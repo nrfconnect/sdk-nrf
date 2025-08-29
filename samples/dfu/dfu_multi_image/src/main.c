@@ -51,6 +51,13 @@ static int writer_close(bool success)
 	return dfu_target_reset();
 }
 
+#ifdef CONFIG_DFU_MULTI_IMAGE_SAVE_PROGRESS
+static int writer_offset(size_t *offset)
+{
+	return dfu_target_offset_get(offset);
+}
+#endif
+
 static int prepare(void)
 {
 	int ret = 0;
@@ -77,6 +84,9 @@ static int prepare(void)
 		writer.open     = writer_open;
 		writer.write    = writer_write;
 		writer.close    = writer_close;
+#ifdef CONFIG_DFU_MULTI_IMAGE_SAVE_PROGRESS
+		writer.offset = writer_offset;
+#endif /* CONFIG_DFU_MULTI_IMAGE_SAVE_PROGRESS */
 
 		ret = dfu_multi_image_register_writer(&writer);
 		if (ret < 0) {

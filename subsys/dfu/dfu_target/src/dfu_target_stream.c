@@ -13,7 +13,6 @@
 
 #ifdef CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS
 #define MODULE "dfu"
-#define DFU_STREAM_OFFSET "stream/offset"
 #include <zephyr/settings/settings.h>
 #endif /* CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS */
 
@@ -164,7 +163,20 @@ int dfu_target_stream_offset_get(size_t *out)
 
 int dfu_target_stream_write(const uint8_t *buf, size_t len)
 {
+#ifdef CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS
+	/**
+	 * Flush immediately if saving progress.
+	 * This is required, as otherwise if an unaligned write
+	 * happened before a power failure or reboot some of the bytes
+	 * which have already been sent to the device would have to be
+	 * re-sent.
+	 * This could cause problems on the server side, as the higher
+	 * layer could have already acked the data.
+	 */
+	int err = stream_flash_buffered_write(&stream, buf, len, true);
+#else
 	int err = stream_flash_buffered_write(&stream, buf, len, false);
+#endif
 
 	if (err != 0) {
 		LOG_ERR("stream_flash_buffered_write error %d", err);

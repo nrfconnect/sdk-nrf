@@ -18,10 +18,14 @@ find_package(Python3 REQUIRED)
 #   OUTPUT        location of the created package
 #
 function(dfu_multi_image_package TARGET_NAME)
-    cmake_parse_arguments(ARG "" "OUTPUT" "IMAGE_IDS;IMAGE_PATHS;DEPENDS" ${ARGN})
+    cmake_parse_arguments(ARG "" "OUTPUT" "IMAGE_IDS;IMAGE_PATHS;ALIGN;DEPENDS" ${ARGN})
 
     if (NOT DEFINED ARG_IMAGE_IDS OR NOT ARG_IMAGE_PATHS OR NOT ARG_OUTPUT)
         message(FATAL_ERROR "All IMAGE_IDS, IMAGE_PATHS and OUTPUT arguments must be specified")
+    endif()
+
+    if (NOT ARG_ALIGN)
+        set(ARG_ALIGN 1)
     endif()
 
     # Prepare dfu_multi_image_tool.py argument list
@@ -31,6 +35,7 @@ function(dfu_multi_image_package TARGET_NAME)
         list(APPEND SCRIPT_ARGS "--image" "${image_0}" "${image_1}")
     endforeach()
 
+    list(APPEND SCRIPT_ARGS "--align" "${ARG_ALIGN}")
     list(APPEND SCRIPT_ARGS ${ARG_OUTPUT})
 
     # Pass the argument list via file to avoid hitting Windows command-line length limit
