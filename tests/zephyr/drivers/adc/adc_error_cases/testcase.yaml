@@ -8,5 +8,4 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
