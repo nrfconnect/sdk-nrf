@@ -198,7 +198,7 @@ After a successful erase advertising procedure, the peripheral removes all of th
 
 Apart from that, the following changes are applied in configurations that support Fast Pair:
 
-* The ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig options are set in the sysbuild configuration to generate the hex file with Fast Pair provisioning data.
+* The :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY` Kconfig options are set in the sysbuild configuration to generate the hex file with Fast Pair provisioning data.
   These Kconfig options are configured to represent the Nordic device models that are intended for demonstration purposes.
 * The :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option is enabled in the main (default) image configuration.
   For more details about enabling Fast Pair for your application, see the :ref:`ug_bt_fast_pair_prerequisite_ops_kconfig` section in the Fast Pair integration guide.

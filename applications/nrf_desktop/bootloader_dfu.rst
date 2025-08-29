@@ -73,14 +73,14 @@ See :ref:`nrf_desktop_memory_layout` for details.
 Configuring the B0 bootloader
 =============================
 
-To enable the B0 bootloader, select the ``SB_CONFIG_SECURE_BOOT_APPCORE`` Kconfig option in the sysbuild configuration.
-This setting automatically enables the ``SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE`` Kconfig option, which generates application binaries for both slots in non-volatile memory.
+To enable the B0 bootloader, select the :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` Kconfig option in the sysbuild configuration.
+This setting automatically enables the :kconfig:option:`SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE` Kconfig option, which generates application binaries for both slots in non-volatile memory.
 
 The B0 bootloader additionally requires enabling the following options:
 
 * In the sysbuild configuration:
 
-  * ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`` - Required for providing the signature key file used by the build system (to sign the application update images) and by the bootloader (to verify the application signature).
+  * :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE` - Required for providing the signature key file used by the build system (to sign the application update images) and by the bootloader (to verify the application signature).
     If this Kconfig option does not specify the signature key file, debug signature key files will be used by default.
 
 * In the application configuration:
@@ -100,9 +100,9 @@ The B0 bootloader additionally requires enabling the following options:
 Configuring the MCUboot bootloader
 ==================================
 
-To enable the MCUboot bootloader, select the ``SB_CONFIG_BOOTLOADER_MCUBOOT`` Kconfig option in the sysbuild configuration.
+To enable the MCUboot bootloader, select the :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` Kconfig option in the sysbuild configuration.
 
-You must also set the MCUboot private key path (``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE``) in the sysbuild configuration.
+You must also set the MCUboot private key path (:kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`) in the sysbuild configuration.
 The key is used both by the build system (to sign the application update images) and by the bootloader (to verify the application signature using public key derived from the selected private key).
 If this Kconfig option is not overwritten in the sysbuild configuration, debug signature key files located in the MCUboot bootloader repository will be used by default.
 
@@ -136,9 +136,9 @@ Direct-xip mode
 
 The direct-xip mode is used for the :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`.
 In this mode, the MCUboot bootloader boots an image directly from a given slot, so the swap operation is not needed.
-To set the MCUboot mode of operations to the direct-xip mode, enable the ``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP`` Kconfig option in the sysbuild configuration.
-This option automatically enables the ``SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT`` Kconfig option, which builds the application update images for both slots.
-The nRF Desktop application configurations do not use the direct-xip mode with the revert mechanism (``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT``).
+To set the MCUboot mode of operations to the direct-xip mode, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP` Kconfig option in the sysbuild configuration.
+This option automatically enables the :kconfig:option:`SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT` Kconfig option, which builds the application update images for both slots.
+The nRF Desktop application configurations do not use the direct-xip mode with the revert mechanism (:kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT`).
 
 The ``CONFIG_BOOT_DIRECT_XIP`` Kconfig option enables MCUboot to run the image directly from both image slots, and it is automatically applied to the bootloader configuration based on the sysbuild configuration.
 Similarly, the :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` Kconfig option, that informs the application about the MCUboot bootloader's mode, is also applied automatically based on the sysbuild configuration.
@@ -163,7 +163,7 @@ Serial recovery mode
 In the :ref:`USB serial recovery <nrf_desktop_bootloader_serial_dfu>` mode, the MCUboot bootloader uses a built-in foreground DFU transport over serial interface through USB.
 The application is not involved in the foreground DFU transport, therefore it can be directly overwritten by the bootloader.
 Because of that, the configuration with the serial recovery mode requires only a single application slot.
-To set the MCUboot mode of operations to single application slot, enable the ``SB_CONFIG_MCUBOOT_MODE_SINGLE_APP`` Kconfig option in the sysbuild configuration.
+To set the MCUboot mode of operations to single application slot, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_SINGLE_APP` Kconfig option in the sysbuild configuration.
 
 Enable the USB serial recovery DFU using the following configuration options:
 
@@ -193,13 +193,13 @@ MCUboot bootloader on nRF54L
 ----------------------------
 
 The nRF54L SoC Series enhances security and reduces boot times by using hardware cryptography in the MCUboot immutable bootloader.
-The |NCS| allows using hardware cryptography for ED25519 signature (``SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519``) on the nRF54L SoC Series.
+The |NCS| allows using hardware cryptography for ED25519 signature (:kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519`) on the nRF54L SoC Series.
 
 You can enhance security further by enabling the following sysbuild Kconfig options:
 
-* ``SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE`` - This option enables using a pure signature of the image, verifying signature directly on image, rather than on its hash.
+* :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE` - This option enables using a pure signature of the image, verifying signature directly on image, rather than on its hash.
   However, you cannot use this option if the secondary image slot uses external memory.
-* ``SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU`` - This option enables using Key Management Unit (KMU) to store keys for signature verification instead of compiling key data into the MCUboot bootloader image.
+* :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU` - This option enables using Key Management Unit (KMU) to store keys for signature verification instead of compiling key data into the MCUboot bootloader image.
   To use KMU, the public key must first be provisioned.
   See the :ref:`ug_nrf54l_developing_provision_kmu` documentation for details.
 
