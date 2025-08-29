@@ -115,7 +115,7 @@ Developing with custom boards
 Developing with coprocessors
 ============================
 
-|no_changes_yet_note|
+* Added support for the nRF54LM20 FLPR.
 
 Security
 ========
