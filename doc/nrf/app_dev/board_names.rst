@@ -100,6 +100,10 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 |                   |            |                                                     |                                                                       |
 |                   |            |                                                     | ``nrf54h20dk/nrf54h20/cpuppr``                                        |
 +-------------------+------------+-----------------------------------------------------+-----------------------------------------------------------------------+
+| nRF54LM20 DK      | PCA10184   | :zephyr:board:`nrf54lm20dk <nrf54lm20dk>`           | ``nrf54lm20dk/nrf54lm20a/cpuapp``                                     |
+|                   |            |                                                     |                                                                       |
+|                   |            |                                                     | ``nrf54lm20dk/nrf54lm20a/cpuflpr``                                    |
++-------------------+------------+-----------------------------------------------------+-----------------------------------------------------------------------+
 | nRF54L15 DK       | PCA10156   | :zephyr:board:`nrf54l15dk <nrf54l15dk>`             | ``nrf54l15dk/nrf54l15/cpuapp``                                        |
 |                   |            |                                                     |                                                                       |
 |                   |            |                                                     | ``nrf54l15dk/nrf54l15/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`) |
