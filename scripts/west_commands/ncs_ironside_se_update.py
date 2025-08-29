@@ -125,9 +125,11 @@ class NcsIronSideSEUpdate(WestCommand):
         return parser
 
     def do_run(self, args: argparse.Namespace, unknown: list[str]) -> None:
+        has_x_sdfw_variant = self._nrfutil_supports_sdfw_variant()
         common_kwargs = {
             "serial_number": args.serial_number,
             "wait_time": args.wait_time,
+            "sdfw_variant": "ironside" if has_x_sdfw_variant else None,
         }
 
         if not args.allow_erase:
@@ -185,6 +187,9 @@ class NcsIronSideSEUpdate(WestCommand):
                     f"Updating IronSide SE firmware:\n{indent(target_version_diff, '  ')}\n"
                 )
 
+                self.inf("Erasing non-volatile memory")
+                self._nrfutil_device("recover", **common_kwargs)
+
                 self.dbg("Programming application firmware used to trigger the update")
                 self._program(update_app, erase=True, **common_kwargs)
 
@@ -220,7 +225,7 @@ class NcsIronSideSEUpdate(WestCommand):
                     slot_version = self._read_firmware_version(slot, **common_kwargs)
                     last_update_status = self._read_update_status(**common_kwargs)
                     self.dbg(
-                        f"Version after update: {slot_version}, status: {update_status.name}"
+                        f"Version after update: {slot_version}, status: {last_update_status.name}"
                     )
 
                     if slot_version != slot_target_version:
@@ -276,20 +281,24 @@ class NcsIronSideSEUpdate(WestCommand):
         self,
         cmd: str,
         serial_number: str | None = None,
+        sdfw_variant: str | None = None,
         die_on_error: bool = True,
+        dbg_log_stdout: bool = True,
         **kwargs: Any,
     ) -> str:
+        optional_args = ""
         if serial_number is not None:
-            optional_args = f" --serial-number {serial_number}"
-        else:
-            optional_args = ""
+            optional_args += f" --serial-number {serial_number}"
+        if sdfw_variant is not None:
+            optional_args += f"  --x-sdfw-variant {sdfw_variant}"
 
-        cmd = f"nrfutil device {cmd}{optional_args} --x-sdfw-variant ironside"
+        cmd = f"nrfutil device {cmd}{optional_args}"
         self.dbg(cmd)
 
         result = subprocess.run(cmd, shell=True, text=True, capture_output=True)
 
-        self.dbg(result.stdout)
+        if dbg_log_stdout:
+            self.dbg(result.stdout)
 
         if result.returncode != 0:
             if die_on_error:
@@ -310,6 +319,13 @@ class NcsIronSideSEUpdate(WestCommand):
             )
         )
         return bytes(json_out["devices"][0]["memoryData"][0]["values"])
+
+    def _nrfutil_supports_sdfw_variant(self) -> bool:
+        nrfutil_device_program_helptext = self._nrfutil_device(
+            "program --help",
+            dbg_log_stdout=False,
+        )
+        return "--x-sdfw-variant" in nrfutil_device_program_helptext
 
     def _wait_for_bootstatus(self, wait_time: float, **kwargs: Any) -> int:
         boot_status = None
