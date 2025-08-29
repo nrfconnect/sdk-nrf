@@ -161,59 +161,91 @@ Testing
 Sample output
 =============
 
-The following is an example output of the sample when there is no provisioning configuration on the server side:
+The following is an example output of the sample when the device has not been claimed:
 
 .. code-block:: console
 
+	*** Booting nRF Connect SDK v3.0.99-ab6a14880c0a ***
+	*** Using Zephyr OS v4.1.99-7f1481559760 ***
 	<inf> nrf_provisioning_sample: nRF Device Provisioning Sample
-	<inf> nrf_provisioning_sample: Enabling connectivity...
-	<inf> nrf_provisioning_sample: Network connectivity gained!
-	<inf> nrf_provisioning_sample: Initializing the nRF Provisioning library...
-	<inf> nrf_provisioning: Checking for provisioning commands in 2s seconds
+	<inf> nrf_provisioning_sample: Bringing network interface up and connecting to the network
+	<inf> nrf_provisioning_sample: Provisioning scheduled, next attempt in 3 seconds
+	<inf> nrf_provisioning_sample: Network connectivity established
+	<inf> nrf_provisioning_sample: IPv4 connectivity established
+	<inf> nrf_provisioning_sample: IPv6 connectivity established
 	<inf> nrf_provisioning_sample: Provisioning started
 	<inf> nrf_provisioning_http: Requesting commands
 	<inf> nrf_provisioning_http: Connected
-	<inf> nrf_provisioning_http: No more commands to process on server side
-	<inf> nrf_provisioning: Checking for provisioning commands in 86403s seconds
-	<inf> nrf_provisioning_sample: Provisioning is idle.
+	<err> nrf_provisioning_http: Device provided wrong auth credentials
+	<wrn> nrf_provisioning: Unauthorized access: device is not yet claimed.
+	<wrn> nrf_provisioning_sample: Provisioning failed, device not claimed
+	<wrn> nrf_provisioning_sample: Claim the device using the device's attestation token on nrfcloud.com
+	<wrn> nrf_provisioning_sample: Attestation token:
+
+	<attestation_token>
+
+	<inf> nrf_provisioning_sample: Provisioning stopped
+	<inf> nrf_provisioning_sample: Provisioning scheduled, next attempt in 60 seconds
+
+The following is an example output of the sample when there is no provisioning commands available from the service:
+
+.. code-block:: console
+
+	*** Booting nRF Connect SDK v3.0.99-ab6a14880c0a ***
+	*** Using Zephyr OS v4.1.99-7f1481559760 ***
+	<inf> nrf_provisioning_sample: nRF Device Provisioning Sample
+	<inf> nrf_provisioning_sample: Bringing network interface up and connecting to the network
+	<inf> nrf_provisioning_sample: Provisioning scheduled, next attempt in 1 seconds
+	<inf> nrf_provisioning_sample: Provisioning started
+	<inf> nrf_provisioning_sample: Network connectivity established
+	<inf> nrf_provisioning_sample: IPv4 connectivity established
+	<inf> nrf_provisioning_sample: IPv6 connectivity established
+	<inf> nrf_provisioning_http: Requesting commands
+	<inf> nrf_provisioning_http: Connected
+	<inf> nrf_provisioning_http: No commands to process on server side
+	<inf> nrf_provisioning_sample: Provisioning done, no commands received from the server
+	<inf> nrf_provisioning_sample: Provisioning stopped
+	<inf> nrf_provisioning_sample: Provisioning scheduled, next attempt in 60 seconds
 
 The following is an example output when the sample is processing commands from the server:
 
 .. code-block:: console
 
 	<inf> nrf_provisioning_sample: Provisioning started
-	<inf> nrf_provisioning: Externally initiated provisioning
 	<inf> nrf_provisioning_http: Requesting commands
 	<inf> nrf_provisioning_http: Connected
 	<inf> nrf_provisioning_http: Processing commands
-	<inf> nrf_provisioning_sample: Provisioning library requests offline mode
-	<inf> nrf_provisioning: Disconnected from network - provisioning paused
-	<inf> nrf_provisioning_sample: Network connectivity lost!
-	<inf> nrf_provisioning_sample: Provisioning library requests offline mode
-	<inf> nrf_provisioning_sample: Provisioning library requests offline mode
-	<inf> nrf_provisioning_sample: Provisioning library requests offline mode
-	<inf> nrf_provisioning_sample: Provisioning library requests offline mode
-	<inf> nrf_provisioning_sample: Provisioning library requests normal mode
-	<inf> nrf_provisioning: Disconnected from network - provisioning paused
-	<inf> nrf_provisioning: Connected; home network - provisioning resumed
-	<inf> nrf_provisioning_sample: Network connectivity gained!
+	<inf> nrf_provisioning_sample: nRF Provisioning requires device to deactivate network
+	<inf> nrf_provisioning_sample: Network connectivity lost
+	<inf> nrf_provisioning_sample: nRF Provisioning requires device to activate network
+	<inf> nrf_provisioning_sample: Network connectivity established
+	<inf> nrf_provisioning_sample: IPv4 connectivity established
+	<inf> nrf_provisioning_sample: IPv6 connectivity established
 	<inf> nrf_provisioning_http: Sending response to server
 	<inf> nrf_provisioning_http: Requesting commands
 	<inf> nrf_provisioning_http: Connected
 	<inf> nrf_provisioning_http: Processing commands
-	<inf> nrf_provisioning_sample: Provisioning library requests offline mode
-	<inf> nrf_provisioning: Disconnected from network - provisioning paused
-	<inf> nrf_provisioning_sample: Network connectivity lost!
-	<inf> nrf_provisioning_sample: Provisioning library requests offline mode
-	<inf> nrf_provisioning_sample: Provisioning library requests normal mode
-	<inf> nrf_provisioning: Disconnected from network - provisioning paused
-	<inf> nrf_provisioning: Connected; home network - provisioning resumed
-	<inf> nrf_provisioning_sample: Network connectivity gained!
+	<inf> nrf_provisioning_sample: nRF Provisioning requires device to deactivate network
+	<inf> nrf_provisioning_sample: Network connectivity lost
+	<inf> nrf_provisioning_sample: nRF Provisioning requires device to activate network
+	<inf> nrf_provisioning_sample: Network connectivity established
+	<inf> nrf_provisioning_sample: IPv4 connectivity established
+	<inf> nrf_provisioning_sample: IPv6 connectivity established
 	<inf> nrf_provisioning_http: Sending response to server
-	<inf> nrf_provisioning_sample: Provisioning done, rebooting...
-	<inf> nrf_provisioning: Disconnected from network - provisioning paused
-	<inf> nrf_provisioning_sample: Network connectivity lost!
-	<inf> nrf_provisioning_sample: Provisioning is idle.
+	<inf> nrf_provisioning_http: Requesting commands
+	<inf> nrf_provisioning_http: Connected
+	<inf> nrf_provisioning_http: Processing commands
+	<inf> nrf_provisioning_sample: nRF Provisioning requires device to deactivate network
+	<inf> nrf_provisioning_sample: Network connectivity lost
+	<inf> nrf_provisioning_sample: nRF Provisioning requires device to activate network
+	<inf> nrf_provisioning_sample: Network connectivity established
+	<inf> nrf_provisioning_sample: IPv4 connectivity established
+	<inf> nrf_provisioning_sample: IPv6 connectivity established
+	<inf> nrf_provisioning_http: Sending response to server
+	<inf> nrf_provisioning_sample: Provisioning done
+	<inf> nrf_provisioning_sample: The device can now connect to the provisioned cloud service
+	<inf> nrf_provisioning_sample: Provisioning stopped
+	<inf> nrf_provisioning_sample: Provisioning scheduled, next attempt in 62 seconds
 
 Provisioning with the nRF Cloud Provisioning Service using auto-onboarding
 ==========================================================================
