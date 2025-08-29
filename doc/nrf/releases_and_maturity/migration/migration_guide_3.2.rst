@@ -66,7 +66,13 @@ Libraries
 
 This section describes the changes related to libraries.
 
-|no_changes_yet_note|
+Debug libraries
+---------------
+
+* :ref:`mod_memfault` module:
+
+  * The ``CONFIG_MEMFAULT_DEVICE_INFO_CUSTOM`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_CUSTOM`.
+  * The ``CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_BUILTIN`.
 
 .. _migration_3.2_recommended:
 
