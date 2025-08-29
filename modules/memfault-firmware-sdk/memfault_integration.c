@@ -41,6 +41,18 @@ BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_PROJECT_KEY) > 1,
 	"Memfault Project Key not configured. Please visit " MEMFAULT_URL " ");
 #endif
 
+extern void memfault_ncs_metrics_init(void);
+
+/* Memfault HTTP client configuration
+ *
+ * This symbol has public scope- it's used by the Memfault SDK when executing
+ * HTTP requests
+ */
+sMfltHttpClientConfig g_mflt_http_client_config = {
+	.api_key = CONFIG_MEMFAULT_NCS_PROJECT_KEY,
+};
+
+#if defined(CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN)
 /* Firmware type check */
 BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_FW_TYPE) > 1, "Firmware type must be configured");
 
@@ -63,13 +75,6 @@ BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_FW_VERSION_STATIC) > 1,
 /* Hardware version check */
 BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_HW_VERSION) > 1, "Hardware version must be configured");
 
-extern void memfault_ncs_metrics_init(void);
-
-sMfltHttpClientConfig g_mflt_http_client_config = {
-	.api_key = CONFIG_MEMFAULT_NCS_PROJECT_KEY,
-};
-
-#if defined(CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN)
 void memfault_platform_get_device_info(sMemfaultDeviceInfo *info)
 {
 #if defined(CONFIG_MEMFAULT_NCS_FW_VERSION_AUTO)
@@ -97,6 +102,29 @@ void memfault_platform_get_device_info(sMemfaultDeviceInfo *info)
 		.software_version = fw_version,
 		.hardware_version = CONFIG_MEMFAULT_NCS_HW_VERSION,
 	};
+}
+
+int memfault_ncs_device_id_set(const char *device_id, size_t len)
+{
+	if (!IS_ENABLED(CONFIG_MEMFAULT_NCS_DEVICE_ID_RUNTIME)) {
+		LOG_ERR("CONFIG_MEMFAULT_NCS_DEVICE_ID_RUNTIME is disabled");
+		return -ENOTSUP;
+	}
+
+	if (device_id == NULL) {
+		return -EINVAL;
+	}
+
+	if (len > (sizeof(device_serial) - 1)) {
+		LOG_ERR("Device ID is longer than CONFIG_MEMFAULT_NCS_DEVICE_ID_MAX_LEN");
+		LOG_WRN("The Memfault device ID will be truncated");
+	}
+
+	memcpy(device_serial, device_id, MIN(sizeof(device_serial) - 1, len));
+
+	device_serial[MIN(sizeof(device_serial) - 1, len)] = '\0';
+
+	return 0;
 }
 #endif /* defined(CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN) */
 
@@ -150,29 +178,6 @@ static int init(void)
 	}
 
 	return err;
-}
-
-int memfault_ncs_device_id_set(const char *device_id, size_t len)
-{
-	if (!IS_ENABLED(CONFIG_MEMFAULT_NCS_DEVICE_ID_RUNTIME)) {
-		LOG_ERR("CONFIG_MEMFAULT_NCS_DEVICE_ID_RUNTIME is disabled");
-		return -ENOTSUP;
-	}
-
-	if (device_id == NULL) {
-		return -EINVAL;
-	}
-
-	if (len > (sizeof(device_serial) - 1)) {
-		LOG_ERR("Device ID is longer than CONFIG_MEMFAULT_NCS_DEVICE_ID_MAX_LEN");
-		LOG_WRN("The Memfault device ID will be truncated");
-	}
-
-	memcpy(device_serial, device_id, MIN(sizeof(device_serial) - 1, len));
-
-	device_serial[MIN(sizeof(device_serial) - 1, len)] = '\0';
-
-	return 0;
 }
 
 #if defined(CONFIG_NRF_MODEM_LIB)
