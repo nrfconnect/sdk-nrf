@@ -956,7 +956,7 @@
 .. _`Device command overview`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming.html
 .. _`Programming application firmware using MCUboot serial recovery`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_firmware_thingy91.html
 .. _`Programming modem firmware using MCUboot serial recovery`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_firmware_thingy91.html
-.. _`Programming application firmware on the nRF54L15 SoC`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_nrf54L15.html
+.. _`Programming application firmware on the nRF54L SoCs`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_nrf54L15.html
 .. _`Upgrading modem firmware using J-Link`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_modem_9160.html
 .. _`Provisioning keys for hardware KMU`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/provisioning_keys.html
 

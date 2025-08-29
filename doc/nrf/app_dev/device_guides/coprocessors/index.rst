@@ -9,7 +9,7 @@ Developing with coprocessors
 
 You can use the VPR coprocessor (Fast Lightweight Peripheral Processor - FLPR) as follows:
 
-* As an additional core in a multicore system using Zephyr in multithreaded mode (see the :ref:`nRF54L15<vpr_flpr_nrf54l>` and :ref:`nRF54H20 devices<ug_nrf54h20_flpr>` pages).
+* As an additional core in a multicore system using Zephyr in multithreaded mode (see the :ref:`nRF54L<vpr_flpr_nrf54l>` and :ref:`nRF54H20 devices<ug_nrf54h20_flpr>` pages).
 * As a peripheral emulator, using one of the following methods depending on the use case:
 
   * :ref:`High-Performance Framework (HPF)<hpf_index>`
@@ -60,7 +60,7 @@ For detailed comparison see the :ref:`ug_hpf_softperipherals_comparison` page.
      - Handles simple data pre-processing or post-processing based on specific protocol needs.
      - Not supported.
    * - Maturity level
-     - Experimental (nRF54L15 and nRF54H20)
+     - Experimental (nRF54L15, nRF54LM20, and nRF54H20)
      - Experimental (nRF54L15)
      - Supported (see :ref:`nrfxlib:soft_peripherals` documentation for the list of supported devices)
    * - Example use case
