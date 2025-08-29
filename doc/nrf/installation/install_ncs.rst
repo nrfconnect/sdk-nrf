@@ -98,24 +98,27 @@ Depending on your preferred development environment, complete the following step
       .. note::
          If you prefer, you can now `start VS Code walkthrough`_ and install the toolchain and the SDK from there.
 
-      1. Open the nRF Connect extension in |VSC| by clicking its icon in the :guilabel:`Activity Bar`.
-      #. In the extension's :guilabel:`Welcome View`, click on :guilabel:`Manage toolchains`.
-         The list of actions appears in the |VSC|'s quick pick.
-      #. Click :guilabel:`Install Toolchain`.
-         The list of available stable toolchain versions appears in the |VSC|'s quick pick.
-      #. Select the toolchain version to install.
-         The toolchain version should match the |NCS| version you are going to work with.
-         |install_latest_version|
+      You can install the toolchain together with or separately from the SDK code:
 
-         .. note::
-              If you have received a custom URL for installing the toolchain, you can provide it using the :guilabel:`Change Toolchain Index` button in the quick pick's header (wrench icon).
-              If you are working with a development tag, disable the filter in the quick pick's header to list all available toolchains.
+      * When you install the toolchain together with the SDK code, you can download a pre-packaged bundle from the Nordic Semiconductor server that installs both the SDK and the toolchain.
+        Skip to :ref:`cloning_the_repositories` step now.
+      * When you install the toolchain separately from the SDK code, you can later install the SDK code from a GitHub tag.
+        To install the toolchain separately from the SDK code, complete the following steps:
 
-         The toolchain installation starts in the background, as can be seen in the notification that appears.
+        1. Open the nRF Connect extension in |VSC| by clicking its icon in the :guilabel:`Activity Bar`.
+        #. In the extension's :guilabel:`Welcome View`, click on :guilabel:`Manage toolchains`.
+           The list of actions appears in the |VSC|'s quick pick.
+        #. Click :guilabel:`Install toolchain`.
+           The list of available stable toolchain versions appears in the |VSC|'s quick pick.
+        #. Select the toolchain version to install.
+           The toolchain version should match the |NCS| version you are going to work with.
+           |install_latest_version|
 
-      When you install the toolchain for the first time, the installed version is automatically selected for your project.
+           .. note::
+                If you have received a custom URL for installing the toolchain, you can provide it using the :guilabel:`Change Toolchain Index` button in the quick pick's header (wrench icon).
+                If you are working with a development tag, disable the filter in the quick pick's header to list all available toolchains.
 
-      After installing the toolchain, you can access the :guilabel:`Install Toolchain` option by clicking on :guilabel:`Manage toolchains`.
+           The toolchain installation starts in the background, as can be seen in the notification that appears.
 
    .. group-tab:: Command line
 
@@ -236,7 +239,8 @@ For more information about the repository and development model, see the :ref:`d
       #. Select the SDK type to install.
          The list of available stable SDK versions for the selected SDK type appears in the |VSC|'s quick pick, grouped into two categories:
 
-         * Pre-packaged SDKs - Bundled by Nordic Semiconductor.
+         * Pre-packaged SDKs & Toolchains - Available on the Nordic Semiconductor server.
+           The package downloads both the SDK and Toolchain, but skips the Toolchain if you have it already installed.
            Available mostly for stable releases and some preview tags.
            Recommended for faster and more reliable download and installation.
          * GitHub - Taken from the `nRF Connect by Nordic Semiconductor GitHub organization <nrfconnect GitHub organization_>`_.
