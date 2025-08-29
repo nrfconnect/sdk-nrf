@@ -22,7 +22,7 @@ if (CONFIG_MBEDTLS_DEBUG)
 endif()
 
 # Add mbed TLS heap library - Not for TF-M build
-if(CONFIG_MBEDTLS_ENABLE_HEAP)
+if(CONFIG_MBEDTLS_ENABLE_HEAP AND CONFIG_MBEDTLS_PLATFORM_MEMORY)
   list(APPEND src_zephyr
     mbedtls_heap.c
   )
