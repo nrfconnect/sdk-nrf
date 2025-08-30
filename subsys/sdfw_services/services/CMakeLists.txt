@@ -8,4 +8,3 @@
 add_subdirectory_ifdef(CONFIG_SSF_DEVICE_INFO_SERVICE_ENABLED device_info)
 add_subdirectory_ifdef(CONFIG_SSF_ENC_FW_SERVICE_ENABLED enc_fw)
 add_subdirectory_ifdef(CONFIG_SSF_EXTMEM_SERVICE_ENABLED extmem)
-add_subdirectory_ifdef(CONFIG_SSF_PSA_CRYPTO_SERVICE_ENABLED psa_crypto)
