@@ -57,7 +57,8 @@ For more information about the general features of the TF-M ITS service, see `TF
 Encrypted ITS
 -------------
 
-TF-M ITS encryption is a data protection mechanism in Internal Trusted Storage. It provides transparent encryption using a Master Key Encryption Key (MKEK) stored in hardware, with unique encryption keys derived for each file.
+TF-M ITS encryption is a data protection mechanism in Internal Trusted Storage.
+It provides transparent encryption using a Master Key Encryption Key (MKEK) stored in hardware, with unique encryption keys derived for each file.
 
 To enable TF-M ITS encryption, set the :kconfig:option:`CONFIG_TFM_ITS_ENCRYPTED` Kconfig option.
 
