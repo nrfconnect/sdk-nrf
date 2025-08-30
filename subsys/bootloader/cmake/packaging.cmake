@@ -17,7 +17,13 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
     sysbuild_get(${DEFAULT_IMAGE}_kernel_name IMAGE ${DEFAULT_IMAGE} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
 
     list(APPEND dfu_multi_image_ids 0)
-    list(APPEND dfu_multi_image_paths "${${DEFAULT_IMAGE}_image_dir}/zephyr/${${DEFAULT_IMAGE}_kernel_name}.signed.bin")
+
+    if(SB_CONFIG_BOOT_ENCRYPTION)
+      list(APPEND dfu_multi_image_paths "${${DEFAULT_IMAGE}_image_dir}/zephyr/${${DEFAULT_IMAGE}_kernel_name}.signed.encrypted.bin")
+    else()
+      list(APPEND dfu_multi_image_paths "${${DEFAULT_IMAGE}_image_dir}/zephyr/${${DEFAULT_IMAGE}_kernel_name}.signed.bin")
+    endif()
+
     list(APPEND dfu_multi_image_targets ${DEFAULT_IMAGE}_extra_byproducts ${dfu_multi_image_paths})
   endif()
 
