@@ -58,3 +58,7 @@
 # temperature sensor
 - name: temperature_sensor
   zap_file: samples/matter/temperature_sensor/src/default_zap/temperature_sensor.zap
+
+# contact sensor
+- name: contact_sensor
+  zap_file: samples/matter/contact_sensor/src/default_zap/contact_sensor.zap
