@@ -25,6 +25,7 @@
 LOG_MODULE_REGISTER(bt_bms, CONFIG_BT_BMS_LOG_LEVEL);
 
 #define UINT24_SIZE	3
+#define BT_BMS_OP_CODE_SIZE	1
 
 #define BT_ATT_ERR_OP_CODE_NOT_SUPPORTED	0x80
 #define BT_ATT_ERR_OPERATION_FAILED		0x81
@@ -282,8 +283,8 @@ static ssize_t ctrl_pt_write(struct bt_conn *conn,
 	}
 
 	params.op_code  = op_code;
-	params.code     = cp_proc + sizeof(op_code);
-	params.code_len = len - sizeof(op_code);
+	params.code     = cp_proc + BT_BMS_OP_CODE_SIZE;
+	params.code_len = len - BT_BMS_OP_CODE_SIZE;
 	if (!ctrl_pt_authorize(conn, &params)) {
 		LOG_ERR("Authorization failed");
 		return BT_GATT_ERR(BT_ATT_ERR_AUTHORIZATION);
