@@ -46,7 +46,6 @@ config MPSL_FEM_NRF2240_TWI_SUPPORT
 
 config MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool
-	default n
 
 config MPSL_FEM_API_AVAILABLE
 	bool
@@ -153,7 +152,7 @@ config MPSL_FEM_NRF2240
 	help
 	  FEM device is nRF2240.
 
-endchoice	# MPSL_FEM_CHOICE
+endchoice # MPSL_FEM_CHOICE
 
 if (MPSL_FEM_NRF21540_GPIO || MPSL_FEM_NRF21540_GPIO_SPI) && MPSL_FEM
 
@@ -209,14 +208,13 @@ config MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL
 	  If this option is disabled the PA gain is constant and equal MPSL_FEM_NRF21540_TX_GAIN_DB.
 
 
-endif   # (MPSL_FEM_NRF21540_GPIO || MPSL_FEM_NRF21540_GPIO_SPI) && MPSL_FEM
+endif # (MPSL_FEM_NRF21540_GPIO || MPSL_FEM_NRF21540_GPIO_SPI) && MPSL_FEM
 
-endif	# MPSL_FEM || MPSL_FEM_PIN_FORWARDER
+endif # MPSL_FEM || MPSL_FEM_PIN_FORWARDER
 
 config MPSL_FEM_POWER_MODEL
 	bool "Use a model to split the requested TX power into values used to control the internal state of the FEM"
 	depends on MPSL_FEM
-	default n
 	help
 	  Use a model to split the requested TX power into values used to control
 	  the internal state of the FEM. This model can be used for compensating for external
@@ -258,7 +256,7 @@ config MPSL_FEM_POWER_MODEL_NRF21540_USE_BUILTIN
 	  for the low granularity of the SoC output power. Compensation for other factors such
 	  as temperature, frequency and operating voltage is also done.
 
-endchoice	# MPSL_FEM_POWER_MODEL_CHOICE
+endchoice # MPSL_FEM_POWER_MODEL_CHOICE
 
 config MPSL_FEM_BUILTIN_POWER_MODEL_UPDATE_PERIOD
 	int "Builtin model update period in ms"
@@ -269,7 +267,7 @@ config MPSL_FEM_BUILTIN_POWER_MODEL_UPDATE_PERIOD
 	  accurate power output. This setting specifies how frequently the model will be updated
 	  to account for changing external conditions.
 
-endif   # MPSL_FEM_POWER_MODEL
+endif # MPSL_FEM_POWER_MODEL
 
 config MPSL_FEM_DEVICE_CONFIG_254
 	bool "Apply device configuration 254"

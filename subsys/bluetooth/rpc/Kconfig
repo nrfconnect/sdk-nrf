@@ -95,7 +95,6 @@ endif # BT_RPC_HOST
 
 config BT_RPC_INTERNAL_FUNCTIONS
 	bool "Internal functions"
-	default n
 	help
 	  Enable functionality required for internal purposes e.g. testing.
 

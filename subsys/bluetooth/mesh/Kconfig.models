@@ -107,7 +107,6 @@ config BT_MESH_LVL_CLI
 	help
 	  Enable mesh Generic Level Client model.
 
-
 menuconfig BT_MESH_DTT_SRV
 	bool "Generic Default Transition Time Server"
 	select BT_MESH_NRF_MODELS
@@ -130,7 +129,6 @@ config BT_MESH_DTT_CLI
 	help
 	  Enable mesh Generic Default Transition Time Client model.
 
-
 config BT_MESH_PONOFF_SRV
 	bool "Generic Power OnOff Server"
 	select BT_MESH_NRF_MODELS
@@ -147,7 +145,6 @@ config BT_MESH_PONOFF_CLI
 	help
 	  Enable mesh Generic Power OnOff Client model.
 
-
 config BT_MESH_PLVL_SRV
 	bool "Generic Power Level Server"
 	select BT_MESH_NRF_MODELS
@@ -163,7 +160,6 @@ config BT_MESH_PLVL_CLI
 	help
 	  Enable mesh Generic Power Level Client model.
 
-
 config BT_MESH_BATTERY_SRV
 	bool "Generic Battery Server"
 	select BT_MESH_NRF_MODELS
@@ -175,7 +171,6 @@ config BT_MESH_BATTERY_CLI
 	select BT_MESH_NRF_MODELS
 	help
 	  Enable mesh Generic Battery Client model.
-
 
 config BT_MESH_LOC_SRV
 	bool "Generic Location Server"
@@ -203,6 +198,7 @@ config BT_MESH_PROP_CLI
 	  Enable mesh Generic Property Client model.
 
 if BT_MESH_PROP_SRV || BT_MESH_PROP_CLI
+
 menu "Generic Property Model configuration"
 
 config BT_MESH_PROP_MAXSIZE
@@ -225,8 +221,8 @@ config BT_MESH_PROP_MAXCOUNT
 	  payload (see BT_MESH_TX_SEG_MAX).
 
 endmenu
-endif
 
+endif
 
 config BT_MESH_LIGHTNESS_SRV
 	bool "Light Lightness Server"
@@ -244,6 +240,7 @@ config BT_MESH_LIGHTNESS_CLI
 	  Enable mesh Light Lightness Client model.
 
 if BT_MESH_LIGHTNESS_SRV || BT_MESH_LIGHTNESS_CLI
+
 menu "Light Lightness Model configuration"
 
 choice BT_MESH_LIGHTNESS_REPR
@@ -262,7 +259,9 @@ config BT_MESH_LIGHTNESS_LINEAR
 	  Represent the Light Lightness light level state on a linear scale.
 
 endchoice
+
 endmenu
+
 endif
 
 menuconfig BT_MESH_LIGHT_CTRL_REG
@@ -288,7 +287,7 @@ config BT_MESH_LIGHT_CTRL_REG_SPEC_INTERVAL
 	help
 	  Update interval of the specification-defined illuminance regulator (in milliseconds).
 
-endif #BT_MESH_LIGHT_CTRL_REG_SPEC
+endif # BT_MESH_LIGHT_CTRL_REG_SPEC
 
 config BT_MESH_LIGHT_CTRL_AMB_LIGHT_LEVEL_TIMEOUT
 	int "Ambient light level report timeout (seconds)"
@@ -301,7 +300,7 @@ config BT_MESH_LIGHT_CTRL_AMB_LIGHT_LEVEL_TIMEOUT
 	  avoiding an issue with the regulator getting stuck with an old output value, and not
 	  triggering new report from the sensor. When set to zero, the timeout is disabled.
 
-endif #BT_MESH_LIGHT_CTRL_REG
+endif # BT_MESH_LIGHT_CTRL_REG
 
 menuconfig BT_MESH_LIGHT_CTRL_SRV
 	bool "Light Lightness Control (LC) Server"
