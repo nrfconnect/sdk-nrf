@@ -17,6 +17,7 @@ config LED_ENABLE
 config ESB_SNIFFER
 	bool "Turn sample into a functional ESB sniffer"
 	select USE_SEGGER_RTT
+	select SHELL
 	help
 	  Enable sniffer functionality with RTT backend and runtime configuration updates through UART shell.
 	  Disable logging received packets through UART.

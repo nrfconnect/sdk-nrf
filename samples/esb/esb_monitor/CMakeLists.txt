@@ -10,5 +10,5 @@ project(NONE)
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c)
-target_sources_ifdef(CONFIG_ESB_SNIFFER app PRIVATE src/sniffer.c)
+target_sources_ifdef(CONFIG_ESB_SNIFFER app PRIVATE src/sniffer.c src/sniffer_shell.c)
 # NORDIC SDK APP END
