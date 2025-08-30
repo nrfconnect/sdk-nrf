@@ -294,6 +294,9 @@ static void at_handler_cereg(const char *response)
 		case LTE_LC_LTE_MODE_NBIOT:
 			LTE_LC_TRACE(LTE_LC_TRACE_LTE_MODE_UPDATE_NBIOT);
 			break;
+		case LTE_LC_LTE_MODE_NTN_NBIOT:
+			LTE_LC_TRACE(LTE_LC_TRACE_LTE_MODE_UPDATE_NTN_NBIOT);
+			break;
 		case LTE_LC_LTE_MODE_NONE:
 			LTE_LC_TRACE(LTE_LC_TRACE_LTE_MODE_UPDATE_NONE);
 			break;

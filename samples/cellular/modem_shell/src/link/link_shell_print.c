@@ -157,11 +157,12 @@ const char *link_shell_sysmode_to_string(int sysmode, char *out_str_buff)
 	struct mapping_tbl_item const mapping_table[] = {
 		{ LTE_LC_SYSTEM_MODE_LTEM, "LTE-M" },
 		{ LTE_LC_SYSTEM_MODE_NBIOT, "NB-IoT" },
-		{ LTE_LC_SYSTEM_MODE_LTEM_NBIOT, "LTE-M - NB-IoT" },
 		{ LTE_LC_SYSTEM_MODE_GPS, "GNSS" },
 		{ LTE_LC_SYSTEM_MODE_LTEM_GPS, "LTE-M - GNSS" },
-		{ LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS, "LTE-M - NB-IoT - GNSS" },
 		{ LTE_LC_SYSTEM_MODE_NBIOT_GPS, "NB-IoT - GNSS" },
+		{ LTE_LC_SYSTEM_MODE_LTEM_NBIOT, "LTE-M - NB-IoT" },
+		{ LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS, "LTE-M - NB-IoT - GNSS" },
+		{ LTE_LC_SYSTEM_MODE_NTN_NBIOT, "NTN NB-IoT" },
 		{ LINK_SYSMODE_NONE, "None" },
 		{ -1, NULL }
 	};
@@ -197,6 +198,7 @@ const char *link_shell_sysmode_currently_active_to_string(int actmode,
 		{ LTE_LC_LTE_MODE_NONE, "None" },
 		{ LTE_LC_LTE_MODE_LTEM, "LTE-M" },
 		{ LTE_LC_LTE_MODE_NBIOT, "NB-IoT" },
+		{ LTE_LC_LTE_MODE_NTN_NBIOT, "NTN NB-IoT" },
 		{ -1, NULL }
 	};
 

@@ -126,6 +126,7 @@ static const char link_sysmode_usage_str[] =
 	"  -M, --ltem_gnss,        Set LTE-M + GNSS system mode\n"
 	"  -N, --nbiot_gnss,       Set NB-IoT + GNSS system mode\n"
 	"      --ltem_nbiot_gnss,  Set LTE-M + NB-IoT + GNSS system mode\n"
+	"      --ntn,              Set NTN NB-IoT system mode\n"
 	"  -h, --help,             Shows this help information\n"
 	"\n"
 	"Additional LTE mode preference that can be optionally given\n"
@@ -190,6 +191,12 @@ static const char link_edrx_usage_str[] =
 	"      --nbiot_edrx, [str] Sets custom eDRX value for NB-IoT to be requested when\n"
 	"                          enabling eDRX with -e option.\n"
 	"      --nbiot_ptw, [str]  Sets custom Paging Time Window value for NB-IoT to be\n"
+	"                          requested when enabling eDRX with -e option.\n"
+	"      --ntn_nbiot_edrx, [str]\n"
+	"                          Sets custom eDRX value for NTN NB-IoT to be requested when\n"
+	"                          enabling eDRX with -e option.\n"
+	"      --ntn_nbiot_ptw, [str]\n"
+	"                          Sets custom Paging Time Window value for NTN NB-IoT to be\n"
 	"                          requested when enabling eDRX with -e option.\n"
 	"  -h, --help,             Shows this help information";
 
@@ -380,6 +387,7 @@ enum {
 	LINK_SHELL_OPT_MRESET_USER,
 	LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT,
 	LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS,
+	LINK_SHELL_OPT_SYSMODE_NTN,
 	LINK_SHELL_OPT_SYSMODE_PREF_AUTO,
 	LINK_SHELL_OPT_SYSMODE_PREF_LTEM,
 	LINK_SHELL_OPT_SYSMODE_PREF_NBIOT,
@@ -411,6 +419,8 @@ enum {
 	LINK_SHELL_OPT_LTEM_PTW,
 	LINK_SHELL_OPT_NBIOT_EDRX,
 	LINK_SHELL_OPT_NBIOT_PTW,
+	LINK_SHELL_OPT_NTN_NBIOT_EDRX,
+	LINK_SHELL_OPT_NTN_NBIOT_PTW,
 	LINK_SHELL_OPT_MODEM_INIT,
 	LINK_SHELL_OPT_MODEM_SHUTDOWN,
 	LINK_SHELL_OPT_MODEM_SHUTDOWN_CFUN0,
@@ -450,6 +460,8 @@ static struct option long_options[] = {
 	{ "ltem_ptw", required_argument, 0, LINK_SHELL_OPT_LTEM_PTW },
 	{ "nbiot_edrx", required_argument, 0, LINK_SHELL_OPT_NBIOT_EDRX },
 	{ "nbiot_ptw", required_argument, 0, LINK_SHELL_OPT_NBIOT_PTW },
+	{ "ntn_nbiot_edrx", required_argument, 0, LINK_SHELL_OPT_NTN_NBIOT_EDRX },
+	{ "ntn_nbiot_ptw", required_argument, 0, LINK_SHELL_OPT_NTN_NBIOT_PTW },
 	{ "prot", required_argument, 0, 'A' },
 	{ "pword", required_argument, 0, 'P' },
 	{ "uname", required_argument, 0, 'U' },
@@ -466,6 +478,7 @@ static struct option long_options[] = {
 	{ "mreset_user", no_argument, 0, LINK_SHELL_OPT_MRESET_USER },
 	{ "ltem_nbiot", no_argument, 0, LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT },
 	{ "ltem_nbiot_gnss", no_argument, 0, LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS },
+	{ "ntn", no_argument, 0, LINK_SHELL_OPT_SYSMODE_NTN },
 	{ "pref_auto", no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_AUTO },
 	{ "pref_ltem", no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_LTEM },
 	{ "pref_nbiot", no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_NBIOT },
@@ -581,9 +594,11 @@ static void link_shell_print_usage(enum link_shell_command command)
 	 LTE_LC_SYSTEM_MODE_LTEM_NBIOT                   :	   \
 	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS)     ? \
 	 LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS               :	   \
+	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NTN_NBIOT)           ? \
+	 LTE_LC_SYSTEM_MODE_NTN_NBIOT                    :	   \
 	 LINK_SYSMODE_NONE)
 
-static void link_shell_sysmode_set(int sysmode, int lte_pref)
+static int link_shell_sysmode_set(int sysmode, int lte_pref)
 {
 	enum lte_lc_func_mode functional_mode;
 	char snum[64];
@@ -599,11 +614,15 @@ static void link_shell_sysmode_set(int sysmode, int lte_pref)
 				"Requested mode couldn't set to modem. "
 				"Not in flighmode nor in pwroff?");
 		}
+
+		return -EFAULT;
 	} else {
 		mosh_print(
 			"System mode set successfully to modem: %s",
 			link_shell_sysmode_to_string(sysmode, snum));
 	}
+
+	return 0;
 }
 
 #define MOSH_NCELLMEAS_SEARCH_TYPE_NONE 0xFF
@@ -1119,6 +1138,10 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 	bool nbiot_edrx_set = false;
 	char nbiot_ptw_str[LINK_SHELL_EDRX_PTW_STR_LENGTH + 1];
 	bool nbiot_ptw_set = false;
+	char ntn_nbiot_edrx_str[LINK_SHELL_EDRX_VALUE_STR_LENGTH + 1];
+	bool ntn_nbiot_edrx_set = false;
+	char ntn_nbiot_ptw_str[LINK_SHELL_EDRX_PTW_STR_LENGTH + 1];
+	bool ntn_nbiot_ptw_set = false;
 
 	optreset = 1;
 	optind = 1;
@@ -1173,6 +1196,28 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			if (strlen(optarg) == LINK_SHELL_EDRX_PTW_STR_LENGTH) {
 				strcpy(nbiot_ptw_str, optarg);
 				nbiot_ptw_set = true;
+			} else {
+				mosh_error(
+					"PTW string length must be %d.",
+					LINK_SHELL_EDRX_PTW_STR_LENGTH);
+				return -EINVAL;
+			}
+			break;
+		case LINK_SHELL_OPT_NTN_NBIOT_EDRX:
+			if (strlen(optarg) == LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
+				strcpy(ntn_nbiot_edrx_str, optarg);
+				ntn_nbiot_edrx_set = true;
+			} else {
+				mosh_error(
+					"eDRX value string length must be %d.",
+					LINK_SHELL_EDRX_VALUE_STR_LENGTH);
+				return -EINVAL;
+			}
+			break;
+		case LINK_SHELL_OPT_NTN_NBIOT_PTW:
+			if (strlen(optarg) == LINK_SHELL_EDRX_PTW_STR_LENGTH) {
+				strcpy(ntn_nbiot_ptw_str, optarg);
+				ntn_nbiot_ptw_set = true;
 			} else {
 				mosh_error(
 					"PTW string length must be %d.",
@@ -1253,6 +1298,34 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			return -EINVAL;
 		}
 
+		value = NULL; /* Set with the defaults if not given */
+		if (ntn_nbiot_edrx_set) {
+			value = ntn_nbiot_edrx_str;
+		}
+
+		ret = lte_lc_edrx_param_set(LTE_LC_LTE_MODE_NTN_NBIOT, value);
+		if (ret < 0) {
+			mosh_error(
+				"Cannot set NTN NB-IoT eDRX value %s, error: %d",
+				((value == NULL) ? "NULL" : value),
+				ret);
+			return -EINVAL;
+		}
+
+		value = NULL; /* Set with the defaults if not given */
+		if (ntn_nbiot_ptw_set) {
+			value = ntn_nbiot_ptw_str;
+		}
+
+		ret = lte_lc_ptw_set(LTE_LC_LTE_MODE_NTN_NBIOT, value);
+		if (ret < 0) {
+			mosh_error(
+				"Cannot set NTN NB-IoT PTW value %s, error: %d",
+				((value == NULL) ? "NULL" : value),
+				ret);
+			return -EINVAL;
+		}
+
 		ret = lte_lc_edrx_req(true);
 		if (ret < 0) {
 			mosh_error("Cannot enable eDRX: %d", ret);
@@ -1277,8 +1350,9 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 				mosh_print("eDRX not in use");
 			} else {
 				mosh_print("eDRX LTE mode: %s, eDRX interval: %.2f s, PTW: %.2f s",
-					   edrx_cfg.mode == LTE_LC_LTE_MODE_LTEM ?
-						"LTE-M" : "NB-IoT",
+					   (edrx_cfg.mode == LTE_LC_LTE_MODE_LTEM)  ? "LTE-M" :
+					   (edrx_cfg.mode == LTE_LC_LTE_MODE_NBIOT) ? "NB-IoT" :
+										      "NTN NB-IoT",
 					   (double)edrx_cfg.edrx, (double)edrx_cfg.ptw);
 			}
 		}
@@ -2406,8 +2480,8 @@ static int link_shell_settings(const struct shell *shell, size_t argc, char **ar
 		if (operation == LINK_OPERATION_RESET) {
 			link_sett_defaults_set();
 			if (SYS_MODE_PREFERRED != LINK_SYSMODE_NONE) {
-				link_shell_sysmode_set(SYS_MODE_PREFERRED,
-						       CONFIG_LTE_MODE_PREFERENCE_VALUE);
+				(void)link_shell_sysmode_set(SYS_MODE_PREFERRED,
+							     CONFIG_LTE_MODE_PREFERENCE_VALUE);
 			}
 		}
 		if (mreset_type == LINK_FACTORY_RESET_ALL) {
@@ -2500,6 +2574,9 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 		case LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS:
 			sysmode_option = LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS;
 			break;
+		case LINK_SHELL_OPT_SYSMODE_NTN:
+			sysmode_option = LTE_LC_SYSTEM_MODE_NTN_NBIOT;
+			break;
 		case LINK_SHELL_OPT_SYSMODE_PREF_AUTO:
 			sysmode_lte_pref_option = LTE_LC_SYSTEM_MODE_PREFER_AUTO;
 			break;
@@ -2559,15 +2636,15 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 			}
 		}
 	} else if (sysmode_option != LINK_SYSMODE_NONE) {
-		link_shell_sysmode_set(sysmode_option, sysmode_lte_pref_option);
-
-		/* Save system modem to link settings */
-		(void)link_sett_sysmode_save(sysmode_option, sysmode_lte_pref_option);
-
+		ret = link_shell_sysmode_set(sysmode_option, sysmode_lte_pref_option);
+		if (ret == 0) {
+			/* Save system modem to link settings */
+			(void)link_sett_sysmode_save(sysmode_option, sysmode_lte_pref_option);
+		}
 	} else if (operation == LINK_OPERATION_RESET) {
 		if (SYS_MODE_PREFERRED != LINK_SYSMODE_NONE) {
-			link_shell_sysmode_set(SYS_MODE_PREFERRED,
-					       CONFIG_LTE_MODE_PREFERENCE_VALUE);
+			(void)link_shell_sysmode_set(SYS_MODE_PREFERRED,
+						     CONFIG_LTE_MODE_PREFERENCE_VALUE);
 		}
 
 		(void)link_sett_sysmode_default_set();
