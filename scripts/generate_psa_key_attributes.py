@@ -66,6 +66,7 @@ class PsaKeyLifetime(IntEnum):
 class PsaKeyLocation(IntEnum):
     """Location for storing key"""
 
+    LOCATION_LOCAL_STORAGE = 0
     LOCATION_CRACEN = 0x804E0000
     LOCATION_CRACEN_KMU = 0x804E4B00
 
