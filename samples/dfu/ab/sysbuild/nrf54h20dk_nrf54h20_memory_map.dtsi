@@ -1,0 +1,48 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* On nRF54H20 the Direct XIP mode is supported in the merged slot configuration
+ * Merge application and radio slots by extending the application partition.
+ */
+&cpuapp_slot0_partition {
+	reg = <0x40000 DT_SIZE_K(656)>;
+};
+
+&cpuapp_slot1_partition {
+	reg = <0x100000 DT_SIZE_K(656)>;
+};
+
+/ {
+	chosen {
+		nrf,bootloader-request = &boot_request;
+	};
+};
+
+/ {
+	reserved-memory {
+		cpuapp_retained_mem: memory@e1ad000 {
+			compatible = "zephyr,memory-region";
+			reg = <0xe1ad000 DT_SIZE_K(4)>;
+			zephyr,memory-region = "RetainedMem";
+			status = "okay";
+
+			retainedmem {
+				compatible = "zephyr,retained-ram";
+				status = "okay";
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				boot_request: boot_request@0 {
+					compatible = "zephyr,retention";
+					status = "okay";
+					reg = <0x0 16>;
+					prefix = [0B 01];
+					checksum = <4>;
+				};
+			};
+		};
+	};
+};
