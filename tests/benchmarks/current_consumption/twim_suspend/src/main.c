@@ -8,6 +8,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/i2c.h>
 #include <zephyr/pm/device.h>
+#include <zephyr/pm/device_runtime.h>
 
 /* Note: logging is normally disabled for this test
  * Enable only for debugging purposes
@@ -51,13 +52,10 @@ int main(void)
 		printk("I2C configuration failed%d\n", response);
 		__ASSERT_NO_MSG(response == 0);
 	}
-
-	response = pm_device_action_run(i2c_device, PM_DEVICE_ACTION_SUSPEND);
-	printk("PM_DEVICE_ACTION_SUSPEND status: %d\n", response);
-	__ASSERT_NO_MSG(response == 0);
+	pm_device_init_suspended(i2c_device);
 
 	while (1) {
-		response = pm_device_action_run(i2c_device, PM_DEVICE_ACTION_RESUME);
+		response = pm_device_runtime_get(i2c_device);
 		printk("PM_DEVICE_ACTION_RESUME status: %d\n", response);
 		__ASSERT_NO_MSG(response == 0);
 
@@ -69,7 +67,7 @@ int main(void)
 		printk("Variant_Id: %d\n", response);
 		__ASSERT_NO_MSG(response != 0);
 
-		response = pm_device_action_run(i2c_device, PM_DEVICE_ACTION_SUSPEND);
+		response = pm_device_runtime_put(i2c_device);
 		printk("PM_DEVICE_ACTION_SUSPEND status: %d\n", response);
 		__ASSERT_NO_MSG(response == 0);
 

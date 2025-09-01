@@ -19,6 +19,12 @@
 
 &gpio9 {
 	status = "okay";
+	zephyr,pm-device-runtime-auto;
+};
+
+&gpio1 {
+	status = "okay";
+	zephyr,pm-device-runtime-auto;
 };
 
 &gpiote130 {
@@ -27,4 +33,5 @@
 
 &uart135 {
 	/delete-property/ hw-flow-control;
+	zephyr,pm-device-runtime-auto;
 };

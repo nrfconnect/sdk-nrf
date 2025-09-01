@@ -4,5 +4,5 @@
  */
 
 &i2c130 {
-	/delete-property/ zephyr,pm-device-runtime-auto;
+	zephyr,pm-device-runtime-auto;
 };
