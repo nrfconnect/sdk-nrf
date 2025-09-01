@@ -391,7 +391,10 @@ DECT NR+ samples
 DFU samples
 -----------
 
-* Added the :ref:`dfu_multi_image_sample` sample to demonstrate how to use the :ref:`lib_dfu_target` library.
+* Added:
+
+  * The :ref:`dfu_multi_image_sample` sample to demonstrate how to use the :ref:`lib_dfu_target` library.
+  * The :ref:`ab_sample` sample to demonstrate how to implement the A/B firmware update strategy using :ref:`MCUboot <mcuboot_index_ncs>`.
 
 Edge Impulse samples
 --------------------
