@@ -644,3 +644,4 @@
   - "include/nfc/ndef/text_rec.h"
   - "include/dk_buttons_and_leds.h"
   - "include/app_event_manager/app_event_manager.h"
+  - "scripts/west_commands/ncs_ironside_se_update.py"
