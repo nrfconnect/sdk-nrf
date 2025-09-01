@@ -62,6 +62,20 @@ class OptionsFromKconfig(SphinxDirective):
             )
         )
         os.environ["ZEPHYR_BASE"] = str(self.config.options_from_kconfig_zephyr_dir)
+
+        import zephyr_module
+        modules = zephyr_module.parse_modules(os.environ["ZEPHYR_BASE"])
+
+        kconfig_module_dirs = ""
+        for module in modules:
+            kconfig_module_dirs += zephyr_module.process_kconfig_module_dir(module.project,
+                                                                            module.meta)
+
+        import tempfile
+        f = tempfile.NamedTemporaryFile('w', encoding="utf-8")
+        os.environ["KCONFIG_ENV_FILE"] = f.name
+        f.write(kconfig_module_dirs)
+
         import kconfiglib
         self._monkey_patch_kconfiglib(kconfiglib)
 
@@ -110,6 +124,7 @@ class OptionsFromKconfig(SphinxDirective):
 
         lines = statemachine.string2lines('\n'.join(lines))
         self.state_machine.insert_input(lines, path)
+        f.close()
         return []
 
 
