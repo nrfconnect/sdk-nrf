@@ -17,7 +17,6 @@
 LOG_MODULE_REGISTER(uarte_suspend);
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
-static const struct device *const console_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 
 #if DT_NODE_EXISTS(DT_NODELABEL(dut))
 #define UART_NODE DT_NODELABEL(dut)
@@ -122,10 +121,6 @@ int main(void)
 	if (err != 0) {
 		printk("Unexpected error when setting callback %d\n", err);
 		__ASSERT_NO_MSG(err == 0);
-	}
-
-	if (IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)) {
-		pm_device_runtime_enable(console_dev);
 	}
 
 	while (1) {

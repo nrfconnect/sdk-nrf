@@ -11,6 +11,6 @@
 	zephyr,pm-device-runtime-auto;
 };
 
-&exmif {
-	status = "disabled";
+&gdpwr_slow_main {
+	/delete-property/zephyr,pm-device-runtime-auto;
 };

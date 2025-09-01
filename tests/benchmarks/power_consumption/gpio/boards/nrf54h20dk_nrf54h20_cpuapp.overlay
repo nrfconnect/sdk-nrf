@@ -31,3 +31,7 @@
 	status = "okay";
 	owned-channels = <0>;
 };
+
+&gdpwr_slow_main {
+	/delete-property/zephyr,pm-device-runtime-auto;
+};
