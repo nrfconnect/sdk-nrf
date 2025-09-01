@@ -62,6 +62,16 @@ class OptionsFromKconfig(SphinxDirective):
             )
         )
         os.environ["ZEPHYR_BASE"] = str(self.config.options_from_kconfig_zephyr_dir)
+        os.environ["ENV_FILE"] = str(path / "kconfig_module_dirs.env")
+
+        import zephyr_module
+        kconfig_module_dirs = ""
+        for module in modules:
+            kconfig_module_dirs += zephyr_module.process_kconfig_module_dir(module.project,
+                                                                            module.meta)
+        with open(path / "kconfig_module_dirs.env", "w") as f:
+            f.write(kconfig_module_dirs)
+
         import kconfiglib
         self._monkey_patch_kconfiglib(kconfiglib)
 
