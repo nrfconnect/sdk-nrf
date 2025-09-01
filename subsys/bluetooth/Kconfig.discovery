@@ -24,11 +24,9 @@ config BT_GATT_DM_WORKQ_OWN
 
 config BT_GATT_DM_WORKQ_SYS
 	bool "Use system workqueue"
-	select EXPERIMENTAL
 	help
 	  Use system workqueue for GATT Discovery Manager. Can be used if creating a new thread
-	  is not viable due to memory constraints, but it is not recommended to have potential
-	  blocking calls in the system workqueue.
+	  is not viable due to memory constraints.
 
 endchoice
 
