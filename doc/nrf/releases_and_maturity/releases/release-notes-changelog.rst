@@ -281,7 +281,7 @@ Bluetooth samples
 
    * :ref:`peripheral_lbs`
    * :ref:`peripheral_status`
-   * :ref:`peripheral_status`
+   * :ref:`peripheral_uart`
 
 Bluetooth Mesh samples
 ----------------------
