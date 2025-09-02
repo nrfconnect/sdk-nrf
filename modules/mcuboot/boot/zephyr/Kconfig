@@ -12,16 +12,20 @@ config BOOT_USE_MIN_PARTITION_SIZE
 
 partition=MCUBOOT_SCRATCH
 partition-size=0x1e000
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_config"
+source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/partition_manager/Kconfig.template.partition_config"
 
 partition=MCUBOOT_PAD
+
 if SOC_SERIES_NRF54LX
 	partition-size=0x800
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_config"
+source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/partition_manager/Kconfig.template.partition_config"
+
 endif
+
 if !SOC_SERIES_NRF54LX
 	partition-size=0x200
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_config"
+source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/partition_manager/Kconfig.template.partition_config"
+
 endif
 
 config PM_PARTITION_SIZE_MCUBOOT

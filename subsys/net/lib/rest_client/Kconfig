@@ -28,6 +28,6 @@ module=REST_CLIENT
 module-dep=LOG
 module-str=Log level for REST Client lib
 module-help=Enables REST Client log messages.
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # REST_CLIENT

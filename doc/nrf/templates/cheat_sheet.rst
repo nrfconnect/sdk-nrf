@@ -575,7 +575,7 @@ Kconfig:
    id = 0xBEEF
    flags = 0
    ver = 1
-   source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
+   source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
 cmake:
 

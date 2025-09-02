@@ -70,6 +70,6 @@ config HEAP_MEM_POOL_ADD_SIZE_BT_GATT_DM
 
 module = BT_GATT_DM
 module-str = GATT database discovery
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_GATT_DM

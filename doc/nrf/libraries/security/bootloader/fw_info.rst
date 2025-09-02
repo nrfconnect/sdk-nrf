@@ -119,7 +119,7 @@ To create an EXT_API, complete the following steps:
       id = 0xBEEF
       flags = 0
       ver = 1
-      source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
+      source "$(ZEPHYR_NRF_MODULE_DIR_BASE)/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
 #. Declare a new struct type:
 

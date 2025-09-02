@@ -14,6 +14,6 @@ if BT_NSMS
 
 module = BT_NSMS
 module-str = NSMS
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_NSMS

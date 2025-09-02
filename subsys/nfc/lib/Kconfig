@@ -153,6 +153,6 @@ endif # NFC_THREAD_CALLBACK
 
 module = NFC_PLATFORM
 module-str = nfc_platform
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # NFC_PLATFORM

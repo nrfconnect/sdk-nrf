@@ -21,7 +21,7 @@ config APPCORE_IMAGE_NAME
 	default "remote_hci" if APPCORE_REMOTE_HCI
 
 config APPCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/direct_test_mode/remote_hci" if APPCORE_REMOTE_HCI
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/bluetooth/direct_test_mode/remote_hci" if APPCORE_REMOTE_HCI
 
 choice DTM_TRANSPORT
 	default DTM_TRANSPORT_TWOWIRE

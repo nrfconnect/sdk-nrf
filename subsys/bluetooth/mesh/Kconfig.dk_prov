@@ -38,6 +38,6 @@ config BT_MESH_DK_LEGACY_UUID_GEN
 
 module = BT_MESH_DK_PROV
 module-str = DK BT mesh provisioning library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_MESH_DK_PROV

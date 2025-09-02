@@ -57,6 +57,6 @@ config FLASH_RPC_SYS_INIT
 
 module = FLASH_RPC
 module-str = Flash over nRF RPC
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # FLASH_RPC

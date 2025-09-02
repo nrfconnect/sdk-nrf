@@ -57,4 +57,4 @@ config TRAFFIC_GEN_TYPE_TCP
 module = TRAFFIC_GEN
 module-dep = LOG
 module-str = Log level for sample
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
