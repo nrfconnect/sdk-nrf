@@ -2198,6 +2198,17 @@ The issues in this section are related to the :ref:`nrf_desktop` application.
 
 .. rst-class:: v3-1-0
 
+NCSDK-34743: System state indication LED does not work on nRF54L15 DK
+  The system state indication LED is kept turned off, because the PWM hardware peripheral attempts to drive the LED instead of GPIO.
+  On the nRF54L05, nRF54L10 and nRF54L15 SoCs, you can only use the **GPIO1** port for PWM hardware peripheral output.
+  The system state indication LED is connected to **GPIO2**.
+
+  **Affected platforms:** nRF54L15 DK
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``744701bdf6f2ce7e3421649644ccd86cad8e26b4``).
+
+.. rst-class:: v3-1-0
+
 NCSDK-34299: nRF Desktop application does not build or run due to the IronSide SE migration
   The :ref:`nrf_desktop` application is currently incompatible with the latest |NCS| transition to the IronSide SE solution - bundle 22.1.0 and higher for the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
   As a result, you cannot use this application with that board target in any of the affected releases.
