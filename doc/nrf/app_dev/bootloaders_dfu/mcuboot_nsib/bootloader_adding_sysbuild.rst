@@ -146,12 +146,10 @@ See :ref:`ug_fw_update_keys` for information on how to generate custom keys for 
 
 For SoCs using KMU for NSIB (nRF54L Series devices), the private key must be provisioned in the KMU before NSIB can be run.
 
-Additionally, the |NSIB| supports the following methods for signing images with private keys:
+Additionally, the |NSIB| supports a custom method for signing images with private keys:
 
-* Uses the :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_OPENSSL` Kconfig option.
 * :ref:`Using a custom command <ug_bootloader_adding_sysbuild_immutable_b0_custom_signing>` - Uses the :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM` Kconfig option.
 
-The OpenSSL method is handled internally by the build system, whereas using custom commands requires more configuration steps.
 
 Checking the public key
 ^^^^^^^^^^^^^^^^^^^^^^^
