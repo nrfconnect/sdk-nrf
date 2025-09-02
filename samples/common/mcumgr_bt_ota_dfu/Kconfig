@@ -48,8 +48,11 @@ config IMG_ERASE_PROGRESSIVELY
 
 if MCUMGR_TRANSPORT_BT_REASSEMBLY
 
+# MCUmgr buffer size is optimized to fit one SMP packet divided into five Bluetooth Write Commands,
+# transmitted with the maximum possible MTU value.
+# With the default BT_L2CAP_TX_MTU value: (247 - 3) * 5 = 1220
 config MCUMGR_TRANSPORT_NETBUF_SIZE
-	default 1230
+	default 1220
 
 config MCUMGR_GRP_OS_MCUMGR_PARAMS
 	default y
