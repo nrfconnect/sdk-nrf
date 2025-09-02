@@ -288,6 +288,7 @@
 /drivers/mpsl/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
 /drivers/mspi/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /drivers/net/                             @nrfconnect/ncs-co-drivers @doki-nordic
+/drivers/regulator/                       @nrfconnect/ncs-co-drivers
 /drivers/serial/                          @nrfconnect/ncs-co-drivers @nordic-krch
 /drivers/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /drivers/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
