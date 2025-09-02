@@ -231,13 +231,13 @@ The following table indicates the software maturity levels of the support for ea
            - Supported
            - Supported
            - Supported
-         * - **Sidewalk**
-           - --
-           - --
-           - --
-           - --
-           - --
-           - Supported\ :sup:`4`
+         * - **Amazon Sidewalk**
+           - --\ :sup:`4`
+           - --\ :sup:`4`
+           - --\ :sup:`4`
+           - --\ :sup:`4`
+           - --\ :sup:`4`
+           - --\ :sup:`4`
          * - **Thread**
            - --
            - --
@@ -253,12 +253,12 @@ The following table indicates the software maturity levels of the support for ea
            - --
            - Supported\ :sup:`1`
          * - **Zigbee**
-           - --
-           - --
-           - --
-           - --
-           - Supported\ :sup:`5`
-           - Supported\ :sup:`5`
+           - --\ :sup:`5`
+           - --\ :sup:`5`
+           - --\ :sup:`5`
+           - --\ :sup:`5`
+           - --\ :sup:`5`
+           - --\ :sup:`5`
 
    .. group-tab:: nRF53 Series
 
@@ -280,14 +280,14 @@ The following table indicates the software maturity levels of the support for ea
            - Supported
          * - **NFC**
            - Supported
-         * - **Sidewalk**
-           - Supported\ :sup:`4`
+         * - **Amazon Sidewalk**
+           - --\ :sup:`4`
          * - **Thread**
            - Supported
          * - **Wi-Fi®**
            - Supported\ :sup:`2`
          * - **Zigbee**
-           - Supported\ :sup:`5`
+           - --\ :sup:`5`
 
    .. group-tab:: nRF54 Series
 
@@ -337,12 +337,12 @@ The following table indicates the software maturity levels of the support for ea
            - Supported
            - Supported
            - --
-         * - **Sidewalk**
-           - --
-           - --
-           - Supported\ :sup:`4`
-           - Supported\ :sup:`4`
-           - --
+         * - **Amazon Sidewalk**
+           - --\ :sup:`4`
+           - --\ :sup:`4`
+           - --\ :sup:`4`
+           - --\ :sup:`4`
+           - --\ :sup:`4`
          * - **Thread**
            - --
            - Supported
@@ -356,11 +356,11 @@ The following table indicates the software maturity levels of the support for ea
            - Experimental\ :sup:`3`
            - --
          * - **Zigbee**
-           - --
-           - Supported\ :sup:`5`
-           - Supported\ :sup:`5`
-           - Supported\ :sup:`5`
-           - --
+           - --\ :sup:`5`
+           - --\ :sup:`5`
+           - --\ :sup:`5`
+           - --\ :sup:`5`
+           - --\ :sup:`5`
 
    .. group-tab:: nRF91 Series
 
@@ -403,11 +403,11 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - --
-            * - **Sidewalk**
-              - --
-              - --
-              - --
-              - --
+            * - **Amazon Sidewalk**
+              - --\ :sup:`4`
+              - --\ :sup:`4`
+              - --\ :sup:`4`
+              - --\ :sup:`4`
             * - **Thread**
               - --
               - --
@@ -419,205 +419,21 @@ The following table indicates the software maturity levels of the support for ea
               - Supported\ :sup:`1`
               - Supported\ :sup:`1`
             * - **Zigbee**
-              - --
-              - --
-              - --
-              - --
+              - --\ :sup:`5`
+              - --\ :sup:`5`
+              - --\ :sup:`5`
+              - --\ :sup:`5`
 
 | [1]: Only with nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
 | [2]: Only with nRF7002 DK, nRF7002 DK in nRF7001 emulation mode, nRF7002 EB, nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
 | [3]: Only with nRF7002-EB II
-| [4]: Available through Amazon Sidewalk add-on for the |NCS|
-| [5]: Available through Zigbee add-ons for the |NCS|
+| [4]: The software maturity levels for Amazon Sidewalk can be found on the `Amazon Sidewalk <Amazon Sidewalk documentation_>`_ add-on page
+| [5]: The software maturity levels for Zigbee can be found on the `Zigbee R23`_ add-on page
 
 Amazon Sidewalk features support
 ********************************
 
-The following table indicates the software maturity levels of the support for each Amazon Sidewalk feature:
-
-.. toggle::
-
-   .. tabs::
-
-      .. group-tab:: nRF52 Series
-
-         .. list-table:: Amazon Sidewalk features support
-            :widths: auto
-            :header-rows: 1
-
-            * -
-              - nRF52810
-              - nRF52811
-              - nRF52820
-              - nRF52832
-              - nRF52833
-              - nRF52840
-            * - **Sidewalk - OTA DFU over Bluetooth LE**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **Sidewalk File Transfer (FUOTA)**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Experimental
-            * - **Sidewalk Multi-link + Auto-connect**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **Sidewalk on-device certification**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **Sidewalk over Bluetooth LE**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **Sidewalk over FSK**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **Sidewalk over LORA**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-
-      .. group-tab:: nRF53 Series
-
-         .. list-table:: Amazon Sidewalk features support
-            :widths: auto
-            :header-rows: 1
-
-            * -
-              - nRF5340
-            * - **Sidewalk - OTA DFU over Bluetooth LE**
-              - Supported
-            * - **Sidewalk File Transfer (FUOTA)**
-              - Experimental
-            * - **Sidewalk Multi-link + Auto-connect**
-              - Supported
-            * - **Sidewalk on-device certification**
-              - Supported
-            * - **Sidewalk over Bluetooth LE**
-              - Supported
-            * - **Sidewalk over FSK**
-              - Supported
-            * - **Sidewalk over LORA**
-              - Supported
-
-      .. group-tab:: nRF54 Series
-
-         .. list-table:: Amazon Sidewalk features support
-            :widths: auto
-            :header-rows: 1
-
-            * -
-              - nRF54H20
-              - nRF54L05
-              - nRF54L10
-              - nRF54L15
-            * - **Sidewalk - OTA DFU over Bluetooth LE**
-              - --
-              - --
-              - Supported
-              - Supported
-            * - **Sidewalk File Transfer (FUOTA)**
-              - --
-              - --
-              - Experimental
-              - Experimental
-            * - **Sidewalk Multi-link + Auto-connect**
-              - --
-              - --
-              - Supported
-              - Supported
-            * - **Sidewalk on-device certification**
-              - --
-              - --
-              - Supported
-              - Supported
-            * - **Sidewalk over Bluetooth LE**
-              - --
-              - --
-              - Supported
-              - Supported
-            * - **Sidewalk over FSK**
-              - --
-              - --
-              - Supported
-              - Supported
-            * - **Sidewalk over LORA**
-              - --
-              - --
-              - Supported
-              - Supported
-
-      .. group-tab:: nRF91 Series
-
-         .. list-table:: Amazon Sidewalk features support
-            :widths: auto
-            :header-rows: 1
-
-            * -
-              - nRF9131
-              - nRF9151
-              - nRF9160
-              - nRF9161
-            * - **Sidewalk - OTA DFU over Bluetooth LE**
-              - --
-              - --
-              - --
-              - --
-            * - **Sidewalk File Transfer (FUOTA)**
-              - --
-              - --
-              - --
-              - --
-            * - **Sidewalk Multi-link + Auto-connect**
-              - --
-              - --
-              - --
-              - --
-            * - **Sidewalk on-device certification**
-              - --
-              - --
-              - --
-              - --
-            * - **Sidewalk over Bluetooth LE**
-              - --
-              - --
-              - --
-              - --
-            * - **Sidewalk over FSK**
-              - --
-              - --
-              - --
-              - --
-            * - **Sidewalk over LORA**
-              - --
-              - --
-              - --
-              - --
+The software maturity levels of the support for each Amazon Sidewalk feature can be found on the `Amazon Sidewalk <Amazon Sidewalk documentation_>`_ add-on page.
 
 Bluetooth features support
 **************************
@@ -1848,187 +1664,7 @@ Zigbee feature support
 
 .. include:: /includes/zigbee_deprecation.txt
 
-The following table indicates the software maturity levels of the support for each Zigbee feature:
-
-.. toggle::
-
-   .. tabs::
-
-      .. tab:: nRF52 Series
-         .. list-table:: Zigbee feature support
-            :widths: auto
-            :header-rows: 1
-
-            * - Feature
-              - nRF52810
-              - nRF52811
-              - nRF52820
-              - nRF52832
-              - nRF52833
-              - nRF52840
-            * - **OTA DFU over Zigbee**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **Zigbee (Sleepy) End Device**
-              - --
-              - --
-              - --
-              - --
-              - Supported
-              - Supported
-            * - **Zigbee + Bluetooth LE multiprotocol**
-              - --
-              - --
-              - --
-              - --
-              - Supported
-              - Supported
-            * - **Zigbee + nRF21540 (GPIO)**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **Zigbee Coordinator**
-              - --
-              - --
-              - --
-              - --
-              - Supported
-              - Supported
-            * - **Zigbee Network Co-Processor (NCP)**
-              - --
-              - --
-              - --
-              - --
-              - Supported
-              - Supported
-            * - **Zigbee Router**
-              - --
-              - --
-              - --
-              - --
-              - Supported
-              - Supported
-
-      .. tab:: nRF53 Series
-         .. list-table:: Zigbee feature support
-            :widths: auto
-            :header-rows: 1
-
-            * - Feature
-              - nRF5340
-            * - **OTA DFU over Zigbee**
-              - Supported
-            * - **Zigbee (Sleepy) End Device**
-              - Supported
-            * - **Zigbee + Bluetooth LE multiprotocol**
-              - Supported
-            * - **Zigbee + nRF21540 (GPIO)**
-              - --
-            * - **Zigbee Coordinator**
-              - Supported
-            * - **Zigbee Network Co-Processor (NCP)**
-              - Supported
-            * - **Zigbee Router**
-              - Supported
-
-      .. tab:: nRF54 Series
-         .. list-table:: Zigbee feature support
-            :widths: auto
-            :header-rows: 1
-
-            * - Feature
-              - nRF54H20
-              - nRF54L05
-              - nRF54L10
-              - nRF54L15
-            * - **OTA DFU over Zigbee**
-              - --
-              - --
-              - Supported
-              - Supported
-            * - **Zigbee (Sleepy) End Device**
-              - --
-              - --
-              - Supported
-              - Supported
-            * - **Zigbee + Bluetooth LE multiprotocol**
-              - --
-              - --
-              - Supported
-              - Supported
-            * - **Zigbee + nRF21540 (GPIO)**
-              - --
-              - --
-              - --
-              - --
-            * - **Zigbee Coordinator**
-              - --
-              - --
-              - Supported
-              - Supported
-            * - **Zigbee Network Co-Processor (NCP)**
-              - --
-              - Supported
-              - Supported
-              - Supported
-            * - **Zigbee Router**
-              - --
-              - --
-              - Supported
-              - Supported
-
-      .. tab:: nRF91 Series
-         .. list-table:: Zigbee feature support
-            :widths: auto
-            :header-rows: 1
-
-            * - Feature
-              - nRF9131
-              - nRF9151
-              - nRF9160
-              - nRF9161
-            * - **OTA DFU over Zigbee**
-              - --
-              - --
-              - --
-              - --
-            * - **Zigbee (Sleepy) End Device**
-              - --
-              - --
-              - --
-              - --
-            * - **Zigbee + Bluetooth LE multiprotocol**
-              - --
-              - --
-              - --
-              - --
-            * - **Zigbee + nRF21540 (GPIO)**
-              - --
-              - --
-              - --
-              - --
-            * - **Zigbee Coordinator**
-              - --
-              - --
-              - --
-              - --
-            * - **Zigbee Network Co-Processor (NCP)**
-              - --
-              - --
-              - --
-              - --
-            * - **Zigbee Router**
-              - --
-              - --
-              - --
-              - --
+The software maturity levels of the support for each Zigbee feature can be found on the `Zigbee R23`_ add-on page.
 
 Wi-Fi feature support
 *********************
