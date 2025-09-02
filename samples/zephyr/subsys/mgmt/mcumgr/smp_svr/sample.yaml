@@ -8,6 +8,16 @@ common:
     - ci_samples_zephyr_subsys_mgmt_mcumgr_smp_svr
 
 tests:
+  sample.mcumgr.smp_svr.bt.nrf54l15:
+    harness: bluetooth
+    tags: bluetooth
+    extra_args: EXTRA_CONF_FILE="overlay-bt.conf"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
   sample.mcumgr.smp_svr.bt.nrf54h20dk:
     sysbuild: true
     extra_args:
