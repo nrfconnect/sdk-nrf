@@ -23,6 +23,118 @@ Distribution
 
 The |ISE| is provided as a precompiled binary, which is part of the nRF54H20 SoC bundle and is provided independently from the |NCS| release cycle.
 
+Installing
+**********
+
+For new setups, follow the instructions found in :ref:`ug_nrf54h20_gs`.
+
+Updating IronSide SE
+********************
+
+The |NCS| provides two approaches for updating the IronSide SE firmware:
+
+* **West command approach**: |NCS| provides a west command that can be used to install the update.
+  To use this approach, follow the "Brief instruction" section below.
+* **Manual approach**: It is possible to perform the steps performed by the west command manually.
+  This is described in the "Detailed update process" section.
+
+Brief instruction
+=================
+
+To update the IronSide SE firmware, use the ``west ncs-ironside-se-update`` command with the following syntax:
+
+.. code-block:: console
+
+   west ncs-ironside-se-update --zip <path_to_soc_binaries.zip> --allow-erase
+
+The command accepts the following main options:
+
+* ``--zip``: Path to the IronSide SE release ZIP file (required)
+* ``--allow-erase``: Allow erasing the device during update (currently required)
+* ``--serial``: Specify the serial number of the target device
+* ``--firmware-slot``: Update only a specific firmware slot (``uslot`` for IronSide SE or ``rslot`` for IronSide SE Recovery)
+* ``--wait-time``: Timeout in seconds to wait for the device to boot (default: 2.0)
+
+Detailed update process
+=======================
+
+SoC binary bundle overview
+---------------------------
+
+The SoC binary bundle is a ZIP archive that contains the following components:
+
+* **IronSide SE update firmware** (``ironside_se_update.hex``) - The main IronSide SE firmware
+* **IronSide SE Recovery update firmware** (``ironside_se_recovery_update.hex``) - The recovery firmware
+* **Update application** (``update_application.hex``) - Application firmware used to trigger the update process
+* Additional metadata and manifest files required for the update process
+
+The update process involves several steps:
+
+1. **Update application execution**: The update application runs on the application core and communicates with the IronSide SE update service. It reads the update firmware from memory and passes the update blob metadata to the IronSide SE.
+
+2. **Update preparation**: The IronSide SE validates the update parameters and writes the update metadata to the Secure Information Configuration Registers (SICR).
+
+3. **Update installation**: After a reset, the Secure Domain ROM (SDROM) detects the pending update through the SICR registers, verifies the update firmware signature, and installs the new firmware.
+
+4. **Update completion**: The system boots with the updated IronSide SE firmware, and the update status can be read to verify successful installation.
+
+The bundle is packaged as a ZIP file with the naming convention ``<soc>_soc_binaries_v<version>.zip``.
+
+Manual update using nrfutil commands
+-------------------------------------
+
+You can perform the same update process manually using ``nrfutil`` commands, which mimics the functionality of ``west ncs-ironside-se-update``:
+
+1. **Extract the update bundle:**
+
+   .. code-block:: console
+
+      unzip <soc_binaries.zip> -d /tmp/update_dir
+
+2. **Erase non-volatile memory:**
+
+   .. code-block:: console
+
+      nrfutil device recover --serial-number <serial> --x-sdfw-variant ironside
+
+3. **Program the update application:**
+
+   .. code-block:: console
+
+      nrfutil device program --firmware /tmp/update_dir/update/update_application.hex --serial-number <serial> --x-sdfw-variant ironside
+
+4. **Program the IronSide SE update firmware:**
+
+   .. code-block:: console
+
+      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_update.hex --serial-number <serial> --x-sdfw-variant ironside
+
+5. **Reset to execute update service:**
+
+   .. code-block:: console
+
+      nrfutil device reset --serial-number <serial> --x-sdfw-variant ironside
+
+6. **Reset to trigger update installation:**
+
+   .. code-block:: console
+
+      nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial> --x-sdfw-variant ironside
+
+7. **Program the IronSide SE Recovery update firmware (if updating both slots):**
+
+   .. code-block:: console
+
+      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_recovery_update.hex --serial-number <serial> --x-sdfw-variant ironside
+
+   Then repeat steps 5 and 6.
+
+8. **Clean up - erase the update application:**
+
+   .. code-block:: console
+
+      nrfutil device erase --all --serial-number <serial> --x-sdfw-variant ironside
+
 .. _ug_nrf54h20_ironside_se_uicr:
 
 Global Resource configuration
