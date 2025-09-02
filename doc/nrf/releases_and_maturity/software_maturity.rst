@@ -336,7 +336,7 @@ The following table indicates the software maturity levels of the support for ea
            - Supported
            - Supported
            - Supported
-           - --
+           - Experimental
          * - **Amazon Sidewalk**
            - --\ :sup:`4`
            - --\ :sup:`4`
@@ -1577,17 +1577,21 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LM20
             * - **NFC Type 2 Tag (read-only)**
               - Experimental
               - Supported
               - Supported
               - Supported
+              - Experimental
             * - **NFC Type 4 Tag (read/write)**
               - Experimental
               - Supported
               - Supported
               - Supported
+              - Experimental
             * - **NFC Reader/Writer (polling device)**
+              - --
               - --
               - --
               - --
@@ -1597,26 +1601,31 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
+              - Experimental
             * - **NDEF encoding/decoding**
               - Experimental
               - Supported
               - Supported
               - Supported
+              - Experimental
             * - **NFC Record Type Definitions: URI, Text, Connection Handover**
               - Experimental
               - Supported
               - Supported
               - Supported
+              - Experimental
             * - **NFC Connection Handover to Bluetooth carrier, Static and Negotiated Handover**
               - Experimental
               - Supported
               - Supported
               - Supported
+              - Experimental
             * - **NFC Tag NDEF Exchange Protocol (TNEP)**
               - Experimental\ :sup:`1`
               - Supported\ :sup:`1`
               - Supported\ :sup:`1`
               - Supported\ :sup:`1`
+              - Experimental\ :sup:`1`
 
       .. group-tab:: nRF91 Series
 
