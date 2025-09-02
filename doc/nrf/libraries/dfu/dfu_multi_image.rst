@@ -38,8 +38,6 @@ The following options control which images are included:
 | :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` | Include nRF700x Wi-Fi® firmware patches.|
 +-------------------------------------------------------------------+-----------------------------------------+
 
-.. _lib_dfu_multi_image_suit_multi_image_package:
-
 Dependencies
 ************
 
