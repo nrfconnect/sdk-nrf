@@ -28,13 +28,6 @@ function(b0_gen_keys)
       --in ${SIGNATURE_PRIVATE_KEY_FILE}
       --out ${SIGNATURE_PUBLIC_KEY_FILE}
       )
-  elseif(SB_CONFIG_SECURE_BOOT_SIGNING_OPENSSL)
-    set(PUB_GEN_CMD
-      openssl ec
-      -pubout
-      -in ${SIGNATURE_PRIVATE_KEY_FILE}
-      -out ${SIGNATURE_PUBLIC_KEY_FILE}
-      )
   elseif(SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM)
     string(CONFIGURE "${SB_CONFIG_SECURE_BOOT_SIGNING_PUBLIC_KEY}" SIGNATURE_PUBLIC_KEY_FILE)
     set(SIGNATURE_PUBLIC_KEY_FILE ${SIGNATURE_PUBLIC_KEY_FILE} PARENT_SCOPE)
@@ -185,25 +178,6 @@ function(b0_sign_image slot cpunet_target)
       --in ${hash_file} ${sign_cmd_signature_type}
       > ${signature_file}
       )
-  elseif(SB_CONFIG_SECURE_BOOT_SIGNING_OPENSSL)
-    if(SB_CONFIG_SECURE_BOOT_SIGNATURE_TYPE_ED25519)
-      set(sign_cmd
-        openssl pkeyutl -sign -inkey ${SIGNATURE_PRIVATE_KEY_FILE} -rawin -in ${hash_file} > ${signature_file} &&
-        openssl pkeyutl -verify -pubin -inkey ${SIGNATURE_PRIVATE_KEY_FILE} -rawin -in ${hash_file} -sigfile ${signature_file}
-        )
-    else()
-      set(sign_cmd
-        openssl dgst
-        -${sign_cmd_hash_type}
-        -sign ${SIGNATURE_PRIVATE_KEY_FILE} ${hash_file} |
-        ${PYTHON_EXECUTABLE}
-        ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/asn1parse.py
-        --alg ecdsa
-        --contents signature
-        > ${signature_file}
-        )
-    endif()
-
   elseif(SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM)
     set(custom_sign_cmd "${SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND}")
     string(CONFIGURE "${custom_sign_cmd}" custom_sign_cmd)
