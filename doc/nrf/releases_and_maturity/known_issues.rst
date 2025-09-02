@@ -2462,6 +2462,12 @@ nRF5340 Audio
 
 The issues in this section are related to the :ref:`nrf53_audio_app` application.
 
+.. rst-class:: v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
+
+OCT-3406: If an audio stream was interrupted, stopped and restarted, or a received timestamp was wrong, the timestamp may be estimated
+  This may result in the receiver continuously estimating timestamps, triggering prints "Invalid sdu_ref_us delta.." depending on the chosen log level.
+  In this condition, the timestamp would be submitted with an offset to the rest of the system.
+
 .. rst-class:: v3-1-1 v3-1-0
 
 OCT-3265: Test with nRF5340 DK as sink will cause the I2S to interfere with other signals on the same pins
