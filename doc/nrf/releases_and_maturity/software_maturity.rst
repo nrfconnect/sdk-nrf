@@ -1285,66 +1285,79 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LM20
             * - **Thread - Full Thread Device (FTD)**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Thread - Minimal Thread Device (MTD)**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Thread 1.1**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Thread 1.2 - CSL Receiver**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Thread 1.2 - Core**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Thread 1.2 - Link Metrics**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Thread 1.3 - Core**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Thread 1.4 - Core**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Thread FTD + Bluetooth LE multiprotocol**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Thread MTD + Bluetooth LE multiprotocol**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Thread Radio Co-Processor (RCP)**
               - --
               - Supported
               - Supported
               - Supported
+              - Experimental
             * - **Thread TCP**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
 
       .. tab:: nRF91 Series
 
