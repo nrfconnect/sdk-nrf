@@ -60,6 +60,15 @@ The following UICR fields are supported:
 | UICR.MPCCONF         | Points to an array of memory-protection entries used to configure   |
 |                      | global memory regions.                                              |
 +----------------------+---------------------------------------------------------------------+
+| UICR.WDTSTART        | Configures automatic start of a local watchdog timer before the     |
+|                      | application core is booted, providing early system protection.      |
++----------------------+---------------------------------------------------------------------+
+| UICR.SECURESTORAGE   | Defines secure storage configuration including address, and         |
+|                      | partition sizes for cryptographic and ITS services.                 |
++----------------------+---------------------------------------------------------------------+
+| UICR.SECONDARY       | Configures secondary firmware boot settings including processor     |
+|                      | selection, triggers, memory protection, and peripheral access.      |
++----------------------+---------------------------------------------------------------------+
 
 .. note::
    If no UICR values are programmed, |ISE| applies a set of default configurations.
@@ -371,6 +380,118 @@ See the following table for a mapping between the devicetree input used by ``nrf
           /* gpio1 - P1.2 CTRLSEL = 3 */
           UICR_GPIO_PIN_CNF_CTRLSEL_SET(0x5f938400UL, 2, 3);
 
+UICR.WDTSTART
+=============
+
+UICR.WDTSTART configures the automatic start of a local watchdog timer before the application core is booted.
+This provides early system protection ensuring that the system can recover from early boot failures.
+
+The UICR.WDTSTART configuration consists of three sub-registers:
+
+UICR.WDTSTART.ENABLE
+  Controls whether the watchdog timer automatic start feature is enabled.
+
+UICR.WDTSTART.INSTANCE
+  Specifies which watchdog timer instance to configure and start.
+  The following are valid values:
+
+  * ``WDT0`` - Use watchdog timer instance 0
+  * ``WDT1`` - Use watchdog timer instance 1
+
+UICR.WDTSTART.CRV
+  Sets the initial Counter Reload Value (CRV) for the watchdog timer.
+  This value determines the watchdog timeout period.
+  The CRV must be at least 15 (0xF) to ensure proper watchdog operation.
+
+UICR.SECURESTORAGE
+==================
+
+UICR.SECURESTORAGE configures the secure storage system used by |ISE| for persistent storage of cryptographic keys and trusted data.
+The secure storage is divided into separate partitions for different services and processor domains.
+The total size of all configurations specified in ``UICR.SECURESTORAGE.*`` must be aligned to a 4 KB boundary.
+For more information, see :ref:`ug_nrf54h20_ironside_se_secure_storage`.
+
+The UICR.SECURESTORAGE configuration consists of the following sub-registers:
+
+UICR.SECURESTORAGE.ENABLE
+  Controls whether the secure storage feature is enabled.
+
+UICR.SECURESTORAGE.ADDRESS
+  Specifies the start address of the secure storage region in memory.
+  This address must be aligned to a 4 KB boundary and must point to a valid memory region that can be used for secure storage.
+
+UICR.SECURESTORAGE.CRYPTO
+  Configures partition sizes for the cryptographic service within the secure storage.
+
+  UICR.SECURESTORAGE.CRYPTO.APPLICATIONSIZE1KB
+    Sets the size of the ``APPLICATION`` domain partition for cryptographic storage, specified in 1 kiB blocks.
+
+  UICR.SECURESTORAGE.CRYPTO.RADIOCORESIZE1KB
+    Sets the size of the ``RADIOCORE`` domain partition for cryptographic storage, specified in 1 kiB blocks.
+
+UICR.SECURESTORAGE.ITS
+  Configures partition sizes for the Internal Trusted Storage (ITS) service within the secure storage.
+
+  UICR.SECURESTORAGE.ITS.APPLICATIONSIZE1KB
+    Sets the size of the ``APPLICATION`` domain partition for ITS, specified in 1 kiB blocks.
+
+  UICR.SECURESTORAGE.ITS.RADIOCORESIZE1KB
+    Sets the size of the ``RADIOCORE`` domain partition for ITS, specified in 1 kiB blocks.
+
+UICR.SECONDARY
+==============
+
+UICR.SECONDARY configures the secondary firmware boot system, which allows |ISE| to boot alternative firmware in response to specific conditions or triggers.
+This feature enables a recovery firmware setup through a dual-firmware configuration that includes both main and recovery firmware.
+
+The UICR.SECONDARY configuration consists of multiple sub-registers organized into functional groups:
+
+UICR.SECONDARY.ENABLE
+  Controls whether the secondary firmware boot feature is enabled.
+
+UICR.SECONDARY.PROCESSOR
+  Specifies which processor should be used to boot the secondary firmware.
+  Valid values are:
+
+  * ``APPLICATION`` - Boot secondary firmware on the application domain CPU.
+  * ``RADIOCORE`` - Boot secondary firmware on the radio core CPU.
+
+UICR.SECONDARY.ADDRESS
+  Sets the start address of the secondary firmware.
+  This value is used as the initial value of the secure Vector Table Offset Register (VTOR) after CPU reset.
+  The address must be aligned to a 4 KiB boundary.
+  Bits [11:0] are ignored.
+
+UICR.SECONDARY.TRIGGER
+  Configures automatic triggers that cause |ISE| to boot the secondary firmware instead of the primary firmware.
+
+  UICR.SECONDARY.TRIGGER.ENABLE
+    Controls whether automatic triggers are enabled to boot the secondary firmware.
+
+  UICR.SECONDARY.TRIGGER.RESETREAS
+    Specifies which reset reasons will trigger an automatic boot into the secondary firmware.
+    Multiple triggers can be enabled simultaneously by setting the corresponding bits:
+
+    * ``APPLICATIONWDT0`` - Application domain watchdog 0 reset
+    * ``APPLICATIONWDT1`` - Application domain watchdog 1 reset
+    * ``APPLICATIONLOCKUP`` - Application domain CPU lockup reset
+    * ``RADIOCOREWDT0`` - Radio core watchdog 0 reset
+    * ``RADIOCOREWDT1`` - Radio core watchdog 1 reset
+    * ``RADIOCORELOCKUP`` - Radio core CPU lockup reset
+
+UICR.SECONDARY.PROTECTEDMEM
+  Identical to UICR.PROTECTEDMEM, but applies to the secondary firmware.
+
+UICR.SECONDARY.WDTSTART
+  Identical to UICR.WDTSTART, but applies to the secondary firmware boot process.
+  Note that if RADIOCORE is specified in ``UICR.SECONDARY.PROCESSOR``, the WDT instances used are the ones in the radio core.
+
+UICR.SECONDARY.PERIPHCONF
+  Identical to UICR.PERIPHCONF, but applies to the secondary firmware boot process.
+
+UICR.SECONDARY.MPCCONF
+  Identical to UICR.MPCCONF, but applies to the secondary firmware boot process.
+
 .. _ug_nrf54h20_ironside_se_programming:
 
 Programming
@@ -500,6 +621,57 @@ When booting the application core, |ISE| does the following:
 
 This allows the error report to be read by a debugger, if the device is not protected.
 
+.. _ug_nrf54h20_ironside_se_secondary_firmware:
+
+Secondary firmware
+******************
+
+The secondary firmware feature provides an alternative boot path that can be triggered implicitly or explicitly.
+It can be used for different purposes, some examples are DFU applications in systems that don't use dual banking, recovery firmware, and analysis firmware.
+
+.. note::
+   The term "primary firmware" is rarely used when describing the firmware that is booted by default by IronSide SE, as it is implicit when the term "secondary" is not specified.
+
+.. note::
+   The term "secondary slot" and "secondary image" are used in the MCUboot context.
+   This usage is unrelated to the "secondary firmware" described in this section.
+
+Configuration and triggering
+=============================
+
+Configuring a secondary firmware is optional and is done through the ``UICR.SECONDARY`` fields.
+
+The secondary firmware can be triggered automatically, through ``CTRLAP.BOOTMODE`` or through an IPC service (``ironside_bootmode`` service).
+Any component that communicates with IronSide SE over IPC can leverage this service.
+Setting bit 5 in ``CTRLAP.BOOTMODE`` will also trigger secondary firmware.
+
+IronSide SE automatically triggers the secondary firmware in any of the following situations:
+
+* The integrity check of the memory specified in ``UICR.PROTECTEDMEM`` fails.
+* Any boot failure occurs, such as missing primary firmware or failure to apply ``UICR.PERIPHCONF`` or ``UICR.MPCCONF`` configurations.
+* A local domain is reset with a reason configured to trigger the secondary firmware.
+* Secondary firmware will be booted by IronSide SE if one of the triggers configured in ``UICR.SECONDARY.TRIGGER.RESETREAS`` occurs.
+
+The secondary firmware can be protected using ``UICR.SECONDARY.PROTECTEDMEM`` for integrity checking, and can be updated by other components when protection is not enabled.
+
+Protection
+==========
+
+The secondary firmware can be protected through integrity checks by enabling ``UICR.SECONDARY.PROTECTEDMEM``.
+The ``PERIPHCONF`` entries for the secondary firmware can also be placed in memory covered by ``UICR.SECONDARY.PROTECTEDMEM`` to create a fully immutable secondary firmware and configuration.
+
+If the integrity check of the memory specified in this configuration fails, the secondary firmware will not be booted.
+Instead, IronSide SE will attempt to boot the primary firmware, and information about the failure is available in the boot report and boot status.
+
+Update
+======
+
+As with the primary firmware, IronSide SE does not facilitate updating the secondary firmware.
+The secondary image can be updated by other components as long as ``UICR.SECONDARY.PROTECTEDMEM`` is not set.
+Using the secondary firmware as a bootloader capable of validating and updating a second image enables updating firmware in the secondary boot flow while having secure boot enabled through ``UICR.SECONDARY.PROTECTEDMEM``.
+
+
+
 .. _ug_nrf54h20_ironside_se_cpuconf_service:
 
 |ISE| CPUCONF service
@@ -538,6 +710,72 @@ The release ZIP archive for |ISE| includes the following components:
 The |NCS| defines the west ``ncs-ironside-se-update`` command to update |ISE| on a device via the debugger.
 This command takes a nRF54H20 SoC binary ZIP file and uses the |ISE| update service to update both the |ISE| and |ISE| Recovery (or optionally just one of them).
 For more information, see :ref:`abi_compatibility`.
+
+.. _ug_nrf54h20_ironside_se_secure_storage:
+
+Secure Storage
+**************
+
+|ISE| provides secure storage functionality through the UICR.SECURESTORAGE configuration.
+This feature enables applications to store sensitive data in dedicated, encrypted storage regions that are protected by device-unique keys and access controls.
+
+UICR.SECURESTORAGE Configuration
+================================
+
+The UICR.SECURESTORAGE field configures secure storage regions for PSA Crypto keys and PSA Internal Trusted Storage (ITS) data.
+To leverage this secure storage functionality, applications must set the key location to ``PSA_KEY_LOCATION_LOCAL_STORAGE`` (``0x000000``).
+
+The secure storage configuration includes two separate storage regions:
+
+* **UICR.SECURESTORAGE.CRYPTO** - Used for PSA Crypto API operations when storing cryptographic keys
+* **UICR.SECURESTORAGE.ITS** - Used for PSA Internal Trusted Storage (ITS) API operations when storing general secure data
+
+
+Secure Storage through PSA Crypto API
+=====================================
+
+When using the PSA Crypto API to operate on keys, the storage region specified by ``UICR.SECURESTORAGE.CRYPTO`` is automatically used if the key attributes are configured with **key location** set to ``PSA_KEY_LOCATION_LOCAL_STORAGE``.
+
+This ensures that cryptographic keys are stored in the dedicated secure storage region rather than in regular application memory.
+
+Secure storage through PSA Internal Trusted Storage (ITS) API
+=============================================================
+
+When using the PSA ITS API for storing general secure data, the storage region specified by ``UICR.SECURESTORAGE.ITS`` is used automatically.
+No special configuration is required for PSA ITS operations, as they inherently use the secure storage when available.
+
+Security Properties
+===================
+
+The secure storage provided by |ISE| has the following security characteristics:
+
+Access Control
+--------------
+
+* **Domain Isolation**: Secure storage regions are not accessible by local domains directly.
+* **Ironside Exclusive Access**: Only the Ironside Secure Element can access the secure storage regions.
+* **Domain Separation**: Each local domain can only access its own secure storage data, ensuring isolation between different domains.
+
+Data Protection
+---------------
+
+* **Encryption**: All data stored in the secure storage regions is encrypted using device-unique keys.
+* **Integrity**: The stored data is protected against tampering through cryptographic integrity checks.
+* **Confidentiality**: The encryption ensures that stored data remains confidential even if the storage medium is physically accessed.
+
+.. note::
+   The device-unique encryption keys are managed entirely by |ISE| and are not accessible to application code.
+   This ensures that the secure storage remains protected even in cases where application-level vulnerabilities exist.
+
+Configuration Considerations
+============================
+
+When configuring secure storage, consider the following:
+
+* Ensure sufficient storage space is allocated in both ``UICR.SECURESTORAGE.CRYPTO`` and ``UICR.SECURESTORAGE.ITS`` regions based on your application's requirements
+* The sum of these to regions must be 4kB aligned.
+* The secure storage regions should be properly sized to accommodate the expected number of keys and data items
+* Access to secure storage is only available when the key location is explicitly set to ``PSA_KEY_LOCATION_LOCAL_STORAGE``
 
 .. _ug_nrf54h20_ironside_se_bootmode_register_format:
 
@@ -656,8 +894,8 @@ See the following table for a summary of the available boot commands:
 .. list-table::
    :header-rows: 1
 
-   * - Opcode
-     - Command name
+   * - Command name
+     - Opcode
      - Description
    * - ``ERASEALL``
      - ``0x1``
