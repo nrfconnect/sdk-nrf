@@ -126,8 +126,14 @@ Developing with coprocessors
 Security
 ========
 
-* Added CRACEN and nrf_oberon driver support for nRF54LM20.
-  For the list of supported features and limitations, see the :ref:`ug_crypto_supported_features` page.
+* Added:
+
+  * CRACEN and nrf_oberon driver support for nRF54LM20.
+    For the list of supported features and limitations, see the :ref:`ug_crypto_supported_features` page.
+
+  * Support for disabling Internal Trusted Storage (ITS) on nRF54L series devices when using
+    :kconfig:option:`CONFIG_TFM_PARTITION_CRYPTO` with Trusted Firmware-M (TF-M) through the
+    :kconfig:option:`CONFIG_TFM_PARTITION_INTERNAL_TRUSTED_STORAGE` Kconfig option.
 
 Protocols
 =========
