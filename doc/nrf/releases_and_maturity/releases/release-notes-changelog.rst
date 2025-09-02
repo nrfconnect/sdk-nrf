@@ -593,7 +593,9 @@ nRF RPC libraries
 Other libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`nrf_profiler` library:
+
+  * Updated the documentation by separating out the :ref:`nrf_profiler_script` documentation.
 
 Shell libraries
 ---------------
@@ -608,7 +610,10 @@ See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:R
 Scripts
 =======
 
-* Added the :ref:`esb_sniffer_scripts` scripts for the :ref:`esb_monitor` sample.
+* Added:
+
+  * The :ref:`esb_sniffer_scripts` scripts for the :ref:`esb_monitor` sample.
+  * The documentation page for :ref:`nrf_profiler_script`.
 
 Integrations
 ============

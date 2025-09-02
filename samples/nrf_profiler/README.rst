@@ -54,13 +54,15 @@ After programming the sample to your development kit, you can test it by perform
       python3 real_time_plot.py *test_name*
 
    This command generates a :file:`test_name.csv` file and a :file:`test_name.json` file.
-   The script opens a GUI window that displays events as dots on timelines, similar to the following diagram.
+   The script opens a GUI window that displays events as dots on timelines, similar to the following plot.
 
-   .. include:: ../../doc/nrf/libraries/others/nrf_profiler.rst
-      :start-after: nrf_profiler_GUI_start
-      :end-before: nrf_profiler_GUI_end
+   .. figure:: ../../doc/nrf/images/app_event_manager_profiling_sample.png
+      :scale: 50 %
+      :alt: Example of nRF Profiler host tools GUI window
 
-   See the :ref:`nrf_profiler_backends_custom_visualization` section in the nRF Profiler documentation for more information about the GUI.
+      Example of nRF Profiler host tools GUI window
+
+   See the :ref:`nrf_profiler_script_visualization_GUI` section in the nRF Profiler host tools documentation for more information about the GUI.
 
 #. |connect_terminal|
    After you connect, the sample will display messages in the terminal.
