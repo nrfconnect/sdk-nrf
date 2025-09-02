@@ -8,6 +8,14 @@ common:
     - ci_samples_zephyr_subsys_mgmt_mcumgr_smp_svr
 
 tests:
+  sample.mcumgr.smp_svr.bt.nrf5340dk.ext_flash:
+    sysbuild: true
+    extra_args:
+      - FILE_SUFFIX=nrf5340_bt
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
   sample.mcumgr.smp_svr.bt.nrf54l15:
     harness: bluetooth
     tags: bluetooth
