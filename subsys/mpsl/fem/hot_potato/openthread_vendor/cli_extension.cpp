@@ -242,7 +242,7 @@ static otError VendorPowerMappingTable(void *aContext, uint8_t aArgsLength, char
 			     error = OT_ERROR_INVALID_ARGS);
 		PrintMapTableForChannel(power_map_current, channel);
 	} else {
-		for (uint8_t i = MIN_802154_CHANNEL; i < MAX_802154_CHANNEL; i++) {
+		for (uint8_t i = MIN_802154_CHANNEL; i <= MAX_802154_CHANNEL; i++) {
 			PrintMapTableForChannel(power_map_current, i);
 		}
 	}
