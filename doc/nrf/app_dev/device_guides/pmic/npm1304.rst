@@ -45,6 +45,11 @@ The following boards in the `Zephyr`_ open source project and in the |NCS| are c
      - | `Datasheet <nRF54L15 Datasheet_>`_
        | `Quick Start app`_
        | `User Guide <nRF54L15 DK User Guide_>`_
+   * - :zephyr:board:`nrf54lm20dk`
+     - nPM1304 EK
+     - PCA10184
+     - | ``nrf54lm20dk/nrf54lm20a/cpuapp``
+     - --
    * - :zephyr:board:`nrf5340dk`
      - nPM1304 EK
      - PCA10095
