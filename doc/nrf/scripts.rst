@@ -17,6 +17,7 @@ Here you can find documentation for these scripts.
    ../../scripts/generate_psa_key_attributes/*
    ../../scripts/hid_configurator/*
    ../../scripts/memfault/*
+   ../../scripts/nrf_profiler/*
    ../../scripts/nrf_provision/*/*
    ../../scripts/partition_manager/*
    ../../scripts/shell/*/*

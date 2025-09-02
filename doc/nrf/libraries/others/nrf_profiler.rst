@@ -7,9 +7,14 @@ nRF Profiler
    :local:
    :depth: 2
 
-The nRF Profiler provides an interface for logging and visualizing data for performance measurements, while the system is running.
+The nRF Profiler library allows for performance measurements of an embedded device.
+The library provides an interface for lightweight logging of nRF Profiler events together with associated timestamp and data.
+This allows you to deliver information about the system state with minimal negative impact on performance.
 You can use the module to profile :ref:`app_event_manager` events or custom events.
-The output is provided using RTT and can be visualized in a custom Python backend.
+
+The nRF Profiler supports one backend that provides output to the host computer using RTT.
+You can use a dedicated set of host tools available in the |NCS| to visualize and analyze the collected nRF Profiler events.
+See the :ref:`nrf_profiler_script` page for details.
 
 See the :ref:`nrf_profiler_sample` sample for an example of how to use the nRF Profiler.
 
@@ -18,7 +23,7 @@ See the :ref:`nrf_profiler_sample` sample for an example of how to use the nRF P
 Configuration
 *************
 
-Since Application Event Manager events are converted to nRF Profiler events, the nRF Profiler can be configured to profile custom events or Application Event Manager events, or both.
+Since Application Event Manager events are converted to nRF Profiler events by the :ref:`app_event_manager_profiler_tracer`, you can configure the nRF Profiler to profile custom events or Application Event Manager events, or both.
 
 Configuring for use with custom events
 ======================================
@@ -89,119 +94,15 @@ To profile custom events, complete the following steps:
         nrf_profiler_log_send(&buf, data_event_id);
       }
 
-   .. note::
-
-	    The ``data_event_id`` and the data that is profiled with the event must be consistent with the registered event type.
-	    The data for every data field must be provided in the correct order.
+.. note::
+   The ``data_event_id`` and the data that is profiled with the event must be consistent with the registered event type.
+   The data for every data field must be provided in the correct order.
 
 Configuration for use with Application Event Manager
 ====================================================
 
-If you are using the Application Event Manager, in order to use the nRF Profiler follow the steps in
-:ref:`app_event_manager_profiler_tracer_em_implementation` and :ref:`app_event_manager_profiler_tracer_config` on the :ref:`app_event_manager_profiler_tracer` documentation page.
-
-.. _nrf_profiler_backends:
-
-Enabling supported backend
-**************************
-
-The nRF Profiler supports a custom backend that is based around Python scripts to visualize the output data.
-The backend communicates with the host using RTT.
-
-To save profiling data, the scripts use CSV files for event occurrences and JSON files for event descriptions.
-
-Available scripts
-=================
-
-The scripts can be found under :file:`scripts/nrf_profiler/` in the |NCS| folder structure.
-The following script files are available:
-
-* :file:`data_collector.py` - This script connects to the device using RTT, receives profiling data, and saves it to files.
-  When running the script from the command line, provide the time for collecting data (in seconds) and the dataset name.
-  For example:
-
-  .. parsed-literal::
-     :class: highlight
-
-     python3 data_collector.py 5 test1
-
-  In this command, ``5`` is the time value for collecting data and ``test1`` is the dataset name.
-* :file:`plot_from_files.py` - This script plots events from the dataset that is provided as the command-line argument.
-  For example:
-
-  .. parsed-literal::
-     :class: highlight
-
-     python3 plot_from_files.py test1
-
-  In this command, ``test1`` is the dataset name.
-* :file:`real_time_plot.py` - This script connects to the device using RTT, plots data in real-time, and saves the data.
-  When running the script from the command line, provide the dataset name.
-  For example:
-
-  .. parsed-literal::
-     :class: highlight
-
-     python3 real_time_plot.py test1
-
-* :file:`merge_data.py` - This script combines data from ``test_p`` and ``test_c`` datasets into one dataset ``test_merged``.
-  It also provides clock drift compensation based on the synchronization events: ``sync_event_p`` and ``sync_event_c``.
-  This enables you to observe times between events for the two connected devices.
-  As command-line arguments, provide names of events used for synchronization for a Peripheral (``sync_event_p``) and a Central (``sync_event_c``), as well as names of datasets for the Peripheral (``test_p``), the Central (``test_c``), and the merge result (``test_merged``).
-  For example:
-
-  .. parsed-literal::
-     :class: highlight
-
-     python3 merge_data.py test_p sync_event_p test_c sync_event_c test_merged
-
-
-Running the backend
-===================
-
-To enable and run the custom backend, complete the following steps:
-
-1. Connect device to the computer.
-2. Complete the configuration steps for use with either custom events or Application Event Manager, as described in the :ref:`nrf_profiler_configuration` section.
-#. From the list of `Available scripts`_, choose the Python script that you want to use for event visualization, analysis, and calculating statistics.
-#. Run the script from the command line using its related command.
-
-.. _nrf_profiler_backends_custom_visualization:
-
-Backend visualization
-=====================
-
-When you run either the :file:`plot_from_files.py` or the :file:`real_time_plot.py` script, the profiled events are visualized in a GUI window.
-
-The visual output can look like the following diagram:
-
-.. nrf_profiler_GUI_start
-
-.. figure:: ../../images/app_event_manager_profiling_sample.png
-   :scale: 50 %
-   :alt: Example of nRF Profiler backend script visualization
-
-   Example of nRF Profiler backend script visualization
-
-.. nrf_profiler_GUI_end
-
-In this diagram:
-
-* Red dots indicate the submissions for the related events.
-* Blue vertical rectangles indicate the processing of the events, with their width corresponding to the processing time length.
-* The :guilabel:`Start/Stop` button can be used to pause or resume the real-time plot translation.
-
-The GUI also supports the following actions:
-
-* Scrolling on the diagram using the mouse wheel zooms it in or out.
-
-  * When plotting is paused, scrolling zooms to the cursor location.
-  * When plotting in running, scrolling zooms to the right edge of the plot.
-
-* Middle mouse button can be used to mark an event submission or processing for tracking, and to display the event data.
-* When plotting is paused, you can click and drag with the left mouse button to pan the plot.
-* You can click the left or right mouse button to place a vertical line at the cursor location.
-  When two lines are present, the application measures the time between them and displays it.
+To use the nRF Profiler for Application Event Manager events, refer to the :ref:`app_event_manager_profiler_tracer` documentation.
+The Application Event Manager profiler tracer automatically initializes the nRF Profiler and then acts as a linking layer between :ref:`app_event_manager` and the nRF Profiler.
 
 Shell integration
 *****************

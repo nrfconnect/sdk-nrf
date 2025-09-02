@@ -95,8 +95,8 @@ To profile an Application Event Manager event, you must complete the following s
          * By default, all Application Event Manager events that are defined with an :c:struct:`event_info` argument are profiled.
          * :c:struct:`sample_event_info` is defined within the :c:macro:`APP_EVENT_INFO_DEFINE` macro.
 
-#. Use the Profiler Python scripts to profile the application.
-   See :ref:`nrf_profiler_backends` in the Profiler documentation for details.
+#. Use the nRF Profiler host tools to profile the application.
+   See :ref:`nrf_profiler_script` documentation page for details.
 
 Implementation details
 **********************
