@@ -99,6 +99,11 @@ config MPSL_FEM_NRF21540_GPIO_SPI
 		$(dt_nodelabel_has_prop,nrf_radio_fem,ant-sel-gpios))
 	select NRFX_PPI if HAS_HW_NRF_PPI
 	select NRFX_DPPI if HAS_HW_NRF_DPPIC
+	select NRFX_GPPI if SOC_SERIES_NRF54LX
+	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
+	select NRFX_DPPI20 if SOC_SERIES_NRF54LX
+	select NRFX_PPIB11 if SOC_SERIES_NRF54LX
+	select NRFX_PPIB21 if SOC_SERIES_NRF54LX
 	select PINCTRL
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	imply MPSL_FEM_POWER_MODEL if MPSL_FEM   # Don't force the model, but make it a default
