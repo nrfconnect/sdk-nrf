@@ -1,0 +1,33 @@
+[
+	{
+		"name": "Time between one_sec_event",
+		"start_event": {
+			"name": "one_sec_event"
+		},
+		"end_event": {
+			"name": "one_sec_event"
+		}
+	},
+	{
+		"name": "Processing time of five_sec_event",
+		"start_event": {
+			"name": "five_sec_event",
+			"state": "processing_start"
+		},
+		"end_event": {
+			"name": "five_sec_event",
+			"state": "processing_end"
+		}
+	},
+	{
+		"name": "burst_event processing start delay",
+		"start_event": {
+			"name": "burst_event",
+			"state": "submit"
+		},
+		"end_event": {
+			"name": "burst_event",
+			"state": "processing_start"
+		}
+	}
+]

@@ -477,6 +477,11 @@ Other samples
   * Added a new testing step demonstrating how to calculate event propagation statistics.
     Also added the related test preset for the :file:`calc_stats.py` script (:file:`nrf/scripts/nrf_profiler/stats_nordic_presets/nrf_profiler.json`).
 
+* :ref:`app_event_manager_profiling_tracer_sample` sample:
+
+  * Added a new testing step demonstrating how to calculate event propagation statistics.
+    Also added the related test preset for the :file:`calc_stats.py` script (:file:`nrf/scripts/nrf_profiler/stats_nordic_presets/app_event_manager_profiler_tracer.json`).
+
 Drivers
 =======
 
