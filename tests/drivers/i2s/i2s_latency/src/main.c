@@ -207,8 +207,10 @@ static void test_i2s_transmission_latency(const struct device *dev, uint32_t fra
 
 		timer_value_us[repeat_counter] =
 			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
-		average_timer_value_us += timer_value_us[repeat_counter] / MEASUREMENT_REPEATS;
+		average_timer_value_us += timer_value_us[repeat_counter];
 	}
+
+	average_timer_value_us /= MEASUREMENT_REPEATS;
 
 	theoretical_transmission_time_us =
 		calculate_theoretical_transsmison_time_us(WORDS_COUNT, frame_clk_freq);
