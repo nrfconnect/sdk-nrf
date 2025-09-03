@@ -1073,6 +1073,13 @@ static int configure_supported_features(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_PRIVACY)) {
+		err = sdc_support_le_privacy();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
 	return 0;
 }
 
