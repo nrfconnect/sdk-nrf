@@ -60,7 +60,7 @@ config MPSL_FEM_HOT_POTATO_BYPASS_BLE
 
 config MPSL_FEM_HOT_POTATO_PA_LDO
         bool "Use LDO voltage regulator when PA is used"
-        default y if MPSL_FEM_HOT_POTATO_BYPASS_BLE
+        default y
         depends on SOC_SERIES_NRF54LX
         help
           Switch to LDO voltage regulator just before FEM Power Amplifier gets
