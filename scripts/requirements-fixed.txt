@@ -79,7 +79,7 @@ jsonschema-specifications==2023.7.1 ; python_version >= "3.12" and python_versio
 jsonschema==4.23.0 ; python_version >= "3.12" and python_version < "4.0"
 jsonstreams==0.6.0 ; python_version >= "3.12" and python_version < "4.0" and platform_machine == "x86_64"
 junit2html==31.0.2 ; python_version >= "3.12" and python_version < "4.0"
-junitparser==3.1.0 ; python_version >= "3.12" and python_version < "4.0"
+junitparser==3.2.0 ; python_version >= "3.12" and python_version < "4.0"
 lark==1.1.7 ; python_version >= "3.12" and python_version < "4.0"
 libusb-package==1.0.26.1 ; python_version >= "3.12" and python_version < "4.0"
 libusb==1.0.27 ; python_version >= "3.12" and python_version < "4.0"
