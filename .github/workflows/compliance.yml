@@ -19,6 +19,7 @@ jobs:
       with:
         git-fetch-depth: 0
         git-ref: ${{ github.event.pull_request.head.sha }}
+        west-token: ${{ secrets.NCS_GITHUB_TOKEN }}
         rebase: true
 
     - name: cache-pip
