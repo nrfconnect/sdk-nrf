@@ -567,6 +567,9 @@ Libraries for networking
 
   * Fixed multiple bugs and enhanced error handling.
 
+* Deprecated the :ref:`lib_nrf_cloud_rest` library.
+  Use the :ref:`lib_nrf_cloud_coap` library instead.
+
 Libraries for NFC
 -----------------
 

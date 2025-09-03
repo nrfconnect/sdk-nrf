@@ -7,6 +7,11 @@ nRF Cloud REST
    :local:
    :depth: 2
 
+.. note::
+
+   This library has been deprecated and it will be removed in one of the future releases.
+   Use the :ref:`lib_nrf_cloud_coap` library instead.
+
 The nRF Cloud REST library enables applications to use `nRF Cloud's REST-based device API <nRF Cloud REST API_>`_.
 This library is an enhancement to the :ref:`lib_nrf_cloud` library.
 
