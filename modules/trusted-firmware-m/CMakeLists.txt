@@ -124,10 +124,18 @@ if(CONFIG_TFM_NRF_PROVISIONING)
 endif()
 
 if(CONFIG_NFCT_PINS_AS_GPIOS OR CONFIG_TFM_NFCT_PINS_AS_GPIOS)
-  set_property(TARGET zephyr_property_target
-    APPEND PROPERTY TFM_CMAKE_OPTIONS
-    -DCONFIG_NFCT_PINS_AS_GPIOS=ON
-  )
+  # HAL only checks for NRF_CONFIG_NFCT_PINS_AS_GPIOS on 54L
+  if(CONFIG_SOC_SERIES_NRF54LX)
+    set_property(TARGET zephyr_property_target
+      APPEND PROPERTY TFM_CMAKE_OPTIONS
+      -DNRF_CONFIG_NFCT_PINS_AS_GPIOS=ON
+    )
+  else()
+    set_property(TARGET zephyr_property_target
+      APPEND PROPERTY TFM_CMAKE_OPTIONS
+      -DCONFIG_NFCT_PINS_AS_GPIOS=ON
+    )
+  endif()
 endif()
 
 zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/include/tfm)
