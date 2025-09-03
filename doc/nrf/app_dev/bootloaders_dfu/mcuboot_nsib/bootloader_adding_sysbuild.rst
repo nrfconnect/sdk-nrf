@@ -317,18 +317,7 @@ To use MCUboot as an upgradable bootloader to your application, complete the fol
 
    |how_to_configure|
 
-#. Optionally, you can configure MCUboot to use the cryptographic functionality exposed by the immutable bootloader and reduce the flash memory usage for MCUboot to less than 16 kB.
-   To enable this configuration, apply both the :file:`prj_minimal.conf` Kconfig project file and the :file:`external_crypto.conf` Kconfig fragment for the MCUboot image:
-
-   .. code-block::
-
-      west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- \
-      -DSB_CONFIG_SECURE_BOOT_APPCORE=y \
-      -DSB_CONFIG_BOOTLOADER_MCUBOOT=y \
-      -Dmcuboot_FILE_SUFFIX=minimal \
-      -Dmcuboot_EXTRA_CONF_FILE=external_crypto.conf
-
-   See :ref:`ug_bootloader_config` for more information about using Kconfig fragments with bootloaders.
+#. In order to reduce the flash memory usage for MCUboot, see :ref:`mcuboot_minimal_configuration`.
 
 The build process generates several :ref:`app_build_output_files`, including :ref:`app_build_mcuboot_output`.
 
