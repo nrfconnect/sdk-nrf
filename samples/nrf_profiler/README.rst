@@ -1,14 +1,14 @@
 .. _nrf_profiler_sample:
 
-Profiler
-########
+nRF Profiler
+############
 
 .. contents::
    :local:
    :depth: 2
 
-The Profiler sample demonstrates the functionality of the :ref:`nrf_profiler` subsystem.
-It shows how to use the Profiler to log and visualize data about custom events that are not part of the :ref:`app_event_manager`.
+The nRF Profiler sample demonstrates the functionality of the :ref:`nrf_profiler` library.
+It shows how to use the nRF Profiler to log and visualize data about custom events that are not part of the :ref:`app_event_manager`.
 
 Requirements
 ************
@@ -61,7 +61,7 @@ After programming the sample to your development kit, you can test it by perform
       :start-after: nrf_profiler_GUI_start
       :end-before: nrf_profiler_GUI_end
 
-   See the :ref:`nrf_profiler_backends_custom_visualization` section in the Profiler documentation for more information about the GUI.
+   See the :ref:`nrf_profiler_backends_custom_visualization` section in the nRF Profiler documentation for more information about the GUI.
 
 #. |connect_terminal|
 
