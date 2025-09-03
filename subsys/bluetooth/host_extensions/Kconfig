@@ -16,3 +16,17 @@ config BT_RADIO_NOTIFICATION_CONN_CB
 	  connection event starts.
 	  This feature can be used to synchronize data sampling
 	  with on-air data transmission.
+
+config BT_L2CAP_FIXED
+	bool "Enable support for the fixed L2CAP channel"
+	depends on BT_CONN
+	help
+	  Enables support for a fixed L2CAP channel.
+	  Only a single fixed custom L2CAP channel is supported.
+
+config BT_L2CAP_FIXED_CID
+	hex "CID of the fixed L2CAP channel"
+	depends on BT_L2CAP_FIXED
+	range 0x20 0x3f
+	help
+	  The channel identifier to be used for the fixed L2CAP channel.

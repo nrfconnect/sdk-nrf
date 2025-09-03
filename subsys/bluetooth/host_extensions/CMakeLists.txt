@@ -6,3 +6,8 @@
 
 zephyr_sources(host_extensions.c)
 zephyr_sources_ifdef(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB radio_notification_conn_cb.c)
+zephyr_sources_ifdef(CONFIG_BT_L2CAP_FIXED l2cap_fixed.c)
+zephyr_library_include_directories_ifdef(
+  CONFIG_BT_L2CAP_FIXED
+  ${ZEPHYR_BASE}/subsys/bluetooth/host
+)

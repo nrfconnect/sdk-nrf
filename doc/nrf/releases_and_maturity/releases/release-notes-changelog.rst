@@ -135,7 +135,8 @@ Amazon Sidewalk
 Bluetooth® LE
 -------------
 
-|no_changes_yet_note|
+* Added support for a fixed custom L2CAP channel.
+  The feature is enabled by the :kconfig:option:`CONFIG_BT_L2CAP_FIXED` Kconfig option, and the channel ID is configurable with the :kconfig:option:`CONFIG_BT_L2CAP_FIXED_CID` Kconfig option.
 
 Bluetooth Mesh
 --------------
