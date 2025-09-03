@@ -76,10 +76,9 @@ After programming the sample to your development kit, test it by performing the 
 1. Run the script :file:`real_time_plot.py` located in the :file:`scripts/nrf_profiler` folder, with the name that is to be used to store the data as argument.
    For example, run the following command to generate a :file:`test_name.csv` and a :file:`test_name.json` file using the *test_name* argument:
 
-   .. parsed-literal::
-      :class: highlight
+   .. code-block:: console
 
-      real_time_plot.py *test_name*
+      python3 real_time_plot.py *test_name*
 
    The script opens a GUI window that displays events as points on timelines, similar to the following:
 
@@ -102,6 +101,14 @@ After programming the sample to your development kit, test it by performing the 
    One event submission and corresponding processing time is highlighted in green.
 #. Check the results for the generated :file:`test_name.csv` and :file:`test_name.json` files.
 #. See how events are logged with data transmitted by the event.
+#. Calculate the nRF Profiler event propagation statistics (statistics for time intervals between nRF Profiler events) from the previously collected dataset using the following command:
+
+   .. code-block:: console
+
+      python3 calc_stats.py *test_name* stats_nordic_presets/app_event_manager_profiler_tracer.json
+
+   The :file:`stats_nordic_presets/app_event_manager_profiler_tracer.json` file specifies the nRF Profiler events used for the calculations.
+   The file refers to the events used by the sample.
 
 Dependencies
 ************
