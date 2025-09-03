@@ -7,3 +7,13 @@
 &uart20 {
 	hw-flow-control;
 };
+
+/ {
+	chosen {
+		zephyr,entropy = &rng;
+	};
+};
+
+&psa_rng {
+	status = "disabled";
+};
