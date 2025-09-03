@@ -143,7 +143,7 @@ static void button_msg_sub_thread(void)
 					break;
 				}
 
-				ret = audio_system_encode_test_tone_step();
+				ret = audio_datapath_tone_play_step();
 				if (ret) {
 					LOG_WRN("Failed to play test tone, ret: %d", ret);
 				}

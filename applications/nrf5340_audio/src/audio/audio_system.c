@@ -26,8 +26,7 @@ LOG_MODULE_REGISTER(audio_system, CONFIG_AUDIO_SYSTEM_LOG_LEVEL);
 #define FIFO_TX_BLOCK_COUNT (CONFIG_FIFO_FRAME_SPLIT_NUM * CONFIG_FIFO_TX_FRAME_COUNT)
 #define FIFO_RX_BLOCK_COUNT (CONFIG_FIFO_FRAME_SPLIT_NUM * CONFIG_FIFO_RX_FRAME_COUNT)
 
-#define DEBUG_INTERVAL_NUM     1000
-#define TEST_TONE_BASE_FREQ_HZ 1000
+#define DEBUG_INTERVAL_NUM 1000
 
 K_THREAD_STACK_DEFINE(encoder_thread_stack, CONFIG_ENCODER_STACK_SIZE);
 
@@ -112,7 +111,7 @@ static void audio_headset_configure(void)
 		sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
 		break;
 	case BT_AUDIO_LOCATION_FRONT_RIGHT:
-	    sw_codec_cfg.decoder.audio_ch = 1;
+		sw_codec_cfg.decoder.audio_ch = 1;
 		sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
 		break;
 	case (BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT):

@@ -541,6 +541,42 @@ int audio_datapath_tone_play(uint16_t freq, uint16_t dur_ms, float amplitude)
 	return 0;
 }
 
+int audio_datapath_tone_play_step(void)
+{
+	int ret;
+	static uint32_t test_tone_hz;
+
+	if (CONFIG_AUDIO_BIT_DEPTH_BITS != 16) {
+		LOG_WRN("Tone gen only supports 16 bits");
+		return -ECANCELED;
+	}
+
+	if (test_tone_hz == 0) {
+		test_tone_hz = TEST_TONE_BASE_FREQ_HZ;
+	} else if (test_tone_hz >= TEST_TONE_BASE_FREQ_HZ * 4) {
+		test_tone_hz = 0;
+	} else {
+		test_tone_hz = test_tone_hz * 2;
+	}
+
+	if (tone_active) {
+		audio_datapath_tone_stop();
+	}
+
+	if (test_tone_hz != 0) {
+		ret = audio_datapath_tone_play(test_tone_hz, 0, 0.5);
+		if (ret) {
+			LOG_ERR("Failed to generate test tone");
+			return ret;
+		}
+		LOG_INF("Test tone set at %d Hz", test_tone_hz);
+	} else {
+		LOG_INF("Test tone off");
+	}
+
+	return 0;
+}
+
 void audio_datapath_tone_stop(void)
 {
 	k_timer_stop(&tone_stop_timer);

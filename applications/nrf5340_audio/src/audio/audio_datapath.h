@@ -25,6 +25,17 @@
 #include "audio_defines.h"
 
 #define SDU_REF_CH_DELTA_MAX_US (int)(CONFIG_AUDIO_FRAME_DURATION_US * 0.001)
+#define TEST_TONE_BASE_FREQ_HZ	1000
+
+/**
+ * @brief	Step through different test tones.
+ *
+ * @note	A stream must already be running to use this feature.
+ *		Will step through test tones: 1 kHz, 2 kHz, 4 kHz and off.
+ *
+ * @return	0 on success, error otherwise.
+ */
+int audio_datapath_tone_play_step(void);
 
 /**
  * @brief	Mixes a tone into the I2S TX stream.
