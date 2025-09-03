@@ -1,0 +1,20 @@
+[
+	{
+		"name": "Time between no data events",
+		"start_event": {
+			"name": "no data event"
+		},
+		"end_event": {
+			"name": "no data event"
+		}
+	},
+	{
+		"name": "Time from no data event to data event",
+		"start_event": {
+			"name": "no data event"
+		},
+		"end_event": {
+			"name": "data event"
+		}
+	}
+]

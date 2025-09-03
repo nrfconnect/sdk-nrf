@@ -472,7 +472,10 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`nrf_profiler_sample` sample:
+
+  * Added a new testing step demonstrating how to calculate event propagation statistics.
+    Also added the related test preset for the :file:`calc_stats.py` script (:file:`nrf/scripts/nrf_profiler/stats_nordic_presets/nrf_profiler.json`).
 
 Drivers
 =======
