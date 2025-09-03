@@ -7,6 +7,11 @@ Cellular: nRF Cloud REST FOTA
    :local:
    :depth: 2
 
+.. note::
+
+   The :ref:`lib_nrf_cloud_rest` library has been deprecated and it will be removed in one of the future releases.
+   Use the :ref:`nrf_cloud_coap_fota_sample` sample instead.
+
 The REST FOTA sample demonstrates how to use the `nRF Cloud REST API`_ to perform Firmware Over-the-Air (FOTA) updates over REST on your device.
 This covers modem, application, and full modem FOTA updates (FMFU).
 Also, with the nRF9160 DK, it supports SMP FOTA updates.

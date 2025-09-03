@@ -7,6 +7,11 @@ Cellular: nRF Cloud REST cellular location
    :local:
    :depth: 2
 
+.. note::
+
+   The :ref:`lib_nrf_cloud_rest` library has been deprecated and it will be removed in one of the future releases.
+   Use the :ref:`nrf_cloud_coap_cell_location` sample instead.
+
 This sample demonstrates how to use the `nRF Cloud REST API`_ for nRF Cloud's cellular location service on your device.
 
 Requirements
