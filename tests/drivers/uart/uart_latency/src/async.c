@@ -96,11 +96,13 @@ static void test_uart_latency(size_t buffer_size, uint32_t baudrate)
 		dk_set_led_off(DK_LED1);
 		timer_value_us[repeat_counter] =
 			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
-		average_timer_value_us += timer_value_us[repeat_counter] / MEASUREMENT_REPEATS;
+		average_timer_value_us += timer_value_us[repeat_counter];
 		zassert_equal(err, 0, "UART transmission failed");
 		uart_rx_disable(uart_dev);
 		check_transmitted_data(&test_data);
 	}
+
+	average_timer_value_us /= MEASUREMENT_REPEATS;
 
 	TC_PRINT("Calculated transmission time (for %u bytes) [us]: %u\n", buffer_size,
 		 theoretical_transmission_time_us);

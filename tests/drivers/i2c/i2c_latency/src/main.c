@@ -245,11 +245,13 @@ static void test_i2c_read_latency(size_t buffer_size, uint8_t i2c_speed_setting)
 		counter_stop(tst_timer_dev);
 		timer_value_us[repeat_counter] =
 			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
-		average_timer_value_us += timer_value_us[repeat_counter] / MEASUREMENT_REPEATS;
+		average_timer_value_us += timer_value_us[repeat_counter];
 
 		zassert_ok(ret);
 		zassert_mem_equal(fixture.master_buffer, fixture.slave_buffer, buffer_size);
 	}
+
+	average_timer_value_us /= MEASUREMENT_REPEATS;
 
 	TC_PRINT("Calculated transmission time (for %u bytes) [us]: %u\n", buffer_size,
 		 theoretical_transmission_time_us);
@@ -291,11 +293,13 @@ static void test_i2c_write_latency(size_t buffer_size, uint8_t i2c_speed_setting
 		counter_stop(tst_timer_dev);
 		timer_value_us[repeat_counter] =
 			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
-		average_timer_value_us += timer_value_us[repeat_counter] / MEASUREMENT_REPEATS;
+		average_timer_value_us += timer_value_us[repeat_counter];
 
 		zassert_ok(ret);
 		zassert_mem_equal(fixture.slave_buffer, fixture.slave_buffer, buffer_size);
 	}
+
+	average_timer_value_us /= MEASUREMENT_REPEATS;
 
 	TC_PRINT("Calculated transmission time (for %u bytes) [us]: %u\n", buffer_size,
 		 theoretical_transmission_time_us);

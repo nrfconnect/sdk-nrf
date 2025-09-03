@@ -126,11 +126,13 @@ static void test_spim_transmission_latency(size_t buffer_size)
 		counter_stop(tst_timer_dev);
 		timer_value_us[repeat_counter] =
 			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
-		average_timer_value_us += timer_value_us[repeat_counter] / MEASUREMENT_REPEATS;
+		average_timer_value_us += timer_value_us[repeat_counter];
 
 		zassert_ok(err, "SPI transceive failed");
 		zassert_mem_equal(tx_buffer, rx_buffer, buffer_size);
 	}
+
+	average_timer_value_us /= MEASUREMENT_REPEATS;
 
 	TC_PRINT("Calculated transmission time (for %u bytes) [us]: %u\n", buffer_size,
 		 theoretical_transmission_time_us);
