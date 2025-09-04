@@ -1,0 +1,7 @@
+#include "../app_nrf5340_bt.overlay"
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};
