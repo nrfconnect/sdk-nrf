@@ -35,8 +35,7 @@ The following sections provide detailed lists of changes by component.
 IDE, OS, and tool support
 =========================
 
-* Added macOS 26 support (Tier 3) to the table listing :ref:`supported operating systems for proprietary tools <additional_nordic_sw_tools_os_support>`.
-* Updated the required `SEGGER J-Link`_ version to v8.60.
+|no_changes_yet_note|
 
 Board support
 =============
@@ -101,7 +100,7 @@ Developing with Thingy:53
 Developing with PMICs
 =====================
 
-* Added the :ref:`ug_npm1304_developing` documentation.
+|no_changes_yet_note|
 
 Developing with Front-End Modules
 =================================
@@ -116,13 +115,12 @@ Developing with custom boards
 Developing with coprocessors
 ============================
 
-* Added support for the nRF54LM20 FLPR.
+|no_changes_yet_note|
 
 Security
 ========
 
-* Added CRACEN and nrf_oberon driver support for nRF54LM20.
-  For the list of supported features and limitations, see the :ref:`ug_crypto_supported_features` page.
+|no_changes_yet_note|
 
 Protocols
 =========
@@ -162,11 +160,7 @@ Gazell
 Matter
 ------
 
-* Added support for the :zephyr:board:`nrf54lm20dk` board.
-* Included fixes for the following certification test cases:
-
-  * TC-IDM-10.3
-  * TC-OPCREDS-3.8
+|no_changes_yet_note|
 
 Matter fork
 +++++++++++
@@ -216,10 +210,7 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
-* Added application configurations for the :zephyr:board:`nrf54lm20dk` board.
-  The configurations are supported through the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
-  For details, see the :ref:`nrf_desktop_board_configuration` page.
-  The :zephyr:board:`nrf54lm20dk` board support is experimental.
+|no_changes_yet_note|
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -249,11 +240,7 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
-* Added experimental support for the :zephyr:board:`nrf54lm20dk` board in the following samples:
-
-  * :ref:`bluetooth_central_hids`
-  * :ref:`peripheral_hids_keyboard`
-  * :ref:`peripheral_hids_mouse`
+|no_changes_yet_note|
 
 Bluetooth Mesh samples
 ----------------------
@@ -263,7 +250,7 @@ Bluetooth Mesh samples
 Bluetooth Fast Pair samples
 ---------------------------
 
-* Added experimental support for the :zephyr:board:`nrf54lm20dk` board in all Fast Pair samples.
+|no_changes_yet_note|
 
 Cellular samples
 ----------------
@@ -308,7 +295,7 @@ Keys samples
 Matter samples
 --------------
 
-* Added support for the :zephyr:board:`nrf54lm20dk` board in all Matter samples.
+|no_changes_yet_note|
 
 Networking samples
 ------------------
@@ -333,14 +320,7 @@ Peripheral samples
 PMIC samples
 ------------
 
-* Updated:
-
-  * By renaming the nPM1300: Fuel Gauge sample to :ref:`npm13xx_fuel_gauge`.
-    The wiring is changed for all targets.
-    Refer to the :ref:`Wiring table <npm13xx_fuel_gauge_wiring>` in the sample documentation for details.
-  * By renaming the nPM1300: One button sample to :ref:`npm13xx_one_button`.
-    The wiring is changed for all targets.
-    Refer to the :ref:`Wiring table <npm13xx_one_button_wiring>` in the sample documentation for details.
+|no_changes_yet_note|
 
 Protocol serialization samples
 ------------------------------
@@ -370,7 +350,7 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-* Added support for the :zephyr:board:`nrf54lm20dk` board in the :ref:`ot_cli_sample` and :ref:`ot_coprocessor_sample` samples.
+|no_changes_yet_note|
 
 Wi-Fi samples
 -------------
@@ -380,9 +360,7 @@ Wi-Fi samples
 Other samples
 -------------
 
-* :ref:`coremark_sample` sample:
-
-  * Added support for the :zephyr:board:`nrf54lm20dk` board target.
+|no_changes_yet_note|
 
 Drivers
 =======
