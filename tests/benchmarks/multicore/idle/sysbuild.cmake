@@ -20,6 +20,13 @@ set_property(GLOBAL APPEND PROPERTY PM_CPUNET_IMAGES remote)
 set_property(GLOBAL PROPERTY DOMAIN_APP_CPUNET remote)
 set(CPUNET_PM_DOMAIN_DYNAMIC_PARTITION remote CACHE INTERNAL "")
 
+if(SB_CONFIG_BOOTLOADER_MCUBOOT AND SB_CONFIG_SOC_NRF54H20)
+  set_target_properties(remote PROPERTIES
+   IMAGE_CONF_SCRIPT ${ZEPHYR_BASE}/share/sysbuild/image_configurations/MAIN_image_default.cmake
+  )
+  UpdateableImage_Add(APPLICATION remote)
+endif()
+
 # Add a dependency so that the remote image will be built and flashed first
 add_dependencies(${DEFAULT_IMAGE} remote)
 # Add dependency so that the remote image is flashed first.
