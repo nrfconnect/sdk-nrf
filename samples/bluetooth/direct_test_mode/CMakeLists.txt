@@ -12,7 +12,6 @@ target_include_directories(app PRIVATE ./src)
 
 target_sources_ifndef(CONFIG_DTM_TRANSPORT_HCI app PRIVATE
   src/transport/dtm_uart_twowire.c
-  src/transport/dtm_uart_wait.c
 )
 
 target_sources_ifdef(CONFIG_DTM_TRANSPORT_HCI app PRIVATE src/transport/dtm_hci.c)
