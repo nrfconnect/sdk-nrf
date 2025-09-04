@@ -6,6 +6,17 @@
 
 source "share/sysbuild/Kconfig"
 
-config REMOTE_BOARD
-	string
-	default "$(BOARD)/nrf54h20/cpurad" if SOC_NRF54H20_CPUAPP
+choice NETCORE
+  default NETCORE_CUSTOM
+
+config NETCORE_CUSTOM
+  bool "Custom netcore FW"
+endchoice
+
+config NETCORE_IMAGE_NAME
+  string
+  default "remote" if NETCORE_CUSTOM
+
+config NETCORE_IMAGE_PATH
+  string
+  default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever"

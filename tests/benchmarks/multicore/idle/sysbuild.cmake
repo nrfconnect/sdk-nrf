@@ -8,17 +8,19 @@ if("${SB_CONFIG_REMOTE_BOARD}" STREQUAL "")
   message(FATAL_ERROR "REMOTE_BOARD must be set to a valid board name")
 endif()
 
-# Add remote project
-ExternalZephyrProject_Add(
-    APPLICATION remote
-    SOURCE_DIR ${APP_DIR}/remote
-    BOARD ${SB_CONFIG_REMOTE_BOARD}
-    BOARD_REVISION ${BOARD_REVISION}
-  )
-set_property(GLOBAL APPEND PROPERTY PM_DOMAINS CPUNET)
-set_property(GLOBAL APPEND PROPERTY PM_CPUNET_IMAGES remote)
-set_property(GLOBAL PROPERTY DOMAIN_APP_CPUNET remote)
-set(CPUNET_PM_DOMAIN_DYNAMIC_PARTITION remote CACHE INTERNAL "")
+if(NOT SB_CONFIG_SOC_NRF54H20)
+  # Add remote project
+  ExternalZephyrProject_Add(
+      APPLICATION remote
+      SOURCE_DIR ${APP_DIR}/remote
+      BOARD ${SB_CONFIG_REMOTE_BOARD}
+      BOARD_REVISION ${BOARD_REVISION}
+    )
+  set_property(GLOBAL APPEND PROPERTY PM_DOMAINS CPUNET)
+  set_property(GLOBAL APPEND PROPERTY PM_CPUNET_IMAGES remote)
+  set_property(GLOBAL PROPERTY DOMAIN_APP_CPUNET remote)
+  set(CPUNET_PM_DOMAIN_DYNAMIC_PARTITION remote CACHE INTERNAL "")
+endif()
 
 # Add a dependency so that the remote image will be built and flashed first
 add_dependencies(${DEFAULT_IMAGE} remote)
