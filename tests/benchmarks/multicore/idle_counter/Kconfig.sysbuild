@@ -19,4 +19,4 @@ config NETCORE_IMAGE_NAME
 
 config NETCORE_IMAGE_PATH
 	string
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_pwm_led/remote"
+	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_counter/remote"
