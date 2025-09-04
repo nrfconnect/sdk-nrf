@@ -26,7 +26,6 @@ config WIFI_THREAD_PRIORITY
 
 config WIFI_ZPERF_SERVER
 	bool "Zperf role: server or client"
-	default n
 
 config WIFI_ZPERF_PROT_UDP
 	bool "UDP or TCP"
