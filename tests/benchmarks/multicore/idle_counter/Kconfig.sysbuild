@@ -18,4 +18,4 @@ config NETCORE_IMAGE_NAME
 	default "remote" if NETCORE_REMOTE
 
 config NETCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_gpio/remote" if NETCORE_REMOTE
+	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_counter/remote" if NETCORE_REMOTE
