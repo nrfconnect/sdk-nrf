@@ -11,6 +11,7 @@
 
 #include "modules/rai.h"
 #include "modules/dns.h"
+#include "common/helpers.h"
 
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
@@ -29,6 +30,8 @@ static void on_modem_init(int err, void *ctx)
 		LOG_ERR("Modem library init error: %d, lte_lc not initialized", err);
 		return;
 	}
+
+	mfw_type_init();
 
 	if (!IS_ENABLED(CONFIG_LTE_NETWORK_MODE_DEFAULT)) {
 		err = lte_lc_system_mode_set(lte_lc_sys_mode, lte_lc_sys_mode_pref);
