@@ -98,9 +98,9 @@ endif
 
 # PSA crypto is WPA2 only for now
 if HOSTAP_CRYPTO_ALT_PSA
-	config WIFI_NM_WPA_SUPPLICANT_WPA3
-		default n
-	config WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
-		default n
+config WIFI_NM_WPA_SUPPLICANT_WPA3
+	default n
+config WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
+	default n
 endif
 endif
