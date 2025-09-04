@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		ncs,dtm-uart = &uart0;
+	};
+
+	aliases {
+		dtm-alive-pin = &led1;
+	};
+};
+
+&uart0 {
+	status = "okay";
+	current-speed = <19200>;
+};

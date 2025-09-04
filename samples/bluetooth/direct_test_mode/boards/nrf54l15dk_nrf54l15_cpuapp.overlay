@@ -8,6 +8,10 @@
 	chosen {
 		ncs,dtm-uart = &uart20;
 	};
+
+	aliases {
+		dtm-alive-pin = &led0;
+	};
 };
 
 &uart20 {

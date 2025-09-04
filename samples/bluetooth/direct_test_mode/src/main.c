@@ -5,10 +5,33 @@
  */
 
 #include <zephyr/device.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/fatal.h>
+#include <zephyr/logging/log_ctrl.h>
+#include <zephyr/sys/__assert.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/pm/device_runtime.h>
 
 #include "transport/dtm_transport.h"
+
+#if DT_HAS_ALIAS(dtm_alive_pin)
+// Use system_halt provided by the OS.
+extern void arch_system_halt(unsigned int reason);
+
+void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *esf)
+{
+	ARG_UNUSED(esf);
+
+	const struct gpio_dt_spec alive_gpio = GPIO_DT_SPEC_GET(DT_ALIAS(dtm_alive_pin), gpios);
+	(void)gpio_pin_set_dt(&alive_gpio, 0);
+
+	LOG_PANIC();
+
+	arch_system_halt(reason);
+
+	CODE_UNREACHABLE;
+}
+#endif
 
 int main(void)
 {
@@ -34,6 +57,16 @@ int main(void)
 		printk("Error initializing DTM transport: %d\n", err);
 		return err;
 	}
+
+#if DT_HAS_ALIAS(dtm_alive_pin)
+	const struct gpio_dt_spec alive_gpio = GPIO_DT_SPEC_GET(DT_ALIAS(dtm_alive_pin), gpios);
+
+	err = gpio_pin_configure_dt(&alive_gpio, GPIO_OUTPUT_ACTIVE);
+	if (err) {
+		printk("Error setting DTM alive pin: %d\n", err);
+		return err;
+	}
+#endif
 
 	for (;;) {
 		cmd = dtm_tr_get();

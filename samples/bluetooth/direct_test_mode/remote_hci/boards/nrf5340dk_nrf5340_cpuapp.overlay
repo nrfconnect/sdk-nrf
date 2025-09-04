@@ -22,4 +22,8 @@
 		<&gpio0 6 0>,
 		<&gpio0 7 0>;
 	};
+
+	led_0 {
+		gpios = < &gpio0 0x1c GPIO_ACTIVE_LOW >;
+	};
 };

@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/ {
+	aliases {
+		dtm-alive-pin = &led0;
+	};
+};
+
 &radio {
 	status = "okay";
 	/* This is a number of antennas that are available on antenna matrix

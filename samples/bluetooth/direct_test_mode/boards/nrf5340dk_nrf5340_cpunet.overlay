@@ -9,6 +9,10 @@
 		ncs,dtm-uart = &uart_ipc;
 	};
 
+	aliases {
+		dtm-alive-pin = &led0;
+	};
+
 	uart_ipc: uart_ipc {
 		status = "okay";
 		compatible = "nordic,nrf-ipc-uart";
