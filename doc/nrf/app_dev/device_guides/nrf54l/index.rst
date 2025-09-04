@@ -26,8 +26,12 @@ Refer to the following information for the list of supported development kits (D
      - | ``nrf54lm20dk/nrf54lm20a/cpuapp``
        | ``nrf54lm20dk/nrf54lm20a/cpuflpr``
        | ``nrf54lm20dk/nrf54lm20a/cpuflpr/xip``
-     - --
-     - --
+     - | `Datasheet <nRF54LM20A Datasheet_>`_
+       | `Quick Start app`_
+       | `User Guide <nRF54LM20 DK User Guide_>`_
+       | `nRF54LM20A Compatibility Matrix`_
+     - | `nRF54LM20 DK product page <nRF54LM20 DK_>`_
+       | `nRF54LM20A System-on-Chip (SoC) <nRF54LM20A System-on-Chip_>`_
    * - :zephyr:board:`nrf54l15dk`
      - PCA10156
      - | ``nrf54l15dk/nrf54l15/cpuapp``
@@ -53,6 +57,9 @@ Refer to the following information for the list of supported development kits (D
      - | `nRF54L05 System-on-Chip (SoC) <nRF54L05_>`_
 
 For the full list of supported protocols, see the :ref:`software maturity documentation<software_maturity>`.
+
+Learn the essentials of the nRF54L Series with the `nRF54L Series Express course`_ in the Nordic Developer Academy.
+This self-paced course introduces the hardware architecture, functionality, capabilities, and performance of the nRF54L Series.
 
 .. toctree::
    :maxdepth: 2
