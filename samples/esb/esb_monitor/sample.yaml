@@ -1,10 +1,20 @@
 sample:
   name: ESB Monitor Sample
+common:
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+      - "Enhanced ShockBurst monitor sample"
+      - "Initialization complete"
+      - "Start receiving packets"
+  timeout: 15
+
 tests:
   sample.esb.monitor:
     sysbuild: true
     filter: CONFIG_UART_CONSOLE and CONFIG_SERIAL_SUPPORT_INTERRUPT
-    harness: keyboard
     integration_platforms:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -29,7 +39,6 @@ tests:
       - ci_samples_esb
   sample.esb.monitor.dynamic_irq:
     sysbuild: true
-    build_only: true
     extra_configs:
       - CONFIG_ESB_DYNAMIC_INTERRUPTS=y
       - CONFIG_DYNAMIC_INTERRUPTS=y
