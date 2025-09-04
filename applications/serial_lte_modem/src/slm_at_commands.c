@@ -570,4 +570,8 @@ void slm_at_uninit(void)
 		LOG_ERR("LwM2M carrier could not be uninitialized: %d", err);
 	}
 #endif
+#if defined(CONFIG_SLM_CMUX)
+	slm_cmux_uninit();
+#endif
+
 }

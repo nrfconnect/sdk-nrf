@@ -17,6 +17,8 @@
 enum {
 	/* The command ran successfully and doesn't want the automatic response to be sent. */
 	SILENT_AT_COMMAND_RET = __ELASTERROR,
+	/* The AT to CMUX change command ran successfully. */
+	SILENT_AT_CMUX_COMMAND_RET,
 };
 
 /** The maximum allowed length of an AT command/response passed through the SLM */

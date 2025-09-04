@@ -38,7 +38,6 @@ enum slm_operation_mode {
 	SLM_DATA_MODE,			/* Raw data sending */
 	SLM_NULL_MODE			/* Discard incoming until next command */
 };
-static struct slm_at_backend at_backend;
 static enum slm_operation_mode at_mode;
 static slm_datamode_handler_t datamode_handler;
 static int datamode_handler_result;
@@ -445,52 +444,6 @@ static void format_final_result(char *buf, size_t buf_len, size_t buf_max_len)
 		}
 	}
 }
-static void restore_at_backend(void)
-{
-	const int err = at_backend.start();
-
-	if (err) {
-		LOG_ERR("Failed to restore AT backend. (%d) Resetting.", err);
-		slm_reset();
-	}
-}
-
-static int stop_at_backend(void)
-{
-	const int err = at_backend.stop();
-
-	if (!err) {
-		/* Wait for UART disabling to complete. */
-		k_sleep(K_MSEC(100));
-	}
-	return err;
-}
-
-int slm_at_set_backend(const struct slm_at_backend new_backend)
-{
-	const struct slm_at_backend old_backend = at_backend;
-	int ret;
-
-	if (old_backend.start) {
-		ret = stop_at_backend();
-		if (ret) {
-			LOG_ERR("Failed to stop previous AT backend. (%d)", ret);
-			return ret;
-		}
-	}
-
-	at_backend = new_backend;
-	ret = new_backend.start();
-	if (ret) {
-		LOG_ERR("Failed to start AT backend. (%d)", ret);
-		stop_at_backend();
-
-		at_backend = old_backend;
-		restore_at_backend();
-	}
-
-	return ret;
-}
 
 static int slm_at_send_indicate(const uint8_t *data, size_t len,
 				bool print_full_debug, bool indicate)
@@ -500,9 +453,6 @@ static int slm_at_send_indicate(const uint8_t *data, size_t len,
 	if (k_is_in_isr()) {
 		LOG_ERR("FIXME: Attempt to send AT response (of size %u) in ISR.", len);
 		return -EINTR;
-	} else if (at_backend.send == NULL) {
-		LOG_ERR("Attempt to send via an uninitialized AT backend");
-		return -EFAULT;
 	}
 
 	if (indicate) {
@@ -514,7 +464,7 @@ static int slm_at_send_indicate(const uint8_t *data, size_t len,
 		}
 	}
 
-	ret = at_backend.send(data, len);
+	ret = slm_tx_write(data, len);
 	if (!ret) {
 		LOG_HEXDUMP_DBG(data, print_full_debug ? len : MIN(HEXDUMP_LIMIT, len), "TX");
 	}
@@ -531,13 +481,14 @@ int slm_at_send_str(const char *str)
 	return slm_at_send(str, strlen(str));
 }
 
-static void cmd_send(uint8_t *buf, size_t cmd_length, size_t buf_size)
+static void cmd_send(uint8_t *buf, size_t cmd_length, size_t buf_size, bool *stop_at_receive)
 {
 	int err;
 	size_t offset = 0;
 	char *at_cmd = buf;
 
 	LOG_HEXDUMP_DBG(buf, cmd_length, "RX");
+	*stop_at_receive = false;
 
 	/* UART can send additional characters when the device is powered on.
 	 * We ignore everything before the start of the AT-command.
@@ -563,6 +514,10 @@ static void cmd_send(uint8_t *buf, size_t cmd_length, size_t buf_size)
 	err = nrf_modem_at_cmd(buf + strlen(CRLF_STR), buf_size - strlen(CRLF_STR), "%s", at_cmd);
 	if (err == -SILENT_AT_COMMAND_RET) {
 		return;
+	} else if (err == -SILENT_AT_CMUX_COMMAND_RET) {
+		/* Stop processing AT commands until CMUX pipe is established. */
+		*stop_at_receive = true;
+		return;
 	} else if (err < 0) {
 		LOG_ERR("AT command failed: %d", err);
 		rsp_send_error();
@@ -586,7 +541,7 @@ static void cmd_send(uint8_t *buf, size_t cmd_length, size_t buf_size)
 	}
 }
 
-static size_t cmd_rx_handler(const uint8_t *buf, const size_t len)
+static size_t cmd_rx_handler(const uint8_t *buf, const size_t len, bool *stop_at_receive)
 {
 	size_t processed;
 	static bool inside_quotes;
@@ -594,6 +549,7 @@ static size_t cmd_rx_handler(const uint8_t *buf, const size_t len)
 	static uint8_t prev_character;
 	bool send = false;
 
+	*stop_at_receive = false;
 	for (processed = 0; processed < len && send == false; processed++) {
 
 		/* Handle control characters */
@@ -661,7 +617,7 @@ static size_t cmd_rx_handler(const uint8_t *buf, const size_t len)
 			rsp_send_error();
 		} else if (at_cmd_len > 0) {
 			slm_at_buf[at_cmd_len] = '\0';
-			cmd_send(slm_at_buf, at_cmd_len, sizeof(slm_at_buf));
+			cmd_send(slm_at_buf, at_cmd_len, sizeof(slm_at_buf), stop_at_receive);
 		} else {
 			/* Ignore 0 size command. */
 		}
@@ -712,42 +668,47 @@ static size_t null_handler(const uint8_t *buf, const size_t len)
 	return processed;
 }
 
-void slm_at_receive(const uint8_t *buf, size_t len)
+size_t slm_at_receive(const uint8_t *buf, size_t len, bool *stop_at_receive)
 {
 	size_t ret = 0;
 
+	*stop_at_receive = false;
+
 	k_timer_stop(&inactivity_timer);
 
-	while (len > 0) {
+	while (ret < len) {
 
 		switch (get_slm_mode()) {
 		case SLM_AT_COMMAND_MODE:
-			ret = cmd_rx_handler(buf, len);
+			ret += cmd_rx_handler(buf + ret, len - ret, stop_at_receive);
+			if (*stop_at_receive) {
+				return ret;
+			}
 			break;
 		case SLM_DATA_MODE:
-			ret = raw_rx_handler(buf, len);
+			ret += raw_rx_handler(buf + ret, len - ret);
 			break;
 		case SLM_NULL_MODE:
-			ret = null_handler(buf, len);
+			ret += null_handler(buf + ret, len - ret);
 			break;
 		}
 
 		assert(ret <= len);
-		buf += ret;
-		len -= ret;
 	}
 
 	/* start inactivity timer in datamode */
 	if (get_slm_mode() == SLM_DATA_MODE) {
 		k_timer_start(&inactivity_timer, K_MSEC(slm_datamode_time_limit), K_NO_WAIT);
 	}
+
+	return ret;
 }
 
 AT_MONITOR(at_notify, ANY, notification_handler);
 
 static void notification_handler(const char *notification)
 {
-	if (get_slm_mode() == SLM_AT_COMMAND_MODE && at_backend.send != NULL) {
+	if (get_slm_mode() == SLM_AT_COMMAND_MODE) {
 
 #if defined(CONFIG_SLM_PPP)
 		if (!slm_fwd_cgev_notifs
@@ -1001,9 +962,12 @@ int slm_at_host_init(void)
 
 static int at_host_power_off(bool shutting_down)
 {
-	int err = stop_at_backend();
+	int err = slm_uart_handler_disable();
 
 	if (!err || shutting_down) {
+
+		/* Wait for UART disabling to complete. */
+		k_sleep(K_MSEC(100));
 
 		/* Power off UART module */
 		err = pm_device_action_run(slm_uart_dev, PM_DEVICE_ACTION_SUSPEND);
@@ -1012,9 +976,6 @@ static int at_host_power_off(bool shutting_down)
 		}
 		if (err) {
 			LOG_WRN("Failed to suspend UART. (%d)", err);
-			if (!shutting_down) {
-				restore_at_backend();
-			}
 		}
 	}
 
@@ -1043,7 +1004,7 @@ int slm_at_host_power_on(void)
 	/* Wait for UART enabling to complete. */
 	k_sleep(K_MSEC(100));
 
-	restore_at_backend();
+	slm_uart_handler_enable();
 	return 0;
 }
 

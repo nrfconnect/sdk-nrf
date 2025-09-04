@@ -9,8 +9,8 @@
 #include "slm_ppp.h"
 #endif
 #include "slm_util.h"
+#include "slm_uart_handler.h"
 #include <zephyr/logging/log.h>
-#include <zephyr/modem/backend/uart_slm.h>
 #include <zephyr/modem/cmux.h>
 #include <zephyr/modem/pipe.h>
 #include <assert.h>
@@ -35,10 +35,6 @@ static struct {
 	/* UART backend */
 	struct modem_pipe *uart_pipe;
 	bool uart_pipe_open;
-	struct modem_backend_uart_slm uart_backend;
-	uint8_t uart_backend_receive_buf[CONFIG_SLM_CMUX_UART_BUFFER_SIZE]
-		__aligned(sizeof(void *));
-	uint8_t uart_backend_transmit_buf[CONFIG_SLM_CMUX_UART_BUFFER_SIZE];
 
 	/* CMUX */
 	struct modem_cmux instance;
@@ -73,6 +69,7 @@ static void rx_work_fn(struct k_work *work)
 	static uint8_t recv_buf[RECV_BUF_LEN];
 	int ret;
 	bool is_at;
+	bool ignored;
 
 	for (int i = 0; i < ARRAY_SIZE(cmux.dlcis); ++i) {
 		if (atomic_test_and_clear_bit(&cmux.dlci_channel_rx, i)) {
@@ -93,7 +90,7 @@ static void rx_work_fn(struct k_work *work)
 			}
 
 			LOG_DBG("DLCI %u (AT) received %u bytes of data.", INDEX_TO_DLCI(i), ret);
-			slm_at_receive(recv_buf, ret);
+			slm_at_receive(recv_buf, ret, &ignored);
 		}
 	}
 }
@@ -290,29 +287,6 @@ static void close_pipe(struct modem_pipe **pipe)
 	}
 }
 
-static int cmux_stop(void)
-{
-	if (cmux.uart_pipe && cmux.uart_pipe_open) {
-		/* CMUX is running. Just close the UART pipe to pause and be able to resume.
-		 * This allows AT data to be cached by the CMUX module while the UART is off.
-		 */
-		modem_pipe_close_async(cmux.uart_pipe);
-		cmux.uart_pipe_open = false;
-		return 0;
-	}
-
-	modem_cmux_release(&cmux.instance);
-
-	close_pipe(&cmux.uart_pipe);
-	cmux.uart_pipe_open = false;
-
-	for (size_t i = 0; i != ARRAY_SIZE(cmux.dlcis); ++i) {
-		close_pipe(&cmux.dlcis[i].pipe);
-	}
-
-	return 0;
-}
-
 static bool cmux_is_started(void)
 {
 	return (cmux.uart_pipe != NULL);
@@ -342,6 +316,21 @@ void slm_cmux_init(void)
 	k_work_init(&cmux.tx_work, tx_work_fn);
 
 	cmux.requested_at_channel = UINT_MAX;
+}
+
+void slm_cmux_uninit(void)
+{
+	if (cmux_is_started()) {
+		LOG_INF("CMUX is running, releasing resources.");
+		modem_cmux_release(&cmux.instance);
+
+		close_pipe(&cmux.uart_pipe);
+		cmux.uart_pipe_open = false;
+
+		for (size_t i = 0; i != ARRAY_SIZE(cmux.dlcis); ++i) {
+			close_pipe(&cmux.dlcis[i].pipe);
+		}
+	}
 }
 
 static struct cmux_dlci *cmux_get_dlci(enum cmux_channel channel)
@@ -396,16 +385,7 @@ static int cmux_start(void)
 	}
 
 	{
-		const struct modem_backend_uart_slm_config uart_backend_config = {
-			.uart = DEVICE_DT_GET(DT_CHOSEN(ncs_slm_uart)),
-			.receive_buf = cmux.uart_backend_receive_buf,
-			.receive_buf_size = sizeof(cmux.uart_backend_receive_buf),
-			.transmit_buf = cmux.uart_backend_transmit_buf,
-			.transmit_buf_size = sizeof(cmux.uart_backend_transmit_buf),
-		};
-
-		cmux.uart_pipe =
-			modem_backend_uart_slm_init(&cmux.uart_backend, &uart_backend_config);
+		cmux.uart_pipe = slm_uart_pipe_init(cmux_write_at_channel);
 		if (!cmux.uart_pipe) {
 			return -ENODEV;
 		}
@@ -423,26 +403,10 @@ static int cmux_start(void)
 	return ret;
 }
 
-static void cmux_starter(struct k_work *)
-{
-	const int ret = slm_at_set_backend((struct slm_at_backend) {
-		.start = cmux_start,
-		.send = cmux_write_at_channel,
-		.stop = cmux_stop
-	});
-
-	if (ret) {
-		LOG_ERR("Failed to start CMUX. (%d)", ret);
-	} else {
-		LOG_INF("CMUX started.");
-	}
-}
-
 SLM_AT_CMD_CUSTOM(xcmux, "AT#XCMUX", handle_at_cmux);
 static int handle_at_cmux(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
 			  uint32_t param_count)
 {
-	static struct k_work_delayable cmux_start_work;
 	unsigned int at_dlci;
 	int ret;
 
@@ -480,12 +444,13 @@ static int handle_at_cmux(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 		cmux.at_channel = at_channel;
 	}
 
-	k_work_init_delayable(&cmux_start_work, cmux_starter);
-	ret = k_work_schedule(&cmux_start_work, SLM_UART_RESPONSE_DELAY);
-	if (ret == 1) {
-		ret = 0;
-	} else if (ret == 0) {
-		ret = -EAGAIN;
+	/* Respond before starting CMUX. */
+	rsp_send_ok();
+	ret = cmux_start();
+	if (ret) {
+		LOG_ERR("Failed to start CMUX. (%d)", ret);
+	} else {
+		ret = -SILENT_AT_CMUX_COMMAND_RET;
 	}
 	return ret;
 }
