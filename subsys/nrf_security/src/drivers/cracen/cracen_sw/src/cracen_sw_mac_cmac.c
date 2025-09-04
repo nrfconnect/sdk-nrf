@@ -67,7 +67,7 @@ psa_status_t cracen_cmac_derive_subkeys(cracen_mac_operation_t *operation, uint8
 {
 	uint8_t empty_block[SX_BLKCIPHER_AES_BLK_SZ] = {0};
 	uint8_t L[SX_BLKCIPHER_AES_BLK_SZ]; /* L is defined in RFC 4493 */
-	psa_status_t status = cracen_aes_ecb_encrypt(&operation->cmac.keyref, empty_block, L);
+	psa_status_t status = cracen_aes_primitive(&operation->cmac.keyref, empty_block, L);
 
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -111,7 +111,7 @@ psa_status_t cracen_sw_cmac_update(cracen_mac_operation_t *operation, const uint
 			cracen_xorbytes(operation->cmac.sw_ctx.mac_state,
 					operation->cmac.sw_ctx.partial_block,
 					SX_BLKCIPHER_AES_BLK_SZ);
-			psa_status = cracen_aes_ecb_encrypt(&operation->cmac.keyref,
+			psa_status = cracen_aes_primitive(&operation->cmac.keyref,
 							    operation->cmac.sw_ctx.mac_state,
 							    operation->cmac.sw_ctx.mac_state);
 			if (psa_status != PSA_SUCCESS) {
@@ -153,7 +153,7 @@ psa_status_t cracen_sw_cmac_finish(cracen_mac_operation_t *operation)
 	cracen_xorbytes(operation->cmac.sw_ctx.mac_state, last_block, SX_BLKCIPHER_AES_BLK_SZ);
 
 	psa_status =
-		cracen_aes_ecb_encrypt(&operation->cmac.keyref, operation->cmac.sw_ctx.mac_state,
+		cracen_aes_primitive(&operation->cmac.keyref, operation->cmac.sw_ctx.mac_state,
 				       operation->cmac.sw_ctx.mac_state);
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;

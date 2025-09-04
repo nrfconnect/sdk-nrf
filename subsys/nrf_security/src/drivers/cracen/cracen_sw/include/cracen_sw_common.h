@@ -18,12 +18,48 @@
  * AES-ECB encryption functionality.
  *
  * @param key The AES key reference.
- * @param input Pointer to a 16-byte input block.
+ * @param input Pointer to the input block.
+ * @param input_length Length of the input block.
  * @param output Pointer to a 16-byte output buffer.
+ * @param output_size Size of the output buffer.
+ * @param output_length Pointer where to store the actual output length.
  *
  * @retval psa_status_t PSA_SUCCESS on success, error code otherwise.
  */
 psa_status_t cracen_aes_ecb_encrypt(const struct sxkeyref *key, const uint8_t *input,
-				    uint8_t *output);
+			      size_t input_length, uint8_t *output, size_t output_size,
+			      size_t *output_length);
+
+/** @brief Decrypt a single AES block using ECB mode.
+ *
+ * This function is designed for CRACEN software workarounds that need
+ * AES-ECB decryption functionality.
+ *
+ * @param key The AES key reference.
+ * @param input Pointer to the input block.
+ * @param input_length Length of the input block.
+ * @param output Pointer to a 16-byte output buffer.
+ * @param output_size Size of the output buffer.
+ * @param output_length Pointer where to store the actual output length.
+ *
+ * @retval psa_status_t PSA_SUCCESS on success, error code otherwise.
+ */
+psa_status_t cracen_aes_ecb_decrypt(const struct sxkeyref *key, const uint8_t *input,
+			      size_t input_length, uint8_t *output, size_t output_size,
+			      size_t *output_length);
+
+/** @brief Perform a single AES block encryption operation.
+ *
+ * This function is designed for use as an AES primitive in CRACEN software workarounds that require
+ * it.
+ *
+ * @param key The AES key reference.
+ * @param input Pointer to the input block.
+ * @param output Pointer to a 16-byte output buffer.
+ *
+ * @retval psa_status_t PSA_SUCCESS on success, error code otherwise.
+ */
+psa_status_t cracen_aes_primitive(const struct sxkeyref *key, const uint8_t *input,
+				  uint8_t *output);
 
 #endif /* CRACEN_SW_COMMON_H */
