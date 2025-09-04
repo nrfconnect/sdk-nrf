@@ -2803,7 +2803,7 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L15
               - nRF54LM20
             * - **Immutable MCUboot as part of build**
-              - --
+              - Experimental
               - Supported
               - Supported
               - Supported
@@ -2837,7 +2837,7 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Experimental
               - Experimental
-              - Experimental
+              - --
 
       .. tab:: nRF91 Series
 

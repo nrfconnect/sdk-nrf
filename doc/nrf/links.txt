@@ -317,6 +317,9 @@
 .. _`nRF54L05`: https://www.nordicsemi.com/Products/nRF54L05
 .. _`nRF54L10`: https://www.nordicsemi.com/Products/nRF54L10
 
+.. _`nRF54LM20A System-on-Chip`: https://www.nordicsemi.com/Products/nRF54LM20A
+.. _`nRF54LM20 DK`: https://www.nordicsemi.com/Products/Development-hardware/nRF54LM20-DK
+
 .. _`nRF52840 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/Download#infotabs
 .. _`nRF52840 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK/
 
@@ -467,6 +470,7 @@
 .. _`Asset Tracker Template`: https://docs.nordicsemi.com/bundle/asset-tracker-template-latest/page/index.html
 
 .. _`known issues page on the main branch`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html
+.. _`known issues for nRF Connect SDK v3.1.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v3-1-1
 .. _`known issues for nRF Connect SDK v3.1.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v3-1-0
 .. _`known issues for nRF Connect SDK v3.0.2`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v3-0-2
 .. _`known issues for nRF Connect SDK v3.0.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v3-0-1
@@ -516,6 +520,7 @@
 .. _`known issues for nRF Connect SDK v1.4.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-4-1
 .. _`known issues for nRF Connect SDK v1.4.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-4-0
 
+.. _`Repositories and revisions for v3.1.1`: https://docs.nordicsemi.com/bundle/ncs-3.1.1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v3.1.0`: https://docs.nordicsemi.com/bundle/ncs-3.1.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v3.0.2`: https://docs.nordicsemi.com/bundle/ncs-3.0.2/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v3.0.1`: https://docs.nordicsemi.com/bundle/ncs-3.0.1/page/nrf/releases_and_maturity/repository_revisions.html
@@ -557,6 +562,7 @@
 .. _`Repositories and revisions for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrf/introduction.html#repositories_and_revisions
 .. _`Repositories and revisions`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrf/introduction.html#repositories_and_revisions
 
+.. _`Modem library changelog for v3.1.1`: https://docs.nordicsemi.com/bundle/ncs-3.1.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v3.1.0`: https://docs.nordicsemi.com/bundle/ncs-3.1.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v3.0.2`: https://docs.nordicsemi.com/bundle/ncs-3.0.2/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v3.0.1`: https://docs.nordicsemi.com/bundle/ncs-3.0.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
@@ -594,6 +600,7 @@
 .. _`Modem library changelog for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 .. _`Modem library changelog for v1.9.0`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 
+.. _`LwM2M carrier library changelog for v3.1.1`: https://docs.nordicsemi.com/bundle/ncs-3.1.1/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v3.1.0`: https://docs.nordicsemi.com/bundle/ncs-3.1.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v3.0.2`: https://docs.nordicsemi.com/bundle/ncs-3.0.2/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v3.0.1`: https://docs.nordicsemi.com/bundle/ncs-3.0.1/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
@@ -802,6 +809,10 @@
 .. _`nRF54L15 RRAMC`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/rramc.html
 .. _`nRF54L15 REGION.CONFIG`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/rramc.html#ariaid-title35
 .. _`nRF54L15 DK CRACEN`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/cracen.html
+
+.. _`nRF54LM20A Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54LM20A/page/keyfeatures_html5.html
+.. _`nRF54LM20 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf54lm20_dk/page/UG/nRF54LM20_DK/intro/intro.html
+.. _`nRF54LM20A Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54lm20a/page/COMP/nrf54lm20a/nrf54lm20a_comp_matrix.html
 
 .. _`nRF53 Series`: https://docs.nordicsemi.com/category/nrf-53-series
 
@@ -1060,6 +1071,8 @@
 .. _`Power saving techniques`: https://academy.nordicsemi.com/courses/cellular-iot-fundamentals/lessons/lesson-1-cellular-fundamentals/topic/lesson-1-power-saving-techniques/
 .. _`Bluetooth LE Fundamentals course`: https://academy.nordicsemi.com/courses/bluetooth-low-energy-fundamentals/
 .. _`Wi-Fi Fundamentals course`: https://academy.nordicsemi.com/courses/wi-fi-fundamentals/
+
+.. _`nRF54L Series Express course`: https://academy.nordicsemi.com/courses/nrf54l-series-express-course/
 
 .. _Bootloaders and DFU/FOTA: https://academy.nordicsemi.com/courses/nrf-connect-sdk-intermediate/lessons/lesson-8-bootloaders-and-dfu-fota/
 
