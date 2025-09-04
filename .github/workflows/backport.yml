@@ -7,6 +7,11 @@ on:
     branches:
       - main
 
+
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   backport:
     name: Backport
@@ -26,6 +31,6 @@ jobs:
       - name: Backport
         uses: zephyrproject-rtos/action-backport@6b0bae5b575d289305a22ab11a273941b518994c # v2.0.3-3
         with:
-          github_token: ${{ secrets.NCS_GITHUB_TOKEN }}
+          github_token: ${{ secrets.NCS_NORDICBUILDER_ACTION_TOKEN }}
           issue_labels: Backport
           labels_template: '["Backport"]'
