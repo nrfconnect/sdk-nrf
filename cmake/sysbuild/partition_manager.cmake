@@ -256,7 +256,10 @@ function(partition_manager)
       # So for each domain we should just include the generated hex file.
       # Those are available thorugh sysbuild_get, but not locally as there is no parent image.
       list(APPEND explicitly_assigned ${part})
-      sysbuild_get(${part}_PM_HEX_FILE IMAGE ${part} VAR BYPRODUCT_KERNEL_SIGNED_HEX_NAME CACHE)
+      sysbuild_get(${part}_PM_HEX_FILE IMAGE ${part} VAR BYPRODUCT_KERNEL_SIGNED_CONFIRMED_HEX_NAME CACHE)
+      if(NOT ${part}_PM_HEX_FILE)
+        sysbuild_get(${part}_PM_HEX_FILE IMAGE ${part} VAR BYPRODUCT_KERNEL_SIGNED_HEX_NAME CACHE)
+      endif()
       if(NOT ${part}_PM_HEX_FILE)
         sysbuild_get(${part}_PM_HEX_FILE IMAGE ${part} VAR BYPRODUCT_KERNEL_HEX_NAME CACHE)
       endif()

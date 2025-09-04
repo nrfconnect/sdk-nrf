@@ -245,6 +245,40 @@ function(zephyr_mcuboot_tasks)
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
         ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/scripts/build/mergehex.py -o ${output_merged}.encrypted.hex ${output_internal}.encrypted.hex ${output_external}.encrypted.hex)
     endif()
+
+    if(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
+      list(APPEND byproducts ${output_merged}.confirmed.hex)
+      if(CONFIG_NCS_IS_VARIANT_IMAGE)
+        zephyr_runner_file(hex ${output_merged}.confirmed.hex)
+      endif()
+      set(BYPRODUCT_KERNEL_SIGNED_CONFIRMED_HEX_NAME "${output_merged}.confirmed.hex"
+        CACHE FILEPATH "Signed and confirmed kernel hex file" FORCE
+      )
+
+      if("${keyfile_enc}" STREQUAL "")
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_internal_sign} ${imgtool_args} --pad --confirm ${input_internal_arg}.hex
+          ${output_internal}.confirmed.hex)
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_external_sign} ${imgtool_args} --pad --confirm ${output_external}.hex
+          ${output_external}.confirmed.hex)
+        # Combine the signed confirmed hex files into a single output hex file
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/scripts/build/mergehex.py -o ${output_merged}.confirmed.hex ${output_internal}.confirmed.hex ${output_external}.confirmed.hex)
+      else()
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_internal_sign} ${imgtool_args} ${imgtool_encrypt_extra_args} --encrypt
+          "${keyfile_enc}" --clear --pad --confirm ${input_internal_arg}
+          ${output_internal}.confirmed.hex)
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_external_sign} ${imgtool_args} ${imgtool_encrypt_extra_args} --encrypt
+          "${keyfile_enc}" --clear --pad --confirm ${input_external_arg}
+          ${output_external}.confirmed.hex)
+        # Combine the signed confirmed hex files into a single output hex file
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/scripts/build/mergehex.py -o ${output_merged}.confirmed.hex ${output_internal}.confirmed.hex ${output_external}.confirmed.hex)
+      endif()
+    endif()
   endif()
 
   # Set up .bin outputs.
@@ -260,6 +294,19 @@ function(zephyr_mcuboot_tasks)
     set(BYPRODUCT_KERNEL_SIGNED_BIN_NAME "${output_internal}.bin;${output_external}.bin"
       CACHE FILEPATH "Signed kernel bin files" FORCE
     )
+
+    if(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
+      set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+        ${CMAKE_OBJCOPY} --input-target=ihex --output-target=binary ${output_internal}.confirmed.hex ${output_internal}.confirmed.bin)
+      set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+        ${CMAKE_OBJCOPY} --input-target=ihex --output-target=binary ${output_external}.confirmed.hex ${output_external}.confirmed.bin)
+
+      list(APPEND byproducts "${output_internal}.confirmed.bin;${output_external}.confirmed.bin")
+
+      set(BYPRODUCT_KERNEL_SIGNED_CONFIRMED_BIN_NAME "${output_internal}.confirmed.bin;${output_external}.confirmed.bin"
+        CACHE FILEPATH "Signed kernel bin files" FORCE
+      )
+    endif()
 
     if(NOT "${keyfile_enc}" STREQUAL "")
       # Instead of re-signing, convert the encrypted hex files to binary using objcopy

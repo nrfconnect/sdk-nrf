@@ -93,12 +93,6 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${slot_size} --header-size ${CONFIG_ROM_START_OFFSET} ${imgtool_rom_command})
   endif()
 
-  set(imgtool_directxip_hex_command)
-
-  if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
-    set(imgtool_directxip_hex_command --confirm)
-  endif()
-
   # Arguments to imgtool.
   if(NOT CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS STREQUAL "")
     # Separate extra arguments into the proper format for adding to
@@ -208,6 +202,25 @@ function(zephyr_mcuboot_tasks)
         ${imgtool_sign} ${imgtool_args} ${imgtool_bin_extra} ${imgtool_encrypt_extra_args} --encrypt
         "${keyfile_enc}" ${input_arg} ${output}.encrypted.bin)
     endif()
+
+    # Generate and use the confirmed image in Direct XIP with revert, so the
+    # default application will boot after flashing.
+    if(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
+      list(APPEND byproducts ${output}.confirmed.bin)
+      zephyr_runner_file(bin ${output}.confirmed.bin)
+      set(BYPRODUCT_KERNEL_SIGNED_CONFIRMED_BIN_NAME "${output}.confirmed.bin"
+        CACHE FILEPATH "Signed and confirmed kernel bin file" FORCE
+      )
+      if("${keyfile_enc}" STREQUAL "")
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_sign} ${imgtool_args} ${imgtool_bin_extra} --pad --confirm ${input_arg}
+          ${output}.confirmed.bin)
+      else()
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_sign} ${imgtool_args} ${imgtool_bin_extra} ${imgtool_encrypt_extra_args}
+          --encrypt "${keyfile_enc}" --clear --pad --confirm ${input_arg} ${output}.confirmed.bin)
+      endif()
+    endif()
   endif()
 
   # Set up .hex outputs.
@@ -236,12 +249,11 @@ function(zephyr_mcuboot_tasks)
     # after the commands which generate the unsigned versions.
     if("${keyfile_enc}" STREQUAL "")
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-        ${imgtool_sign} ${imgtool_args} ${imgtool_directxip_hex_command} ${imgtool_hex_extra}
-        ${input_arg} ${output}.hex)
+        ${imgtool_sign} ${imgtool_args} ${imgtool_hex_extra} ${input_arg} ${output}.hex)
     else()
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-        ${imgtool_sign} ${imgtool_args} ${imgtool_directxip_hex_command} ${imgtool_hex_extra}
-        ${imgtool_encrypt_extra_args} --encrypt "${keyfile_enc}" --clear ${input_arg} ${output}.hex)
+        ${imgtool_sign} ${imgtool_args} ${imgtool_hex_extra} ${imgtool_encrypt_extra_args} --encrypt
+        "${keyfile_enc}" --clear ${input_arg} ${output}.hex)
 
       list(APPEND byproducts ${output}.encrypted.hex)
       set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_HEX_NAME "${output}.encrypted.hex"
@@ -251,6 +263,27 @@ function(zephyr_mcuboot_tasks)
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
         ${imgtool_sign} ${imgtool_args} ${imgtool_hex_extra} ${imgtool_encrypt_extra_args} --encrypt
         "${keyfile_enc}" ${input_arg} ${output}.encrypted.hex)
+    endif()
+
+    # Generate and use the confirmed image in Direct XIP with revert, so the
+    # default application will boot after flashing.
+    if(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
+      list(APPEND byproducts ${output}.confirmed.hex)
+      if((NOT CONFIG_PARTITION_MANAGER_ENABLED) OR CONFIG_NCS_IS_VARIANT_IMAGE)
+        zephyr_runner_file(hex ${output}.confirmed.hex)
+      endif()
+      set(BYPRODUCT_KERNEL_SIGNED_CONFIRMED_HEX_NAME "${output}.confirmed.hex"
+        CACHE FILEPATH "Signed and confirmed kernel hex file" FORCE
+      )
+      if("${keyfile_enc}" STREQUAL "")
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_sign} ${imgtool_args} ${imgtool_hex_extra} --pad --confirm ${input_arg}
+          ${output}.confirmed.hex)
+      else()
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_sign} ${imgtool_args} ${imgtool_hex_extra} ${imgtool_encrypt_extra_args}
+          --encrypt "${keyfile_enc}" --clear --pad --confirm ${input_arg} ${output}.confirmed.hex)
+      endif()
     endif()
   endif()
 
