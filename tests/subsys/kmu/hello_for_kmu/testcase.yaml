@@ -19,6 +19,9 @@ tests:
       pytest_root:
         - "../pytest/test_kmu_provision.py"
   mcuboot.kmu.west_flash_default_provision:
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     harness: console
     harness_config:
       type: one_line
