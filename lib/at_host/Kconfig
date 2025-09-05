@@ -7,6 +7,8 @@
 menuconfig AT_HOST_LIBRARY
 	bool "AT Host Library for nrf91"
 	depends on NRF_MODEM_LIB
+	depends on SERIAL_SUPPORT_INTERRUPT
+	select UART_INTERRUPT_DRIVEN
 	select AT_MONITOR
 
 if AT_HOST_LIBRARY
