@@ -105,16 +105,16 @@ ZMS settings backend
    To migrate from the legacy backend to the new backend remove the Kconfig options :kconfig:option:`CONFIG_SETTINGS_ZMS_NAME_CACHE`
    and :kconfig:option:`CONFIG_SETTINGS_ZMS_NAME_CACHE_SIZE` from your conf files.
 
-Bluetooth LE legacy pairing
----------------------------
+Bluetooth® LE legacy pairing
+----------------------------
 
 .. toggle::
 
-   Support for Bluetooth LE legacy pairing is no longer enabled by default, because it is not secure.
+   Support for Bluetooth LE legacy pairing is no longer enabled by default because it is not secure.
    The :kconfig:option:`CONFIG_BT_SMP_SC_PAIR_ONLY` Kconfig option is enabled by default in Zephyr.
    If you still need to support the Bluetooth LE legacy pairing and you accept the security risks, disable the option in the configuration.
 
-   .. note::
+   .. caution::
       Using Bluetooth LE legacy pairing introduces, among others, a risk of passive eavesdropping.
       Supporting Bluetooth LE legacy pairing makes devices vulnerable to downgrade attacks.
 
@@ -513,8 +513,8 @@ Serial LTE Modem
 
    * Errors that were previously notified to the application with the ``LWM2M_CARRIER_ERROR_RUN`` event type have instead been added to :c:macro:`LWM2M_CARRIER_ERROR_CONFIGURATION`.
 
-Bluetooth® Fast Pair Locator tag
---------------------------------
+Bluetooth Fast Pair Locator tag
+-------------------------------
 
 .. toggle::
 
