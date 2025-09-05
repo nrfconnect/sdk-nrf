@@ -578,7 +578,6 @@
 
 "CI-test-low-level":
   - "applications/hpf/**/*"
-  - "boards/nordic/nrf54lm20pdk/**/*"
   - "boards/nordic/nrf54lv10dk/**/*"
   - "drivers/gpio/**/*"
   - "dts/bindings/gpio/**/*"
