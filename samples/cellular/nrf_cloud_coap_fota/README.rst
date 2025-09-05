@@ -101,20 +101,18 @@ Building and running
 The configuration files for this sample are located in the :file:`samples/cellular/nrf_cloud_coap_fota` folder.
 See :ref:`configure_application` on how to configure the parameters.
 
-To create a FOTA test version of this sample, add the following parameter to your build command:
-
-``-DEXTRA_CONF_FILE=overlay_fota_test.conf``
+To create a FOTA test version of this sample, change the ``PATCHLEVEL`` in the :file:`VERSION` file.
 
 To enable full modem FOTA, add the following parameter to your build command:
 
-``-DEXTRA_CONF_FILE=overlay_full_modem_fota.conf``
+``-DEXTRA_CONF_FILE=full_modem_fota.conf``
 
 Also, if you are using an nRF9160 DK, specify your development kit version by appending it to the board name.
 For example, if you are using version 1.0.1, use the board name ``nrf9160dk@1.0.1/nrf9160/ns`` in your build command.
 
 To enable SMP FOTA (nRF9160 DK only), add the following parameters to your build command:
 
-* ``-DEXTRA_CONF_FILE=overlay_smp_fota.conf``
+* ``-DEXTRA_CONF_FILE=smp_fota.conf``
 * ``-DEXTRA_DTC_OVERLAY_FILE=nrf9160dk_mcumgr_client_uart2.overlay``
 
 Once you have flashed your nRF9160 DK, change the switch **SW10** to the **nRF52** position to be able to flash the nRF52840 firmware on the DK.
