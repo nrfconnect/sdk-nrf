@@ -1,8 +1,10 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+#include "memory_map.dtsi"
 
 / {
 	/* Redefine leds to fit CAF requirements. */
@@ -51,25 +53,25 @@
 			label = "Green LED 3";
 		};
 	};
-
-	aliases {
-		nrfdesktop-dvfs-clock = &cpuapp_hsfll;
-	};
 };
 
-&cpusec_cpuapp_ipc {
-	status = "okay";
+/* Define the necessary aliases for the MCUboot slots that will be used by the DFU transports.
+ * Due to the build system limitation, the allowed size of the application image (configured by
+ * the code partition DTS node) is incorrectly increased by the size allocated for the radio image.
+ */
+slot0_partition: &cpuapp_slot0_partition {
+	label = "image-0";
 };
 
-&cpusec_bellboard {
-	status = "okay";
+slot1_partition: &cpuapp_slot1_partition {
+	label = "image-1";
 };
 
-/* Shrink ppr partition as ppr core is not used and extend app core code partition. */
-&cpuppr_code_partition {
-	reg = < 0xf8000 DT_SIZE_K(32) >;
+/* Remove the undefined property value from the disabled VPR cores to prevent build errors. */
+&cpuflpr_vpr {
+	/delete-property/ source-memory;
 };
 
-&cpuapp_slot0_partition {
-	reg = < 0xa6000 DT_SIZE_K(328) >;
+&cpuppr_vpr {
+	/delete-property/ source-memory;
 };
