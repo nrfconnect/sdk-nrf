@@ -49,7 +49,7 @@ config MBEDTLS_PSA_CRYPTO_SPM
 	  scope of TF-M build (Prefixes with mbedcrypto__)
 
 config MBEDTLS_PSA_CRYPTO_STORAGE_C
-	bool "PSA storage for persistent keys" if !BUILD_WITH_TFM
+	bool "PSA storage for persistent keys"
 	default y if BUILD_WITH_TFM
 	help
 	  Corresponds to MBEDTLS_PSA_CRYPTO_STORAGE_C setting in mbed TLS config file.
