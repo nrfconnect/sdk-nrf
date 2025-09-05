@@ -372,7 +372,7 @@
 /lib/at_monitor/                          @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /lib/at_parser/                           @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /lib/at_shell/                            @nrfconnect/ncs-cia
-/lib/bin/                                 @nrfconnect/ncs-co-networking @lemrey
+/lib/bin/                                 @nrfconnect/ncs-co-networking
 /lib/bin/lwm2m_carrier/                   @nrfconnect/ncs-carrier
 /lib/boot_banner/                         @nordicjm
 /lib/contin_array/                        @nrfconnect/ncs-audio
