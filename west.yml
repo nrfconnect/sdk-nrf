@@ -274,6 +274,10 @@ manifest:
       revision: d5fad6bd094899101a4e5fd53af7298160ced6ab
       groups:
         - benchmark
+    - name: nrfx
+      remote: ncs
+      repo-path: nrfx
+      revision: master
 
   # West-related configuration for the nrf repository.
   self:
