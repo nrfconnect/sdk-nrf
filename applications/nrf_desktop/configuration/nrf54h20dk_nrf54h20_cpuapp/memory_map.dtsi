@@ -1,0 +1,60 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&mram1x {
+	/delete-node/ partitions;
+
+	/* Redefine the "partitions" DTS node. */
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* Partitions belonging to the MRAM_10 memory block.
+		 * The start of the MRAM_10 memory is reserved for internal IronSide SE firmware.
+		 */
+
+		cpuapp_boot_partition: partition@30000 {
+			reg = <0x30000 DT_SIZE_K(32)>;
+		};
+
+		cpux_slot0_partition: partition@38000 {
+			reg = <0x38000 DT_SIZE_K(800)>;
+		};
+
+		cpuapp_slot0_partition: subpartition@38000 {
+			reg = <0x38000 DT_SIZE_K(580)>;
+		};
+
+		cpurad_slot0_partition: subpartition@c9000 {
+			reg = <0xc9000 DT_SIZE_K(220)>;
+		};
+
+		/* Partitions belonging to the MRAM_11 memory block. */
+
+		cpux_slot1_partition: partition@100000 {
+			reg = <0x100000 DT_SIZE_K(800)>;
+		};
+
+		cpuapp_slot1_partition: subpartition@100000 {
+			reg = <0x100000 DT_SIZE_K(580)>;
+		};
+
+		cpurad_slot1_partition: subpartition@191000 {
+			reg = <0x191000 DT_SIZE_K(220)>;
+		};
+
+		storage_partition: partition@1c8000 {
+			reg = <0x1c8000 DT_SIZE_K(40)>;
+		};
+
+		periphconf_partition: partition@1d2000 {
+			reg = <0x1d2000 DT_SIZE_K(8)>;
+		};
+
+		/* The end of the MRAM_11 memory is left unallocated. */
+	};
+};
