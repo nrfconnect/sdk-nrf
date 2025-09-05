@@ -93,12 +93,6 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${slot_size} --header-size ${CONFIG_ROM_START_OFFSET} ${imgtool_rom_command})
   endif()
 
-  set(imgtool_directxip_hex_command)
-
-  if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
-    set(imgtool_directxip_hex_command --confirm)
-  endif()
-
   # Arguments to imgtool.
   if(NOT CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS STREQUAL "")
     # Separate extra arguments into the proper format for adding to
@@ -153,14 +147,24 @@ function(zephyr_mcuboot_tasks)
   # List of additional build byproducts.
   set(byproducts)
 
-  # 'west sign' arguments for confirmed, unconfirmed and encrypted images.
-  set(unconfirmed_args)
-  set(confirmed_args)
-  set(encrypted_args)
+  # Input file to sign
+  set(input_arg)
+  # Additional (algorithm-dependent) args for encryption
+  set(imgtool_encrypt_extra_args)
 
   if(NOT "${keyfile_enc}" STREQUAL "")
     if(CONFIG_MCUBOOT_ENCRYPTION_ALG_AES_256)
       set(imgtool_args ${imgtool_args} --encrypt-keylen 256)
+    endif()
+
+    # Signature type determines key exchange scheme; ED25519 here means
+    # ECIES-X25519 is used. Default to HMAC-SHA512 for ECIES-X25519.
+    # Only .encrypted.bin file gets the ENCX25519/ENCX25519_SHA512, the
+    # just signed one does not.
+    # Only NRF54L gets the HMAC-SHA512, other remain with previously used
+    # SHA256.
+    if(CONFIG_SOC_SERIES_NRF54LX AND CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519)
+      set(imgtool_encrypt_extra_args --hmac-sha 512)
     endif()
   endif()
 
@@ -168,15 +172,15 @@ function(zephyr_mcuboot_tasks)
   if(CONFIG_BUILD_OUTPUT_BIN)
     if(CONFIG_BUILD_WITH_TFM)
       # TF-M does not generate a bin file, so use the hex file as an input
-      set(unconfirmed_args ${input}.hex ${output}.bin)
+      set(input_arg ${input}.hex)
     else()
-      set(unconfirmed_args ${input}.bin ${output}.bin)
+      set(input_arg ${input}.bin)
     endif()
 
     list(APPEND byproducts ${output}.bin)
     zephyr_runner_file(bin ${output}.bin)
     set(BYPRODUCT_KERNEL_SIGNED_BIN_NAME "${output}.bin"
-        CACHE FILEPATH "Signed kernel bin file" FORCE
+      CACHE FILEPATH "Signed kernel bin file" FORCE
     )
 
     # Add the west sign calls and their byproducts to the post-processing
@@ -187,39 +191,41 @@ function(zephyr_mcuboot_tasks)
     # calls to the "extra_post_build_commands" property ensures they run
     # after the commands which generate the unsigned versions.
     set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-      ${imgtool_sign} ${imgtool_args} ${imgtool_bin_extra} ${unconfirmed_args})
+      ${imgtool_sign} ${imgtool_args} ${imgtool_bin_extra} ${input_arg} ${output}.bin)
 
     if(NOT "${keyfile_enc}" STREQUAL "")
-      if(CONFIG_BUILD_WITH_TFM)
-        # TF-M does not generate a bin file, so use the hex file as an input
-        set(unconfirmed_args ${input}.hex ${output}.encrypted.bin)
-      else()
-        set(unconfirmed_args ${input}.bin ${output}.encrypted.bin)
-      endif()
-
       list(APPEND byproducts ${output}.encrypted.bin)
       set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_BIN_NAME "${output}.encrypted.bin"
-          CACHE FILEPATH "Signed and encrypted kernel bin file" FORCE
+        CACHE FILEPATH "Signed and encrypted kernel bin file" FORCE
       )
-
-      # Signature type determines key exchange scheme; ED25519 here means
-      # ECIES-X25519 is used. Default to HMAC-SHA512 for ECIES-X25519.
-      # Only .encrypted.bin file gets the ENCX25519/ENCX25519_SHA512, the
-      # just signed one does not.
-      # Only NRF54L gets the HMAC-SHA512, other remain with previously used
-      # SHA256.
-      if(CONFIG_SOC_SERIES_NRF54LX AND CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519)
-        set(imgtool_hmac_args --hmac-sha 512)
-      endif()
-
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-        ${imgtool_sign} ${imgtool_args} ${imgtool_hmac_args} --encrypt "${keyfile_enc}" ${imgtool_bin_extra} ${unconfirmed_args})
+        ${imgtool_sign} ${imgtool_args} ${imgtool_bin_extra} ${imgtool_encrypt_extra_args} --encrypt
+        "${keyfile_enc}" ${input_arg} ${output}.encrypted.bin)
+    endif()
+
+    # Generate and use the confirmed image in Direct XIP with revert, so the
+    # default application will boot after flashing.
+    if(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
+      list(APPEND byproducts ${output}.confirmed.bin)
+      zephyr_runner_file(bin ${output}.confirmed.bin)
+      set(BYPRODUCT_KERNEL_SIGNED_CONFIRMED_BIN_NAME "${output}.confirmed.bin"
+        CACHE FILEPATH "Signed and confirmed kernel bin file" FORCE
+      )
+      if("${keyfile_enc}" STREQUAL "")
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_sign} ${imgtool_args} ${imgtool_bin_extra} --pad --confirm ${input_arg}
+          ${output}.confirmed.bin)
+      else()
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_sign} ${imgtool_args} ${imgtool_bin_extra} ${imgtool_encrypt_extra_args}
+          --encrypt "${keyfile_enc}" --clear --pad --confirm ${input_arg} ${output}.confirmed.bin)
+      endif()
     endif()
   endif()
 
   # Set up .hex outputs.
   if(CONFIG_BUILD_OUTPUT_HEX)
-    set(unconfirmed_args ${input}.hex ${output}.hex)
+    set(input_arg ${input}.hex)
     list(APPEND byproducts ${output}.hex)
 
     # If using partition manager do not run zephyr_runner_file here as PM will
@@ -231,7 +237,7 @@ function(zephyr_mcuboot_tasks)
     endif()
 
     set(BYPRODUCT_KERNEL_SIGNED_HEX_NAME "${output}.hex"
-        CACHE FILEPATH "Signed kernel hex file" FORCE
+      CACHE FILEPATH "Signed kernel hex file" FORCE
     )
 
     # Add the west sign calls and their byproducts to the post-processing
@@ -243,28 +249,41 @@ function(zephyr_mcuboot_tasks)
     # after the commands which generate the unsigned versions.
     if("${keyfile_enc}" STREQUAL "")
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-        ${imgtool_sign} ${imgtool_args} ${imgtool_directxip_hex_command} ${imgtool_hex_extra} ${unconfirmed_args})
+        ${imgtool_sign} ${imgtool_args} ${imgtool_hex_extra} ${input_arg} ${output}.hex)
     else()
-      # Signature type determines key exchange scheme; ED25519 here means
-      # ECIES-X25519 is used. Default to HMAC-SHA512 for ECIES-X25519.
-      # Only NRF54L gets the HMAC-SHA512, other remain with previously used
-      # SHA256.
-      if((CONFIG_SOC_NRF54L15_CPUAPP OR CONFIG_SOC_NRF54L10_CPUAPP OR CONFIG_SOC_NRF54L05_CPUAPP OR CONFIG_SOC_NRF54LM20A_ENGA_CPUAPP) AND CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519)
-        set(imgtool_args ${imgtool_args} --hmac-sha 512)
-      endif()
-
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-        ${imgtool_sign} ${imgtool_args} --encrypt "${keyfile_enc}" --clear
-        ${imgtool_directxip_hex_command} ${imgtool_hex_extra} ${unconfirmed_args})
+        ${imgtool_sign} ${imgtool_args} ${imgtool_hex_extra} ${imgtool_encrypt_extra_args} --encrypt
+        "${keyfile_enc}" --clear ${input_arg} ${output}.hex)
 
-      set(unconfirmed_args ${input}.hex ${output}.encrypted.hex)
       list(APPEND byproducts ${output}.encrypted.hex)
       set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_HEX_NAME "${output}.encrypted.hex"
-          CACHE FILEPATH "Signed and encrypted kernel hex file" FORCE
+        CACHE FILEPATH "Signed and encrypted kernel hex file" FORCE
       )
 
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-        ${imgtool_sign} ${imgtool_args} --encrypt "${keyfile_enc}" ${imgtool_hex_extra} ${unconfirmed_args})
+        ${imgtool_sign} ${imgtool_args} ${imgtool_hex_extra} ${imgtool_encrypt_extra_args} --encrypt
+        "${keyfile_enc}" ${input_arg} ${output}.encrypted.hex)
+    endif()
+
+    # Generate and use the confirmed image in Direct XIP with revert, so the
+    # default application will boot after flashing.
+    if(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
+      list(APPEND byproducts ${output}.confirmed.hex)
+      if((NOT CONFIG_PARTITION_MANAGER_ENABLED) OR CONFIG_NCS_IS_VARIANT_IMAGE)
+        zephyr_runner_file(hex ${output}.confirmed.hex)
+      endif()
+      set(BYPRODUCT_KERNEL_SIGNED_CONFIRMED_HEX_NAME "${output}.confirmed.hex"
+        CACHE FILEPATH "Signed and confirmed kernel hex file" FORCE
+      )
+      if("${keyfile_enc}" STREQUAL "")
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_sign} ${imgtool_args} ${imgtool_hex_extra} --pad --confirm ${input_arg}
+          ${output}.confirmed.hex)
+      else()
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_sign} ${imgtool_args} ${imgtool_hex_extra} ${imgtool_encrypt_extra_args}
+          --encrypt "${keyfile_enc}" --clear --pad --confirm ${input_arg} ${output}.confirmed.hex)
+      endif()
     endif()
   endif()
 
