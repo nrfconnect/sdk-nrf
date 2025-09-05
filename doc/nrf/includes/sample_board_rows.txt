@@ -263,6 +263,14 @@
 
 | nRF54LV10 DK |   | nrf54lv10dk | ``nrf54lv10dk/nrf54lv10a/cpuapp`` |
 
+.. nrf54lv10dk_nrf54lv10a_cpuapp_ns
+
+| nRF54LV10 DK |   | nrf54lv10dk | ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` |
+
+.. nrf54lm20pdk_nrf54lm20a_cpuapp
+
+| nRF54LM20 PDK |   | nrf54lm20pdk | ``nrf54lm20pdk/nrf54lm20a/cpuapp`` |
+
 .. nrf54lm20dk_nrf54lm20a_cpuapp
 
 | :ref:`nRF54LM20 DK <ug_nrf54l>` | PCA10184 | :zephyr:board:`nrf54lm20dk <nrf54lm20dk>` | ``nrf54lm20dk/nrf54lm20a/cpuapp`` |
