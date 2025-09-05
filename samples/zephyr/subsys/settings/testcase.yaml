@@ -3,8 +3,11 @@ sample:
 
 tests:
   nrf.extended.sample.subsys.settings:
-    depends_on:
-      - future_target
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    platform_allow:
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     tags:
       - settings
       - ci_samples_zephyr_subsys_settings
