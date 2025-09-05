@@ -896,10 +896,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
       set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
     endif()
   endif()
-
-  if(SB_CONFIG_NRF_PERIPHCONF_MIGRATE)
-    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/periphconf_migrate.cmake)
-  endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
 # Enable use of partition manager with sysbuild.
@@ -911,6 +907,7 @@ include(ncs_sysbuild_extensions)
 include(${CMAKE_CURRENT_LIST_DIR}/extensions.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/appcore.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/netcore.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/secondary.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/secureboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/mcuboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/hpf.cmake)
