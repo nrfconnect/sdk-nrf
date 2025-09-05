@@ -61,7 +61,6 @@ if WIFI
 
 config NRF_CLOUD_COAP_SEND_SSIDS
 	bool "Include access point SSIDs with scan results"
-	default n
 	help
 	  The nRF Cloud Wi-Fi location service does not require the human-
 	  readable SSIDs in order to determine the device location. It does

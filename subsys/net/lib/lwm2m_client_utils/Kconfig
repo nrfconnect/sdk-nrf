@@ -106,7 +106,6 @@ endif # LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
 
 config LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT
 	bool "Advanced Firmware Update object support (EXPERIMENTAL)"
-	default n
 	select EXPERIMENTAL
 	help
 	  This is a non standard Advanced Firmware Update object which is still
