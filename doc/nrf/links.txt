@@ -1307,7 +1307,7 @@
 .. _`CBOR Object Signing and Encryption (COSE)`: https://datatracker.ietf.org/doc/html/rfc8152
 .. _`CBOR Object Signing and Encryption (COSE): Structures and Process`: https://datatracker.ietf.org/doc/html/rfc9052
 
-.. _`SPAKE2+`: https://datatracker.ietf.org/doc/pdf/draft-bar-cfrg-spake2plus-02.pdf
+.. _`SPAKE2+`: https://datatracker.ietf.org/doc/rfc9383/
 
 .. _`DULT`: https://datatracker.ietf.org/doc/draft-detecting-unwanted-location-trackers/
 .. _`DULT status`: https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-status-of-this-memo
