@@ -66,7 +66,7 @@ To perform a FOTA update, complete the following steps:
    To create a binary file for an application update, build the application with the :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` option enabled.
    The :file:`build/<app_name>/zephyr/zephyr.signed.bin` file must be uploaded to the server.
 
-   To create binary files for a bootloader upgrade, make sure that the Kconfig options :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BUILD_S1_VARIANT` are enabled and build MCUboot as usual.
+   To create binary files for a bootloader upgrade, select the :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` Kconfig option in the sysbuild configuration and build MCUboot as usual.
    The build will create a binary file for each variant of the upgradable bootloader, one for each bootloader slot.
    See :ref:`upgradable_bootloader` for more information.
 
