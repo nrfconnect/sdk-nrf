@@ -113,7 +113,7 @@ There are three ways to define this storage location:
 
   Use this option if the flash memory for your application is too full to use a dedicated partition, and the application uses MCUboot for FOTA updates but not for MCUboot itself.
 
-  Do not use this option if you are using MCUboot as a second-stage upgradable bootloader and also have FOTA updates enabled for MCUboot itself, not just the application (using :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BUILD_S1_VARIANT`).
+  Do not use this option if you are using MCUboot as a second-stage upgradable bootloader and also have FOTA updates enabled for MCUboot itself, not just the application (using the :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` Kconfig option).
   Otherwise, the P-GPS library prevents the full completion of MCUboot update, and the first-stage immutable bootloader reverts MCUboot to its previous image.
 
 * To use an application-specific storage, enable the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_CUSTOM` option.

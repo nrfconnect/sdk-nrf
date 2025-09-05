@@ -567,7 +567,7 @@ static int setup_cloud(void)
 	 * the notification.
 	 *
 	 * If that is a serious concern, use SYS_INIT with priority 0 (less than
-	 * CONFIG_NET_CONNECTION_MANAGER_PRIORITY) to register this hook before conn_mgr
+	 * CONFIG_NET_CONNECTION_MANAGER_MONITOR_PRIORITY) to register this hook before conn_mgr
 	 * initializes.
 	 *
 	 * In reality, connectivity layers such as LTE take some time to go online, so registering
