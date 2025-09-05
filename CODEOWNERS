@@ -630,7 +630,7 @@
 /samples/debug/ppi_trace/*.rst            @nrfconnect/ncs-doc-leads
 /samples/dect/dect_phy/dect_shell/*.rst   @nrfconnect/ncs-iot-positioning-doc
 /samples/dect/dect_phy/hello_dect/*.rst   @nrfconnect/ncs-modem-doc
-/samples/dfu/dfu_target/*.rst        @nrfconnect/ncs-charon-doc
+/samples/dfu/dfu_target/*.rst             @nrfconnect/ncs-charon-doc
 /samples/dfu/dfu_multi_image/*.rst        @nrfconnect/ncs-charon-doc
 /samples/esb/**/*.rst                     @nrfconnect/ncs-si-muffin-doc
 /samples/edge_impulse/**/*.rst            @nrfconnect/ncs-si-muffin-doc
@@ -784,7 +784,7 @@
 /subsys/debug/                            @nordic-krch
 /subsys/debug/coredump/                   @nrfconnect/ncs-protocols-serialization
 /subsys/dfu/                              @nrfconnect/ncs-pluto
-/subsys/dfu/dfu_multi_image/              @Damian-Nordic
+/subsys/dfu/dfu_multi_image/              @Damian-Nordic @nrfconnect/ncs-charon
 /subsys/dm/                               @nrfconnect/ncs-si-muffin
 /subsys/dult/                             @nrfconnect/ncs-si-bluebagel
 /subsys/emds/                             @balaklaka @nrfconnect/ncs-paladin

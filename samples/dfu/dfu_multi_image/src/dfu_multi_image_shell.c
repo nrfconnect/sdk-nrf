@@ -121,6 +121,26 @@ static int cmd_dfu_multi_image_schedule_update(const struct shell *shell, size_t
 	return 0;
 }
 
+static int cmd_dfu_multi_image_reset(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret = 0;
+
+	ret = dfu_multi_image_reset();
+	if (ret < 0) {
+		shell_error(shell, "DFU multi image reset failed: %d", ret);
+		return ret;
+	}
+
+	ret = dfu_multi_image_sample_lib_prepare();
+
+	if (ret < 0) {
+		shell_error(shell, "Failed to prepare dfu_multi_image library: %d", ret);
+		return ret;
+	}
+
+	return 0;
+}
+
 static int cmd_dfu_multi_image_full_update(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
@@ -177,6 +197,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(dfu_multi_image_cmds,
 	SHELL_CMD(done, NULL, "Done writing data", cmd_dfu_multi_image_done),
 	SHELL_CMD(schedule_update, NULL, "Schedule update for the images in the uploaded package.",
 		  cmd_dfu_multi_image_schedule_update),
+	SHELL_CMD(reset, NULL, "Reset the dfu_multi_image state as well as all the underlying "
+			     "dfu_target states", cmd_dfu_multi_image_reset),
 	SHELL_CMD(full_update, NULL,
 			  "Perform all the steps to fully update the firmware from the NVM buffer",
 			  cmd_dfu_multi_image_full_update),

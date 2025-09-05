@@ -18,3 +18,14 @@ tests:
       - ci_samples_dfu
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
+  sample.dfu.dfu_multi_image.save_progress:
+    extra_configs:
+      - CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS=y
+      - CONFIG_DFU_MULTI_IMAGE_SAVE_PROGRESS=y
+      - CONFIG_SETTINGS=y
+      - CONFIG_NVS=y
+    tags:
+      - dfu_multi_image
+      - ci_samples_dfu
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
