@@ -105,6 +105,26 @@ ZMS settings backend
    To migrate from the legacy backend to the new backend remove the Kconfig options :kconfig:option:`CONFIG_SETTINGS_ZMS_NAME_CACHE`
    and :kconfig:option:`CONFIG_SETTINGS_ZMS_NAME_CACHE_SIZE` from your conf files.
 
+
+CRACEN initialization
+---------------------
+
+.. toggle::
+
+   In the |NCS| versions 2.8.0 and 2.9.0, CRACEN initialization needed to be explicitly configured by the user.
+   This was typically done by adding the :kconfig:option:`CONFIG_CRACEN_LOAD_MICROCODE` Kconfig option to the MCUboot configuration.
+   This option specified when CRACEN should be initialized.
+   However, with the transition to |NCS| 3.0.0, CRACEN initialization has been automated.
+   The new build configuration option (:kconfig:option:`SB_CONFIG_CRACEN_MICROCODE_LOAD_ONCE`) now controls this process at the sysbuild level.
+   When enabled, the build system automatically determines which image should handle the initialization of CRACEN.
+
+   The default behavior for CRACEN initialization has changed in |NCS| 3.0.0.
+   Unlike in the |NCS| versions 2.8.0 and 2.9.0 where CRACEN initialization is disabled by default in the MCUboot configuration, CRACEN is initialized by the earliest bootloader by default in the |NCS| 3.0.0.
+
+   This change can lead to scenarios where CRACEN might be initialized twice or not initialized at all when migrating from the |NCS| v2.9.0 to v3.0.0.
+   You must analyze which image is responsible for initializing CRACEN before and after the firmware update to ensure correct operation.
+   Make sure to adjust your bootloader or application upgrade path accordingly to avoid any issues related to CRACEN initialization.
+
 nRF54H20
 ========
 
