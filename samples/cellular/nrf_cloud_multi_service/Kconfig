@@ -118,7 +118,6 @@ config LOCATION_TRACKING_CELLULAR
 
 config LOCATION_TRACKING_WIFI
 	bool "Use Wi-Fi method for location tracking"
-	default n
 	depends on LOCATION_METHOD_WIFI
 	help
 	  Requires the use of an nRF7002 companion chip.
