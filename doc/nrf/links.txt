@@ -715,9 +715,10 @@
 .. _`Direct Test Mode app`: https://docs.nordicsemi.com/bundle/nrf-connect-direct-test-mode/page/index.html
 
 .. _`Programmer app`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/index.html
-.. _`Programming the nRF52840 Dongle`:
+.. _`Programming the nRF52840 Dongle`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_nrf52840_dongle.html
 .. _`Programming a Development Kit`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_dk.html
-.. _`Programming Nordic Thingy53`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_dk.html#programming-nordic-thingy53
+.. _`Programming Nordic Thingy53`:
+.. _`Programming Nordic Thingy prototyping platforms`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_thingy.html
 
 .. _`Serial Terminal app`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/index.html
 .. _`Connecting using the Serial Terminal app`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/connecting.html
