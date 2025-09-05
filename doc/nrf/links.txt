@@ -236,6 +236,7 @@
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/
 
+.. _`SPAKE2+`: https://datatracker.ietf.org/doc/rfc9383/
 .. _`SPAKE2+ Python Tool page`: https://project-chip.github.io/connectedhomeip-doc/scripts/tools/spake2p/README.html
 
 .. _`Azure SDK for Embedded C`: https://azure.github.io/azure-sdk-for-c/
