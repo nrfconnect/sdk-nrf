@@ -21,6 +21,7 @@ The following table lists variants and extensions available out of the box for e
       - Thermostat
       - Smoke CO alarm
       - Temperature sensor
+      - Contact sensor
     * - FEM support
       - ✔
       - ✔
@@ -30,7 +31,9 @@ The following table lists variants and extensions available out of the box for e
       -
       -
       -
+      -
     * - DFU support
+      - ✔
       - ✔
       - ✔
       - ✔
@@ -48,6 +51,7 @@ The following table lists variants and extensions available out of the box for e
       - ✔
       - ✔
       - ✔
+      - ✔
     * - :ref:`Thread role <thread_ot_device_types>`
       - Router
       - SED
@@ -55,6 +59,7 @@ The following table lists variants and extensions available out of the box for e
       - MED
       - SSED
       - MED
+      - SED
       - SED
       - SED
     * - :ref:`ICD mode <ug_matter_device_low_power_icd>`
@@ -66,6 +71,7 @@ The following table lists variants and extensions available out of the box for e
       - Not supported
       - LIT
       - LIT
+      - LIT
     * - Wi-Fi® support
       - ✔
       - ✔
@@ -75,10 +81,12 @@ The following table lists variants and extensions available out of the box for e
       - ✔
       -
       -
+      -
     * - Thread and Wi-Fi switching
       -
       -
       - ✔
+      -
       -
       -
       -
@@ -91,6 +99,7 @@ The following table lists variants and extensions available out of the box for e
       -
       - ✔
       -
+      - ✔
       - ✔
       - ✔
 
