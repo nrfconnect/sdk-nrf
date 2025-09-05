@@ -7,11 +7,11 @@
 config TFM_BOARD
 	string
 	# Redefinition of TFM_BOARD to use out-of-tree boards.
-	default "${ZEPHYR_NRF_MODULE_DIR}/modules/trusted-firmware-m/tfm_boards/nrf9160" if SOC_NRF9160
-	default "${ZEPHYR_NRF_MODULE_DIR}/modules/trusted-firmware-m/tfm_boards/nrf9120" if SOC_NRF9120
-	default "${ZEPHYR_NRF_MODULE_DIR}/modules/trusted-firmware-m/tfm_boards/nrf5340_cpuapp" if SOC_NRF5340_CPUAPP
-	default "${ZEPHYR_NRF_MODULE_DIR}/modules/trusted-firmware-m/tfm_boards/nrf54l15_cpuapp" if SOC_NRF54L15_CPUAPP
-	default "${ZEPHYR_NRF_MODULE_DIR}/modules/trusted-firmware-m/tfm_boards/nrf54l10_cpuapp" if SOC_NRF54L10_CPUAPP
+	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf9160" if SOC_NRF9160
+	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf9120" if SOC_NRF9120
+	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf5340_cpuapp" if SOC_NRF5340_CPUAPP
+	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf54l15_cpuapp" if SOC_NRF54L15_CPUAPP
+	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf54l10_cpuapp" if SOC_NRF54L10_CPUAPP
 	depends on TRUSTED_EXECUTION_NONSECURE
 
 if BUILD_WITH_TFM
