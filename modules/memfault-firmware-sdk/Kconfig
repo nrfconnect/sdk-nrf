@@ -144,9 +144,7 @@ config MEMFAULT_NCS_STACK_METRICS
 	default y
 	help
 	  Collect metrics for unused stack space for selected stacks.
-	  Currently the following stacks' unused space is monitored:
-		- connection_poll_thread, used by the cloud libraries for
-		  nRF Cloud, AWS IoT and Azure IoT Hub
+	  Currently the connection_poll_thread, BT RX, and BT TX threads are supported.
 
 config MEMFAULT_NCS_LTE_METRICS
 	bool "Collect LTE metrics"
@@ -252,11 +250,6 @@ config MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
 	depends on FLASH
 	help
 	  Use internal flash to store coredump data
-
-config MEMFAULT_CDR_ENABLE
-	bool "Custom Data Recording"
-	select MEMFAULT_PLATFORM_EXTRA_CONFIG_FILE
-	default n
 
 if MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
 config MEMFAULT_NCS_FLASH_REGION_SIZE
