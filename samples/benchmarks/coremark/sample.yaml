@@ -9,25 +9,27 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow:
-      - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -36,25 +38,27 @@ tests:
     sysbuild: true
     build_only: false
     platform_allow:
-      - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -71,25 +75,27 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow:
-      - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -99,25 +105,27 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow:
-      - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -127,25 +135,27 @@ tests:
     sysbuild: true
     build_only: true
     platform_allow:
-      - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     tags:
       - ci_build
       - sysbuild
