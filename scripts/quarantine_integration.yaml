@@ -585,40 +585,43 @@
 - scenarios:
     - sample.benchmark.coremark.heap_memory
   platforms:
-    - nrf52dk/nrf52832
     - nrf52833dk/nrf52833
+    - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
     - nrf54l15dk/nrf54l05/cpuapp
     - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54lm20dk/nrf54lm20a/cpuapp
-    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
     - sample.benchmark.coremark.static_memory
   platforms:
-    - nrf52dk/nrf52832
     - nrf52833dk/nrf52833
+    - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
     - nrf54l15dk/nrf54l05/cpuapp
     - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54lm20dk/nrf54lm20a/cpuapp
-    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
     - sample.benchmark.coremark.multiple_threads
   platforms:
-    - nrf52dk/nrf52832
     - nrf52833dk/nrf52833
+    - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
     - nrf54l15dk/nrf54l05/cpuapp
     - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54lm20dk/nrf54lm20a/cpuapp
-    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
