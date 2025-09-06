@@ -34,6 +34,19 @@
 /** @brief Magic number to signal that PRNG context is initialized */
 #define CRACEN_PRNG_INITIALIZED (0xA5B4A5B4)
 
+/* IAR Doesn't support aligned stack variables */
+#define ALIGN_UP(value, alignment) \
+  (((value) + (alignment) - 1) & ~((alignment) - 1))
+
+#ifdef __IAR_SYSTEMS_ICC__
+#define ALIGN_ON_STACK(type, var, size, alignment)                    \
+  type var##base[(size) + ((alignment)/sizeof(type))]; \
+  type * var = (type *)ALIGN_UP((intptr_t)var##base, alignment)
+#else
+#define ALIGN_ON_STACK(type, var, size, alignment)                    \
+  type var[size] __attribute__((aligned(alignment)));
+#endif
+
 /*
  * This driver uses a global context and discards the context passed from the user. We do that
  * because we are not aware of a requirement for multiple PRNG contexts from the users of the
@@ -109,10 +122,11 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 {
 	psa_status_t status = SX_OK;
 
-	char temp[CRACEN_PRNG_ENTROPY_SIZE + CRACEN_PRNG_NONCE_SIZE] __aligned(
-		CONFIG_DCACHE_LINE_SIZE);
+	const size_t temp_sizeof = CRACEN_PRNG_ENTROPY_SIZE + CRACEN_PRNG_NONCE_SIZE;
+	ALIGN_ON_STACK(char, temp, temp_sizeof, CONFIG_DCACHE_LINE_SIZE);
+
 	size_t temp_length = 0;
-	_Static_assert(sizeof(temp) % SX_BLKCIPHER_AES_BLK_SZ == 0, "");
+	_Static_assert(temp_sizeof % SX_BLKCIPHER_AES_BLK_SZ == 0, "");
 
 	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
 
@@ -120,7 +134,7 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 	psa_set_key_bits(&attr, PSA_BYTES_TO_BITS(sizeof(prng.key)));
 	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_ENCRYPT);
 
-	while (temp_length < sizeof(temp)) {
+	while (temp_length < temp_sizeof) {
 		cracen_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
 
 		status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V, sizeof(prng.V),
@@ -134,7 +148,7 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 	}
 
 	if (data) {
-		cracen_xorbytes(temp, data, sizeof(temp));
+		cracen_xorbytes(temp, data, temp_sizeof);
 	}
 
 	memcpy(prng.key, temp, sizeof(prng.key));
@@ -252,11 +266,11 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 
 	while (len_left > 0) {
 		size_t cur_len = MIN(len_left, SX_BLKCIPHER_AES_BLK_SZ);
-		char temp[SX_BLKCIPHER_AES_BLK_SZ] __aligned(CONFIG_DCACHE_LINE_SIZE);
+		ALIGN_ON_STACK(char, temp, SX_BLKCIPHER_AES_BLK_SZ, CONFIG_DCACHE_LINE_SIZE);
 
 		cracen_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
 		status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V, sizeof(prng.V),
-						 temp, sizeof(temp));
+						 temp, SX_BLKCIPHER_AES_BLK_SZ);
 
 		if (status != PSA_SUCCESS) {
 			nrf_security_mutex_unlock(cracen_prng_trng_mutex);
