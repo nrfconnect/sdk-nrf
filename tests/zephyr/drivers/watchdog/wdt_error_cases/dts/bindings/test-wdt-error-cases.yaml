@@ -1,0 +1,23 @@
+description: |
+    This binding provides resources required to build and run the
+    tests/drivers/watchdog/wdt_error_cases test in Zephyr.
+
+compatible: "test-wdt-error_cases"
+
+properties:
+  opt-pause-in-sleep:
+    type: boolean
+    description: |
+      If true, the watchdog timer will be paused when the CPU is in sleep mode.
+      This is useful to prevent the watchdog from triggering during low-power
+      states.
+  opt-pause-halted-by-dbg:
+    type: boolean
+    description: |
+      If true, the watchdog timer will be paused when the CPU is halted by a
+      debugger. This allows the watchdog to be used during debugging without
+      triggering a reset.
+  test-wdt-max-window:
+    type: int
+    description: |
+      The maximum window size for the watchdog timer.
