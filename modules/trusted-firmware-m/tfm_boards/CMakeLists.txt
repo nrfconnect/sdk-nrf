@@ -148,6 +148,10 @@ if (CONFIG_NFCT_PINS_AS_GPIOS)
   target_compile_definitions(platform_s PUBLIC CONFIG_NFCT_PINS_AS_GPIOS)
 endif()
 
+if (NRF_CONFIG_NFCT_PINS_AS_GPIOS)
+  target_compile_definitions(platform_s PUBLIC NRF_CONFIG_NFCT_PINS_AS_GPIOS)
+endif()
+
 if (TFM_CPU_FREQ_MHZ)
   target_compile_definitions(platform_s PUBLIC NRF_CONFIG_CPU_FREQ_MHZ=${TFM_CPU_FREQ_MHZ})
 endif()
