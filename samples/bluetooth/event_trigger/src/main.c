@@ -18,6 +18,13 @@
 #include <bluetooth/scan.h>
 #include <bluetooth/hci_vs_sdc.h>
 
+#ifdef CONFIG_SOC_COMPATIBLE_NRF54LX
+#include <nrfx_gpiote.h>
+#include <helpers/nrfx_gppi.h>
+#include <nrfx_dppi.h>
+#include <zephyr/drivers/gpio.h>
+#endif
+
 #include <hal/nrf_egu.h>
 
 #define EGU_NODE DT_ALIAS(egu)
@@ -29,12 +36,32 @@
 
 #define ADVERTISING_UUID128 BT_UUID_128_ENCODE(0x038a803f, 0xf6b3, 0x420b, 0xa95a, 0x10cc7b32b6db)
 
+#ifdef CONFIG_SOC_COMPATIBLE_NRF54LX
+#define EGU_TRIGGER_GPIO_PIN (43) /* PORT1 pin 11 */
+#endif
+
 static volatile uint8_t timestamp_log_index = NUM_TRIGGERS;
 static uint32_t timestamp_log[NUM_TRIGGERS];
 static struct bt_conn *active_conn;
 static volatile bool connection_established;
 static struct k_work work;
 static void work_handler(struct k_work *w);
+
+#ifdef CONFIG_SOC_COMPATIBLE_NRF54LX
+const nrfx_gpiote_t gpiote = NRFX_GPIOTE_INSTANCE(20);
+const nrfx_dppi_t dppi_radio_domain = NRFX_DPPI_INSTANCE(10);
+const nrfx_dppi_t dppi_gpio_domain = NRFX_DPPI_INSTANCE(20);
+static uint8_t gppi_chan_egu_event;
+static uint8_t dppi_chan_egu_event;
+static uint8_t dppi_chan_gpio_trigger;
+#endif
+
+static struct {
+	bool setup;
+	bool active;
+	uint16_t conn_evt_counter_start;
+	uint16_t period_in_events;
+} m_trigger_params;
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -45,13 +72,31 @@ static const struct bt_data sd[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1),
 };
 
+static int setup_qos_conn_event(void);
+
 static void egu_handler(const void *context)
 {
 	nrf_egu_event_clear(NRF_EGU, NRF_EGU_EVENT_TRIGGERED0);
 
-	if (timestamp_log_index < NUM_TRIGGERS) {
+	if (m_trigger_params.active && timestamp_log_index < NUM_TRIGGERS) {
+		/* GPIO toggling occurs every m_trigger_params.period_in_events.
+		 * EGU ISR is entered every event.
+		 * As a simple approach, non-relevant EGU ISRs are just ignored.
+		 */
 		k_work_submit(&work);
 	}
+
+#ifdef CONFIG_SOC_COMPATIBLE_NRF54LX
+	/* Instead of disabling/enabling the PPI channel it's of course also possible to
+	 * just toggle the GPIO here, since this handler executes while the radio is
+	 * transceiving.
+	 *
+	 * In a single-link scenario it's possible to keep track of events by implementing
+	 * a simple counter here as well
+	 */
+	__ASSERT_NO_MSG(nrfx_dppi_channel_disable(&dppi_gpio_domain, dppi_chan_gpio_trigger)
+		== NRFX_SUCCESS);
+#endif
 }
 
 static void work_handler(struct k_work *w)
@@ -60,7 +105,8 @@ static void work_handler(struct k_work *w)
 	timestamp_log_index++;
 }
 
-static int setup_connection_event_trigger(struct bt_conn *conn, bool enable)
+static int setup_connection_event_trigger(struct bt_conn *conn,
+	bool enable, uint16_t conn_evt_counter_start, uint16_t period_in_events)
 {
 	int err;
 	sdc_hci_cmd_vs_set_event_start_task_t cmd_params;
@@ -85,10 +131,87 @@ static int setup_connection_event_trigger(struct bt_conn *conn, bool enable)
 		IRQ_CONNECT(DT_IRQN(EGU_NODE), 5, egu_handler, 0, 0);
 		nrf_egu_int_enable(NRF_EGU, NRF_EGU_INT_TRIGGERED0);
 		NVIC_EnableIRQ(DT_IRQN(EGU_NODE));
+#ifdef CONFIG_SOC_COMPATIBLE_NRF54LX
+		if (nrfx_gppi_channel_alloc(&gppi_chan_egu_event) !=
+		    NRFX_SUCCESS) {
+			printk("Failed allocating gppi_chan_egu_event\n");
+			return -ENOMEM;
+		}
+
+		if (nrfx_dppi_channel_alloc(&dppi_radio_domain, &dppi_chan_egu_event) !=
+		    NRFX_SUCCESS) {
+			printk("Failed allocating dppi_chan_egu_event\n");
+			return -ENOMEM;
+		}
+
+		if (nrfx_dppi_channel_alloc(&dppi_gpio_domain, &dppi_chan_gpio_trigger) !=
+		    NRFX_SUCCESS) {
+			printk("Failed allocating dppi_chan_gpio_trigger\n");
+			return -ENOMEM;
+		}
+
+		if (nrfx_gppi_edge_connection_setup(gppi_chan_egu_event,
+						    &dppi_radio_domain,
+						    dppi_chan_egu_event,
+						    &dppi_gpio_domain,
+						    dppi_chan_gpio_trigger) != NRFX_SUCCESS) {
+			printk("Failed edge setup chan ready\n");
+			return -ENOMEM;
+		}
+
+		nrf_egu_publish_set(NRF_EGU, NRF_EGU_EVENT_TRIGGERED0, dppi_chan_egu_event);
+
+		uint8_t egu_triggered_gpiote_channel;
+
+		const nrfx_gpiote_output_config_t gpiote_output_cfg =
+			NRFX_GPIOTE_DEFAULT_OUTPUT_CONFIG;
+
+		if (nrfx_gpiote_channel_alloc(&gpiote, &egu_triggered_gpiote_channel) !=
+		    NRFX_SUCCESS) {
+			printk("Failed allocating GPIOTE chan\n");
+			return -ENOMEM;
+		}
+
+		printk("Allocated GPIOTE channel %u\n", egu_triggered_gpiote_channel);
+
+		const nrfx_gpiote_task_config_t gpiote_task_cfg = {
+			.task_ch = egu_triggered_gpiote_channel,
+			.polarity = NRF_GPIOTE_POLARITY_TOGGLE,
+			.init_val = NRF_GPIOTE_INITIAL_VALUE_LOW,
+		};
+
+		if (nrfx_gpiote_output_configure(&gpiote,
+						 EGU_TRIGGER_GPIO_PIN,
+						 &gpiote_output_cfg,
+						 &gpiote_task_cfg)
+		    != NRFX_SUCCESS) {
+			printk("Failed configuring GPIOTE chan\n");
+			return -ENOMEM;
+		}
+
+		nrf_gpiote_subscribe_set(
+			gpiote.p_reg,
+			nrfx_gpiote_out_task_address_get(
+				&gpiote, EGU_TRIGGER_GPIO_PIN),
+			dppi_chan_gpio_trigger);
+
+		if (nrfx_dppi_channel_enable(&dppi_radio_domain, dppi_chan_egu_event)
+			!= NRFX_SUCCESS) {
+			printk("Failed chan enable dppi_chan_egu_event\n");
+			return -ENOMEM;
+		}
+
+		nrfx_gppi_channels_enable(NRFX_BIT(gppi_chan_egu_event));
+		nrfx_gpiote_out_task_enable(&gpiote, EGU_TRIGGER_GPIO_PIN);
+#endif
+		setup_qos_conn_event();
 	} else {
 		cmd_params.task_address = 0;
 		nrf_egu_int_disable(NRF_EGU, NRF_EGU_INT_TRIGGERED0);
 		NVIC_DisableIRQ(DT_IRQN(EGU_NODE));
+#ifdef CONFIG_SOC_COMPATIBLE_NRF54LX
+		nrfx_gpiote_out_task_disable(&gpiote, EGU_TRIGGER_GPIO_PIN);
+#endif
 	}
 
 	err = hci_vs_sdc_set_event_start_task(&cmd_params);
@@ -99,6 +222,73 @@ static int setup_connection_event_trigger(struct bt_conn *conn, bool enable)
 	}
 
 	printk("Successfully configured event trigger\n");
+
+	m_trigger_params.conn_evt_counter_start = conn_evt_counter_start;
+	m_trigger_params.period_in_events = period_in_events;
+	m_trigger_params.setup = enable;
+
+	return 0;
+}
+
+static bool on_vs_evt(struct net_buf_simple *buf)
+{
+	uint8_t code;
+	sdc_hci_subevent_vs_qos_conn_event_report_t *evt;
+
+	code = net_buf_simple_pull_u8(buf);
+	if (code != SDC_HCI_SUBEVENT_VS_QOS_CONN_EVENT_REPORT) {
+		return false;
+	}
+
+	evt = (void *)buf->data;
+
+	if (timestamp_log_index < NUM_TRIGGERS && m_trigger_params.setup) {
+
+		const uint16_t next_event_counter = evt->event_counter + 1;
+
+		if ((int16_t)(next_event_counter - m_trigger_params.conn_evt_counter_start) >= 0) {
+			m_trigger_params.active = true;
+		}
+
+#ifdef CONFIG_SOC_COMPATIBLE_NRF54LX
+		const uint16_t events_since_start = next_event_counter -
+			m_trigger_params.conn_evt_counter_start;
+
+		if (m_trigger_params.active &&
+			((events_since_start % m_trigger_params.period_in_events) == 0)) {
+			if (nrfx_dppi_channel_enable(&dppi_gpio_domain, dppi_chan_gpio_trigger)
+				!= NRFX_SUCCESS) {
+				printk("Failed chan enable dppi_chan_gpio_trigger\n");
+				return -ENOMEM;
+			}
+		}
+#endif
+	}
+
+	return true;
+}
+
+static int setup_qos_conn_event(void)
+{
+	int err;
+	sdc_hci_cmd_vs_qos_conn_event_report_enable_t cmd_enable;
+
+	err = bt_hci_register_vnd_evt_cb(on_vs_evt);
+	if (err) {
+		printk("Failed registering vendor specific callback (err %d)\n",
+		       err);
+		return err;
+	}
+
+	cmd_enable.enable = true;
+
+	err = hci_vs_sdc_qos_conn_event_report_enable(&cmd_enable);
+	if (err) {
+		printk("Could not enable QoS reports (err %d)\n", err);
+		return err;
+	}
+
+	printk("Successfully enabled QoS reports\n");
 
 	return 0;
 }
@@ -304,7 +494,7 @@ int main(void)
 
 		change_connection_interval(active_conn, INTERVAL_10MS);
 
-		err = setup_connection_event_trigger(active_conn, true);
+		err = setup_connection_event_trigger(active_conn, true, 150, 2);
 
 		if (err) {
 			printk("Could not set up event trigger. (err %d)\n", err);
@@ -315,7 +505,7 @@ int main(void)
 			;
 		}
 
-		err = setup_connection_event_trigger(active_conn, false);
+		err = setup_connection_event_trigger(active_conn, false, 0, 0);
 
 		if (err) {
 			printk("Could not disable event trigger. (err %d)\n", err);
