@@ -1170,7 +1170,7 @@ You can provision and onboard your device in one of the following ways:
       .. parsed-literal::
          :class: highlight
 
-         claim_and_provision_device --api_key *your_api_key* --provisioning-tags "nrf-cloud-onboarding" --cmd-type at_shell --unclaim
+         claim_and_provision_device --api-key *your_api_key* --provisioning-tags "nrf-cloud-onboarding" --cmd-type at_shell --unclaim
 
       Where *your_api_key* is the API key you obtained in **Step 2**.
 
