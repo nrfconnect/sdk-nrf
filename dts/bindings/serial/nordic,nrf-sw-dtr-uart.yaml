@@ -1,0 +1,33 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+    DTR/RI UART
+
+compatible: "nordic,nrf-sw-dtr-uart"
+
+include: uart-device.yaml
+
+properties:
+  dte-role:
+    type: boolean
+    description: Data Terminal Equipment role
+
+  dtr-pin:
+    type: int
+    description: Data Terminal Ready pin
+    required: true
+
+  dtr-pin-toggle:
+    type: boolean
+    description: DTR pin for DCE uses toggle on high-to-low, instead of level trigger
+
+  dtr-pin-debounce:
+    type: int
+    description: DTR pin debounce time in milliseconds
+    default: 0
+
+  ri-pin:
+    type: int
+    description: Ring Indicator pin
+    required: true
