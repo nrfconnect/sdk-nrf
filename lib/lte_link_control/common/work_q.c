@@ -15,7 +15,7 @@ static struct k_work_q work_q;
 void work_q_start(void)
 {
 	struct k_work_queue_config cfg = {
-		.name = "work_q",
+		.name = "lte_lc_work_q",
 	};
 
 	k_work_queue_start(&work_q, work_q_stack, K_THREAD_STACK_SIZEOF(work_q_stack),
