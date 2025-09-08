@@ -36,10 +36,6 @@
 		led3 = &led3;
 	};
 
-	chosen {
-		zephyr,console = &uart136;
-	};
-
 	cpurad_cpusys_errata216_mboxes: errata216_mboxes {
 		compatible = "zephyr,mbox-ipm";
 		status = "okay";
@@ -59,15 +55,6 @@
 &gpiote130 {
 	owned-channels = <0 1 2 3 4 5 6 7>;
 	status = "okay";
-};
-
-&uart136 {
-	status = "okay";
-	memory-regions = <&cpurad_dma_region>;
-};
-
-&uart135 {
-	status = "disabled";
 };
 
 &dppic020 {
