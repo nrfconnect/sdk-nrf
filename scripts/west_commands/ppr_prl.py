@@ -154,8 +154,8 @@ class PPR_PRL(WestCommand):
         )
         readout_parser.add_argument("-o", "--output", metavar="PATH", help="Path to the output file", required=True)
         readout_parser.add_argument("--dev-id", help="Device serial number")
-        readout_parser.add_argument("--address", help="Starting address of the log buffer to dump", default="0x2fc007e0")
-        readout_parser.add_argument("--entries-count", help="Number of log entries", type=int, default=1024)
+        readout_parser.add_argument("--address", help="Starting address of the log buffer to dump", default="0x2fc00fe0")
+        readout_parser.add_argument("--entries-count", help="Number of log entries", type=int, default=2048)
 
         return parser
 
@@ -164,12 +164,12 @@ class PPR_PRL(WestCommand):
             self._flash(args)
         if args.command == "readout":
             self._readout(args)
-                
+
 
     def _flash(self, args: argparse.Namespace) -> None:
         if not args.image:
             nrf_path = self.manifest.topdir + "/nrf"
-            image_path = "{}/snippets/haltium_ppr_power_logger/ppr_hex/firmware_nvm_v2.hex".format(nrf_path)
+            image_path = "{}/snippets/haltium_ppr_power_logger/ppr_hex/pcrmlog_nvm_v1.hex".format(nrf_path)
         else:
             image_path = args.image
 
