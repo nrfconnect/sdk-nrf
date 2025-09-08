@@ -36,7 +36,7 @@ Depending on your development environment, you can use one of the following opti
    .. group-tab:: nRF Connect for VS Code
 
       Use the extension's `Memory report`_ feature, which shows the size and percentage of memory that each symbol uses on your device for RAM, ROM, and partitions.
-      Click the :guilabel:`Memory report` button in the :guilabel:`Actions View` to generate the report.
+      Click the :guilabel:`Memory report` button in the `Actions View`_ to generate the report.
       The partition map is available in the :guilabel:`Partitions` tab.
 
       Alternatively, you can also use the `Memory Explorer <How to work with the Memory Explorer_>`_ feature of the extension's nRF Debug to check memory sections for the partitions.

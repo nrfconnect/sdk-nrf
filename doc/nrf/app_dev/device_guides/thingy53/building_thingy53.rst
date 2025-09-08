@@ -135,7 +135,7 @@ Complete the following steps to build and program using |nRFVSC|:
    #. Connect the external debug probe to the PC using a micro-USB cable.
    #. Make sure that the Thingy:53 and the external debug probe are powered on.
       (On the Thingy:53, move the power switch **SW1** to the **ON** position.)
-   #. Click :guilabel:`Flash` in the :guilabel:`Actions View`.
+   #. Click :guilabel:`Flash` in the `Actions View`_.
 
 .. _thingy53_build_pgm_command_line:
 

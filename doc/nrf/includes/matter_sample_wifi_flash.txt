@@ -15,7 +15,7 @@ For example, to program the sample and minimize the erase time, use the followin
    west flash --ext-erase-mode=ranges
 
 You can also observe a longer programming process when using the :guilabel:`Erase and Flash to Board` option in the |nRFVSC|.
-To speed up this process, you can use the :guilabel:`Flash` button instead of :guilabel:`Erase and Flash to Board` in the :guilabel:`Actions View`.
+To speed up this process, you can use the :guilabel:`Flash` button instead of :guilabel:`Erase and Flash to Board` in the `Actions View`_.
 
 To disable storing the Wi-Fi firmware patch in the external memory, complete the following steps:
 

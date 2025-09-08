@@ -11,7 +11,7 @@ Installing the |NCS|
 
 There are different ways to install the |NCS|, depending on your preferred development environment:
 
-* Using |VSC| and the :ref:`requirements_nrfvsc` (recommended)
+* Using |VSC| and :ref:`requirements_nrfvsc` (recommended)
 * Using command line and :ref:`requirements_nrf_util`
 
 Regardless of which way you choose, the following steps install the |NCS| source code and the |NCS| :term:`toolchain`.
@@ -75,127 +75,13 @@ Depending on your preferred development environment, install the following softw
 
 .. _gs_installing_toolchain:
 .. _gs_installing_tools:
-
-.. rst-class:: numbered-step
-
-Install the |NCS| toolchain
-***************************
-
-.. installncstoolchain-include-start
-
-The |NCS| :term:`toolchain` includes the Zephyr SDK and then adds tools and modules required to build |NCS| samples and applications on top of it.
-These include the :ref:`required SDK tools <requirements_toolchain_tools>`, the :ref:`Python dependencies <requirements_toolchain_python_deps>`, and the :ref:`GN tool <ug_matter_gs_tools_gn>` for creating :ref:`ug_matter` applications.
-
-.. note::
-    When you first install the |NCS|, it is recommended to install the latest released, stable versions of the SDK and the toolchain.
-
-Depending on your preferred development environment, complete the following steps:
-
-.. tabs::
-
-   .. group-tab:: nRF Connect for VS Code
-
-      You can install the toolchain together with or separately from the SDK code:
-
-      * When you install the toolchain together with the SDK code, you can download a pre-packaged bundle from the Nordic Semiconductor server that installs both the SDK and the toolchain.
-        Skip to :ref:`cloning_the_repositories` step now.
-      * When you install the toolchain separately from the SDK code, you can later install the SDK code from a GitHub tag.
-        To install the toolchain separately from the SDK code, complete the following steps:
-
-        1. Open the nRF Connect extension in |VSC| by clicking its icon in the :guilabel:`Activity Bar`.
-        #. In the extension's :guilabel:`Welcome View`, click on :guilabel:`Manage toolchains`.
-           The list of actions appears in the |VSC|'s quick pick.
-        #. Click :guilabel:`Install toolchain`.
-           The list of available stable toolchain versions appears in the |VSC|'s quick pick.
-        #. Select the toolchain version to install.
-           The toolchain version should match the |NCS| version you are going to work with.
-           |install_latest_version|
-
-           .. note::
-                If you have received a custom URL for installing the toolchain, you can provide it using the :guilabel:`Change Toolchain Index` button in the quick pick's header (wrench icon).
-                If you are working with a development tag, disable the filter in the quick pick's header to list all available toolchains.
-
-           The toolchain installation starts in the background, as can be seen in the notification that appears.
-
-   .. group-tab:: Command line
-
-      1. Open a terminal window.
-      #. Remove the lock on the nRF Util installation to be able to install other nRF Util commands.
-         See `Locking nRF Util home directory`_ in the tool documentation for more information.
-      #. Run the following command to install the nRF Util's ``sdk-manager`` command:
-
-         .. code-block:: console
-
-            nrfutil install sdk-manager
-
-      #. Run the following command to list the available installations:
-
-         .. code-block:: console
-
-            nrfutil sdk-manager search
-
-         The versions from this list correspond to the |NCS| versions and will be *version* in the following step.
-      #. Run the following command to install the toolchain version for the SDK version of your choice:
-
-         .. parsed-literal::
-            :class: highlight
-
-            nrfutil sdk-manager toolchain install --ncs-version *version*
-
-         For example:
-
-         .. parsed-literal::
-            :class: highlight
-
-            nrfutil sdk-manager toolchain install --ncs-version |release|
-
-         This example command installs the toolchain required for the |NCS| |release|.
-         |install_latest_version|
-
-      The ``sdk-manager`` command installs the toolchain by default at :file:`C:/ncs/toolchains` on Windows and at :file:`~/ncs/toolchains` on Linux.
-      These can be modified, as explained in the `command documentation <sdk-manager Configuration settings_>`_.
-      On macOS, :file:`/opt/nordic/ncs/toolchains` is used and no other location is allowed.
-
-      If you have received a custom URL for installing the toolchain, you can use the following commands to set it as default, replacing the respective parameters:
-
-      .. parsed-literal::
-         :class: highlight
-
-         nrfutil sdk-manager config toolchain-index add *index-name* *custom_toolchain_URL*
-         nrfutil sdk-manager config toolchain-index set *index-name*
-
-      If you have received a custom bundle ID for installing a specific toolchain version, you can use the following commands to provide it, replacing the respective parameter:
-
-      .. parsed-literal::
-         :class: highlight
-
-         nrfutil sdk-manager toolchain install --toolchain-bundle-id *custom_bundle_ID*
-
-      To read more about ``sdk-manager`` commands, use the ``nrfutil sdk-manager --help`` command, or see the `command documentation <sdk-manager command_>`_.
-
-With the default location to install the toolchain (:file:`C:/ncs/toolchains` on Windows, :file:`~/ncs/toolchains/` on Linux, and the non-modifiable :file:`/opt/nordic/ncs/toolchains/` on macOS), your directory structure now looks similar to this:
-
-.. code-block:: none
-
-   ncs
-   └─── toolchains
-      └─── <toolchain-installation>
-
-In this simplified structure preview, *<toolchain-installation>* corresponds to the version name you installed (most commonly, a SHA).
-
-You can check the versions of the required tools and Python dependencies on the :ref:`Requirements reference page <requirements_toolchain>`.
-
-.. installncstoolchain-include-end
-
 .. _cloning_the_repositories_win:
 .. _cloning_the_repositories:
 
 .. rst-class:: numbered-step
 
-Get the |NCS| code
-******************
-
-.. getncscode-include-start
+Install the |NCS| code and toolchain
+************************************
 
 Every |NCS| release consists of a combination of :ref:`ncs_git_intro` repositories at different versions and revisions, managed together by :ref:`ncs_west_intro`.
 The revision of each of those repositories is determined by the current revision of the main (or :ref:`manifest <zephyr:west-manifests>`) repository, `sdk-nrf`_.
@@ -217,46 +103,110 @@ Simply put, you can work with the following versions of the |NCS|:
      - Branch name (for example, ``main``)
      - `sdk-nrf`_ repository
 
+For each version of the |NCS|, Nordic Semiconductor provides a dedicated toolchain.
+The |NCS| :term:`toolchain` includes the Zephyr SDK and then adds tools and modules required to build |NCS| samples and applications on top of it.
+These include the :ref:`required SDK tools <requirements_toolchain_tools>`, the :ref:`Python dependencies <requirements_toolchain_python_deps>`, and the :ref:`GN tool <ug_matter_gs_tools_gn>` for creating :ref:`ug_matter` applications.
+You can check the versions of the required tools and Python dependencies on the :ref:`Requirements reference page <requirements_toolchain>`.
+
 .. note::
    Unless you are familiar with the :ref:`development process <dev-model>`, you should always work with a specific, stable release of the |NCS|.
 
 For more information about the repository and development model, see the :ref:`dm_code_base` page.
 
+When you install |NCS| for the first time, you have neither the SDK code nor the toolchain installed.
+Depending on your preferred development environment, complete the following steps:
+
 .. tabs::
 
    .. group-tab:: nRF Connect for VS Code
 
-      To clone the |NCS| code, complete the following steps:
-
       1. Open the nRF Connect extension in |VSC| by clicking its icon in the :guilabel:`Activity Bar`.
-      #. In the extension's :guilabel:`Welcome View`, click on :guilabel:`Manage SDKs`.
-         The list of actions appears in the |VSC|'s quick pick.
-      #. Click :guilabel:`Install SDK`.
+         The extension loads and the `Welcome View`_ appears with two buttons: :guilabel:`Install SDK` and :guilabel:`Install Toolchain`.
+      #. Click on :guilabel:`Install SDK`.
          The list of available SDK types appears.
-      #. Select the SDK type to install.
-         The list of available stable SDK versions for the selected SDK type appears in the |VSC|'s quick pick, grouped into two categories:
+      #. Select :guilabel:`nRF Connect SDK`.
+         The list of available stable versions for the |NCS| appears in the |VSC|'s quick pick, grouped into two categories:
 
-         * Pre-packaged SDKs & Toolchains - Available on the Nordic Semiconductor server.
-           The package downloads both the SDK and Toolchain, but skips the Toolchain if you have it already installed.
+         * :guilabel:`Pre-packaged SDKs & Toolchains` - Available on the Nordic Semiconductor server.
+           The package downloads both the SDK and toolchain, but skips the toolchain if you have it already installed.
            Available mostly for stable releases and some preview tags.
            Recommended for faster and more reliable download and installation.
-         * GitHub - Taken from the `nRF Connect by Nordic Semiconductor GitHub organization <nrfconnect GitHub organization_>`_.
-           Available for stable releases, but also preview tags and branches (after disabling the filter in the quick pick).
+         * :guilabel:`GitHub` - Taken from the `nRF Connect by Nordic Semiconductor GitHub organization <nrfconnect GitHub organization_>`_.
+           Available for stable releases, but also preview tags and branches.
 
-      #. Select the SDK version to install.
+      #. Select an |NCS| version to install from the :guilabel:`Pre-packaged SDKs & Toolchains` category.
          |install_latest_version|
 
-      The SDK installation starts and it can take several minutes.
+      The SDK and toolchain installation starts and it can take several minutes.
+      You can follow the progress in the notification that appears.
+
+      After the installation is complete, the extension's :guilabel:`Welcome View` is updated to feature :guilabel:`Manage toolchains` and :guilabel:`Manage SDKs` menus.
+      You can use these menus to install other versions of the |NCS| and toolchain, either together or separately.
+      See the `extension documentation <How to set up SDK and toolchain_>`_ for more information.
 
    .. group-tab:: Command line
 
-      To clone the repositories, complete the following steps:
+      1. Open a terminal window.
+      #. Remove the lock on the nRF Util installation to be able to install other nRF Util commands.
+         See `Locking nRF Util home directory`_ in the tool documentation for more information.
+      #. Run the following command to install the nRF Util's ``sdk-manager`` command:
 
-      1. On the command line, open the directory :file:`ncs`.
-         By default, this is one level up from the location where you installed the toolchain.
-         This directory will hold all |NCS| repositories.
+         .. code-block:: console
 
-      #. Start the toolchain environment for your operating system using the following command pattern, with ``--ncs-version`` corresponding to the toolchain version you have installed in the :ref:`previous step <gs_installing_tools>`:
+            nrfutil install sdk-manager
+
+      #. Run the following command to list the available installations:
+
+         .. code-block:: console
+
+            nrfutil sdk-manager search
+
+         The versions from this list correspond to the |NCS| versions and will be *version* in the following step.
+      #. Run the following command to install the SDK and the toolchain for the SDK version of your choice:
+
+         .. parsed-literal::
+            :class: highlight
+
+            nrfutil sdk-manager install *version*
+
+         For example:
+
+         .. parsed-literal::
+            :class: highlight
+
+            nrfutil sdk-manager install |release|
+
+         This example command installs both the SDK code and the toolchain for the |NCS| |release|.
+         |install_latest_version|
+
+         The ``sdk-manager`` command installs the SDK by default at :file:`C:/ncs/` on Windows and at :file:`~/ncs/` on Linux, and the toolchain in the :file:`toolchains` subdirectory.
+         The SDK installation location can be modified, as explained in the `command documentation <sdk-manager Configuration settings_>`_.
+         On macOS, :file:`/opt/nordic/ncs/` and :file:`/opt/nordic/ncs/toolchains` are used and no other locations are allowed.
+         The :file:`ncs` directory holds all |NCS| repositories.
+
+         If you have received a custom URL or a toolchain bundle ID for installing the toolchain, you can use dedicated commands to provide it.
+         Expand the section below to see the commands.
+
+         .. toggle::
+
+            If you have received a custom URL for installing the toolchain, you can use the following commands to set it as default, replacing the respective parameters:
+
+            .. parsed-literal::
+               :class: highlight
+
+               nrfutil sdk-manager config toolchain-index add *index-name* *custom_toolchain_URL*
+               nrfutil sdk-manager config toolchain-index set *index-name*
+
+            If you have received a custom bundle ID for installing a specific toolchain version, you can use the following commands to provide it, replacing the respective parameter:
+
+            .. parsed-literal::
+               :class: highlight
+
+               nrfutil sdk-manager toolchain install --toolchain-bundle-id *custom_bundle_ID*
+
+            To learn more about ``sdk-manager`` commands, use the ``nrfutil sdk-manager --help`` command, or see the `command documentation <sdk-manager command_>`_.
+
+      #. Start the toolchain environment for your operating system using the following command pattern, with ``--ncs-version`` corresponding to the |NCS| version you have installed:
 
          .. tabs::
 
@@ -381,9 +331,7 @@ For more information about the repository and development model, see the :ref:`d
 
             west zephyr-export
 
-..
-
-With the default location to install the toolchain (see the previous step) and the default location to install the SDK (:file:`C:/ncs` on Windows, :file:`~/ncs/` on Linux, and :file:`/opt/nordic/ncs/` on macOS), your directory structure now looks similar to this:
+With the default locations to install the SDK code (:file:`C:/ncs` on Windows, :file:`~/ncs/` on Linux, and :file:`/opt/nordic/ncs/` on macOS) and its toolchain (:file:`C:/ncs/toolchains` on Windows, :file:`~/ncs/toolchains/` on Linux, and the non-modifiable :file:`/opt/nordic/ncs/toolchains/` on macOS), your directory structure now looks similar to this:
 
 .. code-block:: none
 
@@ -399,11 +347,9 @@ With the default location to install the toolchain (see the previous step) and t
       ├─── zephyr
       └─── ...
 
-In this simplified structure preview, *<toolchain-installation>* corresponds to the toolchain version and *<west-workspace>* corresponds to the SDK version name.
+In this simplified structure preview, *<toolchain-installation>* corresponds to the toolchain version (most commonly, a SHA) and *<west-workspace>* corresponds to the SDK version name.
 There are also additional directories, and the structure might change over time, for example if you later :ref:`change the state of development to a different revision <updating_repos>`.
 The full set of repositories and directories is defined in the :ref:`manifest file <zephyr:west-manifest-files>` (`see the file in the repository <west manifest file_>`_).
-
-.. getncscode-include-end
 
 .. _build_environment_cli:
 
