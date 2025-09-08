@@ -805,7 +805,7 @@
 /subsys/net/lib/download_client*          @nrfconnect/ncs-modem
 /subsys/net/lib/downloader/               @nrfconnect/ncs-modem
 /subsys/net/lib/ftp_client/               @nrfconnect/ncs-iot-oulu
-/subsys/net/lib/hostap_crypto/            @krish2718 @jukkar @vivekuppunda
+/subsys/net/lib/hostap_crypto/            @krish2718 @jukkar
 /subsys/net/lib/icalendar_parser/         @lats1980
 /subsys/net/lib/lwm2m_client_utils/       @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu
 /subsys/net/lib/nrf70_fw_ext/             @krish2718 @sachinthegreen
