@@ -109,8 +109,6 @@ See how to build the :ref:`peripheral_lbs` sample with MCUboot in direct-xip mod
 
 .. note::
    When building the application with MCUboot in direct-XIP mode with revert mechanism support, the signed image intended for flashing is automatically marked as confirmed.
-   Without this configuration, the application will fail to boot.
-   It must, however, be disabled when building update images.
 
 Both the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP` and :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT` Kconfig options automatically build application update images for both slots.
 To read about the files that are built when the option is enabled, refer to the :ref:`app_build_mcuboot_output` page.
