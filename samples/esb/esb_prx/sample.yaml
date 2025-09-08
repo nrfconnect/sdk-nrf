@@ -32,29 +32,31 @@ tests:
   sample.esb.prx.build:
     sysbuild: true
     integration_platforms:
-      - nrf52dk/nrf52832
+      - nrf21540dk/nrf52840
       - nrf52833dk/nrf52833
       - nrf52840dk/nrf52840
       - nrf52dk/nrf52810
+      - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpunet
-      - nrf21540dk/nrf52840
       - nrf54h20dk/nrf54h20/cpurad
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     platform_allow:
-      - nrf52dk/nrf52832
+      - nrf21540dk/nrf52840
       - nrf52833dk/nrf52833
       - nrf52840dk/nrf52840
       - nrf52dk/nrf52810
+      - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpunet
-      - nrf21540dk/nrf52840
       - nrf54h20dk/nrf54h20/cpurad
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     tags:
       - esb
       - ci_build
