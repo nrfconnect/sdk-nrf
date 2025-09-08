@@ -526,6 +526,7 @@
 /samples/nrf5340/empty_app_core/          @nrfconnect/ncs-si-muffin
 /samples/nrf5340/extxip_smp_svr/          @nrfconnect/ncs-eris
 /samples/nrf54h20/empty_app_core/         @nrfconnect/ncs-aurora
+/samples/ironside_se/                     @nrfconnect/ncs-aurora
 /samples/nrf_compress/                    @nordicjm
 /samples/nrf_profiler/                    @nrfconnect/ncs-si-bluebagel
 /samples/nrf_rpc/protocols_serialization/ @nrfconnect/ncs-protocols-serialization
@@ -637,6 +638,7 @@
 /samples/event_manager_proxy/*.rst        @nrfconnect/ncs-si-muffin-doc
 /samples/gazell/**/*.rst                  @nrfconnect/ncs-si-muffin-doc
 /samples/hw_id/*.rst                      @nrfconnect/ncs-cia-doc
+/samples/ironside_se/**/*.rst             @nrfconnect/ncs-aurora-doc
 /samples/ipc/ipc_service/*.rst            @nrfconnect/ncs-si-muffin-doc
 /samples/keys/**/*.rst                    @nrfconnect/ncs-aegir-doc
 /samples/matter/**/*.rst                  @nrfconnect/ncs-matter-doc
