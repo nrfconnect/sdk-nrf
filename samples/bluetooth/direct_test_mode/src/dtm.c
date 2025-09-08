@@ -802,12 +802,6 @@ int clock_init(void)
 		}
 	} while (err == -EAGAIN);
 
-#if NRF54L_ERRATA_20_PRESENT
-	if (nrf54l_errata_20()) {
-		nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
-	}
-#endif /* NRF54L_ERRATA_20_PRESENT */
-
 	return 0;
 }
 
