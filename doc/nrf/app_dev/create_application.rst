@@ -149,9 +149,6 @@ Using |nRFVSC| is the recommended method.
 Creating application in |nRFVSC|
 ================================
 
-.. note::
-   If you prefer, you can `start VS Code walkthrough`_ and create applications and build configurations from there.
-
 Use the following steps depending on the application placement:
 
 .. tabs::
