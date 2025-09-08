@@ -1,0 +1,58 @@
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config SUPPORT_SECONDARY
+	bool
+	default y if SOC_NRF54H20_CPUAPP
+
+config SECONDARY_REMOTE_BOARD_TARGET_CPUCLUSTER
+	string
+	default "cpuapp" if SOC_NRF54H20_CPUAPP
+
+menu "Secondary core configuration"
+	depends on SUPPORT_SECONDARY
+
+config SUPPORT_SECONDARY_BOOT_GEN_UICR
+	bool
+	default y
+
+config NRF_DEFAULT_SECONDARY_BOOT
+	bool
+
+choice SECONDARY
+	prompt "Secondary image"
+	default SECONDARY_BOOT_GEN_UICR if NRF_DEFAULT_SECONDARY_BOOT && SECONDARY_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
+	depends on SUPPORT_SECONDARY
+
+config SECONDARY_NONE
+	bool "None"
+	help
+	  Do not include a secondary image in the build.
+
+config SECONDARY_BOOT_GEN_UICR
+	bool "Secondary Boot with UICR generation"
+	depends on SUPPORT_SECONDARY_BOOT_GEN_UICR
+	help
+	  Include secondary boot sample with UICR generation as the secondary image to use.
+	  This demonstrates secondary application boot with PERIPHCONF migration.
+
+endchoice
+
+if !SECONDARY_NONE
+
+config SECONDARY_IMAGE_NAME
+	string
+	default "secondary" if SECONDARY_BOOT_GEN_UICR
+	help
+	  Name of secondary image.
+
+config SECONDARY_IMAGE_PATH
+	string
+	default "${ZEPHYR_NRF_MODULE_DIR}/samples/ironside_se/secondary_boot_gen_uicr/secondary" if SECONDARY_BOOT_GEN_UICR
+	help
+	  Source directory of secondary image.
+
+endif # !SECONDARY_NONE
+
+endmenu
