@@ -510,7 +510,11 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-|no_changes_yet_note|
+* :ref:`hids_readme` library:
+
+  * Updated the report length of the HID boot mouse to ``3``.
+    The :c:func:`bt_hids_boot_mouse_inp_rep_send` function only allows to provide the state of the buttons and mouse movement (for both X and Y axes).
+    No additional data can be provided by the application.
 
 Common Application Framework
 ----------------------------

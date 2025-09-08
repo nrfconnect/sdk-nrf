@@ -23,8 +23,6 @@
 
 #include <zephyr/logging/log.h>
 
-#define BOOT_MOUSE_INPUT_REPORT_MIN_SIZE 3
-
 #define GATT_PERM_READ_MASK     (BT_GATT_PERM_READ | \
 				 BT_GATT_PERM_READ_ENCRYPT | \
 				 BT_GATT_PERM_READ_AUTHEN)
