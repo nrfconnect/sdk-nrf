@@ -576,6 +576,8 @@ Wi-Fi samples
 Other samples
 -------------
 
+* Added the :ref:`secondary_boot_sample` sample that demonstrates how to build and boot a secondary application image on the nRF54H20 DK.
+
 * :ref:`nrf_profiler_sample` sample:
 
   * Added a new testing step demonstrating how to calculate event propagation statistics.
