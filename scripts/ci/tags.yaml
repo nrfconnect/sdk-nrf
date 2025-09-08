@@ -1669,6 +1669,11 @@ ci_samples_zephyr_subsys_settings:
     - nrf/samples/zephyr/subsys/settings/
     - zephyr/samples/subsys/settings/
 
+ci_samples_zephyr_sysbuild_hello_world:
+  files:
+    - nrf/samples/zephyr/sysbuild/hello_world/
+    - zephyr/samples/sysbuild/hello_world/
+
 ci_samples_zephyr_drivers_audio_dmic:
   files:
     - nrf/samples/zephyr/drivers/audio/dmic/
