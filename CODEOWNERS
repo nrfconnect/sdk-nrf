@@ -681,6 +681,7 @@
 /samples/zephyr/subsys/settings/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/usb/               @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/mgmt/mcumgr/smp_svr/ @nrfconnect/ncs-charon
+/samples/zephyr/sysbuild/                 @nrfconnect/ncs-low-level-test
 
 /samples/**/*.svg                         @nrfconnect/ncs-doc-leads
 /samples/**/*.png                         @nrfconnect/ncs-doc-leads
