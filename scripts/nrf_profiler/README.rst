@@ -137,6 +137,82 @@ You can use it  for visualization or calculating statistics.
    An application must provide its own implementation.
    See the :ref:`nrf_desktop_nrf_profiler_sync` for an example implementation used by the :ref:`nrf_desktop` application.
 
+.. _nrf_profiler_script_calculating_statistics:
+
+Calculating statistics
+======================
+
+The :file:`calc_stats.py` script is used to calculate and visualize the nRF Profiler event propagation statistics (statistics for time intervals between nRF Profiler events) for a given dataset.
+A JSON file containing test presets specifies the events to be analyzed.
+The script calculates and displays the following statistics for each test preset:
+
+* basic statistics (min, max, mean, median, standard deviation)
+* histogram plot
+* plot of subsequent time intervals between events
+
+For some of the statistics, the script also filters out time intervals that deviate from the other records.
+These statistics are denoted by a ``no outliers`` suffix in the plot title and output file name.
+
+Apart from displaying the statistics, the scipts also stores them as local files under the :file:`data_stats/` directory.
+The results are organized in subdirectories based on the dataset name, time range, and test preset name.
+
+When running the script from the command line, provide the dataset name (``test1``) and path to the JSON file containing test presets (:file:`stats_nordic_presets/app_event_manager_profiler_tracer.json`).
+
+.. code-block:: console
+
+    python3 calc_stats.py test1 stats_nordic_presets/app_event_manager_profiler_tracer.json
+
+.. tip::
+   Before calculating statistics using the example command, you need to collect profiling data from a device running the :ref:`app_event_manager_profiling_tracer_sample` sample and store the data as the ``test1`` dataset.
+   Make sure to use the mentioned sample, because the test preset refers to sample-specific nRF Profiler event names.
+
+If you want to calculate statistics for your own application, you need to create a new test preset file that refers to the nRF Profiler events used by your application.
+You can use the script to calculate statistics for custom nRF Profiler events or Application Event Manager events, or both.
+
+Test preset JSON file format
+----------------------------
+
+The test preset JSON file contains an array of test presets.
+Every test preset is identified by a unique name.
+The script calculates the time intervals between start and end events specified by each test preset.
+The script uses the time intervals as input data for calculating statistics.
+
+An example of an array containing a single test preset looks as follows:
+
+.. code-block:: json
+
+    [
+        {
+            "name": "Test Name",
+            "start_event": {
+                "name": "event_name_1",
+                "state": "submit"
+            },
+            "end_event": {
+                "name": "event_name_2",
+                "state": "processing_end"
+            }
+        }
+    ]
+
+Fields:
+
+* ``name`` - Name of the test preset (used for output files and plot titles)
+* ``start_event`` - Configuration for the start event
+
+    * ``name`` - Name of the event
+    * ``state`` - Event state (optional, defaults to "submit")
+
+      Possible values:
+
+        * ``submit`` - Event submission
+        * ``processing_start`` - Event processing start (only for Application Event Manager events)
+        * ``processing_end`` - Event processing end (only for Application Event Manager events)
+
+* ``end_event`` - Configuration for the end event (same format as ``start_event``)
+
+For examples of the test preset JSON file, see the :file:`stats_nordic_presets/` directory.
+
 Dependencies
 ************
 

@@ -630,6 +630,7 @@ Scripts
 
   * The :ref:`esb_sniffer_scripts` scripts for the :ref:`esb_monitor` sample.
   * The documentation page for :ref:`nrf_profiler_script`.
+    The page also describes the script for calculating statistics (:file:`calc_stats.py`).
 
 Integrations
 ============
