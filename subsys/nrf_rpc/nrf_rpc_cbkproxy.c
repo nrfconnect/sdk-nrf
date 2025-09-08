@@ -93,21 +93,16 @@ static void callback_jump_table_start(void)
 #endif
 		".L%=callback_jump_table_end:\n"
 		"mov   r0, lr\n"
-		"ldr   r1, .L%=callback_jump_table_start_addr\n"
+		"ldr   r1, =callback_jump_table_start+8\n"
 		"sub   r0, r1\n"
 		"asrs  r0, r0, #1\n"
-		"ldr   r1, .L%=out_callbacks_addr\n"
+		"ldr   r1, =out_callbacks\n"
 		"ldr   r1, [r1, r0]\n"
 		"asrs  r0, r0, #2\n"
 		"blx   r1\n"
 		"add   sp, #16\n"
 		"mov   lr, r1\n"
-		"bx    lr\n"
-		".align 2\n"
-		".L%=callback_jump_table_start_addr:\n"
-		".word callback_jump_table_start + 8\n"
-		".L%=out_callbacks_addr:\n"
-		".word out_callbacks\n":::
+		"bx    lr\n":::
 	);
 }
 
