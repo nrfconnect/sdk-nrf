@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(ciphersuites)
+project(tls_ciphersuites)
 
 # Generate hex files from pem files
 set(gen_dir ${CMAKE_CURRENT_BINARY_DIR}/certs)

@@ -79,7 +79,7 @@
   - "lib/sms/**/*"
   - "samples/cellular/at_client/**/*"
   - "samples/cellular/at_monitor/**/*"
-  - "samples/cellular/ciphersuites/**/*"
+  - "samples/cellular/tls_ciphersuites/**/*"
   - "samples/net/coap_client/**/*"
   - "samples/net/download/**/*"
   - "samples/cellular/http_update/**/*"
