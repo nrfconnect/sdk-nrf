@@ -34,7 +34,7 @@ Depending on your preferred development method, you can start the correct CLI to
 
    .. group-tab:: nRF Connect for VS Code
 
-      Start the nRF Connect terminal profile from the :guilabel:`Welcome View` (:guilabel:`Open terminal` action) or the :guilabel:`Panel View`.
+      Start the nRF Connect terminal profile from the `Welcome View`_ (:guilabel:`Open terminal` action) or the `Panel View`_.
       See `How to use nRF Connect terminal profile`_ in the extension documentation for more information.
 
       .. note::

@@ -159,7 +159,7 @@ Use the following steps depending on the application placement:
 
       1. Open |VSC|.
       #. Open |nRFVSC|.
-      #. In the :guilabel:`Welcome View`, click the :guilabel:`Create a new application` action.
+      #. In the `Welcome View`_, click the :guilabel:`Create a new application` action.
          A quick pick menu appears.
       #. Choose one of the following options:
 
@@ -172,7 +172,7 @@ Use the following steps depending on the application placement:
          The application creation process starts after you enter the name.
          When the application is created, a VS Code prompt appears asking you what to do with the application.
       #. Click :guilabel:`Open`.
-         This will open the new application and add it to the :guilabel:`Applications View` in the extension.
+         This will open the new application and add it to the `Applications View`_ in the extension.
          At this point, you have created a freestanding application.
       #. Add the :file:`west.yml` to create a west workspace around the application:
 
@@ -195,7 +195,7 @@ Use the following steps depending on the application placement:
 
       1. Open |VSC|.
       #. Open |nRFVSC|.
-      #. In the :guilabel:`Welcome View`, click the :guilabel:`Create a new application` action.
+      #. In the `Welcome View`_, click the :guilabel:`Create a new application` action.
          A quick pick menu appears.
       #. Choose one of the following options:
 
@@ -206,7 +206,7 @@ Use the following steps depending on the application placement:
          The application creation process starts after you enter the name.
          When the application is created, a VS Code prompt appears.
       #. Click :guilabel:`Open`.
-         This opens the new application and adds it to the :guilabel:`Applications View` in the extension.
+         This opens the new application and adds it to the `Applications View`_ in the extension.
 
       You can now start :ref:`configuring and building <configuration_and_build>` the application.
 
@@ -310,7 +310,7 @@ To create an application from the add-on index, complete the following steps:
 
       Complete the following steps in |nRFVSC|:
 
-      1. In the :guilabel:`Welcome View`, click :guilabel:`Create a new application`.
+      1. In the `Welcome View`_, click :guilabel:`Create a new application`.
       #. Select :guilabel:`Browse nRF Connect SDK Add-on Index`.
       #. Browse through the available add-ons and select one that matches your needs.
       #. Follow the creation wizard to set up your workspace application.

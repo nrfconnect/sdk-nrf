@@ -44,7 +44,7 @@ Complete the following steps to program the sample or application onto nRF5340 D
 
 #. Connect the nRF5340 development kit to your PC using a USB cable.
 #. Make sure that the nRF5340 DK and the external debug probe are powered on.
-#. Click :guilabel:`Build` in the :guilabel:`Actions View` to start the build process.
+#. Click :guilabel:`Build` in the `Actions View`_ to start the build process.
 #. Click :guilabel:`Flash` in the :guilabel:`Actions View` to program the resulting image to your device.
 
 Using the command line
