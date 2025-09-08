@@ -74,6 +74,7 @@ After programming the sample to your development kit, you can test it by perform
 
    The :file:`stats_nordic_presets/nrf_profiler.json` file specifies the nRF Profiler events used for the calculations.
    The file refers to the events used by the sample.
+   See the :ref:`nrf_profiler_script_calculating_statistics` section in the nRF Profiler host tools documentation for more information.
 
 Dependencies
 ************
