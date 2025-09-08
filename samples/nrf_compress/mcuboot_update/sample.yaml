@@ -3,7 +3,15 @@ common:
   tags:
     - sysbuild
     - ci_samples_nrf_compress
-  build_only: true
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+      - "Starting bootloader"
+      - "Jumping to the first image slot"
+      - "smp_bt_sample: Advertising successfully started"
+  timeout: 15
 tests:
   nrf_compress.mcuboot_update:
     platform_allow:
