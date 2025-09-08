@@ -212,6 +212,8 @@ Matter bridge
 nRF5340 Audio
 -------------
 
+* Power measurements are now disabled by default in debug builds.
+  To enable power measurements, set the ``CONFIG_NRF5340_AUDIO_POWER_MEASUREMENT`` Kconfig option to ``y`` in the :file:`applications/nrf5340_audio/prj.conf` file.
 * Added the API documentation in the header files listed on the :ref:`audio_api` page.
 * Updated:
 
