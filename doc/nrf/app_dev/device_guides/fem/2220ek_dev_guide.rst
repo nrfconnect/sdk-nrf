@@ -28,6 +28,8 @@ On the :zephyr:board:`nrf54l15dk` development kit, plug the nRF2220 EK board int
    The pin **P0.04** of the nRF54L15 SoC is connected also to **Button 3** of the development kit.
    Do not press this button while the firmware containing the code supporting the nRF2220 EK shield is running.
 
+On the :zephyr:board:`nrf54lm20dk` development kit, plug the nRF2220 EK board into the ``PORT0`` expansion slot.
+
 .. _ug_radio_fem_nrf2220ek_programming:
 
 Building and programming with nRF2220 EK
