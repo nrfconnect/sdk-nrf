@@ -233,6 +233,7 @@ nRF Desktop
       The public key used by MCUboot for validating the application image is securely stored in the KMU hardware peripheral.
       To simplify the programming procedure, the application is configured to use the automatic KMU provisioning.
       The KMU provisioning is performed by the west runner as a part of the ``west flash`` command when the ``--erase`` or ``--recover`` flag is used.
+    * The IPC Radio firmware configurations for the ``nrf5340dk/nrf5340/cpunet`` and ``nrf54h20dk/nrf54h20/cpurad`` board targets to align the outgoing ACL packet count (:kconfig:option:`CONFIG_BT_CTLR_SDC_TX_PACKET_COUNT`) in the Bluetooth Controller with the Bluetooth Host configuration (:kconfig:option:`CONFIG_BT_BUF_ACL_TX_COUNT`) of the application image.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
