@@ -27,6 +27,8 @@ The following steps show how to add support for a new Bluetooth LE service calle
       static bt_uuid *sUuidMyBtService = BT_UUID_MY_BT_SERVICE;
       static bt_uuid *sUuidServices[] = { sUuidLbs, sUuidEs, sUuidMyBtService};
 
+#. Set the :kconfig:option:`CONFIG_BT_SCAN_UUID_CNT` Kconfig option to ``3`` in the :file:`prj.conf` file.
+
 #. Implement the ``Bridged Device Data Provider`` role.
 
    a. Create the :file:`my_bt_service_data_provider.cpp` and :file:`my_bt_service_data_provider.h` files for your Bluetooth LE Data Provider in the :file:`src/ble_providers` directory.
