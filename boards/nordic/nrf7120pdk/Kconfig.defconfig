@@ -3,7 +3,7 @@
 
 if BOARD_NRF7120PDK_NRF7120_CPUAPP
 
-config BT_CTLR
+config HAS_BT_CTLR
 	default BT
 
 config ROM_START_OFFSET
@@ -14,7 +14,7 @@ endif # BOARD_NRF7120PDK_NRF7120_CPUAPP
 
 if BOARD_NRF7120PDK_NRF7120_CPUAPP_NS
 
-config BT_CTLR
+config HAS_BT_CTLR
 	default BT
 
 # By default, if we build for a Non-Secure version of the board,
