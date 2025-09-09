@@ -147,6 +147,9 @@ After building the sample and programming it to your development kit, complete t
 .. note::
    The following steps use the CHIP Tool controller as an example.
 
+   The temperature measurement value is multiplied by 100 to achieve the resolution of 0.01 degrees Celsius.
+   For example, 1252 means 12.52 degrees Celsius.
+
 .. tabs::
 
    .. group-tab:: nRF52 and nRF53 DKs
@@ -180,7 +183,7 @@ After building the sample and programming it to your development kit, complete t
          .. code-block:: console
 
             [1755081048.320] [99348:99350] [TOO] Endpoint: 1 Cluster: 0x0000_0402 Attribute 0x0000_0000 DataVersion: 1994139940
-            [1755081048.320] [99348:99350] [TOO]   MeasuredValue: 12
+            [1755081048.320] [99348:99350] [TOO]   MeasuredValue: 1200
 
    .. group-tab:: nRF54 DKs
 
@@ -200,7 +203,7 @@ After building the sample and programming it to your development kit, complete t
          .. code-block:: console
 
             [1755081048.320] [99348:99350] [TOO] Endpoint: 1 Cluster: 0x0000_0402 Attribute 0x0000_0000 DataVersion: 1994139940
-            [1755081048.320] [99348:99350] [TOO]   MeasuredValue: 9
+            [1755081048.320] [99348:99350] [TOO]   MeasuredValue: 900
 
       #. Wait some time, for example 30 s, and read the measured temperature again using the same command as before:
 
@@ -213,7 +216,7 @@ After building the sample and programming it to your development kit, complete t
          .. code-block:: console
 
             [1755081048.320] [99348:99350] [TOO] Endpoint: 1 Cluster: 0x0000_0402 Attribute 0x0000_0000 DataVersion: 1994139940
-            [1755081048.320] [99348:99350] [TOO]   MeasuredValue: 12
+            [1755081048.320] [99348:99350] [TOO]   MeasuredValue: 1200
 
 .. _matter_temperature_sensor_sample_remote_control:
 

@@ -558,10 +558,10 @@
 		/* Endpoint: 1, Cluster: Temperature Measurement (server) */                                                                         \
 		{ ZAP_EMPTY_DEFAULT(), 0x00000000, 2, ZAP_TYPE(TEMPERATURE), ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* MeasuredValue                        \
 													      */                                     \
-		{ ZAP_SIMPLE_DEFAULT(-20), 0x00000001, 2, ZAP_TYPE(TEMPERATURE), ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* MinMeasuredValue                 \
-														  */                                 \
-		{ ZAP_SIMPLE_DEFAULT(20), 0x00000002, 2, ZAP_TYPE(TEMPERATURE), ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* MaxMeasuredValue                  \
-														 */                                  \
+		{ ZAP_SIMPLE_DEFAULT(-2000), 0x00000001, 2, ZAP_TYPE(TEMPERATURE),                                                                   \
+		  ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* MinMeasuredValue */                                                                             \
+		{ ZAP_SIMPLE_DEFAULT(2000), 0x00000002, 2, ZAP_TYPE(TEMPERATURE),                                                                    \
+		  ZAP_ATTRIBUTE_MASK(NULLABLE) }, /* MaxMeasuredValue */                                                                             \
 		{ ZAP_SIMPLE_DEFAULT(0), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                                                    \
 		{ ZAP_SIMPLE_DEFAULT(4), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                                                 \
 	}
