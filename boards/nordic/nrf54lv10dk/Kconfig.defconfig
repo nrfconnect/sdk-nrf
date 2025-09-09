@@ -5,7 +5,7 @@
 DT_CHOSEN_Z_CODE_PARTITION := zephyr,code-partition
 DT_CHOSEN_Z_SRAM_PARTITION := zephyr,sram-secure-partition
 
-config BT_CTLR
+config HAS_BT_CTLR
 	default BT
 
 config SOC_NRF54LX_SKIP_GLITCHDETECTOR_DISABLE
