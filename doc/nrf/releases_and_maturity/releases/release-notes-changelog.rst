@@ -620,6 +620,11 @@ Trusted Firmware-M (TF-M) samples
 * :ref:`tfm_hello_world` sample:
 
   * Added support for the ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` board target.
+  * Added support for the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` board target.
+
+* :ref:`tfm_secure_peripheral_partition`
+
+  * Added support for the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` board target.
 
 Thread samples
 --------------
