@@ -7,26 +7,87 @@ Developing with Front-End Modules
 
 .. include:: /includes/guides_complementary_to_app_dev.txt
 
-Zephyr and the |NCS| provides support for developing applications with the following :term:`Front-End Module (FEM)` devices:
+Zephyr and the |NCS| provides support for developing applications with the following :term:`Front-End Module (FEM)` devices according to :ref:`software_maturity`:
 
-.. list-table::
-   :header-rows: 1
+.. tabs::
 
-   * - FEM device
-     - Implementation
-     - Supported SoCs
-   * - nRF2220
-     - nRF2220
-     - nRF52, nRF53, nRF54L
-   * - nRF21540
-     - nRF21540 GPIO
-     - nRF52, nRF53, nRF54L
-   * - nRF21540
-     - nRF21540 GPIO+SPI
-     - nRF52, nRF53, nRF54L
-   * - SKY66112-11
-     - Simple GPIO
-     - nRF52, nRF53, nF54L
+   .. group-tab:: nRF52 Series
+
+      .. list-table:: Front-End Module support
+         :widths: auto
+         :header-rows: 1
+
+         * - FEM device
+           - Implementation
+           - nRF52833
+           - nRF52840
+         * - nRF2220
+           - nRF2220
+           - Supported
+           - Supported
+         * - nRF21540
+           - nRF21540 GPIO
+           - Supported
+           - Supported
+         * - nRF21540
+           - nRF21540 GPIO+SPI
+           - Supported
+           - Supported
+         * - SKY66112-11
+           - Simple GPIO
+           - Supported
+           - Supported
+
+   .. group-tab:: nRF53 Series
+
+      .. list-table:: Front-End Module support
+         :widths: auto
+         :header-rows: 1
+
+         * - FEM device
+           - Implementation
+           - nRF5340
+         * - nRF2220
+           - nRF2220
+           - Supported
+         * - nRF21540
+           - nRF21540 GPIO
+           - Supported
+         * - nRF21540
+           - nRF21540 GPIO+SPI
+           - Supported
+         * - SKY66112-11
+           - Simple GPIO
+           - Supported
+
+   .. group-tab:: nRF54 Series
+
+      .. list-table:: Front-End Module support
+         :widths: auto
+         :header-rows: 1
+
+         * - FEM device
+           - Implementation
+           - nRF54L10
+           - nRF54L15
+         * - nRF2220
+           - nRF2220
+           - Supported
+           - Supported
+         * - nRF21540
+           - nRF21540 GPIO
+           - Supported
+           - Supported
+         * - nRF21540
+           - nRF21540 GPIO+SPI
+           - Supported
+           - Supported
+         * - SKY66112-11
+           - Simple GPIO
+           - Supported
+           - Supported
+
+The FEM support on SoCs that are not listed in the table above might still work, but it is not tested and not guaranteed to work.
 
 The following hardware platforms with :term:`Front-End Module (FEM)` are supported by the |NCS|:
 
