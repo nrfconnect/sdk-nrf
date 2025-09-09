@@ -286,6 +286,16 @@ config TFM_PS_STACK_SIZE
 	default 0x1200 if TFM_PS_NUM_ASSETS > 70
 	default 0xC00 if TFM_PS_NUM_ASSETS > 30
 	default 0x700
+
+config TFM_PS_SUPPORT_FORMAT_TRANSITION
+	bool "Allow reading Protected Storage data from TF-M versions prior to 2.2"
+	help
+	  TF-M version 2.2 introduced a new storage format for the Protected Storage
+	  data. To avoid breaking firmware upgrades to version 2.2 TF-M allows reading
+	  the Protected Storage data stored with earlier versions using this configuration.
+	  This is relevant for TF-M enabled applications built with NCS version 3.1 and prior
+	  that want to perform a firmware upgrade to NCS version 3.2 onwards.
+
 endmenu
 
 # Copied from secure_fw/spm/Kconfig, removed CONFIG prefix
