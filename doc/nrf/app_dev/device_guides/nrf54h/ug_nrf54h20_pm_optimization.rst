@@ -140,6 +140,49 @@ Consider also the following recommendations:
   * Add ``zephyr,pm-device-runtime-auto`` in the DTS for all peripherals with runtime PM support.
   * Build and program an empty image on any unused core to release shared resources.
 
+.. _ug_nrf54h20_pm_optimizations_bootloader:
+
+Operation with MCUboot as the bootloader
+========================================
+
+Suspend to RAM (S2RAM) operation of the application requires special support from the bootloader.
+
+MCUboot on the nRF54H20 SoC supports Suspend to RAM (S2RAM) functionality in the Application.
+It is able to detect wake-up from S2RAM and redirect execution to the Application's resume routine.
+To enable S2RAM support for your project, set the following MCUboot Kconfig options:
+
+* :kconfig:option:`CONFIG_PM` - Power management support.
+* :kconfig:option:`CONFIG_PM_S2RAM` - Suspend to RAM support.
+* :kconfig:option:`CONFIG_PM_S2RAM_CUSTOM_MARKING` - Custom S2RAM making support.
+* :kconfig:option:`CONFIG_SOC_NRF54H20_PM_S2RAM_OVERRIDE` - Override Nordic s2ram implementation by MCUboot.
+
+Also ensure that your board DTS file includes the following zephyr nodes for describing linker section used:
+
+* a ``zephyr,memory-region`` compatible node with nodelabel ``pm_s2ram`` of 32 B size for placing S2RAM cpu context RAM.
+* a ``zephyr,memory-region`` compatible node with nodelabel ``mcuboot_s2ram`` of 4 B size for placing MCUboot's S2RAM magic variable.
+
+Example DTS snippet:
+
+.. code-block:: dts
+
+   / {
+      soc {
+         /* run-time common mcuboot S2RAM support section */
+         mcuboot_s2ram: cpuapp_s2ram@22007fdc  {
+            compatible = "zephyr,memory-region", "mmio-sram";
+            reg = <0x22007fdc 4>;
+            zephyr,memory-region = "mcuboot_s2ram_context";
+         };
+
+         /* S2RAM cpu context RAM allocation */
+         pm_s2ram: cpuapp_s2ram@22007fe0  {
+            compatible = "zephyr,memory-region", "mmio-sram";
+            reg = <0x22007fe0 32>;
+            zephyr,memory-region = "pm_s2ram_context";
+         };
+      };
+   };
+
 Memory and cache optimization recommendations
 =============================================
 
