@@ -444,6 +444,8 @@ Cryptography samples
 
   * Added support for ``nrf54lm20dk/nrf54lm20a/cpuapp``.
 
+* Added support for the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` board target in all supported cryptography samples.
+
 Debug samples
 -------------
 
