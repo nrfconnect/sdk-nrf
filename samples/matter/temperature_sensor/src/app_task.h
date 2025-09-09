@@ -26,11 +26,13 @@ public:
 
 	static constexpr chip::EndpointId kTemperatureSensorEndpointId = 1;
 
+	/* Defined by cluster temperature measured value = 100 x temperature in degC with resolution of
+	 * 0.01 degC. */
 	void UpdateTemperatureMeasurement()
 	{
 		/* Linear temperature increase that is wrapped around to min value after reaching the max value. */
 		if (mCurrentTemperature < mTemperatureSensorMaxValue) {
-			mCurrentTemperature++;
+			mCurrentTemperature += kTemperatureMeasurementStep;
 		} else {
 			mCurrentTemperature = mTemperatureSensorMinValue;
 		}
@@ -42,7 +44,8 @@ private:
 	CHIP_ERROR Init();
 	k_timer mTimer;
 
-	static constexpr uint16_t kTemperatureMeasurementIntervalMs = 10000;
+	static constexpr uint16_t kTemperatureMeasurementIntervalMs = 10000; /* 10 seconds */
+	static constexpr uint16_t kTemperatureMeasurementStep = 100; /* 1 degree Celsius */
 
 	static void UpdateTemperatureTimeoutCallback(k_timer *timer);
 
