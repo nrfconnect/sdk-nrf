@@ -1555,7 +1555,7 @@ endpoint 0 {
     callback attribute capabilityMinima;
     callback attribute specificationVersion;
     callback attribute maxPathsPerInvoke;
-    ram      attribute randomNumber default = 0;
+    persist  attribute randomNumber default = 0;
     callback attribute generatedCommandList;
     callback attribute acceptedCommandList;
     callback attribute attributeList;
@@ -1725,8 +1725,8 @@ endpoint 1 {
     callback attribute attributeList;
     ram      attribute featureMap default = 0;
     ram      attribute clusterRevision default = 1;
-    ram      attribute devKitName default = "Nordic Development Kit";
-    ram      attribute userLED default = false;
+    persist  attribute devKitName default = "Nordic Development Kit";
+    persist  attribute userLED default = false;
     ram      attribute userButton default = false;
 
     handle command SetLED;
