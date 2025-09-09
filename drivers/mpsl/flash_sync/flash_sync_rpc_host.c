@@ -106,12 +106,6 @@ static void call_handler_from_high_prio(void)
 	 * happening on the radio core, where the handler is called from a high
 	 * priority interrupt by MPSL. Alternatively, it is possible to simply
 	 * disable interrupts and call the handler directly (probably a worse solution).
-
-	 * However, for the current only use case (Flash IPUC) + PoC calling the handler
-	 * from a thread with the highest priority is sufficient.
-	 * Additionally, for this case it could be difficult to achieve the goal
-	 * using an interrupt handler, as the Flash IPUC implementation needs
-	 * to perform calls via IPC.
 	 */
 	high_prio_handler();
 }
