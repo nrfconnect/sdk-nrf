@@ -25,6 +25,7 @@ LOG_MODULE_REGISTER(raw_tx_packet, CONFIG_LOG_DEFAULT_LEVEL);
 #include "wifi_connection.h"
 
 #define BEACON_PAYLOAD_LENGTH 256
+#define PADDING_ZERO_THRESHOLD 10
 #define CONTINUOUS_MODE_TRANSMISSION 0
 #define FIXED_MODE_TRANSMISSION 1
 
@@ -201,12 +202,66 @@ static int setup_raw_pkt_socket(int *sockfd, struct sockaddr_ll *sa)
 	return 0;
 }
 
+static unsigned short calculate_beacon_payload_length(const uint8_t *payload,
+						      unsigned short max_length)
+{
+	/* Skip fixed parameters: timestamp(8) + beacon_interval(2) + capability(2) */
+	unsigned short pos = 12;
+	unsigned short actual_length = pos;
+
+	while (pos < max_length) {
+		if ((pos + 1 < max_length) && (payload[pos] == 0) && (payload[pos + 1] == 0)) {
+			unsigned short zero_count = 0;
+			unsigned short check_pos = pos;
+
+			while (check_pos < max_length && payload[check_pos] == 0) {
+				zero_count++;
+				check_pos++;
+			}
+
+			if (zero_count >= PADDING_ZERO_THRESHOLD) {
+				break;
+			}
+		}
+
+		if (pos + 1 >= max_length) {
+			break;
+		}
+
+		uint8_t length = payload[pos + 1];
+
+		actual_length = pos + 2 + length;
+
+		pos += 2 + length;
+
+		if (pos >= max_length) {
+			break;
+		}
+	}
+	return actual_length;
+}
+
+static unsigned short calculate_beacon_frame_length(const struct beacon *beacon_frame)
+{
+	unsigned short header_length = sizeof(beacon_frame->frame_control) +
+				       sizeof(beacon_frame->duration) +
+				       sizeof(beacon_frame->da) +
+				       sizeof(beacon_frame->sa) +
+				       sizeof(beacon_frame->bssid) +
+				       sizeof(beacon_frame->seq_ctrl);
+
+	unsigned short payload_length = calculate_beacon_payload_length(beacon_frame->payload,
+									BEACON_PAYLOAD_LENGTH);
+
+	return header_length + payload_length;
+}
+
 static void fill_raw_tx_pkt_hdr(struct raw_tx_pkt_header *raw_tx_pkt)
 {
 	/* Raw Tx Packet header */
 	raw_tx_pkt->magic_num = NRF_WIFI_MAGIC_NUM_RAWTX;
 	raw_tx_pkt->data_rate = CONFIG_RAW_TX_PKT_SAMPLE_RATE_VALUE;
-	raw_tx_pkt->packet_length = sizeof(test_beacon_frame);
+	raw_tx_pkt->packet_length = calculate_beacon_frame_length(&test_beacon_frame);
 	raw_tx_pkt->tx_mode = CONFIG_RAW_TX_PKT_SAMPLE_RATE_FLAGS;
 	raw_tx_pkt->queue = CONFIG_RAW_TX_PKT_SAMPLE_QUEUE_NUM;
 	/* The byte is reserved and used by the driver */
@@ -256,6 +311,7 @@ static void wifi_send_raw_tx_packets(void)
 	struct raw_tx_pkt_header packet;
 	char *test_frame = NULL;
 	unsigned int buf_length, num_pkts, transmission_mode, num_failures = 0;
+	unsigned short beacon_frame_length = calculate_beacon_frame_length(&test_beacon_frame);
 
 	ret = setup_raw_pkt_socket(&sockfd, &sa);
 	if (ret < 0) {
@@ -271,18 +327,18 @@ static void wifi_send_raw_tx_packets(void)
 		return;
 	}
 
-	test_frame = malloc(sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame));
+	test_frame = malloc(sizeof(struct raw_tx_pkt_header) + beacon_frame_length);
 	if (!test_frame) {
 		LOG_ERR("Malloc failed for send buffer %d", errno);
 		return;
 	}
 
-	buf_length = sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame);
+	buf_length = sizeof(struct raw_tx_pkt_header) + beacon_frame_length;
 	memcpy(test_frame, &packet, sizeof(struct raw_tx_pkt_header));
 
 	if (num_pkts == 1) {
 		memcpy(test_frame + sizeof(struct raw_tx_pkt_header),
-		       &test_beacon_frame, sizeof(test_beacon_frame));
+		       &test_beacon_frame, beacon_frame_length);
 
 		ret = wifi_send_raw_tx_pkt(sockfd, test_frame, buf_length, &sa);
 		if (ret < 0) {
@@ -294,7 +350,7 @@ static void wifi_send_raw_tx_packets(void)
 	} else {
 		for (int i = 0; i < num_pkts; i++) {
 			memcpy(test_frame + sizeof(struct raw_tx_pkt_header),
-			       &test_beacon_frame, sizeof(test_beacon_frame));
+			       &test_beacon_frame, beacon_frame_length);
 
 			ret = sendto(sockfd, test_frame, buf_length, 0,
 					(struct sockaddr *)&sa, sizeof(sa));
