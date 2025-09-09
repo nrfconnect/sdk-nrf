@@ -45,7 +45,7 @@ extern "C" {
 			&_type;                                                \
 	}
 
-/** @defgroup bt_mesh_sensor_formats_percentage Percentage sensor formats
+/** @defgroup bt_mesh_sensor_formats_percentage Percentage formats
  *  @{
  */
 
@@ -71,7 +71,7 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_percentage_16;
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_percentage_delta_trigger;
 /** @} */
 
-/** @defgroup bt_mesh_sensor_formats_environmental Environmental sensor formats
+/** @defgroup bt_mesh_sensor_formats_environmental Environmental formats
  *  @{
  */
 
@@ -167,7 +167,7 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_rainfall;
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_uv_index;
 /** @} */
 
-/** @defgroup bt_mesh_sensor_formats_time Time sensor formats
+/** @defgroup bt_mesh_sensor_formats_time Time formats
  *  @{
  */
 
@@ -207,7 +207,7 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_time_millisecond
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_time_exp_8;
 /** @} */
 
-/** @defgroup bt_mesh_sensor_formats_electrical Electrical sensor formats
+/** @defgroup bt_mesh_sensor_formats_electrical Electrical formats
  *  @{
  */
 
@@ -262,7 +262,7 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_energy;
 
 /** @} */
 
-/** @defgroup bt_mesh_sensor_formats_lighting Lighting sensor formats
+/** @defgroup bt_mesh_sensor_formats_lighting Lighting formats
  *  @{
  */
 /** Chromatic distance
@@ -329,7 +329,7 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_luminous_flux;
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_perceived_lightness;
 /** @} */
 
-/** @defgroup bt_mesh_sensor_formats_miscellaneous Miscellaneous sensor formats
+/** @defgroup bt_mesh_sensor_formats_miscellaneous Miscellaneous formats
  *  @{
  */
 
@@ -374,7 +374,7 @@ extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_boolean;
 extern const struct bt_mesh_sensor_format bt_mesh_sensor_format_coefficient;
 /** @} */
 
-/** @defgroup bt_mesh_sensor_types_occupancy Occupancy sensor types
+/** @defgroup bt_mesh_sensor_types_occupancy Occupancy types
  *  @{
  */
 
@@ -442,8 +442,7 @@ extern const struct bt_mesh_sensor_type
 
 /** @} */
 
-/** @defgroup bt_mesh_sensor_types_ambient_temperature Ambient temperature
- *  sensor types
+/** @defgroup bt_mesh_sensor_types_ambient_temperature Ambient temperature types
  *  @{
  */
 
@@ -617,7 +616,7 @@ extern const struct bt_mesh_sensor_type bt_mesh_sensor_luminous_flux_range;
 
 /** @} */
 
-/** @defgroup bt_mesh_sensor_types_environmental Environmental sensor types
+/** @defgroup bt_mesh_sensor_types_environmental Environmental types
  *  @{
  */
 
@@ -885,8 +884,7 @@ extern const struct bt_mesh_sensor_type bt_mesh_sensor_wind_chill;
 
 /** @} */
 
-/** @defgroup bt_mesh_sensor_types_device_operating_temperature Device operating
- *  temperature sensor types
+/** @defgroup bt_mesh_sensor_types_device_operating_temperature Device operating temperature types
  *  @{
  */
 
@@ -963,8 +961,7 @@ extern const struct bt_mesh_sensor_type
 
 /** @} */
 
-/** @defgroup bt_mesh_sensor_types_electrical_input Electrical input sensor
- *  types
+/** @defgroup bt_mesh_sensor_types_electrical_input Electrical input types
  *  @{
  */
 
@@ -1169,8 +1166,7 @@ extern const struct bt_mesh_sensor_type
 
 /** @} */
 
-/** @defgroup bt_mesh_sensor_types_energy_management Energy management sensor
- *  types
+/** @defgroup bt_mesh_sensor_types_energy_management Energy management types
  *  @{
  */
 
@@ -1319,7 +1315,7 @@ extern const struct bt_mesh_sensor_type bt_mesh_sensor_active_power_loadside;
 
 /** @} */
 
-/** @defgroup bt_mesh_sensor_types_photometry Photometry sensor types
+/** @defgroup bt_mesh_sensor_types_photometry Photometry types
  *  @{
  */
 
@@ -1470,8 +1466,7 @@ extern const struct bt_mesh_sensor_type bt_mesh_sensor_tot_light_exposure_time;
 
 /** @} */
 
-/** @defgroup bt_mesh_sensor_types_power_supply_output Power supply output
- *  sensor types
+/** @defgroup bt_mesh_sensor_types_power_supply_output Power supply output types
  *  @{
  */
 
@@ -1635,8 +1630,7 @@ extern const struct bt_mesh_sensor_type
 
 /** @} */
 
-/** @defgroup bt_mesh_sensor_types_warranty_and_service Warranty and service
- *  sensor types
+/** @defgroup bt_mesh_sensor_types_warranty_and_service Warranty and service types
  *  @{
  */
 
