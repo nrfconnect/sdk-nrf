@@ -7,7 +7,7 @@ elseif(CONFIG_SOC_NRF54LV10A_ENGA_CPUFLPR)
   board_runner_args(jlink "--speed=4000")
 endif()
 
-if(CONFIG_SOC_NRF54LV10A_ENGA_CPUAPP_NS)
+if(CONFIG_BOARD_NRF54LV10DK_NRF54LV10A_CPUAPP_NS)
   set(TFM_PUBLIC_KEY_FORMAT "full")
 endif()
 
