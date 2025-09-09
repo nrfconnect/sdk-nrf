@@ -1,23 +1,22 @@
+common:
+  sysbuild: true
+  tags:
+    - b0
+    - ci_tests_subsys_bootloader
+
 tests:
   b0.w:
-    sysbuild: true
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - b0
   b0.rwx:
-    sysbuild: true
     extra_args:
       - b0_CONFIG_SB_DISABLE_SELF_RWX=y
       - CONFIG_TEST_B0_LOCK_READS=y
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - b0
   b0.mcuboot.w:
-    sysbuild: true
     extra_args:
       - b0_CONFIG_SB_DISABLE_SELF_RWX=y
       - b0_CONFIG_SB_DISABLE_NEXT_W=y
@@ -27,10 +26,7 @@ tests:
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - b0
   b0.mcuboot.rwx:
-    sysbuild: true
     extra_args:
       - b0_CONFIG_SB_DISABLE_SELF_RWX=y
       - b0_CONFIG_SB_DISABLE_NEXT_W=y
@@ -42,5 +38,3 @@ tests:
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - b0
