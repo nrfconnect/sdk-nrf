@@ -142,7 +142,6 @@ For more information, see :ref:`emds_readme`.
 * :kconfig:option:`CONFIG_EMDS` - Enables the emergency data storage.
 * :kconfig:option:`CONFIG_BT_MESH_RPL_STORAGE_MODE_EMDS` - Enables the persistent storage of RPL in EMDS.
 * :kconfig:option:`CONFIG_PM_PARTITION_SIZE_EMDS_STORAGE` =0x4000 - Defines the partition size for the Partition Manager.
-* :kconfig:option:`CONFIG_EMDS_SECTOR_COUNT` =4 - Defines the sector count of the emergency data storage area.
 
 .. _ug_bt_mesh_configuring_lpn:
 
