@@ -60,13 +60,13 @@ config DFU_MULTI_IMAGE_PACKAGE_NET
 
 endif # SOC_SERIES_NRF53X
 
-if BOARD_NRF54L15DK
+if BOARD_NRF54L15DK || BOARD_NRF54LM20DK
 
-# Disable checking the external drivers for nRF54L15 DKs.
+# Disable checking the external drivers for nRF54L15 and nRF54LM20 DKs.
 config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
 	default y
 
-endif # BOARD_NRF54L15DK
+endif # BOARD_NRF54L15DK || BOARD_NRF54LM20DK
 
 endif # BOOTLOADER_MCUBOOT
 
