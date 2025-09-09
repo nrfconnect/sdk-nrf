@@ -70,22 +70,27 @@ Zephyr and the |NCS| provides support for developing applications with the follo
            - Implementation
            - nRF54L10
            - nRF54L15
+           - nRF54LM20
          * - nRF2220
            - nRF2220
+           - Supported
            - Supported
            - Supported
          * - nRF21540
            - nRF21540 GPIO
            - Supported
            - Supported
+           - --
          * - nRF21540
            - nRF21540 GPIO+SPI
+           - Supported
            - Supported
            - Supported
          * - SKY66112-11
            - Simple GPIO
            - Supported
            - Supported
+           - --
 
 The FEM support on SoCs that are not listed in the table above might still work, but it is not tested and not guaranteed to work.
 
