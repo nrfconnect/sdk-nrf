@@ -30,9 +30,11 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
   sample.tfm.hello_world.bootloaders:
     sysbuild: true
     tags:
