@@ -285,6 +285,11 @@ Bluetooth samples
    * :ref:`peripheral_status`
    * :ref:`peripheral_uart`
 
+* :ref:`direct_test_mode` sample:
+
+  * Updated by simplifying the 2-wire UART polling.
+    This is done by replacing the hardware timer with the ``k_sleep()`` function.
+
 Bluetooth Mesh samples
 ----------------------
 
