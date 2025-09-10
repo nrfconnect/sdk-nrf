@@ -262,7 +262,7 @@ static int do_sms_stop(void)
 	return 0;
 }
 
-static int do_sms_send(const char *number, const char *message)
+static int do_sms_send(const char *number, const char *message, uint16_t message_len)
 {
 	int err;
 
@@ -271,7 +271,7 @@ static int do_sms_send(const char *number, const char *message)
 		return -EPERM;
 	}
 
-	err = sms_send_text(number, message);
+	err = sms_send(number, message, message_len, SMS_DATA_TYPE_ASCII);
 	if (err) {
 		LOG_ERR("SMS send error: %d", err);
 	}
@@ -299,7 +299,7 @@ static int handle_at_sms(enum at_parser_cmd_type cmd_type, struct at_parser *par
 			err = do_sms_start();
 		} else if (op ==  AT_SMS_SEND) {
 			char number[SMS_MAX_ADDRESS_LEN_CHARS + 1];
-			char message[MAX_CONCATENATED_MESSAGE * SMS_MAX_PAYLOAD_LEN_CHARS];
+			const char *msg_ptr = NULL;
 			int size;
 
 			size = SMS_MAX_ADDRESS_LEN_CHARS + 1;
@@ -307,12 +307,11 @@ static int handle_at_sms(enum at_parser_cmd_type cmd_type, struct at_parser *par
 			if (err) {
 				return err;
 			}
-			size = MAX_CONCATENATED_MESSAGE * SMS_MAX_PAYLOAD_LEN_CHARS;
-			err = util_string_get(parser, 3, message, &size);
+			err = at_parser_string_ptr_get(parser, 3, &msg_ptr, &size);
 			if (err) {
 				return err;
 			}
-			err = do_sms_send(number, message);
+			err = do_sms_send(number, msg_ptr, size);
 		} else {
 			LOG_WRN("Unknown SMS operation: %d", op);
 			err = -EINVAL;
