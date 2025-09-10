@@ -274,7 +274,6 @@ manifest:
       revision: d5fad6bd094899101a4e5fd53af7298160ced6ab
       groups:
         - benchmark
-      # latest nrfx
     - name: nrfx
       remote: ncs
       path: nrfx
