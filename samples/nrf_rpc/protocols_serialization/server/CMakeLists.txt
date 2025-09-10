@@ -7,6 +7,11 @@ cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
+# # Do not include obfuscated symbols in case of building from sources
+if (CONFIG_MPSL_BUILD_TYPE_SRC_DEBUG)
+  target_compile_definitions(nrf-802154-driver-interface INTERFACE OBFUSCATE_LIBMPSL_PROTOCOL_DEFINES_H__=1)
+endif()
+
 project(protocols_serialization_server)
 
 # NORDIC SDK APP START
