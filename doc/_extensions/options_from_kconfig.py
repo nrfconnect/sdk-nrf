@@ -8,6 +8,7 @@ import sys
 
 from docutils import statemachine
 from docutils.parsers.rst import directives
+from dotenv import load_dotenv
 from sphinx.application import Sphinx
 from sphinx.util.docutils import SphinxDirective
 
@@ -69,12 +70,15 @@ class OptionsFromKconfig(SphinxDirective):
         kconfig_module_dirs = ""
         for module in modules:
             kconfig_module_dirs += zephyr_module.process_kconfig_module_dir(module.project,
-                                                                            module.meta)
+                                                                            module.meta,
+                                                                            False)
 
         import tempfile
-        f = tempfile.NamedTemporaryFile('w', encoding="utf-8")
-        os.environ["KCONFIG_ENV_FILE"] = f.name
+        f = tempfile.NamedTemporaryFile('w', encoding="utf-8", delete=False)
         f.write(kconfig_module_dirs)
+        f.close()
+        load_dotenv(f.name)
+        os.unlink(f.name)
 
         import kconfiglib
         self._monkey_patch_kconfiglib(kconfiglib)
@@ -124,7 +128,6 @@ class OptionsFromKconfig(SphinxDirective):
 
         lines = statemachine.string2lines('\n'.join(lines))
         self.state_machine.insert_input(lines, path)
-        f.close()
         return []
 
 

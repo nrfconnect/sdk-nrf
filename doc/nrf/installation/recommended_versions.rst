@@ -233,7 +233,7 @@ Building and running applications, samples, and tests
    * - packaging
      - :ncs-tool-version:`PACKAGING_VERSION`
    * - progress
-     - :ncs-tool-version:`PROGRESS_VERSION`
+     - :ncs-tool-version:`TQDM_VERSION`
    * - pyelftools
      - :ncs-tool-version:`PYELFTOOLS_VERSION`
    * - pylint
