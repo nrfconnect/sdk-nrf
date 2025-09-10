@@ -39,9 +39,18 @@ For example, :ref:`nrf_desktop_hid_state` is automatically enabled for the HID p
 
 By default, the nRF Desktop devices use a predefined format of HID reports.
 The common HID report map is defined in the :file:`configuration/common/hid_report_desc.c` file.
+
 The selected role implies a set of related HID reports.
-For example, HID mouse automatically enables support for HID mouse report.
-If you select ``other HID device`` peripheral type, you need to explicitly define the set of HID reports in the configuration.
+For example, HID mouse automatically enables support for HID mouse report (:ref:`CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT <config_desktop_app_options>`).
+You can manually enable support for additional HID reports if needed.
+If you select the ``other HID device`` peripheral type, you need to explicitly enable all of the needed HID input reports in the configuration (the reports are not automatically implied by this peripheral type).
+
+You can enable the following HID reports:
+
+* HID mouse report (:ref:`CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT <config_desktop_app_options>`)
+* HID keyboard report (:ref:`CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT <config_desktop_app_options>`)
+* HID system control report (:ref:`CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT <config_desktop_app_options>`)
+* HID consumer control report (:ref:`CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT <config_desktop_app_options>`)
 
 Apart from this, you can specify the supported HID boot protocol interface as one of the following:
 
