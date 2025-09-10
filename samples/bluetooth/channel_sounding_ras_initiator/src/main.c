@@ -60,6 +60,7 @@ static uint32_t ras_feature_bits;
 static uint8_t buffer_index;
 static uint8_t buffer_num_valid;
 static cs_de_dist_estimates_t distance_estimate_buffer[MAX_AP][DE_SLIDING_WINDOW_SIZE];
+static struct bt_conn_le_cs_config cs_config;
 
 static void store_distance_estimates(cs_de_report_t *p_report)
 {
@@ -180,8 +181,7 @@ static void ranging_data_cb(struct bt_conn *conn, uint16_t ranging_counter, int 
 	/* This struct is static to avoid putting it on the stack (it's very large) */
 	static cs_de_report_t cs_de_report;
 
-	cs_de_populate_report(&latest_local_steps, &latest_peer_steps, BT_CONN_LE_CS_ROLE_INITIATOR,
-			      &cs_de_report);
+	cs_de_populate_report(&latest_local_steps, &latest_peer_steps, &cs_config, &cs_de_report);
 
 	net_buf_simple_reset(&latest_local_steps);
 
@@ -401,6 +401,7 @@ static void config_create_cb(struct bt_conn *conn,
 	ARG_UNUSED(conn);
 
 	if (status == BT_HCI_ERR_SUCCESS) {
+		cs_config = *config;
 		LOG_INF("CS config creation complete. ID: %d", config->id);
 		k_sem_give(&sem_config_created);
 	} else {
