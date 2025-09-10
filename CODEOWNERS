@@ -740,7 +740,6 @@
 /snippets/hw-flow-control/                @nrfconnect/ncs-low-level-test @miha-nordic
 /snippets/matter-diagnostic-logs/         @nrfconnect/ncs-matter
 /snippets/matter-debug/                   @nrfconnect/ncs-matter
-/snippets/matter-power-consumption-tests/ @nrfconnect/ncs-matter
 /snippets/nordic-bt-rpc/                  @ppryga-nordic
 /snippets/nrf70-driver-debug/             @krish2718 @sachinthegreen
 /snippets/nrf70-driver-verbose-debug/     @krish2718 @sachinthegreen
