@@ -40,3 +40,7 @@
 &gpio1 {
 	status = "okay";
 };
+
+&gdpwr_slow_main {
+	/delete-property/zephyr,pm-device-runtime-auto;
+};

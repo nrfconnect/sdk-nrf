@@ -49,4 +49,9 @@ dut: &uart135 {
 	pinctrl-names = "default", "sleep";
 	current-speed = <115200>;
 	hw-flow-control;
+	zephyr,pm-device-runtime-auto;
+};
+
+&gdpwr_slow_main {
+	/delete-property/zephyr,pm-device-runtime-auto;
 };

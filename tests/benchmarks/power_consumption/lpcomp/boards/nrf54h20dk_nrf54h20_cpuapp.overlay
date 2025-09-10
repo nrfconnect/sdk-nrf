@@ -29,3 +29,11 @@
 	status = "okay";
 	zephyr,pm-device-runtime-auto;
 };
+
+&gdpwr_slow_main {
+	/delete-property/zephyr,pm-device-runtime-auto;
+};
+
+&gdpwr_slow_active {
+	/delete-property/zephyr,pm-device-runtime-auto;
+};

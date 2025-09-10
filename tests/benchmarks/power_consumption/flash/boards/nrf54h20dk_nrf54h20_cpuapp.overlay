@@ -21,3 +21,7 @@
 };
 
 /delete-node/ &led1;
+
+&gdpwr_slow_main {
+	/delete-property/zephyr,pm-device-runtime-auto;
+};
