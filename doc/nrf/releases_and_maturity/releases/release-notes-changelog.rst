@@ -471,6 +471,10 @@ Cryptography samples
 
   * Added support for ``nrf54lm20dk/nrf54lm20a/cpuapp``.
 
+* :ref:`crypto_persistent_key` sample:
+
+  * Added support for the ``nrf54h20dk/nrf54h20/cpuapp`` board target, demonstrating use of Internal Trusted Storage (ITS) on the nRF54H20 DK.
+
 Debug samples
 -------------
 
