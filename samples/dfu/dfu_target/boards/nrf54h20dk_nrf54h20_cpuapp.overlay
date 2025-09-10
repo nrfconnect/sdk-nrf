@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* This sample does not use the radio core, so the radio partition ca be reused */
+/delete-node/ &cpurad_slot0_partition;
+
+/ {
+	aliases {
+		dfu-target-helper = &dfu_target_helper_partition;
+	};
+};
+
+&mram1x {
+	partitions {
+		dfu_target_helper_partition: partition@92000 {
+			label = "helper";
+			reg = <0x92000 DT_SIZE_K(328)>;
+		};
+	};
+};
