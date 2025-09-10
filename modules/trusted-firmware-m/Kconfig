@@ -217,16 +217,16 @@ config TFM_ITS_BUF_SIZE
 
 config TFM_ITS_STACK_SIZE
 	hex "Stack size"
-	default 0x1000 if SOC_SERIES_NRF54LX
-	default 0x720 if !SOC_SERIES_NRF54LX
+	default 0x1000 if NRF_PLATFORM_LUMOS
+	default 0x720 if !NRF_PLATFORM_LUMOS
 
 # Nordic additions to ITS Kconfig
 config TFM_ITS_ENCRYPTED
 	bool
 	prompt "PSA Internal Trusted Storage with encryption"
 	depends on !CRACEN_NEED_MULTIPART_WORKAROUNDS
-	default y if SOC_SERIES_NRF54LX
-	select PSA_WANT_ALG_CHACHA20_POLY1305 if SOC_SERIES_NRF54LX
+	default y if NRF_PLATFORM_LUMOS
+	select PSA_WANT_ALG_CHACHA20_POLY1305 if NRF_PLATFORM_LUMOS
 	select PSA_WANT_GENERATE_RANDOM
 	help
 	  Enables authenticated encryption for PSA Internal Trusted Storage files
@@ -338,7 +338,7 @@ endchoice
 config TFM_CPU_FREQ_MHZ
 	int
 	default $(div, $(dt_node_int_prop_int,/clocks/hfpll,clock-frequency), 1000000) \
-		if SOC_SERIES_NRF54LX
+		if NRF_PLATFORM_LUMOS
 	default $(div, $(dt_node_int_prop_int,/cpus/cpu@0,clock-frequency), 1000000) \
 		if $(dt_node_has_prop,/cpus/cpu@0,clock-frequency)
 	default $(div, $(dt_node_int_prop_int,/cpus/cpu@1,clock-frequency), 1000000) \
@@ -391,7 +391,7 @@ config TFM_SECURE_UART_SHARE_INSTANCE
 choice TFM_SECURE_UART_INSTANCE
 	prompt "TF-M logging UART instance"
 	default TFM_SECURE_UART20 if SOC_NRF54LV10A_ENGA_CPUAPP
-	default TFM_SECURE_UART30 if SOC_SERIES_NRF54LX
+	default TFM_SECURE_UART30 if NRF_PLATFORM_LUMOS
 	default TFM_SECURE_UART1
 
 config TFM_SECURE_UART0
@@ -516,6 +516,7 @@ config TFM_S_CODE_VECTOR_TABLE_SIZE
 	default 0x144 if SOC_SERIES_NRF91X
 	default 0x154 if SOC_NRF5340_CPUAPP
 	default 0x47c if SOC_SERIES_NRF54LX
+	default 0x504 if SOC_SERIES_NRF71X
 	default 0xffffffff # Invalid value to discover missing SOC support.
 	help
 	  The TF-M interrupt vector table size.

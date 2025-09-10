@@ -88,10 +88,11 @@ if(${TFM_PARTITION_CRYPTO})
       $<$<BOOL:${CONFIG_HW_UNIQUE_KEY_RANDOM}>:CONFIG_HW_UNIQUE_KEY_RANDOM>
     )
 
-    # nrf54l15/nrf54l10 use the PSA headers in the hw_unique_key_cracen_kmu.c file, which means
-    # that we need to make sure that the nrf_security PSA headers are included
-    # before any other PSA-related headers.
-    if(NRF_SOC_VARIANT MATCHES "nrf54l1[05]" OR NRF_SOC_VARIANT MATCHES "nrf54lv10a")
+    # nrf54l15/nrf54l10/nrf7120 use the PSA headers in the hw_unique_key_cracen_kmu.c
+    # file, which means that we need to make sure that the nrf_security PSA headers
+    # are included before any other PSA-related headers.
+    if((NRF_SOC_VARIANT MATCHES "nrf54l1[05]") OR
+        (NRF_SOC_VARIANT MATCHES "nrf54lv10a") OR (NRF_SOC_VARIANT MATCHES "nrf7120"))
       target_link_libraries(platform_crypto_keys
         PRIVATE
         psa_crypto_library_config
@@ -222,7 +223,8 @@ file(COPY ${CMAKE_CURRENT_LIST_DIR}/common
      DESTINATION ${INSTALL_PLATFORM_NS_DIR})
 
 
-if(NRF_SOC_VARIANT MATCHES "nrf54l1[05]" OR NRF_SOC_VARIANT MATCHES "nrf54lv10a")
+if((NRF_SOC_VARIANT MATCHES "nrf54l1[05]") OR
+    (NRF_SOC_VARIANT MATCHES "nrf54lv10a") OR (NRF_SOC_VARIANT MATCHES "nrf7120"))
   file(COPY ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_key_ids.h
        DESTINATION ${INSTALL_INTERFACE_INC_DIR})
   file(COPY ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_security/src/drivers/cracen/cracenpsa/include/cracen_psa_kmu.h

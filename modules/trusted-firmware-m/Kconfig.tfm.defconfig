@@ -13,6 +13,7 @@ config TFM_BOARD
 	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf54l15_cpuapp" if SOC_NRF54L15_CPUAPP
 	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf54l10_cpuapp" if SOC_NRF54L10_CPUAPP
 	default "$(ZEPHYR_NRF_MODULE_DIR)/modules/trusted-firmware-m/tfm_boards/nrf54lv10a_cpuapp" if SOC_NRF54LV10A_ENGA_CPUAPP
+	default "${ZEPHYR_NRF_MODULE_DIR}/modules/trusted-firmware-m/tfm_boards/nrf7120_cpuapp" if SOC_NRF7120_ENGA_CPUAPP
 	depends on TRUSTED_EXECUTION_NONSECURE
 
 if BUILD_WITH_TFM
@@ -27,8 +28,8 @@ config TFM_DUMMY_PROVISIONING
 
 config TFM_REGRESSION_NS
 	bool
-	select NRF_TIMER0_SECURE if !SOC_SERIES_NRF54LX
-	select NRF_TIMER00_SECURE if SOC_SERIES_NRF54LX
+	select NRF_TIMER0_SECURE if !NRF_PLATFORM_LUMOS
+	select NRF_TIMER00_SECURE if NRF_PLATFORM_LUMOS
 
 config TFM_LOG_LEVEL_SILENCE
 	# Overrule zephyr disable TF-M secure output if the uart1 node has not
@@ -43,7 +44,8 @@ config TFM_LOG_LEVEL_SILENCE
 		   $(dt_nodelabel_has_prop,uart30,pinctrl-names)
 
 choice TFM_PROFILE_TYPE
-	default TFM_PROFILE_TYPE_NOT_SET if SOC_SERIES_NRF54LX || BT_CRYPTO || BT_MESH_USES_TFM_PSA || OPENTHREAD
+	default TFM_PROFILE_TYPE_NOT_SET if NRF_PLATFORM_LUMOS || \
+		BT_CRYPTO || BT_MESH_USES_TFM_PSA || OPENTHREAD
 	default TFM_PROFILE_TYPE_MINIMAL
 endchoice
 
@@ -83,7 +85,7 @@ config TFM_PARTITION_PROTECTED_STORAGE
 	select PSA_WANT_KEY_TYPE_AES
 	select PSA_WANT_ALG_CCM if SOC_SERIES_NRF91X
 	select PSA_WANT_ALG_GCM if SOC_NRF5340_CPUAPP
-	select PSA_WANT_ALG_GCM if SOC_SERIES_NRF54LX
+	select PSA_WANT_ALG_GCM if NRF_PLATFORM_LUMOS
 
 # Override TF-M crypto dependency on ITS when using KMU
 config TFM_PARTITION_CRYPTO

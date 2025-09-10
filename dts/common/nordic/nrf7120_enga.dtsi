@@ -871,6 +871,28 @@
 			status = "disabled";
 			#mbox-cells = <1>;
 		};
+
+		mram_controller: mram-controller@5004e000 {
+			compatible = "nordic,nrf-mramc";
+			reg = <0x5004e000 0x1000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			interrupts = <78 NRF_DEFAULT_IRQ_PRIORITY>;
+
+			cpuapp_mram: mram@0 {
+				compatible = "soc-nv-flash";
+				reg = <0 DT_SIZE_K(3972)>;
+				erase-block-size = <4096>;
+				write-block-size = <4>;
+			};
+
+			cpuflpr_mram: mram@3e1000 {
+				compatible = "soc-nv-flash";
+				reg = <0x3e1000 DT_SIZE_K(116)>;
+				erase-block-size = <4096>;
+				write-block-size = <4>;
+			};
+		};
 	};
 
 	wifi: wifi {
