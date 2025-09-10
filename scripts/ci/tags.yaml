@@ -1459,6 +1459,11 @@ ci_tests_drivers_uart:
     - zephyr/dts/vendor/nordic/
     - zephyr/soc/nordic/
 
+ci_tests_drivers_grtc:
+  files:
+    - nrf/tests/drivers/grtc/
+    - zephyr/drivers/timer/
+
 ci_tests_drivers_sensor_qdec:
   files:
     - nrf/samples/zephyr/sensor/qdec/
