@@ -202,8 +202,8 @@ void nrf_802154_received_raw(uint8_t *data, int8_t power, uint8_t lqi)
 		if (rf_rx_pool[i].data == NULL) {
 			rx_pkt = &rf_rx_pool[i];
 			rx_pkt->rf_buf = data;
-			rx_pkt->data = &data[1];
-			rx_pkt->length = data[0] - RF_FCS_SIZE;
+			rx_pkt->data = &data[RF_PTT_PAYLOAD_START];
+			rx_pkt->length = data[0] - RF_FCS_SIZE - RF_FCF_SIZE;
 			rx_pkt->rssi = power;
 			rx_pkt->lqi = lqi;
 			pkt_placed = true;
@@ -470,12 +470,14 @@ bool ptt_rf_send_packet_ext(const uint8_t *pkt, ptt_pkt_len_t len, bool cca)
 {
 	bool ret = false;
 
-	if ((pkt == NULL) || (len > RF_PSDU_MAX_SIZE - RF_FCS_SIZE)) {
+	if ((pkt == NULL) || (len > RF_PSDU_MAX_SIZE - RF_FCS_SIZE - RF_FCF_SIZE)) {
 		ret = false;
 	} else {
 		/* temp_tx_pkt is protected inside ptt rf by locking mechanism */
-		temp_tx_pkt[0] = len + RF_FCS_SIZE;
-		memcpy(&temp_tx_pkt[RF_PSDU_START], pkt, len);
+		temp_tx_pkt[0] = len + RF_FCS_SIZE + RF_FCF_SIZE;
+		temp_tx_pkt[1] = FRAME_TYPE_MULTIPURPOSE;
+		temp_tx_pkt[2] = 0;
+		memcpy(&temp_tx_pkt[RF_PTT_PAYLOAD_START], pkt, len);
 		const nrf_802154_transmit_metadata_t metadata = {
 			.frame_props = NRF_802154_TRANSMITTED_FRAME_PROPS_DEFAULT_INIT,
 			.cca = cca
@@ -490,12 +492,14 @@ bool ptt_rf_modulated_stream_ext(const uint8_t *pkt, ptt_pkt_len_t len)
 {
 	bool ret = false;
 
-	if ((pkt == NULL) || (len > RF_PSDU_MAX_SIZE - RF_FCS_SIZE)) {
+	if ((pkt == NULL) || (len > RF_PSDU_MAX_SIZE - RF_FCS_SIZE - RF_FCF_SIZE)) {
 		ret = false;
 	} else {
 		/* temp_tx_pkt is protected inside ptt rf by locking mechanism */
-		temp_tx_pkt[0] = len + RF_FCS_SIZE;
-		memcpy(&temp_tx_pkt[RF_PSDU_START], pkt, len);
+		temp_tx_pkt[0] = len + RF_FCS_SIZE + RF_FCF_SIZE;
+		temp_tx_pkt[1] = FRAME_TYPE_MULTIPURPOSE;
+		temp_tx_pkt[2] = 0;
+		memcpy(&temp_tx_pkt[RF_PTT_PAYLOAD_START], pkt, len);
 
 		ret = nrf_802154_modulated_carrier(temp_tx_pkt);
 	}
