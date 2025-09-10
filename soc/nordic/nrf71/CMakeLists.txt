@@ -19,3 +19,6 @@ if(NOT CONFIG_BUILD_WITH_TFM AND CONFIG_PSA_NEED_CRACEN_KMU_DRIVER)
   # We are sure that this file will be included first.
   zephyr_linker_sources(RAM_SECTIONS SORT_KEY ! kmu_push_area_section.ld)
 endif()
+
+# WZN-6148: port this to zephyr/modules/hal_nordic/nrfx/CMakeLists.txt in future
+zephyr_compile_definitions_ifdef(CONFIG_SOC_NRF7120_SKIP_CLOCK_CONFIG NRF_SKIP_CLOCK_CONFIGURATION)
