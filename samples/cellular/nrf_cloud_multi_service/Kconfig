@@ -154,19 +154,20 @@ choice
 	default LED_INDICATION_GPIO if BOARD_NRF9160DK_NRF9160_NS || BOARD_NRF9161DK_NRF9161_NS || $(dt_compat_enabled,gpio-leds)
 	default LED_INDICATION_DISABLED
 
-	config LED_INDICATION_PWM
-		select LED
-		select LED_PWM
-		select PWM
-		bool "Enable LED indication using the pwm-leds driver"
+config LED_INDICATION_PWM
+	bool "Enable LED indication using the pwm-leds driver"
+	select LED
+	select LED_PWM
+	select PWM
 
-	config LED_INDICATION_GPIO
-		select LED
-		select LED_GPIO
-		bool "Enable LED indication using the gpio-leds driver"
+config LED_INDICATION_GPIO
+	bool "Enable LED indication using the gpio-leds driver"
+	select LED
+	select LED_GPIO
 
-	config LED_INDICATION_DISABLED
-		bool "Disable LED indication"
+config LED_INDICATION_DISABLED
+	bool "Disable LED indication"
+
 endchoice
 
 choice
@@ -176,28 +177,28 @@ choice
 	default LED_INDICATOR_4LED if !LED_INDICATION_DISABLED
 	default LED_INDICATOR_NONE
 
-	config LED_INDICATOR_RGB
-		depends on LED_INDICATION_PWM
-		bool "A single RGB LED"
+config LED_INDICATOR_RGB
+	bool "A single RGB LED"
+	depends on LED_INDICATION_PWM
 
-	config LED_INDICATOR_4LED
-		depends on !LED_INDICATION_DISABLED
-		bool "Four binary LEDs"
+config LED_INDICATOR_4LED
+	bool "Four binary LEDs"
+	depends on !LED_INDICATION_DISABLED
 
-	config LED_INDICATOR_NONE
-		depends on LED_INDICATION_DISABLED
-		bool "No indicator LEDs"
+config LED_INDICATOR_NONE
+	bool "No indicator LEDs"
+	depends on LED_INDICATION_DISABLED
 
 endchoice
 
 config LED_VERBOSE_INDICATION
-	depends on !LED_INDICATION_DISABLED
 	bool "Enables extra LED status indications"
+	depends on !LED_INDICATION_DISABLED
 	default y
 
 config LED_CONTINUOUS_INDICATION
-	depends on !LED_INDICATION_DISABLED
 	bool "Show an idle pattern instead of turning LEDs off"
+	depends on !LED_INDICATION_DISABLED
 	default y
 
 config GNSS_FIX_TIMEOUT_SECONDS
@@ -225,8 +226,8 @@ config TEST_COUNTER_MULTIPLIER
 	  It is useful for load testing.
 
 config AT_CMD_REQUESTS
-	depends on !NRF_CLOUD_COAP
 	bool "Enables remote execution of AT commands using device messages"
+	depends on !NRF_CLOUD_COAP
 	default y
 
 config AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH
