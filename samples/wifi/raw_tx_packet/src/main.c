@@ -25,7 +25,10 @@ LOG_MODULE_REGISTER(raw_tx_packet, CONFIG_LOG_DEFAULT_LEVEL);
 #include "wifi_connection.h"
 
 #define BEACON_PAYLOAD_LENGTH 256
+#define DEFAULT_RAW_TX_WIFI_CHANNEL 6
 #define PADDING_ZERO_THRESHOLD 10
+#define DS_PARAMETER_SET_ELEMENT_ID 3
+#define DS_PARAMETER_SET_LENGTH 1
 #define CONTINUOUS_MODE_TRANSMISSION 0
 #define FIXED_MODE_TRANSMISSION 1
 
@@ -256,6 +259,51 @@ static unsigned short calculate_beacon_frame_length(const struct beacon *beacon_
 	return header_length + payload_length;
 }
 
+static void update_beacon_channel(void)
+{
+	uint8_t channel;
+	struct net_if *iface = net_if_get_first_wifi();
+
+	if (!iface) {
+		channel = DEFAULT_RAW_TX_WIFI_CHANNEL;
+	} else {
+#ifdef CONFIG_RAW_TX_PKT_SAMPLE_CONNECTION_MODE
+		struct wifi_iface_status status = {0};
+
+		if (net_mgmt(NET_REQUEST_WIFI_IFACE_STATUS, iface, &status, sizeof(status)) == 0) {
+			if (status.state >= WIFI_STATE_ASSOCIATED && status.channel > 0) {
+				channel = (uint8_t)status.channel;
+			} else {
+				channel = DEFAULT_RAW_TX_WIFI_CHANNEL;
+			}
+		} else {
+			channel = DEFAULT_RAW_TX_WIFI_CHANNEL;
+		}
+#else
+		channel = CONFIG_RAW_TX_PKT_SAMPLE_CHANNEL;
+#endif
+	}
+
+	/* Update channel in DS Parameter */
+	uint8_t *payload = test_beacon_frame.payload;
+	unsigned short pos = 12;
+
+	while ((pos + 2) < BEACON_PAYLOAD_LENGTH) {
+		uint8_t tag = payload[pos];
+		uint8_t length = payload[pos + 1];
+
+		if (tag == DS_PARAMETER_SET_ELEMENT_ID && length == DS_PARAMETER_SET_LENGTH) {
+			payload[pos + 2] = channel;
+			return;
+		}
+
+		pos += 2 + length;
+		if (pos >= BEACON_PAYLOAD_LENGTH) {
+			break;
+		}
+	}
+}
+
 static void fill_raw_tx_pkt_hdr(struct raw_tx_pkt_header *raw_tx_pkt)
 {
 	/* Raw Tx Packet header */
@@ -312,6 +360,8 @@ static void wifi_send_raw_tx_packets(void)
 	char *test_frame = NULL;
 	unsigned int buf_length, num_pkts, transmission_mode, num_failures = 0;
 	unsigned short beacon_frame_length = calculate_beacon_frame_length(&test_beacon_frame);
+
+	update_beacon_channel();
 
 	ret = setup_raw_pkt_socket(&sockfd, &sa);
 	if (ret < 0) {
