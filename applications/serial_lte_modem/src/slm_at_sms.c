@@ -14,6 +14,7 @@
 LOG_MODULE_REGISTER(slm_sms, CONFIG_SLM_LOG_LEVEL);
 
 #define MAX_CONCATENATED_MESSAGE  3
+#define SLM_SMS_AT_HEADER_INFO_MAX_LEN 64
 
 /**@brief SMS operations. */
 enum slm_sms_operation {
@@ -22,15 +23,123 @@ enum slm_sms_operation {
 	AT_SMS_SEND
 };
 
+struct sms_concat_info {
+	sys_snode_t node;
+	char messages[8 - 1][SMS_MAX_PAYLOAD_LEN_CHARS + 1];
+	char *rsp_buf;
+	uint16_t ref_number;
+	uint8_t total_msgs;
+	uint8_t count;
+	int64_t last_received_uptime;
+};
+
+static sys_slist_t sms_concat_list;
+
+static K_MUTEX_DEFINE(list_mtx);
+
 static int sms_handle;
+
+static struct sms_concat_info *sms_concat_info_node_find(
+	struct sms_concat_info **prev_out,
+	uint16_t ref_number)
+{
+	struct sms_concat_info *prev = NULL, *curr;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&sms_concat_list, curr, node) {
+		if (curr->ref_number == ref_number) {
+			*prev_out = prev;
+			return curr;
+		}
+		prev = curr;
+	}
+	return NULL;
+}
+
+static void sms_concat_cleanup(void)
+{
+	struct sms_concat_info *prev = NULL, *curr, *tmp;
+	int64_t uptime = k_uptime_get();
+
+	LOG_WRN("sms_concat_cleanup sys_slist_len=%d, uptime=%lld", sys_slist_len(&sms_concat_list), uptime); // TODO REMOVE
+
+	SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&sms_concat_list, curr, tmp, node) {
+		LOG_WRN("ref_number=%d, last_received_uptime=%lld", curr->ref_number, curr->last_received_uptime); // TODO REMOVE
+		/* Remove messages that haven't received more parts in 1 hour after
+		 * the previous part was received.
+		 */
+		if (uptime - curr->last_received_uptime > 30000 /* TODO real value: SEC_PER_HOUR * MSEC_PER_SEC*/) {
+			LOG_WRN("Cleaned SMS ref number %d, last_received_uptime=%lld, uptime=%lld",
+				curr->ref_number, curr->last_received_uptime, uptime);
+			sys_slist_remove(&sms_concat_list, &prev->node, &curr->node);
+		} else {
+			prev = curr;
+		}
+	}
+}
+
+static struct sms_concat_info *sms_concat_info_append(struct sms_deliver_header *header)
+{
+	struct sms_concat_info *to_ins;
+
+	k_mutex_lock(&list_mtx, K_FOREVER);
+
+	/* Allocate memory and fill. */
+	to_ins = (struct sms_concat_info *)k_malloc(sizeof(struct sms_concat_info));
+	if (to_ins == NULL) {
+		LOG_ERR("Out of memory");
+		k_mutex_unlock(&list_mtx);
+		return NULL;
+	}
+	memset(to_ins, 0, sizeof(struct sms_concat_info));
+	to_ins->ref_number = header->concatenated.ref_number;
+	to_ins->total_msgs = header->concatenated.total_msgs;
+	to_ins->count = 0;
+	to_ins->last_received_uptime = k_uptime_get();
+
+	size_t concat_msg_size = to_ins->total_msgs * SMS_MAX_PAYLOAD_LEN_CHARS + SLM_SMS_AT_HEADER_INFO_MAX_LEN;
+	to_ins->rsp_buf = k_malloc(concat_msg_size);
+	memset(to_ins->rsp_buf, 0, concat_msg_size);
+	if (to_ins->rsp_buf == NULL) {
+		LOG_ERR("No memory for concatenated SMS for %d bytes", concat_msg_size);
+		return NULL;
+	}
+
+	/* Insert ref_number in the list. */
+	sys_slist_append(&sms_concat_list, &to_ins->node);
+	k_mutex_unlock(&list_mtx);
+	return to_ins;
+}
+
+void sms_concat_info_remove(uint16_t ref_number)
+{
+	struct sms_concat_info *curr, *prev = NULL;
+
+	k_mutex_lock(&list_mtx, K_FOREVER);
+
+	/* Check if the ref_number is registered before removing it. */
+	curr = sms_concat_info_node_find(&prev, ref_number);
+	if (curr == NULL) {
+		LOG_WRN("ref_number not registered. Nothing to do");
+		k_mutex_unlock(&list_mtx);
+		return;
+	}
+
+	k_free(curr->rsp_buf);
+
+	/* Remove the message info from the list. */
+	sys_slist_remove(&sms_concat_list, &prev->node, &curr->node);
+	k_free(curr);
+
+	k_mutex_unlock(&list_mtx);
+	return;
+}
 
 static void sms_callback(struct sms_data *const data, void *context)
 {
-	static uint16_t ref_number;
-	static uint8_t total_msgs;
-	static uint8_t count;
-	static char messages[MAX_CONCATENATED_MESSAGE - 1][SMS_MAX_PAYLOAD_LEN_CHARS + 1];
-	static char rsp_buf[MAX_CONCATENATED_MESSAGE * SMS_MAX_PAYLOAD_LEN_CHARS + 64] = {0};
+	//static char concat_rsp_buf[SLM_SMS_AT_HEADER_INFO_MAX_LEN + SMS_MAX_PAYLOAD_LEN_CHARS * 8] = {0};
+	static char rsp_buf[SLM_SMS_AT_HEADER_INFO_MAX_LEN + SMS_MAX_PAYLOAD_LEN_CHARS] = {0};
+	struct sms_concat_info *to_ins = NULL;
+	struct sms_concat_info *curr;
 
 	ARG_UNUSED(context);
 
@@ -41,6 +150,7 @@ static void sms_callback(struct sms_data *const data, void *context)
 
 	if (data->type == SMS_TYPE_DELIVER) {
 		struct sms_deliver_header *header = &data->header.deliver;
+		LOG_WRN("SMS_TYPE_DELIVER %d", sys_slist_len(&sms_concat_list));
 
 		if (!header->concatenated.present) {
 			sprintf(rsp_buf,
@@ -54,72 +164,75 @@ static void sms_callback(struct sms_data *const data, void *context)
 			strcat(rsp_buf, data->payload);
 			strcat(rsp_buf, "\"\r\n");
 			rsp_send("%s", rsp_buf);
+			rsp_buf[0] = '\0';
 		} else {
-			LOG_DBG("concatenated message %d, %d, %d",
+			LOG_DBG("Concatenated message %d, %d, %d",
 				header->concatenated.ref_number,
-				total_msgs = header->concatenated.total_msgs,
+				header->concatenated.total_msgs,
 				header->concatenated.seq_number);
-			/* ref_number and total_msgs should remain unchanged */
-			if (ref_number == 0) {
-				ref_number = header->concatenated.ref_number;
+
+			curr = sms_concat_info_node_find(&to_ins, header->concatenated.ref_number);
+			if (curr == NULL) {
+				curr = sms_concat_info_append(header);
+				if (curr == NULL) {
+					goto done;
+				}
 			}
-			if (ref_number != header->concatenated.ref_number) {
-				LOG_ERR("SMS concatenated message ref_number error: %d, %d",
-					ref_number, header->concatenated.ref_number);
-				goto done;
-			}
-			if (total_msgs == 0) {
-				total_msgs = header->concatenated.total_msgs;
-			}
-			if (total_msgs != header->concatenated.total_msgs) {
+
+			/* total_msgs should remain unchanged */
+			if (curr->total_msgs != header->concatenated.total_msgs) {
 				LOG_ERR("SMS concatenated message total_msgs error: %d, %d",
-					total_msgs, header->concatenated.total_msgs);
+					curr->total_msgs, header->concatenated.total_msgs);
 				goto done;
 			}
-			if (total_msgs > MAX_CONCATENATED_MESSAGE) {
-				LOG_ERR("SMS concatenated message no memory: %d", total_msgs);
-				goto done;
-			}
+
 			/* seq_number should start with 1 but could arrive in random order */
 			if (header->concatenated.seq_number == 0 ||
-			    header->concatenated.seq_number > total_msgs) {
+			    header->concatenated.seq_number > curr->total_msgs) {
 				LOG_ERR("SMS concatenated message seq_number error: %d, %d",
-					header->concatenated.seq_number, total_msgs);
+					header->concatenated.seq_number, curr->total_msgs);
 				goto done;
 			}
 			if (header->concatenated.seq_number == 1) {
-				sprintf(rsp_buf, "\r\n#XSMS: \"%02d-%02d-%02d %02d:%02d:%02d\",\"",
+				sprintf(curr->rsp_buf,
+					"\r\n#XSMS: \"%02d-%02d-%02d %02d:%02d:%02d\",\"",
 					header->time.year, header->time.month, header->time.day,
 					header->time.hour, header->time.minute,
 					header->time.second);
-				strcat(rsp_buf, header->originating_address.address_str);
-				strcat(rsp_buf, "\",\"");
-				strcat(rsp_buf, data->payload);
-				count++;
+				strcat(curr->rsp_buf, header->originating_address.address_str);
+				strcat(curr->rsp_buf, "\",\"");
+				strcat(curr->rsp_buf, data->payload);
+				//strcpy(concat_rsp_buf, curr->rsp_buf);
 			} else {
-				strcpy(messages[header->concatenated.seq_number - 2],
-					data->payload);
-				count++;
+				strcpy(curr->messages[header->concatenated.seq_number - 2], data->payload);
+				strcpy(curr->rsp_buf + SLM_SMS_AT_HEADER_INFO_MAX_LEN + (header->concatenated.seq_number - 1) * SMS_MAX_PAYLOAD_LEN_CHARS,
+				       data->payload);
 			}
-			if (count == total_msgs) {
-				for (int i = 0; i < (total_msgs - 1); i++) {
-					strcat(rsp_buf, messages[i]);
+			curr->count++;
+			if (curr->count == curr->total_msgs) {
+				for (int i = 1; i < curr->total_msgs; i++) {
+					//strcat(concat_rsp_buf, curr->messages[i-1]); // TODO REMOVE
+					strncat(curr->rsp_buf, curr->rsp_buf + SLM_SMS_AT_HEADER_INFO_MAX_LEN + i * SMS_MAX_PAYLOAD_LEN_CHARS, SMS_MAX_PAYLOAD_LEN_CHARS);
 				}
-				strcat(rsp_buf, "\"\r\n");
-				rsp_send("%s", rsp_buf);
-			} else {
-				return;
+ 				// TODO REMOVE
+				/*if (strcmp(concat_rsp_buf, curr->rsp_buf) != 0) {
+					LOG_ERR("DIFFER");
+				}*/
+				//LOG_WRN("concat_rsp_buf: %s", concat_rsp_buf);
+				LOG_WRN("curr->rsp_buf:  %s", curr->rsp_buf); // TODO REMOVE
+				strcat(curr->rsp_buf, "\"\r\n");
+				rsp_send("%s", curr->rsp_buf);
+				sms_concat_info_remove(curr->ref_number);
 			}
-done:
-			ref_number = 0;
-			total_msgs = 0;
-			count = 0;
 		}
 	} else if (data->type == SMS_TYPE_STATUS_REPORT) {
 		LOG_INF("Status report received");
 	} else {
 		LOG_WRN("Unknown type: %d", data->type);
 	}
+
+done:
+	sms_concat_cleanup();
 }
 
 static int do_sms_start(void)
@@ -162,6 +275,8 @@ static int do_sms_send(const char *number, const char *message)
 	if (err) {
 		LOG_ERR("SMS send error: %d", err);
 	}
+
+	LOG_WRN("do_sms_send sys_slist_len=%d", sys_slist_len(&sms_concat_list)); // TODO REMOVE
 
 	return err;
 }
