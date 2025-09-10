@@ -497,7 +497,7 @@
 /samples/cellular/slm_shell/              @nrfconnect/ncs-lr-slm
 /samples/cellular/sms/                    @nrfconnect/ncs-modem-tre
 /samples/cellular/uicc_lwm2m/             @stig-bjorlykke
-/samples/cellular/lte_ble_gateway/        @nrfconnect/ncs-cia
+/samples/cellular/lte_sensor_gateway/     @nrfconnect/ncs-cia
 /samples/common/                          @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/crypto/                          @nrfconnect/ncs-aegir
 /samples/debug/memfault/                  @nrfconnect/ncs-cia @nrfconnect/ncs-memfault
