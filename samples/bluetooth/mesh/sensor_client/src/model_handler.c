@@ -142,7 +142,7 @@ static const struct bt_mesh_sensor_cli_handlers bt_mesh_sensor_cli_handlers = {
 static struct bt_mesh_sensor_cli sensor_cli =
 	BT_MESH_SENSOR_CLI_INIT(&bt_mesh_sensor_cli_handlers);
 
-#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_BASELINE)
 /* HVAC Integration NLC Profile composition data page 2 */
 static const uint8_t cmp2_elem_offset_hvac[1]; /* Profile uses element 0 */
 
@@ -380,7 +380,7 @@ static const struct bt_mesh_comp comp = {
 
 const struct bt_mesh_comp *model_handler_init(void)
 {
-#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_BASELINE)
 	if (bt_mesh_comp2_register(&comp_p2)) {
 		printk("Failed to register comp2\n");
 	}
