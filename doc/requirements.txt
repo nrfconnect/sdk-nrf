@@ -27,3 +27,4 @@ sphinx_markdown_tables          # |     |         |   X    |         |         |
 sphinxcontrib-mscgen            # |  X  |         |        |         |    X    |      |        |
 sphinxcontrib-plantuml>=0.27    # |     |         |        |         |         |  X   |        |
 west>=1.0.0                     # |     |         |        |         |         |      |   X    |
+python-dotenv                   # |     |    X    |        |         |         |      |        |
