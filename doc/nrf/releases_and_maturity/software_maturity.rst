@@ -3011,3 +3011,97 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - --
               - --
+
+Front-End Modules support
+*************************
+
+The following table indicates the software maturity levels of the support for Front-End Modules:
+
+.. toggle::
+
+  .. software_maturity_fem_support_table_start
+
+  .. tabs::
+
+    .. group-tab:: nRF52 Series
+
+        .. list-table:: Front-End Module support
+          :widths: auto
+          :header-rows: 1
+
+          * - FEM device
+            - Implementation
+            - nRF52833
+            - nRF52840
+          * - nRF2220
+            - nRF2220
+            - Supported
+            - Supported
+          * - nRF21540
+            - nRF21540 GPIO
+            - Supported
+            - Supported
+          * - nRF21540
+            - nRF21540 GPIO+SPI
+            - Supported
+            - Supported
+          * - SKY66112-11
+            - Simple GPIO
+            - Supported
+            - Supported
+
+    .. group-tab:: nRF53 Series
+
+        .. list-table:: Front-End Module support
+          :widths: auto
+          :header-rows: 1
+
+          * - FEM device
+            - Implementation
+            - nRF5340
+          * - nRF2220
+            - nRF2220
+            - Supported
+          * - nRF21540
+            - nRF21540 GPIO
+            - Supported
+          * - nRF21540
+            - nRF21540 GPIO+SPI
+            - Supported
+          * - SKY66112-11
+            - Simple GPIO
+            - Supported
+
+    .. group-tab:: nRF54 Series
+
+        .. list-table:: Front-End Module support
+          :widths: auto
+          :header-rows: 1
+
+          * - FEM device
+            - Implementation
+            - nRF54L10
+            - nRF54L15
+            - nRF54LM20
+          * - nRF2220
+            - nRF2220
+            - Supported
+            - Supported
+            - Supported
+          * - nRF21540
+            - nRF21540 GPIO
+            - Supported
+            - Supported
+            - --
+          * - nRF21540
+            - nRF21540 GPIO+SPI
+            - Supported
+            - Supported
+            - Supported
+          * - SKY66112-11
+            - Simple GPIO
+            - Supported
+            - Supported
+            - --
+
+  .. software_maturity_fem_support_table_end
