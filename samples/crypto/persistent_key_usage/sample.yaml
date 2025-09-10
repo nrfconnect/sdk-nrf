@@ -34,7 +34,13 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-
+  sample.persistent_key_usage.ironside_se:
+    tags:
+      - ci_samples_sdfw
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
   sample.persistent_key_usage.secure_storage:
     platform_allow:
       - nrf52840dk/nrf52840
