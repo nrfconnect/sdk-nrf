@@ -15,6 +15,13 @@ ExternalZephyrProject_Add(
     BOARD ${SB_CONFIG_REMOTE_BOARD}
     BOARD_REVISION ${BOARD_REVISION}
   )
+  
+if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+  set_target_properties(remote PROPERTIES
+  IMAGE_CONF_SCRIPT ${ZEPHYR_BASE}/share/sysbuild/image_configurations/MAIN_image_default.cmake
+  )
+  UpdateableImage_Add(APPLICATION remote)
+endif()
 
 # Add a dependency so that the remote image will be built and flashed first
 add_dependencies(idle_twim remote)
