@@ -7,13 +7,18 @@ HID state module
    :local:
    :depth: 2
 
-The |hid_state| is required for communicating with the HID report providers to generate reports from input data.
+The |hid_state| is the center of an application acting as a HID peripheral.
 It is responsible for the following operations:
 
-* Tracking state of the HID report subscriptions.
-* Notifying the HID report providers to form the HID reports in either report or boot protocol.
-* Notifying the HID report providers about state changes of the HID report subscriber connection.
-* Sending :c:struct:`led_event` based on the HID keyboard LED output reports.
+* Tracking the state of HID subscribers and HID input report subscriptions.
+  The module can simultaneously handle HID input report subscriptions of multiple HID subscribers.
+  The module provides HID input reports only to one subscriber (*active subscriber*).
+* Providing HID input reports to the active HID subscriber.
+  The module relies on HID report providers to aggregate the user input, form HID input reports, and submit a :c:struct:`hid_report_event`.
+  The HID input reports can be formatted according to either HID report protocol or HID boot protocol.
+* Handling HID output reports.
+  The module handles only the HID keyboard LED output report.
+  The module sends a :c:struct:`led_event` to update state of the keyboard LEDs.
 
 Module events
 *************
@@ -29,20 +34,24 @@ Configuration
 *************
 
 To enable the |hid_state|, use the :ref:`CONFIG_DESKTOP_HID_STATE_ENABLE <config_desktop_app_options>` Kconfig option that is implied by the :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` option.
-An nRF Desktop peripheral uses the |hid_state| and HID report providers to generate HID reports based on the user input.
+Make sure to configure the peripheral type and the set of supported HID input reports and HID boot interface.
 For details related to HID configuration in the nRF Desktop, see the :ref:`nrf_desktop_hid_configuration` documentation.
 
-To send boot reports, enable the respective Kconfig option:
+Number of supported HID subscribers
+===================================
 
-* :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD <config_desktop_app_options>` - This option enables sending keyboard boot reports.
-* :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE <config_desktop_app_options>` - This option enables sending mouse boot reports.
+If your application configuration supports more than one HID subscriber, you must align the maximum number of HID subscribers that can be handled simultaneously (:ref:`CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT <config_desktop_app_options>`).
+For example, to use a configuration that allows to simultaneously subscribe to HID reports from HID over GATT (Bluetooth LE) and a single USB HID instance, set the value of this Kconfig option to ``2``.
 
-Number of supported HID data subscribers
-========================================
+If multiple HID subscribers are simultaneously connected, the |hid_state| selects the one with the highest priority as the active subscriber.
+The |hid_state| provides HID input reports only to the active subscriber.
+The |hid_state| displays the HID keyboard LED state associated with the active subscriber.
 
-If your application configuration supports more than one HID data subscriber, you must align the maximum number of HID data subscribers that can be supported simultaneously (:ref:`CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT <config_desktop_app_options>`).
-For example, to use a configuration that allows to simultaneously subscribe for HID reports from HID over GATT (BLE) and a single USB HID instance, set the value of this Kconfig option to ``2``.
-See the `Tracking state of transports`_ section for more details about HID subscribers.
+By default, the subscriber that is associated with USB has priority over a subscriber associated with Bluetooth LE.
+As a result, if a HID host connects through the USB while another HID host is connected over the Bluetooth LE, the HID reports will be routed to the USB.
+
+.. note::
+   The subscriber priority must be unique, which means that two or more subscribers cannot share the same priority value.
 
 HID keyboard LEDs
 =================
@@ -82,65 +91,95 @@ You must define all of the mentioned data in this configuration file, and specif
 HID report providers
 ====================
 
-The module selects the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_EVENT <config_desktop_app_options>` Kconfig option to enable :c:struct:`hid_report_provider_event` event support.
-The events are used to establish two-way callbacks between the |hid_state| and the HID report providers.
-The |hid_state| can request the HID report providers to generate HID reports and notify the providers about the connection state changes and report sent occurrences.
-The HID report providers are responsible for generating HID reports when requested by the |hid_state|.
-The HID report providers can also notify the |hid_state| when new data is available.
+The |hid_state| relies on the HID report providers to collect user input, form HID input reports, and submit a :c:struct:`hid_report_event`.
+The module selects the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_EVENT <config_desktop_app_options>` Kconfig option to enable the HID report provider event and default HID report providers for all HID input reports enabled in the configuration.
+The HID providers for mouse and keyboard input reports also handle the respective HID boot input reports if the boot report support is enabled in the configuration.
+
+.. note::
+   You can provide an alternative implementation of a HID report provider to generate a HID report in a custom way.
+   You can also add a new HID report provider to introduce support for another HID input report.
+   See the :ref:`nrf_desktop_hid_state_providing_hid_input_reports` section for implementation details related to HID report providers integration.
 
 Implementation details
 **********************
 
-The |hid_state| in association with the HID report providers provides a routing mechanism between sources of input data and transport modules.
-This can be associated with:
+This section describes implementation details related to responsibilities of the |hid_state|.
 
-* Receiving input events from :ref:`caf_buttons`, :ref:`nrf_desktop_wheel`, and :ref:`nrf_desktop_motion`.
-* Sending out HID reports to HID transports, for example, :ref:`nrf_desktop_hids` and :ref:`nrf_desktop_usb_state`.
+Tracking state of HID subscribers
+=================================
 
-Apart from the routing mechanism, the module is also responsible for `Handling HID keyboard LED state`_.
+A HID transport (for example :ref:`nrf_desktop_hids` or :ref:`nrf_desktop_usb_state`) is a module that forwards HID reports to a HID host and forwards HID subscriptions of the HID host.
+A HID transport reports the state of a HID subscriber using the :c:struct:`hid_report_subscriber_event`.
+When the connection to the HID host is indicated by this event, the |hid_state| will create an associated subscriber.
+The |hid_state| tracks the state of the HID subscribers.
 
-Tracking state of transports
-============================
+As part of the :c:struct:`hid_report_subscriber_event`, the subscriber provides the following parameters:
 
-The |hid_state| tracks the state of modules that forward the HID data to a HID host (HID transports) by listening to :c:struct:`hid_report_subscriber_event`.
-The |hid_state| refers collectively to all transports as *subscribers*.
-When the connection to the host is indicated by this event, the |hid_state| will create a subscriber associated with the transport.
-Each subscriber reports its priority as part of the :c:struct:`hid_report_subscriber_event`.
-The subscriber priority must be unique, that mean two or more subscribers cannot share the same priority value.
+* Subscriber priority - The |hid_state| provides HID input reports only to the subscriber with the highest priority (active subscriber).
+* Pipeline size - The |hid_state| forwards this information to the HID report providers.
+  The information can be used, for example, to synchronize sensor sampling with sending the HID input reports to the HID host.
+  See the :ref:`nrf_desktop_hid_mouse_report_handling` section for information how the pipeline size is used for HID mouse reports.
+* Maximum number of processed HID input reports - The |hid_state| limits the number of HID input reports processed by a HID subscriber at a time by delaying providing the subsequent HID input report until the previous report is sent to a HID host.
 
-By default, the subscriber that is associated with USB has priority over any Bluetooth LE peer subscriber.
-As a result, when the host connected through the USB subscribes for a HID report, the HID report will be routed to the USB.
+Tracking state of HID report subscriptions
+------------------------------------------
 
-Tracking state of HID report notifications
-==========================================
+For each subscriber, the |hid_state| tracks the state of HID input report subscriptions.
+The HID input reports are only provided after the active subscriber enables the subscription.
+The subscriber updates its HID report subscriptions using a :c:struct:`hid_report_subscription_event`.
 
-For each subscriber, the |hid_state| tracks the state of notifications for each of the available HID reports.
-These are tracked in the subscriber's structure :c:struct:`subscriber`.
+The HID report subscriptions are tracked in the subscriber's structure :c:struct:`subscriber`.
 This structure's member ``state`` is an array of :c:struct:`report_state` structures.
-Each element corresponds to one available HID report.
-
-The subscriber connects to the HID reports by submitting :c:struct:`hid_report_subscription_event`.
-Depending on the connection method, this event can be submitted:
-
-* For Bluetooth, when the notification is enabled for a given HID report.
-* For USB, when the device is connected to USB.
+Each element corresponds to one HID input report.
 
 The :c:struct:`report_state` structure serves the following purposes:
 
-* Tracks the state of the connection.
+* Tracks the state of the report subscription.
 * Contains the link connecting the object to the right :c:struct:`provider` structure which contains the HID report provider info such as report ID and API (:c:struct:`hid_report_provider_api`).
-* Tracks the number of reports of the associated type that were sent to the subscriber.
+* Tracks the number of reports with a given ID in flight.
 
-Requesting HID reports
-======================
+.. _nrf_desktop_hid_state_providing_hid_input_reports:
 
-When a HID report is to be sent to the subscriber, the |hid_state| calls the appropriate function from the :c:struct:`hid_report_provider_api` to trigger the HID report provider to generate HID report.
+Providing HID input reports
+===========================
 
-Handling HID keyboard LED state
-===============================
+The |hid_state| relies on the HID providers to collect user input, form HID input reports, and submit a :c:struct:`hid_report_event`.
+Every HID input report ID is handled by a dedicated HID report provider API (:c:struct:`hid_report_provider_api`).
 
-When the |hid_state| receives a :c:struct:`hid_report_event` that contains a HID output report, it updates the remembered information about the state of the HID output report of the appropriate subscriber.
+HID report provider event
+-------------------------
+
+The :c:struct:`hid_report_provider_event` is used to establish two-way callbacks between the |hid_state| and the HID report providers.
+The event allows to exchange the API structures between the |hid_state| and HID report providers (:c:struct:`hid_report_provider_api` and :c:struct:`hid_state_api`).
+The API structures allow for direct function calls between the modules.
+
+The |hid_state| requests the HID report providers to generate HID reports and notifies the providers about the connection state changes and report sent occurrences.
+The HID report providers can notify the |hid_state| when new data is available (on user input) to trigger generating a HID input report.
+
+On a |hid_state|'s request, a HID report provider submits a :c:struct:`hid_report_event` to provide a HID input report to the active HID subscriber.
+The :c:struct:`hid_report_sent_event` is submitted by the HID transport related to the subscriber to confirm that the HID report was sent to the HID host.
+The |hid_state| relies on this event to track the number of HID reports in flight and notify the providers.
+
+See the :c:struct:`hid_report_provider_event` event documentation page for detailed information regarding the communication between the |hid_state| and HID report providers.
+
+Default HID providers
+---------------------
+
+The following application modules are used as default implementations of HID report providers:
+
+* :ref:`nrf_desktop_hid_provider_mouse`
+* :ref:`nrf_desktop_hid_provider_keyboard`
+* :ref:`nrf_desktop_hid_provider_system_ctrl`
+* :ref:`nrf_desktop_hid_provider_consumer_ctrl`
+
+The respective HID report provider is automatically enabled if support for a given HID input report is enabled in the :ref:`nrf_desktop_hid_configuration`.
+See the documentation page of a HID report provider for detailed information about the provider.
+
+HID output reports
+==================
+
+When the |hid_state| receives a :c:struct:`hid_report_event` that contains a HID output report, it updates the stored information about the state of the HID output report of the appropriate subscriber.
 
 By default, nRF Desktop supports only HID keyboard LED output report.
-The nRF Desktop peripheral displays the state of the keyboard LEDs that was specified by the HID subscriber that subscribed for keyboard key HID input report.
-When the subscriber is changed or it updates the state of the keyboard LEDs, the |hid_state| sends :c:struct:`leds_event` to update the state of the hardware LEDs.
+The nRF Desktop peripheral displays the state of the keyboard LEDs that was specified by the active HID subscriber.
+When the active subscriber is changed or it updates the state of the keyboard LEDs, the |hid_state| sends :c:struct:`leds_event` to update the state of the hardware LEDs.
