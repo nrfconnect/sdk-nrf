@@ -674,16 +674,31 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 	return SX_OK;
 }
 
-int cracen_prepare_ik_key(const uint8_t *user_data)
+bool cracen_load_ikg_seed(void)
 {
-#ifdef CONFIG_CRACEN_IKG_SEED_LOAD
 	if (!nrf_cracen_seedram_lock_check(NRF_CRACEN)) {
+		if (lib_kmu_is_slot_empty(CONFIG_CRACEN_IKG_SEED_KMU_SLOT + 0) ||
+		    lib_kmu_is_slot_empty(CONFIG_CRACEN_IKG_SEED_KMU_SLOT + 1) ||
+		    lib_kmu_is_slot_empty(CONFIG_CRACEN_IKG_SEED_KMU_SLOT + 2)) {
+			return false;
+		}
+
 		if (lib_kmu_push_slot(CONFIG_CRACEN_IKG_SEED_KMU_SLOT + 0) ||
 		    lib_kmu_push_slot(CONFIG_CRACEN_IKG_SEED_KMU_SLOT + 1) ||
 		    lib_kmu_push_slot(CONFIG_CRACEN_IKG_SEED_KMU_SLOT + 2)) {
-			return SX_ERR_INVALID_KEYREF;
+			return false;
 		}
 		nrf_cracen_seedram_lock_enable_set(NRF_CRACEN, true);
+	}
+
+	return true;
+}
+
+int cracen_prepare_ik_key(const uint8_t *user_data)
+{
+#ifdef CONFIG_CRACEN_IKG_SEED_LOAD
+	if (!cracen_load_ikg_seed()) {
+		return SX_ERR_INVALID_KEYREF;
 	}
 #endif
 

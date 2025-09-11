@@ -190,6 +190,13 @@ psa_status_t cracen_cipher_crypt_ecb(const struct sxkeyref *key, const uint8_t *
 				     size_t *output_length, enum cipher_operation dir);
 
 /**
+ * @brief Load IKG key seed
+ *
+ * @return True if IKG seed is loaded and locked, otherwise false.
+ */
+bool cracen_load_ikg_seed(void);
+
+/**
  * @brief Prepare ik key.
  *
  * @param user_data    Owner ID.
