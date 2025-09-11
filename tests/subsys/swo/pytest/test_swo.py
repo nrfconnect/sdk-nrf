@@ -22,7 +22,7 @@ def _kill(proc):
             child.kill()
         proc.kill()
     except Exception as e:
-        logger.exception(f'Could not kill nrfutil - {e}')
+        logger.exception(f'Could not kill JLinkSWOViewerCLExe - {e}')
 
 
 def test_swo_logging(dut: DeviceAdapter):
@@ -35,7 +35,7 @@ def test_swo_logging(dut: DeviceAdapter):
     PLATFORM = dut.device_config.platform
     SEGGER_ID = dut.device_config.id
     COLLECT_TIMEOUT = 10.0
-    EXPECTED = rf"\d+: Hello from {PLATFORM}"
+    EXPECTED = rf"log_swo: \d+: Hello from {PLATFORM}"
 
     logger.debug(f"{dut.device_config=}")
 
@@ -76,6 +76,11 @@ def test_swo_logging(dut: DeviceAdapter):
             'swofreq': 1000000,
         },
         'nrf54lv10dk/nrf54lv10a/cpuapp': {
+            'device': 'NRF54LV10A_M33',
+            'cpufreq': 128000000,
+            'swofreq': 1000000,
+        },
+        'nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp': {
             'device': 'NRF54LV10A_M33',
             'cpufreq': 128000000,
             'swofreq': 1000000,
