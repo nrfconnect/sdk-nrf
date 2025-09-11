@@ -72,3 +72,16 @@ tests:
     extra_args:
       - udp_SHIELD="nrf7002eb2"
       - udp_SNIPPET=nrf70-wifi
+  sample.net.udp.nrf54lm20_nrf7002eb2.wifi:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    extra_args:
+      - udp_SHIELD="nrf7002eb2"
