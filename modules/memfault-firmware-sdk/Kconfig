@@ -6,10 +6,6 @@
 
 if MEMFAULT
 
-config MEMFAULT_HTTP_USES_MBEDTLS
-	bool
-	default n if NRF_MODEM_LIB
-
 config MEMFAULT_NCS_PROJECT_KEY
 	string "Memfault API key"
 	help
