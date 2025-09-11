@@ -110,6 +110,27 @@ tests:
       - mqtt_SHIELD="nrf7002eb2"
       - mqtt_SNIPPET=nrf70-wifi
       - mqtt_EXTRA_CONF_FILE=overlay-tls-nrf54l-nrf70.conf
+  sample.net.mqtt.nrf54lm20_nrf7002eb2.wifi:
+    sysbuild: true
+    build_only: true
+    platform_allow: nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    extra_args:
+      - mqtt_SHIELD="nrf7002eb2"
+  sample.net.mqtt.nrf54lm20_nrf7002eb2.wifi.tls:
+    sysbuild: true
+    build_only: true
+    platform_allow: nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    extra_args:
+      - mqtt_SHIELD="nrf7002eb2"
+      - EXTRA_CONF_FILE=overlay-tls-nrf54l-nrf70.conf
   sample.net.mqtt.nrf91.tls:
     sysbuild: true
     build_only: true

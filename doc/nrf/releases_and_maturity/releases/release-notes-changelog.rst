@@ -434,7 +434,15 @@ Matter samples
 Networking samples
 ------------------
 
-|no_changes_yet_note|
+* Added support for the nRF7002-EB II with the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target in the following samples:
+
+  * :ref:`aws_iot`
+  * :ref:`net_coap_client_sample`
+  * :ref:`download_sample`
+  * :ref:`http_server`
+  * :ref:`https_client`
+  * :ref:`mqtt_sample`
+  * :ref:`udp_sample`
 
 NFC samples
 -----------

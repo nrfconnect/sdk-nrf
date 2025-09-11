@@ -110,6 +110,7 @@ The sample provides predefined configuration files for the following development
 * :file:`thingy91x_nrf9151_ns.conf` - Configuration file for the Thingy:91 X.
 * :file:`boards/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the nRF7002 DK.
 * :file:`nrf54l15dk_nrf54l15_cpuapp.conf` - Configuration file for the nRF54L15 DK.
+* :file:`nrf54lm20dk_nrf54lm20a_cpuapp.conf` - Configuration file for the nRF54LM20 DK.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator board.
 
 Files that are located under the :file:`/boards` folder is automatically merged with the :file:`prj.conf` file when you build for corresponding target.
