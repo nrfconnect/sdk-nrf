@@ -448,6 +448,13 @@ psa_status_t psa_lock_key(mbedtls_svc_key_id_t key_id)
 	return cracen_kmu_block(&attr);
 }
 
+psa_status_t psa_purge_key(mbedtls_svc_key_id_t key_id)
+{
+	(void) key_id;
+	/* Do nothing */
+	return PSA_SUCCESS;
+}
+
 #endif /* PSA_NEED_CRACEN_KMU_DRIVER */
 
 /* Initialization function */
