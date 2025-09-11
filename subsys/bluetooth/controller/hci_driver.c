@@ -1449,10 +1449,12 @@ static int hci_driver_open(const struct device *dev, bt_hci_recv_t recv_func)
 #endif /* CONFIG_BT_PER_ADV */
 
 #if defined(CONFIG_BT_CTLR_CHANNEL_SOUNDING)
-	sdc_hci_cmd_vs_set_cs_event_length_t cs_event_length_params = {
-		.cs_event_length_us = CONFIG_BT_CTLR_SDC_CS_EVENT_LEN_DEFAULT
+	sdc_hci_cmd_vs_cs_params_set_t cs_params_set_event_length = {
+		.cs_param_type = SDC_HCI_VS_CS_PARAM_TYPE_CS_EVENT_LENGTH_SET,
+		.cs_param_data.cs_event_length_params.cs_event_length_us =
+			CONFIG_BT_CTLR_SDC_CS_EVENT_LEN_DEFAULT
 	};
-	err = sdc_hci_cmd_vs_set_cs_event_length(&cs_event_length_params);
+	err = sdc_hci_cmd_vs_cs_params_set(&cs_params_set_event_length);
 	if (err) {
 		MULTITHREADING_LOCK_RELEASE();
 		return -ENOTSUP;
