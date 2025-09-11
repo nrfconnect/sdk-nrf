@@ -149,13 +149,14 @@ ci_samples_wifi:
   files:
     - modules/lib/hostap/
     - modules/lib/nrf_wifi/
+    - nrf/boards/shields/nrf7002eb2/
     - nrf/samples/wifi/
-    - nrf/subsys/net/lib/nrf70_fw_ext/
     - nrf/subsys/net/lib/hostap_crypto/
+    - nrf/subsys/net/lib/nrf70_fw_ext/
     - nrfxlib/nrf_wifi/
+    - zephyr/drivers/wifi/
     - zephyr/modules/hostap/
     - zephyr/modules/nrf_wifi/
-    - zephyr/drivers/wifi/
 
 ci_applications_matter: &ci_matter
   files:
