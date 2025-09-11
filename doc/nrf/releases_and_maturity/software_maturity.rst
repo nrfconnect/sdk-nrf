@@ -2252,13 +2252,13 @@ Trusted Firmware-M support
               - --
               - --
               - Experimental
-              - --
+              - Experimental (with :ref:`limitations <tfm_encrypted_its>`)
             * - :ref:`Minimal <ug_tfm_supported_services_profiles_minimal>`
               - --
               - --
               - --
               - Experimental
-              - --
+              - Experimental (with :ref:`limitations <tfm_encrypted_its>`)
 
       .. tab:: nRF91 Series
 

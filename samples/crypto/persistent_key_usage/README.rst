@@ -25,6 +25,9 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
+.. note::
+   |encrypted_its_not_supported_on_nrf54lm20|
+
 Overview
 ********
 

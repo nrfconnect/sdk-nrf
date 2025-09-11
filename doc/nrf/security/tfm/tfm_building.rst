@@ -25,6 +25,7 @@ The :ref:`boards supported by the SDK <app_boards_names>` distinguish entries ac
 To build with TF-M in the |NCS|, you must use a board target with the ``*/ns`` variant.
 The following platforms are currently supported:
 
+* nRF54LM20A
 * nRF54L15
 * nRF5340
 * nRF91 Series

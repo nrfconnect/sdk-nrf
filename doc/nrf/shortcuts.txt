@@ -220,6 +220,8 @@
 .. |samples_tfm_info| replace:: Starting from the |NCS| v2.0.0, TF-M is the only way to use :ref:`security by separation <ug_tfm_security_by_separation>` with ARM TrustZone.
    In addition, the TF-M implementation is enabled by default for all samples and applications in the |NCS| when you build for the ``*/ns`` :ref:`variant <app_boards_names>` of the boards.
 
+.. |encrypted_its_not_supported_on_nrf54lm20| replace:: The encrypted ITS service is not supported on nRF54LM20 as it :ref:`does not support the full set of AEAD algorithm features <ug_crypto_supported_features_aead_algorithms>`.
+
 .. |plusminus| unicode:: U+000B1 .. PLUS-MINUS SIGN
    :rtrim:
 
