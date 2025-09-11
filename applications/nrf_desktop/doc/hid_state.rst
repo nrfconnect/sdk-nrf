@@ -170,6 +170,38 @@ The following application modules are used as default implementations of HID rep
 The respective HID report provider is automatically enabled if support for a given HID input report is enabled in the :ref:`nrf_desktop_hid_configuration`.
 See the documentation page of a HID report provider for detailed information about the provider.
 
+Custom HID providers
+--------------------
+
+You can introduce your own implementation of a HID report provider to the application.
+The HID report provider can either:
+
+* Handle a HID input report that is already supported by the application instead of a default HID report provider (substitute the default HID report provider).
+  Make sure to disable the default HID report provider while introducing the custom provider.
+* Introduce a support for a new HID input report.
+
+HID report map update
+~~~~~~~~~~~~~~~~~~~~~
+
+If your HID report provider implementation uses a different HID input report format, you need to align the HID report configuration (including the HID report map).
+If the default HID report descriptor is used (:ref:`CONFIG_DESKTOP_USE_DEFAULT_REPORT_DESCR <config_desktop_app_options>`), the configuration is defined by the following files:
+
+* :file:`configuration/common/hid_report_desc.h`,
+* :file:`configuration/common/hid_report_desc.c`.
+
+.. note::
+   nRF Desktop dongles share a common HID report format with the nRF Desktop peripherals.
+   In order to allow a dongle to forward HID input reports from the peripherals, the dongle must use aligned HID report configuration.
+
+HID transport update
+~~~~~~~~~~~~~~~~~~~~
+
+If you introduce a support for a new HID input report, you might also need to update configuration of modules that acts as HID transports (for example :ref:`nrf_desktop_hids`, :ref:`nrf_desktop_usb_state`).
+This is needed to ensure:
+
+* proper configuration of the module and underlying libraries,
+* handling of the newly introduced HID input report.
+
 HID output reports
 ==================
 
