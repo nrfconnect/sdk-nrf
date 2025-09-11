@@ -22,6 +22,9 @@ LOG_MODULE_REGISTER(nrf_cloud_fota_poll, CONFIG_NRF_CLOUD_FOTA_POLL_LOG_LEVEL);
 
 #define JOB_WAIT_S		30
 
+#define IS_RECOVERABLE_NETWORK_ERR(err)                                                            \
+	((err) == -ENETDOWN || (err) == -ENETUNREACH || (err) == -EFAULT)
+
 /* FOTA job status strings that provide additional details for nrf_cloud_fota_status values */
 const char * const FOTA_STATUS_DETAILS_TIMEOUT = "Download did not complete in the allotted time";
 const char * const FOTA_STATUS_DETAILS_CANCELED = "Download was canceled";
@@ -192,21 +195,6 @@ static void cancel_if_job_is_not_valid(struct nrf_cloud_fota_poll_ctx *ctx,
 	}
 }
 
-/* Function that resets the downloaded image in case full modem FOTA fails.
- * This is to avoid resuming the download when doing a full modem FOTA,
- * which does not currently work.
- */
-static void reset_image(enum dfu_target_image_type img_type)
-{
-	if (img_type == DFU_TARGET_IMAGE_TYPE_FULL_MODEM) {
-		int err = fota_download_util_image_reset(DFU_TARGET_IMAGE_TYPE_FULL_MODEM);
-
-		if (err) {
-			LOG_ERR("fota_download_util_image_reset() failed: %d", err);
-		}
-	}
-}
-
 /****************************************************/
 /* End of transport-specific wrappers.              */
 /****************************************************/
@@ -236,8 +224,6 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 		LOG_ERR("FOTA download error: %d", evt->cause);
 
 		nrf_cloud_download_end();
-
-		reset_image(ctx_ptr->img_type);
 
 		fota_status = NRF_CLOUD_FOTA_FAILED;
 		fota_status_details = FOTA_STATUS_DETAILS_DL_ERR;
@@ -271,8 +257,6 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 		if (ctx_ptr->is_nonblocking) {
 			LOG_DBG("FOTA download cancelled");
 			nrf_cloud_download_end();
-
-			reset_image(ctx_ptr->img_type);
 
 			fota_status = NRF_CLOUD_FOTA_CANCELED;
 			fota_status_details = FOTA_STATUS_DETAILS_CANCELED;
@@ -450,7 +434,7 @@ static int check_for_job(struct nrf_cloud_fota_poll_ctx *ctx,
 		return err;
 	} else if (err) {
 		LOG_ERR("Failed to fetch FOTA job, error: %d", err);
-		return -ENOENT;
+		return err;
 	}
 
 	if (job_ref->type == NRF_CLOUD_FOTA_TYPE__INVALID) {
@@ -690,7 +674,8 @@ int nrf_cloud_fota_poll_process(struct nrf_cloud_fota_poll_ctx *ctx)
 	if (validate_in_progress_job()) {
 		err = update_job_status(ctx);
 		if (err) {
-			return -ENOTRECOVERABLE;
+			LOG_ERR("Failed to update in-progress FOTA job, error: %d", err);
+			return IS_RECOVERABLE_NETWORK_ERR(err) ? err : -ENOTRECOVERABLE;
 		}
 
 		wait_after_job_update();
@@ -705,7 +690,8 @@ int nrf_cloud_fota_poll_process(struct nrf_cloud_fota_poll_ctx *ctx)
 		cleanup(&job);
 		return err;
 	} else if (err < 0) {
-		return -ENOTRECOVERABLE;
+		LOG_ERR("Failed to check for FOTA job, error: %d", err);
+		return IS_RECOVERABLE_NETWORK_ERR(err) ? err : -ENOTRECOVERABLE;
 	} else if (err > 0) {
 		/* No job. */
 		cleanup(&job);
@@ -750,7 +736,8 @@ int nrf_cloud_fota_poll_process(struct nrf_cloud_fota_poll_ctx *ctx)
 	/* Job was not successful, send status to nRF Cloud */
 	err = update_job_status(ctx);
 	if (err) {
-		return -ENOTRECOVERABLE;
+		LOG_ERR("Failed to update nRF Cloud with unsuccessful FOTA job, error: %d", err);
+		return IS_RECOVERABLE_NETWORK_ERR(err) ? err : -ENOTRECOVERABLE;
 	}
 
 	wait_after_job_update();
