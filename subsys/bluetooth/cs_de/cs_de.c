@@ -153,7 +153,7 @@ static int32_t calculate_left_null_compensation_of_peak(int32_t peak_index,
 						  CONFIG_BT_CS_DE_NFFT_SIZE) > 0
 							 ? (left_null_index + NORMAL_PEAK_TO_NULL -
 							    CONFIG_BT_CS_DE_NFFT_SIZE)
-							 : 0;
+							 : peak_index;
 		} else {
 			compensated_peak_index = left_null_index + NORMAL_PEAK_TO_NULL;
 		}
@@ -161,38 +161,9 @@ static int32_t calculate_left_null_compensation_of_peak(int32_t peak_index,
 	return compensated_peak_index;
 }
 
-static void interpolate_missing_frequencies(float *iq)
-{
-	/* Channels 23, 24, and 25 are not allowed for use with channel sounding.
-	 * However, the FFT algorithm requires evenly spaced samples.
-	 * IQ values are therefore linearly interpolated from channels 22 and 26.
-	 */
-
-	const uint8_t ch_22 = 22 - CHANNEL_INDEX_OFFSET;
-	const uint8_t ch_26 = 26 - CHANNEL_INDEX_OFFSET;
-	const float i_slope = (iq[2 * ch_26] - iq[2 * ch_22]) / 4.0f;
-	const float q_slope = (iq[2 * ch_26 + 1] - iq[2 * ch_22 + 1]) / 4.0f;
-
-	for (uint8_t i = ch_22 + 1; i < ch_26; i++) {
-		iq[2 * i] = iq[2 * ch_22] + i_slope * (i - ch_22);
-		iq[2 * i + 1] = iq[2 * ch_22 + 1] + q_slope * (i - ch_22);
-	}
-}
 
 static void calculate_dist_ifft(float *dist, float iq_tones_comb[2 * CONFIG_BT_CS_DE_NFFT_SIZE])
 {
-	interpolate_missing_frequencies(iq_tones_comb);
-
-	for (uint8_t n = 0; n < 2 * NUM_CHANNELS; n += 2) {
-		if (iq_tones_comb[n] == 0.0f && iq_tones_comb[n + 1] == 0.0f) {
-			/* Phase measurements are missing for some channels.
-			 * FFT cannot be used.
-			 */
-			LOG_DBG("Could not compute iFFT due to missing frequencies.");
-			return;
-		}
-	}
-
 #if CONFIG_BT_CS_DE_NFFT_SIZE == 512
 	arm_cfft_f32(&arm_cfft_sR_f32_len512, iq_tones_comb, 0, 1);
 #elif CONFIG_BT_CS_DE_NFFT_SIZE == 1024
