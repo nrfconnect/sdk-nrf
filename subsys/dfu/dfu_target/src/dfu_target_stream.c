@@ -149,7 +149,22 @@ int dfu_target_stream_init(const struct dfu_target_stream_init *init)
 
 int dfu_target_stream_offset_get(size_t *out)
 {
+	if (!out) {
+		return -EINVAL;
+	}
+
 	*out = stream_flash_bytes_written(&stream);
+
+	return 0;
+}
+
+int dfu_target_stream_bytes_buffered_get(size_t *out)
+{
+	if (!out) {
+		return -EINVAL;
+	}
+
+	*out = stream_flash_bytes_buffered(&stream);
 
 	return 0;
 }
