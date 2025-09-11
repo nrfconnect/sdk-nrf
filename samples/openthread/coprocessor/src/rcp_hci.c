@@ -24,6 +24,8 @@
 #include <zephyr/bluetooth/buf.h>
 #include <zephyr/bluetooth/hci_raw.h>
 
+#include <zephyr/logging/log.h>
+
 LOG_MODULE_REGISTER(rcp_hci_module, CONFIG_OT_COPROCESSOR_LOG_LEVEL);
 
 static const struct device *const hci_uart_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_bt_c2h_uart));
