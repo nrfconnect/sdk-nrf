@@ -1928,6 +1928,10 @@ ci_samples_nrf54h20:
     - zephyr/modules/hal_nordic/
     - zephyr/soc/nordic/nrf54h/
 
+ci_tests_subsys_rtt:
+  files:
+    - nrf/tests/subsys/rtt/
+
 ci_tests_subsys_swo:
   files:
     - nrf/tests/subsys/swo/
