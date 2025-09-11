@@ -225,6 +225,7 @@ Core features
 Security services
 =================
 
+* |encrypted_its_not_supported_on_nrf54lm20|
 * Firmware Update service is not supported.
 * Firmware verification is not supported.
 * Firmware encryption is not supported.

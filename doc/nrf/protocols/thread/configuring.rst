@@ -411,8 +411,6 @@ Minimal Thread Device (MTD)
 Trusted Firmware-M support options
 ==================================
 
-To configure your Thread application to run with Trusted Firmware-M, use the following board target:
+Thread currently supports Trusted Firmware-M (TF-M) on the nRF54L15 DK.
 
-* ``nrf54l15dk/nrf54l15/cpuapp/ns``` for the nRF54L15 DK
-
-For more Trusted Firmware-M documentation, see :ref:`ug_tfm` and the official `TF-M documentation`_.
+To configure your Thread application to run with Trusted Firmware-M, use the ``nrf54l15dk/nrf54l15/cpuapp/ns`` board target and follow the instructions in :ref:`ug_tfm_building`.

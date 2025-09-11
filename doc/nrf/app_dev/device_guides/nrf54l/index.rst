@@ -24,6 +24,7 @@ Refer to the following information for the list of supported development kits (D
    * - :zephyr:board:`nrf54lm20dk`
      - PCA10184
      - | ``nrf54lm20dk/nrf54lm20a/cpuapp``
+       | ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
        | ``nrf54lm20dk/nrf54lm20a/cpuflpr``
        | ``nrf54lm20dk/nrf54lm20a/cpuflpr/xip``
      - --
@@ -31,6 +32,7 @@ Refer to the following information for the list of supported development kits (D
    * - :zephyr:board:`nrf54l15dk`
      - PCA10156
      - | ``nrf54l15dk/nrf54l15/cpuapp``
+       | ``nrf54l15dk/nrf54l15/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
        | ``nrf54l15dk/nrf54l15/cpuflpr``
        | ``nrf54l15dk/nrf54l15/cpuflpr/xip``
      - | `Datasheet <nRF54L15 Datasheet_>`_
