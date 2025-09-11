@@ -47,6 +47,7 @@ static K_SEM_DEFINE(sem_mtu_exchange_done, 0, 1);
 static K_SEM_DEFINE(sem_security, 0, 1);
 static K_SEM_DEFINE(sem_ras_features, 0, 1);
 static K_SEM_DEFINE(sem_local_steps, 1, 1);
+static K_SEM_DEFINE(sem_distance_estimate_updated, 0, 1);
 
 static K_MUTEX_DEFINE(distance_estimate_buffer_mutex);
 
@@ -199,6 +200,7 @@ static void ranging_data_cb(struct bt_conn *conn, uint16_t ranging_counter, int 
 				store_distance_estimates(&cs_de_report);
 			}
 		}
+		k_sem_give(&sem_distance_estimate_updated);
 	}
 }
 
@@ -500,7 +502,9 @@ static int scan_init(void)
 	int err;
 
 	struct bt_scan_init_param param = {
-		.scan_param = NULL, .conn_param = BT_LE_CONN_PARAM_DEFAULT, .connect_if_match = 1};
+		.scan_param = NULL,
+		.conn_param = BT_LE_CONN_PARAM(0x10, 0x10, 0, BT_GAP_MS_TO_CONN_TIMEOUT(4000)),
+		.connect_if_match = 1};
 
 	bt_scan_init(&param);
 	bt_scan_cb_register(&scan_cb);
@@ -658,7 +662,7 @@ int main(void)
 		.role = BT_CONN_LE_CS_ROLE_INITIATOR,
 		.rtt_type = BT_CONN_LE_CS_RTT_TYPE_AA_ONLY,
 		.cs_sync_phy = BT_CONN_LE_CS_SYNC_1M_PHY,
-		.channel_map_repetition = 3,
+		.channel_map_repetition = 1,
 		.channel_selection_type = BT_CONN_LE_CS_CHSEL_TYPE_3B,
 		.ch3c_shape = BT_CONN_LE_CS_CH3C_SHAPE_HAT,
 		.ch3c_jump = 2,
@@ -689,8 +693,8 @@ int main(void)
 		.min_procedure_interval = realtime_rd ? 5 : 10,
 		.max_procedure_interval = realtime_rd ? 5 : 10,
 		.max_procedure_count = 0,
-		.min_subevent_len = 60000,
-		.max_subevent_len = 60000,
+		.min_subevent_len = 16000,
+		.max_subevent_len = 16000,
 		.tone_antenna_config_selection = BT_LE_CS_TONE_ANTENNA_CONFIGURATION_A1_B1,
 		.phy = BT_LE_CS_PROCEDURE_PHY_2M,
 		.tx_power_delta = 0x80,
@@ -717,21 +721,18 @@ int main(void)
 	}
 
 	while (true) {
-		k_sleep(K_MSEC(5000));
-
+		k_sem_take(&sem_distance_estimate_updated, K_FOREVER);
 		if (buffer_num_valid != 0) {
 			for (uint8_t ap = 0; ap < MAX_AP; ap++) {
 				cs_de_dist_estimates_t distance_on_ap = get_distance(ap);
 
-				LOG_INF("Latest distance estimates on antenna path %u: ifft: %f, "
-					"phase_slope: %f, rtt: %f meters",
+				LOG_INF("Latest distance estimates on antenna path %u: ifft: %.2f, "
+					"phase_slope: %.2f, rtt: %.2f meters",
 					ap, (double)distance_on_ap.ifft,
 					(double)distance_on_ap.phase_slope,
 					(double)distance_on_ap.rtt);
+				}
 			}
-		}
-
-		LOG_INF("Sleeping for a few seconds...");
 	}
 
 	return 0;
