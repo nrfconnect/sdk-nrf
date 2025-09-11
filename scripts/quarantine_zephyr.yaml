@@ -209,6 +209,10 @@
     - nrf9160dk@0.14.0/nrf9160
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-8152"
 
+- scenarios:
+    - testing.ctest.base
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35402"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
@@ -516,3 +520,7 @@
   platforms:
     - nrf52840dk/nrf52840
   comment: "Not compatible with NCS. https://nordicsemi.atlassian.net/browse/KRKNWK-20183"
+
+- scenarios:
+    - buildsystem.sbom.spdx
+  comment: "Missing toolchain python package. https://nordicsemi.atlassian.net/browse/NCSDK-35387"
