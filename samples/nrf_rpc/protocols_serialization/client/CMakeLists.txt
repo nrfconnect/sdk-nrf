@@ -21,4 +21,5 @@ zephyr_library_sources_ifdef(CONFIG_NFC_RPC src/nfc_shell.c)
 zephyr_library_sources_ifdef(CONFIG_BT_THROUGHPUT src/bt_throughput_shell.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_RPC_UTILS src/rpc_utils_shell.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_PS_CLIENT_BT_TEST src/bt_test_shell.c)
+zephyr_library_sources_ifdef(CONFIG_NRF_RPC_UTILS_HEALTH_MONITOR src/health_monitor_shell.c)
 # NORDIC SDK APP START

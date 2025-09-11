@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+
+menuconfig HEALTH_MONITOR
+	bool "Health Monitor"
+	help
+	  Enable Health Monitor, a system that constantly monitors Server state
+	  and periodically reports it to the Client.
+
+if HEALTH_MONITOR
+
+config HEALTH_MONITOR_RAPORT_PERIOD
+	int "Health Monitor raport period [ms]"
+	default 60000
+	help
+	  Default interval of sending health raport to the client expressed in milliseconds.
+
+config HEALTH_MONITOR_HEALTHCHECK_PERIOD
+	int "Health Monitor health check period [ms]"
+	default 1000
+	help
+	  Configures how often health check task should be run.
+
+
+config HEALTH_MONITOR_SRP_TIMEOUT
+	int "SRP registration timeout [s]"
+	default 300
+	help
+	  If SRP registrations are not complete after the given time event is generated.
+	  0 for immediate notification, negative to disable.
+
+config HEALTH_MONITOR_SINGLETON_LEADER_TIMEOUT
+	int "Singleton Leader timeout [s]"
+	default 20
+	help
+	  If state changes to Leader with no connection to other devices for the given time event is generated.
+	  0 for immediate notification, negative to disable.
+
+module = HEALTH_MONITOR
+module-str = health_monitor
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NRF_PS_SERVER_HEALTH_MONITOR

@@ -46,6 +46,11 @@ config NRF_RPC_UTILS_CRASH_GEN
 	help
 	  Enables nRF RPC commands for generating a crash on the remote device.
 
+config NRF_RPC_UTILS_HEALTH_MONITOR
+	bool "RPC Health Monitor support"
+	help
+	  Enables Health Monitor support over RPC.
+
 config NRF_RPC_UTILS_SYSTEM_HEALTH
 	bool "System health"
 	help

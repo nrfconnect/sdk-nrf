@@ -21,6 +21,11 @@ if(CONFIG_NRF_PS_SERVER_FATAL_ERROR_TRIGGER)
   target_sources(app PRIVATE src/fatal_error_trigger.c)
 endif()
 
+
+if(CONFIG_NRF_PS_SERVER_HEALTH_MONITOR)
+  target_sources(app PRIVATE src/hot_main.c)
+endif()
+
 if(CONFIG_NRF_PS_SERVER_RPC_ALIVE_LED)
   # Wrap z_fatal_error to turn off the RPC alive LED on fatal error
   target_link_options(app INTERFACE -Wl,--wrap=z_fatal_error)

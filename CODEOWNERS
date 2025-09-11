@@ -337,6 +337,7 @@
 /include/drivers/sensor_stub.h            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/emds/                            @balaklaka @nrfconnect/ncs-paladin
 /include/fem_al/                          @nrfconnect/ncs-dragoon
+/include/health_monitor.h                 @MarekPorwisz
 /include/hpf/                             @nrfconnect/ncs-ll-ursus
 /include/logging/                         @nrfconnect/ncs-protocols-serialization
 /include/mgmt/                            @nrfconnect/ncs-eris
@@ -376,6 +377,7 @@
 /lib/flash_patch/                         @nrfconnect/ncs-eris
 /lib/fprotect/                            @nrfconnect/ncs-eris
 /lib/gcf_sms/                             @nrfconnect/ncs-modem
+/lib/health_monitor/                      @MarekPorwisz
 /lib/hw_id/                               @nrfconnect/ncs-cia
 /lib/hw_unique_key/                       @nrfconnect/ncs-aegir
 /lib/identity_key/                        @nrfconnect/ncs-aegir

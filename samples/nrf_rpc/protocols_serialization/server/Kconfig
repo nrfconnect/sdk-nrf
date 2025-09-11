@@ -24,6 +24,13 @@ config NRF_PS_SERVER_RPC_ALIVE_LED
 	  Turns on the LED selected with "/aliases/rpc-alive-led" DTS property
 	  when the UART transport is alive and ready to receive nRF RPC packets.
 
+config NRF_PS_SERVER_HEALTH_MONITOR
+	bool "Health Monitor support"
+	default y
+	depends on HEALTH_MONITOR
+	help
+	  Turns on Health Monitor tasks.
+
 module = NRF_PS_SERVER
 module-str = nrf_ps_server
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
