@@ -109,7 +109,22 @@ int dfu_target_full_modem_offset_get(size_t *out)
 		return -EPERM;
 	}
 
-	return dfu_target_stream_offset_get(out);
+	size_t bytes_written, bytes_buffered;
+	int err;
+
+	err = dfu_target_stream_offset_get(&bytes_written);
+	if (err) {
+		return err;
+	}
+
+	err = dfu_target_stream_bytes_buffered_get(&bytes_buffered);
+	if (err) {
+		return err;
+	}
+
+	*out = bytes_written + bytes_buffered;
+
+	return 0;
 }
 
 int dfu_target_full_modem_write(const void *const buf, size_t len)
