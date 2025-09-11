@@ -758,6 +758,8 @@ When booting the application domain, |ISE| performs the following operations:
 
 * Updates :ref:`CTRL_AP.BOOTSTATUS <ug_nrf54h20_ironside_se_bootstatus_register_format>` and writes the :ref:`boot report <ug_nrf54h20_ironside_se_boot_report>` to reflect any boot errors encountered during the initialization process.
 
+For more information on the boot sequence, see :ref:`ug_nrf54h20_architecture_boot`.
+
 .. _ug_nrf54h20_ironside_se_secondary_firmware:
 
 Secondary firmware
@@ -765,6 +767,8 @@ Secondary firmware
 
 The secondary firmware feature provides an alternative boot path that can be triggered implicitly or explicitly.
 It can be used for different purposes, some examples are DFU applications in systems that don't use dual banking, recovery firmware, and analysis firmware.
+
+For more information on the boot sequence, see :ref:`ug_nrf54h20_architecture_boot`.
 
 .. note::
    The term "primary firmware" is rarely used when describing the firmware that is booted by default by |ISE|, as it is implicit when the term "secondary" is not specified.
