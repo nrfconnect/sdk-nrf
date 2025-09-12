@@ -22,72 +22,57 @@ def _kill(proc):
             child.kill()
         proc.kill()
     except Exception as e:
-        logger.exception(f'Could not kill JLinkSWOViewerCLExe - {e}')
+        logger.exception(f'Could not kill JLinkRTTLoggerExe - {e}')
 
 
-def test_swo_logging(dut: DeviceAdapter):
+def test_rtt_logging(dut: DeviceAdapter):
     """
     Compile and flash test application on MCU.
-    Tested core(s) uses SWO backend for logging.
-    JLinkSWOViewerCLExe is used to collect logs.
+    Tested core(s) uses RTT backend for logging.
+    JLinkRTTLoggerExe is used to collect logs.
     """
     BUILD_DIR = str(dut.device_config.build_dir)
     PLATFORM = dut.device_config.platform
     SEGGER_ID = dut.device_config.id
     COLLECT_TIMEOUT = 10.0
-    EXPECTED = rf"log_swo: \d+: Hello from {PLATFORM}"
+    EXPECTED = rf"log_rtt: \d+: Hello from {PLATFORM}"
 
-    logger.debug(f"{dut.device_config=}")
-
-    SWO_CONFIG = {
+    SWD_CONFIG = {
         'nrf52dk/nrf52832': {
             'device': 'nRF52832_xxAA',
-            'cpufreq': 64000000,
-            'swofreq': 1000000,
         },
         'nrf52840dk/nrf52840': {
             'device': 'nRF52840_xxAA',
-            'cpufreq': 64000000,
-            'swofreq': 1000000,
         },
         'nrf5340dk/nrf5340/cpuapp': {
             'device': 'nRF5340_xxAA_APP',
-            'cpufreq': 64000000,
-            'swofreq': 1000000,
         },
         'nrf54l15dk/nrf54l05/cpuapp': {
             'device': 'nRF54L05_M33',
-            'cpufreq': 128000000,
-            'swofreq': 1000000,
         },
         'nrf54l15dk/nrf54l10/cpuapp': {
             'device': 'nRF54L10_M33',
-            'cpufreq': 128000000,
-            'swofreq': 1000000,
         },
         'nrf54l15dk/nrf54l15/cpuapp': {
             'device': 'nRF54L15_M33',
-            'cpufreq': 128000000,
-            'swofreq': 1000000,
         },
         'nrf54lm20dk/nrf54lm20a/cpuapp': {
             'device': 'NRF54LM20A_M33',
-            'cpufreq': 128000000,
-            'swofreq': 1000000,
+        },
+        'nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp': {
+            'device': 'NRF54LS05B_M33',
         },
         'nrf54lv10dk/nrf54lv10a/cpuapp': {
             'device': 'NRF54LV10A_M33',
-            'cpufreq': 128000000,
-            'swofreq': 1000000,
         },
         'nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp': {
             'device': 'NRF54LV10A_M33',
-            'cpufreq': 128000000,
-            'swofreq': 1000000,
         },
     }
 
-    log_filename = f"{BUILD_DIR}/log_swo.txt"
+    dut.close()
+
+    log_filename = f"{BUILD_DIR}/log_rtt.txt"
     try:
         Path(f"{log_filename}").unlink()
         logger.info("Old output file was deleted")
@@ -95,25 +80,27 @@ def test_swo_logging(dut: DeviceAdapter):
         pass
 
     # Wait a bit for the core to boot
-    time.sleep(2)
+    my_delay = 2
+    time.sleep(my_delay)
+    logger.info(f"{my_delay=}")
 
-    # use JLinkSWOViewerCLExe to collect logs
-    cmd = f"JLinkSWOViewerCLExe -USB {SEGGER_ID}"
-    cmd += f" -device {SWO_CONFIG[PLATFORM]['device']}"
-    cmd += f" -cpufreq {SWO_CONFIG[PLATFORM]['cpufreq']}"
-    cmd += f" -swofreq {SWO_CONFIG[PLATFORM]['swofreq']}"
-    cmd += f" -itmmask 0xFFFF -outputfile {log_filename}"
+    # use JLinkRTTLoggerExe to collect logs
+    cmd = f"JLinkRTTLoggerExe -USB {SEGGER_ID}"
+    cmd += f" -device {SWD_CONFIG[PLATFORM]['device']}"
+    cmd += f" -If SWD -Speed 1000 -RTTChannel 0"
+    cmd += f" {log_filename}"
+
     try:
         logger.info(f"Executing:\n{cmd}")
         proc = subprocess.Popen(
-            cmd,
+            cmd.split(),
+            stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             encoding='UTF-8',
-            shell=True,
         )
     except OSError as exc:
-        logger.error(f"Unable to start JLinkSWOViewerCLExe:\n{cmd=}\n{exc=}")
+        logger.error(f"Unable to start JLinkRTTLoggerExe:\n{cmd=}\n{exc=}")
 
     try:
         proc.wait(COLLECT_TIMEOUT)
@@ -121,6 +108,8 @@ def test_swo_logging(dut: DeviceAdapter):
         pass
     finally:
         _kill(proc)
+        outs, errs = proc.communicate()
+        logger.info(f"{outs=}\n{errs=}")
 
     # read logs
     with open(f"{log_filename}", errors="ignore") as log_file:
