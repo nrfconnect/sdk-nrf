@@ -415,7 +415,7 @@ void audio_system_start(void)
 			&encoder_thread_data, encoder_thread_stack, CONFIG_ENCODER_STACK_SIZE,
 			(k_thread_entry_t)encoder_thread, NULL, NULL, NULL,
 			K_PRIO_PREEMPT(CONFIG_ENCODER_THREAD_PRIO), 0, K_NO_WAIT);
-		ret = k_thread_name_set(encoder_thread_id, "ENCODER");
+		ret = k_thread_name_set(encoder_thread_id, "Encoder");
 		ERR_CHK(ret);
 	}
 

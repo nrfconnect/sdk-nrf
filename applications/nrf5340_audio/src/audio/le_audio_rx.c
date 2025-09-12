@@ -201,7 +201,7 @@ static int audio_datapath_thread_create(void)
 		&audio_datapath_thread_data, audio_datapath_thread_stack,
 		CONFIG_AUDIO_DATAPATH_STACK_SIZE, (k_thread_entry_t)audio_datapath_thread, NULL,
 		NULL, NULL, K_PRIO_PREEMPT(CONFIG_AUDIO_DATAPATH_THREAD_PRIO), 0, K_NO_WAIT);
-	ret = k_thread_name_set(audio_datapath_thread_id, "AUDIO_DATAPATH");
+	ret = k_thread_name_set(audio_datapath_thread_id, "Audio_datapath");
 	if (ret) {
 		LOG_ERR("Failed to create audio_datapath thread");
 		return ret;
