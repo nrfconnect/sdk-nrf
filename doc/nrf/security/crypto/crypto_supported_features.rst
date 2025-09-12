@@ -1912,7 +1912,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental (with exceptions, see note)
+                 - Experimental
                * - CCM* no tag
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_STAR_NO_TAG`
                  - --
@@ -1936,11 +1936,6 @@ The options are grouped by Series and drivers available for the device Series, a
                * For CBC no padding and CBC PKCS#7 padding cipher modes:
 
                  * Multi-part encrypt and decrypt APIs are not supported.
-
-               * For CTR cipher mode:
-
-                 * Only single-part full-block encryption is supported.
-                 * A maximum of 32 bytes of plaintext or ciphertext is supported.
 
          .. tab:: nrf_oberon
 
