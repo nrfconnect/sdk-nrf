@@ -52,6 +52,11 @@ You can enable the following HID reports:
 * HID system control report (:ref:`CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT <config_desktop_app_options>`)
 * HID consumer control report (:ref:`CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT <config_desktop_app_options>`)
 
+.. note::
+   nRF Desktop application allows you to modify the used HID input reports or introduce support for a new HID input report.
+   This can be achieved by implementing a custom HID report provider that can be used together with the :ref:`nrf_desktop_hid_state`.
+   For details, see the :ref:`nrf_desktop_hid_state_providing_hid_input_reports` documentation section.
+
 Apart from this, you can specify the supported HID boot protocol interface as one of the following:
 
 * mouse (:ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE <config_desktop_app_options>`)
