@@ -1789,7 +1789,7 @@ int hci_internal_msg_get(uint8_t *msg_out, sdc_hci_msg_type_t *msg_type_out)
 		return 0;
 	}
 
-	const int retval = sdc_hci_get(msg_out, msg_type_out);
+	const int retval = sdc_hci_get(msg_out, (uint8_t*)msg_type_out);
 
 #if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC)
 	if (retval == 0 && *msg_type_out == SDC_HCI_MSG_TYPE_EVT
