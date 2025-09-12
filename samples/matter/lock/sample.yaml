@@ -128,7 +128,9 @@ tests:
     build_only: true
     extra_args:
       - FILE_SUFFIX=release
-      - lock_SNIPPET=power-consumption-tests
+      - CONFIG_NCS_SAMPLE_MATTER_LEDS=n
+      - CONFIG_NCS_SAMPLE_MATTER_WATCHDOG=n
+      - CONFIG_CHIP_ENABLE_PAIRING_AUTOSTART=y
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
