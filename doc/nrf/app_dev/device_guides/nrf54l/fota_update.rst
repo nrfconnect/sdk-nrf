@@ -173,7 +173,7 @@ In |NCS|, you can build and program the :zephyr:code-sample:`smp-svr` as any oth
             west build -b nrf54l15dk/nrf54l15/cpuapp -T sample.mcumgr.smp_svr.bt.nrf54l15dk.ext_flash
             west flash
 
-    .. group-tab:: nRF54l15 DK with SPI Flash as update image (DTS partitioning)
+    .. group-tab:: nRF54L15 DK with SPI Flash as update image (DTS partitioning)
 
        To build with the DTS partitioning, run the following command:
 
@@ -200,7 +200,7 @@ Provisioning of keys for Hardware KMU
 
 .. note::
 
-   The nRF54LM20A SoC currently does not support KMU.
+   The MCUboot bootloader does not yet support KMU for nRF54LM20.
 
 In case of FOTA implementations using the MCUboot bootloader, which includes hardware cryptography and KMU, you must complete key provisioning before booting any application.
 Otherwise, the bootloader :ref:`may not boot the firmware setup and might take unwanted actions<ug_nrf54l_developing_basics_kmu_provisioning_keys>`.
