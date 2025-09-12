@@ -8,8 +8,9 @@ common:
     type: multi_line
     ordered: true
     regex:
-      - "Starting bootloader"
-      - "Jumping to the first image slot"
+      - "Starting .*bootloader"
+      - "Jumping to the .*image slot"
+      - "smp_sample: build time"
       - "smp_bt_sample: Advertising successfully started"
   timeout: 15
   tags:
@@ -97,6 +98,13 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "Starting bootloader"
+        - "Jumping to the first image slot"
+        - "smp_sample: build time"
   sample.mcumgr.smp_svr.bt.nrf54h20dk.direct_xip_withrequests:
     sysbuild: true
     extra_args:
