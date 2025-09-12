@@ -83,17 +83,17 @@ static void schedule_send_backoff(struct fsm_state_object *state_object);
 
 /* Forward declarations: State Machine Functions */
 static void state_running_entry(void *o);
-static void state_running_run(void *o);
+static enum smf_state_result state_running_run(void *o);
 static void state_running_exit(void *o);
 static void state_waiting_for_nrf_modem_lib_init_entry(void *o);
-static void state_waiting_for_nrf_modem_lib_init_run(void *o);
-static void state_waiting_for_network_connection_run(void *o);
+static enum smf_state_result state_waiting_for_nrf_modem_lib_init_run(void *o);
+static enum smf_state_result state_waiting_for_network_connection_run(void *o);
 static void state_network_connected_entry(void *o);
-static void state_network_connected_run(void *o);
+static enum smf_state_result state_network_connected_run(void *o);
 static void state_coredump_send_attempt_entry(void *o);
-static void state_coredump_send_attempt_run(void *o);
+static enum smf_state_result state_coredump_send_attempt_run(void *o);
 static void state_coredump_send_backoff_entry(void *o);
-static void state_coredump_send_backoff_run(void *o);
+static enum smf_state_result state_coredump_send_backoff_run(void *o);
 static void state_finished_entry(void *o);
 static void state_error_entry(void *o);
 
@@ -232,7 +232,7 @@ static void state_waiting_for_nrf_modem_lib_init_entry(void *o)
 	state_object->retry_count = 0;
 }
 
-static void state_waiting_for_nrf_modem_lib_init_run(void *o)
+static enum smf_state_result state_waiting_for_nrf_modem_lib_init_run(void *o)
 {
 	struct fsm_state_object *state_object = o;
 
@@ -240,7 +240,10 @@ static void state_waiting_for_nrf_modem_lib_init_run(void *o)
 
 	if (state_object->event == EVENT_NRF_MODEM_LIB_INITED) {
 		smf_set_state(SMF_CTX(state_object), &states[STATE_RUNNING]);
+		return SMF_EVENT_HANDLED;
 	}
+
+	return SMF_EVENT_PROPAGATE;
 }
 
 static void state_running_entry(void *o)
@@ -269,7 +272,7 @@ static void state_running_entry(void *o)
 	}
 }
 
-static void state_running_run(void *o)
+static enum smf_state_result state_running_run(void *o)
 {
 	struct fsm_state_object *state_object = o;
 
@@ -277,9 +280,13 @@ static void state_running_run(void *o)
 
 	if (state_object->event == EVENT_NRF_MODEM_LIB_SHUTDOWN) {
 		smf_set_state(SMF_CTX(state_object), &states[STATE_WAITING_FOR_NRF_MODEM_LIB_INIT]);
+		return SMF_EVENT_HANDLED;
 	} else if (state_object->event == EVENT_ERROR) {
 		smf_set_state(SMF_CTX(state_object), &states[STATE_ERROR]);
+		return SMF_EVENT_HANDLED;
 	}
+
+	return SMF_EVENT_PROPAGATE;
 }
 
 static void state_running_exit(void *o)
@@ -307,7 +314,7 @@ static void state_running_exit(void *o)
 	(void)k_work_cancel_delayable(&state_object->backoff_work);
 }
 
-static void state_waiting_for_network_connection_run(void *o)
+static enum smf_state_result state_waiting_for_network_connection_run(void *o)
 {
 	struct fsm_state_object *state_object = o;
 
@@ -333,7 +340,10 @@ static void state_waiting_for_network_connection_run(void *o)
 
 	if (state_object->lte_registered && state_object->pdn_active) {
 		smf_set_state(SMF_CTX(state_object), &states[STATE_NETWORK_CONNECTED]);
+		return SMF_EVENT_HANDLED;
 	}
+
+	return SMF_EVENT_PROPAGATE;
 }
 
 static void state_network_connected_entry(void *o)
@@ -345,7 +355,7 @@ static void state_network_connected_entry(void *o)
 	state_object->retry_count = 0;
 }
 
-static void state_network_connected_run(void *o)
+static enum smf_state_result state_network_connected_run(void *o)
 {
 	struct fsm_state_object *state_object = o;
 
@@ -355,11 +365,15 @@ static void state_network_connected_run(void *o)
 		state_object->lte_registered = false;
 
 		smf_set_state(SMF_CTX(state_object), &states[STATE_WAITING_FOR_NETWORK_CONNECTION]);
+		return SMF_EVENT_HANDLED;
 	} else if (state_object->event == EVENT_PDN_DEACTIVATED) {
 		state_object->pdn_active = false;
 
 		smf_set_state(SMF_CTX(state_object), &states[STATE_WAITING_FOR_NETWORK_CONNECTION]);
+		return SMF_EVENT_HANDLED;
 	}
+
+	return SMF_EVENT_PROPAGATE;
 }
 
 static void state_coredump_send_attempt_entry(void *o)
@@ -399,7 +413,7 @@ static void state_coredump_send_attempt_entry(void *o)
 	}
 }
 
-static void state_coredump_send_attempt_run(void *o)
+static enum smf_state_result state_coredump_send_attempt_run(void *o)
 {
 	struct fsm_state_object *state_object = o;
 
@@ -407,9 +421,13 @@ static void state_coredump_send_attempt_run(void *o)
 
 	if (state_object->event == EVENT_COREDUMP_SEND_FAIL) {
 		smf_set_state(SMF_CTX(state_object), &states[STATE_COREDUMP_SEND_BACKOFF]);
+		return SMF_EVENT_HANDLED;
 	} else if (state_object->event == EVENT_COREDUMP_SEND_SUCCESS) {
 		smf_set_state(SMF_CTX(state_object), &states[STATE_FINISHED]);
+		return SMF_EVENT_HANDLED;
 	}
+
+	return SMF_EVENT_PROPAGATE;
 }
 
 static void state_coredump_send_backoff_entry(void *o)
@@ -421,7 +439,7 @@ static void state_coredump_send_backoff_entry(void *o)
 	schedule_send_backoff(state_object);
 }
 
-static void state_coredump_send_backoff_run(void *o)
+static enum smf_state_result state_coredump_send_backoff_run(void *o)
 {
 	struct fsm_state_object *state_object = o;
 
@@ -429,7 +447,10 @@ static void state_coredump_send_backoff_run(void *o)
 
 	if (state_object->event == EVENT_BACKOFF_TIMER_EXPIRED) {
 		smf_set_state(SMF_CTX(state_object), &states[STATE_COREDUMP_SEND_ATTEMPT]);
+		return SMF_EVENT_HANDLED;
 	}
+
+	return SMF_EVENT_PROPAGATE;
 }
 
 static void state_finished_entry(void *o)
