@@ -600,7 +600,7 @@ static void init_entry(void *o)
 	parser_settings.on_url = on_url;
 }
 
-static void init_run(void *o)
+static enum smf_state_result init_run(void *o)
 {
 	struct s_object *user_object = o;
 
@@ -611,6 +611,8 @@ static void init_run(void *o)
 	} else {
 		LOG_DBG("Unknown event, skipping state transition.");
 	}
+
+	return SMF_EVENT_HANDLED;
 }
 
 /* Scan and cache Wi-Fi results in unprovisioned state. */
@@ -630,7 +632,7 @@ static void unprovisioned_entry(void *o)
 	}
 }
 
-static void unprovisioned_run(void *o)
+static enum smf_state_result unprovisioned_run(void *o)
 {
 	struct s_object *user_object = o;
 
@@ -641,6 +643,8 @@ static void unprovisioned_run(void *o)
 	} else {
 		LOG_DBG("Unknown event, skipping state transition.");
 	}
+
+	return SMF_EVENT_HANDLED;
 }
 
 static void unprovisioned_exit(void *o)
@@ -685,7 +689,7 @@ static void provisioning_entry(void *o)
 	notify_app(SOFTAP_WIFI_PROVISION_EVT_STARTED);
 }
 
-static void provisioning_run(void *o)
+static enum smf_state_result provisioning_run(void *o)
 {
 	struct s_object *user_object = o;
 
@@ -699,6 +703,8 @@ static void provisioning_run(void *o)
 	} else {
 		LOG_DBG("Unknown event, skipping state transition.");
 	}
+
+	return SMF_EVENT_HANDLED;
 }
 
 /* Wi-Fi credentials received, provisioning complete, cleanup and disable AP mode. */
@@ -732,7 +738,7 @@ static void provisioning_exit(void *o)
 	}
 }
 
-static void provisioned_run(void *o)
+static enum smf_state_result provisioned_run(void *o)
 {
 	struct s_object *user_object = o;
 
@@ -743,6 +749,8 @@ static void provisioned_run(void *o)
 	} else {
 		LOG_DBG("Unknown event, skipping state transition.");
 	}
+
+	return SMF_EVENT_HANDLED;
 }
 
 static void provisioned_exit(void *o)
@@ -766,7 +774,7 @@ static void finished_entry(void *o)
 	k_sem_give(&softap_wifi_provision_sem);
 }
 
-static void finished_run(void *o)
+static enum smf_state_result finished_run(void *o)
 {
 	struct s_object *user_object = o;
 
@@ -775,6 +783,8 @@ static void finished_run(void *o)
 	} else {
 		LOG_DBG("Unknown event, skipping state transition.");
 	}
+
+	return SMF_EVENT_HANDLED;
 }
 
 /* Delete Wi-Fi credentials upon exit of the provisioning state. */
