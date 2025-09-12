@@ -7,9 +7,11 @@
 menuconfig MODEM_SLM
 	bool "Modem SLM Library for host MCU"
 	depends on SERIAL
-	depends on UART_ASYNC_API
-	depends on RING_BUFFER
+	select UART_ASYNC_API
+	select RING_BUFFER
 	select UART_USE_RUNTIME_CONFIGURE
+	select GPIO_GET_CONFIG
+	select PM_DEVICE
 
 if MODEM_SLM
 
@@ -71,24 +73,6 @@ config MODEM_SLM_CR_LF_TERMINATION
 	bool "CR+LF Termination"
 
 endchoice
-
-config MODEM_SLM_POWER_PIN
-	int "Power pin"
-	default -1
-	help
-	  Interface GPIO to toggle power pin of the nRF91 Series device.
-
-config MODEM_SLM_POWER_PIN_TIME
-	int "Power pin active time"
-	default 100
-	help
-	  GPIO active time in milliseconds. This setting specifies the period length for the pin to be active.
-
-config MODEM_SLM_INDICATE_PIN
-	int "Indicate pin"
-	default -1
-	help
-	  Interface GPIO pin used by SLM to indicate that data is available or an unexpected reset has occurred.
 
 module = MODEM_SLM
 module-str = Modem SLM

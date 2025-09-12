@@ -289,6 +289,9 @@ static int tx_start(void)
 	// if (state != PM_DEVICE_STATE_ACTIVE) {
 	// 	return 1;
 	// }
+	if (!atomic_test_bit(&uart_state, SLM_TX_ENABLED_BIT)) {
+		return -EAGAIN;
+	}
 
 	len = ring_buf_get_claim(&tx_buf, &buf, ring_buf_capacity_get(&tx_buf));
 	err = uart_tx(slm_uart_dev, buf, len, SYS_FOREVER_US);
