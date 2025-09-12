@@ -35,7 +35,7 @@ Obtaining a certificate
 =======================
 
 The sample connects to ``www.example.com``, which requires an X.509 certificate.
-This certificate is provided in the :file:`samples/cellular/ciphersuites/cert` folder.
+This certificate is provided in the :file:`samples/cellular/tls_ciphersuites/cert` folder.
 |hex_format|
 
 To connect to other servers, you might need to provision a different certificate.
@@ -67,7 +67,7 @@ CONFIG_EXTENDED_CIPHERSUITE_LIST
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/ciphersuites`
+.. |sample path| replace:: :file:`samples/cellular/tls_ciphersuites`
 
 .. include:: /includes/build_and_run_ns.txt
 
