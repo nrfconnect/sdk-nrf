@@ -67,7 +67,7 @@ Measuring memory usage
 ======================
 
 You can obtain the current memory statistics from the device using Kconfig options and UART shell commands.
-To do this, set the :kconfig:option:`CONFIG_CHIP_MEMORY_PROFILING` global Matter memory profiling Kconfig to ``y``.
+Set the :ref:`CONFIG_CHIP_MEMORY_PROFILING` Kconfig option to ``y``.
 This activates all the other necessary Kconfig options and enables all UART shell commands for measuring memory usage.
 Alternatively, you can enable each option separately.
 

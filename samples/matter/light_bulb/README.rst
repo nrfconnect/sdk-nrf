@@ -187,10 +187,6 @@ To set up an AWS IoT instance and configure the sample, complete the following s
 #. Observe that the light bulb changes state.
    The local changes to the attributes always take precedence over what is set in the shadow's desired state.
 
-.. note::
-   The integration layer has built-in reconnection logic and tries to maintain the connection as long as the device is connected to the internet.
-   The reconnection interval can be configured using the :kconfig:option:`CONFIG_AWS_IOT_RECONNECTION_INTERVAL_SECONDS` option.
-
 User interface
 **************
 
