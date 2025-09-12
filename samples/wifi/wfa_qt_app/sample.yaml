@@ -50,3 +50,32 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_wifi
+  sample.54lm20dk.nrf7002eb2.wfa_qt_app.netusb:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - wfa_qt_app_SHIELD="nrf7002eb2"
+      - EXTRA_CONF_FILE="overlay-netusb.conf"
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.54lm20dk.nrf7002eb2.wfa_qt_app.slip:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - wfa_qt_app_SHIELD="nrf7002eb2"
+      - EXTRA_CONF_FILE="overlay-slip.conf"
+      - EXTRA_DTC_OVERLAY_FILE="nrf54lm20_uart_pipe.overlay"
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
