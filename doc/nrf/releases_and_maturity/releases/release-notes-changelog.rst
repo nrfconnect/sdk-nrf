@@ -513,7 +513,14 @@ Thread samples
 Wi-Fi samples
 -------------
 
-|no_changes_yet_note|
+* Removed support for the nRF7002-EB II with the ``nrf54h20dk/nrf54h20/cpuapp`` board target from the following samples:
+
+  * :ref:`wifi_station_sample`
+  * :ref:`wifi_scan_sample`
+  * :ref:`wifi_shell_sample`
+  * :ref:`wifi_radio_test`
+  * :ref:`ble_wifi_provision`
+  * :ref:`wifi_provisioning_internal_sample`
 
 Other samples
 -------------
