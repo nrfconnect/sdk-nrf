@@ -77,6 +77,8 @@ After programming the sample to your development kit, perform the following step
    +-------------------+------------------+
    | nRF54H20 DK       | ``0xe092000``    |
    +-------------------+------------------+
+   | nRF54L15 DK       | ``0xf2000``      |
+   +-------------------+------------------+
 
 #. Upload the second version of the image to the device using ``nrfutil device``:
 
