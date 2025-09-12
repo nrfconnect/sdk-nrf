@@ -129,6 +129,10 @@
 	pinctrl-names = "default", "sleep";
 };
 
+&uicr {
+	nfct-pins-as-gpios;
+};
+
 /* Include default memory partition configuration file. */
 /* This is not the layout that's actually used! It's overridden by Partition Manager. */
 #include <vendor/nordic/nrf5340_cpuapp_partition.dtsi>
