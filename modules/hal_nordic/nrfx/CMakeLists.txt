@@ -3,6 +3,9 @@
 
 zephyr_library_amend(${ZEPHYR_NRF_MODULE_DIR})
 
+set(BSP_DIR ${NRFX_DIR}/bsp)
+set(SOC_DIR ${BSP_DIR}/${CONFIG_SOC_NORDIC_BSP_NAME})
+set(MDK_DIR ${SOC_DIR}/mdk)
 set(mdk_dir ${NRFX_DIR}/mdk)
 
 # Add definitions for products which are yet to be upstreamed.
@@ -18,7 +21,7 @@ zephyr_compile_definitions_ifdef(CONFIG_SOC_NRF7120_ENGA NRF7120_ENGA_XXAA)
 zephyr_compile_definitions_ifdef(CONFIG_SOC_NRF7120_ENGA_CPUAPP NRF_APPLICATION)
 zephyr_compile_definitions_ifdef(CONFIG_SOC_NRF7120_ENGA_CPUFLPR NRF_FLPR)
 
-zephyr_library_sources_ifdef(CONFIG_SOC_NRF7120_ENGA ${mdk_dir}/system_nrf7120_enga.c)
+zephyr_library_sources_ifdef(CONFIG_SOC_NRF7120_ENGA ${MDK_DIR}/system_nrf7120_enga.c)
 
 mdk_svd_ifdef(CONFIG_SOC_NRF54LM20A_ENGA_CPUAPP nrf54lm20a_enga_application.svd)
 mdk_svd_ifdef(CONFIG_SOC_NRF54LM20A_ENGA_CPUFLPR nrf54lm20a_enga_flpr.svd)
