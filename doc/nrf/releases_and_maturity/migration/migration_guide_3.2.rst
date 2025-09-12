@@ -68,6 +68,15 @@ This section describes the changes related to libraries.
 
 |no_changes_yet_note|
 
+Trusted Firmware-M
+==================
+
+.. toggle::
+
+   * Trusted Firmware-M changed how data is stored and read in the Protected Storage partition.
+     As a consequence, the applications that build with TF-M (``*/ns`` board targets) and want to perform a firmware upgrade to this |NCS| release will not be able to read the existing Protected Storage data with the default configuration.
+     To enable reading the Protected Storage data from a previous release, make sure that the application enables the :kconfig:option:`CONFIG_TFM_PS_SUPPORT_FORMAT_TRANSITION` Kconfig option.
+
 .. _migration_3.2_recommended:
 
 Recommended changes
