@@ -10,6 +10,9 @@ Developing with nRF54L Series
 
 .. include:: /includes/guides_complementary_to_app_dev.txt
 
+Learn the essentials of the nRF54L Series with the `nRF54L Series Express course`_ in the Nordic Developer Academy.
+This self-paced course introduces the hardware architecture, functionality, capabilities, and performance of the nRF54L Series.
+
 Zephyr and the |NCS| provide support and contain board definitions for developing on the nRF54L Series devices.
 Refer to the following information for the list of supported development kits (DKs) and their related hardware and software documentation:
 

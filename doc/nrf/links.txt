@@ -1082,6 +1082,8 @@
 .. _`Bluetooth LE Fundamentals course`: https://academy.nordicsemi.com/courses/bluetooth-low-energy-fundamentals/
 .. _`Wi-Fi Fundamentals course`: https://academy.nordicsemi.com/courses/wi-fi-fundamentals/
 
+.._`nRF54L Series Express course`: https://academy.nordicsemi.com/courses/nrf54l-series-express-course/
+
 .. _Bootloaders and DFU/FOTA: https://academy.nordicsemi.com/courses/nrf-connect-sdk-intermediate/lessons/lesson-8-bootloaders-and-dfu-fota/
 
 .. ### Source: devzone.nordicsemi.com, https://blog.nordicsemi.com/
