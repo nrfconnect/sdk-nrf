@@ -15,6 +15,7 @@
 	model = "Nordic nRF7120 PDK nRF7120 Application MCU";
 
 	chosen {
+		zephyr,code-partition = &slot0_ns_partition;
 		zephyr,sram = &cpuapp_sram;
 	};
 };
