@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-zephyr_library(nrf_compress)
+zephyr_library_named(nrf_compress)
 zephyr_library_sources(src/implementation.c)
 zephyr_linker_sources(SECTIONS sections.ld)
 zephyr_iterable_section(NAME nrf_compress_implementation KVMA RAM_REGION GROUP RODATA_REGION SUBALIGN CONFIG_LINKER_ITERABLE_SUBALIGN)
