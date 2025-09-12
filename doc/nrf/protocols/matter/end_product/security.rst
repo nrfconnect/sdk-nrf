@@ -352,7 +352,7 @@ If the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_DAC_PRIV_KEY_KMU_ENCRYPTED` Kconf
 
 By default, the DAC private key occupies the last slots dedicated for application purposes.
 For the non-encrypted version, it occupies the last two slots (178 and 179), and for the encrypted version, it occupies the last four slots (176-179).
-You can change the default slots by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_DAC_PRIV_KEY_KMU_SLOT` Kconfig option to the first slot number of the desired slots, making sure that all slots fit within the possible range.
+You can change the default slots by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_DAC_PRIV_KEY_KMU_SLOT_ID` Kconfig option to the first slot number of the desired slots, making sure that all slots fit within the possible range.
 This means you can set it to slot numbers 0-176 for encrypted, or 0-178 for non-encrypted.
 To read more about KMU slots, see the :ref:`ug_nrf54l_crypto_kmu_slots` section of the :ref:`ug_nrf54l_cryptography` page, which details the KMU peripheral.
 
