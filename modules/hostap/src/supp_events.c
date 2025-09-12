@@ -218,7 +218,7 @@ int send_wifi_mgmt_conn_event(void *ctx, int status_code)
 int send_wifi_mgmt_disc_event(void *ctx, int reason_code)
 {
 	struct wpa_supplicant *wpa_s = ctx;
-	int status = wpas_to_wifi_mgmt_diconn_status(reason_code);
+	int status = reason_code;
 	enum net_event_wifi_cmd event;
 
 	if (!wpa_s || !wpa_s->current_ssid) {
