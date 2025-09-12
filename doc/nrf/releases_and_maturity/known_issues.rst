@@ -435,6 +435,15 @@ NCSDK-30959: The Bluetooth subsystem might deadlock when :kconfig:option:`CONFIG
 
   **Workaround:** Enable the :kconfig:option:`CONFIG_BT_HCI_ACL_FLOW_CONTROL` Kconfig option or do not call the blocking API from any of the Bluetooth Host callbacks.
 
+.. rst-class:: v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-2 v2-9-1 v2-9-0-nRF54H20-1 v2-9-0 v2-8-0 v2-7-99-cs2 v2-7-99-cs1 v2-7-0
+
+NCSDK-35430: Assertion can happen in the Bluetooth Host if an application is trying to send a synchronous command while the system workqueue is blocked
+  If the Bluetooth Host or an application blocks the system workqueue, the Bluetooth Host TX processor cannot send commands or data towards the Controller.
+  If this happens when a separate thread tries to send a synchronous command, an assertion can occur.
+  This assertion is highly possible if the application is trying to send a synchronous command from the :c:member:`bt_conn_cb.connected` callback.
+
+  **Workaround:** Increase the value of the :kconfig:option:`CONFIG_BT_BUF_CMD_TX_COUNT` Kconfig option.
+
 Bluetooth Mesh
 ==============
 
