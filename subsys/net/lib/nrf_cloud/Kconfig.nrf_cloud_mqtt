@@ -19,7 +19,7 @@ menuconfig $(module)
 if NRF_CLOUD_MQTT
 
 config NRF_CLOUD_STATIC_IPV4
-	bool "Enable use of static IPv4"
+	bool "Static IPv4"
 	depends on NET_IPV4
 
 config NRF_CLOUD_STATIC_IPV4_ADDR
@@ -111,7 +111,7 @@ config NRF_CLOUD_MQTT_UA_WAIT_KEEPALIVE
 	  more rapidly for better user experience.
 
 config NRF_CLOUD_MQTT_SHADOW_TRANSFORMS
-	bool "Enable requesting shadow data using a JSONata expression"
+	bool "Request shadow data using a JSONata expression"
 	help
 	  This feature allows the device to request specific parts of its shadow.
 

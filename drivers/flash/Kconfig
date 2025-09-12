@@ -51,7 +51,7 @@ config FLASH_RPC_SYS_INIT_PRIORITY
 	  Device driver initialization priority.
 
 config FLASH_RPC_SYS_INIT
-	bool "Enable at sys init"
+	bool "sys init"
 	help
 	  SYS_INIT nrf_rpc
 
