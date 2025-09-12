@@ -24,6 +24,12 @@
 /**< Start of PSDU payload */
 #define RF_PSDU_START (1u)
 
+/**< Start of PTT payload */
+#define RF_PTT_PAYLOAD_START (3u)
+
+/**< Frame control field size. */
+#define RF_FCF_SIZE (2u)
+
 /** @brief NRF radio driver initialization
  *
  *  @param none
