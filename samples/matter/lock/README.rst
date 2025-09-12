@@ -340,7 +340,7 @@ Factory data support
 Enabling Matter Bluetooth LE with Nordic UART Service
 =====================================================
 
-You can enable the :ref:`matter_lock_sample_ble_nus` feature by setting the :kconfig:option:`CONFIG_CHIP_NUS` Kconfig option to ``y``.
+You can enable the :ref:`matter_lock_sample_ble_nus` feature by setting the :ref:`CONFIG_CHIP_NUS` Kconfig option to ``y``.
 
 .. note::
    This sample supports one Bluetooth LE connection at a time.
@@ -809,7 +809,7 @@ To test the :ref:`matter_lock_sample_ble_nus` feature, complete the following st
    Some of the steps depend on which :ref:`configuration <matter_lock_sample_custom_configs>` the sample was built with.
 
 #. Install `nRF Toolbox`_ on your Android (Android 11 or newer) or iOS (iOS 16.1 or newer) smartphone.
-#. Build the door lock application for Matter over Thread with the :kconfig:option:`CONFIG_CHIP_NUS` set to ``y``.
+#. Build the door lock application for Matter over Thread with the :ref:`CONFIG_CHIP_NUS` set to ``y``.
    For example, if you build from command line for the ``nrf52840dk/nrf52840``, use the following command:
 
    .. code-block:: console
