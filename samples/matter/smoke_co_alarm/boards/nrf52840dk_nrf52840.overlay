@@ -20,6 +20,9 @@
 &i2c0 {
 	status = "disabled";
 };
+&pwm0 {
+	status = "disabled";
+};
 &spi1 {
 	status = "disabled";
 };
