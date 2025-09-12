@@ -678,6 +678,7 @@
 /samples/zephyr/sensor/bme680/            @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/qdec/              @nrfconnect/ncs-low-level-test
 /samples/zephyr/smp_svr_mini_boot/        @nrfconnect/ncs-pluto @nrfconnect/ncs-charon
+/samples/zephyr/subsys/ipc/               @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/settings/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/usb/               @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/mgmt/mcumgr/smp_svr/ @nrfconnect/ncs-charon
