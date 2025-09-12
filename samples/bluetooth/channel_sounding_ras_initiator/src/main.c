@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
+#include <zephyr/sys/byteorder.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/bluetooth/cs.h>
 #include <zephyr/bluetooth/gatt.h>
@@ -404,7 +405,50 @@ static void config_create_cb(struct bt_conn *conn,
 
 	if (status == BT_HCI_ERR_SUCCESS) {
 		cs_config = *config;
-		LOG_INF("CS config creation complete. ID: %d", config->id);
+
+		const char *mode_str[5] = {"Unused", "1 (RTT)", "2 (PBR)", "3 (RTT + PBR)",
+					   "Invalid"};
+		const char *role_str[3] = {"Initiator", "Reflector", "Invalid"};
+		const char *rtt_type_str[8] = {
+			"AA only",	 "32-bit sounding", "96-bit sounding", "32-bit random",
+			"64-bit random", "96-bit random",   "128-bit random",  "Invalid"};
+		const char *phy_str[4] = {"Invalid", "LE 1M PHY", "LE 2M PHY", "LE 2M 2BT PHY"};
+		const char *chsel_type_str[3] = {"Algorithm #3b", "Algorithm #3c", "Invalid"};
+		const char *ch3c_shape_str[3] = {"Hat shape", "X shape", "Invalid"};
+
+		LOG_INF("CS config creation complete.\n"
+			" - id: %u\n"
+			" - main_mode_type: %s\n"
+			" - sub_mode_type: %s\n"
+			" - min_main_mode_steps: %u\n"
+			" - max_main_mode_steps: %u\n"
+			" - main_mode_repetition: %u\n"
+			" - mode_0_steps: %u\n"
+			" - role: %s\n"
+			" - rtt_type: %s\n"
+			" - cs_sync_phy: %s\n"
+			" - channel_map_repetition: %u\n"
+			" - channel_selection_type: %s\n"
+			" - ch3c_shape: %s\n"
+			" - ch3c_jump: %u\n"
+			" - t_ip1_time_us: %u\n"
+			" - t_ip2_time_us: %u\n"
+			" - t_fcs_time_us: %u\n"
+			" - t_pm_time_us: %u\n"
+			" - channel_map: 0x%08X%08X%04X\n",
+			config->id, mode_str[config->main_mode_type],
+			mode_str[config->sub_mode_type], config->min_main_mode_steps,
+			config->max_main_mode_steps, config->main_mode_repetition,
+			config->mode_0_steps, role_str[config->role],
+			rtt_type_str[config->rtt_type], phy_str[config->cs_sync_phy],
+			config->channel_map_repetition,
+			chsel_type_str[config->channel_selection_type],
+			ch3c_shape_str[config->ch3c_shape], config->ch3c_jump,
+			config->t_ip1_time_us, config->t_ip2_time_us, config->t_fcs_time_us,
+			config->t_pm_time_us, sys_get_le32(&config->channel_map[6]),
+			sys_get_le32(&config->channel_map[2]),
+			sys_get_le16(&config->channel_map[0]));
+
 		k_sem_give(&sem_config_created);
 	} else {
 		LOG_WRN("CS config creation failed. (HCI status 0x%02x)", status);
@@ -731,8 +775,8 @@ int main(void)
 					ap, (double)distance_on_ap.ifft,
 					(double)distance_on_ap.phase_slope,
 					(double)distance_on_ap.rtt);
-				}
 			}
+		}
 	}
 
 	return 0;
