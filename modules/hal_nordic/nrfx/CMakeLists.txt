@@ -3,6 +3,9 @@
 
 zephyr_library_amend(${ZEPHYR_NRF_MODULE_DIR})
 
+set(BSP_DIR ${NRFX_DIR}/bsp)
+set(SOC_DIR ${BSP_DIR}/${CONFIG_SOC_NORDIC_BSP_NAME})
+set(MDK_DIR ${SOC_DIR}/mdk)
 set(mdk_dir ${NRFX_DIR}/mdk)
 set(helpers_dir ${NRFX_DIR}/helpers)
 
@@ -16,7 +19,7 @@ zephyr_compile_definitions_ifdef(CONFIG_SOC_NRF7120_ENGA NRF7120_ENGA_XXAA)
 zephyr_compile_definitions_ifdef(CONFIG_SOC_NRF7120_ENGA_CPUAPP NRF_APPLICATION)
 zephyr_compile_definitions_ifdef(CONFIG_SOC_NRF7120_ENGA_CPUFLPR NRF_FLPR)
 
-zephyr_library_sources_ifdef(CONFIG_SOC_NRF7120_ENGA ${mdk_dir}/system_nrf7120_enga.c)
+zephyr_library_sources_ifdef(CONFIG_SOC_NRF7120_ENGA ${MDK_DIR}/system_nrf7120_enga.c)
 
 mdk_svd_ifdef(CONFIG_SOC_NRF54LS05B_ENGA_CPUAPP nrf54ls05b_enga_application.svd)
 mdk_svd_ifdef(CONFIG_SOC_NRF54LV10A_ENGA_CPUAPP nrf54lv10a_enga_application.svd)
