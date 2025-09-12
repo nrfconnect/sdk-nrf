@@ -14,7 +14,9 @@
 #include <dfu/dfu_target_mcuboot.h>
 #include <zephyr/dfu/mcuboot.h>
 
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
 #include <pm_config.h>
+#endif
 
 #define STREAM_BUF_SIZE 256
 
@@ -22,7 +24,10 @@
 #define DFU_TARGET_HELPER_ADDRESS PM_DFU_TARGET_HELPER_ADDRESS
 #define DFU_TARGET_HELPER_SIZE PM_DFU_TARGET_HELPER_SIZE
 #else
-#define DFU_TARGET_HELPER_ADDRESS DT_REG_ADDR(DT_ALIAS(dfu_target_helper))
+#define DFU_TARGET_HELPER_CONTAINER_ADDRESS DT_REG_ADDR(DT_GPARENT(DT_ALIAS(dfu_target_helper)))
+#define DFU_TARGET_HELPER_OFFSET DT_REG_ADDR(DT_ALIAS(dfu_target_helper))
+#define DFU_TARGET_HELPER_ADDRESS ((uint32_t) DFU_TARGET_HELPER_CONTAINER_ADDRESS + \
+				   DFU_TARGET_HELPER_OFFSET)
 #define DFU_TARGET_HELPER_SIZE DT_REG_SIZE(DT_ALIAS(dfu_target_helper))
 #endif
 
@@ -58,7 +63,7 @@ static int cmd_dfu_target_init(const struct shell *shell, size_t argc, char **ar
 
 	img_type = (enum dfu_target_image_type) shell_strtol(argv[1], 10, &ret);
 	if (ret != 0) {
-		shell_error(shell, "Invalid <img_type> argument");
+		shell_error(shell, "Invali68500d <img_type> argument");
 		return -EINVAL;
 	}
 	size = shell_strtol(argv[2], 10, &ret);
