@@ -270,7 +270,7 @@ static void disconnected_entry(void *o)
 }
 
 /* Function executed when the module is in the disconnected state. */
-static void disconnected_run(void *o)
+static enum smf_state_result disconnected_run(void *o)
 {
 	struct s_object *user_object = o;
 
@@ -289,6 +289,8 @@ static void disconnected_run(void *o)
 		 */
 		k_work_reschedule_for_queue(&transport_queue, &connect_work, K_SECONDS(5));
 	}
+
+	return SMF_EVENT_HANDLED;
 }
 
 /* Function executed when the module enters the connected state. */
@@ -309,7 +311,7 @@ static void connected_entry(void *o)
 }
 
 /* Function executed when the module is in the connected state. */
-static void connected_run(void *o)
+static enum smf_state_result connected_run(void *o)
 {
 	struct s_object *user_object = o;
 
@@ -319,14 +321,16 @@ static void connected_run(void *o)
 		 * The call to this function will cause on_mqtt_disconnect() to be called.
 		 */
 		(void)mqtt_helper_disconnect();
-		return;
+		return SMF_EVENT_HANDLED;
 	}
 
 	if (user_object->chan != &PAYLOAD_CHAN) {
-		return;
+		return SMF_EVENT_HANDLED;
 	}
 
 	publish(&user_object->payload);
+
+	return SMF_EVENT_HANDLED;
 }
 
 /* Function executed when the module exits the connected state. */

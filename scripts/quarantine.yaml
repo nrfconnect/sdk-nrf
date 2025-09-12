@@ -99,3 +99,9 @@
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35382"
+
+- scenarios:
+    - sample.bluetooth.mesh.sensor_client
+  platforms:
+    - nrf52dk/nrf52832
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35409"

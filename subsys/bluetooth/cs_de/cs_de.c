@@ -387,7 +387,7 @@ static bool process_step_data(struct bt_le_cs_subevent_step *local_step,
 {
 	cs_de_report_t *p_report = (cs_de_report_t *)user_data;
 
-	if (local_step->mode == BT_CONN_LE_CS_MAIN_MODE_2) {
+	if (local_step->mode == BT_HCI_OP_LE_CS_MAIN_MODE_2) {
 		struct bt_hci_le_cs_step_data_mode_2 *local_step_data =
 			(struct bt_hci_le_cs_step_data_mode_2 *)local_step->data;
 		struct bt_hci_le_cs_step_data_mode_2 *peer_step_data =
