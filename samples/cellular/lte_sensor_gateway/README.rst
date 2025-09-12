@@ -86,7 +86,7 @@ All LEDs (1-4):
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/lte_ble_gateway`
+.. |sample path| replace:: :file:`samples/cellular/lte_sensor_gateway`
 
 .. include:: /includes/build_and_run_ns.txt
 
