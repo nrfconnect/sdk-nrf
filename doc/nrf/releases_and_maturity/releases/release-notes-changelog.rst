@@ -726,7 +726,7 @@ zcbor
 Trusted Firmware-M
 ==================
 
-|no_changes_yet_note|
+* Updated the TF-M version to v2.2.0.
 
 Documentation
 =============
