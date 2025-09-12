@@ -124,6 +124,20 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
     set(imgtool_args)
   endif()
 
+  # Fetch VID and CID values from the main image Kconfig.
+  set(CONFIG_MCUBOOT_IMGTOOL_UUID_VID)
+  set(CONFIG_MCUBOOT_IMGTOOL_UUID_CID)
+  sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_UUID_VID IMAGE ${main_image} VAR CONFIG_MCUBOOT_IMGTOOL_UUID_VID KCONFIG)
+  sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_UUID_CID IMAGE ${main_image} VAR CONFIG_MCUBOOT_IMGTOOL_UUID_CID KCONFIG)
+
+  if(CONFIG_MCUBOOT_IMGTOOL_UUID_VID)
+    set(imgtool_extra ${imgtool_extra} --vid "${CONFIG_MCUBOOT_IMGTOOL_UUID_VID_NAME}")
+  endif()
+
+  if(CONFIG_MCUBOOT_IMGTOOL_UUID_CID)
+    set(imgtool_extra ${imgtool_extra} --cid "${CONFIG_MCUBOOT_IMGTOOL_UUID_CID_NAME}")
+  endif()
+
   # Fetch version and flags from the main image Kconfig.
   set(CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION)
   set(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE)
