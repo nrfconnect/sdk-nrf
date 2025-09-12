@@ -14,14 +14,31 @@
  */
 #include "slm_trap_macros.h"
 #include <zephyr/device.h>
+#include <zephyr/modem/pipe.h>
 
 #define UART_RX_MARGIN_MS	10
 
 extern const struct device *const slm_uart_dev;
 extern uint32_t slm_uart_baudrate;
 
+/** UART pipe transmit callback type. */
+typedef int (*slm_pipe_tx_t)(const uint8_t *data, size_t len);
+
 /** @retval 0 on success. Otherwise, the error code is returned. */
 int slm_uart_handler_enable(void);
+
+/** @retval 0 on success. Otherwise, the error code is returned. */
+int slm_uart_handler_disable(void);
+
+/**
+ * @brief Write data to UART or to a modem pipe.
+ *
+ * @retval 0 on success. Otherwise, the error code is returned.
+ */
+int slm_tx_write(const uint8_t *data, size_t len);
+
+/* Initialize UART pipe for SLM. */
+struct modem_pipe *slm_uart_pipe_init(slm_pipe_tx_t pipe_tx);
 
 /** @} */
 

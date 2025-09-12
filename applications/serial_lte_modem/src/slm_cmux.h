@@ -11,6 +11,7 @@
 struct modem_pipe;
 
 void slm_cmux_init(void);
+void slm_cmux_uninit(void);
 
 /* CMUX channels that are used by other modules. */
 enum cmux_channel {

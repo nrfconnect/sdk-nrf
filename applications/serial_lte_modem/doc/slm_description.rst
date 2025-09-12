@@ -340,8 +340,11 @@ The following configuration files are provided:
   This disables most of the IP-based protocols available through AT commands (such as FTP and MQTT) as it is expected that the controlling chip's own IP stack is used instead.
   See :ref:`CONFIG_SLM_PPP <CONFIG_SLM_PPP>` and :ref:`SLM_AT_PPP` for more information.
 
-* :file:`overlay-ppp-without-cmux.overlay` - Devicetree overlay that configures the UART to be used by PPP.
-  This configuration file should be included when building SLM with PPP and without CMUX, in addition to :file:`overlay-ppp.conf`.
+* :file:`overlay-ppp-without-cmux.conf` - Configuration file that enables support for the second UART to be used by PPP.
+  This configuration file should be included when building SLM with PPP and without CMUX, in addition to :file:`overlay-ppp.conf` and :file:`overlay-ppp-without-cmux.overlay`.
+
+* :file:`overlay-ppp-without-cmux.overlay` - Devicetree overlay that configures the second UART to be used by PPP.
+  This configuration file should be included when building SLM with PPP and without CMUX, in addition to :file:`overlay-ppp.conf` and :file:`overlay-ppp-without-cmux.conf`.
   It can be customized to fit your configuration, such as UART settings, baud rate, and flow control.
   By default, it sets the baud rate of the PPP UART to 1 000 000.
 
