@@ -95,12 +95,12 @@ typedef struct {
  * @brief Partially populate the report.
  * This populates the report but does not set the distance estimates and the quality.
  * @param[in] local_steps Buffer to the local step data to parse.
- * @param[in] peer_steps   Buffer to the peer ranging data to parse.
- * @param[in] role Role of the local controller.
+ * @param[in] peer_steps Buffer to the peer ranging data to parse.
+ * @param[in] config CS config of the local controller.
  * @param[out] p_report Report populated with the raw data from the last ranging.
  */
 void cs_de_populate_report(struct net_buf_simple *local_steps, struct net_buf_simple *peer_steps,
-			   enum bt_conn_le_cs_role role, cs_de_report_t *p_report);
+			   struct bt_conn_le_cs_config *config, cs_de_report_t *p_report);
 
 /* Takes partially populated report and calculates distance estimates and quality. */
 cs_de_quality_t cs_de_calc(cs_de_report_t *p_report);

@@ -153,7 +153,7 @@ static int32_t calculate_left_null_compensation_of_peak(int32_t peak_index,
 						  CONFIG_BT_CS_DE_NFFT_SIZE) > 0
 							 ? (left_null_index + NORMAL_PEAK_TO_NULL -
 							    CONFIG_BT_CS_DE_NFFT_SIZE)
-							 : 0;
+							 : peak_index;
 		} else {
 			compensated_peak_index = left_null_index + NORMAL_PEAK_TO_NULL;
 		}
@@ -161,38 +161,9 @@ static int32_t calculate_left_null_compensation_of_peak(int32_t peak_index,
 	return compensated_peak_index;
 }
 
-static void interpolate_missing_frequencies(float *iq)
-{
-	/* Channels 23, 24, and 25 are not allowed for use with channel sounding.
-	 * However, the FFT algorithm requires evenly spaced samples.
-	 * IQ values are therefore linearly interpolated from channels 22 and 26.
-	 */
-
-	const uint8_t ch_22 = 22 - CHANNEL_INDEX_OFFSET;
-	const uint8_t ch_26 = 26 - CHANNEL_INDEX_OFFSET;
-	const float i_slope = (iq[2 * ch_26] - iq[2 * ch_22]) / 4.0f;
-	const float q_slope = (iq[2 * ch_26 + 1] - iq[2 * ch_22 + 1]) / 4.0f;
-
-	for (uint8_t i = ch_22 + 1; i < ch_26; i++) {
-		iq[2 * i] = iq[2 * ch_22] + i_slope * (i - ch_22);
-		iq[2 * i + 1] = iq[2 * ch_22 + 1] + q_slope * (i - ch_22);
-	}
-}
 
 static void calculate_dist_ifft(float *dist, float iq_tones_comb[2 * CONFIG_BT_CS_DE_NFFT_SIZE])
 {
-	interpolate_missing_frequencies(iq_tones_comb);
-
-	for (uint8_t n = 0; n < 2 * NUM_CHANNELS; n += 2) {
-		if (iq_tones_comb[n] == 0.0f && iq_tones_comb[n + 1] == 0.0f) {
-			/* Phase measurements are missing for some channels.
-			 * FFT cannot be used.
-			 */
-			LOG_DBG("Could not compute iFFT due to missing frequencies.");
-			return;
-		}
-	}
-
 #if CONFIG_BT_CS_DE_NFFT_SIZE == 512
 	arm_cfft_f32(&arm_cfft_sR_f32_len512, iq_tones_comb, 0, 1);
 #elif CONFIG_BT_CS_DE_NFFT_SIZE == 1024
@@ -279,12 +250,12 @@ static void calculate_dist_rtt(cs_de_report_t *p_report)
 	}
 }
 
-static bool m_is_tone_quality_bad(cs_de_tone_quality_t *p_tone_qi)
+static bool m_is_tone_quality_bad(cs_de_tone_quality_t *p_tone_qi, uint8_t channel_map[10])
 {
 	uint8_t bad_tones_count = 0;
-
 	for (uint8_t i = 0; i < NUM_CHANNELS; ++i) {
-		if (p_tone_qi[i] == CS_DE_TONE_QUALITY_BAD) {
+		if (BT_LE_CS_CHANNEL_BIT_GET(channel_map, i + CHANNEL_INDEX_OFFSET) &&
+		    p_tone_qi[i] == CS_DE_TONE_QUALITY_BAD) {
 			bad_tones_count += 1;
 		}
 	}
@@ -422,17 +393,18 @@ static bool process_step_data(struct bt_le_cs_subevent_step *local_step,
 }
 
 void cs_de_populate_report(struct net_buf_simple *local_steps, struct net_buf_simple *peer_steps,
-			   enum bt_conn_le_cs_role role, cs_de_report_t *p_report)
+			   struct bt_conn_le_cs_config *config, cs_de_report_t *p_report)
 {
 	memset(p_report, 0x0, sizeof(*p_report));
 	memset(m_n_iqs, 0, sizeof(m_n_iqs));
 	memset(m_tone_quality_indicators, CS_DE_TONE_QUALITY_BAD,
 	       sizeof(m_tone_quality_indicators));
 
-	p_report->role = role;
+	p_report->role = config->role;
 
-	bt_ras_rreq_rd_subevent_data_parse(peer_steps, local_steps, role, process_ranging_header,
-					   NULL, process_step_data, p_report);
+	bt_ras_rreq_rd_subevent_data_parse(peer_steps, local_steps, config->role,
+					   process_ranging_header, NULL, process_step_data,
+					   p_report);
 
 	for (uint8_t ap = 0; ap < p_report->n_ap; ap++) {
 		p_report->distance_estimates[ap].ifft = NAN;
@@ -440,7 +412,7 @@ void cs_de_populate_report(struct net_buf_simple *local_steps, struct net_buf_si
 		p_report->distance_estimates[ap].rtt = NAN;
 		p_report->distance_estimates[ap].best = NAN;
 
-		if (m_is_tone_quality_bad(&m_tone_quality_indicators[ap][0])) {
+		if (m_is_tone_quality_bad(&m_tone_quality_indicators[ap][0], config->channel_map)) {
 			p_report->tone_quality[ap] = CS_DE_TONE_QUALITY_BAD;
 		} else {
 			p_report->tone_quality[ap] = CS_DE_TONE_QUALITY_OK;
