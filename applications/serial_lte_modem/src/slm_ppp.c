@@ -14,7 +14,9 @@
 #include <modem/lte_lc.h>
 #include <modem/pdn.h>
 #include <zephyr/modem/ppp.h>
-#include <zephyr/modem/backend/uart_slm.h>
+#if !defined(CONFIG_SLM_CMUX)
+#include <zephyr/modem/backend/uart.h>
+#endif
 #include <zephyr/net/ethernet.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/ppp.h>
@@ -616,12 +618,12 @@ int slm_ppp_init(void)
 	}
 
 	{
-		static struct modem_backend_uart_slm ppp_uart_backend;
+		static struct modem_backend_uart ppp_uart_backend;
 		static uint8_t ppp_uart_backend_receive_buf[sizeof(ppp_data_buf)]
 			__aligned(sizeof(void *));
 		static uint8_t ppp_uart_backend_transmit_buf[sizeof(ppp_data_buf)];
 
-		const struct modem_backend_uart_slm_config uart_backend_config = {
+		const struct modem_backend_uart_config uart_backend_config = {
 			.uart = ppp_uart_dev,
 			.receive_buf = ppp_uart_backend_receive_buf,
 			.receive_buf_size = sizeof(ppp_uart_backend_receive_buf),
@@ -629,7 +631,7 @@ int slm_ppp_init(void)
 			.transmit_buf_size = sizeof(ppp_uart_backend_transmit_buf),
 		};
 
-		ppp_pipe = modem_backend_uart_slm_init(&ppp_uart_backend, &uart_backend_config);
+		ppp_pipe = modem_backend_uart_init(&ppp_uart_backend, &uart_backend_config);
 		if (!ppp_pipe) {
 			return -ENOSYS;
 		}
