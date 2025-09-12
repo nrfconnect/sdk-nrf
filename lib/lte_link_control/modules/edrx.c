@@ -16,6 +16,7 @@
 #include <nrf_modem_at.h>
 
 #include "common/work_q.h"
+#include "common/helpers.h"
 #include "common/event_handler_list.h"
 #include "modules/edrx.h"
 
@@ -96,10 +97,21 @@ static void lte_lc_edrx_values_store(enum lte_lc_lte_mode mode, char *edrx_value
 static void edrx_ptw_send_work_fn(struct k_work *work_item)
 {
 	int err;
-	int actt[] = {AT_CEDRXS_ACTT_WB, AT_CEDRXS_ACTT_NB, AT_CEDRXS_ACTT_NTN_NB};
+	int actt[3];
+	uint8_t actt_count = 0;
+	enum mfw_type mfw_type = mfw_type_get();
 
-	/* Apply the configurations for LTE-M, NB-IoT and NTN NB-IoT. */
-	for (size_t i = 0; i < ARRAY_SIZE(actt); i++) {
+	if (mfw_type == MFW_TYPE_NRF9151_NTN || mfw_type == MFW_TYPE_UNKNOWN) {
+		actt[actt_count] = AT_CEDRXS_ACTT_NTN_NB;
+		actt_count++;
+	}
+	actt[actt_count] = AT_CEDRXS_ACTT_WB;
+	actt_count++;
+	actt[actt_count] = AT_CEDRXS_ACTT_NB;
+	actt_count++;
+
+	/* Apply the configurations. */
+	for (size_t i = 0; i < actt_count; i++) {
 		char *requested_ptw_value =
 			(actt[i] == AT_CEDRXS_ACTT_WB) ? requested_ptw_value_ltem :
 			(actt[i] == AT_CEDRXS_ACTT_NB) ? requested_ptw_value_nbiot :
@@ -114,10 +126,7 @@ static void edrx_ptw_send_work_fn(struct k_work *work_item)
 
 			err = nrf_modem_at_printf("AT%%XPTW=%d,\"%s\"", actt[i],
 						  requested_ptw_value);
-			/* Setting PTW for NTN NB-IoT causes an error with non-NTN firmwares, so
-			 * silently ignore errors for it.
-			 */
-			if (err && actt[i] != AT_CEDRXS_ACTT_NTN_NB) {
+			if (err) {
 				LOG_ERR("Failed to request PTW, reported error: %d", err);
 			}
 		}
@@ -413,7 +422,22 @@ int edrx_ptw_set(enum lte_lc_lte_mode mode, const char *ptw)
 int edrx_request(bool enable)
 {
 	int err = 0;
-	int actt[] = {AT_CEDRXS_ACTT_WB, AT_CEDRXS_ACTT_NB, AT_CEDRXS_ACTT_NTN_NB};
+	int actt[3];
+	uint8_t actt_count = 0;
+	enum mfw_type mfw_type = mfw_type_get();
+
+	/* Try to configure for NTN NB-IoT first, because a failing +CEDRXS command removes
+	 * the +CEDRXS notification subscription. eDRX is configured for NTN NB-IoT only when
+	 * when modem firmware has NTN support or when firmware type can not be determined.
+	 */
+	if (mfw_type == MFW_TYPE_NRF9151_NTN || mfw_type == MFW_TYPE_UNKNOWN) {
+		actt[actt_count] = AT_CEDRXS_ACTT_NTN_NB;
+		actt_count++;
+	}
+	actt[actt_count] = AT_CEDRXS_ACTT_WB;
+	actt_count++;
+	actt[actt_count] = AT_CEDRXS_ACTT_NB;
+	actt_count++;
 
 	LOG_DBG("enable=%d, "
 		"requested_edrx_value_ltem=%s, edrx_value_ltem=%s, "
@@ -444,8 +468,8 @@ int edrx_request(bool enable)
 		return 0;
 	}
 
-	/* Apply the configurations for LTE-M, NB-IoT and NTN NB-IoT. */
-	for (size_t i = 0; i < ARRAY_SIZE(actt); i++) {
+	/* Apply the configurations. */
+	for (size_t i = 0; i < actt_count; i++) {
 		char *requested_edrx_value =
 			(actt[i] == AT_CEDRXS_ACTT_WB) ? requested_edrx_value_ltem :
 			(actt[i] == AT_CEDRXS_ACTT_NB) ? requested_edrx_value_nbiot :
@@ -467,10 +491,7 @@ int edrx_request(bool enable)
 			err = nrf_modem_at_printf("AT+CEDRXS=2,%d", actt[i]);
 		}
 
-		/* Setting eDRX for NTN NB-IoT causes an error with non-NTN firmwares, so
-		 * silently ignore errors for it.
-		 */
-		if (err && actt[i] != AT_CEDRXS_ACTT_NTN_NB) {
+		if (err) {
 			LOG_ERR("Failed to enable eDRX, reported error: %d", err);
 			return -EFAULT;
 		}
