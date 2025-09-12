@@ -2380,17 +2380,38 @@ The lists are organized by device Series and implementation.
             * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
               - --
 
-      .. tab:: nRF54 Series
+      .. tab:: nRF54H Series
 
-         The following tables list the cryptographic support for nRF54 Series devices.
-         The nRF54 Series devices do not support the :ref:`nrf_cc3xx <crypto_drivers_cc3xx>` driver.
+         The following tables list the cryptographic support for nRF54H Series devices.
+         nRF54H Series devices do not support either the :ref:`nrf_cc3xx <crypto_drivers_cc3xx>` or the :ref:`nrf_oberon <crypto_drivers_oberon>` drivers.
 
-         .. list-table:: Cryptographic support by implementation - nRF54 Series
+         .. list-table:: Cryptographic support by implementation - nRF54H Series
             :header-rows: 1
             :widths: auto
 
             * - Implementation
               - nRF54H20
+            * - :ref:`Oberon PSA Crypto - nrf_cc3xx <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
+            * - :ref:`Oberon PSA Crypto - CRACEN <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
+            * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
+            * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
+              - --
+            * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+              - Supported
+
+      .. tab:: nRF54L Series
+
+         The following tables list the cryptographic support for nRF54L Series devices.
+         The nRF54L Series devices do not support the :ref:`nrf_cc3xx <crypto_drivers_cc3xx>` driver.
+
+         .. list-table:: Cryptographic support by implementation - nRF54L Series
+            :header-rows: 1
+            :widths: auto
+
+            * - Implementation
               - nRF54L05
               - nRF54L10
               - nRF54L15
@@ -2400,27 +2421,22 @@ The lists are organized by device Series and implementation.
               - --
               - --
               - --
-              - --
             * - :ref:`Oberon PSA Crypto - CRACEN <ug_crypto_architecture_implementation_standards_oberon>`
-              - --
               - Supported
               - Supported
               - Supported
               - Experimental
             * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
-              - --
               - Supported
               - Supported
               - Supported
               - Supported
             * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
               - --
-              - --
               - Experimental
               - Experimental
               - Experimental
             * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
-              - Supported
               - --
               - --
               - --

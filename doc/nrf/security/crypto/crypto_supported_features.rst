@@ -41,8 +41,13 @@ Cryptographic feature support
 The following sections list the supported cryptographic features and algorithms.
 The lists are organized by device Series and cryptographic drivers: :ref:`nrf_cc3xx <crypto_drivers_cc3xx>`, :ref:`CRACEN <crypto_drivers_cracen>`, and :ref:`nrf_oberon <crypto_drivers_oberon>`.
 
-The listed Kconfig options enable the features and algorithms for the drivers that support them.
+The listed ``CONFIG_`` Kconfig options enable the features and algorithms for the drivers that support them.
 The Kconfig options follow the ``CONFIG_PSA_WANT_*`` + ``CONFIG_PSA_USE_*`` configuration scheme, which is described in detail on the :ref:`crypto_drivers` page.
+
+.. note::
+   On nRF54H Series devices, the ``CONFIG_PSA_WANT`` and ``CONFIG_PSA_USE`` feature selection scheme is not implemented and enabling any feature with these options will silently have no effect.
+   The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
 
 Key types and key management
 ============================
@@ -568,9 +573,130 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
                  - Supported
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54H Series
 
-      The following tables list the supported key types for nRF54 Series devices.
+      The following tables list the supported key types for nRF54H Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: Key type support per device (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Key type
+                 - Supported primitive
+                 - nRF54H20
+               * - AES
+                 - ``PSA_WANT_KEY_TYPE_AES``
+                 - Supported
+               * - Chacha20
+                 - ``PSA_WANT_KEY_TYPE_CHACHA20``
+                 - Supported
+               * - ECC Key Pair Import
+                 - ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT``
+                 - Supported
+               * - ECC Key Pair Export
+                 - ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT``
+                 - Supported
+               * - ECC Key Pair Generate
+                 - ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE``
+                 - Supported
+               * - ECC Key Pair Derive
+                 - ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE``
+                 - Supported
+               * - ECC Public Key
+                 - ``PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY``
+                 - Supported
+               * - RSA Key Pair Import
+                 - ``PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT``
+                 - --
+               * - RSA Key Pair Export
+                 - ``PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT``
+                 - --
+               * - RSA Key Pair Generate
+                 - ``PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE``
+                 - --
+               * - RSA Key Pair Derive
+                 - ``PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE``
+                 - --
+               * - RSA Public Key
+                 - ``PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY``
+                 - --
+               * - XChaCha20
+                 - ``PSA_WANT_KEY_TYPE_XCHACHA20``
+                 - --
+               * - HSS Public Key
+                 - ``PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY``
+                 - --
+               * - LMS Public Key
+                 - ``PSA_WANT_KEY_TYPE_LMS_PUBLIC_KEY``
+                 - --
+               * - XMSS Public Key
+                 - ``PSA_WANT_KEY_TYPE_XMSS_PUBLIC_KEY``
+                 - --
+               * - XMSS-MT Public Key
+                 - ``PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY``
+                 - --
+               * - ML-DSA-44
+                 - ``PSA_WANT_ML_DSA_KEY_SIZE_44``
+                 - --
+               * - ML-DSA-65
+                 - ``PSA_WANT_ML_DSA_KEY_SIZE_65``
+                 - --
+               * - ML-DSA-87
+                 - ``PSA_WANT_ML_DSA_KEY_SIZE_87``
+                 - --
+               * - ML-DSA Key Pair Import
+                 - ``PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT``
+                 - --
+               * - ML-DSA Key Pair Export
+                 - ``PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT``
+                 - --
+               * - ML-DSA Key Pair Generate
+                 - ``PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_GENERATE``
+                 - --
+               * - ML-DSA Key Pair Derive
+                 - ``PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_DERIVE``
+                 - --
+               * - ML-DSA Public Key
+                 - ``PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY``
+                 - --
+               * - ML-KEM-512
+                 - ``PSA_WANT_ML_KEM_KEY_SIZE_512``
+                 - --
+               * - ML-KEM-768
+                 - ``PSA_WANT_ML_KEM_KEY_SIZE_768``
+                 - --
+               * - ML-KEM-1024
+                 - ``PSA_WANT_ML_KEM_KEY_SIZE_1024``
+                 - --
+               * - ML-KEM Key Pair Import
+                 - ``PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT``
+                 - --
+               * - ML-KEM Key Pair Export
+                 - ``PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT``
+                 - --
+               * - ML-KEM Key Pair Generate
+                 - ``PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE``
+                 - --
+               * - ML-KEM Key Pair Derive
+                 - ``PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE``
+                 - --
+               * - ML-KEM Public Key
+                 - ``PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY``
+                 - --
+
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported key types for nRF54L Series devices.
 
       .. note::
          Only some of these key types can be :ref:`stored in the Key Management Unit (KMU) <ug_nrf54l_crypto_kmu_supported_key_types>`.
@@ -579,7 +705,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: CRACEN
 
-            .. list-table:: Key type support per device (CRACEN driver) - nRF54 Series
+            .. list-table:: Key type support per device (CRACEN driver) - nRF54L Series
               :header-rows: 1
               :widths: auto
 
@@ -790,7 +916,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: Key type support per device (nrf_oberon driver) - nRF54 Series
+            .. list-table:: Key type support per device (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -1576,15 +1702,15 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the key management support for nRF54 Series devices.
+      The following tables list the key management support for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: Key management support (CRACEN driver) - nRF54 Series
+            .. list-table:: Key management support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -1606,7 +1732,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 
          .. tab:: nrf_oberon
 
-            .. list-table:: Key management support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: Key management support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -1871,15 +1997,55 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`
                  - Supported
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54H Series
 
-      The following tables list the supported cipher modes for nRF54 Series devices.
+      The following tables list the supported cipher modes for nRF54H Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: Cipher mode support per device (CRACEN driver) - nRF54 Series
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: Cipher mode support per device (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Cipher mode
+                 - Supported primitive
+                 - nRF54H20
+               * - ECB no padding
+                 - ``PSA_WANT_ALG_ECB_NO_PADDING``
+                 - Supported
+               * - CBC no padding
+                 - ``PSA_WANT_ALG_CBC_NO_PADDING``
+                 - Supported
+               * - CBC PKCS#7 padding
+                 - ``PSA_WANT_ALG_CBC_PKCS7``
+                 - Supported
+               * - CTR
+                 - ``PSA_WANT_ALG_CTR``
+                 - Supported
+               * - CCM* no tag
+                 - ``PSA_WANT_ALG_CCM_STAR_NO_TAG``
+                 - --
+               * - Stream cipher
+                 - ``PSA_WANT_ALG_STREAM_CIPHER``
+                 - --
+
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported cipher modes for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: Cipher mode support per device (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -1939,7 +2105,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: Cipher mode support per device (nrf_oberon driver) - nRF54 Series
+            .. list-table:: Cipher mode support per device (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -2171,15 +2337,15 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_NO_TAG`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the cipher driver support for nRF54 Series devices.
+      The following tables list the cipher driver support for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: Cipher driver support (CRACEN driver) - nRF54 Series
+            .. list-table:: Cipher driver support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -2194,7 +2360,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 
          .. tab:: nrf_oberon
 
-            .. list-table:: Cipher driver support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: Cipher driver support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -2325,15 +2491,39 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDH`
                  - Supported
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54H Series
 
-      The following tables list the supported key agreement algorithms for nRF54 Series devices.
+      The following tables list the supported key agreement algorithms for nRF54H Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: Key agreement algorithm support (CRACEN driver) - nRF54 Series
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: Key agreement algorithm support (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Key agreement algorithm
+                 - Supported primitive
+                 - nRF54H20
+               * - ECDH
+                 - ``PSA_WANT_ALG_ECDH``
+                 - Supported
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported key agreement algorithms for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: Key agreement algorithm support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -2352,7 +2542,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: Key agreement algorithm support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: Key agreement algorithm support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -2476,15 +2666,15 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                * - Configuration automatically generated based on the enabled key agreement algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDH` (limited to curve types secp224r1, secp256r1, secp384r1, and Curve25519)
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the key agreement driver support for nRF54 Series devices.
+      The following tables list the key agreement driver support for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: Key agreement driver support (CRACEN driver) - nRF54 Series
+            .. list-table:: Key agreement driver support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -2495,7 +2685,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 
          .. tab:: nrf_oberon
 
-            .. list-table:: Key agreement driver support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: Key agreement driver support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -2582,15 +2772,15 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_KEM`
                  - Experimental
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the supported key encapsulation algorithms for nRF54 Series devices.
+      The following tables list the supported key encapsulation algorithms for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: nrf_oberon
 
-            .. list-table:: Key encapsulation algorithm support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: Key encapsulation algorithm support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -2673,15 +2863,15 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                * - Configuration automatically generated based on the enabled key encapsulation algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_KEM`
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the key encapsulation driver support for nRF54 Series devices.
+      The following tables list the key encapsulation driver support for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: nrf_oberon
 
-            .. list-table:: Key encapsulation driver support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: Key encapsulation driver support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -2830,15 +3020,67 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_HMAC`
                  - Supported
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54H Series
 
-      The following tables list the supported KDF algorithms for nRF54 Series devices.
+      The following table lists the supported KDF algorithms for nRF54H Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: KDF algorithm support (CRACEN driver) - nRF54 Series
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: KDF algorithm support (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - KDF algorithm
+                 - Supported primitive
+                 - nRF54H20
+               * - HKDF
+                 - ``PSA_WANT_ALG_HKDF``
+                 - Supported
+               * - HKDF-Extract
+                 - ``PSA_WANT_ALG_HKDF_EXTRACT``
+                 - Supported
+               * - HKDF-Expand
+                 - ``PSA_WANT_ALG_HKDF_EXPAND``
+                 - Supported
+               * - PBKDF2-HMAC
+                 - ``PSA_WANT_ALG_PBKDF2_HMAC``
+                 - Supported
+               * - PBKDF2-AES-CMAC-PRF-128
+                 - ``PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128``
+                 - Supported
+               * - TLS 1.2 PRF
+                 - ``PSA_WANT_ALG_TLS12_PRF``
+                 - Supported
+               * - TLS 1.2 PSK to MS
+                 - ``PSA_WANT_ALG_TLS12_PSK_TO_MS``
+                 - Supported
+               * - TLS 1.2 EC J-PAKE to PMS
+                 - ``PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS``
+                 - Supported
+               * - SP 800-108r1 CMAC w/counter
+                 - ``PSA_WANT_ALG_SP800_108_COUNTER_CMAC``
+                 - Supported
+               * - SP 800-108 HMAC counter mode
+                 - ``PSA_WANT_ALG_SP800_108_COUNTER_HMAC``
+                 - --
+
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported KDF algorithms for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: KDF algorithm support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -2911,7 +3153,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: KDF algorithm support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: KDF algorithm support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -3120,15 +3362,15 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_CMAC`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_HMAC`
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the KDF driver support for nRF54 Series devices.
+      The following tables list the KDF driver support for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: KDF driver support (CRACEN driver) - nRF54 Series
+            .. list-table:: KDF driver support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -3148,7 +3390,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 
          .. tab:: nrf_oberon
 
-            .. list-table:: KDF driver support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: KDF driver support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -3296,15 +3538,46 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC`
                  - Supported
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54H Series
 
-      The following tables list the supported MAC algorithms for nRF54 Series devices.
+      The following tables list the supported MAC algorithms for nRF54H Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: MAC algorithm support (CRACEN driver) - nRF54 Series
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: MAC algorithm support (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - MAC algorithm
+                 - Supported primitive
+                 - nRF54H20
+               * - CMAC
+                 - ``PSA_WANT_ALG_CMAC``
+                 - Supported
+               * - HMAC
+                 - ``PSA_WANT_ALG_HMAC``
+                 - Supported
+
+            .. note::
+               On the nRF54H20 SoC, 192-bit keys are not supported.
+               See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported MAC algorithms for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: MAC algorithm support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -3336,7 +3609,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: MAC algorithm support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: MAC algorithm support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -3487,15 +3760,15 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                  - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CMAC`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC`
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the MAC driver support for nRF54 Series devices.
+      The following tables list the MAC driver support for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: MAC driver support (CRACEN driver) - nRF54 Series
+            .. list-table:: MAC driver support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -3507,7 +3780,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 
          .. tab:: nrf_oberon
 
-            .. list-table:: MAC driver support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: MAC driver support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -3674,15 +3947,51 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
                  - Experimental
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54H Series
 
-      The following tables list the supported AEAD algorithms for nRF54 Series devices.
+      The following tables list the supported AEAD algorithms for nRF54H Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: AEAD algorithm support (CRACEN driver) - nRF54 Series
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: AEAD algorithm support (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - AEAD algorithm
+                 - Supported primitive
+                 - nRF54H20
+               * - CCM
+                 - ``PSA_WANT_ALG_CCM``
+                 - Supported
+               * - GCM
+                 - ``PSA_WANT_ALG_GCM``
+                 - Supported
+               * - ChaCha20-Poly1305
+                 - ``PSA_WANT_ALG_CHACHA20_POLY1305``
+                 - Supported
+               * - XChaCha20-Poly1305
+                 - ``PSA_WANT_ALG_XCHACHA20_POLY1305``
+                 - --
+
+            .. note::
+              CRACEN only supports a 96-bit IV for AES GCM.
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported AEAD algorithms for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: AEAD algorithm support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -3717,25 +4026,25 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
 
-         .. note::
+            .. note::
 
-            * CRACEN only supports a 96-bit IV for AES GCM.
-            * The following limitations apply for nRF54LM20 when using the CRACEN driver:
+                * CRACEN only supports a 96-bit IV for AES GCM.
+                * The following limitations apply for nRF54LM20 when using the CRACEN driver:
 
-              * 192-bit keys are not supported.
-                See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
-              * CCM cipher mode:
+                  * 192-bit keys are not supported.
+                    See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
+                  * CCM cipher mode:
 
-                * Multi-part encrypt and decrypt APIs are not supported.
-                * A maximum of 1 MB of plaintext or ciphertext is supported.
+                    * Multi-part encrypt and decrypt APIs are not supported.
+                    * A maximum of 1 MB of plaintext or ciphertext is supported.
 
-              * GCM and ChaCha20-Poly1305 cipher modes:
+                  * GCM and ChaCha20-Poly1305 cipher modes:
 
-                * Multi-part encrypt and decrypt APIs are not supported.
+                    * Multi-part encrypt and decrypt APIs are not supported.
 
          .. tab:: nrf_oberon
 
-            .. list-table:: AEAD algorithm support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: AEAD algorithm support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -3923,15 +4232,15 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the AEAD driver support for nRF54 Series devices.
+      The following tables list the AEAD driver support for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: AEAD driver support (CRACEN driver) - nRF54 Series
+            .. list-table:: AEAD driver support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -3944,7 +4253,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 
          .. tab:: nrf_oberon
 
-            .. list-table:: AEAD driver support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: AEAD driver support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -4256,15 +4565,78 @@ The options are grouped by Series and drivers available for the device Series, a
                - :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA` is limited to ECC curve type Ed25519.
                - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS_ANY_SALT` does not support RSA key pair generation.
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54H Series
 
-      The following tables list the supported asymmetric signature algorithms for nRF54 Series devices.
+      The following tables list the supported asymmetric signature algorithms for nRF54H Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: Asymmetric signature algorithm support (CRACEN driver) - nRF54 Series
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: Asymmetric signature algorithm support (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Asymmetric signature algorithm
+                 - Supported primitive
+                 - nRF54H20
+               * - ECDSA
+                 - ``PSA_WANT_ALG_ECDSA``
+                 - Supported
+               * - ECDSA without hashing
+                 - ``PSA_WANT_ALG_ECDSA_ANY``
+                 - Supported
+               * - ECDSA (deterministic)
+                 - ``PSA_WANT_ALG_DETERMINISTIC_ECDSA``
+                 - Supported
+               * - PureEdDSA
+                 - ``PSA_WANT_ALG_PURE_EDDSA``
+                 - Supported
+               * - HashEdDSA Edwards25519
+                 - ``PSA_WANT_ALG_ED25519PH``
+                 - Supported
+               * - RSA PKCS#1 v1.5 sign
+                 - ``PSA_WANT_ALG_RSA_PKCS1V15_SIGN``
+                 - --
+               * - RSA raw PKCS#1 v1.5 sign
+                 - ``PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW``
+                 - --
+               * - RSA PSS
+                 - ``PSA_WANT_ALG_RSA_PSS``
+                 - --
+               * - RSA PSS any salt
+                 - ``PSA_WANT_ALG_RSA_PSS_ANY_SALT``
+                 - --
+               * - HSS
+                 - ``PSA_WANT_ALG_HSS``
+                 - --
+               * - LMS
+                 - ``PSA_WANT_ALG_LMS``
+                 - --
+               * - ML-DSA
+                 - ``PSA_WANT_ALG_ML_DSA``
+                 - --
+               * - XMSS
+                 - ``PSA_WANT_ALG_XMSS``
+                 - --
+               * - XMSS-MT
+                 - ``PSA_WANT_ALG_XMSS_MT``
+                 - --
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported asymmetric signature algorithms for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: Asymmetric signature algorithm support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -4361,7 +4733,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: Asymmetric signature algorithm support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: Asymmetric signature algorithm support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -4767,15 +5139,15 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_XMSS`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_XMSS_MT`
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the asymmetric signature driver support for nRF54 Series devices.
+      The following tables list the asymmetric signature driver support for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: Asymmetric signature driver support (CRACEN driver) - nRF54 Series
+            .. list-table:: Asymmetric signature driver support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -4792,7 +5164,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 
          .. tab:: nrf_oberon
 
-            .. list-table:: Asymmetric signature driver support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: Asymmetric signature driver support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -4965,15 +5337,15 @@ The options are grouped by Series and drivers available for the device Series, a
             .. note::
                :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_CRYPT` does not support RSA key pair generation.
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the supported asymmetric encryption algorithms for nRF54 Series devices.
+      The following tables list the supported asymmetric encryption algorithms for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: Asymmetric encryption algorithm support (CRACEN driver) - nRF54 Series
+            .. list-table:: Asymmetric encryption algorithm support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -4998,7 +5370,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: Asymmetric encryption algorithm support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: Asymmetric encryption algorithm support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -5153,15 +5525,15 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                  - | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_OAEP`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_CRYPT` (does not support RSA key pair generation)
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the asymmetric encryption driver support for nRF54 Series devices.
+      The following tables list the asymmetric encryption driver support for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: Asymmetric encryption driver support (CRACEN driver) - nRF54 Series
+            .. list-table:: Asymmetric encryption driver support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -5173,7 +5545,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 
          .. tab:: nrf_oberon
 
-            .. list-table:: Asymmetric encryption driver support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: Asymmetric encryption driver support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -5499,15 +5871,84 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_521`
                  - --
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54H Series
 
-      The following tables list the supported ECC curve types for nRF54 Series devices.
+      The following tables list the supported ECC curve types for nRF54H Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: ECC curve type support (CRACEN driver) - nRF54 Series
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: ECC curve type support (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ECC curve type
+                 - Supported primitive
+                 - nRF54H20
+               * - BrainpoolP192r1
+                 - ``PSA_WANT_ECC_BRAINPOOL_P_R1_192``
+                 - --
+               * - BrainpoolP224r1
+                 - ``PSA_WANT_ECC_BRAINPOOL_P_R1_224``
+                 - --
+               * - BrainpoolP256r1
+                 - ``PSA_WANT_ECC_BRAINPOOL_P_R1_256``
+                 - Supported
+               * - BrainpoolP320r1
+                 - ``PSA_WANT_ECC_BRAINPOOL_P_R1_320``
+                 - --
+               * - BrainpoolP384r1
+                 - ``PSA_WANT_ECC_BRAINPOOL_P_R1_384``
+                 - --
+               * - BrainpoolP512r1
+                 - ``PSA_WANT_ECC_BRAINPOOL_P_R1_512``
+                 - --
+               * - Curve25519 (X25519)
+                 - ``PSA_WANT_ECC_MONTGOMERY_255``
+                 - Supported
+               * - Edwards25519 (Ed25519)
+                 - ``PSA_WANT_ECC_TWISTED_EDWARDS_255``
+                 - Supported
+               * - Edwards448 (Ed448)
+                 - ``PSA_WANT_ECC_TWISTED_EDWARDS_448``
+                 - --
+               * - secp192k1
+                 - ``PSA_WANT_ECC_SECP_K1_192``
+                 - --
+               * - secp256k1
+                 - ``PSA_WANT_ECC_SECP_K1_256``
+                 - --
+               * - secp192r1
+                 - ``PSA_WANT_ECC_SECP_R1_192``
+                 - --
+               * - secp224r1
+                 - ``PSA_WANT_ECC_SECP_R1_224``
+                 - --
+               * - secp256r1
+                 - ``PSA_WANT_ECC_SECP_R1_256``
+                 - Supported
+               * - secp384r1
+                 - ``PSA_WANT_ECC_SECP_R1_384``
+                 - Supported
+               * - secp521r1
+                 - ``PSA_WANT_ECC_SECP_R1_521``
+                 - Supported
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported ECC curve types for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: ECC curve type support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -5616,7 +6057,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: ECC curve type support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: ECC curve type support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -6036,15 +6477,15 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_384`
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the ECC curve driver support for nRF54 Series devices.
+      The following tables list the ECC curve driver support for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: ECC curve driver support (CRACEN driver) - nRF54 Series
+            .. list-table:: ECC curve driver support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -6069,7 +6510,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 
          .. tab:: nrf_oberon
 
-            .. list-table:: ECC curve driver support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: ECC curve driver support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -6248,15 +6689,45 @@ The options are grouped by Series and drivers available for the device Series, a
             .. note::
                :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG` is implemented in software, with entropy provided by the hardware RNG peripheral.
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54H Series
 
-      The following tables list the supported RNG algorithms for nRF54 Series devices.
+      The following tables list the supported RNG algorithms for nRF54H Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: RNG algorithm support (CRACEN driver) - nRF54 Series
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: RNG algorithm support (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - PRNG algorithm
+                 - Supported primitive
+                 - nRF54H20
+               * - RNG support
+                 - ``PSA_WANT_GENERATE_RANDOM``
+                 - Supported
+               * - CTR-DRBG
+                 - ``PSA_WANT_ALG_CTR_DRBG``
+                 - Supported
+               * - HMAC-DRBG
+                 - ``PSA_WANT_ALG_HMAC_DRBG``
+                 - --
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported RNG algorithms for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: RNG algorithm support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -6287,7 +6758,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: RNG algorithm support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: RNG algorithm support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -6461,15 +6932,15 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                  - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR_DRBG`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG` (software implementation, entropy provided by the hardware RNG peripheral)
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the RNG driver support for nRF54 Series devices.
+      The following tables list the RNG driver support for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: RNG driver support (CRACEN driver) - nRF54 Series
+            .. list-table:: RNG driver support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -6480,7 +6951,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 
          .. tab:: nrf_oberon
 
-            .. list-table:: RNG driver support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: RNG driver support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -6781,15 +7252,78 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
                  - Supported
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54H Series
 
-      The following tables list the supported hash algorithms for nRF54 Series devices.
+      The following tables list the supported hash algorithms for nRF54H Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: Hash algorithm support (CRACEN driver) - nRF54 Series
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: Hash algorithm support (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Hash algorithm
+                 - Supported primitive
+                 - nRF54H20
+               * - SHA-1 (weak)
+                 - ``PSA_WANT_ALG_SHA_1``
+                 - Supported
+               * - SHA-224
+                 - ``PSA_WANT_ALG_SHA_224``
+                 - --
+               * - SHA-256
+                 - ``PSA_WANT_ALG_SHA_256``
+                 - Supported
+               * - SHA-384
+                 - ``PSA_WANT_ALG_SHA_384``
+                 - Supported
+               * - SHA-512
+                 - ``PSA_WANT_ALG_SHA_512``
+                 - Supported
+               * - SHA3-224
+                 - ``PSA_WANT_ALG_SHA3_224``
+                 - --
+               * - SHA3-256
+                 - ``PSA_WANT_ALG_SHA3_256``
+                 - Supported
+               * - SHA3-384
+                 - ``PSA_WANT_ALG_SHA3_384``
+                 - Supported
+               * - SHA3-512
+                 - ``PSA_WANT_ALG_SHA3_512``
+                 - Supported
+               * - SHA-256/192
+                 - ``PSA_WANT_ALG_SHA_256_192``
+                 - --
+               * - SHAKE128 256 bits
+                 - ``PSA_WANT_ALG_SHAKE128_256``
+                 - --
+               * - SHAKE256 192 bits
+                 - ``PSA_WANT_ALG_SHAKE256_192``
+                 - --
+               * - SHAKE256 256 bits
+                 - ``PSA_WANT_ALG_SHAKE256_256``
+                 - --
+               * - SHAKE256 512 bits
+                 - ``PSA_WANT_ALG_SHAKE256_512``
+                 - Supported
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported hash algorithms for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: Hash algorithm support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -6886,7 +7420,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: Hash algorithm support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: Hash algorithm support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -7266,15 +7800,15 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the hash driver support for nRF54 Series devices.
+      The following tables list the hash driver support for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: Hash driver support (CRACEN driver) - nRF54 Series
+            .. list-table:: Hash driver support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -7293,7 +7827,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 
          .. tab:: nrf_oberon
 
-            .. list-table:: Hash driver support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: Hash driver support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -7442,15 +7976,55 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_PASSWORD_HASH`
                  - Experimental
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54H Series
 
-      The following tables list the supported PAKE algorithms for nRF54 Series devices.
+      The following table lists the supported PAKE algorithms for nRF54H Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: PAKE algorithm support (CRACEN driver) - nRF54 Series
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: PAKE algorithm support (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - PAKE algorithm
+                 - Supported primitive
+                 - nRF54H20
+               * - EC J-PAKE
+                 - ``PSA_WANT_ALG_JPAKE``
+                 - Supported
+               * - SPAKE2+ with HMAC
+                 - ``PSA_WANT_ALG_SPAKE2P_HMAC``
+                 - Supported
+               * - SPAKE2+ with CMAC
+                 - ``PSA_WANT_ALG_SPAKE2P_CMAC``
+                 - Supported
+               * - SPAKE2+ for Matter
+                 - ``PSA_WANT_ALG_SPAKE2P_MATTER``
+                 - Supported
+               * - SRP-6
+                 - ``PSA_WANT_ALG_SRP_6``
+                 - --
+               * - SRP password hashing
+                 - ``PSA_WANT_ALG_SRP_PASSWORD_HASH``
+                 - --
+
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported PAKE algorithms for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: PAKE algorithm support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -7499,7 +8073,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: PAKE algorithm support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: PAKE algorithm support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -7652,15 +8226,15 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_PASSWORD_HASH`
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the PAKE driver support for nRF54 Series devices.
+      The following tables list the PAKE driver support for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: PAKE driver support (CRACEN driver) - nRF54 Series
+            .. list-table:: PAKE driver support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -7676,7 +8250,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 
          .. tab:: nrf_oberon
 
-            .. list-table:: PAKE driver support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: PAKE driver support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -7836,15 +8410,15 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
                  - Supported
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the supported RSA key pair operations for nRF54 Series devices.
+      The following tables list the supported RSA key pair operations for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: RSA key pair operation support (CRACEN driver) - nRF54 Series
+            .. list-table:: RSA key pair operation support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -7881,7 +8455,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: RSA key pair operation support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: RSA key pair operation support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -8070,15 +8644,15 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE`
                  - Supported
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the supported SRP key pair operations for nRF54 Series devices.
+      The following tables list the supported SRP key pair operations for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: SRP key pair operation support (CRACEN driver) - nRF54 Series
+            .. list-table:: SRP key pair operation support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -8115,7 +8689,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: SRP key pair operation support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: SRP key pair operation support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -8267,15 +8841,48 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE`
                  - Supported
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54H Series
 
-      The following tables list the supported SPAKE2P key pair operations for nRF54 Series devices.
+      The following table lists the supported SPAKE2P key pair operations for nRF54H Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: SPAKE2P key pair operation support (CRACEN driver) - nRF54 Series
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: SPAKE2P key pair operation support (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - SPAKE2P key pair operation
+                 - Supported primitive
+                 - nRF54H20
+               * - Import
+                 - ``PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT``
+                 - Supported
+               * - Export
+                 - ``PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT``
+                 - Supported
+               * - Generate
+                 - ``PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE``
+                 - Supported
+               * - Derive
+                 - ``PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE``
+                 - Supported
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported SPAKE2P key pair operations for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: SPAKE2P key pair operation support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -8312,7 +8919,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: SPAKE2P key pair operation support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: SPAKE2P key pair operation support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -8508,15 +9115,48 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE`
                  - Supported
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54H Series
 
-      The following tables list the supported ECC key pair operations for nRF54 Series devices.
+      The following tables list the supported ECC key pair operations for nRF54H Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: ECC key pair operation support (CRACEN driver) - nRF54 Series
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: ECC key pair operation support (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - ECC key pair operation
+                 - Supported primitive
+                 - nRF54H20
+               * - Generate
+                 - ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE``
+                 - Supported
+               * - Import
+                 - ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT``
+                 - Supported
+               * - Export
+                 - ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT``
+                 - Supported
+               * - Derive
+                 - ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE``
+                 - Supported
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported ECC key pair operations for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: ECC key pair operation support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -8553,7 +9193,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: ECC key pair operation support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: ECC key pair operation support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -8785,15 +9425,45 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_AES_KEY_SIZE_256`
                  - Supported
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54H Series
 
-      The following tables list the supported AES key sizes for nRF54 Series devices.
+      The following tables list the supported AES key sizes for nRF54H Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: AES key size support (CRACEN driver) - nRF54 Series
+            The nRF54H Series does not use the CRACEN driver directly for cryptographic operations.
+            The driver is used alongside Oberon PSA Core and the CRACEN driver within the :ref:`IronSide Secure Element firmware <ug_crypto_architecture_implementation_standards_ironside>`.
+
+            The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+
+            .. list-table:: AES key size support (CRACEN driver through IronSide SE) - nRF54H Series
+               :header-rows: 1
+               :widths: auto
+
+               * - AES key size
+                 - Supported primitive
+                 - nRF54H20
+               * - 128 bits
+                 - ``PSA_WANT_AES_KEY_SIZE_128``
+                 - Supported
+               * - 192 bits
+                 - ``PSA_WANT_AES_KEY_SIZE_192``
+                 - Supported
+               * - 256 bits
+                 - ``PSA_WANT_AES_KEY_SIZE_256``
+                 - Supported
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported AES key sizes for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: AES key size support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -8824,7 +9494,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: AES key size support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: AES key size support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -9083,15 +9753,15 @@ The options are grouped by Series and drivers available for the device Series, a
                  - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_8192`
                  - Supported
 
-   .. tab:: nRF54 Series
+   .. tab:: nRF54L Series
 
-      The following tables list the supported RSA key sizes for nRF54 Series devices.
+      The following tables list the supported RSA key sizes for nRF54L Series devices.
 
       .. tabs::
 
          .. tab:: CRACEN
 
-            .. list-table:: RSA key size support (CRACEN driver) - nRF54 Series
+            .. list-table:: RSA key size support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
@@ -9146,7 +9816,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: nrf_oberon
 
-            .. list-table:: RSA key size support (nrf_oberon driver) - nRF54 Series
+            .. list-table:: RSA key size support (nrf_oberon driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
 
