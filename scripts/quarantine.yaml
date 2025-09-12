@@ -101,6 +101,12 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35382"
 
 - scenarios:
+    - sample.bluetooth.mesh.sensor_client
+  platforms:
+    - nrf52dk/nrf52832
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35409"
+
+- scenarios:
     - sample.bluetooth.peripheral_mds
   platforms:
     - nrf52840dk/nrf52840
