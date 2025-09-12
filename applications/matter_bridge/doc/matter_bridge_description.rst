@@ -382,23 +382,15 @@ Configuration options
 
 Check and configure the following configuration options:
 
-.. _CONFIG_BRIDGED_DEVICE_IMPLEMENTATION:
+.. _CONFIG_BRIDGED_DEVICE_SIMULATED:
 
-CONFIG_BRIDGED_DEVICE_IMPLEMENTATION
-   ``bool`` - Select bridged device implementation.
-   See the :ref:`matter_bridge_app_bridged_support_configs` section for more information.
-   Accepts the following values:
+CONFIG_BRIDGED_DEVICE_SIMULATED
+   ``bool`` - Implement a simulated bridged device.
 
-   .. _CONFIG_BRIDGED_DEVICE_SIMULATED:
+.. _CONFIG_BRIDGED_DEVICE_BT:
 
-   CONFIG_BRIDGED_DEVICE_SIMULATED
-      ``bool`` - Implement a simulated bridged device.
-      You must also configure :ref:`CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION <CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION>`
-
-   .. _CONFIG_BRIDGED_DEVICE_BT:
-
-   CONFIG_BRIDGED_DEVICE_BT
-      ``bool`` - Implement a Bluetooth LE bridged device.
+CONFIG_BRIDGED_DEVICE_BT
+   ``bool`` - Implement a Bluetooth LE bridged device.
 
 .. _CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE:
 
@@ -410,21 +402,15 @@ CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
    ``bool`` - Enable support for OnOff Light bridged device.
 
-.. _CONFIG_BRIDGE_SWITCH_BRIDGED_DEVICE:
+.. _CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE:
 
-CONFIG_BRIDGE_SWITCH_BRIDGED_DEVICE
-   ``bool`` - Enable support for a switch bridged device.
-   Accepts the following values:
+CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
+   ``bool`` - Enable support for Generic Switch bridged device.
 
-   .. _CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE:
+.. _CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE:
 
-   CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
-      ``bool`` - Enable support for Generic Switch bridged device.
-
-   .. _CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE:
-
-   CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
-      ``bool`` - Enable support for OnOff Light Switch bridged device.
+CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
+   ``bool`` - Enable support for OnOff Light Switch bridged device.
 
 .. _CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE:
 
@@ -443,23 +429,17 @@ CONFIG_BRIDGE_MIGRATE_VERSION_1
 
    If you selected the simulated device implementation using the :ref:`CONFIG_BRIDGED_DEVICE_SIMULATED <CONFIG_BRIDGED_DEVICE_SIMULATED>` Kconfig option, also check and configure the following option:
 
-.. _CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION:
+.. _CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC:
 
-CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION
-   ``bool`` - Select the simulated OnOff device implementation.
-   Accepts the following values:
+CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC
+   ``bool`` - Automatically simulated OnOff device.
+   The simulated device automatically changes its state periodically.
 
-   .. _CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC:
+.. _CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL:
 
-   CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC
-      ``bool`` - Automatically simulated OnOff device.
-      The simulated device automatically changes its state periodically.
-
-   .. _CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL:
-
-   CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL
-      ``bool`` - Shell-controlled simulated OnOff device.
-      The state of the simulated device is changed using shell commands.
+CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL
+   ``bool`` - Shell-controlled simulated OnOff device.
+   The state of the simulated device is changed using shell commands.
 
 If you selected the Bluetooth LE device implementation using the :ref:`CONFIG_BRIDGED_DEVICE_BT <CONFIG_BRIDGED_DEVICE_BT>` Kconfig option, also check and configure the following options:
 
