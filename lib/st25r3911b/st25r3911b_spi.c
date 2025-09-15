@@ -46,7 +46,7 @@ static const struct spi_config spi_cfg =  {
 
 static bool reg_is_valid(uint8_t reg)
 {
-	return (reg < ST25R3911B_REG_IC_IDENTITY);
+	return (reg <= ST25R3911B_REG_IC_IDENTITY);
 }
 
 static bool cmd_is_valid(uint8_t cmd)
