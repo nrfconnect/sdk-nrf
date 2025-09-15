@@ -1934,6 +1934,8 @@
 
 .. _`nRF54H20 SoC binaries v22.2.0+14`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v22.2.0%2B14.zip
 
+.. _`latest nRF54H20 SoC binaries`: https://files.nordicsemi.com/artifactory/SDSC/external/
+
 .. ### Descr: Old 54H BICR file
 
 .. _`BICR binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr_ext_loadcap.hex

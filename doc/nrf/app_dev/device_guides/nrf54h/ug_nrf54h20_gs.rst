@@ -104,15 +104,16 @@ Install a terminal emulator, such as the `Serial Terminal app`_ (from the nRF Co
 Both of these terminal emulators start the required :ref:`toolchain environment <using_toolchain_environment>`.
 
 .. _ug_nrf54h20_gs_bringup:
+.. _ug_nrf54h20_gs_bringup_bicr:
 .. _ug_nrf54h20_gs_bicr:
 
 .. rst-class:: numbered-step
 
-Programming the BICR
-********************
+Bring-up step: Programming the BICR
+***********************************
 
 The Board Information Configuration Registers (BICR) are non-volatile memory (NVM) registers that contain information on how the nRF54H20 SoC must interact with other board elements, including information about power and clock delivery to the SoC.
-To prepare the nRF54H20 DK for first use, you must manually program the values of the BICR using a precompiled BICR binary file (:file:`bicr.hex`).
+To prepare the nRF54H20 DK for its first use, you must manually program the required values into the BICR using a precompiled BICR binary file (:file:`bicr.hex`).
 
 1. Download the `nRF54H20 DK BICR binary file`_.
 #. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
@@ -129,11 +130,12 @@ To prepare the nRF54H20 DK for first use, you must manually program the values o
       nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware bicr.hex --core Application --serial-number <serial_number>
 
 .. _ug_nrf54h20_SoC_binaries:
+.. _ug_nrf54h20_gs_bringup_soc_bin:
 
 .. rst-class:: numbered-step
 
-Programming the nRF54H20 SoC binaries
-*************************************
+Bring-up step: Programming the nRF54H20 SoC binaries
+****************************************************
 
 .. note::
    To program the nRF54H20 SoC binaries based on IronSide SE on your nRF54H20 SoC-based device, your device must be in lifecycle state (LCS) ``EMPTY``.
@@ -142,11 +144,11 @@ Programming the nRF54H20 SoC binaries
    Devices already provisioned using SUIT-based binaries and in LCS ``RoT`` cannot be transitioned back to LCS ``EMPTY``.
    For more information, see :ref:`abi_compatibility`.
 
-After programming the BICR, program the nRF54H20 SoC with the :ref:`nRF54H20 SoC binaries <abi_compatibility>`.
+After programming the BICR, program the :ref:`nRF54H20 SoC binaries <abi_compatibility>`.
 This bundle contains the precompiled firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` and :ref:`System Controller <ug_nrf54h20_sys_ctrl>`.
 To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 SoC binaries v22.2.0+14`_, compatible with the nRF54H20 DK v0.9.0 and later DK revisions.
+1. Download the `latest nRF54H20 SoC binaries`_.
 
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
@@ -155,10 +157,12 @@ To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
 
       nrfutil device x-provision-nrf54h --firmware <path-to_bundle_zip_file> --serial-number <serial_number>
 
+.. _ug_nrf54h20_gs_bringup_trasition:
+
 .. rst-class:: numbered-step
 
-Transitioning the nRF54H20 SoC to RoT
-*************************************
+Bring-up step: Transitioning the nRF54H20 SoC to RoT
+****************************************************
 
 The current nRF54H20 DK comes with its lifecycle state (LCS) set to ``EMPTY``.
 To operate correctly, you must transition its lifecycle state to Root of Trust (``RoT``).
