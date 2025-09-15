@@ -39,7 +39,12 @@ void thread_definition(void)
 		return;
 	}
 	while (1) {
+#if defined(CONFIG_ADC_ASYNC)
+		ret = adc_read_async(adc, &sequence, NULL);
+#else
 		ret = adc_read(adc, &sequence);
+#endif
+
 		if (ret < 0) {
 			printk("Issue wih reading voltage, terminating thread.");
 			return;
