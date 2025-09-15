@@ -32,7 +32,7 @@ if [ $? -ne 0 ]; then
 fi
 
 zcbor code -c cddl/nrf_cloud_coap_device_msg.cddl --default-max-qty 10 -e \
-	-t message_out \
+	-t message_out message_out_batch \
 	--oc src/msg_encode.c \
 	--oh include/msg_encode.h \
 	--oht include/msg_encode_types.h \
