@@ -47,6 +47,8 @@
   type var[size] __attribute__((aligned(alignment)));
 #endif
 
+#define CRACEN_ENTROPY_AND_NONCE_SIZE (CRACEN_PRNG_ENTROPY_SIZE + CRACEN_PRNG_NONCE_SIZE)
+
 /*
  * This driver uses a global context and discards the context passed from the user. We do that
  * because we are not aware of a requirement for multiple PRNG contexts from the users of the
@@ -122,11 +124,10 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 {
 	psa_status_t status = SX_OK;
 
-	const size_t temp_sizeof = CRACEN_PRNG_ENTROPY_SIZE + CRACEN_PRNG_NONCE_SIZE;
-	ALIGN_ON_STACK(char, temp, temp_sizeof, CONFIG_DCACHE_LINE_SIZE);
+	ALIGN_ON_STACK(char, temp, CRACEN_ENTROPY_AND_NONCE_SIZE, CONFIG_DCACHE_LINE_SIZE);
 
 	size_t temp_length = 0;
-	_Static_assert(temp_sizeof % SX_BLKCIPHER_AES_BLK_SZ == 0, "");
+	_Static_assert(CRACEN_ENTROPY_AND_NONCE_SIZE % SX_BLKCIPHER_AES_BLK_SZ == 0, "");
 
 	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
 
@@ -134,7 +135,7 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 	psa_set_key_bits(&attr, PSA_BYTES_TO_BITS(sizeof(prng.key)));
 	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_ENCRYPT);
 
-	while (temp_length < temp_sizeof) {
+	while (temp_length < CRACEN_ENTROPY_AND_NONCE_SIZE) {
 		cracen_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
 
 		status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V, sizeof(prng.V),
@@ -148,7 +149,7 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 	}
 
 	if (data) {
-		cracen_xorbytes(temp, data, temp_sizeof);
+		cracen_xorbytes(temp, data, CRACEN_ENTROPY_AND_NONCE_SIZE);
 	}
 
 	memcpy(prng.key, temp, sizeof(prng.key));
