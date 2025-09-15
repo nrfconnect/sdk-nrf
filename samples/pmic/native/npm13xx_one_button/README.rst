@@ -118,7 +118,7 @@ You can use either the nRF Connect for VS Code extension or the command line.
 
       .. code-block:: bash
 
-         -DSHIELD=npm1300_ek
+         -Dnpm13xx_one_button_SHIELD=npm1300_ek
 
       To apply an extra overlay, choose the respective file from the **Extra Devicetree overlays** drop-down menu
 
