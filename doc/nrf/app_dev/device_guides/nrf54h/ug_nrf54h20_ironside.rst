@@ -186,6 +186,50 @@ After applying the entry, |ISE| performs a read-back check: it reads back the re
 The configuration procedure is aborted if an entry fails either the validation or the read-back check.
 If a failure occurs, BOOTSTATUS.BOOTERROR is set to indicate the error condition, and a description of the failed entry is written to the boot report.
 
+Custom Lockable Data Region
+============================
+
+There is a user-accessible region between the UICR and BICR that can be used for storing custom lockable data.
+This region allows applications to store configuration data, calibration values, device-specific identifiers, or other critical information that can be written multiple times until the region is locked.
+
+The custom lockable data region can be written to repeatedly until UICR.LOCK is set, at which point it becomes read-only and shares the same security and integrity mechanisms as the UICR and BICR.
+This provides a flexible alternative to traditional one-time programmable (OTP) memory, offering the same level of protection as system configuration registers but with fewer limitations during the development and manufacturing process.
+
+Programming conditions
+----------------------
+
+The custom lockable data region can be programmed under the following conditions:
+
+* **Before UICR.LOCK is set**: The region is freely programmable and can be written to multiple times using standard memory write operations.
+* **Write operations**: Standard memory write operations can be used to program data into this region repeatedly until the lock is engaged.
+* **Flexible programming**: Unlike traditional OTP memory, data can be modified and updated multiple times during development and manufacturing phases.
+
+.. warning::
+   Ensure that all necessary data is programmed into the custom lockable region before setting UICR.LOCK, as the region becomes read-only and immutable once the lock is enabled.
+
+Integrity protection
+--------------------
+
+When UICR.LOCK is set and the device is restarted, the custom lockable data region undergoes the same integrity verification process as the UICR and BICR:
+
+* **Integrity checking**: The contents of the custom lockable region are included in the cryptographic integrity check performed during boot.
+* **Failure handling**: Any integrity check failure in the custom lockable region is handled in the same manner as described for UICR.LOCK failure conditions.
+* **Boot behavior**: If the integrity check fails, the application domain's CPUWAIT is set, preventing normal application execution.
+
+This integrity protection ensures that any tampering with the custom lockable data will be detected and will prevent the device from booting normally.
+
+Erasure behavior
+----------------
+
+The custom lockable data region follows different erasure rules depending on the lock state:
+
+* **Before UICR.LOCK is set**: The region can be freely erased and modified using standard memory operations without affecting other regions.
+* **After UICR.LOCK is set**: The region can only be erased through an ERASEALL operation, which also erases the UICR and other protected regions.
+* **Lock removal**: Performing an ERASEALL operation removes the UICR.LOCK restriction, allowing the region to be reprogrammed.
+
+.. note::
+   The BICR is not erased during an ERASEALL operation, but the custom lockable region and UICR are both cleared, allowing for reprogramming of the entire configuration.
+
 Peripheral configuration using nrf-regtool
 ------------------------------------------
 
