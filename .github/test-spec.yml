@@ -578,9 +578,12 @@
 
 "CI-test-low-level":
   - "applications/hpf/**/*"
+  - "boards/nordic/nrf54ls05dk/**/*"
   - "boards/nordic/nrf54lv10dk/**/*"
   - "drivers/gpio/**/*"
+  - "dts/arm/nordic/**/*"
   - "dts/bindings/gpio/**/*"
+  - "dts/common/nordic/**/*"
   - "include/drivers/gpio/**/*"
   - "include/event_manager_proxy.h"
   - "subsys/event_manager_proxy/**/*"
