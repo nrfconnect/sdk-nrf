@@ -26,9 +26,7 @@ message_out = {
 	? ts => uint .size 8
 }
 
-message_out_batch = {
-	msgs => [+ message_out]
-}
+message_out_batch = [+ message_out]
 
 appId = 1
 data = 2
@@ -39,4 +37,3 @@ acc = 6
 spd = 7
 hdg = 8
 alt = 9
-msgs = 10

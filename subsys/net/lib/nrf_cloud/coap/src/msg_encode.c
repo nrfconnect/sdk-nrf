@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
  * Generated using zcbor version 0.8.1
@@ -25,6 +25,7 @@ static bool encode_repeated_pvt_alt(zcbor_state_t *state, const struct pvt_alt *
 static bool encode_pvt(zcbor_state_t *state, const struct pvt *input);
 static bool encode_repeated_message_out_ts(zcbor_state_t *state,
 					   const struct message_out_ts *input);
+static bool encode_message_out_batch(zcbor_state_t *state, const struct message_out_batch *input);
 static bool encode_message_out(zcbor_state_t *state, const struct message_out *input);
 
 static bool encode_repeated_pvt_spd(zcbor_state_t *state, const struct pvt_spd *input)
@@ -127,6 +128,29 @@ static bool encode_repeated_message_out_ts(zcbor_state_t *state, const struct me
 	return tmp_result;
 }
 
+static bool encode_message_out_batch(zcbor_state_t *state, const struct message_out_batch *input)
+{
+	zcbor_log("%s\r\n", __func__);
+
+	bool tmp_result = ((
+		(zcbor_list_start_encode(state, 10) &&
+		 ((zcbor_multi_encode_minmax(1, 10, &(*input).message_out_batch_message_out_m_count,
+					     (zcbor_encoder_t *)encode_message_out, state,
+					     (&(*input).message_out_batch_message_out_m),
+					     sizeof(struct message_out))) ||
+		  (zcbor_list_map_end_force_encode(state), false)) &&
+		 zcbor_list_end_encode(state, 10))));
+
+	if (!tmp_result) {
+		zcbor_trace_file(state);
+		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
+	} else {
+		zcbor_log("%s success\r\n", __func__);
+	}
+
+	return tmp_result;
+}
+
 static bool encode_message_out(zcbor_state_t *state, const struct message_out *input)
 {
 	zcbor_log("%s\r\n", __func__);
@@ -150,7 +174,7 @@ static bool encode_message_out(zcbor_state_t *state, const struct message_out *i
 						      message_out_data_pvt_m_c)
 							     ? ((encode_pvt(
 								       state,
-							       (&(*input).message_out_data_pvt_m))))
+								       (&(*input).message_out_data_pvt_m))))
 							     : false))))) &&
 		  (!(*input).message_out_ts_present ||
 		   encode_repeated_message_out_ts(state, (&(*input).message_out_ts)))) ||
@@ -174,5 +198,15 @@ int cbor_encode_message_out(uint8_t *payload, size_t payload_len, const struct m
 
 	return zcbor_entry_function(payload, payload_len, (void *)input, payload_len_out, states,
 				    (zcbor_decoder_t *)encode_message_out,
+				    sizeof(states) / sizeof(zcbor_state_t), 1);
+}
+
+int cbor_encode_message_out_batch(uint8_t *payload, size_t payload_len,
+				  const struct message_out_batch *input, size_t *payload_len_out)
+{
+	zcbor_state_t states[6];
+
+	return zcbor_entry_function(payload, payload_len, (void *)input, payload_len_out, states,
+				    (zcbor_decoder_t *)encode_message_out_batch,
 				    sizeof(states) / sizeof(zcbor_state_t), 1);
 }
