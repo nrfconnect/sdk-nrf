@@ -111,8 +111,6 @@ Developing with Front-End Modules
 
 * Added support for the following:
 
-  * :ref:`nRF2220 Front-End Module <ug_radio_fem_nrf2220>`.
-  * :ref:`nRF2220 EK shield <ug_radio_fem_nrf2220ek>`.
   * :ref:`nRF21540 Front-End Module in GPIO mode <ug_radio_fem_nrf21540_gpio>` for the nRF54L Series devices.
 
 Developing with PMICs
@@ -428,7 +426,6 @@ Bluetooth samples
   * Added:
 
     * Loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
-    * Support for the :ref:`nRF2220 front-end module <ug_radio_fem_nrf2220ek>`.
 
 * :ref:`central_uart` sample:
 
@@ -640,7 +637,6 @@ Peripheral samples
   * Added:
 
     * Loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
-    * Support for the :ref:`nRF2220 front-end module <ug_radio_fem_nrf2220ek>`.
 
 PMIC samples
 ------------

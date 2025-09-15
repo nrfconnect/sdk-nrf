@@ -48,11 +48,6 @@ The following FEM :term:`Shield` is available and defined in the :file:`nrf/boar
      - | `User Guide <nRF21540 EK User Guide_>`_
        | `Front-End Module Feature <nRF21540 Front-End Module_>`_
      - `nRF21540 DB product page`_
-   * - nRF2220 :term:`Evaluation Kit (EK)`
-     - PCA63558
-     - ``nrf2220ek``
-     -
-     -
 
 .. toctree::
    :maxdepth: 2
@@ -60,5 +55,4 @@ The following FEM :term:`Shield` is available and defined in the :file:`nrf/boar
 
    fem_software_support
    fem_power_models
-   2220ek_dev_guide
    21540ek_dev_guide

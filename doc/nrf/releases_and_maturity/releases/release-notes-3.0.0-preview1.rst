@@ -91,8 +91,6 @@ Developing with Front-End Modules
 
 * Added support for the following:
 
-  * :ref:`nRF2220 Front-End Module <ug_radio_fem_nrf2220>`.
-  * :ref:`nRF2220 EK shield <ug_radio_fem_nrf2220ek>`.
   * :ref:`nRF21540 Front-End Module in GPIO mode <ug_radio_fem_nrf21540_gpio>` for the nRF54L Series devices.
 
 Developing with PMICs

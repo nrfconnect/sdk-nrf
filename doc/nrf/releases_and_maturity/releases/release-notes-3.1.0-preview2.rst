@@ -104,7 +104,7 @@ Developing with PMICs
 Developing with Front-End Modules
 =================================
 
-* Added the temperature compensation feature for the nRF2220 Front-End Module.
+|no_changes_yet_note|
 
 Developing with custom boards
 =============================
