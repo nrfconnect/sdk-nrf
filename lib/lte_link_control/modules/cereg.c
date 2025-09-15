@@ -314,6 +314,14 @@ static void at_handler_cereg(const char *response)
 
 	if ((reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
 	    (reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+#if defined(CONFIG_LTE_LC_PSM_MODULE)
+		/* Clear PSM configuration if the device is not registered */
+		if (reg_status == LTE_LC_NW_REG_NOT_REGISTERED) {
+			psm_cfg.tau = -1;
+			psm_cfg.active_time = -1;
+			psm_evt_update_send(&psm_cfg);
+		}
+#endif
 		return;
 	}
 

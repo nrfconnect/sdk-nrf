@@ -184,13 +184,25 @@ enum lte_lc_func_mode {
 	/**
 	 * Sets the device to receive only functionality.
 	 *
-	 * Can be used, for example, to evaluate connections with
-	 * lte_lc_conn_eval_params_get().
+	 * Features supported by mfw_nrf9160 in receive only mode:
+	 * - lte_lc_conn_eval_params_get()
 	 *
-	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf9160 >= v1.3.0
-	 *       - mfw_nrf91x1
-	 *       - mfw_nrf9151-ntn
+	 * Features supported by mfw_nrf91x1 and mfw_nrf9151-ntn in receive only mode:
+	 * - Network selection
+	 * - lte_lc_conn_eval_params_get()
+	 * - lte_lc_neighbor_cell_measurement()
+	 * - lte_lc_env_eval()
+	 *
+	 * mfw_nrf91x1 and mfw_nrf9151-ntn perform network selection in receive only mode.
+	 * When the search has been completed, an @ref LTE_LC_EVT_MODEM_EVENT is sent with modem
+	 * event @ref LTE_LC_MODEM_EVT_SEARCH_DONE. The application can check the last received
+	 * @ref LTE_LC_EVT_CELL_UPDATE to see if a suitable cell was found or not.
+	 *
+	 * After network selection, device remains camped on the found cell, but will not try to
+	 * register unless the functional mode is changed. LTE registration can be triggered on
+	 * the cell by setting the functional mode to @ref LTE_LC_FUNC_MODE_NORMAL or
+	 * @ref LTE_LC_FUNC_MODE_ACTIVATE_LTE. Device should not be left in receive only mode for
+	 * longer than necessary, because current consumption will be elevated.
 	 */
 	LTE_LC_FUNC_MODE_RX_ONLY		= 2,
 
@@ -1849,9 +1861,19 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
  * event is received, the neighbor cell measurements are automatically stopped. If the
  * function returns successfully, the @ref LTE_LC_EVT_NEIGHBOR_CELL_MEAS event is always reported.
  *
- * @note This is only supported by the following modem firmware:
+ * In receive only functional mode, it is recommended to wait for the modem to complete the network
+ * selection before calling this function. This can be determined from the
+ * @ref LTE_LC_EVT_MODEM_EVENT event with modem event @ref LTE_LC_MODEM_EVT_SEARCH_DONE.
+ *
+ * @note In @ref LTE_LC_FUNC_MODE_NORMAL and @ref LTE_LC_FUNC_MODE_ACTIVATE_LTE functional modes,
+ *       this is only supported by the following modem firmware:
  *       - mfw_nrf9160 >= v1.3.0
  *       - mfw_nrf91x1
+ *       - mfw_nrf9151-ntn
+ *
+ * @note In @ref LTE_LC_FUNC_MODE_RX_ONLY functional mode, this is only supported by the following
+ *       modem firmware:
+ *       - mfw_nrf91x1 >= v2.0.3
  *       - mfw_nrf9151-ntn
  *
  * @note Requires `CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE` to be enabled.
@@ -1880,7 +1902,13 @@ int lte_lc_neighbor_cell_measurement_cancel(void);
  * Get connection evaluation parameters.
  *
  * Connection evaluation parameters can be used to determine the energy efficiency of data
- * transmission before the actual data transmission.
+ * transmission before the actual data transmission. Connection evaluation is based on collected
+ * cell history.
+ *
+ * In receive only functional mode with modem firmware mfw_nrf91x1 v2.0.3 and higher, and
+ * mfw_nrf9151-ntn, it is recommended to wait for the modem to complete the network selection
+ * before calling this function. This can be determined from the @ref LTE_LC_EVT_MODEM_EVENT event
+ * with modem event @ref LTE_LC_MODEM_EVT_SEARCH_DONE.
  *
  * @note Requires `CONFIG_LTE_LC_CONN_EVAL_MODULE` to be enabled.
  *
