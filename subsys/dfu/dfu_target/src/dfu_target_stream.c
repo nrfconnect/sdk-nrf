@@ -54,9 +54,6 @@ static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
 	if (current_id && !strcmp(key, current_id)) {
-		int err;
-		off_t absolute_offset;
-		struct flash_pages_info page;
 		ssize_t len = read_cb(cb_arg, &stream.bytes_written,
 				      sizeof(stream.bytes_written));
 
@@ -64,6 +61,11 @@ static int settings_set(const char *key, size_t len_rd,
 			LOG_ERR("Can't read stream.bytes_written from storage");
 			return len;
 		}
+
+#ifdef CONFIG_STREAM_FLASH_ERASE
+		int err;
+		off_t absolute_offset;
+		struct flash_pages_info page;
 
 		/* Zero bytes written - set last erased page to its default. */
 		if (stream.bytes_written == 0) {
@@ -85,6 +87,7 @@ static int settings_set(const char *key, size_t len_rd,
 		 * written data.
 		 */
 		stream.erased_up_to = page.start_offset + page.size - stream.offset;
+#endif /* CONFIG_STREAM_FLASH_ERASE */
 	}
 
 	return 0;
