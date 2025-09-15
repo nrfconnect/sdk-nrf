@@ -158,30 +158,41 @@ To enable S2RAM support for your project, set the following MCUboot Kconfig opti
 
 Also ensure that your board DTS file includes the following zephyr nodes for describing linker section used:
 
-* a ``zephyr,memory-region`` compatible node with nodelabel ``pm_s2ram`` of 32 B size for placing S2RAM cpu context RAM.
-* a ``zephyr,memory-region`` compatible node with nodelabel ``mcuboot_s2ram`` of 4 B size for placing MCUboot's S2RAM magic variable.
+* A ``zephyr,memory-region`` compatible node labeled ``pm_s2ram``, with a size of 32 bytes.
+  This region is used to store the S2RAM CPU context.
+* A ``zephyr,memory-region`` compatible node labeled ``pm_s2ram_stack``, with a size of 32 bytes.
+  This region is used as the program stack during S2RAM resume.
+* A ``zephyr,memory-region`` compatible node labeled ``mcuboot_s2ram``, with a size of 4 bytes.
+  This region is used to store the MCUboot S2RAM magic variable.
 
 Example DTS snippet:
 
 .. code-block:: dts
 
-   / {
+  / {
       soc {
-         /* run-time common mcuboot S2RAM support section */
-         mcuboot_s2ram: cpuapp_s2ram@22007fdc  {
-            compatible = "zephyr,memory-region", "mmio-sram";
-            reg = <0x22007fdc 4>;
-            zephyr,memory-region = "mcuboot_s2ram_context";
-         };
+        /* run-time common mcuboot S2RAM support section */
+        mcuboot_s2ram: cpuapp_s2ram@22007fdc {
+           compatible = "zephyr,memory-region", "mmio-sram";
+           reg = <0x22007fdc 4>;
+           zephyr,memory-region = "mcuboot_s2ram_context";
+        };
 
-         /* S2RAM cpu context RAM allocation */
-         pm_s2ram: cpuapp_s2ram@22007fe0  {
-            compatible = "zephyr,memory-region", "mmio-sram";
-            reg = <0x22007fe0 32>;
-            zephyr,memory-region = "pm_s2ram_context";
-         };
+        /* temporary stack for S2RAM resume logic */
+        pm_s2ram_stack: cpuapp_s2ram_stack@22007fd0 {
+           compatible = "zephyr,memory-region", "mmio-sram";
+           reg = <0x22007fd0 16>;
+           zephyr,memory-region = "pm_s2ram_stack";
+        };
+
+        /* S2RAM cpu context RAM allocation */
+        pm_s2ram: cpuapp_s2ram@22007fe0 {
+           compatible = "zephyr,memory-region", "mmio-sram";
+           reg = <0x22007fe0 32>;
+           zephyr,memory-region = "pm_s2ram_context";
+        };
       };
-   };
+  };
 
 Memory and cache optimization recommendations
 =============================================
