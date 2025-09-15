@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "nrf54h20dk_nrf54h20_cpurad.overlay"
+
+/ {
+	chosen {
+		ncs,dtm-uart = &cdc_acm_uart0;
+	};
+};
+
+&uart135 {
+	status = "disabled";
+};
+
+&uart136 {
+	status = "disabled";
+};
+
+&zephyr_udc0 {
+	status = "okay";
+
+	cdc_acm_uart0: cdc_acm_uart0 {
+		status = "okay";
+		compatible = "zephyr,cdc-acm-uart";
+		current-speed = <19200>;
+	};
+};

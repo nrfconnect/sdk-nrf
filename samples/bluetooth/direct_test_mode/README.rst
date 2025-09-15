@@ -401,19 +401,26 @@ On the |nRF5340DKnoref|, you can build the sample with HCI interface with the ``
 USB CDC ACM transport variant
 =============================
 
-On the nRF5340 development kit, you can build this sample configured to use the USB interface as a communication interface with the tester.
-Use the following command:
+On the nRF5340 and nRF54H20 development kits, you can build this sample configured to use the USB interface as a communication interface with the tester.
+
+Use the following command for nRF54H20:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DFILE_SUFFIX=usb
+   west build samples/bluetooth/direct_test_mode -b nrf54h20dk/nrf54h20/cpurad -- -DFILE_SUFFIX=usb_54h20
+
+Use the following command for nRF5340:
+
+.. code-block:: console
+
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DFILE_SUFFIX=usb_5340
 
 You can also build this sample with support for the front-end module.
 Use the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb_5340
 
 .. _dtm_testing:
 
