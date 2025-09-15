@@ -84,7 +84,13 @@ Libraries
 
 This section describes the changes related to libraries.
 
-|no_changes_yet_note|
+.. toggle::
+
+   * :ref:`lte_lc_readme` library:
+
+      * Changed the order of the :c:enumerator:`LTE_LC_MODEM_EVT_SEARCH_DONE` modem event, and registration and cell related events.
+        When modem has completed the network selection, the registration and cell related events (:c:enumerator:`LTE_LC_EVT_NW_REG_STATUS`, :c:enumerator:`LTE_LC_EVT_CELL_UPDATE`, :c:enumerator:`LTE_LC_EVT_LTE_MODE_UPDATE` and :c:enumerator:`LTE_LC_EVT_PSM_UPDATE`) are sent first, followed by the :c:enumerator:`LTE_LC_MODEM_EVT_SEARCH_DONE` modem event.
+        If the application depends on the order of the events, it may need to be updated.
 
 Trusted Firmware-M
 ==================
