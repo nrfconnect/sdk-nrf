@@ -616,7 +616,7 @@ void test_lte_lc_connect_success(void)
 	/* AT commands triggered by lte_lc_offline() */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=4", 0);
 
-	lte_lc_callback_count_expected = 7;
+	lte_lc_callback_count_expected = 8;
 
 	/* LTE-M registration */
 	test_event_data[0].type = LTE_LC_EVT_NW_REG_STATUS;
@@ -643,6 +643,10 @@ void test_lte_lc_connect_success(void)
 
 	test_event_data[6].type = LTE_LC_EVT_LTE_MODE_UPDATE;
 	test_event_data[6].lte_mode = LTE_LC_LTE_MODE_NONE;
+
+	test_event_data[7].type = LTE_LC_EVT_PSM_UPDATE;
+	test_event_data[7].psm_cfg.tau = -1;
+	test_event_data[7].psm_cfg.active_time = -1;
 
 	/* Schedule another lte_lc_connect which will cause -EINPOGRESS */
 	k_work_schedule(&lte_lc_connect_inprogress_work, K_MSEC(1));
@@ -911,6 +915,94 @@ void test_lte_lc_power_off_fail(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=0", -NRF_ENOMEM);
 	ret = lte_lc_power_off();
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
+}
+
+void test_lte_lc_rx_only(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=2", 0);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", 0);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", 0);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=4", 0);
+
+	lte_lc_callback_count_expected = 9;
+
+	/* Events caused by PLMN search in RX only mode, registration status is not sent
+	 * because it has not changed.
+	 */
+
+	test_event_data[0].type = LTE_LC_EVT_CELL_UPDATE;
+	test_event_data[0].cell.id = 0x001b8b1e;
+	test_event_data[0].cell.tac = 0x0138;
+
+	test_event_data[1].type = LTE_LC_EVT_LTE_MODE_UPDATE;
+	test_event_data[1].lte_mode = LTE_LC_LTE_MODE_LTEM;
+
+	test_event_data[2].type = LTE_LC_EVT_MODEM_EVENT;
+	test_event_data[2].modem_evt.type = LTE_LC_MODEM_EVT_SEARCH_DONE;
+
+	/* Events caused by normal mode */
+
+	test_event_data[3].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[3].nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
+
+	test_event_data[4].type = LTE_LC_EVT_PSM_UPDATE;
+	test_event_data[4].psm_cfg.tau = 11400;
+	test_event_data[4].psm_cfg.active_time = -1;
+
+	/* Events caused by offline mode */
+
+	test_event_data[5].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[5].nw_reg_status = LTE_LC_NW_REG_NOT_REGISTERED;
+
+	test_event_data[6].type = LTE_LC_EVT_CELL_UPDATE;
+	test_event_data[6].cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	test_event_data[6].cell.tac = LTE_LC_CELL_TAC_INVALID;
+
+	test_event_data[7].type = LTE_LC_EVT_LTE_MODE_UPDATE;
+	test_event_data[7].lte_mode = LTE_LC_LTE_MODE_NONE;
+
+	test_event_data[8].type = LTE_LC_EVT_PSM_UPDATE;
+	test_event_data[8].psm_cfg.tau = -1;
+	test_event_data[8].psm_cfg.active_time = -1;
+
+	/* RX only mode with PLMN search */
+
+	ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_RX_ONLY);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	strcpy(at_notif, "%MDMEV: SEARCH STATUS 2\r\n");
+	at_monitor_dispatch(at_notif);
+
+	strcpy(at_notif, "+CEREG: 0,\"0138\",\"001B8B1E\",7\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* Sleep until delayed LTE_LC_MODEM_EVT_SEARCH_DONE is dispatched */
+	k_sleep(K_MSEC(150));
+
+	/* Normal mode */
+
+	ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	strcpy(at_notif, "+CEREG: 1,\"0138\",\"001B8B1E\",7,,,\"11100000\",\"00010011\"\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* Offline mode*/
+
+	ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	strcpy(at_notif, "+CEREG: 0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	k_sleep(K_MSEC(1));
 }
 
 void test_lte_lc_psm_param_set_good_weather(void)
