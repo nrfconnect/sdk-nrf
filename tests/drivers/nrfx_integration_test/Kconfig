@@ -142,9 +142,5 @@ config NRFX_ALL_DRIVERS
 	select NRFX_WDT31	if HAS_HW_NRF_WDT31
 	select NRFX_WDT130	if HAS_HW_NRF_WDT130
 	select NRFX_PRS_BOX_0
-	select NRFX_PRS_BOX_1
-	select NRFX_PRS_BOX_2
-	select NRFX_PRS_BOX_3
-	select NRFX_PRS_BOX_4
 
 source "Kconfig.zephyr"
