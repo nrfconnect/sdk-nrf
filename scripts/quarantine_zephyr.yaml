@@ -524,3 +524,11 @@
 - scenarios:
     - buildsystem.sbom.spdx
   comment: "Missing toolchain python package. https://nordicsemi.atlassian.net/browse/NCSDK-35387"
+
+- scenarios:
+    - arch.arm.interrupt.no_optimizations
+    - arch.arm.swap.common.fpu_sharing.no_optimizations
+    - arch.arm.swap.common.no_optimizations
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35435"
