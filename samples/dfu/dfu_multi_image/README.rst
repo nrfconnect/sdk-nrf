@@ -13,7 +13,7 @@ Currently, it only supports DFU targets for MCUboot as its backend.
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -80,6 +80,8 @@ Testing
    +===================+==================+
    | nRF5340 DK        | ``0xb8000``      |
    +-------------------+------------------+
+   | nRF54H20 DK       | ``0xe134000``    |
+   +-------------------+------------------+
 
 #. Upload the second version of the images to the device using ``nrfutil device``:
 
@@ -137,6 +139,10 @@ Testing
       Network core build time: <BUILD_TIME>
 
    The build time should reflect the new version in both cases.
+
+#. (Optional, not applicable to nRF5340) To make the update permanent, use the ``dfu_multi_image mcuboot_confirm <image_number>`` command.
+   ``<image_number>`` is ``0`` for the application core and ``1`` for the network core.
+   Without this step, an image which wasn't confirmed will revert to the previous image on the next reboot.
 
 Dependencies
 ************
