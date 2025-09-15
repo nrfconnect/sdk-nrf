@@ -19,9 +19,6 @@
 #define CHMAP_DEFAULT_MIN_ACTIVE_CHANNELS     5
 #define FILTER_EVALUATION_SAMPLE_COUNT	      2000
 #define FILTER_EVALUATIONS_BEFORE_RESET_COUNT 3
-#define FILTER_MAX_RATING_HISTORY	      10
-
-static uint8_t evaluations_since_last_evaluation = 0;
 
 // Algorithm weight parameters
 struct chmap_filter_params {
@@ -64,9 +61,9 @@ static void reset_sample_counters(struct chmap_instance *chmap_instance);
 static void set_default_parameters(struct chmap_filter_params *params);
 static void decrement_cooldown_time_and_update_state(struct chmap_instance *chmap_instance);
 static void add_random_channel_to_channel_map(struct chmap_instance *chmap_instance);
-// void channel_map_filter_set_preferences(struct chmap_instance *chmap_instance,
-// 					const uint8_t desired_active_channels,
-// 					const uint8_t min_active_channels);
+void channel_map_filter_set_preferences(struct chmap_instance *chmap_instance,
+					const uint8_t desired_active_channels,
+					const uint8_t min_active_channels);
 
 LOG_MODULE_REGISTER(algo, LOG_LEVEL_INF);
 
@@ -161,8 +158,8 @@ int channel_map_filter_algo_evaluate(struct chmap_instance *chmap_instance)
 		reset_sample_counters(chmap_instance);
 	}
 
-	printk("Channel map evaluation completed successfully.");
-	printk("Active channels: %d\n", chmap_instance->active_channel_count);
+	printk("Channel map evaluation completed successfully");
+	printk("\nActive channels: %d\n", chmap_instance->active_channel_count);
 
 	chmap_instance->evaluations_since_last_evaluation++;
 	return 1; // Evaluation performed

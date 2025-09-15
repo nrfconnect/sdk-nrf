@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+// TODO: Try to make the central send update to peripheral rather than running algo on both
+// centra and peripheral device.
+
 #include <zephyr/console/console.h>
 #include <string.h>
 #include <stdlib.h>
@@ -83,7 +86,7 @@ void algorithm_evaluation_and_update(void)
 			channel_map_filter_algo_get_channel_map(&filter_chmap_instance);
 
 		if (new_channel_map) { /* Apply new map */
-			LOG_INF("Applying new channel map\n");
+			LOG_INF("Applying new channel map");
 
 			int err = bt_le_set_chan_map(new_channel_map);
 			if (err) {
@@ -231,8 +234,10 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	/* make sure we're not scanning or advertising */
 	if (conn_info.role == BT_CONN_ROLE_CENTRAL) {
 		bt_scan_stop();
+
 	} else {
 		bt_le_adv_stop();
+
 #if defined(CONFIG_BT_SMP)
 		err = bt_conn_set_security(conn, BT_SECURITY_L2);
 		if (err) {
@@ -240,9 +245,6 @@ static void connected(struct bt_conn *conn, uint8_t err)
 		}
 #endif /* CONFIG_BT_SMP */
 	}
-
-	// TODO: Try to make the central send update to peripheral rather than running algo on both
-	// centra and peripheral device.
 
 	printk("Connected as %s\n",
 	       conn_info.role == BT_CONN_ROLE_CENTRAL ? "central" : "peripheral");
@@ -270,7 +272,9 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 static bool on_vs_evt(struct net_buf_simple *buf)
 {
-	if (conn_info.role != BT_CONN_ROLE_CENTRAL) {
+
+	if (conn_info.role !=
+	    BT_CONN_ROLE_CENTRAL) { /* if peripheral gets inside callback, simply leave*/
 		return true;
 	}
 
@@ -433,12 +437,6 @@ int main(void)
 		return 0;
 	}
 
-	// Enable QoS reporting to catch all packets
-	if (enable_qos_conn_evt_report()) {
-		printk("Enable QoS reports failed.\n");
-		return 0;
-	}
-
 	while (true) {
 		LOG_INF("Choose device role - type c (central) or p (peripheral): ");
 
@@ -450,6 +448,12 @@ int main(void)
 			LOG_INF("Central. Starting scanning\n");
 			scan_init();
 			scan_start();
+
+			if (enable_qos_conn_evt_report()) { /* Enable QoS only central */
+				printk("Enable QoS reports failed.\n");
+				return 0;
+			}
+
 			break;
 		} else if (input_char == 'p') {
 			LOG_INF("Peripheral. Starting advertising\n");
