@@ -23,7 +23,9 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/hci.h>
+#include <zephyr/bluetooth/buf.h>
 #include <zephyr/bluetooth/uuid.h>
+#include <zephyr/sys/byteorder.h>
 #include <bluetooth/services/latency.h>
 #include <bluetooth/services/latency_client.h>
 #include <bluetooth/scan.h>
@@ -65,6 +67,42 @@ static uint32_t packets_since_last_evaluation = 0;
 
 LOG_MODULE_REGISTER(paramtest, LOG_LEVEL_INF);
 
+static int read_conn_channel_map(struct bt_conn *conn, uint8_t out_map[5])
+{
+	if (!conn || !out_map) {
+		return -EINVAL;
+	}
+
+	uint16_t handle;
+	int err = bt_hci_get_conn_handle(conn, &handle);
+	if (err) {
+		return err;
+	}
+
+	struct net_buf *buf = bt_hci_cmd_create(BT_HCI_OP_LE_READ_CHAN_MAP,
+						sizeof(struct bt_hci_cp_le_read_chan_map));
+	if (!buf) {
+		return -ENOBUFS;
+	}
+
+	struct bt_hci_cp_le_read_chan_map *cp = net_buf_add(buf, sizeof(*cp));
+	cp->handle = sys_cpu_to_le16(handle);
+
+	struct net_buf *rsp = NULL;
+	err = bt_hci_cmd_send_sync(BT_HCI_OP_LE_READ_CHAN_MAP, buf, &rsp);
+	if (err) {
+		if (rsp) {
+			net_buf_unref(rsp);
+		}
+		return err;
+	}
+
+	const struct bt_hci_rp_le_read_chan_map *rp = (void *)rsp->data;
+	memcpy(out_map, rp->ch_map, sizeof(rp->ch_map));
+	net_buf_unref(rsp);
+	return 0;
+}
+
 static void init_channel_map(void)
 {
 	memset(&filter_chmap_instance, 0, sizeof(filter_chmap_instance));
@@ -74,6 +112,7 @@ static void init_channel_map(void)
 	packets_since_last_evaluation = 0;
 
 	LOG_INF("Channel map and algorithm initialized\n");
+	printk("Algorithm will evaluate every %d packets\n", FILTER_EVALUATION_INTERVAL);
 }
 
 void algorithm_evaluation_and_update(void)
@@ -351,8 +390,8 @@ static void test_run(void)
 	}
 
 	test_ready = false;
-
-	printk("Algorithm will evaluate every %d packets\n", FILTER_EVALUATION_INTERVAL);
+	uint8_t previous_active_map[CHMAP_BLE_BITMASK_SIZE] = {0};
+	uint8_t active_map[CHMAP_BLE_BITMASK_SIZE] = {0};
 
 	/* Start sending data to trigger packet events */
 	while (default_conn) {
@@ -363,6 +402,22 @@ static void test_run(void)
 			printk("Latency request failed (err %d)\n", err);
 		}
 
+		if (conn_info.role == BT_CONN_ROLE_PERIPHERAL) {
+			/* Read back controller's active channel map for verification */
+			err = read_conn_channel_map(default_conn, active_map);
+			if (!err) {
+				if (memcmp(active_map, previous_active_map,
+					   CHMAP_BLE_BITMASK_SIZE) != 0) {
+					printk("LL channel map: %02x %02x %02x %02x %02x\n",
+					       active_map[4], active_map[3], active_map[2],
+					       active_map[1], active_map[0]);
+					memcpy(previous_active_map, active_map,
+					       CHMAP_BLE_BITMASK_SIZE);
+				}
+			} else {
+				printk("Reading LL channel map failed (err %d)\n", err);
+			}
+		}
 		k_sleep(K_MSEC(1)); /* wait between requests */
 	}
 }
@@ -423,8 +478,6 @@ int main(void)
 
 	LOG_INF("Bluetooth initialized\n");
 
-	init_channel_map();
-
 	err = bt_latency_init(&latency, NULL);
 	if (err) {
 		printk("Latency service initialization failed (err %d)\n", err);
@@ -446,6 +499,7 @@ int main(void)
 
 		if (input_char == 'c') {
 			LOG_INF("Central. Starting scanning\n");
+			init_channel_map();
 			scan_init();
 			scan_start();
 
