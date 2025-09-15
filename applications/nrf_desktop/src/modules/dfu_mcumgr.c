@@ -1,18 +1,13 @@
 /*
- * Copyright (c) 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2023-2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <zephyr/kernel.h>
 
-#if defined CONFIG_DESKTOP_DFU_BACKEND_MCUBOOT
 #include <zephyr/dfu/mcuboot.h>
 #include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt.h>
-#elif defined CONFIG_DESKTOP_DFU_BACKEND_SUIT
-#include <sdfw/sdfw_services/suit_service.h>
-#include <dfu/suit_dfu.h>
-#endif
 
 #include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
 #include <zephyr/mgmt/mcumgr/mgmt/callbacks.h>
@@ -45,16 +40,7 @@ static void dfu_lock_owner_changed(const struct dfu_lock_owner *new_owner)
 	/* The function declaration is not included in MCUmgr's header file if the mutex locking
 	 * of the image management state object is disabled.
 	 */
-#if defined CONFIG_DESKTOP_DFU_BACKEND_MCUBOOT
 	img_mgmt_reset_upload();
-#elif defined CONFIG_DESKTOP_DFU_BACKEND_SUIT
-	int err = suit_dfu_cleanup();
-
-	if (err) {
-		module_set_state(MODULE_STATE_ERROR);
-		LOG_ERR("Failed to cleanup SUIT DFU: %d", err);
-	}
-#endif
 #endif /* CONFIG_DESKTOP_DFU_LOCK */
 }
 
@@ -75,19 +61,6 @@ static void dfu_timeout_handler(struct k_work *work)
 	}
 }
 
-static bool smp_cmd_is_suit_dfu_cmd(const struct mgmt_evt_op_cmd_arg *cmd,
-				    const char **smp_cmd_name)
-{
-#if CONFIG_MGMT_SUITFU_GRP_SUIT
-	if (cmd->group == CONFIG_MGMT_GROUP_ID_SUIT) {
-		*smp_cmd_name = "SUIT Management";
-		return true;
-	}
-#endif /* CONFIG_MGMT_SUITFU_GRP_SUIT */
-
-	return false;
-}
-
 static bool smp_cmd_is_dfu_cmd(const struct mgmt_evt_op_cmd_arg *cmd)
 {
 	const char *smp_cmd_name = "Unknown";
@@ -99,10 +72,6 @@ static bool smp_cmd_is_dfu_cmd(const struct mgmt_evt_op_cmd_arg *cmd)
 		smp_cmd_name = "OS Management Reset";
 	} else {
 		dfu_transfer_cmd = false;
-	}
-
-	if (IS_ENABLED(CONFIG_DESKTOP_DFU_BACKEND_SUIT) && !dfu_transfer_cmd) {
-		dfu_transfer_cmd = smp_cmd_is_suit_dfu_cmd(cmd, &smp_cmd_name);
 	}
 
 	if (dfu_transfer_cmd && smp_cmd_name) {
@@ -161,7 +130,6 @@ static struct mgmt_callback cmd_recv_cb = {
 	.event_id = MGMT_EVT_OP_CMD_RECV,
 };
 
-#if CONFIG_DESKTOP_DFU_BACKEND_MCUBOOT
 static void dfu_backend_init(void)
 {
 	if (!IS_ENABLED(CONFIG_DESKTOP_DFU_MCUMGR_MCUBOOT_DIRECT_XIP)) {
@@ -172,76 +140,12 @@ static void dfu_backend_init(void)
 		}
 	}
 
+	k_work_init_delayable(&dfu_timeout, dfu_timeout_handler);
+
+	mgmt_callback_register(&cmd_recv_cb);
+
 	LOG_INF("MCUboot image version: %s", CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION);
 }
-#elif CONFIG_DESKTOP_DFU_BACKEND_SUIT
-static const char *suit_release_type_str_get(suit_version_release_type_t type)
-{
-	switch (type) {
-	case SUIT_VERSION_RELEASE_NORMAL:
-		return NULL;
-	case SUIT_VERSION_RELEASE_RC:
-		return "rc";
-	case SUIT_VERSION_RELEASE_BETA:
-		return "beta";
-	case SUIT_VERSION_RELEASE_ALPHA:
-		return "alpha";
-	default:
-		__ASSERT(0, "Unknown release type");
-		return NULL;
-	}
-};
-
-static void dfu_backend_init(void)
-{
-	int err;
-	bool is_semver_supported;
-	unsigned int seq_num = 0;
-	suit_ssf_manifest_class_info_t class_info;
-	suit_semver_raw_t version_raw;
-	suit_version_t version;
-
-	err = suit_get_supported_manifest_info(SUIT_MANIFEST_APP_ROOT, &class_info);
-	if (!err) {
-		err = suit_get_installed_manifest_info(&(class_info.class_id),
-				&seq_num, &version_raw, NULL, NULL, NULL);
-	}
-	if (!err) {
-		/* Semantic versioning support has been added to the SDFW in the v0.6.2
-		 * public release. Older SDFW versions return empty array in the version
-		 * variable.
-		 */
-		is_semver_supported = (version_raw.len != 0);
-		if (is_semver_supported) {
-			err = suit_metadata_version_from_array(&version,
-							       version_raw.raw,
-							       version_raw.len);
-		}
-	}
-
-	if (!err) {
-		if (is_semver_supported) {
-			const char *release_type;
-
-			release_type = suit_release_type_str_get(version.type);
-			if (release_type) {
-				LOG_INF("SUIT manifest version: %d.%d.%d-%s%d",
-					version.major, version.minor, version.patch,
-					release_type, version.pre_release_number);
-			} else {
-				LOG_INF("SUIT manifest version: %d.%d.%d",
-					version.major, version.minor, version.patch);
-			}
-		}
-
-		LOG_INF("SUIT manifest sequence number: %d", seq_num);
-	} else {
-		LOG_ERR("SUIT manifest info retrieval failed (err: %d)", err);
-	}
-}
-#else
-#error "The DFU backend choice is not supported"
-#endif /* CONFIG_DESKTOP_DFU_BACKEND_MCUBOOT */
 
 static bool app_event_handler(const struct app_event_header *aeh)
 {
@@ -261,11 +165,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			dfu_backend_init();
-
-			k_work_init_delayable(&dfu_timeout, dfu_timeout_handler);
-
-			mgmt_callback_register(&cmd_recv_cb);
 		}
+
 		return false;
 	}
 
