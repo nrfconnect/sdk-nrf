@@ -541,9 +541,10 @@ static int dl_coap_download(struct downloader *dl)
 	len = dl_socket_recv(coap->sock.fd, dl->cfg.buf + dl->buf_offset,
 			     dl->cfg.buf_size - dl->buf_offset);
 	if (len < 0) {
-		if ((len == ETIMEDOUT) || (len == EWOULDBLOCK) || (len == EAGAIN)) {
+		if ((len == -ETIMEDOUT) || (len == -EWOULDBLOCK) || (len == -EAGAIN)) {
 			/* Request data again */
 			coap->retransmission_req = true;
+			LOG_DBG("CoAP recv failed with error: %d, retransmission requested", len);
 			return 0;
 		}
 
