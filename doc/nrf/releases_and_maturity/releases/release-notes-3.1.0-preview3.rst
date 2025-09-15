@@ -107,7 +107,6 @@ Developing with Front-End Modules
 
 * Added:
 
-  * The temperature compensation feature for the nRF2220 Front-End Module.
   * Support for the nRF21540 Front-End Module in GPIO/SPI mode for nRF54L Series devices.
 
 Developing with custom boards

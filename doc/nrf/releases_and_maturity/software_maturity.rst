@@ -3033,10 +3033,6 @@ The following table indicates the software maturity levels of the support for Fr
             - Implementation
             - nRF52833
             - nRF52840
-          * - nRF2220
-            - nRF2220
-            - Supported
-            - Supported
           * - nRF21540
             - nRF21540 GPIO
             - Supported
@@ -3059,9 +3055,6 @@ The following table indicates the software maturity levels of the support for Fr
           * - FEM device
             - Implementation
             - nRF5340
-          * - nRF2220
-            - nRF2220
-            - Supported
           * - nRF21540
             - nRF21540 GPIO
             - Supported
@@ -3083,11 +3076,6 @@ The following table indicates the software maturity levels of the support for Fr
             - nRF54L10
             - nRF54L15
             - nRF54LM20
-          * - nRF2220
-            - nRF2220
-            - Supported
-            - Supported
-            - Supported
           * - nRF21540
             - nRF21540 GPIO
             - Supported

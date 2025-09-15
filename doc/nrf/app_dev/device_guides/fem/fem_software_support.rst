@@ -13,10 +13,6 @@ The following :term:`Front-End Module (FEM)` implementations are available in th
      - Interface
      - Compatible hardware
      - Documentation for hardware implementation
-   * - nRF2220
-     - 2-pin + I2C
-     - nRF2220
-     - :ref:`ug_radio_fem_nrf2220`
    * - nRF21540 GPIO+SPI
      - 3-pin + SPI
      - nRF21540
@@ -68,7 +64,6 @@ To use any of these implementations with your application, first complete the fo
    Refer to the chosen :ref:`documentation for hardware implementation <ug_radio_fem_hw_desc>` for details.
 #. Select the FEM driver implementation by setting one of the following Kconfig options to ``y`` for the chosen FEM support configuration:
 
-   * :ref:`nRF2220 <ug_radio_fem_nrf2220>`: :kconfig:option:`CONFIG_MPSL_FEM_NRF2220` Kconfig option.
    * :ref:`nRF21540 GPIO <ug_radio_fem_nrf21540_gpio>`: :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO` Kconfig option.
      This Kconfig option is enabled by default if the `nRF21540`_ node is provided in devicetree.
    * :ref:`nRF21540 GPIO+SPI <ug_radio_fem_nrf21540_spi_gpio>`: :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO_SPI` Kconfig option.
@@ -84,7 +79,6 @@ If you are working with the nRF21540 EK, see also :ref:`ug_radio_fem_nrf21540ek`
    :caption: Subpages:
 
    fem_mpsl_fem_only
-   fem_nrf2220
    fem_nrf21540_gpio
    fem_nrf21540_gpio_spi
    fem_nRF21540_optional_properties
