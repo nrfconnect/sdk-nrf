@@ -26,5 +26,3 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-    extra_args:
-      - platform:nrf54l15dk/nrf54l15/cpuapp:mcuboot_CONFIG_FPROTECT=n
