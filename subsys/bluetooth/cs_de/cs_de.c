@@ -26,7 +26,7 @@ LOG_MODULE_REGISTER(cs_de, CONFIG_BT_CS_DE_LOG_LEVEL);
 #define CHANNEL_INDEX_OFFSET (2)
 #define NUM_CHANNELS	     (75)
 
-#define TONE_QI_BAD_TONE_COUNT_THRESHOLD (4)
+#define TONE_QI_OK_TONE_COUNT_THRESHOLD (15)
 
 #define PHASE_INVALID (2 * PI)
 
@@ -250,16 +250,16 @@ static void calculate_dist_rtt(cs_de_report_t *p_report)
 	}
 }
 
-static bool m_is_tone_quality_bad(cs_de_tone_quality_t *p_tone_qi, uint8_t channel_map[10])
+static bool m_is_tone_quality_ok(cs_de_tone_quality_t *p_tone_qi, uint8_t channel_map[10])
 {
-	uint8_t bad_tones_count = 0;
+	uint8_t ok_tones_count = 0;
 	for (uint8_t i = 0; i < NUM_CHANNELS; ++i) {
 		if (BT_LE_CS_CHANNEL_BIT_GET(channel_map, i + CHANNEL_INDEX_OFFSET) &&
-		    p_tone_qi[i] == CS_DE_TONE_QUALITY_BAD) {
-			bad_tones_count += 1;
+		    p_tone_qi[i] == CS_DE_TONE_QUALITY_OK) {
+			ok_tones_count += 1;
 		}
 	}
-	return (bad_tones_count > TONE_QI_BAD_TONE_COUNT_THRESHOLD);
+	return (ok_tones_count >= TONE_QI_OK_TONE_COUNT_THRESHOLD);
 }
 
 static void cumulate_mean(float *avg, float new_value, uint16_t *N)
@@ -412,10 +412,10 @@ void cs_de_populate_report(struct net_buf_simple *local_steps, struct net_buf_si
 		p_report->distance_estimates[ap].rtt = NAN;
 		p_report->distance_estimates[ap].best = NAN;
 
-		if (m_is_tone_quality_bad(&m_tone_quality_indicators[ap][0], config->channel_map)) {
-			p_report->tone_quality[ap] = CS_DE_TONE_QUALITY_BAD;
-		} else {
+		if (m_is_tone_quality_ok(&m_tone_quality_indicators[ap][0], config->channel_map)) {
 			p_report->tone_quality[ap] = CS_DE_TONE_QUALITY_OK;
+		} else {
+			p_report->tone_quality[ap] = CS_DE_TONE_QUALITY_BAD;
 		}
 	}
 }
