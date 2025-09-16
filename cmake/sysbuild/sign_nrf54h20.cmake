@@ -127,15 +127,25 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
   # Fetch VID and CID values from the main image Kconfig.
   set(CONFIG_MCUBOOT_IMGTOOL_UUID_VID)
   set(CONFIG_MCUBOOT_IMGTOOL_UUID_CID)
-  sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_UUID_VID IMAGE ${main_image} VAR CONFIG_MCUBOOT_IMGTOOL_UUID_VID KCONFIG)
-  sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_UUID_CID IMAGE ${main_image} VAR CONFIG_MCUBOOT_IMGTOOL_UUID_CID KCONFIG)
+  set(CONFIG_MCUBOOT_IMGTOOL_UUID_VID_NAME)
+  set(CONFIG_MCUBOOT_IMGTOOL_UUID_CID_NAME)
+  sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_UUID_VID IMAGE ${main_image} VAR
+    CONFIG_MCUBOOT_IMGTOOL_UUID_VID KCONFIG)
+  sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_UUID_CID IMAGE ${main_image} VAR
+    CONFIG_MCUBOOT_IMGTOOL_UUID_CID KCONFIG)
+  sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_UUID_VID_NAME IMAGE ${main_image} VAR
+    CONFIG_MCUBOOT_IMGTOOL_UUID_VID_NAME KCONFIG)
+  sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_UUID_CID_NAME IMAGE ${main_image} VAR
+    CONFIG_MCUBOOT_IMGTOOL_UUID_CID_NAME KCONFIG)
 
   if(CONFIG_MCUBOOT_IMGTOOL_UUID_VID)
-    set(imgtool_extra ${imgtool_extra} --vid "${CONFIG_MCUBOOT_IMGTOOL_UUID_VID_NAME}")
+    set(imgtool_args ${imgtool_args} --vid
+      "${CONFIG_MCUBOOT_IMGTOOL_UUID_VID_NAME}")
   endif()
 
   if(CONFIG_MCUBOOT_IMGTOOL_UUID_CID)
-    set(imgtool_extra ${imgtool_extra} --cid "${CONFIG_MCUBOOT_IMGTOOL_UUID_CID_NAME}")
+    set(imgtool_args ${imgtool_args} --cid
+      "${CONFIG_MCUBOOT_IMGTOOL_UUID_CID_NAME}")
   endif()
 
   # Fetch version and flags from the main image Kconfig.
