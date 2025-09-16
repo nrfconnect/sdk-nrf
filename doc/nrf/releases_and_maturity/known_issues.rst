@@ -6138,6 +6138,17 @@ Zephyr
 
 The issues in this section are related to the Zephyr downstream in the |NCS|.
 
+.. rst-class:: v3-1-1
+
+NRFX-8345: Idle current consumption might be increased by 8 uA in some scenarios.
+
+  **Affected platforms:** nRF54H20
+
+  **Workaround:** Under investigation. Possible workaround con be to add in device tree zephyr,pm-device-runtime-auto; to gpio nodes if your application uses power management: 
+  &gpio0 {
+	  zephyr,pm-device-runtime-auto;
+  };
+
 .. rst-class:: v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0
 
 NCSDK-20104: MCUboot configuration can prevent application from being able to run
