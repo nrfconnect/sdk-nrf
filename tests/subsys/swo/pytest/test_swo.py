@@ -15,6 +15,7 @@ from twister_harness import DeviceAdapter
 
 logger = logging.getLogger(__name__)
 
+
 # Kill parent process and all child processes (if started)
 def _kill(proc):
     try:
@@ -22,7 +23,7 @@ def _kill(proc):
             child.kill()
         proc.kill()
     except Exception as e:
-        logger.exception(f'Could not kill JLinkSWOViewerCLExe - {e}')
+        logger.exception(f"Could not kill JLinkSWOViewerCLExe - {e}")
 
 
 def test_swo_logging(dut: DeviceAdapter):
@@ -37,53 +38,64 @@ def test_swo_logging(dut: DeviceAdapter):
     COLLECT_TIMEOUT = 10.0
     EXPECTED = rf"log_swo: \d+: Hello from {PLATFORM}"
 
+    NRF54L_JLINK_SCRIPT = Path(__file__).parent.resolve() / "nrf54l_swo.script"
+
     logger.debug(f"{dut.device_config=}")
 
     SWO_CONFIG = {
-        'nrf52dk/nrf52832': {
-            'device': 'nRF52832_xxAA',
-            'cpufreq': 64000000,
-            'swofreq': 1000000,
+        "nrf52dk/nrf52832": {
+            "device": "nRF52832_xxAA",
+            "cpufreq": 64000000,
+            "swofreq": 1000000,
+            "args": "",
         },
-        'nrf52840dk/nrf52840': {
-            'device': 'nRF52840_xxAA',
-            'cpufreq': 64000000,
-            'swofreq': 1000000,
+        "nrf52840dk/nrf52840": {
+            "device": "nRF52840_xxAA",
+            "cpufreq": 64000000,
+            "swofreq": 1000000,
+            "args": "",
         },
-        'nrf5340dk/nrf5340/cpuapp': {
-            'device': 'nRF5340_xxAA_APP',
-            'cpufreq': 64000000,
-            'swofreq': 1000000,
+        "nrf5340dk/nrf5340/cpuapp": {
+            "device": "nRF5340_xxAA_APP",
+            "cpufreq": 64000000,
+            "swofreq": 1000000,
+            "args": "",
         },
-        'nrf54l15dk/nrf54l05/cpuapp': {
-            'device': 'nRF54L05_M33',
-            'cpufreq': 128000000,
-            'swofreq': 1000000,
+        "nrf54l15dk/nrf54l05/cpuapp": {
+            "device": "nRF54L05_M33",
+            "cpufreq": 128000000,
+            "swofreq": 1000000,
+            "args": f"-jlinkscriptfile {NRF54L_JLINK_SCRIPT}",
         },
-        'nrf54l15dk/nrf54l10/cpuapp': {
-            'device': 'nRF54L10_M33',
-            'cpufreq': 128000000,
-            'swofreq': 1000000,
+        "nrf54l15dk/nrf54l10/cpuapp": {
+            "device": "nRF54L10_M33",
+            "cpufreq": 128000000,
+            "swofreq": 1000000,
+            "args": f"-jlinkscriptfile {NRF54L_JLINK_SCRIPT}",
         },
-        'nrf54l15dk/nrf54l15/cpuapp': {
-            'device': 'nRF54L15_M33',
-            'cpufreq': 128000000,
-            'swofreq': 1000000,
+        "nrf54l15dk/nrf54l15/cpuapp": {
+            "device": "nRF54L15_M33",
+            "cpufreq": 128000000,
+            "swofreq": 1000000,
+            "args": f"-jlinkscriptfile {NRF54L_JLINK_SCRIPT}",
         },
-        'nrf54lm20dk/nrf54lm20a/cpuapp': {
-            'device': 'NRF54LM20A_M33',
-            'cpufreq': 128000000,
-            'swofreq': 1000000,
+        "nrf54lm20dk/nrf54lm20a/cpuapp": {
+            "device": "NRF54LM20A_M33",
+            "cpufreq": 128000000,
+            "swofreq": 1000000,
+            "args": f"-jlinkscriptfile {NRF54L_JLINK_SCRIPT}",
         },
-        'nrf54lv10dk/nrf54lv10a/cpuapp': {
-            'device': 'NRF54LV10A_M33',
-            'cpufreq': 128000000,
-            'swofreq': 1000000,
+        "nrf54lv10dk/nrf54lv10a/cpuapp": {
+            "device": "NRF54LV10A_M33",
+            "cpufreq": 128000000,
+            "swofreq": 1000000,
+            "args": f"-jlinkscriptfile {NRF54L_JLINK_SCRIPT}",
         },
-        'nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp': {
-            'device': 'NRF54LV10A_M33',
-            'cpufreq': 128000000,
-            'swofreq': 1000000,
+        "nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp": {
+            "device": "NRF54LV10A_M33",
+            "cpufreq": 128000000,
+            "swofreq": 1000000,
+            "args": f"-jlinkscriptfile {NRF54L_JLINK_SCRIPT}",
         },
     }
 
@@ -103,13 +115,14 @@ def test_swo_logging(dut: DeviceAdapter):
     cmd += f" -cpufreq {SWO_CONFIG[PLATFORM]['cpufreq']}"
     cmd += f" -swofreq {SWO_CONFIG[PLATFORM]['swofreq']}"
     cmd += f" -itmmask 0xFFFF -outputfile {log_filename}"
+    cmd += f" {SWO_CONFIG[PLATFORM]['args']}"
     try:
         logger.info(f"Executing:\n{cmd}")
         proc = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            encoding='UTF-8',
+            encoding="UTF-8",
             shell=True,
         )
     except OSError as exc:
@@ -127,9 +140,7 @@ def test_swo_logging(dut: DeviceAdapter):
         log_file_content = log_file.read()
 
     # if nothing in log_file, stop test
-    assert(
-        len(log_file_content) > 0
-    ), f"File {log_filename} is empty"
+    assert len(log_file_content) > 0, f"File {log_filename} is empty"
 
     # Check if log file contains expected string
     expected_str = re.search(EXPECTED, log_file_content)
