@@ -138,7 +138,7 @@ In the door lock sample, you can use the following commands with the Bluetooth L
 * ``Lock`` - To lock the door of the connected device.
 * ``Unlock`` - To unlock the door of the connected device.
 
-If the device is already connected to the Matter network, the notification about changing the lock state will be send to the Bluetooth controller.
+If the device is already connected to the Matter network, the notification about changing the lock state will be sent to the Bluetooth controller.
 
 Currently, the door lock's Bluetooth LE service extension with NUS is only available for the nRF52840 and the nRF5340 DKs in the :ref:`Matter over Thread <ug_matter_gs_testing>` network variant.
 However, you can use the Bluetooth LE service extension regardless of whether the device is connected to a Matter over Thread network or not.
@@ -556,7 +556,7 @@ Onboarding information
 ++++++++++++++++++++++
 
 When you start the commissioning procedure, the controller must get the onboarding information from the Matter accessory device.
-The onboarding information representation depends on your commissioner setup.
+The onboarding information representation depends on your commissioner set-up.
 
 For this sample, you can use one of the following :ref:`onboarding information formats <ug_matter_network_topologies_commissioning_onboarding_formats>` to provide the commissioner with the data payload that includes the device discriminator and the setup PIN code:
 
@@ -822,7 +822,7 @@ To test the :ref:`matter_lock_sample_ble_nus` feature, complete the following st
 
       west flash --erase
 
-#. If you built the sample with the debug configuration, connect the board to an UART console to see the log entries from the device.
+#. If you built the sample with the debug configuration, connect the board to a UART console to see the log entries from the device.
 #. Open the nRF Toolbox application on your smartphone.
 #. Select :guilabel:`Universal Asynchronous Receiver/Transmitter UART` from the list in the nRF Toolbox application.
 #. Tap on :guilabel:`Connect`.
