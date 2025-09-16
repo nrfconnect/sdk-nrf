@@ -18,6 +18,14 @@ config MCUBOOT_BUILD_DIRECT_XIP_VARIANT
 	help
 	  Will build the alternative slot (variant) image of the main application.
 
+config MCUBOOT_BUILD_DIRECT_XIP_VARIANT_CUSTOM_OVERLAY
+	string "Use a custom DTS overlay for the secondary slot image"
+	depends on MCUBOOT_BUILD_DIRECT_XIP_VARIANT || !PARTITION_MANAGER
+	help
+	  When this value is not populated, the default DTS overlay is used for the secondary slot.
+	  Use this Kconfig option when you want to set a custom overlay file for the secondary slot
+	  image.
+
 menuconfig MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 	bool "Downgrade prevention using hardware security counters"
 	depends on (SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X || SOC_SERIES_NRF54LX)
