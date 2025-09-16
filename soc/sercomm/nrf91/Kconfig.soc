@@ -9,5 +9,3 @@ config SOC_TPM530M
 
 config SOC
 	default "tpm530m" if SOC_TPM530M
-
-source "soc/nordic/nrf91/Kconfig.soc"
