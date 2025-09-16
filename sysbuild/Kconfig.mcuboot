@@ -154,6 +154,11 @@ choice BOOT_SIGNATURE_TYPE
 
 endchoice
 
+choice MCUBOOT_MODE
+	default MCUBOOT_MODE_SWAP_USING_MOVE
+
+endchoice
+
 config BOOT_SIGNATURE_TYPE_PURE
 	bool "Verify signature directly over image"
 	depends on SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX
