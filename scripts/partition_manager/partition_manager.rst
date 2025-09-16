@@ -548,7 +548,7 @@ After the ``nordic,pm-ext-flash`` value is set, you can place partitions in the 
    # Name of partition
    external_plz:
      region: external_flash
-     size: CONFIG_EXTERNAL_PLZ_SIZE
+     size: CONFIG_SOME_INT
 
 .. note::
 
