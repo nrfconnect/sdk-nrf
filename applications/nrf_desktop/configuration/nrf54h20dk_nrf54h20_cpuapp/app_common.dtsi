@@ -59,6 +59,8 @@
 	};
 
 	aliases {
+		nrfdesktop-dvfs-clock = &cpuapp_hsfll;
+
 		/delete-property/ pwm-led0;
 	};
 };
