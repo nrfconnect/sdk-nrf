@@ -121,8 +121,6 @@ The following snippets are available:
      The ``usb`` snippet does not support the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp`` and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
 
 * ``hci`` - Enables support for the Bluetooth HCI interface parallel to :ref:`Thread RCP <thread_architectures_designs_cp_rcp>`.
-* ``l2`` - Enables the Zephyr networking layer.
-* ``logging_l2`` - Enables logging from the Zephyr networking layer.
 
 FEM support
 ===========
