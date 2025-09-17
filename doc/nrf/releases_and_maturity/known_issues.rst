@@ -5020,6 +5020,22 @@ SoftDevice Controller
 The issues in this section are related to :ref:`nrfxlib:softdevice_controller`.
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
+.. rst-class:: v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0
+
+DRGN-26138: Using the radio in timeslots may lead to undefined behavior in the controller
+
+  The controller may show reduced performance when EVENT registers are not cleared in timeslots or are set before the controller is enabled.
+
+  **Affected platforms:** nRF54L and nRF54H Series
+
+  **Workaround:** Clear the following radio events after using the radio in a timeslot:
+
+  * ``EVENTS_READY``
+  * ``EVENTS_END``
+  * ``EVENTS_DISABLED``
+  * ``EVENTS_ADDRESS``
+  * ``EVENTS_PAYLOAD``
+
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0
 
 DRGN-25859: The controller may stop raising advertising reports to the host while scanning for extended advertising packets
