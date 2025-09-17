@@ -209,7 +209,9 @@ Matter bridge
 nRF5340 Audio
 -------------
 
-|no_changes_yet_note|
+* Added:
+
+   * Ability to connect by address as a unicast client.
 
 nRF Desktop
 -----------
