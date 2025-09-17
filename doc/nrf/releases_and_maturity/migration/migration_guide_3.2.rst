@@ -89,7 +89,12 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-|no_changes_yet_note|
+MCUboot
+-------
+
+The default C library for MCUboot has changed to picolibc which is recommended over the minimal C library as it is a fully developed and supported C library designed for application usage.
+If the C library for MCUboot in a sysbuild project has not been changed by having a :file:`sysbuild/mcuboot` folder, or :file:`sysbuild/mcuboot.conf` file which changes it, then it will automatically be changed to use picolibc.
+Use :kconfig:option:`CONFIG_PICOLIBC` to specify piclibc in a project or :kconfig:option:`CONFIG_MINIMAL_LIBC` to specify the minimal C library (not recommended for usage outside of tests).
 
 Libraries
 =========
