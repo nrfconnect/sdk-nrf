@@ -30,26 +30,6 @@ LOG_MODULE_REGISTER(dtr_uart, CONFIG_NRF_SW_DTR_UART_LOG_LEVEL);
 
 #define DT_DRV_COMPAT nordic_nrf_sw_dtr_uart
 
-enum dtr_uart_event {
-	/* RX disabled event. */
-	DTR_UART_EVENT_RX_DISABLED,
-
-	/* DTE event: No traffic between DTE and DCE for a configured timeout -> DTR deasserted. */
-	DTR_UART_EVENT_IDLE,
-};
-
-static const char *dtr_event_str(enum dtr_uart_event event)
-{
-	switch (event) {
-	case DTR_UART_EVENT_RX_DISABLED:
-		return "RX DISABLED";
-	case DTR_UART_EVENT_IDLE:
-		return "DTR IDLE";
-	}
-
-	return "";
-}
-
 enum dtr_timeout_event {
 
 	/* No timeout pending. */
@@ -100,14 +80,14 @@ struct dtr_uart_data {
 	uart_callback_t user_callback;
 	void *user_data;
 
+	/* Semaphore used to wait for RX to be disabled */
+	struct k_sem rx_disable_sem;
+
 	/* DTR state: 0 = deasserted (UART inactive), 1 = asserted (UART active) */
 	bool dtr_state;
 	struct gpio_callback dtr_cb;
 
 	/* Worker and message queue for DTR events */
-	struct k_work event_queue_work;
-	struct k_msgq event_queue;
-	enum dtr_uart_event event_queue_buf[8];
 	struct k_work_delayable dtr_work;
 
 	/* One timeout event can run at a time */
@@ -179,21 +159,22 @@ static void tx_complete(struct dtr_uart_data *data)
 	data->tx_len = 0;
 }
 
-static void deactivate_rx(struct dtr_uart_data *data)
+static int deactivate_rx(struct dtr_uart_data *data)
 {
 	const struct dtr_uart_config *config = get_dev_config(get_dev(data));
 	int err;
 
 	if (!data->rx_active) {
 		LOG_WRN("RX: Not active");
-		return;
+		return -EALREADY;
 	}
 	data->rx_active = false;
-	/* abort rx */
 	err = uart_rx_disable(config->uart);
 	if (err) {
 		LOG_ERR("RX: Failed to disable (err: %d)", err);
 	}
+
+	return err;
 }
 
 static void activate_rx(struct dtr_uart_data *data)
@@ -212,14 +193,6 @@ static void activate_rx(struct dtr_uart_data *data)
 		.type = UART_RX_BUF_REQUEST,
 	};
 	user_callback(get_dev(data), &evt);
-}
-
-static void event_queue_delegate(struct dtr_uart_data *data, enum dtr_uart_event evt)
-{
-	if (k_msgq_put(&data->event_queue, &evt, K_NO_WAIT)) {
-		__ASSERT(false, "Failed to enqueue event");
-	}
-	k_work_submit(&data->event_queue_work);
 }
 
 /* Timeout for scheduled task. */
@@ -263,6 +236,7 @@ static int power_on_uart(struct dtr_uart_data *data)
 		if (err) {
 			LOG_ERR("Failed to resume UART device: %d", err);
 		}
+		LOG_DBG("UART powered on");
 	}
 
 	return err;
@@ -284,49 +258,12 @@ static int power_off_uart(struct dtr_uart_data *data)
 		if (err) {
 			LOG_ERR("Failed to suspend UART device: %d", err);
 		}
+		LOG_DBG("UART powered off");
 	}
 	return err;
 }
 
-static void event_rx_disabled_work(struct dtr_uart_data *data)
-{
-	data->rx_active = false;
-	if (data->dtr_state == 1) {
-		LOG_INF("RX disabled event in state %d, not suspending", data->dtr_state);
-		return;
-	}
-
-	/* Power off UART module */
-	const int err = power_off_uart(data);
-	if (err) {
-		LOG_ERR("Failed to suspend UART device: %d", err);
-	}
-}
-
 /**************************** WORKERS **********************************/
-static void event_queue_work_fn(struct k_work *work)
-{
-	struct dtr_uart_data *data = CONTAINER_OF(work, struct dtr_uart_data, event_queue_work);
-	enum dtr_uart_event evt;
-
-	while (k_msgq_get(&data->event_queue, &evt, K_NO_WAIT) == 0) {
-		LOG_INF("DTR event \"%s\" in state %d", dtr_event_str(evt), data->dtr_state);
-
-		switch (evt) {
-		case DTR_UART_EVENT_IDLE:
-			break;
-		case DTR_UART_EVENT_RX_DISABLED:
-			event_rx_disabled_work(data);
-			break;
-		default:
-			LOG_WRN("Unknown event: %d", evt);
-			break;
-		}
-
-		LOG_INF("DTR event \"%s\" done, new state %d", dtr_event_str(evt), data->dtr_state);
-	}
-}
-
 static void dtr_timeout_work_fn(struct k_work *work)
 {
 	struct k_work_delayable *delayed_work = CONTAINER_OF(work, struct k_work_delayable, work);
@@ -342,9 +279,6 @@ static void dtr_timeout_work_fn(struct k_work *work)
 		break;
 	case DTR_TIMEOUT_DTR_ACTIVATION:
 		/* TODO: handle error */
-	case DTR_TIMEOUT_DTR_IDLE:
-		event_queue_delegate(data, DTR_UART_EVENT_IDLE);
-		break;
 	default:
 		LOG_WRN("Unknown timeout event: %d", data->dtr_timeout_event);
 		break;
@@ -366,7 +300,7 @@ static void uart_dtr_input_gpio_callback(const struct device *port, struct gpio_
 {
 	struct dtr_uart_data *data = CONTAINER_OF(cb, struct dtr_uart_data, dtr_cb);
 
-	k_work_reschedule(&data->dtr_work, K_MSEC(10));
+	k_work_reschedule(&data->dtr_work, K_MSEC(10)); // MARKUS TODO: Debounce time?
 }
 
 static void dtr_work_handler(struct k_work *work)
@@ -375,6 +309,7 @@ static void dtr_work_handler(struct k_work *work)
 	struct dtr_uart_data *data = CONTAINER_OF(dwork, struct dtr_uart_data, dtr_work);
 	const struct dtr_uart_config *cfg = get_dev_config(data->dev);
 	bool asserted = gpio_pin_get_dt(&cfg->dtr_gpio);
+	int err;
 
 	if (data->dtr_state == asserted) {
 		LOG_WRN("DTR is already %s, ignoring event", asserted ? "asserted" : "deasserted");
@@ -388,8 +323,7 @@ static void dtr_work_handler(struct k_work *work)
 		gpio_pin_set_dt(&get_dev_config(get_dev(data))->ri_gpio, 0);
 
 		/* Power on UART module */
-		const int err = power_on_uart(data);
-
+		err = power_on_uart(data);
 		if (err) {
 			LOG_ERR("Failed to resume UART device: %d", err);
 		}
@@ -398,9 +332,14 @@ static void dtr_work_handler(struct k_work *work)
 		activate_tx(data);
 	} else {
 		deactivate_tx(data);
-		deactivate_rx(data);
 
-		/* Wait for UART to be disabled, before powering it down. */
+		k_sem_reset(&data->rx_disable_sem);
+		err = deactivate_rx(data);
+		if (err == 0) {
+			/* Wait for RX to be fully disabled, before powering UART down. */
+			k_sem_take(&data->rx_disable_sem, K_MSEC(100));
+		}
+		power_off_uart(data);
 	}
 }
 
@@ -422,48 +361,50 @@ static void uart_callback(const struct device *uart, struct uart_event *evt, voi
 
 	switch (evt->type) {
 	case UART_TX_DONE:
-		LOG_INF("TX: done");
+		LOG_DBG("TX: done");
 		tx_complete(data);
 		user_callback(dev, evt);
 		break;
 	case UART_TX_ABORTED:
-		LOG_INF("TX: abort");
+		LOG_DBG("TX: abort");
 		tx_complete(data);
 		user_callback(dev, evt);
 		break;
 	case UART_RX_RDY:
-		LOG_INF("RX: Ready buf:%p, offset: %d,len: %d", (void *)evt->data.rx.buf,
+		LOG_DBG("RX: Ready buf:%p, offset: %d,len: %d", (void *)evt->data.rx.buf,
 			evt->data.rx.offset, evt->data.rx.len);
 		user_callback(dev, evt);
 		break;
 
 	case UART_RX_BUF_REQUEST:
-		LOG_INF("UART_RX_BUF_REQUEST");
+		LOG_DBG("UART_RX_BUF_REQUEST");
 		user_callback(dev, evt);
 		break;
 
 	case UART_RX_BUF_RELEASED:
-		LOG_INF("Rx buf released %p", (void *)evt->data.rx_buf.buf);
+		LOG_DBG("Rx buf released %p", (void *)evt->data.rx_buf.buf);
 		user_callback(dev, evt);
 		break;
 
 	case UART_RX_DISABLED: {
-		LOG_INF("UART_RX_DISABLED %d", data->dtr_state);
+		LOG_DBG("UART_RX_DISABLED %d", data->dtr_state);
 		/* When RX disabled because of DTR down, we handle it ourselves. */
 		if (data->dtr_state && data->app_rx_enable) {
 			data->app_rx_enable = false;
 			user_callback(dev, evt);
 		}
 
-		event_queue_delegate(data, DTR_UART_EVENT_RX_DISABLED);
+		if (!data->dtr_state) {
+			/* RX disabled because of DTR down. */
+			k_sem_give(&data->rx_disable_sem);
+		}
 		break;
 	}
 	case UART_RX_STOPPED:
-		LOG_INF("Rx stopped");
+		LOG_DBG("Rx stopped");
 		if (data->dtr_state && data->app_rx_enable) {
 			user_callback(dev, evt);
 		}
-		event_queue_delegate(data, DTR_UART_EVENT_RX_DISABLED);
 		break;
 	}
 }
@@ -505,11 +446,10 @@ static int dtr_uart_init(const struct device *dev)
 		return err;
 	}
 
-	k_msgq_init(&data->event_queue, (char *)&data->event_queue_buf, sizeof(enum dtr_uart_event),
-		    sizeof(data->event_queue_buf) / sizeof(enum dtr_uart_event));
-	k_work_init(&data->event_queue_work, event_queue_work_fn);
 	k_work_init_delayable(&data->dtr_work, dtr_work_handler);
 	k_work_init_delayable(&data->dtr_timeout_work, dtr_timeout_work_fn);
+
+	k_sem_init(&data->rx_disable_sem, 0, 1);
 
 	/* Read initial DTR state */
 	int initial_dtr_state = gpio_pin_get_dt(&cfg->dtr_gpio);
@@ -571,7 +511,8 @@ static int api_tx(const struct device *dev, const uint8_t *buf, size_t len, int3
 	if (buf == NULL || len == 0) {
 		return 0;
 	}
-	LOG_INF("api_tx: %.*s", len, buf);
+
+	LOG_DBG("api_tx: %.*s", len, buf);
 
 	struct dtr_uart_data *data = get_dev_data(dev);
 
@@ -601,10 +542,10 @@ static int api_tx_abort(const struct device *dev)
 /* Application calls this when it is ready to receive data. */
 static int api_rx_enable(const struct device *dev, uint8_t *buf, size_t len, int32_t timeout)
 {
-	LOG_INF("api_rx_enable: %p, %zu", (void *)buf, len);
-
 	const struct dtr_uart_config *config = get_dev_config(dev);
 	struct dtr_uart_data *data = get_dev_data(dev);
+
+	LOG_DBG("api_rx_enable: %p, %zu", (void *)buf, len);
 
 	if (data->app_rx_enable) {
 		LOG_ERR("RX already enabled");
@@ -657,8 +598,9 @@ release:
 
 static int api_rx_disable(const struct device *dev)
 {
-	LOG_INF("api_rx_disable");
 	struct dtr_uart_data *data = get_dev_data(dev);
+
+	LOG_DBG("api_rx_disable");
 
 	if (!data->app_rx_enable) {
 		LOG_ERR("RX not enabled");
