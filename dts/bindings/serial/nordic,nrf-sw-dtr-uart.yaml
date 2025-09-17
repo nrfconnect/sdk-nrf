@@ -9,25 +9,12 @@ compatible: "nordic,nrf-sw-dtr-uart"
 include: uart-device.yaml
 
 properties:
-  dte-role:
-    type: boolean
-    description: Data Terminal Equipment role
-
-  dtr-pin:
-    type: int
+  dtr-gpios:
+    type: phandle-array
     description: Data Terminal Ready pin
     required: true
 
-  dtr-pin-toggle:
-    type: boolean
-    description: DTR pin for DCE uses toggle on high-to-low, instead of level trigger
-
-  dtr-pin-debounce:
-    type: int
-    description: DTR pin debounce time in milliseconds
-    default: 0
-
-  ri-pin:
-    type: int
+  ri-gpios:
+    type: phandle-array
     description: Ring Indicator pin
     required: true
