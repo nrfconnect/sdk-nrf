@@ -236,6 +236,8 @@ nRF5340 Audio
 
   * The :ref:`Audio application API documentation <audio_api>` page.
   * The :ref:`config_audio_app_options` page.
+  * The API documentation in the header files listed on the :ref:`audio_api` page.
+  * Ability to connect by address as a unicast client.
 
 * Updated:
 
