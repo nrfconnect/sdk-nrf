@@ -429,6 +429,9 @@ int trace_backend_clear(void)
 int trace_backend_deinit(void)
 {
 	buffer_flush_to_flash();
+
+	is_initialized = false;
+
 	return 0;
 }
 
