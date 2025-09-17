@@ -1,0 +1,11 @@
+&gpio1 {
+	status = "okay";
+};
+
+&comp {
+	compatible = "nordic,nrf-lpcomp";
+	psel = "AIN2"; /* P1.02 */
+	refsel = "VDD_4_8";
+	status = "okay";
+	zephyr,pm-device-runtime-auto;
+};
