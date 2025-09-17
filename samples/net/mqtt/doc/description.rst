@@ -117,8 +117,8 @@ Files that are located under the :file:`/boards` folder is automatically merged 
 In addition, the sample provides the following overlay configuration files, which are used to enable additional features in the sample:
 
 * :file:`overlay-tls-nrf91.conf` - TLS overlay configuration file for nRF91 Series devices.
-* :file:`overlay-tls-nrf70.conf` - TLS overlay configuration file for nRF70 Series devices.
-* :file:`overlay-tls-nrf54l15-nrf70.conf` - TLS overlay configuration file for nRF54L15 DK.
+* :file:`overlay-tls-nrf7002.conf` - TLS overlay configuration file for nRF70 Series devices.
+* :file:`overlay-tls-nrf54l-nrf70.conf` - TLS overlay configuration file for nRF54L Series devices.
 * :file:`overlay-tls-native_sim.conf` - TLS overlay configuration file for the native simulator board.
 
 They are located in :file:`samples/net/mqtt` folder.
