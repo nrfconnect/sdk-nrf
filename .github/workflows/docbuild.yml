@@ -144,6 +144,16 @@ jobs:
         run: |
           ROOT="$PWD"
 
+          # Patch Sphinx footers where we want to keep copyright info
+          # (**/doxygen/* skipped, Doxygen content)
+          find \
+            doc/_build/html/matter \
+            doc/_build/html/zephyr \
+            -type f \
+            -name "*.html" \
+            -not -path "**/doxygen/*" \
+            -exec python doc/_zoomin/footer_patch.py {} --silent ";"
+
           # Doxygen APIs combined with Sphinx
           declare -a SPHINX_DOXYGEN=("nrf" "nrfxlib" "zephyr")
 
