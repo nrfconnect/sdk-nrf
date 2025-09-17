@@ -3,6 +3,9 @@ common:
     - drivers
     - flash
     - ci_tests_drivers_hpf
+  harness: ztest
+  harness_config:
+    fixture: external_flash
 tests:
   nrf.extended.drivers.flash.common.hpf.quad:
     platform_allow:
