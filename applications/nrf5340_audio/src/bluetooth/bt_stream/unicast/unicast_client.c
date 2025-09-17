@@ -153,7 +153,8 @@ static void create_group(void)
 		}
 
 		/* Add only the streams that has a valid preset set */
-		for (int j = 0; j < tmp_server->snk.num_eps; j++) {
+		for (int j = 0;
+		     j < MIN(tmp_server->snk.num_eps, POPCOUNT(tmp_server->snk.locations)); j++) {
 			if (tmp_server->snk.lc3_preset[j].qos.pd == 0) {
 				LOG_DBG("Sink EP %d has no valid preset, skipping", j);
 				continue;
@@ -166,7 +167,8 @@ static void create_group(void)
 		}
 
 		/* Add only the streams that has a valid preset set */
-		for (int j = 0; j < tmp_server->src.num_eps; j++) {
+		for (int j = 0;
+		     j < MIN(tmp_server->src.num_eps, POPCOUNT(tmp_server->src.locations)); j++) {
 			if (tmp_server->src.lc3_preset[j].qos.pd == 0) {
 				LOG_DBG("Source EP %d has no valid preset, skipping", j);
 				continue;
@@ -1213,7 +1215,6 @@ int unicast_client_start(uint8_t cig_index)
 	uint8_t num_servers = srv_store_num_get(true);
 
 	for (int i = 0; i < num_servers; i++) {
-		uint8_t state;
 		struct server_store *server = NULL;
 
 		ret = srv_store_server_get(&server, i);
@@ -1224,9 +1225,12 @@ int unicast_client_start(uint8_t cig_index)
 
 		/* Check if we have valid sink endpoints to start */
 		if (server->snk.num_eps > 0) {
-			for (int j = 0; j < server->snk.num_eps; j++) {
+			for (int j = 0;
+			     j < MIN(server->snk.num_eps, POPCOUNT(server->snk.locations)); j++) {
+				uint8_t state = BT_BAP_EP_STATE_IDLE;
+
 				ret = le_audio_ep_state_get(server->snk.eps[j], &state);
-				if (state == BT_BAP_EP_STATE_STREAMING) {
+				if (state == BT_BAP_EP_STATE_STREAMING || ret) {
 					LOG_DBG("Sink endpoint is already streaming, skipping "
 						"start");
 					continue;
@@ -1243,9 +1247,12 @@ int unicast_client_start(uint8_t cig_index)
 
 		/* Check if we have valid source endpoints to start */
 		if (server->src.num_eps > 0) {
-			for (int j = 0; j < server->src.num_eps; j++) {
+			for (int j = 0;
+			     j < MIN(server->src.num_eps, POPCOUNT(server->src.locations)); j++) {
+				uint8_t state = BT_BAP_EP_STATE_IDLE;
+
 				ret = le_audio_ep_state_get(server->src.eps[j], &state);
-				if (state == BT_BAP_EP_STATE_STREAMING) {
+				if (state == BT_BAP_EP_STATE_STREAMING || ret) {
 					LOG_DBG("Source endpoint is already streaming, skipping "
 						"start");
 					continue;
@@ -1322,7 +1329,6 @@ int unicast_client_stop(uint8_t cig_index)
 	uint8_t num_servers = srv_store_num_get(true);
 
 	for (int i = 0; i < num_servers; i++) {
-		uint8_t state;
 		struct server_store *server = NULL;
 
 		ret = srv_store_server_get(&server, i);
@@ -1333,8 +1339,10 @@ int unicast_client_stop(uint8_t cig_index)
 
 		if (server->snk.num_eps > 0) {
 			for (int j = 0; j < server->snk.num_eps; j++) {
+				uint8_t state = BT_BAP_EP_STATE_IDLE;
+
 				ret = le_audio_ep_state_get(server->snk.eps[j], &state);
-				if (state != BT_BAP_EP_STATE_STREAMING) {
+				if (state != BT_BAP_EP_STATE_STREAMING || ret) {
 					LOG_DBG("Sink endpoint is not streaming, skipping stop");
 					continue;
 				}
@@ -1345,8 +1353,10 @@ int unicast_client_stop(uint8_t cig_index)
 
 		if (server->src.num_eps > 0) {
 			for (int j = 0; j < server->src.num_eps; j++) {
+				uint8_t state = BT_BAP_EP_STATE_IDLE;
+
 				ret = le_audio_ep_state_get(server->src.eps[j], &state);
-				if (state != BT_BAP_EP_STATE_STREAMING) {
+				if (state != BT_BAP_EP_STATE_STREAMING || ret) {
 					LOG_DBG("Source endpoint is not streaming, skipping stop");
 					continue;
 				}
