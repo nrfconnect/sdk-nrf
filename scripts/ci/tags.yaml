@@ -49,6 +49,7 @@ bluetooth:
     - modules/crypto/mbedtls/
     - modules/crypto/oberon-psa-crypto/
     - modules/crypto/tinycrypt/
+    - modules/lib/memfault-firmware-sdk/
     - nrf/applications/ipc_radio/
     - nrf/cmake/
     - nrf/drivers/mpsl/
