@@ -99,3 +99,14 @@
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35382"
+
+- scenarios:
+    - sample.bluetooth.peripheral_mds
+  platforms:
+    - nrf52840dk/nrf52840
+    - nrf54l15dk/nrf54l05/cpuapp
+    - nrf54l15dk/nrf54l10/cpuapp
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35468"
