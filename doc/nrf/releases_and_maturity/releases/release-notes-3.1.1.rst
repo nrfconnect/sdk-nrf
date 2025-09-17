@@ -18,9 +18,26 @@ Highlights
 
 This patch release adds the following changes on top of the :ref:`nRF Connect SDK v3.1.0 <ncs_release_notes_3.1.0>`:
 
+This is the first release of the |NCS| that brings comprehensive :ref:`experimental <software_maturity>` support for the nRF54LM20 DK and nRF54LM20A SoC.
+See the `nRF54LM20A System-on-Chip`_ page to learn more.
+
+* This release provides experimental support for the nRF54LM20A SoC with the following features:
+
+  * Protocols:
+
+    * Bluetooth® LE, including Channel Sounding
+    * 2.4 Ghz proprietary
+    * Thread 1.4
+    * Matter-over-Thread 1.4.2
+
+  * All nRF54LM20A SoC peripherals, including the new USB-HS interface.
+  * DFU with MCUboot enabling dual-bank DFU with optional external flash.
+  * Hardware crypto provided by :ref:`PSA Crypto APIs (hardware accelerated) <ug_nrf54l_cryptography>` for cryptographic operations.
+  * Google Find My Device and Apple Find My for members of the Apple and Google programs.
+  * Out-of-the-box support across many standard SDK samples.
+
 * Matter:
 
-  * Added support for the nRF54LM20 DK.
   * Included fixes to achieve compatibility with Matter 1.4.2 Test Harness and to pass the following Matter certification test cases:
 
     * TC-IDM-10.3
