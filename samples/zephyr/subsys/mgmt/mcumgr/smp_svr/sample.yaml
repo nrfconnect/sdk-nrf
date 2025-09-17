@@ -61,6 +61,12 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+    harness_config:
+      type: multi_line
+      ordered: false
+      regex:
+        - "smp_sample: build time"
+        - "smp_bt_sample: Advertising successfully started"
   sample.mcumgr.smp_svr.bt.nrf54h20dk:
     sysbuild: true
     extra_args:
