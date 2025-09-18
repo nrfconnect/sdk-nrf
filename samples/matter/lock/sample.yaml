@@ -127,7 +127,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - FILE_SUFFIX=release
+      - FILE_SUFFIX=debug
       - CONFIG_NCS_SAMPLE_MATTER_LEDS=n
       - CONFIG_NCS_SAMPLE_MATTER_WATCHDOG=n
       - CONFIG_CHIP_ENABLE_PAIRING_AUTOSTART=y
