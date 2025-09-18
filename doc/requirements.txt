@@ -29,3 +29,4 @@ sphinxcontrib-plantuml>=0.27    # |     |         |        |         |         |
 sphinxcontrib-programoutput     # |  X  |         |        |         |         |      |   X    |
 west>=1.0.0                     # |     |         |        |         |         |      |   X    |
 python-dotenv                   # |     |    X    |        |         |         |      |        |
+tabulate                        # |     |         |        |         |         |      |   X    |
