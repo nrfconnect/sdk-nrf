@@ -49,6 +49,7 @@ manifest:
     - -libmodem
     - -bsec
     - -doc-internal
+    - -nrfx
     - +optional
 
   # "projects" is a list of git repositories which make up the NCS
@@ -65,7 +66,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: b48a1f26ef887cee5f3c20ee04c1b1db7f43f226
+      revision: pull/3265/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -274,6 +275,12 @@ manifest:
       revision: d5fad6bd094899101a4e5fd53af7298160ced6ab
       groups:
         - benchmark
+    - name: nrfx
+      remote: ncs
+      path: nrfx
+      groups:
+        - nrfx
+      revision: eadf25033e69b9908f36add188ac62b354914922
 
   # West-related configuration for the nrf repository.
   self:
