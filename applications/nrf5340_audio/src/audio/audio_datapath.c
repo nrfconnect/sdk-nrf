@@ -66,6 +66,9 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define DRIFT_COMP_WAITING_CNT (DRIFT_MEAS_PERIOD_US / BLK_PERIOD_US)
 /* How much data to be collected before moving on with presentation compensation */
 #define PRES_COMP_NUM_DATA_PTS (DRIFT_MEAS_PERIOD_US / CONFIG_AUDIO_FRAME_DURATION_US)
+/* How many microseconds two timestamps can be apart before they are considered non-consecutive */
+#define CONSECUTIVE_TS_LIMIT_US                                                                    \
+	(CONFIG_AUDIO_FRAME_DURATION_US + (CONFIG_AUDIO_FRAME_DURATION_US / 2))
 
 /* Audio clock - nRF5340 Analog Phase-Locked Loop (APLL) */
 #define APLL_FREQ_MIN	 HFCLKAUDIO_12_165_MHZ
@@ -895,6 +898,13 @@ void audio_datapath_pres_delay_us_get(uint32_t *delay_us)
 
 void audio_datapath_stream_out(struct net_buf *audio_frame)
 {
+	/* Upon first received audio frame, the delta will be invalid (as there is no previous value
+	 * to compare it to). Hence, this function only prints LOG_ERR if there are consecutive
+	 * errors.
+	 */
+	static uint32_t consec_invalid_ts_deltas;
+	bool sdu_ref_not_consecutive = false;
+
 	if (!ctrl_blk.stream_started) {
 		LOG_WRN("Stream not started");
 		return;
@@ -908,38 +918,62 @@ void audio_datapath_stream_out(struct net_buf *audio_frame)
 	struct audio_metadata *meta = net_buf_user_data(audio_frame);
 
 	if (meta->ref_ts_us == ctrl_blk.prev_pres_sdu_ref_us && meta->ref_ts_us != 0) {
-		LOG_WRN("Duplicate sdu_ref_us (%d) - Dropping audio frame", meta->ref_ts_us);
+		LOG_ERR("Duplicate sdu_ref_us (%d) - Dropping audio frame", meta->ref_ts_us);
 		return;
 	}
 
-	bool sdu_ref_not_consecutive = false;
+	uint32_t sdu_ref_delta_us = meta->ref_ts_us - ctrl_blk.prev_pres_sdu_ref_us;
 
-	if (ctrl_blk.prev_pres_sdu_ref_us) {
-		uint32_t sdu_ref_delta_us = meta->ref_ts_us - ctrl_blk.prev_pres_sdu_ref_us;
+	if (meta->ref_ts_us == 0 && ctrl_blk.prev_pres_sdu_ref_us == 0) {
+		/* Timestamp not received yet */
+		ctrl_blk.prev_pres_sdu_ref_us = meta->ref_ts_us;
+		sdu_ref_not_consecutive = true;
 
-		/* Check if the delta is from two consecutive frames */
-		if (sdu_ref_delta_us <
-		    (CONFIG_AUDIO_FRAME_DURATION_US + (CONFIG_AUDIO_FRAME_DURATION_US / 2))) {
-			/* Check for invalid delta */
-			if ((sdu_ref_delta_us >
-			     (CONFIG_AUDIO_FRAME_DURATION_US + SDU_REF_CH_DELTA_MAX_US)) ||
-			    (sdu_ref_delta_us <
-			     (CONFIG_AUDIO_FRAME_DURATION_US - SDU_REF_CH_DELTA_MAX_US))) {
-				LOG_DBG("Invalid sdu_ref_us delta (%d) - Estimating sdu_ref_us",
-					sdu_ref_delta_us);
-
-				/* Estimate sdu_ref_us */
-				meta->ref_ts_us = ctrl_blk.prev_pres_sdu_ref_us +
-						  CONFIG_AUDIO_FRAME_DURATION_US;
-			}
-		} else {
-			LOG_INF("sdu_ref_us not from consecutive frames (diff: %d us)",
+	} else if (sdu_ref_delta_us > CONSECUTIVE_TS_LIMIT_US) {
+		/* If the new timestamp is not consecutive wrt. the previous timestamp */
+		if (consec_invalid_ts_deltas) {
+			LOG_ERR("sdu_ref_us not from consecutive frames (delta: %d us)",
 				sdu_ref_delta_us);
-			sdu_ref_not_consecutive = true;
+		} else {
+			LOG_DBG("sdu_ref_us not from consecutive frames (delta: %d us)",
+				sdu_ref_delta_us);
 		}
-	}
 
-	ctrl_blk.prev_pres_sdu_ref_us = meta->ref_ts_us;
+		sdu_ref_not_consecutive = true;
+		ctrl_blk.prev_pres_sdu_ref_us = meta->ref_ts_us;
+		consec_invalid_ts_deltas++;
+
+	} else if (!IN_RANGE(sdu_ref_delta_us,
+			     CONFIG_AUDIO_FRAME_DURATION_US - SDU_REF_CH_DELTA_MAX_US,
+			     CONFIG_AUDIO_FRAME_DURATION_US + SDU_REF_CH_DELTA_MAX_US)) {
+		/* If timestamp is consecutive but has invalid delta: Estimate the timestamp */
+		if (consec_invalid_ts_deltas) {
+			LOG_ERR("Invalid sdu_ref_us delta (%d) meta->ref_ts_us %d us. "
+				"Estimating.",
+				sdu_ref_delta_us, meta->ref_ts_us);
+		} else {
+			LOG_DBG("Invalid sdu_ref_us delta (%d) meta->ref_ts_us %d us. "
+				"Estimating.",
+				sdu_ref_delta_us, meta->ref_ts_us);
+		}
+
+		/* Estimate ref_ts_us.
+		 * If the SDU ref was estimated, we don't update the previous reference with
+		 * the estimated value. This is to avoid an infinite loop of estimations.
+		 */
+		uint32_t ref_ts_temp_us = meta->ref_ts_us;
+
+		meta->ref_ts_us = ctrl_blk.prev_pres_sdu_ref_us + CONFIG_AUDIO_FRAME_DURATION_US;
+		ctrl_blk.prev_pres_sdu_ref_us = ref_ts_temp_us;
+
+		consec_invalid_ts_deltas++;
+	} else {
+		/* The new timestamp is valid. It is consecutive and
+		 * within the expected range compared to the last timestamp.
+		 */
+		ctrl_blk.prev_pres_sdu_ref_us = meta->ref_ts_us;
+		consec_invalid_ts_deltas = 0;
+	}
 
 	/*** Presentation compensation ***/
 	if (ctrl_blk.pres_comp.enabled) {
