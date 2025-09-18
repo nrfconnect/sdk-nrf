@@ -578,3 +578,15 @@
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
     - nrf54h20dk@0.9.0/nrf54h20/cpurad
   comment: "Not compatible"
+
+- scenarios:
+    - arch.arm.*.no_optimizations
+    - llext.writable
+    - llext.writable_slid_linking
+    - llext.writable_relocatable_slid_linking
+    - llext.writable_relocatable
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8497"
+
+- scenarios:
+    - examples.nrfx.*
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8588"
