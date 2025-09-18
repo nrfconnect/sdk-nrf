@@ -139,3 +139,21 @@
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35605"
+
+- scenarios:
+    - applications.nrf_desktop.*
+  platforms:
+    - nrf52kbd/nrf52832
+  comment: "Needs alignment to new errata system in nrfx - NRFX-8421"
+
+- scenarios:
+    - sample.bluetooth.mesh.light_ctrl
+  platforms:
+    - nrf52dk/nrf52832
+  comment: "Needs alignment to new errata system in nrfx - NRFX-8421"
+
+- scenarios:
+    - sample.bluetooth.nrf_dm.timeslot
+  platforms:
+    - nrf52dk/nrf52832
+  comment: "Needs alignment to new errata system in nrfx - NRFX-8421"
