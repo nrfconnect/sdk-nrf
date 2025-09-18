@@ -24,6 +24,24 @@ Required changes
 
 The following changes are mandatory to make your application work in the same way as in previous releases.
 
+nRF54H20
+========
+
+This section describes the changes specific to the nRF54H20 SoC and DK support in the |NCS|.
+
+nRF54H20 SoC binaries
+---------------------
+
+.. toggle::
+
+   * The nRF54H20 SoC binaries based on IronSide SE have been updated to version v23.0.1+16.
+     Starting from the |NCS| v3.2.0, you should always upgrade your nRF54H20 SoC binaries to the latest version.
+
+     For more information, see:
+
+     * :ref:`abi_compatibility` for details about the SoC binaries.
+     * :ref:`ug_nrf54h20_ironside_se_update` for instructions on updating the SoC binaries.
+
 Samples and applications
 ========================
 

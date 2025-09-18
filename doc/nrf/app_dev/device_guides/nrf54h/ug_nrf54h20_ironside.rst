@@ -22,6 +22,7 @@ Distribution
 ************
 
 The |ISE| is provided as a precompiled binary, which is part of the nRF54H20 SoC bundle and is provided independently from the |NCS| release cycle.
+For more information, see :ref:`abi_compatibility`.
 
 .. _ug_nrf54h20_ironside_se_uicr:
 
@@ -494,10 +495,21 @@ UICR.SECONDARY.MPCCONF
 
 .. _ug_nrf54h20_ironside_se_programming:
 
-Programming
-***********
+Programming |ISE| on the nRF54H20 SoC
+*************************************
 
-For programming instructions, see :ref:`ug_nrf54h20_SoC_binaries`.
+|ISE| is included in the nRF54H20 SoC binaries.
+The nRF54H20 SoC binaries are bundled in a ZIP archive that contains the following components:
+
+* *IronSide SE update firmware* (:file:`ironside_se_update.hex`) - The main |ISE| firmware
+* *IronSide SE Recovery update firmware* (:file:`ironside_se_recovery_update.hex`) - The recovery firmware
+* The update application (:file:`update_application.hex`) - The application firmware used to trigger the update process
+* Additional metadata and manifest files required for the update process
+
+The bundle ZIP file follows the naming convention :file:`<soc>_soc_binaries_v<version>.zip`.
+
+For more information on the nRF54H20 SoC binaries, see :ref:`nRF54H20 SoC binaries<abi_compatibility>`.
+For instructions on how to program the nRF54H20 SoC binaries, see :ref:`ug_nrf54h20_SoC_binaries`.
 
 By default, the nRF54H20 SoC uses the following memory and access configurations:
 
@@ -510,6 +522,120 @@ By default, the nRF54H20 SoC uses the following memory and access configurations
 
 Global domain memory can be protected from write operations by configuring UICR registers.
 To remove these protections and disable all other protection mechanisms enforced through UICR settings, perform an ``ERASEALL`` operation.
+
+.. _ug_nrf54h20_ironside_se_update:
+
+Updating |ISE|
+**************
+
+|NCS| supports two methods for updating the |ISE| firmware on the nRF54H20 SoC:
+
+* Using the ``west`` command.
+  You can use the ``west`` command provided by the |NCS| to install the firmware update.
+  For step-by-step instructions, see :ref:`ug_nrf54h20_ironside_se_update_west`.
+
+* Updating the SoC binaries manually.
+  Alternatively, you can perform the update by manually executing the same steps carried out by the ``west`` command.
+  For step-by-step instructions, see :ref:`ug_nrf54h20_ironside_se_update_manual`.
+
+.. caution::
+   You cannot update the nRF54H20 SoC binaries from a SUIT-based (up to 0.9.6) to an IronSide-SE-based (2x.x.x) version.
+
+.. _ug_nrf54h20_ironside_se_update_west:
+
+Updating using west
+===================
+
+To update the |ISE| firmware, you can use the ``west ncs-ironside-se-update`` command with the following syntax:
+
+.. code-block:: console
+
+   west ncs-ironside-se-update --zip <path_to_soc_binaries.zip> --allow-erase
+
+The command accepts the following main options:
+
+* ``--zip`` (required) - Sets the path to the nRF54H20 SoC binaries ZIP file.
+* ``--allow-erase`` (required) - Enables erasing the device during the update process.
+* ``--serial`` - Specifies the serial number of the target device.
+* ``--firmware-slot`` - Updates only a specific firmware slot (``uslot`` for |ISE| or ``rslot`` for |ISE| Recovery).
+* ``--wait-time`` - Specifies the timeout in seconds to wait for the device to boot (default: 2.0 seconds).
+
+.. _ug_nrf54h20_ironside_se_update_manual:
+
+Updating manually
+=================
+
+The manual update process involves the following steps:
+
+1. Executing the update application.
+   The update application runs on the application core and communicates with the |ISE| update service.
+   It reads the update firmware from memory and passes the update blob metadata to the |ISE|.
+
+#. Preparing the update.
+   The |ISE| validates the update parameters and writes the update metadata to the Secure Information Configuration Registers (SICR).
+
+#. Installing the update.
+   After a reset, the Secure Domain ROM (SDROM) detects the pending update through the SICR registers, verifies the update firmware signature, and installs the new firmware.
+
+#. Completing the update.
+   The system boots with the updated |ISE| firmware, and the update status can be read to verify successful installation.
+
+Updating manually using nrfutil
+-------------------------------
+
+``nrfutil`` commands can replicate the functionality of ``west ncs-ironside-se-update``.
+To perform the manual update process using ``nrfutil`` commands, complete the following steps:
+
+1. Extract the update bundle:
+
+   .. code-block:: console
+
+      unzip <soc_binaries.zip> -d /tmp/update_dir
+
+#. Erase non-volatile memory:
+
+   .. code-block:: console
+
+      nrfutil device recover --serial-number <serial> --x-sdfw-variant ironside
+
+#. Program the update application:
+
+   .. code-block:: console
+
+      nrfutil device program --firmware /tmp/update_dir/update/update_application.hex --serial-number <serial> --x-sdfw-variant ironside
+
+#. Program the |ISE| update firmware:
+
+   .. code-block:: console
+
+      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_update.hex --serial-number <serial> --x-sdfw-variant ironside
+
+#. Reset to execute the update service:
+
+   .. code-block:: console
+
+      nrfutil device reset --serial-number <serial> --x-sdfw-variant ironside
+
+#. Reset to trigger the installation of the update:
+
+   .. code-block:: console
+
+      nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial> --x-sdfw-variant ironside
+
+#. Program the |ISE| Recovery update firmware (if updating both slots):
+
+   .. code-block:: console
+
+      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_recovery_update.hex --serial-number <serial> --x-sdfw-variant ironside
+
+   Then repeat steps 5 and 6.
+
+#. Erase the update application:
+
+   .. code-block:: console
+
+      nrfutil device erase --all --serial-number <serial> --x-sdfw-variant ironside
+
 
 .. _ug_nrf54h20_ironside_se_debug:
 
@@ -630,7 +756,7 @@ The secondary firmware feature provides an alternative boot path that can be tri
 It can be used for different purposes, some examples are DFU applications in systems that don't use dual banking, recovery firmware, and analysis firmware.
 
 .. note::
-   The term "primary firmware" is rarely used when describing the firmware that is booted by default by IronSide SE, as it is implicit when the term "secondary" is not specified.
+   The term "primary firmware" is rarely used when describing the firmware that is booted by default by |ISE|, as it is implicit when the term "secondary" is not specified.
 
 .. note::
    The term "secondary slot" and "secondary image" are used in the MCUboot context.
@@ -642,15 +768,15 @@ Configuration and triggering
 Configuring a secondary firmware is optional and is done through the ``UICR.SECONDARY`` fields.
 
 The secondary firmware can be triggered automatically, through ``CTRLAP.BOOTMODE`` or through an IPC service (``ironside_bootmode`` service).
-Any component that communicates with IronSide SE over IPC can leverage this service.
+Any component that communicates with |ISE| over IPC can leverage this service.
 Setting bit 5 in ``CTRLAP.BOOTMODE`` will also trigger secondary firmware.
 
-IronSide SE automatically triggers the secondary firmware in any of the following situations:
+|ISE| automatically triggers the secondary firmware in any of the following situations:
 
 * The integrity check of the memory specified in ``UICR.PROTECTEDMEM`` fails.
 * Any boot failure occurs, such as missing primary firmware or failure to apply ``UICR.PERIPHCONF`` or ``UICR.MPCCONF`` configurations.
 * A local domain is reset with a reason configured to trigger the secondary firmware.
-* Secondary firmware will be booted by IronSide SE if one of the triggers configured in ``UICR.SECONDARY.TRIGGER.RESETREAS`` occurs.
+* Secondary firmware will be booted by |ISE| if one of the triggers configured in ``UICR.SECONDARY.TRIGGER.RESETREAS`` occurs.
 
 The secondary firmware can be protected using ``UICR.SECONDARY.PROTECTEDMEM`` for integrity checking, and can be updated by other components when protection is not enabled.
 
@@ -661,12 +787,12 @@ The secondary firmware can be protected through integrity checks by enabling ``U
 The ``PERIPHCONF`` entries for the secondary firmware can also be placed in memory covered by ``UICR.SECONDARY.PROTECTEDMEM`` to create a fully immutable secondary firmware and configuration.
 
 If the integrity check of the memory specified in this configuration fails, the secondary firmware will not be booted.
-Instead, IronSide SE will attempt to boot the primary firmware, and information about the failure is available in the boot report and boot status.
+Instead, |ISE| will attempt to boot the primary firmware, and information about the failure is available in the boot report and boot status.
 
 Update
 ======
 
-As with the primary firmware, IronSide SE does not facilitate updating the secondary firmware.
+As with the primary firmware, |ISE| does not facilitate updating the secondary firmware.
 The secondary image can be updated by other components as long as ``UICR.SECONDARY.PROTECTEDMEM`` is not set.
 Using the secondary firmware as a bootloader capable of validating and updating a second image enables updating firmware in the secondary boot flow while having secure boot enabled through ``UICR.SECONDARY.PROTECTEDMEM``.
 
