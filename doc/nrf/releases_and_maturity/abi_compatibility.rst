@@ -67,6 +67,11 @@ Provisioning the nRF54H20 SoC
 
 To provision the nRF54H20 SoC using the nRF54H20 SoC binaries, see :ref:`ug_nrf54h20_gs_bringup`.
 
+Updating the nRF54H20 SoC
+*************************
+
+To update the nRF54H20 SoC binaries to the latest version, see :ref:`ug_nrf54h20_ironside_se_update`.
+
 nRF54H20 SoC binaries changelog
 *******************************
 
