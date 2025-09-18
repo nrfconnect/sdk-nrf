@@ -49,6 +49,7 @@ manifest:
     - -libmodem
     - -bsec
     - -doc-internal
+    - -nrfx
     - +optional
 
   # "projects" is a list of git repositories which make up the NCS
@@ -277,6 +278,8 @@ manifest:
     - name: nrfx
       remote: ncs
       path: nrfx
+      groups:
+        - nrfx
       revision: eadf25033e69b9908f36add188ac62b354914922
 
   # West-related configuration for the nrf repository.
