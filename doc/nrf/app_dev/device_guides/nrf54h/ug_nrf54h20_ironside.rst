@@ -670,6 +670,8 @@ To protect the nRF54H20 SoC in a production-ready device, you must enable the fo
   It blocks all `ERASEALL` operations on NVR0, preserving UICR settings even if an attacker attempts a full-chip erase.
 
 
+.. _ug_nrf54h20_ironside_se_boot_report:
+
 IronSide boot report
 ********************
 
@@ -728,24 +730,33 @@ This data is suitable as a source of initial entropy.
 
 .. _ironside_se_booting:
 
-Booting of other domains
+Booting of local domains
 ************************
 
-|ISE| boots the System Controller core first, followed by the application core, in that order.
-When booting the application core, |ISE| does the following:
+This section describes the default boot flow used by |ISE|.
+For information about the alternative boot flow that uses the secondary firmware, see :ref:`ug_nrf54h20_ironside_se_secondary_firmware`.
 
-* Sets the application domain's INITSVTOR to the first 32-bit word of the application-owned memory.
-* Reads the reset vector from the second 32-bit word of the application-owned memory.
-* If the reset vector is set to 0xFFFFFFFF, sets CTRL_AP.BOOTSTATUS.BOOTERROR to indicate that no firmware is programmed.
-* If any other error is encountered during initialization, sets CTRL_AP.BOOTSTATUS.BOOTERROR accordingly.
-* If CTRL_AP.BOOTSTATUS.BOOTERROR is non-zero (meaning an invalid UICR configuration is detected), sets the application domain's CPUWAIT to 1; otherwise, sets it to 0.
-* Sets the application domain's CPUSTART to 1.
-* Stops the allocation procedure.
-* Updates the boot report to indicate the UICR entry (and, if applicable, the array index) that triggered the failure.
-* Sets CTRL_AP.BOOTSTATUS.BOOTERROR to indicate the source of the error.
-* Starts the application core with application domain's CPUWAIT = 1 (halted mode).
+|ISE| boots only the application core CPU.
+The application core then triggers the boot of other local domain CPUs, such as the radio core, through the :ref:`ug_nrf54h20_ironside_se_cpuconf_service`.
 
-This allows the error report to be read by a debugger, if the device is not protected.
+Application domain boot sequence
+================================
+
+When booting the application domain, |ISE| performs the following operations:
+
+* Sets the processor's vector table address to the start of the application-owned memory region.
+* Verifies for firmware availability by reading the reset vector from the second 32-bit word of the vector table and comparing it to the erased value (``0xFFFFFFFF``).
+* Sets the secure vector table offset register (INITSVTOR) to point to the vector table address.
+* Enables the CPU with the appropriate start mode:
+
+  * |ISE| enables the CPU in halted mode if any of the following conditions are met:
+
+    * No firmware is available.
+    * Boot errors occurred.
+    * The ``DEBUGWAIT`` boot command was issued.
+  * Otherwise, |ISE| enables and starts the CPU normally.
+
+* Updates :ref:`CTRL_AP.BOOTSTATUS <ug_nrf54h20_ironside_se_bootstatus_register_format>` and writes the :ref:`boot report <ug_nrf54h20_ironside_se_boot_report>` to reflect any boot errors encountered during the initialization process.
 
 .. _ug_nrf54h20_ironside_se_secondary_firmware:
 
@@ -824,6 +835,7 @@ For details about the CPUCONF peripheral, refer to the nRF54H20 SoC datasheet.
 
 |ISE| is updated by the Secure Domain ROM (SDROM), which performs the update operation when triggered by a set of SICR registers.
 SDROM verifies and copies the update candidate specified through these registers.
+SDROM requires the |ISE| update to be located in MRAM.
 
 |ISE| exposes an update service that allows local domains to trigger the update process by indirectly writing to the relevant SICR registers.
 
@@ -864,8 +876,8 @@ When using the PSA Crypto API to operate on keys, the storage region specified b
 
 This ensures that cryptographic keys are stored in the dedicated secure storage region rather than in regular application memory.
 
-Secure storage through PSA Internal Trusted Storage (ITS) API
-=============================================================
+Secure storage through PSA ITS API
+==================================
 
 When using the PSA ITS API for storing general secure data, the storage region specified by ``UICR.SECURESTORAGE.ITS`` is used automatically.
 No special configuration is required for PSA ITS operations, as they inherently use the secure storage when available.
