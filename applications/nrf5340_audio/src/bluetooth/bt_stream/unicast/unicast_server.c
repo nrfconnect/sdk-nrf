@@ -734,19 +734,18 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_RX)) {
-		if (location == BT_AUDIO_LOCATION_FRONT_LEFT) {
-			csip_param.rank = CSIP_HL_RANK;
-		} else if (location == BT_AUDIO_LOCATION_FRONT_RIGHT) {
-			csip_param.rank = CSIP_HR_RANK;
-		} else if (location ==
-			   (BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT)) {
-			csip_param.rank = CSIP_HL_RANK;
-		} else {
-			LOG_ERR("Location not supported");
-			return -ECANCELED;
-		}
+	if (location == BT_AUDIO_LOCATION_FRONT_LEFT) {
+		csip_param.rank = CSIP_HL_RANK;
+	} else if (location == BT_AUDIO_LOCATION_FRONT_RIGHT) {
+		csip_param.rank = CSIP_HR_RANK;
+	} else if (location == (BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT)) {
+		csip_param.rank = CSIP_HL_RANK;
+	} else {
+		LOG_ERR("Location not supported");
+		return -ECANCELED;
+	}
 
+	if (IS_ENABLED(CONFIG_BT_AUDIO_RX)) {
 		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, location);
 		if (ret) {
 			LOG_ERR("Location set failed. Err: %d", ret);

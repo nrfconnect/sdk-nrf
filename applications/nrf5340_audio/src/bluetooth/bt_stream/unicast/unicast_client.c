@@ -191,10 +191,28 @@ static void create_group(void)
 		pair_params[i].tx_param = &group_sink_stream_params[i];
 		/* Search streams for a matching source */
 		bool source_found = false;
+		struct server_store *sink_server = NULL;
+
+		ret = srv_store_from_stream_get(group_sink_stream_params[i].stream, &sink_server);
+		if (ret < 0) {
+			LOG_ERR("Failed to get server from sink stream %p: %d",
+				(void *)group_sink_stream_params[i].stream, ret);
+			srv_store_unlock(__func__);
+			return;
+		}
+
 		for (int j = stream_iterator; j < group_source_iterator; j++) {
-			/* Check if the source stream belongs to the same connection */
-			if (group_sink_stream_params[i].stream->conn ==
-			    group_source_stream_params[j].stream->conn) {
+			/* Check if the source stream belongs to the same device */
+			struct server_store *source_server = NULL;
+			ret = srv_store_from_stream_get(group_source_stream_params[j].stream,
+							&source_server);
+			if (ret < 0) {
+				LOG_ERR("Failed to get server from source stream %p: %d",
+					(void *)group_source_stream_params[j].stream, ret);
+				srv_store_unlock(__func__);
+				return;
+			}
+			if (sink_server == source_server) {
 				pair_params[i].rx_param = &group_source_stream_params[j];
 				source_found = true;
 				stream_iterator++;
@@ -206,6 +224,28 @@ static void create_group(void)
 			pair_params[i].rx_param = NULL;
 			stream_iterator++;
 		}
+	}
+
+	/* Check if there are unpaired source streams, if so; add them */
+	for (int i = 0; i < group_source_iterator; i++) {
+		/* Check if the source has already been added */
+		bool source_already_added = false;
+		for (int j = 0; j < stream_iterator; j++) {
+			if (pair_params[j].rx_param == &group_source_stream_params[i]) {
+				source_already_added = true;
+				break;
+			}
+		}
+
+		if (source_already_added) {
+			LOG_DBG("Source EP %d already added, skipping", i);
+			continue;
+		}
+
+		LOG_DBG("Adding unpaired source EP %d", i);
+		pair_params[stream_iterator].tx_param = NULL;
+		pair_params[stream_iterator].rx_param = &group_source_stream_params[i];
+		stream_iterator++;
 	}
 
 	group_param.params = pair_params;
@@ -284,8 +324,9 @@ static void cap_start_worker(struct k_work *work)
 		}
 
 		/* Check if the server has at least one valid preset set */
-		if (tmp_server->snk.lc3_preset[0].qos.pd == 0) {
-			LOG_DBG("Server %d has no valid sink preset, skipping", i);
+		if (tmp_server->snk.lc3_preset[0].qos.pd == 0 &&
+		    tmp_server->src.lc3_preset[0].qos.pd == 0) {
+			LOG_DBG("Server %d has no valid preset, skipping", i);
 			continue;
 		}
 
@@ -299,6 +340,16 @@ static void cap_start_worker(struct k_work *work)
 			for (int j = 0; j < ARRAY_SIZE(tmp_server->snk.cap_streams); j++) {
 				if (memcmp(stream_element,
 					   &tmp_server->snk.cap_streams[j].bap_stream,
+					   sizeof(struct bt_bap_stream)) == 0) {
+					LOG_DBG("Server %d already in unicast group, skipping", i);
+					server_found = true;
+					break;
+				}
+			}
+
+			for (int j = 0; j < ARRAY_SIZE(tmp_server->src.cap_streams); j++) {
+				if (memcmp(stream_element,
+					   &tmp_server->src.cap_streams[j].bap_stream,
 					   sizeof(struct bt_bap_stream)) == 0) {
 					LOG_DBG("Server %d already in unicast group, skipping", i);
 					server_found = true;
@@ -1447,6 +1498,7 @@ int unicast_client_send(struct net_buf const *const audio_frame, uint8_t cig_ind
 	}
 
 	if (num_active_streams == 0) {
+		/* This could happen if we had a sink + source and just the sink disconnected */
 		LOG_WRN("No active streams");
 		srv_store_unlock(__func__);
 		return -ECANCELED;

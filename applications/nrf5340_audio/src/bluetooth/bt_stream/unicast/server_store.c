@@ -742,8 +742,7 @@ int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 			continue;
 		}
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
-			if (memcmp(&tmp_server->snk.cap_streams[i].bap_stream, stream,
-				   sizeof(struct bt_bap_stream)) == 0) {
+			if (&tmp_server->snk.cap_streams[i].bap_stream == stream) {
 				*server = tmp_server;
 				LOG_DBG("Found server for sink stream %p "
 					"at index %d",
@@ -752,8 +751,7 @@ int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 			}
 		}
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
-			if (memcmp(&tmp_server->src.cap_streams[i].bap_stream, stream,
-				   sizeof(struct bt_bap_stream)) == 0) {
+			if (&tmp_server->src.cap_streams[i].bap_stream == stream) {
 				*server = tmp_server;
 				LOG_DBG("Found server for source stream %p "
 					"at index %d",
