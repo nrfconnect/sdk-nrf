@@ -283,12 +283,10 @@ static int tx_start(void)
 	uint8_t *buf;
 	size_t len;
 	int err;
-	// enum pm_device_state state = PM_DEVICE_STATE_OFF;
 
-	// pm_device_state_get(slm_uart_dev, &state);
-	// if (state != PM_DEVICE_STATE_ACTIVE) {
-	// 	return 1;
-	// }
+	if (!atomic_test_bit(&uart_state, SLM_TX_ENABLED_BIT)) {
+		return -EAGAIN;
+	}
 
 	len = ring_buf_get_claim(&tx_buf, &buf, ring_buf_capacity_get(&tx_buf));
 	err = uart_tx(slm_uart_dev, buf, len, SYS_FOREVER_US);

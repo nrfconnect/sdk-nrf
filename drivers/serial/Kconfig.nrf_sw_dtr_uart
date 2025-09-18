@@ -1,39 +1,26 @@
-# UART configuration
-
-# Copyright (c) 2025, Nordic Semiconductor ASA
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 config NRF_SW_DTR_UART
-	bool "Low Power UART using REQ/RDY lines"
+	bool "DTR UART implementation - DCE side"
 	select GPIO
 	select UART_ASYNC_API
 	select RING_BUFFER
 	select PM_DEVICE
 	help
-	  Low power UART implements UART API and extends standard UART
-	  communication with 2 pins protocol for receiver wake up and flow control.
+	  Data Terminal Ready (DTR) UART implements UART API and extends UART communication
+	  with DTR and Ring Indicator (RI) signals.
+
+	  Data Communication Equipment (DCE) is controlled by DTE (Data Terminal Equipment)
+	  using DTR signal. When DTR is deasserted, DCE will stop the UART communication and
+	  power down the UART peripheral. When DTR is asserted, DCE will power up the UART
+	  peripheral and start the UART communication.
+
+	  RI signal is used by DCE to notify DTE that data is available to read.
 
 if NRF_SW_DTR_UART
-
-config NRF_SW_DTR_UART_DTE_IDLE
-	bool "Enable DTE idle detection"
-	help
-	  When DTE has not sent or received data for NRF_SW_DTR_UART_DTE_IDLE_TIMEOUT_MS period,
-	  it will pull up DTR to force DCE to disable UART and then disables own UART.
-
-config NRF_SW_DTR_UART_DTE_IDLE_TIMEOUT_MS
-	int "DTE UART Idle Timeout (ms)"
-	default 1000
-	range 100 600000
-	help
-	  Idle detection timeout in milliseconds.
-
-config NRF_SW_DTR_UART_INIT_PRIORITY
-	int "Initialization priority"
-	default 45
-	help
-	  Initialization priority within POST_KERNEL level.
-
 
 module = NRF_SW_DTR_UART
 module-str = dtr uart
