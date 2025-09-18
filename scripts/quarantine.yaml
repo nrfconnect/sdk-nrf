@@ -101,3 +101,16 @@
   platforms:
     - nrf9160dk_nrf9160
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36569"
+
+- scenarios:
+    - sample.debug.memfault
+    - sample.debug.memfault.etb
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8480"
+
+- scenarios:
+    - sample.bluetooth.peripheral_mds
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8480"
