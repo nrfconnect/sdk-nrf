@@ -42,6 +42,71 @@ The sample supports the following MCUmgr transports by default:
 * Bluetooth
 * Serial (UART)
 
+A/B functionality
+=================
+
+When the A/B functionality is used, the device has two slots for the application: slot A and slot B.
+The slots are equivalent, and the device can boot from either of them.
+In the case of MCUboot, this is achieved by using the Direct XIP feature.
+Thus, note that the terms slot 0, primary slot, slot A and slot 1, secondary slot, slot B are used interchangeably throughout the documentation.
+This configuration allows a background update of the non-active slot while the application runs from the active slot.
+After the update is complete, the device can quickly switch to the updated slot on the next reboot.
+
+The following conditions decide which slot will be booted (active) on the next reboot:
+
+1. If one of the slots is not valid, the other slot is selected as active.
+#. If both slots are valid, the slot marked as "preferred" is selected as active.
+#. If both slots are valid and none is marked as "preferred," the slot with the higher version number is selected as active.
+#. If none of the above conditions is met, slot A is selected as active.
+
+You can set the preferred slot using the ``boot_request_set_preferred_slot`` function.
+Currently, this only sets the boot preference for a single reboot.
+
+Identifying the active slot
+---------------------------
+
+If the project uses the Partition Manager, the currently running slot can be identified by checking if ``CONFIG_NCS_IS_VARIANT_IMAGE`` is defined.
+If it is defined, the application is running from slot B.
+Otherwise, it is running from slot A.
+
+If the project does not use the Partition Manager (a configuration currently only supported on the nRF54H20), the currently running slot can be identified by comparing the address pointed `zephyr,code-partition` to specific node addresses defined in the device tree.
+The following node partitions are used by default:
+
+* ``slot0_partition`` - Application core, slot A
+* ``slot1_partition`` - Application core, slot B
+* ``cpurad_slot0_partition`` - Radio core, slot A
+* ``cpurad_slot1_partition`` - Radio core, slot B
+
+For example, verifying that the application is running from slot A can be done by using the following macro:
+
+.. code-block:: c
+
+    #define IS_RUNNING_FROM_SLOT_A \
+        (FIXED_PARTITION_NODE_OFFSET(DT_CHOSEN(zephyr_code_partition)) == \
+         FIXED_PARTITION_OFFSET(slot0_partition))
+
+.. _ab_build_files:
+
+Build files
+-----------
+
+When building for the nRF54H20, the merge slot feature is used if Direct XIP is enabled.
+This means that, for both slot A and slot B, the application image and the radio image are merged and treated as a single image by MCUboot.
+In this case, the following files should be sent to the device when performing an update:
+
+* :file:`build/zephyr/zephyr_secondary_app.merged.bin` - Contains the slot B image.
+  This file should be uploaded to the secondary slot when the device is running from slot A.
+* :file:`build/zephyr/zephyr.merged.bin` - Contains the slot A image.
+  This file should be uploaded to the primary slot when the device is running from slot B.
+
+If building on other supported platforms, where there is no separate radio core, only the application core is updated.
+In this case, the following MCUboot files for the application image are used:
+
+* :file:`build/mcuboot_secondary_app/zephyr/zephyr.signed.bin` -  Contains the slot B image.
+  This file should be uploaded to the secondary slot when the device is running from slot A.
+* :file:`build/ab/zephyr/zephyr.signed.bin` - Contains the slot A image.
+  This file should be uploaded to the primary slot when the device is running from slot B.
+
 User interface
 **************
 
@@ -105,6 +170,9 @@ To perform DFU using the `nRF Connect Device Manager`_ mobile app, complete the 
 .. include:: /app_dev/device_guides/nrf52/fota_update.rst
    :start-after: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_start
    :end-before: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
+
+Instead of using the :file:`dfu_application.zip` file, you can also send the appropriate binary file directly, as described in :ref:`ab_build_files`.
+Make sure to select the correct file based on the currently running slot.
 
 Dependencies
 ************
