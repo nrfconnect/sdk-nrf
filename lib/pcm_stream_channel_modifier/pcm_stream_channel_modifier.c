@@ -224,6 +224,11 @@ int pscm_interleave(void const *const input, size_t input_size, uint8_t channel,
 		return -EINVAL;
 	}
 
+	if (pcm_bit_depth % 8) {
+		LOG_ERR("PCM bit depth is not divisible by 8: %d", pcm_bit_depth);
+		return -EINVAL;
+	}
+
 	bytes_per_sample = pcm_bit_depth / 8;
 	step = bytes_per_sample * (output_channels - 1);
 	pointer_input = (uint8_t *)input;
@@ -256,6 +261,11 @@ int pscm_deinterleave(void const *const input, size_t input_size, uint8_t input_
 
 	if (output_size < (input_size / input_channels)) {
 		LOG_DBG("Output buffer too small to uninterleave input into");
+		return -EINVAL;
+	}
+
+	if (pcm_bit_depth % 8) {
+		LOG_ERR("PCM bit depth is not divisible by 8: %d", pcm_bit_depth);
 		return -EINVAL;
 	}
 

@@ -125,7 +125,7 @@ ZTEST(suite_pscm_int, test_pscm_interleave_api_parameters)
 
 	ret = pscm_interleave(input, input_size, channel, 12, &output, output_size,
 			      output_channels);
-	zassert_equal(ret, -EINVAL, "Failed interleave pcm_bit_depth not devisable by 8: ret %d",
+	zassert_equal(ret, -EINVAL, "Failed interleave pcm_bit_depth not divisible by 8: ret %d",
 		      ret);
 
 	ret = pscm_interleave(input, input_size, channel, 40, &output, output_size,
@@ -174,7 +174,7 @@ ZTEST(suite_pscm_deint, test_pscm_deinterleave_api_parameters)
 
 	ret = pscm_deinterleave(input, input_size, input_channels, channel, 12, &output,
 				output_size);
-	zassert_equal(ret, -EINVAL, "Failed deinterleave pcm_bit_depth not devisable by 8: ret %d",
+	zassert_equal(ret, -EINVAL, "Failed deinterleave pcm_bit_depth not divisible by 8: ret %d",
 		      ret);
 
 	ret = pscm_deinterleave(input, input_size, input_channels, channel, 40, &output,
