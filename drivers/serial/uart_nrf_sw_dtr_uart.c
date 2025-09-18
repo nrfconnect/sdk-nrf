@@ -30,37 +30,6 @@ LOG_MODULE_REGISTER(dtr_uart, CONFIG_NRF_SW_DTR_UART_LOG_LEVEL);
 
 #define DT_DRV_COMPAT nordic_nrf_sw_dtr_uart
 
-enum dtr_timeout_event {
-
-	/* No timeout pending. */
-	DTR_TIMEOUT_NO_TIMEOUT = 0,
-
-	/* RI timeout. */
-	DTR_TIMEOUT_RI,
-
-	/* DTR activation timeout. */
-	DTR_TIMEOUT_DTR_ACTIVATION,
-
-	/* DTR idle timeout. */
-	DTR_TIMEOUT_DTR_IDLE,
-};
-
-static const char *dtr_timeout_str(enum dtr_timeout_event timeout)
-{
-	switch (timeout) {
-	case DTR_TIMEOUT_NO_TIMEOUT:
-		return "NO TIMEOUT";
-	case DTR_TIMEOUT_RI:
-		return "RI TIMEOUT";
-	case DTR_TIMEOUT_DTR_ACTIVATION:
-		return "DTR ACTIVATION TIMEOUT";
-	case DTR_TIMEOUT_DTR_IDLE:
-		return "DTR IDLE TIMEOUT";
-	}
-
-	return "";
-}
-
 /* Low power uart structure. */
 struct dtr_uart_data {
 
@@ -87,12 +56,11 @@ struct dtr_uart_data {
 	bool dtr_state;
 	struct gpio_callback dtr_cb;
 
-	/* Worker and message queue for DTR events */
+	/* Worker for processing DTR signal changes */
 	struct k_work_delayable dtr_work;
 
-	/* One timeout event can run at a time */
-	enum dtr_timeout_event dtr_timeout_event;
-	struct k_work_delayable dtr_timeout_work;
+	/* Worker for deactivating RI signal. */
+	struct k_work_delayable ri_work;
 };
 
 /* Forward declarations. */
@@ -195,31 +163,6 @@ static void activate_rx(struct dtr_uart_data *data)
 	user_callback(get_dev(data), &evt);
 }
 
-/* Timeout for scheduled task. */
-static bool set_dtr_timeout_event(struct dtr_uart_data *data, enum dtr_timeout_event timeout,
-				  k_timeout_t duration)
-{
-	if (data->dtr_timeout_event == timeout) {
-		LOG_INF("DTR timeout event already set to same value");
-		k_work_reschedule(&data->dtr_timeout_work, duration);
-		return true;
-	} else if (data->dtr_timeout_event == DTR_TIMEOUT_NO_TIMEOUT) {
-		LOG_INF("DTR timeout event set to %s", dtr_timeout_str(timeout));
-		data->dtr_timeout_event = timeout;
-		k_work_schedule(&data->dtr_timeout_work, duration);
-		return true;
-	}
-
-	LOG_WRN("DTR timeout event already set");
-	return false;
-}
-
-static void cancel_dtr_timeout_event(struct dtr_uart_data *data)
-{
-	data->dtr_timeout_event = DTR_TIMEOUT_NO_TIMEOUT;
-	k_work_cancel_delayable(&data->dtr_timeout_work);
-}
-
 static int power_on_uart(struct dtr_uart_data *data)
 {
 	const struct dtr_uart_config *config = get_dev_config(get_dev(data));
@@ -264,33 +207,19 @@ static int power_off_uart(struct dtr_uart_data *data)
 }
 
 /**************************** WORKERS **********************************/
-static void dtr_timeout_work_fn(struct k_work *work)
+static void ri_work_fn(struct k_work *work)
 {
 	struct k_work_delayable *delayed_work = CONTAINER_OF(work, struct k_work_delayable, work);
 	struct dtr_uart_data *data =
-		CONTAINER_OF(delayed_work, struct dtr_uart_data, dtr_timeout_work);
+		CONTAINER_OF(delayed_work, struct dtr_uart_data, ri_work);
 
-	LOG_INF("DTR timeout event \"%s\" in state %d", dtr_timeout_str(data->dtr_timeout_event),
-		data->dtr_state);
-
-	switch (data->dtr_timeout_event) {
-	case DTR_TIMEOUT_RI:
-		gpio_pin_set_dt(&get_dev_config(get_dev(data))->ri_gpio, 0);
-		break;
-	case DTR_TIMEOUT_DTR_ACTIVATION:
-		/* TODO: handle error */
-	default:
-		LOG_WRN("Unknown timeout event: %d", data->dtr_timeout_event);
-		break;
-	}
-
-	data->dtr_timeout_event = DTR_TIMEOUT_NO_TIMEOUT;
+	gpio_pin_set_dt(&get_dev_config(get_dev(data))->ri_gpio, 0);
 }
 
 static void ri_start(struct dtr_uart_data *data)
 {
 	gpio_pin_set_dt(&get_dev_config(get_dev(data))->ri_gpio, 1);
-	set_dtr_timeout_event(data, DTR_TIMEOUT_RI, K_MSEC(1000));
+	k_work_schedule(&data->ri_work, K_MSEC(1000));
 }
 
 /******************************* GPIO ********************************/
@@ -319,7 +248,8 @@ static void dtr_work_handler(struct k_work *work)
 	data->dtr_state = asserted;
 
 	if (asserted) {
-		cancel_dtr_timeout_event(data);
+		/* Stop RI signal. */
+		k_work_cancel_delayable(&data->ri_work);
 		gpio_pin_set_dt(&get_dev_config(get_dev(data))->ri_gpio, 0);
 
 		/* Power on UART module */
@@ -447,7 +377,7 @@ static int dtr_uart_init(const struct device *dev)
 	}
 
 	k_work_init_delayable(&data->dtr_work, dtr_work_handler);
-	k_work_init_delayable(&data->dtr_timeout_work, dtr_timeout_work_fn);
+	k_work_init_delayable(&data->ri_work, ri_work_fn);
 
 	k_sem_init(&data->rx_disable_sem, 0, 1);
 
@@ -465,6 +395,8 @@ static int dtr_uart_init(const struct device *dev)
 	data->dtr_state = initial_dtr_state;
 
 	/* TODO: How to do this from Zephyr API: Set sense to wake the DCE from possible shutdown */
+	/* MARKUS TODO: -> Possibly through pin_trigger_enable, which is called in interrupt set.
+	 * What if we just don't disable interrupt when shutting down? */
 	/* nrf_gpio_cfg_sense_set(data->dtr_pin, NRF_GPIO_PIN_SENSE_LOW); */
 
 	/* Set up GPIO interrupt for DTR changes */
@@ -527,7 +459,7 @@ static int api_tx(const struct device *dev, const uint8_t *buf, size_t len, int3
 	data->tx_buf = buf;
 	data->tx_len = len;
 
-	/* DCE - Start RI pulse. */
+	/* Start RI pulse. */
 	ri_start(data);
 
 	/* Buffer the data until DTR is down. */
