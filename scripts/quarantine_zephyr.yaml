@@ -246,6 +246,12 @@
     - nrf54lm20dk/nrf54lm20a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35490"
 
+- scenarios:
+    - net.http.server.tls.toolchain
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35519"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
