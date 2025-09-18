@@ -112,3 +112,16 @@
     - nrf54lm20dk/nrf54lm20a/cpuapp
     - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35468"
+
+- scenarios:
+    - sample.nrf7002_eb.thingy53.shell
+  platforms:
+    - thingy53/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35521"
+
+- scenarios:
+    - applications.machine_learning.zrelease
+    - applications.machine_learning.zdebug
+  platforms:
+    - thingy53/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35522"
