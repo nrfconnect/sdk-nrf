@@ -95,3 +95,68 @@
   platforms:
     - nrf52840dk/nrf52840
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29460"
+
+- scenarios:
+    - sample.bluetooth.mesh.light_ctrl.emds
+  platforms:
+    - thingy53/nrf5340/cpuapp
+
+- scenarios:
+    - applications.matter_weather_station.debug
+  platforms:
+    - thingy53/nrf5340/cpuapp
+
+- scenarios:
+    - event_manager_proxy.icmsg.cpuflpr
+  platforms:
+    - nrf54lv10dk/nrf54lv10a/cpuapp
+
+- scenarios:
+    - sample.debug.memfault
+    - sample.debug.memfault.etb
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8480"
+
+- scenarios:
+    - sample.bluetooth.peripheral_mds
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8480"
+
+- scenarios:
+    - bluetooth.controller
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8565"
+
+- scenarios:
+    - sample.bluetooth.fast_pair.*
+    - sample.bluetooth.mesh.*
+    - sample.dfu.dfu_target
+    - sample.matter.*
+    - sample.mcuboot.*
+    - mcuboot.*
+    - sample.nrf_security.sha256.integration
+    - sample.find_my.switchable_networks.*
+    - sample.find_my.locator_tag.*
+    - bluetooth.mesh.metadata_extraction_.*
+    - nrf_compress.*
+    - sample.cellular.smp_svr
+    - mcuboot.direct_xip
+  platforms:
+    - nrf52840dk/nrf52840
+    - nrf52840dongle/nrf52840
+    - nrf9160dk@0.14.0/nrf52840
+    - nrf9160dk@0.14.0/nrf9160
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8562"
+
+- scenarios:
+    - applications.matter_weather_station.nrf7002eb
+    - sample.nrf7002_eb.thingy53.*
+    - sample.sensor.bme68x.*
+    - sample.bluetooth.peripheral_.*
+    - sample.bluetooth.mesh.*
+  platforms:
+    - thingy53/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8605"
