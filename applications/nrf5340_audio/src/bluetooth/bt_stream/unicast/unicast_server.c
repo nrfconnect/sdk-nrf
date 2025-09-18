@@ -740,6 +740,7 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 		csip_param.rank = CSIP_HR_RANK;
 	} else if (location == (BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT)) {
 		csip_param.rank = CSIP_HL_RANK;
+		csip_param.set_size = 1;
 	} else {
 		LOG_ERR("Location not supported");
 		return -ECANCELED;

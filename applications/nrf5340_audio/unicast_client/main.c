@@ -350,7 +350,7 @@ static void le_audio_msg_sub_thread(void)
 				}
 			}
 
-			if (num_conn < CONFIG_BT_MAX_CONN) {
+			if (num_conn < CONFIG_BT_MAX_CONN && num_filled < msg.set_size) {
 				/* Room for more connections, start scanning again */
 				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL,
 							 BRDCAST_ID_NOT_USED);
