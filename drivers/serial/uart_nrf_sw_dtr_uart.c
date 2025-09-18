@@ -42,6 +42,7 @@ struct dtr_uart_data {
 	/* Current TX buffer. */
 	const uint8_t *tx_buf;
 	size_t tx_len;
+	bool tx_started;
 
 	bool app_rx_enable;
 	bool rx_active;
@@ -89,6 +90,13 @@ static inline const struct device *get_dev(struct dtr_uart_data *data)
 	return data->dev;
 }
 
+static void tx_complete(struct dtr_uart_data *data)
+{
+	data->tx_started = false;
+	data->tx_buf = NULL;
+	data->tx_len = 0;
+}
+
 static void activate_tx(struct dtr_uart_data *data)
 {
 	const struct dtr_uart_config *config = get_dev_config(get_dev(data));
@@ -96,35 +104,53 @@ static void activate_tx(struct dtr_uart_data *data)
 	if (data->tx_buf && data->tx_len > 0) {
 		int err;
 
+		data->tx_started = true;
 		err = uart_tx(config->uart, data->tx_buf, data->tx_len, SYS_FOREVER_US);
-		if (err < 0) {
-			LOG_ERR("TX: Not started (error: %d)", err);
-			// tx_complete(data);
+		if (err) {
+			LOG_ERR("TX: Not started (%d).", err);
+
+			struct uart_event evt = {
+				.type = UART_TX_ABORTED,
+				.data.tx.buf = data->tx_buf,
+				.data.tx.len = 0,
+			};
+
+			tx_complete(data);
+			user_callback(get_dev(data), &evt);
 		}
 	}
 }
 
-static void deactivate_tx(struct dtr_uart_data *data)
+static int deactivate_tx(struct dtr_uart_data *data)
 {
 	const struct dtr_uart_config *config = get_dev_config(get_dev(data));
+	int err;
 
-	// MARKUS TODO: This needs to take care of scenario where we have not yet sent at all.
-	if (data->tx_buf) {
-		int err;
+	// MARKUS TODO: Atomic.
+	if (data->tx_buf && !data->tx_started) {
+		LOG_DBG("TX: Abort - Before started.");
 
-		// MARKUS TODO: We must wait for the abort to take place before we disable UART.
-		err = uart_tx_abort(config->uart);
-		if (err < 0) {
-			LOG_ERR("TX: Abort (error: %d)", err);
-			// tx_complete(data);
-		}
+		struct uart_event evt = {
+			.type = UART_TX_ABORTED,
+			.data.tx.buf = data->tx_buf,
+			.data.tx.len = 0,
+		};
+		tx_complete(data);
+		user_callback(get_dev(data), &evt);
+		return 0;
 	}
-}
 
-static void tx_complete(struct dtr_uart_data *data)
-{
-	data->tx_buf = NULL;
-	data->tx_len = 0;
+	err = uart_tx_abort(config->uart);
+	if (err == 0) {
+		LOG_DBG("TX: Abort.");
+	} else if (err == -EFAULT) {
+		LOG_DBG("TX: Abort - No active transfer.");
+	} else {
+		/* We assume that UART_TX_ABORTED is sent. */
+		LOG_ERR("TX: Abort (%d).", err);
+	}
+
+	return err;
 }
 
 static int deactivate_rx(struct dtr_uart_data *data)
@@ -221,8 +247,6 @@ static void ri_start(struct dtr_uart_data *data)
 	gpio_pin_set_dt(&get_dev_config(get_dev(data))->ri_gpio, 1);
 	k_work_schedule(&data->ri_work, K_MSEC(1000));
 }
-
-/******************************* GPIO ********************************/
 
 static void uart_dtr_input_gpio_callback(const struct device *port, struct gpio_callback *cb,
 					 uint32_t pins)
@@ -468,7 +492,9 @@ static int api_tx(const struct device *dev, const uint8_t *buf, size_t len, int3
 
 static int api_tx_abort(const struct device *dev)
 {
-	return -ENOTSUP;
+	struct dtr_uart_data *data = get_dev_data(dev);
+
+	return deactivate_tx(data);
 }
 
 /* Application calls this when it is ready to receive data. */
@@ -483,8 +509,8 @@ static int api_rx_enable(const struct device *dev, uint8_t *buf, size_t len, int
 		LOG_ERR("RX already enabled");
 		return -EBUSY;
 	}
-
 	data->app_rx_enable = true;
+
 	if (!data->dtr_state) {
 		struct uart_event evt = {
 			.type = UART_RX_BUF_RELEASED,
