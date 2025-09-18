@@ -214,34 +214,34 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35402"
 
 - scenarios:
-    - sample.mgmt.osdp.peripheral_device.sample.mgmt.osdp.peripheral_device
-    - sample.mgmt.osdp.control_panel_sc.sample.mgmt.osdp.control_panel_sc
-    - sample.mgmt.osdp.peripheral_device_sc.sample.mgmt.osdp.peripheral_device_sc
-    - sample.mgmt.osdp.control_panel.sample.mgmt.osdp.control_panel
+    - sample.mgmt.osdp.peripheral_device
+    - sample.mgmt.osdp.control_panel_sc
+    - sample.mgmt.osdp.peripheral_device_sc
+    - sample.mgmt.osdp.control_panel
   platforms:
     - nrf54lm20dk/nrf54lm20a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35494"
 
 - scenarios:
-    - sample.drivers.crypto.mbedtls.sample.drivers.crypto.mbedtls
+    - sample.drivers.crypto.mbedtls
   platforms:
     - nrf54lm20dk/nrf54lm20a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35493"
 
 - scenarios:
-    - mgmt.mcumgr.fs.mgmt.hash.supported.sha256.mgmt.mcumgr.fs.mgmt.hash.supported.sha256
+    - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
   platforms:
     - nrf54lm20dk/nrf54lm20a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35492"
 
 - scenarios:
-    - kernel.common.misra.kernel.common.misra
+    - kernel.common.misra
   platforms:
     - nrf54lm20dk/nrf54lm20a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35491"
 
 - scenarios:
-    - drivers.i2c.target_api.single_role.drivers.i2c.target_api.single_role
+    - drivers.i2c.target_api.single_role
   platforms:
     - nrf54lm20dk/nrf54lm20a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35490"
