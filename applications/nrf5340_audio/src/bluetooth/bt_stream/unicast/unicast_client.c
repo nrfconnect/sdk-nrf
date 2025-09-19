@@ -1352,7 +1352,7 @@ int unicast_client_stop(uint8_t cig_index)
 				      CONFIG_BT_MAX_CONN];
 	static struct bt_cap_unicast_audio_stop_param param;
 
-	ret = k_sem_take(&sem_cap_procedure_proceed, K_FOREVER);
+	ret = k_sem_take(&sem_cap_procedure_proceed, CAP_PROCED_SEM_WAIT_TIME_MS);
 	if (ret) {
 		LOG_ERR("Failed to take sem_cap_procedure_proceed: %d", ret);
 		return ret;
