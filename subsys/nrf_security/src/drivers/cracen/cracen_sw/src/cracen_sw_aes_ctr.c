@@ -42,11 +42,6 @@ psa_status_t cracen_sw_aes_ctr_setup(cracen_cipher_operation_t *operation,
 {
 	psa_status_t status;
 
-	/* Validate AES key size */
-	if (key_buffer_size != 16 && key_buffer_size != 24 && key_buffer_size != 32) {
-		return PSA_ERROR_NOT_SUPPORTED;
-	}
-
 	/* Verify key buffer fits in operation structure */
 	if (key_buffer_size > sizeof(operation->key_buffer)) {
 		return PSA_ERROR_INVALID_ARGUMENT;
