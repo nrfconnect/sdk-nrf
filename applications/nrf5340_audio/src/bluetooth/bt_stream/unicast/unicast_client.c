@@ -444,7 +444,7 @@ static bool sink_parse_cb(struct bt_data *data, void *user_data)
 		supported_sample_rates_print(lc3_freq_bit, BT_AUDIO_DIR_SINK);
 
 		/* Try with the preferred sample rate first */
-		switch (CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE) {
+		switch (CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE) {
 		case BT_AUDIO_CODEC_CFG_FREQ_48KHZ:
 			if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
 				if (bt_audio_codec_cfg_get_freq(&lc3_preset_sink.codec_cfg) !=
@@ -622,7 +622,7 @@ static bool source_parse_cb(struct bt_data *data, void *user_data)
 		supported_sample_rates_print(lc3_freq_bit, BT_AUDIO_DIR_SOURCE);
 
 		/* Try with the preferred sample rate first */
-		switch (CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE) {
+		switch (CONFIG_BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE) {
 		case BT_AUDIO_CODEC_CFG_FREQ_48KHZ:
 			if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
 				lc3_preset_source = lc3_preset_source_48_4_1;
