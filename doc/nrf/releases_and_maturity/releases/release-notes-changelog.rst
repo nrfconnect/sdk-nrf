@@ -316,6 +316,8 @@ Bluetooth Mesh samples
 
 * :ref:`bluetooth_mesh_sensor_client` sample:
 
+  * Added polling toggle to **Button 1** (**Button 0** on nRF54 DKs) to start/stop the periodic Sensor Get loop, ensuring the functionality is available on all supported devices including single-button hardware.
+
   * Updated:
 
     * To demonstrate the Bluetooth :ref:`ug_bt_mesh_nlc` HVAC Integration profile.
@@ -325,6 +327,10 @@ Bluetooth Mesh samples
       * :ref:`bluetooth_mesh_light_lc`
       * :ref:`bluetooth_mesh_sensor_server`
       * :ref:`bluetooth_mesh_sensor_client`
+
+    * Button functions.
+      Assignments are shifted down one index to accommodate the new polling toggle.
+      The descriptor action has been removed from button actions but is still available through mesh shell commands.
 
 Bluetooth Fast Pair samples
 ---------------------------
