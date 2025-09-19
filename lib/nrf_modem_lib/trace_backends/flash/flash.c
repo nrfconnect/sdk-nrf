@@ -18,12 +18,15 @@
 
 LOG_MODULE_REGISTER(modem_trace_backend, CONFIG_MODEM_TRACE_BACKEND_LOG_LEVEL);
 
-#define EXT_FLASH_DEVICE DEVICE_DT_GET(DT_ALIAS(ext_flash))
-#define TRACE_OFFSET FLASH_AREA_OFFSET(modem_trace)
-#define TRACE_SIZE CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_PARTITION_SIZE
+/* Partition offset is implicit in flash_area */
 
-#define BUF_SIZE CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_BUF_SIZE
+#if USE_PARTITION_MANAGER
+#define MODEM_TRACE_PARTITION	MODEM_TRACE
+#else
+#define MODEM_TRACE_PARTITION	modem_trace
+#endif
 
+#define BUF_SIZE		CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_BUF_SIZE
 #define TRACE_MAGIC_INITIALIZED 0x152ac523
 
 static trace_backend_processed_cb trace_processed_callback;
@@ -155,7 +158,7 @@ static int trace_flash_erase(void)
 
 	LOG_INF("Erasing external flash");
 
-	err = flash_area_erase(modem_trace_area, 0, TRACE_SIZE);
+	err = flash_area_erase(modem_trace_area, 0, modem_trace_area->fa_size);
 	if (err) {
 		LOG_ERR("flash_area_erase error: %d", err);
 	}
@@ -176,7 +179,7 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 
 	trace_processed_callback = trace_processed_cb;
 
-	err = flash_area_open(FIXED_PARTITION_ID(MODEM_TRACE), &modem_trace_area);
+	err = flash_area_open(FIXED_PARTITION_ID(MODEM_TRACE_PARTITION), &modem_trace_area);
 	if (err) {
 		LOG_ERR("flash_area_open error:  %d", err);
 		return -ENODEV;
@@ -211,7 +214,7 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 	uint32_t f_sector_cnt = sizeof(trace_flash_sectors) / sizeof(struct flash_sector);
 
 	err = flash_area_get_sectors(
-		FIXED_PARTITION_ID(MODEM_TRACE), &f_sector_cnt, trace_flash_sectors);
+		FIXED_PARTITION_ID(MODEM_TRACE_PARTITION), &f_sector_cnt, trace_flash_sectors);
 	if (err) {
 		LOG_ERR("flash_area_get_sectors error: %d", err);
 		return err;
@@ -227,7 +230,7 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 	LOG_DBG("Sectors: %d, first sector: %p, sector size: %d",
 		f_sector_cnt, trace_flash_sectors, trace_flash_sectors[0].fs_size);
 
-	err = fcb_init(FIXED_PARTITION_ID(MODEM_TRACE), &trace_fcb);
+	err = fcb_init(FIXED_PARTITION_ID(MODEM_TRACE_PARTITION), &trace_fcb);
 	if (err) {
 		LOG_ERR("fcb_init error: %d", err);
 		return err;
@@ -243,7 +246,8 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 
 size_t trace_backend_data_size(void)
 {
-	return trace_bytes_unread;
+	/* Ensure we never report more data than the partition can hold */
+	return MIN(trace_bytes_unread, modem_trace_area->fa_size);
 }
 
 /* Read from offset
