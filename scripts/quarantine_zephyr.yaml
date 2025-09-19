@@ -246,6 +246,18 @@
     - nrf54lm20dk/nrf54lm20a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35490"
 
+- scenarios:
+    - libraries.encoding.jwt.rsa.psa
+  platforms:
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35542"
+
+- scenarios:
+    - libraries.encoding.jwt.rsa.legacy
+  platforms:
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35543"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:

@@ -103,6 +103,8 @@
 - scenarios:
     - sample.bluetooth.peripheral_mds
   platforms:
+    - nrf52dk/nrf52832
+    - nrf52833dk/nrf52833
     - nrf52840dk/nrf52840
     - nrf54l15dk/nrf54l05/cpuapp
     - nrf54l15dk/nrf54l10/cpuapp
