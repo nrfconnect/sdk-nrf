@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if SOC_SERIES_NRF53X
+
+# These options are only needed to set the needed sysbuild configuration
+# options specific for the nRF53 board without the need to add a
+# nRF53 specific configuration in sample.yaml
+# If you are building a standalone application for nRF53, you should
+# remove this file and select the options directly in sysbuild.conf using
+# the following code:
+
+# SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y
+# SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE=y
+# SB_CONFIG_SECURE_BOOT_NETCORE=y
+# SB_CONFIG_NETCORE_APP_UPDATE=y
+
+config DFU_MULTI_IMAGE_SAMPLE_NRF53
+	bool
+	default y
+	select MCUBOOT_NRF53_MULTI_IMAGE_UPDATE
+	select SECURE_BOOT_NETCORE
+	select NETCORE_APP_UPDATE
+
+# Simulteanous update is performed - test is not supported
+choice MCUBOOT_MODE
+	default MCUBOOT_MODE_OVERWRITE_ONLY
+
+endchoice
+
+endif
+
+source "share/sysbuild/Kconfig"
