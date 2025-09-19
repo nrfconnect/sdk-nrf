@@ -43,8 +43,6 @@ The nRF54H20 boot sequence has two key features:
 Boot stages
 ***********
 
-.. to review
-
 The Secure Domain boots the System Controller, the application core, and the radio core:
 
 * VPRs (PPR, FLPR) are started by their owners when the owners decide.
@@ -71,8 +69,11 @@ The following is a description of the boot sequence steps:
 #. If IronSide SE signature is valid, the Secure Domain ROM reconfigures ROM memory as non-executable and non-readable and then branches into the firmware stored in MRAM.
    This is the first step of the primary boot stage where a user-installable firmware component is executed by any CPU in the system.
 
-#. At the end of the primary boot stage, IronSide SE configures and restricts access to all global resources, and initiates the secondary boot stage.
+#. IronSide SE configures and restricts access to all global resources.
 
-#. In the secondary boot stage, SysCtrl and other local domains are released from reset and in parallel start to execute their respective MRAM firmware components.
+#. SysCtrl and other local domains are released from reset and in parallel start to execute their respective MRAM firmware components.
 
 #. Each of the local domains is responsible to configure its local resources partitioning.
+
+.. note::
+   To better understand the boot process and how |ISE| works, it is strongly suggested to read the entire :ref:`ug_nrf54h20_ironside` documentation page.
