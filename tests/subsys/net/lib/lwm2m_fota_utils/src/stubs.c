@@ -84,7 +84,7 @@ DEFINE_FAKE_VALUE_FUNC(int, dfu_target_modem_delta_reset);
 DEFINE_FAKE_VALUE_FUNC(bool, dfu_target_modem_delta_identify, const void *const);
 DEFINE_FAKE_VALUE_FUNC(int, modem_info_string_get, enum modem_info, char *, const size_t);
 DEFINE_FAKE_VALUE_FUNC(int, boot_read_bank_header, uint8_t, struct mcuboot_img_header *, size_t);
-DEFINE_FAKE_VOID_FUNC(clear_attrs, void *);
+DEFINE_FAKE_VOID_FUNC(clear_attrs, uint8_t, void *);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_notify_observer_path, const struct lwm2m_obj_path *);
 DEFINE_FAKE_VOID_FUNC(engine_remove_observer_by_id, uint16_t, int32_t);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_firmware_start_transfer, uint16_t, char *);

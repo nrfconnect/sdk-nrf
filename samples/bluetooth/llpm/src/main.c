@@ -9,11 +9,7 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/types.h>
 
-#if defined(CONFIG_USB_DEVICE_STACK)
-#include <zephyr/usb/usb_device.h>
 #include <zephyr/drivers/uart.h>
-#endif
-
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/gatt.h>
@@ -426,13 +422,9 @@ int main(void)
 {
 	int err;
 
-#if defined(CONFIG_USB_DEVICE_STACK)
+#if DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_console), zephyr_cdc_acm_uart)
 	const struct device *uart_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 	uint32_t dtr = 0;
-
-	if (usb_enable(NULL)) {
-		return 0;
-	}
 
 	/* Poll if the DTR flag was set, optional */
 	while (!dtr) {

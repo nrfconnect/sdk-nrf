@@ -12,7 +12,6 @@
 #include <zephyr/types.h>
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/uart.h>
-#include <zephyr/usb/usb_device.h>
 
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
@@ -241,14 +240,6 @@ static int uart_init(void)
 
 	if (!device_is_ready(uart)) {
 		return -ENODEV;
-	}
-
-	if (IS_ENABLED(CONFIG_USB_DEVICE_STACK)) {
-		err = usb_enable(NULL);
-		if (err && (err != -EALREADY)) {
-			LOG_ERR("Failed to enable USB");
-			return err;
-		}
 	}
 
 	rx = k_malloc(sizeof(*rx));

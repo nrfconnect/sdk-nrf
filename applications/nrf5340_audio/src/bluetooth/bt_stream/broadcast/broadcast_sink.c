@@ -562,7 +562,7 @@ static bool is_any_active_streams(void)
 {
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		if (audio_streams[i].ep != NULL &&
-		    audio_streams[i].ep->status.state == BT_BAP_EP_STATE_STREAMING) {
+		    audio_streams[i].ep->state == BT_BAP_EP_STATE_STREAMING) {
 			return true;
 		}
 	}

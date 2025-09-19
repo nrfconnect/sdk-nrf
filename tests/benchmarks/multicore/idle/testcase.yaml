@@ -103,6 +103,8 @@ tests:
       - CONFIG_FIRST_SLEEP_OFFSET=y
       - CONFIG_PM=y
       - CONFIG_PM_S2RAM=y
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - CONFIG_POWEROFF=y
       - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
       - CONFIG_CONSOLE=n
@@ -110,6 +112,8 @@ tests:
       - CONFIG_SERIAL=n
       - CONFIG_GPIO=n
       - CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_PM_DEVICE=y
+      - remote_CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - remote_CONFIG_PM=y
       - remote_CONFIG_POWEROFF=y
       - remote_CONFIG_CONSOLE=n
@@ -135,6 +139,8 @@ tests:
       - CONFIG_FIRST_SLEEP_OFFSET=y
       - CONFIG_PM=y
       - CONFIG_PM_S2RAM=y
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - CONFIG_POWEROFF=y
       - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
       - CONFIG_CONSOLE=n
@@ -143,6 +149,8 @@ tests:
       - CONFIG_GPIO=n
       - CONFIG_BOOT_BANNER=n
       - CONFIG_FPU=y
+      - remote_CONFIG_PM_DEVICE=y
+      - remote_CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - remote_CONFIG_PM=y
       - remote_CONFIG_POWEROFF=y
       - remote_CONFIG_CONSOLE=n
@@ -168,6 +176,8 @@ tests:
       - CONFIG_FIRST_SLEEP_OFFSET=y
       - CONFIG_PM=y
       - CONFIG_PM_S2RAM=y
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - CONFIG_POWEROFF=y
       - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
       - CONFIG_CONSOLE=n
@@ -175,6 +185,8 @@ tests:
       - CONFIG_SERIAL=n
       - CONFIG_GPIO=n
       - CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_PM_DEVICE=y
+      - remote_CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - remote_CONFIG_PM=y
       - remote_CONFIG_POWEROFF=y
       - remote_CONFIG_CONSOLE=n
@@ -201,6 +213,8 @@ tests:
       - CONFIG_FIRST_SLEEP_OFFSET=y
       - CONFIG_PM=y
       - CONFIG_PM_S2RAM=y
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - CONFIG_POWEROFF=y
       - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
       - CONFIG_CONSOLE=n
@@ -208,6 +222,8 @@ tests:
       - CONFIG_SERIAL=n
       - CONFIG_GPIO=n
       - CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_PM_DEVICE=y
+      - remote_CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - remote_CONFIG_PM=y
       - remote_CONFIG_POWEROFF=y
       - remote_CONFIG_CONSOLE=n
@@ -234,6 +250,8 @@ tests:
       - CONFIG_FIRST_SLEEP_OFFSET=y
       - CONFIG_PM=y
       - CONFIG_PM_S2RAM=y
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - CONFIG_POWEROFF=y
       - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
       - CONFIG_CONSOLE=n
@@ -241,6 +259,8 @@ tests:
       - CONFIG_SERIAL=n
       - CONFIG_GPIO=n
       - CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_PM_DEVICE=y
+      - remote_CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - remote_CONFIG_PM=y
       - remote_CONFIG_POWEROFF=y
       - remote_CONFIG_CONSOLE=n
@@ -266,6 +286,8 @@ tests:
       - CONFIG_FIRST_SLEEP_OFFSET=y
       - CONFIG_PM=y
       - CONFIG_PM_S2RAM=y
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - CONFIG_POWEROFF=y
       - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
       - CONFIG_CONSOLE=n
@@ -273,6 +295,8 @@ tests:
       - CONFIG_SERIAL=n
       - CONFIG_GPIO=n
       - CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_PM_DEVICE=y
+      - remote_CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - remote_CONFIG_PM=y
       - remote_CONFIG_POWEROFF=y
       - remote_CONFIG_CONSOLE=n
@@ -299,6 +323,8 @@ tests:
       - CONFIG_FIRST_SLEEP_OFFSET=y
       - CONFIG_PM=y
       - CONFIG_PM_S2RAM=y
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - CONFIG_POWEROFF=y
       - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
       - CONFIG_CONSOLE=n
@@ -306,6 +332,8 @@ tests:
       - CONFIG_SERIAL=n
       - CONFIG_GPIO=n
       - CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_PM_DEVICE=y
+      - remote_CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - remote_CONFIG_PM=y
       - remote_CONFIG_POWEROFF=y
       - remote_CONFIG_CONSOLE=n

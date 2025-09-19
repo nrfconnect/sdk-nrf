@@ -48,9 +48,6 @@ endif # BUILD_WITH_TFM
 DT_CHOSEN_Z_CODE_PARTITION := zephyr,code-partition
 DT_CHOSEN_Z_SRAM_PARTITION := zephyr,sram-secure-partition
 
-config NFCT_PINS_AS_GPIOS
-	default y
-
 if BOARD_THINGY91X_NRF5340_CPUAPP && TRUSTED_EXECUTION_SECURE
 
 config FLASH_LOAD_SIZE
