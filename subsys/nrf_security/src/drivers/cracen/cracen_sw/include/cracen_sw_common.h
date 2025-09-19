@@ -17,6 +17,7 @@
  * This function is designed for CRACEN software workarounds that need
  * AES-ECB encryption functionality.
  *
+ * @param blkciph The block cipher struct.
  * @param key The AES key reference.
  * @param input Pointer to the input block.
  * @param input_length Length of the input block.
@@ -26,15 +27,16 @@
  *
  * @retval psa_status_t PSA_SUCCESS on success, error code otherwise.
  */
-psa_status_t cracen_aes_ecb_encrypt(const struct sxkeyref *key, const uint8_t *input,
-			      size_t input_length, uint8_t *output, size_t output_size,
-			      size_t *output_length);
+psa_status_t cracen_aes_ecb_encrypt(struct sxblkcipher *blkciph, const struct sxkeyref *key,
+				    const uint8_t *input, size_t input_length, uint8_t *output,
+				    size_t output_size, size_t *output_length);
 
 /** @brief Decrypt a single AES block using ECB mode.
  *
  * This function is designed for CRACEN software workarounds that need
  * AES-ECB decryption functionality.
  *
+ * @param blkciph The block cipher struct.
  * @param key The AES key reference.
  * @param input Pointer to the input block.
  * @param input_length Length of the input block.
@@ -44,22 +46,23 @@ psa_status_t cracen_aes_ecb_encrypt(const struct sxkeyref *key, const uint8_t *i
  *
  * @retval psa_status_t PSA_SUCCESS on success, error code otherwise.
  */
-psa_status_t cracen_aes_ecb_decrypt(const struct sxkeyref *key, const uint8_t *input,
-			      size_t input_length, uint8_t *output, size_t output_size,
-			      size_t *output_length);
+psa_status_t cracen_aes_ecb_decrypt(struct sxblkcipher *blkciph, const struct sxkeyref *key,
+				    const uint8_t *input, size_t input_length, uint8_t *output,
+				    size_t output_size, size_t *output_length);
 
 /** @brief Perform a single AES block encryption operation.
  *
  * This function is designed for use as an AES primitive in CRACEN software workarounds that require
  * it.
  *
+ * @param blkciph The block cipher struct.
  * @param key The AES key reference.
  * @param input Pointer to the input block.
  * @param output Pointer to a 16-byte output buffer.
  *
  * @retval psa_status_t PSA_SUCCESS on success, error code otherwise.
  */
-psa_status_t cracen_aes_primitive(const struct sxkeyref *key, const uint8_t *input,
-				  uint8_t *output);
+psa_status_t cracen_aes_primitive(struct sxblkcipher *blkciph, const struct sxkeyref *key,
+				  const uint8_t *input, uint8_t *output);
 
 #endif /* CRACEN_SW_COMMON_H */
