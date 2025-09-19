@@ -263,9 +263,8 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES) && alg == PSA_ALG_ECB_NO_PADDING) {
-		struct sxkeyref key;
-
-		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size, &key);
+		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
+					    &operation.keyref);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
@@ -274,14 +273,13 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES) && alg == PSA_ALG_CBC_PKCS7) {
-		struct sxkeyref key;
-
-		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size, &key);
+		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
+					    &operation.keyref);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-		return encrypt_cbc(&key, input, input_length, output, output_size, output_length,
-				   iv);
+		return encrypt_cbc(&operation.keyref, input, input_length, output, output_size,
+				   output_length, iv);
 	}
 
 	status = setup(CRACEN_ENCRYPT, &operation, attributes, key_buffer, key_buffer_size, alg);
@@ -327,9 +325,8 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES) && alg == PSA_ALG_ECB_NO_PADDING) {
-		struct sxkeyref key;
-
-		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size, &key);
+		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
+					    &operation.keyref);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
@@ -338,14 +335,13 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES) && alg == PSA_ALG_CBC_PKCS7) {
-		struct sxkeyref key;
-
-		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size, &key);
+		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
+					    &operation.keyref);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-		return decrypt_cbc(&key, input + iv_size, input_length - iv_size, output,
-				   output_size, output_length, input);
+		return decrypt_cbc(&operation.keyref, input + iv_size, input_length - iv_size,
+				   output, output_size, output_length, input);
 	}
 
 	if (input_length < iv_size) {
