@@ -635,6 +635,50 @@ config BT_CTLR_SDC_CS_EVENT_LEN_DEFAULT
 	help
 	  The time set aside for channel sounding events in microseconds.
 
+choice BT_CTLR_SDC_CS_T_PM_LEN_DEFAULT_SELECTION
+prompt "Default channel sounding t_pm length"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	default BT_CTLR_SDC_CS_T_PM_LEN_10_US
+	help
+	  Set the preferred tone length (T_PM) of CS tones
+
+	  In Channel Sounding, tones in step mode-2 and -3 have a length of t_pm microseconds.
+	  T_PM can be 10, 20 or 40 microseconds.
+
+	  Since the T_PM can affect the quality of tone measurements, it is important for
+	  certain use-cases to be able to set a preferred T_PM. The controller will then use
+	  this value when the LE CS Create Config command is issued.
+
+	  If the local or peer device does not support the suggested preferred T_PM, it cannot
+	  be used. The controller will then select a T_PM value supported by both local and
+	  peer devices when the LE CS Create Config command is issued.
+
+config BT_CTLR_SDC_CS_T_PM_LEN_10_US
+	bool "10 us"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Set controller default channel sounding tones to 10 microseconds.
+
+config BT_CTLR_SDC_CS_T_PM_LEN_20_US
+	bool "20 us"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Set controller default channel sounding tones to 20 microseconds.
+
+config BT_CTLR_SDC_CS_T_PM_LEN_40_US
+	bool "40 us"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Set controller default channel sounding tones to 40 microseconds.
+endchoice
+
+config BT_CTLR_SDC_CS_T_PM_LEN_DEFAULT
+	int
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	default 10 if BT_CTLR_SDC_CS_T_PM_LEN_10_US
+	default 20 if BT_CTLR_SDC_CS_T_PM_LEN_20_US
+	default 40 if BT_CTLR_SDC_CS_T_PM_LEN_40_US
+
 config BT_CTLR_SDC_LE_POWER_CLASS_1
 	bool "Device supports transmitting at LE Power Class 1 level"
 	default y if BT_CTLR_TX_PWR_ANTENNA >= 10
