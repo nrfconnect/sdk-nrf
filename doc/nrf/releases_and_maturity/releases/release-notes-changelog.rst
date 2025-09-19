@@ -631,6 +631,12 @@ Modem libraries
     * Support for environment evaluation.
     * Support for NTN NB-IoT system mode.
     * eDRX support for NTN NB-IoT.
+    * Support for new modem events :c:enumerator:`LTE_LC_MODEM_EVT_RF_CAL_NOT_DONE`, :c:enumerator:`LTE_LC_MODEM_EVT_INVALID_BAND_CONF`, and :c:enumerator:`LTE_LC_MODEM_EVT_DETECTED_COUNTRY`.
+
+  * Updated:
+
+    * The type of the :c:member:`lte_lc_evt.modem_evt` field to :c:struct:`lte_lc_modem_evt`.
+    * Replaced modem events ``LTE_LC_MODEM_EVT_CE_LEVEL_0``, ``LTE_LC_MODEM_EVT_CE_LEVEL_1``, ``LTE_LC_MODEM_EVT_CE_LEVEL_2`` and ``LTE_LC_MODEM_EVT_CE_LEVEL_3`` with the :c:enumerator:`LTE_LC_MODEM_EVT_CE_LEVEL` modem event.
 
 Multiprotocol Service Layer libraries
 -------------------------------------
