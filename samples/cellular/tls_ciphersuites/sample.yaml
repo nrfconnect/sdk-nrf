@@ -1,7 +1,7 @@
 sample:
   name: TLS Ciphersuites sample
 tests:
-  sample.cellular.ciphersuites:
+  sample.cellular.tls_ciphersuites:
     sysbuild: true
     build_only: true
     integration_platforms:
