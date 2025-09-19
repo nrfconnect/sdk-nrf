@@ -246,6 +246,12 @@
     - nrf54lm20dk/nrf54lm20a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35490"
 
+- scenarios:
+    - net.http.server.tls.toolchain
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35519"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
@@ -330,6 +336,7 @@
     - kernel.threads.dynamic_thread.stack.no_pool.alloc.no_user
     - kernel.threads.dynamic_thread.stack.pool.no_alloc.no_user
     - kernel.threads.dynamic_thread.stack.no_pool.no_alloc.user
+    - kernel.poll.minimallibc
     - kernel.scheduler.no_timeslicing
     - kernel.scheduler.dumb_no_timeslicing
     - kernel.scheduler.dumb_timeslicing
@@ -398,6 +405,7 @@
     - sample.net.sockets.socketpair
     - sample.drivers.crypto.mbedtls
     - kernel.workqueue.api
+    - kernel.workqueue.work_timeout
     - sample.posix.env
     - sample.shell.shell_module
     - kernel.common
@@ -423,6 +431,7 @@
     - crypto.tinycrypt.hmac_prng
     - drivers.can.shell
     - kernel.common
+    - kernel.common.lto
     - kernel.common.minimallibc
     - kernel.common.misra
     - kernel.common.nano32

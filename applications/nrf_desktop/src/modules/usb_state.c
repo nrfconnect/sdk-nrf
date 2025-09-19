@@ -142,6 +142,45 @@ static struct config_channel_transport cfg_chan_transport;
 
 static void report_sent(struct usb_hid_device *usb_hid, struct usb_hid_buf *buf, bool error);
 
+/* Start - wrappers used to suppress deprecation warnings (`sdw_`) for USB legacy stack APIs. */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
+static int sdw_usb_enable(usb_dc_status_callback status_cb)
+{
+	return usb_enable(status_cb);
+}
+
+static int sdw_usb_wakeup_request(void)
+{
+	return usb_wakeup_request();
+}
+
+static int sdw_usb_hid_init(const struct device *dev)
+{
+	return usb_hid_init(dev);
+}
+
+static void sdw_usb_hid_register_device(const struct device *dev, const uint8_t *desc,
+					size_t size, const struct hid_ops *op)
+{
+	usb_hid_register_device(dev, desc, size, op);
+}
+
+static int sdw_usb_hid_set_proto_code(const struct device *dev, uint8_t proto_code)
+{
+	return usb_hid_set_proto_code(dev, proto_code);
+}
+
+static int sdw_hid_int_ep_write(const struct device *dev, const uint8_t *data,
+				uint32_t data_len, uint32_t *bytes_ret)
+{
+	return hid_int_ep_write(dev, data, data_len, bytes_ret);
+}
+
+#pragma GCC diagnostic pop
+/* End - wrappers used to suppress deprecation warnings (`sdw_`) for USB legacy stack APIs. */
+
 static uint8_t usb_hid_buf_get_report_id(struct usb_hid_buf *buf)
 {
 	__ASSERT_NO_MSG(buf->status_bm & USB_HID_BUF_ALLOCATED);
@@ -273,7 +312,7 @@ static void usb_hid_buf_send(struct usb_hid_device *usb_hid, struct usb_hid_buf 
 		err = hid_device_submit_report(usb_hid->dev, size, data);
 	} else {
 		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_USB_STACK_LEGACY));
-		err = hid_int_ep_write(usb_hid->dev, data, size, NULL);
+		err = sdw_hid_int_ep_write(usb_hid->dev, data, size, NULL);
 	}
 
 	if (err) {
@@ -697,7 +736,7 @@ static void usb_wakeup(void)
 		}
 	} else {
 		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_USB_STACK_LEGACY));
-		err = usb_wakeup_request();
+		err = sdw_usb_wakeup_request();
 	}
 
 	if (!err) {
@@ -854,13 +893,13 @@ static int usb_init_legacy_hid_device_init(struct usb_hid_device *usb_hid_dev,
 	usb_hid_dev->hid_protocol = HID_PROTOCOL_REPORT;
 	usb_hid_dev->report_bm = report_bm;
 
-	usb_hid_register_device(dev, hid_report_desc, hid_report_desc_size, &hid_ops);
+	sdw_usb_hid_register_device(dev, hid_report_desc, hid_report_desc_size, &hid_ops);
 
 	int err = 0;
 
 	/* Legacy way of setting HID boot protocol requires an additional API call. */
 	if (IS_ENABLED(CONFIG_USB_HID_BOOT_PROTOCOL)) {
-		err = usb_hid_set_proto_code(dev, CONFIG_DESKTOP_USB_HID_PROTOCOL_CODE);
+		err = sdw_usb_hid_set_proto_code(dev, CONFIG_DESKTOP_USB_HID_PROTOCOL_CODE);
 		if (err) {
 			LOG_ERR("usb_hid_set_proto_code failed for dev: %p (err: %d)",
 				(void *)dev, err);
@@ -868,7 +907,7 @@ static int usb_init_legacy_hid_device_init(struct usb_hid_device *usb_hid_dev,
 		}
 	}
 
-	err = usb_hid_init(dev);
+	err = sdw_usb_hid_init(dev);
 	if (err) {
 		LOG_ERR("usb_hid_init failed for dev: %p (err: %d)", (void *)dev, err);
 		return err;
@@ -1013,7 +1052,7 @@ static int usb_init_legacy(void)
 		return err;
 	}
 
-	err = usb_enable(usb_init_legacy_status_cb);
+	err = sdw_usb_enable(usb_init_legacy_status_cb);
 	if (err) {
 		LOG_ERR("usb_enable failed (err: %d)", err);
 		return err;

@@ -99,7 +99,7 @@ static int configure_power_pin_interrupt(gpio_callback_handler_t handler, gpio_f
 	 */
 	err = gpio_pin_interrupt_configure(gpio_dev, pin, GPIO_INT_DISABLE);
 	if (err) {
-		LOG_ERR("Failed to configure %s (0x%x) on power pin. (%d)",
+		LOG_ERR("Failed to configure %s (0x%lx) on power pin. (%d)",
 			"interrupt", GPIO_INT_DISABLE, err);
 	}
 

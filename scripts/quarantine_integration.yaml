@@ -476,7 +476,6 @@
 
 - scenarios:
     - fast_pair.crypto.oberon
-    - fast_pair.crypto.tinycrypt
     - fast_pair.crypto.psa
   platforms:
     - nrf52840dk/nrf52840

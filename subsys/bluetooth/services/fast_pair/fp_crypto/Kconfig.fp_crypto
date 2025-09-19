@@ -18,16 +18,6 @@ choice BT_FAST_PAIR_CRYPTO_BACKEND
 	help
 	  Select the Fast Pair cryptographic backend.
 
-config BT_FAST_PAIR_CRYPTO_TINYCRYPT
-	bool "Fast Pair with Tinycrypt cryptographic backend"
-	select TINYCRYPT
-	select TINYCRYPT_SHA256
-	select TINYCRYPT_SHA256_HMAC
-	select TINYCRYPT_AES
-	select TINYCRYPT_ECC_DH
-	help
-	  Select Tinycrypt cryptographic backend for Fast Pair.
-
 config BT_FAST_PAIR_CRYPTO_OBERON
 	bool "Fast Pair with Oberon cryptographic backend"
 	select NRF_OBERON
