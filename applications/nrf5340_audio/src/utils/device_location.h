@@ -28,6 +28,20 @@ static const char HS_LOC_OTHER_TAG[] = "H*";
 static const char GW_TAG[] = "GW";
 
 /**
+ * @brief Get the number of Bluetooth LE audio channels from the location.
+ *
+ * @param[out] location Location bitfield
+ */
+static inline uint8_t device_location_to_chan_num(enum bt_audio_location location)
+{
+	if (location == BT_AUDIO_LOCATION_MONO_AUDIO) {
+		return 1;
+	} else {
+		return POPCOUNT(location);
+	}
+}
+
+/**
  * @brief Get assigned audio channel.
  *
  * @param[out] location Location bitfield
