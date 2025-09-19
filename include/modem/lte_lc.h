@@ -610,7 +610,7 @@ enum lte_lc_modem_sleep_type {
 	 * Proprietary PSM.
 	 *
 	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf91x1 >= v2.0.0
+	 *       - mfw_nrf91x1
 	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_MODEM_SLEEP_PROPRIETARY_PSM	= 7,
@@ -705,8 +705,8 @@ enum lte_lc_ce_level {
 	LTE_LC_CE_LEVEL_UNKNOWN	= UINT8_MAX,
 };
 
-/** Modem domain events. */
-enum lte_lc_modem_evt {
+/** Modem domain event type. */
+enum lte_lc_modem_evt_type {
 	/**
 	 * Indicates that a light search has been performed.
 	 *
@@ -751,40 +751,97 @@ enum lte_lc_modem_evt {
 	LTE_LC_MODEM_EVT_NO_IMEI,
 
 	/**
-	 * Selected CE level in RACH procedure is 0, see 3GPP TS 36.331 for details.
+	 * Selected CE level in RACH procedure. See 3GPP TS 36.331 for details.
+	 *
+	 * The associated payload is the @c lte_lc_modem_evt.ce_level member of type
+	 * @ref lte_lc_ce_level in the event.
 	 *
 	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf91x1 >= v2.0.0
+	 *       - mfw_nrf91x1
 	 *       - mfw_nrf9151-ntn
 	 */
-	LTE_LC_MODEM_EVT_CE_LEVEL_0,
+	LTE_LC_MODEM_EVT_CE_LEVEL,
 
 	/**
-	 * Selected CE level in RACH procedure is 1, see 3GPP TS 36.331 for details.
+	 * RF calibration or power class selection not done.
 	 *
 	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf91x1 >= v2.0.0
+	 *       - mfw_nrf91x1
 	 *       - mfw_nrf9151-ntn
 	 */
-	LTE_LC_MODEM_EVT_CE_LEVEL_1,
+	LTE_LC_MODEM_EVT_RF_CAL_NOT_DONE,
 
 	/**
-	 * Selected CE level in RACH procedure is 2, see 3GPP TS 36.331 for details.
+	 * Invalid band configuration.
+	 *
+	 * The associated payload is the @c lte_lc_modem_evt.invalid_band_conf member of type
+	 * @ref lte_lc_invalid_band_conf in the event.
 	 *
 	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf91x1 >= v2.0.0
+	 *       - mfw_nrf91x1
 	 *       - mfw_nrf9151-ntn
 	 */
-	LTE_LC_MODEM_EVT_CE_LEVEL_2,
+	LTE_LC_MODEM_EVT_INVALID_BAND_CONF,
 
 	/**
-	 * Selected CE level in RACH procedure is 3, see 3GPP TS 36.331 for details.
+	 * Current country the device is operating in.
+	 *
+	 * The associated payload is the @c lte_lc_modem_evt.detected_country member of type
+	 * `uint32_t` in the event. The country is reported as a Mobile Country Code (MCC).
 	 *
 	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf91x1 >= v2.0.0
 	 *       - mfw_nrf9151-ntn
 	 */
-	LTE_LC_MODEM_EVT_CE_LEVEL_3,
+	LTE_LC_MODEM_EVT_DETECTED_COUNTRY
+};
+
+/** Band configuration status. */
+enum lte_lc_band_conf_status {
+	/** Usable bands available in system. */
+	LTE_LC_BAND_CONF_STATUS_OK = 0,
+
+	/** No usable bands available in system. */
+	LTE_LC_BAND_CONF_STATUS_INVALID = 1,
+
+	/** System support not configured. */
+	LTE_LC_BAND_CONF_STATUS_SYSTEM_NOT_SUPPORTED = 2
+};
+
+/** Detected conflicting band lock or operator restrictions. */
+struct lte_lc_invalid_band_conf {
+	/** LTE-M band configuration status. */
+	enum lte_lc_band_conf_status status_ltem;
+
+	/** NB-IoT band configuration status. */
+	enum lte_lc_band_conf_status status_nbiot;
+
+	/** NTN NB-IoT band configuration status. */
+	enum lte_lc_band_conf_status status_ntn_nbiot;
+};
+
+/** Modem domain event.
+ *
+ * This structure is used as the payload for event @ref LTE_LC_EVT_MODEM_EVENT.
+ */
+struct lte_lc_modem_evt {
+	/** Event type. */
+	enum lte_lc_modem_evt_type type;
+
+	/** Payload for the event (optional). */
+	union {
+		/** Payload for event @ref LTE_LC_MODEM_EVT_CE_LEVEL. */
+		enum lte_lc_ce_level ce_level;
+
+		/** Payload for event @ref LTE_LC_MODEM_EVT_INVALID_BAND_CONF. */
+		struct lte_lc_invalid_band_conf invalid_band_conf;
+
+		/**
+		 * Payload for event @ref LTE_LC_MODEM_EVT_DETECTED_COUNTRY.
+		 *
+		 * Mobile Country Code (MCC) for the detected country.
+		 */
+		uint32_t detected_country;
+	};
 };
 
 /** RAI configuration. */
@@ -1346,7 +1403,7 @@ struct lte_lc_evt {
 #endif /* CONFIG_LTE_LC_MODEM_SLEEP_MODULE */
 
 		/** Payload for event @ref LTE_LC_EVT_MODEM_EVENT. */
-		enum lte_lc_modem_evt modem_evt;
+		struct lte_lc_modem_evt modem_evt;
 
 		/**
 		 * Payload for event @ref LTE_LC_EVT_TAU_PRE_WARNING.
@@ -1620,7 +1677,7 @@ int lte_lc_psm_get(int *tau, int *active_time);
  *       `CONFIG_LTE_PROPRIETARY_PSM_REQ` if it is called during modem initialization.
  *
  * @note This is only supported by the following modem firmware:
- *       - mfw_nrf91x1 >= v2.0.0
+ *       - mfw_nrf91x1
  *       - mfw_nrf9151-ntn
  *
  * @note Requires `CONFIG_LTE_LC_PSM_MODULE` to be enabled.

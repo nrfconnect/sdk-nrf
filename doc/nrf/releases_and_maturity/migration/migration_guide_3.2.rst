@@ -84,7 +84,16 @@ Libraries
 
 This section describes the changes related to libraries.
 
-|no_changes_yet_note|
+.. toggle::
+
+   * :ref:`lte_lc_readme` library:
+
+     * The type of the :c:member:`lte_lc_evt.modem_evt` field has been changed to :c:struct:`lte_lc_modem_evt`.
+       The modem event type can be determined from the :c:member:`lte_lc_modem_evt.type` field.
+       Applications using modem events need to be updated to read the event type from ``modem_evt.type`` instead of ``modem_evt``.
+
+     * Modem events ``LTE_LC_MODEM_EVT_CE_LEVEL_0``, ``LTE_LC_MODEM_EVT_CE_LEVEL_1``, ``LTE_LC_MODEM_EVT_CE_LEVEL_2`` and ``LTE_LC_MODEM_EVT_CE_LEVEL_3`` have been replaced by event :c:enumerator:`LTE_LC_MODEM_EVT_CE_LEVEL`.
+       The CE level can be read from :c:member:`lte_lc_modem_evt.ce_level`.
 
 Trusted Firmware-M
 ==================

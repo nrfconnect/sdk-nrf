@@ -220,7 +220,33 @@ static void lte_lc_event_handler(const struct lte_lc_evt *const evt)
 		break;
 
 	case LTE_LC_EVT_MODEM_EVENT:
-		TEST_ASSERT_EQUAL(test_event_data[index].modem_evt, evt->modem_evt);
+		TEST_ASSERT_EQUAL(test_event_data[index].modem_evt.type, evt->modem_evt.type);
+		switch (evt->modem_evt.type) {
+		case LTE_LC_MODEM_EVT_CE_LEVEL:
+			TEST_ASSERT_EQUAL(
+				test_event_data[index].modem_evt.ce_level,
+				evt->modem_evt.ce_level);
+			break;
+		case LTE_LC_MODEM_EVT_INVALID_BAND_CONF:
+			TEST_ASSERT_EQUAL(
+				test_event_data[index].modem_evt.invalid_band_conf.status_ltem,
+				evt->modem_evt.invalid_band_conf.status_ltem);
+			TEST_ASSERT_EQUAL(
+				test_event_data[index].modem_evt.invalid_band_conf.status_nbiot,
+				evt->modem_evt.invalid_band_conf.status_nbiot);
+			TEST_ASSERT_EQUAL(
+				test_event_data[index].modem_evt.invalid_band_conf.status_ntn_nbiot,
+				evt->modem_evt.invalid_band_conf.status_ntn_nbiot);
+			break;
+		case LTE_LC_MODEM_EVT_DETECTED_COUNTRY:
+			TEST_ASSERT_EQUAL(
+				test_event_data[index].modem_evt.detected_country,
+				evt->modem_evt.detected_country);
+			break;
+		default:
+			/* No payload for this event type */
+			break;
+		}
 		break;
 
 	case LTE_LC_EVT_RAI_UPDATE:
@@ -4361,7 +4387,7 @@ void test_lte_lc_modem_events(void)
 	int ret;
 	int index = 0;
 
-	lte_lc_callback_count_expected = 10;
+	lte_lc_callback_count_expected = 11;
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=2", EXIT_SUCCESS);
 	ret = lte_lc_modem_events_enable();
@@ -4374,61 +4400,81 @@ void test_lte_lc_modem_events(void)
 
 	strcpy(at_notif, "%MDMEV: ME OVERHEATED\r\n");
 	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
-	test_event_data[index].modem_evt = LTE_LC_MODEM_EVT_OVERHEATED;
+	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_OVERHEATED;
 	at_monitor_dispatch(at_notif);
 	index++;
 
 	strcpy(at_notif, "%MDMEV: NO IMEI\r\n");
 	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
-	test_event_data[index].modem_evt = LTE_LC_MODEM_EVT_NO_IMEI;
+	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_NO_IMEI;
 	at_monitor_dispatch(at_notif);
 	index++;
 
 	strcpy(at_notif, "%MDMEV: ME BATTERY LOW\r\n");
 	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
-	test_event_data[index].modem_evt = LTE_LC_MODEM_EVT_BATTERY_LOW;
+	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_BATTERY_LOW;
 	at_monitor_dispatch(at_notif);
 	index++;
 
 	strcpy(at_notif, "%MDMEV: RESET LOOP\r\n");
 	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
-	test_event_data[index].modem_evt = LTE_LC_MODEM_EVT_RESET_LOOP;
+	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_RESET_LOOP;
 	at_monitor_dispatch(at_notif);
 	index++;
 
 	strcpy(at_notif, "%MDMEV: SEARCH STATUS 1\r\n");
 	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
-	test_event_data[index].modem_evt = LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE;
+	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE;
 	at_monitor_dispatch(at_notif);
 	index++;
 
 	strcpy(at_notif, "%MDMEV: SEARCH STATUS 2\r\n");
 	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
-	test_event_data[index].modem_evt = LTE_LC_MODEM_EVT_SEARCH_DONE;
-	at_monitor_dispatch(at_notif);
-	index++;
-
-	strcpy(at_notif, "%MDMEV: PRACH CE-LEVEL 0\r\n");
-	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
-	test_event_data[index].modem_evt = LTE_LC_MODEM_EVT_CE_LEVEL_0;
-	at_monitor_dispatch(at_notif);
-	index++;
-
-	strcpy(at_notif, "%MDMEV: PRACH CE-LEVEL 1\r\n");
-	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
-	test_event_data[index].modem_evt = LTE_LC_MODEM_EVT_CE_LEVEL_1;
+	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_SEARCH_DONE;
 	at_monitor_dispatch(at_notif);
 	index++;
 
 	strcpy(at_notif, "%MDMEV: PRACH CE-LEVEL 2\r\n");
 	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
-	test_event_data[index].modem_evt = LTE_LC_MODEM_EVT_CE_LEVEL_2;
+	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_CE_LEVEL;
+	test_event_data[index].modem_evt.ce_level = LTE_LC_CE_LEVEL_2;
 	at_monitor_dispatch(at_notif);
 	index++;
 
-	strcpy(at_notif, "%MDMEV: PRACH CE-LEVEL 3\r\n");
+	strcpy(at_notif, "%MDMEV: RF CALIBRATION NOT DONE\r\n");
 	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
-	test_event_data[index].modem_evt = LTE_LC_MODEM_EVT_CE_LEVEL_3;
+	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_RF_CAL_NOT_DONE;
+	at_monitor_dispatch(at_notif);
+	index++;
+
+	strcpy(at_notif, "%MDMEV: INVALID BAND CONFIGURATION 1 2\r\n");
+	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
+	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_INVALID_BAND_CONF;
+	test_event_data[index].modem_evt.invalid_band_conf.status_ltem =
+		LTE_LC_BAND_CONF_STATUS_INVALID;
+	test_event_data[index].modem_evt.invalid_band_conf.status_nbiot =
+		LTE_LC_BAND_CONF_STATUS_SYSTEM_NOT_SUPPORTED;
+	test_event_data[index].modem_evt.invalid_band_conf.status_ntn_nbiot =
+		LTE_LC_BAND_CONF_STATUS_SYSTEM_NOT_SUPPORTED;
+	at_monitor_dispatch(at_notif);
+	index++;
+
+	strcpy(at_notif, "%MDMEV: INVALID BAND CONFIGURATION 0 1 0\r\n");
+	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
+	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_INVALID_BAND_CONF;
+	test_event_data[index].modem_evt.invalid_band_conf.status_ltem =
+		LTE_LC_BAND_CONF_STATUS_OK;
+	test_event_data[index].modem_evt.invalid_band_conf.status_nbiot =
+		LTE_LC_BAND_CONF_STATUS_INVALID;
+	test_event_data[index].modem_evt.invalid_band_conf.status_ntn_nbiot =
+		LTE_LC_BAND_CONF_STATUS_OK;
+	at_monitor_dispatch(at_notif);
+	index++;
+
+	strcpy(at_notif, "%MDMEV: DETECTED COUNTRY 123\r\n");
+	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
+	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_DETECTED_COUNTRY;
+	test_event_data[index].modem_evt.detected_country = 123;
 	at_monitor_dispatch(at_notif);
 	index++;
 
@@ -4455,13 +4501,7 @@ void test_lte_lc_modem_events_fail(void)
 	strcpy(at_notif, "%MDMEV: SEARCH STATUS 3\r\n");
 	at_monitor_dispatch(at_notif);
 
-	strcpy(at_notif, "%MDMEV: PRACH CE-LEVEL 4\r\n");
-	at_monitor_dispatch(at_notif);
-
 	strcpy(at_notif, "%MDMEV: SEARCH STATUS 1 and then some\r\n");
-	at_monitor_dispatch(at_notif);
-
-	strcpy(at_notif, "%MDMEV: PRACH CE-LEVEL 0 and then some\r\n");
 	at_monitor_dispatch(at_notif);
 }
 
