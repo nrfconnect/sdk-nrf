@@ -1,6 +1,10 @@
 sample:
   description: Matter Bridge
   name: Matter Bridge application
+common:
+  tags:
+    - sysbuild
+    - ci_applications_matter
 tests:
   applications.matter_bridge.release:
     sysbuild: true
@@ -15,9 +19,6 @@ tests:
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter
   applications.matter_bridge.debug:
     sysbuild: true
     build_only: true
@@ -30,9 +31,6 @@ tests:
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter
   applications.matter_bridge.br_ble:
     sysbuild: true
     build_only: true
@@ -46,9 +44,6 @@ tests:
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter
   applications.matter_bridge.release.br_ble:
     sysbuild: true
     build_only: true
@@ -63,9 +58,6 @@ tests:
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter
   applications.matter_bridge.br_ble.smp_dfu:
     sysbuild: true
     build_only: true
@@ -77,9 +69,6 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter
   applications.matter_bridge.nrf5340.wifi:
     sysbuild: true
     build_only: true
@@ -94,9 +83,6 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter
   applications.matter_bridge.br_ble.memory_profiling:
     sysbuild: true
     build_only: true
@@ -110,9 +96,6 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter
   applications.matter_bridge.memory_profiling:
     sysbuild: true
     build_only: true
@@ -124,9 +107,6 @@ tests:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter
   applications.matter_bridge.smart_plug:
     sysbuild: true
     build_only: true
@@ -135,6 +115,3 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter

@@ -1,6 +1,10 @@
 sample:
   name: Matter Weather Station
   description: Matter Weather Station application
+common:
+  tags:
+    - sysbuild
+    - ci_applications_matter
 tests:
   # This configuration is used for performing DFU over BLE between different NCS
   # applications on Thingy53.
@@ -11,9 +15,6 @@ tests:
     platform_exclude: thingy53/nrf5340/cpuapp/ns
     integration_platforms:
       - thingy53/nrf5340/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter
   applications.matter_weather_station.debug:
     sysbuild: true
     build_only: true
@@ -26,9 +27,6 @@ tests:
     platform_exclude: thingy53/nrf5340/cpuapp/ns
     integration_platforms:
       - thingy53/nrf5340/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter
   applications.matter_weather_station.release:
     sysbuild: true
     build_only: true
@@ -42,9 +40,6 @@ tests:
     platform_exclude: thingy53/nrf5340/cpuapp/ns
     integration_platforms:
       - thingy53/nrf5340/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter
   applications.matter_weather_station.nrf7002eb:
     sysbuild: true
     build_only: true
@@ -57,6 +52,3 @@ tests:
     platform_exclude: thingy53/nrf5340/cpuapp/ns
     integration_platforms:
       - thingy53/nrf5340/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter
