@@ -220,6 +220,7 @@ struct cracen_mac_operation_s {
 			uint8_t key_buffer[CRACEN_MAX_AES_KEY_SIZE];
 #if defined(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)
 			cracen_cmac_context_t sw_ctx;
+			struct sxblkcipher cipher;
 #endif /* CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS */
 		} cmac;
 #endif /* PSA_NEED_CRACEN_CMAC */

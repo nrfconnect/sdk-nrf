@@ -37,12 +37,11 @@ psa_status_t cracen_aes_ecb_crypt(struct sxblkcipher *blkciph,
 	return sx_status;
 }
 
-psa_status_t cracen_aes_ecb_encrypt(const struct sxkeyref *key, const uint8_t *input,
-				    size_t input_length, uint8_t *output, size_t output_size,
-				    size_t *output_length)
+psa_status_t cracen_aes_ecb_encrypt(struct sxblkcipher *blkciph, const struct sxkeyref *key,
+				    const uint8_t *input, size_t input_length, uint8_t *output,
+				    size_t output_size, size_t *output_length)
 {
 	int sx_status;
-	struct sxblkcipher blkciph;
 
 	if (output_size < input_length) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -52,21 +51,20 @@ psa_status_t cracen_aes_ecb_encrypt(const struct sxkeyref *key, const uint8_t *i
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	sx_status = sx_blkcipher_create_aesecb_enc(&blkciph, key);
+	sx_status = sx_blkcipher_create_aesecb_enc(blkciph, key);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	return cracen_aes_ecb_crypt(&blkciph, input, input_length, output, output_size,
+	return cracen_aes_ecb_crypt(blkciph, input, input_length, output, output_size,
 				    output_length);
 }
 
-psa_status_t cracen_aes_ecb_decrypt(const struct sxkeyref *key, const uint8_t *input,
-				    size_t input_length, uint8_t *output, size_t output_size,
-				    size_t *output_length)
+psa_status_t cracen_aes_ecb_decrypt(struct sxblkcipher *blkciph, const struct sxkeyref *key,
+				    const uint8_t *input, size_t input_length, uint8_t *output,
+				    size_t output_size, size_t *output_length)
 {
 	int sx_status;
-	struct sxblkcipher blkciph;
 
 	if (output_size < input_length) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -76,26 +74,26 @@ psa_status_t cracen_aes_ecb_decrypt(const struct sxkeyref *key, const uint8_t *i
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	sx_status = sx_blkcipher_create_aesecb_dec(&blkciph, key);
+	sx_status = sx_blkcipher_create_aesecb_dec(blkciph, key);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	return cracen_aes_ecb_crypt(&blkciph, input, input_length, output, output_size,
+	return cracen_aes_ecb_crypt(blkciph, input, input_length, output, output_size,
 				    output_length);
 }
 
-psa_status_t cracen_aes_primitive(const struct sxkeyref *key, const uint8_t *input, uint8_t *output)
+psa_status_t cracen_aes_primitive(struct sxblkcipher *blkciph, const struct sxkeyref *key,
+				  const uint8_t *input, uint8_t *output)
 {
 	int sx_status;
-	struct sxblkcipher blkciph;
 	size_t output_size;
 
-	sx_status = sx_blkcipher_create_aesecb_enc(&blkciph, key);
+	sx_status = sx_blkcipher_create_aesecb_enc(blkciph, key);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	return cracen_aes_ecb_crypt(&blkciph, input, SX_BLKCIPHER_AES_BLK_SZ, output,
+	return cracen_aes_ecb_crypt(blkciph, input, SX_BLKCIPHER_AES_BLK_SZ, output,
 				    SX_BLKCIPHER_AES_BLK_SZ, &output_size);
 }
