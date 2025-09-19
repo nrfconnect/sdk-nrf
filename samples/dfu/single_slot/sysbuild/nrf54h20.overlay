@@ -1,0 +1,72 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* On nRF54H20 the FW loader mode is supported in the merged slot configuration
+ * Extend slot0_partition and slot1_partition to cover both application and
+ * radio images, as well as MCUboot image metadata (header and trailer).
+ * Those partitions will be used by MCUboot to verify the merged image to boot.
+ * Apart from that, they will be used by the MCUmgr subsystem to correctly
+ * handle flags, stored inside the MCUboot image trailer.
+ * Use cpu<app|rad>_slot<0|1>_partition as zephyr,code-partition, so the
+ * application and radio sizes are correctly reported.
+ */
+/delete-node/&cpuapp_slot0_partition;
+/delete-node/&cpuapp_slot1_partition;
+/delete-node/&cpurad_slot0_partition;
+/delete-node/&cpurad_slot1_partition;
+
+/delete-node/ &cpuppr_code_partition;
+/delete-node/ &cpuflpr_code_partition;
+
+/* Remove the undefined property value from the disabled VPR cores to prevent build errors. */
+&cpuflpr_vpr {
+	/delete-property/ source-memory;
+};
+
+&cpuppr_vpr {
+	/delete-property/ source-memory;
+};
+
+&mram1x {
+	partitions {
+		boot_partition: partition@30000 {
+			label = "mcuboot";
+			reg = <0x30000 DT_SIZE_K(36)>;
+		};
+
+		/* Main application with the MCUboot header. */
+		slot0_partition: partition@39000 {
+			reg = <0x39000 DT_SIZE_K(1284)>;
+		};
+
+		/* Main application without the MCUboot metadata.
+		 * Offset by the MCUboot header size (2048 bytes).
+		 * Reduced by the MCUboot trailer size (224 bytes).
+		 */
+		cpuapp_slot0_partition: partition@39800 {
+			reg = <0x39800 (DT_SIZE_K(1282) - 224)>;
+		};
+
+		/* Merged partition used by the FW loader. */
+		slot1_partition: partition@17a000 {
+			reg = <0x17a000 DT_SIZE_K(268)>;
+		};
+
+		/* Application code partition (part of the FW loader).
+		 * Offset by the MCUboot header size (2048 bytes).
+		 */
+		fw_loader_partition: partition@17a800 {
+			reg = <0x17a800 DT_SIZE_K(166)>;
+		};
+
+		/* Radio code partition (part of the FW loader).
+		 * Reduced by the MCUboot trailer size (224 bytes).
+		 */
+		cpurad_slot0_partition: partition@18b000 {
+			reg = <0x18b000 (DT_SIZE_K(100) - 224)>;
+		};
+	};
+};
