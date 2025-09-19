@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config NRF_SW_DTR_UART
+	bool "DTR UART implementation - DCE side"
+	select GPIO
+	select UART_ASYNC_API
+	select RING_BUFFER
+	select PM_DEVICE
+	help
+	  Data Terminal Ready (DTR) UART implements UART API and extends UART communication
+	  with DTR and Ring Indicator (RI) signals.
+
+	  Data Communication Equipment (DCE) is controlled by DTE (Data Terminal Equipment)
+	  using DTR signal. When DTR is deasserted, DCE will stop the UART communication and
+	  power down the UART peripheral. When DTR is asserted, DCE will power up the UART
+	  peripheral and start the UART communication.
+
+	  RI signal is used by DCE to notify DTE that data is available to read.
+
+if NRF_SW_DTR_UART
+
+module = NRF_SW_DTR_UART
+module-str = dtr uart
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
