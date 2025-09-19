@@ -245,10 +245,14 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 				return PSA_ERROR_BUFFER_TOO_SMALL;
 			}
 
-			/* Handle inplace encryption by moving plaintext to right to free space for
-			 * iv
+			/* Handle inplace encryption by moving plaintext to the right by iv_length
+			 * bytes. This is done because in inplace encryption the input and output
+			 * should point to the same data so that the output can overwrite its own
+			 * input. If they are not in sync the output will overwrite the input of
+			 * another operation which is of course wrong.
+			 *
 			 */
-			if (input_length && output > input && output < input + input_length) {
+			if (output == input + iv_length) {
 				memmove(output, input, input_length);
 				input = output;
 			}
