@@ -199,7 +199,6 @@ static int handle_at_shutdown(enum at_parser_cmd_type cmd_type, struct at_parser
 
 FUNC_NORETURN void slm_reset(void)
 {
-	slm_at_host_uninit();
 	slm_power_off_modem();
 	LOG_PANIC();
 	sys_reboot(SYS_REBOOT_COLD);
@@ -212,6 +211,7 @@ static int handle_at_reset(enum at_parser_cmd_type cmd_type, struct at_parser *,
 		return -EINVAL;
 	}
 
+	slm_at_host_uninit();
 	final_call(slm_reset);
 	return 0;
 }
@@ -570,4 +570,8 @@ void slm_at_uninit(void)
 		LOG_ERR("LwM2M carrier could not be uninitialized: %d", err);
 	}
 #endif
+#if defined(CONFIG_SLM_CMUX)
+	slm_cmux_uninit();
+#endif
+
 }
