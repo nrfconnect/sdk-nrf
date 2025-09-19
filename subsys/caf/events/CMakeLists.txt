@@ -65,3 +65,8 @@ zephyr_sources_ifdef(CONFIG_CAF_SENSOR_DATA_AGGREGATOR_EVENTS
 )
 
 zephyr_linker_sources(SECTIONS module_id_list.ld)
+zephyr_linker_section(NAME module_id_list_all KVMA RAM_REGION GROUP RODATA_REGION NOINPUT)
+zephyr_linker_section_configure(SECTION module_id_list_all
+                                INPUT "module_id_list"
+                                SYMBOLS "__start_module_id_list" "__stop_module_id_list"
+                                KEEP)
