@@ -220,7 +220,6 @@
   - any:
       - "include/bluetooth/**/*"
       - "!include/bluetooth/mesh/**/*"
-  - "subsys/nrf_rpc/**/*"
   - "subsys/mpsl/**/*"
   - "subsys/nrf_security/**/*"
   - "drivers/mpsl/**/*"
