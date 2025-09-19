@@ -1,0 +1,19 @@
+sample:
+  description: Central device of a Bluetooth Low Energy automated power controller.
+    A feedback system that adjusts the transmit power based on the current RSSI
+    — increasing, decreasing, or maintaining it as needed.
+  name: Bluetooth LE central with automated power control
+tests:
+  sample.bluetooth.central_automated_power_control:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
