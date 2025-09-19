@@ -198,9 +198,7 @@ static psa_status_t encrypt_cbc(const struct sxkeyref *key, const uint8_t *input
 	}
 
 	memset(padded_input_block, padding, sizeof(padded_input_block));
-	if (remaining_bytes > 0) {
-		memcpy(padded_input_block, input + full_blocks_length, remaining_bytes);
-	}
+	memcpy(padded_input_block, input + full_blocks_length, remaining_bytes);
 
 	sx_status = sx_blkcipher_crypt(&cipher_ctx, padded_input_block, sizeof(padded_input_block),
 				       output + full_blocks_length);
@@ -216,10 +214,9 @@ static psa_status_t encrypt_cbc(const struct sxkeyref *key, const uint8_t *input
 	sx_status = sx_blkcipher_wait(&cipher_ctx);
 	if (sx_status == SX_OK) {
 		*output_length = padded_input_length;
-		return PSA_SUCCESS;
-	} else {
-		return silex_statuscodes_to_psa(sx_status);
 	}
+
+	return silex_statuscodes_to_psa(sx_status);
 }
 
 static psa_status_t decrypt_cbc(const struct sxkeyref *key, const uint8_t *input,
