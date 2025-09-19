@@ -70,12 +70,12 @@ endif # LTE_LC_DNS_FALLBACK_MODULE
 # End of modules Kconfig options
 
 config LTE_SHELL
-	bool "Enable LTE shell commands"
+	bool "LTE shell commands"
 	default y
 	depends on SHELL
 
 config LTE_LOCK_BANDS
-	bool "Enable LTE band lock"
+	bool "LTE band lock"
 	help
 	  Enable LTE band lock. Bands not enabled in LTE_LOCK_BAND_MASK
 	  are not used when this setting is enabled.
@@ -98,7 +98,7 @@ config LTE_PLMN_SELECTION_OPTIMIZATION
 	  Refer to the AT%FEACONF command in the AT command manual for more details.
 
 config LTE_LOCK_PLMN
-	bool "Enable LTE PLMN lock"
+	bool "LTE PLMN lock"
 	help
 	  Enable PLMN lock for network selection.
 
@@ -120,7 +120,7 @@ config LTE_UNLOCK_PLMN
 if LTE_LC_PSM_MODULE
 
 config LTE_PSM_REQ
-	bool "Enable PSM request"
+	bool "PSM request"
 	help
 	  Enable request for use of PSM using AT+CPSMS.
 	  If this option is set the library will automatically request PSM when
@@ -178,7 +178,7 @@ config LTE_PSM_REQ_RAT_SECONDS
 	  non-negative value can be given.
 
 config LTE_PROPRIETARY_PSM_REQ
-	bool "Enable use of proprietary PSM"
+	bool "Proprietary PSM"
 	help
 	  Enable use of proprietary PSM using AT%FEACONF. To use this feature, also PSM request
 	  must be enabled using CONFIG_LTE_PSM_REQ or lte_lc_psm_req().
@@ -189,7 +189,7 @@ endif # LTE_LC_PSM_MODULE
 if LTE_LC_EDRX_MODULE
 
 config LTE_EDRX_REQ
-	bool "Enable eDRX request"
+	bool "eDRX request"
 	help
 	  Enable request for use of eDRX using AT+CEDRXS.
 	  For reference, see 3GPP 27.007 Ch. 7.40.

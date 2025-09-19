@@ -18,7 +18,7 @@ config SECURE_BOOT
 if SECURE_BOOT
 
 config SB_MONOTONIC_COUNTER
-	bool "Enable HW monotonic version counter"
+	bool "HW monotonic version counter"
 	default y
 	help
 	  The counter stores the current firmware version in a way that ensures that the value
@@ -94,7 +94,7 @@ menuconfig IS_SECURE_BOOTLOADER
 if IS_SECURE_BOOTLOADER
 
 config SB_BPROT_IN_DEBUG
-	bool "Enable block protect in debug"
+	bool "Block protect in debug"
 	default y
 	depends on (HAS_HW_NRF_BPROT || HAS_HW_NRF_MPU)
 

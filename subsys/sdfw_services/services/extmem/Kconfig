@@ -6,7 +6,6 @@
 
 menuconfig SSF_EXTMEM_SERVICE_ENABLED
 	bool "EXTMEM Update service"
-	default n
 	depends on SDFW_SERVICES_ENABLED
 
 if SSF_EXTMEM_SERVICE_ENABLED
@@ -45,7 +44,7 @@ config SSF_EXTMEM_BASE_ADDRESS
 	  address does not belong to memory ranges owned by other domains to prevent data leaks.
 
 config SSF_EXTMEM_WRITE_ERASE_OPS
-	bool "Enable write and erase operations"
+	bool "Write and erase operations"
 	help
 	  Enable write and erase operations.
 
