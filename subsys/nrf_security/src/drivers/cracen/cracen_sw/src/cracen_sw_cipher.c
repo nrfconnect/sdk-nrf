@@ -152,9 +152,7 @@ static psa_status_t encrypt_cbc(const struct sxkeyref *key, const uint8_t *input
 	}
 
 	memset(padded_input_block, padding, sizeof(padded_input_block));
-	if (remaining_bytes > 0) {
-		memcpy(padded_input_block, input + full_blocks_length, remaining_bytes);
-	}
+	memcpy(padded_input_block, input + full_blocks_length, remaining_bytes);
 
 	sx_status = sx_blkcipher_crypt(&cipher_ctx, padded_input_block, sizeof(padded_input_block),
 				       output + full_blocks_length);
@@ -170,10 +168,9 @@ static psa_status_t encrypt_cbc(const struct sxkeyref *key, const uint8_t *input
 	sx_status = sx_blkcipher_wait(&cipher_ctx);
 	if (sx_status == SX_OK) {
 		*output_length = padded_input_length;
-		return PSA_SUCCESS;
-	} else {
-		return silex_statuscodes_to_psa(sx_status);
 	}
+
+	return silex_statuscodes_to_psa(sx_status);
 }
 
 static psa_status_t decrypt_cbc(const struct sxkeyref *key, const uint8_t *input,
@@ -248,10 +245,13 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 				return PSA_ERROR_BUFFER_TOO_SMALL;
 			}
 
-			/* Handle inplace encryption by moving plaintext to right to free space for
-			 * iv
+			/* Handle inplace encryption by moving plaintext to the right by iv_length bytes.
+			 * This is done because in inplace encryption the input and output should point to the 
+			 * same data so that the output can overwrite it's own input. If they are not in sync
+			 * the output will overwrite the input of another operation which is of course wrong.
+			 *
 			 */
-			if (input_length && output > input && output < input + input_length) {
+			if (output == input + iv_length) { 
 				memmove(output, input, input_length);
 				input = output;
 			}
@@ -263,25 +263,23 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES) && alg == PSA_ALG_ECB_NO_PADDING) {
-		struct sxkeyref key;
-
-		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size, &key);
+		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
+					    &operation.keyref);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-		return cracen_aes_ecb_encrypt(&key, input, input_length, output, output_size,
-					      output_length);
+		return cracen_aes_ecb_encrypt(&operation.cipher, &operation.keyref, input,
+					      input_length, output, output_size, output_length);
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES) && alg == PSA_ALG_CBC_PKCS7) {
-		struct sxkeyref key;
-
-		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size, &key);
+		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
+					    &operation.keyref);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-		return encrypt_cbc(&key, input, input_length, output, output_size, output_length,
-				   iv);
+		return encrypt_cbc(&operation.keyref, input, input_length, output, output_size,
+				   output_length, iv);
 	}
 
 	status = setup(CRACEN_ENCRYPT, &operation, attributes, key_buffer, key_buffer_size, alg);
@@ -327,25 +325,23 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES) && alg == PSA_ALG_ECB_NO_PADDING) {
-		struct sxkeyref key;
-
-		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size, &key);
+		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
+					    &operation.keyref);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-		return cracen_aes_ecb_decrypt(&key, input, input_length, output, output_size,
-					      output_length);
+		return cracen_aes_ecb_decrypt(&operation.cipher, &operation.keyref, input,
+					      input_length, output, output_size, output_length);
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES) && alg == PSA_ALG_CBC_PKCS7) {
-		struct sxkeyref key;
-
-		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size, &key);
+		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
+					    &operation.keyref);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-		return decrypt_cbc(&key, input + iv_size, input_length - iv_size, output,
-				   output_size, output_length, input);
+		return decrypt_cbc(&operation.keyref, input + iv_size, input_length - iv_size,
+				   output, output_size, output_length, input);
 	}
 
 	if (input_length < iv_size) {
@@ -572,12 +568,14 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 							operation->blk_size);
 					if (operation->dir == CRACEN_ENCRYPT) {
 						psa_status = cracen_aes_ecb_encrypt(
+							&operation->cipher,
 							&operation->keyref,
 							operation->unprocessed_input,
 							operation->unprocessed_input_bytes, output,
 							output_size, output_length);
 					} else {
 						psa_status = cracen_aes_ecb_decrypt(
+							&operation->cipher,
 							&operation->keyref,
 							operation->unprocessed_input,
 							operation->unprocessed_input_bytes, output,
@@ -593,12 +591,14 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 				if (block_bytes) {
 					if (operation->dir == CRACEN_ENCRYPT) {
 						psa_status = cracen_aes_ecb_encrypt(
-							&operation->keyref, input, block_bytes,
-							output, output_size, output_length);
+							&operation->cipher, &operation->keyref,
+							input, block_bytes, output, output_size,
+							output_length);
 					} else {
 						psa_status = cracen_aes_ecb_decrypt(
-							&operation->keyref, input, block_bytes,
-							output, output_size, output_length);
+							&operation->cipher, &operation->keyref,
+							input, block_bytes, output, output_size,
+							output_length);
 					}
 					if (psa_status != PSA_SUCCESS) {
 						return psa_status;
@@ -706,12 +706,14 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES)) {
 		if (operation->alg == PSA_ALG_ECB_NO_PADDING) {
 			if (operation->dir == CRACEN_ENCRYPT) {
-				return cracen_aes_ecb_encrypt(&operation->keyref,
+				return cracen_aes_ecb_encrypt(&operation->cipher,
+							      &operation->keyref,
 							      operation->unprocessed_input,
 							      operation->unprocessed_input_bytes,
 							      output, output_size, output_length);
 			} else {
-				return cracen_aes_ecb_decrypt(&operation->keyref,
+				return cracen_aes_ecb_decrypt(&operation->cipher,
+							      &operation->keyref,
 							      operation->unprocessed_input,
 							      operation->unprocessed_input_bytes,
 							      output, output_size, output_length);
