@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/dfu_extra.cmake)
 
 function(mcuboot_image_number_to_slot result image secondary)
   if(secondary)
@@ -22,6 +23,7 @@ function(dfu_app_zip_package)
   set(CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION)
   set(exclude_files)
   set(include_files)
+  set(used_image_ids)
 
   sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION IMAGE ${DEFAULT_IMAGE} VAR CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION KCONFIG)
   sysbuild_get(CONFIG_KERNEL_BIN_NAME IMAGE ${DEFAULT_IMAGE} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
@@ -36,6 +38,9 @@ function(dfu_app_zip_package)
       mcuboot_image_number_to_slot(internal_slot_secondary ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER} y)
       mcuboot_image_number_to_slot(external_slot_primary ${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} n)
       mcuboot_image_number_to_slot(external_slot_secondary ${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} y)
+
+      list(APPEND used_image_ids ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER})
+      list(APPEND used_image_ids ${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER})
 
       if(NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
         # Application
@@ -113,6 +118,8 @@ function(dfu_app_zip_package)
 
       mcuboot_image_number_to_slot(slot_primary ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER} n)
       mcuboot_image_number_to_slot(slot_secondary ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER} y)
+
+      list(APPEND used_image_ids ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER})
 
       if(NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
         if(SB_CONFIG_PARTITION_MANAGER)
@@ -204,6 +211,8 @@ function(dfu_app_zip_package)
     mcuboot_image_number_to_slot(net_update_slot_primary ${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER} n)
     mcuboot_image_number_to_slot(net_update_slot_secondary ${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER} y)
 
+    list(APPEND used_image_ids ${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER})
+
     if(SB_CONFIG_PARTITION_MANAGER)
       set(net_load_address "$<TARGET_PROPERTY:partition_manager,CPUNET_PM_APP_ADDRESS>")
     else()
@@ -249,6 +258,8 @@ function(dfu_app_zip_package)
     math(EXPR nrf70_patches_slot_primary "${nrf70_patches_slot_primary} + 1")
     math(EXPR nrf70_patches_slot_secondary "${nrf70_patches_slot_secondary} + 1")
 
+    list(APPEND used_image_ids ${SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER})
+
     list(APPEND generate_script_app_params
          "nrf70.binimage_index=${SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER}"
          "nrf70.binslot_index_primary=${nrf70_patches_slot_primary}"
@@ -258,6 +269,47 @@ function(dfu_app_zip_package)
     list(APPEND bin_files "${CMAKE_BINARY_DIR}/nrf70.signed.bin")
     list(APPEND zip_names "nrf70.bin")
     list(APPEND signed_targets nrf70_wifi_fw_patch_target)
+  endif()
+
+  # Include extra images if enabled
+  if(SB_CONFIG_DFU_EXTRA_BINARIES)
+    dfu_extra_get_binaries(
+      IDS extra_image_ids
+      PATHS extra_bin_files
+      TARGETS extra_zip_targets
+      NAMES extra_zip_names
+      FILTER_PACKAGES zip
+    )
+
+    if(extra_bin_files)
+      set(extra_script_params "")
+      list(LENGTH extra_image_ids id_count)
+      if(id_count GREATER 0)
+        math(EXPR last_index "${id_count} - 1")
+        foreach(index RANGE ${last_index})
+          list(GET extra_image_ids ${index} image_id)
+          list(GET extra_zip_names ${index} zip_name)
+
+          mcuboot_image_number_to_slot(slot_primary ${image_id} n)
+          mcuboot_image_number_to_slot(slot_secondary ${image_id} y)
+          math(EXPR slot_primary "${slot_primary} + 1")
+          math(EXPR slot_secondary "${slot_secondary} + 1")
+
+          if(image_id IN_LIST used_image_ids)
+            message(FATAL_ERROR "IMAGE_ID ${id} already exists")
+          endif()
+
+          list(APPEND extra_script_params "${zip_name}image_index=${image_id}")
+          list(APPEND extra_script_params "${zip_name}slot_index_primary=${slot_primary}")
+          list(APPEND extra_script_params "${zip_name}slot_index_secondary=${slot_secondary}")
+        endforeach()
+      endif()
+
+      list(APPEND bin_files ${extra_bin_files})
+      list(APPEND zip_names ${extra_zip_names})
+      list(APPEND signed_targets ${extra_zip_targets})
+      list(APPEND generate_script_app_params ${extra_script_params})
+    endif()
   endif()
 
   if(bin_files)

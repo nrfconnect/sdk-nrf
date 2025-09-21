@@ -53,3 +53,13 @@ config DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH
 	  and the DFU process.
 
 endif # DFU_MULTI_IMAGE_PACKAGE_BUILD
+
+config DFU_EXTRA_BINARIES
+	bool "Enable extra DFU binaries support"
+	help
+	  Enables support for adding extra binary files to DFU packages.
+	  This allows applications to extend DFU functionality with additional
+	  extra firmware binaries.
+
+	  When enabled, extra binaries can be added using the dfu_extra_add_binary()
+	  CMake function.
