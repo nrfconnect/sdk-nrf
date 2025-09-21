@@ -41,6 +41,16 @@ config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
 	  being gated on the NORDIC_QSPI_NOR Kconfig, can be enabled to use
 	  non-QSPI external flash chips from partition manager.
 
+config PM_EXTERNAL_FLASH_LOGICAL_ADDR
+	hex "Logical address of external flash memory"
+	default 0x12000000 if SOC_SERIES_NRF52X
+	default 0x10000000 if SOC_FAMILY_NORDIC_NRF
+	depends on PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+	help
+	  Defines the logical address used by flashing tools and image merging
+	  utilities (for example, nrfutil, nrfjprog, or mergehex) to place data
+	  into external flash memory.
+
 endif # PARTITION_MANAGER
 
 config BUILD_OUTPUT_BIN

@@ -53,6 +53,9 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
+* Added support for extra images in DFU packages (multi-image binary and ZIP).
+  This allows applications to extend the built-in DFU functionality with additional firmware images beyond those natively supported by the |NCS|, for example, firmware for external devices.
+  See :ref:`lib_dfu_extra` for details.
 * Added an option to restore progress after a power failure when using DFU multi-image with MCUboot.
 
 Developing with nRF91 Series
@@ -712,7 +715,7 @@ Debug libraries
 DFU libraries
 -------------
 
-|no_changes_yet_note|
+* Added new library :ref:`lib_dfu_extra`.
 
 Gazell libraries
 ----------------

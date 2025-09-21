@@ -7,6 +7,7 @@
 if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
   include(${ZEPHYR_BASE}/../nrf/cmake/fw_zip.cmake)
   include(${ZEPHYR_BASE}/../nrf/cmake/dfu_multi_image.cmake)
+  include(${ZEPHYR_BASE}/../nrf/cmake/dfu_extra.cmake)
 
   set(dfu_multi_image_ids)
   set(dfu_multi_image_paths)
@@ -76,6 +77,26 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
 
     list(APPEND dfu_multi_image_paths "${CMAKE_BINARY_DIR}/nrf70.signed.bin")
     list(APPEND dfu_multi_image_targets nrf70_wifi_fw_patch_target)
+  endif()
+
+  if(SB_CONFIG_MCUBOOT_EXTRA_IMAGES)
+    dfu_extra_get_binaries(
+      IDS extra_image_ids
+      PATHS extra_paths
+      TARGETS extra_targets
+      FILTER_PACKAGES multi
+    )
+    if(extra_image_ids)
+      foreach(id IN LISTS extra_image_ids)
+        if(id IN_LIST dfu_multi_image_ids)
+          message(FATAL_ERROR "IMAGE_ID ${id} already exists")
+        endif()
+      endforeach()
+
+      list(APPEND dfu_multi_image_ids ${extra_image_ids})
+      list(APPEND dfu_multi_image_paths ${extra_paths})
+      list(APPEND dfu_multi_image_targets ${extra_targets})
+    endif()
   endif()
 
   if(DEFINED dfu_multi_image_targets)

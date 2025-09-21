@@ -26,6 +26,14 @@ config MCUBOOT_MCUBOOT_IMAGE_NUMBER
 	int "MCUboot (S0/S1) image number (informative only, do not change)"
 	default -1
 
+config MCUBOOT_EXTRA_1_IMAGE_NUMBER
+	int "Extra 1 image number (informative only, do not change)"
+	default -1
+
+config MCUBOOT_EXTRA_2_IMAGE_NUMBER
+	int "Extra 2 image number (informative only, do not change)"
+	default -1
+
 if MCUBOOT
 
 config MCUBOOT_MCUBOOT_S0_S1_VERSION_MAJOR

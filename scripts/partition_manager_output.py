@@ -66,6 +66,7 @@ def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=
             add_line(f'{name_upper}_END_ADDRESS', hex(partition['end_address']))
             add_line(f'{name_upper}_SIZE', hex(partition['size']))
             add_line(f'{name_upper}_NAME', name)
+            add_line(f'{name_upper}_REGION', partition['region'])
 
             try:
                 # To support single item string for affiliation we convert the string into a list.

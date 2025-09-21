@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/dfu_extra.cmake)
 
 function(mcuboot_image_number_to_slot result image secondary)
   if(secondary)
@@ -295,6 +296,43 @@ function(dfu_app_zip_package)
     list(APPEND bin_files "${CMAKE_BINARY_DIR}/nrf70.signed.bin")
     list(APPEND zip_names "nrf70.bin")
     list(APPEND signed_targets nrf70_wifi_fw_patch_target)
+  endif()
+
+  # Include extra images if enabled
+  if(SB_CONFIG_MCUBOOT_EXTRA_IMAGES)
+    dfu_extra_get_binaries(
+      IDS extra_image_ids
+      PATHS extra_bin_files
+      TARGETS extra_zip_targets
+      NAMES extra_zip_names
+      FILTER_PACKAGES zip
+    )
+
+    if(extra_bin_files)
+      set(extra_script_params "")
+      list(LENGTH extra_image_ids id_count)
+      if(id_count GREATER 0)
+        math(EXPR last_index "${id_count} - 1")
+        foreach(index RANGE ${last_index})
+          list(GET extra_image_ids ${index} image_id)
+          list(GET extra_zip_names ${index} zip_name)
+
+          mcuboot_image_number_to_slot(slot_primary ${image_id} n)
+          mcuboot_image_number_to_slot(slot_secondary ${image_id} y)
+          math(EXPR slot_primary "${slot_primary} + 1")
+          math(EXPR slot_secondary "${slot_secondary} + 1")
+
+          list(APPEND extra_script_params "${zip_name}image_index=${image_id}")
+          list(APPEND extra_script_params "${zip_name}slot_index_primary=${slot_primary}")
+          list(APPEND extra_script_params "${zip_name}slot_index_secondary=${slot_secondary}")
+        endforeach()
+      endif()
+
+      list(APPEND bin_files ${extra_bin_files})
+      list(APPEND zip_names ${extra_zip_names})
+      list(APPEND signed_targets ${extra_zip_targets})
+      list(APPEND generate_script_app_params ${extra_script_params})
+    endif()
   endif()
 
   if(bin_files)
