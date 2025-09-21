@@ -1,0 +1,100 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mcuboot:
+  address: 0x0
+  size: 0x20000
+  region: flash_primary
+mcuboot_pad:
+  address: 0x20000
+  size: 0x800
+  region: flash_primary
+app:
+  address: 0x20800
+  size: 0x3F800
+  region: flash_primary
+mcuboot_primary:
+  address: 0x20000
+  orig_span: &primary_span
+  - mcuboot_pad
+  - app
+  span: *primary_span
+  size: 0x40000
+  region: flash_primary
+mcuboot_primary_app:
+  address: 0x20800
+  orig_span: &primary_app_span
+  - app
+  span: *primary_app_span
+  size: 0x3F800
+  region: flash_primary
+mcuboot_primary_1_pad:
+  address: 0x60000
+  size: 0x800
+  region: flash_primary
+ext_img1:
+  address: 0x60800
+  size: 0x1F800
+  region: flash_primary
+mcuboot_primary_1:
+  address: 0x60000
+  orig_span: &primary1_span
+  - mcuboot_primary_1_pad
+  - ext_img1
+  span: *primary1_span
+  size: 0x20000
+  region: flash_primary
+  image_index: 1
+settings_storage:
+  address: 0x80000
+  size: 0x2000
+  region: flash_primary
+reserved_flash:
+  address: 0x82000
+  size: 0xFB000
+  region: flash_primary
+mcuboot_secondary:
+  address: 0x0
+  size: 0x40000
+  device: MX25R64
+  region: external_flash
+mcuboot_secondary_1:
+  address: 0x40000
+  size: 0x20000
+  device: MX25R64
+  region: external_flash
+  image_index: 1
+mcuboot_primary_2_pad:
+  address: 0x60000
+  size: 0x800
+  device: MX25R64
+  region: external_flash
+ext_img2:
+  address: 0x60800
+  size: 0xF800
+  device: MX25R64
+  region: external_flash
+mcuboot_primary_2:
+  address: 0x60000
+  orig_span: &primary2_span
+  - mcuboot_primary_2_pad
+  - ext_img2
+  span: *primary2_span
+  size: 0x10000
+  device: MX25R64
+  region: external_flash
+  image_index: 2
+mcuboot_secondary_2:
+  address: 0x70000
+  size: 0x10000
+  device: MX25R64
+  region: external_flash
+  image_index: 2
+external_flash:
+  address: 0x80000
+  size: 0x780000
+  device: MX25R64
+  region: external_flash

@@ -74,9 +74,17 @@ config MCUBOOT_COMPRESSED_IMAGE_SUPPORT
 	  When enabled, supports loading compressed images using LZMA2 to the secondary slot which
 	  will then be decompressed and loaded to the primary slot.
 
+config MCUBOOT_EXTRA_IMAGES
+	int "Extra images"
+	default 0
+	range 0 2
+	depends on !MCUBOOT_MODE_SINGLE_APP
+
 config MCUBOOT_MAX_UPDATEABLE_IMAGES
 	int
 	default 1 if MCUBOOT_MODE_SINGLE_APP
+	default 6 if MCUBOOT_EXTRA_IMAGES > 1
+	default 5 if MCUBOOT_EXTRA_IMAGES > 0
 	default 4
 
 config MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT

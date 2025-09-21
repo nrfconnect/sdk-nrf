@@ -38,6 +38,9 @@ The following options control which images are included:
 | :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` | Include nRF700x Wi-Fi® firmware patches.|
 +-------------------------------------------------------------------+-----------------------------------------+
 
+In addition to the built-in set of images, you can also register the extra images that will be included in the multi-image DFU package.
+See :ref:`lib_dfu_extra` for details on how to configure and assign IDs for extra DFU images.
+
 Allowing to restore progress after power failure
 ================================================
 

@@ -196,6 +196,33 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set(${current_cache_name} ${value} CACHE INTERNAL "" FORCE)
     endforeach()
 
+    # Assign image IDs for MCUboot extra images
+    set(dfu_slots_application_kconfigs CONFIG_MCUBOOT_EXTRA_1_IMAGE_NUMBER;CONFIG_MCUBOOT_EXTRA_2_IMAGE_NUMBER)
+    set(dfu_slots_cache_names NCS_MCUBOOT_EXTRA_1_IMAGE_NUMBER;NCS_MCUBOOT_EXTRA_2_IMAGE_NUMBER)
+    set(dfu_slots_output_names "Extra Image 1;Extra Image 2")
+
+    if(SB_CONFIG_MCUBOOT_EXTRA_IMAGES GREATER 0)
+      math(EXPR extra_images_last_index "${SB_CONFIG_MCUBOOT_EXTRA_IMAGES} - 1")
+      foreach(index RANGE ${extra_images_last_index})
+        list(GET dfu_slots_application_kconfigs ${index} current_application_kconfig)
+        list(GET dfu_slots_cache_names ${index} current_cache_name)
+        list(GET dfu_slots_output_names ${index} current_output_name)
+        set(value -1)
+
+        if(SB_CONFIG_MCUBOOT_EXTRA_IMAGES GREATER index)
+          math(EXPR dfu_image_index "${dfu_image_index} + 1")
+          set(value ${dfu_image_index})
+          string(APPEND dfu_slots_output_text "   * ${current_output_name}: ${value}\n")
+        endif()
+
+        foreach(image mcuboot;${updateable_images})
+          set_config_int(${image} ${current_application_kconfig} ${value})
+        endforeach()
+
+        set(${current_cache_name} ${value} CACHE INTERNAL "" FORCE)
+      endforeach()
+    endif()
+
     # Output details on image IDs
     string(LENGTH ${dfu_slots_output_text} dfu_slots_output_text_length)
     math(EXPR dfu_slots_output_text_length "${dfu_slots_output_text_length} - 1")
@@ -779,6 +806,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   if(SB_CONFIG_MATTER_FACTORY_DATA_GENERATE)
     include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/generate_factory_data_sysbuild.cmake)
     nrfconnect_generate_factory_data()
+  endif()
+
+  # Sign extra DFU images added via dfu_extra_add_binary()
+  if(SB_CONFIG_MCUBOOT_EXTRA_IMAGES)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_extra.cmake)
   endif()
 
   include_packaging()
