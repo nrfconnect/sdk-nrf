@@ -494,6 +494,7 @@ kconfig_check_and_set_base_to_one(PSA_NEED_OBERON_XMSS_VERIFY)
 
 # Convert NRF_RNG driver configuration
 kconfig_check_and_set_base_to_one(PSA_NEED_NRF_RNG_ENTROPY_DRIVER)
+kconfig_check_and_set_base_to_one(PSA_NEED_CRACEN_TRNG_DRIVER)
 
 # Nordic specific
 kconfig_check_and_set_base_to_one(PSA_CRYPTO_DRIVER_ALG_PRNG_TEST)

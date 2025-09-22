@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-# Build Oberon PSA crypto driver 
+# Build Oberon PSA crypto driver
 set(drivers_path ${OBERON_PSA_CORE_PATH}/oberon/drivers)
 
 target_include_directories(psa_crypto_library_config
@@ -74,6 +74,9 @@ target_link_libraries(oberon_psa_driver
     psa_interface
 )
 
+if(CONFIG_PSA_NEED_CRACEN_TRNG_DRIVER)
+  add_subdirectory(cracen_trng)
+endif()
 
 # Link to imported libraries for Oberon APIs.
 target_link_libraries(oberon_psa_driver
