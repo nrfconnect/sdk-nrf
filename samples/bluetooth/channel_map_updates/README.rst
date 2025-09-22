@@ -3,9 +3,6 @@
 Bluetooth: Channel Map Updates
 ##############################
 
-.. contents::
-   :local:
-   :depth: 2
 
 The Channel Map Updates sample demonstrates an autonomous channel map update algorithm for Bluetooth® Low Energy connections using Quality of Service (QoS) events.
 The algorithm automatically evaluates channel performance and generates optimized channel maps to improve connection reliability.
@@ -14,14 +11,14 @@ Requirements
 ************
 
 The sample supports the following development kits:
-   
-.. table-from-sample-yaml::
+
+See the supported boards listed in ``samples/bluetooth/channel_map_updates/sample.yaml``.
 
 You need at least two development kits to physically test this sample:
 
-* Currently only supports channel map updates to one peripheral device. To demonstrate you need two development kits.
+* This sample currently supports channel map updates to one peripheral device. To demonstrate it, you need two development kits.
 
-You can use mix different development kits from the list above.
+You can mix different development kits from the list above.
 
 The sample also requires a connection to a computer with a serial terminal for each of the development kits.
 
@@ -44,14 +41,14 @@ Rating Calculation
 
 The algorithm evaluates each channel after collecting a configurable number of samples using the following formula:
 
-.. code-block:: none
+.. code-block:: text
 
    rating = (1.0f - w_3) * prev_rating + w_3 * (1.0f - (w_1 * crc_error_rate + w_2 * rx_timeout_rate));
 
 Where:
 
 * ``w_1``: Weight for CRC errors
-* ``w_2``: Weight for RX timeouts  
+* ``w_2``: Weight for RX timeouts
 * ``w_3``: Weight for old rating
 * ``crc_error_rate``: ``crc_errors / packets_sent``
 * ``rx_timeout_rate``: ``rx_timeouts / packets_sent``
@@ -60,10 +57,10 @@ Where:
 Channel Map Generation
 ----------------------
 
-Channels are included in the channel map iff:
+Channels are included in the channel map if and only if:
 
 1. Their rating is above a configurable threshold (default: 0.8).
-2. The amount of active channels is greater than the minimum configurable amount (default 3). In order to prevent failiure of the adaptive channel hopping algorithm.
+2. The number of active channels is greater than the minimum configurable amount (default: 3), to prevent failure of the adaptive channel hopping algorithm.
 
 Key Features
 ============
@@ -84,25 +81,32 @@ The sample uses a console interface to select the device role:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/channel_map_updates`
+Sample path: ``samples/bluetooth/channel_map_updates``
 
-.. include:: /includes/build_and_run_ns.txt
+For physical DKs: Build and flash the sample for two development kits (one acting as central, one as peripheral) using your usual nRF Connect SDK workflow (for example, with ``west build`` and ``west flash``). Refer to the nRF Connect SDK documentation for detailed build and flashing instructions.
 
-.. include:: /includes/nRF54H20_erase_UICR.txt
+For BabbleSim: Build the sample then go to the testing steps below:
+
+.. code-block:: bash
+
+   west build -b nrf54l15bsim/nrf54l15/cpuapp
+
 
 Testing
 =======
 
+Testing Physical DKs:
+*********************
+
 After programming the sample to both development kits, complete the following steps to test it:
 
-1. |connect_terminal_both|
-#. Reset both kits.
-#. On the first development kit, type ``c`` in the terminal to set it as central (tester).
-#. On the second development kit, type ``p`` in the terminal to set it as peripheral (peer).
-#. Observe that the kits establish a connection.
-   The central will start gathering QoS statistics.
-#. After the evaluation interval is reached (default: 2000 packets), the algorithm will run.
-#. After a set amount of evaluations (default = 5) an evaluation report is printedshowing:
+1. Connect a terminal emulator to both development kits.
+2. Reset both kits.
+3. On the first development kit, type ``c`` in the terminal to set it as central (tester).
+4. On the second development kit, type ``p`` in the terminal to set it as peripheral (peer).
+5. Observe that the kits establish a connection. The central will start gathering QoS statistics.
+6. After the evaluation interval is reached (default: 2000 packets), the algorithm will run.
+7. After a set number of evaluations (default: 5), an evaluation report is printed showing:
 
    On Central Unit
    * Channel statistics (packets sent, CRC errors, RX timeouts)
@@ -113,10 +117,46 @@ After programming the sample to both development kits, complete the following st
    On Peripheral Unit
    * Prints the Channel Map if it has been updated from last iteration
 
+Testing in Simulation:
+**********************
+1. Start two instances of the BabbleSim board (one acting as central, one as peripheral):
+
+   .. code-block:: bash
+
+      cd build/zephyr
+      ./zephyr.exe -s=<simulator_name> -p=<phy_name> -d=<device_id>
+
+   Replace the placeholders to match your BabbleSim setup.
+
+2. In the first terminal, type ``c`` to set it as central (tester).
+3. In the second terminal, type ``p`` to set it as peripheral (peer).
+4. Start an interferer (optional), for example the burst interferer that is installed together with BabbleSim:
+
+   .. code-block:: bash
+
+      cd <babblesim_root>/tools/bsim/bin
+      ./bs_device_2G4_burst_interf -s=<simulator_name> -p=<phy_name> -d=<device_id> -type=WLAN -centerfreq=2440 -power=10
+
+   This starts a WLAN-like interference process centered at 2440 MHz with 10 dBm power.
+
+5. Start the physical layer used by the devices:
+
+   .. code-block:: bash
+
+      cd <babblesim_root>/tools/bsim/bin
+      ./bs_2G4_phy_v1 -s=<simulator_name> -p=<phy_name> -D=<total_devices> -sim_length=10e8 -channel=Indoorv1 -defmodem=BLE_simple
+
+   This starts a physical layer process with the Indoorv1 channel preset and the BLE_simple modem for more realistic packet transfer.
+
+6. Observe that the devices establish a connection. The central will start gathering QoS statistics.
+7. After the evaluation interval is reached (default: 2000 packets), the algorithm will run.
+8. After a set number of evaluations (default: 5), an evaluation report is printed showing:
+
 Sample output
 =============
 
 The result should look similar to the following output on the central device::
+
 
    *** Booting nRF Connect SDK v3.0.2-89ba1294ac9b ***
    *** Using Zephyr OS v4.0.99-f791c49f492c ***
@@ -171,7 +211,8 @@ The result should look similar to the following output on the central device::
    I: ...
 
 
-The result should look similar to the following output on the central device::
+The result should look similar to the following output on the peripheral device::
+
    *** Booting nRF Connect SDK v3.0.2-89ba1294ac9b ***
    *** Using Zephyr OS v4.0.99-f791c49f492c ***
    I: Starting Bluetooth Channel Map Update Sample
@@ -221,30 +262,19 @@ The result should look similar to the following output on the central device::
 Dependencies
 ************
 
-This sample uses the following |NCS| libraries:
+This sample uses the following nRF Connect SDK libraries:
 
-* :ref:`latency_readme`
-* :ref:`latency_client_readme`
-* :ref:`gatt_dm_readme`
-* :ref:`nrf_bt_scan_readme`
+* ``latency``
+* ``latency_client``
+* ``gatt_dm``
+* ``nrf_bt_scan``
 
-In addition, it uses the following Zephyr libraries:
+In addition, it uses the following Zephyr components and headers:
 
-* :file:`include/zephyr/types.h`
-* :file:`include/console.h`
-* :ref:`zephyr:kernel_api`:
-
-  * :file:`include/kernel.h`
-
-* :file:`include/sys/printk.h`
-* :ref:`zephyr:bluetooth_api`:
-
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/conn.h`
-  * :file:`include/bluetooth/gatt.h`
-  * :file:`include/bluetooth/hci.h`
-  * :file:`include/bluetooth/uuid.h`
-
-* :ref:`zephyr:logging_api`:
-   * :file:`include/logging/log.h`
+* ``include/zephyr/types.h``
+* ``include/console.h``
+* Kernel API (``include/kernel.h``)
+* ``include/sys/printk.h``
+* Bluetooth API (``include/bluetooth/bluetooth.h``, ``include/bluetooth/conn.h``, ``include/bluetooth/gatt.h``, ``include/bluetooth/hci.h``, ``include/bluetooth/uuid.h``)
+* Logging API (``include/logging/log.h``)
 

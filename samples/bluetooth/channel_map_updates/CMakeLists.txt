@@ -13,5 +13,6 @@ target_include_directories(app PRIVATE include)
 target_sources(app PRIVATE include
     src/main.c
     src/filter_algo.c
+    src/bsim_console_stub.c
     )
 # NORDIC SDK APP END

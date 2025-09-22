@@ -271,6 +271,14 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	if (conn_info.role == BT_CONN_ROLE_CENTRAL) {
 		bt_scan_stop();
 
+#if !defined(CONFIG_BT_SMP)
+		/* With SMP disabled (e.g., in BabbleSim), start discovery immediately */
+		err = bt_gatt_dm_start(default_conn, BT_UUID_LATENCY, &discovery_cb, &latency_client);
+		if (err) {
+			printk("Discover failed (err %d)\n", err);
+		}
+#endif /* !CONFIG_BT_SMP */
+
 	} else {
 		bt_le_adv_stop();
 
@@ -279,6 +287,10 @@ static void connected(struct bt_conn *conn, uint8_t err)
 		if (err) {
 			printk("Failed to set security: %d\n", err);
 		}
+#else
+		/* Peripheral does not need discovery gating; mark test ready */
+		test_ready = true;
+		k_sem_give(&test_ready_sem);
 #endif /* CONFIG_BT_SMP */
 	}
 
@@ -394,9 +406,11 @@ static void test_run(void)
 	while (default_conn) {
 		uint32_t time = k_cycle_get_32();
 
-		err = bt_latency_request(&latency_client, &time, sizeof(time));
-		if (err && err != -EALREADY) {
-			printk("Latency request failed (err %d)\n", err);
+		if (conn_info.role == BT_CONN_ROLE_CENTRAL) {
+			err = bt_latency_request(&latency_client, &time, sizeof(time));
+			if (err && err != -EALREADY) {
+				printk("Latency request failed (err %d)\n", err);
+			}
 		}
 
 		if (conn_info.role == BT_CONN_ROLE_PERIPHERAL) {
