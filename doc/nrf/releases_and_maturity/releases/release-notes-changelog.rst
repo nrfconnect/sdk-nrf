@@ -262,6 +262,8 @@ nRF Desktop
       The implementation of serial recovery over USB CDC ACM still uses the deprecated APIs of the USB legacy stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK`).
     * Configurations of the ``nrf52840dongle/nrf52840`` board target to align them after the ``bare`` variant of the board was introduced in Zephyr.
       The application did not switch to the ``bare`` board variant to keep backwards compatibility.
+    * The :ref:`nrf_desktop_hid_state` to allow for delayed registration of HID report providers.
+      Before the change was introduced, subscribing to a HID input report before the respective provider was registered triggered an assertion failure.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

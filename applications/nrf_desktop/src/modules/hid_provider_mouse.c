@@ -277,6 +277,7 @@ static void trigger_report_transmission(void)
 	report_data.update_needed = true;
 
 	if (active_sub) {
+		__ASSERT_NO_MSG(hid_state_api);
 		(void)hid_state_api->trigger_report_send(boot_mode ?
 							 REPORT_ID_BOOT_MOUSE : REPORT_ID_MOUSE);
 	} else {
@@ -383,6 +384,7 @@ static bool handle_hid_report_provider_event(const struct hid_report_provider_ev
 				mouse_report_connection_state_changed);
 		__ASSERT_NO_MSG(!hid_state_api);
 		__ASSERT_NO_MSG(event->hid_state_api);
+		__ASSERT_NO_MSG(event->hid_state_api->trigger_report_send);
 		hid_state_api = event->hid_state_api;
 	} else if (event->report_id == REPORT_ID_BOOT_MOUSE) {
 		__ASSERT_NO_MSG(event->provider_api->connection_state_changed ==
