@@ -4,9 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-// TODO: Try to make the central send update to peripheral rather than running algo on both
-// centra and peripheral device.
-
 #include <zephyr/console/console.h>
 #include <string.h>
 #include <stdlib.h>
@@ -48,7 +45,7 @@ static struct bt_conn *default_conn;
 static struct bt_latency latency;
 static struct bt_latency_client latency_client;
 static struct bt_le_conn_param *conn_param =
-	/* Use standard 7.5 ms interval (6 * 1.25 ms) */
+	/* Use standard 7.5 ms connection interval (6 * 1.25 ms) */
 	BT_LE_CONN_PARAM(INTERVAL_UNITS, INTERVAL_UNITS, 0, 400);
 static struct bt_conn_info conn_info = {0};
 
@@ -66,6 +63,18 @@ static uint32_t total_packets_sent = 0;
 static uint32_t packets_since_last_evaluation = 0;
 
 LOG_MODULE_REGISTER(paramtest, LOG_LEVEL_INF);
+
+static void init_channel_map(void)
+{
+	memset(&filter_chmap_instance, 0, sizeof(filter_chmap_instance));
+	channel_map_filter_algo_init(&filter_chmap_instance);
+
+	total_packets_sent = 0;
+	packets_since_last_evaluation = 0;
+
+	LOG_INF("Channel map and algorithm initialized");
+	LOG_INF("Algorithm will evaluate every %d packets", FILTER_EVALUATION_INTERVAL);
+}
 
 static int read_conn_channel_map(struct bt_conn *conn, uint8_t out_map[5])
 {
@@ -101,18 +110,6 @@ static int read_conn_channel_map(struct bt_conn *conn, uint8_t out_map[5])
 	memcpy(out_map, rp->ch_map, sizeof(rp->ch_map));
 	net_buf_unref(rsp);
 	return 0;
-}
-
-static void init_channel_map(void)
-{
-	memset(&filter_chmap_instance, 0, sizeof(filter_chmap_instance));
-	channel_map_filter_algo_init(&filter_chmap_instance);
-
-	total_packets_sent = 0;
-	packets_since_last_evaluation = 0;
-
-	LOG_INF("Channel map and algorithm initialized\n");
-	printk("Algorithm will evaluate every %d packets\n", FILTER_EVALUATION_INTERVAL);
 }
 
 void algorithm_evaluation_and_update(void)
@@ -152,7 +149,7 @@ void scan_filter_match(struct bt_scan_device_info *device_info,
 
 	bt_addr_le_to_str(device_info->recv_info->addr, addr, sizeof(addr));
 
-	printk("Filters matched. Address: %s connectable: %d\n", addr, connectable);
+	printk("Filters matched. Address: %s connectable: %d\n\n", addr, connectable);
 }
 
 void scan_filter_no_match(struct bt_scan_device_info *device_info, bool connectable)
@@ -203,7 +200,7 @@ static void discovery_complete(struct bt_gatt_dm *dm, void *context)
 {
 	struct bt_latency_client *latency = context;
 
-	printk("Service discovery completed\n");
+	printk("Service discovery completed\n\n");
 
 	bt_gatt_dm_data_print(dm);
 	bt_latency_handles_assign(dm, latency);
@@ -253,7 +250,7 @@ static void scan_start(void)
 		return;
 	}
 
-	printk("Scanning successfully started\n");
+	printk("Scanning successfully started\n\n");
 }
 
 static void connected(struct bt_conn *conn, uint8_t err)
@@ -408,9 +405,28 @@ static void test_run(void)
 			if (!err) {
 				if (memcmp(active_map, previous_active_map,
 					   CHMAP_BLE_BITMASK_SIZE) != 0) {
-					printk("LL channel map: %02x %02x %02x %02x %02x\n",
+
+					printk("Detected Channel Map Update. (format, CH36 -> "
+					       "CH0)\n");
+
+					/* Print channel map in Hexadecimal */
+					printk("LL channel map, HEX: %02x %02x %02x %02x "
+					       "%02x\n",
 					       active_map[4], active_map[3], active_map[2],
 					       active_map[1], active_map[0]);
+
+					/* Print channel map in Bits */
+					char bitstr[CHMAP_BT_CONN_CH_COUNT + 1];
+					for (int ch = CHMAP_BT_CONN_CH_COUNT - 1; ch >= 0; ch--) {
+						uint8_t bit =
+							(active_map[ch / 8] >> (ch % 8)) & 0x01;
+						bitstr[CHMAP_BT_CONN_CH_COUNT - 1 - ch] =
+							bit ? '1' : '0';
+					}
+					bitstr[CHMAP_BT_CONN_CH_COUNT] = '\0';
+					printk("LL channel map, BITS: %s\n\n", bitstr);
+
+					/* Copy & replace map for next evaluation */
 					memcpy(previous_active_map, active_map,
 					       CHMAP_BLE_BITMASK_SIZE);
 				}
@@ -418,7 +434,7 @@ static void test_run(void)
 				printk("Reading LL channel map failed (err %d)\n", err);
 			}
 		}
-		k_sleep(K_MSEC(1)); /* wait between requests */
+		k_sleep(K_MSEC(1)); /* Wait between requests */
 	}
 }
 
@@ -432,7 +448,7 @@ void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_securit
 		bt_conn_disconnect(conn, BT_HCI_ERR_PAIRING_NOT_SUPPORTED);
 		return;
 	}
-	/*Start service discovery when link is encrypted*/
+	/* Start service discovery when link is encrypted */
 	err = bt_gatt_dm_start(default_conn, BT_UUID_LATENCY, &discovery_cb, &latency_client);
 	if (err) {
 		printk("Discover failed (err %d)\n", err);
@@ -495,10 +511,8 @@ int main(void)
 
 		char input_char = console_getchar();
 
-		printk("\n");
-
 		if (input_char == 'c') {
-			LOG_INF("Central. Starting scanning\n");
+			LOG_INF("Central. Starting scanning");
 			init_channel_map();
 			scan_init();
 			scan_start();

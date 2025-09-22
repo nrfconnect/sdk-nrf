@@ -294,7 +294,7 @@ static void set_default_parameters(struct chmap_filter_params *params)
 {
 	params->w_1 = 0.15f;		      // Weight for CRC errors
 	params->w_2 = 0.85f;		      // Weight for RX timeouts
-	params->w_3 = 0.8750f;		      // Weight for old rating
+	params->w_3 = 0.85f;		      // Weight for old rating
 	params->rating_threshold = 0.8f;      // Disable channels below this rating
 	params->min_packets_per_channel = 10; // Minimum packets needed for rating
 }

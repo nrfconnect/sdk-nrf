@@ -14,12 +14,14 @@ Requirements
 ************
 
 The sample supports the following development kits:
-
+   
 .. table-from-sample-yaml::
 
-.. include:: /includes/tfm.txt
+You need at least two development kits to physically test this sample:
 
-You can use any two of the development kits listed above and mix different development kits.
+* Currently only supports channel map updates to one peripheral device. To demonstrate you need two development kits.
+
+You can use mix different development kits from the list above.
 
 The sample also requires a connection to a computer with a serial terminal for each of the development kits.
 
@@ -58,10 +60,10 @@ Where:
 Channel Map Generation
 ----------------------
 
-Channels are included in the channel map if:
+Channels are included in the channel map iff:
 
-1. Their rating is above a configurable threshold (default: 0.3).
-2. At least 2 channels are always kept active as a safety mechanism.
+1. Their rating is above a configurable threshold (default: 0.8).
+2. The amount of active channels is greater than the minimum configurable amount (default 3). In order to prevent failiure of the adaptive channel hopping algorithm.
 
 Key Features
 ============
@@ -102,15 +104,19 @@ After programming the sample to both development kits, complete the following st
 #. After the evaluation interval is reached (default: 2000 packets), the algorithm will run.
 #. After a set amount of evaluations (default = 5) an evaluation report is printedshowing:
 
+   On Central Unit
    * Channel statistics (packets sent, CRC errors, RX timeouts)
    * Channel ratings
    * Channel states (active/inactive)
    * Updated channel map application
 
+   On Peripheral Unit
+   * Prints the Channel Map if it has been updated from last iteration
+
 Sample output
 =============
 
-The result should look similar to the following output::
+The result should look similar to the following output on the central device::
 
    *** Booting nRF Connect SDK v3.0.2-89ba1294ac9b ***
    *** Using Zephyr OS v4.0.99-f791c49f492c ***
@@ -123,20 +129,28 @@ The result should look similar to the following output::
    I: HW Platform: Nordic Semiconductor (0x0002)
    I: HW Variant: nRF54Lx (0x0005)
    I: Firmware: Standard Bluetooth controller (0x00) Version 137.20634 Build 261734951
-   Bluetooth initialized
-   Channel map and algorithm initialized
-   Connection event reports enabled
-   Choose device role - type c (central) or p (peripheral): c
-   Central. Starting scanning
+   I: Bluetooth initialized
+
+   I: Choose device role - type c (central) or p (peripheral): 
+   I: Central. Starting scanning
+   I: Channel map and algorithm initialized
+   Algorithm will evaluate every 2000 packets
    Scanning successfully started
+
    Filters matched. Address: D2:A9:E7:9A:A7:72 (random) connectable: 1
    Connected as central
    Connection interval: 6 units (7.5 ms)
-   I: Channel map evaluation completed successfully.
-   I: Active channels: 32
+   Security changed: level 2, err: 0 
+   Service discovery completed
 
-   Applying new channel map
-   Successfully applied channel map
+   Channel map evaluation completed successfully
+   Active channels: 33
+   I: Applying new channel map
+   I: Successfully applied channel map
+
+   .
+   .
+   .
 
    I: 
    --- Algorithm Channel Report ---
@@ -155,6 +169,54 @@ The result should look similar to the following output::
    I: 23 |                 282 |          3 |         211 |       0.442 |       1.000 | 0
    I: 24 |                 272 |          0 |         132 |       0.639 |       1.000 | 0
    I: ...
+
+
+The result should look similar to the following output on the central device::
+   *** Booting nRF Connect SDK v3.0.2-89ba1294ac9b ***
+   *** Using Zephyr OS v4.0.99-f791c49f492c ***
+   I: Starting Bluetooth Channel Map Update Sample
+
+   I: SoftDevice Controller build revision: 
+   I: 89 9a 50 8a 95 01 9c 58 |..P....X
+   I: fc 39 d2 c1 10 04 ee 02 |.9......
+   I: 64 ce 25 be             |d.%.    
+   I: HW Platform: Nordic Semiconductor (0x0002)
+   I: HW Variant: nRF54Lx (0x0005)
+   I: Firmware: Standard Bluetooth controller (0x00) Version 137.20634 Build 2617349514
+   I: Identity: D2:A9:E7:9A:A7:72 (random)
+   I: HCI: version 6.0 (0x0e) revision 0x30f3, manufacturer 0x0059
+   I: LMP: version 6.0 (0x0e) subver 0x30f3
+   I: Bluetooth initialized
+
+   I: Choose device role - type c (central) or p (peripheral): 
+   I: Peripheral. Starting advertising
+
+   Advertising successfully started
+   Connected as peripheral
+   Connection interval: 6 units (7.5 ms)
+   Security changed: level 2, err: 0 
+   Service discovery completed
+
+   Detected Channel Map Update, (formatted CH36 down to CH0)
+   LL channel map, HEX: 1f ff ff ff ff
+   LL channel map, BITS: 1111111111111111111111111111111111111
+
+   Detected Channel Map Update, (formatted CH36 down to CH0)
+   LL channel map, HEX: 1f fb ff ff ff
+   LL channel map, BITS: 1111111111011111111111111111111111111
+
+   .
+   .
+   .
+
+   Detected Channel Map Update, (formatted CH36 down to CH0)
+   LL channel map, HEX: 1f c3 ff 5f ff
+   LL channel map, BITS: 1111111000011111111110101111111111111
+
+   Detected Channel Map Update, (formatted CH36 down to CH0)
+   LL channel map, HEX: 1f c3 ff 4f ff
+   LL channel map, BITS: 1111111000011111111110100111111111111
+   
 
 Dependencies
 ************
