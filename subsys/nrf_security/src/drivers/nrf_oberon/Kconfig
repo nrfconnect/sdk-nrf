@@ -1737,3 +1737,6 @@ config PSA_NEED_OBERON_HMAC_DRBG_DRIVER
 
 endif # PSA_CRYPTO_DRIVER_OBERON
 endmenu
+
+# Include CRACEN TRNG driver config
+rsource "cracen_trng/Kconfig"

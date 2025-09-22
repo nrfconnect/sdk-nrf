@@ -12,7 +12,7 @@ nvic: &cpuapp_nvic {};
 
 / {
 	chosen {
-		zephyr,entropy = &rng;
+		zephyr,entropy = &psa_rng;
 	};
 
 	soc {
@@ -23,7 +23,7 @@ nvic: &cpuapp_nvic {};
 
 	psa_rng: psa-rng {
 		compatible = "zephyr,psa-crypto-rng";
-		status = "disabled";
+		status = "okay";
 	};
 
 	prng: prng {
@@ -33,7 +33,7 @@ nvic: &cpuapp_nvic {};
 
 	rng: rng {
 		compatible = "nordic,nrf-cracen-ctrdrbg";
-		status = "okay";
+		status = "disabled";
 	};
 };
 
