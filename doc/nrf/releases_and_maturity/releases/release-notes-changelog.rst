@@ -36,7 +36,7 @@ IDE, OS, and tool support
 * Added macOS 26 support (Tier 3) to the table listing :ref:`supported operating systems for proprietary tools <additional_nordic_sw_tools_os_support>`.
 * Updated:
 
-  * The required `SEGGER J-Link`_ version to v8.60.
+  * The required `SEGGER J-Link`_ version to v8.66.
   * Steps on the :ref:`install_ncs` page for installing the |NCS| and toolchain together.
     With this change, the separate steps to install the toolchain and the SDK were merged into a single step.
 
