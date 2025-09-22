@@ -21,7 +21,7 @@ Examples:
     ("even/newer/index", "absolutely/newer/index"),
 """
 
-NRF = [
+NRF = (
     ("introduction", "index"), # Introduction
     ("ug_nrf9160_gs", "gsg_guides"), # Getting started with nRF9160 DK (removed in v3.0.0)
     ("working_with_nrf/nrf91/nrf9160_gs", "gsg_guides"),
@@ -672,4 +672,4 @@ NRF = [
     # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_compare_other_dfu", "app_dev/bootloaders_dfu/index"),
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_debugging", "app_dev/device_guides/nrf54h/ug_nrf54h20_debugging"), # nRF54H20 debugging
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_custom_pcb", "app_dev/device_guides/nrf54h/ug_nrf54h20_custom_pcb"), # Configuring your application for a custom PCB
-]
+)
