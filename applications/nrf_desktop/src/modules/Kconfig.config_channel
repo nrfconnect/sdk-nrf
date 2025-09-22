@@ -57,7 +57,6 @@ comment "DFU"
 config DESKTOP_CONFIG_CHANNEL_DFU_ENABLE
 	bool "DFU over the config channel"
 	depends on DESKTOP_CONFIG_CHANNEL_ENABLE
-	depends on (SSF_SUIT_SERVICE_ENABLED || !SUIT)
 	help
 	  This option enables DFU over the config channel.
 
