@@ -56,41 +56,77 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 		     "B0 bootloader supported only with Partition Manager");
 	#include <pm_config.h>
 	#include <fw_info.h>
-	#define BOOTLOADER_NAME	"B0"
+	#define BOOTLOADER_NAME "B0"
 	#if PM_ADDRESS == PM_S0_IMAGE_ADDRESS
-		#define DFU_SLOT_ID		PM_S1_IMAGE_ID
+		#define DFU_SLOT_ID PM_S1_IMAGE_ID
 	#elif PM_ADDRESS == PM_S1_IMAGE_ADDRESS
-		#define DFU_SLOT_ID		PM_S0_IMAGE_ID
+		#define DFU_SLOT_ID PM_S0_IMAGE_ID
 	#else
 		#error Missing partition definitions.
 	#endif
 #elif CONFIG_BOOTLOADER_MCUBOOT
-	BUILD_ASSERT(IS_ENABLED(CONFIG_PARTITION_MANAGER_ENABLED),
-		     "MCUBoot bootloader supported only with Partition Manager");
-	#include <pm_config.h>
 	#include <zephyr/dfu/mcuboot.h>
 	#if CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
-		#define BOOTLOADER_NAME	"MCUBOOT+XIP"
+		#define BOOTLOADER_NAME "MCUBOOT+XIP"
 	#else
-		#define BOOTLOADER_NAME	"MCUBOOT"
+		#define BOOTLOADER_NAME "MCUBOOT"
 	#endif
 
-	#ifdef PM_MCUBOOT_SECONDARY_PAD_SIZE
-		BUILD_ASSERT(PM_MCUBOOT_PAD_SIZE == PM_MCUBOOT_SECONDARY_PAD_SIZE);
-	#endif
+	#if CONFIG_PARTITION_MANAGER_ENABLED
+		#include <pm_config.h>
 
-	#if CONFIG_BUILD_WITH_TFM
-		#define PM_ADDRESS_OFFSET (PM_MCUBOOT_PAD_SIZE + PM_TFM_SIZE)
-	#else
-		#define PM_ADDRESS_OFFSET (PM_MCUBOOT_PAD_SIZE)
-	#endif
+		#ifdef PM_MCUBOOT_SECONDARY_PAD_SIZE
+			BUILD_ASSERT(PM_MCUBOOT_PAD_SIZE == PM_MCUBOOT_SECONDARY_PAD_SIZE);
+		#endif
 
-	#if (PM_ADDRESS - PM_ADDRESS_OFFSET) == PM_MCUBOOT_PRIMARY_ADDRESS
-		#define DFU_SLOT_ID		PM_MCUBOOT_SECONDARY_ID
-	#elif (PM_ADDRESS - PM_ADDRESS_OFFSET) == PM_MCUBOOT_SECONDARY_ADDRESS
-		#define DFU_SLOT_ID		PM_MCUBOOT_PRIMARY_ID
+		#if CONFIG_BUILD_WITH_TFM
+			#define PM_ADDRESS_OFFSET (PM_MCUBOOT_PAD_SIZE + PM_TFM_SIZE)
+		#else
+			#define PM_ADDRESS_OFFSET (PM_MCUBOOT_PAD_SIZE)
+		#endif
+
+		#define MCUBOOT_PRIMARY_SLOT_ID   PM_MCUBOOT_PRIMARY_ID
+		#define MCUBOOT_SECONDARY_SLOT_ID PM_MCUBOOT_SECONDARY_ID
+
+		#if (PM_ADDRESS - PM_ADDRESS_OFFSET) == PM_MCUBOOT_PRIMARY_ADDRESS
+			#define DFU_SLOT_ID MCUBOOT_SECONDARY_SLOT_ID
+		#elif (PM_ADDRESS - PM_ADDRESS_OFFSET) == PM_MCUBOOT_SECONDARY_ADDRESS
+			#define DFU_SLOT_ID MCUBOOT_PRIMARY_SLOT_ID
+		#else
+			#error Missing partition definitions.
+		#endif
+	#elif CONFIG_USE_DT_CODE_PARTITION
+		#include <zephyr/devicetree.h>
+
+		#define CODE_PARTITION_NODE    DT_CHOSEN(zephyr_code_partition)
+		#define MCUBOOT_PRIMARY_NODE   DT_NODELABEL(slot0_partition)
+		#define MCUBOOT_SECONDARY_NODE DT_NODELABEL(slot1_partition)
+
+		BUILD_ASSERT(DT_FIXED_PARTITION_EXISTS(MCUBOOT_PRIMARY_NODE),
+			     "Missing primary partition definition in DTS.");
+		BUILD_ASSERT(DT_FIXED_PARTITION_EXISTS(MCUBOOT_SECONDARY_NODE),
+			     "Missing secondary partition definition in DTS.");
+
+		#define CODE_PARTITION_START_ADDR    DT_FIXED_PARTITION_ADDR(CODE_PARTITION_NODE)
+		#define MCUBOOT_PRIMARY_START_ADDR   DT_FIXED_PARTITION_ADDR(MCUBOOT_PRIMARY_NODE)
+		#define MCUBOOT_SECONDARY_START_ADDR DT_FIXED_PARTITION_ADDR(MCUBOOT_SECONDARY_NODE)
+
+		#if MCUBOOT_PRIMARY_START_ADDR == MCUBOOT_SECONDARY_START_ADDR
+			#error Primary and secondary partitions cannot have the same address.
+		#endif
+
+		#define MCUBOOT_PRIMARY_SLOT_ID   DT_FIXED_PARTITION_ID(MCUBOOT_PRIMARY_NODE)
+		#define MCUBOOT_SECONDARY_SLOT_ID DT_FIXED_PARTITION_ID(MCUBOOT_SECONDARY_NODE)
+
+		#if CODE_PARTITION_START_ADDR == MCUBOOT_PRIMARY_START_ADDR
+			#define DFU_SLOT_ID MCUBOOT_SECONDARY_SLOT_ID
+		#elif CODE_PARTITION_START_ADDR == MCUBOOT_SECONDARY_START_ADDR
+			#define DFU_SLOT_ID MCUBOOT_PRIMARY_SLOT_ID
+		#else
+			#error Missing partition definitions in DTS.
+		#endif
 	#else
-		#error Missing partition definitions.
+		#error Unsupported partitioning scheme.
 	#endif
 #else
 	#error Bootloader not supported.
@@ -732,12 +768,12 @@ static void handle_image_info_request(uint8_t *data, size_t *size)
 	uint8_t flash_area_id;
 	uint8_t bank_header_area_id;
 
-	if (DFU_SLOT_ID == PM_MCUBOOT_SECONDARY_ID) {
+	if (DFU_SLOT_ID == MCUBOOT_SECONDARY_SLOT_ID) {
 		flash_area_id = 0;
-		bank_header_area_id = PM_MCUBOOT_PRIMARY_ID;
+		bank_header_area_id = MCUBOOT_PRIMARY_SLOT_ID;
 	} else {
 		flash_area_id = 1;
-		bank_header_area_id = PM_MCUBOOT_SECONDARY_ID;
+		bank_header_area_id = MCUBOOT_SECONDARY_SLOT_ID;
 	}
 
 	int err = boot_read_bank_header(bank_header_area_id, &header,
