@@ -23,6 +23,10 @@
 
 #include "cracen_psa_primitives.h"
 
+#if defined(CONFIG_SOC_NRF54LV10A) && defined(CONFIG_PSA_NEED_CRACEN_CTR_AES)
+#include <cracen_sw_aes_ctr.h>
+#endif
+
 static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *attributes)
 {
 	bool is_supported = false;
@@ -64,9 +68,8 @@ static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *at
 }
 
 static psa_status_t setup(enum cipher_operation dir, cracen_cipher_operation_t *operation,
-				    const psa_key_attributes_t *attributes,
-				    const uint8_t *key_buffer, size_t key_buffer_size,
-				    psa_algorithm_t alg)
+			  const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
+			  size_t key_buffer_size, psa_algorithm_t alg)
 {
 	if (!is_alg_supported(alg, attributes)) {
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -285,6 +288,29 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 	cracen_cipher_operation_t operation = {0};
 	*output_length = 0;
 
+#if defined(CONFIG_SOC_NRF54LV10A) && defined(CONFIG_PSA_NEED_CRACEN_CTR_AES)
+	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
+	if (alg == PSA_ALG_CTR) {
+		if (output_size < input_length) {
+			return PSA_ERROR_BUFFER_TOO_SMALL;
+		}
+		/* Handle inplace encryption by moving plaintext to the right by iv_length
+		 * bytes. This is done because in inplace encryption the input and output
+		 * should point to the same data so that the output can overwrite its own
+		 * input. If they are not in sync the output will overwrite the input of
+		 * another operation which is of course wrong.
+		 *
+		 */
+		if (output == input + iv_length) {
+			memmove(output, input, input_length);
+			input = output;
+		}
+		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, iv,
+					       iv_length, input, input_length, output, output_size,
+					       output_length);
+	}
+#endif
+
 	/* If ECB is not enabled in the configuration the encrypt setup will return an not supported
 	 * error and thus we don't need to write an else here.
 	 */
@@ -337,6 +363,15 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 	/* ChaCha20 only supports 12 bytes IV in the single part decryption function */
 	const size_t iv_size = (alg == PSA_ALG_STREAM_CIPHER) ? 12 : SX_BLKCIPHER_IV_SZ;
 	*output_length = 0;
+
+#if defined(CONFIG_SOC_NRF54LV10A) && defined(CONFIG_PSA_NEED_CRACEN_CTR_AES)
+	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
+	if (alg == PSA_ALG_CTR) {
+		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, input,
+					       iv_size, input + iv_size, input_length - iv_size,
+					       output, output_size, output_length);
+	}
+#endif
 
 	if (input_length == 0) {
 		return PSA_SUCCESS;
@@ -462,6 +497,14 @@ psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
 	if (!is_multi_part_supported(alg)) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
+
+#if defined(CONFIG_SOC_NRF54LV10A) && defined(CONFIG_PSA_NEED_CRACEN_CTR_AES)
+	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
+	if (alg == PSA_ALG_CTR) {
+		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size);
+	}
+#endif
+
 	return setup(CRACEN_ENCRYPT, operation, attributes, key_buffer, key_buffer_size, alg);
 }
 
@@ -473,6 +516,14 @@ psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
 	if (!is_multi_part_supported(alg)) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
+
+#if defined(CONFIG_SOC_NRF54LV10A) && defined(CONFIG_PSA_NEED_CRACEN_CTR_AES)
+	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
+	if (alg == PSA_ALG_CTR) {
+		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size);
+	}
+#endif
+
 	return setup(CRACEN_DECRYPT, operation, attributes, key_buffer, key_buffer_size, alg);
 }
 
@@ -480,6 +531,13 @@ psa_status_t cracen_cipher_set_iv(cracen_cipher_operation_t *operation, const ui
 				  size_t iv_length)
 {
 	__ASSERT_NO_MSG(iv != NULL);
+
+#if defined(CONFIG_SOC_NRF54LV10A) && defined(CONFIG_PSA_NEED_CRACEN_CTR_AES)
+	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
+	if (operation->alg == PSA_ALG_CTR) {
+		return cracen_sw_aes_ctr_set_iv(operation, iv, iv_length);
+	}
+#endif
 
 	/* Set IV is called after the encrypt/decrypt setup functions thus we
 	 * know that we have CHACHA20 as the stream cipher here. Chacha20
@@ -516,6 +574,14 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 {
 	__ASSERT_NO_MSG(input != NULL || input_length == 0);
 	__ASSERT_NO_MSG(output_length != NULL);
+
+#if defined(CONFIG_SOC_NRF54LV10A) && defined(CONFIG_PSA_NEED_CRACEN_CTR_AES)
+	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
+	if (operation->alg == PSA_ALG_CTR) {
+		return cracen_sw_aes_ctr_update(operation, input, input_length, output, output_size,
+						output_length);
+	}
+#endif
 
 	int sx_status = SX_ERR_UNINITIALIZED_OBJ;
 	psa_status_t psa_status = PSA_ERROR_CORRUPTION_DETECTED;
@@ -667,6 +733,13 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 {
 	__ASSERT_NO_MSG(output_length != NULL);
 
+#if defined(CONFIG_SOC_NRF54LV10A) && defined(CONFIG_PSA_NEED_CRACEN_CTR_AES)
+	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
+	if (operation->alg == PSA_ALG_CTR) {
+		return cracen_sw_aes_ctr_finish(operation, output_length);
+	}
+#endif
+
 	int sx_status;
 
 	*output_length = 0;
@@ -807,6 +880,15 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 
 psa_status_t cracen_cipher_abort(cracen_cipher_operation_t *operation)
 {
+#if defined(CONFIG_SOC_NRF54LV10A) && defined(CONFIG_PSA_NEED_CRACEN_CTR_AES)
+	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
+	if (operation->alg == PSA_ALG_CTR) {
+		/* Software AES CTR implementation doesn't allocate hardware resources to free */
+		safe_memzero(operation, sizeof(cracen_cipher_operation_t));
+		return PSA_SUCCESS;
+	}
+#endif
+
 	int sx_status;
 
 	sx_status = sx_blkcipher_free(&operation->cipher);

@@ -23,6 +23,8 @@ list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/prng_pool.c
 )
 
+# Include hardware cipher implementation for all devices except nRF54LM20A
+# nRF54LM20A uses only cracen_sw
 if(NOT CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/cipher.c
