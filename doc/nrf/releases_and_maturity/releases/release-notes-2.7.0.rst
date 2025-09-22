@@ -845,7 +845,7 @@ Networking samples
 ------------------
 
 * Updated the networking samples to support import of certificates in valid PEM formats.
-* Removed QEMU x86 emulation support and added support for the :ref:`native simulator <zephyr:native_sim>` board.
+* Removed QEMU x86 emulation support and added support for the :zephyr:board:`native simulator <native_sim>` board.
 
 * :ref:`mqtt_sample` sample:
 
