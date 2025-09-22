@@ -27,13 +27,13 @@ common:
   timeout: 60
 
 tests:
-  tests.drivers.uart_latency.async:
+  drivers.uart.uart_latency.async:
     extra_configs:
       - CONFIG_UART_ASYNC_API=y
-  tests.drivers.uart_latency.int_driven:
+  drivers.uart.uart_latency.int_driven:
     extra_configs:
       - CONFIG_UART_INTERRUPT_DRIVEN=y
-  tests.drivers.uart_latency.poll:
+  drivers.uart.uart_latency.poll:
     extra_configs:
       - CONFIG_UART_ASYNC_API=n
       - CONFIG_UART_INTERRUPT_DRIVEN=n
