@@ -661,8 +661,8 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 
 	switch (evt->id) {
 	case FOTA_DOWNLOAD_EVT_FINISHED:
-		LOG_INF("Download complete");
 		nrf_cloud_download_end();
+		LOG_INF("Download complete");
 
 		if (current_fota.status == NRF_CLOUD_FOTA_DOWNLOADING &&
 		    current_fota.sent_dl_progress != 100) {
