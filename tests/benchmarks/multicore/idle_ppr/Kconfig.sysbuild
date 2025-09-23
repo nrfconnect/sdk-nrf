@@ -19,4 +19,4 @@ config NETCORE_IMAGE_NAME
 
 config NETCORE_IMAGE_PATH
   string
-  default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever"
+  default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_ppr/remote"
