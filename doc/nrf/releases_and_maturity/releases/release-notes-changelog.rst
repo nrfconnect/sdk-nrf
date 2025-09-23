@@ -637,7 +637,7 @@ Libraries for networking
 * Deprecated the :ref:`lib_nrf_cloud_rest` library.
   Use the :ref:`lib_nrf_cloud_coap` library instead.
 
-* Fixed occasional message truncation that notified that the download was complete in the :ref:`lib_nrf_cloud_fota` library.
+* Fixed occasional message truncation notifying that the download was complete in the :ref:`lib_nrf_cloud_fota` library.
 
 Libraries for NFC
 -----------------
