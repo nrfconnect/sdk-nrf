@@ -3,10 +3,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
-import os.path
 import sys
+import tempfile
 
-from docutils import statemachine
+from docutils import statemachine, nodes
 from docutils.parsers.rst import directives
 from dotenv import load_dotenv
 from sphinx.application import Sphinx
@@ -27,6 +27,7 @@ class OptionsFromKconfig(SphinxDirective):
         'suffix': directives.unchanged,
         'show-type': directives.flag,
         'only-visible': directives.flag,
+        'filename': directives.unchanged,
     }
 
     @staticmethod
@@ -40,20 +41,102 @@ class OptionsFromKconfig(SphinxDirective):
         kconfiglib._SOURCE_TOKENS = kconfiglib._REL_SOURCE_TOKENS
         kconfiglib.Kconfig._parse_error = lambda self_, msg: None
 
-    def _get_kconfig_path(self, path):
-        rel_path = os.path.relpath(path, self.env.srcdir)
-        return os.path.join(
-            self.config.options_from_kconfig_base_dir, rel_path, 'Kconfig'
-        )
+    def _convert_build_to_source_path(self, build_path):
+        """
+        Convert build directory path back to source path.
+
+        Args:
+            build_path: Path in the build directory
+
+        Returns:
+            Corresponding source directory path
+        """
+        if '_build' not in build_path or not self.config.options_from_kconfig_base_dir:
+            return build_path
+
+        # Extract the relative part after _build
+        parts = build_path.split('_build')
+        if len(parts) <= 1:
+            return build_path
+
+        rel_part = parts[-1].lstrip(os.sep)
+
+        # Remove common build subdirectories
+        for prefix in ['nrf/src/', 'nrf/']:
+            if rel_part.startswith(prefix):
+                rel_part = rel_part[len(prefix):]
+                break
+
+        return os.path.join(self.config.options_from_kconfig_base_dir, rel_part)
+
+    def _get_source_directory(self):
+        """
+        Get the directory of the current RST file.
+
+        Returns:
+            Absolute path to the directory containing the RST file
+        """
+        source = self.state_machine.input_lines.source(
+            self.lineno - self.state_machine.input_offset - 1)
+        return os.path.dirname(os.path.abspath(source))
+
+    def _strip_quotes(self, text):
+        """
+        Remove surrounding quotes from text if present.
+
+        Args:
+            text: String that may have surrounding quotes
+
+        Returns:
+            String with quotes removed if they were present
+        """
+        if text and len(text) >= 2:
+            if (text.startswith('"') and text.endswith('"')) or \
+               (text.startswith("'") and text.endswith("'")):
+                return text[1:-1]
+        return text
 
     def run(self):
+        source_dir = self._get_source_directory()
+
         if len(self.arguments) > 0:
-            _, path = self.env.relfn2path(self.arguments[0])
+            # Case 1: Explicit path argument provided
+            arg_path = self.arguments[0]
+
+            if os.path.isabs(arg_path):
+                path = arg_path
+            else:
+                # Calculate relative path from sphinx source directory
+                rel_source_path = os.path.relpath(source_dir, self.env.srcdir)
+                # Combine with base directory and argument path
+                path = os.path.normpath(os.path.join(
+                    self.config.options_from_kconfig_base_dir,
+                    rel_source_path,
+                    arg_path
+                ))
+
+                # Fallback: try other resolution methods if file doesn't exist
+                if not os.path.exists(path):
+                    # Convert build path to source path and try direct resolution
+                    converted_source_dir = self._convert_build_to_source_path(source_dir)
+                    fallback_path = os.path.normpath(os.path.join(converted_source_dir, arg_path))
+                    if os.path.exists(fallback_path):
+                        path = fallback_path
+                    else:
+                        # Additional fallback: try using the old relfn2path method
+                        try:
+                            _, old_path = self.env.relfn2path(arg_path)
+                            if os.path.exists(old_path):
+                                path = old_path
+                        except Exception:
+                            pass  # Keep the original path for error reporting
         else:
-            source = self.state_machine.input_lines.source(
-                self.lineno - self.state_machine.input_offset - 1)
-            source_dir = os.path.dirname(os.path.abspath(source))
-            path = self._get_kconfig_path(source_dir)
+            # Case 2: No argument provided - auto-detection
+            # Convert build path to source path if needed
+            source_dir = self._convert_build_to_source_path(source_dir)
+            # Use custom filename if specified, otherwise default to 'Kconfig'
+            filename = self.options.get('filename', 'Kconfig')
+            path = os.path.join(source_dir, filename)
 
         sys.path.append(
             os.path.join(
@@ -73,19 +156,37 @@ class OptionsFromKconfig(SphinxDirective):
                                                                             module.meta,
                                                                             False)
 
-        import tempfile
         f = tempfile.NamedTemporaryFile('w', encoding="utf-8", delete=False)
         f.write(kconfig_module_dirs)
         f.close()
         load_dotenv(f.name)
         os.unlink(f.name)
 
+        # Validate that the Kconfig file exists before attempting to parse it
+        if not os.path.exists(path):
+            # Create an error message for the user
+            error_msg = f"Kconfig file not found: {path}"
+            if len(self.arguments) > 0:
+                error_msg += f"\n  Argument provided: {self.arguments[0]}"
+                error_msg += f"\n  RST file directory: {self._get_source_directory()}"
+                error_msg += f"\n  Resolved path: {path}"
+
+            # Return an error node instead of crashing
+            error_node = nodes.error(error_msg, nodes.paragraph('', error_msg))
+            return [error_node]
+
         import kconfiglib
         self._monkey_patch_kconfiglib(kconfiglib)
 
         # kconfiglib wants this env var defined
         os.environ['srctree'] = os.path.dirname(os.path.abspath(__file__))
-        kconfig = kconfiglib.Kconfig(filename=path, warn=False)
+
+        try:
+            kconfig = kconfiglib.Kconfig(filename=path, warn=False)
+        except Exception as e:
+            error_msg = f"Failed to parse Kconfig file '{path}': {str(e)}"
+            error_node = nodes.error(error_msg, nodes.paragraph('', error_msg))
+            return [error_node]
 
         prefix = self.options.get('prefix', None)
         suffix = self.options.get('suffix', None)
@@ -102,9 +203,7 @@ class OptionsFromKconfig(SphinxDirective):
                 typ_ = kconfiglib.TYPE_TO_STR[sym.type]
                 text += '``(' + typ_ + ')`` '
             if prefix is not None:
-                if (prefix.startswith('"') and prefix.endswith('"')) or \
-                   (prefix.startswith("'") and prefix.endswith("'")):
-                    prefix = prefix[1:-1]
+                prefix = self._strip_quotes(prefix)
                 text += prefix
             try:
                 prompt_ = f'{sym.nodes[0].prompt[0]}'
@@ -115,9 +214,7 @@ class OptionsFromKconfig(SphinxDirective):
             else:
                 text += prompt_
             if suffix is not None:
-                if (suffix.startswith('"') and suffix.endswith('"')) or \
-                   (suffix.startswith("'") and suffix.endswith("'")):
-                    suffix = suffix[1:-1]
+                suffix = self._strip_quotes(suffix)
                 text += suffix
             lines.append(f'{text}\n')
             try:
