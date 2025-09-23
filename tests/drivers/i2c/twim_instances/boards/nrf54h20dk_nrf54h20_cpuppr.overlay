@@ -83,10 +83,22 @@
 			low-power-enable;
 		};
 	};
-};
 
-&can120 {
-	status = "disabled";
+	i2c137_default_test: i2c137_default_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 8)>,
+				<NRF_PSEL(TWIM_SCL, 2, 0)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c137_sleep_test: i2c137_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 2, 10)>,
+				<NRF_PSEL(TWIM_SCL, 2, 0)>;
+			low-power-enable;
+		};
+	};
 };
 
 &i2c130 {
@@ -126,6 +138,19 @@
 };
 
 &i2c134 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	pinctrl-0 = <&i2c134_default_test>;
+	pinctrl-1 = <&i2c134_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	zephyr,concat-buf-size = <256>;
+};
+
+/* i2c135 inaccessible due to cpuppr console on uart135 */
+
+/* i2c136 inaccessible due to cpuapp console on uart136 */
+
+&i2c137 {
 	compatible = "nordic,nrf-twim";
 	status = "okay";
 	pinctrl-0 = <&i2c134_default_test>;
