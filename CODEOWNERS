@@ -665,11 +665,12 @@
 /samples/wifi/**/*.rst                    @nrfconnect/ncs-wifi-doc
 /samples/wifi/provisioning/softap/*.rst   @nrfconnect/ncs-cia-doc
 /samples/zephyr/basic/blinky/             @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
+/samples/zephyr/bluetooth/                @nrfconnect/ncs-low-level-test
 /samples/zephyr/boards/nordic/spis_wakeup/ @nrfconnect/ncs-low-level-test
 /samples/zephyr/boards/nordic/system_off/ @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/adc/              @nrfconnect/ncs-low-level-test
-/samples/zephyr/drivers/counter/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/audio/dmic/       @nrfconnect/ncs-low-level-test
+/samples/zephyr/drivers/counter/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/i2c/rtio_loopback/ @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/jesd216/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/mbox/             @nrfconnect/ncs-low-level-test
@@ -681,9 +682,9 @@
 /samples/zephyr/sensor/qdec/              @nrfconnect/ncs-low-level-test
 /samples/zephyr/smp_svr_mini_boot/        @nrfconnect/ncs-pluto @nrfconnect/ncs-charon
 /samples/zephyr/subsys/ipc/               @nrfconnect/ncs-low-level-test
+/samples/zephyr/subsys/mgmt/mcumgr/smp_svr/ @nrfconnect/ncs-charon
 /samples/zephyr/subsys/settings/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/usb/               @nrfconnect/ncs-low-level-test
-/samples/zephyr/subsys/mgmt/mcumgr/smp_svr/ @nrfconnect/ncs-charon
 /samples/zephyr/sysbuild/                 @nrfconnect/ncs-low-level-test
 
 /samples/**/*.svg                         @nrfconnect/ncs-doc-leads
