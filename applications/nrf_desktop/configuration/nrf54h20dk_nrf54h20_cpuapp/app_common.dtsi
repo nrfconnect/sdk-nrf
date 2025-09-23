@@ -7,7 +7,11 @@
 #include "memory_map.dtsi"
 
 / {
-	/* Redefine leds to fit CAF requirements. */
+	/* Redefine leds to fit CAF requirements.
+	 * Remove the pwmleds DTS node to prevent the CONFIG_LED_PWM and CONFIG_CAF_LEDS_PWM Kconfig
+	 * options from being enabled.
+	 */
+	/delete-node/ pwmleds;
 	/delete-node/ leds;
 
 	leds0 {
@@ -52,6 +56,10 @@
 			gpios = < &gpio9 3 GPIO_ACTIVE_HIGH >;
 			label = "Green LED 3";
 		};
+	};
+
+	aliases {
+		/delete-property/ pwm-led0;
 	};
 };
 
