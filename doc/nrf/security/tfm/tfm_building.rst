@@ -114,23 +114,23 @@ Following are the available Kconfig options for TF-M partitions:
      - Default value
      - Dependencies
    * - :kconfig:option:`CONFIG_TFM_PARTITION_PLATFORM`
-     - Provides platform services.
+     - Provides :ref:`ug_tfm_services_platform`.
      - Enabled
      -
    * - :kconfig:option:`CONFIG_TFM_PARTITION_CRYPTO`
-     - Provides cryptographic services.
+     - Provides :ref:`tfm_partition_crypto`.
      - Enabled
-     - INTERNAL_TRUSTED_STORAGE
+     -
    * - :kconfig:option:`CONFIG_TFM_PARTITION_PROTECTED_STORAGE`
-     - Provides secure storage services.
+     - Provides :ref:`tfm_partition_ps`.
      - Enabled
      - PLATFORM, CRYPTO
    * - :kconfig:option:`CONFIG_TFM_PARTITION_INTERNAL_TRUSTED_STORAGE`
-     - Provides internal trusted storage services.
+     - Provides :ref:`ug_tfm_services_its`.
      - Enabled
      -
    * - :kconfig:option:`CONFIG_TFM_PARTITION_INITIAL_ATTESTATION`
-     - Provides initial attestation services.
+     - Provides :ref:`ug_tfm_services_initial_attestation`.
      - Disabled
      - CRYPTO
 
