@@ -307,6 +307,13 @@ Bluetooth samples
    * :ref:`peripheral_status`
    * :ref:`peripheral_uart`
 
+* Disabled legacy pairing in the following samples:
+
+   * :ref:`central_nfc_pairing`
+   * :ref:`power_profiling`
+
+   Support for legacy pairing remains exclusively for :ref:`peripheral_nfc_pairing` sample to retain compatibility with older Andorid devices.
+
 * :ref:`direct_test_mode` sample:
 
   * Updated by simplifying the 2-wire UART polling.
