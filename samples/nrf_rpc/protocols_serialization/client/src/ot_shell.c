@@ -2156,7 +2156,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	udp_cmds, SHELL_CMD_ARG(open, NULL, "Open socket", cmd_udp_open, 1, 0),
 	SHELL_CMD_ARG(bind, NULL, "Bind socket [-u|-b] <addr> <port>", cmd_udp_bind, 3, 1),
 	SHELL_CMD_ARG(connect, NULL, "Connect socket <addr> <port>", cmd_udp_connect, 3, 0),
-	SHELL_CMD_ARG(send, NULL, "Send message [addr port] <message>", cmd_udp_send, 2, 2),
 	SHELL_CMD_ARG(txcallback, NULL, "Enable/disable tx callback", cmd_udp_txcallback, 1, 1),
 	SHELL_CMD_ARG(send, NULL, "Send message [addr port] [-t] <message>", cmd_udp_send, 2, 3),
 	SHELL_CMD_ARG(txtimestamp, NULL, "Enable/disable TX timestamping of UDP packets [enable|disable]",
