@@ -683,7 +683,8 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-|no_changes_yet_note|
+* Removed the Fast Pair TinyCrypt cryptographic backend (``CONFIG_BT_FAST_PAIR_CRYPTO_TINYCRYPT``), because the TinyCrypt library support was removed from Zephyr.
+  You can use either the Fast Pair Oberon cryptographic backend (:kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_OBERON`) or the Fast Pair PSA cryptographic backend (:kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_PSA`).
 
 Edge Impulse integration
 ------------------------
