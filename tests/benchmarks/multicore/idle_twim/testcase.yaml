@@ -15,15 +15,18 @@ tests:
     harness: pytest
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuppr
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuppr
     extra_args:
       - SHIELD=pca63566
+      - vpr_launcher_SHIELD=pca63566_fwd
     harness_config:
       fixture: pca63566
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_twim_gated"
-    timeout: 90
+    timeout: 120
 
   benchmarks.multicore.idle_twim.nrf54h20dk_cpuapp_cpurad.coverage:
     tags:
