@@ -20,13 +20,15 @@ tests:
     sysbuild: true
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuppr
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuppr
     extra_args:
-      - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
       - SHIELD=pca63566
-      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - vpr_launcher_SHIELD=pca63566_fwd
     harness_config:
       fixture: pca63566
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_i2c_54H"
+    timeout: 120
