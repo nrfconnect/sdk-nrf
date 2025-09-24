@@ -435,14 +435,19 @@ void test_nrf_modem_lib_trace_enotsup(void)
 	struct nrf_modem_lib_trace_backend trace_backend_orig;
 
 	trace_backend_orig.read = trace_backend.read;
+	trace_backend_orig.peek_at = trace_backend.peek_at;
 	trace_backend_orig.data_size = trace_backend.data_size;
 	trace_backend_orig.clear = trace_backend.clear;
 
 	trace_backend.read = NULL;
+	trace_backend.peek_at = NULL;
 	trace_backend.data_size = NULL;
 	trace_backend.clear = NULL;
 
 	ret = nrf_modem_lib_trace_read(buf, 10);
+	TEST_ASSERT_EQUAL(-ENOTSUP, ret);
+
+	ret = nrf_modem_lib_trace_peek_at(0, buf, 10);
 	TEST_ASSERT_EQUAL(-ENOTSUP, ret);
 
 	ret = nrf_modem_lib_trace_data_size();
