@@ -100,11 +100,3 @@
   platforms:
     - thingy53/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35522"
-
-- scenarios:
-    - sample.dfu.dfu_multi_image
-    - sample.dfu.dfu_multi_image.encryption
-    - sample.dfu.dfu_multi_image.save_progress
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35605"
