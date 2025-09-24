@@ -106,6 +106,8 @@ void test_write_more_than_flash_partition_size(void)
 {
 	int ret;
 	static uint8_t data[CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_PARTITION_SIZE + 400];
+	uint8_t read_buffer[1024];
+	size_t data_available;
 
 	memset(data, 0x11, sizeof(data));
 
@@ -114,19 +116,20 @@ void test_write_more_than_flash_partition_size(void)
 
 	ret = trace_backend.write(data, sizeof(data));
 	/* When writing more data than the partition can hold, FCB rotation occurs.
-	 * The write function returns the amount actually stored after rotation. */
+	 * The write function returns the amount actually stored after rotation.
+	 */
 	TEST_ASSERT_TRUE(ret > 0);
 	TEST_ASSERT_TRUE(ret <= sizeof(data));
 
-	size_t data_available = trace_backend.data_size();
-	/* Verify circular buffer behavior: */
+	data_available = trace_backend.data_size();
 	TEST_ASSERT_EQUAL(ret, data_available); /* Available should match what was written */
 	TEST_ASSERT_TRUE(data_available <= CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_PARTITION_SIZE);
 	/* Should retain at least 70% of partition size to be useful */
-	TEST_ASSERT_TRUE(data_available >= (CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_PARTITION_SIZE * 7) / 10);
+	TEST_ASSERT_TRUE(
+		data_available >=
+		(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_PARTITION_SIZE * 7) / 10);
 
 	/* Verify we can actually read the data back */
-	uint8_t read_buffer[1024];
 	ret = trace_backend.read(read_buffer, sizeof(read_buffer));
 	TEST_ASSERT_TRUE(ret > 0); /* Should be able to read something */
 	TEST_ASSERT_TRUE(ret <= sizeof(read_buffer)); /* Shouldn't read more than requested */
@@ -321,103 +324,40 @@ void test_large_buffer_write(void)
 	TEST_ASSERT_EQUAL(sizeof(large_data), ret);
 
 	final_size = trace_backend.data_size();
+	/* With RAM tail possible, final size equals total written */
 	TEST_ASSERT_EQUAL(sizeof(large_data), final_size);
 }
 
-/* Test resumable upload failure: previously read data is not retained */
-void test_resumable_upload_failure(void)
+/* Test that peek_at returns -EINVAL for NULL or zero length buffer */
+void test_peek_at_invalid_parameters(void)
 {
 	int ret;
-	uint8_t block[1024];
-	uint8_t read_buf[256];
-	size_t first_read;
-	size_t drain_offset;
-	size_t read_total;
-	int i;
-	const int iterations = 6;
+	uint8_t data[8] = { 0xAB };
 
-	/* Initialize backend */
 	ret = trace_backend.init(processed_cb);
 	TEST_ASSERT_EQUAL(0, ret);
 
-	/* Write enough to span multiple entries/sectors to ensure rotation on read */
-	for (i = 0; i < iterations; i++) {
-		memset(block, 0xA0 + i, sizeof(block));
+	ret = trace_backend.write(data, sizeof(data));
+	TEST_ASSERT_EQUAL((int)sizeof(data), ret);
 
-		ret = trace_backend.write(block, sizeof(block));
-		TEST_ASSERT_EQUAL(sizeof(block), ret);
-	}
+	ret = trace_backend.peek_at(0, NULL, 1);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
-	TEST_ASSERT_EQUAL((size_t)(iterations * sizeof(block)), trace_backend.data_size());
-
-	/* Simulate upload attempt: read an initial chunk */
-	first_read = 1500;
-	read_total = 0;
-
-	while (read_total < first_read) {
-		size_t request_size;
-
-		request_size = MIN(sizeof(read_buf), first_read - read_total);
-
-		ret = trace_backend.read(read_buf, request_size);
-		TEST_ASSERT_TRUE(ret > 0);
-
-		TEST_ASSERT_EQUAL(request_size, (size_t)ret);
-
-		/* Verify content matches the expected pattern across block boundaries */
-		for (size_t j = 0; j < (size_t)ret; j++) {
-			uint8_t expected;
-
-			expected = 0xA0 + ((read_total + j) / sizeof(block));
-			TEST_ASSERT_EQUAL_HEX8(expected, read_buf[j]);
-		}
-
-		read_total += (size_t)ret;
-	}
-
-	TEST_ASSERT_EQUAL(first_read, read_total);
-
-	/* Upload fails; in the meantime, consume the rest so earlier sectors rotate/erase */
-	drain_offset = first_read;
-
-	while (drain_offset < (size_t)iterations * sizeof(block)) {
-		ret = trace_backend.read(read_buf, sizeof(read_buf));
-		if (ret == -ENODATA) {
-			break;
-		}
-
-		TEST_ASSERT_TRUE(ret > 0);
-
-		/* Verify remaining content is as expected while draining */
-		for (size_t j = 0; j < (size_t)ret; j++) {
-			uint8_t expected;
-
-			expected = 0xA0 + ((drain_offset + j) / sizeof(block));
-			TEST_ASSERT_EQUAL_HEX8(expected, read_buf[j]);
-		}
-
-		drain_offset += (size_t)ret;
-	}
-
-	/* Verify we drained all the data and that we got what we expected */
-	TEST_ASSERT_EQUAL((size_t)iterations * sizeof(block), drain_offset);
-	TEST_ASSERT_EQUAL(0, trace_backend.data_size());
-
-	/* Retry: there is no way to resume from the previous offset; old data is gone */
-	ret = trace_backend.read(read_buf, sizeof(read_buf));
-	TEST_ASSERT_EQUAL(-ENODATA, ret);
+	ret = trace_backend.peek_at(0, data, 0);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
-/* Test that resume fails when no peek/ack mechanism is used and data is dropped */
-void test_resume_fails_without_peek(void)
+
+/* Test that resume fails when no peek at offset mechanism is used and data is dropped */
+void test_resume_fails_without_peek_at(void)
 {
 	int ret;
 	uint8_t block[256];
 	uint8_t read_buf[256];
 	size_t first_read;
-	size_t drain_offset;
+	size_t retry_offset;
 	size_t read_total;
 	int i;
-	const int iterations = 8;
+	const size_t iterations = 8;
 
 	/* Initialize backend */
 	ret = trace_backend.init(processed_cb);
@@ -460,8 +400,8 @@ void test_resume_fails_without_peek(void)
 
 	TEST_ASSERT_EQUAL(first_read, read_total);
 
-	/* Upload fails, device resets and most recent read data is lost */
-	drain_offset = first_read - sizeof(read_buf);
+	/* Upload fails, device resets and most recent read data is lost from caller's RAM buffer */
+	retry_offset = first_read - sizeof(read_buf);
 
 	ret = trace_backend.read(read_buf, sizeof(read_buf));
 	TEST_ASSERT_EQUAL(sizeof(read_buf), (size_t)ret);
@@ -472,9 +412,204 @@ void test_resume_fails_without_peek(void)
 	for (size_t j = 0; j < (size_t)ret; j++) {
 		uint8_t expected;
 
-		expected = 0xA0 + ((drain_offset + j) / sizeof(block));
+		expected = 0xA0 + ((retry_offset + j) / sizeof(block));
 		TEST_ASSERT_NOT_EQUAL_HEX8(expected, read_buf[j]);
 	}
+}
+
+/* Test peek_at basic functionality and that it does not consume data.
+ * Data is still available in the flash buffer after the peek_at call.
+ */
+void test_peek_at_does_not_consume(void)
+{
+	int ret;
+	uint8_t data[CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_BUF_SIZE - 16];
+	uint8_t peek_at_buf[30];
+	uint8_t read_buf[30];
+	size_t size_before;
+
+	for (size_t i = 0; i < sizeof(data); i++) {
+		data[i] = (uint8_t)i;
+	}
+
+	ret = trace_backend.init(processed_cb);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	/* Write a small buffer that stays in RAM buffer, ie doesn't trigger flash flush */
+	ret = trace_backend.write(data, sizeof(data));
+	TEST_ASSERT_EQUAL((int)sizeof(data), ret);
+
+	size_before = trace_backend.data_size();
+	TEST_ASSERT_EQUAL(sizeof(data), size_before);
+
+	/* Read the first 30 bytes at offset 0 */
+	ret = trace_backend.peek_at(0, peek_at_buf, sizeof(peek_at_buf));
+	TEST_ASSERT_EQUAL((int)sizeof(peek_at_buf), ret);
+
+	TEST_ASSERT_EQUAL_HEX8_ARRAY(peek_at_buf, data, sizeof(peek_at_buf));
+
+	/* Ensure size unchanged: peek_at does not consume */
+	TEST_ASSERT_EQUAL(size_before, trace_backend.data_size());
+
+	/* Read the same data again and verify that the size has not changed */
+	ret = trace_backend.peek_at(0, peek_at_buf, sizeof(peek_at_buf));
+	TEST_ASSERT_EQUAL((int)sizeof(peek_at_buf), ret);
+
+	TEST_ASSERT_EQUAL(size_before, trace_backend.data_size());
+
+	/* And that the data is the same */
+	TEST_ASSERT_EQUAL_HEX8_ARRAY(peek_at_buf, data, sizeof(peek_at_buf));
+
+	/* Consume via read() and verify equals the peek_at data */
+	ret = trace_backend.read(read_buf, sizeof(read_buf));
+	TEST_ASSERT_EQUAL((int)sizeof(read_buf), ret);
+
+	TEST_ASSERT_EQUAL_HEX8_ARRAY(peek_at_buf, read_buf, sizeof(read_buf));
+
+	/* Verify that the size has decreased after consuming */
+	TEST_ASSERT_EQUAL(size_before - sizeof(read_buf), trace_backend.data_size());
+}
+
+/* Test peek_at spanning multiple FCB entries and into arbitrary offsets */
+void test_peek_at_spanning_multiple_entries(void)
+{
+	int ret;
+	/* Large buffer to ensure more than two FCB entries are created */
+	static uint8_t large_buffer[(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_BUF_SIZE * 3) + 128];
+	uint8_t read_buf[CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_BUF_SIZE];
+	size_t offset;
+
+	for (size_t i = 0; i < sizeof(large_buffer); i++) {
+		/* Fill the buffer with a known pattern */
+		large_buffer[i] = (uint8_t)(i & 0xFF);
+	}
+
+	ret = trace_backend.init(processed_cb);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	ret = trace_backend.write(large_buffer, sizeof(large_buffer));
+	TEST_ASSERT_EQUAL((int)sizeof(large_buffer), ret);
+
+	/* Verify that the data size is as expected */
+	TEST_ASSERT_EQUAL(sizeof(large_buffer), trace_backend.data_size());
+
+	/* Pick an offset that crosses the first FCB entry boundary */
+	offset = (size_t)CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_BUF_SIZE + 128;
+
+	ret = trace_backend.peek_at((size_t)offset, read_buf, sizeof(read_buf));
+	TEST_ASSERT_EQUAL((int)sizeof(read_buf), ret);
+
+	/* Verify the data read is correct */
+	TEST_ASSERT_EQUAL_HEX8_ARRAY(read_buf, &large_buffer[offset], sizeof(read_buf));
+
+	/* Move on to next chunk */
+	offset += sizeof(read_buf);
+
+	ret = trace_backend.peek_at((size_t)offset, read_buf, sizeof(read_buf));
+	TEST_ASSERT_EQUAL((int)sizeof(read_buf), ret);
+
+	/* Verify the data read is correct */
+	TEST_ASSERT_EQUAL_HEX8_ARRAY(read_buf, &large_buffer[offset], sizeof(read_buf));
+
+	/* Out of range offset should return -EFAULT */
+	ret = trace_backend.peek_at(sizeof(large_buffer), read_buf, sizeof(read_buf));
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+}
+
+/* Test that repeated peek_at calls do not advance cursor and that later read() sees same bytes */
+void test_repeated_peek_at_and_read(void)
+{
+	int ret;
+	static uint8_t buf[(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_BUF_SIZE) + 64];
+	uint8_t peek_at_buf_1[32];
+	uint8_t peek_at_buf_2[32];
+	uint8_t read_buf[32];
+	size_t read_offset = 0;
+
+	for (size_t i = 0; i < sizeof(buf); i++) {
+		buf[i] = (uint8_t)(i & 0xFF);
+	}
+
+	ret = trace_backend.init(processed_cb);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	ret = trace_backend.write(buf, sizeof(buf));
+	TEST_ASSERT_EQUAL((int)sizeof(buf), ret);
+
+	/* Read the first 32 bytes twice */
+	ret = trace_backend.peek_at(read_offset, peek_at_buf_1, sizeof(peek_at_buf_1));
+	TEST_ASSERT_EQUAL((int)sizeof(peek_at_buf_1), ret);
+
+	ret = trace_backend.peek_at(read_offset, peek_at_buf_2, sizeof(peek_at_buf_2));
+	TEST_ASSERT_EQUAL((int)sizeof(peek_at_buf_2), ret);
+
+	TEST_ASSERT_EQUAL_HEX8_ARRAY(peek_at_buf_1, peek_at_buf_2, sizeof(peek_at_buf_1));
+
+	/* Now do read() and verify that it matches the peek_at data */
+	ret = trace_backend.read(read_buf, sizeof(read_buf));
+	TEST_ASSERT_EQUAL((int)sizeof(read_buf), ret);
+
+	TEST_ASSERT_EQUAL_HEX8_ARRAY(peek_at_buf_1, read_buf, sizeof(peek_at_buf_1));
+
+	/* The next read should now be different from the content in peek_at_buf_1
+	 * as we have advanced the read cursor.
+	 */
+	ret = trace_backend.read(read_buf, sizeof(read_buf));
+	TEST_ASSERT_EQUAL((int)sizeof(read_buf), ret);
+
+	for (size_t i = 0; i < sizeof(read_buf); i++) {
+		TEST_ASSERT_NOT_EQUAL_HEX8(read_buf[i], peek_at_buf_1[i]);
+	}
+
+	/* The peek_at should not be affected */
+	ret = trace_backend.peek_at(read_offset, peek_at_buf_1, sizeof(peek_at_buf_1));
+	TEST_ASSERT_EQUAL((int)sizeof(peek_at_buf_1), ret);
+
+	TEST_ASSERT_EQUAL_HEX8_ARRAY(peek_at_buf_1, peek_at_buf_2, sizeof(peek_at_buf_1));
+}
+
+/* Test reading small amount of data multiple times */
+void test_read_small_amount_of_data_multiple_times(void)
+{
+	int ret;
+	uint8_t data[128];
+	uint8_t read_buf[sizeof(data) / 4];
+	size_t read_offset = 0;
+
+	for (size_t i = 0; i < sizeof(data); i++) {
+		data[i] = (uint8_t)(i & 0xFF);
+	}
+
+	ret = trace_backend.init(processed_cb);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	ret = trace_backend.write(data, sizeof(data));
+	TEST_ASSERT_EQUAL((int)sizeof(data), ret);
+
+	TEST_ASSERT_EQUAL(sizeof(data), trace_backend.data_size());
+
+	while (read_offset < sizeof(data)) {
+		size_t request_size;
+
+		/* data buffer should always be divisible by request_size without remainder,
+		 * and equal to the read_buf size.
+		 */
+		request_size = MIN(sizeof(read_buf), sizeof(data) - read_offset);
+		TEST_ASSERT_EQUAL(request_size, sizeof(read_buf));
+
+		ret = trace_backend.peek_at(read_offset, read_buf, request_size);
+		TEST_ASSERT_EQUAL((int)request_size, ret);
+
+		TEST_ASSERT_EQUAL_HEX8_ARRAY(read_buf, &data[read_offset], sizeof(read_buf));
+
+		read_offset += request_size;
+	}
+
+	TEST_ASSERT_EQUAL(sizeof(data), read_offset);
+
+	/* A subsequent read should return -EFAULT */
+	ret = trace_backend.peek_at(read_offset, read_buf, sizeof(read_buf));
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
 
 int main(void)

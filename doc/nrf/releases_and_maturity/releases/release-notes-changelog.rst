@@ -640,6 +640,11 @@ Modem libraries
     * The type of the :c:member:`lte_lc_evt.modem_evt` field to :c:struct:`lte_lc_modem_evt`.
     * Replaced modem events ``LTE_LC_MODEM_EVT_CE_LEVEL_0``, ``LTE_LC_MODEM_EVT_CE_LEVEL_1``, ``LTE_LC_MODEM_EVT_CE_LEVEL_2`` and ``LTE_LC_MODEM_EVT_CE_LEVEL_3`` with the :c:enumerator:`LTE_LC_MODEM_EVT_CE_LEVEL` modem event.
 
+* :ref:`nrf_modem_lib_readme` library:
+
+  * Added the :c:func:`nrf_modem_lib_trace_peek_at` function to the :c:struct:`nrf_modem_lib_trace_backend` interface to peek trace data at a byte offset without consuming it.
+    Support for this API has been added to the flash trace backend.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 

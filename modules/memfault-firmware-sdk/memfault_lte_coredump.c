@@ -223,7 +223,7 @@ static void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 
 static void state_waiting_for_nrf_modem_lib_init_entry(void *o)
 {
-	struct fsm_state_object *state_object = o;
+	ARG_UNUSED(o);
 
 	LOG_DBG("state_waiting_for_nrf_modem_lib_init_entry");
 
@@ -250,7 +250,7 @@ static void state_running_entry(void *o)
 {
 	int err;
 
-	ARG_UNUSED(o);
+	struct fsm_state_object *state_object = o;
 
 	LOG_DBG("state_running_entry");
 
@@ -348,7 +348,7 @@ static enum smf_state_result state_waiting_for_network_connection_run(void *o)
 
 static void state_network_connected_entry(void *o)
 {
-	struct fsm_state_object *state_object = o;
+	ARG_UNUSED(o);
 
 	LOG_DBG("state_network_connected_entry");
 
@@ -380,7 +380,7 @@ static void state_coredump_send_attempt_entry(void *o)
 {
 	int err;
 
-	ARG_UNUSED(o);
+	struct fsm_state_object *state_object = o;
 
 	LOG_DBG("state_coredump_send_attempt_entry");
 	LOG_DBG("Triggering heartbeat");
