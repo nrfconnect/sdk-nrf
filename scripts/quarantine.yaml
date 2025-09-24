@@ -28,7 +28,6 @@
     - nrf7002dk/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-20715"
 
-
 - scenarios:
     - nrf.extended.drivers.uart.uart_elementary_dual_l09
     - nrf.extended.drivers.uart.uart_elementary_dual_setup_mismatch_l09
@@ -88,19 +87,6 @@
   platforms:
     - nrf52dk/nrf52832
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35409"
-
-- scenarios:
-    - sample.bluetooth.peripheral_mds
-  platforms:
-    - nrf52dk/nrf52832
-    - nrf52833dk/nrf52833
-    - nrf52840dk/nrf52840
-    - nrf54l15dk/nrf54l05/cpuapp
-    - nrf54l15dk/nrf54l10/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-    - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35468"
 
 - scenarios:
     - sample.nrf7002_eb.thingy53.shell
