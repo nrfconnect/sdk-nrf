@@ -255,10 +255,7 @@ Zephyr's Mesh security toolbox implementation uses third-party crypto library AP
 
   * :kconfig:option:`CONFIG_BT_MESH_USES_MBEDTLS_PSA` - Enables use of the `Mbed TLS`_ PSA API based security toolbox (default option).
   * :kconfig:option:`CONFIG_BT_MESH_USES_TFM_PSA` - Enables use of the `Trusted Firmware M`_ PSA API based security toolbox (default option for platforms that support TF-M).
-  * :kconfig:option:`CONFIG_BT_MESH_USES_TINYCRYPT` - Enables use of Tinycrypt-based security toolbox.
     Zephyr's Mesh operates with open key values, including storing them in the persistent memory.
-    The Tinycrypt-based solution has worse security materials protection compared to others, because it keeps the keys in the memory in open form.
-    Tinycrypt is not recommended for future designs.
 
 The Bluetooth Mesh security toolbox based on the `PSA Certified Crypto API`_ does not operate with open key values.
 After Bluetooth Mesh receives an open key value, it immediately imports the key into the crypto library and receives the unique key identifier.
