@@ -255,6 +255,13 @@ nRF Desktop
     * Application configurations to avoid using the deprecated Kconfig options :ref:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE <config_desktop_app_options>`.
       The configurations rely on Kconfig options specific to HID providers instead.
       The HID keypress queue sizes for HID consumer control (:ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_CONSUMER_CTRL_EVENT_QUEUE_SIZE <config_desktop_app_options>`) and HID system control (:ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_SYSTEM_CTRL_EVENT_QUEUE_SIZE <config_desktop_app_options>`) reports were decreased to ``10``.
+    * Application configurations integrating the USB legacy stack (:ref:`CONFIG_DESKTOP_USB_STACK_LEGACY <config_desktop_app_options>`) to suppress build warnings related to deprecated APIs of the USB legacy stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK`).
+      The configurations enable the :kconfig:option:`CONFIG_DEPRECATION_TEST` Kconfig option to suppress the deprecation warnings.
+      The USB legacy stack is still used by default.
+    * MCUboot configurations that support serial recovery over USB CDC ACM to enable the :kconfig:option:`CONFIG_DEPRECATION_TEST` Kconfig option to suppress deprecation warnings.
+      The implementation of serial recovery over USB CDC ACM still uses the deprecated APIs of the USB legacy stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK`).
+    * Configurations of the ``nrf52840dongle/nrf52840`` board target to align them after the ``bare`` variant of the board was introduced in Zephyr.
+      The application did not switch to the ``bare`` board variant to keep backwards compatibility.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
