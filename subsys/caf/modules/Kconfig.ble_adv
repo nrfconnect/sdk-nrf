@@ -5,7 +5,7 @@
 #
 
 menuconfig CAF_BLE_ADV
-	bool "Enable Bluetooth LE advertising"
+	bool "Bluetooth LE advertising"
 	depends on BT_PERIPHERAL
 	depends on CAF_BLE_COMMON_EVENTS
 	depends on CAF_BLE_STATE
@@ -47,7 +47,7 @@ config CAF_BLE_ADV_DIRECT_ADV
 	  if the remote device supports the address resolution of directed advertisements.
 
 config CAF_BLE_ADV_FAST_ADV
-	bool "Enable period of fast advertising"
+	bool "Period of fast advertising"
 
 config CAF_BLE_ADV_SLOW_INT_MIN
 	hex "Minimum Advertising Interval during slow advertising (N * 0.625 milliseconds)"
@@ -117,7 +117,7 @@ config CAF_BLE_ADV_FAST_ADV_TIMEOUT
 endif
 
 config CAF_BLE_ADV_FILTER_ACCEPT_LIST
-	bool "Enable filter accept list"
+	bool "Filter accept list"
 	select BT_FILTER_ACCEPT_LIST
 	select BT_CTLR_FILTER_ACCEPT_LIST if HAS_BT_CTLR
 	select BT_CTLR_PRIVACY if HAS_BT_CTLR
@@ -128,7 +128,7 @@ config CAF_BLE_ADV_FILTER_ACCEPT_LIST
 	  data.
 
 config CAF_BLE_ADV_GRACE_PERIOD
-	bool "Enable grace period feature"
+	bool "Grace period feature"
 	depends on CAF_BLE_ADV_PM_EVENTS
 	default y if BT_ADV_PROV_SWIFT_PAIR
 	help

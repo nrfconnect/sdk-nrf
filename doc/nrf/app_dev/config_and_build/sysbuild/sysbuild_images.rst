@@ -162,7 +162,7 @@ This can be handled using the following approach:
           # This will set a bool Kconfig option in the image (note: sysbuild forces this setting, it cannot be overwritten by changing the application configuration)
           set_config_bool(${SB_CONFIG_NETCORE_IMAGE_NAME} CONFIG_MY_CUSTOM_CONFIG y)
           # This will set a string (or numeric) Kconfig option in the image (note: sysbuild forces this setting, it cannot be overwritten by changing the application configuration)
-          set_property(TARGET ${SB_CONFIG_NETCORE_IMAGE_NAME} APPEND_STRING PROPERTY CONFIG "CONFIG_CUSTOM_STRING=my_custom_value\n")
+          set_property(TARGET ${SB_CONFIG_NETCORE_IMAGE_NAME} APPEND_STRING PROPERTY CONFIG "CONFIG_FOO=my_custom_value\n")
         endif()
 
 .. _sysbuild_images_adding_custom_firmware_loader_images:
@@ -223,7 +223,7 @@ This can be handled using the following approach:
           # This will set a bool Kconfig option in the image (note: sysbuild forces this setting, it cannot be overwritten by changing the application configuration)
           set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MY_CUSTOM_CONFIG y)
           # This will set a string (or numeric) Kconfig option in the image (note: sysbuild forces this setting, it cannot be overwritten by changing the application configuration)
-          set_property(TARGET ${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} APPEND_STRING PROPERTY CONFIG "CONFIG_CUSTOM_STRING=my_custom_value\n")
+          set_property(TARGET ${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} APPEND_STRING PROPERTY CONFIG "CONFIG_FOO=my_custom_value\n")
         endif()
 
 .. _sysbuild_images_adding_to_a_single_board:

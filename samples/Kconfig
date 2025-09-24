@@ -5,7 +5,7 @@
 #
 
 config NCS_SAMPLES_DEFAULTS
-	bool "Enable NCS sample default settings"
+	bool "NCS sample default settings"
 	imply LOG
 	imply LOG_DEFAULT_MINIMAL
 	imply ASSERT

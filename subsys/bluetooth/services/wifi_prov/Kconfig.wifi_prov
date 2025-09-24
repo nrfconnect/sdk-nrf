@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 menuconfig BT_WIFI_PROV
-	bool "Enable Wi-Fi provisioning service"
+	bool "Wi-Fi provisioning service"
 	select BT_NRF_SERVICES
 	depends on NANOPB
 	depends on NET_L2_WIFI_MGMT

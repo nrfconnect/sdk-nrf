@@ -15,7 +15,7 @@ config DK_LIBRARY_BUTTON_SCAN_INTERVAL
 	default 10
 
 config DK_LIBRARY_DYNAMIC_BUTTON_HANDLERS
-	bool "Enable the runtime assignable button handler API"
+	bool "Runtime assignable button handler API"
 	default y
 
 module = DK_LIBRARY

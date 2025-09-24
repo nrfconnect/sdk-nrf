@@ -42,7 +42,7 @@ menuconfig LWM2M_CARRIER
 
 if LWM2M_CARRIER
 
-menu "Enabled Carriers"
+menu "Carriers"
 
 config LWM2M_CARRIER_GENERIC
 	bool "Generic"
@@ -235,7 +235,7 @@ config LWM2M_CARRIER_PDN_TYPE
 	  PDN type for custom APN.
 
 config LWM2M_CARRIER_QUEUE_MODE
-	bool "Enable queue mode"
+	bool "Queue mode"
 	default y
 	help
 	  Configure whether the LwM2M device is to inform the LwM2M server that
