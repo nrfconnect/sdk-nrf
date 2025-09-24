@@ -103,6 +103,25 @@ int nrf_modem_lib_trace_read(uint8_t *buf, size_t len);
  */
 int nrf_modem_lib_trace_clear(void);
 
+/**
+ * @brief Peek trace data at offset without consuming it
+ *
+ * Copy up to @p len bytes starting at @p offset from the oldest available data into @p buf
+ * without advancing the backend read cursor.
+ *
+ * @param offset Byte offset relative to the oldest available byte
+ * @param buf Output buffer
+ * @param len Size of output buffer
+ *
+ * @return number of bytes copied, negative errno on failure.
+ * @retval -ENOTSUP if the operation is not supported by the trace backend.
+ * @retval -EPERM if the trace backend is not initialized.
+ * @retval -EINVAL if the buffer is NULL.
+ * @retval -EFAULT if the offset is beyond the available trace data.
+ * @retval -ENODATA if no data is available at the offset.
+ */
+int nrf_modem_lib_trace_peek_at(size_t offset, uint8_t *buf, size_t len);
+
 #if defined(CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_BITRATE) || defined(__DOXYGEN__)
 /** @brief Get the last measured rolling average bitrate of the trace backend.
  *
