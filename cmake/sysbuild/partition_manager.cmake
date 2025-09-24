@@ -530,7 +530,8 @@ foreach(d APP ${PM_DOMAINS})
 
     if(DEFINED ${image_name}_CONFIG_SOC_SERIES_NRF54LX)
       set(otp_start_addr "0xffd500")
-      set(otp_size 1276)  # 319 * 4
+      # 320 UICR words, minus 32 user-reserved words
+      set(otp_size 1148)  # (319 - 32) * 4
     endif()
   endif()
 
