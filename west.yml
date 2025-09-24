@@ -275,6 +275,11 @@ manifest:
       groups:
         - benchmark
 
+    - name: nrfx
+      remote: ncs
+      repo-path: nrfx
+      revision: pull/964/head
+
   # West-related configuration for the nrf repository.
   self:
     # This repository should be cloned to ncs/nrf.
