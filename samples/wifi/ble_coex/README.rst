@@ -80,16 +80,16 @@ To enable different test modes, set up the following configuration parameters in
 
 * Test modes: Use the following Kconfig options to select the required test case:
 
-  * :kconfig:option:`CONFIG_TEST_TYPE_WLAN_ONLY` for Wi-Fi-only test.
-  * :kconfig:option:`CONFIG_TEST_TYPE_BLE_ONLY` for Bluetooth LE-only test.
-  * :kconfig:option:`CONFIG_TEST_TYPE_WLAN_BLE` for concurrent Wi-Fi and Bluetooth LE test.
+  * :option:`CONFIG_TEST_TYPE_WLAN_ONLY` for Wi-Fi-only test.
+  * :option:`CONFIG_TEST_TYPE_BLE_ONLY` for Bluetooth LE-only test.
+  * :option:`CONFIG_TEST_TYPE_WLAN_BLE` for concurrent Wi-Fi and Bluetooth LE test.
 
   Based on the required test, set only one of these to ``y``.
-* Test duration: Use the :kconfig:option:`CONFIG_WIFI_TEST_DURATION` Kconfig option to set the duration of the Wi-Fi test and :kconfig:option:`CONFIG_BLE_TEST_DURATION` for the Bluetooth LE test.
+* Test duration: Use the :option:`CONFIG_WIFI_TEST_DURATION` Kconfig option to set the duration of the Wi-Fi test and :option:`CONFIG_BLE_TEST_DURATION` for the Bluetooth LE test.
   The units are in milliseconds.
   For example, to set the test for 20 seconds, set these values to ``20000``.
   For the concurrent Wi-Fi and Bluetooth LE test, make sure that both are set to the same duration to ensure maximum overlap.
-* Bluetooth LE configuration: Set the Bluetooth LE connection interval limits using the :kconfig:option:`CONFIG_INTERVAL_MIN` and :kconfig:option:`CONFIG_INTERVAL_MAX` Kconfig options.
+* Bluetooth LE configuration: Set the Bluetooth LE connection interval limits using the :option:`CONFIG_INTERVAL_MIN` and :option:`CONFIG_INTERVAL_MAX` Kconfig options.
   The units are 1.25 milliseconds.
   For example, ``CONFIG_INTERVAL_MIN=80`` corresponds to an interval of 100 ms (80 x 1.25).
 
@@ -110,7 +110,7 @@ Use :kconfig:option:`CONFIG_BT_THROUGHPUT_DURATION` to set the duration of the B
 The units are in milliseconds.
 
 .. note::
-   Use the same test duration value for :kconfig:option:`CONFIG_WIFI_TEST_DURATION`, :kconfig:option:`CONFIG_BLE_TEST_DURATION`, and :kconfig:option:`CONFIG_BT_THROUGHPUT_DURATION`.
+   Use the same test duration value for :option:`CONFIG_WIFI_TEST_DURATION`, :kconfig:option:`CONFIG_BLE_TEST_DURATION`, and :kconfig:option:`CONFIG_BT_THROUGHPUT_DURATION`.
 
 Building and running
 ********************
