@@ -12,7 +12,8 @@ static void log_motion_event(const struct app_event_header *aeh)
 {
 	const struct motion_event *event = cast_motion_event(aeh);
 
-	APP_EVENT_MANAGER_LOG(aeh, "dx=%d, dy=%d", event->dx, event->dy);
+	APP_EVENT_MANAGER_LOG(aeh, "dx=%d, dy=%d, %sactive", event->dx, event->dy,
+			      event->active ? "" : "in");
 }
 
 static void profile_motion_event(struct log_event_buf *buf,
@@ -22,11 +23,12 @@ static void profile_motion_event(struct log_event_buf *buf,
 
 	nrf_profiler_log_encode_int16(buf, event->dx);
 	nrf_profiler_log_encode_int16(buf, event->dy);
+	nrf_profiler_log_encode_uint8(buf, event->active ? (1) : (0));
 }
 
 APP_EVENT_INFO_DEFINE(motion_event,
-		  ENCODE(NRF_PROFILER_ARG_S16, NRF_PROFILER_ARG_S16),
-		  ENCODE("dx", "dy"),
+		  ENCODE(NRF_PROFILER_ARG_S16, NRF_PROFILER_ARG_S16, NRF_PROFILER_ARG_U8),
+		  ENCODE("dx", "dy", "active"),
 		  profile_motion_event);
 
 APP_EVENT_TYPE_DEFINE(motion_event,

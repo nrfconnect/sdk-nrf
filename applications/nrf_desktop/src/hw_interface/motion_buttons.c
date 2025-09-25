@@ -61,12 +61,13 @@ static motion_ts get_timestamp(void)
 	}
 }
 
-static void motion_event_send(int16_t dx, int16_t dy)
+static void motion_event_send(int16_t dx, int16_t dy, bool active)
 {
 	struct motion_event *event = new_motion_event();
 
 	event->dx = dx;
 	event->dy = dy;
+	event->active = active;
 
 	APP_EVENT_SUBMIT(event);
 }
@@ -96,6 +97,11 @@ static enum dir key_to_dir(uint16_t key_id)
 	}
 
 	return dir;
+}
+
+static bool is_motion_active(void)
+{
+	return active_dir_bm != 0;
 }
 
 static int16_t ts_diff_to_motion(int64_t diff, int32_t *reminder)
@@ -157,7 +163,7 @@ static void send_motion(void)
 	int16_t y;
 
 	generate_motion(&x, &y);
-	motion_event_send(x, y);
+	motion_event_send(x, y, is_motion_active());
 }
 
 static bool handle_button_event(const struct button_event *event)
@@ -196,10 +202,6 @@ static bool handle_module_state_event(const struct module_state_event *event)
 	return false;
 }
 
-static bool is_motion_active(void)
-{
-	return active_dir_bm != 0;
-}
 
 static bool handle_hid_report_sent_event(const struct hid_report_sent_event *event)
 {

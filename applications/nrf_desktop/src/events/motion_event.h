@@ -25,6 +25,7 @@ struct motion_event {
 
 	int16_t dx;
 	int16_t dy;
+	bool active;
 };
 
 APP_EVENT_TYPE_DECLARE(motion_event);
