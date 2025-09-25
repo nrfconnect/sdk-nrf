@@ -4,7 +4,6 @@
  */
 
 #include <zephyr/kernel.h>
-#include <zephyr/sys/atomic.h>
 
 #include <app_event_manager.h>
 #include "motion_event.h"
@@ -12,7 +11,6 @@
 #include "hid_event.h"
 
 #include <zephyr/shell/shell.h>
-#include <zephyr/shell/shell_rtt.h>
 
 #define MODULE motion
 #include <caf/events/module_state_event.h>
@@ -22,10 +20,12 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 
 #define SCALE CONFIG_DESKTOP_MOTION_SIMULATED_SCALE_FACTOR
 
-enum {
+enum state {
+	STATE_DISCONNECTED,
 	STATE_IDLE,
 	STATE_FETCHING,
 	STATE_SUSPENDED,
+	STATE_SUSPENDED_DISCONNECTED,
 };
 
 struct vertex {
@@ -50,18 +50,12 @@ const static int edge_time = CONFIG_DESKTOP_MOTION_SIMULATED_EDGE_TIME;
 
 static int x_cur;
 static int y_cur;
-static atomic_t state;
-static atomic_t connected;
+static enum state state;
+/* If shell is enabled, wait for shell command to start generating motion.
+ * Otherwise, start generating motion right after boot.
+ */
+static bool generating_motion = !IS_ENABLED(CONFIG_SHELL);
 
-
-static void set_default_state(void)
-{
-	if (IS_ENABLED(CONFIG_SHELL)) {
-		atomic_set(&state, STATE_IDLE);
-	} else {
-		atomic_set(&state, STATE_FETCHING);
-	}
-}
 
 static void motion_event_send(int16_t dx, int16_t dy)
 {
@@ -82,21 +76,37 @@ static uint64_t get_timestamp(void)
 	}
 }
 
-static void generate_motion_event(void)
+static void generate_new_position(int *x_new, int *y_new)
 {
 	BUILD_ASSERT((edge_time & (edge_time - 1)) == 0,
 			 "Edge time must be power of 2");
 
-	uint64_t t = get_timestamp();
-	size_t v1_id = (t / edge_time) % ARRAY_SIZE(coords);
-	size_t v2_id = (v1_id + 1) % ARRAY_SIZE(coords);
+	if (generating_motion) {
+		uint64_t t = get_timestamp();
+		size_t v1_id = (t / edge_time) % ARRAY_SIZE(coords);
+		size_t v2_id = (v1_id + 1) % ARRAY_SIZE(coords);
 
-	const struct vertex *v1 = &coords[v1_id];
-	const struct vertex *v2 = &coords[v2_id];
+		const struct vertex *v1 = &coords[v1_id];
+		const struct vertex *v2 = &coords[v2_id];
 
-	int edge_pos = t % edge_time;
-	int x_new = v1->x + (v2->x - v1->x) * edge_pos / edge_time;
-	int y_new = v1->y + (v2->y - v1->y) * edge_pos / edge_time;
+		int edge_pos = t % edge_time;
+
+		*x_new = v1->x + (v2->x - v1->x) * edge_pos / edge_time;
+		*y_new = v1->y + (v2->y - v1->y) * edge_pos / edge_time;
+	} else {
+		*x_new = x_cur;
+		*y_new = y_cur;
+	}
+}
+
+static void generate_motion_event(void)
+{
+	__ASSERT_NO_MSG(state == STATE_FETCHING);
+
+	int x_new;
+	int y_new;
+
+	generate_new_position(&x_new, &y_new);
 
 	motion_event_send(x_new - x_cur, y_new - y_cur);
 
@@ -122,26 +132,43 @@ static bool app_event_handler(const struct app_event_header *aeh)
 				peer_count--;
 			}
 
-			bool new_state = (peer_count != 0);
-			bool old_state = atomic_set(&connected, new_state);
+			if ((peer_count == 1) && event->enabled) {
+				/* The first HID subscriber connected. */
+				if (state == STATE_DISCONNECTED) {
+					state = generating_motion ?
+						STATE_FETCHING : STATE_IDLE;
 
-			if (old_state != new_state && new_state) {
-				if (atomic_get(&state) == STATE_FETCHING) {
-					generate_motion_event();
+					if (state == STATE_FETCHING) {
+						generate_motion_event();
+					}
+				} else {
+					__ASSERT_NO_MSG(state == STATE_SUSPENDED_DISCONNECTED);
+					state = STATE_SUSPENDED;
+				}
+			} else if ((peer_count == 0) && !event->enabled) {
+				/* All of the HID subscribers disconnected. */
+				if ((state == STATE_FETCHING) || (state == STATE_IDLE)) {
+					state = STATE_DISCONNECTED;
+				} else {
+					__ASSERT_NO_MSG(state == STATE_SUSPENDED);
+					state = STATE_SUSPENDED_DISCONNECTED;
 				}
 			}
 		}
+
 		return false;
 	}
 
 	if (is_hid_report_sent_event(aeh)) {
-		const struct hid_report_sent_event *event =
-			cast_hid_report_sent_event(aeh);
+		const struct hid_report_sent_event *event = cast_hid_report_sent_event(aeh);
 
 		if ((event->report_id == REPORT_ID_MOUSE) ||
 		    (event->report_id == REPORT_ID_BOOT_MOUSE)) {
-			if (atomic_get(&state) == STATE_FETCHING) {
+			if (state == STATE_FETCHING) {
 				generate_motion_event();
+				if (!generating_motion) {
+					state = STATE_IDLE;
+				}
 			}
 		}
 
@@ -152,7 +179,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		struct module_state_event *event = cast_module_state_event(aeh);
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
-			set_default_state();
+			/* Ensure proper synchronization of the shell commands. */
+			BUILD_ASSERT(!IS_ENABLED(CONFIG_SHELL) || !IS_ENABLED(CONFIG_SMP));
+			__ASSERT_NO_MSG(!IS_ENABLED(CONFIG_SHELL) || !k_is_preempt_thread());
+
 			LOG_INF("Simulated motion: ready");
 		}
 
@@ -161,14 +191,26 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 	if (IS_ENABLED(CONFIG_DESKTOP_MOTION_PM_EVENTS) &&
 	    is_power_down_event(aeh)) {
-		atomic_set(&state, STATE_SUSPENDED);
+		if (state == STATE_DISCONNECTED) {
+			state = STATE_SUSPENDED_DISCONNECTED;
+		} else if ((state == STATE_IDLE) || (state == STATE_FETCHING)) {
+			state = STATE_SUSPENDED;
+		}
 
 		return false;
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_MOTION_PM_EVENTS) &&
 	    is_wake_up_event(aeh)) {
-		set_default_state();
+		if (state == STATE_SUSPENDED_DISCONNECTED) {
+			state = STATE_DISCONNECTED;
+		} else if (state == STATE_SUSPENDED) {
+			state = generating_motion ? STATE_FETCHING : STATE_IDLE;
+
+			if (state == STATE_FETCHING) {
+				generate_motion_event();
+			}
+		}
 
 		return false;
 	}
@@ -192,26 +234,33 @@ APP_EVENT_SUBSCRIBE(MODULE, hid_report_subscription_event);
 
 static int start_motion(const struct shell *shell, size_t argc, char **argv)
 {
-	if (!atomic_cas(&state, STATE_IDLE, STATE_FETCHING)) {
-		shell_print(shell, "Simulated motion inactive"
-				    " or already fetching");
-		return 0;
+	k_sched_lock();
+
+	if (!generating_motion) {
+		generating_motion = true;
+		shell_print(shell, "Started generating simulated motion");
+
+		if (state == STATE_IDLE) {
+			state = STATE_FETCHING;
+			generate_motion_event();
+		}
 	}
-	if (atomic_get(&connected)) {
-		generate_motion_event();
-	}
-	shell_print(shell, "Started generating simulated motion");
+
+	k_sched_unlock();
 
 	return 0;
 }
 
 static int stop_motion(const struct shell *shell, size_t argc, char **argv)
 {
-	if (!atomic_cas(&state, STATE_FETCHING, STATE_IDLE)) {
-		shell_print(shell, "Simulated motion is not fetching");
-		return 0;
+	k_sched_lock();
+
+	if (generating_motion) {
+		generating_motion = false;
+		shell_print(shell, "Stopped generating simulated motion");
 	}
-	shell_print(shell, "Stopped generating simulated motion");
+
+	k_sched_unlock();
 
 	return 0;
 }
@@ -222,7 +271,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_motion_sim,
 	SHELL_SUBCMD_SET_END
 );
 
-SHELL_CMD_REGISTER(motion_sim, &sub_motion_sim,
-		   "Simulated motion commands", NULL);
+SHELL_CMD_REGISTER(motion_sim, &sub_motion_sim, "Simulated motion commands", NULL);
 
 #endif /* CONFIG_SHELL */
