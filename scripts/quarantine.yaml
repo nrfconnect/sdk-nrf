@@ -149,3 +149,8 @@
     - applications.matter_weather_station.debug
   platforms:
     - thingy53/nrf5340/cpuapp
+
+- scenarios:
+    - sample.dfu.dfu_multi_image.encryption
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
