@@ -29,12 +29,18 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HID_REPORT_PROVIDER_MOUSE_LOG_LEVEL);
 /* Make sure that mouse buttons would fit in button bitmask. */
 BUILD_ASSERT(MOUSE_REPORT_BUTTON_COUNT_MAX <= BITS_PER_BYTE);
 
+enum SYNC_DATA {
+	SYNC_DATA_MOTION,
+};
+
 struct report_data {
 	uint8_t button_bm; /* Bitmask of pressed mouse buttons. */
 	int16_t axes[MOUSE_REPORT_AXIS_COUNT]; /* Array of axes (motion X, motion Y, wheel). */
 	bool update_needed;
 	uint8_t pipeline_cnt;
 	uint8_t pipeline_size;
+	uint8_t sync_data_active_bm;
+	uint8_t sync_data_wait_bm;
 };
 
 static const void *active_sub;
@@ -53,6 +59,8 @@ static void clear_report_data(struct report_data *rd)
 	rd->update_needed = false;
 	rd->pipeline_cnt = 0;
 	rd->pipeline_size = 0;
+	rd->sync_data_active_bm = 0;
+	rd->sync_data_wait_bm = 0;
 }
 
 static void send_empty_report(uint8_t report_id, const void *subscriber)
@@ -87,6 +95,9 @@ static bool send_report_mouse(uint8_t report_id, bool force)
 		/* Send HID report to refresh state of HID subscriber. */
 	} else if (rd->pipeline_cnt >= rd->pipeline_size) {
 		/* Buffer HID data internally until previously submitted reports are sent. */
+		return false;
+	} else if (rd->sync_data_wait_bm != 0) {
+		/* Wait for data from synchronously sampled sensors. */
 		return false;
 	} else if (!rd->update_needed) {
 		/* Nothing to send. */
@@ -167,6 +178,9 @@ static bool send_report_boot_mouse(uint8_t report_id, bool force)
 		/* Send HID report to refresh state of HID subscriber. */
 	} else if (rd->pipeline_cnt >= rd->pipeline_size) {
 		/* Buffer HID data internally until previously submitted reports are sent. */
+		return false;
+	} else if (rd->sync_data_wait_bm != 0) {
+		/* Wait for data from synchronously sampled sensors. */
 		return false;
 	} else if (!rd->update_needed) {
 		/* Nothing to send. */
@@ -259,6 +273,13 @@ static void mouse_report_sent(uint8_t report_id, bool error)
 	__ASSERT_NO_MSG(((report_id == REPORT_ID_MOUSE) && !boot_mode) ||
 			((report_id == REPORT_ID_BOOT_MOUSE) && boot_mode));
 
+	/* Wait for the synchronously sampled sensors before providing subsequent HID report.
+	 * The sensors are sampled on hid_report_sent_event.
+	 */
+	if (report_data.pipeline_cnt >= report_data.pipeline_size) {
+		report_data.sync_data_wait_bm = report_data.sync_data_active_bm;
+	}
+
 	__ASSERT_NO_MSG(report_data.pipeline_cnt > 0);
 	report_data.pipeline_cnt--;
 
@@ -276,7 +297,10 @@ static void trigger_report_transmission(void)
 	/* Mark that update is needed. */
 	report_data.update_needed = true;
 
-	if (active_sub) {
+	/* Trigger instant report transmission only if the module does not wait for any data coming
+	 * from a synchronized sensor. Otherwise the module needs to wait for the sensor.
+	 */
+	if (active_sub && (report_data.sync_data_wait_bm == 0)) {
 		__ASSERT_NO_MSG(hid_state_api);
 		(void)hid_state_api->trigger_report_send(boot_mode ?
 							 REPORT_ID_BOOT_MOUSE : REPORT_ID_MOUSE);
@@ -340,7 +364,13 @@ static bool handle_motion_event(const struct motion_event *event)
 	report_data.axes[MOUSE_REPORT_AXIS_X] += event->dx;
 	report_data.axes[MOUSE_REPORT_AXIS_Y] += event->dy;
 
-	trigger_report_transmission();
+	WRITE_BIT(report_data.sync_data_wait_bm, SYNC_DATA_MOTION, 0);
+	WRITE_BIT(report_data.sync_data_active_bm, SYNC_DATA_MOTION, event->active);
+
+	/* Skip HID report transmission if motion sensor reports no motion and becomes inactive. */
+	if (event->active || (event->dx != 0) || (event->dy != 0)) {
+		trigger_report_transmission();
+	}
 
 	return false;
 }
