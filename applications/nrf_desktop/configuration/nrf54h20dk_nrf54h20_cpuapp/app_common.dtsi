@@ -77,6 +77,8 @@ slot1_partition: &cpuapp_slot1_partition {
 	label = "image-1";
 };
 
+secondary_app_partition: &cpuapp_slot1_partition {};
+
 /* Remove the undefined property value from the disabled VPR cores to prevent build errors. */
 &cpuflpr_vpr {
 	/delete-property/ source-memory;
