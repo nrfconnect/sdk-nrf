@@ -19,4 +19,4 @@ tests:
     harness: pytest
     harness_config:
       pytest_root:
-        - pytest/tests.py::test_grtc_reset"
+        - "pytest/tests.py::test_grtc_reset"
