@@ -9,5 +9,8 @@
 / {
 	chosen {
 		zephyr,boot-mode = &boot_request;
+		zephyr,code-partition = &cpuapp_slot0_partition;
 	};
 };
+
+secondary_app_partition: &cpuapp_slot1_partition {};
