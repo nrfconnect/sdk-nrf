@@ -33,4 +33,4 @@ LABEL org.opencontainers.image.description="This image contains toolchain for sd
 
 ENTRYPOINT ["/bin/bash", "-c"]
 SHELL ["/bin/bash", "-c"]
-CMD ["bin/bash"]
+CMD ["/bin/bash"]
