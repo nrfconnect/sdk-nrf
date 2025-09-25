@@ -24,27 +24,32 @@ LOG_MODULE_REGISTER(mpsl_radio_pin_debug, CONFIG_MPSL_LOG_LEVEL);
 static int m_ppi_config(void)
 {
 #if defined(PPI_PRESENT)
+	nrf_ppi_channel_t *ch;
 	uint8_t ppi_chan_radio_ready;
 	uint8_t ppi_chan_radio_address;
 	uint8_t ppi_chan_radio_end;
 	uint8_t ppi_chan_radio_disabled;
 
-	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_ready) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_alloc(ch) != NRFX_SUCCESS) {
+		ppi_chan_radio_ready = (uint8_t)*ch;
 		LOG_ERR("Failed allocating PPI chan");
 		return -ENOMEM;
 	}
 
-	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_address) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_alloc(ch) != NRFX_SUCCESS) {
+		ppi_chan_radio_address = (uint8_t)*ch;
 		LOG_ERR("Failed allocating PPI chan");
 		return -ENOMEM;
 	}
 
-	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_end) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_alloc(ch) != NRFX_SUCCESS) {
+		ppi_chan_radio_end = (uint8_t)*ch;
 		LOG_ERR("Failed allocating PPI chan");
 		return -ENOMEM;
 	}
 
-	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_disabled) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_alloc(ch) != NRFX_SUCCESS) {
+		ppi_chan_radio_disabled = (uint8_t)*ch;
 		LOG_ERR("Failed allocating PPI chan");
 		return -ENOMEM;
 	}
