@@ -719,326 +719,511 @@ static void rand_prio_low_vector_get_blocking(uint8_t *p_buff, uint8_t length)
 
 static int configure_supported_features(void)
 {
+#if !defined(SDC_USE_NEW_SDC_SUPPORT_API)
 	int err;
+#endif
 
 #if defined(CONFIG_BT_BROADCASTER)
 	if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_ext_adv();
+#else
 		err = sdc_support_ext_adv();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	} else {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_adv();
+#else
 		err = sdc_support_adv();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 #endif
 
 	if (IS_ENABLED(CONFIG_BT_PER_ADV)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_le_periodic_adv();
+#else
 		err = sdc_support_le_periodic_adv();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_peripheral();
+#else
 		err = sdc_support_peripheral();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_OBSERVER)) {
 		if (!IS_ENABLED(CONFIG_BT_CENTRAL)) {
 			if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+				sdc_support_ext_scan();
+#else
 				err = sdc_support_ext_scan();
 				if (err) {
 					return -ENOTSUP;
 				}
+#endif
 			} else {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+				sdc_support_scan();
+#else
 				err = sdc_support_scan();
 				if (err) {
 					return -ENOTSUP;
-				}
+}
+#endif
 			}
 		}
 
 		if (IS_ENABLED(CONFIG_BT_PER_ADV_SYNC)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_le_periodic_sync();
+#else
 			err = sdc_support_le_periodic_sync();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
 		if (IS_ENABLED(CONFIG_BT_CTLR_ADV_EXT)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_ext_central();
+#else
 			err = sdc_support_ext_central();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		} else {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_central();
+#else
 			err = sdc_support_central();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_DATA_LENGTH)) {
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_dle_central();
+#else
 			err = sdc_support_dle_central();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_dle_peripheral();
+#else
 			err = sdc_support_dle_peripheral();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_PHY_2M)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_le_2m_phy();
+#else
 		err = sdc_support_le_2m_phy();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_phy_update_central();
+#else
 			err = sdc_support_phy_update_central();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_phy_update_peripheral();
+#else
 			err = sdc_support_phy_update_peripheral();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SYNC_TRANSFER_SENDER)) {
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_periodic_adv_sync_transfer_sender_central();
+#else
 			err = sdc_support_periodic_adv_sync_transfer_sender_central();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_periodic_adv_sync_transfer_sender_peripheral();
+#else
 			err = sdc_support_periodic_adv_sync_transfer_sender_peripheral();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SYNC_TRANSFER_RECEIVER)) {
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_periodic_adv_sync_transfer_receiver_central();
+#else
 			err = sdc_support_periodic_adv_sync_transfer_receiver_central();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_periodic_adv_sync_transfer_receiver_peripheral();
+#else
 			err = sdc_support_periodic_adv_sync_transfer_receiver_peripheral();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_PHY_CODED)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_le_coded_phy();
+#else
 		err = sdc_support_le_coded_phy();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_phy_update_central();
+#else
 			err = sdc_support_phy_update_central();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_phy_update_peripheral();
+#else
 			err = sdc_support_phy_update_peripheral();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_DF_CONN_CTE_RSP) && IS_ENABLED(CONFIG_BT_CENTRAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_le_conn_cte_rsp_central();
+#else
 		err = sdc_support_le_conn_cte_rsp_central();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_DF_CONN_CTE_RSP) && IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_le_conn_cte_rsp_peripheral();
+#else
 		err = sdc_support_le_conn_cte_rsp_peripheral();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_DF_ADV_CTE_TX)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_le_connectionless_cte_transmitter();
+#else
 		err = sdc_support_le_connectionless_cte_transmitter();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_LE_POWER_CONTROL)) {
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_le_power_control_central();
+#else
 			err = sdc_support_le_power_control_central();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_le_power_control_peripheral();
+#else
 			err = sdc_support_le_power_control_peripheral();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 
 		if (IS_ENABLED(CONFIG_BT_CTLR_LE_PATH_LOSS_MONITORING)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_le_path_loss_monitoring();
+#else
 			err = sdc_support_le_path_loss_monitoring();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SCA_UPDATE)) {
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_sca_central();
+#else
 			err = sdc_support_sca_central();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_sca_peripheral();
+#else
 			err = sdc_support_sca_peripheral();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_QOS_CHANNEL_SURVEY)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_qos_channel_survey();
+#else
 		err = sdc_support_qos_channel_survey();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_PAWR_ADV)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_le_periodic_adv_with_rsp();
+#else
 		err = sdc_support_le_periodic_adv_with_rsp();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_PAWR_SYNC)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_le_periodic_sync_with_rsp();
+#else
 		err = sdc_support_le_periodic_sync_with_rsp();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_PERIPHERAL_ISO)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_cis_peripheral();
+#else
 		err = sdc_support_cis_peripheral();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_CENTRAL_ISO)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_cis_central();
+#else
 		err = sdc_support_cis_central();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_ADV_ISO)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_bis_source();
+#else
 		err = sdc_support_bis_source();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_IGNORE_HCI_ISO_DATA_TS_FROM_HOST)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_iso_host_timestamps_ignore(true);
+#else
 		err = sdc_iso_host_timestamps_ignore(true);
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SYNC_ISO)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_bis_sink();
+#else
 		err = sdc_support_bis_sink();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 #if defined(CONFIG_BT_CTLR_SDC_ALLOW_PARALLEL_SCANNING_AND_INITIATING)
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+	sdc_support_parallel_scanning_and_initiating();
+#else
 	err = sdc_support_parallel_scanning_and_initiating();
 	if (err) {
 		return -ENOTSUP;
 	}
 #endif
+#endif
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SUBRATING)) {
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_connection_subrating_central();
+#else
 			err = sdc_support_connection_subrating_central();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_connection_subrating_peripheral();
+#else
 			err = sdc_support_connection_subrating_peripheral();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_FRAME_SPACE_UPDATE)) {
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_frame_space_update_central();
+#else
 			err = sdc_support_frame_space_update_central();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+			sdc_support_frame_space_update_peripheral();
+#else
 			err = sdc_support_frame_space_update_peripheral();
 			if (err) {
 				return -ENOTSUP;
 			}
+#endif
 		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_EXTENDED_FEAT_SET)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_extended_feature_set();
+#else
 		err = sdc_support_extended_feature_set();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_CHANNEL_SOUNDING_TEST)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_channel_sounding_test();
+#else
 		err = sdc_support_channel_sounding_test();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_CHANNEL_SOUNDING)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_channel_sounding();
+#if defined(CONFIG_BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT)
+		sdc_cs_antenna_switch_callback_set(cs_antenna_switch_func);
+		cs_antenna_switch_init();
+#endif
+#else
 #if defined(CONFIG_BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT)
 		err = sdc_support_channel_sounding(cs_antenna_switch_func);
 		cs_antenna_switch_init();
@@ -1048,43 +1233,65 @@ static int configure_supported_features(void)
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_CS_STEP_MODE3)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_channel_sounding_mode3();
+#else
 		err = sdc_support_channel_sounding_mode3();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_CS_ROLE_INITIATOR_ONLY) ||
 		IS_ENABLED(CONFIG_BT_CTLR_SDC_CS_ROLE_BOTH)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_channel_sounding_initiator_role();
+#else
 		err = sdc_support_channel_sounding_initiator_role();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_CS_ROLE_REFLECTOR_ONLY) ||
 		IS_ENABLED(CONFIG_BT_CTLR_SDC_CS_ROLE_BOTH)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_channel_sounding_reflector_role();
+#else
 		err = sdc_support_channel_sounding_reflector_role();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_LE_POWER_CLASS_1)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_le_power_class_1();
+#else
 		err = sdc_support_le_power_class_1();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
+
 	if (IS_ENABLED(CONFIG_BT_CTLR_PRIVACY)) {
+#if defined(SDC_USE_NEW_SDC_SUPPORT_API)
+		sdc_support_le_privacy();
+#else
 		err = sdc_support_le_privacy();
 		if (err) {
 			return -ENOTSUP;
 		}
+#endif
 	}
 
 	return 0;
