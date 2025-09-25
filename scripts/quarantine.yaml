@@ -139,3 +139,18 @@
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35605"
+
+- scenarios:
+    - sample.bluetooth.mesh.light_ctrl.emds
+  platforms:
+    - thingy53/nrf5340/cpuapp
+
+- scenarios:
+    - applications.matter_weather_station.debug
+  platforms:
+    - thingy53/nrf5340/cpuapp
+
+- scenarios:
+    - sample.dfu.dfu_multi_image.encryption
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
