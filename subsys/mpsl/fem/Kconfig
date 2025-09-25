@@ -82,7 +82,7 @@ config MPSL_FEM_NRF21540_GPIO
 		$(dt_nodelabel_has_prop,nrf_radio_fem,ant-sel-gpios))
 	select NRFX_PPI if HAS_HW_NRF_PPI
 	select NRFX_DPPI if HAS_HW_NRF_DPPIC
-	select NRFX_GPPI if SOC_SERIES_NRF54LX
+	select NRFX_GPPI
 	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
 	select NRFX_DPPI20 if SOC_SERIES_NRF54LX
 	select NRFX_PPIB11 if SOC_SERIES_NRF54LX
@@ -99,7 +99,7 @@ config MPSL_FEM_NRF21540_GPIO_SPI
 		$(dt_nodelabel_has_prop,nrf_radio_fem,ant-sel-gpios))
 	select NRFX_PPI if HAS_HW_NRF_PPI
 	select NRFX_DPPI if HAS_HW_NRF_DPPIC
-	select NRFX_GPPI if SOC_SERIES_NRF54LX
+	select NRFX_GPPI
 	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
 	select NRFX_DPPI20 if SOC_SERIES_NRF54LX
 	select NRFX_PPIB11 if SOC_SERIES_NRF54LX
