@@ -48,11 +48,11 @@ namespace app
 					case Attributes::ClusterRevision::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, clusterRevision);
 					case Attributes::DevKitName::TypeInfo::GetAttributeId():
-						return DataModel::Decode(reader, devKitName);
+						return DataModel::Decode(reader, DevKitName);
 					case Attributes::UserLED::TypeInfo::GetAttributeId():
-						return DataModel::Decode(reader, userLED);
+						return DataModel::Decode(reader, UserLED);
 					case Attributes::UserButton::TypeInfo::GetAttributeId():
-						return DataModel::Decode(reader, userButton);
+						return DataModel::Decode(reader, UserButton);
 					default:
 						return CHIP_NO_ERROR;
 					}

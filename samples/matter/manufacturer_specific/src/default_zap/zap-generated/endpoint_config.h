@@ -44,7 +44,10 @@
                                                                                                                        \
 		/* Endpoint: 1, Cluster: NordicDevKit (server), big-endian */                                          \
                                                                                                                        \
-		/* 8 - DevKitName, */                                                                                  \
+		/* 8 -                                                                                                 \
+		    DevKitName                                                                                         \
+                                                                                                                       \
+		  , */                                                                                                 \
 		22,                                                                                                    \
 		'N',                                                                                                   \
 		'o',                                                                                                   \
@@ -89,7 +92,10 @@
                                                                                                                        \
 		/* Endpoint: 1, Cluster: NordicDevKit (server), little-endian */                                       \
                                                                                                                        \
-		/* 8 - DevKitName, */                                                                                  \
+		/* 8 -                                                                                                 \
+		    DevKitName                                                                                         \
+                                                                                                                       \
+		  , */                                                                                                 \
 		22,                                                                                                    \
 		'N',                                                                                                   \
 		'o',                                                                                                   \
@@ -318,10 +324,20 @@
                                                                                                                                                  \
 		/* Endpoint: 1, Cluster: NordicDevKit (server) */                                                                                \
 		{ ZAP_LONG_DEFAULTS_INDEX(8), 0xFFF10000, 255, ZAP_TYPE(CHAR_STRING),                                                            \
-		  ZAP_ATTRIBUTE_MASK(TOKENIZE) | ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* DevKitName */                                                \
-		{ ZAP_SIMPLE_DEFAULT(false), 0xFFF10001, 1, ZAP_TYPE(BOOLEAN), ZAP_ATTRIBUTE_MASK(TOKENIZE) }, /* UserLED                        \
-														*/                               \
-		{ ZAP_SIMPLE_DEFAULT(false), 0xFFF10002, 1, ZAP_TYPE(BOOLEAN), 0 }, /* UserButton */                                             \
+		  ZAP_ATTRIBUTE_MASK(TOKENIZE) | ZAP_ATTRIBUTE_MASK(WRITABLE) }, /*                                                              \
+DevKitName                                                                                                                                       \
+                                                                                                                                                 \
+*/                                                                                                                                               \
+		{ ZAP_SIMPLE_DEFAULT(false), 0xFFF10001, 1, ZAP_TYPE(BOOLEAN), ZAP_ATTRIBUTE_MASK(TOKENIZE) }, /*                                \
+		    UserLED                                                                                                                      \
+                                                                                                                                                 \
+                                                                                                                                                 \
+		   */                                                                                                                            \
+		{ ZAP_SIMPLE_DEFAULT(false), 0xFFF10002, 1, ZAP_TYPE(BOOLEAN), 0 }, /*                                                           \
+		    UserButton                                                                                                                   \
+                                                                                                                                                 \
+                                                                                                                                                 \
+		   */                                                                                                                            \
 		{ ZAP_SIMPLE_DEFAULT(0), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                                                \
 		{ ZAP_SIMPLE_DEFAULT(1), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                                             \
 	}
@@ -644,10 +660,10 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 #define FIXED_ENDPOINT_ARRAY { 0x0000, 0x0001 }
 
 // Array of profile ids
-#define FIXED_PROFILE_IDS { 0x0103, 0x0FFF }
+#define FIXED_PROFILE_IDS { 0x0103, 0x0402 }
 
 // Array of device types
-#define FIXED_DEVICE_TYPES { { 0x00000012, 1 }, { 0x00000016, 3 }, { 0x00000001, 1 } }
+#define FIXED_DEVICE_TYPES { { 0x00000012, 1 }, { 0x00000016, 3 }, { 0xFFF10001, 1 } }
 
 // Array of device type offsets
 #define FIXED_DEVICE_TYPE_OFFSETS { 0, 2 }
