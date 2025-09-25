@@ -170,4 +170,9 @@ config MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE
 	help
 	  This is a Kconfig which is informative only, the value should not be changed.
 
+config NCS_MCUBOOT_BOOTLOADER_SIGN_MERGED_BINARY
+	bool "Sign merged binary instead of individual images (informative only, do not change)"
+	help
+	  This is a Kconfig which is informative only, the value should not be changed.
+
 endmenu
