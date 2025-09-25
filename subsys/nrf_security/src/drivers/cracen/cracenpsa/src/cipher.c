@@ -68,9 +68,8 @@ static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *at
 }
 
 static psa_status_t setup(enum cipher_operation dir, cracen_cipher_operation_t *operation,
-				    const psa_key_attributes_t *attributes,
-				    const uint8_t *key_buffer, size_t key_buffer_size,
-				    psa_algorithm_t alg)
+			  const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
+			  size_t key_buffer_size, psa_algorithm_t alg)
 {
 	if (!is_alg_supported(alg, attributes)) {
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -296,19 +295,19 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 			return PSA_ERROR_BUFFER_TOO_SMALL;
 		}
 		/* Handle inplace encryption by moving plaintext to the right by iv_length
-		* bytes. This is done because in inplace encryption the input and output
-		* should point to the same data so that the output can overwrite its own
-		* input. If they are not in sync the output will overwrite the input of
-		* another operation which is of course wrong.
-		*
-		*/
+		 * bytes. This is done because in inplace encryption the input and output
+		 * should point to the same data so that the output can overwrite its own
+		 * input. If they are not in sync the output will overwrite the input of
+		 * another operation which is of course wrong.
+		 *
+		 */
 		if (output == input + iv_length) {
 			memmove(output, input, input_length);
 			input = output;
 		}
-		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size,
-					       iv, iv_length, input, input_length,
-					       output, output_size, output_length);
+		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, iv,
+					       iv_length, input, input_length, output, output_size,
+					       output_length);
 	}
 #endif
 
@@ -368,10 +367,9 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 #if defined(CONFIG_SOC_NRF54LV10A) && defined(CONFIG_PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
-		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size,
-					       input, iv_size, input + iv_size,
-					       input_length - iv_size, output, output_size,
-					       output_length);
+		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, input,
+					       iv_size, input + iv_size, input_length - iv_size,
+					       output, output_size, output_length);
 	}
 #endif
 
@@ -477,29 +475,11 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 	return silex_statuscodes_to_psa(sx_status);
 }
 
-static bool is_multi_part_supported(psa_algorithm_t alg)
-{
-	if (IS_ENABLED(CONFIG_SOC_NRF54LM20A)) {
-		switch (alg) {
-		case PSA_ALG_ECB_NO_PADDING:
-			return IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES);
-		default:
-			return false;
-		}
-	} else {
-		return true;
-	}
-}
-
 psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
 					 const psa_key_attributes_t *attributes,
 					 const uint8_t *key_buffer, size_t key_buffer_size,
-	psa_algorithm_t alg)
+					 psa_algorithm_t alg)
 {
-	if (!is_multi_part_supported(alg)) {
-		return PSA_ERROR_NOT_SUPPORTED;
-	}
-
 #if defined(CONFIG_SOC_NRF54LV10A) && defined(CONFIG_PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
@@ -515,9 +495,6 @@ psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
 					 const uint8_t *key_buffer, size_t key_buffer_size,
 					 psa_algorithm_t alg)
 {
-	if (!is_multi_part_supported(alg)) {
-		return PSA_ERROR_NOT_SUPPORTED;
-	}
 
 #if defined(CONFIG_SOC_NRF54LV10A) && defined(CONFIG_PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
@@ -580,8 +557,8 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 #if defined(CONFIG_SOC_NRF54LV10A) && defined(CONFIG_PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (operation->alg == PSA_ALG_CTR) {
-		return cracen_sw_aes_ctr_update(operation, input, input_length, output,
-					        output_size, output_length);
+		return cracen_sw_aes_ctr_update(operation, input, input_length, output, output_size,
+						output_length);
 	}
 #endif
 
