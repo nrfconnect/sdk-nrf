@@ -69,6 +69,7 @@ function(zephyr_mcuboot_tasks)
   # from being updated without a pristine build
   # TODO: NCSDK-28461 sysbuild PM fields cannot be updated without a pristine build, will become
   # invalid if a static PM file is updated without pristine build
+  set(imgtool_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_ADDRESS@)
   set(imgtool_sign_sysbuild --slot-size @PM_MCUBOOT_SECONDARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_rom_command} CACHE STRING "imgtool sign sysbuild replacement")
   set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_sign_sysbuild})
 
