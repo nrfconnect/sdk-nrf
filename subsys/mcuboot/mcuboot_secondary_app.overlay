@@ -6,6 +6,6 @@
 
 / {
 	chosen {
-		zephyr,code-partition = &slot1_partition;
+		zephyr,code-partition = &secondary_app_partition;
 	};
 };
