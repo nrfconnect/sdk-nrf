@@ -4,6 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../../../nrf54h20dk_nrf54h20_cpuapp/memory_map.dtsi"
+#include "nrf54h20dk_nrf54h20_memory_map_requests.dtsi"
 
 secondary_app_partition: &cpurad_slot1_partition {};

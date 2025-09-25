@@ -21,12 +21,15 @@
 			reg = <0x30000 DT_SIZE_K(24)>;
 		};
 
-		/* Due to the build system limitation, the allowed size of the application image
-		 * (configured by the code partition DTS node) is incorrectly increased by the size
-		 * allocated for the radio image.
+		/* When using merged slots, the definition of MCUboot slots is common for all
+		 * images and points to the "merged" partition.
 		 */
-		cpuapp_slot0_partition: partition@36000 {
+		slot0_partition: partition@36000 {
 			reg = <0x36000 DT_SIZE_K(808)>;
+		};
+
+		cpuapp_slot0_partition: partition@36800 {
+			reg = <0x36800 DT_SIZE_K(586)>;
 		};
 
 		cpurad_slot0_partition: partition@c9000 {
@@ -35,12 +38,12 @@
 
 		/* Partitions belonging to the MRAM_11 memory block. */
 
-		/* Due to the build system limitation, the allowed size of the application image
-		 * (configured by the code partition DTS node) is incorrectly increased by the size
-		 * allocated for the radio image.
-		 */
-		cpuapp_slot1_partition: partition@100000 {
+		slot1_partition: partition@100000 {
 			reg = <0x100000 DT_SIZE_K(808)>;
+		};
+
+		cpuapp_slot1_partition: partition@100800 {
+			reg = <0x100800 DT_SIZE_K(586)>;
 		};
 
 		cpurad_slot1_partition: partition@193000 {
