@@ -475,29 +475,11 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 	return silex_statuscodes_to_psa(sx_status);
 }
 
-static bool is_multi_part_supported(psa_algorithm_t alg)
-{
-	if (IS_ENABLED(CONFIG_SOC_NRF54LM20A)) {
-		switch (alg) {
-		case PSA_ALG_ECB_NO_PADDING:
-			return IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES);
-		default:
-			return false;
-		}
-	} else {
-		return true;
-	}
-}
-
 psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
 					 const psa_key_attributes_t *attributes,
 					 const uint8_t *key_buffer, size_t key_buffer_size,
 					 psa_algorithm_t alg)
 {
-	if (!is_multi_part_supported(alg)) {
-		return PSA_ERROR_NOT_SUPPORTED;
-	}
-
 #if defined(CONFIG_SOC_NRF54LV10A) && defined(CONFIG_PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
@@ -513,9 +495,6 @@ psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
 					 const uint8_t *key_buffer, size_t key_buffer_size,
 					 psa_algorithm_t alg)
 {
-	if (!is_multi_part_supported(alg)) {
-		return PSA_ERROR_NOT_SUPPORTED;
-	}
 
 #if defined(CONFIG_SOC_NRF54LV10A) && defined(CONFIG_PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
