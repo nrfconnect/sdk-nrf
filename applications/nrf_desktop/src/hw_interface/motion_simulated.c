@@ -57,12 +57,14 @@ static enum state state;
 static bool generating_motion = !IS_ENABLED(CONFIG_SHELL);
 
 
-static void motion_event_send(int16_t dx, int16_t dy)
+static void motion_event_send(int16_t dx, int16_t dy, bool active)
 {
 	struct motion_event *event = new_motion_event();
 
 	event->dx = dx;
 	event->dy = dy;
+	event->active = active;
+
 	APP_EVENT_SUBMIT(event);
 }
 
@@ -108,7 +110,7 @@ static void generate_motion_event(void)
 
 	generate_new_position(&x_new, &y_new);
 
-	motion_event_send(x_new - x_cur, y_new - y_cur);
+	motion_event_send(x_new - x_cur, y_new - y_cur, generating_motion);
 
 	x_cur = x_new;
 	y_cur = y_new;
@@ -194,6 +196,11 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		if (state == STATE_DISCONNECTED) {
 			state = STATE_SUSPENDED_DISCONNECTED;
 		} else if ((state == STATE_IDLE) || (state == STATE_FETCHING)) {
+			if (state == STATE_FETCHING) {
+				/* Send a motion_event to inform about leaving fetching state. */
+				motion_event_send(0, 0, false);
+			}
+
 			state = STATE_SUSPENDED;
 		}
 
