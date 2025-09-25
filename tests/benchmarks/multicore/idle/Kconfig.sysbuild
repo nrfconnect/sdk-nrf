@@ -8,3 +8,21 @@ source "share/sysbuild/Kconfig"
 
 config REMOTE_BOARD
 	string "The board used for remote target"
+
+if SOC_NRF54H20
+choice NETCORE
+  default NETCORE_CUSTOM
+
+config NETCORE_CUSTOM
+  bool "Custom netcore FW"
+endchoice
+
+config NETCORE_IMAGE_NAME
+  string
+  default "remote" if NETCORE_CUSTOM
+
+config NETCORE_IMAGE_PATH
+  string
+  default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle/remote" if NETCORE_CUSTOM
+
+endif # SOC_NRF54H20

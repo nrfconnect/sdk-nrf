@@ -8,3 +8,19 @@ source "share/sysbuild/Kconfig"
 
 config REMOTE_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING
 	bool "Enable global domain frequency changing from remote"
+
+choice NETCORE
+  default NETCORE_CUSTOM
+
+config NETCORE_CUSTOM
+  bool "Custom netcore FW"
+endchoice
+
+config NETCORE_IMAGE_NAME
+  string
+  default "remote"
+
+config NETCORE_IMAGE_PATH
+  string
+  default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/remote_gdf_switching" if REMOTE_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING
+  default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever"

@@ -16,7 +16,26 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      - FILE_SUFFIX=s2ram
+      - EXTRA_DTC_OVERLAY_FILE="boards/comp.overlay"
+    harness_config:
+      fixture: gpio_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_comp"
+
+  benchmarks.multicore.idle_comp.nrf54h20dk_cpuapp_cpurad.s2ram.mcuboot:
+    tags:
+      - ci_build
+      - ci_tests_benchmarks_multicore
+      - ppk_power_measure
+    filter: not CONFIG_COVERAGE
+    harness: pytest
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_comp/boards/nrf54h20dk_nrf54h20_cpuapp.overlay"
       - EXTRA_DTC_OVERLAY_FILE="boards/comp.overlay"
     harness_config:
       fixture: gpio_loopback
@@ -35,7 +54,6 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      - FILE_SUFFIX=s2ram
       - EXTRA_DTC_OVERLAY_FILE="boards/lpcomp.overlay"
     harness_config:
       fixture: gpio_loopback

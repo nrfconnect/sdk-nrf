@@ -124,6 +124,39 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption"
     tags: ppk_power_measure
 
+  benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.s2ram.mcuboot:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
+      - CONFIG_FIRST_SLEEP_OFFSET=y
+      - CONFIG_PM=y
+      - CONFIG_PM_S2RAM=y
+      - CONFIG_POWEROFF=y
+      - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+      - CONFIG_CONSOLE=n
+      - CONFIG_UART_CONSOLE=n
+      - CONFIG_SERIAL=n
+      - CONFIG_GPIO=n
+      - CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_PM=y
+      - remote_CONFIG_POWEROFF=y
+      - remote_CONFIG_CONSOLE=n
+      - remote_CONFIG_UART_CONSOLE=n
+      - remote_CONFIG_SERIAL=n
+      - remote_CONFIG_GPIO=n
+      - remote_CONFIG_BOOT_BANNER=n
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+    harness: pytest
+    harness_config:
+      fixture: lfclk_at_lfxo
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption"
+    tags: ppk_power_measure
+
   benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.s2ram.fpu:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
