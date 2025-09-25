@@ -1,0 +1,72 @@
+name: Review Quarantine PR (Publish)
+
+on:
+  # Run only after the generator workflow completes
+  workflow_run:
+    workflows: ["Review Quarantine PR (Generate)"]
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
+
+jobs:
+  publish-comment:
+    name: Publish quarantine comment to PR (only after Generate succeeds)
+    runs-on: ubuntu-24.04
+    if: >
+      ${{
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'pull_request'
+      }}
+
+    steps:
+      - name: Download generated artifacts from the triggering run
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Download artifacts from the exact run that triggered this workflow
+          run-id: ${{ github.event.workflow_run.id }}
+          path: ./quarantine-artifacts
+
+      - name: Prepare comment body for publish
+        id: prep
+        run: |
+          set -euo pipefail
+          PR_FILE="$(find ./quarantine-artifacts -type f -name 'pr_number.txt' -print -quit)"
+          if [[ -z "${PR_FILE}" || ! -s "${PR_FILE}" ]]; then
+            echo "ERROR: pr_number.txt not found or empty." >&2
+            exit 1
+          fi
+
+          PR_NUMBER="$(head -n1 -- "$PR_FILE" | tr -d '\r\n')"
+          if [[ ! "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+            echo "ERROR: Invalid PR number: '$PR_NUMBER'" >&2
+            exit 1
+          fi
+
+          COMMENT_FILE="$(find ./quarantine-artifacts -type f -name 'quarantine_comment.md' -print -quit)"
+          if [[ -z "${COMMENT_FILE}" || ! -s "${COMMENT_FILE}" ]]; then
+            echo "ERROR: Quarantine comment not found or empty." >&2
+            exit 1
+          fi
+
+          cp -- "$COMMENT_FILE" quarantine_comment_body.md
+          printf 'pr_number=%s\n' "$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+      - name: Find Comment
+        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3
+        id: find_comment
+        with:
+          issue-number: ${{ steps.prep.outputs.pr_number }}
+          comment-author: "github-actions[bot]"
+          body-includes: quarantine-notifier
+
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4
+        with:
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          issue-number: ${{ steps.prep.outputs.pr_number }}
+          body-path: quarantine_comment_body.md
+          edit-mode: replace
