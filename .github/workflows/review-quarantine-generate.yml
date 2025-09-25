@@ -1,0 +1,129 @@
+name: Review Quarantine PR (Generate)
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - "scripts/quarantine*.yaml"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: quarantine-generate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    name: Generate quarantine comment artifacts
+    runs-on: ubuntu-24.04
+
+    env:
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ env.HEAD_SHA }}
+          path: nrf
+          fetch-depth: 1
+
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml west pathspec
+
+      # Compare base..head via GitHub API (works for fork PRs).
+      - name: Detect changed quarantine YAML files (base vs PR)
+        id: quarantine_changed_files
+        uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
+        with:
+          base_sha: ${{ env.BASE_SHA }}
+          sha: ${{ env.HEAD_SHA }}
+          files: |
+            scripts/quarantine*.yaml
+          separator: "\n"
+
+      - name: Compare only affected quarantine YAMLs (base vs PR)
+        shell: bash
+        id: compare_quarantine
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          west init -l ./nrf
+          west update zephyr --narrow
+          export ZEPHYR_BASE="zephyr"
+          OUTDIR="quarantine-diff-results"
+          mkdir -p "$OUTDIR" quarantine-base-files quarantine-pr-files
+
+          echo "Changed quarantine files count: ${{ steps.quarantine_changed_files.outputs.all_modified_files_count }}"
+          files="${{ steps.quarantine_changed_files.outputs.all_modified_files }}"
+
+          while IFS= read -r rel; do
+            [[ -z "$rel" ]] && continue
+            echo "== Comparing affected quarantine file: $rel =="
+            fname="${rel##*/}"
+            base_file="quarantine-base-files/$fname"
+            pr_file="quarantine-pr-files/$fname"
+
+            # Fetch the base version via GitHub API; empty file if new in this PR
+            if content=$(gh api "repos/${{ github.repository }}/contents/${rel}?ref=${{ env.BASE_SHA }}" \
+                         --jq '.content' 2>/dev/null); then
+              echo "$content" | base64 -d > "$base_file"
+            else
+              echo "  Not found at base SHA, treating as newly added file."
+              : > "$base_file"
+            fi
+
+            # Copy PR version if it exists; empty file if deleted in this PR
+            if [[ -f "nrf/$rel" ]]; then
+              cp "nrf/$rel" "$pr_file"
+            else
+              echo "  Deleted in this PR, treating as empty quarantine."
+              : > "$pr_file"
+            fi
+
+            python3 nrf/scripts/compare_quarantine.py "$pr_file" "$base_file" \
+              --outdir "$OUTDIR" --repo-root ./nrf
+          done <<< "$files"
+
+      - name: Prepare comment body
+        working-directory: nrf
+        run: |
+          set -euo pipefail
+          python scripts/ci/quarantine_notifier.py \
+            --repo-root . \
+            --diff-dir ../quarantine-diff-results \
+            --output quarantine_comment.md \
+            --ref "${{ env.HEAD_SHA }}"
+
+      - name: Upload quarantine scenario diff artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: quarantine-scenario-diff
+          path: quarantine-diff-results/*.txt
+          if-no-files-found: warn
+
+      # PR number is not accessible between workflows in a fork and a base context
+      - name: Store PR number for Publish (as artifact file)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "${{ github.event.pull_request.number }}" > pr_number.txt
+
+      # Upload artifacts for the publish workflow (includes PR number)
+      - name: Upload artifacts for publish workflow
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: quarantine-artifacts-pr${{ env.PR_NUMBER }}-sha${{ env.HEAD_SHA }}
+          path: |
+            nrf/quarantine_comment.md
+            pr_number.txt
+          if-no-files-found: ignore
+          retention-days: 30

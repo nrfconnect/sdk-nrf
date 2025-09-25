@@ -718,8 +718,10 @@
 
 
 # Scripts
+/scripts/compare_quarantine.py            @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/docker/                          @nrfconnect/ncs-ci
 /scripts/ci/do_not_merge.py               @carlescufi
+/scripts/ci/quarantine_notifier.py        @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/test_plan.py                  @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/tags.yaml                     @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/tags_sdk_zephyr.yaml          @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
