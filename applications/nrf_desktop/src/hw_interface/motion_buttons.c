@@ -27,9 +27,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 #endif
 
 enum state {
+	STATE_DISCONNECTED,
 	STATE_IDLE,
-	STATE_CONNECTED,
-	STATE_PENDING
+	STATE_FETCHING
 };
 
 enum dir {
@@ -151,6 +151,8 @@ static void clear_accumulated_motion(void)
 
 static void send_motion(void)
 {
+	__ASSERT_NO_MSG(state == STATE_FETCHING);
+
 	int16_t x;
 	int16_t y;
 
@@ -175,9 +177,9 @@ static bool handle_button_event(const struct button_event *event)
 
 		update_motion_ts(dir, get_timestamp() - ts_shift);
 
-		if (state == STATE_CONNECTED) {
+		if (state == STATE_IDLE) {
+			state = STATE_FETCHING;
 			send_motion();
-			state = STATE_PENDING;
 		}
 	}
 
@@ -203,11 +205,10 @@ static bool handle_hid_report_sent_event(const struct hid_report_sent_event *eve
 {
 	if ((event->report_id == REPORT_ID_MOUSE) ||
 	    (event->report_id == REPORT_ID_BOOT_MOUSE)) {
-		if (state == STATE_PENDING) {
-			if (is_motion_active()) {
-				send_motion();
-			} else {
-				state = STATE_CONNECTED;
+		if (state == STATE_FETCHING) {
+			send_motion();
+			if (!is_motion_active()) {
+				state = STATE_IDLE;
 			}
 		}
 	}
@@ -231,19 +232,14 @@ static bool handle_hid_report_subscription_event(const struct hid_report_subscri
 
 		bool is_connected = (peer_count != 0);
 
-		if ((state == STATE_IDLE) && is_connected) {
-			if (is_motion_active()) {
+		if ((state == STATE_DISCONNECTED) && is_connected) {
+			state = is_motion_active() ? STATE_FETCHING : STATE_IDLE;
+			if (state == STATE_FETCHING) {
 				clear_accumulated_motion();
 				send_motion();
-				state = STATE_PENDING;
-			} else {
-				state = STATE_CONNECTED;
 			}
-			return false;
-		}
-		if ((state != STATE_IDLE) && !is_connected) {
-			state = STATE_IDLE;
-			return false;
+		} else if ((state != STATE_DISCONNECTED) && !is_connected) {
+			state = STATE_DISCONNECTED;
 		}
 	}
 
@@ -253,8 +249,7 @@ static bool handle_hid_report_subscription_event(const struct hid_report_subscri
 static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_hid_report_sent_event(aeh)) {
-		return handle_hid_report_sent_event(
-				cast_hid_report_sent_event(aeh));
+		return handle_hid_report_sent_event(cast_hid_report_sent_event(aeh));
 	}
 
 	if (is_button_event(aeh)) {
