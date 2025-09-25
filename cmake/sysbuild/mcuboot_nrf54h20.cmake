@@ -9,6 +9,7 @@ if(SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY)
   set(MERGED_IMAGES_HEX "mcuboot_merged.hex")
   UpdateableImage_Get(images GROUP "DEFAULT")
 
+  check_merged_slot_boundaries("slot0_partition" "${images}")
   merge_images_nrf54h20(${MERGED_IMAGES_HEX} "${images}")
   # Since all bootloader-enabled images are merged, disable programming subimages.
   list(REMOVE_ITEM images "${DEFAULT_IMAGE}")
@@ -19,6 +20,7 @@ if(SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY)
   UpdateableImage_Get(variants GROUP "VARIANT")
 
   if(variants)
+    check_merged_slot_boundaries("slot1_partition" "${variants}")
     merge_images_nrf54h20(${MERGED_IMAGES_SECONDARY_HEX} "${variants}")
     list(REMOVE_ITEM variants "mcuboot_secondary_app")
     disable_programming_nrf54h20("${variants}")

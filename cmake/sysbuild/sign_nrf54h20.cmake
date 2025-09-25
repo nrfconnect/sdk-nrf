@@ -4,6 +4,45 @@
 
 include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
 
+function(check_merged_slot_boundaries merged_partition images)
+  # Predefine the MCUboot header size.
+  set(MCUBOOT_HEADER_SIZE 0x800)
+
+  # Fetch merged slot details from the mcuboot image.
+  dt_chosen(flash_node TARGET mcuboot PROPERTY "zephyr,flash")
+  dt_nodelabel(slot_path TARGET mcuboot NODELABEL "${merged_partition}" REQUIRED)
+  dt_partition_addr(slot_addr PATH "${slot_path}" TARGET mcuboot REQUIRED ABSOLUTE)
+  dt_reg_size(slot_size TARGET mcuboot PATH ${slot_path})
+
+  # Calculate boundaries of the usable area.
+  sysbuild_get(mcuboot_image_footer_size IMAGE mcuboot CACHE)
+  math(EXPR slot_max_addr "${slot_addr} + ${slot_size} - ${mcuboot_image_footer_size}" OUTPUT_FORMAT HEXADECIMAL)
+  math(EXPR slot_min_addr "${slot_addr} + ${MCUBOOT_HEADER_SIZE}" OUTPUT_FORMAT HEXADECIMAL)
+
+  # Iterate over images and check that they fit in the merged slots.
+  foreach(image ${images})
+    set(start_offset)
+    set(end_offset)
+    sysbuild_get(start_offset IMAGE ${image} VAR CONFIG_ROM_START_OFFSET KCONFIG)
+    sysbuild_get(end_offset IMAGE ${image} VAR CONFIG_ROM_END_OFFSET KCONFIG)
+    dt_chosen(code_flash TARGET ${image} PROPERTY "zephyr,code-partition")
+    dt_partition_addr(code_addr PATH "${code_flash}" TARGET ${image} REQUIRED ABSOLUTE)
+    dt_reg_size(code_size TARGET ${image} PATH ${code_flash})
+
+    math(EXPR code_end_addr "${code_addr} + ${code_size} - ${end_offset}" OUTPUT_FORMAT HEXADECIMAL)
+    math(EXPR code_start_addr "${code_addr} + ${start_offset}" OUTPUT_FORMAT HEXADECIMAL)
+
+    if((${code_end_addr} GREATER ${slot_max_addr}) OR
+       (${code_start_addr} LESS ${slot_min_addr}))
+      message(FATAL_ERROR "Variant image ${image} "
+                          "(${code_start_addr}, ${code_end_addr}) "
+                          "does not fit in the merged ${merged_partition} "
+                          "(${slot_min_addr}, ${slot_max_addr})")
+      return()
+    endif()
+  endforeach()
+endfunction()
+
 function(merge_images_nrf54h20 output_artifact images)
   find_program(MERGEHEX mergehex.py HINTS ${ZEPHYR_BASE}/scripts/build/ NAMES
     mergehex NAMES_PER_DIR)
