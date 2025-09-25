@@ -167,3 +167,8 @@
     - applications.matter_weather_station.debug
   platforms:
     - thingy53/nrf5340/cpuapp
+
+- scenarios:
+    - event_manager_proxy.icmsg.cpuflpr
+  platforms:
+    - nrf54lv10dk/nrf54lv10a/cpuapp
