@@ -58,7 +58,7 @@ Implementation details
 
 The module is used by :ref:`nrf_desktop_hid_state` as a HID input report provider for the HID mouse input report and HID boot mouse input report.
 The module registers two separate HID report providers to handle both input reports.
-On initialization, the module submits the :c:struct:`hid_report_provider_event` events to establish two-way callbacks between the |hid_state| and the HID report providers.
+On initialization, the module submits the events of type :c:struct:`hid_report_provider_event` to establish two-way callbacks between the |hid_state| and the HID report providers.
 
 Handling user input
 ===================
