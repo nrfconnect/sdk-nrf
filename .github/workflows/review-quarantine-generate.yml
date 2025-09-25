@@ -1,0 +1,114 @@
+name: Review Quarantine PR (Generate)
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - "scripts/quarantine*.yaml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quarantine-generate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    name: Generate quarantine comment artifacts
+    runs-on: ubuntu-24.04
+
+    env:
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+
+    steps:
+      # Checkout PR head (fork) – read-only
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ env.HEAD_SHA }}
+          path: pr
+          fetch-depth: 0
+          persist-credentials: false
+
+      # Fetch the base repo (needed for unmodified python "prepare comment" script)
+      - name: Fetch base SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C pr remote add upstream "https://github.com/${{ github.repository }}.git"
+          git -C pr fetch --no-tags --depth=1 upstream "${BASE_SHA}"
+
+      # Generate diff for any scripts/quarantine*.yaml (U100 context)
+      - name: Generate diff (U100 context)
+        id: diff
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C pr diff -U100 "${BASE_SHA}" "${HEAD_SHA}" -- ':(glob)scripts/quarantine*.yaml' > "$RUNNER_TEMP/diff_quarantine.txt" || true
+
+      # Checkout the trusted base repo to run the notifier from trusted code
+      - name: Checkout base repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BASE_SHA }}
+          path: base
+          fetch-depth: 1
+          persist-credentials: false
+
+      # Python setup & deps
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml
+
+      # Run notifier script from base repo
+      - name: Prepare comment body
+        working-directory: base
+        run: |
+          python scripts/ci/quarantine_notifier.py \
+            --repo-root . \
+            --diff-file "$RUNNER_TEMP/diff_quarantine.txt" \
+            --output quarantine_comment.md \
+            --audit-json quarantine_audit.json \
+            --inventory-json scenario_inventory.json \
+            --ref "${HEAD_SHA}" \
+            --strict-missing-codeowners \
+            --strict-flag-file strict_missing_codeowners.flag
+
+      # PR number is not accessible between workflows in a fork and a base context
+      - name: Store PR number for Publish (as artifact file)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "${{ github.event.pull_request.number }}" > pr_number.txt
+
+      # Upload artifacts for the publish workflow (includes PR number)
+      - name: Upload artifacts for publish workflow
+        uses: actions/upload-artifact@v4
+        with:
+          name: quarantine-artifacts-pr${{ env.PR_NUMBER }}-sha${{ env.HEAD_SHA }}
+          path: |
+            ${{ runner.temp }}/diff_quarantine.txt
+            base/quarantine_comment.md
+            base/quarantine_audit.json
+            base/scenario_inventory.json
+            base/strict_missing_codeowners.flag
+            pr_number.txt
+          if-no-files-found: ignore
+          retention-days: 30
+
+      # Enforce strict mode on CODEOWNERS
+      - name: Fail if strict violation (missing CODEOWNERS)
+        shell: bash
+        run: |
+          if [[ -f base/strict_missing_codeowners.flag ]]; then
+            echo "Strict mode: Missing CODEOWNERS detected. Failing the job."
+            cat base/strict_missing_codeowners.flag
+            exit 1
+          else
+            echo "Strict mode: no violations."
+          fi
