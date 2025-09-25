@@ -65,18 +65,6 @@
 	};
 };
 
-/* Define the necessary aliases for the MCUboot slots that will be used by the DFU transports.
- * Due to the build system limitation, the allowed size of the application image (configured by
- * the code partition DTS node) is incorrectly increased by the size allocated for the radio image.
- */
-slot0_partition: &cpuapp_slot0_partition {
-	label = "image-0";
-};
-
-slot1_partition: &cpuapp_slot1_partition {
-	label = "image-1";
-};
-
 secondary_app_partition: &cpuapp_slot1_partition {};
 
 /* Remove the undefined property value from the disabled VPR cores to prevent build errors. */
