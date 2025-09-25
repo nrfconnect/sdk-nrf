@@ -605,6 +605,14 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v3-1-0 v3-0-2 v3-0-1 v3-0-0
+
+KRKNWK-20815: The NordicDevKit cluster does not work with the 0.1.0 version of the `Matter Cluster Editor app`_
+  The ``NordicDevKit`` cluster from the :ref:`matter_manufacturer_specific_sample` is not supported in the version 0.1.0 of the `Matter Cluster Editor app`_.
+  When the cluster XML file is loaded in the tool, saving the file may result in some fields not being saved correctly, causing them to become unavailable.
+
+  **Workaround:** Upgrade to the latest version of the `Matter Cluster Editor app`_.
+
 .. rst-class:: v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0
 
 KRKNWK-20445: PSA crypto implementation does not properly revert NOC keys when failsafe occurs
