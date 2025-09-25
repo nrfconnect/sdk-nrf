@@ -1,34 +1,78 @@
-name: Quarantine validation
+name: Review Quarantine PR (Publish)
 
 on:
+  # Publish step must use pull_request_target to allow commenting, but restrict to forks
   pull_request_target:
-    branches:
-      - main
-      - v*-branch
-    paths:
-      - '**/scripts/quarantine*.yaml'
+    types: [opened, reopened, synchronize, ready_for_review]
+  workflow_run:
+    workflows: ["Generate quarantine comment artifacts"]
+    types: [completed]
 
 permissions:
   contents: read
-  pull-requests: write
+  issues: write        # create/update PR (issue) comments
+  pull-requests: write # needed to comment on PRs
 
 jobs:
-  quarantine-info:
+  publish-comment:
+    name: Publish quarantine comment to PR (forks only)
     runs-on: ubuntu-24.04
+    if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    env:
+      REPO: ${{ github.repository }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
     steps:
-      - name: Add information about quarantine process
+      - name: Download generated artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: quarantine-artifacts-pr${{ github.event.pull_request.number }}-sha${{ github.event.pull_request.head.sha }}
+          path: ./quarantine-artifacts
+
+      - name: Check for comment content
+        id: has_comment
+        shell: bash
         run: |
-          # Find existing comment
-          comment_id=$(gh pr view ${{ github.event.pull_request.number }} --json comments --jq '.comments[] | select(.body | contains("Quarantine Process")) | .id' || echo "")
-          if [[ -z "$comment_id" ]]; then
-            # No comment - create new one
-            gh pr comment "$PR_NUMBER" --body "$BODY"
+          set -euo pipefail
+          if [[ -s ./quarantine-artifacts/quarantine_comment.md ]]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Post or update PR comment
+        if: steps.has_comment.outputs.present == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          BODY: >
-            Since quarantine was modified, please make sure
-            you are following the process described in
-            [Quarantine Process](https://nordicsemi.atlassian.net/wiki/spaces/NCS/pages/1104576817/Quarantine).
+        shell: bash
+        run: |
+          set -euo pipefail
+          BODY="$(cat ./quarantine-artifacts/quarantine_comment.md)"
+          existing_id="$(gh pr view "$PR_NUMBER" --json comments --jq '.comments[] | select(.body | contains("Quarantine update – notifying maintainers")) | .id' || echo "")"
+
+          if [[ -n "$existing_id" ]]; then
+            echo "Updating existing quarantine notification comment (id=$existing_id)."
+            gh api -X PATCH "repos/$REPO/issues/comments/$existing_id" -f body="$BODY" > /dev/null
+          else
+            echo "Creating quarantine notification comment."
+            gh pr comment "$PR_NUMBER" --body "$BODY" > /dev/null
+          fi
+
+      - name: Upload audit artifacts (mirror)
+        if: steps.has_comment.outputs.present == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: quarantine-audit-pr${{ github.event.pull_request.number }}-run${{ github.run_id }}
+          path: |
+            ./quarantine-artifacts/diff_quarantine.txt
+            ./quarantine-artifacts/quarantine_comment.md
+            ./quarantine-artifacts/quarantine_audit.json
+            ./quarantine-artifacts/scenario_inventory.json
+            ./quarantine-artifacts/strict_missing_codeowners.flag
+          if-no-files-found: ignore
+          retention-days: 30
