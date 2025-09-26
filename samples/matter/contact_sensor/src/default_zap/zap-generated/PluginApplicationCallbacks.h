@@ -24,7 +24,7 @@ void MatterDescriptorPluginServerInitCallback();
 void MatterAccessControlPluginServerInitCallback();
 void MatterBasicInformationPluginServerInitCallback();
 void MatterOtaSoftwareUpdateRequestorPluginServerInitCallback();
-void MatterPowerSourcePluginServerInitCallback();
+void MatterLocalizationConfigurationPluginServerInitCallback();
 void MatterGeneralCommissioningPluginServerInitCallback();
 void MatterNetworkCommissioningPluginServerInitCallback();
 void MatterDiagnosticLogsPluginServerInitCallback();
@@ -43,7 +43,7 @@ void MatterIcdManagementPluginServerInitCallback();
 	MatterAccessControlPluginServerInitCallback();                                                                 \
 	MatterBasicInformationPluginServerInitCallback();                                                              \
 	MatterOtaSoftwareUpdateRequestorPluginServerInitCallback();                                                    \
-	MatterPowerSourcePluginServerInitCallback();                                                                   \
+	MatterLocalizationConfigurationPluginServerInitCallback();                                                     \
 	MatterGeneralCommissioningPluginServerInitCallback();                                                          \
 	MatterNetworkCommissioningPluginServerInitCallback();                                                          \
 	MatterDiagnosticLogsPluginServerInitCallback();                                                                \

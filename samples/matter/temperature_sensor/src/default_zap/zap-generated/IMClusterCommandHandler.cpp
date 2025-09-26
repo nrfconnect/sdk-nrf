@@ -424,6 +424,27 @@ namespace app
 						}
 						break;
 					}
+					case Commands::SetVIDVerificationStatement::Id: {
+						Commands::SetVIDVerificationStatement::DecodableType commandData;
+						TLVError = commandData.Decode(aDataTlv,
+									      apCommandObj->GetAccessingFabricIndex());
+						if (TLVError == CHIP_NO_ERROR) {
+							wasHandled =
+								emberAfOperationalCredentialsClusterSetVIDVerificationStatementCallback(
+									apCommandObj, aCommandPath, commandData);
+						}
+						break;
+					}
+					case Commands::SignVIDVerificationRequest::Id: {
+						Commands::SignVIDVerificationRequest::DecodableType commandData;
+						TLVError = DataModel::Decode(aDataTlv, commandData);
+						if (TLVError == CHIP_NO_ERROR) {
+							wasHandled =
+								emberAfOperationalCredentialsClusterSignVIDVerificationRequestCallback(
+									apCommandObj, aCommandPath, commandData);
+						}
+						break;
+					}
 					default: {
 						// Unrecognized command ID, error status will apply.
 						ChipLogError(Zcl,
