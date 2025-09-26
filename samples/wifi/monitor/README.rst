@@ -22,7 +22,7 @@ Overview
 The sample demonstrates how to configure the nRF70 Series device in Monitor mode.
 It analyzes the incoming Wi-Fi packets on a raw socket and prints the packet statistics at a fixed interval.
 
-To set the wait duration for printing Wi-Fi packet statistics in seconds, use the :kconfig:option:`CONFIG_STATS_PRINT_TIMEOUT` Kconfig option.
+To set the wait duration for printing Wi-Fi packet statistics in seconds, use the :option:`CONFIG_STATS_PRINT_TIMEOUT` Kconfig option.
 
 Configuration
 *************

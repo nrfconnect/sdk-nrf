@@ -298,7 +298,7 @@ The report is used by the :ref:`nrf_desktop_config_channel`.
 
 .. note::
    The nRF Desktop also uses a dedicated HID output report to forward the :ref:`nrf_desktop_config_channel` data through the nRF Desktop dongle.
-   This report is handled using the configuration channel's infrastructure and you can enable it using the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT <config_desktop_app_options>` Kconfig option.
+   This report is handled using the configuration channel's infrastructure and you can enable it using the :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT` Kconfig option.
    See the Kconfig option's help for details about the report.
 
 HID protocols
