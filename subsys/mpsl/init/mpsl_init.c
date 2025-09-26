@@ -25,6 +25,7 @@
 #endif
 #if defined(CONFIG_SOC_SERIES_NRF54HX)
 #include <hal/nrf_dppi.h>
+#include <hal/nrf_grtc.h>
 #endif
 #if defined(CONFIG_MPSL_TRIGGER_IPC_TASK_ON_RTC_START)
 #include <hal/nrf_ipc.h>
@@ -59,9 +60,9 @@ extern void rtc_pretick_rtc0_isr_hook(void);
 BUILD_ASSERT(!IS_ENABLED(CONFIG_NRFX_RTC0), "MPSL reserves RTC0 on this SoC.");
 BUILD_ASSERT(!IS_ENABLED(CONFIG_NRFX_TIMER0), "MPSL reserves TIMER0 on this SoC.");
 #elif IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX) || IS_ENABLED(CONFIG_SOC_SERIES_NRF71X)
-BUILD_ASSERT(!IS_ENABLED(CONFIG_NRFX_TIMER10), "MPSL reserves TIMER10 on this SoC");
+BUILD_ASSERT(!IS_ENABLED(CONFIG_NRFX_TIMER10), "MPSL reserves TIMER10 on this SoC.");
 #elif IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX)
-BUILD_ASSERT(!IS_ENABLED(CONFIG_NRFX_TIMER020), "MPSL reserves TIMER020 on this SoC");
+BUILD_ASSERT(!IS_ENABLED(CONFIG_NRFX_TIMER020), "MPSL reserves TIMER020 on this SoC.");
 #else
 #error
 #endif
@@ -167,6 +168,11 @@ BUILD_ASSERT((IPCT_SOURCE_CHANNELS & MPSL_RESERVED_IPCT_SOURCE_CHANNELS) ==
 
 #if defined(CONFIG_SOC_SERIES_NRF54LX)
 BUILD_ASSERT(NRF_CONFIG_CPU_FREQ_MHZ == 128, "Currently mpsl only works when frequency is 128MHz");
+#endif
+
+#if IS_ENABLED(CONFIG_NRF_GRTC_TIMER) && !defined(CONFIG_SOC_SERIES_NRF54HX)
+BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_GRTC_TIMER_AUTO_KEEP_ALIVE),
+	     "MPSL requires NRF_GRTC_TIMER_AUTO_KEEP_ALIVE to be enabled when using GRTC timer");
 #endif
 
 #define MPSL_LOW_PRIO (4)
@@ -415,6 +421,12 @@ static int32_t mpsl_lib_init_internal(void)
 	 */
 	nrf_dppi_channels_enable(NRF_DPPIC130, DPPI_SINK_CHANNELS);
 	nrf_dppi_channels_enable(NRF_DPPIC132, DPPI_SOURCE_CHANNELS);
+#endif
+
+#if defined(CONFIG_SOC_SERIES_NRF54HX) && IS_ENABLED(CONFIG_NRF_GRTC_TIMER)
+	/* Runtime check for GRTC AUTOEN register on nRF54H */
+	__ASSERT(nrf_grtc_sys_counter_auto_mode_check(NRF_GRTC->MODE),
+	         "MPSL requires NRF_GRTC->AUTOEN to be set on nRF54H when using GRTC timer");
 #endif
 #if defined(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
 	err = mpsl_init(NULL, CONFIG_MPSL_LOW_PRIO_IRQN, m_assert_handler);
