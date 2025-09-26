@@ -415,6 +415,7 @@ Cellular samples
 Cryptography samples
 --------------------
 
+* Added the :ref:`crypto_kmu_usage_nrf54l` sample.
 
 * :ref:`crypto_aes_ctr` sample:
 
