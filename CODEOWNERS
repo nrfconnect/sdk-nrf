@@ -355,8 +355,6 @@
 /include/nrf_compress/                    @nordicjm
 /include/nrf_rpc/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-muffin @nrfconnect/ncs-protocols-serialization
 /include/power/                           @nrfconnect/ncs-co-drivers
-/include/sdfw/                            @nrfconnect/ncs-aurora
-/include/sdfw/sdfw_services/extmem_remote.h @nrfconnect/ncs-charon
 /include/shell/                           @nordic-krch
 /include/util/                            @nrfconnect/ncs-aegir @nordic-krch
 /include/tfm/                             @nrfconnect/ncs-aegir
@@ -828,10 +826,8 @@
 /subsys/nrf_security/                     @nrfconnect/ncs-aegir
 /subsys/partition_manager/                @nordicjm @tejlmand
 /subsys/pcd/                              @nrfconnect/ncs-pluto
-/subsys/sdfw_services/                    @nrfconnect/ncs-aurora
 /subsys/secure_storage/                   @nrfconnect/ncs-aegir
 /subsys/settings/                         @nrfconnect/ncs-pluto @rghaddab
-/subsys/sdfw_services/services/extmem/    @nrfconnect/ncs-charon
 /subsys/shell/                            @nordic-krch
 /subsys/trusted_storage/                  @nrfconnect/ncs-aegir
 /subsys/uart_async_adapter/               @nrfconnect/ncs-si-muffin
