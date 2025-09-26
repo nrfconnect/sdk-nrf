@@ -47,7 +47,8 @@ Refer to the following information for the list of supported development kits (D
        | `nRF54L15 System-on-Chip (SoC) <nRF54L15 System-on-Chip_>`_
    * - :ref:`nRF54L10 emulation on the nRF54L15 DK <zephyr:nrf54l15dk_nrf54l10>`
      - PCA10156
-     - ``nrf54l15dk/nrf54l10/cpuapp``
+     - | ``nrf54l15dk/nrf54l10/cpuapp``
+       | ``nrf54l15dk/nrf54l10/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
      - | `Datasheet <nRF54L15 Datasheet_>`_
        | `nRF54L10 Compatibility Matrix`_
      - | `nRF54L10 System-on-Chip (SoC) <nRF54L10_>`_

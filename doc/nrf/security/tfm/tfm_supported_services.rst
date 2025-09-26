@@ -1,7 +1,7 @@
 .. _ug_tfm_supported_services:
 
-Supported services and limitations in the |NCS|
-###############################################
+TF-M support and limitations in the |NCS|
+#########################################
 
 .. contents::
    :local:
@@ -45,14 +45,18 @@ Instead, it provides two main configurations for TF-M: minimal and configurable.
      - Not supported
      - Profile Large protects less resource-constrained Arm Cortex-M devices.
 
-Hardware support matrix for TF-M configurations
-  Expand the following field to list the software maturity levels for the TF-M configurations in the |NCS| for each device.
+.. _ug_tfm_supported_services_profiles_hw_support:
 
-  .. toggle::
+Hardware support matrix for TF-M profiles
+=========================================
 
-     .. include:: ../../releases_and_maturity/software_maturity.rst
-        :start-after: tfm_ncs_profiles_support_table_start
-        :end-before: tfm_ncs_profiles_support_table_end
+The following table lists hardware support and software maturity levels for the minimal and configurable TF-M profiles in the |NCS|.
+
+.. include:: ../../releases_and_maturity/software_maturity.rst
+   :start-after: tfm_ncs_profiles_support_table_start
+   :end-before: tfm_ncs_profiles_support_table_end
+
+For the definitions of the maturity levels, see :ref:`software_maturity`.
 
 .. _ug_tfm_supported_services_profiles_minimal:
 
