@@ -5142,6 +5142,11 @@ DRGN-23002: An assert could happen when using the coexistence interface
 DRGN-23291: LE Power Control was not being used for CIS
   This could happen when the CIS was not the first CIS in the CIG.
 
+.. rst-class:: v2-9-0-nRF54H20-1 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-3 v2-6-2 v2-6-1 v2-6-0
+
+DRGN-24784: Disconnect could happen if multiple peripheral links were active and encrypted
+  This could happen when the LE Long Term Key Request Reply command overwrites the session key of an active link.
+
 .. rst-class:: v2-7-0 v2-6-2 v2-6-1 v2-6-0
 
 DRGN-23204: The SoftDevice Controller in the peripheral role could terminate a connection due to a MIC failure during a valid encryption start procedure
