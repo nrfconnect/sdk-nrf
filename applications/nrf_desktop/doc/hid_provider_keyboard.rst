@@ -7,7 +7,7 @@ HID provider keyboard module
    :local:
    :depth: 2
 
-The HID provider keyboard module is a HID report provider integrated with :ref:`nrf_desktop_hid_state`.
+The HID provider keyboard module is a HID report provider integrated with the :ref:`nrf_desktop_hid_state`.
 The module is responsible for providing the HID keyboard input report and the HID boot keyboard input report.
 
 The module listens to the user input (:c:struct:`button_event`) and communicates with the :ref:`nrf_desktop_hid_state`.
@@ -31,13 +31,14 @@ Configuration
 
 You can enable the default implementation of the HID provider using the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD <config_desktop_app_options>` Kconfig option.
 This option is enabled by default if the device uses HID provider events (:ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_EVENT <config_desktop_app_options>`) and supports HID keyboard reports (:ref:`CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT <config_desktop_app_options>`).
+The default implementation of the HID provider uses a predefined format of HID reports, which is aligned with the default HID report map in the common configuration (:ref:`CONFIG_DESKTOP_HID_REPORT_DESC <config_desktop_app_options>`).
 The module also provides HID boot keyboard input report if it is supported (:ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD <config_desktop_app_options>`).
 
 Alternatively, you can substitute the module with a custom HID keyboard report provider implementation.
+Using the custom provider allows you to modify the sources of user input and the HID report format.
 Enable the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_ALT <config_desktop_app_options>` Kconfig option to use a custom HID keyboard report provider.
 The option disables the default HID keyboard report provider.
 Make sure to introduce the custom HID keyboard report provider if you enable this option.
-See the :ref:`nrf_desktop_hid_state_providing_hid_input_reports` documentation section of the HID state module for details.
 
 Default implementation
 ======================
@@ -58,7 +59,7 @@ See the following sections for the configuration details of the used application
 HID keymap
 ----------
 
-Since keys on the board can be associated with a HID usage ID and thus be part of different HID reports, the first step is to identify if the key belongs to a HID report that is provided by this module.
+Since the keys on the board can be associated with a HID usage ID and thus be part of different HID reports, the first step is to identify if the key belongs to a HID report that is provided by this module.
 This is done by obtaining the key mapping from the :ref:`nrf_desktop_hid_keymap`.
 The module selects the :ref:`CONFIG_DESKTOP_HID_KEYMAP <config_desktop_app_options>` Kconfig option to enable the utility.
 Make sure to configure the HID keymap utility.
@@ -111,7 +112,7 @@ The subsequent requests lead to providing subsequent keypresses as HID report ev
 All key state changes still go through the HID event queue until the queue is empty.
 
 Once the queue is empty, a key state change results in an instant update of the tracked state of pressed keys.
-If the state of pressed keys changes, the module calls the ``trigger_report_send`` callback from the :c:struct:`hid_state_api` to notify the :ref:`nrf_desktop_hid_state` about the new data.
+If the state of pressed keys changes, the module calls the :c:member:`hid_state_api.trigger_report_send` callback to notify the :ref:`nrf_desktop_hid_state` about the new data.
 The module also remembers that the HID subscriber needs to be updated.
 
 Discarding queued events
