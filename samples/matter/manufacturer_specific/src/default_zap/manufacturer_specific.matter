@@ -1460,9 +1460,9 @@ cluster NordicDevKit = 4294048769 {
   readonly attribute attrib_id attributeList[] = 65531;
   readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
-  attribute char_string<254> devKitName = 4293984256;
-  provisional readonly nosubscribe attribute boolean userLED = 4293984257;
-  provisional readonly nosubscribe attribute boolean userButton = 4293984258;
+  attribute char_string<254> DevKitName = 4293984256;
+  provisional readonly nosubscribe attribute boolean UserLED = 4293984257;
+  provisional readonly nosubscribe attribute boolean UserButton = 4293984258;
 
   request struct SetLEDRequest {
     LEDActionEnum action = 0;
@@ -1490,9 +1490,9 @@ cluster NordicDevKit = 4294048769 {
   readonly attribute attrib_id attributeList[] = 65531;
   readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
-  attribute char_string<254> devKitName = 4293984256;
-  provisional readonly nosubscribe attribute boolean userLED = 4293984257;
-  provisional readonly nosubscribe attribute boolean userButton = 4293984258;
+  attribute char_string<254> DevKitName = 4293984256;
+  provisional readonly nosubscribe attribute boolean UserLED = 4293984257;
+  provisional readonly nosubscribe attribute boolean UserButton = 4293984258;
 
   request struct SetLEDRequest {
     LEDActionEnum action = 0;
@@ -1714,7 +1714,7 @@ endpoint 0 {
   }
 }
 endpoint 1 {
-  device type nordic_dev_kit = 1, version 1;
+  device type nordic_dev_kit = 4293984257, version 1;
 
   binding cluster NordicDevKit;
 
@@ -1725,9 +1725,9 @@ endpoint 1 {
     callback attribute attributeList;
     ram      attribute featureMap default = 0;
     ram      attribute clusterRevision default = 1;
-    persist  attribute devKitName default = "Nordic Development Kit";
-    persist  attribute userLED default = false;
-    ram      attribute userButton default = false;
+    persist  attribute DevKitName default = "Nordic Development Kit";
+    persist  attribute UserLED default = false;
+    ram      attribute UserButton default = false;
 
     handle command SetLED;
   }

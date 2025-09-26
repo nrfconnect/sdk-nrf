@@ -172,10 +172,10 @@ namespace app
 							static_cast<uint32_t>(0);
 						Attributes::ClusterRevision::TypeInfo::DecodableType clusterRevision =
 							static_cast<uint16_t>(0);
-						Attributes::DevKitName::TypeInfo::DecodableType devKitName;
-						Attributes::UserLED::TypeInfo::DecodableType userLED =
+						Attributes::DevKitName::TypeInfo::DecodableType DevKitName;
+						Attributes::UserLED::TypeInfo::DecodableType UserLED =
 							static_cast<bool>(0);
-						Attributes::UserButton::TypeInfo::DecodableType userButton =
+						Attributes::UserButton::TypeInfo::DecodableType UserButton =
 							static_cast<bool>(0);
 					};
 				};
