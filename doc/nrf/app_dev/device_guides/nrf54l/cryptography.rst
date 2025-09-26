@@ -335,7 +335,7 @@ Depending on the usage scheme:
 
 * Key slots with the usage scheme Encrypted (``CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED``) also have to be decrypted to a temporary push location in RAM before they are used by CRACEN, which is handled by the CRACEN driver.
 
-When the application is built with TF-M, this temporary push location is protected inside the secure processing environment to avoid exposing the key material to the non-secure application.
+When the application is built with TF-M (for nRF54L Series devices that :ref:`support TF-M <ug_tfm_supported_services>`), this temporary push location is protected inside the secure processing environment to avoid exposing the key material to the non-secure application.
 If TF-M is not used, the keys are pushed to a reserved RAM area at location 0x20000000-0x20000064 (``kmu_push_area``).
 
 You might encounter the following KMU-specific error codes when using the KMU keys:

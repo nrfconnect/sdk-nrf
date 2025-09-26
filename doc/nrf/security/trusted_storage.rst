@@ -47,13 +47,13 @@ The table below gives an overview of the trusted storage support for the product
      - Yes
      - Yes
      - No
-   * - nRF54L15 with TF-M
+   * - nRF54L15/10 with TF-M
      - TF-M secure storage service
      - Yes
      - Yes
      - Yes
      - Yes
-   * - nRF54L15 without TF-M
+   * - nRF54L15/10 without TF-M
      - Trusted storage library
      - Partial [1]_
      - Yes

@@ -17,18 +17,76 @@ To add TF-M to your build, enable the :kconfig:option:`CONFIG_BUILD_WITH_TFM` co
 By default, TF-M is configured to build the :ref:`minimal version <tfm_minimal_build>`.
 To use the full TF-M, you must disable the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` option.
 
+.. _ug_tfm_building_board_targets:
+
 Board targets supported by TF-M
 *******************************
 
-The :ref:`boards supported by the SDK <app_boards_names>` distinguish entries according which CPU is to be targeted (for multi-core SoCs) and whether the security by separation is to be used or not (addition of the ``*/ns`` :ref:`variant <app_boards_names>` if it is used).
-
+The boards supported by the SDK distinguish entries according to which CPU is to be targeted (for multi-core SoCs) and whether the :ref:`security by separation <ug_tfm_security_by_separation>` is to be used or not (addition of the ``*/ns`` :ref:`variant <app_boards_names>` if it is used).
 To build with TF-M in the |NCS|, you must use a board target with the ``*/ns`` variant.
-The following platforms are currently supported:
 
-* nRF54LM20A
-* nRF54L15
-* nRF5340
-* nRF91 Series
+The following table lists the board targets that you can use to build with TF-M.
+See :ref:`app_boards_names` for the complete list of boards and board targets supported by the SDK.
+
+.. list-table:: Board targets supported by TF-M
+   :header-rows: 1
+
+   * - Hardware platform
+     - PCA number
+     - Board name
+     - TF-M board target
+   * - nRF9161 DK
+     - PCA10153
+     - :zephyr:board:`nrf9161dk <nrf9161dk>`
+     - ``nrf9161dk/nrf9161/ns``
+   * - nRF9160 DK
+     - PCA10090
+     - :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>`
+     - ``nrf9160dk/nrf9160/ns``
+   * - nRF9151 DK
+     - PCA10171
+     - :zephyr:board:`nrf9151dk <nrf9151dk>`
+     - ``nrf9151dk/nrf9151/ns``
+   * - nRF9131 EK
+     - PCA10165
+     - :zephyr:board:`nrf9131ek <nrf9131ek>`
+     - ``nrf9131ek/nrf9131/ns``
+   * - nRF54LM20 DK
+     - PCA10184
+     - :zephyr:board:`nrf54lm20dk <nrf54lm20dk>`
+     - ``nrf54lm20dk/nrf54lm20a/cpuapp/ns``
+   * - nRF54L15 DK
+     - PCA10156
+     - :zephyr:board:`nrf54l15dk <nrf54l15dk>`
+     - ``nrf54l15dk/nrf54l15/cpuapp/ns``
+   * - nRF54L10 emulated on the nRF54L15 DK
+     - PCA10156
+     - :ref:`nrf54l10dk/nrf54l10 <zephyr:nrf54l15dk_nrf54l10>`
+     - ``nrf54l15dk/nrf54l10/cpuapp/ns``
+   * - nRF5340 DK
+     - PCA10095
+     - :zephyr:board:`nrf5340dk <nrf5340dk>`
+     - ``nrf5340dk/nrf5340/cpuapp/ns``
+   * - Thingy:53
+     - PCA20053
+     - :zephyr:board:`thingy53 <thingy53>`
+     - ``thingy53/nrf5340/cpuapp/ns``
+   * - nRF7002 DK
+     - PCA10143
+     - :zephyr:board:`nrf7002dk <nrf7002dk>`
+     - ``nrf7002dk/nrf5340/cpuapp/ns``
+   * - Thingy:91
+     - PCA20035
+     - :ref:`thingy91 <ug_thingy91>`
+     - ``thingy91/nrf9160/ns``
+   * - Thingy:91 X
+     - PCA20065
+     - :ref:`thingy91x <ug_thingy91x>`
+     - ``thingy91x/nrf9151/ns``
+   * - Thingy:91 X
+     - PCA20065
+     - :ref:`thingy91x <ug_thingy91x>`
+     - ``thingy91x/nrf5340/cpuapp/ns``
 
 .. _ug_tfm_building_secure_services:
 

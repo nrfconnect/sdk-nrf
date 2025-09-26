@@ -778,7 +778,12 @@ zcbor
 Trusted Firmware-M
 ==================
 
-* Updated the TF-M version to 2.2.0.
+* Updated:
+
+  * The TF-M version to 2.2.0.
+  * Documentation to clarify the support for TF-M on devices emulated using the nRF54L15 DK.
+    nRF54L05 does not support TF-M.
+    nRF54L10 supports TF-M experimentally.
 
 Documentation
 =============
