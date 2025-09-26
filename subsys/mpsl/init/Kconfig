@@ -80,6 +80,7 @@ config MPSL_HFCLK_LATENCY
 	int "HFCLK ramp-up latency in microsecond, assumed by MPSL to wait for the clock availability"
 	default $(dt_node_int_prop_int,/clocks/hfxo,startup-time-us) if $(dt_node_has_prop,/clocks/hfxo,startup-time-us)
 	default $(dt_node_int_prop_int,/oscillators/hfxo,startup-time-us) if $(dt_node_has_prop,/oscillators/hfxo,startup-time-us)
+	depends on !SOC_SERIES_NRF54HX
 	default 1400
 	help
 	  This option configures the amount of time MPSL will assume it takes
