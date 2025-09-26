@@ -23,7 +23,7 @@ def reset_dut(dut: DeviceAdapter, reset_kind: str = "RESET_PIN"):
         "--serial-number",
         dut.device_config.id.lstrip("0"),
     ]
-    subprocess.run(cmd, stderr=subprocess.STDOUT).decode("utf-8")
+    subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
 def get_cycle_and_uptime_from_logs(dut: DeviceAdapter):
     lines = dut.readlines_until(num_of_lines=5)
