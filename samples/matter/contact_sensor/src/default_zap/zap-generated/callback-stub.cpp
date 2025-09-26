@@ -61,6 +61,9 @@ void emberAfClusterInitCallback(EndpointId endpoint, ClusterId clusterId)
 	case app::Clusters::Identify::Id:
 		emberAfIdentifyClusterInitCallback(endpoint);
 		break;
+	case app::Clusters::LocalizationConfiguration::Id:
+		emberAfLocalizationConfigurationClusterInitCallback(endpoint);
+		break;
 	case app::Clusters::NetworkCommissioning::Id:
 		emberAfNetworkCommissioningClusterInitCallback(endpoint);
 		break;
@@ -72,9 +75,6 @@ void emberAfClusterInitCallback(EndpointId endpoint, ClusterId clusterId)
 		break;
 	case app::Clusters::OperationalCredentials::Id:
 		emberAfOperationalCredentialsClusterInitCallback(endpoint);
-		break;
-	case app::Clusters::PowerSource::Id:
-		emberAfPowerSourceClusterInitCallback(endpoint);
 		break;
 	case app::Clusters::SoftwareDiagnostics::Id:
 		emberAfSoftwareDiagnosticsClusterInitCallback(endpoint);
@@ -143,6 +143,11 @@ void __attribute__((weak)) emberAfIdentifyClusterInitCallback(EndpointId endpoin
 	// To prevent warning
 	(void)endpoint;
 }
+void __attribute__((weak)) emberAfLocalizationConfigurationClusterInitCallback(EndpointId endpoint)
+{
+	// To prevent warning
+	(void)endpoint;
+}
 void __attribute__((weak)) emberAfNetworkCommissioningClusterInitCallback(EndpointId endpoint)
 {
 	// To prevent warning
@@ -159,11 +164,6 @@ void __attribute__((weak)) emberAfOtaSoftwareUpdateRequestorClusterInitCallback(
 	(void)endpoint;
 }
 void __attribute__((weak)) emberAfOperationalCredentialsClusterInitCallback(EndpointId endpoint)
-{
-	// To prevent warning
-	(void)endpoint;
-}
-void __attribute__((weak)) emberAfPowerSourceClusterInitCallback(EndpointId endpoint)
 {
 	// To prevent warning
 	(void)endpoint;
