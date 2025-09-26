@@ -9,6 +9,15 @@ TF-M support and limitations in the |NCS|
 
 This page lists the supported features and limitations of Trusted Firmware-M (TF-M) in the |NCS|.
 
+TF-M version in the |NCS|
+*************************
+
+.. include:: ../../security.rst
+   :start-after: security_components_ver_table_start
+   :end-before: security_components_ver_table_end
+
+For versions used in older releases of the |NCS|, check the expandable section on the :ref:`security` page.
+
 .. _ug_tfm_supported_services_profiles:
 
 Supported TF-M profiles

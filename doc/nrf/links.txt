@@ -69,7 +69,8 @@
 .. _`MCUboot Kconfig option documentation`: https://github.com/nrfconnect/sdk-nrf/blob/main/modules/mcuboot/boot/zephyr/Kconfig#L27C11-L27C12
 
 .. _`sdk-mbedtls`: https://github.com/nrfconnect/sdk-mbedtls
-.. _`Arm Mbed TLS project`: https://github.com/ARMmbed/mbedtls
+.. _`official Mbed TLS releases`: https://github.com/Mbed-TLS/mbedtls/releases
+.. _`Arm Mbed TLS project`: https://github.com/Mbed-TLS/mbedtls
 
 .. _`nrfconnect GitHub organization`: https://github.com/nrfconnect
 .. _`sdk-nrf`: https://github.com/nrfconnect/sdk-nrf
@@ -1890,6 +1891,8 @@
 .. _`IEEE 802.15.4-2015 standard`: https://standards.ieee.org/ieee/802.15.4/5788/
 
 .. _`NX3215SA-32.768K-STD-MUA-9 datasheet`: https://www.ndk.com/en/products/upload/lineup/pdf/NDKX01-00001_en.pdf
+
+.. _`official TF-M releases`: https://trustedfirmware-m.readthedocs.io/en/latest/releases/index.html
 
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 

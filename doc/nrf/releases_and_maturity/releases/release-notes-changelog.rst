@@ -137,6 +137,8 @@ Security
 
   * Support for AES in counter mode using CRACEN for the :zephyr:board:`nrf54lm20dk`.
 
+* Updated the :ref:`security_index` page with a table that lists the versions of security components implemented in the |NCS|.
+
 Protocols
 =========
 
@@ -800,6 +802,7 @@ Trusted Firmware-M
   * Documentation to clarify the support for TF-M on devices emulated using the nRF54L15 DK.
     nRF54L05 does not support TF-M.
     nRF54L10 supports TF-M experimentally.
+
 
 Documentation
 =============
