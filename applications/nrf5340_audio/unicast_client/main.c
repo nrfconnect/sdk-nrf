@@ -23,6 +23,7 @@
 #include "bt_content_ctrl.h"
 #include "le_audio_rx.h"
 #include "fw_info_app.h"
+#include "server_store.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
@@ -231,13 +232,13 @@ static void le_audio_msg_sub_thread(void)
 		case LE_AUDIO_EVT_STREAMING:
 			LOG_DBG("LE audio evt streaming");
 
+			if (msg.dir == BT_AUDIO_DIR_SINK) {
+				audio_system_encoder_start();
+			}
+
 			if (strm_state == STATE_STREAMING) {
 				LOG_DBG("Got streaming event in streaming state");
 				break;
-			}
-
-			if (msg.dir == BT_AUDIO_DIR_SINK) {
-				audio_system_encoder_start();
 			}
 
 			audio_system_start();
@@ -308,7 +309,7 @@ static void le_audio_msg_sub_thread(void)
 
 			LOG_DBG("LE audio config received");
 
-			ret = unicast_client_config_get(msg.conn, msg.dir, &bitrate_bps,
+			ret = unicast_client_config_get(msg.stream, &bitrate_bps,
 							&sampling_rate_hz);
 			if (ret) {
 				LOG_WRN("Failed to get config: %d", ret);
@@ -350,7 +351,7 @@ static void le_audio_msg_sub_thread(void)
 				}
 			}
 
-			if (num_conn < CONFIG_BT_MAX_CONN) {
+			if (num_conn < CONFIG_BT_MAX_CONN && num_filled < msg.set_size) {
 				/* Room for more connections, start scanning again */
 				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL,
 							 BRDCAST_ID_NOT_USED);
@@ -371,6 +372,26 @@ static void le_audio_msg_sub_thread(void)
 		}
 
 		STACK_USAGE_PRINT("le_audio_msg_thread", &le_audio_msg_sub_thread_data);
+	}
+}
+
+static void discovery_process_start(struct bt_conn *conn)
+{
+	int ret;
+
+	ret = bt_r_and_c_discover(conn);
+	if (ret) {
+		LOG_WRN("Failed to discover rendering services");
+	}
+
+	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
+		ret = unicast_client_discover(conn, UNICAST_SERVER_BIDIR);
+	} else {
+		ret = unicast_client_discover(conn, UNICAST_SERVER_SINK);
+	}
+
+	if (ret) {
+		LOG_ERR("Failed to handle unicast client discover: %d", ret);
 	}
 }
 
@@ -399,23 +420,45 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 		break;
 
 	case BT_MGMT_SECURITY_CHANGED:
-		LOG_INF("Security changed");
+		LOG_INF("Security changed. Addr is resolved");
+		ret = srv_store_lock(K_NO_WAIT);
+		ERR_CHK_MSG(ret, "Failed to lock server store");
 
-		ret = bt_r_and_c_discover(msg->conn);
-		if (ret) {
-			LOG_WRN("Failed to discover rendering services");
-		}
+		if (srv_store_server_exists(&msg->addr)) {
+			/* If the server is already in server_store, it must have already
+			 * been paired with.
+			 */
 
-		if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
-			ret = unicast_client_discover(msg->conn, UNICAST_SERVER_BIDIR);
+			LOG_DBG("Server already in store, addr resolved");
+			ret = srv_store_conn_update(msg->conn, &msg->addr);
+			if (ret) {
+				LOG_ERR("Failed to update conn in store: %d", ret);
+				srv_store_unlock();
+				return;
+			}
+
+			srv_store_unlock();
+			discovery_process_start(msg->conn);
 		} else {
-			ret = unicast_client_discover(msg->conn, UNICAST_SERVER_SINK);
+			srv_store_unlock();
 		}
 
+		break;
+	case BT_MGMT_PAIRING_COMPLETE:
+		LOG_INF("Pairing complete event");
+
+		ret = srv_store_lock(K_NO_WAIT);
+		ERR_CHK_MSG(ret, "Failed to lock server store");
+
+		ret = srv_store_add_by_conn(msg->conn);
 		if (ret) {
-			LOG_ERR("Failed to handle unicast client discover: %d", ret);
+			LOG_ERR("Failed to add server to store: %d", ret);
+			srv_store_unlock();
+			return;
 		}
 
+		srv_store_unlock();
+		discovery_process_start(msg->conn);
 		break;
 
 	case BT_MGMT_DISCONNECTED:
@@ -423,6 +466,22 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 		LOG_INF("Disconnection event. Num connections: %u", num_conn);
 
 		unicast_client_conn_disconnected(msg->conn);
+
+		ret = srv_store_lock(K_NO_WAIT);
+		ERR_CHK_MSG(ret, "Failed to lock server store");
+
+		ret = srv_store_clear_by_conn(msg->conn);
+		if (ret) {
+			LOG_DBG("Failed to clear conn from store: %d", ret);
+		}
+		srv_store_unlock();
+		break;
+	case BT_MGMT_BOND_DELETED:
+		LOG_DBG("Bond deleted");
+		ret = srv_store_remove_by_addr(&msg->addr);
+		if (ret) {
+			LOG_ERR("Failed to remove server from store: %d", ret);
+		}
 		break;
 
 	default:
@@ -543,6 +602,23 @@ void streamctrl_send(struct net_buf const *const audio_frame)
 	}
 }
 
+static void fill_server_store_by_bonded(const struct bt_bond_info *info, void *user_data)
+{
+	LOG_DBG("Traversing bonds to fill server store");
+	int ret;
+
+	if (!IS_ENABLED(CONFIG_BT_BONDABLE)) {
+		return;
+	}
+
+	ret = srv_store_lock(K_NO_WAIT);
+	ERR_CHK_MSG(ret, "Failed to lock server store");
+
+	ret = srv_store_add_by_addr(&info->addr);
+	ERR_CHK_MSG(ret, "Failed to add server store");
+	srv_store_unlock();
+}
+
 int main(void)
 {
 	int ret;
@@ -578,6 +654,9 @@ int main(void)
 
 	ret = unicast_client_enable(0, le_audio_rx_data_handler);
 	ERR_CHK(ret);
+
+	/* Go through all existing bonds */
+	bt_foreach_bond(BT_ID_DEFAULT, fill_server_store_by_bonded, NULL);
 
 	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, CONFIG_BT_DEVICE_NAME,
 				 BRDCAST_ID_NOT_USED);

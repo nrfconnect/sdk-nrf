@@ -168,6 +168,9 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 #if defined(CONFIG_BT_SMP)
 static void security_changed_cb(struct bt_conn *conn, bt_security_t level, enum bt_security_err err)
 {
+	/* The address has not yet been resolved at this point if this is the first time they bond.
+	 * After this the controller may resolve the address.
+	 */
 	int ret;
 	struct bt_mgmt_msg msg;
 
@@ -178,24 +181,94 @@ static void security_changed_cb(struct bt_conn *conn, bt_security_t level, enum 
 		if (ret) {
 			LOG_WRN("Failed to disconnect %d", ret);
 		}
+	} else if (level < BT_SECURITY_L2) {
+		LOG_WRN("Security changed: level %d too low, disconnecting", level);
+		ret = bt_conn_disconnect(conn, BT_HCI_ERR_AUTH_FAIL);
+		if (ret) {
+			LOG_WRN("Failed to disconnect %d", ret);
+		}
 	} else {
-		LOG_DBG("Security changed: level %d", level);
+		const bt_addr_le_t *peer_addr = bt_conn_get_dst(conn);
+		char peer_str[BT_ADDR_LE_STR_LEN];
+
+		bt_addr_le_to_str(peer_addr, peer_str, BT_ADDR_LE_STR_LEN);
+
+		LOG_INF("Security changed: level %d %s", level, peer_str);
+
 		/* Publish connected */
 		msg.event = BT_MGMT_SECURITY_CHANGED;
 		msg.conn = conn;
+		msg.addr = *peer_addr;
 
 		ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
 		ERR_CHK(ret);
 	}
 }
+
+void identity_resolved_cb(struct bt_conn *conn, const bt_addr_le_t *rpa,
+			  const bt_addr_le_t *identity)
+{
+	char rpa_str[BT_ADDR_LE_STR_LEN];
+	char identity_str[BT_ADDR_LE_STR_LEN];
+	(void)bt_addr_le_to_str(rpa, rpa_str, BT_ADDR_LE_STR_LEN);
+	(void)bt_addr_le_to_str(identity, identity_str, BT_ADDR_LE_STR_LEN);
+	LOG_INF("ID is resolved. RPA: %s, Identity: %s", rpa_str, identity_str);
+};
+
 #endif /* defined(CONFIG_BT_SMP) */
 
 static struct bt_conn_cb conn_callbacks = {
 	.connected = connected_cb,
 	.disconnected = disconnected_cb,
 #if defined(CONFIG_BT_SMP)
+	.identity_resolved = identity_resolved_cb,
 	.security_changed = security_changed_cb,
 #endif /* defined(CONFIG_BT_SMP) */
+};
+
+void bond_deleted_cb(uint8_t id, const bt_addr_le_t *peer)
+{
+	int ret;
+	char str[BT_ADDR_LE_STR_LEN];
+	struct bt_mgmt_msg msg;
+
+	(void)bt_addr_le_to_str(peer, str, BT_ADDR_LE_STR_LEN);
+	LOG_INF("Bond deleted: id %d, peer %s", id, str);
+
+	msg.event = BT_MGMT_BOND_DELETED;
+	msg.addr = *peer;
+
+	ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
+	ERR_CHK(ret);
+}
+
+void pairing_complete_cb(struct bt_conn *conn, bool bonded)
+{
+	LOG_INF("Pairing complete. Bonded: %d", bonded);
+	int ret;
+	struct bt_mgmt_msg msg;
+	const bt_addr_le_t *peer_addr = bt_conn_get_dst(conn);
+	char str[BT_ADDR_LE_STR_LEN];
+
+	(void)bt_addr_le_to_str(peer_addr, str, BT_ADDR_LE_STR_LEN);
+
+	msg.event = BT_MGMT_PAIRING_COMPLETE;
+	msg.addr = *peer_addr;
+	msg.conn = conn;
+
+	ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
+	ERR_CHK(ret);
+}
+
+void pairing_failed_cb(struct bt_conn *conn, enum bt_security_err reason)
+{
+	LOG_ERR("Pairing failed: %d %s", reason, bt_security_err_to_str(reason));
+}
+
+static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
+	.bond_deleted = bond_deleted_cb,
+	.pairing_complete = pairing_complete_cb,
+	.pairing_failed = pairing_failed_cb,
 };
 
 static void bt_enabled_cb(int err)
@@ -281,6 +354,9 @@ int bt_mgmt_bonding_clear(void)
 {
 	int ret;
 
+	/* TODO: Delay. Awaiting fix in NCSDK-35186 */
+	k_sleep(K_MSEC(100));
+
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		LOG_INF("Clearing all bonds");
 
@@ -333,6 +409,15 @@ int bt_mgmt_conn_disconnect(struct bt_conn *conn, uint8_t reason)
 int bt_mgmt_init(void)
 {
 	int ret;
+
+	if (IS_ENABLED(CONFIG_BT_CONN)) {
+		bt_conn_cb_register(&conn_callbacks);
+		ret = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
+		if (ret) {
+			LOG_ERR("Failed to register conn auth info callbacks: %d", ret);
+			return ret;
+		}
+	}
 
 	ret = bt_enable(bt_enabled_cb);
 	if (ret) {
@@ -407,10 +492,6 @@ int bt_mgmt_init(void)
 	ret = local_identity_addr_print();
 	if (ret) {
 		return ret;
-	}
-
-	if (IS_ENABLED(CONFIG_BT_CONN)) {
-		bt_conn_cb_register(&conn_callbacks);
 	}
 
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL) || IS_ENABLED(CONFIG_BT_BROADCASTER)) {
