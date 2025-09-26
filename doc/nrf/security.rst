@@ -38,7 +38,7 @@ Some of them are documented in detail in other parts of this documentation, whil
       | - :ref:`ug_nrf54l_cryptography`
   * - Trusted Firmware-M (TF-M)
     - TF-M is the reference implementation of `Platform Security Architecture (PSA)`_.
-      On nRF5340, nRF54L and nRF91 Series devices, TF-M is used to configure and boot an application with :ref:`security by separation <app_boards_spe_nspe_cpuapp_ns>`.
+      On :ref:`boards with the /ns variant <app_boards_names>`, TF-M is used to configure and boot an application with :ref:`security by separation <app_boards_spe_nspe_cpuapp_ns>`.
     - See :ref:`ug_tfm`.
     - | - :ref:`tfm_samples`
       | - :ref:`crypto_samples`
