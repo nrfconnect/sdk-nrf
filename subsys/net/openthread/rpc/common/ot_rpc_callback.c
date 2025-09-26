@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <string.h>
+
 #include "ot_rpc_callback.h"
 
 ot_rpc_callback_id ot_rpc_callback_alloc(struct ot_rpc_callback *table, size_t table_size,
@@ -64,4 +66,9 @@ void ot_rpc_callback_free(struct ot_rpc_callback *table, size_t table_size, ot_r
 	cb = &table[id - 1];
 	cb->func = NULL;
 	cb->context = NULL;
+}
+
+void ot_rpc_callback_clear(struct ot_rpc_callback *table, size_t table_size)
+{
+	memset(table, 0, table_size * sizeof(struct ot_rpc_callback));
 }

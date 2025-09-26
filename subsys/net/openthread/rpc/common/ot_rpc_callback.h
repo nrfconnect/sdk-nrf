@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include <nrf_rpc.h>
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof((array)[0]))
 #endif
@@ -46,6 +47,7 @@ ot_rpc_callback_id ot_rpc_callback_alloc(struct ot_rpc_callback *table, size_t t
 ot_rpc_callback_func ot_rpc_callback_get(struct ot_rpc_callback *table, size_t table_size,
 					 ot_rpc_callback_id id, void **context_out);
 void ot_rpc_callback_free(struct ot_rpc_callback *table, size_t table_size, ot_rpc_callback_id id);
+void ot_rpc_callback_clear(struct ot_rpc_callback *table, size_t table_size);
 
 /**
  * @brief Defines a named callback table with the specified function pointer type and size.
@@ -67,9 +69,18 @@ void ot_rpc_callback_free(struct ot_rpc_callback *table, size_t table_size, ot_r
  */
 #define OT_RPC_CALLBACK_TABLE_DEFINE(name, type, size)                                             \
 	static struct ot_rpc_callback name[size];                                                  \
+	static struct nrf_rpc_cleanup_handler name##_cleanup_handler;                              \
                                                                                                    \
+	static inline void ot_rpc_##name##_clear(void *context)                                    \
+	{                                                                                          \
+		ot_rpc_callback_clear(name, ARRAY_SIZE(name));                                     \
+	}                                                                                          \
 	static inline ot_rpc_callback_id ot_rpc_##name##_alloc(type func, void *context)           \
 	{                                                                                          \
+		if (name##_cleanup_handler.handler == NULL) {                                      \
+			name##_cleanup_handler.handler = ot_rpc_##name##_clear;                    \
+			nrf_rpc_register_cleanup_handler(&name##_cleanup_handler);                 \
+		}                                                                                  \
 		return ot_rpc_callback_alloc(name, ARRAY_SIZE(name), (ot_rpc_callback_func)func,   \
 					     context);                                             \
 	}                                                                                          \
