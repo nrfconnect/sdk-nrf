@@ -26,4 +26,3 @@ This includes both the Nordic-specific and the open-source portions of the SDK.
    dev_model_and_contributions/ncs_distro
    dev_model_and_contributions/licenses
    dev_model_and_contributions/contributions
-   dev_model_and_contributions/documentation
