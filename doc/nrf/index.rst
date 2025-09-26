@@ -4,38 +4,37 @@
 Introduction
 ############
 
-The |NCS| is a modern, unified software development kit for building low-power wireless applications based on the Nordic Semiconductor nRF52, nRF53, nRF54, nRF70, and nRF91 Series wireless devices.
-It supports :ref:`Microsoft Windows, Linux, and macOS <requirements>` for development.
+The |NCS| is Nordic Semiconductor's software development kit for building low-power wireless applications based on the Nordic Semiconductor nRF52, nRF53, nRF54, nRF70, and nRF91 Series wireless devices.
 
-The |NCS| has the following distinguishing features:
+How to get started with the |NCS|
+  * If you want to get started with a device you have without needing to install the |NCS|, see the :ref:`gsg_guides` section.
+    The Quick Start app allows you to test your device using a guided process with precompiled binaries.
+  * If you want to install the |NCS|, see the :ref:`install_ncs` page in the :ref:`installation` section.
+    You can use |VSC| or command line as the development environment.
+  * If you want to go through a dedicated training to familiarize yourself with the basic functionalities of the |NCS|, enroll in the `nRF Connect SDK Fundamentals course`_ in the `Nordic Developer Academy`_.
 
-Based on Zephyr and open source
-  The |NCS| integrates the :ref:`Zephyr™ real-time operating system (RTOS) <zephyr:introducing_zephyr>` and is compatible with most of Zephyr's applications and samples.
-  Just like Zephyr, the |NCS| is open source and :ref:`based on proven open-source projects <dm_code_base>`.
+How to work with the |NCS|
+  * If you want to create an application using the |NCS|, see the :ref:`ug_app_dev` section.
+    The section includes information on topics such as creating an application, supported boards, and bootloaders and DFU.
+    It also provides additional information for specific Nordic Semiconductor devices, and topics such as working with front-end modules.
+  * If you want to see how to implement typical use cases using the |NCS|, see the :ref:`application` and :ref:`samples` sections.
+    Samples showcase a single feature or library, while applications include a variety of libraries to implement a specific use case.
+  * If you want to refine an application you have developed or one provided by the |NCS|, see the :ref:`test_and_optimize` section.
+    It covers topics such as debugging, logging, and optimization for both memory and power.
+  * If you want to go through a dedicated training to familiarize yourself with topics and techniques related to developing applications in the |NCS|, enroll in the `nRF Connect SDK Intermediate course`_ in the `Nordic Developer Academy`_.
 
-Middleware and security
-  The |NCS| includes middleware from Zephyr, such as MQTT or Trusted Firmware-M for security.
-  In addition to that, the |NCS| adds extra libraries and drivers, such as CoAP, LwM2M, a secure bootloader (MCUboot), Mbed TLS, nRF 802.15.4 Radio Driver, nRF Security, nRF Profiler, nRF Remote procedure call libraries, and many more.
-
-Pre-certified libraries
-  The |NCS| provides pre-certified, optimized libraries, including for SoftDevice, Matter, and Thread.
-
-Robust connectivity support
-  The |NCS| supports a wide range of connectivity technologies.
-  In addition to connectivity technologies :ref:`provided by Zephyr <zephyr:connectivity>`, such as Bluetooth® Low Energy, IPv6, TCP/IP, UDP, LoRa and LoRaWAN, the |NCS| supports ANT, Bluetooth Mesh, Apple Find My, LTE-M/NB-IoT/GPS, DECT NR+, Matter, Amazon Sidewalk, Thread, and Wi-Fi®, among others.
-
-Remote observability
-  The |NCS| provides remote observability support to maintain optimal device performance and reliability in ever-changing device ecosystems after devices are deployed.
-  Once devices are in the field, you can implement device reliability best practices such as remote debug, monitoring, and FOTA support.
-
-Scalable and extensible
-  The |NCS| is out-of-tree ready and can be used for projects and applications of all sizes and levels of complexity.
-
-Third-party integrations
-  The |NCS| provides integrations with third-party and Nordic products within the SDK, such as AWS, nRF Cloud, :ref:`Memfault (Remote Observability) <ug_memfault>` and more.
-
-Varied reference designs
-  The |NCS| comes with advanced hardware reference designs for different use cases, ranging from nRF Desktop for Human Interface Devices to nRF5340 Audio for audio devices based on Bluetooth LE Audio specifications.
+How to learn more about the |NCS|
+  * If you want to learn about the security features in the |NCS|, see the :ref:`security` section.
+    The |NCS| offers features such as access port protection, Trusted Firmware-M, and trusted storage.
+  * If you want know more about the protocols supported by the |NCS|, see the :ref:`protocols` section.
+    The |NCS| supports Bluetooth®, cellular, Matter, Thread, Wi-Fi®, and other protocols.
+  * If you want to learn about the more technical parts of the |NCS|, see the :ref:`drivers`, :ref:`libraries` and :ref:`scripts` sections.
+    The documentation for the drivers and libraries also includes the respective API documentation.
+  * If you want to learn about different versions and software maturity levels of the |NCS|, see the :ref:`releases_and_maturity` section.
+    The section includes release notes, migration guides, and known issues.
+  * If you want to learn about the |NCS| itself, see the :ref:`about_sdk` section.
+    It covers topics such as development model and contributions, as well as the |NCS| documentation itself.
+  * If you want to go through dedicated training to familiarize yourself with developing for some of the protocols available in the |NCS|, enroll in the `Bluetooth LE Fundamentals course`_, `Cellular IoT Fundamentals course`_, or `Wi-Fi Fundamentals course`_ in the `Nordic Developer Academy`_.
 
 .. toctree::
    :maxdepth: 2
@@ -54,7 +53,7 @@ Varied reference designs
    libraries/index
    scripts
    integrations
-   dev_model_and_contributions
+   about_sdk
    releases_and_maturity
    glossary
 

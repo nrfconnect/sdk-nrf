@@ -575,9 +575,10 @@ NRF = (
     ("ug_edge_impulse", "external_comp/edge_impulse"), # Edge Impulse integration
     ("ug_memfault", "external_comp/memfault"), # Memfault integration
     ("ug_nrf_cloud", "external_comp/nrf_cloud"), # Using nRF Cloud with the nRF Connect SDK
-    ("ug_dev_model", "dev_model_and_contributions"), # Development model and contributions (landing)
-    ("dev_model", "dev_model_and_contributions"),
-    ("releases_and_maturity/dev_model", "dev_model_and_contributions"),
+    ("ug_dev_model", "dev_model_and_contributions/index"), # Development model and contributions (landing)
+    ("dev_model", "dev_model_and_contributions/index"),
+    ("releases_and_maturity/dev_model", "dev_model_and_contributions/index"),
+    ("dev_model_and_contributions", "dev_model_and_contributions/index"),
     ("dm_code_base", "dev_model_and_contributions/code_base"), # nRF Connect SDK code base
     ("developing/code_base", "dev_model_and_contributions/code_base"),
     ("releases_and_maturity/developing/code_base", "dev_model_and_contributions/code_base"),

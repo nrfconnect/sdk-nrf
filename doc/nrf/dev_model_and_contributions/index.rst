@@ -20,10 +20,9 @@ This includes both the Nordic-specific and the open-source portions of the SDK.
    :maxdepth: 2
    :caption: Subpages:
 
-   dev_model_and_contributions/code_base
-   dev_model_and_contributions/managing_code
-   dev_model_and_contributions/adding_code
-   dev_model_and_contributions/ncs_distro
-   dev_model_and_contributions/licenses
-   dev_model_and_contributions/contributions
-   dev_model_and_contributions/documentation
+   code_base
+   managing_code
+   adding_code
+   ncs_distro
+   licenses
+   contributions
