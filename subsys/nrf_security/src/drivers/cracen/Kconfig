@@ -35,8 +35,9 @@ config CRACEN_LOAD_MICROCODE
 	default y
 	help
 	  Whether to load the CRACEN microcode on startup.
-	  This is required to use the PKE/IKG engine. Note that this is not
-	  required when a bootloader has already loaded the microcode.
+	  This is required to use the PKE/IKG engine on nRF54L15,
+	  nRF54L10, and nRF54L05. (This is not required
+	  when a bootloader has already loaded the microcode.)
 
 config CRACEN_LIB_KMU
 	bool "CRACEN KMU library"
