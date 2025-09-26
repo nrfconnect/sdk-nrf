@@ -26,6 +26,7 @@
 &adc {
 	#address-cells = <1>;
 	#size-cells = <0>;
+	zephyr,pm-device-runtime-auto;
 
 	channel@0 {
 		reg = <0>;
@@ -34,9 +35,9 @@
 		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
 		zephyr,input-positive = <NRF_SAADC_AIN2>;
 	};
-
 };
 
 &gpio1 {
 	status = "okay";
+	zephyr,pm-device-runtime-auto;
 };
