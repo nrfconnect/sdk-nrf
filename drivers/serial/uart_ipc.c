@@ -13,7 +13,7 @@
 
 #define DT_DRV_COMPAT nordic_nrf_ipc_uart
 
-#define BIND_TIMEOUT     CONFIG_IPC_UART_BIND_TIMEOUT_MS
+#define BIND_TIMEOUT	 CONFIG_IPC_UART_BIND_TIMEOUT_MS
 #define IPC_RESEND_DELAY CONFIG_IPC_UART_RESEND_DELAY
 
 LOG_MODULE_REGISTER(ipc_uart, CONFIG_IPC_UART_LOG_LEVEL);
@@ -51,16 +51,28 @@ static void ipc_send_work_handler(struct k_work *work)
 
 	dev_data = CONTAINER_OF(work, struct uart_ipc_data, ipc_send_work.work);
 
-	data_size = ring_buf_get_claim(dev_data->tx_ringbuf, &data,
-				       ring_buf_size_get(dev_data->tx_ringbuf));
+	uint32_t ringbuf_size = ring_buf_size_get(dev_data->tx_ringbuf);
+	data_size = ring_buf_get_claim(dev_data->tx_ringbuf, &data, ringbuf_size);
 	if (data_size == 0) {
 		/* Nothing to send. */
 		return;
 	}
+	
+	if (ringbuf_size > data_size) {
+		// hit end of contiguous buffer, reschedule to get the rest
+		ret = k_work_schedule(&dev_data->ipc_send_work, K_NO_WAIT);
+		if (ret < 0) {
+			LOG_ERR("k_work_schedule Failed with: %d", ret);
+		}
+	}
 
 	ret = ipc_service_send(&dev_data->ept, data, data_size);
 	if (ret == -ENOMEM) {
-		k_work_reschedule(&dev_data->ipc_send_work, K_MSEC(IPC_RESEND_DELAY));
+		ret = k_work_reschedule(&dev_data->ipc_send_work, K_MSEC(IPC_RESEND_DELAY));
+		if (ret < 0) {
+			LOG_ERR("k_work_reschedule Failed with: %d", ret);
+		}
+
 	} else if (ret < 0) {
 		__ASSERT(false, "Failed to send data over ipc, ret: %d", ret);
 		ret = 0;
@@ -72,6 +84,14 @@ static void ipc_send_work_handler(struct k_work *work)
 	if (ret) {
 		/* Should not happen. */
 		__ASSERT_NO_MSG(false);
+	}
+	ringbuf_size = ring_buf_size_get(dev_data->tx_ringbuf);
+	if (ringbuf_size > 0 ) {
+		// hit end of contiguous buffer, reschedule to get the rest
+		ret = k_work_schedule(&dev_data->ipc_send_work, K_NO_WAIT);
+		if (ret < 0) {
+			LOG_ERR("k_work_schedule Failed with: %d", ret);
+		}
 	}
 }
 
@@ -137,7 +157,10 @@ void ipc_uart_poll_out(const struct device *dev, unsigned char out_char)
 		__ASSERT(false, "Invalid bytes count returned from buffer");
 	}
 
-	k_work_schedule(&data->ipc_send_work, K_NO_WAIT);
+	ret = k_work_schedule(&data->ipc_send_work, K_NO_WAIT);
+	if (ret < 0) {
+		LOG_ERR("k_work_schedule Failed with: %d", ret);
+	}
 }
 
 int ipc_uart_init(const struct device *dev)
@@ -185,27 +208,23 @@ int ipc_uart_init(const struct device *dev)
 	return 0;
 }
 
-static const struct uart_driver_api uart_ipc_api = {
-	.poll_in = ipc_uart_poll_in,
-	.poll_out = ipc_uart_poll_out
-};
+static const struct uart_driver_api uart_ipc_api = {.poll_in = ipc_uart_poll_in,
+						    .poll_out = ipc_uart_poll_out};
 
-#define UART_IPC_DEVICE(idx)                                                                    \
-	static const struct uart_ipc_config _CONCAT(uart_ipc_config_, idx) = {                  \
-		.ipc = DEVICE_DT_GET(DT_INST_PHANDLE(idx, ipc)),                                \
-		.ept_name = DT_INST_PROP(idx, ept_name)                                         \
-	};                                                                                      \
-                                                                                                \
-	RING_BUF_DECLARE(ipc_uart_tx_buf_##idx, CONFIG_IPC_UART_TX_RING_BUFFER_SIZE);           \
-	RING_BUF_DECLARE(ipc_uart_rx_buf_##idx, CONFIG_IPC_UART_RX_RING_BUFFER_SIZE);           \
-                                                                                                \
-	static struct uart_ipc_data _CONCAT(uart_ipc_data_, idx) = {                            \
-		.tx_ringbuf = &_CONCAT(ipc_uart_tx_buf_, idx),                                  \
-		.rx_ringbuf = &_CONCAT(ipc_uart_rx_buf_, idx)                                   \
-	};                                                                                      \
-                                                                                                \
-	DEVICE_DT_INST_DEFINE(idx, ipc_uart_init, NULL,                                         \
-			      &_CONCAT(uart_ipc_data_, idx), &_CONCAT(uart_ipc_config_, idx),   \
-			      POST_KERNEL, CONFIG_IPC_UART_INIT_PRIORITY, &uart_ipc_api);
+#define UART_IPC_DEVICE(idx)                                                                       \
+	static const struct uart_ipc_config _CONCAT(uart_ipc_config_, idx) = {                     \
+		.ipc = DEVICE_DT_GET(DT_INST_PHANDLE(idx, ipc)),                                   \
+		.ept_name = DT_INST_PROP(idx, ept_name)};                                          \
+                                                                                                   \
+	RING_BUF_DECLARE(ipc_uart_tx_buf_##idx, CONFIG_IPC_UART_TX_RING_BUFFER_SIZE);              \
+	RING_BUF_DECLARE(ipc_uart_rx_buf_##idx, CONFIG_IPC_UART_RX_RING_BUFFER_SIZE);              \
+                                                                                                   \
+	static struct uart_ipc_data _CONCAT(uart_ipc_data_, idx) = {                               \
+		.tx_ringbuf = &_CONCAT(ipc_uart_tx_buf_, idx),                                     \
+		.rx_ringbuf = &_CONCAT(ipc_uart_rx_buf_, idx)};                                    \
+                                                                                                   \
+	DEVICE_DT_INST_DEFINE(idx, ipc_uart_init, NULL, &_CONCAT(uart_ipc_data_, idx),             \
+			      &_CONCAT(uart_ipc_config_, idx), POST_KERNEL,                        \
+			      CONFIG_IPC_UART_INIT_PRIORITY, &uart_ipc_api);
 
 DT_INST_FOREACH_STATUS_OKAY(UART_IPC_DEVICE)
