@@ -7,6 +7,79 @@ Security
 This section provides an overview of core security features available in Nordic Semiconductor products.
 The features are made available either as built-ins in modules, drivers, and subsystems, or are shown in samples or applications in |NCS|.
 
+.. security_components_ver_table_start
+
+The |NCS| |release| allows you to develop applications with the following versions of security components:
+
+.. list-table:: |NCS|, TF-M, and Mbed TLS versions
+     :header-rows: 1
+     :widths: auto
+
+     * - |NCS| release
+       - TF-M version
+       - Mbed TLS version
+     * - |release|
+       - v2.1.2
+       - 3.6.4
+
+.. security_components_ver_table_end
+
+Expand the following section to see the table listing versions of different security components implemented since the |NCS| v2.1.0.
+
+.. toggle::
+
+   .. note::
+
+      Not all `official TF-M releases`_ are implemented by the |NCS|.
+      This is because the |NCS| implements TF-M through Zephyr.
+      Zephyr adds specific patches to the TF-M version, which are then upmerged into the |NCS| with changes specific to the |NCS|.
+
+      Similarly, not all `official Mbed TLS releases`_ are implemented by the |NCS| through the `sdk-mbedtls`_ repository.
+
+   .. list-table:: |NCS|, TF-M, and Mbed TLS versions
+     :header-rows: 1
+     :widths: auto
+
+     * - |NCS| release
+       - TF-M version
+       - Mbed TLS version
+     * - Upcoming release (currently on the ``main`` branch of `sdk-nrf`_)
+       - v2.2.0
+       - 3.6.4
+     * - v3.1.0, v3.1.1
+       - v2.1.2
+       - 3.6.4
+     * - v3.0.0 (up to v3.0.2)
+       - v2.1.1
+       - 3.6.3
+     * - v2.9.0 (up to v2.9.2)
+       - v2.1.1
+       - 3.6.2
+     * - v2.8.0
+       - v2.1.1
+       - 3.6.2
+     * - v2.7.0
+       - v2.0.0
+       - 3.5.2
+     * - v2.6.0 (up to v2.6.4)
+       - v2.0.0
+       - 3.5.2
+     * - v2.5.0 (up to v2.5.3)
+       - v1.8.0
+       - 3.3.0
+     * - v2.4.0 (up to v2.4.4)
+       - v1.7.0
+       - 3.3.0
+     * - v2.3.0
+       - v1.6.0
+       - 3.1.0
+     * - v2.2.0
+       - v1.6.0
+       - 3.1.0
+     * - v2.1.0 (up to v2.1.4)
+       - v1.6.0
+       - 3.1.0
+
 The following table lists the available general security features.
 Some of them are documented in detail in other parts of this documentation, while others are documented in the subpages in this section.
 
