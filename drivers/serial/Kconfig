@@ -6,3 +6,4 @@
 
 rsource "Kconfig.nrf_sw_lpuart"
 rsource "Kconfig.ipc"
+rsource "Kconfig.nrf_sw_dtr_uart"
