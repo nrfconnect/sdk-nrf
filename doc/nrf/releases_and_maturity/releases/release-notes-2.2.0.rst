@@ -454,7 +454,7 @@ nRF9160 samples
 
   * Added overlay files for nRF9160 DK with nRF7002 EK to obtain the current location by using Wi-Fi scanning results.
 
-* :ref:`lte_sensor_gateway` sample:
+* LTE Sensor Gateway sample:
 
   * Added handling for the new data receive events in the :ref:`lib_nrf_cloud` library.
   * Removed A-GPS and P-GPS processing.

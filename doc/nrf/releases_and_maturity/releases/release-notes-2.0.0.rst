@@ -401,7 +401,7 @@ nRF9160 samples
   * Corrected handling of the bootloader FOTA updates.
   * Enabled the :ref:`lib_at_host` library to make it easier to update certificates.
 
-* :ref:`lte_sensor_gateway` sample:
+* LTE Sensor Gateway sample:
 
   * Added support for Thingy:91.
 

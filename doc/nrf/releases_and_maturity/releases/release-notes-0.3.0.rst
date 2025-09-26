@@ -25,7 +25,7 @@ Highlights
 * Added the following samples for nRF9160:
 
   * nRF9160: Asset Tracker
-  * :ref:`lte_sensor_gateway`
+  * LTE Sensor Gateway
   * AT Client
 
 * Added a first stage bootloader B0
@@ -103,7 +103,7 @@ nRF9160
     This sample uses the **at_host** library to provide a UART interface for AT commands.
   * nRF9160: Asset Tracker:
     This sample uses the **nrf_cloud** library to transmit GPS and device orientation data to nRF Connect for Cloud via LTE.
-  * :ref:`lte_sensor_gateway`:
+  * LTE Sensor Gateway:
     This sample uses the **nrf_cloud** library to transmit sensor data collected via Bluetooth LE to nRF Connect for Cloud via LTE.
 
 * Added the following libraries:

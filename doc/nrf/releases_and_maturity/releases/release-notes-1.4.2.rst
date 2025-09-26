@@ -52,7 +52,7 @@ nRF9160
   * Updated to v0.10.2.
     See the :ref:`liblwm2m_carrier_changelog` for detailed information.
 
-* Fixed the NCSDK-5666 known issue where the :ref:`lte_sensor_gateway` sample could assert when the Thingy:52 was flipped.
+* Fixed the NCSDK-5666 known issue where the LTE Sensor Gateway sample could assert when the Thingy:52 was flipped.
 
 Known issues
 ************

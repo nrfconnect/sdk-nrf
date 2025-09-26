@@ -95,7 +95,7 @@ nRF9160
   * :ref:`nrf_coap_client_sample` - receives data from a public CoAP server using the Nordic CoAP library
   * Simple GPS sample - gets the current position and logs it on UART
 
-* Fixed an issue in the :ref:`lte_sensor_gateway` sample where the host and the controller would go out of sync after a reset
+* Fixed an issue in the LTE Sensor Gateway sample where the host and the controller would go out of sync after a reset
 * Various fixes and updates to BSD Library, sockets offloading layer, and OS adaption:
 
   * Updated the BSD library (in nrfxlib) to version 0.3.0 (see the :ref:`nrfxlib:nrf_modem_changelog` for details)
