@@ -645,7 +645,7 @@ Cellular samples
   * :ref:`nrf_cloud_rest_cell_location`
   * :ref:`nrf_cloud_rest_fota`
 
-* Deprecated the :ref:`lte_sensor_gateway` sample.
+* Deprecated the LTE Sensor Gateway sample.
   It is no longer maintained.
 
 * :ref:`modem_shell_application` sample:

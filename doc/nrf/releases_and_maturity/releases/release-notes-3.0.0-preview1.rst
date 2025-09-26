@@ -409,7 +409,7 @@ Cellular samples
     * Slow Wi-Fi connectivity startup by selecting ``TFM_SFN`` instead of ``TFM_IPC``.
     * The size of TLS credentials buffer for Wi-Fi connectivity to allow installing both AWS and CoAP CA certificates.
 
-* :ref:`lte_sensor_gateway` sample:
+* LTE Sensor Gateway sample:
 
    * Fixed an issue with devicetree configuration after HCI updates in `sdk-zephyr`_.
 

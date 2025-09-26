@@ -555,7 +555,7 @@ Cellular samples (renamed from nRF9160 samples)
 
 * Added:
 
-  * Support for the nRF9161 DK in all cellular samples except for the :ref:`lte_sensor_gateway` sample.
+  * Support for the nRF9161 DK in all cellular samples except for the LTE Sensor Gateway sample.
   * The :ref:`battery` sample to show how to use the :ref:`modem_battery_readme` library.
   * The :ref:`nrf_provisioning_sample` sample that demonstrates how to use the :ref:`lib_nrf_provisioning` service.
 

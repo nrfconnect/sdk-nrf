@@ -3353,7 +3353,7 @@ IRIS-7381: :ref:`nrf_cloud_rest_cell_location` sample might attempt to take a ne
 .. rst-class:: v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0
 
 NCSDK-5666: LTE Sensor Gateway
-  The :ref:`lte_sensor_gateway` sample crashes when Thingy:52 is flipped.
+  The LTE Sensor Gateway sample crashes when Thingy:52 is flipped.
 
   **Affected platforms:** nRF9160, Thingy:52
 

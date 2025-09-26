@@ -793,7 +793,7 @@ Cellular samples
     * The size of TLS credentials buffer for Wi-Fi connectivity to allow installing both AWS and CoAP CA certificates.
     * Build issues with Wi-Fi configuration using CoAP.
 
-* :ref:`lte_sensor_gateway` sample:
+* LTE Sensor Gateway sample:
 
   * Fixed an issue with devicetree configuration after HCI updates in `sdk-zephyr`_.
 

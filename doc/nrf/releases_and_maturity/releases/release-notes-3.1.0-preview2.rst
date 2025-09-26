@@ -298,7 +298,7 @@ Bluetooth Fast Pair samples
 Cellular samples
 ----------------
 
-* Deprecated the :ref:`lte_sensor_gateway` sample.
+* Deprecated the LTE Sensor Gateway sample.
   It is no longer maintained.
 
 * :ref:`nrf_cloud_multi_service` sample:

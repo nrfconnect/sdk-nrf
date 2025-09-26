@@ -213,7 +213,7 @@ Documentation
     * nRF9160: Secure Services
     * Secure Partition Manager
     * nRF9160: AWS FOTA
-    * :ref:`lte_sensor_gateway`
+    * LTE Sensor Gateway
 
   * Bluetooth Low Energy:
 

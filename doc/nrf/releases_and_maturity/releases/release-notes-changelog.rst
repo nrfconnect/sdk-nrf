@@ -541,19 +541,22 @@ Cellular samples
   * The :ref:`nrf_cloud_mqtt_device_message` sample to demonstrate how to use the `nRF Cloud MQTT API`_ for device messages.
   * The :ref:`nrf_cloud_mqtt_fota` sample to demonstrate how to use the `nRF Cloud MQTT API`_ for FOTA updates.
 
-* Removed the SLM Shell sample.
-  Use the `Serial Modem Host Shell`_ sample instead.
-
-* :ref:`nrf_cloud_rest_cell_location` sample:
-
-  * Added runtime setting of the log level for the nRF Cloud logging feature.
-
 * Updated the following samples to use the new ``SEC_TAG_TLS_INVALID`` definition:
 
   * :ref:`modem_shell_application`
   * :ref:`http_application_update_sample`
   * :ref:`http_modem_delta_update_sample`
   * :ref:`http_modem_full_update_sample`
+
+* Removed:
+
+  * The SLM Shell sample.
+    Use the `Serial Modem Host Shell`_ sample instead.
+  * The deprecated LTE Sensor Gateway sample.
+
+* :ref:`nrf_cloud_rest_cell_location` sample:
+
+  * Added runtime setting of the log level for the nRF Cloud logging feature.
 
 * :ref:`modem_shell_application` sample:
 
@@ -562,14 +565,14 @@ Cellular samples
     * Support for environment evaluation using the ``link enveval`` command.
     * Support for NTN NB-IoT to the ``link sysmode`` and ``link edrx`` commands.
 
+* :ref:`gnss_sample` sample:
+
+  * Added TLS support for connection to the SUPL server.
+
 * :ref:`nrf_cloud_multi_service` sample:
 
   * Fixed an issue where sporadically the application was stuck waiting for the device to connect to the internet.
     This was due to wrong :ref:`Connection Manager <zephyr:conn_mgr_overview>` initialization.
-
-* :ref:`gnss_sample` sample:
-
-  * Added TLS support for connection to the SUPL server.
 
 Cryptography samples
 --------------------

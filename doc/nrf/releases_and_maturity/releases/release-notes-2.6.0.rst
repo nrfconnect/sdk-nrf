@@ -674,7 +674,7 @@ Cellular samples
 
 * Added support for the nRF9151 DK in all cellular samples except for the following samples:
 
-  * :ref:`lte_sensor_gateway`
+  * LTE Sensor Gateway
   * :ref:`smp_svr`
   * SLM Shell
 

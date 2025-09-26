@@ -455,7 +455,7 @@ nRF9160
 =======
 
 * The nRF9160: Asset Tracker application prints warnings and error messages during successful FOTA. (NCSDK-5574)
-* The :ref:`lte_sensor_gateway` sample crashes when Thingy:52 is flipped. (NCSDK-5666)
+* The LTE Sensor Gateway sample crashes when Thingy:52 is flipped. (NCSDK-5666)
 
 From v1.2.0
 -----------
