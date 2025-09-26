@@ -23,6 +23,7 @@
 #include "bt_content_ctrl.h"
 #include "le_audio_rx.h"
 #include "fw_info_app.h"
+#include "server_store.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
@@ -404,6 +405,7 @@ static void discovery_process_start(struct bt_conn *conn)
  */
 static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 {
+	int ret;
 	const struct bt_mgmt_msg *msg;
 	uint8_t num_conn = 0;
 
@@ -418,23 +420,44 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 		break;
 
 	case BT_MGMT_SECURITY_CHANGED:
-		if (BT_ADDR_IS_NRPA(&msg->addr.a)) {
-			ERR_CHK_MSG(-EINVAL, "Non-resolvable private not supported by application");
-		}
-
-		if (!bt_addr_le_is_identity(&msg->addr)) {
-			/* If this is the case, we wait for ID resolution.*/
-			/* TODO: Double check this func with Herman*/
-			LOG_DBG("Security changed. Addr not resolved");
-			return;
-		}
 		LOG_INF("Security changed. Addr is resolved");
+		ret = srv_store_lock(K_NO_WAIT);
+		ERR_CHK_MSG(ret, "Failed to lock server store");
 
-		discovery_process_start(msg->conn);
+		if (srv_store_server_exists(&msg->addr)) {
+			/* If the server is already in server_store, it must have already
+			 * been paired with.
+			 */
+
+			LOG_DBG("Server already in store, addr resolved");
+			ret = srv_store_conn_update(msg->conn, &msg->addr);
+			if (ret) {
+				LOG_ERR("Failed to update conn in store: %d", ret);
+				srv_store_unlock();
+				return;
+			}
+
+			srv_store_unlock();
+			discovery_process_start(msg->conn);
+		} else {
+			srv_store_unlock();
+		}
 
 		break;
-	case BT_MGMT_IDENTITY_RESOLVED:
-		LOG_DBG("Identity resolved");
+	case BT_MGMT_PAIRING_COMPLETE:
+		LOG_INF("Pairing complete event");
+
+		ret = srv_store_lock(K_NO_WAIT);
+		ERR_CHK_MSG(ret, "Failed to lock server store");
+
+		ret = srv_store_add_by_conn(msg->conn);
+		if (ret) {
+			LOG_ERR("Failed to add server to store: %d", ret);
+			srv_store_unlock();
+			return;
+		}
+
+		srv_store_unlock();
 		discovery_process_start(msg->conn);
 		break;
 
@@ -443,6 +466,22 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 		LOG_INF("Disconnection event. Num connections: %u", num_conn);
 
 		unicast_client_conn_disconnected(msg->conn);
+
+		ret = srv_store_lock(K_NO_WAIT);
+		ERR_CHK_MSG(ret, "Failed to lock server store");
+
+		ret = srv_store_clear_by_conn(msg->conn);
+		if (ret) {
+			LOG_DBG("Failed to clear conn from store: %d", ret);
+		}
+		srv_store_unlock();
+		break;
+	case BT_MGMT_BOND_DELETED:
+		LOG_DBG("Bond deleted");
+		ret = srv_store_remove_by_addr(&msg->addr);
+		if (ret) {
+			LOG_ERR("Failed to remove server from store: %d", ret);
+		}
 		break;
 
 	default:
@@ -563,6 +602,23 @@ void streamctrl_send(struct net_buf const *const audio_frame)
 	}
 }
 
+static void fill_server_store_by_bonded(const struct bt_bond_info *info, void *user_data)
+{
+	LOG_DBG("Traversing bonds to fill server store");
+	int ret;
+
+	if (!IS_ENABLED(CONFIG_BT_BONDABLE)) {
+		return;
+	}
+
+	ret = srv_store_lock(K_NO_WAIT);
+	ERR_CHK_MSG(ret, "Failed to lock server store");
+
+	ret = srv_store_add_by_addr(&info->addr);
+	ERR_CHK_MSG(ret, "Failed to add server store");
+	srv_store_unlock();
+}
+
 int main(void)
 {
 	int ret;
@@ -598,6 +654,9 @@ int main(void)
 
 	ret = unicast_client_enable(0, le_audio_rx_data_handler);
 	ERR_CHK(ret);
+
+	/* Go through all existing bonds */
+	bt_foreach_bond(BT_ID_DEFAULT, fill_server_store_by_bonded, NULL);
 
 	ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, CONFIG_BT_DEVICE_NAME,
 				 BRDCAST_ID_NOT_USED);

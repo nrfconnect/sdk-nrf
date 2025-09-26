@@ -82,45 +82,6 @@ static int server_remove(struct server_store *server)
 	return 0;
 }
 
-int server_remove_by_addr(uint8_t id, const bt_addr_le_t *peer)
-{
-	__ASSERT(id == BT_ID_DEFAULT, "Only default ID is supported");
-	for (int i = 0; i < CONFIG_BT_MAX_CONN; i++) {
-		if (bt_addr_le_eq(&servers[i].addr, peer)) {
-			return server_remove(&servers[i]);
-		}
-	}
-
-	LOG_ERR("Server not found");
-	return -ENOENT;
-}
-
-static int server_remove_by_conn(struct bt_conn const *const conn)
-{
-	struct server_store *server = NULL;
-	const bt_addr_le_t *peer_addr = bt_conn_get_dst(conn);
-
-	if (bt_le_bond_exists(BT_ID_DEFAULT, peer_addr)) {
-		/* If the peer is bonded, we can use the stored information */
-		LOG_DBG("Peer is bonded");
-	}
-
-	for (int i = 0; i < CONFIG_BT_MAX_CONN; i++) {
-		if (bt_addr_le_eq(&servers[i].addr, peer_addr)) {
-			server = &servers[i];
-			break;
-		}
-	}
-
-	if (server == NULL) {
-		LOG_ERR("Server does not exist");
-		return -ENOENT;
-	}
-
-	memset(server, 0, sizeof(struct server_store));
-	return 0;
-}
-
 struct pd {
 	uint32_t min;
 	uint32_t max;
@@ -1103,6 +1064,25 @@ int srv_store_from_addr_get(bt_addr_le_t const *const addr, struct server_store 
 	return ret;
 }
 
+bool srv_store_server_exists(bt_addr_le_t const *const addr)
+{
+	valid_entry_check(__func__);
+	int ret;
+
+	/* TODO: Add NULL checks */
+	struct server_store *temp_server = NULL;
+
+	ret = srv_store_from_addr_get_internal(addr, &temp_server);
+	if (ret == 0) {
+		return true;
+	} else if (ret == -ENOENT) {
+		return false;
+	}
+
+	LOG_ERR("Error checking if server exists: %d", ret);
+	return false;
+}
+
 int srv_store_from_conn_get(struct bt_conn const *const conn, struct server_store **server)
 {
 	valid_entry_check(__func__);
@@ -1157,6 +1137,8 @@ int srv_store_add_by_conn(struct bt_conn *conn)
 
 	int ret;
 	struct server_store *temp_server = NULL;
+
+	LOG_INF("Adding server by conn");
 
 	const bt_addr_le_t *peer_addr = bt_conn_get_dst(conn);
 	char peer_str[BT_ADDR_LE_STR_LEN];
@@ -1251,11 +1233,80 @@ int srv_store_conn_update(struct bt_conn *conn, bt_addr_le_t const *const addr)
 	return 0;
 }
 
-int srv_store_remove(struct bt_conn const *const conn)
+int srv_store_clear_by_conn(struct bt_conn *conn)
+{
+	valid_entry_check(__func__);
+	int ret;
+
+	struct server_store *server = NULL;
+
+	ret = srv_store_from_conn_get_internal(conn, &server);
+	if (ret < 0) {
+		return ret;
+	}
+
+	server->name = "NOT_SET";
+	server->conn = NULL;
+	server->member = NULL;
+
+	memset(&server->snk.eps, 0, sizeof(server->snk.eps));
+	memset(&server->src.eps, 0, sizeof(server->src.eps));
+	memset(&server->snk.lc3_preset, 0, sizeof(server->snk.lc3_preset));
+	memset(&server->src.lc3_preset, 0, sizeof(server->src.lc3_preset));
+	memset(&server->snk.codec_caps, 0, sizeof(server->snk.codec_caps));
+	memset(&server->src.codec_caps, 0, sizeof(server->src.codec_caps));
+	server->snk.num_codec_caps = 0;
+	server->src.num_codec_caps = 0;
+	server->snk.num_eps = 0;
+	server->src.num_eps = 0;
+	server->snk.locations = 0;
+	server->src.locations = 0;
+	server->snk.waiting_for_disc = false;
+	server->src.waiting_for_disc = false;
+
+	return 0;
+}
+
+int srv_store_remove_by_addr(bt_addr_le_t const *const addr)
 {
 	valid_entry_check(__func__);
 
-	return server_remove_by_conn(conn);
+	for (int i = 0; i < CONFIG_BT_MAX_CONN; i++) {
+		if (bt_addr_le_eq(&servers[i].addr, addr)) {
+			return server_remove(&servers[i]);
+		}
+	}
+
+	LOG_ERR("Server not found");
+	return -ENOENT;
+}
+
+int srv_store_remove_by_conn(struct bt_conn const *const conn)
+{
+	valid_entry_check(__func__);
+
+	struct server_store *server = NULL;
+	const bt_addr_le_t *peer_addr = bt_conn_get_dst(conn);
+
+	if (bt_le_bond_exists(BT_ID_DEFAULT, peer_addr)) {
+		/* If the peer is bonded, we can use the stored information */
+		LOG_DBG("Peer is bonded");
+	}
+
+	for (int i = 0; i < CONFIG_BT_MAX_CONN; i++) {
+		if (bt_addr_le_eq(&servers[i].addr, peer_addr)) {
+			server = &servers[i];
+			break;
+		}
+	}
+
+	if (server == NULL) {
+		LOG_ERR("Server does not exist");
+		return -ENOENT;
+	}
+
+	memset(server, 0, sizeof(struct server_store));
+	return 0;
 }
 
 static int srv_store_remove_all_internal(void)
@@ -1294,9 +1345,9 @@ int _srv_store_lock(k_timeout_t timeout, const char *file, int line)
 	if (ret) {
 
 #if CONFIG_DEBUG
-		LOG_ERR("Sem take error: %d", ret);
-#else
 		LOG_ERR("Sem take error: %d. Owner: %s Line: %d", ret, owner_file, owner_line);
+#else
+		LOG_ERR("Sem take error: %d", ret);
 #endif
 		return ret;
 	}

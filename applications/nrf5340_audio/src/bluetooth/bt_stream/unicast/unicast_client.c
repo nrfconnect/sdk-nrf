@@ -1196,7 +1196,7 @@ void unicast_client_conn_disconnected(struct bt_conn *conn)
 
 	ret = srv_store_from_conn_get(conn, &server);
 	if (ret) {
-		LOG_ERR("%s: Unknown connection, should not reach here", __func__);
+		LOG_DBG("%s: Unknown server", __func__);
 		srv_store_unlock();
 		return;
 	}
@@ -1222,51 +1222,20 @@ int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir)
 
 	struct server_store *server = NULL;
 
-	ret = srv_store_add_by_conn(conn);
-	if (ret == -EALREADY) {
-		LOG_INF("Server store already exists for conn: %p", (void *)conn);
-		ret = srv_store_from_conn_get(conn, &server);
-		if (ret) {
-			LOG_ERR("%s: Unknown connection, should not reach here", __func__);
-			srv_store_unlock();
-			return ret;
-		}
-
-		memset(&server->snk.eps, 0, sizeof(server->snk.eps));
-		memset(&server->src.eps, 0, sizeof(server->src.eps));
-		memset(&server->snk.lc3_preset, 0, sizeof(server->snk.lc3_preset));
-		memset(&server->src.lc3_preset, 0, sizeof(server->src.lc3_preset));
-		memset(&server->snk.codec_caps, 0, sizeof(server->snk.codec_caps));
-		memset(&server->src.codec_caps, 0, sizeof(server->src.codec_caps));
-		server->snk.num_codec_caps = 0;
-		server->src.num_codec_caps = 0;
-		server->snk.num_eps = 0;
-		server->src.num_eps = 0;
-		server->snk.locations = 0;
-		server->src.locations = 0;
-		server->snk.waiting_for_disc = false;
-		server->src.waiting_for_disc = false;
-
-	} else if (ret) {
-		LOG_ERR("Failed to add server store for conn: %p, err: %d", (void *)conn, ret);
+	ret = srv_store_from_conn_get(conn, &server);
+	if (ret) {
+		LOG_ERR("%s: Unknown connection, should not reach here", __func__);
 		srv_store_unlock();
 		return ret;
-	} else {
-		ret = srv_store_from_conn_get(conn, &server);
-		if (ret) {
-			LOG_ERR("%s: Unknown connection, should not reach here", __func__);
-			srv_store_unlock();
-			return ret;
-		}
+	}
 
-		/* Register ops */
-		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
-			bt_cap_stream_ops_register(&server->snk.cap_streams[i], &stream_ops);
-		}
+	/* Register ops */
+	for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
+		bt_cap_stream_ops_register(&server->snk.cap_streams[i], &stream_ops);
+	}
 
-		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
-			bt_cap_stream_ops_register(&server->src.cap_streams[i], &stream_ops);
-		}
+	for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
+		bt_cap_stream_ops_register(&server->src.cap_streams[i], &stream_ops);
 	}
 
 	ret = bt_cap_initiator_unicast_discover(conn);

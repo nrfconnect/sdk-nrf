@@ -203,6 +203,8 @@ int srv_store_codec_cap_set(struct bt_conn const *const conn, enum bt_audio_dir 
  */
 int srv_store_from_addr_get(bt_addr_le_t const *const addr, struct server_store **server);
 
+bool srv_store_server_exists(bt_addr_le_t const *const addr);
+
 /**
  * @brief	Get a server from the dst address in the conn pointer.
  *
@@ -295,6 +297,8 @@ int srv_store_add_by_addr(const bt_addr_le_t *addr);
  */
 int srv_store_conn_update(struct bt_conn *conn, bt_addr_le_t const *const addr);
 
+int srv_store_clear_by_conn(struct bt_conn *conn);
+
 /**
  * @brief	Remove a single stored server based on conn pointer.
  *
@@ -308,7 +312,9 @@ int srv_store_conn_update(struct bt_conn *conn, bt_addr_le_t const *const addr);
  *
  * @return 0 on success, negative error code on failure.
  */
-int srv_store_remove(struct bt_conn const *const conn);
+int srv_store_remove_by_conn(struct bt_conn const *const conn);
+
+int srv_store_remove_by_addr(bt_addr_le_t const *const addr);
 
 /**
  * @brief	Remove all stored servers.
@@ -334,7 +340,7 @@ int srv_store_remove_all(void);
 int _srv_store_lock(k_timeout_t timeout, const char *file, int line);
 
 #ifdef CONFIG_DEBUG
-#define srv_store_lock(timeout) _srv_store_lock(timeout, __FILE__, __LINE__)
+#define srv_store_lock(timeout) _srv_store_lock(timeout, __func__, __LINE__)
 #else
 #define srv_store_lock(timeout) _srv_store_lock(timeout, NULL, 0)
 #endif
