@@ -14,7 +14,9 @@
 #include <modem/lte_lc.h>
 #include <modem/pdn.h>
 #include <zephyr/modem/ppp.h>
-#include <zephyr/modem/backend/uart_slm.h>
+#if !defined(CONFIG_SLM_CMUX)
+#include <zephyr/modem/backend/uart.h>
+#endif
 #include <zephyr/net/ethernet.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/ppp.h>
@@ -616,12 +618,12 @@ int slm_ppp_init(void)
 	}
 
 	{
-		static struct modem_backend_uart_slm ppp_uart_backend;
+		static struct modem_backend_uart ppp_uart_backend;
 		static uint8_t ppp_uart_backend_receive_buf[sizeof(ppp_data_buf)]
 			__aligned(sizeof(void *));
 		static uint8_t ppp_uart_backend_transmit_buf[sizeof(ppp_data_buf)];
 
-		const struct modem_backend_uart_slm_config uart_backend_config = {
+		const struct modem_backend_uart_config uart_backend_config = {
 			.uart = ppp_uart_dev,
 			.receive_buf = ppp_uart_backend_receive_buf,
 			.receive_buf_size = sizeof(ppp_uart_backend_receive_buf),
@@ -629,7 +631,7 @@ int slm_ppp_init(void)
 			.transmit_buf_size = sizeof(ppp_uart_backend_transmit_buf),
 		};
 
-		ppp_pipe = modem_backend_uart_slm_init(&ppp_uart_backend, &uart_backend_config);
+		ppp_pipe = modem_backend_uart_init(&ppp_uart_backend, &uart_backend_config);
 		if (!ppp_pipe) {
 			return -ENOSYS;
 		}
@@ -703,7 +705,7 @@ static void ppp_data_passing_thread(void*, void*, void*)
 {
 	const size_t mtu = net_if_get_mtu(ppp_iface);
 	struct zsock_pollfd fds[PPP_FDS_COUNT];
-	enum pm_device_state state = PM_DEVICE_STATE_OFF;
+	// enum pm_device_state state = PM_DEVICE_STATE_OFF;
 
 	for (size_t i = 0; i != ARRAY_SIZE(fds); ++i) {
 		fds[i].fd = ppp_fds[i];
@@ -745,11 +747,11 @@ static void ppp_data_passing_thread(void*, void*, void*)
 
 			/* When DL data is received from the network, check if UART is suspended */
 			if (src == MODEM_FD_IDX) {
-				pm_device_state_get(ppp_uart_dev, &state);
-				if (state != PM_DEVICE_STATE_ACTIVE) {
-					LOG_DBG("PPP data received but UART not active");
-					slm_ctrl_pin_indicate();
-				}
+				// pm_device_state_get(ppp_uart_dev, &state);
+				// if (state != PM_DEVICE_STATE_ACTIVE) {
+				// 	LOG_DBG("PPP data received but UART not active");
+				// 	// slm_ctrl_pin_indicate();
+				// }
 			}
 			const ssize_t len =
 				zsock_recv(fds[src].fd, ppp_data_buf, mtu, ZSOCK_MSG_DONTWAIT);

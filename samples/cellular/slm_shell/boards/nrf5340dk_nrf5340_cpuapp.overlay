@@ -7,7 +7,6 @@
 / {
 	chosen {
 		ncs,slm-uart = &uart2;
-		ncs,slm-gpio = &gpio0;
 	};
 };
 
@@ -27,6 +26,21 @@
 	pinctrl-1 = <&uart2_sleep>;
 	pinctrl-names = "default", "sleep";
 };
+
+/ {
+	dte_dtr: dte_dtr {
+		compatible = "nordic,dte-dtr";
+		dtr-gpios = <&gpio0 26 GPIO_ACTIVE_LOW>;
+		ri-gpios = <&gpio0 25 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+	};
+};
+
+&gpio0 {
+	status = "okay";
+	/* Use PORT event for DTR and RI pins to ensure lower power consumption. */
+	sense-edge-mask = <0x06000000>;
+};
+
 
 &pinctrl {
 	uart2_default: uart2_default {
