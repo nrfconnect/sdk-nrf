@@ -208,19 +208,23 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
      SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP)
     if(CONFIG_NCS_IS_VARIANT_IMAGE)
       set(slot_size ${slot1_size})
+      set(slot_addr ${slot1_addr})
     else()
       set(slot_size ${slot0_size})
+      set(slot_addr ${slot0_addr})
     endif()
-    set(imgtool_rom_command --rom-fixed ${code_addr})
+    # Adjust start offset, based on the active slot and code partition address.
+    math(EXPR start_offset "${start_offset} + ${code_addr} - ${slot_addr}")
+    set(imgtool_rom_command --rom-fixed ${slot_addr})
   else()
     message(FATAL_ERROR "Only Direct XIP MCUboot modes are supported.")
     return()
   endif()
 
   # Basic 'imgtool sign' command with known image information.
-  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign
-      --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --header-size
-      ${start_offset} --slot-size ${slot_size} ${imgtool_rom_command})
+  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version
+    ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --header-size ${start_offset} --slot-size ${slot_size}
+    --pad-header ${imgtool_rom_command})
   set(imgtool_args --align ${write_block_size} ${imgtool_args})
 
   # Extensionless prefix of any output file.
@@ -285,9 +289,8 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
       set(BYPRODUCT_KERNEL_SIGNED_CONFIRMED_HEX_NAME
         "${output}.signed.confirmed.hex" CACHE FILEPATH
         "Signed and confirmed kernel hex file" FORCE)
-      list(APPEND imgtool_cmd COMMAND
-        ${imgtool_sign} ${imgtool_args} --pad --confirm ${merged_hex}
-        ${output}.signed.confirmed.hex)
+      list(APPEND imgtool_cmd COMMAND ${imgtool_sign} ${imgtool_args} --pad --pad-header --confirm
+        ${merged_hex} ${output}.signed.confirmed.hex)
     endif()
 
     if(NOT "${keyfile_enc}" STREQUAL "")
