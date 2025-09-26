@@ -15,6 +15,7 @@
 #include <nrf_modem_at.h>
 
 #include "common/event_handler_list.h"
+#include "common/helpers.h"
 #include "modules/mdmev.h"
 
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
@@ -73,6 +74,18 @@ static int mdmev_parse(const char *at_response, enum lte_lc_modem_evt *modem_evt
 	return -ENODATA;
 }
 
+static void search_done_event_send_work_fn(struct k_work *work)
+{
+	struct lte_lc_evt evt = {
+		.type = LTE_LC_EVT_MODEM_EVENT,
+		.modem_evt = LTE_LC_MODEM_EVT_SEARCH_DONE,
+	};
+
+	event_handler_list_dispatch(&evt);
+}
+
+K_WORK_DELAYABLE_DEFINE(search_done_event_send_work, search_done_event_send_work_fn);
+
 static void at_handler_mdmev(const char *response)
 {
 	int err;
@@ -89,6 +102,18 @@ static void at_handler_mdmev(const char *response)
 	}
 
 	evt.type = LTE_LC_EVT_MODEM_EVENT;
+
+	if (evt.modem_evt == LTE_LC_MODEM_EVT_SEARCH_DONE &&
+	    mfw_type_get() != MFW_TYPE_NRF9151_NTN) {
+		/* With mfw_nrf9160 and mfw_nrf91x1, modem sends the SEARCH STATUS 2 notification
+		 * before the +CEREG notification. To simplify application implementation, the
+		 * search done event is delayed a bit. When application receives the search done
+		 * event, it can check the last received cell information to see if a cell was
+		 * found or not.
+		 */
+		k_work_schedule(&search_done_event_send_work, K_MSEC(100));
+		return;
+	}
 
 	event_handler_list_dispatch(&evt);
 }
