@@ -9,6 +9,38 @@ Supported services and limitations in the |NCS|
 
 This page lists the supported features and limitations of Trusted Firmware-M (TF-M) in the |NCS|.
 
+.. _ug_tfm_supported_versions:
+
+Supported TF-M versions
+***********************
+
+The following table lists the TF-M versions supported by different versions of the |NCS| since the |NCS| v2.1.0.
+
+Not all `official TF-M releases`_ are supported by the |NCS|.
+This is because the |NCS| supports TF-M versions through Zephyr.
+Zephyr adds specific patches to the TF-M version, which are then upmerged into the |NCS| with changes specific to the |NCS|.
+
+.. list-table:: Supported TF-M and |NCS| versions
+   :header-rows: 1
+   :widths: auto
+
+   * - TF-M version
+     - |NCS| version
+   * - v2.2.0
+     - Current `main` of `sdk-nrf`_
+   * - v2.1.2
+     - v3.1.0, v3.1.1
+   * - v2.1.1
+     - v2.8.0, v2.9.0, v2.9.1, v2.9.2, v3.0.0, v3.0.1, v3.0.2
+   * - v2.0.0
+     - v2.6.0, v2.6.1, v2.6.2, v2.7.0
+   * - v1.8.0
+     - v2.5.0, v2.5.1, v2.5.2, v2.5.3
+   * - v1.7.0
+     - v2.3.0, v2.4.0, v2.4.1, v2.4.2, v2.4.3
+   * - v1.6.0
+     - v2.1.0, v2.1.1, v2.1.2, v2.1.3, v2.1.4, v2.2.0
+
 .. _ug_tfm_supported_services_profiles:
 
 Supported TF-M profiles
