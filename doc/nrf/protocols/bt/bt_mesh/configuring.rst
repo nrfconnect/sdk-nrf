@@ -296,10 +296,10 @@ The following two types of security risks are possible:
 
 Additionally, after upgrading the device firmware with the key importer functionality enabled, and once the key import is complete, it is recommend to update device firmware with the key importer functionality disabled as soon as possible.
 
-Trusted storage
----------------
+Secure storage
+--------------
 
-The :ref:`trusted_storage_in_ncs` is a security mechanism designed to securely store and manage sensitive data.
+The :ref:`secure_storage_in_ncs` is a security mechanism designed to securely store and manage sensitive data.
 Currently, all :ref:`bt_mesh_samples` in the |NCS| use the :ref:`trusted_storage_readme` library as the Trusted Storage backend for all supported platforms.
 
 .. note::
