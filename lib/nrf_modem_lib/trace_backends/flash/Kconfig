@@ -47,7 +47,7 @@ config NRF_MODEM_LIB_TRACE_FLASH_SECTORS
 
 config NRF_MODEM_LIB_TRACE_BACKEND_FLASH_PARTITION_SIZE
 	hex "External flash space reserved for modem traces"
-	range 0 0x800000
+	range 0 0x2000000
 	default 0x400000
 	help
 	  Flash space set aside for modem traces in the external flash.
