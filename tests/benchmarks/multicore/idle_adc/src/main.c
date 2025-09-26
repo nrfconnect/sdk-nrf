@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/adc.h>
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/pm/device_runtime.h>
 #define ADC_NODE       DT_ALIAS(adc0)
 #define ADC_LOW_LEVEL  0
 #define ADC_HIGH_LEVEL 4092
@@ -66,6 +67,10 @@ int main(void)
 	while (test_repetitions)
 #endif
 	{
+		err = pm_device_runtime_get(gpio.port);
+		__ASSERT_NO_MSG(err == 0);
+		err = pm_device_runtime_get(adc);
+		__ASSERT_NO_MSG(err == 0);
 		gpio_pin_set_dt(&gpio, 1);
 		err = adc_read(adc, &sequence);
 		k_busy_wait(1000);
@@ -80,6 +85,10 @@ int main(void)
 		sample_value = channel_reading[0];
 		__ASSERT_NO_MSG(sample_value == ADC_LOW_LEVEL);
 		gpio_pin_set_dt(&led, 0);
+		err = pm_device_runtime_put(adc);
+		__ASSERT_NO_MSG(err == 0);
+		err = pm_device_runtime_put(gpio.port);
+		__ASSERT_NO_MSG(err == 0);
 		k_sleep(K_SECONDS(1));
 		gpio_pin_set_dt(&led, 1);
 	}
