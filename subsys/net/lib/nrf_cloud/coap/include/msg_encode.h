@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
  * Generated using zcbor version 0.8.1
@@ -26,6 +26,9 @@ extern "C" {
 
 int cbor_encode_message_out(uint8_t *payload, size_t payload_len, const struct message_out *input,
 			    size_t *payload_len_out);
+
+int cbor_encode_message_out_batch(uint8_t *payload, size_t payload_len,
+				  const struct message_out_batch *input, size_t *payload_len_out);
 
 #ifdef __cplusplus
 }

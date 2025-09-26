@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
  * Generated using zcbor version 0.8.1
@@ -72,6 +72,11 @@ struct message_out {
 	} message_out_data_choice;
 	struct message_out_ts message_out_ts;
 	bool message_out_ts_present;
+};
+
+struct message_out_batch {
+	struct message_out message_out_batch_message_out_m[10];
+	size_t message_out_batch_message_out_m_count;
 };
 
 #ifdef __cplusplus
