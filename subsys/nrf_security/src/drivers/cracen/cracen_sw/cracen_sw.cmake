@@ -10,9 +10,13 @@ list(APPEND cracen_driver_include_dirs
   ${CMAKE_CURRENT_LIST_DIR}/include
 )
 
-if(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS OR (CONFIG_SOC_NRF54LV10A AND CONFIG_PSA_NEED_CRACEN_CTR_AES))
+list(APPEND cracen_driver_sources
+  ${CMAKE_CURRENT_LIST_DIR}/src/cracen_sw_common.c
+)
+
+# Include full software cipher implementation only for devices that need multipart workarounds
+if(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)
   list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_sw_common.c
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_sw_cipher.c
   )
 endif()

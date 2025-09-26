@@ -21,14 +21,12 @@
 #include <cracen_sw_common.h>
 #include "cracen_sw_aes_ctr.h"
 
-/* AES CTR mode counter field is the rightmost 32 bits (4 bytes) of the 16-byte block */
+/* AES CTR mode counter field is the entire 16-byte block */
 #define AES_BLOCK_LAST_BYTE_INDEX  (SX_BLKCIPHER_AES_BLK_SZ - 1)
-#define AES_CTR_COUNTER_START_BYTE (SX_BLKCIPHER_AES_BLK_SZ - 4)
+#define AES_CTR_COUNTER_START_BYTE 0
 
-/* Increments the counter by one block */
 static void increment_counter(uint8_t *ctr)
 {
-	/* CTR mode increments the rightmost 32 bits in big-endian */
 	for (int i = AES_BLOCK_LAST_BYTE_INDEX; i >= AES_CTR_COUNTER_START_BYTE; i--) {
 		if (++ctr[i] != 0) {
 			break;
