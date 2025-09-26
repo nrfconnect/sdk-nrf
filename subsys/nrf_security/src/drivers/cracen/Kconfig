@@ -29,13 +29,30 @@ source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 if PSA_CRYPTO_DRIVER_CRACEN
 
+config CRACEN_NEED_ECC_KEY_GEN_PKE
+	bool
+	default y
+	depends on PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECP_R1 || \
+		   PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECP_K1 || \
+		   PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_GENERATE_BRAINPOOL_P_R1
+	help
+	  ECC key generation operations that require PK engine.
+	  This excludes Montgomery and Twisted Edwards curves which use
+	  random generation with bit manipulation instead of PKE operations.
+
 config CRACEN_LOAD_MICROCODE
 	bool "Load CRACEN microcode"
 	depends on CRACEN_HW_VERSION_BASE
-	default y
+	default y if CRACEN_IKG || \
+		     PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER || \
+		     PSA_NEED_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER || \
+		     PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER || \
+		     PSA_NEED_CRACEN_PAKE_DRIVER || \
+		     PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_GENERATE || \
+		     CRACEN_NEED_ECC_KEY_GEN_PKE
 	help
 	  Whether to load the CRACEN microcode on startup.
-	  This is required to use the PKE/IKG engine. Note that this is not
+	  This is required to use the PK/IKG engine. Note that this is not
 	  required when a bootloader has already loaded the microcode.
 
 config CRACEN_LIB_KMU
