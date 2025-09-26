@@ -40,11 +40,14 @@ The Thread stack requires the following cryptographic operations:
 Secure processing environment
 *****************************
 
-When building for the nRF54L15 DK using the :ref:`board target <app_boards_names>` with the ``/ns`` variant (``nrf54l15dk/nrf54l15/cpuapp/ns``), Thread samples can use the :ref:`secure processing environment <ug_tfm_security_by_separation>` with Trusted Firmware-M (TF-M).
+When building for the nRF54L15 DK using the ``nrf54l15dk/nrf54l15/cpuapp/ns`` :ref:`board target <app_boards_names>`, Thread samples can use the :ref:`secure processing environment <ug_tfm_security_by_separation>` with Trusted Firmware-M (TF-M).
 In such cases, all cryptographic operations within the Thread stack are performed using the `Platform Security Architecture (PSA)`_ API and executed in the secure TF-M environment using the :ref:`TF-M Crypto Service implementation <ug_crypto_architecture_implementation_standards_tfm>`.
-The secure materials like Thread network key are stored in the TF-M secure storage using the :ref:`tfm_encrypted_its` module.
+The secure materials like Thread network key can be stored in the TF-M secure storage using the :ref:`tfm_encrypted_its` or :ref:`key_storage_kmu`.
 
-For example, to build the Thread CLI sample for the nRF54L15 DK with the TF-M support, run the following command:
+Thread samples use the full, configurable TF-M build, so you cannot use the minimal build.
+For more information, see :ref:`ug_tfm_supported_services_profiles`.
+
+For example, to build the Thread CLI sample with the TF-M support, run the following command:
 
 .. code-block:: console
 

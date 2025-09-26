@@ -2224,6 +2224,8 @@ Trusted Firmware-M support
 
       .. tab:: nRF53 Series
 
+         For board targets supported by TF-M, see :ref:`ug_tfm_building_board_targets`.
+
          .. list-table:: TF-M profile support
             :header-rows: 1
             :widths: auto
@@ -2236,6 +2238,8 @@ Trusted Firmware-M support
               - Supported
 
       .. tab:: nRF54 Series
+
+         For board targets supported by TF-M, see :ref:`ug_tfm_building_board_targets`.
 
          .. list-table:: TF-M profile support
             :header-rows: 1
@@ -2250,17 +2254,19 @@ Trusted Firmware-M support
             * - :ref:`Configurable <ug_tfm_supported_services_profiles_configurable>`
               - --
               - --
-              - --
+              - Experimental
               - Experimental
               - Experimental (with :ref:`limitations <tfm_encrypted_its>`)
             * - :ref:`Minimal <ug_tfm_supported_services_profiles_minimal>`
               - --
               - --
-              - --
+              - Experimental
               - Experimental
               - Experimental (with :ref:`limitations <tfm_encrypted_its>`)
 
       .. tab:: nRF91 Series
+
+         For board targets supported by TF-M, see :ref:`ug_tfm_building_board_targets`.
 
          .. list-table:: TF-M profile support
             :header-rows: 1
@@ -2412,7 +2418,7 @@ The lists are organized by device Series and implementation.
               - --
               - Experimental
               - Experimental
-              - --
+              - Experimental
             * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
               - Supported
               - --
