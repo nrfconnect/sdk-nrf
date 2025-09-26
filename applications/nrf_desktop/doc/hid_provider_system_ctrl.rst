@@ -34,7 +34,7 @@ This option is enabled by default if the device uses HID provider events (:ref:`
 The default implementation of the HID provider uses a predefined format of HID reports, which is aligned with the default HID report map in the common configuration (:ref:`CONFIG_DESKTOP_HID_REPORT_DESC <config_desktop_app_options>`).
 
 Alternatively, you can substitute the module with a custom HID system control report provider implementation.
-Using the custom provider allows you to modify sources of user input and the HID report format.
+Using the custom provider allows you to modify the sources of user input and the HID report format.
 Enable the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_SYSTEM_CTRL_ALT <config_desktop_app_options>` Kconfig option to use a custom HID system control report provider.
 The option disables the default HID system control report provider.
 Make sure to introduce the custom HID system control report provider if you enable this option.
@@ -58,7 +58,8 @@ See the following sections for the configuration details of the used application
 HID keymap
 ----------
 
-The module uses the :ref:`nrf_desktop_hid_keymap` to map an application-specific key ID to a HID report ID and HID usage ID pair.
+Since the keys on the board can be associated with a HID usage ID and thus be part of different HID reports, the first step is to identify if the key belongs to a HID report that is provided by this module.
+This is done by obtaining the key mapping from the :ref:`nrf_desktop_hid_keymap`.
 The module selects the :ref:`CONFIG_DESKTOP_HID_KEYMAP <config_desktop_app_options>` Kconfig option to enable the utility.
 Make sure to configure the HID keymap utility.
 See the utility's documentation for details.
