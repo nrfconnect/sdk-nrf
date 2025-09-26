@@ -48,6 +48,7 @@ The Kconfig options follow the ``CONFIG_PSA_WANT_*`` + ``CONFIG_PSA_USE_*`` conf
    On nRF54H Series devices, the ``CONFIG_PSA_WANT_*`` and ``CONFIG_PSA_USE_*`` feature selection scheme is not implemented and enabling any feature with these options will silently have no effect.
    The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
+.. _ug_crypto_supported_features_key_types:
 
 Key types and key management
 ============================
@@ -8996,6 +8997,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+
+.. _ug_crypto_supported_features_ecc_key_pair:
 
 ECC key pair operations
 -----------------------
