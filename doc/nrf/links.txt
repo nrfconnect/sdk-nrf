@@ -1891,6 +1891,8 @@
 
 .. _`NX3215SA-32.768K-STD-MUA-9 datasheet`: https://www.ndk.com/en/products/upload/lineup/pdf/NDKX01-00001_en.pdf
 
+.. _`official TF-M releases`: https://trustedfirmware-m.readthedocs.io/en/latest/releases/index.html
+
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 
 .. _`nrf-regtool`: https://github.com/nrfconnect/nrf-regtool/
