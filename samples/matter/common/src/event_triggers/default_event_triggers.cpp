@@ -267,10 +267,12 @@ CHIP_ERROR Register()
 	ReturnErrorOnFailure(Nrf::Matter::TestEventTrigger::Instance().RegisterICDTestEventTriggers());
 #endif
 
+#ifdef CONFIG_CHIP_OTA_REQUESTOR
 	/* Register OTA test events handler */
 	static chip::OTATestEventTriggerHandler otaTestEventTrigger;
 	ReturnErrorOnFailure(
 		Nrf::Matter::TestEventTrigger::Instance().RegisterTestEventTriggerHandler(&otaTestEventTrigger));
+#endif
 
 	k_timer_init(&sDelayTimer, &DelayTimerCallback, nullptr);
 
