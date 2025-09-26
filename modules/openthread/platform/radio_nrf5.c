@@ -680,13 +680,10 @@ static bool nrf5_tx(const otRadioFrame *frame, uint8_t *payload, bool cca)
 		},
 	};
 
-#ifdef NRF_802154_TX_FUNCTIONS_RETURN_ERROR_CODE
 	nrf_802154_tx_error_t result = nrf_802154_transmit_raw(payload, &metadata);
+	__ASSERT(result != NRF_802154_TX_ERROR_INVALID_REQUEST, "Invalid transmit request");
 
 	return result == NRF_802154_TX_ERROR_NONE;
-#else
-	return nrf_802154_transmit_raw(payload, &metadata);
-#endif
 }
 
 #if NRF_802154_CSMA_CA_ENABLED
@@ -709,13 +706,10 @@ static bool nrf5_tx_csma_ca(otRadioFrame *frame, uint8_t *payload)
 
 	nrf_802154_csma_ca_max_backoffs_set(frame->mInfo.mTxInfo.mMaxCsmaBackoffs);
 
-#ifdef NRF_802154_TX_FUNCTIONS_RETURN_ERROR_CODE
 	nrf_802154_tx_error_t result = nrf_802154_transmit_csma_ca_raw(payload, &metadata);
+	__ASSERT(result != NRF_802154_TX_ERROR_INVALID_REQUEST, "Invalid transmit request");
 
 	return result == NRF_802154_TX_ERROR_NONE;
-#else
-	return nrf_802154_transmit_csma_ca_raw(payload, &metadata);
-#endif
 }
 #endif
 
@@ -751,13 +745,10 @@ static bool nrf5_tx_at(otRadioFrame *frame, uint8_t *payload)
 			nrf5_data.tx.frame.mInfo.mTxInfo.mTxDelay) /
 		NSEC_PER_USEC);
 
-#ifdef NRF_802154_TX_FUNCTIONS_RETURN_ERROR_CODE
 	nrf_802154_tx_error_t result = nrf_802154_transmit_raw_at(payload, tx_at, &metadata);
+	__ASSERT(result != NRF_802154_TX_ERROR_INVALID_REQUEST, "Invalid transmit request");
 
 	return result == NRF_802154_TX_ERROR_NONE;
-#else
-	return nrf_802154_transmit_raw_at(payload, tx_at, &metadata);
-#endif
 }
 
 static void handle_frame_received(otInstance *aInstance)
