@@ -26,10 +26,14 @@ int mpsl_fem_utils_ppi_channel_alloc(uint8_t *ppi_channels, size_t size)
 #endif
 
 	for (int i = 0; i < size; i++) {
-		IF_ENABLED(CONFIG_HAS_HW_NRF_PPI,
-			(err = nrfx_ppi_channel_alloc(&ppi_channels[i]);));
-		IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
-			(err = nrfx_dppi_channel_alloc(&dppi, &ppi_channels[i]);));
+#if IS_ENABLED(CONFIG_HAS_HW_NRF_PPI)
+		nrf_ppi_channel_t *ch;
+
+		err = nrfx_ppi_channel_alloc(ch);
+		ppi_channels[i] = (uint8_t)ch;
+#elif IS_ENABLED(CONFIG_HAS_HW_NRF_DPPIC)
+		err = nrfx_dppi_channel_alloc(&dppi, &ppi_channels[i]);
+#endif
 		if (err != NRFX_SUCCESS) {
 			return -ENOMEM;
 		}
