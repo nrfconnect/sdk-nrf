@@ -143,6 +143,7 @@ static void create_group(void)
 	/* Find out how many servers we have connected
 	 */
 	uint8_t num_servers = srv_store_num_get(true);
+
 	if (num_servers == 0) {
 		LOG_ERR("No servers found, cannot create unicast group");
 		srv_store_unlock();
@@ -156,6 +157,7 @@ static void create_group(void)
 
 	for (int i = 0; i < num_servers; i++) {
 		struct server_store *tmp_server = NULL;
+
 		ret = srv_store_server_get(&tmp_server, i);
 		if (ret < 0) {
 			LOG_ERR("Failed to get server store from index %d: %d", i, ret);
@@ -181,6 +183,7 @@ static void create_group(void)
 
 	for (int i = 0; i < num_servers; i++) {
 		struct server_store *tmp_server = NULL;
+
 		ret = srv_store_server_get(&tmp_server, i);
 		if (ret < 0) {
 			LOG_ERR("Failed to get server store from index %d: %d", i, ret);
@@ -689,9 +692,9 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 
 		ret = srv_store_valid_codec_cap_check(conn, dir, &valid_sink_caps, NULL, 0);
 		if (valid_sink_caps) {
-
 			/* Get the valid configuration to set for this stream and put that
-			 * in the corresponding preset */
+			 * in the corresponding preset
+			 */
 
 			LOG_INF("Found %d valid PAC record(s), %d location(s), %d snk "
 				"ep(s) %d src ep(s)",

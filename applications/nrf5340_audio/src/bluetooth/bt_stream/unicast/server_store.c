@@ -582,8 +582,8 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 
 	bt_bap_ep_get_info(stream->ep, &ep_info);
 	enum bt_audio_dir dir = ep_info.dir;
-
 	struct server_store *server = NULL;
+
 	for (int srv_idx = 0; srv_idx < CONFIG_BT_MAX_CONN; srv_idx++) {
 
 		/* Across all servers, we need to first check if another stream is in the
@@ -766,6 +766,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 		for (int i = 0; i < server->snk.num_codec_caps; i++) {
 			struct bt_bap_lc3_preset srch_preset;
 			struct bt_bap_lc3_preset *preset = &srch_preset;
+
 			if (IS_ENABLED(CONFIG_BT_AUDIO_EP_PRINT)) {
 				LOG_INF("");
 				LOG_INF("Sink PAC %d", i);
