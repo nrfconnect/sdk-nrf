@@ -642,6 +642,11 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
+* Added missing brackets that caused C++ compilation to fail in the following libraries:
+
+  * :ref:`lib_nrf_cloud_pgps`
+  * :ref:`lib_nrf_cloud_fota`
+
 * Updated the following libraries to use the new ``SEC_TAG_TLS_INVALID`` definition for checking whether a security tag is valid:
 
   * :ref:`lib_aws_fota`

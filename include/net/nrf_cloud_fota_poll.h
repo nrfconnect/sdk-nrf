@@ -152,6 +152,7 @@ int nrf_cloud_fota_poll_update_apply(struct nrf_cloud_fota_poll_ctx *ctx);
 /** @} */
 
 #ifdef __cplusplus
+}
 #endif
 
 #endif /* NRF_CLOUD_FOTA_POLL_H_ */
