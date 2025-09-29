@@ -11,6 +11,7 @@
 #include <zephyr/fff.h>
 #include <zephyr/ztest.h>
 #include <zephyr/net/socket.h>
+#include "nrf_cloud_fsm.h"
 
 DEFINE_FFF_GLOBALS;
 
