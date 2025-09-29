@@ -162,14 +162,14 @@ static void toggle_slot_for_single_boot(void)
 {
 	int err = 0;
 	enum ab_boot_slot active_slot = active_boot_slot_get();
-	enum ab_boot_slot new_slot = SLOT_INVALID;
+	enum boot_slot new_slot = BOOT_SLOT_NONE;
 
 	if (active_slot == SLOT_A) {
 		LOG_INF("Temporarily switching slots (A -> B)");
-		new_slot = SLOT_B;
+		new_slot = BOOT_SLOT_SECONDARY;
 	} else if (active_slot == SLOT_B) {
 		LOG_INF("Temporarily switching slots (B -> A)");
-		new_slot = SLOT_A;
+		new_slot = BOOT_SLOT_PRIMARY;
 	} else {
 		LOG_ERR("Cannot determine active slot, cannot toggle");
 		return;
