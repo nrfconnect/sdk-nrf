@@ -20,3 +20,4 @@ tests:
     harness_config:
       pytest_root:
         - "pytest/tests.py::test_grtc_reset"
+    timeout: 30
