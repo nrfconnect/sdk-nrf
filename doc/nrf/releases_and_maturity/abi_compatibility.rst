@@ -74,6 +74,40 @@ nRF54H20 IronSide SE binaries changelog
 
 The following sections provide detailed lists of changes by component.
 
+IronSide Secure Element (IronSide SE) v23.1.0+19
+================================================
+
+Added
+-----
+
+* LFXO external square support in SysCtrl.
+* Counter service for monotonic counters with PSA ITS storage backend.
+
+  .. note::
+     This service can only be used on devices that have booted at least once with an unlocked UICR with this version.
+
+* The IronSide boot reports now contain a 16-byte UUID extracted from the OTP. (NRFX-8171)
+* Defined a new category of platform keys, called revocable keys. (NCSDK-35397)
+
+  These are general-purpose, persistent keys which can be provisioned using the PSA Crypto API, but only when the UICR is unlocked.
+  When the UICR is locked, destroying a revocable key will prevent it from being created again.
+  Using these keys does not depend on the ``UICR.SECURESTORAGE`` configuration.
+
+Updated
+-------
+
+* The MRAMC.READY/READYNEXT registers are now readable by local domains. (NCSDK-35534)
+
+  This allows local domains to check if MRAM is ready for a write operation before triggering it.
+* The IronSide SE update now fails if it is placed outside the valid memory range (0x0e100000 - 0x0e200000). (NCSDK-35750)
+* The IronSide SE PSA crypto service now supports 3 concurrent crypto operations. (NCSDK-35671)
+
+  This enables support for TLS.
+* An invalid enumeration for the processor in UICR.SECONDARY.PROCESSOR is now reported with a uicr_regid equal to the offset of that register.
+* The NRFS (SysCtrl) IPC buffers for the Application core and Radio core can now only be accessed when the secure attribute is set.
+* SysCtrl updated to v6.0.1.
+* SysCtrl has updated calibration thresholds for LFRC.
+
 IronSide Secure Element (IronSide SE) v23.0.2+17
 ================================================
 
