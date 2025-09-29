@@ -140,7 +140,8 @@ static void create_group(void)
 		return;
 	}
 
-	/* Find out how many servers we have connected */
+	/* Find out how many servers we have connected
+	 */
 	uint8_t num_servers = srv_store_num_get(true);
 	if (num_servers == 0) {
 		LOG_ERR("No servers found, cannot create unicast group");
@@ -148,7 +149,8 @@ static void create_group(void)
 		return;
 	}
 
-	/* Find out how many valid sink EPs we have */
+	/* Find out how many valid sink EPs we have
+	 */
 	uint8_t num_valid_sink_eps = 0;
 	uint8_t num_valid_source_eps = 0;
 
@@ -190,7 +192,8 @@ static void create_group(void)
 			continue;
 		}
 
-		/* Add only the streams that has a valid preset set */
+		/* Add only the streams that has a valid preset set
+		 */
 		for (int j = 0;
 		     j < MIN(tmp_server->snk.num_eps, POPCOUNT(tmp_server->snk.locations)); j++) {
 			if (tmp_server->snk.lc3_preset[j].qos.pd == 0) {
@@ -204,7 +207,8 @@ static void create_group(void)
 			group_sink_iterator++;
 		}
 
-		/* Add only the streams that has a valid preset set */
+		/* Add only the streams that has a valid preset set
+		 */
 		for (int j = 0;
 		     j < MIN(tmp_server->src.num_eps, POPCOUNT(tmp_server->src.locations)); j++) {
 			if (tmp_server->src.lc3_preset[j].qos.pd == 0) {
@@ -221,13 +225,14 @@ static void create_group(void)
 
 	int stream_iterator = 0;
 
-	/* Pair TX and RX from same server */
-	/* We pair in the order of sink to source because the sink stream will always be created
+	/* Pair TX and RX from same server.
+	 * We pair in the order of sink to source because the sink stream will always be created
 	 * before the source stream
 	 */
 	for (int i = 0; i < group_sink_iterator; i++) {
 		pair_params[i].tx_param = &group_sink_stream_params[i];
-		/* Search streams for a matching source */
+		/* Search streams for a matching source
+		 */
 		bool source_found = false;
 		struct server_store *sink_server = NULL;
 
@@ -240,8 +245,10 @@ static void create_group(void)
 		}
 
 		for (int j = stream_iterator; j < group_source_iterator; j++) {
-			/* Check if the source stream belongs to the same device */
+			/* Check if the source stream belongs to the same device
+			 */
 			struct server_store *source_server = NULL;
+
 			ret = srv_store_from_stream_get(group_source_stream_params[j].stream,
 							&source_server);
 			if (ret < 0) {
@@ -268,6 +275,7 @@ static void create_group(void)
 	for (int i = 0; i < group_source_iterator; i++) {
 		/* Check if the source has already been added */
 		bool source_already_added = false;
+
 		for (int j = 0; j < stream_iterator; j++) {
 			if (pair_params[j].rx_param == &group_source_stream_params[i]) {
 				source_already_added = true;
@@ -348,6 +356,7 @@ static void cap_start_worker(struct k_work *work)
 
 		/* Check that the server is connected */
 		struct bt_conn_info info;
+
 		ret = bt_conn_get_info(tmp_server->conn, &info);
 		if (ret) {
 			LOG_ERR("Failed to get connection info for conn: %p",
@@ -594,6 +603,7 @@ static void endpoint_cb(struct bt_conn *conn, enum bt_audio_dir dir, struct bt_b
 	}
 
 	struct server_store *server = NULL;
+
 	ret = srv_store_from_conn_get(conn, &server);
 	if (ret) {
 		LOG_ERR("%s: Unknown connection, should not reach here", __func__);
@@ -652,6 +662,7 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 	}
 
 	struct server_store *server = NULL;
+
 	ret = srv_store_from_conn_get(conn, &server);
 	if (ret) {
 		LOG_ERR("%s: Unknown connection, should not reach here", __func__);

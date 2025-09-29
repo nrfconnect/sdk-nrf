@@ -539,11 +539,11 @@ bool srv_store_preset_validated(struct bt_audio_codec_cfg *new, struct bt_audio_
 }
 
 /* One needs to look at the group pointer, if this group pointer already exists, we may need
-to update the entire group. If it is a new group, no reconfig is needed.
-*  New A, no ext group
-*  New A, existing A. If new pres dlay needed, reconfig all
-*  New B, existing A, no reconfig needed.
-*/
+ * to update the entire group. If it is a new group, no reconfig is needed.
+ *  New A, no ext group
+ *  New A, existing A. If new pres delay needed, reconfig all
+ *  New B, existing A, no reconfig needed.
+ */
 
 /* The presentation delay within a CIG for a given dir needs to be the same.
  * bt_bap_ep -> cig_id;
@@ -595,7 +595,8 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 		}
 
 		if (server->conn == stream->conn) {
-			/* Do not compare against the same unicast server */
+			/* Do not compare against the same unicast server
+			 */
 			continue;
 		}
 
@@ -796,6 +797,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 
 		for (int i = 0; i < server->src.num_codec_caps; i++) {
 			struct bt_bap_lc3_preset *preset = NULL;
+
 			if (IS_ENABLED(CONFIG_BT_AUDIO_EP_PRINT)) {
 				LOG_INF("");
 				LOG_INF("Source PAC %d", i);
