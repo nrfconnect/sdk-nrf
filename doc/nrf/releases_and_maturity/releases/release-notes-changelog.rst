@@ -707,6 +707,10 @@ Libraries for networking
 
   * Updated by adding a missing CONFIG prefix.
 
+* :ref:`lib_nrf_cloud` library:
+
+  * Updated by refactoring the folder structure of the library to separate the different backend implementations.
+
 Libraries for NFC
 -----------------
 

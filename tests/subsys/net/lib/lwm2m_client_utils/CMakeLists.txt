@@ -67,7 +67,7 @@ set(includes
 "${ZEPHYR_BASE}/subsys/net/lib/lwm2m/"
 "${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/"
 "${ZEPHYR_BASE}/../modules/lib/cjson/"
-"${ZEPHYR_BASE}/../nrf/subsys/net/lib/nrf_cloud/include/"
+"${ZEPHYR_BASE}/../nrf/subsys/net/lib/nrf_cloud/common/include/"
 "${ZEPHYR_BASE}/../nrf/subsys/net/lib/fota_download/include/"
 "src/"
 )

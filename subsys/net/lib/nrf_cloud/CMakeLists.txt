@@ -5,80 +5,139 @@
 #
 zephyr_library()
 zephyr_library_sources(
-	src/nrf_cloud_codec_internal.c
-	src/nrf_cloud_log.c
-	src/nrf_cloud_codec.c
-	src/nrf_cloud_mem.c
-	src/nrf_cloud_client_id.c
-	src/nrf_cloud_sec_tag.c
-	src/nrf_cloud_info.c)
-zephyr_library_sources_ifdef(
-	CONFIG_NRF_CLOUD_ALERT
-	src/nrf_cloud_alert.c)
+	common/src/nrf_cloud_codec_internal.c
+	common/src/nrf_cloud_log.c
+	common/src/nrf_cloud_codec.c
+	common/src/nrf_cloud_mem.c
+	common/src/nrf_cloud_client_id.c
+	common/src/nrf_cloud_sec_tag.c
+	common/src/nrf_cloud_info.c)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_LOG_BACKEND
-	src/nrf_cloud_log_backend.c)
+	common/src/nrf_cloud_log_backend.c)
 zephyr_library_sources_ifdef(
 	CONFIG_MODEM_JWT
-	src/nrf_cloud_jwt.c)
+	common/src/nrf_cloud_jwt.c)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_JWT_SOURCE_CUSTOM
-	src/nrf_cloud_jwt.c)
+	common/src/nrf_cloud_jwt.c)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_MQTT
-	src/nrf_cloud.c
-	src/nrf_cloud_fsm.c
-	src/nrf_cloud_transport.c
-	src/nrf_cloud_dns.c)
+	mqtt/src/nrf_cloud.c
+	mqtt/src/nrf_cloud_fsm.c
+	mqtt/src/nrf_cloud_transport.c
+	mqtt/src/nrf_cloud_codec_internal.c
+	common/src/nrf_cloud_dns.c)
+
 zephyr_library_sources_ifdef(
-	CONFIG_NRF_CLOUD_AGNSS
-	src/nrf_cloud_agnss.c
-	src/nrf_cloud_agnss_utils.c)
+	CONFIG_NRF_CLOUD_DOWNLOADS
+	common/src/nrf_cloud_download.c
+)
+
+zephyr_library_sources_ifdef(
+	CONFIG_NRF_CLOUD_COAP_DOWNLOADS
+	coap/src/nrf_cloud_coap_download.c
+)
+
+zephyr_library_sources_ifdef(
+	CONFIG_NRF_CLOUD_HTTPS_DOWNLOADS
+	common/src/nrf_cloud_https_download.c
+)
+if(CONFIG_NRF_CLOUD_AGNSS)
+	zephyr_library_sources(
+		common/src/nrf_cloud_agnss.c
+		common/src/nrf_cloud_agnss_utils.c
+	)
+	zephyr_library_sources_ifdef(
+		CONFIG_NRF_CLOUD_MQTT
+		mqtt/src/nrf_cloud_agnss.c)
+endif()
+
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_PGPS
-	src/nrf_cloud_agnss.c
-	src/nrf_cloud_agnss_utils.c
-	src/nrf_cloud_pgps.c
-	src/nrf_cloud_pgps_utils.c
-	src/nrf_cloud_download.c)
-zephyr_library_sources_ifdef(
-	CONFIG_NRF_CLOUD_LOCATION
-	src/nrf_cloud_location.c)
+	common/src/nrf_cloud_pgps.c
+	common/src/nrf_cloud_pgps_utils.c
+# this is on purpose, P-GPS uses some AGNSS functions, even if AGNSS is not enabled
+	common/src/nrf_cloud_agnss.c
+	common/src/nrf_cloud_agnss_utils.c
+)
+
+if(CONFIG_NRF_CLOUD_PGPS)
+	zephyr_library_sources_ifdef(
+		CONFIG_NRF_CLOUD_MQTT
+		mqtt/src/nrf_cloud_pgps.c)
+endif()
+
+if(CONFIG_NRF_CLOUD_LOCATION)
+  zephyr_library_sources(
+    common/src/nrf_cloud_location.c
+  )
+	zephyr_library_sources_ifdef(
+		CONFIG_NRF_CLOUD_MQTT
+		mqtt/src/nrf_cloud_location.c)
+endif()
+
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_FOTA
-	src/nrf_cloud_fota.c
-	src/nrf_cloud_fota_common.c
-	src/nrf_cloud_download.c)
+	mqtt/src/nrf_cloud_fota.c
+	common/src/nrf_cloud_fota_common.c
+)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_FOTA_POLL
-	src/nrf_cloud_download.c
-	src/nrf_cloud_fota_common.c
-	src/nrf_cloud_fota_poll.c)
+	common/src/nrf_cloud_fota_common.c
+	common/src/nrf_cloud_fota_poll.c
+)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_REST
-	src/nrf_cloud_rest.c)
-zephyr_compile_definitions_ifdef(
-	CONFIG_NRF_CLOUD_COAP)
+	rest/src/nrf_cloud_rest.c
+)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_COAP
-	coap/src/agnss_encode.c
-	coap/src/nrf_cloud_coap_transport.c
-	coap/src/coap_codec.c
-	coap/src/nrfc_dtls.c
-	coap/src/ground_fix_encode.c
-	coap/src/ground_fix_decode.c
-	coap/src/msg_encode.c
 	coap/src/nrf_cloud_coap.c
-	coap/src/pgps_decode.c
-	coap/src/pgps_encode.c
-	src/nrf_cloud_dns.c)
+	coap/src/nrf_cloud_coap_transport.c
+	coap/src/nrf_cloud_coap_codec.c
+	coap/src/nrf_cloud_dtls.c
+	coap/generated/src/agnss_encode.c
+	coap/generated/src/ground_fix_encode.c
+	coap/generated/src/ground_fix_decode.c
+	coap/generated/src/msg_encode.c
+	coap/generated/src/pgps_decode.c
+	coap/generated/src/pgps_encode.c
+	common/src/nrf_cloud_dns.c)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_CHECK_CREDENTIALS
-	src/nrf_cloud_credentials.c)
+	common/src/nrf_cloud_credentials.c)
 zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES
-	src/nrf_cloud_credentials.c)
-zephyr_include_directories(./include coap/include)
+	common/src/nrf_cloud_credentials.c)
+zephyr_include_directories(include common/include coap/include mqtt/include coap/generated/include)
 if(CONFIG_MCUBOOT_IMG_MANAGER)
   zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
+endif()
+
+if(CONFIG_NRF_CLOUD_ALERT)
+	zephyr_library_sources(
+		common/src/nrf_cloud_alert.c
+	)
+	zephyr_library_sources_ifdef(
+		CONFIG_NRF_CLOUD_COAP
+		coap/src/nrf_cloud_alert.c)
+	zephyr_library_sources_ifdef(
+		CONFIG_NRF_CLOUD_MQTT
+		mqtt/src/nrf_cloud_alert.c)
+	zephyr_library_sources_ifdef(
+		CONFIG_NRF_CLOUD_REST
+		rest/src/nrf_cloud_alert.c)
+endif()
+
+if(CONFIG_NRF_CLOUD_LOG_DIRECT)
+	zephyr_library_sources_ifdef(
+		CONFIG_NRF_CLOUD_COAP
+		coap/src/nrf_cloud_log.c)
+	zephyr_library_sources_ifdef(
+		CONFIG_NRF_CLOUD_MQTT
+		mqtt/src/nrf_cloud_log.c)
+	zephyr_library_sources_ifdef(
+		CONFIG_NRF_CLOUD_REST
+		rest/src/nrf_cloud_log.c)
 endif()
