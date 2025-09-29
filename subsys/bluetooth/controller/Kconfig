@@ -538,6 +538,18 @@ config BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
 config BT_CTLR_EXTENDED_FEAT_SET
 	select EXPERIMENTAL
 
+config BT_CTLR_SDC_EXTENDED_FEAT_MAX_REMOTE_PAGE
+	int "Number of supported remote feature pages"
+	depends on BT_CTLR_EXTENDED_FEAT_SET
+	range 1 10
+	default BT_LE_LOCAL_MINIMUM_REQUIRED_FEATURE_PAGE if BT_LE_LOCAL_MINIMUM_REQUIRED_FEATURE_PAGE > 0
+	default 1
+	help
+	  Configures the maximum number of remote Extended Feature Set feature pages
+	  that can be stored inside the controller. This value also sets the maximum
+	  page that will be requested by the HCI_LE_Read_All_Remote_Features command.
+	  Each feature page requires approximately 24 bytes of RAM per link.
+
 config BT_CTLR_FRAME_SPACE_UPDATE
 	select EXPERIMENTAL
 
