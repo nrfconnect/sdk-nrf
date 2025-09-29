@@ -486,7 +486,7 @@ Update the nRF54H20 IronSide SE binaries
    It is not possible to update the nRF54H20 binaries from a SUIT-based (up to 0.9.6) to an IronSide-SE-based (2x.x.x) version.
 
 To update the nRF54H20 IronSide SE binaries (versions 2x.x.x, based on IronSide SE) using the debugger on a nRF54H20 SoC, use the west ``ncs-ironside-se-update`` command.
-This command takes the nRF54H20 SoC binary ZIP file and uses the IronSide SE update service to update both the IronSide SE and IronSide SE Recovery (or optionally just one of them).
+This command takes the nRF54H20 IronSide SE binary ZIP file and uses the IronSide SE update service to update both the IronSide SE and IronSide SE Recovery (or optionally just one of them).
 
 For more information on how to use the ``ncs-ironside-se-update`` command, see :ref:`ug_nrf54h20_ironside_se_update`.
 For more information on the nRF54H20 IronSide SE binaries, see :ref:`abi_compatibility`.

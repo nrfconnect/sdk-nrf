@@ -488,6 +488,10 @@ Glossary
       Audio LE reduces power consumption for audio transmission, allows for isochronous audio streams between a source and multiple sink devices, and enables broadcasting to an unlimited number of audio devices.
       The standard uses the new :term:`LC3 codec`.
 
+   Lifecycle states (LCS)
+      Device states that control security-related features, such as access to debug and programming interfaces.
+      For more information, see :ref:`ug_nrf54h20_architecture_lifecycle`.
+
    Link Layer (LL)
       "A control protocol for the link and physical layers that is carried over logical links in addition to user data."
       `Bluetooth Core Specification`_, Vol 1, Part A, Section 1.2.
