@@ -19,6 +19,23 @@ tests:
         - "idle_ppr: Run 0"
         - "idle_ppr: Run 1"
 
+  benchmarks.multicore.idle_ppr.idle_retained:
+    tags: ppk_power_measure
+    extra_args:
+      - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
+      - idle_ppr_CONF_FILE=prj_s2ram.conf
+      - remote_rad_CONF_FILE=prj_s2ram.conf
+      - remote_ppr_CONF_FILE=prj_s2ram.conf
+      - idle_ppr_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - remote_rad_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - remote_ppr_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_ppr_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle_retained.overlay"
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_ppr_and_idle"
+
   benchmarks.multicore.idle_ppr.idle:
     tags: ppk_power_measure
     extra_args:

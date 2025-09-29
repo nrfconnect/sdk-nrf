@@ -52,6 +52,19 @@ tests:
       - idle_SNIPPET=nordic-ppr-xip
       - CONFIG_FIRST_SLEEP_OFFSET=y
 
+  benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad_retained:
+    harness: console
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - CONFIG_FIRST_SLEEP_OFFSET=y
+      - idle_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle_retained.overlay"
+      - remote_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle_retained.overlay"
+
   benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad:
     harness: console
     platform_allow:

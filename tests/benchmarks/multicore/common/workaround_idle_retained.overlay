@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Increase min-residency-us for idle_cache_disabled and s2ram
+ * so the cpu enters idle_cache_retained state.
+ */
+
+/ {
+	cpus {
+		power-states {
+			idle_cache_disabled: idle_cache_disabled {
+				min-residency-us = <790000>;
+			};
+
+			s2ram: s2ram {
+				min-residency-us = <800000>;
+			};
+		};
+	};
+};
