@@ -281,6 +281,13 @@ manifest:
       groups:
         - nrfx
       revision: 98167a75a6ed8eb530c4e2977118619b51fd75b0
+    - name: bspexternal
+      repo-path: nrfx
+      remote: ncs
+      path: modules/hal/bspexternal
+      groups:
+        - nrfx
+      revision: nrfx-bsp-nrf54lm20
 
   # West-related configuration for the nrf repository.
   self:
