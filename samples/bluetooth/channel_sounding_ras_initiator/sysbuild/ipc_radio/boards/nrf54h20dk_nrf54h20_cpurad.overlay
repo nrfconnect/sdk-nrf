@@ -15,3 +15,11 @@
 		multiplexing-mode = <0>;
 	};
 };
+
+&gpiote130 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
