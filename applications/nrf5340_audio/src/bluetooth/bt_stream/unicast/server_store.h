@@ -113,21 +113,23 @@ int srv_store_location_set(struct bt_conn const *const conn, enum bt_audio_dir d
 			   enum bt_audio_location loc);
 
 /**
- * @brief	Check which codec capabilities	 are valid.
+ * @brief	Check which codec capabilities are valid.
  *
  * @note	srv_store_lock() must be called before accessing this function.
  *
  * @param[in] conn  Pointer to the connection.
  * @param[in] dir   Direction to check.
  * @param[out] valid_codec_caps  Bitfield will be populated with valid codec capabilities.
- * @param[in] client_supp_cfgs  The supported configs of the unicast client.
+ * @param[in] client_supp_cfgs  Supported configs of the unicast client (Reserved).
+ * @param[in] num_client_supp_cfgs  Number of supported configs in the array (Reserved).
  *
  * @return	0 on success.
  * @return	-ENOENT Server not found.
  */
 int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_audio_dir dir,
 				    uint32_t *valid_codec_caps,
-				    struct client_supp_configs const *const client_supp_cfgs);
+				    struct client_supp_configs const **const client_supp_cfgs,
+				    uint8_t num_client_supp_cfgs);
 
 /**
  * @brief	Get a server based on stream pointer.
@@ -144,17 +146,14 @@ int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 			      struct server_store **server);
 
 /**
- * @brief	Store the available audio context for a server based on conn dst address.
+ * @brief	Get the number of endpoints in a given state across all stored servers.
  *
  * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] conn  Pointer to the connection.
- * @param[in] snk_ctx   Sink context.
- * @param[out] src_ctx  Source context.
+ * @param[in] state  State to search for.
+ * @param[in] dir   Direction to filter on.
  *
- * @return	0 on success.
- * @return	-EINVAL Illegal argument(s)
- * @return	-ENOENT Server not found.
+ * @return	Number of endpoints in the given state and direction.
  */
 int srv_store_all_ep_state_count(enum bt_bap_ep_state state, enum bt_audio_dir dir);
 
@@ -203,6 +202,15 @@ int srv_store_codec_cap_set(struct bt_conn const *const conn, enum bt_audio_dir 
  */
 int srv_store_from_addr_get(bt_addr_le_t const *const addr, struct server_store **server);
 
+/**
+ * @brief	Find if a stored server exists based on address.
+ *
+ * @param[in] addr  Pointer to the address to find the server for.
+ *
+ * @note	srv_store_lock() must be called before accessing this function.
+ *
+ * @return	true if the server exists, false otherwise.
+ */
 bool srv_store_server_exists(bt_addr_le_t const *const addr);
 
 /**
@@ -284,6 +292,9 @@ int srv_store_add_by_addr(const bt_addr_le_t *addr);
 /**
  * @brief	Update the conn pointer of an existing server based on address.
  *
+ * @param[in] conn  Pointer to the connection to write.
+ * @param[in] addr  Pointer to the address associated with the server to update.
+ *
  *  * @note	This function can be used when a secure connection is established to an already
  * bonded device added by srv_store_add_by_addr(). srv_store_lock() must be called before accessing
  * this function.
@@ -297,6 +308,15 @@ int srv_store_add_by_addr(const bt_addr_le_t *addr);
  */
 int srv_store_conn_update(struct bt_conn *conn, bt_addr_le_t const *const addr);
 
+/**
+ * @brief	Clear the contents of a server based on conn pointer.
+ *
+ * @note	This function can be used in a disconnect callback to clear all the contents of a
+ * server. Must only be called when there are no active connections. srv_store_lock() must be called
+ * before accessing this function.
+ *
+ * @return 0 on success, negative error code on failure.
+ */
 int srv_store_clear_by_conn(struct bt_conn *conn);
 
 /**
@@ -314,6 +334,14 @@ int srv_store_clear_by_conn(struct bt_conn *conn);
  */
 int srv_store_remove_by_conn(struct bt_conn const *const conn);
 
+/**
+ * @brief	Remove a single stored server based on address
+ * @param[in] addr  Pointer to the address associated with the server to remove.
+ *
+ * @note	srv_store_lock() must be called before accessing this function.
+ *
+ * @return 0 on success, negative error code on failure.
+ */
 int srv_store_remove_by_addr(bt_addr_le_t const *const addr);
 
 /**

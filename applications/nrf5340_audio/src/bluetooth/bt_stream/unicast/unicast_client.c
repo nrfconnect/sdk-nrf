@@ -676,7 +676,7 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 	if (dir == BT_AUDIO_DIR_SINK && !err) {
 		uint32_t valid_sink_caps = 0;
 
-		ret = srv_store_valid_codec_cap_check(conn, dir, &valid_sink_caps, NULL);
+		ret = srv_store_valid_codec_cap_check(conn, dir, &valid_sink_caps, NULL, 0);
 		if (valid_sink_caps) {
 
 			/* Get the valid configuration to set for this stream and put that
@@ -743,7 +743,7 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 	} else if (dir == BT_AUDIO_DIR_SOURCE && !err) {
 		uint32_t valid_source_caps = 0;
 
-		ret = srv_store_valid_codec_cap_check(conn, dir, &valid_source_caps, NULL);
+		ret = srv_store_valid_codec_cap_check(conn, dir, &valid_source_caps, NULL, 0);
 		if (valid_source_caps) {
 			ret = bt_audio_codec_cfg_set_val(
 				&server->src.lc3_preset[0].codec_cfg, BT_AUDIO_CODEC_CFG_CHAN_ALLOC,

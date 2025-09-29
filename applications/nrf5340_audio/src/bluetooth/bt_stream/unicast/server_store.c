@@ -722,10 +722,15 @@ int srv_store_location_set(struct bt_conn const *const conn, enum bt_audio_dir d
 
 int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_audio_dir dir,
 				    uint32_t *valid_codec_caps,
-				    struct client_supp_configs const *const client_supp_cfgs)
+				    struct client_supp_configs const **const client_supp_cfgs,
+				    uint8_t num_client_supp_cfgs)
 {
 	valid_entry_check(__func__);
+	/* Ref: OCT-3480. These parameters can be checked to determine a full match of
+	 * client versus server(s) capabilities.
+	 */
 	ARG_UNUSED(client_supp_cfgs);
+	ARG_UNUSED(num_client_supp_cfgs);
 
 	int ret;
 
