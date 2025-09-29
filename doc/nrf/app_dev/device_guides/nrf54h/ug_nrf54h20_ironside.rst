@@ -458,6 +458,10 @@ This string is informational only, and no semantics should be attached to this p
 The |ISE| boot ROM code (SDROM) reports the status of an |ISE| update request through SICR.UROT.UPDATE.STATUS.
 The value of this register is copied to the |ISE| update status field of the boot report.
 
+.. note::
+   After an update is installed or attempted, |ISE| resets the update status to ``0xFFFFFFFF`` on the next boot.
+   This means that the update status is only valid for a single execution.
+
 UICR error description
 ======================
 
