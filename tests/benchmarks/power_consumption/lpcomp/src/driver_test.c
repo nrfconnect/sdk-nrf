@@ -12,15 +12,22 @@
 static const struct device *test_dev = DEVICE_DT_GET(DT_ALIAS(test_comp));
 static const struct gpio_dt_spec test_pin = GPIO_DT_SPEC_GET(DT_PATH(zephyr_user), test_gpios);
 
-volatile int counter;
+static volatile int counter;
+static volatile bool suspend_req;
 
 static void test_callback(const struct device *dev, void *user_data)
 {
 	int rc;
 
-	rc = pm_device_runtime_put(dev);
+	rc = pm_device_runtime_put_async(dev, K_NO_WAIT);
 	__ASSERT_NO_MSG(rc == 0);
 	counter++;
+}
+
+bool self_suspend_req(void)
+{
+	suspend_req = true;
+	return true;
 }
 
 void thread_definition(void)
@@ -37,6 +44,11 @@ void thread_definition(void)
 	k_msleep(10);
 
 	while (1) {
+		if (suspend_req) {
+			suspend_req = false;
+			k_thread_suspend(k_current_get());
+		}
+
 		rc = pm_device_runtime_get(test_dev);
 		__ASSERT_NO_MSG(rc == 0);
 		k_busy_wait(100);

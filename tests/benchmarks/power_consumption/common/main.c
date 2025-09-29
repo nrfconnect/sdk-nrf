@@ -22,24 +22,8 @@ __weak bool self_suspend_req(void)
 	return false;
 }
 
+/* Priority must be lower than main thread (default 0), and preemptible (>=0) */
 K_THREAD_DEFINE(thread_id, 1024, thread_definition, NULL, NULL, NULL, 5, 0, 0);
-
-void timer_handler(struct k_timer *dummy)
-{
-	if (state == true) {
-		state = false;
-		gpio_pin_set_dt(&led, 1);
-		k_thread_resume(thread_id);
-	} else {
-		state = true;
-		gpio_pin_set_dt(&led, 0);
-		if (self_suspend_req() == false) {
-			k_thread_suspend(thread_id);
-		}
-	}
-}
-
-K_TIMER_DEFINE(timer, timer_handler, NULL);
 
 int main(void)
 {
@@ -48,10 +32,19 @@ int main(void)
 	rc = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
 	__ASSERT_NO_MSG(rc == 0);
 
-	k_timer_start(&timer, K_SECONDS(1), K_SECONDS(1));
-
 	while (1) {
 		k_msleep(1000);
+		if (state == true) {
+			state = false;
+			gpio_pin_set_dt(&led, 1);
+			k_thread_resume(thread_id);
+		} else {
+			state = true;
+			gpio_pin_set_dt(&led, 0);
+			if (self_suspend_req() == false) {
+				k_thread_suspend(thread_id);
+			}
+		}
 	}
 	return 0;
 }
