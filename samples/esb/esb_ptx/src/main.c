@@ -14,6 +14,7 @@
 #include <zephyr/devicetree.h>
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
+#include <zephyr/pm/device_runtime.h>
 #include <dk_buttons_and_leds.h>
 #if defined(CONFIG_CLOCK_CONTROL_NRF2)
 #include <hal/nrf_lrcconf.h>
@@ -207,6 +208,18 @@ int main(void)
 	int err;
 
 	LOG_INF("Enhanced ShockBurst ptx sample");
+
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
+	const struct device *dtm_uart = DEVICE_DT_GET_OR_NULL(DT_CHOSEN(zephyr_console));
+
+	if (dtm_uart != NULL) {
+		int ret = pm_device_runtime_get(dtm_uart);
+
+		if (ret < 0) {
+			printk("Failed to get DTM UART runtime PM: %d\n", ret);
+		}
+	}
+#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
 
 	err = clocks_start();
 	if (err) {
