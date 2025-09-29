@@ -311,6 +311,7 @@ ZTEST(suite_server_store, test_pres_dly_simple)
 	test_1_cap_stream.bap_stream.group = (void *)0xaaaa;
 
 	struct bt_bap_qos_cfg_pref qos_cfg_pref_in;
+
 	qos_cfg_pref_in.pd_min = 1000;
 	qos_cfg_pref_in.pd_max = 4000;
 	qos_cfg_pref_in.pref_pd_min = 2000;
@@ -693,6 +694,7 @@ ZTEST(suite_server_store, test_conn_ptr_update)
 
 	const bt_addr_le_t addr = {.type = BT_ADDR_LE_PUBLIC,
 				   .a = {.val = {0x01, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA}}};
+
 	ret = srv_store_add_by_addr(&addr);
 	zassert_equal(ret, 0);
 
