@@ -433,7 +433,8 @@ static int32_t mpsl_lib_init_internal(void)
 #endif /* CONFIG_CLOCK_CONTROL_NRF && DT_NODE_EXISTS(DT_NODELABEL(hfxo)) */
 #endif /* !CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL */
 	if (IS_ENABLED(CONFIG_SOC_NRF_FORCE_CONSTLAT) &&
-		!IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX)) {
+		!IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX) &&
+		!IS_ENABLED(CONFIG_SOC_SERIES_NRF71X)) {
 		mpsl_pan_rfu();
 	}
 
@@ -576,7 +577,7 @@ int32_t mpsl_lib_uninit(void)
 #endif /* IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
 }
 
-#if defined(CONFIG_SOC_COMPATIBLE_NRF54LX)
+#if defined(CONFIG_SOC_COMPATIBLE_NRF54LX) || defined(CONFIG_SOC_SERIES_NRF71X)
 void mpsl_constlat_request_callback(void)
 {
 #if defined(CONFIG_NRFX_POWER)
@@ -594,7 +595,7 @@ void mpsl_lowpower_request_callback(void)
 	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_LOWPWR);
 #endif
 }
-#endif /* defined(CONFIG_SOC_COMPATIBLE_NRF54LX) */
+#endif /* defined(CONFIG_SOC_COMPATIBLE_NRF54LX) || defined(CONFIG_SOC_SERIES_NRF71X) */
 
 #if defined(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
 #define MPSL_INIT_LEVEL POST_KERNEL
