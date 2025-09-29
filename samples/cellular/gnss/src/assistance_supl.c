@@ -27,7 +27,7 @@ static ssize_t supl_read(void *p_buff, size_t nbytes, void *user_data)
 {
 	ARG_UNUSED(user_data);
 
-	ssize_t rc = recv(supl_fd, p_buff, nbytes, 0);
+	ssize_t rc = zsock_recv(supl_fd, p_buff, nbytes, 0);
 
 	if (rc < 0 && (errno == EAGAIN)) {
 		/* Return 0 to indicate a timeout. */
@@ -44,7 +44,7 @@ static ssize_t supl_write(const void *p_buff, size_t nbytes, void *user_data)
 {
 	ARG_UNUSED(user_data);
 
-	return send(supl_fd, p_buff, nbytes, 0);
+	return zsock_send(supl_fd, p_buff, nbytes, 0);
 }
 
 static int inject_agnss_type(void *agnss, size_t agnss_size, uint16_t type, void *user_data)
@@ -90,9 +90,9 @@ static int open_supl_socket(void)
 {
 	int err;
 	char port[6];
-	struct addrinfo *info;
+	struct zsock_addrinfo *info;
 
-	struct addrinfo hints = {
+	struct zsock_addrinfo hints = {
 		.ai_flags = AI_NUMERICSERV,
 		.ai_family = AF_UNSPEC, /* Both IPv4 and IPv6 addresses accepted. */
 		.ai_socktype = SOCK_STREAM
@@ -100,7 +100,7 @@ static int open_supl_socket(void)
 
 	snprintf(port, sizeof(port), "%d", SUPL_SERVER_PORT);
 
-	err = getaddrinfo(SUPL_SERVER, port, &hints, &info);
+	err = zsock_getaddrinfo(SUPL_SERVER, port, &hints, &info);
 	if (err) {
 		LOG_ERR("Failed to resolve hostname %s, error: %d", SUPL_SERVER, err);
 
@@ -110,11 +110,11 @@ static int open_supl_socket(void)
 	/* Not connected. */
 	err = -1;
 
-	for (struct addrinfo *addr = info; addr != NULL; addr = addr->ai_next) {
+	for (struct zsock_addrinfo *addr = info; addr != NULL; addr = addr->ai_next) {
 		char ip[INET6_ADDRSTRLEN] = { 0 };
 		struct sockaddr *const sa = addr->ai_addr;
 
-		supl_fd = socket(sa->sa_family, SOCK_STREAM, IPPROTO_TCP);
+		supl_fd = zsock_socket(sa->sa_family, SOCK_STREAM, IPPROTO_TCP);
 		if (supl_fd < 0) {
 			LOG_ERR("Failed to create socket, errno %d", errno);
 			goto cleanup;
@@ -126,21 +126,21 @@ static int open_supl_socket(void)
 			.tv_usec = 0,
 		};
 
-		err = setsockopt(supl_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+		err = zsock_setsockopt(supl_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
 		if (err) {
 			LOG_ERR("Failed to set socket timeout, errno %d", errno);
 			goto cleanup;
 		}
 
-		inet_ntop(sa->sa_family,
-			  (void *)&((struct sockaddr_in *)sa)->sin_addr,
-			  ip,
-			  INET6_ADDRSTRLEN);
+		zsock_inet_ntop(sa->sa_family,
+				(void *)&((struct sockaddr_in *)sa)->sin_addr,
+				ip,
+				INET6_ADDRSTRLEN);
 		LOG_INF("Connecting to %s port %d", ip, SUPL_SERVER_PORT);
 
-		err = connect(supl_fd, sa, addr->ai_addrlen);
+		err = zsock_connect(supl_fd, sa, addr->ai_addrlen);
 		if (err) {
-			close(supl_fd);
+			zsock_close(supl_fd);
 			supl_fd = -1;
 
 			/* Try the next address. */
@@ -152,13 +152,13 @@ static int open_supl_socket(void)
 	}
 
 cleanup:
-	freeaddrinfo(info);
+	zsock_freeaddrinfo(info);
 
 	if (err) {
 		/* Unable to connect, close socket. */
 		LOG_ERR("Could not connect to SUPL server");
 		if (supl_fd > -1) {
-			close(supl_fd);
+			zsock_close(supl_fd);
 			supl_fd = -1;
 		}
 		return -1;
@@ -169,7 +169,7 @@ cleanup:
 
 static void close_supl_socket(void)
 {
-	if (close(supl_fd) < 0) {
+	if (zsock_close(supl_fd) < 0) {
 		LOG_ERR("Failed to close SUPL socket");
 	}
 }
