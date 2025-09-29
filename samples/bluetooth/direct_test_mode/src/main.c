@@ -6,6 +6,7 @@
 
 #include <zephyr/device.h>
 #include <zephyr/sys/printk.h>
+#include <zephyr/pm/device_runtime.h>
 
 #include "transport/dtm_transport.h"
 
@@ -15,6 +16,18 @@ int main(void)
 	union dtm_tr_packet cmd;
 
 	printk("Starting Direct Test Mode sample\n");
+
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
+	const struct device *dtm_uart = DEVICE_DT_GET_OR_NULL(DT_CHOSEN(ncs_dtm_uart));
+
+	if (dtm_uart != NULL) {
+		int ret = pm_device_runtime_get(dtm_uart);
+
+		if (ret < 0) {
+			printk("Failed to get DTM UART runtime PM: %d\n", ret);
+		}
+	}
+#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
 
 	err = dtm_tr_init();
 	if (err) {
