@@ -8,11 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#if defined(CONFIG_POSIX_API)
-#include <zephyr/posix/arpa/inet.h>
-#else
 #include <zephyr/net/socket.h>
-#endif
 
 #include "lte_params.h"
 #include "utils.h"
@@ -280,9 +276,9 @@ static int parse_ip_address(struct supl_session_ctx *session_ctx,
 		addr_buf[i - 1] = buf[i];
 	}
 
-	if (inet_pton(AF_INET, addr_buf, session_ctx->device_id)) {
+	if (zsock_inet_pton(AF_INET, addr_buf, session_ctx->device_id)) {
 		session_ctx->device_id_choice = LIBSUPL_ID_CHOICE_IPV4;
-	} else if (inet_pton(AF_INET6, addr_buf, session_ctx->device_id)) {
+	} else if (zsock_inet_pton(AF_INET6, addr_buf, session_ctx->device_id)) {
 		session_ctx->device_id_choice = LIBSUPL_ID_CHOICE_IPV6;
 	} else {
 		return -1;
