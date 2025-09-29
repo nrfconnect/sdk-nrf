@@ -172,3 +172,22 @@
     - event_manager_proxy.icmsg.cpuflpr
   platforms:
     - nrf54lv10dk/nrf54lv10a/cpuapp
+
+- scenarios:
+    - sample.dfu.dfu_multi_image.encryption
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8481"
+
+- scenarios:
+    - sample.debug.memfault
+    - sample.debug.memfault.etb
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8480"
+
+- scenarios:
+    - sample.bluetooth.peripheral_mds
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8480"
