@@ -49,7 +49,9 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 /* 4 Mb RX wait for acknowledgment time-out value. */
 #define RX_ACK_TIMEOUT_US_4MBPS 160
 
-/* Minimum retransmit time */
+/* Minimum retransmit time for the worst case scenario = 435.
+ * In general = wait_for_ack_timeout_us + ADDR_EVENT_LATENCY_US + ramp_up.
+ */
 #define RETRANSMIT_DELAY_MIN 435
 
 /* Radio Tx ramp-up time in microseconds. */
@@ -1029,8 +1031,6 @@ static bool update_radio_parameters(void)
 	params_valid &= update_radio_protocol();
 	params_valid &= update_radio_crc();
 	update_rf_payload_format(esb_cfg.payload_length);
-	params_valid &=
-	    (esb_cfg.retransmit_delay >= RETRANSMIT_DELAY_MIN);
 
 	return params_valid;
 }
@@ -1899,7 +1899,17 @@ int esb_init(const struct esb_config *config)
 	memset(rx_pipe_info, 0, sizeof(rx_pipe_info));
 	memset(pids, 0, sizeof(pids));
 
-	update_radio_parameters();
+	if (!update_radio_parameters()) {
+		LOG_ERR("Failed to update radio parameters");
+		return -EINVAL;
+	}
+
+	if (esb_cfg.retransmit_delay < RETRANSMIT_DELAY_MIN) {
+		LOG_ERR("Configured retransmission delay is below the required minimum of %d us",
+			RETRANSMIT_DELAY_MIN);
+
+		return -EINVAL;
+	}
 
 	/* Configure radio address registers according to ESB default values */
 	nrf_radio_base0_set(NRF_RADIO, 0xE7E7E7E7);
