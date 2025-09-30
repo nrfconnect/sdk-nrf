@@ -61,7 +61,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: v3.5.99-ncs1-4
+      revision: v3.5.99-ncs1-4-NCSDK-34113-2-preview1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -142,7 +142,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 4fd27c5a8bd45c75893fc30b734afeb46a81553c
+      revision: v2.6.4-NCSDK-34113-2-preview1
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -181,7 +181,7 @@ manifest:
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: e5d86ebfadebfb093bd99d5594813b1a6ff95f1c
+      revision: ncs-v2.6-branch-NCSDK-34113-2-preview1
       submodules: true
       groups:
         - dragoon
@@ -196,7 +196,7 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: v2.6.4
+      revision: v2.6.4-NCSDK-34113-2-preview1
       groups:
         - sidewalk
     - name: find-my
