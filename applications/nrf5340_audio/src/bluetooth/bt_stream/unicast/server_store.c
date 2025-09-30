@@ -197,6 +197,8 @@ static void supported_sample_rates_print(uint16_t supported_sample_rates, enum b
 		LOG_DBG("Unicast_server supports: %s kHz in sink direction", supported_str);
 	} else if (dir == BT_AUDIO_DIR_SOURCE) {
 		LOG_DBG("Unicast_server supports: %s kHz in source direction", supported_str);
+	} else {
+		/* Do nothing */
 	}
 }
 
