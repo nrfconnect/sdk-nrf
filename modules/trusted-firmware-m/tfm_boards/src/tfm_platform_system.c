@@ -16,6 +16,8 @@
 #include <tfm_hal_isolation.h>
 
 #include <hal/nrf_gpio.h>
+#include <hal/nrf_regulators.h>
+
 #include "handle_attr.h"
 
 #if NRF_ALLOW_NON_SECURE_FAULT_HANDLING
@@ -26,6 +28,15 @@ void tfm_platform_hal_system_reset(void)
 {
 	/* Reset the system */
 	NVIC_SystemReset();
+}
+
+void tfm_platform_hal_system_off(void)
+{
+	__disable_irq();
+	nrf_regulators_system_off(NRF_REGULATORS);
+
+	/* This should be unreachable */
+	return TFM_PLATFORM_ERR_SUCCESS;
 }
 
 #if CONFIG_FW_INFO
