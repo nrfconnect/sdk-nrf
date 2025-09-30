@@ -24,9 +24,17 @@ See the following user guides for more information on adding, configuring, and t
 When you add MCUboot to your application build, the files that can be used for firmware over-the-air (FOTA) upgrades are automatically generated.
 See the `MCUboot output build files`_ page for a list of all these files.
 
-.. note::
-   When you use MCUboot in the direct-xip mode, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT` sysbuild Kconfig option to let the build system generate an additional set of files for the second application slot.
-   These files are identical to the ones listed on the `MCUboot output build files`_ page, but they are placed in the :file:`mcuboot_secondary_app` folder for the main application, while the files for the remaining applications are located in the respective :file:`<application>_secondary_app` folder.
-   For example, :file:`mcuboot_secondary_app/zephyr/zephyr.signed.bin` is created and placed in the second slot on the target device when the :file:`zephyr.signed.bin` file is placed in the first slot.
-   Similarly, the :file:`ipc_radio_secondary_app/zephyr/zephyr.signed.bin` file is created and placed in the second slot on the target device when the :file:`ipc_radio/zephyr/zephyr.signed.bin` file is placed in the first slot.
-   For more information about the direct-xip mode, see the *Equal slots (direct-xip)* section in the :doc:`Bootloader documentation <design>`.
+Using MCUboot in the direct-xip mode
+************************************
+
+When you use MCUboot in the direct-xip mode, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT` sysbuild Kconfig option to let the build system generate an additional set of files for the second application slot.
+For platforms other than nRF54H20, these files are identical to those listed on the `MCUboot output build files`_ page.
+However, they are placed in the :file:`mcuboot_secondary_app` folder for the main application, while the files for the remaining applications are located in their respective :file:`<application>_secondary_app` folders.
+For example, the :file:`mcuboot_secondary_app/zephyr/zephyr.signed.bin` file is created and placed in the second slot on the target device when the :file:`zephyr.signed.bin` file is placed in the first slot.
+Similarly, the :file:`ipc_radio_secondary_app/zephyr/zephyr.signed.bin` file is created and placed in the second slot on the target device when the :file:`ipc_radio/zephyr/zephyr.signed.bin` file is placed in the first slot.
+
+For the nRF54H20 SoC, the merged-slot variant is used, in which the application and radio core images are merged into a single image.
+In this case, the update files are located in the common :file:`zephyr` directory, rather than within any specific application folder.
+The file used for the primary application is :file:`zephyr.signed.bin`, while the file used for the secondary application is :file:`zephyr_secondary_app.signed.bin`.
+
+For more information about the direct-xip mode, see the *Equal slots (direct-xip)* section in the :doc:`Bootloader documentation <design>`.
