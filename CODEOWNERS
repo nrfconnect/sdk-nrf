@@ -13,6 +13,7 @@
 /Jenkinsfile                              @thst-nordic
 /west.yml                                 @carlescufi @tejlmand
 /west-test.yml                            @thst-nordic
+/ncs-2.6.4-branch-cherry-picks.txt        @cvinayak
 
 # CI specific west
 /test-manifests/99-default-test-nrf.yml     @thst-nordic
