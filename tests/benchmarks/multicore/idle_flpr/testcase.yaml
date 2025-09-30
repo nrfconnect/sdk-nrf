@@ -26,10 +26,13 @@ tests:
   benchmarks.multicore.idle_flpr.idle_retained:
     tags: ppk_power_measure
     extra_args:
+      - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
       - idle_flpr_CONF_FILE=prj_s2ram.conf
       - remote_flpr_CONF_FILE=prj_s2ram.conf
+      - remote_rad_CONF_FILE=prj_s2ram.conf
       - idle_flpr_CONFIG_TEST_SLEEP_DURATION_MS=500
       - remote_flpr_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - remote_rad_CONFIG_TEST_SLEEP_DURATION_MS=500
       - idle_flpr_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle_retained.overlay"
     harness: pytest
     harness_config:
@@ -40,10 +43,13 @@ tests:
   benchmarks.multicore.idle_flpr.idle:
     tags: ppk_power_measure
     extra_args:
+      - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
       - idle_flpr_CONF_FILE=prj_s2ram.conf
       - remote_flpr_CONF_FILE=prj_s2ram.conf
+      - remote_rad_CONF_FILE=prj_s2ram.conf
       - idle_flpr_CONFIG_TEST_SLEEP_DURATION_MS=500
       - remote_flpr_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - remote_rad_CONFIG_TEST_SLEEP_DURATION_MS=500
       - idle_flpr_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle.overlay"
     harness: pytest
     harness_config:
@@ -54,8 +60,10 @@ tests:
   benchmarks.multicore.idle_flpr.s2ram:
     tags: ppk_power_measure
     extra_args:
+      - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
       - idle_flpr_CONF_FILE=prj_s2ram.conf
       - remote_flpr_CONF_FILE=prj_s2ram.conf
+      - remote_rad_CONF_FILE=prj_s2ram.conf
     harness: pytest
     harness_config:
       fixture: ppk_power_measure
