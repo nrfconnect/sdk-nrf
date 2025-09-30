@@ -57,7 +57,7 @@ BUILD_ASSERT(CONFIG_BT_ISO_MAX_CIG == 1, "Only one CIG is supported");
 
 static le_audio_receive_cb receive_cb;
 
-static struct bt_bap_unicast_group *unicast_group;
+static struct bt_cap_unicast_group *unicast_group;
 static bool unicast_group_created;
 
 static bool playing_state = true;
@@ -126,13 +126,13 @@ static void cap_proc_waiting_check(void)
 static void create_group(void)
 {
 	int ret;
-	struct bt_bap_unicast_group_stream_pair_param
+	struct bt_cap_unicast_group_stream_pair_param
 		pair_params[CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
-	struct bt_bap_unicast_group_stream_param
+	struct bt_cap_unicast_group_stream_param
 		group_sink_stream_params[CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
-	struct bt_bap_unicast_group_stream_param
+	struct bt_cap_unicast_group_stream_param
 		group_source_stream_params[CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
-	struct bt_bap_unicast_group_param group_param;
+	struct bt_cap_unicast_group_param group_param;
 
 	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
 	if (ret < 0) {
@@ -203,10 +203,10 @@ static void create_group(void)
 				LOG_DBG("Sink EP %d has no valid preset, skipping", j);
 				continue;
 			}
-			group_sink_stream_params[group_sink_iterator].qos =
+			group_sink_stream_params[group_sink_iterator].qos_cfg =
 				&tmp_server->snk.lc3_preset[j].qos;
 			group_sink_stream_params[group_sink_iterator].stream =
-				&tmp_server->snk.cap_streams[j].bap_stream;
+				&tmp_server->snk.cap_streams[j];
 			group_sink_iterator++;
 		}
 
@@ -218,10 +218,10 @@ static void create_group(void)
 				LOG_DBG("Source EP %d has no valid preset, skipping", j);
 				continue;
 			}
-			group_source_stream_params[group_source_iterator].qos =
+			group_source_stream_params[group_source_iterator].qos_cfg =
 				&tmp_server->src.lc3_preset[j].qos;
 			group_source_stream_params[group_source_iterator].stream =
-				&tmp_server->src.cap_streams[j].bap_stream;
+				&tmp_server->src.cap_streams[j];
 			group_source_iterator++;
 		}
 	}
@@ -239,10 +239,11 @@ static void create_group(void)
 		bool source_found = false;
 		struct server_store *sink_server = NULL;
 
-		ret = srv_store_from_stream_get(group_sink_stream_params[i].stream, &sink_server);
+		ret = srv_store_from_stream_get(&group_sink_stream_params[i].stream->bap_stream,
+						&sink_server);
 		if (ret < 0) {
 			LOG_ERR("Failed to get server from sink stream %p: %d",
-				(void *)group_sink_stream_params[i].stream, ret);
+				(void *)&group_sink_stream_params[i].stream->bap_stream, ret);
 			srv_store_unlock();
 			return;
 		}
@@ -251,12 +252,12 @@ static void create_group(void)
 			/* Check if the source stream belongs to the same device
 			 */
 			struct server_store *source_server = NULL;
-
-			ret = srv_store_from_stream_get(group_source_stream_params[j].stream,
-							&source_server);
+			ret = srv_store_from_stream_get(
+				&group_source_stream_params[j].stream->bap_stream, &source_server);
 			if (ret < 0) {
 				LOG_ERR("Failed to get server from source stream %p: %d",
-					(void *)group_source_stream_params[j].stream, ret);
+					(void *)&group_source_stream_params[j].stream->bap_stream,
+					ret);
 				srv_store_unlock();
 				return;
 			}
@@ -306,7 +307,7 @@ static void create_group(void)
 		group_param.packing = BT_ISO_PACKING_SEQUENTIAL;
 	}
 
-	ret = bt_bap_unicast_group_create(&group_param, &unicast_group);
+	ret = bt_cap_unicast_group_create(&group_param, &unicast_group);
 	if (ret) {
 		LOG_ERR("Failed to create unicast group: %d", ret);
 	} else {
@@ -315,6 +316,29 @@ static void create_group(void)
 	}
 
 	srv_store_unlock();
+}
+
+static bool stream_in_group_check(struct bt_cap_stream *stream, void *user_data)
+{
+	struct server_store *tmp_server = (struct server_store *)user_data;
+
+	for (int j = 0; j < ARRAY_SIZE(tmp_server->snk.cap_streams); j++) {
+		if (stream == &tmp_server->snk.cap_streams[j]) {
+			LOG_DBG("Sink stream %p already in unicast group, skipping",
+				(void *)stream);
+			return false;
+		}
+	}
+
+	for (int j = 0; j < ARRAY_SIZE(tmp_server->src.cap_streams); j++) {
+		if (stream == &tmp_server->src.cap_streams[j]) {
+			LOG_DBG("Source stream %p already in unicast group, skipping",
+				(void *)stream);
+			return false;
+		}
+	}
+
+	return true;
 }
 
 static void cap_start_worker(struct k_work *work)
@@ -328,8 +352,15 @@ static void cap_start_worker(struct k_work *work)
 	}
 
 	uint8_t group_length = 0;
+	struct bt_cap_unicast_group_info info;
 
-	group_length = sys_slist_len(&unicast_group->streams);
+	ret = bt_cap_unicast_group_get_info(unicast_group, &info);
+	if (ret) {
+		LOG_ERR("Failed to get unicast group info: %d", ret);
+		return;
+	}
+
+	group_length = sys_slist_len(&info.unicast_group->streams);
 	if (group_length >= CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT) {
 		/* The group is as full as it can get, start the relevant streams */
 		goto start_streams;
@@ -354,7 +385,7 @@ static void cap_start_worker(struct k_work *work)
 		ret = srv_store_server_get(&tmp_server, i);
 		if (ret < 0) {
 			LOG_ERR("Failed to get server store from index %d: %d", i, ret);
-			goto start_streams;
+			continue;
 		}
 
 		/* Check that the server is connected */
@@ -380,35 +411,12 @@ static void cap_start_worker(struct k_work *work)
 			continue;
 		}
 
-		bool server_found = false;
-		struct bt_bap_stream *stream_element;
-
 		/* Check each of the streams in the unicast_group against all of the streams in the
 		 * server
 		 */
-		SYS_SLIST_FOR_EACH_CONTAINER(&unicast_group->streams, stream_element, _node) {
-			for (int j = 0; j < ARRAY_SIZE(tmp_server->snk.cap_streams); j++) {
-				if (memcmp(stream_element,
-					   &tmp_server->snk.cap_streams[j].bap_stream,
-					   sizeof(struct bt_bap_stream)) == 0) {
-					LOG_DBG("Server %d already in unicast group, skipping", i);
-					server_found = true;
-					break;
-				}
-			}
-
-			for (int j = 0; j < ARRAY_SIZE(tmp_server->src.cap_streams); j++) {
-				if (memcmp(stream_element,
-					   &tmp_server->src.cap_streams[j].bap_stream,
-					   sizeof(struct bt_bap_stream)) == 0) {
-					LOG_DBG("Server %d already in unicast group, skipping", i);
-					server_found = true;
-					break;
-				}
-			}
-		}
-
-		if (!server_found) {
+		ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_in_group_check,
+							  tmp_server);
+		if (ret == -ECANCELED) {
 			LOG_INF("Server %d not found in unicast group, will stop the current "
 				"streams and create a new group",
 				i);
@@ -826,6 +834,15 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 }
 #endif /* CONFIG_BT_AUDIO_TX */
 
+static bool new_pres_dly_us_set(struct bt_cap_stream *stream, void *user_data)
+{
+	uint32_t *new_pres_dly_us = (uint32_t *)user_data;
+
+	stream->bap_stream.qos->pd = *new_pres_dly_us;
+
+	return false;
+}
+
 static void stream_configured_cb(struct bt_bap_stream *stream,
 				 const struct bt_bap_qos_cfg_pref *pref)
 {
@@ -895,11 +912,8 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 			existing_pres_dly_us, new_pres_dly_us);
 		/* Should stop all running streams to update all streams in group */
 
-		struct bt_bap_stream *stream_element;
-
-		SYS_SLIST_FOR_EACH_CONTAINER(&unicast_group->streams, stream_element, _node) {
-			stream_element->qos->pd = new_pres_dly_us;
-		}
+		bt_cap_unicast_group_foreach_stream(unicast_group, new_pres_dly_us_set,
+						    &new_pres_dly_us);
 	}
 
 	le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, stream->conn, stream, dir);
@@ -980,6 +994,17 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn, stream, dir);
 }
 
+static bool all_streams_released_check(struct bt_cap_stream *stream, void *user_data)
+{
+	if (stream->bap_stream.ep != NULL) {
+		LOG_DBG("stream %p is not released", stream);
+		/* Found a stream that is not released, will stop iterating */
+		return true;
+	}
+
+	return false;
+}
+
 static void stream_released_cb(struct bt_bap_stream *stream)
 {
 	int ret;
@@ -989,19 +1014,14 @@ static void stream_released_cb(struct bt_bap_stream *stream)
 	/* Check if unicast_group_recreate has been requested */
 	if (unicast_group_created == false) {
 		/* Check if all streams have been released, only delete group if they all are */
-		struct bt_bap_stream *stream_element;
-
-		SYS_SLIST_FOR_EACH_CONTAINER(&unicast_group->streams, stream_element, _node) {
-			/* If a stream has an endpoint, it is not ready to be removed
-			 * from a group, as it is not in an idle state
-			 */
-			if (stream_element->ep != NULL) {
-				LOG_DBG("stream %p is not released", stream);
-				return;
-			}
+		ret = bt_cap_unicast_group_foreach_stream(unicast_group, all_streams_released_check,
+							  NULL);
+		if (ret == -ECANCELED) {
+			LOG_DBG("Not all streams have been released, not deleting group");
+			return;
 		}
 
-		ret = bt_bap_unicast_group_delete(unicast_group);
+		ret = bt_cap_unicast_group_delete(unicast_group);
 		if (ret) {
 			LOG_ERR("Failed to delete unicast group: %d", ret);
 		}
