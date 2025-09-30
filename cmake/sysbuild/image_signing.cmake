@@ -10,6 +10,8 @@
 # Since this file is brought in via include(), we do the work in a
 # function to avoid polluting the top-level scope.
 
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
+
 function(zephyr_runner_file type path)
   # Property magic which makes west flash choose the signed build
   # output of a given type.
@@ -87,7 +89,7 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_rom_command)
     if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
       dt_chosen(code_partition PROPERTY "zephyr,code-partition")
-      dt_reg_addr(code_partition_offset PATH "${code_partition}" REQUIRED)
+      dt_partition_addr(code_partition_offset PATH "${code_partition}" REQUIRED)
       set(imgtool_rom_command --rom-fixed ${code_partition_offset})
     endif()
     set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${slot_size} --header-size ${CONFIG_ROM_START_OFFSET} ${imgtool_rom_command})
