@@ -16,6 +16,9 @@
 #include <tfm_hal_isolation.h>
 
 #include <hal/nrf_gpio.h>
+#include <hal/nrf_regulators.h>
+#include <helpers/nrfx_ram_ctrl.h>
+
 #include "handle_attr.h"
 
 #if NRF_ALLOW_NON_SECURE_FAULT_HANDLING
@@ -27,6 +30,20 @@ void tfm_platform_hal_system_reset(void)
 	/* Reset the system */
 	NVIC_SystemReset();
 }
+
+#if TFM_NRF_SYSTEM_OFF_SERVICE
+enum tfm_platform_err_t tfm_platform_hal_system_off(void)
+{
+	__disable_irq();
+
+	nrfx_ram_ctrl_retention_enable_all_set(false);
+
+	nrf_regulators_system_off(NRF_REGULATORS);
+
+	/* This should be unreachable */
+	return TFM_PLATFORM_ERR_SYSTEM_ERROR;
+}
+#endif /* TFM_NRF_SYSTEM_OFF_SERVICE */
 
 #if CONFIG_FW_INFO
 static enum tfm_platform_err_t tfm_platform_hal_fw_info_service(psa_invec *in_vec,
