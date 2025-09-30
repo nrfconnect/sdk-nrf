@@ -131,7 +131,8 @@
 # ec0b9966b4 Bluetooth: radio_notification_conn_cb for 54 series
 # 79c0c3c3d2 dts: Bluetooth: Add new DTS binding for the SoftDevice Controller (2)
 # 51537ac87c bluetooth: fast_pair: fmdn: Integrate DULT motion detector module
-# 88b468e452 bluetooth: controller: add k_panic() if the hci packet is too big
+88b468e452 bluetooth: controller: add k_panic() if the hci packet is too big
+
 # 871eab84cf Bluetooth: Controller: Add device tree dependency to selection
 # 503549979f Bluetooth: hci_driver: Mark Anchor point update report as discardable
 # 8e944f1efe Bluetooth: radio_notification_callback: Refactor to not use EGUs
@@ -160,6 +161,7 @@
 # d68032e31f kconfig: Use SOC_NRF54H20_ENGB
 # adf1d0fccc Bluetooth: Controller: Add Missing CS HCI cmd Handler
 d8f5a506a6 bluetooth: controller: hci_driver: Add option to enable power class 1
+
 # a07804cccb Bluetooth: Mesh: Fix recall in light_ctrl_srv
 # 86f195311c bluetooth: Initialize conn to NULL for bt_conn_le_create()
 # 771d5ce292 bluetooth: services: lbs: button_state only used if poll is enabled
@@ -194,6 +196,7 @@ d8f5a506a6 bluetooth: controller: hci_driver: Add option to enable power class 1
 # 3bf7d40e19 Bluetooth: Mesh: fix uptime to tai conversion inaccuracy
 52b63957ad bluetooth: hci_driver: Fix deadlock in MPSL workq
 aec6383d2d bluetooth: hci_driver: Process recvd msgs directly from SDC callback
+
 # 33bdc5fa3a bluetooth: controller: remove vs supported commands implementation
 # 12223d7199 Bluetooth: Mesh: fix defaults for generic location srv
 # f25ade654e bluetooth: services: report id in out/feature report data callback
@@ -229,6 +232,7 @@ aec6383d2d bluetooth: hci_driver: Process recvd msgs directly from SDC callback
 # 6c574e3779 samples: nrf_rpc: ps_client: fix BLE snippet after upmerge
 # 560e88d8c4 Bluetooth: Mesh: make bsim mesh with mbedtls workable
 77661839cf Bluetooth: Controller: Ensure controller can handle flow control buffers
+
 # 42cd2d1da1 mpsl: pm: Add MRAM low latency request and response handling
 # 007584f392 bluetooth: controller: Return code from sdc_init was overwirtten
 # 1883f06ef4 Bluetooth: Mesh: disable HUK for nrf52 ble mesh
@@ -271,6 +275,7 @@ aec6383d2d bluetooth: hci_driver: Process recvd msgs directly from SDC callback
 # bc5b776f39 bluetooth: samples: Use real-time ranging data in RAS samples
 # 68eeb4eee8 bluetooth: services: Redefine the CS RAS reassembly buffer kconfig
 beadde7490 Bluetooth: Controller: Port HCI Command buffer allocation
+
 # d869608228 Bluetooth: Host: Rename _bt_gatt_ccc to bt_gatt_ccc_managed_user_data
 # 65ccff6ce0 Bluetooth: rpc: Change signature of bt_conn_get_remote_info
 # 4ca3691a9d Bluetooth: rpc: cast conn to not const
@@ -284,10 +289,12 @@ beadde7490 Bluetooth: Controller: Port HCI Command buffer allocation
 # 1d6ebb4427 bluetooth: controller: add command handler for new VS HCI command
 # 79addd913e bluetooth: improving linking for channel sounding
 399a846eb4 bluetooth: controller: add missing feature bit for power class 1
+
 # e7153cd716 softdevice_controller: Remove BT_CTRL_SDC_BSIM_BUILD Kconfig
 # 963abf85f2 bluetooth: rpc: Rename nrf53_cpunet_init()
 # 85d05d5217 bluetooth: controller: move HCI packet types to net_buf payload
 8d38c08481 bluetooth: Add support for LE Power Class 1 Feature
+
 # 35a7c6743e bluetooth: fast_pair: introduce Fast Pair advertising manager
 # 00e622635a bluetooth: Make it possible to use radio notification cb with bt_disable
 # 16275c5a70 bluetooth: improving linking for channel sounding
