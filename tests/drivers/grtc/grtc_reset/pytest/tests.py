@@ -28,7 +28,7 @@ def reset_dut(dut: DeviceAdapter, reset_kind: str = "RESET_PIN"):
     logger.info(output)
 
 def get_cycle_and_uptime_from_logs(dut: DeviceAdapter):
-    lines = dut.readlines_until(timeout=5)
+    lines = dut.readlines_until(regex=r'.*k_uptime_get.*', timeout=5)
     for line in lines:
         match_cycle = re.search(r'k_cycle_get_32\s*=\s*(\d+)', line)
         if match_cycle:
