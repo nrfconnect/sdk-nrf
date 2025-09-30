@@ -722,6 +722,7 @@
 .. _`Cellular Monitor app`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/index.html
 .. _`Managing credentials`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/managing_credentials.html
 
+.. _`Matter Quick Start app`: https://docs.nordicsemi.com/bundle/nrf-connect-matter-quickstart/page/index.html
 .. _`Matter Cluster Editor app`: https://docs.nordicsemi.com/bundle/nrf-connect-matter-cluster-editor/page/index.html
 .. _`nPM PowerUP app`: https://docs.nordicsemi.com/bundle/nrf-connect-npm/page/index.html
 .. _`Quick Start app`: https://docs.nordicsemi.com/bundle/nrf-connect-quickstart/page/index.html
