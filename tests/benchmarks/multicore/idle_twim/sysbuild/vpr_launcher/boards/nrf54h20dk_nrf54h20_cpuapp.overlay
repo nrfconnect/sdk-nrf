@@ -6,9 +6,10 @@
 
 / {
 	aliases {
-		led = &led0;
+		/delete-property/ led0;
 		/delete-property/ led1;
 	};
 };
 
+/delete-node/ &led0;
 /delete-node/ &led1;
