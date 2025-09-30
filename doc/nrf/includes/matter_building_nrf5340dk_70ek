@@ -10,7 +10,7 @@ To build the Matter over Wi-Fi sample variant on nRF5340 DK with nRF7002 EK shie
 
          .. code-block:: console
 
-            -- -DSHIELD=nrf7002ek -DFILE_SUFFIX=nrf70ek -DSB_CONFIG_WIFI_NRF70=y
+            -- -DSHIELD=nrf7002ek -DFILE_SUFFIX=nrf70ek -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y
 
    .. group-tab:: Command line
 
@@ -20,11 +20,11 @@ To build the Matter over Wi-Fi sample variant on nRF5340 DK with nRF7002 EK shie
 
         .. code-block:: console
 
-           west build -p -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek -DFILE_SUFFIX=nrf70ek -DSB_CONFIG_WIFI_NRF70=y
+           west build -p -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek -DFILE_SUFFIX=nrf70ek -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y
 
       * CMake with the following command:
 
         .. code-block:: console
 
-           cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -DSHIELD=nrf7002ek -DFILE_SUFFIX=nrf70ek -DSB_CONFIG_WIFI_NRF70=y -DAPP_DIR=*app_path* *path_to_zephyr*/share/sysbuild
+           cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -DSHIELD=nrf7002ek -DFILE_SUFFIX=nrf70ek -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y -DAPP_DIR=*app_path* *path_to_zephyr*/share/sysbuild
            ninja -C build
