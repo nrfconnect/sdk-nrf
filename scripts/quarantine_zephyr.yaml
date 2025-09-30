@@ -378,6 +378,8 @@
     - libraries.ring_buffer
     - libraries.hash_map.cxx.djb2
     - cpp.libcxx.glibcxx.picolibc
+    - cpp.libcxx.glibcxx.newlib
+    - cpp.libcxx.glibcxx.newlib_nano
     - portability.posix.eventfd
     - portability.posix.headers.newlib.without_posix_api
     - portability.posix.headers.newlib.with_posix_api

@@ -100,3 +100,9 @@
   platforms:
     - thingy53/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35522"
+
+- scenarios:
+    - applications.machine_learning.zdebug_rtt
+  platforms:
+    - thingy53/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35672"
