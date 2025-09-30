@@ -38,6 +38,9 @@
 #define FILE_PATH_LONG  "this/path/is/too/long/to/fit/in/the/buffer/provided/to/the/downloader/" \
 			"for/download_get_with_file_and_hostname"
 
+#define TEST_COAP_RETRIES 5
+#define TEST_EXPECTED_RECVFROM_CALLS (TEST_COAP_RETRIES - 2)
+
 #define HTTP_HDR_OK "HTTP/1.1 200 OK\r\n" \
 "Accept-Ranges: bytes\r\n" \
 "Age: 497805\r\n" \
@@ -1005,6 +1008,29 @@ static ssize_t z_impl_zsock_recvfrom_coap(
 	return 32;
 }
 
+static ssize_t z_impl_zsock_recvfrom_coap_timeout(int sock, void *buf, size_t max_len, int flags,
+						  struct sockaddr *src_addr, socklen_t *addrlen)
+{
+	errno = EAGAIN;
+	return -1;
+}
+
+static int recovery_call_count;
+
+static ssize_t z_impl_zsock_recvfrom_coap_timeout_then_data(int sock, void *buf, size_t max_len,
+							    int flags, struct sockaddr *src_addr,
+							    socklen_t *addrlen)
+{
+	if (recovery_call_count == 0) {
+		recovery_call_count++;
+		errno = EAGAIN;
+		return -1;
+	}
+
+	recovery_call_count++;
+	return z_impl_zsock_recvfrom_coap(sock, buf, max_len, flags, src_addr, addrlen);
+}
+
 int coap_get_option_int_ok(const struct coap_packet *cpkt, uint16_t code)
 {
 	return 0;
@@ -1028,16 +1054,15 @@ bool coap_pending_cycle_ok(struct coap_pending *pending)
 	return true;
 }
 
-bool coap_pending_cycle_5(struct coap_pending *pending)
+bool coap_pending_cycles(struct coap_pending *pending)
 {
-	pending->timeout = 1000 * (5 - coap_pending_cycle_fake.call_count);
+	pending->timeout = 1000 * (TEST_COAP_RETRIES - coap_pending_cycle_fake.call_count);
 
 	if (pending->timeout) {
 		return true;
 	}
 
 	return false;
-
 }
 
 int coap_update_from_block_ok(const struct coap_packet *cpkt,
@@ -1945,7 +1970,7 @@ void test_downloader_get_coap_bad_header_code_timeout(void)
 	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_coap;
 
 	coap_get_transmission_parameters_fake.custom_fake = coap_get_transmission_parameters_ok;
-	coap_pending_cycle_fake.custom_fake = coap_pending_cycle_5;
+	coap_pending_cycle_fake.custom_fake = coap_pending_cycles;
 	coap_header_get_type_fake.custom_fake = coap_header_get_type_ack;
 	coap_header_get_code_fake.custom_fake = coap_header_get_code_bad;
 	coap_packet_get_payload_fake.custom_fake = coap_packet_get_payload_ok;
@@ -1954,6 +1979,80 @@ void test_downloader_get_coap_bad_header_code_timeout(void)
 	TEST_ASSERT_EQUAL(0, err);
 
 	evt = dl_wait_for_event(DOWNLOADER_EVT_ERROR, K_SECONDS(3));
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+void test_downloader_get_coap_retransmission_timeout(void)
+{
+	int err;
+	struct downloader_evt evt;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_coap_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_coap_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_coap_timeout;
+
+	coap_get_transmission_parameters_fake.custom_fake = coap_get_transmission_parameters_ok;
+	coap_pending_cycle_fake.custom_fake = coap_pending_cycles;
+	coap_header_get_type_fake.custom_fake = coap_header_get_type_ack;
+	coap_header_get_code_fake.custom_fake = coap_header_get_code_ok;
+	coap_packet_get_payload_fake.custom_fake = coap_packet_get_payload_ok;
+
+	err = downloader_get(&dl, &dl_host_cfg, COAP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_ERROR, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(-ETIMEDOUT, evt.error);
+	TEST_ASSERT_EQUAL(TEST_EXPECTED_RECVFROM_CALLS, z_impl_zsock_recvfrom_fake.call_count);
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+void test_downloader_get_coap_retransmission_recovery(void)
+{
+	int err;
+	struct downloader_evt evt;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_coap_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_coap_ok;
+
+	RESET_FAKE(z_impl_zsock_sendto);
+	RESET_FAKE(z_impl_zsock_recvfrom);
+	recovery_call_count = 0;
+
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_coap_timeout_then_data;
+
+	coap_get_transmission_parameters_fake.custom_fake = coap_get_transmission_parameters_ok;
+	RESET_FAKE(coap_pending_cycle);
+	coap_pending_cycle_fake.custom_fake = coap_pending_cycles;
+	coap_header_get_type_fake.custom_fake = coap_header_get_type_ack;
+	coap_header_get_code_fake.custom_fake = coap_header_get_code_ok;
+	coap_packet_get_payload_fake.custom_fake = coap_packet_get_payload_ok;
+
+	err = downloader_get(&dl, &dl_host_cfg, COAP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(DOWNLOADER_EVT_DONE, evt.id);
+
+	TEST_ASSERT_EQUAL(2, coap_pending_cycle_fake.call_count);
+	TEST_ASSERT_EQUAL(2, z_impl_zsock_recvfrom_fake.call_count);
 
 	downloader_deinit(&dl);
 	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
