@@ -32,12 +32,15 @@ config CHIP_ENABLE_ICD_SUPPORT
 
 endif # OPENTHREAD
 
-if CHIP_WIFI
+if SHIELD_NRF7002EB
+
+config CHIP_WIFI
+	default y
 
 config NRF_WIFI_LOW_POWER
 	default y
 
-endif # CHIP_WIFI
+endif # SHIELD_NRF7002EB
 
 source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.features"
 source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.defaults"
