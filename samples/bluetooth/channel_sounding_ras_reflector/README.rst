@@ -53,6 +53,17 @@ After programming the sample to your development kit, you can test it by connect
       I: CS security enabled.
       I: CS procedures enabled.
 
+Building for testing with Android 16 ranging module
+===================================================
+
+In order to enable Bluetooth configurations required to test Channel sounding with Android 16 phones with Channel sounding support,
+the android_ranging.conf fragment can be applied. For example, using the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -bnrf54l15dk/nrf54l15/cpuapp -- -DEXTRA_CONF_FILE="android_ranging.conf"
+
 Dependencies
 ************
 
