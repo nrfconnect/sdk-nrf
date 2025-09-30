@@ -331,6 +331,21 @@ You can use the following optional arguments:
 * ``-m`` or ``--matter-path`` to provide a path to a different Matter SDK location than the default one.
   The command will use this path to read the required ZAP tool version and use the generation script from it.
 
+.. _ug_matter_gs_tools_matter_quickstart:
+
+Matter Quick Start app
+**********************
+
+The Matter Quick Start app is a GUI tool for setting up and configuring Matter accessory devices for different smart home ecosystems.
+
+.. figure:: images/matter_quickstart_ecosystem_setup.png
+   :alt: Matter Quick Start app
+
+   Matter Quick Start app
+
+The tool is available in `nRF Connect for Desktop`_.
+For installation instructions and more information about the tool, see the `Matter Quick Start app`_ documentation.
+
 .. _ug_matter_gs_tools_matter_cluster_editor:
 
 Matter Cluster Editor app
