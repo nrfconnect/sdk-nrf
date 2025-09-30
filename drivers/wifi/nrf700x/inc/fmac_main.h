@@ -33,6 +33,11 @@
 
 #define NRF700X_DRIVER_VERSION "1."NCS_VERSION_STRING
 
+/* Calculate compile-time maximum for vendor stats */
+#ifdef CONFIG_NET_STATISTICS_ETHERNET_VENDOR
+#define MAX_VENDOR_STATS ((sizeof(struct rpu_fw_stats) / sizeof(uint32_t)) + 1)
+#endif /* CONFIG_NET_STATISTICS_ETHERNET_VENDOR */
+
 #ifndef CONFIG_NRF700X_RADIO_TEST
 struct nrf_wifi_vif_ctx_zep {
 	const struct device *zep_dev_ctx;
@@ -56,6 +61,10 @@ struct nrf_wifi_vif_ctx_zep {
 	bool set_if_event_received;
 	int set_if_status;
 #ifdef CONFIG_NET_STATISTICS_ETHERNET
+#ifdef CONFIG_NET_STATISTICS_ETHERNET_VENDOR
+	struct net_stats_eth_vendor eth_stats_vendor_data[MAX_VENDOR_STATS];
+	char vendor_key_strings[MAX_VENDOR_STATS][16];
+#endif /* CONFIG_NET_STATISTICS_ETHERNET_VENDOR */
 	struct net_stats_eth eth_stats;
 #endif /* CONFIG_NET_STATISTICS_ETHERNET */
 #ifdef CONFIG_NRF700X_STA_MODE
