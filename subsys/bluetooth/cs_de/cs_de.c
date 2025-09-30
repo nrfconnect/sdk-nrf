@@ -283,17 +283,17 @@ static void extract_pcts(cs_de_report_t *p_report, uint8_t channel_index,
 			return;
 		}
 
-		if (local_tone_info[antenna_path].quality_indicator !=
+		if (local_tone_info[tone_index].quality_indicator !=
 			    BT_HCI_LE_CS_TONE_QUALITY_HIGH ||
-		    remote_tone_info[antenna_path].quality_indicator !=
+		    remote_tone_info[tone_index].quality_indicator !=
 			    BT_HCI_LE_CS_TONE_QUALITY_HIGH) {
 			return;
 		}
 
 		struct bt_le_cs_iq_sample local_iq =
-			bt_le_cs_parse_pct(local_tone_info[antenna_path].phase_correction_term);
+			bt_le_cs_parse_pct(local_tone_info[tone_index].phase_correction_term);
 		struct bt_le_cs_iq_sample remote_iq =
-			bt_le_cs_parse_pct(remote_tone_info[antenna_path].phase_correction_term);
+			bt_le_cs_parse_pct(remote_tone_info[tone_index].phase_correction_term);
 
 		m_n_iqs[antenna_path][channel_index]++;
 		m_tone_quality_indicators[antenna_path][channel_index] = CS_DE_TONE_QUALITY_OK;
