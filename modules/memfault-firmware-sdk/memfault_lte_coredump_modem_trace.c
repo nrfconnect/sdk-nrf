@@ -144,7 +144,6 @@ int memfault_lte_coredump_modem_trace_init(void)
 	static bool initialized;
 
 	if (initialized) {
-		LOG_ERR("Already initialized");
 		return -EALREADY;
 	}
 
