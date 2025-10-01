@@ -173,104 +173,109 @@ static int pres_delay_find(struct bt_bap_qos_cfg_pref *common,
 	return 0;
 }
 
-static void supported_sample_rates_print(uint16_t supported_sample_rates, enum bt_audio_dir dir)
-{
-	char supported_str[20] = "";
-
-	if (supported_sample_rates & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
-		strcat(supported_str, "48, ");
-	}
-
-	if (supported_sample_rates & BT_AUDIO_CODEC_CAP_FREQ_24KHZ) {
-		strcat(supported_str, "24, ");
-	}
-
-	if (supported_sample_rates & BT_AUDIO_CODEC_CAP_FREQ_32KHZ) {
-		strcat(supported_str, "32, ");
-	}
-
-	if (supported_sample_rates & BT_AUDIO_CODEC_CAP_FREQ_16KHZ) {
-		strcat(supported_str, "16, ");
-	}
-
-	if (dir == BT_AUDIO_DIR_SINK) {
-		LOG_DBG("Unicast_server supports: %s kHz in sink direction", supported_str);
-	} else if (dir == BT_AUDIO_DIR_SOURCE) {
-		LOG_DBG("Unicast_server supports: %s kHz in source direction", supported_str);
-	} else {
-		/* Do nothing */
-	}
-}
-
-static void sample_rate_check(uint16_t lc3_freq_bit, struct bt_bap_lc3_preset **preset,
-			      uint8_t pref_sample_rate)
+static int sample_rate_check(uint16_t lc3_freq_bit, struct bt_bap_lc3_preset *preset,
+			     uint8_t pref_sample_rate)
 {
 	/* Try with the preferred sample rate first
 	 */
 	switch (pref_sample_rate) {
 	case BT_AUDIO_CODEC_CFG_FREQ_48KHZ:
 		if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
-			memcpy(*preset, &lc3_preset_48_4_1, sizeof(struct bt_bap_lc3_preset));
+			memcpy(preset, &lc3_preset_48_4_1, sizeof(struct bt_bap_lc3_preset));
+			return 0;
 		}
 
 		break;
 
 	case BT_AUDIO_CODEC_CFG_FREQ_24KHZ:
 		if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_24KHZ) {
-			memcpy(*preset, &lc3_preset_24_2_1, sizeof(struct bt_bap_lc3_preset));
+			memcpy(preset, &lc3_preset_24_2_1, sizeof(struct bt_bap_lc3_preset));
+			return 0;
 		}
 
 		break;
 
 	case BT_AUDIO_CODEC_CFG_FREQ_16KHZ:
 		if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_16KHZ) {
-			memcpy(*preset, &lc3_preset_16_2_1, sizeof(struct bt_bap_lc3_preset));
+			memcpy(preset, &lc3_preset_16_2_1, sizeof(struct bt_bap_lc3_preset));
+			return 0;
 		}
 
+		break;
+
+	default:
 		break;
 	}
 
 	/* If no match with the preferred, revert to trying highest first
 	 */
 	if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
-		memcpy(*preset, &lc3_preset_48_4_1, sizeof(struct bt_bap_lc3_preset));
+		memcpy(preset, &lc3_preset_48_4_1, sizeof(struct bt_bap_lc3_preset));
+		return 0;
 	} else if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_24KHZ) {
-		memcpy(*preset, &lc3_preset_24_2_1, sizeof(struct bt_bap_lc3_preset));
+		memcpy(preset, &lc3_preset_24_2_1, sizeof(struct bt_bap_lc3_preset));
+		return 0;
 	} else if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_16KHZ) {
-		memcpy(*preset, &lc3_preset_16_2_1, sizeof(struct bt_bap_lc3_preset));
+		memcpy(preset, &lc3_preset_16_2_1, sizeof(struct bt_bap_lc3_preset));
+		return 0;
 	}
+
+	LOG_DBG("No supported sample rate found");
+	return -ENOTSUP;
 }
 
-static bool sink_parse_cb(struct bt_data *data, void *user_data)
+static bool sink_pac_parse(struct bt_data *data, void *user_data)
 {
-	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FREQ) {
+	int ret;
+	struct bt_bap_lc3_preset *preset = (struct bt_bap_lc3_preset *)user_data;
+
+	switch (data->type) {
+	case BT_AUDIO_CODEC_CAP_TYPE_FREQ:
 		uint16_t lc3_freq_bit = sys_get_le16(data->data);
 
-		supported_sample_rates_print(lc3_freq_bit, BT_AUDIO_DIR_SINK);
+		ret = sample_rate_check(lc3_freq_bit, preset,
+					CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE);
+		if (ret) {
+			/* This PAC record from the server is not supported by the client.
+			 * Stop parsing this record.
+			 */
+			return false;
+		}
+		break;
 
-		sample_rate_check(lc3_freq_bit, (struct bt_bap_lc3_preset **)user_data,
-				  CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE);
-	}
-
-	/* Make sure the presets octets per frame is within the range of the codec capabilities
-	 */
-	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FRAME_LEN) {
+	case BT_AUDIO_CODEC_CAP_TYPE_FRAME_LEN:
+		/* Make sure the presets octets per frame is within the range of the codec
+		 * capabilities.
+		 */
 		uint16_t lc3_min_frame_length = sys_get_le16(data->data);
 		uint16_t lc3_max_frame_length = sys_get_le16(data->data + sizeof(uint16_t));
 
-		int preset_octets_per_frame;
-		struct bt_bap_lc3_preset *preset = *(struct bt_bap_lc3_preset **)user_data;
+		int preset_octets_per_frame = 0;
 
-		le_audio_octets_per_frame_get(&preset->codec_cfg, &preset_octets_per_frame);
+		ret = le_audio_octets_per_frame_get(&preset->codec_cfg, &preset_octets_per_frame);
+		if (ret) {
+			LOG_WRN("Failed to get preset octets per frame: %d", ret);
+			memset(preset, 0, sizeof(struct bt_bap_lc3_preset));
+			return false;
+		}
 
 		if (!IN_RANGE(preset_octets_per_frame, lc3_min_frame_length,
 			      lc3_max_frame_length)) {
-			LOG_DBG("Preset octets/frame %d not in range [%d, %d]",
+			LOG_DBG("Sink preset octets/frame %d not in range [%d, %d]",
 				preset_octets_per_frame, lc3_min_frame_length,
 				lc3_max_frame_length);
-			bt_audio_codec_cfg_set_octets_per_frame(&preset->codec_cfg,
-								lc3_max_frame_length);
+			ret = bt_audio_codec_cfg_set_octets_per_frame(&preset->codec_cfg,
+								      lc3_max_frame_length);
+			if (ret < 0) {
+				LOG_ERR("Failed to set preset octets per frame: %d", ret);
+				memset(preset, 0, sizeof(struct bt_bap_lc3_preset));
+				return false;
+			}
 		}
+		break;
+
+	default:
+		break;
 	}
 
 	/* Did not find what we were looking for, continue parsing LTV
@@ -278,14 +283,12 @@ static bool sink_parse_cb(struct bt_data *data, void *user_data)
 	return true;
 }
 
-static bool source_parse_cb(struct bt_data *data, void *user_data)
+static bool source_pac_parse(struct bt_data *data, void *user_data)
 {
 	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FREQ) {
 		uint16_t lc3_freq_bit = sys_get_le16(data->data);
 
-		supported_sample_rates_print(lc3_freq_bit, BT_AUDIO_DIR_SOURCE);
-
-		sample_rate_check(lc3_freq_bit, (struct bt_bap_lc3_preset **)user_data,
+		sample_rate_check(lc3_freq_bit, (struct bt_bap_lc3_preset *)user_data,
 				  CONFIG_BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE);
 
 		/* Found what we were looking for, stop parsing LTV
@@ -300,13 +303,13 @@ static bool source_parse_cb(struct bt_data *data, void *user_data)
 		uint16_t lc3_max_frame_length = sys_get_le16(data->data + sizeof(uint16_t));
 
 		int preset_octets_per_frame;
-		struct bt_bap_lc3_preset *preset = *(struct bt_bap_lc3_preset **)user_data;
+		struct bt_bap_lc3_preset *preset = (struct bt_bap_lc3_preset *)user_data;
 
 		le_audio_octets_per_frame_get(&preset->codec_cfg, &preset_octets_per_frame);
 
 		if (!IN_RANGE(preset_octets_per_frame, lc3_min_frame_length,
 			      lc3_max_frame_length)) {
-			LOG_DBG("Preset octets/frame %d not in range [%d, %d]",
+			LOG_DBG("Source preset octets/frame %d not in range [%d, %d]",
 				preset_octets_per_frame, lc3_min_frame_length,
 				lc3_max_frame_length);
 			bt_audio_codec_cfg_set_octets_per_frame(&preset->codec_cfg,
@@ -329,7 +332,7 @@ static void set_color_if_supported(char *str, uint16_t bitfield, uint16_t mask)
 	}
 }
 
-static bool caps_print_cb(struct bt_data *data, void *user_data)
+static bool pac_record_print(struct bt_data *data, void *user_data)
 {
 	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FREQ) {
 		uint16_t freq_bit = sys_get_le16(data->data);
@@ -362,7 +365,7 @@ static bool caps_print_cb(struct bt_data *data, void *user_data)
 		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_384KHZ);
 		strcat(supported_freq, "384");
 
-		LOG_INF("\tFrequencies kHz: %s", supported_freq);
+		LOG_INF("\tFreq kHz: %s", supported_freq);
 	}
 
 	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_DURATION) {
@@ -488,6 +491,8 @@ static int srv_store_from_addr_get_internal(bt_addr_le_t const *const addr,
 bool srv_store_preset_validated(struct bt_audio_codec_cfg *new, struct bt_audio_codec_cfg *existing,
 				uint8_t pref_sample_rate_value)
 {
+	int ret;
+
 	if (new == NULL || existing == NULL) {
 		return false;
 	}
@@ -497,8 +502,24 @@ bool srv_store_preset_validated(struct bt_audio_codec_cfg *new, struct bt_audio_
 	int existing_freq_hz = 0;
 	int pref_freq_hz = 0;
 
-	le_audio_freq_hz_get(new, &new_freq_hz);
-	le_audio_freq_hz_get(existing, &existing_freq_hz);
+	ret = le_audio_freq_hz_get(new, &new_freq_hz);
+	if (ret) {
+		LOG_ERR("Failed to get new freq hz: %d", ret);
+		return false;
+	}
+
+	const struct bt_audio_codec_cfg zero_dummy = {0};
+
+	if (memcmp(existing, &zero_dummy, sizeof(struct bt_audio_codec_cfg)) == 0) {
+		/* No existing preset, will use new one */
+		return true;
+	}
+
+	ret = le_audio_freq_hz_get(existing, &existing_freq_hz);
+	if (ret) {
+		LOG_ERR("Failed to get existing freq hz: %d", ret);
+		return false;
+	}
 
 	switch (pref_sample_rate_value) {
 	case BT_AUDIO_CODEC_CFG_FREQ_48KHZ:
@@ -511,7 +532,7 @@ bool srv_store_preset_validated(struct bt_audio_codec_cfg *new, struct bt_audio_
 		pref_freq_hz = 16000;
 		break;
 	default:
-		pref_freq_hz = 0;
+		pref_freq_hz = -1;
 		break;
 	}
 
@@ -519,15 +540,26 @@ bool srv_store_preset_validated(struct bt_audio_codec_cfg *new, struct bt_audio_
 	    new_freq_hz == pref_freq_hz) {
 		LOG_DBG("New preset has higher frequency, or pref freq met: %d > %d", new_freq_hz,
 			existing_freq_hz);
-		int new_octets, existing_octets = 0;
-
-		le_audio_octets_per_frame_get(new, &new_octets);
-		le_audio_octets_per_frame_get(existing, &existing_octets);
 
 		if (new_freq_hz == pref_freq_hz && existing_freq_hz != pref_freq_hz) {
 			LOG_DBG("New preset has preferred frequency: %d == %d", new_freq_hz,
 				pref_freq_hz);
 			return true;
+		}
+
+		int new_octets = 0;
+		int existing_octets = 0;
+
+		ret = le_audio_octets_per_frame_get(new, &new_octets);
+		if (ret) {
+			LOG_ERR("Failed to get new octets/frame: %d", ret);
+			return false;
+		}
+
+		ret = le_audio_octets_per_frame_get(existing, &existing_octets);
+		if (ret) {
+			LOG_ERR("Failed to get existing octets/frame: %d", ret);
+			return false;
 		}
 
 		if (new_octets >= existing_octets) {
@@ -747,6 +779,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 	ARG_UNUSED(num_client_supp_cfgs);
 
 	int ret;
+	struct bt_bap_lc3_preset zero_preset = {0};
 
 	*valid_codec_caps = 0;
 	if (conn == NULL || valid_codec_caps == NULL) {
@@ -766,32 +799,37 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 		LOG_DBG("Discovered %d sink endpoint(s) for device", server->snk.num_eps);
 
 		for (int i = 0; i < server->snk.num_codec_caps; i++) {
-			struct bt_bap_lc3_preset srch_preset;
-			struct bt_bap_lc3_preset *preset = &srch_preset;
+			struct bt_bap_lc3_preset preset = {0};
 
-			if (IS_ENABLED(CONFIG_BT_AUDIO_EP_PRINT)) {
-				LOG_INF("");
-				LOG_INF("Sink PAC %d", i);
-				(void)bt_audio_data_parse(server->snk.codec_caps[i].data,
+			if (IS_ENABLED(CONFIG_BT_AUDIO_PAC_REC_PRINT)) {
+				LOG_INF("Sink PAC %d:", i);
+				ret = bt_audio_data_parse(server->snk.codec_caps[i].data,
 							  server->snk.codec_caps[i].data_len,
-							  caps_print_cb, NULL);
+							  pac_record_print, NULL);
+				if (ret) {
+					LOG_ERR("Failed data parse %d:", ret);
+				}
 				LOG_INF("__________________________");
 			}
 
-			(void)bt_audio_data_parse(server->snk.codec_caps[i].data,
-						  server->snk.codec_caps[i].data_len, sink_parse_cb,
-						  &preset);
-
-			if (preset == NULL) {
+			ret = bt_audio_data_parse(server->snk.codec_caps[i].data,
+						  server->snk.codec_caps[i].data_len,
+						  sink_pac_parse, &preset);
+			if (ret && ret != -ECANCELED) {
+				LOG_ERR("PAC record sink parse failed %d:", ret);
 				continue;
 			}
 
-			LOG_DBG("Valid codec capabilities found for device, EP %d", i);
+			if (memcmp(&preset, &zero_preset, sizeof(struct bt_bap_lc3_preset)) == 0) {
+				continue;
+			}
+
+			LOG_DBG("Valid codec capabilities found for device, sink EP %d", i);
 			*valid_codec_caps |= 1 << i;
 			if (srv_store_preset_validated(
-				    &preset->codec_cfg, &server->snk.lc3_preset[0].codec_cfg,
+				    &(preset.codec_cfg), &(server->snk.lc3_preset[0].codec_cfg),
 				    CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE)) {
-				memcpy(&server->snk.lc3_preset[0], preset,
+				memcpy(&server->snk.lc3_preset[0], &preset,
 				       sizeof(struct bt_bap_lc3_preset));
 			}
 		}
@@ -799,32 +837,40 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 		LOG_DBG("Discovered %d source endpoint(s) for device", server->src.num_eps);
 
 		for (int i = 0; i < server->src.num_codec_caps; i++) {
-			struct bt_bap_lc3_preset *preset = NULL;
+			struct bt_bap_lc3_preset preset = {0};
 
-			if (IS_ENABLED(CONFIG_BT_AUDIO_EP_PRINT)) {
-				LOG_INF("");
-				LOG_INF("Source PAC %d", i);
-				(void)bt_audio_data_parse(server->src.codec_caps[i].data,
+			if (IS_ENABLED(CONFIG_BT_AUDIO_PAC_REC_PRINT)) {
+				LOG_INF("Source PAC %d:", i);
+				ret = bt_audio_data_parse(server->src.codec_caps[i].data,
 							  server->src.codec_caps[i].data_len,
-							  caps_print_cb, NULL);
+							  pac_record_print, NULL);
+				if (ret) {
+					LOG_ERR("Failed data parse %d:", ret);
+				}
 				LOG_INF("__________________________");
 			}
 
-			(void)bt_audio_data_parse(server->src.codec_caps[i].data,
+			ret = bt_audio_data_parse(server->src.codec_caps[i].data,
 						  server->src.codec_caps[i].data_len,
-						  source_parse_cb, &preset);
+						  source_pac_parse, &preset);
 
-			if (preset == NULL) {
+			if (ret && ret != -ECANCELED) {
+				LOG_ERR("PAC record source parse failed %d:", ret);
 				continue;
 			}
 
-			LOG_DBG("Valid codec capabilities found for device, EP %d", i);
+			if (memcmp(&preset, &zero_preset, sizeof(struct bt_bap_lc3_preset)) == 0) {
+				continue;
+			}
+
+			LOG_DBG("Valid codec capabilities found for device, source EP %d", i);
 			*valid_codec_caps |= 1 << i;
 
 			if (srv_store_preset_validated(
-				    &preset->codec_cfg, &server->src.lc3_preset[0].codec_cfg,
+				    &(preset.codec_cfg), &(server->src.lc3_preset[0].codec_cfg),
 				    CONFIG_BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE)) {
-				memcpy(&server->src.lc3_preset[0], preset, sizeof(*preset));
+				memcpy(&server->src.lc3_preset[0], &preset,
+				       sizeof(struct bt_bap_lc3_preset));
 			}
 		}
 	}

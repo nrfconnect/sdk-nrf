@@ -547,16 +547,15 @@ ZTEST(suite_server_store, test_preset_pref)
 	valid = srv_store_preset_validated(&lc3_preset_16_2_1.codec_cfg,
 					   &server->snk.lc3_preset[0].codec_cfg,
 					   preferred_sample_rate_value);
-	zassert_equal(valid, true, "16kHz preset should be valid even when pref is 48kHz");
-	memcpy(&server->snk.lc3_preset[0], &lc3_preset_16_2_1, sizeof(server->snk.lc3_preset[0]));
+	zassert_equal(valid, true, "the existing LC3 preset is empty. Will accept the new one");
 
+	memcpy(&server->snk.lc3_preset[0], &lc3_preset_16_2_1, sizeof(server->snk.lc3_preset[0]));
 	valid = srv_store_preset_validated(&lc3_preset_48_4_1.codec_cfg,
 					   &server->snk.lc3_preset[0].codec_cfg,
 					   preferred_sample_rate_value);
-
 	zassert_equal(valid, true, "48kHz preset should be valid when pref is 48kHz");
-	memcpy(&server->snk.lc3_preset[0], &lc3_preset_48_4_1, sizeof(server->snk.lc3_preset[0]));
 
+	memcpy(&server->snk.lc3_preset[0], &lc3_preset_48_4_1, sizeof(server->snk.lc3_preset[0]));
 	valid = srv_store_preset_validated(&lc3_preset_24_2_1.codec_cfg,
 					   &server->snk.lc3_preset[0].codec_cfg,
 					   preferred_sample_rate_value);
@@ -777,6 +776,7 @@ ZTEST(suite_server_store, test_cap_check)
 	 * more comprehensive client <-> server(s) capability check.
 	 */
 	int ret;
+	uint32_t valid_codec_caps = 0;
 
 	ret = srv_store_lock(K_NO_WAIT);
 	zassert_equal(ret, 0);
@@ -785,12 +785,18 @@ ZTEST(suite_server_store, test_cap_check)
 	ret = srv_store_add_by_conn(&test_1_conn);
 	zassert_equal(ret, 0);
 
+	/* Unsupported codec capability */
 	static struct bt_audio_codec_cap codec_cap_1 = BT_AUDIO_CODEC_CAP_LC3(
-		BT_AUDIO_CODEC_CAP_FREQ_48KHZ,
+		BT_AUDIO_CODEC_CAP_FREQ_384KHZ,
 		(BT_AUDIO_CODEC_CAP_DURATION_10 | BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),
 		BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1), 20, 180, 1u, BT_AUDIO_CONTEXT_TYPE_ANY);
 
 	static struct bt_audio_codec_cap codec_cap_2 = BT_AUDIO_CODEC_CAP_LC3(
+		BT_AUDIO_CODEC_CAP_FREQ_48KHZ,
+		(BT_AUDIO_CODEC_CAP_DURATION_10 | BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),
+		BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1), 20, 180, 1u, BT_AUDIO_CONTEXT_TYPE_ANY);
+
+	static struct bt_audio_codec_cap codec_cap_3 = BT_AUDIO_CODEC_CAP_LC3(
 		BT_AUDIO_CODEC_CAP_FREQ_24KHZ,
 		(BT_AUDIO_CODEC_CAP_DURATION_10 | BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),
 		BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1), 20, 180, 1u, BT_AUDIO_CONTEXT_TYPE_ANY);
@@ -798,16 +804,23 @@ ZTEST(suite_server_store, test_cap_check)
 	ret = srv_store_codec_cap_set(&test_1_conn, BT_AUDIO_DIR_SINK, &codec_cap_1);
 	zassert_equal(ret, 0, "Setting codec capabilities did not return zero %d", ret);
 
+	ret = srv_store_valid_codec_cap_check(&test_1_conn, BT_AUDIO_DIR_SINK, &valid_codec_caps,
+					      NULL, 0);
+	zassert_equal(ret, 0);
+	zassert_equal(valid_codec_caps, 0, "No valid codec caps should be found");
+
 	ret = srv_store_codec_cap_set(&test_1_conn, BT_AUDIO_DIR_SINK, &codec_cap_2);
 	zassert_equal(ret, 0, "Setting codec capabilities did not return zero %d", ret);
 
-	uint32_t valid_codec_caps;
+	ret = srv_store_codec_cap_set(&test_1_conn, BT_AUDIO_DIR_SINK, &codec_cap_3);
+	zassert_equal(ret, 0, "Setting codec capabilities did not return zero %d", ret);
 
+	valid_codec_caps = 0;
 	ret = srv_store_valid_codec_cap_check(&test_1_conn, BT_AUDIO_DIR_SINK, &valid_codec_caps,
 					      NULL, 0);
 	zassert_equal(ret, 0);
 	TC_PRINT("codec caps: 0x%x", valid_codec_caps);
-	zassert_equal(valid_codec_caps, (1 << 0) | (1 << 1), "Two first caps are valid");
+	zassert_equal(valid_codec_caps, (1 << 1) | (1 << 2), "cap 1 and 2 are valid, not 0");
 
 	srv_store_unlock();
 }
