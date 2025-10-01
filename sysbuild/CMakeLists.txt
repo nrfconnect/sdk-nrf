@@ -238,6 +238,12 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
         if(SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU)
           set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_USING_KMU y)
+
+          if(SB_CONFIG_MCUBOOT_SIGNATURE_KMU_UROT_MAPPING)
+            set_config_bool(mcuboot CONFIG_NCS_BOOT_SIGNATURE_KMU_UROT_MAPPING y)
+          else()
+            set_config_bool(mcuboot CONFIG_NCS_BOOT_SIGNATURE_KMU_UROT_MAPPING n)
+          endif()
         else()
           set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_USING_KMU n)
         endif()

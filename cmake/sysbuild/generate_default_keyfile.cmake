@@ -8,7 +8,7 @@
 set(kmu_json_commands "")
 set(kmu_json_dependencies "")
 
-# First command: Generate keyfile for BL_PUBKEY
+# First command: Generate keyfile for b0 (BL_PUBKEY)
 if(SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE)
   # --- Determine the signing key file to use ---
   set(signature_private_key_file "") # Initialize
@@ -39,12 +39,18 @@ if(SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE)
   list(APPEND kmu_json_dependencies ${signature_private_key_file})
 endif()
 
-# Second command (conditional): Update keyfile for UROT_PUBKEY
+# Second command (conditional): Update keyfile for MCUboot (UROT_PUBKEY or BL_PUBKEY)
 if(SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE)
   string(CONFIGURE "${SB_CONFIG_BOOT_SIGNATURE_KEY_FILE}" mcuboot_signature_key_file)
+  set(mcuboot_kmu_keyname UROT_PUBKEY)
+
+  if(NOT SB_CONFIG_MCUBOOT_SIGNATURE_KMU_UROT_MAPPING AND NOT SB_CONFIG_SECURE_BOOT_APPCORE)
+    set(mcuboot_kmu_keyname BL_PUBKEY)
+  endif()
+
   list(APPEND kmu_json_commands
     COMMAND ${Python3_EXECUTABLE} -m west ncs-provision upload
-      --keyname UROT_PUBKEY
+      --keyname ${mcuboot_kmu_keyname}
       --key ${mcuboot_signature_key_file}
       --build-dir ${CMAKE_BINARY_DIR}
       --dry-run
