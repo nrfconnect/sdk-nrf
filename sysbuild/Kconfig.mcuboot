@@ -183,6 +183,18 @@ config MCUBOOT_SIGNATURE_USING_KMU
 	help
 	  The device needs to be provisioned with proper set of keys.
 
+config MCUBOOT_SIGNATURE_KMU_UROT_MAPPING
+	bool "Use original UROT KMU key mapping [DEPRECATED]"
+	depends on MCUBOOT_SIGNATURE_USING_KMU
+	depends on SOC_SERIES_NRF54LX
+	depends on !SECURE_BOOT_APPCORE
+	select DEPRECATED
+	help
+	  When this option is enabled, it will use the previous UROT_PUBKEY key slot IDs for the
+	  MCUboot image which are assigned for the non-immutable bootloader IDs, otherwise it
+	  will use the key set for the mode that MCUboot is used in (non-immutable slots when b0
+	  is enabled, or immutable slots when b0 is not enabled).
+
 config MCUBOOT_SIGNATURE_USING_ITS
 	bool "Use ITS stored keys for signature verification [EXPERIMENTAL]"
 	depends on SOC_SERIES_NRF54HX
