@@ -605,6 +605,27 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v3-1-1
+
+KRKNWK-20774: Fatal error on nRF54LM20 SoC after enabling the :kconfig:option:`CONFIG_PICOLIBC` Kconfig option or dynamic heap memory allocation
+  The nRF54LM20 SoC crashes after enabling the :kconfig:option:`CONFIG_PICOLIBC` Kconfig option or dynamic heap memory allocation while running a Matter sample.
+  The root cause is that the nRF54LM20 DK devicetree overlay in the Matter samples configures the SRAM memory incorrectly.
+  As a result, a restricted region of the SRAM is used, which leads to a crash.
+
+  **Workaround:** Remove the following configuration from the :file:`boards/nrf54lm20dk_nrf54lm20a_cpuapp.overlay`, :file:`boards/nrf54lm20dk_nrf54lm20a_cpuapp_internal.overlay`, :file:`sysbuild/mcuboot/boards/nrf54lm20dk_nrf54lm20a_cpuapp.conf`, and :file:`sysbuild/mcuboot/boards/nrf54lm20dk_nrf54lm20a_cpuapp_internal.conf` files of the Matter sample:
+
+    .. code-block:: console
+
+      /* restore full RRAM and SRAM space - by default some parts are dedicated to FLRP */
+      &cpuapp_rram {
+        reg = <0x0 DT_SIZE_K(2036)>;
+      };
+
+      &cpuapp_sram {
+        reg = <0x20000000 DT_SIZE_K(512)>;
+        ranges = <0x0 0x20000000 0x80000>;
+      };
+
 .. rst-class:: v3-1-0 v3-0-2 v3-0-1 v3-0-0
 
 KRKNWK-20815: The NordicDevKit cluster does not work with the 0.1.0 version of the `Matter Cluster Editor app`_
