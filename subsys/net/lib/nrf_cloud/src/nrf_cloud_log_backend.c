@@ -231,7 +231,7 @@ static int log_msg_filter(uint32_t src_id, int level)
 	if (level > nrf_cloud_log_control_get()) {
 		return -ENOMSG;
 	}
-	if ((level == 0) && !IS_ENABLED(NRF_CLOUD_LOG_INCLUDE_LEVEL_0)) {
+	if ((level == 0) && !IS_ENABLED(CONFIG_NRF_CLOUD_LOG_INCLUDE_LEVEL_0)) {
 		return -ENOMSG;
 	}
 #if !defined(CONFIG_LOG_RUNTIME_FILTERING)
