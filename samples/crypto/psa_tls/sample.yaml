@@ -654,11 +654,15 @@ tests:
       - nrf9160dk/nrf9160
       - nrf5340dk/nrf5340/cpuapp
       - nrf9151dk/nrf9151
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf9160dk/nrf9160
       - nrf9151dk/nrf9151
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
     tags:
       - ci_build
       - legacy
@@ -674,11 +678,15 @@ tests:
       - nrf9160dk/nrf9160
       - nrf5340dk/nrf5340/cpuapp
       - nrf9151dk/nrf9151
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf9160dk/nrf9160
       - nrf9151dk/nrf9151
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
     tags:
       - ci_build
       - legacy

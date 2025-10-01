@@ -7,16 +7,23 @@
 choice PSA_CORE
 	prompt "PSA Core implementation"
 
+config PSA_CORE_DISABLED
+	bool
+	prompt "PSA core-less for SSF crypto client support"
+	depends on DT_HAS_NORDIC_IRONSIDE_CALL_ENABLED
+
 config PSA_CORE_OBERON
 	bool
 	prompt "PSA Core implementation - Oberon"
 	select PSA_WANT_AES_KEY_SIZE_128
 	select PSA_WANT_AES_KEY_SIZE_192
 	select PSA_WANT_AES_KEY_SIZE_256
+	depends on !DT_HAS_NORDIC_IRONSIDE_CALL_ENABLED
 
 config PSA_CORE_LITE
 	bool "PSA core created for tiny footprint"
 	depends on SOC_SERIES_NRF54LX
+	depends on !DT_HAS_NORDIC_IRONSIDE_CALL_ENABLED
 	help
 	  The PSA core with tiny footprint is created to be used e.g. for bootloader
 	  or similar use cases where there are severe size restrictions. This PSA core
