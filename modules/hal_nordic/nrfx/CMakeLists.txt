@@ -4,9 +4,15 @@
 zephyr_library_amend(${ZEPHYR_NRF_MODULE_DIR})
 
 set(BSP_DIR ${NRFX_DIR}/bsp)
-set(SOC_DIR ${BSP_DIR}/${CONFIG_SOC_NORDIC_BSP_NAME})
+
+if(CONFIG_SOC_NORDIC_BSP_NAME STREQUAL "stable")
+  set(SOC_DIR ${BSP_DIR}/${CONFIG_SOC_NORDIC_BSP_NAME})
+else()
+  string(TOUPPER ${CONFIG_SOC_NORDIC_BSP_NAME} BSP_MODULE_NAME)
+  set(SOC_DIR "${ZEPHYR_${BSP_MODULE_NAME}_MODULE_DIR}")
+endif()
+
 set(MDK_DIR ${SOC_DIR}/mdk)
-set(mdk_dir ${NRFX_DIR}/mdk)
 
 # Add definitions for products which are yet to be upstreamed.
 zephyr_compile_definitions_ifdef(CONFIG_SOC_NRF54LM20A_ENGA NRF54LM20A_ENGA_XXAA)
