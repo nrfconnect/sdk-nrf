@@ -91,7 +91,7 @@ config OPENTHREAD_PING_SENDER
 	default y
 
 choice LIBC_IMPLEMENTATION
-	default NEWLIB_LIBC
+	default PICOLIBC
 endchoice
 
 config NEWLIB_LIBC_NANO
