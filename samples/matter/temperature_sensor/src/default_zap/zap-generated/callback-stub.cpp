@@ -58,9 +58,6 @@ void emberAfClusterInitCallback(EndpointId endpoint, ClusterId clusterId)
 	case app::Clusters::Identify::Id:
 		emberAfIdentifyClusterInitCallback(endpoint);
 		break;
-	case app::Clusters::LocalizationConfiguration::Id:
-		emberAfLocalizationConfigurationClusterInitCallback(endpoint);
-		break;
 	case app::Clusters::NetworkCommissioning::Id:
 		emberAfNetworkCommissioningClusterInitCallback(endpoint);
 		break;
@@ -134,11 +131,6 @@ void __attribute__((weak)) emberAfIcdManagementClusterInitCallback(EndpointId en
 	(void)endpoint;
 }
 void __attribute__((weak)) emberAfIdentifyClusterInitCallback(EndpointId endpoint)
-{
-	// To prevent warning
-	(void)endpoint;
-}
-void __attribute__((weak)) emberAfLocalizationConfigurationClusterInitCallback(EndpointId endpoint)
 {
 	// To prevent warning
 	(void)endpoint;
