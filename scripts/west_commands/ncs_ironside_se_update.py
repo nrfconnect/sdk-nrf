@@ -217,7 +217,9 @@ class NcsIronSideSEUpdate(WestCommand):
 
                     self.dbg("Reset to trigger update installation")
                     self._nrfutil_device(
-                        "reset --reset-kind RESET_VIA_SECDOM", **common_kwargs
+                        "reset --reset-kind RESET_VIA_SECDOM",
+                        die_on_error=False, # nrfutil will incorrectly fail, so don't die on error
+                        **common_kwargs,
                     )
                     self.dbg("Waiting for update to complete")
                     self._wait_for_bootstatus(**common_kwargs)
