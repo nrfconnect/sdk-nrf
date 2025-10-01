@@ -73,6 +73,9 @@ static int cmd_dfu_multi_image_write(const struct shell *shell, size_t argc, cha
 	if (ret < 0) {
 		shell_error(shell, "DFU multi image write failed: %d", ret);
 		return ret;
+	} else {
+		shell_print(shell, "Successfully wrote %d bytes at offset %d", chunk_size,
+			    write_offset);
 	}
 
 	return 0;
