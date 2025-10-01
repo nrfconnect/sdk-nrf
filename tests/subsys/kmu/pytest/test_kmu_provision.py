@@ -11,6 +11,7 @@ import pytest
 from twister_harness import DeviceAdapter
 from twister_harness.helpers.utils import match_lines, find_in_config
 from common import (
+    get_keyname_for_mcuboot,
     provision_keys_for_kmu,
     reset_board,
     APP_KEYS_FOR_KMU
@@ -49,7 +50,7 @@ def test_kmu_use_key_from_config(dut: DeviceAdapter, test_option):
 
     provision_keys_for_kmu(
         keys=keys,
-        keyname="UROT_PUBKEY",
+        keyname=get_keyname_for_mcuboot(sysbuild_config),
         dev_id=dut.device_config.id
     )
     dut.clear_buffer()
@@ -70,13 +71,14 @@ def test_kmu_use_wrong_key(dut: DeviceAdapter):
     verify that the application does not boot if the keys are incorrect.
     """
     logger.info("Provision wrong keys")
+    sysbuild_config = Path(dut.device_config.build_dir) / 'zephyr' / '.config'
     provision_keys_for_kmu(
         keys=[
             APP_KEYS_FOR_KMU / 'root-ed25519-1.pem',
             APP_KEYS_FOR_KMU / 'root-ed25519-2.pem',
             APP_KEYS_FOR_KMU / 'root-ed25519-w.pem'
         ],
-        keyname="UROT_PUBKEY",
+        keyname=get_keyname_for_mcuboot(sysbuild_config),
         dev_id=dut.device_config.id
     )
 
