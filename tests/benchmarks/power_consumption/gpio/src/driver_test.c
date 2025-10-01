@@ -7,6 +7,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/kernel.h>
 #include <zephyr/irq.h>
+#include <zephyr/pm/device_runtime.h>
 
 #define OUTPUT_NODE DT_ALIAS(out0)
 #define INPUT_NODE  DT_ALIAS(in0)
@@ -47,11 +48,15 @@ void thread_definition(void)
 
 	while (1) {
 		counter = 0;
+		rc = pm_device_runtime_get(output.port);
+		__ASSERT_NO_MSG(rc == 0);
 		key = irq_lock();
 		rc = gpio_pin_set_dt(&output, 0);
 		rc = gpio_pin_set_dt(&output, 1);
 		rc = gpio_pin_set_dt(&output, 0);
 		irq_unlock(key);
+		rc = pm_device_runtime_put(output.port);
+		__ASSERT_NO_MSG(rc == 0);
 		__ASSERT_NO_MSG(counter == 1);
 
 		k_msleep(10);
