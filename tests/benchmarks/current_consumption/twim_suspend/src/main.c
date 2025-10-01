@@ -7,7 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/i2c.h>
-#include <zephyr/pm/device.h>
+#include <zephyr/pm/device_runtime.h>
 
 /* Note: logging is normally disabled for this test
  * Enable only for debugging purposes
@@ -46,20 +46,30 @@ int main(void)
 	printk("Device address 0x%x\n", DEVICE_ADDRESS);
 	printk("I2C speed setting: %d\n", I2C_SPEED_STANDARD);
 
+	response = pm_device_runtime_get(i2c_device);
+	if (response != 0) {
+		printk("Device get failed%d\n", response);
+		__ASSERT_NO_MSG(response == 0);
+	}
+
 	response = i2c_configure(i2c_device, i2c_config);
 	if (response != 0) {
 		printk("I2C configuration failed%d\n", response);
 		__ASSERT_NO_MSG(response == 0);
 	}
 
-	response = pm_device_action_run(i2c_device, PM_DEVICE_ACTION_SUSPEND);
-	printk("PM_DEVICE_ACTION_SUSPEND status: %d\n", response);
-	__ASSERT_NO_MSG(response == 0);
+	response = pm_device_runtime_put(i2c_device);
+	if (response != 0) {
+		printk("Device put failed%d\n", response);
+		__ASSERT_NO_MSG(response == 0);
+	}
 
 	while (1) {
-		response = pm_device_action_run(i2c_device, PM_DEVICE_ACTION_RESUME);
-		printk("PM_DEVICE_ACTION_RESUME status: %d\n", response);
-		__ASSERT_NO_MSG(response == 0);
+		response = pm_device_runtime_get(i2c_device);
+		if (response != 0) {
+			printk("Device get failed%d\n", response);
+			__ASSERT_NO_MSG(response == 0);
+		}
 
 		response = read_sensor_register(CHIP_ID_REGISTER_ADDRESS);
 		printk("Chip_Id: %d\n", response);
@@ -69,9 +79,11 @@ int main(void)
 		printk("Variant_Id: %d\n", response);
 		__ASSERT_NO_MSG(response != 0);
 
-		response = pm_device_action_run(i2c_device, PM_DEVICE_ACTION_SUSPEND);
-		printk("PM_DEVICE_ACTION_SUSPEND status: %d\n", response);
-		__ASSERT_NO_MSG(response == 0);
+		response = pm_device_runtime_put(i2c_device);
+		if (response != 0) {
+			printk("Device put failed%d\n", response);
+			__ASSERT_NO_MSG(response == 0);
+		}
 
 		printk("Good night\n");
 		k_msleep(1000);
