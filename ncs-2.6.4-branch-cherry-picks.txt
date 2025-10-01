@@ -1,316 +1,316 @@
 # git log --oneline --reverse v3.1.1...HEAD subsys/bluetooth > ncs-2.6.4-branch-cherry-picks.txt
 
-ae5db09900 Bluetooth: controller: Fix memory config for channel survey
-bd7fdbc71f Bluetooth: Remove dep on ZLI for BSIM platform
-561b85e071 bluetooth: controller: update hci_driver to use new scanner memory macro
-9b002d87d2 treewide: Fix float to double promotion error
-1ebf62b939 tests: bluetooth: fast_pair: Fix strnlen() warnings
-8c73911a65 samples: Replace nRF54H20 PDK with DK
-2b136fee92 bluetooth: controller: Put ECDH driver in the MPSL work queue by default
-386272cb0f Bluetooth: Mesh: Remove unneeded dependency from metadata extraction
-e2ef01ab15 bluetooth: controller: Add kconfig for scanning/initiating in parallel
-26c0203d0f bluetooth: fast_pair: Disallow MbedTLS crypto for _ns and new targets
-a223da0578 bluetooth: controller: set bits 22 and 23 in LE Read Supported States
-b820233ab6 bluetooth: controller: increase default tx buffers for PAwR adv
-dd811c8868 bluetooth: controller: hci_driver: memset iso buffer config
-375009f222 Bluetooth: Fix EnOcean module parsing sensor data as commissioning
-1fd1259b8c bluetooth: controller: Prepare for changing RX SDU Pool size change
-51fdb70bca bluetooth: fast_pair: Add PSA crypto backend
-447f728a4a bluetooth: controller: Add HCI commands for LE Path Loss Monitoring
-e51875cfd7 samples: Change PSA WANT ECC key pair
-b5f3301901 Bluetooth: Controller: Use new APIs to configure ISO buffer use
-51c7c7e992 Bluetooth: Controller: Configurable RX and TX ISO MTU
-fd87be083a bluetooth: Move bt_rpc.h include from subsys to include
-e988c624ec bluetooth: controller: remove usage of sdc_soc.h in crypto.c
-04843ac9c6 Bluetooth: Controller: Reuse implementation in bt_read_static_addr
-8fdd623ecd Bluetooth: Controller: Add support for vendor specific commands
-589dbc03a5 Bluetooth: Mesh: Fix handling of uninitialized values in Sensor
-35059d322c bt: kconfig: Support BT_CTLR_ECDH_LIB_OBERON with TFM
-8834e8a232 bluetooth: services: wifi_prov: fix address access
-8737aeac90 kconfig: bluetooth: rename BT_BREDR to BT_CLASSIC
-74420ca4da bluetooth: kconfig: remove BT_RECV_BLOCKING dependency
-f8565ee406 Bluetooth: Mesh: avoid double conversion precision losing
-4a4815a8d4 Bluetooth: Host: allow reducing initiator priority
-620f21a693 bluetooth: controller: hci_driver: Add power control memory
-74cefe0765 Bluetooth: Host: Add missing include
-dd1b2387d2 bluetooth: fast_pair: storage: add storage module for beacon clock
-17fe32a264 Bluetooth: Mesh: Fix status pub for move set in gen_lvl_srv
-354d68abf4 bluetooth: fast_pair: fp_storage: Add AK storage minimal implementation
-2bd5dc7dd5 bluetooth: fast_pair: add crypto API for the FMDN extension
-776e6f59cb bluetooth: fast_pair: implement FMDN crypto for Oberon backend
-37cffb612d bluetooth: fast_pair: storage: add storage module for eik
-ab2e9d076c Bluetooth: Mesh: Reduce gen_lvl_srv set publication
-f7f59e4467 bluetooth: fast_pair: introduce kconfig and cmake for FMDN extension
-9fdf86387a bluetooth: fast_pair: fmdn: add callbacks module
-f1b48d3a8f bluetooth: fast_pair: fmdn: add clock module
-8869ab8657 bluetooth: fast_pair: fmdn: add DULT integration module
-ba83e927fb bluetooth: fast_pair: fmdn: add battery module
-9a425fa14c bluetooth: fast_pair: fmdn: add ring module
-aae0dd49c0 bluetooth: fast_pair: fmdn: add state module
-06c8f7d68b bluetooth: fast_pair: fmdn: add auth module
-d66bdad405 bluetooth: fast_pair: fmdn: add read mode module
-87691813af bluetooth: fast_pair: fmdn: add beacon actions module
-596d919337 bluetooth: fast_pair: reject factory reset in ready state for FMDN
-7e9565edd9 bluetooth: fast_pair: support procedure without bluetooth pairing
-21b36949eb sysbuild: Add bluetooth mesh DFU metadata support
-f399a1fb9d bluetooth: fast_pair: uuid: add beacon actions uuid to the api header
-b5b2524cd9 bluetooth: Don't reference removed Kconfig symbols
-f33a6c4af9 bluetooth: Remove bt_read_static_addr() "hack"
-a4dd5ea580 bluetooth: controller: Merge BT_HCI_VS_EXT into BT_HCI_VS
-28055db254 Bluetooth: Mesh: Coverity warning fixed
-ca4f64c4a3 Bluetooth: rpc: Change handling of remote settings initialization
-438c48431b bluetooth: controller: Move LE Path Loss Monitoring to separate KConfig
-927dfc6460 Bluetooth: enocean: Add unit test
-5872e4185a bluetooth: fast_pair: make model ID characteristic configurable
-27b496d1a5 bluetooth: fast_pair: apply dis overrides when fmdn is disabled
-6d59580931 bluetooth: fast_pair: use personalized name when fmdn is disabled
-bb9f21fab9 bluetooth: fast_pair: mark personalized name extension as experimental
-f92549677c bluetooth: Fix potential nullptr dereference in mds
-18a4fd9438 Bluetooth: Mesh: Don't start LC regulator on powerup
-c42007ba5d Bluetooth: Mesh: Fix scene recall for LLC server
-df5fed17b6 bluetooth: fast_pair: remove the experimental tag from the main Kconfig
-9607ca018e bluetooth: fast_pair: remove the experimental tag from fmdn extension
-79f748473b Bluetooth: Mesh: Correct typo in LLC server
-bfa09a3681 Bluetooth: Mesh: Improve LLC light property update
-635fa76ef9 Bluetooth: Add hci_vs_sdc.h which expose wrappers VS HCI commands
-4afbc3f79d Bluetooth: Remove VS HCI wrappers for coex
-dd6c463747 Bluetooth: <type>_cb_register functions to return int
-33ce349e57 adv_prov: fast_pair: Fix uninitialized structure
-c7d84c4463 services: hids: Fix possible out-of-bound access
-27d1272577 bluetooth: rpc: fix gatt client without smp
-8a5fa875b9 bluetooth: rpc: add static to local functions
-1f0de181ee Bluetooth: Controller: Enable Connection Subrating support in the SDC
-046cca6d94 Bluetooth: Controller: Add memory macro for subrating
-b32d531513 bluetooth: fast_pair: separate subsequent pairing feature into Kconfig
-257c99a252 bluetooth: rpc: add cb unregistration
-3913864abd nrf: rpc: move serializer and callback proxy to nrf rpc
-aba980b411 Bluetooth: Add "Radio Notification callback" feature
-a406621114 bluetooth: fast_pair: add use case layer and Kconfig selection
-96fe789cec sdc: handle opcode for VS Set Event Start Task
-4db7d6a019 bluetooth: Correct dependencies for BT_LL_SOFTDEVICE_HEADERS_INCLUDE
-945caf70a3 bluetooth: Build hci_vs_sdc if SDC headers are available
-6d006a8420 bluetooth: controller: use new PLM kconfigs
-9f37978df6 bluetooth: controller: kconfig: remove old sdc plm kconfig
-77479e2d04 bluetooth: controller: Select multirole library if using MPSL CX
-87b48efb36 fast_pair: fp_auth: Fix misspelling in API doc
-0e7cc47ff9 bluetooth: fast_pair: fp_storage: Fix storage reset
-0f177a82bc Bluetooth: Controller: Add Connection event anchor point reports
-4f9ba07303 Bluetooth: Add HCI wrapper for Set Event Start Task
-e8c40ae3d5 Bluetooth: Remove core spec version number from refs
-af9bd1cf2f Bluetooth: Controller: Allow overriding SDC HCI include path
-6c6d0ff161 bluetooth: controller: Remove call to deprecated SDC coex method
-57e4140d12 Bluetooth: Controller: Fix reading uninitialized memory
-cf3b9c8fc4 Bluetooth: Host: Utilize hci_vs_sdc.h to simplify code
-6ff71db587 bluetooth: adv_prov: Add adv_handle parameter
-c22da4b0ad samples: bluetooth: Restore support for BT RPC in HIDS mouse and c. UART
-49deec1aa9 Bluetooth: Controller: Use multirole lib for any 54L series device
-e950ac12fa bluetooth: controller: Add SDC feature enabler for Path Loss Monitoring
-8bd9196973 nrf_rpc: UART transport implementation.
-8dd5d5d1f9 bluetooth: rpc: include shell Kconfig
-d558eadc23 bluetooth: fast_pair: use_case: add use case options for HID devices
-5751b7332a bluetooth: Use VS Set Event Start Task in radio_notification_conn_cb.c
-6e9ae016ad bluetooth: fast_pair: fmdn: improve fmdn adv set lifetime management
-05987151e1 Bluetooth: Controller Update to use the new driver API
-441982ed86 fast_pair: Drop MbedTLS cryptographic backend support
-2678a8233c Bluetooth: Host: Remove useless internal include
-9539f0a1a5 bluetooth: controller: free DPPI channel 13
-f6f5b32f97 Bluetooth: Host: Use public API to obtain conn handle
-8e9c3a29f0 Bluetooth: Mesh: fix model id in time shell client
-4742b26f55 bluetooth: controller: free DPPI 12 on 54L & 54H
-219f6a4836 manifest: update Zephyr to remove deprecated Kconfig
-277935f4c3 bluetooth: controller: Select SDC multirole variant if subrating
-bc7ba5100e bluetooth: fast_pair: Fix PSA crypto backend dependencies
-8e64dd028c bluetooth: controller: Remove experimental flag from subrating
-30086f3419 bluetooth: fast_pair: fp_gatt_service: Allow to opt-out not used code
-2e5e36f0c4 bluetooth: fast_pair: Kconfig defaults cleanup
-5e45476977 bluetooth: fast_pair: use_case: locator_tag: add restrictions
-b97558b386 dts: Bluetooth: Add new DTS binding for the SoftDevice Controller
-3940f0e728 bluetooth: fast_pair: add kconfig for battery notification extension
-fef20ce1d8 Revert "dts: Bluetooth: Add new DTS binding for the SoftDevice Controller"
-f781fd5801 susbsys: bluetooth: controller: Use new sync transfer mem define
-ec0b9966b4 Bluetooth: radio_notification_conn_cb for 54 series
-79c0c3c3d2 dts: Bluetooth: Add new DTS binding for the SoftDevice Controller (2)
-51537ac87c bluetooth: fast_pair: fmdn: Integrate DULT motion detector module
-88b468e452 bluetooth: controller: add k_panic() if the hci packet is too big
-871eab84cf Bluetooth: Controller: Add device tree dependency to selection
-503549979f Bluetooth: hci_driver: Mark Anchor point update report as discardable
-8e944f1efe Bluetooth: radio_notification_callback: Refactor to not use EGUs
-c2300bada6 Bluetooth: radio_notification_callback: Remove experimental label
-d54c2c19af bluetooth: crypto: Adding missing key-types for ECC
-2541ba2b58 libraries: Update all includes to <zephyr/net_buf.h>
-58f18dc5cd bluetooth: controller: align softdevice with BT_CTLR_CRYPTO_SUPPORT
-b15c1d7ce0 bluetooth: controller: ecdh: enable security backend for tf-m builds
-b2422dc77b Bluetooth: Controller: Kconfig: select BT_CTLR_CRYPTO_SUPPORT for sdc
-97726616b8 Bluetooth: Mesh: align rpl with subnet bridge changes
-3a2b093831 bluetooth: fast_pair: crypto: enable security backend for tf-m builds
-9179359c20 bluetooth: rpc: include Kconfig for logging from Zephyr Bluetooth stack
-94c905e17f bluetooth: rpc: add nrf53 cpunet enable code
-9c155e4e33 bluetooth: rpc: Align with the new Zephyr Bluetooth GATT API
-8c7ee2fea0 bluetooth: fast_pair: Remove the factory reset prepare user action
-4089f8ec49 bluetooth: mesh: remove deprecated legacy sensor API
-af4286ed6b bluetooth: rpc: fix assert condition
-d66c59bc6d Bluetooth: Controller: Enable Channel Sounding support
-1deb009b3c bluetooth: fast_pair: Add bond management
-958275302d fast_pair: Add bond management documentation
-b288e79d02 ble: crypto: Remove NORDIC_SECURITY_BACKEND for ECDH with nrf_oberon
-6f5194b6ca ble: fast_pair: crypto: Allow for nrf_oberon when TF-M is enabled
-8e8f3a3b43 Bluetooth: Mesh: Add empty func to rpl.c
-ffbfaa4614 Bluetooth: GATT DM: Schedule host cbs in work q
-f3f9c04fcf bluetooth: mark CS as experimental in Kconfig
-d68032e31f kconfig: Use SOC_NRF54H20_ENGB
-adf1d0fccc Bluetooth: Controller: Add Missing CS HCI cmd Handler
+# ae5db09900 Bluetooth: controller: Fix memory config for channel survey
+# bd7fdbc71f Bluetooth: Remove dep on ZLI for BSIM platform
+# 561b85e071 bluetooth: controller: update hci_driver to use new scanner memory macro
+# 9b002d87d2 treewide: Fix float to double promotion error
+# 1ebf62b939 tests: bluetooth: fast_pair: Fix strnlen() warnings
+# 8c73911a65 samples: Replace nRF54H20 PDK with DK
+# 2b136fee92 bluetooth: controller: Put ECDH driver in the MPSL work queue by default
+# 386272cb0f Bluetooth: Mesh: Remove unneeded dependency from metadata extraction
+# e2ef01ab15 bluetooth: controller: Add kconfig for scanning/initiating in parallel
+# 26c0203d0f bluetooth: fast_pair: Disallow MbedTLS crypto for _ns and new targets
+# a223da0578 bluetooth: controller: set bits 22 and 23 in LE Read Supported States
+# b820233ab6 bluetooth: controller: increase default tx buffers for PAwR adv
+# dd811c8868 bluetooth: controller: hci_driver: memset iso buffer config
+# 375009f222 Bluetooth: Fix EnOcean module parsing sensor data as commissioning
+# 1fd1259b8c bluetooth: controller: Prepare for changing RX SDU Pool size change
+# 51fdb70bca bluetooth: fast_pair: Add PSA crypto backend
+# 447f728a4a bluetooth: controller: Add HCI commands for LE Path Loss Monitoring
+# e51875cfd7 samples: Change PSA WANT ECC key pair
+# b5f3301901 Bluetooth: Controller: Use new APIs to configure ISO buffer use
+# 51c7c7e992 Bluetooth: Controller: Configurable RX and TX ISO MTU
+# fd87be083a bluetooth: Move bt_rpc.h include from subsys to include
+# e988c624ec bluetooth: controller: remove usage of sdc_soc.h in crypto.c
+# 04843ac9c6 Bluetooth: Controller: Reuse implementation in bt_read_static_addr
+# 8fdd623ecd Bluetooth: Controller: Add support for vendor specific commands
+# 589dbc03a5 Bluetooth: Mesh: Fix handling of uninitialized values in Sensor
+# 35059d322c bt: kconfig: Support BT_CTLR_ECDH_LIB_OBERON with TFM
+# 8834e8a232 bluetooth: services: wifi_prov: fix address access
+# 8737aeac90 kconfig: bluetooth: rename BT_BREDR to BT_CLASSIC
+# 74420ca4da bluetooth: kconfig: remove BT_RECV_BLOCKING dependency
+# f8565ee406 Bluetooth: Mesh: avoid double conversion precision losing
+# 4a4815a8d4 Bluetooth: Host: allow reducing initiator priority
+# 620f21a693 bluetooth: controller: hci_driver: Add power control memory
+# 74cefe0765 Bluetooth: Host: Add missing include
+# dd1b2387d2 bluetooth: fast_pair: storage: add storage module for beacon clock
+# 17fe32a264 Bluetooth: Mesh: Fix status pub for move set in gen_lvl_srv
+# 354d68abf4 bluetooth: fast_pair: fp_storage: Add AK storage minimal implementation
+# 2bd5dc7dd5 bluetooth: fast_pair: add crypto API for the FMDN extension
+# 776e6f59cb bluetooth: fast_pair: implement FMDN crypto for Oberon backend
+# 37cffb612d bluetooth: fast_pair: storage: add storage module for eik
+# ab2e9d076c Bluetooth: Mesh: Reduce gen_lvl_srv set publication
+# f7f59e4467 bluetooth: fast_pair: introduce kconfig and cmake for FMDN extension
+# 9fdf86387a bluetooth: fast_pair: fmdn: add callbacks module
+# f1b48d3a8f bluetooth: fast_pair: fmdn: add clock module
+# 8869ab8657 bluetooth: fast_pair: fmdn: add DULT integration module
+# ba83e927fb bluetooth: fast_pair: fmdn: add battery module
+# 9a425fa14c bluetooth: fast_pair: fmdn: add ring module
+# aae0dd49c0 bluetooth: fast_pair: fmdn: add state module
+# 06c8f7d68b bluetooth: fast_pair: fmdn: add auth module
+# d66bdad405 bluetooth: fast_pair: fmdn: add read mode module
+# 87691813af bluetooth: fast_pair: fmdn: add beacon actions module
+# 596d919337 bluetooth: fast_pair: reject factory reset in ready state for FMDN
+# 7e9565edd9 bluetooth: fast_pair: support procedure without bluetooth pairing
+# 21b36949eb sysbuild: Add bluetooth mesh DFU metadata support
+# f399a1fb9d bluetooth: fast_pair: uuid: add beacon actions uuid to the api header
+# b5b2524cd9 bluetooth: Don't reference removed Kconfig symbols
+# f33a6c4af9 bluetooth: Remove bt_read_static_addr() "hack"
+# a4dd5ea580 bluetooth: controller: Merge BT_HCI_VS_EXT into BT_HCI_VS
+# 28055db254 Bluetooth: Mesh: Coverity warning fixed
+# ca4f64c4a3 Bluetooth: rpc: Change handling of remote settings initialization
+# 438c48431b bluetooth: controller: Move LE Path Loss Monitoring to separate KConfig
+# 927dfc6460 Bluetooth: enocean: Add unit test
+# 5872e4185a bluetooth: fast_pair: make model ID characteristic configurable
+# 27b496d1a5 bluetooth: fast_pair: apply dis overrides when fmdn is disabled
+# 6d59580931 bluetooth: fast_pair: use personalized name when fmdn is disabled
+# bb9f21fab9 bluetooth: fast_pair: mark personalized name extension as experimental
+# f92549677c bluetooth: Fix potential nullptr dereference in mds
+# 18a4fd9438 Bluetooth: Mesh: Don't start LC regulator on powerup
+# c42007ba5d Bluetooth: Mesh: Fix scene recall for LLC server
+# df5fed17b6 bluetooth: fast_pair: remove the experimental tag from the main Kconfig
+# 9607ca018e bluetooth: fast_pair: remove the experimental tag from fmdn extension
+# 79f748473b Bluetooth: Mesh: Correct typo in LLC server
+# bfa09a3681 Bluetooth: Mesh: Improve LLC light property update
+# 635fa76ef9 Bluetooth: Add hci_vs_sdc.h which expose wrappers VS HCI commands
+# 4afbc3f79d Bluetooth: Remove VS HCI wrappers for coex
+# dd6c463747 Bluetooth: <type>_cb_register functions to return int
+# 33ce349e57 adv_prov: fast_pair: Fix uninitialized structure
+# c7d84c4463 services: hids: Fix possible out-of-bound access
+# 27d1272577 bluetooth: rpc: fix gatt client without smp
+# 8a5fa875b9 bluetooth: rpc: add static to local functions
+# 1f0de181ee Bluetooth: Controller: Enable Connection Subrating support in the SDC
+# 046cca6d94 Bluetooth: Controller: Add memory macro for subrating
+# b32d531513 bluetooth: fast_pair: separate subsequent pairing feature into Kconfig
+# 257c99a252 bluetooth: rpc: add cb unregistration
+# 3913864abd nrf: rpc: move serializer and callback proxy to nrf rpc
+# aba980b411 Bluetooth: Add "Radio Notification callback" feature
+# a406621114 bluetooth: fast_pair: add use case layer and Kconfig selection
+# 96fe789cec sdc: handle opcode for VS Set Event Start Task
+# 4db7d6a019 bluetooth: Correct dependencies for BT_LL_SOFTDEVICE_HEADERS_INCLUDE
+# 945caf70a3 bluetooth: Build hci_vs_sdc if SDC headers are available
+# 6d006a8420 bluetooth: controller: use new PLM kconfigs
+# 9f37978df6 bluetooth: controller: kconfig: remove old sdc plm kconfig
+# 77479e2d04 bluetooth: controller: Select multirole library if using MPSL CX
+# 87b48efb36 fast_pair: fp_auth: Fix misspelling in API doc
+# 0e7cc47ff9 bluetooth: fast_pair: fp_storage: Fix storage reset
+# 0f177a82bc Bluetooth: Controller: Add Connection event anchor point reports
+# 4f9ba07303 Bluetooth: Add HCI wrapper for Set Event Start Task
+# e8c40ae3d5 Bluetooth: Remove core spec version number from refs
+# af9bd1cf2f Bluetooth: Controller: Allow overriding SDC HCI include path
+# 6c6d0ff161 bluetooth: controller: Remove call to deprecated SDC coex method
+# 57e4140d12 Bluetooth: Controller: Fix reading uninitialized memory
+# cf3b9c8fc4 Bluetooth: Host: Utilize hci_vs_sdc.h to simplify code
+# 6ff71db587 bluetooth: adv_prov: Add adv_handle parameter
+# c22da4b0ad samples: bluetooth: Restore support for BT RPC in HIDS mouse and c. UART
+# 49deec1aa9 Bluetooth: Controller: Use multirole lib for any 54L series device
+# e950ac12fa bluetooth: controller: Add SDC feature enabler for Path Loss Monitoring
+# 8bd9196973 nrf_rpc: UART transport implementation.
+# 8dd5d5d1f9 bluetooth: rpc: include shell Kconfig
+# d558eadc23 bluetooth: fast_pair: use_case: add use case options for HID devices
+# 5751b7332a bluetooth: Use VS Set Event Start Task in radio_notification_conn_cb.c
+# 6e9ae016ad bluetooth: fast_pair: fmdn: improve fmdn adv set lifetime management
+# 05987151e1 Bluetooth: Controller Update to use the new driver API
+# 441982ed86 fast_pair: Drop MbedTLS cryptographic backend support
+# 2678a8233c Bluetooth: Host: Remove useless internal include
+# 9539f0a1a5 bluetooth: controller: free DPPI channel 13
+# f6f5b32f97 Bluetooth: Host: Use public API to obtain conn handle
+# 8e9c3a29f0 Bluetooth: Mesh: fix model id in time shell client
+# 4742b26f55 bluetooth: controller: free DPPI 12 on 54L & 54H
+# 219f6a4836 manifest: update Zephyr to remove deprecated Kconfig
+# 277935f4c3 bluetooth: controller: Select SDC multirole variant if subrating
+# bc7ba5100e bluetooth: fast_pair: Fix PSA crypto backend dependencies
+# 8e64dd028c bluetooth: controller: Remove experimental flag from subrating
+# 30086f3419 bluetooth: fast_pair: fp_gatt_service: Allow to opt-out not used code
+# 2e5e36f0c4 bluetooth: fast_pair: Kconfig defaults cleanup
+# 5e45476977 bluetooth: fast_pair: use_case: locator_tag: add restrictions
+# b97558b386 dts: Bluetooth: Add new DTS binding for the SoftDevice Controller
+# 3940f0e728 bluetooth: fast_pair: add kconfig for battery notification extension
+# fef20ce1d8 Revert "dts: Bluetooth: Add new DTS binding for the SoftDevice Controller"
+# f781fd5801 susbsys: bluetooth: controller: Use new sync transfer mem define
+# ec0b9966b4 Bluetooth: radio_notification_conn_cb for 54 series
+# 79c0c3c3d2 dts: Bluetooth: Add new DTS binding for the SoftDevice Controller (2)
+# 51537ac87c bluetooth: fast_pair: fmdn: Integrate DULT motion detector module
+# 88b468e452 bluetooth: controller: add k_panic() if the hci packet is too big
+# 871eab84cf Bluetooth: Controller: Add device tree dependency to selection
+# 503549979f Bluetooth: hci_driver: Mark Anchor point update report as discardable
+# 8e944f1efe Bluetooth: radio_notification_callback: Refactor to not use EGUs
+# c2300bada6 Bluetooth: radio_notification_callback: Remove experimental label
+# d54c2c19af bluetooth: crypto: Adding missing key-types for ECC
+# 2541ba2b58 libraries: Update all includes to <zephyr/net_buf.h>
+# 58f18dc5cd bluetooth: controller: align softdevice with BT_CTLR_CRYPTO_SUPPORT
+# b15c1d7ce0 bluetooth: controller: ecdh: enable security backend for tf-m builds
+# b2422dc77b Bluetooth: Controller: Kconfig: select BT_CTLR_CRYPTO_SUPPORT for sdc
+# 97726616b8 Bluetooth: Mesh: align rpl with subnet bridge changes
+# 3a2b093831 bluetooth: fast_pair: crypto: enable security backend for tf-m builds
+# 9179359c20 bluetooth: rpc: include Kconfig for logging from Zephyr Bluetooth stack
+# 94c905e17f bluetooth: rpc: add nrf53 cpunet enable code
+# 9c155e4e33 bluetooth: rpc: Align with the new Zephyr Bluetooth GATT API
+# 8c7ee2fea0 bluetooth: fast_pair: Remove the factory reset prepare user action
+# 4089f8ec49 bluetooth: mesh: remove deprecated legacy sensor API
+# af4286ed6b bluetooth: rpc: fix assert condition
+# d66c59bc6d Bluetooth: Controller: Enable Channel Sounding support
+# 1deb009b3c bluetooth: fast_pair: Add bond management
+# 958275302d fast_pair: Add bond management documentation
+# b288e79d02 ble: crypto: Remove NORDIC_SECURITY_BACKEND for ECDH with nrf_oberon
+# 6f5194b6ca ble: fast_pair: crypto: Allow for nrf_oberon when TF-M is enabled
+# 8e8f3a3b43 Bluetooth: Mesh: Add empty func to rpl.c
+# ffbfaa4614 Bluetooth: GATT DM: Schedule host cbs in work q
+# f3f9c04fcf bluetooth: mark CS as experimental in Kconfig
+# d68032e31f kconfig: Use SOC_NRF54H20_ENGB
+# adf1d0fccc Bluetooth: Controller: Add Missing CS HCI cmd Handler
 d8f5a506a6 bluetooth: controller: hci_driver: Add option to enable power class 1
-a07804cccb Bluetooth: Mesh: Fix recall in light_ctrl_srv
-86f195311c bluetooth: Initialize conn to NULL for bt_conn_le_create()
-771d5ce292 bluetooth: services: lbs: button_state only used if poll is enabled
-d5e1da742e bluetooth: services: ras: Add initial folder structure for ranging service
-27bf3581eb bluetooth: services: ras: Implement Ranging Responder role of RAS
-d0cdd9babd bluetooth: services: ras: Add RREQ implementation to RAS
-0d227d82bb bluetooth: services: hogp: Pass GATT read's error code
-992213e5f8 cmake: sysbuild: fast_pair: add support for nRF54H20 non-PM
-1ac36e15fe treewide: Remove references to SOC_NRF54H20_ENGB_CPURAD
-3c94a8a267 bluetooth: services: RAS: Add rreq parse function
-8fdc675d02 samples: bluetooth: Add Channel Sounding Initiator with RREQ sample
-ee2d84ad14 softdevice_controller: Use always-on mram on 54h
-3872e96db1 Bluetooth: Controller: Remove experimental from parallel scan+init
-c3f89ebef0 bluetooth: remove hci_vs_sdc_set_conn_event_trigger()
-02f9716596 bluetooth: add Kconfig options to enable optional CS capabilities
-638711ef0d bluetooth: controller: Allow enabling SDC LLPM on BabbleSim
-2c45deb3f5 bluetooth: controller: Return an error if LLPM is not supported
-10edacd3ed all: Remove CONFIG_SOC_NRF54H20_NO_MRAM_LATENCY=n
-2c47cf7a52 bluetooth: fast_pair: fmdn: callbacks: migrate to slist find API
-568a7d4cde bluetooth: fast_pair: allow multiple instances of info callbacks
-49acaa05c6 fast_pair: Remove MRAM1x dependency for targets without Partition Manager
-e70c928eb8 bluetooth: services: ras: rrsp: Fix bug with multiple subevents
-619d8c1cf9 bluetooth: services: ras: rreq: Allow calling already subscribed err
-14e6e7b444 bluetooth: services: ras: rreq: Check for aborted subevent
-1f092fb664 bluetooth: controller: fix MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT
-29e8546912 bluetooth: services: ras: Fix unaligned memory access in RAS
-dee077dd8a Bluetooth: Controller: Set Extended Advertising Parameters v2 command
-5241ce0e56 bluetooth: services: ras: rreq: Add feature read functionality
-5a083ee0b9 Bluetooth: mesh: Fix scene recall for Light Ctrl server
-59be6ede09 bluetooth: fast_pair: allow the callback registration in SYS_INIT
-f39663d47b bluetooth: services: User data in HID service callback
-3bf7d40e19 Bluetooth: Mesh: fix uptime to tai conversion inaccuracy
+# a07804cccb Bluetooth: Mesh: Fix recall in light_ctrl_srv
+# 86f195311c bluetooth: Initialize conn to NULL for bt_conn_le_create()
+# 771d5ce292 bluetooth: services: lbs: button_state only used if poll is enabled
+# d5e1da742e bluetooth: services: ras: Add initial folder structure for ranging service
+# 27bf3581eb bluetooth: services: ras: Implement Ranging Responder role of RAS
+# d0cdd9babd bluetooth: services: ras: Add RREQ implementation to RAS
+# 0d227d82bb bluetooth: services: hogp: Pass GATT read's error code
+# 992213e5f8 cmake: sysbuild: fast_pair: add support for nRF54H20 non-PM
+# 1ac36e15fe treewide: Remove references to SOC_NRF54H20_ENGB_CPURAD
+# 3c94a8a267 bluetooth: services: RAS: Add rreq parse function
+# 8fdc675d02 samples: bluetooth: Add Channel Sounding Initiator with RREQ sample
+# ee2d84ad14 softdevice_controller: Use always-on mram on 54h
+# 3872e96db1 Bluetooth: Controller: Remove experimental from parallel scan+init
+# c3f89ebef0 bluetooth: remove hci_vs_sdc_set_conn_event_trigger()
+# 02f9716596 bluetooth: add Kconfig options to enable optional CS capabilities
+# 638711ef0d bluetooth: controller: Allow enabling SDC LLPM on BabbleSim
+# 2c45deb3f5 bluetooth: controller: Return an error if LLPM is not supported
+# 10edacd3ed all: Remove CONFIG_SOC_NRF54H20_NO_MRAM_LATENCY=n
+# 2c47cf7a52 bluetooth: fast_pair: fmdn: callbacks: migrate to slist find API
+# 568a7d4cde bluetooth: fast_pair: allow multiple instances of info callbacks
+# 49acaa05c6 fast_pair: Remove MRAM1x dependency for targets without Partition Manager
+# e70c928eb8 bluetooth: services: ras: rrsp: Fix bug with multiple subevents
+# 619d8c1cf9 bluetooth: services: ras: rreq: Allow calling already subscribed err
+# 14e6e7b444 bluetooth: services: ras: rreq: Check for aborted subevent
+# 1f092fb664 bluetooth: controller: fix MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT
+# 29e8546912 bluetooth: services: ras: Fix unaligned memory access in RAS
+# dee077dd8a Bluetooth: Controller: Set Extended Advertising Parameters v2 command
+# 5241ce0e56 bluetooth: services: ras: rreq: Add feature read functionality
+# 5a083ee0b9 Bluetooth: mesh: Fix scene recall for Light Ctrl server
+# 59be6ede09 bluetooth: fast_pair: allow the callback registration in SYS_INIT
+# f39663d47b bluetooth: services: User data in HID service callback
+# 3bf7d40e19 Bluetooth: Mesh: fix uptime to tai conversion inaccuracy
 52b63957ad bluetooth: hci_driver: Fix deadlock in MPSL workq
 aec6383d2d bluetooth: hci_driver: Process recvd msgs directly from SDC callback
-33bdc5fa3a bluetooth: controller: remove vs supported commands implementation
-12223d7199 Bluetooth: Mesh: fix defaults for generic location srv
-f25ade654e bluetooth: services: report id in out/feature report data callback
-87bd56e139 bluetooth: services: report id in input report notification callback
-11284f3b11 bluetooth: Add required heap to the gatt_dm
-fcbe2bb365 bluetooth: controller: Add dependencies to Kconfig symbols
-a2f01a97bd Bluetooth: Mesh: light_temp_srv added publication
-82d3d2677a treewide: Remove child/parent image support
-d9462735dd Bluetooth: Mesh: Fix idx in dtt_srv_get
-d10da56ffe Bluetooth: Controller: Update to memory allocation for CS
-87dfbdb86f Bluetooth: Controller: Remove use of SDC_MEM_CS_DEPRECATED
-2b05cc3b0d Bluetooth: Mesh: fix NO_ACTIONS scheduling
-cf7594ee83 bluetooth: host_extension: RTCx time diff may be negative
-c8c315ab0d bluetooth: rpc: remove unnecessary source
-4b22fc763c bluetooth: rpc: Remove dependency on BT_DRIVERS
-45bb11c4a0 bluetooth: controller: Kconfig: Adapt to upstream Zephyr changes
-635d71dae3 treewide: Adapt to upstream Zephyr changes related to BT_CTLR
-2c121828f7 samples: bluetooth: Update to no longer use deprecated adv resume
-5c37d82e85 treewide: Remove redefinitions of SEC_PER_HOUR and SEC_PER_DAY
-d3148c6849 treewide: Synchronize wifi_credentials and wifi_mgmt_ext with upstream
-3dc26aa7b2 Bluetooth: Mesh: adapting configuration parameters
-948bc5c66e bluetooth: mesh: PSA requires RNG enabled
-1e840b035e bluetooth: Remove references to BT_TINYCRYPT_ECC
-0ad47f18dd mesh: Add link to mbedTLS for simulator tests to find psa/crypto.h
-fcc36a2237 bluetooth: rpc: Remove deprecated bt_le_set_auto_conn
-9047a00bdd bluetooth: controller: Adjust stack sizes due to PSA change
-ebc79e09fd bluetooth: services: wifi_prov: Fix setting of nanopb_BUILD_RUNTIME
-f3d45ca3b5 mpsl: clock_ctrl: Integration layer with nRF clock control
-c223901da7 driver: creating a cs multiantenna callback
-5481bb27a3 Bluetooth: Controller: Use SOC_COMPATIBLE for setting SDC lib variant
-7738cefb2c Bluetooth: Mesh: enable HUK init in driver
-db14165d79 bluetooth: fast_pair: fmdn: extend api with a callback for conn auth
-6c574e3779 samples: nrf_rpc: ps_client: fix BLE snippet after upmerge
-560e88d8c4 Bluetooth: Mesh: make bsim mesh with mbedtls workable
+# 33bdc5fa3a bluetooth: controller: remove vs supported commands implementation
+# 12223d7199 Bluetooth: Mesh: fix defaults for generic location srv
+# f25ade654e bluetooth: services: report id in out/feature report data callback
+# 87bd56e139 bluetooth: services: report id in input report notification callback
+# 11284f3b11 bluetooth: Add required heap to the gatt_dm
+# fcbe2bb365 bluetooth: controller: Add dependencies to Kconfig symbols
+# a2f01a97bd Bluetooth: Mesh: light_temp_srv added publication
+# 82d3d2677a treewide: Remove child/parent image support
+# d9462735dd Bluetooth: Mesh: Fix idx in dtt_srv_get
+# d10da56ffe Bluetooth: Controller: Update to memory allocation for CS
+# 87dfbdb86f Bluetooth: Controller: Remove use of SDC_MEM_CS_DEPRECATED
+# 2b05cc3b0d Bluetooth: Mesh: fix NO_ACTIONS scheduling
+# cf7594ee83 bluetooth: host_extension: RTCx time diff may be negative
+# c8c315ab0d bluetooth: rpc: remove unnecessary source
+# 4b22fc763c bluetooth: rpc: Remove dependency on BT_DRIVERS
+# 45bb11c4a0 bluetooth: controller: Kconfig: Adapt to upstream Zephyr changes
+# 635d71dae3 treewide: Adapt to upstream Zephyr changes related to BT_CTLR
+# 2c121828f7 samples: bluetooth: Update to no longer use deprecated adv resume
+# 5c37d82e85 treewide: Remove redefinitions of SEC_PER_HOUR and SEC_PER_DAY
+# d3148c6849 treewide: Synchronize wifi_credentials and wifi_mgmt_ext with upstream
+# 3dc26aa7b2 Bluetooth: Mesh: adapting configuration parameters
+# 948bc5c66e bluetooth: mesh: PSA requires RNG enabled
+# 1e840b035e bluetooth: Remove references to BT_TINYCRYPT_ECC
+# 0ad47f18dd mesh: Add link to mbedTLS for simulator tests to find psa/crypto.h
+# fcc36a2237 bluetooth: rpc: Remove deprecated bt_le_set_auto_conn
+# 9047a00bdd bluetooth: controller: Adjust stack sizes due to PSA change
+# ebc79e09fd bluetooth: services: wifi_prov: Fix setting of nanopb_BUILD_RUNTIME
+# f3d45ca3b5 mpsl: clock_ctrl: Integration layer with nRF clock control
+# c223901da7 driver: creating a cs multiantenna callback
+# 5481bb27a3 Bluetooth: Controller: Use SOC_COMPATIBLE for setting SDC lib variant
+# 7738cefb2c Bluetooth: Mesh: enable HUK init in driver
+# db14165d79 bluetooth: fast_pair: fmdn: extend api with a callback for conn auth
+# 6c574e3779 samples: nrf_rpc: ps_client: fix BLE snippet after upmerge
+# 560e88d8c4 Bluetooth: Mesh: make bsim mesh with mbedtls workable
 77661839cf Bluetooth: Controller: Ensure controller can handle flow control buffers
-42cd2d1da1 mpsl: pm: Add MRAM low latency request and response handling
-007584f392 bluetooth: controller: Return code from sdc_init was overwirtten
-1883f06ef4 Bluetooth: Mesh: disable HUK for nrf52 ble mesh
-34740f13c7 bluetooth: mesh: Overwrite secure storage backend config
-374673e77e bluetooth: controller: use DIRSET mask for antenna switch gpios
-7669bb8121 bluetooth: fast_pair: fmdn: add restriction for fmdn tx power
-f79bb54aa2 driver: switch to new sdc_support_channel_sounding function
-dc3dcfd6f1 Bluetooth: Mesh: Fixed reported coverity issues
-23efa5b583 Bluetooth: Controller: Add support for Advertising Coding Selection
-7c2ec0dfc2 bluetooth: controller: Use GPIO driver for CS antenna switching
-4b7980286e bluetooth: controller: Fix compilation error in cs_antenna_switch.c
-fdd05c60af bluetooth: controller: fix single-pin multiplexed antenna switch
-029bc8024e bluetooth: mesh: Correct CMakeLists.txt formatting
-3db08122ae bluetooth: services: Fix discarding valid steps in RAS RREQ parser
-d7272535eb bluetooth: services: prefer ind over notif in RAS when relevant
-509cb57490 sysbuild: fast_pair: add Model ID and Anti-Spoofing Key Kconfig options
-9ad5d51f6d bluetooth: controller: Reset ECDH command on deinitialization
-f3b5d2747d bluetooth: services: Fix RAS ring buffer alloc overflow issue
-8db30da07e bluetooth: services: Support aborted procedures/subevents in RAS
-d3f4cedfc1 Bluetooth: Mesh: add tc to psa key convertor
-7525bf5382 Bluetooth: controller: Don't select ECDH support
-190839b44b bluetooth: fast_pair: fmdn: add uptime workaround to the clock module
-b820eaf478 bluetooth: fast_pair: fmdn: add API for checking the provisioning state
-86638730d9 Bluetooth: Mesh: remove bt long wq customization
-6082787b4f Bluetooth: decrease bt long wq size
-9eeb85faf9 bluetooth: services: ras: Fix RAS RRSP after GATT API changes
-b4b0ece65e applications: nrf5340_audio: Added BT_PRIVATE_SHELL
-eaa31b396e bluetooth: services: ras: Add callback for ranging header in parser.
-4ac10c6e31 bluetooth: Add channel sounding distance estimation library
-6f8e19f1b0 doc: Update documentation for Channel Sounding Kconfig options
-fa895eff2d doc: Update docs for Channel Sounding Ranging Service Kconfig options
-a52948108d Bluetooth: Mesh: Increase default MBEDTLS_HEAP_SIZE for NLC profile
-c167d918f9 bluetooth: samples: Apply callback changes of CS complete events
-261d002e60 Bluetooth: controller: Remove ECDH implementation
-a939310a7a doc: Remove [EXPERIMENTAL] tag from Channel Sounding Kconfigs
-81bb2ad59a bluetooth: controller: Use new SDC variants for nRF54L
-4e15fed7e3 bluetooth: services: Set RTT estimate to NAN if negative
-30b1946844 bluetooth: fast_pair: fmdn: Fix Kconfig dependency misalignment
-5bb0759d0c bluetooth: services: Implement real-time ranging data service
-bc5b776f39 bluetooth: samples: Use real-time ranging data in RAS samples
-68eeb4eee8 bluetooth: services: Redefine the CS RAS reassembly buffer kconfig
+# 42cd2d1da1 mpsl: pm: Add MRAM low latency request and response handling
+# 007584f392 bluetooth: controller: Return code from sdc_init was overwirtten
+# 1883f06ef4 Bluetooth: Mesh: disable HUK for nrf52 ble mesh
+# 34740f13c7 bluetooth: mesh: Overwrite secure storage backend config
+# 374673e77e bluetooth: controller: use DIRSET mask for antenna switch gpios
+# 7669bb8121 bluetooth: fast_pair: fmdn: add restriction for fmdn tx power
+# f79bb54aa2 driver: switch to new sdc_support_channel_sounding function
+# dc3dcfd6f1 Bluetooth: Mesh: Fixed reported coverity issues
+# 23efa5b583 Bluetooth: Controller: Add support for Advertising Coding Selection
+# 7c2ec0dfc2 bluetooth: controller: Use GPIO driver for CS antenna switching
+# 4b7980286e bluetooth: controller: Fix compilation error in cs_antenna_switch.c
+# fdd05c60af bluetooth: controller: fix single-pin multiplexed antenna switch
+# 029bc8024e bluetooth: mesh: Correct CMakeLists.txt formatting
+# 3db08122ae bluetooth: services: Fix discarding valid steps in RAS RREQ parser
+# d7272535eb bluetooth: services: prefer ind over notif in RAS when relevant
+# 509cb57490 sysbuild: fast_pair: add Model ID and Anti-Spoofing Key Kconfig options
+# 9ad5d51f6d bluetooth: controller: Reset ECDH command on deinitialization
+# f3b5d2747d bluetooth: services: Fix RAS ring buffer alloc overflow issue
+# 8db30da07e bluetooth: services: Support aborted procedures/subevents in RAS
+# d3f4cedfc1 Bluetooth: Mesh: add tc to psa key convertor
+# 7525bf5382 Bluetooth: controller: Don't select ECDH support
+# 190839b44b bluetooth: fast_pair: fmdn: add uptime workaround to the clock module
+# b820eaf478 bluetooth: fast_pair: fmdn: add API for checking the provisioning state
+# 86638730d9 Bluetooth: Mesh: remove bt long wq customization
+# 6082787b4f Bluetooth: decrease bt long wq size
+# 9eeb85faf9 bluetooth: services: ras: Fix RAS RRSP after GATT API changes
+# b4b0ece65e applications: nrf5340_audio: Added BT_PRIVATE_SHELL
+# eaa31b396e bluetooth: services: ras: Add callback for ranging header in parser.
+# 4ac10c6e31 bluetooth: Add channel sounding distance estimation library
+# 6f8e19f1b0 doc: Update documentation for Channel Sounding Kconfig options
+# fa895eff2d doc: Update docs for Channel Sounding Ranging Service Kconfig options
+# a52948108d Bluetooth: Mesh: Increase default MBEDTLS_HEAP_SIZE for NLC profile
+# c167d918f9 bluetooth: samples: Apply callback changes of CS complete events
+# 261d002e60 Bluetooth: controller: Remove ECDH implementation
+# a939310a7a doc: Remove [EXPERIMENTAL] tag from Channel Sounding Kconfigs
+# 81bb2ad59a bluetooth: controller: Use new SDC variants for nRF54L
+# 4e15fed7e3 bluetooth: services: Set RTT estimate to NAN if negative
+# 30b1946844 bluetooth: fast_pair: fmdn: Fix Kconfig dependency misalignment
+# 5bb0759d0c bluetooth: services: Implement real-time ranging data service
+# bc5b776f39 bluetooth: samples: Use real-time ranging data in RAS samples
+# 68eeb4eee8 bluetooth: services: Redefine the CS RAS reassembly buffer kconfig
 beadde7490 Bluetooth: Controller: Port HCI Command buffer allocation
-d869608228 Bluetooth: Host: Rename _bt_gatt_ccc to bt_gatt_ccc_managed_user_data
-65ccff6ce0 Bluetooth: rpc: Change signature of bt_conn_get_remote_info
-4ca3691a9d Bluetooth: rpc: cast conn to not const
-374687627c Bluetooth: Services: Rename BT_GATT_CCC_INITIALIZER
-73be2dddbc bluetooth: mesh: add more mbedtls heap for dfu distributor
-64c7bf3d2a bluetooth: samples: Save and restore local steps in RAS server callback
-408e58f475 bluetooth|mpsl: Prepare to support nRF71 series in SDC and MPSL
-f89ca53984 bluetooth: services: Use BT_GATT_CCC_WITH_WRITE_CB in RRSP
-7167fc695d bluetooth: fast_pair: fmdn: improve conn state handling and logging
-dc69d93d67 bluetooth: improving linking for channel sounding
-1d6ebb4427 bluetooth: controller: add command handler for new VS HCI command
-79addd913e bluetooth: improving linking for channel sounding
+# d869608228 Bluetooth: Host: Rename _bt_gatt_ccc to bt_gatt_ccc_managed_user_data
+# 65ccff6ce0 Bluetooth: rpc: Change signature of bt_conn_get_remote_info
+# 4ca3691a9d Bluetooth: rpc: cast conn to not const
+# 374687627c Bluetooth: Services: Rename BT_GATT_CCC_INITIALIZER
+# 73be2dddbc bluetooth: mesh: add more mbedtls heap for dfu distributor
+# 64c7bf3d2a bluetooth: samples: Save and restore local steps in RAS server callback
+# 408e58f475 bluetooth|mpsl: Prepare to support nRF71 series in SDC and MPSL
+# f89ca53984 bluetooth: services: Use BT_GATT_CCC_WITH_WRITE_CB in RRSP
+# 7167fc695d bluetooth: fast_pair: fmdn: improve conn state handling and logging
+# dc69d93d67 bluetooth: improving linking for channel sounding
+# 1d6ebb4427 bluetooth: controller: add command handler for new VS HCI command
+# 79addd913e bluetooth: improving linking for channel sounding
 399a846eb4 bluetooth: controller: add missing feature bit for power class 1
-e7153cd716 softdevice_controller: Remove BT_CTRL_SDC_BSIM_BUILD Kconfig
-963abf85f2 bluetooth: rpc: Rename nrf53_cpunet_init()
-85d05d5217 bluetooth: controller: move HCI packet types to net_buf payload
+# e7153cd716 softdevice_controller: Remove BT_CTRL_SDC_BSIM_BUILD Kconfig
+# 963abf85f2 bluetooth: rpc: Rename nrf53_cpunet_init()
+# 85d05d5217 bluetooth: controller: move HCI packet types to net_buf payload
 8d38c08481 bluetooth: Add support for LE Power Class 1 Feature
-35a7c6743e bluetooth: fast_pair: introduce Fast Pair advertising manager
-00e622635a bluetooth: Make it possible to use radio notification cb with bt_disable
-16275c5a70 bluetooth: improving linking for channel sounding
-7a4fa45bf0 bluetooth: Fix radio notification callback with GRTC
-901e00f341 Revert "bluetooth: fast_pair: fmdn: add uptime workaround to the clock module"
-e5ee3ed5f6 bluetooth: rpc: move serialization SYS_INIT to APPLICATION level
-4bbfb4ff79 Bluetooth: Controller: Fix KConfig comment typo
-c34231ef1b nrf_rpc: Remove build assert for undefined CONFIG_BT_BREDR
-db745e9969 bluetooth: hci: Replace bt_hci_cmd_create() with bt_hci_cmd_alloc()
-c390622264 samples: bluetooth: mesh: Clear all bonds on Node-Reset
-92664d3536 bluetooth: rpc: fix enable, disable, enable scenario
-3c221e6bbc bluetooth: hci: remove mention of bt_hci_cmd_create in some docs
-931e1fa3e4 bluetooth: rpc: reclaim GATT buffer on bt_disable
-22bbbf7d7f bluetooth: services: ras: fix ranging buffer value bug
-3aba835355 bluetooth: fast_pair: adv_manager: fix module dependency on FMDN
-93ce046618 bluetooth: fast_pair: adv_manager: add missing Kconfig dependency
-f4123c1d7f bluetooth: controller: Set default ACL spacing when CS is used
-465de1b4a6 bluetooth: hci_driver: Add missing mpsl.h include
-ab6af6e8c2 bluetooth: mesh: clear bonds for all ids on node reset
-b0e7a445a2 bluetooth: controller: stop using deprecated mode3 support config
-263c182c4b provisioning: wifi: Add enterprise security support
-f65b94e932 bluetooth: wifi_prov: Update auth mode to match Zephyr enumerations
-373b1f75ec bluetooth: wifi_prov: Add tools to generate encoded string
-749b3f4b08 wifi_prov: Rejig the library to use for multiple transports
-1fab212cb9 bluetooth: make host and sdc tx numbers aligned
-10db0ac0d3 bluetooth: mesh: increase mesh work queue stack size
+# 35a7c6743e bluetooth: fast_pair: introduce Fast Pair advertising manager
+# 00e622635a bluetooth: Make it possible to use radio notification cb with bt_disable
+# 16275c5a70 bluetooth: improving linking for channel sounding
+# 7a4fa45bf0 bluetooth: Fix radio notification callback with GRTC
+# 901e00f341 Revert "bluetooth: fast_pair: fmdn: add uptime workaround to the clock module"
+# e5ee3ed5f6 bluetooth: rpc: move serialization SYS_INIT to APPLICATION level
+# 4bbfb4ff79 Bluetooth: Controller: Fix KConfig comment typo
+# c34231ef1b nrf_rpc: Remove build assert for undefined CONFIG_BT_BREDR
+# db745e9969 bluetooth: hci: Replace bt_hci_cmd_create() with bt_hci_cmd_alloc()
+# c390622264 samples: bluetooth: mesh: Clear all bonds on Node-Reset
+# 92664d3536 bluetooth: rpc: fix enable, disable, enable scenario
+# 3c221e6bbc bluetooth: hci: remove mention of bt_hci_cmd_create in some docs
+# 931e1fa3e4 bluetooth: rpc: reclaim GATT buffer on bt_disable
+# 22bbbf7d7f bluetooth: services: ras: fix ranging buffer value bug
+# 3aba835355 bluetooth: fast_pair: adv_manager: fix module dependency on FMDN
+# 93ce046618 bluetooth: fast_pair: adv_manager: add missing Kconfig dependency
+# f4123c1d7f bluetooth: controller: Set default ACL spacing when CS is used
+# 465de1b4a6 bluetooth: hci_driver: Add missing mpsl.h include
+# ab6af6e8c2 bluetooth: mesh: clear bonds for all ids on node reset
+# b0e7a445a2 bluetooth: controller: stop using deprecated mode3 support config
+# 263c182c4b provisioning: wifi: Add enterprise security support
+# f65b94e932 bluetooth: wifi_prov: Update auth mode to match Zephyr enumerations
+# 373b1f75ec bluetooth: wifi_prov: Add tools to generate encoded string
+# 749b3f4b08 wifi_prov: Rejig the library to use for multiple transports
+# 1fab212cb9 bluetooth: make host and sdc tx numbers aligned
+# 10db0ac0d3 bluetooth: mesh: increase mesh work queue stack size
