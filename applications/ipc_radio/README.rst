@@ -77,11 +77,6 @@ CONFIG_IPC_RADIO_802154
 
 You can select the Bluetooth Low Energy serialization using the following Kconfig options:
 
-.. _CONFIG_IPC_RADIO_BT_SER:
-
-CONFIG_IPC_RADIO_BT_SER
-   This option selects the type of the IPC Bluetooth radio serialization.
-
 .. _CONFIG_IPC_RADIO_BT_HCI_IPC:
 
 CONFIG_IPC_RADIO_BT_HCI_IPC
