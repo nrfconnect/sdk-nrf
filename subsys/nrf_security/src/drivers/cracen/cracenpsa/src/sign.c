@@ -293,6 +293,9 @@ static psa_status_t cracen_signature_ecc_sign(bool is_message,
 	status = cracen_ecc_get_ecurve_from_psa(
 		PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(attributes)),
 		psa_get_key_bits(attributes), &ecurve);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
 
 	status = validate_signing_conditions(is_message, alg, attributes, ecurve->sz,
 					     signature_size);
