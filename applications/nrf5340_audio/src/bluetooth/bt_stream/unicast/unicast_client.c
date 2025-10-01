@@ -252,6 +252,7 @@ static void create_group(void)
 			/* Check if the source stream belongs to the same device
 			 */
 			struct server_store *source_server = NULL;
+
 			ret = srv_store_from_stream_get(
 				&group_source_stream_params[j].stream->bap_stream, &source_server);
 			if (ret < 0) {
@@ -496,6 +497,8 @@ static void unicast_client_location_cb(struct bt_conn *conn, enum bt_audio_dir d
 				srv_store_unlock();
 				return;
 			}
+		} else {
+			LOG_ERR("Source channel location not supported");
 		}
 		srv_store_unlock();
 		return;
@@ -688,6 +691,8 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 		} else if (dir == BT_AUDIO_DIR_SOURCE) {
 			LOG_WRN("No sources found");
 			server->src.waiting_for_disc = false;
+		} else {
+			LOG_ERR("Unknown direction:");
 		}
 	} else if (err) {
 		LOG_ERR("Discovery failed: %d", err);
