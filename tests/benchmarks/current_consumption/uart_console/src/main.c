@@ -10,8 +10,6 @@
 
 #define SLEEP_TIME_MS 1000
 
-static const struct device *const console_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
-
 int main(void)
 {
 
@@ -19,8 +17,6 @@ int main(void)
 	/* [246] System: Intermittent extra current consumption when going to sleep */
 	*(volatile uint32_t *)0x4007AC84ul = 0x00000002ul;
 #endif
-
-	pm_device_runtime_enable(console_dev);
 
 	while (1) {
 		printk("33 characters long string !!!!!!\n");
