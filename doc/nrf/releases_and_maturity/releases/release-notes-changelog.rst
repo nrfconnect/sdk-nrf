@@ -724,7 +724,11 @@ Edge Impulse integration
 Memfault integration
 --------------------
 
-|no_changes_yet_note|
+* Added a metric tracking the unused stack space of the Bluetooth Long workqueue thread, when the :kconfig:option:`CONFIG_MEMFAULT_NCS_BT_METRICS` Kconfig option is enabled.
+  The new metric is named ``ncs_bt_lw_wq_unused_stack``.
+
+* Removed a metric for the tracking Bluetooth TX thread unused stack ``ncs_bt_tx_unused_stack``.
+  The thread in question was removed in Zephyr v3.7.0.
 
 AVSystem integration
 --------------------
