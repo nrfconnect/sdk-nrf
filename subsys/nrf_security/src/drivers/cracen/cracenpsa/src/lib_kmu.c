@@ -10,7 +10,7 @@
 
 #include <zephyr/kernel.h>
 
-#include <nrf.h>
+#include <nrfx.h>
 
 #if defined(CONFIG_SOC_SERIES_NRF54LX)
 #include <nrfx_rramc.h>

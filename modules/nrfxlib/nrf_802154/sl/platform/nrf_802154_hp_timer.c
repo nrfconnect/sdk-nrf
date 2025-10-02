@@ -19,7 +19,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "nrf.h"
+#include "nrfx.h"
 #include "hal/nrf_timer.h"
 
 #include "nrf_802154_sl_periphs.h"
