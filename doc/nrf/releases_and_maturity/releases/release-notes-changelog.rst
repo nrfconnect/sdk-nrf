@@ -760,6 +760,12 @@ Memfault integration
   * The ``CONFIG_MEMFAULT_DEVICE_INFO_CUSTOM`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_CUSTOM`.
   * The ``CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_BUILTIN`.
 
+* Added a metric tracking the unused stack space of the Bluetooth Long workqueue thread, when the :kconfig:option:`CONFIG_MEMFAULT_NCS_BT_METRICS` Kconfig option is enabled.
+  The new metric is named ``ncs_bt_lw_wq_unused_stack``.
+
+* Removed a metric for the tracking Bluetooth TX thread unused stack ``ncs_bt_tx_unused_stack``.
+  The thread in question was removed in Zephyr v3.7.0.
+
 AVSystem integration
 --------------------
 
