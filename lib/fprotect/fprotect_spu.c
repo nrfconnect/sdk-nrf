@@ -9,7 +9,7 @@
 #include <hal/nrf_spu.h>
 #include <errno.h>
 #include <soc.h>
-#include <nrf_erratas.h>
+#include <nrfx.h>
 
 
 #define SPU_BLOCK_SIZE CONFIG_FPROTECT_BLOCK_SIZE

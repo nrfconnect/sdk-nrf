@@ -9,7 +9,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/misc/coresight/nrf_etr.h>
-#include <system_nrf.h>
+#include <nrfx.h>
 
 #include "coremark_zephyr.h"
 

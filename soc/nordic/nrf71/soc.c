@@ -29,9 +29,9 @@
 #include <cmsis_core.h>
 #include <hal/nrf_glitchdet.h>
 #endif
-#include <soc/nrfx_coredep.h>
 
-#include <system_nrf7120_enga.h>
+#include <nrfx.h>
+#include <soc/nrfx_coredep.h>
 
 LOG_MODULE_REGISTER(soc, CONFIG_SOC_LOG_LEVEL);
 
