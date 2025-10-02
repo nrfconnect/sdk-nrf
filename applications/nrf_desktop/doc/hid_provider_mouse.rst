@@ -109,16 +109,10 @@ The reason for this operation is to allow to track key presses that happen right
 When the device is disconnected and the input event with the button data is received, the data is stored onto the :ref:`nrf_desktop_hid_eventq` instance, a member of the :c:struct:`report_data` structure.
 This queue preserves an order in which input data events are received.
 
-Storing limitations
--------------------
-
-You can limit the number of events that can be inserted into the queue using the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_MOUSE_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option.
-
 Discarding events
 ------------------
 
 When there is no space for a new input event, the module tries to free space by discarding the oldest event in the queue.
-Events stored in the queue are automatically discarded after the period defined by the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_MOUSE_KEYPRESS_EXPIRATION <config_desktop_app_options>` option.
 
 When discarding an event from the queue, the module checks if the key associated with the event is pressed.
 This is to avoid missing key releases for earlier key presses when the keys from the queue are replayed to the host.

@@ -69,11 +69,6 @@ Make sure that the DFU lock utility is enabled if your nRF Desktop application c
 You cannot use this module with the :ref:`caf_ble_smp`.
 In other words, you cannot simultaneously enable the :ref:`CONFIG_DESKTOP_DFU_MCUMGR_ENABLE <config_desktop_app_options>` option and the :kconfig:option:`CONFIG_CAF_BLE_SMP` Kconfig option.
 
-You have to choose the backend for the DFU process by enabling the following option:
-
-  * :kconfig:option:`CONFIG_DESKTOP_DFU_BACKEND_MCUBOOT` - This option depends on the MCUboot bootloader support for the DFU process.
-    For details, see :ref:`mcuboot` in the Zephyr documentation.
-
 .. note::
     B0 bootloader is not integrated with MCUmgr.
 
