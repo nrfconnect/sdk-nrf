@@ -142,6 +142,9 @@ static int cmd_dfu_target_write(const struct shell *shell, size_t argc, char **a
 	if (ret < 0) {
 		shell_error(shell, "DFU target write failed: %d", ret);
 		return ret;
+	} else {
+		shell_print(shell, "Successfully wrote %d bytes at offset %d", chunk_size,
+			    offset);
 	}
 
 	return 0;
