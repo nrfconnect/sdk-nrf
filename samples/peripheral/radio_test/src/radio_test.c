@@ -28,7 +28,6 @@
 #include "fem_al/fem_al.h"
 #endif /* CONFIG_FEM */
 
-#include <nrf_erratas.h>
 #if NRF54H_ERRATA_216_PRESENT
 #include <zephyr/drivers/mbox.h>
 #endif /* NRF54H_ERRATA_216_PRESENT */
