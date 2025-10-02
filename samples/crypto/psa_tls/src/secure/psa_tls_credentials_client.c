@@ -7,7 +7,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(psa_tls_credentials_client_secure);
 
-#include <nrf.h>
+#include <nrfx.h>
 #include <zephyr/kernel.h>
 #include <zephyr/linker/sections.h>
 #include <zephyr/net/tls_credentials.h>

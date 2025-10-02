@@ -55,7 +55,6 @@ Dependencies
 
 This sample has the following `nrfx`_ dependencies:
 
-* ``nrfx/nrf.h``
 * ``nrfx/nrfx.h``
 
 In addition, it uses the following Zephyr libraries:
