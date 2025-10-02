@@ -46,8 +46,7 @@ struct unicast_server_src_vars {
 	struct bt_cap_stream cap_streams[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
 };
 
-/* This struct holds the parameters for a given peer server/headset device
- **/
+/* This struct holds the parameters for a given unicast server/headset device */
 struct server_store {
 	char *name;
 	bt_addr_le_t addr;
@@ -78,7 +77,7 @@ bool srv_store_preset_validated(struct bt_audio_codec_cfg *new, struct bt_audio_
 
 /**
  * @brief Search for a common presentation delay across all server Audio Stream Endpoints (ASEs) for
- * the given direction. This function will try to satisfy the preffered presentation delay for all
+ * the given direction. This function will try to satisfy the preferred presentation delay for all
  * ASEs. If that is not possible, it will try to satisfy the max and min values.
  *
  * @param common_pres_dly_us Pointer to store the new common presentation delay in microseconds.
@@ -262,7 +261,8 @@ int srv_store_server_get(struct server_store **server, uint8_t index);
  *
  * @param[in] conn  Pointer to the connection associated with the server to add, based on address.
  *
- * @note	This function should not be used if the peer uses a random address.
+ * @note	This function should not be used if the peer uses a resolvable address
+ * which has not yet been resolved, or any other changing address type.
  * srv_store_lock() must be called before accessing this function.
  *
  * @return	0 on success.
@@ -317,7 +317,7 @@ int srv_store_conn_update(struct bt_conn *conn, bt_addr_le_t const *const addr);
  *
  * @return 0 on success, negative error code on failure.
  */
-int srv_store_clear_by_conn(struct bt_conn *conn);
+int srv_store_clear_by_conn(struct bt_conn const *const conn);
 
 /**
  * @brief	Remove a single stored server based on conn pointer.
@@ -331,11 +331,13 @@ int srv_store_clear_by_conn(struct bt_conn *conn);
  * srv_store_lock() must be called before accessing this function.
  *
  * @return 0 on success, negative error code on failure.
+ * @return	-EACCES Server has active conn.
+ * @retval	Other negative.	Errors from underlying functions.
  */
 int srv_store_remove_by_conn(struct bt_conn const *const conn);
 
 /**
- * @brief	Remove a single stored server based on address
+ * @brief	Remove a single stored server based on address.
  * @param[in] addr  Pointer to the address associated with the server to remove.
  *
  * @note	srv_store_lock() must be called before accessing this function.

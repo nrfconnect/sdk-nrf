@@ -750,13 +750,16 @@ ZTEST(suite_server_store, test_clear)
 	memset(&server_in->snk, 0xAA, sizeof(server_in->snk));
 	memset(&server_in->src, 0xBB, sizeof(server_in->src));
 
+	const bt_addr_le_t *addr = bt_conn_get_dst(&test_1_conn);
+
+	ret = srv_store_remove_by_addr(addr);
+	zassert_equal(ret, -EACCES, " Should not be able to remove with active conn");
+
 	ret = srv_store_clear_by_conn(&test_1_conn);
 	zassert_equal(ret, 0);
 
 	ret = srv_store_from_conn_get(&test_1_conn, &server_out);
 	zassert_equal(ret, 0);
-
-	const bt_addr_le_t *addr = bt_conn_get_dst(&test_1_conn);
 
 	ret = srv_store_from_addr_get(addr, &server_out);
 	zassert_equal(ret, 0);

@@ -9,12 +9,11 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/addr.h>
 #include <string.h>
+#include <../subsys/bluetooth/audio/bap_endpoint.h>
 
 #include "server_store.h"
 #include "macros_common.h"
 #include "le_audio.h"
-
-#include <../subsys/bluetooth/audio/bap_endpoint.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(server_store, CONFIG_SERVER_STORE_LOG_LEVEL);
@@ -48,21 +47,29 @@ static void valid_entry_check(char const *const str)
 	__ASSERT(atomic_ptr_get(&lock_owner) == k_current_get(), "%s: Thread mismatch", str);
 }
 
-/* Any address stored here will be there if the server is connected, or
- *if the device is disconnected but bonded
- */
-static struct server_store servers[CONFIG_BT_MAX_CONN];
+#define MAX_SERVERS (CONFIG_BT_MAX_CONN + CONFIG_BT_MAX_PAIRED)
+#define NO_ADDR	    BT_ADDR_LE_ANY
 
+static struct server_store servers[MAX_SERVERS];
+
+struct pd {
+	uint32_t min;
+	uint32_t pref_min;
+	uint32_t pref_max;
+	uint32_t max;
+};
+
+/* Add a new server */
 static int server_add(struct server_store *server)
 {
-	for (int i = 0; i < CONFIG_BT_MAX_CONN; i++) {
+	for (int i = 0; i < MAX_SERVERS; i++) {
 		char peer_str[BT_ADDR_LE_STR_LEN];
 
 		bt_addr_le_to_str(&server->addr, peer_str, BT_ADDR_LE_STR_LEN);
 
-		if (bt_addr_le_eq(&servers[i].addr, BT_ADDR_LE_ANY)) {
+		if (bt_addr_le_eq(&servers[i].addr, NO_ADDR)) {
 			memcpy(&servers[i], server, sizeof(struct server_store));
-			LOG_INF("Added server %s to index %d", peer_str, i);
+			LOG_DBG("Added server %s to index %d", peer_str, i);
 			return 0;
 		}
 	}
@@ -70,6 +77,7 @@ static int server_add(struct server_store *server)
 	return -ENOMEM;
 }
 
+/* Fully remove a server */
 static int server_remove(struct server_store *server)
 {
 	if (server == NULL) {
@@ -81,13 +89,7 @@ static int server_remove(struct server_store *server)
 	return 0;
 }
 
-struct pd {
-	uint32_t min;
-	uint32_t max;
-	uint32_t pref_min;
-	uint32_t pref_max;
-};
-
+/* Check if presentation delay is within range */
 static bool pres_dly_in_range(uint32_t existing_pres_dly_us,
 			      struct bt_bap_qos_cfg_pref const *const qos_cfg_pref_in)
 {
@@ -114,13 +116,11 @@ static bool pres_dly_in_range(uint32_t existing_pres_dly_us,
 	return true;
 }
 
-/* Looking for the smallest commonly acceptable set of presentation delays
- */
+/* Find the smallest commonly acceptable set of presentation delays */
 static int pres_delay_find(struct bt_bap_qos_cfg_pref *common,
 			   struct bt_bap_qos_cfg_pref const *const in)
 {
-	/* Checking min values
-	 */
+	/* Checking min values */
 	if (!IN_RANGE(in->pd_min, common->pd_min, common->pd_max)) {
 		LOG_ERR("Incoming pd_min %d is not in range [%d, %d]", in->pd_min, common->pd_min,
 			common->pd_max);
@@ -143,8 +143,7 @@ static int pres_delay_find(struct bt_bap_qos_cfg_pref *common,
 		}
 	}
 
-	/* Checking max values
-	 */
+	/* Checking max values */
 	if (!IN_RANGE(in->pd_max, common->pd_min, common->pd_max)) {
 		LOG_WRN("Incoming pd_max %d is not in range [%d, %d]. Ignored.", in->pd_max,
 			common->pd_min, common->pd_max);
@@ -173,11 +172,11 @@ static int pres_delay_find(struct bt_bap_qos_cfg_pref *common,
 	return 0;
 }
 
+/* Populate a preset based on preferred sample rate */
 static int sample_rate_check(uint16_t lc3_freq_bit, struct bt_bap_lc3_preset *preset,
 			     uint8_t pref_sample_rate)
 {
-	/* Try with the preferred sample rate first
-	 */
+	/* Try with preferred first */
 	switch (pref_sample_rate) {
 	case BT_AUDIO_CODEC_CFG_FREQ_48KHZ:
 		if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
@@ -207,8 +206,7 @@ static int sample_rate_check(uint16_t lc3_freq_bit, struct bt_bap_lc3_preset *pr
 		break;
 	}
 
-	/* If no match with the preferred, revert to trying highest first
-	 */
+	/* If no match with the preferred, find highest sample rate */
 	if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
 		memcpy(preset, &lc3_preset_48_4_1, sizeof(struct bt_bap_lc3_preset));
 		return 0;
@@ -224,17 +222,17 @@ static int sample_rate_check(uint16_t lc3_freq_bit, struct bt_bap_lc3_preset *pr
 	return -ENOTSUP;
 }
 
-static bool sink_pac_parse(struct bt_data *data, void *user_data)
+/* Generic parser function for sink and source */
+static bool pac_parse(struct bt_data *data, struct bt_bap_lc3_preset *preset,
+		      uint8_t pref_sample_rate)
 {
 	int ret;
-	struct bt_bap_lc3_preset *preset = (struct bt_bap_lc3_preset *)user_data;
 
 	switch (data->type) {
 	case BT_AUDIO_CODEC_CAP_TYPE_FREQ:
 		uint16_t lc3_freq_bit = sys_get_le16(data->data);
 
-		ret = sample_rate_check(lc3_freq_bit, preset,
-					CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE);
+		ret = sample_rate_check(lc3_freq_bit, preset, pref_sample_rate);
 		if (ret) {
 			/* This PAC record from the server is not supported by the client.
 			 * Stop parsing this record.
@@ -261,7 +259,7 @@ static bool sink_pac_parse(struct bt_data *data, void *user_data)
 
 		if (!IN_RANGE(preset_octets_per_frame, lc3_min_frame_length,
 			      lc3_max_frame_length)) {
-			LOG_DBG("Sink preset octets/frame %d not in range [%d, %d]",
+			LOG_DBG("Preset octets/frame %d not in range [%d, %d]",
 				preset_octets_per_frame, lc3_min_frame_length,
 				lc3_max_frame_length);
 			ret = bt_audio_codec_cfg_set_octets_per_frame(&preset->codec_cfg,
@@ -278,48 +276,24 @@ static bool sink_pac_parse(struct bt_data *data, void *user_data)
 		break;
 	}
 
-	/* Did not find what we were looking for, continue parsing LTV
-	 */
+	/* Did not find what we were looking for, continue parsing LTV */
 	return true;
 }
 
+/* Parse published audio capabilities (PAC) for sink (client->server)/(gateway->headset) */
+static bool sink_pac_parse(struct bt_data *data, void *user_data)
+{
+	struct bt_bap_lc3_preset *preset = (struct bt_bap_lc3_preset *)user_data;
+
+	return pac_parse(data, preset, CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE);
+}
+
+/* Parse published audio capabilities (PAC) for source (server->client)/(headset->gateway) */
 static bool source_pac_parse(struct bt_data *data, void *user_data)
 {
-	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FREQ) {
-		uint16_t lc3_freq_bit = sys_get_le16(data->data);
+	struct bt_bap_lc3_preset *preset = (struct bt_bap_lc3_preset *)user_data;
 
-		sample_rate_check(lc3_freq_bit, (struct bt_bap_lc3_preset *)user_data,
-				  CONFIG_BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE);
-
-		/* Found what we were looking for, stop parsing LTV
-		 */
-		return false;
-	}
-
-	/* Make sure the presets octets per frame is within the range of the codec capabilities
-	 */
-	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FRAME_LEN) {
-		uint16_t lc3_min_frame_length = sys_get_le16(data->data);
-		uint16_t lc3_max_frame_length = sys_get_le16(data->data + sizeof(uint16_t));
-
-		int preset_octets_per_frame;
-		struct bt_bap_lc3_preset *preset = (struct bt_bap_lc3_preset *)user_data;
-
-		le_audio_octets_per_frame_get(&preset->codec_cfg, &preset_octets_per_frame);
-
-		if (!IN_RANGE(preset_octets_per_frame, lc3_min_frame_length,
-			      lc3_max_frame_length)) {
-			LOG_DBG("Source preset octets/frame %d not in range [%d, %d]",
-				preset_octets_per_frame, lc3_min_frame_length,
-				lc3_max_frame_length);
-			bt_audio_codec_cfg_set_octets_per_frame(&preset->codec_cfg,
-								lc3_max_frame_length);
-		}
-	}
-
-	/* Did not find what we were looking for, continue parsing LTV
-	 */
-	return true;
+	return pac_parse(data, preset, CONFIG_BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE);
 }
 
 static void set_color_if_supported(char *str, uint16_t bitfield, uint16_t mask)
@@ -332,6 +306,7 @@ static void set_color_if_supported(char *str, uint16_t bitfield, uint16_t mask)
 	}
 }
 
+/* Print all records in the published audio capabilities */
 static bool pac_record_print(struct bt_data *data, void *user_data)
 {
 	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FREQ) {
@@ -442,7 +417,7 @@ static bool pres_dly_ignore_stream(struct bt_bap_stream const *const existing_st
 	}
 
 	if (existing_stream == stream_in) {
-		/* The existing stream is not in the same group as the incoming stream */
+		/* The existing stream is the same as the incoming stream */
 		return true;
 	}
 
@@ -453,10 +428,11 @@ static bool pres_dly_ignore_stream(struct bt_bap_stream const *const existing_st
 	return false;
 }
 
+/* Get a server based on the address in a conn pointer */
 static int srv_store_from_conn_get_internal(struct bt_conn const *const conn,
 					    struct server_store **server)
 {
-	for (int i = 0; i < CONFIG_BT_MAX_CONN; i++) {
+	for (int i = 0; i < MAX_SERVERS; i++) {
 		const bt_addr_le_t *peer_addr = bt_conn_get_dst(conn);
 		char peer_str[BT_ADDR_LE_STR_LEN];
 		char local_str[BT_ADDR_LE_STR_LEN];
@@ -474,10 +450,11 @@ static int srv_store_from_conn_get_internal(struct bt_conn const *const conn,
 	return -ENOENT;
 }
 
+/* Get a server based on the address */
 static int srv_store_from_addr_get_internal(bt_addr_le_t const *const addr,
 					    struct server_store **server)
 {
-	for (int i = 0; i < CONFIG_BT_MAX_CONN; i++) {
+	for (int i = 0; i < MAX_SERVERS; i++) {
 		if (bt_addr_le_eq(&servers[i].addr, addr)) {
 			*server = &servers[i];
 			return 0;
@@ -497,7 +474,7 @@ bool srv_store_preset_validated(struct bt_audio_codec_cfg *new, struct bt_audio_
 		return false;
 	}
 
-	/* Higher sampling frequency is more preferred */
+	/* Higher sampling frequency is preferred */
 	int new_freq_hz = 0;
 	int existing_freq_hz = 0;
 	int pref_freq_hz = 0;
@@ -572,16 +549,7 @@ bool srv_store_preset_validated(struct bt_audio_codec_cfg *new, struct bt_audio_
 	return false;
 }
 
-/* One needs to look at the group pointer, if this group pointer already exists, we may need
- * to update the entire group. If it is a new group, no reconfig is needed.
- *  New A, no ext group
- *  New A, existing A. If new pres delay needed, reconfig all
- *  New B, existing A, no reconfig needed.
- */
-
-/* The presentation delay within a CIG for a given dir needs to be the same.
- * bt_bap_ep -> cig_id;
- */
+/* Find the presentation delay. Needs to be the same within a CIG for a given direction */
 int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pres_dly_us,
 			    uint32_t *existing_pres_dly_us,
 			    struct bt_bap_qos_cfg_pref const *qos_cfg_pref_in,
@@ -589,15 +557,15 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 {
 	valid_entry_check(__func__);
 
-	*existing_pres_dly_us = 0;
-
 	int ret;
 
-	if (stream == NULL || computed_pres_dly_us == NULL || qos_cfg_pref_in == NULL ||
-	    group_reconfig_needed == NULL) {
+	if (stream == NULL || computed_pres_dly_us == NULL || existing_pres_dly_us == NULL ||
+	    qos_cfg_pref_in == NULL || group_reconfig_needed == NULL) {
 		LOG_ERR("NULL parameter");
 		return -EINVAL;
 	}
+
+	*existing_pres_dly_us = 0;
 
 	if (stream->group == NULL) {
 		LOG_ERR("The incoming stream %p has no group", (void *)stream);
@@ -614,14 +582,19 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 	struct bt_bap_qos_cfg_pref common_pd = *qos_cfg_pref_in;
 	struct bt_bap_ep_info ep_info;
 
-	bt_bap_ep_get_info(stream->ep, &ep_info);
+	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
+	if (ret) {
+		LOG_ERR("Failed to get ep info: %d", ret);
+		return ret;
+	}
+
 	enum bt_audio_dir dir = ep_info.dir;
 	struct server_store *server = NULL;
 
-	for (int srv_idx = 0; srv_idx < CONFIG_BT_MAX_CONN; srv_idx++) {
+	for (int srv_idx = 0; srv_idx < MAX_SERVERS; srv_idx++) {
 
 		/* Across all servers, we need to first check if another stream is in the
-		 * same subgroup as the new incoming stream.
+		 * same unicast group as the new incoming stream.
 		 */
 		server = &servers[srv_idx];
 		if (server == NULL) {
@@ -629,8 +602,7 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 		}
 
 		if (server->conn == stream->conn) {
-			/* Do not compare against the same unicast server
-			 */
+			/* Do not compare against the same unicast server */
 			continue;
 		}
 
@@ -781,12 +753,12 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 	int ret;
 	struct bt_bap_lc3_preset zero_preset = {0};
 
-	*valid_codec_caps = 0;
 	if (conn == NULL || valid_codec_caps == NULL) {
 		LOG_ERR("Invalid parameters: conn or valid_codec_caps is NULL");
 		return -EINVAL;
 	}
 
+	*valid_codec_caps = 0;
 	struct server_store *server = NULL;
 
 	ret = srv_store_from_conn_get_internal(conn, &server);
@@ -796,7 +768,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 	}
 	/* Only the sampling frequency is checked */
 	if (dir == BT_AUDIO_DIR_SINK) {
-		LOG_DBG("Discovered %d sink endpoint(s) for device", server->snk.num_eps);
+		LOG_DBG("Discovered %d sink endpoint(s) for server", server->snk.num_eps);
 
 		for (int i = 0; i < server->snk.num_codec_caps; i++) {
 			struct bt_bap_lc3_preset preset = {0};
@@ -824,7 +796,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 				continue;
 			}
 
-			LOG_DBG("Valid codec capabilities found for device, sink EP %d", i);
+			LOG_DBG("Valid codec capabilities found for server, sink EP %d", i);
 			*valid_codec_caps |= 1 << i;
 			if (srv_store_preset_validated(
 				    &(preset.codec_cfg), &(server->snk.lc3_preset[0].codec_cfg),
@@ -834,7 +806,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 			}
 		}
 	} else if (dir == BT_AUDIO_DIR_SOURCE) {
-		LOG_DBG("Discovered %d source endpoint(s) for device", server->src.num_eps);
+		LOG_DBG("Discovered %d source endpoint(s) for server", server->src.num_eps);
 
 		for (int i = 0; i < server->src.num_codec_caps; i++) {
 			struct bt_bap_lc3_preset preset = {0};
@@ -863,7 +835,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 				continue;
 			}
 
-			LOG_DBG("Valid codec capabilities found for device, source EP %d", i);
+			LOG_DBG("Valid codec capabilities found for server, source EP %d", i);
 			*valid_codec_caps |= 1 << i;
 
 			if (srv_store_preset_validated(
@@ -888,16 +860,16 @@ int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 	struct server_store *tmp_server = NULL;
 	uint32_t matches = 0;
 
-	*server = NULL;
-
 	if (stream == NULL || server == NULL) {
 		LOG_ERR("Invalid parameters: stream or server is NULL");
 		return -EINVAL;
 	}
 
-	for (int srv_idx = 0; srv_idx < CONFIG_BT_MAX_CONN; srv_idx++) {
+	*server = NULL;
+
+	for (int srv_idx = 0; srv_idx < MAX_SERVERS; srv_idx++) {
 		tmp_server = &servers[srv_idx];
-		if (bt_addr_le_eq(&tmp_server->addr, BT_ADDR_LE_ANY)) {
+		if (bt_addr_le_eq(&tmp_server->addr, NO_ADDR)) {
 			continue;
 		}
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
@@ -948,6 +920,11 @@ static int srv_store_ep_state_count(struct bt_conn const *const conn, enum bt_ba
 	int ret;
 	int count = 0;
 	struct server_store *server = NULL;
+
+	if (conn == NULL) {
+		LOG_ERR("NULL parameter");
+		return -EINVAL;
+	}
 
 	ret = srv_store_from_conn_get_internal(conn, &server);
 	if (ret < 0) {
@@ -1011,9 +988,9 @@ int srv_store_all_ep_state_count(enum bt_bap_ep_state state, enum bt_audio_dir d
 	int count_total = 0;
 	struct server_store *server = NULL;
 
-	for (int srv_idx = 0; srv_idx < CONFIG_BT_MAX_CONN; srv_idx++) {
+	for (int srv_idx = 0; srv_idx < MAX_SERVERS; srv_idx++) {
 		server = &servers[srv_idx];
-		if (bt_addr_le_eq(&server->addr, BT_ADDR_LE_ANY)) {
+		if (bt_addr_le_eq(&server->addr, NO_ADDR)) {
 			/* Empty entry */
 			continue;
 		}
@@ -1065,13 +1042,8 @@ int srv_store_codec_cap_set(struct bt_conn const *const conn, enum bt_audio_dir 
 	valid_entry_check(__func__);
 	int ret;
 
-	if (conn == NULL) {
-		LOG_ERR("No valid connection pointer received");
-		return -EINVAL;
-	}
-
-	if (codec == NULL) {
-		LOG_ERR("Codec capability is NULL");
+	if (conn == NULL || codec == NULL) {
+		LOG_ERR("NULL parameter");
 		return -EINVAL;
 	}
 
@@ -1130,6 +1102,11 @@ int srv_store_from_addr_get(bt_addr_le_t const *const addr, struct server_store 
 	valid_entry_check(__func__);
 	int ret;
 
+	if (addr == NULL || server == NULL) {
+		LOG_ERR("NULL parameter");
+		return -EINVAL;
+	}
+
 	ret = srv_store_from_addr_get_internal(addr, server);
 	return ret;
 }
@@ -1162,6 +1139,11 @@ int srv_store_from_conn_get(struct bt_conn const *const conn, struct server_stor
 	valid_entry_check(__func__);
 	int ret;
 
+	if (conn == NULL || server == NULL) {
+		LOG_ERR("NULL parameter");
+		return -EINVAL;
+	}
+
 	ret = srv_store_from_conn_get_internal(conn, server);
 	return ret;
 }
@@ -1172,8 +1154,8 @@ int srv_store_num_get(bool check_consecutive)
 	int num_servers = 0;
 	bool prev_found = true;
 
-	for (int i = 0; i < CONFIG_BT_MAX_CONN; i++) {
-		if (!bt_addr_le_eq(&servers[i].addr, BT_ADDR_LE_ANY)) {
+	for (int i = 0; i < MAX_SERVERS; i++) {
+		if (!bt_addr_le_eq(&servers[i].addr, NO_ADDR)) {
 			num_servers++;
 			if (!prev_found && check_consecutive) {
 				LOG_ERR("Non-consecutive server storage detected");
@@ -1191,11 +1173,16 @@ int srv_store_server_get(struct server_store **server, uint8_t index)
 {
 	valid_entry_check(__func__);
 
-	if (index >= CONFIG_BT_MAX_CONN) {
+	if (server == NULL) {
+		LOG_ERR("NULL parameter");
 		return -EINVAL;
 	}
 
-	if (servers[index].conn == NULL || bt_addr_le_eq(&servers[index].addr, BT_ADDR_LE_ANY)) {
+	if (index >= MAX_SERVERS) {
+		return -EINVAL;
+	}
+
+	if (servers[index].conn == NULL || bt_addr_le_eq(&servers[index].addr, NO_ADDR)) {
 		*server = NULL;
 		return -ENOENT;
 	}
@@ -1212,22 +1199,23 @@ int srv_store_add_by_conn(struct bt_conn *conn)
 	int ret;
 	struct server_store *temp_server = NULL;
 
-	LOG_INF("Adding server by conn");
+	if (conn == NULL) {
+		LOG_ERR("NULL parameter");
+		return -EINVAL;
+	}
 
 	const bt_addr_le_t *peer_addr = bt_conn_get_dst(conn);
 	char peer_str[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(peer_addr, peer_str, BT_ADDR_LE_STR_LEN);
 
-	LOG_INF("Adding server for peer: %s", peer_str);
+	LOG_DBG("Adding server by conn for peer: %s", peer_str);
 	/*TODO: Check. If the address is random, we delete when the connection is removed */
 
-	/* Check if server already exists
-	 */
+	/* Check if server already exists */
 	ret = srv_store_from_conn_get(conn, &temp_server);
 	if (ret == 0) {
-		/* Server already exists, no need to add again, but we update the conn pointer
-		 */
+		/* Server already exists, no need to add again, but we update the conn pointer */
 		temp_server->conn = conn;
 		LOG_DBG("Server already exists for conn: %p", (void *)conn);
 		return -EALREADY;
@@ -1253,6 +1241,11 @@ int srv_store_add_by_addr(const bt_addr_le_t *addr)
 	int ret;
 	char peer_str[BT_ADDR_LE_STR_LEN];
 	struct server_store *temp_server = NULL;
+
+	if (addr == NULL) {
+		LOG_ERR("NULL parameter");
+		return -EINVAL;
+	}
 
 	ret = srv_store_from_addr_get_internal(addr, &temp_server);
 	if (ret == 0) {
@@ -1284,6 +1277,11 @@ int srv_store_conn_update(struct bt_conn *conn, bt_addr_le_t const *const addr)
 
 	struct server_store *server = NULL;
 
+	if (conn == NULL || addr == NULL) {
+		LOG_ERR("NULL parameter");
+		return -EINVAL;
+	}
+
 	ret = srv_store_from_addr_get_internal(addr, &server);
 	if (ret < 0) {
 		return ret;
@@ -1309,10 +1307,15 @@ int srv_store_conn_update(struct bt_conn *conn, bt_addr_le_t const *const addr)
 	return 0;
 }
 
-int srv_store_clear_by_conn(struct bt_conn *conn)
+int srv_store_clear_by_conn(struct bt_conn const *const conn)
 {
 	valid_entry_check(__func__);
 	int ret;
+
+	if (conn == NULL) {
+		LOG_ERR("NULL parameter");
+		return -EINVAL;
+	}
 
 	struct server_store *server = NULL;
 
@@ -1321,6 +1324,7 @@ int srv_store_clear_by_conn(struct bt_conn *conn)
 		return ret;
 	}
 
+	/* Address is not cleared */
 	server->name = "NOT_SET";
 	server->conn = NULL;
 	server->member = NULL;
@@ -1347,8 +1351,18 @@ int srv_store_remove_by_addr(bt_addr_le_t const *const addr)
 {
 	valid_entry_check(__func__);
 
-	for (int i = 0; i < CONFIG_BT_MAX_CONN; i++) {
+	if (addr == NULL) {
+		LOG_ERR("NULL parameter");
+		return -EINVAL;
+	}
+
+	for (int i = 0; i < MAX_SERVERS; i++) {
 		if (bt_addr_le_eq(&servers[i].addr, addr)) {
+			if (servers[i].conn != NULL) {
+				LOG_ERR("Cannot remove server with active connection");
+				return -EACCES;
+			}
+
 			return server_remove(&servers[i]);
 		}
 	}
@@ -1361,16 +1375,15 @@ int srv_store_remove_by_conn(struct bt_conn const *const conn)
 {
 	valid_entry_check(__func__);
 
+	if (conn == NULL) {
+		LOG_ERR("NULL parameter");
+		return -EINVAL;
+	}
+
 	struct server_store *server = NULL;
 	const bt_addr_le_t *peer_addr = bt_conn_get_dst(conn);
 
-	if (bt_le_bond_exists(BT_ID_DEFAULT, peer_addr)) {
-		/* If the peer is bonded, we can use the stored information
-		 */
-		LOG_DBG("Peer is bonded");
-	}
-
-	for (int i = 0; i < CONFIG_BT_MAX_CONN; i++) {
+	for (int i = 0; i < MAX_SERVERS; i++) {
 		if (bt_addr_le_eq(&servers[i].addr, peer_addr)) {
 			server = &servers[i];
 			break;
@@ -1391,7 +1404,7 @@ static int srv_store_remove_all_internal(void)
 	valid_entry_check(__func__);
 	int ret;
 
-	for (int i = 0; i < CONFIG_BT_MAX_CONN; i++) {
+	for (int i = 0; i < MAX_SERVERS; i++) {
 		ret = server_remove(&servers[i]);
 		if (ret) {
 			LOG_ERR("Failed to remove server at index %d, error: %d", i, ret);
