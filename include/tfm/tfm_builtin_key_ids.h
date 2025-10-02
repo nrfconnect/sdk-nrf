@@ -7,7 +7,7 @@
 #ifndef __TFM_BUILTIN_KEY_IDS_H__
 #define __TFM_BUILTIN_KEY_IDS_H__
 
-#include <nrf.h>
+#include <nrfx.h>
 
 #if defined(NRF_CRACENCORE) || defined(CONFIG_CRACEN_HW_PRESENT)
 

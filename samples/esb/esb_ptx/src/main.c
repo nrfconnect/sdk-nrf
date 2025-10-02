@@ -8,7 +8,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/irq.h>
 #include <zephyr/logging/log.h>
-#include <nrf.h>
+#include <nrfx.h>
 #include <esb.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
@@ -18,7 +18,6 @@
 #if defined(CONFIG_CLOCK_CONTROL_NRF2)
 #include <hal/nrf_lrcconf.h>
 #endif
-#include <nrf_erratas.h>
 #if NRF54L_ERRATA_20_PRESENT
 #include <hal/nrf_power.h>
 #endif /* NRF54L_ERRATA_20_PRESENT */

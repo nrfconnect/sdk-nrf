@@ -7,7 +7,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(psa_dtls_client);
 
-#include <nrf.h>
+#include <nrfx.h>
 #include <errno.h>
 #include <zephyr/kernel.h>
 #include <zephyr/net/socket.h>
