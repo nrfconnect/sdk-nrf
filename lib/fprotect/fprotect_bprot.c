@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <nrf.h>
+#include <nrfx.h>
 #if defined(NRF_BPROT)
 	#include <hal/nrf_bprot.h>
 	#define PROTECT nrf_bprot_nvm_blocks_protection_enable
