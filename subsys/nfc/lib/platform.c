@@ -18,8 +18,6 @@
 #include <zephyr/sys/__assert.h>
 #include <zephyr/sys/onoff.h>
 
-#include <nrf_erratas.h>
-
 #include <nrfx_nfct.h>
 #include <nrfx_timer.h>
 #include <hal/nrf_ficr.h>

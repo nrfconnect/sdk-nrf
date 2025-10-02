@@ -29,10 +29,10 @@
 #include <cmsis_core.h>
 #include <hal/nrf_glitchdet.h>
 #endif
+
+#include <nrfx.h>
 #include <soc/nrfx_coredep.h>
 
-#include <system_nrf7120_enga.h>
-#include <nrf7120_enga_wificore.h>
 #include <hal/nrf_spu.h>
 #include <hal/nrf_mpc.h>
 

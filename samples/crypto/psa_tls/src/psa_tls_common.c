@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <nrf.h>
+#include <nrfx.h>
 #include <errno.h>
 #include <zephyr/kernel.h>
 #include <zephyr/net/socket.h>

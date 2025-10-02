@@ -8,7 +8,7 @@
 #include <zephyr/autoconf.h>
 #include <string.h>
 #include <errno.h>
-#include <nrf.h>
+#include <nrfx.h>
 #include <assert.h>
 #if !defined(CONFIG_BUILD_WITH_TFM)
 #include <zephyr/kernel.h>
