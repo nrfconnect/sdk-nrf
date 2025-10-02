@@ -1,10 +1,26 @@
+common:
+  tags:
+    - drivers
+    - grtc
+    - ci_tests_drivers_grtc
+  harness: pytest
+  timeout: 30
+
 tests:
-  drivers.grtc.grtc_reset:
-    sysbuild: true
-    tags:
-      - drivers
-      - grtc
-      - ci_tests_drivers_grtc
+  drivers.grtc.test_grtc_after_reset_system:
+    platform_allow:
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness_config:
+      pytest_root:
+        - "pytest/tests.py::test_grtc_after_reset_system"
+
+  drivers.grtc.test_grtc_after_reset_pin:
     platform_allow:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
@@ -15,9 +31,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-    harness: pytest
+      - nrf54l15dk/nrf54l15/cpuapp
     harness_config:
       pytest_root:
-        - "pytest/tests.py::test_grtc_reset"
-    timeout: 30
+        - "pytest/tests.py::test_grtc_after_reset_pin"
