@@ -37,7 +37,6 @@
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
 
-#include <nrf_erratas.h>
 #if NRF54L_ERRATA_20_PRESENT
 #include <hal/nrf_power.h>
 #endif /* NRF54L_ERRATA_20_PRESENT */

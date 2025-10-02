@@ -7,8 +7,7 @@
 #include <cmsis.h>
 #include <tfm_spm_log.h>
 #include <mpu_armv8m_drv.h>
-#include <nrf.h>
-#include <nrf_peripherals.h>
+#include <nrfx.h>
 #include <array.h>
 #include <nrfx_nvmc.h>
 

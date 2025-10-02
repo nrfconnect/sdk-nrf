@@ -4,11 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <errno.h>
-#include <nrf.h>
+#include <nrfx.h>
 #include <esb.h>
 #include <stddef.h>
 #include <string.h>
-#include <nrf_erratas.h>
 
 #include <hal/nrf_radio.h>
 #include <hal/nrf_timer.h>

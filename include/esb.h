@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include <errno.h>
 
-#include <nrf.h>
+#include <nrfx.h>
 #include <hal/nrf_radio.h>
 
 #include <zephyr/sys/util.h>

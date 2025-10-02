@@ -11,7 +11,7 @@
 
 #include <tfm_ioctl_core_api.h>
 
-#include "nrf.h"
+#include "nrfx.h"
 
 /*
  * On platforms like nrf53 we provide a service for reading out

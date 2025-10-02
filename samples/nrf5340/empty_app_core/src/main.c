@@ -7,7 +7,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/init.h>
-#include <nrf.h>
 #include <nrfx.h>
 
 #define LFXO_NODE DT_NODELABEL(lfxo)
