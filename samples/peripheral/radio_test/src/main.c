@@ -13,7 +13,7 @@
 #if defined(CONFIG_CLOCK_CONTROL_NRF2)
 #include <hal/nrf_lrcconf.h>
 #endif
-#include <nrf_erratas.h>
+#include <nrfx.h>
 #if NRF54L_ERRATA_20_PRESENT
 #include <hal/nrf_power.h>
 #endif /* NRF54L_ERRATA_20_PRESENT */

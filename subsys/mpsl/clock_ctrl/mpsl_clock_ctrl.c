@@ -15,6 +15,7 @@
 
 #include <mpsl_clock.h>
 #include "mpsl_clock_ctrl.h"
+#include "nrf_errno.h"
 
 LOG_MODULE_REGISTER(mpsl_clock_ctrl, CONFIG_MPSL_LOG_LEVEL);
 
