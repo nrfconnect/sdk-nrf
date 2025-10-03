@@ -23,7 +23,12 @@ if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
       )
     else()
       UpdateableImage_Add(APPLICATION ${image} GROUP "VARIANT")
-      set(secondary_overlay "${ZEPHYR_NRF_MODULE_DIR}/subsys/mcuboot/mcuboot_secondary_app.overlay")
+
+      string(CONFIGURE "${SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT_CUSTOM_OVERLAY}" secondary_overlay)
+      if("${secondary_overlay}" STREQUAL "")
+        set(secondary_overlay "${ZEPHYR_NRF_MODULE_DIR}/subsys/mcuboot/mcuboot_secondary_app.overlay")
+      endif()
+
       add_overlay_dts(${image} "${secondary_overlay}")
     endif()
 
