@@ -1,0 +1,21 @@
+.. toggle::
+
+   To prepare the sample to work with a custom board, complete the following steps:
+
+      1. Refer to the :ref:`create-your-board-directory` Zephyr guide and create your board directory.
+      #. Modify the contents of the :file:`board.yaml` file according to the :ref:`board_description` user guide.
+      #. Update the :ref:`default_board_configuration` (all `.dts` and `.dtsi` files) to match your board's requirements.
+      #. Write Kconfig files to enable all required Kconfig options for your board.
+      #. If you want to build your custom board with nRF70 Wi-Fi support, set the :kconfig:option:`CONFIG_CHIP_WIFI` and :kconfig:option:`SB_CONFIG_WIFI_NRF70` Kconfig options to ``y``.
+      #. If your device uses external flash, add its devicetree definition under the :file:`board/<board_name>_<soc_name>.overlay` file, and set ``nordic,pm-ext-flash`` in the devicetree's ``chosen`` configuration.
+      #. Refer to the :ref:`ug_matter_device_advanced_kconfigs` user guide, create your list of advanced configurations for your board, and apply the selected Kconfig options in the :file:`prj.conf` file.
+      #. See the :ref:`list of threads used in Matter application <matter_threads_table>` and adjust stack sizes according to your board and project requirements.
+      #. A custom board does not have support for LEDs and buttons by default.
+         Therefore, you need to provide your own implementation of the :file:`nrf/samples/matter/common/src/board/board.cpp` board file.
+
+   For more information, see the following guides:
+
+      * :ref:`board_porting_guide` and :ref:`custom_board_definition` to learn how to create a custom board directory.
+      * :ref:`ug_matter_device_optimizing_memory` to learn how to optimize memory on your board.
+      * :ref:`ug_matter_device_advanced_kconfigs` to learn about Matter configuration.
+      * :ref:`ug_matter_hw_requirements` to learn about hardware requirements for Nordic Development Kits and to use as a reference when planning your custom board.

@@ -23,3 +23,8 @@ Factory data support
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_factory_data_start
     :end-before: matter_door_lock_sample_factory_data_end
+
+Custom board with Nordic SoC
+----------------------------
+
+.. include:: /includes/matter_custom_board.txt
