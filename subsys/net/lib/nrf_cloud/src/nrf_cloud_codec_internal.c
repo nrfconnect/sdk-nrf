@@ -26,6 +26,7 @@
 #include <ncs_version.h>
 #include <ncs_commit.h>
 #include "cJSON_os.h"
+#include <date_time.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_codec_internal, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
@@ -2564,6 +2565,9 @@ int nrf_cloud_obj_location_request_payload_add(struct nrf_cloud_obj *const obj,
 
 	int err = 0;
 	bool cell_inf_added = false;
+	int64_t ts_now = 0;
+
+	date_time_now(&ts_now);
 
 	if (cells_inf) {
 		err = nrf_cloud_cell_pos_req_json_encode(cells_inf, obj->json);
@@ -2593,6 +2597,10 @@ int nrf_cloud_obj_location_request_payload_add(struct nrf_cloud_obj *const obj,
 			LOG_ERR("Failed to add Wi-Fi info to location request, error: %d", err);
 		}
 	}
+
+	cJSON *meta_obj = cJSON_AddObjectToObjectCS(obj->json, NRF_CLOUD_LOCATION_JSON_KEY_META);
+
+	cJSON_AddNumberToObjectCS(meta_obj, NRF_CLOUD_LOCATION_TYPE_VAL_RECORDED_AT, ts_now);
 
 	return err;
 }
