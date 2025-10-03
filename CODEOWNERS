@@ -824,6 +824,7 @@
 /subsys/nrf_profiler/                     @nrfconnect/ncs-si-bluebagel
 /subsys/nrf_rpc/                          @nrfconnect/ncs-si-muffin @nrfconnect/ncs-protocols-serialization
 /subsys/nrf_security/                     @nrfconnect/ncs-aegir
+/subsys/nrf_ironside/                     @nrfconnect/ncs-aurora
 /subsys/partition_manager/                @nordicjm @tejlmand
 /subsys/pcd/                              @nrfconnect/ncs-pluto
 /subsys/secure_storage/                   @nrfconnect/ncs-aegir
