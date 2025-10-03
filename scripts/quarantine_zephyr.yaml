@@ -237,6 +237,7 @@
 - scenarios:
     - kernel.common.misra
   platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
     - nrf54lm20dk/nrf54lm20a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35491"
 
@@ -578,3 +579,11 @@
 - scenarios:
     - buildsystem.sbom.spdx
   comment: "Missing toolchain python package. https://nordicsemi.atlassian.net/browse/NCSDK-35387"
+
+- scenarios:
+    - arch.arm.*.no_optimizations
+    - llext.writable
+    - llext.writable_slid_linking
+    - llext.writable_relocatable_slid_linking
+    - llext.writable_relocatable
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8497"
