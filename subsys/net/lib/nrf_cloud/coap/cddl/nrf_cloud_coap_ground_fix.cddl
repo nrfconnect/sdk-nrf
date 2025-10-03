@@ -45,7 +45,8 @@ wifi_ob = {
 
 ground_fix_req = {
 	? lte => lte_ar,
-	? wifi => wifi_ob
+	? wifi => wifi_ob,
+	? ts => uint .size 8
 }
 
 earfcn = 1
@@ -68,6 +69,7 @@ ssid = 17
 accessPoints = 18
 lte = 19
 wifi = 20
+ts = 21
 
 ; *******************
 ; Ground Fix Response
@@ -77,7 +79,8 @@ ground_fix_resp = {
 	lat => float .size 8,
 	lon => float .size 8,
 	uncertainty => int/float,
-	fulfilledWith => tstr
+	fulfilledWith => tstr,
+	? ts => uint .size 8
 }
 
 lat = 1
