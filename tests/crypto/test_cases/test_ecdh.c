@@ -286,11 +286,7 @@ void exec_test_case_ecdh_deterministic_full(void)
 			&initiator_mbed_ctx->z,
 			&responder_mbed_ctx->Q,
 			&initiator_mbed_ctx->d,
-#if defined(CONFIG_MBEDTLS_VANILLA_BACKEND)
-			NULL,
-#else
 			drbg_random,
-#endif
 			NULL);
 	stop_time_measurement();
 
@@ -309,11 +305,7 @@ void exec_test_case_ecdh_deterministic_full(void)
 			&responder_mbed_ctx->z,
 			&initiator_mbed_ctx->Q,
 			&responder_mbed_ctx->d,
-#if defined(CONFIG_MBEDTLS_VANILLA_BACKEND)
-			NULL,
-#else
 			drbg_random,
-#endif
 			NULL);
 
 	TEST_VECTOR_ASSERT_EQUAL(p_test_vector->expected_err_code, err_code);
@@ -397,11 +389,7 @@ void exec_test_case_ecdh_deterministic(void)
 			&responder_mbed_ctx->z,
 			&initiator_mbed_ctx->Q,
 			&responder_mbed_ctx->d,
-#if defined(CONFIG_MBEDTLS_VANILLA_BACKEND)
-			NULL,
-#else
 			drbg_random,
-#endif
 			NULL);
 	stop_time_measurement();
 
