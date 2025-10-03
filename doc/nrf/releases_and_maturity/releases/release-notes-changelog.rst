@@ -227,8 +227,10 @@ Matter bridge
 nRF5340 Audio
 -------------
 
+* Added:
 
-* Added the API documentation in the header files listed on the :ref:`audio_api` page.
+  * The API documentation in the header files listed on the :ref:`audio_api` page.
+  * Ability to connect by address as a unicast client.
 
 * Updated:
 
