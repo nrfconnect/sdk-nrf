@@ -465,6 +465,30 @@ static int srv_store_from_addr_get_internal(bt_addr_le_t const *const addr,
 	return -ENOENT;
 }
 
+int srv_store_foreach_server(srv_store_foreach_func_t func, void *user_data)
+{
+	if (func == NULL) {
+		return -EINVAL;
+	}
+
+	/* Call the func for each server */
+	for (int i = 0; i < MAX_SERVERS; i++) {
+		struct server_store *server = &servers[i];
+
+		if (server->conn == NULL) {
+			continue;
+		}
+
+		const bool keep_iterating = func(server, user_data);
+
+		if (!keep_iterating) {
+			return -ECANCELED;
+		}
+	}
+
+	return 0;
+}
+
 bool srv_store_preset_validated(struct bt_audio_codec_cfg *new, struct bt_audio_codec_cfg *existing,
 				uint8_t pref_sample_rate_value)
 {
@@ -1167,29 +1191,6 @@ int srv_store_num_get(bool check_consecutive)
 	}
 
 	return num_servers;
-}
-
-int srv_store_server_get(struct server_store **server, uint8_t index)
-{
-	valid_entry_check(__func__);
-
-	if (server == NULL) {
-		LOG_ERR("NULL parameter");
-		return -EINVAL;
-	}
-
-	if (index >= MAX_SERVERS) {
-		return -EINVAL;
-	}
-
-	if (servers[index].conn == NULL || bt_addr_le_eq(&servers[index].addr, NO_ADDR)) {
-		*server = NULL;
-		return -ENOENT;
-	}
-
-	*server = &servers[index];
-
-	return 0;
 }
 
 int srv_store_add_by_conn(struct bt_conn *conn)

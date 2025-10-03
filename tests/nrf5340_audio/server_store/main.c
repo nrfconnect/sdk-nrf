@@ -488,42 +488,6 @@ ZTEST(suite_server_store, test_cap_set)
 	srv_store_unlock();
 }
 
-ZTEST(suite_server_store, test_srv_get)
-{
-	int ret;
-
-	TEST_CONN(100);
-	TEST_CONN(1);
-
-	ret = srv_store_lock(K_NO_WAIT);
-	zassert_equal(ret, 0);
-
-	ret = srv_store_add_by_conn(&test_100_conn);
-	zassert_equal(ret, 0);
-
-	ret = srv_store_add_by_conn(&test_1_conn);
-	zassert_equal(ret, 0);
-
-	struct server_store *server;
-
-	ret = srv_store_server_get(&server, 0);
-	zassert_equal(ret, 0);
-	zassert_not_null(server, "Retrieved server should not be NULL");
-	zassert_equal_ptr(server->conn, &test_100_conn,
-			  "Retrieved server connection does not match expected");
-
-	ret = srv_store_server_get(&server, 1);
-	zassert_equal(ret, 0);
-	zassert_not_null(server, "Retrieved server should not be NULL");
-	zassert_equal_ptr(server->conn, &test_1_conn,
-			  "Retrieved server connection does not match expected");
-
-	ret = srv_store_server_get(&server, 2);
-	zassert_equal(ret, -ENOENT, "Adding server did not return zero %d", ret);
-
-	srv_store_unlock();
-}
-
 ZTEST(suite_server_store, test_preset_pref)
 {
 	int ret;
@@ -541,7 +505,7 @@ ZTEST(suite_server_store, test_preset_pref)
 
 	struct server_store *server;
 
-	ret = srv_store_server_get(&server, 0);
+	ret = srv_store_from_conn_get(&test_1_conn, &server);
 	zassert_equal(ret, 0);
 
 	valid = srv_store_preset_validated(&lc3_preset_16_2_1.codec_cfg,

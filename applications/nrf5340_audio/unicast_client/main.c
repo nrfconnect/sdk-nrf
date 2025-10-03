@@ -59,6 +59,8 @@ K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STA
 K_THREAD_STACK_DEFINE(content_control_msg_sub_thread_stack,
 		      CONFIG_CONTENT_CONTROL_MSG_SUB_STACK_SIZE);
 
+#define SRV_STORE_LOCK_WAIT_TIME_MS K_MSEC(50)
+
 /* Function for handling all stream state changes */
 static void stream_state_set(enum stream_state stream_state_new)
 {
@@ -421,7 +423,7 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 
 	case BT_MGMT_SECURITY_CHANGED:
 		LOG_INF("Security changed. Addr is resolved");
-		ret = srv_store_lock(K_NO_WAIT);
+		ret = srv_store_lock(SRV_STORE_LOCK_WAIT_TIME_MS);
 		ERR_CHK_MSG(ret, "Failed to lock server store");
 
 		if (srv_store_server_exists(&msg->addr)) {
@@ -447,7 +449,7 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 	case BT_MGMT_PAIRING_COMPLETE:
 		LOG_INF("Pairing complete event");
 
-		ret = srv_store_lock(K_NO_WAIT);
+		ret = srv_store_lock(SRV_STORE_LOCK_WAIT_TIME_MS);
 		ERR_CHK_MSG(ret, "Failed to lock server store");
 
 		ret = srv_store_add_by_conn(msg->conn);
@@ -467,7 +469,7 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 
 		unicast_client_conn_disconnected(msg->conn);
 
-		ret = srv_store_lock(K_NO_WAIT);
+		ret = srv_store_lock(SRV_STORE_LOCK_WAIT_TIME_MS);
 		ERR_CHK_MSG(ret, "Failed to lock server store");
 
 		ret = srv_store_clear_by_conn(msg->conn);
@@ -611,7 +613,7 @@ static void fill_server_store_by_bonded(const struct bt_bond_info *info, void *u
 		return;
 	}
 
-	ret = srv_store_lock(K_NO_WAIT);
+	ret = srv_store_lock(SRV_STORE_LOCK_WAIT_TIME_MS);
 	ERR_CHK_MSG(ret, "Failed to lock server store");
 
 	ret = srv_store_add_by_addr(&info->addr);

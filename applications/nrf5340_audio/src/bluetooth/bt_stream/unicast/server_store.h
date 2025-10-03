@@ -63,6 +63,29 @@ struct client_supp_configs {
 	struct bt_audio_codec_octets_per_codec_frame oct_per_codec_frame;
 };
 
+/** Callback function for bt_bap_unicast_group_foreach_stream().
+ *
+ * @param stream     The audio stream.
+ * @param user_data  User data.
+ *
+ * @retval false Continue iterating.
+ * @retval true Stop iterating.
+ */
+typedef bool (*srv_store_foreach_func_t)(struct server_store *server, void *user_data);
+
+/** Iterate through all stored servers and call the given function for each.
+ *
+ * @note		srv_store_lock() must be called before accessing this function.
+ *
+ * @param func		Function to call for each server.
+ * @param user_data	User data to pass to the function.
+ *
+ * @retval	0 on success.
+ * @retval	-EINVAL if func is NULL.
+ * @retval	-ECANCELED if the iteration was stopped by the callback function.
+ */
+int srv_store_foreach_server(srv_store_foreach_func_t func, void *user_data);
+
 /**
  * @brief Validate the codec configuration preset.
  *
@@ -238,23 +261,6 @@ int srv_store_from_conn_get(struct bt_conn const *const conn, struct server_stor
  * @return	-EINVAL Non-consecutive server storage detected.
  */
 int srv_store_num_get(bool check_consecutive);
-
-/**
- * @brief	Get a server based on index.
- *
- * @param[out]	server  Pointer to the server at the given index.
- * @param[in]	index    Index of the server to retrieve.
- *
- * @note	When an entry is deleted, the remaining servers are not re-indexed.
- * Hence, there may be indexes which are vacant between other servers.
- * srv_store_lock() must be called before accessing this function.
- *
- * @return	0 on success.
- * @return	-EINVAL Illegal value
- * @return	-ENOENT No server found at index.
- * @retval	Other negative.	Errors from underlying functions.
- */
-int srv_store_server_get(struct server_store **server, uint8_t index);
 
 /**
  * @brief	Add a server to the storage based on conn.
