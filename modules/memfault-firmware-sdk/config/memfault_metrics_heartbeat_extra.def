@@ -7,7 +7,7 @@
 #ifdef CONFIG_MEMFAULT_NCS_STACK_METRICS
 MEMFAULT_METRICS_KEY_DEFINE(ncs_connection_poll_unused_stack, kMemfaultMetricType_Unsigned)
 MEMFAULT_METRICS_KEY_DEFINE(ncs_bt_rx_unused_stack, kMemfaultMetricType_Unsigned)
-MEMFAULT_METRICS_KEY_DEFINE(ncs_bt_tx_unused_stack, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_bt_lw_wq_unused_stack, kMemfaultMetricType_Unsigned)
 #endif /* CONFIG_MEMFAULT_NCS_STACK_METRICS */
 
 #ifdef CONFIG_MEMFAULT_NCS_LTE_METRICS
