@@ -193,6 +193,7 @@ function(dfu_app_zip_package)
     # Network core
     get_property(image_name GLOBAL PROPERTY DOMAIN_APP_CPUNET)
     set(net_update_name "${image_name}.bin")
+    set(secondary_net_update_name "${image_name}_secondary_app.bin")
     sysbuild_get(net_core_board IMAGE ${image_name} VAR BOARD CACHE)
 
     if(SB_CONFIG_SECURE_BOOT_NETCORE)
@@ -204,42 +205,76 @@ function(dfu_app_zip_package)
     mcuboot_image_number_to_slot(net_update_slot_primary ${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER} n)
     mcuboot_image_number_to_slot(net_update_slot_secondary ${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER} y)
 
-    if(SB_CONFIG_PARTITION_MANAGER)
-      set(net_load_address "$<TARGET_PROPERTY:partition_manager,CPUNET_PM_APP_ADDRESS>")
-    else()
-      get_address_from_dt_partition_nodelabel("slot${net_update_slot_primary}_partition"
-                                              net_load_address
-                                             )
-    endif()
+    if(NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
+      if(SB_CONFIG_PARTITION_MANAGER)
+        set(net_load_address "$<TARGET_PROPERTY:partition_manager,CPUNET_PM_APP_ADDRESS>")
+      else()
+        get_address_from_dt_partition_nodelabel("slot${net_update_slot_primary}_partition"
+                                                net_load_address
+                                               )
+      endif()
 
-    math(EXPR net_update_slot_primary "${net_update_slot_primary} + 1")
-    math(EXPR net_update_slot_secondary "${net_update_slot_secondary} + 1")
+      math(EXPR net_update_slot_primary "${net_update_slot_primary} + 1")
+      math(EXPR net_update_slot_secondary "${net_update_slot_secondary} + 1")
 
-    set(generate_script_app_params
+      set(generate_script_app_params
+          ${generate_script_app_params}
+          "${net_update_name}image_index=${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}"
+          "${net_update_name}slot_index_primary=${net_update_slot_primary}"
+          "${net_update_name}slot_index_secondary=${net_update_slot_secondary}"
+          "${net_update_name}load_address=${net_load_address}"
+          "${net_update_name}version=${net_update_version}"
+          "${net_update_name}board=${net_core_board}"
+          "${net_update_name}soc=${SB_CONFIG_SOC}"
+         )
+
+      if(SB_CONFIG_SECURE_BOOT_NETCORE)
+        list(APPEND bin_files "${CMAKE_BINARY_DIR}/signed_by_mcuboot_and_b0_${image_name}.bin")
+        list(APPEND signed_targets ${image_name}_signed_packaged_target)
+      else()
+          sysbuild_get(net_CONFIG_KERNEL_BIN_NAME IMAGE ${image_name} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+          if(SB_CONFIG_BOOT_ENCRYPTION)
+            list(APPEND bin_files "${CMAKE_BINARY_DIR}/${image_name}/zephyr/${net_CONFIG_KERNEL_BIN_NAME}.signed.encrypted.bin")
+          else()
+            list(APPEND bin_files "${CMAKE_BINARY_DIR}/${image_name}/zephyr/${net_CONFIG_KERNEL_BIN_NAME}.signed.bin")
+          endif()
+      endif()
+
+      list(APPEND zip_names "${net_update_name}")
+      list(APPEND signed_targets ${image_name}_extra_byproducts)
+    elseif(NOT SB_CONFIG_PARTITION_MANAGER)
+      get_address_from_dt_partition_nodelabel("slot${net_update_slot_primary}_partition" primary_net_load_address)
+      get_address_from_dt_partition_nodelabel("slot${net_update_slot_secondary}_partition" secondary_net_load_address)
+
+      # Radio in DirectXIP mode
+      set(generate_script_app_params
         ${generate_script_app_params}
-        "${net_update_name}image_index=${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}"
-        "${net_update_name}slot_index_primary=${net_update_slot_primary}"
-        "${net_update_name}slot_index_secondary=${net_update_slot_secondary}"
-        "${net_update_name}load_address=${net_load_address}"
-        "${net_update_name}version=${net_update_version}"
-        "${net_update_name}board=${net_core_board}"
-        "${net_update_name}soc=${SB_CONFIG_SOC}"
-       )
+          "${net_update_name}load_address=${primary_net_load_address}"
+          "${net_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
+          "${net_update_name}image_index=${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}"
+          "${net_update_name}slot=${net_update_slot_primary}"
+          "${secondary_net_update_name}load_address=${secondary_net_load_address}"
+          "${secondary_net_update_name}image_index=${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}"
+          "${secondary_net_update_name}slot=${net_update_slot_secondary}"
+          "${secondary_net_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
+        )
+      list(APPEND bin_files
+           "${CMAKE_BINARY_DIR}/${image_name}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
+           "${CMAKE_BINARY_DIR}/${image_name}_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
+      )
+      set(exclude_files EXCLUDE
+          ${CMAKE_BINARY_DIR}/${image_name}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
+          ${CMAKE_BINARY_DIR}/${image_name}_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
+      )
+      set(include_files INCLUDE
+          ${CMAKE_BINARY_DIR}/${image_name}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+          ${CMAKE_BINARY_DIR}/${image_name}_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+      )
 
-    if(SB_CONFIG_SECURE_BOOT_NETCORE)
-      list(APPEND bin_files "${CMAKE_BINARY_DIR}/signed_by_mcuboot_and_b0_${image_name}.bin")
-      list(APPEND signed_targets ${image_name}_signed_packaged_target)
-    else()
-        sysbuild_get(net_CONFIG_KERNEL_BIN_NAME IMAGE ${image_name} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
-        if(SB_CONFIG_BOOT_ENCRYPTION)
-          list(APPEND bin_files "${CMAKE_BINARY_DIR}/${image_name}/zephyr/${net_CONFIG_KERNEL_BIN_NAME}.signed.encrypted.bin")
-        else()
-          list(APPEND bin_files "${CMAKE_BINARY_DIR}/${image_name}/zephyr/${net_CONFIG_KERNEL_BIN_NAME}.signed.bin")
-        endif()
+      list(APPEND zip_names "${net_update_name};${secondary_net_update_name}")
+      list(APPEND signed_targets ${image_name}_extra_byproducts)
+      list(APPEND signed_targets ${image_name}_secondary_app_extra_byproducts)
     endif()
-
-    list(APPEND zip_names "${net_update_name}")
-    list(APPEND signed_targets ${image_name}_extra_byproducts)
   endif()
 
   if(SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH)
