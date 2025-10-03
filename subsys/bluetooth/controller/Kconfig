@@ -691,6 +691,9 @@ config BT_CTLR_SDC_CS_T_PM_LEN_DEFAULT
 	default 20 if BT_CTLR_SDC_CS_T_PM_LEN_20_US
 	default 40 if BT_CTLR_SDC_CS_T_PM_LEN_40_US
 
+config BT_CTLR_LE_PATH_LOSS_MONITORING
+	select BT_CTLR_LE_POWER_CONTROL
+
 config BT_CTLR_SDC_LE_POWER_CLASS_1
 	bool "Device supports transmitting at LE Power Class 1 level"
 	default y if BT_CTLR_TX_PWR_ANTENNA >= 10
