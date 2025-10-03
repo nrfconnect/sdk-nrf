@@ -206,15 +206,9 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 #endif
 
 #if defined(CONFIG_BT_CTLR_EXTENDED_FEAT_SET)
-#if defined(SDC_MEM_EXTENDED_FEATURE_SET_NEW)
-#define SDC_EXTENDED_FEAT_SET_MEM_SIZE                                                             \
-	SDC_MEM_EXTENDED_FEATURE_SET_NEW(SDC_CENTRAL_COUNT + PERIPHERAL_COUNT,                     \
-					 CONFIG_BT_CTLR_SDC_EXTENDED_FEAT_MAX_REMOTE_PAGE)
-#else
 #define SDC_EXTENDED_FEAT_SET_MEM_SIZE                                                             \
 	SDC_MEM_EXTENDED_FEATURE_SET(SDC_CENTRAL_COUNT + PERIPHERAL_COUNT,                         \
 				     CONFIG_BT_CTLR_SDC_EXTENDED_FEAT_MAX_REMOTE_PAGE)
-#endif
 #else
 #define SDC_EXTENDED_FEAT_SET_MEM_SIZE 0
 #endif
