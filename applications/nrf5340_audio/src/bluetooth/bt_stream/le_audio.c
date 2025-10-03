@@ -169,6 +169,7 @@ int le_audio_octets_per_frame_get(const struct bt_audio_codec_cfg *codec, uint32
 
 	ret = bt_audio_codec_cfg_get_octets_per_frame(codec);
 	if (ret < 0) {
+		LOG_ERR("Failed to get octets per frame: %d", ret);
 		return ret;
 	}
 

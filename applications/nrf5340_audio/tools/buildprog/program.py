@@ -17,7 +17,7 @@ MEM_ADDR_UICR_CH = 0x00FF80F4
 def print_location_labels(locations):
     labels = [loc.label for loc in locations if loc.value != 0]
     if not labels and any(loc.value == 0 for loc in locations):
-        labels.append(Location.BT_AUDIO_LOCATION_MONO_AUDIO.label)
+        labels.append(Location.MONO_AUDIO.label)
     print(" + ".join(labels))
 
 def locations_to_bitfield(locations: List[Location]) -> int:

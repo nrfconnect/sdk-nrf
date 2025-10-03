@@ -62,14 +62,13 @@ enum unicast_discover_dir {
 /**
  * @brief	Get configuration for the audio stream.
  *
- * @param[in]	conn			Pointer to the connection to get the configuration for.
- * @param[in]	dir			Direction to get the configuration from.
+ * @param[in]	stream			Pointer to the stream to get the configuration for.
  * @param[out]	bitrate			Pointer to the bit rate used; can be NULL.
  * @param[out]	sampling_rate_hz	Pointer to the sampling rate used; can be NULL.
  *
  * @return	0 for success, error otherwise.
  */
-int unicast_client_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint32_t *bitrate,
+int unicast_client_config_get(struct bt_bap_stream *stream, uint32_t *bitrate,
 			      uint32_t *sampling_rate_hz);
 
 /**
