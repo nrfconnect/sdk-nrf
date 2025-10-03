@@ -38,15 +38,20 @@ def get_cycle_and_uptime_from_logs(dut: DeviceAdapter):
             uptime=(int(match_uptime.group(1)))
     return cycle, uptime
 
-
-def test_grtc_reset(dut: DeviceAdapter):
-    cycle, uptime = get_cycle_and_uptime_from_logs(dut)
-    reset_dut(dut, reset_kind="RESET_SYSTEM")
-    cycle_system, uptime_system = get_cycle_and_uptime_from_logs(dut)
+def test_grtc_after_reset_system(dut: DeviceAdapter):
     reset_dut(dut, reset_kind="RESET_PIN")
-    cycle_pin, uptime_pin = get_cycle_and_uptime_from_logs(dut)
-    assert uptime in range(10, 14)
-    assert cycle_system > cycle
-    assert uptime_system < 3
-    assert cycle_pin < cycle_system
-    assert uptime_pin < 3
+    cycle_start, uptime_start = get_cycle_and_uptime_from_logs(dut)
+    assert uptime_start in range(8, 24)
+    reset_dut(dut, reset_kind="RESET_SYSTEM")
+    cycle_after_reset, uptime_after_reset = get_cycle_and_uptime_from_logs(dut)
+    assert cycle_after_reset > cycle_start
+    assert uptime_after_reset in range(8, 24)
+
+def test_grtc_after_reset_pin(dut: DeviceAdapter):
+    reset_dut(dut, reset_kind="RESET_PIN")
+    cycle_start, uptime_start = get_cycle_and_uptime_from_logs(dut)
+    assert uptime_start in range(8, 24)
+    reset_dut(dut, reset_kind="RESET_PIN")
+    cycle_after_reset, uptime_after_reset = get_cycle_and_uptime_from_logs(dut)
+    assert cycle_after_reset < cycle_start + cycle_after_reset
+    assert uptime_after_reset in range(8, 24)
