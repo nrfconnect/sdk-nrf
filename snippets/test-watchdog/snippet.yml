@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+name: test-watchdog
+
+boards:
+  /.*/nrf54ls05b/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf54ls05b_cpuapp.overlay
+  /.*/nrf54lv10a/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf54lv10a.overlay
+  /.*/nrf54lv10a/cpuapp/ns/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf54lv10a_ns.overlay
+  /.*/nrf54lv10a/cpuflpr/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf54lv10a.overlay

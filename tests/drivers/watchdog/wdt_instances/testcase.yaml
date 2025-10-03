@@ -4,23 +4,12 @@ common:
     - ci_tests_drivers_watchdog
   harness: ztest
   timeout: 20
+  extra_args: SNIPPET="test-watchdog"
+  filter: dt_compat_enabled("nordic,nrf-wdt")
 
 tests:
   drivers.watchdog.wdt_instances:
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54h20dk/nrf54h20/cpurad
-      - nrf54h20dk/nrf54h20/cpuppr
-      - nrf54h20dk/nrf54h20/cpuflpr
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
+    platform_exclude:
+      - mps2/an385
+      - mps2/an521/cpu0
+      - qemu_cortex_m0/nrf51822

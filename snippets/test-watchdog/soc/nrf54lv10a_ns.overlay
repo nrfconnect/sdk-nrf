@@ -1,9 +1,16 @@
 /*
  * Copyright (c) 2025 Nordic Semiconductor ASA
- *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-&wdt30 {
+/ {
+	aliases {
+		watchdog0 = &wdt31;
+	};
+};
+
+/* wdt30 can't be accessed by NS code */
+
+&wdt31 {
 	status = "okay";
 };

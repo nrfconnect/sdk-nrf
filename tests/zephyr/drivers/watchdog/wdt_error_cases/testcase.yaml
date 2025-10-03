@@ -3,17 +3,14 @@ common:
     - drivers
     - watchdog
     - ci_tests_zephyr_drivers_watchdog
-  # depends_on: watchdog
   harness: ztest
   timeout: 30
+  extra_args: SNIPPET="test-watchdog"
+  filter: dt_alias_exists("watchdog0")
 
 tests:
   nrf.extended.drivers.watchdog.wdt_error_cases:
-    platform_allow:
-      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
-    integration_platforms:
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
+    platform_exclude:
+      - mps2/an385
+      - mps2/an521/cpu0
+      - qemu_cortex_m0/nrf51822
