@@ -16,6 +16,7 @@
 #include <sdc_hci_vs.h>
 
 #include "hci_internal.h"
+#include "hci_internal_wrappers.h"
 #include "ecdh.h"
 
 #define CMD_COMPLETE_MIN_SIZE (BT_HCI_EVT_HDR_SIZE \
@@ -773,6 +774,10 @@ void hci_internal_le_supported_features(
 #if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC)
 	features->params.periodic_advertising_with_responses_scanner = 1;
 #endif
+
+#if defined(CONFIG_BT_CTLR_SDC_LE_POWER_CLASS_1)
+	features->params.le_Power_class_1 = 1;
+#endif /* CONFIG_BT_CTLR_SDC_LE_POWER_CLASS_1 */
 }
 
 static void le_read_supported_states(uint8_t *buf)
@@ -891,7 +896,7 @@ static uint8_t controller_and_baseband_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_CB_SET_CONTROLLER_TO_HOST_FLOW_CONTROL:
 		return sdc_hci_cmd_cb_set_controller_to_host_flow_control((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_CB_HOST_BUFFER_SIZE:
-		return sdc_hci_cmd_cb_host_buffer_size((void *)cmd_params);
+		return sdc_hci_cmd_cb_host_buffer_size_wrapper((void *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_CB_HOST_NUMBER_OF_COMPLETED_PACKETS:
 		return sdc_hci_cmd_cb_host_number_of_completed_packets((void *)cmd_params);
 #endif
