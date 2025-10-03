@@ -498,6 +498,7 @@
 /samples/dect/dect_phy/dect_shell/        @nrfconnect/ncs-modem-tre
 /samples/dect/dect_phy/hello_dect/        @nrfconnect/ncs-modem
 /samples/dfu/ab/                          @nrfconnect/ncs-eris
+/samples/dfu/ab_split/                    @nrfconnect/ncs-eris
 /samples/dfu/dfu_target/                  @nrfconnect/ncs-eris
 /samples/dfu/dfu_multi_image/             @nrfconnect/ncs-eris
 /samples/dfu/fw_loader/                   @nrfconnect/ncs-eris
