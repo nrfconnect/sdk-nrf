@@ -8,10 +8,16 @@ config PSA_SSF_CRYPTO_CLIENT
 	bool
 	prompt "PSA crypto provided through SSF"
 	default y
-	depends on SOC_NRF54H20 || SOC_SERIES_NRF92X
+	depends on SOC_NRF54H20_CPUAPP || SOC_NRF54H20_CPURAD || SOC_SERIES_NRF92X
 	select NRF_IRONSIDE_CALL
+	select PSA_CRYPTO_CLIENT
+	select PSA_CRYPTO
 
 if PSA_SSF_CRYPTO_CLIENT
+
+choice PSA_CRYPTO_PROVIDER 
+    default PSA_CRYPTO_PROVIDER_CUSTOM
+endchoice
 
 config PSA_SSF_CRYPTO_CLIENT_OUT_BOUNCE_BUFFERS
 	bool "Support PSA crypto with output buffers that are not cache-safe"

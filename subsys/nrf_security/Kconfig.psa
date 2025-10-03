@@ -21,7 +21,6 @@ osource "modules/mbedtls/Kconfig.psa"
 
 rsource "src/core/Kconfig"
 
-rsource "src/ssf_secdom/Kconfig"
 
 comment "PSA Driver Support"
 
