@@ -94,13 +94,17 @@ def pre_process(data: Data):
     # Give more user friendly information of each package
     package_name_map = dict()
     for package in data.packages.values():
-        if (package.url is None) or (package.version is None):
+        if package.version is None:
+            package.version = 'NoneVersion'
+        if package.url is None:
             continue
         if (package.name is None) and ('github.com' in package.url):
             offs = package.url.find('github.com') + len('github.com') + 1
             package.name = package.url[offs:]
             if package.name.endswith('.git'):
                 package.name = package.name[:-4]
+        if package.name is None:
+            package.name = package.id or package.url or 'NoneName'
         if package.name in package_name_map:
             existing = package_name_map[package.name]
             del package_name_map[package.name]
