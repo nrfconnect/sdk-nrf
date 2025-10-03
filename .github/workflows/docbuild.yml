@@ -25,6 +25,8 @@ on:
     tags:
       - v*
 
+# Add some commit
+
 jobs:
   build:
     runs-on: ubuntu-24.04
