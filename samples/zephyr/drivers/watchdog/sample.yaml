@@ -15,16 +15,12 @@ common:
       - "Waiting for reset..."
       - "Watchdog sample application"
   timeout: 30
+  extra_args: SNIPPET="test-watchdog"
+  filter: dt_alias_exists("watchdog0")
 
 tests:
   nrf.extended.sample.drivers.watchdog:
-    platform_allow:
-      - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuflpr
-      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuflpr
-    integration_platforms:
-      - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
+    platform_exclude:
+      - mps2/an385
+      - mps2/an521/cpu0
+      - qemu_cortex_m0/nrf51822
