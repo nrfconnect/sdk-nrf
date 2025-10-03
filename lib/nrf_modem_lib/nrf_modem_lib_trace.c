@@ -516,6 +516,15 @@ int nrf_modem_lib_trace_read(uint8_t *buf, size_t len)
 	return read;
 }
 
+int nrf_modem_lib_trace_peek_at(size_t offset, uint8_t *buf, size_t len)
+{
+	if (!trace_backend.peek_at) {
+		return -ENOTSUP;
+	}
+
+	return trace_backend.peek_at(offset, buf, len);
+}
+
 int nrf_modem_lib_trace_clear(void)
 {
 	int err;
