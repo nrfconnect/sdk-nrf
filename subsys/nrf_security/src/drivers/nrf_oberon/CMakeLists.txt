@@ -42,16 +42,6 @@ add_library(oberon_psa_driver STATIC
   ${src_crypto_oberon}
 )
 
-# Turn off warnings that Oberon are systematically
-# triggering. Oberon is testing this deliverable before we get it so
-# we don't need to re-test it with gcc warnings.
-target_compile_options(oberon_psa_driver
-  PRIVATE
-    -Wno-uninitialized
-    -Wno-unused-variable
-    -Wno-unused-function
-)
-
 # Clang does not support -Wno-maybe-uninitialized so the following
 # warning option is only used for GNU (GCC)
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
