@@ -466,6 +466,7 @@ Matter samples
 
   * The :ref:`matter_temperature_sensor_sample` sample that demonstrates how to implement and test a Matter temperature sensor device.
   * The :ref:`matter_contact_sensor_sample` sample that demonstrates how to implement and test a Matter contact sensor device.
+  * The ``matter_custom_board`` toggle paragraph in the Matter advanced configuration section of all Matter samples that demonstrates how add and configure a custom board.
 
 * Updated all Matter over Wi-Fi samples and applications to store a portion of the application code related to the nRF70 Series Wi-Fi firmware in the external flash memory by default.
   This change breaks the DFU between the previous |NCS| versions and the |NCS| v3.2.0.
