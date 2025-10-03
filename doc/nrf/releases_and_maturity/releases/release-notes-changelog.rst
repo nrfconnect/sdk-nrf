@@ -179,7 +179,7 @@ Gazell
 Matter
 ------
 
-|no_changes_yet_note|
+* Updated to using the :kconfig:option:`CONFIG_PICOLIBC` Kconfig option as the C library instead of :kconfig:option:`CONFIG_NEWLIB_LIBC`, in compliance with Zephyr requirements.
 
 Matter fork
 +++++++++++
@@ -194,7 +194,10 @@ nRF IEEE 802.15.4 radio driver
 Thread
 ------
 
-* Updated the :ref:`thread_sed_ssed` documentation to clarify the impact of the SSED configuration on the device's power consumption and provide a guide for :ref:`thread_ssed_fine_tuning` of SSED devices.
+* Updated:
+
+  * The :ref:`thread_sed_ssed` documentation to clarify the impact of the SSED configuration on the device's power consumption and provide a guide for :ref:`thread_ssed_fine_tuning` of SSED devices.
+  * The platform configuration to use the :kconfig:option:`CONFIG_PICOLIBC` Kconfig opiton as the C library instead of :kconfig:option:`CONFIG_NEWLIB_LIBC`, in compliance with Zephyr requirements.
 
 Wi-Fi®
 ------
