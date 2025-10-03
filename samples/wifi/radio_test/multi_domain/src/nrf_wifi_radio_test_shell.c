@@ -1558,13 +1558,19 @@ static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
 			      SHELL_INFO,
 			      "\n************* RX capture data ***********\n");
 
-		for (i = 0; i < (ctx->conf_params.capture_length); i++) {
+		for (i = 0; i < (ctx->conf_params.capture_length/16); i++) {
+			for (int j = 0; j < 16; j++) {
+				shell_fprintf(shell,
+						SHELL_INFO,
+						"%02X%02X%02X ",
+						rx_cap_buf[i*48 + 2 + j*3],
+						rx_cap_buf[i*48 + 1 + j*3],
+						rx_cap_buf[i*48 + 0 + j*3]);
+			}
+
 			shell_fprintf(shell,
-				      SHELL_INFO,
-				      "%02X%02X%02X\n",
-				       rx_cap_buf[i*3 + 2],
-				       rx_cap_buf[i*3 + 1],
-				       rx_cap_buf[i*3 + 0]);
+						SHELL_INFO,
+						"\n");
 		}
 	} else if (capture_status == 1) {
 		shell_fprintf(shell,
