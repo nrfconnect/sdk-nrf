@@ -8,7 +8,7 @@
 #define HW_HEADER_FILE
 
 #include <cracen/membarriers.h>
-#include <nrf.h>
+#include <nrfx.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <sxsymcrypt/internal.h>

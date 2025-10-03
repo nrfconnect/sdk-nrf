@@ -12,7 +12,7 @@
 #ifdef DPPI_PRESENT
 #include <nrfx_dppi.h>
 #endif
-#include <nrf_erratas.h>
+#include <nrfx.h>
 
 #include <zephyr/sys/printk.h>
 
