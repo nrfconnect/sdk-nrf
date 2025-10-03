@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
+
 function(merge_images_nrf54h20 output_artifact images)
   find_program(MERGEHEX mergehex.py HINTS ${ZEPHYR_BASE}/scripts/build/ NAMES
     mergehex NAMES_PER_DIR)
@@ -177,10 +179,10 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
   dt_prop(write_block_size TARGET mcuboot PATH "${flash_node}" PROPERTY
     "write-block-size")
   dt_nodelabel(slot0_path TARGET mcuboot NODELABEL "slot0_partition" REQUIRED)
-  dt_reg_addr(slot0_addr TARGET mcuboot PATH ${slot0_path})
+  dt_partition_addr(slot0_addr PATH "${slot0_path}" TARGET mcuboot REQUIRED)
   dt_reg_size(slot0_size TARGET mcuboot PATH ${slot0_path})
   dt_nodelabel(slot1_path TARGET mcuboot NODELABEL "slot1_partition" REQUIRED)
-  dt_reg_addr(slot1_addr TARGET mcuboot PATH ${slot1_path})
+  dt_partition_addr(slot1_addr PATH "${slot1_path}" TARGET mcuboot REQUIRED)
   dt_reg_size(slot1_size TARGET mcuboot PATH ${slot1_path})
   if(NOT write_block_size)
     set(write_block_size 4)
@@ -190,7 +192,7 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
 
   # Fetch devicetree details for the active code partition.
   dt_chosen(code_flash TARGET ${main_image} PROPERTY "zephyr,code-partition")
-  dt_reg_addr(code_addr TARGET ${main_image} PATH ${code_flash})
+  dt_partition_addr(code_addr PATH "${code_flash}" TARGET ${main_image} REQUIRED)
   set(start_offset)
   sysbuild_get(start_offset IMAGE ${main_image} VAR CONFIG_ROM_START_OFFSET
     KCONFIG)
