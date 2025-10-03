@@ -45,7 +45,7 @@ The listed ``CONFIG_`` Kconfig options enable the features and algorithms for th
 The Kconfig options follow the ``CONFIG_PSA_WANT_*`` + ``CONFIG_PSA_USE_*`` configuration scheme, which is described in detail on the :ref:`crypto_drivers` page.
 
 .. note::
-   On nRF54H Series devices, the ``CONFIG_PSA_WANT`` and ``CONFIG_PSA_USE`` feature selection scheme is not implemented and enabling any feature with these options will silently have no effect.
+   On nRF54H Series devices, the ``CONFIG_PSA_WANT_*`` and ``CONFIG_PSA_USE_*`` feature selection scheme is not implemented and enabling any feature with these options will silently have no effect.
    The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
 
 
