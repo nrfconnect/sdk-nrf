@@ -781,6 +781,8 @@ For more information on the boot sequence, see :ref:`ug_nrf54h20_architecture_bo
    The term "secondary slot" and "secondary image" are used in the MCUboot context.
    This usage is unrelated to the "secondary firmware" described in this section.
 
+.. _ug_nrf54h20_ironside_se_secondary_conf_trigger:
+
 Configuration and triggering
 =============================
 
@@ -1011,6 +1013,16 @@ BOOTERROR
   * A status value of 0 indicates that the CPU was started normally.
   * A non-zero value indicates that an error condition occurred, preventing the CPU from starting.
     Detailed information about the issue can be found in the boot report.
+
+.. _ug_nrf54h20_ironside_se_local_domain_reset:
+
+Local Domain Reset Handling
+****************************
+
+When a local domain resets, |ISE| detects the event in the RESETHUB peripheral and triggers a global system reset, reported as ``SECSREQ`` in the local domain ``RESETINFO.RESETREAS.GLOBAL``.
+
+Certain local domain reset reasons can trigger a boot into the secondary boot mode.
+For more information, see :ref:`ug_nrf54h20_ironside_se_secondary_conf_trigger`.
 
 .. _ug_nrf54h20_ironside_se_boot_commands:
 
