@@ -33,12 +33,15 @@ config OPENTHREAD_DEFAULT_TX_POWER
 
 endif # OPENTHREAD
 
-if CHIP_WIFI
+if BOARD_NRF7002DK_NRF5340_CPUAPP
+
+config CHIP_WIFI
+	default y
 
 config NRF_WIFI_LOW_POWER
 	default y
 
-endif # CHIP_WIFI
+endif # BOARD_NRF7002DK_NRF5340_CPUAPP
 
 # Enable Read Client functionality for all build configurations.
 config CHIP_ENABLE_READ_CLIENT
