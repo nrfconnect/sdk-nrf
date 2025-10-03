@@ -20,7 +20,7 @@ config MEMFAULT_DEVICE_INFO_BUILTIN
 	help
 	  Use built-in Memfault Device Info implementation
 
-config MEMFAULT_DEVICE_INFO_CUSTOM
+config MEMFAULT_NCS_DEVICE_INFO_CUSTOM
 	bool "Custom user-defined Memfault Device Info implementation"
 	help
 	  Use custom user-defined Memfault Device Info implementation.
@@ -28,6 +28,8 @@ config MEMFAULT_DEVICE_INFO_CUSTOM
 	  application.
 
 endchoice
+
+if MEMFAULT_DEVICE_INFO_BUILTIN
 
 choice
 	prompt "Memfault device ID generation method"
@@ -119,6 +121,8 @@ config MEMFAULT_NCS_FW_VERSION
 	help
 	 When using a statically configured firmware version, this value
 	 will be reported to Memfault
+
+endif  # MEMFAULT_DEVICE_INFO_BUILTIN
 
 config MEMFAULT_NCS_INIT_PRIORITY
 	int "Memfault initialization priority"
