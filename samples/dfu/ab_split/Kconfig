@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config N_BLINKS
+	int "Number of fast blinks"
+	default 1
+
+config EMULATE_APP_HEALTH_CHECK_FAILURE
+	bool "Blocks confirmation of being healthy after the update"
+
+source "Kconfig.zephyr"
