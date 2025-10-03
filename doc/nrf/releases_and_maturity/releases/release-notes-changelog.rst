@@ -680,6 +680,10 @@ Libraries for networking
 
 * Fixed occasional message truncation notifying that the download was complete in the :ref:`lib_nrf_cloud_fota` library.
 
+* :ref:`lib_nrf_cloud` library:
+
+  * Updated by refactoring the folder structure of the library to separate the different backend implementations.
+
 Libraries for NFC
 -----------------
 
