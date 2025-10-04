@@ -1435,6 +1435,59 @@ void test_location_wifi_timeout(void)
 #endif
 }
 
+/* Test Wi-Fi location cancellation during scan to verify wifi scan semaphore is properly
+ * released and Wi-Fi scan can be restarted.
+ */
+void test_location_wifi_cancel_releases_semaphore(void)
+{
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	int err;
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_WIFI};
+
+	location_config_defaults_set(&config, 1, methods);
+	config.methods[0].wifi.timeout = 10000;
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	test_location_event_data[location_cb_expected].id = LOCATION_EVT_STARTED;
+	test_location_event_data[location_cb_expected].method = LOCATION_METHOD_WIFI;
+	location_cb_expected++;
+#endif
+
+	net_mgmt_NET_REQUEST_WIFI_SCAN_expected = true;
+
+	__cmock_net_mgmt_NET_REQUEST_WIFI_SCAN_ExpectAndReturn(0);
+
+	err = location_request(&config);
+	TEST_ASSERT_EQUAL(0, err);
+	k_sleep(K_MSEC(10));
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	/* Wait for LOCATION_EVT_STARTED */
+	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
+#endif
+
+	err = location_request_cancel();
+	TEST_ASSERT_EQUAL(0, err);
+
+	/* Next time location is requested, the Wi-Fi scan semaphore should be available again
+	 * and scan can be started again.
+	 */
+	__cmock_net_mgmt_NET_REQUEST_WIFI_SCAN_ExpectAndReturn(0);
+
+	err = location_request(&config);
+	TEST_ASSERT_EQUAL(0, err);
+	k_sleep(K_MSEC(10));
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	/* Wait for LOCATION_EVT_STARTED */
+	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
+#endif
+#endif /* defined(CONFIG_LOCATION_METHOD_WIFI) */
+}
+
 /********* GENERAL ERROR TESTS ***********************/
 
 /* Test location request with unknown method. */
