@@ -112,6 +112,8 @@ void scan_wifi_execute(int32_t timeout, struct k_sem *wifi_scan_ready)
 #if defined(CONFIG_LOCATION_METHOD_WIFI_NET_IF_UPDOWN)
 	ret = scan_wifi_startup_interface(wifi_iface);
 	if (ret) {
+		k_sem_give(scan_wifi_ready);
+		scan_wifi_ready = NULL;
 		return;
 	}
 #endif /* defined(CONFIG_LOCATION_METHOD_WIFI_NET_IF_UPDOWN) */
@@ -203,7 +205,7 @@ void scan_wifi_net_mgmt_event_handler(
 int scan_wifi_cancel(void)
 {
 	if (scan_wifi_ready != NULL) {
-		k_sem_reset(scan_wifi_ready);
+		k_sem_give(scan_wifi_ready);
 		scan_wifi_ready = NULL;
 	}
 	return 0;
