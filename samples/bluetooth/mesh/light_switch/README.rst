@@ -299,6 +299,33 @@ Configure the Generic OnOff Client model on each element on the **Mesh Light Swi
 Once the provisioning and the configuration of the client node and at least one of the server nodes are complete, you can use buttons on the client development kit.
 The buttons will control the LED lights on the associated servers, as described in :ref:`bluetooth_mesh_light_switch_user_interface`.
 
+External flash support
+======================
+
+This sample may use an optional external QSPI flash on :zephyr:board:`nrf52840dk/nrf52840` to store mesh settings externally.
+
+Optional external flash variants for :zephyr:board:`nrf52840dk/nrf52840`:
+
+* ``ext_flash``: Enable external flash device.
+* ``ext_flash_settings``: Also relocate mesh settings to external flash.
+
+Enable external flash device only:
+
+.. code-block:: console
+
+   west build -p -b nrf52840dk/nrf52840 -- -DFILE_SUFFIX=ext_flash
+
+Enable external flash and relocate mesh settings:
+
+.. code-block:: console
+
+   west build -p -b nrf52840dk/nrf52840 -- -DFILE_SUFFIX=ext_flash -DEXTRA_CONF_FILE=prj_ext_flash_settings.conf
+
+.. note::
+   The external flash is not erased during the internal flash erasing procedure.
+   See `nRF Util`_ for more information on how to erase the external flash.
+   Currently, only the external flash on the ``nrf52840dk/nrf52840`` board is supported.
+
 Dependencies
 ************
 
@@ -313,15 +340,15 @@ In addition, it uses the following Zephyr libraries:
 * :file:`include/drivers/hwinfo.h`
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
+   * :file:`include/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
+   * :file:`include/bluetooth/bluetooth.h`
 
 * :ref:`zephyr:bluetooth_mesh`:
 
-  * :file:`include/bluetooth/mesh.h`
+   * :file:`include/bluetooth/mesh.h`
 
 The sample also uses the following secure firmware component:
 
