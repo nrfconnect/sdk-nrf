@@ -217,7 +217,7 @@ The following table provides an overview over features in Internal Trusted Stora
    * The PSA Crypto API is invoked by other APIs that are available from the NSPE.
      For example the PSA Protected Storage API or the PSA Crypto API ``import()`` and ``generate()``.
 
-   * Internal Trusted Storage has experimental support for encryption with the :kconfig:option:`CONFIG_PSA_ITS_ENCRYPTED` Kconfig option set.
+   * Internal Trusted Storage has experimental support for encryption with the :kconfig:option:`CONFIG_TFM_ITS_ENCRYPTED` Kconfig option.
 
 PSA Secure Storage API in Nordic hardware and the |NCS|
 =======================================================
