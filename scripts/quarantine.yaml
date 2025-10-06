@@ -83,12 +83,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31463"
 
 - scenarios:
-    - sample.bluetooth.mesh.sensor_client
-  platforms:
-    - nrf52dk/nrf52832
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35409"
-
-- scenarios:
     - sample.nrf7002_eb.thingy53.shell
   platforms:
     - thingy53/nrf5340/cpuapp

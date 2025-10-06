@@ -359,6 +359,8 @@ Bluetooth Mesh samples
       Assignments are shifted down one index to accommodate the new polling toggle.
       The descriptor action has been removed from button actions but is still available through mesh shell commands.
 
+  * Removed support for the ``nrf52dk/nrf52832``, since it does not have enough RAM space after NLC support was added.
+
 Bluetooth Fast Pair samples
 ---------------------------
 
