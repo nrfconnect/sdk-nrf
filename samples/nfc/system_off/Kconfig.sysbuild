@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "share/sysbuild/Kconfig"
+
+config REMOTE_CORE_BOARD
+string
+	default "nrf54h20dk/nrf54h20/cpurad" if $(BOARD) = "nrf54h20dk"
