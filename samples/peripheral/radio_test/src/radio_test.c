@@ -75,10 +75,6 @@
 	#define RADIO_TEST_EVENT_END               NRF_RADIO_EVENT_END
 #endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
 
-#define RADIO_TEST_TIMER_IRQ_HANDLER  NRFX_CONCAT_3(nrfx_timer_,	    \
-						 RADIO_TEST_TIMER_INSTANCE, \
-						 _irq_handler)
-
 #define ENDPOINT_EGU_RADIO_TX    BIT(1)
 #define ENDPOINT_EGU_RADIO_RX    BIT(2)
 #define ENDPOINT_TIMER_RADIO_TX  BIT(3)
@@ -100,7 +96,8 @@ static uint32_t rx_packet_cnt;
 static uint8_t current_channel;
 
 /* Timer used for channel sweeps and tx with duty cycle. */
-static const nrfx_timer_t timer = NRFX_TIMER_INSTANCE(RADIO_TEST_TIMER_INSTANCE);
+static nrfx_timer_t timer =
+	NRFX_TIMER_INSTANCE(NRF_TIMER_INST_GET(RADIO_TEST_TIMER_INSTANCE));
 
 static bool sweep_processing;
 
@@ -1304,7 +1301,7 @@ int radio_test_init(struct radio_test_config *config)
 
 	timer_init(config);
 	IRQ_CONNECT(RADIO_TEST_TIMER_IRQn, IRQ_PRIO_LOWEST,
-		RADIO_TEST_TIMER_IRQ_HANDLER, NULL, 0);
+		nrfx_timer_irq_handler, &timer, 0);
 
 	irq_connect_dynamic(RADIO_TEST_RADIO_IRQn, IRQ_PRIO_LOWEST, radio_handler, config, 0);
 	irq_enable(RADIO_TEST_RADIO_IRQn);
