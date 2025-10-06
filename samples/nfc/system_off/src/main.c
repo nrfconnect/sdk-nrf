@@ -10,10 +10,7 @@
 #include <zephyr/pm/device.h>
 
 #include <nrfx.h>
-#include <hal/nrf_power.h>
-#if !NRF_POWER_HAS_RESETREAS
-#include <hal/nrf_reset.h>
-#endif
+#include <helpers/nrfx_reset_reason.h>
 
 #include <nfc_t2t_lib.h>
 #include <nfc/ndef/msg.h>
@@ -175,6 +172,20 @@ static void print_reset_reason(void)
 		printk("Power-on-reset\n");
 	}
 
+#elif defined(NRF_RESETINFO)
+	reas = nrf_resetinfo_resetreas_global_get(NRF_RESETINFO);
+	if (reas & NRF_RESETINFO_RESETREAS_GLOBAL_NFC_MASK) {
+		printk("Wake up by NFC field detect\n");
+	} else if (reas & NRF_RESETINFO_RESETREAS_GLOBAL_PIN_MASK) {
+		printk("Reset by pin-reset\n");
+	} else if (reas & NRF_RESETINFO_RESETREAS_LOCAL_SREQ_MASK) {
+		printk("Reset by soft-reset\n");
+	} else if (reas) {
+		printk("Reset by a different source (0x%08X)\n", reas);
+	} else {
+		printk("Power-on-reset\n");
+	}
+
 #else
 
 	reas = nrf_reset_resetreas_get(NRF_RESET);
@@ -193,7 +204,6 @@ static void print_reset_reason(void)
 
 #endif
 }
-
 
 int main(void)
 {
