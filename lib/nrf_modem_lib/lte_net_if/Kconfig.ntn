@@ -1,0 +1,77 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_MODEM_LIB_NET_IF_NTN
+	bool "nRF91 LTE network interface for NTN (Non-Terrestrial Network)"
+	depends on NRF_MODEM_LIB
+	select CONN_MGR_CONNECTIVITY
+	help
+	  Enable nRF91 LTE network interface for NTN (Non-Terrestrial Network).
+	  This provides a separate network interface specifically for NTN connectivity,
+	  allowing applications to choose between terrestrial and non-terrestrial networks.
+	  
+	  This works alongside the regular LTE network interface and provides similar
+	  functionality but optimized for satellite communication.
+
+if NRF_MODEM_LIB_NET_IF_NTN
+
+config NRF_MODEM_LIB_NET_IF_NTN_AUTO_START
+	bool "Auto-start NTN interface"
+	help
+	  Automatically start the NTN network interface when the system starts.
+	  When enabled, the NTN interface will be brought up automatically during
+	  system initialization.
+
+config NRF_MODEM_LIB_NET_IF_NTN_CONNECT_TIMEOUT_SECONDS
+	int "NTN LTE connection timeout in seconds"
+	range 0 86400
+	default 120
+	help
+	  Time period (in seconds) that the connectivity layer will attempt to establish
+	  an NTN LTE connection for, before timing out. If set to 0, no timeout is applied.
+	  
+	  NTN connections may take longer to establish than terrestrial connections
+	  due to the nature of satellite communication, so a longer timeout is recommended.
+
+config NRF_MODEM_LIB_NET_IF_NTN_CONNECTION_PERSISTENCE
+	bool "NTN Connection persistence"
+	default y
+	help
+	  When enabled, the NTN connectivity layer will attempt to keep the NTN LTE connection
+	  active, even after a connection loss, by automatically re-establishing the connection.
+	  
+	  This is particularly useful for NTN connections where connectivity may be
+	  intermittent due to satellite coverage patterns.
+
+config NRF_MODEM_LIB_NET_IF_NTN_AUTO_CONNECT
+	bool "Auto-connect for NTN interface"
+	default y
+	help
+	  Automatically connect the NTN interface when it is brought up.
+	  If disabled, the application will need to manually trigger NTN connections.
+
+config NRF_MODEM_LIB_NET_IF_NTN_AUTO_DOWN
+	bool "Auto-down for NTN interface"
+	default y
+	help
+	  Automatically bring down the NTN interface when network connectivity is lost.
+	  If disabled, the interface will remain up even without network connectivity.
+
+config NRF_MODEM_LIB_NET_IF_NTN_DOWN_DEFAULT_LTE_DISCONNECT
+	bool "Disconnect NTN LTE on interface down"
+	default y
+	help
+	  When the NTN network interface is brought down, disconnect from NTN LTE instead
+	  of shutting down the modem completely. This allows for faster re-connection
+	  and preserves the ability to use other network interfaces.
+
+module = NRF_MODEM_LIB_NET_IF_NTN
+module-dep = LOG
+module-str = nRF91 NTN LTE network interface
+module-help = Enables logging for nRF91 NTN LTE network interface.
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NRF_MODEM_LIB_NET_IF_NTN

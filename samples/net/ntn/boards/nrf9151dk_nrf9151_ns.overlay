@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Enable uart1 for tracing. */
+&uart1 {
+	status = "okay";
+	current-speed = < 1000000 >;
+	hw-flow-control;
+};
+
+/ {
+	chosen {
+		nordic,modem-trace-uart = &uart1;
+	};
+};
