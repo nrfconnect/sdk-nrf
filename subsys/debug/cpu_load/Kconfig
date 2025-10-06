@@ -74,52 +74,52 @@ choice
 config NRF_CPU_LOAD_TIMER_0
 	depends on $(dt_nodelabel_has_compat,timer0,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 0"
-	select NRFX_TIMER0
+	select NRFX_TIMER
 
 config NRF_CPU_LOAD_TIMER_1
 	depends on $(dt_nodelabel_has_compat,timer1,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 1"
-	select NRFX_TIMER1
+	select NRFX_TIMER
 
 config NRF_CPU_LOAD_TIMER_2
 	depends on $(dt_nodelabel_has_compat,timer2,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 2"
-	select NRFX_TIMER2
+	select NRFX_TIMER
 
 config NRF_CPU_LOAD_TIMER_3
 	depends on $(dt_nodelabel_has_compat,timer3,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 3"
-	select NRFX_TIMER3
+	select NRFX_TIMER
 
 config NRF_CPU_LOAD_TIMER_4
 	depends on $(dt_nodelabel_has_compat,timer4,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 4"
-	select NRFX_TIMER4
+	select NRFX_TIMER
 
 config NRF_CPU_LOAD_TIMER_20
 	depends on $(dt_nodelabel_has_compat,timer20,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 20"
-	select NRFX_TIMER20
+	select NRFX_TIMER
 
 config NRF_CPU_LOAD_TIMER_21
 	depends on $(dt_nodelabel_has_compat,timer21,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 21"
-	select NRFX_TIMER21
+	select NRFX_TIMER
 
 config NRF_CPU_LOAD_TIMER_22
 	depends on $(dt_nodelabel_has_compat,timer22,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 22"
-	select NRFX_TIMER22
+	select NRFX_TIMER
 
 config NRF_CPU_LOAD_TIMER_23
 	depends on $(dt_nodelabel_has_compat,timer23,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 23"
-	select NRFX_TIMER23
+	select NRFX_TIMER
 
 config NRF_CPU_LOAD_TIMER_24
 	depends on $(dt_nodelabel_has_compat,timer24,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 24"
-	select NRFX_TIMER24
+	select NRFX_TIMER
 
 endchoice
 
