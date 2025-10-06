@@ -49,7 +49,7 @@ LOG_MODULE_REGISTER(periph);
 #define PTT_CLK_TIMER 20
 #endif
 
-static nrfx_timer_t clk_timer = NRFX_TIMER_INSTANCE(PTT_CLK_TIMER);
+static nrfx_timer_t clk_timer = NRFX_TIMER_INSTANCE(NRF_TIMER_INST_GET(PTT_CLK_TIMER));
 
 #define GPIOTE_NODE(gpio_node) DT_PHANDLE(gpio_node, gpiote_instance)
 #define GPIOTE_INST_AND_COMMA(gpio_node) \
