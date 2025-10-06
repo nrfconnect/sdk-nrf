@@ -508,11 +508,6 @@ struct lte_lc_cell {
 	 * Timing advance measurement time in milliseconds, calculated from modem boot time.
 	 *
 	 * Range 0 - 18 446 744 073 709 551 614 ms.
-	 *
-	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf9160 >= v1.3.1
-	 *       - mfw_nrf91x1
-	 *       - mfw_nrf9151-ntn
 	 */
 	uint64_t timing_advance_meas_time;
 
@@ -1060,11 +1055,6 @@ enum lte_lc_neighbor_search_type {
 	 * networks might be deployed, in other words, a light search. The search is limited to
 	 * bands that are valid for the area of the current ITU-T region. If RPLMN is not found
 	 * based on previous cell history, the modem accepts any found PLMN.
-	 *
-	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf9160 >= v1.3.1
-	 *       - mfw_nrf91x1
-	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT = 2,
 
@@ -1072,21 +1062,11 @@ enum lte_lc_neighbor_search_type {
 	 * The modem follows the same procedure as for
 	 * @ref LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT, but will continue to perform a complete
 	 * search instead of a light search, and the search is performed for all supported bands.
-	 *
-	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf9160 >= v1.3.1
-	 *       - mfw_nrf91x1
-	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE = 3,
 
 	/**
 	 * GCI search, option 1. Modem searches EARFCNs based on previous cell history.
-	 *
-	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf9160 >= v1.3.4
-	 *       - mfw_nrf91x1
-	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT = 4,
 
@@ -1095,11 +1075,6 @@ enum lte_lc_neighbor_search_type {
 	 * @ref LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT. If less than gci_count cells were found,
 	 * the modem performs a light search on bands that are valid for the area of the current
 	 * ITU-T region.
-	 *
-	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf9160 >= v1.3.4
-	 *       - mfw_nrf91x1
-	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT = 5,
 
@@ -1107,11 +1082,6 @@ enum lte_lc_neighbor_search_type {
 	 * GCI search, option 3. Modem starts with the same search method as in
 	 * @ref LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT. If less than gci_count cells were found,
 	 * the modem performs a complete search on all supported bands.
-	 *
-	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf9160 >= v1.3.4
-	 *       - mfw_nrf91x1
-	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE = 6,
 };
@@ -1126,11 +1096,6 @@ struct lte_lc_ncellmeas_params {
 	 *
 	 * Current cell is counted as one cell. Mandatory with the GCI search types, ignored with
 	 * other search types.
-	 *
-	 * @note This is only supported by the following modem firmware:
-	 *       - mfw_nrf9160 >= v1.3.4
-	 *       - mfw_nrf91x1
-	 *       - mfw_nrf9151-ntn
 	 */
 	uint8_t gci_count;
 };
@@ -1865,12 +1830,6 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
  * selection before calling this function. This can be determined from the
  * @ref LTE_LC_EVT_MODEM_EVENT event with modem event @ref LTE_LC_MODEM_EVT_SEARCH_DONE.
  *
- * @note In @ref LTE_LC_FUNC_MODE_NORMAL and @ref LTE_LC_FUNC_MODE_ACTIVATE_LTE functional modes,
- *       this is only supported by the following modem firmware:
- *       - mfw_nrf9160 >= v1.3.0
- *       - mfw_nrf91x1
- *       - mfw_nrf9151-ntn
- *
  * @note In @ref LTE_LC_FUNC_MODE_RX_ONLY functional mode, this is only supported by the following
  *       modem firmware:
  *       - mfw_nrf91x1 >= v2.0.3
@@ -1980,11 +1939,6 @@ int lte_lc_env_eval_cancel(void);
  *
  * See @ref lte_lc_modem_evt for more information on which events may be received.
  * An event handler must be registered to receive events.
- *
- * @note This is only supported by the following modem firmware:
- *       - mfw_nrf9160 >= v1.3.0
- *       - mfw_nrf91x1
- *       - mfw_nrf9151-ntn
  *
  * @retval 0 if successful.
  * @retval -EFAULT if AT command failed.
