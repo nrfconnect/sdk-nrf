@@ -752,6 +752,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/generate_default_keyfile.cmake)
   endif()
 
+  if(SB_CONFIG_NRF54L_INVALIDATE_PROTECTED_RAM_SLOTS)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/nrf54l_prot_ram_inv_slots.cmake)
+  endif()
+
   if(SB_CONFIG_MATTER_OTA)
     include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/zephyr/ota-image_sysbuild.cmake)
     if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)

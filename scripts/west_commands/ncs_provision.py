@@ -22,11 +22,13 @@ KEY_SLOTS: dict[str, list[int]] = {
     "UROT_PUBKEY": [226, 228, 230],
     "BL_PUBKEY": [242, 244, 246],
     "APP_PUBKEY": [202, 204, 206],
+    "PROT_RAM_INV_SLOTS": [248],
 }
 POLICIES = ["revokable", "lock", "lock-last"]
 NRF54L15_KEY_POLICIES: dict[str, str] = {
     "revokable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_REVOKABLE,
     "lock": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_READ_ONLY,
+    "rotatable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_DEFAULT,
 }
 
 
@@ -35,6 +37,7 @@ class SlotParams:
     id: int
     keyfile: str
     lifetime: psa_attr_generator.PsaKeyPersistence
+    keytype: psa_attr_generator.PsaKeyType
 
 
 class NrfutilWrapper:
@@ -65,26 +68,50 @@ class NrfutilWrapper:
 
     def _make_json_file(self) -> str:
         """Generate PSA key attribute file, see generate_psa_key_attributes.py for details"""
-        output_file = (
-            Path(self.output_dir).joinpath("keyfile.json").resolve().expanduser()
-        )
 
         for slot in self.slots:
-            attr = psa_attr_generator.PlatformKeyAttributes(
-                key_type=psa_attr_generator.PsaKeyType.ECC_PUBLIC_KEY_TWISTED_EDWARDS,
-                identifier=slot.id,
-                location=psa_attr_generator.PsaKeyLocation.LOCATION_CRACEN_KMU,
-                persistence=slot.lifetime,
-                key_usage=psa_attr_generator.PsaKeyUsage.VERIFY,
-                algorithm=psa_attr_generator.PsaAlgorithm.EDDSA_PURE,
-                key_bits=255,
-                cracen_usage=psa_attr_generator.PsaCracenUsageScheme.RAW,
-            )
-
-            with open(slot.keyfile, "rb") as key_file:
-                psa_attr_generator.generate_attr_file(
-                    attributes=attr, key_file=output_file, key_from_file=key_file
+            if slot.keytype == psa_attr_generator.PsaKeyType.AES:
+                attr = psa_attr_generator.PlatformKeyAttributes(
+                    key_type=psa_attr_generator.PsaKeyType.AES,
+                    identifier=slot.id,
+                    location=psa_attr_generator.PsaKeyLocation.LOCATION_CRACEN_KMU,
+                    persistence=slot.lifetime,
+                    key_usage=psa_attr_generator.PsaKeyUsage.ENCRYPT,
+                    algorithm=psa_attr_generator.PsaAlgorithm.CTR,
+                    key_bits=256,
+                    cracen_usage=psa_attr_generator.PsaCracenUsageScheme.PROTECTED,
                 )
+
+                output_file = (
+                    Path(self.output_dir).joinpath("prot_ram_inv_slots.json").resolve().expanduser()
+                )
+
+                psa_attr_generator.generate_attr_file(
+                    attributes=attr, key_file=output_file, trng_key=True
+                )
+            elif slot.keytype == psa_attr_generator.PsaKeyType.ECC_PUBLIC_KEY_TWISTED_EDWARDS:
+                attr = psa_attr_generator.PlatformKeyAttributes(
+                    key_type=psa_attr_generator.PsaKeyType.ECC_PUBLIC_KEY_TWISTED_EDWARDS,
+                    identifier=slot.id,
+                    location=psa_attr_generator.PsaKeyLocation.LOCATION_CRACEN_KMU,
+                    persistence=slot.lifetime,
+                    key_usage=psa_attr_generator.PsaKeyUsage.VERIFY,
+                    algorithm=psa_attr_generator.PsaAlgorithm.EDDSA_PURE,
+                    key_bits=255,
+                    cracen_usage=psa_attr_generator.PsaCracenUsageScheme.RAW,
+                )
+
+                output_file = (
+                    Path(self.output_dir).joinpath("keyfile.json").resolve().expanduser()
+                )
+
+                with open(slot.keyfile, "rb") as key_file:
+                    psa_attr_generator.generate_attr_file(
+                        attributes=attr, key_file=output_file, key_from_file=key_file
+                    )
+            else:
+                sys.exit(f"Unsupported key type: {slot.keytype}")
+
         return str(output_file)
 
     def _build_command(self) -> list[str]:
@@ -129,7 +156,7 @@ class NcsProvision(WestCommand):
             """),
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
-        group = upload_parser.add_mutually_exclusive_group(required=True)
+        group = upload_parser.add_mutually_exclusive_group()
         group.add_argument(
             "-i", "--input", metavar="PATH", help="Upload keys from YAML file"
         )
@@ -187,8 +214,16 @@ class NcsProvision(WestCommand):
             self._upload_keys(args)
 
     def _upload_keys(self, args: argparse.Namespace) -> None:
+        if args.keys is None and args.input is None and args.keyname != "PROT_RAM_INV_SLOTS":
+            sys.exit("error: one of the arguments -i/--input -k/--key is required")
+
         slots: list[SlotParams] = []
-        if args.input:
+        data: list[dict[str, Any]] = []
+
+        if args.keyname == "PROT_RAM_INV_SLOTS":
+            for id in KEY_SLOTS["PROT_RAM_INV_SLOTS"]:
+                slots.append(SlotParams(id=id, keyfile=None, lifetime=NRF54L15_KEY_POLICIES["rotatable"], keytype=psa_attr_generator.PsaKeyType.AES))
+        elif args.input:
             data = self._read_keys_params_from_file(args.input)
         else:
             data = self._read_keys_params_from_args(args)
@@ -221,6 +256,7 @@ class NcsProvision(WestCommand):
 
     def _generate_slots(self, keyname: str, keys: str, policy: str) -> list[SlotParams]:
         """Return list of SlotParams for given keys."""
+
         if len(keys) > len(KEY_SLOTS[keyname]):
             sys.exit(
                 "Error: requested upload of more keys than there are designated slots."
@@ -234,8 +270,10 @@ class NcsProvision(WestCommand):
                     key_policy = NRF54L15_KEY_POLICIES["revokable"]
             else:
                 key_policy = NRF54L15_KEY_POLICIES[policy]
+
+            key_type = psa_attr_generator.PsaKeyType.ECC_PUBLIC_KEY_TWISTED_EDWARDS
             slot_id = KEY_SLOTS[keyname][slot_idx]
-            slot = SlotParams(id=slot_id, keyfile=keyfile, lifetime=key_policy)
+            slot = SlotParams(id=slot_id, keyfile=keyfile, lifetime=key_policy, keytype=key_type)
             slots.append(slot)
         return slots
 
