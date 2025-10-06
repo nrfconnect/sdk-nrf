@@ -1,6 +1,6 @@
 .. _bluetooth_channel_map_updates:
 
-Bluetooth: Channel Map Updates
+Bluetooth: Autonomous Channel Map Updates
 ##############################
 
 
@@ -25,7 +25,7 @@ The sample also requires a connection to a computer with a serial terminal for e
 Overview
 ********
 
-The sample implements a hardware-based channel map update algorithm that uses connection event reports to collect Quality of Service data.
+The sample implements a channel map update algorithm that uses connection event reports to collect Quality of Service data.
 It automatically evaluates channel performance based on CRC errors and RX timeouts, then generates optimized channel maps to improve connection reliability.
 
 The sample can operate in two roles:

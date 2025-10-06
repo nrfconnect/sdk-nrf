@@ -8,7 +8,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <zephyr/logging/log.h>
 #include <zephyr/random/random.h>
 #include <zephyr/bluetooth/hci.h>
 
@@ -65,8 +64,6 @@ void channel_map_filter_set_preferences(struct chmap_instance *chmap_instance,
 					const uint8_t desired_active_channels,
 					const uint8_t min_active_channels);
 
-LOG_MODULE_REGISTER(algo, LOG_LEVEL_INF);
-
 // Initialize the channel map algorithm
 void channel_map_filter_algo_init(struct chmap_instance *chmap_instance)
 {
@@ -100,25 +97,25 @@ void channel_map_filter_algo_init(struct chmap_instance *chmap_instance)
 void print_channel_stats(struct chmap_instance *chmap_instance)
 {
 	if (!chmap_instance) {
-		LOG_INF("ERROR: chmap_instance is NULL!\n");
+		printk("ERROR: chmap_instance is NULL!\n");
 		return;
 	}
 
-	LOG_INF("\n--- Algorithm Channel Report ---");
-	LOG_INF("Ch | Total_packets_sent  | CRC_Errors | RX_Timeouts | Rating Made | Last Rating | "
-		"State");
-	LOG_INF("---|---------------------|------------|-------------|-------------|-------------|-"
-		"------");
+	printk("\n--- Algorithm Channel Report ---");
+	printk("Ch | Total_packets_sent  | CRC_Errors | RX_Timeouts | Rating Made | Last Rating | "
+	       "State");
+	printk("---|---------------------|------------|-------------|-------------|-------------|-"
+	       "------");
 
 	for (int i = 0; i < CHMAP_BT_CONN_CH_COUNT; i++) {
 		struct chmap_channel channel_data = chmap_instance->bt_channels[i];
 		float rating_used_this_sample = channel_data.rating;
 		float rating_used_prev_sample = channel_data.prev_rating;
 
-		LOG_INF("%2d | %19d | %10d | %11d | %11.3f | %11.3f | %d", i,
-			channel_data.total_packets_sent, channel_data.total_crc_errors,
-			channel_data.total_rx_timeouts, (double)rating_used_this_sample,
-			(double)rating_used_prev_sample, channel_data.state);
+		printk("%2d | %19d | %10d | %11d | %11.3f | %11.3f | %d", i,
+		       channel_data.total_packets_sent, channel_data.total_crc_errors,
+		       channel_data.total_rx_timeouts, (double)rating_used_this_sample,
+		       (double)rating_used_prev_sample, channel_data.state);
 	}
 }
 
@@ -165,7 +162,8 @@ int channel_map_filter_algo_evaluate(struct chmap_instance *chmap_instance)
 	return 1; // Evaluation performed
 }
 
-// TODO: Test dynamically adaptive alternatives
+// TODO: Instead of picking channels which are to be tested again at random use Channel Sounding
+
 // Decrement cooldown_time for channel, and update state if cooldown_time is over
 static void decrement_cooldown_time_and_update_state(struct chmap_instance *chmap_instance)
 {

@@ -28,7 +28,6 @@
 #include <bluetooth/scan.h>
 #include <bluetooth/gatt_dm.h>
 #include <bluetooth/hci_vs_sdc.h>
-#include <zephyr/logging/log.h>
 #include <bluetooth/hci_vs_sdc.h>
 #include "filter_algo.h"
 
@@ -62,8 +61,6 @@ static struct chmap_instance filter_chmap_instance;
 static uint32_t total_packets_sent = 0;
 static uint32_t packets_since_last_evaluation = 0;
 
-LOG_MODULE_REGISTER(paramtest, LOG_LEVEL_INF);
-
 static void init_channel_map(void)
 {
 	memset(&filter_chmap_instance, 0, sizeof(filter_chmap_instance));
@@ -72,8 +69,8 @@ static void init_channel_map(void)
 	total_packets_sent = 0;
 	packets_since_last_evaluation = 0;
 
-	LOG_INF("Channel map and algorithm initialized");
-	LOG_INF("Algorithm will evaluate every %d packets", FILTER_EVALUATION_INTERVAL);
+	printk("Channel map and algorithm initialized\n");
+	printk("Algorithm will evaluate every %d packets\n", FILTER_EVALUATION_INTERVAL);
 }
 
 static int read_conn_channel_map(struct bt_conn *conn, uint8_t out_map[5])
@@ -122,13 +119,13 @@ void algorithm_evaluation_and_update(void)
 			channel_map_filter_algo_get_channel_map(&filter_chmap_instance);
 
 		if (new_channel_map) { /* Apply new map */
-			LOG_INF("Applying new channel map");
+			printk("Applying new channel map\n");
 
 			int err = bt_le_set_chan_map(new_channel_map);
 			if (err) {
-				LOG_ERR("Failed to apply channel map (err %d)\n", err);
+				printk("Failed to apply channel map (err %d)\n", err);
 			} else {
-				LOG_INF("Successfully applied channel map\n");
+				printk("Successfully applied channel map\n");
 				set_suggested_bitmask_to_current_bitmask(&filter_chmap_instance);
 			}
 		}
@@ -136,7 +133,7 @@ void algorithm_evaluation_and_update(void)
 		return;
 
 	} else {
-		LOG_ERR("Algorithm evaluation failed (err %d)\n", eval_result);
+		printk("Algorithm evaluation failed (err %d)\n", eval_result);
 	}
 
 	packets_since_last_evaluation = 0;
@@ -273,7 +270,8 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 #if !defined(CONFIG_BT_SMP)
 		/* With SMP disabled (e.g., in BabbleSim), start discovery immediately */
-		err = bt_gatt_dm_start(default_conn, BT_UUID_LATENCY, &discovery_cb, &latency_client);
+		err = bt_gatt_dm_start(default_conn, BT_UUID_LATENCY, &discovery_cb,
+				       &latency_client);
 		if (err) {
 			printk("Discover failed (err %d)\n", err);
 		}
@@ -420,7 +418,7 @@ static void test_run(void)
 				if (memcmp(active_map, previous_active_map,
 					   CHMAP_BLE_BITMASK_SIZE) != 0) {
 
-					printk("Detected Channel Map Update. (format, CH36 -> "
+					printk("Detected Channel Map Update. (Format: CH36 -> "
 					       "CH0)\n");
 
 					/* Print channel map in Hexadecimal */
@@ -481,7 +479,7 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 int main(void)
 {
 	int err;
-	LOG_INF("Starting Bluetooth Channel Map Update Sample\n");
+	printk("Starting Bluetooth Channel Map Update Sample\n");
 
 #if defined(CONFIG_USB_DEVICE_STACK)
 	const struct device *uart_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
@@ -506,7 +504,7 @@ int main(void)
 		return 0;
 	}
 
-	LOG_INF("Bluetooth initialized\n");
+	printk("Bluetooth initialized\n");
 
 	err = bt_latency_init(&latency, NULL);
 	if (err) {
@@ -521,12 +519,12 @@ int main(void)
 	}
 
 	while (true) {
-		LOG_INF("Choose device role - type c (central) or p (peripheral): ");
+		printk("Choose device role - type c (central) or p (peripheral): \n");
 
 		char input_char = console_getchar();
 
 		if (input_char == 'c') {
-			LOG_INF("Central. Starting scanning");
+			printk("Central. Starting scanning\n");
 			init_channel_map();
 			scan_init();
 			scan_start();
@@ -538,12 +536,12 @@ int main(void)
 
 			break;
 		} else if (input_char == 'p') {
-			LOG_INF("Peripheral. Starting advertising\n");
+			printk("Peripheral. Starting advertising\n");
 			adv_start();
 			break;
 		}
 
-		LOG_WRN("Invalid role\n");
+		printk("Invalid role\n");
 	}
 
 	for (;;) {
