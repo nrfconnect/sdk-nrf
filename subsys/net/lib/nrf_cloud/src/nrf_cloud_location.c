@@ -22,10 +22,11 @@ BUILD_ASSERT(CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST_BUFFER_SIZE >= NRF_CLOUD_ANCH
 	"CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST_BUFFER_SIZE is not large enough");
 #endif
 
-int nrf_cloud_location_request(const struct lte_lc_cells_info *const cells_inf,
+int nrf_cloud_location_request_timestamped(const struct lte_lc_cells_info *const cells_inf,
 			       const struct wifi_scan_info *const wifi_inf,
 			       const struct nrf_cloud_location_config *const config,
-			       nrf_cloud_location_response_t cb)
+			       nrf_cloud_location_response_t cb,
+			       int64_t timestamp)
 {
 	if (nfsm_get_current_state() != STATE_DC_CONNECTED) {
 		return -EACCES;
@@ -35,7 +36,7 @@ int nrf_cloud_location_request(const struct lte_lc_cells_info *const cells_inf,
 	NRF_CLOUD_OBJ_JSON_DEFINE(location_req_obj);
 
 	err = nrf_cloud_obj_location_request_create(&location_req_obj, cells_inf, wifi_inf,
-						    config);
+						    config, timestamp);
 	if (!err) {
 		if (!config || (config->do_reply)) {
 			nfsm_set_location_response_cb(cb);
@@ -46,6 +47,14 @@ int nrf_cloud_location_request(const struct lte_lc_cells_info *const cells_inf,
 
 	(void)nrf_cloud_obj_free(&location_req_obj);
 	return err;
+}
+
+int nrf_cloud_location_request(const struct lte_lc_cells_info *const cells_inf,
+			       const struct wifi_scan_info *const wifi_inf,
+			       const struct nrf_cloud_location_config *const config,
+			       nrf_cloud_location_response_t cb)
+{
+	return nrf_cloud_location_request_timestamped(cells_inf, wifi_inf, config, cb, 0);
 }
 
 int nrf_cloud_location_scell_data_get(struct lte_lc_cell *const cell_inf)

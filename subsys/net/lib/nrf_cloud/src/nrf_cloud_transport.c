@@ -22,7 +22,7 @@
 #include <zephyr/settings/settings.h>
 #include <zephyr/net/socket.h>
 
-LOG_MODULE_REGISTER(nrf_cloud_transport, CONFIG_NRF_CLOUD_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf_cloud_transport, 4);
 
 #if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME)
 BUILD_ASSERT((sizeof(CONFIG_NRF_CLOUD_CLIENT_ID) - 1) <= NRF_CLOUD_CLIENT_ID_MAX_LEN,

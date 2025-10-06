@@ -657,7 +657,8 @@ int nrf_cloud_obj_gnss_msg_create(struct nrf_cloud_obj *const obj,
 int nrf_cloud_obj_location_request_create(struct nrf_cloud_obj *const obj,
 					  const struct lte_lc_cells_info *const cells_inf,
 					  const struct wifi_scan_info *const wifi_inf,
-					  const struct nrf_cloud_location_config *const config);
+					  const struct nrf_cloud_location_config *const config,
+					  int64_t timestamp);
 
 /**
  * @brief Add PVT data to the provided object.

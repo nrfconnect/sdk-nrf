@@ -12,6 +12,7 @@
 #include <zephyr/net/coap.h>
 #include "../coap/include/coap_codec.h"
 #endif
+#include <date_time.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_codec, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
@@ -975,7 +976,8 @@ int nrf_cloud_obj_modem_pvt_add(struct nrf_cloud_obj *const obj,
 int nrf_cloud_obj_location_request_create(struct nrf_cloud_obj *const obj,
 					  const struct lte_lc_cells_info *const cells_inf,
 					  const struct wifi_scan_info *const wifi_inf,
-					  const struct nrf_cloud_location_config *const config)
+					  const struct nrf_cloud_location_config *const config,
+					  int64_t timestamp)
 {
 	if ((!cells_inf && !wifi_inf) || !obj) {
 		return -EINVAL;
@@ -1051,7 +1053,7 @@ int nrf_cloud_obj_location_request_create(struct nrf_cloud_obj *const obj,
 	}
 
 	/* Add cell/wifi info */
-	err = nrf_cloud_obj_location_request_payload_add(&data_obj, cells_inf, wifi_inf);
+	err = nrf_cloud_obj_location_request_payload_add(&data_obj, cells_inf, wifi_inf, timestamp);
 	if (err) {
 		goto cleanup;
 	}

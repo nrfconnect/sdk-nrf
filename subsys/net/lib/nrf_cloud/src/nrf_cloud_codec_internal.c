@@ -26,7 +26,6 @@
 #include <ncs_version.h>
 #include <ncs_commit.h>
 #include "cJSON_os.h"
-#include <date_time.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_codec_internal, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
@@ -2548,7 +2547,8 @@ cleanup:
 
 int nrf_cloud_obj_location_request_payload_add(struct nrf_cloud_obj *const obj,
 	struct lte_lc_cells_info const *const cells_inf,
-	struct wifi_scan_info const *const wifi_inf)
+	struct wifi_scan_info const *const wifi_inf,
+	int64_t timestamp)
 {
 	if (!obj || (!cells_inf && !wifi_inf)) {
 		return -EINVAL;
@@ -2565,9 +2565,6 @@ int nrf_cloud_obj_location_request_payload_add(struct nrf_cloud_obj *const obj,
 
 	int err = 0;
 	bool cell_inf_added = false;
-	int64_t ts_now = 0;
-
-	date_time_now(&ts_now);
 
 	if (cells_inf) {
 		err = nrf_cloud_cell_pos_req_json_encode(cells_inf, obj->json);
@@ -2598,9 +2595,16 @@ int nrf_cloud_obj_location_request_payload_add(struct nrf_cloud_obj *const obj,
 		}
 	}
 
-	cJSON *meta_obj = cJSON_AddObjectToObjectCS(obj->json, NRF_CLOUD_LOCATION_JSON_KEY_META);
 
-	cJSON_AddNumberToObjectCS(meta_obj, NRF_CLOUD_LOCATION_TYPE_VAL_RECORDED_AT, ts_now);
+	if (timestamp) {
+		cJSON *meta_obj = cJSON_AddObjectToObjectCS(
+			obj->json, NRF_CLOUD_LOCATION_JSON_KEY_META
+		);
+
+		cJSON_AddNumberToObjectCS(
+			meta_obj, NRF_CLOUD_LOCATION_TYPE_VAL_RECORDED_AT, timestamp
+		);
+	}
 
 	return err;
 }

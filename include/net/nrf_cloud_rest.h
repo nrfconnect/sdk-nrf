@@ -127,6 +127,8 @@ struct nrf_cloud_rest_location_request {
 	struct wifi_scan_info *wifi_info;
 	/** Optionally specify do_reply, hi_conf, and fallback */
 	const struct nrf_cloud_location_config *config;
+	/** Optionally specify timestamp */
+	int64_t timestamp;
 };
 
 /** @brief Data required for nRF Cloud Assisted GNSS (A-GNSS) request */

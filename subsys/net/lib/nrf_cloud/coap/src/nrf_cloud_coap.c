@@ -488,7 +488,8 @@ int nrf_cloud_coap_location_get(struct nrf_cloud_rest_location_request const *co
 	err = coap_codec_ground_fix_req_encode(request->cell_info,
 					       request->wifi_info,
 					       buffer, &len,
-					       COAP_CONTENT_FORMAT_APP_CBOR);
+					       COAP_CONTENT_FORMAT_APP_CBOR,
+					       request->timestamp);
 	if (err) {
 		LOG_ERR("Unable to encode location data: %d", err);
 		goto give_and_return;
