@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
  * Generated using zcbor version 0.8.1
@@ -28,6 +28,10 @@ extern "C" {
  */
 #define DEFAULT_MAX_QTY 10
 
+struct ground_fix_resp_ts {
+	uint64_t ground_fix_resp_ts;
+};
+
 struct ground_fix_resp {
 	double ground_fix_resp_lat;
 	double ground_fix_resp_lon;
@@ -40,6 +44,8 @@ struct ground_fix_resp {
 		ground_fix_resp_uncertainty_float_c,
 	} ground_fix_resp_uncertainty_choice;
 	struct zcbor_string ground_fix_resp_fulfilledWith;
+	struct ground_fix_resp_ts ground_fix_resp_ts;
+	bool ground_fix_resp_ts_present;
 };
 
 #ifdef __cplusplus

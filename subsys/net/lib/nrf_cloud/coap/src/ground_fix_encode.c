@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
  * Generated using zcbor version 0.8.1
@@ -43,6 +43,8 @@ static bool encode_ap(zcbor_state_t *state, const struct ap *input);
 static bool encode_wifi_ob(zcbor_state_t *state, const struct wifi_ob *input);
 static bool encode_repeated_ground_fix_req_wifi(zcbor_state_t *state,
 						const struct ground_fix_req_wifi *input);
+static bool encode_repeated_ground_fix_req_ts(zcbor_state_t *state,
+					      const struct ground_fix_req_ts *input);
 static bool encode_ground_fix_req(zcbor_state_t *state, const struct ground_fix_req *input);
 
 static bool encode_repeated_cell_earfcn(zcbor_state_t *state, const struct cell_earfcn *input)
@@ -463,18 +465,40 @@ static bool encode_repeated_ground_fix_req_wifi(zcbor_state_t *state,
 	return tmp_result;
 }
 
+static bool encode_repeated_ground_fix_req_ts(zcbor_state_t *state,
+					      const struct ground_fix_req_ts *input)
+{
+	zcbor_log("%s\r\n", __func__);
+
+	bool tmp_result = ((((zcbor_uint32_put(state, (21)))) &&
+			    ((((*input).ground_fix_req_ts <= UINT64_MAX)) ||
+			     (zcbor_error(state, ZCBOR_ERR_WRONG_RANGE), false)) &&
+			    (zcbor_uint64_encode(state, (&(*input).ground_fix_req_ts)))));
+
+	if (!tmp_result) {
+		zcbor_trace_file(state);
+		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
+	} else {
+		zcbor_log("%s success\r\n", __func__);
+	}
+
+	return tmp_result;
+}
+
 static bool encode_ground_fix_req(zcbor_state_t *state, const struct ground_fix_req *input)
 {
 	zcbor_log("%s\r\n", __func__);
 
 	bool tmp_result = ((
-		(zcbor_map_start_encode(state, 2) &&
+		(zcbor_map_start_encode(state, 3) &&
 		 (((!(*input).ground_fix_req_lte_present ||
 		    encode_repeated_ground_fix_req_lte(state, (&(*input).ground_fix_req_lte))) &&
 		   (!(*input).ground_fix_req_wifi_present ||
-		    encode_repeated_ground_fix_req_wifi(state, (&(*input).ground_fix_req_wifi)))) ||
+		    encode_repeated_ground_fix_req_wifi(state, (&(*input).ground_fix_req_wifi))) &&
+		   (!(*input).ground_fix_req_ts_present ||
+		    encode_repeated_ground_fix_req_ts(state, (&(*input).ground_fix_req_ts)))) ||
 		  (zcbor_list_map_end_force_encode(state), false)) &&
-		 zcbor_map_end_encode(state, 2))));
+		 zcbor_map_end_encode(state, 3))));
 
 	if (!tmp_result) {
 		zcbor_trace_file(state);

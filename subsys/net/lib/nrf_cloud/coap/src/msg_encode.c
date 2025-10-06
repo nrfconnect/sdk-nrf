@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
  * Generated using zcbor version 0.8.1
@@ -150,7 +150,7 @@ static bool encode_message_out(zcbor_state_t *state, const struct message_out *i
 						      message_out_data_pvt_m_c)
 							     ? ((encode_pvt(
 								       state,
-							       (&(*input).message_out_data_pvt_m))))
+								       (&(*input).message_out_data_pvt_m))))
 							     : false))))) &&
 		  (!(*input).message_out_ts_present ||
 		   encode_repeated_message_out_ts(state, (&(*input).message_out_ts)))) ||
