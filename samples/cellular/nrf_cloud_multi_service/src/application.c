@@ -30,6 +30,9 @@
 #include "led_control.h"
 #include "at_commands.h"
 #include "shadow_config.h"
+#include <net/nrf_cloud_location.h>
+#include <zephyr/net/wifi_mgmt.h>
+
 
 LOG_MODULE_REGISTER(application, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
@@ -325,6 +328,78 @@ static void test_counter_send(void)
 	}
 }
 
+static void batch_location_request(void)
+{
+	struct wifi_scan_result ap_lists[3][10] = {
+                {
+                        {.mac = {0x4c,0xe1,0x75,0x80,0x5e,0x60}, .mac_length= 6, .rssi = -45},
+                        {.mac = {0x4c,0xe1,0x75,0x80,0x5e,0x61}, .mac_length= 6, .rssi = -45},
+                        {.mac = {0x4c,0xe1,0x75,0x80,0x5e,0x6e}, .mac_length= 6, .rssi = -48},
+                        {.mac = {0x4c,0xe1,0x75,0x80,0x5e,0x6f}, .mac_length= 6, .rssi = -49},
+                        {.mac = {0xc8,0x7f,0x54,0x4c,0x1d,0x80}, .mac_length= 6, .rssi = -62},
+                        {.mac = {0xc8,0x7f,0x54,0x4c,0x1d,0x84}, .mac_length= 6, .rssi = -69},
+                        {.mac = {0x4c,0xe1,0x75,0xbf,0x09,0x2f}, .mac_length= 6, .rssi = -69},
+                        {.mac = {0xe8,0x9c,0x25,0xab,0xc6,0xf0}, .mac_length= 6, .rssi = -69},
+                        {.mac = {0x4c,0xe1,0x75,0xbf,0x09,0x2e}, .mac_length= 6, .rssi = -70},
+                        {.mac = {0x6c,0x8b,0xd3,0x38,0x38,0xa0}, .mac_length= 6, .rssi = -70},
+                },
+                {
+                        {.mac = {0x90,0x72,0x40,0x24,0x9a,0x82}, .mac_length= 6, .rssi = -69},
+                        {.mac = {0x98,0x77,0xe7,0x3b,0xf9,0x5a}, .mac_length= 6, .rssi = -70},
+                        {.mac = {0xcc,0x16,0x7e,0x25,0xad,0x10}, .mac_length= 6, .rssi = -76},
+                        {.mac = {0xf0,0x99,0xbf,0x07,0x14,0xf0}, .mac_length= 6, .rssi = -78},
+                        {.mac = {0xcc,0x16,0x7e,0x25,0xad,0x1e}, .mac_length= 6, .rssi = -81},
+                        {.mac = {0x80,0x2a,0xa8,0xc1,0x2c,0x0d}, .mac_length= 6, .rssi = -82},
+                        {.mac = {0x34,0xfc,0xb9,0x19,0x5c,0xf2}, .mac_length= 6, .rssi = -84},
+                        {.mac = {0x00,0x1d,0xc9,0x09,0xd6,0xf3}, .mac_length= 6, .rssi = -84},
+                        {.mac = {0x34,0xfc,0xb9,0x19,0x5c,0xf1}, .mac_length= 6, .rssi = -85},
+                        {.mac = {0x34,0xfc,0xb9,0x19,0x5c,0xf0}, .mac_length= 6, .rssi = -86},
+                },
+                {
+                        {.mac = {0x4c,0xe1,0x75,0x80,0x5e,0x60}, .mac_length= 6, .rssi = -45},
+                        {.mac = {0x4c,0xe1,0x75,0x80,0x5e,0x61}, .mac_length= 6, .rssi = -45},
+                        {.mac = {0x4c,0xe1,0x75,0x80,0x5e,0x6e}, .mac_length= 6, .rssi = -48},
+                        {.mac = {0x4c,0xe1,0x75,0x80,0x5e,0x6f}, .mac_length= 6, .rssi = -48},
+                        {.mac = {0x4c,0xe1,0x75,0xbf,0x09,0x20}, .mac_length= 6, .rssi = -62},
+                        {.mac = {0x4c,0xe1,0x75,0xbf,0x09,0x21}, .mac_length= 6, .rssi = -62},
+                        {.mac = {0xe8,0x9c,0x25,0xab,0xc6,0xf0}, .mac_length= 6, .rssi = -63},
+                        {.mac = {0x4c,0xe1,0x75,0xbf,0x09,0x2e}, .mac_length= 6, .rssi = -66},
+                        {.mac = {0x4c,0xe1,0x75,0x01,0x15,0x6f}, .mac_length= 6, .rssi = -66},
+                        {.mac = {0x4c,0xe1,0x75,0xbf,0x09,0x2f}, .mac_length= 6, .rssi = -67},
+                },
+	};
+	struct wifi_scan_info wifi_inf[3] = {
+		{
+			.ap_info = ap_lists[0],
+			.cnt = 10,
+		},
+		{
+			.ap_info = ap_lists[1],
+			.cnt = 10,
+		},
+		{
+			.ap_info = ap_lists[2],
+			.cnt = 10,
+		},
+	};
+	int64_t timestamps[3] = {1759757839000, 1759758255000, 1759758654000};
+
+	struct nrf_cloud_location_config cfg = {
+		.do_reply = false,
+		.hi_conf = false,
+		.fallback = true,
+	};
+
+	for (size_t i = 0; i < 3; i++) {
+		int err = nrf_cloud_location_request_timestamped(NULL, &wifi_inf[i], &cfg, NULL, timestamps[i]);
+		if (err) {
+			LOG_ERR("nrf_cloud_location_request_timestamped, error: %d", err);
+		} else {
+			LOG_INF("nrf_cloud_location_request_timestamped %d sent", i + 1);
+		}
+	}
+}
+
 #if defined(CONFIG_DK_LIBRARY)
 static void button_handler(uint32_t button_state, uint32_t has_changed)
 {
@@ -332,6 +407,7 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 		if ((button_state & DK_BTN1_MSK) == DK_BTN1_MSK) {
 			LOG_INF("Button pressed");
 			(void)nrf_cloud_alert_send(ALERT_TYPE_MSG, 0, "Button pressed");
+			(void)batch_location_request();
 		}
 	}
 }
