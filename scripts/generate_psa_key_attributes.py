@@ -117,8 +117,16 @@ class PsaKeyPersistence(IntEnum):
 class PsaKeyLocation(IntEnum):
     """Location for storing key"""
 
+    # LOCATION_CRACEN should be used if the key is stored on a nRF54H device with SUIT based secure
+    # domain firmware
     LOCATION_CRACEN = 0x804E0000
+
+    # LOCATION_CRACEN_KMU should be used if the key is stored on a nRF54L device
     LOCATION_CRACEN_KMU = 0x804E4B00
+
+    # LOCATION_LOCAL_STORAGE should be used if the key is stored on a nRF54H device with IronSide based
+    # secure domain firmware
+    LOCATION_LOCAL_STORAGE = 0x00000000
 
 
 class PsaAlgorithm(IntEnum):
