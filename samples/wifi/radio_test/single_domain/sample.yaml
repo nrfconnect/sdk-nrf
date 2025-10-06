@@ -36,7 +36,7 @@ tests:
     build_only: true
     extra_args:
       - single_domain_SHIELD="nrf7002eb2"
-      - CONFIG_NRFX_TIMER10=y
+      - CONFIG_NRFX_TIMER=y
       - CONFIG_NRFX_GPPI=y
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
