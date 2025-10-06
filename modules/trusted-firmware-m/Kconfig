@@ -227,7 +227,6 @@ config TFM_ITS_ENCRYPTED
 	depends on !CRACEN_NEED_MULTIPART_WORKAROUNDS
 	default y if SOC_SERIES_NRF54LX
 	select PSA_WANT_ALG_CHACHA20_POLY1305 if SOC_SERIES_NRF54LX
-	select PSA_ITS_ENCRYPTED
 	select PSA_WANT_GENERATE_RANDOM
 	help
 	  Enables authenticated encryption for PSA Internal Trusted Storage files
