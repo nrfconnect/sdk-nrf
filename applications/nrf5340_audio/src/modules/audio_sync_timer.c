@@ -28,8 +28,8 @@ LOG_MODULE_REGISTER(audio_sync_timer, CONFIG_AUDIO_SYNC_TIMER_LOG_LEVEL);
 #define AUDIO_SYNC_HF_TIMER_CURR_TIME_CAPTURE_CHANNEL		1
 #define AUDIO_SYNC_HF_TIMER_CURR_TIME_CAPTURE			NRF_TIMER_TASK_CAPTURE1
 
-static const nrfx_timer_t audio_sync_hf_timer_instance =
-	NRFX_TIMER_INSTANCE(AUDIO_SYNC_HF_TIMER_INSTANCE_NUMBER);
+static nrfx_timer_t audio_sync_hf_timer_instance =
+	NRFX_TIMER_INSTANCE(NRF_TIMER_INST_GET(AUDIO_SYNC_HF_TIMER_INSTANCE_NUMBER));
 
 static uint8_t dppi_channel_i2s_frame_start;
 
