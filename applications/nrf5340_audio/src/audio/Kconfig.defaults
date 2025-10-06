@@ -5,7 +5,7 @@
 #
 
 # Audio sync timer
-config NRFX_TIMER1
+config NRFX_TIMER
 	default y
 
 # Audio sync timer
