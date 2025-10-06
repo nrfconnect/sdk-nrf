@@ -54,6 +54,7 @@
 .. _`TF-M sample incompatibility issue`: https://github.com/zephyrproject-rtos/zephyr/issues/34658
 
 .. _`Asset-Tracker-Template`: https://github.com/nrfconnect/Asset-Tracker-Template
+.. _`ncs-serial-modem`: https://github.com/nrfconnect/ncs-serial-modem
 
 .. _`hello-nrfcloud v2.0.1`: https://github.com/hello-nrfcloud/firmware/releases/tag/v2.0.1
 
