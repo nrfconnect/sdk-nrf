@@ -333,11 +333,11 @@ Bluetooth Mesh samples
 
 * :ref:`ble_mesh_dfu_distributor` sample:
 
-  * Added support for external flash memory for the ``nrf52840dk/nrf52840`` as the secondary partition for the DFU process.
+  * Added support for external flash memory for the ``nrf52840dk/nrf52840`` and the ``nrf54l15dk/nrf54l15/cpuapp`` as the secondary partition for the DFU process.
 
 * :ref:`ble_mesh_dfu_target` sample:
 
-  * Added support for external flash memory for the ``nrf52840dk/nrf52840`` as the secondary partition for the DFU process.
+  * Added support for external flash memory for the ``nrf52840dk/nrf52840`` and the ``nrf54l15dk/nrf54l15/cpuapp`` as the secondary partition for the DFU process.
 
 * :ref:`bluetooth_mesh_sensor_client` sample:
 
