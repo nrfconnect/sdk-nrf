@@ -69,9 +69,6 @@
 #define DEFAULT_TIMER_IRQ          NRFX_CONCAT_3(TIMER,			 \
 						 DEFAULT_TIMER_INSTANCE, \
 						 _IRQn)
-#define DEFAULT_TIMER_IRQ_HANDLER  NRFX_CONCAT_3(nrfx_timer_,		 \
-						 DEFAULT_TIMER_INSTANCE, \
-						 _irq_handler)
 
 /* Note that the timer instance 1 can be used in the communication module. */
 
@@ -83,19 +80,6 @@
 #define ANOMALY_172_TIMER_IRQ          NRFX_CONCAT_3(TIMER,		    \
 						ANOMALY_172_TIMER_INSTANCE, \
 						_IRQn)
-#define ANOMALY_172_TIMER_IRQ_HANDLER  NRFX_CONCAT_3(nrfx_timer_,	    \
-						ANOMALY_172_TIMER_INSTANCE, \
-						_irq_handler)
-#endif /* NRF52_ERRATA_172_PRESENT */
-
-/* Helper macro for labeling timer instances. */
-#define NRFX_TIMER_CONFIG_LABEL(_num) NRFX_CONCAT_3(CONFIG_, NRFX_TIMER, _num)
-
-BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(DEFAULT_TIMER_INSTANCE) == 1,
-	     "Core DTM timer needs additional KConfig configuration");
-#if NRF52_ERRATA_172_PRESENT
-BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(ANOMALY_172_TIMER_INSTANCE) == 1,
-	     "Anomaly DTM timer needs additional KConfig configuration");
 #endif /* NRF52_ERRATA_172_PRESENT */
 
 #define DTM_EGU_EVENT NRF_EGU_EVENT_TRIGGERED0
@@ -399,11 +383,11 @@ static struct dtm_instance {
 	uint32_t address;
 
 	/* Timer to be used for scheduling TX packets. */
-	const nrfx_timer_t timer;
+	nrfx_timer_t timer;
 
 #if NRF52_ERRATA_172_PRESENT
 	/* Timer to be used to handle Anomaly 172. */
-	const nrfx_timer_t anomaly_timer;
+	nrfx_timer_t anomaly_timer;
 
 	/* Enable or disable the workaround for Errata 172. */
 	bool anomaly_172_wa_enabled;
@@ -435,9 +419,9 @@ static struct dtm_instance {
 	.state = STATE_UNINITIALIZED,
 	.packet_hdr_plen = NRF_RADIO_PREAMBLE_LENGTH_8BIT,
 	.address = DTM_RADIO_ADDRESS,
-	.timer = NRFX_TIMER_INSTANCE(DEFAULT_TIMER_INSTANCE),
+	.timer = NRFX_TIMER_INSTANCE(NRF_TIMER_INST_GET(DEFAULT_TIMER_INSTANCE)),
 #if NRF52_ERRATA_172_PRESENT
-	.anomaly_timer = NRFX_TIMER_INSTANCE(ANOMALY_172_TIMER_INSTANCE),
+	.anomaly_timer = NRFX_TIMER_INSTANCE(NRF_TIMER_INST_GET(ANOMALY_172_TIMER_INSTANCE)),
 #endif /* NRF52_ERRATA_172_PRESENT */
 	.radio_mode = NRF_RADIO_MODE_BLE_1MBIT,
 	.txpower = 0,
@@ -825,7 +809,7 @@ static int timer_init(void)
 	}
 
 	IRQ_CONNECT(DEFAULT_TIMER_IRQ, CONFIG_DTM_TIMER_IRQ_PRIORITY,
-		    DEFAULT_TIMER_IRQ_HANDLER, NULL, 0);
+		    nrfx_timer_irq_handler, &dtm_inst.timer, 0);
 
 	return 0;
 }
@@ -849,8 +833,8 @@ static int anomaly_timer_init(void)
 
 	IRQ_CONNECT(ANOMALY_172_TIMER_IRQ,
 		    CONFIG_ANOMALY_172_TIMER_IRQ_PRIORITY,
-		    ANOMALY_172_TIMER_IRQ_HANDLER,
-		    NULL, 0);
+		    nrfx_timer_irq_handler,
+		    &dtm_inst.anomaly_timer, 0);
 
 	nrfx_timer_compare(&dtm_inst.anomaly_timer,
 		NRF_TIMER_CC_CHANNEL0,
