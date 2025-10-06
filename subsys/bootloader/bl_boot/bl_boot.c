@@ -194,6 +194,9 @@ static void uninit_used_peripherals(void)
 #if defined(CONFIG_HAS_HW_NRF_UARTE20)
 	uninit_used_uarte(NRF_UARTE20);
 #endif
+#if defined(CONFIG_HAS_HW_NRF_UARTE30)
+	uninit_used_uarte(NRF_UARTE30);
+#endif
 #endif /* CONFIG_UART_NRFX */
 
 	nrf_clock_int_disable(NRF_CLOCK, 0xFFFFFFFF);
