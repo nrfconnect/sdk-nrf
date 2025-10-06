@@ -258,8 +258,6 @@ int main(void)
 
 	lte_lc_register_handler(lte_event_handler);
 
-	/* Enable PSM. */
-	lte_lc_psm_req(true);
 	lte_lc_connect();
 
 	k_sem_take(&lte_connected, K_FOREVER);
