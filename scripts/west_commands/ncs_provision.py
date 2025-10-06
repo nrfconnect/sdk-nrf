@@ -17,11 +17,12 @@ import generate_psa_key_attributes as psa_attr_generator
 import yaml
 from west.commands import WestCommand
 
-KEY_TYPES = ["UROT_PUBKEY", "BL_PUBKEY", "APP_PUBKEY"]
+KEY_TYPES = ["UROT_PUBKEY", "BL_PUBKEY", "APP_PUBKEY", "PROT_RAM_INV_SLOTS"]
 KMU_KEY_SLOTS: dict[str, list[int]] = {
     "UROT_PUBKEY": [226, 228, 230],
     "BL_PUBKEY": [242, 244, 246],
     "APP_PUBKEY": [202, 204, 206],
+    "PROT_RAM_INV_SLOTS": [248],
 }
 ITS_KEY_SLOTS: dict[str, list[int]] = {
     "UROT_PUBKEY": [],
@@ -34,14 +35,15 @@ ITS_KEY_SLOTS: dict[str, list[int]] = {
     "APP_PUBKEY": [],
 }
 
-POLICIES = ["revokable", "lock", "lock-last", "rotable"]
+POLICIES = ["revokable", "lock", "lock-last", "rotatable"]
 KMU_KEY_POLICIES: dict[str, str] = {
     "revokable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_REVOKABLE,
     "lock": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_READ_ONLY,
+    "rotatable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_DEFAULT,
 }
 ITS_KEY_POLICIES: dict[str, str] = {
     "revokable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_DEFAULT,
-    "rotable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_DEFAULT,
+    "rotatable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_DEFAULT,
 }
 
 @dataclass
@@ -49,6 +51,7 @@ class SlotParams:
     id: int
     keyfile: str
     lifetime: psa_attr_generator.PsaKeyPersistence
+    keytype: psa_attr_generator.PsaKeyType
 
 
 class NrfutilWrapper:
@@ -79,9 +82,6 @@ class NrfutilWrapper:
 
     def _make_json_file(self, soc: str) -> str:
         """Generate PSA key attribute file, see generate_psa_key_attributes.py for details"""
-        output_file = (
-            Path(self.output_dir).joinpath("keyfile.json").resolve().expanduser()
-        )
 
         if soc.startswith("nrf54l"):
             location = psa_attr_generator.PsaKeyLocation.LOCATION_CRACEN_KMU
@@ -89,21 +89,48 @@ class NrfutilWrapper:
             location = psa_attr_generator.PsaKeyLocation.LOCATION_LOCAL_STORAGE
 
         for slot in self.slots:
-            attr = psa_attr_generator.PlatformKeyAttributes(
-                key_type=psa_attr_generator.PsaKeyType.ECC_PUBLIC_KEY_TWISTED_EDWARDS,
-                identifier=slot.id,
-                location=location,
-                persistence=slot.lifetime,
-                key_usage=psa_attr_generator.PsaKeyUsage.VERIFY,
-                algorithm=psa_attr_generator.PsaAlgorithm.EDDSA_PURE,
-                key_bits=255,
-                cracen_usage=psa_attr_generator.PsaCracenUsageScheme.RAW,
-            )
-
-            with open(slot.keyfile, "rb") as key_file:
-                psa_attr_generator.generate_attr_file(
-                    attributes=attr, key_file=output_file, key_from_file=key_file
+            if slot.keytype == psa_attr_generator.PsaKeyType.AES:
+                attr = psa_attr_generator.PlatformKeyAttributes(
+                    key_type=psa_attr_generator.PsaKeyType.AES,
+                    identifier=slot.id,
+                    location=location,
+                    persistence=slot.lifetime,
+                    key_usage=psa_attr_generator.PsaKeyUsage.ENCRYPT,
+                    algorithm=psa_attr_generator.PsaAlgorithm.CTR,
+                    key_bits=256,
+                    cracen_usage=psa_attr_generator.PsaCracenUsageScheme.PROTECTED,
                 )
+
+                output_file = (
+                    Path(self.output_dir).joinpath("prot_ram_inv_slots.json").resolve().expanduser()
+                )
+
+                psa_attr_generator.generate_attr_file(
+                    attributes=attr, key_file=output_file, trng_key=True
+                )
+            elif slot.keytype == psa_attr_generator.PsaKeyType.ECC_PUBLIC_KEY_TWISTED_EDWARDS:
+                attr = psa_attr_generator.PlatformKeyAttributes(
+                    key_type=psa_attr_generator.PsaKeyType.ECC_PUBLIC_KEY_TWISTED_EDWARDS,
+                    identifier=slot.id,
+                    location=location,
+                    persistence=slot.lifetime,
+                    key_usage=psa_attr_generator.PsaKeyUsage.VERIFY,
+                    algorithm=psa_attr_generator.PsaAlgorithm.EDDSA_PURE,
+                    key_bits=255,
+                    cracen_usage=psa_attr_generator.PsaCracenUsageScheme.RAW,
+                )
+
+                output_file = (
+                    Path(self.output_dir).joinpath("keyfile.json").resolve().expanduser()
+                )
+
+                with open(slot.keyfile, "rb") as key_file:
+                    psa_attr_generator.generate_attr_file(
+                        attributes=attr, key_file=output_file, key_from_file=key_file
+                    )
+            else:
+                sys.exit(f"Unsupported key type: {slot.keytype}")
+
         return str(output_file)
 
     def _build_command(self, soc: str) -> list[str]:
@@ -148,7 +175,7 @@ class NcsProvision(WestCommand):
             """),
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
-        group = upload_parser.add_mutually_exclusive_group(required=True)
+        group = upload_parser.add_mutually_exclusive_group()
         group.add_argument(
             "-i", "--input", metavar="PATH", help="Upload keys from YAML file"
         )
@@ -214,8 +241,20 @@ class NcsProvision(WestCommand):
             self._upload_keys(args)
 
     def _upload_keys(self, args: argparse.Namespace) -> None:
+        if args.keys is None and args.input is None and args.keyname != "PROT_RAM_INV_SLOTS":
+            sys.exit("error: one of the arguments -i/--input -k/--key is required")
+
         slots: list[SlotParams] = []
-        if args.input:
+        data: list[dict[str, Any]] = []
+
+        if args.keyname == "PROT_RAM_INV_SLOTS":
+            for id in KMU_KEY_SLOTS["PROT_RAM_INV_SLOTS"]:
+                slots.append(SlotParams(
+                    id=id,
+                    keyfile=None,
+                    lifetime=KMU_KEY_POLICIES["rotatable"],
+                    keytype=psa_attr_generator.PsaKeyType.AES))
+        elif args.input:
             data = self._read_keys_params_from_file(args.input)
         else:
             data = self._read_keys_params_from_args(args)
@@ -277,10 +316,11 @@ class NcsProvision(WestCommand):
             if soc.startswith("nrf54h"):
                 if policy == "revokable" and not 0x40002000 <= slot_id <= 0x4FFFFFFF:
                     sys.exit("Revokable policy key ID out of range.")
-                elif policy == "rotable" and not 0x1 <= slot_id <= 0x3FFFFFFF:
-                    sys.exit("Rotable policy key ID out of range.")
+                elif policy == "rotatable" and not 0x1 <= slot_id <= 0x3FFFFFFF:
+                    sys.exit("Rotatable policy key ID out of range.")
 
-            slot = SlotParams(id=slot_id, keyfile=keyfile, lifetime=key_policy)
+            key_type = psa_attr_generator.PsaKeyType.ECC_PUBLIC_KEY_TWISTED_EDWARDS
+            slot = SlotParams(id=slot_id, keyfile=keyfile, lifetime=key_policy, keytype=key_type)
             slots.append(slot)
         return slots
 

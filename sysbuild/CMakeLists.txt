@@ -1023,6 +1023,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     endif()
   endif()
 
+  if(SB_CONFIG_KMU_INVALIDATE_PROTECTED_RAM_SLOTS)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/nrf54l_prot_ram_inv_slots.cmake)
+  endif()
+
   if(SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/nrf700x.cmake)
   endif()
