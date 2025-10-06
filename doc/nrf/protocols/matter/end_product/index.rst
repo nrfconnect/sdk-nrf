@@ -26,6 +26,7 @@ Also, topics related to Matter certification (:ref:`ug_matter_device_attestation
    :caption: Subpages:
 
    prerequisites
+   platform_dmp_cert
    factory_provisioning
    attestation
    dcl
