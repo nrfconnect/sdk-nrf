@@ -827,6 +827,10 @@ SDROM verifies and copies the update candidate specified through these registers
 
 |ISE| exposes an update service that allows local domains to trigger the update process by indirectly writing to the relevant SICR registers.
 
+.. note::
+   The update data must be placed within a valid memory range.
+   See :file:`nrf_ironside/update.h` for more details.
+
 The release ZIP archive for |ISE| includes the following components:
 
 * A HEX file containing the update candidate for |ISE|.
