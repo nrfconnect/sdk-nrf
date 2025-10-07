@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config CRACEN_HW_PRESENT
+config HAS_HW_NRF_CRACEN
 	def_bool (SOC_SERIES_NRF54LX && !SOC_NRF54LS05B) || SOC_SERIES_NRF71X
 
 config CRACEN_HW_VERSION_BASE

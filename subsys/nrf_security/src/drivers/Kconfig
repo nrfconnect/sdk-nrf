@@ -10,7 +10,7 @@ config PSA_CRYPTO_DRIVER_OBERON
 	# The Oberon driver is required to provide HKDF needed for protected storage and bultin keys
 	prompt "Oberon PSA driver" if !(TFM_PARTITION_PROTECTED_STORAGE || TFM_CRYPTO_BUILTIN_KEYS)
 	bool
-	default y if ! CRACEN_HW_PRESENT
+	default y if !HAS_HW_NRF_CRACEN
 	help
 	  This configuration enables the usage of the Oberon PSA driver.
 
@@ -29,7 +29,7 @@ config PSA_CRYPTO_DRIVER_CC3XX
 config PSA_CRYPTO_DRIVER_CRACEN
 	bool "Cracen PSA driver"
 	depends on MBEDTLS_PSA_CRYPTO_C
-	depends on CRACEN_HW_PRESENT
+	depends on HAS_HW_NRF_CRACEN
 	# CRACEN uses the k_event_ API
 	select EVENTS if MULTITHREADING
 	default y

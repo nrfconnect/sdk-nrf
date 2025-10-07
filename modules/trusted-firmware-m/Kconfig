@@ -65,7 +65,7 @@ config TFM_CRYPTO_BUILTIN_KEYS
 	prompt "TF-M crypto builtin keys"
 	default y
 	depends on !TFM_PROFILE_TYPE_MINIMAL
-	depends on !CRACEN_HW_PRESENT
+	depends on !HAS_HW_NRF_CRACEN
 	select PSA_WANT_ALG_HKDF
 	select PSA_WANT_ALG_HMAC
 	select PSA_WANT_ALG_SHA_256

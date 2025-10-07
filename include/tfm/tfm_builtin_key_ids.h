@@ -9,7 +9,7 @@
 
 #include <nrf.h>
 
-#if defined(NRF_CRACENCORE) || defined(CONFIG_CRACEN_HW_PRESENT)
+#if defined(NRF_CRACENCORE) || defined(CONFIG_HAS_HW_NRF_CRACEN)
 
 #include <cracen_psa_key_ids.h>
 #define TFM_BUILTIN_KEY_LOADER_KEY_LOCATION PSA_KEY_LOCATION_CRACEN
