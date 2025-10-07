@@ -19,6 +19,6 @@ function(get_address_from_dt_partition_nodelabel label address)
 
   dt_reg_addr(flash_area_addr TARGET ${DEFAULT_IMAGE} PATH ${flash_area_node})
 
-  math(EXPR ${address} "${flash_area_addr} + ${partition_offset}")
+  math(EXPR ${address} "${flash_area_addr} + ${partition_offset}" OUTPUT_FORMAT HEXADECIMAL)
   set(${address} ${${address}} PARENT_SCOPE)
 endfunction()
