@@ -17,13 +17,6 @@ import json
 from NrfHidDevice import EVENT_DATA_LEN_MAX
 import imgtool.image
 
-try:
-    from suit_generator.envelope import SuitEnvelope
-except ImportError as e:
-    print('Exception when importing SUIT generator:{}'.format(e))
-    print('The SUIT generator Python package is necassary to handle device with SUIT')
-    print('The SUIT generator can be installed from ncs/modules/lib/suit-generator')
-
 DFU_SYNC_INTERVAL = 1
 
 class DFUInfo:
@@ -304,8 +297,6 @@ class DfuImage:
         if zipfile.is_zipfile(dfu_package):
             self._initialize_from_zip_file(dfu_package, dev_fwinfo, dev_board_name,
                                            dev_bootloader_variant)
-        elif dfu_package.endswith('.suit'):
-            self._initialize_from_suit_file(dfu_package, dev_fwinfo)
         else:
             print('Invalid DFU package format')
             return
@@ -333,56 +324,6 @@ class DfuImage:
 
         except Exception:
             print("Parsing zip file failed")
-
-    def _initialize_from_suit_file(self, dfu_package, dev_fwinfo):
-        try:
-            envelope = SuitEnvelope()
-            envelope.load(dfu_package)
-            sequence_number = envelope.sequence_number
-        except Exception as e:
-            print("Exception during retrieving manifest sequence number")
-            print(e)
-            return
-
-        if not isinstance(sequence_number, int):
-            print("Invalid sequence number type. \
-                   Is of type: {} and should be: int".format(type(sequence_number)))
-            return
-
-        if not hasattr(envelope, 'current_version'):
-            print("The current_version field is not found in the SuitEnvelope class. \
-                   Upgrade suit-generator package to the newer version")
-            return
-
-        current_version = envelope.current_version
-        if current_version is not None and not isinstance(current_version, list):
-            print("Invalid current_version type. \
-                   Is of type: {} and should be: list or None".format(type(current_version)))
-            return
-
-        booted_fw_version = dev_fwinfo.get_fw_version()
-        assert len(booted_fw_version) == 4
-        if booted_fw_version[:3] == (0, 0, 0):
-            # Semantic versioning is not supported in the booted firmware:
-            # fallback to sequence number versioning
-            image_bin_version = (0, 0, 0, sequence_number)
-        else:
-            if current_version is None:
-                print("The semantic version is not defined in the SUIT envelope. \
-                       Generate the SUIT package with the semantic version")
-                return
-
-            # It is assumed that the version list uses the following order of elements:
-            # (major, minor, patch, type, pre_release_number)
-            # Field names are documented in the suit_version_t structure from:
-            # nrf/subsys/suit/metadata/include/suit_metadata.h
-            assert len(current_version) >= 3
-            major, minor, patch = current_version[:3]
-            image_bin_version = (major, minor, patch, sequence_number)
-
-        self.image_bin_path = dfu_package
-        self.bootloader_variant = "SUIT"
-        self.image_bin_version = image_bin_version
 
     @staticmethod
     def _is_dfu_file_correct(dfu_bin):
