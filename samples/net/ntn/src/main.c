@@ -41,6 +41,8 @@ static struct net_mgmt_event_callback conn_cb;
 static int fd;
 static struct sockaddr_storage host_addr;
 
+static K_SEM_DEFINE(data_sent, 0, 1);
+
 /* Forward declarations */
 static void server_transmission_work_fn(struct k_work *work);
 
@@ -51,6 +53,9 @@ static void server_transmission_work_fn(struct k_work *work)
 {
 	int err;
 	char buffer[CONFIG_NTN_SAMPLE_DATA_UPLOAD_SIZE_BYTES] = {"\0"};
+
+	snprintf(buffer, sizeof(buffer),
+		"ntn sample");
 
 	LOG_INF("Transmitting UDP/IP payload of %d bytes to the "
 		"IP address %s, port number %d",
@@ -64,8 +69,7 @@ static void server_transmission_work_fn(struct k_work *work)
 		return;
 	}
 
-	(void)k_work_reschedule(&server_transmission_work,
-				K_SECONDS(CONFIG_NTN_SAMPLE_DATA_UPLOAD_FREQUENCY_SECONDS));
+	k_sem_give(&data_sent);
 }
 
 static int server_addr_construct(void)
@@ -165,8 +169,8 @@ int main(void)
 	}
 
 	/* Get references to both interfaces: TODO - Use better naming for ifaces, perhaps a suffix? */
-	struct net_if *lte_if = net_if_get_by_index(net_if_get_by_name("net0"));
-	struct net_if *ntn_if = net_if_get_by_index(net_if_get_by_name("net1"));
+	struct net_if *lte_if = net_if_get_by_index(net_if_get_by_name("cell_if"));
+	struct net_if *ntn_if = net_if_get_by_index(net_if_get_by_name("ntn_if"));
 
 	if (!lte_if || !ntn_if) {
 		LOG_ERR("Failed to get network interfaces");
@@ -175,6 +179,8 @@ int main(void)
 	}
 
 	LOG_INF("Cellular interface found: %p, NTN interface found: %p", lte_if, ntn_if);
+
+	LOG_INF("Bringing up Cellular network interface");
 
 	/* Bring up cellular interface */
 	err = net_if_up(lte_if);
@@ -192,7 +198,7 @@ int main(void)
 		return err;
 	}
 
-	k_sleep(K_SECONDS(10));
+	k_sem_take(&data_sent, K_FOREVER);
 
 	/* Disconnect from the LTE cellular interface */
 	err = conn_mgr_if_disconnect(lte_if);
@@ -202,7 +208,7 @@ int main(void)
 		return err;
 	}
 
-	k_sleep(K_SECONDS(10));
+	k_sleep(K_SECONDS(5));
 
 	/* Bring down cellular interface */
 	err = net_if_down(lte_if);
@@ -211,6 +217,12 @@ int main(void)
 		FATAL_ERROR();
 		return err;
 	}
+
+	LOG_INF("Cellular interface down");
+
+	k_sleep(K_SECONDS(5));
+
+	LOG_INF("Bringing up NTN network interface");
 
 	/* Bring up NTN interface */
 	err = net_if_up(ntn_if);
@@ -228,9 +240,9 @@ int main(void)
 		return err;
 	}
 
-	k_sleep(K_SECONDS(10));
+	k_sem_take(&data_sent, K_FOREVER);
 
-	/* Disconnect from the NTN cellular interface */
+	/* Put the NTN cellular interface to dormant mode */
 	err = conn_mgr_if_disconnect(ntn_if);
 	if (err) {
 		LOG_ERR("conn_mgr_if_disconnect NTN, error: %d", err);
@@ -238,9 +250,18 @@ int main(void)
 		return err;
 	}
 
-	k_sleep(K_SECONDS(10));
+	k_sleep(K_SECONDS(5));
 
-	LOG_DBG("Finished");
+	/* Tear down the NTN cellular interface */
+	err = net_if_down(ntn_if);
+	if (err) {
+		LOG_ERR("net_if_down, error: %d", err);
+		FATAL_ERROR();
+		return err;
+	}
+
+	LOG_INF("Finished");
+
 
 	return 0;
 }

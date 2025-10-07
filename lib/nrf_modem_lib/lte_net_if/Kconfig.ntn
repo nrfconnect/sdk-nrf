@@ -68,6 +68,66 @@ config NRF_MODEM_LIB_NET_IF_NTN_DOWN_DEFAULT_LTE_DISCONNECT
 	  of shutting down the modem completely. This allows for faster re-connection
 	  and preserves the ability to use other network interfaces.
 
+config NRF_MODEM_LIB_NET_IF_NTN_BANDLOCK_ENABLE
+	bool "Enable NTN band lock"
+	default n
+	help
+	  Enable band lock for NTN mode.
+
+if NRF_MODEM_LIB_NET_IF_NTN_BANDLOCK_ENABLE
+
+config NRF_MODEM_LIB_NET_IF_NTN_BANDLOCK
+	int "NTN band to lock to"
+	default 265
+	help
+	  Band number to lock NTN mode to.
+
+endif # NRF_MODEM_LIB_NET_IF_NTN_BANDLOCK_ENABLE
+
+config NRF_MODEM_LIB_NET_IF_NTN_CHANNEL_SELECT_ENABLE
+	bool "Enable NTN channel select"
+	default n
+	help
+	  Enable channel selection for NTN mode.
+
+if NRF_MODEM_LIB_NET_IF_NTN_CHANNEL_SELECT_ENABLE
+
+config NRF_MODEM_LIB_NET_IF_NTN_CHANNEL_SELECT
+	int "NTN channel to select"
+	default 1
+	help
+	  Channel number to select in NTN mode.
+
+endif # NRF_MODEM_LIB_NET_IF_NTN_CHANNEL_SELECT_ENABLE
+
+config NRF_MODEM_LIB_NET_IF_NTN_APN_ENABLE
+	bool "Enable NTN APN select"
+	default n
+	help
+	  Enable APN selection for NTN mode.
+
+if NRF_MODEM_LIB_NET_IF_NTN_APN_ENABLE
+
+config NRF_MODEM_LIB_NET_IF_NTN_APN
+	string "NTN APN"
+	default ""
+	help
+	  Access Point Name (APN) for NTN connection.
+	  Leave empty to use default APN.
+endif # NRF_MODEM_LIB_NET_IF_NTN_APN_ENABLE
+
+config NRF_MODEM_LIB_NET_IF_NTN_DISABLE_EPCO
+	bool "Disable ePCO"
+	default n
+	help
+	  Disable ePCO.
+
+config NRF_MODEM_LIB_NET_IF_NTN_LOG_SV_DATA_ENABLE
+	bool "Enable logging of Satellite Vehicle data"
+	default n
+	help
+	  Enable logging of Satellite Vehicle data.
+
 module = NRF_MODEM_LIB_NET_IF_NTN
 module-dep = LOG
 module-str = nRF91 NTN LTE network interface

@@ -22,12 +22,16 @@ LOG_MODULE_REGISTER(nrf_modem_lib_netif, CONFIG_NRF_MODEM_LIB_NET_IF_LOG_LEVEL);
 static void connection_timeout_work_fn(struct k_work *work);
 static void connection_timeout_schedule(void);
 static void modem_fault_work_fn(struct k_work *work);
+static void deregister_handlers_work_fn(struct k_work *work);
 
 /* Delayable work used to handle LTE connection timeouts. */
 static K_WORK_DELAYABLE_DEFINE(connection_timeout_work, connection_timeout_work_fn);
 
 /* Work item for handling modem faults. */
 static K_WORK_DEFINE(modem_fault_handler_work, modem_fault_work_fn);
+
+/* Work item for deregistering handlers. */
+static K_WORK_DEFINE(deregister_handlers_work, deregister_handlers_work_fn);
 
 static int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn);
 
@@ -370,7 +374,6 @@ static void lte_reg_handler(const struct lte_lc_evt *const evt)
 
 static void lte_net_if_init(struct conn_mgr_conn_binding *if_conn)
 {
-	int ret;
 	int timeout = CONFIG_NRF_MODEM_LIB_NET_IF_CONNECT_TIMEOUT_SECONDS;
 
 	net_if_dormant_on(if_conn->iface);
@@ -399,16 +402,6 @@ static void lte_net_if_init(struct conn_mgr_conn_binding *if_conn)
 	LOG_DBG("Connection persistence is %s",
 		(if_conn->flags & BIT(CONN_MGR_IF_PERSISTENT)) ? "enabled" : "disabled");
 
-	/* Register handler for default PDP context 0. */
-	ret = pdn_default_ctx_cb_reg(pdn_event_handler);
-	if (ret) {
-		LOG_ERR("pdn_default_ctx_cb_reg, error: %d", ret);
-		net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, if_conn->iface);
-		return;
-	}
-
-	/* Register handler for registration status notifications */
-	lte_lc_register_handler(lte_reg_handler);
 
 	/* Keep local reference to the network interface that the connectivity layer is bound to. */
 	iface_bound = if_conn->iface;
@@ -437,10 +430,22 @@ int lte_net_if_disable(void)
 static int lte_net_if_connect(struct conn_mgr_conn_binding *const if_conn)
 {
 	ARG_UNUSED(if_conn);
+	int ret;
 
 	LOG_DBG("Connecting to LTE");
 
-	int ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_LTE);
+	/* Register handler for default PDP context 0. */
+	ret = pdn_default_ctx_cb_reg(pdn_event_handler);
+	if (ret) {
+		LOG_ERR("pdn_default_ctx_cb_reg, error: %d", ret);
+		net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, if_conn->iface);
+		return ret;
+	}
+
+	/* Register handler for registration status notifications */
+	lte_lc_register_handler(lte_reg_handler);
+
+	ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_LTE);
 
 	if (ret) {
 		LOG_ERR("lte_lc_func_mode_set, error: %d", ret);
@@ -455,6 +460,14 @@ static int lte_net_if_connect(struct conn_mgr_conn_binding *const if_conn)
 	connection_timeout_schedule();
 
 	return 0;
+}
+
+static void deregister_handlers_work_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	lte_lc_deregister_handler(lte_reg_handler);
+	pdn_default_ctx_cb_dereg(pdn_event_handler);
 }
 
 static int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn)
@@ -473,7 +486,13 @@ static int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn)
 		return ret;
 	}
 
-	return 0;
+	/* Sleep shortly to allow events to propagate to handlers*/
+	k_sleep(K_SECONDS(2));
+
+	/* Submit work to deregister handlers */
+	k_work_submit(&deregister_handlers_work);
+
+	return ret;
 }
 
 /* Bind connectity APIs.

@@ -1141,6 +1141,8 @@ static void nrf9x_iface_api_init(struct net_if *iface)
 {
 	nrf9x_iface_data.iface = iface;
 
+	net_if_set_name(iface, "cell_if");
+
 	iface->if_dev->socket_offload = nrf9x_socket_create;
 
 	socket_offload_dns_register(&nrf9x_socket_dns_offload_ops);
@@ -1186,6 +1188,8 @@ static struct nrf9x_iface_data_ntn {
 static void nrf9x_iface_api_init_ntn(struct net_if *iface)
 {
 	nrf9x_iface_data_ntn.iface = iface;
+
+	net_if_set_name(iface, "ntn_if");
 
 	iface->if_dev->socket_offload = nrf9x_socket_create;
 
