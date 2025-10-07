@@ -24,7 +24,7 @@
 #include <nrf_cc3xx_platform.h>
 #endif
 
-#if defined(CONFIG_CRACEN_HW_PRESENT)
+#if defined(CONFIG_HAS_HW_NRF_CRACEN)
 static bool boot_seed_set;
 static uint8_t boot_seed[BOOT_SEED_SIZE];
 #endif
@@ -126,7 +126,7 @@ enum tfm_plat_err_t tfm_plat_get_boot_seed(uint32_t size, uint8_t *buf)
 	if (nrf_err != NRF_CC3XX_PLATFORM_SUCCESS) {
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
-#elif defined(CONFIG_CRACEN_HW_PRESENT)
+#elif defined(CONFIG_HAS_HW_NRF_CRACEN)
 	if (!boot_seed_set) {
 		psa_status_t psa_err = psa_generate_random(boot_seed, sizeof(boot_seed));
 
