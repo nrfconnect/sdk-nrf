@@ -67,8 +67,13 @@ LOG_MODULE_DECLARE(downloader, CONFIG_DOWNLOADER_LOG_LEVEL);
 	"\r\n"
 
 struct transport_params_http {
+	/** Whether transport config has been set by the application. */
+	bool cfg_set;
 	/** Configuration options */
 	struct downloader_transport_http_cfg cfg;
+
+	/* The following fields are reset before each download: */
+
 	/** The server has closed the connection. */
 	bool connection_close;
 	/** Is using ranged query. */
@@ -515,14 +520,20 @@ static int dl_http_init(struct downloader *dl, struct downloader_host_cfg *dl_ho
 			const char *url)
 {
 	struct transport_params_http *http;
+	uint8_t *reset_ptr;
 
 	http = (struct transport_params_http *)dl->transport_internal;
 
-	/* Reset http internal struct except config. */
-	struct downloader_transport_http_cfg tmp_cfg = http->cfg;
+	if (!http->cfg_set) {
+		/* Set socket receive timeout to 30s by default. */
+		http->cfg.sock_recv_timeo_ms = 30 * MSEC_PER_SEC;
+	}
 
-	memset(http, 0, sizeof(struct transport_params_http));
-	http->cfg = tmp_cfg;
+	/* Reset all fields after the config. */
+	reset_ptr = (uint8_t *)&http->cfg + sizeof(http->cfg);
+	memset(reset_ptr,
+	       0,
+	       sizeof(struct transport_params_http) - ((uint8_t *)reset_ptr - (uint8_t *)http));
 
 	return parse_protocol(dl, url);
 }
@@ -699,6 +710,7 @@ int downloader_transport_http_set_config(struct downloader *dl,
 	}
 
 	http = (struct transport_params_http *)dl->transport_internal;
+	http->cfg_set = true;
 	http->cfg = *cfg;
 
 	return 0;
