@@ -112,19 +112,26 @@ config SB_INFINITE_LOOP_AFTER_RAM_CLEANUP
 	  Verification option that keeps execution in infinite loop after
 	  RAM cleanup has been performed.
 
+config SB_DISABLE_SELF_RWX_SUPPORTED
+	bool
+	default y if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP
+	default y if SOC_NRF54LV10A_ENGA_CPUAPP
+	default y if SOC_NRF54LM20A_ENGA_CPUAPP
+
 config SB_DISABLE_SELF_RWX
 	bool "Disable read and execution on self NVM"
-	depends on (SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP || SOC_NRF54LV10A_ENGA_CPUAPP) && !FPROTECT_ALLOW_COMBINED_REGIONS
+	depends on SB_DISABLE_SELF_RWX_SUPPORTED && !FPROTECT_ALLOW_COMBINED_REGIONS
 	help
 	  Sets RRAMC's BOOTCONF region protection before jumping to application.
 	  It disables reads writes and execution memory area which holds NSIB.
 
 config SB_DISABLE_NEXT_W
 	bool "Disable writes for next stage"
-	depends on (SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP) && !FPROTECT
+	depends on SB_DISABLE_SELF_RWX_SUPPORTED && !FPROTECT
 	help
 	  NSIB disables writes on next stage in bootloading chain.
-	  It uses RRAMC's region 4 and is limited to 31KB.
+	  It uses RRAMC's region 4 and is limited to 31KB for nRF54L15, nRF54L10 and nRF54L05
+	  and to 127KB for nRF54LV10a and nRF54LM20a.
 
 endif # IS_SECURE_BOOTLOADER
 
