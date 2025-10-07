@@ -436,16 +436,16 @@ static int response_code_to_error(int code)
 {
 	switch (code) {
 	case COAP_RESPONSE_CODE_UNAUTHORIZED:
-		LOG_ERR("Device didn't send auth credentials");
+		LOG_ERR("Device not authorized");
 		return -EACCES;
 	case COAP_RESPONSE_CODE_FORBIDDEN:
 		LOG_ERR("Device provided wrong auth credentials");
-		return -EACCES;
+		return -EPERM;
 	case COAP_RESPONSE_CODE_BAD_REQUEST:
 		LOG_ERR("Bad request");
 		return -EINVAL;
 	case COAP_RESPONSE_CODE_NOT_ACCEPTABLE:
-		LOG_ERR("Not acceptable");
+		LOG_ERR("Invalid Accept Headers");
 		return -EINVAL;
 	case COAP_RESPONSE_CODE_NOT_FOUND:
 		LOG_ERR("Resource not found");
