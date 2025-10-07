@@ -550,5 +550,13 @@ config BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
 	  If this parameter is set to zero, the subevent length
 	  is chosen by the controller.
 
+config BT_CTLR_SDC_LE_POWER_CLASS_1
+	bool "Device supports transmitting at LE Power Class 1 level"
+	default y if BT_CTLR_TX_PWR_ANTENNA >= 10
+	help
+	  This should be set if the device supports transmitting above +10dBm.
+	  See Bluetooth Core Specification, Vol 6, Part A, Section 3
+	  Transmitter Characteristics for more information.
+
 endmenu
 endif  # BT_LL_SOFTDEVICE
