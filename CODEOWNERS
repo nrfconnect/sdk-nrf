@@ -968,6 +968,7 @@
 /tests/zephyr/kernel/timer/timer_behavior/ @nrfconnect/ncs-low-level-test
 /tests/zephyr/subsys/secure_storage/      @nrfconnect/ncs-aegir
 /tests/zephyr/subsys/settings/performance/ @nrfconnect/ncs-pluto @rghaddab
+/tests/zephyr/samples/sensor/qdec/         @nrfconnect/ncs-low-level-test
 
 /tests/benchmarks/multicore/idle/*.rst    @nrfconnect/ncs-si-bluebagel-doc
 /tests/benchmarks/multicore/idle_gpio/*.rst @nrfconnect/ncs-si-bluebagel-doc
