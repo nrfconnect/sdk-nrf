@@ -717,6 +717,11 @@ Libraries for networking
 
   * Updated by refactoring the folder structure of the library to separate the different backend implementations.
 
+* :ref:`lib_downloader` library:
+
+  * Fixed an issue where HTTP download would hang if the application had not set the socket receive timeout and data flow from the server stopped.
+    The HTTP transport now sets the socket receive timeout to 30 seconds by default.
+
 Libraries for NFC
 -----------------
 

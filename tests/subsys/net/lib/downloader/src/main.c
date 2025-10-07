@@ -8,6 +8,7 @@
 
 #include <net/downloader.h>
 #include <net/downloader_transport_coap.h>
+#include <net/downloader_transport_http.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/coap.h>
 
@@ -209,6 +210,10 @@ static struct downloader_host_cfg dl_host_conf_w_sec_tags_and_cid = {
 	.sec_tag_list = sec_tags,
 	.sec_tag_count = ARRAY_SIZE(sec_tags),
 	.cid = true,
+};
+
+struct downloader_transport_http_cfg dl_http_cfg = {
+	.sock_recv_timeo_ms = 60000,
 };
 
 DEFINE_FFF_GLOBALS;
@@ -1405,6 +1410,9 @@ void test_downloader_get_https(void)
 	err = downloader_init(&dl, &dl_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 
+	err = downloader_transport_http_set_config(&dl, &dl_http_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
 	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
 	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
 	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_https_ipv6_ok;
@@ -1412,7 +1420,6 @@ void test_downloader_get_https(void)
 	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_https_ok;
 	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
 	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_http_header_then_data;
-
 
 	err = downloader_get(&dl, &dl_host_conf_w_sec_tags, HTTPS_URL, 0);
 	TEST_ASSERT_EQUAL(0, err);
