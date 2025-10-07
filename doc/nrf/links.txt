@@ -1897,8 +1897,6 @@
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 
 .. _`nrf-regtool`: https://github.com/nrfconnect/nrf-regtool/
-.. _`nRF54H20 Objective Product Specification 0.3`: https://res.developer.nordicsemi.com/res/nrf54H20/OPS/nRF54H20_OPS_v0.3.pdf
-.. _`nRF54H20 Objective Product Specification 0.3.1`: https://res.developer.nordicsemi.com/res/nrf54H20/OPS/nRF54H20_OPS_v0.3.1.pdf
 
 .. _`Introduction to nRF54H20`: https://res.developer.nordicsemi.com/res/nrf54H20/intro/Introduction%20to%20nRF54H20%20v1_0_1.pdf
 .. _`nRF54H20 prototype difference`: https://res.developer.nordicsemi.com/res/nrf54H20/other/nRF54H20_proto_diff.pdf

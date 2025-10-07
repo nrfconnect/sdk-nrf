@@ -51,8 +51,7 @@ The following boards in the `Zephyr`_ open source project and in the |NCS| are c
      - | ``nrf54h20dk/nrf54h20/cpuapp``
        | ``nrf54h20dk/nrf54h20/cpurad``
        | ``nrf54h20dk/nrf54h20/cpuppr``
-     - | `Objective Product Specification <nRF54H20 Objective Product Specification 0.3.1_>`_
-       | :ref:`Getting started <ug_nrf54h20_gs>`
+     - | :ref:`Getting started with the nRF54H20 DK <ug_nrf54h20_gs>`
    * - :zephyr:board:`nrf54l15dk`
      - nPM1300 EK
      - PCA10156
