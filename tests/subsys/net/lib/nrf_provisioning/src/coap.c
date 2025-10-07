@@ -484,7 +484,7 @@ void test_coap_auth_failed(void)
 
 	int ret = nrf_provisioning_coap_req(&coap_ctx);
 
-	TEST_ASSERT_EQUAL_INT(-EACCES, ret);
+	TEST_ASSERT_EQUAL_INT(-EPERM, ret);
 }
 
 /*
