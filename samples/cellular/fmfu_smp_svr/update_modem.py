@@ -6,8 +6,9 @@
 
 import argparse
 import logging
-import time
 import os
+import time
+
 from pynrfjprog import HighLevel
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -28,8 +29,8 @@ def run(uart, modem_firmware_zip, baudrate):
 
         # Print upload time
         logging.info("-------------------------------------------------------")
-        logging.info("The operation took {0:.2f} seconds "
-                    .format(time.time() - start_time))
+        logging.info(f"The operation took {time.time() - start_time:.2f} seconds "
+                    )
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(allow_abbrev=False)

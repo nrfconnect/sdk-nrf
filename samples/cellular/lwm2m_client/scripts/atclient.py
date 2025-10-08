@@ -6,9 +6,11 @@
 
 """AT command handling"""
 
-import sys
 import logging
+import sys
+
 import serial
+
 
 class ATclient:
     """Send and receive AT commands to modem through serial port."""
@@ -43,7 +45,7 @@ class ATclient:
             at_str = at_str.encode()
         self.serial.write(at_str)
         logging.debug(at_str.decode())
-        if not self.lf in at_str:
+        if self.lf not in at_str:
             self.serial.write(self.lf)
         resp = []
         while True:
