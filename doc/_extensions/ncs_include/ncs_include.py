@@ -11,8 +11,8 @@ import os
 import os.path
 
 from docutils import io, statemachine
-from docutils.utils.error_reporting import SafeString, ErrorString
 from docutils.parsers.rst import directives
+from docutils.utils.error_reporting import ErrorString, SafeString
 from sphinx.util.docutils import SphinxDirective
 
 
@@ -41,8 +41,7 @@ class NcsInclude(SphinxDirective):
         docset = self.options.get('docset', None)
         if docset is not None and \
                 docset not in self.config.ncs_include_mapping:
-            raise self.severe('The supplied "docset" was not found: "%s"' %
-                              docset)
+            raise self.severe(f'The supplied "docset" was not found: "{docset}"')
 
         indent = self.options.get('indent', 0)
         dedent = self.options.get('dedent', 0)
@@ -56,7 +55,7 @@ class NcsInclude(SphinxDirective):
             raise self.severe('Choose one of "dedent" and "auto-dedent" only')
 
         if not self.state.document.settings.file_insertion_enabled:
-            raise self.warning('"%s" directive disabled.' % self.name)
+            raise self.warning(f'"{self.name}" directive disabled.')
 
         if docset is None:
             # without a docset fallback to Sphinx style include
@@ -76,13 +75,11 @@ class NcsInclude(SphinxDirective):
                                         encoding=encoding,
                                         error_handler=e_handler)
         except UnicodeEncodeError:
-            raise self.severe('Problems with "%s" directive path:\n'
-                              'Cannot encode input file path "%s" '
-                              '(wrong locale?).' %
-                              (self.name, SafeString(path)))
-        except IOError as error:
-            raise self.severe('Problems with "%s" directive path:\n%s.' %
-                              (self.name, ErrorString(error)))
+            raise self.severe(f'Problems with "{self.name}" directive path:\n'
+                              f'Cannot encode input file path "{SafeString(path)}" '
+                              '(wrong locale?).')
+        except OSError as error:
+            raise self.severe(f'Problems with "{self.name}" directive path:\n{ErrorString(error)}.')
 
         # Get to-be-included content
         startline = self.options.get('start-line', None)
@@ -94,8 +91,7 @@ class NcsInclude(SphinxDirective):
             else:
                 rawtext = include_file.read()
         except UnicodeError as error:
-            raise self.severe(u'Problem with "%s" directive:\n%s' %
-                              (self.name, ErrorString(error)))
+            raise self.severe(f'Problem with "{self.name}" directive:\n{ErrorString(error)}')
         # start-after/end-before: no restrictions on newlines in match-text,
         # and no restrictions on matching inside lines vs. line boundaries
         start_at_text = self.options.get('start-at', None)
@@ -104,8 +100,8 @@ class NcsInclude(SphinxDirective):
             # skip content in rawtext before *and incl.* a matching text
             after_index = rawtext.find(after_text)
             if after_index < 0:
-                raise self.severe('Problem with "start-after" option of "%s" '
-                                  'directive:\nText not found.' % self.name)
+                raise self.severe(f'Problem with "start-after" option of "{self.name}" '
+                                  'directive:\nText not found.')
             if start_at_text:
                 rawtext = rawtext[after_index:]
             else:
@@ -116,8 +112,8 @@ class NcsInclude(SphinxDirective):
             # skip content in rawtext after *and incl.* a matching text
             before_index = rawtext.find(before_text)
             if before_index < 0:
-                raise self.severe('Problem with "end-before" option of "%s" '
-                                  'directive:\nText not found.' % self.name)
+                raise self.severe(f'Problem with "end-before" option of "{self.name}" '
+                                  'directive:\nText not found.')
             if end_at_text:
                 rawtext = rawtext[:before_index + len(end_at_text)]
             else:

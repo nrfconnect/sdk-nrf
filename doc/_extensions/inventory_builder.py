@@ -12,8 +12,8 @@
 # It can be run as a 1st step when projects contain multi-
 # directional links between them.
 
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator, Set
 
 from docutils import nodes
 from sphinx.builders import Builder
@@ -42,10 +42,10 @@ class InventoryBuilder(Builder):
                 yield doc_name
                 continue
 
-    def get_target_uri(self, docname: str, typ: str = None) -> str: #pylint: disable=no-self-use
+    def get_target_uri(self, docname: str, typ: str = None) -> str:
         return docname + '.html'
 
-    def prepare_writing(self, docnames: Set[str]) -> None:
+    def prepare_writing(self, docnames: set[str]) -> None:
         pass
 
     def write_doc(self, docname: str, doctree: nodes.document) -> None:
