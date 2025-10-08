@@ -7,10 +7,9 @@
 # nrf documentation build configuration file
 
 import os
-from pathlib import Path
-import sys
 import re
-
+import sys
+from pathlib import Path
 
 # Paths ------------------------------------------------------------------------
 
@@ -230,7 +229,7 @@ notfound_urls_prefix = "/nRF_Connect_SDK/doc/{}/nrf/".format(
 # -- Options for zephyr.gh_utils -----------------------------------------------
 
 gh_link_version = "main" if version.endswith("99") else f"v{version}"
-gh_link_base_url = f"https://github.com/nrfconnect/sdk-nrf"
+gh_link_base_url = "https://github.com/nrfconnect/sdk-nrf"
 gh_link_prefixes = {
     "applications/.*": "",
     "samples/.*": "",

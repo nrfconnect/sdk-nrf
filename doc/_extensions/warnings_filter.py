@@ -26,11 +26,10 @@ Configuration options
 
 import logging
 import re
-from typing import Dict, Any, List, Optional
+from typing import Any
 
 from sphinx.application import Sphinx
 from sphinx.util.logging import NAMESPACE
-
 
 __version__ = "0.1.0"
 
@@ -44,7 +43,7 @@ class WarningsFilter(logging.Filter):
         name: Filter name.
     """
 
-    def __init__(self, expressions: List[str], silent: bool, name: str = "") -> None:
+    def __init__(self, expressions: list[str], silent: bool, name: str = "") -> None:
         super().__init__(name)
 
         self._expressions = expressions
@@ -111,7 +110,7 @@ def configure(app: Sphinx) -> None:
         handler.filters.insert(0, filter)
 
 
-def finished(app: Sphinx, exception: Optional[Exception]):
+def finished(app: Sphinx, exception: Exception | None):
     """
     Prints out any patterns that have not matched a log line to allow us to clean up any that are not used.
     """
@@ -127,7 +126,7 @@ def finished(app: Sphinx, exception: Optional[Exception]):
             logging.warning(f"Unused expression: {expression.pattern}")
 
 
-def setup(app: Sphinx) -> Dict[str, Any]:
+def setup(app: Sphinx) -> dict[str, Any]:
     app.add_config_value("warnings_filter_config", "", "")
     app.add_config_value("warnings_filter_builders", [], "")
     app.add_config_value("warnings_filter_silent", True, "")

@@ -1,9 +1,9 @@
 # Internal documentation build configuration file
 
-from pathlib import Path
 import sys
-from sphinx.config import eval_config_file
+from pathlib import Path
 
+from sphinx.config import eval_config_file
 
 # Paths ------------------------------------------------------------------------
 

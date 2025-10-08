@@ -6,9 +6,10 @@ Copyright (c) 2021 Nordic Semiconductor ASA
 SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 """
 
-from bs4 import BeautifulSoup
-import sys
 import argparse
+import sys
+
+from bs4 import BeautifulSoup
 
 
 def move_contentinfo_to_main(html_file, silent=False):
@@ -23,7 +24,7 @@ def move_contentinfo_to_main(html_file, silent=False):
         Modified HTML content as string
     """
     # Read the HTML file
-    with open(html_file, 'r', encoding='utf-8') as f:
+    with open(html_file, encoding='utf-8') as f:
         html_content = f.read()
 
     # Parse the HTML
@@ -108,7 +109,7 @@ def main():
                 if args.output:
                     print(f"Output saved to {args.output}")
                 else:
-                    print(f"File updated in place")
+                    print("File updated in place")
 
     except FileNotFoundError:
         if not args.silent:

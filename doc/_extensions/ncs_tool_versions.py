@@ -28,12 +28,13 @@ Examples of use:
 
 """
 
+import re
+from collections.abc import Callable
+
+import yaml
 from docutils import nodes
 from sphinx.application import Sphinx
-from typing import List, Dict, Callable
 from sphinx.util import logging
-import yaml
-import re
 
 __version__ = "0.1.0"
 
@@ -45,7 +46,7 @@ def remove_prefix(s: str, prefix: str) -> str:
     return s[len(prefix) :] if s.startswith(prefix) else s
 
 
-def parse_pip_requirements(lines: List[str]) -> Dict[str, str]:
+def parse_pip_requirements(lines: list[str]) -> dict[str, str]:
     """Create a mapping from a pip requirements file.
     The listed dependencies are mapped to their required versions.
     Exact versions will only have their version displayed, and dependencies
@@ -114,7 +115,11 @@ def tool_version_replace(app: Sphinx) -> Callable:
         pip_versions = parse_pip_requirements(requirement_lines)
         versions.update(pip_versions)
 
-    def tool_version_role(name, rawtext, text, lineno, inliner, options={}, content=[]):
+    def tool_version_role(name, rawtext, text, lineno, inliner, options=None, content=None):
+        if content is None:
+            content = []
+        if options is None:
+            options = {}
         if text in versions:
             node = nodes.Text(versions[text])
         else:
