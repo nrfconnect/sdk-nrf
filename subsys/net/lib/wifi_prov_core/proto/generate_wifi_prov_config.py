@@ -13,15 +13,15 @@ Copyright (c) 2025 Nordic Semiconductor ASA
 SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 """
 
-import os
-import sys
 import argparse
 import base64
+import os
+import sys
 
 # Import generated protobuf modules
 try:
-    from request_pb2 import Request, WifiConfig, EnterpriseCertConfig
-    from common_pb2 import WifiInfo, AuthMode, Band, OpCode
+    from common_pb2 import AuthMode, Band, OpCode, WifiInfo
+    from request_pb2 import EnterpriseCertConfig, Request, WifiConfig
 except ImportError:
     print("Error: Python protobuf defigdnitions not found.")
     print("Please ensure the CMake build has generated the protobuf files.")
@@ -47,8 +47,8 @@ def read_cert_file(file_path):
     try:
         with open(file_path, 'rb') as f:
             return f.read()
-    except IOError as e:
-        raise IOError(f"Failed to read certificate file {file_path}: {e}")
+    except OSError as e:
+        raise OSError(f"Failed to read certificate file {file_path}: {e}")
 
 def check_required_files(cert_dir):
     """Check if all required certificate files exist.
@@ -289,6 +289,7 @@ Examples:
     # Show JSON only if requested
     if args.json:
         import json
+
         from google.protobuf.json_format import MessageToDict
 
         json_data = MessageToDict(request, preserving_proto_field_name=True)
@@ -306,6 +307,7 @@ Examples:
         if args.json:
             # Save as JSON
             import json
+
             from google.protobuf.json_format import MessageToDict
             json_data = MessageToDict(request, preserving_proto_field_name=True)
             with open(args.output, 'w') as f:
@@ -350,17 +352,17 @@ Examples:
     }
     auth_name = auth_names.get(args.auth_mode, f"Unknown({args.auth_mode})")
 
-    print(f"\nConfiguration details:")
+    print("\nConfiguration details:")
     print(f"  SSID: {args.ssid}")
     print(f"  BSSID: {args.bssid}")
     print(f"  Channel: {args.channel}")
     print(f"  Band: {'2.4GHz' if args.band == 1 else '5GHz'}")
     print(f"  Auth: {auth_name}")
     if args.cert_dir:
-        print(f"  Mode: EAP-TLS")
+        print("  Mode: EAP-TLS")
         print(f"  Identity: {args.identity}")
     elif args.passphrase:
-        print(f"  Mode: Personal")
+        print("  Mode: Personal")
         print(f"  Passphrase: {'*' * len(args.passphrase)}")
 
 if __name__ == "__main__":
