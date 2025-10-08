@@ -22,13 +22,10 @@ However, changes that affect data structure layouts, such as altering field orde
 ABI compatibility for the nRF54H20 SoC binaries
 ***********************************************
 
-.. note::
-   To use the most recent version of the |NCS|, always provision your nRF54H20 SoC-based device with the latest IronSide SE-based SoC binaries available.
+To use the most recent version of the |NCS|, download and provision your nRF54H20 SoC-based device with the `latest nRF54H20 SoC binaries`_ available.
 
 .. caution::
    The nRF54H20 SoC binaries do not support rollbacks to previous versions.
-
-You must download the `latest nRF54H20 SoC binaries`_ for the nRF54H20 SoC.
 
 Legacy ABI compatibility matrix for the nRF54H20 SoC binaries
 =============================================================
@@ -77,6 +74,18 @@ nRF54H20 SoC binaries changelog
 
 The following sections provide detailed lists of changes by component.
 
+IronSide Secure Element (IronSide SE) v23.0.2+17
+================================================
+
+Added
+-----
+
+* SHA1 support. (NCSDK-35321)
+  This feature corresponds to the ``PSA_WANT_ALG_SHA_1`` CRACEN PSA cryptographic primitive.
+
+  For more information, see :ref:`ug_crypto_supported_features`.
+
+
 IronSide Secure Element (IronSide SE) v23.0.1+16
 ================================================
 
@@ -105,67 +114,68 @@ IronSide Secure Element (IronSide SE) v23.0.0+15
 Added
 -----
 
-* IronSide SE now supports most CRACEN PSA features.
-  The available features correspond to the following configuration::
+* IronSide SE now supports the following CRACEN PSA cryptographic primitives:
 
-    CONFIG_PSA_WANT_GENERATE_RANDOM=y
-    CONFIG_PSA_WANT_ALG_CTR_DRBG=y
-    CONFIG_PSA_WANT_ALG_CBC_PKCS7=y
-    CONFIG_PSA_WANT_ALG_CBC_NO_PADDING=y
-    CONFIG_PSA_WANT_ALG_CCM=y
-    CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305=y
-    CONFIG_PSA_WANT_ALG_CMAC=y
-    CONFIG_PSA_WANT_ALG_CTR=y
-    CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA=y
-    CONFIG_PSA_WANT_ALG_ECB_NO_PADDING=y
-    CONFIG_PSA_WANT_ALG_ECDH=y
-    CONFIG_PSA_WANT_ALG_ECDSA=y
-    CONFIG_PSA_WANT_ALG_ECDSA_ANY=y
-    CONFIG_PSA_WANT_ALG_GCM=y
-    CONFIG_PSA_WANT_ALG_HKDF=y
-    CONFIG_PSA_WANT_ALG_HMAC=y
-    CONFIG_PSA_WANT_ALG_JPAKE=y
-    CONFIG_PSA_WANT_ALG_PBKDF2_HMAC=y
-    CONFIG_PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128=y
-    CONFIG_PSA_WANT_ALG_PURE_EDDSA=y
-    CONFIG_PSA_WANT_ALG_SHA_256=y
-    CONFIG_PSA_WANT_ALG_SHA_384=y
-    CONFIG_PSA_WANT_ALG_SHA_512=y
-    CONFIG_PSA_WANT_ALG_SHA3_256=y
-    CONFIG_PSA_WANT_ALG_SHA3_384=y
-    CONFIG_PSA_WANT_ALG_SHA3_512=y
-    CONFIG_PSA_WANT_ALG_SHAKE256_512=y
-    CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_CMAC=y
-    CONFIG_PSA_WANT_ALG_SPAKE2P_HMAC=y
-    CONFIG_PSA_WANT_ALG_SPAKE2P_CMAC=y
-    CONFIG_PSA_WANT_ALG_SPAKE2P_MATTER=y
-    CONFIG_PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS=y
-    CONFIG_PSA_WANT_ALG_TLS12_PRF=y
-    CONFIG_PSA_WANT_ALG_TLS12_PSK_TO_MS=y
-    CONFIG_PSA_WANT_ALG_HKDF_EXTRACT=y
-    CONFIG_PSA_WANT_ALG_HKDF_EXPAND=y
-    CONFIG_PSA_WANT_ALG_ED25519PH=y
-    CONFIG_PSA_WANT_ECC_MONTGOMERY_255=y
-    CONFIG_PSA_WANT_ECC_SECP_R1_256=y
-    CONFIG_PSA_WANT_ECC_SECP_R1_384=y
-    CONFIG_PSA_WANT_ECC_SECP_R1_521=y
-    CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255=y
-    CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE=y
-    CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT=y
-    CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT=y
-    CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE=y
-    CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY=y
-    CONFIG_PSA_WANT_KEY_TYPE_AES=y
-    CONFIG_PSA_WANT_AES_KEY_SIZE_128=y
-    CONFIG_PSA_WANT_AES_KEY_SIZE_256=y
-    CONFIG_PSA_WANT_KEY_TYPE_CHACHA20=y
-    CONFIG_PSA_WANT_KEY_TYPE_PASSWORD=y
-    CONFIG_PSA_WANT_KEY_TYPE_PASSWORD_HASH=y
-    CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE=y
-    CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT=y
-    CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT=y
-    CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE=y
-    CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY=y
+  * ``PSA_WANT_GENERATE_RANDOM``
+  * ``PSA_WANT_ALG_CTR_DRBG``
+  * ``PSA_WANT_ALG_CBC_PKCS7``
+  * ``PSA_WANT_ALG_CBC_NO_PADDING``
+  * ``PSA_WANT_ALG_CCM``
+  * ``PSA_WANT_ALG_CHACHA20_POLY1305``
+  * ``PSA_WANT_ALG_CMAC``
+  * ``PSA_WANT_ALG_CTR``
+  * ``PSA_WANT_ALG_DETERMINISTIC_ECDSA``
+  * ``PSA_WANT_ALG_ECB_NO_PADDING``
+  * ``PSA_WANT_ALG_ECDH``
+  * ``PSA_WANT_ALG_ECDSA``
+  * ``PSA_WANT_ALG_ECDSA_ANY``
+  * ``PSA_WANT_ALG_GCM``
+  * ``PSA_WANT_ALG_HKDF``
+  * ``PSA_WANT_ALG_HMAC``
+  * ``PSA_WANT_ALG_JPAKE``
+  * ``PSA_WANT_ALG_PBKDF2_HMAC``
+  * ``PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128``
+  * ``PSA_WANT_ALG_PURE_EDDSA``
+  * ``PSA_WANT_ALG_SHA_256``
+  * ``PSA_WANT_ALG_SHA_384``
+  * ``PSA_WANT_ALG_SHA_512``
+  * ``PSA_WANT_ALG_SHA3_256``
+  * ``PSA_WANT_ALG_SHA3_384``
+  * ``PSA_WANT_ALG_SHA3_512``
+  * ``PSA_WANT_ALG_SHAKE256_512``
+  * ``PSA_WANT_ALG_SP800_108_COUNTER_CMAC``
+  * ``PSA_WANT_ALG_SPAKE2P_HMAC``
+  * ``PSA_WANT_ALG_SPAKE2P_CMAC``
+  * ``PSA_WANT_ALG_SPAKE2P_MATTER``
+  * ``PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS``
+  * ``PSA_WANT_ALG_TLS12_PRF``
+  * ``PSA_WANT_ALG_TLS12_PSK_TO_MS``
+  * ``PSA_WANT_ALG_HKDF_EXTRACT``
+  * ``PSA_WANT_ALG_HKDF_EXPAND``
+  * ``PSA_WANT_ALG_ED25519PH``
+  * ``PSA_WANT_ECC_MONTGOMERY_255``
+  * ``PSA_WANT_ECC_SECP_R1_256``
+  * ``PSA_WANT_ECC_SECP_R1_384``
+  * ``PSA_WANT_ECC_SECP_R1_521``
+  * ``PSA_WANT_ECC_TWISTED_EDWARDS_255``
+  * ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE``
+  * ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT``
+  * ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT``
+  * ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE``
+  * ``PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY``
+  * ``PSA_WANT_KEY_TYPE_AES``
+  * ``PSA_WANT_AES_KEY_SIZE_128``
+  * ``PSA_WANT_AES_KEY_SIZE_256``
+  * ``PSA_WANT_KEY_TYPE_CHACHA20``
+  * ``PSA_WANT_KEY_TYPE_PASSWORD``
+  * ``PSA_WANT_KEY_TYPE_PASSWORD_HASH``
+  * ``PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE``
+  * ``PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT``
+  * ``PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT``
+  * ``PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE``
+  * ``PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY``
+
+  For more information, see :ref:`ug_crypto_supported_features`.
 
 * Support for a secondary boot mode. (NCSDK-32171)
 
