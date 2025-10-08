@@ -150,17 +150,14 @@ Suspend to RAM (S2RAM) operation of the application requires special support fro
 MCUboot on the nRF54H20 SoC supports Suspend to RAM (S2RAM) functionality in the application.
 It can detect a wake-up from S2RAM and redirect execution to the application's resume routine.
 
-To enable S2RAM support for your project, set the following MCUboot Kconfig options:
-
-* :kconfig:option:`CONFIG_PM` - Power management support.
-* :kconfig:option:`CONFIG_PM_S2RAM` - Suspend to RAM support.
-* :kconfig:option:`CONFIG_PM_S2RAM_CUSTOM_MARKING` - Custom S2RAM marking support.
-* :kconfig:option:`CONFIG_SOC_NRF54H20_PM_S2RAM_OVERRIDE` - Enables MCUboot to override the default Nordic S2RAM implementation.
+To enable S2RAM support for your project, set the :kconfig:option:`CONFIG_SOC_EARLY_RESET_HOOK` MCUboot Kconfig option.
+This option integrates the S2RAM resume bridge into the start-up code.
 
 Also ensure that your board's DTS file includes the following Zephyr nodes, which describe the linker sections used:
 
-* a ``zephyr,memory-region`` compatible node with nodelabel ``pm_s2ram`` of 32 B size for placing S2RAM cpu context RAM.
-* a ``zephyr,memory-region`` compatible node with nodelabel ``mcuboot_s2ram`` of 4 B size for placing MCUboot's S2RAM magic variable.
+* a ``zephyr,memory-region`` compatible node labeled ``mcuboot_s2ram``, with a size of 8 bytes, used for placing MCUboot's S2RAM magic variable.
+* a ``zephyr,memory-region`` compatible node labeled ``pm_s2ram_stack``, with a size of 16 bytes.
+  This region is used as the program stack by MCUboot during S2RAM resume.
 
 Example DTS snippet:
 
@@ -168,19 +165,19 @@ Example DTS snippet:
 
    / {
       soc {
-         /* run-time common mcuboot S2RAM support section */
-         mcuboot_s2ram: cpuapp_s2ram@22007fdc  {
-            compatible = "zephyr,memory-region", "mmio-sram";
-            reg = <0x22007fdc 4>;
-            zephyr,memory-region = "mcuboot_s2ram_context";
-         };
+        /* run-time common mcuboot S2RAM support section */
+        mcuboot_s2ram: cpuapp_s2ram@22007fd8 {
+           compatible = "zephyr,memory-region", "mmio-sram";
+           reg = <0x22007fd8 8>;
+           zephyr,memory-region = "mcuboot_s2ram_context";
+        };
 
-         /* S2RAM cpu context RAM allocation */
-         pm_s2ram: cpuapp_s2ram@22007fe0  {
-            compatible = "zephyr,memory-region", "mmio-sram";
-            reg = <0x22007fe0 32>;
-            zephyr,memory-region = "pm_s2ram_context";
-         };
+        /* temporary stack for S2RAM resume logic */
+        pm_s2ram_stack: cpuapp_s2ram_stack@22007fc0 {
+           compatible = "zephyr,memory-region", "mmio-sram";
+           reg = <0x22007fc0 16>;
+           zephyr,memory-region = "pm_s2ram_stack";
+        };
       };
    };
 
