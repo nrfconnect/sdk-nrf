@@ -185,9 +185,9 @@ Gazell
 Matter
 ------
 
-
+* Added documentation for leveraging Matter Compliant Platform certification through the Derived Matter Product (DMP) process.
+  See :ref:`ug_matter_platform_and_dmp`.
 * Updated to using the :kconfig:option:`CONFIG_PICOLIBC` Kconfig option as the C library instead of :kconfig:option:`CONFIG_NEWLIB_LIBC`, in compliance with Zephyr requirements.
-* Added documentation for leveraging Matter Compliant Platform certification through the Derived Matter Product (DMP) process. See :ref:`ug_matter_platform_and_dmp`.
 
 Matter fork
 +++++++++++
