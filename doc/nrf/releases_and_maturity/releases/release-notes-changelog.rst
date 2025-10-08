@@ -844,7 +844,11 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-|no_changes_yet_note|
+* Added support for S2RAM resume on nRF54H20 devices.
+  MCUboot acts as the S2RAM resume mediator and redirects execution to the application's native resume routine.
+
+* Updated KMU mapping to ``BL_PUBKEY`` when MCUboot is used as the immutable bootloader for nRF54L Series devices.
+  You can restore the previous KMU mapping (``UROT_PUBKEY``) with the :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_KMU_UROT_MAPPING` Kconfig option.
 
 Zephyr
 ======
