@@ -110,8 +110,8 @@ class TerminalNotebook:
     def remove_terminal(self, device):
         self.device_terminal_dict[device].feed('\033[2J')
         if self.notebook.get_n_pages() != 1:
-	        self.notebook.remove_page(self.notebook.page_num(self.device_terminal_dict[device]))
-	        self.notebook.queue_draw_area(0,0,-1,-1)
+                self.notebook.remove_page(self.notebook.page_num(self.device_terminal_dict[device]))
+                self.notebook.queue_draw_area(0,0,-1,-1)
         else:
             self.device_terminal_dict[device].set_color_background(COLOR_TERMINAL_INACTIVE)
         del self.device_sending_dict[device]

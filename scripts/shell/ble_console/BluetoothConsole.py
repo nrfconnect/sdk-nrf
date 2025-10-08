@@ -85,7 +85,7 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
         self.window.show_all()
         self.display_console_message("Welcome to Bluetooth Console by Nordic Semiconductor\r\nSelect device from context menu to connect", 8000)
 
-    """Signal from BlueZ"""
+    # Signal from BlueZ
     def bt_read_event(self, *args, **kwargs):
         if len(args) >= 2:
             if (args[0] == READ_CHARACTERISTIC) and ('Value' in args[1]):
