@@ -6,10 +6,10 @@
 
 """ Tools to program multiple nRF5340 Audio DKs """
 
+from os import path, system
 from threading import Thread
-from os import system, path
-from typing import List
-from nrf5340_audio_dk_devices import DeviceConf, SelectFlags, AudioDevice, Location
+
+from nrf5340_audio_dk_devices import AudioDevice, DeviceConf, Location, SelectFlags
 
 MEM_ADDR_UICR_SNR = 0x00FF80F0
 MEM_ADDR_UICR_CH = 0x00FF80F4
@@ -20,7 +20,7 @@ def print_location_labels(locations):
         labels.append(Location.MONO_AUDIO.label)
     print(" + ".join(labels))
 
-def locations_to_bitfield(locations: List[Location]) -> int:
+def locations_to_bitfield(locations: list[Location]) -> int:
     bitfield = 0
     for loc in locations:
         bitfield |= loc.value
@@ -41,10 +41,7 @@ def __populate_uicr(dev):
 
     # Write segger nr to UICR
     ret_val = system(cmd)
-    if ret_val:
-        return False
-    else:
-        return True
+    return not ret_val
 
 
 def _program_cores(dev: DeviceConf) -> int:
@@ -122,7 +119,7 @@ def __program_thread(dev: DeviceConf):
         _program_cores(dev)
 
 
-def program_threads_run(devices_list: List[DeviceConf], sequential: bool = False):
+def program_threads_run(devices_list: list[DeviceConf], sequential: bool = False):
     """Program devices in parallel"""
     threads = []
     # First program net cores if applicable
