@@ -7,8 +7,8 @@ import logging
 import os
 import shlex
 import subprocess
-
 from pathlib import Path
+
 from twister_harness.helpers.utils import find_in_config
 
 logger = logging.getLogger(__name__)
