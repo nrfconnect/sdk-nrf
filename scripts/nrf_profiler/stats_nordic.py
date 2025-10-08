@@ -55,6 +55,8 @@ class StatsNordic:
         elif event_state == EventState.PROCESSING_END:
             timestamps = np.fromiter(map(lambda x: x.proc_end_time, trackings),
                                      dtype=float)
+        else:
+            raise ValueError(f"Invalid EventState: {event_state}")
 
         timestamps = timestamps[np.nonzero((timestamps > start_meas) & (timestamps < end_meas))]
 

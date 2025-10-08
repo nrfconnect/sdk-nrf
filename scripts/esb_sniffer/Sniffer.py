@@ -182,7 +182,7 @@ class Sniffer:
     def stop(self) -> int:
         '''Send stop command to the DK.'''
         if self.jlink is None:
-            raise OSError
+            return ValueError("JLink not initialized")
 
         ret = self.__send_command(RttCommands.SNIFFER_STOP)
 
