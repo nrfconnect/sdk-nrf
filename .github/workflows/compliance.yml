@@ -33,7 +33,7 @@ jobs:
         pip3 install -U pip
         pip3 install -U wheel
         grep -E "^setuptools" scripts/requirements-fixed.txt | cut -d ' ' -f '1' | xargs pip3 install -U
-        grep -E "^python-magic=|^junitparser|^lxml|^gitlint|^pylint|^pykwalify|^yamllint|^unidiff|^vermin|^python-dotenv|^tabulate" scripts/requirements-fixed.txt | cut -d ' ' -f '1' | xargs pip3 install -U
+        grep -E "^python-magic=|^junitparser|^lxml|^gitlint|^pylint|^pykwalify|^yamllint|^unidiff|^vermin|^python-dotenv|^tabulate|^ruff" scripts/requirements-fixed.txt | cut -d ' ' -f '1' | xargs pip3 install -U
         grep -E "^west" scripts/requirements-fixed.txt | cut -d ' ' -f '1' | xargs pip3 install -U
         pip3 show -f west
 
@@ -68,8 +68,7 @@ jobs:
         ls -la
         git log --pretty=oneline | head -n 10
         $ZEPHYR_BASE/scripts/ci/check_compliance.py --annotate \
-        -e KconfigBasicNoModules -e ClangFormat -e Ruff \
-        -e SysbuildKconfigBasicNoModules \
+        -e KconfigBasicNoModules -e ClangFormat -e SysbuildKconfigBasicNoModules \
         -c origin/${BASE_REF}..
 
     - name: upload-results
