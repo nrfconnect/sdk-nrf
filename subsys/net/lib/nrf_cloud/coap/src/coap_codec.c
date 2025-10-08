@@ -294,7 +294,8 @@ static void copy_wifi_info(struct wifi_ob *wifi_encode,
 
 int coap_codec_ground_fix_req_encode(struct lte_lc_cells_info const *const cell_info,
 				     struct wifi_scan_info const *const wifi_info,
-				     uint8_t *buf, size_t *len, enum coap_content_format fmt)
+				     uint8_t *buf, size_t *len, enum coap_content_format fmt,
+				     int64_t timestamp)
 {
 	__ASSERT_NO_MSG((cell_info != NULL) || (wifi_info != NULL));
 	__ASSERT_NO_MSG(buf != NULL);
@@ -318,6 +319,10 @@ int coap_codec_ground_fix_req_encode(struct lte_lc_cells_info const *const cell_
 	if (wifi_info) {
 		copy_wifi_info(&input.ground_fix_req_wifi.ground_fix_req_wifi, wifi_info);
 	}
+
+	input.ground_fix_req_ts.ground_fix_req_ts = timestamp;
+	input.ground_fix_req_ts_present = (timestamp != 0);
+
 	err = cbor_encode_ground_fix_req(buf, *len, &input, &out_len);
 	if (err) {
 		LOG_ERR("Error %d encoding ground fix", err);

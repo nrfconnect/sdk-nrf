@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
  * Generated using zcbor version 0.8.1
@@ -19,7 +19,29 @@
 #error "The type file was generated with a different default_max_qty than this file"
 #endif
 
+static bool decode_repeated_ground_fix_resp_ts(zcbor_state_t *state,
+					       struct ground_fix_resp_ts *result);
 static bool decode_ground_fix_resp(zcbor_state_t *state, struct ground_fix_resp *result);
+
+static bool decode_repeated_ground_fix_resp_ts(zcbor_state_t *state,
+					       struct ground_fix_resp_ts *result)
+{
+	zcbor_log("%s\r\n", __func__);
+
+	bool tmp_result = ((((zcbor_uint32_expect(state, (21)))) &&
+			    (zcbor_uint64_decode(state, (&(*result).ground_fix_resp_ts))) &&
+			    ((((*result).ground_fix_resp_ts <= UINT64_MAX)) ||
+			     (zcbor_error(state, ZCBOR_ERR_WRONG_RANGE), false))));
+
+	if (!tmp_result) {
+		zcbor_trace_file(state);
+		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
+	} else {
+		zcbor_log("%s success\r\n", __func__);
+	}
+
+	return tmp_result;
+}
 
 static bool decode_ground_fix_resp(zcbor_state_t *state, struct ground_fix_resp *result)
 {
@@ -46,7 +68,10 @@ static bool decode_ground_fix_resp(zcbor_state_t *state, struct ground_fix_resp 
 				  true))),
 		     zcbor_union_end_code(state), int_res))) &&
 		  (((zcbor_uint32_expect(state, (4)))) &&
-		   (zcbor_tstr_decode(state, (&(*result).ground_fix_resp_fulfilledWith))))) ||
+		   (zcbor_tstr_decode(state, (&(*result).ground_fix_resp_fulfilledWith)))) &&
+		  zcbor_present_decode(&((*result).ground_fix_resp_ts_present),
+				       (zcbor_decoder_t *)decode_repeated_ground_fix_resp_ts, state,
+				       (&(*result).ground_fix_resp_ts))) ||
 		 (zcbor_list_map_end_force_decode(state), false)) &&
 		zcbor_map_end_decode(state))));
 

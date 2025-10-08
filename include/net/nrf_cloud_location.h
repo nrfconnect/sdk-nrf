@@ -162,6 +162,43 @@ int nrf_cloud_location_request(const struct lte_lc_cells_info *const cells_inf,
 			       const struct wifi_scan_info *const wifi_inf,
 			       const struct nrf_cloud_location_config *const config,
 			       nrf_cloud_location_response_t cb);
+
+/** @brief Perform an nRF Cloud location request over MQTT.
+ *
+ * @param cells_inf Cell info. The required network parameters are
+ *                  cell identifier, mcc, mnc and tac. The required neighboring
+ *                  cell parameters are E-ARFCN and physical cell identity.
+ *                  The parameters for time diff and measurement time are not used.
+ *                  The remaining parameters are optional; including them may improve
+ *                  location accuracy. To omit a request parameter, use the appropriate
+ *                  `NRF_CLOUD_LOCATION_CELL_OMIT_` define.
+ *                  Can be NULL if Wi-Fi info is provided.
+ * @param wifi_inf Wi-Fi info. The MAC address is the only required parameter
+ *                 for each item.
+ *                 To omit a request parameter, use the appropriate
+ *                 `NRF_CLOUD_LOCATION_WIFI_OMIT_` define.
+ *                 Can be NULL if cell info is provided.
+ * @param config   Optional configuration of request. If NULL, fall back to default
+ *                 which is do_reply = true, hi_conf = false, and fallback = true.
+ * @param cb Callback function to receive parsed location result. Only used when
+ *           config->do_reply is true or config is NULL.
+ *           If @kconfig{CONFIG_NRF_CLOUD_LOCATION_ANCHOR_LIST} is enabled, the application
+ *           should not access the anchor list data after exiting the callback as it may
+ *           become invalid.
+ *           If cb is NULL, JSON result will be sent to the cloud event handler as
+ *           an NRF_CLOUD_EVT_RX_DATA_LOCATION event.
+ * @param timestamp       timestamp in ms.
+ * @retval 0       Request sent successfully.
+ * @retval -EACCES Cloud connection is not established; wait for @ref NRF_CLOUD_EVT_READY.
+ * @retval -EDOM The number of access points in the Wi-Fi-only request was smaller than
+ *               the minimum required value NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN.
+ * @return A negative value indicates an error.
+ */
+int nrf_cloud_location_request_timestamped(const struct lte_lc_cells_info *const cells_inf,
+			       const struct wifi_scan_info *const wifi_inf,
+			       const struct nrf_cloud_location_config *const config,
+			       nrf_cloud_location_response_t cb,
+			       int64_t ts);
 #endif /* CONFIG_NRF_CLOUD_MQTT */
 
 /** @brief Process location data received from nRF Cloud over MQTT or REST.

@@ -573,7 +573,8 @@ int nrf_cloud_rest_location_get(struct nrf_cloud_rest_context *const rest_ctx,
 	/* Add the location request payload */
 	ret = nrf_cloud_obj_location_request_payload_add(&payload_obj,
 							 request->cell_info,
-							 request->wifi_info);
+							 request->wifi_info,
+							 request->timestamp);
 	if (ret) {
 		LOG_ERR("Failed to create location request payload, err: %d", ret);
 		goto clean_up;

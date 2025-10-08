@@ -284,7 +284,8 @@ int nrf_cloud_cell_pos_req_json_encode(struct lte_lc_cells_info const *const inf
 /** @brief Add the location request data payload to the provided initialized object */
 int nrf_cloud_obj_location_request_payload_add(struct nrf_cloud_obj *const obj,
 					       struct lte_lc_cells_info const *const cells_inf,
-					       struct wifi_scan_info const *const wifi_inf);
+					       struct wifi_scan_info const *const wifi_inf,
+					       int64_t timestamp);
 
 /** @brief Build a Wi-Fi positioning request in the provided cJSON object using the provided
  * Wi-Fi info. Local MAC addresses are not included in the request.

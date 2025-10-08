@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
  * Generated using zcbor version 0.8.1
@@ -155,11 +155,17 @@ struct ground_fix_req_wifi {
 	struct wifi_ob ground_fix_req_wifi;
 };
 
+struct ground_fix_req_ts {
+	uint64_t ground_fix_req_ts;
+};
+
 struct ground_fix_req {
 	struct ground_fix_req_lte ground_fix_req_lte;
 	bool ground_fix_req_lte_present;
 	struct ground_fix_req_wifi ground_fix_req_wifi;
 	bool ground_fix_req_wifi_present;
+	struct ground_fix_req_ts ground_fix_req_ts;
+	bool ground_fix_req_ts_present;
 };
 
 #ifdef __cplusplus

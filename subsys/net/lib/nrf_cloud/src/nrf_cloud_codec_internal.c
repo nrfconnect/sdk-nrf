@@ -2547,7 +2547,8 @@ cleanup:
 
 int nrf_cloud_obj_location_request_payload_add(struct nrf_cloud_obj *const obj,
 	struct lte_lc_cells_info const *const cells_inf,
-	struct wifi_scan_info const *const wifi_inf)
+	struct wifi_scan_info const *const wifi_inf,
+	int64_t timestamp)
 {
 	if (!obj || (!cells_inf && !wifi_inf)) {
 		return -EINVAL;
@@ -2592,6 +2593,17 @@ int nrf_cloud_obj_location_request_payload_add(struct nrf_cloud_obj *const obj,
 		} else if (err) {
 			LOG_ERR("Failed to add Wi-Fi info to location request, error: %d", err);
 		}
+	}
+
+
+	if (timestamp) {
+		cJSON *meta_obj = cJSON_AddObjectToObjectCS(
+			obj->json, NRF_CLOUD_LOCATION_JSON_KEY_META
+		);
+
+		cJSON_AddNumberToObjectCS(
+			meta_obj, NRF_CLOUD_LOCATION_TYPE_VAL_RECORDED_AT, timestamp
+		);
 	}
 
 	return err;
