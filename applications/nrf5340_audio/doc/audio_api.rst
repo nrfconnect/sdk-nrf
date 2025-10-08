@@ -72,6 +72,14 @@ Bluetooth Audio Rendering and Capture
 
 .. doxygengroup:: audio_app_bt_rendering_and_capture
 
+Bluetooth Content Control
+*************************
+
+| Header file: :file:`applications/nrf5340_audio/src/bluetooth/bt_content_control/bt_content_ctrl.h`
+| Source file: :file:`applications/nrf5340_audio/src/bluetooth/bt_content_control/bt_content_ctrl.c`
+
+.. doxygengroup:: audio_app_bt_content_ctrl
+
 Audio I2S
 *********
 

@@ -5,6 +5,8 @@
  */
 
 /** @file
+ * @addtogroup audio_app_bt_stream
+ * @{
  * @defgroup server_store Storage on unicast client of remote unicast servers.
  * @{
  * @brief Helper functions to manage how a unicast client (gateway side) stores the
@@ -429,6 +431,7 @@ void srv_store_unlock(void);
 int srv_store_init(void);
 
 /**
+ * @}
  * @}
  */
 

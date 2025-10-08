@@ -265,7 +265,7 @@ nRF5340 Audio
   * The buffer count (:kconfig:option:`CONFIG_BT_ISO_TX_BUF_COUNT` and :kconfig:option:`CONFIG_BT_BUF_ACL_TX_COUNT`) to be in-line with SoftDevice Controller (SDC) defaults.
     This can be changed and optimized for specific use cases.
   * The power measurements to be disabled by default in ``debug`` builds.
-    To enable power measurements, set the :kconfig:option:`CONFIG_NRF5340_AUDIO_POWER_MEASUREMENT` Kconfig option to ``y`` in the :file:`applications/nrf5340_audio/prj.conf` file.
+    See :ref:`nrf53_audio_app_configuration_power_measurements` for more information.
   * The audio application targeting the :zephyr:board:`nrf5340dk` to use pins **P1.5** to **P1.9** for the I2S interface instead of **P0.13** to **P0.17**.
     This change was made to avoid conflicts with the onboard peripherals on the nRF5340 DK.
   * The API documentation in the header files listed on the :ref:`audio_api` page.

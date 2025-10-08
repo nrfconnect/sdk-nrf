@@ -4,6 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup audio_app_bt_stream
+ * @{
+ * @defgroup unicast_server Functions for unicast server functionality.
+ * @{
+ * @brief Helper functions to manage unicast server (headset side) functionality.
+ */
+
 #ifndef _UNICAST_SERVER_H_
 #define _UNICAST_SERVER_H_
 
@@ -76,5 +84,10 @@ int unicast_server_disable(void);
  * @return	0 for success, error otherwise.
  */
 int unicast_server_enable(le_audio_receive_cb rx_cb, enum bt_audio_location location);
+
+/**
+ * @}
+ * @}
+ */
 
 #endif /* _UNICAST_SERVER_H_ */

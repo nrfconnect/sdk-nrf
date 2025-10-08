@@ -4,6 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup audio_app_bt_content_ctrl Functions for content control.
+ * @{
+ * @brief Helper functions to manage content control.
+ */
+
 #ifndef _BT_CONTENT_CTRL_H_
 #define _BT_CONTENT_CTRL_H_
 
@@ -70,5 +76,9 @@ bool bt_content_ctlr_media_state_playing(void);
  * @return	0 for success, error otherwise.
  */
 int bt_content_ctrl_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _BT_CONTENT_CTRL_H_ */

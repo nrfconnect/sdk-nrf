@@ -5,6 +5,8 @@
  */
 
 /** @file
+ * @addtogroup audio_app_bt_stream
+ * @{
  * @defgroup unicast_client Functions for unicast client functionality.
  * @{
  * @brief Helper functions to manage unicast client (gateway side) functionality.
@@ -148,6 +150,7 @@ int unicast_client_disable(uint8_t cig_index);
 int unicast_client_enable(uint8_t cig_index, le_audio_receive_cb recv_cb);
 
 /**
+ * @}
  * @}
  */
 

@@ -15,10 +15,11 @@ In addition, Coordinated Set Identification Service (CSIS) is implemented on the
 
 The following limitations apply to this application:
 
-* One CIG, one of the two CIS streams (selectable).
+* One CIG, one of the two CIS streams or a mixed stereo comprising of the two (selectable).
+  See :file:`overlay-unicast_server.conf` for more information.
 * Audio output: I2S/Analog headset output.
 * Audio input: PDM microphone over I2S.
-* Configuration: 16 bit, several bit rates ranging from 32 kbps to 124 kbps.
+* Configuration: 16-bit, several bit rates ranging from 32 kbps to 124 kbps.
 
 .. _nrf53_audio_unicast_server_app_requirements:
 

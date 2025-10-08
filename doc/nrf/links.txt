@@ -1169,6 +1169,7 @@
 .. _`Ranging Service Specification`: https://files.bluetooth.com/download/ras_v1-0/
 
 .. _`Bluetooth SIG company identifiers`: https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
+.. _`Bluetooth Assigned Numbers`: https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Assigned_Numbers/out/en/Assigned_Numbers.pdf
 
 .. _`Bluetooth SIG's Qualification Process`: https://www.bluetooth.com/develop-with-bluetooth/qualification-listing/
 .. _`Launch Studio`: https://qualification.bluetooth.com/
