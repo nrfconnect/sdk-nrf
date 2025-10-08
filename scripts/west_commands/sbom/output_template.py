@@ -13,12 +13,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import quote
 
-from data_structure import Data, FileInfo  # pylint: disable=unused-import
+from data_structure import Data, FileInfo
 from jinja2 import Template, filters
 from west import log
-
-                                           # Ignoring false warning from pylint, FileInfo is used.
-
 
 counter_value = 0
 
