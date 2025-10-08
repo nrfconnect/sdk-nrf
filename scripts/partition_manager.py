@@ -163,8 +163,10 @@ def remove_irrelevant_requirements(reqs, system_reqs, dp):
 
 def get_images_which_need_resolving(reqs, sub_partitions):
     # Get candidates which have placement specs.
-    unsorted = {x for x in reqs if 'placement' in reqs[x] and ('before' in reqs[x]['placement']
-                                                                             or 'after' in reqs[x]['placement'])}
+    unsorted = {
+        x for x in reqs
+        if 'placement' in reqs[x] and ('before' in reqs[x]['placement'] or 'after' in reqs[x]['placement'])
+    }
 
     # Sort sub_partitions by whether they are inside other sub_partitions. Innermost first.
     sorted_subs = sorted(sub_partitions.values(), key=lambda x: len(x['span']))

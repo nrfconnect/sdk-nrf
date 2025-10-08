@@ -25,7 +25,7 @@ class EventType:
         self.data_descriptions = data_descriptions
 
     def __str__(self):
-        return "Name: {} Data: {}".format(self.name, ",".join([" ".join([i, j]) for i,j in zip(self.data_types, self.data_descriptions, strict=False)]))
+        return "Name: {} Data: {}".format(self.name, ",".join([" ".join([i, j]) for i,j in zip(self.data_types, self.data_descriptions, strict=True)]))
 
     def serialize(self):
         return {"name": self.name, "data_types": self.data_types,
