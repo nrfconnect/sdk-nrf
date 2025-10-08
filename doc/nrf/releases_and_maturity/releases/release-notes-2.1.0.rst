@@ -872,7 +872,7 @@ Libraries for networking
     * The APIs are modified for both IoT Hub and DPS interaction.
       The applications and samples that use the library have been updated accordingly.
 
-* :ref:`lib_download_client` library:
+* Download client library:
 
   * Fixed:
 

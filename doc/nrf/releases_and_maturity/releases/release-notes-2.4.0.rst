@@ -812,7 +812,7 @@ Libraries for networking
   * Updated the file :file:`lwm2m_client_utils.h`, which includes new API for FOTA to register application callback to receive state changes and requests for the update process.
   * Removed the old API ``lwm2m_firmware_get_update_state_cb()``.
 
-* :ref:`lib_download_client` library:
+* Download client library:
 
   * Added the :c:func:`download_client_get` function that combines the functionality of functions :c:func:`download_client_set_host`, :c:func:`download_client_start`, and :c:func:`download_client_disconnect`.
 

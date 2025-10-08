@@ -88,7 +88,7 @@ nRF9160
   * nRF9160: Simple MQTT sample - Updated the default server URL to ``mqtt.eclipseprojects.io``.
   * Extracted the certificate, button, and LED handling functionality from :ref:`http_application_update_sample` sample to :file:`samples/nrf9160/http_update/common`, to share them with :ref:`http_modem_delta_update_sample` sample.
   * Moved the :ref:`http_application_update_sample` sample from ``samples/nrf9160/http_application_update/`` to ``samples/nrf9160/http_update/application_update``.
-  * :ref:`lib_download_client` library:
+  * Download client library:
 
     * Reintroduced the optional TCP timeout (enabled by default) on the TCP socket that is used for the download.
       Upon timeout on a TCP socket, the HTTP download will fail and the ``ETIMEDOUT`` error will be returned via the callback handler.

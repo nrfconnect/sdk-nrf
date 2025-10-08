@@ -108,7 +108,7 @@ The following sections provide detailed lists of changes by component.
 nRF9160
 =======
 
-* :ref:`lib_download_client`:
+* Download client:
 
   * Fixed DNS lookup when using non-default PDN.
 

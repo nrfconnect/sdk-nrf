@@ -678,6 +678,9 @@ Libraries for networking
   * :ref:`lib_fota_download`
   * :ref:`lib_ftp_client`
 
+* Removed the Download client library.
+  Use the :ref:`lib_downloader` library instead.
+
 * :ref:`lib_nrf_provisioning` library:
 
   * Added a blocking call to wait for a functional-mode change, relocating the logic from the app into the library.

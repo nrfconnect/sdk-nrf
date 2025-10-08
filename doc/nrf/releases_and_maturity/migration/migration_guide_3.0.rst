@@ -568,32 +568,32 @@ Download client
 
 .. toggle::
 
-   * The :ref:`lib_download_client` library has been deprecated in favor of the :ref:`lib_downloader` library and will be removed in a future |NCS| release.
+   * The Download client library has been deprecated in favor of the :ref:`lib_downloader` library and will be removed in a future |NCS| release.
 
      You can follow this guide to migrate your application to use the :ref:`lib_downloader` library.
      This will reduce the footprint of the application and will decrease memory requirements on the heap.
 
-     To replace :ref:`lib_download_client` with the :ref:`lib_downloader`, complete the following steps.
+     To replace Download client with the :ref:`lib_downloader`, complete the following steps.
 
      1. Kconfig options:
 
          * Replace:
 
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_MAX_HOSTNAME_SIZE` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_MAX_FILENAME_SIZE` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_STACK_SIZE` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_STACK_SIZE` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_SHELL` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_SHELL` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_HTTP_TIMEO_MS` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_COAP_MAX_RETRANSMIT_REQUEST_COUNT` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_COAP_MAX_RETRANSMIT_REQUEST_COUNT` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_COAP_BLOCK_SIZE_512` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_MAX_HOSTNAME_SIZE` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_MAX_FILENAME_SIZE` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_STACK_SIZE`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_STACK_SIZE` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_SHELL`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_SHELL` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_HTTP_TIMEO_MS` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_COAP_MAX_RETRANSMIT_REQUEST_COUNT`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_COAP_MAX_RETRANSMIT_REQUEST_COUNT` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_COAP_BLOCK_SIZE_512` Kconfig option.
 
          * Remove:
 
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_BUF_SIZE` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_CID` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_BUF_SIZE`` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE`` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS`` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_CID`` Kconfig option.
 
          * Add:
 

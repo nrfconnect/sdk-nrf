@@ -156,7 +156,6 @@
 /doc/nrf/libraries/networking/aws_*.rst   @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/networking/azure_*.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/networking/coap_utils.rst @nrfconnect/ncs-terahertz-doc
-/doc/nrf/libraries/networking/download_client.rst @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/networking/downloader.rst @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/networking/fota_download.rst @nrfconnect/ncs-pluto-doc
 /doc/nrf/libraries/networking/ftp_client.rst @nrfconnect/ncs-iot-oulu-tampere-doc
@@ -348,7 +347,6 @@
 /include/mpsl/                            @nrfconnect/ncs-dragoon
 /include/net/                             @nrfconnect/ncs-co-networking
 /include/net/azure_*                      @nrfconnect/ncs-cia
-/include/net/download_client*             @nrfconnect/ncs-modem
 /include/net/downloader*                  @nrfconnect/ncs-modem
 /include/net/nrf_cloud_*                  @nrfconnect/ncs-nrf-cloud
 /include/nfc/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-muffin
@@ -804,7 +802,6 @@
 /subsys/net/lib/mqtt_helper/              @nrfconnect/ncs-cia
 /subsys/net/lib/azure_*                   @nrfconnect/ncs-cia
 /subsys/net/lib/aws_*                     @nrfconnect/ncs-cia
-/subsys/net/lib/download_client*          @nrfconnect/ncs-modem
 /subsys/net/lib/downloader/               @nrfconnect/ncs-modem
 /subsys/net/lib/ftp_client/               @nrfconnect/ncs-iot-oulu
 /subsys/net/lib/hostap_crypto/            @krish2718 @jukkar
@@ -926,7 +923,6 @@
 /tests/subsys/net/lib/aws_*/              @nrfconnect/ncs-cia
 /tests/subsys/net/lib/azure_iot_hub/      @nrfconnect/ncs-cia
 /tests/subsys/net/lib/downloader/         @nrfconnect/ncs-modem
-/tests/subsys/net/lib/download_client/    @nrfconnect/ncs-modem
 /tests/subsys/net/lib/fota_download/      @nrfconnect/ncs-pluto
 /tests/subsys/net/lib/lwm2m_*/            @nrfconnect/ncs-iot-oulu
 /tests/subsys/net/lib/mqtt_helper/        @nrfconnect/ncs-cia
