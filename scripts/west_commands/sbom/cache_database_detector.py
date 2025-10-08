@@ -8,10 +8,11 @@ Detector that detect license using provided cache database file.
 '''
 
 import json
-from west import log
+
 from args import args
-from data_structure import Data
 from common import SbomException
+from data_structure import Data
+from west import log
 
 
 def detect(data: Data, optional: bool):
@@ -19,7 +20,7 @@ def detect(data: Data, optional: bool):
     if args.input_cache_database is None:
         raise SbomException('No input cache database file.')
 
-    with open(args.input_cache_database, 'r') as fd:
+    with open(args.input_cache_database) as fd:
         log.dbg(f'Loading cache database from {args.input_cache_database}')
         db = json.load(fd)
 

@@ -18,10 +18,11 @@
 NRF54L15 BOOTCONF generator.
 """
 
-from intelhex import IntelHex
 import argparse
 import sys
 import warnings
+
+from intelhex import IntelHex
 
 SIZE_MAX_KB = 31
 

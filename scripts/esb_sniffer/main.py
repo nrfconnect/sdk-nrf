@@ -4,13 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-from serial import Serial, SerialException
-from threading import Thread, Event
-from Sniffer import Sniffer
-from time import sleep
+import contextlib
 import logging
-import sys
 import os
+import sys
+from threading import Event, Thread
+from time import sleep
+
+from serial import Serial, SerialException
+from Sniffer import Sniffer
 
 PIPE_DATA = "/tmp/esb_sniffer_data"
 PIPE_COMM = "/tmp/esb_sniffer_comm"
@@ -20,7 +22,7 @@ COMM_STOP_CAPTURE  = "2"
 
 LOG_LVL = logging.INFO
 
-class Process():
+class Process:
     '''Base for actual threads.'''
     def __init__(self, name: str, target, daemon: bool=True):
         self.name = name
@@ -68,10 +70,8 @@ class PipeData(Process):
         return 0
 
     def __del__(self):
-        try:
+        with contextlib.suppress(Exception):
             self.pipe.close()
-        except Exception:
-            pass
 
 class PipeComm(Process):
     '''Start and stop device in response from extcap.'''
@@ -82,7 +82,7 @@ class PipeComm(Process):
 
     def loop(self) -> int:
         try:
-            self.pipe = open(PIPE_COMM, 'r')
+            self.pipe = open(PIPE_COMM)
 
             while not self.stop_evt.is_set():
                 comm = self.pipe.read(len(COMM_START_CAPTURE))
@@ -105,10 +105,8 @@ class PipeComm(Process):
 
     def __del__(self):
         self.data_evt.clear()
-        try:
+        with contextlib.suppress(Exception):
             self.pipe.close()
-        except Exception:
-            pass
 
 class Watchdog(Process):
     '''Watch threads and gracefully stop them in case of error.'''
