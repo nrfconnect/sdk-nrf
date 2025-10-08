@@ -7,7 +7,6 @@
 import logging
 import re
 import subprocess
-import time
 
 from twister_harness import DeviceAdapter
 

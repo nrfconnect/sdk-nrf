@@ -7,8 +7,8 @@
 import logging
 import re
 import subprocess
-from pathlib import Path
 import time
+from pathlib import Path
 
 import psutil
 from twister_harness import DeviceAdapter

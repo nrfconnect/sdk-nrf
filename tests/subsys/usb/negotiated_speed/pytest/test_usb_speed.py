@@ -6,12 +6,11 @@ import os
 import subprocess
 import sys
 import time
-from typing import Dict
 
 from twister_harness import DeviceAdapter
 
 USB_SAMPLE_ID: str = "NordicSemiconductor USBD MSC sample"
-packet_size_vs_speed: Dict[int, str] = {
+packet_size_vs_speed: dict[int, str] = {
     64: "Full Speed",
     512: "High Speed",
     1024: "Super Speed",
