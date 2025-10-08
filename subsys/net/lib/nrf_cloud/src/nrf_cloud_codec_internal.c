@@ -2595,17 +2595,6 @@ int nrf_cloud_obj_location_request_payload_add(struct nrf_cloud_obj *const obj,
 		}
 	}
 
-
-	if (timestamp) {
-		cJSON *meta_obj = cJSON_AddObjectToObjectCS(
-			obj->json, NRF_CLOUD_LOCATION_JSON_KEY_META
-		);
-
-		cJSON_AddNumberToObjectCS(
-			meta_obj, NRF_CLOUD_LOCATION_TYPE_VAL_RECORDED_AT, timestamp
-		);
-	}
-
 	return err;
 }
 
@@ -2956,6 +2945,14 @@ int nrf_cloud_location_response_decode(const char *const buf,
 	} else {
 		/* Indicate that an nRF Cloud error code was found */
 		ret = -EFAULT;
+	}
+
+	if(json_item_string_exists(loc_obj, NRF_CLOUD_MSG_TIMESTAMP_KEY, NULL)) {
+		double timestamp = 0;
+
+		(void)get_num_from_obj(loc_obj, NRF_CLOUD_MSG_TIMESTAMP_KEY, &timestamp);
+		result->timestamp = (int64_t)timestamp;
+		LOG_ERR("Location timestamp: %lld", result->timestamp);
 	}
 
 cleanup:

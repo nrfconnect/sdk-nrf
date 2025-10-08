@@ -74,8 +74,8 @@ static int cloud_service_pos_get(
 	k_sem_reset(&location_ready);
 
 	LOG_DBG("Sending positioning request (MQTT)");
-	err = nrf_cloud_location_request(
-		params->cell_data, params->wifi_data, NULL, cloud_service_location_ready_cb);
+	err = nrf_cloud_location_request_timestamped(
+		params->cell_data, params->wifi_data, NULL, cloud_service_location_ready_cb, 1759934279392);
 	if (err == -EACCES) {
 		LOG_ERR("Cloud connection is not established");
 		return err;

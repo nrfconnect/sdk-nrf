@@ -741,6 +741,8 @@ static void nct_mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 			break;
 		}
 
+		LOG_DBG("payload: %.*s", p->message.payload.len, nct.payload_buf);
+
 		/* Determine if this is a control channel or data channel topic event */
 		if (nrf_cloud_cc_rx_topic_decode(&p->message.topic, &cc.opcode)) {
 			cc.message_id = p->message_id;

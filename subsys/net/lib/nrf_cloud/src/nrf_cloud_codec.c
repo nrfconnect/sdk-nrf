@@ -1063,6 +1063,10 @@ int nrf_cloud_obj_location_request_create(struct nrf_cloud_obj *const obj,
 	if (err) {
 		goto cleanup;
 	}
+
+	if (timestamp) {
+		cJSON_AddNumberToObjectCS(obj->json, NRF_CLOUD_MSG_TIMESTAMP_KEY, timestamp);
+	}
 	/* The data object now belongs to the location request object */
 
 	return 0;
