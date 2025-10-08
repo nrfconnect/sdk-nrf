@@ -30,10 +30,10 @@ Showing DFU Multi Image package header:
 """
 
 import argparse
-import cbor2
-import struct
 import os
+import struct
 
+import cbor2
 
 # Buffer size used for file reads to ensure large files are not loaded into memory at once
 READ_BUFFER_SIZE = 16 * 1024

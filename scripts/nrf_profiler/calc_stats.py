@@ -3,11 +3,11 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-from stats_nordic import StatsNordic
-
 import argparse
-import logging
 import json
+import logging
+
+from stats_nordic import StatsNordic
 
 
 def main():
@@ -28,17 +28,17 @@ def main():
         log_lvl_number = logging.INFO
 
     try:
-        with open(args.test_presets, "r") as test_preset_file:
+        with open(args.test_presets) as test_preset_file:
             test_preset_dict = json.load(test_preset_file)
     except FileNotFoundError:
-        print("File {} not found".format(args.test_presets))
+        print(f"File {args.test_presets} not found")
         return
     except Exception as e:
-        print("Exception while opening {}".format(args.test_presets))
+        print(f"Exception while opening {args.test_presets}")
         print(e)
         return
 
-    sn = StatsNordic("{}.csv".format(args.dataset_name), "{}.json".format(args.dataset_name),
+    sn = StatsNordic(f"{args.dataset_name}.csv", f"{args.dataset_name}.json",
                      log_lvl_number)
     sn.calculate_stats(test_preset_dict, args.start_time, args.end_time)
 

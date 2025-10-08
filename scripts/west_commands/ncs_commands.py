@@ -8,30 +8,35 @@ from __future__ import annotations
 
 import argparse
 import json
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 from textwrap import dedent
-from typing import Any, List, NamedTuple, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, NamedTuple
 
+import yaml
 from west import log
 from west.commands import WestCommand
-from west.manifest import Manifest, MalformedManifest, ImportFlag, \
-    MANIFEST_PROJECT_INDEX, Project, QUAL_MANIFEST_REV_BRANCH
+from west.manifest import (
+    MANIFEST_PROJECT_INDEX,
+    QUAL_MANIFEST_REV_BRANCH,
+    ImportFlag,
+    MalformedManifest,
+    Manifest,
+    Project,
+)
 from west.version import __version__ as west_version
-import yaml
 
 try:
-    from packaging import version
     import pygit2  # type: ignore
+    from packaging import version
 except ImportError:
     sys.exit("Can't import extra dependencies needed for NCS west extensions.\n"
              "Please install packages in nrf/scripts/requirements-extra.txt "
              "with pip3.")
 
 import ncs_west_helpers as nwh
-from pygit2_helpers import commit_affects_files, commit_title, \
-    title_has_sauce, title_is_revert
+from pygit2_helpers import commit_affects_files, commit_title, title_has_sauce, title_is_revert
 
 WEST_V0_13_0_OR_LATER = version.parse(west_version) >= version.parse('0.13.0')
 
@@ -42,7 +47,7 @@ class NcsUserData(NamedTuple):
     upstream_sha: str
     compare_by_default: bool
 
-def ncs_userdata(project: Project) -> Optional[NcsUserData]:
+def ncs_userdata(project: Project) -> NcsUserData | None:
     # Converts raw userdata in 'project' to an NcsUserData, if
     # possible. Otherwise returns None.
 
@@ -127,7 +132,7 @@ class NcsWestCommand(WestCommand):
     # some common code that will be useful to multiple commands
 
     @staticmethod
-    def checked_sha(project: Project, revision: str) -> Optional[str]:
+    def checked_sha(project: Project, revision: str) -> str | None:
         # get revision's SHA and check that it exists in the project.
         # returns the SHA on success, or None if we can't unwrap revision
         # to a SHA which is present in the project.
@@ -176,7 +181,7 @@ class NcsWestCommand(WestCommand):
         self.ncs_pmap = {p.name: p for p in projects}
 
     @staticmethod
-    def die_if_any_uncloned(projects: List[Project]) -> None:
+    def die_if_any_uncloned(projects: list[Project]) -> None:
         uncloned = [project for project in projects if not project.is_cloned()]
         if not uncloned:
             return
@@ -225,7 +230,7 @@ class NcsWestCommand(WestCommand):
             self.parser.error(msg)
         return zephyr_rev
 
-    def to_ncs_repository(self, project: Project) -> Optional[nwh.Repository]:
+    def to_ncs_repository(self, project: Project) -> nwh.Repository | None:
         # Get necessary NCS-side metadata for the project and convert to
         # a Repository.
 
@@ -245,7 +250,7 @@ class NcsWestCommand(WestCommand):
             return None
         return to_repository(project, ncs_sha)
 
-    def to_upstream_repository(self, project: Project) -> Optional[nwh.Repository]:
+    def to_upstream_repository(self, project: Project) -> nwh.Repository | None:
         # Get the upstream metadata for the project and convert to a
         # Repository.
         name = project.name

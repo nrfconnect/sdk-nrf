@@ -14,12 +14,12 @@ relative directory where the external file is located. The value ends at the end
 so don't use any comment closing characters or whitespaces at the end of the line.
 '''
 
-from pathlib import Path
 import re
 import traceback
-from west import log
-from data_structure import Data
+from pathlib import Path
 
+from data_structure import Data
+from west import log
 
 SPDX_TAG_RE = re.compile(
     r'(?:^|[^a-zA-Z0-9\-])SPDX-License-Identifier\s*:\s*([a-zA-Z0-9 :\(\)\.\+\-]+)',
@@ -40,7 +40,7 @@ dir_search_done = set()
 
 def parse_license_file(file: Path):
     try:
-        with open(file, 'r', encoding='8859') as fd:
+        with open(file, encoding='8859') as fd:
             content = fd.read()
     except: # pylint: disable=bare-except
         # Going up to root directory may cause some unexpected IO/permission problems.

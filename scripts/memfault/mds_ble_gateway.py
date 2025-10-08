@@ -3,20 +3,31 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-import logging
 import argparse
+import logging
 import time
-import requests
 
+import requests
 from pc_ble_driver_py import config
 
 config.__conn_ic_id__ = "nrf52"
 
-from pc_ble_driver_py.exceptions import NordicSemiException
-from pc_ble_driver_py.ble_driver import BLEDriver, BLEDriverObserver, BLEUUIDBase, BLEUUID, Flasher
-from pc_ble_driver_py.ble_driver import BLEConfig, BLEConfigConnGatt, BLEAdvData, BLEGapConnParams
-from pc_ble_driver_py.ble_driver import BLEGattStatusCode, BLEGapSecStatus, BLEHci
 from pc_ble_driver_py.ble_adapter import BLEAdapter, BLEAdapterObserver, EvtSync
+from pc_ble_driver_py.ble_driver import (
+    BLEUUID,
+    BLEAdvData,
+    BLEConfig,
+    BLEConfigConnGatt,
+    BLEDriver,
+    BLEDriverObserver,
+    BLEGapConnParams,
+    BLEGapSecStatus,
+    BLEGattStatusCode,
+    BLEHci,
+    BLEUUIDBase,
+    Flasher,
+)
+from pc_ble_driver_py.exceptions import NordicSemiException
 
 logger = logging.getLogger(__name__)
 
@@ -356,7 +367,7 @@ class Memfault(BLEMemfault):
 
     @staticmethod
     def print_progress(chunk_number, reconnection):
-        dots_num = (chunk_number % 4)
+        dots_num = chunk_number % 4
         dots = ''.join('.' * dots_num)
 
         if chunk_number == 1 or reconnection:

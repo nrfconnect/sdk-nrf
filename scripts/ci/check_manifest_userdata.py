@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-from pathlib import Path
-from pprint import pprint
 import logging
 import sys
+from pathlib import Path
+from pprint import pprint
 
-from west.manifest import Manifest
 import pykwalify.core
+from west.manifest import Manifest
 
 HERE = Path(__file__).parent
 SCRIPTS = HERE.parent
@@ -30,7 +30,7 @@ def get_upstream_sha(project):
     if not project.userdata:
         return None
 
-    if not 'ncs' in project.userdata:
+    if 'ncs' not in project.userdata:
         return None
 
     return project.userdata['ncs']['upstream-sha']

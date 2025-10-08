@@ -5,27 +5,28 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import argparse
-from contextlib import closing
-from collections import defaultdict
 import getpass
 import netrc
 import os
 import sqlite3
 import sys
-from typing import Dict, List, NamedTuple, Optional, Union
+from collections import defaultdict
+from contextlib import closing, suppress
+from typing import NamedTuple
 
-import pygit2
 import github
+import pygit2
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'west_commands'))
-from pygit2_helpers import zephyr_commit_area, commit_title
+from pygit2_helpers import commit_title, zephyr_commit_area
+
 
 # A container for pull request information.
 class pr_info(NamedTuple):
     number: int
     title: str
     html_url: str
-    commits: List[pygit2.Commit]
+    commits: list[pygit2.Commit]
 
 NO_PULL_REQUEST = -1
 
@@ -95,7 +96,7 @@ class ResultsDatabase:
         self._con = None
 
     def get_result(self,
-                   commit_or_sha: Union[str, pygit2.Commit]) -> commit_result:
+                   commit_or_sha: str | pygit2.Commit) -> commit_result:
         '''Get the commit_result from a previous run, or None.
 
         You can only call this during the time that this object is
@@ -169,7 +170,7 @@ def parse_args() -> argparse.Namespace:
 
     return ret
 
-def get_gh_credentials() -> Dict:
+def get_gh_credentials() -> dict:
     # Get github.Github credentials.
     #
     # This function tried to get github.com credentials from a
@@ -219,7 +220,7 @@ def get_gh_repo(repo_org_and_name) -> github.Repository:
 
     return github.Github(**get_gh_credentials()).get_repo(repo_org_and_name)
 
-def get_pygit2_commits(args: argparse.Namespace) -> List[pygit2.Commit]:
+def get_pygit2_commits(args: argparse.Namespace) -> list[pygit2.Commit]:
     # Get commit objects for the commit range given by args.start and
     # args.end from the repository in args.local_path.
 
@@ -230,8 +231,8 @@ def get_pygit2_commits(args: argparse.Namespace) -> List[pygit2.Commit]:
 
 def get_commit_results_for_range(
         repo_org_and_name: str,
-        commit_list: List[pygit2.Commit],
-        sqlite_db: Optional[str]) -> List[commit_result]:
+        commit_list: list[pygit2.Commit],
+        sqlite_db: str | None) -> list[commit_result]:
     # Get information about pull requests which are associated with a
     # commit range.
     #
@@ -268,7 +269,7 @@ def get_commit_results_for_range(
 
 def get_results_from_db(
         db: ResultsDatabase,
-        commit_list: List[pygit2.Commit]) -> Dict[str, commit_result]:
+        commit_list: list[pygit2.Commit]) -> dict[str, commit_result]:
     # Fetches known results from db for the commits in commit_list.
     # Prints signs of life to stderr.
 
@@ -318,7 +319,7 @@ def get_result_from_network(commit: pygit2.Commit,
 
     return result
 
-def guess_pr_area(commits: List[pygit2.Commit]) -> str:
+def guess_pr_area(commits: list[pygit2.Commit]) -> str:
     # Assign an area to the PR by taking the area of each commit, and
     # picking the one that happens the most. Hopefully this is good
     # enough. We could consider adding pull request label tracking to
@@ -423,7 +424,5 @@ def main():
             print(f'- {commit.oid} {commit_title(commit)}')
 
 if __name__ == '__main__':
-    try:
+    with suppress(KeyboardInterrupt):
         main()
-    except KeyboardInterrupt:
-        pass

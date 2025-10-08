@@ -22,13 +22,13 @@ __all__ = [
     'zephyr_commit_area',
 ]
 
-from collections.abc import Iterable, Iterator
-from pathlib import Path
-from typing import Optional
 import os
 import re
+from collections.abc import Iterable, Iterator
+from pathlib import Path
 
 import pygit2  # type: ignore
+
 
 def title_is_revert(title: str) -> bool:
     '''Return True if and only if the title starts with 'Revert '.
@@ -185,7 +185,7 @@ def zephyr_commit_area(commit: pygit2.Commit) -> str:
 
     return 'Other'
 
-def _commit_area_prefix(commit_title: str) -> Optional[str]:
+def _commit_area_prefix(commit_title: str) -> str | None:
     '''Get the prefix of a pull request title which describes its area.
 
     This returns the "raw" prefix as it appears in the title. To

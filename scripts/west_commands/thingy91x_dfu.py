@@ -3,27 +3,28 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-import sys
-import usb.core
-import usb.util
 import argparse
 import logging as default_logging
-import serial
-import serial.tools.list_ports
 import os
+import re
+import sys
 import time
-from west.commands import WestCommand
-import west.log
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
-import re
+
+import serial
+import serial.tools.list_ports
+import usb.core
+import usb.util
+import west.log
+from west.commands import WestCommand
 
 # Workaround for pyusb on windows
 # libusb1 backend is used on all platforms,
 # but on windows, the library DLL is not found automatically
 if sys.platform == "win32":
-    import usb.backend.libusb1
     import libusb
+    import usb.backend.libusb1
     if usb.backend.libusb1.get_backend() is None:
         usb.backend.libusb1.get_backend(find_library=lambda x : libusb.dll._name)
 
@@ -343,7 +344,7 @@ if __name__ == "__main__":
 
 class Thingy91XDFU(WestCommand):
     def __init__(self):
-        super(Thingy91XDFU, self).__init__(
+        super().__init__(
             "thingy91x-dfu",
             "Thingy:91 X DFU",
             "Put Thingy:91 X in DFU mode and update using MCUBoot serial recovery.",
@@ -364,7 +365,7 @@ class Thingy91XDFU(WestCommand):
 
 class Thingy91XReset(WestCommand):
     def __init__(self):
-        super(Thingy91XReset, self).__init__(
+        super().__init__(
             "thingy91x-reset",
             "Thingy:91 X Reset",
             "Reset Thingy:91 X.",

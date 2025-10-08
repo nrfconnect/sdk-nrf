@@ -3,8 +3,8 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-import re
 import collections
+import re
 
 ConfigOption = collections.namedtuple('ConfigOption', 'range option_name help type')
 
@@ -43,7 +43,7 @@ BLE_QOS_OPTIONS = {
 # OPTION_ID: (struct format, struct member names, binary to human-readable conversion function, human-readable to binary conversion function)
 BLE_QOS_OPTIONS_FORMAT = {
     'blacklist' : ('<H', ['wifi_blacklist'], lambda x: str([i for i in range(0,16) if x & (1 << i) != 0])[1:-1], lambda x: sum(map(lambda y: (1 << int(y)), re.findall(r'([\d]+)', x)))),
-    'chmap': ('<5s', ['channel_map'], lambda x: '0x{:02X}{:02X}{:02X}{:02X}{:02X}'.format(x[4],x[3],x[2],x[1],x[0]), None),
+    'chmap': ('<5s', ['channel_map'], lambda x: f'0x{x[4]:02X}{x[3]:02X}{x[2]:02X}{x[1]:02X}{x[0]:02X}', None),
     'param_ble': ('<HBhhHBHHH', ['sample_count_min', 'min_channel_count', 'weight_crc_ok', 'weight_crc_error', 'ble_block_threshold', 'eval_max_count', 'eval_duration', 'eval_keepout_duration', 'eval_success_threshold'], None, None),
     'param_wifi' : ('<hhh', ['wifi_rating_inc', 'wifi_present_threshold', 'wifi_active_threshold'], None, None),
 }

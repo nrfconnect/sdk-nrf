@@ -39,7 +39,6 @@ logging.getLogger("pykwalify.core").setLevel(50)
 
 sys.path.append(os.path.join(zephyr_base, 'scripts'))
 import list_boards
-
 from pylib.twister.twisterlib.statuses import TwisterStatus
 
 
@@ -101,11 +100,13 @@ class Tag:
             (self._exclude_match_fn and self._exclude_match_fn(path))
 
     def __repr__(self):
-        return "<Tag {}>".format(self.name)
+        return f"<Tag {self.name}>"
 
 class Filters:
     def __init__(self, modified_files, ignore_path, alt_tags, testsuite_root,
-                 pull_request=False, platforms=[], detailed_test_id=True, quarantine_list=None, tc_roots_th=20):
+                 pull_request=False, platforms=None, detailed_test_id=True, quarantine_list=None, tc_roots_th=20):
+        if platforms is None:
+            platforms = []
         self.modified_files = modified_files
         self.testsuite_root = testsuite_root
         self.resolved_files = []
@@ -162,7 +163,7 @@ class Filters:
 
     def find_modules(self):
         if 'west.yml' in self.modified_files and args.commits is not None:
-            print(f"Manifest file 'west.yml' changed")
+            print("Manifest file 'west.yml' changed")
             print("=========")
             old_manifest_content = repo_to_scan.git.show(f"{args.commits[:-2]}:west.yml")
             with open("west_old.yml", "w") as manifest:
@@ -212,18 +213,17 @@ class Filters:
             p = re.match(r"^arch\/([^/]+)\/", f)
             if not p:
                 p = re.match(r"^include\/zephyr\/arch\/([^/]+)\/", f)
-            if p:
-                if p.group(1) != 'common':
-                    archs.add(p.group(1))
-                    # Modified file is treated as resolved, since a matching scope was found
-                    self.resolved_files.append(f)
+            if p and p.group(1) != 'common':
+                archs.add(p.group(1))
+                # Modified file is treated as resolved, since a matching scope was found
+                self.resolved_files.append(f)
 
         _options = []
         for arch in archs:
             _options.extend(["-a", arch ])
 
         if _options:
-            logging.info(f'Potential architecture filters...')
+            logging.info('Potential architecture filters...')
             if self.platforms:
                 for platform in self.platforms:
                     _options.extend(["-p", platform])
@@ -258,7 +258,7 @@ class Filters:
                 c = (zephyr_base / changed).resolve()
                 if c.is_relative_to(board.dir.resolve()):
                     for file in glob.glob(os.path.join(board.dir, f"{board.name}*.yaml")):
-                        with open(file, 'r', encoding='utf-8') as f:
+                        with open(file, encoding='utf-8') as f:
                             b = yaml.load(f.read(), Loader=SafeLoader)
                             matched_boards[b['identifier']] = board
 
@@ -280,7 +280,7 @@ class Filters:
             _options.extend(["-p", board ])
 
         if _options:
-            logging.info(f'Potential board filters...')
+            logging.info('Potential board filters...')
             self.get_plan(_options)
 
     def is_in_testsuite_root(self, new_testsuite_root):
@@ -348,7 +348,7 @@ class Filters:
 
     def find_tags(self):
 
-        with open(self.tag_cfg_file, 'r') as ymlfile:
+        with open(self.tag_cfg_file) as ymlfile:
             tags_config = yaml.safe_load(ymlfile)
 
         tags = {}
@@ -384,8 +384,10 @@ class Filters:
         if exclude_tags:
             logging.info(f'Potential tag based filters: {exclude_tags}')
 
-    def find_excludes(self, skip=[]):
-        with open(self.ignore_path, "r") as twister_ignore:
+    def find_excludes(self, skip=None):
+        if skip is None:
+            skip = []
+        with open(self.ignore_path) as twister_ignore:
             ignores = twister_ignore.read().splitlines()
             ignores = filter(lambda x: not x.startswith("#"), ignores)
 
@@ -405,7 +407,7 @@ class Filters:
 
         if self.full_twister:
             _options = []
-            logging.info(f'Need to run full or partial twister...')
+            logging.info('Need to run full or partial twister...')
             if self.platforms:
                 for platform in self.platforms:
                     _options.extend(["-p", platform])
@@ -416,7 +418,7 @@ class Filters:
                 _options.extend(self.tag_options)
                 self.get_plan(_options, True)
         else:
-            logging.info(f'No twister needed or partial twister run only...')
+            logging.info('No twister needed or partial twister run only...')
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -482,7 +484,7 @@ if __name__ == "__main__":
         commit = repo_to_scan.git.diff("--name-only", args.commits)
         files = commit.split("\n")
     elif args.modified_files:
-        with open(args.modified_files, "r") as fp:
+        with open(args.modified_files) as fp:
             files = json.load(fp)
 
     if files:

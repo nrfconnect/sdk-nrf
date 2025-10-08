@@ -8,8 +8,9 @@ Post-processing of input files.
 '''
 
 import hashlib
-from data_structure import Data, FileInfo, Package
+
 from common import SbomException
+from data_structure import Data, FileInfo, Package
 
 
 def remove_duplicates(data: Data):

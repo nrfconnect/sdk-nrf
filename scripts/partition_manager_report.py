@@ -5,9 +5,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 import argparse
-import yaml
 import platform
 from os import path
+
+import yaml
 
 
 def get_size_str(size):
@@ -98,15 +99,15 @@ def main():
         else:
             domain_name = ''
         items = []
-        with open(i, 'r') as f:
+        with open(i) as f:
             items = yaml.safe_load(f).items()
         regions = set(val['region'] for _, val in items)
         for r in sorted(regions):
             pm_config_primary = {k: v for k, v in items if v['region'] == r}
-            min_address = min((part['address'] for part in pm_config_primary.values()
-                               if 'address' in part))
-            max_address = max((part['address'] + part['size'] for part in pm_config_primary.values()
-                               if 'address' in part))
+            min_address = min(part['address'] for part in pm_config_primary.values()
+                               if 'address' in part)
+            max_address = max(part['address'] + part['size'] for part in pm_config_primary.values()
+                               if 'address' in part)
             print_region(domain_name, r, max_address - min_address, pm_config_primary)
 
 

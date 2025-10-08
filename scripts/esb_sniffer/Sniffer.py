@@ -4,22 +4,26 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-from pynrfjprog.Parameters import CoProcessor
-from pynrfjprog.APIError import APIError
-from pynrfjprog.LowLevel import API
-from time import sleep
-from enum import Enum
 import logging
 import struct
+from enum import Enum
+from time import sleep
+
+from pynrfjprog.APIError import APIError
+from pynrfjprog.LowLevel import API
+from pynrfjprog.Parameters import CoProcessor
+
 
 class RttCommands(Enum):
     SNIFFER_START  = 1
     SNIFFER_STOP   = 2
     SNIFFER_STATUS = 3
 
-class Sniffer():
+class Sniffer:
     '''API to communicate with the DK.'''
-    def __init__(self, packet_len: int=45, rtt_channels: dict={"data_down":1, "comm_down":2, "comm_up":1}, read_at_once: int=2000, swd_freq_khz: int=8000, log_lvl=logging.INFO):
+    def __init__(self, packet_len: int=45, rtt_channels: dict=None, read_at_once: int=2000, swd_freq_khz: int=8000, log_lvl=logging.INFO):
+        if rtt_channels is None:
+            rtt_channels = {"data_down": 1, "comm_down": 2, "comm_up": 1}
         self.jlink = None
         self.remaining_data = None
         self.packet_len = packet_len
@@ -164,7 +168,7 @@ class Sniffer():
     def start(self) -> int:
         '''Send start command to the DK.'''
         if self.jlink is None:
-            raise IOError
+            raise OSError
 
         ret = self.__send_command(RttCommands.SNIFFER_START)
 
@@ -178,7 +182,7 @@ class Sniffer():
     def stop(self) -> int:
         '''Send stop command to the DK.'''
         if self.jlink is None:
-            raise IOError
+            raise OSError
 
         ret = self.__send_command(RttCommands.SNIFFER_STOP)
 
@@ -192,7 +196,7 @@ class Sniffer():
     def get_status(self) -> str:
         '''Send status command to the DK.'''
         if self.jlink is None:
-            raise IOError
+            raise OSError
 
         ret = self.__send_command(RttCommands.SNIFFER_STATUS)
 
@@ -208,13 +212,13 @@ class Sniffer():
     def read(self) -> bytearray:
         '''Read data from the DK.'''
         if self.jlink is None:
-            raise IOError
+            raise OSError
 
         try:
             buff = self.jlink.rtt_read(self.rtt_ch["data_down"], self.read_at_once*self.packet_len, encoding=None)
         except APIError as err:
             self.logger.error("JLink connection error while reading packets: err = %d", err.err_code)
-            raise IOError
+            raise OSError
 
         packets = self.__gen_pcap_packets(buff)
 
@@ -223,7 +227,7 @@ class Sniffer():
     def _get_com_port(self) -> 'str|None':
         '''Find serial ports of the connected DK.'''
         if self.jlink is None:
-            raise IOError
+            raise OSError
 
         try:
             sn = self.jlink.read_connected_emu_snr()

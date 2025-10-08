@@ -4,8 +4,8 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-import re
 import argparse
+import re
 
 # Tests for validating the regexes are located tests/unity/wrap
 
