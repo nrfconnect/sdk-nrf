@@ -740,7 +740,7 @@ Libraries for networking
   * Removed the Kconfig option :kconfig:option:`CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS`.
     The maximum number of supported neighbor cell measurements for HERE location services depends on the :kconfig:option:`CONFIG_LTE_NEIGHBOR_CELLS_MAX` Kconfig option.
 
-* :ref:`lib_download_client` library:
+* Download client library:
 
   * Updated the library so that it does not retry download on disconnect.
   * Fixed a race condition when starting the download.

@@ -232,7 +232,7 @@ Documentation
 
     * Secure Partition Manager (SPM)
     * ``at_cmd`` library
-    * :ref:`lib_download_client`
+    * Download client
     * :ref:`lib_aws_fota`
     * :ref:`lib_fota_download`
     * Secure Services

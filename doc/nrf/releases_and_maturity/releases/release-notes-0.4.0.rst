@@ -90,7 +90,7 @@ nRF9160
 * Split the previous ``nrf9160_pca10090`` board into two boards, one for the secure (``nrf9160_pca10090``) and one for the non-secure (``nrf9160_pca10090ns``) image (both reside in the same board folder)
 * Added the following samples:
 
-  * :ref:`http_application_update_sample` - demonstrates a basic FOTA (firmware over-the-air) update using the :ref:`lib_download_client`
+  * :ref:`http_application_update_sample` - demonstrates a basic FOTA (firmware over-the-air) update using the Download client
   * nRF9160: Simple MQTT - connects to an MQTT broker and sends and receives data
   * :ref:`nrf_coap_client_sample` - receives data from a public CoAP server using the Nordic CoAP library
   * Simple GPS sample - gets the current position and logs it on UART
@@ -109,7 +109,7 @@ Common libraries
 
 * Added the following libraries:
 
-  * :ref:`lib_download_client` - downloads files over HTTP and reports back the progress (as data fragments) to the application
+  * Download client - downloads files over HTTP and reports back the progress (as data fragments) to the application
   * Nordic CoAP library - ported to the |NCS|
   * Secure Partition Manager (SPM) (replacing Secure Boot) - configures security attributions for the flash, SRAM, and peripherals
 
@@ -187,7 +187,7 @@ Documentation
   * :ref:`lib_nfc_ndef`
   * :ref:`app_event_manager` and :ref:`nrf_profiler`
   * :ref:`at_cmd_parser_readme`, :ref:`at_params_readme`, and :ref:`modem_info_readme`
-  * :ref:`lib_download_client`
+  * Download client
   * Secure Partition Manager (SPM)
   * :ref:`st25r3911b_nfc_readme`
   * :ref:`dfu_smp_readme` and :ref:`lbs_readme`

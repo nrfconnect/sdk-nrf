@@ -42,7 +42,7 @@ Changes
 =======
 
 * Added the new :ref:`lib_downloader` library to the glue layer (:file:`lwm2m_os.c/h`).
-  Removed the deprecated :ref:`lib_download_client` from the glue layer.
+  Removed the deprecated Download client from the glue layer.
 * Added missing documentation for some glue layer functions.
 * Removed the error type ``LWM2M_CARRIER_ERROR_RUN``.
 

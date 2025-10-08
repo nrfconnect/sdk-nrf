@@ -4318,10 +4318,10 @@ NCSDK-11432: DFU: Erasing secondary slot returns error response
 .. rst-class:: v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 NCSDK-6238: Socket API calls might hang when using Download client
-  When using the :ref:`lib_download_client` library with HTTP (without TLS), the application might not process incoming fragments fast enough, which can starve the :ref:`nrfxlib:nrf_modem` buffers and make calls to the Modem library hang.
-  Samples and applications that are affected include those that use the :ref:`lib_download_client` library to download files through HTTP, or those that use :ref:`lib_fota_download` with modem updates enabled.
+  When using the Download client library with HTTP (without TLS), the application might not process incoming fragments fast enough, which can starve the :ref:`nrfxlib:nrf_modem` buffers and make calls to the Modem library hang.
+  Samples and applications that are affected include those that use the Download client library to download files through HTTP, or those that use :ref:`lib_fota_download` with modem updates enabled.
 
-  **Workaround:** Set :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS` with the :ref:`lib_download_client` library.
+  **Workaround:** Set ``CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS`` with the Download client library.
 
 .. rst-class:: v1-1-0
 
@@ -4333,7 +4333,7 @@ Jobs not received after reset
 .. rst-class:: v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
 
 NCSDK-24305: fota_download library sends FOTA_DOWNLOAD_EVT_FINISHED when unable to connect
-  The :ref:`lib_download_client` library do not resume a download if the device cannot connect to a target server.
+  The Download client library do not resume a download if the device cannot connect to a target server.
   This causes the :ref:`lib_fota_download` library to incorrectly assume that the download has completed.
 
   **Workaround:** Set the :kconfig:option:`CONFIG_FOTA_SOCKET_RETRIES` Kconfig option to ``0``.

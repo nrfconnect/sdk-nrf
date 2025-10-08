@@ -1184,7 +1184,7 @@ Libraries for networking
 
   * Fixed a NULL pointer issue that could occur when there were some valid predictions in flash but not the one required at the current time.
 
-* :ref:`lib_download_client` library:
+* Download client library:
 
   * Removed the deprecated ``download_client_connect`` function.
 

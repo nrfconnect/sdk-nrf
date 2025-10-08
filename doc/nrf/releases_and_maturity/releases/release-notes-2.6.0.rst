@@ -1199,7 +1199,7 @@ Libraries for networking
     It now contains more details on how to use the Azure CLI to set up an IoT Hub.
     The documentation on credential provisioning has also been updated, both for nRF91 Series devices and nRF70 Series devices.
 
-* :ref:`lib_download_client` library:
+* Download client library:
 
   * Added the ``family`` parameter to the :c:struct:`download_client_cfg` structure.
     This is used to optimize the download sequence when the device only supports IPv4 or IPv6.
