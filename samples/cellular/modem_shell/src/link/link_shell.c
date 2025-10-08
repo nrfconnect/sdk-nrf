@@ -5,11 +5,12 @@
  */
 
 #include <stdio.h>
+#include <unistd.h>
+#include <getopt.h>
 
 #include <zephyr/shell/shell.h>
 #include <zephyr/shell/shell_uart.h>
-#include <unistd.h>
-#include <getopt.h>
+#include <zephyr/sys/poweroff.h>
 
 #include <nrf_modem_at.h>
 #include <modem/nrf_modem_lib.h>
@@ -375,6 +376,7 @@ static const char link_modem_usage_str[] =
 	"      --init,           Initialize modem using nrf_modem_lib_init()\n"
 	"      --shutdown,       Shutdown modem\n"
 	"      --shutdown_cfun0, Send AT+CFUN=0 AT command and shutdown modem\n"
+	"      --systemoff,      Send AT+CFUN=0 AT command, shutdown modem and trigger SYSTEMOFF\n"
 	"  -h, --help,           Shows this help information\n"
 	"\n"
 	"Several options can be given and they are run in the given order.";
@@ -448,6 +450,7 @@ enum {
 	LINK_SHELL_OPT_MODEM_INIT,
 	LINK_SHELL_OPT_MODEM_SHUTDOWN,
 	LINK_SHELL_OPT_MODEM_SHUTDOWN_CFUN0,
+	LINK_SHELL_OPT_MODEM_SYSTEMOFF,
 	LINK_SHELL_OPT_ENVEVAL_EVAL_TYPE,
 	LINK_SHELL_OPT_ENVEVAL_PLMNS,
 };
@@ -528,6 +531,7 @@ static struct option long_options[] = {
 	{ "init", no_argument, 0, LINK_SHELL_OPT_MODEM_INIT },
 	{ "shutdown", no_argument, 0, LINK_SHELL_OPT_MODEM_SHUTDOWN },
 	{ "shutdown_cfun0", no_argument, 0, LINK_SHELL_OPT_MODEM_SHUTDOWN_CFUN0 },
+	{ "systemoff", no_argument, 0, LINK_SHELL_OPT_MODEM_SYSTEMOFF },
 	{ "eval_type", required_argument, 0, LINK_SHELL_OPT_ENVEVAL_EVAL_TYPE },
 	{ "plmns", required_argument, 0, LINK_SHELL_OPT_ENVEVAL_PLMNS },
 	{ 0, 0, 0, 0 }
@@ -1718,6 +1722,14 @@ static int link_shell_modem(const struct shell *shell, size_t argc, char **argv)
 			 */
 			nrf_modem_at_printf("AT+CFUN=0");
 			nrf_modem_lib_shutdown();
+			break;
+		case LINK_SHELL_OPT_MODEM_SYSTEMOFF:
+			operation_selected = true;
+			nrf_modem_at_printf("AT+CFUN=0");
+			nrf_modem_lib_shutdown();
+			printk("Entering SYSTEMOFF in 1 second, wakeup only with reset\n");
+			k_sleep(K_SECONDS(1));
+			sys_poweroff();
 			break;
 
 		case 'h':
