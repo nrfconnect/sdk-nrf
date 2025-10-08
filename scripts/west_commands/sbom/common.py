@@ -7,14 +7,15 @@
 Common utility functions used by west ncs-sbom command.
 '''
 
-import os
-import json
-import subprocess
 import concurrent.futures
-from time import time
+import json
+import os
+import subprocess
+from collections.abc import Callable, Iterable
 from pathlib import Path
-from typing import Callable, Iterable
 from tempfile import NamedTemporaryFile
+from time import time
+
 from west import log
 
 
@@ -112,13 +113,13 @@ def concurrent_pool_iter(func: Callable, iterable: Iterable, use_process: bool=F
         it = executor.map(func, collected, chunksize=chunksize)
     else:
         it = map(func, collected)
-    return zip(it, collected, range(len(collected)))
+    return zip(it, collected, range(len(collected)), strict=False)
 
 
 def dbg_time(message: 'str|None' = None, level = log.VERBOSE_NORMAL):
     '''Return object that will convert to string containing time elapsed from this function call.
     Optionally it can show a debug log'''
-    if log.VERBOSE < level:
+    if level > log.VERBOSE:
         return 0
     class TimeRet:
         def __init__(self, t):

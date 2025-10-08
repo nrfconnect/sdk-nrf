@@ -6,8 +6,9 @@
 
 
 import argparse
-import yaml
 from os import path
+
+import yaml
 from partition_manager import PartitionError
 
 
@@ -47,10 +48,10 @@ def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=
         def add_line(text_before_split, text_after_split):
             if current_domain is None or domain == current_domain or 'LABEL' in text_before_split:
                 # Don't prefix with domain for the current domain
-                config_lines.append('{}PM_{}{}{}'.format(head, text_before_split, split, text_after_split))
+                config_lines.append(f'{head}PM_{text_before_split}{split}{text_after_split}')
             else:
                 config_lines.append('{}PM{}_{}{}{}'.format(
-                    head, '_{}'.format(domain) if domain is not None else '',
+                    head, f'_{domain}' if domain is not None else '',
                     text_before_split, split, text_after_split))
 
         for name, partition in sorted(pm_config.items(),
@@ -83,7 +84,7 @@ def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=
 
             extra_params = partition.get('extra_params')
             if extra_params:
-                for epkey in extra_params.keys():
+                for epkey in extra_params:
                     add_line(f'{name_upper}_EXTRA_PARAM_{epkey}', extra_params[epkey])
 
             if partition_has_device(partition):
@@ -105,14 +106,13 @@ def get_config_lines(gpm_config, greg_config, head, split, dest, current_domain=
                     if region['default_driver_kconfig']:
                         add_line(f'{name_upper}_DEFAULT_DRIVER_KCONFIG', region['default_driver_kconfig'])
 
-            elif dest is DEST_KCONFIG:
-                if 'span' in partition.keys():
-                    add_line(f'{name_upper}_SPAN', string_of_strings(partition['span']))
+            elif dest is DEST_KCONFIG and 'span' in partition:
+                add_line(f'{name_upper}_SPAN', string_of_strings(partition['span']))
 
         add_line('NUM', str(partition_id))
 
         def find_depth(key, depth=0):
-            if 'span' in pm_config[key].keys():
+            if 'span' in pm_config[key]:
                 return find_depth(pm_config[key]['span'][0], depth + 1)
             return depth
 
@@ -228,7 +228,7 @@ def main():
         else:
             # Root domain does not have domain suffix in the partitions file name.
             domain_name = ''
-        with open(partition, 'r') as f:
+        with open(partition) as f:
             gpm_config[domain_name] = yaml.safe_load(f)
 
     for region in args.input_regions:
@@ -238,14 +238,14 @@ def main():
         else:
             # Root domain does not have domain suffix in the regions file name.
             domain_name = ''
-        with open(region, 'r') as f:
+        with open(region) as f:
             greg_config[domain_name] = yaml.safe_load(f)
 
     if args.config_file:
         write_kconfig_file(gpm_config, greg_config, args.config_file)
 
     if args.header_files:
-        for name, header_file in zip(args.images, args.header_files):
+        for name, header_file in zip(args.images, args.header_files, strict=False):
             write_gpm_config(gpm_config, greg_config, name, header_file)
 
 
