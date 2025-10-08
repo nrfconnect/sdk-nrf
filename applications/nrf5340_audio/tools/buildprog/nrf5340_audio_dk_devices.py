@@ -10,7 +10,6 @@ Settings for building and flashing nRF5340 Audio DK for different targets.
 from dataclasses import InitVar, dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import List
 
 
 class SelectFlags(str, Enum):
@@ -103,8 +102,8 @@ class DeviceConf:
     nrf5340_audio_dk_dev: AudioDevice
     recover_on_fail: bool
 
-    cores: InitVar[List[Core]]
-    devices: InitVar[List[AudioDevice]]
+    cores: InitVar[list[Core]]
+    devices: InitVar[list[AudioDevice]]
     _only_reboot: InitVar[SelectFlags]
     # Post init variables
     only_reboot: SelectFlags = field(init=False, default=SelectFlags.NOT)
@@ -116,7 +115,7 @@ class DeviceConf:
         init=False, default=SelectFlags.NOT)
 
     def __post_init__(
-        self, cores: List[Core], devices: List[AudioDevice], _only_reboot: SelectFlags,
+        self, cores: list[Core], devices: list[AudioDevice], _only_reboot: SelectFlags,
     ):
         device_selected = self.nrf5340_audio_dk_dev in devices
         self.only_reboot = _only_reboot if device_selected else SelectFlags.NOT

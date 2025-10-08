@@ -9,28 +9,28 @@ Script to build and program the nRF5340 Audio project to multiple devices
 """
 
 import argparse
-import sys
-import shutil
-import os
-import json
-import subprocess
-import re
 import getpass
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
 from pathlib import Path
+
 from colorama import Fore, Style
-from prettytable import PrettyTable
 from nrf5340_audio_dk_devices import (
-    BuildType,
-    Location,
-    DeviceConf,
-    BuildConf,
     AudioDevice,
-    SelectFlags,
+    BuildConf,
+    BuildType,
     Core,
+    DeviceConf,
+    Location,
+    SelectFlags,
     Transport,
 )
+from prettytable import PrettyTable
 from program import program_threads_run
-
 
 BUILDPROG_FOLDER = Path(__file__).resolve().parent
 NRF5340_AUDIO_FOLDER = (BUILDPROG_FOLDER / "../..").resolve()
