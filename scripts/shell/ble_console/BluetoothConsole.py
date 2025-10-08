@@ -54,11 +54,11 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
         self.text_message = self.text_window.get_buffer()
 
         try:
-            BluetoothConnection.__init__(self, self.bt_read_event, self.display_message)
+            BluetoothConnection.__init__(self, self.bt_read_event, self.display_console_message)
         except DBusException:
             self.popup_warning("Bluetooth stack not reachable on D-Bus. Ensure Bluetooth device is connected and restart program.")
 
-        TerminalNotebook.__init__(self, self.write_bluetooth, vbox, self.unconnect_from_menu, self.display_message)
+        TerminalNotebook.__init__(self, self.write_bluetooth, vbox, self.unconnect_from_menu, self.display_console_message)
 
         GLib.timeout_add(1000, self.update_device_list)
 
@@ -83,7 +83,7 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
         vbox.pack_start(self.text_window, False, False, 0)
         self.text_window.set_size_request(-1,0)
         self.window.show_all()
-        self.display_message("Welcome to Bluetooth Console by Nordic Semiconductor\r\nSelect device from context menu to connect", 8000)
+        self.display_console_message("Welcome to Bluetooth Console by Nordic Semiconductor\r\nSelect device from context menu to connect", 8000)
 
     """Signal from BlueZ"""
     def bt_read_event(self, *args, **kwargs):
@@ -97,7 +97,7 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
     def export_name_from_rec_arg(self, argument):
         return argument.split('/service',1)[0]
 
-    def display_message(self, message, timeout = 3000):
+    def display_console_message(self, message, timeout = 3000):
         self.text_window.set_size_request(-1,-1)
         self.text_message.set_text(message)
         GLib.timeout_add(timeout, self.clr_display_message)
@@ -174,12 +174,12 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
         GLib.idle_add(self.send_data)
         self.connect_to_device(device)
         self.add_terminal(device, self.get_device_name(device))
-        self.display_message("Connected to " + device)
+        self.display_console_message("Connected to " + device)
 
     def disconnect(self, device):
         self.disconnect_from_device(device)
         self.remove_terminal(device)
-        self.display_message("Disonnected from " + device)
+        self.display_console_message("Disonnected from " + device)
 
     def popup_warning(self, text):
         popup = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING,
