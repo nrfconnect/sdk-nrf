@@ -4,8 +4,8 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-import re
 import argparse
+import re
 
 
 def func_names_from_header(in_file, out_file, exclude=None):

@@ -3,30 +3,30 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-import matplotlib
-from matplotlib.collections import PatchCollection
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from matplotlib.widgets import Button
-from enum import Enum
-
-import numpy as np
+import json
+import logging
 import sys
 import time
-import logging
-import json
+from enum import Enum
 
-from processed_events import ProcessedEvents, EM_MEM_ADDRESS_DATA_DESC
-from events import TrackedEvent, EventType
-from stream import StreamError
+import matplotlib
+import matplotlib.animation as animation
+import matplotlib.pyplot as plt
+import numpy as np
+from events import EventType, TrackedEvent
+from matplotlib.collections import PatchCollection
+from matplotlib.widgets import Button
 from plot_nordic_config import PlotNordicConfig
+from processed_events import EM_MEM_ADDRESS_DATA_DESC, ProcessedEvents
+from stream import StreamError
+
 
 class MouseButton(Enum):
     LEFT = 1
     MIDDLE = 2
     RIGHT = 3
 
-class DrawState():
+class DrawState:
     def __init__(self, timeline_width_init,
                  event_processing_rect_height, event_submit_markersize):
         self.timeline_max = 0
@@ -59,7 +59,7 @@ class DrawState():
         self.synchronized_with_events = False
         self.stale_events_displayed = False
 
-class PlotNordic():
+class PlotNordic:
 
     def __init__(self, stream=None, event_close=None, log_lvl=logging.WARNING):
         plt.rcParams['toolbar'] = 'None'
@@ -229,7 +229,7 @@ class PlotNordic():
     @staticmethod
     def _stringify_time(time_seconds):
         if time_seconds > 0.1:
-            return '%.5f' % (time_seconds) + ' s'
+            return f'{time_seconds:.5f}' + ' s'
 
         return '%.5f' % (1000 * time_seconds) + ' ms'
 
@@ -320,47 +320,43 @@ class PlotNordic():
     def button_release_event(self, event):
         x_rel, y_rel = self._get_relative_coords(event)
 
-        if event.button == MouseButton.LEFT.value:
-            if self.draw_state.paused:
-                if abs(x_rel - self.draw_state.pan_x_start1) < 0.01:
-                    if self.draw_state.l_line is not None:
-                        self.draw_state.l_line.remove()
-                        self.draw_state.l_line = None
-                        self.draw_state.l_line_coord = None
+        if event.button == MouseButton.LEFT.value and self.draw_state.paused:
+            if abs(x_rel - self.draw_state.pan_x_start1) < 0.01:
+                if self.draw_state.l_line is not None:
+                    self.draw_state.l_line.remove()
+                    self.draw_state.l_line = None
+                    self.draw_state.l_line_coord = None
 
-                    if 0 <= x_rel <= 1:
-                        if 0 <= y_rel <= 1:
-                            self.draw_state.l_line_coord = self.draw_state.timeline_max - \
+                if 0 <= x_rel <= 1 and 0 <= y_rel <= 1:
+                    self.draw_state.l_line_coord = self.draw_state.timeline_max - \
                                 (1 - x_rel) * self.draw_state.timeline_width
-                            self.draw_state.l_line = plt.axvline(
-                                self.draw_state.l_line_coord)
-                    plt.draw()
+                    self.draw_state.l_line = plt.axvline(
+                        self.draw_state.l_line_coord)
+                plt.draw()
 
-                else:
-                    self.draw_state.timeline_max = self.draw_state.timeline_max - \
+            else:
+                self.draw_state.timeline_max = self.draw_state.timeline_max - \
                         (x_rel - self.draw_state.pan_x_start1) * \
                         self.draw_state.timeline_width
-                    self.draw_state.ax.set_xlim(
-                        self.draw_state.timeline_max -
-                        self.draw_state.timeline_width,
-                        self.draw_state.timeline_max)
-                    plt.draw()
+                self.draw_state.ax.set_xlim(
+                    self.draw_state.timeline_max -
+                    self.draw_state.timeline_width,
+                    self.draw_state.timeline_max)
+                plt.draw()
 
-        if event.button == MouseButton.RIGHT.value:
-            if self.draw_state.paused:
-                if abs(x_rel - self.draw_state.pan_x_start2) < 0.01:
-                    if self.draw_state.r_line is not None:
-                        self.draw_state.r_line.remove()
-                        self.draw_state.r_line = None
-                        self.draw_state.r_line_coord = None
+        if event.button == MouseButton.RIGHT.value and self.draw_state.paused:
+            if abs(x_rel - self.draw_state.pan_x_start2) < 0.01:
+                if self.draw_state.r_line is not None:
+                    self.draw_state.r_line.remove()
+                    self.draw_state.r_line = None
+                    self.draw_state.r_line_coord = None
 
-                    if 0 <= x_rel <= 1:
-                        if 0 <= y_rel <= 1:
-                            self.draw_state.r_line_coord = self.draw_state.timeline_max - \
+                if 0 <= x_rel <= 1 and 0 <= y_rel <= 1:
+                    self.draw_state.r_line_coord = self.draw_state.timeline_max - \
                                 (1 - x_rel) * self.draw_state.timeline_width
-                            self.draw_state.r_line = plt.axvline(
-                                self.draw_state.r_line_coord, color='r')
-                    plt.draw()
+                    self.draw_state.r_line = plt.axvline(
+                        self.draw_state.r_line_coord, color='r')
+                plt.draw()
 
         if self.draw_state.r_line_coord is not None and self.draw_state.l_line_coord is not None:
             if self.draw_state.duration_marker is not None:
@@ -399,7 +395,7 @@ class PlotNordic():
             except StreamError as err:
                 if err.args[1] == StreamError.TIMEOUT_MSG:
                     break
-                self.logger.error("Receiving error: {}. Exiting".format(err))
+                self.logger.error(f"Receiving error: {err}. Exiting")
                 self.close_event(None)
                 sys.exit()
             data_str = data.decode()
@@ -471,7 +467,7 @@ class PlotNordic():
                         self.logger.info("Module closed before receiving event descriptions.")
                         sys.exit()
                     continue
-                self.logger.error("Receiving error: {}. Exiting".format(err))
+                self.logger.error(f"Receiving error: {err}. Exiting")
                 sys.exit()
         data_str = bytes.decode()
         event_types_dict = json.loads(data_str)

@@ -3,11 +3,12 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-import struct
 import collections
 import logging
+import struct
 
 from NrfHidDevice import EVENT_DATA_LEN_MAX
+
 from modules.module_config import MODULE_CONFIG
 
 
@@ -34,11 +35,11 @@ class ConfigParser:
         if len(member_names) != len(vals):
             raise ValueError('format does not match member name list')
         self.members = collections.OrderedDict()
-        for key, val in zip(member_names, vals):
+        for key, val in zip(member_names, vals, strict=False):
             self.members[key] = val
 
     def __str__(self):
-        return ''.join(map(lambda x: '{}: {}\n'.format(x[0], x[1]), self.members.items()))
+        return ''.join(map(lambda x: f'{x[0]}: {x[1]}\n', self.members.items()))
 
     def config_get(self, name):
         return self.presenter(self.members[name])
@@ -67,9 +68,7 @@ def get_option_format(module_name, option_name_on_device):
 
 def change_config(dev, module_name, option_name, value, option_descr):
     value_range = option_descr.range
-    logging.debug('Send request to update {}/{}: {}'.format(module_name,
-                                                            option_name,
-                                                            value))
+    logging.debug(f'Send request to update {module_name}/{option_name}: {value}')
 
     option_name_on_device = option_descr.option_name
     format = get_option_format(module_name, option_name_on_device)
@@ -85,14 +84,12 @@ def change_config(dev, module_name, option_name, value, option_descr):
             config.config_update(option_name, value)
             event_data = config.serialize()
         except (ValueError, KeyError):
-            print('Failed. Invalid value for {}/{}'.format(module_name, option_name))
+            print(f'Failed. Invalid value for {module_name}/{option_name}')
             return False
     else:
         if value is not None:
             if not check_range(value, value_range):
-                print('Failed. Config value for {}/{} must be in range {}'.format(module_name,
-                                                                                  option_name,
-                                                                                  value_range))
+                print(f'Failed. Config value for {module_name}/{option_name} must be in range {value_range}')
                 return False
 
             event_data = struct.pack('<I', value)
@@ -110,8 +107,7 @@ def change_config(dev, module_name, option_name, value, option_descr):
 
 
 def fetch_config(dev, module_name, option_name, option_descr):
-    logging.debug('Fetch the current value of {}/{} from the firmware'.format(module_name,
-                                                                              option_name))
+    logging.debug(f'Fetch the current value of {module_name}/{option_name} from the firmware')
 
     option_name_on_device = option_descr.option_name
     success, fetched_data = dev.config_get(module_name, option_name_on_device)

@@ -8,9 +8,9 @@
 import argparse
 import datetime
 import os
+
 from cryptography import x509
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.x509.oid import NameOID
 
@@ -345,9 +345,7 @@ def main():
         handle_root_ca_action(args)
     elif args.action == "sub_ca":
         handle_sub_ca_action(args)
-    elif args.action == "sign":
-        handle_sign_action(args)
-    elif args.action == "sign_root":
+    elif args.action == "sign" or args.action == "sign_root":
         handle_sign_action(args)
     elif args.action == "csr":
         handle_csr_action(args)

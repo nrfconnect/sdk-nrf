@@ -45,10 +45,10 @@ def capture(ws_fifo, sn_pipe):
             if pkt:
                 ws.write(pkt)
             else:
-                raise IOError
+                raise OSError
 
             ws.flush()
-    except IOError:
+    except OSError:
         print(f"Failed to read packets from the device: {err}", file=sys.stderr)
         ws.close()
 

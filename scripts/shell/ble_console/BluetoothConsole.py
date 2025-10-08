@@ -3,21 +3,21 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 """Desktop application - Bluetooth console for Linux to communicate with any NUS device"""
 
-import time
-import sys
 import os
+import sys
+import time
 
 import gi
+
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GObject, Gdk, GLib
+from gi.repository import GLib, Gtk
 
 gi.require_version('Vte', '2.91')
-from gi.repository import Vte
 
+from BlueZ_communication import GATT_CHAR_PATH, BluetoothConnection
 from dbus import DBusException
 from TerminalNotebook import TerminalNotebook
-from BlueZ_communication import BluetoothConnection
-from BlueZ_communication import GATT_CHAR_PATH
+
 READ_CHARACTERISTIC = GATT_CHAR_PATH
 MAX_SEND_LENGTH     = 20
 

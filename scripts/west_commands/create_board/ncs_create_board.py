@@ -1,15 +1,15 @@
 # Copyright (c) 2024 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-from pathlib import Path
 import json
 import shutil
 import sys
+from pathlib import Path
 
+import jsonschema
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 from west.commands import WestCommand
 from yaml import load
-import jsonschema
 
 try:
     from yaml import CLoader as Loader
@@ -18,7 +18,6 @@ except ImportError:
 
 sys.path.append(str(Path(__file__).parents[1]))
 import utils
-
 
 utils.install_json_excepthook()
 
@@ -52,7 +51,7 @@ class NcsCreateBoard(WestCommand):
         return parser
 
     def do_run(self, args, unknown_args):
-        with open(SCHEMA, "r") as f:
+        with open(SCHEMA) as f:
             schema = json.loads(f.read())
 
         if args.json_schema:
@@ -64,7 +63,7 @@ class NcsCreateBoard(WestCommand):
             print(json.dumps(schema))
             return
 
-        with open(CONFIG, "r") as f:
+        with open(CONFIG) as f:
             config = load(f, Loader=Loader)
 
         # validate input
@@ -173,12 +172,12 @@ class NcsCreateBoard(WestCommand):
             f.write(tmpl.render())
 
         tmpl = env.get_template("board.yml.jinja2")
-        with open(out_dir / f"board.yml", "w") as f:
+        with open(out_dir / "board.yml", "w") as f:
             f.write(tmpl.render())
 
         try:
             tmpl = env.get_template("Kconfig.defconfig.jinja2")
-            with open(out_dir / f"Kconfig.defconfig", "w") as f:
+            with open(out_dir / "Kconfig.defconfig", "w") as f:
                 f.write(tmpl.render(config))
         except TemplateNotFound:
             pass

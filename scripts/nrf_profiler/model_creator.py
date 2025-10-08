@@ -3,16 +3,18 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+import csv
+import json
+import logging
 import sys
 from enum import Enum
-import logging
-import json
-from rtt_nordic_config import RttNordicConfig
-from events import Event, EventType, TrackedEvent, EventsData
-from processed_events import ProcessedEvents
-from stream import StreamError
 from io import StringIO
-import csv
+
+from events import Event, EventsData, EventType, TrackedEvent
+from processed_events import ProcessedEvents
+from rtt_nordic_config import RttNordicConfig
+from stream import StreamError
+
 
 class Command(Enum):
     START = 1
@@ -99,7 +101,7 @@ class ModelCreator:
                     if self.event_close.is_set():
                         self.close()
                     continue
-                self.logger.error("Receiving error: {}".format(err))
+                self.logger.error(f"Receiving error: {err}")
                 self.close()
             if len(buf) > 0:
                 self.bufs.append(buf)
@@ -124,7 +126,7 @@ class ModelCreator:
                         self.logger.info("Module closed before receiving event descriptions.")
                         sys.exit()
                     continue
-                self.logger.error("Receiving error: {}. Exiting".format(err))
+                self.logger.error(f"Receiving error: {err}. Exiting")
                 sys.exit()
         desc_buf = bytes.decode()
         f = StringIO(desc_buf)
@@ -153,7 +155,7 @@ class ModelCreator:
             try:
                 self.stream.send_desc(json_et_string.encode())
             except StreamError as err:
-                self.logger.error("Sending error: {}. Cannot send descriptions.".format(err))
+                self.logger.error(f"Sending error: {err}. Cannot send descriptions.")
                 sys.exit()
 
     def _read_single_event(self):
@@ -236,13 +238,13 @@ class ModelCreator:
         try:
             self.stream.send_ev(event_string.encode())
         except StreamError as err:
-            self.logger.error("Sending error: {}. Cannot send event.".format(err))
+            self.logger.error(f"Sending error: {err}. Cannot send event.")
             self.close()
 
     def _write_event_to_file(self, csvfile, tracked_event):
         try:
             csvfile.write(tracked_event.serialize() + '\r\n')
-        except IOError:
+        except OSError:
             self.logger.error("Problem with accessing csv file")
             self.close()
 

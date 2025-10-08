@@ -3,14 +3,15 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-from multiprocessing import Process, Event, active_children
 import argparse
-import time
 import logging
 import signal
-from stream import Stream
-from rtt2stream import Rtt2Stream
+import time
+from multiprocessing import Event, Process, active_children
+
 from model_creator import ModelCreator
+from rtt2stream import Rtt2Stream
+from stream import Stream
 
 is_waiting = True
 def signal_handler(sig, frame):
@@ -24,7 +25,7 @@ def rtt2stream(stream, event, event_close, log_lvl_number):
         event.wait()
         rtt2s.read_and_transmit_data()
     except Exception as e:
-        print("[ERROR] Unhandled exception in Profiler Rtt to stream module: {}".format(e))
+        print(f"[ERROR] Unhandled exception in Profiler Rtt to stream module: {e}")
 
 def model_creator(stream, event, event_close, dataset_name, log_lvl_number):
     signal.signal(signal.SIGINT, signal.SIG_IGN)
@@ -38,7 +39,7 @@ def model_creator(stream, event, event_close, dataset_name, log_lvl_number):
         event.set()
         mc.start()
     except Exception as e:
-        print("[ERROR] Unhandled exception in Profiler model creator module: {}".format(e))
+        print(f"[ERROR] Unhandled exception in Profiler model creator module: {e}")
 
 
 def main():

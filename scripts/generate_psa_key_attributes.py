@@ -9,16 +9,16 @@ Module for generating PSA key attribute binary blobs
 """
 
 import argparse
-import struct
 import binascii
-import math
 import json
+import math
+import struct
 import sys
-from pathlib import Path
 from enum import IntEnum
-from cryptography.hazmat.primitives import serialization
+from pathlib import Path
 from typing import BinaryIO
 
+from cryptography.hazmat.primitives import serialization
 
 # Extra PSA key usage flags
 PSA_KEY_USAGE_EXPORT = 0x01

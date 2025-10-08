@@ -18,11 +18,12 @@
 NRF54L15 BOOTCONF generator.
 """
 
-from intelhex import IntelHex
 import argparse
 import sys
 import warnings
 import struct
+
+from intelhex import IntelHex
 
 BOOTCONF_ADDR = 0x00FFD080
 

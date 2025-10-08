@@ -12,12 +12,12 @@
 from __future__ import annotations
 
 import collections
-from dataclasses import dataclass
-from pathlib import Path
 import subprocess
 import sys
 import textwrap
-from typing import Union, Iterable
+from collections.abc import Iterable
+from dataclasses import dataclass
+from pathlib import Path
 
 try:
     import editdistance
@@ -26,10 +26,8 @@ except ImportError:
     sys.exit("Can't import extra dependencies needed for NCS west extensions.\n"
              "Please install packages in nrf/scripts/requirements-extra.txt "
              "with pip3.")
+from pygit2_helpers import commit_reverts_what, commit_title, title_is_revert, title_no_sauce
 from west import log
-
-from pygit2_helpers import title_is_revert, title_no_sauce, \
-        commit_reverts_what, commit_title
 
 __all__ = ['InvalidRepositoryError', 'UnknownCommitsError', 'RepoAnalyzer']
 
@@ -75,7 +73,7 @@ class RepoAnalyzer:
     def __init__(self,
                  downstream_repo: Repository,
                  upstream_repo: Repository,
-                 downstream_domain: Union[str, tuple[str]] = '@nordicsemi.no',
+                 downstream_domain: str | tuple[str] = '@nordicsemi.no',
                  downstream_sauce: str = 'nrf',
                  edit_dist_threshold: int = 3,
                  include_mergeups: bool = False):
@@ -212,7 +210,7 @@ class RepoAnalyzer:
             if len(c.parents) > 1:
                 if not self._include_mergeups:
                     # Skip all the mergeup commits.
-                    log.dbg('** skipped mergeup {} ("{}")'.format(sha, sl),
+                    log.dbg(f'** skipped mergeup {sha} ("{sl}")',
                             level=log.VERBOSE_VERY)
                     continue
                 else:
@@ -239,9 +237,7 @@ class RepoAnalyzer:
                 #         rsha = 'd269d6fcc54c9f03bb19419120ce3a57f69a6a88'
 
                 if rsha in downstream_out:
-                    log.dbg('** commit {} ("{}") was reverted in {}'.
-                            format(rsha, commit_title(downstream_out[rsha]),
-                                   sha), level=log.VERBOSE_VERY)
+                    log.dbg(f'** commit {rsha} ("{commit_title(downstream_out[rsha])}") was reverted in {sha}', level=log.VERBOSE_VERY)
                     del downstream_out[rsha]
                     continue
                 elif rsha is not None:
@@ -254,12 +250,11 @@ class RepoAnalyzer:
                         ['merge-base', '--is-ancestor', rsha, downstream_sha],
                         check=False).returncode == 0
                     if not is_ancestor:
-                        log.wrn(('commit {} ("{}") reverts {}, '
-                                 "which isn't in downstream history").
-                                format(sha, sl, rsha))
+                        log.wrn(f'commit {sha} ("{sl}") reverts {rsha}, '
+                                 "which isn't in downstream history")
 
             downstream_out[sha] = c
-            log.dbg('** added oot patch: {} ("{}")'.format(sha, sl),
+            log.dbg(f'** added oot patch: {sha} ("{sl}")',
                     level=log.VERBOSE_VERY)
 
         return list(downstream_out.values())
@@ -315,7 +310,7 @@ class RepoAnalyzer:
 
         return likely_merged
 
-def _to_list(arg: Union[str, Iterable[str]]) -> list[str]:
+def _to_list(arg: str | Iterable[str]) -> list[str]:
     # Returns sauce as an immutable object (by copying a sequence
     # into a tuple if sauce is not a string)
 

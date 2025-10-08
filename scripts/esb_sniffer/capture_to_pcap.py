@@ -4,10 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-from Sniffer import Sniffer
-from threading import Thread
 import struct
 import sys
+from threading import Thread
+
+from Sniffer import Sniffer
+
 
 class Capture:
     '''Read packets from the DK and write them into pcap file.'''

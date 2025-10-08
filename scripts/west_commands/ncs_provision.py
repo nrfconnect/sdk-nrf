@@ -14,7 +14,6 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
 import generate_psa_key_attributes as psa_attr_generator
-
 import yaml
 from west.commands import WestCommand
 

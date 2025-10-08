@@ -9,8 +9,8 @@ Parsing and utility functions for west ncs-sbom command arguments.
 
 import argparse
 from pathlib import Path
-from common import SbomException
 
+from common import SbomException
 
 DEFAULT_REPORT_NAME = 'sbom_report.html'
 
@@ -171,7 +171,7 @@ def init_args(allowed_detectors: dict):
     if (args.build_dir is None
             and (args.input_files is None or len(args.input_files) == 0)
             and (args.input_list_file is None or len(args.input_list_file) == 0)):
-        from input_build import get_default_build_dir # Avoid circular import
+        from input_build import get_default_build_dir  # Avoid circular import
         default_build_dir = get_default_build_dir()
         if default_build_dir is not None:
             args.build_dir = [[default_build_dir]]

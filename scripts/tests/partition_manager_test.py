@@ -8,8 +8,6 @@ from pprint import pformat
 
 import pytest
 import yaml
-
-
 from partition_manager import (
     COMPLEX,
     END_TO_START,
@@ -45,7 +43,7 @@ def expect_addr_size(td, name, expected_address, expected_size):
 def expect_list(expected, actual):
     expected_list = list(sorted(expected))
     actual_list = list(sorted(actual))
-    assert sorted(expected_list) == sorted(actual_list), 'Expected list {}, was {}'.format(expected_list, actual_list)
+    assert sorted(expected_list) == sorted(actual_list), f'Expected list {expected_list}, was {actual_list}'
 
 
 def test_remove_item_not_in_list():

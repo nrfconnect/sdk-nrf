@@ -3,12 +3,13 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-import hid
+import codecs
+import logging
 import struct
 import time
-import logging
 from enum import IntEnum
-import codecs
+
+import hid
 
 REPORT_ID = 6
 REPORT_SIZE = 30
@@ -46,7 +47,7 @@ class ConfigStatus(IntEnum):
     GET_PEERS_CACHE    = 13
     FAULT              = 99
 
-class NrfHidTransport():
+class NrfHidTransport:
     HEADER_FORMAT = '<BBBBB'
     @staticmethod
     def _create_feature_report(recipient, event_id, status, event_data):
@@ -75,7 +76,7 @@ class NrfHidTransport():
             assert event_data_len == 0
         else:
             # Unsupported operation
-            assert False
+            raise AssertionError()
 
         report = struct.pack(NrfHidTransport.HEADER_FORMAT, REPORT_ID,
                              recipient, event_id, status, event_data_len)
@@ -97,7 +98,7 @@ class NrfHidTransport():
             logging.error('Response too short')
             return None
 
-        fmt = '{}{}s'.format(NrfHidTransport.HEADER_FORMAT, data_field_len)
+        fmt = f'{NrfHidTransport.HEADER_FORMAT}{data_field_len}s'
 
         (report_id, rcpt, event_id, status, data_len, data) = struct.unpack(fmt, response_raw)
 
@@ -124,7 +125,7 @@ class NrfHidTransport():
         try:
             dev.send_feature_report(data)
         except Exception as e:
-            logging.debug('Send feature report problem: {}'.format(e))
+            logging.debug(f'Send feature report problem: {e}')
             return False, None
 
         for _ in range(POLL_RETRY_COUNT):
@@ -133,7 +134,7 @@ class NrfHidTransport():
             try:
                 response_raw = dev.get_feature_report(REPORT_ID, REPORT_SIZE)
             except Exception as e:
-                logging.error('Get feature report problem: {}'.format(e))
+                logging.error(f'Get feature report problem: {e}')
                 rsp_status = ConfigStatus.FAULT
                 break
 
@@ -153,11 +154,8 @@ class NrfHidTransport():
             if (rsp_status != ConfigStatus.TIMEOUT) and \
                ((rsp_recipient != recipient) or (rsp_event_id != event_id)):
                 logging.error('Response does not match the request:\n'
-                              '\trequest: recipient {} event_id {}\n'
-                              '\tresponse: recipient {}, event_id {}'.format(recipient,
-                                                                             event_id,
-                                                                             rsp_recipient,
-                                                                             rsp_event_id))
+                              f'\trequest: recipient {recipient} event_id {event_id}\n'
+                              f'\tresponse: recipient {rsp_recipient}, event_id {rsp_event_id}')
                 rsp_status = ConfigStatus.FAULT
             break
 
@@ -169,12 +167,12 @@ class NrfHidTransport():
             if rsp_event_data is not None:
                 fetched_data = rsp_event_data
         else:
-            logging.warning('Error response code: {}'.format(rsp_status.name))
+            logging.warning(f'Error response code: {rsp_status.name}')
 
         return success, fetched_data
 
 
-class NrfHidDevice():
+class NrfHidDevice:
     def __init__(self, dev, recipient):
         self.recipient = recipient
         self.dev_ptr = dev
@@ -214,7 +212,7 @@ class NrfHidDevice():
             devlist = hid.enumerate(vid=vid)
         except Exception as e:
             devlist = []
-            logging.error('Exception during hid.enumerate: {}'.format(e))
+            logging.error(f'Exception during hid.enumerate: {e}')
 
         for d in devlist:
             dev = None
@@ -229,20 +227,19 @@ class NrfHidDevice():
 
                 if peers_cache:
                     if discovered_dev.initialized():
-                        cache_dev_descr = '{} (HW ID: {})'.format(discovered_dev.get_board_name(),
-                                                                  discovered_dev.get_hwid())
+                        cache_dev_descr = f'{discovered_dev.get_board_name()} (HW ID: {discovered_dev.get_hwid()})'
                     else:
                         # Use device path to identify dongles that cannot be configured over
                         # configuration channel.
                         cache_dev_descr = d['path']
-                    logging.debug('Peers cache of {}: {} '.format(cache_dev_descr, peers_cache))
+                    logging.debug(f'Peers cache of {cache_dev_descr}: {peers_cache} ')
 
                 discovered_peers = [NrfHidDevice(dev, peers[p]) for p in peers]
 
             except hid.HIDException as he:
-                logging.warning('HID exception during device open: {}'.format(he))
+                logging.warning(f'HID exception during device open: {he}')
             except Exception as e:
-                logging.error('Unknown exception during device open: {}'.format(e))
+                logging.error(f'Unknown exception during device open: {e}')
             else:
                 dev_active = NrfHidDevice._add_nrf_hid_device(discovered_dev, dir_devs)
                 for dp in discovered_peers:
@@ -355,7 +352,7 @@ class NrfHidDevice():
                 return None, None
 
             module_variant = fetched_data.decode('utf-8').replace(chr(0x00), '')
-            module_name = '{}/{}'.format(module_name, module_variant)
+            module_name = f'{module_name}/{module_variant}'
 
         return module_name, module_config
 
@@ -409,7 +406,7 @@ class NrfHidDevice():
                                                                    ConfigStatus.GET_PEERS_CACHE,
                                                                    None)
         if success:
-            return " ".join("0x{:02x}".format(b) for b in fetched_data)
+            return " ".join(f"0x{b:02x}" for b in fetched_data)
         else:
             return None
 
@@ -470,7 +467,7 @@ class NrfHidDevice():
         try:
             event_id = NrfHidDevice._get_event_id(module_name, option_name, self.dev_config)
         except KeyError:
-            print("No module: {} or option: {}".format(module_name, option_name))
+            print(f"No module: {module_name} or option: {option_name}")
             if is_get:
                 return False, None
             else:
@@ -496,10 +493,7 @@ class NrfHidDevice():
         self.dev_config = None
 
     def initialized(self):
-        if (self.dev_ptr is None) or (self.dev_config is None):
-            return False
-        else:
-            return True
+        return not (self.dev_ptr is None or self.dev_config is None)
 
     def get_hwid(self):
         return self.hwid
@@ -528,7 +522,7 @@ class NrfHidDevice():
     def get_complete_module_name(self, name):
         """complete module name consist of module name + '/' + variant name."""
         for key in self.dev_config:
-            if key.startswith('{}/'.format(name)):
+            if key.startswith(f'{name}/'):
                 return key
             if name == key:
                 return key

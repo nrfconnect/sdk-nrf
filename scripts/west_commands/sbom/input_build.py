@@ -12,12 +12,12 @@ import re
 from enum import Enum
 from pathlib import Path
 from types import SimpleNamespace
-from west import log, util
-from args import args
-from data_structure import Data, FileInfo
-from common import SbomException, command_execute
-import yaml
 
+import yaml
+from args import args
+from common import SbomException, command_execute
+from data_structure import Data, FileInfo
+from west import log, util
 
 DEFAULT_BUILD_DIR = 'build'
 DEFAULT_TARGET = 'zephyr/zephyr.elf'
@@ -32,7 +32,7 @@ class FileType(Enum):
 
 def detect_file_type(file: Path) -> FileType:
     '''Simple detector for type of a file based on its header.'''
-    with open(file, 'r', encoding='8859') as fd:
+    with open(file, encoding='8859') as fd:
         header = fd.read(16)
     if header.startswith('!<arch>\n'):
         return FileType.ARCHIVE
@@ -73,7 +73,7 @@ class InputBuild:
         target_line_re = re.compile(r'([^\s]+)\s*:\s*(#.*)?')
         dep_line_re = re.compile(r'\s+(.*?)\s*(#.*)?')
         empty_line_re = re.compile(r'\s*(#.*)?')
-        with open(deps_file_name, 'r') as fd:
+        with open(deps_file_name) as fd:
             line_no = 0
             while True:
                 line = fd.readline()
@@ -201,7 +201,7 @@ class InputBuild:
             - extracted: bool - Always False. It will be changed to True when the file is extracted
                                 from the build system.
         '''
-        with open(map_file, 'r') as fd:
+        with open(map_file) as fd:
             map_content = fd.read()
         items = dict()
         file_entry_re = (r'^(?:[ \t]+\.[^\s]+(?:\r?\n)?[ \t]+0x[0-9a-fA-F]{16}[ \t]+'
@@ -277,9 +277,8 @@ class InputBuild:
         for input in archive_inputs:
             input_path = (self.build_dir / input).resolve()
             input_type = detect_file_type(input_path)
-            if map_item is not None:
-                if input_path.name in map_item.content:
-                    map_item.content[input_path.name] = True
+            if map_item is not None and input_path.name in map_item.content:
+                map_item.content[input_path.name] = True
             if input_type == FileType.OTHER:
                 leafs.add(input_path)
             else:
@@ -400,13 +399,13 @@ def check_external_tools(build_dir: Path):
         return result
 
     try:
-        domains = yaml.safe_load(open(os.path.join(build_dir, 'domains.yaml'), 'r'))
+        domains = yaml.safe_load(open(os.path.join(build_dir, 'domains.yaml')))
         cmakecache = os.path.join(build_dir, domains['default'], 'CMakeCache.txt')
     except FileNotFoundError:
         cmakecache = os.path.join(build_dir, 'CMakeCache.txt')
 
     try:
-        with open(cmakecache, 'r') as fd:
+        with open(cmakecache) as fd:
             cmake_cache = fd.read()
     except FileNotFoundError as ex:
         raise SbomException('Cannot find "CMakeCache.txt".\n'
@@ -435,7 +434,7 @@ def generate_input(data: Data):
         check_external_tools(Path(args.build_dir[0][0]))
         for build_dir, *targets in args.build_dir:
             try:
-                domains = yaml.safe_load(open(os.path.join(build_dir, 'domains.yaml'), 'r'))
+                domains = yaml.safe_load(open(os.path.join(build_dir, 'domains.yaml')))
                 domains = [d['name'] for d in domains['domains']]
             except FileNotFoundError:
                 domains = ['.']
