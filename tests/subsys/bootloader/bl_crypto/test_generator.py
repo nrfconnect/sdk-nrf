@@ -4,6 +4,9 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+# pylint: skip-file
+# ruff: noqa
+
 import operator
 import random
 import sys
