@@ -72,8 +72,7 @@ def pre_process(data: Data):
     data.licenses = used_licenses
     # Sort licenses
     def lic_reorder(id: str):
-        lic = data.licenses[id]
-        lic: License|LicenseExpr
+        lic: License | LicenseExpr = data.licenses[id]
         if id == '':
             return 'A'
         elif lic.is_expr:

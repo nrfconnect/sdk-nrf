@@ -332,7 +332,7 @@ class DfuImage:
 
         img_length = os.stat(dfu_bin).st_size
 
-        return not img_length <= 0
+        return img_length > 0
 
     @staticmethod
     def _zip_get_dfu_file_entry_v0(manifest, dfu_slot_id, bootloader_api):
