@@ -188,4 +188,11 @@ Driver selection in the |ISE| implementation
 --------------------------------------------
 
 The |ISE| implementation works only with the :ref:`CRACEN driver <crypto_drivers_cracen>`.
-It does not support the :ref:`software fallback <crypto_drivers_software_fallback>` mechanism to :ref:`nrf_oberon <crypto_drivers_oberon>`.
+The driver is used indirectly for cryptographic operations, which means that:
+
+* The |ISE| does not follow the :ref:`crypto_drivers_feature_selection` mechanism.
+  It instead implements a fixed set of features and algorithms whose configurations cannot be changed by the user.
+
+* The |ISE| does not support the :ref:`software fallback <crypto_drivers_software_fallback>` mechanism to :ref:`nrf_oberon <crypto_drivers_oberon>`.
+
+See :ref:`ug_crypto_supported_features` for the list of supported Oberon PSA Crypto directives in the |ISE|.
