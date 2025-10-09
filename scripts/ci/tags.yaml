@@ -149,11 +149,13 @@ ci_tests_subsys_net_openthread:
 ci_samples_wifi:
   files:
     - modules/lib/hostap/
+    - modules/lib/matter/
     - modules/lib/nrf_wifi/
     - nrf/boards/shields/nrf7002eb2/
     - nrf/samples/wifi/
     - nrf/subsys/net/lib/hostap_crypto/
     - nrf/subsys/net/lib/nrf70_fw_ext/
+    - nrf/subsys/net/openthread/
     - nrfxlib/nrf_wifi/
     - zephyr/drivers/wifi/
     - zephyr/modules/hostap/
@@ -924,6 +926,7 @@ ci_tests_lib_location:
     - nrf/lib/location/
     - nrf/lib/lte_link_control/
     - nrf/modules/cjson/
+    - nrf/subsys/net/lib/nrf_cloud/
     - nrf/tests/lib/location/
     - nrf/tests/mocks/nrf_modem_at/
 
