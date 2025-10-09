@@ -21,6 +21,7 @@
 			psels = <NRF_PSEL(PWM_OUT0, 0, 0)>;
 		};
 	};
+
 	pwm_sleep: pwm_sleep {
 		group1 {
 			psels = <NRF_PSEL(PWM_OUT0, 0, 0)>;
@@ -35,7 +36,7 @@
 
 &gpiote130 {
 	status = "okay";
-	owned-channels = < 0x0 >;
+	owned-channels = <0x0>;
 };
 
 &pwm130 {

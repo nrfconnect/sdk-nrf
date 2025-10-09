@@ -6,7 +6,7 @@
 
 /* Include this devicetree overlay only if using PPP without CMUX. */
 
- / {
+/ {
 	chosen {
 		ncs,slm-ppp-uart = &uart1;
 	};

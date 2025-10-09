@@ -25,7 +25,7 @@
 
 	dut_spi_sleep: dut_spi_sleep {
 		group1 {
-			psels =	<NRF_PSEL(SPIM_MISO, 1, 1)>,
+			psels = <NRF_PSEL(SPIM_MISO, 1, 1)>,
 				<NRF_PSEL(SPIM_MOSI, 1, 2)>,
 				<NRF_PSEL(SPIM_SCK, 1, 3)>;
 			low-power-enable;
@@ -42,6 +42,7 @@
 	overrun-character = <0x00>;
 	zephyr,pm-device-runtime-auto;
 	cs-gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
+
 	dut_spi: test-spi-dev@0 {
 		compatible = "vnd,spi-device";
 		reg = <0>;

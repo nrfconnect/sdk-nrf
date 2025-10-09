@@ -8,6 +8,7 @@
 	chosen {
 		zephyr,console = &uart1;
 	};
+
 	aliases {
 		tst-timer = &timer0;
 	};
