@@ -7,7 +7,9 @@
 #include <nordic/nrf54ls05b.dtsi>
 
 cpu: &cpuapp {};
+
 systick: &cpuapp_systick {};
+
 nvic: &cpuapp_nvic {};
 
 / {

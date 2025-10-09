@@ -17,6 +17,7 @@
 		in-polling-period-us = <1000>;
 		in-report-size = <64>;
 	};
+
 	hid_dev_1: hid_dev_1 {
 		compatible = "zephyr,hid-device";
 		label = "HID1";
@@ -40,17 +41,17 @@
 		compatible = "gpio-leds";
 		status = "okay";
 		label = "LED Peer State";
+
 		led1_g: led_1 {
 			gpios = <&gpio0 14 GPIO_ACTIVE_LOW>;
 			label = "Green LED 1";
 		};
-
 	};
+
 	leds {
 		status = "disabled";
 	};
 };
-
 
 &usbd {
 	compatible = "nordic,nrf-usbd";

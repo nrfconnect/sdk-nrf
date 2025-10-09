@@ -14,7 +14,6 @@
 	aliases {
 		watchdog0 = &wdt0;
 	};
-
 };
 
 /* Set IPC thread priority to the highest value to not collide with other threads. */

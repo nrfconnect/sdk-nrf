@@ -15,6 +15,7 @@
 
 	pwmleds {
 		compatible = "pwm-leds";
+
 		pwm120_gpio: pwm120_gpio {
 			pwms = <&pwm120 0 PWM_MSEC(10) PWM_POLARITY_NORMAL>;
 		};
@@ -29,6 +30,7 @@
 			psels = <NRF_PSEL(PWM_OUT0, 7, 0)>;
 		};
 	};
+
 	/omit-if-no-ref/ pwm120_sleep: pwm120_sleep {
 		group1 {
 			psels = <NRF_PSEL(PWM_OUT0, 7, 0)>;
@@ -43,7 +45,7 @@
 	pinctrl-1 = <&pwm120_sleep>;
 	pinctrl-names = "default", "sleep";
 	memory-regions = <&dma_fast_region>;
-	clocks = < &hsfll120 >;
+	clocks = <&hsfll120>;
 };
 
 &dma_fast_region {

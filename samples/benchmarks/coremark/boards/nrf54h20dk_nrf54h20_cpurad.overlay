@@ -7,17 +7,19 @@
 / {
 	buttons {
 		compatible = "gpio-keys";
+
 		button1: button_1 {
-			gpios = < &gpio0 0x9 0x11 >;
+			gpios = <&gpio0 0x9 0x11>;
 			label = "Push button 1";
-			zephyr,code = < 0x2 >;
+			zephyr,code = <0x2>;
 		};
 	};
 
 	leds {
 		compatible = "gpio-leds";
+
 		led1: led_1 {
-			gpios = < &gpio9 0x1 0x0 >;
+			gpios = <&gpio9 0x1 0x0>;
 			label = "Green LED 1";
 		};
 	};
@@ -26,7 +28,7 @@
 		button = &button1;
 		led = &led1;
 	};
- };
+};
 
 &gpio0 {
 	status = "okay";
@@ -52,5 +54,5 @@
 /* DTS nodes required for the STM standalone logging, imported from the nordic-log-stm snippet. */
 &tddconf {
 	status = "okay";
-	etrsources = <(NRF_TDDCONF_SOURCE_STMMAINCORE)>;
+	etrsources = <NRF_TDDCONF_SOURCE_STMMAINCORE>;
 };
