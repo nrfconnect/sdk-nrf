@@ -66,7 +66,6 @@
 			#clock-cells = <0>;
 			clock-frequency = <DT_FREQ_M(128)>;
 		};
-
 	};
 
 	soc {
@@ -161,7 +160,6 @@
 				clocks = <&hfxo>;
 				prescaler = <0>;
 			};
-
 
 			egu10: egu@87000 {
 				compatible = "nordic,nrf-egu";
@@ -515,7 +513,7 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 
-			cpuapp_nvic: interrupt-controller@e000e100  {
+			cpuapp_nvic: interrupt-controller@e000e100 {
 				#address-cells = <1>;
 				compatible = "arm,v8m-nvic";
 				reg = <0xe000e100 0xc00>;

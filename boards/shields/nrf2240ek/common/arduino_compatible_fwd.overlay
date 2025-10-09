@@ -10,6 +10,7 @@
 			<&arduino_header 13 0>,	/* md-gpios */
 			<&arduino_header 4 0>;	/* pwrmd-gpios */
 	};
+
 	nrf2240-twi-if {
 		gpios = <&gpio1 2 0>,		/* TWIM_SDA */
 			<&gpio1 3 0>;		/* TWIM_SCL */

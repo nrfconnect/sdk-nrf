@@ -7,6 +7,7 @@
 			#size-cells = <1>;
 			status = "okay";
 			zephyr,deferred-init;
+
 			flash_rpc: flash_rpc@0 {
 				status = "okay";
 				compatible = "soc-nv-flash";

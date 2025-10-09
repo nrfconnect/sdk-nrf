@@ -9,6 +9,7 @@
 		gpios = <&arduino_header 14 0>,	/* cs-gpios */
 			<&arduino_header 13 0>;	/* md-gpios */
 	};
+
 	nrf2220-twi-if {
 		gpios = <&gpio1 2 0>,	/* TWIM_SDA */
 			<&gpio1 3 0>;	/* TWIM_SCL */

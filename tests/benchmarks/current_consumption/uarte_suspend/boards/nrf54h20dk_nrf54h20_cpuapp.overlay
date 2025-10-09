@@ -14,7 +14,7 @@
 /delete-node/ &led1;
 
 &cpuapp_dma_region {
-	status="okay";
+	status = "okay";
 };
 
 /* UART device used for test

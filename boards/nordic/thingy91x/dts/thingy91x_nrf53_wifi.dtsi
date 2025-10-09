@@ -33,6 +33,7 @@
 /* Enable pmic_wifi */
 &pmic_wifi {
 	status = "okay";
+
 	regulators {
 		status = "okay";
 	};
@@ -49,12 +50,15 @@
 
 &pmic_main {
 	status = "okay";
+
 	npm1300_gpios {
 		status = "okay";
 	};
+
 	regulators {
 		status = "okay";
 	};
+
 	charger {
 		status = "okay";
 	};

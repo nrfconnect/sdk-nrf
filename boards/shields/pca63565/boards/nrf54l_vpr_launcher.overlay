@@ -11,21 +11,21 @@
  */
 
 &i2c22 {
-    status = "disabled";
+	status = "disabled";
 };
 
 &bme688 {
-    status = "disabled";
+	status = "disabled";
 };
 
 &spi21 {
-    status = "disabled";
+	status = "disabled";
 };
 
 &bmi270 {
-    status = "disabled";
+	status = "disabled";
 };
 
 &adxl362 {
-    status = "disabled";
+	status = "disabled";
 };

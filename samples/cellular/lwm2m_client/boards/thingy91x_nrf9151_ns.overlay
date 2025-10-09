@@ -4,5 +4,5 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 &bme680 {
-        status = "okay";
+	status = "okay";
 };
