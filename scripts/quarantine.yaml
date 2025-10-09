@@ -106,3 +106,12 @@
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuppr
   comment: "Needs newer toolchain or dtc due to RAM overflow error"
+
+- scenarios:
+    - unity.location_test
+    - unity.location_test.data_details
+    - unity.location_test.no_agnss
+    - unity.location_test.no_wifi
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35825"
