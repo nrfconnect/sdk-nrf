@@ -22,14 +22,6 @@ In addition to the driver wrapper, the Oberon PSA Crypto implementation also inc
 This central component implements the PSA Certified Crypto API and exposes it to applications.
 The core module performs parameter validation, handles key management, and forwards calls to the driver wrapper.
 
-The nrf_cc3xx and nrf_oberon drivers are provided as closed-source libraries.
-The CRACEN driver is open-source.
-
-.. note::
-   Do not use the drivers directly.
-   Use them only through the :ref:`supported PSA Crypto API implementations <ug_crypto_architecture_implementation_standards>` and nRF Security.
-   For configuration steps, see :ref:`psa_crypto_support`.
-
 The following figure shows the Oberon PSA Crypto implementation with the cryptographic drivers:
 
 .. figure:: ../images/driver_arch.svg
@@ -43,24 +35,35 @@ The following figure shows the Oberon PSA Crypto implementation with the cryptog
 The cryptographic drivers are organized into hardware and software drivers.
 Hardware drivers take precedence over software drivers, which provide fallback options in case the hardware drivers are not available for a wanted cryptographic operation for a given hardware platform.
 
+.. note::
+   Do not use the drivers directly.
+   Use them only through the :ref:`supported PSA Crypto API implementations <ug_crypto_architecture_implementation_standards>` and nRF Security.
+   For configuration steps, see :ref:`psa_crypto_support`.
+
+
 .. list-table:: PSA Crypto drivers in the |NCS|
    :widths: auto
    :header-rows: 1
 
    * - Driver
      - Driver type
+     - Distribution
      - Supported hardware platforms
      - Description
    * - :ref:`nrf_cc3xx (CC310 and CC312)<crypto_drivers_cc3xx>`
      - Hardware
+     - Closed-source binary
      - nRF52840, nRF5340, nRF91 Series devices
      - Drivers for the `CryptoCell 310 <nRF9160 CRYPTOCELL - Arm TrustZone CryptoCell 310_>`_ and `CryptoCell 312 <nRF5340 CRYPTOCELL - Arm TrustZone CryptoCell 312_>`_ hardware accelerators.
    * - :ref:`CRACEN <crypto_drivers_cracen>`
      - Hardware
+     - Open-source
      - nRF54L Series devices, nRF54H20
-     - Security subsystem providing hardware acceleration for cryptographic operations through the CRACEN hardware peripheral. For more information, see the :ref:`ug_nrf54l_cryptography` and the :ref:`ug_nrf54h20_ironside` pages.
+     - | Security subsystem providing hardware acceleration for cryptographic operations through the CRACEN hardware peripheral. For more information, see the :ref:`ug_nrf54l_cryptography`.
+       | On nRF54H20, the driver is used indirectly through the :ref:`ug_nrf54h20_ironside`.
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
      - Software
+     - Closed-source binary
      - nRF devices with Arm Cortex®-M0, -M4, or -M33 processors
      - Optimized software library for cryptographic algorithms created by Oberon Microsystems, based on the `sdk-oberon-psa-crypto`_ library.
 
@@ -174,12 +177,16 @@ The following table provides a brief overview of the available directives and th
        | :kconfig:option:`CONFIG_PSA_USE_CC3XX_HASH_DRIVER`
 
 .. note::
-   For the complete overview of the available configuration options, see the :ref:`ug_crypto_supported_features` page.
+   - For the complete overview of the available configuration options, see the :ref:`ug_crypto_supported_features` page.
+   - On the nRF54H20 SoC, the |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+     The ``PSA_WANT_*`` and ``PSA_USE_*`` directives are directly implemented within |ISE|.
+     Enabling any feature with the corresponding Kconfig options will have no effect.
 
-When you select Kconfig options for the wanted features and drivers, nRF Security checks the Oberon directives to make the optimal driver selection.
-To combine the settings in Kconfig that represent application requirements (``PSA_WANT_*``) and driver preferences from the user (``PSA_USE_*``), nRF Security uses ``PSA_NEED_*`` macros.
-These macros are automatically selected.
-They control which drivers are compiled into the build and thus available for use at runtime for `Software fallback`_ and `Driver chaining`_.
+When you select Kconfig options for the wanted features and drivers, nRF Security checks the Oberon directives to compile the optimal driver selection into the build.
+As part of this check, nRF Security uses ``PSA_NEED_*`` macros to combine the settings in Kconfig that represent application requirements (``PSA_WANT_*``) and driver preferences from the user (``PSA_USE_*``).
+Because the ``PSA_WANT_*`` directives can be supported by multiple drivers, the ``PSA_USE_*`` directives are useful to narrow down the driver selection.
+The ``PSA_NEED_*`` macros are automatically selected.
+They control which drivers are compiled and thus available for use at runtime for `Software fallback`_ and `Driver chaining`_.
 
 The following figure shows an overview of this process:
 
@@ -200,7 +207,7 @@ The software fallback can happen at runtime and works as follows:
 * No software fallback required - If hardware acceleration is enabled and available for the requested features, nRF Security selects the preferred driver for performance and security reasons.
 * Software fallback required - If no hardware driver is enabled and available, or if the hardware or the preferred driver do not support the specific cryptographic operation, nRF Security falls back to the software nrf_oberon driver.
 
-The software fallback mechanism to the nrf_oberon driver is enabled by default in the |NCS|.
+The software fallback mechanism to the nrf_oberon driver is enabled by default in the |NCS| for the implementations that support it.
 You can :ref:`manually disable the software fallback mechanism <psa_crypto_support_disable_software_fallback>`.
 For example, you can do that if you want the cryptographic operations to run in hardware only.
 
@@ -242,6 +249,7 @@ Driver chaining in the |NCS|
 ----------------------------
 
 Driver chaining is handled in the |NCS| at runtime when you :ref:`enable multiple drivers at the same time <psa_crypto_support_multiple_drivers>` and then enable specific :ref:`nrf_oberon driver features in combination with driver features for hardware acceleration <nrf_security_drivers_config_features>`.
+The IronSide Secure Element implementation does not support driver chaining.
 
 Common driver chains supported in the nrf_oberon driver include the following cases:
 
@@ -272,7 +280,7 @@ Driver overview
 The following sections provide more details about the available cryptographic drivers.
 
 None of these drivers should be used directly.
-Use them only through nRF Security.
+Use them only through nRF Security or through the dedicated firmware (CRACEN within IronSide Secure Element).
 
 .. _crypto_drivers_cc3xx:
 .. _nrf_security_drivers_cc3xx:
@@ -368,7 +376,12 @@ The hardware peripheral is available on the following devices:
 CRACEN driver configuration
 ---------------------------
 
-For configuration details, see :ref:`psa_crypto_support`.
+Depending on the hardware platform:
+
+* For nRF54L Series devices, see :ref:`psa_crypto_support`.
+* For the nRF54H20 SoC, you cannot configure the CRACEN driver.
+  You must use the CRACEN driver as provided in the IronSide SE firmware bundle.
+  See :ref:`ug_nrf54h20_SoC_binaries` for more information.
 
 .. _crypto_drivers_oberon:
 .. _nrf_security_drivers_oberon:
