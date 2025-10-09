@@ -20,6 +20,9 @@
     - applications.matter_bridge.br_ble.smp_dfu
     - applications.matter_bridge.br_ble.memory_profiling
     - applications.matter_bridge.memory_profiling
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp
   comment: "Variant does not fit in FLASH area - it should be probably removed in the future"
 
 - scenarios:
@@ -99,6 +102,32 @@
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuppr
   comment: "Needs newer toolchain or dtc due to RAM overflow error"
+
+- scenarios:
+    - sample.persistent_key_usage.secure_storage
+    - sample.persistent_key_usage.trusted_storage
+    - sample.psa.its.secure_storage.entropy_driver
+    - sample.psa.its.secure_storage.entropy_not_secure
+    - sample.psa.persistent_key.secure_storage.entropy_driver
+    - sample.psa.persistent_key.secure_storage.entropy_not_secure
+    - secure_storage.psa.crypto.secure_storage
+    - secure_storage.psa.its.secure_storage.custom.store
+    - secure_storage.psa.its.secure_storage.store.settings
+    - secure_storage.psa.its.secure_storage.store.settings.64-bit_uids
+  platforms:
+    - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35676"
+
+- scenarios:
+    - benchmarks.current_consumption.systemoff.gpio_wakeup
+    - benchmarks.current_consumption.systemoff.gpio_wakeup.retained_mem
+    - benchmarks.current_consumption.systemoff.grtc_wakeup
+    - benchmarks.current_consumption.sample.boards.nrf.system_off
+    - benchmarks.current_consumption.sample.boards.nrf.system_off.retained_mem
+    - benchmarks.current_consumption.sample.boards.nrf.system_off.lpcomp_wakeup
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+  comment: "Wait for lilium support"
 
 - scenarios:
     - sample.benchmark.coremark.heap_memory
