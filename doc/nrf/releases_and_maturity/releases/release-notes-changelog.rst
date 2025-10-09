@@ -277,6 +277,8 @@ nRF Desktop
       The application did not switch to the ``bare`` board variant to keep backwards compatibility.
     * The :ref:`nrf_desktop_hid_state` to allow for delayed registration of HID report providers.
       Before the change was introduced, subscribing to a HID input report before the respective provider was registered triggered an assertion failure.
+    * HID transports (:ref:`nrf_desktop_hids`, :ref:`nrf_desktop_usb_state`) to use the early :c:struct:`hid_report_event` subscription (:c:macro:`APP_EVENT_SUBSCRIBE_EARLY`).
+      This update improves the reception speed of HID input reports in HID transports.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

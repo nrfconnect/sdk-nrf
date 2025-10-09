@@ -1567,7 +1567,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 }
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, hid_report_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 APP_EVENT_SUBSCRIBE(MODULE, config_event);
 #endif
