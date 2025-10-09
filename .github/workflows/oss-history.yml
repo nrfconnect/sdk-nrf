@@ -27,7 +27,7 @@ jobs:
           pip3 install --upgrade pip setuptools west
           pip3 install -r ncs/nrf/scripts/requirements-extra.txt
 
-      - name: Set upsteam
+      - name: Set upstream
         working-directory: ncs
         run: |
           git -C zephyr remote add upstream https://github.com/zephyrproject-rtos/zephyr
@@ -41,4 +41,4 @@ jobs:
         uses: nrfconnect/action-oss-history@main
         with:
           workspace: 'ncs'
-          args: -p zephyr -p mcuboot -p hostap -p wfa-qt-control-app
+          args: -p zephyr -p mcuboot -p hostap -p wfa-qt-control-app -p trusted-firmware-m -p mbedtls
