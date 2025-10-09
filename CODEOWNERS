@@ -676,6 +676,7 @@
 /samples/zephyr/drivers/i2c/rtio_loopback/ @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/jesd216/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/mbox/             @nrfconnect/ncs-low-level-test
+/samples/zephyr/drivers/regulator/        @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/spi_bitbang/      @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/spi_flash/        @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/watchdog/         @nrfconnect/ncs-low-level-test
