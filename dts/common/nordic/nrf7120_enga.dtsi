@@ -80,7 +80,7 @@
 		#size-cells = <1>;
 		ranges;
 
-		nordic_reserved: memory@200fe000{
+		nordic_reserved: memory@200fe000 {
 			#address-cells = <1>;
 			#size-cells = <1>;
 			compatible = "mmio-sram";
@@ -88,7 +88,7 @@
 			ranges = <0x0 0x200fe000 0x1000>;
 		};
 
-		nrf_kmu_cracen_exchange_area: memory@200ff000{
+		nrf_kmu_cracen_exchange_area: memory@200ff000 {
 			#address-cells = <1>;
 			#size-cells = <1>;
 			reg = <0x200ff000 0x1000>;
@@ -119,6 +119,7 @@
 #ifdef USE_NON_SECURE_ADDRESS_MAP
 		/* Intentionally empty because uicr is hardware fixed to Secure */
 #else
+
 		uicr: uicr@ffd000 {
 			compatible = "nordic,nrf-uicr";
 			reg = <0xffd000 0x1000>;
@@ -165,6 +166,7 @@
 			#size-cells = <1>;
 			ranges = <0x0 0x40000000 0x10000000>;
 #else
+
 		global_peripherals: peripheral@50000000 {
 			reg = <0x50000000 0x10000000>;
 			#address-cells = <1>;
@@ -205,7 +207,7 @@
 				status = "disabled";
 			};
 
-			cpuflpr_vpr: vpr@4c000{
+			cpuflpr_vpr: vpr@4c000 {
 				compatible = "nordic,nrf-vpr-coprocessor";
 				reg = <0x4c000 0x1000>;
 				ranges = <0x0 0x4c000 0x1000>;
@@ -890,7 +892,7 @@
 					status = "disabled";
 				};
 
-				cpuapp_nvic: interrupt-controller@e000e100  {
+				cpuapp_nvic: interrupt-controller@e000e100 {
 					#address-cells = <1>;
 					compatible = "arm,v8m-nvic";
 					reg = <0xe000e100 0xc00>;
@@ -901,13 +903,13 @@
 			};
 		};
 
-		wifi_bellboard: mailbox@40074000{
+		wifi_bellboard: mailbox@40074000 {
 			reg = <0x40074000 0x1000>;
 			status = "disabled";
 			#mbox-cells = <1>;
 		};
 
-		cpuapp_bellboard: mailbox@40078000{
+		cpuapp_bellboard: mailbox@40078000 {
 			reg = <0x40078000 0x1000>;
 			status = "disabled";
 			#mbox-cells = <1>;
