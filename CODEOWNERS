@@ -72,14 +72,14 @@
 /doc/_zoomin/                             @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
 /doc/kconfig/                             @nrfconnect/ncs-doc-leads
 /doc/matter/                              @nrfconnect/ncs-matter-doc
-/doc/mcuboot/                             @nrfconnect/ncs-pluto-doc
+/doc/mcuboot/                             @nrfconnect/ncs-eris-doc
 /doc/nrf/*.rst                            @nrfconnect/ncs-doc-leads
 /doc/nrf/app_dev/                         @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc
-/doc/nrf/app_dev/bootloaders_dfu/         @nrfconnect/ncs-pluto-doc
+/doc/nrf/app_dev/bootloaders_dfu/         @nrfconnect/ncs-eris-doc
 /doc/nrf/app_dev/device_guides/fem/       @nrfconnect/ncs-doc-leads
 /doc/nrf/app_dev/device_guides/nrf52/     @nrfconnect/ncs-doc-leads
 /doc/nrf/app_dev/device_guides/nrf53/     @nrfconnect/ncs-doc-leads
-/doc/nrf/app_dev/device_guides/nrf53/qspi_xip_guide_nrf5340.rst @nrfconnect/ncs-pluto-doc
+/doc/nrf/app_dev/device_guides/nrf53/qspi_xip_guide_nrf5340.rst @nrfconnect/ncs-eris-doc
 /doc/nrf/app_dev/device_guides/nrf54l/    @annwoj
 /doc/nrf/app_dev/device_guides/nrf70/     @nrfconnect/ncs-wifi-doc
 /doc/nrf/app_dev/device_guides/nrf91/     @nrfconnect/ncs-modem-doc
@@ -127,7 +127,7 @@
 /doc/nrf/libraries/debug/index.rst        @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/debug/memfault_ncs.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/debug/ppi_trace.rst    @nrfconnect/ncs-doc-leads
-/doc/nrf/libraries/dfu/                   @nrfconnect/ncs-pluto-doc
+/doc/nrf/libraries/dfu/                   @nrfconnect/ncs-eris-doc
 /doc/nrf/libraries/gazell/                @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/modem/nrf_modem_lib/   @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/at_cmd_custom.rst @nrfconnect/ncs-modem-doc
@@ -157,7 +157,7 @@
 /doc/nrf/libraries/networking/azure_*.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/networking/coap_utils.rst @nrfconnect/ncs-terahertz-doc
 /doc/nrf/libraries/networking/downloader.rst @nrfconnect/ncs-modem-doc
-/doc/nrf/libraries/networking/fota_download.rst @nrfconnect/ncs-pluto-doc
+/doc/nrf/libraries/networking/fota_download.rst @nrfconnect/ncs-eris-doc
 /doc/nrf/libraries/networking/ftp_client.rst @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/libraries/networking/icalendar_parser.rst @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/networking/index.rst   @nrfconnect/ncs-doc-leads
@@ -194,7 +194,7 @@
 /doc/nrf/libraries/others/esb.rst         @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/others/event_manager_proxy.rst @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/others/fem_al.rst      @nrfconnect/ncs-si-muffin-doc
-/doc/nrf/libraries/others/flash_map_pm.rst @nrfconnect/ncs-pluto-doc
+/doc/nrf/libraries/others/flash_map_pm.rst @nrfconnect/ncs-eris-doc
 /doc/nrf/libraries/others/hw_id.rst       @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/others/index.rst       @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/others/log_rpc.rst     @nrfconnect/ncs-terahertz-doc
@@ -211,7 +211,7 @@
 /doc/nrf/libraries/others/tone.rst        @nrfconnect/ncs-audio-doc
 /doc/nrf/libraries/others/uart_async_adapter.rst @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/others/wave_gen.rst    @nrfconnect/ncs-si-bluebagel-doc
-/doc/nrf/libraries/security/bootloader/   @nrfconnect/ncs-pluto-doc
+/doc/nrf/libraries/security/bootloader/   @nrfconnect/ncs-eris-doc
 /doc/nrf/libraries/security/nrf_security/ @nrfconnect/ncs-aegir-doc
 /doc/nrf/libraries/security/tfm/          @nrfconnect/ncs-aegir-doc
 /doc/nrf/libraries/security/fatal_error.rst @nrfconnect/ncs-doc-leads
@@ -244,7 +244,7 @@
 /doc/nrf/samples/crypto.rst               @nrfconnect/ncs-aegir-doc
 /doc/nrf/samples/debug.rst                @nrfconnect/ncs-cia-doc
 /doc/nrf/samples/dect.rst                 @nrfconnect/ncs-modem-doc
-/doc/nrf/samples/dfu.rst                  @nrfconnect/ncs-charon-doc
+/doc/nrf/samples/dfu.rst                  @nrfconnect/ncs-eris-doc
 /doc/nrf/samples/edge.rst                 @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/samples/esb.rst                  @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/samples/fast_pair.rst            @nrfconnect/ncs-si-bluebagel-doc
@@ -342,7 +342,7 @@
 /include/fem_al/                          @nrfconnect/ncs-dragoon
 /include/hpf/                             @nrfconnect/ncs-ll-ursus
 /include/logging/                         @nrfconnect/ncs-protocols-serialization
-/include/mgmt/                            @nrfconnect/ncs-pluto
+/include/mgmt/                            @nrfconnect/ncs-eris
 /include/modem/                           @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /include/mpsl/                            @nrfconnect/ncs-dragoon
 /include/net/                             @nrfconnect/ncs-co-networking
@@ -377,8 +377,8 @@
 /lib/edge_impulse/                        @nrfconnect/ncs-si-muffin
 /lib/fatal_error/                         @nordic-krch
 /lib/fem_al/                              @nrfconnect/ncs-si-muffin
-/lib/flash_patch/                         @nrfconnect/ncs-pluto
-/lib/fprotect/                            @nrfconnect/ncs-pluto
+/lib/flash_patch/                         @nrfconnect/ncs-eris
+/lib/fprotect/                            @nrfconnect/ncs-eris
 /lib/gcf_sms/                             @nrfconnect/ncs-modem
 /lib/hw_id/                               @nrfconnect/ncs-cia
 /lib/hw_unique_key/                       @nrfconnect/ncs-aegir
@@ -412,7 +412,7 @@
 /modules/azure-sdk-for-c/                 @nrfconnect/ncs-cia
 /modules/cjson/                           @nrfconnect/ncs-cia @nrfconnect/ncs-nrf-cloud
 /modules/coremark/                        @nrfconnect/ncs-si-bluebagel
-/modules/mcuboot/                         @nrfconnect/ncs-pluto
+/modules/mcuboot/                         @nrfconnect/ncs-eris
 /modules/memfault-firmware-sdk/           @nrfconnect/ncs-cia @nrfconnect/ncs-memfault
 /modules/nrfxlib/                         @nrfconnect/ncs-code-owners
 /modules/openthread/                      @nrfconnect/ncs-thread
@@ -476,7 +476,7 @@
 /samples/bluetooth/shell_bt_nus/          @nrfconnect/ncs-si-muffin
 /samples/bluetooth/subrating/             @nrfconnect/ncs-dragoon
 /samples/bluetooth/throughput/            @nrfconnect/ncs-si-muffin
-/samples/bootloader/                      @nrfconnect/ncs-pluto
+/samples/bootloader/                      @nrfconnect/ncs-eris
 /samples/caf/                             @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/caf_sensor_manager/              @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/cellular/                        @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
@@ -500,9 +500,9 @@
 /samples/debug/ppi_trace/                 @nordic-krch
 /samples/dect/dect_phy/dect_shell/        @nrfconnect/ncs-modem-tre
 /samples/dect/dect_phy/hello_dect/        @nrfconnect/ncs-modem
-/samples/dfu/ab/                          @nrfconnect/ncs-charon
-/samples/dfu/dfu_target/                  @nrfconnect/ncs-charon
-/samples/dfu/dfu_multi_image/             @nrfconnect/ncs-charon
+/samples/dfu/ab/                          @nrfconnect/ncs-eris
+/samples/dfu/dfu_target/                  @nrfconnect/ncs-eris
+/samples/dfu/dfu_multi_image/             @nrfconnect/ncs-eris
 /samples/edge_impulse/                    @nrfconnect/ncs-si-muffin
 /samples/esb/                             @nrfconnect/ncs-si-muffin
 /samples/event_manager_proxy/             @nrfconnect/ncs-si-muffin
@@ -511,17 +511,17 @@
 /samples/ipc/ipc_service/                 @nrfconnect/ncs-si-muffin
 /samples/keys/                            @nrfconnect/ncs-aegir
 /samples/matter/                          @nrfconnect/ncs-matter
-/samples/mcuboot/                         @nrfconnect/ncs-pluto
+/samples/mcuboot/                         @nrfconnect/ncs-eris
 /samples/mpsl/                            @nrfconnect/ncs-dragoon
 /samples/net/                             @nrfconnect/ncs-cia @nrfconnect/ncs-modem
 /samples/nfc/                             @nrfconnect/ncs-si-muffin
-/samples/nrf5340/netboot/                 @nrfconnect/ncs-pluto
-/samples/nrf5340/extxip_smp_svr/          @nrfconnect/ncs-pluto
+/samples/nrf5340/netboot/                 @nrfconnect/ncs-eris
+/samples/nrf5340/extxip_smp_svr/          @nrfconnect/ncs-eris
 /samples/nrf_rpc/                         @nrfconnect/ncs-si-muffin
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
 /samples/nrf5340/empty_app_core/          @nrfconnect/ncs-si-muffin
-/samples/nrf5340/extxip_smp_svr/          @nrfconnect/ncs-pluto
+/samples/nrf5340/extxip_smp_svr/          @nrfconnect/ncs-eris
 /samples/nrf54h20/empty_app_core/         @nrfconnect/ncs-aurora
 /samples/nrf_compress/                    @nordicjm
 /samples/nrf_profiler/                    @nrfconnect/ncs-si-bluebagel
@@ -608,7 +608,7 @@
 /samples/bluetooth/shell_bt_nus/*.rst     @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/subrating/*.rst        @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/throughput/*.rst       @nrfconnect/ncs-si-muffin-doc
-/samples/bootloader/*.rst                 @nrfconnect/ncs-pluto-doc
+/samples/bootloader/*.rst                 @nrfconnect/ncs-eris-doc
 /samples/caf/*.rst                        @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-bluebagel-doc
 /samples/caf_sensor_manager/*.rst         @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-bluebagel-doc
 /samples/cellular/**/*.rst                @nrfconnect/ncs-modem-doc
@@ -626,9 +626,9 @@
 /samples/debug/ppi_trace/*.rst            @nrfconnect/ncs-doc-leads
 /samples/dect/dect_phy/dect_shell/*.rst   @nrfconnect/ncs-iot-positioning-doc
 /samples/dect/dect_phy/hello_dect/*.rst   @nrfconnect/ncs-modem-doc
-/samples/dfu/ab/*.rst                     @nrfconnect/ncs-charon-doc
-/samples/dfu/dfu_target/*.rst             @nrfconnect/ncs-charon-doc
-/samples/dfu/dfu_multi_image/*.rst        @nrfconnect/ncs-charon-doc
+/samples/dfu/ab/*.rst                     @nrfconnect/ncs-eris-doc
+/samples/dfu/dfu_target/*.rst             @nrfconnect/ncs-eris-doc
+/samples/dfu/dfu_multi_image/*.rst        @nrfconnect/ncs-eris-doc
 /samples/esb/**/*.rst                     @nrfconnect/ncs-si-muffin-doc
 /samples/edge_impulse/**/*.rst            @nrfconnect/ncs-si-muffin-doc
 /samples/event_manager_proxy/*.rst        @nrfconnect/ncs-si-muffin-doc
@@ -643,8 +643,8 @@
 /samples/nfc/**/*.rst                     @nrfconnect/ncs-si-muffin-doc
 /samples/nrf5340/empty_app_core/*.rst     @nrfconnect/ncs-si-muffin-doc
 /samples/nrf5340/empty_net_core/*.rst     @nrfconnect/ncs-si-bluebagel-doc
-/samples/nrf5340/extxip_smp_svr/*.rst     @nrfconnect/ncs-pluto-doc
-/samples/nrf5340/netboot/*.rst            @nrfconnect/ncs-pluto-doc
+/samples/nrf5340/extxip_smp_svr/*.rst     @nrfconnect/ncs-eris-doc
+/samples/nrf5340/netboot/*.rst            @nrfconnect/ncs-eris-doc
 /samples/nrf5340/remote_shell/*.rst       @nrfconnect/ncs-si-muffin-doc
 /samples/nrf_compress/mcuboot_update/*.rst @nrfconnect/ncs-vestavind-doc
 /samples/nrf_profiler/*.rst               @nrfconnect/ncs-si-bluebagel-doc
@@ -676,9 +676,9 @@
 /samples/zephyr/sensor/accel_polling/     @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/bme680/            @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/qdec/              @nrfconnect/ncs-low-level-test
-/samples/zephyr/smp_svr_mini_boot/        @nrfconnect/ncs-pluto @nrfconnect/ncs-charon
+/samples/zephyr/smp_svr_mini_boot/        @nrfconnect/ncs-eris
 /samples/zephyr/subsys/ipc/               @nrfconnect/ncs-low-level-test
-/samples/zephyr/subsys/mgmt/mcumgr/smp_svr/ @nrfconnect/ncs-charon
+/samples/zephyr/subsys/mgmt/mcumgr/smp_svr/ @nrfconnect/ncs-eris
 /samples/zephyr/subsys/settings/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/usb/               @nrfconnect/ncs-low-level-test
 /samples/zephyr/sysbuild/                 @nrfconnect/ncs-low-level-test
@@ -705,15 +705,15 @@
 /scripts/west_commands/sbom/              @nrfconnect/ncs-co-scripts
 /scripts/west_commands/thingy91x_dfu.py   @nrfconnect/ncs-cia
 /scripts/west_commands/ncs_ironside_se_update.py @nrfconnect/ncs-aurora
-/scripts/west_commands/ncs_provision.py   @nrfconnect/ncs-pluto
-/scripts/bootloader/                      @nrfconnect/ncs-pluto
-/scripts/reglock.py                       @nrfconnect/ncs-pluto
+/scripts/west_commands/ncs_provision.py   @nrfconnect/ncs-eris
+/scripts/bootloader/                      @nrfconnect/ncs-eris
+/scripts/reglock.py                       @nrfconnect/ncs-eris
 /scripts/ncs-docker-version.txt           @nrfconnect/ncs-ci
 /scripts/print_docker_image.sh            @nrfconnect/ncs-ci
 /scripts/print_toolchain_checksum.sh      @nrfconnect/ncs-ci
 /scripts/hpf/                             @nrfconnect/ncs-ll-ursus
 /scripts/generate_psa_key_attributes.py   @nrfconnect/ncs-aegir
-/scripts/tests/                           @nrfconnect/ncs-pluto @fundakol
+/scripts/tests/                           @nrfconnect/ncs-eris @fundakol
 /scripts/vale/                            @francescoser
 /scripts/esb_sniffer/                     @nrfconnect/ncs-si-muffin
 
@@ -778,23 +778,23 @@
 /subsys/bluetooth/services/ras/           @nrfconnect/ncs-dragoon
 /subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
 /subsys/bluetooth/services/hids.c         @nrfconnect/ncs-si-bluebagel
-/subsys/bootloader/                       @nrfconnect/ncs-pluto
+/subsys/bootloader/                       @nrfconnect/ncs-eris
 /subsys/caf/                              @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /subsys/debug/                            @nordic-krch
 /subsys/debug/coredump/                   @nrfconnect/ncs-protocols-serialization
-/subsys/dfu/                              @nrfconnect/ncs-pluto
-/subsys/dfu/dfu_target/                   @nrfconnect/ncs-pluto @nrfconnect/ncs-charon
-/subsys/dfu/dfu_multi_image/              @Damian-Nordic @nrfconnect/ncs-charon
+/subsys/dfu/                              @nrfconnect/ncs-eris
+/subsys/dfu/dfu_target/                   @nrfconnect/ncs-eris
+/subsys/dfu/dfu_multi_image/              @Damian-Nordic @nrfconnect/ncs-eris
 /subsys/dm/                               @nrfconnect/ncs-si-muffin
 /subsys/dult/                             @nrfconnect/ncs-si-bluebagel
 /subsys/emds/                             @balaklaka @nrfconnect/ncs-paladin
 /subsys/esb/                              @nrfconnect/ncs-si-muffin
 /subsys/event_manager_proxy/              @nrfconnect/ncs-si-muffin
-/subsys/fw_info/                          @nrfconnect/ncs-pluto
+/subsys/fw_info/                          @nrfconnect/ncs-eris
 /subsys/gazell/                           @leewkb4567
 /subsys/logging/                          @nrfconnect/ncs-protocols-serialization
-/subsys/mcuboot/                          @nrfconnect/ncs-charon
-/subsys/mgmt/                             @nrfconnect/ncs-pluto
+/subsys/mcuboot/                          @nrfconnect/ncs-eris
+/subsys/mgmt/                             @nrfconnect/ncs-eris
 /subsys/mpsl/                             @nrfconnect/ncs-dragoon
 /subsys/mpsl/cx/                          @nrfconnect/ncs-radio-sw
 /subsys/mpsl/fem/                         @nrfconnect/ncs-radio-sw
@@ -822,9 +822,9 @@
 /subsys/nrf_rpc/                          @nrfconnect/ncs-si-muffin @nrfconnect/ncs-protocols-serialization
 /subsys/nrf_security/                     @nrfconnect/ncs-aegir
 /subsys/partition_manager/                @nordicjm @tejlmand
-/subsys/pcd/                              @nrfconnect/ncs-pluto
+/subsys/pcd/                              @nrfconnect/ncs-eris
 /subsys/secure_storage/                   @nrfconnect/ncs-aegir
-/subsys/settings/                         @nrfconnect/ncs-pluto @rghaddab
+/subsys/settings/                         @nrfconnect/ncs-eris @rghaddab
 /subsys/shell/                            @nordic-krch
 /subsys/trusted_storage/                  @nrfconnect/ncs-aegir
 /subsys/uart_async_adapter/               @nrfconnect/ncs-si-muffin
@@ -844,9 +844,9 @@
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/crypto/                            @magnev
 /tests/drivers/audio/                     @nrfconnect/ncs-low-level-test
-/tests/drivers/flash/flash_rpc/           @nrfconnect/ncs-pluto
-/tests/drivers/flash_patch/               @nrfconnect/ncs-pluto
-/tests/drivers/fprotect/                  @nrfconnect/ncs-pluto
+/tests/drivers/flash/flash_rpc/           @nrfconnect/ncs-eris
+/tests/drivers/flash_patch/               @nrfconnect/ncs-eris
+/tests/drivers/fprotect/                  @nrfconnect/ncs-eris
 /tests/drivers/gpio/                      @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/drivers/grtc/                      @nrfconnect/ncs-low-level-test
 /tests/drivers/i2c/                       @nrfconnect/ncs-low-level-test
@@ -898,8 +898,8 @@
 /tests/lib/app_jwt/                       @nrfconnect/ncs-modem
 /tests/mocks/nrf_rpc/                     @nrfconnect/ncs-protocols-serialization
 /tests/modules/lib/zcbor/                 @oyvindronningstad
-/tests/modules/mcuboot/direct_xip/        @nrfconnect/ncs-pluto
-/tests/modules/mcuboot/external_flash/    @nrfconnect/ncs-pluto
+/tests/modules/mcuboot/direct_xip/        @nrfconnect/ncs-eris
+/tests/modules/mcuboot/external_flash/    @nrfconnect/ncs-eris
 /tests/nrf5340_audio/                     @nrfconnect/ncs-audio @nordic-auko
 /tests/psa_crypto/                        @nrfconnect/ncs-aegir
 /tests/subsys/app_event_manager/          @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
@@ -910,20 +910,20 @@
 /tests/subsys/bluetooth/enocean/          @nrfconnect/ncs-paladin
 /tests/subsys/bluetooth/fast_pair/        @nrfconnect/ncs-si-bluebagel
 /tests/subsys/bluetooth/mesh/             @nrfconnect/ncs-paladin
-/tests/subsys/bootloader/                 @nrfconnect/ncs-pluto
+/tests/subsys/bootloader/                 @nrfconnect/ncs-eris
 /tests/subsys/caf/                        @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /tests/subsys/debug/cpu_load/             @nordic-krch
-/tests/subsys/dfu/                        @nrfconnect/ncs-pluto
+/tests/subsys/dfu/                        @nrfconnect/ncs-eris
 /tests/subsys/dfu/dfu_multi_image/        @Damian-Nordic
 /tests/subsys/emds/                       @balaklaka @nrfconnect/ncs-paladin
 /tests/subsys/event_manager_proxy/        @nrfconnect/ncs-si-muffin
-/tests/subsys/fw_info/                    @nrfconnect/ncs-pluto
-/tests/subsys/kmu/                        @nrfconnect/ncs-pluto
+/tests/subsys/fw_info/                    @nrfconnect/ncs-eris
+/tests/subsys/kmu/                        @nrfconnect/ncs-eris
 /tests/subsys/mpsl/                       @nrfconnect/ncs-dragoon
 /tests/subsys/net/lib/aws_*/              @nrfconnect/ncs-cia
 /tests/subsys/net/lib/azure_iot_hub/      @nrfconnect/ncs-cia
 /tests/subsys/net/lib/downloader/         @nrfconnect/ncs-modem
-/tests/subsys/net/lib/fota_download/      @nrfconnect/ncs-pluto
+/tests/subsys/net/lib/fota_download/      @nrfconnect/ncs-eris
 /tests/subsys/net/lib/lwm2m_*/            @nrfconnect/ncs-iot-oulu
 /tests/subsys/net/lib/mqtt_helper/        @nrfconnect/ncs-cia
 /tests/subsys/net/lib/nrf_cloud/          @nrfconnect/ncs-nrf-cloud
@@ -937,7 +937,7 @@
 /tests/subsys/nrf_security/psa_core_lite/ @nrfconnect/ncs-aegir
 /tests/subsys/partition_manager/region/   @nordicjm @tejlmand
 /tests/subsys/partition_manager/static_pm_file/ @nordicjm @tejlmand
-/tests/subsys/pcd/                        @nrfconnect/ncs-pluto
+/tests/subsys/pcd/                        @nrfconnect/ncs-eris
 /tests/subsys/rtt/                        @nrfconnect/ncs-low-level-test
 /tests/subsys/swo/                        @nrfconnect/ncs-low-level-test
 /tests/subsys/usb/negotiated_speed/       @nrfconnect/ncs-low-level-test
@@ -967,7 +967,7 @@
 /tests/zephyr/drivers/watchdog/           @nrfconnect/ncs-low-level-test
 /tests/zephyr/kernel/timer/timer_behavior/ @nrfconnect/ncs-low-level-test
 /tests/zephyr/subsys/secure_storage/      @nrfconnect/ncs-aegir
-/tests/zephyr/subsys/settings/performance/ @nrfconnect/ncs-pluto @rghaddab
+/tests/zephyr/subsys/settings/performance/ @nrfconnect/ncs-eris @rghaddab
 /tests/zephyr/samples/sensor/qdec/         @nrfconnect/ncs-low-level-test
 
 /tests/benchmarks/multicore/idle/*.rst    @nrfconnect/ncs-si-bluebagel-doc

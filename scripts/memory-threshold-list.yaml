@@ -192,6 +192,6 @@
   rom_increase: 256
   ram_increase: 256
   codeowners:
-    - nrfconnect/ncs-pluto
+    - nrfconnect/ncs-eris
     - robertstypa
     - maciejpietras
