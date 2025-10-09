@@ -8,7 +8,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
-#include <zephyr/drivers/misc/coresight/nrf_etr.h>
+#include <zephyr/drivers/debug/debug_nrf_etr.h>
 #include <system_nrf.h>
 
 #include "coremark_zephyr.h"
@@ -55,7 +55,7 @@ static atomic_t coremark_in_progress;
 
 static void logging_mode_multi_domain_blocked_state_indicate(void)
 {
-	if (!IS_ENABLED(CONFIG_NRF_ETR)) {
+	if (!IS_ENABLED(CONFIG_DEBUG_NRF_ETR)) {
 		return;
 	}
 
@@ -70,7 +70,7 @@ static void logging_mode_multi_domain_blocked_state_indicate(void)
 	k_sleep(K_MSEC(100));
 
 	/* Flush logs from the ETR and direct them to UART. */
-	nrf_etr_flush();
+	debug_nrf_etr_flush();
 }
 
 static int logging_mode_indicate(void)
@@ -94,7 +94,7 @@ static int logging_mode_indicate(void)
 		/* Only the core responsible for moving the logs from the STM sink to UART
 		 * indicates the logging mode.
 		 */
-		if (IS_ENABLED(CONFIG_NRF_ETR)) {
+		if (IS_ENABLED(CONFIG_DEBUG_NRF_ETR)) {
 			LOG_INF("Multi-domain logging mode");
 			LOG_INF("This core is used to output logs from all cores to terminal "
 				"over UART\n");
