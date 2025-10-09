@@ -2238,6 +2238,19 @@ The issues in this section are related to the :ref:`nrf_desktop` application.
 
 .. rst-class:: v3-1-1 v3-1-0
 
+NCSDK-35650: Possible problems with sending HID input reports over Bluetooth LE after reconnection
+  Bluetooth stack might leak ATT TX buffers during disconnection if an application delays ATT sent callback until data transmission is done by Bluetooth LE controller (:kconfig:option:`CONFIG_BT_ATT_SENT_CB_AFTER_TX`).
+  Enabling the feature introduces an additional network buffer reference with the :c:func:`net_buf_ref` function.
+  This extends the lifetime of the network buffer representation until data transmission is confirmed by an ACK from the remote.
+  The reference is removed with the :c:func:`net_buf_unref` function when the TX callback passed to the :c:func:`bt_l2cap_send_pdu` function is called.
+  The TX callback might not be called for data sent over Bluetooth LE during the link disconnection.
+  This leads to missing net buffer reference removal.
+  Eventually, the buffers cannot be reused after Bluetooth LE reconnection.
+
+  **Workaround:** Apply the fix from `sdk-zephyr PR #3323`_.
+
+.. rst-class:: v3-1-1 v3-1-0
+
 NCSDK-34743: System state indication LED does not work on nRF54L15 DK
   The system state indication LED is kept turned off, because the PWM hardware peripheral attempts to drive the LED instead of GPIO.
   On the nRF54L05, nRF54L10 and nRF54L15 SoCs, you can only use the **GPIO1** port for PWM hardware peripheral output.
