@@ -15,6 +15,7 @@
 
 /* Shrink by 160 KB */
 /delete-node/ &cpurad_slot0_partition;
+
 &mram1x {
 	partitions {
 		cpurad_slot0_partition: partition@BA000 {

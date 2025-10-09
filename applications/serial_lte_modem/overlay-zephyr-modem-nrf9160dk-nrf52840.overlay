@@ -13,6 +13,6 @@
 };
 
 &uart1 {
-        current-speed = <115200>;
-        hw-flow-control;
+	current-speed = <115200>;
+	hw-flow-control;
 };

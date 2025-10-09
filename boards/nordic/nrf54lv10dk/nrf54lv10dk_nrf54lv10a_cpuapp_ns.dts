@@ -19,7 +19,6 @@
 		zephyr,sram = &cpuapp_sram;
 		zephyr,bt-hci = &bt_hci_sdc;
 		zephyr,entropy = &psa_rng;
-
 	};
 
 	/delete-node/ rng;
