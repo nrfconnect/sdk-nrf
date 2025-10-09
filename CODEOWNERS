@@ -736,34 +736,42 @@
 /share/                                   @nrfconnect/ncs-co-build-system
 
 # Snippets
-/snippets/ci-shell/                       @nrfconnect/ncs-protocols-serialization
-/snippets/hpf/                            @nrfconnect/ncs-ll-ursus
-/snippets/hw-flow-control/                @nrfconnect/ncs-low-level-test @miha-nordic
-/snippets/matter-diagnostic-logs/         @nrfconnect/ncs-matter
-/snippets/matter-debug/                   @nrfconnect/ncs-matter
-/snippets/nordic-bt-rpc/                  @ppryga-nordic
-/snippets/nrf70-driver-debug/             @krish2718 @sachinthegreen
-/snippets/nrf70-driver-verbose-debug/     @krish2718 @sachinthegreen
-/snippets/nrf70-fw-patch-ext-flash/       @krish2718 @sachinthegreen
-/snippets/nrf70-wifi/                     @krish2718 @sachinthegreen
-/snippets/nrf91-modem-trace-ext-flash/    @nrfconnect/ncs-cia
-/snippets/nrf91-modem-trace-ram/          @nrfconnect/ncs-modem
-/snippets/nrf91-modem-trace-rtt/          @nrfconnect/ncs-modem
-/snippets/nrf91-modem-trace-uart/         @nrfconnect/ncs-modem
-/snippets/tfm-enable-share-uart/          @nrfconnect/ncs-cia
-/snippets/wpa-supplicant-debug/           @krish2718 @sachinthegreen
-/snippets/zperf/                          @nrfconnect/ncs-protocols-serialization
+/snippets/                                @nrfconnect/ncs-co-build-system
+**/snippets/                              @nrfconnect/ncs-co-build-system
+
+/snippets/ci-shell/                       @nrfconnect/ncs-co-build-system @nrfconnect/ncs-protocols-serialization
+/snippets/hpf/                            @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ll-ursus
+/snippets/hw-flow-control/                @nrfconnect/ncs-co-build-system @nrfconnect/ncs-low-level-test @miha-nordic
+/snippets/matter-diagnostic-logs/         @nrfconnect/ncs-co-build-system @nrfconnect/ncs-matter
+/snippets/matter-debug/                   @nrfconnect/ncs-co-build-system @nrfconnect/ncs-matter
+/snippets/nordic-bt-rpc/                  @nrfconnect/ncs-co-build-system @ppryga-nordic
+/snippets/nrf70-driver-debug/             @nrfconnect/ncs-co-build-system @krish2718 @sachinthegreen
+/snippets/nrf70-driver-verbose-debug/     @nrfconnect/ncs-co-build-system @krish2718 @sachinthegreen
+/snippets/nrf70-fw-patch-ext-flash/       @nrfconnect/ncs-co-build-system @krish2718 @sachinthegreen
+/snippets/nrf70-wifi/                     @nrfconnect/ncs-co-build-system @krish2718 @sachinthegreen
+/snippets/nrf91-modem-trace-ext-flash/    @nrfconnect/ncs-co-build-system @nrfconnect/ncs-cia
+/snippets/nrf91-modem-trace-ram/          @nrfconnect/ncs-co-build-system @nrfconnect/ncs-modem
+/snippets/nrf91-modem-trace-rtt/          @nrfconnect/ncs-co-build-system @nrfconnect/ncs-modem
+/snippets/nrf91-modem-trace-uart/         @nrfconnect/ncs-co-build-system @nrfconnect/ncs-modem
+/snippets/tfm-enable-share-uart/          @nrfconnect/ncs-co-build-system @nrfconnect/ncs-cia
+/snippets/wpa-supplicant-debug/           @nrfconnect/ncs-co-build-system @krish2718 @sachinthegreen
+/snippets/zperf/                          @nrfconnect/ncs-co-build-system @nrfconnect/ncs-protocols-serialization
+
+/applications/matter_bridge/snippets/     @nrfconnect/ncs-co-build-system @nrfconnect/ncs-matter
+/samples/matter/light_switch/snippets/    @nrfconnect/ncs-co-build-system @nrfconnect/ncs-matter
+/samples/matter/lock/snippets/            @nrfconnect/ncs-co-build-system @nrfconnect/ncs-matter
+
+/samples/openthread/cli/snippets/         @nrfconnect/ncs-co-build-system @nrfconnect/ncs-thread
+/samples/openthread/coap_client/snippets/ @nrfconnect/ncs-co-build-system @nrfconnect/ncs-thread
+/samples/openthread/coap_server/snippets/ @nrfconnect/ncs-co-build-system @nrfconnect/ncs-thread
+/samples/openthread/coprocessor/snippets/ @nrfconnect/ncs-co-build-system @nrfconnect/ncs-thread
+
+/snippets/nordic-bt-rpc/*.rst             @nrfconnect/ncs-doc-leads
 
 # SoC
 /soc/nordic/                              @nrfconnect/ncs-code-owners
 /soc/nordic/nrf71/                        @nrfconnect/ncs-code-owners @rob-robinson-14 @Hi-Im-David
 /soc/sercomm/                             @nrfconnect/ncs-code-owners @tokangas
-
-# These snippet entries must be below other snippet entries (excluding doc), do not move
-/snippets/                                @nrfconnect/ncs-co-build-system
-**/snippets/                              @nrfconnect/ncs-co-build-system
-
-/snippets/nordic-bt-rpc/*.rst             @nrfconnect/ncs-doc-leads
 
 # Subsystems
 /subsys/app_event_manager/                @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
