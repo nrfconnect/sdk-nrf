@@ -65,10 +65,6 @@ config OPENTHREAD_RPC_CLIENT_NUM_SENT_COAP_REQUESTS
 	  Defines the number of slots for storing a callback along with its context
 	  for ongoing CoAP requests awaiting a response.
 
-config OPENTHREAD_RPC_CLIENT_NUM_TX_CALLBACKS
-	int "Maximum number of registered message TX callbacks"
-	default 8
-
 config OPENTHREAD_RPC_CLIENT_RADIO_TIME_REFRESH_PERIOD
 	int "Radio time sync period [s]"
 	default 30
