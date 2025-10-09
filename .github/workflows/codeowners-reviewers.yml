@@ -1,0 +1,19 @@
+name: Assign reviewers from CODEOWNERS
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  contribs:
+    runs-on: ubuntu-24.04
+    name: Assign Reviewers from CODEOWNERS
+    steps:
+      - name: Assign
+        uses: nrfconnect/action-codeowners-reviewers@35bb91b2cf253dd8fdb9aa484b01b5a98efbb603
+        with:
+          github_token: ${{ secrets.NCS_NORDICBUILDER_ACTION_TOKEN }}
