@@ -4,7 +4,6 @@
  * P1.2 - P1.3
  */
 
-
 / {
 	aliases {
 		i2c-slave = &i2c21;
@@ -50,6 +49,7 @@
 	pinctrl-0 = <&i2c20_default_alt>;
 	pinctrl-1 = <&i2c20_sleep_alt>;
 	pinctrl-names = "default", "sleep";
+
 	sensor: sensor@54 {
 		reg = <0x54>;
 	};

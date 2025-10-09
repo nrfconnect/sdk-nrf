@@ -7,7 +7,7 @@
 /* Enable uart1 for tracing. */
 &uart1 {
 	status = "okay";
-	current-speed = < 1000000 >;
+	current-speed = <1000000>;
 	hw-flow-control;
 };
 

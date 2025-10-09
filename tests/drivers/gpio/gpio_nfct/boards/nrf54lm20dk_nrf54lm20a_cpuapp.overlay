@@ -11,6 +11,7 @@
 	 */
 	test_gpios {
 		compatible = "gpio-leds";
+
 		out_gpios: out_gpios {
 			gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
 		};

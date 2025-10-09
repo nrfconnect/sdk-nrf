@@ -9,16 +9,20 @@
 		sw1 = &button1;
 		led1 = &led1;
 	};
+
 	buttons {
 		compatible = "gpio-keys";
+
 		button1: button_1 {
 			gpios = <&gpio0 9 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
 			label = "Push button 1";
 			zephyr,code = <INPUT_KEY_1>;
 		};
 	};
+
 	leds {
 		compatible = "gpio-leds";
+
 		led1: led_1 {
 			gpios = <&gpio9 1 GPIO_ACTIVE_HIGH>;
 			label = "Green LED 1";

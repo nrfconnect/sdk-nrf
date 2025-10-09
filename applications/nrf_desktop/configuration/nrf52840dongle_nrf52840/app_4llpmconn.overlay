@@ -15,6 +15,7 @@
 		in-polling-period-us = <1000>;
 		in-report-size = <64>;
 	};
+
 	hid_dev_1: hid_dev_1 {
 		compatible = "zephyr,hid-device";
 		label = "HID1";
@@ -22,6 +23,7 @@
 		in-polling-period-us = <1000>;
 		in-report-size = <64>;
 	};
+
 	hid_dev_2: hid_dev_2 {
 		compatible = "zephyr,hid-device";
 		label = "HID2";
@@ -29,6 +31,7 @@
 		in-polling-period-us = <1000>;
 		in-report-size = <64>;
 	};
+
 	hid_dev_3: hid_dev_3 {
 		compatible = "zephyr,hid-device";
 		label = "HID3";
@@ -36,6 +39,7 @@
 		in-polling-period-us = <1000>;
 		in-report-size = <64>;
 	};
+
 	hid_dev_4: hid_dev_4 {
 		compatible = "zephyr,hid-device";
 		label = "HID4";
@@ -43,6 +47,7 @@
 		in-polling-period-us = <1000>;
 		in-report-size = <64>;
 	};
+
 	hid_dev_5: hid_dev_5 {
 		compatible = "zephyr,hid-device";
 		label = "HID5";

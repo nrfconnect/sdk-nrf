@@ -16,6 +16,7 @@
 				<NRF_PSEL(SDP_MSPI_DQ0, 7, 1)>;
 			nordic,drive-mode = <NRF_DRIVE_E0E1>;
 		};
+
 		group2 {
 			psels = <NRF_PSEL(SDP_MSPI_DQ1, 7, 2)>,
 				<NRF_PSEL(SDP_MSPI_DQ2, 7, 3)>,
@@ -168,8 +169,8 @@ test_line0: &spi130 {
 	pinctrl-1 = <&spis130_sleep_alt>;
 	pinctrl-names = "default", "sleep";
 	memory-regions = <&cpuapp_dma_region>;
-	/delete-property/rx-delay-supported;
-	/delete-property/rx-delay;
+	/delete-property/ rx-delay-supported;
+	/delete-property/ rx-delay;
 };
 
 test_line1: &spi131 {
@@ -180,8 +181,8 @@ test_line1: &spi131 {
 	pinctrl-1 = <&spis131_sleep_alt>;
 	pinctrl-names = "default", "sleep";
 	memory-regions = <&cpuapp_dma_region>;
-	/delete-property/rx-delay-supported;
-	/delete-property/rx-delay;
+	/delete-property/ rx-delay-supported;
+	/delete-property/ rx-delay;
 };
 
 test_line2: &spi132 {
@@ -192,8 +193,8 @@ test_line2: &spi132 {
 	pinctrl-1 = <&spis132_sleep_alt>;
 	pinctrl-names = "default", "sleep";
 	memory-regions = <&cpuapp_dma_region>;
-	/delete-property/rx-delay-supported;
-	/delete-property/rx-delay;
+	/delete-property/ rx-delay-supported;
+	/delete-property/ rx-delay;
 };
 
 test_line3: &spi133 {
@@ -204,6 +205,6 @@ test_line3: &spi133 {
 	pinctrl-1 = <&spis133_sleep_alt>;
 	pinctrl-names = "default", "sleep";
 	memory-regions = <&cpuapp_dma_region>;
-	/delete-property/rx-delay-supported;
-	/delete-property/rx-delay;
+	/delete-property/ rx-delay-supported;
+	/delete-property/ rx-delay;
 };
