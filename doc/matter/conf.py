@@ -30,9 +30,8 @@ sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
 extensions = [
-    "recommonmark",
+    "myst_parser",
     "warnings_filter",
-    "sphinx_markdown_tables",
     "zephyr.external_content"
 ]
 source_suffix = [".rst", ".md"]
@@ -56,6 +55,16 @@ html_theme_options = {
 
 warnings_filter_config = str(NRF_BASE / "doc" / "matter" / "known-warnings.txt")
 
+# -- Options for MyST --------------------------------------------------------
+
+myst_heading_anchors = 6
+suppress_warnings = [
+    "myst.header",
+    "myst.anchor",
+    "myst.xref_missing",
+]
+myst_enable_extensions = ["html_image"]
+
 # Options for external_content -------------------------------------------------
 
 external_content_contents = [
@@ -74,7 +83,15 @@ external_content_contents = [
     (MATTER_BASE / "src" / "tools" / "chip-cert", "README.md"),
 
 ]
-
+external_content_link_prefixes = [
+    "src/",
+    r"\.vscode/",
+    "CONTRIBUTING",  # cannot detect CONTRIBUTING.md
+    "README",  # cannot detect README.md
+    "scripts/",
+    "examples/android/",
+    "data_model/",
+]
 
 def setup(app):
     app.add_css_file("css/matter.css")

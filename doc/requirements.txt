@@ -15,7 +15,8 @@ natsort                         # |     |         |        |         |         |
 PyYAML                          # |  X  |         |        |         |         |      |   X    |
 pykwalify                       # |     |         |        |         |         |      |   X    |
 pytest                          # |     |         |        |         |         |      |   X    |
-recommonmark                    # |     |         |   X    |    X    |         |      |        |
+recommonmark                    # |     |         |        |    X    |         |      |        |
+myst_parser                     # |     |         |   X    |         |         |      |        |
 snowballstemmer<3.0.0           # https://github.com/snowballstem/snowball/issues/229
 sphinx>=8.1,<8.2                # |  X  |    X    |   X    |    X    |    X    |  X   |   X    |
 sphinx-autobuild                # |  X  |    X    |   X    |    X    |    X    |  X   |   X    |
@@ -24,7 +25,7 @@ sphinx-ncs-theme<1.1            # |  X  |         |        |         |         |
 sphinx-notfound-page>=1.0.0     # |  X  |         |        |         |         |      |   X    |
 sphinx-tabs>=3.4                # |  X  |         |        |         |         |      |   X    |
 sphinx-togglebutton             # |  X  |         |        |         |         |      |   X    |
-sphinx_markdown_tables          # |     |         |   X    |         |         |      |        |
+sphinx_markdown_tables          # |     |         |        |     X   |         |      |        |
 sphinxcontrib-mscgen            # |  X  |         |        |         |    X    |      |        |
 sphinxcontrib-plantuml>=0.27    # |     |         |        |         |         |  X   |        |
 sphinxcontrib-programoutput     # |  X  |         |        |         |         |      |   X    |
