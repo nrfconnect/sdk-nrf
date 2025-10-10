@@ -4,6 +4,47 @@
 
 include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
 
+function(check_image_boundaries merged_partition images)
+  # Predefine the MCUboot header size.
+  set(MCUBOOT_HEADER_SIZE 0x800)
+
+  # Fetch merged slot details from the mcuboot image.
+  dt_chosen(flash_node TARGET mcuboot PROPERTY "zephyr,flash")
+  dt_nodelabel(slot_path TARGET mcuboot NODELABEL "${merged_partition}" REQUIRED)
+  dt_partition_addr(slot_addr PATH "${slot_path}" TARGET mcuboot REQUIRED ABSOLUTE)
+  dt_reg_size(slot_size TARGET mcuboot PATH ${slot_path})
+
+  # Calculate boundaries of the usable area.
+  sysbuild_get(mcuboot_image_footer_size IMAGE mcuboot CACHE)
+  math(EXPR slot_max_addr "${slot_addr} + ${slot_size} - ${mcuboot_image_footer_size}" OUTPUT_FORMAT HEXADECIMAL)
+  math(EXPR slot_min_addr "${slot_addr} + ${MCUBOOT_HEADER_SIZE}" OUTPUT_FORMAT HEXADECIMAL)
+
+  # Iterate over images and check that they fit in the merged slots.
+  foreach(image ${images})
+    set(start_offset)
+    set(end_offset)
+    sysbuild_get(start_offset IMAGE ${image} VAR CONFIG_ROM_START_OFFSET
+      KCONFIG)
+    sysbuild_get(end_offset IMAGE ${image} VAR CONFIG_ROM_END_OFFSET
+      KCONFIG)
+    dt_chosen(code_flash TARGET ${image} PROPERTY "zephyr,code-partition")
+    dt_partition_addr(code_addr PATH "${code_flash}" TARGET ${image} REQUIRED ABSOLUTE)
+    dt_reg_size(code_size TARGET ${image} PATH ${code_flash})
+
+    math(EXPR code_end_addr "${code_addr} + ${code_size} - ${end_offset}" OUTPUT_FORMAT HEXADECIMAL)
+    math(EXPR code_start_addr "${code_addr} + ${start_offset}" OUTPUT_FORMAT HEXADECIMAL)
+
+    if((${code_end_addr} GREATER ${slot_max_addr}) OR
+       (${code_start_addr} LESS ${slot_min_addr}))
+      message(FATAL_ERROR "Variant image ${image} "
+                          "(${code_start_addr}, ${code_end_addr}) "
+                          "does not fit in the merged ${merged_partition} "
+                          "(${slot_min_addr}, ${slot_max_addr})")
+      return()
+    endif()
+  endforeach()
+endfunction()
+
 function(merge_images_nrf54h20 output_artifact images)
   find_program(MERGEHEX mergehex.py HINTS ${ZEPHYR_BASE}/scripts/build/ NAMES
     mergehex NAMES_PER_DIR)
@@ -208,10 +249,14 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
      SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP)
     if(CONFIG_NCS_IS_VARIANT_IMAGE)
       set(slot_size ${slot1_size})
+      set(slot_addr ${slot1_addr})
     else()
       set(slot_size ${slot0_size})
+      set(slot_addr ${slot0_addr})
     endif()
-    set(imgtool_rom_command --rom-fixed ${code_addr})
+    # Adjust start offset, based on the active slot and code partition address.
+    math(EXPR start_offset "${start_offset} + ${code_addr} - ${slot_addr}")
+    set(imgtool_rom_command --rom-fixed ${slot_addr})
   else()
     message(FATAL_ERROR "Only Direct XIP MCUboot modes are supported.")
     return()
@@ -220,7 +265,8 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
   # Basic 'imgtool sign' command with known image information.
   set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign
       --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --header-size
-      ${start_offset} --slot-size ${slot_size} ${imgtool_rom_command})
+      ${start_offset} --slot-size ${slot_size} --pad-header
+      ${imgtool_rom_command})
   set(imgtool_args --align ${write_block_size} ${imgtool_args})
 
   # Extensionless prefix of any output file.
@@ -286,8 +332,8 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
         "${output}.signed.confirmed.hex" CACHE FILEPATH
         "Signed and confirmed kernel hex file" FORCE)
       list(APPEND imgtool_cmd COMMAND
-        ${imgtool_sign} ${imgtool_args} --pad --confirm ${merged_hex}
-        ${output}.signed.confirmed.hex)
+        ${imgtool_sign} ${imgtool_args} --pad --pad-header --confirm
+        ${merged_hex} ${output}.signed.confirmed.hex)
     endif()
 
     if(NOT "${keyfile_enc}" STREQUAL "")
