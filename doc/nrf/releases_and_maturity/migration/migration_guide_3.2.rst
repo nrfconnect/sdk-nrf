@@ -78,6 +78,11 @@ Matter
        #. Set the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option to ``n``.
        #. Set the :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` Kconfig option to ``n``.
        #. Set the :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option to ``2``.
+     
+     * The Kconfig options :kconfig:option:`CONFIG_CHIP_SPI_NOR` and :kconfig:option:`CONFIG_CHIP_QSPI_NOR` have been removed.
+       Instead, use the standard options :kconfig:option:`CONFIG_SPI_NOR` and :kconfig:option:`CONFIG_NORDIC_QSPI_NOR`.
+       The configuration system will now automatically enable these options when the corresponding SPI or QSPI device is specified in the devicetree.
+       This change ensures more consistent configuration by relying on the standard Kconfig options when external NOR flash devices are present.
 
 Libraries
 =========
