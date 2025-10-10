@@ -12,11 +12,12 @@ import json
 import os
 import re
 from tempfile import NamedTemporaryFile
-from west import log
-from data_structure import Data, FileInfo, License
+
 from args import args
 from common import SbomException, command_execute
+from data_structure import Data, FileInfo, License
 from license_utils import is_spdx_license
+from west import log
 
 
 def check_scancode():
@@ -63,7 +64,7 @@ def detect(data: Data, optional: bool):
 
     decoded = map(run_scancode, filtered)
 
-    for result, file in zip(decoded, filtered):
+    for result, file in zip(decoded, filtered, strict=False):
 
         current = result['files'][0]
         if 'licenses' in current:

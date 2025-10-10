@@ -17,13 +17,15 @@ if os.name == "nt":
                Please update to Python 3.8 or newer to allow placing hidapi.dll in the directory \
                containing configurator_cli.py script')
 
+import contextlib
+
 from NrfHidManager import NrfHidManager
 
-from modules.module_config import MODULE_CONFIG
 from modules.config import change_config, fetch_config
-from modules.dfu import DfuImage
-from modules.dfu import fwinfo, devinfo, fwreboot, dfu_transfer
+from modules.dfu import DfuImage, devinfo, dfu_transfer, fwinfo, fwreboot
 from modules.led_stream import send_continuous_led_stream
+from modules.module_config import MODULE_CONFIG
+
 try:
     from modules.music_led_stream import send_music_led_stream
 except ImportError as e:
@@ -39,7 +41,7 @@ def progress_bar(permil):
     done_len = length * permil // 1000
     progress_line = '[' + '*' * done_len + '-' * (length - done_len) + ']'
     percent = permil / 10.0
-    print('\r{} {}%'.format(progress_line, percent), end='')
+    print(f'\r{progress_line} {percent}%', end='')
 
 
 def perform_show(dev, args):
@@ -70,17 +72,16 @@ def perform_dfu(dev, args):
         print('No proper update image in file')
         return
 
-    print('DFU will use file {}'.format(os.path.basename(img_file_bin)))
+    print(f'DFU will use file {os.path.basename(img_file_bin)}')
 
     img_ver_file = img_file.get_dfu_image_version()
     if img_ver_file is None:
         print('Cannot read image version from file')
         return
 
-    if bootloader_variant:
-        if bootloader_variant != img_file.get_dfu_image_bootloader_var():
-            print('Bootloader types does not match')
-            return
+    if bootloader_variant and bootloader_variant != img_file.get_dfu_image_bootloader_var():
+        print('Bootloader types does not match')
+        return
 
     print('Current FW version from device: ' +
           '.'.join([str(i) for i in img_ver_dev]))
@@ -125,9 +126,9 @@ def perform_config(dev, args):
         success, val = fetch_config(dev, module_name, option_name, option_config)
 
         if success:
-            print('Fetched {} {}: {}'.format(module_name, option_name, val))
+            print(f'Fetched {module_name} {option_name}: {val}')
         else:
-            print('Failed to fetch {} {}'.format(module_name, option_name))
+            print(f'Failed to fetch {module_name} {option_name}')
     else:
         if value_type is None:
             value = None
@@ -135,20 +136,18 @@ def perform_config(dev, args):
             try:
                 value = value_type(args.value)
             except ValueError:
-                print('Invalid type for {} {}. Expected {}'.format(module_name,
-                                                                   option_name,
-                                                                   value_type))
+                print(f'Invalid type for {module_name} {option_name}. Expected {value_type}')
                 return
 
         success = change_config(dev, module_name, option_name, value, option_config)
 
         if success:
             if value_type is None:
-                print('{} {} set'.format(module_name, option_name))
+                print(f'{module_name} {option_name} set')
             else:
-                print('{} {} set to {}'.format(module_name, option_name, value))
+                print(f'{module_name} {option_name} set to {value}')
         else:
-            print('Failed to set {} {}'.format(module_name, option_name))
+            print(f'Failed to set {module_name} {option_name}')
 
 
 def perform_fwinfo(dev, args):
@@ -236,7 +235,7 @@ def parse_arguments():
         module_opts = module_config['options']
         assert isinstance(module_opts, dict)
 
-        parser_config_module = sp_config.add_parser(module_name, help='{} module options'.format(module_name))
+        parser_config_module = sp_config.add_parser(module_name, help=f'{module_name} module options')
         sp_config_module = parser_config_module.add_subparsers(dest='option')
         sp_config_module.required = True
 
@@ -246,13 +245,11 @@ def parse_arguments():
             if module_opts[opt_name].type == int:
                 parser_config_module_opt.add_argument('value', type=int,
                                                       default=None, nargs='?',
-                                                      help='int from range {}'.format(
-                                                          module_opts[opt_name].range))
+                                                      help=f'int from range {module_opts[opt_name].range}')
             elif module_opts[opt_name].type == str:
                 parser_config_module_opt.add_argument('value', type=str,
                                                       default=None, nargs='?',
-                                                      help='str from range {}'.format(
-                                                          module_opts[opt_name].range))
+                                                      help=f'str from range {module_opts[opt_name].range}')
 
     return parser.parse_args()
 
@@ -271,7 +268,7 @@ def configurator():
         if len(devlist) > 0:
             print('Found following nRF Desktop devices:')
             for d in devlist:
-                print("  {}".format(d))
+                print(f"  {d}")
         else:
             print('Found no nRF Desktop devices')
         return
@@ -281,8 +278,7 @@ def configurator():
     if len(devs) == 0:
         print('Specified device was not found')
     elif len(devs) == 1:
-        print('Performing {} operation on {}'.format(args.command,
-                                                     devs[0].get_board_name()))
+        print(f'Performing {args.command} operation on {devs[0].get_board_name()}')
         configurator.ALLOWED_COMMANDS[args.command](devs[0], args)
     else:
         print('More than one device found. Please specify hwid.')
@@ -299,7 +295,5 @@ configurator.ALLOWED_COMMANDS = {
 
 
 if __name__ == '__main__':
-    try:
+    with contextlib.suppress(KeyboardInterrupt):
         configurator()
-    except KeyboardInterrupt:
-        pass

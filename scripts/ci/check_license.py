@@ -5,17 +5,18 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 import argparse
+import contextlib
 import json
 import re
-import sys
 import shlex
 import subprocess
+import sys
 import tempfile
 import textwrap
 from pathlib import Path
-import yaml
-import junit_xml
 
+import junit_xml
+import yaml
 
 # Messages shown in the output
 LICENSE_ALLOWED = '"*" license is allowed for this file.'
@@ -62,10 +63,8 @@ def parse_args():
 
 def unlink_quietly(path: Path) -> None:
     '''Delete a file if it exists.'''
-    try:
+    with contextlib.suppress(FileNotFoundError):
         path.unlink()
-    except FileNotFoundError:
-        pass
 
 
 class FileLicenseChecker:
@@ -74,7 +73,7 @@ class FileLicenseChecker:
     allow_list: 'dict[str, list[tuple[re.Pattern, bool]]]'
 
     def __init__(self, allow_list_file: Path):
-        with open(allow_list_file, 'r') as fd:
+        with open(allow_list_file) as fd:
             data = yaml.safe_load(fd)
         self.allow_list = {}
         for key in data:
@@ -233,7 +232,7 @@ class PatchLicenseChecker:
         try:
             self.run('west', 'ncs-sbom', '--input-list-file', tmp_list, '--license-detectors',
                      'spdx-tag,full-text,external-file', '--output-cache-database', tmp_json)
-            with open(tmp_json, 'r', encoding='utf-8') as fd:
+            with open(tmp_json, encoding='utf-8') as fd:
                 output = json.load(fd)
                 return output['files']
         finally:

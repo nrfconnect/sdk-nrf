@@ -10,7 +10,7 @@ import abc
 import argparse
 import sys
 from hashlib import sha256, sha512
-from typing import BinaryIO, Type
+from typing import BinaryIO
 
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives import hashes, serialization
@@ -190,7 +190,7 @@ class Ed25519KeysGenerator(KeysGeneratorBase):
         return private_key.sign(message)
 
 
-ALGORITHMS: dict[str, Type[KeysGeneratorBase]] = {
+ALGORITHMS: dict[str, type[KeysGeneratorBase]] = {
     "ed25519": Ed25519KeysGenerator,
     "ec": EllipticCurveKeysGenerator,
 }
