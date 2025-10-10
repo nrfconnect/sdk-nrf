@@ -162,7 +162,7 @@ This is demonstrated by the following code, that would be placed somewhere in yo
        - name: nrf
          repo-path: sdk-nrf
          remote: ncs
-         revision: v3.1.0
+         revision: v3.2.0-preview2
          import: true
      self:
        path: application
@@ -190,7 +190,7 @@ For example:
        - name: nrf
          repo-path: sdk-nrf
          remote: ncs
-         revision: v3.1.0
+         revision: v3.2.0-preview2
          import: true
        # Example for how to override a repository in the nRF Connect SDK with your own:
        - name: mcuboot
