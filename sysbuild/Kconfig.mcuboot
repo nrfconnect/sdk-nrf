@@ -22,6 +22,19 @@ config MCUBOOT_IMAGES_ROM_END_OFFSET_AUTO
 	  (e.g. "smp_svr;ipc_radio", "mcuboot_secondary_app").
 	  If empty the default set of updateable images will be affected.
 
+config MCUBOOT_MANIFEST_UPDATES
+	bool "Enable transactional updates"
+	help
+	  If y, enables support for transactional updates using manifests.
+	  This allows multiple images to be updated atomically. The manifest
+	  is a separate TLV which contains a list of images to update and
+	  their expected hash values. The manifest TLV is a part of an image
+	  that is signed to prevent tampering.
+	  The manifest must be transferred as part of the image with index 0.
+	  It can be a dedicated image, or part of an existing image.
+	  If the second option is selected, all updates must contain an update
+	  for image 0.
+
 config MCUBOOT_BUILD_DIRECT_XIP_VARIANT
 	bool "Build DirectXIP variant image"
 	depends on MCUBOOT_MODE_DIRECT_XIP || MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT
