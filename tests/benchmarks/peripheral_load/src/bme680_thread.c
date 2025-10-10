@@ -10,6 +10,8 @@ LOG_MODULE_REGISTER(be680, LOG_LEVEL_INF);
 #include <zephyr/drivers/sensor.h>
 #include "common.h"
 
+#if DT_HAS_COMPAT_STATUS_OKAY(bosch_bme680)
+
 static const struct device *const bme680 = DEVICE_DT_GET_ONE(bosch_bme680);
 
 /* BME680 thread */
@@ -96,3 +98,7 @@ static void bme680_thread(void *arg1, void *arg2, void *arg3)
 
 K_THREAD_DEFINE(thread_bme680_id, BME680_THREAD_STACKSIZE, bme680_thread, NULL, NULL, NULL,
 	K_PRIO_PREEMPT(BME680_THREAD_PRIORITY), 0, 0);
+
+#else
+#pragma message("BME680 thread skipped due to missing node in the DTS")
+#endif

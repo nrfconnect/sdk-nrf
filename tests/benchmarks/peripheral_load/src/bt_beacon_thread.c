@@ -83,6 +83,7 @@ static void bt_thread(void *arg1, void *arg2, void *arg3)
 	ARG_UNUSED(arg3);
 
 	LOG_INF("Starting BT beacon");
+	atomic_inc(&started_threads);
 
 	/* Initialize the Bluetooth Subsystem */
 	if (bt_enable(bt_ready)) {
@@ -90,6 +91,8 @@ static void bt_thread(void *arg1, void *arg2, void *arg3)
 	} else {
 		LOG_INF("Bluetooth init OK");
 	}
+
+	atomic_inc(&completed_threads);
 }
 
 K_THREAD_DEFINE(thread_bt_id, BT_THREAD_STACKSIZE, bt_thread, NULL, NULL, NULL,

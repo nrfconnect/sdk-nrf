@@ -199,4 +199,7 @@ static void clock_thread(void *arg1, void *arg2, void *arg3)
 
 K_THREAD_DEFINE(thread_clock_id, CLOCK_THREAD_STACKSIZE, clock_thread, NULL, NULL, NULL,
 		K_PRIO_PREEMPT(CLOCK_THREAD_PRIORITY), 0, 0);
+
+#else
+#pragma message("Clock thread skipped - feature is not supported on this platform")
 #endif
