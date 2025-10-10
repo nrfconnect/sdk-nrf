@@ -44,6 +44,7 @@ struct le_audio_msg {
 	uint8_t set_size;
 	uint8_t const *sirk;
 	struct stream_index idx;
+	struct bt_bap_stream *stream;
 };
 
 /**
@@ -60,6 +61,8 @@ enum bt_mgmt_evt_type {
 	BT_MGMT_EXT_ADV_WITH_PA_READY = 1,
 	BT_MGMT_CONNECTED,
 	BT_MGMT_SECURITY_CHANGED,
+	BT_MGMT_PAIRING_COMPLETE,
+	BT_MGMT_BOND_DELETED,
 	BT_MGMT_PA_SYNCED,
 	BT_MGMT_PA_SYNC_LOST,
 	BT_MGMT_DISCONNECTED,
@@ -75,6 +78,8 @@ struct bt_mgmt_msg {
 	struct bt_le_per_adv_sync *pa_sync;
 	uint32_t broadcast_id;
 	uint8_t pa_sync_term_reason;
+	bt_addr_le_t addr;
+	bt_addr_le_t identity;
 };
 
 enum volume_evt_type {

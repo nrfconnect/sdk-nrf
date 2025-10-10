@@ -1,0 +1,16 @@
+tests:
+  nrf5340_audio.server_store:
+    sysbuild: true
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf5340_audio_dk/nrf5340/cpuapp
+      - native_sim
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf5340_audio_dk/nrf5340/cpuapp
+      - native_sim
+    tags:
+      - server_store
+      - sysbuild
+      - ci_tests_nrf5340_audio
+    timeout: 20

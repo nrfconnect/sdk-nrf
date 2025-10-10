@@ -15,7 +15,7 @@ The nRF5340 Audio applications align the configuration with the nRF5340 Audio us
 Among others, the Kconfig options for Bluetooth, Zephyr's audio subsystems, and hardware peripherals are selected to ensure they are enabled.
 
 The :option:`CONFIG_NRF5340_AUDIO` option is the main Kconfig option that activates all nRF5340 Audio functionality.
-See the :file:`Kconfig.defaults` file for details related to the default common configuration.
+See the :file:`Kconfig.defaults` file in the :file:`nrf5340_audio` directory for details related to the default common configuration.
 
 .. note::
    Part of the default configuration is applied by modifying the default values of Kconfig options.
@@ -102,6 +102,60 @@ You build each BIS gateway separately using the normal procedures from :ref:`nrf
 After building the first gateway, configure the required Kconfig options for the second gateway and build the second gateway firmware.
 Remember to program the two firmware versions to two separate gateway devices.
 
+.. _nrf53_audio_app_configuration_headset_location:
+
+Configuring the headset location
+================================
+
+When using the :ref:`default CIS transport mode configuration <nrf53_audio_transport_mode_configuration>`, if you want to use two headset devices or the stereo configuration, you must also define the correct headset location.
+
+The nRF5340 Audio applications use the audio location definitions from the `Bluetooth Assigned Numbers`_ specification, page 201.
+These correspond to the bitfields in the :file:`bt_audio_location` enum in the :file:`zephyr/include/zephyr/bluetooth/assigned_numbers.h` file.
+When building the audio application, the location value is used to populate the UICR with the correct bitfield for each headset.
+
+You can set the location for each headset in the following ways, depending on the building and programming method:
+
+* When :ref:`nrf53_audio_app_building_script`, set the location for each headset in the :file:`nrf5340_audio_dk_devices.json` file.
+  Use the location labels from the `Bluetooth Assigned Numbers`_ specification, page 201.
+  For example:
+
+  .. code-block:: json
+
+     [
+      {
+        "nrf5340_audio_dk_snr": 1000,
+        "nrf5340_audio_dk_dev": "headset",
+        "location": ["FRONT_LEFT"]
+      }
+     ]
+
+  When no location is set, the headset is programmed as a left channel one.
+* When :ref:`nrf53_audio_app_building_standard`, set the location for each headset when running the :ref:`programming command <nrf53_audio_app_building_standard_programming>`.
+  Use the combined bitfield values from the :file:`zephyr/include/zephyr/bluetooth/assigned_numbers.h` file to define the headset location.
+  For example, if you want to use the stereo configuration, use the combined bitfield value of the left and right channels (``1`` and ``2``, respectively):
+
+  .. code-block:: console
+
+     nrfutil device x-write --address 0x00FF80F4 --value 3
+
+The following table lists some of the available locations and their bitfield values:
+
+.. list-table:: Example autio locations and their bitfield values
+   :header-rows: 1
+
+   * - Audio location
+     - Value from specification
+     - Bitfield value
+   * - ``"FRONT_LEFT"``
+     - ``0x00000000``
+     - ``1``
+   * - ``"FRONT_RIGHT"``
+     - ``0x00000001``
+     - ``2``
+   * - Stereo
+     - n/a
+     - ``3``
+
 .. _nrf53_audio_source_configuration:
 
 Configuring the audio source
@@ -171,6 +225,26 @@ The nRF5340 Audio application introduces application-specific configuration opti
 These options configure the Bluetooth stack components described in :ref:`nrf53_audio_app_overview_architecture`.
 
 See :ref:`config_audio_app_options` for options starting with ``CONFIG_BT_AUDIO``.
+
+.. _nrf53_audio_app_configuration_power_measurements:
+
+Configuring power measurements
+******************************
+
+The power measurements are disabled by default in the :ref:`debug version <nrf53_audio_app_overview_files>` of the application.
+
+.. note::
+   Enabling power measurements in the debug version together with :ref:`debug logging <ug_logging>` significantly increases the power consumption compared with the release version of the application.
+   For better results, consider using the `Power Profiler Kit II (PPK2)`_ and the `Power Profiler app`_ from nRF Connect for Desktop to measure the power consumption.
+
+To enable power measurements in the debug version, set the :kconfig:option:`CONFIG_NRF5340_AUDIO_POWER_MEASUREMENT` Kconfig option to ``y`` in the :file:`applications/nrf5340_audio/prj.conf` file.
+
+.. _nrf53_audio_app_configuration_sd_card_playback:
+
+Configuring SD card playback
+****************************
+
+The SD Card Playback module allows you to play audio files directly from an SD card inserted into the nRF5340 Audio development kit.
 
 .. _nrf53_audio_app_configuration_sd_card_playback:
 

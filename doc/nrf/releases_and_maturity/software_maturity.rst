@@ -135,7 +135,7 @@ The following table indicates the software maturity levels of the support for th
           Synchronizes and unsynchronizes with the stream.
         - The following limitations apply:
 
-          * One BIG, one of the two BIS streams (selectable).
+          * One BIG, one of the two BIS streams or a mixed stereo comprising of the two (selectable).
           * Audio output: I2S/Analog headset output.
           * Configuration: 16 bit, several bit rates ranging from 32 kbps to 124 kbps.
 
@@ -146,21 +146,18 @@ The following table indicates the software maturity levels of the support for th
           Transmitting unidirectional or transceiving bidirectional audio using CIG and CIS.
         - The following limitations apply:
 
-          * One CIG with two CIS.
           * Audio input: USB or I2S (Line in or using Pulse Density Modulation).
           * Audio output: USB or I2S/Analog headset output.
           * Configuration: 16 bit, several bit rates ranging from 32 kbps to 124 kbps.
 
         - Experimental
       * - :ref:`Unicast server <nrf53_audio_unicast_server_app>`
-        - One CIG with one CIS stream.
-
-          Receiving unidirectional or transceiving bidirectional audio using CIG and CIS.
+        - Receiving unidirectional or transceiving bidirectional audio using CIG and CIS.
 
           Coordinated Set Identification Service (CSIS) is implemented on the server side.
         - The following limitations apply:
 
-          * One CIG, one of the two CIS streams (selectable).
+          * One CIG, one of the two CIS streams or a mixed stereo comprising of the two (selectable).
           * Audio output: I2S/Analog headset output.
           * Audio input: PDM microphone over I2S.
           * Configuration: 16 bit, several bit rates ranging from 32 kbps to 124 kbps.
