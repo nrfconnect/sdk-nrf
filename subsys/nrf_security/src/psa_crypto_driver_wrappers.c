@@ -822,9 +822,6 @@ psa_status_t psa_driver_wrapper_derive_key(const psa_key_attributes_t *attribute
 		status = oberon_derive_key(attributes, input, input_length, key_buffer,
 					   key_buffer_size, key_buffer_length);
 
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
 #endif /* PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER */
 		break;
 
