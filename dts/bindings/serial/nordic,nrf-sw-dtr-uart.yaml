@@ -1,0 +1,20 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+    DTR/RI UART
+
+compatible: "nordic,nrf-sw-dtr-uart"
+
+include: uart-device.yaml
+
+properties:
+  dtr-gpios:
+    type: phandle-array
+    description: Data Terminal Ready pin
+    required: true
+
+  ri-gpios:
+    type: phandle-array
+    description: Ring Indicator pin
+    required: true

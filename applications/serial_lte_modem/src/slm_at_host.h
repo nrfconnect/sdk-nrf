@@ -47,15 +47,6 @@ enum slm_datamode_operation {
  */
 typedef int (*slm_datamode_handler_t)(uint8_t op, const uint8_t *data, int len, uint8_t flags);
 
-/* All the AT backend API functions return 0 on success. */
-struct slm_at_backend {
-	int (*start)(void);
-	int (*send)(const uint8_t *data, size_t len);
-	int (*stop)(void);
-};
-/** @retval 0 on success (the new backend is successfully started). */
-int slm_at_set_backend(struct slm_at_backend backend);
-
 /**
  * @brief Sends the given data via the current AT backend.
  *
@@ -66,8 +57,12 @@ int slm_at_send(const uint8_t *data, size_t len);
 /** @brief Identical to slm_at_send(str, strlen(str)). */
 int slm_at_send_str(const char *str);
 
-/** @brief Processes received AT bytes. */
-void slm_at_receive(const uint8_t *data, size_t len);
+/**
+ * @brief Processes received AT bytes.
+ *
+ * @retval Number of bytes processed.
+ */
+size_t slm_at_receive(const uint8_t *data, size_t len, bool *stop_at_receive);
 
 /**
  * @brief Initialize AT host for serial LTE modem
