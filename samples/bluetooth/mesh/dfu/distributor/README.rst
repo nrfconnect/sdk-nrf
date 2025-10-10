@@ -256,6 +256,38 @@ Build the sample using the following command:
    See `nRF Util`_ for more information on how to erase the external flash.
    Currently, external flash is supported on the ``nrf52840dk/nrf52840`` board and the ``nrf54l15dk/nrf54l15/cpuapp`` board.
 
+Optionally, you can also relocate the Bluetooth Mesh settings (for example the Replay Protection
+List and model states) to the external flash. To do so, add the extra configuration file when
+building:
+
+.. code-block:: console
+
+   west build -p -b *board_name* -- -DFILE_SUFFIX=ext_flash -DEXTRA_CONF_FILE=prj_ext_flash_settings.conf
+
+Without the extra configuration file, only the DFU image slot(s) use external flash and the mesh
+settings remain in internal flash. The relocation is supported only on the
+``nrf52840dk/nrf52840`` board variant.
+
+External flash variants
+-----------------------
+
+This sample also supports external flash memory as an optional storage partition for mesh settings on :zephyr:board:`nrf52840dk/nrf52840`.
+
+* ``ext_flash``: Enable external flash device.
+* ``ext_flash_settings``: Also relocate mesh settings to external flash.
+
+Enable external flash device only (same as above, for clarity):
+
+.. code-block:: console
+
+   west build -p -b nrf52840dk/nrf52840 -- -DFILE_SUFFIX=ext_flash
+
+Enable external flash and relocate mesh settings:
+
+.. code-block:: console
+
+   west build -p -b nrf52840dk/nrf52840 -- -DFILE_SUFFIX=ext_flash -DEXTRA_CONF_FILE=prj_ext_flash_settings.conf
+
 Dependencies
 ************
 

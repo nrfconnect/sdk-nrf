@@ -285,6 +285,12 @@ This sample can be configured to report energy usage sensor data to any device i
 
 The Sensor Server model is now configured and able to receive messages from and send data to the peer Sensor Client.
 
+.. note::
+  The external flash is not erased during the internal flash erasing procedure.
+  See `nRF Util`_ for more information on how to erase the external flash.
+  Currently, only the external flash on the ``nrf52840dk/nrf52840`` board is supported at the moment.
+
+
 .. _bluetooth_mesh_light_lc_occupancy_mode:
 
 Occupancy mode
@@ -323,6 +329,28 @@ Do this in the following way:
 * Go to the Light LC Server configuration that is located on the Element 2.
 * Scroll down to the **OCCUPANCY MODE** and tap :guilabel:`ON` to enable the Occupancy mode in the **Standby** state.
 * When the Light LC Server is in the **Standby** state, press ``Button 2`` on the **Mesh Sensor** node.
+
+External flash support
+======================
+
+This sample may use an optional external QSPI flash on :zephyr:board:`nrf52840dk/nrf52840` to store mesh settings externally.
+
+Optional external flash variants for :zephyr:board:`nrf52840dk/nrf52840`:
+
+* ``ext_flash``: Enable external flash device.
+* ``ext_flash_settings``: Also relocate mesh settings to external flash.
+
+Enable external flash device only:
+
+.. code-block:: console
+
+  west build -p -b nrf52840dk/nrf52840 -- -DFILE_SUFFIX=ext_flash
+
+Enable external flash and relocate mesh settings:
+
+.. code-block:: console
+
+  west build -p -b nrf52840dk/nrf52840 -- -DFILE_SUFFIX=ext_flash -DEXTRA_CONF_FILE=prj_ext_flash_settings.conf
 
 Dependencies
 ************
