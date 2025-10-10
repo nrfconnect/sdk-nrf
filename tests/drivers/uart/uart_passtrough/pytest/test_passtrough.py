@@ -4,7 +4,7 @@
 
 import logging
 import time
-from typing import Callable
+from collections.abc import Callable
 
 from serial_port import SerialPort
 from twister_harness import DeviceAdapter
@@ -29,7 +29,7 @@ def send_with_dead_time_between_characters(
         write_handler(character)
         time.sleep(dead_time_s)
     if apply_encoding:
-        line_termination = "\n".encode()
+        line_termination = b"\n"
     else:
         line_termination = "\n"
     write_handler(line_termination)

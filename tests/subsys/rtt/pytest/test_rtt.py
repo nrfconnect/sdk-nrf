@@ -7,8 +7,8 @@
 import logging
 import re
 import subprocess
-from pathlib import Path
 import time
+from pathlib import Path
 
 import psutil
 from twister_harness import DeviceAdapter
@@ -83,7 +83,7 @@ def test_rtt_logging(dut: DeviceAdapter):
     # use JLinkRTTLoggerExe to collect logs
     cmd = f"JLinkRTTLoggerExe -USB {SEGGER_ID}"
     cmd += f" -device {SWD_CONFIG[PLATFORM]['device']}"
-    cmd += f" -If SWD -Speed 1000 -RTTChannel 0"
+    cmd += " -If SWD -Speed 1000 -RTTChannel 0"
     cmd += f" {log_filename}"
 
     try:

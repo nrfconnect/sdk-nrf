@@ -4,10 +4,11 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-from intelhex import IntelHex as ih
+from argparse import ArgumentParser
 from struct import pack
 from subprocess import run
-from argparse import ArgumentParser
+
+from intelhex import IntelHex as ih
 
 key_nrf53 = [
     0xc5, 0xa8, 0x08, 0xeb, 0xe3, 0x1e, 0xa5, 0xb4,

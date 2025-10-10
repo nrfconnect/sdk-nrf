@@ -74,7 +74,7 @@ class SerialPort:
         """
         response: str = ""
         if self.serial_port.is_open is False:
-            raise IOError("Serial port is closed")
+            raise OSError("Serial port is closed")
 
         try:
             time.sleep(0.25)
