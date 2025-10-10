@@ -37,8 +37,3 @@ nRF5340 Bluetooth DNs/QDIDs
 
       * The Audio applications do not demonstrate the full capabilities of the underlying DNs/QDIDs.
         At the same time, the Audio applications may demonstrate features not available in the underlying DNs/QDID.
-
-.. ncs-include:: lc3/README.rst
-   :docset: nrfxlib
-   :start-after: lc3_qdid_start
-   :end-before: lc3_qdid_end
