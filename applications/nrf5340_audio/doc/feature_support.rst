@@ -23,22 +23,14 @@ For an explanation of the maturity levels, see :ref:`Software maturity levels <s
 nRF5340 Audio DNs and QDIDs
 ***************************
 
-The following DNs (Design Numbers) and QDIDs (Qualified Design IDs) are related to the nRF5340 LE Audio applications:
+See `nRF5340 Bluetooth DNs and QDIDs Compatibility Matrix`_ for the Design Numbers (DNs) and Qualified Design IDs (QDIDs) for nRF5340 LE Audio applications.
 
-nRF5340 Bluetooth DNs/QDIDs
-   See `nRF5340 Bluetooth DNs and QDIDs Compatibility Matrix`_ for the DNs/QDIDs for nRF5340 LE Audio applications.
+A full Audio product DN will typically require DNs and QDIDs for the Controller component, Host component, Profiles, and Services component and LC3 codec component.
+The exact DN/QDID numbers depend on the project configuration and the features used in the application.
 
-   A full Audio product DN will typically require DNs/QDIDs for Controller component, Host component, Profiles and Services component and LC3 codec component.
-   The exact DN/QDID numbers depend on the project configuration and the features used in the application.
+.. note::
+   * The DNs/QDIDs listed in the Compatibility Matrix might not cover all use cases or combinations.
+     The full details of what is supported by a given DN or QDID can be found in the associated Implementation Conformance Statement (ICS).
 
-   .. note::
-      * The DNs/QDIDs listed in the Compatibility Matrix might not cover all use cases or combinations.
-        The full details of what is supported by a DN/QDID can be found in the associated ICS (Implementation Conformance Statement).
-
-      * The Audio applications do not demonstrate the full capabilities of the underlying DNs/QDIDs.
-        At the same time, the Audio applications may demonstrate features not available in the underlying DNs/QDID.
-
-.. ncs-include:: lc3/README.rst
-   :docset: nrfxlib
-   :start-after: lc3_qdid_start
-   :end-before: lc3_qdid_end
+   * The Audio applications do not demonstrate the full capabilities of the underlying DNs and QDIDs.
+     At the same time, the Audio applications may demonstrate features not available in the underlying DNs or QDID.
