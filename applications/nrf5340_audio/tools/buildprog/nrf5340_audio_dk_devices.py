@@ -131,12 +131,11 @@ class DeviceConf:
 
     def __str__(self):
         result = f"{self.nrf5340_audio_dk_snr} {self.nrf5340_audio_dk_dev.name}"
-        if self.nrf5340_audio_dk_dev == AudioDevice.headset:
-            # Print all location labels if multiple
-            if isinstance(self.location, list):
-                result += " " + "+".join([loc.label for loc in self.location])
-            else:
-                result += f" {self.location.name}"
+        # Print all location labels if multiple
+        if isinstance(self.location, list):
+            result += " " + "+".join([loc.label for loc in self.location])
+        else:
+            result += f" {self.location.name}"
         return result
 
 
