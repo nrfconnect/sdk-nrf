@@ -283,6 +283,13 @@ nRF Desktop
       Before the change was introduced, subscribing to a HID input report before the respective provider was registered triggered an assertion failure.
     * HID transports (:ref:`nrf_desktop_hids`, :ref:`nrf_desktop_usb_state`) to use the early :c:struct:`hid_report_event` subscription (:c:macro:`APP_EVENT_SUBSCRIBE_EARLY`).
       This update improves the reception speed of HID input reports in HID transports.
+    * The :ref:`nrf_desktop_motion` implementations to align internal state names for consistency.
+    * The :ref:`nrf_desktop_motion` implementation that generates simulated motion.
+      Improved the Zephyr shell (:kconfig:option:`CONFIG_SHELL`) integration to prevent potential race conditions related to using preemptive execution context for shell commands.
+    * The :c:struct:`motion_event` to include information if the sensor is still active or goes to idle state waiting for user activity (:c:member:`motion_event.active`).
+      The newly added field is filled by all :ref:`nrf_desktop_motion` implementations.
+      The :ref:`nrf_desktop_hid_provider_mouse` uses the newly added field to improve the synchronization of motion sensor sampling.
+      After the motion sensor sampling is triggered, the provider waits for the result before submitting a subsequent HID mouse input report.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

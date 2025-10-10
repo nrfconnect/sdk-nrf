@@ -91,6 +91,8 @@ The HID provider mouse module tracks the number of HID reports in flight and mai
 
 * If the number of HID reports in flight is lower than the pipeline size, the module provides additional HID reports to generate the HID report pipeline on user input.
 * If the number of HID reports in flight is greater than or equal to the pipeline size, the module buffers user input internally and delays providing subsequent HID input reports until previously submitted reports are sent to the HID host.
+  Apart from this, after a HID input report handled by the module is sent, the module waits for a subsequent :c:struct:`motion_event` before submitting a subsequent HID input report.
+  This is done to ensure that the recent value of motion will be included in the subsequent HID input report.
 
 See the :ref:`nrf_desktop_hid_mouse_report_handling` section for an overview of handling HID mouse input reports in the nRF Desktop.
 The section focuses on interactions between application modules.
