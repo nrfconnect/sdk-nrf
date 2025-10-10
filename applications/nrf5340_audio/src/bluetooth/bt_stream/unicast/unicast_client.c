@@ -1088,7 +1088,7 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
  * @param[in]	stream		Stream to check.
  * @param[in]	user_data	User data, not used.
  *
- * @retval	true 	A stream is found that is not yet released.
+ * @retval	true	A stream is found that is not yet released.
  * @retval	false	All streams are released.
  */
 static bool all_streams_released_check(struct bt_cap_stream *stream, void *user_data)

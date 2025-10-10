@@ -61,4 +61,3 @@ When building using the command line, you must explicitly specify the :file:`*.c
 See :ref:`nrf53_audio_app_building_standard` for more information.
 
 When building using the script, you :ref:`specify parameters for building <nrf53_audio_app_building_script_running>` instead of the file names.
-
