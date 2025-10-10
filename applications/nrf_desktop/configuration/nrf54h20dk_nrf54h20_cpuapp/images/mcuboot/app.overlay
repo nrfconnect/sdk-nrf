@@ -15,17 +15,6 @@
 	};
 };
 
-/* Define the necessary aliases for the DTS partition nodes that contain the application and
- * radio images.
- */
-slot0_partition: &cpuapp_slot0_partition {
-	label = "image-0";
-};
-
-slot1_partition: &cpuapp_slot1_partition {
-	label = "image-1";
-};
-
 /* Remove the undefined property value from the disabled VPR cores to prevent build errors. */
 &cpuflpr_vpr {
 	/delete-property/ source-memory;
