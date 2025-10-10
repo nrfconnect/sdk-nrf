@@ -57,19 +57,22 @@ enum at_cmd_state {
 typedef void (*slm_data_handler_t)(const uint8_t *data, size_t datalen);
 
 /**
- * @typedef slm_ind_handler_t
+ * @typedef slm_ri_handler_t
  *
- * Handler to handle @kconfig{CONFIG_MODEM_SLM_INDICATE_PIN} signal from SLM.
+ * Handler to handle the Ring Indicate (RI) signal from SLM.
  */
-typedef void (*slm_ind_handler_t)(void);
+typedef void (*slm_ri_handler_t)(void);
 
 /**@brief Initialize Modem SLM library.
  *
  * @param handler Pointer to a handler function of type @ref slm_data_handler_t.
+ * @param automatic_uart If true, DTR and UART are automatically managed by the library.
+ * @param inactivity_timeout Inactivity timeout for DTR and UART disablement. Only used if @p
+ * automatic is true.
  *
  * @return Zero on success, non-zero otherwise.
  */
-int modem_slm_init(slm_data_handler_t handler);
+int modem_slm_init(slm_data_handler_t handler, bool automatic_uart, k_timeout_t inactivity_timeout);
 
 /**@brief Un-initialize Modem SLM library.
  *
@@ -77,32 +80,19 @@ int modem_slm_init(slm_data_handler_t handler);
 int modem_slm_uninit(void);
 
 /**
- * @brief Register callback for @kconfig{CONFIG_MODEM_SLM_INDICATE_PIN} indication
+ * @brief Register callback for Ring Indicate (RI) pin.
  *
- * @param handler Pointer to a handler function of type @ref slm_ind_handler_t.
- * @param wakeup  Enable/disable System Off wakeup by GPIO Sense.
+ * @param handler Pointer to a handler function of type @ref slm_ri_handler_t.
  *
- * @retval Zero    Success.
- * @retval -EFAULT if @kconfig{CONFIG_MODEM_SLM_INDICATE_PIN} is not defined.
+ * @retval Zero on success. Otherwise, a (negative) error code is returned.
  */
-int modem_slm_register_ind(slm_ind_handler_t handler, bool wakeup);
-
-/**
- * @brief Toggle power pin of the nRF91 Series device configured with
- * @kconfig{CONFIG_MODEM_SLM_POWER_PIN}.
- *
- * The pin is enabled for the time specified in @kconfig{CONFIG_MODEM_SLM_POWER_PIN_TIME}
- * and then disabled.
- *
- * @return Zero on success, non-zero otherwise.
- */
-int modem_slm_power_pin_toggle(void);
+int modem_slm_register_ri_handler(slm_ri_handler_t handler);
 
 /**
  * @brief Function to send an AT command in SLM command mode
  *
  * This function wait until command result is received. The response of the AT command is received
- * via the @ref slm_ind_handler_t registered in @ref modem_slm_init.
+ * via the @ref slm_ri_handler_t registered in @ref modem_slm_init.
  *
  * @param command Pointer to null terminated AT command string without command terminator
  * @param timeout Response timeout for the command in seconds, Zero means infinite wait
@@ -122,6 +112,35 @@ int modem_slm_send_cmd(const char *const command, uint32_t timeout);
  * @return Zero on success, non-zero otherwise.
  */
 int modem_slm_send_data(const uint8_t *const data, size_t datalen);
+
+/**
+ * @brief Configure automatic DTR UART handling
+ *
+ * If automatic DTR UART handling is enabled, the library will enable DTR UART when RI
+ * signal is detected, and disable it after inactivity timeout.
+ *
+ * @param automatic If true, DTR UART is automatically managed by the library.
+ * @param inactivity Inactivity timeout for DTR UART disablement. Only used if @p
+ * automatic is true.
+ *
+ * @return Zero on success, non-zero otherwise.
+ */
+void modem_slm_configure_dtr_uart(bool automatic, k_timeout_t inactivity);
+
+/**
+ * @brief Disable DTR UART
+ *
+ * Disables DTR UART. Disables automatic DTR UART handling.
+ *
+ */
+void modem_slm_disable_dtr_uart(void);
+
+/** @brief Enable DTR UART
+ *
+ * Enables DTR UART. Disables automatic DTR UART handling.
+ *
+ */
+void modem_slm_enable_dtr_uart(void);
 
 /**
  * @brief SLM monitor callback.
