@@ -188,4 +188,27 @@ config NCS_MCUBOOT_BOOTLOADER_SIGN_MERGED_BINARY
 	help
 	  This is a Kconfig which is informative only, the value should not be changed.
 
+config NCS_MCUBOOT_MANIFEST_UPDATES
+	bool "Manifest-based updates"
+	help
+	  When enabled, supports transactional updates using manifests.
+	  This is a Kconfig which is informative only, the value should not be changed.
+
+if NCS_MCUBOOT_MANIFEST_UPDATES
+
+config NCS_MCUBOOT_IMGTOOL_APPEND_MANIFEST
+	bool "MCUboot append manifest"
+	help
+	  Append common manifest while signing the image.
+	  This is a Kconfig which is informative only, the value should not be changed.
+
+config NCS_MCUBOOT_MANIFEST_IMAGE_NUMBER
+	int "Image number that must include manifest"
+	help
+	  Specifies the index of the image that must include the manifest.
+	  This is a Kconfig which is informative only, the value should not be changed.
+
+endif # NCS_MCUBOOT_MANIFEST_UPDATES
+
+
 endmenu
