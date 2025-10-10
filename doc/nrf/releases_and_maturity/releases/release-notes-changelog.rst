@@ -251,6 +251,9 @@ nRF5340 Audio
     This change was made to avoid conflicts with the onboard peripherals on the nRF5340 DK.
   * The API documentation in the header files listed on the :ref:`audio_api` page.
 
+* Removed the LC3 QDID from the :ref:`nrf53_audio_feature_support` page.
+  The QDID is now listed in the `nRF5340 Bluetooth DNs and QDIDs Compatibility Matrix`_.
+
 nRF Desktop
 -----------
 
