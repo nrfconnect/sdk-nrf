@@ -5,6 +5,7 @@
  */
 
 #include <nrf_rpc/nrf_rpc_serialize.h>
+#include <nrf_rpc/nrf_rpc_cbkproxy.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
