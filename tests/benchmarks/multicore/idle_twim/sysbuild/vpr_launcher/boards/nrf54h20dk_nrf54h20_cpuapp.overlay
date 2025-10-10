@@ -8,6 +8,7 @@
 	aliases {
 		/delete-property/ led0;
 		/delete-property/ led1;
+		/delete-property/ mcuboot-led0;
 	};
 };
 
