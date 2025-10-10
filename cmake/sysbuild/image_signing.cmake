@@ -143,6 +143,10 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_extra ${imgtool_extra} --cid "${CONFIG_MCUBOOT_IMGTOOL_UUID_CID_NAME}")
   endif()
 
+  if(CONFIG_NCS_MCUBOOT_IMGTOOL_APPEND_MANIFEST)
+    set(imgtool_extra ${imgtool_extra} --manifest "manifest.yaml")
+  endif()
+
   set(imgtool_args ${imgtool_extra})
 
   # Extensionless prefix of any output file.
