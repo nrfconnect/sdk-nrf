@@ -37,7 +37,7 @@ enum csip_set_rank {
 
 static le_audio_receive_cb receive_cb;
 static struct bt_csip_set_member_svc_inst *csip;
-static uint8_t concurrent_sync_num;
+static uint8_t concurrent_sink_streams_num;
 
 /* Advertising data for peer connection */
 static uint8_t csip_rsi_adv_data[BT_CSIP_RSI_SIZE];
@@ -407,7 +407,10 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 	}
 
 	LOG_INF("Stream %p started", stream);
-	concurrent_sync_num++;
+
+	if (dir == BT_AUDIO_DIR_SINK) {
+		concurrent_sink_streams_num++;
+	}
 
 	if (dir == BT_AUDIO_DIR_SOURCE && IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
 		struct stream_index idx = {
@@ -432,7 +435,10 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 	}
 
 	LOG_DBG("Stream %p stopped. Reason: %d", stream, reason);
-	concurrent_sync_num--;
+
+	if (dir == BT_AUDIO_DIR_SINK) {
+		concurrent_sink_streams_num--;
+	}
 
 	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn, dir);
 }
@@ -466,7 +472,7 @@ int le_audio_concurrent_sync_num_get(uint8_t *num_streams, enum bt_audio_locatio
 		return -EINVAL;
 	}
 
-	*num_streams = concurrent_sync_num;
+	*num_streams = concurrent_sink_streams_num;
 	*locations = 0;
 
 	for (int i = 0; i < ARRAY_SIZE(cap_audio_streams); i++) {
