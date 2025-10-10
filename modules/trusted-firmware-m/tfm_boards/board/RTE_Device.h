@@ -15,7 +15,7 @@
 
 #include <nrf-pinctrl.h>
 
-#include <nrf.h>
+#include <nrfx.h>
 
 #define UART_PIN_INIT(node_id, prop, idx) DT_PROP_BY_IDX(node_id, prop, idx),
 
