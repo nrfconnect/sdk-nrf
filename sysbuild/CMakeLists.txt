@@ -172,6 +172,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     set(dfu_slots_output_names Application;Network;Wifi\ patches;QSPI\ XIP;MCUboot\ b0\ update)
     set(dfu_slots_output_text "-- Sysbuild assigned MCUboot image IDs:\n")
     set(dfu_image_index -1)
+    set(manifest_image_target "none")
 
     list(LENGTH dfu_slots_sysbuild_kconfigs test_things_size)
     math(EXPR test_things_size "${test_things_size} - 1")
@@ -192,6 +193,22 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       foreach(image mcuboot;${updateable_images})
         set_config_int(${image} ${current_application_kconfig} ${value})
       endforeach()
+
+      if(SB_CONFIG_MCUBOOT_MANIFEST_UPDATES)
+        if(${value} EQUAL ${SB_CONFIG_MCUBOOT_MANIFEST_IMAGE_INDEX})
+          if("${current_application_kconfig}" STREQUAL "CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER")
+            set(manifest_image_target ${DEFAULT_IMAGE})
+          elseif("${current_application_kconfig}" STREQUAL "CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER")
+            set(manifest_image_target ${SB_CONFIG_NETCORE_IMAGE_NAME})
+          else()
+            # Unsupported indexes:
+            # - CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER
+            # - CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER
+            # - CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER
+            message(FATAL_ERROR "MCUboot manifest image can only be assigned to application or network core images")
+          endif()
+        endif()
+      endif()
 
       set(${current_cache_name} ${value} CACHE INTERNAL "" FORCE)
     endforeach()
@@ -256,6 +273,25 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(mcuboot CONFIG_BOOT_IMG_HASH_ALG_SHA512 y)
     endif()
 
+    if(SB_CONFIG_MCUBOOT_MANIFEST_UPDATES)
+      set_config_bool(mcuboot CONFIG_MCUBOOT_MANIFEST_UPDATES y)
+      set_config_int(mcuboot CONFIG_MCUBOOT_MANIFEST_IMAGE_INDEX
+        ${SB_CONFIG_MCUBOOT_MANIFEST_IMAGE_INDEX})
+
+      if("${manifest_image_target}" STREQUAL "none")
+        message(FATAL_ERROR "No manifest image target, cannot append manifest to image")
+      endif()
+      set_config_bool(${manifest_image_target} CONFIG_NCS_MCUBOOT_IMGTOOL_APPEND_MANIFEST y)
+      if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
+        if("${manifest_image_target}" STREQUAL "${DEFAULT_IMAGE}")
+          set_config_bool(mcuboot_secondary_app CONFIG_NCS_MCUBOOT_IMGTOOL_APPEND_MANIFEST y)
+        else()
+          set_config_bool(${manifest_image_target}_secondary_app
+            CONFIG_NCS_MCUBOOT_IMGTOOL_APPEND_MANIFEST y)
+        endif()
+      endif()
+    endif()
+
     # Apply configuration to application
     foreach(image ${updateable_images})
       foreach(mode ${application_mcuboot_modes})
@@ -265,6 +301,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
           set_config_bool(${image} ${mode} n)
         endif()
       endforeach()
+
+      if(SB_CONFIG_MCUBOOT_MANIFEST_UPDATES)
+        set_config_bool(${image} CONFIG_NCS_MCUBOOT_MANIFEST_UPDATES y)
+        set_config_int(${image} CONFIG_NCS_MCUBOOT_MANIFEST_IMAGE_INDEX ${SB_CONFIG_MCUBOOT_MANIFEST_IMAGE_INDEX})
+      endif()
 
       if(SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519)
         set_config_bool(${image} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 y)
@@ -385,7 +426,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
        OR SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT
        OR SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT
        OR (SB_CONFIG_SOC_SERIES_NRF54LX AND SB_CONFIG_BOOT_ENCRYPTION)
-       OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+       OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
+       OR SB_CONFIG_MCUBOOT_MANIFEST_UPDATES)
       # Use NCS signing script with support for PM or direct XIP (NCS specific features)
       if(SB_CONFIG_QSPI_XIP_SPLIT_IMAGE)
         set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
@@ -886,6 +928,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
   if(SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY AND SB_CONFIG_SOC_NRF54H20)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/mcuboot_nrf54h20.cmake)
+  endif()
+
+  if(SB_CONFIG_BOOTLOADER_MCUBOOT AND SB_CONFIG_MCUBOOT_MANIFEST_UPDATES)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/mcuboot_manifest.cmake)
   endif()
 
   if(SB_CONFIG_DFU_ZIP)
