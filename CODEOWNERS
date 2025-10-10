@@ -81,6 +81,9 @@
 /doc/nrf/app_dev/device_guides/nrf53/     @nrfconnect/ncs-doc-leads
 /doc/nrf/app_dev/device_guides/nrf53/qspi_xip_guide_nrf5340.rst @nrfconnect/ncs-eris-doc
 /doc/nrf/app_dev/device_guides/nrf54l/    @annwoj
+/doc/nrf/app_dev/device_guides/nrf54l/cryptography.rst    @nrfconnect/ncs-aegir-doc
+/doc/nrf/app_dev/device_guides/nrf54l/kmu_basics.rst      @nrfconnect/ncs-aegir-doc
+/doc/nrf/app_dev/device_guides/nrf54l/kmu_provision.rst   @nrfconnect/ncs-aegir-doc
 /doc/nrf/app_dev/device_guides/nrf70/     @nrfconnect/ncs-wifi-doc
 /doc/nrf/app_dev/device_guides/nrf91/     @nrfconnect/ncs-modem-doc
 /doc/nrf/app_dev/device_guides/nrf91/nrf91_snippet.rst @nrfconnect/ncs-cia-doc
