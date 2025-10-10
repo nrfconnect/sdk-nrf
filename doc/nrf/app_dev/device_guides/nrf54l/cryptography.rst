@@ -213,8 +213,8 @@ The following list shows available schemes that determine how the keys are used:
 
 .. _ug_nrf54l_crypto_kmu_supported_key_types:
 
-Supported key types
-===================
+Key types that can be stored in the KMU
+=======================================
 
 The following table lists all key types that can be stored in the KMU, indicating which usage schemes (Protected, Encrypted, and Raw) support them and the number of key slots they require.
 
@@ -253,24 +253,17 @@ The following table lists all key types that can be stored in the KMU, indicatin
      - No
      - Yes
      - Yes
-   * - ECC secp256r1 key pair
+   * - ECC secp256r1 key pair (ECDSA and ECDH usage) [3]_
      - | ``key_type``: ``PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)``
        | ``key_bits``: 256
      - 2
      - No
      - Yes
      - Yes
-   * - ECC secp256r1 public key
+   * - ECC secp256r1 public key (ECDSA usage only)
      - | ``key_type``: ``PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)``
        | ``key_bits``: 256
      - 4
-     - No
-     - Yes
-     - Yes
-   * - ECDH [3]_
-     - | ``key_type``: ``PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)``
-       | ``key_bits``: 256
-     - 2
      - No
      - Yes
      - Yes
@@ -298,7 +291,7 @@ The following table lists all key types that can be stored in the KMU, indicatin
      - Yes
 .. [1] Keys with the Encrypted usage scheme (``CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED``) will require two additional KMU slots to store the nonce and the authentication tag.
 .. [2] Not supported on nRF54LM20.
-.. [3] Not supported for key derivation.
+.. [3] ECDH not supported for key derivation.
 
 Storing keys in KMU
 ===================
