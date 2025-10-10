@@ -290,6 +290,8 @@ nRF Desktop
       The newly added field is filled by all :ref:`nrf_desktop_motion` implementations.
       The :ref:`nrf_desktop_hid_provider_mouse` uses the newly added field to improve the synchronization of motion sensor sampling.
       After the motion sensor sampling is triggered, the provider waits for the result before submitting a subsequent HID mouse input report.
+    * The :ref:`nrf_desktop_hid_state_pm` to skip submitting the :c:struct:`keep_alive_event` if the :c:enum:`POWER_MANAGER_LEVEL_ALIVE` power level is enforced by any application module through the :c:struct:`power_manager_restrict_event`.
+      This is done to improve performance.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
