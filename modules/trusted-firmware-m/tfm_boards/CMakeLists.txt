@@ -164,6 +164,30 @@ if (CONFIG_NRF_SECURE_APPROTECT_LOCK)
   target_compile_definitions(platform_s PUBLIC NRF_SECURE_APPROTECT)
 endif()
 
+if (CONFIG_PSA_NEED_CRACEN_HKDF)
+  target_compile_definitions(platform_s PUBLIC CONFIG_PSA_NEED_CRACEN_HKDF)
+endif()
+
+if (CONFIG_PSA_NEED_CRACEN_PBKDF2_HMAC)
+  target_compile_definitions(platform_s PUBLIC CONFIG_PSA_NEED_CRACEN_PBKDF2_HMAC)
+endif()
+
+if (CONFIG_PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
+  target_compile_definitions(platform_s PUBLIC CONFIG_PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
+endif()
+
+if (CONFIG_PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS)
+  target_compile_definitions(platform_s PUBLIC CONFIG_PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS)
+endif()
+
+if (CONFIG_PSA_NEED_CRACEN_TLS12_PRF)
+  target_compile_definitions(platform_s PUBLIC CONFIG_PSA_NEED_CRACEN_TLS12_PRF)
+endif()
+
+if (CONFIG_PSA_NEED_CRACEN_TLS12_PSK_TO_MS)
+  target_compile_definitions(platform_s PUBLIC CONFIG_PSA_NEED_CRACEN_TLS12_PSK_TO_MS)
+endif()
+
 if (CRYPTO_STORAGE_DISABLED AND TFM_PARTITION_CRYPTO AND NOT TFM_PARTITION_INTERNAL_TRUSTED_STORAGE)
   # Added here to satisfy the following requirement from tfm_crypto.yaml:
   #
