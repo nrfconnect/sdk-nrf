@@ -439,6 +439,8 @@ Cryptography samples
 
   * Added support for ``nrf54lm20dk/nrf54lm20a/cpuapp``.
 
+* Added support for the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` board target in all supported cryptography samples.
+
 Debug samples
 -------------
 
@@ -552,7 +554,10 @@ SUIT samples
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
-|no_changes_yet_note|
+* Added support for the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` board target in the following samples:
+
+  * :ref:`tfm_hello_world`
+  * :ref:`tfm_secure_peripheral_partition`
 
 Thread samples
 --------------
