@@ -43,17 +43,22 @@ The lists are organized by device Series and cryptographic drivers: :ref:`nrf_cc
 
 The listed ``CONFIG_`` Kconfig options enable the features and algorithms for the drivers that support them.
 The Kconfig options follow the ``CONFIG_PSA_WANT_*`` + ``CONFIG_PSA_USE_*`` configuration scheme, which is described in detail on the :ref:`crypto_drivers` page.
+When you select Kconfig options for the wanted features and drivers to use, the corresponding Oberon PSA Crypto directives are compiled into the build to make the optimal driver selection.
+For more information, see the :ref:`nrf_security_drivers` page.
 
 .. note::
-   On nRF54H Series devices, the ``CONFIG_PSA_WANT_*`` and ``CONFIG_PSA_USE_*`` feature selection scheme is not implemented and enabling any feature with these options will silently have no effect.
-   The |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+   On the nRF54H20 SoC, the |ISE| implements a fixed set of features and algorithms that cannot be changed by the user.
+   The ``PSA_WANT_*`` and ``PSA_USE_*`` directives are directly implemented within |ISE|.
+   Enabling any feature with the corresponding Kconfig options will have no effect.
 
 .. _ug_crypto_supported_features_key_types:
 
 Key types and key management
 ============================
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific key types.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring key types that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option, Oberon PSA Crypto selects the most appropriate driver for the management of the supported key types.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
@@ -592,7 +597,7 @@ The options are grouped by Series and drivers available for the device Series, a
                :widths: auto
 
                * - Key type
-                 - Supported primitive
+                 - Supported directive
                  - nRF54H20
                * - AES
                  - ``PSA_WANT_KEY_TYPE_AES``
@@ -1557,7 +1562,8 @@ The options are grouped by Series and drivers available for the device Series, a
 Key management
 --------------
 
-The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring Oberon PSA Crypto to use specific drivers for management of the wanted key types.
+The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring driver preferences.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the management of the supported key types (selected with the corresponding ``CONFIG_PSA_WANT_*``).
 
 .. tabs::
 
@@ -1850,7 +1856,9 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 Cipher modes
 ============
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific cipher modes.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring cipher modes that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option, Oberon PSA Crypto selects the most appropriate cipher driver for the supported cipher modes.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. note::
@@ -2016,7 +2024,7 @@ The options are grouped by Series and drivers available for the device Series, a
                :widths: auto
 
                * - Cipher mode
-                 - Supported primitive
+                 - Supported directive
                  - nRF54H20
                * - ECB no padding
                  - ``PSA_WANT_ALG_ECB_NO_PADDING``
@@ -2260,7 +2268,8 @@ The options are grouped by Series and drivers available for the device Series, a
 Cipher driver
 -------------
 
-The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring Oberon PSA Crypto to use specific drivers for the wanted cipher modes.
+The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring driver preferences.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported cipher modes (selected with the corresponding ``CONFIG_PSA_WANT_*``).
 
 .. tabs::
 
@@ -2416,7 +2425,9 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 Key agreement algorithms
 ========================
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific key agreement algorithms.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring key agreement algorithms that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option, Oberon PSA Crypto selects the most appropriate driver for the supported key agreement algorithms.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. note::
@@ -2510,7 +2521,7 @@ The options are grouped by Series and drivers available for the device Series, a
                :widths: auto
 
                * - Key agreement algorithm
-                 - Supported primitive
+                 - Supported directive
                  - nRF54H20
                * - ECDH
                  - ``PSA_WANT_ALG_ECDH``
@@ -2607,7 +2618,8 @@ The options are grouped by Series and drivers available for the device Series, a
 Key agreement driver
 --------------------
 
-The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring Oberon PSA Crypto to use specific drivers for the wanted key agreement algorithms.
+The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring driver preferences.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported key agreement algorithms (selected with the corresponding ``CONFIG_PSA_WANT_*``).
 
 .. tabs::
 
@@ -2726,7 +2738,9 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 Key encapsulation algorithms
 ============================
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific key encapsulation algorithms.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring key encapsulation algorithms that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option, Oberon PSA Crypto selects the most appropriate driver for the supported key encapsulation algorithms.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
@@ -2826,7 +2840,8 @@ The options are grouped by Series and drivers available for the device Series, a
 Key encapsulation driver
 ------------------------
 
-The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring Oberon PSA Crypto to use specific drivers for the wanted key encapsulation algorithms.
+The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring driver preferences.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported key encapsulation algorithms (selected with the corresponding ``CONFIG_PSA_WANT_*``).
 
 .. tabs::
 
@@ -2902,7 +2917,9 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 KDF algorithms
 ==============
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific key derivation function (KDF) algorithms.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring KDF algorithms that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option, Oberon PSA Crypto selects the most appropriate driver for the supported KDF algorithms.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
@@ -3039,7 +3056,7 @@ The options are grouped by Series and drivers available for the device Series, a
                :widths: auto
 
                * - KDF algorithm
-                 - Supported primitive
+                 - Supported directive
                  - nRF54H20
                * - HKDF
                  - ``PSA_WANT_ALG_HKDF``
@@ -3307,7 +3324,8 @@ The options are grouped by Series and drivers available for the device Series, a
 Key derivation function driver
 ------------------------------
 
-The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring Oberon PSA Crypto to use specific drivers for the wanted KDF algorithms.
+The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring driver preferences.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported KDF algorithms (selected with the corresponding ``CONFIG_PSA_WANT_*``).
 
 .. tabs::
 
@@ -3439,7 +3457,9 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 MAC algorithms
 ==============
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific Message Authentication Code (MAC) algorithms.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring MAC algorithms that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option, Oberon PSA Crypto selects the most appropriate driver for the supported MAC algorithms.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. note::
@@ -3557,7 +3577,7 @@ The options are grouped by Series and drivers available for the device Series, a
                :widths: auto
 
                * - MAC algorithm
-                 - Supported primitive
+                 - Supported directive
                  - nRF54H20
                * - CMAC
                  - ``PSA_WANT_ALG_CMAC``
@@ -3697,7 +3717,8 @@ The options are grouped by Series and drivers available for the device Series, a
 MAC driver
 ----------
 
-The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring Oberon PSA Crypto to use specific drivers for the wanted MAC algorithms.
+The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring driver preferences.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported MAC algorithms (selected with the corresponding ``CONFIG_PSA_WANT_*``).
 
 .. tabs::
 
@@ -3826,7 +3847,9 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 AEAD algorithms
 ===============
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific Authenticated Encryption with Associated Data (AEAD) algorithms.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring AEAD algorithms that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option, Oberon PSA Crypto selects the most appropriate driver for the supported AEAD algorithms.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. note::
@@ -3966,7 +3989,7 @@ The options are grouped by Series and drivers available for the device Series, a
                :widths: auto
 
                * - AEAD algorithm
-                 - Supported primitive
+                 - Supported directive
                  - nRF54H20
                * - CCM
                  - ``PSA_WANT_ALG_CCM``
@@ -4163,7 +4186,8 @@ The options are grouped by Series and drivers available for the device Series, a
 AEAD driver
 -----------
 
-The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring Oberon PSA Crypto to use specific drivers for the wanted AEAD algorithms.
+The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring driver preferences.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported AEAD algorithms (selected with the corresponding ``CONFIG_PSA_WANT_*``).
 
 .. tabs::
 
@@ -4302,7 +4326,9 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 Asymmetric signature algorithms
 ===============================
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific asymmetric signature algorithms.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring asymmetric signature algorithms that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option, Oberon PSA Crypto selects the most appropriate driver for the supported asymmetric signature algorithms.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. note::
@@ -4584,7 +4610,7 @@ The options are grouped by Series and drivers available for the device Series, a
                :widths: auto
 
                * - Asymmetric signature algorithm
-                 - Supported primitive
+                 - Supported directive
                  - nRF54H20
                * - ECDSA
                  - ``PSA_WANT_ALG_ECDSA``
@@ -5042,7 +5068,8 @@ The options are grouped by Series and drivers available for the device Series, a
 Asymmetric signature driver
 ---------------------------
 
-The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring Oberon PSA Crypto to use specific drivers for the wanted asymmetric signature algorithms.
+The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring driver preferences.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported asymmetric signature algorithms (selected with the corresponding ``CONFIG_PSA_WANT_*``).
 
 .. tabs::
 
@@ -5236,7 +5263,9 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 Asymmetric encryption algorithms
 ================================
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific asymmetric encryption algorithms.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring asymmetric encryption algorithms that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option, Oberon PSA Crypto selects the most appropriate driver for the supported asymmetric encryption algorithms.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. note::
@@ -5462,7 +5491,8 @@ The options are grouped by Series and drivers available for the device Series, a
 Asymmetric encryption driver
 ----------------------------
 
-The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring Oberon PSA Crypto to use specific drivers for the wanted asymmetric encryption algorithms.
+The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring driver preferences.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported asymmetric encryption algorithms (selected with the corresponding ``CONFIG_PSA_WANT_*``).
 
 .. tabs::
 
@@ -5589,7 +5619,9 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 ECC curve types
 ===============
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific ECC curve types.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring ECC curve types that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option, Oberon PSA Crypto selects the most appropriate driver for the supported ECC curve types.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
@@ -5890,7 +5922,7 @@ The options are grouped by Series and drivers available for the device Series, a
                :widths: auto
 
                * - ECC curve type
-                 - Supported primitive
+                 - Supported directive
                  - nRF54H20
                * - BrainpoolP192r1
                  - ``PSA_WANT_ECC_BRAINPOOL_P_R1_192``
@@ -6392,7 +6424,8 @@ The options are grouped by Series and drivers available for the device Series, a
 ECC curve driver
 ----------------
 
-The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring Oberon PSA Crypto to use specific drivers for key management using the wanted ECC curve types.
+The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring driver preferences.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported ECC curve types (selected with the corresponding ``CONFIG_PSA_WANT_*``).
 
 .. tabs::
 
@@ -6570,7 +6603,9 @@ RNG algorithms
 ==============
 
 RNG uses PRNG seeded by entropy (also known as TRNG).
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for enabling RNG and requesting Oberon PSA Crypto to use specific PRNG algorithms.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring RNG algorithms that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option, Oberon PSA Crypto selects the most appropriate driver for the supported RNG algorithms.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. note::
@@ -6708,7 +6743,7 @@ The options are grouped by Series and drivers available for the device Series, a
                :widths: auto
 
                * - PRNG algorithm
-                 - Supported primitive
+                 - Supported directive
                  - nRF54H20
                * - RNG support
                  - ``PSA_WANT_GENERATE_RANDOM``
@@ -6869,7 +6904,8 @@ The options are grouped by Series and drivers available for the device Series, a
 RNG driver
 ----------
 
-The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring Oberon PSA Crypto to use specific drivers for the wanted RNG algorithms.
+The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring driver preferences.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported RNG algorithms (selected with the corresponding ``CONFIG_PSA_WANT_*``).
 
 .. tabs::
 
@@ -6995,7 +7031,9 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 Hash algorithms
 ===============
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific hash algorithms.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring hash algorithms that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option, Oberon PSA Crypto selects the most appropriate driver for the supported hash algorithms.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. note::
@@ -7271,7 +7309,7 @@ The options are grouped by Series and drivers available for the device Series, a
                :widths: auto
 
                * - Hash algorithm
-                 - Supported primitive
+                 - Supported directive
                  - nRF54H20
                * - SHA-1 (weak)
                  - ``PSA_WANT_ALG_SHA_1``
@@ -7719,7 +7757,8 @@ The options are grouped by Series and drivers available for the device Series, a
 Hash driver
 -----------
 
-The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring Oberon PSA Crypto to use specific drivers for the wanted hash algorithms.
+The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring driver preferences.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported hash algorithms (selected with the corresponding ``CONFIG_PSA_WANT_*``).
 
 .. tabs::
 
@@ -7890,7 +7929,9 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
 PAKE algorithms
 ===============
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific password-authenticated key exchange (PAKE) algorithms.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring PAKE algorithms that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option, Oberon PSA Crypto selects the most appropriate driver for the supported PAKE algorithms.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
@@ -7995,7 +8036,7 @@ The options are grouped by Series and drivers available for the device Series, a
                :widths: auto
 
                * - PAKE algorithm
-                 - Supported primitive
+                 - Supported directive
                  - nRF54H20
                * - EC J-PAKE
                  - ``PSA_WANT_ALG_JPAKE``
@@ -8179,7 +8220,8 @@ The options are grouped by Series and drivers available for the device Series, a
 PAKE driver
 -----------
 
-The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring Oberon PSA Crypto to use specific drivers for the wanted PAKE algorithms.
+The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuring driver preferences.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported PAKE algorithms (selected with the corresponding ``CONFIG_PSA_WANT_*``).
 
 .. tabs::
 
@@ -8296,7 +8338,9 @@ The Kconfig options follow the ``CONFIG_PSA_WANT_*`` configuration scheme, which
 RSA key pair operations
 -----------------------
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific RSA key pair operations.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring RSA key pair operations that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported RSA key pair operations.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
@@ -8574,7 +8618,9 @@ The options are grouped by Series and drivers available for the device Series, a
 SRP key pair operations
 -----------------------
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific SRP key pair operations.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring SRP key pair operations that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported SRP key pair operations.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
@@ -8771,7 +8817,9 @@ The options are grouped by Series and drivers available for the device Series, a
 SPAKE2P key pair operations
 ---------------------------
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific SPAKE2P key pair operations.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring SPAKE2P key pair operations that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported SPAKE2P key pair operations.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
@@ -8860,7 +8908,7 @@ The options are grouped by Series and drivers available for the device Series, a
                :widths: auto
 
                * - SPAKE2P key pair operation
-                 - Supported primitive
+                 - Supported directive
                  - nRF54H20
                * - Import
                  - ``PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT``
@@ -9003,7 +9051,9 @@ The options are grouped by Series and drivers available for the device Series, a
 ECC key pair operations
 -----------------------
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific ECC key pair operations.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring ECC key pair operations that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported ECC key pair operations.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
@@ -9136,7 +9186,7 @@ The options are grouped by Series and drivers available for the device Series, a
                :widths: auto
 
                * - ECC key pair operation
-                 - Supported primitive
+                 - Supported directive
                  - nRF54H20
                * - Generate
                  - ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE``
@@ -9324,7 +9374,9 @@ The Kconfig options follow the ``CONFIG_PSA_WANT_*`` configuration scheme, which
 AES key size configuration
 --------------------------
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific AES key sizes.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring AES key sizes that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported AES key sizes.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. note::
@@ -9446,7 +9498,7 @@ The options are grouped by Series and drivers available for the device Series, a
                :widths: auto
 
                * - AES key size
-                 - Supported primitive
+                 - Supported directive
                  - nRF54H20
                * - 128 bits
                  - ``PSA_WANT_AES_KEY_SIZE_128``
@@ -9599,7 +9651,9 @@ The options are grouped by Series and drivers available for the device Series, a
 RSA key size configuration
 --------------------------
 
-The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for requesting Oberon PSA Crypto to use specific RSA key sizes.
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring RSA key sizes that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting, Oberon PSA Crypto selects the most appropriate driver for the supported RSA key sizes.
+
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
