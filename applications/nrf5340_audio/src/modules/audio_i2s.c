@@ -46,8 +46,11 @@ static nrfx_i2s_config_t cfg = {
 	.mode = NRF_I2S_MODE_MASTER,
 	.format = NRF_I2S_FORMAT_I2S,
 	.alignment = NRF_I2S_ALIGN_LEFT,
-	.ratio = I2S_RATIO,
-	.mck_setup = 0x66666000,
+	.prescalers = {
+		.ratio = I2S_RATIO,
+		.mck_setup = 0x66666000,
+		.enable_bypass = false,
+	},
 #if (CONFIG_AUDIO_BIT_DEPTH_16)
 	.sample_width = NRF_I2S_SWIDTH_16BIT,
 #elif (CONFIG_AUDIO_BIT_DEPTH_32)
@@ -57,7 +60,6 @@ static nrfx_i2s_config_t cfg = {
 #endif /* (CONFIG_AUDIO_BIT_DEPTH_16) */
 	.channels = NRF_I2S_CHANNELS_STEREO,
 	.clksrc = NRF_I2S_CLKSRC_ACLK,
-	.enable_bypass = false,
 };
 
 static i2s_blk_comp_callback_t i2s_blk_comp_callback;
