@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 identifier: nrf54lv10dk@0.2.0/nrf54lv10a/cpuflpr
-name: nRF54Lv10-DK-nRF54Lv10a-Fast-Lightweight-Peripheral-Processor (rev. 0.2.0)
+name: nRF54LV10-DK-nRF54LV10a-Fast-Lightweight-Peripheral-Processor (rev. 0.2.0)
 type: mcu
 arch: riscv
 toolchain:
