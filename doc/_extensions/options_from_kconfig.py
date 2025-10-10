@@ -12,7 +12,6 @@ from dotenv import load_dotenv
 from sphinx.application import Sphinx
 from sphinx.util.docutils import SphinxDirective
 
-
 __version__ = '0.0.1'
 
 
@@ -84,7 +83,7 @@ class OptionsFromKconfig(SphinxDirective):
         self._monkey_patch_kconfiglib(kconfiglib)
 
         # kconfiglib wants this env var defined
-        os.environ['srctree'] = os.path.dirname(os.path.abspath(__file__))
+        os.environ['SRCTREE'] = os.path.dirname(os.path.abspath(__file__))
         kconfig = kconfiglib.Kconfig(filename=path, warn=False)
 
         prefix = self.options.get('prefix', None)
