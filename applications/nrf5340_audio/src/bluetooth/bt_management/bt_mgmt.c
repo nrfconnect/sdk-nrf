@@ -173,17 +173,26 @@ static void security_changed_cb(struct bt_conn *conn, bt_security_t level, enum 
 	struct bt_mgmt_msg msg;
 
 	if (err) {
-		LOG_WRN("Security failed: level %d err %d %s", level, err,
-			bt_security_err_to_str(err));
+		if (err == BT_SECURITY_ERR_UNSPECIFIED) {
+			LOG_WRN("Security failed: level %d err %d Clear bond on peer?", level, err);
+		} else {
+			LOG_WRN("Security failed: level %d err %d %s", level, err,
+				bt_security_err_to_str(err));
+		}
 		ret = bt_conn_disconnect(conn, BT_HCI_ERR_AUTH_FAIL);
-		if (ret) {
+		if (ret == -ENOTCONN) {
+			LOG_DBG("Not connected");
+		} else if (ret) {
 			LOG_WRN("Failed to disconnect %d", ret);
 		}
+
 	} else if (level < BT_SECURITY_L2) {
 		LOG_WRN("Security changed: level %d too low, disconnecting", level);
 		ret = bt_conn_disconnect(conn, BT_HCI_ERR_AUTH_FAIL);
-		if (ret) {
-			LOG_WRN("Failed to disconnect %d", ret);
+		if (ret == -ENOTCONN) {
+			LOG_DBG("Not connected");
+		} else if (ret) {
+			LOG_ERR("Failed to disconnect %d", ret);
 		}
 	} else {
 		const bt_addr_le_t *peer_addr = bt_conn_get_dst(conn);
@@ -260,7 +269,16 @@ void pairing_complete_cb(struct bt_conn *conn, bool bonded)
 
 void pairing_failed_cb(struct bt_conn *conn, enum bt_security_err reason)
 {
-	LOG_ERR("Pairing failed: %d %s", reason, bt_security_err_to_str(reason));
+	int ret;
+
+	LOG_WRN("Pairing failed: %d %s", reason, bt_security_err_to_str(reason));
+
+	ret = bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+	if (ret == -ENOTCONN) {
+		LOG_DBG("Not connected");
+	} else if (ret) {
+		LOG_ERR("Failed to disconnect %d", ret);
+	}
 }
 
 static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
