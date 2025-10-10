@@ -60,6 +60,7 @@ jobs:
       - name: Install requirements
         shell: bash
         run: |
+          pip3 install -r nrf/scripts/requirements-fixed.txt
           pip3 install -r nrf/scripts/requirements-west-ncs-sbom.txt
           pip3 install -r nrf/scripts/requirements-extra.txt
       - name: Smoke test ncs-loot & ncs-compare
@@ -73,3 +74,23 @@ jobs:
         shell: bash
         run: |
           west ncs-sbom -h
+          # show what scancode-toolkit is default
+          
+          # Linux
+          SCANCODE=scancode
+
+          # Windows
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            # use the absolute path dropped by pip on windows runners
+            SCANCODE="$pythonLocation/Scripts/scancode.exe"
+          fi
+
+          # create a dummy file
+          echo "/* SPDX-License-Identifier: LicenseRef-Nordic-5-Clause */" > test_file.c
+
+          # run ncs-sbom with scancode-toolkit
+          west ncs-sbom \
+            --input-files test_file.c \
+            --license-detectors scancode-toolkit \
+            --scancode "$SCANCODE" \
+            --output-html scancode_report.html
