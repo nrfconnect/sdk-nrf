@@ -4,11 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "common.h"
+
+#if DT_NODE_HAS_STATUS(DT_ALIAS(accel0), okay)
+#include <zephyr/drivers/sensor.h>
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(accel, LOG_LEVEL_INF);
-
-#include <zephyr/drivers/sensor.h>
-#include "common.h"
 
 static const struct device *const accelerometer = DEVICE_DT_GET(DT_ALIAS(accel0));
 
@@ -70,3 +72,7 @@ static void accel_thread(void *arg1, void *arg2, void *arg3)
 
 K_THREAD_DEFINE(thread_accel_id, ACCEL_THREAD_STACKSIZE, accel_thread, NULL, NULL, NULL,
 	K_PRIO_PREEMPT(ACCEL_THREAD_PRIORITY), 0, 0);
+
+#else
+#pragma message("Accelerometer thread skipped due to missing node in the DTS")
+#endif

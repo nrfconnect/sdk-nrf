@@ -17,10 +17,9 @@ LOG_MODULE_REGISTER(flash_thd, LOG_LEVEL_INF);
 #define FLASH_NODE DT_COMPAT_GET_ANY_STATUS_OKAY(jedec_mspi_nor)
 #elif DT_HAS_COMPAT_STATUS_OKAY(nordic_qspi_nor)
 #define FLASH_NODE DT_COMPAT_GET_ANY_STATUS_OKAY(nordic_qspi_nor)
-#else
-#error Unsupported flash driver
-#define FLASH_NODE DT_INVALID_NODE
 #endif
+
+#if defined(FLASH_NODE)
 
 #define TEST_AREA_OFFSET	(0xff000)
 #define EXPECTED_SIZE		(512)
@@ -64,3 +63,7 @@ static void flash_thread(void *arg1, void *arg2, void *arg3)
 
 K_THREAD_DEFINE(thread_flash_id, FLASH_THREAD_STACKSIZE, flash_thread, NULL, NULL, NULL,
 	K_PRIO_PREEMPT(FLASH_THREAD_PRIORITY), 0, 0);
+
+#else
+#pragma message("Flash thread skipped due to missing external memory")
+#endif

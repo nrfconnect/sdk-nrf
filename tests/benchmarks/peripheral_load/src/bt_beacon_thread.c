@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "common.h"
+
+#if DT_NODE_HAS_STATUS(DT_CHOSEN(zephyr_bt_hci), okay)
 #include <zephyr/types.h>
 #include <stddef.h>
 #include <zephyr/sys/printk.h>
@@ -11,7 +14,6 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/hci.h>
-#include "common.h"
 
 LOG_MODULE_REGISTER(bt_thread, LOG_LEVEL_INF);
 
@@ -83,6 +85,7 @@ static void bt_thread(void *arg1, void *arg2, void *arg3)
 	ARG_UNUSED(arg3);
 
 	LOG_INF("Starting BT beacon");
+	atomic_inc(&started_threads);
 
 	/* Initialize the Bluetooth Subsystem */
 	if (bt_enable(bt_ready)) {
@@ -90,7 +93,13 @@ static void bt_thread(void *arg1, void *arg2, void *arg3)
 	} else {
 		LOG_INF("Bluetooth init OK");
 	}
+
+	atomic_inc(&completed_threads);
 }
 
 K_THREAD_DEFINE(thread_bt_id, BT_THREAD_STACKSIZE, bt_thread, NULL, NULL, NULL,
 	K_PRIO_PREEMPT(BT_THREAD_PRIORITY), 0, 0);
+
+#else
+#pragma message("Bluetooth thread skipped due to missing 'bt_hci_sdc' node in the DTS")
+#endif
