@@ -42,6 +42,7 @@
  * Required but not implemented.
  */
 #define NRF_MODEM_LIB_NET_IF_CTX_TYPE void *
+#define NRF_MODEM_LIB_NET_IF_NTN_CTX_TYPE void *
 
 #define OBJ_TO_SD(obj) (((struct nrf_sock_ctx *)obj)->nrf_fd)
 #define OBJ_TO_CTX(obj) ((struct nrf_sock_ctx *)obj)
@@ -1177,10 +1178,58 @@ NET_DEVICE_OFFLOAD_INIT(nrf9x_socket, "nrf9x_socket",
 			&nrf9x_iface_data, NULL,
 			0, &nrf9x_iface_offload_api, 1280);
 
+#if defined(CONFIG_NRF_MODEM_LIB_NET_IF_NTN)
+static struct nrf9x_iface_data_ntn {
+	struct net_if *iface;
+} nrf9x_iface_data_ntn;
+
+static void nrf9x_iface_api_init_ntn(struct net_if *iface)
+{
+	nrf9x_iface_data_ntn.iface = iface;
+
+	iface->if_dev->socket_offload = nrf9x_socket_create;
+
+	/* NTN shares the same DNS offload operations */
+	socket_offload_dns_register(&nrf9x_socket_dns_offload_ops);
+
+	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_NTN_AUTO_START)) {
+		net_if_flag_set(iface, NET_IF_NO_AUTO_START);
+	}
+}
+
+static int nrf9x_iface_enable_ntn(const struct net_if *iface, bool enabled)
+{
+	/* Enables or disable the NTN device (in response to admin state change) */
+	extern int lte_net_if_enable_ntn(void);
+	extern int lte_net_if_disable_ntn(void);
+
+	return enabled ? lte_net_if_enable_ntn() :
+			 lte_net_if_disable_ntn();
+}
+
+static struct offloaded_if_api nrf9x_iface_offload_api_ntn = {
+	.iface_api.init = nrf9x_iface_api_init_ntn,
+	.enable = nrf9x_iface_enable_ntn,
+};
+
+/* NTN network device for Non-Terrestrial Network */
+NET_DEVICE_OFFLOAD_INIT(nrf9x_socket_ntn, "nrf9x_socket_ntn",
+			nrf9x_socket_offload_init,
+			NULL,
+			&nrf9x_iface_data_ntn, NULL,
+			0, &nrf9x_iface_offload_api_ntn, 1280);
+#endif /* CONFIG_NRF_MODEM_LIB_NET_IF_NTN */
+
 #if defined(CONFIG_NRF_MODEM_LIB_NET_IF)
 extern struct conn_mgr_conn_api lte_net_if_conn_mgr_api;
 CONN_MGR_CONN_DEFINE(NRF_MODEM_LIB_NET_IF, &lte_net_if_conn_mgr_api);
 CONN_MGR_BIND_CONN(nrf9x_socket, NRF_MODEM_LIB_NET_IF);
 #endif /* CONFIG_NRF_MODEM_LIB_NET_IF */
+
+#if defined(CONFIG_NRF_MODEM_LIB_NET_IF_NTN)
+extern struct conn_mgr_conn_api lte_net_if_conn_mgr_api_ntn;
+CONN_MGR_CONN_DEFINE(NRF_MODEM_LIB_NET_IF_NTN, &lte_net_if_conn_mgr_api_ntn);
+CONN_MGR_BIND_CONN(nrf9x_socket_ntn, NRF_MODEM_LIB_NET_IF_NTN);
+#endif /* CONFIG_NRF_MODEM_LIB_NET_IF_NTN */
 
 #endif /* CONFIG_NET_SOCKETS_OFFLOAD */
