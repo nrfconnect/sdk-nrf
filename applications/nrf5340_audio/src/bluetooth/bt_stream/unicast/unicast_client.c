@@ -341,8 +341,8 @@ static void unicast_group_create(void)
 /**
  * @brief	Function to check if a stream is already in the unicast group.
  *
- * @param stream	Stream to check.
- * @param user_data	User data, in this case a pointer to the server_store to
+ * @param[in] stream	Stream to check.
+ * @param[in] user_data	User data, in this case a pointer to the server_store to
  *			check against.
  *
  * @retval		False	The stream is in the group.
@@ -363,8 +363,8 @@ static bool stream_in_group_check(struct bt_cap_stream *stream, void *user_data)
 /**
  * @brief	Function to check if a server has any streams in the unicast group.
  *
- * @param server	Server to check.
- * @param user_data	Unused.
+ * @param[in] server	Server to check.
+ * @param[in] user_data	Unused.
  *
  * @retval		True	All streams from the server are in the group.
  * @retval		False	At least one stream is missing from the group.
@@ -489,9 +489,9 @@ K_WORK_DEFINE(cap_start_work, cap_start_worker);
  *		warning will be logged and the LE_AUDIO_EVT_NO_VALID_CFG event will be
  *		published.
  *
- * @param conn		Connection pointer to the unicast_server where the location was discovered.
- * @param dir		Direction of the location (sink or source).
- * @param loc		Discovered location.
+ * @param[in]	conn	Connection pointer to the unicast_server where the location was discovered.
+ * @param[in]	dir	Direction of the location (sink or source).
+ * @param[in]	loc	Discovered location.
  */
 static void unicast_client_location_cb(struct bt_conn *conn, enum bt_audio_dir dir,
 				       enum bt_audio_location loc)
@@ -578,10 +578,10 @@ static void unicast_client_location_cb(struct bt_conn *conn, enum bt_audio_dir d
  * @brief	Callback for when available contexts are discovered. This function will store the
  *		available contexts in the server_store struct for the corresponding connection.
  *
- * @param conn		Connection pointer to the unicast_server where the available contexts
+ * @param[in]	conn	Connection pointer to the unicast_server where the available contexts
  *			was discovered.
- * @param snk_ctx	Available sink contexts.
- * @param src_ctx	Available source contexts.
+ * @param[in]	snk_ctx	Available sink contexts.
+ * @param[in]	src_ctx	Available source contexts.
  */
 static void available_contexts_cb(struct bt_conn *conn, enum bt_audio_context snk_ctx,
 				  enum bt_audio_context src_ctx)
@@ -610,10 +610,10 @@ static void available_contexts_cb(struct bt_conn *conn, enum bt_audio_context sn
  *		codec capability in the server_store struct for the corresponding connection and
  *		direction.
  *
- * @param conn		Connection pointer to the unicast_server where the codec capability was
+ * @param[in]	conn	Connection pointer to the unicast_server where the codec capability was
  *			discovered.
- * @param dir		Direction of the codec capability (sink or source).
- * @param codec		Pointer to the discovered codec capability.
+ * @param[in]	dir	Direction of the codec capability (sink or source).
+ * @param[in]	codec	Pointer to the discovered codec capability.
  */
 static void pac_record_cb(struct bt_conn *conn, enum bt_audio_dir dir,
 			  const struct bt_audio_codec_cap *codec)
@@ -643,9 +643,9 @@ static void pac_record_cb(struct bt_conn *conn, enum bt_audio_dir dir,
  * @brief	Callback for when an endpoint is discovered. This function will store the endpoint
  *		in the server_store struct for the corresponding connection and direction.
  *
- * @param conn		Connection pointer to the unicast_server where the endpoint was discovered.
- * @param dir		Direction of the endpoint (sink or source).
- * @param ep		Pointer to the discovered endpoint. NULL if the discovery is complete.
+ * @param[in]	conn	Connection pointer to the unicast_server where the endpoint was discovered.
+ * @param[in]	dir	Direction of the endpoint (sink or source).
+ * @param[in]	ep	Pointer to the discovered endpoint. NULL if the discovery is complete.
  */
 static void endpoint_cb(struct bt_conn *conn, enum bt_audio_dir dir, struct bt_bap_ep *ep)
 {
@@ -717,9 +717,9 @@ static void endpoint_cb(struct bt_conn *conn, enum bt_audio_dir dir, struct bt_b
  * @note	If a stereo sink is found, the preset for both left and right channel will be set to
  *		the same preset, only differing in channel allocation.
  *
- * @param conn		Connection pointer to the unicast_server where the discovery was done.
- * @param err		Error code, 0 if successful.
- * @param server	Server pointer to the server_store struct where the discovered data will be
+ * @param[in]	conn	Connection pointer to the unicast_server where the discovery was done.
+ * @param[in]	err	Error code, 0 if successful.
+ * @param[in]	server	Server pointer to the server_store struct where the discovered data will be
  *			stored.
  */
 static void discover_cb_sink(struct bt_conn *conn, int err, struct server_store *server)
@@ -804,9 +804,9 @@ static void discover_cb_sink(struct bt_conn *conn, int err, struct server_store 
  *		configuration to be used in the preset(s) based on the discovered codec capabilities
  *		and channel allocation.
  *
- * @param conn		Connection pointer to the unicast_server where the discovery was done.
- * @param err		Error code, 0 if successful.
- * @param server	Server pointer to the server_store struct where the discovered data will be
+ * @param[in]	conn	Connection pointer to the unicast_server where the discovery was done.
+ * @param[in]	err	Error code, 0 if successful.
+ * @param[in]	server	Server pointer to the server_store struct where the discovered data will be
  *			stored.
  */
 static void discover_cb_source(struct bt_conn *conn, int err, struct server_store *server)
@@ -1085,11 +1085,11 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 /**
  * @brief	Function to check if all streams in the unicast group have been released.
  *
- * @param stream	Stream to check.
- * @param user_data	User data, not used.
+ * @param[in]	stream		Stream to check.
+ * @param[in]	user_data	User data, not used.
  *
- * @return		True if a stream is found that is not released, false if all streams are
- *			released.
+ * @retval	true 	A stream is found that is not yet released.
+ * @retval	false	All streams are released.
  */
 static bool all_streams_released_check(struct bt_cap_stream *stream, void *user_data)
 {

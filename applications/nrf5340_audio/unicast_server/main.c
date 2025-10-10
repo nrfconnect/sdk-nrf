@@ -52,7 +52,7 @@ static k_tid_t le_audio_msg_sub_thread_id;
 K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_BUTTON_MSG_SUB_STACK_SIZE);
 K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
 
-#define STEREO_PRES_DLY_MIN_US 10000
+#define STEREO_PRES_DLY_MIN_US 5000
 
 static enum stream_state strm_state = STATE_PAUSED;
 
@@ -561,8 +561,10 @@ int main(void)
 	device_location_get(&location);
 
 	if (POPCOUNT(location) > 1) {
-		audio_pres_delay_min_set(STEREO_PRES_DLY_MIN_US); /* 10 ms */
-		LOG_INF("Multiple locations configured, setting min pres delay to 10 ms");
+		ret = unicast_server_pd_min_set(STEREO_PRES_DLY_MIN_US);
+		ERR_CHK_MSG(ret, "Failed to set min pres delay");
+		LOG_INF("Multiple locations configured, setting min pres delay to %d us",
+			STEREO_PRES_DLY_MIN_US);
 	}
 
 	ret = unicast_server_enable(le_audio_rx_data_handler, location);

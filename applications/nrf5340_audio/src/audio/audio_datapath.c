@@ -166,9 +166,6 @@ static struct {
 	} pres_comp;
 } ctrl_blk;
 
-uint32_t audio_pres_delay_min_us = CONFIG_AUDIO_MIN_PRES_DLY_US;
-uint32_t audio_pres_delay_max_us = CONFIG_AUDIO_MAX_PRES_DLY_US;
-
 /**
  * @brief	Get the current number of blocks in the output buffer.
  */
@@ -879,24 +876,6 @@ static void audio_datapath_sdu_ref_update(const struct zbus_channel *chan)
 
 ZBUS_LISTENER_DEFINE(sdu_ref_msg_listen, audio_datapath_sdu_ref_update);
 
-void audio_pres_delay_min_set(uint32_t dly_us)
-{
-	if (dly_us > audio_pres_delay_max_us) {
-		LOG_WRN("Min pres delay (%u) cannot be higher than max (%u), keeping old min (%u)",
-			dly_us, audio_pres_delay_max_us, audio_pres_delay_min_us);
-		return;
-	}
-
-	if (dly_us < CONFIG_AUDIO_MIN_PRES_DLY_US) {
-		LOG_WRN("Min pres delay (%u) too low, setting to %u", dly_us,
-			CONFIG_AUDIO_MIN_PRES_DLY_US);
-		dly_us = CONFIG_AUDIO_MIN_PRES_DLY_US;
-	}
-
-	audio_pres_delay_min_us = dly_us;
-	LOG_INF("Min pres delay set to %u us", audio_pres_delay_min_us);
-}
-
 int audio_datapath_pres_delay_us_set(uint32_t delay_us)
 {
 	if (!IN_RANGE(delay_us, CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US)) {
@@ -915,24 +894,6 @@ int audio_datapath_pres_delay_us_set(uint32_t delay_us)
 void audio_datapath_pres_delay_us_get(uint32_t *delay_us)
 {
 	*delay_us = ctrl_blk.pres_comp.pres_delay_us;
-}
-
-void audio_pres_delay_max_set(uint32_t dly_us)
-{
-	if (dly_us < audio_pres_delay_min_us) {
-		LOG_WRN("Max pres delay (%u) cannot be lower than min (%u), keeping old max (%u)",
-			dly_us, audio_pres_delay_min_us, audio_pres_delay_max_us);
-		return;
-	}
-
-	if (dly_us > CONFIG_AUDIO_MAX_PRES_DLY_US) {
-		LOG_WRN("Max pres delay (%u) too high, setting to %u", dly_us,
-			CONFIG_AUDIO_MAX_PRES_DLY_US);
-		dly_us = CONFIG_AUDIO_MAX_PRES_DLY_US;
-	}
-
-	audio_pres_delay_max_us = dly_us;
-	LOG_INF("Max pres delay set to %u us", audio_pres_delay_max_us);
 }
 
 void audio_datapath_stream_out(struct net_buf *audio_frame)

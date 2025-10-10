@@ -36,19 +36,20 @@ NET_BUF_POOL_FIXED_DEFINE(ble_rx_pool, CONFIG_BUF_BLE_RX_PACKET_NUM,
 			  (CONFIG_BT_ISO_RX_MTU * CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX),
 			  sizeof(struct audio_metadata), NULL);
 
-static uint8_t location_to_net_buf_index(enum bt_audio_location total_loc,
-					 enum bt_audio_location srch_loc)
+static int location_to_net_buf_index(enum bt_audio_location total_loc,
+				     enum bt_audio_location srch_loc, uint8_t *index)
 {
-	int index = 0;
+	int idx = 0;
 
 	while (total_loc) {
 		if (srch_loc & 0x01) {
-			return index;
+			*index = idx;
+			return 0;
 		}
 
 		/* Count the number of active locations */
 		if (total_loc & 0x01) {
-			index++;
+			idx++;
 		}
 
 		total_loc >>= 1;
@@ -58,9 +59,10 @@ static uint8_t location_to_net_buf_index(enum bt_audio_location total_loc,
 	return -EINVAL;
 }
 
-static int audio_frame_add(struct net_buf *audio_frame, struct net_buf *audio_frame_rx,
+static int audio_frame_add(struct net_buf *audio_frame, struct net_buf const *const audio_frame_rx,
 			   struct audio_metadata *meta, enum bt_audio_location stream_locations)
 {
+	int ret;
 	uint16_t offset = 0;
 
 	if (audio_frame == NULL || audio_frame_rx == NULL || meta == NULL) {
@@ -70,16 +72,21 @@ static int audio_frame_add(struct net_buf *audio_frame, struct net_buf *audio_fr
 
 	if (meta->locations != stream_locations) {
 		/* Get net_buf_index for given location */
-		uint8_t net_buf_index =
-			location_to_net_buf_index(stream_locations, meta->locations);
+		uint8_t net_buf_index = 0;
 
-		if (net_buf_index < 0) {
-			LOG_ERR("Invalid location index: %d", net_buf_index);
-			return net_buf_index;
+		ret = location_to_net_buf_index(stream_locations, meta->locations, &net_buf_index);
+		if (ret) {
+			LOG_ERR("Invalid location index, ret: %d", ret);
+			return ret;
 		}
 
 		/* Calculate offset in net_buf */
 		offset = net_buf_index * meta->bytes_per_location;
+
+		if (offset > audio_frame->size - audio_frame_rx->len) {
+			LOG_ERR("Calculated offset too large: %d", offset);
+			return -EINVAL;
+		}
 	}
 
 	if (audio_frame_rx->len && !meta->bad_data) {

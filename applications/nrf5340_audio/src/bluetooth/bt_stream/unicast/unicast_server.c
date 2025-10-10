@@ -138,7 +138,7 @@ static enum bt_audio_dir caps_dirs[] = {
 #endif /* (CONFIG_BT_AUDIO_TX) */
 };
 
-static const struct bt_bap_qos_cfg_pref qos_pref = BT_BAP_QOS_CFG_PREF(
+static struct bt_bap_qos_cfg_pref qos_pref = BT_BAP_QOS_CFG_PREF(
 	true, BT_GAP_LE_PHY_2M, CONFIG_BT_AUDIO_RETRANSMITS, BLE_ISO_LATENCY_MS,
 	CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US,
 	CONFIG_BT_AUDIO_PREFERRED_MIN_PRES_DLY_US, CONFIG_BT_AUDIO_PREFERRED_MAX_PRES_DLY_US);
@@ -463,6 +463,26 @@ static struct bt_bap_stream_ops stream_ops = {
 	.released = stream_released_cb,
 };
 
+int unicast_server_pd_min_set(uint32_t dly_min_in_us)
+{
+	if (dly_min_in_us > qos_pref.pd_max) {
+		LOG_WRN("Min pres delay (%u) cannot be higher than max (%u), keeping old min (%u)",
+			dly_min_in_us, qos_pref.pd_max, qos_pref.pd_min);
+		return -EINVAL;
+	}
+
+	if (dly_min_in_us < CONFIG_AUDIO_MIN_PRES_DLY_US) {
+		LOG_WRN("Min pres delay (%u) too low, setting to %u", dly_min_in_us,
+			CONFIG_AUDIO_MIN_PRES_DLY_US);
+		return -EINVAL;
+	}
+
+	qos_pref.pd_min = dly_min_in_us;
+	qos_pref.pref_pd_min = dly_min_in_us;
+
+	return 0;
+}
+
 int le_audio_concurrent_sync_num_get(uint8_t *num_streams, enum bt_audio_location *locations)
 {
 	int ret;
@@ -476,21 +496,21 @@ int le_audio_concurrent_sync_num_get(uint8_t *num_streams, enum bt_audio_locatio
 	*locations = 0;
 
 	for (int i = 0; i < ARRAY_SIZE(cap_audio_streams); i++) {
-		if (cap_audio_streams[i].bap_stream.conn) {
-			if (cap_audio_streams[i].bap_stream.codec_cfg) {
-				enum bt_audio_location chan_allocation;
-
-				ret = bt_audio_codec_cfg_get_chan_allocation(
-					cap_audio_streams[i].bap_stream.codec_cfg, &chan_allocation,
-					false);
-				if (ret) {
-					LOG_WRN("Failed to get channel allocation");
-					return ret;
-				}
-
-				*locations |= chan_allocation;
-			}
+		if (!cap_audio_streams[i].bap_stream.conn ||
+		    !cap_audio_streams[i].bap_stream.codec_cfg) {
+			continue;
 		}
+
+		enum bt_audio_location chan_allocation;
+
+		ret = bt_audio_codec_cfg_get_chan_allocation(
+			cap_audio_streams[i].bap_stream.codec_cfg, &chan_allocation, false);
+		if (ret) {
+			LOG_WRN("Failed to get channel allocation");
+			return ret;
+		}
+
+		*locations |= chan_allocation;
 	}
 
 	return 0;

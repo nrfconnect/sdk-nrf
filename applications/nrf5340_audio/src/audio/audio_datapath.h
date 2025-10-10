@@ -43,13 +43,6 @@ int audio_datapath_tone_play(uint16_t freq, uint16_t dur_ms, float amplitude);
 void audio_datapath_tone_stop(void);
 
 /**
- * @brief	Set the minimum presentation delay.
- *
- * @param	dly_us	The minimum presentation delay in µs.
- */
-void audio_pres_delay_min_set(uint32_t dly_us);
-
-/**
  * @brief	Set the presentation delay.
  *
  * @param	delay_us	The presentation delay in µs.
@@ -64,13 +57,6 @@ int audio_datapath_pres_delay_us_set(uint32_t delay_us);
  * @param	delay_us	The presentation delay in µs.
  */
 void audio_datapath_pres_delay_us_get(uint32_t *delay_us);
-
-/**
- * @brief	Set the maximum presentation delay.
- *
- * @param	dly_us	The maximum presentation delay in µs.
- */
-void audio_pres_delay_max_set(uint32_t dly_us);
 
 /**
  * @brief	Input an audio data frame which is processed and outputted over I2S.

@@ -21,6 +21,15 @@
 #include <audio_defines.h>
 
 /**
+ * @brief	Set the minimum presentation delay for audio streams.
+ *
+ * @param[in]	dly_min_in_us	Minimum presentation delay in microseconds.
+ *
+ * @return	0 for success, error otherwise.
+ */
+int unicast_server_pd_min_set(uint32_t dly_min_in_us);
+
+/**
  * @brief	Get configuration for audio stream.
  *
  * @param[in]	conn			Pointer to the connection to get the configuration for.
