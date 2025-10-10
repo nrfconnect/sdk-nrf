@@ -22,12 +22,24 @@
 NRF_SECURITY_EVENT_DEFINE(cracen_irq_event_for_cryptomaster)
 NRF_SECURITY_EVENT_DEFINE(cracen_irq_event_for_pke)
 
+#if !defined(CONFIG_MULTITHREADING)
+ISR_DIRECT_DECLARE(cracen_direct_isr_handler)
+{
+	cracen_isr_handler(NULL);
+	return 0;
+}
+#endif
+
 void cracen_interrupts_init(void)
 {
 	nrf_security_event_init(cracen_irq_event_for_cryptomaster);
 	nrf_security_event_init(cracen_irq_event_for_pke);
 
+#if defined(CONFIG_MULTITHREADING)
 	IRQ_CONNECT(CRACEN_IRQn, 0, cracen_isr_handler, NULL, 0);
+#else
+	IRQ_DIRECT_CONNECT(CRACEN_IRQn, 0, cracen_direct_isr_handler, 0);
+#endif
 }
 
 #ifdef __NRF_TFM__
