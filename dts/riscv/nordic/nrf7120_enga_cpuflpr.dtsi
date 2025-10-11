@@ -7,6 +7,7 @@
 #include <nordic/nrf7120_enga.dtsi>
 
 cpu: &cpuflpr {};
+
 clic: &cpuflpr_clic {};
 
 /delete-node/ &cpuapp;
@@ -39,12 +40,12 @@ clic: &cpuflpr_clic {};
 &wifi_bellboard {
 	compatible = "nordic,nrf-bellboard-rx";
 	interrupts = <116 NRF_DEFAULT_IRQ_PRIORITY>,
-			<117 NRF_DEFAULT_IRQ_PRIORITY>,
-			<118 NRF_DEFAULT_IRQ_PRIORITY>,
-			<119 NRF_DEFAULT_IRQ_PRIORITY>;
+		     <117 NRF_DEFAULT_IRQ_PRIORITY>,
+		     <118 NRF_DEFAULT_IRQ_PRIORITY>,
+		     <119 NRF_DEFAULT_IRQ_PRIORITY>;
 	interrupt-names = "irq0", "irq1", "irq2", "irq3";
 	nordic,interrupt-mapping = <0x0000000f 0>, <0x0000000f 1>,
-				<0x0000000f 2>, <0x0000000f 3>;
+				   <0x0000000f 2>, <0x0000000f 3>;
 };
 
 &cpuapp_bellboard {

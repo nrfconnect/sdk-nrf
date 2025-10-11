@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- &nfct {
+&nfct {
 	status = "okay";
 	memory-regions = <&cpuapp_dma_region>;
 };

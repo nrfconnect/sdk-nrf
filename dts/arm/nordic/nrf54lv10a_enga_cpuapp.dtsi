@@ -7,7 +7,9 @@
 #include <nordic/nrf54lv10a.dtsi>
 
 cpu: &cpuapp {};
+
 systick: &cpuapp_systick {};
+
 nvic: &cpuapp_nvic {};
 
 /delete-node/ &cpuflpr;
