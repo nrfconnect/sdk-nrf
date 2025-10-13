@@ -106,3 +106,16 @@
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31463"
+
+- scenarios:
+    - mcuboot.upgrade.encryption.ecdsa_p256
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29460"
+
+- scenarios:
+    - mcuboot.nrf_compress.encryption_ed25519
+    - mcuboot.upgrade.encryption.ed25519
+  platforms:
+    - nrf54lv10dk.*
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35259"
