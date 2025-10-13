@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+	default y if BOARD_NRF5340DK_NRF5340_CPUAPP
+
+choice MCUBOOT_MODE
+	default MCUBOOT_MODE_OVERWRITE_ONLY if SOC_SERIES_NRF53X && !NETCORE_NONE
+endchoice
+
+config SECURE_BOOT_NETCORE
+	default y if BOARD_NRF5340DK_NRF5340_CPUAPP && !NETCORE_NONE
+
+config NETCORE_APP_UPDATE
+	default y if SECURE_BOOT_NETCORE
+
+config SECURE_BOOT_SIGNING_KEY_FILE
+	default "$ZEPHYR_BASE/../bootloader/mcuboot/root-ed25519.pem" if SECURE_BOOT_SIGNATURE_TYPE_ED25519
+	default "$ZEPHYR_BASE/../bootloader/mcuboot/root-ec-p256.pem" if SECURE_BOOT_SIGNATURE_TYPE_ECDSA
+
+config MCUBOOT_USE_ALL_AVAILABLE_RAM
+	default y if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
+
+source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
