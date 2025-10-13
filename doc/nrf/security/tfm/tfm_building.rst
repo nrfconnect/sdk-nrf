@@ -51,6 +51,10 @@ See :ref:`app_boards_names` for the complete list of boards and board targets su
      - PCA10165
      - :zephyr:board:`nrf9131ek <nrf9131ek>`
      - ``nrf9131ek/nrf9131/ns``
+   * - nRF54LV10 DK
+     - PCA10188
+     - ``nrf54lv10dk``
+     - ``nrf54lv10dk/nrf54lv10a/cpuapp/ns``
    * - nRF54LM20 DK
      - PCA10184
      - :zephyr:board:`nrf54lm20dk <nrf54lm20dk>`
