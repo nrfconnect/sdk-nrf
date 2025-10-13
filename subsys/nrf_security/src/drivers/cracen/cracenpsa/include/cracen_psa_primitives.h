@@ -44,6 +44,14 @@
 #define CRACEN_MAX_CHACHA20_KEY_SIZE (32u)
 
 /*
+ * There is a HW limitation for nRF54LM20A and nRF54LV10A:
+ * a maximum of 1 MB of plaintext or ciphertext is supported.
+ */
+#if defined(CONFIG_SOC_NRF54LM20A) || defined(CONFIG_SOC_NRF54LV10A)
+#define CRACEN_MAX_CCM_DATA_SIZE (65536U * SX_BLKCIPHER_AES_BLK_SZ)
+#endif /* CONFIG_SOC_NRF54LM20A || CONFIG_SOC_NRF54LV10A */
+
+/*
  * There are two key types supported for ciphers, CHACHA20 and AES,
  * and they both have a max key size of 32.
  */
