@@ -13,9 +13,7 @@
 #include <zephyr/sys/ring_buffer.h>
 #include <zephyr/sys/base64.h>
 #include <date_time.h>
-#if defined(CONFIG_NRF_CLOUD_MQTT)
 #include "nrf_cloud_fsm.h"
-#endif /* CONFIG_NRF_CLOUD_MQTT */
 #include "nrf_cloud_mem.h"
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_transport.h"
