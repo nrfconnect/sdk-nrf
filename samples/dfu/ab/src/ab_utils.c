@@ -39,12 +39,18 @@ LOG_MODULE_DECLARE(ab_sample);
 
 #define SLOT_A_OFFSET FIXED_PARTITION_OFFSET(SLOT_A_PARTITION)
 #define SLOT_B_OFFSET FIXED_PARTITION_OFFSET(SLOT_B_PARTITION)
+#define SLOT_A_SIZE   FIXED_PARTITION_SIZE(SLOT_A_PARTITION)
+#define SLOT_B_SIZE   FIXED_PARTITION_SIZE(SLOT_B_PARTITION)
 
 #define SLOT_A_FLASH_AREA_ID FIXED_PARTITION_ID(SLOT_A_PARTITION)
 #define SLOT_B_FLASH_AREA_ID FIXED_PARTITION_ID(SLOT_B_PARTITION)
 
-#define IS_SLOT_A (CODE_PARTITION_OFFSET == SLOT_A_OFFSET)
-#define IS_SLOT_B (CODE_PARTITION_OFFSET == SLOT_B_OFFSET)
+#define IS_SLOT_A                                                                                  \
+	(CODE_PARTITION_OFFSET >= SLOT_A_OFFSET &&                                                 \
+	 CODE_PARTITION_OFFSET < SLOT_A_OFFSET + SLOT_A_SIZE)
+#define IS_SLOT_B                                                                                  \
+	(CODE_PARTITION_OFFSET >= SLOT_B_OFFSET &&                                                 \
+	 CODE_PARTITION_OFFSET < SLOT_B_OFFSET + SLOT_B_SIZE)
 
 #endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 
