@@ -48,6 +48,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf52833dk/nrf52833
       - nrf52840dk/nrf52840
@@ -59,6 +60,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
     tags:
       - ci_build
       - sysbuild
