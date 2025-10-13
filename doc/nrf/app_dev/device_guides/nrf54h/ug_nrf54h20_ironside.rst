@@ -101,31 +101,30 @@ It is not possible to boot the vendor-specified recovery firmware if the integri
 UICR.APPROTECT
 ==============
 
-You can configure several access ports (APs) through UICR.
-UICR.APPROTECT controls debugger access when connected to an AP, specifically the settings in the TAMPC peripheral.
-Set all APs to UICR_APPROTECT_PROTECTED to get a protected device.
+UICR.APPROTECT controls debugger and access-port permissions through the TAMPC peripheral.
+The configuration consists of separate registers for each access port, allowing independent control over debugging capabilities for different processor domains and CoreSight access.
 
-The following table shows the configuration of the TAMPC peripheral for each AP.
+The UICR.APPROTECT configuration consists of the following sub-registers:
 
-+-----------+-----------+-----------+-----------+-----------+-----------+-------------------------------+
-|                TAMPC.DOMAIN[n]                |   TAMPC.AP[n]         | Configuration                 |
-+-----------+-----------+-----------+-----------+-----------+-----------+                               +
-| DBGEN     | NIDEN     | SPIDEN    | SPNIDEN   | DBGEN     | SPIDEN    |                               |
-+===========+===========+===========+===========+===========+===========+===============================+
-|     0     |     0     |     0     |     0     |     0     |     0     | UICR_APPROTECT_PROTECTED      |
-+-----------+-----------+-----------+-----------+-----------+-----------+-------------------------------+
-|     1     |     1     |     1     |     1     |     1     |     1     | UICR_APPROTECT_UNPROTECTED    |
-+-----------+-----------+-----------+-----------+-----------+-----------+-------------------------------+
+UICR.APPROTECT.APPLICATION
+  Controls access port protection for the application domain processor.
+  This setting determines whether the debugger can access the application domain memory, registers, and debug features.
 
-+-----------+-----------+-----------+-----------+-----------+--------------------------------+
-|                         TAMPC.CORESIGHT                   | Configuration                  |
-+-----------+-----------+-----------+-----------+-----------+                                +
-| DEVICEEN  | DBGEN     | NIDEN     | SPIDEN    | SPNIDEN   |                                |
-+===========+===========+===========+===========+===========+================================+
-|     0     |     0     |     0     |     0     |     0     | UICR_APPROTECT_PROTECTED       |
-+-----------+-----------+-----------+-----------+-----------+--------------------------------+
-|     1     |     1     |     1     |     1     |     1     | UICR_APPROTECT_UNPROTECTED     |
-+-----------+-----------+-----------+-----------+-----------+--------------------------------+
+UICR.APPROTECT.RADIOCORE
+  Controls access port protection for the radio core processor.
+  This setting determines whether the debugger can access the radio core memory, registers, and debug features.
+
+UICR.APPROTECT.CORESIGHT
+  Controls access port protection for the CoreSight debug infrastructure.
+  This setting determines whether system-level trace features are accessible.
+
+Each of these sub-registers accepts the following values:
+
+* ``UICR_MAGIC_ERASE_VALUE`` - Full debug access is enabled, allowing unrestricted use of debugging tools and memory access.
+* ``UICR_PROTECTED`` - Debug access is disabled, preventing debugger connection and protecting the device from unauthorized access.
+
+.. note::
+   To fully protect a production device, set all three sub-registers (APPLICATION, RADIOCORE, and CORESIGHT) to ``UICR_PROTECTED``.
 
 UICR.ERASEPROTECT
 =================
