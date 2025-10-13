@@ -396,11 +396,18 @@ psa_status_t cracen_aead_set_nonce(cracen_aead_operation_t *operation, const uin
 #endif
 }
 
-static void set_lengths(cracen_aead_operation_t *operation, size_t ad_length,
+static psa_status_t set_lengths(cracen_aead_operation_t *operation, size_t ad_length,
 			size_t plaintext_length)
 {
+#if defined(CRACEN_MAX_CCM_DATA_SIZE)
+	if ((operation->alg == PSA_ALG_CCM) && (plaintext_length > CRACEN_MAX_CCM_DATA_SIZE)) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+#endif /* CRACEN_MAX_CCM_DATA_SIZE */
+
 	operation->ad_length = ad_length;
 	operation->plaintext_length = plaintext_length;
+	return PSA_SUCCESS;
 }
 
 psa_status_t cracen_aead_set_lengths(cracen_aead_operation_t *operation, size_t ad_length,
@@ -409,8 +416,7 @@ psa_status_t cracen_aead_set_lengths(cracen_aead_operation_t *operation, size_t 
 #ifdef CONFIG_SOC_NRF54LM20A
 	return PSA_ERROR_NOT_SUPPORTED;
 #else
-	set_lengths(operation, ad_length, plaintext_length);
-	return PSA_SUCCESS;
+	return set_lengths(operation, ad_length, plaintext_length);
 #endif
 }
 
@@ -755,7 +761,10 @@ psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const u
 		goto error_exit;
 	}
 
-	set_lengths(&operation, additional_data_length, plaintext_length);
+	status = set_lengths(&operation, additional_data_length, plaintext_length);
+	if (status != PSA_SUCCESS) {
+		goto error_exit;
+	}
 
 	/* Do not call the cracen_aead_update*() functions to avoid using
 	 * HW context switching (process_on_hw()) in single-part operations.
@@ -820,7 +829,10 @@ psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const u
 		goto error_exit;
 	}
 
-	set_lengths(&operation, additional_data_length, *plaintext_length);
+	status = set_lengths(&operation, additional_data_length, *plaintext_length);
+	if (status != PSA_SUCCESS) {
+		goto error_exit;
+	}
 
 	/* Do not call the cracen_aead_update*() functions to avoid using
 	 * HW context switching (process_on_hw()) in single-part operations.
