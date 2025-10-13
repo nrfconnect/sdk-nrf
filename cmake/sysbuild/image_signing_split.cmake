@@ -91,17 +91,14 @@ function(zephyr_mcuboot_tasks)
     message(WARNING "slot0_partition write block size devicetree parameter is missing, assuming write block size is 4")
   endif()
 
-  # Fetch QSPI XIP MCUboot image number from sysbuild
-  zephyr_get(qspi_xip_image_number VAR QSPI_XIP_IMAGE_NUMBER SYSBUILD)
-
   if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
     # XIP image, need to use the fixed address for these slots
     if(CONFIG_NCS_IS_VARIANT_IMAGE)
       set(imgtool_internal_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_ADDRESS@)
-      set(imgtool_external_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_${qspi_xip_image_number}_ADDRESS@)
+      set(imgtool_external_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS@)
     else()
       set(imgtool_internal_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_ADDRESS@)
-      set(imgtool_external_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_${qspi_xip_image_number}_ADDRESS@)
+      set(imgtool_external_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS@)
     endif()
   endif()
 
@@ -111,7 +108,7 @@ function(zephyr_mcuboot_tasks)
   # TODO: NCSDK-28461 sysbuild PM fields cannot be updated without a pristine build, will become
   # invalid if a static PM file is updated without pristine build
   set(imgtool_internal_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_internal_rom_command} CACHE STRING "imgtool sign (internal flash) sysbuild replacement")
-  set(imgtool_external_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_${qspi_xip_image_number}_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_external_rom_command} CACHE STRING "imgtool sign (external flash) sysbuild replacement")
+  set(imgtool_external_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_external_rom_command} CACHE STRING "imgtool sign (external flash) sysbuild replacement")
   set(imgtool_internal_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_internal_sign_sysbuild})
   set(imgtool_external_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_external_sign_sysbuild})
 

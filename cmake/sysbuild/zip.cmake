@@ -32,10 +32,10 @@ function(dfu_app_zip_package)
       set(app_external_update_name "${DEFAULT_IMAGE}.external.bin")
       set(secondary_app_internal_update_name mcuboot_secondary_app.internal.bin)
       set(secondary_app_external_update_name mcuboot_secondary_app.external.bin)
-      mcuboot_image_number_to_slot(internal_slot_primary ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER} n)
-      mcuboot_image_number_to_slot(internal_slot_secondary ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER} y)
-      mcuboot_image_number_to_slot(external_slot_primary ${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} n)
-      mcuboot_image_number_to_slot(external_slot_secondary ${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} y)
+      mcuboot_image_number_to_slot(internal_slot_primary ${NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER} n)
+      mcuboot_image_number_to_slot(internal_slot_secondary ${NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER} y)
+      mcuboot_image_number_to_slot(external_slot_primary ${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} n)
+      mcuboot_image_number_to_slot(external_slot_secondary ${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} y)
 
       if(NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
         # Application
@@ -46,12 +46,12 @@ function(dfu_app_zip_package)
 
         set(generate_script_app_params
             "${app_internal_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>"
-            "${app_internal_update_name}image_index=${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
+            "${app_internal_update_name}image_index=${NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
             "${app_internal_update_name}slot_index_primary=${internal_slot_primary}"
             "${app_internal_update_name}slot_index_secondary=${internal_slot_secondary}"
             "${app_internal_update_name}version_MCUBOOT=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
-            "${app_external_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_APP_ADDRESS>"
-            "${app_external_update_name}image_index=${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}"
+            "${app_external_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_APP_ADDRESS>"
+            "${app_external_update_name}image_index=${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}"
             "${app_external_update_name}slot_index_primary=${external_slot_primary}"
             "${app_external_update_name}slot_index_secondary=${external_slot_secondary}"
             "${app_external_update_name}version_MCUBOOT=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
@@ -68,18 +68,18 @@ function(dfu_app_zip_package)
         set(generate_script_app_params
             "${app_internal_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_APP_ADDRESS>"
             "${app_internal_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
-            "${app_internal_update_name}image_index=${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
+            "${app_internal_update_name}image_index=${NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
             "${app_internal_update_name}slot=${internal_slot_primary}"
-            "${app_external_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_APP_ADDRESS>"
+            "${app_external_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_PRIMARY_${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_APP_ADDRESS>"
             "${app_external_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
-            "${app_external_update_name}image_index=${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}"
+            "${app_external_update_name}image_index=${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}"
             "${app_external_update_name}slot=${external_slot_primary}"
             "${secondary_app_internal_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_SECONDARY_APP_ADDRESS>"
             "${secondary_app_internal_update_name}image_index=0"
             "${secondary_app_internal_update_name}slot=${internal_slot_secondary}"
             "${secondary_app_internal_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
-            "${secondary_app_external_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_SECONDARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_APP_ADDRESS>"
-            "${secondary_app_external_update_name}image_index=${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}"
+            "${secondary_app_external_update_name}load_address=$<TARGET_PROPERTY:partition_manager,PM_MCUBOOT_SECONDARY_${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_APP_ADDRESS>"
+            "${secondary_app_external_update_name}image_index=${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}"
             "${secondary_app_external_update_name}slot=${external_slot_secondary}"
             "${secondary_app_external_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
            )
@@ -111,8 +111,8 @@ function(dfu_app_zip_package)
         set(secondary_app_update_name mcuboot_secondary_app.signed.bin)
       endif()
 
-      mcuboot_image_number_to_slot(slot_primary ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER} n)
-      mcuboot_image_number_to_slot(slot_secondary ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER} y)
+      mcuboot_image_number_to_slot(slot_primary ${NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER} n)
+      mcuboot_image_number_to_slot(slot_secondary ${NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER} y)
 
       if(NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
         if(SB_CONFIG_PARTITION_MANAGER)
@@ -127,7 +127,7 @@ function(dfu_app_zip_package)
 
         set(generate_script_app_params
             "${app_update_name}load_address=${load_address}"
-            "${app_update_name}image_index=${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
+            "${app_update_name}image_index=${NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
             "${app_update_name}slot_index_primary=${slot_primary}"
             "${app_update_name}slot_index_secondary=${slot_secondary}"
             "${app_update_name}version_MCUBOOT=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
@@ -155,10 +155,10 @@ function(dfu_app_zip_package)
         set(generate_script_app_params
             "${app_update_name}load_address=${primary_load_address}"
             "${app_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
-            "${app_update_name}image_index=${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
+            "${app_update_name}image_index=${NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
             "${app_update_name}slot=${slot_primary}"
             "${secondary_app_update_name}load_address=${secondary_load_address}"
-            "${secondary_app_update_name}image_index=${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
+            "${secondary_app_update_name}image_index=${NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER}"
             "${secondary_app_update_name}slot=${slot_secondary}"
             "${secondary_app_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
            )
@@ -202,8 +202,8 @@ function(dfu_app_zip_package)
       sysbuild_get(net_update_version IMAGE ${image_name} VAR CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION KCONFIG)
     endif()
 
-    mcuboot_image_number_to_slot(net_update_slot_primary ${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER} n)
-    mcuboot_image_number_to_slot(net_update_slot_secondary ${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER} y)
+    mcuboot_image_number_to_slot(net_update_slot_primary ${NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER} n)
+    mcuboot_image_number_to_slot(net_update_slot_secondary ${NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER} y)
 
     if(NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
       if(SB_CONFIG_PARTITION_MANAGER)
@@ -219,7 +219,7 @@ function(dfu_app_zip_package)
 
       set(generate_script_app_params
           ${generate_script_app_params}
-          "${net_update_name}image_index=${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}"
+          "${net_update_name}image_index=${NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}"
           "${net_update_name}slot_index_primary=${net_update_slot_primary}"
           "${net_update_name}slot_index_secondary=${net_update_slot_secondary}"
           "${net_update_name}load_address=${net_load_address}"
@@ -251,10 +251,10 @@ function(dfu_app_zip_package)
         ${generate_script_app_params}
           "${net_update_name}load_address=${primary_net_load_address}"
           "${net_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
-          "${net_update_name}image_index=${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}"
+          "${net_update_name}image_index=${NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}"
           "${net_update_name}slot=${net_update_slot_primary}"
           "${secondary_net_update_name}load_address=${secondary_net_load_address}"
-          "${secondary_net_update_name}image_index=${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}"
+          "${secondary_net_update_name}image_index=${NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}"
           "${secondary_net_update_name}slot=${net_update_slot_secondary}"
           "${secondary_net_update_name}version_MCUBOOT+XIP=${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}"
         )
@@ -279,13 +279,13 @@ function(dfu_app_zip_package)
 
   if(SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH)
     # nRF7x Wifi patch
-    mcuboot_image_number_to_slot(nrf70_patches_slot_primary ${SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER} n)
-    mcuboot_image_number_to_slot(nrf70_patches_slot_secondary ${SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER} y)
+    mcuboot_image_number_to_slot(nrf70_patches_slot_primary ${NCS_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER} n)
+    mcuboot_image_number_to_slot(nrf70_patches_slot_secondary ${NCS_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER} y)
     math(EXPR nrf70_patches_slot_primary "${nrf70_patches_slot_primary} + 1")
     math(EXPR nrf70_patches_slot_secondary "${nrf70_patches_slot_secondary} + 1")
 
     list(APPEND generate_script_app_params
-         "nrf70.binimage_index=${SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER}"
+         "nrf70.binimage_index=${NCS_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER}"
          "nrf70.binslot_index_primary=${nrf70_patches_slot_primary}"
          "nrf70.binslot_index_secondary=${nrf70_patches_slot_secondary}"
     )
