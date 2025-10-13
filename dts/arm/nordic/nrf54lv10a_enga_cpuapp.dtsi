@@ -34,7 +34,7 @@ nvic: &cpuapp_nvic {};
 
 	prng: prng {
 		compatible = "nordic,entropy-prng";
-		status = "okay";
+		status = "disabled";
 	};
 };
 
