@@ -780,6 +780,11 @@ For more information on the boot sequence, see :ref:`ug_nrf54h20_architecture_bo
    The term "secondary slot" and "secondary image" are used in the MCUboot context.
    This usage is unrelated to the "secondary firmware" described in this section.
 
+Sample
+======
+
+For an example of how to create a secondary image with automatic triggers, see the :ref:`secondary_boot_trigger_lockup_sample` sample.
+
 .. _ug_nrf54h20_ironside_se_secondary_conf_trigger:
 
 Configuration and triggering
