@@ -81,6 +81,33 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
+  sample.benchmarks.peripheral_stress_test.nrf54l05_10:
+    filter: not CONFIG_COVERAGE
+    harness_config:
+      type: multi_line
+      ordered: false
+      regex:
+        - ".*ADC thread has completed"
+        - ".*Counter thread has completed"
+        - ".*Flash thread has completed"
+        - ".*GPIO thread has completed"
+        - ".*I2S thread has completed"
+        - ".*PWM thread has completed"
+        - ".*TEMP thread has completed"
+        - ".*Timer thread has completed"
+        - ".*WDT thread has completed"
+        - ".*CPU load thread has completed"
+        - ".*Bluetooth init OK"
+        - ".*all \\d{1,} threads have completed"
+    extra_args:
+      - CONFIG_CAN=n
+    platform_allow:
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+
   sample.benchmarks.peripheral_stress_test.nrf54l15:
     filter: not CONFIG_COVERAGE
     harness_config:
