@@ -17,7 +17,7 @@ Even when keys must pass through addressable RAM, the KMU significantly reduces 
 Therefore, you should use KMU for managing secrets whenever possible.
 
 When using an nRF54L device with Trusted Firmware-M, you can use the KMU to store keys instead of using the :ref:`ug_tfm_services_its`.
-For this to work, you need to enable the :ref:`tfm_partition_crypto` service, which enables the :ref:`ug_tfm_services_its` service by default.
+For this to work, you need to enable the :ref:`tfm_partition_crypto`, which enables the :ref:`ug_tfm_services_its` by default.
 You can then manually disable the ITS service and start using KMU instead.
 
 Key Types

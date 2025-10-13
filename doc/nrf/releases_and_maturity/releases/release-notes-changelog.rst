@@ -128,7 +128,7 @@ Security
 
 * Added:
 
-  * CRACEN and nrf_oberon driver support for nRF54LM20.
+  * CRACEN and nrf_oberon driver support for nRF54LM20 and nRF54LV10.
     For the list of supported features and limitations, see the :ref:`ug_crypto_supported_features` page.
 
   * Support for disabling Internal Trusted Storage (ITS) on nRF54L series devices when using
@@ -436,7 +436,10 @@ Cellular samples
 Cryptography samples
 --------------------
 
-* Added the :ref:`crypto_kmu_usage_nrf54l` sample.
+* Added:
+
+  * Support for ``nrf54lv10dk/nrf54lv10a/cpuapp`` and ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` board targets to all samples (except :ref:`crypto_test`).
+  * The :ref:`crypto_kmu_usage_nrf54l` sample.
 
 * :ref:`crypto_aes_ctr` sample:
 
@@ -555,7 +558,9 @@ SUIT samples
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
-|no_changes_yet_note|
+* :ref:`tfm_hello_world` sample:
+
+  * Added support for the ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` board target.
 
 Thread samples
 --------------
