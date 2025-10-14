@@ -484,7 +484,7 @@ static void esb_fem_for_tx_set(bool ack)
 		 */
 		uint16_t ramp_up = esb_cfg.use_fast_ramp_up ? TX_FAST_RAMP_UP_TIME_US :
 							      TX_RAMP_UP_TIME_US;
-		nrf_timer_cc_set(esb_timer.p_reg, NRF_TIMER_CC_CHANNEL2, ramp_up);
+		nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL2, ramp_up, true);
 	}
 
 	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
@@ -1140,10 +1140,14 @@ static bool rx_fifo_push_rfbuf(uint8_t pipe, uint8_t pid)
 static void esb_timer_handler(nrf_timer_event_t event_type, void *context)
 {
 	if (nrf_timer_int_enable_check(esb_timer.p_reg, NRF_TIMER_INT_COMPARE1_MASK)) {
-		nrf_timer_event_clear(esb_timer.p_reg, NRF_TIMER_EVENT_COMPARE1);
 		if (on_timer_compare1 != NULL) {
 			on_timer_compare1();
 		}
+	}
+
+	if (event_type == NRF_TIMER_EVENT_COMPARE2) {
+		nrf_timer_shorts_disable(esb_timer.p_reg,
+			(NRF_TIMER_SHORT_COMPARE2_CLEAR_MASK | NRF_TIMER_SHORT_COMPARE2_STOP_MASK));
 	}
 
 	if (nrf54h_errata_216() && event_type == NRF_TIMER_EVENT_COMPARE3) {
@@ -1153,6 +1157,8 @@ static void esb_timer_handler(nrf_timer_event_t event_type, void *context)
 			/* This case is triggered after calling the radio_start() function */
 
 			/* Restore timer shorts */
+			nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_STOP);
+			nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_CLEAR);
 			nrf_timer_shorts_set(esb_timer.p_reg, errata_216_timer_shorts);
 
 			nrf_egu_task_trigger(ESB_EGU, ESB_EGU_TASK);
@@ -1374,7 +1380,6 @@ static void on_radio_disabled_tx(void)
 	 * received by the time defined in wait_for_ack_timeout_us
 	 */
 
-	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_CLEAR);
 	nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL0,
 			   (wait_for_ack_timeout_us + ADDR_EVENT_LATENCY_US), false);
 
