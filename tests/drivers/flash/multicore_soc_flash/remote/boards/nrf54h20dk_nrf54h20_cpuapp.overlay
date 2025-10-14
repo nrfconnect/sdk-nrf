@@ -1,0 +1,3 @@
+&storage_partition {
+	status = "okay";
+};
