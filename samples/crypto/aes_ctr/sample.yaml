@@ -1,8 +1,7 @@
 sample:
   description: |
-    This app provides an example of performing AES encryption and decryption
-    using AES CTR mode
-  name: AES CTR example
+    This sample demonstrates AES encryption and decryption using the AES CTR mode.
+  name: AES CTR sample
 tests:
   sample.aes_ctr.cc3xx:
     sysbuild: true

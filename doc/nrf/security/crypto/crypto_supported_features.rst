@@ -6599,6 +6599,8 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_384`
 
+.. _ug_crypto_supported_features_rng_algorithms:
+
 RNG algorithms
 ==============
 

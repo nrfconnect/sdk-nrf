@@ -1,8 +1,7 @@
 sample:
   description: |
-    This app provides an example of performing AES encryption and decryption
-    using AES CCM mode
-  name: AES CCM example
+    This sample demonstrates AES encryption and decryption using the AES CCM mode.
+  name: AES CCM sample
 tests:
   sample.aes_ccm.cc3xx:
     sysbuild: true

@@ -69,6 +69,8 @@ Hardware drivers take precedence over software drivers, which provide fallback o
 
 .. psa_crypto_driver_table_end
 
+.. _crypto_drivers_driver_selection:
+
 Driver selection
 ****************
 
