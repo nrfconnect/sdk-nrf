@@ -1,0 +1,8 @@
+source "Kconfig.zephyr"
+
+config READ_FROM_SOC_FLASH
+    bool "Enable reading from SOC flash"
+    default y
+
+config WRITE_TO_SOC_FLASH
+    bool "Enable writing to SOC flash"
