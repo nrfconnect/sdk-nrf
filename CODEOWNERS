@@ -107,7 +107,7 @@
 /doc/nrf/drivers/uart_nrf_sw_lpuart.rst   @nrfconnect/ncs-doc-leads
 /doc/nrf/external_comp/avsystem.rst       @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/external_comp/bt_fast_pair/      @nrfconnect/ncs-si-bluebagel-doc
-/doc/nrf/external_comp/coremark.rst       @nrfconnect/ncs-si-bluebagel-doc
+/doc/nrf/external_comp/coremark.rst       @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/external_comp/dult.rst           @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/external_comp/edge_impulse.rst   @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/external_comp/memfault.rst       @nrfconnect/ncs-cia-doc
@@ -414,7 +414,7 @@
 # Modules
 /modules/azure-sdk-for-c/                 @nrfconnect/ncs-cia
 /modules/cjson/                           @nrfconnect/ncs-cia @nrfconnect/ncs-nrf-cloud
-/modules/coremark/                        @nrfconnect/ncs-si-bluebagel
+/modules/coremark/                        @nrfconnect/ncs-si-muffin
 /modules/mcuboot/                         @nrfconnect/ncs-eris
 /modules/memfault-firmware-sdk/           @nrfconnect/ncs-cia @nrfconnect/ncs-memfault
 /modules/nrfxlib/                         @nrfconnect/ncs-code-owners
@@ -428,7 +428,7 @@
 /samples/app_event_manager/               @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/app_event_manager_profiler_tracer/ @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/app_jwt/                             @nrfconnect/ncs-modem @ayla-nordicsemi
-/samples/benchmarks/coremark/             @nrfconnect/ncs-si-bluebagel
+/samples/benchmarks/coremark/             @nrfconnect/ncs-si-muffin
 /samples/bluetooth/nrf_auraconfig/        @nrfconnect/ncs-audio
 /samples/bluetooth/central_and_peripheral_hr/ @nrfconnect/ncs-si-muffin
 /samples/bluetooth/central_bas/           @nrfconnect/ncs-si-muffin
@@ -560,7 +560,7 @@
 /samples/app_event_manager/*.rst          @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-bluebagel-doc
 /samples/app_event_manager_profiler_tracer/*.rst @nrfconnect/ncs-si-muffin-doc
 /samples/app_jwt/*.rst                        @nrfconnect/ncs-modem-doc @ayla-nordicsemi
-/samples/benchmarks/coremark/*.rst        @nrfconnect/ncs-si-bluebagel-doc
+/samples/benchmarks/coremark/*.rst        @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/**/*.rst                @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/central_and_peripheral_hr/*.rst @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/central_bas/*.rst      @nrfconnect/ncs-si-muffin-doc
