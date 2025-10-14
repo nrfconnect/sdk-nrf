@@ -154,9 +154,6 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 			return -EINVAL;
 		}
 
-		/* Clear all output locations to ensure any unused locations are zero */
-		memset(audio_frame_out->data, 0, audio_frame_out->size);
-
 		/* Encode only the common channel(s) between the input and output locations. */
 		while (loc_out && loc_in) {
 			if (loc_out & loc_in & 0x01) {

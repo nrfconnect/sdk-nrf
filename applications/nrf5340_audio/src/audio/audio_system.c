@@ -101,22 +101,21 @@ static void audio_gateway_configure(void)
 		sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
 	}
 
-	device_location_get(&sw_codec_cfg.encoder.audio_loc);
-
 	if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
-		sw_codec_cfg.encoder.audio_loc = BT_AUDIO_LOCATION_MONO_AUDIO;
-	}
-
-	if (sw_codec_cfg.encoder.audio_loc == BT_AUDIO_LOCATION_MONO_AUDIO ||
-	    (POPCOUNT(sw_codec_cfg.encoder.audio_loc) == 1)) {
 		sw_codec_cfg.encoder.num_ch = 1;
+		sw_codec_cfg.encoder.audio_loc = BT_AUDIO_LOCATION_MONO_AUDIO;
 		sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
-
-		return;
+	} else {
+		/* For multi-channel on the gateway, only left and
+		 * right front are currently supported
+		 */
+		sw_codec_cfg.encoder.num_ch = 2;
+		sw_codec_cfg.encoder.audio_loc =
+			BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT;
+		sw_codec_cfg.encoder.channel_mode = SW_CODEC_MULTICHANNEL;
 	}
 
-	sw_codec_cfg.encoder.num_ch = POPCOUNT(sw_codec_cfg.encoder.audio_loc);
-	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MULTICHANNEL;
+	LOG_INF("Gateway configured for %d encoder channels", sw_codec_cfg.encoder.num_ch);
 }
 
 static void audio_headset_configure(void)
@@ -142,7 +141,9 @@ static void audio_headset_configure(void)
 
 	switch ((uint32_t)sw_codec_cfg.decoder.audio_loc) {
 	case BT_AUDIO_LOCATION_MONO_AUDIO:
+	/* Fall through*/
 	case BT_AUDIO_LOCATION_FRONT_LEFT:
+	/* Fall through*/
 	case BT_AUDIO_LOCATION_FRONT_RIGHT:
 		sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
 		break;
