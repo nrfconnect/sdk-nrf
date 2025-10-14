@@ -14,6 +14,6 @@ jobs:
     name: Assign Reviewers from CODEOWNERS
     steps:
       - name: Assign
-        uses: nrfconnect/action-codeowners-reviewers@35bb91b2cf253dd8fdb9aa484b01b5a98efbb603
+        uses: nrfconnect/action-codeowners-reviewers@e00a792221daf9f7ec21c658400dc62739b3bfe5
         with:
           github_token: ${{ secrets.NCS_NORDICBUILDER_ACTION_TOKEN }}
