@@ -3,6 +3,10 @@
 };
 
 / {
+	chosen {
+		zephyr,entropy = &rng;
+	};
+
 	zephyr,user {
 		ppi-trace-rtc = <&rtc2>;
 	};
