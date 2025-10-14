@@ -86,3 +86,4 @@ This self-paced course introduces the hardware architecture, functionality, capa
    kmu_provision
    dfu_config
    ecies_x25519.rst
+   otp_map_nrf54l
