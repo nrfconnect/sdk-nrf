@@ -94,6 +94,16 @@ static struct async_poll_ctx poll_ctx = {
 static struct k_thread apoll_thread_id;
 static K_THREAD_STACK_DEFINE(apoll_thread_stack, KB(2));
 
+static struct nw_wait_ctx {
+	struct slm_socket *socket;
+	uint8_t sock_buf[SLM_MAX_MESSAGE_SIZE];
+	size_t len;
+	int32_t flags;
+} nw_wait_ctx;
+
+static struct k_thread nw_wait_thread_id;
+static K_THREAD_STACK_DEFINE(nw_wait_thread_stack, KB(2));
+
 /* forward declarations */
 #define SOCKET_SEND_TMO_SEC 30
 static int socket_poll(int sock_fd, int event, int timeout);
@@ -673,6 +683,11 @@ static int do_connect(const char *url, uint16_t port)
 		.sa_family = AF_UNSPEC
 	};
 
+	if (sock == nw_wait_ctx.socket)	{
+		LOG_ERR("nw_wait: Socket busy.");
+		return -EBUSY;
+	}
+
 	LOG_DBG("connect %s:%d", url, port);
 	ret = util_resolve_host(sock->cid, url, port, sock->family, &sa);
 	if (ret) {
@@ -749,12 +764,56 @@ static int do_accept(int timeout)
 	return 0;
 }
 
+static void nw_wait_thread(void*, void*, void*)
+{
+	size_t sent = 0;
+	int err = 0;
+
+	LOG_DBG("nw_wait_thread started");
+
+	if (nw_wait_ctx.socket == NULL) {
+		LOG_ERR("nw_wait: No socket");
+		return;
+	}
+
+	while (sent < nw_wait_ctx.len) {
+		err = zsock_send(nw_wait_ctx.socket->fd, nw_wait_ctx.sock_buf + sent,
+				 nw_wait_ctx.len - sent, nw_wait_ctx.flags);
+		if (err < 0) {
+			LOG_ERR("nw_wait: Sent %u out of %u bytes. (%d)", sent, nw_wait_ctx.len,
+				-errno);
+			delegate_poll_event(nw_wait_ctx.socket, ZSOCK_POLLERR);
+
+			/* TODO:
+			 * There is an argument on sending the #XSEND: 0 from the do_send() and
+			 * sending the #XSEND: sent bytes with possible failure from here.
+			 * This will work better when the handles are included in the response.
+			 */
+			goto exit;
+		}
+		sent += err;
+	}
+	LOG_DBG("nw_wait: Sent %u out of %u bytes. (%d)", sent, nw_wait_ctx.len, 0);
+
+exit:
+	delegate_poll_event(nw_wait_ctx.socket, ZSOCK_POLLOUT);
+
+	LOG_DBG("nw_wait_thread stopped");
+	nw_wait_ctx.socket = NULL;
+}
+
+
 static int do_send(const uint8_t *data, int len, int flags)
 {
 	int ret = 0;
 	int sockfd = sock->fd;
 
 	LOG_DBG("send flags=%d", flags);
+
+	if (sock == nw_wait_ctx.socket) {
+		LOG_ERR("nw_wait: Socket busy.");
+		return -EBUSY;
+	}
 
 	/* For TCP/TLS Server, send to incoming socket */
 	if (sock->type == SOCK_STREAM && sock->role == AT_SOCKET_ROLE_SERVER) {
@@ -767,6 +826,32 @@ static int do_send(const uint8_t *data, int len, int flags)
 	}
 
 	uint32_t sent = 0;
+
+	if (flags & NRF_MSG_WAITACK) {
+		if (nw_wait_ctx.socket != NULL) {
+			LOG_ERR("Another socket is waiting for NW ACK");
+			return -EBUSY;
+		}
+		if (len > sizeof(nw_wait_ctx.sock_buf)) {
+			LOG_ERR("Data length %d exceeds max %d", len, sizeof(nw_wait_ctx.sock_buf));
+			return -EMSGSIZE;
+		}
+
+		/* Send data with a thread. */
+		memcpy(nw_wait_ctx.sock_buf, data, len);
+		nw_wait_ctx.len = len;
+		nw_wait_ctx.flags = flags;
+		nw_wait_ctx.socket = sock;
+		k_thread_create(&nw_wait_thread_id, nw_wait_thread_stack,
+			K_THREAD_STACK_SIZEOF(nw_wait_thread_stack),
+			nw_wait_thread, NULL, NULL, NULL,
+			K_LOWEST_APPLICATION_THREAD_PRIO, 0, K_NO_WAIT);
+
+		if (!in_datamode()) {
+			rsp_send("\r\n#XSEND: %d\r\n", len);
+		}
+		return len;
+	}
 
 	while (sent < len) {
 		ret = zsock_send(sockfd, data + sent, len - sent, flags);
@@ -837,6 +922,16 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int le
 	int ret = 0;
 	uint32_t sent = 0;
 	struct sockaddr sa = {.sa_family = AF_UNSPEC};
+
+	if (sock == nw_wait_ctx.socket) {
+		LOG_ERR("nw_wait: Socket busy.");
+		return -EBUSY;
+	}
+
+	if (flags & NRF_MSG_WAITACK) {
+		LOG_ERR("nw_wait: Not supported with sendto.");
+		return -EOPNOTSUPP;
+	}
 
 	LOG_DBG("sendto %s:%d, flags=%d", url, port, flags);
 	ret = util_resolve_host(sock->cid, url, port, sock->family, &sa);
@@ -985,7 +1080,9 @@ static int socket_datamode_callback(uint8_t op, const uint8_t *data, int len, ui
 	} else if (op == DATAMODE_EXIT) {
 		LOG_DBG("datamode exit");
 		memset(udp_url, 0, sizeof(udp_url));
-		delegate_poll_event(sock, ZSOCK_POLLOUT);
+		if (nw_wait_ctx.socket == NULL) {
+			delegate_poll_event(sock, ZSOCK_POLLOUT);
+		}
 	}
 
 	return ret;
