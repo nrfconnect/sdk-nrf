@@ -39,7 +39,8 @@
 #define BT_BUF_CMD_TX_COUNT CONFIG_BT_BUF_CMD_TX_COUNT
 
 BUILD_ASSERT(BT_BUF_ACL_RX_COUNT < BT_BUF_CMD_TX_COUNT,
-	     "Too low HCI command buffers compared to ACL Rx buffers.");
+	     "Too low HCI command buffers compared to ACL Rx buffers."
+	     STRINGIFY(BT_BUF_ACL_RX_COUNT) " vs " STRINGIFY(BT_BUF_CMD_TX_COUNT));
 #else  /* controller-only build */
 /*
  * On a controller-only build (`BT_HCI_RAW`) `CONFIG_BT_BUF_CMD_TX_COUNT` controls the capacity of
