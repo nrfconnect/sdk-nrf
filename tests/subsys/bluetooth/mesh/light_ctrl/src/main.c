@@ -295,10 +295,10 @@ static void expect_turn_on_state_change(void)
 	state_timeout = K_MSEC(expected_transition.time);
 	expect_transition_start(&state_timeout);
 
-	expected_msg[0] = 1;
+	expected_msg[0] = 0;
 	expected_msg[1] = 1;
 	expected_msg[2] = 0;
-	expected_onoff_status.present_on_off = true;
+	expected_onoff_status.present_on_off = false;
 	expected_onoff_status.target_on_off = true;
 	/* z_add_timeout() adds one more tick which results in additional 10ms because of
 	 * CONFIG_SYS_CLOCK_TICKS_PER_SEC value.
