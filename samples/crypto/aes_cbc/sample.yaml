@@ -1,8 +1,7 @@
 sample:
   description: |
-    This app provides an example of performing AES encryption and decryption
-    using AES CBC mode
-  name: AES CBC example
+    This sample demonstrates AES encryption and decryption using the AES CBC mode.
+  name: AES CBC sample
 tests:
   sample.aes_cbc.cc3xx:
     sysbuild: true
