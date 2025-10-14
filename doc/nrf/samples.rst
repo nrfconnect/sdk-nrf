@@ -54,6 +54,7 @@ General information about samples in the |NCS|
    samples/edge
    samples/esb
    samples/gazell
+   samples/ironside_se
    samples/keys
    samples/matter
    samples/net
