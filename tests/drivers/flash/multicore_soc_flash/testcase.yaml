@@ -1,0 +1,42 @@
+common:
+  sysbuild: true
+  tags:
+    - drivers
+    - flash
+    - ci_tests_drivers_flash
+  platform_allow: 
+    - nrf54h20dk/nrf54h20/cpuapp
+  integration_platforms:
+    - nrf54h20dk/nrf54h20/cpuapp
+
+tests:
+  drivers.flash.multicore_soc_flash.app_read_rad_read: {}
+  drivers.flash.multicore_soc_flash.app_read_rad_write:
+    extra_configs:
+      - remote_CONFIG_WRITE_TO_SOC_FLASH=y
+  drivers.flash.multicore_soc_flash.app_write_rad_read:
+    extra_configs:
+      - CONFIG_WRITE_TO_SOC_FLASH=y
+  drivers.flash.multicore_soc_flash.app_write_rad_write:
+    extra_configs:
+      - CONFIG_WRITE_TO_SOC_FLASH=y
+      - remote_CONFIG_WRITE_TO_SOC_FLASH=y
+  drivers.flash.multicore_soc_flash.app_write_rad_write.s2ram:
+    extra_configs:
+      - CONFIG_WRITE_TO_SOC_FLASH=y
+      - CONFIG_PM=y
+      - CONFIG_PM_S2RAM=y
+      - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME=y
+      - CONFIG_POWEROFF=y
+      - remote_CONFIG_WRITE_TO_SOC_FLASH=y
+      - remote_CONFIG_PM=y
+      - remote_CONFIG_PM_DEVICE=y
+      - remote_CONFIG_PM_DEVICE_RUNTIME=y
+      - remote_CONFIG_POWEROFF=y
+
+      - CONFIG_MRAM_LATENCY=y
+      - CONFIG_MRAM_LATENCY_AUTO_REQ=y
+      - remote_CONFIG_MRAM_LATENCY=y
+      - remote_CONFIG_MRAM_LATENCY_AUTO_REQ=y
