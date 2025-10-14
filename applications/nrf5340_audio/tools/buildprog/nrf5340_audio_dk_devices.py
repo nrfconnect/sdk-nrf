@@ -78,7 +78,6 @@ class Location(Enum):
     "Kept for compatibility with old code, use the Location enum instead"
     left = FRONT_LEFT
     right = FRONT_RIGHT
-    NA = MONO_AUDIO
 
     def __new__(cls, value, label):
         obj = object.__new__(cls)
@@ -131,11 +130,12 @@ class DeviceConf:
 
     def __str__(self):
         result = f"{self.nrf5340_audio_dk_snr} {self.nrf5340_audio_dk_dev.name}"
-        # Print all location labels if multiple
-        if isinstance(self.location, list):
-            result += " " + "+".join([loc.label for loc in self.location])
-        else:
-            result += f" {self.location.name}"
+        if self.nrf5340_audio_dk_dev == AudioDevice.headset:
+            # Print all location labels if multiple
+            if isinstance(self.location, list):
+                result += " " + "+".join([loc.label for loc in self.location])
+            else:
+                result += f" {self.location.name}"
         return result
 
 
