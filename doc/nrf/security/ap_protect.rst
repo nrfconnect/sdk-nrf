@@ -49,7 +49,7 @@ For detailed information, refer to the hardware documentation.
 
        - For nRF52, nRF53, and nRF91 devices, firmware must write ``SwDisable`` to ``APPROTECT.DISABLE``.
 
-       - For nRF54L devices, firmware must open the `debugger signals in Tamper Controller <nRF54L15 Debugger signals>`_.
+       - For nRF54L devices, firmware must open the `debugger signals in Tamper Controller <nRF54L15 Debugger signals_>`_.
 
 The following table lists related SoCs or SiPs with information about the AP-Protect mechanism they support.
 For some SoCs or SiPs, the AP-Protect implementation is different depending on the build code of the device.
