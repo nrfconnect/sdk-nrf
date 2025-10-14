@@ -52,7 +52,6 @@ After programming the test to your development kit, complete the following steps
 #. Reset the kit.
 #. Observe the console output for both cores:
 
-
 .. code-block:: console
 
    [00:00:00.123,456] === Hello World from Primary Image ===
