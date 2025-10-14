@@ -11,60 +11,60 @@ mapping_topics:
   - nrf/index.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series", "nrf52-series",
                      "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91", "thingy91x", "nrf9161",
                      "nrf9151", "nrf9131", "nrf54h20", "nrf54l15", "nrf54l05", "nrf54l10",
-                     "nrf5340", "thingy53", "nrf52840", "nrf52833", "nrf52832", "nrf52820",
-                     "nrf52811", "nrf52810", "nrf52805", "nrf21540", "npm1100",
+                     "nrf54lm20a", "nrf5340", "thingy53", "nrf52840", "nrf52833", "nrf52832",
+                     "nrf52820", "nrf52811", "nrf52810", "nrf52805", "nrf21540", "npm1100",
                      "npm1300", "npm2100", "npm6001"]
   - nrf/gsg_guides.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                           "nrf52-series", "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91",
                           "thingy91x", "nrf9161", "nrf9151", "nrf9131", "nrf54h20", "nrf54l15",
-                          "nrf54l05", "nrf54l10", "nrf5340", "thingy53", "nrf52840", "nrf52833",
-                          "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805", "nrf21540",
-                          "npm1100", "npm1300", "npm2100", "npm6001", "development-kits",
-                          "prototyping-platforms", "evaluation-kits", "pmic"]
+                          "nrf54l05", "nrf54l10", "nrf54lm20a", "nrf5340", "thingy53", "nrf52840",
+                          "nrf52833", "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805",
+                          "nrf21540", "npm1100", "npm1300", "npm2100", "npm6001",
+                          "development-kits", "prototyping-platforms", "evaluation-kits", "pmic"]
   - nrf/installation.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                             "nrf52-series", "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91",
                             "thingy91x", "nrf9161", "nrf9151", "nrf9131", "nrf54h20", "nrf54l15",
-                            "nrf54l05", "nrf54l10", "nrf5340", "thingy53", "nrf52840", "nrf52833",
-                            "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805", "nrf21540",
-                            "npm1100", "npm1300", "npm2100", "npm6001"]
+                            "nrf54l05", "nrf54l10", "nrf54lm20a", "nrf5340", "thingy53", "nrf52840",
+                            "nrf52833", "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805",
+                            "nrf21540", "npm1100", "npm1300", "npm2100", "npm6001"]
   - nrf/installation/*.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                               "nrf52-series", "nrf7002", "nrf7001", "nrf7000", "nrf9160",
                               "thingy91", "thingy91x", "nrf9161", "nrf9151", "nrf9131", "nrf54h20",
-                              "nrf54l15", "nrf54l05", "nrf54l10", "nrf5340", "thingy53", "nrf52840",
-                              "nrf52833", "nrf52832", "nrf52820", "nrf52811", "nrf52810",
-                              "nrf52805", "nrf21540", "npm1100", "npm1300", "npm2100",
-                              "npm6001"]
+                              "nrf54l15", "nrf54l05", "nrf54l10", "nrf54lm20a", "nrf5340",
+                              "thingy53", "nrf52840", "nrf52833", "nrf52832", "nrf52820",
+                              "nrf52811", "nrf52810", "nrf52805", "nrf21540", "npm1100", "npm1300",
+                              "npm2100", "npm6001"]
   - nrf/app_dev.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                        "nrf52-series", "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91",
                        "thingy91x", "nrf9161", "nrf9151", "nrf9131", "nrf54h20", "nrf54l15",
-                       "nrf54l05", "nrf54l10", "nrf5340", "thingy53", "nrf52840", "nrf52833",
-                       "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805", "nrf21540",
-                       "npm1100", "npm1300", "npm2100", "npm6001"]
+                       "nrf54l05", "nrf54l10", "nrf54lm20a", "nrf5340", "thingy53", "nrf52840",
+                       "nrf52833", "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805",
+                       "nrf21540", "npm1100", "npm1300", "npm2100", "npm6001"]
   - nrf/app_dev/create_application.html: ["nrf91-series", "nrf70-series", "nrf54-series",
                                           "nrf53-series", "nrf52-series", "nrf7002", "nrf7001",
                                           "nrf7000", "nrf9160", "thingy91", "thingy91x", "nrf9161",
                                           "nrf9151", "nrf9131", "nrf54h20", "nrf54l15", "nrf54l05",
-                                          "nrf54l10", "nrf5340", "thingy53", "nrf52840", "nrf52833",
-                                          "nrf52832", "nrf52820", "nrf52811", "nrf52810",
-                                          "nrf52805", "nrf21540", "npm1100", "npm1300",
-                                          "npm2100",
-                                          "npm6001", "applications", "nrf-connect-vsc"]
+                                          "nrf54l10", "nrf54lm20a", "nrf5340", "thingy53",
+                                          "nrf52840", "nrf52833", "nrf52832", "nrf52820",
+                                          "nrf52811", "nrf52810", "nrf52805", "nrf21540", "npm1100",
+                                          "npm1300", "npm2100", "npm6001", "applications",
+                                          "nrf-connect-vsc"]
   - nrf/app_dev/board_names.html: ["nrf91-series", "nrf70-series", "nrf54-series",
                                    "nrf53-series", "nrf52-series", "nrf7002", "nrf7001",
                                    "nrf7000", "nrf9160", "thingy91", "thingy91x", "nrf9161",
                                    "nrf9151", "nrf9131", "nrf54h20", "nrf54l15", "nrf54l05",
-                                   "nrf54l10", "nrf5340", "thingy53", "nrf52840", "nrf52833",
-                                   "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805",
-                                   "nrf21540", "npm1100", "npm1300", "npm2100",
+                                   "nrf54l10", "nrf54lm20a", "nrf5340", "thingy53", "nrf52840",
+                                   "nrf52833", "nrf52832", "nrf52820", "nrf52811", "nrf52810",
+                                   "nrf52805", "nrf21540", "npm1100", "npm1300", "npm2100",
                                    "npm6001"]
   - nrf/app_dev/config_and_build/*.html: ["nrf91-series", "nrf70-series", "nrf54-series",
                                           "nrf53-series", "nrf52-series", "nrf7002", "nrf7001",
                                           "nrf7000", "nrf9160", "thingy91", "thingy91x", "nrf9161",
                                           "nrf9151", "nrf9131", "nrf54h20", "nrf54l15", "nrf54l05",
-                                          "nrf54l10", "nrf5340", "thingy53", "nrf52840", "nrf52833",
-                                          "nrf52832", "nrf52820", "nrf52811", "nrf52810",
-                                          "nrf52805", "nrf21540", "npm1100", "npm1300",
-                                          "npm2100", "npm6001"]
+                                          "nrf54l10", "nrf54lm20a", "nrf5340", "thingy53",
+                                          "nrf52840", "nrf52833", "nrf52832", "nrf52820",
+                                          "nrf52811", "nrf52810", "nrf52805", "nrf21540", "npm1100",
+                                          "npm1300", "npm2100", "npm6001"]
   - nrf/app_dev/config_and_build/config_and_build_system.html: ["applications", "samples",
                                                                 "kconfig"]
   - nrf/app_dev/config_and_build/cmake/index.html: ["applications", "samples", "kconfig",
@@ -86,9 +86,9 @@ mapping_topics:
   - nrf/app_dev/programming.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                                    "nrf52-series", "nrf7002", "nrf7001", "nrf7000", "nrf9160",
                                    "thingy91", "thingy91x", "nrf9161", "nnrf9151", "nrf9131",
-                                   "nrf54h20", "nrf54l15", "nrf54l05", "nrf54l10", "nrf5340",
-                                   "thingy53", "nrf52840", "nrf52833", "nrf52832", "nrf52820",
-                                   "nrf52811", "nrf52810", "nrf52805", "nrf21540",
+                                   "nrf54h20", "nrf54l15", "nrf54l05", "nrf54l10", "nrf54lm20a",
+                                   "nrf5340", "thingy53", "nrf52840", "nrf52833", "nrf52832",
+                                   "nrf52820", "nrf52811", "nrf52810", "nrf52805", "nrf21540",
                                    "npm1100", "npm1300", "npm2100", "npm6001", "applications",
                                    "samples", "development-kits", "evaluation-kits",
                                    "prototyping-platforms"]
@@ -96,10 +96,10 @@ mapping_topics:
                                             "nrf53-series", "nrf52-series", "nrf7002", "nrf7001",
                                             "nrf7000", "nrf9160", "thingy91", "thingy91x",
                                             "nrf9161", "nnrf9151", "nrf9131", "nrf54h20",
-                                            "nrf54l15", "nrf54l05", "nrf54l10", "nrf5340",
-                                            "thingy53", "nrf52840", "nrf52833", "nrf52832",
-                                            "nrf52820", "nrf52811", "nrf52810", "nrf52805",
-                                            "nrf21540", "npm1100", "npm1300", "npm2100",
+                                            "nrf54l15", "nrf54l05", "nrf54l10", "nrf54lm20a",
+                                            "nrf5340", "thingy53", "nrf52840", "nrf52833",
+                                            "nrf52832", "nrf52820", "nrf52811", "nrf52810",
+                                            "nrf52805", "nrf21540", "npm1100", "npm1300", "npm2100",
                                             "npm6001", "applications", "samples",
                                             "development-kits", "evaluation-kits",
                                             "prototyping-platforms"]
@@ -107,22 +107,22 @@ mapping_topics:
                                              "nrf53-series", "nrf52-series", "nrf7002", "nrf7001",
                                              "nrf7000", "nrf9160", "thingy91", "thingy91x",
                                              "nrf9161", "nrf9151", "nrf9131", "nrf54h20",
-                                             "nrf54l15", "nrf54l05", "nrf54l10", "nrf5340",
-                                             "thingy53", "nrf52840", "nrf52833", "nrf52832",
-                                             "nrf52820", "nrf52811", "nrf52810", "nrf52805",
-                                             "nrf21540", "npm1100", "npm1300", "npm2100",
-                                             "npm6001"]
+                                             "nrf54l15", "nrf54l05", "nrf54l10", "nrf54lm20a",
+                                             "nrf5340", "thingy53", "nrf52840", "nrf52833",
+                                             "nrf52832", "nrf52820", "nrf52811", "nrf52810",
+                                             "nrf52805", "nrf21540", "npm1100", "npm1300",
+                                             "npm2100", "npm6001"]
   - nrf/app_dev/bootloaders_dfu/mcuboot_nsib/*.html: ["nrf91-series", "nrf70-series",
                                                       "nrf54-series", "nrf53-series",
                                                       "nrf52-series", "nrf7002", "nrf7001",
                                                       "nrf7000", "nrf9160", "thingy91", "thingy91x",
                                                       "nrf9161", "nrf9151", "nrf9131", "nrf54h20",
-                                                      "nrf54l15", "nrf54l05", "nrf54l10", "nrf5340",
-                                                      "thingy53", "nrf52840", "nrf52833",
-                                                      "nrf52832", "nrf52820", "nrf52811",
-                                                      "nrf52810", "nrf52805", "nrf21540",
-                                                      "npm1100", "npm1300", "npm2100", "npm6001",
-                                                      "applications"]
+                                                      "nrf54l15", "nrf54l05", "nrf54l10",
+                                                      "nrf54lm20a", "nrf5340", "thingy53",
+                                                      "nrf52840", "nrf52833", "nrf52832",
+                                                      "nrf52820", "nrf52811", "nrf52810",
+                                                      "nrf52805", "nrf21540", "npm1100", "npm1300",
+                                                      "npm2100", "npm6001", "applications"]
   - nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_config.html: ["kconfig"]
   - nrf/app_dev/bootloaders_dfu/qspi_xip_split_image.html: ["nrf52840", "thingy53", "nrf5340"]
   - nrf/app_dev/bootloaders_dfu/dfu_tools_mcumgr_cli.html: ["nrf91-series", "nrf70-series",
@@ -131,11 +131,11 @@ mapping_topics:
                                                             "nrf7000", "nrf9160", "thingy91",
                                                             "thingy91x", "nrf9161", "nrf9151",
                                                             "nrf9131", "nrf54h20", "nrf54l15",
-                                                            "nrf54l05", "nrf54l10", "nrf5340",
-                                                            "thingy53", "nrf52840", "nrf52833",
-                                                            "nrf52832", "nrf52820", "nrf52811",
-                                                            "nrf52810", "nrf52805", "nrf21540",
-                                                            "npm1100", "npm1300",
+                                                            "nrf54l05", "nrf54l10", "nrf54lm20a",
+                                                            "nrf5340", "thingy53", "nrf52840",
+                                                            "nrf52833", "nrf52832", "nrf52820",
+                                                            "nrf52811", "nrf52810", "nrf52805",
+                                                            "nrf21540", "npm1100", "npm1300",
                                                             "npm2100", "npm6001"]
   - nrf/app_dev/bootloaders_dfu/mcuboot_image_compression.html: ["nrf91-series", "nrf70-series",
                                                                  "nrf54-series", "nrf53-series",
@@ -144,22 +144,23 @@ mapping_topics:
                                                                  "thingy91", "thingy91x", "nrf9161",
                                                                  "nrf9151", "nrf9131", "nrf54h20",
                                                                  "nrf54l15", "nrf54l05", "nrf54l10",
-                                                                 "nrf5340", "thingy53", "nrf52840",
-                                                                 "nrf52833", "nrf52832", "nrf52820",
-                                                                 "nrf52811", "nrf52810", "nrf52805",
-                                                                 "nrf21540", "npm1100",
-                                                                 "npm1300", "npm2100", "npm6001"]
+                                                                 "nrf54lm20a", "nrf5340",
+                                                                 "thingy53", "nrf52840", "nrf52833",
+                                                                 "nrf52832", "nrf52820", "nrf52811",
+                                                                 "nrf52810", "nrf52805", "nrf21540",
+                                                                 "npm1100", "npm1300", "npm2100",
+                                                                 "npm6001"]
   - nrf/app_dev/bootloaders_dfu/sysbuild_image_ids.html: ["nrf91-series", "nrf70-series",
                                                           "nrf54-series", "nrf53-series",
                                                           "nrf52-series", "nrf7002", "nrf7001",
                                                           "nrf7000", "nrf9160", "thingy91",
                                                           "thingy91x", "nrf9161", "nrf9151",
                                                           "nrf9131", "nrf54h20", "nrf54l15",
-                                                          "nrf54l05", "nrf54l10", "nrf5340",
-                                                          "thingy53", "nrf52840", "nrf52833",
-                                                          "nrf52832", "nrf52820", "nrf52811",
-                                                          "nrf52810", "nrf52805", "nrf21540",
-                                                          "npm1100", "npm1300",
+                                                          "nrf54l05", "nrf54l10", "nrf54lm20a",
+                                                          "nrf5340", "thingy53", "nrf52840",
+                                                          "nrf52833", "nrf52832", "nrf52820",
+                                                          "nrf52811", "nrf52810", "nrf52805",
+                                                          "nrf21540", "npm1100", "npm1300",
                                                           "npm2100", "npm6001"]
   - nrf/app_dev/device_guides/nrf91/index.html: ["nrf9160", "nrf9161", "thingy91", "thingy91x",
                                                  "nrf9151", "nrf9131", "development-kits",
@@ -204,8 +205,8 @@ mapping_topics:
   - nrf/app_dev/device_guides/nrf70/index.html: ["evaluation-kits"]
   - nrf/app_dev/device_guides/nrf70/nrf7002ek_dev_guide.html: ["evaluation-kits"]
   - nrf/app_dev/device_guides/nrf70/constrained.html: ["kconfig"]
-  - nrf/app_dev/device_guides/nrf54l/*.html: ["nrf54-series", "nrf54l15", "nrf54l10", "nrf54l05",
-                                              "development-kits"]
+  - nrf/app_dev/device_guides/nrf54l/*.html: ["nrf54-series", "nrf54l15", "nrf54l10", "nrf54lm20a",
+                                              "nrf54l05", "development-kits"]
   - nrf/app_dev/device_guides/nrf54h/*.html: ["nrf54-series", "nrf54h20", "development-kits"]
   - nrf/app_dev/device_guides/nrf53/index.html: ["nrf5340", "thingy53", "development-kits",
                                                  "prototyping-platforms"]
@@ -240,17 +241,17 @@ mapping_topics:
   - nrf/test_and_optimize.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                                  "nrf52-series", "nrf7002", "nrf7001", "nrf7000", "nrf9160",
                                  "thingy91", "thingy91x", "nrf9161", "nrf9151", "nrf9131",
-                                 "nrf54h20", "nrf54l15", "nrf54l05", "nrf54l10", "nrf5340",
-                                 "thingy53", "nrf52840", "nrf52833", "nrf52832", "nrf52820",
-                                 "nrf52811", "nrf52810", "nrf52805", "nrf21540",
+                                 "nrf54h20", "nrf54l15", "nrf54l05", "nrf54l10", "nrf54lm20a",
+                                 "nrf5340", "thingy53", "nrf52840", "nrf52833", "nrf52832",
+                                 "nrf52820", "nrf52811", "nrf52810", "nrf52805", "nrf21540",
                                  "npm1100", "npm1300", "npm2100", "npm6001", "applications",
                                  "samples"]
   - nrf/test_and_optimize/*.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                                    "nrf52-series", "nrf7002", "nrf7001", "nrf7000", "nrf9160",
                                    "thingy91", "thingy91x", "nrf9161", "nrf9151", "nrf9131",
-                                   "nrf54h20", "nrf54l15", "nrf54l05", "nrf54l10", "nrf5340",
-                                   "thingy53", "nrf52840", "nrf52833", "nrf52832", "nrf52820",
-                                   "nrf52811", "nrf52810", "nrf52805", "nrf21540",
+                                   "nrf54h20", "nrf54l15", "nrf54l05", "nrf54l10", "nrf54lm20a",
+                                   "nrf5340", "thingy53", "nrf52840", "nrf52833", "nrf52832",
+                                   "nrf52820", "nrf52811", "nrf52810", "nrf52805", "nrf21540",
                                    "npm1100", "npm1300", "npm2100", "npm6001"]
   - nrf/test_and_optimize/optimizing/*.html: ["applications", "protocols"]
   - nrf/test_and_optimize/optimizing/memory.html: ["kconfig", "ble", "blemesh",
@@ -264,12 +265,12 @@ mapping_topics:
   - nrf/security/*.html: ["kconfig"]
   - nrf/security/crypto/*.html: ["nrf91-series", "nrf54-series", "nrf53-series",
                                  "nrf52-series", "nrf9160", "nrf9161", "nrf9151", "nrf9131",
-                                 "nrf54h20", "nrf54l15", "nrf54l10", "nrf54l05", "nrf5340",
-                                 "nrf52840", "nrf52833", "nrf52832", "kconfig"]
+                                 "nrf54h20", "nrf54l15", "nrf54l10", "nrf54lm20a", "nrf54l05",
+                                 "nrf5340", "nrf52840", "nrf52833", "nrf52832", "kconfig"]
   - nrf/security/tfm/*.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                               "nrf9160", "nrf9161", "nrf9151", "nrf9131", "nrf7002",
-                              "nrf54l15", "nrf54l10", "nrf5340", "thingy91", "thingy91x",
-                              "thingy53", "kconfig"]
+                              "nrf54l15", "nrf54l10", "nrf54lm20a", "nrf5340", "thingy91",
+                              "thingy91x", "thingy53", "kconfig"]
   - nrf/security/ap_protect.html: ["nrf91-series", "nrf54-series", "nrf53-series",
                                    "nrf52-series", "nrf9160", "nrf9161", "nrf9151", "nrf9131",
                                    "nrf54h20", "nrf54l15", "nrf5340", "nrf52840", "nrf52833",
@@ -277,8 +278,8 @@ mapping_topics:
                                    "kconfig"]
   - nrf/security/secure_storage.html: ["nrf91-series", "nrf54-series", "nrf53-series",
                                        "nrf52-series", "nrf9160", "nrf9161", "nrf9151", "nrf9131",
-                                       "nrf54l15", "nrf54l10", "nrf5340", "nrf52840", "nrf52833",
-                                       "nrf52832", "kconfig"]
+                                       "nrf54l15", "nrf54l10", "nrf54lm20a", "nrf5340", "nrf52840",
+                                       "nrf52833", "nrf52832", "kconfig"]
   - nrf/protocols/*.html: ["protocols"]
   - nrf/protocols.html: ["sidewalk", "ble", "blemesh", "esb", "gazell", "matter", "multiprotocol",
                          "nfc", "thread", "zigbee", "wifi", "dect-nr+", "protocols"]
@@ -319,8 +320,8 @@ mapping_topics:
   - nrf/applications.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                             "nrf52-series", "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91",
                             "thingy91x", "nrf9161", "nrf9151", "nrf54h20", "nrf54l15", "nrf54l05",
-                            "nrf54l10", "nrf5340", "thingy53", "nrf52840", "nrf52833", "nrf52832",
-                            "nrf52820", "nrf52811", "nrf52810", "nrf52805", "nrf21540",
+                            "nrf54l10", "nrf54lm20a", "nrf5340", "thingy53", "nrf52840", "nrf52833",
+                            "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805", "nrf21540",
                             "npm1100", "npm1300", "npm2100", "npm6001", "kconfig",
                             "development-kits", "prototyping-platforms"]
   - nrf/applications/*.html: ["applications", "kconfig"]
@@ -335,8 +336,8 @@ mapping_topics:
   - nrf/samples.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                        "nrf52-series", "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91",
                        "thingy91x", "nrf9161", "nrf9151", "nrf54h20", "nrf54l15", "nrf54l05",
-                       "nrf54l10", "nrf5340", "thingy53", "nrf52840", "nrf52833", "nrf52832",
-                       "nrf52820", "nrf52811", "nrf52810", "nrf52805", "nrf21540",
+                       "nrf54l10", "nrf54lm20a", "nrf5340", "thingy53", "nrf52840", "nrf52833",
+                       "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805", "nrf21540",
                        "npm1100", "npm1300", "npm2100", "npm6001", "development-kits",
                        "prototyping-platforms", "kconfig"]
   - nrf/samples/*.html: ["samples", "kconfig"]
@@ -378,7 +379,7 @@ mapping_topics:
   - nrf/libraries/bin/lwm2m_carrier/certification.html: ["certification"]
   - nrf/libraries/bluetooth/*.html: ["ble", "nrf52-series", "nrf52840", "nrf52833", "nrf52832",
                                      "nrf52820", "nrf52811", "nrf52810", "nrf52805", "nrf54-series",
-                                     "nrf54h20", "nrf54l15", "nrf54l05", "nrf54l10",
+                                     "nrf54h20", "nrf54l15", "nrf54l05", "nrf54l10", "nrf54lm20a",
                                      "development-kits"]
   - nrf/libraries/bluetooth/mesh.html: ["blemesh"]
   - nrf/libraries/bluetooth/mesh/*.html: ["blemesh"]
@@ -431,7 +432,7 @@ mapping_topics:
   - nrfxlib/nrf_modem/*.html: ["nrf91-series", "nrf9160", "nrf9161", "nrf9151", "lte", "dect-nr+"]
   - nrfxlib/nrf_modem/doc/at_interface.html: ["at-commands"]
   - nrfxlib/nrf_802154/README.html: ["nrf52-series", "nrf54-series", "nrf54l15", "nrf54l05",
-                                     "nrf54l10", "nrf52840", "nrf52833", "nrf5340"]
+                                     "nrf54l10", "nrf54lm20a", "nrf52840", "nrf52833", "nrf5340"]
   - nrfxlib/nrf_802154/*.html: ["multiprotocol"]
   - nrfxlib/nrf_fuel_gauge/*.html: ["pmic", "npm1100", "npm1300", "npm2100", "npm6001",
                                     "evaluation-kits"]
