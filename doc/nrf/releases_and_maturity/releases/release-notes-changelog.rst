@@ -489,10 +489,14 @@ Matter samples
   * The :ref:`matter_contact_sensor_sample` sample that demonstrates how to implement and test a Matter contact sensor device.
   * The ``matter_custom_board`` toggle paragraph in the Matter advanced configuration section of all Matter samples that demonstrates how add and configure a custom board.
 
-* Updated all Matter over Wi-Fi samples and applications to store a portion of the application code related to the nRF70 Series Wi-Fi firmware in the external flash memory by default.
-  This change breaks the DFU between the previous |NCS| versions and the |NCS| v3.2.0.
-  To fix this, you need to disable storing the Wi-Fi firmware patch in external memory.
-  See the :ref:`migration guide <migration_3.2_required>` for more information.
+* Updated:
+
+  * All Matter over Wi-Fi samples and applications to store a portion of the application code related to the nRF70 Series Wi-Fi firmware in the external flash memory by default.
+    This change breaks the DFU between the previous |NCS| versions and the |NCS| v3.2.0.
+    To fix this, you need to disable storing the Wi-Fi firmware patch in external memory.
+    See the :ref:`migration guide <migration_3.2_required>` for more information.
+  * All Matter samples that support low-power mode to use the :ref:`lib_ram_pwrdn` feature with the nRF54LM20 DK.
+    This change resulted in decreasing the sleep current consumption by more than two uA.
 
 * :ref:`matter_lock_sample` sample:
 
@@ -750,6 +754,10 @@ Other libraries
 * :ref:`nrf_profiler` library:
 
   * Updated the documentation by separating out the :ref:`nrf_profiler_script` documentation.
+
+* :ref:`lib_ram_pwrdn` library:
+
+  * Added support for the nRF54LM20A SoC.
 
 Shell libraries
 ---------------
