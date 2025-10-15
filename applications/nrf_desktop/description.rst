@@ -1091,7 +1091,7 @@ After building the application with or without :ref:`specifying the build type <
    .. note::
       When a :ref:`configuration with debug features <nrf_desktop_requirements_build_types>` is enabled, for example logger and assertions, the gaming mouse report rate can be significantly lower.
 
-      Make sure that you use the ``release``configurations before testing the mouse report rate.
+      Make sure that you use the ``release`` configurations before testing the mouse report rate.
       For the ``release`` configurations, you should observe a 500-Hz report rate when both the mouse and the keyboard are connected and a 1000-Hz rate when only the mouse is connected.
 
 #. Switch the Bluetooth peer on the gaming mouse by pressing the **Precise Aim** button (see `User interface`_).
