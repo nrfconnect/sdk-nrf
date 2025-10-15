@@ -22,12 +22,12 @@ macro(add_region)
   list(APPEND ${underscore_domain}region_arguments "--${REGION_NAME}-base-address;${REGION_BASE}")
   list(APPEND ${underscore_domain}region_arguments
     "--${REGION_NAME}-placement-strategy;${REGION_PLACEMENT}")
-  if (REGION_DEVICE)
+  if(REGION_DEVICE)
     list(APPEND ${underscore_domain}region_arguments "--${REGION_NAME}-device;${REGION_DEVICE}")
   list(APPEND ${underscore_domain}region_arguments
        "--${REGION_NAME}-default-driver-kconfig;${REGION_DEFAULT_DRIVER_KCONFIG}")
   endif()
-  if (REGION_DYNAMIC_PARTITION)
+  if(REGION_DYNAMIC_PARTITION)
     list(APPEND ${underscore_domain}region_arguments
       "--${REGION_NAME}-dynamic-partition;${REGION_DYNAMIC_PARTITION}")
   endif()
@@ -75,7 +75,7 @@ function(partition_manager)
     set(static_configuration_file ${board_dir_pm_static})
   endif()
 
-  if (EXISTS ${static_configuration_file})
+  if(EXISTS ${static_configuration_file})
     message(STATUS "Found partition manager static configuration ${PM_DOMAIN}: "
                    "${static_configuration_file}"
     )
@@ -138,7 +138,7 @@ function(partition_manager)
       )
   endif()
 
-  if (DEFINED PM_DOMAIN)
+  if(DEFINED PM_DOMAIN)
     set(underscore _)
   else()
     set(underscore)
@@ -273,7 +273,7 @@ function(partition_manager)
     endif()
   endforeach()
 
-  if (DEFINED PM_DOMAIN)
+  if(DEFINED PM_DOMAIN)
     set(merged_suffix _${PM_DOMAIN})
     string(TOUPPER ${merged_suffix} MERGED_SUFFIX)
   endif()
@@ -330,12 +330,12 @@ function(partition_manager)
       ${CMAKE_BINARY_DIR}/${container}.hex
       )
 
-    if (DEFINED PM_DOMAIN)
+    if(DEFINED PM_DOMAIN)
       get_property(image_name GLOBAL PROPERTY DOMAIN_APP_${PM_DOMAIN})
       update_runner(IMAGE ${image_name} HEX ${CMAKE_BINARY_DIR}/${container}.hex)
     endif()
 
-    if ("${container}" STREQUAL "merged")
+    if("${container}" STREQUAL "merged")
       update_runner(IMAGE ${DEFAULT_IMAGE} HEX ${CMAKE_BINARY_DIR}/${container}.hex)
     endif()
   endforeach()
@@ -406,7 +406,7 @@ get_property(PM_SUBSYS_PREPROCESSED GLOBAL PROPERTY PM_SUBSYS_PREPROCESSED)
 # have a statically defined size. There is only one dynamic partition per
 # domain. For the "root domain" (ie the domain of the root image) this is
 # always "app".
-if (NOT is_dynamic_partition_in_domain)
+if(NOT is_dynamic_partition_in_domain)
   set(dynamic_partition "app")
 else()
   set(dynamic_partition ${${DOMAIN}_PM_DOMAIN_DYNAMIC_PARTITION})
@@ -560,7 +560,7 @@ foreach(d APP ${PM_DOMAINS})
   sysbuild_get(${image_name}_CONFIG_FLASH_SIZE IMAGE ${image_name} VAR CONFIG_FLASH_SIZE KCONFIG)
   math(EXPR flash_size "${${image_name}_CONFIG_FLASH_SIZE} * 1024" OUTPUT_FORMAT HEXADECIMAL)
 
-  if (${image_name}_CONFIG_SOC_SERIES_NRF91X OR ${image_name}_CONFIG_SOC_NRF5340_CPUAPP OR ${image_name}_CONFIG_SOC_SERIES_NRF54LX)
+  if(${image_name}_CONFIG_SOC_SERIES_NRF91X OR ${image_name}_CONFIG_SOC_NRF5340_CPUAPP OR ${image_name}_CONFIG_SOC_SERIES_NRF54LX)
     add_region(
       NAME otp
       SIZE ${otp_size}
@@ -646,7 +646,7 @@ endforeach()
 list(APPEND pm_out_partition_file ${APPLICATION_BINARY_DIR}/partitions.yml)
 list(APPEND pm_out_region_file    ${APPLICATION_BINARY_DIR}/regions.yml)
 
-if (is_dynamic_partition_in_domain)
+if(is_dynamic_partition_in_domain)
   # Nothing is built as child.
   # We have all required info available, just need to use them.
   # We are being built as sub image.
@@ -669,7 +669,7 @@ else()
   list(REMOVE_DUPLICATES PM_DOMAINS)
   foreach (d ${PM_DOMAINS})
     # Don't include shared vars from own domain.
-    if (NOT ("${DOMAIN}" STREQUAL "${d}"))
+    if(NOT ("${DOMAIN}" STREQUAL "${d}"))
       get_shared(shared_header_files          IMAGE ${d} PROPERTY PM_DOMAIN_HEADER_FILES)
       get_shared(shared_prefixed_images       IMAGE ${d} PROPERTY PM_DOMAIN_IMAGES)
       get_shared(shared_pm_out_partition_file IMAGE ${d} PROPERTY PM_DOMAIN_PARTITIONS)
