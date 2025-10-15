@@ -666,6 +666,10 @@ Libraries
 
 This section provides detailed lists of changes by :ref:`library <libraries>`.
 
+   * :ref:`nrf_security_readme` library:
+
+      * The ``CONFIG_CRACEN_PROVISION_PROT_RAM_INV_DATA`` Kconfig option has been renamed to :kconfig:option:`CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT`.
+
 Binary libraries
 ----------------
 
