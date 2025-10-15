@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <time.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #if defined(CONFIG_NRF_CLOUD_MQTT)
@@ -46,6 +47,21 @@ static void cloud_service_location_ready_cb(
 		cloud_location.latitude = result->lat;
 		cloud_location.longitude = result->lon;
 		cloud_location.accuracy = (double)result->unc;
+		if (result->timestamp) {
+			/* Convert the timestamp to a struct tm */
+			time_t temp_time = result->timestamp / 1000;
+			struct tm ltm = {0};
+
+			gmtime_r(&temp_time, &ltm);
+			cloud_location.datetime.ms = result->timestamp % 1000;
+			cloud_location.datetime.second = ltm.tm_sec;
+			cloud_location.datetime.minute = ltm.tm_min;
+			cloud_location.datetime.hour = ltm.tm_hour;
+			cloud_location.datetime.day = ltm.tm_mday + 1;
+			cloud_location.datetime.month = ltm.tm_mon;
+			cloud_location.datetime.year = ltm.tm_year + 1900;
+			cloud_location.datetime.valid = true;
+		}
 
 		k_sem_give(&location_ready);
 	} else {

@@ -945,12 +945,15 @@ int nrf_cloud_obj_modem_pvt_add(struct nrf_cloud_obj *const obj,
 }
 #endif /* CONFIG_NRF_MODEM */
 
-int nrf_cloud_obj_location_request_create(struct nrf_cloud_obj *const obj,
-					  const struct lte_lc_cells_info *const cells_inf,
-					  const struct wifi_scan_info *const wifi_inf,
-					  const struct nrf_cloud_location_config *const config)
+int nrf_cloud_obj_location_request_create_timestamped(
+	struct nrf_cloud_obj *const obj,
+	const struct lte_lc_cells_info *const cells_inf,
+	const struct wifi_scan_info *const wifi_inf,
+	const struct nrf_cloud_location_config *const config,
+	int64_t timestamp
+)
 {
-	if ((!cells_inf && !wifi_inf) || !obj) {
+if ((!cells_inf && !wifi_inf) || !obj) {
 		return -EINVAL;
 	}
 	if (!cells_inf && (wifi_inf->cnt < NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN)) {
@@ -1035,6 +1038,10 @@ int nrf_cloud_obj_location_request_create(struct nrf_cloud_obj *const obj,
 	}
 	/* The data object now belongs to the location request object */
 
+	if (timestamp) {
+		cJSON_AddNumberToObjectCS(obj->json, NRF_CLOUD_MSG_TIMESTAMP_KEY, timestamp);
+	}
+
 	return 0;
 
 cleanup:
@@ -1042,6 +1049,16 @@ cleanup:
 	(void)nrf_cloud_obj_free(&data_obj);
 	(void)nrf_cloud_obj_free(obj);
 	return err;
+}
+
+int nrf_cloud_obj_location_request_create(struct nrf_cloud_obj *const obj,
+					  const struct lte_lc_cells_info *const cells_inf,
+					  const struct wifi_scan_info *const wifi_inf,
+					  const struct nrf_cloud_location_config *const config)
+{
+	return nrf_cloud_obj_location_request_create_timestamped(
+		obj, cells_inf, wifi_inf, config, 0
+	);
 }
 
 #if defined(CONFIG_NRF_CLOUD_PGPS)

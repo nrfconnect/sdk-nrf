@@ -13,6 +13,7 @@
 #include "nrf_cloud_fsm.h"
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_transport.h"
+#include <date_time.h>
 
 int nrf_cloud_location_request(const struct lte_lc_cells_info *const cells_inf,
 			       const struct wifi_scan_info *const wifi_inf,
@@ -24,10 +25,14 @@ int nrf_cloud_location_request(const struct lte_lc_cells_info *const cells_inf,
 	}
 
 	int err = 0;
+	int64_t timestamp = 0;
+
+	date_time_now(&timestamp);
 
 	NRF_CLOUD_OBJ_JSON_DEFINE(location_req_obj);
 
-	err = nrf_cloud_obj_location_request_create(&location_req_obj, cells_inf, wifi_inf, config);
+	err = nrf_cloud_obj_location_request_create_timestamped(
+		&location_req_obj, cells_inf, wifi_inf, config, timestamp);
 	if (!err) {
 		if (!config || (config->do_reply)) {
 			nfsm_set_location_response_cb(cb);
