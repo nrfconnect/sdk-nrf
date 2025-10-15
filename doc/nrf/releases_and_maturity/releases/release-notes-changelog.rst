@@ -735,6 +735,7 @@ Libraries for networking
 * :ref:`lib_nrf_cloud` library:
 
   * Updated by refactoring the folder structure of the library to separate the different backend implementations.
+  * Added the :c:func:`nrf_cloud_obj_location_request_create_timestamped` function to do location requests for past cellular or Wi-Fi scans.
 
 * :ref:`lib_downloader` library:
 
