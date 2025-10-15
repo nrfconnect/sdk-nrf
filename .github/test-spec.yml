@@ -267,6 +267,7 @@
   - "include/bluetooth/mesh/**/*"
   - "tests/subsys/bluetooth/mesh/**/*"
   - "samples/bluetooth/mesh/**/*"
+  - "scripts/requirements-fixed.txt"
 
 "CI-thingy91-test":
   - "modules/cjson/**/*"
