@@ -148,11 +148,3 @@
   platforms:
     - nrf54lv10dk.*
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35259"
-
-- scenarios:
-    - sample.mcumgr.smp_svr.bt.nrf54l15dk.ext_flash
-  platforms:
-    - nrf54l15dk/nrf54l05/cpuapp
-    - nrf54l15dk/nrf54l10/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35694"
