@@ -383,7 +383,7 @@ The following Kconfig options are available:
 
 You must update your applications to select the required Kconfig options at the sysbuild level for applications to work.
 If these options are not set, the QSPI XIP flash code sections will not be generated.
-The MCUboot image number is now dependent upon what images are present in a build, and the Kconfig option :kconfig:option:`SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER` gives the image number of this section.
+The MCUboot image number depends on the images present in a build, and the sysbuild CMake variable ``NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`` and application Kconfig option :kconfig:option:`CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER` give the image number of this section.
 
 The format for the Partition Manager static partition file has also changed.
 There must now be a ``pad`` section and an ``app`` section which form the primary section in a span.
