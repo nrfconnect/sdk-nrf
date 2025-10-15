@@ -34,7 +34,7 @@ config SB_NUM_VER_COUNTER_SLOTS
 	default 240
 	range 2 300 if SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X || SOC_SERIES_NRF54LX
 	range 2 1800 if SOC_SERIES_NRF52X
-	range 2 400 if SOC_SERIES_NRF51X
+	range 2 288 if SOC_SERIES_NRF51X
 	depends on SB_MONOTONIC_COUNTER
 	help
 	  The number of monotonic counter slots available for the counter,
