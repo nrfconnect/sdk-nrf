@@ -53,7 +53,7 @@ config LOCK_MAX_HOLIDAY_SCHEDULES
 endif
 
 config LOCK_ENABLE_DEBUG
-	bool "Enable debug features to print users and credentials"
+	bool "Debug features to print users and credentials"
 	depends on SHELL
 	help
 	  Debug features allows to checking and printing current users, their state, and
