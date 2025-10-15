@@ -64,8 +64,8 @@ config CRACEN_LIB_KMU
 	help
 	  The CRACEN KMU library.
 
-config CRACEN_PROVISION_PROT_RAM_INV_DATA
-	bool "Provision protected RAM invalidation data"
+config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT
+	bool "Provision protected RAM invalidation slots on boot"
 	depends on CRACEN_LIB_KMU
 	default y
 	help
