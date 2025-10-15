@@ -120,7 +120,7 @@ int main(void)
 	__ASSERT(ret == 0, "Could not configure led GPIO");
 
 	/* Wait a bit to solve NRFS request timeout issue. */
-	k_msleep(500);
+	k_msleep(1000);
 
 	/* Synchronize Remote core with Host core */
 #if !defined(CONFIG_TEST_ROLE_REMOTE)
