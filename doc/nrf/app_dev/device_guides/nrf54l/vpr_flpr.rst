@@ -25,7 +25,7 @@ The following section provides a support overview for various FLPR targets:
      - Supported drivers
    * - nRF54L15 FLPR running from SRAM
      - ``nrf54l15dk/nrf54l15/cpuflpr``
-     - Experimental
+     - Supported
      - * GPIO
        * GPIOTE
        * GRTC
@@ -34,7 +34,7 @@ The following section provides a support overview for various FLPR targets:
        * VPR
    * - nRF54L15 FLPR running from RRAM
      - ``nrf54l15dk/nrf54l15/cpuflpr/xip``
-     - Experimental
+     - Supported
      - --
    * - nRF54L05 FLPR running from SRAM
      - Not available
