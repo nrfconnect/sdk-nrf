@@ -109,6 +109,10 @@ This section describes the changes related to libraries.
        When the modem has completed the network selection, the registration and cell related events (:c:enumerator:`LTE_LC_EVT_NW_REG_STATUS`, :c:enumerator:`LTE_LC_EVT_CELL_UPDATE`, :c:enumerator:`LTE_LC_EVT_LTE_MODE_UPDATE` and :c:enumerator:`LTE_LC_EVT_PSM_UPDATE`) are sent first, followed by the :c:enumerator:`LTE_LC_MODEM_EVT_SEARCH_DONE` modem event.
        If the application depends on the order of the events, it may need to be updated.
 
+   * :ref:`nrf_security_readme` library:
+
+      * The ``CONFIG_CRACEN_PROVISION_PROT_RAM_INV_DATA`` Kconfig option has been renamed to :kconfig:option:`CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT`.
+
 Trusted Firmware-M
 ==================
 
