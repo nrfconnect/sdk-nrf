@@ -144,9 +144,9 @@ int cracen_init(void)
 		goto exit;
 	}
 
-#if defined(CONFIG_CRACEN_PROVISION_PROT_RAM_INV_DATA)
-	status = cracen_provision_prot_ram_inv_data();
-#endif /* CONFIG_CRACEN_PROVISION_PROT_RAM_INV_DATA */
+#if defined(CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_BOOT)
+	status = cracen_provision_prot_ram_inv_slots();
+#endif /* CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_BOOT */
 
 exit:
 	cracen_release();

@@ -82,4 +82,4 @@ psa_status_t cracen_kmu_destroy_key(const psa_key_attributes_t *attributes);
  *
  * @return PSA status code.
  */
-psa_status_t cracen_provision_prot_ram_inv_data(void);
+psa_status_t cracen_provision_prot_ram_inv_slots(void);
