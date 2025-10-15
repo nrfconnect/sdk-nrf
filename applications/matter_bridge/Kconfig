@@ -33,18 +33,18 @@ choice BRIDGED_DEVICE_IMPLEMENTATION
 	prompt "Bridged Device implementation"
 	default BRIDGED_DEVICE_SIMULATED
 
-	config BRIDGED_DEVICE_SIMULATED
-		bool "Simulated Bridged Device"
-		help
-		  Enables using simulated bridged devices that do not perform
-		  real operations, but emulate exemplary data to imitate the real
-		  device behavior.
+config BRIDGED_DEVICE_SIMULATED
+	bool "Simulated Bridged Device"
+	help
+	  Enables using simulated bridged devices that do not perform
+	  real operations, but emulate exemplary data to imitate the real
+	  device behavior.
 
-	config BRIDGED_DEVICE_BT
-		bool "Bluetooth LE Bridged Device"
-		help
-		  Enables using real bridged devices that communicate with the Matter bridge device
-		  over Bluetooth LE.
+config BRIDGED_DEVICE_BT
+	bool "Bluetooth LE Bridged Device"
+	help
+	  Enables using real bridged devices that communicate with the Matter bridge device
+	  over Bluetooth LE.
 
 endchoice
 
@@ -54,17 +54,17 @@ choice BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION
 	prompt "Simulated bridged onoff device implementation"
 	default BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL
 
-	config BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC
-		bool "Automatically simulated bridged onoff device"
-		help
-		  Enables using simulated bridged onoff device that
-		  automatically changes its state periodically.
+config BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC
+	bool "Automatically simulated bridged onoff device"
+	help
+	  Enables using simulated bridged onoff device that
+	  automatically changes its state periodically.
 
-	config BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL
-		bool "Shell controlled simulated bridged onoff device"
-		help
-		  Enables using simulated bridged onoff device that is
-		  controlled by shell commands.
+config BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL
+	bool "Shell controlled simulated bridged onoff device"
+	help
+	  Enables using simulated bridged onoff device that is
+	  controlled by shell commands.
 
 endchoice
 
@@ -160,8 +160,7 @@ config NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
 	default y
 
 config BRIDGE_SMART_PLUG_SUPPORT
-	bool "Enables additional endpoint implementing Matter smart plug functionality"
-	default n
+	bool "Additional endpoint implementing Matter smart plug functionality"
 
 # Sample configuration used for Thread networking
 if OPENTHREAD

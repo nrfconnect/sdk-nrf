@@ -25,7 +25,7 @@ config NCS_SAMPLE_MATTER_CUSTOM_BLUETOOTH_ADVERTISING
 	  allow to use the custom one.
 
 config NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS
-	bool "Enable operational keys migration feature"
+	bool "Operational keys migration feature"
 	depends on CHIP_CRYPTO_PSA
 	help
 	  Enables migration of the operational keys stored in the persistent storage to the PSA ITS secure storage.
@@ -41,7 +41,7 @@ config NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE
 	  properly to PSA ITS storage.
 
 config NCS_SAMPLE_MATTER_LEDS
-	bool "Enable LEDs usage"
+	bool "LEDs usage"
 	default y
 	depends on DK_LIBRARY
 	help
@@ -108,7 +108,7 @@ config NCS_SAMPLE_MATTER_ZAP_FILE_PATH
 	  It shall contain the file name and .zap extension.
 
 config NCS_SAMPLE_MATTER_CERTIFICATION
-	bool "Enable patches required for Matter platform certification"
+	bool "Patches for Matter platform certification"
 	help
 	  It enables including software patches required for the Matter platform certification
 	  purposes. Currently it works only with the Matter template sample.
