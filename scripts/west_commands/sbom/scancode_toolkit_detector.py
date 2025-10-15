@@ -67,9 +67,9 @@ def detect(data: Data, optional: bool):
 
         current = result['files'][0]
         if 'licenses' in current:
-            licenses = current['licenses']
+            licenses = result['files'][0]['licenses']
         elif 'license_detections' in current:
-            licenses = current['license_detections']
+            licenses = result['files'][0]['license_detections']
         else:
             print('No license information for {}'.format(current['path']))
             continue
@@ -81,25 +81,11 @@ def detect(data: Data, optional: bool):
                 friendly_id = i['spdx_license_key']
             elif 'key' in i and i['key'] != '':
                 friendly_id = i['key']
-            elif 'license_expression_spdx' in i and i['license_expression_spdx'] != '':
-                friendly_id = i['license_expression_spdx']
-            elif 'license_expression' in i and i['license_expression'] != '':
-                friendly_id = i['license_expression']
             id = friendly_id.upper()
-            if id in ('UNKNOWN-SPDX', 'LICENSEREF-SCANCODE-UNKNOWN-SPDX') or id == '':
-                matched_text = None
-                if 'matched_text' in i:
-                    matched_text = i['matched_text']
-                elif 'matches' in i and isinstance(i['matches'], list):
-                    matched_text = next((match.get('matched_text')
-                                         for match in i['matches']
-                                         if match.get('matched_text') is not None), None)
-                if matched_text:
-                    friendly_id = re.sub(r'SPDX-License-Identifier:', '', matched_text,
-                                         flags=re.I).strip()
-                    friendly_id = friendly_id.rstrip('*/').strip()
-                    friendly_id = friendly_id.lstrip('/*').strip()
-                    id = friendly_id.upper()
+            if id in ('UNKNOWN-SPDX', 'LICENSEREF-SCANCODE-UNKNOWN-SPDX'):
+                friendly_id = re.sub(r'SPDX-License-Identifier:', '', i['matched_text'],
+                                     flags=re.I).strip()
+                id = friendly_id.upper()
             if id == '':
                 log.wrn(f'Invalid response from scancode-toolkit, file: {file.file_path}')
                 continue
