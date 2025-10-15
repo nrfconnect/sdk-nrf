@@ -2287,6 +2287,19 @@ static bool json_item_string_exists(const cJSON *const obj, const char *const ke
 	return (strcmp(str_val, val) == 0);
 }
 
+static int64_t get_timestamp(const cJSON *const obj)
+{
+	__ASSERT_NO_MSG(obj != NULL);
+
+	cJSON *item = cJSON_GetObjectItem(obj, NRF_CLOUD_MSG_TIMESTAMP_KEY);
+
+	if (item) {
+		return cJSON_GetNumberValue(item);
+	}
+
+	return 0;
+}
+
 static void
 nrf_cloud_parse_location_anchors_json(const cJSON *const loc_obj,
 				      struct nrf_cloud_location_result *const location_out)
@@ -2475,6 +2488,8 @@ int nrf_cloud_location_response_decode(const char *const buf,
 		/* Not a location data message */
 		goto cleanup;
 	}
+
+	result->timestamp = get_timestamp(loc_obj);
 
 	/* MQTT payload format found, parse the data */
 	data_obj = cJSON_GetObjectItem(loc_obj, NRF_CLOUD_JSON_DATA_KEY);

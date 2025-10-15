@@ -637,6 +637,33 @@ int nrf_cloud_obj_gnss_msg_create(struct nrf_cloud_obj *const obj,
 				  const struct nrf_cloud_gnss_data * const gnss);
 
 /**
+ * @brief Create an nRF Cloud Location request message object with a timestamp.
+ *
+ * @details If successful, memory is allocated for the provided object.
+ *          The @ref nrf_cloud_obj_free function should be called when finished with the object.
+ *
+ * @param[out] obj Uninitialzed object to contain the Location message.
+ * @param[in] cells_inf Cellular network data, can be NULL if wifi_inf is provided.
+ * @param[in] wifi_inf Wi-Fi network data, can be NULL if cells_inf is provided.
+ * @param[in] config Optional configuration of request. If NULL, use cloud defaults.
+ * @param[in] timestamp Optional UTC timestamp (milliseconds) of request, or 0 to omit.
+ *
+ * @retval -EINVAL Invalid parameter.
+ * @retval -EDOM Too few Wi-Fi networks, see NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN.
+ * @retval -EBADF Invalid object type.
+ * @retval -ENOTEMPTY Object already initialized.
+ * @retval -ENOMEM Out of memory.
+ * @retval 0 Success; GNSS message created.
+ */
+int nrf_cloud_obj_location_request_create_timestamped(
+	struct nrf_cloud_obj *const obj,
+	const struct lte_lc_cells_info *const cells_inf,
+	const struct wifi_scan_info *const wifi_inf,
+	const struct nrf_cloud_location_config *const config,
+	int64_t timestamp
+);
+
+/**
  * @brief Create an nRF Cloud Location request message object.
  *
  * @details If successful, memory is allocated for the provided object.
