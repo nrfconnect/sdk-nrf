@@ -57,77 +57,19 @@ jobs:
         with:
           git-fetch-depth: 0
           path: nrf
-      - name: Install requirements(bash)
+      - name: Install requirements
         shell: bash
         run: |
-          pip3 install -r nrf/scripts/requirements-fixed.txt
           pip3 install -r nrf/scripts/requirements-west-ncs-sbom.txt
           pip3 install -r nrf/scripts/requirements-extra.txt
-      - name: Install requirements (Windows)
-        if: ${{ matrix.os == 'windows-latest' }}
-        shell: pwsh
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r nrf/scripts/requirements-fixed.txt
-          python -m pip install -r nrf/scripts/requirements-west-ncs-sbom.txt
-          python -m pip install -r nrf/scripts/requirements-extra.txt
       - name: Smoke test ncs-loot & ncs-compare
         shell: bash
         run: |
           west ncs-loot -h
           west ncs-compare -h
-      - name: Smoke test ncs-sbom (Ubuntu)
+      - name: Smoke test ncs-sbom
         # macOS is not supported by scancode-toolkit(used in ncs-sbom)
-        if: ${{ matrix.os == 'ubuntu-24.04' }}
+        if: ${{ matrix.os == 'ubuntu-24.04' || matrix.os == 'windows-latest' }}
         shell: bash
         run: |
           west ncs-sbom -h
-
-          # show what scancode-toolkit is default
-          if [[ "$RUNNER_OS" == "Linux" ]]; then
-            scancode --version
-          fi
-
-          # create a dummy file
-          echo "/* SPDX-License-Identifier: LicenseRef-Nordic-5-Clause */" > test_file.c
-
-          # run ncs-sbom with scancode-toolkit
-          west ncs-sbom \
-            --input-files test_file.c \
-            --license-detectors scancode-toolkit \
-            --output-html scancode_report.html
-      - name: Smoke test ncs-sbom (Windows)
-        if: ${{ matrix.os == 'windows-latest' }}
-        shell: pwsh
-        run: |
-          # --- show environment trees (Windows style) ---
-          $envs = @(
-            "pythonLocation",
-            "PKG_CONFIG_PATH",
-            "Python_ROOT_DIR",
-            "Python2_ROOT_DIR",
-            "Python3_ROOT_DIR"
-          )
-
-          foreach ($e in $envs) {
-            $path = (Get-Item "Env:$e").Value
-            Write-Host "`n=== $e ==="
-            Write-Host $path
-            if (Test-Path $path) {
-              Write-Host "`n--- Directory tree for $e ---"
-              tree $path /F | Out-String | Write-Host
-            } else {
-              Write-Host "Path not found: $path"
-            }
-          }
-
-          west ncs-sbom -h
-
-          # create a dummy file
-          Set-Content -Path test_file.c -Value '/* SPDX-License-Identifier: LicenseRef-Nordic-5-Clause */'
-
-          # run ncs-sbom with scancode-toolkit
-          west ncs-sbom `
-            --input-files test_file.c `
-            --license-detectors scancode-toolkit `
-            --output-html scancode_report.html
