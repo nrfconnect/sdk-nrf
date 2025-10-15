@@ -1,4 +1,4 @@
 jinja2
-scancode-toolkit[full]==32.4.1 ; platform_machine == "x86_64" or platform_machine == "AMD64"
+scancode-toolkit[full]==32.4.1 ; platform_machine == "x86_64" or platform_machine == "amd64"
 fingerprints==1.2.3
 normality==2.5.0
