@@ -25,7 +25,7 @@
 #define PERIPHERAL_NAME "path_loss_peripheral"
 
 static struct bt_conn *default_conn;
-
+/*s*/
 /* Set up logging */
 LOG_MODULE_REGISTER(central_unit, LOG_LEVEL_INF);
 
