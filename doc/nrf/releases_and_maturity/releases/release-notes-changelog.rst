@@ -292,6 +292,7 @@ nRF Desktop
       After the motion sensor sampling is triggered, the provider waits for the result before submitting a subsequent HID mouse input report.
     * The :ref:`nrf_desktop_hid_state_pm` to skip submitting the :c:struct:`keep_alive_event` if the :c:enum:`POWER_MANAGER_LEVEL_ALIVE` power level is enforced by any application module through the :c:struct:`power_manager_restrict_event`.
       This is done to improve performance.
+    * The documentation of the :ref:`nrf_desktop_hid_state` and default HID report providers to simplify getting started with updating HID input reports used by the application or introducing support for a new HID input report.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
