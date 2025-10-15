@@ -9,6 +9,7 @@
 #if !defined(CONFIG_BOARD_NATIVE_SIM)
 #include <helpers/nrfx_reset_reason.h>
 #endif /* !defined(CONFIG_BOARD_NATIVE_SIM) */
+#include <app_version.h>
 #include <date_time.h>
 #include <stdio.h>
 #include <net/nrf_cloud.h>
@@ -30,6 +31,9 @@
 #include "led_control.h"
 #include "at_commands.h"
 #include "shadow_config.h"
+#ifdef CONFIG_MEMFAULT
+#include "memfault/core/platform/device_info.h"
+#endif
 
 LOG_MODULE_REGISTER(application, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 
@@ -49,6 +53,18 @@ BUILD_ASSERT(CONFIG_AT_CMD_REQUEST_RESPONSE_BUFFER_LENGTH >= AT_CMD_REQUEST_ERR_
 
 /* State of the test counter. This can be changed using the configuration in the shadow */
 static bool test_counter_enabled;
+
+#ifdef CONFIG_MEMFAULT
+void memfault_platform_get_device_info(sMemfaultDeviceInfo *info)
+{
+	*info = (sMemfaultDeviceInfo) {
+		.device_serial = "nrf-359404230048804",
+		.software_type = "app",
+		.software_version = APP_VERSION_STRING,
+		.hardware_version = "nrf9151dk",
+	};
+}
+#endif
 
 /**
  * @brief Construct a device message object with automatically generated timestamp
