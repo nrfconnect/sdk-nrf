@@ -539,9 +539,9 @@ static int m_lfclk_accuracy_get(void)
 
 int32_t mpsl_clock_ctrl_init(void)
 {
-#if defined(CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST)
 	int err;
 
+#if defined(CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST)
 	err = m_nvm_clock_request();
 	if (err) {
 		return err;
