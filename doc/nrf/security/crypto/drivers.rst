@@ -363,7 +363,7 @@ The hardware peripheral is available on the following devices:
 
 * nRF54L Series devices - See :ref:`ug_crypto_supported_features` for supported features and limitations for each device.
   For more information, see the :ref:`ug_nrf54l_cryptography` page.
-  For more information about the hardware peripheral, see the CRACEN hardware peripheral page in the device datasheets (for example, `nRF54L15 datasheet <nRF54L15 DK CRACEN_>`_).
+  For more information about the hardware peripheral, see the CRACEN hardware peripheral page in the device datasheets (for example, `nRF54L15 datasheet <nRF54L15 CRACEN_>`_).
 
 * nRF54H20 - On this platform, the IronSide Secure Element relies on the CRACEN driver and implements a fixed set of features and algorithms that cannot be changed by the user.
   See :ref:`ug_crypto_supported_features` for the list of provided PSA Crypto directives.
