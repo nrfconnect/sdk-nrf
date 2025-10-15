@@ -193,6 +193,15 @@ static void on_location_update(const struct location_event_data * const location
 		location_data->location.longitude,
 		(double)location_data->location.accuracy,
 		location_method_str(location_data->method));
+	if (location_data->location.datetime.valid) {
+		LOG_INF("Location timestamp: %04u-%02u-%02uT%02u:%02u:%02uZ",
+			location_data->location.datetime.year,
+			location_data->location.datetime.month,
+			location_data->location.datetime.day,
+			location_data->location.datetime.hour,
+			location_data->location.datetime.minute,
+			location_data->location.datetime.second);
+	}
 
 	/* If the position update was derived using GNSS, send it onward to nRF Cloud. */
 	if (location_data->method == LOCATION_METHOD_GNSS) {
