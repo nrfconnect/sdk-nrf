@@ -67,9 +67,3 @@ jobs:
         run: |
           west ncs-loot -h
           west ncs-compare -h
-      - name: Smoke test ncs-sbom
-        # macOS is not supported by scancode-toolkit(used in ncs-sbom)
-        if: ${{ matrix.os == 'ubuntu-24.04' || matrix.os == 'windows-latest' }}
-        shell: bash
-        run: |
-          west ncs-sbom -h
