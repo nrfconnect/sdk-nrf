@@ -133,11 +133,16 @@ This section describes the changes related to samples and applications.
 MCUboot
 -------
 
-The default C library for MCUboot has changed to picolibc.
-Picolibc is recommended over the minimal C library as it is a fully developed and supported C library designed for application usage.
-If you have not explicitly specified the C library in your sysbuild project for MCUboot using either a :file:`sysbuild/mcuboot/prj.conf` file or :file:`sysbuild/mcuboot.conf` file, picolibc will be used by default.
-To set picolibc in your project, use the :kconfig:option:`CONFIG_PICOLIBC` Kconfig option.
-If you need to use the minimal C library (which is not recommended outside of testing scenarios), use the :kconfig:option:`CONFIG_MINIMAL_LIBC` Kconfig option.
+.. toggle::
+
+   * The default C library for MCUboot has changed to picolibc.
+     Picolibc is recommended over the minimal C library as it is a fully developed and supported C library designed for application usage.
+     If you have not explicitly specified the C library in your sysbuild project for MCUboot using either a :file:`sysbuild/mcuboot/prj.conf` file or :file:`sysbuild/mcuboot.conf` file, picolibc will be used by default.
+     To set picolibc in your project, use the :kconfig:option:`CONFIG_PICOLIBC` Kconfig option.
+     If you need to use the minimal C library (which is not recommended outside of testing scenarios), use the :kconfig:option:`CONFIG_MINIMAL_LIBC` Kconfig option.
+   * MCUboot image IDs are no longer taken from sysbuild Kconfig options and are instead automatically assigned.
+     See :ref:`sysbuild_assigned_images_ids` for details on how to get the values from the sysbuild cache as these are no longer available in the sysbuild Kconfig tree.
+     Application Kconfig values for image IDs remain present and their functionality is the same as in |NCS| v3.1.0.
 
 Libraries
 =========
