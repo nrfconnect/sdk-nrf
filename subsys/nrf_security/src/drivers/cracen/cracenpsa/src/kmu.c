@@ -206,7 +206,8 @@ static psa_status_t cracen_kmu_decrypt(kmu_metadata *metadata, size_t number_of_
 
 #endif /* PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS */
 
-#ifdef CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT
+#if defined(CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT) ||                                 \
+	defined(CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT)
 psa_status_t cracen_provision_prot_ram_inv_slots(void)
 {
 	uint8_t rng_buffer[2 * CRACEN_KMU_SLOT_KEY_SIZE];
@@ -254,9 +255,9 @@ psa_status_t cracen_provision_prot_ram_inv_slots(void)
 	safe_memzero(rng_buffer, sizeof(rng_buffer));
 	return psa_status;
 }
-#endif /* CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT */
-
-
+#endif /* CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT ||
+	* CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT
+	*/
 /* Used internally in sxsymcrypt so we use sx return codes here. */
 int cracen_kmu_prepare_key(const uint8_t *user_data)
 {

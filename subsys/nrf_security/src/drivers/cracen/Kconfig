@@ -75,6 +75,18 @@ config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT
 	  When disabled the application is expected to provision the reserved KMU slots 248 and 249
 	  manually, otherwise the protected RAM keys will not be usable.
 
+config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT
+	bool "Provision protected RAM invalidation slots using psa_import_key"
+	depends on CRACEN_LIB_KMU
+	depends on !CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT
+	help
+	  Provision the protected RAM invalidation KMU slots (248,249) in the KMU using a
+	  psa_import_key call. The application is required to call psa_import_key with the
+	  KMU slot 248. The key material provided is ignored and random data is generated to
+	  populate the slots.
+	  This is meant to be used by a provisioning image that runs once before the application
+	  image is flashed. This is not meant to be used by user applications.
+
 config CRACEN_IKG
 	bool "CRACEN IKG"
 	help
