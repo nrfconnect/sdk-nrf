@@ -57,6 +57,41 @@ These logs are visible once you configure logger for your application.
 You can also configure log level per logger module, for example to get more information about a given subsystem.
 See :ref:`ug_logging` for details on how to enable and configure logs.
 
+Debug logging for the Bluetooth stack
+-------------------------------------
+
+To enable debug logging for the Bluetooth stack in your :file:`prj.conf` file when using the |NCS|, set the :kconfig:option:`CONFIG_BT_LOG_LEVEL_DBG` Kconfig option to ``y``.
+This enables debug-level logging for the Bluetooth subsystem, allowing you to see detailed logs from the Bluetooth stack during development and troubleshooting.
+For example, a minimal configuration might look like this::
+
+   CONFIG_BT=y
+   CONFIG_BT_LOG_LEVEL_DBG=y
+
+If you want even more detailed debugging (such as stack traces or assertion failures), you can also enable the following Kconfig options::
+
+   CONFIG_ASSERT=y
+   CONFIG_BT_LOG_LEVEL_INF=y
+   CONFIG_EXCEPTION_STACK_TRACE=y
+
+For more detailed logs from specific parts of the Bluetooth stack, you can add more specific configurations.
+For example:
+
+* Bluetooth HCI driver debugging - ``CONFIG_BT_HCI_CORE_LOG_LEVEL_DBG``
+* Bluetooth L2CAP debugging - ``CONFIG_BT_L2CAP_LOG_LEVEL_DBG``
+* Bluetooth ATT debugging - ``CONFIG_BT_ATT_LOG_LEVEL_DBG``
+* Bluetooth GATT debugging - ``CONFIG_BT_GATT_LOG_LEVEL_DBG``
+* Bluetooth SMP debugging - ``CONFIG_BT_SMP_LOG_LEVEL_DBG``
+
+To see more detailed logs, you can set the log level:
+
+* ``CONFIG_BT_LOG_LEVEL_DBG=y``
+* ``CONFIG_BT_LOG_LEVEL=4``
+  Log levels typically range from 0 (no logs) to 4 (debug).
+
+Ensure that the logger module is enabled to see the logs::
+
+   CONFIG_LOG=y
+
 Debug libraries
 ===============
 
