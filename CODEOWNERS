@@ -178,6 +178,7 @@
 /doc/nrf/libraries/nrf_rpc/nrf_rpc_ipc.rst @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/nrf_rpc/nrf_rpc_uart.rst @nrfconnect/ncs-terahertz-doc
 /doc/nrf/libraries/nrf_rpc/nrf_rpc_utils.rst @nrfconnect/ncs-terahertz-doc
+/doc/nrf/libraries/otdoa_al/              @nrfconnect/ncs-iot-positioning-doc @nriedel
 
 /doc/nrf/libraries/others/adp536x.rst     @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/others/app_event_manager.rst @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-bluebagel-doc
@@ -354,6 +355,7 @@
 /include/nfc/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-muffin
 /include/nrf_compress/                    @nordicjm
 /include/nrf_rpc/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-muffin @nrfconnect/ncs-protocols-serialization
+/include/otdoa_al/                        @nrfconnect/ncs-modem-tre @nriedel
 /include/power/                           @nrfconnect/ncs-co-drivers
 /include/shell/                           @nordic-krch
 /include/util/                            @nrfconnect/ncs-aegir @nordic-krch
@@ -396,6 +398,7 @@
 /lib/modem_slm/                           @nrfconnect/ncs-lr-slm
 /lib/multithreading_lock/                 @nrfconnect/ncs-dragoon
 /lib/nrf_modem_lib/                       @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
+/lib/otdoa_al/                            @nrfconnect/ncs-modem-tre @nriedel
 /lib/pcm_mix/                             @nrfconnect/ncs-audio
 /lib/pcm_stream_channel_modifier/         @nrfconnect/ncs-audio
 /lib/pdn/                                 @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
@@ -491,6 +494,7 @@
 /samples/cellular/nidd/                   @stig-bjorlykke
 /samples/cellular/nrf_cloud_*             @nrfconnect/ncs-nrf-cloud
 /samples/cellular/nrf_provisioning/       @nrfconnect/ncs-iot-oulu
+/samples/cellular/otdoa/                  @nrfconnect/ncs-modem-tre @nriedel
 /samples/cellular/modem_trace_flash/      @nrfconnect/ncs-modem
 /samples/cellular/slm_shell/              @nrfconnect/ncs-lr-slm
 /samples/cellular/sms/                    @nrfconnect/ncs-modem-tre

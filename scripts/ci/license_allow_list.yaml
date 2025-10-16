@@ -15,6 +15,12 @@ LicenseRef-Nordic-5-Clause: ".*"
 # PCFT license is allowed for nRF53 Audio.
 LicenseRef-PCFT: "^nrf/applications/nrf5340_audio/"
 
+# PHY Wireless License is allowed for OTDOA positioning
+LicenseRef-PHYW: |
+  ^nrf/include/otdoa_al/
+  ^nrf/lib/otdoa_al/
+  ^nrf/samples/cellular/otdoa/
+
 # Missing license information is allowed in all files except the ones listed below using
 # negative match.
 none: |

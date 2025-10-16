@@ -1,0 +1,9 @@
+/*
+ * Thingy91X board DTS Overlay
+ */
+
+/* set console UART to 921600 baud */
+&uart0 {
+	status = "okay";
+	current-speed = <921600>;
+};

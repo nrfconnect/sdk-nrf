@@ -53,5 +53,6 @@ rsource "fem_al/Kconfig"
 rsource "sample_rate_converter/Kconfig"
 rsource "boot_banner/Kconfig"
 rsource "uicc_lwm2m/Kconfig"
+rsource "otdoa_al/Kconfig"
 
 endmenu

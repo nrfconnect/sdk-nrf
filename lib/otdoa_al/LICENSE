@@ -1,0 +1,37 @@
+LicenseID:  LicenseRef-PHYW
+
+ExtractedText: <text>
+The Software (defined below) is Copyright (C) PHY Wireless 2025
+
+Redistribution and use of the hellaPHY OTDOA Adaptation Layer Software (the “Software”),
+in binary and source code forms (as and to the extent made available hereunder), with or
+without modification, are permitted provided that (i) each person and entity that receives
+access to the Software, with or without modifications, agrees to and complies with the following
+and (ii) any action inconsistent with any of the following is excluded from the rights
+and licenses granted  hereunder:
+
+1. Redistributions of the Software in any form, with or without modification, must be on these
+terms, must retain all notices contained in the Software, and must conspicuously reproduce the
+above copyright notice, this list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution.
+
+2. Neither the name of PHY Wireless, Inc. nor Nordic Semiconductor ASA nor the names of its
+contributors may be used to endorse or promote products derived from this Software without
+specific prior written permission.
+
+3. This Software, with or without modification, must only be used with a Nordic Semiconductor
+ASA Integrated Circuit.
+
+4. No Software provided in (or compiled into) binary form under this license, with or without
+modifications (and no information downloaded from a communications carrier using the Software,
+with or without modifications) will be reverse engineered, decompiled, modified and/or disassembled.
+
+THIS SOFTWARE IS PROVIDED BY PHY WIRELESS, INC. AND NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE HEREBY DISCLAIMED.
+IN NO EVENT SHALL PHY WIRELESS, INC., NORDIC SEMICONDUCTOR ASA, OR CONTRIBUTORS BE LIABLE FOR ANY
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (OR FOR ANY: COST OF PROCUREMENT
+OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE. ANY OTHER DAMAGES WILL BE LIMITED TO $100 IN THE AGGREGATE.
