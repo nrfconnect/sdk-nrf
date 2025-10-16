@@ -28,3 +28,7 @@
 	pinctrl-names = "default", "sleep";
 	clkout-32k;
 };
+
+&fll16m {
+	status = "okay";
+};
