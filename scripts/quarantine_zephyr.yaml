@@ -238,6 +238,7 @@
     - kernel.common.misra
   platforms:
     - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf54l15dk/nrf54l15/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35491"
 
 - scenarios:
