@@ -67,7 +67,7 @@ enum lte_lc_nw_reg_status {
 	 * @note This is only supported by the following modem firmware:
 	 *       - mfw_nrf9151-ntn
 	 */
-       LTE_LC_NW_REG_RX_ONLY_REGISTERED_HOME		= 51,
+	LTE_LC_NW_REG_RX_ONLY_REGISTERED_HOME		= 51,
 
 	/**
 	 * Not registered, but UE is currently trying to attach or searching for an operator to
