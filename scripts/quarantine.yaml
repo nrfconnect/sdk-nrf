@@ -173,3 +173,7 @@
   platforms:
     - nrf5340dk/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-8480"
+
+- platforms:
+    - .*ns
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8563"
