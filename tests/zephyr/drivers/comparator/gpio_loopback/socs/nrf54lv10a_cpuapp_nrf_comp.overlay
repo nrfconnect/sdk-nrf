@@ -1,6 +1,8 @@
+#include <zephyr/dt-bindings/comparator/nrf-comp.h>
+
 &comp {
 	main-mode = "SE";
-	psel = "AIN6"; /* P1.11 */
+	psel = <NRF_COMP_AIN6>; /* P1.11 */
 	refsel = "INT_1V2";
 	sp-mode = "HIGH";
 	th-up = <63>;
