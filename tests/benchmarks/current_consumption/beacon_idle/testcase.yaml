@@ -1,0 +1,31 @@
+common:
+  sysbuild: true
+  tags:
+    - ci_tests_benchmarks_current_consumption
+    - ppk_power_measure
+    - bluetooth
+  harness: pytest
+  harness_config:
+    fixture: ppk_power_measure
+    pytest_root:
+      - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_beacon_idle"
+tests:
+  benchmarks.current_consumption.beacon_idle.nrf54h:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - ipc_radio_CONFIG_PM=y
+      - ipc_radio_CONFIG_PM_DEVICE=y
+      - ipc_radio_CONFIG_PM_DEVICE_RUNTIME=y
+      - ipc_radio_POWEROFF=y
+      - SB_CONFIG_NETCORE_IPC_RADIO=y
+      - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
+  benchmarks.current_consumption.beacon_idle.nrf54l:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
