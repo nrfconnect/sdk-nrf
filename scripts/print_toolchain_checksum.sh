@@ -4,7 +4,13 @@ BASEDIR=$(dirname "$0")
 REQUIREMENTS=$BASEDIR/requirements-fixed.txt
 
 # Detect OS and set tools version file + hash command
-case "$(uname -s)" in
+if [ -n "$TCM_OS_OVERRIDE" ]; then
+    OS_NAME="$TCM_OS_OVERRIDE"
+else
+    OS_NAME="$(uname -s)"
+fi
+
+case "$OS_NAME" in
     MINGW*)   TOOLS_VERSIONS="$BASEDIR/tools-versions-win10.yml" ; HASH_CMD="sha256sum" ;;
     Linux*)   TOOLS_VERSIONS="$BASEDIR/tools-versions-linux.yml" ; HASH_CMD="sha256sum" ;;
     Darwin*)  TOOLS_VERSIONS="$BASEDIR/tools-versions-darwin.yml" ; HASH_CMD="shasum -a 256" ;;
