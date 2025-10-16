@@ -11,6 +11,17 @@ config MCUBOOT_SIGN_MERGED_BINARY
 	depends on SOC_NRF54H20
 	select EXPERIMENTAL
 
+config MCUBOOT_IMAGES_ROM_END_OFFSET_AUTO
+	string "Images that should have automatically calculated ROM end offset"
+	default ""
+	depends on SOC_NRF54H20
+	help
+	  Enable automatic calculation of the ROM end offset based on the
+	  bootloader configuration as well as the image size.
+	  This setting should be a semicolon-separated list of image names
+	  (e.g. "smp_svr;ipc_radio", "mcuboot_secondary_app").
+	  If empty the default set of updateable images will be affected.
+
 config MCUBOOT_BUILD_DIRECT_XIP_VARIANT
 	bool "Build DirectXIP variant image"
 	depends on MCUBOOT_MODE_DIRECT_XIP || MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT
