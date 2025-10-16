@@ -1,0 +1,16 @@
+common:
+  depends_on: i2c
+  tags:
+    - drivers
+    - i2c
+    - ci_tests_zephyr_drivers_i2c_i2c_nrfx_twim
+  harness: ztest
+  harness_config:
+    fixture: i2c_bus_short
+
+tests:
+  nrf.extended.drivers.i2c.nrfx_twim_async_api:
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120pdk/nrf7120/cpuapp
