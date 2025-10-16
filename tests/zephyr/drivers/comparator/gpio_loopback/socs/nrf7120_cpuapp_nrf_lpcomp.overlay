@@ -1,6 +1,8 @@
+#include <zephyr/dt-bindings/comparator/nrf-comp.h>
+
 &comp {
 	compatible = "nordic,nrf-lpcomp";
-	psel = "AIN0"; /* P0.00 */
+	psel = <NRF_COMP_AIN0>; /* P0.00 */
 	refsel = "VDD_4_8";
 	status = "okay";
 };
