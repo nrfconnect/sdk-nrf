@@ -52,6 +52,12 @@
 .. _`Zephyr pull request #50305`: https://github.com/zephyrproject-rtos/zephyr/pull/50305
 .. _`Zephyr issue #69546`: https://github.com/zephyrproject-rtos/zephyr/issues/69546
 .. _`TF-M sample incompatibility issue`: https://github.com/zephyrproject-rtos/zephyr/issues/34658
+.. _`HCI driver debugging`: https://github.com/zephyrproject-rtos/zephyr/blob/06daf0e29ee1d7cfd8242f45f2ad04f2fd2b03b9/subsys/bluetooth/host/hci_core.c#L77
+.. _`L2CAP debugging`: https://github.com/zephyrproject-rtos/zephyr/blob/06daf0e29ee1d7cfd8242f45f2ad04f2fd2b03b9/subsys/bluetooth/host/l2cap.c#L41
+.. _`ATT debugging`: https://github.com/zephyrproject-rtos/zephyr/blob/06daf0e29ee1d7cfd8242f45f2ad04f2fd2b03b9/subsys/bluetooth/host/att.c#L46
+.. _`GATT debugging`: https://github.com/zephyrproject-rtos/zephyr/blob/06daf0e29ee1d7cfd8242f45f2ad04f2fd2b03b9/subsys/bluetooth/host/gatt.c#L60
+.. _`SMP debugging`: https://github.com/zephyrproject-rtos/zephyr/blob/06daf0e29ee1d7cfd8242f45f2ad04f2fd2b03b9/subsys/bluetooth/host/smp.c#L50
+.. _`access layer debugging`: https://github.com/zephyrproject-rtos/zephyr/blob/06daf0e29ee1d7cfd8242f45f2ad04f2fd2b03b9/subsys/bluetooth/mesh/access.c#L32
 
 .. _`Asset-Tracker-Template`: https://github.com/nrfconnect/Asset-Tracker-Template
 .. _`ncs-serial-modem`: https://github.com/nrfconnect/ncs-serial-modem
@@ -998,6 +1004,7 @@
 .. _`Programming application firmware on the nRF54L SoCs`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_nrf54L15.html
 .. _`Upgrading modem firmware using J-Link`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_modem_9160.html
 .. _`Provisioning cryptographic keys`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/provisioning_keys.html
+.. _`Logging HCI packets`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/hci_logger.html
 
 .. _`anomaly 19`: https://docs.nordicsemi.com/bundle/errata_nRF5340_EngA/page/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
 

@@ -1003,7 +1003,10 @@ Trusted Firmware-M
 Documentation
 =============
 
-* Added the :ref:`app_power_opt_opp` page to the :ref:`app_optimize` section.
+* Added:
+
+  * The :ref:`debug_log_bt_stack` section to the :ref:`gs_debugging` page.
+  * The :ref:`app_power_opt_opp` page to the :ref:`app_optimize` section.
 
 * Updated:
 
