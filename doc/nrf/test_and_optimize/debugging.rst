@@ -57,6 +57,43 @@ These logs are visible once you configure logger for your application.
 You can also configure log level per logger module, for example to get more information about a given subsystem.
 See :ref:`ug_logging` for details on how to enable and configure logs.
 
+.. _debug_log_bt_stack:
+
+Debug logging for the Bluetooth stack
+-------------------------------------
+
+To enable debug logging for the Bluetooth stack in your :file:`prj.conf` file when using the |NCS|, set the :kconfig:option:`CONFIG_BT_LOG_LEVEL_DBG` Kconfig option to ``y``.
+This enables debug-level logging for the Bluetooth subsystem, allowing you to see detailed logs from the Bluetooth stack during development and troubleshooting.
+For example, a minimal configuration might look like this::
+
+   CONFIG_BT=y
+   CONFIG_BT_LOG_LEVEL_DBG=y
+
+If you want even more detailed debugging (such as stack traces or assertion failures), you can also enable the following Kconfig options:
+
+* ``CONFIG_ASSERT=y``
+* ``CONFIG_BT_LOG_LEVEL_INF=y``
+* ``CONFIG_EXCEPTION_STACK_TRACE=y``
+
+For more detailed logs from specific parts of the Bluetooth stack, you can add more specific configurations.
+To enable debug logs from a module of your interest, use a module-specific logging configuration string and add the ``_DBG`` prefix to it.
+For example:
+
+* Bluetooth `HCI driver debugging`_ - :kconfig:option:`CONFIG_BT_HCI_CORE_LOG_LEVEL_DBG`
+* Bluetooth `L2CAP debugging`_ - :kconfig:option:`CONFIG_BT_L2CAP_LOG_LEVEL_DBG`
+* Bluetooth `ATT debugging`_ - :kconfig:option:`CONFIG_BT_ATT_LOG_LEVEL_DBG`
+* Bluetooth `GATT debugging`_ - :kconfig:option:`CONFIG_BT_GATT_LOG_LEVEL_DBG`
+* Bluetooth `SMP debugging`_ - :kconfig:option:`CONFIG_BT_SMP_LOG_LEVEL_DBG`
+* Bluetooth Mesh `access layer debugging`_ - :kconfig:option:`CONFIG_BT_MESH_ACCESS_LOG_LEVEL_DBG`
+
+To ensure that the logger module is enabled and you can see the logs, set the :kconfig:option:`CONFIG_LOG` Kconfig option to ``y``.
+
+For more advanced debug purposes, see the following:
+
+* `Logging HCI packets`_ for logs with a detailed view of what happens both inside and between Bluetooth devices.
+* The :kconfig:option:`CONFIG_MPSL_PIN_DEBUG` Kconfig option to figure out when the radio is used.
+  On multi-core SoCs, set this option on the core that runs the radio firmware.
+
 Debug libraries
 ===============
 
