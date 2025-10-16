@@ -9,9 +9,9 @@
 
 int constant_memcmp(const void *s1, const void *s2, size_t n)
 {
-	const volatile unsigned char *a = s1;
-	const volatile unsigned char *b = s2;
-	volatile unsigned char x = 0;
+	const volatile uint8_t *a = s1;
+	const volatile uint8_t *b = s2;
+	volatile uint8_t x = 0;
 
 	for (size_t i = 0; i < n; i++) {
 		x |= a[i] ^ b[i];
@@ -22,8 +22,8 @@ int constant_memcmp(const void *s1, const void *s2, size_t n)
 
 bool constant_memcmp_is_zero(const void *s1, size_t n)
 {
-	const volatile unsigned char *a = s1;
-	volatile unsigned char x = 0;
+	const volatile uint8_t *a = s1;
+	volatile uint8_t x = 0;
 
 	for (size_t i = 0; i < n; i++) {
 		x |= a[i];

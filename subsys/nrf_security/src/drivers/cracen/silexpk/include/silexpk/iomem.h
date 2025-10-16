@@ -8,6 +8,7 @@
 #define IOMEM_HEADER_FILE
 
 #include <string.h>
+#include <stdint.h>
 
 #ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
 #define SX_WARN_UNALIGNED_ADDR(addr) printk("%s: WARNING: unaligned address %p\r\n", __func__, addr)
@@ -47,13 +48,13 @@ void sx_wrpkmem(void *dst, const void *src, size_t sz);
  * @param[in] input_byte The byte value to be written.
  */
 #ifndef CONFIG_SOC_NRF54LM20A
-static inline void sx_wrpkmem_byte(void *dst, char input_byte)
+static inline void sx_wrpkmem_byte(void *dst, uint8_t input_byte)
 {
-	volatile char *d = (volatile char *)dst;
+	volatile uint8_t *d = (volatile uint8_t *)dst;
 	*d = input_byte;
 }
 #else
-void sx_wrpkmem_byte(void *dst, char input_byte);
+void sx_wrpkmem_byte(void *dst, uint8_t input_byte);
 #endif
 
 /** Read from device memory at src into normal memory at dst.
@@ -82,9 +83,9 @@ static inline void sx_rdpkmem(void *dst, const void *src, size_t sz)
  *
  * @return Byte value from the src.
  */
-static inline unsigned char sx_rdpkmem_byte(const void *src)
+static inline uint8_t sx_rdpkmem_byte(const void *src)
 {
-	volatile unsigned char *s = (volatile unsigned char *)src;
+	volatile uint8_t *s = (volatile uint8_t *)src;
 	return s[0];
 }
 

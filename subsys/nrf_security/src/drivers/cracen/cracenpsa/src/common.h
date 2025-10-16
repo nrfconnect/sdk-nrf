@@ -11,6 +11,7 @@
 #include "sxsymcrypt/internal.h"
 
 #include <stddef.h>
+#include <stdint.h>
 #include <zephyr/sys/util.h>
 #include <silexpk/sxbuf/sxbufop.h>
 #include <sxsymcrypt/hashdefs.h>
@@ -132,7 +133,7 @@ psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
  * \return sxsymcrypt status code.
  */
 int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey, bool is_key_pair,
-				 const unsigned char *key, size_t keylen, struct sx_buf *modulus,
+				 const uint8_t *key, size_t keylen, struct sx_buf *modulus,
 				 struct sx_buf *exponent);
 
 /**
@@ -170,7 +171,7 @@ psa_status_t rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit, size
  * @param[in] b Second buffer of size sz
  * @param[in] sz Size of the buffers
  */
-void cracen_xorbytes(char *a, const char *b, size_t sz);
+void cracen_xorbytes(uint8_t *a, const uint8_t *b, size_t sz);
 
 /**
  * @brief Loads key buffer and attributes.

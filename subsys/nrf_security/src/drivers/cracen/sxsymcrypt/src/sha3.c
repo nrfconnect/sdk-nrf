@@ -20,8 +20,8 @@ static const struct sx_digesttags ba418tags = {.cfg = DMATAG_BA418 | DMATAG_CONF
  * in https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf
  * (section 5.1 and B.2).
  */
-static size_t fips202_pad(unsigned char prefix, unsigned char suffix, size_t capacity, size_t msgsz,
-			  unsigned char *padding)
+static size_t fips202_pad(uint8_t prefix, uint8_t suffix, size_t capacity, size_t msgsz,
+			  uint8_t *padding)
 {
 	size_t r = (1600 / 8) - capacity;
 	size_t q;
@@ -58,9 +58,9 @@ static size_t fips202_pad(unsigned char prefix, unsigned char suffix, size_t cap
 #define SHA3_MODE_SHAKE(x, outlen) ((x) | SHA3_SHAKE_ENABLE | ((outlen) << 8))
 #define SHA3_SW_PAD		   0
 
-static void shake256_digest(struct sxhash *hash_ctx, char *digest)
+static void shake256_digest(struct sxhash *hash_ctx, uint8_t *digest)
 {
-	unsigned char *padding = (unsigned char *)&hash_ctx->extramem;
+	uint8_t *padding = (uint8_t *)&hash_ctx->extramem;
 	int padsz;
 
 	/* For SHAKE256, the capacity is 64 bytes. */
@@ -76,9 +76,9 @@ static void shake256_digest(struct sxhash *hash_ctx, char *digest)
 	ADD_OUTDESCA(hash_ctx->dma, digest, hash_ctx->algo->digestsz, CMDMA_BA413_BUS_MSK);
 }
 
-static void sha3_digest(struct sxhash *hash_ctx, char *digest)
+static void sha3_digest(struct sxhash *hash_ctx, uint8_t *digest)
 {
-	unsigned char *padding = (unsigned char *)&hash_ctx->extramem;
+	uint8_t *padding = (uint8_t *)&hash_ctx->extramem;
 	int padsz;
 
 	padsz = fips202_pad(SHA3_MODE_PREFIX, SHA3_MODE_SUFFIX, 2 * hash_ctx->algo->digestsz,

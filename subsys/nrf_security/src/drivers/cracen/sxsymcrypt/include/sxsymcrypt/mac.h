@@ -14,6 +14,7 @@ extern "C" {
 #endif
 
 #include <stddef.h>
+#include <stdint.h>
 #include "internal.h"
 
 /** Feeds data to be used for MAC generation.
@@ -36,7 +37,7 @@ extern "C" {
  * @remark - this function can be called multiple times to feed multiple chunks
  *           scattered in memory.
  */
-int sx_mac_feed(struct sxmac *c, const char *datain, size_t sz);
+int sx_mac_feed(struct sxmac *c, const uint8_t *datain, size_t sz);
 
 /** Starts MAC generation operation.
  *
@@ -58,7 +59,7 @@ int sx_mac_feed(struct sxmac *c, const char *datain, size_t sz);
  * @remark - if used with context saving(last chunk), the fed data size for
  *         the last chunk can not be 0
  */
-int sx_mac_generate(struct sxmac *c, char *mac);
+int sx_mac_generate(struct sxmac *c, uint8_t *mac);
 
 /** Resumes MAC operation in context-saving.
  *

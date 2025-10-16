@@ -597,7 +597,7 @@ static inline struct sx_pk_acq_req sx_ecjpake_gen_step_2_go(const struct sx_pk_e
 static inline void sx_ecjpake_gen_step_2_end(sx_pk_req *req, sx_pk_affine_point *a, sx_ecop *x2s,
 					     sx_pk_affine_point *ga)
 {
-	const char **outputs = sx_pk_get_output_ops(req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
 	const int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_mem2affpt(outputs[0], outputs[1], opsz, a);

@@ -252,16 +252,16 @@ struct cracen_key_derivation_operation {
 			uint8_t blk_counter;
 			uint8_t prk[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
 			uint8_t t[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
-			char info[CRACEN_HKDF_MAX_INFO_SIZE];
+			uint8_t info[CRACEN_HKDF_MAX_INFO_SIZE];
 			size_t info_length;
 			bool info_set;
 		} hkdf;
 
 		struct {
 			uint64_t input_cost;
-			char password[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
+			uint8_t password[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
 			size_t password_length;
-			char salt[CRACEN_PBKDF_MAX_SALT_SIZE];
+			uint8_t salt[CRACEN_PBKDF_MAX_SALT_SIZE];
 			size_t salt_length;
 			uint32_t blk_counter;
 			uint8_t uj[PSA_MAC_MAX_SIZE];

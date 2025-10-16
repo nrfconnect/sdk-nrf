@@ -19,14 +19,14 @@
  * @param[in] mem Memory address to write the operand to
  * @param[in] sz Size in bytes of the operand
  */
-void sx_pk_ecop2mem(const sx_ecop *op, char *mem, int sz);
+void sx_pk_ecop2mem(const sx_ecop *op, uint8_t *mem, int sz);
 
 /** Write the operand into memory which has the exact size needed
  *
  * @param[in] op Operand written to memory. Data should be in big endian
  * @param[in] mem Memory address to write the operand to
  */
-void sx_pk_op2vmem(const sx_op *op, char *mem);
+void sx_pk_op2vmem(const sx_op *op, uint8_t *mem);
 
 /** Convert raw bytes to operand
  *
@@ -35,7 +35,7 @@ void sx_pk_op2vmem(const sx_op *op, char *mem);
  * @param[out] op Operand in which the raw little endian bytes are written.
  * Its size should be bigger or equal to 'sz'
  */
-void sx_pk_mem2op(const char *mem, int sz, sx_op *op);
+void sx_pk_mem2op(const uint8_t *mem, int sz, sx_op *op);
 
 /** Convert raw bytes to EC operand
  *
@@ -44,7 +44,7 @@ void sx_pk_mem2op(const char *mem, int sz, sx_op *op);
  * @param[out] op EC Operand in which the raw little endian bytes are written.
  * Its size should be bigger or equal to 'sz'
  */
-void sx_pk_mem2ecop(const char *mem, int sz, sx_ecop *op);
+void sx_pk_mem2ecop(const uint8_t *mem, int sz, sx_ecop *op);
 
 /** Convert raw bytes to an affine point operand
  *
@@ -54,7 +54,7 @@ void sx_pk_mem2ecop(const char *mem, int sz, sx_ecop *op);
  * @param[out] op Affine point operand in which the raw little endian bytes are
  * written. Its size should be bigger or equal to 'sz'
  */
-void sx_pk_mem2affpt(const char *mem_x, const char *mem_y, int sz, sx_pk_affine_point *op);
+void sx_pk_mem2affpt(const uint8_t *mem_x, const uint8_t *mem_y, int sz, sx_pk_affine_point *op);
 
 /** Write the affine point operand into memory filling 'sz' bytes, 0-pading if
  * needed
@@ -65,7 +65,7 @@ void sx_pk_mem2affpt(const char *mem_x, const char *mem_y, int sz, sx_pk_affine_
  * @param[in] mem_y Memory address to write the y-coordinate of the operand to
  * @param[in] sz Size in bytes of a single coordinate
  */
-void sx_pk_affpt2mem(const sx_pk_affine_point *op, char *mem_x, char *mem_y, int sz);
+void sx_pk_affpt2mem(const sx_pk_affine_point *op, uint8_t *mem_x, uint8_t *mem_y, int sz);
 
 /** Return the size in bytes of the operand.
  *

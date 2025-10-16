@@ -108,7 +108,7 @@ sx_async_srp_user_keygen_go(struct sx_pk_cnx *cnx, const sx_op *n, const sx_op *
  */
 static inline void sx_async_srp_user_keygen_end(sx_pk_req *req, sx_op *s)
 {
-	const char **outputs = sx_pk_get_output_ops(req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
 	const int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_mem2op(outputs[0], opsz, s);
