@@ -38,29 +38,40 @@ def send_with_dead_time_between_characters(
 def test_uart_passtrough(dut: DeviceAdapter):
     """
     Verify the UART darta forwarding capability.
-    Send message from 'passtrough' UART to 'console 'UART' and verify it,
-    then send message from 'console' to 'passtrough' UART and verify it.
+    Send message from 'console' to 'passtrough' UART and verify it,
+    then send message from 'passtrough' UART to 'console 'UART' and verify it.
     """
+
+    dut.readlines_until(regex="Ready", print_output=True, timeout=2)
+    dut.disconnect()
+    console_serial_port: SerialPort = SerialPort(
+        serial_port=dut.device_config.serial, baudrate=dut.device_config.baud
+    )
 
     if "if00" in dut.device_config.serial:
         second_serial_port_name = dut.device_config.serial.replace("if00", "if02")
     elif "if02" in dut.device_config.serial:
         second_serial_port_name = dut.device_config.serial.replace("if02", "if00")
 
-    second_serial_port: SerialPort = SerialPort(
+    passtrough_serial_port: SerialPort = SerialPort(
         serial_port=second_serial_port_name, baudrate=dut.device_config.baud
     )
 
-    dut.readlines_until(regex="Ready", print_output=True, timeout=2)
-    second_serial_port.open()
+    first_message: str = "TEST1: console->passtrough"
+    second_message: str = "TEST2: passtrough->console"
+
+    console_serial_port.open()
+    passtrough_serial_port.open()
     send_with_dead_time_between_characters(
-        second_serial_port.send, "TEST1: console->passtrough", DEAD_TIME_S
+        console_serial_port.send, first_message, DEAD_TIME_S
     )
-    dut.readlines_until(regex="TEST1: console->passtrough", print_output=True, timeout=2)
+    first_search_result: bool = passtrough_serial_port.read_data_until_matched(first_message)
     send_with_dead_time_between_characters(
-        dut.write, "TEST2: passtrough->console", DEAD_TIME_S, apply_encoding=True
+        passtrough_serial_port.send, second_message, DEAD_TIME_S
     )
-    second_port_data: str = second_serial_port.send("", get_response=True)
-    logger.debug(second_port_data)
-    assert "TEST2: passtrough->console" in second_port_data
-    second_serial_port.close()
+    second_search_result: bool = console_serial_port.read_data_until_matched(second_message)
+    passtrough_serial_port.close()
+    console_serial_port.close()
+
+    assert first_search_result is True, f"{first_message} not found"
+    assert second_search_result is True, f"{second_message} not found"

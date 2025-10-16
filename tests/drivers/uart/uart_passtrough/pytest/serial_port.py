@@ -103,3 +103,30 @@ class SerialPort:
             logger.error(f"Decoding error: {exc}")
 
         return response.rstrip("\n")
+
+    def read_data_until_matched(self, message_to_find: str) -> bool:
+        """
+        Read serial data until 'message_to_find' is found
+        or 'timeout' is reached
+        """
+        data: str = ""
+        start: float = time.perf_counter()
+        while time.perf_counter() - start < self._timeout:
+            try:
+                if self.serial_port.in_waiting > 0:
+                    data += self.serial_port.read_all().decode()
+                    logger.debug(data)
+                    if message_to_find in data:
+                        return True
+                time.sleep(0.1)
+
+            except serial.SerialTimeoutException as exc:
+                logger.error(f"Serial port read timeout: {exc}")
+
+            except serial.SerialException as exc:
+                logger.error(f"Serial port read error: {exc}")
+
+            except UnicodeDecodeError as exc:
+                logger.error(f"Decoding error: {exc}")
+
+        return False
