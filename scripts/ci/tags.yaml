@@ -1689,6 +1689,11 @@ ci_tests_zephyr_drivers_i2c_i2c_bme688:
     - nrf/tests/zephyr/drivers/i2c/i2c_bme688/
     - zephyr/tests/drivers/i2c/i2c_bme688/
 
+ci_tests_zephyr_drivers_i2c_i2c_nrfx_twim:
+  files:
+    - nrf/tests/zephyr/drivers/i2c/i2c_nrfx_twim/
+    - zephyr/tests/drivers/i2c/i2c_nrfx_twim/
+
 ci_tests_zephyr_drivers_spi:
   files:
     - nrf/tests/zephyr/drivers/spi/
