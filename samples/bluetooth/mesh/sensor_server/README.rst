@@ -263,6 +263,11 @@ The Sensor Setup Server models are now configured and able to receive sensor set
    To enable Sensor Server configuration by a Sensor Client, an application key must be bound to the Sensor Setup Server.
    This functionality must also be programmed in the :ref:`bt_mesh_sensor_cli_readme` device.
 
+External flash for settings partition
+=====================================
+
+.. include:: /includes/mesh_ext_flash_settings.txt
+
 Dependencies
 ************
 

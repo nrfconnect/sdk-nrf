@@ -361,13 +361,27 @@ Bluetooth samples
 Bluetooth Mesh samples
 ----------------------
 
+* Added external flash settings support for the ``nrf52840dk/nrf52840`` board targets in all Bluetooth Mesh samples.
+
 * :ref:`ble_mesh_dfu_distributor` sample:
 
-  * Added support for external flash memory for the ``nrf52840dk/nrf52840`` and the ``nrf54l15dk/nrf54l15/cpuapp`` as the secondary partition for the DFU process.
+   * Added:
+
+    * Support for external flash memory for the ``nrf52840dk/nrf52840`` and the ``nrf54l15dk/nrf54l15/cpuapp`` as the secondary partition for the DFU process.
+    * Support for external flash settings for the ``nrf52840dk/nrf52840`` board targets.
+
+  * Updated the :makevar:`FILE_SUFFIX` make variable to use more descriptive suffixes for external flash configurations.
+    The new suffixes are ``_dfu_ext_flash`` for external flash DFU storage and ``_ext_flash_settings`` for external flash settings storage.
 
 * :ref:`ble_mesh_dfu_target` sample:
 
-  * Added support for external flash memory for the ``nrf52840dk/nrf52840`` and the ``nrf54l15dk/nrf54l15/cpuapp`` as the secondary partition for the DFU process.
+  * Added:
+
+    * Support for external flash memory for the ``nrf52840dk/nrf52840`` and the ``nrf54l15dk/nrf54l15/cpuapp`` as the secondary partition for the DFU process.
+    * Support for external flash settings for the ``nrf52840dk/nrf52840`` board targets.
+
+  * Updated the :makevar:`FILE_SUFFIX` make variable to use more descriptive suffixes for external flash configurations.
+    The new suffixes are ``_dfu_ext_flash`` for external flash DFU storage and ``_ext_flash_settings`` for external flash settings storage.
 
 * :ref:`bluetooth_mesh_sensor_client` sample:
 

@@ -25,3 +25,13 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
+  sample.bluetooth.mesh.ble_and_mesh.settings_ext_flash:
+    sysbuild: true
+    build_only: true
+    extra_args: FILE_SUFFIX=settings_ext_flash
+    platform_allow:
+      - nrf52840dk/nrf52840
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild

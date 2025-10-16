@@ -254,6 +254,11 @@ You should now be able to perform the following actions:
   When controlling a Mesh Light Fixture device using the Mesh Light Dimmer device, the Light LC Server control will be temporarily disabled for the Mesh Light Fixture device.
   The control will be re-enabled after a certain time which can be configured using the :kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL` option.
 
+External flash for settings partition
+=====================================
+
+.. include:: /includes/mesh_ext_flash_settings.txt
+
 Dependencies
 ************
 

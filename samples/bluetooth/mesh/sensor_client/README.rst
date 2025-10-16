@@ -226,6 +226,11 @@ For example, to set the sensor gain for present ambient light level to 1.1, writ
 
    mesh models sensor setting-set 0x004E 0x0074 1.1
 
+External flash for settings partition
+=====================================
+
+.. include:: /includes/mesh_ext_flash_settings.txt
+
 Dependencies
 ************
 
@@ -240,14 +245,14 @@ In addition, it uses the following Zephyr libraries:
 * :file:`include/drivers/hwinfo.h`
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
+   * :file:`include/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
+   * :file:`include/bluetooth/bluetooth.h`
 
 * :ref:`zephyr:bluetooth_mesh`:
 
-  * :file:`include/bluetooth/mesh.h`
+   * :file:`include/bluetooth/mesh.h`
 
 * :ref:`bluetooth_mesh_shell`

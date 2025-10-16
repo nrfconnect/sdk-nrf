@@ -219,6 +219,11 @@ Running DFU
 After the sample is built with the :file:`overlay-dfu.conf` file and the :file:`sysbuild-dfu.conf` file, and programmed to your development kit, support for FOTA update is enabled.
 See :ref:`FOTA over Bluetooth Low Energy<ug_nrf52_developing_ble_fota>` for instructions on how to perform FOTA update and initiate the DFU process.
 
+External flash for settings partition
+=====================================
+
+.. include:: /includes/mesh_ext_flash_settings.txt
+
 Dependencies
 ************
 
@@ -233,15 +238,15 @@ In addition, it uses the following Zephyr libraries:
 * :file:`include/drivers/hwinfo.h`
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
+   * :file:`include/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
+   * :file:`include/bluetooth/bluetooth.h`
 
 * :ref:`zephyr:bluetooth_mesh`:
 
-  * :file:`include/bluetooth/mesh.h`
+   * :file:`include/bluetooth/mesh.h`
 
 The sample also uses the following secure firmware component:
 

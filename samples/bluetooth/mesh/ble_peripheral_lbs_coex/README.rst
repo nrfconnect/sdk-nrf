@@ -249,6 +249,11 @@ After programming the sample to your development kit, test it by performing the 
    Once connected, the device will not advertise with the LBS Service UUID until the device is rebooted.
    Reboot the device to restart the LBS Service UUID advertisements.
 
+External flash for settings partition
+=====================================
+
+.. include:: /includes/mesh_ext_flash_settings.txt
+
 Dependencies
 ************
 

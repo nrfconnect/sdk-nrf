@@ -324,6 +324,11 @@ Do this in the following way:
 * Scroll down to the **OCCUPANCY MODE** and tap :guilabel:`ON` to enable the Occupancy mode in the **Standby** state.
 * When the Light LC Server is in the **Standby** state, press ``Button 2`` on the **Mesh Sensor** node.
 
+External flash for settings partition
+=====================================
+
+.. include:: /includes/mesh_ext_flash_settings.txt
+
 Dependencies
 ************
 
