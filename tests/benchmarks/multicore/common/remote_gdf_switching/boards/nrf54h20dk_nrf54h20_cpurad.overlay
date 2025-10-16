@@ -30,3 +30,7 @@
 	status = "disabled";
 	/delete-property/memory-regions;
 };
+
+&hsfll120 {
+	status = "okay";
+};
