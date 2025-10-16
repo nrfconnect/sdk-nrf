@@ -205,21 +205,32 @@ In this sample, UART and SEGGER RTT are available as logging backends.
 External flash support
 ======================
 
+This sample supports two types of external flash usage: DFU firmware image storage and settings partition storage.
+
+DFU firmware image storage
+--------------------------
+
 This sample supports external flash memory as secondary storage partition for saving of the incoming firmware images.
 See :ref:`ug_bootloader_external_flash` for more information on external flash support as a partition in the :ref:`ug_bootloader_mcuboot_nsib`.
 The default configuration does not support external flash memory.
-To enable external flash support, set :makevar:`FILE_SUFFIX` to ``ext_flash`` when building the sample.
+To enable external flash support, set :makevar:`FILE_SUFFIX` to ``dfu_ext_flash`` when building the sample.
 
 Build the sample using the following command:
 
 .. code-block:: console
 
-   west build -p -b *board_name* -- -DFILE_SUFFIX=ext_flash
+   west build -p -b *board_name* -- -DFILE_SUFFIX=dfu_ext_flash
+
+Currently, DFU external flash is supported on the ``nrf52840dk/nrf52840`` and ``nrf54l15dk/nrf54l15/cpuapp`` board targets.
+
+Settings partition storage
+--------------------------
+
+.. include:: /includes/mesh_ext_flash_settings.txt
 
 .. note::
-   The external flash is not erased during the internal flash erasing procedure.
-   See `nRF Util`_ for more information on how to erase the external flash.
-   Currently, external flash is supported on the ``nrf52840dk/nrf52840`` board and the ``nrf54l15dk/nrf54l15/cpuapp`` board.
+   You can use only one :makevar:`FILE_SUFFIX` at a time.
+   The sample does not support both DFU firmware image storage and settings partition storage on external flash simultaneously.
 
 Dependencies
 ************

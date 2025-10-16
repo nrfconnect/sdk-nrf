@@ -1,0 +1,17 @@
+This sample supports relocating mesh settings to external flash on ``nrf52840dk/nrf52840`` board target.
+See the `nRF52840 DK User Guide`_ for details about the external flash memory available on the board.
+This provides additional storage space for mesh persistent data.
+
+To enable external flash settings storage, set :makevar:`FILE_SUFFIX` to ``settings_ext_flash`` when building the sample.
+
+Build the sample using the following command:
+
+.. code-block:: console
+
+   west build -p -b nrf52840dk/nrf52840 -- -DFILE_SUFFIX=settings_ext_flash
+
+.. note::
+   The external flash is not erased during the internal flash erasing procedure.
+   See `nRF Util`_ for more information on how to erase the external flash.
+
+Currently, the external flash settings partition is only supported on the ``nrf52840dk/nrf52840`` board target.
