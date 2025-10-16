@@ -1,14 +1,14 @@
 .. _otdoa_sample:
 
-Cellular: hellaPHY OTDOA Positioning
-###########################
+Cellular: ``hellaPHY`` OTDOA Positioning
+########################################
 
 .. contents::
    :local:
    :depth: 2
 
 hellaPHY OTDOA is a new positioning technology that uses signals broadcast by the
-terrestrial cellular network to estimate the position of the UE.  This sample
+terrestrial cellular network to estimate the position of the UE. This sample
 demonstrates how to use the hellaPHY OTDOA library and adaptation layer to
 estimate the position of your device.
 
@@ -60,7 +60,7 @@ Running the sample application
 
 .. note::
    The device must be provisioned with a private key before it can be used
-   for OTDOA positioning.  The corresponding public key must be sent to PHY Wireless
+   for OTDOA positioning. The corresponding public key must be sent to PHY Wireless
    to be provisioned on the network server.
 
 To provision the device, follow these steps:

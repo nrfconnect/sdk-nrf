@@ -19,10 +19,12 @@
  */
 
 /** @brief Parse the response to AT%%XMONITOR and return ECGI & DLEARFCN
- * @param psz_resp      [in]   response string returned by the modem
- * @param u_resp_len    [in]   Length of the response string
- * @param pu32_ecgi     [out]  A pointer to where the returned ECGI will be written
- * @param pu32_dlearfcn [out]  A pointer to where the returned DLEARFCN will be written
+ * @param[in]  psz_resp      response string returned by the modem
+ * @param[in]  u_resp_len    Length of the response string
+ * @param[out] pu32_ecgi     A pointer to where the returned ECGI will be written
+ * @param[out] pu32_dlearfcn A pointer to where the returned DLEARFCN will be written
+ * @param[out] pu16_mcc      A pointer to where the returned MCC will be written
+ * @param[out] pu16_mnc      A pointer to where the returned MNC will be written
  * @return     0               Success
  *
  * @note response is documented in "nRF91 AT Commands Command Reference Guide" v2.0
@@ -39,10 +41,10 @@ int otdoa_nordic_at_parse_xmonitor_response(const char *const psz_resp, size_t u
 
 /**
  * @brief Use AT%%XMONITOR command to get the current ECGI and DLEARFCN from the modem
- * @param pu32_ecgi[out]       ECGI
- * @param pu32_dlearfcn[out]   DLEARFCN
- * @param pu16_mcc[out]        MCC
- * @param pu16_mnc[out]        MNC
+ * @param[out] pu32_ecgi       ECGI
+ * @param[out] pu32_dlearfcn   DLEARFCN
+ * @param[out] pu16_mcc        MCC
+ * @param[out] pu16_mnc        MNC
  * @return  0 on success
  *          values from otdoa_api_error_codes_t (in phywi_otdoa_api.h) on any failure
  *

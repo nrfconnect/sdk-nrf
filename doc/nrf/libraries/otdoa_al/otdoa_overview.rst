@@ -1,33 +1,33 @@
-.. otdoa overview:
+.. _otdoa_overview:
 
 hellaPHY OTDOA Overview
 #######################
 
 hellaPHY Observed Time-Difference of Arrival (hellaPHY OTDOA) is a technique for estimating a UE's position.
 It involves estimating time differences between signals broadcast by the terrestrial LTE cellular
-network.  These time difference estimates can then be used to triangulate the UE's position based
+network. These time difference estimates can then be used to triangulate the UE's position based
 upon known cellular base station positions, in much the same way as GNSS systems triangulate
-a position based upon know satellite positions.  The hellaPHY OTDOA implementation in this library is
+a position based upon know satellite positions. The hellaPHY OTDOA implementation in this library is
 *UE-based*, meaning that the position estimate is calculated by the UE application processor,
 rather than by a network server.
 
 Cells in the LTE network broadcast Positioning Reference Signals (PRS) signals
-that may be used to estimate the time difference of arrival at the UE.  The PRS
+that may be used to estimate the time difference of arrival at the UE. The PRS
 signals are periodically broadcast by the LTE network (typically for 1 msec.
 every 160 msec.), and they are multiplexed in a way that allows the UE to detect
 PRS broadcast by multiple base stations at the same time.
 
 Information about the cellular base stations, including their positions,
 is contained in micro-Base Station Almanac (uBSA) file that is downloaded
-by the UE from a network server.  This uBSA is stored in a file system on
-the UE, and it typically covers a large geographic area.  The UE uses this
+by the UE from a network server. This uBSA is stored in a file system on
+the UE, and it typically covers a large geographic area. The UE uses this
 uBSA for many position estimates; if it moves outside the geographic coverage
-area a new uBSA is automatically downloaded.  An important function of the
+area a new uBSA is automatically downloaded. An important function of the
 OTDOA Adaption Layer is to download the uBSA from a network server, and store
 it in the UE file system for access by the OTDOA binary library.
 
 Once the uBSA has been downloaded, all position estimate calculations are
-performed by n the UE application processor.  This includes collection of the PRS
+performed by n the UE application processor. This includes collection of the PRS
 signals, estimation of time differences of arrival, and triangulation
 calculations necessary to estimate the UE position.
 
@@ -42,7 +42,7 @@ Implementation
 
 The hellaPHY OTDOA firmware subsystem consists of a binary library (delivered in binary
 object code format), and the adaption layer (delivered as source code as part of
-the nRF Connect SDK).  The diagram below shows an overview of the hellaPHY OTDOA firmware subsystem
+the nRF Connect SDK). The diagram below shows an overview of the hellaPHY OTDOA firmware subsystem
 in a typical application.
 
 .. image:: images/otdoa-fw-arch.drawio.png
@@ -83,17 +83,17 @@ Security Requirements
 TLS Certificate
 ---------------
 The UE requires a TLS certificate to authenticate with the network server
-when downloading the uBSA or configuration information.  This certificate
+when downloading the uBSA or configuration information. This certificate
 may be installed by the application using the :ref:`otdoa_api_install_tls_cert`
-API.  Alternatively, the certificate may be installed by the adaption layer
+API. Alternatively, the certificate may be installed by the adaption layer
 using the :kconfig:option:`CONFIG_OTDOA_API_TLS_CERT_INSTALL` configuration
 option.
 
 Network Server Keys
 -------------------
 The UE requires a public/private key pair to authenticate with the network server
-when downloading the uBSA or configuration information.  The private key is
-loaded into the UE using the :ref:`otdoa_api_provision` API.   The public key
+when downloading the uBSA or configuration information. The private key is
+loaded into the UE using the :ref:`otdoa_api_provision` API. The public key
 is sent to the network server where it is used to authenticate the UE.
 
 Instructions for generating the public/private key pair are provided along with
@@ -185,7 +185,7 @@ It uses the following Zephyr libraries and services:
 FLASH File System
 =================
 
-The OTDOA library uses a FLASH file system for storage of uBSA information.  Typically
+The OTDOA library uses a FLASH file system for storage of uBSA information. Typically
 this makes use of the Zephyr Little FS file system, mounted on either an external serial
 FLASH or using the NRF SoC internal FLASH.
 
