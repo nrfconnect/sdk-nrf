@@ -47,7 +47,7 @@ struct sx_pk_acq_req sx_async_x25519_ptmult_go(const struct sx_x25519_op *k,
 
 void sx_async_x25519_ptmult_end(sx_pk_req *req, struct sx_x25519_op *r)
 {
-	const char **outputs = sx_pk_get_output_ops(req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
 
 	sx_rdpkmem(r->bytes, outputs[0], SX_X25519_OP_SZ);
 
@@ -100,7 +100,7 @@ struct sx_pk_acq_req sx_async_x448_ptmult_go(const struct sx_x448_op *k,
 
 void sx_async_x448_ptmult_end(sx_pk_req *req, struct sx_x448_op *r)
 {
-	const char **outputs = sx_pk_get_output_ops(req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
 
 	sx_rdpkmem(r->bytes, outputs[0], SX_X448_OP_SZ);
 

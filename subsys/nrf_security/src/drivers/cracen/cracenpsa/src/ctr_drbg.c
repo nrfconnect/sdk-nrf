@@ -67,7 +67,7 @@ NRF_SECURITY_MUTEX_DEFINE(cracen_prng_trng_mutex);
  *
  * @return 0 on success, nonzero on failure.
  */
-static int trng_get_entropy(char *dst, int num_trng_bytes)
+static int trng_get_entropy(uint8_t *dst, int num_trng_bytes)
 {
 	int sx_err;
 	struct sx_trng trng;
@@ -124,7 +124,7 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 {
 	psa_status_t status = SX_OK;
 
-	ALIGN_ON_STACK(char, temp, CRACEN_ENTROPY_AND_NONCE_SIZE, CONFIG_DCACHE_LINE_SIZE);
+	ALIGN_ON_STACK(uint8_t, temp, CRACEN_ENTROPY_AND_NONCE_SIZE, CONFIG_DCACHE_LINE_SIZE);
 
 	size_t temp_length = 0;
 	_Static_assert(CRACEN_ENTROPY_AND_NONCE_SIZE % SX_BLKCIPHER_AES_BLK_SZ == 0, "");
@@ -165,7 +165,7 @@ psa_status_t cracen_init_random(cracen_prng_context_t *context)
 
 	int sx_err = SX_ERR_CORRUPTION_DETECTED;
 
-	char entropy[CRACEN_PRNG_ENTROPY_SIZE +
+	uint8_t entropy[CRACEN_PRNG_ENTROPY_SIZE +
 		     CRACEN_PRNG_NONCE_SIZE]; /* DRBG entropy + nonce buffer. */
 
 	if (prng.initialized == CRACEN_PRNG_INITIALIZED) {
@@ -206,7 +206,7 @@ static psa_status_t cracen_reseed(void)
 	psa_status_t status;
 
 	/* DRBG entropy + nonce buffer. */
-	char entropy[CRACEN_PRNG_ENTROPY_SIZE + CRACEN_PRNG_NONCE_SIZE];
+	uint8_t entropy[CRACEN_PRNG_ENTROPY_SIZE + CRACEN_PRNG_NONCE_SIZE];
 	int sx_err = trng_get_entropy(entropy, sizeof(entropy));
 
 	if (sx_err) {
@@ -267,7 +267,7 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 
 	while (len_left > 0) {
 		size_t cur_len = MIN(len_left, SX_BLKCIPHER_AES_BLK_SZ);
-		ALIGN_ON_STACK(char, temp, SX_BLKCIPHER_AES_BLK_SZ, CONFIG_DCACHE_LINE_SIZE);
+		ALIGN_ON_STACK(uint8_t, temp, SX_BLKCIPHER_AES_BLK_SZ, CONFIG_DCACHE_LINE_SIZE);
 
 		cracen_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
 		status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V, sizeof(prng.V),
@@ -308,7 +308,7 @@ psa_status_t cracen_get_trng(uint8_t *output, size_t output_size)
 	}
 
 	nrf_security_mutex_lock(cracen_prng_trng_mutex);
-	sx_err = trng_get_entropy((char *)output, output_size);
+	sx_err = trng_get_entropy(output, output_size);
 	nrf_security_mutex_unlock(cracen_prng_trng_mutex);
 
 	return silex_statuscodes_to_psa(sx_err);

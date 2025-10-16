@@ -16,7 +16,7 @@
 #endif
 
 /** Little endian function of sx_pk_ecop2mem() */
-void sx_pk_ecop2mem_le(const sx_ecop *op, char *mem, int sz)
+void sx_pk_ecop2mem_le(const sx_ecop *op, uint8_t *mem, int sz)
 {
 	int cursz = op->sz;
 	int diff = sz - cursz;
@@ -24,8 +24,8 @@ void sx_pk_ecop2mem_le(const sx_ecop *op, char *mem, int sz)
 	assert(cursz <= sz);
 	sx_clrpkmem(mem + cursz, diff);
 
-	char buf[SX_PK_MAX_OP_SZ];
-	char *ptr = op->bytes;
+	uint8_t buf[SX_PK_MAX_OP_SZ];
+	uint8_t *ptr = op->bytes;
 
 	assert(cursz <= SX_PK_MAX_OP_SZ);
 	for (int i = 0; i < cursz; i += 1) {
@@ -35,7 +35,7 @@ void sx_pk_ecop2mem_le(const sx_ecop *op, char *mem, int sz)
 }
 
 /** Big endian function of sx_pk_ecop2mem() */
-void sx_pk_ecop2mem_be(const sx_ecop *op, char *mem, int sz)
+void sx_pk_ecop2mem_be(const sx_ecop *op, uint8_t *mem, int sz)
 {
 	int cursz = op->sz;
 	int diff = sz - cursz;
@@ -46,17 +46,17 @@ void sx_pk_ecop2mem_be(const sx_ecop *op, char *mem, int sz)
 	sx_wrpkmem(mem + diff, op->bytes, cursz);
 }
 
-void sx_pk_ecop2mem(const sx_ecop *op, char *mem, int sz)
+void sx_pk_ecop2mem(const sx_ecop *op, uint8_t *mem, int sz)
 {
 	sx_pk_ecop2mem_be(op, mem, sz);
 }
 
 /** Little endian function of sx_pk_op2vmem() */
-void sx_pk_op2vmem_le(const sx_op *op, char *mem)
+void sx_pk_op2vmem_le(const sx_op *op, uint8_t *mem)
 {
 	int sz = op->sz;
-	char buf[SX_PK_MAX_OP_SZ];
-	char *ptr = op->bytes;
+	uint8_t buf[SX_PK_MAX_OP_SZ];
+	uint8_t *ptr = op->bytes;
 
 	assert(sz <= SX_PK_MAX_OP_SZ);
 	for (int i = 0; i < sz; i += 1) {
@@ -66,12 +66,12 @@ void sx_pk_op2vmem_le(const sx_op *op, char *mem)
 }
 
 /** Big endian function of sx_pk_op2vmem() */
-void sx_pk_op2vmem_be(const sx_op *op, char *mem)
+void sx_pk_op2vmem_be(const sx_op *op, uint8_t *mem)
 {
 	sx_wrpkmem(mem, op->bytes, op->sz);
 }
 
-void sx_pk_op2vmem(const sx_op *op, char *mem)
+void sx_pk_op2vmem(const sx_op *op, uint8_t *mem)
 {
 	sx_pk_op2vmem_be(op, mem);
 }
@@ -82,7 +82,7 @@ int sx_op_size(sx_op *op)
 }
 
 /** Big endian function of sx_pk_mem2op() */
-void sx_pk_mem2op_be(const char *mem, int sz, sx_op *op)
+void sx_pk_mem2op_be(const uint8_t *mem, int sz, sx_op *op)
 {
 	int cursz = op->sz;
 
@@ -94,24 +94,24 @@ void sx_pk_mem2op_be(const char *mem, int sz, sx_op *op)
 	}
 }
 
-void sx_pk_mem2op(const char *mem, int sz, sx_op *op)
+void sx_pk_mem2op(const uint8_t *mem, int sz, sx_op *op)
 {
 	sx_pk_mem2op_be(mem, sz, op);
 }
 
-void sx_pk_mem2ecop(const char *mem, int sz, sx_ecop *op)
+void sx_pk_mem2ecop(const uint8_t *mem, int sz, sx_ecop *op)
 {
 	/* for now sx_op and sx_ecop have the same type in sxbuf */
 	sx_pk_mem2op(mem, sz, op);
 }
 
-void sx_pk_mem2affpt(const char *mem_x, const char *mem_y, int sz, sx_pk_affine_point *op)
+void sx_pk_mem2affpt(const uint8_t *mem_x, const uint8_t *mem_y, int sz, sx_pk_affine_point *op)
 {
 	sx_pk_mem2ecop(mem_x, sz, &op->x);
 	sx_pk_mem2ecop(mem_y, sz, &op->y);
 }
 
-void sx_pk_affpt2mem(const sx_pk_affine_point *op, char *mem_x, char *mem_y, int sz)
+void sx_pk_affpt2mem(const sx_pk_affine_point *op, uint8_t *mem_x, uint8_t *mem_y, int sz)
 {
 	sx_pk_ecop2mem(&op->x, mem_x, sz);
 	sx_pk_ecop2mem(&op->y, mem_y, sz);

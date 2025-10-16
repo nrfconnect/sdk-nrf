@@ -33,7 +33,7 @@
 static int lenAlenC_aesgcm_ba411(size_t aadsz, size_t datasz, uint8_t *out);
 static int lenAlenC_nop(size_t aadsz, size_t datasz, uint8_t *out);
 
-static const char zeros[SX_CCM_MAX_TAG_SZ] = {0};
+static const uint8_t zeros[SX_CCM_MAX_TAG_SZ] = {0};
 
 static const struct sx_aead_cmdma_tags ba411aeadtags = {
 	.cfg = DMATAG_BA411 | DMATAG_CONFIG(0),
@@ -140,7 +140,7 @@ exit:
 }
 
 static int sx_aead_create_aesgcm(struct sxaead *aead_ctx, const struct sxkeyref *key,
-				 const char *iv, size_t tagsz)
+				 const uint8_t *iv, size_t tagsz)
 {
 	uint32_t keyszfld = 0;
 	int err;
@@ -186,8 +186,8 @@ static int sx_aead_create_aesgcm(struct sxaead *aead_ctx, const struct sxkeyref 
 	return SX_OK;
 }
 
-int sx_aead_create_aesgcm_enc(struct sxaead *aead_ctx, const struct sxkeyref *key, const char *iv,
-			      size_t tagsz)
+int sx_aead_create_aesgcm_enc(struct sxaead *aead_ctx, const struct sxkeyref *key,
+			      const uint8_t *iv, size_t tagsz)
 {
 	int status;
 
@@ -199,8 +199,8 @@ int sx_aead_create_aesgcm_enc(struct sxaead *aead_ctx, const struct sxkeyref *ke
 	return SX_OK;
 }
 
-int sx_aead_create_aesgcm_dec(struct sxaead *aead_ctx, const struct sxkeyref *key, const char *iv,
-			      size_t tagsz)
+int sx_aead_create_aesgcm_dec(struct sxaead *aead_ctx, const struct sxkeyref *key,
+			      const uint8_t *iv, size_t tagsz)
 {
 	int status;
 
@@ -215,7 +215,7 @@ int sx_aead_create_aesgcm_dec(struct sxaead *aead_ctx, const struct sxkeyref *ke
 }
 
 static int sx_aead_create_aesccm(struct sxaead *aead_ctx, const struct sxkeyref *key,
-				 const char *nonce, size_t noncesz, size_t tagsz, size_t aadsz,
+				 const uint8_t *nonce, size_t noncesz, size_t tagsz, size_t aadsz,
 				 size_t datasz, const uint32_t dir)
 {
 	int err;
@@ -279,21 +279,21 @@ static int sx_aead_create_aesccm(struct sxaead *aead_ctx, const struct sxkeyref 
 }
 
 int sx_aead_create_aesccm_enc(struct sxaead *aead_ctx, const struct sxkeyref *key,
-			      const char *nonce, size_t noncesz, size_t tagsz, size_t aadsz,
+			      const uint8_t *nonce, size_t noncesz, size_t tagsz, size_t aadsz,
 			      size_t datasz)
 {
 	return sx_aead_create_aesccm(aead_ctx, key, nonce, noncesz, tagsz, aadsz, datasz, 0);
 }
 
 int sx_aead_create_aesccm_dec(struct sxaead *aead_ctx, const struct sxkeyref *key,
-			      const char *nonce, size_t noncesz, size_t tagsz, size_t aadsz,
+			      const uint8_t *nonce, size_t noncesz, size_t tagsz, size_t aadsz,
 			      size_t datasz)
 {
 	return sx_aead_create_aesccm(aead_ctx, key, nonce, noncesz, tagsz, aadsz, datasz,
 				     ba411ccmcfg.decr);
 }
 
-int sx_aead_feed_aad(struct sxaead *aead_ctx, const char *aad, size_t aadsz)
+int sx_aead_feed_aad(struct sxaead *aead_ctx, const uint8_t *aad, size_t aadsz)
 {
 	if (!aead_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
@@ -321,7 +321,7 @@ static void sx_aead_discard_aad(struct sxaead *aead_ctx)
 	}
 }
 
-int sx_aead_crypt(struct sxaead *aead_ctx, const char *datain, size_t datainsz, char *dataout)
+int sx_aead_crypt(struct sxaead *aead_ctx, const uint8_t *datain, size_t datainsz, uint8_t *dataout)
 {
 	if (!aead_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
@@ -349,7 +349,7 @@ static int sx_aead_run(struct sxaead *aead_ctx)
 	return SX_OK;
 }
 
-int sx_aead_produce_tag(struct sxaead *aead_ctx, char *tagout)
+int sx_aead_produce_tag(struct sxaead *aead_ctx, uint8_t *tagout)
 {
 	if (!aead_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
@@ -380,7 +380,7 @@ int sx_aead_produce_tag(struct sxaead *aead_ctx, char *tagout)
 	return sx_aead_run(aead_ctx);
 }
 
-int sx_aead_verify_tag(struct sxaead *aead_ctx, const char *tagin)
+int sx_aead_verify_tag(struct sxaead *aead_ctx, const uint8_t *tagin)
 {
 	if (!aead_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
@@ -496,7 +496,7 @@ int sx_aead_status(struct sxaead *aead_ctx)
 #endif
 
 	if (!(aead_ctx->dma.dmamem.cfg & aead_ctx->cfg->ctxsave) && aead_ctx->expectedtag != NULL) {
-		status = sx_memdiff(aead_ctx->expectedtag, (const char *)aead_ctx->extramem,
+		status = sx_memdiff(aead_ctx->expectedtag, (const uint8_t *)aead_ctx->extramem,
 				    aead_ctx->tagsz)
 				 ? SX_ERR_INVALID_TAG
 				 : SX_OK;

@@ -60,7 +60,7 @@ static inline unsigned int cracen_op_bitsz(const struct sx_buf *op)
 		return 0;
 	}
 
-	unsigned char v = (unsigned char)op->bytes[i];
+	uint8_t v = op->bytes[i];
 
 	while ((v & 0x80) == 0) {
 		v = v << 1;

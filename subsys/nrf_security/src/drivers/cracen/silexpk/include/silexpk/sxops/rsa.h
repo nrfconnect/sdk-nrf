@@ -579,7 +579,7 @@ static inline struct sx_pk_acq_req sx_async_rsa_keygen_go(const sx_op *p, const 
 static inline void sx_async_rsa_keygen_end(sx_pk_req *req, sx_op *n, sx_op *lambda_n,
 					   sx_op *privkey)
 {
-	const char **outputs = sx_pk_get_output_ops(req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
 	const int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_mem2op(outputs[0], opsz, n);
@@ -700,7 +700,7 @@ static inline struct sx_pk_acq_req sx_async_rsa_crt_keyparams_go(const sx_op *p,
  */
 static inline void sx_async_rsa_crt_keyparams_end(sx_pk_req *req, sx_op *dp, sx_op *dq, sx_op *qinv)
 {
-	const char **outputs = sx_pk_get_output_ops(req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
 	const int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_mem2op(outputs[0], opsz, dp);

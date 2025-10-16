@@ -87,6 +87,7 @@ extern "C" {
 #endif
 
 #include <stddef.h>
+#include <stdint.h>
 #include "internal.h"
 
 /** Prepares a ChaCha20-Poly1305 AEAD encryption operation.
@@ -116,7 +117,7 @@ extern "C" {
  *           operation is completed.
  */
 int sx_aead_create_chacha20poly1305_enc(struct sxaead *c, struct sxkeyref *key,
-					const char *nonce, size_t tagsz);
+					const uint8_t *nonce, size_t tagsz);
 
 /** Prepares a ChaCha20-Poly1305 AEAD decryption operation.
  *
@@ -147,7 +148,7 @@ int sx_aead_create_chacha20poly1305_enc(struct sxaead *c, struct sxkeyref *key,
  *           context saving.
  */
 int sx_aead_create_chacha20poly1305_dec(struct sxaead *c, struct sxkeyref *key,
-					const char *nonce, size_t tagsz);
+					const uint8_t *nonce, size_t tagsz);
 
 /** Prepares a ChaCha20 encryption.
  *
@@ -172,7 +173,7 @@ int sx_aead_create_chacha20poly1305_dec(struct sxaead *c, struct sxkeyref *key,
  *        sx_keyref_load_material() or sx_keyref_load_by_id()
  */
 int sx_blkcipher_create_chacha20_enc(struct sxblkcipher *c, struct sxkeyref *key,
-				     const char *counter, const char *nonce);
+				     const uint8_t *counter, const uint8_t *nonce);
 
 /** Prepares a ChaCha20 decryption.
  *
@@ -198,7 +199,7 @@ int sx_blkcipher_create_chacha20_enc(struct sxblkcipher *c, struct sxkeyref *key
  *        sx_keyref_load_material() or sx_keyref_load_by_id()
  */
 int sx_blkcipher_create_chacha20_dec(struct sxblkcipher *c, struct sxkeyref *key,
-				     const char *counter, const char *nonce);
+				     const uint8_t *counter, const uint8_t *nonce);
 
 #ifdef __cplusplus
 }

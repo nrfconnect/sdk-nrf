@@ -53,10 +53,10 @@ static psa_status_t cracen_ecdh_wrstr_calc_secret(const struct sx_pk_ecurve *cur
 	int sx_status;
 	psa_status_t psa_status;
 
-	char scratch_char_x[CRACEN_MAC_ECC_PRIVKEY_BYTES];
-	char scratch_char_y[CRACEN_MAC_ECC_PRIVKEY_BYTES];
+	uint8_t scratch_char_x[CRACEN_MAC_ECC_PRIVKEY_BYTES];
+	uint8_t scratch_char_y[CRACEN_MAC_ECC_PRIVKEY_BYTES];
 
-	struct sx_buf priv_key_buff = {.sz = priv_key_size, .bytes = (char *)priv_key};
+	struct sx_buf priv_key_buff = {.sz = priv_key_size, .bytes = (uint8_t *)priv_key};
 
 	sx_pk_affine_point scratch_pnt = {{.bytes = scratch_char_x, .sz = priv_key_size},
 					  {.bytes = scratch_char_y, .sz = priv_key_size}};
@@ -77,10 +77,10 @@ static psa_status_t cracen_ecdh_wrstr_calc_secret(const struct sx_pk_ecurve *cur
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	publ_key_pnt.x.bytes = (char *)publ_key + 1;
+	publ_key_pnt.x.bytes = (uint8_t *)publ_key + 1;
 	publ_key_pnt.x.sz = priv_key_size;
 
-	publ_key_pnt.y.bytes = (char *)publ_key + priv_key_size + 1;
+	publ_key_pnt.y.bytes = (uint8_t *)publ_key + priv_key_size + 1;
 	publ_key_pnt.y.sz = priv_key_size;
 
 	psa_status = cracen_ecc_check_public_key(curve, &publ_key_pnt);

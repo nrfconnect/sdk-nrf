@@ -32,14 +32,14 @@ struct sx_blkcipher_cmdma_tags {
 
 struct sx_blkcipher_cmdma_cfg {
 	const struct sx_blkcipher_cmdma_tags *dmatags;
-	unsigned char decr;
-	unsigned char ctxsave;
-	unsigned char ctxload;
-	unsigned char mode;
-	unsigned char inminsz;
-	unsigned char granularity;
-	unsigned char blocksz;
-	unsigned char statesz;
+	uint8_t decr;
+	uint8_t ctxsave;
+	uint8_t ctxload;
+	uint8_t mode;
+	uint8_t inminsz;
+	uint8_t granularity;
+	uint8_t blocksz;
+	uint8_t statesz;
 
 };
 

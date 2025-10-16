@@ -57,7 +57,7 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	struct cracen_crypt_text text = {(char *)input, input_length};
+	struct cracen_crypt_text text = {(uint8_t *)input, input_length};
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_RSA_OAEP)) {
 		if (PSA_ALG_IS_RSA_OAEP(alg)) {
@@ -66,7 +66,7 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 				return status;
 			}
 
-			struct sx_buf label = {salt_length, (char *)salt};
+			struct sx_buf label = {salt_length, (uint8_t *)salt};
 
 			if (dir == CRACEN_ENCRYPT) {
 				sx_status = cracen_rsa_oaep_encrypt(hashalg, &pubkey, &text, &label,

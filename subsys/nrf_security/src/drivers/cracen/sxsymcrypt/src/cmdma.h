@@ -49,7 +49,7 @@
 
 #define ADD_CFGDESC(dmactl, baddr, bsz, tag)                                                       \
 	do {                                                                                       \
-		(dmactl).d->addr = (char *)(baddr);                                                \
+		(dmactl).d->addr = (uint8_t *)(baddr);                                             \
 		(dmactl).d->sz = (uint32_t)(bsz) | DMA_REALIGN;                                    \
 		(dmactl).d->dmatag = tag;                                                          \
 		(dmactl).d++;                                                                      \
@@ -73,7 +73,7 @@
 
 #define ADD_RAW_INDESC(dmactl, baddr, bsz, tag)                                                    \
 	do {                                                                                       \
-		(dmactl).d->addr = (char *)(baddr);                                                \
+		(dmactl).d->addr = (uint8_t *)(baddr);                                             \
 		(dmactl).d->sz = (uint32_t)(bsz);                                                  \
 		(dmactl).d->dmatag = (tag);                                                        \
 		(dmactl).d++;                                                                      \
@@ -81,7 +81,7 @@
 
 #define ADD_INDESC_IGN(dmactl, baddr, bsz, ignsz, tag)                                             \
 	do {                                                                                       \
-		(dmactl).d->addr = (char *)(baddr);                                                \
+		(dmactl).d->addr = (uint8_t *)(baddr);                                             \
 		(dmactl).d->sz = (uint32_t)(bsz) | DMA_REALIGN;                                    \
 		(dmactl).d->dmatag = tag | DMATAG_IGN(ignsz);                                      \
 		(dmactl).d++;                                                                      \
@@ -91,7 +91,7 @@
 /* addr needs to be set to some DMA fetchable address even though the data will not be used */
 #define ADD_EMPTY_INDESC(dmactl, ignb, tag)                                                        \
 	do {                                                                                       \
-		(dmactl).d->addr = (char *)&(dmactl).dmamem;                                       \
+		(dmactl).d->addr = (uint8_t *)&(dmactl).dmamem;                                    \
 		(dmactl).d->sz = ignb | DMA_REALIGN;                                               \
 		(dmactl).d->dmatag = tag | DMATAG_IGN(ignb & DMATAG_INVALID_BYTES_MASK);           \
 		(dmactl).d++;                                                                      \
@@ -100,7 +100,7 @@
 #define ADD_INDESCA(dmactl, baddr, bsz, tag, msk)                                                  \
 	do {                                                                                       \
 		uint32_t asz = ALIGN_SZA(bsz, msk);                                                \
-		(dmactl).d->addr = (char *)(baddr);                                                \
+		(dmactl).d->addr = (uint8_t *)(baddr);                                             \
 		(dmactl).d->sz = asz | DMA_REALIGN;                                                \
 		(dmactl).d->dmatag = tag | DMATAG_IGN(asz - (bsz));                                \
 		(dmactl).d++;                                                                      \
@@ -113,9 +113,9 @@
 		if (validbitsz == 0)\
 			validbitsz = bitmask + 1;\
 		uint32_t asz = ALIGN_SZA(bsz, msk);\
-		(dmactl).d->addr = sx_map_usrdatain((char *)(baddr), bsz);\
+		(dmactl).d->addr = sx_map_usrdatain((uint8_t *)(baddr), bsz);\
 		(dmactl).d->sz = asz | DMA_REALIGN;\
-		(dmactl).d->dmatag = tag | DMATAG_IGN((validbitsz - 1)); \
+		(dmactl).d->dmatag = tag | DMATAG_IGN((validbitsz - 1));\
 		(dmactl).d++;\
 	} while (0)
 
@@ -138,7 +138,7 @@
 #define ADD_OUTDESCA(dmactl, baddr, bsz, msk)                                                      \
 	do {                                                                                       \
 		uint32_t asz = ALIGN_SZA(bsz, msk);                                                \
-		WR_OUTDESC(dmactl, (char *)(baddr), bsz);                                          \
+		WR_OUTDESC(dmactl, baddr, bsz);                                                    \
 		if (asz - (bsz))                                                                   \
 			ADD_DISCARDDESC(dmactl, (asz - (bsz)));                                    \
 	} while (0)

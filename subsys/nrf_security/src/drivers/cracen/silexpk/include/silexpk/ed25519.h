@@ -31,19 +31,19 @@ extern "C" {
 /** An encoded Ed25519 point */
 struct sx_ed25519_pt {
 	/** Bytes array representing encoded point for Ed25519 **/
-	char encoded[SX_ED25519_PT_SZ];
+	uint8_t encoded[SX_ED25519_PT_SZ];
 };
 
 /** A Ed25519 scalar value */
 struct sx_ed25519_v {
 	/** Bytes array representing scalar for Ed25519 **/
-	char bytes[SX_ED25519_SZ];
+	uint8_t bytes[SX_ED25519_SZ];
 };
 
 /** A hash digest used in the Ed25519 protocol */
 struct sx_ed25519_dgst {
 	/** Bytes array of hash digest **/
-	char bytes[SX_ED25519_DGST_SZ];
+	uint8_t bytes[SX_ED25519_DGST_SZ];
 };
 
 /** EdDSA point multiplication (Ed25519)

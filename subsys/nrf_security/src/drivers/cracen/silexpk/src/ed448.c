@@ -26,7 +26,8 @@ static inline void write_ed448dgst(const struct sx_ed448_dgst *op, struct sx_pk_
 	sx_wrpkmem(slots->b.addr, op->bytes + SX_ED448_SZ, SX_ED448_SZ);
 }
 
-static inline void encode_eddsa_pt(const char *pxbuf, const char *pybuf, struct sx_ed448_pt *pt)
+static inline void encode_eddsa_pt(const uint8_t *pxbuf, const uint8_t *pybuf,
+				   struct sx_ed448_pt *pt)
 {
 	sx_rdpkmem(pt->encoded, pybuf, sizeof(pt->encoded));
 	pt->encoded[SX_ED448_SZ - 1] |= (pxbuf[0] & 1) << 7;
@@ -54,7 +55,7 @@ struct sx_pk_acq_req sx_async_ed448_ptmult_go(const struct sx_ed448_dgst *r)
 
 void sx_async_ed448_ptmult_end(sx_pk_req *req, struct sx_ed448_pt *pt)
 {
-	const char **outputs = sx_pk_get_output_ops(req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
 
 	encode_eddsa_pt(outputs[0], outputs[1], pt);
 
@@ -104,7 +105,7 @@ struct sx_pk_acq_req sx_pk_async_ed448_sign_go(const struct sx_ed448_dgst *k,
 
 void sx_async_ed448_sign_end(sx_pk_req *req, struct sx_ed448_v *sig_s)
 {
-	const char **outputs = sx_pk_get_output_ops(req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
 
 	sx_rdpkmem(&sig_s->bytes, outputs[0], sizeof(sig_s->bytes));
 
@@ -134,7 +135,7 @@ static inline int ed448_decode_pt_x(const struct sx_ed448_pt *pt)
 }
 
 /** Write the y affine coordinate of an encoded Ed448 point into memory */
-static inline void ed448_pt_write_y(const struct sx_ed448_pt *pt, char *ay)
+static inline void ed448_pt_write_y(const struct sx_ed448_pt *pt, uint8_t *ay)
 {
 	sx_wrpkmem(ay, pt->encoded, SX_ED448_PT_SZ - 1);
 	sx_wrpkmem_byte(&ay[SX_ED448_PT_SZ - 1], pt->encoded[SX_ED448_PT_SZ - 1] & 0x7f);

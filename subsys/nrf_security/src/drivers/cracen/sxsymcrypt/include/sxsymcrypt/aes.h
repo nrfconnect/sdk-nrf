@@ -15,6 +15,7 @@ extern "C" {
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "internal.h"
 
@@ -48,7 +49,7 @@ extern "C" {
  *        that supports hardware keys for AES XTS.
  */
 int sx_blkcipher_create_aesxts_enc(struct sxblkcipher *c, const struct sxkeyref *key1,
-				   const struct sxkeyref *key2, const char *iv);
+				   const struct sxkeyref *key2, const uint8_t *iv);
 
 /** Prepares an AES XTS block cipher decryption
  *
@@ -80,7 +81,7 @@ int sx_blkcipher_create_aesxts_enc(struct sxblkcipher *c, const struct sxkeyref 
  *        that supports hardware keys for AES XTS.
  */
 int sx_blkcipher_create_aesxts_dec(struct sxblkcipher *c, const struct sxkeyref *key1,
-				   const struct sxkeyref *key2, const char *iv);
+				   const struct sxkeyref *key2, const uint8_t *iv);
 
 /** Prepares an AES CTR block cipher encryption.
  *
@@ -105,7 +106,7 @@ int sx_blkcipher_create_aesxts_dec(struct sxblkcipher *c, const struct sxkeyref 
  *        sx_keyref_load_material() or sx_keyref_load_by_id()
  */
 int sx_blkcipher_create_aesctr_enc(struct sxblkcipher *c, const struct sxkeyref *key,
-				   const char *iv);
+				   const uint8_t *iv);
 
 /** Prepares an AES CTR block cipher decryption
  *
@@ -130,7 +131,7 @@ int sx_blkcipher_create_aesctr_enc(struct sxblkcipher *c, const struct sxkeyref 
  *        sx_keyref_load_material() or sx_keyref_load_by_id()
  */
 int sx_blkcipher_create_aesctr_dec(struct sxblkcipher *c, const struct sxkeyref *key,
-				   const char *iv);
+				   const uint8_t *iv);
 
 /** Prepares an AES ECB block cipher encryption.
  *
@@ -205,7 +206,7 @@ int sx_blkcipher_create_aesecb_dec(struct sxblkcipher *c, const struct sxkeyref 
  *        sx_keyref_load_material() or sx_keyref_load_by_id()
  */
 int sx_blkcipher_create_aescbc_enc(struct sxblkcipher *c, const struct sxkeyref *key,
-				   const char *iv);
+				   const uint8_t *iv);
 
 /** Prepares an AES CBC block cipher decryption
  *
@@ -230,7 +231,7 @@ int sx_blkcipher_create_aescbc_enc(struct sxblkcipher *c, const struct sxkeyref 
  *        sx_keyref_load_material() or sx_keyref_load_by_id()
  */
 int sx_blkcipher_create_aescbc_dec(struct sxblkcipher *c, const struct sxkeyref *key,
-				   const char *iv);
+				   const uint8_t *iv);
 
 /** Prepares an AES GCM AEAD encryption operation.
  *
@@ -262,7 +263,7 @@ int sx_blkcipher_create_aescbc_dec(struct sxblkcipher *c, const struct sxkeyref 
  * @remark - GCM and GMAC support AAD split in multiple chunks, using context
  *           saving.
  */
-int sx_aead_create_aesgcm_enc(struct sxaead *c, const struct sxkeyref *key, const char *iv,
+int sx_aead_create_aesgcm_enc(struct sxaead *c, const struct sxkeyref *key, const uint8_t *iv,
 			      size_t tagsz);
 
 /** Prepares an AES GCM AEAD decryption operation.
@@ -295,7 +296,7 @@ int sx_aead_create_aesgcm_enc(struct sxaead *c, const struct sxkeyref *key, cons
  * @remark - GCM and GMAC support AAD split in multiple chunks, using context
  *           saving.
  */
-int sx_aead_create_aesgcm_dec(struct sxaead *c, const struct sxkeyref *key, const char *iv,
+int sx_aead_create_aesgcm_dec(struct sxaead *c, const struct sxkeyref *key, const uint8_t *iv,
 			      size_t tagsz);
 
 /** Maximum size, in bytes, of CCM authentication tag */
@@ -337,7 +338,7 @@ int sx_aead_create_aesgcm_dec(struct sxaead *c, const struct sxkeyref *key, cons
  *           created according to RFC3610 2.2 and provided via
  *           sx_aead_feed_aad()
  */
-int sx_aead_create_aesccm_enc(struct sxaead *c, const struct sxkeyref *key, const char *nonce,
+int sx_aead_create_aesccm_enc(struct sxaead *c, const struct sxkeyref *key, const uint8_t *nonce,
 			      size_t noncesz, size_t tagsz, size_t aadsz, size_t datasz);
 
 /** Prepares an AES CCM AEAD decryption operation.
@@ -376,7 +377,7 @@ int sx_aead_create_aesccm_enc(struct sxaead *c, const struct sxkeyref *key, cons
  *           created according to RFC3610 2.2 and provided via
  *           sx_aead_feed_aad()
  */
-int sx_aead_create_aesccm_dec(struct sxaead *c, const struct sxkeyref *key, const char *nonce,
+int sx_aead_create_aesccm_dec(struct sxaead *c, const struct sxkeyref *key, const uint8_t *nonce,
 			      size_t noncesz, size_t tagsz, size_t aadsz, size_t datasz);
 
 static inline bool sx_aead_aesccm_nonce_size_is_valid(size_t noncesz)

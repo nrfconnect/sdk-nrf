@@ -46,7 +46,7 @@ int sx_ik_read_status(sx_pk_req *req)
 int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *inputs)
 {
 	int slots = req->cmd->inslots;
-	char *cryptoram = req->cryptoram;
+	uint8_t *cryptoram = req->cryptoram;
 	int i = 0;
 	const struct sx_pk_capabilities *caps;
 

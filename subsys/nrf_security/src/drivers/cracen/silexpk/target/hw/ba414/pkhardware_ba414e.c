@@ -57,9 +57,9 @@ int sx_pk_get_opsize(sx_pk_req *req)
 void sx_pk_write_curve(sx_pk_req *req, const struct sx_pk_ecurve *curve)
 {
 	int i;
-	char *dst = req->cryptoram;
+	uint8_t *dst = req->cryptoram;
 	int slot_size = req->slot_sz;
-	const char *src = curve->params;
+	const uint8_t *src = curve->params;
 
 	if (curve->curveflags & PK_OP_FLAGS_SELCUR_MASK) {
 		/* Predefined curves have curve parameters hardcoded in hardware
@@ -85,17 +85,17 @@ void sx_pk_write_curve_gen(sx_pk_req *pk, const struct sx_pk_ecurve *curve, stru
 			   struct sx_pk_slot py)
 {
 	(void)pk;
-	const char *src = curve->params + curve->sz * 2;
+	const uint8_t *src = curve->params + curve->sz * 2;
 
 	sx_wrpkmem(px.addr, src, curve->sz);
 	src += curve->sz;
 	sx_wrpkmem(py.addr, src, curve->sz);
 }
 
-const char **sx_pk_get_output_ops(sx_pk_req *req)
+const uint8_t **sx_pk_get_output_ops(sx_pk_req *req)
 {
 	int slots = req->cmd->outslots;
-	char *cryptoram = req->cryptoram;
+	uint8_t *cryptoram = req->cryptoram;
 	int slot_size = req->slot_sz;
 	unsigned int i = 0;
 
@@ -132,12 +132,12 @@ static void write_command(sx_pk_req *req, int op_size, uint32_t flags)
 
 static void sx_pk_blind(sx_pk_req *req, sx_pk_blind_factor factor)
 {
-	/* Casting the factor into char*. This way the LSB
+	/* Casting the factor into uint8_t*. This way the LSB
 	 * can be changed regardless of the CPU endianness
 	 */
-	char *p = (char *)(&factor);
+	uint8_t *p = (uint8_t *)(&factor);
 	int slot_sz = req->slot_sz;
-	char *cryptoram = req->cryptoram + slot_sz * 16;
+	uint8_t *cryptoram = req->cryptoram + slot_sz * 16;
 	const int blind_sz = sizeof(factor);
 
 	/* Force lsb bit to guarantee odd random value. Force bits 63 & 62 to 0 and
@@ -166,7 +166,7 @@ int sx_pk_list_ecc_inslots(sx_pk_req *req, const struct sx_pk_ecurve *curve, int
 			   struct sx_pk_slot *inputs)
 {
 	int slots = req->cmd->inslots;
-	char *cryptoram = req->cryptoram;
+	uint8_t *cryptoram = req->cryptoram;
 	int slot_size = req->slot_sz;
 	int i = 0;
 	const struct sx_pk_capabilities *caps;
@@ -232,7 +232,7 @@ static int sx_pk_gfcmd_opsize(const struct sx_pk_cmd_def *cmd, const int *opsize
 int sx_pk_list_gfp_inslots(sx_pk_req *req, const int *opsizes, struct sx_pk_slot *inputs)
 {
 	int slots = req->cmd->inslots;
-	char *cryptoram = req->cryptoram;
+	uint8_t *cryptoram = req->cryptoram;
 	int slot_size = req->slot_sz;
 	int i = 0;
 	const struct sx_pk_capabilities *caps;

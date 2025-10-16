@@ -43,14 +43,14 @@
 
 static struct {
 	uint8_t id;
-	const char *label;
+	const uint8_t *label;
 } owner_to_label[] = {{DOMAIN_SECURE, "SECURE-"}, {DOMAIN_SYSCTRL, "SYSCTRL-"},
 		      {DOMAIN_CELL, "CELL-"}, {DOMAIN_WIFI, "WIFI-"},
 		      {DOMAIN_RADIO, "RADIOCORE-"},	  {DOMAIN_APPLICATION, "APPLICATION-"}};
 
 static struct {
 	uint8_t id;
-	const char *label;
+	const uint8_t *label;
 } key_type_to_label[] = {
 	{USAGE_FWENC, "FWENC-"}, {USAGE_STMTRACE, "STMTRACE-"}, {USAGE_COREDUMP, "COREDUMP-"}};
 
@@ -72,7 +72,7 @@ typedef struct sicr_key {
 } sicr_key;
 
 typedef struct derived_key {
-	char label[DERIVED_KEY_MAX_LABEL_SIZE];
+	uint8_t label[DERIVED_KEY_MAX_LABEL_SIZE];
 } derived_key;
 
 typedef struct ikg_key {
@@ -174,8 +174,8 @@ static key_type find_key(uint32_t id, platform_key *key)
 	}
 
 	if (usage == USAGE_FWENC || usage == USAGE_STMTRACE || usage == USAGE_COREDUMP) {
-		char *labelptr = key->derived.label;
-		char *end = labelptr + sizeof(key->derived.label);
+		uint8_t *labelptr = key->derived.label;
+		uint8_t *end = labelptr + sizeof(key->derived.label);
 
 		bool valid_owner = false;
 
@@ -197,7 +197,7 @@ static key_type find_key(uint32_t id, platform_key *key)
 			}
 		}
 
-		static const char *const genstr[] = {"0", "1", "2", "3"};
+		static const uint8_t *const genstr[] = {"0", "1", "2", "3"};
 
 		if (generation > ARRAY_SIZE(genstr) || !valid_key_type || !valid_owner) {
 			return INVALID;

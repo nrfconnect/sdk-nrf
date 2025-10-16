@@ -43,6 +43,7 @@
 #define HASH_HEADER_FILE
 
 #include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -119,7 +120,7 @@ int sx_hash_resume_state(struct sxhash *c);
  *           context-saving is 4.
  * @remark - maximum sum of the chunk sizes fed is 2^32-1 bytes
  */
-int sx_hash_feed(struct sxhash *c, const char *msg, size_t sz);
+int sx_hash_feed(struct sxhash *c, const uint8_t *msg, size_t sz);
 
 /** Starts the partial hashing operation.
  *
@@ -178,7 +179,7 @@ int sx_hash_save_state(struct sxhash *c);
  *           is completed. Checking the completion of an operation is done by
  *           using sx_hash_wait() or sx_hash_status().
  */
-int sx_hash_digest(struct sxhash *c, char *digest);
+int sx_hash_digest(struct sxhash *c, uint8_t *digest);
 
 /** Waits until the given hash operation has finished
  *
