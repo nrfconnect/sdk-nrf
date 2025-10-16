@@ -674,6 +674,7 @@ Modem libraries
     * Support for new modem events :c:enumerator:`LTE_LC_MODEM_EVT_RF_CAL_NOT_DONE`, :c:enumerator:`LTE_LC_MODEM_EVT_INVALID_BAND_CONF`, and :c:enumerator:`LTE_LC_MODEM_EVT_DETECTED_COUNTRY`.
     * Description of new features supported by mfw_nrf91x1 and mfw_nrf9151-ntn in receive only functional mode.
     * Sending of the ``LTE_LC_EVT_PSM_UPDATE`` event with ``tau`` and ``active_time`` set to ``-1`` when registration status is ``LTE_LC_NW_REG_NOT_REGISTERED``.
+    * New registration statuses and functional modes for the ``mfw_nrf9151-ntn`` modem firmware.
 
   * Updated:
 
