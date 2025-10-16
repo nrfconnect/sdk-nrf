@@ -65,3 +65,7 @@
 &pwm130 {
 	status = "disabled";
 };
+
+&hsfll120 {
+	status = "okay";
+};

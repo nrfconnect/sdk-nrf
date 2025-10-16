@@ -25,3 +25,15 @@
 &gpiote130 {
 	status = "okay";
 };
+
+&fll16m {
+	status = "okay";
+};
+
+&hsfll120 {
+	status = "okay";
+};
+
+&lfclk {
+	status = "okay";
+};

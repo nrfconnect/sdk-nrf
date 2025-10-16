@@ -58,3 +58,7 @@
 	pinctrl-names = "default", "sleep";
 	memory-regions = <&cpuapp_dma_region>;
 };
+
+&hsfll120 {
+	status = "okay";
+};
