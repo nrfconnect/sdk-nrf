@@ -51,6 +51,9 @@ External APIs
 
 The firmware information structure allows for exchange of arbitrary tagged and versioned interfaces called *external APIs* (EXT_APIs).
 
+.. note::
+   EXT_APIs are currently only supported on the nRF52 and nRF53 Series devices.
+
 An EXT_API structure is a structure consisting of a header followed by arbitrary data.
 The header consists of the following information:
 

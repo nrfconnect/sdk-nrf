@@ -41,6 +41,7 @@ config $(EXT_API)_EXT_API_AT_LEAST_REQUIRED
 
 config $(EXT_API)_EXT_API_ENABLED
 	bool "Provide the $(EXT_API) EXT_API to other images"
+	default y if IS_SECURE_BOOTLOADER && EXT_API_SUPPORTED
 	select FW_INFO_PROVIDE_ENABLE
 	help
 	  Provide this EXT_API to other images.
