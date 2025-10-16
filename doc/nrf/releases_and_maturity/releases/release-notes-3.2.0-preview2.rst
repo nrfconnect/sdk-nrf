@@ -1,16 +1,13 @@
-.. _ncs_release_notes_changelog:
+.. _ncs_release_notes_320_preview2:
 
-Changelog for |NCS| v3.1.99
-###########################
+Changelog for |NCS| v3.2.0-preview2
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -159,7 +156,7 @@ Bluetooth Mesh
 * Updated the NLC profile configuration system:
 
   * Introduced individual profile configuration options for better user control.
-  * Deprecated the :kconfig:option:`CONFIG_BT_MESH_NLC_PERF_CONF` and :kconfig:option:`CONFIG_BT_MESH_NLC_PERF_DEFAULT` Kconfig options.
+  * Deprecated the ``CONFIG_BT_MESH_NLC_PERF_CONF`` and ``CONFIG_BT_MESH_NLC_PERF_DEFAULT`` Kconfig options.
     Existing configurations continue to work but you should migrate to individual profile options.
 
 DECT NR+
@@ -278,15 +275,6 @@ nRF Desktop
       Before the change was introduced, subscribing to a HID input report before the respective provider was registered triggered an assertion failure.
     * HID transports (:ref:`nrf_desktop_hids`, :ref:`nrf_desktop_usb_state`) to use the early :c:struct:`hid_report_event` subscription (:c:macro:`APP_EVENT_SUBSCRIBE_EARLY`).
       This update improves the reception speed of HID input reports in HID transports.
-    * The :ref:`nrf_desktop_motion` implementations to align internal state names for consistency.
-    * The :ref:`nrf_desktop_motion` implementation that generates simulated motion.
-      Improved the Zephyr shell (:kconfig:option:`CONFIG_SHELL`) integration to prevent potential race conditions related to using preemptive execution context for shell commands.
-    * The :c:struct:`motion_event` to include information if the sensor is still active or goes to idle state waiting for user activity (:c:member:`motion_event.active`).
-      The newly added field is filled by all :ref:`nrf_desktop_motion` implementations.
-      The :ref:`nrf_desktop_hid_provider_mouse` uses the newly added field to improve the synchronization of motion sensor sampling.
-      After the motion sensor sampling is triggered, the provider waits for the result before submitting a subsequent HID mouse input report.
-    * The :ref:`nrf_desktop_hid_state_pm` to skip submitting the :c:struct:`keep_alive_event` if the :c:enum:`POWER_MANAGER_LEVEL_ALIVE` power level is enforced by any application module through the :c:struct:`power_manager_restrict_event`.
-      This is done to improve performance.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -488,14 +476,10 @@ Matter samples
   * The :ref:`matter_contact_sensor_sample` sample that demonstrates how to implement and test a Matter contact sensor device.
   * The ``matter_custom_board`` toggle paragraph in the Matter advanced configuration section of all Matter samples that demonstrates how add and configure a custom board.
 
-* Updated:
-
-  * All Matter over Wi-Fi samples and applications to store a portion of the application code related to the nRF70 Series Wi-Fi firmware in the external flash memory by default.
-    This change breaks the DFU between the previous |NCS| versions and the |NCS| v3.2.0.
-    To fix this, you need to disable storing the Wi-Fi firmware patch in external memory.
-    See the :ref:`migration guide <migration_3.2_required>` for more information.
-  * All Matter samples that support low-power mode to use the :ref:`lib_ram_pwrdn` feature with the nRF54LM20 DK.
-    This change resulted in decreasing the sleep current consumption by more than two uA.
+* Updated all Matter over Wi-Fi samples and applications to store a portion of the application code related to the nRF70 Series Wi-Fi firmware in the external flash memory by default.
+  This change breaks the DFU between the previous |NCS| versions and the |NCS| v3.2.0.
+  To fix this, you need to disable storing the Wi-Fi firmware patch in external memory.
+  See the :ref:`migration guide <migration_3.2_required>` for more information.
 
 * :ref:`matter_lock_sample` sample:
 
@@ -730,7 +714,6 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud` library:
 
-  * Added the :c:func:`nrf_cloud_obj_location_request_create_timestamped` function to make location requests for past cellular or Wi-Fi scans.
   * Updated by refactoring the folder structure of the library to separate the different backend implementations.
 
 * :ref:`lib_downloader` library:
@@ -754,10 +737,6 @@ Other libraries
 * :ref:`nrf_profiler` library:
 
   * Updated the documentation by separating out the :ref:`nrf_profiler_script` documentation.
-
-* :ref:`lib_ram_pwrdn` library:
-
-  * Added support for the nRF54LM20A SoC.
 
 Shell libraries
 ---------------
@@ -893,3 +872,7 @@ Documentation
   * The Emergency data storage section in the :ref:`bluetooth_mesh_light_lc` sample documentation to clarify the EMDS storage context implementation and usage.
   * The :ref:`ble_mesh_dfu_distributor` sample documentation to clarify the external flash support.
   * The :ref:`ble_mesh_dfu_target` sample documentation to clarify the external flash support.
+  * The :ref:`abi_compatibility` page to include information about the new |ISE| releases.
+  * The :ref:`ug_nrf54h20_architecture_boot` page to include information about the boot sequences with MCUboot and with the secondary firmware.
+  * The :ref:`ug_nrf54h20_custom_pcb` page to add information about how to transition the nRF54H20 SoC to LCS RoT and how to update |ISE|.
+  * The :ref:`ug_nrf54h20_ironside` page to add information on update placement, reset handling, clearing update status, and multiple UICR fields.
