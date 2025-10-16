@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <mpsl_hwres.h>
+#include <mpsl_dppi.h>
 #if defined(DPPI_PRESENT)
 #include <nrfx_dppi.h>
 #endif
