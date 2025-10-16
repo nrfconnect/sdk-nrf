@@ -28,6 +28,11 @@ config NET_PKT_BUF_RX_DATA_POOL_SIZE
 
 endif
 
+config WIFI_POCAP_SHELL
+	bool "Wi-Fi pre-silicon testing shell"
+	depends on BOARD_NRF7120PDK_NRF7120_CPUAPP_EMU || BOARD_NRF7120PDK_NRF7120_CPUAPP
+	default y
+
 source "Kconfig.zephyr"
 
 endmenu

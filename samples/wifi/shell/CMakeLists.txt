@@ -9,6 +9,11 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(nrf_wifi_shell)
 
+target_sources_ifdef(CONFIG_WIFI_POCAP_SHELL
+	app
+	PRIVATE
+	src/wifi_pocap_shell.c)
+
 target_sources_ifdef(CONFIG_NRF70_RAW_DATA_TX
 	app
 	PRIVATE
