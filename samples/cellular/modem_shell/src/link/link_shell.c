@@ -147,20 +147,27 @@ static const char link_sysmode_usage_str[] =
 static const char link_funmode_usage_str[] =
 	"Usage: link funmode [option] | --read\n"
 	"Options:\n"
-	"  -r, --read,              Read modem functional mode\n"
-	"  -0, --pwroff,            Set modem to minimum functionality mode\n"
-	"  -1, --normal,            Set modem to normal mode\n"
-	"      --normal_no_rel14,   Set modem to normal mode without enabling Release 14 features\n"
-	"  -2, --rxonly,            Set modem to RX only mode\n"
-	"  -4, --flightmode,        Set modem to flight mode\n"
-	"      --lteoff,            Deactivate LTE\n"
-	"      --lteon,             Activate LTE\n"
-	"      --gnssoff,           Deactivate GNSS\n"
-	"      --gnsson,            Activate GNSS\n"
-	"      --uiccoff,           Deactivate UICC\n"
-	"      --uiccon,            Activate UICC\n"
-	"      --flightmode_uiccon, Set modem to flight mode without shutting down UICC\n"
-	"  -h, --help,              Shows this help information";
+	"  -r, --read,            Read modem functional mode\n"
+	"  -0, --pwroff,          Set modem to minimum functionality mode\n"
+	"  -1, --normal,          Set modem to normal mode\n"
+	"      --normal_no_rel14, Set modem to normal mode without enabling Release 14 features\n"
+	"  -2, --rxonly,          Set modem to RX only mode\n"
+	"  -4, --flightmode,      Set modem to flight mode\n"
+	"      --lteoff,          Deactivate LTE\n"
+	"      --lteon,           Activate LTE\n"
+	"      --gnssoff,         Deactivate GNSS\n"
+	"      --gnsson,          Activate GNSS\n"
+	"      --uiccoff,         Deactivate UICC\n"
+	"      --uiccon,          Activate UICC\n"
+	"      --flightmode_uiccon,\n"
+	"                         Set modem to flight mode without shutting down UICC\n"
+	"      --flightmode_keepreg,\n"
+	"                         Set modem to flight mode while preserving the LTE registration\n"
+	"                         context\n"
+	"      --flightmode_keepreg_uiccon,\n"
+	"                         Set modem to flight mode while preserving the LTE\n"
+	"                         registration context and without shutting down UICC\n"
+	"  -h, --help,            Shows this help information";
 
 static const char link_normal_mode_at_usage_str[] =
 	"Usage: link nmodeat --read | --mem<1-3>\n"
@@ -426,6 +433,8 @@ enum {
 	LINK_SHELL_OPT_FUNMODE_UICCOFF,
 	LINK_SHELL_OPT_FUNMODE_UICCON,
 	LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_UICCON,
+	LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG,
+	LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG_UICCON,
 	LINK_SHELL_OPT_THRESHOLD_TIME,
 	LINK_SHELL_OPT_START,
 	LINK_SHELL_OPT_STOP,
@@ -477,6 +486,9 @@ static struct option long_options[] = {
 	{ "uiccoff", no_argument, 0, LINK_SHELL_OPT_FUNMODE_UICCOFF },
 	{ "uiccon", no_argument, 0, LINK_SHELL_OPT_FUNMODE_UICCON },
 	{ "flightmode_uiccon", no_argument, 0, LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_UICCON },
+	{ "flightmode_keepreg", no_argument, 0, LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG },
+	{ "flightmode_keepreg_uiccon", no_argument, 0,
+	  LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG_UICCON },
 	{ "ltem", no_argument, 0, 'm' },
 	{ "nbiot", no_argument, 0, 'n' },
 	{ "gnss", no_argument, 0, 'g' },
@@ -1647,6 +1659,12 @@ static int link_shell_funmode(const struct shell *shell, size_t argc, char **arg
 			break;
 		case LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_UICCON:
 			funmode_option = LTE_LC_FUNC_MODE_OFFLINE_UICC_ON;
+			break;
+		case LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG:
+			funmode_option = LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG;
+			break;
+		case LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG_UICCON:
+			funmode_option = LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG_UICC_ON;
 			break;
 		case LINK_SHELL_OPT_NMODE_NO_REL14:
 			funmode_option = LTE_LC_FUNC_MODE_NORMAL;
