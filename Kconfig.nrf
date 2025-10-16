@@ -86,6 +86,7 @@ config MCUMGR_TRANSPORT_NETBUF_SIZE
 
 # When using HCI on the nRF5340 we need a larger command buffer.
 config BT_BUF_CMD_TX_COUNT
+	depends on !BT_LL_SW_SPLIT
 	default 10 if SOC_COMPATIBLE_NRF5340_CPUAPP || SOC_COMPATIBLE_NRF5340_CPUNET
 
 config INIT_ARCH_HW_AT_BOOT
