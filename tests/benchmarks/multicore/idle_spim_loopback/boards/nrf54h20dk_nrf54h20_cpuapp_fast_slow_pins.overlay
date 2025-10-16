@@ -80,3 +80,7 @@
 &dma_fast_region {
 	status = "okay";
 };
+
+&hsfll120 {
+	status = "okay";
+};

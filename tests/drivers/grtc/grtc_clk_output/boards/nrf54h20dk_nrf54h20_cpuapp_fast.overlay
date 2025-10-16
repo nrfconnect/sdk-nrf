@@ -33,3 +33,7 @@
 	clkout-fast-frequency-hz = <50000>;  /* 16 MHz / (160 * 2) */
 	nordic,clockpin-enable = <NRF_FUN_GRTC_CLKOUT_FAST>;
 };
+
+&fll16m {
+	status = "okay";
+};

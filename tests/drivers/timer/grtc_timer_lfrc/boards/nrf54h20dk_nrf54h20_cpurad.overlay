@@ -13,3 +13,11 @@
 &timer020 {
 	status = "okay";
 };
+
+&fll16m {
+	status = "okay";
+};
+
+&lfclk {
+	status = "okay";
+};

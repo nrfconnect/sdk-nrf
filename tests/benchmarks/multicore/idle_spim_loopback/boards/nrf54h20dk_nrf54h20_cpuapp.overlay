@@ -63,3 +63,7 @@
 		spi-max-frequency = <DT_FREQ_M(4)>;
 	};
 };
+
+&hsfll120 {
+	status = "okay";
+};

@@ -45,3 +45,7 @@ dut: &uart120 {
 	pinctrl-names = "default", "sleep";
 	current-speed = <4000000>;
 };
+
+&hsfll120 {
+	status = "okay";
+};
