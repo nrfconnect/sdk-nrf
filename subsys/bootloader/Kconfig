@@ -101,6 +101,7 @@ config SB_BPROT_IN_DEBUG
 config SB_CLEANUP_RAM
 	bool "Perform RAM cleanup"
 	depends on !FW_INFO_PROVIDE_ENABLE
+	depends on !MPU_STACK_GUARD
 	depends on CPU_CORTEX_M4 || CPU_CORTEX_M33
 	help
 	  Sets contents of memory to 0 before jumping to application.
