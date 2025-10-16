@@ -95,7 +95,7 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_wifi
-  sample.nrf54_nrf7002eb.radio_test:
+  sample.nrf54h_nrf7002eb.radio_test:
     sysbuild: true
     build_only: true
     extra_args:
@@ -105,24 +105,8 @@ tests:
       - SB_CONFIG_SUPPORT_NETCORE_PERIPHERAL_RADIO_TEST=y
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_wifi
-  sample.nrf54_nrf7002eb2.radio_test:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      - multi_domain_SHIELD="nrf7002eb2"
-      - SNIPPET=nrf70-wifi
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
     tags:
       - ci_build
       - sysbuild
