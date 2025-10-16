@@ -130,8 +130,9 @@ bool srv_store_preset_validated(struct bt_audio_codec_cfg const *const new,
  *
  *
  * @retval 0		Success, negative error code on failure.
- * @retval -ESPIPE	If there is no common presentation delay found.
- * @retval -EMLINK	If the search was conducted across multiple CIGs
+ * @retval -ESPIPE	There is no common presentation delay found.
+ * @retval -EINVAL	Illegal argument(s), or submitted streams are in different groups.
+ * @retval -EMLINK	The search was conducted across multiple CIGs
  */
 int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pres_dly_us,
 			    uint32_t *existing_pres_dly_us,
@@ -366,6 +367,9 @@ int srv_store_clear_by_conn(struct bt_conn const *const conn);
  * If not, the address will still be stored, and other or new connections that maliciously present
  * the same address will be recognized as a valid, previously stored server.
  *
+ * @note	This function assumes that this conn will no longer be valid.
+ *		Hence, it will remove a server with a (previously) active conn.
+ *
  * @note srv_store_lock() must be called before accessing this function.
  *
  * @param[in] conn	Connection to the server to be removed.
@@ -402,7 +406,7 @@ int srv_store_remove_by_addr(bt_addr_le_t const *const addr);
 int srv_store_remove_all(bool force);
 
 /**
- * @brief Lock/take the server store semaphore.
+ * @brief Lock or take the server store semaphore.
  *
  * @note Do not use directly. Use the supplied defines.
  *
@@ -424,7 +428,7 @@ int _srv_store_lock(k_timeout_t timeout, const char *file, int line);
 #endif
 
 /**
- * @brief	Unlock/give the server store semaphore.
+ * @brief	Unlock or give the server store semaphore.
  */
 void srv_store_unlock(void);
 

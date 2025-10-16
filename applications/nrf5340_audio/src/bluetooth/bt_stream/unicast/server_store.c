@@ -407,7 +407,6 @@ static bool pres_dly_stream_ignore(struct bt_bap_stream const *const existing_st
 		return true;
 	}
 
-	/* TODO: Add check if we are in QOS configured or higher state. Ref. Emil */
 	stream_print(&existing_stream->ep->qos_pref, true, "Existing");
 	return false;
 }
@@ -538,9 +537,8 @@ struct foreach_stream_data {
 	bool existing_pres_dly_already_in_range;
 };
 
-static bool foreach_stream_in_group(struct bt_cap_stream *existing_stream, void *user_data)
+static bool stream_check_pd(struct bt_cap_stream *existing_stream, void *user_data)
 {
-	int ret;
 	struct foreach_stream_data *ctx = (struct foreach_stream_data *)user_data;
 
 	if (existing_stream->bap_stream.group != ctx->incoming_stream->group) {
@@ -553,7 +551,6 @@ static bool foreach_stream_in_group(struct bt_cap_stream *existing_stream, void 
 	if (pres_dly_stream_ignore(&(existing_stream->bap_stream), ctx->incoming_stream)) {
 		/* Do not consider this stream. Continue parsing */
 		LOG_WRN("Ignoring existing stream");
-		ctx->ret = 0;
 		return false;
 	}
 
@@ -589,14 +586,12 @@ static bool foreach_stream_in_group(struct bt_cap_stream *existing_stream, void 
 	*ctx->group_reconfig_needed = true;
 	(*ctx->streams_checked)++;
 
-	ret = pres_delay_compute(ctx->common_qos, &existing_stream->bap_stream.ep->qos_pref);
-	if (ret) {
-		ctx->ret = ret;
+	ctx->ret = pres_delay_compute(ctx->common_qos, &existing_stream->bap_stream.ep->qos_pref);
+	if (ctx->ret) {
 		return true;
 	}
 
 	/* Continue iteration */
-	ctx->ret = 0;
 	return false;
 }
 
@@ -674,7 +669,7 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 		.existing_pres_dly_already_in_range = false,
 	};
 
-	ret = bt_cap_unicast_group_foreach_stream(unicast_group, foreach_stream_in_group,
+	ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_check_pd,
 						  (void *)&foreach_data);
 	if (foreach_data.ret) {
 		LOG_ERR("Failed to compute presentation delay");
@@ -763,7 +758,7 @@ int srv_store_location_set(struct bt_conn const *const conn, enum bt_audio_dir d
 	struct server_store *server = NULL;
 
 	ret = srv_store_from_conn_get(conn, &server);
-	if (ret < 0) {
+	if (ret) {
 		return ret;
 	}
 
@@ -808,7 +803,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 	struct server_store *server = NULL;
 
 	ret = srv_store_from_conn_get(conn, &server);
-	if (ret < 0) {
+	if (ret) {
 		LOG_ERR("Unknown connection, should not reach here");
 		return ret;
 	}
@@ -932,6 +927,7 @@ int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 				matches++;
 			}
 		}
+
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
 			LOG_DBG("Checking server %d, source stream %d", srv_idx, i);
 			if (&tmp_server->src.cap_streams[i].bap_stream == stream) {
@@ -1072,7 +1068,7 @@ int srv_store_avail_context_set(struct bt_conn *conn, enum bt_audio_context snk_
 	struct server_store *server = NULL;
 
 	ret = srv_store_from_conn_get(conn, &server);
-	if (ret < 0) {
+	if (ret) {
 		return ret;
 	}
 
@@ -1101,7 +1097,7 @@ int srv_store_codec_cap_set(struct bt_conn const *const conn, enum bt_audio_dir 
 	struct server_store *server = NULL;
 
 	ret = srv_store_from_conn_get(conn, &server);
-	if (ret < 0) {
+	if (ret) {
 		return ret;
 	}
 
@@ -1241,7 +1237,6 @@ int srv_store_add_by_conn(struct bt_conn *conn)
 	bt_addr_le_to_str(peer_addr, peer_str, BT_ADDR_LE_STR_LEN);
 
 	LOG_DBG("Adding server by conn for peer: %s", peer_str);
-	/*TODO: Check. If the address is random, we delete when the connection is removed */
 
 	/* Check if server already exists */
 	ret = srv_store_from_conn_get(conn, &temp_server);
@@ -1315,7 +1310,7 @@ int srv_store_conn_update(struct bt_conn *conn, bt_addr_le_t const *const addr)
 	}
 
 	ret = srv_store_from_addr_get(addr, &server);
-	if (ret < 0) {
+	if (ret) {
 		return ret;
 	}
 
@@ -1408,6 +1403,7 @@ int srv_store_remove_by_addr(bt_addr_le_t const *const addr)
 int srv_store_remove_by_conn(struct bt_conn const *const conn)
 {
 	valid_entry_check(__func__);
+	int ret;
 
 	if (conn == NULL) {
 		LOG_ERR("NULL parameter");
@@ -1415,22 +1411,16 @@ int srv_store_remove_by_conn(struct bt_conn const *const conn)
 	}
 
 	struct server_store *server = NULL;
-	const bt_addr_le_t *peer_addr = bt_conn_get_dst(conn);
 
-	for (int i = 0; i < MAX_SERVERS; i++) {
-		if (bt_addr_le_eq(&servers[i].addr, peer_addr)) {
-			server = &servers[i];
-			break;
-		}
+	ret = srv_store_from_conn_get(conn, &server);
+	if (ret == -ENOENT) {
+		LOG_WRN("Server does not exist");
+		return ret;
+	} else if (ret) {
+		return ret;
 	}
 
-	if (server == NULL) {
-		LOG_ERR("Server does not exist");
-		return -ENOENT;
-	}
-
-	memset(server, 0, sizeof(struct server_store));
-	return 0;
+	return server_remove(server, true);
 }
 
 int srv_store_remove_all(bool force)

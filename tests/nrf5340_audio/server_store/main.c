@@ -596,7 +596,7 @@ ZTEST(suite_server_store, test_pres_delay_multi_group)
 
 	mock_add_stream_to_group(&TCS_1_existing.bap_stream, &unicast_group);
 
-	/* Add stream in another group. This is illegal*/
+	/* Add stream in another group */
 	TEST_CAP_STREAM(TCS_2_existing, BT_AUDIO_DIR_SINK, 500, 0xBBBB);
 	TCS_2_existing.bap_stream.ep->qos_pref.pd_min = 500;
 	TCS_2_existing.bap_stream.ep->qos_pref.pref_pd_min = 500;
@@ -616,13 +616,14 @@ ZTEST(suite_server_store, test_pres_delay_multi_group)
 	uint32_t existing_pres_dly_us = 0;
 	bool group_reconfig_needed = false;
 
-	/* New stream in group AAAA, no change */
 	TEST_CAP_STREAM(TCS_1_new, BT_AUDIO_DIR_SINK, 0, 0xBBBB);
 
 	ret = srv_store_pres_dly_find(&TCS_1_new.bap_stream, &computed_pres_dly_us,
 				      &existing_pres_dly_us, &server_qos_pref,
 				      &group_reconfig_needed, &unicast_group);
-	zassert_equal(ret, -EINVAL, "Finding presentation delay did not return zero %d", ret);
+	zassert_equal(ret, -EINVAL,
+		      "Should return -EINVAL as two streams of differing groups are submitted %d",
+		      ret);
 
 	srv_store_unlock();
 }

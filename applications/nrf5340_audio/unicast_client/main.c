@@ -432,8 +432,6 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 			 * been paired with.
 			 */
 
-			LOG_DBG("Server already in store, addr resolved");
-
 			ret = srv_store_conn_update(msg->conn, &msg->addr);
 			if (ret) {
 				LOG_ERR("Failed to update conn in store: %d", ret);
