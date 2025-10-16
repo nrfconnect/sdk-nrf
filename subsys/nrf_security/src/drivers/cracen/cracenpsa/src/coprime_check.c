@@ -72,7 +72,7 @@ static int modular_inversion_start(struct cracen_coprimecheck *coprimecheck)
 static int modular_reduction_finish(uint8_t *workmem, struct sx_pk_acq_req *pkreq,
 				    struct cracen_coprimecheck *coprimecheck)
 {
-	const char **outputs = sx_pk_get_output_ops(pkreq->req);
+	const uint8_t **outputs = sx_pk_get_output_ops(pkreq->req);
 	int opsz = sx_pk_get_opsize(pkreq->req);
 	size_t bsz = coprimecheck->bsz;
 
@@ -165,7 +165,7 @@ int cracen_coprime_check(uint8_t *workmem, size_t workmemsz, const uint8_t *a, s
 	 * shorter than a
 	 */
 	if ((!b_is_odd) || (a_is_odd && (asz < bsz))) {
-		const char *tmp = a;
+		const uint8_t *tmp = a;
 		size_t tmpsz = asz;
 
 		a = b;

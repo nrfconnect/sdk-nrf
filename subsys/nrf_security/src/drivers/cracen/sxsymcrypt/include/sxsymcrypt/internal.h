@@ -35,7 +35,7 @@ struct sx_aead_cmdma_cfg;
 
 /** A cryptomaster DMA descriptor */
 struct sxdesc {
-	char *addr;
+	uint8_t *addr;
 	struct sxdesc *next;
 	uint32_t sz;
 	uint32_t dmatag;
@@ -55,7 +55,7 @@ struct sx_dmactl {
 	bool hw_acquired;
 	struct sxdesc *d;
 	struct sxdesc *out;
-	char *mapped;
+	uint8_t *mapped;
 	struct sx_dmaslot dmamem;
 };
 
@@ -69,7 +69,7 @@ struct sx_dmactl {
  * All members should be considered INTERNAL and may not be accessed directly.
  */
 struct sxkeyref {
-	const char *key;
+	const uint8_t *key;
 	size_t sz;
 	uint32_t cfg;
 	int (*prepare_key)(const uint8_t *arg0);
@@ -87,7 +87,7 @@ struct sxkeyref {
  */
 struct sxaead {
 	const struct sx_aead_cmdma_cfg *cfg;
-	const char *expectedtag;
+	const uint8_t *expectedtag;
 	uint32_t discardaadsz;
 	uint32_t datainsz;
 	size_t dataintotalsz;
@@ -115,7 +115,7 @@ struct sxblkcipher {
 	uint32_t textsz;
 	struct sx_dmactl dma;
 	struct sxdesc descs[5];
-	char extramem[SX_BLKCIPHER_PRIV_SZ];
+	uint8_t extramem[SX_BLKCIPHER_PRIV_SZ];
 };
 
 /** A simple 3gpp operation

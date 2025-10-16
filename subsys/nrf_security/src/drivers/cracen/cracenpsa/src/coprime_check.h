@@ -7,6 +7,8 @@
 #ifndef COPRIME_CHECK_HEADER_FILE
 #define COPRIME_CHECK_HEADER_FILE
 
+#include <stdint.h>
+
 /** Function to check if two integer numbers are coprime.
  * @param[in] a            Unsigned integer stored as a big endian byte array.
  * @param[in] asz          Size in bytes of \p a.

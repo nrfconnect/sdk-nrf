@@ -35,19 +35,19 @@ extern "C" {
 /** An encoded Ed448 point */
 struct sx_ed448_pt {
 	/** Bytes array representing encoded point for Ed448 **/
-	char encoded[SX_ED448_PT_SZ];
+	uint8_t encoded[SX_ED448_PT_SZ];
 };
 
 /** A Ed448 scalar value */
 struct sx_ed448_v {
 	/** Bytes array representing scalar for Ed448 **/
-	char bytes[SX_ED448_SZ];
+	uint8_t bytes[SX_ED448_SZ];
 };
 
 /** A hash digest used in the Ed448 protocol */
 struct sx_ed448_dgst {
 	/** Bytes array of hash digest **/
-	char bytes[SX_ED448_DGST_SZ];
+	uint8_t bytes[SX_ED448_DGST_SZ];
 };
 
 /** EdDSA point multiplication (Ed448)

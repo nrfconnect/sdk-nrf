@@ -39,9 +39,9 @@ then update this error
 #define NULL (void *)0
 #endif
 
-#define ADDR_BA414EP_REGS(instance) ((char *)(ADDR_BA414EP_REGS_BASE) + 0x10000 * (instance))
+#define ADDR_BA414EP_REGS(instance) ((uint8_t *)(ADDR_BA414EP_REGS_BASE) + 0x10000 * (instance))
 #define ADDR_BA414EP_CRYPTORAM(instance)                                                           \
-	((char *)ADDR_BA414EP_CRYPTORAM_BASE + 0x10000 * (instance))
+	((uint8_t *)ADDR_BA414EP_CRYPTORAM_BASE + 0x10000 * (instance))
 
 #define PK_BUSY_MASK_BA414EP 0x00010000
 #define PK_BUSY_MASK_IK	     0x00050000

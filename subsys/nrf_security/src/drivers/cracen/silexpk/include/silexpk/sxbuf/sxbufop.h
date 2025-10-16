@@ -18,7 +18,7 @@ struct sx_buf {
 	/** Size in bytes of operand **/
 	size_t sz;
 	/** Memory of operand bytes in big endian **/
-	char *bytes;
+	uint8_t *bytes;
 };
 /** Simple "sxops" implementation based on sx_buf**/
 typedef struct sx_buf sx_op;

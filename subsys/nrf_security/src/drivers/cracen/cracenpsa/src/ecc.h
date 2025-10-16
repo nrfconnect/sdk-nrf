@@ -7,6 +7,7 @@
 #define ECC_H
 
 #include <psa/crypto.h>
+#include <stdint.h>
 
 int ecc_genpubkey(const uint8_t *priv_key, uint8_t *pub_key, const struct sx_pk_ecurve *curve);
 

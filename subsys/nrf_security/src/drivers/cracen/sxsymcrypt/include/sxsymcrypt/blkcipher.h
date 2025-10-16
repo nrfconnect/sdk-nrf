@@ -98,7 +98,7 @@ struct sxblkcipher;
  *
  * @pre - one of the sx_blkcipher_create_*() functions must be called first
  */
-int sx_blkcipher_crypt(struct sxblkcipher *c, const char *datain, size_t sz, char *dataout);
+int sx_blkcipher_crypt(struct sxblkcipher *c, const uint8_t *datain, size_t sz, uint8_t *dataout);
 
 /** Starts a block cipher operation.
  *

@@ -8,6 +8,7 @@
 #define CRACEN_PSA_ECDSA_H
 
 #include <psa/crypto.h>
+#include <stdint.h>
 
 int cracen_ecdsa_verify_message(const uint8_t *pubkey, const struct sxhashalg *hashalg,
 				const uint8_t *message, size_t message_length,

@@ -56,7 +56,7 @@ exit:
 	return SX_OK;
 }
 
-int sx_mac_feed(struct sxmac *mac_ctx, const char *datain, size_t sz)
+int sx_mac_feed(struct sxmac *mac_ctx, const uint8_t *datain, size_t sz)
 {
 	if (!mac_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
@@ -87,7 +87,7 @@ static int sx_mac_run(struct sxmac *mac_ctx)
 	return SX_OK;
 }
 
-int sx_mac_generate(struct sxmac *mac_ctx, char *mac)
+int sx_mac_generate(struct sxmac *mac_ctx, uint8_t *mac)
 {
 	if (!mac_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;

@@ -83,9 +83,9 @@ static int cracen_signature_set_hashalgo_from_digestsz(const struct sxhashalg **
 #endif /* PSA_MAX_RSA_KEY_BITS > 0 */
 
 static psa_status_t
-cracen_signature_prepare_ec_pubkey(const char *key_buffer, size_t key_buffer_size,
+cracen_signature_prepare_ec_pubkey(const uint8_t *key_buffer, size_t key_buffer_size,
 				   const struct sx_pk_ecurve **sicurve, psa_algorithm_t alg,
-				   const psa_key_attributes_t *attributes, char *pubkey_buffer)
+				   const psa_key_attributes_t *attributes, uint8_t *pubkey_buffer)
 {
 	size_t curvesz = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 	psa_status_t psa_status;
@@ -391,12 +391,12 @@ static psa_status_t cracen_signature_ecc_verify(bool is_message,
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ED25519PH) && alg == PSA_ALG_ED25519PH) {
-		sx_status = cracen_ed25519ph_verify(pubkey_buffer, (char *)input, input_length,
+		sx_status = cracen_ed25519ph_verify(pubkey_buffer, input, input_length,
 						    signature, is_message);
 
 	} else if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_255) &&
 		   alg == PSA_ALG_PURE_EDDSA) {
-		sx_status = cracen_ed25519_verify(pubkey_buffer, (char *)input, input_length,
+		sx_status = cracen_ed25519_verify(pubkey_buffer, input, input_length,
 						  signature);
 
 	} else if ((PSA_ALG_IS_ECDSA(alg) && IS_ENABLED(PSA_NEED_CRACEN_ECDSA)) ||
@@ -472,7 +472,7 @@ static psa_status_t cracen_signature_rsa_sign(bool is_message,
 	}
 
 	sign.sz = PSA_SIGN_OUTPUT_SIZE(PSA_KEY_TYPE_RSA_KEY_PAIR, key_bits_attr, alg);
-	sign.r = (char *)signature;
+	sign.r = signature;
 
 	if ((size_t)signature_size < sign.sz) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;

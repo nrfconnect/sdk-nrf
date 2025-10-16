@@ -9,6 +9,7 @@
 
 #include <psa/crypto.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 #include <zephyr/sys/__assert.h>
 #include <cracen/mem_helpers.h>
