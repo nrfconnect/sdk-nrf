@@ -11,7 +11,6 @@
 #include <nrfx.h>
 #include <nrfx_nvmc.h>
 
-#include <mdk/nrf_erratas.h>
 #include <zephyr/logging/log.h>
 
 #define KMU_KEYSLOT_SIZE_WORDS 4

@@ -587,3 +587,7 @@
     - llext.writable_relocatable_slid_linking
     - llext.writable_relocatable
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-8497"
+
+- platforms:
+    - .*ns
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8563"

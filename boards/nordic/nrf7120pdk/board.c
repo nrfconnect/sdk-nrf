@@ -6,8 +6,7 @@
 
 #include <zephyr/device.h>
 #include <zephyr/platform/hooks.h>
-#include "nrf7120_enga_types.h"
-#include "nrf7120_enga_global.h"
+#include <nrfx.h>
 
 #if CONFIG_BOARD_EARLY_INIT_HOOK
 /* Temporary workaround while VPR does not handle starting clocks */

@@ -9,7 +9,7 @@
 #include <zephyr/kernel.h>
 #include <nrf_modem.h>
 #include <nrf_modem_os.h>
-#include <nrf.h>
+#include <nrfx.h>
 #include <nrf_errno.h>
 #include <errno.h>
 
