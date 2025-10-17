@@ -15,6 +15,7 @@ if MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
 	int "Number of available hardware counter slots"
 	default 240
+	range 2 288 if SOC_SERIES_NRF54LX
 	range 2 300
 	help
 	  When MCUBOOT_HW_DOWNGRADE_PREVENTION is enabled, MCUboot will use
