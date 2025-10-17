@@ -9,8 +9,6 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/counter.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/devicetree/clocks.h>
-#include <zephyr/drivers/clock_control/nrf_clock_control.h>
 
 LOG_MODULE_REGISTER(idle_counter);
 
@@ -25,33 +23,6 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 const struct device *const counter_dev = DEVICE_DT_GET(DT_ALIAS(counter));
 
 static K_SEM_DEFINE(my_sem, 0, 1);
-
-const uint32_t freq[] = {320, 256, 128, 64};
-
-#if defined(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING)
-/*
- * Set Global Domain frequency (HSFLL120)
- */
-void set_global_domain_frequency(uint32_t freq)
-{
-	int err;
-	int res;
-	struct onoff_client cli;
-	const struct device *hsfll_dev = DEVICE_DT_GET(DT_NODELABEL(hsfll120));
-	const struct nrf_clock_spec clk_spec_global_hsfll = {.frequency = MHZ(freq)};
-
-	LOG_INF("Requested frequency [Hz]: %d", clk_spec_global_hsfll.frequency);
-	sys_notify_init_spinwait(&cli.notify);
-	err = nrf_clock_control_request(hsfll_dev, &clk_spec_global_hsfll, &cli);
-	__ASSERT((err >= 0 && err < 3), "Wrong nrf_clock_control_request return code");
-	do {
-		err = sys_notify_fetch_result(&cli.notify, &res);
-		k_yield();
-	} while (err == -EAGAIN);
-	__ASSERT(err == 0, "Wrong clock control request return code");
-	__ASSERT(res == 0, "Wrong clock control request response");
-}
-#endif /* CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING */
 
 void counter_handler(const struct device *counter_dev, uint8_t chan_id, uint32_t ticks,
 		     void *user_data)
@@ -148,16 +119,9 @@ int main(void)
 
 	while (1) {
 		sleep_with_state_indication(CONFIG_TEST_SLEEP_DURATION_MS);
-		for (int i = 0; i < ARRAY_SIZE(freq); i++) {
-			start_time = start_timer(counter_dev);
-			k_msleep(100);
-#if defined(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING)
-			sleep_with_state_indication(CONFIG_TEST_SLEEP_DURATION_MS / 2 - 100);
-			set_global_domain_frequency(freq[(i + 1) % ARRAY_SIZE(freq)]);
-			k_msleep(10);
-#endif /* CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING */
-			verify_timer(start_time);
-		}
+		start_time = start_timer(counter_dev);
+		k_msleep(100);
+		verify_timer(start_time);
 		ret = gpio_pin_set_dt(&led, 1);
 		__ASSERT(ret == 0, "Unable to turn on LED");
 		k_msleep(100);

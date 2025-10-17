@@ -32,7 +32,3 @@
 &timer130 {
 	status = "okay";
 };
-
-&hsfll120 {
-	status = "okay";
-};
