@@ -404,7 +404,8 @@ int srv_store_remove_by_addr(bt_addr_le_t const *const addr);
 int srv_store_remove_all(bool force);
 
 /**
- * @brief	Lock or take the server store semaphore.
+ * @brief	Take the server store semaphore to lock down server store.
+ * This can prevent thread issues.
  *
  * @note	Do not use directly. Use the supplied defines.
  *
@@ -426,7 +427,7 @@ int _srv_store_lock(k_timeout_t timeout, const char *file, int line);
 #endif
 
 /**
- * @brief	Unlock or give the server store semaphore.
+ * @brief	Give the server store semaphore to unlock server store.
  */
 void srv_store_unlock(void);
 
