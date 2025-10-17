@@ -5,11 +5,10 @@
  */
 
 #include <nrf_rpc/nrf_rpc_serialize.h>
-#include <ot_rpc_callback.h>
-#include <ot_rpc_common.h>
 #include <ot_rpc_ids.h>
-#include <ot_rpc_lock.h>
 #include <ot_rpc_types.h>
+#include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 
 #include <nrf_rpc_cbor.h>
 #include "ot_rpc_resource.h"
@@ -265,61 +264,6 @@ static void ot_rpc_msg_get_thread_link_info(const struct nrf_rpc_group *group,
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
-static void ot_rpc_msg_tx_cb(const otMessage *aMessage, otError aError, void *aContext)
-{
-	ot_rpc_callback_id cb_id = (ot_rpc_callback_id)aContext;
-	ot_rpc_res_tab_key msg_key = ot_res_tab_msg_alloc((otMessage *)aMessage);
-	struct nrf_rpc_cbor_ctx ctx;
-
-	if (msg_key == 0) {
-		nrf_rpc_err(-ENOMEM, NRF_RPC_ERR_SRC_SEND, &ot_group, OT_RPC_CMD_MESSAGE_TX_CB,
-			    NRF_RPC_PACKET_TYPE_CMD);
-		return;
-	}
-
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 3 + sizeof(cb_id) + sizeof(msg_key) + sizeof(aError));
-	nrf_rpc_encode_uint(&ctx, cb_id);
-	nrf_rpc_encode_uint(&ctx, msg_key);
-	nrf_rpc_encode_uint(&ctx, aError);
-
-	ot_rpc_mutex_unlock();
-	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_MESSAGE_TX_CB, &ctx, nrf_rpc_rsp_decode_void,
-				NULL);
-	ot_rpc_mutex_lock();
-
-	ot_res_tab_msg_free(msg_key);
-}
-
-static void ot_rpc_msg_register_tx_callback(const struct nrf_rpc_group *group,
-					    struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
-{
-	ot_rpc_res_tab_key key;
-	uint32_t cb_id;
-	otMessage *message;
-
-	key = nrf_rpc_decode_uint(ctx);
-	cb_id = nrf_rpc_decode_uint(ctx);
-
-	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_REGISTER_TX_CALLBACK);
-		return;
-	}
-
-	ot_rpc_mutex_lock();
-	message = ot_res_tab_msg_get(key);
-
-	if (!message) {
-		ot_rpc_mutex_unlock();
-		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_REGISTER_TX_CALLBACK);
-		return;
-	}
-
-	otMessageRegisterTxCallback(message, (cb_id != 0) ? ot_rpc_msg_tx_cb : NULL, (void *)cb_id);
-	ot_rpc_mutex_unlock();
-
-	nrf_rpc_rsp_send_void(group);
-}
-
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_msg_length, OT_RPC_CMD_MESSAGE_GET_LENGTH,
 			 ot_rpc_msg_length, NULL);
 
@@ -338,8 +282,4 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_msg_append, OT_RPC_CMD_MESSAGE_APPEND,
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_msg_get_thread_link_info,
 			 OT_RPC_CMD_MESSAGE_GET_THREAD_LINK_INFO, ot_rpc_msg_get_thread_link_info,
-			 NULL);
-
-NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_msg_register_tx_callback,
-			 OT_RPC_CMD_MESSAGE_REGISTER_TX_CALLBACK, ot_rpc_msg_register_tx_callback,
 			 NULL);
