@@ -183,12 +183,39 @@ static uint32_t curr_fade_time(struct bt_mesh_light_ctrl_srv *srv)
 }
 
 static bool state_is_on(const struct bt_mesh_light_ctrl_srv *srv,
-			enum bt_mesh_light_ctrl_srv_state state)
+			enum bt_mesh_light_ctrl_srv_state prev_state)
 {
-	/* Only the stable Standby state is considered Off: */
-	if (srv->fade.duration > 0) {
-		return (state != LIGHT_CTRL_STATE_STANDBY ||
-			atomic_test_bit(&srv->flags, FLAG_TRANSITION));
+	/* Note: The issue with this function is the prev_state represents previous state, but
+	 * the state of the FSM changes once old state is captured. Thus, we need some
+	 * implied logic here to correct this understanding.
+	 *
+	 * This module will be refactored later.
+	 */
+
+	/* If there is a delayed transition, report the value before the change. */
+	if (atomic_test_bit(&srv->flags, FLAG_ON_PENDING) ||
+	    atomic_test_bit(&srv->flags, FLAG_OFF_PENDING)) {
+		return prev_state != LIGHT_CTRL_STATE_STANDBY;
+	}
+
+	/* For ongoing transition (of non-zero duration), we have two cases:
+	 *  - Immediately at state change publications (prev_state != srv->state),
+	 *    Present should reflect the state 'before' the transition started.
+	 *  - For later Status queries (prev_state == srv->state), Present shall remain
+	 *    On (1) for the duration of the transition.
+	 */
+	if (atomic_test_bit(&srv->flags, FLAG_TRANSITION) && srv->fade.duration > 0) {
+		if (prev_state != srv->state) {
+			return prev_state != LIGHT_CTRL_STATE_STANDBY;
+		}
+
+		/* At this point, we are in an ongoing transition (with non-zero duration),
+		 * prev_state == srv->state, and neither FLAG_ON_PENDING nor FLAG_OFF_PENDING is
+		 * set. Per spec, the Present OnOff is reported as ON for the entire duration of a
+		 * transition to OFF. Here we return true, indicating the light should be reported
+		 * as ON during this transition regardless of the eventual target state.
+		 */
+		return true;
 	}
 
 	return srv->state != LIGHT_CTRL_STATE_STANDBY;
@@ -229,6 +256,13 @@ static int light_onoff_status_send(struct bt_mesh_light_ctrl_srv *srv,
 	BT_MESH_MODEL_BUF_DEFINE(buf, BT_MESH_LIGHT_CTRL_OP_LIGHT_ONOFF_STATUS,
 				 3);
 	light_onoff_encode(srv, &buf, prev_state);
+
+	if (buf.len > 2) {
+		LOG_DBG("POnOff: %u TOnOff: %u RT: 0x%02X", buf.data[2], buf.data[3],
+			 (uint8_t) buf.data[4]);
+	} else {
+		LOG_DBG("POnOff: %u", buf.data[2]);
+	}
 
 	return bt_mesh_msg_send(srv->model, ctx, &buf);
 }
@@ -888,7 +922,7 @@ static int light_onoff_set(struct bt_mesh_light_ctrl_srv *srv, struct bt_mesh_ms
 	enum bt_mesh_light_ctrl_srv_state prev_state = srv->state;
 
 	if (!tid_check_and_update(&srv->tid, tid, ctx)) {
-		LOG_DBG("Set Light OnOff: %s (%u + %u)", onoff ? "on" : "off",
+		LOG_DBG("Set Light OnOff: %s (TT %u + Delay %u)", onoff ? "on" : "off",
 		       has_trans ? transition.time : 0,
 		       has_trans ? transition.delay : 0);
 
