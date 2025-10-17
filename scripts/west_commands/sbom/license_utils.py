@@ -9,9 +9,9 @@ Utility functions for handling licenses and license expressions.
 
 import re
 from pathlib import Path
+
 import yaml
 from data_structure import DataBaseClass, License
-
 
 spdx_licenses: 'dict(License)' = dict()
 license_texts: 'list(License)' = list()
@@ -93,7 +93,7 @@ def get_spdx_license_expr_info(expr: str) -> SPDXLicenseExprInfo:
             pass
         else:
             result.licenses.add(token.upper())
-        ignore_next = (token == 'WITH')
+        ignore_next = token == 'WITH'
         lic = get_license(token)
         if lic is None:
             friendly_tokens.append(token)
@@ -107,7 +107,7 @@ def get_spdx_license_expr_info(expr: str) -> SPDXLicenseExprInfo:
 def load_data():
     '''Load license information data from "spdx-licenses.yaml" and "license-texts.yaml" files.'''
 
-    with open(Path(__file__).parent / 'data/spdx-licenses.yaml', 'r') as fd:
+    with open(Path(__file__).parent / 'data/spdx-licenses.yaml') as fd:
         data = yaml.safe_load(fd)
     for id, value in data.items():
         if id.startswith('_'):
@@ -117,20 +117,20 @@ def load_data():
         lic.id = id.upper()
         lic.friendly_id = id
         lic.name = value['name']
-        lic.url = value['url'] if 'url' in value else f'https://spdx.org/licenses/{id}.html'
+        lic.url = value.get('url', f'https://spdx.org/licenses/{id}.html')
         spdx_licenses[lic.id] = lic
         license_by_id[lic.id] = lic
 
-    with open(Path(__file__).parent / 'data/license-texts.yaml', 'r') as fd:
+    with open(Path(__file__).parent / 'data/license-texts.yaml') as fd:
         data = yaml.safe_load(fd)
     for value in data:
         lic = License()
         lic.id = value['id'].upper()
         lic.friendly_id = value['id']
         lic.custom = not is_spdx_license(lic.id)
-        lic.name = value['name'] if 'name' in value else None
-        lic.url = value['url'] if 'url' in value else None
-        lic.detector = value['detect-pattern'] if 'detect-pattern' in value else None
+        lic.name = value.get('name', None)
+        lic.url = value.get('url', None)
+        lic.detector = value.get('detect-pattern', None)
         lic.text = value['text']
         license_texts.append(lic)
         if lic.id not in license_by_id:

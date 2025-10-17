@@ -82,7 +82,7 @@ class BaseValidator(abc.ABC):
         output_bin: BinaryIO | None,
         magic_value: str
     ) -> None:
-        with open(input_file, 'r', encoding='UTF-8') as f:
+        with open(input_file, encoding='UTF-8') as f:
             ih = IntelHex(f)
         # OBJCOPY incorrectly inserts x86 specific records, remove the start_addr as it is wrong.
         ih.start_addr = None
@@ -129,7 +129,7 @@ class BaseValidator(abc.ABC):
 
     @staticmethod
     def _read_text(file, encoding=None) -> str:
-        with open(file, 'r', encoding=encoding) as f:
+        with open(file, encoding=encoding) as f:
             data = f.read()
         return data
 
@@ -241,7 +241,7 @@ class Ed25519SignatureValidator(BaseValidator):
                 magic_value=magic_value
             )
 
-        with open(input_file, 'r', encoding='UTF-8') as f:
+        with open(input_file, encoding='UTF-8') as f:
             ih = IntelHex(f)
         # OBJCOPY incorrectly inserts x86 specific records, remove the start_addr as it is wrong.
         ih.start_addr = None

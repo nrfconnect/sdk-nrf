@@ -8,11 +8,11 @@ import argparse
 import collections
 import logging
 import os
-from pathlib import Path
 import re
+import shlex
 import subprocess
 import sys
-import shlex
+from pathlib import Path
 
 logger = None
 
@@ -97,7 +97,7 @@ def ls_owned_files(codeowners):
     pattern2files = collections.OrderedDict()
     top_path = Path(GIT_TOP)
 
-    with open(codeowners, "r") as codeo:
+    with open(codeowners) as codeo:
         for lineno, line in enumerate(codeo, start=1):
 
             if line.startswith("#") or not line.strip():
@@ -142,8 +142,8 @@ def git_pattern_to_glob(git_pattern):
     if git_pattern.endswith("/"):
         ret = ret + "**/*"
     elif os.path.isdir(os.path.join(GIT_TOP, ret)):
-        failure("Expected '/' after directory '{}' "
-                         "in CODEOWNERS".format(ret))
+        failure(f"Expected '/' after directory '{ret}' "
+                         "in CODEOWNERS")
 
     return ret
 

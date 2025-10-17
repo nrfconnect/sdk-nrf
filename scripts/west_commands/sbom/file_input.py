@@ -7,15 +7,15 @@
 Input files from command line and/or a text file.
 '''
 
-import re
 import os
+import re
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
-from west import log, util
+
 from args import args
 from common import SbomException
 from data_structure import Data, FileInfo
-
+from west import log, util
 
 GLOB_PATTERN_START = re.compile(r'[\*\?\[]')
 
@@ -82,7 +82,7 @@ def generate_input(data: Data):
             data.inputs.append(f'A list of files read from: "{file_path}"')
             globs = list()
             try:
-                with open(file_path, 'r') as fd:
+                with open(file_path) as fd:
                     for line in fd:
                         line = line.strip()
                         if line == '' or line[0] == '#':

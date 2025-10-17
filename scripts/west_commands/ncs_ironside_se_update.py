@@ -10,13 +10,13 @@ import subprocess
 import time
 from ctypes import c_char_p
 from enum import Enum
-from intelhex import IntelHex
 from pathlib import Path, PosixPath
 from tempfile import TemporaryDirectory
 from textwrap import indent
 from typing import Any
 from zipfile import ZipFile
 
+from intelhex import IntelHex
 from west.commands import WestCommand
 
 IRONSIDE_SE_VERSION_ADDR = 0x2F88_FD04
@@ -137,130 +137,129 @@ class NcsIronSideSEUpdate(WestCommand):
                 "Unable to perform update without erasing the device, set '--allow-erase'"
             )
 
-        with TemporaryDirectory() as tmpdir:
-            with ZipFile(args.zip.name, "r") as zip_ref:
-                zip_ref.extractall(tmpdir)
-                update_dir = Path(tmpdir, "update")
-                update_app = update_dir / "update_application.hex"
-                match getattr(args, "firmware_slot"):
-                    case FirmwareSlot.USLOT:
-                        update_hex_files = [
-                            (FirmwareSlot.USLOT, update_dir / "ironside_se_update.hex")
-                        ]
-                    case FirmwareSlot.RSLOT:
-                        update_hex_files = [
-                            (
-                                FirmwareSlot.RSLOT,
-                                update_dir / "ironside_se_recovery_update.hex",
-                            )
-                        ]
-                    case _:
-                        update_hex_files = [
-                            (FirmwareSlot.USLOT, update_dir / "ironside_se_update.hex"),
-                            (
-                                FirmwareSlot.RSLOT,
-                                update_dir / "ironside_se_recovery_update.hex",
-                            ),
-                        ]
-
-                if not update_app.exists():
-                    self.die(
-                        f"Update application file not found in ZIP: "
-                        f"{update_app.relative_to(update_dir)}"
-                    )
-
-                target_versions = {}
-                for slot, update_file in update_hex_files:
-                    if not update_file.exists():
-                        self.die(
-                            f"Update firmware file for {slot.description} ({slot.value}) "
-                            f"not found in ZIP: {update_file.relative_to(update_dir)}"
+        with TemporaryDirectory() as tmpdir, ZipFile(args.zip.name, "r") as zip_ref:
+            zip_ref.extractall(tmpdir)
+            update_dir = Path(tmpdir, "update")
+            update_app = update_dir / "update_application.hex"
+            match args.firmware_slot:
+                case FirmwareSlot.USLOT:
+                    update_hex_files = [
+                        (FirmwareSlot.USLOT, update_dir / "ironside_se_update.hex")
+                    ]
+                case FirmwareSlot.RSLOT:
+                    update_hex_files = [
+                        (
+                            FirmwareSlot.RSLOT,
+                            update_dir / "ironside_se_recovery_update.hex",
                         )
-                    target_versions[slot] = self._load_update_version(update_file)
+                    ]
+                case _:
+                    update_hex_files = [
+                        (FirmwareSlot.USLOT, update_dir / "ironside_se_update.hex"),
+                        (
+                            FirmwareSlot.RSLOT,
+                            update_dir / "ironside_se_recovery_update.hex",
+                        ),
+                    ]
 
-                fw_version_before = self._read_versions_from_device(**common_kwargs)
-                target_version_diff = self._fmt_versions(
-                    before=fw_version_before,
-                    after=target_versions,
+            if not update_app.exists():
+                self.die(
+                    f"Update application file not found in ZIP: "
+                    f"{update_app.relative_to(update_dir)}"
                 )
+
+            target_versions = {}
+            for slot, update_file in update_hex_files:
+                if not update_file.exists():
+                    self.die(
+                        f"Update firmware file for {slot.description} ({slot.value}) "
+                        f"not found in ZIP: {update_file.relative_to(update_dir)}"
+                    )
+                target_versions[slot] = self._load_update_version(update_file)
+
+            fw_version_before = self._read_versions_from_device(**common_kwargs)
+            target_version_diff = self._fmt_versions(
+                before=fw_version_before,
+                after=target_versions,
+            )
+            self.inf(
+                f"Updating IronSide SE firmware:\n{indent(target_version_diff, '  ')}\n"
+            )
+
+            self.inf("Erasing non-volatile memory")
+            self._nrfutil_device("recover", **common_kwargs)
+
+            self.dbg("Programming application firmware used to trigger the update")
+            self._program(update_app, erase=True, **common_kwargs)
+
+            update_failed = False
+            last_update_status = UpdateStatus.NONE
+
+            for slot, update_file in update_hex_files:
+                slot_target_version = target_versions[slot]
                 self.inf(
-                    f"Updating IronSide SE firmware:\n{indent(target_version_diff, '  ')}\n"
+                    f"Updating {slot.description} ({slot.name}) "
+                    f"to {slot_target_version}"
                 )
 
-                self.inf("Erasing non-volatile memory")
-                self._nrfutil_device("recover", **common_kwargs)
+                update_status = self._read_update_status(**common_kwargs)
+                self.dbg(f"Status before triggering the update: {update_status}")
 
-                self.dbg("Programming application firmware used to trigger the update")
-                self._program(update_app, erase=True, **common_kwargs)
+                self._program(update_file, **common_kwargs)
 
-                update_failed = False
-                last_update_status = UpdateStatus.NONE
+                self.dbg("Reset to execute update service")
+                self._nrfutil_device("reset", **common_kwargs)
+                # Wait for the application to boot
+                self._wait_for_bootstatus(**common_kwargs)
+                # Wait for the application to execute
+                time.sleep(0.200)
 
-                for slot, update_file in update_hex_files:
-                    slot_target_version = target_versions[slot]
-                    self.inf(
-                        f"Updating {slot.description} ({slot.name}) "
+                self.dbg("Reset to trigger update installation")
+                self._nrfutil_device(
+                    "reset --reset-kind RESET_VIA_SECDOM",
+                    die_on_error=False, # nrfutil will incorrectly fail, so don't die on error
+                    **common_kwargs,
+                )
+                self.dbg("Waiting for update to complete")
+                self._wait_for_bootstatus(**common_kwargs)
+
+                slot_version = self._read_firmware_version(slot, **common_kwargs)
+                last_update_status = self._read_update_status(**common_kwargs)
+                self.dbg(
+                    f"Version after update: {slot_version}, status: {last_update_status.name}"
+                )
+
+                if slot_version != slot_target_version:
+                    update_failed = True
+                    self.err(
+                        f"Failed to update {slot.description} ({slot.name}) "
                         f"to {slot_target_version}"
                     )
+                    break
 
-                    update_status = self._read_update_status(**common_kwargs)
-                    self.dbg(f"Status before triggering the update: {update_status}")
+            self.dbg("Erasing application firmware used to trigger the update")
+            self._nrfutil_device("erase --all", **common_kwargs)
 
-                    self._program(update_file, **common_kwargs)
-
-                    self.dbg("Reset to execute update service")
-                    self._nrfutil_device("reset", **common_kwargs)
-                    # Wait for the application to boot
-                    self._wait_for_bootstatus(**common_kwargs)
-                    # Wait for the application to execute
-                    time.sleep(0.200)
-
-                    self.dbg("Reset to trigger update installation")
-                    self._nrfutil_device(
-                        "reset --reset-kind RESET_VIA_SECDOM",
-                        die_on_error=False, # nrfutil will incorrectly fail, so don't die on error
-                        **common_kwargs,
+            if update_failed:
+                fw_version_after = self._read_versions_from_device(**common_kwargs)
+                version_str = self._fmt_versions(
+                    before=None, after=fw_version_after
+                )
+                self.inf(
+                    f"The device is left with IronSide SE firmware:\n"
+                    f"{indent(version_str, '  ')}\n"
+                )
+                if last_update_status != UpdateStatus.NONE:
+                    fail_status_str = (
+                        f"{last_update_status.name} - "
+                        f"{last_update_status.description}"
                     )
-                    self.dbg("Waiting for update to complete")
-                    self._wait_for_bootstatus(**common_kwargs)
-
-                    slot_version = self._read_firmware_version(slot, **common_kwargs)
-                    last_update_status = self._read_update_status(**common_kwargs)
-                    self.dbg(
-                        f"Version after update: {slot_version}, status: {last_update_status.name}"
+                else:
+                    fail_status_str = (
+                        "The update status did not "
+                        "indicate why the failure happened"
                     )
-
-                    if slot_version != slot_target_version:
-                        update_failed = True
-                        self.err(
-                            f"Failed to update {slot.description} ({slot.name}) "
-                            f"to {slot_target_version}"
-                        )
-                        break
-
-                self.dbg("Erasing application firmware used to trigger the update")
-                self._nrfutil_device("erase --all", **common_kwargs)
-
-                if update_failed:
-                    fw_version_after = self._read_versions_from_device(**common_kwargs)
-                    version_str = self._fmt_versions(
-                        before=None, after=fw_version_after
-                    )
-                    self.inf(
-                        f"The device is left with IronSide SE firmware:\n"
-                        f"{indent(version_str, '  ')}\n"
-                    )
-                    if last_update_status != UpdateStatus.NONE:
-                        fail_status_str = (
-                            f"{last_update_status.name} - "
-                            f"{last_update_status.description}"
-                        )
-                    else:
-                        fail_status_str = (
-                            "The update status did not "
-                            "indicate why the failure happened"
-                        )
-                    self.die(fail_status_str)
+                self.die(fail_status_str)
 
     def _program(self, hex_file: PosixPath, erase: bool = False, **kwargs: Any) -> None:
         if not hex_file.exists():

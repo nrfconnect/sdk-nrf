@@ -7,16 +7,15 @@
 Generates report using the Jinja2 templates.
 '''
 
-import os
 import hashlib
+import os
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import quote
-from datetime import datetime, timezone
+
+from data_structure import Data, FileInfo
 from jinja2 import Template, filters
 from west import log
-from data_structure import Data, FileInfo  # pylint: disable=unused-import
-                                           # Ignoring false warning from pylint, FileInfo is used.
-
 
 counter_value = 0
 
@@ -83,7 +82,7 @@ def generate(data: Data, output_file: 'Path|str', template_file: Path):
     '''Generate output_file from data using template_file.'''
     output_file = Path(output_file)
     log.dbg(f'Writing output to "{output_file}" using template "{template_file}"')
-    with open(template_file, 'r') as fd:
+    with open(template_file) as fd:
         template_source = fd.read()
     t = Template(template_source)
     out = t.render(**data_to_dict(data, output_file.parent.resolve()))

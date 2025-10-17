@@ -5,10 +5,12 @@
 
 import sys
 from pathlib import Path
-from west import log
+
 from args import args
 from common import SbomException, command_execute, concurrent_pool_iter
-from data_structure import Data, FileInfo, Package  # pylint: disable=unused-import
+from data_structure import Data, FileInfo, Package
+from west import log
+
                                                     # FileInfo is used.
 
 
@@ -120,7 +122,7 @@ def check_external_tools():
     '''
     try:
         command_execute(args.git, '--version', allow_stderr=True)
-    except BaseException as ex: # pylint: disable=bare-except
+    except BaseException as ex:
         # We are checking if calling this command works at all,
         # so ANY kind of problem (exception) should return "False" value.
         raise SbomException('Cannot execute "git" command.\nMake sure it available on your '

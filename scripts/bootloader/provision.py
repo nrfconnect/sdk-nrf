@@ -176,8 +176,7 @@ def get_hashes(public_key_files, verify_hashes):
         with open(fn, 'rb') as f:
             digest = sha256(public_key_to_string(load_pem_public_key(f.read()))).digest()[:16]
             if verify_hashes and any([digest[n:n + 2] == b'\xff\xff' for n in range(0, len(digest), 2)]):
-                raise RuntimeError("Hash of key in '%s' contains 0xffff. Please regenerate the key." %
-                                   os.path.abspath(f.name))
+                raise RuntimeError(f"Hash of key in '{os.path.abspath(f.name)}' contains 0xffff. Please regenerate the key.")
             hashes.append(digest)
 
     if len(hashes) != len(set(hashes)):
