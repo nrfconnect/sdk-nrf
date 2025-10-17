@@ -15,15 +15,10 @@ LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 #include <zephyr/drivers/i2c.h>
 #include <nrfx_twis.h>
 
-#if CONFIG_NRFX_TWIS1
-#define I2C_S_INSTANCE 1
-#elif CONFIG_NRFX_TWIS2
-#define I2C_S_INSTANCE 2
-#elif CONFIG_NRFX_TWIS22
-#define I2C_S_INSTANCE 22
-#elif CONFIG_NRFX_TWIS131
-#define I2C_S_INSTANCE 131
-#else
+#define I2C_S_INST_IDX 0
+
+#define DT_DRV_COMPAT nordic_nrf_twis
+#if !DT_NODE_HAS_STATUS_OKAY(DT_DRV_INST(I2C_S_INST_IDX))
 #error "TWIS instance not enabled or not supported"
 #endif
 
@@ -49,7 +44,9 @@ static uint8_t i2c_twim_buffer[DATA_FIELD_LEN];
 static uint8_t previous_data[DATA_FIELD_LEN];
 
 #else /* ROLE */
-static const nrfx_twis_t twis = NRFX_TWIS_INSTANCE(I2C_S_INSTANCE);
+static nrfx_twis_t twis = {
+	.p_reg = (NRF_TWIS_Type *)DT_INST_REG_ADDR(I2C_S_INST_IDX)
+};
 static uint8_t i2c_twis_buffer[DATA_FIELD_LEN] TWIS_MEMORY_SECTION;
 static uint8_t previous;
 
@@ -94,7 +91,7 @@ void twis_verify_data(void)
 	counter++;
 }
 
-void i2s_slave_handler(nrfx_twis_evt_t const *p_event)
+void i2s_slave_handler(nrfx_twis_event_t const *p_event)
 {
 	switch (p_event->type) {
 	case NRFX_TWIS_EVT_READ_REQ:
@@ -134,8 +131,8 @@ void twis_setup(void)
 		LOG_ERR("pinctrl_apply_state() returned %d", ret);
 	}
 
-	IRQ_CONNECT(DT_IRQN(NODE_TWIS), DT_IRQ(NODE_TWIS, priority),
-		    NRFX_TWIS_INST_HANDLER_GET(I2C_S_INSTANCE), NULL, 0);
+	IRQ_CONNECT(DT_INST_IRQN(I2C_S_INST_IDX), DT_INST_IRQ(I2C_S_INST_IDX, priority),
+		    nrfx_twis_irq_handler, &twis, 0);
 
 	nrfx_twis_enable(&twis);
 }
