@@ -45,6 +45,34 @@ config BT_LONG_WQ_STACK_SIZE
 	default 1800 if (BT_ECC || BT_GATT_CACHING)
 	default 1024
 
+if BT_CONN
+config BT_HCI_ACL_FLOW_CONTROL
+	default y
+
+config BT_BUF_CMD_TX_COUNT
+	default 3 if BT_BUF_ACL_RX_COUNT_EXTRA = 1
+	default 4 if BT_BUF_ACL_RX_COUNT_EXTRA = 2
+	default 5 if BT_BUF_ACL_RX_COUNT_EXTRA = 3
+	default 6 if BT_BUF_ACL_RX_COUNT_EXTRA = 4
+	default 7 if BT_BUF_ACL_RX_COUNT_EXTRA = 5
+	default 8 if BT_BUF_ACL_RX_COUNT_EXTRA = 6
+	default 9 if BT_BUF_ACL_RX_COUNT_EXTRA = 7
+	default 10 if BT_BUF_ACL_RX_COUNT_EXTRA = 8
+	default 11 if BT_BUF_ACL_RX_COUNT_EXTRA = 9
+	default 12 if BT_BUF_ACL_RX_COUNT_EXTRA = 10
+	default 13 if BT_BUF_ACL_RX_COUNT_EXTRA = 11
+	default 14 if BT_BUF_ACL_RX_COUNT_EXTRA = 12
+	default 15 if BT_BUF_ACL_RX_COUNT_EXTRA = 13
+	default 16 if BT_BUF_ACL_RX_COUNT_EXTRA = 14
+	default 17 if BT_BUF_ACL_RX_COUNT_EXTRA = 15
+	default 18 if BT_BUF_ACL_RX_COUNT_EXTRA = 16
+	default 19 if BT_BUF_ACL_RX_COUNT_EXTRA = 17
+	default 20 if BT_BUF_ACL_RX_COUNT_EXTRA = 18
+	default 21 if BT_BUF_ACL_RX_COUNT_EXTRA = 19
+	default 22 if BT_BUF_ACL_RX_COUNT_EXTRA = 20
+
+endif # BT_CONN
+
 rsource "controller/Kconfig"
 rsource "host_extensions/Kconfig"
 rsource "cs_de/Kconfig"
