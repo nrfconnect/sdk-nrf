@@ -528,7 +528,7 @@ static int start_download(void)
 		.host = job.host,
 		.path = job.path,
 		.dl_host_conf = {.sec_tag_list = &sec_tag,
-				 .sec_tag_count = (sec_tag < 0 ? 0 : 1),
+				 .sec_tag_count = (sec_tag != SEC_TAG_TLS_INVALID ? 1 : 0),
 				 .pdn_id = 0,
 				 .range_override = range_override},
 		.fota = {.expected_type = ctx_ptr->img_type,
