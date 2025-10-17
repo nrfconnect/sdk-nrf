@@ -51,13 +51,11 @@ extern int32_t http_uptime(void);
  */
 void otdoa_http_defaults(tOTDOA_HTTP_MEMBERS *pG)
 {
-	pG->uEcgi = 10242563;
-	pG->uDlearfcn = 5230;
-	pG->uRadius = 3000;
-	pG->uNumCells = 50;
-	pG->uNumRepeatCount = 0;
+	pG->req.uEcgi = 10242563;
+	pG->req.uDlearfcn = 5230;
+	pG->req.uRadius = 3000;
+	pG->req.uNumCells = 50;
 	pG->prsID = 0;
-	pG->bSkipAuth = false;
 }
 
 /**
@@ -221,7 +219,7 @@ int otdoa_http_send_ubsa_req(const char *const pURL, uint32_t u32ECGI, uint32_t 
 			     uint32_t u32Radius, uint32_t u32NumCells, uint16_t u16MCC,
 			     uint16_t u16MNC, const bool reset_blacklist)
 {
-	tOTDOA_MSG_HTTP_GET_UBSA msg;
+	tOTDOA_MSG_HTTP_GET_UBSA msg = { 0 };
 
 	msg.u32MsgId = OTDOA_HTTP_MSG_GET_H1_UBSA;
 	OTDOA_LOG_INF("Sending uBSA req for ECGI %u", u32ECGI);
@@ -241,7 +239,7 @@ int otdoa_http_send_results_upload(const char *pURL, otdoa_api_results_t *pResul
 				   const char *p_notes, const char *p_true_lat,
 				   const char *p_true_lon)
 {
-	tOTDOA_MSG_HTTP_UPLOAD_RESULTS msg;
+	tOTDOA_MSG_HTTP_UPLOAD_RESULTS msg = { 0 };
 
 	msg.u32MsgId = OTDOA_HTTP_MSG_UPLOAD_OTDOA_RESULTS;
 	msg.u32MsgLen = sizeof(msg);
@@ -255,7 +253,7 @@ int otdoa_http_send_results_upload(const char *pURL, otdoa_api_results_t *pResul
 
 int otdoa_http_send_test_jwt(void)
 {
-	tOTDOA_MSG_HTTP_TEST_JWT msg;
+	tOTDOA_MSG_HTTP_TEST_JWT msg = { 0 };
 
 	msg.u32MsgId = OTDOA_HTTP_MSG_TEST_JWT;
 	msg.u32MsgLen = sizeof(msg);
@@ -264,7 +262,7 @@ int otdoa_http_send_test_jwt(void)
 
 int otdoa_http_send_rebind_socket(void)
 {
-	tOTDOA_MSG_HTTP_REBIND msg;
+	tOTDOA_MSG_HTTP_REBIND msg = { 0 };
 
 	msg.u32MsgId = OTDOA_HTTP_MSG_REBIND_SOCKET;
 	msg.u32MsgLen = sizeof(msg);

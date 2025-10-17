@@ -178,6 +178,14 @@ typedef struct OTDOA_HTTP_BLACKLIST {
 	int age;
 } tOTDOA_HTTP_BLACKLIST;
 
+typedef struct OTDOA_HTTP_REQ {
+	unsigned int uRecommendedDelay;
+	unsigned int uEcgi;
+	unsigned int uDlearfcn;
+	unsigned int uRadius;
+	unsigned int uNumCells;
+} tOTDOA_HTTP_REQ;
+
 typedef union {
 	tOTDOA_MSG_HTTP_HEADER header;
 	tOTDOA_MSG_HTTP_GET_UBSA http_get_ubsa;
@@ -191,7 +199,6 @@ typedef union {
 
 /* HTTPS Thread Members */
 typedef struct OTDOA_HTTP_MEMBERS {
-	bool bReady;
 	bool bDownloadComplete;
 	int nRange;	            /* Start offset for current request */
 	int nRangeSegmentEnd;   /* end of current segment */
@@ -199,12 +206,8 @@ typedef struct OTDOA_HTTP_MEMBERS {
 	int nHeaderLength;      /* Length of header */
 	int nContentLength;     /* Length of content (body) */
 	int nBSARequests;       /* Number of BSA downloads this session */
-	int iHttpResponseCode;
 	bool bDisableTLS;       /* true to disable TLS and use HTTP (for uBSA DL only) */
-	bool bSkipConfigDL;     /* true to skip config file DL when DL the uBSA */
 	bool bSkipAuth;         /* true to skip authentication when DL the uBSA */
-	bool bDisableEncryption;
-	int nOverrideAuthResp;  /* non-zero value overrides initial auth. response (for testing) */
 	uint8_t pubkey[PUBKEY_LMAX];
 	uint8_t iv[IV_LMAX];
 
@@ -213,17 +216,11 @@ typedef struct OTDOA_HTTP_MEMBERS {
 	char *szSend;
 	size_t nOff;
 	int fdSocket;
-	int fdFile;
 	struct addrinfo *res;
 	char szModemAddress[HELLAPHY_IP_ADDR_LMAX];
 	char szServerAddress[HELLAPHY_IP_ADDR_LMAX];
 	char ubsa_token[UBSA_TOKEN_LMAX];
-	unsigned int uRecommendedDelay;
-	unsigned int uEcgi;
-	unsigned int uDlearfcn;
-	unsigned int uRadius;
-	unsigned int uNumCells;
-	unsigned int uNumRepeatCount;
+	tOTDOA_HTTP_REQ req;
 	long prsID;
 	uint16_t uMCC;
 	uint16_t uMNC;

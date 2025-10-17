@@ -31,6 +31,32 @@ extern int32_t http_uptime(void);
 /* forward references: */
 int otdoa_http_h1_process_config_data(tOTDOA_HTTP_MEMBERS *pG);
 
+/* static function declarations for message handling */
+static int handle_get_ubsa_message(tOTDOA_HTTP_MESSAGE *pMsg);
+static int handle_get_config_message(tOTDOA_HTTP_MESSAGE *pMsg);
+#ifdef CONFIG_OTDOA_ENABLE_RESULTS_UPLOAD
+static int handle_upload_results_message(tOTDOA_HTTP_MESSAGE *pMsg);
+#endif
+static int handle_test_jwt_message(tOTDOA_HTTP_MESSAGE *pMsg);
+
+/* static function declarations for UBSA download handling */
+static int handle_ubsa_authentication(tOTDOA_HTTP_MEMBERS *p_http);
+static int handle_ubsa_download_loop(tOTDOA_HTTP_MEMBERS *p_http);
+
+/* static function declarations for HTTP receive handling */
+static int receive_data_with_retry(tOTDOA_HTTP_MEMBERS *pG, size_t nAvail, int *iCount);
+
+/* static function declarations for auth response processing */
+static otdoa_api_error_codes_t handle_encryption_parameters(tOTDOA_HTTP_MEMBERS *pG, char *pValue, int iTokenCount);
+static otdoa_api_error_codes_t handle_token_and_delay(tOTDOA_HTTP_MEMBERS *pG, char *pValue, int iTokenCount);
+
+/* static function declarations for range response header processing */
+static otdoa_api_error_codes_t validate_range_response_inputs(tOTDOA_HTTP_MEMBERS *pG, int *iHeaderLen, int *iTokenCount);
+static otdoa_api_error_codes_t handle_http_response_code(tOTDOA_HTTP_MEMBERS *pG, char *pResponse, int iTokenCount, bool *bPartialContent);
+static otdoa_api_error_codes_t handle_content_length_header(tOTDOA_HTTP_MEMBERS *pG, char *pLengthField);
+static otdoa_api_error_codes_t handle_partial_content_response(tOTDOA_HTTP_MEMBERS *pG, int iTokenCount);
+static otdoa_api_error_codes_t handle_non_partial_content_response(tOTDOA_HTTP_MEMBERS *pG, int iLastSegmentEnd);
+
 #define HTTP_LINE_TERMINATOR "\r\n"
 
 extern tOTDOA_HTTP_MEMBERS gHTTP;
@@ -42,6 +68,9 @@ static int encrypt_ubsa = 1;
 static int encrypt_ubsa;
 #endif
 static int compress_ubsa = 1;
+static 	int nOverrideAuthResp;  /* non-zero value overrides initial auth. response (for testing) */
+static bool bSkipConfigDL;
+static bool bDisableEncryption;
 
 void http_set_ubsa_params_h1(int enc, int comp)
 {
@@ -58,31 +87,31 @@ bool otdoa_get_disable_tls(void)
 	return gHTTP.bDisableTLS;
 }
 
-void otdoa_skip_config_dl(bool bSkipConfigDL)
+void otdoa_skip_config_dl(bool bSkipCfgDL)
 {
-	gHTTP.bSkipConfigDL = bSkipConfigDL;
+	bSkipConfigDL = bSkipCfgDL;
 }
 bool otdoa_get_skip_config_dl(void)
 {
-	return gHTTP.bSkipConfigDL;
+	return bSkipConfigDL;
 }
 
-void otdoa_http_disable_encrypt(bool bDisableEncryption)
+void otdoa_http_disable_encrypt(bool bDisableEncr)
 {
-	gHTTP.bDisableEncryption = bDisableEncryption;
+	bDisableEncryption = bDisableEncr;
 }
 bool otdoa_http_get_encryption_disable(void)
 {
-	return gHTTP.bDisableEncryption;
+	return bDisableEncryption;
 }
 
 void otdoa_http_override_auth_resp(int override)
 {
-	gHTTP.nOverrideAuthResp = override;
+	nOverrideAuthResp = override;
 }
 int otdoa_http_get_override_auth_resp(void)
 {
-	return gHTTP.nOverrideAuthResp;
+	return nOverrideAuthResp;
 }
 
 /*
@@ -139,10 +168,10 @@ bool otdoa_http_check_pending_stop(void)
 void otdoa_http_h1_copy_ubsa_params(tOTDOA_HTTP_MEMBERS *pG, const tOTDOA_HTTP_MESSAGE *pM)
 {
 	pG->nRange = 0;
-	pG->uEcgi = pM->http_get_ubsa.uEcgi;
-	pG->uDlearfcn = pM->http_get_ubsa.uDlearfcn;
-	pG->uRadius = pM->http_get_ubsa.uRadius;
-	pG->uNumCells = pM->http_get_ubsa.uNumCells;
+	pG->req.uEcgi = pM->http_get_ubsa.uEcgi;
+	pG->req.uDlearfcn = pM->http_get_ubsa.uDlearfcn;
+	pG->req.uRadius = pM->http_get_ubsa.uRadius;
+	pG->req.uNumCells = pM->http_get_ubsa.uNumCells;
 	pG->uMCC = pM->http_get_ubsa.u16MCC;
 	pG->uMNC = pM->http_get_ubsa.u16MNC;
 }
@@ -338,10 +367,10 @@ int otdoa_http_h1_format_auth_request(tOTDOA_HTTP_MEMBERS *pG)
 			   "Connection: keep-alive\r\n"
 			   "authorization: Bearer %s\r\n"
 			   "\r\n",
-			   pG->uEcgi, (pG->bDisableEncryption ? 0 : 1), pG->uDlearfcn, pG->uRadius,
+			   pG->req.uEcgi, (bDisableEncryption ? 0 : 1), pG->req.uDlearfcn, pG->req.uRadius,
 			   pG->uMCC, pG->uMNC,
 			   otdoa_api_get_short_version(),
-			   modem_ver, pG->uNumCells,
+			   modem_ver, pG->req.uNumCells,
 			   LOG2_COMPRESS_WINDOW, otdoa_http_get_download_url(), jwt_token);
 
 	/* check that we didn't overflow the buffer */
@@ -454,91 +483,18 @@ int otdoa_http_h1_handle_message(tOTDOA_HTTP_MESSAGE *pMsg)
 
 	switch (pMsg->header.u32MsgId) {
 	case OTDOA_HTTP_MSG_GET_H1_UBSA:
-		OTDOA_LOG_INF("HTTP H1 received OTDOA_HTTP_MSG_GET_H1_UBSA");
-		if (gHTTP.bSkipConfigDL) {
-			OTDOA_LOG_WRN("Skipping config DL.");
-		} else if (gHTTP.nBSARequests++ % CFG_DL_INTERVAL == 0) {
-			/* Always get config file first
-			 * needs to have TLS enabled for the config endpoint.
-			 */
-			bool save_tls = gHTTP.bDisableTLS;
-
-			gHTTP.bDisableTLS = false;
-			rc = otdoa_http_h1_rebind(NULL);
-			if (rc != 0) {
-				OTDOA_LOG_WRN("Failed to bind socket (for cfg dl). rc = %d", rc);
-				otdoa_http_invoke_callback_dl_compl(OTDOA_EVENT_FAIL_NO_CELL);
-				break;
-			}
-			rc = otdoa_http_h1_handle_get_cfg(&gHTTP);
-			gHTTP.bDisableTLS = save_tls;
-			if (rc != 0) {
-				OTDOA_LOG_WRN("Failed to get config file. API Status Result = %d",
-						  rc);
-				otdoa_http_invoke_callback_dl_compl(rc);
-				break;
-			}
-		}
-
-		if (pMsg->http_get_ubsa.bResetBlacklist) {
-			otdoa_http_h1_blacklist_init(&gHTTP);
-		}
-
-		rc = otdoa_http_h1_download_ubsa(&gHTTP, pMsg);
-
-		/* send result back to the OTDOA API */
-		OTDOA_LOG_INF("API Status Result = %d", rc);
-		otdoa_http_invoke_callback_dl_compl(rc);
+		rc = handle_get_ubsa_message(pMsg);
 		break;
 	case OTDOA_HTTP_MSG_GET_H1_CONFIG_FILE:
-		OTDOA_LOG_INF("HTTP_H1 received OTDOA_HTTP_MSG_GET_H1_CONFIG");
-		/* force to use TLS */
-		bool save_tls = gHTTP.bDisableTLS;
-
-		gHTTP.bDisableTLS = false;
-		rc = otdoa_http_h1_rebind(NULL);
-		if (rc != 0) {
-			OTDOA_LOG_WRN("Failed to bind socket (for cfg dl). rc = %d", rc);
-			otdoa_http_invoke_callback_dl_compl(OTDOA_EVENT_FAIL_NO_CELL);
-			break;
-		}
-		rc = otdoa_http_h1_handle_get_cfg(&gHTTP);
-		gHTTP.bDisableTLS = save_tls;
-		OTDOA_LOG_INF("Config DL Result = %d", rc);
-		otdoa_http_h1_free_cs_buffer();
-		/* NB: We don't send a result back to the OTDOA API in this case */
+		rc = handle_get_config_message(pMsg);
 		break;
 #ifdef CONFIG_OTDOA_ENABLE_RESULTS_UPLOAD
 	case OTDOA_HTTP_MSG_UPLOAD_OTDOA_RESULTS:
-		OTDOA_LOG_INF("HTTP_H1 received OTDOA_HTTP_MSG_UPLOAD_OTDOA_RESULTS");
-		rc = otdoa_http_h1_rebind(pMsg->http_upload_results.pURL);
-		if (rc != 0) {
-			otdoa_http_invoke_callback_ul_compl(OTDOA_EVENT_FAIL_NO_CELL);
-			break;
-		}
-
-		rc = otdoa_http_h1_handle_otdoa_results(&gHTTP, pMsg);
-
-		const char *prs_id = strstr(gHTTP.csBuffer, "id = ");
-
-		if (prs_id) {
-			prs_id += strlen("if = ");
-			gHTTP.prsID = strtol(prs_id, NULL, 10);
-		}
-		free(pMsg->http_upload_results.pResults);
-		/* NB:  This print is used to detect completion of position estimate for CI tests */
-		OTDOA_LOG_INF("OTDOA position estimate %s", (rc == 0 ? "SUCCESS" : "FAILURE"));
-		otdoa_http_invoke_callback_ul_compl(rc == 0 ? OTDOA_API_SUCCESS
-								: OTDOA_EVENT_FAIL_NO_CELL);
+		rc = handle_upload_results_message(pMsg);
 		break;
 #endif
 	case OTDOA_HTTP_MSG_TEST_JWT:
-		if (otdoa_http_h1_rebind(NULL)) {
-			OTDOA_LOG_ERR("Failed to bind to server socket");
-			break;
-		}
-		OTDOA_LOG_INF("Starting JWT test...");
-		rc = otdoa_http_h1_test_jwt(&gHTTP);
+		rc = handle_test_jwt_message(pMsg);
 		break;
 	default:
 		OTDOA_LOG_WRN("unexpected HTTP message");
@@ -548,6 +504,546 @@ int otdoa_http_h1_handle_message(tOTDOA_HTTP_MESSAGE *pMsg)
 
 exit:
 	return rc;
+}
+
+/**
+ * Handle OTDOA_HTTP_MSG_GET_H1_UBSA message
+ */
+static int handle_get_ubsa_message(tOTDOA_HTTP_MESSAGE *pMsg)
+{
+	int rc = 0;
+
+	OTDOA_LOG_INF("HTTP H1 received OTDOA_HTTP_MSG_GET_H1_UBSA");
+	if (bSkipConfigDL) {
+		OTDOA_LOG_WRN("Skipping config DL.");
+	} else if (gHTTP.nBSARequests++ % CFG_DL_INTERVAL == 0) {
+		/* Always get config file first
+		 * needs to have TLS enabled for the config endpoint.
+		 */
+		bool save_tls = gHTTP.bDisableTLS;
+
+		gHTTP.bDisableTLS = false;
+		rc = otdoa_http_h1_rebind(NULL);
+		if (rc != 0) {
+			OTDOA_LOG_WRN("Failed to bind socket (for cfg dl). rc = %d", rc);
+			otdoa_http_invoke_callback_dl_compl(OTDOA_EVENT_FAIL_NO_CELL);
+			return rc;
+		}
+		rc = otdoa_http_h1_handle_get_cfg(&gHTTP);
+		gHTTP.bDisableTLS = save_tls;
+		if (rc != 0) {
+			OTDOA_LOG_WRN("Failed to get config file. API Status Result = %d", rc);
+			otdoa_http_invoke_callback_dl_compl(rc);
+			return rc;
+		}
+	} else {
+		OTDOA_LOG_INF("Skipping config DL.");
+	}
+
+	if (pMsg->http_get_ubsa.bResetBlacklist) {
+		otdoa_http_h1_blacklist_init(&gHTTP);
+	}
+
+	rc = otdoa_http_h1_download_ubsa(&gHTTP, pMsg);
+
+	/* send result back to the OTDOA API */
+	OTDOA_LOG_INF("API Status Result = %d", rc);
+	otdoa_http_invoke_callback_dl_compl(rc);
+
+	return rc;
+}
+
+/**
+ * Handle OTDOA_HTTP_MSG_GET_H1_CONFIG_FILE message
+ */
+static int handle_get_config_message(tOTDOA_HTTP_MESSAGE *pMsg)
+{
+	int rc = 0;
+
+	OTDOA_LOG_INF("HTTP_H1 received OTDOA_HTTP_MSG_GET_H1_CONFIG");
+	/* force to use TLS */
+	bool save_tls = gHTTP.bDisableTLS;
+
+	gHTTP.bDisableTLS = false;
+	rc = otdoa_http_h1_rebind(NULL);
+	if (rc != 0) {
+		OTDOA_LOG_WRN("Failed to bind socket (for cfg dl). rc = %d", rc);
+		otdoa_http_invoke_callback_dl_compl(OTDOA_EVENT_FAIL_NO_CELL);
+		return rc;
+	}
+	rc = otdoa_http_h1_handle_get_cfg(&gHTTP);
+	gHTTP.bDisableTLS = save_tls;
+	OTDOA_LOG_INF("Config DL Result = %d", rc);
+	otdoa_http_h1_free_cs_buffer();
+	/* NB: We don't send a result back to the OTDOA API in this case */
+
+	return rc;
+}
+
+#ifdef CONFIG_OTDOA_ENABLE_RESULTS_UPLOAD
+/**
+ * Handle OTDOA_HTTP_MSG_UPLOAD_OTDOA_RESULTS message
+ */
+static int handle_upload_results_message(tOTDOA_HTTP_MESSAGE *pMsg)
+{
+	int rc = 0;
+
+	OTDOA_LOG_INF("HTTP_H1 received OTDOA_HTTP_MSG_UPLOAD_OTDOA_RESULTS");
+	rc = otdoa_http_h1_rebind(pMsg->http_upload_results.pURL);
+	if (rc != 0) {
+		otdoa_http_invoke_callback_ul_compl(OTDOA_EVENT_FAIL_NO_CELL);
+		return rc;
+	}
+
+	rc = otdoa_http_h1_handle_otdoa_results(&gHTTP, pMsg);
+
+	const char *prs_id = strstr(gHTTP.csBuffer, "id = ");
+
+	if (prs_id) {
+		prs_id += strlen("if = ");
+		gHTTP.prsID = strtol(prs_id, NULL, 10);
+	}
+	free(pMsg->http_upload_results.pResults);
+	/* NB:  This print is used to detect completion of position estimate for CI tests */
+	OTDOA_LOG_INF("OTDOA position estimate %s", (rc == 0 ? "SUCCESS" : "FAILURE"));
+	otdoa_http_invoke_callback_ul_compl(rc == 0 ? OTDOA_API_SUCCESS
+							: OTDOA_EVENT_FAIL_NO_CELL);
+
+	return rc;
+}
+#endif
+
+/**
+ * Handle OTDOA_HTTP_MSG_TEST_JWT message
+ */
+static int handle_test_jwt_message(tOTDOA_HTTP_MESSAGE *pMsg)
+{
+	int rc = 0;
+
+	if (otdoa_http_h1_rebind(NULL)) {
+		OTDOA_LOG_ERR("Failed to bind to server socket");
+		return -1;
+	}
+	OTDOA_LOG_INF("Starting JWT test...");
+	rc = otdoa_http_h1_test_jwt(&gHTTP);
+
+	return rc;
+}
+
+/**
+ * Handle UBSA authentication process
+ */
+static int handle_ubsa_authentication(tOTDOA_HTTP_MEMBERS *p_http)
+{
+	int rc = 0;
+
+	if (!p_http->bSkipAuth) {
+		/* Send initial authentication request */
+		rc = otdoa_http_h1_send_get_ubsa_auth_req(p_http);
+		if (rc != OTDOA_API_SUCCESS) {
+			OTDOA_LOG_ERR("Failed to send auth request: %d\n", rc);
+			return rc;
+		}
+
+		/* Receive and process auth response */
+		rc = otdoa_http_h1_receive_header(p_http);
+		if (rc <= 0) {
+			OTDOA_LOG_ERR("Failed to receive auth response: %d\n", rc);
+			rc = (rc == 0) ? OTDOA_EVENT_FAIL_NTWK_CONN : -rc;
+			return rc;
+		}
+
+		/* possibly override the auth. response for testing */
+		if (nOverrideAuthResp != 0) {
+			OTDOA_LOG_WRN("Overriding auth response to %d", nOverrideAuthResp);
+			rc = nOverrideAuthResp;
+			return rc;
+		}
+
+		rc = otdoa_http_h1_process_auth_response(p_http);
+		if (rc != 0) {
+			OTDOA_LOG_ERR("Failed to process auth response: %d\n", rc);
+			return rc;
+		}
+	}
+
+	return rc;
+}
+
+/**
+ * Handle UBSA download loop process
+ */
+static int handle_ubsa_download_loop(tOTDOA_HTTP_MEMBERS *p_http)
+{
+	int rc = 0;
+
+	/* Download data in ranges */
+	while (p_http->nRange < p_http->nRangeMax) {
+		/* Send range request */
+		rc = otdoa_http_h1_send_get_ubsa_range_req(p_http);
+		if (rc != 0) {
+			OTDOA_LOG_ERR("Failed to send range request: %d\n", rc);
+			return rc;
+		}
+
+		/* Receive range response header */
+		rc = otdoa_http_h1_receive_header(p_http);
+		if (rc <= 0) {
+			OTDOA_LOG_ERR("Failed to receive range response: %d\n", rc);
+			rc = (rc == 0) ? OTDOA_EVENT_FAIL_NTWK_CONN : -rc;
+			return rc;
+		}
+
+		/* Process range response header */
+		rc = otdoa_http_h1_process_range_response_header(p_http);
+		if (rc != OTDOA_API_SUCCESS && rc != OTDOA_EVENT_HTTP_PARTIAL_CONTENT) {
+			OTDOA_LOG_ERR("Failed to process range response header: %d\n", rc);
+			return rc;
+		}
+
+		/* Process range response content */
+		rc = otdoa_http_h1_process_range_response_content(p_http);
+		if (rc < 0) {
+			OTDOA_LOG_ERR("Failed to process range response content: %d\n", rc);
+			return rc;
+		}
+	}
+
+	OTDOA_LOG_INF("UBSA download complete\n");
+	return 0;
+}
+
+/**
+ * Receive data with retry logic for non-blocking sockets
+ */
+static int receive_data_with_retry(tOTDOA_HTTP_MEMBERS *pG, size_t nAvail, int *iCount)
+{
+	int iBytesRead = 0;
+	int iRC = 0;
+
+	iBytesRead = http_recv(pG->fdSocket, &pG->csBuffer[pG->nOff], nAvail, 0);
+	if (0 == iBytesRead) {
+		OTDOA_LOG_INF("otdoa_http_h1_receive_header: server shut down.");
+		iRC = 0;
+	} else if (iBytesRead < 0) {
+		int err_no = http_errno();
+
+		if (err_no == EWOULDBLOCK) {
+			if ((*iCount)++ > NONBLOCK_RETRY_LIMIT) {
+				OTDOA_LOG_ERR("Retry limit reached in "
+						  "otdoa_http_h1_receive_header()");
+				iRC = -OTDOA_API_INTERNAL_ERROR;
+			} else if (otdoa_http_check_pending_stop()) {
+				/* NB negative return code */
+				iRC = -OTDOA_EVENT_FAIL_CANCELLED;
+				OTDOA_LOG_WRN("Handling stop request in HTTP receive");
+			} else {
+				OTDOA_LOG_DBG("Sleeping %d msec.",
+						  NONBLOCK_RETRY_MILLISECONDS);
+				http_sleep(NONBLOCK_RETRY_MILLISECONDS);
+				iRC = -1; /* Indicate retry needed */
+			}
+		} else {
+			OTDOA_LOG_ERR("recv failed. errno: %s, buffsize: %d", strerror(err_no),
+					  nAvail);
+			iRC = -OTDOA_API_INTERNAL_ERROR;
+		}
+	} else {
+		OTDOA_LOG_DBG("receive_header: iBytesRead: %d\r", iBytesRead);
+		iRC = iBytesRead; /* for positive return code */
+		pG->nOff += iBytesRead;
+	}
+
+	return iRC;
+}
+
+/**
+ * Handle encryption parameters (pubkey and IV) from auth response
+ */
+static otdoa_api_error_codes_t handle_encryption_parameters(tOTDOA_HTTP_MEMBERS *pG, char *pValue, int iTokenCount)
+{
+	otdoa_api_error_codes_t iRC = OTDOA_API_SUCCESS;
+	size_t len = 0;
+
+	/* pubkey, iv only present if encryption is enabled */
+	if (!bDisableEncryption) {
+		pValue = otdoa_http_h1_find_value(pG->csBuffer, "pubkey: ", iTokenCount);
+		if (!pValue) {
+			OTDOA_LOG_ERR("pubkey header field not found.");
+			iRC = OTDOA_API_INTERNAL_ERROR;
+			return iRC;
+		}
+
+		len = strlen(pValue);
+		OTDOA_LOG_INF("pubkey length: %zu", len);
+		OTDOA_LOG_INF("pubkey: %s", pValue);
+
+		/* pubkey is in ASCII DER format.  So string is 2 bytes per byte of the
+		 * binary DER format key
+		 */
+		if (len == 2 * PUBKEY_DER_LEN) {
+			/* Parse the public key starting at fixed offset */
+			/* times 2 since offset is binary, but pValue is ASCII */
+			pValue += 2 * PUBKEY_DER_OFFSET;
+			if (0 != parse_keystr(pValue, pG->pubkey, PUBKEY_LMAX)) {
+				OTDOA_LOG_ERR("Failed to parse pubkey: %s", pValue);
+				iRC = OTDOA_API_INTERNAL_ERROR;
+				return iRC;
+			}
+			OTDOA_LOG_HEXDUMP_INF(pG->pubkey, PUBKEY_LMAX, "pubkey: ");
+		} else {
+			OTDOA_LOG_ERR("Bad pubkey len: %zu", len);
+			iRC = OTDOA_API_INTERNAL_ERROR;
+			return iRC;
+		}
+
+		pValue = otdoa_http_h1_find_value(pG->csBuffer, "iv: ", iTokenCount);
+		if (!pValue) {
+			OTDOA_LOG_ERR("iv header field not found.");
+			iRC = OTDOA_API_INTERNAL_ERROR;
+			return iRC;
+		}
+
+		len = strlen(pValue);
+		OTDOA_LOG_DBG("iv length: %zu", len);
+		OTDOA_LOG_DBG("iv: %s", pValue);
+		if (len == 2 * IV_LMAX) {
+			if (0 != parse_keystr(pValue, pG->iv, IV_LMAX)) {
+				OTDOA_LOG_ERR("Failed to convert IV: %s", pValue);
+				iRC = OTDOA_API_INTERNAL_ERROR;
+				return iRC;
+			}
+			OTDOA_LOG_INF("Converted IV: %s", pValue);
+		} else {
+			OTDOA_LOG_ERR("Bad IV length: %zu  IV: %s", len, pValue);
+			iRC = OTDOA_API_INTERNAL_ERROR;
+			return iRC;
+		}
+
+		/* Set key for use in decrypting uBSA */
+		if (0 != otdoa_crypto_set_new_key(pG->pubkey, PUBKEY_LMAX)) {
+			OTDOA_LOG_ERR("Failed to update encryption key");
+			iRC = OTDOA_API_INTERNAL_ERROR;
+			return iRC;
+		}
+	}
+
+	return iRC;
+}
+
+/**
+ * Handle ubsa-token and recommended-delay from auth response
+ */
+static otdoa_api_error_codes_t handle_token_and_delay(tOTDOA_HTTP_MEMBERS *pG, char *pValue, int iTokenCount)
+{
+	otdoa_api_error_codes_t iRC = OTDOA_API_SUCCESS;
+	size_t len = 0;
+
+	pValue = otdoa_http_h1_find_value(pG->csBuffer, "ubsa-token: ", iTokenCount);
+	if (!pValue) {
+		OTDOA_LOG_ERR("ubsa-token header field not found.");
+		iRC = OTDOA_API_INTERNAL_ERROR;
+		return iRC;
+	}
+
+	len = strlen(pValue);
+	OTDOA_LOG_DBG("ubsa-token length: %zu", strlen(pValue));
+	OTDOA_LOG_DBG("ubsa-token: %s", pValue);
+	if (len < UBSA_TOKEN_LMAX) {
+		strncpy(pG->ubsa_token, pValue, len);
+		pG->ubsa_token[len] = '\0'; /* ensure null term */
+	} else {
+		OTDOA_LOG_ERR("ubsa-token too long");
+		iRC = OTDOA_API_INTERNAL_ERROR;
+		return iRC;
+	}
+
+	/* set recommended delay to zero - if it doesn't get set below zero is good */
+	pG->req.uRecommendedDelay = 0;
+	pValue = otdoa_http_h1_find_value(pG->csBuffer, "recommended-delay: ", iTokenCount);
+	if (pValue) {
+		if (parse_string_to_int_unsigned(pValue, &pG->req.uRecommendedDelay) != 0) {
+			OTDOA_LOG_ERR("Invalid recommended-delay value: %s", pValue);
+			pG->req.uRecommendedDelay = 0; /* Set to default on error */
+		}
+	} else {
+		OTDOA_LOG_ERR("recommended-delay header field not found.");
+	}
+	OTDOA_LOG_INF("recommended-delay: %s (%i)", pValue, pG->req.uRecommendedDelay);
+
+	return iRC;
+}
+
+/**
+ * Validate inputs for range response header processing
+ */
+static otdoa_api_error_codes_t validate_range_response_inputs(tOTDOA_HTTP_MEMBERS *pG, int *iHeaderLen, int *iTokenCount)
+{
+	if (!pG) {
+		OTDOA_LOG_ERR("pG null!");
+		return OTDOA_API_INTERNAL_ERROR;
+	}
+
+	if (!pG->csBuffer) {
+		OTDOA_LOG_ERR("pG->csBuffer null!");
+		return OTDOA_API_INTERNAL_ERROR;
+	}
+
+	*iHeaderLen = otdoa_http_h1_get_header_len(pG->csBuffer);
+	if (!*iHeaderLen) {
+		OTDOA_LOG_ERR("http header delimiter not found.");
+		return OTDOA_API_INTERNAL_ERROR;
+	}
+
+	pG->csBuffer[*iHeaderLen + 2] = 0;
+	pG->pData = &(pG->csBuffer[*iHeaderLen + 4]);
+
+	*iTokenCount = otdoa_http_h1_split_into_tokens(pG->csBuffer);
+	OTDOA_LOG_DBG("Found %d tokens", *iTokenCount);
+
+	return OTDOA_API_SUCCESS;
+}
+
+/**
+ * Handle HTTP response code processing
+ */
+static otdoa_api_error_codes_t handle_http_response_code(tOTDOA_HTTP_MEMBERS *pG, char *pResponse, int iTokenCount, bool *bPartialContent)
+{
+	otdoa_api_error_codes_t iRC = OTDOA_API_INTERNAL_ERROR;
+	int iHttpResponseCode = 0;
+
+	if (!pResponse) {
+		return iRC;
+	}
+
+	OTDOA_LOG_INF("response code: %s", pResponse);
+	iHttpResponseCode = otdoa_http_h1_parse_response_code(pResponse);
+
+	switch (iHttpResponseCode) {
+	case 200:
+		OTDOA_LOG_DBG("200:OK Success - no data follows");
+		iRC = OTDOA_API_SUCCESS;
+		break;
+	case 202:
+		OTDOA_LOG_DBG("202:Accepted - token exists, ubsa processing not done");
+		pG->req.uRecommendedDelay = 0;
+		char *pValue = otdoa_http_h1_find_value(pG->csBuffer, "recommended-delay: ", iTokenCount);
+		if (pValue) {
+			if (parse_string_to_int_unsigned(pValue, &pG->req.uRecommendedDelay) != 0) {
+				OTDOA_LOG_ERR("Invalid recommended-delay : %s", pValue);
+				pG->req.uRecommendedDelay = 0;
+			}
+		} else {
+			OTDOA_LOG_ERR("recommended-delay header field not found.");
+		}
+		OTDOA_LOG_DBG("recommended-delay: %s (%i)", pValue, pG->req.uRecommendedDelay);
+		iRC = OTDOA_EVENT_HTTP_NOT_READY;
+		break;
+	case 206:
+		*bPartialContent = true;
+		iRC = OTDOA_EVENT_HTTP_PARTIAL_CONTENT;
+		OTDOA_LOG_DBG("206:Partial Content - chunck supplied, more data follows");
+		break;
+	case 400:
+		OTDOA_LOG_DBG("400:Bad Request");
+		iRC = OTDOA_EVENT_FAIL_HTTP_BAD_REQUEST;
+		break;
+	case 401:
+		OTDOA_LOG_DBG("401:Unauthorized");
+		iRC = OTDOA_EVENT_FAIL_HTTP_UNAUTHORIZED;
+		break;
+	case 429:
+		OTDOA_LOG_DBG("429:Too Many Requests");
+		iRC = OTDOA_EVENT_FAIL_HTTP_TOO_MANY_REQUESTS;
+		break;
+	case 500:
+		OTDOA_LOG_DBG("500:Internal Server Error");
+		iRC = OTDOA_EVENT_FAIL_HTTP_INTERNAL_SERVER_ERROR;
+		break;
+	default:
+		iRC = OTDOA_API_INTERNAL_ERROR;
+		OTDOA_LOG_ERR("Unexpected response code: %d", iHttpResponseCode);
+		break;
+	}
+
+	return iRC;
+}
+
+/**
+ * Handle Content-Length header processing
+ */
+static otdoa_api_error_codes_t handle_content_length_header(tOTDOA_HTTP_MEMBERS *pG, char *pLengthField)
+{
+	if (pLengthField) {
+		if (parse_string_to_int_signed(pLengthField, &pG->nContentLength) != 0) {
+			OTDOA_LOG_ERR("Invalid Content-Length value: %s", pLengthField);
+			return OTDOA_API_INTERNAL_ERROR;
+		}
+		OTDOA_LOG_INF("Content-Length: %s", pLengthField);
+	}
+	return OTDOA_API_SUCCESS;
+}
+
+/**
+ * Handle partial content (206) response processing
+ */
+static otdoa_api_error_codes_t handle_partial_content_response(tOTDOA_HTTP_MEMBERS *pG, int iTokenCount)
+{
+	char *pRangeField = otdoa_http_h1_find_value(pG->csBuffer, "Content-Range: bytes", iTokenCount);
+	if (!pRangeField) {
+		OTDOA_LOG_ERR("Content-Range header field not found.");
+		return OTDOA_API_INTERNAL_ERROR;
+	}
+
+	OTDOA_LOG_DBG("Content-Range: %s", pRangeField);
+
+	int parsedTokens = sscanf(pRangeField, "%d-%d/%d", &pG->nRange, &pG->nRangeSegmentEnd, &pG->nRangeMax);
+	if (3 != parsedTokens) {
+		OTDOA_LOG_ERR("found %d tokens in: %s", parsedTokens, pRangeField);
+		return OTDOA_API_INTERNAL_ERROR;
+	}
+
+	/* Handle special case of only one chunk for download */
+	if (pG->nRangeSegmentEnd > pG->nRangeMax - 1) {
+		pG->nRangeSegmentEnd = pG->nRangeMax - 1;
+	}
+	if (pG->nContentLength >= pG->nRangeMax) {
+		pG->nContentLength = pG->nRangeMax;
+		pG->bDownloadComplete = true;
+	}
+
+	return OTDOA_API_SUCCESS;
+}
+
+/**
+ * Handle non-partial content (200) response processing
+ */
+static otdoa_api_error_codes_t handle_non_partial_content_response(tOTDOA_HTTP_MEMBERS *pG, int iLastSegmentEnd)
+{
+	if (pG->nRange == 0) {
+		/* Receiving just one chunk for the entire uBSA */
+		pG->nRangeSegmentEnd = pG->nContentLength - 1;
+		pG->nRangeMax = pG->nContentLength;
+		pG->bDownloadComplete = true;
+	} else {
+		/* Not partial content--use the content-length provided in the header
+		 * for this content length, but we still need the start since we're
+		 * not provided with a content-range on last chunck (?). We can get
+		 * the start of last chunk by saving rangeSegmentEnd for each and
+		 * using on last chunk.
+		 */
+		if (iLastSegmentEnd) {
+			pG->nRange = iLastSegmentEnd + 1;
+		}
+		pG->nRangeSegmentEnd += pG->nContentLength;
+		OTDOA_LOG_DBG("nRange after final chunk: %d", pG->nRange);
+		OTDOA_LOG_DBG("range end after final chunk: %d", pG->nRangeSegmentEnd);
+		OTDOA_LOG_DBG("content length after final chunk: %d", pG->nContentLength);
+		OTDOA_LOG_DBG("range max after final chunk: %d", pG->nRangeMax);
+		pG->bDownloadComplete = true;
+	}
+
+	return OTDOA_API_SUCCESS;
 }
 
 /**
@@ -603,70 +1099,15 @@ int otdoa_http_h1_download_ubsa_internal(tOTDOA_HTTP_MEMBERS *p_http, tOTDOA_HTT
 	}
 	OTDOA_LOG_INF("Successfully connected to server\n");
 
-	if (!p_http->bSkipAuth) {
-		/* Send initial authentication request */
-		rc = otdoa_http_h1_send_get_ubsa_auth_req(p_http);
-		if (rc != OTDOA_API_SUCCESS) {
-			OTDOA_LOG_ERR("Failed to send auth request: %d\n", rc);
-			goto disconnect;
-		}
-
-		/* Receive and process auth response */
-		rc = otdoa_http_h1_receive_header(p_http);
-		if (rc <= 0) {
-			OTDOA_LOG_ERR("Failed to receive auth response: %d\n", rc);
-			rc = (rc == 0) ? OTDOA_EVENT_FAIL_NTWK_CONN : -rc;
-			goto disconnect;
-		}
-
-		/* possibly override the auth. response for testing */
-		if (gHTTP.nOverrideAuthResp != 0) {
-			OTDOA_LOG_WRN("Overriding auth response to %d", gHTTP.nOverrideAuthResp);
-			rc = gHTTP.nOverrideAuthResp;
-			goto disconnect;
-		}
-
-		rc = otdoa_http_h1_process_auth_response(p_http);
-		if (rc != 0) {
-			OTDOA_LOG_ERR("Failed to process auth response: %d\n", rc);
-			goto disconnect;
-		}
+	rc = handle_ubsa_authentication(p_http);
+	if (rc != 0) {
+		goto disconnect;
 	}
 
-	/* Download data in ranges */
-	while (p_http->nRange < p_http->nRangeMax) {
-		/* Send range request */
-		rc = otdoa_http_h1_send_get_ubsa_range_req(p_http);
-		if (rc != 0) {
-			OTDOA_LOG_ERR("Failed to send range request: %d\n", rc);
-			goto disconnect;
-		}
-
-		/* Receive range response header */
-		rc = otdoa_http_h1_receive_header(p_http);
-		if (rc <= 0) {
-			OTDOA_LOG_ERR("Failed to receive range response: %d\n", rc);
-			rc = (rc == 0) ? OTDOA_EVENT_FAIL_NTWK_CONN : -rc;
-			goto disconnect;
-		}
-
-		/* Process range response header */
-		rc = otdoa_http_h1_process_range_response_header(p_http);
-		if (rc != OTDOA_API_SUCCESS && rc != OTDOA_EVENT_HTTP_PARTIAL_CONTENT) {
-			OTDOA_LOG_ERR("Failed to process range response header: %d\n", rc);
-			goto disconnect;
-		}
-
-		/* Process range response content */
-		rc = otdoa_http_h1_process_range_response_content(p_http);
-		if (rc < 0) {
-			OTDOA_LOG_ERR("Failed to process range response content: %d\n", rc);
-			goto disconnect;
-		}
+	rc = handle_ubsa_download_loop(p_http);
+	if (rc != 0) {
+		goto disconnect;
 	}
-
-	OTDOA_LOG_INF("UBSA download complete\n");
-	rc = 0;
 
 disconnect:
 	otdoa_http_h1_send_disconnect(p_http);
@@ -709,11 +1150,14 @@ int otdoa_http_h1_download_ubsa(tOTDOA_HTTP_MEMBERS *p_http, tOTDOA_HTTP_MESSAGE
 	const int blacklist = otdoa_http_h1_blacklist_check(p_http, params->http_get_ubsa.uEcgi);
 	(void)otdoa_http_h1_blacklist_tick(p_http);
 	if (blacklist < 0) {
-		OTDOA_LOG_ERR("download_ubsa: failure checking ecgi blacklist: %d\n", blacklist);
+		OTDOA_LOG_ERR("download_ubsa: failure checking ecgi blacklist: %d", blacklist);
 	} else if (blacklist > 0) {
-		OTDOA_LOG_ERR("download_ubsa: ecgi %u is blacklisted.  age = %d\n",
+		OTDOA_LOG_WRN("download_ubsa: ecgi %u is blacklisted.  age = %d",
 				  params->http_get_ubsa.uEcgi, blacklist);
 		return OTDOA_EVENT_FAIL_BLACKLISTED;
+	} else {
+		OTDOA_LOG_DBG("download_ubsa: ecgi %u is not blacklisted.",
+				  params->http_get_ubsa.uEcgi);
 	}
 
 	int rebind = otdoa_http_h1_rebind(NULL);
@@ -738,7 +1182,7 @@ int otdoa_http_h1_download_ubsa(tOTDOA_HTTP_MEMBERS *p_http, tOTDOA_HTTP_MESSAGE
 			continue;
 		case OTDOA_EVENT_HTTP_NOT_READY:
 			/* delay the recommended amount, then try again */
-			otdoa_sleep_msec((int)p_http->uRecommendedDelay);
+			otdoa_sleep_msec((int)p_http->req.uRecommendedDelay);
 			p_http->bSkipAuth = true;
 			continue;
 		/*  hack: blacklist on 400 until phywi updates */
@@ -825,13 +1269,13 @@ int otdoa_http_h1_send_get_ubsa_range_req(tOTDOA_HTTP_MEMBERS *pG)
 		goto exit;
 	}
 
-	if (pG->uRecommendedDelay > 0) {
-		OTDOA_LOG_DBG("delaying %d", pG->uRecommendedDelay);
-		http_sleep((int)pG->uRecommendedDelay);
+	if (pG->req.uRecommendedDelay > 0) {
+		OTDOA_LOG_DBG("delaying %d", pG->req.uRecommendedDelay);
+		http_sleep((int)pG->req.uRecommendedDelay);
 	}
 
 	/* Reset recommended delay--it will be set again if needed with a new 202 response. */
-	pG->uRecommendedDelay = 0;
+	pG->req.uRecommendedDelay = 0;
 
 	OTDOA_LOG_INF("ubsa_range_req: %s\r", pG->csBuffer);
 	iRC = http_send_request(pG, strlen(pG->szSend));
@@ -933,7 +1377,6 @@ exit:
  */
 int otdoa_http_h1_receive_header(tOTDOA_HTTP_MEMBERS *pG)
 {
-	int iBytesRead = 0;
 	int iRC = 0;
 	int iSB = 0;
 	int iCount = 0;
@@ -970,44 +1413,21 @@ int otdoa_http_h1_receive_header(tOTDOA_HTTP_MEMBERS *pG)
 			iRC = -OTDOA_API_INTERNAL_ERROR;
 			break;
 		}
-		iBytesRead = http_recv(pG->fdSocket, &pG->csBuffer[pG->nOff], nAvail, 0);
-		if (0 == iBytesRead) {
-			OTDOA_LOG_INF("otdoa_http_h1_receive_header: server shut down.");
-			iRC = 0;
-			break;
-		} else if (iBytesRead < 0) {
-			int err_no = http_errno();
-
-			if (err_no == EWOULDBLOCK) {
-				if (iCount++ > NONBLOCK_RETRY_LIMIT) {
-					OTDOA_LOG_ERR("Retry limit reached in "
-							  "otdoa_http_h1_receive_header()");
-					iRC = -OTDOA_API_INTERNAL_ERROR;
-					break;
-				}
-				if (otdoa_http_check_pending_stop()) {
-					/* NB negative return code */
-					iRC = -OTDOA_EVENT_FAIL_CANCELLED;
-					OTDOA_LOG_WRN("Handling stop request in HTTP receive");
-					goto exit;
-				} else {
-					OTDOA_LOG_DBG("Sleeping %d msec.",
-							  NONBLOCK_RETRY_MILLISECONDS);
-					http_sleep(NONBLOCK_RETRY_MILLISECONDS);
-					continue;
-				}
+		iRC = receive_data_with_retry(pG, nAvail, &iCount);
+		if (iRC < 0) {
+			if (iRC == -OTDOA_EVENT_FAIL_CANCELLED) {
+				goto exit;
+			} else if (iRC == -1) {
+				/* Retry needed */
+				continue;
+			} else {
+				/* Other error */
+				goto exit;
 			}
-
-			OTDOA_LOG_ERR("recv failed. errno: %s, buffsize: %d", strerror(err_no),
-					  nAvail);
-			iRC = -OTDOA_API_INTERNAL_ERROR;
-			goto exit;
+		} else if (iRC == 0) {
+			/* Server shut down */
+			break;
 		}
-
-		OTDOA_LOG_INF("receive_header: iBytesRead: %d\r", iBytesRead);
-
-		iRC = iBytesRead; /* for positive return code */
-		pG->nOff += iBytesRead;
 
 		pG->nHeaderLength = otdoa_http_h1_get_header_len(pG->csBuffer);
 
@@ -1291,8 +1711,9 @@ otdoa_api_error_codes_t otdoa_http_h1_process_config_response_header(tOTDOA_HTTP
 		OTDOA_LOG_ERR("Content-Length not found");
 		pG->nContentLength = 0;
 		iRC = OTDOA_EVENT_FAIL_BAD_CFG;
+	} else {
+        /* will return an error */
 	}
-
 exit:
 
 	return iRC;
@@ -1390,100 +1811,17 @@ otdoa_api_error_codes_t otdoa_http_h1_process_auth_response(tOTDOA_HTTP_MEMBERS 
 	}
 
 	if (OTDOA_API_SUCCESS == iRC) {
-		size_t len = 0;
-		/* pubkey, iv only present if encryption is enabled */
-		if (!pG->bDisableEncryption) {
-
-			pValue = otdoa_http_h1_find_value(pG->csBuffer, "pubkey: ", iTokenCount);
-			if (!pValue) {
-				OTDOA_LOG_ERR("pubkey header field not found.");
-				iRC = OTDOA_API_INTERNAL_ERROR;
-				goto exit;
-			}
-
-			len = strlen(pValue);
-			OTDOA_LOG_INF("pubkey length: %zu", len);
-			OTDOA_LOG_INF("pubkey: %s", pValue);
-
-			/* pubkey is in ASCII DER format.  So string is 2 bytes per byte of the
-			 * binary DER format key
-			 */
-			if (len == 2 * PUBKEY_DER_LEN) {
-				/* Parse the public key starting at fixed offset */
-				/* times 2 since offset is binary, but pValue is ASCII */
-				pValue += 2 * PUBKEY_DER_OFFSET;
-				if (0 != parse_keystr(pValue, pG->pubkey, PUBKEY_LMAX)) {
-					OTDOA_LOG_ERR("Failed to parse pubkey: %s", pValue);
-					iRC = OTDOA_API_INTERNAL_ERROR;
-					goto exit;
-				}
-				OTDOA_LOG_HEXDUMP_INF(pG->pubkey, PUBKEY_LMAX, "pubkey: ");
-			} else {
-				OTDOA_LOG_ERR("Bad pubkey len: %zu", len);
-				iRC = OTDOA_API_INTERNAL_ERROR;
-				goto exit;
-			}
-
-			pValue = otdoa_http_h1_find_value(pG->csBuffer, "iv: ", iTokenCount);
-			if (!pValue) {
-				OTDOA_LOG_ERR("iv header field not found.");
-				iRC = OTDOA_API_INTERNAL_ERROR;
-				goto exit;
-			}
-
-			len = strlen(pValue);
-			OTDOA_LOG_DBG("iv length: %zu", len);
-			OTDOA_LOG_DBG("iv: %s", pValue);
-			if (len == 2 * IV_LMAX) {
-				if (0 != parse_keystr(pValue, pG->iv, IV_LMAX)) {
-					OTDOA_LOG_ERR("Failed to convert IV: %s", pValue);
-					iRC = OTDOA_API_INTERNAL_ERROR;
-				}
-				OTDOA_LOG_INF("Converted IV: %s", pValue);
-			} else {
-				OTDOA_LOG_ERR("Bad IV length: %zu  IV: %s", len, pValue);
-				iRC = OTDOA_API_INTERNAL_ERROR;
-				goto exit;
-			}
-
-			/* Set key for use in decrypting uBSA */
-			if (0 != otdoa_crypto_set_new_key(pG->pubkey, PUBKEY_LMAX)) {
-				OTDOA_LOG_ERR("Failed to update encryption key");
-				iRC = OTDOA_API_INTERNAL_ERROR;
-				goto exit;
-			}
-		}
-		pValue = otdoa_http_h1_find_value(pG->csBuffer, "ubsa-token: ", iTokenCount);
-		if (!pValue) {
-			OTDOA_LOG_ERR("ubsa-token header field not found.");
-			iRC = OTDOA_API_INTERNAL_ERROR;
+		/* Handle encryption parameters if encryption is enabled */
+		iRC = handle_encryption_parameters(pG, pValue, iTokenCount);
+		if (iRC != OTDOA_API_SUCCESS) {
 			goto exit;
 		}
 
-		len = strlen(pValue);
-		OTDOA_LOG_DBG("ubsa-token length: %zu", strlen(pValue));
-		OTDOA_LOG_DBG("ubsa-token: %s", pValue);
-		if (len < UBSA_TOKEN_LMAX) {
-			strncpy(pG->ubsa_token, pValue, len);
-			pG->ubsa_token[len] = '\0'; /* ensure null term */
-		} else {
-			OTDOA_LOG_ERR("ubsa-token too long");
-			iRC = OTDOA_API_INTERNAL_ERROR;
+		/* Handle ubsa-token and recommended-delay */
+		iRC = handle_token_and_delay(pG, pValue, iTokenCount);
+		if (iRC != OTDOA_API_SUCCESS) {
 			goto exit;
 		}
-
-		/* set recommended delay to zero - if it doesn't get set below zero is good */
-		pG->uRecommendedDelay = 0;
-		pValue = otdoa_http_h1_find_value(pG->csBuffer, "recommended-delay: ", iTokenCount);
-		if (pValue) {
-			if (parse_string_to_int_unsigned(pValue, &pG->uRecommendedDelay) != 0) {
-				OTDOA_LOG_ERR("Invalid recommended-delay value: %s", pValue);
-				pG->uRecommendedDelay = 0; /* Set to default on error */
-			}
-		} else {
-			OTDOA_LOG_ERR("recommended-delay header field not found.");
-		}
-		OTDOA_LOG_INF("recommended-delay: %s (%i)", pValue, pG->uRecommendedDelay);
 	} else {
 		/* LOG the body if available */
 		/* point to data following the '\r\n\r\n' indicating
@@ -1518,7 +1856,7 @@ exit:
  */
 otdoa_api_error_codes_t otdoa_http_h1_process_range_response_header(tOTDOA_HTTP_MEMBERS *pG)
 {
-	int iRC = 0;
+	otdoa_api_error_codes_t iRC = 0;
 	int iHeaderLen = 0;
 	char *pResponse = 0;
 	char *pLengthField = 0;
@@ -1526,169 +1864,42 @@ otdoa_api_error_codes_t otdoa_http_h1_process_range_response_header(tOTDOA_HTTP_
 	bool bPartialContent = false;
 	int iLastSegmentEnd = 0;
 
-	if (!pG) {
-		OTDOA_LOG_ERR("pG null!");
-		iRC = OTDOA_API_INTERNAL_ERROR;
+	/* Validate inputs and setup */
+	iRC = validate_range_response_inputs(pG, &iHeaderLen, &iTokenCount);
+	if (iRC != OTDOA_API_SUCCESS) {
 		goto exit;
 	}
 
-	if (!pG->csBuffer) {
-		OTDOA_LOG_ERR("pG->csBuffer null!");
-		iRC = OTDOA_API_INTERNAL_ERROR;
-		goto exit;
-	}
-
-	iHeaderLen = otdoa_http_h1_get_header_len(pG->csBuffer);
-	if (!iHeaderLen) {
-		OTDOA_LOG_ERR("http header delimiter not found.");
-		iRC = OTDOA_API_INTERNAL_ERROR;
-		goto exit;
-	}
-
-	pG->csBuffer[iHeaderLen + 2] = 0;
-	pG->pData = &(pG->csBuffer[iHeaderLen + 4]);
-
-	iTokenCount = otdoa_http_h1_split_into_tokens(pG->csBuffer);
-	OTDOA_LOG_DBG("Found %d tokens", iTokenCount);
-
-	iRC = OTDOA_API_INTERNAL_ERROR; /* Default result */
+	/* Process HTTP response code */
 	pResponse = otdoa_http_h1_find_value(pG->csBuffer, "HTTP/1.1 ", iTokenCount);
-	if (pResponse) {
-		int iHttpResponseCode = 0;
-
-		OTDOA_LOG_INF("response code: %s", pResponse);
-		iHttpResponseCode = otdoa_http_h1_parse_response_code(pResponse);
-		switch (iHttpResponseCode) {
-		case 200:
-			OTDOA_LOG_DBG("200:OK Success - no data follows");
-			iRC = OTDOA_API_SUCCESS;
-			break;
-		case 202:
-			OTDOA_LOG_DBG("202:Accepted - token exists, ubsa processing not done");
-			/* set recommended delay to zero - if it doesn't get set below zero is good
-			 */
-			pG->uRecommendedDelay = 0;
-			char *pValue = otdoa_http_h1_find_value(pG->csBuffer,
-								"recommended-delay: ", iTokenCount);
-			if (pValue) {
-				if (parse_string_to_int_unsigned(pValue, &pG->uRecommendedDelay)
-				    != 0) {
-					OTDOA_LOG_ERR("Invalid recommended-delay : %s", pValue);
-					pG->uRecommendedDelay = 0; /* Set to default on error */
-				}
-			} else {
-				OTDOA_LOG_ERR("recommended-delay header field not found.");
-			}
-			OTDOA_LOG_DBG("recommended-delay: %s (%i)", pValue, pG->uRecommendedDelay);
-			iRC = OTDOA_EVENT_HTTP_NOT_READY;
-			break;
-		case 206:
-			bPartialContent = true;
-			iRC = OTDOA_EVENT_HTTP_PARTIAL_CONTENT;
-			OTDOA_LOG_DBG("206:Partial Content - chunck supplied, more data follows");
-			break;
-		case 400:
-			OTDOA_LOG_DBG("400:Bad Request");
-			iRC = OTDOA_EVENT_FAIL_HTTP_BAD_REQUEST;
-			break;
-		case 401:
-			OTDOA_LOG_DBG("401:Unauthorized");
-			iRC = OTDOA_EVENT_FAIL_HTTP_UNAUTHORIZED;
-			break;
-		case 429:
-			OTDOA_LOG_DBG("429:Too Many Requests");
-			iRC = OTDOA_EVENT_FAIL_HTTP_TOO_MANY_REQUESTS;
-			break;
-		case 500:
-			OTDOA_LOG_DBG("500:Internal Server Error");
-			iRC = OTDOA_EVENT_FAIL_HTTP_INTERNAL_SERVER_ERROR;
-			break;
-		default:
-			iRC = OTDOA_API_INTERNAL_ERROR;
-			OTDOA_LOG_ERR("Unexpected response code: %d", iHttpResponseCode);
-			break;
-		}
-	}
-	/* ToDo:  Fail and exit on bad HTTP response code */
+	iRC = handle_http_response_code(pG, pResponse, iTokenCount, &bPartialContent);
 	if (!pResponse || (iRC != OTDOA_EVENT_HTTP_PARTIAL_CONTENT && iRC != OTDOA_API_SUCCESS)) {
 		OTDOA_LOG_WRN("Bad HTTP Response %d", iRC);
 		goto exit;
 	}
 
+	/* Process Content-Length header */
 	pLengthField = otdoa_http_h1_find_value(pG->csBuffer, "Content-Length: ", iTokenCount);
-	if (pLengthField) {
-		if (parse_string_to_int_signed(pLengthField, &pG->nContentLength) != 0) {
-			OTDOA_LOG_ERR("Invalid Content-Length value: %s", pLengthField);
-			iRC = OTDOA_API_INTERNAL_ERROR;
-			goto exit;
-		}
-		OTDOA_LOG_INF("Content-Length: %s", pLengthField);
+	iRC = handle_content_length_header(pG, pLengthField);
+	if (iRC != OTDOA_API_SUCCESS) {
+		goto exit;
 	}
 
+	/* Process content based on whether it's partial or not */
 	iLastSegmentEnd = pG->nRangeSegmentEnd;
-
 	if (bPartialContent) {
-		char *pRangeField = 0;
-
-		pRangeField =
-			otdoa_http_h1_find_value(pG->csBuffer, "Content-Range: bytes", iTokenCount);
-		if (pRangeField) {
-			/* parse to get the range values */
-			OTDOA_LOG_DBG("Content-Range: %s", pRangeField);
-
-			iTokenCount = sscanf(pRangeField, "%d-%d/%d", &pG->nRange,
-						 &pG->nRangeSegmentEnd, &pG->nRangeMax);
-			if (3 != iTokenCount) {
-				OTDOA_LOG_ERR("found %d tokens in: %s", iTokenCount, pRangeField);
-				iRC = OTDOA_API_INTERNAL_ERROR;
-				goto exit;
-			}
-			/* Handle special case of only one chunk for download */
-			if (pG->nRangeSegmentEnd > pG->nRangeMax - 1) {
-				pG->nRangeSegmentEnd = pG->nRangeMax - 1;
-			}
-			if (pG->nContentLength >= pG->nRangeMax) {
-				pG->nContentLength = pG->nRangeMax;
-				pG->bDownloadComplete = true;
-			}
-
-		} else {
-			OTDOA_LOG_ERR("Content-Range header field not found.");
-			iRC = OTDOA_API_INTERNAL_ERROR;
-			goto exit;
-		}
+		iRC = handle_partial_content_response(pG, iTokenCount);
 	} else {
-		/* For 200 OK response only Content-Length field is present
-		 * This happens on last chunk of uBSA.
-		 */
-		if (pG->nRange == 0) {
-			/* Receiving just one chunk for the entire uBSA */
-			pG->nRangeSegmentEnd = pG->nContentLength - 1;
-			pG->nRangeMax = pG->nContentLength;
-			pG->bDownloadComplete = true;
-		} else {
-			/* Not partial content--use the content-length provided in the header
-			 * for this content length, but we still need the start since we're
-			 * not provided with a content-range on last chunck (?). We can get
-			 * the start of last chunk by saving rangeSegmentEnd for each and
-			 * using on last chunk.
-			 */
-			if (iLastSegmentEnd) {
-				pG->nRange = iLastSegmentEnd + 1;
-			}
-			pG->nRangeSegmentEnd += pG->nContentLength;
-			OTDOA_LOG_DBG("nRange after final chunk: %d", pG->nRange);
-			OTDOA_LOG_DBG("range end after final chunk: %d", pG->nRangeSegmentEnd);
-			OTDOA_LOG_DBG("content length after final chunk: %d", pG->nContentLength);
-			OTDOA_LOG_DBG("range max after final chunk: %d", pG->nRangeMax);
-			pG->bDownloadComplete = true;
-		}
+		iRC = handle_non_partial_content_response(pG, iLastSegmentEnd);
 	}
+	if (iRC != OTDOA_API_SUCCESS) {
+		goto exit;
+	}
+
 	OTDOA_LOG_INF("range start: %d range end: %d content length: %d range max: %d", pG->nRange,
 			  pG->nRangeSegmentEnd, pG->nContentLength, pG->nRangeMax);
 
 exit:
-
 	return iRC;
 }
 
@@ -1838,10 +2049,10 @@ int otdoa_http_h1_process_ubsa_data(tOTDOA_HTTP_MEMBERS *pG)
 		/* enable encryption locally if it is disabled on server and we want to store it
 		 * encrypted
 		 */
-		int enable_ue_encr = pG->bDisableEncryption && encrypt_ubsa;
+		int enable_ue_encr = bDisableEncryption && encrypt_ubsa;
 
 		/* Pass in the IV from server if data was encrypted by the server*/
-		uint8_t *pu8_iv = (pG->bDisableEncryption ? NULL : pG->iv);
+		uint8_t *pu8_iv = (bDisableEncryption ? NULL : pG->iv);
 
 		iRC = otdoa_ubsa_proc_start_h1(OTDOA_pxlGetBSAPath(), enable_ue_encr, compress_ubsa,
 						   (1 << LOG2_COMPRESS_WINDOW), pu8_iv);
@@ -2037,7 +2248,7 @@ int otdoa_http_h1_handle_get_cfg(tOTDOA_HTTP_MEMBERS *pG)
 	} else if (iRC < 0) {
 		OTDOA_LOG_ERR("receive error %d", iRC);
 		goto exit;
-	} else if (iRC == 0) {
+	} else  { /* iRC == 0*/
 		OTDOA_LOG_ERR("0 bytes!");
 		iRC = OTDOA_API_INTERNAL_ERROR; /* usually zero bytes means other end shutdown */
 		goto exit;
@@ -2057,7 +2268,7 @@ exit:
 	return iRC;
 }
 
-extern void log_response_string(const char *, const char *);
+extern void log_response_string(const char *pszKey, const char *pszBuffer);
 
 #ifdef CONFIG_OTDOA_ENABLE_RESULTS_UPLOAD
 /*
@@ -2086,7 +2297,7 @@ int otdoa_http_h1_handle_otdoa_results(tOTDOA_HTTP_MEMBERS *pG, const tOTDOA_HTT
 #define APPEND_PARAM(formatter, value)                                                             \
 	content_length +=                                                                          \
 		snprintf(pG->csBuffer + header_length + content_length,                            \
-			 HTTPS_BUF_SIZE - (header_length + content_length), formatter, value);
+			 HTTPS_BUF_SIZE - (header_length + content_length), formatter, value)
 
 	const otdoa_api_results_t *results = pM->http_upload_results.pResults;
 	int content_length = 0;
@@ -2129,10 +2340,12 @@ int otdoa_http_h1_handle_otdoa_results(tOTDOA_HTTP_MEMBERS *pG, const tOTDOA_HTT
 
 #undef APPEND_PARAM
 
-	/* snprintf is intentionally truncating here, silence the warning */
+/* save the warning state */
 #pragma GCC diagnostic push
+/* snprintf is intentionally truncating here, silence the warning */
 #pragma GCC diagnostic ignored "-Wformat-truncation"
 	snprintf(pG->csBuffer, header_length, header_format, content_length);
+/* restore the warning state */
 #pragma GCC diagnostic pop
 	/* printf really doesn't like printing without a null terminator, so fix the header here */
 	pG->csBuffer[header_length - 1] = '\n';
@@ -2240,11 +2453,13 @@ int otdoa_http_h1_blacklist_tick(tOTDOA_HTTP_MEMBERS *p_http)
 
 	for (int i = 0; i < BLACKLIST_SIZE; ++i) {
 		/* decrement all valid entries, clear ones that have expired*/
-		if (p_http->blacklist[i].ecgi != 0 && --p_http->blacklist[i].age == 0) {
-			OTDOA_LOG_DBG("Clearing blacklist entry for ECGI %u",
-					  p_http->blacklist[i].ecgi);
-			p_http->blacklist[i].ecgi = 0;
-			ctr++;
+		if (p_http->blacklist[i].ecgi != 0) {
+			if (--p_http->blacklist[i].age == 0) {
+				OTDOA_LOG_DBG("Clearing blacklist entry for ECGI %u",
+						p_http->blacklist[i].ecgi);
+				p_http->blacklist[i].ecgi = 0;
+				ctr++;
+			}
 		}
 	}
 	return ctr;
@@ -2391,9 +2606,8 @@ int otdoa_http_h1_test_jwt(tOTDOA_HTTP_MEMBERS *pG)
 	OTDOA_LOG_INF("JWT test success!");
 
 cleanup:
-	rc = otdoa_http_h1_send_disconnect(pG);
-	if (rc) {
-		OTDOA_LOG_ERR("Failed to disconnect: %d", rc);
+	if (otdoa_http_h1_send_disconnect(pG)) {
+		OTDOA_LOG_ERR("Failed to disconnect from server.");
 	}
 
 	return rc;

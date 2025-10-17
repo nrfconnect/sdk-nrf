@@ -43,17 +43,13 @@ void otdoa_sample_start(uint32_t session_length, uint32_t capture_flags, uint32_
 
 static void lte_event_handler(const struct lte_lc_evt *const evt)
 {
-	switch (evt->type) {
-	case LTE_LC_EVT_NW_REG_STATUS:
-		if ((evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
-		    (evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
-			printk("Connected to LTE");
-			k_sem_give(&lte_connected);
-		}
-		break;
-	default:
-		break;
-	}
+    if (evt->type == LTE_LC_EVT_NW_REG_STATUS) {
+        if ((evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME) ||
+            (evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_ROAMING)) {
+            printk("Connected to LTE");
+            k_sem_give(&lte_connected);
+        }
+    }
 }
 
 int otdoa_sample_main(void)
@@ -196,11 +192,17 @@ static void otdoa_event_handler(const otdoa_api_event_data_t *p_event_data)
 						err);
 				}
 			}
-		} else if (p_event_data->dl_compl.status == OTDOA_API_SUCCESS) {
-			set_blink_sleep();
-			LOG_INF("OTDOA uBSA DL SUCCESS");
-			pos_est_timer_restart();
-		}
+		} else {
+            /* DL request was not part of a session, so just handle the result */
+            if (p_event_data->dl_compl.status == OTDOA_API_SUCCESS) {
+                set_blink_sleep();
+                LOG_INF("OTDOA uBSA DL SUCCESS");
+            } else {
+                LOG_ERR("OTDOA uBSA DL FAILED");
+                set_blink_error();
+            }
+            pos_est_timer_restart();
+        }
 		break;
 	}
 

@@ -94,6 +94,8 @@ int32_t otdoa_api_ubsa_download(const otdoa_api_ubsa_dl_req_t *p_dl_request,
 		} else if (rc != 0) {
 			/* other failures */
 			return rc;
+		} else {
+			/* rc==0, so no error */
 		}
 	}
 

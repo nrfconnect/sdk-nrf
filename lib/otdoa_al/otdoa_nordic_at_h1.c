@@ -126,12 +126,13 @@ int otdoa_nordic_at_parse_xmonitor_response(const char *const psz_resp, size_t u
 
 			if (1 != i_scn_rv) {
 				i_ret = OTDOA_EVENT_FAIL_BAD_MODEM_RESP;
-			}
-			/* allow both REGISTERED and ROAMINIG status */
-			else if (u32_reg_status != REG_STATUS_REGISTERED &&
-				 u32_reg_status != REG_STATUS_ROAMING) {
-				i_ret = OTDOA_EVENT_FAIL_NOT_REGISTERED;
-			}
+			} else {
+                /* allow both REGISTERED and ROAMINIG status */
+                if (u32_reg_status != REG_STATUS_REGISTERED &&
+                    u32_reg_status != REG_STATUS_ROAMING) {
+                    i_ret = OTDOA_EVENT_FAIL_NOT_REGISTERED;
+                }
+            }
 			break;
 		}
 		case 3: /* PLMN - MCC/MNC */
@@ -159,9 +160,11 @@ int otdoa_nordic_at_parse_xmonitor_response(const char *const psz_resp, size_t u
 
 			if (1 != i_scn_rv) {
 				i_ret = OTDOA_EVENT_FAIL_BAD_MODEM_RESP;
-			} else if (u32_AcT != 7) {
-				i_ret = OTDOA_EVENT_FAIL_NOT_LTE_MODE;
-			}
+			} else {
+                if (u32_AcT != 7) {
+                    i_ret = OTDOA_EVENT_FAIL_NOT_LTE_MODE;
+                }
+            }
 			break;
 		}
 		case 7: /* ECGI */
@@ -230,7 +233,9 @@ error_exit:
 		if (pu16_mnc) {
 			*pu16_mnc = u16_mnc;
 		}
-	}
+	} else {
+        /* just return the error code*/
+    }
 
 	if (i_ret != 0 && i_ret != OTDOA_EVENT_FAIL_NO_DLEARFCN) {
 		if (psz_resp) {
