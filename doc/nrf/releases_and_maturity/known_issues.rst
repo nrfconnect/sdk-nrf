@@ -3351,6 +3351,16 @@ The issues in this section are related to :ref:`matter_samples`.
 
 .. rst-class:: v3-1-1 v3-1-0
 
+KRKNWK-20915: The :ref:`matter_lock_sample` sample does not work with the nRF54L Series and Nordic UART Service (NUS)
+  Using the Nordic UART Service (NUS) with the :ref:`matter_lock_sample` sample on the nRF54L Series devices results in a crash.
+  The root cause is that the NUS requires increased BT RX stack size for the nRF54L Series devices.
+
+  **Affected platforms:** nRF54L15, nRF54L10, nRF54LM20
+
+  **Workaround:** Set the :kconfig:option:`CONFIG_BT_RX_STACK_SIZE` Kconfig option to ``2560`` in the sample's :file:`prj.conf` file.
+
+.. rst-class:: v3-1-1 v3-1-0
+
 KRKNWK-20691: The :ref:`matter_lock_sample` sample does not update LED state on auto-relock
   The sample does not update the LED state to on after auto-relock timeout.
   The attribute value after auto-relock timeout is correct (locked), but the sample does not handle this change correctly, so the state of LED visualizing the lock state is wrong.
