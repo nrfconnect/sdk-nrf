@@ -445,7 +445,7 @@
 /samples/bluetooth/direction_finding_connectionless_rx/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/direction_finding_connectionless_tx/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/direction_finding_peripheral/ @nrfconnect/ncs-dragoon
-/samples/bluetooth/direct_test_mode/      @nrfconnect/ncs-si-muffin
+/samples/bluetooth/direct_test_mode/      @nrfconnect/ncs-dragoon
 /samples/bluetooth/enocean/               @nrfconnect/ncs-paladin
 /samples/bluetooth/event_trigger/         @nrfconnect/ncs-dragoon
 /samples/bluetooth/fast_pair/             @nrfconnect/ncs-si-bluebagel
@@ -535,7 +535,7 @@
 /samples/peripheral/802154_phy_test/      @nrfconnect/ncs-radio-sw
 /samples/peripheral/802154_sniffer/       @e-rk
 /samples/peripheral/lpuart/               @nordic-krch @nrfconnect/ncs-low-level-test
-/samples/peripheral/radio_test/           @nrfconnect/ncs-si-muffin
+/samples/peripheral/radio_test/           @nrfconnect/ncs-dragoon
 /samples/pmic/native/                     @nordic-auko
 /samples/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
@@ -578,7 +578,7 @@
 /samples/bluetooth/direction_finding_connectionless_rx/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/direction_finding_connectionless_tx/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/direction_finding_peripheral/*.rst @nrfconnect/ncs-dragoon-doc
-/samples/bluetooth/direct_test_mode/*.rst @nrfconnect/ncs-si-muffin-doc
+/samples/bluetooth/direct_test_mode/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/enocean/*.rst          @nrfconnect/ncs-paladin-doc
 /samples/bluetooth/event_trigger/*.rst    @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/fast_pair/**/*.rst     @nrfconnect/ncs-si-bluebagel-doc
@@ -660,7 +660,7 @@
 /samples/peripheral/802154_phy_test/*.rst @nrfconnect/ncs-radio-sw-doc
 /samples/peripheral/802154_sniffer/*.rst  @nrfconnect/ncs-radio-sw-doc
 /samples/peripheral/lpuart/*.rst          @nrfconnect/ncs-doc-leads
-/samples/peripheral/radio_test/*.rst      @nrfconnect/ncs-si-muffin-doc
+/samples/peripheral/radio_test/*.rst      @nrfconnect/ncs-dragoon-doc
 /samples/pmic/**/*.rst                    @nrfconnect/ncs-pmic-doc
 /samples/sensor/**/*.rst                  @nrfconnect/ncs-cia-doc
 /samples/tfm/**/*.rst                     @nrfconnect/ncs-aegir-doc
