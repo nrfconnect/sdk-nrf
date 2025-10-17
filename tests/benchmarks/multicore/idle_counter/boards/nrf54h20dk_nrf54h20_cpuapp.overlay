@@ -17,7 +17,3 @@
 };
 
 /delete-node/ &led1;
-
-&hsfll120 {
-	status = "okay";
-};
