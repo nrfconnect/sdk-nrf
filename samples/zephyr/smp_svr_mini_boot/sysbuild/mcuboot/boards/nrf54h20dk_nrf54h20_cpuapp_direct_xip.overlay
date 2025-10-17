@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "../../nrf54h20dk_nrf54h20_memory_map_direct_xip.dtsi"
+
 / {
 	chosen {
 		zephyr,code-partition = &boot_partition;
