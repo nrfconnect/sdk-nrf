@@ -12,6 +12,10 @@ project(nrf_cloud_multi_service)
 # Include certs files if enabled.
 zephyr_include_directories_ifdef(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES certs)
 
+if(CONFIG_MEMFAULT)
+zephyr_include_directories(config)
+endif()
+
 # NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c)
 target_sources(app PRIVATE src/application.c)

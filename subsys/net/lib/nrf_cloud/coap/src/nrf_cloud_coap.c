@@ -583,9 +583,20 @@ int nrf_cloud_coap_fota_job_get(struct nrf_cloud_fota_job_info *const job)
 
 	/* Check for callback errors */
 	if (fota_err == COAP_RESPONSE_CODE_NOT_FOUND) {
-		/* A CoAP error response code, but not an actual error */
+		/* Fake a fota job from memfault */
 		err = 0;
-		LOG_DBG("No pending FOTA job");
+		fota_err = 0;
+		LOG_DBG("Faking pending FOTA job");
+		memset(job, 0, sizeof(*job));
+		job->id = "912c7a5f-e541-f84d-21f1-811e5afd238c";
+		job->type = NRF_CLOUD_FOTA_APPLICATION;
+		job->host = "ota-cdn.memfault.com";
+		job->file_size = 316711;
+		job->path =
+			"6724/ota-payloads/27589917262?token=PUBdkn3i5CRl9_uibpio35wrMr08G0T_QD20kI49icc"
+			"&expires=1760634000&v=2";
+		LOG_DBG("FOTA job received; type:%d, id:%s, host:%s, path:%s, size:%d",
+			job->type, job->id, job->host, job->path, job->file_size);
 	} else if (fota_err > 0) {
 		LOG_RESULT_CODE_ERR("Error getting FOTA job info; result code:", fota_err);
 	} else if (fota_err == -ETIMEDOUT) {
@@ -596,6 +607,7 @@ int nrf_cloud_coap_fota_job_get(struct nrf_cloud_fota_job_info *const job)
 		/* No callback error: success */
 		LOG_DBG("FOTA job received; type:%d, id:%s, host:%s, path:%s, size:%d",
 			job->type, job->id, job->host, job->path, job->file_size);
+
 	}
 
 give_and_return:
