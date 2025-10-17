@@ -13,11 +13,6 @@ LOG_MODULE_REGISTER(idle_pwm_loop, LOG_LEVEL_INF);
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/pm/device_runtime.h>
 
-#if defined(CONFIG_CLOCK_CONTROL)
-#include <zephyr/devicetree/clocks.h>
-#include <zephyr/drivers/clock_control/nrf_clock_control.h>
-#endif
-
 #if !DT_NODE_EXISTS(DT_NODELABEL(pwm_to_gpio_loopback))
 #error "Unsupported board: pwm_to_gpio_loopback node is not defined"
 #endif
@@ -41,34 +36,6 @@ static volatile uint32_t high, low;
 /* Variables used to make CPU active for ~1 second */
 static struct k_timer my_timer;
 static bool timer_expired;
-
-
-#if defined(CONFIG_CLOCK_CONTROL)
-const uint32_t freq[] = {320, 256, 128, 64};
-
-/*
- * Set Global Domain frequency (HSFLL120)
- */
-void set_global_domain_frequency(uint32_t freq)
-{
-	int err;
-	int res;
-	struct onoff_client cli;
-	const struct device *hsfll_dev = DEVICE_DT_GET(DT_NODELABEL(hsfll120));
-	const struct nrf_clock_spec clk_spec_global_hsfll = {.frequency = MHZ(freq)};
-
-	printk("Requested frequency [Hz]: %d\n", clk_spec_global_hsfll.frequency);
-	sys_notify_init_spinwait(&cli.notify);
-	err = nrf_clock_control_request(hsfll_dev, &clk_spec_global_hsfll, &cli);
-	__ASSERT((err >= 0 && err < 3), "Wrong nrf_clock_control_request return code");
-	do {
-		err = sys_notify_fetch_result(&cli.notify, &res);
-		k_yield();
-	} while (err == -EAGAIN);
-	__ASSERT(err == 0, "Wrong clock control request return code");
-	__ASSERT(res == 0, "Wrong clock control request response");
-}
-#endif /* CONFIG_CLOCK_CONTROL */
 
 void my_timer_handler(struct k_timer *dummy)
 {
@@ -107,10 +74,6 @@ int main(void)
 
 	/* Wait a bit to solve NRFS request timeout issue. */
 	k_msleep(100);
-
-#if defined(CONFIG_CLOCK_CONTROL)
-	set_global_domain_frequency(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ);
-#endif
 
 	/* Set PWM fill ratio to 50% */
 	pulse = pwm_out.period >> 1;
@@ -229,10 +192,6 @@ int main(void)
 		}
 		__ASSERT_NO_MSG(ret == 0);
 
-#if defined(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING)
-			k_busy_wait(100000);
-			set_global_domain_frequency(freq[counter % ARRAY_SIZE(freq)]);
-#endif
 		/* Keep PWM active for ~ 1 second */
 		while (!timer_expired) {
 			/* GPIOTE shall count edges here */

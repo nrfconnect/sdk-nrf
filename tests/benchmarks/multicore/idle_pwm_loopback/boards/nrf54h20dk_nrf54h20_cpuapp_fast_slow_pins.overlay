@@ -89,7 +89,3 @@
 	current-speed = <115200>;
 	/delete-property/ hw-flow-control;
 };
-
-&hsfll120 {
-	status = "okay";
-};
