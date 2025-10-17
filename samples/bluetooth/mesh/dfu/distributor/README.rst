@@ -251,10 +251,9 @@ Build the sample using the following command:
 
    west build -p -b *board_name* -- -DFILE_SUFFIX=ext_flash
 
-.. note::
-   The external flash is not erased during the internal flash erasing procedure.
-   See `nRF Util`_ for more information on how to erase the external flash.
-   Currently, external flash is supported on the ``nrf52840dk/nrf52840`` board and the ``nrf54l15dk/nrf54l15/cpuapp`` board.
+Currently, external flash is supported on the ``nrf52840dk/nrf52840`` board and the ``nrf54l15dk/nrf54l15/cpuapp`` board.
+
+.. include:: /includes/mesh_ext_flash_settings.txt
 
 Dependencies
 ************

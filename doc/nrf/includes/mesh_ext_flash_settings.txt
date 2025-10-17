@@ -1,0 +1,18 @@
+External flash for settings partition
+#####################################
+
+This sample supports relocating mesh settings to the MX25R64 QSPI NOR external flash on ``nrf52840dk/nrf52840``.
+This provides additional storage space for mesh persistent data.
+
+To build with external flash settings storage:
+
+.. code-block:: console
+
+   west build -p -b nrf52840dk/nrf52840 -- -DEXTRA_CONF_FILE=boards/nrf52840dk_nrf52840/ext_flash_settings.conf
+
+This build configuration enables the external flash device and QSPI driver, then relocates the settings partition to external flash.
+
+.. note::
+   The external flash is not erased during the internal flash erasing procedure.
+   See `nRF Util`_ for more information on how to erase the external flash.
+   Currently, only the external flash on the ``nrf52840dk/nrf52840`` board is supported.

@@ -200,6 +200,8 @@ When the reply is received, you will see the following:
 
 Note that private messages are only seen by those the messages are addressed to.
 
+.. include:: ../common/ext_flash_support.rst
+
 Dependencies
 ************
 
