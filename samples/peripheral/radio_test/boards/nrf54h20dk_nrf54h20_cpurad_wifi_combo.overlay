@@ -6,6 +6,6 @@
 
 &dppic020 {
 	status = "okay";
-	source-channels = < 0 1 >;
-	sink-channels = < 2 3 >;
+	source-channels = <0 1>;
+	sink-channels = <2 3>;
 };

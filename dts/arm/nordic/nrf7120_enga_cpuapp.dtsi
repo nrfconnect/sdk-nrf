@@ -7,7 +7,9 @@
 #include <nordic/nrf7120_enga.dtsi>
 
 cpu: &cpuapp {};
+
 systick: &cpuapp_systick {};
+
 nvic: &cpuapp_nvic {};
 
 /delete-node/ &cpuflpr;
@@ -67,7 +69,7 @@ nvic: &cpuapp_nvic {};
 #else
 	interrupts = <228 NRF_DEFAULT_IRQ_PRIORITY>,
 #endif
-	/* Reserved for Zero Latency IRQs */
+		     /* Reserved for Zero Latency IRQs */
 		     <229 NRF_DEFAULT_IRQ_PRIORITY>;
 };
 

@@ -9,4 +9,4 @@
 		button = &button0;
 		led = &led0;
 	};
- };
+};

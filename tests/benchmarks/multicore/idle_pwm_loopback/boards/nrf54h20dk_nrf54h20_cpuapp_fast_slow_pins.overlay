@@ -45,6 +45,7 @@
 			psels = <NRF_PSEL(PWM_OUT2, 2, 6)>;
 		};
 	};
+
 	/omit-if-no-ref/ pwm120_sleep: pwm120_sleep {
 		group1 {
 			psels = <NRF_PSEL(PWM_OUT2, 2, 6)>;

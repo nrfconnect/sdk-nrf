@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- / {
-
+/ {
 	reserved-memory {
 		sram0_aggregator_area0: memory@2007f000 {
 			reg = <0x2007f000 0x1000>;
