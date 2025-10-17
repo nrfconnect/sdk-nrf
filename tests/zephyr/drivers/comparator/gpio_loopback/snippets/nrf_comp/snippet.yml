@@ -4,3 +4,6 @@ boards:
   nrf54lv10dk/nrf54lv10a/cpuapp:
     append:
       EXTRA_DTC_OVERLAY_FILE: boards/nrf54lv10dk_nrf54lv10a_cpuapp.overlay
+  nrf54lv10dk/nrf54lv10a/cpuapp/ns:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf54lv10dk_nrf54lv10a_cpuapp.overlay
