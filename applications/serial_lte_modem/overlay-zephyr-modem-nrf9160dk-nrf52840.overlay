@@ -8,11 +8,18 @@
 
 / {
 	chosen {
-		ncs,slm-uart = &uart1;
+		ncs,slm-uart = &dtr_uart;
 	};
 };
 
 &uart1 {
         current-speed = <115200>;
         hw-flow-control;
+	status = "okay";
+	dtr_uart: nrf-sw-dtr-uart {
+		compatible = "nordic,nrf-sw-dtr-uart";
+		dtr-gpios = <&interface_to_nrf52840 4 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+		ri-gpios = <&interface_to_nrf52840 5 (GPIO_ACTIVE_LOW)>;
+		status = "okay";
+	};
 };
