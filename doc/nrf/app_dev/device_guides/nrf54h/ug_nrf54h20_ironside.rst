@@ -696,6 +696,8 @@ The UICR.WDTSTART configuration consists of three sub-registers:
   This value determines the watchdog timeout period.
   The CRV must be at least 15 (0xF) to ensure proper watchdog operation.
 
+.. _ug_nrf54h20_ironside_uicr_securestorage:
+
 UICR.SECURESTORAGE
 ==================
 
