@@ -9,8 +9,6 @@
 #include <zephyr/pm/device_runtime.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/devicetree/clocks.h>
-#include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #include <zephyr/drivers/gpio.h>
 
 /* Note: logging is normally disabled for this test
@@ -36,33 +34,6 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 uint8_t test_pattern[TEST_BUFFER_LEN];
 static uint8_t test_buffer[TEST_BUFFER_LEN];
 static volatile uint8_t uart_error_counter;
-
-#if defined(CONFIG_CLOCK_CONTROL)
-const uint32_t freq[] = {320, 256, 128, 64};
-
-/*
- * Set Global Domain frequency (HSFLL120)
- */
-void set_global_domain_frequency(uint32_t freq)
-{
-	int err;
-	int res;
-	struct onoff_client cli;
-	const struct device *hsfll_dev = DEVICE_DT_GET(DT_NODELABEL(hsfll120));
-	const struct nrf_clock_spec clk_spec_global_hsfll = {.frequency = MHZ(freq)};
-
-	printk("Requested frequency [Hz]: %d\n", clk_spec_global_hsfll.frequency);
-	sys_notify_init_spinwait(&cli.notify);
-	err = nrf_clock_control_request(hsfll_dev, &clk_spec_global_hsfll, &cli);
-	__ASSERT((err >= 0 && err < 3), "Wrong nrf_clock_control_request return code");
-	do {
-		err = sys_notify_fetch_result(&cli.notify, &res);
-		k_yield();
-	} while (err == -EAGAIN);
-	__ASSERT(err == 0, "Wrong clock control request return code");
-	__ASSERT(res == 0, "Wrong clock control request response");
-}
-#endif /* CONFIG_CLOCK_CONTROL */
 
 void timer_handler(struct k_timer *dummy)
 {
@@ -134,10 +105,6 @@ int main(void)
 	err = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
 	__ASSERT(err == 0, "Could not configure led GPIO");
 
-#if defined(CONFIG_CLOCK_CONTROL)
-	set_global_domain_frequency(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ);
-#endif
-
 	printk("Hello World! %s\n", CONFIG_BOARD_TARGET);
 	printk("UART instance: %s\n", uart_dev->name);
 	set_test_pattern();
@@ -172,12 +139,6 @@ int main(void)
 				err = uart_tx(uart_dev, test_pattern, TEST_BUFFER_LEN, 1000000);
 			} while (err == -EBUSY);
 			__ASSERT(err == 0, "Unexpected error when sending UART TX data: %d", err);
-#if defined(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING)
-			if (switch_flag) {
-				set_global_domain_frequency(freq[++counter % ARRAY_SIZE(freq)]);
-				switch_flag = 0;
-			}
-#endif
 			while (k_sem_take(&uart_rx_ready_sem, K_NO_WAIT) != 0) {
 			};
 			for (int index = 0; index < TEST_BUFFER_LEN; index++) {
