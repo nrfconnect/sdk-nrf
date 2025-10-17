@@ -226,7 +226,7 @@
   - "drivers/mpsl/**/*"
 
 "CI-ble-samples-test":
-  - "samples/bluetooth/central_and_peripheral_hr/*"
+  - "samples/bluetooth/central_and_peripheral_hrs/*"
   - "samples/bluetooth/central_bas/*"
   - "samples/bluetooth/central_hids/*"
   - "samples/bluetooth/central_hr_coded/*"
