@@ -26,6 +26,8 @@ It is highly recommended to use the PCB layouts and component values provided by
 * The **P9** port cannot be used with internal or external pull-down resistors.
 * For optimal performance, the output impedance of the **P6** and **P7** ports should match the PCB and external device pin impedance.
 
+.. _ug_nrf54h20_custom_pcb_board:
+
 Prepare the configuration files for your custom board in the |NCS|
 ******************************************************************
 
@@ -46,6 +48,8 @@ See the following documentation pages for more information:
    Ensure the compatibility of your custom board files when migrating to a new |NCS| release.
 
    See :ref:`zephyr:board_porting_guide` for more information.
+
+.. _ug_nrf54h20_custom_pcb_bicr:
 
 Configure, generate, and program the BICR
 *****************************************
