@@ -497,15 +497,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(mcuboot CONFIG_FW_INFO y)
 
       if(SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256)
-        if(SB_CONFIG_SOC_SERIES_NRF54LX)
-          set_config_bool(mcuboot CONFIG_BOOT_ECDSA_TINYCRYPT y)
-        else()
-          if(SB_CONFIG_BOOT_SHARED_CRYPTO_ECDSA_P256)
-            add_overlay_config(
-              mcuboot
-              ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr/external_crypto.conf
-              )
-            endif()
+        if(SB_CONFIG_BOOT_SHARED_CRYPTO_ECDSA_P256)
+          add_overlay_config(
+            mcuboot
+            ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr/external_crypto.conf
+            )
         endif()
       endif()
 
