@@ -312,17 +312,6 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 	int sx_status = SX_ERR_UNINITIALIZED_OBJ;
 
 	switch (operation->alg) {
-	case PSA_ALG_CTR:
-		if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
-			sx_status = operation->dir == CRACEN_DECRYPT
-					    ? sx_blkcipher_create_aesctr_dec(&operation->cipher,
-									     &operation->keyref,
-									     operation->iv)
-					    : sx_blkcipher_create_aesctr_enc(&operation->cipher,
-									     &operation->keyref,
-									     operation->iv);
-		}
-		break;
 	case PSA_ALG_STREAM_CIPHER:
 		if (IS_ENABLED(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)) {
 			sx_status = operation->dir == CRACEN_DECRYPT
