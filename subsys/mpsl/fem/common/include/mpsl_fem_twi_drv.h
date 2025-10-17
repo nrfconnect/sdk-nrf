@@ -14,7 +14,7 @@
 /** @brief Structure representing an I2C bus driver for a Front-End Module. */
 typedef struct {
 	const struct device *dev;
-	nrfx_twim_evt_handler_t nrfx_twim_callback_saved;
+	nrfx_twim_event_handler_t nrfx_twim_callback_saved;
 	void *nrfx_twim_callback_ctx_saved;
 	mpsl_fem_twi_async_xfer_write_cb_t fem_twi_async_xfwr_write_cb;
 	void *fem_twi_async_xfwr_write_cb_ctx;
