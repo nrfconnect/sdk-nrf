@@ -5,7 +5,7 @@
 #
 
 menuconfig NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS
-	bool "Enable diagnostics logs support"
+	bool "Diagnostics logs support"
 	imply CHIP_ENABLE_BDX_LOG_TRANSFER
 	help
 	  Provides support for diagnostics logs. Diagnostics logs allow the Matter controller to read end-user,

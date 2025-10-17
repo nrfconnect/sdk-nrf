@@ -21,10 +21,10 @@ config BRIDGE_AGGREGATOR_ENDPOINT_ID
 	default 1
 
 config BRIDGE_MIGRATE_PRE_2_7_0
-	bool "Enable migration of bridged device data stored in old scheme from pre nRF SDK 2.7.0 releases"
+	bool "Migration of bridged device data stored in old scheme from pre nRF SDK 2.7.0 releases"
 
 config BRIDGE_MIGRATE_VERSION_1
-	bool "Enable migration of bridged device data stored in version 1 of new scheme"
+	bool "Migration of bridged device data stored in version 1 of new scheme"
 	default y
 
 if BRIDGED_DEVICE_BT
