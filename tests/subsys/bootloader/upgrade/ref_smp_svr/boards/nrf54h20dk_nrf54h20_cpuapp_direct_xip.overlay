@@ -1,0 +1,9 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../sysbuild/nrf54h20dk_nrf54h20_memory_map_direct_xip.dtsi"
+
+secondary_app_partition: &cpuapp_slot1_partition {};

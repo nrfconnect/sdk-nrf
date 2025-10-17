@@ -117,6 +117,7 @@ tests:
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
 
   mcuboot.direct_xip.basic:
+    timeout: 900
     tags:
       - direct_xip
     platform_allow:
@@ -138,6 +139,7 @@ tests:
       - FILE_SUFFIX=direct_xip
 
   mcuboot.direct_xip.with_revert:
+    timeout: 900
     tags:
       - direct_xip
     platform_allow:
