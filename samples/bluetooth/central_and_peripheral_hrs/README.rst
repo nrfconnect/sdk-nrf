@@ -80,7 +80,7 @@ User interface
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/central_and_peripheral_hr`
+.. |sample path| replace:: :file:`samples/bluetooth/central_and_peripheral_hrs`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -171,7 +171,7 @@ Testing with Bluetooth Low Energy app
       #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the **SERVER SETUP** tab.
       #. Click the dongle configuration and select :guilabel:`Load setup`.
-      #. Load the :file:`hr_service.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hr` in the |NCS| folder structure.
+      #. Load the :file:`hr_service.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hrs` in the |NCS| folder structure.
       #. Click :guilabel:`Apply to device`.
       #. Open the **CONNECTION MAP** tab.
       #. Click the dongle configuration (gear icon) and select :guilabel:`Advertising setup`.
@@ -179,7 +179,7 @@ Testing with Bluetooth Low Energy app
          The current version of nRF Connect can store the advertising setup.
 
       #. Click :guilabel:`Load setup`.
-         Load the :file:`hrs_adv_setup.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hr` in the |NCS| folder structure.
+         Load the :file:`hrs_adv_setup.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hrs` in the |NCS| folder structure.
       #. Click :guilabel:`Apply` and :guilabel:`Close`.
       #. Click the gear icon to open the Adapter settings and select :guilabel:`Start advertising`.
       #. Wait until the development kit running the Central and Peripheral HRS connects.
@@ -217,7 +217,7 @@ Testing with Bluetooth Low Energy app
       #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the **SERVER SETUP** tab.
       #. Click the dongle configuration and select :guilabel:`Load setup`.
-      #. Load the :file:`hr_service.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hr` in the |NCS| folder structure.
+      #. Load the :file:`hr_service.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hrs` in the |NCS| folder structure.
       #. Click :guilabel:`Apply to device`.
       #. Open the **CONNECTION MAP** tab.
       #. Click the dongle configuration (gear icon) and select :guilabel:`Advertising setup`.
@@ -225,7 +225,7 @@ Testing with Bluetooth Low Energy app
          The current version of nRF Connect can store the advertising setup.
 
       #. Click :guilabel:`Load setup`.
-         Load the :file:`hrs_adv_setup.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hr` in the |NCS| folder structure.
+         Load the :file:`hrs_adv_setup.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hrs` in the |NCS| folder structure.
       #. Click :guilabel:`Apply` and :guilabel:`Close`.
       #. Click the gear icon to open the Adapter settings and select :guilabel:`Start advertising`.
       #. Wait until the development kit running the Central and Peripheral HRS connects.
