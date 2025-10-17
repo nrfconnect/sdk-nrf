@@ -70,11 +70,11 @@ struct client_supp_configs {
 /**
  * @brief	Function for bt_bap_unicast_group_foreach_stream().
  *
- * @param[in] server	The audio server.
- * @param[in] user_data	User data.
+ * @param[in]	server		The audio server.
+ * @param[in]	user_data	User data.
  *
- * @retval false	Continue iterating.
- * @retval true		Stop iterating.
+ * @retval	false	Continue iterating.
+ * @retval	true	Stop iterating.
  */
 typedef bool (*srv_store_foreach_func_t)(struct server_store *server, void *user_data);
 
@@ -83,12 +83,12 @@ typedef bool (*srv_store_foreach_func_t)(struct server_store *server, void *user
  *
  * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] func	Function to call for each server.
- * @param[in] user_data	User data to pass to the function.
+ * @param[in]	func		Function to call for each server.
+ * @param[in]	user_data	User data to pass to the function.
  *
- * @retval 0		Success.
- * @retval -EINVAL	If func is NULL.
- * @retval -ECANCELED	If the iteration was stopped by the callback function.
+ * @retval	0		Success.
+ * @retval	-EINVAL		Function pointer is NULL.
+ * @retval	-ECANCELED	The iteration was stopped by the callback function.
  */
 int srv_store_foreach_server(srv_store_foreach_func_t func, void *user_data);
 
@@ -97,42 +97,37 @@ int srv_store_foreach_server(srv_store_foreach_func_t func, void *user_data);
  *
  * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] new	Pointer to the new codec configuration.
- * @param[in] existing	Pointer to the existing codec configuration.
- * @param[in] pref_sample_rate_value  Preferred sample rate value.
+ * @param[in]	new			Pointer to the new codec configuration.
+ * @param[in]	existing		Pointer to the existing codec configuration.
+ * @param[in]	pref_sample_rate_value	Preferred sample rate value.
  *
- * @retval true		If the new preset should overwrite the existing one.
- * @retval false	Otherwise.
+ * @retval	true	The new preset should overwrite the existing one.
+ * @retval	false	Otherwise.
  */
 bool srv_store_preset_validated(struct bt_audio_codec_cfg const *const new,
 				struct bt_audio_codec_cfg const *const existing,
 				uint8_t pref_sample_rate_value);
 
 /**
- * @brief Search for a common presentation delay across all server Audio Stream Endpoints (ASEs) for
- * the given direction.
+ * @brief Search for a common presentation delay across all server Audio Stream Endpoints (ASEs) in
+ * a given @p unicast_group for the given direction.
  *
  * This function will try to satisfy the preferred presentation delay for all
  * ASEs. If that is not possible, it will try to satisfy the max and min values.
  *
- * @note	This function will search across CIGs. This may not make sense, as the same
- * presentation delay is only mandated within a CIG.
- *
  * @note srv_store_lock() must be called before accessing this function.
  *
- * @param[in] stream	Pointer to a new stream to be started
- * @param[out] computed_pres_dly_us Pointer to store the computed presentation delay in
- * microseconds.
- * @param[out] existing_pres_dly_us Pointer to store the existing presentation delay in
- * microseconds.
- * @param[in] server_qos_pref	Pointer to the preferred QoS configuration.
- * @param[out] group_reconfig_needed True if a group reconfiguration is needed.
+ * @param[in]	stream			Pointer to a new stream to be started
+ * @param[out]	computed_pres_dly_us	Pointer to store the computed presentation delay in
+ *					microseconds.
+ * @param[out]	existing_pres_dly_us	Pointer to store the existing presentation delay in
+ *					microseconds.
+ * @param[in]	server_qos_pref		Pointer to the preferred QoS configuration.
+ * @param[out]	group_reconfig_needed	True if a group reconfiguration is needed.
  *
- *
- * @retval 0		Success, negative error code on failure.
- * @retval -ESPIPE	There is no common presentation delay found.
- * @retval -EINVAL	Illegal argument(s), or submitted streams are in different groups.
- * @retval -EMLINK	The search was conducted across multiple CIGs
+ * @retval	0	Success, negative error code on failure.
+ * @retval	-ESPIPE	There is no common presentation delay found.
+ * @retval	-EINVAL	Illegal argument(s), or submitted streams are in different groups.
  */
 int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pres_dly_us,
 			    uint32_t *existing_pres_dly_us,
@@ -149,9 +144,9 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
  * @param[in] dir	Direction to store.
  * @param[in] loc	Location to store.
  *
- * @retval 0		Success.
- * @retval -ENOENT	Server not found.
- * @retval -ENOTCONN	Server conn is NULL.
+ * @retval	0		Success.
+ * @retval	-ENOENT		Server not found.
+ * @retval	-ENOTCONN	Server conn is NULL.
  */
 int srv_store_location_set(struct bt_conn const *const conn, enum bt_audio_dir dir,
 			   enum bt_audio_location loc);
@@ -163,15 +158,15 @@ int srv_store_location_set(struct bt_conn const *const conn, enum bt_audio_dir d
  *
  * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] conn	Pointer to the connection.
- * @param[in] dir	Direction to check for (sink or source).
- * @param[out] valid_codec_caps	Bit field to be populated with valid codec capabilities.
- * @param[in] client_supp_cfgs	(Reserved) Supported configurations of the unicast client.
- * @param[in] num_client_supp_cfgs	(Reserved) Number of supported configurations in the array.
+ * @param[in]	conn			Pointer to the connection.
+ * @param[in]	dir			Direction to check for (sink or source).
+ * @param[out]	valid_codec_caps	Bit field to be populated with valid codec capabilities.
+ * @param[in]	client_supp_cfgs	(Reserved) Supported configurations of the unicast client.
+ * @param[in]	num_client_supp_cfgs	(Reserved) Number of supported configurations in the array.
  *
- * @retval 0		Success.
- * @retval -ENOENT	Server not found.
- * @retval -ENOTCONN	Server conn is NULL.
+ * @retval	0		Success.
+ * @retval	-ENOENT		Server not found.
+ * @retval	-ENOTCONN	Server conn is NULL.
  */
 int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_audio_dir dir,
 				    uint32_t *valid_codec_caps,
@@ -183,11 +178,11 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
  *
  * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] stream	Pointer to the stream.
- * @param[out] server	Pointer to the server. NULL if not found.
+ * @param[in]	stream	Pointer to the stream.
+ * @param[out]	server	Pointer to the server. NULL if not found.
  *
- * @retval 0		Success.
- * @retval -ENOENT	Server not found.
+ * @retval	0	Success.
+ * @retval	-ENOENT	Server not found.
  */
 int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 			      struct server_store **server);
@@ -197,10 +192,10 @@ int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
  *
  * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] state	State to search for.
- * @param[in] dir	Direction to filter on.
+ * @param[in]	state	State to search for.
+ * @param[in]	dir	Direction to filter on.
  *
- * @retval	Number of endpoints in the given state and direction.
+ * @return	Number of endpoints in the given state and direction.
  */
 int srv_store_all_ep_state_count(enum bt_bap_ep_state state, enum bt_audio_dir dir);
 
@@ -209,13 +204,13 @@ int srv_store_all_ep_state_count(enum bt_bap_ep_state state, enum bt_audio_dir d
  *
  * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] conn	Pointer to the connection.
- * @param[in] snk_ctx	Sink context.
- * @param[out] src_ctx	Source context.
+ * @param[in]	conn	Pointer to the connection.
+ * @param[in]	snk_ctx	Sink context.
+ * @param[out]	src_ctx	Source context.
  *
- * @retval 0		Success.
- * @retval -EINVAL	Illegal argument(s)
- * @retval -ENOENT	Server not found.
+ * @retval	0	Success.
+ * @retval	-EINVAL	Illegal argument(s)
+ * @retval	-ENOENT	Server not found.
  */
 int srv_store_avail_context_set(struct bt_conn *conn, enum bt_audio_context snk_ctx,
 				enum bt_audio_context src_ctx);
@@ -225,14 +220,14 @@ int srv_store_avail_context_set(struct bt_conn *conn, enum bt_audio_context snk_
  *
  * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] conn	Pointer to the connection.
- * @param[in] dir	Direction of the capability.
- * @param[out] codec	Codec capability to store.
+ * @param[in]	conn	Pointer to the connection.
+ * @param[in]	dir	Direction of the capability.
+ * @param[out]	codec	Codec capability to store.
  *
- * @retval 0		Success.
- * @retval -EINVAL	Illegal argument(s)
- * @retval -ENOMEM	Out of memory.
- * @retval -ENOTCONN	Server conn is NULL.
+ * @retval	0		Success.
+ * @retval	-EINVAL		Illegal argument(s)
+ * @retval	-ENOMEM		Out of memory.
+ * @retval	-ENOTCONN	Server conn is NULL.
  */
 int srv_store_codec_cap_set(struct bt_conn const *const conn, enum bt_audio_dir dir,
 			    struct bt_audio_codec_cap const *const codec);
@@ -242,21 +237,21 @@ int srv_store_codec_cap_set(struct bt_conn const *const conn, enum bt_audio_dir 
  *
  * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] addr	Pointer to the address of the server.
- * @param[out] server	Pointer to the server. NULL if not found.
+ * @param[in]	addr	Pointer to the address of the server.
+ * @param[out]	server	Pointer to the server. NULL if not found.
  *
- * @retval 0		Success.
- * @retval -ENOENT	Server not found in storage.
+ * @retval	0	Success.
+ * @retval	-ENOENT	Server not found in storage.
  */
 int srv_store_from_addr_get(bt_addr_le_t const *const addr, struct server_store **server);
 
 /**
  * @brief	Check if there is a server with the given address in the server store.
  *
- * @param[in] addr	Pointer to the address of the server.
+ * @param[in]	addr	Pointer to the address of the server.
  *
- * @retval	true if the server exists, false otherwise.
- * @retval	false if the server does not exist.
+ * @retval	true	The server exists.
+ * @retval	false	The server does not exist.
  */
 bool srv_store_server_exists(bt_addr_le_t const *const addr);
 
@@ -265,12 +260,12 @@ bool srv_store_server_exists(bt_addr_le_t const *const addr);
  *
  * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] conn	Pointer to the connection to find the server for.
- * @param[out] server	Pointer to the server. NULL if not found.
+ * @param[in]	conn	Pointer to the connection to find the server for.
+ * @param[out]	server	Pointer to the server. NULL if not found.
  *
- * @retval 0		Success.
- * @retval -ENOENT	Server not found in storage.
- * @retval -ENOTCONN	Server conn is NULL.
+ * @retval	0		Success.
+ * @retval	-ENOENT		Server not found in storage.
+ * @retval	-ENOTCONN	Server conn is NULL.
  */
 int srv_store_from_conn_get(struct bt_conn const *const conn, struct server_store **server);
 
@@ -280,10 +275,11 @@ int srv_store_from_conn_get(struct bt_conn const *const conn, struct server_stor
  * @note	srv_store_lock() must be called before accessing this function.
  *
  * @note	Do not iterate through the servers, as they may not be stored consecutively in
- * memory. Use the srv_store_foreach_func_t function.
+ *		memory. Use the srv_store_foreach_func_t function.
  *
- * @retval		Number of servers.
- * @retval -EINVAL	Non-consecutive server storage detected.
+ * @retval	Number of servers.
+ * @retval	-EINVAL	Non-consecutive server storage detected.
+ * @retval	-ENOENT	Server not found in storage.
  */
 int srv_store_num_get(void);
 
@@ -291,16 +287,16 @@ int srv_store_num_get(void);
  * @brief	Add a server to the storage based on conn.
  *
  * @note	This function should not be used if the peer uses a resolvable address
- * which has not yet been resolved, or any other changing address type.
+ *		which has not yet been resolved, or any other changing address type.
  * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] conn	Pointer to the connection associated with the server to add, based on
- * address.
+ * @param[in]	conn	Pointer to the connection associated with the server to add, based on
+ *			address.
  *
- * @retval 0		Success.
- * @retval -EALREADY	The server already exists.
- * @retval -ENOMEM	Out of memory.
- * @retval		Other negative.	Errors from underlying functions.
+ * @retval	0		Success.
+ * @retval	-EALREADY	The server already exists.
+ * @retval	-ENOMEM		Out of memory.
+ * @retval	Other negative.	Errors from underlying functions.
  */
 int srv_store_add_by_conn(struct bt_conn *conn);
 
@@ -308,18 +304,17 @@ int srv_store_add_by_conn(struct bt_conn *conn);
  * @brief	Add a server to the storage based on address.
  *
  * @note	This function can be used when getting addresses from bonding information.
- * At this point, there will only be an address associated with the server, no conn
- * pointer, and so on. Hence, you must call srv_store_conn_update() when a connection is
- * established.
+ *		At this point, there will only be an address associated with the server, no conn
+ *		pointer, and so on. Hence, you must call srv_store_conn_update() when a connection
+ *		is established.
  *
- * @note srv_store_lock() must be called before accessing this function.
+ * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] addr	Pointer to the address associated with the server to add.
+ * @param[in]	addr	Pointer to the address associated with the server to add.
  *
- *
- * @retval	0 Success.
- * @retval	-EALREADY The server already exists.
- * @retval	-ENOMEM  Out of memory.
+ * @retval	0		Success.
+ * @retval	-EALREADY	The server already exists.
+ * @retval	-ENOMEM		Out of memory.
  * @retval	Other negative.	Errors from underlying functions.
  */
 int srv_store_add_by_addr(const bt_addr_le_t *addr);
@@ -331,15 +326,15 @@ int srv_store_add_by_addr(const bt_addr_le_t *addr);
  *
  * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] conn	Pointer to the connection to write.
- * @param[in] addr	Address to write.
+ * @param[in]	conn	Pointer to the connection to write.
+ * @param[in]	addr	Address to write.
  *
- * @retval 0	Success.
- * @retval -ENOENT		Server not found.
- * @retval -EPERM		Address does not match the connection's peer address.
- * @retval -EACCES		Server already has a different conn assigned.
- * @retval -EALREADY		Server is already assigned to the same conn.
- * @retval Other negative.	Errors from underlying functions.
+ * @retval	0		Success.
+ * @retval	-ENOENT		Server not found.
+ * @retval	-EPERM		Address does not match the connection's peer address.
+ * @retval	-EACCES		Server already has a different conn assigned.
+ * @retval	-EALREADY	Server is already assigned to the same conn.
+ * @retval	Other negative.	Errors from underlying functions.
  */
 int srv_store_conn_update(struct bt_conn *conn, bt_addr_le_t const *const addr);
 
@@ -347,15 +342,15 @@ int srv_store_conn_update(struct bt_conn *conn, bt_addr_le_t const *const addr);
  * @brief	Clear the contents of a server based on conn pointer.
  *
  * @note	This function can be used in a disconnect callback.
- * Will not clear the address or streams.
- * Must only be called when there are no active connections.
+ *		Will not clear the address or streams.
+ *		Must only be called when there are no active connections.
  *
  * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] conn	Connection to the server to be cleared.
+ * @param[in]	conn	Connection to the server to be cleared.
  *
- * @retval 0		Success, negative error code on failure.
- * @retval -ENOTCONN	Server conn is NULL.
+ * @retval	0		Success, negative error code on failure.
+ * @retval	-ENOTCONN	Server conn is NULL.
  */
 int srv_store_clear_by_conn(struct bt_conn const *const conn);
 
@@ -363,20 +358,21 @@ int srv_store_clear_by_conn(struct bt_conn const *const conn);
  * @brief	Remove a server by conn pointer.
  *
  * @note	Depending on the application, it is strongly recommended to call this function
- * when an unbonded (untrusted) connection is terminated or the bond for that connection is cleared.
- * If not, the address will still be stored, and other or new connections that maliciously present
- * the same address will be recognized as a valid, previously stored server.
+ *		when an unbonded (untrusted) connection is terminated or the bond for that
+ *		connection is cleared. If not, the address will still be stored, and other or new
+ *		connections that maliciously present the same address will be recognized as a valid,
+ *		previously stored server.
  *
  * @note	This function assumes that this conn will no longer be valid.
  *		Hence, it will remove a server with a (previously) active conn.
  *
- * @note srv_store_lock() must be called before accessing this function.
+ * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] conn	Connection to the server to be removed.
+ * @param[in]	conn	Connection to the server to be removed.
  *
- * @retval 0			Success.
- * @retval -EACCES		Server has active conn.
- * @retval Other negative.	Errors from underlying functions.
+ * @retval	0		Success.
+ * @retval	-EACCES		Server has active conn.
+ * @retval	Other negative.	Errors from underlying functions.
  */
 int srv_store_remove_by_conn(struct bt_conn const *const conn);
 
@@ -385,9 +381,10 @@ int srv_store_remove_by_conn(struct bt_conn const *const conn);
  *
  * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] addr  Pointer to the address associated with the server to remove.
+ * @param[in]	addr	Pointer to the address associated with the server to remove.
  *
- * @retval 0 Success, negative error code on failure.
+ * @retval	0	Success.
+ * @retval	Negative error code on failure.
  */
 int srv_store_remove_by_addr(bt_addr_le_t const *const addr);
 
@@ -398,26 +395,27 @@ int srv_store_remove_by_addr(bt_addr_le_t const *const addr);
  *
  * @note	srv_store_lock() must be called before accessing this function.
  *
- * @param[in] force  Set true to remove servers even if they have active connection.
- *	Use false for normal operation, use true with caution.
+ * @param[in]	force	Set true to remove servers even if they have active connection.
+ *			Use false for normal operation, use true with caution.
  *
- * @retval 0	Success, negative error code on failure.
+ * @retval	0	Success.
+ * @retval	Negative error code on failure.
  */
 int srv_store_remove_all(bool force);
 
 /**
- * @brief Lock or take the server store semaphore.
+ * @brief	Lock or take the server store semaphore.
  *
- * @note Do not use directly. Use the supplied defines.
+ * @note	Do not use directly. Use the supplied defines.
  *
- * @param timeout[in]	Waiting period to take the semaphore,
- * or one of the special values K_NO_WAIT and K_FOREVER.
- * @param file[in]	String to log the lock source.
- * @param line[in]	String to log the lock line number.
+ * @param	timeout[in]	Waiting period to take the semaphore, or one of the special values
+ *				K_NO_WAIT and K_FOREVER.
+ * @param	file[in]	String to log the lock source.
+ * @param	line[in]	String to log the lock line number.
  *
- * @retval 0		Lock taken. One can now operate on the server store.
- * @retval -EBUSY	Returned without waiting.
- * @retval -EAGAIN	Waiting period timed out, or the semaphore reset during the waiting period.
+ * @retval	0	Lock taken. One can now operate on the server store.
+ * @retval	-EBUSY	Returned without waiting.
+ * @retval	-EAGAIN	Waiting period timed out, or the semaphore reset during the waiting period.
  */
 int _srv_store_lock(k_timeout_t timeout, const char *file, int line);
 
@@ -435,7 +433,8 @@ void srv_store_unlock(void);
 /**
  * @brief	Initialize the server store and clear all contents.
  *
- * @retval 0	Success, negative error code on failure.
+ * @retval	0	Success.
+ * @retval	Negative error code on failure.
  */
 int srv_store_init(void);
 

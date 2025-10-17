@@ -371,7 +371,7 @@ static void done_print(uint8_t existing_streams_checked,
 	char buf[20] = {0};
 
 	if (computed_pres_dly_us != UINT32_MAX) {
-		sprintf(buf, "%u", computed_pres_dly_us);
+		snprintf(buf, sizeof(buf), "%u", computed_pres_dly_us);
 	} else {
 		strcpy(buf, "No common value");
 	}
@@ -579,7 +579,6 @@ static bool stream_check_pd(struct bt_cap_stream *existing_stream, void *user_da
 		*ctx->computed_pres_dly_us = *ctx->existing_pres_dly_us;
 		LOG_INF("Existing pres delay is within the incoming stream QoS range");
 		ctx->existing_pres_dly_already_in_range = true;
-		ctx->ret = 0;
 		return true;
 	}
 
@@ -608,6 +607,7 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 	if (stream == NULL || computed_pres_dly_us == NULL || existing_pres_dly_us == NULL ||
 	    server_qos_pref == NULL || group_reconfig_needed == NULL) {
 		LOG_ERR("NULL parameter");
+
 		return -EINVAL;
 	}
 
@@ -620,12 +620,14 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 	if (stream->group == NULL) {
 		LOG_ERR("The incoming stream %p has no group", (void *)stream);
 		*computed_pres_dly_us = UINT32_MAX;
+
 		return -EINVAL;
 	}
 
 	if (server_qos_pref->pd_min == 0 || server_qos_pref->pd_max == 0) {
 		LOG_ERR("Incoming pd_min or pd_max is zero");
 		*computed_pres_dly_us = UINT32_MAX;
+
 		return -EINVAL;
 	}
 
@@ -643,6 +645,7 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 	if (ret) {
 		LOG_ERR("Failed to find initial common presentation delay: %d", ret);
 		*computed_pres_dly_us = UINT32_MAX;
+
 		return ret;
 	}
 
@@ -652,6 +655,7 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 	if (ret) {
 		LOG_ERR("Failed to get ep info: %d", ret);
 		*computed_pres_dly_us = UINT32_MAX;
+
 		return ret;
 	}
 
@@ -674,12 +678,14 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 	if (foreach_data.ret) {
 		LOG_ERR("Failed to compute presentation delay");
 		*computed_pres_dly_us = UINT32_MAX;
+
 		return foreach_data.ret;
 	}
 
 	if (ret != 0 && ret != -ECANCELED) {
 		LOG_ERR("Failed to iterate streams in group: %d", ret);
 		*computed_pres_dly_us = UINT32_MAX;
+
 		return ret;
 	}
 
@@ -687,55 +693,63 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 
 	if (foreach_data.existing_pres_dly_already_in_range) {
 		LOG_DBG("Existing pres delay already in range, no reconfig needed");
-		done_print(existing_streams_checked, &common_qos, *computed_pres_dly_us,
-			   *existing_pres_dly_us);
-		return 0;
+
+		ret = 0;
+		goto print_and_return;
 	}
 
 	if (existing_streams_checked == 0) {
 		LOG_DBG("No other streams in the same group found");
+
 		/* No other streams in the same group found */
 		if (server_qos_pref->pref_pd_min == 0) {
 			*computed_pres_dly_us = common_qos.pd_min;
 		} else {
 			*computed_pres_dly_us = common_qos.pref_pd_min;
 		}
-		done_print(existing_streams_checked, &common_qos, *computed_pres_dly_us,
-			   *existing_pres_dly_us);
-		return 0;
+
+		ret = 0;
+		goto print_and_return;
 	}
 
-	if (group_reconfig_needed) {
-		if (common_qos.pd_min > common_qos.pd_max) {
-			LOG_ERR("No common ground for pd_min %u and pd_max %u", common_qos.pd_min,
-				common_qos.pd_max);
-			*computed_pres_dly_us = UINT32_MAX;
-			done_print(existing_streams_checked, &common_qos, *computed_pres_dly_us,
-				   *existing_pres_dly_us);
-			return -ESPIPE;
-		}
-
-		/* No streams have a preferred min */
-		if (common_qos.pref_pd_min == 0) {
-			*computed_pres_dly_us = common_qos.pd_min;
-		} else {
-			if (common_qos.pref_pd_min < common_qos.pd_min) {
-				/* Preferred min is lower than min, use min */
-				LOG_ERR("pref PD min is lower than min. Using min");
-				*computed_pres_dly_us = common_qos.pd_min;
-			} else if (common_qos.pref_pd_min > common_qos.pd_min &&
-				   common_qos.pref_pd_min <= common_qos.pd_max) {
-				/* Preferred min is in range, use pref min */
-				*computed_pres_dly_us = common_qos.pref_pd_min;
-			} else {
-				*computed_pres_dly_us = common_qos.pd_min;
-			}
-		}
+	if (!group_reconfig_needed) {
+		ret = 0;
+		goto print_and_return;
 	}
 
+	if (common_qos.pd_min > common_qos.pd_max) {
+		LOG_ERR("No common ground for pd_min %u and pd_max %u", common_qos.pd_min,
+			common_qos.pd_max);
+		*computed_pres_dly_us = UINT32_MAX;
+
+		ret = -ESPIPE;
+		goto print_and_return;
+	}
+
+	/* No streams have a preferred min */
+	if (common_qos.pref_pd_min == 0) {
+		*computed_pres_dly_us = common_qos.pd_min;
+
+		ret = 0;
+		goto print_and_return;
+	}
+
+	if (common_qos.pref_pd_min < common_qos.pd_min) {
+		/* Preferred min is lower than min, use min */
+		LOG_ERR("pref PD min is lower than min. Using min");
+		*computed_pres_dly_us = common_qos.pd_min;
+	} else if (common_qos.pref_pd_min > common_qos.pd_min &&
+		   common_qos.pref_pd_min <= common_qos.pd_max) {
+		/* Preferred min is in range, use pref min */
+		*computed_pres_dly_us = common_qos.pref_pd_min;
+	} else {
+		*computed_pres_dly_us = common_qos.pd_min;
+	}
+
+print_and_return:
 	done_print(existing_streams_checked, &common_qos, *computed_pres_dly_us,
 		   *existing_pres_dly_us);
-	return 0;
+	return ret;
 }
 
 int srv_store_location_set(struct bt_conn const *const conn, enum bt_audio_dir dir,
@@ -1183,26 +1197,24 @@ bool srv_store_server_exists(bt_addr_le_t const *const addr)
 int srv_store_from_conn_get(struct bt_conn const *const conn, struct server_store **server)
 {
 	valid_entry_check(__func__);
+	int ret;
 
 	if (conn == NULL || server == NULL) {
 		LOG_ERR("NULL parameter");
 		return -EINVAL;
 	}
 
-	for (int i = 0; i < MAX_SERVERS; i++) {
-		if (bt_addr_le_eq(&servers[i].addr, bt_conn_get_dst(conn))) {
-			if (servers[i].conn == NULL) {
-				*server = NULL;
-				return -ENOTCONN;
-			}
-
-			*server = &servers[i];
-			return 0;
-		}
+	ret = srv_store_from_addr_get(bt_conn_get_dst(conn), server);
+	if (ret) {
+		return ret;
 	}
 
-	*server = NULL;
-	return -ENOENT;
+	if ((*server)->conn != conn) {
+		LOG_ERR("Connection pointer does not match stored connection");
+		return -ENOTCONN;
+	}
+
+	return 0;
 }
 
 int srv_store_num_get(void)
@@ -1248,6 +1260,7 @@ int srv_store_add_by_conn(struct bt_conn *conn)
 	}
 
 	struct server_store server;
+
 	server.conn = NULL;
 
 	ret = server_remove(&server, false);
@@ -1282,6 +1295,7 @@ int srv_store_add_by_addr(const bt_addr_le_t *addr)
 	}
 
 	struct server_store server;
+
 	server.conn = NULL;
 
 	ret = server_remove(&server, false);
