@@ -8,12 +8,13 @@ common:
   platform_allow:
     - nrf54lv10dk/nrf54lv10a/cpuapp
     - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp/ns
   integration_platforms:
     - nrf54lv10dk/nrf54lv10a/cpuapp
 tests:
   nrf.extended.drivers.comparator.gpio_loopback.nrf_comp:
     extra_args:
-      - SNIPPET="gpio_loopback_nrf_comp"
+      - FILE_SUFFIX="nrf_comp"
   nrf.extended.drivers.comparator.gpio_loopback.nrf_lpcomp:
     extra_args:
-      - SNIPPET="gpio_loopback_nrf_lpcomp"
+      - FILE_SUFFIX="nrf_lpcomp"
