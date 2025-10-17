@@ -1407,6 +1407,8 @@ static void on_radio_disabled_tx(void)
 
 	nrf_radio_packetptr_set(NRF_RADIO, rx_payload_buffer);
 	if (fast_switching) {
+		nrf_radio_int_disable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
+		nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common | ESB_SHORT_DISABLE_MASK));
 		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
 	}
 	on_radio_disabled = on_radio_disabled_tx_wait_for_ack;
@@ -1440,6 +1442,11 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 				nrf_radio_txaddress_get(NRF_RADIO), rx_pdu->type.dpl_pdu.pid)) {
 				interrupt_flags |= INT_RX_DATA_RECEIVED_MSK;
 			}
+		}
+
+		if (fast_switching) {
+			nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
+			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
 		}
 
 		if ((tx_fifo.count == 0) || (esb_cfg.tx_mode == ESB_TXMODE_MANUAL)) {
@@ -1479,6 +1486,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 			 */
 			if (fast_switching) {
 				nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+				nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
 			} else {
 				nrf_radio_shorts_set(NRF_RADIO,
 					(radio_shorts_common | NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
