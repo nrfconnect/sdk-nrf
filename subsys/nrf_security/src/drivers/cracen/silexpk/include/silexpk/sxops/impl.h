@@ -11,6 +11,7 @@
 #ifndef SXOPS_IMPL_HEADER_FILE
 #define SXOPS_IMPL_HEADER_FILE
 
+#include <stdint.h>
 #include <silexpk/version.h>
 
 /** Make sure the application is compatible with SilexPK API version **/
@@ -30,7 +31,7 @@ SX_PK_API_ASSERT_SRC_COMPATIBLE(2, 0, sxopsimpl);
  */
 static inline void sx_async_finish_single(sx_pk_req *pkhw, sx_op *result)
 {
-	const char **outputs = sx_pk_get_output_ops(pkhw);
+	const uint8_t **outputs = sx_pk_get_output_ops(pkhw);
 	const int opsz = sx_pk_get_opsize(pkhw);
 
 	sx_pk_mem2op(outputs[0], opsz, result);
@@ -52,7 +53,7 @@ static inline void sx_async_finish_single(sx_pk_req *pkhw, sx_op *result)
  */
 static inline void sx_async_finish_single_ec(sx_pk_req *pkhw, sx_ecop *result)
 {
-	const char **outputs = sx_pk_get_output_ops(pkhw);
+	const uint8_t **outputs = sx_pk_get_output_ops(pkhw);
 	const int opsz = sx_pk_get_opsize(pkhw);
 
 	sx_pk_mem2ecop(outputs[0], opsz, result);
@@ -75,7 +76,7 @@ static inline void sx_async_finish_single_ec(sx_pk_req *pkhw, sx_ecop *result)
  */
 static inline void sx_async_finish_pair(sx_pk_req *pkhw, sx_op *r1, sx_op *r2)
 {
-	const char **outputs = sx_pk_get_output_ops(pkhw);
+	const uint8_t **outputs = sx_pk_get_output_ops(pkhw);
 	const int opsz = sx_pk_get_opsize(pkhw);
 
 	sx_pk_mem2op(outputs[0], opsz, r1);
@@ -99,7 +100,7 @@ static inline void sx_async_finish_pair(sx_pk_req *pkhw, sx_op *r1, sx_op *r2)
  */
 static inline void sx_async_finish_ec_pair(sx_pk_req *pkhw, sx_ecop *r1, sx_ecop *r2)
 {
-	const char **outputs = sx_pk_get_output_ops(pkhw);
+	const uint8_t **outputs = sx_pk_get_output_ops(pkhw);
 	const int opsz = sx_pk_get_opsize(pkhw);
 
 	sx_pk_mem2ecop(outputs[0], opsz, r1);
@@ -122,7 +123,7 @@ static inline void sx_async_finish_ec_pair(sx_pk_req *pkhw, sx_ecop *r1, sx_ecop
  */
 static inline void sx_async_finish_affine_point(sx_pk_req *pkhw, sx_pk_affine_point *r)
 {
-	const char **outputs = sx_pk_get_output_ops(pkhw);
+	const uint8_t **outputs = sx_pk_get_output_ops(pkhw);
 	const int opsz = sx_pk_get_opsize(pkhw);
 
 	sx_pk_mem2affpt(outputs[0], outputs[1], opsz, r);
@@ -147,7 +148,7 @@ static inline void sx_async_finish_affine_point(sx_pk_req *pkhw, sx_pk_affine_po
  */
 static inline void sx_async_finish_quad(sx_pk_req *pkhw, sx_op *r1, sx_op *r2, sx_op *r3, sx_op *r4)
 {
-	const char **outputs = sx_pk_get_output_ops(pkhw);
+	const uint8_t **outputs = sx_pk_get_output_ops(pkhw);
 	const int opsz = sx_pk_get_opsize(pkhw);
 
 	sx_pk_mem2op(outputs[0], opsz, r1);
@@ -173,7 +174,7 @@ static inline void sx_async_finish_quad(sx_pk_req *pkhw, sx_op *r1, sx_op *r2, s
  */
 static inline void sx_async_finish_any(sx_pk_req *pkhw, sx_op **results, int count)
 {
-	const char **outputs = sx_pk_get_output_ops(pkhw);
+	const uint8_t **outputs = sx_pk_get_output_ops(pkhw);
 	const int opsz = sx_pk_get_opsize(pkhw);
 
 	for (int i = 0; i < count; i++) {

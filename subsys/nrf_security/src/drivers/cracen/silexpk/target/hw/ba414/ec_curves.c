@@ -13,7 +13,7 @@
 
 #define SX_MAX(p, q) ((p >= q) ? p : q)
 
-static const unsigned char params_nistp192[] = {
+static const uint8_t params_nistp192[] = {
 	/* q */
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 	0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -36,9 +36,9 @@ static const unsigned char params_nistp192[] = {
 const struct sx_pk_ecurve sx_curve_nistp192 = {.curveflags = PK_OP_FLAGS_PRIME |
 							     PK_OP_FLAGS_SELCUR_P192,
 					       .sz = 24,
-					       .params = (char *)params_nistp192};
+					       .params = params_nistp192};
 
-static const unsigned char params_nistp224[] = {
+static const uint8_t params_nistp224[] = {
 	/* q */
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 	0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
@@ -59,9 +59,9 @@ static const unsigned char params_nistp224[] = {
 	0xb7, 0xd7, 0xbf, 0xd8, 0xba, 0x27, 0x0b, 0x39, 0x43, 0x23, 0x55, 0xff, 0xb4};
 
 const struct sx_pk_ecurve sx_curve_nistp224 = {
-	.curveflags = PK_OP_FLAGS_PRIME, .sz = 28, .params = (char *)params_nistp224};
+	.curveflags = PK_OP_FLAGS_PRIME, .sz = 28, .params = params_nistp224};
 
-static const unsigned char params_nistp256[] = {
+static const uint8_t params_nistp256[] = {
 	/* q */
 	0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -90,9 +90,9 @@ static const unsigned char params_nistp256[] = {
 const struct sx_pk_ecurve sx_curve_nistp256 = {.curveflags = PK_OP_FLAGS_PRIME |
 							     PK_OP_FLAGS_SELCUR_P256,
 					       .sz = 32,
-					       .params = (char *)params_nistp256};
+					       .params = params_nistp256};
 
-static const unsigned char params_nistp384[] = {
+static const uint8_t params_nistp384[] = {
 	/* q */
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -127,9 +127,9 @@ static const unsigned char params_nistp384[] = {
 const struct sx_pk_ecurve sx_curve_nistp384 = {.curveflags = PK_OP_FLAGS_PRIME |
 							     PK_OP_FLAGS_SELCUR_P384,
 					       .sz = 48,
-					       .params = (char *)params_nistp384};
+					       .params = params_nistp384};
 
-static const unsigned char params_nistp521[] = {
+static const uint8_t params_nistp521[] = {
 	/* q */
 	0x01, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -170,9 +170,9 @@ static const unsigned char params_nistp521[] = {
 const struct sx_pk_ecurve sx_curve_nistp521 = {.curveflags = PK_OP_FLAGS_PRIME |
 							     PK_OP_FLAGS_SELCUR_P521,
 					       .sz = 66,
-					       .params = (char *)params_nistp521};
+					       .params = params_nistp521};
 
-static const char params_ed25519[32 * 6] =
+static const uint8_t params_ed25519[32 * 6] =
 	/* q */
 	"\xed\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
 	"\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\x7f"
@@ -191,10 +191,11 @@ static const char params_ed25519[32 * 6] =
 	/* i */
 	"\xB0\xA0\x0E\x4A\x27\x1B\xEE\xC4\x78\xE4\x2F\xAD\x06\x18\x43\x2F"
 	"\xA7\xD7\xFB\x3D\x99\x00\x4D\x2B\x0B\xDF\xC1\x4F\x80\x24\x83\x2B";
-const struct sx_pk_ecurve sx_curve_ed25519 = {
-	.curveflags = PK_OP_FLAGS_SELCUR_ED25519, .sz = 32, .params = params_ed25519};
+const struct sx_pk_ecurve sx_curve_ed25519 = {.curveflags = PK_OP_FLAGS_SELCUR_ED25519,
+					      .sz = 32,
+					      .params = params_ed25519};
 
-const unsigned char params_ed448[57 * 5] = {
+const uint8_t params_ed448[57 * 5] = {
 	/* q = */
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe, 0xff,
@@ -221,19 +222,20 @@ const unsigned char params_ed448[57 * 5] = {
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00};
 const struct sx_pk_ecurve sx_curve_ed448 = {
-	.curveflags = PK_OP_FLAGS_EDWARDS_448, .sz = 57, .params = (char *)params_ed448};
+	.curveflags = PK_OP_FLAGS_EDWARDS_448, .sz = 57, .params = params_ed448};
 
-static const char params_x25519[32 * 2] =
+static const uint8_t params_x25519[32 * 2] =
 	/* p */
 	"\xED\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"
 	"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x7F"
 	/* a */
 	"\x06\x6d\x07\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 	"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-const struct sx_pk_ecurve sx_curve_x25519 = {
-	.curveflags = PK_OP_FLAGS_SELCUR_X25519, .sz = 32, .params = params_x25519};
+const struct sx_pk_ecurve sx_curve_x25519 = {.curveflags = PK_OP_FLAGS_SELCUR_X25519,
+					     .sz = 32,
+					     .params = params_x25519};
 
-static const char params_x448[56 * 2] =
+static const uint8_t params_x448[56 * 2] =
 	/* p = 2^448 - 2^224 - 1 = */
 	"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"
 	"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFE\xFF\xFF\xFF"
@@ -244,9 +246,10 @@ static const char params_x448[56 * 2] =
 	"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 	"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 	"\x00\x00\x00\x00\x00\x00\x00\x00";
-const struct sx_pk_ecurve sx_curve_x448 = {.curveflags = 0, .sz = 56, .params = params_x448};
+const struct sx_pk_ecurve sx_curve_x448 = {
+	.curveflags = 0, .sz = 56, .params = params_x448};
 
-static const char params_brainpoolP192r1[] =
+static const uint8_t params_brainpoolP192r1[] =
 	/* q */
 	"\xc3\x02\xf4\x1d\x93\x2a\x36\xcd\xa7\xa3\x46\x30\x93\xd1\x8d\xb7\x8f"
 	"\xce\x47\x6d\xe1\xa8\x62\x97"
@@ -266,9 +269,11 @@ static const char params_brainpoolP192r1[] =
 	"\x46\x9a\x28\xef\x7c\x28\xcc\xa3\xdc\x72\x1d\x04\x4f\x44\x96\xbc\xca"
 	"\x7e\xf4\x14\x6f\xbf\x25\xc9";
 const struct sx_pk_ecurve sx_curve_brainpoolP192r1 = {
-	.curveflags = PK_OP_FLAGS_PRIME, .sz = 24, .params = params_brainpoolP192r1};
+	.curveflags = PK_OP_FLAGS_PRIME,
+	.sz = 24,
+	.params = params_brainpoolP192r1};
 
-static const char params_brainpoolP224r1[] =
+static const uint8_t params_brainpoolP224r1[] =
 	/* q */
 	"\xd7\xc1\x34\xaa\x26\x43\x66\x86\x2a\x18\x30\x25\x75\xd1\xd7\x87\xb0"
 	"\x9f\x07\x57\x97\xda\x89\xf5\x7e\xc8\xc0\xff"
@@ -288,9 +293,11 @@ static const char params_brainpoolP224r1[] =
 	"\x25\x80\xf6\x3c\xcf\xe4\x41\x38\x87\x07\x13\xb1\xa9\x23\x69\xe3\x3e"
 	"\x21\x35\xd2\x66\xdb\xb3\x72\x38\x6c\x40\x0b";
 const struct sx_pk_ecurve sx_curve_brainpoolP224r1 = {
-	.curveflags = PK_OP_FLAGS_PRIME, .sz = 28, .params = params_brainpoolP224r1};
+	.curveflags = PK_OP_FLAGS_PRIME,
+	.sz = 28,
+	.params = params_brainpoolP224r1};
 
-static const char params_brainpoolP256r1[] =
+static const uint8_t params_brainpoolP256r1[] =
 	/* q */
 	"\xa9\xfb\x57\xdb\xa1\xee\xa9\xbc\x3e\x66\x0a\x90\x9d\x83\x8d\x72\x6e"
 	"\x3b\xf6\x23\xd5\x26\x20\x28\x20\x13\x48\x1d\x1f\x6e\x53\x77"
@@ -310,9 +317,11 @@ static const char params_brainpoolP256r1[] =
 	"\x26\xdc\x5c\x6c\xe9\x4a\x4b\x44\xf3\x30\xb5\xd9\xbb\xd7\x7c\xbf\x95"
 	"\x84\x16\x29\x5c\xf7\xe1\xce\x6b\xcc\xdc\x18\xff\x8c\x07\xb6";
 const struct sx_pk_ecurve sx_curve_brainpoolP256r1 = {
-	.curveflags = PK_OP_FLAGS_PRIME, .sz = 32, .params = params_brainpoolP256r1};
+	.curveflags = PK_OP_FLAGS_PRIME,
+	.sz = 32,
+	.params = params_brainpoolP256r1};
 
-static const char params_brainpoolP320r1[] =
+static const uint8_t params_brainpoolP320r1[] =
 	/* q */
 	"\xd3\x5e\x47\x20\x36\xbc\x4f\xb7\xe1\x3c\x78\x5e\xd2\x01\xe0\x65\xf9"
 	"\x8f\xcf\xa6\xf6\xf4\x0d\xef\x4f\x92\xb9\xec\x78\x93\xec\x28\xfc\xd4"
@@ -338,9 +347,11 @@ static const char params_brainpoolP320r1[] =
 	"\x3f\x41\x34\x95\x54\xb4\x9a\xcc\x31\xdc\xcd\x88\x45\x39\x81\x6f\x5e"
 	"\xb4\xac\x8f\xb1\xf1\xa6";
 const struct sx_pk_ecurve sx_curve_brainpoolP320r1 = {
-	.curveflags = PK_OP_FLAGS_PRIME, .sz = 40, .params = params_brainpoolP320r1};
+	.curveflags = PK_OP_FLAGS_PRIME,
+	.sz = 40,
+	.params = params_brainpoolP320r1};
 
-static const char params_brainpoolP384r1[] =
+static const uint8_t params_brainpoolP384r1[] =
 	/* q */
 	"\x8c\xb9\x1e\x82\xa3\x38\x6d\x28\x0f\x5d\x6f\x7e\x50\xe6\x41\xdf\x15"
 	"\x2f\x71\x09\xed\x54\x56\xb4\x12\xb1\xda\x19\x7f\xb7\x11\x23\xac\xd3"
@@ -366,9 +377,11 @@ static const char params_brainpoolP384r1[] =
 	"\xb7\x7d\xe1\x07\xdc\xd2\xa6\x2e\x88\x0e\xa5\x3e\xeb\x62\xd5\x7c\xb4"
 	"\x39\x02\x95\xdb\xc9\x94\x3a\xb7\x86\x96\xfa\x50\x4c\x11";
 const struct sx_pk_ecurve sx_curve_brainpoolP384r1 = {
-	.curveflags = PK_OP_FLAGS_PRIME, .sz = 48, .params = params_brainpoolP384r1};
+	.curveflags = PK_OP_FLAGS_PRIME,
+	.sz = 48,
+	.params = params_brainpoolP384r1};
 
-static const char params_brainpoolP512r1[] =
+static const uint8_t params_brainpoolP512r1[] =
 	/* q */
 	"\xaa\xdd\x9d\xb8\xdb\xe9\xc4\x8b\x3f\xd4\xe6\xae\x33\xc9\xfc\x07\xcb"
 	"\x30\x8d\xb3\xb3\xc9\xd2\x0e\xd6\x63\x9c\xca\x70\x33\x08\x71\x7d\x4d"
@@ -400,9 +413,11 @@ static const char params_brainpoolP512r1[] =
 	"\xc7\xb9\xe7\xc1\xac\x4d\x77\xfc\x94\xca\xdc\x08\x3e\x67\x98\x40\x50"
 	"\xb7\x5e\xba\xe5\xdd\x28\x09\xbd\x63\x80\x16\xf7\x23";
 const struct sx_pk_ecurve sx_curve_brainpoolP512r1 = {
-	.curveflags = PK_OP_FLAGS_PRIME, .sz = 64, .params = params_brainpoolP512r1};
+	.curveflags = PK_OP_FLAGS_PRIME,
+	.sz = 64,
+	.params = params_brainpoolP512r1};
 
-static const char params_secp192k1[] =
+static const uint8_t params_secp192k1[] =
 	/* q */
 	"\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
 	"\xff\xff\xfe\xff\xff\xee\x37"
@@ -423,7 +438,7 @@ static const char params_secp192k1[] =
 const struct sx_pk_ecurve sx_curve_secp192k1 = {
 	.curveflags = PK_OP_FLAGS_PRIME, .sz = 24, .params = params_secp192k1};
 
-static const char params_secp256k1[] =
+static const uint8_t params_secp256k1[] =
 	/* q */
 	"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"
 	"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFE\xFF\xFF\xFC\x2F"
@@ -446,7 +461,7 @@ static const char params_secp256k1[] =
 const struct sx_pk_ecurve sx_curve_secp256k1 = {
 	.curveflags = PK_OP_FLAGS_PRIME, .sz = 32, .params = params_secp256k1};
 
-static const unsigned char param_fp256[] = {
+static const uint8_t param_fp256[] = {
 	/* p */
 	0x85, 0x42, 0xD6, 0x9E, 0x4C, 0x04, 0x4F, 0x18, 0xE8, 0xB9, 0x24, 0x35, 0xBF, 0x6F, 0xF7,
 	0xDE, 0x45, 0x72, 0x83, 0x91, 0x5C, 0x45, 0x51, 0x7D, 0x72, 0x2E, 0xDB, 0x8B, 0x08, 0xF1,
@@ -473,7 +488,7 @@ static const unsigned char param_fp256[] = {
 	0x24, 0x9A};
 
 const struct sx_pk_ecurve curve_fp256 = {
-	.curveflags = PK_OP_FLAGS_PRIME, .sz = 32, .params = (char *)param_fp256};
+	.curveflags = PK_OP_FLAGS_PRIME, .sz = 32, .params = param_fp256};
 
 int sx_pk_count_curve_params(const struct sx_pk_ecurve *curve)
 {
@@ -486,12 +501,12 @@ int sx_pk_count_curve_params(const struct sx_pk_ecurve *curve)
 		return 0;
 	}
 	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_448)) {
-		if (curve->params == params_x448) {
+		if (curve->params == (const uint8_t *)params_x448) {
 			return 2;
 		}
 	}
 	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY_448)) {
-		if (curve->params == (char *)params_ed448) {
+		if (curve->params == params_ed448) {
 			return 5;
 		}
 	}

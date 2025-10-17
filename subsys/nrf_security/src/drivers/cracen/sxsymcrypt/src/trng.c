@@ -166,7 +166,7 @@ static int ba431_setup_conditioning_key(struct sx_trng *ctx)
 	return SX_OK;
 }
 
-int sx_trng_get(struct sx_trng *ctx, char *dst, size_t size)
+int sx_trng_get(struct sx_trng *ctx, uint8_t *dst, size_t size)
 {
 	int status = SX_OK;
 
@@ -207,7 +207,7 @@ int sx_trng_get(struct sx_trng *ctx, char *dst, size_t size)
 
 		data = sx_rd_trng(BA431_REG_FIFODATA_OFST);
 		for (size_t i = 0; (i < sizeof(data)) && (size); i++, size--) {
-			*dst = (char)(data & 0xFF);
+			*dst = (uint8_t)(data & 0xFF);
 			dst++;
 			data >>= 8;
 		}

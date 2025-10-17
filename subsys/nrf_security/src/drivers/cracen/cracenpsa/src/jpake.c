@@ -72,8 +72,8 @@ psa_status_t cracen_jpake_set_password_key(cracen_jpake_operation_t *operation,
 	 */
 	const uint8_t *order = sx_pk_curve_order(operation->curve);
 
-	sx_op modulo = {.sz = CRACEN_P256_KEY_SIZE, .bytes = (char *)order};
-	sx_op b = {.sz = password_length, .bytes = (char *)password};
+	sx_op modulo = {.sz = CRACEN_P256_KEY_SIZE, .bytes = (uint8_t *)order};
+	sx_op b = {.sz = password_length, .bytes = (uint8_t *)password};
 	sx_op result = {.sz = sizeof(operation->secret), .bytes = operation->secret};
 
 	/* The nistp256 curve order (n) is prime so we use the ODD variant of the reduce command. */
@@ -173,7 +173,7 @@ static psa_status_t cracen_ecjpake_get_public_key(cracen_jpake_operation_t *oper
 		return silex_statuscodes_to_psa(status);
 	}
 
-	const char **outputs = sx_pk_get_output_ops(pkreq.req);
+	const uint8_t **outputs = sx_pk_get_output_ops(pkreq.req);
 
 	sx_rdpkmem(&public_key[0], outputs[0], opsz);
 	sx_rdpkmem(&public_key[32], outputs[1], opsz);

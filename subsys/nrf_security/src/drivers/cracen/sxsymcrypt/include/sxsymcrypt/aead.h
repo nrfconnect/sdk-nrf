@@ -82,6 +82,7 @@ extern "C" {
 #endif
 
 #include <stddef.h>
+#include <stdint.h>
 
 /** Initialization vector (IV) size, in bytes, for GCM encryption/decryption */
 #define SX_GCM_IV_SZ 12u
@@ -115,7 +116,7 @@ struct sxaead;
  * @remark - in context saving mode, \p aadsz must be multiple of block size
  *           unless it is the last chunk
  */
-int sx_aead_feed_aad(struct sxaead *c, const char *aad, size_t aadsz);
+int sx_aead_feed_aad(struct sxaead *c, const uint8_t *aad, size_t aadsz);
 
 /** Adds data to be encrypted or decrypted.
  *
@@ -144,7 +145,7 @@ int sx_aead_feed_aad(struct sxaead *c, const char *aad, size_t aadsz);
  * @remark - in context saving mode, \p datainsz must be multiple of block size
  *           unless it is the last chunk
  */
-int sx_aead_crypt(struct sxaead *c, const char *datain, size_t datainsz, char *dataout);
+int sx_aead_crypt(struct sxaead *c, const uint8_t *datain, size_t datainsz, uint8_t *dataout);
 
 /** Starts an AEAD encryption and tag computation.
  *
@@ -169,7 +170,7 @@ int sx_aead_crypt(struct sxaead *c, const char *datain, size_t datainsz, char *d
  * @remark - if used with context saving(last chunk), the fed data size for
  *         the last chunk can not be 0
  */
-int sx_aead_produce_tag(struct sxaead *c, char *tag);
+int sx_aead_produce_tag(struct sxaead *c, uint8_t *tag);
 
 /** Starts an AEAD decryption and tag validation.
  *
@@ -193,7 +194,7 @@ int sx_aead_produce_tag(struct sxaead *c, char *tag);
  * @remark - if used with context saving(last chunk), the fed data size for
  *         the last chunk can not be 0
  */
-int sx_aead_verify_tag(struct sxaead *c, const char *tag);
+int sx_aead_verify_tag(struct sxaead *c, const uint8_t *tag);
 
 /** Resumes AEAD operation in context-saving.
  *

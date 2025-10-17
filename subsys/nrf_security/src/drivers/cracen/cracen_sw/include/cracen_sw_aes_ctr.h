@@ -9,6 +9,7 @@
 
 #include <psa/crypto.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <sxsymcrypt/keyref.h>
 #include "cracen_psa_primitives.h"
 

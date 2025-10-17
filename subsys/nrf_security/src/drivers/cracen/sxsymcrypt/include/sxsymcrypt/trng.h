@@ -158,7 +158,7 @@ int sx_trng_open(struct sx_trng *ctx, const struct sx_trng_config *config);
  *
  * @pre - the sx_trng_open() must be called first.
  */
-int sx_trng_get(struct sx_trng *ctx, char *dst, size_t size);
+int sx_trng_get(struct sx_trng *ctx, uint8_t *dst, size_t size);
 
 /**
  * @brief End TRNG context. Will power off Cracen.
