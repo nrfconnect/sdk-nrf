@@ -4,6 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup audio_app_bt_stream
+ * @{
+ * @defgroup unicast_server Functions for unicast server functionality.
+ * @{
+ * @brief Helper functions to manage unicast server (headset side) functionality.
+ */
+
 #ifndef _UNICAST_SERVER_H_
 #define _UNICAST_SERVER_H_
 
@@ -11,6 +19,15 @@
 #include "le_audio.h"
 
 #include <audio_defines.h>
+
+/**
+ * @brief	Set the minimum presentation delay for audio streams.
+ *
+ * @param[in]	dly_min_in_us	Minimum presentation delay in microseconds.
+ *
+ * @return	0 for success, error otherwise.
+ */
+int unicast_server_pd_min_set(uint32_t dly_min_in_us);
 
 /**
  * @brief	Get configuration for audio stream.
@@ -76,5 +93,10 @@ int unicast_server_disable(void);
  * @return	0 for success, error otherwise.
  */
 int unicast_server_enable(le_audio_receive_cb rx_cb, enum bt_audio_location location);
+
+/**
+ * @}
+ * @}
+ */
 
 #endif /* _UNICAST_SERVER_H_ */

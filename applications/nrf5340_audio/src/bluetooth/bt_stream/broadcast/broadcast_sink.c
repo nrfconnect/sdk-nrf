@@ -575,9 +575,23 @@ static struct bt_bap_broadcast_sink_cb broadcast_sink_cbs = {
 	.syncable = syncable_cb,
 };
 
-int le_audio_concurrent_sync_num_get(void)
+int le_audio_concurrent_sync_num_get(uint8_t *num_streams, enum bt_audio_location *locations)
 {
-	return sync_stream_cnt;
+	if (num_streams == NULL || locations == NULL) {
+		LOG_ERR("Invalid input parameters");
+		return -EINVAL;
+	}
+
+	*num_streams = sync_stream_cnt;
+	*locations = 0;
+
+	for (int i = 0; i < ARRAY_SIZE(audio_codec_info); i++) {
+		if (bis_index_bitfield & BIT(i)) {
+			*locations |= audio_codec_info[i].chan_allocation;
+		}
+	}
+
+	return 0;
 }
 
 int broadcast_sink_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay)

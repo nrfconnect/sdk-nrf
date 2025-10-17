@@ -13,12 +13,6 @@ The nRF5340 Audio applications are designed to be used only with the following h
    :header: heading
    :rows: nrf5340_audio_dk_nrf5340, nrf5340dk_nrf5340_cpuapp
 
-.. note::
-   The applications supports PCA10121 revisions 1.0.0 or above.
-   The applications are also compatible with the following pre-launch revisions:
-
-   * Revisions 0.8.0 and above.
-
 You need at least two nRF5340 development kits (one with the gateway firmware and one with headset firmware) to test each of the applications.
 For CIS with TWS in mind, three kits are required.
 
@@ -49,19 +43,21 @@ You can :ref:`test the DK out of the box <nrf53_audio_app_dk_testing_out_of_the_
 nRF5340 Audio configuration files
 *********************************
 
-All applications use the :file:`Kconfig.defaults` located in the :file:`nrf5340_audio` directory.
-Additionally, each nRF5340 Audio application uses its own, application-specific :file:`Kconfig.defaults` file from the application directory, which includes configuration specific to the given application.
-These files change the configuration defaults automatically, based on the different application versions and device types.
+The applications use the same :ref:`nrf53_audio_app_overview_files` and the same :file:`Kconfig.defaults` file in the :file:`nrf5340_audio` directory.
+You can however select different :file:`*.conf` files to build them as either debug or release.
+Each nRF5340 Audio application also uses its own, application-specific overlay file.
 
-For each application, only one of the following :file:`.conf` files is included when building:
+You need the following configuration files to :ref:`build the application <nrf53_audio_app_building>`:
 
-* :file:`prj.conf` is the default configuration file and it implements the debug application version.
-* :file:`prj_release.conf` is the optional configuration file and it implements the release application version.
-  No debug features are enabled in the release application version.
-  When building using the command line, you must explicitly specify if :file:`prj_release.conf` is going to be included instead of :file:`prj.conf`.
-  See :ref:`nrf53_audio_app_building` for details.
-* :file:`prj_fota.conf` is the optional configuration file used for FOTA DFU.
-  When used, the build system builds the debug version of the application (:file:`prj.conf`), but with the features needed to perform DFU over Bluetooth LE.
-  It also includes bootloaders so that the applications on both the application core and network core can be updated.
-  When building using the command line, you must explicitly specify if :file:`prj_fota.conf` is going to be included instead of :file:`prj.conf`.
+* Application version configuration file: :file:`prj.conf` or :file:`prj_release.conf`.
+* Application-specific overlay file (:file:`overlay-<app_name>.conf`) from the application directory.
+
+Optionally, you can use the following configuration file:
+
+* FOTA DFU configuration file: :file:`prj_fota.conf` for building the debug version of the application (:file:`prj.conf`), but with the features needed to perform DFU over Bluetooth LE.
   See :ref:`nrf53_audio_app_fota` for more information.
+
+When building using the command line, you must explicitly specify the :file:`*.conf` files that are going to be included.
+See :ref:`nrf53_audio_app_building_standard` for more information.
+
+When building using the script, you :ref:`specify parameters for building <nrf53_audio_app_building_script_running>` instead of the file names.

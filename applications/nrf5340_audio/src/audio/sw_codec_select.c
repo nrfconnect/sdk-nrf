@@ -217,6 +217,10 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 int sw_codec_decode(struct net_buf const *const audio_frame_in,
 		    struct net_buf *const audio_frame_out)
 {
+	if (audio_frame_in == NULL || audio_frame_out == NULL) {
+		return -EINVAL;
+	}
+
 	if (!m_config.decoder.enabled) {
 		LOG_ERR("Decoder has not been initialized");
 		return -ENXIO;
@@ -474,7 +478,8 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			ret = sample_rate_converter_open(&encoder_converters[i]);
 			if (ret) {
 				LOG_ERR("Failed to initialize the sample rate converter for "
-					"encoding channel %d: %d", i, ret);
+					"encoding channel %d: %d",
+					i, ret);
 				return ret;
 			}
 		}
@@ -485,7 +490,8 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			ret = sample_rate_converter_open(&decoder_converters[i]);
 			if (ret) {
 				LOG_ERR("Failed to initialize the sample rate converter for "
-					"decoding channel %d: %d", i, ret);
+					"decoding channel %d: %d",
+					i, ret);
 				return ret;
 			}
 		}
