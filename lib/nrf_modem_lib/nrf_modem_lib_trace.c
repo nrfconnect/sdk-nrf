@@ -286,6 +286,13 @@ void trace_thread_handler(void)
 	size_t n_frags;
 
 trace_reset:
+	/* Trace backend is suspended here to keep it suspended until first trace data is received
+	 * and to suspend the trace backend after deinit and reset.
+	 */
+	if (trace_backend.suspend) {
+		k_work_schedule(&backend_suspend_work, K_NO_WAIT);
+	}
+
 	k_sem_take(&trace_sem, K_FOREVER);
 
 	while (true) {
