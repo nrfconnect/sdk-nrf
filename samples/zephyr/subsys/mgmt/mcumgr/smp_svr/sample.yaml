@@ -17,6 +17,203 @@ common:
     - ci_samples_zephyr_subsys_mgmt_mcumgr_smp_svr
 
 tests:
+  sample.mcumgr.smp_svr.basic:
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf9160dk/nrf9160
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_args:
+      - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+  sample.mcumgr.smp_svr.encryption.rsa:
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    tags:
+      - encryption
+    extra_args:
+      - SB_CONFIG_BOOT_ENCRYPTION=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA=y
+      - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      - FILE_SUFFIX=larger_mcuboot
+
+  sample.mcumgr.smp_svr.encryption.ecdsa_p256:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    tags:
+      - encryption
+    extra_args:
+      - SB_CONFIG_BOOT_ENCRYPTION=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
+      - FILE_SUFFIX=larger_mcuboot
+
+  sample.mcumgr.smp_svr.encryption.ed25519:
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    tags:
+      - encryption
+    extra_args:
+      - FILE_SUFFIX=larger_mcuboot
+      - SB_CONFIG_BOOT_ENCRYPTION=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+
+  sample.mcumgr.smp_svr.signature.none:
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    tags:
+      - signature
+    extra_args:
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_NONE=y
+
+  sample.mcumgr.smp_svr.signature.ed25519:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - signature
+    extra_args:
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+
+  sample.mcumgr.smp_svr.signature.ecdsa_p256:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - signature
+    extra_args:
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
+
+  sample.mcumgr.smp_svr.signature.pure:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - signature
+    extra_args:
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE=y
+
+  sample.mcumgr.smp_svr.kmu.basic:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    tags: kmu
+    extra_args:
+      - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+  nsib.sample.mcumgr.smp_svr.kmu.basic:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    tags:
+      - kmu
+      - nsib
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+
+  sample.mcumgr.smp_svr.kmu.revocation:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    tags: kmu
+    extra_args:
+      - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+      - mcuboot_CONFIG_BOOT_SIGNATURE_KMU_SLOTS=3
+      - mcuboot_CONFIG_BOOT_KEYS_REVOCATION=y
+
+  sample.mcumgr.smp_svr.nrf_compress.basic:
+    tags:
+      - nrf_compress
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y
+      - SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT=y
+      - FILE_SUFFIX=larger_mcuboot
+
+  sample.mcumgr.smp_svr.nrf_compress.encryption_rsa:
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - encryption
+      - nrf_compress
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y
+      - SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT=y
+      - SB_CONFIG_BOOT_ENCRYPTION=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA=y
+      - FILE_SUFFIX=larger_mcuboot
+
+  sample.mcumgr.smp_svr.nrf_compress.encryption_ecdsa_p256:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    tags:
+      - encryption
+      - nrf_compress
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y
+      - SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT=y
+      - SB_CONFIG_BOOT_ENCRYPTION=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
+      - FILE_SUFFIX=larger_mcuboot
+
+  sample.mcumgr.smp_svr.nrf_compress.encryption_ed25519:
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    tags:
+      - encryption
+      - nrf_compress
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y
+      - SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT=y
+      - SB_CONFIG_BOOT_ENCRYPTION=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+      - FILE_SUFFIX=larger_mcuboot
+
   sample.mcumgr.smp_svr.bt.nrf5340dk.ext_flash:
     sysbuild: true
     extra_args:
@@ -37,9 +234,8 @@ tests:
   sample.mcumgr.smp_svr.bt.nrf54l15dk.ext_flash:
     extra_args:
       - OVERLAY_CONFIG="overlay-bt.conf"
+      - FILE_SUFFIX=ext_flash
       - DTC_OVERLAY_FILE="boards/nrf54l15dk_ext_flash.overlay"
-      - mcuboot_OVERLAY_CONFIG="boards/nrf54l15dk_ext_flash.conf"
-      - mcuboot_EXTRA_DTC_OVERLAY_FILE="boards/nrf54l15dk_ext_flash.overlay"
       - SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK=y
       - SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=y
     platform_allow:
