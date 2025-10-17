@@ -9,17 +9,6 @@ common:
     - ci_tests_benchmarks_current_consumption
 tests:
   benchmarks.power_consumption.counter:
-    extra_args:
-      - idle_counter_CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING=y
-    harness: pytest
-    harness_config:
-      fixture: ppk_power_measure
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_fast_counter_and_s2ram_with_clock_control"
-
-  benchmarks.power_consumption.counter.remote_gd_freq_switching:
-    extra_args:
-      - remote_CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING=y
     harness: pytest
     harness_config:
       fixture: ppk_power_measure
