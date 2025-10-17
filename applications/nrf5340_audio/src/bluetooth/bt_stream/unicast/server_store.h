@@ -124,6 +124,7 @@ bool srv_store_preset_validated(struct bt_audio_codec_cfg const *const new,
  *					microseconds.
  * @param[in]	server_qos_pref		Pointer to the preferred QoS configuration.
  * @param[out]	group_reconfig_needed	True if a group reconfiguration is needed.
+ * @param[in]	unicast_group		Pointer to the unicast group to search within.
  *
  * @retval	0	Success, negative error code on failure.
  * @retval	-ESPIPE	There is no common presentation delay found.
