@@ -17,6 +17,9 @@
 
 #include <openthread/message.h>
 
+/* Message address used when testing serialization of a function that takes otMessage* */
+#define MSG_ADDR UINT32_MAX
+
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {
 	zassert_ok(report->code);
