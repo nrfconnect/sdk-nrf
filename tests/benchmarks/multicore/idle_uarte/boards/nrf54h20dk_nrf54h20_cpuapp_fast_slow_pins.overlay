@@ -72,7 +72,3 @@ dut: &uart120 {
 	current-speed = <4000000>;
 	/delete-property/ hw-flow-control;
 };
-
-&hsfll120 {
-	status = "okay";
-};
