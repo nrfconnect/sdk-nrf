@@ -23,7 +23,7 @@ You can use `print_toolchain_checksum.sh`_ to get ID proper for your |NCS| revis
 .. code-block:: shell
 
     TOOLCHAIN_ID=$(../print_toolchain_checksum.sh)
-    docker build --build-arg VERSION=$TOOLCHAIN_ID
+    docker build --build-arg VERSION=$TOOLCHAIN_ID .
 
 Accepting J-Link license
 ************************
