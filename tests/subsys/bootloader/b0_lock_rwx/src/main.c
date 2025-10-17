@@ -7,8 +7,25 @@
 #include <zephyr/ztest.h>
 #include <hal/nrf_rramc.h>
 #include <nrfx_rramc.h>
+#include <pm_config.h>
+
+#define B0_RRAMC_REGION      3
+#define MCUBOOT_RRAMC_REGION 4
 
 #define RRAMC_REGION_FOR_TEST CONFIG_TEST_B0_LOCK_REGION
+
+#if RRAMC_REGION_FOR_TEST == B0_RRAMC_REGION
+#define RRAMC_REGION_FOR_TEST_SIZE   PM_B0_SIZE
+#define RRAM_REGION_FOR_TEST_ADDRESS PM_B0_ADDRESS
+#elif RRAMC_REGION_FOR_TEST == MCUBOOT_RRAMC_REGION
+#if !defined(CONFIG_TEST_B0_LOCK_USE_S1)
+#define RRAMC_REGION_FOR_TEST_SIZE   PM_MCUBOOT_SIZE
+#define RRAM_REGION_FOR_TEST_ADDRESS PM_MCUBOOT_ADDRESS
+#else
+#define RRAMC_REGION_FOR_TEST_SIZE   PM_S1_IMAGE_SIZE
+#define RRAM_REGION_FOR_TEST_ADDRESS PM_S1_IMAGE_ADDRESS
+#endif
+#endif
 
 static uint32_t expected_fatal;
 static uint32_t actual_fatal;
@@ -43,23 +60,34 @@ void *get_config(void)
 			(NRF_RRAMC_REGION_PERM_WRITE_MASK),
 			"Write permission isn't cleared");
 #endif
-	zassert_true(config.size_kb > 0, "Protected region has zero size.");
+	zassert_equal(config.size_kb, RRAMC_REGION_FOR_TEST_SIZE / 1024,
+		      "Protected region size doesn't match protected partition size.");
+	zassert_equal(
+		config.address, RRAM_REGION_FOR_TEST_ADDRESS,
+		"Protected region start address doesn't match protected partition start address.");
 	return NULL;
 }
 
-ZTEST(b0_self_lock_test, test_reading_b0_image)
+ZTEST(b0_self_lock_test, test_rwx_locked_region)
 {
 	printk("Region %d\n", RRAMC_REGION_FOR_TEST);
-	uint32_t protected_end_address = 1024 * config.size_kb;
+	uint32_t protected_end_address = config.address + (1024 * config.size_kb);
 	volatile uint32_t *unprotected_word = (volatile uint32_t *)protected_end_address;
 	volatile uint32_t *protected_word =
 		(volatile uint32_t *)protected_end_address - sizeof(uint32_t);
+	uint32_t original_config = nrf_rramc_region_config_raw_get(NRF_RRAMC,
+								   RRAMC_REGION_FOR_TEST);
+	uint32_t updated_config = 0xFFFFFFFF;
 
 	config.permissions = NRF_RRAMC_REGION_PERM_READ_MASK |
 			     NRF_RRAMC_REGION_PERM_WRITE_MASK |
 			     NRF_RRAMC_REGION_PERM_EXECUTE_MASK;
 	/* Try unlocking. This should take no effect at this point */
 	nrf_rramc_region_config_set(NRF_RRAMC, RRAMC_REGION_FOR_TEST, &config);
+
+	updated_config = nrf_rramc_region_config_raw_get(NRF_RRAMC, RRAMC_REGION_FOR_TEST);
+	zassert_equal(updated_config, original_config,
+		"Managed to update the locked config.");
 
 #if defined(CONFIG_TEST_B0_LOCK_READS)
 	printk("Legal read\n");
@@ -76,8 +104,6 @@ ZTEST(b0_self_lock_test, test_reading_b0_image)
 	nrfx_rramc_write_enable_set(true, 0);
 	/* Next line corrupts application header.
 	 * It is ok since we need to run test once per flashing.
-	 * Moreover after reboot slot will be invalidated and
-	 * application will boot from second one.
 	 */
 	nrf_rramc_word_write((uint32_t)unprotected_word, test_value);
 	zassert_equal(test_value, *unprotected_word,
@@ -86,7 +112,6 @@ ZTEST(b0_self_lock_test, test_reading_b0_image)
 	expected_fatal++;
 	__DSB();
 	nrf_rramc_word_write((uint32_t)protected_word, test_value);
-
 #endif
 
 }
