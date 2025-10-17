@@ -62,13 +62,9 @@ def test_uart_passtrough(dut: DeviceAdapter):
 
     console_serial_port.open()
     passtrough_serial_port.open()
-    send_with_dead_time_between_characters(
-        console_serial_port.send, first_message, DEAD_TIME_S
-    )
+    send_with_dead_time_between_characters(console_serial_port.send, first_message, DEAD_TIME_S)
     first_search_result: bool = passtrough_serial_port.read_data_until_matched(first_message)
-    send_with_dead_time_between_characters(
-        passtrough_serial_port.send, second_message, DEAD_TIME_S
-    )
+    send_with_dead_time_between_characters(passtrough_serial_port.send, second_message, DEAD_TIME_S)
     second_search_result: bool = console_serial_port.read_data_until_matched(second_message)
     passtrough_serial_port.close()
     console_serial_port.close()
