@@ -94,14 +94,14 @@ or
     ]
 """
 
-from docutils import nodes
-from docutils.parsers.rst import directives
-from sphinx.util.docutils import SphinxDirective
-from sphinx.application import Sphinx
-from azure.storage.blob import ContainerClient
-from sphinx.util import logging
 import requests
 import yaml
+from azure.storage.blob import ContainerClient
+from docutils import nodes
+from docutils.parsers.rst import directives
+from sphinx.application import Sphinx
+from sphinx.util import logging
+from sphinx.util.docutils import SphinxDirective
 
 __version__ = "0.1.1"
 

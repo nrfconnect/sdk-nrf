@@ -59,15 +59,15 @@ Example of use:
   :container: dl/dt
 """
 
-from docutils import nodes
-from docutils.parsers.rst import directives
-from sphinx.util.docutils import SphinxDirective
-from sphinx.application import Sphinx
-from sphinx.util import logging
-from typing import Dict, List, Optional, Tuple
-from pathlib import Path
 import json
 import re
+from pathlib import Path
+
+from docutils import nodes
+from docutils.parsers.rst import directives
+from sphinx.application import Sphinx
+from sphinx.util import logging
+from sphinx.util.docutils import SphinxDirective
 
 __version__ = "0.1.0"
 
@@ -92,7 +92,8 @@ class PageFilter(SphinxDirective):
 
     def run(self):
         name = self.options.get("name", "")
-        split_first = lambda s: s.split(maxsplit=1)
+        def split_first(s):
+            return s.split(maxsplit=1)
         content = list(map(split_first, self.content))
         default = self.options.get("default", "all")
         container = self.options.get("container", None)
@@ -112,7 +113,8 @@ class VersionFilter(PageFilter):
         tags = self.options.get("tags", [])
         tags = {classname: displayname for classname, displayname in tags}
         tags["versions"] = ""
-        create_tuple = lambda v: (v, v.replace("-", "."))
+        def create_tuple(v):
+            return v, v.replace("-", ".")
         versions = list(map(create_tuple, reversed(self.env.nrf_versions)))
         return [FilterDropdown(name, versions, default, container_element, tags)]
 
@@ -134,10 +136,10 @@ class FilterDropdown(nodes.Element):
     def __init__(
         self,
         name: str,
-        options: List[Tuple[str, str]],
+        options: list[tuple[str, str]],
         default_value: str = "all",
         container_element: str = None,
-        filter_tags: Tuple[str, str] = None,
+        filter_tags: tuple[str, str] = None,
     ) -> None:
         super().__init__()
         self.name = name
@@ -176,7 +178,7 @@ class _FindFilterDropdownVisitor(nodes.NodeVisitor):
             self._found_dropdowns.append(node)
 
     @property
-    def found_filter_dropdown(self) -> List[nodes.Node]:
+    def found_filter_dropdown(self) -> list[nodes.Node]:
         return self._found_dropdowns
 
 
@@ -184,8 +186,8 @@ def page_filter_install(
     app: Sphinx,
     pagename: str,
     templatename: str,
-    context: Dict,
-    doctree: Optional[nodes.Node],
+    context: dict,
+    doctree: nodes.Node | None,
 ) -> None:
     """Install the javascript filter function."""
 

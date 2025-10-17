@@ -5,9 +5,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 import argparse
+import errno
 import os
 import struct
-import errno
 
 HEADER_LENGTH = 42
 HEADER_MAGIC = 0x424ad2dc
@@ -94,7 +94,7 @@ def main():
         chunk = header.encode() + chunk
 
         # Generate file name of each chunk.
-        chunk_version_str = version_str + '_{0:03d}.bin'.format(i + 1)
+        chunk_version_str = version_str + f'_{i + 1:03d}.bin'
 
         # Write the chunk into the output directory.
         with open(os.path.join(output_dir, chunk_version_str), 'wb') as chunk_file:
