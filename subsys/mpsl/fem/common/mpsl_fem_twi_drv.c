@@ -28,33 +28,34 @@ static int32_t mpsl_fem_twi_drv_impl_xfer_write(void *p_instance, uint8_t slave_
 }
 
 static inline void mpsl_fem_twi_drv_nrfx_twim_callback_replace(mpsl_fem_twi_drv_t *drv,
-							       nrfx_twim_evt_handler_t callback)
+							       nrfx_twim_event_handler_t callback)
 {
 	const struct i2c_nrfx_twim_common_config *config = drv->dev->config;
-	nrfx_err_t err;
+	int err;
 
-	nrfx_twim_callback_get(&config->twim, &drv->nrfx_twim_callback_saved,
+	nrfx_twim_callback_get(config->twim, &drv->nrfx_twim_callback_saved,
 		&drv->nrfx_twim_callback_ctx_saved);
 
-	err = nrfx_twim_callback_set(&config->twim, callback, drv);
+	err = nrfx_twim_callback_set(config->twim, callback, drv);
 
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	__ASSERT_NO_MSG(err >= 0);
 	(void)err;
 }
 
 static inline void mpsl_fem_twi_drv_nrfx_twim_callback_restore(mpsl_fem_twi_drv_t *drv)
 {
 	const struct i2c_nrfx_twim_common_config *config = drv->dev->config;
-	nrfx_err_t err;
+	int err;
 
-	err = nrfx_twim_callback_set(&config->twim, drv->nrfx_twim_callback_saved,
+	err = nrfx_twim_callback_set(config->twim, drv->nrfx_twim_callback_saved,
 		drv->nrfx_twim_callback_ctx_saved);
 
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	__ASSERT_NO_MSG(err >= 0);
 	(void)err;
 }
 
-static void mpsl_fem_twi_drv_nrfx_twim_evt_handler(nrfx_twim_evt_t const *p_event, void *p_context)
+static void mpsl_fem_twi_drv_nrfx_twim_evt_handler(nrfx_twim_event_t const *p_event,
+						   void *p_context)
 {
 	mpsl_fem_twi_drv_t *drv = (mpsl_fem_twi_drv_t *)p_context;
 	int32_t res = 0;
@@ -91,26 +92,20 @@ static int32_t mpsl_fem_twi_drv_impl_xfer_write_async(void *p_instance, uint8_t 
 		.p_primary_buf = (uint8_t *)p_data,
 		.primary_length = data_length,
 	};
-	nrfx_err_t err;
-	int32_t ret = 0;
+	int err;
 
 	drv->fem_twi_async_xfwr_write_cb = p_callback;
 	drv->fem_twi_async_xfwr_write_cb_ctx = p_context;
 
 	mpsl_fem_twi_drv_nrfx_twim_callback_replace(drv, mpsl_fem_twi_drv_nrfx_twim_evt_handler);
 
-	err = nrfx_twim_xfer(&config->twim, &cur_xfer, 0);
+	err = nrfx_twim_xfer(config->twim, &cur_xfer, 0);
 
-	if (err != NRFX_SUCCESS) {
+	if (err < 0) {
 		mpsl_fem_twi_drv_nrfx_twim_callback_restore(drv);
-		if (err == NRFX_ERROR_BUSY) {
-			ret = -EBUSY;
-		} else {
-			ret = -EIO;
-		}
 	}
 
-	return ret;
+	return err;
 }
 
 static uint32_t mpsl_fem_twi_drv_frequency_hz_get(mpsl_fem_twi_drv_t *drv)
