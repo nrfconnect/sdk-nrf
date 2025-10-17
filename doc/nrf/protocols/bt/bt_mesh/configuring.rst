@@ -261,15 +261,15 @@ The Bluetooth Mesh security toolbox based on the `PSA Certified Crypto API`_ doe
 After Bluetooth Mesh receives an open key value, it immediately imports the key into the crypto library and receives the unique key identifier.
 The key identifiers are used in the security toolbox and stored in the persistent memory.
 The crypto library is responsible for storing of the key values in the Internal Trusted Storage (`PSA Certified Secure Storage API 1.0`_).
-Bluetooth Mesh data structures based on Tinycrypt and the PSA API, as well as images of these structures stored in the persistent memory, are not compatible due to different key representations.
-When a provisioned device updates its firmware binary from the Tinycrypt-based toolbox to firmware binary that uses the PSA API based toolbox, a provisioned device must be unprovisioned first and reprovisioned after the update.
+Bluetooth Mesh data structures based on TinyCrypt (now removed from the SDK) and the PSA API, as well as images of these structures stored in the persistent memory, are not compatible due to different key representations.
+When a provisioned device updates its firmware binary from the TinyCrypt-based toolbox to firmware binary that uses the PSA API based toolbox, a provisioned device must be unprovisioned first and reprovisioned after the update.
 The provisioned device cannot restore data from the persistent memory after firmware update.
 If the image is changed over Mesh DFU, it is recommended to use :c:enumerator:`BT_MESH_DFU_EFFECT_UNPROV`.
 
-A provisioned device can update its firmware image from the Tinycrypt-based toolbox to firmware image that uses the PSA API based toolbox without unprovisioning if the key importer functionality is used.
+A provisioned device can update its firmware image from the TinyCrypt-based toolbox to firmware image that uses the PSA API based toolbox without unprovisioning if the key importer functionality is used.
 The :kconfig:option:`CONFIG_BT_MESH_KEY_IMPORTER` Kconfig option enables the key importer functionality.
 The key importer is an application initialization functionality that is called with kernel initialization priority before starting main.
-This functionality reads out the persistently stored Bluetooth Mesh data and if it finds keys stored by the Tinycrypt-based security toolbox, it imports them over the PSA API into the crypto library and stores the key identifiers in a format based on the PSA API toolbox.
+This functionality reads out the persistently stored Bluetooth Mesh data and if it finds keys stored by the TinyCrypt-based security toolbox, it imports them over the PSA API into the crypto library and stores the key identifiers in a format based on the PSA API toolbox.
 Once the new firmware image starts Bluetooth Mesh initialization, the persistent area already has the stored data in the correct format.
 
 The device can be vulnerable to attacks while the device uses the key importer functionality.

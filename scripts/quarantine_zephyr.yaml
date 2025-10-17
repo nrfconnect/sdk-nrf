@@ -395,8 +395,6 @@
     - drivers.eeprom.shell
     - drivers.can.shell
     - shell.shell_custom_header
-    - crypto.tinycrypt
-    - crypto.tinycrypt.hmac_prng
     - net.mqtt_sn.packet
     - net.http.server.common
     - net.coap.server.common
@@ -442,8 +440,6 @@
 - scenarios:
     - cpp.libcxx.glibcxx.picolibc
     - crypto.mbedtls
-    - crypto.tinycrypt
-    - crypto.tinycrypt.hmac_prng
     - drivers.can.shell
     - kernel.common
     - kernel.common.lto

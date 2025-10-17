@@ -4501,7 +4501,7 @@ NCSDK-29460: Encryption: Build error for default configuration on the ``nrf52840
 
   **Affected platforms:** nRF52840
 
-  **Workaround:** Switch the signature algorithm to RSA or change the crypto library to tinycrypt.
+  **Workaround:** Switch the signature algorithm to RSA or change the crypto library to TinyCrypt.
 
 .. rst-class:: v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0
 
