@@ -172,8 +172,8 @@ class NcsCreateBoard(WestCommand):
         with open(out_dir / f"Kconfig.{input['board']}", "w") as f:
             f.write(tmpl.render())
 
-        tmpl = env.get_template("board.yml.jinja2")
-        with open(out_dir / f"board.yml", "w") as f:
+        tmpl = env.get_template("board.yaml.jinja2")
+        with open(out_dir / f"board.yaml", "w") as f:
             f.write(tmpl.render())
 
         try:
@@ -216,8 +216,8 @@ class NcsCreateBoard(WestCommand):
             with open(out_dir / f"{name}.dts", "w") as f:
                 f.write(tmpl.render(target=target))
 
-            tmpl = env.get_template("board_twister.yml.jinja2")
-            with open(out_dir / f"{name}.yml", "w") as f:
+            tmpl = env.get_template("board_twister.yaml.jinja2")
+            with open(out_dir / f"{name}.yaml", "w") as f:
                 f.write(tmpl.render(target=target))
 
         # return post-commands
