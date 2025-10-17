@@ -1013,7 +1013,7 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.bluetooth.central_and_peripheral_hr.build
+    - sample.bluetooth.central_and_peripheral_hrs.build
   platforms:
     - nrf52840dk/nrf52840
     - nrf5340dk/nrf5340/cpuapp

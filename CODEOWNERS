@@ -432,7 +432,7 @@
 /samples/basic/                           @nrfconnect/ncs-co-build-system
 /samples/benchmarks/coremark/             @nrfconnect/ncs-si-muffin
 /samples/bluetooth/nrf_auraconfig/        @nrfconnect/ncs-audio
-/samples/bluetooth/central_and_peripheral_hr/ @nrfconnect/ncs-si-muffin
+/samples/bluetooth/central_and_peripheral_hrs/ @nrfconnect/ncs-si-muffin
 /samples/bluetooth/central_bas/           @nrfconnect/ncs-si-muffin
 /samples/bluetooth/central_hids/          @nrfconnect/ncs-si-bluebagel
 /samples/bluetooth/central_hr_coded/      @nrfconnect/ncs-si-muffin
@@ -567,7 +567,7 @@
 /samples/basic/empty/*.rst                @nrfconnect/ncs-doc-leads
 /samples/benchmarks/coremark/*.rst        @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/**/*.rst                @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc
-/samples/bluetooth/central_and_peripheral_hr/*.rst @nrfconnect/ncs-si-muffin-doc
+/samples/bluetooth/central_and_peripheral_hrs/*.rst @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/central_bas/*.rst      @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/nrf_auraconfig/*.rst   @nrfconnect/ncs-audio-doc
 /samples/bluetooth/*_hids*/*.rst          @nrfconnect/ncs-si-bluebagel-doc
