@@ -49,7 +49,7 @@ Each nRF5340 Audio application also uses its own, application-specific overlay f
 
 You need the following configuration files to :ref:`build the application <nrf53_audio_app_building>`:
 
-* Application version configuration file: :file:`prj.conf` or :file:`prj_release.conf`
+* Application version configuration file: :file:`prj.conf` or :file:`prj_release.conf`.
 * Application-specific overlay file (:file:`overlay-<app_name>.conf`) from the application directory.
 
 Optionally, you can use the following configuration file:

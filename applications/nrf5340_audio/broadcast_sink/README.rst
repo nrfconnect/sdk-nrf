@@ -68,6 +68,18 @@ For other configuration options, see :ref:`nrf53_audio_app_configuration` and :r
 
 For information about how to configure applications in the |NCS|, see :ref:`configure_application`.
 
+.. _nrf53_audio_broadcast_sink_app_configuration_stereo:
+
+Stereo configuration
+====================
+
+The broadcast sink can receive audio from two BISes and play it on the left and right channels of the audio output.
+In this mode, the I2S output is stereo, but :zephyr:board:`nrf5340_audio_dk` still only has one audio output channel, since it has a mono codec (CS47L63).
+
+To configure stereo, program the :ref:`correct headset location <nrf53_audio_app_configuration_headset_location>` for each headset.
+
+See also :file:`overlay-broadcast_sink.conf` for more information.
+
 .. _nrf53_audio_broadcast_sink_app_building:
 
 Building and running

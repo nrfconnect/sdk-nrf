@@ -242,44 +242,42 @@ nRF5340 Audio
 
 * Added:
 
-  * The :ref:`Audio application API documentation <audio_api>` page.
-  * The :ref:`config_audio_app_options` page.
-  * The API documentation in the header files listed on the :ref:`audio_api` page.
   * Ability to connect by address as a unicast client.
   * A way to store servers in RAM on the unicast client (gateway) side.
     The storage does a compare on server address to match multiple servers in a unicast group.
     This means that if another device appears with the same address, it will be treated as the same server.
-  * Experimental support for stereo in :ref:`unicast server app<nrf53_audio_unicast_server_app>`.
-    The unicast server can now receive audio from two CISes and play it on the left and right channels of the audio output, if the correct configuration options are enabled.
-    The I2S output will be stereo, but :zephyr:board:`nrf5340_audio_dk` will still only have one audio output channel, since it has a mono codec (CS47L63).
-    See :file:`overlay-unicast_server.conf` for more information.
+  * Experimental support for stereo in :ref:`unicast server application<nrf53_audio_unicast_server_app_configuration_stereo>`.
+  * The :ref:`Audio application API documentation <audio_api>` page.
+  * The :ref:`config_audio_app_options` page.
+  * The API documentation in the header files listed on the :ref:`audio_api` page.
 
 * Updated:
 
-  * The unicast client (gateway) has been rewritten to support N channels.
-  * The unicast client (gateway) now checks if a server has a resolvable address.
+  * The unicast client (gateway) application has been rewritten to support N channels.
+  * The unicast client (gateway) application now checks if a server has a resolvable address.
     If this has not been resolved, the discovery process will start in the identity resolved callback.
-  * The application to use the ``NFC.TAGHEADER0`` value from FICR as the broadcast ID instead of using a random ID.
-  * The application to change from Newlib to Picolib to align with |NCS| and Zephyr.
-  * The application to use the :ref:`net_buf_interface` API to pass audio data between threads.
+  * The audio applications now use the ``NFC.TAGHEADER0`` value from FICR as the broadcast ID instead of using a random ID.
+  * The applications now use Picolib instead of Newlib.
+    This aligns with the |NCS| and Zephyr requirements.
+  * The audio applications now use the :ref:`net_buf_interface` API to pass audio data between threads.
     The :ref:`net_buf_interface` will also contain the metadata about the audio stream in the ``user_data`` section of the API.
     This change was done to transition to standard Zephyr APIs, as well as to have a structured way to pass N-channel audio between modules.
-  * The optional buildprog tool to use `nRF Util`_ instead of nrfjprog that has been deprecated.
-  * The documentation pages with information about the :ref:`SD card playback module <nrf53_audio_app_overview_architecture_sd_card_playback>` and :ref:`how to enable it <nrf53_audio_app_configuration_sd_card_playback>`.
-  * The buffer count (:kconfig:option:`CONFIG_BT_ISO_TX_BUF_COUNT` and :kconfig:option:`CONFIG_BT_BUF_ACL_TX_COUNT`) to be in-line with SoftDevice Controller (SDC) defaults.
-    This can be changed and optimized for specific use cases.
-  * The power measurements to be disabled by default in ``debug`` builds.
+  * The optional :file:`buildprog.py` :ref:`script for building and programming audio applications <nrf53_audio_app_building_script>` to use `nRF Util`_ instead of nrfjprog that has been deprecated.
+  * The buffer count to be in-line with SoftDevice Controller (SDC) defaults.
+    This can be changed and optimized for specific use cases using the :kconfig:option:`CONFIG_BT_ISO_TX_BUF_COUNT` and :kconfig:option:`CONFIG_BT_BUF_ACL_TX_COUNT` Kconfig options.
+  * The power measurements to be disabled by default in the :ref:`debug version <nrf53_audio_app_building_config_files>` of the applications.
     See :ref:`nrf53_audio_app_configuration_power_measurements` for more information.
   * The audio application targeting the :zephyr:board:`nrf5340dk` to use pins **P1.5** to **P1.9** for the I2S interface instead of **P0.13** to **P0.17**.
     This change was made to avoid conflicts with the onboard peripherals on the nRF5340 DK.
+  * The documentation pages with information about the :ref:`SD card playback module <nrf53_audio_app_overview_architecture_sd_card_playback>` and :ref:`how to enable it <nrf53_audio_app_configuration_sd_card_playback>`.
   * The API documentation in the header files listed on the :ref:`audio_api` page.
 
 * Removed:
 
-  * The uart_terminal tool to use standardized tools.
+  * The uart_terminal tool in favor of using standardized tools.
     Similar functionality is provided through the `nRF Terminal <nRF Terminal documentation_>`_ in the |nRFVSC|.
   * The functionality to jump between BIS0 and BIS1 in the :ref:`broadcast sink <nrf53_audio_broadcast_sink_app>` application.
-    Button 4 is no longer needed for this purpose due to added support for stereo audio.
+    **Button 4** is no longer needed for this purpose due to added support for stereo audio.
 
 nRF Desktop
 -----------

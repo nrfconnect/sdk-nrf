@@ -80,7 +80,7 @@ Enabling the walkie-talkie demo
 
 The walkie-talkie demo uses one or two bidirectional streams from the gateway to one or two headsets.
 The PDM microphone is used as input on both the gateway and headset device.
-To switch to using the walkie-talkie, set the :option:`CONFIG_WALKIE_TALKIE_DEMO` Kconfig option to ``y``  in the :file:`applications/nrf5340_audio/prj.conf` file (for the debug version) or in the :file:`applications/nrf5340_audio/prj_release.conf` file (for the release version).
+To switch to using the walkie-talkie, set the :option:`CONFIG_WALKIE_TALKIE_DEMO` Kconfig option to ``y`` in the :file:`applications/nrf5340_audio/prj.conf` file (for the debug version) or in the :file:`applications/nrf5340_audio/prj_release.conf` file (for the release version).
 
 Enabling the Auracast™ (broadcast) mode
 =======================================
@@ -93,7 +93,7 @@ Enabling the BIS mode with two gateways
 =======================================
 
 In addition to the standard BIS mode with one gateway, you can also add a second gateway device.
-The BIS headsets can then switch between the two gateways and receive audio stream from one of the two gateways.
+The BIS headsets can then switch between the two gateways and receive the audio stream from one of the two gateways.
 
 To configure the second gateway, add both the :option:`CONFIG_TRANSPORT_BIS` and the :option:`CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT` Kconfig options set to ``y`` to the :file:`applications/nrf5340_audio/prj.conf` file for the debug version and to the :file:`applications/nrf5340_audio/prj_release.conf` file for the release version.
 You can provide an alternative name to the second gateway using the :option:`CONFIG_BT_AUDIO_BROADCAST_NAME_ALT` or use the default alternative name.
@@ -109,14 +109,14 @@ Configuring the headset location
 
 When using the :ref:`default CIS transport mode configuration <nrf53_audio_transport_mode_configuration>`, if you want to use two headset devices or the stereo configuration, you must also define the correct headset location.
 
-The nRF5340 Audio applications use the audio location definitions from the `Bluetooth Assigned Numbers`_ specification, page 201.
+The nRF5340 Audio applications use audio location definitions from the Audio Location Definition chapter in the `Bluetooth Assigned Numbers`_ specification.
 These correspond to the bitfields in the :file:`bt_audio_location` enum in the :file:`zephyr/include/zephyr/bluetooth/assigned_numbers.h` file.
 When building the audio application, the location value is used to populate the UICR with the correct bitfield for each headset.
 
 You can set the location for each headset in the following ways, depending on the building and programming method:
 
 * When :ref:`nrf53_audio_app_building_script`, set the location for each headset in the :file:`nrf5340_audio_dk_devices.json` file.
-  Use the location labels from the `Bluetooth Assigned Numbers`_ specification, page 201.
+  Use the location labels from the Audio Location Definition chapter in the `Bluetooth Assigned Numbers`_ specification.
   For example:
 
   .. code-block:: json
@@ -129,7 +129,7 @@ You can set the location for each headset in the following ways, depending on th
       }
      ]
 
-  When no location is set, the headset is programmed as a left channel one.
+  When no location is set, the headset is programmed as a left channel.
 * When :ref:`nrf53_audio_app_building_standard`, set the location for each headset when running the :ref:`programming command <nrf53_audio_app_building_standard_programming>`.
   Use the combined bitfield values from the :file:`zephyr/include/zephyr/bluetooth/assigned_numbers.h` file to define the headset location.
   For example, if you want to use the stereo configuration, use the combined bitfield value of the left and right channels (``1`` and ``2``, respectively):
@@ -140,7 +140,7 @@ You can set the location for each headset in the following ways, depending on th
 
 The following table lists some of the available locations and their bitfield values:
 
-.. list-table:: Example autio locations and their bitfield values
+.. list-table:: Example audio locations and their bitfield values
    :header-rows: 1
 
    * - Audio location
@@ -148,10 +148,10 @@ The following table lists some of the available locations and their bitfield val
      - Bitfield value
    * - ``"FRONT_LEFT"``
      - ``0x00000000``
-     - ``1``
+     - ``0``
    * - ``"FRONT_RIGHT"``
      - ``0x00000001``
-     - ``2``
+     - ``1``
    * - Stereo
      - n/a
      - ``3``
@@ -170,7 +170,7 @@ The audio source is selected using the following Kconfig options:
 * I2S audio source (:option:`CONFIG_AUDIO_SOURCE_I2S`) - Uses 3.5 mm jack analog input using I2S
 
 In the default configuration, the gateway application uses USB as the audio source.
-The :ref:`nrf53_audio_app_building` and the testing steps also refer to using the USB serial connection.
+The :ref:`nrf53_audio_app_building` and testing steps also refer to using the USB serial connection.
 
 The audio source selection affects the firmware architecture and available features.
 USB audio source is limited to unidirectional streams due to CPU load considerations, while I2S supports bidirectional communication.
@@ -234,17 +234,10 @@ Configuring power measurements
 The power measurements are disabled by default in the :ref:`debug version <nrf53_audio_app_overview_files>` of the application.
 
 .. note::
-   Enabling power measurements in the debug version together with :ref:`debug logging <ug_logging>` significantly increases the power consumption compared with the release version of the application.
+   Enabling power measurements in the debug version together with :ref:`debug logging <ug_logging>` increases the power consumption compared with the release version of the application.
    For better results, consider using the `Power Profiler Kit II (PPK2)`_ and the `Power Profiler app`_ from nRF Connect for Desktop to measure the power consumption.
 
 To enable power measurements in the debug version, set the :kconfig:option:`CONFIG_NRF5340_AUDIO_POWER_MEASUREMENT` Kconfig option to ``y`` in the :file:`applications/nrf5340_audio/prj.conf` file.
-
-.. _nrf53_audio_app_configuration_sd_card_playback:
-
-Configuring SD card playback
-****************************
-
-The SD Card Playback module allows you to play audio files directly from an SD card inserted into the nRF5340 Audio development kit.
 
 .. _nrf53_audio_app_configuration_sd_card_playback:
 
