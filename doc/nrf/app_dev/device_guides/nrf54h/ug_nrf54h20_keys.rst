@@ -7,6 +7,22 @@ Provisioning keys on the nRF54H20 SoC
    :local:
    :depth: 2
 
+This guide describes how to generate and provision cryptographic public keys on an nRF54H20 SoC in the Root of Trust (RoT) lifecycle state.
+It is intended for developers defining manifest signing keys for the application core, radio core, and OEM root.
+A successful provisioning makes the keys available to Secure Domain Firmware through PSA Crypto key identifiers.
+
+Prerequisites
+=============
+
+To follow this guide, your nRF54H20 device must meet the following requirement:
+
+* On the nRF54H20 DK, you must :ref:`provision <ug_nrf54h20_gs_bringup_soc_bin>` the DK as described in the :ref:`ug_nrf54h20_getting_started` page.
+* On a custom nRF54H20-based device, you must :ref:`configure, generate, and program the BICR <ug_nrf54h20_custom_pcb_bicr>` as described in the :ref:`ug_nrf54h20_custom_pcb` page.
+* You must configure `UICR.SECURESTORAGE`_ in your |ISE| UICR configuration.
+
+Overview
+========
+
 The keys provisioning workflow for the nRF54H20 SoC consists of two main steps:
 
 1. Generating the required metadata using a script provided with the |NCS|.
