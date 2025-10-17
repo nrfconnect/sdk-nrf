@@ -219,27 +219,29 @@ The nRF Desktop mouse sends HID input reports to the host after the host connect
 
 The :ref:`nrf_desktop_motion` sensor sampling is synchronized with sending the HID mouse input reports to the host.
 
-The :ref:`nrf_desktop_wheel` and :ref:`caf_buttons` provide data to the :ref:`nrf_desktop_hid_state` when the mouse wheel is used or a button is pressed, respectively.
+The :ref:`nrf_desktop_wheel` and :ref:`caf_buttons` provide data to the :ref:`nrf_desktop_hid_provider_mouse` when the mouse wheel is used or a button is pressed, respectively.
 These inputs are not synchronized with the HID report transmission to the host.
 
 When the mouse is constantly in use, the motion module is kept in the fetching state.
 In this state, the nRF Desktop mouse forwards the data from the motion sensor to the host in the following way:
 
-1. USB state (or Bluetooth HIDS) sends a HID mouse report to the host and submits ``hid_report_sent_event``.
+1. USB state (or Bluetooth HIDS) sends a HID mouse report to the host and submits a :c:struct:`hid_report_sent_event`.
 #. The event triggers sampling of the motion sensor.
 #. A dedicated thread is used to fetch the sample from the sensor.
-#. After the sample is fetched, the thread forwards it to the :ref:`nrf_desktop_hid_state` as ``motion_event``.
-#. The |hid_state| updates the HID report data, generates new HID input report, and submits it as ``hid_report_event``.
+#. After the sample is fetched, the thread forwards it to the :ref:`nrf_desktop_hid_provider_mouse` as a :c:struct:`motion_event`.
+#. The HID provider mouse module updates the HID report data and notifies the HID state module (:c:member:`hid_state_api.trigger_report_send`).
+   The HID state module instantly asks the HID provider mouse module to provide a HID mouse input report (:c:member:`hid_report_provider_api.send_report`).
+   While handling the request, the HID provider mouse generates and submits the HID mouse input report as a :c:struct:`hid_report_event`.
 #. The HID report data is forwarded to the host either by the :ref:`nrf_desktop_usb_state` or by the :ref:`nrf_desktop_hids`.
    The USB state has precedence if the USB is connected.
-#. When the HID input report is sent to the host, ``hid_report_sent_event`` is submitted.
+#. When the HID input report is sent to the host, a :c:struct:`hid_report_sent_event` is submitted.
    The motion sensor sample is triggered and the sequence repeats.
 
-If the device is connected through Bluetooth LE or the device is connected through USB and :ref:`nrf_desktop_usb_state_sof_synchronization` is enabled, the :ref:`nrf_desktop_hid_state` uses a pipeline that consists of two HID reports that it creates upon receiving the first ``motion_event``.
-The |hid_state| submits two ``hid_report_event`` events.
+If the device is connected through Bluetooth LE or the device is connected through USB and :ref:`nrf_desktop_usb_state_sof_synchronization` is enabled, the :ref:`nrf_desktop_hid_provider_mouse` uses a pipeline that consists of two HID reports that it creates upon receiving the first :c:struct:`motion_event`.
+In response to two requests from the HID state module, the HID provider mouse module submits two :c:struct:`hid_report_event` events to generate the pipeline.
 Sending the first event to the host triggers the motion sensor sample.
 
-For the Bluetooth connections, submitting ``hid_report_sent_event`` is delayed by one Bluetooth connection interval.
+For the Bluetooth connections, submitting the :c:struct:`hid_report_sent_event` is delayed by one Bluetooth connection interval.
 Because of this delay, the :ref:`nrf_desktop_hids` requires a pipeline of two sequential HID reports to make sure that data is sent on every connection event.
 Such a solution is necessary to achieve a high report rate.
 For :ref:`nrf_desktop_usb_state_sof_synchronization`, the pipeline of two sequential HID reports is necessary to ensure that a USB peripheral can provide HID data on every USB poll.
