@@ -170,4 +170,10 @@ config MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE
 	help
 	  This is a Kconfig which is informative only, the value should not be changed.
 
+config NCS_MCUBOOT_IMGTOOL_APPEND_MANIFEST
+	bool "MCUboot append manifest"
+	help
+	  Append common manifest while signing the image.
+	  This is a Kconfig which is informative only, the value should not be changed.
+
 endmenu

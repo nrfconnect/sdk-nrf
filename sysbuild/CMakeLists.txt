@@ -229,6 +229,14 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(mcuboot CONFIG_BOOT_IMG_HASH_ALG_SHA512 y)
     endif()
 
+    if(SB_CONFIG_MCUBOOT_MANIFEST_UPDATES)
+      set_config_bool(mcuboot CONFIG_MCUBOOT_MANIFEST_UPDATES y)
+      set_config_bool(${DEFAULT_IMAGE} CONFIG_NCS_MCUBOOT_IMGTOOL_APPEND_MANIFEST y)
+      if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
+        set_config_bool(mcuboot_secondary_app CONFIG_NCS_MCUBOOT_IMGTOOL_APPEND_MANIFEST y)
+      endif()
+    endif()
+
     # Apply configuration to application
     foreach(image ${updateable_images})
       foreach(mode ${application_mcuboot_modes})
@@ -331,7 +339,9 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(mcuboot CONFIG_BOOT_FIH_PROFILE_DEFAULT_LOW y)
     endif()
 
-    if(SB_CONFIG_PARTITION_MANAGER OR SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP OR SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT OR SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT)
+    if(SB_CONFIG_PARTITION_MANAGER OR SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP
+       OR SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT OR SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT
+       OR SB_CONFIG_MCUBOOT_MANIFEST_UPDATES)
       # Use NCS signing script with support for PM or direct XIP (NCS specific features)
       if(SB_CONFIG_QSPI_XIP_SPLIT_IMAGE)
         set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
@@ -799,6 +809,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
   if(SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY AND SB_CONFIG_SOC_NRF54H20)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/mcuboot_nrf54h20.cmake)
+  endif()
+
+  if(SB_CONFIG_BOOTLOADER_MCUBOOT AND SB_CONFIG_MCUBOOT_MANIFEST_UPDATES)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/mcuboot_manifest.cmake)
   endif()
 
   if(SB_CONFIG_DFU_ZIP)
