@@ -954,6 +954,14 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 			MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
 		psa_key_attributes_t stored_attributes;
 
+#ifdef CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT
+		if (slot_id == PROTECTED_RAM_INVALIDATION_DATA_SLOT1) {
+			/* The key bits are required for the psa_import_key to succeed */
+			*key_bits = 256;
+			return cracen_provision_prot_ram_inv_slots();
+		}
+#endif
+
 		size_t opaque_key_size;
 		psa_status_t status = cracen_get_opaque_size(attributes, &opaque_key_size);
 
