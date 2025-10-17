@@ -48,7 +48,6 @@ bluetooth:
   files:
     - modules/crypto/mbedtls/
     - modules/crypto/oberon-psa-crypto/
-    - modules/crypto/tinycrypt/
     - modules/lib/memfault-firmware-sdk/
     - nrf/applications/ipc_radio/
     - nrf/cmake/
@@ -351,7 +350,6 @@ find_my:
     - find-my/
     - modules/crypto/mbedtls/
     - modules/crypto/oberon-psa-crypto/
-    - modules/crypto/tinycrypt/
     - modules/lib/open-amp/
     - nrf/applications/ipc_radio/
     - nrf/cmake/
@@ -397,7 +395,6 @@ ci_samples_cellular:
     - bootloader/mcuboot/
     - modules/crypto/mbedtls/
     - modules/crypto/oberon-psa-crypto/
-    - modules/crypto/tinycrypt/
     - modules/hal/nordic/nrfx/
     - modules/lib/cjson/
     - modules/lib/hostap/
