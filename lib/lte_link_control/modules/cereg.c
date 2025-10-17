@@ -269,13 +269,12 @@ static void at_handler_cereg(const char *response)
 	}
 
 	/* Network registration status event */
-	if (reg_status != prev_reg_status) {
-		prev_reg_status = reg_status;
-		evt.type = LTE_LC_EVT_NW_REG_STATUS;
-		evt.nw_reg_status = reg_status;
+	/* For NTN, always send reg status notification (cereg)*/
+	prev_reg_status = reg_status;
+	evt.type = LTE_LC_EVT_NW_REG_STATUS;
+	evt.nw_reg_status = reg_status;
 
-		event_handler_list_dispatch(&evt);
-	}
+	event_handler_list_dispatch(&evt);
 
 	/* Cell update event */
 	if ((cell.id != prev_cell.id) || (cell.tac != prev_cell.tac)) {
