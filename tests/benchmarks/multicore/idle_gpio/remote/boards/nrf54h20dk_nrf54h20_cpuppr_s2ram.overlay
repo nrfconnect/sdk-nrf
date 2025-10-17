@@ -1,0 +1,66 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		led3 = &led3;
+		sw1 = &button1;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		led3: led_3 {
+			gpios = <&gpio9 3 GPIO_ACTIVE_HIGH>;
+			label = "Green LED 3";
+		};
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+
+		button1: button_1 {
+			gpios = <&gpio0 9 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Push button 1";
+			zephyr,code = <INPUT_KEY_1>;
+		};
+	};
+
+	cpus {
+		power-states {
+			wait: wait {
+				compatible = "zephyr,power-state";
+				power-state-name = "standby";
+				substate-id = <0>;
+				min-residency-us = <20000>;
+			};
+
+			hibernate: hibernate {
+				compatible = "zephyr,power-state";
+				power-state-name = "suspend-to-ram";
+				substate-id = <0>;
+				min-residency-us = <400000>;
+			};
+		};
+	};
+};
+
+&cpu {
+	cpu-power-states = <&wait &hibernate>;
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio9 {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <0>;
+};
