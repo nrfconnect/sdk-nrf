@@ -31,16 +31,23 @@ int fw_info_app_print(void)
 
 #if (CONFIG_DEBUG)
 	int ret;
-	enum bt_audio_location location;
-
-	device_location_get(&location);
 
 	LOG_INF("------- DEBUG BUILD -------");
 
 #if (CONFIG_AUDIO_DEV == HEADSET)
+	enum bt_audio_location location;
+
+	device_location_get(&location);
+
 	if (location == BT_AUDIO_LOCATION_MONO_AUDIO){
 		LOG_ERR("HEADSET location %s is not supported", bt_audio_location_bit_to_str(location));
 		return -EINVAL;
+	}
+
+	for (int i = 0; i < (CHAR_BIT * sizeof(enum bt_audio_location)); i++) {
+		if (location & BIT(i)) {
+			LOG_INF(COLOR_CYAN "HEADSET location: %s" COLOR_RESET, bt_audio_location_bit_to_str(BIT(i)));
+		}
 	}
 
 	if (location == BT_AUDIO_LOCATION_FRONT_LEFT) {
@@ -62,19 +69,9 @@ int fw_info_app_print(void)
 	if (ret) {
 		return ret;
 	}
-#else
-	/* Make sure that we have the correct device */
-	BUILD_ASSERT(0, "Unrecognized audio device");
+	LOG_INF(COLOR_CYAN "GATEWAY device" COLOR_RESET);
 #endif /* (CONFIG_AUDIO_DEV == HEADSET) */
-
-	for (int i = 0; i < (CHAR_BIT * sizeof(enum bt_audio_location)); i++) {
-		if (location & BIT(i)) {
-			LOG_INF(COLOR_CYAN "%s location: %s" COLOR_RESET, CONFIG_AUDIO_DEV == HEADSET ?  "HEADSET" : "GATEWAY", bt_audio_location_bit_to_str(BIT(i)));
-		}
-	}
-
 #endif /* (CONFIG_DEBUG) */
-
 
 	return 0;
 }

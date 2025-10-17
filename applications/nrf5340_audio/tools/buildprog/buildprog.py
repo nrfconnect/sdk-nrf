@@ -78,8 +78,12 @@ def __print_dev_conf(device_list):
     ]
 
     for device in device_list:
-        loc_names = str([loc.name for loc in device.location])
-        loc_names = loc_names.replace("[", "").replace("]", "").replace("'", "")
+        if device.nrf5340_audio_dk_dev.value == AudioDevice.headset:
+            loc_names = str([loc.name for loc in device.location])
+            loc_names = loc_names.replace("[", "").replace("]", "").replace("'", "")
+        else:
+            loc_names = "NA"
+
         row = []
         row.append(device.nrf5340_audio_dk_snr)
         color = Fore.GREEN if device.snr_connected else Fore.YELLOW
@@ -349,17 +353,28 @@ def __main():
         dev_arr = json.load(f)
     device_list = []
     for dev in dev_arr:
-        if "channel" in dev:
-            print("Using deprecated location format. Convert to using Location enum")
-            if dev["channel"] == "left":
-                location = [Location.FRONT_LEFT]
-            elif dev["channel"] == "right":
-                location = [Location.FRONT_RIGHT]
+        if AudioDevice[dev["nrf5340_audio_dk_dev"]] == AudioDevice.headset:
+            if "channel" in dev:
+                print("Using deprecated location format. Convert to using Location enum")
+                if dev["channel"] == "left":
+                    location = [Location.FRONT_LEFT]
+                elif dev["channel"] == "right":
+                    location = [Location.FRONT_RIGHT]
+                else:
+                    print("Invalid location, setting to MONO_AUDIO")
+                    location = [Location.MONO_AUDIO]
+            elif dev["location"]:
+                try:
+                    location = [Location[name] for name in dev["location"]]
+                except KeyError as e:
+                    raise KeyError(f"Invalid location name {e} for headset in JSON file")
             else:
-                print("Invalid location, setting to MONO_AUDIO")
+                print("No location specified for headset, setting to MONO_AUDIO")
                 location = [Location.MONO_AUDIO]
         else:
-            location = [Location[name] for name in dev["location"]]
+            if dev["location"] != ['NA'] or dev["location"] == []:
+                print("Location field is only valid for headset devices, setting to NA")
+            location = []
 
         device = DeviceConf(
             location=location,
