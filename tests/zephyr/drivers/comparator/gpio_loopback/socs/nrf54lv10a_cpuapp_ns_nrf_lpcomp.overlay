@@ -1,0 +1,6 @@
+&comp {
+	compatible = "nordic,nrf-lpcomp";
+	psel = "AIN6"; /* P1.11 */
+	refsel = "VDD_4_8";
+	status = "okay";
+};
