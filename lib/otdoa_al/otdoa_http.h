@@ -9,7 +9,6 @@
 
 #include <stdbool.h>
 
-#include <otdoa_al/otdoa_log.h>
 #include <otdoa_al/phywi_otdoa_api.h>
 #include "autoconf.h"
 #include "modem/modem_key_mgmt.h"
@@ -77,18 +76,18 @@
  * are sent through Zephyr FIFOs (as opposed to e.g. workqueues) need this field.  Currently
  * that includes messages sent to the capture thread.
  */
-#define RESERVED       void *fifo_reserved;
+#define OTDOA_MSG_RESERVED       void *fifo_reserved;
 #define HTTPS_URL_LMAX 32
 
 typedef struct {
-	RESERVED;
+	OTDOA_MSG_RESERVED;
 	uint32_t u32MsgId;
 	uint32_t u32MsgLen;
 } tOTDOA_MSG_HTTP_HEADER;
 
 /* message for http module to download uBSA*/
 typedef struct {
-	RESERVED;
+	OTDOA_MSG_RESERVED;
 	uint32_t u32MsgId;
 	uint32_t u32MsgLen;
 	char pURL[HTTPS_URL_LMAX];
@@ -104,14 +103,14 @@ typedef struct {
 
 /* message for http module to download config file */
 typedef struct {
-	RESERVED;
+	OTDOA_MSG_RESERVED;
 	uint32_t u32MsgId;
 	uint32_t u32MsgLen;
 } tOTDOA_MSG_HTTP_GET_CFG;
 
 /* message for http module to upload the vector */
 typedef struct {
-	RESERVED;
+	OTDOA_MSG_RESERVED;
 	uint32_t u32MsgId;
 	uint32_t u32MsgLen;
 	char vf[HTTPS_URL_LMAX];
@@ -120,7 +119,7 @@ typedef struct {
 
 /* message for http module to upload log files */
 typedef struct {
-	RESERVED;
+	OTDOA_MSG_RESERVED;
 	uint32_t u32MsgId;
 	uint32_t u32MsgLen;
 	char vf[HTTPS_URL_LMAX];
@@ -129,7 +128,7 @@ typedef struct {
 
 /* message for http module to upload otdoa results */
 typedef struct {
-	RESERVED;
+	OTDOA_MSG_RESERVED;
 	uint32_t u32MsgId;
 	uint32_t u32MsgLen;
 	char pURL[HTTPS_URL_LMAX];
@@ -141,14 +140,14 @@ typedef struct {
 
 /* message for http module to test the JWT generation */
 typedef struct {
-	RESERVED;
+	OTDOA_MSG_RESERVED;
 	uint32_t u32MsgId;
 	uint32_t u32MsgLen;
 } tOTDOA_MSG_HTTP_TEST_JWT;
 
 /* message for http module to rebind the socket */
 typedef struct {
-	RESERVED;
+	OTDOA_MSG_RESERVED;
 	uint32_t u32MsgId;
 	uint32_t u32MsgLen;
 } tOTDOA_MSG_HTTP_REBIND;

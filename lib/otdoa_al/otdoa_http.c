@@ -19,6 +19,8 @@
 #include "otdoa_http.h"
 #include "otdoa_http_h1.h"
 
+LOG_MODULE_DECLARE(otdoa_al, LOG_LEVEL_INF);
+
 /* forward declarations */
 tOTDOA_HTTP_MEMBERS gHTTP = {};
 
@@ -72,7 +74,7 @@ int http_send_request(tOTDOA_HTTP_MEMBERS *pG, const size_t n)
 	do {
 		bytes = http_send(pG->fdSocket, &pG->szSend[pG->nOff], n - pG->nOff, 0);
 		if (bytes < 0) {
-			OTDOA_LOG_ERR("http_send_request: send failed: %s", strerror(errno));
+			LOG_ERR("http_send_request: send failed: %s", strerror(errno));
 			return -1;
 		}
 		pG->nOff += bytes;
@@ -90,7 +92,7 @@ int http_send_request(tOTDOA_HTTP_MEMBERS *pG, const size_t n)
  */
 int http_write_to_file(const char *path, void *data, size_t len)
 {
-	OTDOA_LOG_DBG("Attempting to write %lu bytes from %p to %s", len, data, path);
+	LOG_DBG("Attempting to write %zu bytes from %p to %s", len, data, path);
 	int rc = 0;
 	tOFS_FILE *fp = FOPEN(path, "w");
 
@@ -114,6 +116,8 @@ int http_write_to_file(const char *path, void *data, size_t len)
  * Searches for a string in a response, and logs the
  * line containing that string
  */
+#define OTDOA_MAX_LOG_LENGTH 96
+
 void log_response_string(const char *pszKey, const char *pszBuffer)
 {
 	const char *pszStart = strstr(pszBuffer, pszKey);
@@ -129,9 +133,9 @@ void log_response_string(const char *pszKey, const char *pszBuffer)
 
 		szLog[len] = '\0'; /* ensure null terimination */
 		strncpy(szLog, pszStart, len);
-		OTDOA_LOG_INF("    %s", szLog);
+		LOG_INF("    %s", szLog);
 	} else {
-		OTDOA_LOG_ERR("Key %s not found in response", pszKey);
+		LOG_ERR("Key %s not found in response", pszKey);
 	}
 }
 
@@ -152,7 +156,7 @@ int otdoa_http_handle_message(tOTDOA_HTTP_MESSAGE *pMsg)
 	gHTTP.csBuffer = calloc(1, HTTPS_BUF_SIZE);
 #endif
 	if (!gHTTP.csBuffer) {
-		OTDOA_LOG_ERR("http_entry_point: failed to alloc send/receive buffer\n");
+		LOG_ERR("http_entry_point: failed to alloc send/receive buffer\n");
 		rc = -ENOMEM;
 		goto exit_error;
 	}
@@ -160,19 +164,19 @@ int otdoa_http_handle_message(tOTDOA_HTTP_MESSAGE *pMsg)
 	switch (pMsg->header.u32MsgId) {
 
 	case OTDOA_HTTP_MSG_GET_H1_UBSA:
-		OTDOA_LOG_INF("HTTP received OTDOA_HTTP_MSG_GET_H1_UBSA");
+		LOG_INF("HTTP received OTDOA_HTTP_MSG_GET_H1_UBSA");
 		otdoa_http_h1_handle_message(pMsg);
 		break;
 
 	case OTDOA_HTTP_MSG_GET_H1_CONFIG_FILE:
 
-		OTDOA_LOG_INF("HTTP received OTDOA_HTTP_MSG_GET_H1_CONFIG_FILE");
+		LOG_INF("HTTP received OTDOA_HTTP_MSG_GET_H1_CONFIG_FILE");
 		otdoa_http_h1_handle_message(pMsg);
 		break;
 
 	case OTDOA_HTTP_MSG_REBIND_SOCKET:
 
-		OTDOA_LOG_INF("HTTP received HTTPS_COMMAND_REBIND_SOCKET");
+		LOG_INF("HTTP received HTTPS_COMMAND_REBIND_SOCKET");
 		/* rebind the socket in case the configured upload URL has changed. has to be a
 		 * message because config file parsing is slow and I can't just do this at the end
 		 * of GET_CONFIG_FILE above
@@ -182,18 +186,18 @@ int otdoa_http_handle_message(tOTDOA_HTTP_MESSAGE *pMsg)
 
 	case OTDOA_HTTP_MSG_UPLOAD_OTDOA_RESULTS:
 
-		OTDOA_LOG_INF("HTTP received HTTPS_COMMAND_UPLOAD_RESULTS");
+		LOG_INF("HTTP received HTTPS_COMMAND_UPLOAD_RESULTS");
 		otdoa_http_h1_handle_message(pMsg);
 		break;
 
 	case OTDOA_HTTP_MSG_TEST_JWT:
 
-		OTDOA_LOG_INF("HTTP received HTTPS_COMMAND_TEST_JWT");
+		LOG_INF("HTTP received HTTPS_COMMAND_TEST_JWT");
 		otdoa_http_h1_handle_message(pMsg);
 		break;
 
 	default:
-		OTDOA_LOG_WRN("unexpected HTTP message");
+		LOG_WRN("unexpected HTTP message");
 		break;
 	}
 
@@ -222,7 +226,7 @@ int otdoa_http_send_ubsa_req(const char *const pURL, uint32_t u32ECGI, uint32_t 
 	tOTDOA_MSG_HTTP_GET_UBSA msg = { 0 };
 
 	msg.u32MsgId = OTDOA_HTTP_MSG_GET_H1_UBSA;
-	OTDOA_LOG_INF("Sending uBSA req for ECGI %u", u32ECGI);
+	LOG_INF("Sending uBSA req for ECGI %u", u32ECGI);
 	msg.u32MsgLen = sizeof(msg);
 	strncpy(msg.pURL, pURL, sizeof(msg.pURL));
 	msg.uEcgi = u32ECGI;

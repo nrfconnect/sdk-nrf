@@ -16,7 +16,6 @@
 
 #include <zephyr/kernel.h>
 
-#include <otdoa_al/otdoa_log.h>
 #include "otdoa_al_log.h"
 
 #ifdef CONFIG_LOG_MODE_MINIMAL
@@ -38,52 +37,26 @@ uint32_t otdoa_log_level_set(int level, const char *backend)
 	if (source_id >= 0) {
 		log_filter_set(NULL, 0, source_id, level);
 	} else {
-		OTDOA_LOG_WRN("otdoa_log_level_set(): Failed to find module otdoa");
+		LOG_WRN("otdoa_log_level_set(): Failed to find module otdoa");
 	}
 	return 0;
 }
 
-void otdoa_log_err(const char *fmt, ...)
-{
-	char log_buf[OTDOA_MAX_LOG_LENGTH] = {0};
-	va_list va;
-
-	va_start(va, fmt);
-	vsnprintf(log_buf, sizeof(log_buf), fmt, va);
-	LOG_ERR("%s", log_buf);
-}
-
-void otdoa_log_wrn(const char *fmt, ...)
-{
-	char log_buf[OTDOA_MAX_LOG_LENGTH] = {0};
-	va_list va;
-
-	va_start(va, fmt);
-	vsnprintf(log_buf, sizeof(log_buf), fmt, va);
-	LOG_WRN("%s", log_buf);
-}
-void otdoa_log_inf(const char *fmt, ...)
-{
-	char log_buf[OTDOA_MAX_LOG_LENGTH] = {0};
-	va_list va;
-
-	va_start(va, fmt);
-	vsnprintf(log_buf, sizeof(log_buf), fmt, va);
-	LOG_INF("%s", log_buf);
-}
-void otdoa_log_dbg(const char *fmt, ...)
-{
-	char log_buf[OTDOA_MAX_LOG_LENGTH] = {0};
-	va_list va;
-
-	va_start(va, fmt);
-	vsnprintf(log_buf, sizeof(log_buf), fmt, va);
-	LOG_DBG("%s", log_buf);
-}
-
-void otdoa_log_hexdump_inf(void *data, unsigned int length, char *str)
-{
-	LOG_HEXDUMP_INF(data, length, str);
+void otdoa_log( int log_level, const char *string) {
+	switch(log_level) {
+		case LOG_LEVEL_ERR:
+			LOG_ERR("%s",string);
+			break;
+		case LOG_LEVEL_WRN:
+			LOG_WRN("%s",string);
+			break;
+		case LOG_LEVEL_INF:
+			LOG_INF("%s",string);
+			break;
+		case LOG_LEVEL_DBG:
+			LOG_DBG("%s",string);
+			break;
+	}
 }
 
 void otdoa_log_init(void)

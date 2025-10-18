@@ -13,6 +13,8 @@
 #include "otdoa_al_log.h"
 #include "otdoa_http.h"
 
+LOG_MODULE_REGISTER(otdoa_al, LOG_LEVEL_INF);
+
 struct http_work {
 	struct k_work work;
 	tOTDOA_HTTP_MESSAGE msg;
@@ -38,8 +40,6 @@ static struct http_stop_work_item {
 
 K_THREAD_STACK_DEFINE(http_workq_stack, CONFIG_OTDOA_HTTP_QUEUE_STACK_SIZE);
 K_THREAD_STACK_DEFINE(rs_thread_stack, CONFIG_OTDOA_RS_THREAD_STACK_SIZE);
-
-LOG_MODULE_DECLARE(otdoa, LOG_LEVEL_DBG);
 
 void rs_entry_point(void *p1, void *p2, void *p3);
 
@@ -74,7 +74,7 @@ int otdoa_stop(void)
 	int rc = k_thread_join(&rs_thread_data, K_MSEC(10000));
 
 	if (rc) {
-		OTDOA_LOG_ERR("Timed out waiting for RS Thread to terminate: %d", rc);
+		LOG_ERR("Timed out waiting for RS Thread to terminate: %d", rc);
 	}
 
 	free(message_slab_buffer);
@@ -84,7 +84,7 @@ int otdoa_stop(void)
 void *otdoa_message_alloc(size_t length)
 {
 	if (length > message_slab.info.block_size) {
-		OTDOA_LOG_ERR("message too large for allocation (%u bytes)", length);
+		LOG_ERR("message too large for allocation (%u bytes)", length);
 		return NULL;
 	}
 
@@ -92,7 +92,7 @@ void *otdoa_message_alloc(size_t length)
 	int rc = k_mem_slab_alloc(&message_slab, &alloc, K_NO_WAIT);
 
 	if (rc) {
-		OTDOA_LOG_ERR("Memory allocation failure: %d", rc);
+		LOG_ERR("Memory allocation failure: %d", rc);
 		return NULL;
 	}
 
@@ -107,13 +107,13 @@ int otdoa_message_free(void *msg)
 
 void rs_entry_point(void *p1, void *p2, void *p3)
 {
-	OTDOA_LOG_INF("RS Thread Started");
+	LOG_INF("RS Thread Started");
 
 	while (!atomic_get(&gOTDOA.terminate)) {
 		void *msg = k_fifo_get(&rs_fifo, K_FOREVER);
 
 		if (!msg) {
-			OTDOA_LOG_INF("RS Thread timed out with no message");
+			LOG_INF("RS Thread timed out with no message");
 			continue;
 		}
 
@@ -121,7 +121,7 @@ void rs_entry_point(void *p1, void *p2, void *p3)
 		otdoa_message_free(msg);
 	}
 
-	OTDOA_LOG_INF("RS Thread Exit");
+	LOG_INF("RS Thread Exit");
 	atomic_clear(&gOTDOA.terminate);
 }
 
@@ -149,7 +149,7 @@ void otdoa_queue_handle_http(struct k_work *work)
 int otdoa_queue_http_message(const void *msg, const size_t length)
 {
 	if (!msg) {
-		OTDOA_LOG_ERR("no message");
+		LOG_ERR("no message");
 		return -1;
 	}
 
@@ -157,7 +157,7 @@ int otdoa_queue_http_message(const void *msg, const size_t length)
 
 	work = otdoa_message_alloc(sizeof(struct k_work)+length);
 	if (!work) {
-		OTDOA_LOG_ERR("failed to alloate http message");
+		LOG_ERR("failed to alloate http message");
 		return -1;
 	}
 
@@ -170,7 +170,7 @@ int otdoa_queue_http_message(const void *msg, const size_t length)
 		/* 0 and 2 are success values, but imply the work item has be
 		 * double-allocated
 		 */
-		OTDOA_LOG_ERR("failed to queue http message: %d", rc);
+		LOG_ERR("failed to queue http message: %d", rc);
 		otdoa_message_free(work);
 		return -1;
 	}
@@ -181,14 +181,14 @@ int otdoa_queue_http_message(const void *msg, const size_t length)
 int otdoa_queue_rs_message(const void *pv_msg, const size_t length)
 {
 	if (!pv_msg) {
-		OTDOA_LOG_ERR("no message");
+		LOG_ERR("no message");
 		return -1;
 	}
 
 	void *msg = otdoa_message_alloc(length);
 
 	if (!msg) {
-		OTDOA_LOG_ERR("failed to allocate rs message");
+		LOG_ERR("failed to allocate rs message");
 		return -1;
 	}
 
@@ -219,7 +219,7 @@ int32_t otdoa_queue_stop_request(int fail_or_cancel)
 		/* 0 and 2 are success values, but imply the work item has be
 		 * double-allocated
 		 */
-		OTDOA_LOG_ERR("failed to queue http stop message: %d", rc);
+		LOG_ERR("failed to queue http stop message: %d", rc);
 		return -1;
 	}
 

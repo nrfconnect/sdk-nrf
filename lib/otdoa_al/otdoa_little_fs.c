@@ -16,7 +16,7 @@
 #include <zephyr/storage/flash_map.h>
 #include "zephyr/logging/log.h"
 
-LOG_MODULE_DECLARE(main);
+LOG_MODULE_DECLARE(otdoa_al);
 
 /* Matches LFS_NAME_MAX */
 #define MAX_PATH_LEN 255

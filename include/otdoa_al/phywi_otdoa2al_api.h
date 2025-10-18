@@ -52,17 +52,6 @@ int otdoa_timers_init(void);
 int otdoa_timer_start(unsigned int uTimerNo, unsigned int uDurationMS);
 int otdoa_timer_stop(unsigned int uTimerNo);
 int otdoa_timer_active(unsigned int uTimerNo);
-
-/***************************************************************************
- * Log Functions
- */
-unsigned int otdoa_log_level_set(int level, const char *backend);
-void otdoa_log_err(const char *fmt, ...);
-void otdoa_log_wrn(const char *fmt, ...);
-void otdoa_log_inf(const char *fmt, ...);
-void otdoa_log_dbg(const char *fmt, ...);
-void otdoa_log_hexdump_inf(void *data, unsigned int length, char *str);
-
 /***************************************************************************
  * PRS Sample Buffering Functions
  *  Alloc/free of  sample buffers

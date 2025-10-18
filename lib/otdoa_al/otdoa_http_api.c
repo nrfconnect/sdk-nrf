@@ -11,6 +11,9 @@
 #include "otdoa_http.h"
 #include "otdoa_al_log.h"
 
+LOG_MODULE_DECLARE(otdoa_al, LOG_LEVEL_INF);
+
+
 static otdoa_api_callback_t al_event_callback;
 /**
  * @brief Initialize the OTDOA AL library
@@ -29,13 +32,13 @@ int32_t otdoa_al_init(otdoa_api_callback_t event_callback)
 	int rc = modem_key_mgmt_exists(CONFIG_OTDOA_TLS_SEC_TAG, OTDOA_TLS_CERT_TYPE, &exists);
 
 	if (rc) {
-		OTDOA_LOG_ERR("otdoa_al_init: failed to check for TLS certificate in tag %d: %d",
+		LOG_ERR("otdoa_al_init: failed to check for TLS certificate in tag %d: %d",
 			      CONFIG_OTDOA_TLS_SEC_TAG, rc);
 		return OTDOA_API_INTERNAL_ERROR;
 	}
 
 	if (!exists) {
-		OTDOA_LOG_ERR("otdoa_al_init: TLS certificate not found in tag %d",
+		LOG_ERR("otdoa_al_init: TLS certificate not found in tag %d",
 			      CONFIG_OTDOA_TLS_SEC_TAG);
 		return OTDOA_API_INTERNAL_ERROR;
 	}
@@ -47,7 +50,7 @@ int32_t otdoa_al_init(otdoa_api_callback_t event_callback)
 void otdoa_http_invoke_callback_dl_compl(int status)
 {
 	if (!al_event_callback) {
-		otdoa_log_err("No registered callback");
+		LOG_ERR("No registered callback");
 		return;
 	}
 
@@ -61,7 +64,7 @@ void otdoa_http_invoke_callback_dl_compl(int status)
 void otdoa_http_invoke_callback_ul_compl(int status)
 {
 	if (!al_event_callback) {
-		otdoa_log_err("No registered callback");
+		LOG_ERR("No registered callback");
 		return;
 	}
 
@@ -85,7 +88,7 @@ int32_t otdoa_api_ubsa_download(const otdoa_api_ubsa_dl_req_t *p_dl_request,
 
 	if (ecgi == 0) {
 		rc = otdoa_nordic_at_get_ecgi_and_dlearfcn(&ecgi, &dlearfcn, &mcc, &mnc);
-		OTDOA_LOG_INF("otdoa_nordic_at_get_ecgi_and_dlearfcn() returned %d.  ECGI: %u", rc,
+		LOG_INF("otdoa_nordic_at_get_ecgi_and_dlearfcn() returned %d.  ECGI: %u", rc,
 			      ecgi);
 		if (rc == OTDOA_EVENT_FAIL_NO_DLEARFCN && ecgi != 0) {
 			/* got the ECGI OK but we miss the DLEARFCN. So default to 5230 */

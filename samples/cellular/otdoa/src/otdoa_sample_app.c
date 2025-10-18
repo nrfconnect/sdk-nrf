@@ -17,7 +17,7 @@
 
 #define UBSA_FILE_PATH "/lfs/ubsa.csv"
 
-LOG_MODULE_REGISTER(otdoa_sample, LOG_LEVEL_DBG);
+LOG_MODULE_DECLARE(otdoa_sample, LOG_LEVEL_INF);
 
 static K_SEM_DEFINE(lte_connected, 0, 1);
 

@@ -15,6 +15,8 @@
 
 #define CHECK_IP
 
+LOG_MODULE_DECLARE(otdoa_al, LOG_LEVEL_INF);
+
 struct modem_param_info MPI = {0};
 bool bModemInfoInit;
 
@@ -86,14 +88,14 @@ int tls_setup(int fd, const char *host)
 
 	nErr = setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
 	if (nErr) {
-		OTDOA_LOG_ERR("Failed to setup peer verification: %s", strerror(errno));
+		LOG_ERR("Failed to setup peer verification: %s", strerror(errno));
 		return nErr;
 	}
 
 	/* associate the socket with the security tag we have provisioned the certificate with */
 	nErr = setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, tls_sec_tag, sizeof(tls_sec_tag));
 	if (nErr) {
-		OTDOA_LOG_ERR("Failed to setup TLS sec tag: %s", strerror(errno));
+		LOG_ERR("Failed to setup TLS sec tag: %s", strerror(errno));
 		return nErr;
 	}
 
@@ -103,10 +105,10 @@ int tls_setup(int fd, const char *host)
 	if (!server) {
 		server = otdoa_http_get_download_url();
 	}
-	OTDOA_LOG_INF("tls_setup(%d, %s)", fd, server);
+	LOG_INF("tls_setup(%d, %s)", fd, server);
 	nErr = setsockopt(fd, SOL_TLS, TLS_HOSTNAME, server, strlen(server) + 1);
 	if (nErr) {
-		OTDOA_LOG_ERR("Failed to setup TLS Hostname: %s", strerror(errno));
+		LOG_ERR("Failed to setup TLS Hostname: %s", strerror(errno));
 		return nErr;
 	}
 
@@ -137,13 +139,13 @@ int http_bind(tOTDOA_HTTP_MEMBERS *pG, const char *pURL)
 		pURL = otdoa_http_get_download_url();
 	}
 
-	OTDOA_LOG_INF("Binding to server [%s]", pURL);
+	LOG_INF("Binding to server [%s]", pURL);
 
 	/* wait for successful bind */
 	int nRetry;
 
 	for (nRetry = 0; nRetry < MAX_BIND_RETRIES; nRetry++) {
-		OTDOA_LOG_DBG("Trying getaddrinfo() %d", nRetry);
+		LOG_DBG("Trying getaddrinfo() %d", nRetry);
 		rc = getaddrinfo(pURL, NULL, &hints, &pG->res);
 		if (rc == 0) {
 			break;
@@ -151,7 +153,7 @@ int http_bind(tOTDOA_HTTP_MEMBERS *pG, const char *pURL)
 		k_sleep(K_SECONDS(1));
 	}
 	if (nRetry >= MAX_BIND_RETRIES) {
-		OTDOA_LOG_ERR("getaddrinfo() retry %d failed, err: %s", nRetry,
+		LOG_ERR("getaddrinfo() retry %d failed, err: %s", nRetry,
 			      rc == EAI_SYSTEM ? strerror(errno) : gai_strerror(rc));
 		return -1;
 	}
@@ -161,15 +163,15 @@ int http_bind(tOTDOA_HTTP_MEMBERS *pG, const char *pURL)
 		while (info) {
 			if (!inet_ntop(AF_INET, &((struct sockaddr_in *)pG->res->ai_addr)->sin_addr,
 				       pG->szServerAddress, sizeof(pG->szServerAddress))) {
-				OTDOA_LOG_ERR("Failed to convert address to text form: %d %s",
+				LOG_ERR("Failed to convert address to text form: %d %s",
 					      errno, strerror(errno));
 				return -1;
 			}
-			OTDOA_LOG_DBG("Found address %s", pG->szServerAddress);
+			LOG_DBG("Found address %s", pG->szServerAddress);
 			info = info->ai_next;
 		}
 	}
-	OTDOA_LOG_INF("Server IP: %s", pG->szServerAddress);
+	LOG_INF("Server IP: %s", pG->szServerAddress);
 
 	if (pG->bDisableTLS) {
 		((struct sockaddr_in *)pG->res->ai_addr)->sin_port = htons(HTTP_PORT);
@@ -187,7 +189,7 @@ int http_bind(tOTDOA_HTTP_MEMBERS *pG, const char *pURL)
 void http_unbind(tOTDOA_HTTP_MEMBERS *pG)
 {
 	if (pG->res) {
-		OTDOA_LOG_INF("http_unbind()");
+		LOG_INF("http_unbind()");
 		freeaddrinfo(pG->res);
 		pG->res = NULL;
 	}
@@ -207,10 +209,10 @@ int http_connect(tOTDOA_HTTP_MEMBERS *pG, const char *tls_host)
 	bool bFound = false;
 	int proto = pG->bDisableTLS ? IPPROTO_TCP : IPPROTO_TLS_1_2;
 
-	OTDOA_LOG_INF("HTTP connect on protocol %d", proto);
+	LOG_INF("HTTP connect on protocol %d", proto);
 	pG->fdSocket = socket(AF_INET, SOCK_STREAM, proto);
 	if (pG->fdSocket == -1) {
-		OTDOA_LOG_ERR("failed to open socket");
+		LOG_ERR("failed to open socket");
 		return -1;
 	}
 
@@ -220,35 +222,35 @@ int http_connect(tOTDOA_HTTP_MEMBERS *pG, const char *tls_host)
 			bFound = true;
 			break;
 		}
-		OTDOA_LOG_DBG("Waiting for IP address... %s", pG->szModemAddress);
+		LOG_DBG("Waiting for IP address... %s", pG->szModemAddress);
 		k_sleep(K_SECONDS(1));
 	}
 
 	if (bFound) {
-		OTDOA_LOG_DBG("nrf9161 IP address %s", pG->szModemAddress);
+		LOG_DBG("nrf9161 IP address %s", pG->szModemAddress);
 	} else {
-		OTDOA_LOG_ERR("failed to get IP address\r\n");
+		LOG_ERR("failed to get IP address\r\n");
 		return -1;
 	}
 #endif
 
 	/* setup TLS socket options */
 	if (pG->bDisableTLS) {
-		OTDOA_LOG_WRN("Skipping TLS");
+		LOG_WRN("Skipping TLS");
 	} else {
 		nErr = tls_setup(pG->fdSocket, tls_host);
 		if (nErr) {
 			http_disconnect(pG);
-			OTDOA_LOG_ERR("tls_setup error %s", strerror(errno));
+			LOG_ERR("tls_setup error %s", strerror(errno));
 			return -2;
 		}
 	}
 	/* connect */
-	OTDOA_LOG_DBG("connect() on socket %d", pG->fdSocket);
+	LOG_DBG("connect() on socket %d", pG->fdSocket);
 	nErr = connect(pG->fdSocket, pG->res->ai_addr, sizeof(struct sockaddr_in));
 	if (nErr) {
-		OTDOA_LOG_ERR("connect failed: nErr = %d, %d -> %s", nErr, errno, strerror(errno));
-		OTDOA_LOG_ERR("connect failed: fdSocket = %d, ai_addr = %p", pG->fdSocket,
+		LOG_ERR("connect failed: nErr = %d, %d -> %s", nErr, errno, strerror(errno));
+		LOG_ERR("connect failed: fdSocket = %d, ai_addr = %p", pG->fdSocket,
 			      (void *)pG->res->ai_addr);
 		http_disconnect(pG);
 		return -3;
@@ -267,7 +269,7 @@ int http_disconnect(tOTDOA_HTTP_MEMBERS *pG)
 	int nReturn = -1;
 
 	if (pG->fdSocket >= 0) {
-		OTDOA_LOG_DBG("closing socket %d", pG->fdSocket);
+		LOG_DBG("closing socket %d", pG->fdSocket);
 		nReturn = close(pG->fdSocket);
 	}
 	pG->fdSocket = -1;
@@ -294,14 +296,14 @@ bool SetSocketBlocking(int fd, bool blocking)
 	int flags = zsock_fcntl(fd, F_GETFL, 0);
 
 	if (flags == -1) {
-		OTDOA_LOG_ERR("fcntl() returned %d. errno = %d", flags, errno);
+		LOG_ERR("fcntl() returned %d. errno = %d", flags, errno);
 		return false;
 	}
 	flags = blocking ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK);
 	bool rv = (zsock_fcntl(fd, F_SETFL, flags) == 0) ? true : false;
 
 	if (!rv) {
-		OTDOA_LOG_ERR("failed fctrl().  errno = %d", errno);
+		LOG_ERR("failed fctrl().  errno = %d", errno);
 	}
 	return rv;
 }
@@ -349,7 +351,7 @@ int otdoa_api_install_tls_cert(const char *tls_cert, const size_t cert_len)
 	int rc = modem_key_mgmt_exists(CONFIG_OTDOA_TLS_SEC_TAG, OTDOA_TLS_CERT_TYPE, &exists);
 
 	if (rc) {
-		OTDOA_LOG_ERR("Failed to check for certificate: %d", rc);
+		LOG_ERR("Failed to check for certificate: %d", rc);
 		return OTDOA_API_INTERNAL_ERROR;
 	}
 
@@ -359,16 +361,16 @@ int otdoa_api_install_tls_cert(const char *tls_cert, const size_t cert_len)
 		 */
 		rc = modem_key_mgmt_delete(CONFIG_OTDOA_TLS_SEC_TAG, OTDOA_TLS_CERT_TYPE);
 		if (rc) {
-			OTDOA_LOG_WRN("Failed to delete existing certificate: %d", rc);
+			LOG_WRN("Failed to delete existing certificate: %d", rc);
 		}
 	}
 
 	/* provision certificate to the modem */
-	OTDOA_LOG_DBG("Provisioning certificate");
+	LOG_DBG("Provisioning certificate");
 	rc = modem_key_mgmt_write(CONFIG_OTDOA_TLS_SEC_TAG, OTDOA_TLS_CERT_TYPE, tls_cert,
 				  cert_len);
 	if (rc) {
-		OTDOA_LOG_ERR("Failed to provision certificate: %d", rc);
+		LOG_ERR("Failed to provision certificate: %d", rc);
 		return OTDOA_API_INTERNAL_ERROR;
 	}
 

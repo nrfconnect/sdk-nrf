@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-PHYW
  */
 
- #include <zephyr/kernel.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
 
@@ -22,7 +22,7 @@ struct k_timer led_timer;
 /* forward reference */
 static void button_cb(uint32_t button_state, uint32_t has_changed);
 
-LOG_MODULE_REGISTER(gpio_log, LOG_LEVEL_DBG);
+LOG_MODULE_DECLARE(otdoa_sample, LOG_LEVEL_INF);
 
 static void led_timer_cb(struct k_timer *timer)
 {

@@ -11,7 +11,7 @@
 #include "otdoa_gpio.h"
 #include "otdoa_sample_app.h"
 
-LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(otdoa_sample, LOG_LEVEL_DBG);
 
 int main(void)
 {

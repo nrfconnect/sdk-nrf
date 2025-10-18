@@ -17,6 +17,8 @@
 
 #define DEFAULT_UBSA_DLEARFCN 5230
 
+LOG_MODULE_DECLARE(otdoa_al, LOG_LEVEL_INF);
+
 /*
  * Our own version of str_tok_r that stops on the first token found.
  * So it doesn't eat consecutive delimeters
@@ -96,11 +98,11 @@ int otdoa_nordic_at_parse_xmonitor_response(const char *const psz_resp, size_t u
 	uint16_t u16_mnc = 0;
 
 	if (!psz_resp) {
-		OTDOA_LOG_ERR("otdoa_nordic_at_parse_xmonitor_response(): NULL pointer\n");
+		LOG_ERR("otdoa_nordic_at_parse_xmonitor_response(): NULL pointer\n");
 		return OTDOA_API_INTERNAL_ERROR;
 	}
 	if (*psz_resp == '\0') {
-		OTDOA_LOG_ERR("otdoa_nordic_at_parse_xmonitor_response(): Empty string\n");
+		LOG_ERR("otdoa_nordic_at_parse_xmonitor_response(): Empty string\n");
 		return OTDOA_API_INTERNAL_ERROR;
 	}
 
@@ -194,7 +196,7 @@ int otdoa_nordic_at_parse_xmonitor_response(const char *const psz_resp, size_t u
 			break;
 		}
 		if (++n_token > XMONITOR_RESP_MAX_TOKENS) {
-			OTDOA_LOG_ERR("XMONITOR response: too many tokens");
+			LOG_ERR("XMONITOR response: too many tokens");
 			break;
 		}
 	}
@@ -239,11 +241,11 @@ error_exit:
 
 	if (i_ret != 0 && i_ret != OTDOA_EVENT_FAIL_NO_DLEARFCN) {
 		if (psz_resp) {
-			OTDOA_LOG_ERR("AT%%XMONITOR response %s", psz_resp);
+			LOG_ERR("AT%%XMONITOR response %s", psz_resp);
 		}
-		OTDOA_LOG_ERR("Failed to parse AT%%XMONITOR response.  returning %d\n", i_ret);
+		LOG_ERR("Failed to parse AT%%XMONITOR response.  returning %d\n", i_ret);
 	} else {
-		OTDOA_LOG_DBG("otdoa_nordic_at_parse_xmonitor_response: ECGI=%" PRIu32
+		LOG_DBG("otdoa_nordic_at_parse_xmonitor_response: ECGI=%" PRIu32
 			      " (0x%08X), DLEARFCN=%" PRIu32 " returning %d\n",
 			      u32_egci, (unsigned int)u32_egci, u32_dlearfcn, i_ret);
 	}
@@ -261,7 +263,7 @@ int otdoa_nordic_at_get_ecgi_and_dlearfcn(uint32_t *pu32_ecgi, uint32_t *pu32_dl
 	memset(monitor_buf, 0, sizeof(monitor_buf));
 	i_ret = nrf_modem_at_cmd(monitor_buf, sizeof(monitor_buf), "AT%%XMONITOR");
 	if (i_ret) {
-		OTDOA_LOG_ERR("otdoa_nordic_at_get_ecgi_and_dlearfcn: ERROR (%d) Failed to get "
+		LOG_ERR("otdoa_nordic_at_get_ecgi_and_dlearfcn: ERROR (%d) Failed to get "
 			      "MODEM Status\n",
 			      i_ret);
 		i_ret = OTDOA_EVENT_FAIL_BAD_MODEM_RESP;
@@ -302,7 +304,7 @@ int otdoa_nordic_at_get_imei_from_modem(void)
 
 	err = nrf_modem_at_cmd(imei_buf, sizeof(imei_buf), IMEI_QUERY);
 	if (err) {
-		OTDOA_LOG_ERR("Failed to get IMEI\n");
+		LOG_ERR("Failed to get IMEI\n");
 		return OTDOA_EVENT_FAIL_BAD_MODEM_RESP;
 	}
 
@@ -332,12 +334,12 @@ int otdoa_nordic_at_get_imei_from_modem(void)
 		len = NRF_IMEI_LEN;
 	}
 	strncpy((char *)otdoa_nordic_at_imei, p_imei_token, len);
-	OTDOA_LOG_INF("Got IMEI %s\n", otdoa_nordic_at_imei);
+	LOG_INF("Got IMEI %s\n", otdoa_nordic_at_imei);
 
 	return 0;
 
 error_return:
-	OTDOA_LOG_ERR("otdoa_nordic_at_get_imei_from_modem() invalid response %s", imei_buf);
+	LOG_ERR("otdoa_nordic_at_get_imei_from_modem() invalid response %s", imei_buf);
 	return OTDOA_EVENT_FAIL_BAD_MODEM_RESP;
 }
 
@@ -368,7 +370,7 @@ int otdoa_nordic_at_get_modem_version(char *psz_ver, unsigned int max_len)
 	int err = nrf_modem_at_cmd(resp, sizeof(resp), MODEM_VER_QUERY);
 
 	if (err) {
-		OTDOA_LOG_ERR("Failed to get modem version %d\n", err);
+		LOG_ERR("Failed to get modem version %d\n", err);
 		return OTDOA_EVENT_FAIL_BAD_MODEM_RESP;
 	}
 
@@ -376,7 +378,7 @@ int otdoa_nordic_at_get_modem_version(char *psz_ver, unsigned int max_len)
 	char *p_ver_token = strstr(resp, MODEM_VER_RESP);
 
 	if (!p_ver_token) {
-		OTDOA_LOG_ERR("Failed to parse modem version %s\n", resp);
+		LOG_ERR("Failed to parse modem version %s\n", resp);
 		return OTDOA_EVENT_FAIL_BAD_MODEM_RESP;
 	}
 	/* Find the end and null-terminate */
