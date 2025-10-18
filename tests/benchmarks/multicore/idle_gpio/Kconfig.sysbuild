@@ -6,16 +6,24 @@
 
 source "share/sysbuild/Kconfig"
 
+config ENABLE_CPUPPR
+	bool "Build image for CPU PPR"
+
 choice NETCORE
-	default NETCORE_REMOTE
+	default NETCORE_REMOTE if !ENABLE_CPUPPR
+	default NETCORE_REMOTE_SLEEP_FOREVER if ENABLE_CPUPPR
 
 config NETCORE_REMOTE
 	bool "Remote image"
 
+config NETCORE_REMOTE_SLEEP_FOREVER
+	bool "Remote sleep forever image"
+
 endchoice
 
 config NETCORE_IMAGE_NAME
-	default "remote" if NETCORE_REMOTE
+	default "remote_rad" if (NETCORE_REMOTE || NETCORE_REMOTE_SLEEP_FOREVER)
 
 config NETCORE_IMAGE_PATH
 	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_gpio/remote" if NETCORE_REMOTE
+	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever" if NETCORE_REMOTE_SLEEP_FOREVER
