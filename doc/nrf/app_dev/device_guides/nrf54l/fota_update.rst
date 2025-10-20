@@ -152,7 +152,7 @@ In |NCS|, you can build and program the :zephyr:code-sample:`smp-svr` as any oth
             west build -b *board_target* -- -DEXTRA_CONF_FILE=overlay-bt.conf
             west flash
 
-    .. group-tab:: nRF54L SoCs with HW cryptography support
+    .. group-tab:: nRF54L SoCs with hardware cryptography support
 
         .. note::
 

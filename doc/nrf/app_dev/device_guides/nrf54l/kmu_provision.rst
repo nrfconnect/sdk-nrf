@@ -7,10 +7,6 @@ Performing KMU provisioning
    :local:
    :depth: 2
 
-.. note::
-
-   The MCUboot bootloader does not yet support KMU for nRF54LM20.
-
 The nRF54L devices are equipped with Hardware Key Management Unit (KMU), that requires provisioning when in use.
 The |NCS| provides a west command, ``ncs-provision``, allowing to upload keys to the device though the Serial Write Debug (SWD) interface.
 

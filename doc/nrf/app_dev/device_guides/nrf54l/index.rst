@@ -21,26 +21,6 @@ Refer to the following information for the list of supported development kits (D
      - Board target
      - Documentation
      - Product pages
-   * - nRF54LV10 DK
-     - PCA10188
-     - | ``nrf54lv10dk/nrf54lv10a/cpuapp``
-       | ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
-       | ``nrf54lv10dk/nrf54lv10a/cpuflpr``
-       | ``nrf54lv10dk/nrf54lv10a/cpuflpr/xip``
-     - *Documentation not yet available*
-     - *Product pages not yet available*
-   * - :zephyr:board:`nrf54lm20dk`
-     - PCA10184
-     - | ``nrf54lm20dk/nrf54lm20a/cpuapp``
-       | ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
-       | ``nrf54lm20dk/nrf54lm20a/cpuflpr``
-       | ``nrf54lm20dk/nrf54lm20a/cpuflpr/xip``
-     - | `Datasheet <nRF54LM20A Datasheet_>`_
-       | `Quick Start app`_
-       | `User Guide <nRF54LM20 DK User Guide_>`_
-       | `nRF54LM20A Compatibility Matrix`_
-     - | `nRF54LM20 DK product page <nRF54LM20 DK_>`_
-       | `nRF54LM20A System-on-Chip (SoC) <nRF54LM20A System-on-Chip_>`_
    * - :zephyr:board:`nrf54l15dk`
      - PCA10156
      - | ``nrf54l15dk/nrf54l15/cpuapp``
@@ -66,6 +46,26 @@ Refer to the following information for the list of supported development kits (D
      - | `Datasheet <nRF54L15 Datasheet_>`_
        | `nRF54L05 Compatibility Matrix`_
      - | `nRF54L05 System-on-Chip (SoC) <nRF54L05_>`_
+   * - :zephyr:board:`nrf54lm20dk`
+     - PCA10184
+     - | ``nrf54lm20dk/nrf54lm20a/cpuapp``
+       | ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
+       | ``nrf54lm20dk/nrf54lm20a/cpuflpr``
+       | ``nrf54lm20dk/nrf54lm20a/cpuflpr/xip``
+     - | `Datasheet <nRF54LM20A Datasheet_>`_
+       | `Quick Start app`_
+       | `User Guide <nRF54LM20 DK User Guide_>`_
+       | `nRF54LM20A Compatibility Matrix`_
+     - | `nRF54LM20 DK product page <nRF54LM20 DK_>`_
+       | `nRF54LM20A System-on-Chip (SoC) <nRF54LM20A System-on-Chip_>`_
+   * - nRF54LV10 DK
+     - PCA10188
+     - | ``nrf54lv10dk/nrf54lv10a/cpuapp``
+       | ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
+       | ``nrf54lv10dk/nrf54lv10a/cpuflpr``
+       | ``nrf54lv10dk/nrf54lv10a/cpuflpr/xip``
+     - *Documentation not yet available*
+     - *Product pages not yet available*
 
 For the full list of supported protocols, see the :ref:`software maturity documentation<software_maturity>`.
 
