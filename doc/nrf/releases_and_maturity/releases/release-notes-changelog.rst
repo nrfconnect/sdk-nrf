@@ -408,6 +408,7 @@ Cellular samples
   * The :ref:`nrf_cloud_coap_cell_location` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for nRF Cloud's cellular location service.
   * The :ref:`nrf_cloud_coap_fota_sample` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for FOTA updates.
   * The :ref:`nrf_cloud_coap_device_message` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for device messages.
+  * The :ref:`nrf_cloud_mqtt_device_message` sample to demonstrate how to use the `nRF Cloud MQTT API`_ for device messages.
 
 * :ref:`nrf_cloud_rest_cell_location` sample:
 

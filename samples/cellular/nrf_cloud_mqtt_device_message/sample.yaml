@@ -1,0 +1,20 @@
+sample:
+  name: nRF Cloud MQTT Device message
+tests:
+  sample.cellular.nrf_cloud_mqtt_device_message:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - thingy91x/nrf9151/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - thingy91x/nrf9151/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
