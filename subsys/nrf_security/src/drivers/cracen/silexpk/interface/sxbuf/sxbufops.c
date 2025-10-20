@@ -16,7 +16,7 @@
 #endif
 
 /** Little endian function of sx_pk_ecop2mem() */
-void sx_pk_ecop2mem_le(const sx_ecop *op, uint8_t *mem, int sz)
+void sx_pk_ecop2mem_le(const sx_const_ecop *op, uint8_t *mem, int sz)
 {
 	int cursz = op->sz;
 	int diff = sz - cursz;
@@ -25,7 +25,7 @@ void sx_pk_ecop2mem_le(const sx_ecop *op, uint8_t *mem, int sz)
 	sx_clrpkmem(mem + cursz, diff);
 
 	uint8_t buf[SX_PK_MAX_OP_SZ];
-	uint8_t *ptr = op->bytes;
+	const uint8_t *ptr = op->bytes;
 
 	assert(cursz <= SX_PK_MAX_OP_SZ);
 	for (int i = 0; i < cursz; i += 1) {
@@ -35,7 +35,7 @@ void sx_pk_ecop2mem_le(const sx_ecop *op, uint8_t *mem, int sz)
 }
 
 /** Big endian function of sx_pk_ecop2mem() */
-void sx_pk_ecop2mem_be(const sx_ecop *op, uint8_t *mem, int sz)
+void sx_pk_ecop2mem_be(const sx_const_ecop *op, uint8_t *mem, int sz)
 {
 	int cursz = op->sz;
 	int diff = sz - cursz;
@@ -46,7 +46,7 @@ void sx_pk_ecop2mem_be(const sx_ecop *op, uint8_t *mem, int sz)
 	sx_wrpkmem(mem + diff, op->bytes, cursz);
 }
 
-void sx_pk_ecop2mem(const sx_ecop *op, uint8_t *mem, int sz)
+void sx_pk_ecop2mem(const sx_const_ecop *op, uint8_t *mem, int sz)
 {
 	sx_pk_ecop2mem_be(op, mem, sz);
 }
@@ -66,17 +66,22 @@ void sx_pk_op2vmem_le(const sx_op *op, uint8_t *mem)
 }
 
 /** Big endian function of sx_pk_op2vmem() */
-void sx_pk_op2vmem_be(const sx_op *op, uint8_t *mem)
+void sx_pk_op2vmem_be(const sx_const_op *op, uint8_t *mem)
 {
 	sx_wrpkmem(mem, op->bytes, op->sz);
 }
 
-void sx_pk_op2vmem(const sx_op *op, uint8_t *mem)
+void sx_pk_op2vmem(const sx_const_op *op, uint8_t *mem)
 {
 	sx_pk_op2vmem_be(op, mem);
 }
 
 int sx_op_size(sx_op *op)
+{
+	return op->sz;
+}
+
+int sx_const_op_size(sx_const_op *op)
 {
 	return op->sz;
 }
@@ -111,7 +116,7 @@ void sx_pk_mem2affpt(const uint8_t *mem_x, const uint8_t *mem_y, int sz, sx_pk_a
 	sx_pk_mem2ecop(mem_y, sz, &op->y);
 }
 
-void sx_pk_affpt2mem(const sx_pk_affine_point *op, uint8_t *mem_x, uint8_t *mem_y, int sz)
+void sx_pk_affpt2mem(const sx_pk_const_affine_point *op, uint8_t *mem_x, uint8_t *mem_y, int sz)
 {
 	sx_pk_ecop2mem(&op->x, mem_x, sz);
 	sx_pk_ecop2mem(&op->y, mem_y, sz);

@@ -148,7 +148,7 @@ static void ecdsa_write_pk(const uint8_t *pubkey, uint8_t *x, uint8_t *y, size_t
 	sx_wrpkmem(y, pubkey + opsz, opsz);
 }
 
-static void ecdsa_write_sig(const struct cracen_signature *sig, uint8_t *r, uint8_t *s,
+static void ecdsa_write_sig(const struct cracen_const_signature *sig, uint8_t *r, uint8_t *s,
 			    size_t opsz)
 {
 	sx_wrpkmem(r, sig->r, opsz);
@@ -524,10 +524,7 @@ int cracen_ecdsa_verify_digest(const uint8_t *pubkey, const uint8_t *digest, con
 
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecdsa_verify inputs;
-	struct cracen_signature internal_signature = {0};
-
-	internal_signature.r = (uint8_t *)signature;
-	internal_signature.s = (uint8_t *)signature + opsz;
+	struct cracen_const_signature internal_signature = {.r = signature, .s = signature + opsz};
 
 	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECDSA_VER);
 	if (pkreq.status) {

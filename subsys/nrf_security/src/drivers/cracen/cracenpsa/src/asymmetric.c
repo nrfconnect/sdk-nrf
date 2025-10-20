@@ -66,7 +66,7 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 				return status;
 			}
 
-			struct sx_buf label = {salt_length, (uint8_t *)salt};
+			struct sx_const_buf label = {salt_length, salt};
 
 			if (dir == CRACEN_ENCRYPT) {
 				sx_status = cracen_rsa_oaep_encrypt(hashalg, &pubkey, &text, &label,

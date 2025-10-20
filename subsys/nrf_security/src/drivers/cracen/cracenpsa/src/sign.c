@@ -524,7 +524,7 @@ static psa_status_t cracen_signature_rsa_verify(bool is_message,
 	int sx_status;
 	size_t key_bits_attr = psa_get_key_bits(attributes);
 	struct cracen_rsa_key privkey = {0};
-	struct cracen_signature sign = {0};
+	struct cracen_const_signature sign = {.sz = signature_length, .r = signature};
 	struct sxhashalg hashalg = {0};
 	const struct sxhashalg *hashalgpointer = &hashalg;
 	struct sx_buf modulus;
@@ -567,8 +567,7 @@ static psa_status_t cracen_signature_rsa_verify(bool is_message,
 	} else {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
-	sign.sz = signature_length;
-	sign.r = (uint8_t *)signature;
+
 	if (PSA_ALG_IS_RSA_PSS(alg) && IS_ENABLED(PSA_NEED_CRACEN_RSA_PSS)) {
 		if (is_message) {
 			sx_status = cracen_rsa_pss_verify_message(&privkey, &sign, hashalgpointer,

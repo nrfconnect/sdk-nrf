@@ -225,12 +225,12 @@ static psa_status_t check_wstr_publ_key_for_ecdh(psa_ecc_family_t curve_family, 
 	psa_status_t psa_status;
 	const struct sx_pk_ecurve *curve;
 
-	sx_pk_affine_point publ_key_pnt = {};
+	sx_pk_const_affine_point publ_key_pnt = {};
 
-	publ_key_pnt.x.bytes = (uint8_t *)&data[1];
+	publ_key_pnt.x.bytes = &data[1];
 	publ_key_pnt.x.sz = priv_key_size;
 
-	publ_key_pnt.y.bytes = (uint8_t *)&data[1 + priv_key_size];
+	publ_key_pnt.y.bytes = &data[1 + priv_key_size];
 	publ_key_pnt.y.sz = priv_key_size;
 
 	psa_status = cracen_ecc_get_ecurve_from_psa(curve_family, curve_bits, &curve);
@@ -496,13 +496,13 @@ static psa_status_t export_spake2p_public_key_from_keypair(const psa_key_attribu
 	size_t key_bits_attr = psa_get_key_bits(attributes);
 	psa_ecc_family_t psa_curve = PSA_KEY_TYPE_SPAKE2P_GET_FAMILY(psa_get_key_type(attributes));
 	const struct sx_pk_ecurve *sx_curve;
-	uint8_t *w0;
-	uint8_t *w1;
+	const uint8_t *w0;
+	const uint8_t *w1;
 
 	switch (type) {
 	case PSA_KEY_TYPE_SPAKE2P_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1):
-		w0 = (uint8_t *)priv_key;
-		w1 = (uint8_t *)priv_key + CRACEN_P256_KEY_SIZE;
+		w0 = priv_key;
+		w1 = priv_key + CRACEN_P256_KEY_SIZE;
 		status = cracen_ecc_get_ecurve_from_psa(psa_curve, key_bits_attr, &sx_curve);
 		if (status != PSA_SUCCESS) {
 			return status;
@@ -1093,7 +1093,14 @@ static psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attribu
 	}
 
 	/* Generate n and d */
-	status = silex_statuscodes_to_psa(sx_rsa_keygen(&p, &q, &e, &n, NULL, &d));
+	sx_const_op c_p;
+	sx_const_op c_q;
+	sx_const_op c_e;
+
+	sx_get_const_op(&p, &c_p);
+	sx_get_const_op(&q, &c_q);
+	sx_get_const_op(&e, &c_e);
+	status = silex_statuscodes_to_psa(sx_rsa_keygen(&c_p, &c_q, &c_e, &n, NULL, &d));
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}

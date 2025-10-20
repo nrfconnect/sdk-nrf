@@ -158,9 +158,9 @@ static int rsagenpriv_crt_finish(struct sx_pk_acq_req *pkreq, size_t keysz, uint
 	int sx_status;
 	uint8_t *wmem = workmem + GENPRIVKEY_WORKMEM_OFST(keysz);
 	size_t primefactorsz = keysz >> 1;
-	sx_op p;
-	sx_op q;
-	sx_op privexp;
+	sx_const_op p;
+	sx_const_op q;
+	sx_const_op privexp;
 
 	/* p and q come out of the earlier key-gen call in workmem */
 	p.bytes = wmem;
@@ -188,7 +188,7 @@ static int rsagenpriv_crt_finish(struct sx_pk_acq_req *pkreq, size_t keysz, uint
 		return sx_status;
 	}
 
-	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(pkreq->req);
+	const uint8_t **outputs = sx_pk_get_output_ops(pkreq->req);
 
 	if (pkreq->status != SX_OK) {
 		sx_pk_release_req(pkreq->req);
@@ -247,8 +247,8 @@ static int miller_rabin_get_random(uint8_t *workmem, struct cracen_rsacheckpq *r
 		 */
 		cracen_be_add(workmem, candidatesz, 1);
 		uint8_t *candprime = get_candidate_prime(rsacheckpq);
-		struct sx_buf random;
-		struct sx_buf candidate;
+		struct sx_const_buf random;
+		struct sx_const_buf candidate;
 
 		random.bytes = workmem;
 		random.sz = candidatesz;
@@ -570,9 +570,9 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 
 	struct sx_pk_acq_req pkreq;
 	size_t primefactorsz = keysz >> 1;
-	sx_op p;
-	sx_op q;
-	sx_op pubexp_struct;
+	sx_const_op p;
+	sx_const_op q;
+	sx_const_op pubexp_struct;
 
 	p.bytes = wmem;
 	p.sz = primefactorsz;
