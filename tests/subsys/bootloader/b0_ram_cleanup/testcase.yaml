@@ -1,0 +1,12 @@
+common:
+  sysbuild: true
+  tags:
+    - b0
+    - ci_tests_subsys_bootloader
+
+tests:
+  b0.cleanup_ram:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
