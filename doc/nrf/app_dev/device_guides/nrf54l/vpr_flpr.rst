@@ -23,14 +23,6 @@ The following section provides a support overview for various FLPR targets:
      - Zephyr build target
      - Kernel support
      - Supported drivers
-   * - nRF54LM20A FLPR running from SRAM
-     - ``nrf54lm20dk/nrf54lm20a/cpuflpr``
-     - Experimental
-     - --
-   * - nRF54LM20A FLPR running from RRAM
-     - ``nrf54lm20dk/nrf54lm20a/cpuflpr/xip``
-     - Experimental
-     - --
    * - nRF54L15 FLPR running from SRAM
      - ``nrf54l15dk/nrf54l15/cpuflpr``
      - Supported
@@ -59,6 +51,22 @@ The following section provides a support overview for various FLPR targets:
    * - nRF54L05 FLPR running from RRAM
      - Not available
      - --
+     - --
+   * - nRF54LM20A FLPR running from SRAM
+     - ``nrf54lm20dk/nrf54lm20a/cpuflpr``
+     - Experimental
+     - --
+   * - nRF54LM20A FLPR running from RRAM
+     - ``nrf54lm20dk/nrf54lm20a/cpuflpr/xip``
+     - Experimental
+     - --
+   * - nRF54LV10 FLPR running from SRAM
+     - ``nrf54lv10dk/nrf54lv10a/cpuflpr``
+     - Experimental
+     - --
+   * - nRF54LV10 FLPR running from RRAM
+     - ``nrf54lv10dk/nrf54lv10a/cpuflpr/xip``
+     - Experimental
      - --
 
 .. _vpr_flpr_nrf54l_initiating:
