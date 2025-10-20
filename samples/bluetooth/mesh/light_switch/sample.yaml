@@ -16,6 +16,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -27,6 +28,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     tags:
       - bluetooth
       - ci_build
@@ -41,6 +43,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -48,6 +51,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args: OVERLAY_CONFIG=overlay-lpn.conf
     tags:
       - bluetooth
