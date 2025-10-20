@@ -68,8 +68,7 @@ static size_t test_tone_size;
  * An improvement would be to have the USB convert incoming data to the format it requires.
  */
 static struct audio_metadata decoder_meta = {.data_coding = PCM,
-					     .data_len_us = CONFIG_AUDIO_FRAME_DURATION_US,
-					     .sample_rate_hz = CONFIG_AUDIO_SAMPLE_RATE_48000_HZ,
+					     .sample_rate_hz = 48000,
 					     .bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
 					     .carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
 					     .bytes_per_location = PCM_NUM_BYTES_MONO,
