@@ -1,0 +1,20 @@
+common:
+  sysbuild: true
+  tags:
+    - ci_tests_benchmarks_current_consumption
+    - ppk_power_measure
+tests:
+  benchmarks.current_consumption.ship_mode:
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_args:
+      - CONF_FILE="${ZEPHYR_NRF_MODULE_DIR}/samples/zephyr/drivers/regulator/ship_mode/prj.conf"
+      - CONFIG_BOOT_DELAY=4000
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_ship_mode"
+    timeout: 80
