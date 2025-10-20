@@ -25,9 +25,6 @@
 extern "C" {
 #endif
 
-/** @brief TLS is not used. */
-#define REST_CLIENT_SEC_TAG_NO_SEC -1
-
 /** @brief Use the default TLS peer verification; TLS_PEER_VERIFY_REQUIRED. */
 #define REST_CLIENT_TLS_DEFAULT_PEER_VERIFY -1
 
@@ -63,7 +60,7 @@ struct rest_client_req_context {
 	/** Defines whether the connection should remain after API call. Default: false. */
 	bool keep_alive;
 
-	/** Security tag. Default: @ref REST_CLIENT_SEC_TAG_NO_SEC. */
+	/** Security tag. Default: SEC_TAG_TLS_INVALID. */
 	int sec_tag;
 
 	/** Indicates the preference for peer verification.

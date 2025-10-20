@@ -227,7 +227,7 @@ static int rest_client_sckt_connect(int *const fd,
 		}
 	}
 
-	proto = (sec_tag == REST_CLIENT_SEC_TAG_NO_SEC) ? IPPROTO_TCP : IPPROTO_TLS_1_2;
+	proto = (sec_tag == SEC_TAG_TLS_INVALID) ? IPPROTO_TCP : IPPROTO_TLS_1_2;
 	*fd = zsock_socket(addr_info->ai_family, SOCK_STREAM, proto);
 	if (*fd == -1) {
 		LOG_ERR("Failed to open socket, error: %d", errno);
@@ -235,7 +235,7 @@ static int rest_client_sckt_connect(int *const fd,
 		goto clean_up;
 	}
 
-	if (sec_tag >= 0) {
+	if (sec_tag != SEC_TAG_TLS_INVALID) {
 		ret = rest_client_sckt_tls_setup(*fd, hostname, sec_tag, tls_peer_verify);
 		if (ret) {
 			ret = -EACCES;
@@ -377,7 +377,7 @@ void rest_client_request_defaults_set(struct rest_client_req_context *req_ctx)
 
 	req_ctx->connect_socket = REST_CLIENT_SCKT_CONNECT;
 	req_ctx->keep_alive = false;
-	req_ctx->sec_tag = REST_CLIENT_SEC_TAG_NO_SEC;
+	req_ctx->sec_tag = SEC_TAG_TLS_INVALID;
 	req_ctx->tls_peer_verify = REST_CLIENT_TLS_DEFAULT_PEER_VERIFY;
 	req_ctx->http_method = HTTP_GET;
 	req_ctx->timeout_ms = CONFIG_REST_CLIENT_REQUEST_TIMEOUT * MSEC_PER_SEC;
