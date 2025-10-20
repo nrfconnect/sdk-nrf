@@ -61,8 +61,9 @@ struct sx_pk_cmd_def;
  *
  * @return Acquired acceleration request for this operation
  */
-static inline struct sx_pk_acq_req
-sx_async_mod_single_op_cmd_go(const struct sx_pk_cmd_def *cmd, const sx_op *modulo, const sx_op *b)
+static inline struct sx_pk_acq_req sx_async_mod_single_op_cmd_go(const struct sx_pk_cmd_def *cmd,
+								 const sx_const_op *modulo,
+								 const sx_const_op *b)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_mod_single_op_cmd inputs;
@@ -74,8 +75,8 @@ sx_async_mod_single_op_cmd_go(const struct sx_pk_cmd_def *cmd, const sx_op *modu
 
 	/* convert and transfer operands */
 	int sizes[] = {
-		sx_op_size(modulo),
-		sx_op_size(b),
+		sx_const_op_size(modulo),
+		sx_const_op_size(b),
 	};
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
@@ -123,8 +124,8 @@ sx_async_mod_single_op_cmd_go(const struct sx_pk_cmd_def *cmd, const sx_op *modu
  * @see sx_async_mod_single_op_cmd_go() and sx_async_finish_single()
  * for an asynchronous version
  */
-static inline int sx_mod_single_op_cmd(const struct sx_pk_cmd_def *cmd, const sx_op *modulo,
-				       const sx_op *b, sx_op *result)
+static inline int sx_mod_single_op_cmd(const struct sx_pk_cmd_def *cmd, const sx_const_op *modulo,
+				       const sx_const_op *b, sx_op *result)
 {
 	struct sx_pk_acq_req pkreq;
 	int status;
@@ -164,8 +165,8 @@ static inline int sx_mod_single_op_cmd(const struct sx_pk_cmd_def *cmd, const sx
  */
 static inline struct sx_pk_acq_req sx_async_mod_cmd_go(struct sx_pk_cnx *cnx,
 						       const struct sx_pk_cmd_def *cmd,
-						       const sx_op *modulo, const sx_op *a,
-						       const sx_op *b)
+						       const sx_const_op *modulo,
+						       const sx_const_op *a, const sx_const_op *b)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_mod_cmd inputs;
@@ -177,9 +178,9 @@ static inline struct sx_pk_acq_req sx_async_mod_cmd_go(struct sx_pk_cnx *cnx,
 
 	/* convert and transfer operands */
 	int sizes[] = {
-		sx_op_size(modulo),
-		sx_op_size(a),
-		sx_op_size(b),
+		sx_const_op_size(modulo),
+		sx_const_op_size(a),
+		sx_const_op_size(b),
 	};
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
@@ -228,8 +229,8 @@ static inline struct sx_pk_acq_req sx_async_mod_cmd_go(struct sx_pk_cnx *cnx,
  * for an asynchronous version
  */
 static inline int sx_mod_primitive_cmd(struct sx_pk_cnx *cnx, const struct sx_pk_cmd_def *cmd,
-				       const sx_op *modulo, const sx_op *a, const sx_op *b,
-				       sx_op *result)
+				       const sx_const_op *modulo, const sx_const_op *a,
+				       const sx_const_op *b, sx_op *result)
 {
 	struct sx_pk_acq_req pkreq;
 	int status;
@@ -262,8 +263,8 @@ static inline int sx_mod_primitive_cmd(struct sx_pk_cnx *cnx, const struct sx_pk
  *
  * @see sx_async_finish_single(), sx_mod_inv()
  */
-static inline struct sx_pk_acq_req sx_async_mod_inv_go(struct sx_pk_cnx *cnx, const sx_op *modulo,
-						       const sx_op *b)
+static inline struct sx_pk_acq_req
+sx_async_mod_inv_go(struct sx_pk_cnx *cnx, const sx_const_op *modulo, const sx_const_op *b)
 {
 	return sx_async_mod_single_op_cmd_go(SX_PK_CMD_ODD_MOD_INV, modulo, b);
 }
@@ -291,7 +292,7 @@ static inline struct sx_pk_acq_req sx_async_mod_inv_go(struct sx_pk_cnx *cnx, co
  *
  * @see sx_async_mod_inv_go() for an asynchronous verion
  */
-static inline int sx_mod_inv(struct sx_pk_cnx *cnx, const sx_op *modulo, const sx_op *b,
+static inline int sx_mod_inv(struct sx_pk_cnx *cnx, const sx_const_op *modulo, const sx_const_op *b,
 			     sx_op *result)
 {
 	struct sx_pk_acq_req pkreq;
@@ -327,8 +328,9 @@ static inline int sx_mod_inv(struct sx_pk_cnx *cnx, const sx_op *modulo, const s
  *
  * @see sx_mod_exp() for the synchronous version
  */
-static inline struct sx_pk_acq_req sx_async_mod_exp_go(struct sx_pk_cnx *cnx, const sx_op *input,
-						       const sx_op *e, const sx_op *m)
+static inline struct sx_pk_acq_req sx_async_mod_exp_go(struct sx_pk_cnx *cnx,
+						       const sx_const_op *input,
+						       const sx_const_op *e, const sx_const_op *m)
 {
 	return sx_async_mod_cmd_go(cnx, SX_PK_CMD_MOD_EXP, m, input, e);
 }
@@ -376,8 +378,8 @@ static inline void sx_async_mod_exp_end(sx_pk_req *req, sx_op *result)
  * @see sx_async_mod_exp_go(), sx_async_mod_exp_end()
  * for an asynchronous version
  */
-static inline int sx_mod_exp(struct sx_pk_cnx *cnx, const sx_op *input, const sx_op *e,
-			     const sx_op *m, sx_op *result)
+static inline int sx_mod_exp(struct sx_pk_cnx *cnx, const sx_const_op *input, const sx_const_op *e,
+			     const sx_const_op *m, sx_op *result)
 {
 	struct sx_pk_acq_req pkreq;
 	int status;
@@ -421,10 +423,10 @@ static inline int sx_mod_exp(struct sx_pk_cnx *cnx, const sx_op *input, const sx
  *
  * @see sx_async_crt_mod_exp_end()
  */
-static inline struct sx_pk_acq_req sx_async_crt_mod_exp_go(struct sx_pk_cnx *cnx, const sx_op *in,
-							   const sx_op *p, const sx_op *q,
-							   const sx_op *dp, const sx_op *dq,
-							   const sx_op *qinv)
+static inline struct sx_pk_acq_req
+sx_async_crt_mod_exp_go(struct sx_pk_cnx *cnx, const sx_const_op *in, const sx_const_op *p,
+			const sx_const_op *q, const sx_const_op *dp, const sx_const_op *dq,
+			const sx_const_op *qinv)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_crt_mod_exp inputs;
@@ -435,8 +437,8 @@ static inline struct sx_pk_acq_req sx_async_crt_mod_exp_go(struct sx_pk_cnx *cnx
 	}
 
 	/* convert and transfer operands */
-	int sizes[] = {sx_op_size(p),  sx_op_size(q),  sx_op_size(in),
-		       sx_op_size(dp), sx_op_size(dq), sx_op_size(qinv)};
+	int sizes[] = {sx_const_op_size(p),  sx_const_op_size(q),  sx_const_op_size(in),
+		       sx_const_op_size(dp), sx_const_op_size(dq), sx_const_op_size(qinv)};
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
@@ -504,9 +506,9 @@ static inline void sx_async_crt_mod_exp_end(sx_pk_req *req, sx_op *result)
  * @see sx_async_crt_mod_exp_go(), sx_async_crt_mod_exp_end()
  * for an asynchronous version
  */
-static inline int sx_crt_mod_exp(struct sx_pk_cnx *cnx, const sx_op *in, const sx_op *p,
-				 const sx_op *q, const sx_op *dp, const sx_op *dq,
-				 const sx_op *qinv, sx_op *result)
+static inline int sx_crt_mod_exp(struct sx_pk_cnx *cnx, const sx_const_op *in, const sx_const_op *p,
+				 const sx_const_op *q, const sx_const_op *dp, const sx_const_op *dq,
+				 const sx_const_op *qinv, sx_op *result)
 {
 	struct sx_pk_acq_req pkreq;
 	int status;
@@ -535,8 +537,9 @@ static inline int sx_crt_mod_exp(struct sx_pk_cnx *cnx, const sx_op *in, const s
 
  * @return Acquired acceleration request for this operation
  */
-static inline struct sx_pk_acq_req sx_async_rsa_keygen_go(const sx_op *p, const sx_op *q,
-							  const sx_op *public_expo)
+static inline struct sx_pk_acq_req sx_async_rsa_keygen_go(const sx_const_op *p,
+							  const sx_const_op *q,
+							  const sx_const_op *public_expo)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_rsa_keygen inputs;
@@ -547,7 +550,7 @@ static inline struct sx_pk_acq_req sx_async_rsa_keygen_go(const sx_op *p, const 
 	}
 
 	/* convert and transfer operands */
-	int sizes[] = {sx_op_size(p), sx_op_size(q), sx_op_size(public_expo)};
+	int sizes[] = {sx_const_op_size(p), sx_const_op_size(q), sx_const_op_size(public_expo)};
 
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
@@ -621,8 +624,9 @@ static inline void sx_async_rsa_keygen_end(sx_pk_req *req, sx_op *n, sx_op *lamb
  * @see sx_async_rsa_keygen_go(), sx_async_rsa_keygen_end()
  * for an asynchronous version
  */
-static inline int sx_rsa_keygen(const sx_op *p, const sx_op *q, const sx_op *public_expo, sx_op *n,
-				sx_op *lambda_n, sx_op *privkey)
+static inline int sx_rsa_keygen(const sx_const_op *p, const sx_const_op *q,
+				const sx_const_op *public_expo, sx_op *n, sx_op *lambda_n,
+				sx_op *privkey)
 {
 	struct sx_pk_acq_req pkreq;
 	int status;
@@ -655,8 +659,9 @@ static inline int sx_rsa_keygen(const sx_op *p, const sx_op *q, const sx_op *pub
  *
  * @see sx_async_rsa_crt_keyparams_end() and sx_async_rsa_crt_keyparams()
  */
-static inline struct sx_pk_acq_req sx_async_rsa_crt_keyparams_go(const sx_op *p, const sx_op *q,
-								 const sx_op *privkey)
+static inline struct sx_pk_acq_req sx_async_rsa_crt_keyparams_go(const sx_const_op *p,
+								 const sx_const_op *q,
+								 const sx_const_op *privkey)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_rsa_crt_keyparams inputs;
@@ -667,7 +672,7 @@ static inline struct sx_pk_acq_req sx_async_rsa_crt_keyparams_go(const sx_op *p,
 	}
 
 	/* convert and transfer operands */
-	int sizes[] = {sx_op_size(p), sx_op_size(q), sx_op_size(privkey)};
+	int sizes[] = {sx_const_op_size(p), sx_const_op_size(q), sx_const_op_size(privkey)};
 
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
@@ -741,8 +746,9 @@ static inline void sx_async_rsa_crt_keyparams_end(sx_pk_req *req, sx_op *dp, sx_
  * @see sx_async_rsa_crt_keyparams_go(), sx_async_rsa_crt_keyparams_end()
  * for an asynchronous version
  */
-static inline int sx_rsa_crt_keyparams(const sx_op *p, const sx_op *q, const sx_op *privkey,
-				       sx_op *dp, sx_op *dq, sx_op *qinv)
+static inline int sx_rsa_crt_keyparams(const sx_const_op *p, const sx_const_op *q,
+				       const sx_const_op *privkey, sx_op *dp, sx_op *dq,
+				       sx_op *qinv)
 {
 	struct sx_pk_acq_req pkreq;
 	int status;
@@ -782,7 +788,8 @@ static inline int sx_rsa_crt_keyparams(const sx_op *p, const sx_op *q, const sx_
  *
  * @see sx_miller_rabin() for a synchronous version
  */
-static inline struct sx_pk_acq_req sx_async_miller_rabin_go(const sx_op *n, const sx_op *a)
+static inline struct sx_pk_acq_req sx_async_miller_rabin_go(const sx_const_op *n,
+							    const sx_const_op *a)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_miller_rabin inputs;
@@ -793,7 +800,7 @@ static inline struct sx_pk_acq_req sx_async_miller_rabin_go(const sx_op *n, cons
 	}
 
 	/* convert and transfer operands */
-	int sizes[] = {sx_op_size(n), sx_op_size(a)};
+	int sizes[] = {sx_const_op_size(n), sx_const_op_size(a)};
 
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
@@ -833,7 +840,7 @@ static inline struct sx_pk_acq_req sx_async_miller_rabin_go(const sx_op *n, cons
  * @see sx_async_miller_rabin_go() for an asynchronous version
  */
 
-static inline int sx_miller_rabin(const sx_op *n, const sx_op *a)
+static inline int sx_miller_rabin(const sx_const_op *n, const sx_const_op *a)
 {
 	struct sx_pk_acq_req pkreq;
 	uint32_t status;
