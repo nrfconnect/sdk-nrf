@@ -7,6 +7,9 @@ common:
     type: one_line
     regex:
       - "(.*) entering ship mode"
+  tags:
+    - ci_samples_zephyr_drivers_regulator
+
 tests:
   sample.drivers.regulator.ship_mode:
     platform_allow:

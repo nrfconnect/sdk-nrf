@@ -1675,6 +1675,11 @@ ci_samples_zephyr_drivers_audio_dmic:
     - nrf/samples/zephyr/drivers/audio/dmic/
     - zephyr/samples/drivers/audio/dmic/
 
+ci_samples_zephyr_drivers_regulator:
+  files:
+    - nrf/drivers/regulator/
+    - nrf/samples/zephyr/drivers/regulator/
+
 ci_tests_zephyr_drivers_audio_dmic_api:
   files:
     - nrf/tests/zephyr/drivers/audio/dmic_api/
