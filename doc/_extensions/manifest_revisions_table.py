@@ -27,7 +27,7 @@ SPDX-License-Identifier: Apache-2.0
 """
 
 import re
-from typing import Any, Dict, List
+from typing import Any
 
 from docutils import nodes
 from docutils.parsers.rst import directives
@@ -35,7 +35,6 @@ from sphinx.application import Sphinx
 from sphinx.errors import ExtensionError
 from sphinx.util.docutils import SphinxDirective
 from west.manifest import Manifest
-
 
 __version__ = "0.1.0"
 
@@ -85,7 +84,7 @@ class ManifestRevisionsTable(SphinxDirective):
 
         return tag_fmt.format(rev=rev)
 
-    def run(self) -> List[nodes.Element]:
+    def run(self) -> list[nodes.Element]:
         # parse show-first option
         show_first_raw = self.options.get("show-first", None)
         show_first = (
@@ -156,7 +155,7 @@ class ManifestRevisionsTable(SphinxDirective):
         return [table]
 
 
-def setup(app: Sphinx) -> Dict[str, Any]:
+def setup(app: Sphinx) -> dict[str, Any]:
     app.add_config_value("manifest_revisions_table_manifest", None, "env")
 
     directives.register_directive("manifest-revisions-table", ManifestRevisionsTable)
