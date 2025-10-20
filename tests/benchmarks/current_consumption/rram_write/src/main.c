@@ -20,6 +20,7 @@
 #if DT_FIXED_PARTITION_EXISTS(DT_NODELABEL(TEST_AREA))
 #define TEST_AREA_OFFSET DT_REG_ADDR(DT_NODELABEL(TEST_AREA))
 #define TEST_AREA_SIZE   DT_REG_SIZE(DT_NODELABEL(TEST_AREA))
+#define TEST_AREA_END    (TEST_AREA_OFFSET + TEST_AREA_SIZE)
 #define TEST_AREA_DEVICE DEVICE_DT_GET(DT_MTD_FROM_FIXED_PARTITION(DT_NODELABEL(TEST_AREA)))
 #else
 #error "Unsupported configuration"
@@ -60,7 +61,7 @@ void write_to_test_area(void)
 	gpio_pin_set_dt(&led, 1);
 	start = k_uptime_get();
 	for (uint32_t write_offset = TEST_AREA_OFFSET;
-		write_offset < TEST_AREA_OFFSET + TEST_AREA_SIZE;
+		write_offset + BUF_SIZE < TEST_AREA_END;
 		write_offset += BUF_SIZE) {
 
 		rc = flash_write(flash_dev, write_offset, data, BUF_SIZE);
@@ -77,7 +78,7 @@ void read_and_verify_test_area(void)
 	int rc;
 
 	for (uint32_t read_offset = TEST_AREA_OFFSET;
-		read_offset < TEST_AREA_OFFSET + TEST_AREA_SIZE;
+		read_offset + BUF_SIZE < TEST_AREA_END;
 		read_offset += BUF_SIZE) {
 
 		rc = flash_read(flash_dev, read_offset, read_buf, BUF_SIZE);
