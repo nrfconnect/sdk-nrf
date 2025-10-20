@@ -898,7 +898,6 @@ static void configure_supported_features(void)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_CHANNEL_SOUNDING)) {
-		sdc_support_channel_sounding();
 #if defined(CONFIG_BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT)
 		sdc_cs_antenna_switch_callback_set(cs_antenna_switch_func);
 		cs_antenna_switch_init();
