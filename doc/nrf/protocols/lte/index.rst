@@ -15,3 +15,4 @@ For development of asset tracking applications, it is recommended to base your a
    overview
    lte_ncs
    psm
+   power_nrf91
