@@ -145,7 +145,11 @@ int nrf_cloud_print_details(void)
 #endif
 	LOG_INF("Protocol:          %s", protocol);
 	LOG_INF("Download protocol: %s", download_protocol);
+#if defined(CONFIG_NRF_MODEM_LIB)
+	LOG_INF("Sec tag:           %u", (uint32_t) nrf_cloud_sec_tag_get());
+#else
 	LOG_INF("Sec tag:           %d", nrf_cloud_sec_tag_get());
+#endif /* defined(CONFIG_NRF_MODEM_LIB) */
 #if defined(CONFIG_NRF_CLOUD_COAP)
 	LOG_INF("CoAP JWT Sec tag:  %d", nrf_cloud_sec_tag_coap_jwt_get());
 #endif
