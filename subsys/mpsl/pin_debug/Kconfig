@@ -7,12 +7,14 @@
 config MPSL_PIN_DEBUG
 	bool "Toggle MPSL debug pins [EXPERIMENTAL]"
 	select EXPERIMENTAL
+	select GPIO
 	depends on (BOARD_NRF52DK_NRF52832 || \
 		    BOARD_NRF52833DK_NRF52833 || \
 		    BOARD_NRF52840DK_NRF52840 || \
 		    BOARD_NRF5340DK_NRF5340_CPUNET || \
 		    BOARD_NRF5340DK_NRF5340_CPUAPP || \
-		    BOARD_NRF54L15DK)
+		    BOARD_NRF54L15DK || \
+		    BOARD_NRF54H20DK)
 	help
 	  Set this option to enable toggling of GPIO pins upon radio
 	  events. This can be useful for debugging purposes to figure
@@ -41,16 +43,30 @@ config MPSL_PIN_DEBUG_54X_APP_OR_RADIO_CORE
 	select NRFX_DPPI
 	default y if SOC_COMPATIBLE_NRF54LX
 
+config MPSL_PIN_DEBUG_54H
+	bool
+	depends on MPSL_PIN_DEBUG
+	select NRFX_GPIOTE0
+	select NRFX_GPPI
+	default y if SOC_NRF54H20_CPURAD
+	help
+	  Pin debugging on 54H.
+	  The user needs to add a device tree overlay enabling
+	  gpio1, gpiote0 and gpiote130.
+
 config MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN
 	int "Pin toggled upon the events RADIO->EVENTS_READY and RADIO->EVENTS_DISABLED"
 	depends on MPSL_PIN_DEBUG
 	default 3 if SOC_COMPATIBLE_NRF52X
 	default 4 if SOC_COMPATIBLE_NRF53X
 	default 43 if SOC_COMPATIBLE_NRF54LX
+	default 36 if SOC_NRF54H20_CPURAD
 	help
 	  For nRF52 and nRF53 only PORT0 can be used.
 	  For nRF54L only PORT1 can be used. Here the pin number
 	  is 43 - 32 = 11.
+	  For 54H, the only supported pin is pin 4 on Port 1 because
+	  this is connected to GPIOTE0 channel 0.
 
 config MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN
 	int "Pin toggled upon the events RADIO->EVENTS_ADDRESS and RADIO->EVENTS_END"
@@ -58,7 +74,10 @@ config MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN
 	default 4 if SOC_COMPATIBLE_NRF52X
 	default 5 if SOC_COMPATIBLE_NRF53X
 	default 44 if SOC_COMPATIBLE_NRF54LX
+	default 37 if SOC_NRF54H20_CPURAD
 	help
 	  For nRF52 and nRF53 only PORT0 can be used.
 	  For nRF54L only PORT1 can be used. Here the pin number
 	  is 44 - 32 = 12.
+	  For 54H, the only supported pin is pin 5 on Port 1 because
+	  this is connected to GPIOTE0 channel 0.
