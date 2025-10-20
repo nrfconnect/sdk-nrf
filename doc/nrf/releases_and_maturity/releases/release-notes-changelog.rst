@@ -363,7 +363,10 @@ Bluetooth samples
 Bluetooth Mesh samples
 ----------------------
 
-* Added external flash settings support for the ``nrf52840dk/nrf52840`` board targets in all Bluetooth Mesh samples.
+* Added:
+
+  * Support for external flash settings for the ``nrf52840dk/nrf52840`` board targets in all Bluetooth Mesh samples.
+  * Support for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target in all Bluetooth Mesh samples.
 
 * :ref:`ble_mesh_dfu_distributor` sample:
 
