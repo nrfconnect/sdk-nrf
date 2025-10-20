@@ -67,8 +67,9 @@ struct sx_pk_ecurve;
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req sx_ecjpake_generate_zkp_go(const struct sx_pk_ecurve *curve,
-							      const sx_ecop *v, const sx_ecop *x,
-							      const sx_ecop *h)
+							      const sx_const_ecop *v,
+							      const sx_const_ecop *x,
+							      const sx_const_ecop *h)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecjpake_generate_zkp inputs;
@@ -139,8 +140,9 @@ static inline void sx_ecjpake_generate_zkp_end(sx_pk_req *req, sx_ecop *r)
  * @see sx_async_ecjpake_generate_zkp_go(), sx_async_ecjpake_generate_zkp_end()
  * for an asynchronous version
  */
-static inline int sx_ecjpake_generate_zkp(const struct sx_pk_ecurve *curve, const sx_ecop *v,
-					  const sx_ecop *x, const sx_ecop *h, sx_ecop *r)
+static inline int sx_ecjpake_generate_zkp(const struct sx_pk_ecurve *curve, const sx_const_ecop *v,
+					  const sx_const_ecop *x, const sx_const_ecop *h,
+					  sx_ecop *r)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
@@ -177,11 +179,10 @@ static inline int sx_ecjpake_generate_zkp(const struct sx_pk_ecurve *curve, cons
  *
  * @return Acquired acceleration request for this operation
  */
-static inline struct sx_pk_acq_req sx_ecjpake_verify_zkp_go(const struct sx_pk_ecurve *curve,
-							    const sx_pk_affine_point *v,
-							    const sx_pk_affine_point *x,
-							    const sx_ecop *r, const sx_ecop *h,
-							    const sx_pk_affine_point *g)
+static inline struct sx_pk_acq_req
+sx_ecjpake_verify_zkp_go(const struct sx_pk_ecurve *curve, const sx_pk_const_affine_point *v,
+			 const sx_pk_const_affine_point *x, const sx_const_ecop *r,
+			 const sx_const_ecop *h, const sx_pk_const_affine_point *g)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecjpake_verify_zkp inputs;
@@ -271,9 +272,9 @@ static inline void sx_ecjpake_verify_zkp_end(sx_pk_req *req)
  * an asynchronous version
  */
 static inline int sx_ecjpake_verify_zkp(const struct sx_pk_ecurve *curve,
-					const sx_pk_affine_point *v, const sx_pk_affine_point *x,
-					const sx_ecop *r, const sx_ecop *h,
-					const sx_pk_affine_point *g)
+					const sx_pk_const_affine_point *v,
+					const sx_pk_const_affine_point *x, const sx_const_ecop *r,
+					const sx_const_ecop *h, const sx_pk_const_affine_point *g)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
@@ -309,9 +310,9 @@ static inline int sx_ecjpake_verify_zkp(const struct sx_pk_ecurve *curve,
  *
  */
 static inline struct sx_pk_acq_req sx_ecjpake_3pt_add_go(const struct sx_pk_ecurve *curve,
-							 const sx_pk_affine_point *a,
-							 const sx_pk_affine_point *b,
-							 const sx_pk_affine_point *c)
+							 const sx_pk_const_affine_point *a,
+							 const sx_pk_const_affine_point *b,
+							 const sx_pk_const_affine_point *c)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecjpake_3pt_add inputs;
@@ -389,9 +390,10 @@ static inline void sx_ecjpake_3pt_add_end(sx_pk_req *req, sx_pk_affine_point *gb
  * @see sx_async_ecjpake_verify_zkp_go(), sx_async_ecjpake_verify_zkp_end() for
  * an asynchronous version
  */
-static inline int sx_ecjpake_3pt_add(const struct sx_pk_ecurve *curve, const sx_pk_affine_point *a,
-				     const sx_pk_affine_point *b, const sx_pk_affine_point *c,
-				     sx_pk_affine_point *gb)
+static inline int sx_ecjpake_3pt_add(const struct sx_pk_ecurve *curve,
+				     const sx_pk_const_affine_point *a,
+				     const sx_pk_const_affine_point *b,
+				     const sx_pk_const_affine_point *c, sx_pk_affine_point *gb)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
@@ -427,9 +429,10 @@ static inline int sx_ecjpake_3pt_add(const struct sx_pk_ecurve *curve, const sx_
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req sx_ecjpake_gen_sess_key_go(const struct sx_pk_ecurve *curve,
-							      const sx_pk_affine_point *x4,
-							      const sx_pk_affine_point *b,
-							      const sx_ecop *x2, const sx_ecop *x2s)
+							      const sx_pk_const_affine_point *x4,
+							      const sx_pk_const_affine_point *b,
+							      const sx_const_ecop *x2,
+							      const sx_const_ecop *x2s)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecjpake_gen_sess_key inputs;
@@ -510,8 +513,9 @@ static inline void sx_ecjpake_gen_sess_key_end(sx_pk_req *req, sx_pk_affine_poin
  * for an asynchronous version
  */
 static inline int sx_ecjpake_gen_sess_key(const struct sx_pk_ecurve *curve,
-					  const sx_pk_affine_point *x4, const sx_pk_affine_point *b,
-					  const sx_ecop *x2, const sx_ecop *x2s,
+					  const sx_pk_const_affine_point *x4,
+					  const sx_pk_const_affine_point *b,
+					  const sx_const_ecop *x2, const sx_const_ecop *x2s,
 					  sx_pk_affine_point *t)
 {
 	uint32_t status;
@@ -548,11 +552,10 @@ static inline int sx_ecjpake_gen_sess_key(const struct sx_pk_ecurve *curve,
  *
  * @return Acquired acceleration request for this operation
  */
-static inline struct sx_pk_acq_req sx_ecjpake_gen_step_2_go(const struct sx_pk_ecurve *curve,
-							    const sx_pk_affine_point *x4,
-							    const sx_pk_affine_point *x3,
-							    const sx_pk_affine_point *x1,
-							    const sx_ecop *x2, const sx_ecop *s)
+static inline struct sx_pk_acq_req
+sx_ecjpake_gen_step_2_go(const struct sx_pk_ecurve *curve, const sx_pk_const_affine_point *x4,
+			 const sx_pk_const_affine_point *x3, const sx_pk_const_affine_point *x1,
+			 const sx_const_ecop *x2, const sx_const_ecop *s)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecjpake_gen_step_2 inputs;
@@ -645,9 +648,10 @@ static inline void sx_ecjpake_gen_step_2_end(sx_pk_req *req, sx_pk_affine_point 
  * an asynchronous version
  */
 static inline int sx_ecjpake_gen_step_2(const struct sx_pk_ecurve *curve,
-					const sx_pk_affine_point *x4, const sx_pk_affine_point *x3,
-					const sx_pk_affine_point *x1, const sx_ecop *x2,
-					const sx_ecop *s, sx_pk_affine_point *a, sx_ecop *x2s,
+					const sx_pk_const_affine_point *x4,
+					const sx_pk_const_affine_point *x3,
+					const sx_pk_const_affine_point *x1, const sx_const_ecop *x2,
+					const sx_const_ecop *s, sx_pk_affine_point *a, sx_ecop *x2s,
 					sx_pk_affine_point *ga)
 {
 	uint32_t status;

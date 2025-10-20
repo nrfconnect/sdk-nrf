@@ -393,25 +393,25 @@ psa_status_t cracen_platform_get_builtin_key(psa_drv_slot_number_t slot_number,
 		cracen_aead_operation_t op = {};
 
 		psa_status_t status = cracen_aead_decrypt_setup(
-			&op, &mkek_attr, (uint8_t *)&mkek_ikg_opaque_key,
+			&op, &mkek_attr, (const uint8_t *)&mkek_ikg_opaque_key,
 			sizeof(mkek_ikg_opaque_key),
 			PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, key.sicr.mac_size));
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
 
-		status = cracen_aead_set_nonce(&op, (uint8_t *)key.sicr.nonce,
+		status = cracen_aead_set_nonce(&op, (const uint8_t *)key.sicr.nonce,
 					       sizeof(key.sicr.nonce));
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
 
-		status = cracen_aead_update_ad(&op, (uint8_t *)&key.sicr.type,
+		status = cracen_aead_update_ad(&op, (const uint8_t *)&key.sicr.type,
 					       sizeof(key.sicr.type));
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-		status = cracen_aead_update_ad(&op, (uint8_t *)&key.sicr.bits,
+		status = cracen_aead_update_ad(&op, (const uint8_t *)&key.sicr.bits,
 					       sizeof(key.sicr.bits));
 		if (status != PSA_SUCCESS) {
 			return status;
@@ -635,20 +635,23 @@ psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attribut
 	cracen_aead_operation_t op = {};
 
 	status = cracen_aead_encrypt_setup(
-		&op, &mkek_attr, (uint8_t *)&mkek_ikg_opaque_key, sizeof(mkek_ikg_opaque_key),
+		&op, &mkek_attr, (const uint8_t *)&mkek_ikg_opaque_key, sizeof(mkek_ikg_opaque_key),
 		PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, key.sicr.mac_size));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-	status = cracen_aead_set_nonce(&op, (uint8_t *)key.sicr.nonce, sizeof(key.sicr.nonce));
+	status = cracen_aead_set_nonce(&op, (const uint8_t *)key.sicr.nonce,
+				       sizeof(key.sicr.nonce));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-	status = cracen_aead_update_ad(&op, (uint8_t *)&key.sicr.type, sizeof(key.sicr.type));
+	status = cracen_aead_update_ad(&op, (const uint8_t *)&key.sicr.type,
+				       sizeof(key.sicr.type));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-	status = cracen_aead_update_ad(&op, (uint8_t *)&key.sicr.bits, sizeof(key.sicr.bits));
+	status = cracen_aead_update_ad(&op, (const uint8_t *)&key.sicr.bits,
+				       sizeof(key.sicr.bits));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
