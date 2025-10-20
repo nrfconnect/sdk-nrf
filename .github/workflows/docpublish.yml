@@ -31,7 +31,8 @@ jobs:
       - name: Obtain PR number
         working-directory: docs
         run: |
-          echo "PR=$(cat pr.txt)" >> "$GITHUB_ENV"
+          PR=$(head -n1 pr.txt 2>/dev/null) || true
+          printf 'PR=%s\n' "$PR" >> "$GITHUB_ENV"
 
       - name: Upload to Azure storage
         working-directory: docs
