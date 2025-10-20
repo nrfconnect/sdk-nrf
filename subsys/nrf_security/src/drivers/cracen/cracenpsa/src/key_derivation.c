@@ -56,11 +56,11 @@ static psa_status_t cracen_ecdh_wrstr_calc_secret(const struct sx_pk_ecurve *cur
 	uint8_t scratch_char_x[CRACEN_MAC_ECC_PRIVKEY_BYTES];
 	uint8_t scratch_char_y[CRACEN_MAC_ECC_PRIVKEY_BYTES];
 
-	struct sx_buf priv_key_buff = {.sz = priv_key_size, .bytes = (uint8_t *)priv_key};
+	sx_const_ecop priv_key_buff = {.sz = priv_key_size, .bytes = priv_key};
 
 	sx_pk_affine_point scratch_pnt = {{.bytes = scratch_char_x, .sz = priv_key_size},
 					  {.bytes = scratch_char_y, .sz = priv_key_size}};
-	sx_pk_affine_point publ_key_pnt = {};
+	sx_pk_const_affine_point publ_key_pnt = {};
 
 	if (publ_key_size != cracen_ecc_wstr_expected_pub_key_bytes(priv_key_size)) {
 		return PSA_ERROR_INVALID_ARGUMENT;
@@ -77,10 +77,10 @@ static psa_status_t cracen_ecdh_wrstr_calc_secret(const struct sx_pk_ecurve *cur
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	publ_key_pnt.x.bytes = (uint8_t *)publ_key + 1;
+	publ_key_pnt.x.bytes = publ_key + 1;
 	publ_key_pnt.x.sz = priv_key_size;
 
-	publ_key_pnt.y.bytes = (uint8_t *)publ_key + priv_key_size + 1;
+	publ_key_pnt.y.bytes = publ_key + priv_key_size + 1;
 	publ_key_pnt.y.sz = priv_key_size;
 
 	psa_status = cracen_ecc_check_public_key(curve, &publ_key_pnt);
@@ -90,8 +90,11 @@ static psa_status_t cracen_ecdh_wrstr_calc_secret(const struct sx_pk_ecurve *cur
 
 	sx_status = sx_ecp_ptmult(curve, &priv_key_buff, &publ_key_pnt, &scratch_pnt);
 	if (sx_status == SX_OK) {
-		sx_pk_ecop2mem(&scratch_pnt.x, output, scratch_pnt.x.sz);
-		*output_length = scratch_pnt.x.sz;
+		sx_pk_const_affine_point c_scratch_pnt;
+
+		sx_get_const_affine_point(&scratch_pnt, &c_scratch_pnt);
+		sx_pk_ecop2mem(&c_scratch_pnt.x, output, c_scratch_pnt.x.sz);
+		*output_length = c_scratch_pnt.x.sz;
 	}
 
 	safe_memzero(scratch_pnt.x.bytes, scratch_pnt.x.sz);
@@ -825,7 +828,7 @@ cracen_key_derivation_cmac_ctr_add_core_fixed_input(cracen_key_derivation_operat
 	}
 
 	/* L_4 */
-	return sx_mac_feed(cmac_ctx, (uint8_t *)&operation->cmac_ctr.L,
+	return sx_mac_feed(cmac_ctx, (const uint8_t *)&operation->cmac_ctr.L,
 			   sizeof(operation->cmac_ctr.L));
 }
 
@@ -885,7 +888,7 @@ cracen_key_derivation_cmac_ctr_generate_block(cracen_key_derivation_operation_t 
 	}
 
 	counter_be = uint32_to_be(operation->cmac_ctr.counter);
-	sx_status = sx_mac_feed(&cmac_ctx, (uint8_t *)&counter_be, sizeof(counter_be));
+	sx_status = sx_mac_feed(&cmac_ctx, (const uint8_t *)&counter_be, sizeof(counter_be));
 	if (sx_status) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
@@ -999,7 +1002,7 @@ cracen_key_derivation_pbkdf2_generate_block(cracen_key_derivation_operation_t *o
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-	status = cracen_mac_update(&operation->mac_op, (uint8_t *)&blk_counter_be,
+	status = cracen_mac_update(&operation->mac_op, (const uint8_t *)&blk_counter_be,
 				   sizeof(blk_counter_be));
 	if (status != PSA_SUCCESS) {
 		return status;

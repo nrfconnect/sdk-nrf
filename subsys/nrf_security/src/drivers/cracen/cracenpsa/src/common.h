@@ -117,7 +117,7 @@ static inline size_t cracen_ecc_wstr_expected_pub_key_bytes(size_t priv_key_size
  *
  */
 psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
-					 const sx_pk_affine_point *in_pnt);
+					 const sx_pk_const_affine_point *in_pnt);
 
 /**
  * \brief Tries to extract an RSA key from ASN.1.
@@ -148,7 +148,7 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
  * \retval SX_OK on success.
  * \retval SX_ERR_INVALID_PARAM if the ASN.1 integer cannot be extracted.
  */
-int cracen_signature_asn1_get_operand(uint8_t **p, const uint8_t *end, struct sx_buf *op);
+int cracen_signature_asn1_get_operand(const uint8_t **p, const uint8_t *end, struct sx_buf *op);
 
 /**
  * @brief Use cracen_get_random up to generate a random number in the range [1, upperlimit).
@@ -314,7 +314,8 @@ psa_status_t cracen_ecc_reduce_p256(const uint8_t *input, size_t input_size, uin
  * status code.
  */
 int cracen_rsa_modexp(struct sx_pk_acq_req *pkreq, struct sx_pk_slot *inputs,
-		      struct cracen_rsa_key *rsa_key, uint8_t *base, size_t basez, int *sizes);
+		      struct cracen_rsa_key *rsa_key, const uint8_t *base, size_t basez,
+		      int *sizes);
 
 #define CRACEN_KEY_INIT_RSA(mod, expon)                                                            \
 	(struct cracen_rsa_key)                                                                    \

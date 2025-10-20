@@ -410,6 +410,12 @@ struct cracen_signature {
 	uint8_t *s; /** Signature element "s". */
 };
 
+struct cracen_const_signature {
+	size_t sz;	  /** Total signature size, in bytes. */
+	const uint8_t *r; /** Signature element "r". */
+	const uint8_t *s; /** Signature element "s". */
+};
+
 struct cracen_ecc_priv_key {
 	const struct sx_pk_ecurve *curve;
 	const uint8_t *d; /** Private key value d */
