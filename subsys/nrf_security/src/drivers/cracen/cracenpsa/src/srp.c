@@ -55,9 +55,9 @@ static const uint8_t cracen_G3072[] = {5};
 static psa_status_t calculate_v_from_k(const uint8_t *k, size_t k_size, uint8_t *v, size_t v_size)
 {
 
-	sx_op g = {.sz = sizeof(cracen_G3072), .bytes = (uint8_t *)cracen_G3072};
-	sx_op a = {.sz = k_size, .bytes = (uint8_t *)k};
-	sx_op modulo = {.sz = sizeof(cracen_N3072), .bytes = (uint8_t *)cracen_N3072};
+	sx_const_op g = {.sz = sizeof(cracen_G3072), .bytes = cracen_G3072};
+	sx_const_op a = {.sz = k_size, .bytes = k};
+	sx_const_op modulo = {.sz = sizeof(cracen_N3072), .bytes = cracen_N3072};
 	sx_op result = {.sz = v_size, .bytes = v};
 
 	return silex_statuscodes_to_psa(sx_mod_exp(NULL, &g, &a, &modulo, &result));
@@ -196,9 +196,9 @@ static psa_status_t cracen_srp_calculate_client_key_share(cracen_srp_operation_t
 	}
 
 	/* g^a mod N */
-	sx_op g = {.sz = sizeof(cracen_G3072), .bytes = (uint8_t *)cracen_G3072};
-	sx_op a = {.sz = sizeof(operation->ab), .bytes = operation->ab};
-	sx_op modulo = {.sz = sizeof(cracen_N3072), .bytes = (uint8_t *)cracen_N3072};
+	sx_const_op g = {.sz = sizeof(cracen_G3072), .bytes = cracen_G3072};
+	sx_const_op a = {.sz = sizeof(operation->ab), .bytes = operation->ab};
+	sx_const_op modulo = {.sz = sizeof(cracen_N3072), .bytes = cracen_N3072};
 	sx_op result = {.sz = sizeof(operation->A), .bytes = operation->A};
 	int sx_status = sx_mod_exp(NULL, &g, &a, &modulo, &result);
 
@@ -230,9 +230,9 @@ static psa_status_t cracen_srp_calculate_server_key_share(cracen_srp_operation_t
 	}
 
 	/* b' = g^b */
-	sx_op g = {.sz = sizeof(cracen_G3072), .bytes = (uint8_t *)cracen_G3072};
-	sx_op b = {.sz = sizeof(operation->ab), .bytes = operation->ab};
-	sx_op modulo = {.sz = sizeof(cracen_N3072), .bytes = (uint8_t *)cracen_N3072};
+	sx_const_op g = {.sz = sizeof(cracen_G3072), .bytes = cracen_G3072};
+	sx_const_op b = {.sz = sizeof(operation->ab), .bytes = operation->ab};
+	sx_const_op modulo = {.sz = sizeof(cracen_N3072), .bytes = cracen_N3072};
 	sx_op temp_b = {.sz = sizeof(temp_value), .bytes = temp_value};
 	int sx_status = sx_mod_exp(NULL, &g, &b, &modulo, &temp_b);
 
@@ -254,8 +254,8 @@ static psa_status_t cracen_srp_calculate_server_key_share(cracen_srp_operation_t
 		goto error;
 	}
 	/* kv mod N, using output as temp storage */
-	sx_op k = {.sz = CRACEN_SRP_HASH_LENGTH, .bytes = k_value};
-	sx_op v = {.sz = sizeof(operation->v), .bytes = operation->v};
+	sx_const_op k = {.sz = CRACEN_SRP_HASH_LENGTH, .bytes = k_value};
+	sx_const_op v = {.sz = sizeof(operation->v), .bytes = operation->v};
 	sx_op kv = {.sz = sizeof(temp_value_2), .bytes = temp_value_2};
 	const struct sx_pk_cmd_def *cmd_mul = SX_PK_CMD_ODD_MOD_MULT;
 
@@ -267,9 +267,14 @@ static psa_status_t cracen_srp_calculate_server_key_share(cracen_srp_operation_t
 
 	/* B = (kv + b') mod N */
 	sx_op result = {.sz = sizeof(operation->B), .bytes = operation->B};
+	sx_const_op c_temp_b;
+	sx_const_op c_kv;
+
+	sx_get_const_op(&temp_b, &c_temp_b);
+	sx_get_const_op(&kv, &c_kv);
 	const struct sx_pk_cmd_def *cmd_add = SX_PK_CMD_MOD_ADD;
 
-	sx_status = sx_mod_primitive_cmd(NULL, cmd_add, &modulo, &kv, &temp_b, &result);
+	sx_status = sx_mod_primitive_cmd(NULL, cmd_add, &modulo, &c_kv, &c_temp_b, &result);
 	status = silex_statuscodes_to_psa(sx_status);
 	if (status != PSA_SUCCESS) {
 		goto error;
@@ -330,9 +335,9 @@ static psa_status_t cracen_srp_calculate_client_S(cracen_srp_operation_t *operat
 	}
 
 	/* g'= g^x mod N; using S as temp storage */
-	sx_op g = {.sz = sizeof(cracen_G3072), .bytes = (uint8_t *)cracen_G3072};
-	sx_op x = {.sz = sizeof(operation->x), .bytes = operation->x};
-	sx_op modulo = {.sz = sizeof(cracen_N3072), .bytes = (uint8_t *)cracen_N3072};
+	sx_const_op g = {.sz = sizeof(cracen_G3072), .bytes = cracen_G3072};
+	sx_const_op x = {.sz = sizeof(operation->x), .bytes = operation->x};
+	sx_const_op modulo = {.sz = sizeof(cracen_N3072), .bytes = cracen_N3072};
 	sx_op temp_g = {.sz = CRACEN_SRP_FIELD_SIZE, .bytes = S};
 	int sx_status = sx_mod_exp(NULL, &g, &x, &modulo, &temp_g);
 
@@ -346,31 +351,40 @@ static psa_status_t cracen_srp_calculate_client_S(cracen_srp_operation_t *operat
 		return status;
 	}
 	/* k is only a hash there only using the first bytes of the buffer */
-	sx_op k = {.sz = CRACEN_SRP_HASH_LENGTH, .bytes = temp_value_0};
+	sx_const_op k = {.sz = CRACEN_SRP_HASH_LENGTH, .bytes = temp_value_0};
 	sx_op kg = {.sz = sizeof(temp_value_1), .bytes = temp_value_1};
+	sx_const_op c_temp_g;
 	const struct sx_pk_cmd_def *cmd_mul = SX_PK_CMD_ODD_MOD_MULT;
 
-	sx_status = sx_mod_primitive_cmd(NULL, cmd_mul, &modulo, &k, &temp_g, &kg);
+	sx_get_const_op(&temp_g, &c_temp_g);
+	sx_status = sx_mod_primitive_cmd(NULL, cmd_mul, &modulo, &k, &c_temp_g, &kg);
 	status = silex_statuscodes_to_psa(sx_status);
 	if (status != PSA_SUCCESS) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	/* B' = (B - kg) mod N */
-	sx_op B = {.sz = sizeof(operation->B), .bytes = operation->B};
+	sx_const_op B = {.sz = sizeof(operation->B), .bytes = operation->B};
 	sx_op temp_b = {.sz = CRACEN_SRP_FIELD_SIZE, .bytes = S};
+	sx_const_op c_kg;
 	const struct sx_pk_cmd_def *cmd_sub = SX_PK_CMD_MOD_SUB;
 
-	sx_status = sx_mod_primitive_cmd(NULL, cmd_sub, &modulo, &B, &kg, &temp_b);
+	sx_get_const_op(&kg, &c_kg);
+	sx_status = sx_mod_primitive_cmd(NULL, cmd_sub, &modulo, &B, &c_kg, &temp_b);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	/* t_1 = (B')^a mod N */
-	sx_op a = {.sz = sizeof(operation->ab), .bytes = operation->ab};
+	sx_const_op c_temp_b;
+	sx_const_op a = {.sz = sizeof(operation->ab), .bytes = operation->ab};
 	sx_op temp_1 = {.sz = sizeof(temp_value_1), .bytes = temp_value_1};
 
-	sx_status = sx_mod_exp(NULL, &temp_b, &a, &modulo, &temp_1);
+	sx_get_const_op(&temp_b, &c_temp_b);
+	sx_status = sx_mod_exp(NULL, &c_temp_b, &a, &modulo, &temp_1);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
 
 	/* get u */
 	status = cracen_srp_calculate_u(operation, temp_value_0, sizeof(temp_value_0));
@@ -379,26 +393,32 @@ static psa_status_t cracen_srp_calculate_client_S(cracen_srp_operation_t *operat
 	}
 
 	/* t_2 = (B')^u mod N */
-	sx_op u = {.sz = CRACEN_SRP_HASH_LENGTH, .bytes = temp_value_0};
+	sx_const_op u = {.sz = CRACEN_SRP_HASH_LENGTH, .bytes = temp_value_0};
 	sx_op temp_2 = {.sz = CRACEN_SRP_FIELD_SIZE, .bytes = S};
 
-	sx_status = sx_mod_exp(NULL, &temp_b, &u, &modulo, &temp_2);
+	sx_status = sx_mod_exp(NULL, &c_temp_b, &u, &modulo, &temp_2);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	/* t_3 = (t_2)^x mod N = ((B')^u)^x mod N = (B')^(ux) mod N */
+	sx_const_op c_temp_2;
 	sx_op temp_3 = {.sz = sizeof(temp_value_0), .bytes = temp_value_0};
 
-	sx_status = sx_mod_exp(NULL, &temp_2, &x, &modulo, &temp_3);
+	sx_get_const_op(&temp_2, &c_temp_2);
+	sx_status = sx_mod_exp(NULL, &c_temp_2, &x, &modulo, &temp_3);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	/* B = t_1 * t_3 mod N */
+	sx_const_op c_temp_1;
+	sx_const_op c_temp_3;
 	sx_op result = {.sz = CRACEN_SRP_FIELD_SIZE, .bytes = S};
 
-	sx_status = sx_mod_primitive_cmd(NULL, cmd_mul, &modulo, &temp_1, &temp_3, &result);
+	sx_get_const_op(&temp_1, &c_temp_1);
+	sx_get_const_op(&temp_3, &c_temp_3);
+	sx_status = sx_mod_primitive_cmd(NULL, cmd_mul, &modulo, &c_temp_1, &c_temp_3, &result);
 	return silex_statuscodes_to_psa(sx_status);
 }
 
@@ -421,9 +441,9 @@ static psa_status_t cracen_srp_calculate_server_S(cracen_srp_operation_t *operat
 	}
 
 	/* t_1 = v^u mod N */
-	sx_op v = {.sz = sizeof(operation->v), .bytes = operation->v};
-	sx_op u = {.sz = sizeof(u_buffer), .bytes = u_buffer};
-	sx_op modulo = {.sz = sizeof(cracen_N3072), .bytes = (uint8_t *)cracen_N3072};
+	sx_const_op v = {.sz = sizeof(operation->v), .bytes = operation->v};
+	sx_const_op u = {.sz = sizeof(u_buffer), .bytes = u_buffer};
+	sx_const_op modulo = {.sz = sizeof(cracen_N3072), .bytes = cracen_N3072};
 	sx_op temp_1 = {.sz = CRACEN_SRP_FIELD_SIZE, .bytes = S};
 	int sx_status = sx_mod_exp(NULL, &v, &u, &modulo, &temp_1);
 
@@ -433,19 +453,23 @@ static psa_status_t cracen_srp_calculate_server_S(cracen_srp_operation_t *operat
 
 	/* t_2 = A * t_1 mod N = (Av^u) mod N */
 	sx_op temp_2 = {.sz = sizeof(temp_value), .bytes = temp_value};
-	sx_op A = {.sz = sizeof(operation->A), .bytes = operation->A};
+	sx_const_op A = {.sz = sizeof(operation->A), .bytes = operation->A};
+	sx_const_op c_temp_1;
 	const struct sx_pk_cmd_def *cmd_mul = SX_PK_CMD_ODD_MOD_MULT;
 
-	sx_status = sx_mod_primitive_cmd(NULL, cmd_mul, &modulo, &A, &temp_1, &temp_2);
+	sx_get_const_op(&temp_1, &c_temp_1);
+	sx_status = sx_mod_primitive_cmd(NULL, cmd_mul, &modulo, &A, &c_temp_1, &temp_2);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	/* t_2^b mod N = (Av^u)^b mod N = S */
-	sx_op b = {.sz = sizeof(operation->ab), .bytes = operation->ab};
+	sx_const_op b = {.sz = sizeof(operation->ab), .bytes = operation->ab};
 	sx_op result = {.sz = CRACEN_SRP_FIELD_SIZE, .bytes = S};
+	sx_const_op c_temp_2;
 
-	sx_status = sx_mod_exp(NULL, &temp_2, &b, &modulo, &result);
+	sx_get_const_op(&temp_2, &c_temp_2);
+	sx_status = sx_mod_exp(NULL, &c_temp_2, &b, &modulo, &result);
 	return silex_statuscodes_to_psa(sx_status);
 }
 

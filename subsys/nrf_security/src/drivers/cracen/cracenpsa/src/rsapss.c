@@ -262,7 +262,7 @@ static void rsa_pss_verify_init(struct rsa_pss_workmem *workmem, size_t emsz, si
 }
 
 int cracen_rsa_pss_verify_message(struct cracen_rsa_key *rsa_key,
-				  struct cracen_signature *signature,
+				  struct cracen_const_signature *signature,
 				  const struct sxhashalg *hashalg, const uint8_t *message,
 				  size_t message_length, size_t saltsz)
 {
@@ -278,7 +278,8 @@ int cracen_rsa_pss_verify_message(struct cracen_rsa_key *rsa_key,
 	return cracen_rsa_pss_verify_digest(rsa_key, signature, hashalg, digest, digestsz, saltsz);
 }
 
-int cracen_rsa_pss_verify_digest(struct cracen_rsa_key *rsa_key, struct cracen_signature *signature,
+int cracen_rsa_pss_verify_digest(struct cracen_rsa_key *rsa_key,
+				 struct cracen_const_signature *signature,
 				 const struct sxhashalg *hashalg, const uint8_t *digest,
 				 size_t digest_length, size_t saltsz)
 {
