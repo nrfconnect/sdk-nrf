@@ -447,6 +447,7 @@ NRF = (
     ("samples/samples_other", "samples/other"), # Other samples (landing)
     ("samples/pmic/native/npm1300_fuel_gauge/README", "samples/pmic/native/npm13xx_fuel_gauge/README"),
     ("samples/pmic/native/npm1300_one_button/README", "samples/pmic/native/npm13xx_one_button/README"),
+    ("samples/nrf5340/empty_network_core/README", "samples/basic/empty/README"),
     ("libraries/bluetooth_services/index", "libraries/bluetooth/index"), # Changed the folder name libraries/bluetooth_services to libraries/bluetooth to better match the include folder structure
     ("libraries/bluetooth_services/adv_prov", "libraries/bluetooth/adv_prov"),
     ("libraries/bluetooth_services/conn_ctx", "libraries/bluetooth/conn_ctx"),
