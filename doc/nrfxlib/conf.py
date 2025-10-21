@@ -43,6 +43,7 @@ extensions = [
     "zephyr.doxybridge",
     "zephyr.domain",
     "zephyr.gh_utils",
+    "sphinx_llms_txt",
 ]
 master_doc = "README"
 
@@ -121,3 +122,29 @@ def setup(app):
 
     utils.add_google_analytics(app, html_theme_options)
     utils.add_announcement_banner(html_theme_options)
+
+# Options for sphinx-llms-txt ---------------------------------------------------
+
+llms_txt_summary = """
+# nRF Connect SDK Documentation
+
+The nRF Connect SDK is Nordic Semiconductor's software development kit for
+building products based on Nordic Semiconductor SoCs.
+
+Quick start: gsg_guides.html
+Installing the nRF Connect SDK: installation/install_ncs.html
+"""
+
+# DO NOT GENERATE llms-full.txt
+llms_txt_full = False
+llms_txt_exclude_patterns = [
+    # EXCLUDE release notes - might need to include latest tag
+    "releases_and_maturity/releases/release-notes-*",
+]
+
+# INCLUDE source files
+llms_txt_source_files = [
+]
+
+# SET base URL - might need to change ncs-latest to latest tag
+llms_txt_html_base_url = "https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/"
