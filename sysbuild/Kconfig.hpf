@@ -23,13 +23,6 @@ endchoice
 config HPF_DEVELOPER_MODE
 	bool "HPF developer mode"
 
-config HPF_IMAGE_PATH
-	string
-	default "$(ZEPHYR_NRF_MODULE_DIR)/applications/hpf/gpio" if HPF_GPIO
-	default "$(ZEPHYR_NRF_MODULE_DIR)/applications/hpf/mspi" if HPF_MSPI
-	help
-	  Source directory of HPF image.
-
 config HPF_APPLY_SNIPPET
 	bool "Apply HPF overlay snippet"
 	default y
