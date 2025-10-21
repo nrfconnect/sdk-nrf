@@ -1,34 +1,42 @@
-name: src-mirror
+name: Generate src mirror package
+
 on:
+  workflow_dispatch:
   push:
     tags:
       - '*'
 
+permissions:
+  contents: read
+
+concurrency:
+  group: src-mirror-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  zip-and-upload:
-    runs-on: ubuntu-latest
+
+  # Tar entire project west workspace, prune, and upload to artifact service.
+  generate-src-mirror-package:
+    runs-on: ubuntu-24.04-16cores
     steps:
-      - name: Checkout sources
-        uses: nrfconnect/action-checkout-west-update@main
+
+      - name: Set STABLE variable
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]] && [[ "${{ github.ref_name }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "STABLE=true" >> $GITHUB_ENV
+          else
+            echo "STABLE=false" >> $GITHUB_ENV
+          fi
+          echo "STABLE=${{ env.STABLE }}"
+
+      - name: Upload src.tar.gz
+        uses: nrfconnect/action-src-mirror@main
         with:
-          git-fetch-depth: 0
-          path: workspace/nrf
-
-      - name: Create tar
-        run: >
-          tar -C ./workspace -cvf src.tar.gz .
-
-      - name: Set up JFrog CLI
-        uses: jfrog/setup-jfrog-cli@v4
-
-      - name: Configure and Upload to Artifactory
-        env:
-          ARTIFACTORY_URL: https://eu.files.nordicsemi.com/artifactory
-          REPOSITORY: ncs-src-mirror
-          FILE_PATH: src.tar.gz
-          TARGET_PATH: external/${{ github.ref_name }}/
-        run: >
-          jfrog rt u $FILE_PATH $REPOSITORY/$TARGET_PATH
-          --url=$ARTIFACTORY_URL
-          --user=${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
-          --password=${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
+          git-ref: ${{ github.ref_name }}
+          path: 'nrf'
+          west-update-args: ''
+          sdk-manager-api-version: '1'
+          artifactory-base-folder-path: ${{ (github.ref_type == 'tag') && 'ncs-src-mirror/external/' || 'ncs-src-mirror/internal/' }}
+          artifactory-user: ${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
+          artifactory-pass: ${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
+          stable: ${{ env.STABLE }}
