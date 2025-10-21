@@ -249,6 +249,7 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		}
 
 		uint32_t bitrate;
+		int dur_us;
 
 		ret = le_audio_bitrate_get(tx[i].cap_stream->bap_stream.codec_cfg, &bitrate);
 		if (ret) {
@@ -256,9 +257,15 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 			return ret;
 		}
 
-		if (data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(bitrate)) {
+		ret = le_audio_duration_us_get(tx[i].cap_stream->bap_stream.codec_cfg, &dur_us);
+		if (ret) {
+			LOG_ERR("Error retrieving frame duration: %d", ret);
+			return ret;
+		}
+
+		if (data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(bitrate, dur_us)) {
 			LOG_ERR("The encoded data size (%zu) does not match the SDU size (%d)",
-				data_size_pr_stream, LE_AUDIO_SDU_SIZE_OCTETS(bitrate));
+				data_size_pr_stream, LE_AUDIO_SDU_SIZE_OCTETS(bitrate, dur_us));
 			return -EINVAL;
 		}
 
