@@ -11,6 +11,7 @@ tests:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args: mbox_SNIPPET=nordic-flpr
@@ -27,6 +28,7 @@ tests:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
@@ -46,6 +48,7 @@ tests:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
