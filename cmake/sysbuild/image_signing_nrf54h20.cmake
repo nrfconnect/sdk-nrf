@@ -8,7 +8,12 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
   cmake_path(ABSOLUTE_PATH ZEPHYR_BINARY_DIR OUTPUT_VARIABLE app_binary_dir)
   cmake_path(GET app_binary_dir PARENT_PATH app_build_dir)
   cmake_path(GET app_build_dir PARENT_PATH sysbuild_binary_dir)
-  cmake_path(APPEND sysbuild_binary_dir ${KERNEL_NAME} OUTPUT_VARIABLE output)
+
+  if(CONFIG_MCUBOOT_APPLICATION_FIRMWARE_UPDATER)
+    cmake_path(APPEND sysbuild_binary_dir "firmware_updater" OUTPUT_VARIABLE output)
+  else()
+    cmake_path(APPEND sysbuild_binary_dir ${KERNEL_NAME} OUTPUT_VARIABLE output)
+  endif()
 
   if(CONFIG_BUILD_OUTPUT_BIN)
     get_target_property(bin_file runners_yaml_props_target "bin_file")

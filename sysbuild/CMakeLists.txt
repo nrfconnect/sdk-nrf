@@ -252,16 +252,39 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       endif()
     endforeach()
 
-    if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER AND SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519)
-      set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 y)
+    if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
+      FirmwareUpdaterImage_Get(fw_loader_images)
+      foreach(image ${fw_loader_images})
+        if(SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519)
+          set_config_bool(${image} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 y)
 
-      if(SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE)
-        set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE y)
-      endif()
+          if(SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE)
+            set_config_bool(${image} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE y)
+          endif()
 
-      if(SB_CONFIG_BOOT_IMG_HASH_ALG_SHA512)
-        set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 y)
-      endif()
+          if(SB_CONFIG_BOOT_IMG_HASH_ALG_SHA512)
+            set_config_bool(${image} CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 y)
+          endif()
+        endif()
+
+        if(SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY AND SB_CONFIG_SOC_NRF54H20)
+          set(${image}_SIGNING_SCRIPT
+            "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_nrf54h20.cmake" CACHE INTERNAL
+            "MCUboot signing script" FORCE)
+        else()
+          set(${image}_SIGNING_SCRIPT
+            "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_firmware_loader.cmake" CACHE
+            INTERNAL "MCUboot signing script" FORCE)
+        endif()
+        set_target_properties(${image} PROPERTIES IMAGE_CONF_SCRIPT
+          ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/image_configurations/firmware_loader_image_default.cmake
+        )
+
+        if(NOT ${image} STREQUAL ${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME})
+          add_dependencies(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} ${image})
+          sysbuild_add_dependencies(FLASH ${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} ${image})
+        endif()
+      endforeach()
     endif()
 
     # The NRF54LX goes with PSA crypto by default
@@ -373,14 +396,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
           set(${image}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
           set_config_bool(${image} CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_IMAGE n)
         endforeach()
-
-        if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
-          set(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_firmware_loader.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
-
-          set_target_properties(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} PROPERTIES
-            IMAGE_CONF_SCRIPT ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/image_configurations/firmware_loader_image_default.cmake
-          )
-        endif()
       endif()
 
       if(SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK)

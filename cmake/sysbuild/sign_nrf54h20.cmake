@@ -206,12 +206,15 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
   set(CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION)
   set(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE)
   set(CONFIG_NCS_IS_VARIANT_IMAGE)
+  set(CONFIG_MCUBOOT_APPLICATION_FIRMWARE_UPDATER)
   sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION IMAGE ${main_image} VAR
     CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION KCONFIG)
   sysbuild_get(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE IMAGE ${main_image} VAR
     CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE KCONFIG)
   sysbuild_get(CONFIG_NCS_IS_VARIANT_IMAGE IMAGE ${main_image} VAR
     CONFIG_NCS_IS_VARIANT_IMAGE CACHE)
+  sysbuild_get(CONFIG_MCUBOOT_APPLICATION_FIRMWARE_UPDATER IMAGE ${main_image} VAR
+    CONFIG_MCUBOOT_APPLICATION_FIRMWARE_UPDATER KCONFIG)
 
   # Fetch devicetree details for flash and slot information.
   dt_chosen(flash_node TARGET mcuboot PROPERTY "zephyr,flash")
@@ -255,9 +258,24 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
     # Adjust start offset, based on the active slot and code partition address.
     math(EXPR start_offset "${start_offset} + ${code_addr} - ${slot_addr}")
     set(imgtool_rom_command --rom-fixed ${slot_addr})
+  elseif(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
+    if(CONFIG_MCUBOOT_APPLICATION_FIRMWARE_UPDATER)
+      set(slot_size ${slot1_size})
+      set(slot_addr ${slot1_addr})
+    else()
+      set(slot_size ${slot0_size})
+      set(slot_addr ${slot0_addr})
+    endif()
+    # Adjust start offset, based on the active slot and code partition address.
+    math(EXPR start_offset "${start_offset} + ${code_addr} - ${slot_addr}")
+    set(imgtool_rom_command --rom-fixed ${slot_addr})
   else()
-    message(FATAL_ERROR "Only Direct XIP MCUboot modes are supported.")
+    message(FATAL_ERROR "Only Direct XIP and firmware updater MCUboot modes are supported.")
     return()
+  endif()
+
+  if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER OR SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY)
+    set(imgtool_args --overwrite-only ${imgtool_args})
   endif()
 
   # Basic 'imgtool sign' command with known image information.
@@ -273,6 +291,8 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
   cmake_path(GET BINARY_DIR PARENT_PATH sysbuild_build_dir)
   if(CONFIG_NCS_IS_VARIANT_IMAGE)
     cmake_path(APPEND sysbuild_build_dir "${BINARY_BIN_FILE}_secondary_app" OUTPUT_VARIABLE output)
+  elseif(CONFIG_MCUBOOT_APPLICATION_FIRMWARE_UPDATER)
+    cmake_path(APPEND sysbuild_build_dir "firmware_updater" OUTPUT_VARIABLE output)
   else()
     cmake_path(APPEND sysbuild_build_dir "${BINARY_BIN_FILE}" OUTPUT_VARIABLE output)
   endif()
