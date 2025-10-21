@@ -252,6 +252,8 @@ def setup(app):
 llms_txt_summary = """
 # nRF Connect SDK Documentation
 
+Version: {version}
+
 The nRF Connect SDK is Nordic Semiconductor's software development kit for
 building products based on Nordic Semiconductor SoCs.
 
@@ -262,13 +264,17 @@ Installing the nRF Connect SDK: installation/install_ncs.html
 # DO NOT GENERATE llms-full.txt
 llms_txt_full = False
 llms_txt_exclude_patterns = [
-    # EXCLUDE release notes - might need to include latest tag
-    "releases_and_maturity/releases/release-notes-*",
+    # EXCLUDE release notes - including latest tag
+    "releases_and_maturity/releases/release-notes-{}".format(
+    "changelog" if version.endswith("99") else version
+    ),
 ]
 
 # INCLUDE source files
 llms_txt_source_files = [
 ]
 
-# SET base URL - might need to change ncs-latest to latest tag
-llms_txt_html_base_url = "https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/"
+# SET base URL - including latest tag
+llms_txt_html_base_url = "https://docs.nordicsemi.com/bundle/ncs-{}/page/nrf/".format(
+    "latest" if version.endswith("99") else version
+)
