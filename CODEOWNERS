@@ -517,6 +517,7 @@
 /samples/matter/                          @nrfconnect/ncs-matter
 /samples/mcuboot/                         @nrfconnect/ncs-eris
 /samples/mpsl/                            @nrfconnect/ncs-dragoon
+/samples/multicore/                       @nrfconnect/ncs-co-build-system
 /samples/net/                             @nrfconnect/ncs-cia @nrfconnect/ncs-modem
 /samples/nfc/                             @nrfconnect/ncs-si-muffin
 /samples/nrf5340/netboot/                 @nrfconnect/ncs-eris
@@ -648,7 +649,7 @@
 /samples/net/coap_client/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/nfc/**/*.rst                     @nrfconnect/ncs-si-muffin-doc
 /samples/nrf5340/empty_app_core/*.rst     @nrfconnect/ncs-si-muffin-doc
-/samples/nrf5340/empty_net_core/*.rst     @nrfconnect/ncs-si-bluebagel-doc
+/samples/multicore/empty/*.rst            @nrfconnect/ncs-doc-leads
 /samples/nrf5340/extxip_smp_svr/*.rst     @nrfconnect/ncs-eris-doc
 /samples/nrf5340/netboot/*.rst            @nrfconnect/ncs-eris-doc
 /samples/nrf5340/remote_shell/*.rst       @nrfconnect/ncs-si-muffin-doc
