@@ -27,3 +27,4 @@ tests:
     extra_args:
       - SB_CONFIG_NETCORE_IPC_RADIO=y
       - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
+      - SNIPPET=hw-flow-control
