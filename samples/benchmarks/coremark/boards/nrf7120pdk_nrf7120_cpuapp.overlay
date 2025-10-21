@@ -13,6 +13,7 @@
 		reserved-memory {
 			#address-cells = <1>;
 			#size-cells = <1>;
+
 			cpuflpr_code_partition: image@3e1000 {
 				/* FLPR core code partition */
 				reg = <0x3e1000 DT_SIZE_K(116)>;
