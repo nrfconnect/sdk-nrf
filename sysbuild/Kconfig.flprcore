@@ -12,4 +12,57 @@ config FLPRCORE_REMOTE_BOARD_TARGET_CPUCLUSTER
 	string
 	default "cpuflpr"
 
+menu "Fast lightweight peripheral processor core (FLPR) configuration"
+	depends on SUPPORT_FLPRCORE
+
+config SUPPORT_FLPRCORE_EMPTY
+	bool
+	default y
+
+config DEFAULT_FLPRCORE_EMPTY
+	bool
+
+choice FLPRCORE
+	prompt "FLPR core image" if !HPF
+	default FLPRCORE_EMPTY if DEFAULT_FLPRCORE_EMPTY && FLPRCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
+	depends on SUPPORT_FLPRCORE
+
+config FLPRCORE_NONE
+	bool "None"
+	help
+	  Do not include a FLPR core image in the build.
+
+config FLPRCORE_EMPTY
+	bool "Empty"
+	depends on SUPPORT_FLPRCORE_EMPTY
+	help
+	  Include empty image as the FLPR core image to use.
+
+endchoice
+
+if !FLPRCORE_NONE || HPF
+
+config FLPRCORE_IMAGE_NAME
+	string
+	default "empty_flpr_core" if FLPRCORE_EMPTY
+	default "hpf_gpio" if HPF_GPIO
+	default "hpf_mspi" if HPF_MSPI
+	help
+	  Name of FLPR core image.
+
+config FLPRCORE_IMAGE_PATH
+	string
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/basic/empty" if FLPRCORE_EMPTY
+	default "$(ZEPHYR_NRF_MODULE_DIR)/applications/hpf/gpio" if HPF_GPIO
+	default "$(ZEPHYR_NRF_MODULE_DIR)/applications/hpf/mspi" if HPF_MSPI
+	help
+	  Source directory of FLPR core image.
+
+endif # !FLPRCORE_NONE
+
+# Include high performance framework which provides it's own FLPR configuration
+rsource "Kconfig.hpf"
+
+endmenu
+
 endif # SUPPORT_FLPRCORE
