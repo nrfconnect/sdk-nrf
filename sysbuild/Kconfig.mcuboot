@@ -8,6 +8,7 @@ menu "MCUboot configuration"
 config MCUBOOT_SIGN_MERGED_BINARY
 	bool "Sign single, merged update package [EXPERIMENTAL]"
 	default y if (MCUBOOT_MODE_DIRECT_XIP || MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT)
+	default y if MCUBOOT_MODE_FIRMWARE_UPDATER
 	depends on SOC_NRF54H20
 	select EXPERIMENTAL
 
