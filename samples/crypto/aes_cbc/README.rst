@@ -27,10 +27,14 @@ The sample :ref:`enables PSA Crypto API <psa_crypto_support_enable>` and configu
 * :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_NO_PADDING` - Used to enable support for the CBC cipher mode without padding from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_cipher_modes`.
 * :kconfig:option:`CONFIG_PSA_WANT_GENERATE_RANDOM` - Used to enable random number generation for key and IV generation from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_rng_algorithms`.
 
+.. crypto_sample_overview_driver_selection_start
+
 The sample also configures the cryptographic drivers for each board target using Kconfig options in the overlay files in the :file:`boards` directory.
 
-These Kconfig options are then used by Oberon PSA Crypto to compile the required cryptographic PSA directives and select the cryptographic drivers.
-See :ref:`crypto_drivers_driver_selection` for more information about the driver selection process.
+These Kconfig options are then used by the build system to compile the required cryptographic PSA directives and make the configured cryptographic drivers available at runtime.
+See :ref:`crypto_drivers_driver_selection` for more information about this process.
+
+.. crypto_sample_overview_driver_selection_end
 
 Once built and run, the sample performs the following operations:
 
@@ -64,9 +68,9 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, complete the following steps to test it:
-
 .. crypto_sample_testing_start
+
+After programming the sample to your development kit, complete the following steps to test it:
 
 1. |connect_terminal|
 #. Build and program the application.
@@ -82,7 +86,7 @@ After programming the sample to your development kit, complete the following ste
    [00:00:00.251,159] <inf> aes_cbc: Starting AES-CBC-NO-PADDING example...
    [00:00:00.251,190] <inf> aes_cbc: Generating random AES key...
    [00:00:00.251,342] <inf> aes_cbc: AES key generated successfully!
-   [00:00:00.251,373] <inf> aes_cbc: Encrypting using AES CBC MODE...
+   [00:00:00.251,373] <inf> aes_cbc: Encrypting using the AES CBC mode...
    [00:00:00.251,708] <inf> aes_cbc: Encryption successful!
    [00:00:00.251,708] <inf> aes_cbc: ---- IV (len: 16): ----
    [00:00:00.251,739] <inf> aes_cbc: Content:
@@ -102,7 +106,7 @@ After programming the sample to your development kit, complete the following ste
                                     39 56 54 b5 96 6e 13 e2  7d 22 26 1e 3c 7c 3e eb |9VT..n.. }"&.<|>.
                                     15 60 31 d3 58 02 b6 85  98 63 2c e6 ad dc aa 19 |.`1.X... .c,.....
    [00:00:00.251,922] <inf> aes_cbc: ---- Encrypted text end  ----
-   [00:00:00.251,953] <inf> aes_cbc: Decrypting using AES CBC MODE...
+   [00:00:00.251,953] <inf> aes_cbc: Decrypting using the AES CBC mode...
    [00:00:00.252,166] <inf> aes_cbc: ---- Decrypted text (len: 64): ----
    [00:00:00.252,197] <inf> aes_cbc: Content:
                                     45 78 61 6d 70 6c 65 20  73 74 72 69 6e 67 20 74 |Example  string t

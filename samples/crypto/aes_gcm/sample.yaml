@@ -1,8 +1,7 @@
 sample:
-  description: >
-    This app provides an example of performing authenticated
-    AES encryption and decryption using AES GCM mode
-  name: AES GCM example
+  description: |
+    This sample demonstrates AES encryption and decryption using the AES GCM mode.
+  name: AES GCM sample
 tests:
   sample.aes_gcm.cc312:
     sysbuild: true

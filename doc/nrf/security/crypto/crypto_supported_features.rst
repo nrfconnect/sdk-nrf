@@ -2503,6 +2503,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_STAR_NO_TAG`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`
 
+.. _ug_crypto_supported_features_key_agreement_algorithms:
 
 Key agreement algorithms
 ========================
@@ -4454,6 +4455,8 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
+
+.. _ug_crypto_supported_features_signature_algorithms:
 
 Asymmetric signature algorithms
 ===============================
@@ -7239,6 +7242,8 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                * - Configuration automatically generated based on the enabled RNG algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
                  - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR_DRBG`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG` (software implementation, entropy provided by the hardware RNG peripheral)
+
+.. _ug_crypto_supported_features_hash_algorithms:
 
 Hash algorithms
 ===============

@@ -28,10 +28,9 @@ The sample :ref:`enables PSA Crypto API <psa_crypto_support_enable>` and configu
 * :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM` - Used to enable support for the CCM AEAD algorithm from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_aead_algorithms`.
 * :kconfig:option:`CONFIG_PSA_WANT_GENERATE_RANDOM` - Used to enable random number generation for key generation from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_rng_algorithms`.
 
-The sample also configures the cryptographic drivers for each board target using Kconfig options in the overlay files in the :file:`boards` directory.
-
-These Kconfig options are then used by Oberon PSA Crypto to compile the required cryptographic PSA directives and select the cryptographic drivers.
-See :ref:`crypto_drivers_driver_selection` for more information about the driver selection process.
+.. include:: /samples/crypto/aes_cbc/README.rst
+   :start-after: crypto_sample_overview_driver_selection_start
+   :end-before: crypto_sample_overview_driver_selection_end
 
 Once built and run, the sample performs the following operations:
 
@@ -63,8 +62,6 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, complete the following steps to test it:
-
 .. include:: /samples/crypto/aes_cbc/README.rst
    :start-after: crypto_sample_testing_start
    :end-before: crypto_sample_testing_end
@@ -76,7 +73,7 @@ After programming the sample to your development kit, complete the following ste
    [00:00:00.251,159] <inf> aes_ccm: Starting AES CCM example...
    [00:00:00.251,190] <inf> aes_ccm: Generating random AES key...
    [00:00:00.251,342] <inf> aes_ccm: AES key generated successfully!
-   [00:00:00.251,373] <inf> aes_ccm: Encrypting using AES CCM MODE...
+   [00:00:00.251,373] <inf> aes_ccm: Encrypting using the AES CCM mode...
    [00:00:00.251,708] <inf> aes_ccm: Encryption successful!
    [00:00:00.251,708] <inf> aes_ccm: ---- Nonce (len: 13): ----
    [00:00:00.251,739] <inf> aes_ccm: Content:
@@ -92,7 +89,7 @@ After programming the sample to your development kit, complete the following ste
                                 b3 5d 47 06 89 a5 08 3b  e6 54 57 25 b9 49 02 50 |.]G....;.TW%.I.P
                                 d1 55 49 58 11 00 00 00  00 00 00 00 00 00 00 00 |.UX.............
    [00:00:00.251,922] <inf> aes_ccm: ---- Encrypted text end  ----
-   [00:00:00.251,953] <inf> aes_ccm: Decrypting using AES CCM MODE...
+   [00:00:00.251,953] <inf> aes_ccm: Decrypting using the AES CCM mode...
    [00:00:00.252,166] <inf> aes_ccm: ---- Decrypted text (len: 100): ----
    [00:00:00.252,197] <inf> aes_ccm: Content:
                                     Example string to demonstrate basic usage of AES CCM mode.

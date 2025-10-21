@@ -1,8 +1,8 @@
 sample:
   description: |
-    This app provides an example of performing encryption and decryption using
-    Chacha20-Poly1305
-  name: Chacha20-Poly1305 example
+    This sample demonstrates Chacha20-Poly1305 encryption and decryption using
+    the Chacha20-Poly1305 mode.
+  name: Chacha20-Poly1305 sample
 tests:
   sample.chachapoly.cc3xx:
     sysbuild: true
