@@ -4,11 +4,11 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+import argparse
+import logging
 import socket
 import struct
 import time
-import argparse
-import logging
 
 # Define constants for client roles
 UPLINK = 1
@@ -65,7 +65,7 @@ def tcp_server(ctrl_socket, config_data):
                     break
                 packet_count += 1
                 total_bytes_received += len(data)
-            except socket.timeout:
+            except TimeoutError:
                 logger.warning(
                     f"No data received for {remaining_timeout:.2f} seconds. Closing connection."
                 )

@@ -7,8 +7,9 @@ The "ncs-sbom" extension command.
 '''
 
 import argparse
-import main
+
 import args
+import main
 from west.commands import WestCommand
 
 

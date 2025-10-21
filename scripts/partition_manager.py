@@ -65,7 +65,7 @@ def resolve_one_of(reqs, partitions, invalid=False):
 
     for k, v in reqs.items():
         if isinstance(v, dict):
-            if 'one_of' in v.keys():
+            if 'one_of' in v:
                 if invalid:
                     raise PartitionError(INVALID_ONE_OF_ERROR)
                 if len(v.keys()) != 1:
@@ -91,7 +91,7 @@ def resolve_one_of(reqs, partitions, invalid=False):
                 if isinstance(i, dict):
                     if invalid:
                         raise PartitionError(INVALID_ONE_OF_ERROR)
-                    if 'one_of' not in i.keys():
+                    if 'one_of' not in i:
                         raise PartitionError(
                             "Found illegal dict inside list. Only 'one_of' "
                             "dicts are allowed")
@@ -115,13 +115,13 @@ def remove_all_zero_sized_partitions(reqs, dp, system_reqs, to_delete=None):
             to_delete.append(k)
             remove_all_zero_sized_partitions({k: v for k, v in reqs.items() if k not in to_delete},
                 dp, {k: v for k, v in system_reqs.items() if k not in to_delete}, to_delete)
-        if 'share_size' in v.keys():
+        if 'share_size' in v:
             non_zero_partitions = [p for p in system_reqs if 'size' not in system_reqs[p] or system_reqs[p]['size'] != 0]
             actual_partitions = v['share_size'] if not isinstance(v['share_size'], dict) else v['share_size']['one_of']
             remove_item_not_in_list(actual_partitions, non_zero_partitions, dp)
             if not v['share_size'] or ('one_of' in v['share_size'] and len(v['share_size']['one_of']) == 0):
                 del v['share_size']
-                if 'size' not in v.keys():
+                if 'size' not in v:
                     # The partition has no size, delete it, and rerun this function with the new reqs.
                     to_delete.append(k)
                     remove_all_zero_sized_partitions({k: v for k, v in reqs.items() if k not in to_delete},
@@ -138,7 +138,7 @@ def remove_irrelevant_requirements(reqs, system_reqs, dp):
 
     # Verify that no partitions define an empty 'placement'
     for k, v in reqs.items():
-        if 'placement' in v.keys() and len(v['placement']) == 0:
+        if 'placement' in v and len(v['placement']) == 0:
             raise PartitionError(
                 f"Found empty 'placement' property for partition '{k}'")
 
@@ -149,13 +149,13 @@ def remove_irrelevant_requirements(reqs, system_reqs, dp):
     # Remove dependencies to partitions which are not present
     for k, v in reqs.items():
         for before_after in ['before', 'after']:
-            if 'placement' in v.keys() and before_after in v['placement'].keys():
+            if 'placement' in v and before_after in v['placement']:
                 remove_item_not_in_list(v['placement'][before_after], [*reqs.keys(), 'start', 'end'], dp)
                 if not v['placement'][before_after]:
                     del v['placement'][before_after]
-        if 'span' in v.keys():
+        if 'span' in v:
             remove_item_not_in_list(v['span'], reqs.keys(), dp)
-        if 'inside' in v.keys():
+        if 'inside' in v:
             remove_item_not_in_list(v['inside'], reqs.keys(), dp)
             if not v['inside']:
                 del v['inside']
@@ -163,8 +163,8 @@ def remove_irrelevant_requirements(reqs, system_reqs, dp):
 
 def get_images_which_need_resolving(reqs, sub_partitions):
     # Get candidates which have placement specs.
-    unsorted = {x for x in reqs.keys() if 'placement' in reqs[x].keys() and ('before' in reqs[x]['placement'].keys()
-                                                                             or 'after' in reqs[x]['placement'].keys())}
+    unsorted = {x for x in reqs if 'placement' in reqs[x] and ('before' in reqs[x]['placement']
+                                                                             or 'after' in reqs[x]['placement'])}
 
     # Sort sub_partitions by whether they are inside other sub_partitions. Innermost first.
     sorted_subs = sorted(sub_partitions.values(), key=lambda x: len(x['span']))
@@ -210,7 +210,7 @@ def solve_direction(reqs, sub_partitions, unsolved, solution, ab):
 
 def solve_inside(reqs, sub_partitions):
     for key, value in reqs.items():
-        if 'inside' in value.keys():
+        if 'inside' in value:
             sub_partitions[value['inside'][0]]['span'].append(key)
 
 
@@ -339,7 +339,7 @@ def resolve(reqs, dp, system_reqs = None):
 def shared_size(reqs, share_with, total_size, dp):
     size = sizeof(reqs, share_with, total_size, dp)
     if share_with == dp or \
-            ('span' in reqs[share_with].keys() and dp in reqs[share_with]['span']):
+            ('span' in reqs[share_with] and dp in reqs[share_with]['span']):
         sharer_count = reqs[share_with]['sharers']
         size /= (sharer_count + 1)
     return int(size)
@@ -347,18 +347,18 @@ def shared_size(reqs, share_with, total_size, dp):
 
 def get_size_source(reqs, sharer):
     size_source = sharer
-    while 'share_size' in reqs[size_source].keys():
+    while 'share_size' in reqs[size_source]:
         # Find "original" source.
         size_source = reqs[size_source]['share_size'][0]
     return size_source
 
 
 def set_shared_size(all_reqs, total_size, dp, system_reqs):
-    for req in all_reqs.keys():
-        if 'share_size' in all_reqs[req].keys():
+    for req in all_reqs:
+        if 'share_size' in all_reqs[req]:
             size_source = get_size_source(system_reqs, req)
-            if size_source in all_reqs.keys():
-                if 'sharers' not in all_reqs[size_source].keys():
+            if size_source in all_reqs:
+                if 'sharers' not in all_reqs[size_source]:
                     all_reqs[size_source]['sharers'] = 0
                 all_reqs[size_source]['sharers'] += 1
                 all_reqs[req]['share_size'] = [size_source]
@@ -367,7 +367,7 @@ def set_shared_size(all_reqs, total_size, dp, system_reqs):
 
     # Find partitions which share size with dynamic partition or a container partition which spans dynamic partition.
     dynamic_size_sharers = get_dependent_partitions(all_reqs, dp, system_reqs)
-    static_size_sharers = [k for k, v in all_reqs.items() if 'share_size' in v.keys() and k not in dynamic_size_sharers]
+    static_size_sharers = [k for k, v in all_reqs.items() if 'share_size' in v and k not in dynamic_size_sharers]
     for req in static_size_sharers:
         share_with_name = system_reqs[req]['share_size'][0]
         share_with = system_reqs[share_with_name]
@@ -383,14 +383,14 @@ def set_shared_size(all_reqs, total_size, dp, system_reqs):
 
 
 def get_dependent_partitions(all_reqs, target, system_reqs):
-    return [k for k, v in all_reqs.items() if 'share_size' in v.keys()
+    return [k for k, v in all_reqs.items() if 'share_size' in v
             and (v['share_size'][0] == target
-                 or ('span' in system_reqs[v['share_size'][0]].keys()
+                 or ('span' in system_reqs[v['share_size'][0]]
                      and target in system_reqs[v['share_size'][0]]['span']))]
 
 
 def dynamic_partitions_size(reqs, total_size, dp):
-    size = total_size - sum([req['size'] for name, req in reqs.items() if 'size' in req.keys() and name != dp])
+    size = total_size - sum([req['size'] for name, req in reqs.items() if 'size' in req and name != dp])
     return size
 
 
@@ -439,9 +439,9 @@ def _set_addresses_and_align(reqs, sub_partitions, solution, size, start, dynami
     # Check 'align' and 'align_next'.
     for part in solution_non_empty:
         if 'align' in reqs[part]:
-            raise PartitionError(f"'align' config is misplaced (should be part of 'placement').")
+            raise PartitionError("'align' config is misplaced (should be part of 'placement').")
         if 'align_next' in reqs[part]:
-            raise PartitionError(f"'align_next' config is misplaced (should be part of 'placement').")
+            raise PartitionError("'align_next' config is misplaced (should be part of 'placement').")
 
     # Resolve 'align_next'
     for i in range(len(solution_non_empty) - 1):
@@ -540,7 +540,7 @@ def align_partition(current, reqs, move_up, dynamic_partitions, dp, solution):
         raise PartitionError('Invalid combination, can not have dynamic'
                              ' partition in front of app with alignment')
 
-    e = 'EMPTY_{}'.format(len([x for x in reqs.keys() if 'EMPTY' in x]))
+    e = 'EMPTY_{}'.format(len([x for x in reqs if 'EMPTY' in x]))
     reqs[e] = {'address': empty_partition_address,
                'size': empty_partition_size,
                'region': reqs[dynamic_partitions[0]]['region'],
@@ -652,8 +652,8 @@ def set_size_addr(entry, size, address):
 
 def set_sub_partition_address_and_size(reqs, sub_partitions):
     for sp_name, sp_value in sub_partitions.items():
-        end = max(((reqs[part]['address'] + reqs[part]['size']) for part in sp_value['span']))
-        address = min((reqs[part]['address'] for part in sp_value['span']))
+        end = max((reqs[part]['address'] + reqs[part]['size']) for part in sp_value['span'])
+        address = min(reqs[part]['address'] for part in sp_value['span'])
         size = end - address
         if size == 0:
             raise PartitionError(
@@ -667,8 +667,8 @@ def set_sub_partition_address_and_size(reqs, sub_partitions):
 def sizeof(reqs, req, total_size, dp):
     if req == dp:
         size = dynamic_partitions_size(reqs, total_size, dp)
-    elif 'span' not in reqs[req].keys():
-        size = reqs[req]['size'] if 'size' in reqs[req].keys() else 0
+    elif 'span' not in reqs[req]:
+        size = reqs[req].get('size', 0)
     else:
         size = sum([sizeof(reqs, part, total_size, dp) for part in reqs[req]['span']])
 
@@ -680,11 +680,11 @@ def load_reqs(input_config):
 
     for ymlpath in input_config:
         if path.exists(ymlpath):
-            with open(ymlpath, 'r') as f:
+            with open(ymlpath) as f:
                 loaded_reqs = yaml.safe_load(f)
                 if loaded_reqs is None:
                     continue
-                for key in loaded_reqs.keys():
+                for key in loaded_reqs:
                     if key in reqs and loaded_reqs[key] != reqs[key]:
                         raise PartitionError(
                             f"Conflicting configuration found for '{f.name}'"
@@ -699,7 +699,7 @@ def get_dynamic_area_start_and_size(static_config, base, size, dp):
     # Remove app from this dict to simplify the case where partitions
     # before and after are removed.
     proper_partitions = [config for name, config in static_config.items()
-                         if 'span' not in config.keys() and
+                         if 'span' not in config and
                          name != dp]
 
     first_address = base
@@ -709,7 +709,7 @@ def get_dynamic_area_start_and_size(static_config, base, size, dp):
                                for config in proper_partitions}
     ends = {first_address} | {config['address'] + config['size']
                               for config in proper_partitions}
-    gaps = list(zip(sorted(ends - starts), sorted(starts - ends)))
+    gaps = list(zip(sorted(ends - starts), sorted(starts - ends), strict=False))
 
     if len(gaps) != 1:
         raise PartitionError(
@@ -776,7 +776,7 @@ def solve_simple_region(pm_config, start, size, placement_strategy, region_name,
     if static_conf:
         verify_static_conf_simple(size, start, placement_strategy, static_conf)
         reserved = sum([config['size'] for name, config in static_conf.items()
-                        if 'region' in config.keys() and config['region'] == region_name])
+                        if 'region' in config and config['region'] == region_name])
         pm_config.update(static_conf)
 
     if placement_strategy == END_TO_START:
@@ -825,7 +825,7 @@ def verify_static_conf_simple(size, start, placement_strategy, static_conf):
                                for c in static_conf.values() if 'size' in c}
     ends = {start} | {c['address'] + c['size']
                       for c in static_conf.values() if 'size' in c}
-    gaps = list(zip(sorted(ends - starts), sorted(starts - ends)))
+    gaps = list(zip(sorted(ends - starts), sorted(starts - ends), strict=False))
 
     # The whole region is filled, which is valid.
     if len(gaps) == 0:

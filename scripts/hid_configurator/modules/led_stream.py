@@ -3,8 +3,8 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-import struct
 import random
+import struct
 
 from NrfHidDevice import EVENT_DATA_LEN_MAX
 
@@ -115,7 +115,7 @@ def send_continuous_led_stream(dev, led_id, freq, substep_cnt = 10):
                 free -= 1
     except Exception as e:
         print(e)
-    except KeyboardInterrupt as e:
+    except KeyboardInterrupt:
         pass
 
     print('LED stream ended')
