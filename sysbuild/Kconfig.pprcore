@@ -6,6 +6,56 @@ config SUPPORT_PPRCORE
 	bool
 	default y if SOC_NRF54H20_CPUAPP
 
+if SUPPORT_PPRCORE
+
 config PPRCORE_REMOTE_BOARD_TARGET_CPUCLUSTER
 	string
 	default "cpuppr" if SOC_NRF54H20_CPUAPP
+
+menu "Peripheral processor core (PPR) configuration"
+	depends on SUPPORT_PPRCORE
+
+config SUPPORT_PPRCORE_EMPTY
+	bool
+	default y
+
+config DEFAULT_PPRCORE_EMPTY
+	bool
+
+choice PPRCORE
+	prompt "PPR core image"
+	default PPRCORE_EMPTY if DEFAULT_PPRCORE_EMPTY && PPRCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
+	depends on SUPPORT_PPRCORE
+
+config PPRCORE_NONE
+	bool "None"
+	help
+	  Do not include a PPR core image in the build.
+
+config PPRCORE_EMPTY
+	bool "Empty"
+	depends on SUPPORT_PPRCORE_EMPTY
+	help
+	  Include empty image as the PPR core image to use.
+
+endchoice
+
+if !PPRCORE_NONE
+
+config PPRCORE_IMAGE_NAME
+	string
+	default "empty_ppr_core" if PPRCORE_EMPTY
+	help
+	  Name of PPR core image.
+
+config PPRCORE_IMAGE_PATH
+	string
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/basic/empty" if PPRCORE_EMPTY
+	help
+	  Source directory of PPR core image.
+
+endif # !PPRCORE_NONE
+
+endmenu
+
+endif # SUPPORT_PPRCORE
