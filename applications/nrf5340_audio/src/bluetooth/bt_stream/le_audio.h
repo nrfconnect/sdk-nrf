@@ -21,8 +21,7 @@
 #include <audio_defines.h>
 
 #define LE_AUDIO_ZBUS_EVENT_WAIT_TIME	  K_MSEC(5)
-
-#define LE_AUDIO_SDU_SIZE_OCTETS(bitrate) (bitrate / (1000000 / CONFIG_AUDIO_FRAME_DURATION_US) / 8)
+#define LE_AUDIO_SDU_SIZE_OCTETS(bitrate, dur_us) (bitrate / (1000000 / dur_us) / 8)
 
 #if CONFIG_SAMPLE_RATE_CONVERTER && CONFIG_AUDIO_SAMPLE_RATE_48000_HZ
 #define BT_AUDIO_CODEC_CAPABILIY_FREQ                                                              \
@@ -48,9 +47,10 @@
 #define BT_BAP_LC3_PRESET_CONFIGURABLE(_loc, _stream_context, _bitrate)                            \
 	BT_BAP_LC3_PRESET(BT_AUDIO_CODEC_LC3_CONFIG(CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE,   \
 						    BT_AUDIO_CODEC_CFG_DURATION_10, _loc,          \
-						    LE_AUDIO_SDU_SIZE_OCTETS(_bitrate), 1,         \
+						    LE_AUDIO_SDU_SIZE_OCTETS(_bitrate, 10000), 1,  \
 						    _stream_context),                              \
-			  BT_BAP_QOS_CFG_UNFRAMED(10000u, LE_AUDIO_SDU_SIZE_OCTETS(_bitrate),      \
+			  BT_BAP_QOS_CFG_UNFRAMED(10000u,                                          \
+						  LE_AUDIO_SDU_SIZE_OCTETS(_bitrate, 10000),       \
 						  CONFIG_BT_AUDIO_RETRANSMITS,                     \
 						  CONFIG_BT_AUDIO_MAX_TRANSPORT_LATENCY_MS,        \
 						  CONFIG_BT_AUDIO_PRESENTATION_DELAY_US))
