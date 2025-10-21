@@ -1,14 +1,14 @@
 .. _nrf5340_empty_net_core:
 
-nRF5340: Empty firmware for network core
-########################################
+Empty firmware for multiple core SoCs
+#####################################
 
 .. contents::
    :local:
    :depth: 2
 
-The sample demonstrates how to generate an empty network core firmware.
-The sample is used only by the applications that do not use the network core.
+The sample demonstrates how to generate an empty network (or other) core firmware.
+The sample is used only by the applications that do not use the other core(s).
 In the mentioned case, the empty network core sample is automatically added to build by the :kconfig:option:`SB_CONFIG_NETCORE_EMPTY` sysbuild Kconfig option.
 
 Requirements
@@ -21,7 +21,7 @@ The sample supports the following development kits:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf5340/empty_net_core`
+.. |sample path| replace:: :file:`samples/basic/empty`
 
 .. include:: /includes/build_and_run.txt
 

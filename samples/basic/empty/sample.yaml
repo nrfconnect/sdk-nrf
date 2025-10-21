@@ -1,8 +1,8 @@
 sample:
-  description: Minimal configuration sample that works as empty netcore image.
-  name: Empty firmware for network core
+  description: Minimal configuration sample that works as empty network (or other) core image.
+  name: Empty firmware for multicore MCUs
 tests:
-  sample.nrf5340.empty_net_core.build:
+  sample.basic.empty:
     sysbuild: true
     build_only: true
     integration_platforms:
