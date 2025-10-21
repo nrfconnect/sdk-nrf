@@ -91,16 +91,20 @@ void event_handler(struct esb_evt const *event)
 	switch (event->evt_id) {
 	case ESB_EVENT_RX_RECEIVED:
 #if defined(CONFIG_ESB_SNIFFER)
-		if (esb_read_rx_payload(&packet.payload) == 0) {
+		struct esb_payload *payload = &packet.payload;
 #else
-		if (esb_read_rx_payload(&rx_payload) == 0) {
+		struct esb_payload *payload = &rx_payload;
 #endif /* !defined(CONFIG_ESB_SNIFFER) */
+		int err;
+
+		while ((err = esb_read_rx_payload(payload)) == 0) {
 			log_packet();
 
 #if defined(CONFIG_LED_ENABLE) && !defined(CONFIG_ESB_SNIFFER)
 			leds_update(rx_payload.data[1]);
 #endif /* defined(CONFIG_LED_ENABLE) && !defined(CONFIG_ESB_SNIFFER) */
-		} else {
+		}
+		if (err && err != -ENODATA) {
 			LOG_ERR("Error while reading rx packet");
 		}
 		break;

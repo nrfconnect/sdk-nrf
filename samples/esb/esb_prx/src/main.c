@@ -54,7 +54,9 @@ void event_handler(struct esb_evt const *event)
 		LOG_DBG("TX FAILED EVENT");
 		break;
 	case ESB_EVENT_RX_RECEIVED:
-		if (esb_read_rx_payload(&rx_payload) == 0) {
+		int err;
+
+		while ((err = esb_read_rx_payload(&rx_payload)) == 0) {
 			LOG_DBG("Packet received, len %d : "
 				"0x%02x, 0x%02x, 0x%02x, 0x%02x, "
 				"0x%02x, 0x%02x, 0x%02x, 0x%02x",
@@ -65,7 +67,8 @@ void event_handler(struct esb_evt const *event)
 				rx_payload.data[7]);
 
 			leds_update(rx_payload.data[1]);
-		} else {
+		}
+		if (err && err != -ENODATA) {
 			LOG_ERR("Error while reading rx packet");
 		}
 		break;
