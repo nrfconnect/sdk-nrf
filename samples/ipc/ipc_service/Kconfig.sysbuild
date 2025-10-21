@@ -14,3 +14,4 @@ config REMOTE_BOARD
 	default "nrf54l15dk/nrf54l15/cpuflpr" if BOARD_NRF54L15DK_NRF54L15_CPUAPP
 	default "nrf54lm20dk/nrf54lm20a/cpuflpr" if BOARD_NRF54LM20DK_NRF54LM20A_CPUAPP
 	default "nrf54lv10dk/nrf54lv10a/cpuflpr" if BOARD_NRF54LV10DK_NRF54LV10A_CPUAPP
+	default "nrf54lv10dk/nrf54lv10a/cpuflpr" if BOARD_NRF54LV10DK_NRF54LV10A_CPUAPP_NS

@@ -231,6 +231,7 @@ tests:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     timeout: 20
@@ -244,6 +245,7 @@ tests:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     timeout: 20
