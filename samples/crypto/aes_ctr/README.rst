@@ -27,10 +27,9 @@ The sample :ref:`enables PSA Crypto API <psa_crypto_support_enable>` and configu
 * :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR` - Used to enable support for the CTR cipher mode from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_cipher_modes`.
 * :kconfig:option:`CONFIG_PSA_WANT_GENERATE_RANDOM` - Used to enable random number generation for key and IV generation from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_rng_algorithms`.
 
-The sample also configures the cryptographic drivers for each board target using Kconfig options in the overlay files in the :file:`boards` directory.
-
-These Kconfig options are then used by Oberon PSA Crypto to compile the required cryptographic PSA directives and select the cryptographic drivers.
-See :ref:`crypto_drivers_driver_selection` for more information about the driver selection process.
+.. include:: /samples/crypto/aes_cbc/README.rst
+   :start-after: crypto_sample_overview_driver_selection_start
+   :end-before: crypto_sample_overview_driver_selection_end
 
 Once built and run, the sample performs the following operations:
 
@@ -65,8 +64,6 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, complete the following steps to test it:
-
 .. include:: /samples/crypto/aes_cbc/README.rst
    :start-after: crypto_sample_testing_start
    :end-before: crypto_sample_testing_end
@@ -78,7 +75,7 @@ After programming the sample to your development kit, complete the following ste
    [00:00:00.123,456] <inf> aes_ctr: Starting AES CTR example...
    [00:00:00.123,489] <inf> aes_ctr: Generating random AES key...
    [00:00:00.123,512] <inf> aes_ctr: AES key generated successfully!
-   [00:00:00.123,545] <inf> aes_ctr: Encrypting using AES CTR MODE...
+   [00:00:00.123,545] <inf> aes_ctr: Encrypting using the AES CTR mode...
    [00:00:00.123,567] <inf> aes_ctr: Encryption successful!
    [00:00:00.123,589] <inf> aes_ctr: ---- IV (len: 16): ----
    [00:00:00.123,611] <inf> aes_ctr: Content:
@@ -91,7 +88,7 @@ After programming the sample to your development kit, complete the following ste
                                 7b 61 95 44 09 64 ea ef  ad b8 72 59 65 4f 6a 7c |{a.D.d....rYeOj|
                                 7f 81 f4 2a 3b 9d 3e 66  42 e5 db 87 4c 16        |...*;..fB...L.
    [00:00:00.123,699] <inf> aes_ctr: ---- Encrypted text end  ----
-   [00:00:00.123,721] <inf> aes_ctr: Decrypting using AES CTR MODE...
+   [00:00:00.123,721] <inf> aes_ctr: Decrypting using the AES CTR mode...
    [00:00:00.123,743] <inf> aes_ctr: ---- Decrypted text (len: 56): ----
    [00:00:00.123,765] <inf> aes_ctr: Content:
                                 Example string to demonstrate basic usage of AES CTR mode.

@@ -124,7 +124,7 @@ int encrypt_ccm_aes(void)
 	uint32_t output_len;
 	psa_status_t status;
 
-	LOG_INF("Encrypting using AES CCM MODE...");
+	LOG_INF("Encrypting using the AES CCM mode...");
 
 	/* Encrypt the plaintext and create the authentication tag */
 	status = psa_aead_encrypt(key_id,
@@ -160,7 +160,7 @@ int decrypt_ccm_aes(void)
 	uint32_t output_len;
 	psa_status_t status;
 
-	LOG_INF("Decrypting using AES CCM MODE...");
+	LOG_INF("Decrypting using the AES CCM mode...");
 
 	/* Decrypt the encrypted data and authenticate the tag */
 	status = psa_aead_decrypt(key_id,

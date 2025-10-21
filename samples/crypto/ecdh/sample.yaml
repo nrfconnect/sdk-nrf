@@ -1,8 +1,7 @@
 sample:
   description: |
-    This app provides an example of performing Elliptic-curve Diffie–Hellman
-    key echange which allows two parties to obtain a common secret
-  name: ECDH example
+    This sample demonstrates ECDH key exchange using the ECDH algorithm.
+  name: ECDH sample
 tests:
   sample.ecdh.cc3xx:
     sysbuild: true

@@ -124,7 +124,7 @@ int encrypt_aes_gcm(void)
 	uint32_t output_len;
 	psa_status_t status;
 
-	LOG_INF("Encrypting using AES GCM MODE...");
+	LOG_INF("Encrypting using the AES GCM mode...");
 
 	/* Generate a random IV */
 	status = psa_generate_random(m_iv, NRF_CRYPTO_EXAMPLE_AES_IV_SIZE);
@@ -164,7 +164,7 @@ int decrypt_aes_gcm(void)
 	uint32_t output_len;
 	psa_status_t status;
 
-	LOG_INF("Decrypting using AES GCM MODE...");
+	LOG_INF("Decrypting using the AES GCM mode...");
 
 	/* Decrypt and authenticate the encrypted data */
 	status = psa_aead_decrypt(key_id,
@@ -200,7 +200,7 @@ int main(void)
 {
 	int status;
 
-	LOG_INF("Starting AES-GCM example...");
+	LOG_INF("Starting AES GCM example...");
 
 	status = crypto_init();
 	if (status != APP_SUCCESS) {

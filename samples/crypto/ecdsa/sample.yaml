@@ -1,7 +1,7 @@
 sample:
   description: |
-    This app provides an example of signing/verifying using ECDSA signatures
-  name: ECDSA example
+    This sample demonstrates ECDSA signing and verification using the ECDSA algorithm.
+  name: ECDSA sample
 tests:
   sample.ecdsa.cc3xx:
     sysbuild: true

@@ -92,7 +92,7 @@ int generate_ecdsa_keypair(void)
 	psa_status_t status;
 	size_t olen;
 
-	LOG_INF("Generating random ECDSA keypair...");
+	LOG_INF("Generating random ECDSA key pair...");
 
 	/* Configure the key attributes */
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
@@ -156,7 +156,7 @@ int sign_message(void)
 	uint32_t output_len;
 	psa_status_t status;
 
-	LOG_INF("Signing a message using ECDSA...");
+	LOG_INF("Signing a message using the ECDSA algorithm...");
 
 	/* Compute the SHA256 hash*/
 	status = psa_hash_compute(PSA_ALG_SHA_256,
@@ -195,7 +195,7 @@ int verify_message(void)
 {
 	psa_status_t status;
 
-	LOG_INF("Verifying ECDSA signature...");
+	LOG_INF("Verifying the ECDSA signature...");
 
 	/* Verify the signature of the hash */
 	status = psa_verify_hash(pub_key_id,

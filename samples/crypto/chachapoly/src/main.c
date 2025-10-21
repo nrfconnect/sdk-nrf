@@ -110,7 +110,7 @@ int generate_key(void)
 	/* After the key handle is acquired the attributes are not needed */
 	psa_reset_key_attributes(&key_attributes);
 
-	LOG_INF("ChachaPoly key generated successfully!");
+	LOG_INF("Chacha20 key generated successfully!");
 
 	return APP_SUCCESS;
 }
@@ -120,7 +120,7 @@ int encrypt_chachapoly(void)
 	uint32_t output_len;
 	psa_status_t status;
 
-	LOG_INF("Encrypting using Chacha20-Poly1305...");
+	LOG_INF("Encrypting using the Chacha20-Poly1305 mode...");
 
 	/* Generate a random nonce */
 	status = psa_generate_random(m_nonce, NRF_CRYPTO_EXAMPLE_CHACHAPOLY_NONCE_SIZE);
@@ -160,7 +160,7 @@ int decrypt_chachapoly(void)
 	uint32_t output_len;
 	psa_status_t status;
 
-	LOG_INF("Decrypting using Chacha20-Poly1305 ...");
+	LOG_INF("Decrypting using the Chacha20-Poly1305 mode...");
 
 	/* Decrypt and authenticate the encrypted data */
 	status = psa_aead_decrypt(key_id,
@@ -196,7 +196,7 @@ int main(void)
 {
 	int status;
 
-	LOG_INF("Starting ChachaPoly example...");
+	LOG_INF("Starting Chacha20-Poly1305 example...");
 	status = crypto_init();
 	if (status != APP_SUCCESS) {
 		LOG_INF(APP_ERROR_MESSAGE);
