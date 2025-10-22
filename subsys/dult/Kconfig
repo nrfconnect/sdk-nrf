@@ -149,7 +149,7 @@ config DULT_USER
 	  Add DULT user source files.
 
 config DULT_MOTION_DETECTOR
-	bool "DULT Motion detector feature"
+	bool "Enable DULT Motion detector feature"
 	help
 	  The DULT Motion detector requests the device to ring if the accessory separated
 	  from owner is moving. For more details see
@@ -158,7 +158,7 @@ config DULT_MOTION_DETECTOR
 if DULT_MOTION_DETECTOR
 
 config DULT_MOTION_DETECTOR_TEST_MODE
-	bool "DULT Motion detector test mode"
+	bool "Enable DULT Motion detector test mode"
 	help
 	  The DULT Motion detector test mode allows to configure motion detector parameters
 	  for testing purposes. Those values are defined in the DULT specification and should

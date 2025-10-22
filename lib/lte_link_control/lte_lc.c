@@ -29,7 +29,6 @@
 #include "modules/xmodemsleep.h"
 #include "modules/xsystemmode.h"
 #include "modules/xt3412.h"
-#include "modules/enveval.h"
 
 #include "common/work_q.h"
 #include "common/event_handler_list.h"
@@ -183,16 +182,6 @@ int lte_lc_neighbor_cell_measurement_cancel(void)
 int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params)
 {
 	return coneval_params_get(params);
-}
-
-int lte_lc_env_eval(struct lte_lc_env_eval_params *params)
-{
-	return env_eval(params);
-}
-
-int lte_lc_env_eval_cancel(void)
-{
-	return env_eval_cancel();
 }
 
 int lte_lc_modem_events_enable(void)

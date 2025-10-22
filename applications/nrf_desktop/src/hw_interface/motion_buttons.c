@@ -27,9 +27,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 #endif
 
 enum state {
-	STATE_DISCONNECTED,
 	STATE_IDLE,
-	STATE_FETCHING
+	STATE_CONNECTED,
+	STATE_PENDING
 };
 
 enum dir {
@@ -61,13 +61,12 @@ static motion_ts get_timestamp(void)
 	}
 }
 
-static void motion_event_send(int16_t dx, int16_t dy, bool active)
+static void motion_event_send(int16_t dx, int16_t dy)
 {
 	struct motion_event *event = new_motion_event();
 
 	event->dx = dx;
 	event->dy = dy;
-	event->active = active;
 
 	APP_EVENT_SUBMIT(event);
 }
@@ -97,11 +96,6 @@ static enum dir key_to_dir(uint16_t key_id)
 	}
 
 	return dir;
-}
-
-static bool is_motion_active(void)
-{
-	return active_dir_bm != 0;
 }
 
 static int16_t ts_diff_to_motion(int64_t diff, int32_t *reminder)
@@ -157,13 +151,11 @@ static void clear_accumulated_motion(void)
 
 static void send_motion(void)
 {
-	__ASSERT_NO_MSG(state == STATE_FETCHING);
-
 	int16_t x;
 	int16_t y;
 
 	generate_motion(&x, &y);
-	motion_event_send(x, y, is_motion_active());
+	motion_event_send(x, y);
 }
 
 static bool handle_button_event(const struct button_event *event)
@@ -183,9 +175,9 @@ static bool handle_button_event(const struct button_event *event)
 
 		update_motion_ts(dir, get_timestamp() - ts_shift);
 
-		if (state == STATE_IDLE) {
-			state = STATE_FETCHING;
+		if (state == STATE_CONNECTED) {
 			send_motion();
+			state = STATE_PENDING;
 		}
 	}
 
@@ -202,15 +194,20 @@ static bool handle_module_state_event(const struct module_state_event *event)
 	return false;
 }
 
+static bool is_motion_active(void)
+{
+	return active_dir_bm != 0;
+}
 
 static bool handle_hid_report_sent_event(const struct hid_report_sent_event *event)
 {
 	if ((event->report_id == REPORT_ID_MOUSE) ||
 	    (event->report_id == REPORT_ID_BOOT_MOUSE)) {
-		if (state == STATE_FETCHING) {
-			send_motion();
-			if (!is_motion_active()) {
-				state = STATE_IDLE;
+		if (state == STATE_PENDING) {
+			if (is_motion_active()) {
+				send_motion();
+			} else {
+				state = STATE_CONNECTED;
 			}
 		}
 	}
@@ -234,14 +231,19 @@ static bool handle_hid_report_subscription_event(const struct hid_report_subscri
 
 		bool is_connected = (peer_count != 0);
 
-		if ((state == STATE_DISCONNECTED) && is_connected) {
-			state = is_motion_active() ? STATE_FETCHING : STATE_IDLE;
-			if (state == STATE_FETCHING) {
+		if ((state == STATE_IDLE) && is_connected) {
+			if (is_motion_active()) {
 				clear_accumulated_motion();
 				send_motion();
+				state = STATE_PENDING;
+			} else {
+				state = STATE_CONNECTED;
 			}
-		} else if ((state != STATE_DISCONNECTED) && !is_connected) {
-			state = STATE_DISCONNECTED;
+			return false;
+		}
+		if ((state != STATE_IDLE) && !is_connected) {
+			state = STATE_IDLE;
+			return false;
 		}
 	}
 
@@ -251,7 +253,8 @@ static bool handle_hid_report_subscription_event(const struct hid_report_subscri
 static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_hid_report_sent_event(aeh)) {
-		return handle_hid_report_sent_event(cast_hid_report_sent_event(aeh));
+		return handle_hid_report_sent_event(
+				cast_hid_report_sent_event(aeh));
 	}
 
 	if (is_button_event(aeh)) {

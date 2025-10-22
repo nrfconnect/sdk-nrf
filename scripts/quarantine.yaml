@@ -20,9 +20,6 @@
     - applications.matter_bridge.br_ble.smp_dfu
     - applications.matter_bridge.br_ble.memory_profiling
     - applications.matter_bridge.memory_profiling
-  platforms:
-    - nrf7002dk/nrf5340/cpuapp
-    - nrf5340dk/nrf5340/cpuapp
   comment: "Variant does not fit in FLASH area - it should be probably removed in the future"
 
 - scenarios:
@@ -30,6 +27,7 @@
   platforms:
     - nrf7002dk/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-20715"
+
 
 - scenarios:
     - nrf.extended.drivers.uart.uart_elementary_dual_l09
@@ -73,61 +71,16 @@
   comment: "Needs alignment to work with IronSide SE"
 
 - scenarios:
+    - applications.nrf_desktop.*
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+  comment: "Needs alignment to work with MCUBoot"
+
+- scenarios:
     - drivers.counter.basic_api
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34187"
-
-- scenarios:
-    - sample.nrf7002_eb.thingy53.shell
-  platforms:
-    - thingy53/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35521"
-
-- scenarios:
-    - applications.machine_learning.zrelease
-    - applications.machine_learning.zdebug
-  platforms:
-    - thingy53/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35522"
-
-- scenarios:
-    - applications.machine_learning.zdebug_rtt
-  platforms:
-    - thingy53/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35672"
-
-- scenarios:
-    - benchmarks.multicore.idle_twim.nrf54h20dk_cpuapp_cpurad.s2ram
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
-  comment: "Needs newer toolchain or dtc due to RAM overflow error"
-
-- scenarios:
-    - sample.persistent_key_usage.secure_storage
-    - sample.persistent_key_usage.trusted_storage
-    - sample.psa.its.secure_storage.entropy_driver
-    - sample.psa.its.secure_storage.entropy_not_secure
-    - sample.psa.persistent_key.secure_storage.entropy_driver
-    - sample.psa.persistent_key.secure_storage.entropy_not_secure
-    - secure_storage.psa.crypto.secure_storage
-    - secure_storage.psa.its.secure_storage.custom.store
-    - secure_storage.psa.its.secure_storage.store.settings
-    - secure_storage.psa.its.secure_storage.store.settings.64-bit_uids
-  platforms:
-    - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35676"
-
-- scenarios:
-    - benchmarks.current_consumption.systemoff.gpio_wakeup
-    - benchmarks.current_consumption.systemoff.gpio_wakeup.retained_mem
-    - benchmarks.current_consumption.systemoff.grtc_wakeup
-    - benchmarks.current_consumption.sample.boards.nrf.system_off
-    - benchmarks.current_consumption.sample.boards.nrf.system_off.retained_mem
-    - benchmarks.current_consumption.sample.boards.nrf.system_off.lpcomp_wakeup
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
-  comment: "Wait for lilium support"
 
 - scenarios:
     - sample.benchmark.coremark.heap_memory
@@ -137,20 +90,23 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31463"
 
 - scenarios:
-    - mcuboot.upgrade.encryption.ecdsa_p256
+    - sample.nrf54_nrf7002eb2.radio_test
+    - sample.nrf7002eb2.nrf54h20.ble-wifi-provision
+    - sample.nrf7002eb2.nrf54h20.int-wifi-provision
+    - sample.nrf7002eb2.scan
+    - sample.nrf7002eb2.shell
+    - sample.nrf7002eb2.sta
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35382"
+
+- scenarios:
+    - sample.bluetooth.peripheral_mds
   platforms:
     - nrf52840dk/nrf52840
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29460"
-
-- scenarios:
-    - mcuboot.nrf_compress.encryption_ed25519
-    - mcuboot.upgrade.encryption.ed25519
-  platforms:
-    - nrf54lv10dk.*
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35259"
-
-- scenarios:
-    - sample.bluetooth.direct_test_mode
-  platforms:
-    - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35981"
+    - nrf54l15dk/nrf54l05/cpuapp
+    - nrf54l15dk/nrf54l10/cpuapp
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35468"

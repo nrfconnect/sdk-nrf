@@ -53,7 +53,7 @@ Key generation and import
 Keys can have one of the following lifetimes:
 
 * Volatile - Stored in RAM, lost on reset.
-* Persistent - Stored in PSA Internal Trusted Storage or Key Management Unit, retained during reboots.
+* Persistent - Stored in PSA Internal Trusted Storage, retained during reboots.
 
 The PSA Crypto API supports two methods for using keys:
 
@@ -129,7 +129,7 @@ For an example of how to derive keys from HUKs, see the :ref:`Hardware unique ke
 Key Management Unit (KMU)
 =========================
 
-The Key Management Unit (KMU) is a hardware peripheral for secure key storage available on select Nordic Semiconductor devices.
+The Key Management Unit (KMU) is a hardware peripheral for secure key storage available on select nRF devices.
 It provides hardware-level protection for cryptographic keys.
 
 This option offers the following features:

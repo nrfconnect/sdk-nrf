@@ -154,12 +154,6 @@ The script requires the following arguments:
    "--location", "PSA key storage location"
    "--persistence", "Persistence mode for the key"
 
-.. note::
-   For the nRF54L Series devices, the script also requires the ``--cracen-usage`` argument.
-   The argument can take different values.
-   If you use ``--cracen-usage ENCRYPTED``, make sure that the device already has a seed value before you provision the key.
-   See :ref:`ug_nrf54l_crypto_cracen_ikg` for more information.
-
 To list all available arguments, including the optional ones, run the ``generate_psa_key_attributes.py -h`` command.
 
 .. note::

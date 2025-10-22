@@ -26,12 +26,6 @@ LOG_MODULE_REGISTER(audio_system, CONFIG_AUDIO_SYSTEM_LOG_LEVEL);
 #define FIFO_TX_BLOCK_COUNT (CONFIG_FIFO_FRAME_SPLIT_NUM * CONFIG_FIFO_TX_FRAME_COUNT)
 #define FIFO_RX_BLOCK_COUNT (CONFIG_FIFO_FRAME_SPLIT_NUM * CONFIG_FIFO_RX_FRAME_COUNT)
 
-/* Size these to fit the use case as part of optimization (e.g. increase decoder pool when it is
- * wrapped in a thread).
- */
-#define FIFO_ENC_POOL_BLK_COUNT 2
-#define FIFO_DEC_POOL_BLK_COUNT 1
-
 #define DEBUG_INTERVAL_NUM     1000
 #define TEST_TONE_BASE_FREQ_HZ 1000
 
@@ -42,11 +36,7 @@ K_MSGQ_DEFINE(audio_q_rx, sizeof(struct net_buf *), FIFO_RX_BLOCK_COUNT, sizeof(
 
 NET_BUF_POOL_FIXED_DEFINE(audio_q_rx_pool, FIFO_RX_BLOCK_COUNT, FRAME_SIZE_BYTES,
 			  sizeof(struct audio_metadata), NULL);
-NET_BUF_POOL_FIXED_DEFINE(audio_q_enc_pool, FIFO_ENC_POOL_BLK_COUNT, ENC_MULTI_CHAN_MAX_FRAME_SIZE,
-			  sizeof(struct audio_metadata), NULL);
-NET_BUF_POOL_FIXED_DEFINE(audio_q_dec_pool, FIFO_DEC_POOL_BLK_COUNT, PCM_NUM_BYTES_MULTI_CHAN,
-			  sizeof(struct audio_metadata), NULL);
-NET_BUF_POOL_FIXED_DEFINE(audio_q_tx_pool, FIFO_TX_BLOCK_COUNT, USB_BLOCK_SIZE_MULTI_CHAN,
+NET_BUF_POOL_FIXED_DEFINE(audio_q_tx_pool, FIFO_TX_BLOCK_COUNT, USB_BLOCK_SIZE_STEREO,
 			  sizeof(struct audio_metadata), NULL);
 
 static K_SEM_DEFINE(sem_encoder_start, 0, 1);
@@ -64,20 +54,7 @@ static struct sw_codec_config sw_codec_cfg;
 static int16_t test_tone_buf[CONFIG_AUDIO_SAMPLE_RATE_HZ / 1000];
 static size_t test_tone_size;
 
-/* The meta data for the decoder and the expected format of the USB.
- * An improvement would be to have the USB convert incoming data to the format it requires.
- */
-static struct audio_metadata decoder_meta = {.data_coding = PCM,
-					     .sample_rate_hz = 48000,
-					     .bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
-					     .carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
-					     .bytes_per_location = PCM_NUM_BYTES_MONO,
-					     .interleaved = true,
-					     .locations = BT_AUDIO_LOCATION_FRONT_LEFT |
-							  BT_AUDIO_LOCATION_FRONT_RIGHT,
-					     .bad_data = 0};
-
-bool sample_rate_valid(uint32_t sample_rate_hz)
+static bool sample_rate_valid(uint32_t sample_rate_hz)
 {
 	if (sample_rate_hz == 16000 || sample_rate_hz == 24000 || sample_rate_hz == 48000) {
 		return true;
@@ -94,27 +71,20 @@ static void audio_gateway_configure(void)
 		ERR_CHK_MSG(-EINVAL, "No codec selected");
 	}
 
-	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
-		sw_codec_cfg.decoder.audio_loc = BT_AUDIO_LOCATION_MONO_AUDIO;
-		sw_codec_cfg.decoder.num_ch = 1;
-		sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
-	}
+#if (CONFIG_STREAM_BIDIRECTIONAL)
+	sw_codec_cfg.decoder.audio_ch = DEVICE_LOCATION_DEFAULT;
+	sw_codec_cfg.decoder.num_ch = 1;
+	sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
+#endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
 
 	if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
 		sw_codec_cfg.encoder.num_ch = 1;
-		sw_codec_cfg.encoder.audio_loc = BT_AUDIO_LOCATION_MONO_AUDIO;
-		sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
 	} else {
-		/* For multi-channel on the gateway, only left and
-		 * right front are currently supported
-		 */
 		sw_codec_cfg.encoder.num_ch = 2;
-		sw_codec_cfg.encoder.audio_loc =
-			BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT;
-		sw_codec_cfg.encoder.channel_mode = SW_CODEC_MULTICHANNEL;
 	}
 
-	LOG_INF("Gateway configured for %d encoder channels", sw_codec_cfg.encoder.num_ch);
+	sw_codec_cfg.encoder.channel_mode =
+		(sw_codec_cfg.encoder.num_ch == 1) ? SW_CODEC_MONO : SW_CODEC_STEREO;
 }
 
 static void audio_headset_configure(void)
@@ -125,32 +95,31 @@ static void audio_headset_configure(void)
 		ERR_CHK_MSG(-EINVAL, "No codec selected");
 	}
 
-	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
-		sw_codec_cfg.encoder.audio_loc = BT_AUDIO_LOCATION_MONO_AUDIO;
-		sw_codec_cfg.encoder.num_ch = 1;
-		sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
-	}
+#if (CONFIG_STREAM_BIDIRECTIONAL)
+	sw_codec_cfg.encoder.audio_ch = 0;
+	sw_codec_cfg.encoder.num_ch = 1;
+	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
+#endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
 
-	device_location_get(&sw_codec_cfg.decoder.audio_loc);
-	if (sw_codec_cfg.decoder.audio_loc == BT_AUDIO_LOCATION_MONO_AUDIO) {
-		sw_codec_cfg.decoder.num_ch = 1;
-	} else {
-		sw_codec_cfg.decoder.num_ch = POPCOUNT(sw_codec_cfg.decoder.audio_loc);
-	}
+	enum bt_audio_location device_location;
 
-	switch ((uint32_t)sw_codec_cfg.decoder.audio_loc) {
-	case BT_AUDIO_LOCATION_MONO_AUDIO:
-	/* Fall through*/
+	device_location_get(&device_location);
+
+	sw_codec_cfg.decoder.num_ch = POPCOUNT(device_location);
+	switch ((uint32_t)device_location) {
 	case BT_AUDIO_LOCATION_FRONT_LEFT:
-	/* Fall through*/
+		sw_codec_cfg.decoder.audio_ch = 0;
+		sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
+		break;
 	case BT_AUDIO_LOCATION_FRONT_RIGHT:
+	    sw_codec_cfg.decoder.audio_ch = 1;
 		sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
 		break;
 	case (BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT):
-		sw_codec_cfg.decoder.channel_mode = SW_CODEC_MULTICHANNEL;
+		sw_codec_cfg.decoder.channel_mode = SW_CODEC_STEREO;
 		break;
 	default:
-		LOG_ERR("Unsupported device location: 0x%08x", sw_codec_cfg.decoder.audio_loc);
+		LOG_ERR("Unsupported device location: 0x%08x", device_location);
 		ERR_CHK(-EINVAL);
 		break;
 	};
@@ -166,17 +135,14 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 	int ret;
 	uint32_t audio_q_num_used;
 	static uint32_t test_tone_finite_pos;
-	struct net_buf *audio_frame_out = NULL;
-	struct audio_metadata *meta_blk;
-	struct audio_metadata *meta_in;
 	int debug_trans_count = 0;
 
 	while (1) {
 		/* Don't start encoding until the stream needing it has started */
 		ret = k_poll(&encoder_evt, 1, K_FOREVER);
-		struct net_buf *audio_frame_in = net_buf_alloc(&audio_q_rx_pool, K_NO_WAIT);
+		struct net_buf *audio_frame = net_buf_alloc(&audio_q_rx_pool, K_NO_WAIT);
 
-		if (audio_frame_in == NULL) {
+		if (audio_frame == NULL) {
 			LOG_ERR("Out of RX buffers");
 			continue;
 		}
@@ -194,54 +160,32 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 		ERR_CHK_MSG(ret, "Failed to get audio block from RX queue");
 
 		/* Copy metadata from the first block */
-		ret = net_buf_user_data_copy(audio_frame_in, audio_block);
+		ret = net_buf_user_data_copy(audio_frame, audio_block);
 		ERR_CHK_MSG(ret, "Failed to copy user data");
 
 		/* Extract the data from the block */
-		net_buf_add_mem(audio_frame_in, audio_block->data, audio_block->len);
-
-		meta_in = net_buf_user_data(audio_frame_in);
+		net_buf_add_mem(audio_frame, audio_block->data, audio_block->len);
 
 		/* Free the block */
 		net_buf_unref(audio_block);
+		struct audio_metadata *meta = net_buf_user_data(audio_frame);
 
 		/* Loop until we have a full frame */
-		while (meta_in->data_len_us < CONFIG_AUDIO_FRAME_DURATION_US) {
+		while (meta->data_len_us < CONFIG_AUDIO_FRAME_DURATION_US) {
 			ret = k_msgq_get(&audio_q_rx, (void *)&audio_block, K_FOREVER);
 			ERR_CHK_MSG(ret, "Failed to get audio block from RX queue");
 
-			meta_blk = net_buf_user_data(audio_block);
+			struct audio_metadata *block_meta = net_buf_user_data(audio_block);
 
 			/* Extract the data from the block */
-			net_buf_add_mem(audio_frame_in, audio_block->data, audio_block->len);
-			meta_in->data_len_us += meta_blk->data_len_us;
-			meta_in->bytes_per_location += meta_blk->bytes_per_location;
+			net_buf_add_mem(audio_frame, audio_block->data, audio_block->len);
+			meta->data_len_us += block_meta->data_len_us;
 
 			/* Free the block */
 			net_buf_unref(audio_block);
 		}
 
 		if (sw_codec_cfg.encoder.enabled) {
-			audio_frame_out = net_buf_alloc(&audio_q_enc_pool, K_NO_WAIT);
-
-			if (audio_frame_out == NULL) {
-				LOG_WRN("Out of encoder buffers");
-				net_buf_unref(audio_frame_in);
-				continue;
-			}
-
-			/* Configure the meta data */
-			struct audio_metadata *meta_out = net_buf_user_data(audio_frame_out);
-
-			net_buf_user_data_copy(audio_frame_out, audio_frame_in);
-			meta_out->data_coding = LC3;
-			meta_out->sample_rate_hz = sw_codec_cfg.encoder.sample_rate_hz;
-			meta_out->bitrate_bps = sw_codec_cfg.encoder.bitrate;
-			meta_out->bytes_per_location =
-				(meta_out->bitrate_bps * meta_out->data_len_us) / 8000000;
-			meta_out->interleaved = false;
-			meta_out->locations = sw_codec_cfg.encoder.audio_loc;
-
 			if (test_tone_size) {
 				/* Test tone takes over audio stream */
 				uint32_t num_bytes = 0;
@@ -252,20 +196,17 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 				ERR_CHK(ret);
 
 				ret = pscm_copy_pad(tmp, FRAME_SIZE_BYTES / 2,
-						    CONFIG_AUDIO_BIT_DEPTH_BITS,
-						    audio_frame_in->data, &num_bytes);
+						    CONFIG_AUDIO_BIT_DEPTH_BITS, audio_frame->data,
+						    &num_bytes);
 				ERR_CHK(ret);
 
-				if (audio_frame_in->len != num_bytes) {
-					LOG_ERR("Audio frame and tone length mismatch: %u != %u",
-						audio_frame_in->len, num_bytes);
+				if (audio_frame->len != num_bytes) {
+					LOG_ERR("Tone wrong size: %u", num_bytes);
 				}
 			}
 
-			ret = sw_codec_encode(audio_frame_in, audio_frame_out);
+			ret = sw_codec_encode(audio_frame);
 			ERR_CHK_MSG(ret, "Encode failed");
-
-			net_buf_unref(audio_frame_in);
 		}
 
 		/* Print block usage */
@@ -279,8 +220,8 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 		}
 
 		if (sw_codec_cfg.encoder.enabled) {
-			streamctrl_send(audio_frame_out);
-			net_buf_unref(audio_frame_out);
+			streamctrl_send(audio_frame);
+			net_buf_unref(audio_frame);
 		}
 		STACK_USAGE_PRINT("encoder_thread", &encoder_thread_data);
 	}
@@ -382,10 +323,12 @@ int audio_system_config_set(uint32_t encoder_sample_rate_hz, uint32_t encoder_bi
 }
 
 /* This function is only used on gateway using USB as audio source and bidirectional stream */
-int audio_system_decode(struct net_buf *audio_frame_in)
+int audio_system_decode(struct net_buf *audio_frame)
 {
 	int ret;
 	static int debug_trans_count;
+	static void *pcm_raw_data;
+	size_t pcm_block_size;
 
 	if (!sw_codec_cfg.initialized) {
 		/* Throw away data */
@@ -396,32 +339,9 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 		return -EPERM;
 	}
 
-	if (audio_frame_in == NULL) {
-		LOG_ERR("Buffer pointer is NULL");
-		return -EINVAL;
-	}
-
-	struct net_buf *audio_frame_out = net_buf_alloc(&audio_q_dec_pool, K_NO_WAIT);
-
-	if (audio_frame_out == NULL) {
-		LOG_WRN("Out of PCM buffers");
-		return -ENOSPC;
-	}
-
-	/* Configure the meta data */
-	struct audio_metadata *meta_in = net_buf_user_data(audio_frame_in);
-	struct audio_metadata *meta_out = net_buf_user_data(audio_frame_out);
-
-	*meta_out = decoder_meta;
-	meta_out->data_len_us = meta_in->data_len_us;
-	meta_out->ref_ts_us = meta_in->ref_ts_us;
-	meta_out->data_rx_ts_us = meta_in->data_rx_ts_us;
-	meta_out->bad_data = meta_in->bad_data;
-
-	ret = sw_codec_decode(audio_frame_in, audio_frame_out);
+	ret = sw_codec_decode(audio_frame, &pcm_raw_data, &pcm_block_size);
 	if (ret) {
 		LOG_ERR("Failed to decode");
-		net_buf_unref(audio_frame_out);
 		return ret;
 	}
 
@@ -444,29 +364,19 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 
 		if (audio_block == NULL) {
 			LOG_ERR("Out of TX buffers");
-			net_buf_unref(audio_frame_out);
 			return -ENOMEM;
 		}
 
-		struct audio_metadata *meta_blk = net_buf_user_data(audio_block);
-
-		net_buf_add_mem(audio_block,
-				(char *)audio_frame_out->data + (i * (BLOCK_SIZE_BYTES)),
+		net_buf_add_mem(audio_block, (char *)pcm_raw_data + (i * (BLOCK_SIZE_BYTES)),
 				BLOCK_SIZE_BYTES);
-		net_buf_user_data_copy(audio_block, audio_frame_out);
-
-		meta_blk->data_len_us = meta_out->data_len_us / CONFIG_FIFO_FRAME_SPLIT_NUM;
-		meta_blk->bytes_per_location = BLOCK_SIZE_BYTES;
 
 		ret = k_msgq_put(&audio_q_tx, (void *)&audio_block, K_NO_WAIT);
 		if (ret) {
 			LOG_ERR("Failed to put block onto queue");
 			net_buf_unref(audio_block);
-			net_buf_unref(audio_frame_out);
 			return ret;
 		}
 	}
-
 	if (debug_trans_count == DEBUG_INTERVAL_NUM) {
 		uint32_t audio_q_num_used = k_msgq_num_used_get(&audio_q_tx);
 
@@ -476,8 +386,6 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 	} else {
 		debug_trans_count++;
 	}
-
-	net_buf_unref(audio_frame_out);
 
 	return 0;
 }
@@ -507,7 +415,7 @@ void audio_system_start(void)
 			&encoder_thread_data, encoder_thread_stack, CONFIG_ENCODER_STACK_SIZE,
 			(k_thread_entry_t)encoder_thread, NULL, NULL, NULL,
 			K_PRIO_PREEMPT(CONFIG_ENCODER_THREAD_PRIO), 0, K_NO_WAIT);
-		ret = k_thread_name_set(encoder_thread_id, "Encoder");
+		ret = k_thread_name_set(encoder_thread_id, "ENCODER");
 		ERR_CHK(ret);
 	}
 

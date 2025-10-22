@@ -7,7 +7,7 @@
 menu "Secure Boot firmware validation"
 
 config SECURE_BOOT_VALIDATION
-	bool "Secure Boot validation"
+	bool "Enable Secure Boot validation code"
 	select FW_INFO
 	depends on SECURE_BOOT_CRYPTO
 	depends on SECURE_BOOT_STORAGE

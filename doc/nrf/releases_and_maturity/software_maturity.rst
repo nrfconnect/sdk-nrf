@@ -2224,8 +2224,6 @@ Trusted Firmware-M support
 
       .. tab:: nRF53 Series
 
-         For board targets supported by TF-M, see :ref:`ug_tfm_building_board_targets`.
-
          .. list-table:: TF-M profile support
             :header-rows: 1
             :widths: auto
@@ -2239,8 +2237,6 @@ Trusted Firmware-M support
 
       .. tab:: nRF54 Series
 
-         For board targets supported by TF-M, see :ref:`ug_tfm_building_board_targets`.
-
          .. list-table:: TF-M profile support
             :header-rows: 1
             :widths: auto
@@ -2251,25 +2247,20 @@ Trusted Firmware-M support
               - nRF54L10
               - nRF54L15
               - nRF54LM20
-              - nRF54LV10
             * - :ref:`Configurable <ug_tfm_supported_services_profiles_configurable>`
               - --
               - --
-              - Experimental
+              - --
               - Experimental
               - Experimental (with :ref:`limitations <tfm_encrypted_its>`)
-              - Experimental
             * - :ref:`Minimal <ug_tfm_supported_services_profiles_minimal>`
               - --
               - --
-              - Experimental
+              - --
               - Experimental
               - Experimental (with :ref:`limitations <tfm_encrypted_its>`)
-              - Experimental
 
       .. tab:: nRF91 Series
-
-         For board targets supported by TF-M, see :ref:`ug_tfm_building_board_targets`.
 
          .. list-table:: TF-M profile support
             :header-rows: 1
@@ -2383,43 +2374,21 @@ The lists are organized by device Series and implementation.
             * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
               - --
 
-      .. tab:: nRF54H Series
+      .. tab:: nRF54 Series
 
-         The following tables list the cryptographic support for nRF54H Series devices.
-         nRF54H Series devices do not support either the :ref:`nrf_cc3xx <crypto_drivers_cc3xx>` or the :ref:`nrf_oberon <crypto_drivers_oberon>` drivers.
+         The following tables list the cryptographic support for nRF54 Series devices.
+         The nRF54 Series devices do not support the :ref:`nrf_cc3xx <crypto_drivers_cc3xx>` driver.
 
-         .. list-table:: Cryptographic support by implementation - nRF54H Series
+         .. list-table:: Cryptographic support by implementation - nRF54 Series
             :header-rows: 1
             :widths: auto
 
             * - Implementation
               - nRF54H20
-            * - :ref:`Oberon PSA Crypto - nrf_cc3xx <ug_crypto_architecture_implementation_standards_oberon>`
-              - --
-            * - :ref:`Oberon PSA Crypto - CRACEN <ug_crypto_architecture_implementation_standards_oberon>`
-              - --
-            * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
-              - --
-            * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
-              - --
-            * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
-              - Supported
-
-      .. tab:: nRF54L Series
-
-         The following tables list the cryptographic support for nRF54L Series devices.
-         The nRF54L Series devices do not support the :ref:`nrf_cc3xx <crypto_drivers_cc3xx>` driver.
-
-         .. list-table:: Cryptographic support by implementation - nRF54L Series
-            :header-rows: 1
-            :widths: auto
-
-            * - Implementation
               - nRF54L05
               - nRF54L10
               - nRF54L15
               - nRF54LM20
-              - nRF54LV10
             * - :ref:`Oberon PSA Crypto - nrf_cc3xx <ug_crypto_architecture_implementation_standards_oberon>`
               - --
               - --
@@ -2427,25 +2396,25 @@ The lists are organized by device Series and implementation.
               - --
               - --
             * - :ref:`Oberon PSA Crypto - CRACEN <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
               - Supported
               - Supported
               - Supported
-              - Experimental
               - Experimental
             * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
-              - Supported
+              - --
               - Supported
               - Supported
               - Supported
               - Supported
             * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
               - --
-              - Experimental
-              - Experimental
-              - Experimental
-              - Experimental
-            * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
               - --
+              - Experimental
+              - Experimental
+              - --
+            * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+              - Supported
               - --
               - --
               - --
@@ -2623,10 +2592,8 @@ Hardware Unique Key
              - nRF54L10
              - nRF54L15
              - nRF54LM20
-             - nRF54LV10
            * - **Key Derivation from Hardware Unique Key**
              - --
-             - Experimental
              - Experimental
              - Experimental
              - Experimental
@@ -2704,14 +2671,12 @@ Trusted storage implements the PSA Certified Secure Storage APIs without TF-M.
               - nRF54L10
               - nRF54L15
               - nRF54LM20
-              - nRF54LV10
             * - **Trusted storage**
               - Experimental
               - Supported
               - Supported
               - Supported
               - Experimental
-              - Supported
 
       .. tab:: nRF91 Series
 
@@ -2828,48 +2793,41 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L10
               - nRF54L15
               - nRF54LM20
-              - nRF54LV10
             * - **Immutable MCUboot as part of build**
-              - Experimental
+              - --
               - Supported
               - Supported
               - Supported
               - Experimental
-              - Supported
             * - **Updatable MCUboot as part of build**
               - --
               - Experimental
               - Experimental
               - Experimental
               - --
-              - Experimental
             * - **Application image compression**
               - --
               - --
               - Supported
               - Supported
               - Experimental
-              - Supported
             * - **Hardware cryptography acceleration**
               - --
               - Supported
               - Supported
               - Supported
               - --
-              - Supported
             * - **Multiple signature keys**
               - --
               - Supported
               - Supported
               - Supported
               - --
-              - Supported
             * - **Image encryption**
               - --
               - Experimental
               - Experimental
               - Experimental
-              - --
               - Experimental
 
       .. tab:: nRF91 Series

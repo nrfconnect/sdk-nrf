@@ -77,7 +77,7 @@ config NRF_CLOUD_CERTIFICATES_FILE
 endif # NRF_CLOUD_PROVISION_CERTIFICATES
 
 config NRF_CLOUD_CHECK_CREDENTIALS
-	bool "Check if nRF Cloud credentials are present"
+	bool "Enable the ability to check if nRF Cloud credentials are present"
 
 choice NRF_CLOUD_CREDENTIALS_MGMT
 	prompt "Select how credentials are managed"
@@ -157,34 +157,6 @@ config NRF_CLOUD_GATEWAY
 	help
 	  Enables functionality in this device to be compatible with
 	  nRF Cloud LTE gateway support.
-
-config NRF_CLOUD_DOWNLOADS
-	bool
-	default y
-	depends on NRF_CLOUD_FOTA || NRF_CLOUD_PGPS || NRF_CLOUD_FOTA_POLL
-	help
-	  Enable nRF Cloud file downloads for FOTA and P-GPS.
-
-choice NRF_CLOUD_DOWNLOADS_PROTOCOL
-	prompt "nRF Cloud file download protocol"
-	depends on NRF_CLOUD_DOWNLOADS
-	default NRF_CLOUD_COAP_DOWNLOADS if NRF_CLOUD_COAP
-
-config NRF_CLOUD_COAP_DOWNLOADS
-	bool "CoAP"
-	depends on NRF_CLOUD_COAP
-	select DOWNLOADER_TRANSPORT_COAP
-	help
-	  Use nRF Cloud CoAP's proxy download resource to download files for FOTA and P-GPS.
-	  When enabled, the Kconfig option COAP_EXTENDED_OPTIONS_LEN_VALUE must be increased
-	  from the default value. Safe values are 80 for P-GPS and 192 for FOTA.
-
-config NRF_CLOUD_HTTPS_DOWNLOADS
-	bool "HTTPS"
-	help
-	  Use HTTPS to download files for FOTA and P-GPS.
-
-endchoice
 
 module=NRF_CLOUD
 module-dep=LOG

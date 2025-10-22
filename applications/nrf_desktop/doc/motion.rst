@@ -100,10 +100,10 @@ Shell integration
 
 If the Zephyr shell is enabled (meaning the :kconfig:option:`CONFIG_SHELL` Kconfig option is set), the motion module registers a ``motion_sim`` shell module and links to it two commands:
 
-* ``start`` - Start generating simulated movement data.
-* ``stop``- Stop generating simulated movement data.
+* ``start`` - Start sending simulated movement data to the HID subscriber.
+* ``stop``- Stop sending simulated movement data to the HID subscriber.
 
-If the shell is enabled, the module no longer starts generating motion automatically after boot.
+If the shell is enabled, motion generation no longer starts automatically when the HID subscriber connects and after system wakeup (when :c:struct:`wake_up_event` is received).
 The simulated movement data generation needs to be triggered using a shell command.
 
 Configuration channel

@@ -16,7 +16,3 @@
 	status = "okay";
 	hw-flow-control;
 };
-
-&uart0 {
-	hw-flow-control;
-};

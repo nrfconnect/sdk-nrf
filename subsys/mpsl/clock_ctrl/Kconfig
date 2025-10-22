@@ -27,7 +27,7 @@ config MPSL_EXT_CLK_CTRL_CLOCK_REQUEST_WAIT_TIMEOUT_MS
 	  it must be greater or equalt than internal clock driver timeout value.
 
 config MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST
-	bool "Request for a non-volatile memory clock"
+	bool "Enables a request for a non-volatile memory clock"
 	depends on CLOCK_CONTROL_NRF_HSFLL_GLOBAL
 	depends on SOC_SERIES_NRF54HX
 	default y
@@ -37,7 +37,7 @@ config MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST
 	  too slow. This is crucial to meet meet radio protocols requirements.
 
 config MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW
-	bool "Workaround for LFCLK request timeout"
+	bool "Enables a workaround for LFCLK request timeout"
 	depends on SOC_SERIES_NRF54HX
 	default y
 	help

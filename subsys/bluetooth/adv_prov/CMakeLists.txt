@@ -6,7 +6,5 @@
 
 zephyr_sources(core.c)
 zephyr_linker_sources(SECTIONS core.ld)
-zephyr_iterable_section(NAME bt_le_adv_prov_ad KVMA RAM_REGION GROUP RODATA_REGION SUBALIGN 4)
-zephyr_iterable_section(NAME bt_le_adv_prov_sd KVMA RAM_REGION GROUP RODATA_REGION SUBALIGN 4)
 
 add_subdirectory(providers)

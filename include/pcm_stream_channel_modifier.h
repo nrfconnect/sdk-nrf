@@ -109,10 +109,10 @@ int pscm_two_channel_split(void const *const input, size_t input_size, uint8_t p
 			   void *output_left, void *output_right, size_t *output_size);
 
 /**
- * @brief  Interleave a channel into a buffer of N channels of PCM
+ * @brief  Interleave a single channel into a buffer of N channels of PCM
  * @note: The interleaver can not be executed inplace (i.e. input != output)
  *
- * @param[in]	input				Pointer to the channel input buffer.
+ * @param[in]	input				Pointer to the single channel input buffer.
  * @param[in]	input_size			Number of bytes in input.
  * @param[in]	channel				Channel to interleave into.
  * @param[in]	pcm_bit_depth		Bit depth of PCM samples (8, 16, 24, or 32).
@@ -128,15 +128,15 @@ int pscm_interleave(void const *const input, size_t input_size, uint8_t channel,
 		    uint8_t output_channels);
 
 /**
- * @brief  De-interleave a channel from a buffer of N channels of PCM
- * @note: The de-interleaver can not be executed inplace (i.e. input != output)
+ * @brief  Deinterleave a single channel from a buffer of N channels of PCM
+ * @note: The deinterleaver can not be executed inplace (i.e. input != output)
  *
  * @param[in]	input				Pointer to the multi channel input buffer.
  * @param[in]	input_size			Number of bytes in input.
  * @param[in]	input_channels		Number of channels in the input buffer.
- * @param[in]	channel				Channel to de-interleave.
+ * @param[in]	channel				Channel to deinterleave.
  * @param[in]	pcm_bit_depth		Bit depth of PCM samples (8, 16, 24, or 32).
- * @param[out]	output				Pointer to the channel output.
+ * @param[out]	output				Pointer to the single channel output.
  * @param[in]	output_size			Number of bytes in output. Must be at least
  *					(input_size / output_channels).
  *

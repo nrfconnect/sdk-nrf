@@ -280,7 +280,7 @@ Updated libraries
 
   * Added support for boards with LED or button pins on different GPIO ports.
 
-* Download client:
+* :ref:`lib_download_client`:
 
   * Added support for specifying an access point name for the packet data network.
   * Moved the header file to ``include/net``.

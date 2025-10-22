@@ -60,24 +60,10 @@ jobs:
       - name: Install requirements
         shell: bash
         run: |
-          pip3 install -r nrf/scripts/requirements-fixed.txt
+          pip3 install -r nrf/scripts/requirements-west-ncs-sbom.txt
+          pip3 install -r nrf/scripts/requirements-extra.txt
       - name: Smoke test ncs-loot & ncs-compare
         shell: bash
         run: |
           west ncs-loot -h
           west ncs-compare -h
-      - name: Smoke test ncs-sbom
-        # macOS is not supported by scancode-toolkit(used in ncs-sbom)
-        if: ${{ matrix.os == 'ubuntu-24.04' || matrix.os == 'windows-latest' }}
-        shell: bash
-        run: |
-          west ncs-sbom -h
-
-          # create a dummy file
-          echo "/* SPDX-License-Identifier: LicenseRef-Nordic-5-Clause */" > test_file.c
-          scancode --version
-          # run ncs-sbom with scancode-toolkit
-          west ncs-sbom \
-            --input-files test_file.c \
-            --license-detectors scancode-toolkit \
-            --output-html scancode_report.html

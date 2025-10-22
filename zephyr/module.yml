@@ -1,21 +1,15 @@
 build:
   cmake: .
   kconfig: Kconfig.nrf
-  kconfig-ext: true
   sysbuild-cmake: sysbuild
   sysbuild-kconfig: sysbuild/Kconfig.sysbuild
-  sysbuild-kconfig-ext: true
   settings:
     soc_root: .
     board_root: .
     dts_root: .
     module_ext_root: .
     snippet_root: .
-samples:
-  - applications
-  - samples
-tests:
-  - tests
+
 runners:
   # Additional runners, Zephyr will import these when discovering
   # subclasses of the `ZephyrBinaryRunner` class.

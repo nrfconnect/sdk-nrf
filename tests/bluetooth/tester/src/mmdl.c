@@ -3931,7 +3931,7 @@ static void scene_store_procedure(uint8_t *data, uint16_t len)
 	struct mesh_scene_ctl_store_procedure *cmd = (void *)data;
 	struct net_buf_simple *buf = NET_BUF_SIMPLE(3);
 	uint16_t scene;
-	struct bt_mesh_scene_register status = { .scenes = NULL };
+	struct bt_mesh_scene_register status;
 	struct model_data *model_bound;
 	struct bt_mesh_msg_ctx ctx = {
 		.net_idx = net.net_idx,

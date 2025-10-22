@@ -49,7 +49,7 @@ config NRF_WIFI_FW_FLASH_CHUNK_SIZE
 	  RAM usage (heap) of the application.
 
 config NRF_WIFI_FW_PATCH_INTEGRITY_CHECK
-	bool "Integrity check of nRF70 FW patches"
+	bool "Enable integrity check of nRF70 FW patches"
 	select FLASH_AREA_CHECK_INTEGRITY
 	default y
 	help

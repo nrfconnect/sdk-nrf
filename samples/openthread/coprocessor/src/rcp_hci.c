@@ -17,14 +17,14 @@
 #include <zephyr/init.h>
 #include <zephyr/drivers/uart.h>
 
+#include <zephyr/usb/usb_device.h>
+
 #include <zephyr/net_buf.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/l2cap.h>
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/buf.h>
 #include <zephyr/bluetooth/hci_raw.h>
-
-#include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(rcp_hci_module, CONFIG_OT_COPROCESSOR_LOG_LEVEL);
 

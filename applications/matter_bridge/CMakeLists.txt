@@ -25,109 +25,109 @@ include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/zap_helpers.cmake)
 ncs_get_zap_parent_dir(ZAP_PARENT_DIR)
 
 target_include_directories(app PRIVATE
-  src
-  src/bridged_device_types
-  ${ZAP_PARENT_DIR}
-  ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/
-  ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/util
+    src
+    src/bridged_device_types
+    ${ZAP_PARENT_DIR}
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/util
 )
 
 target_sources(app PRIVATE
-  src/app_task.cpp
-  src/main.cpp
-  src/bridge_shell.cpp
-  src/zcl_callbacks.cpp
-  ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/bridge_manager.cpp
-  ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/matter_bridged_device.cpp
-  ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/bridge_storage_manager.cpp
-  ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/bridged_device_data_provider.cpp
-  ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/binding/binding_handler.cpp
+    src/app_task.cpp
+    src/main.cpp
+    src/bridge_shell.cpp
+    src/zcl_callbacks.cpp
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/bridge_manager.cpp
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/matter_bridged_device.cpp
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/bridge_storage_manager.cpp
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/bridged_device_data_provider.cpp
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/binding/binding_handler.cpp
 )
 
 if(CONFIG_BRIDGED_DEVICE_BT)
-  target_sources(app PRIVATE
-    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/ble_connectivity_manager.cpp
-      src/ble_providers/ble_bridged_device_factory.cpp
-  )
-  target_include_directories(app PRIVATE src/ble_providers)
+    target_sources(app PRIVATE
+         ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/ble_connectivity_manager.cpp
+        src/ble_providers/ble_bridged_device_factory.cpp
+    )
+    target_include_directories(app PRIVATE src/ble_providers)
 
 if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE AND (CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE OR CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE))
-  target_sources(app PRIVATE
-    src/bridged_device_types/onoff_light.cpp
-    src/ble_providers/ble_lbs_data_provider.cpp
-  )
+    target_sources(app PRIVATE
+        src/bridged_device_types/onoff_light.cpp
+        src/ble_providers/ble_lbs_data_provider.cpp
+    )
 
 if(CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE)
-  target_sources(app PRIVATE src/bridged_device_types/generic_switch.cpp)
+    target_sources(app PRIVATE src/bridged_device_types/generic_switch.cpp)
 endif()
 
 if(CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE)
-  target_sources(app PRIVATE
-    src/bridged_device_types/onoff_light_switch.cpp
-  )
+    target_sources(app PRIVATE
+        src/bridged_device_types/onoff_light_switch.cpp
+    )
 endif()
 
 endif() # CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE AND (CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE OR CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE)
 
 if(CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE)
-  target_sources(app PRIVATE
-    src/bridged_device_types/humidity_sensor.cpp
-  )
+    target_sources(app PRIVATE
+        src/bridged_device_types/humidity_sensor.cpp
+    )
 endif() # CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 
 if(CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE)
-  target_sources(app PRIVATE
-    src/bridged_device_types/temperature_sensor.cpp
-  )
+    target_sources(app PRIVATE
+        src/bridged_device_types/temperature_sensor.cpp
+    )
 endif() # CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 
 # Assume it makes no sense to support BLE environmental sensor without all Matter counterparts
 if(CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE AND CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE)
-  target_sources(app PRIVATE
-    src/ble_providers/ble_environmental_data_provider.cpp
-)
+    target_sources(app PRIVATE
+        src/ble_providers/ble_environmental_data_provider.cpp
+    )
 endif() # CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE AND CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 
 else()
-  target_sources(app PRIVATE
-    src/simulated_providers/simulated_bridged_device_factory.cpp
-  )
-  target_include_directories(app PRIVATE src/simulated_providers)
+    target_sources(app PRIVATE
+        src/simulated_providers/simulated_bridged_device_factory.cpp
+    )
+    target_include_directories(app PRIVATE src/simulated_providers)
 
 if(CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE AND (CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE OR CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE))
-  target_sources(app PRIVATE
-    src/bridged_device_types/onoff_light.cpp
-    src/simulated_providers/simulated_onoff_light_data_provider.cpp
-  )
+    target_sources(app PRIVATE
+        src/bridged_device_types/onoff_light.cpp
+        src/simulated_providers/simulated_onoff_light_data_provider.cpp
+    )
 
 if(CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE)
-  target_sources(app PRIVATE
-    src/bridged_device_types/generic_switch.cpp
-    src/simulated_providers/simulated_generic_switch_data_provider.cpp
-  )
+    target_sources(app PRIVATE
+        src/bridged_device_types/generic_switch.cpp
+        src/simulated_providers/simulated_generic_switch_data_provider.cpp
+    )
 endif()
 
 if(CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE)
-  target_sources(app PRIVATE
-    src/bridged_device_types/onoff_light_switch.cpp
-    src/simulated_providers/simulated_onoff_light_switch_data_provider.cpp
-  )
+    target_sources(app PRIVATE
+        src/bridged_device_types/onoff_light_switch.cpp
+        src/simulated_providers/simulated_onoff_light_switch_data_provider.cpp
+    )
 endif()
 
 endif() # CONFIG_BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE AND (CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE OR CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE))
 
 if(CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE)
-  target_sources(app PRIVATE
-    src/bridged_device_types/temperature_sensor.cpp
-    src/simulated_providers/simulated_temperature_sensor_data_provider.cpp
-  )
+    target_sources(app PRIVATE
+            src/bridged_device_types/temperature_sensor.cpp
+            src/simulated_providers/simulated_temperature_sensor_data_provider.cpp
+    )
 endif() # CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 
 if(CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE)
-  target_sources(app PRIVATE
-    src/bridged_device_types/humidity_sensor.cpp
-    src/simulated_providers/simulated_humidity_sensor_data_provider.cpp
-  )
+    target_sources(app PRIVATE
+        src/bridged_device_types/humidity_sensor.cpp
+        src/simulated_providers/simulated_humidity_sensor_data_provider.cpp
+    )
 endif() # CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 
 endif() # CONFIG_BRIDGED_DEVICE_BT

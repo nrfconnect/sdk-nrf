@@ -18,7 +18,7 @@ config SECURE_BOOT
 if SECURE_BOOT
 
 config SB_MONOTONIC_COUNTER
-	bool "HW monotonic version counter"
+	bool "Enable HW monotonic version counter"
 	default y
 	help
 	  The counter stores the current firmware version in a way that ensures that the value
@@ -94,7 +94,7 @@ menuconfig IS_SECURE_BOOTLOADER
 if IS_SECURE_BOOTLOADER
 
 config SB_BPROT_IN_DEBUG
-	bool "Block protect in debug"
+	bool "Enable block protect in debug"
 	default y
 	depends on (HAS_HW_NRF_BPROT || HAS_HW_NRF_MPU)
 
@@ -112,26 +112,19 @@ config SB_INFINITE_LOOP_AFTER_RAM_CLEANUP
 	  Verification option that keeps execution in infinite loop after
 	  RAM cleanup has been performed.
 
-config SB_DISABLE_SELF_RWX_SUPPORTED
-	bool
-	default y if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP
-	default y if SOC_NRF54LV10A_ENGA_CPUAPP
-	default y if SOC_NRF54LM20A_ENGA_CPUAPP
-
 config SB_DISABLE_SELF_RWX
 	bool "Disable read and execution on self NVM"
-	depends on SB_DISABLE_SELF_RWX_SUPPORTED && !FPROTECT_ALLOW_COMBINED_REGIONS
+	depends on (SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP || SOC_NRF54LV10A_ENGA_CPUAPP) && !FPROTECT_ALLOW_COMBINED_REGIONS
 	help
 	  Sets RRAMC's BOOTCONF region protection before jumping to application.
 	  It disables reads writes and execution memory area which holds NSIB.
 
 config SB_DISABLE_NEXT_W
 	bool "Disable writes for next stage"
-	depends on SB_DISABLE_SELF_RWX_SUPPORTED && !FPROTECT
+	depends on (SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP) && !FPROTECT
 	help
 	  NSIB disables writes on next stage in bootloading chain.
-	  It uses RRAMC's region 4 and is limited to 31KB for nRF54L15, nRF54L10 and nRF54L05
-	  and to 127KB for nRF54LV10a and nRF54LM20a.
+	  It uses RRAMC's region 4 and is limited to 31KB.
 
 endif # IS_SECURE_BOOTLOADER
 
@@ -174,11 +167,6 @@ config MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519
 
 config MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE
 	bool "Signature is verified over an image rather than sha of an image"
-	help
-	  This is a Kconfig which is informative only, the value should not be changed.
-
-config NCS_MCUBOOT_BOOTLOADER_SIGN_MERGED_BINARY
-	bool "Sign merged binary instead of individual images (informative only, do not change)"
 	help
 	  This is a Kconfig which is informative only, the value should not be changed.
 

@@ -304,36 +304,3 @@ void log_rpc_set_time(uint64_t now_us)
 	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_SET_TIME, &ctx, nrf_rpc_rsp_decode_void,
 				NULL);
 }
-
-int log_rpc_get_crash_info(struct nrf_rpc_crash_info *info)
-{
-	struct nrf_rpc_cbor_ctx ctx;
-	int result = 0;
-
-	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 0);
-
-	nrf_rpc_cbor_cmd_rsp_no_err(&log_rpc_group, LOG_RPC_CMD_GET_CRASH_INFO, &ctx);
-
-	if (nrf_rpc_decode_is_null(&ctx)) {
-		result = -ENOENT;
-		goto out;
-	}
-
-	info->uuid = nrf_rpc_decode_uint(&ctx);
-	info->reason = nrf_rpc_decode_uint(&ctx);
-	info->pc = nrf_rpc_decode_uint(&ctx);
-	info->lr = nrf_rpc_decode_uint(&ctx);
-	info->sp = nrf_rpc_decode_uint(&ctx);
-	info->xpsr = nrf_rpc_decode_uint(&ctx);
-	info->assert_line = nrf_rpc_decode_uint(&ctx);
-
-	nrf_rpc_decode_str(&ctx, info->assert_filename, sizeof(info->assert_filename));
-
-out:
-	if (!nrf_rpc_decoding_done_and_check(&log_rpc_group, &ctx)) {
-		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &log_rpc_group,
-			    LOG_RPC_CMD_GET_CRASH_INFO, NRF_RPC_PACKET_TYPE_RSP);
-	}
-
-	return result;
-}

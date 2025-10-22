@@ -65,7 +65,7 @@ config HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT
 	  still requires the device to reboot and the bootloader to load the HUK
 
 config HW_UNIQUE_KEY_RANDOM
-	bool "Support writing random HW Unique Keys"
+	bool "Enable writing random HW Unique Keys"
 	depends on MAIN_STACK_SIZE >= 2048 || BUILD_WITH_TFM
 	default y if BUILD_WITH_TFM
 	help

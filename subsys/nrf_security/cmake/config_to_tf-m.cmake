@@ -20,7 +20,7 @@ set_property(TARGET zephyr_property_target
   PROPERTY TFM_MBEDCRYPTO_PATH ${CMAKE_CURRENT_LIST_DIR}/../tfm
 )
 
-if(CONFIG_TFM_ITS_ENCRYPTED)
+if(CONFIG_PSA_ITS_ENCRYPTED)
   set_property(TARGET zephyr_property_target
     APPEND PROPERTY TFM_CMAKE_OPTIONS
       -DITS_ENCRYPTION=1

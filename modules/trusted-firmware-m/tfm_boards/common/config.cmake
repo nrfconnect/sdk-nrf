@@ -24,7 +24,7 @@ set(NRF_ALLOW_NON_SECURE_FAULT_HANDLING       OFF         CACHE BOOL      "Allow
 set(TFM_DUMMY_PROVISIONING                    OFF         CACHE BOOL      "Provision with dummy values. NOT to be used in production")
 set(PLATFORM_DEFAULT_PROVISIONING             OFF         CACHE BOOL      "Use default provisioning implementation")
 set(NRF_PROVISIONING                          OFF         CACHE BOOL      "Use Nordic provisioning implementation")
-set(NRF_CONFIG_NFCT_PINS_AS_GPIOS             OFF         CACHE BOOL      "Use NFCT pins as GPIOs.")
+set(CONFIG_NFCT_PINS_AS_GPIOS                 OFF         CACHE BOOL      "Use NFCT pins as GPIOs.")
 set(CONFIG_NRF_TRACE_PORT                     OFF         CACHE BOOL      "Enable trace port.")
 set(CONFIG_NRF_APPROTECT_LOCK                 OFF         CACHE BOOL      "Enable approtect.")
 set(CONFIG_NRF_APPROTECT_USER_HANDLING        OFF         CACHE BOOL      "Enable approtect user handling.")

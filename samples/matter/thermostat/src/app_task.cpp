@@ -32,7 +32,7 @@ Identify sIdentify = { kThermostatEndpointId, AppTask::IdentifyStartHandler, App
 		       Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator };
 
 #define TEMPERATURE_BUTTON_MASK DK_BTN2_MSK
-} /* namespace */
+} // namespace
 
 void AppTask::IdentifyStartHandler(Identify *)
 {

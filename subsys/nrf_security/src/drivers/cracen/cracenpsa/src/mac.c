@@ -12,6 +12,7 @@
 #include <cracen/mem_helpers.h>
 #include "cracen_psa_primitives.h"
 #include "cracen_mac_cmac.h"
+#include "cracen_sw_mac_cmac.h"
 #include "cracen_mac_hmac.h"
 
 static psa_status_t setup(cracen_mac_operation_t *operation, const psa_key_attributes_t *attributes,
@@ -38,7 +39,15 @@ static psa_status_t setup(cracen_mac_operation_t *operation, const psa_key_attri
 						 alg);
 		}
 	}
-	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
+	    IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
+		if (PSA_ALG_FULL_LENGTH_MAC(alg) == PSA_ALG_CMAC) {
+			return cracen_sw_cmac_setup(operation, attributes, key_buffer,
+						    key_buffer_size);
+		}
+	}
+	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
+	    !IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(alg) == PSA_ALG_CMAC) {
 			return cracen_cmac_setup(operation, attributes, key_buffer,
 						 key_buffer_size);
@@ -81,8 +90,15 @@ psa_status_t cracen_mac_update(cracen_mac_operation_t *operation, const uint8_t 
 			return cracen_hmac_update(operation, input, input_length);
 		}
 	}
+	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
+	    IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
+		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
+			return cracen_sw_cmac_update(operation, input, input_length);
+		}
+	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
+	    !IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
 			return cracen_cmac_update(operation, input, input_length);
 		}
@@ -113,7 +129,13 @@ psa_status_t cracen_mac_sign_finish(cracen_mac_operation_t *operation, uint8_t *
 			status = cracen_hmac_finish(operation);
 		}
 	}
-	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
+	    IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
+		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
+			status = cracen_sw_cmac_finish(operation);
+		}
+	} else if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
+		   !IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
 			status = cracen_cmac_finish(operation);
 		}
@@ -157,7 +179,13 @@ psa_status_t cracen_mac_verify_finish(cracen_mac_operation_t *operation, const u
 			status = cracen_hmac_finish(operation);
 		}
 	}
-	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
+	    IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
+		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
+			status = cracen_sw_cmac_finish(operation);
+		}
+	} else if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
+		   !IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
 			status = cracen_cmac_finish(operation);
 		}
@@ -189,6 +217,24 @@ psa_status_t cracen_mac_compute(const psa_key_attributes_t *attributes, const ui
 	status = setup(&operation, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
+	    IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS) &&
+	    PSA_ALG_FULL_LENGTH_MAC(alg) == PSA_ALG_CMAC) {
+
+		if (mac_size < operation.mac_size) {
+			status = PSA_ERROR_BUFFER_TOO_SMALL;
+			goto error_exit;
+		}
+
+		status = cracen_cmac_compute(&operation, input, input_length, mac);
+		if (status != PSA_SUCCESS) {
+			goto error_exit;
+		}
+
+		*mac_length = operation.mac_size;
+		return PSA_SUCCESS;
 	}
 
 	status = cracen_mac_update(&operation, input, input_length);

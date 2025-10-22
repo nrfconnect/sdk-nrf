@@ -9,14 +9,13 @@
 """
 
 import argparse
-import contextlib
 import logging
-from secrets import token_hex
 
-from atclient import ATclient
+from secrets import token_hex
 from coiote import Coiote
-from device import Device
 from leshan import Leshan
+from device import Device
+from atclient import ATclient
 
 if __name__ == "__main__":
     try:
@@ -63,10 +62,14 @@ if __name__ == "__main__":
     if args.leshan:
         leshan = Leshan('https://leshan.eclipseprojects.io/api')
         bserver = Leshan('https://leshan.eclipseprojects.io/bs/api')
-        with contextlib.suppress(RuntimeError):
+        try:
             leshan.delete_device(identity)
-        with contextlib.suppress(RuntimeError):
+        except RuntimeError:
+            pass
+        try:
             leshan.delete_bs_device(identity)
+        except RuntimeError:
+            pass
     else:
         coiote = Coiote()
 

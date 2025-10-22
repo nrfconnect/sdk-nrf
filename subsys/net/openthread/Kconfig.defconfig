@@ -91,18 +91,11 @@ config OPENTHREAD_PING_SENDER
 	default y
 
 choice LIBC_IMPLEMENTATION
-	default PICOLIBC
+	default NEWLIB_LIBC
 endchoice
 
 config NEWLIB_LIBC_NANO
 	default y if NEWLIB_LIBC
-
-# Workaround for picolib. Currently, Zephyr does not support
-# POSIX_SYSCONF_IMPL_FULL if PICOLIBC is enabled.
-# Use POSIX_SYSCONF_IMPL_MACRO instead until it is fixed in Zephyr.
-choice POSIX_SYSCONF_IMPL_CHOICE
-	default POSIX_SYSCONF_IMPL_MACRO if PICOLIBC
-endchoice
 
 config NUM_METAIRQ_PRIORITIES
 	default 1

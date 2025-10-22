@@ -1714,7 +1714,7 @@ endpoint 0 {
   }
 }
 endpoint 1 {
-  device type nordic_dev_kit = 4293984257, version 1;
+  device type nordic_dev_kit = 1, version 1;
 
   binding cluster NordicDevKit;
 

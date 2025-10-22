@@ -48,3 +48,9 @@
 &uart135 {
 	status = "disabled";
 };
+
+/* DTS nodes required for the STM standalone logging, imported from the nordic-log-stm snippet. */
+&tddconf {
+	status = "okay";
+	etrsources = <(NRF_TDDCONF_SOURCE_STMMAINCORE)>;
+};

@@ -581,13 +581,16 @@ int main(void)
 		 * it. This is a blocking operation which can take a long time.
 		 * This function is likely to reboot in order to complete the FOTA update.
 		 */
-		err = nrf_cloud_fota_poll_process(&fota_ctx);
-		if (err == -ENOTRECOVERABLE) {
-			LOG_ERR("A fatal error occurred during FOTA processing");
-			sample_reboot(FOTA_REBOOT_SYS_ERROR);
-		} else if (err == -ENOENT) {
-			/* A job has finished, check again for another */
-			continue;
+		while (true) {
+			err = nrf_cloud_fota_poll_process(&fota_ctx);
+			if (err == -ENOTRECOVERABLE) {
+				sample_reboot(FOTA_REBOOT_SYS_ERROR);
+			} else if ((err == -ENOENT) || (err == -EFAULT)) {
+				/* A job has finished or failed, check again for another */
+				continue;
+			}
+
+			break;
 		}
 
 		/* Check the configuration in the shadow to determine the FOTA check interval */

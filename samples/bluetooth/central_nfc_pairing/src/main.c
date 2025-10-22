@@ -36,9 +36,24 @@
 static struct k_poll_signal pair_signal;
 static struct k_poll_event events[K_POOL_EVENTS_CNT];
 
+static bool use_remote_tk;
 static struct bt_le_oob oob_local;
+static uint8_t tk_value[NFC_NDEF_LE_OOB_REC_TK_LEN];
+static uint8_t remote_tk_value[NFC_NDEF_LE_OOB_REC_TK_LEN];
 static struct bt_le_oob oob_remote;
 static struct bt_conn *default_conn;
+
+static int tk_value_generate(void)
+{
+	int err;
+
+	err = bt_rand(tk_value, sizeof(tk_value));
+	if (err) {
+		printk("Random TK value generation failed: %d\n", err);
+	}
+
+	return err;
+}
 
 static void pair_key_generate_init(void)
 {
@@ -59,7 +74,7 @@ static int paring_key_generate(void)
 		printk("Error while fetching local OOB data: %d\n", err);
 	}
 
-	return err;
+	return tk_value_generate();
 }
 
 static void paring_key_process(void)
@@ -253,12 +268,30 @@ static void lesc_oob_data_set(struct bt_conn *conn,
 	}
 }
 
+static void legacy_tk_value_set(struct bt_conn *conn)
+{
+	int err;
+	const uint8_t *tk = use_remote_tk ? remote_tk_value : tk_value;
+
+	err = bt_le_oob_set_legacy_tk(conn, tk);
+	if (err) {
+		printk("TK value set error: %d\n", err);
+	}
+
+	use_remote_tk = false;
+}
+
 static void auth_oob_data_request(struct bt_conn *conn,
 				  struct bt_conn_oob_info *info)
 {
 	if (info->type == BT_CONN_OOB_LE_SC) {
 		printk("LESC OOB data requested\n");
 		lesc_oob_data_set(conn, info);
+	}
+
+	if (info->type == BT_CONN_OOB_LE_LEGACY) {
+		printk("Legacy TK value requested\n");
+		legacy_tk_value_set(conn);
 	}
 }
 
@@ -282,6 +315,7 @@ static void pairing_complete(struct bt_conn *conn, bool bonded)
 
 	k_poll_signal_raise(&pair_signal, 0);
 	bt_le_oob_set_sc_flag(false);
+	bt_le_oob_set_legacy_flag(false);
 }
 
 
@@ -296,6 +330,7 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 
 	k_poll_signal_raise(&pair_signal, 0);
 	bt_le_oob_set_sc_flag(false);
+	bt_le_oob_set_legacy_flag(false);
 }
 
 static struct bt_conn_auth_cb conn_auth_callbacks = {
@@ -384,6 +419,12 @@ static int oob_le_data_handle(const struct nfc_ndef_record_desc *rec,
 		bt_addr_le_copy(&oob_remote.addr, oob->addr);
 	}
 
+	if (oob->tk_value) {
+		bt_le_oob_set_legacy_flag(true);
+		memcpy(remote_tk_value, oob->tk_value, sizeof(remote_tk_value));
+		use_remote_tk = request;
+	}
+
 	/* Remove all scanning filters. */
 	bt_scan_filter_remove_all();
 
@@ -412,6 +453,7 @@ static int carrier_prepare(void)
 
 	rec_payload.addr = &oob_local.addr;
 	rec_payload.le_sc_data = &oob_local.le_sc_data;
+	rec_payload.tk_value = tk_value;
 	rec_payload.local_name = bt_get_name();
 	rec_payload.le_role = NFC_NDEF_LE_OOB_REC_LE_ROLE(
 		NFC_NDEF_LE_OOB_REC_LE_ROLE_CENTRAL_ONLY);

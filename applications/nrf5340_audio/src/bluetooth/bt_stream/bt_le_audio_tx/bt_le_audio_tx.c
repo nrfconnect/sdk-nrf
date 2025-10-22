@@ -204,7 +204,7 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 
 	/* Get number of channels in the audio frame */
 	struct audio_metadata *meta = net_buf_user_data(audio_frame);
-	uint8_t num_ch = audio_metadata_num_ch_get(meta);
+	uint8_t num_ch = metadata_num_ch_get(meta);
 
 	if (num_ch == 0 || (audio_frame->len % num_ch != 0)) {
 		LOG_ERR("Invalid number (%d) of channels in audio frame (%d)", num_ch,

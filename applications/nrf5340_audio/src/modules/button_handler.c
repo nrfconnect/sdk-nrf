@@ -142,7 +142,7 @@ static void button_publish_thread(void)
 	}
 }
 
-K_THREAD_DEFINE(Msg_pub_btn, CONFIG_BUTTON_PUBLISH_STACK_SIZE, button_publish_thread, NULL, NULL,
+K_THREAD_DEFINE(button_publish, CONFIG_BUTTON_PUBLISH_STACK_SIZE, button_publish_thread, NULL, NULL,
 		NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_PUBLISH_THREAD_PRIO), 0, 0);
 
 /*  ISR triggered by GPIO when assigned button(s) are pushed */

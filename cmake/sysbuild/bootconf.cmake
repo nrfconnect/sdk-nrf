@@ -15,7 +15,6 @@ function(setup_bootconf_data)
         ${ZEPHYR_NRF_MODULE_DIR}/scripts/reglock.py
         --output ${CMAKE_BINARY_DIR}/bootconf.hex
         --size $<TARGET_PROPERTY:partition_manager,PM_B0_SIZE>
-        --soc ${SB_CONFIG_SOC}
       DEPENDS ${APPLICATION_BINARY_DIR}/pm.config
       VERBATIM
     )

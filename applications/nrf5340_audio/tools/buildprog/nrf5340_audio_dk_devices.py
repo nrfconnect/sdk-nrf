@@ -78,6 +78,7 @@ class Location(Enum):
     "Kept for compatibility with old code, use the Location enum instead"
     left = FRONT_LEFT
     right = FRONT_RIGHT
+    NA = MONO_AUDIO
 
     def __new__(cls, value, label):
         obj = object.__new__(cls)

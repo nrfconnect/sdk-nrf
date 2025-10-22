@@ -124,15 +124,13 @@ static bool read_data_cb(uint32_t offset, void *buf, size_t buf_len)
 {
 	ARG_UNUSED(offset);
 
-	int err = nrf_modem_lib_trace_peek_at(offset, buf, buf_len);
+	int err = nrf_modem_lib_trace_read(buf, buf_len);
 
 	if (err == -ENODATA) {
-		LOG_WRN("No more modem trace data to peek");
-
+		LOG_WRN("No more modem trace data to read");
 		return false;
 	} else if (err < 0) {
-		LOG_ERR("Failed to peek modem trace data: %d", err);
-
+		LOG_ERR("Failed to read modem trace data: %d", err);
 		return false;
 	}
 
@@ -144,6 +142,7 @@ int memfault_lte_coredump_modem_trace_init(void)
 	static bool initialized;
 
 	if (initialized) {
+		LOG_ERR("Already initialized");
 		return -EALREADY;
 	}
 

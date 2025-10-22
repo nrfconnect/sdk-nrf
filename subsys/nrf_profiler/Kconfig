@@ -25,7 +25,7 @@ config NRF_PROFILER_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS
 	default 128
 
 config NRF_PROFILER_SHELL
-	bool "Shell integration"
+	bool "Enable shell integration"
 	depends on SHELL
 	default y
 	help

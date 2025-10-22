@@ -6,8 +6,9 @@
 
 #include <mpsl_fem_utils.h>
 #include <hal/nrf_gpio.h>
-#include <helpers/nrfx_gppi.h>
-#if IS_ENABLED(CONFIG_HAS_HW_NRF_DPPIC)
+#if IS_ENABLED(CONFIG_HAS_HW_NRF_PPI)
+#include <nrfx_ppi.h>
+#elif IS_ENABLED(CONFIG_HAS_HW_NRF_DPPIC)
 #include <nrfx_dppi.h>
 #endif
 
@@ -26,7 +27,7 @@ int mpsl_fem_utils_ppi_channel_alloc(uint8_t *ppi_channels, size_t size)
 
 	for (int i = 0; i < size; i++) {
 		IF_ENABLED(CONFIG_HAS_HW_NRF_PPI,
-			(err = nrfx_gppi_channel_alloc(&ppi_channels[i]);));
+			(err = nrfx_ppi_channel_alloc(&ppi_channels[i]);));
 		IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
 			(err = nrfx_dppi_channel_alloc(&dppi, &ppi_channels[i]);));
 		if (err != NRFX_SUCCESS) {

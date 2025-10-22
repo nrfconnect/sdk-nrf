@@ -46,24 +46,15 @@ While the board name is always present, other elements, such as the board revisi
   Check the Product Specification of the given SoC for more information about the available CPU clusters.
 
 * :ref:`Variant <zephyr:glossary>` - You can use this board qualifier to build for a particular type or configuration of a build for a combination of SoC and CPU cluster.
-  In the |NCS|, board variants are used for the following purposes:
+  In the |NCS|, variants are used for indicating the usage of Cortex-M Security Extensions (CMSE) (security by separation):
 
-  * Changing the default memory map - This applies to the entry for the nRF52840 Dongle with the ``*/bare`` variant (``nrf52840dongle/nrf52840/bare``).
-    When you select this target, the firmware does not account for the onboard USB bootloader.
-    This corresponds to using :zephyr:board:`flashing option 3 with an external debug probe <nrf52840dongle>`.
+  * Entries without ``*/ns`` (for example, ``cpuapp``) - When you choose this target, you build the application core firmware as a single execution environment that does not use CMSE (:ref:`Trusted Firmware-M (TF-M) <ug_tfm>`).
+  * Entries with ``*/ns`` (for example, ``cpuapp/ns``) - Recommended for more security.
+    When you choose this target, you build the application with CMSE using security by separation.
+    The application core firmware is placed in Non-Secure Processing Environment (NSPE) and uses Secure Processing Environment (SPE) for security features.
+    By default, the build system automatically includes :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` in SPE and merges it with NSPE.
 
-  * Indicating the use of Cortex-M Security Extensions (CMSE), also known as security by separation:
-
-    * Variants without ``*/ns`` (for example, ``cpuapp``) - When you select this target, you build the application core firmware as a single execution environment without CMSE.
-      See :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` for more information.
-
-    * Variants with ``*/ns`` (for example, ``cpuapp/ns``) - Recommended for enhanced security.
-      When you select this target, you build the application with CMSE enabled, using security by separation.
-
-      The application core firmware is placed in Non-Secure Processing Environment (NSPE) and uses Secure Processing Environment (SPE) for security features.
-      By default, the build system automatically includes :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` in SPE and merges it with NSPE.
-
-      Read more about separation of processing environments on the :ref:`ug_tfm_security_by_separation` page.
+  Read more about separation of processing environments on the :ref:`ug_tfm_security_by_separation` page.
 
 .. note::
     This board name scheme was introduced in the |NCS| before the v2.7.0 release following changes in Zephyr v3.6.0.
@@ -82,104 +73,87 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 
 .. _table:
 
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| Hardware platform | PCA number |                 Board name                             |                             Board targets                                |
-+===================+============+========================================================+==========================================================================+
-| nRF9161 DK        | PCA10153   | :zephyr:board:`nrf9161dk <nrf9161dk>`                  | ``nrf9161dk/nrf9161``                                                    |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf9161dk/nrf9161/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)             |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF9160 DK        | PCA10090   | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>`            | ``nrf9160dk/nrf9160``                                                    |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf9160dk/nrf9160/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)             |
-|                   |            +--------------------------------------------------------+--------------------------------------------------------------------------+
-|                   |            | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf52840>`           | ``nrf9160dk/nrf52840``                                                   |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF9151 DK        | PCA10171   | :zephyr:board:`nrf9151dk <nrf9151dk>`                  | ``nrf9151dk/nrf9151``                                                    |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf9151dk/nrf9151/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)             |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF9131 EK        | PCA10165   | :zephyr:board:`nrf9131ek <nrf9131ek>`                  | ``nrf9131ek/nrf9131``                                                    |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf9131ek/nrf9131/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)             |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF54H20 DK       | PCA10175   | :zephyr:board:`nrf54h20dk <nrf54h20dk>`                | ``nrf54h20dk/nrf54h20/cpuapp``                                           |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf54h20dk/nrf54h20/cpurad``                                           |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf54h20dk/nrf54h20/cpuppr``                                           |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF54LV10 DK      | PCA10188   | ``nrf54lv10dk``                                        | ``nrf54lv10dk/nrf54lv10a/cpuapp``                                        |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`) |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf54lv10dk/nrf54lv10a/cpuflpr``                                       |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf54lv10dk/nrf54lv10a/cpuflpr/xip``                                   |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF54LM20 DK      | PCA10184   | :zephyr:board:`nrf54lm20dk <nrf54lm20dk>`              | ``nrf54lm20dk/nrf54lm20a/cpuapp``                                        |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`) |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf54lm20dk/nrf54lm20a/cpuflpr``                                       |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf54lm20dk/nrf54lm20a/cpuflpr/xip``                                   |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF54L15 DK       | PCA10156   | :zephyr:board:`nrf54l15dk <nrf54l15dk>`                | ``nrf54l15dk/nrf54l15/cpuapp``                                           |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf54l15dk/nrf54l15/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)    |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf54l15dk/nrf54l15/cpuflpr``                                          |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf54l15dk/nrf54l15/cpuflpr/xip``                                      |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF54L10 emulated | PCA10156   | :ref:`nrf54l15dk/nrf54l10 <zephyr:nrf54l15dk_nrf54l10>`| ``nrf54l15dk/nrf54l10/cpuapp``                                           |
-| on the nRF54L15 DK|            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf54l15dk/nrf54l10/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)    |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF54L05 emulated | PCA10156   | :ref:`nrf54l15dk/nrf54l05 <zephyr:nrf54l15dk_nrf54l05>`| ``nrf54l15dk/nrf54l05/cpuapp``                                           |
-| on the nRF54L15 DK|            |                                                        |                                                                          |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF5340 DK        | PCA10095   | :zephyr:board:`nrf5340dk <nrf5340dk>`                  | ``nrf5340dk/nrf5340/cpunet``                                             |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf5340dk/nrf5340/cpuapp``                                             |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf5340dk/nrf5340/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)      |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF5340 Audio     | PCA10121   | :zephyr:board:`nrf5340_audio_dk <nrf5340_audio_dk>`    | ``nrf5340_audio_dk/nrf5340/cpuapp``                                      |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| Thingy:53         | PCA20053   | :zephyr:board:`thingy53 <thingy53>`                    | ``thingy53/nrf5340/cpunet``                                              |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``thingy53/nrf5340/cpuapp``                                              |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``thingy53/nrf5340/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)       |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF52840 DK       | PCA10056   | :zephyr:board:`nrf52840dk <nrf52840dk>`                | ``nrf52840dk/nrf52840``                                                  |
-|                   |            +--------------------------------------------------------+--------------------------------------------------------------------------+
-|                   |            | :ref:`nrf52840dk <zephyr:nrf52840dk_nrf52811>`         | ``nrf52840dk/nrf52811``                                                  |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF52840 Dongle   | PCA10059   | :zephyr:board:`nrf52840dongle <nrf52840dongle>`        | ``nrf52840dongle/nrf52840``                                              |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf52840dongle/nrf52840/bare``                                         |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF52833 DK       | PCA10100   | :zephyr:board:`nrf52833dk <nrf52833dk>`                | ``nrf52833dk/nrf52833``                                                  |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf52833dk/nrf52820``                                                  |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF52 DK          | PCA10040   | :zephyr:board:`nrf52dk <nrf52dk>`                      | ``nrf52dk/nrf52832``                                                     |
-| (nRF53832)        |            +--------------------------------------------------------+--------------------------------------------------------------------------+
-|                   |            | :ref:`nrf52dk <zephyr:nrf52dk_nrf52810>`               | ``nrf52dk/nrf52810``                                                     |
-|                   |            +--------------------------------------------------------+--------------------------------------------------------------------------+
-|                   |            | :ref:`nrf52dk <zephyr:nrf52dk_nrf52805>`               | ``nrf52dk/nrf52805``                                                     |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF21540 DK       | PCA10112   | :zephyr:board:`nrf21540dk <nrf21540dk>`                | ``nrf21540dk/nrf52840``                                                  |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF7002 DK        | PCA10143   | :zephyr:board:`nrf7002dk <nrf7002dk>`                  | ``nrf7002dk/nrf5340/cpunet``                                             |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf7002dk/nrf5340/cpuapp``                                             |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf7002dk/nrf5340/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)      |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| Hardware platform | PCA number |                 Board name                          |                             Board targets                                |
++===================+============+=====================================================+==========================================================================+
+| nRF9161 DK        | PCA10153   | :zephyr:board:`nrf9161dk <nrf9161dk>`               | ``nrf9161dk/nrf9161``                                                    |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf9161dk/nrf9161/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)             |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| nRF9160 DK        | PCA10090   | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>`         | ``nrf9160dk/nrf9160``                                                    |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf9160dk/nrf9160/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)             |
+|                   |            +-----------------------------------------------------+--------------------------------------------------------------------------+
+|                   |            | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf52840>`        | ``nrf9160dk/nrf52840``                                                   |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| nRF9151 DK        | PCA10171   | :zephyr:board:`nrf9151dk <nrf9151dk>`               | ``nrf9151dk/nrf9151``                                                    |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf9151dk/nrf9151/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)             |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| nRF9131 EK        | PCA10165   | :zephyr:board:`nrf9131ek <nrf9131ek>`               | ``nrf9131ek/nrf9131``                                                    |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf9131ek/nrf9131/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)             |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| nRF54H20 DK       | PCA10175   | :zephyr:board:`nrf54h20dk <nrf54h20dk>`             | ``nrf54h20dk/nrf54h20/cpuapp``                                           |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf54h20dk/nrf54h20/cpurad``                                           |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf54h20dk/nrf54h20/cpuppr``                                           |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| nRF54LM20 DK      | PCA10184   | :zephyr:board:`nrf54lm20dk <nrf54lm20dk>`           | ``nrf54lm20dk/nrf54lm20a/cpuapp``                                        |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`) |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf54lm20dk/nrf54lm20a/cpuflpr``                                       |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf54lm20dk/nrf54lm20a/cpuflpr/xip``                                   |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| nRF54L15 DK       | PCA10156   | :zephyr:board:`nrf54l15dk <nrf54l15dk>`             | ``nrf54l15dk/nrf54l15/cpuapp``                                           |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf54l15dk/nrf54l15/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)    |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf54l15dk/nrf54l15/cpuflpr``                                          |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf54l15dk/nrf54l15/cpuflpr/xip``                                      |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| nRF5340 DK        | PCA10095   | :zephyr:board:`nrf5340dk <nrf5340dk>`               | ``nrf5340dk/nrf5340/cpunet``                                             |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf5340dk/nrf5340/cpuapp``                                             |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf5340dk/nrf5340/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)      |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| nRF5340 Audio     | PCA10121   | :zephyr:board:`nrf5340_audio_dk <nrf5340_audio_dk>` | ``nrf5340_audio_dk/nrf5340/cpuapp``                                      |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| Thingy:53         | PCA20053   | :zephyr:board:`thingy53 <thingy53>`                 | ``thingy53/nrf5340/cpunet``                                              |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``thingy53/nrf5340/cpuapp``                                              |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``thingy53/nrf5340/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)       |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| nRF52840 DK       | PCA10056   | :zephyr:board:`nrf52840dk <nrf52840dk>`             | ``nrf52840dk/nrf52840``                                                  |
+|                   |            +-----------------------------------------------------+--------------------------------------------------------------------------+
+|                   |            | :ref:`nrf52840dk <zephyr:nrf52840dk_nrf52811>`      | ``nrf52840dk/nrf52811``                                                  |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| nRF52840 Dongle   | PCA10059   | :zephyr:board:`nrf52840dongle <nrf52840dongle>`     | ``nrf52840dongle/nrf52840``                                              |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| nRF52833 DK       | PCA10100   | :zephyr:board:`nrf52833dk <nrf52833dk>`             | ``nrf52833dk/nrf52833``                                                  |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf52833dk/nrf52820``                                                  |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| nRF52 DK          | PCA10040   | :zephyr:board:`nrf52dk <nrf52dk>`                   | ``nrf52dk/nrf52832``                                                     |
+| (nRF53832)        |            +-----------------------------------------------------+--------------------------------------------------------------------------+
+|                   |            | :ref:`nrf52dk <zephyr:nrf52dk_nrf52810>`            | ``nrf52dk/nrf52810``                                                     |
+|                   |            +-----------------------------------------------------+--------------------------------------------------------------------------+
+|                   |            | :ref:`nrf52dk <zephyr:nrf52dk_nrf52805>`            | ``nrf52dk/nrf52805``                                                     |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| nRF21540 DK       | PCA10112   | :zephyr:board:`nrf21540dk <nrf21540dk>`             | ``nrf21540dk/nrf52840``                                                  |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
+| nRF7002 DK        | PCA10143   | :zephyr:board:`nrf7002dk <nrf7002dk>`               | ``nrf7002dk/nrf5340/cpunet``                                             |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf7002dk/nrf5340/cpuapp``                                             |
+|                   |            |                                                     |                                                                          |
+|                   |            |                                                     | ``nrf7002dk/nrf5340/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)      |
++-------------------+------------+-----------------------------------------------------+--------------------------------------------------------------------------+
 
 .. note::
    In |NCS| releases before v1.6.1:

@@ -43,7 +43,7 @@ config NRF_CLOUD_COAP_SERVER_PORT
 	default 5684
 
 config NRF_CLOUD_COAP_KEEPOPEN
-	bool "SO_KEEPOPEN to prevent unnecessary socket closures"
+	bool "Enable SO_KEEPOPEN to prevent unnecessary socket closures"
 	default y
 	depends on SOC_NRF9161_LACA || SOC_NRF9151_LACA || SOC_NRF9131_LACA
 	help
@@ -68,6 +68,16 @@ config NRF_CLOUD_COAP_SEND_SSIDS
 	  the amount of data sent to the cloud is greatly reduced.
 
 endif # WIFI
+
+config NRF_CLOUD_COAP_DOWNLOADS
+	bool "Download files using CoAP instead of HTTP"
+	depends on NRF_CLOUD_COAP
+	select DOWNLOADER_TRANSPORT_COAP
+	default y
+	help
+	  Use nRF Cloud CoAP's proxy download resource to download files for FOTA and P-GPS.
+	  When enabled, the Kconfig option COAP_EXTENDED_OPTIONS_LEN_VALUE must be increased
+	  from the default value. Safe values are 80 for P-GPS and 192 for FOTA.
 
 config NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST
 	bool "Disconnect on failed request"

@@ -49,7 +49,6 @@ enum log_rpc_cmd_backend {
 	LOG_RPC_CMD_INVALIDATE_CRASH_DUMP,
 	LOG_RPC_CMD_ECHO,
 	LOG_RPC_CMD_SET_TIME,
-	LOG_RPC_CMD_GET_CRASH_INFO,
 };
 
 #ifdef __cplusplus

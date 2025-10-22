@@ -334,8 +334,7 @@ static void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 
 static void lte_reg_handler(const struct lte_lc_evt *const evt)
 {
-	if (evt->type == LTE_LC_EVT_MODEM_EVENT &&
-	    evt->modem_evt.type == LTE_LC_MODEM_EVT_RESET_LOOP) {
+	if (evt->type == LTE_LC_EVT_MODEM_EVENT && evt->modem_evt == LTE_LC_MODEM_EVT_RESET_LOOP) {
 		LOG_WRN("The modem has detected a reset loop. LTE network attach is now "
 			"restricted for the next 30 minutes.");
 

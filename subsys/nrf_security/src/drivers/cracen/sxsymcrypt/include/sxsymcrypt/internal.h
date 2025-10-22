@@ -111,7 +111,7 @@ struct sxaead {
  */
 struct sxblkcipher {
 	const struct sx_blkcipher_cmdma_cfg *cfg;
-	const struct sxkeyref *key;
+	struct sxkeyref key;
 	uint32_t textsz;
 	struct sx_dmactl dma;
 	struct sxdesc descs[5];

@@ -6,7 +6,7 @@
 
 config MBEDTLS_PSA_CRYPTO_C
 	bool
-	prompt "PSA crypto APIs"
+	prompt "Enable PSA crypto APIs"
 	default y
 	help
 	  Enable the Platform Security Architecture cryptography API.
@@ -97,6 +97,12 @@ config MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE
 	  16 bytes is the smallest reasonable buffer size (needed for an 128-bit AES key)
 	  to set here. The applications need to increase this buffer size in accordance
 	  with the enabled key types and sizes.
+
+config PSA_ITS_ENCRYPTED
+	bool
+	depends on MBEDTLS_PSA_CRYPTO_STORAGE_C
+	help
+	  Enables authenticated encryption for PSA Internal Trusted Storage files
 
 config PSA_CRYPTO_SYS_INIT
 	bool "Invoke psa_crypto_init during system initialization"

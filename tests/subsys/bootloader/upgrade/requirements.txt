@@ -1,4 +1,0 @@
-# for required images
-filelock
-# for lzma compression check
-intelhex

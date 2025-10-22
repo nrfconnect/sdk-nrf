@@ -20,4 +20,4 @@ common:
     - nrf52840dk/nrf52840
 
 tests:
-  drivers.i2c.twim_latency: {}
+  tests.drivers.twim_latency: {}

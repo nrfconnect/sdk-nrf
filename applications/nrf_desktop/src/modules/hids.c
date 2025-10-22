@@ -683,7 +683,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	return false;
 }
 APP_EVENT_LISTENER(MODULE, app_event_handler);
-APP_EVENT_SUBSCRIBE_EARLY(MODULE, hid_report_event);
+APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
 APP_EVENT_SUBSCRIBE(MODULE, hid_notification_event);
 /* The module is initialized before CAF BLE state module to make sure that the GATT HIDS is
  * registered before Bluetooth is enabled. This is done to avoid submitting works related to Service

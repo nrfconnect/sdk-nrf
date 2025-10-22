@@ -224,7 +224,7 @@ static void test_i2c_read_latency(size_t buffer_size, uint8_t i2c_speed_setting)
 	uint64_t average_timer_value_us = 0;
 	uint32_t theoretical_transmission_time_us;
 
-	TC_PRINT("I2C read latency in test with buffer size: %u bytes and speed setting: %u\n",
+	TC_PRINT("I2C read latency in test with buffer size: %u bytes and spedd setting: %u\n",
 		 buffer_size, i2c_speed_setting);
 	configure_twim_speed(i2c_speed_setting);
 

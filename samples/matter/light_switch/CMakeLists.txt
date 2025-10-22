@@ -25,18 +25,18 @@ include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/zap_helpers.cmake)
 ncs_get_zap_parent_dir(ZAP_PARENT_DIR)
 
 target_include_directories(app PRIVATE
-  src
-  ${ZAP_PARENT_DIR}
+    src
+    ${ZAP_PARENT_DIR}
 )
 
 target_compile_options(app PRIVATE -Wno-deprecated-declarations)
 
 target_sources(app PRIVATE
-  src/app_task.cpp
-  src/light_switch.cpp
-  src/main.cpp
-  src/shell_commands.cpp
-  ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/binding/binding_handler.cpp
+    src/app_task.cpp
+    src/light_switch.cpp
+    src/main.cpp
+    src/shell_commands.cpp
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/binding/binding_handler.cpp
 )
 
 ncs_configure_data_model()

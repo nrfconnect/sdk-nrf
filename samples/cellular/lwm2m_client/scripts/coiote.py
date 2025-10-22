@@ -6,18 +6,16 @@
 
 """Module for interacting with AVSystem Coiote device management REST API"""
 
-import argparse
-import fnmatch
-import json
-import logging
 import os
 import sys
+import argparse
+import logging
+import json
 import time
-
 import requests
+import fnmatch
 
-
-class Operationlist:
+class Operationlist():
     def __init__(self):
         self.resource = None
         self.value = ""
@@ -40,7 +38,7 @@ def create_attributes_payload(attribute=None, value=""):
     }
     return tmp_attribute
 
-class Coiote:
+class Coiote():
     """Interact with Coiote server"""
     def __init__(self):
         #
@@ -77,7 +75,7 @@ class Coiote:
         else:
             self.auth = None
 
-        self.device_id = "urn:imei"
+        self.device_id = f"urn:imei"
         self.queueMode = None
         self.callerPath = os.getcwd()
 
@@ -233,8 +231,9 @@ class Coiote:
         }
 
         resp = self.post(f'/resources/{id}/downloadUrl', json.dumps(objs))
-        if resp and "address" in resp:
-            return resp["address"]
+        if resp:
+            if "address" in resp:
+                return resp["address"]
         return None
 
     def fota_update(self, object, instance, linked_instance=None):
@@ -346,14 +345,16 @@ class Coiote:
 
         # Check the task status before loop to avoid unnecessary API calls
         # if the task has already completed successfully
-        if resp is not None and "status" in resp:
-            status_task = resp["status"]
+        if resp is not None:
+            if "status" in resp:
+                status_task = resp["status"]
 
         # Check the task status until it indicates success or failure
         while status_task != "Success":
             resp = self.get(path)
-            if resp is not None and "status" in resp:
-                status_task = resp["status"]
+            if resp is not None:
+                if "status" in resp:
+                    status_task = resp["status"]
 
             # Check if the status indicates task failure
             if status_task in status_fail:
@@ -590,7 +591,7 @@ class Coiote:
         succeeded = 0
         failed = 0
 
-        with open(dev_file) as fh:
+        with open(dev_file,"r") as fh:
             objs = []
             domain = self.get_domain()
 

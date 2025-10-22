@@ -73,11 +73,12 @@ config BT_MGMT_ADV_STACK_SIZE
 	help
 	  Stack size for the Bluetooth management advertising thread.
 
-config BT_MGMT_ADV_WQ_PRIO
-	int "Work queue priority for bt_mgmt advertising"
+config BT_MGMT_ADV_THREAD_PRIO
+	int "Thread priority for bt_mgmt advertising"
 	default 5
 	help
-	  This work queue will subscribe to BT management advertising work items.
+	  This is a preemptible thread.
+	  This thread will subscribe to BT management advertising work items.
 
 #----------------------------------------------------------------------------#
 menu "Log level"

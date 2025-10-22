@@ -61,6 +61,7 @@
 
 
 static struct bt_le_oob oob_local;
+static uint8_t tk_local[NFC_NDEF_LE_OOB_REC_TK_LEN];
 #if !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED)
 static uint8_t nfc_buffer[NFC_BUFFER_SIZE];
 static void adv_work_handler(struct k_work *work);
@@ -268,6 +269,16 @@ static void auth_cancel(struct bt_conn *conn)
 	printk("Pairing cancelled: %s\n", addr);
 }
 
+static void legacy_tk_value_set(struct bt_conn *conn)
+{
+	int err;
+
+	err = bt_le_oob_set_legacy_tk(conn, tk_local);
+	if (err) {
+		printk("Failed to set local TK (err %d)\n", err);
+	}
+}
+
 static void lesc_oob_data_set(struct bt_conn *conn, struct bt_conn_oob_info *info)
 {
 	int err;
@@ -303,6 +314,11 @@ static void oob_data_request(struct bt_conn *conn, struct bt_conn_oob_info *info
 	if (info->type == BT_CONN_OOB_LE_SC) {
 		printk("LESC OOB data requested\n");
 		lesc_oob_data_set(conn, info);
+	}
+
+	if (info->type == BT_CONN_OOB_LE_LEGACY) {
+		printk("Legacy TK value requested\n");
+		legacy_tk_value_set(conn);
 	}
 }
 
@@ -463,6 +479,11 @@ static int pairing_key_generate(void)
 		return err;
 	}
 
+	err = bt_rand(tk_local, sizeof(tk_local));
+	if (err) {
+		printk("Failed to generate random TK value (err %d)\n", err);
+	}
+
 	return err;
 }
 
@@ -572,6 +593,7 @@ static int nfc_oob_data_setup(size_t *size)
 			NFC_NDEF_LE_OOB_REC_LE_ROLE(NFC_NDEF_LE_OOB_REC_LE_ROLE_PERIPH_ONLY);
 	oob_rec_payload.le_sc_data = &oob_local.le_sc_data;
 	oob_rec_payload.local_name = bt_get_name();
+	oob_rec_payload.tk_value = tk_local;
 
 	ch_msg_records.ac = &NFC_NDEF_CH_AC_RECORD_DESC(ac_rec);
 	ch_msg_records.carrier = &NFC_NDEF_LE_OOB_RECORD_DESC(oob_rec);

@@ -37,7 +37,7 @@ uint8_t ReturnRemainderValue(int16_t Value)
 	return static_cast<uint8_t>((Value % 100 + 5) / 10);
 }
 
-} /* namespace */
+} // namespace
 
 CHIP_ERROR TemperatureManager::Init()
 {

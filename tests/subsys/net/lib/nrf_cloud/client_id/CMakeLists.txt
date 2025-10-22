@@ -16,14 +16,13 @@ target_sources(app PRIVATE ${app_sources})
 
 target_sources(app
 	PRIVATE
-	${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/common/src/nrf_cloud_client_id.c
+	${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_client_id.c
 )
 
 target_include_directories(app
 	PRIVATE
 	src
-	${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/common/include
-	${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/mqtt/include
+	${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/include
 	${ZEPHYR_BASE}/subsys/testsuite/include
 )
 

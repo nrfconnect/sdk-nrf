@@ -135,7 +135,6 @@ int nrf_cloud_fota_poll_process_pending(struct nrf_cloud_fota_poll_ctx *ctx);
  * @retval -ENOENT          A FOTA job has finished and its status has been reported to the cloud.
  * @retval -EAGAIN          No FOTA job exists.
  * @retval -ETIMEDOUT       The FOTA job check timed out. Retry later.
- * @retval -ENETDOWN        The network is down.
  */
 int nrf_cloud_fota_poll_process(struct nrf_cloud_fota_poll_ctx *ctx);
 
@@ -152,7 +151,6 @@ int nrf_cloud_fota_poll_update_apply(struct nrf_cloud_fota_poll_ctx *ctx);
 /** @} */
 
 #ifdef __cplusplus
-}
 #endif
 
 #endif /* NRF_CLOUD_FOTA_POLL_H_ */

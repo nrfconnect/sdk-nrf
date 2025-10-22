@@ -1,0 +1,161 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig  DOWNLOAD_CLIENT
+	bool "[DEPRECATED] Download client"
+	select DEPRECATED
+
+if DOWNLOAD_CLIENT
+
+config DOWNLOAD_CLIENT_BUF_SIZE
+	int "Buffer size (static)"
+	range 256 4096
+	default 2048
+	help
+	  Size of the internal buffer used for incoming and
+	  outgoing packets. It must be large enough to
+	  acommodate for the largest between the HTTP fragment
+	  and CoAP block. In case of CoAP, the CoAP header
+	  length of 20 bytes should be taken into account.
+
+config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE
+	int
+	default 256 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_256
+	default 512 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_512
+	default 1024 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_1024
+	default 2048 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_2048
+	default 4096 if DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_4096
+
+choice
+	prompt "HTTP(S) fragment size"
+	default DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_2048
+	help
+	  Size of the data fragments reported to the application when
+	  using HTTP or HTTPS. Use the largest fragment size when using HTTPS
+	  to reduce the bandwidth overhead due to the HTTP headers, which are
+	  sent for each fragment. When using the Modem library and TLS,
+	  the fragment size may not exceed 2 kB minus the largest HTTP header
+	  the application expects to receive.
+
+config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_4096
+	bool "4096"
+	depends on !NRF_MODEM_LIB
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 4096
+
+config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_2048
+	bool "2048"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 2048
+
+config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_1024
+	bool "1024"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 1024
+
+	config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_512
+	bool "512"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 512
+
+config DOWNLOAD_CLIENT_HTTP_FRAG_SIZE_256
+	bool "256"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 256
+
+endchoice
+
+config DOWNLOAD_CLIENT_COAP_BLOCK_SIZE
+	int
+	default 3 if DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_128
+	default 4 if DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_256
+	default 5 if DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_512
+
+choice
+	prompt "CoAP block size"
+	depends on COAP
+	default DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_512
+	help
+	   CoAP blockwise transfer block size.
+
+config DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_512
+	bool "512"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 532
+
+config DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_256
+	bool "256"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 276
+
+config DOWNLOAD_CLIENT_COAP_BLOCK_SIZE_128
+	bool "128"
+	depends on DOWNLOAD_CLIENT_BUF_SIZE >= 148
+
+endchoice
+
+comment "Thread and stack buffers"
+
+config DOWNLOAD_CLIENT_STACK_SIZE
+	int "Thread stack size"
+	range 768 4096
+	default 1280
+
+config DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE
+	int "Maximum hostname length (stack)"
+	range 8 256
+	default 255
+
+config DOWNLOAD_CLIENT_MAX_FILENAME_SIZE
+	int "Maximum filename length (stack)"
+	range 8 2048
+	default 255
+
+config DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS
+	int "Receive timeout on TCP sockets, in milliseconds"
+	default 30000
+	range -1 600000
+	help
+	  Socket timeout for recv() calls, in milliseconds.
+	  When using HTTP or HTTPS, set a timeout to be able to detect
+	  when the server is not responding and client should give up.
+	  Set to -1 disable.
+
+config DOWNLOAD_CLIENT_COAP_MAX_RETRANSMIT_REQUEST_COUNT
+	int "Number of CoAP request retransmissions"
+	default 4
+	range 1 10
+	help
+	  As part of CoAP exponential backoff mechanism this is the number
+	  of retransmissions of a request. If the retransmissions exceeds,
+	  the download will be stopped.
+
+config DOWNLOAD_CLIENT_RANGE_REQUESTS
+	bool "Always use HTTP Range requests"
+	default y
+	help
+	  Always use HTTP Range requests when downloading (RFC 7233).
+	  This option can be useful to limit the amount of incoming data from the server
+	  by downloading only one fragment at a time. It increases the protocol overhead
+	  but also gives time to the application to process the fragments as they are
+	  downloaded, instead of having to keep up to speed while downloading the whole file.
+
+config DOWNLOAD_CLIENT_CID
+	bool "Use DTLS Connection-ID"
+	help
+	  Use DTLS Connection-ID option when downloading from CoAPS resources.
+	  This requires modem firmware 1.3.5 or newer.
+
+config DOWNLOAD_CLIENT_SHELL
+	bool "Enable shell"
+	depends on SHELL
+
+module=DOWNLOAD_CLIENT
+module-dep=LOG
+module-str=Download client
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+if DOWNLOAD_CLIENT_LOG_LEVEL_DBG
+
+config DOWNLOAD_CLIENT_LOG_HEADERS
+	bool "Log protocol headers to console [Debug]"
+
+endif
+
+endif

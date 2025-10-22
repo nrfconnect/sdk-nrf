@@ -43,7 +43,6 @@ static psa_status_t ecc_key_agreement_check_alg(psa_algorithm_t alg)
 	return status;
 }
 
-#if defined(PSA_NEED_CRACEN_ECDH_SECP_R1)
 static psa_status_t cracen_ecdh_wrstr_calc_secret(const struct sx_pk_ecurve *curve,
 						  const uint8_t *priv_key, size_t priv_key_size,
 						  const uint8_t *publ_key, size_t publ_key_size,
@@ -99,9 +98,7 @@ static psa_status_t cracen_ecdh_wrstr_calc_secret(const struct sx_pk_ecurve *cur
 
 	return silex_statuscodes_to_psa(sx_status);
 }
-#endif /* PSA_NEED_CRACEN_ECDH_SECP_R1 */
 
-#if defined(PSA_NEED_CRACEN_ECDH_MONTGOMERY)
 static psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *curve,
 						    const uint8_t *priv_key, size_t priv_key_size,
 						    const uint8_t *publ_key, size_t publ_key_size,
@@ -151,15 +148,10 @@ static psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *c
 
 	return PSA_SUCCESS;
 }
-#endif /* PSA_NEED_CRACEN_ECDH_MONTGOMERY */
 
-#if defined(PSA_NEED_CRACEN_HKDF)                || \
-	defined(PSA_NEED_CRACEN_PBKDF2_HMAC)     || \
-	defined(PSA_NEED_CRACEN_TLS12_PRF)       || \
-	defined(PSA_NEED_CRACEN_TLS12_PSK_TO_MS)
 /**
  * \brief Initialize and set up the MAC operation that will be used to generate pseudo-random
- *        bytes for HKDF and PBKDF2.
+ *        bytes for HDKF and PBKDF2.
  *
  * \param[in, out] operation        Cracen key derivation operation object.
  * \param[in]      key_buffer       Key buffer or HKDF salt.
@@ -187,9 +179,7 @@ static psa_status_t start_mac_operation(cracen_key_derivation_operation_t *opera
 	return cracen_mac_sign_setup(&operation->mac_op, &attributes, key_buffer, key_buffer_size,
 				     mac_alg);
 }
-#endif
 
-#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
 static size_t pbkdf2_prf_output_length(psa_algorithm_t alg)
 {
 	if (alg == PSA_ALG_PBKDF2_AES_CMAC_PRF_128) {
@@ -198,15 +188,14 @@ static size_t pbkdf2_prf_output_length(psa_algorithm_t alg)
 		return PSA_HASH_LENGTH(PSA_ALG_GET_HASH(alg));
 	}
 }
-#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
 
 psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *operation,
 					 psa_algorithm_t alg)
 {
 	operation->alg = alg;
 
-#if defined(PSA_NEED_CRACEN_HKDF)
-	if (PSA_ALG_IS_HKDF(operation->alg) || PSA_ALG_IS_HKDF_EXPAND(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && (PSA_ALG_IS_HKDF(operation->alg) ||
+	PSA_ALG_IS_HKDF_EXPAND(operation->alg))) {
 		size_t hash_size = PSA_HASH_LENGTH(PSA_ALG_HKDF_GET_HASH(alg));
 
 		if (hash_size == 0) {
@@ -220,7 +209,7 @@ psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *oper
 		return PSA_SUCCESS;
 	}
 
-	if (PSA_ALG_IS_HKDF_EXTRACT(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && PSA_ALG_IS_HKDF_EXTRACT(operation->alg)) {
 		size_t hash_size = PSA_HASH_LENGTH(PSA_ALG_HKDF_GET_HASH(alg));
 
 		if (hash_size == 0) {
@@ -233,10 +222,8 @@ psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *oper
 
 		return PSA_SUCCESS;
 	}
-#endif /* PSA_NEED_CRACEN_HKDF */
 
-#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
-	if (PSA_ALG_IS_PBKDF2(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_PBKDF2_HMAC) && PSA_ALG_IS_PBKDF2(operation->alg)) {
 		size_t output_length = pbkdf2_prf_output_length(operation->alg);
 
 		if (output_length == 0) {
@@ -247,43 +234,36 @@ psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *oper
 		operation->state = CRACEN_KD_STATE_PBKDF2_INIT;
 		return PSA_SUCCESS;
 	}
-#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
 
-#if defined(PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS)
-	if (operation->alg == PSA_ALG_TLS12_ECJPAKE_TO_PMS) {
-		operation->capacity = PSA_TLS12_ECJPAKE_TO_PMS_DATA_SIZE;
-		operation->state = CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_INIT;
-		return PSA_SUCCESS;
+	if (IS_ENABLED(PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS)) {
+		if (operation->alg == PSA_ALG_TLS12_ECJPAKE_TO_PMS) {
+			operation->capacity = PSA_TLS12_ECJPAKE_TO_PMS_DATA_SIZE;
+			operation->state = CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_INIT;
+			return PSA_SUCCESS;
+		}
 	}
-#endif /* PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS */
 
-#if defined(PSA_NEED_CRACEN_TLS12_PRF)
-	if (PSA_ALG_IS_TLS12_PRF(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_TLS12_PRF) && PSA_ALG_IS_TLS12_PRF(operation->alg)) {
 		operation->state = CRACEN_KD_STATE_TLS12_PRF_INIT;
 		operation->capacity = UINT64_MAX;
 		return PSA_SUCCESS;
 	}
-#endif /* PSA_NEED_CRACEN_TLS12_PRF */
 
-#if defined(PSA_NEED_CRACEN_TLS12_PSK_TO_MS)
-	if (PSA_ALG_IS_TLS12_PSK_TO_MS(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_TLS12_PSK_TO_MS) &&
+	    PSA_ALG_IS_TLS12_PSK_TO_MS(operation->alg)) {
 		operation->state = CRACEN_KD_STATE_TLS12_PSK_TO_MS_INIT;
 		operation->capacity = UINT64_MAX;
 		return PSA_SUCCESS;
 	}
-#endif /* PSA_NEED_CRACEN_TLS12_PSK_TO_MS */
 
-#if defined(PSA_NEED_CRACEN_SRP_PASSWORD_HASH)
-	if (PSA_ALG_IS_SRP_PASSWORD_HASH(alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_SRP_PASSWORD_HASH) && PSA_ALG_IS_SRP_PASSWORD_HASH(alg)) {
 		if (PSA_ALG_HKDF_GET_HASH(alg) != CRACEN_SRP_HASH_ALG) {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		operation->capacity = CRACEN_SRP_HASH_LENGTH;
 		return PSA_SUCCESS;
 	}
-#endif /* PSA_NEED_CRACEN_SRP_PASSWORD_HASH */
 
-#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
 	if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
 		operation->capacity = PSA_ALG_SP800_108_COUNTER_CMAC_INIT_CAPACITY;
 		operation->state = CRACEN_KD_STATE_CMAC_CTR_INIT;
@@ -292,7 +272,6 @@ psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *oper
 
 		return PSA_SUCCESS;
 	}
-#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
 
 	return PSA_ERROR_NOT_SUPPORTED;
 }
@@ -312,7 +291,6 @@ psa_status_t cracen_key_derivation_set_capacity(cracen_key_derivation_operation_
 	return PSA_SUCCESS;
 }
 
-#if defined(PSA_NEED_CRACEN_HKDF)
 static psa_status_t
 cracen_key_derivation_input_bytes_hkdf(cracen_key_derivation_operation_t *operation,
 				       psa_key_derivation_step_t step, const uint8_t *data,
@@ -396,9 +374,7 @@ cracen_key_derivation_input_bytes_hkdf(cracen_key_derivation_operation_t *operat
 
 	return PSA_SUCCESS;
 }
-#endif /* PSA_NEED_CRACEN_HKDF */
 
-#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
 static psa_status_t
 cracen_key_derivation_input_bytes_pbkdf2(cracen_key_derivation_operation_t *operation,
 					 psa_key_derivation_step_t step, const uint8_t *data,
@@ -469,9 +445,7 @@ cracen_key_derivation_input_bytes_pbkdf2(cracen_key_derivation_operation_t *oper
 
 	return PSA_SUCCESS;
 }
-#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
 
-#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
 static psa_status_t
 cracen_key_derivation_input_bytes_cmac_ctr(cracen_key_derivation_operation_t *operation,
 					   psa_key_derivation_step_t step, const uint8_t *data,
@@ -528,9 +502,7 @@ cracen_key_derivation_input_bytes_cmac_ctr(cracen_key_derivation_operation_t *op
 
 	return PSA_SUCCESS;
 }
-#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
 
-#if defined(PSA_NEED_CRACEN_TLS12_PRF) || defined(PSA_NEED_CRACEN_TLS12_PSK_TO_MS)
 static psa_status_t
 cracen_key_derivation_input_bytes_tls12(cracen_key_derivation_operation_t *operation,
 					psa_key_derivation_step_t step, const uint8_t *data,
@@ -604,9 +576,7 @@ cracen_key_derivation_input_bytes_tls12(cracen_key_derivation_operation_t *opera
 	}
 	return PSA_SUCCESS;
 }
-#endif /* PSA_NEED_CRACEN_TLS12_PRF || PSA_NEED_CRACEN_TLS12_PSK_TO_MS */
 
-#if defined(PSA_NEED_CRACEN_SRP_PASSWORD_HASH)
 static psa_status_t
 cracen_key_derivation_input_bytes_srp(cracen_key_derivation_operation_t *operation,
 				      psa_key_derivation_step_t step, const uint8_t *data,
@@ -666,18 +636,17 @@ cracen_key_derivation_input_bytes_srp(cracen_key_derivation_operation_t *operati
 	}
 	return status;
 }
-#endif /* PSA_NEED_CRACEN_SRP_PASSWORD_HASH */
 
 psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t *operation,
 					       psa_key_derivation_step_t step, const uint8_t *data,
 					       size_t data_length)
 {
-#if defined(PSA_NEED_CRACEN_HKDF)
-	if (PSA_ALG_IS_HKDF(operation->alg) || PSA_ALG_IS_HKDF_EXTRACT(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && (PSA_ALG_IS_HKDF(operation->alg) ||
+	PSA_ALG_IS_HKDF_EXTRACT(operation->alg))) {
 		return cracen_key_derivation_input_bytes_hkdf(operation, step, data, data_length);
 	}
 
-	if (PSA_ALG_IS_HKDF_EXPAND(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && PSA_ALG_IS_HKDF_EXPAND(operation->alg)) {
 		if (step == PSA_KEY_DERIVATION_INPUT_SECRET) {
 			if (data_length > sizeof(operation->hkdf.prk)) {
 				return PSA_ERROR_INSUFFICIENT_MEMORY;
@@ -688,23 +657,19 @@ psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t
 		}
 		return cracen_key_derivation_input_bytes_hkdf(operation, step, data, data_length);
 	}
-#endif /* PSA_NEED_CRACEN_HKDF */
 
-#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
-	if (PSA_ALG_IS_PBKDF2(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_PBKDF2_HMAC) && PSA_ALG_IS_PBKDF2(operation->alg)) {
 		return cracen_key_derivation_input_bytes_pbkdf2(operation, step, data, data_length);
 	}
-#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
 
-#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
-	if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC) &&
+	    (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC)) {
 		return cracen_key_derivation_input_bytes_cmac_ctr(operation, step, data,
 								  data_length);
 	}
-#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
 
-#if defined(PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS)
-	if (operation->alg == PSA_ALG_TLS12_ECJPAKE_TO_PMS) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS) &&
+	    operation->alg == PSA_ALG_TLS12_ECJPAKE_TO_PMS) {
 		if (operation->state != CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_INIT) {
 			return PSA_ERROR_BAD_STATE;
 		}
@@ -717,25 +682,20 @@ psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t
 		       sizeof(operation->ecjpake_to_pms.key));
 		return PSA_SUCCESS;
 	}
-#endif /* PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS */
 
-#if defined(PSA_NEED_CRACEN_TLS12_PRF)
-	if (PSA_ALG_IS_TLS12_PRF(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_TLS12_PRF) && PSA_ALG_IS_TLS12_PRF(operation->alg)) {
 		return cracen_key_derivation_input_bytes_tls12(operation, step, data, data_length);
 	}
-#endif /* PSA_NEED_CRACEN_TLS12_PRF || PSA_NEED_CRACEN_TLS12_PSK_TO_MS */
 
-#if defined(PSA_NEED_CRACEN_TLS12_PSK_TO_MS)
-	if (PSA_ALG_IS_TLS12_PSK_TO_MS(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_TLS12_PSK_TO_MS) &&
+	    PSA_ALG_IS_TLS12_PSK_TO_MS(operation->alg)) {
 		return cracen_key_derivation_input_bytes_tls12(operation, step, data, data_length);
 	}
-#endif /* PSA_NEED_CRACEN_TLS12_PSK_TO_MS */
 
-#if defined(PSA_NEED_CRACEN_SRP_PASSWORD_HASH)
-	if (PSA_ALG_IS_SRP_PASSWORD_HASH(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_SRP_PASSWORD_HASH) &&
+	    PSA_ALG_IS_SRP_PASSWORD_HASH(operation->alg)) {
 		return cracen_key_derivation_input_bytes_srp(operation, step, data, data_length);
 	}
-#endif /* PSA_NEED_CRACEN_SRP_PASSWORD_HASH */
 
 	return PSA_ERROR_NOT_SUPPORTED;
 }
@@ -745,13 +705,12 @@ psa_status_t cracen_key_derivation_input_key(cracen_key_derivation_operation_t *
 					     const psa_key_attributes_t *attributes,
 					     const uint8_t *key_buffer, size_t key_buffer_size)
 {
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+
 	if (operation->alg != PSA_ALG_SP800_108_COUNTER_CMAC) {
 		return cracen_key_derivation_input_bytes(operation, step, key_buffer,
 							 key_buffer_size);
 	}
-
-#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
-	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
 	if (psa_get_key_type(attributes) != PSA_KEY_TYPE_AES) {
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -780,29 +739,26 @@ psa_status_t cracen_key_derivation_input_key(cracen_key_derivation_operation_t *
 
 	operation->state = CRACEN_KD_STATE_CMAC_CTR_KEY_LOADED;
 	return status;
-#else
-	return PSA_ERROR_NOT_SUPPORTED;
-#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
 }
 
 psa_status_t cracen_key_derivation_input_integer(cracen_key_derivation_operation_t *operation,
 						 psa_key_derivation_step_t step, uint64_t value)
 {
-#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
-	if (PSA_ALG_IS_PBKDF2(operation->alg) && step == PSA_KEY_DERIVATION_INPUT_COST) {
-		if (operation->pbkdf2.input_cost) {
-			/* Can only be provided once. */
-			return PSA_ERROR_BAD_STATE;
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_PBKDF2_HMAC)) {
+		if ((PSA_ALG_IS_PBKDF2(operation->alg)) && step == PSA_KEY_DERIVATION_INPUT_COST) {
+			if (operation->pbkdf2.input_cost) {
+				/* Can only be provided once. */
+				return PSA_ERROR_BAD_STATE;
+			}
+			operation->pbkdf2.input_cost = value;
+			return PSA_SUCCESS;
 		}
-		operation->pbkdf2.input_cost = value;
-		return PSA_SUCCESS;
 	}
-#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
 
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
-#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
 static int
 cracen_key_derivation_cmac_ctr_add_core_fixed_input(cracen_key_derivation_operation_t *operation,
 						    struct sxmac *cmac_ctx)
@@ -914,9 +870,7 @@ cracen_key_derivation_cmac_ctr_generate_block(cracen_key_derivation_operation_t 
 	operation->cmac_ctr.counter++;
 	return PSA_SUCCESS;
 }
-#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
 
-#if defined(PSA_NEED_CRACEN_HKDF)
 /**
  * \brief Generates the next block for HKDF.
  *
@@ -968,9 +922,7 @@ cracen_key_derivation_hkdf_generate_block(cracen_key_derivation_operation_t *ope
 
 	return PSA_SUCCESS;
 }
-#endif /* PSA_NEED_CRACEN_HKDF */
 
-#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
 /**
  * \brief Generates the next block for PBKDF2.
  *
@@ -1040,9 +992,7 @@ cracen_key_derivation_pbkdf2_generate_block(cracen_key_derivation_operation_t *o
 
 	return PSA_SUCCESS;
 }
-#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
 
-#if defined(PSA_NEED_CRACEN_TLS12_PRF) || defined(PSA_NEED_CRACEN_TLS12_PSK_TO_MS)
 static psa_status_t
 cracen_key_derivation_tls12_prf_generate_block(cracen_key_derivation_operation_t *operation)
 {
@@ -1122,7 +1072,6 @@ cracen_key_derivation_tls12_prf_generate_block(cracen_key_derivation_operation_t
 
 	return status;
 }
-#endif /* PSA_NEED_CRACEN_TLS12_PRF || PSA_NEED_CRACEN_TLS12_PSK_TO_MS */
 
 psa_status_t cracen_key_agreement(const psa_key_attributes_t *attributes, const uint8_t *priv_key,
 				  size_t priv_key_size, const uint8_t *publ_key,
@@ -1154,21 +1103,21 @@ psa_status_t cracen_key_agreement(const psa_key_attributes_t *attributes, const 
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-#if defined(PSA_NEED_CRACEN_ECDH_SECP_R1)
-	if (cracen_ecc_curve_is_weierstrass(curve_family)) {
-		return cracen_ecdh_wrstr_calc_secret(curve, priv_key, priv_key_size,
-								publ_key, publ_key_size, output,
-								output_size, output_length);
+	if (IS_ENABLED(PSA_NEED_CRACEN_ECDH_SECP_R1)) {
+		if (cracen_ecc_curve_is_weierstrass(curve_family)) {
+			return cracen_ecdh_wrstr_calc_secret(curve, priv_key, priv_key_size,
+							     publ_key, publ_key_size, output,
+							     output_size, output_length);
+		}
 	}
-#endif /* PSA_NEED_CRACEN_ECDH_SECP_R1 */
 
-#if defined(PSA_NEED_CRACEN_ECDH_MONTGOMERY)
-	if (curve_family == PSA_ECC_FAMILY_MONTGOMERY) {
-		return cracen_ecdh_montgmr_calc_secret(curve, priv_key, priv_key_size,
-								publ_key, publ_key_size, output,
-								output_size, output_length);
+	if (IS_ENABLED(PSA_NEED_CRACEN_ECDH_MONTGOMERY)) {
+		if (curve_family == PSA_ECC_FAMILY_MONTGOMERY) {
+			return cracen_ecdh_montgmr_calc_secret(curve, priv_key, priv_key_size,
+							       publ_key, publ_key_size, output,
+							       output_size, output_length);
+		}
 	}
-#endif /* PSA_NEED_CRACEN_ECDH_MONTGOMERY */
 
 	return PSA_ERROR_NOT_SUPPORTED;
 }
@@ -1178,8 +1127,8 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 {
 	psa_status_t (*generator)(cracen_key_derivation_operation_t *) = NULL;
 
-#if defined(PSA_NEED_CRACEN_HKDF)
-	if (PSA_ALG_IS_HKDF(operation->alg) || PSA_ALG_IS_HKDF_EXPAND(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && (PSA_ALG_IS_HKDF(operation->alg) ||
+	PSA_ALG_IS_HKDF_EXPAND(operation->alg))) {
 		if (operation->state < CRACEN_KD_STATE_HKDF_KEYED || !operation->hkdf.info_set) {
 			return PSA_ERROR_BAD_STATE;
 		}
@@ -1188,7 +1137,7 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 		generator = cracen_key_derivation_hkdf_generate_block;
 	}
 
-	if (PSA_ALG_IS_HKDF_EXTRACT(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && PSA_ALG_IS_HKDF_EXTRACT(operation->alg)) {
 		if (operation->state < CRACEN_KD_STATE_HKDF_KEYED) {
 			return PSA_ERROR_BAD_STATE;
 		}
@@ -1204,10 +1153,8 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 		memcpy(output, operation->hkdf.prk, prk_length);
 		return PSA_SUCCESS;
 	}
-#endif /* PSA_NEED_CRACEN_HKDF */
 
-#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
-	if (PSA_ALG_IS_PBKDF2(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_PBKDF2_HMAC) && PSA_ALG_IS_PBKDF2(operation->alg)) {
 		/* Salt, password and input cost must have been provided. */
 		if (!operation->pbkdf2.input_cost) {
 			return PSA_ERROR_BAD_STATE;
@@ -1221,10 +1168,9 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 		operation->state = CRACEN_KD_STATE_PBKDF2_OUTPUT;
 		generator = cracen_key_derivation_pbkdf2_generate_block;
 	}
-#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
 
-#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
-	if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC) &&
+	    (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC)) {
 		if (operation->state == CRACEN_KD_STATE_CMAC_CTR_KEY_LOADED ||
 		    operation->state == CRACEN_KD_STATE_CMAC_CTR_INPUT_LABEL ||
 		    operation->state == CRACEN_KD_STATE_CMAC_CTR_INPUT_CONTEXT ||
@@ -1243,10 +1189,9 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 			return PSA_ERROR_BAD_STATE;
 		}
 	}
-#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
 
-#if defined(PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS)
-	if (operation->alg == PSA_ALG_TLS12_ECJPAKE_TO_PMS) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS) &&
+	    operation->alg == PSA_ALG_TLS12_ECJPAKE_TO_PMS) {
 		size_t outlen;
 		psa_status_t status = psa_driver_wrapper_hash_compute(
 			PSA_ALG_SHA_256, operation->ecjpake_to_pms.key, 32, output, 32, &outlen);
@@ -1259,24 +1204,20 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 		}
 		return PSA_SUCCESS;
 	}
-#endif /* PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS */
 
-#if defined(PSA_NEED_CRACEN_TLS12_PRF)
-	if (PSA_ALG_IS_TLS12_PRF(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_TLS12_PRF) && PSA_ALG_IS_TLS12_PRF(operation->alg)) {
 		operation->state = CRACEN_KD_STATE_TLS12_PRF_OUTPUT;
 		generator = cracen_key_derivation_tls12_prf_generate_block;
 	}
-#endif /* PSA_NEED_CRACEN_TLS12_PRF */
 
-#if defined(PSA_NEED_CRACEN_TLS12_PSK_TO_MS)
-	if (PSA_ALG_IS_TLS12_PSK_TO_MS(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_TLS12_PSK_TO_MS) &&
+	    PSA_ALG_IS_TLS12_PSK_TO_MS(operation->alg)) {
 		operation->state = CRACEN_KD_STATE_TLS12_PSK_TO_MS_OUTPUT;
 		generator = cracen_key_derivation_tls12_prf_generate_block;
 	}
-#endif /* PSA_NEED_CRACEN_TLS12_PSK_TO_MS */
 
-#if defined(PSA_NEED_CRACEN_SRP_PASSWORD_HASH)
-	if (PSA_ALG_IS_SRP_PASSWORD_HASH(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_SRP_PASSWORD_HASH) &&
+	    PSA_ALG_IS_SRP_PASSWORD_HASH(operation->alg)) {
 		size_t outlen = 0;
 		psa_status_t status =
 			cracen_hash_finish(&operation->hash_op, output, output_length, &outlen);
@@ -1290,7 +1231,6 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 
 		return status;
 	}
-#endif /* PSA_NEED_CRACEN_SRP_PASSWORD_HASH */
 
 	if (generator == NULL) {
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -1336,17 +1276,12 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 
 psa_status_t cracen_key_derivation_abort(cracen_key_derivation_operation_t *operation)
 {
-#if defined(PSA_NEED_CRACEN_HKDF)
-	if (PSA_ALG_IS_HKDF(operation->alg)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_HKDF) && PSA_ALG_IS_HKDF(operation->alg)) {
 		cracen_mac_abort(&operation->mac_op);
-	}
-#endif /* PSA_NEED_CRACEN_HKDF */
-
-#if defined(PSA_NEED_CRACEN_SRP_PASSWORD_HASH)
-	if (PSA_ALG_IS_SRP_PASSWORD_HASH(operation->alg)) {
+	} else if (IS_ENABLED(PSA_NEED_CRACEN_SRP_PASSWORD_HASH) &&
+		   PSA_ALG_IS_SRP_PASSWORD_HASH(operation->alg)) {
 		cracen_hash_abort(&operation->hash_op);
 	}
-#endif /* PSA_NEED_CRACEN_SRP_PASSWORD_HASH */
 
 	safe_memzero(operation, sizeof(*operation));
 	return PSA_SUCCESS;

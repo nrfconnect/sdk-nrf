@@ -103,14 +103,6 @@ Examples
      link search --read
      link search --start
 
-* Perform environment evaluation for PLMNs 24405, 24412 and 24491:
-
-  .. code-block:: console
-
-     link funmode --flightmode
-     link funmode --rxonly
-     link enveval --eval_type dynamic --plmns 24405,24412,24491
-
 ----
 
 AT commands

@@ -11,7 +11,7 @@ project(remote)
 
 target_sources(app PRIVATE ../src/main.c)
 
-if(CONFIG_SOC_NRF54H20_CPUPPR)
-  message(STATUS "Power Mode handler for RISC V is included.")
-  target_sources(app PRIVATE ../../common/power_off.c)
+if(DEFINED CONFIG_SOC_NRF54H20_CPUPPR)
+	message(STATUS "Power Mode handler for RISC V is included.")
+	target_sources(app PRIVATE ../../common/power_off.c)
 endif()

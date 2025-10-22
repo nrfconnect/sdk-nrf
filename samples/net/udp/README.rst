@@ -21,7 +21,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-Additionally, the sample supports emulation using the :zephyr:board:`native simulator <native_sim>`.
+Additionally, the sample supports emulation using the :ref:`native simulator <zephyr:native_sim>`.
 
 Overview
 ********

@@ -6,18 +6,13 @@
 
 /** @file
  *  @brief Globally accessible audio related defines
- *
- * @note: These defines are specific for Bluetooth Low Energy Audio
  */
 
 #ifndef _AUDIO_DEFINES_H_
 #define _AUDIO_DEFINES_H_
 
-#include <zephyr/toolchain.h>
 #include <zephyr/types.h>
-#include <stddef.h>
 #include <stdbool.h>
-#include <stdint.h>
 
 /**
  * @brief Audio channel assignment values
@@ -65,33 +60,12 @@ struct audio_metadata {
 	 */
 	uint8_t carried_bits_per_sample;
 
-	/* The bit-rate for the data stream.
-	 * For example, say we have a 16 bit sample stored in a 32 bit
-	 * word (int_32), 100 samples in each of 2 locations and a sample rate of 48000 Hz then:
-	 *     bitrate_bps = 32 * 48000 * 2
-	 *                 = 3.072 Mbps
-	 *
-	 * For encoded data the bit-rate will be determined by the encoding process.
-	 */
-	uint32_t bitrate_bps;
-
-	/* A flag to specify if the data is interleaved or de-interleaved
-	 * (true = interleaved, false = de-interleaved).
-	 *
-	 * @note This flag is only valid for data types that support interleaving (e.g. PCM
-	 * channel interleaving, where interleaved is LRLRLRLRL..... and de-interleaved is
-	 * LLLLLRRRRRLL...
-	 */
-	bool interleaved;
-
 	/* A 32 bit mask indicating which channel(s)/locations are active within
 	 * the data. A bit set indicates the location is active and
 	 * a count of these will give the number of locations within the
 	 * audio stream.
 	 * Note: This will follow the ANSI/CTA-861-G’s Table 34 codes
 	 * for speaker placement (as used by Bluetooth Low Energy Audio).
-	 *
-	 * @note For Bluetooth Low Energy Audio a value of 0 indicates mono.
 	 */
 	uint32_t locations;
 
@@ -118,17 +92,23 @@ struct audio_metadata {
  *
  * @return The number of channels.
  */
-static inline uint8_t audio_metadata_num_ch_get(struct audio_metadata const *const meta)
+static inline uint8_t metadata_num_ch_get(struct audio_metadata const *const meta)
 {
 	if (meta == NULL) {
 		return 0;
 	}
 
-	if (meta->locations == 0) {
+	uint32_t mask = meta->locations;
+	uint8_t count = 0;
+
+	if (mask == 0) {
 		return 1;
 	}
-
-	return POPCOUNT(meta->locations);
+	while (mask) {
+		count += mask & 1;
+		mask >>= 1;
+	}
+	return count;
 }
 
 #endif /* _AUDIO_DEFINES_H_ */

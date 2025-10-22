@@ -32,55 +32,28 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
     steps:
-      - name: checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Checkout sources
+        uses: nrfconnect/action-checkout-west-update@main
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-          path: ncs/nrf
+          git-fetch-depth: 0
 
-      - name: Rebase
-        if: github.event_name == 'pull_request'
-        continue-on-error: true
-        env:
-          BASE_REF: ${{ github.base_ref }}
-          PR_HEAD: ${{ github.event.pull_request.head.sha }}
-        working-directory: ncs/nrf
-        run: |
-          git config --global user.email "actions@zephyrproject.org"
-          git config --global user.name "Github Actions"
-          rm -fr ".git/rebase-apply"
-          rm -fr ".git/rebase-merge"
-          git rebase origin/${BASE_REF}
-          git clean -f -d
-          git log --graph --oneline HEAD...${PR_HEAD}
+      - name: cache-pip
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-doc-pip
 
       - name: Install packages
-        working-directory: ncs
         run: |
           sudo apt update
-          sudo apt-get install -y wget python3-pip git ninja-build graphviz lcov mscgen plantuml
+          sudo apt-get install -y ninja-build mscgen plantuml
           sudo snap install yq
-          DOXYGEN_VERSION=$(yq ".doxygen.version" nrf/scripts/tools-versions-linux.yml)
+          DOXYGEN_VERSION=$(yq ".doxygen.version" ./ncs/nrf/scripts/tools-versions-linux.yml)
           wget --no-verbose "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
           tar xf doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
           echo "${PWD}/doxygen-${DOXYGEN_VERSION}/bin" >> $GITHUB_PATH
 
-      - name: Set up Python
-        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
-        with:
-          python-version: 3.12
-          cache: pip
-          cache-dependency-path: ncs/nrf/doc/requirements.txt
-
-      - name: Setup Zephyr project
-        uses: zephyrproject-rtos/action-zephyr-setup@6a744370a22e4ecb24f5dda3c7e80ff3e0a3b847 # v1.0.8
-        with:
-          base-path: ncs
-          app-path: nrf
-          toolchains: 'all'
-
-      - name: install-pip
+      - name: Install Python dependencies
         working-directory: ncs
         run: |
           pip install -r nrf/doc/requirements.txt
@@ -143,16 +116,6 @@ jobs:
         working-directory: ncs/nrf
         run: |
           ROOT="$PWD"
-
-          # Patch Sphinx footers where we want to keep copyright info
-          # (**/doxygen/* skipped, Doxygen content)
-          find \
-            doc/_build/html/matter \
-            doc/_build/html/zephyr \
-            -type f \
-            -name "*.html" \
-            -not -path "**/doxygen/*" \
-            -exec python doc/_zoomin/footer_patch.py {} --silent ";"
 
           # Doxygen APIs combined with Sphinx
           declare -a SPHINX_DOXYGEN=("nrf" "nrfxlib" "zephyr")

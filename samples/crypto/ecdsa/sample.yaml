@@ -67,7 +67,6 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54l15dk/nrf54l05/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
@@ -83,7 +82,6 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54l15dk/nrf54l05/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns

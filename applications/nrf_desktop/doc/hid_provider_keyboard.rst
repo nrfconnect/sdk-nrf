@@ -7,14 +7,10 @@ HID provider keyboard module
    :local:
    :depth: 2
 
-The HID provider keyboard module is a HID report provider integrated with the :ref:`nrf_desktop_hid_state`.
-The module is responsible for providing the HID keyboard input report and the HID boot keyboard input report.
-
-The module listens to the user input (:c:struct:`button_event`) and communicates with the :ref:`nrf_desktop_hid_state`.
-It provides HID keyboard reports when requested by the :ref:`nrf_desktop_hid_state`.
+The HID provider keyboard module is responsible for providing keyboard HID reports.
+The module listens to the :c:struct:`button_event` event and communicates with the :ref:`nrf_desktop_hid_state`.
+It provides new keyboard HID reports when requested by the :ref:`nrf_desktop_hid_state`.
 It also notifies the :ref:`nrf_desktop_hid_state` when new data is available.
-
-For details related to the HID report providers integration in the HID state module, see the :ref:`nrf_desktop_hid_state_providing_hid_input_reports` documentation section.
 
 Module events
 *************
@@ -29,96 +25,102 @@ Module events
 Configuration
 *************
 
-You can enable the default implementation of the HID provider using the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD <config_desktop_app_options>` Kconfig option.
-This option is enabled by default if the device uses HID provider events (:ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_EVENT <config_desktop_app_options>`) and supports HID keyboard reports (:ref:`CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT <config_desktop_app_options>`).
-The default implementation of the HID provider uses a predefined format of HID reports, which is aligned with the default HID report map in the common configuration (:ref:`CONFIG_DESKTOP_HID_REPORT_DESC <config_desktop_app_options>`).
-The module also provides HID boot keyboard input report if it is supported (:ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD <config_desktop_app_options>`).
-
-Alternatively, you can substitute the module with a custom HID keyboard report provider implementation.
-Using the custom provider allows you to modify the sources of user input and the HID report format.
+You can enable the module using the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD <config_desktop_app_options>` Kconfig option.
+This option is enabled by default if the device supports HID keyboard reports.
+You can substitute the module with a custom HID keyboard report provider implementation.
 Enable the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_ALT <config_desktop_app_options>` Kconfig option to use a custom HID keyboard report provider.
-The option disables the default HID keyboard report provider.
 Make sure to introduce the custom HID keyboard report provider if you enable this option.
 
-Default implementation
-======================
-
-The module relies on keypresses (:c:struct:`button_event`) as the only source of user input.
-The module needs to perform the following tasks:
-
-* Identify keypresses related to the handled HID input reports.
-* Queue a sequence of the user's key presses and releases that happens before connecting to a HID host.
-  The reason for this operation is to allow tracking key presses that happen right after the device is woken up but before it can connect to the HID host.
-  The sequence of keypresses is replayed once a connection with a HID host is established.
-* Maintain the state of pressed keys.
-  You need this to report the current state of pressed keys while a connection with the HID host is maintained.
-
-The module uses a set of application-specific utilities for that purpose.
-See the following sections for the configuration details of the used application-specific utilities.
-
 HID keymap
-----------
+==========
 
-Since the keys on the board can be associated with a HID usage ID and thus be part of different HID reports, the first step is to identify if the key belongs to a HID report that is provided by this module.
-This is done by obtaining the key mapping from the :ref:`nrf_desktop_hid_keymap`.
+The module uses the :ref:`nrf_desktop_hid_keymap` to map an application-specific key ID to a HID report ID and HID usage ID pair.
 The module selects the :ref:`CONFIG_DESKTOP_HID_KEYMAP <config_desktop_app_options>` Kconfig option to enable the utility.
 Make sure to configure the HID keymap utility.
 See the utility's documentation for details.
 
-HID eventq
-----------
+Queuing keypresses
+==================
 
-The :ref:`nrf_desktop_hid_eventq` is used to temporarily enqueue key state changes before connection with the HID host is established.
-When a key is pressed or released before the connection is established, an element containing this key's usage ID is pushed onto the queue.
-The sequence of keypresses is replayed once the connection with a HID host is established.
-This ensures that all of the keypresses are replayed in order.
-The module selects the :ref:`CONFIG_DESKTOP_HID_EVENTQ <config_desktop_app_options>` Kconfig option to enable the utility.
+The module selects the :ref:`CONFIG_DESKTOP_HID_EVENTQ <config_desktop_app_options>` Kconfig option to enable the :ref:`nrf_desktop_hid_eventq`.
+The utility is used to temporarily queue key state changes (presses and releases) before the connection with the HID host is established.
+When a key state changes (it is pressed or released) before the connection is established, an element containing this key's usage ID is pushed onto the queue.
 
 Queue size
-~~~~~~~~~~
+----------
 
 With the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option, you can set the number of elements on the queue where the keys are stored before the connection is established.
 For backwards compatibility, you can set the default value for this option using the deprecated :ref:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option.
 If there is no space in the queue to enqueue a new key state change, the oldest element is released.
 
 Report expiration
-~~~~~~~~~~~~~~~~~
+-----------------
 
 With the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_KEYPRESS_EXPIRATION <config_desktop_app_options>` Kconfig option, you can set the amount of time after which a queued key will be considered expired.
 For backwards compatibility, you can set the default value for this option using the deprecated :ref:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION <config_desktop_app_options>` Kconfig option.
 The higher the value, the longer the period from which the nRF Desktop application will recall pressed keys when the connection with HID host is established.
 
-Keys state
-----------
+Handling keys state
+===================
 
-The :ref:`nrf_desktop_keys_state` is used to track the state of active keys after the connection with the HID host is established.
-The module selects the :ref:`CONFIG_DESKTOP_KEYS_STATE <config_desktop_app_options>` Kconfig option to enable the utility.
+The module selects the :ref:`CONFIG_DESKTOP_KEYS_STATE <config_desktop_app_options>` Kconfig option to enable the :ref:`nrf_desktop_keys_state`.
+The utility is used to track the state of active keys after the connection with the HID host is established.
 
 Implementation details
 **********************
 
-The module is used by :ref:`nrf_desktop_hid_state` as a HID input report provider for the HID keyboard input report and HID boot keyboard input report.
-The module registers two separate HID report providers to handle both input reports.
-On initialization, the module submits the events of type :c:struct:`hid_report_provider_event` to establish two-way callbacks between the |hid_state| and the HID report providers.
+On initialization, the module announces its presence by sending the :c:struct:`hid_report_provider_event` event with an appropriate report ID and implementation of callbacks from HID report provider API (:c:struct:`hid_report_provider_api`).
+Separate :c:struct:`hid_report_provider_event` events are sent for each report ID.
+The module supports keyboard reports from the report and boot protocols.
+You can enable the boot protocol support using the :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD <config_desktop_app_options>` Kconfig option.
+The :ref:`nrf_desktop_hid_state` receives the events and fills them with its own implementation of callbacks from the HID state API (:c:struct:`hid_state_api`).
+After that process, the modules can communicate by callbacks.
+The module also subscribes to the :c:struct:`button_event` event to get information about the button presses.
+The module sends :c:struct:`hid_report_event` events to an appropriate subscriber when it is requested by the :ref:`nrf_desktop_hid_state`.
 
-Handling keypresses
-===================
+.. note::
+    The HID report formatting function must work according to the HID report descriptor (``hid_report_desc``).
+    The source file containing the descriptor is provided by the :ref:`CONFIG_DESKTOP_HID_REPORT_DESC <config_desktop_app_options>` Kconfig option.
 
-After an application-specific key ID (:c:member:`button_event.key_id`) is mapped to the HID keyboard input report ID and related HID usage ID, the HID usage ID is handled by the provider.
-Before a connection with the HID host is established, the provider enqueues the HID usage ID and keypress state (press or release) in the HID event queue.
-Once the connection is established, the elements of the queue are replayed one after the other to the host, in a sequence of consecutive HID reports.
-On the HID state request, the module pulls an element from the queue, updates the tracked state of pressed keys, and submits a :c:struct:`hid_report_event` to provide the HID input report to the HID subscriber.
-The subsequent requests lead to providing subsequent keypresses as HID report events.
-All key state changes still go through the HID event queue until the queue is empty.
+Linking input data with the right HID report
+============================================
 
-Once the queue is empty, a key state change results in an instant update of the tracked state of pressed keys.
-If the state of pressed keys changes, the module calls the :c:member:`hid_state_api.trigger_report_send` callback to notify the :ref:`nrf_desktop_hid_state` about the new data.
-The module also remembers that the HID subscriber needs to be updated.
+Out of all available input data types, the module collects button events.
+The button events are stored in the :c:struct:`report_data` structure.
+The ``button_event`` is the source of this type of data.
 
-Discarding queued events
-------------------------
+To indicate a change to this input data, the module overwrites the value that is already stored.
 
-While key state changes go through the event queue and there is no space for a new input event, the module tries to free space by discarding the oldest event in the queue.
+Since keys on the board can be associated with a HID usage ID and thus be part of different HID reports, the first step is to identify if the key belongs to a HID report that is provided by this module.
+This is done by obtaining the key mapping from the :ref:`nrf_desktop_hid_keymap`.
+
+Once the mapping is obtained, the application checks if the report to which the usage belongs is connected:
+
+* If the report is connected and the :ref:`nrf_desktop_hid_eventq` instance is empty, the module stores the report and calls the ``trigger_report_send`` callback from the :c:struct:`hid_state_api` to notify the :ref:`nrf_desktop_hid_state` about the new data.
+* If the report is not connected or the :ref:`nrf_desktop_hid_eventq` instance is not empty, the value is enqueued in the :ref:`nrf_desktop_hid_eventq` instance.
+
+The difference between these operations is that storing a value onto the queue (second case) preserves the order of input events.
+See the following section for more information about storing data before the connection.
+
+Storing input data before the connection
+========================================
+
+The button data is stored before the connection.
+
+The reason for this operation is to allow to track key presses that happen right after the device is woken up, but before it can connect to the HID host.
+
+When the device is disconnected and the input event with the button data is received, the data is stored onto the :ref:`nrf_desktop_hid_eventq` instance, a member of the :c:struct:`report_data` structure.
+This queue preserves an order in which input data events are received.
+
+Storing limitations
+-------------------
+
+You can limit the number of events that can be inserted into the queue using the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option.
+
+Discarding events
+------------------
+
+When there is no space for a new input event, the module tries to free space by discarding the oldest event in the queue.
 Events stored in the queue are automatically discarded after the period defined by the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_KEYPRESS_EXPIRATION <config_desktop_app_options>` option.
 
 When discarding an event from the queue, the module checks if the key associated with the event is pressed.
@@ -134,3 +136,5 @@ The discarding mechanism ensures that the host will always receive the correct k
     * Every key that was pressed after the associated key had been pressed is also released.
 
 If there is no space to store the input event in the queue and no old event can be discarded, the entire content of the queue is dropped to ensure the sanity.
+
+Once the connection is established, the elements of the queue are replayed one after the other to the host, in a sequence of consecutive HID reports.

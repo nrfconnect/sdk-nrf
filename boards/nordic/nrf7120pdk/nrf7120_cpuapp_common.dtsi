@@ -184,11 +184,6 @@
 	status = "okay";
 };
 
-&audio_auxpll {
-	nordic,frequency = <NRF_AUXPLL_FREQ_DIV_AUDIO_48K>;
-	status = "okay";
-};
-
 &cpuapp_bellboard {
 	status = "okay";
 };

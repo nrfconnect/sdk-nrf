@@ -10,7 +10,7 @@ if(TARGET nrf_cc3xx_platform)
   add_subdirectory(nrf_cc3xx_platform)
 endif()
 
-# Only build the PSA crypto drivers when Oberon
+# Only build the PSA crypto drivers when Oberon 
 if(CONFIG_MBEDTLS_PSA_CRYPTO_C)
   if(CONFIG_PSA_CRYPTO_DRIVER_CC3XX)
     add_subdirectory(nrf_cc3xx)

@@ -252,7 +252,6 @@
 #cmakedefine PSA_NEED_OBERON_XMSS_VERIFY                                            @PSA_NEED_OBERON_XMSS_VERIFY@
 
 #cmakedefine PSA_NEED_NRF_RNG_ENTROPY_DRIVER                    @PSA_NEED_NRF_RNG_ENTROPY_DRIVER@
-#cmakedefine PSA_NEED_CRACEN_TRNG_DRIVER                        @PSA_NEED_CRACEN_TRNG_DRIVER@
 
 /*
  * CRACEN driver configuration

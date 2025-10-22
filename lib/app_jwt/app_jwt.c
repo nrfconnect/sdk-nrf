@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include <errno.h>
 
+#include <sdfw/sdfw_services/device_info_service.h>
+
 #include <date_time.h>
 #include <psa/crypto.h>
 #include <psa/crypto_extra.h>
@@ -708,7 +710,12 @@ int app_jwt_get_uuid(char *uuid_buffer, const size_t uuid_buffer_size)
 		return -EINVAL;
 	}
 
-	uint8_t uuid_bytes[UUID_BINARY_BYTES_SZ] = {0}; /* TODO NRFX-8297 */
+	uint8_t uuid_bytes[UUID_BINARY_BYTES_SZ];
+
+	if (0 != ssf_device_info_get_uuid(uuid_bytes)) {
+		/* Couldn't read data */
+		return -ENXIO;
+	}
 
 	return bytes_to_uuid_str((uint32_t *)uuid_bytes, UUID_BINARY_BYTES_SZ, uuid_buffer,
 				 uuid_buffer_size);

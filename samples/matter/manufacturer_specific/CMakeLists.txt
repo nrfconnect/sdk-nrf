@@ -28,17 +28,17 @@ include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/source_common.cmake
 include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/data_model.cmake)
 
 target_include_directories(app PRIVATE
-  src
-  ${ZAP_PARENT_DIR}
+    src
+    ${ZAP_PARENT_DIR}
 )
 
 target_sources(app PRIVATE
-  src/app_task.cpp
-  src/zcl_callbacks.cpp
-  src/main.cpp
+    src/app_task.cpp
+    src/zcl_callbacks.cpp
+    src/main.cpp
 )
 
 ncs_configure_data_model(
-  EXTERNAL_CLUSTERS "NORDIC_DEV_KIT_CLUSTER"
+    EXTERNAL_CLUSTERS "NORDIC_DEV_KIT_CLUSTER"
 )
 # NORDIC SDK APP END

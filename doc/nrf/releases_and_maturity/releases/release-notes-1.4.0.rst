@@ -90,7 +90,7 @@ nRF9160
     * Improved the handling of configuration file.
     * Added an option to configure Bluetooth device name.
 
-  * Download client library:
+  * :ref:`lib_download_client` library:
 
     * Added CoAP block-wise transfer support, which can be enabled with :kconfig:option:`CONFIG_COAP`.
     * Updated functions that end with ``_connect()`` and ``_start()`` to parse complete URLs, with port and schema.
@@ -637,7 +637,7 @@ Libraries
 * :ref:`shell_bt_nus_readme` - updated to show how to run the :file:`shell_bt_nus.py` script
 * :ref:`lib_eth_rtt` - added
 * :ref:`lib_aws_iot` - updated with additional information about enabling connection polling
-* Download client - moved :ref:`cert_dwload` to :ref:`modem_key_mgmt`
+* :ref:`lib_download_client` - moved :ref:`cert_dwload` to :ref:`modem_key_mgmt`
 * :ref:`lib_nrf_cloud` - updated cloud API usage section
 * :ref:`lib_at_host` - added
 

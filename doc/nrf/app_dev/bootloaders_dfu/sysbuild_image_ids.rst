@@ -9,24 +9,26 @@ Sysbuild-assigned image IDs
 
 When using sysbuild in |NCS| with MCUboot, the build system automatically assigns image IDs based on your project configuration.
 
+Sysbuild has the following configuration options that display the image IDs assigned to each image.
 A value of ``-1`` indicates that the image is not present:
 
 .. note::
-    Because these are automatically generated at configure time by sysbuild in CMake, the variables are not available in sysbuild's Kconfig tree, but are present in sysbuild's CMake variable cache.
+    These options are also shared with MCUboot and the main application through Kconfig values, except for the :kconfig:option:`SB_CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER` option, which is exclusive to MCUboot.
 
-+-------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
-| CMake variable (sysbuild)                 | Kconfig option (application/MCUboot)                       | Description                                  | Dependencies                                                                                                                             |
-+===========================================+============================================================+==============================================+==========================================================================================================================================+
-| ``NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER``  | :kconfig:option:`CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER`  | Image number for application update          | --                                                                                                                                       |
-+-------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
-| ``NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER`` | :kconfig:option:`CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER` | Image number for network core update         | nRF5340 device and :kconfig:option:`SB_CONFIG_NETCORE_APP_UPDATE`                                                                        |
-+-------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
-| ``NCS_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER`` | :kconfig:option:`CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER` | Image number for Wi-Fi-patch update          | nRF7x device used and :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_XIP` or :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` |
-+-------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
-| ``NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER``     | :kconfig:option:`CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`     | Image number for QSPI XIP split image update | nRF52840 or nRF5340 device and :kconfig:option:`SB_CONFIG_QSPI_XIP_SPLIT_IMAGE`                                                          |
-+-------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
-| ``NCS_MCUBOOT_MCUBOOT_IMAGE_NUMBER``      | :kconfig:option:`CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      | Image number for MCUboot update              | :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE`                                                                                          |
-+-------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
++---------------------------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| Kconfig option (sysbuild)                                     | Kconfig option (application/MCUboot)                       | Description                                  | Dependencies                                                                                                                             |
++===============================================================+============================================================+==============================================+==========================================================================================================================================+
+| :kconfig:option:`SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER`  | :kconfig:option:`CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER`  | Image number for application update          | --                                                                                                                                       |
++---------------------------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER` | :kconfig:option:`CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER` | Image number for network core update         | nRF5340 device and :kconfig:option:`SB_CONFIG_NETCORE_APP_UPDATE`                                                                        |
++---------------------------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER` | :kconfig:option:`CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER` | Image number for Wi-Fi-patch update          | nRF7x device used and :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_XIP` or :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` |
++---------------------------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`     | :kconfig:option:`CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`     | Image number for QSPI XIP split image update | nRF52840 or nRF5340 device and :kconfig:option:`SB_CONFIG_QSPI_XIP_SPLIT_IMAGE`                                                          |
++---------------------------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      | :kconfig:option:`CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      | Image number for MCUboot update              | :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE`                                                                                          |
+|                                                               | (only set for MCUboot image)                               |                                              |                                                                                                                                          |
++---------------------------------------------------------------+------------------------------------------------------------+----------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
 
 The following configuration options specify the number of images and how these image numbers are configured:
 
@@ -78,19 +80,19 @@ Image numbers
 
 Image numbers are assigned in ascending order based on the following priority:
 
-+----------------------+------------------------+-------------------------------------------+------------------------------------------------------------+
-| Image                | Value (if all enabled) | CMake variable (sysbuild)                 | Kconfig option (application/MCUboot)                       |
-+======================+========================+===========================================+============================================================+
-| Application          | 0                      | ``NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER``  | :kconfig:option:`CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER`  |
-+----------------------+------------------------+-------------------------------------------+------------------------------------------------------------+
-| Network core         | 1                      | ``NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER`` | :kconfig:option:`CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER` |
-+----------------------+------------------------+-------------------------------------------+------------------------------------------------------------+
-| nRF7x Wi-Fi patch    | 2                      | ``NCS_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER`` | :kconfig:option:`CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER` |
-+----------------------+------------------------+-------------------------------------------+------------------------------------------------------------+
-| QSPI XIP split image | 3                      | ``NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER``     | :kconfig:option:`CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`     |
-+----------------------+------------------------+-------------------------------------------+------------------------------------------------------------+
-| MCUboot              | 4                      | ``NCS_MCUBOOT_MCUBOOT_IMAGE_NUMBER``      | :kconfig:option:`CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      |
-+----------------------+------------------------+-------------------------------------------+------------------------------------------------------------+
++----------------------+--------------------------------+---------------------------------------------------------------+------------------------------------------------------------+
+| Image                | Value (if all enabled)         | Kconfig option (sysbuild)                                     | Kconfig option (application/MCUboot)                       |
++======================+================================+===============================================================+============================================================+
+| Application          | 0                              | :kconfig:option:`SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER`  | :kconfig:option:`CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER`  |
++----------------------+--------------------------------+---------------------------------------------------------------+------------------------------------------------------------+
+| Network core         | 1                              | :kconfig:option:`SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER` | :kconfig:option:`CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER` |
++----------------------+--------------------------------+---------------------------------------------------------------+------------------------------------------------------------+
+| nRF7x Wi-Fi patch    | 2                              | :kconfig:option:`SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER` | :kconfig:option:`CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER` |
++----------------------+--------------------------------+---------------------------------------------------------------+------------------------------------------------------------+
+| QSPI XIP split image | 3                              | :kconfig:option:`SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`     | :kconfig:option:`CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`     |
++----------------------+--------------------------------+---------------------------------------------------------------+------------------------------------------------------------+
+| MCUboot              | 4 (only set for MCUboot image) | :kconfig:option:`SB_CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      | :kconfig:option:`CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      |
++----------------------+--------------------------------+---------------------------------------------------------------+------------------------------------------------------------+
 
 MCUboot update package version
 ******************************

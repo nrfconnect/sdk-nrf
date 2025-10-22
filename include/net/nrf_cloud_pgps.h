@@ -369,7 +369,6 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param);
 /** @} */
 
 #ifdef __cplusplus
-}
 #endif
 
 #endif /* NRF_CLOUD_PGPS_H_ */

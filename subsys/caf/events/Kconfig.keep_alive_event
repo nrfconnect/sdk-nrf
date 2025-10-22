@@ -5,7 +5,7 @@
 #
 
 config CAF_KEEP_ALIVE_EVENTS
-	bool "Keep alive events"
+	bool "Enable keep alive events"
 	help
 	  This enables keep alive event.
 	  This event is processed by power manager and reschedule power down timer.

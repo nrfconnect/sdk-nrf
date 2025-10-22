@@ -5,7 +5,7 @@
 #
 
 config CAF_SENSOR_EVENTS
-	bool "Sensor events"
+	bool "Enable sensor events"
 	help
 	  Enable support for sensor events.
 

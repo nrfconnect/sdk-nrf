@@ -193,7 +193,7 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 
 		break;
 	case LTE_LC_EVT_MODEM_EVENT:
-		if (evt->modem_evt.type == LTE_LC_MODEM_EVT_RESET_LOOP) {
+		if (evt->modem_evt == LTE_LC_MODEM_EVT_RESET_LOOP) {
 			MEMFAULT_METRIC_ADD(ncs_lte_reset_loop_detected_count, 1);
 		}
 		break;

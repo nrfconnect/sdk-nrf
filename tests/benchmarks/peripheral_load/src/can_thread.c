@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(can, LOG_LEVEL_INF);
+
+#include <zephyr/drivers/can.h>
 #include "common.h"
 
 #if DT_NODE_HAS_STATUS(DT_CHOSEN(zephyr_canbus), okay)
-#include <zephyr/drivers/can.h>
-
-#include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(can, LOG_LEVEL_INF);
 
 static const struct device *const can_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_canbus));
 static int rx_counter;

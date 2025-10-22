@@ -1,9 +1,0 @@
-/*
- * Copyright (C) 2025 Nordic Semiconductor ASA
- * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
- */
-
-&uart135 {
-	status = "disabled";
-	/delete-property/memory-regions;
-};

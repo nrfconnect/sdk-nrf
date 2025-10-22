@@ -8,8 +8,9 @@ menuconfig DESKTOP_DVFS
 	bool "DVFS module [EXPERIMENTAL]"
 	depends on SOC_NRF54H20_CPUAPP
 	select EXPERIMENTAL
+	select NRFS_DVFS_SERVICE_ENABLED
 	select CLOCK_CONTROL
-	select CLOCK_CONTROL_NRF_IRON_HSFLL_LOCAL
+	select CLOCK_CONTROL_NRF2
 	default y
 	help
 	  This option enable DVFS module which switches frequency and voltage according

@@ -1,46 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <configurator>
+  <enum name="LEDActionEnum" type="int8u">
+    <cluster code="0xFFF1FC01" />
+    <item name="Off" value="0" />
+    <item name="On" value="1" />
+    <item name="Toggle" value="2" />
+  </enum>
   <cluster>
     <domain>General</domain>
     <name>NordicDevKit</name>
-    <code>0xfff1fc01</code>
+    <code>0xFFF1FC01</code>
     <define>NORDIC_DEV_KIT_CLUSTER</define>
     <description>The NordicDevKit cluster showcases a cluster manufacturer extensions</description>
-    <command source="client" code="0xfff10000" name="SetLED" optional="false">
+    <command source="client" code="0xFFF10000" name="SetLED" optional="false">
       <description>Change LED state</description>
       <arg name="Action" type="LEDActionEnum" optional="false"/>
     </command>
-    <attribute side="server" code="0xfff10000" define="DEV_KIT_NAME" type="char_string" writable="true" optional="false" default="Nordic Development Kit" name="DevKitName"/>
-    <attribute side="server" code="0xfff10001" define="USER_LED" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="provisional" name="UserLED">
-      <access op="read" role="view"/>
-    </attribute>
-    <attribute side="server" code="0xfff10002" define="USER_BUTTON" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="provisional" name="UserButton">
-      <access op="read" role="view"/>
-    </attribute>
-    <event side="server" code="0xfff10000" name="UserButtonChanged" priority="info" optional="false">
+    <attribute side="server" code="0xFFF10000" define="DEV_KIT_NAME" type="char_string" writable="true" optional="false" default="Nordic Development Kit">DevKitName</attribute>
+    <attribute side="server" code="0xFFF10001" define="USER_LED" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="provisional">UserLED<description/><access op="read" role="view"/></attribute>
+    <attribute side="server" code="0xFFF10002" define="USER_BUTTON" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="provisional">UserButton<description/><access op="read" role="view"/></attribute>
+    <event side="server" code="0xFFF10000" name="UserButtonChanged" priority="info" optional="false">
       <description>The UserButtonChanged event SHALL be emitted by a Node as soon as the User Button is pressed or released.</description>
     </event>
   </cluster>
-  <enum name="LEDActionEnum" type="int8u">
-    <cluster code="0xfff1fc01"/>
-    <item name="Off" value="0"/>
-    <item name="On" value="1"/>
-    <item name="Toggle" value="2"/>
-  </enum>
-  <deviceType>
-    <name>nordic-dev-kit</name>
-    <domain>CHIP</domain>
-    <typeName>Nordic Development Kit</typeName>
-    <profileId editable="false">0x10402</profileId>
-    <deviceId editable="false">0xfff10001</deviceId>
-    <class>Simple</class>
-    <scope>Endpoint</scope>
-    <clusters lockOthers="true">
-      <include cluster="NordicDevKit" client="false" server="true" clientLocked="false" serverLocked="false"/>
-    </clusters>
-  </deviceType>
-  <clusterExtension code="0x28">
-    <command source="client" code="0x0" name="GenerateRandom" optional="false">
+  <clusterExtension code="0x0028">
+    <command source="client" code="0x00" name="GenerateRandom" optional="false">
       <description>Generate random number</description>
     </command>
     <attribute side="server" code="0x17" define="RANDOM_NUMBER" type="int16u" writable="true" optional="false" default="0">RandomNumber</attribute>
@@ -48,4 +32,16 @@
       <description>The RandomNumberChanged event SHALL be emitted by a Node as soon as the RandomNumber attribute is changed.</description>
     </event>
   </clusterExtension>
+  <deviceType>
+    <name>nordic-dev-kit</name>
+    <domain>CHIP</domain>
+    <typeName>Nordic Development Kit</typeName>
+    <profileId editable="false">0x0FFF</profileId>
+    <deviceId editable="false">0x001</deviceId>
+    <class>Simple</class>
+    <scope>Endpoint</scope>
+    <clusters lockOthers="true">
+      <include cluster="NordicDevKit" client="false" server="true" clientLocked="false" serverLocked="false"/>
+    </clusters>
+  </deviceType>
 </configurator>

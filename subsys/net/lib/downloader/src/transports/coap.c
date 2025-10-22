@@ -72,8 +72,6 @@ struct transport_params_coap {
 
 BUILD_ASSERT(CONFIG_DOWNLOADER_TRANSPORT_PARAMS_SIZE >= sizeof(struct transport_params_coap));
 
-static int coap_request_send(struct downloader *dl);
-
 static int coap_get_current_from_response_pkt(const struct coap_packet *cpkt)
 {
 	int block = 0;
@@ -138,7 +136,6 @@ static int coap_get_recv_timeout(struct downloader *dl, uint32_t *timeout)
 int coap_initiate_retransmission(struct downloader *dl)
 {
 	struct transport_params_coap *coap;
-	int ret;
 
 	coap = (struct transport_params_coap *)dl->transport_internal;
 
@@ -149,12 +146,6 @@ int coap_initiate_retransmission(struct downloader *dl)
 	if (!coap_pending_cycle(&coap->pending)) {
 		LOG_ERR("CoAP max-retransmissions exceeded");
 		return -1;
-	}
-
-	ret = coap_request_send(dl);
-	if (ret) {
-		LOG_DBG("coap_request_send failed, err %d", ret);
-		return -ECONNRESET;
 	}
 
 	return 0;

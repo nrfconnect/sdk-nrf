@@ -54,7 +54,7 @@ target_link_libraries(platform_s
   tfm_sprt
 )
 
-if(NOT ${PLATFORM_DEFAULT_PROVISIONING})
+if (NOT ${PLATFORM_DEFAULT_PROVISIONING})
   if(NRF_PROVISIONING)
     target_compile_definitions(platform_s PUBLIC NRF_PROVISIONING)
     set(provisioning_source nrf_provisioning.c)
@@ -73,7 +73,7 @@ target_sources(tfm_sprt
     $<$<NOT:$<BOOL:${TFM_SP_LOG_RAW_ENABLED}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_tfm_sp_log_raw.c>
 )
 
-if(${TFM_PARTITION_CRYPTO})
+if (${TFM_PARTITION_CRYPTO})
   if(CRYPTO_TFM_BUILTIN_KEYS_DRIVER)
     target_sources(platform_crypto_keys
       PRIVATE
@@ -82,7 +82,7 @@ if(${TFM_PARTITION_CRYPTO})
   endif()
 
 
-  if(${CONFIG_HW_UNIQUE_KEY})
+  if (${CONFIG_HW_UNIQUE_KEY})
     target_compile_definitions(platform_s PUBLIC
       CONFIG_HW_UNIQUE_KEY
       $<$<BOOL:${CONFIG_HW_UNIQUE_KEY_RANDOM}>:CONFIG_HW_UNIQUE_KEY_RANDOM>
@@ -132,11 +132,11 @@ if(${TFM_PARTITION_CRYPTO})
   target_link_libraries(platform_s PRIVATE tfm_psa_rot_partition_crypto)
 endif()
 
-if(NRF_ALLOW_NON_SECURE_RESET)
+if (NRF_ALLOW_NON_SECURE_RESET)
   target_compile_definitions(platform_s PUBLIC NRF_ALLOW_NON_SECURE_RESET)
 endif()
 
-if(NRF_ALLOW_NON_SECURE_FAULT_HANDLING)
+if (NRF_ALLOW_NON_SECURE_FAULT_HANDLING)
   target_compile_definitions(platform_s PUBLIC NRF_ALLOW_NON_SECURE_FAULT_HANDLING)
   target_sources(platform_s
     PRIVATE
@@ -144,27 +144,27 @@ if(NRF_ALLOW_NON_SECURE_FAULT_HANDLING)
   )
 endif()
 
-if(NRF_CONFIG_NFCT_PINS_AS_GPIOS)
-  target_compile_definitions(platform_s PUBLIC NRF_CONFIG_NFCT_PINS_AS_GPIOS)
+if (CONFIG_NFCT_PINS_AS_GPIOS)
+  target_compile_definitions(platform_s PUBLIC CONFIG_NFCT_PINS_AS_GPIOS)
 endif()
 
-if(TFM_CPU_FREQ_MHZ)
+if (TFM_CPU_FREQ_MHZ)
   target_compile_definitions(platform_s PUBLIC NRF_CONFIG_CPU_FREQ_MHZ=${TFM_CPU_FREQ_MHZ})
 endif()
 
-if(CONFIG_NRF_TRACE_PORT)
+if (CONFIG_NRF_TRACE_PORT)
   target_compile_definitions(platform_s PUBLIC ENABLE_TRACE)
 endif()
 
-if(CONFIG_NRF_APPROTECT_LOCK)
+if (CONFIG_NRF_APPROTECT_LOCK)
   target_compile_definitions(platform_s PUBLIC NRF_APPROTECT)
 endif()
 
-if(CONFIG_NRF_SECURE_APPROTECT_LOCK)
+if (CONFIG_NRF_SECURE_APPROTECT_LOCK)
   target_compile_definitions(platform_s PUBLIC NRF_SECURE_APPROTECT)
 endif()
 
-if(CRYPTO_STORAGE_DISABLED AND TFM_PARTITION_CRYPTO AND NOT TFM_PARTITION_INTERNAL_TRUSTED_STORAGE)
+if (CRYPTO_STORAGE_DISABLED AND TFM_PARTITION_CRYPTO AND NOT TFM_PARTITION_INTERNAL_TRUSTED_STORAGE)
   # Added here to satisfy the following requirement from tfm_crypto.yaml:
   #
   # "dependencies": [

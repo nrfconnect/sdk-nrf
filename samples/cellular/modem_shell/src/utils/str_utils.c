@@ -133,23 +133,3 @@ const char *gnss_system_str_get(uint8_t system_id)
 		return "unknown";
 	}
 }
-
-int mosh_string_to_int(const char *str_buf, int base, int *output)
-{
-	int temp;
-	char *end_ptr;
-
-	__ASSERT_NO_MSG(str_buf != NULL);
-
-	errno = 0;
-	temp = strtol(str_buf, &end_ptr, base);
-
-	if (end_ptr == str_buf || *end_ptr != '\0' ||
-	    ((temp == LONG_MAX || temp == LONG_MIN) && errno == ERANGE)) {
-		return -ENODATA;
-	}
-
-	*output = temp;
-
-	return 0;
-}

@@ -43,7 +43,7 @@ config FOTA_DOWNLOAD_FULL_MODEM_BUF_SZ
 	  Buffer size must be aligned to the minimal flash write block size
 
 config FOTA_DOWNLOAD_NATIVE_TLS
-	bool "Native TLS socket"
+	bool "Enable native TLS socket"
 	help
 	  Enabling this option will configure the socket to be native for TLS
 	  instead of offloading TLS operations to the modem.

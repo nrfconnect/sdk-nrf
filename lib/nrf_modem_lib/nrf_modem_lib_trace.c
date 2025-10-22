@@ -286,13 +286,6 @@ void trace_thread_handler(void)
 	size_t n_frags;
 
 trace_reset:
-	/* Trace backend is suspended here to keep it suspended until first trace data is received
-	 * and to suspend the trace backend after deinit and reset.
-	 */
-	if (trace_backend.suspend) {
-		k_work_schedule(&backend_suspend_work, K_NO_WAIT);
-	}
-
 	k_sem_take(&trace_sem, K_FOREVER);
 
 	while (true) {
@@ -521,15 +514,6 @@ int nrf_modem_lib_trace_read(uint8_t *buf, size_t len)
 	}
 
 	return read;
-}
-
-int nrf_modem_lib_trace_peek_at(size_t offset, uint8_t *buf, size_t len)
-{
-	if (!trace_backend.peek_at) {
-		return -ENOTSUP;
-	}
-
-	return trace_backend.peek_at(offset, buf, len);
 }
 
 int nrf_modem_lib_trace_clear(void)

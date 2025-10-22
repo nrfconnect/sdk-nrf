@@ -13,5 +13,5 @@ module-str = ot_coprocessor
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 config RCP_SAMPLE_HCI
-	bool "Bluetooth HCI USB support for the coprocessor sample"
+	bool "Enable  Bluetooth HCI USB support for the coprocessor sample"
 	select EXPERIMENTAL

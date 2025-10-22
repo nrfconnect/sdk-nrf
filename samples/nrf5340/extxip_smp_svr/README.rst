@@ -29,7 +29,7 @@ For more information about MCUmgr and SMP, see :ref:`device_mgmt`.
 
 The sample enables the splitting by:
 
-* Enabling the split XIP image feature through the :kconfig:option:`SB_CONFIG_QSPI_XIP_SPLIT_IMAGE` sysbuild Kconfig option.
+* Enabling the split XIP image feature through the :kconfig:option:`SB_CONFIG_XIP_SPLIT_IMAGE` sysbuild Kconfig option.
   This Kconfig option sets a build-system level support for image division and adapts the image-signing support for MCUboot.
 * Using the project's CMake file which describes relocation of certain libraries or objects to an external XIP area.
 * Using a linker script that describes the external QSPI area.

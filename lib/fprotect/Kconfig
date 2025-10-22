@@ -47,7 +47,7 @@ config FPROTECT_BLOCK_SIZE
 	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
 
 menuconfig FPROTECT
-	bool "FPROTECT"
+	bool "Enable FPROTECT"
 	depends on SOC_FAMILY_NORDIC_NRF
 	depends on !(SOC_SERIES_NRF54LX && IS_SECURE_BOOTLOADER)
 	depends on !SOC_SERIES_NRF54HX

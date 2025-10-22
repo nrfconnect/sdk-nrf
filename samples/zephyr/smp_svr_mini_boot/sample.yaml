@@ -13,7 +13,6 @@ common:
 tests:
   sample.smp_svr_mini_boot:
     extra_args:
-      - FILE_SUFFIX="direct_xip"
       - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp

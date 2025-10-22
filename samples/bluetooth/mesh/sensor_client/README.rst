@@ -86,7 +86,7 @@ The models are used for the following purposes:
 * Sensor Client gets sensor data from one or more :ref:`Sensor Servers <bt_mesh_sensor_srv_readme>`.
 
 The model handling is implemented in :file:`src/model_handler.c`.
-Sensor data can be periodically requested using a :c:struct:`k_work_delayable` loop, which can be started and stopped with a button press.
+A :c:struct:`k_work_delayable` item is submitted recursively to periodically request sensor data.
 
 User interface
 **************
@@ -102,13 +102,13 @@ Once the provisioning procedure has completed, the buttons will have the followi
    .. group-tab:: nRF21 and nRF52 DKs
 
       Button 1:
-         Toggles the periodic Sensor Get data loop on/off.
-
-      Button 2:
          Sends a get message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
 
-      Button 3:
+      Button 2:
          Sends a set message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, switching between the ranges specified in the :c:var:`temp_ranges` variable.
+
+      Button 3:
+         Sends a get message for a descriptor, requesting information about the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
 
       Button 4:
          Sends a set message for the :c:var:`bt_mesh_sensor_motion_threshold` setting of the :c:var:`bt_mesh_sensor_presence_detected` sensor, switching between the ranges specified in the :c:var:`presence_motion_threshold` variable.
@@ -116,13 +116,13 @@ Once the provisioning procedure has completed, the buttons will have the followi
    .. group-tab:: nRF54 DKs
 
       Button 0:
-         Toggles the periodic Sensor Get loop (start/stop).
-
-      Button 1:
          Sends a get message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
 
-      Button 2:
+      Button 1:
          Sends a set message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, switching between the ranges specified in the :c:var:`temp_ranges` variable.
+
+      Button 2:
+         Sends a get message for a descriptor, requesting information about the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
 
       Button 3:
          Sends a set message for the :c:var:`bt_mesh_sensor_motion_threshold` setting of the :c:var:`bt_mesh_sensor_presence_detected` sensor, switching between the ranges specified in the :c:var:`presence_motion_threshold` variable.

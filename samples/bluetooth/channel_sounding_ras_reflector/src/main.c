@@ -17,7 +17,7 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/cs.h>
 #include <bluetooth/services/ras.h>
-#include <zephyr/settings/settings.h>
+
 #include <dk_buttons_and_leds.h>
 
 #include <zephyr/logging/log.h>
@@ -97,7 +97,10 @@ static void config_create_cb(struct bt_conn *conn, uint8_t status,
 		const char *chsel_type_str[3] = {"Algorithm #3b", "Algorithm #3c", "Invalid"};
 		const char *ch3c_shape_str[3] = {"Hat shape", "X shape", "Invalid"};
 
-		uint8_t mode_idx = config->mode > 0 && config->mode < 4 ? config->mode : 4;
+		uint8_t main_mode_idx = config->main_mode_type > 0 && config->main_mode_type < 4
+						? config->main_mode_type
+						: 4;
+		uint8_t sub_mode_idx = config->sub_mode_type < 4 ? config->sub_mode_type : 0;
 		uint8_t role_idx = MIN(config->role, 2);
 		uint8_t rtt_type_idx = MIN(config->rtt_type, 7);
 		uint8_t phy_idx = config->cs_sync_phy > 0 && config->cs_sync_phy < 4
@@ -108,7 +111,8 @@ static void config_create_cb(struct bt_conn *conn, uint8_t status,
 
 		LOG_INF("CS config creation complete.\n"
 			" - id: %u\n"
-			" - mode: %s\n"
+			" - main_mode_type: %s\n"
+			" - sub_mode_type: %s\n"
 			" - min_main_mode_steps: %u\n"
 			" - max_main_mode_steps: %u\n"
 			" - main_mode_repetition: %u\n"
@@ -125,7 +129,7 @@ static void config_create_cb(struct bt_conn *conn, uint8_t status,
 			" - t_fcs_time_us: %u\n"
 			" - t_pm_time_us: %u\n"
 			" - channel_map: 0x%08X%08X%04X\n",
-			config->id, mode_str[mode_idx],
+			config->id, mode_str[main_mode_idx], mode_str[sub_mode_idx],
 			config->min_main_mode_steps, config->max_main_mode_steps,
 			config->main_mode_repetition, config->mode_0_steps, role_str[role_idx],
 			rtt_type_str[rtt_type_idx], phy_str[phy_idx],
@@ -206,10 +210,6 @@ int main(void)
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)", err);
 		return 0;
-	}
-
-	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
-		settings_load();
 	}
 
 	err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), NULL, 0);

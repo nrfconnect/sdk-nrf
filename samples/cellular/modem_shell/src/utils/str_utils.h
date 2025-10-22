@@ -29,7 +29,4 @@ void agnss_data_flags_str_get(char *flags_string, uint32_t data_flags);
 /* Returns the given GNSS system as a string. */
 const char *gnss_system_str_get(uint8_t system_id);
 
-/* Converts a string to an integer. Uses strtol(), but adds error checks. */
-int mosh_string_to_int(const char *str_buf, int base, int *output);
-
 #endif

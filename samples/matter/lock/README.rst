@@ -570,7 +570,7 @@ For this sample, you can use one of the following :ref:`onboarding information f
 
          .. figure:: ../../../doc/nrf/images/matter_qr_code_door_lock.png
             :width: 200px
-            :alt: QR code for commissioning the lock device
+            :alt: QR code for commissioning the light bulb device
 
        - MT:8IXS142C00KA0648G00
        - 34970112332

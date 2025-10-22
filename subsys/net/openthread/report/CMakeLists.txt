@@ -33,6 +33,17 @@ else()
 endif()
 ot_report_add_message("+ OpenThread library feature set: ${FEATURE_SET}" TRUE)
 
+if(DEFINED CONFIG_OPENTHREAD_MTD_SED)
+    set(DEVICE_TYPE "Sleepy End Device (SED)")
+elseif(DEFINED CONFIG_OPENTHREAD_NORDIC_LIBRARY_MTD)
+    set(DEVICE_TYPE "Minimal End Device (MED)")
+elseif(DEFINED CONFIG_OPENTHREAD_NORDIC_LIBRARY_FTD)
+    set(DEVICE_TYPE "Full End Device (FED)")
+else()
+    set(DEVICE_TYPE "Unknown")
+endif()
+ot_report_add_message("+ Thread device type: ${DEVICE_TYPE}" TRUE)
+
 # Check whether OpenThread is built from library or from sources
 if(CONFIG_OPENTHREAD_SOURCES)
     ot_report_add_message("+ OpenThread library has been built from sources" TRUE)

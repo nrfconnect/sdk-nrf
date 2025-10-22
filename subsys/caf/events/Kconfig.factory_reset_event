@@ -5,7 +5,7 @@
 #
 
 config CAF_FACTORY_RESET_EVENTS
-	bool "Factory reset events"
+	bool "Enable factory reset events"
 	help
 	  Enable the event that informs the system that factory reset was requested.
 

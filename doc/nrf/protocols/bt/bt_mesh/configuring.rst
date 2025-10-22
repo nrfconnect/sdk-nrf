@@ -255,21 +255,24 @@ Zephyr's Mesh security toolbox implementation uses third-party crypto library AP
 
   * :kconfig:option:`CONFIG_BT_MESH_USES_MBEDTLS_PSA` - Enables use of the `Mbed TLS`_ PSA API based security toolbox (default option).
   * :kconfig:option:`CONFIG_BT_MESH_USES_TFM_PSA` - Enables use of the `Trusted Firmware M`_ PSA API based security toolbox (default option for platforms that support TF-M).
+  * :kconfig:option:`CONFIG_BT_MESH_USES_TINYCRYPT` - Enables use of Tinycrypt-based security toolbox.
     Zephyr's Mesh operates with open key values, including storing them in the persistent memory.
+    The Tinycrypt-based solution has worse security materials protection compared to others, because it keeps the keys in the memory in open form.
+    Tinycrypt is not recommended for future designs.
 
 The Bluetooth Mesh security toolbox based on the `PSA Certified Crypto API`_ does not operate with open key values.
 After Bluetooth Mesh receives an open key value, it immediately imports the key into the crypto library and receives the unique key identifier.
 The key identifiers are used in the security toolbox and stored in the persistent memory.
 The crypto library is responsible for storing of the key values in the Internal Trusted Storage (`PSA Certified Secure Storage API 1.0`_).
-Bluetooth Mesh data structures based on TinyCrypt (now removed from the SDK) and the PSA API, as well as images of these structures stored in the persistent memory, are not compatible due to different key representations.
-When a provisioned device updates its firmware binary from the TinyCrypt-based toolbox to firmware binary that uses the PSA API based toolbox, a provisioned device must be unprovisioned first and reprovisioned after the update.
+Bluetooth Mesh data structures based on Tinycrypt and the PSA API, as well as images of these structures stored in the persistent memory, are not compatible due to different key representations.
+When a provisioned device updates its firmware binary from the Tinycrypt-based toolbox to firmware binary that uses the PSA API based toolbox, a provisioned device must be unprovisioned first and reprovisioned after the update.
 The provisioned device cannot restore data from the persistent memory after firmware update.
 If the image is changed over Mesh DFU, it is recommended to use :c:enumerator:`BT_MESH_DFU_EFFECT_UNPROV`.
 
-A provisioned device can update its firmware image from the TinyCrypt-based toolbox to firmware image that uses the PSA API based toolbox without unprovisioning if the key importer functionality is used.
+A provisioned device can update its firmware image from the Tinycrypt-based toolbox to firmware image that uses the PSA API based toolbox without unprovisioning if the key importer functionality is used.
 The :kconfig:option:`CONFIG_BT_MESH_KEY_IMPORTER` Kconfig option enables the key importer functionality.
 The key importer is an application initialization functionality that is called with kernel initialization priority before starting main.
-This functionality reads out the persistently stored Bluetooth Mesh data and if it finds keys stored by the TinyCrypt-based security toolbox, it imports them over the PSA API into the crypto library and stores the key identifiers in a format based on the PSA API toolbox.
+This functionality reads out the persistently stored Bluetooth Mesh data and if it finds keys stored by the Tinycrypt-based security toolbox, it imports them over the PSA API into the crypto library and stores the key identifiers in a format based on the PSA API toolbox.
 Once the new firmware image starts Bluetooth Mesh initialization, the persistent area already has the stored data in the correct format.
 
 The device can be vulnerable to attacks while the device uses the key importer functionality.
@@ -291,13 +294,13 @@ The following two types of security risks are possible:
   * Execute a key refresh procedure for all existing keys used on the entire network as soon as possible by excluding the compromised device, if any.
     The mechanism to determine if the device is compromised is up to the OEM developers.
 
-Additionally, after upgrading the device firmware with the key importer functionality enabled, and once the key import is complete, it is recommended to update device firmware with the key importer functionality disabled as soon as possible.
+Additionally, after upgrading the device firmware with the key importer functionality enabled, and once the key import is complete, it is recommend to update device firmware with the key importer functionality disabled as soon as possible.
 
-Secure storage
---------------
+Trusted storage
+---------------
 
-:ref:`secure_storage_in_ncs` lets you securely store and manage sensitive data.
-Currently, all :ref:`bt_mesh_samples` in the |NCS| use the :ref:`trusted_storage_readme` library as the PSA Secure Storage API implementation for all supported platforms.
+The :ref:`trusted_storage_in_ncs` is a security mechanism designed to securely store and manage sensitive data.
+Currently, all :ref:`bt_mesh_samples` in the |NCS| use the :ref:`trusted_storage_readme` library as the Trusted Storage backend for all supported platforms.
 
 .. note::
    For the nRF52840 devices, in regards to :ref:`bt_mesh_samples` in |NCS|, AEAD keys are derived using hashes of entry UIDs (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).

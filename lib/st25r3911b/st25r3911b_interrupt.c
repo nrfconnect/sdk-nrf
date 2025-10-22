@@ -8,6 +8,7 @@
 #include <zephyr/device.h>
 #include <soc.h>
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/spinlock.h>
 #include <zephyr/logging/log.h>
 
 #include "st25r3911b_reg.h"
@@ -25,7 +26,7 @@ static const struct gpio_dt_spec irq_gpio =
 
 static struct gpio_callback gpio_cb;
 
-static K_MUTEX_DEFINE(irq_modify_lock);
+static struct k_spinlock spinlock;
 static struct k_sem *sem;
 
 static uint32_t irq_mask;
@@ -113,12 +114,9 @@ int st25r3911b_irq_modify(uint32_t clr_mask, uint32_t set_mask)
 	int err = 0;
 	uint32_t mask;
 	uint32_t old_mask;
+	k_spinlock_key_t key;
 
-	err = k_mutex_lock(&irq_modify_lock, K_NO_WAIT);
-	if (err) {
-		LOG_DBG("Failed to lock irq_modify mutex (err %d)", err);
-		return err;
-	}
+	key = k_spin_lock(&spinlock);
 
 	old_mask = irq_mask;
 	mask = (~old_mask & set_mask) | (old_mask & clr_mask);
@@ -142,10 +140,7 @@ int st25r3911b_irq_modify(uint32_t clr_mask, uint32_t set_mask)
 		}
 	}
 
-	err = k_mutex_unlock(&irq_modify_lock);
-	if (err) {
-		LOG_DBG("Failed to unlock irq_modify mutex (err %d)", err);
-	}
+	k_spin_unlock(&spinlock, key);
 
 	LOG_DBG("Interrupts modified, current state %u", old_mask);
 

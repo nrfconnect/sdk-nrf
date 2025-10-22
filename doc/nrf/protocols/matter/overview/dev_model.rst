@@ -41,20 +41,7 @@ The table also lists the release date for that Matter specification version, and
 |                 |                                                                                                          | Specification         | |NCS| version    |
 | Matter version  | Overview of changes                                                                                      | release date          |                  |
 +=================+==========================================================================================================+=======================+==================+
-| 1.4.2           | - Added Wi-Fi Only Commissioning using Wi-Fi Unsynchronized Service Discovery (USD) for device           | July 9, 2025          | v3.1.0           |
-|                 |   onboarding without requiring Bluetooth LE radios.                                                      |                       |                  |
-|                 | - Added Vendor ID (VID) Verification for cryptographic verification of Admins in Multi-Admin             |                       |                  |
-|                 |   environments.                                                                                          |                       |                  |
-|                 | - Added Access Restriction Lists (ARLs) for Network Infrastructure Managers to restrict access to        |                       |                  |
-|                 |   sensitive settings and data to trusted Controllers.                                                    |                       |                  |
-|                 | - Added Certificate Revocation Lists (CRLs) using PKI for revoking unused or compromised Device          |                       |                  |
-|                 |   Attestation Certificates.                                                                              |                       |                  |
-|                 | - Updated Scenes Management with certifiable scene support, time-based behavior, and improved            |                       |                  |
-|                 |   device coordination.                                                                                   |                       |                  |
-|                 | - Enhanced Network Communication through extended "Quieter Reporting" to reduce network utilization      |                       |                  |
-|                 |   and extend battery life.                                                                               |                       |                  |
-|                 | - Added Standardized Node Reconfiguration, allowing devices to notify Controllers of capability changes  |                       |                  |
-|                 |   through attribute updates.                                                                             |                       |                  |
+| 1.4.2           |                                                                                                          | July 9, 2025          | v3.1.0           |
 +-----------------+----------------------------------------------------------------------------------------------------------+-----------------------+------------------+
 | 1.4.1           | - Matter onboarding using NFC tag can be officially certified now.                                       | March 12, 2025        | v3.0.0           |
 |                 | - Added Enhanced Setup Flow that allows the standard Matter commissioning process to enable display      |                       |                  |

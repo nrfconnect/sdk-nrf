@@ -5,7 +5,7 @@
 #
 
 menuconfig EDGE_IMPULSE
-	bool "Edge Impulse"
+	bool "Enable Edge Impulse"
 	depends on CPP
 	depends on STD_CPP11
 	depends on !FP16
@@ -51,7 +51,7 @@ config EDGE_IMPULSE_URI
 endif # EDGE_IMPULSE
 
 menuconfig EI_WRAPPER
-	bool "Edge Impulse wrapper"
+	bool "Enable Edge Impulse wrapper"
 	depends on EDGE_IMPULSE
 	default y
 	help

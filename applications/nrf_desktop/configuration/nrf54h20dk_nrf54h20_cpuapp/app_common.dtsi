@@ -1,17 +1,11 @@
 /*
- * Copyright (c) 2024-2025 Nordic Semiconductor ASA
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "memory_map.dtsi"
-
 / {
-	/* Redefine leds to fit CAF requirements.
-	 * Remove the pwmleds DTS node to prevent the CONFIG_LED_PWM and CONFIG_CAF_LEDS_PWM Kconfig
-	 * options from being enabled.
-	 */
-	/delete-node/ pwmleds;
+	/* Redefine leds to fit CAF requirements. */
 	/delete-node/ leds;
 
 	leds0 {
@@ -60,18 +54,22 @@
 
 	aliases {
 		nrfdesktop-dvfs-clock = &cpuapp_hsfll;
-
-		/delete-property/ pwm-led0;
 	};
 };
 
-secondary_app_partition: &cpuapp_slot1_partition {};
-
-/* Remove the undefined property value from the disabled VPR cores to prevent build errors. */
-&cpuflpr_vpr {
-	/delete-property/ source-memory;
+&cpusec_cpuapp_ipc {
+	status = "okay";
 };
 
-&cpuppr_vpr {
-	/delete-property/ source-memory;
+&cpusec_bellboard {
+	status = "okay";
+};
+
+/* Shrink ppr partition as ppr core is not used and extend app core code partition. */
+&cpuppr_code_partition {
+	reg = < 0xf8000 DT_SIZE_K(32) >;
+};
+
+&cpuapp_slot0_partition {
+	reg = < 0xa6000 DT_SIZE_K(328) >;
 };

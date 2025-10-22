@@ -7,6 +7,11 @@
 choice PSA_CORE
 	prompt "PSA Core implementation"
 
+config PSA_CORE_DISABLED
+	bool
+	prompt "PSA core-less for SSF crypto client support"
+	depends on SSF_CLIENT
+
 config PSA_CORE_OBERON
 	bool
 	prompt "PSA Core implementation - Oberon"

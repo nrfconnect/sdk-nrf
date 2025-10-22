@@ -33,7 +33,7 @@ constexpr uint16_t kSimulatedReadingFrequency = (60000 / kSensorTimerPeriodMs); 
 constexpr int16_t sMockTemp[] = { 2000, 2731, 1600, 2100, 1937, 3011, 1500, 1899 };
 #endif
 
-} /* namespace */
+} // namespace
 
 TemperatureSensor::TemperatureSensor()
 {

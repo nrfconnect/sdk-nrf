@@ -23,27 +23,6 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_exmif_and_s2ram"
     timeout: 90
 
-  benchmarks.multicore.idle_exmif.nrf54h20dk_cpuapp_cpurad.mcuboot:
-    tags:
-      - ci_build
-      - ci_tests_benchmarks_multicore
-      - exmif
-      - ppk_power_measure
-    filter: not CONFIG_COVERAGE
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-    extra_args:
-      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - mcuboot_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_exmif/boards/nrf54h20dk_mcuboot.overlay"
-    harness: pytest
-    harness_config:
-      fixture: ppk_power_measure
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_exmif_and_s2ram"
-    timeout: 90
-
   benchmarks.multicore.idle_exmif.nrf54h20dk_cpuapp_cpurad.coverage:
     tags:
       - ci_build

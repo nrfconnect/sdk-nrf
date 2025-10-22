@@ -28,4 +28,4 @@ CHIP_ERROR StartCurrentTransport();
  * indicating the active transport, and rebooting the device.
  */
 void SwitchTransport();
-} /* namespace ThreadWifiSwitch */
+} // namespace ThreadWifiSwitch

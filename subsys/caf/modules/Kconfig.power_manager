@@ -7,7 +7,7 @@
 menu "Power manager"
 
 config CAF_POWER_MANAGER
-	bool "Power management"
+	bool "Enable power management"
 	select CAF_PM_EVENTS
 	select CAF_POWER_MANAGER_EVENTS
 	imply POWEROFF if !SOC_SERIES_NRF54HX

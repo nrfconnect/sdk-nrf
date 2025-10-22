@@ -25,19 +25,19 @@ include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/zap_helpers.cmake)
 ncs_get_zap_parent_dir(ZAP_PARENT_DIR)
 
 target_include_directories(app PRIVATE
-  src
-  ${ZAP_PARENT_DIR}
+    src
+    ${ZAP_PARENT_DIR}
 )
 
 if(CONFIG_AWS_IOT_INTEGRATION)
-  add_subdirectory(src/aws_iot_integration)
+    add_subdirectory(src/aws_iot_integration)
 endif()
 
 target_sources(app PRIVATE
-  src/app_task.cpp
-  src/main.cpp
-  src/zcl_callbacks.cpp
-  ${CHIP_ROOT}/src/app/util/persistence/DeferredAttributePersistenceProvider.cpp
+    src/app_task.cpp
+    src/main.cpp
+    src/zcl_callbacks.cpp
+    ${CHIP_ROOT}/src/app/util/persistence/DeferredAttributePersistenceProvider.cpp
 )
 
 ncs_configure_data_model()

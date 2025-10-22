@@ -313,7 +313,7 @@ static int zbus_subscribers_create(void)
 		&button_msg_sub_thread_data, button_msg_sub_thread_stack,
 		CONFIG_BUTTON_MSG_SUB_STACK_SIZE, (k_thread_entry_t)button_msg_sub_thread, NULL,
 		NULL, NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
-	ret = k_thread_name_set(button_msg_sub_thread_id, "Msg_sub_btn");
+	ret = k_thread_name_set(button_msg_sub_thread_id, "BUTTON_MSG_SUB");
 	if (ret) {
 		LOG_ERR("Failed to create button_msg thread");
 		return ret;
@@ -323,7 +323,7 @@ static int zbus_subscribers_create(void)
 		&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
 		CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE, (k_thread_entry_t)le_audio_msg_sub_thread, NULL,
 		NULL, NULL, K_PRIO_PREEMPT(CONFIG_LE_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
-	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "Msg_sub_LE_Audio");
+	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "LE_AUDIO_MSG_SUB");
 	if (ret) {
 		LOG_ERR("Failed to create le_audio_msg thread");
 		return ret;

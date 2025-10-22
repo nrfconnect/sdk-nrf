@@ -5,7 +5,7 @@
 #
 
 config BT_FAST_PAIR_ADV_MANAGER
-	bool "Fast Pair advertising manager"
+	bool "Enable the Fast Pair advertising manager"
 	depends on BT_PERIPHERAL
 	depends on BT_EXT_ADV
 	depends on BT_PRIVACY

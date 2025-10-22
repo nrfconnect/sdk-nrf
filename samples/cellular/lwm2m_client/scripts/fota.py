@@ -8,17 +8,17 @@
    AVSystem Coiote service
 """
 
-import argparse
-import binascii
-import logging
-import os
 import sys
+import argparse
+import logging
 import time
+import os
+import binascii
 
-from coiote import Coiote, Operationlist
+from coiote import Operationlist
+from coiote import Coiote
 
-
-class firmwareObject:
+class firmwareObject():
     def __init__(self):
         self.instance_id = None
         self.state = None
@@ -59,17 +59,27 @@ def fota_state_check(obj_data):
         return obj_data
 
 def fota_ready(obj_list):
-    return all(obj.ready is not False for obj in obj_list)
+    for obj in obj_list:
+        if obj.ready is False:
+            return False
+    return True
 
 def fota_ready_for_update(obj_list):
-    return all(not (obj.ready_for_update is False and obj.failure is False) for obj in obj_list)
+    for obj in obj_list:
+        if obj.ready_for_update is False and obj.failure is False:
+            return False
+
+    return True
 
 def fota_ready_for_test_state(obj_list, test_state):
     if test_state is None:
         return False
-    return all(not (obj.state != test_state and obj.failure is False) for obj in obj_list)
+    for obj in obj_list:
+        if obj.state != test_state and obj.failure is False:
+            return False
+    return True
 
-class Fota:
+class Fota():
     """Interact with Coiote server"""
     def __init__(self):
         #

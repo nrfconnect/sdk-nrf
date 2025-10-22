@@ -25,18 +25,18 @@ include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/zap_helpers.cmake)
 ncs_get_zap_parent_dir(ZAP_PARENT_DIR)
 
 target_include_directories(app PRIVATE
-  src
-  ${ZAP_PARENT_DIR}
+    src
+    ${ZAP_PARENT_DIR}
 )
 
 target_sources(app PRIVATE
-  src/app_task.cpp
-  src/main.cpp
-  src/temp_sensor_manager.cpp
-  src/temperature_manager.cpp
-  src/temperature_measurement/sensor.cpp
-  src/zcl_callbacks.cpp
-  ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/binding/binding_handler.cpp
+    src/app_task.cpp
+    src/main.cpp
+    src/temp_sensor_manager.cpp
+    src/temperature_manager.cpp
+    src/temperature_measurement/sensor.cpp
+    src/zcl_callbacks.cpp
+    ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/binding/binding_handler.cpp
 )
 
 ncs_configure_data_model()

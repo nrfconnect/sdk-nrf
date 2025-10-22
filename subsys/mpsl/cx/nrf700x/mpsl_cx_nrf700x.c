@@ -65,16 +65,6 @@ static const struct gpio_dt_spec req_spec     = GPIO_DT_SPEC_GET(CX_NODE, req_gp
 static const struct gpio_dt_spec status0_spec = GPIO_DT_SPEC_GET(CX_NODE, status0_gpios);
 static const struct gpio_dt_spec grant_spec   = GPIO_DT_SPEC_GET(CX_NODE, grant_gpios);
 
-#if !defined(CONFIG_SOC_SERIES_BSIM_NRFXX)
-/* Direct register access pointers for ISR-safe GPIO control from DT */
-static NRF_GPIO_Type *req_port =
-	((NRF_GPIO_Type *)DT_REG_ADDR(DT_GPIO_CTLR(CX_NODE, req_gpios)));
-static NRF_GPIO_Type *status0_port =
-	((NRF_GPIO_Type *)DT_REG_ADDR(DT_GPIO_CTLR(CX_NODE, status0_gpios)));
-static uint32_t req_pin_mask = BIT(DT_GPIO_PIN(CX_NODE, req_gpios));
-static uint32_t status0_pin_mask = BIT(DT_GPIO_PIN(CX_NODE, status0_gpios));
-#endif
-
 static mpsl_cx_cb_t callback;
 static struct gpio_callback grant_cb;
 static uint32_t grant_abs_pin;
@@ -176,22 +166,7 @@ static int sig_dir_level_calc(mpsl_cx_op_map_t ops)
  */
 static int32_t gpio_drive_status0_to_dir(mpsl_cx_op_map_t ops)
 {
-#if defined(CONFIG_SOC_SERIES_BSIM_NRFXX)
 	return gpio_pin_set_dt(&status0_spec, sig_dir_level_calc(ops));
-#else
-	if (status0_port == NULL) {
-		return -NRF_EINVAL;
-	}
-
-	int level = sig_dir_level_calc(ops);
-
-	if (level) {
-		nrf_gpio_port_out_set(status0_port, status0_pin_mask);
-	} else {
-		nrf_gpio_port_out_clear(status0_port, status0_pin_mask);
-	}
-	return 0;
-#endif
 }
 
 /**
@@ -202,20 +177,7 @@ static int32_t gpio_drive_status0_to_dir(mpsl_cx_op_map_t ops)
  */
 static int32_t gpio_drive_request(int active)
 {
-#if defined(CONFIG_SOC_SERIES_BSIM_NRFXX)
 	return gpio_pin_set_dt(&req_spec, active);
-#else
-	if (req_port == NULL) {
-		return -NRF_EINVAL;
-	}
-
-	if (active) {
-		nrf_gpio_port_out_set(req_port, req_pin_mask);
-	} else {
-		nrf_gpio_port_out_clear(req_port, req_pin_mask);
-	}
-	return 0;
-#endif
 }
 
 static int32_t request(const mpsl_cx_request_t *req_params)

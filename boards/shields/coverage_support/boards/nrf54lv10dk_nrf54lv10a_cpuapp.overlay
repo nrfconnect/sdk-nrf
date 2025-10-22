@@ -14,10 +14,6 @@
 	};
 };
 
-&prng {
-	status = "okay";
-};
-
 &psa_rng {
 	status = "disabled";
 };

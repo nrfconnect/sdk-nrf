@@ -19,4 +19,4 @@ config QSPI_XIP_SPLIT_IMAGE
 	  updating the image.
 
 	  Requires `mcuboot_primary_X` and `mcuboot_secondary_X` entries in a partition manager
-	  configuration file where X is the QSPI XIP image number.
+	  configuration file where X is `SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`.

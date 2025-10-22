@@ -213,58 +213,6 @@
     - testing.ctest.base
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35402"
 
-- scenarios:
-    - sample.mgmt.osdp.peripheral_device
-    - sample.mgmt.osdp.control_panel_sc
-    - sample.mgmt.osdp.peripheral_device_sc
-    - sample.mgmt.osdp.control_panel
-  platforms:
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35494"
-
-- scenarios:
-    - sample.drivers.crypto.mbedtls
-  platforms:
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35493"
-
-- scenarios:
-    - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
-  platforms:
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35492"
-
-- scenarios:
-    - kernel.common.misra
-  platforms:
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35491"
-
-- scenarios:
-    - drivers.i2c.target_api.single_role
-  platforms:
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35490"
-
-- scenarios:
-    - libraries.encoding.jwt.rsa.psa
-  platforms:
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35542"
-
-- scenarios:
-    - libraries.encoding.jwt.rsa.legacy
-  platforms:
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35543"
-
-- scenarios:
-    - net.http.server.tls.toolchain
-  platforms:
-    - native_sim/native
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35519"
-
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
@@ -349,7 +297,6 @@
     - kernel.threads.dynamic_thread.stack.no_pool.alloc.no_user
     - kernel.threads.dynamic_thread.stack.pool.no_alloc.no_user
     - kernel.threads.dynamic_thread.stack.no_pool.no_alloc.user
-    - kernel.poll.minimallibc
     - kernel.scheduler.no_timeslicing
     - kernel.scheduler.dumb_no_timeslicing
     - kernel.scheduler.dumb_timeslicing
@@ -379,8 +326,6 @@
     - libraries.ring_buffer
     - libraries.hash_map.cxx.djb2
     - cpp.libcxx.glibcxx.picolibc
-    - cpp.libcxx.glibcxx.newlib
-    - cpp.libcxx.glibcxx.newlib_nano
     - portability.posix.eventfd
     - portability.posix.headers.newlib.without_posix_api
     - portability.posix.headers.newlib.with_posix_api
@@ -395,6 +340,8 @@
     - drivers.eeprom.shell
     - drivers.can.shell
     - shell.shell_custom_header
+    - crypto.tinycrypt
+    - crypto.tinycrypt.hmac_prng
     - net.mqtt_sn.packet
     - net.http.server.common
     - net.coap.server.common
@@ -418,7 +365,6 @@
     - sample.net.sockets.socketpair
     - sample.drivers.crypto.mbedtls
     - kernel.workqueue.api
-    - kernel.workqueue.work_timeout
     - sample.posix.env
     - sample.shell.shell_module
     - kernel.common
@@ -440,9 +386,10 @@
 - scenarios:
     - cpp.libcxx.glibcxx.picolibc
     - crypto.mbedtls
+    - crypto.tinycrypt
+    - crypto.tinycrypt.hmac_prng
     - drivers.can.shell
     - kernel.common
-    - kernel.common.lto
     - kernel.common.minimallibc
     - kernel.common.misra
     - kernel.common.nano32

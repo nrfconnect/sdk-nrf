@@ -22,7 +22,6 @@ Distribution
 ************
 
 The |ISE| is provided as a precompiled binary, which is part of the nRF54H20 SoC bundle and is provided independently from the |NCS| release cycle.
-For more information, see :ref:`abi_compatibility`.
 
 .. _ug_nrf54h20_ironside_se_uicr:
 
@@ -101,30 +100,31 @@ It is not possible to boot the vendor-specified recovery firmware if the integri
 UICR.APPROTECT
 ==============
 
-UICR.APPROTECT controls debugger and access-port permissions through the TAMPC peripheral.
-The configuration consists of separate registers for each access port, allowing independent control over debugging capabilities for different processor domains and CoreSight access.
+You can configure several access ports (APs) through UICR.
+UICR.APPROTECT controls debugger access when connected to an AP, specifically the settings in the TAMPC peripheral.
+Set all APs to UICR_APPROTECT_PROTECTED to get a protected device.
 
-The UICR.APPROTECT configuration consists of the following sub-registers:
+The following table shows the configuration of the TAMPC peripheral for each AP.
 
-UICR.APPROTECT.APPLICATION
-  Controls access port protection for the application domain processor.
-  This setting determines whether the debugger can access the application domain memory, registers, and debug features.
++-----------+-----------+-----------+-----------+-----------+-----------+-------------------------------+
+|                TAMPC.DOMAIN[n]                |   TAMPC.AP[n]         | Configuration                 |
++-----------+-----------+-----------+-----------+-----------+-----------+                               +
+| DBGEN     | NIDEN     | SPIDEN    | SPNIDEN   | DBGEN     | SPIDEN    |                               |
++===========+===========+===========+===========+===========+===========+===============================+
+|     0     |     0     |     0     |     0     |     0     |     0     | UICR_APPROTECT_PROTECTED      |
++-----------+-----------+-----------+-----------+-----------+-----------+-------------------------------+
+|     1     |     1     |     1     |     1     |     1     |     1     | UICR_APPROTECT_UNPROTECTED    |
++-----------+-----------+-----------+-----------+-----------+-----------+-------------------------------+
 
-UICR.APPROTECT.RADIOCORE
-  Controls access port protection for the radio core processor.
-  This setting determines whether the debugger can access the radio core memory, registers, and debug features.
-
-UICR.APPROTECT.CORESIGHT
-  Controls access port protection for the CoreSight debug infrastructure.
-  This setting determines whether system-level trace features are accessible.
-
-Each of these sub-registers accepts the following values:
-
-* ``UICR_MAGIC_ERASE_VALUE`` - Full debug access is enabled, allowing unrestricted use of debugging tools and memory access.
-* ``UICR_PROTECTED`` - Debug access is disabled, preventing debugger connection and protecting the device from unauthorized access.
-
-.. note::
-   To fully protect a production device, set all three sub-registers (APPLICATION, RADIOCORE, and CORESIGHT) to ``UICR_PROTECTED``.
++-----------+-----------+-----------+-----------+-----------+--------------------------------+
+|                         TAMPC.CORESIGHT                   | Configuration                  |
++-----------+-----------+-----------+-----------+-----------+                                +
+| DEVICEEN  | DBGEN     | NIDEN     | SPIDEN    | SPNIDEN   |                                |
++===========+===========+===========+===========+===========+================================+
+|     0     |     0     |     0     |     0     |     0     | UICR_APPROTECT_PROTECTED       |
++-----------+-----------+-----------+-----------+-----------+--------------------------------+
+|     1     |     1     |     1     |     1     |     1     | UICR_APPROTECT_UNPROTECTED     |
++-----------+-----------+-----------+-----------+-----------+--------------------------------+
 
 UICR.ERASEPROTECT
 =================
@@ -494,21 +494,10 @@ UICR.SECONDARY.MPCCONF
 
 .. _ug_nrf54h20_ironside_se_programming:
 
-Programming |ISE| on the nRF54H20 SoC
-*************************************
+Programming
+***********
 
-|ISE| is included in the nRF54H20 SoC binaries.
-The nRF54H20 SoC binaries are bundled in a ZIP archive that contains the following components:
-
-* *IronSide SE update firmware* (:file:`ironside_se_update.hex`) - The main |ISE| firmware
-* *IronSide SE Recovery update firmware* (:file:`ironside_se_recovery_update.hex`) - The recovery firmware
-* The update application (:file:`update_application.hex`) - The application firmware used to trigger the update process
-* Additional metadata and manifest files required for the update process
-
-The bundle ZIP file follows the naming convention :file:`<soc>_soc_binaries_v<version>.zip`.
-
-For more information on the nRF54H20 SoC binaries, see :ref:`nRF54H20 SoC binaries<abi_compatibility>`.
-For instructions on how to program the nRF54H20 SoC binaries, see :ref:`ug_nrf54h20_SoC_binaries`.
+For programming instructions, see :ref:`ug_nrf54h20_SoC_binaries`.
 
 By default, the nRF54H20 SoC uses the following memory and access configurations:
 
@@ -521,120 +510,6 @@ By default, the nRF54H20 SoC uses the following memory and access configurations
 
 Global domain memory can be protected from write operations by configuring UICR registers.
 To remove these protections and disable all other protection mechanisms enforced through UICR settings, perform an ``ERASEALL`` operation.
-
-.. _ug_nrf54h20_ironside_se_update:
-
-Updating |ISE|
-**************
-
-|NCS| supports two methods for updating the |ISE| firmware on the nRF54H20 SoC:
-
-* Using the ``west`` command.
-  You can use the ``west`` command provided by the |NCS| to install the firmware update.
-  For step-by-step instructions, see :ref:`ug_nrf54h20_ironside_se_update_west`.
-
-* Updating the SoC binaries manually.
-  Alternatively, you can perform the update by manually executing the same steps carried out by the ``west`` command.
-  For step-by-step instructions, see :ref:`ug_nrf54h20_ironside_se_update_manual`.
-
-.. caution::
-   You cannot update the nRF54H20 SoC binaries from a SUIT-based (up to 0.9.6) to an IronSide-SE-based (2x.x.x) version.
-
-.. _ug_nrf54h20_ironside_se_update_west:
-
-Updating using west
-===================
-
-To update the |ISE| firmware, you can use the ``west ncs-ironside-se-update`` command with the following syntax:
-
-.. code-block:: console
-
-   west ncs-ironside-se-update --zip <path_to_soc_binaries.zip> --allow-erase
-
-The command accepts the following main options:
-
-* ``--zip`` (required) - Sets the path to the nRF54H20 SoC binaries ZIP file.
-* ``--allow-erase`` (required) - Enables erasing the device during the update process.
-* ``--serial`` - Specifies the serial number of the target device.
-* ``--firmware-slot`` - Updates only a specific firmware slot (``uslot`` for |ISE| or ``rslot`` for |ISE| Recovery).
-* ``--wait-time`` - Specifies the timeout in seconds to wait for the device to boot (default: 2.0 seconds).
-
-.. _ug_nrf54h20_ironside_se_update_manual:
-
-Updating manually
-=================
-
-The manual update process involves the following steps:
-
-1. Executing the update application.
-   The update application runs on the application core and communicates with the |ISE| update service.
-   It reads the update firmware from memory and passes the update blob metadata to the |ISE|.
-
-#. Preparing the update.
-   The |ISE| validates the update parameters and writes the update metadata to the Secure Information Configuration Registers (SICR).
-
-#. Installing the update.
-   After a reset, the Secure Domain ROM (SDROM) detects the pending update through the SICR registers, verifies the update firmware signature, and installs the new firmware.
-
-#. Completing the update.
-   The system boots with the updated |ISE| firmware, and the update status can be read to verify successful installation.
-
-Updating manually using nrfutil
--------------------------------
-
-``nrfutil`` commands can replicate the functionality of ``west ncs-ironside-se-update``.
-To perform the manual update process using ``nrfutil`` commands, complete the following steps:
-
-1. Extract the update bundle:
-
-   .. code-block:: console
-
-      unzip <soc_binaries.zip> -d /tmp/update_dir
-
-#. Erase non-volatile memory:
-
-   .. code-block:: console
-
-      nrfutil device recover --serial-number <serial> --x-sdfw-variant ironside
-
-#. Program the update application:
-
-   .. code-block:: console
-
-      nrfutil device program --firmware /tmp/update_dir/update/update_application.hex --serial-number <serial> --x-sdfw-variant ironside
-
-#. Program the |ISE| update firmware:
-
-   .. code-block:: console
-
-      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_update.hex --serial-number <serial> --x-sdfw-variant ironside
-
-#. Reset to execute the update service:
-
-   .. code-block:: console
-
-      nrfutil device reset --serial-number <serial> --x-sdfw-variant ironside
-
-#. Reset to trigger the installation of the update:
-
-   .. code-block:: console
-
-      nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial> --x-sdfw-variant ironside
-
-#. Program the |ISE| Recovery update firmware (if updating both slots):
-
-   .. code-block:: console
-
-      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_recovery_update.hex --serial-number <serial> --x-sdfw-variant ironside
-
-   Then repeat steps 5 and 6.
-
-#. Erase the update application:
-
-   .. code-block:: console
-
-      nrfutil device erase --all --serial-number <serial> --x-sdfw-variant ironside
-
 
 .. _ug_nrf54h20_ironside_se_debug:
 
@@ -669,8 +544,6 @@ To protect the nRF54H20 SoC in a production-ready device, you must enable the fo
   It blocks all `ERASEALL` operations on NVR0, preserving UICR settings even if an attacker attempts a full-chip erase.
 
 
-.. _ug_nrf54h20_ironside_se_boot_report:
-
 IronSide boot report
 ********************
 
@@ -687,7 +560,6 @@ The boot report contains the following information:
 * UICR error description
 * Context data passed to the CPUCONF service
 * A fixed amount of random bytes generated by a CSPRNG
-* Universal Unique Identifier (UUID) data
 
 Versions
 ========
@@ -706,10 +578,6 @@ This string is informational only, and no semantics should be attached to this p
 
 The |ISE| boot ROM code (SDROM) reports the status of an |ISE| update request through SICR.UROT.UPDATE.STATUS.
 The value of this register is copied to the |ISE| update status field of the boot report.
-
-.. note::
-   After an update is installed or attempted, |ISE| resets the update status to ``0xFFFFFFFF`` on the next boot.
-   This means that the update status is only valid for a single execution.
 
 UICR error description
 ======================
@@ -732,43 +600,26 @@ Random data
 This field is filled with random data generated by a CSPRNG.
 This data is suitable as a source of initial entropy.
 
-UUID data
-=========
-
-This field contains 16 bytes that represent the device's unique identity.
-The bytes are provided as a stream of 16 raw bytes, rather than in the standard ``8-4-4-4-12`` UUID format.
-
 .. _ironside_se_booting:
 
-Booting of local domains
+Booting of other domains
 ************************
 
-This section describes the default boot flow used by |ISE|.
-For information about the alternative boot flow that uses the secondary firmware, see :ref:`ug_nrf54h20_ironside_se_secondary_firmware`.
+|ISE| boots the System Controller core first, followed by the application core, in that order.
+When booting the application core, |ISE| does the following:
 
-|ISE| boots only the application core CPU.
-The application core then triggers the boot of other local domain CPUs, such as the radio core, through the :ref:`ug_nrf54h20_ironside_se_cpuconf_service`.
+* Sets the application domain's INITSVTOR to the first 32-bit word of the application-owned memory.
+* Reads the reset vector from the second 32-bit word of the application-owned memory.
+* If the reset vector is set to 0xFFFFFFFF, sets CTRL_AP.BOOTSTATUS.BOOTERROR to indicate that no firmware is programmed.
+* If any other error is encountered during initialization, sets CTRL_AP.BOOTSTATUS.BOOTERROR accordingly.
+* If CTRL_AP.BOOTSTATUS.BOOTERROR is non-zero (meaning an invalid UICR configuration is detected), sets the application domain's CPUWAIT to 1; otherwise, sets it to 0.
+* Sets the application domain's CPUSTART to 1.
+* Stops the allocation procedure.
+* Updates the boot report to indicate the UICR entry (and, if applicable, the array index) that triggered the failure.
+* Sets CTRL_AP.BOOTSTATUS.BOOTERROR to indicate the source of the error.
+* Starts the application core with application domain's CPUWAIT = 1 (halted mode).
 
-Application domain boot sequence
-================================
-
-When booting the application domain, |ISE| performs the following operations:
-
-* Sets the processor's vector table address to the start of the application-owned memory region.
-* Verifies for firmware availability by reading the reset vector from the second 32-bit word of the vector table and comparing it to the erased value (``0xFFFFFFFF``).
-* Sets the secure vector table offset register (INITSVTOR) to point to the vector table address.
-* Enables the CPU with the appropriate start mode:
-
-  * |ISE| enables the CPU in halted mode if any of the following conditions are met:
-
-    * No firmware is available.
-    * Boot errors occurred.
-    * The ``DEBUGWAIT`` boot command was issued.
-  * Otherwise, |ISE| enables and starts the CPU normally.
-
-* Updates :ref:`CTRL_AP.BOOTSTATUS <ug_nrf54h20_ironside_se_bootstatus_register_format>` and writes the :ref:`boot report <ug_nrf54h20_ironside_se_boot_report>` to reflect any boot errors encountered during the initialization process.
-
-For more information on the boot sequence, see :ref:`ug_nrf54h20_architecture_boot`.
+This allows the error report to be read by a debugger, if the device is not protected.
 
 .. _ug_nrf54h20_ironside_se_secondary_firmware:
 
@@ -778,21 +629,12 @@ Secondary firmware
 The secondary firmware feature provides an alternative boot path that can be triggered implicitly or explicitly.
 It can be used for different purposes, some examples are DFU applications in systems that don't use dual banking, recovery firmware, and analysis firmware.
 
-For more information on the boot sequence, see :ref:`ug_nrf54h20_architecture_boot`.
-
 .. note::
-   The term "primary firmware" is rarely used when describing the firmware that is booted by default by |ISE|, as it is implicit when the term "secondary" is not specified.
+   The term "primary firmware" is rarely used when describing the firmware that is booted by default by IronSide SE, as it is implicit when the term "secondary" is not specified.
 
 .. note::
    The term "secondary slot" and "secondary image" are used in the MCUboot context.
    This usage is unrelated to the "secondary firmware" described in this section.
-
-Sample
-======
-
-For an example of how to create a secondary image with automatic triggers, see the :ref:`secondary_boot_trigger_lockup_sample` sample.
-
-.. _ug_nrf54h20_ironside_se_secondary_conf_trigger:
 
 Configuration and triggering
 =============================
@@ -800,15 +642,15 @@ Configuration and triggering
 Configuring a secondary firmware is optional and is done through the ``UICR.SECONDARY`` fields.
 
 The secondary firmware can be triggered automatically, through ``CTRLAP.BOOTMODE`` or through an IPC service (``ironside_bootmode`` service).
-Any component that communicates with |ISE| over IPC can leverage this service.
+Any component that communicates with IronSide SE over IPC can leverage this service.
 Setting bit 5 in ``CTRLAP.BOOTMODE`` will also trigger secondary firmware.
 
-|ISE| automatically triggers the secondary firmware in any of the following situations:
+IronSide SE automatically triggers the secondary firmware in any of the following situations:
 
 * The integrity check of the memory specified in ``UICR.PROTECTEDMEM`` fails.
 * Any boot failure occurs, such as missing primary firmware or failure to apply ``UICR.PERIPHCONF`` or ``UICR.MPCCONF`` configurations.
 * A local domain is reset with a reason configured to trigger the secondary firmware.
-* Secondary firmware will be booted by |ISE| if one of the triggers configured in ``UICR.SECONDARY.TRIGGER.RESETREAS`` occurs.
+* Secondary firmware will be booted by IronSide SE if one of the triggers configured in ``UICR.SECONDARY.TRIGGER.RESETREAS`` occurs.
 
 The secondary firmware can be protected using ``UICR.SECONDARY.PROTECTEDMEM`` for integrity checking, and can be updated by other components when protection is not enabled.
 
@@ -819,12 +661,12 @@ The secondary firmware can be protected through integrity checks by enabling ``U
 The ``PERIPHCONF`` entries for the secondary firmware can also be placed in memory covered by ``UICR.SECONDARY.PROTECTEDMEM`` to create a fully immutable secondary firmware and configuration.
 
 If the integrity check of the memory specified in this configuration fails, the secondary firmware will not be booted.
-Instead, |ISE| will attempt to boot the primary firmware, and information about the failure is available in the boot report and boot status.
+Instead, IronSide SE will attempt to boot the primary firmware, and information about the failure is available in the boot report and boot status.
 
 Update
 ======
 
-As with the primary firmware, |ISE| does not facilitate updating the secondary firmware.
+As with the primary firmware, IronSide SE does not facilitate updating the secondary firmware.
 The secondary image can be updated by other components as long as ``UICR.SECONDARY.PROTECTEDMEM`` is not set.
 Using the secondary firmware as a bootloader capable of validating and updating a second image enables updating firmware in the secondary boot flow while having secure boot enabled through ``UICR.SECONDARY.PROTECTEDMEM``.
 
@@ -856,13 +698,8 @@ For details about the CPUCONF peripheral, refer to the nRF54H20 SoC datasheet.
 
 |ISE| is updated by the Secure Domain ROM (SDROM), which performs the update operation when triggered by a set of SICR registers.
 SDROM verifies and copies the update candidate specified through these registers.
-SDROM requires the |ISE| update to be located in MRAM.
 
 |ISE| exposes an update service that allows local domains to trigger the update process by indirectly writing to the relevant SICR registers.
-
-.. note::
-   The update data must be placed within a valid memory range.
-   See :file:`nrf_ironside/update.h` for more details.
 
 The release ZIP archive for |ISE| includes the following components:
 
@@ -901,8 +738,8 @@ When using the PSA Crypto API to operate on keys, the storage region specified b
 
 This ensures that cryptographic keys are stored in the dedicated secure storage region rather than in regular application memory.
 
-Secure storage through PSA ITS API
-==================================
+Secure storage through PSA Internal Trusted Storage (ITS) API
+=============================================================
 
 When using the PSA ITS API for storing general secure data, the storage region specified by ``UICR.SECURESTORAGE.ITS`` is used automatically.
 No special configuration is required for PSA ITS operations, as they inherently use the secure storage when available.
@@ -1028,16 +865,6 @@ BOOTERROR
   * A status value of 0 indicates that the CPU was started normally.
   * A non-zero value indicates that an error condition occurred, preventing the CPU from starting.
     Detailed information about the issue can be found in the boot report.
-
-.. _ug_nrf54h20_ironside_se_local_domain_reset:
-
-Local Domain Reset Handling
-****************************
-
-When a local domain resets, |ISE| detects the event in the RESETHUB peripheral and triggers a global system reset, reported as ``SECSREQ`` in the local domain ``RESETINFO.RESETREAS.GLOBAL``.
-
-Certain local domain reset reasons can trigger a boot into the secondary boot mode.
-For more information, see :ref:`ug_nrf54h20_ironside_se_secondary_conf_trigger`.
 
 .. _ug_nrf54h20_ironside_se_boot_commands:
 

@@ -11,7 +11,7 @@ menu "Bluetooth Mesh Sensors"
 	visible if BT_MESH_SENSOR
 
 config BT_MESH_SENSOR_LABELS
-	bool "Sensor labels"
+	bool "Enable Sensor labels"
 	help
 	  Controls the availability of sensor labels for channels and units
 

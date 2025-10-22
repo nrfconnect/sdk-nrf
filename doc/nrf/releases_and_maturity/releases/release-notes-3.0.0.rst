@@ -382,7 +382,7 @@ Matter
 
   * By disabling the :ref:`mpsl` before performing a factory reset to speed up the process.
   * The :ref:`ug_matter_device_low_power_configuration` page to mention the `nWP049 - Matter over Thread: Power consumption and battery life`_ and `Online Power Profiler for Matter over Thread`_ as useful resources in optimizing the power consumption of a Matter device.
-  * The general documentation on secure storage by moving it to the :ref:`secure_storage_in_ncs` page and :ref:`trusted_storage_readme` library documentation.
+  * The general documentation on trusted storage by moving it to the :ref:`trusted_storage_in_ncs` page and :ref:`trusted_storage_readme` library documentation.
 
 Matter fork
 +++++++++++
@@ -573,7 +573,7 @@ Serial LTE modem
   * An overlay file :file:`overlay-memfault.conf` to enable Memfault.
     See :ref:`mod_memfault` for more information about Memfault features in |NCS|.
 
-* Updated the application to use the :ref:`lib_downloader` library instead of the deprecated Download client library.
+* Updated the application to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
 
 Thingy:53: Matter weather station
 ---------------------------------
@@ -764,7 +764,7 @@ Bluetooth Fast Pair samples
 Cellular samples
 ----------------
 
-* Updated the following samples to use the :ref:`lib_downloader` library instead of the Download client library:
+* Updated the following samples to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
 
   * :ref:`http_application_update_sample`
   * :ref:`http_modem_delta_update_sample`
@@ -854,7 +854,7 @@ Networking samples
 
   * The :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` Kconfig option value to ``1280`` for all networking samples that had it set to a lower value.
     This is a requirement from Zephyr and removes a build warning.
-  * The following samples to use the :ref:`lib_downloader` library instead of the Download client library:
+  * The following samples to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
 
     * :ref:`aws_iot`
     * :ref:`azure_iot_hub`
@@ -1049,7 +1049,7 @@ Binary libraries
 
     * The library to v3.7.0.
       See the :ref:`liblwm2m_carrier_changelog` for detailed information.
-    * The glue to use the :ref:`lib_downloader` library instead of the deprecated Download client library.
+    * The glue to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
 
 Bluetooth libraries and services
 --------------------------------
@@ -1238,10 +1238,10 @@ Libraries for networking
   * The :ref:`lib_downloader` library.
   * A backend for the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` that stores the credentials in the modem, see :kconfig:option:`CONFIG_TLS_CREDENTIALS_BACKEND_NRF_MODEM`.
 
-* Deprecated the Download client library.
+* Deprecated the :ref:`lib_download_client` library.
   See the :ref:`migration guide <migration_3.0_recommended>` for recommended changes.
 
-* Updated the following libraries to use the :ref:`lib_downloader` library instead of the Download client library:
+* Updated the following libraries to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
 
   * :ref:`lib_nrf_cloud`
   * :ref:`lib_aws_fota`

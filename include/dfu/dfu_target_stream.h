@@ -79,18 +79,6 @@ int dfu_target_stream_init(const struct dfu_target_stream_init *init);
  */
 int dfu_target_stream_offset_get(size_t *offset);
 
-/** @brief Get the number of bytes buffered for the stream.
- *
- * This can be used to determine how much data is currently buffered
- * and not yet written to flash.
- *
- * @param[out] out Returns the number of bytes buffered.
- *
- * @return Non-negative value if success, otherwise negative value if unable
- *         to get the buffered bytes
- */
-int dfu_target_stream_bytes_buffered_get(size_t *out);
-
 /**
  * @brief Write a chunk of firmware data.
  *

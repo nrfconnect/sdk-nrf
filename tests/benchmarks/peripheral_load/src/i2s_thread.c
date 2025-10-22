@@ -4,14 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "common.h"
-
-#if DT_NODE_HAS_STATUS(DT_ALIAS(i2s_node0), okay)
-#include <zephyr/drivers/i2s.h>
-
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(i2s, LOG_LEVEL_INF);
 
+#include <zephyr/drivers/i2s.h>
+#include "common.h"
+
+#if DT_NODE_HAS_STATUS(DT_ALIAS(i2s_node0), okay)
 
 static const struct device *dev_i2s = DEVICE_DT_GET_OR_NULL(DT_ALIAS(i2s_node0));
 

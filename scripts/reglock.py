@@ -22,7 +22,8 @@ from intelhex import IntelHex
 import argparse
 import sys
 import warnings
-import struct
+
+SIZE_MAX_KB = 31
 
 BOOTCONF_ADDR = 0x00FFD080
 
@@ -30,46 +31,11 @@ READ_ALLOWED = 0x01
 WRITE_ALLOWED = 0x02
 EXECUTE_ALLOWED = 0x04
 SECURE = 0x08
+OWNER_NONE = 0x00
+OWNER_APP = 0x10
+OWNER_KMU = 0x20
 WRITEONCE = 0x10
-LOCK = 0x2000
-
-SIZE_OFFSET = 16
-
-
-supported_socs = [
-    "nrf54l05",
-    "nrf54l10",
-    "nrf54l15",
-    "nrf54lm20a",
-    "nrf54lv10a",
-    "nrf54ls05b",
-]
-
-def get_max_size_kb(soc):
-    if soc in ["nrf54l05", "nrf54l10", "nrf54l15"]:
-        return 31
-    elif soc in ["nrf54lm20a", "nrf54lv10a"]:
-        return 127
-    elif soc in ["nrf54ls05b"]:
-        return 1023
-    else:
-        sys.exit("error: unsupported SoC")
-
-def get_bootconf_reg_32bit_value(soc, size):
-    value = READ_ALLOWED | EXECUTE_ALLOWED | LOCK
-
-    if soc not in ["nrf54ls05b"]:
-        value |= SECURE
-
-    size_kb = size // 1024
-    max_size_kb = get_max_size_kb(soc)
-
-    if size_kb > max_size_kb:
-        warnings.warn("warning: requested size too big; Setting to allowed maximum")
-        size_kb = max_size_kb
-
-    value |= size_kb << SIZE_OFFSET
-    return value
+LOCK = 0x20
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -82,9 +48,6 @@ def parse_args():
     parser.add_argument("-s", "--size", required=False, default="0x7C00",
                         type=lambda x: hex(int(x, 0)),
                         help="Size to lock.")
-    parser.add_argument("--soc", required=True,
-                        type=str,
-                        help="SoC for which to generate the bootconf.")
     return parser.parse_args()
 
 
@@ -93,12 +56,17 @@ def main():
     size = int(args.size, 16)
     if size % 1024:
         sys.exit("error: requested size not aligned to 1k")
-    if args.soc not in supported_socs:
-        sys.exit("error: unsupported SoC")
+    size = size // 1024
+    if size > SIZE_MAX_KB:
+        warnings.warn("warning: requested size too big; Setting to allowed maximum")
+        size = SIZE_MAX_KB
 
-    reg_value = get_bootconf_reg_32bit_value(args.soc, size)
-
-    payload = struct.pack('<I', reg_value)
+    payload = bytearray([
+        READ_ALLOWED | EXECUTE_ALLOWED | SECURE | OWNER_NONE,
+        LOCK,
+        size,
+        0x0
+        ])
 
     h = IntelHex()
     h.frombytes(bytes=payload, offset=BOOTCONF_ADDR)

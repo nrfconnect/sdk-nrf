@@ -229,7 +229,7 @@ CHIP_ERROR BluetoothDeviceConnected(bool success, void *context)
 
 	return err;
 }
-} /* namespace */
+} // namespace
 
 BleBridgedDeviceFactory::BridgedDeviceFactory &BleBridgedDeviceFactory::GetBridgedDeviceFactory()
 {

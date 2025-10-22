@@ -43,7 +43,6 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
       - cli_SNIPPET="ci;logging;multiprotocol;tcp"
       - FILE_SUFFIX=ble
@@ -55,7 +54,6 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.openthread.cli.singleprotocol:
     sysbuild: true
     build_only: true
@@ -107,15 +105,11 @@ tests:
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args: >
       cli_SNIPPET="ci;low_power"
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
   # Build integration regression protection.
   sample.nrf_security.openthread.integration:
     sysbuild: true

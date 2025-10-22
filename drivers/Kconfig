@@ -18,7 +18,6 @@ endif
 
 rsource "mspi/Kconfig"
 rsource "net/Kconfig"
-rsource "regulator/Kconfig"
 rsource "sensor/Kconfig"
 rsource "serial/Kconfig"
 

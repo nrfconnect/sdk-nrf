@@ -41,8 +41,8 @@ To select the USB stack, enable one of the following Kconfig choice options:
 
 .. note::
    The USB next stack integration is :ref:`experimental <software_maturity>`.
-   For example, the HID boot protocol integration is not yet fully tested and might not work properly.
-   Because of that, the USB legacy stack is still used by default despite the fact that it is deprecated.
+   The HID boot protocol integration is not yet fully tested and may not work properly.
+   The secondary image slot background erase in :ref:`nrf_desktop_dfu` may cause missing USB HID subscriptions after a USB cable is attached.
 
 Some of the properties are configured in the same way for both stacks, but part of the configuration is specific to the selected USB stack.
 See the following sections for details.

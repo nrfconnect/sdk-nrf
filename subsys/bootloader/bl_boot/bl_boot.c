@@ -28,62 +28,26 @@
 #define RRAMC_REGION_FOR_NEXT_W 4
 #define NRF_RRAM_REGION_SIZE_UNIT 0x400
 #define NRF_RRAM_REGION_ADDRESS_RESOLUTION 0x400
+#define NEXT_W_SIZE_KB (PM_MCUBOOT_SIZE / NRF_RRAM_REGION_SIZE_UNIT)
 
-#if defined(CONFIG_SOC_NRF54L15_CPUAPP) || defined(CONFIG_SOC_NRF54L05_CPUAPP) ||                  \
-	defined(CONFIG_SOC_NRF54L10_CPUAPP)
-#define MAX_NEXT_W_SIZE (31 * 1024)
-#elif defined(CONFIG_SOC_NRF54LV10A_ENGA_CPUAPP) || defined(CONFIG_SOC_NRF54LM20A_ENGA_CPUAPP)
-#define MAX_NEXT_W_SIZE (127 * 1024)
-#elif defined(CONFIG_SOC_NRF54LS05B_ENGA_CPUAPP)
-#define MAX_NEXT_W_SIZE (1023 * 1024)
-#endif
+BUILD_ASSERT((PM_MCUBOOT_ADDRESS % NRF_RRAM_REGION_ADDRESS_RESOLUTION) == 0,
+	"Start of protected region is not aligned");
 
-BUILD_ASSERT((PM_S0_IMAGE_ADDRESS % NRF_RRAM_REGION_ADDRESS_RESOLUTION) == 0,
-	     "Start of S0 image region is not aligned - not possible to protect");
+BUILD_ASSERT((PM_MCUBOOT_SIZE % NRF_RRAM_REGION_SIZE_UNIT) == 0,
+	"Size of protected region is not aligned");
 
-BUILD_ASSERT((PM_S0_IMAGE_SIZE % NRF_RRAM_REGION_SIZE_UNIT) == 0,
-	     "Size of S0 image region is not aligned - not possible to protect");
+BUILD_ASSERT(NEXT_W_SIZE_KB < 31,
+	"Size of requested protection is too big");
 
-BUILD_ASSERT(PM_S0_IMAGE_SIZE <= MAX_NEXT_W_SIZE, "Size of S0 partition is too big for protection");
-
-#if defined(PM_S1_IMAGE_ADDRESS)
-BUILD_ASSERT((PM_S1_IMAGE_ADDRESS % NRF_RRAM_REGION_ADDRESS_RESOLUTION) == 0,
-	     "Start of S1 image region is not aligned - not possible to protect");
-
-BUILD_ASSERT((PM_S1_IMAGE_SIZE % NRF_RRAM_REGION_SIZE_UNIT) == 0,
-	     "Size of S1 image region is not aligned - not possible to protect");
-
-BUILD_ASSERT(PM_S1_IMAGE_SIZE <= MAX_NEXT_W_SIZE, "Size of S1 partition is too big for protection");
-#endif /* defined(PM_S1_IMAGE_ADDRESS) */
-
-static int disable_next_w(const uint32_t address)
+static int disable_next_w(void)
 {
-	uint32_t region_size_kb = 0;
-
-	/* Note: the protection is only applied to the image itself, not the header (pad).
-	 * When building with MCUBoot, applying protection to the header is not needed, as the
-	 * header is only used during DFU and is only left for compatibility. Without MCUBoot, the
-	 * header is not present.
-	 */
-	if (address == PM_S0_IMAGE_ADDRESS) {
-		region_size_kb = PM_S0_IMAGE_SIZE / NRF_RRAM_REGION_SIZE_UNIT;
-	} else if (address == PM_S1_IMAGE_ADDRESS) {
-		region_size_kb = PM_S1_IMAGE_SIZE / NRF_RRAM_REGION_SIZE_UNIT;
-	} else {
-		return -EINVAL;
-	}
-
 	nrf_rramc_region_config_t config = {
-		.address = address,
+		.address = PM_MCUBOOT_ADDRESS,
 		.permissions =  NRF_RRAMC_REGION_PERM_READ_MASK |
 				NRF_RRAMC_REGION_PERM_EXECUTE_MASK,
 		.writeonce = false,
-		/* There are no issues with locking the region here,
-		 * as the next stage can still impose more strict
-		 * protection by writing 0 to R/X disable bits.
-		 */
-		.lock = true,
-		.size_kb = region_size_kb,
+		.lock = false,
+		.size_kb = NEXT_W_SIZE_KB,
 	};
 
 	nrf_rramc_region_config_set(NRF_RRAMC, RRAMC_REGION_FOR_NEXT_W, &config);
@@ -91,7 +55,7 @@ static int disable_next_w(const uint32_t address)
 	if (config.permissions & (NRF_RRAMC_REGION_PERM_WRITE_MASK)) {
 		return -ENOSPC;
 	}
-	if (config.size_kb != region_size_kb) {
+	if (config.size_kb != NEXT_W_SIZE_KB) {
 		return -ENOSPC;
 	}
 
@@ -230,9 +194,6 @@ static void uninit_used_peripherals(void)
 #if defined(CONFIG_HAS_HW_NRF_UARTE20)
 	uninit_used_uarte(NRF_UARTE20);
 #endif
-#if defined(CONFIG_HAS_HW_NRF_UARTE30)
-	uninit_used_uarte(NRF_UARTE30);
-#endif
 #endif /* CONFIG_UART_NRFX */
 
 	nrf_clock_int_disable(NRF_CLOCK, 0xFFFFFFFF);
@@ -322,8 +283,8 @@ void bl_boot(const struct fw_info *fw_info)
 	uint32_t *vector_table = (uint32_t *)fw_info->address;
 
 #if defined(CONFIG_SB_DISABLE_NEXT_W)
-	if (disable_next_w(fw_info->address)) {
-		printk("Unable to disable writes on next stage");
+	if (disable_next_w()) {
+		printk("Unable to disable writes on next stage.");
 		return;
 	}
 #endif

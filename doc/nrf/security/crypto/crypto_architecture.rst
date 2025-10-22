@@ -115,7 +115,7 @@ When using the Oberon PSA Crypto implementation, persistent keys from the PSA Cr
 * Zephyr's :ref:`Secure storage <zephyr:secure_storage>` subsystem - Zephyr-specific implementation of the functions defined in the `PSA Certified Secure Storage API`_.
 * |NCS|'s :ref:`trusted_storage_readme` library - which provides features like integrity, confidentiality, and authenticity of the stored data without using the TF-M Platform Root of Trust (PRoT).
 
-For more information, see :ref:`secure_storage_in_ncs`.
+For more information about the storage integration for the Oberon PSA Crypto implementation, see :ref:`trusted_storage_in_ncs`.
 
 .. _ug_crypto_architecture_implementation_standards_tfm:
 
@@ -188,11 +188,4 @@ Driver selection in the |ISE| implementation
 --------------------------------------------
 
 The |ISE| implementation works only with the :ref:`CRACEN driver <crypto_drivers_cracen>`.
-The driver is used indirectly for cryptographic operations, which means that:
-
-* The |ISE| does not follow the :ref:`crypto_drivers_feature_selection` mechanism.
-  It instead implements a fixed set of features and algorithms whose configurations cannot be changed by the user.
-
-* The |ISE| does not support the :ref:`software fallback <crypto_drivers_software_fallback>` mechanism to :ref:`nrf_oberon <crypto_drivers_oberon>`.
-
-See :ref:`ug_crypto_supported_features` for the list of supported Oberon PSA Crypto directives in the |ISE|.
+It does not support the :ref:`software fallback <crypto_drivers_software_fallback>` mechanism to :ref:`nrf_oberon <crypto_drivers_oberon>`.

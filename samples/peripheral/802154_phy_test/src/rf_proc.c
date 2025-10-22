@@ -480,11 +480,7 @@ bool ptt_rf_send_packet_ext(const uint8_t *pkt, ptt_pkt_len_t len, bool cca)
 			.frame_props = NRF_802154_TRANSMITTED_FRAME_PROPS_DEFAULT_INIT,
 			.cca = cca
 		};
-#ifdef NRF_802154_TX_FUNCTIONS_RETURN_ERROR_CODE
-		ret = nrf_802154_transmit_raw(temp_tx_pkt, &metadata) == NRF_802154_TX_ERROR_NONE;
-#else
 		ret = nrf_802154_transmit_raw(temp_tx_pkt, &metadata);
-#endif
 	}
 
 	return ret;

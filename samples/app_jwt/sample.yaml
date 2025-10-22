@@ -11,7 +11,7 @@ common:
     - ci_samples_app_jwt
 
 tests:
-  sample.app_jwt.logging.uart:
+  application.jwt.logging.uart:
     sysbuild: true
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
@@ -19,7 +19,12 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - EXTRA_CONF_FILE=uart_logging.conf
+      - SB_CONFIG_SUIT_ENVELOPE=y
     extra_configs:
       - CONFIG_LOG_BUFFER_SIZE=4098
+      - CONFIG_SUIT=y
       - CONFIG_ZCBOR=y
       - CONFIG_ZCBOR_CANONICAL=y
+      - CONFIG_SUIT_ENVELOPE_TARGET="application"
+      - CONFIG_SUIT_ENVELOPE_TEMPLATE_FILENAME="app_envelope.yaml.jinja2"
+      - CONFIG_SUIT_LOCAL_ENVELOPE_GENERATE=y

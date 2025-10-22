@@ -10,8 +10,6 @@ set(ZEPHYR_AZURE_SDK_FOR_C_CMAKE_DIR ${CMAKE_CURRENT_LIST_DIR}/azure-sdk-for-c)
 set(ZEPHYR_OPENTHREAD_CMAKE_DIR ${CMAKE_CURRENT_LIST_DIR}/openthread)
 set(ZEPHYR_OPENTHREAD_KCONFIG ${CMAKE_CURRENT_LIST_DIR}/openthread/Kconfig)
 set(ZEPHYR_HAL_NORDIC_CMAKE_DIR ${CMAKE_CURRENT_LIST_DIR}/hal_nordic)
-set(ZEPHYR_NRF_KCONFIG ${CMAKE_CURRENT_LIST_DIR}/../Kconfig.nrf)
-set(SYSBUILD_NRF_KCONFIG ${CMAKE_CURRENT_LIST_DIR}/../sysbuild/Kconfig.sysbuild)
 
 # Those are modules with Kconfig tree's inside the module repo but where
 # nRF Connect SDK extend those trees.

@@ -33,14 +33,6 @@ LED states
 
 .. doxygengroup:: nrf_desktop_led_state
 
-Motion events
-*************
-
-| Header file: :file:`applications/nrf_desktop/src/events/motion_event.h`
-| Source file: :file:`applications/nrf_desktop/src/events/motion_event.c`
-
-.. doxygengroup:: nrf_desktop_motion_event
-
 USB events
 **********
 

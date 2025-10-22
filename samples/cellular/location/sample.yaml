@@ -84,7 +84,6 @@ tests:
     extra_configs:
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
       - CONFIG_LOG_BUFFER_SIZE=2048
-      - CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID=y
     extra_args: location_SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
       - nrf9151dk/nrf9151/ns

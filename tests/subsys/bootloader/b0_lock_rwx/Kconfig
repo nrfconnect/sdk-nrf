@@ -18,9 +18,6 @@ config TEST_B0_LOCK_REGION
 	help
 	  Region 3 is used for NSIB protection. Other one for MCUBoot.
 
-config TEST_B0_LOCK_USE_S1
-	bool "MCUBoot is running from S1 image for the test"
-
 menu "Zephyr"
 source "Kconfig.zephyr"
 endmenu

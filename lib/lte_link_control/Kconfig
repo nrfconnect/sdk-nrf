@@ -20,7 +20,7 @@ config LTE_LC_CONN_EVAL_MODULE
 	bool "Connection Parameters Evaluation module"
 
 config LTE_LC_EDRX_MODULE
-	bool "Extended Discontinuous Reception (eDRX) module"
+	bool "Extended Discountinuous Reception (eDRX) module"
 
 config LTE_LC_NEIGHBOR_CELL_MEAS_MODULE
 	bool "Neighboring Cell Measurements module"
@@ -40,11 +40,8 @@ config LTE_LC_MODEM_SLEEP_MODULE
 config LTE_LC_TAU_PRE_WARNING_MODULE
 	bool "Tracking Area Update (TAU) module"
 
-config LTE_LC_ENV_EVAL_MODULE
-	bool "Environment Evaluation module"
-
 menuconfig LTE_LC_DNS_FALLBACK_MODULE
-	bool "DNS Fallback module"
+	bool "Fallback DNS module"
 	default y
 	help
 	  The device might or might not receive a DNS server address by the network during a PDN connection.
@@ -70,12 +67,12 @@ endif # LTE_LC_DNS_FALLBACK_MODULE
 # End of modules Kconfig options
 
 config LTE_SHELL
-	bool "LTE shell commands"
+	bool "Enable LTE shell commands"
 	default y
 	depends on SHELL
 
 config LTE_LOCK_BANDS
-	bool "LTE band lock"
+	bool "Enable LTE band lock"
 	help
 	  Enable LTE band lock. Bands not enabled in LTE_LOCK_BAND_MASK
 	  are not used when this setting is enabled.
@@ -98,7 +95,7 @@ config LTE_PLMN_SELECTION_OPTIMIZATION
 	  Refer to the AT%FEACONF command in the AT command manual for more details.
 
 config LTE_LOCK_PLMN
-	bool "LTE PLMN lock"
+	bool "Enable LTE PLMN lock"
 	help
 	  Enable PLMN lock for network selection.
 
@@ -120,7 +117,7 @@ config LTE_UNLOCK_PLMN
 if LTE_LC_PSM_MODULE
 
 config LTE_PSM_REQ
-	bool "PSM request"
+	bool "Enable PSM request"
 	help
 	  Enable request for use of PSM using AT+CPSMS.
 	  If this option is set the library will automatically request PSM when
@@ -178,7 +175,7 @@ config LTE_PSM_REQ_RAT_SECONDS
 	  non-negative value can be given.
 
 config LTE_PROPRIETARY_PSM_REQ
-	bool "Proprietary PSM"
+	bool "Enable use of proprietary PSM"
 	help
 	  Enable use of proprietary PSM using AT%FEACONF. To use this feature, also PSM request
 	  must be enabled using CONFIG_LTE_PSM_REQ or lte_lc_psm_req().
@@ -189,7 +186,7 @@ endif # LTE_LC_PSM_MODULE
 if LTE_LC_EDRX_MODULE
 
 config LTE_EDRX_REQ
-	bool "eDRX request"
+	bool "Enable eDRX request"
 	help
 	  Enable request for use of eDRX using AT+CEDRXS.
 	  For reference, see 3GPP 27.007 Ch. 7.40.
@@ -444,12 +441,6 @@ config LTE_LC_MODEM_SLEEP_NOTIFICATIONS_THRESHOLD_MS
 	  that triggers a notification.
 
 endif # LTE_LC_MODEM_SLEEP_MODULE
-
-config LTE_LC_ENV_EVAL_MAX_PLMN_COUNT
-	int "Maximum number of PLMNs to evaluate"
-	default 3
-	help
-	  Maximum number of PLMNs that can be evaluated with lte_lc_env_eval().
 
 config LTE_LC_TRACE
 	bool "LTE link control tracing"

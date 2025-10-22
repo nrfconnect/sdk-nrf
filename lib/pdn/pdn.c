@@ -83,9 +83,6 @@ AT_MONITOR(pdn_cgev, "+CGEV", on_cgev);
 AT_MONITOR(pdn_cnec_esm, "+CNEC_ESM", on_cnec_esm);
 #endif
 
-/* Expect enough added heap for the default PDN context */
-BUILD_ASSERT(sizeof(struct pdn) <= CONFIG_HEAP_MEM_POOL_ADD_SIZE_PDN);
-
 static struct pdn *pdn_find(int cid)
 {
 	struct pdn *pdn;

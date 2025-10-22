@@ -4,14 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "common.h"
-
-#if DT_NODE_HAS_STATUS(DT_ALIAS(pwm_led0), okay)
-#include <zephyr/drivers/pwm.h>
-
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(pwm, LOG_LEVEL_INF);
 
+#include <zephyr/drivers/pwm.h>
+#include "common.h"
 
 static const struct pwm_dt_spec pwm_led0 = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led0));
 
@@ -125,7 +122,3 @@ static void pwm_thread(void *arg1, void *arg2, void *arg3)
 
 K_THREAD_DEFINE(thread_pwm_id, PWM_THREAD_STACKSIZE, pwm_thread, NULL, NULL, NULL,
 	K_PRIO_PREEMPT(PWM_THREAD_PRIORITY), 0, 0);
-
-#else
-#pragma message("PWM thread skipped due to missing node in the DTS")
-#endif

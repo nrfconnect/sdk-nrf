@@ -76,7 +76,8 @@ Zephyr and the |NCS| provide support for developing networking applications with
      - nRF7002 EB
      - PCA20053
      - ``nrf54h20dk/nrf54h20/cpuapp``
-     - :ref:`Getting started with the nRF54H20 DK <ug_nrf54h20_gs>`
+     - | `nRF54H20 Objective Product Specification 0.3.1`_
+       | :ref:`Getting started <ug_nrf54h20_gs>`
    * - :zephyr:board:`nrf54l15dk`
      - nRF7002 EB
      - PCA20053

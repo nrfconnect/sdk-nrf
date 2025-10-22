@@ -166,9 +166,6 @@ int main(void)
 #endif
 	LOG_INF("===================================================================");
 
-	/* Arbitrary sleep to fix CI synchronization. */
-	k_msleep(100);
-
 	ret = spi_is_ready_dt(&spim_spec);
 	if (!ret) {
 		LOG_ERR("Error: SPI device is not ready");

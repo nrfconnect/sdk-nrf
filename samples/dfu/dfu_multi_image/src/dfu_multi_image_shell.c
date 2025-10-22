@@ -13,22 +13,16 @@
 #include <dfu/dfu_multi_image.h>
 #include <zephyr/dfu/mcuboot.h>
 
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
 #include <pm_config.h>
-#endif
 
 #include "dfu_multi_image_sample_common.h"
 
 #ifdef CONFIG_PARTITION_MANAGER_ENABLED
 #define DFU_MULTI_IMAGE_HELPER_ADDRESS PM_DFU_MULTI_IMAGE_HELPER_ADDRESS
-#define DFU_MULTI_IMAGE_HELPER_SIZE PM_DFU_MULTI_IMAGE_HELPER_SIZE
+#define DFU_TARGET_HELPER_SIZE PM_DFU_MULTI_IMAGE_HELPER_SIZE
 #else
-#define DFU_MULTI_IMAGE_HELPER_CONTAINER_ADDRESS \
-	DT_REG_ADDR(DT_GPARENT(DT_ALIAS(dfu_multi_image_helper)))
-#define DFU_MULTI_IMAGE_HELPER_OFFSET DT_REG_ADDR(DT_ALIAS(dfu_multi_image_helper))
-#define DFU_MULTI_IMAGE_HELPER_ADDRESS ((uint32_t) DFU_MULTI_IMAGE_HELPER_CONTAINER_ADDRESS + \
-				   DFU_MULTI_IMAGE_HELPER_OFFSET)
-#define DFU_MULTI_IMAGE_HELPER_SIZE DT_REG_SIZE(DT_ALIAS(dfu_multi_image_helper))
+#define DFU_MULTI_IMAGE_HELPER_ADDRESS DT_REG_ADDR(DT_ALIAS(dfu_multi_image_helper))
+#define DFU_TARGET_HELPER_SIZE DT_REG_SIZE(DT_ALIAS(dfu_multi_image_helper))
 #endif
 
 static int cmd_dfu_multi_image_write(const struct shell *shell, size_t argc, char **argv)
@@ -73,9 +67,6 @@ static int cmd_dfu_multi_image_write(const struct shell *shell, size_t argc, cha
 	if (ret < 0) {
 		shell_error(shell, "DFU multi image write failed: %d", ret);
 		return ret;
-	} else {
-		shell_print(shell, "Successfully wrote %d bytes at offset %d", chunk_size,
-			    write_offset);
 	}
 
 	return 0;
@@ -195,33 +186,6 @@ static int cmd_dfu_multi_image_full_update(const struct shell *shell, size_t arg
 	return 0;
 }
 
-#ifndef CONFIG_MCUBOOT_IMGTOOL_OVERWRITE_ONLY
-static int cmd_dfu_multi_image_mcuboot_confirm(const struct shell *shell, size_t argc, char **argv)
-{
-	int ret = 0;
-	int img_num = -1;
-
-	if (argc != 2) {
-		shell_error(shell, "Usage: dfu_multi_image mcuboot_confirm <img_num>");
-		return -EINVAL;
-	}
-
-	img_num = shell_strtol(argv[1], 10, &ret);
-	if (ret != 0) {
-		shell_error(shell, "Invalid <img_num> argument");
-		return -EINVAL;
-	}
-	ret = boot_write_img_confirmed_multi(img_num);
-
-	if (ret < 0) {
-		shell_error(shell, "Failed to confirm current MCUBOOT image: %d", ret);
-		return ret;
-	}
-
-	return 0;
-}
-#endif
-
 /* Define the dfu_target subcommand group */
 SHELL_STATIC_SUBCMD_SET_CREATE(dfu_multi_image_cmds,
 	SHELL_CMD(write, NULL,
@@ -234,14 +198,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(dfu_multi_image_cmds,
 	SHELL_CMD(schedule_update, NULL, "Schedule update for the images in the uploaded package.",
 		  cmd_dfu_multi_image_schedule_update),
 	SHELL_CMD(reset, NULL, "Reset the dfu_multi_image state as well as all the underlying "
-		  "dfu_target states", cmd_dfu_multi_image_reset),
+			     "dfu_target states", cmd_dfu_multi_image_reset),
 	SHELL_CMD(full_update, NULL,
-		  "Perform all the steps to fully update the firmware from the NVM buffer",
-		  cmd_dfu_multi_image_full_update),
-#ifndef CONFIG_MCUBOOT_IMGTOOL_OVERWRITE_ONLY
-	SHELL_CMD(mcuboot_confirm, NULL, "Confirm one of the current MCUBOOT images",
-		  cmd_dfu_multi_image_mcuboot_confirm),
-#endif
+			  "Perform all the steps to fully update the firmware from the NVM buffer",
+			  cmd_dfu_multi_image_full_update),
 	SHELL_SUBCMD_SET_END
 );
 

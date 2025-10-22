@@ -16,12 +16,12 @@ choice WIFI_NRF70_OPER_MODES
 	  Select the operating mode of the nRF700x driver
 
 config WIFI_NRF70_SYSTEM_MODE
-	bool "nRF70 system mode"
+	bool "Enable nRF70 system mode"
 	help
 	  Select this option to enable system mode of the nRF700x driver
 
 config WIFI_NRF70_SCAN_ONLY
-	bool "nRF70 scan only mode"
+	bool "Enable nRF70 scan only mode"
 	help
 	  Select this option to enable scan only mode of the nRF700x driver
 
@@ -36,7 +36,7 @@ endchoice
 if WIFI_NRF70_SYSTEM_MODE
 
 config WIFI_NRF70_SYSTEM_WITH_RAW_MODES
-	bool "nRF70 system with raw modes"
+	bool "Enable nRF70 system with raw modes"
 	help
 	  Select this option to enable nRF700x driver with raw modes
 endif

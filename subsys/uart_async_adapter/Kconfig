@@ -5,7 +5,7 @@
 #
 
 menuconfig UART_ASYNC_ADAPTER
-	bool "UART async adapter [EXPERIMENTAL]"
+	bool "Enable UART async adapter [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	select SERIAL_SUPPORT_ASYNC
 	depends on SERIAL_SUPPORT_INTERRUPT

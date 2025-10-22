@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+service_name = ENC_FW
+service_default_enabled = n
+service_id = 0x6A
+service_version = 1
+service_buffer_size = 64
+service_name_str = Encrypted firmware
+rsource "../Kconfig.template.service"

@@ -7,7 +7,7 @@
 menu "Event options"
 
 config CAF_PM_EVENTS
-	bool "Power management events"
+	bool "Enable power management events"
 	help
 	  Enable support for power management events.
 	  If this config is enabled, predefined modules can create power management events.
@@ -31,7 +31,7 @@ config CAF_INIT_LOG_WAKE_UP_EVENTS
 	default y
 
 config CAF_BLE_COMMON_EVENTS
-	bool "BLE common events"
+	bool "Enable BLE common events"
 	help
 	  Enable support for BLE common events.
 
@@ -66,7 +66,7 @@ config CAF_INIT_LOG_BLE_PEER_CONN_PARAMS_EVENTS
 	default y
 
 config CAF_BLE_SMP_TRANSFER_EVENTS
-	bool "BLE SMP events"
+	bool "Enable BLE SMP events"
 	help
 	  Enable support for BLE SMP transfer events.
 
@@ -77,7 +77,7 @@ config CAF_INIT_LOG_BLE_SMP_TRANSFER_EVENTS
 	default y
 
 config CAF_BUTTON_EVENTS
-	bool "Button events"
+	bool "Enable button events"
 	help
 	  Enable support for button events.
 
@@ -88,7 +88,7 @@ config CAF_INIT_LOG_BUTTON_EVENTS
 	default y
 
 config CAF_CLICK_EVENTS
-	bool "Click events"
+	bool "Enable click events"
 	help
 	  Enable support for click events.
 
@@ -99,7 +99,7 @@ config CAF_INIT_LOG_CLICK_EVENTS
 	default y
 
 config CAF_LED_EVENTS
-	bool "LED events"
+	bool "Enable LED events"
 	help
 	  Enable support for LED event.
 
@@ -121,7 +121,7 @@ config CAF_INIT_LOG_LED_READY_EVENTS
 	  effect.
 
 config CAF_NET_STATE_EVENTS
-	bool "Network state events"
+	bool "Enable network state events"
 	help
 	  Enable support for network state events.
 

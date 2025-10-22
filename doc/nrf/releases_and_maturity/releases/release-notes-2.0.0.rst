@@ -704,7 +704,7 @@ Libraries for networking
     * For cellular positioning responses, the type is now set based on the ``fulfilledWith`` response from the nRF Cloud.
     * nRF Cloud error codes are now parsed and set in the :c:struct:`nrf_cloud_rest_context` structure.
 
-* Download client library:
+* :ref:`lib_download_client` library:
 
   * Fixed an issue where downloads of COAP URIs would fail when they contained multiple path elements.
   * Added the :c:member:`set_native_tls` parameter in the configuration structure to configure native TLS support at runtime.

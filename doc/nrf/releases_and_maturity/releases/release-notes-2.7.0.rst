@@ -845,7 +845,7 @@ Networking samples
 ------------------
 
 * Updated the networking samples to support import of certificates in valid PEM formats.
-* Removed QEMU x86 emulation support and added support for the :zephyr:board:`native simulator <native_sim>` board.
+* Removed QEMU x86 emulation support and added support for the :ref:`native simulator <zephyr:native_sim>` board.
 
 * :ref:`mqtt_sample` sample:
 
@@ -1184,7 +1184,7 @@ Libraries for networking
 
   * Fixed a NULL pointer issue that could occur when there were some valid predictions in flash but not the one required at the current time.
 
-* Download client library:
+* :ref:`lib_download_client` library:
 
   * Removed the deprecated ``download_client_connect`` function.
 
@@ -1353,7 +1353,7 @@ Documentation
   * The :ref:`ug_wifi_overview` page by separating the information about Wi-Fi certification into its own :ref:`ug_wifi_certification` page under :ref:`ug_wifi`.
   * The :ref:`ug_bt_mesh_configuring` page with an example of possible entries in the Settings NVS name cache.
   * The :ref:`lib_security` page to include all security-related libraries.
-  * The secure storage support table in the :ref:`secure_storage_in_ncs` page by adding nRF52833 and replacing nRF9160 with nRF91 Series.
+  * The trusted storage support table in the :ref:`trusted_storage_in_ncs` section by adding nRF52833 and replacing nRF9160 with nRF91 Series.
   * The :ref:`ug_nrf52_developing` and :ref:`ug_nrf5340` by adding notes about how to perform FOTA updates with samples using random HCI identities, some specifically relevant when using the iOS app.
   * Improved the :ref:`ug_radio_fem` user guide to be up-to-date and more informative.
   * The :ref:`bt_fast_pair_readme` page to document support for the FMDN extension and aligned the page with the sysbuild migration.

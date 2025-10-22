@@ -101,7 +101,6 @@ This application type is suitable for the following development cases:
 * You want to develop a project that involves more than one board target, for example using a mesh networking protocol like :ref:`ug_matter` or :ref:`ug_bt_mesh`.
 * You want to run a big project that lets you develop most features without having to patch the |NCS| tree, for example with out-of-tree boards, drivers, or SoCs.
 * You want to use out-of-tree applications from the `nRF Connect SDK Add-ons`_ index.
-* You want to set up Continuous Integration (CI) for your application and explicitly define all dependencies (such as the |NCS| version) in the application's west manifest file.
 
 For more information about applications placed in workspace in the |NCS|, see the :ref:`workflow 4 on the development model page <dm_workflow_4>`.
 
@@ -149,9 +148,6 @@ Using |nRFVSC| is the recommended method.
 
 Creating application in |nRFVSC|
 ================================
-
-.. note::
-   If you prefer, you can `start VS Code walkthrough`_ and create applications and build configurations from there.
 
 Use the following steps depending on the application placement:
 

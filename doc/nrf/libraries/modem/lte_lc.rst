@@ -147,7 +147,7 @@ Tracking Area Update (TAU) Pre-warning:
   * :c:enumerator:`LTE_LC_EVT_TAU_PRE_WARNING` events
   * :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS`
 
-DNS Fallback:
+DNS fallback:
   The :kconfig:option:`CONFIG_LTE_LC_DNS_FALLBACK_MODULE` Kconfig option controls the use of a fallback DNS server address.
 
   The device might or might not receive a DNS server address by the network during a PDN connection.
@@ -157,13 +157,6 @@ DNS Fallback:
   The :kconfig:option:`CONFIG_LTE_LC_DNS_FALLBACK_MODULE` Kconfig option is enabled by default.
   If the application has configured a DNS server address in Zephyr's native networking stack using the :kconfig:option:`CONFIG_DNS_SERVER1` Kconfig option, the same server is set as the fallback address for DNS queries offloaded to the nRF91 Series modem.
   Otherwise, the :kconfig:option:`CONFIG_LTE_LC_DNS_FALLBACK_ADDRESS` Kconfig option controls the fallback DNS server address that is set to Cloudflare's DNS server: 1.1.1.1 by default.
-
-Environment Evaluation:
-  Use the :kconfig:option:`CONFIG_LTE_LC_ENV_EVAL_MODULE` Kconfig option to enable the following functionalities related to Environment Evaluation:
-
-  * :c:enumerator:`LTE_LC_EVT_ENV_EVAL_RESULT` events
-  * :c:func:`lte_lc_env_eval`
-  * :c:func:`lte_lc_env_eval_cancel`
 
 For more information on the callback events received in :c:type:`lte_lc_evt_handler_t` and data associated with each event, see the documentation on :c:struct:`lte_lc_evt`.
 For more information on the functions and data associated with each, refer to the API documentation.
@@ -260,20 +253,6 @@ To enable modem sleep and TAU pre-warning notifications, use the following optio
 * :kconfig:option:`CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS`
 
 For additional configurations related to these features, see the API documentation.
-
-Environment evaluation
-======================
-
-Modem firmware mfw_nrf91x1 v2.0.3 and higher, and mfw_nrf9151-ntn support environment evaluation.
-Environment evaluation allows the application to evaluate available PLMNs and select the best PLMN to use before connecting to the network.
-This is useful especially in cases where the device has multiple SIMs or SIM profiles to select from.
-
-Environment evaluation can only be performed in *receive only* functional mode.
-During the environment evaluation, the device searches for the best cell for each PLMN.
-
-The :c:func:`lte_lc_env_eval` function starts the environment evaluation for the given PLMNs.
-When the environment evaluation is complete, an :c:enumerator:`LTE_LC_EVT_ENV_EVAL_RESULT` event with the evaluation results is received.
-For each found PLMN, the :c:struct:`lte_lc_conn_eval_params` structure is populated with the evaluation results.
 
 Limitations
 ***********

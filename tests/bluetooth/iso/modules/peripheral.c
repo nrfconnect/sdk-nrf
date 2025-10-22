@@ -12,14 +12,9 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(peripheral, CONFIG_ACL_TEST_LOG_LEVEL);
 
-#define LE_AUDIO_EXTENDED_ADV_CONN_NAME                                       \
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_CONN,           \
+#define LE_AUDIO_EXTENDED_ADV_CONN_NAME                                                            \
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_CONN | BT_LE_ADV_OPT_USE_NAME,       \
 			0x100, 0x200, NULL)
-
-/* Set the advertising data. */
-struct bt_data adv_data[] = {
-	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, sizeof(CONFIG_BT_DEVICE_NAME) - 1)
-};
 
 static struct k_work adv_work;
 static struct bt_conn *default_conn;
@@ -145,13 +140,6 @@ static int peripheral_init(void)
 	ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, NULL, &adv_ext);
 	if (ret) {
 		LOG_ERR("Failed to create advertising set, %d", ret);
-		return ret;
-	}
-
-	/* Set the advertising data */
-	ret = bt_le_ext_adv_set_data(adv_ext, adv_data, ARRAY_SIZE(adv_data), NULL, 0);
-	if (ret) {
-		LOG_ERR("Failed to set advertising data. Err: %d", ret);
 		return ret;
 	}
 

@@ -83,9 +83,9 @@ void link_shell_print_modem_sleep_notif(const struct lte_lc_evt *const evt)
 	}
 }
 
-void link_shell_print_modem_domain_event(struct lte_lc_modem_evt modem_evt)
+void link_shell_print_modem_domain_event(enum lte_lc_modem_evt modem_evt)
 {
-	switch (modem_evt.type) {
+	switch (modem_evt) {
 	case LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE:
 		mosh_print("Modem domain event: Light search done");
 		break;
@@ -104,20 +104,17 @@ void link_shell_print_modem_domain_event(struct lte_lc_modem_evt modem_evt)
 	case LTE_LC_MODEM_EVT_NO_IMEI:
 		mosh_print("Modem domain event: No IMEI");
 		break;
-	case LTE_LC_MODEM_EVT_CE_LEVEL:
-		mosh_print("Modem domain event: CE-level %d", modem_evt.ce_level);
+	case LTE_LC_MODEM_EVT_CE_LEVEL_0:
+		mosh_print("Modem domain event: CE-level 0");
 		break;
-	case LTE_LC_MODEM_EVT_RF_CAL_NOT_DONE:
-		mosh_print("Modem domain event: RF calibration not done");
+	case LTE_LC_MODEM_EVT_CE_LEVEL_1:
+		mosh_print("Modem domain event: CE-level 1");
 		break;
-	case LTE_LC_MODEM_EVT_INVALID_BAND_CONF:
-		mosh_print("Modem domain event: Invalid band configuration %d %d %d",
-			   modem_evt.invalid_band_conf.status_ltem,
-			   modem_evt.invalid_band_conf.status_nbiot,
-			   modem_evt.invalid_band_conf.status_ntn_nbiot);
+	case LTE_LC_MODEM_EVT_CE_LEVEL_2:
+		mosh_print("Modem domain event: CE-level 2");
 		break;
-	case LTE_LC_MODEM_EVT_DETECTED_COUNTRY:
-		mosh_print("Modem domain event: Detected country %u", modem_evt.detected_country);
+	case LTE_LC_MODEM_EVT_CE_LEVEL_3:
+		mosh_print("Modem domain event: CE-level 3");
 		break;
 	}
 }
@@ -136,9 +133,6 @@ const char *link_shell_funmode_to_string(int funmode, char *out_str_buff)
 		{ LTE_LC_FUNC_MODE_DEACTIVATE_UICC, "UICC off" },
 		{ LTE_LC_FUNC_MODE_ACTIVATE_UICC, "UICC on" },
 		{ LTE_LC_FUNC_MODE_OFFLINE_UICC_ON, "flightmode but UICC on" },
-		{ LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG, "flightmode but keep registration" },
-		{ LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG_UICC_ON,
-		  "flightmode but keep registration and UICC on" },
 		{ LINK_FUNMODE_NONE, "unknown" },
 		{ -1, NULL }
 	};
@@ -226,23 +220,8 @@ void link_shell_print_reg_status(enum lte_lc_nw_reg_status reg_status)
 	case LTE_LC_NW_REG_UNKNOWN:
 		mosh_print("Network registration status: unknown");
 		break;
-	case LTE_LC_NW_REG_RX_ONLY_NOT_REGISTERED:
-		mosh_print("Network registration status: not registered (receive only)");
-		break;
-	case LTE_LC_NW_REG_RX_ONLY_SEARCHING:
-		mosh_print("Network registration status: searching (receive only)");
-		break;
-	case LTE_LC_NW_REG_RX_ONLY_REGISTRATION_DENIED:
-		mosh_print("Network registration status: registration denied (receive only)");
-		break;
-	case LTE_LC_NW_REG_RX_ONLY_UNKNOWN:
-		mosh_print("Network registration status: unknown (receive only)");
-		break;
 	case LTE_LC_NW_REG_UICC_FAIL:
 		mosh_print("Network registration status: UICC fail");
-		break;
-	case LTE_LC_NW_REG_NO_SUITABLE_CELL:
-		mosh_print("Network registration status: no suitable cell");
 		break;
 	case LTE_LC_NW_REG_REGISTERED_HOME:
 	case LTE_LC_NW_REG_REGISTERED_ROAMING:
@@ -251,15 +230,6 @@ void link_shell_print_reg_status(enum lte_lc_nw_reg_status reg_status)
 			reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
 			"Connected - home network" :
 			"Connected - roaming");
-		break;
-	case LTE_LC_NW_REG_RX_ONLY_REGISTERED_HOME:
-	case LTE_LC_NW_REG_RX_ONLY_REGISTERED_ROAMING:
-		mosh_print(
-			"Network registration status: %s",
-			reg_status == LTE_LC_NW_REG_RX_ONLY_REGISTERED_HOME ?
-			"Connected - home network (receive only)" :
-			"Connected - roaming (receive only)");
-		break;
 	default:
 		break;
 	}

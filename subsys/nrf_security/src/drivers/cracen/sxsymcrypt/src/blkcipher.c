@@ -81,8 +81,8 @@ static const struct sx_blkcipher_cmdma_cfg ba411xtscfg = {
 int sx_blkcipher_free(struct sxblkcipher *cipher_ctx)
 {
 	int sx_err = SX_OK;
-	if (cipher_ctx->key && cipher_ctx->key->clean_key) {
-		sx_err = cipher_ctx->key->clean_key(cipher_ctx->key->user_data);
+	if (cipher_ctx->key.clean_key) {
+		sx_err = cipher_ctx->key.clean_key(cipher_ctx->key.user_data);
 	}
 	sx_cmdma_release_hw(&cipher_ctx->dma);
 	return sx_err;
@@ -106,8 +106,8 @@ static int sx_blkcipher_hw_reserve(struct sxblkcipher *cipher_ctx)
 		goto exit;
 	}
 
-	if (cipher_ctx->key && cipher_ctx->key->prepare_key) {
-		err = cipher_ctx->key->prepare_key(cipher_ctx->key->user_data);
+	if (cipher_ctx->key.prepare_key) {
+		err = cipher_ctx->key.prepare_key(cipher_ctx->key.user_data);
 	}
 
 exit:
@@ -140,7 +140,7 @@ static int sx_blkcipher_create_aesxts(struct sxblkcipher *cipher_ctx, const stru
 		}
 	}
 
-	cipher_ctx->key = key1;
+	memcpy(&cipher_ctx->key, key1, sizeof(cipher_ctx->key));
 	err = sx_blkcipher_hw_reserve(cipher_ctx);
 	if (err != SX_OK) {
 		return err;
@@ -207,7 +207,7 @@ static int sx_blkcipher_create_aes_ba411(struct sxblkcipher *cipher_ctx, const s
 		}
 	}
 
-	cipher_ctx->key = key;
+	memcpy(&cipher_ctx->key, key, sizeof(cipher_ctx->key));
 	cipher_ctx->cfg = cfg;
 	cipher_ctx->textsz = 0;
 
@@ -324,9 +324,8 @@ int sx_blkcipher_resume_state(struct sxblkcipher *cipher_ctx)
 	cipher_ctx->dma.dmamem.cfg &= ~(cipher_ctx->cfg->ctxsave);
 	sx_cmdma_newcmd(&cipher_ctx->dma, cipher_ctx->descs, cipher_ctx->dma.dmamem.cfg,
 			cipher_ctx->cfg->dmatags->cfg);
-
-	if (cipher_ctx->key && KEYREF_IS_USR(cipher_ctx->key)) {
-		ADD_CFGDESC(cipher_ctx->dma, cipher_ctx->key->key, cipher_ctx->key->sz,
+	if (KEYREF_IS_USR(&cipher_ctx->key)) {
+		ADD_CFGDESC(cipher_ctx->dma, cipher_ctx->key.key, cipher_ctx->key.sz,
 			    cipher_ctx->cfg->dmatags->key);
 	}
 	/* Context will be transferred in the same place as the IV. However,
@@ -409,14 +408,7 @@ int sx_blkcipher_ecb_simple(uint8_t *key, size_t key_size, uint8_t *input, size_
 	int status = SX_ERR_HW_PROCESSING;
 
 	uint32_t cmd = CMDMA_BLKCIPHER_MODE_SET(BLKCIPHER_MODEID_ECB);
-	/* Both out_desc and in_descs are used after sx_hw_reserve which locks
-	 * the symmetric mutex, so it is safe to have them as static.
-	 */
-	static struct sxdesc out_desc;
-	static struct sxdesc in_descs[3];
-
-	/* This guards the static variables out_desc and in_descs */
-	sx_hw_reserve(NULL);
+	struct sxdesc in_descs[3] = {};
 
 	in_descs[0].addr = (char *)&cmd;
 	in_descs[0].sz = DMA_REALIGN | sizeof(cmd);
@@ -433,10 +425,14 @@ int sx_blkcipher_ecb_simple(uint8_t *key, size_t key_size, uint8_t *input, size_
 	in_descs[2].dmatag = DMATAG_LAST | ba411tags.data;
 	in_descs[2].next = (void *)1;
 
+	struct sxdesc out_desc = {};
+
 	out_desc.addr = output;
 	out_desc.sz = DMA_REALIGN | output_size;
 	out_desc.next = (void *)1;
 	out_desc.dmatag = DMATAG_LAST;
+
+	sx_hw_reserve(NULL);
 
 #if CONFIG_DCACHE
 	sys_cache_data_flush_range(in_descs, sizeof(in_descs));

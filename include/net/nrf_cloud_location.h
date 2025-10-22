@@ -91,9 +91,6 @@ struct nrf_cloud_location_result {
 
 	/** Size of provided buffer */
 	size_t anchor_buf_sz;
-
-	/** Optional timestamp */
-	int64_t timestamp;
 };
 
 /** @brief Location request config */

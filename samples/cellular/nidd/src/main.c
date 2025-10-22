@@ -38,7 +38,7 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		       evt->cell.id, evt->cell.tac);
 		break;
 	case LTE_LC_EVT_MODEM_EVENT:
-		printk("Modem event: %d\n", evt->modem_evt.type);
+		printk("Modem event: %d\n", evt->modem_evt);
 		break;
 	default:
 		break;

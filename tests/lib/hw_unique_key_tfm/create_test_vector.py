@@ -4,8 +4,8 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-import cryptography.hazmat.primitives.ciphers.algorithms as alg
 import cryptography.hazmat.primitives.cmac as cmac
+import cryptography.hazmat.primitives.ciphers.algorithms as alg
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 

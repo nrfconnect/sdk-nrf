@@ -240,7 +240,7 @@ config BT_FAST_PAIR_FMDN_CLOCK_NVM_UPDATE_RETRY_TIME
 endif # BT_FAST_PAIR_FMDN_CLOCK
 
 config BT_FAST_PAIR_FMDN_DULT
-	bool "Detecting Unwanted Location Trackers (DULT) support in FMDN"
+	bool "Enable Detecting Unwanted Location Trackers (DULT) support in FMDN"
 	default y
 	select DULT
 	help
@@ -334,7 +334,7 @@ config BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_REVISION
 endmenu
 
 config BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR
-	bool "DULT Motion detector support in FMDN"
+	bool "Enable DULT Motion detector support in FMDN"
 	select DULT_MOTION_DETECTOR
 	select BT_FAST_PAIR_FMDN_DULT_CAPABILITY_MOTION_DETECTOR_UT
 	help

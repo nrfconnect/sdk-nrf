@@ -21,15 +21,15 @@ target_sources(app PRIVATE ${app_sources})
 if (NOT CONFIG_NRF_CLOUD_FOTA)
 	target_sources(app
 		PRIVATE
-		${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/common/src/nrf_cloud_fota_common.c
+		${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/src/nrf_cloud_fota_common.c
 	)
 endif()
 
 target_include_directories(app
 	PRIVATE
 	src
-	${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/common/include
-	${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/common/src
+	${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/include
+	${NRF_SDK_DIR}/subsys/net/lib/nrf_cloud/src
 	${ZEPHYR_BASE}/subsys/testsuite/include
 )
 

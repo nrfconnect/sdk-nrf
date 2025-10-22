@@ -18,15 +18,14 @@
 
 #include <zephyr/kernel.h>
 
-#if (CONFIG_AUDIO_SOURCE_USB && !CONFIG_AUDIO_SAMPLE_RATE_48000_HZ &&                              \
-	MAX(CONFIG_AUDIO_INPUT_CHANNELS, CONFIG_AUDIO_OUTPUT_CHANNELS) != 2)
-/* Only 48kHz stereo is supported when using USB */
-#error USB only supports 48kHz stereo
+#if (CONFIG_AUDIO_SOURCE_USB && !CONFIG_AUDIO_SAMPLE_RATE_48000_HZ)
+/* Only 48kHz is supported when using USB */
+#error USB only supports 48kHz
 #endif /* (CONFIG_AUDIO_SOURCE_USB && !CONFIG_AUDIO_SAMPLE_RATE_48000_HZ) */
 
-#define USB_BLOCK_SIZE_MULTI_CHAN                                                                  \
-	(((CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS) / 1000) *                  \
-	 MAX(CONFIG_AUDIO_INPUT_CHANNELS, CONFIG_AUDIO_OUTPUT_CHANNELS))
+/** Calculate USB block size for stereo audio in bytes. */
+#define USB_BLOCK_SIZE_STEREO                                                                      \
+	(((CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS) / 1000) * 2)
 
 /**
  * @brief Set pointers to the queues to be used by the USB module and start sending/receiving data.

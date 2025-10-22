@@ -13,7 +13,7 @@ The |NCS| provides support for writing tests using Unity and CMock.
 Support for CMock is integrated into Unity.
 
 CMake automatically generates the required test runner file and the mock files.
-The test can be executed on the :zephyr:board:`native_sim` board.
+The test can be executed on the :ref:`zephyr:native_sim` board.
 For more information, see :ref:`running_unit_tests`.
 
 Setting up a unit test

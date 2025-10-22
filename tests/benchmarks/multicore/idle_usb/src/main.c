@@ -17,6 +17,9 @@
 #include <zephyr/usb/usbd.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
+
+#include <nrfs_usb.h>
+
 #include <sample_usbd.h>
 
 LOG_MODULE_REGISTER(idle_usb, LOG_LEVEL_INF);
@@ -226,7 +229,15 @@ int main(void)
 	uart_rx_disable(uart_dev);
 	LOG_INF("Put UART into suspend request response: %d", pm_device_runtime_put(uart_dev));
 	usbd_disable(sample_usbd);
-	usbd_shutdown(sample_usbd);
+	k_msleep(100);
+
+	/* Use NRFS USB disable to switch off USB VREG and disable USB HSPLL.
+	 * This is sort of a hack, but without external managed USB hub
+	 * it is not possible to disable USB power
+	 */
+	ret = 1;
+	LOG_INF("NRFS USB disable request response: %d", nrfs_usb_disable_request((void *)ret));
+	k_msleep(100);
 
 	LOG_INF("Good night");
 	gpio_pin_set_dt(&led, 0);

@@ -1,10 +1,6 @@
 sample:
   description: Matter Lock example
   name: Matter Lock
-common:
-  tags:
-    - sysbuild
-    - ci_samples_matter
 tests:
   sample.matter.lock.debug:
     sysbuild: true
@@ -25,6 +21,9 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.lock.release:
     sysbuild: true
     build_only: true
@@ -44,6 +43,9 @@ tests:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.lock.smp_dfu:
     sysbuild: true
     build_only: true
@@ -61,6 +63,9 @@ tests:
       - nrf7002dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp/nrf7001
       - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.lock.no_dfu.no_fd:
     sysbuild: true
     build_only: true
@@ -69,6 +74,9 @@ tests:
     integration_platforms:
       - nrf21540dk/nrf52840
     platform_allow: nrf21540dk/nrf52840
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.lock.thread_wifi_switched.smp_dfu:
     sysbuild: true
     build_only: true
@@ -83,6 +91,9 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.lock.nus:
     sysbuild: true
     build_only: true
@@ -97,6 +108,9 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.lock.schedules:
     sysbuild: true
     build_only: true
@@ -106,6 +120,9 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.lock.release.power_consumption:
     sysbuild: true
     build_only: true
@@ -124,3 +141,6 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter

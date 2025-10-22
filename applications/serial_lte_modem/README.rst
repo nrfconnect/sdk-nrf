@@ -3,12 +3,6 @@
 Serial LTE modem
 ################
 
-.. note::
-
-   The Serial LTE Modem application will be removed before the next |NCS| release.
-   It will be replaced by the Serial Modem, which is an add-on released separately from the `serial-modem <ncs-serial-modem_>`_ repository.
-   The Serial LTE Modem application has been copied as the base for the add-on repository.
-
 The Serial LTE Modem (SLM) application can be used to emulate a stand-alone LTE modem on an nRF91 Series device.
 The application accepts both the modem-specific AT commands and proprietary AT commands.
 The AT commands are documented in the following guides:

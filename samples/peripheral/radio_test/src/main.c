@@ -7,7 +7,6 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
-#include <zephyr/pm/device_runtime.h>
 #if defined(NRF54L15_XXAA)
 #include <hal/nrf_clock.h>
 #endif /* defined(NRF54L15_XXAA) */
@@ -165,27 +164,6 @@ BUILD_ASSERT(false, "No Clock Control driver");
 int main(void)
 {
 	printk("Starting Radio Test sample\n");
-
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
-	const struct device *console_uart = DEVICE_DT_GET_OR_NULL(DT_CHOSEN(zephyr_console));
-	const struct device *shell_uart = DEVICE_DT_GET_OR_NULL(DT_CHOSEN(zephyr_shell_uart));
-
-	if (console_uart != NULL) {
-		int ret = pm_device_runtime_get(console_uart);
-
-		if (ret < 0) {
-			printk("Failed to get console UART runtime PM: %d\n", ret);
-		}
-	}
-
-	if (shell_uart != NULL && shell_uart != console_uart) {
-		int ret = pm_device_runtime_get(shell_uart);
-
-		if (ret < 0) {
-			printk("Failed to get shell UART runtime PM: %d\n", ret);
-		}
-	}
-#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
 
 	clock_init();
 

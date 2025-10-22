@@ -142,12 +142,6 @@ static bool report_send(struct report_state *rs,
 	if (!provider && rs) {
 		provider = rs->provider;
 	}
-
-	if (!provider->api) {
-		LOG_WRN("Provider %p not yet ready", (void *)provider);
-		return report_sent;
-	}
-
 	if (!rs || !provider) {
 		LOG_WRN("No link between report state and provider");
 		return report_sent;
@@ -198,10 +192,7 @@ static bool report_send(struct report_state *rs,
 
 static void link_provider_to_rs(struct provider *provider, struct report_state *rs)
 {
-	if (!provider->api) {
-		LOG_WRN("Provider %p not yet ready", (void *)provider);
-		return;
-	}
+	__ASSERT_NO_MSG(provider->api);
 
 	if (provider->linked_rs == rs) {
 		/* Already linked. */
@@ -395,7 +386,7 @@ static void disconnect(const void *subscriber_id, uint8_t report_id)
 
 	rs->provider = NULL;
 
-	__ASSERT_NO_MSG(!provider->api || provider->linked_rs);
+	__ASSERT_NO_MSG(provider->linked_rs);
 	if (provider->linked_rs == rs) {
 		__ASSERT_NO_MSG(subscriber == state.active_subscriber);
 		link_provider_to_rs(provider, NULL);
@@ -413,6 +404,7 @@ static void link_providers(struct subscriber *subscriber)
 		struct report_state *rs = &subscriber->state[i];
 
 		if (rs->provider) {
+			__ASSERT_NO_MSG(rs->provider->linked_rs == NULL);
 			link_provider_to_rs(rs->provider, rs);
 		}
 	}
@@ -424,7 +416,7 @@ static void unlink_providers(struct subscriber *subscriber)
 		struct report_state *rs = &subscriber->state[i];
 
 		if (rs->provider) {
-			__ASSERT_NO_MSG(!rs->provider->api || (rs->provider->linked_rs == rs));
+			__ASSERT_NO_MSG(rs->provider->linked_rs == rs);
 			link_provider_to_rs(rs->provider, NULL);
 		}
 	}
@@ -624,16 +616,6 @@ static bool handle_hid_report_provider_event(struct hid_report_provider_event *e
 	/* Provide API to let provider trigger sending a HID report. */
 	__ASSERT_NO_MSG(!event->hid_state_api);
 	event->hid_state_api = &hid_state_api;
-
-	if (state.active_subscriber) {
-		struct report_state *rs = get_report_state(state.active_subscriber,
-							   event->report_id);
-		__ASSERT_NO_MSG(rs);
-
-		if (rs->provider == provider) {
-			link_provider_to_rs(provider, rs);
-		}
-	}
 
 	return false;
 }

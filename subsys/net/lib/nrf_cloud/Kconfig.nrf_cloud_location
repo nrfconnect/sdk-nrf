@@ -8,7 +8,7 @@ menu "Location"
 menu "Cellular/Wi-Fi"
 
 config NRF_CLOUD_LOCATION
-	bool "nRF Cloud Location (cellular and/or Wi-Fi) over MQTT"
+	bool "Enable nRF Cloud Location (cellular and/or Wi-Fi) over MQTT"
 	imply FPU
 	depends on NRF_CLOUD_MQTT
 	select CJSON_LIB
@@ -50,9 +50,8 @@ config NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT_MAC_RSSI
 config NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT_ALL
 	bool "Encode all available parameters"
 	help
-	  This option increases the memory required for creating requests.
-	  It also increases the amount of data sent to nRF Cloud.
-
+		This option increases the memory required for creating requests.
+		It also increases the amount of data sent to nRF Cloud.
 endchoice
 
 endmenu

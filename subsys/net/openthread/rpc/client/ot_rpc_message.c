@@ -5,9 +5,11 @@
  */
 
 #include <nrf_rpc/nrf_rpc_serialize.h>
-#include <ot_rpc_ids.h>
-#include <ot_rpc_types.h>
+#include <ot_rpc_callback.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_ids.h>
+#include <ot_rpc_lock.h>
+#include <ot_rpc_types.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -15,6 +17,9 @@
 #include <openthread/udp.h>
 
 #include <string.h>
+
+OT_RPC_CALLBACK_TABLE_DEFINE(tx_cb, otMessageTxCallback,
+			     CONFIG_OPENTHREAD_RPC_CLIENT_NUM_TX_CALLBACKS);
 
 otError otMessageAppend(otMessage *aMessage, const void *aBuf, uint16_t aLength)
 {
@@ -177,3 +182,59 @@ otError otMessageGetThreadLinkInfo(const otMessage *aMessage, otThreadLinkInfo *
 
 	return error;
 }
+
+void otMessageRegisterTxCallback(otMessage *aMessage, otMessageTxCallback aCallback, void *aContext)
+{
+	ot_rpc_res_tab_key key = (ot_rpc_res_tab_key)aMessage;
+	ot_rpc_callback_id cb_id;
+	struct nrf_rpc_cbor_ctx ctx;
+
+	cb_id = ot_rpc_tx_cb_alloc(aCallback, aContext);
+
+	if (aCallback != NULL && cb_id == OT_RPC_CALLBACK_ID_NULL) {
+		/* Failed to allocate a callback entry. */
+		nrf_rpc_err(-ENOMEM, NRF_RPC_ERR_SRC_SEND, &ot_group,
+			    OT_RPC_CMD_MESSAGE_REGISTER_TX_CALLBACK, NRF_RPC_PACKET_TYPE_CMD);
+		return;
+	}
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 2 + sizeof(key) + sizeof(cb_id));
+	nrf_rpc_encode_uint(&ctx, key);
+	nrf_rpc_encode_uint(&ctx, cb_id);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_MESSAGE_REGISTER_TX_CALLBACK, &ctx,
+				nrf_rpc_rsp_decode_void, NULL);
+}
+
+static void ot_rpc_cmd_message_tx_cb(const struct nrf_rpc_group *group,
+				     struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	ot_rpc_callback_id cb_id;
+	ot_rpc_res_tab_key msg_key;
+	otError error;
+	otMessageTxCallback cb;
+	void *context;
+
+	cb_id = nrf_rpc_decode_uint(ctx);
+	msg_key = nrf_rpc_decode_uint(ctx);
+	error = nrf_rpc_decode_uint(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_TX_CB);
+		return;
+	}
+
+	ot_rpc_mutex_lock();
+
+	cb = ot_rpc_tx_cb_get(cb_id, &context);
+
+	if (cb != NULL) {
+		ot_rpc_tx_cb_free(cb_id);
+		cb((const otMessage *)msg_key, error, context);
+	}
+
+	ot_rpc_mutex_unlock();
+	nrf_rpc_rsp_send_void(group);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_message_tx_cb, OT_RPC_CMD_MESSAGE_TX_CB,
+			 ot_rpc_cmd_message_tx_cb, NULL);

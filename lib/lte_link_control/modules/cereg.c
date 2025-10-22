@@ -256,29 +256,8 @@ static void at_handler_cereg(const char *response)
 	case LTE_LC_NW_REG_REGISTERED_ROAMING:
 		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_REGISTERED_ROAMING);
 		break;
-	case LTE_LC_NW_REG_RX_ONLY_NOT_REGISTERED:
-		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_RX_ONLY_NOT_REGISTERED);
-		break;
-	case LTE_LC_NW_REG_RX_ONLY_REGISTERED_HOME:
-		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_RX_ONLY_REGISTERED_HOME);
-		break;
-	case LTE_LC_NW_REG_RX_ONLY_SEARCHING:
-		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_RX_ONLY_SEARCHING);
-		break;
-	case LTE_LC_NW_REG_RX_ONLY_REGISTRATION_DENIED:
-		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_RX_ONLY_REGISTRATION_DENIED);
-		break;
-	case LTE_LC_NW_REG_RX_ONLY_UNKNOWN:
-		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_RX_ONLY_UNKNOWN);
-		break;
-	case LTE_LC_NW_REG_RX_ONLY_REGISTERED_ROAMING:
-		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_RX_ONLY_REGISTERED_ROAMING);
-		break;
 	case LTE_LC_NW_REG_UICC_FAIL:
 		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_UICC_FAIL);
-		break;
-	case LTE_LC_NW_REG_NO_SUITABLE_CELL:
-		LTE_LC_TRACE(LTE_LC_TRACE_NW_REG_NO_SUITABLE_CELL);
 		break;
 	default:
 		LOG_ERR("Unknown network registration status: %d", reg_status);
@@ -335,14 +314,6 @@ static void at_handler_cereg(const char *response)
 
 	if ((reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
 	    (reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
-#if defined(CONFIG_LTE_LC_PSM_MODULE)
-		/* Clear PSM configuration if the device is not registered */
-		if (reg_status == LTE_LC_NW_REG_NOT_REGISTERED) {
-			psm_cfg.tau = -1;
-			psm_cfg.active_time = -1;
-			psm_evt_update_send(&psm_cfg);
-		}
-#endif
 		return;
 	}
 

@@ -54,8 +54,6 @@ static const struct ram_bank banks[] = {
 	{ .start = 0x20000000UL, .section_count = 6, .section_size = 0x8000 },
 #elif defined(CONFIG_SOC_NRF54L05_CPUAPP)
 	{ .start = 0x20000000UL, .section_count = 3, .section_size = 0x8000 },
-#elif defined(CONFIG_SOC_NRF54LM20A_ENGA_CPUAPP)
-	{ .start = 0x20000000UL, .section_count = 16, .section_size = 0x8000 },
 #elif defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52833)
 	{ .start = 0x20000000UL, .section_count = 2, .section_size = 0x1000 },
 	{ .start = 0x20002000UL, .section_count = 2, .section_size = 0x1000 },

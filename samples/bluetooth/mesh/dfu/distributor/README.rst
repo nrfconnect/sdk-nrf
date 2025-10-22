@@ -254,7 +254,7 @@ Build the sample using the following command:
 .. note::
    The external flash is not erased during the internal flash erasing procedure.
    See `nRF Util`_ for more information on how to erase the external flash.
-   Currently, external flash is supported on the ``nrf52840dk/nrf52840`` board and the ``nrf54l15dk/nrf54l15/cpuapp`` board.
+   Currently, only the external flash on the ``nrf52840dk/nrf52840`` board is supported at the moment.
 
 Dependencies
 ************

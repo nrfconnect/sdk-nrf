@@ -5,12 +5,16 @@
  */
 
 #include <stdio.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <stdlib.h>
 #include <string.h>
+
+#if defined(CONFIG_ARCH_POSIX) && defined(CONFIG_EXTERNAL_LIBC)
 #include <time.h>
-#include <zephyr/kernel.h>
-#include <zephyr/sys/clock.h>
-#include <zephyr/logging/log.h>
+#else
+#include <zephyr/posix/time.h>
+#endif
 
 #include <net/nrf_cloud.h>
 #include <modem/location.h>
@@ -80,7 +84,7 @@ void location_utils_systime_to_location_datetime(struct location_datetime *datet
 
 	__ASSERT_NO_MSG(datetime != NULL);
 
-	sys_clock_gettime(SYS_CLOCK_REALTIME, &tp);
+	clock_gettime(CLOCK_REALTIME, &tp);
 	gmtime_r(&tp.tv_sec, &ltm);
 
 	/* System time should have been set when date_time lib is in use */

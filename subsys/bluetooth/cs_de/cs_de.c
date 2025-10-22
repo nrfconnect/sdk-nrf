@@ -283,17 +283,17 @@ static void extract_pcts(cs_de_report_t *p_report, uint8_t channel_index,
 			return;
 		}
 
-		if (local_tone_info[tone_index].quality_indicator !=
+		if (local_tone_info[antenna_path].quality_indicator !=
 			    BT_HCI_LE_CS_TONE_QUALITY_HIGH ||
-		    remote_tone_info[tone_index].quality_indicator !=
+		    remote_tone_info[antenna_path].quality_indicator !=
 			    BT_HCI_LE_CS_TONE_QUALITY_HIGH) {
 			return;
 		}
 
 		struct bt_le_cs_iq_sample local_iq =
-			bt_le_cs_parse_pct(local_tone_info[tone_index].phase_correction_term);
+			bt_le_cs_parse_pct(local_tone_info[antenna_path].phase_correction_term);
 		struct bt_le_cs_iq_sample remote_iq =
-			bt_le_cs_parse_pct(remote_tone_info[tone_index].phase_correction_term);
+			bt_le_cs_parse_pct(remote_tone_info[antenna_path].phase_correction_term);
 
 		m_n_iqs[antenna_path][channel_index]++;
 		m_tone_quality_indicators[antenna_path][channel_index] = CS_DE_TONE_QUALITY_OK;
@@ -358,7 +358,7 @@ static bool process_step_data(struct bt_le_cs_subevent_step *local_step,
 {
 	cs_de_report_t *p_report = (cs_de_report_t *)user_data;
 
-	if (local_step->mode == BT_HCI_OP_LE_CS_MAIN_MODE_2) {
+	if (local_step->mode == BT_CONN_LE_CS_MAIN_MODE_2) {
 		struct bt_hci_le_cs_step_data_mode_2 *local_step_data =
 			(struct bt_hci_le_cs_step_data_mode_2 *)local_step->data;
 		struct bt_hci_le_cs_step_data_mode_2 *peer_step_data =

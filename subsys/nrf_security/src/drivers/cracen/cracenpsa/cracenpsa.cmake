@@ -18,18 +18,11 @@ list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/ecc.c
   ${CMAKE_CURRENT_LIST_DIR}/src/rndinrange.c
 
-  # Note: We always need to have a version of cipher.c as it
+  # Note: We always need to have cipher.c and ctr_drbg.c since it
   # is used directly by many Cracen drivers.
+  ${CMAKE_CURRENT_LIST_DIR}/src/cipher.c
   ${CMAKE_CURRENT_LIST_DIR}/src/prng_pool.c
 )
-
-# Include hardware cipher implementation for all devices except nRF54LM20A
-# nRF54LM20A uses only cracen_sw
-if(NOT CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)
-  list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/cipher.c
-  )
-endif()
 
 if(NOT CONFIG_PSA_CRYPTO_DRIVER_ALG_PRNG_TEST)
   list(APPEND cracen_driver_sources
@@ -89,23 +82,29 @@ if(CONFIG_PSA_NEED_CRACEN_HASH_DRIVER)
   )
 endif()
 
-if(CONFIG_PSA_NEED_CRACEN_MAC_DRIVER AND NOT CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)
+if(CONFIG_PSA_NEED_CRACEN_MAC_DRIVER)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/mac.c
   )
 
-  if(CONFIG_PSA_NEED_CRACEN_CMAC)
+  if(CONFIG_PSA_NEED_CRACEN_HMAC)
     list(APPEND cracen_driver_sources
-      ${CMAKE_CURRENT_LIST_DIR}/src/cracen_mac_cmac.c
+      ${CMAKE_CURRENT_LIST_DIR}/src/cracen_mac_hmac.c
+      ${CMAKE_CURRENT_LIST_DIR}/src/hmac.c
     )
   endif()
-endif()
 
-if(CONFIG_PSA_NEED_CRACEN_HMAC)
-  list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_mac_hmac.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/hmac.c
-  )
+  if(CONFIG_PSA_NEED_CRACEN_CMAC)
+    if(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)
+      list(APPEND cracen_driver_sources
+        ${CMAKE_CURRENT_LIST_DIR}/src/cracen_sw_mac_cmac.c
+      )
+    else()
+      list(APPEND cracen_driver_sources
+        ${CMAKE_CURRENT_LIST_DIR}/src/cracen_mac_cmac.c
+      )
+    endif()
+  endif()
 endif()
 
 if(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KMU_DRIVER OR CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)

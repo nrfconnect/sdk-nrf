@@ -17,6 +17,8 @@ The sample supports pairing in one of the following modes:
 
 * LE Secure Connections Just Works pairing
 * LE Secure Connections OOB pairing
+* Legacy OOB pairing
+* Legacy Just Works pairing
 * Negotiated Handover (TNEP protocol) - two-way OOB pairing
 
 Requirements

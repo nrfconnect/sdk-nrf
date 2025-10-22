@@ -6,6 +6,7 @@
 
 menuconfig DATE_TIME
 	bool "Date time library"
+	select POSIX_TIMERS
 
 if DATE_TIME
 

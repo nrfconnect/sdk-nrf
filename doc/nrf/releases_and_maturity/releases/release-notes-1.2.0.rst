@@ -145,7 +145,7 @@ Updated samples and applications
 Updated libraries
 -----------------
 
-* Download client:
+* :ref:`lib_download_client`:
 
   * Added the ``CONFIG_DOWNLOAD_CLIENT_MAX_TLS_FRAGMENT_SIZE`` option that allows to configure fragment sizes for TLS connections and non-TLS connections independently.
   * Added support for using non-default ports.
@@ -474,7 +474,7 @@ Documentation
     * :ref:`supl_client` - added
     * ``at_cmd`` library - updated
     * :ref:`at_cmd_parser_readme` - updated
-    * Download client - updated
+    * :ref:`lib_download_client` - updated
 
   * Bluetooth Low Energy:
 

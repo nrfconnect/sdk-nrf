@@ -204,5 +204,13 @@ Update the nRF54H20 SoC binaries
 To update the nRF54H20 SoC binaries (versions 2x.x.x, based on IronSide SE) using the debugger on a nRF54H20 SoC, use the west ``ncs-ironside-se-update`` command.
 This command takes the nRF54H20 SoC binary ZIP file and uses the IronSide SE update service to update both the IronSide SE and IronSide SE Recovery (or optionally just one of them).
 
-For more information on how to use the ``ncs-ironside-se-update`` command, see :ref:`ug_nrf54h20_ironside_se_update`.
+To update the nRF54H20 SoC binaries, do the following:
+
+1. Download the new version of the nRF54H20 SoC binaries for your development kit from the :ref:`abi_compatibility` page.
+#. Move the :file:`ZIP` bundle to a folder of your choice and unzip it.
+#. |open_terminal_window_with_environment|
+#. Run the following command::
+
+      west ncs-ironside-se-update --zip ~/path/to//nrf54h20_soc_binaries_v<version_number>.zip --serial $dbg --allow-erase
+
 For more information on the nRF54H20 SoC binaries, see :ref:`abi_compatibility`.

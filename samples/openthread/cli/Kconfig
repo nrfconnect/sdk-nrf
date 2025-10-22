@@ -13,7 +13,7 @@ module-str = ot_cli
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 config CLI_SAMPLE_LOW_POWER
-	bool "Low power mode for the CLI sample"
+	bool "Enable low power mode for the CLI sample"
 
 config CLI_SAMPLE_MULTIPROTOCOL
-	bool "Multiprotocol for the CLI sample"
+	bool "Enable multiprotocol for the CLI sample"

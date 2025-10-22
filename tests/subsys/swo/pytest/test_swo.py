@@ -7,8 +7,8 @@
 import logging
 import re
 import subprocess
-import time
 from pathlib import Path
+import time
 
 import psutil
 from twister_harness import DeviceAdapter
@@ -119,11 +119,11 @@ def test_swo_logging(dut: DeviceAdapter):
     try:
         logger.info(f"Executing:\n{cmd}")
         proc = subprocess.Popen(
-            cmd.split(),
-            stdin=subprocess.PIPE,
+            cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            encoding='UTF-8',
+            encoding="UTF-8",
+            shell=True,
         )
     except OSError as exc:
         logger.error(f"Unable to start JLinkSWOViewerCLExe:\n{cmd=}\n{exc=}")
@@ -134,8 +134,6 @@ def test_swo_logging(dut: DeviceAdapter):
         pass
     finally:
         _kill(proc)
-        outs, errs = proc.communicate()
-        logger.info(f"{outs=}\n{errs=}")
 
     # read logs
     with open(f"{log_filename}", errors="ignore") as log_file:

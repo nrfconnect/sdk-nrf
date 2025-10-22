@@ -65,7 +65,7 @@ config TFM_CRYPTO_BUILTIN_KEYS
 	prompt "TF-M crypto builtin keys"
 	default y
 	depends on !TFM_PROFILE_TYPE_MINIMAL
-	depends on !HAS_HW_NRF_CRACEN
+	depends on !CRACEN_HW_PRESENT
 	select PSA_WANT_ALG_HKDF
 	select PSA_WANT_ALG_HMAC
 	select PSA_WANT_ALG_SHA_256
@@ -224,9 +224,8 @@ config TFM_ITS_STACK_SIZE
 config TFM_ITS_ENCRYPTED
 	bool
 	prompt "PSA Internal Trusted Storage with encryption"
-	depends on !CRACEN_NEED_MULTIPART_WORKAROUNDS
 	default y if SOC_SERIES_NRF54LX
-	select PSA_WANT_ALG_CHACHA20_POLY1305 if SOC_SERIES_NRF54LX
+	select PSA_ITS_ENCRYPTED
 	select PSA_WANT_GENERATE_RANDOM
 	help
 	  Enables authenticated encryption for PSA Internal Trusted Storage files
@@ -351,7 +350,7 @@ config TFM_CPU_FREQ_MHZ
 config TFM_NFCT_PINS_AS_GPIOS
 	bool
 	default y if !DT_HAS_NORDIC_NRF_NFCT_ENABLED
-	depends on SOC_NRF5340_CPUAPP || SOC_SERIES_NRF54LX
+	depends on SOC_NRF5340_CPUAPP
 	help
 	  Two pins are usually reserved for NFC in SoCs that implement the
 	  NFCT peripheral. This option switches them to normal GPIO mode.
@@ -361,8 +360,6 @@ config TFM_NFCT_PINS_AS_GPIOS
 	  flashing device using the image which has this option disabled.
 
 	  NFC pins in nRF5340: P0.02 and P0.03
-	  NFC pins in nRF54L15/10/05: P1.02 and P1.03
-	  NFC pins in nRF54LM20A: P1.01 and P1.02
 
 	  TF-M configures these pins as GPIOS when the NFCT peripheral is not
 	  enabled in the device-tree of the target.

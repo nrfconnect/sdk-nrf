@@ -151,9 +151,9 @@ static int sx_blkcipher_create_chacha20(struct sxblkcipher *cipher_ctx, struct s
 		return SX_ERR_INVALID_KEY_SZ;
 	}
 
+	memcpy(&cipher_ctx->key, key, sizeof(cipher_ctx->key));
 	sx_hw_reserve(&cipher_ctx->dma);
 	cipher_ctx->cfg = &ba417chacha20cfg;
-	cipher_ctx->key = key;
 
 	sx_cmdma_newcmd(&cipher_ctx->dma, cipher_ctx->descs, BA417_MODE_CHACHA20 | dir,
 			cipher_ctx->cfg->dmatags->cfg);

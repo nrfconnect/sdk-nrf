@@ -165,56 +165,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     math(EXPR mcuboot_total_images "${SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES} + ${SB_CONFIG_MCUBOOT_ADDITIONAL_UPDATEABLE_IMAGES}")
     set_config_int(mcuboot CONFIG_UPDATEABLE_IMAGE_NUMBER ${mcuboot_total_images})
 
-    # Assign image IDs for MCUboot images then set Kconfig in all images with the generated IDs
-    set(dfu_slots_sysbuild_kconfigs SB_CONFIG_BOOTLOADER_MCUBOOT;SB_CONFIG_MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT;SB_CONFIG_MCUBOOT_WIFI_PATCHES_HAS_UPDATE_SLOT;SB_CONFIG_QSPI_XIP_SPLIT_IMAGE;SB_CONFIG_SECURE_BOOT_APPCORE)
-    set(dfu_slots_application_kconfigs CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER;CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER;CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER;CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER;CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER)
-    set(dfu_slots_cache_names NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER;NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER;NCS_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER;NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER;NCS_MCUBOOT_MCUBOOT_IMAGE_NUMBER)
-    set(dfu_slots_output_names Application;Network;Wifi\ patches;QSPI\ XIP;MCUboot\ b0\ update)
-    set(dfu_slots_output_text "-- Sysbuild assigned MCUboot image IDs:\n")
-    set(dfu_image_index -1)
-
-    list(LENGTH dfu_slots_sysbuild_kconfigs test_things_size)
-    math(EXPR test_things_size "${test_things_size} - 1")
-
-    foreach(index RANGE ${test_things_size})
-      list(GET dfu_slots_sysbuild_kconfigs ${index} current_sysbuild_kconfig)
-      list(GET dfu_slots_application_kconfigs ${index} current_application_kconfig)
-      list(GET dfu_slots_cache_names ${index} current_cache_name)
-      list(GET dfu_slots_output_names ${index} current_output_name)
-      set(value -1)
-
-      if(${current_sysbuild_kconfig})
-        math(EXPR dfu_image_index "${dfu_image_index} + 1")
-        set(value ${dfu_image_index})
-        string(APPEND dfu_slots_output_text "   * ${current_output_name}: ${value}\n")
-      endif()
-
-      foreach(image mcuboot;${updateable_images})
-        set_config_int(${image} ${current_application_kconfig} ${value})
-      endforeach()
-
-      set(${current_cache_name} ${value} CACHE INTERNAL "" FORCE)
-    endforeach()
-
-    # Output details on image IDs
-    string(LENGTH ${dfu_slots_output_text} dfu_slots_output_text_length)
-    math(EXPR dfu_slots_output_text_length "${dfu_slots_output_text_length} - 1")
-    string(SUBSTRING ${dfu_slots_output_text} 0 ${dfu_slots_output_text_length} dfu_slots_output_text)
-    message(NOTICE ${dfu_slots_output_text})
-
-    set(dfu_slots_sysbuild_kconfigs)
-    set(dfu_slots_application_kconfigs)
-    set(dfu_slots_cache_names)
-    set(dfu_slots_output_names)
-    set(dfu_slots_output_text)
-    set(dfu_slots_output_text_length)
-    set(dfu_image_index)
-    set(value)
-    set(current_sysbuild_kconfig)
-    set(current_application_kconfig)
-    set(current_cache_name)
-    set(current_output_name)
-
     if(SB_CONFIG_MCUBOOT_APP_SYNC_UPDATEABLE_IMAGES)
       foreach(image ${updateable_images})
         set_config_int(${image} CONFIG_UPDATEABLE_IMAGE_NUMBER ${SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES})
@@ -288,12 +238,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
         if(SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU)
           set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_USING_KMU y)
-
-          if(SB_CONFIG_MCUBOOT_SIGNATURE_KMU_UROT_MAPPING)
-            set_config_bool(mcuboot CONFIG_NCS_BOOT_SIGNATURE_KMU_UROT_MAPPING y)
-          else()
-            set_config_bool(mcuboot CONFIG_NCS_BOOT_SIGNATURE_KMU_UROT_MAPPING n)
-          endif()
         else()
           set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_USING_KMU n)
         endif()
@@ -338,6 +282,14 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
         if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
           set(mcuboot_secondary_app_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+        endif()
+
+        # Share QSPI XIP MCUboot image number with the default image to allow for signing script
+        # to get the partition manager configuration
+        set(${DEFAULT_IMAGE}_QSPI_XIP_IMAGE_NUMBER ${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} CACHE INTERNAL "QSPI XIP image number" FORCE)
+
+        if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
+          set(mcuboot_secondary_app_QSPI_XIP_IMAGE_NUMBER ${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} CACHE INTERNAL "QSPI XIP image number" FORCE)
         endif()
 
         # Flash drivers are mandatory with QSPI XIP split image support
@@ -395,6 +347,13 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         add_overlay_config(mcuboot ${ZEPHYR_NRF_MODULE_DIR}/subsys/partition_manager/ext_flash_mcuboot_secondary.conf)
       endif()
 
+      # Provide MCUboot image IDs to main application and MCUboot
+      set_config_int(mcuboot CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER})
+      set_config_int(mcuboot CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER ${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER})
+      set_config_int(mcuboot CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER ${SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER})
+      set_config_int(mcuboot CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER ${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER})
+      set_config_int(mcuboot CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER ${SB_CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER})
+
       if(SB_CONFIG_SECURE_BOOT_APPCORE)
         # Get the s0/s1 MCUboot update package version and split it up into the fields so it can
         # be supplied to the MCUboot image
@@ -422,6 +381,14 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         set_config_int(mcuboot CONFIG_MCUBOOT_MCUBOOT_S0_S1_VERSION_REVISION -1)
         set_config_int(mcuboot CONFIG_MCUBOOT_MCUBOOT_S0_S1_VERSION_BUILD_NUMBER -1)
       endif()
+
+      foreach(image ${updateable_images})
+        set_config_int(${image} CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER ${SB_CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER})
+        set_config_int(${image} CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER ${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER})
+        set_config_int(${image} CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER ${SB_CONFIG_MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER})
+        set_config_int(${image} CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER ${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER})
+        set_config_int(${image} CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER ${SB_CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER})
+      endforeach()
     endif()
 
     if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
@@ -497,11 +464,15 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(mcuboot CONFIG_FW_INFO y)
 
       if(SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256)
-        if(SB_CONFIG_BOOT_SHARED_CRYPTO_ECDSA_P256)
-          add_overlay_config(
-            mcuboot
-            ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr/external_crypto.conf
-            )
+        if(SB_CONFIG_SOC_SERIES_NRF54LX)
+          set_config_bool(mcuboot CONFIG_BOOT_ECDSA_TINYCRYPT y)
+        else()
+          if(SB_CONFIG_BOOT_SHARED_CRYPTO_ECDSA_P256)
+            add_overlay_config(
+              mcuboot
+              ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr/external_crypto.conf
+              )
+            endif()
         endif()
       endif()
 
@@ -722,10 +693,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   if(SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY AND SB_CONFIG_SOC_NRF54H20)
     UpdateableImage_Get(images ALL)
     foreach(image ${images})
-      set_config_bool(${image} CONFIG_NCS_MCUBOOT_BOOTLOADER_SIGN_MERGED_BINARY true)
-      set(${image}_SIGNING_SCRIPT
-        "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_nrf54h20.cmake"
-         CACHE INTERNAL "MCUboot signing script" FORCE)
+      set(${image}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_nrf54h20.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
     endforeach()
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
@@ -834,7 +802,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     endif()
 
     if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_EMPTY)
-      get_property(PM_MCUBOOT_PRIMARY_${NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_${NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}_SIZE)
+      get_property(PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER}_SIZE)
     endif()
 
     if(SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE)
@@ -843,10 +811,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     endif()
 
     if(SB_CONFIG_QSPI_XIP_SPLIT_IMAGE)
-      get_property(PM_MCUBOOT_PRIMARY_${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS)
-      get_property(PM_MCUBOOT_PRIMARY_${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE)
-      get_property(PM_MCUBOOT_SECONDARY_${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS TARGET partition_manager PROPERTY PM_MCUBOOT_SECONDARY_${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS)
-      get_property(PM_MCUBOOT_SECONDARY_${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_SECONDARY_${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE)
+      get_property(PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS)
+      get_property(PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE)
+      get_property(PM_MCUBOOT_SECONDARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS TARGET partition_manager PROPERTY PM_MCUBOOT_SECONDARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS)
+      get_property(PM_MCUBOOT_SECONDARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_SECONDARY_${SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE)
     elseif(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
       get_property(PM_MCUBOOT_SECONDARY_ADDRESS TARGET partition_manager PROPERTY PM_MCUBOOT_SECONDARY_ADDRESS)
       get_property(PM_MCUBOOT_SECONDARY_SIZE TARGET partition_manager PROPERTY PM_MCUBOOT_SECONDARY_SIZE)
@@ -890,6 +858,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
       ExternalProject_Get_Property(${main_app} BINARY_DIR)
       set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
     endif()
+  endif()
+
+  if(SB_CONFIG_NRF_PERIPHCONF_MIGRATE)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/periphconf_migrate.cmake)
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 

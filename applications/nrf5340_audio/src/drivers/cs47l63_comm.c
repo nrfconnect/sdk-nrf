@@ -372,7 +372,7 @@ int cs47l63_comm_init(cs47l63_t *cs47l63_driver)
 			      NULL, K_PRIO_PREEMPT(CONFIG_CS47L63_THREAD_PRIO), 0,
 			      K_MSEC(CS47L63_PROCESS_THREAD_DELAY_MS));
 
-	ret = k_thread_name_set(&cs47l63_data, "HW_Codec_CS47L63");
+	ret = k_thread_name_set(&cs47l63_data, "CS47L63");
 	if (ret) {
 		return ret;
 	}

@@ -253,14 +253,14 @@ config LWM2M_CELL_CONN_APN_PROFILE_COUNT
 endif #LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT
 
 config LWM2M_CLIENT_UTILS_RAI
-	bool "Release assistance indication (RAI)"
+	bool "Enable release assistance indication (RAI)"
 	help
 	  This option enables RAI for access stratum (AS) which was introduced in REL14.
 	  When AS RAI is configured, device may indicate that no further data is
 	  expected in the near future and the connection may be released.
 
 config LWM2M_CLIENT_UTILS_LTE_CONNEVAL
-	bool "Connection pre-evaluation [EXPERIMENTAL]"
+	bool "Enable connection pre-evaluation [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	help
 	  Connection pre-evaluation allows the application to get an estimation of the
@@ -269,7 +269,7 @@ config LWM2M_CLIENT_UTILS_LTE_CONNEVAL
 	  started.
 
 config LWM2M_CLIENT_UTILS_DTLS_CID
-	bool "DTLS Connection Identifier [DEPRECATED]"
+	bool "[Deprecated] Enable DTLS Connection Identifier"
 	select LWM2M_DTLS_CID
 	help
 	  Deprecated. Use CONFIG_LWM2M_DTLS_CID instead.
@@ -277,7 +277,7 @@ config LWM2M_CLIENT_UTILS_DTLS_CID
 if LWM2M_DTLS_CID
 
 config LWM2M_CLIENT_UTILS_DTLS_CON_MANAGEMENT
-	bool "DTLS connection save and load"
+	bool "Enable DTLS connection save and load"
 	depends on LWM2M_RD_CLIENT_STOP_POLLING_AT_IDLE
 	help
 	  Enable DTLS connection identifier save at idle and load exit from idle.

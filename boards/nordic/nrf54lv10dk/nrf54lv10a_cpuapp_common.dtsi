@@ -21,15 +21,15 @@
 		zephyr,bt-hci = &bt_hci_sdc;
 		zephyr,ieee802154 = &ieee802154;
 	};
-
-	aliases {
-		mcuboot-button0 = &button0;
-		mcuboot-led0 = &led0;
-	};
 };
 
 &cpuapp_sram {
 	status = "okay";
+};
+
+&hfpll {
+	/* For now use 64 MHz clock for CPU and fast peripherals. */
+	clock-frequency = <DT_FREQ_M(64)>;
 };
 
 &lfxo {

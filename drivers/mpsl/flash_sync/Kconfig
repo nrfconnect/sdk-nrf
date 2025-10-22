@@ -7,7 +7,7 @@
 if SOC_FLASH_NRF || SOC_FLASH_NRF_RRAM || SOC_NRF54H20
 
 config SOC_FLASH_NRF_RADIO_SYNC_RPC
-	bool "Flash driver synchronization with radio protocols through RPC"
+	bool "Enable flash driver synchronization with radio protocols through RPC"
 	help
 	  Enable the flash synchronization between the application core and the radio core.
 	  This Kconfig option is set based on the value of the SB_CONFIG_SOC_FLASH_NRF_RADIO_SYNC_RPC

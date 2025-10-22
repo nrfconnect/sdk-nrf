@@ -34,16 +34,6 @@ function(b0_gen_keys)
 
     if(NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE} OR IS_DIRECTORY ${SIGNATURE_PUBLIC_KEY_FILE})
       message(WARNING "Invalid public key file: ${SIGNATURE_PUBLIC_KEY_FILE}")
-    else()
-      execute_process(COMMAND ${PYTHON_EXECUTABLE}
-        ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/keyhash_validate.py ${keygen_algorithm}
-        -in ${SIGNATURE_PUBLIC_KEY_FILE} RESULT_VARIABLE keyhash)
-        if(NOT "${keyhash}" STREQUAL "0")
-          message(WARNING "Key file ${SIGNATURE_PUBLIC_KEY_FILE} yields HASH that contains 0xffff "
-                          "which isn't allowed due to limitations of the internal clockworks. "
-                          "To solve the issue use another key."
-          )
-        endif()
     endif()
   else()
     message(WARNING "Unable to parse signing config.")

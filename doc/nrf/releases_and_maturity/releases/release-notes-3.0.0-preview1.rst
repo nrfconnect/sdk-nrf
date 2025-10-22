@@ -199,7 +199,7 @@ Machine learning
 Asset Tracker v2
 ----------------
 
-* Updated the application to use the :ref:`lib_downloader` library instead of the deprecated Download client library.
+* Updated the application to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
 
 Connectivity Bridge
 -------------------
@@ -268,7 +268,7 @@ Serial LTE modem
 
 * Added an overlay :file:`overlay-memfault.conf` file to enable Memfault.
   For more information about Memfault features in |NCS|, see :ref:`mod_memfault`.
-* Updated the application to use the :ref:`lib_downloader` library instead of the deprecated Download client library.
+* Updated the application to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
 
 Thingy:53: Matter weather station
 ---------------------------------
@@ -381,7 +381,7 @@ Bluetooth Mesh samples
 Cellular samples
 ----------------
 
-* Updated the following samples to use the :ref:`lib_downloader` library instead of the Download client library:
+* Updated the following samples to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
 
   * :ref:`http_application_update_sample`
   * :ref:`http_modem_delta_update_sample`
@@ -467,7 +467,7 @@ Networking samples
 
   * The :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` Kconfig option value to ``1280`` for all networking samples that had it set to a lower value.
     This is a requirement from zephyr and removes a build warning.
-  * The following samples to use the :ref:`lib_downloader` library instead of the Download client library:
+  * The following samples to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
 
     * :ref:`aws_iot`
     * :ref:`azure_iot_hub`
@@ -594,7 +594,7 @@ Binary libraries
 
 * :ref:`liblwm2m_carrier_readme` library:
 
-  * Updated the glue to use the :ref:`lib_downloader` library instead of the deprecated Download client library.
+  * Updated the glue to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
 
 Bluetooth libraries and services
 --------------------------------
@@ -709,10 +709,10 @@ Libraries for networking
   * The :ref:`lib_downloader` library.
   * A backend for the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` that stores the credentials in the modem, see :kconfig:option:`CONFIG_TLS_CREDENTIALS_BACKEND_NRF_MODEM`.
 
-* Deprecated the Download client library.
+* Deprecated the :ref:`lib_download_client` library.
   See the :ref:`migration guide <migration_3.0_recommended>` for recommended changes.
 
-* Updated the following libraries to use the :ref:`lib_downloader` library instead of the Download client library:
+* Updated the following libraries to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
 
   * :ref:`lib_nrf_cloud`
   * :ref:`lib_aws_fota`

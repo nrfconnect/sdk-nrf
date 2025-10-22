@@ -11,7 +11,10 @@
 #include <helpers/nrfx_gppi.h>
 #include <hal/nrf_radio.h>
 
-#if defined(DPPI_PRESENT)
+#ifdef PPI_PRESENT
+#include <nrfx_ppi.h>
+#elif defined(DPPI_PRESENT)
+#include <nrfx_dppi.h>
 #include <mpsl_dppi_protocol_api.h>
 #endif
 
@@ -26,22 +29,22 @@ static int m_ppi_config(void)
 	uint8_t ppi_chan_radio_end;
 	uint8_t ppi_chan_radio_disabled;
 
-	if (nrfx_gppi_channel_alloc(&ppi_chan_radio_ready) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_ready) != NRFX_SUCCESS) {
 		LOG_ERR("Failed allocating PPI chan");
 		return -ENOMEM;
 	}
 
-	if (nrfx_gppi_channel_alloc(&ppi_chan_radio_address) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_address) != NRFX_SUCCESS) {
 		LOG_ERR("Failed allocating PPI chan");
 		return -ENOMEM;
 	}
 
-	if (nrfx_gppi_channel_alloc(&ppi_chan_radio_end) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_end) != NRFX_SUCCESS) {
 		LOG_ERR("Failed allocating PPI chan");
 		return -ENOMEM;
 	}
 
-	if (nrfx_gppi_channel_alloc(&ppi_chan_radio_disabled) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_disabled) != NRFX_SUCCESS) {
 		LOG_ERR("Failed allocating PPI chan");
 		return -ENOMEM;
 	}

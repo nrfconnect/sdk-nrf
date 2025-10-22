@@ -3,9 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import json
-
 import requests
-
 
 class Leshan:
     def __init__(self, url):

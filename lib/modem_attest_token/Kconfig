@@ -15,7 +15,7 @@ menuconfig MODEM_ATTEST_TOKEN
 if MODEM_ATTEST_TOKEN
 
 config MODEM_ATTEST_TOKEN_PARSING
-	bool "Parsing of the attestation token"
+	bool "Enable parsing of the attestation token"
 	select ZCBOR
 	select BASE64
 	default y

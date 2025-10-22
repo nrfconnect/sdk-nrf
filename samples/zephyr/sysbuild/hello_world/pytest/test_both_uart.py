@@ -5,7 +5,7 @@
 import logging
 import re
 import time
-from collections.abc import Generator
+from typing import Generator
 
 import pytest
 import serial
@@ -70,6 +70,6 @@ def test_both_uart(dut: DeviceAdapter):
                 logger.debug("Second serial - found")
                 break
         else:
-            raise AssertionError(f"Second serial - regex not found: {regex}")
+            assert False, f"Second serial - regex not found: {regex}"
     else:
         logger.error("Second serial - skipped")

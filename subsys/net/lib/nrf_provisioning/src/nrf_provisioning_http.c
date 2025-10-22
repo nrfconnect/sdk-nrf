@@ -309,11 +309,11 @@ static int status_code_to_error(int status_code)
 		LOG_ERR("Bad request");
 		return -EINVAL;
 	case NRF_PROVISIONING_HTTP_STATUS_UNAUTH:
-		LOG_ERR("Device not authorized");
+		LOG_ERR("Device didn't send auth credentials");
 		return -EACCES;
 	case NRF_PROVISIONING_HTTP_STATUS_FORBIDDEN:
 		LOG_ERR("Device provided wrong auth credentials");
-		return -EPERM;
+		return -EACCES;
 	case NRF_PROVISIONING_HTTP_STATUS_UNS_MEDIA_TYPE:
 		LOG_ERR("Unsupported content format");
 		return -ENOMSG;

@@ -38,7 +38,7 @@ config CAF_BLE_STATE_MAX_LOCAL_ID_BONDS
 	default 0
 
 config CAF_BLE_STATE_PM
-	bool "Bluetooth LE power manager integration"
+	bool "Enable bluetooth LE power manager integration"
 	depends on CAF_BLE_STATE
 	depends on CAF_POWER_MANAGER
 	select CAF_KEEP_ALIVE_EVENTS
@@ -57,7 +57,7 @@ config CAF_BLE_STATE_EXCHANGE_MTU
 	  hold.
 
 config CAF_BLE_USE_LLPM
-	bool "Low Latency Packet Mode (LLPM)"
+	bool "Enable Low Latency Packet Mode (LLPM)"
 	depends on (BT_CTLR_SDC_LLPM || !HAS_BT_CTLR)
 	depends on !SOC_SERIES_NRF53X
 	default y if HAS_BT_CTLR

@@ -4,12 +4,16 @@
 from __future__ import annotations
 
 import logging
-from pathlib import Path
-
 import pytest
-from common import APP_KEYS_FOR_KMU, provision_keys_for_kmu, reset_board
+
+from pathlib import Path
 from twister_harness import DeviceAdapter
-from twister_harness.helpers.utils import find_in_config, match_lines
+from twister_harness.helpers.utils import match_lines, find_in_config
+from common import (
+    provision_keys_for_kmu,
+    reset_board,
+    APP_KEYS_FOR_KMU
+)
 
 logger = logging.getLogger(__name__)
 

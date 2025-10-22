@@ -1073,8 +1073,8 @@ Libraries for networking
 
   * Updated:
 
-    * The ``CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN`` Kconfig option has been replaced by the ``CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE`` Kconfig option.
-    * The ``CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN`` Kconfig option has been replaced by the ``CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE`` Kconfig option.
+    * The ``CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN`` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option.
+    * The ``CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN`` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` Kconfig option.
     * AWS FOTA jobs are now marked as failed if the job document for the update is invalid.
     * The protocol (HTTP or HTTPS) is now automatically chosen based on the ``protocol`` or ``url`` fields in the job document for the update.
 
@@ -1082,19 +1082,19 @@ Libraries for networking
 
   * Updated:
 
-    * The ``CONFIG_AZURE_FOTA_HOSTNAME_MAX_LEN`` Kconfig option has been replaced by the ``CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE`` Kconfig option.
-    * The ``CONFIG_AZURE_FOTA_FILE_PATH_MAX_LEN`` Kconfig option has been replaced by the ``CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE`` Kconfig option.
+    * The ``CONFIG_AZURE_FOTA_HOSTNAME_MAX_LEN`` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option.
+    * The ``CONFIG_AZURE_FOTA_FILE_PATH_MAX_LEN`` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` Kconfig option.
 
-* Download client library:
+* :ref:`lib_download_client` library:
 
   * Added:
 
-    * Kconfig option ``CONFIG_DOWNLOAD_CLIENT_CID`` that allows use of Connection Identifier on DTLS connection.
+    * Kconfig option :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_CID` that allows use of Connection Identifier on DTLS connection.
 
   * Updated:
 
-    * The ``CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE`` Kconfig option's default value to ``255``.
-    * The ``CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE`` Kconfig option's default value to ``255``.
+    * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option's default value to ``255``.
+    * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` Kconfig option's default value to ``255``.
     * Changed the event order so that the :c:member:`DOWNLOAD_CLIENT_EVT_ERROR` is always received before the :c:member:`DOWNLOAD_CLIENT_EVT_CLOSED` event.
 
 * :ref:`lib_fota_download` library:

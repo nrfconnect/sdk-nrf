@@ -22,21 +22,6 @@ tests:
         - "Multicore idle_pwm_led test iteration 0"
         - "Multicore idle_pwm_led test iteration 1"
 
-  benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.idle_retained:
-    filter: not CONFIG_COVERAGE
-    tags: ppk_power_measure
-    extra_args:
-      - idle_pwm_led_CONF_FILE=prj_s2ram.conf
-      - remote_CONF_FILE=prj_s2ram.conf
-      - idle_pwm_led_CONFIG_TEST_SLEEP_DURATION_MS=500
-      - remote_CONFIG_TEST_SLEEP_DURATION_MS=500
-      - idle_pwm_led_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle_retained.overlay"
-    harness: pytest
-    harness_config:
-      fixture: ppk_power_measure
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
-
   benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.idle:
     filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
@@ -58,36 +43,6 @@ tests:
     extra_args:
       - idle_pwm_led_CONF_FILE=prj_s2ram.conf
       - remote_CONF_FILE=prj_s2ram.conf
-    harness: pytest
-    harness_config:
-      fixture: ppk_power_measure
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
-
-  benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.idle_retained_fast:
-    filter: not CONFIG_COVERAGE
-    tags: ppk_power_measure
-    extra_args:
-      - idle_pwm_led_CONF_FILE=prj_s2ram.conf
-      - remote_CONF_FILE=prj_s2ram.conf
-      - idle_pwm_led_CONFIG_TEST_SLEEP_DURATION_MS=500
-      - remote_CONFIG_TEST_SLEEP_DURATION_MS=500
-      - idle_pwm_led_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_0.overlay"
-      - idle_pwm_led_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle_retained.overlay"
-    harness: pytest
-    harness_config:
-      fixture: ppk_power_measure
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
-
-  benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.s2ram.mcuboot:
-    filter: not CONFIG_COVERAGE
-    tags: ppk_power_measure
-    extra_args:
-      - idle_pwm_led_CONF_FILE=prj_s2ram.conf
-      - remote_CONF_FILE=prj_s2ram.conf
-      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - mcuboot_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_pwm_led/boards/nrf54h20dk_nrf54h20_cpuapp.overlay"
     harness: pytest
     harness_config:
       fixture: ppk_power_measure

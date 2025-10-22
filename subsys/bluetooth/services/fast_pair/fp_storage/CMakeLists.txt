@@ -8,7 +8,6 @@ zephyr_library_named(fp_storage)
 
 if(CONFIG_BT_FAST_PAIR_STORAGE_MANAGER)
   zephyr_linker_sources(SECTIONS fp_storage_manager.ld)
-  zephyr_iterable_section(NAME fp_storage_manager_module KVMA RAM_REGION GROUP RODATA_REGION SUBALIGN 4)
   target_sources(fp_storage PRIVATE fp_storage_manager.c)
 endif()
 if(CONFIG_BT_FAST_PAIR_STORAGE_AK_BACKEND_STANDARD)

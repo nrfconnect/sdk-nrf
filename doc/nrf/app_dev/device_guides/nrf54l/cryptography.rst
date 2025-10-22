@@ -213,8 +213,8 @@ The following list shows available schemes that determine how the keys are used:
 
 .. _ug_nrf54l_crypto_kmu_supported_key_types:
 
-Key types that can be stored in the KMU
-=======================================
+Supported key types
+===================
 
 The following table lists all key types that can be stored in the KMU, indicating which usage schemes (Protected, Encrypted, and Raw) support them and the number of key slots they require.
 
@@ -253,17 +253,24 @@ The following table lists all key types that can be stored in the KMU, indicatin
      - No
      - Yes
      - Yes
-   * - ECC secp256r1 key pair (ECDSA and ECDH usage) [3]_
+   * - ECC secp256r1 key pair
      - | ``key_type``: ``PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)``
        | ``key_bits``: 256
      - 2
      - No
      - Yes
      - Yes
-   * - ECC secp256r1 public key (ECDSA usage only)
+   * - ECC secp256r1 public key
      - | ``key_type``: ``PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)``
        | ``key_bits``: 256
      - 4
+     - No
+     - Yes
+     - Yes
+   * - ECDH [3]_
+     - | ``key_type``: ``PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)``
+       | ``key_bits``: 256
+     - 2
      - No
      - Yes
      - Yes
@@ -291,7 +298,7 @@ The following table lists all key types that can be stored in the KMU, indicatin
      - Yes
 .. [1] Keys with the Encrypted usage scheme (``CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED``) will require two additional KMU slots to store the nonce and the authentication tag.
 .. [2] Not supported on nRF54LM20.
-.. [3] ECDH not supported for key derivation.
+.. [3] Not supported for key derivation.
 
 Storing keys in KMU
 ===================
@@ -328,7 +335,7 @@ Depending on the usage scheme:
 
 * Key slots with the usage scheme Encrypted (``CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED``) also have to be decrypted to a temporary push location in RAM before they are used by CRACEN, which is handled by the CRACEN driver.
 
-When the application is built with TF-M (for nRF54L Series devices that :ref:`support TF-M <ug_tfm_supported_services>`), this temporary push location is protected inside the secure processing environment to avoid exposing the key material to the non-secure application.
+When the application is built with TF-M, this temporary push location is protected inside the secure processing environment to avoid exposing the key material to the non-secure application.
 If TF-M is not used, the keys are pushed to a reserved RAM area at location 0x20000000-0x20000064 (``kmu_push_area``).
 
 You might encounter the following KMU-specific error codes when using the KMU keys:

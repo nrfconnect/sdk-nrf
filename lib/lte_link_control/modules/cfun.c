@@ -144,12 +144,6 @@ int cfun_mode_set(enum lte_lc_func_mode mode)
 	case LTE_LC_FUNC_MODE_OFFLINE_UICC_ON:
 		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_OFFLINE_UICC_ON);
 		break;
-	case LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG:
-		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_OFFLINE_KEEP_REG);
-		break;
-	case LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG_UICC_ON:
-		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_OFFLINE_KEEP_REG_UICC_ON);
-		break;
 	default:
 		LOG_ERR("Invalid functional mode: %d", mode);
 		return -EINVAL;

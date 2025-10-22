@@ -1068,7 +1068,7 @@ These overlays show all the Kconfig settings changes needed to properly disable 
 Building with native simulator
 ==============================
 
-You can run this sample on the :zephyr:board:`native simulator <native_sim>` target.
+You can run this sample on the :ref:`zephyr:native_sim` target.
 This enables you to try out connectivity without the need for embedded hardware.
 A Linux host or docker container is required to run the ``native_sim`` target.
 Some setup is needed to connect the application to the network.

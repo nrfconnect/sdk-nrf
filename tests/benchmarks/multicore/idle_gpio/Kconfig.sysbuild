@@ -6,16 +6,5 @@
 
 source "share/sysbuild/Kconfig"
 
-choice NETCORE
-	default NETCORE_REMOTE
-
-config NETCORE_REMOTE
-	bool "Remote image"
-
-endchoice
-
-config NETCORE_IMAGE_NAME
-	default "remote" if NETCORE_REMOTE
-
-config NETCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_gpio/remote" if NETCORE_REMOTE
+config REMOTE_BOARD
+	string "The board used for remote target"

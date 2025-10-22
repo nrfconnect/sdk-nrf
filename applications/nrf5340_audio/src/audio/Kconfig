@@ -124,22 +124,16 @@ config AUDIO_ENCODE_CHANNELS_MAX
 	  Maximum number of audio channels that can be encoded.
 	  This number may have a large impact on memory and CPU usage.
 
-config AUDIO_INPUT_CHANNELS
-	int "Maximum number of simultaneous audio input channels"
-	default 2 if AUDIO_SOURCE_I2S
-	default 2 if AUDIO_SOURCE_USB
-	default 1
-	range 1 2
+config AUDIO_INPUT_CHANNELS_MAX
+	int "Maximum number of simoultaneus audio input channels"
+	default 2
 	help
 	  Maximum number of audio channels that can be physically input.
 	  This is dependent on the HW itself.
 
-config AUDIO_OUTPUT_CHANNELS
-	int "Maximum number of simultaneous audio output channels"
-	default 2 if AUDIO_SOURCE_I2S
-	default 2 if AUDIO_SOURCE_USB
-	default 1
-	range 1 2
+config AUDIO_OUTPUT_CHANNELS_MAX
+	int "Maximum number of simoultaneus audio output channels"
+	default 2
 	help
 	  Maximum number of audio channels that can be physically output.
 	  This is dependent on the HW itself.

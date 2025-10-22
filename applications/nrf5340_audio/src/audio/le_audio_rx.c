@@ -43,8 +43,7 @@ static void audio_frame_add(struct net_buf *audio_frame, struct net_buf *audio_f
 		net_buf_add_mem(audio_frame, audio_frame_rx->data, audio_frame_rx->len);
 	} else {
 		/* Increment len to account for bad_data */
-		net_buf_add(audio_frame,
-			    meta->bytes_per_location * audio_metadata_num_ch_get(meta));
+		net_buf_add(audio_frame, meta->bytes_per_location * metadata_num_ch_get(meta));
 	}
 }
 
@@ -158,9 +157,8 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 
 	/* Check if we have received all frames, send if we have */
 check_send:
-	struct audio_metadata *existing_meta = net_buf_user_data(audio_frame);
-
-	if (le_audio_concurrent_sync_num_get() == audio_metadata_num_ch_get(existing_meta)) {
+	if (le_audio_concurrent_sync_num_get() ==
+	    metadata_num_ch_get(net_buf_user_data(audio_frame))) {
 		/* We have received all frames we are waiting for, pass data on to
 		 * the next module
 		 */
@@ -203,7 +201,7 @@ static int audio_datapath_thread_create(void)
 		&audio_datapath_thread_data, audio_datapath_thread_stack,
 		CONFIG_AUDIO_DATAPATH_STACK_SIZE, (k_thread_entry_t)audio_datapath_thread, NULL,
 		NULL, NULL, K_PRIO_PREEMPT(CONFIG_AUDIO_DATAPATH_THREAD_PRIO), 0, K_NO_WAIT);
-	ret = k_thread_name_set(audio_datapath_thread_id, "Audio_datapath");
+	ret = k_thread_name_set(audio_datapath_thread_id, "AUDIO_DATAPATH");
 	if (ret) {
 		LOG_ERR("Failed to create audio_datapath thread");
 		return ret;

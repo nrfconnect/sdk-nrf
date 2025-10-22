@@ -7,7 +7,7 @@
 menu "Factory reset request"
 
 config CAF_FACTORY_RESET_REQUEST
-	bool "Factory reset request module"
+	bool "Enable factory reset request module"
 	select CAF_FACTORY_RESET_EVENTS
 	help
 	  Enable module that generates initialization event with

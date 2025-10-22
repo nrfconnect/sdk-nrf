@@ -48,6 +48,7 @@ bluetooth:
   files:
     - modules/crypto/mbedtls/
     - modules/crypto/oberon-psa-crypto/
+    - modules/crypto/tinycrypt/
     - modules/lib/memfault-firmware-sdk/
     - nrf/applications/ipc_radio/
     - nrf/cmake/
@@ -148,13 +149,11 @@ ci_tests_subsys_net_openthread:
 ci_samples_wifi:
   files:
     - modules/lib/hostap/
-    - modules/lib/matter/
     - modules/lib/nrf_wifi/
     - nrf/boards/shields/nrf7002eb2/
     - nrf/samples/wifi/
     - nrf/subsys/net/lib/hostap_crypto/
     - nrf/subsys/net/lib/nrf70_fw_ext/
-    - nrf/subsys/net/openthread/
     - nrfxlib/nrf_wifi/
     - zephyr/drivers/wifi/
     - zephyr/modules/hostap/
@@ -303,12 +302,14 @@ ci_tests_subsys_suit:
     - nrf/include/bl*
     - nrf/include/dfu/*suit*
     - nrf/include/fprotect.h
+    - nrf/include/sdfw/sdfw_services/
     - nrf/lib/dk_buttons_and_leds/
     - nrf/samples/suit/
     - nrf/subsys/dfu/
     - nrf/subsys/mgmt/suitfu/
     - nrf/subsys/nrf_rpc/
     - nrf/subsys/nrf_security/
+    - nrf/subsys/sdfw_services/
     - nrf/subsys/suit/
     - nrf/sysbuild/
     - nrf/tests/subsys/suit/
@@ -350,6 +351,7 @@ find_my:
     - find-my/
     - modules/crypto/mbedtls/
     - modules/crypto/oberon-psa-crypto/
+    - modules/crypto/tinycrypt/
     - modules/lib/open-amp/
     - nrf/applications/ipc_radio/
     - nrf/cmake/
@@ -395,6 +397,7 @@ ci_samples_cellular:
     - bootloader/mcuboot/
     - modules/crypto/mbedtls/
     - modules/crypto/oberon-psa-crypto/
+    - modules/crypto/tinycrypt/
     - modules/hal/nordic/nrfx/
     - modules/lib/cjson/
     - modules/lib/hostap/
@@ -923,7 +926,6 @@ ci_tests_lib_location:
     - nrf/lib/location/
     - nrf/lib/lte_link_control/
     - nrf/modules/cjson/
-    - nrf/subsys/net/lib/nrf_cloud/
     - nrf/tests/lib/location/
     - nrf/tests/mocks/nrf_modem_at/
 
@@ -1271,6 +1273,18 @@ ci_tests_modules_lib_zcbor:
     - modules/lib/zcbor/
     - nrf/tests/modules/lib/zcbor/
 
+ci_samples_suit:
+  files:
+    - modules/crypto/
+    - modules/lib/suit-processor/
+    - modules/lib/zcbor/
+    - nrf/samples/suit/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/mgmt/suitfu/
+    - nrf/subsys/sdfw_services/
+    - nrf/subsys/suit/
+    - zephyr/subsys/bluetooth/
+
 ci_tests_benchmarks_multicore:
   files:
     - modules/hal/nordic/nrfs/
@@ -1501,7 +1515,7 @@ ci_samples_sdfw:
     - modules/hal/nordic/nrfs/
     - modules/hal/nordic/nrfx/
     - modules/lib/zcbor/
-    - nrf/samples/ironside_se/
+    - nrf/samples/sdfw/
     - nrf/subsys/nrf_rpc/
     - nrf/subsys/sdfw_services/
     - nrfxlib/nrf_rpc/
@@ -1671,11 +1685,6 @@ ci_samples_zephyr_drivers_audio_dmic:
   files:
     - nrf/samples/zephyr/drivers/audio/dmic/
     - zephyr/samples/drivers/audio/dmic/
-
-ci_samples_zephyr_drivers_regulator:
-  files:
-    - nrf/drivers/regulator/
-    - nrf/samples/zephyr/drivers/regulator/
 
 ci_tests_zephyr_drivers_audio_dmic_api:
   files:

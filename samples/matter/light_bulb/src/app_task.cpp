@@ -51,16 +51,15 @@ bool sIsTriggerEffectActive = false;
 const struct pwm_dt_spec sLightPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
 #endif
 
-/* Define a custom attribute persister which makes actual write of the CurrentLevel attribute value
- * to the non-volatile storage only when it has remained constant for 5 seconds. This is to reduce
- * the flash wearout when the attribute changes frequently as a result of MoveToLevel command.
- * DeferredAttribute object describes a deferred attribute, but also holds a buffer with a value to
- * be written, so it must live so long as the DeferredAttributePersistenceProvider object.
- */
+// Define a custom attribute persister which makes actual write of the CurrentLevel attribute value
+// to the non-volatile storage only when it has remained constant for 5 seconds. This is to reduce
+// the flash wearout when the attribute changes frequently as a result of MoveToLevel command.
+// DeferredAttribute object describes a deferred attribute, but also holds a buffer with a value to
+// be written, so it must live so long as the DeferredAttributePersistenceProvider object.
 DeferredAttribute gCurrentLevelPersister(ConcreteAttributePath(kLightEndpointId, Clusters::LevelControl::Id,
 							       Clusters::LevelControl::Attributes::CurrentLevel::Id));
 
-/* Deferred persistence will be auto-initialized as soon as the default persistence is initialized */
+// Deferred persistence will be auto-initialized as soon as the default persistence is initialized
 DefaultAttributePersistenceProvider gSimpleAttributePersistence;
 DeferredAttributePersistenceProvider gDeferredAttributePersister(gSimpleAttributePersistence,
 								 Span<DeferredAttribute>(&gCurrentLevelPersister, 1),

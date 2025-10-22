@@ -1,10 +1,6 @@
 sample:
   description: Matter Light Switch example
   name: Matter Light Switch
-common:
-  tags:
-    - sysbuild
-    - ci_samples_matter
 tests:
   sample.matter.light_switch.debug:
     sysbuild: true
@@ -23,6 +19,9 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.light_switch.release:
     sysbuild: true
     build_only: true
@@ -42,6 +41,9 @@ tests:
       - nrf7002dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.light_switch.lit_icd:
     sysbuild: true
     build_only: true
@@ -55,3 +57,6 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter

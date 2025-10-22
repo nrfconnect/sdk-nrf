@@ -18,8 +18,3 @@
 		compatible = "zephyr,cdc-acm-uart";
 	};
 };
-
-&uart136 {
-	zephyr,pm-device-runtime-auto;
-	disable-rx;
-};

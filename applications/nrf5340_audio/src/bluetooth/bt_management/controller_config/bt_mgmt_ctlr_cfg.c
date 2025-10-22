@@ -31,7 +31,7 @@ K_THREAD_STACK_DEFINE(ctlr_poll_stack_area, CTLR_POLL_WORK_STACK_SIZE);
 struct k_work_q ctrl_poll_work_q;
 
 struct k_work_queue_config ctrl_poll_work_q_config = {
-	.name = "BT_ctlr_wdt",
+	.name = "ctlr_poll",
 	.no_yield = false,
 };
 

@@ -24,7 +24,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-Additionally, the sample supports emulation using the :zephyr:board:`native simulator <native_sim>`.
+Additionally, the sample supports emulation using the :ref:`native simulator <zephyr:native_sim>`.
 
 .. include:: /includes/tfm.txt
 
@@ -217,7 +217,7 @@ To observe incoming messages in the AWS IoT console, follow the steps documented
 Emulation
 =========
 
-The sample can run on the :zephyr:board:`native simulator <native_sim>`, which simplifies development and testing and removes the need for hardware.
+The sample can run on the :ref:`native simulator <zephyr:native_sim>`, which simplifies development and testing and removes the need for hardware.
 Before you build and run on the ``native_sim`` board, you need to perform the steps documented in :ref:`networking_with_native_sim`.
 
 When these steps are completed, you can build and run the sample by using the following commands:

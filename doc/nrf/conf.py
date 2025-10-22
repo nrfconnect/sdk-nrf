@@ -57,7 +57,6 @@ extensions = [
     "ncs_tool_versions",
     "page_filter",
     "sphinxcontrib.plantuml",
-    "sphinxcontrib.programoutput",
 ]
 
 linkcheck_ignore = [

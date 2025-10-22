@@ -1,1 +1,0 @@
-source "samples/drivers/i2c/rtio_loopback/Kconfig"

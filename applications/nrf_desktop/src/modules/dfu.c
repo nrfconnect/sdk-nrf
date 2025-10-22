@@ -56,89 +56,53 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 		     "B0 bootloader supported only with Partition Manager");
 	#include <pm_config.h>
 	#include <fw_info.h>
-	#define BOOTLOADER_NAME "B0"
+	#define BOOTLOADER_NAME	"B0"
 	#if PM_ADDRESS == PM_S0_IMAGE_ADDRESS
-		#define DFU_SLOT_ID PM_S1_IMAGE_ID
+		#define DFU_SLOT_ID		PM_S1_IMAGE_ID
 	#elif PM_ADDRESS == PM_S1_IMAGE_ADDRESS
-		#define DFU_SLOT_ID PM_S0_IMAGE_ID
+		#define DFU_SLOT_ID		PM_S0_IMAGE_ID
 	#else
 		#error Missing partition definitions.
 	#endif
 #elif CONFIG_BOOTLOADER_MCUBOOT
+	BUILD_ASSERT(IS_ENABLED(CONFIG_PARTITION_MANAGER_ENABLED),
+		     "MCUBoot bootloader supported only with Partition Manager");
+	#include <pm_config.h>
 	#include <zephyr/dfu/mcuboot.h>
 	#if CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
-		#define BOOTLOADER_NAME "MCUBOOT+XIP"
+		#define BOOTLOADER_NAME	"MCUBOOT+XIP"
 	#else
-		#define BOOTLOADER_NAME "MCUBOOT"
+		#define BOOTLOADER_NAME	"MCUBOOT"
 	#endif
 
-	#if CONFIG_PARTITION_MANAGER_ENABLED
-		#include <pm_config.h>
-
-		#ifdef PM_MCUBOOT_SECONDARY_PAD_SIZE
-			BUILD_ASSERT(PM_MCUBOOT_PAD_SIZE == PM_MCUBOOT_SECONDARY_PAD_SIZE);
-		#endif
-
-		#if CONFIG_BUILD_WITH_TFM
-			#define PM_ADDRESS_OFFSET (PM_MCUBOOT_PAD_SIZE + PM_TFM_SIZE)
-		#else
-			#define PM_ADDRESS_OFFSET (PM_MCUBOOT_PAD_SIZE)
-		#endif
-
-		#define MCUBOOT_PRIMARY_SLOT_ID   PM_MCUBOOT_PRIMARY_ID
-		#define MCUBOOT_SECONDARY_SLOT_ID PM_MCUBOOT_SECONDARY_ID
-
-		#if (PM_ADDRESS - PM_ADDRESS_OFFSET) == PM_MCUBOOT_PRIMARY_ADDRESS
-			#define DFU_SLOT_ID MCUBOOT_SECONDARY_SLOT_ID
-		#elif (PM_ADDRESS - PM_ADDRESS_OFFSET) == PM_MCUBOOT_SECONDARY_ADDRESS
-			#define DFU_SLOT_ID MCUBOOT_PRIMARY_SLOT_ID
-		#else
-			#error Missing partition definitions.
-		#endif
-	#elif CONFIG_USE_DT_CODE_PARTITION
-		#include <zephyr/devicetree.h>
-
-		#define CODE_PARTITION_NODE    DT_CHOSEN(zephyr_code_partition)
-		#define MCUBOOT_PRIMARY_NODE   DT_NODELABEL(slot0_partition)
-		#define MCUBOOT_SECONDARY_NODE DT_NODELABEL(slot1_partition)
-
-		BUILD_ASSERT(DT_FIXED_PARTITION_EXISTS(MCUBOOT_PRIMARY_NODE),
-			     "Missing primary partition definition in DTS.");
-		BUILD_ASSERT(DT_FIXED_PARTITION_EXISTS(MCUBOOT_SECONDARY_NODE),
-			     "Missing secondary partition definition in DTS.");
-
-
-		#define CODE_PARTITION_START_ADDR    DT_FIXED_PARTITION_ADDR(CODE_PARTITION_NODE)
-		#define MCUBOOT_PRIMARY_START_ADDR   DT_FIXED_PARTITION_ADDR(MCUBOOT_PRIMARY_NODE)
-		#define MCUBOOT_SECONDARY_START_ADDR DT_FIXED_PARTITION_ADDR(MCUBOOT_SECONDARY_NODE)
-		#define MCUBOOT_PRIMARY_END_ADDR     (MCUBOOT_PRIMARY_START_ADDR + \
-						      DT_REG_SIZE(MCUBOOT_PRIMARY_NODE))
-		#define MCUBOOT_SECONDARY_END_ADDR   (MCUBOOT_SECONDARY_START_ADDR + \
-						      DT_REG_SIZE(MCUBOOT_SECONDARY_NODE))
-
-		#if MCUBOOT_PRIMARY_START_ADDR == MCUBOOT_SECONDARY_START_ADDR
-			#error Primary and secondary partitions cannot have the same address.
-		#endif
-
-		#define MCUBOOT_PRIMARY_SLOT_ID   DT_FIXED_PARTITION_ID(MCUBOOT_PRIMARY_NODE)
-		#define MCUBOOT_SECONDARY_SLOT_ID DT_FIXED_PARTITION_ID(MCUBOOT_SECONDARY_NODE)
-
-		/* Use range check to allow for placing MCUboot header in a separate partition,
-		 * so the application code partition is not an alias for the MCUboot partition,
-		 * but a subpartition of the MCUboot partition.
-		 */
-		#if (CODE_PARTITION_START_ADDR >= MCUBOOT_PRIMARY_START_ADDR) && \
-		    (CODE_PARTITION_START_ADDR < MCUBOOT_PRIMARY_END_ADDR)
-			#define DFU_SLOT_ID MCUBOOT_SECONDARY_SLOT_ID
-		#elif (CODE_PARTITION_START_ADDR >= MCUBOOT_SECONDARY_START_ADDR) && \
-		      (CODE_PARTITION_START_ADDR < MCUBOOT_SECONDARY_END_ADDR)
-			#define DFU_SLOT_ID MCUBOOT_PRIMARY_SLOT_ID
-		#else
-			#error Missing partition definitions in DTS.
-		#endif
-	#else
-		#error Unsupported partitioning scheme.
+	#ifdef PM_MCUBOOT_SECONDARY_PAD_SIZE
+		BUILD_ASSERT(PM_MCUBOOT_PAD_SIZE == PM_MCUBOOT_SECONDARY_PAD_SIZE);
 	#endif
+
+	#if CONFIG_BUILD_WITH_TFM
+		#define PM_ADDRESS_OFFSET (PM_MCUBOOT_PAD_SIZE + PM_TFM_SIZE)
+	#else
+		#define PM_ADDRESS_OFFSET (PM_MCUBOOT_PAD_SIZE)
+	#endif
+
+	#if (PM_ADDRESS - PM_ADDRESS_OFFSET) == PM_MCUBOOT_PRIMARY_ADDRESS
+		#define DFU_SLOT_ID		PM_MCUBOOT_SECONDARY_ID
+	#elif (PM_ADDRESS - PM_ADDRESS_OFFSET) == PM_MCUBOOT_SECONDARY_ADDRESS
+		#define DFU_SLOT_ID		PM_MCUBOOT_PRIMARY_ID
+	#else
+		#error Missing partition definitions.
+	#endif
+#elif CONFIG_SUIT
+	BUILD_ASSERT(!IS_ENABLED(CONFIG_PARTITION_MANAGER_ENABLED),
+		     "SUIT DFU is supported only without Partition Manager");
+	BUILD_ASSERT(DT_NODE_EXISTS(DT_NODELABEL(dfu_partition)),
+		     "DFU partition must be defined in devicetree");
+	#include <sdfw/sdfw_services/suit_service.h>
+	#include <suit_plat_mem_util.h>
+	#define BOOTLOADER_NAME	"SUIT"
+	#define DFU_SLOT_ID		FIXED_PARTITION_ID(dfu_partition)
+	#define UPDATE_CANDIDATE_CNT	1
+	static suit_plat_mreg_t update_candidate;
 #else
 	#error Bootloader not supported.
 #endif
@@ -272,6 +236,16 @@ static void reboot_request_handler(struct k_work *work)
 
 	LOG_PANIC();
 
+#if CONFIG_SUIT
+	if ((update_candidate.mem != 0) && (update_candidate.size != 0) &&
+	    (cur_offset == img_length) && !slot_was_used_by_other_transport) {
+		LOG_INF("Configuration channel reboot request triggered SUIT update");
+		int ret = suit_trigger_update(&update_candidate, UPDATE_CANDIDATE_CNT);
+
+		LOG_INF("SUIT update triggered with status: %d", ret);
+	}
+#endif
+
 	sys_reboot(SYS_REBOOT_WARM);
 
 	if (!k_work_delayable_is_pending(&background_erase)) {
@@ -362,6 +336,12 @@ static void complete_dfu_data_store(void)
 		if (err) {
 			LOG_ERR("Cannot request the image upgrade (err:%d)", err);
 		}
+#elif CONFIG_SUIT
+		update_candidate.mem
+			= suit_plat_mem_nvm_ptr_get(FIXED_PARTITION_OFFSET(dfu_partition));
+		update_candidate.size = img_length;
+		LOG_INF("DFU update candidate stored in DFU partition");
+		LOG_INF("Update will be performed on configuration channel reboot request");
 #endif
 		terminate_dfu();
 	}
@@ -779,12 +759,12 @@ static void handle_image_info_request(uint8_t *data, size_t *size)
 	uint8_t flash_area_id;
 	uint8_t bank_header_area_id;
 
-	if (DFU_SLOT_ID == MCUBOOT_SECONDARY_SLOT_ID) {
+	if (DFU_SLOT_ID == PM_MCUBOOT_SECONDARY_ID) {
 		flash_area_id = 0;
-		bank_header_area_id = MCUBOOT_PRIMARY_SLOT_ID;
+		bank_header_area_id = PM_MCUBOOT_PRIMARY_ID;
 	} else {
 		flash_area_id = 1;
-		bank_header_area_id = MCUBOOT_SECONDARY_SLOT_ID;
+		bank_header_area_id = PM_MCUBOOT_SECONDARY_ID;
 	}
 
 	int err = boot_read_bank_header(bank_header_area_id, &header,
@@ -826,6 +806,118 @@ static void handle_image_info_request(uint8_t *data, size_t *size)
 		pos += sizeof(header.h.v1.sem_ver.build_num);
 	} else {
 		LOG_ERR("Cannot obtain image information");
+	}
+}
+#elif CONFIG_SUIT
+static const char *suit_release_type_str_get(suit_version_release_type_t type)
+{
+	switch (type) {
+	case SUIT_VERSION_RELEASE_NORMAL:
+		return NULL;
+	case SUIT_VERSION_RELEASE_RC:
+		return "rc";
+	case SUIT_VERSION_RELEASE_BETA:
+		return "beta";
+	case SUIT_VERSION_RELEASE_ALPHA:
+		return "alpha";
+	default:
+		__ASSERT(0, "Unknown release type");
+		return NULL;
+	}
+};
+
+static void handle_image_info_request(uint8_t *data, size_t *size)
+{
+	unsigned int seq_num = 0;
+	suit_ssf_manifest_class_info_t class_info;
+	suit_semver_raw_t version_raw;
+	suit_version_t version;
+	bool is_semver_supported;
+
+	int err = suit_get_supported_manifest_info(SUIT_MANIFEST_APP_ROOT, &class_info);
+
+	if (!err) {
+		err = suit_get_installed_manifest_info(&(class_info.class_id),
+				&seq_num, &version_raw, NULL, NULL, NULL);
+	}
+	if (!err) {
+		/* Semantic versioning support has been added to the SDFW in the v0.6.2
+		 * public release. Older SDFW versions return empty array in the version
+		 * variable.
+		 */
+		is_semver_supported = (version_raw.len != 0);
+		if (is_semver_supported) {
+			err = suit_metadata_version_from_array(&version,
+							       version_raw.raw,
+							       version_raw.len);
+		}
+	}
+
+	if (!err) {
+		uint8_t flash_area_id = 0;
+		/* SUIT supports multiple images, return zero as a special image size value. */
+		uint32_t image_size = 0;
+		uint32_t build_num = seq_num;
+		uint8_t major = 0;
+		uint8_t minor = 0;
+		uint16_t revision = 0;
+
+		if (is_semver_supported) {
+			const char *release_type;
+
+			release_type = suit_release_type_str_get(version.type);
+			if (release_type) {
+				LOG_INF("Booted application version: %d.%d.%d-%s%d",
+					version.major, version.minor, version.patch,
+					release_type, version.pre_release_number);
+			} else {
+				LOG_INF("Booted application version: %d.%d.%d",
+					version.major, version.minor, version.patch);
+			}
+
+			__ASSERT_NO_MSG((version.major >= 0) && (version.major <= UINT8_MAX));
+			__ASSERT_NO_MSG((version.minor >= 0) && (version.minor <= UINT8_MAX));
+			__ASSERT_NO_MSG((version.patch >= 0) && (version.patch <= UINT16_MAX));
+
+			major = version.major;
+			minor = version.minor;
+			revision = version.patch;
+			/* The Release type and the pre-release number are not included
+			 * in the image info response.
+			 */
+		}
+
+		LOG_INF("Booted application sequence number: %" PRIu32, seq_num);
+
+		size_t data_size = sizeof(flash_area_id) +
+				   sizeof(image_size) +
+				   sizeof(major) +
+				   sizeof(minor) +
+				   sizeof(revision) +
+				   sizeof(build_num);
+		size_t pos = 0;
+
+		*size = data_size;
+
+		data[pos] = flash_area_id;
+		pos += sizeof(flash_area_id);
+
+		sys_put_le32(image_size, &data[pos]);
+		pos += sizeof(image_size);
+
+		data[pos] = major;
+		pos += sizeof(major);
+
+		data[pos] = minor;
+		pos += sizeof(minor);
+
+		sys_put_le16(revision, &data[pos]);
+		pos += sizeof(revision);
+
+		sys_put_le32(build_num, &data[pos]);
+		pos += sizeof(build_num);
+	} else {
+		LOG_ERR("suit retrieve manifest seq num failed (err: %d)", err);
 	}
 }
 #endif

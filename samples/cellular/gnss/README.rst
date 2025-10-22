@@ -86,13 +86,7 @@ GNSS satellite acquisition can also be assisted by providing factory almanac, GP
 Using this information, GNSS can calculate which satellites it should search for and what are the expected Doppler frequencies.
 
 The sample includes a factory almanac that is written to the file system when the sample starts.
-There are two versions of the factory almanac:
-
-* :file:`factory_almanac_v2.h`: Used by nRF9160 devices.
-* :file:`factory_almanac_v3.h`: Used by nRF91x1 devices.
-
-The date when the factory almanac was generated is found in the header files.
-The files are updated in the repository approximately once a month.
+The date for the factory almanac generation is in the :file:`factory_almanac.h` file.
 The almanac gets inaccurate with time and should be updated occasionally.
 GNSS can use an almanac until it is two years old, but generally it should be updated every few months.
 

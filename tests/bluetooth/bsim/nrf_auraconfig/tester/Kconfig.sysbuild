@@ -6,9 +6,10 @@
 
 source "share/sysbuild/Kconfig"
 
-config NRF_DEFAULT_IPC_RADIO
-	bool
-	default y
+config NET_CORE_BOARD
+	string
+	default "nrf5340bsim/nrf5340/cpunet" if $(BOARD_TARGET_STRING) = "NRF5340BSIM_NRF5340_CPUAPP"
+
 
 config NATIVE_SIMULATOR_PRIMARY_MCU_INDEX
 	int

@@ -94,7 +94,7 @@ config SYSTEM_WORKQUEUE_STACK_SIZE
 	default 2048 if BT_LL_SOFTDEVICE
 
 config BT_CTLR_SDC_LLPM
-	bool "Low Latency Packet Mode support"
+	bool "Enable Low Latency Packet Mode support"
 	select BT_CONN_PARAM_ANY if !BT_HCI_RAW
 	depends on (SOC_SERIES_NRF52X || SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX || \
 		    SOC_SERIES_BSIM_NRF52X || SOC_SERIES_BSIM_NRF54LX)
@@ -103,7 +103,7 @@ config BT_CTLR_SDC_LLPM
 	  which lets the application use connection intervals down to 1 ms.
 
 config BT_CTLR_SDC_QOS_CHANNEL_SURVEY
-	bool "Channel survey"
+	bool "Enable channel survey"
 	select EXPERIMENTAL
 	help
 	  Channel survey feature support
@@ -149,7 +149,7 @@ config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	  the number of bytes configured with BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT.
 
 config BT_CTLR_SDC_CONN_EVENT_EXTEND_DEFAULT
-	bool "Connection event extension by default"
+	bool "Enable connection event extension by default"
 	default y if !NRF_802154_RADIO_DRIVER
 	help
 	  When Extended Connection Events are disabled, the maximum connection event length is
@@ -274,7 +274,7 @@ config BT_CTLR_SDC_RX_PRIO
 # CONFIG_BT_CTLR_DF is declared in Zephyr and also here for a second time,
 # to avoid BT_CTLR_DF_SUPPORT dependency.
 config BT_CTLR_DF
-	bool "CTE Transmitter support"
+	bool "Enable CTE Transmitter support"
 	help
 	  Enable support for the Bluetooth v5.1 Connectionless CTE Transmitter
 	  and the Connection CTE transmitter features in the controller.
@@ -311,6 +311,7 @@ choice BT_LL_SOFTDEVICE_VARIANT
 						     BT_CTLR_EXTENDED_FEAT_SET || \
 						     BT_CTLR_FRAME_SPACE_UPDATE || \
 						     SOC_COMPATIBLE_NRF5340_CPUNET || \
+						     SOC_NRF54H20_CPURAD || \
 						     (SOC_COMPATIBLE_NRF54LX && TRUSTED_EXECUTION_NONSECURE) || \
 						     SOC_SERIES_NRF71X)
 	default BT_LL_SOFTDEVICE_CENTRAL if BT_OBSERVER
@@ -537,18 +538,6 @@ config BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
 config BT_CTLR_EXTENDED_FEAT_SET
 	select EXPERIMENTAL
 
-config BT_CTLR_SDC_EXTENDED_FEAT_MAX_REMOTE_PAGE
-	int "Number of supported remote feature pages"
-	depends on BT_CTLR_EXTENDED_FEAT_SET
-	range 1 10
-	default BT_LE_LOCAL_MINIMUM_REQUIRED_FEATURE_PAGE if BT_LE_LOCAL_MINIMUM_REQUIRED_FEATURE_PAGE > 0
-	default 1
-	help
-	  Configures the maximum number of remote Extended Feature Set feature pages
-	  that can be stored inside the controller. This value also sets the maximum
-	  page that will be requested by the HCI_LE_Read_All_Remote_Features command.
-	  Each feature page requires approximately 24 bytes of RAM per link.
-
 config BT_CTLR_FRAME_SPACE_UPDATE
 	select EXPERIMENTAL
 
@@ -633,7 +622,7 @@ config BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT
 	  Internal helper config. Not intended for use.
 
 config BT_CTLR_SDC_CS_STEP_MODE3
-	bool "Optional step mode-3 support"
+	bool "Enable optional step mode-3 support"
 	depends on BT_CTLR_CHANNEL_SOUNDING
 	help
 	  Enable optional step mode-3 support. Channel sounding will not automatically start using step mode-3 if this
@@ -645,53 +634,6 @@ config BT_CTLR_SDC_CS_EVENT_LEN_DEFAULT
 	default 5000
 	help
 	  The time set aside for channel sounding events in microseconds.
-
-choice BT_CTLR_SDC_CS_T_PM_LEN_DEFAULT_SELECTION
-prompt "Default channel sounding t_pm length"
-	depends on BT_CTLR_CHANNEL_SOUNDING
-	default BT_CTLR_SDC_CS_T_PM_LEN_10_US
-	help
-	  Set the preferred tone length (T_PM) of CS tones
-
-	  In Channel Sounding, tones in step mode-2 and -3 have a length of t_pm microseconds.
-	  T_PM can be 10, 20 or 40 microseconds.
-
-	  Since the T_PM can affect the quality of tone measurements, it is important for
-	  certain use-cases to be able to set a preferred T_PM. The controller will then use
-	  this value when the LE CS Create Config command is issued.
-
-	  If the local or peer device does not support the suggested preferred T_PM, it cannot
-	  be used. The controller will then select a T_PM value supported by both local and
-	  peer devices when the LE CS Create Config command is issued.
-
-config BT_CTLR_SDC_CS_T_PM_LEN_10_US
-	bool "10 us"
-	depends on BT_CTLR_CHANNEL_SOUNDING
-	help
-	  Set controller default channel sounding tones to 10 microseconds.
-
-config BT_CTLR_SDC_CS_T_PM_LEN_20_US
-	bool "20 us"
-	depends on BT_CTLR_CHANNEL_SOUNDING
-	help
-	  Set controller default channel sounding tones to 20 microseconds.
-
-config BT_CTLR_SDC_CS_T_PM_LEN_40_US
-	bool "40 us"
-	depends on BT_CTLR_CHANNEL_SOUNDING
-	help
-	  Set controller default channel sounding tones to 40 microseconds.
-endchoice
-
-config BT_CTLR_SDC_CS_T_PM_LEN_DEFAULT
-	int
-	depends on BT_CTLR_CHANNEL_SOUNDING
-	default 10 if BT_CTLR_SDC_CS_T_PM_LEN_10_US
-	default 20 if BT_CTLR_SDC_CS_T_PM_LEN_20_US
-	default 40 if BT_CTLR_SDC_CS_T_PM_LEN_40_US
-
-config BT_CTLR_LE_PATH_LOSS_MONITORING
-	select BT_CTLR_LE_POWER_CONTROL
 
 config BT_CTLR_SDC_LE_POWER_CLASS_1
 	bool "Device supports transmitting at LE Power Class 1 level"

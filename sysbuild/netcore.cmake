@@ -74,10 +74,4 @@ if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE AND DEFINED SB_CONFI
   endif()
 
   set_property(GLOBAL PROPERTY PM_DOMAINS ${PM_DOMAINS})
-
-  if(SB_CONFIG_BOARD_NRF5340BSIM_NRF5340_CPUAPP)
-    native_simulator_set_child_images(${DEFAULT_IMAGE} ${SB_CONFIG_NETCORE_IMAGE_NAME})
-    native_simulator_set_primary_mcu_index(${DEFAULT_IMAGE} ${SB_CONFIG_NETCORE_IMAGE_NAME})
-    native_simulator_set_final_executable(${DEFAULT_IMAGE})
-  endif()
 endif()

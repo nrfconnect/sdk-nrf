@@ -15,158 +15,80 @@
 #include <nrf_modem_at.h>
 
 #include "common/event_handler_list.h"
-#include "common/helpers.h"
 #include "modules/mdmev.h"
 
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
-/* %MDMEV commands */
-#define AT_MDMEV_ENABLE_1	"AT%%MDMEV=1"
-#define AT_MDMEV_ENABLE_2	"AT%%MDMEV=2"
-#define AT_MDMEV_DISABLE	"AT%%MDMEV=0"
-#define AT_MDMEV_NOTIF_PREFIX	"%MDMEV: "
-
-/* Fixed events */
-#define AT_MDMEV_OVERHEATED		"ME OVERHEATED\r\n"
-#define AT_MDMEV_BATTERY_LOW		"ME BATTERY LOW\r\n"
-#define AT_MDMEV_SEARCH_STATUS_1	"SEARCH STATUS 1\r\n"
-#define AT_MDMEV_SEARCH_STATUS_2	"SEARCH STATUS 2\r\n"
-#define AT_MDMEV_RESET_LOOP		"RESET LOOP\r\n"
-#define AT_MDMEV_NO_IMEI		"NO IMEI\r\n"
-#define AT_MDMEV_RF_CAL_NOT_DONE	"RF CALIBRATION NOT DONE\r\n"
-
-/* Events with values */
-#define AT_MDMEV_CE_LEVEL		"PRACH CE-LEVEL %u\r\n"
-#define AT_MDMEV_INVALID_BAND_CONF	"INVALID BAND CONFIGURATION %u %u %u\r\n"
-#define AT_MDMEV_DETECTED_COUNTRY	"DETECTED COUNTRY %u\r\n"
+/* MDMEV command parameters */
+#define AT_MDMEV_ENABLE_1	 "AT%%MDMEV=1"
+#define AT_MDMEV_ENABLE_2	 "AT%%MDMEV=2"
+#define AT_MDMEV_DISABLE	 "AT%%MDMEV=0"
+#define AT_MDMEV_RESPONSE_PREFIX "%MDMEV: "
+#define AT_MDMEV_OVERHEATED	 "ME OVERHEATED\r\n"
+#define AT_MDMEV_BATTERY_LOW	 "ME BATTERY LOW\r\n"
+#define AT_MDMEV_SEARCH_STATUS_1 "SEARCH STATUS 1\r\n"
+#define AT_MDMEV_SEARCH_STATUS_2 "SEARCH STATUS 2\r\n"
+#define AT_MDMEV_RESET_LOOP	 "RESET LOOP\r\n"
+#define AT_MDMEV_NO_IMEI	 "NO IMEI\r\n"
+#define AT_MDMEV_CE_LEVEL_0	 "PRACH CE-LEVEL 0\r\n"
+#define AT_MDMEV_CE_LEVEL_1	 "PRACH CE-LEVEL 1\r\n"
+#define AT_MDMEV_CE_LEVEL_2	 "PRACH CE-LEVEL 2\r\n"
+#define AT_MDMEV_CE_LEVEL_3	 "PRACH CE-LEVEL 3\r\n"
 
 AT_MONITOR(ltelc_atmon_mdmev, "%MDMEV", at_handler_mdmev);
 
 bool mdmev_enabled;
 
-static int mdmev_fixed_parse(const char *notif, struct lte_lc_modem_evt *modem_evt)
+static int mdmev_parse(const char *at_response, enum lte_lc_modem_evt *modem_evt)
 {
-	struct event_type_map {
-		enum lte_lc_modem_evt_type type;
-		const char *notif;
-	};
-	static const struct event_type_map event_types[] = {
-		{ LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE, AT_MDMEV_SEARCH_STATUS_1 },
-		{ LTE_LC_MODEM_EVT_SEARCH_DONE, AT_MDMEV_SEARCH_STATUS_2 },
-		{ LTE_LC_MODEM_EVT_RESET_LOOP, AT_MDMEV_RESET_LOOP },
-		{ LTE_LC_MODEM_EVT_BATTERY_LOW, AT_MDMEV_BATTERY_LOW },
-		{ LTE_LC_MODEM_EVT_OVERHEATED, AT_MDMEV_OVERHEATED },
-		{ LTE_LC_MODEM_EVT_NO_IMEI, AT_MDMEV_NO_IMEI },
-		{ LTE_LC_MODEM_EVT_RF_CAL_NOT_DONE, AT_MDMEV_RF_CAL_NOT_DONE },
-		{ 0, NULL }
+	static const char *const event_types[] = {
+		[LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE] = AT_MDMEV_SEARCH_STATUS_1,
+		[LTE_LC_MODEM_EVT_SEARCH_DONE] = AT_MDMEV_SEARCH_STATUS_2,
+		[LTE_LC_MODEM_EVT_RESET_LOOP] = AT_MDMEV_RESET_LOOP,
+		[LTE_LC_MODEM_EVT_BATTERY_LOW] = AT_MDMEV_BATTERY_LOW,
+		[LTE_LC_MODEM_EVT_OVERHEATED] = AT_MDMEV_OVERHEATED,
+		[LTE_LC_MODEM_EVT_NO_IMEI] = AT_MDMEV_NO_IMEI,
+		[LTE_LC_MODEM_EVT_CE_LEVEL_0] = AT_MDMEV_CE_LEVEL_0,
+		[LTE_LC_MODEM_EVT_CE_LEVEL_1] = AT_MDMEV_CE_LEVEL_1,
+		[LTE_LC_MODEM_EVT_CE_LEVEL_2] = AT_MDMEV_CE_LEVEL_2,
+		[LTE_LC_MODEM_EVT_CE_LEVEL_3] = AT_MDMEV_CE_LEVEL_3,
 	};
 
-	__ASSERT_NO_MSG(notif != NULL);
+	__ASSERT_NO_MSG(at_response != NULL);
 	__ASSERT_NO_MSG(modem_evt != NULL);
 
-	for (size_t i = 0; i < ARRAY_SIZE(event_types); i++) {
-		if (event_types[i].notif == NULL) {
-			break;
-		}
+	const char *start_ptr = at_response + sizeof(AT_MDMEV_RESPONSE_PREFIX) - 1;
 
-		if (strcmp(event_types[i].notif, notif) == 0) {
-			modem_evt->type = event_types[i].type;
+	for (size_t i = 0; i < ARRAY_SIZE(event_types); i++) {
+		if (strcmp(event_types[i], start_ptr) == 0) {
+			LOG_DBG("Occurrence found: %s", event_types[i]);
+			*modem_evt = i;
 
 			return 0;
 		}
 	}
 
-	return -ENODATA;
-}
-
-static int mdmev_value_parse(const char *notif, struct lte_lc_modem_evt *modem_evt)
-{
-	uint32_t value1;
-	uint32_t value2;
-	uint32_t value3;
-
-	__ASSERT_NO_MSG(notif != NULL);
-	__ASSERT_NO_MSG(modem_evt != NULL);
-
-	if (sscanf(notif, AT_MDMEV_CE_LEVEL, &value1) == 1) {
-		modem_evt->type = LTE_LC_MODEM_EVT_CE_LEVEL;
-		modem_evt->ce_level = value1;
-		return 0;
-	}
-
-	/* Default value for NTN NB-IoT when it's not supported by the modem firmware. */
-	value3 = LTE_LC_BAND_CONF_STATUS_SYSTEM_NOT_SUPPORTED;
-
-	/* At least 2 values are expected (LTE-M and NB-IoT). */
-	if (sscanf(notif, AT_MDMEV_INVALID_BAND_CONF, &value1, &value2, &value3) >= 2) {
-		modem_evt->type = LTE_LC_MODEM_EVT_INVALID_BAND_CONF;
-		modem_evt->invalid_band_conf.status_ltem = value1;
-		modem_evt->invalid_band_conf.status_nbiot = value2;
-		modem_evt->invalid_band_conf.status_ntn_nbiot = value3;
-		return 0;
-	}
-
-	if (sscanf(notif, AT_MDMEV_DETECTED_COUNTRY, &value1) == 1) {
-		modem_evt->type = LTE_LC_MODEM_EVT_DETECTED_COUNTRY;
-		modem_evt->detected_country = value1;
-		return 0;
-	}
+	LOG_DBG("No modem event type found: %s", at_response);
 
 	return -ENODATA;
 }
 
-static void search_done_event_send_work_fn(struct k_work *work)
-{
-	struct lte_lc_evt evt = {
-		.type = LTE_LC_EVT_MODEM_EVENT,
-		.modem_evt.type = LTE_LC_MODEM_EVT_SEARCH_DONE,
-	};
-
-	event_handler_list_dispatch(&evt);
-}
-
-K_WORK_DELAYABLE_DEFINE(search_done_event_send_work, search_done_event_send_work_fn);
-
-static void at_handler_mdmev(const char *notif)
+static void at_handler_mdmev(const char *response)
 {
 	int err;
-	struct lte_lc_evt evt = {
-		.type = LTE_LC_EVT_MODEM_EVENT
-	};
+	struct lte_lc_evt evt = {0};
 
-	__ASSERT_NO_MSG(notif != NULL);
+	__ASSERT_NO_MSG(response != NULL);
 
-	/* Remove the notification prefix. */
-	const char *start_ptr = notif + sizeof(AT_MDMEV_NOTIF_PREFIX) - 1;
+	LOG_DBG("%%MDMEV notification");
 
-	LOG_DBG("%%MDMEV notification: %.*s", (int)(strlen(start_ptr) - strlen("\r\n")), start_ptr);
-
-	/* Try to parse fixed events. */
-	err = mdmev_fixed_parse(start_ptr, &evt.modem_evt);
+	err = mdmev_parse(response, &evt.modem_evt);
 	if (err) {
-		/* Try to parse events with values. */
-		err = mdmev_value_parse(start_ptr, &evt.modem_evt);
-		if (err) {
-			LOG_DBG("No modem event type found: %s", notif);
-			return;
-		}
+		LOG_ERR("Can't parse modem event notification, error: %d", err);
+		return;
 	}
 
 	evt.type = LTE_LC_EVT_MODEM_EVENT;
-
-	if (evt.modem_evt.type == LTE_LC_MODEM_EVT_SEARCH_DONE &&
-	    mfw_type_get() != MFW_TYPE_NRF9151_NTN) {
-		/* With mfw_nrf9160 and mfw_nrf91x1, modem sends the SEARCH STATUS 2 notification
-		 * before the +CEREG notification. To simplify application implementation, the
-		 * search done event is delayed a bit. When application receives the search done
-		 * event, it can check the last received cell information to see if a cell was
-		 * found or not.
-		 * With mfw_nrf9151-ntn, modem sends the SEARCH STATUS 2 notification
-		 * after the +CEREG notification, so no need to delay it there.
-		 */
-		k_work_schedule(&search_done_event_send_work, K_MSEC(100));
-		return;
-	}
 
 	event_handler_list_dispatch(&evt);
 }

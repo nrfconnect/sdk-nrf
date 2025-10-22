@@ -6,15 +6,15 @@
 
 """Device requests"""
 
+import sys
 import argparse
 import logging
 import os
-import re
 import subprocess
-import sys
-import time
-
 import serial
+import time
+import re
+
 from serial.tools.list_ports import comports
 
 NRF91_VID = 4966
@@ -124,7 +124,7 @@ class Device:
 
         # Multiple connected devices, make the user choose
         for i, x in enumerate(sids):
-            print(f"{i + 1}) {x}")
+            print("{}) {}".format(i + 1, x))
 
         while True:
             index = input("Select device (number): ")

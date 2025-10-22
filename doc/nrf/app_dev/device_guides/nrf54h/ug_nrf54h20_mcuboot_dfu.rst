@@ -89,10 +89,11 @@ For detailed information on ECIES-X25519 support, refer to the :ref:`ug_nrf54h_e
 Suspend to RAM (S2RAM) support
 ******************************
 
-MCUboot on the nRF54H20 SoC supports Suspend to RAM (S2RAM) functionality in the application.
-It can detect a wake-up from S2RAM and redirect execution to the application's resume routine.
+MCUboot on the nRF54H20 SoC can supports Suspend to RAM (S2RAM) functionality in the Application.
+It is able to detect wake-up from S2RAM and redirect execution to the Application's resume routine.
 
-For more information, see :ref:`S2RAM operation with MCUboot as the bootloader instruction<ug_nrf54h20_pm_optimizations_bootloader>`.
+Follow :ref:`S2RAM operation with MCUboot as the bootloader instruction<ug_nrf54h20_pm_optimizations_bootloader>`
+for more information.
 
 DFU configuration example
 *************************

@@ -28,6 +28,7 @@ endchoice
 
 rsource "nrf_cloud/Kconfig"
 rsource "rest_client/Kconfig"
+rsource "download_client/Kconfig"
 rsource "downloader/Kconfig"
 rsource "fota_download/Kconfig"
 rsource "aws_iot/Kconfig"

@@ -41,7 +41,6 @@ config BT_RPC_CLIENT
 
 config BT_RPC_HOST
 	bool "Bluetooth over RPC Host"
-	select BT_CONN_DYNAMIC_CALLBACKS
 	help
 	  Bluetooth Low Energy API will use nRF RPC library to provide API for
 	  client on the remote core.
@@ -98,10 +97,6 @@ config BT_RPC_INTERNAL_FUNCTIONS
 	bool "Internal functions"
 	help
 	  Enable functionality required for internal purposes e.g. testing.
-
-config BT_CONN_DYNAMIC_CALLBACKS
-	bool
-	default y
 
 endif # BT_RPC
 

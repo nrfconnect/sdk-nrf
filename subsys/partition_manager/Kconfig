@@ -111,9 +111,10 @@ endif
 
 config PM_PARTITION_SIZE_VPR_LAUNCHER
 	hex
-	depends on SOC_NRF54L15_CPUFLPR || SOC_NRF54LV10A_ENGA_CPUFLPR || SOC_NRF54LM20A_ENGA_CPUFLPR || SOC_NRF7120_ENGA_CPUFLPR
+	depends on SOC_NRF54L15_CPUFLPR || SOC_NRF54L09_ENGA_CPUFLPR || SOC_NRF54LV10A_ENGA_CPUFLPR || SOC_NRF54LM20A_ENGA_CPUFLPR || SOC_NRF7120_ENGA_CPUFLPR
 	default $(dt_node_reg_addr_hex,/soc/rram-controller@5004b000/rram@165000) if SOC_NRF54L15_CPUFLPR
 	default $(dt_node_reg_addr_hex,/soc/rram-controller@5004e000/rram@1e5000) if SOC_NRF54LM20A_ENGA_CPUFLPR
+	default $(dt_node_reg_addr_hex,/soc/rram-controller@5004e000/rram@ee000) if SOC_NRF54L09_ENGA_CPUFLPR
 	default $(dt_node_reg_addr_hex,/soc/rram-controller@5004e000/rram@ed000) if SOC_NRF54LV10A_ENGA_CPUFLPR
 	default $(dt_node_reg_addr_hex,/soc/mram@3e1000) if SOC_NRF7120_ENGA_CPUFLPR
 	help
@@ -123,8 +124,9 @@ config PM_PARTITION_SIZE_VPR_LAUNCHER
 
 config PM_RAM_SIZE_VPR_LAUNCHER
 	hex
-	depends on SOC_NRF54L15_CPUFLPR || SOC_NRF54LV10A_ENGA_CPUFLPR || SOC_NRF54LM20A_ENGA_CPUFLPR || SOC_NRF7120_ENGA_CPUFLPR
+	depends on SOC_NRF54L15_CPUFLPR || SOC_NRF54L09_ENGA_CPUFLPR || SOC_NRF54LV10A_ENGA_CPUFLPR || SOC_NRF54LM20A_ENGA_CPUFLPR || SOC_NRF7120_ENGA_CPUFLPR
 	default 0x28000 if SOC_NRF54L15_CPUFLPR || SOC_NRF7120_ENGA_CPUFLPR
+	default 0x23c00 if SOC_NRF54L09_ENGA_CPUFLPR
 	default 0x1fc00 if SOC_NRF54LV10A_ENGA_CPUFLPR
 	default 0x67c00 if SOC_NRF54LM20A_ENGA_CPUFLPR
 	help
@@ -203,13 +205,13 @@ config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
 config PM_SRAM_BASE
 	hex
 	default $(dt_node_reg_addr_hex,/soc/memory@21000000) if SOC_NRF5340_CPUNET
-	default 0x20000000 if SOC_NRF54L15_CPUFLPR || SOC_NRF54LV10A_ENGA_CPUFLPR || SOC_NRF54LM20A_ENGA_CPUFLPR || SOC_NRF7120_ENGA_CPUFLPR
+	default 0x20000000 if SOC_NRF54L15_CPUFLPR || SOC_NRF54L09_ENGA_CPUFLPR || SOC_NRF54LV10A_ENGA_CPUFLPR || SOC_NRF54LM20A_ENGA_CPUFLPR || SOC_NRF7120_ENGA_CPUFLPR
 	default $(dt_node_reg_addr_hex,/soc/memory@20000000)
 
 config PM_SRAM_SIZE
 	hex
 	default $(dt_node_reg_size_hex,/soc/memory@21000000) if SOC_NRF5340_CPUNET
-	default 0x2fc00 if SOC_NRF54LV10A_ENGA_CPUFLPR # Because the cpuapp_rram DT node is deleted in nrf54l09_enga_cpuflpr.dtsi
+	default 0x2fc00 if SOC_NRF54L09_ENGA_CPUFLPR  || SOC_NRF54LV10A_ENGA_CPUFLPR # Because the cpuapp_rram DT node is deleted in nrf54l09_enga_cpuflpr.dtsi
 	default 0x40000 if SOC_NRF54L15_CPUFLPR  # Because the cpuapp_rram DT node is deleted in nrf54l15_cpuflpr.dtsi
 	default 0x7fc00 if SOC_NRF54LM20A_ENGA_CPUFLPR # Because the cpuapp_rram DT node is deleted in nrf54lm20a_enga_cpuflpr.dtsi
 	default 0x40000 if SOC_NRF7120_ENGA_CPUFLPR  # Because the cpuapp_mram DT node is deleted in nrf7120_enga_cpuflpr.dtsi

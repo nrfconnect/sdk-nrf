@@ -114,7 +114,7 @@ uint32_t audio_sync_timer_frame_start_capture_get(void)
 	static uint32_t prev_tick;
 	uint32_t remainder_us = 0;
 
-	/* This ISR may be called before the I2S FRAMESTART event which does timer capture,
+	/* This ISR is called before the I2S FRAMESTART event which does timer capture,
 	 * resulting in values not yet being updated in the *_cc_get calls.
 	 * To ensure new values are fetched, they are read in a while-loop with a timeout.
 	 * Depending on variables such as sample frequency, this delay varies.
@@ -122,11 +122,7 @@ uint32_t audio_sync_timer_frame_start_capture_get(void)
 	 * Ref: OCT-2585 and OCT-3368.
 	 */
 
-	tick = nrf_rtc_cc_get(audio_sync_lf_timer_instance.p_reg,
-			      AUDIO_SYNC_LF_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL);
-
-	while (tick == prev_tick) {
-		k_busy_wait(1);
+	do {
 		tick = nrf_rtc_cc_get(audio_sync_lf_timer_instance.p_reg,
 				      AUDIO_SYNC_LF_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL);
 		cc_get_calls++;
@@ -134,7 +130,8 @@ uint32_t audio_sync_timer_frame_start_capture_get(void)
 			LOG_ERR("Unable to get new tick from nrf_rtc_cc_get");
 			break;
 		}
-	};
+		k_busy_wait(1);
+	} while (tick == prev_tick);
 
 	cc_get_calls = 0;
 

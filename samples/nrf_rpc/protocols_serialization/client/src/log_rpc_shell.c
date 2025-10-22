@@ -247,32 +247,6 @@ static int cmd_log_rpc_time(const struct shell *sh, size_t argc, char *argv[])
 	return 0;
 }
 
-static int cmd_log_rpc_get_crash_info(const struct shell *sh, size_t argc, char *argv[])
-{
-	int rc;
-	struct nrf_rpc_crash_info info;
-
-	rc = log_rpc_get_crash_info(&info);
-	if (rc) {
-		shell_print(sh, "No coredump stored");
-
-		return 0;
-	}
-
-	shell_print(sh, "uuid: %u", info.uuid);
-	shell_print(sh, "reason: %u", info.reason);
-	shell_print(sh, "PC: 0x%08x", info.pc);
-	shell_print(sh, "LR: 0x%08x", info.lr);
-	shell_print(sh, "SP: 0x%08x", info.sp);
-	shell_print(sh, "XPSR: 0x%08x", info.xpsr);
-
-	if (info.assert_line) {
-		shell_print(sh, "ASSERT at %s:%u", info.assert_filename, info.assert_line);
-	}
-
-	return 0;
-}
-
 SHELL_STATIC_SUBCMD_SET_CREATE(crash_cmds,
 			       SHELL_CMD_ARG(invalidate, NULL, "Invalidate crash dump",
 					     cmd_log_rpc_crash_invalidate, 1, 0),
@@ -296,8 +270,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(echo, NULL, "Generate log message on remote <0-4> <msg>", cmd_log_rpc_echo, 3,
 		      0),
 	SHELL_CMD_ARG(time, NULL, "Set current time <time_us|now>", cmd_log_rpc_time, 2, 0),
-	SHELL_CMD_ARG(crash_info, NULL, "Fetch crash dump summary", cmd_log_rpc_get_crash_info, 1,
-		      0),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_ARG_REGISTER(log_rpc, &log_rpc_cmds, "RPC logging commands", NULL, 1, 0);

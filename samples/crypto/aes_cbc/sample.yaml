@@ -1,7 +1,8 @@
 sample:
   description: |
-    This sample demonstrates AES encryption and decryption using the AES CBC mode.
-  name: AES CBC sample
+    This app provides an example of performing AES encryption and decryption
+    using AES CBC mode
+  name: AES CBC example
 tests:
   sample.aes_cbc.cc3xx:
     sysbuild: true
@@ -50,7 +51,6 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54l15dk/nrf54l05/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
@@ -65,6 +65,5 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54l15dk/nrf54l05/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns

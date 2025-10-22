@@ -75,7 +75,7 @@ static int le_role_encode(enum nfc_ndef_le_oob_rec_le_role le_role, uint8_t **bu
 
 	le_role_ad.type = BT_DATA_LE_ROLE;
 	le_role_ad.data_len = LE_ROLE_PAYLOAD_SIZE;
-	le_role_ad.data = (const uint8_t *) &le_role;
+	le_role_ad.data = &le_role;
 
 	err = bt_data_encode(&le_role_ad, buff, size);
 	if (err) {

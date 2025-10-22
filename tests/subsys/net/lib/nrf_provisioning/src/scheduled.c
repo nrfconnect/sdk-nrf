@@ -168,7 +168,7 @@ static int rest_client_request_not_found_cb(struct rest_client_req_context *req_
 					     struct rest_client_resp_context *resp_ctx,
 					     int cmock_num_calls)
 {
-	resp_ctx->http_status_code = NRF_PROVISIONING_HTTP_STATUS_UNAUTH;
+	resp_ctx->http_status_code = NRF_PROVISIONING_HTTP_STATUS_FORBIDDEN;
 	return 0;
 }
 
@@ -265,7 +265,7 @@ void test_provisioning_init_should_start_provisioning(void)
 		wait_for_provisioning_event(NRF_PROVISIONING_EVENT_START);
 
 		/* Test different scenarios in rotation */
-		int scenario = i % 7;
+		int scenario = i % 6;
 
 		switch (scenario) {
 		case 0: /* No commands from server */

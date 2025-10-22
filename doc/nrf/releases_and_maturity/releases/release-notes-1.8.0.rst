@@ -605,7 +605,7 @@ Libraries for networking
   * Added the :c:func:`azure_iot_hub_dps_reset` function for resetting the DPS information.
   * Added a note about the credentials and their location.
 
-* Download client library:
+* :ref:`lib_download_client` library:
 
   * Removed the ``apn`` field in the ``download_client_cfg`` configuration structure.
 

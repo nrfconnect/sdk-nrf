@@ -71,6 +71,20 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_wifi
+  sample.nrf7002eb2.nrf54h20.ble-wifi-provision:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - ble_SHIELD="nrf7002eb2"
+      - SNIPPET=nrf70-wifi
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
   sample.54lm20dk.nrf7002eb2.ble-wifi-provision:
     sysbuild: true
     build_only: true

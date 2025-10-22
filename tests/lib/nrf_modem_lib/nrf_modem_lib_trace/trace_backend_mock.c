@@ -31,11 +31,6 @@ int trace_backend_read(void *buf, size_t len)
 	return 0;
 }
 
-int trace_backend_peek_at(size_t offset, void *buf, size_t len)
-{
-	return 0;
-}
-
 int trace_backend_clear(void)
 {
 	return 0;
@@ -47,6 +42,5 @@ struct nrf_modem_lib_trace_backend trace_backend = {
 	.write = trace_backend_write,
 	.data_size = trace_backend_data_size,
 	.read = trace_backend_read,
-	.peek_at = trace_backend_peek_at,
 	.clear = trace_backend_clear,
 };

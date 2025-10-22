@@ -1,14 +1,13 @@
 # This file lists all the dependencies required to build the documentation.
 # To update this file, follow these basic rules:
 #   - Keep it sorted alphabetically
-#   - Mark which docsets are using each dependency (empty means used by scripts/tooling)
+#   - Mark which docsets are using each dependency
 #   - Only specify version information if strictly required
 #   - Keep nrf/installation/recommended_versions.rst up to date
 
 # Extension                       | NCS | Kconfig | Matter | MCUboot | nrfxlib | TF-M | Zephyr |
 anytree                         # |     |         |        |         |         |      |   X    |
 azure-storage-blob              # |  X  |         |        |         |         |      |        |
-beautifulsoup4                  # |     |         |        |         |         |      |        |
 doxmlparser                     # |     |         |        |         |         |      |   X    |
 m2r2                            # |     |         |        |         |         |      |        |
 natsort                         # |     |         |        |         |         |      |   x    |
@@ -27,7 +26,5 @@ sphinx-togglebutton             # |  X  |         |        |         |         |
 sphinx_markdown_tables          # |     |         |   X    |         |         |      |        |
 sphinxcontrib-mscgen            # |  X  |         |        |         |    X    |      |        |
 sphinxcontrib-plantuml>=0.27    # |     |         |        |         |         |  X   |        |
-sphinxcontrib-programoutput     # |  X  |         |        |         |         |      |   X    |
 west>=1.0.0                     # |     |         |        |         |         |      |   X    |
 python-dotenv                   # |     |    X    |        |         |         |      |        |
-tabulate                        # |     |         |        |         |         |      |   X    |

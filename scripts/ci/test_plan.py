@@ -502,9 +502,6 @@ if __name__ == "__main__":
     for ts in f.all_tests:
         if TwisterStatus(ts.get('status')) == TwisterStatus.FILTER:
             continue
-        # SKIPS e.g. quarantined tests, should not be build
-        if TwisterStatus(ts.get('status')) == TwisterStatus.SKIP:
-            continue
         n = ts.get("name")
         a = ts.get("arch")
         p = ts.get("platform")

@@ -284,10 +284,8 @@ class PlatformKeyAttributes:
                 raise ValueError(
                     f"Algorithm {self.alg0.name} can only be used with the HMAC key type"
                 )
-            if self.key_bits not in [128, 256]:
-                raise ValueError(
-                    f"Algorithm {self.alg0.name} only supports 128-bit and 256-bit keys"
-                )
+            if self.key_bits != 128:
+                raise ValueError(f"Algorithm {self.alg0.name} only supports 128-bit keys")
             if self.usage not in (
                 PsaKeyUsage.SIGN,
                 PsaKeyUsage.SIGN_VERIFY,

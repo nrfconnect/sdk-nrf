@@ -50,7 +50,7 @@ Depending on your preferred development environment, install the following softw
 
       Additionally, install |VSC|:
 
-      * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_ or `using this direct link <start VS Code walkthrough_>`_.
+      * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
       * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
         |nRFVSC| comes with its own bundled version of some of the nRF Util commands.
 
@@ -119,9 +119,6 @@ Depending on your preferred development environment, complete the following step
 .. tabs::
 
    .. group-tab:: nRF Connect for VS Code
-
-      .. note::
-         If you prefer, you can now `start VS Code walkthrough`_ and install the toolchain and the SDK from there.
 
       1. Open the nRF Connect extension in |VSC| by clicking its icon in the :guilabel:`Activity Bar`.
          The extension loads and the `Welcome View`_ appears with two buttons: :guilabel:`Install SDK` and :guilabel:`Install Toolchain`.

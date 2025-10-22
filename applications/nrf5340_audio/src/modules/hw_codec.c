@@ -380,7 +380,7 @@ int hw_codec_init(void)
 		&volume_msg_sub_thread_data, volume_msg_sub_thread_stack,
 		CONFIG_VOLUME_MSG_SUB_STACK_SIZE, (k_thread_entry_t)volume_msg_sub_thread, NULL,
 		NULL, NULL, K_PRIO_PREEMPT(CONFIG_VOLUME_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
-	ret = k_thread_name_set(volume_msg_sub_thread_id, "Msg_sub_vol");
+	ret = k_thread_name_set(volume_msg_sub_thread_id, "VOLUME_MSG_SUB");
 	ERR_CHK(ret);
 
 	return 0;

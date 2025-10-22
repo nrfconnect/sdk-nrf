@@ -52,7 +52,7 @@ config NRF_SW_LPUART_DEFAULT_TX_TIMEOUT
 	  driven API is enabled).
 
 config NRF_SW_LPUART_INT_DRIVEN
-	bool "Interrupt driven API"
+	bool "Enable interrupt driven API"
 	select UART_INTERRUPT_DRIVEN
 	help
 	  If enabled, then asynchronous API cannot be used

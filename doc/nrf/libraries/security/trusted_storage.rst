@@ -8,9 +8,7 @@ Trusted storage
    :depth: 2
 
 The trusted storage library enables its users to provide integrity, confidentiality and authenticity of stored data using Authenticated Encryption with Associated Data (AEAD) algorithms or cryptographic hash, without the use of TF-M Platform Root of Trust (PRoT).
-The library implements the :ref:`PSA Certified Secure Storage API <ug_psa_certified_api_overview_secstorage>` for use on builds without TF-M (no :ref:`security by separation <ug_tfm_security_by_separation>`).
-
-See also :ref:`secure_storage_in_ncs` for an overview of the PSA Secure Storage API implementation in the |NCS|.
+The library implements the PSA Certified Secure Storage API.
 
 Overview
 ********
@@ -88,16 +86,6 @@ The following backends are used in the trusted storage library:
    The backend requires that Zephyr's settings subsystem is enabled for use (Kconfig option :kconfig:option:`CONFIG_SETTINGS` has to be set).
 
    The trusted storage library provides the ``TRUSTED_STORAGE_STORAGE_BACKEND_SETTINGS`` as a storage backend, but it has support for adding other memory types for storage.
-
-Security functional requirement standards
-=========================================
-
-The trusted storage library addresses two of the PSA Certified Level 2 and Level 3 optional security functional requirements (SFRs):
-
-* Secure Encrypted Storage (internal storage)
-* Secure Storage (internal storage)
-
-The Secure External Storage SFR is not covered by the trusted storage library, but you can implement a custom storage backend.
 
 Requirements
 ************

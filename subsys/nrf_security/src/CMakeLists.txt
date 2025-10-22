@@ -188,6 +188,17 @@ target_link_libraries(${mbedcrypto_target}
     mbedcrypto_base
 )
 
+# Disable compile warnings for Mbed TLS sources for files that are
+# added to the build for legacy APIs but are not enabled due to
+# configurations not being set.
+#
+# These can be removed when NCSDK-28901 is addressed.
+target_compile_options(${mbedcrypto_target}
+  PRIVATE
+    -Wno-unused-function
+    -Wno-unused-variable
+)
+
 # Add PSA core
 if(CONFIG_MBEDTLS_PSA_CRYPTO_C)
   add_subdirectory(core)

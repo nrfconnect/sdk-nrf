@@ -158,7 +158,7 @@ The following snippet shows how to download a file using HTTPS:
    };
 
    struct downloader_transport_http_cfg dl_transport_http_cfg = {
-         .sock_recv_timeo_ms = 60 * MSEC_PER_SEC,
+         .sock_recv_timeo = 600000,
    };
 
    err = downloader_init(&dl, &dl_cfg);

@@ -37,9 +37,9 @@ tests:
   sample.mcumgr.smp_svr.bt.nrf54l15dk.ext_flash:
     extra_args:
       - OVERLAY_CONFIG="overlay-bt.conf"
-      - DTC_OVERLAY_FILE="boards/nrf54l15dk_ext_flash.overlay"
-      - mcuboot_OVERLAY_CONFIG="boards/nrf54l15dk_ext_flash.conf"
-      - mcuboot_EXTRA_DTC_OVERLAY_FILE="boards/nrf54l15dk_ext_flash.overlay"
+      - DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_ext_flash.overlay"
+      - mcuboot_CONF_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_ext_flash.conf"
+      - mcuboot_EXTRA_DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_ext_flash.overlay"
       - SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK=y
       - SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=y
     platform_allow:
@@ -48,8 +48,25 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+  sample.mcumgr.smp_svr.bt.nrf54l15dk.ext_flash.pure_dts:
+    extra_args:
+      - OVERLAY_CONFIG="overlay-bt.conf"
+      - DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_ext_flash.overlay"
+      - mcuboot_CONF_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_ext_flash.conf"
+      - mcuboot_EXTRA_DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_ext_flash.overlay"
+      - SB_CONFIG_PARTITION_MANAGER=n
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness_config:
+      type: multi_line
+      ordered: false
+      regex:
+        - "smp_sample: build time"
+        - "smp_bt_sample: Advertising successfully started"
   sample.mcumgr.smp_svr.bt.nrf54h20dk:
     sysbuild: true
     extra_args:

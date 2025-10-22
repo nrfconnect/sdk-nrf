@@ -25,13 +25,3 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_fast_counter_and_s2ram_with_clock_control"
-
-  benchmarks.power_consumption.counter.mcuboot:
-    extra_args:
-      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - mcuboot_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_counter/boards/nrf54h20dk_nrf54h20_cpuapp.overlay"
-    harness: pytest
-    harness_config:
-      fixture: ppk_power_measure
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_fast_counter_and_s2ram_with_clock_control"

@@ -7,14 +7,10 @@ HID provider mouse module
    :local:
    :depth: 2
 
-The HID provider mouse module is a HID report provider integrated with the :ref:`nrf_desktop_hid_state`.
-The module is responsible for providing the HID mouse input report and the HID boot mouse input report.
-
-The module listens to the user input (:c:struct:`button_event`, :c:struct:`wheel_event`, and :c:struct:`motion_event`) and communicates with the :ref:`nrf_desktop_hid_state`.
-It provides HID mouse reports when requested by the :ref:`nrf_desktop_hid_state`.
+The HID provider mouse module is responsible for providing mouse HID reports.
+The module listens to the :c:struct:`button_event`, :c:struct:`wheel_event` and :c:struct:`motion_event` events and communicates with the :ref:`nrf_desktop_hid_state`.
+It provides new mouse HID reports when requested by the :ref:`nrf_desktop_hid_state`.
 It also notifies the :ref:`nrf_desktop_hid_state` when new data is available.
-
-For details related to the HID report providers integration in the HID state module, see the :ref:`nrf_desktop_hid_state_providing_hid_input_reports` documentation section.
 
 Module events
 *************
@@ -29,24 +25,14 @@ Module events
 Configuration
 *************
 
-You can enable the default implementation of the HID provider using the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_MOUSE <config_desktop_app_options>` Kconfig option.
-This option is enabled by default if the device uses HID provider events (:ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_EVENT <config_desktop_app_options>`) and supports HID mouse reports (:ref:`CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT <config_desktop_app_options>`).
-The default implementation of the HID provider uses a predefined format of HID reports, which is aligned with the default HID report map in the common configuration (:ref:`CONFIG_DESKTOP_HID_REPORT_DESC <config_desktop_app_options>`).
-The module also provides HID boot mouse input report if it is supported (:ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE <config_desktop_app_options>`).
-
-Alternatively, you can substitute the module with a custom HID mouse report provider implementation.
-Using the custom provider allows you to modify the sources of user input and the HID report format.
+You can enable the module using the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_MOUSE <config_desktop_app_options>` Kconfig option.
+This option is enabled by default if the device supports HID mouse reports.
+You can substitute the module with a custom HID mouse report provider implementation.
 Enable the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_MOUSE_ALT <config_desktop_app_options>` Kconfig option to use a custom HID mouse report provider.
-The option disables the default HID mouse report provider.
 Make sure to introduce the custom HID mouse report provider if you enable this option.
 
-Default implementation
-======================
-
-If you use the default implementation, you only need to configure the HID keymap for the module.
-
 HID keymap
-----------
+==========
 
 The module uses the :ref:`nrf_desktop_hid_keymap` to map an application-specific key ID to a HID report ID and HID usage ID pair.
 The module selects the :ref:`CONFIG_DESKTOP_HID_KEYMAP <config_desktop_app_options>` Kconfig option to enable the utility.
@@ -56,54 +42,96 @@ See the utility's documentation for details.
 Implementation details
 **********************
 
-The module is used by :ref:`nrf_desktop_hid_state` as a HID input report provider for the HID mouse input report and HID boot mouse input report.
-The module registers two separate HID report providers to handle both input reports.
-On initialization, the module submits the events of type :c:struct:`hid_report_provider_event` to establish two-way callbacks between the |hid_state| and the HID report providers.
+On initialization, the module announces its presence by sending a :c:struct:`hid_report_provider_event` event with appropriate report ID and implementation of callbacks from the HID report provider API (:c:struct:`hid_report_provider_api`).
+Separate :c:struct:`hid_report_provider_event` events are sent for each report ID.
+The module supports mouse reports from the report and boot protocols.
+You can enable the boot protocol support using the :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE <config_desktop_app_options>` Kconfig option.
+The :ref:`nrf_desktop_hid_state` receives the events and fills them with its own implementation of callbacks from the HID state API (:c:struct:`hid_state_api`).
+After that process, the modules can communicate by callbacks.
+The module also subscribes to the :c:struct:`button_event`, :c:struct:`wheel_event` and :c:struct:`motion_event` events to get information about the button presses, wheel scrolls, and motion events.
+The module sends :c:struct:`hid_report_event` events to an appropriate subscriber when it is requested by the :ref:`nrf_desktop_hid_state`.
 
-Handling user input
-===================
+.. note::
+    The HID report formatting function must work according to the HID report descriptor (``hid_report_desc``).
+    The source file containing the descriptor is provided by the :ref:`CONFIG_DESKTOP_HID_REPORT_DESC <config_desktop_app_options>` Kconfig option.
 
-The module handles the following types of user input:
+Linking input data with the right HID report
+============================================
+
+Out of all available input data types, the following types are collected by this module:
 
 * `Relative value data`_ (axes)
-  This type of input data is related to the pointer coordinates and the wheel rotation.
-  Both :c:struct:`motion_event` and :c:struct:`wheel_event` are sources of this type of data.
 * `Absolute value data`_ (buttons)
-  This type of input data is related to the state of pressed buttons.
-  The :c:struct:`button_event` is the source of this type of data.
 
-Both input types are stored internally in the ``report_data`` structure.
+Both types are stored in the :c:struct:`report_data` structure.
 
 Relative value data
 -------------------
 
-The relative value data is stored within the ``report_data`` structure's ``axes`` member.
-There are separate fields for wheel, mouse motion over the X axis, and mouse motion over the Y axis.
+This type of input data is related to the pointer coordinates and the wheel rotation.
+Both ``motion_event`` and ``wheel_event`` are sources of this type of data.
 
-The values of axes are stored whenever the input data is received, but these values are cleared when HID report subscription is enabled.
-Consequently, values outside of the HID subscription period are never retained.
+When either ``motion_event`` or ``wheel_event`` is received, the module selects the :c:struct:`report_data` structure associated with the mouse HID report and stores the values at the right position within this structure's ``axes`` member.
 
-HID mouse pipeline
-~~~~~~~~~~~~~~~~~~
-
-The nRF Desktop application synchronizes motion sensor sampling with sending HID mouse input reports to the HID host.
-The HID provider mouse module tracks the number of HID reports in flight and maintains a HID report pipeline to ensure proper HID report flow:
-
-* If the number of HID reports in flight is lower than the pipeline size, the module provides additional HID reports to generate the HID report pipeline on user input.
-* If the number of HID reports in flight is greater than or equal to the pipeline size, the module buffers user input internally and delays providing subsequent HID input reports until previously submitted reports are sent to the HID host.
-  If the motion source is active, then after a HID input report handled by the module is sent, the module waits for a subsequent :c:struct:`motion_event` before submitting a subsequent HID input report.
-  This is done to ensure that the recent value of motion will be included in the subsequent HID input report.
-
-See the :ref:`nrf_desktop_hid_mouse_report_handling` section for an overview of handling HID mouse input reports in the nRF Desktop.
-The section focuses on interactions between application modules.
+.. note::
+    The values of axes are stored every time the input data is received, but these values are cleared when a report is connected to the subscriber.
+    Consequently, values outside of the connection period are never retained.
 
 Absolute value data
 -------------------
 
-After an application-specific key ID (:c:member:`button_event.key_id`) is mapped to the HID mouse input report ID and related HID usage ID, the HID usage ID is handled by the provider.
-The module remembers HID usage IDs of all the currently pressed keys as a bitmask.
-The bitmask is then included as part of the HID mouse input report or HID boot mouse input report.
-Because of the fact that HID usage IDs are stored as a bitmask, the module does not support handling multiple hardware buttons mapped to the same HID usage ID.
+This type of input data is related to buttons.
+The ``button_event`` is the source of this type of data.
 
-The module ignores keypresses that happen before HID report subscription is enabled and clears the HID usage ID bitmask when HID report subscription is disabled.
-As a result, keypresses outside of the HID subscription period are never retained.
+To indicate a change to this input data, the module overwrites the value that is already stored.
+
+Since keys on the board can be associated with a HID usage ID and thus be part of different HID reports, the first step is to identify if the key belongs to a HID report that is provided by this module.
+This is done by obtaining the key mapping from the :ref:`nrf_desktop_hid_keymap`.
+
+Once the mapping is obtained, the application checks if the report to which the usage belongs is connected:
+
+* If the report is connected and the :ref:`nrf_desktop_hid_eventq` instance is empty, the module stores the report and calls the ``trigger_report_send`` callback from the :c:struct:`hid_state_api` to notify the :ref:`nrf_desktop_hid_state` about the new data.
+* If the report is not connected or the :ref:`nrf_desktop_hid_eventq` instance is not empty, the value is enqueued in the :ref:`nrf_desktop_hid_eventq` instance.
+
+The difference between these operations is that storing a value onto the queue (second case) preserves the order of input events.
+See the following section for more information about storing data before the connection.
+
+Storing input data before the connection
+========================================
+
+The storing approach before the connection depends on the data type:
+
+* The relative value data is not stored outside of the connection period.
+* The absolute value data is stored before the connection.
+
+The reason for this operation is to allow to track key presses that happen right after the device is woken up, but before it can connect to the HID host.
+
+When the device is disconnected and the input event with the button data is received, the data is stored onto the :ref:`nrf_desktop_hid_eventq` instance, a member of the :c:struct:`report_data` structure.
+This queue preserves an order in which input data events are received.
+
+Storing limitations
+-------------------
+
+You can limit the number of events that can be inserted into the queue using the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_MOUSE_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option.
+
+Discarding events
+------------------
+
+When there is no space for a new input event, the module tries to free space by discarding the oldest event in the queue.
+Events stored in the queue are automatically discarded after the period defined by the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_MOUSE_KEYPRESS_EXPIRATION <config_desktop_app_options>` option.
+
+When discarding an event from the queue, the module checks if the key associated with the event is pressed.
+This is to avoid missing key releases for earlier key presses when the keys from the queue are replayed to the host.
+If a key release is missed, the host could stay with a key that is permanently pressed.
+The discarding mechanism ensures that the host will always receive the correct key sequence.
+
+.. note::
+    The module can only discard an event if the event does not overlap any button that was pressed but not released, or if the button itself is pressed.
+    The event is released only when the following conditions are met:
+
+    * The associated key is not pressed anymore.
+    * Every key that was pressed after the associated key had been pressed is also released.
+
+If there is no space to store the input event in the queue and no old event can be discarded, the entire content of the queue is dropped to ensure the sanity.
+
+Once the connection is established, the elements of the queue are replayed one after the other to the host, in a sequence of consecutive HID reports.

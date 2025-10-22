@@ -23,10 +23,6 @@
 #include <hw_unique_key.h>
 #endif /* CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT */
 
-#if defined(PSA_NEED_CRACEN_TRNG_DRIVER)
-#include <cracen_trng/cracen_trng.h>
-#endif
-
 #if defined(MBEDTLS_PSA_CRYPTO_DRIVERS)
 
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER) || defined(PSA_NEED_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER) || \
@@ -3036,9 +3032,7 @@ psa_status_t psa_driver_wrapper_free_random(psa_driver_random_context_t *context
 psa_status_t psa_driver_wrapper_get_entropy(uint32_t flags, size_t *estimate_bits, uint8_t *output,
 					    size_t output_size)
 {
-#if defined(PSA_NEED_CRACEN_TRNG_DRIVER)
-	return cracen_trng_get_entropy(flags, estimate_bits, output, output_size);
-#elif defined(PSA_NEED_NRF_RNG_ENTROPY_DRIVER)
+#if defined(PSA_NEED_NRF_RNG_ENTROPY_DRIVER)
 	return nrf_rng_get_entropy(flags, estimate_bits, output, output_size);
 #endif
 

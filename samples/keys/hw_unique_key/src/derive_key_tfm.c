@@ -15,7 +15,7 @@
 
 #include "derive_key.h"
 
-#if CONFIG_HAS_HW_NRF_CRACEN
+#if CONFIG_CRACEN_HW_PRESENT
 /* On platforms with Cracen, the HUK is an AES key, suitable for CMAC KDF. */
 #define KDF_ALG	   PSA_ALG_SP800_108_COUNTER_CMAC
 #define INPUT_STEP PSA_KEY_DERIVATION_INPUT_LABEL

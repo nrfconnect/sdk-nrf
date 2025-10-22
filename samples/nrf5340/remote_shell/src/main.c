@@ -11,6 +11,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/ring_buffer.h>
 #include <zephyr/sys/atomic.h>
+#include <zephyr/usb/usb_device.h>
 
 #include "shell_ipc_host.h"
 
@@ -136,6 +137,14 @@ int main(void)
 	if (!device_is_ready(dev)) {
 		LOG_ERR("Device not ready");
 		return 0;
+	}
+
+	if (IS_ENABLED(CONFIG_USB_DEVICE_STACK)) {
+		err = usb_enable(NULL);
+		if (err != 0) {
+			LOG_ERR("Failed to enable USB, err %d", err);
+			return 0;
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_UART_LINE_CTRL)) {

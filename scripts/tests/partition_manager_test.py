@@ -430,8 +430,8 @@ def test_that_offset_and_end_of_first_partition_are_correct_when_aligning_partit
     assert offset == 600
 
     for l in [
-            lambda: get_required_offset(align={'end': ['CONFIG_FOO']}, start=0, size=1000, move_up=False),
-            lambda: get_required_offset(align={'start': ['CONFIG_FOO']}, start=0, size=1000, move_up=False),
+            lambda: get_required_offset(align={'end': ['CONFIG_VAR']}, start=0, size=1000, move_up=False),
+            lambda: get_required_offset(align={'start': ['CONFIG_VAR']}, start=0, size=1000, move_up=False),
             lambda: get_required_offset(align={'start': [[2]]}, start=0, size=1000, move_up=False)
     ]:
         with pytest.raises(TypeError):

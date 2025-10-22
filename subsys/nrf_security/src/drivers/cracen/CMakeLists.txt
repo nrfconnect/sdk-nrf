@@ -11,9 +11,6 @@ set(cracen_driver_sources)
 include(sxsymcrypt/sxsymcrypt.cmake)
 include(silexpk/silexpk.cmake)
 include(cracenpsa/cracenpsa.cmake)
-if(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS OR (CONFIG_SOC_NRF54LV10A AND CONFIG_PSA_NEED_CRACEN_CTR_AES))
-  include(cracen_sw/cracen_sw.cmake)
-endif()
 
 # Add include-directories
 target_include_directories(psa_crypto_library_config
@@ -28,12 +25,11 @@ add_library(cracen_psa_driver STATIC
 
 # The CRACEN sources have not been written to comply with this gcc
 # warning
-if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
-  target_compile_options(cracen_psa_driver
-    PRIVATE
-      -Wno-pointer-sign
-  )
-endif()
+target_compile_options(cracen_psa_driver
+  PRIVATE
+    -Wno-pointer-sign
+    -Wno-unused-function
+)
 
 target_link_libraries(cracen_psa_driver
   PRIVATE

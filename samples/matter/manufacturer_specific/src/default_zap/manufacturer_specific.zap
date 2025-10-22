@@ -2505,16 +2505,16 @@
       "id": 2,
       "name": "Anonymous Endpoint Type",
       "deviceTypeRef": {
-        "code": 4293984257,
-        "profileId": 66562,
+        "code": 1,
+        "profileId": 4095,
         "label": "nordic-dev-kit",
         "name": "nordic-dev-kit",
         "deviceTypeOrder": 0
       },
       "deviceTypes": [
         {
-          "code": 4293984257,
-          "profileId": 66562,
+          "code": 1,
+          "profileId": 4095,
           "label": "nordic-dev-kit",
           "name": "nordic-dev-kit",
           "deviceTypeOrder": 0
@@ -2524,11 +2524,11 @@
         1
       ],
       "deviceIdentifiers": [
-        4293984257
+        1
       ],
       "deviceTypeName": "nordic-dev-kit",
-      "deviceTypeCode": 4293984257,
-      "deviceTypeProfileId": 66562,
+      "deviceTypeCode": 1,
+      "deviceTypeProfileId": 4095,
       "clusters": [
         {
           "name": "NordicDevKit",
@@ -2720,7 +2720,7 @@
     {
       "endpointTypeName": "Anonymous Endpoint Type",
       "endpointTypeIndex": 1,
-      "profileId": 66562,
+      "profileId": 4095,
       "endpointId": 1,
       "networkId": 0,
       "parentEndpointIdentifier": null

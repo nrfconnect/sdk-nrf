@@ -5,55 +5,14 @@
  */
 
 /* On nRF54H20 the Direct XIP mode is supported in the merged slot configuration
- * Extend slot0_partition and slot1_partition to cover both application and
- * radio images, as well as MCUboot image metadata (header and trailer).
- * Those partitions will be used by MCUboot to verify the merged image to boot.
- * Apart from that, they will be used by the MCUmgr subsystem to correctly
- * handle flags, stored inside the MCUboot image trailer.
- * Use cpu<app|rad>_slot<0|1>_partition as zephyr,code-partition, so the
- * application and radio sizes are correctly reported.
+ * Merge application and radio slots by extending the application parition.
  */
-/delete-node/&cpuapp_slot0_partition;
-/delete-node/&cpuapp_slot1_partition;
-/delete-node/&cpurad_slot0_partition;
-/delete-node/&cpurad_slot1_partition;
+&cpuapp_slot0_partition {
+	reg = <0x40000 DT_SIZE_K(656)>;
+};
 
-&mram1x {
-	partitions {
-		/* Merged partition used by the MCUboot (variant 0). */
-		slot0_partition: partition@40000 {
-			reg = <0x40000 DT_SIZE_K(656)>;
-		};
-
-		/* Application code partition (variant 0).
-		 * Offset by the MCUboot header size (2048 bytes).
-		 */
-		cpuapp_slot0_partition: partition@40800 {
-			reg = <0x40800 DT_SIZE_K(326)>;
-		};
-
-		/* Radio code partition (variant 0). */
-		cpurad_slot0_partition: partition@92000 {
-			reg = <0x92000 DT_SIZE_K(328)>;
-		};
-
-		/* Merged partition used by the MCUboot (variant 1). */
-		slot1_partition: partition@100000 {
-			reg = <0x100000 DT_SIZE_K(656)>;
-		};
-
-		/* Application code partition (variant 1).
-		 * Offset by the MCUboot header size (2048 bytes).
-		 */
-		cpuapp_slot1_partition: partition@100800 {
-			reg = <0x100800 DT_SIZE_K(326)>;
-		};
-
-		/* Radio code partition (variant 1). */
-		cpurad_slot1_partition: partition@152000 {
-			reg = <0x152000 DT_SIZE_K(328)>;
-		};
-	};
+&cpuapp_slot1_partition {
+	reg = <0x100000 DT_SIZE_K(656)>;
 };
 
 / {

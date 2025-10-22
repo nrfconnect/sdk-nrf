@@ -2464,8 +2464,7 @@ PREDEFINED             = __DOXYGEN__ \
                          "CONFIG_LTE_LC_PSM_MODULE=y" \
                          "CONFIG_LTE_LC_RAI_MODULE=y" \
                          "CONFIG_LTE_LC_MODEM_SLEEP_MODULE=y" \
-                         "CONFIG_LTE_LC_TAU_PRE_WARNING_MODULE=y" \
-                         "CONFIG_LTE_LC_ENV_EVAL_MODULE=y"
+                         "CONFIG_LTE_LC_TAU_PRE_WARNING_MODULE=y"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

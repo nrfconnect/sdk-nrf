@@ -5,7 +5,7 @@
 #
 
 config ETB_TRACE
-	bool "ETB trace [EXPERIMENTAL]"
+	bool "Enable ETB trace [EXPERIMENTAL]"
 	depends on SOC_SERIES_NRF91X
 	select EXPERIMENTAL
 	help

@@ -27,10 +27,8 @@ if(CONFIG_NCS_IS_VARIANT_IMAGE)
 
     import_kconfig("CONFIG" ${DOTCONFIG})
   else()
-    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
-
     dt_chosen(code_partition PROPERTY "zephyr,code-partition")
-    dt_partition_addr(code_partition_offset PATH "${code_partition}" REQUIRED)
+    dt_reg_addr(code_partition_offset PATH "${code_partition}" REQUIRED)
     dt_reg_size(code_partition_size PATH "${code_partition}" REQUIRED)
 
     set(preload_autoconf_h ${PRELOAD_BINARY_DIR}/zephyr/include/generated/zephyr/autoconf.h)
@@ -41,7 +39,6 @@ if(CONFIG_NCS_IS_VARIANT_IMAGE)
 
     # Modify the CONFIG_FLASH_LOAD_OFFSET and CONFIG_FLASH_LOAD_SIZE for both the .config and autoconf.h files.
     # If partition manager is not used, these values should be taken from the device tree.
-    # Additionally, convert primary slot dependencies to secondary slot dependencies.
     set(dotconfig_variant_content)
     foreach(line IN LISTS dotconfig_content)
       if("${line}" MATCHES "^CONFIG_FLASH_LOAD_OFFSET=.*$")
@@ -50,10 +47,6 @@ if(CONFIG_NCS_IS_VARIANT_IMAGE)
 
       if("${line}" MATCHES "^CONFIG_FLASH_LOAD_SIZE=.*$")
         string(REGEX REPLACE "CONFIG_FLASH_LOAD_SIZE=(.*)" "CONFIG_FLASH_LOAD_SIZE=${code_partition_size}" line ${line})
-      endif()
-
-      if("${line}" MATCHES "(--dependencies|-d).*\([0-9, ]+primary[0-9., ]+\)")
-        string(REGEX REPLACE "primary" "secondary" line ${line})
       endif()
 
       list(APPEND dotconfig_variant_content "${line}\n")
@@ -67,10 +60,6 @@ if(CONFIG_NCS_IS_VARIANT_IMAGE)
 
       if("${line}" MATCHES "^#define CONFIG_FLASH_LOAD_SIZE .*$")
         string(REGEX REPLACE "#define CONFIG_FLASH_LOAD_SIZE (.*)" "#define CONFIG_FLASH_LOAD_SIZE ${code_partition_size}" line ${line})
-      endif()
-
-      if("${line}" MATCHES "(--dependencies|-d).*\([0-9, ]+primary[0-9., ]+\)")
-        string(REGEX REPLACE "primary" "secondary" line ${line})
       endif()
 
       list(APPEND autoconf_variant_content "${line}\n")

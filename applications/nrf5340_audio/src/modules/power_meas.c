@@ -128,7 +128,7 @@ static int power_meas_init(void)
 	pwr_meas_thread_id = k_thread_create(
 		&meas_thread, meas_stack, CONFIG_POWER_MEAS_STACK_SIZE, meas_thread_fn, NULL, NULL,
 		NULL, K_PRIO_PREEMPT(CONFIG_POWER_MEAS_THREAD_PRIO), 0, K_NO_WAIT);
-	ret = k_thread_name_set(pwr_meas_thread_id, "Pwr_meas");
+	ret = k_thread_name_set(pwr_meas_thread_id, "pwr_meas");
 	if (ret) {
 		return ret;
 	}

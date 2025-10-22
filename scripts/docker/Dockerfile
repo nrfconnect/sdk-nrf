@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:22.04
 
 ARG VERSION
 ENV HOME=/opt
@@ -15,7 +15,7 @@ RUN nrfutil toolchain-manager install --toolchain-bundle-id $VERSION \
 # Prepare JLink to be installed when user accepts license agreement
 COPY --chmod=0555 jlink/ /jlink
 RUN wget --post-data="accept_license_agreement=accepted&submit=Download+software" -O /jlink/JLink_Linux.deb \
-    https://www.segger.com/downloads/jlink/JLink_Linux_V876_x86_64.deb
+    https://www.segger.com/downloads/jlink/JLink_Linux_V860_x86_64.deb
 
 # Add interactive-setup.sh which is called at the beginning of bash session, only if session is interactive
 # interactive-setup.sh is saved as bashrc file in root's home folder (/opt)
@@ -33,4 +33,4 @@ LABEL org.opencontainers.image.description="This image contains toolchain for sd
 
 ENTRYPOINT ["/bin/bash", "-c"]
 SHELL ["/bin/bash", "-c"]
-CMD ["/bin/bash"]
+CMD ["bin/bash"]

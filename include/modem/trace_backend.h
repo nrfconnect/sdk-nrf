@@ -7,8 +7,6 @@
 #ifndef TRACE_BACKEND_H__
 #define TRACE_BACKEND_H__
 
-#include <zephyr/kernel.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -93,22 +91,6 @@ struct nrf_modem_lib_trace_backend {
 	 * @return 0 on success, negative errno on failure.
 	 */
 	int (*read)(void *buf, size_t len);
-
-	/**
-	 * @brief Peek trace data at a byte offset without consuming it.
-	 *
-	 * Copy up to @p len bytes starting at @p offset from the beginning of the
-	 * currently available trace data into @p buf. The oldest available byte is at offset 0.
-	 *
-	 * @note Set to @c NULL if this operation is not supported by the trace backend.
-	 *
-	 * @param offset Start offset from the oldest available byte.
-	 * @param buf Output buffer.
-	 * @param len Size of output buffer.
-	 *
-	 * @return Number of bytes copied on success, negative errno on failure.
-	 */
-	int (*peek_at)(size_t offset, void *buf, size_t len);
 
 	/**
 	 * @brief Erase all captured trace data in the compile-time selected trace backend.

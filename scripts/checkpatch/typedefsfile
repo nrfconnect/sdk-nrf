@@ -13,4 +13,3 @@ zb_uint64_t
 zb_time_t
 zb_ieee_addr_t
 zb_ret_t
-cJSON

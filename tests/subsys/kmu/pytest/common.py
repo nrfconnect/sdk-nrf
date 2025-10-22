@@ -7,9 +7,8 @@ import logging
 import os
 import shlex
 import subprocess
-from pathlib import Path
 
-from twister_harness.helpers.utils import find_in_config
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -72,14 +71,6 @@ def flash_board(build_dir: Path | str, dev_id: str | None, erase: bool = False):
     if erase:
         command.extend(['--erase'])
     run_command(command)
-
-
-def get_keyname_for_mcuboot(sysbuild_config: Path) -> str:
-    keyname = "BL_PUBKEY"
-    if (find_in_config(sysbuild_config, "SB_CONFIG_SECURE_BOOT_APPCORE")
-            or find_in_config(sysbuild_config, "SB_CONFIG_MCUBOOT_SIGNATURE_KMU_UROT_MAPPING")):
-        keyname = "UROT_PUBKEY"
-    return keyname
 
 
 def provision_keys_for_kmu(

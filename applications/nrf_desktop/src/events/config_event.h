@@ -141,7 +141,7 @@ extern const uint8_t __start_config_channel_modules[];
 						rsp_data_size = strlen(data_ptr);		\
 						__ASSERT_NO_MSG(rsp_data_size <=		\
 								sizeof(rsp_data_buf));		\
-						memcpy(rsp_data_buf, data_ptr,			\
+						strncpy((char *) rsp_data_buf, data_ptr,	\
 								rsp_data_size);			\
 						cur_opt_descr++;				\
 					} else {						\

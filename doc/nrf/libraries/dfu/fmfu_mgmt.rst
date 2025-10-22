@@ -26,5 +26,3 @@ API documentation
 | Source files: :file:`subsys/mgmt/src/`
 
 .. doxygengroup:: fmfu_mgmt
-
-.. doxygengroup:: fmfu_mgmt_stat

@@ -270,60 +270,6 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		 */
 		mosh_print("TAU pre warning: time %lld", evt->time);
 		break;
-#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
-	case LTE_LC_EVT_ENV_EVAL_RESULT: {
-		struct mapping_tbl_item const enveval_status_strs[] = {
-			{ 0, "successful" },
-			{ 5, "failed, aborted because of higher priority operation" },
-			{ 7, "failed, unspecified" },
-			{ -1, NULL }
-		};
-		struct mapping_tbl_item const enveval_energy_est_strs[] = {
-			{ LTE_LC_ENERGY_CONSUMPTION_EXCESSIVE,
-			"bad conditions, excessive energy consumption" },
-			{ LTE_LC_ENERGY_CONSUMPTION_INCREASED,
-			"poor conditions, slightly increased energy consumption" },
-			{ LTE_LC_ENERGY_CONSUMPTION_NORMAL,
-			"normal conditions" },
-			{ LTE_LC_ENERGY_CONSUMPTION_REDUCED,
-			"good conditions, slightly reduced energy consumption" },
-			{ LTE_LC_ENERGY_CONSUMPTION_EFFICIENT,
-			"excellent conditions, energy efficient transmission" },
-			{ -1, NULL }
-		};
-		const struct lte_lc_env_eval_result *result = &evt->env_eval_result;
-
-		mosh_print("Environment evaluation completed with status: %d (%s)",
-			   result->status,
-			   link_shell_map_to_string(enveval_status_strs, result->status, snum));
-		mosh_print("Number of PLMN results: %u", result->result_count);
-
-		for (int i = 0; i < result->result_count; i++) {
-			const struct lte_lc_conn_eval_params *plmn = &result->results[i];
-
-			mosh_print("PLMN %u:", i + 1);
-			mosh_print("  MCC: %03d, MNC: %02d", plmn->mcc, plmn->mnc);
-			mosh_print("  Energy estimate: %d (%s)",
-				   plmn->energy_estimate,
-				   link_shell_map_to_string(enveval_energy_est_strs,
-							    plmn->energy_estimate, snum));
-			mosh_print("  Cell ID: %d", plmn->cell_id);
-			/* rrc_state is ignored because it's always 0 */
-			mosh_print("  RSRP: %d dBm, RSRQ: %.1f dB, SNR: %d dB",
-				   RSRP_IDX_TO_DBM(plmn->rsrp), (double)RSRQ_IDX_TO_DB(plmn->rsrq),
-				   SNR_IDX_TO_DB(plmn->snr));
-			mosh_print("  EARFCN: %d, Band: %d",
-				   plmn->earfcn, plmn->band);
-			mosh_print("  CE level: %d, TX power: %d dBm",
-				   plmn->ce_level, plmn->tx_power);
-			/* tau_trig is ignored because it's always 1 */
-			mosh_print("  TX rep: %d, RX rep: %d", plmn->tx_rep, plmn->rx_rep);
-			mosh_print("  DL pathloss: %d, Phy cell ID: %d",
-				   plmn->dl_pathloss, plmn->phy_cid);
-		}
-		break;
-	}
-#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS: {
 		int i;
 		struct lte_lc_cells_info cells = evt->cells_info;

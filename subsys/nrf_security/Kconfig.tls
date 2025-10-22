@@ -91,7 +91,7 @@ menuconfig MBEDTLS_TLS_LIBRARY
 if MBEDTLS_TLS_LIBRARY
 
 config MBEDTLS_SSL_CLI_C
-	bool "SSL/TLS client code"
+	bool "Enable the SSL/TLS client code"
 	default y
 	depends on MBEDTLS_SSL_TLS_C
 	help
@@ -99,7 +99,7 @@ config MBEDTLS_SSL_CLI_C
 	  Corresponds to MBEDTLS_SSL_CLI_C in mbed TLS config file
 
 config MBEDTLS_SSL_SRV_C
-	bool "SSL/TLS server code"
+	bool "Enable the SSL/TLS server code"
 	default y
 	depends on MBEDTLS_SSL_TLS_C
 	help
@@ -114,7 +114,7 @@ config MBEDTLS_SSL_TLS_C
 	  Corresponds to MBEDTLS_SSL_TLS_C in mbed TLS config file
 
 config MBEDTLS_SSL_PROTO_TLS1_2
-	bool "TLS version 1.2 protocol"
+	bool "Enable TLS version 1.2 protocol"
 	default y
 	depends on (MBEDTLS_SHA1_C || MBEDTLS_SHA256_C || MBEDTLS_SHA512_C) || \
 		    MBEDTLS_PSA_CRYPTO_C
@@ -143,7 +143,7 @@ config MBEDTLS_SSL_EXTENDED_MASTER_SECRET
 
 config MBEDTLS_SSL_COOKIE_C
 	bool
-	prompt "TLS server-side callbacks for session tickets"
+	prompt "Enable TLS server-side callbacks for session tickets"
 	depends on MBEDTLS_SSL_SRV_C
 	default y
 	help
@@ -156,7 +156,7 @@ config MBEDTLS_TLS_VERSION_1_3
 
 config MBEDTLS_DEBUG_C
 	bool
-	prompt "Debug functions for TLS"
+	prompt "Enable the debug functions for TLS."
 	select CBPRINTF_PACKAGE_LONGDOUBLE
 	help
 	  Enable the debug functions for TLS.
@@ -183,7 +183,7 @@ config MBEDTLS_MEMORY_DEBUG
 	  issues. Enables function for 'debug output' of allocated memory.
 
 config MBEDTLS_SSL_PROTO_DTLS
-	bool "DTLS"
+	bool "Enable support for DTLS"
 	depends on MBEDTLS_SSL_PROTO_TLS1_2
 	help
 	  Enables all version of DTLS
@@ -198,14 +198,14 @@ config MBEDTLS_SSL_DTLS_ANTI_REPLAY
 	  See mbedtls_ssl_conf_dtls_anti_replay() for details.
 
 config MBEDTLS_SSL_DTLS_HELLO_VERIFY
-	bool "HelloVerifyRequest on DTLS servers"
+	bool "Enable support for HellyVerifyRequiest on DTLS servers"
 	default y
 	help
 	  Enable this to ensure DTLS servers can't be used in certain DoS
 	  attacks.
 
 config MBEDTLS_SSL_DTLS_SRTP
-	bool "DTLS-SRTP (RFC5764)"
+	bool "Enable DTLS-SRTP (RFC5764)"
 
 config MBEDTLS_SSL_DTLS_CLIENT_PORT_REUSE
 	bool
@@ -241,7 +241,7 @@ config MBEDTLS_SSL_CLI_ALLOW_WEAK_CERTIFICATE_VERIFICATION_WITHOUT_HOSTNAME
 
 config MBEDTLS_SSL_ALL_ALERT_MESSAGES
 	bool
-	prompt "All SSL alert messages"
+	prompt "Enable all SSL alert messages"
 	default y
 	help
 	  This setting enables alert messages beingsentin case of failures.
@@ -251,7 +251,7 @@ config MBEDTLS_SSL_ALL_ALERT_MESSAGES
 
 config MBEDTLS_SSL_CONTEXT_SERIALIZATION
 	bool
-	prompt "Serialization of TLS conftext structures"
+	prompt "Enable serialization of TLS conftext structures"
 	default y
 	help
 	  This setting enables serialization of TLS structures, through use of
@@ -260,7 +260,7 @@ config MBEDTLS_SSL_CONTEXT_SERIALIZATION
 
 config MBEDTLS_SSL_DEBUG_ALL
 	bool
-	prompt "Debug messages in SSL module for all issues."
+	prompt "Enable debug messages in SSL module for all issues."
 	help
 	  This setting enable the debug messages in SSL module for all issues.
 	  Note: Some debug messages have been enabled to prevent timing attacks.
@@ -316,7 +316,7 @@ config MBEDTLS_SSL_TICKET_C
 
 config MBEDTLS_SSL_EXPORT_KEYS
 	bool
-	prompt "Support for exporting keys"
+	prompt "Enable support for exporting keys"
 	default y
 	help
 	  Enables support for exporting key block and master secret.
@@ -352,7 +352,7 @@ config MBEDTLS_SSL_PROTO_TLS1_3
 	default y
 
 config MBEDTLS_SSL_TLS1_3_COMPATIBILITY_MODE
-	bool "TLS1.3 middlebox compatibility mode"
+	bool "Enable TLS1.3 middlebox compatibility mode"
 	default y
 	help
 	  As specified in RFC8446, TLS 1.3 offers a compatibility mode to make a TLS

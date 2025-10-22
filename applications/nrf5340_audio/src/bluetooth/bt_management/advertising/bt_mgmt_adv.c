@@ -478,7 +478,6 @@ void bt_mgmt_adv_init(void)
 	k_work_init(&adv_work, advertising_process);
 	k_work_queue_init(&adv_work_q);
 	k_work_queue_start(&adv_work_q, adv_work_q_stack_area,
-			   K_THREAD_STACK_SIZEOF(adv_work_q_stack_area), CONFIG_BT_MGMT_ADV_WQ_PRIO,
-			   NULL);
-	k_thread_name_set(&adv_work_q.thread, "BT_adv_WQ");
+			   K_THREAD_STACK_SIZEOF(adv_work_q_stack_area),
+			   CONFIG_BT_MGMT_ADV_THREAD_PRIO, NULL);
 }

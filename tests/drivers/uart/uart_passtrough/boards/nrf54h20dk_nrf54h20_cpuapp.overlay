@@ -17,7 +17,3 @@
 	memory-regions = <&cpuapp_dma_region>;
 	hw-flow-control;
 };
-
-&uart136 {
-	hw-flow-control;
-};

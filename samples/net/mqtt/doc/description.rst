@@ -20,7 +20,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-Additionally, the sample supports emulation using the :zephyr:board:`native simulator <native_sim>`.
+Additionally, the sample supports emulation using the :ref:`native simulator <zephyr:native_sim>`.
 
 Overview
 *********
@@ -271,7 +271,7 @@ If this occurs, the sample's transport module has built-in reconnection logic th
 Emulation
 =========
 
-The sample can be run in :zephyr:board:`native simulator <native_sim>` that simplifies development and testing and removes the need for hardware.
+The sample can be run in :ref:`native simulator <zephyr:native_sim>` that simplifies development and testing and removes the need for hardware.
 Before you can build and the run native simulator, you need to perform the steps included in this link: :ref:`networking_with_native_sim`.
 
 When the aforementioned steps are completed, you can build and run the sample by using the following commands:

@@ -54,5 +54,4 @@ See the subpages for detailed documentation of each of the nRF5340 applications 
    unicast_server/README
    doc/fota
    doc/adapting_application
-   doc/configuration_options
    doc/audio_api

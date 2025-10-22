@@ -18,17 +18,13 @@
 
 LOG_MODULE_REGISTER(modem_trace_backend, CONFIG_MODEM_TRACE_BACKEND_LOG_LEVEL);
 
-/* Partition offset is implicit in flash_area */
+#define EXT_FLASH_DEVICE DEVICE_DT_GET(DT_ALIAS(ext_flash))
+#define TRACE_OFFSET FLASH_AREA_OFFSET(modem_trace)
+#define TRACE_SIZE CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_PARTITION_SIZE
 
-#if USE_PARTITION_MANAGER
-#define MODEM_TRACE_PARTITION	MODEM_TRACE
-#else
-#define MODEM_TRACE_PARTITION	modem_trace
-#endif
+#define BUF_SIZE CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_BUF_SIZE
 
-#define BUF_SIZE		CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH_BUF_SIZE
 #define TRACE_MAGIC_INITIALIZED 0x152ac523
-#define PEEK_AT_OFFSET_MAGIC	0x153ac522
 
 static trace_backend_processed_cb trace_processed_callback;
 
@@ -45,75 +41,41 @@ static struct fcb trace_fcb = {
  */
 extern struct k_sem trace_clear_sem;
 
-struct flash_backend_state {
-	uint32_t magic;
-	size_t read_offset;
-	struct fcb_entry loc;
-	struct flash_sector *sector;
-	size_t trace_bytes_unread;
-	size_t flash_buf_written;
-	uint8_t flash_buf[BUF_SIZE];
-};
-
-struct peek_at_cache {
-	size_t offset;
-	uint32_t magic;
-	struct fcb_entry entry;
-	size_t in_entry_offset;
-};
-
 /* Store in __noinit RAM to perserve in warm boot. */
-static __noinit struct flash_backend_state backend_state;
+static __noinit uint32_t magic;
+static __noinit size_t read_offset;
+static __noinit struct fcb_entry loc;
+static __noinit struct flash_sector *sector;
+
+static __noinit size_t trace_bytes_unread;
+static __noinit size_t flash_buf_written;
+static __noinit uint8_t flash_buf[BUF_SIZE];
 
 static bool is_initialized;
+
 static struct k_sem fcb_sem;
-static struct peek_at_cache peek_at_cache;
-
-static inline void peek_at_cache_set(size_t offset, struct fcb_entry *entry, size_t in_entry_offset)
-{
-	peek_at_cache.magic = PEEK_AT_OFFSET_MAGIC;
-	peek_at_cache.offset = offset;
-	peek_at_cache.in_entry_offset = in_entry_offset;
-
-	memcpy(&peek_at_cache.entry, entry, sizeof(peek_at_cache.entry));
-}
-
-static inline void peek_at_cache_invalidate(void)
-{
-	memset(&peek_at_cache, 0, sizeof(peek_at_cache));
-}
-
-static inline bool peek_at_cache_is_valid(void)
-{
-	bool magic_valid = peek_at_cache.magic == PEEK_AT_OFFSET_MAGIC;
-	bool entry_valid = peek_at_cache.entry.fe_sector != NULL;
-
-	return magic_valid && entry_valid;
-}
 
 static size_t buffer_append(const void *data, size_t len)
 {
 	size_t append_len;
 
-	append_len = MIN(len, sizeof(backend_state.flash_buf) - backend_state.flash_buf_written);
+	append_len = MIN(len, sizeof(flash_buf) - flash_buf_written);
 
-	memcpy(&backend_state.flash_buf[backend_state.flash_buf_written], data, append_len);
+	memcpy(&flash_buf[flash_buf_written], data, append_len);
 
-	backend_state.flash_buf_written += append_len;
-	backend_state.trace_bytes_unread += append_len;
+	flash_buf_written += append_len;
+	trace_bytes_unread += append_len;
 
 	return append_len;
 }
 
 static int fcb_walk_callback(struct fcb_entry_ctx *loc_ctx, void *arg)
 {
-	if ((loc_ctx->loc.fe_sector == backend_state.sector) &&
-	    (loc_ctx->loc.fe_elem_off < backend_state.loc.fe_elem_off)) {
+	if ((loc_ctx->loc.fe_sector == sector) && (loc_ctx->loc.fe_elem_off < loc.fe_elem_off)) {
 		return 0;
 	}
 
-	backend_state.trace_bytes_unread -= loc_ctx->loc.fe_data_len;
-
+	trace_bytes_unread -= loc_ctx->loc.fe_data_len;
 	return 0;
 }
 
@@ -126,13 +88,13 @@ static int buffer_flush_to_flash(void)
 		return -EPERM;
 	}
 
-	if (!backend_state.flash_buf_written) {
+	if (!flash_buf_written) {
 		return -ENODATA;
 	}
 
 	k_sem_take(&fcb_sem, K_FOREVER);
 
-	err = fcb_append(&trace_fcb, backend_state.flash_buf_written, &loc_flush);
+	err = fcb_append(&trace_fcb, flash_buf_written, &loc_flush);
 	if (err) {
 		if (IS_ENABLED(CONFIG_NRF_MODEM_TRACE_FLASH_NOSPACE_ERASE_OLDEST)) {
 			/* Find the number of trace bytes in oldest sector (that is not read). */
@@ -155,10 +117,7 @@ static int buffer_flush_to_flash(void)
 				LOG_ERR("fcb_rotate failed, err %d", err);
 				goto out;
 			}
-
-			err = fcb_append(&trace_fcb, backend_state.flash_buf_written, &loc_flush);
-
-			peek_at_cache_invalidate();
+			err = fcb_append(&trace_fcb, flash_buf_written, &loc_flush);
 		}
 
 		if (err) {
@@ -171,26 +130,22 @@ static int buffer_flush_to_flash(void)
 	}
 
 	err = flash_area_write(
-		trace_fcb.fap, FCB_ENTRY_FA_DATA_OFF(loc_flush), backend_state.flash_buf,
-		backend_state.flash_buf_written);
+		trace_fcb.fap, FCB_ENTRY_FA_DATA_OFF(loc_flush), flash_buf, flash_buf_written);
 	if (err) {
 		LOG_ERR("flash_area_write failed, err %d", err);
-
 		goto out;
 	}
 
 	err = fcb_append_finish(&trace_fcb, &loc_flush);
 	if (err) {
 		LOG_ERR("fcb_append_finish failed, err %d", err);
-
 		goto out;
 	}
 
-	backend_state.flash_buf_written = 0;
+	flash_buf_written = 0;
 
 out:
 	k_sem_give(&fcb_sem);
-
 	return err;
 }
 
@@ -200,7 +155,7 @@ static int trace_flash_erase(void)
 
 	LOG_INF("Erasing external flash");
 
-	err = flash_area_erase(modem_trace_area, 0, modem_trace_area->fa_size);
+	err = flash_area_erase(modem_trace_area, 0, TRACE_SIZE);
 	if (err) {
 		LOG_ERR("flash_area_erase error: %d", err);
 	}
@@ -221,7 +176,7 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 
 	trace_processed_callback = trace_processed_cb;
 
-	err = flash_area_open(FIXED_PARTITION_ID(MODEM_TRACE_PARTITION), &modem_trace_area);
+	err = flash_area_open(FIXED_PARTITION_ID(MODEM_TRACE), &modem_trace_area);
 	if (err) {
 		LOG_ERR("flash_area_open error:  %d", err);
 		return -ENODEV;
@@ -240,16 +195,14 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 	}
 
 	/* After a cold boot the magic will contain random values. */
-	if (backend_state.magic != TRACE_MAGIC_INITIALIZED) {
+	if (magic != TRACE_MAGIC_INITIALIZED) {
 		LOG_DBG("Trace magic not found, initializing");
-
-		backend_state.read_offset = 0;
-		backend_state.trace_bytes_unread = 0;
-		backend_state.flash_buf_written = 0;
-		backend_state.sector = NULL;
-		backend_state.magic = TRACE_MAGIC_INITIALIZED;
-
-		memset(&backend_state.loc, 0, sizeof(backend_state.loc));
+		read_offset = 0;
+		trace_bytes_unread = 0;
+		flash_buf_written = 0;
+		memset(&loc, 0, sizeof(loc));
+		sector = NULL;
+		magic = TRACE_MAGIC_INITIALIZED;
 		trace_flash_erase();
 	} else {
 		LOG_DBG("Trace magic found, skipping initialization");
@@ -258,10 +211,9 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 	uint32_t f_sector_cnt = sizeof(trace_flash_sectors) / sizeof(struct flash_sector);
 
 	err = flash_area_get_sectors(
-		FIXED_PARTITION_ID(MODEM_TRACE_PARTITION), &f_sector_cnt, trace_flash_sectors);
+		FIXED_PARTITION_ID(MODEM_TRACE), &f_sector_cnt, trace_flash_sectors);
 	if (err) {
 		LOG_ERR("flash_area_get_sectors error: %d", err);
-
 		return err;
 	}
 
@@ -275,7 +227,7 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 	LOG_DBG("Sectors: %d, first sector: %p, sector size: %d",
 		f_sector_cnt, trace_flash_sectors, trace_flash_sectors[0].fs_size);
 
-	err = fcb_init(FIXED_PARTITION_ID(MODEM_TRACE_PARTITION), &trace_fcb);
+	err = fcb_init(FIXED_PARTITION_ID(MODEM_TRACE), &trace_fcb);
 	if (err) {
 		LOG_ERR("fcb_init error: %d", err);
 		return err;
@@ -286,14 +238,12 @@ int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 	LOG_DBG("Modem trace flash storage initialized\n");
 
 	k_sem_give(&fcb_sem);
-
 	return 0;
 }
 
 size_t trace_backend_data_size(void)
 {
-	/* Ensure we never report more data than the partition can hold */
-	return MIN(backend_state.trace_bytes_unread, modem_trace_area->fa_size);
+	return trace_bytes_unread;
 }
 
 /* Read from offset
@@ -304,21 +254,19 @@ static int read_from_offset(void *buf, size_t len)
 	int err;
 	size_t to_read;
 
-	to_read = MIN(len, backend_state.loc.fe_data_len - backend_state.read_offset);
-
+	to_read = MIN(len, loc.fe_data_len - read_offset);
 	err = flash_area_read(
-		trace_fcb.fap, FCB_ENTRY_FA_DATA_OFF(backend_state.loc) +
-		backend_state.read_offset, buf, to_read);
+		trace_fcb.fap, FCB_ENTRY_FA_DATA_OFF(loc) + read_offset, buf, to_read);
 	if (err) {
 		LOG_ERR("Flash_area_read failed, err %d", err);
 		return err;
 	}
 
-	backend_state.trace_bytes_unread -= to_read;
+	trace_bytes_unread -= to_read;
 
-	backend_state.read_offset += to_read;
-	if (backend_state.read_offset >= backend_state.loc.fe_data_len) {
-		backend_state.read_offset = 0;
+	read_offset += to_read;
+	if (read_offset >= loc.fe_data_len) {
+		read_offset = 0;
 	}
 
 	return to_read;
@@ -340,39 +288,33 @@ int trace_backend_read(void *buf, size_t len)
 
 	k_sem_take(&fcb_sem, K_FOREVER);
 
-	if (backend_state.read_offset != 0 && backend_state.loc.fe_sector) {
+	if (read_offset != 0 && loc.fe_sector) {
 		err = read_from_offset(buf, len);
-
 		goto out;
 	}
 
-	err = fcb_getnext(&trace_fcb, &backend_state.loc);
-	if (err == -ENOTSUP && !backend_state.flash_buf_written) {
+	err = fcb_getnext(&trace_fcb, &loc);
+	if (err == -ENOTSUP && !flash_buf_written) {
 		/* Nothing to read */
-		backend_state.loc.fe_sector = 0;
-		backend_state.loc.fe_elem_off = 0;
-		backend_state.read_offset = 0;
-		backend_state.sector = NULL;
-
+		loc.fe_sector = 0;
+		loc.fe_elem_off = 0;
+		read_offset = 0;
+		sector = NULL;
 		err = -ENODATA;
-
 		goto out;
-	} else if (err == -ENOTSUP && backend_state.flash_buf_written) {
-		to_read = MIN(backend_state.flash_buf_written, len);
-
-		memcpy(buf, backend_state.flash_buf, to_read);
-
-		if (to_read != backend_state.flash_buf_written) {
+	} else if (err == -ENOTSUP && flash_buf_written) {
+		to_read = MIN(flash_buf_written, len);
+		memcpy(buf, flash_buf, to_read);
+		if (to_read != flash_buf_written) {
 			/* We haven't read all, move the rest to start of buffer */
-			memmove(backend_state.flash_buf, &backend_state.flash_buf[to_read],
-				backend_state.flash_buf_written - to_read);
+			memmove(flash_buf, &flash_buf[to_read],
+				flash_buf_written - to_read);
 		}
 
-		backend_state.flash_buf_written -= to_read;
-		backend_state.trace_bytes_unread -= to_read;
+		flash_buf_written -= to_read;
+		trace_bytes_unread -= to_read;
 
 		err = to_read;
-
 		goto out;
 
 	} else if (err) {
@@ -385,7 +327,7 @@ out:
 	ret = err;
 
 	/* Erase if done with previous sector. */
-	if (backend_state.sector && (backend_state.sector != backend_state.loc.fe_sector)) {
+	if (sector && (sector != loc.fe_sector)) {
 		err = fcb_rotate(&trace_fcb);
 		if (err) {
 			LOG_ERR("Failed to erase read sector, err %d", err);
@@ -394,141 +336,13 @@ out:
 			return ret;
 		}
 
-		peek_at_cache_invalidate();
 		k_sem_give(&trace_clear_sem);
 	}
 
-	backend_state.sector = backend_state.loc.fe_sector;
+	sector = loc.fe_sector;
 
 	k_sem_give(&fcb_sem);
-
 	return ret;
-}
-
-int trace_backend_peek_at(size_t offset, void *buf, size_t len)
-{
-	int err = 0;
-	size_t copied = 0;
-	struct fcb_entry entry;
-	size_t read_offset = offset;
-	size_t skip;
-	/* Variables for caching the starting position when the offset is found within flash */
-	struct fcb_entry start_entry = { 0 };
-	size_t start_in_entry_offset = 0;
-	bool have_start = false;
-
-	if (!is_initialized) {
-		return -EPERM;
-	}
-
-	if (buf == NULL || len == 0) {
-		return -EINVAL;
-	}
-
-	(void)k_sem_take(&fcb_sem, K_FOREVER);
-
-	/* Fail early if requested offset is beyond available. */
-	if (read_offset >= backend_state.trace_bytes_unread) {
-		k_sem_give(&fcb_sem);
-
-		return -EFAULT;
-	}
-
-	/* Initialize iterator from cache if possible, else from the oldest. */
-	if (peek_at_cache_is_valid() && (read_offset >= peek_at_cache.offset)) {
-		/* Start from cached entry and skip only the offset delta. */
-		memcpy(&entry, &peek_at_cache.entry, sizeof(entry));
-		err = 0;
-
-		skip = (read_offset - peek_at_cache.offset) + peek_at_cache.in_entry_offset;
-	} else {
-		if (peek_at_cache_is_valid() && (read_offset < peek_at_cache.offset)) {
-			peek_at_cache_invalidate();
-		}
-
-		entry.fe_sector = NULL;
-		entry.fe_elem_off = 0;
-		skip = read_offset;
-		err = fcb_getnext(&trace_fcb, &entry);
-	}
-
-	while (err == 0) {
-		size_t entry_len = entry.fe_data_len;
-		size_t size_available;
-		size_t size_to_read;
-
-		/* If we need to skip, skip entire entries first. */
-		if (skip >= entry_len) {
-			skip -= entry_len;
-			err = fcb_getnext(&trace_fcb, &entry);
-
-			continue;
-		}
-
-		/* Ensure cache reflects the requested position inside current entry. */
-		if (!have_start) {
-			start_entry = entry;
-			start_in_entry_offset = skip;
-			have_start = true;
-		}
-
-		/* Copy from within this entry starting at in-entry offset. */
-		size_available = entry_len - skip;
-		size_to_read = MIN(size_available, len - copied);
-
-		err = flash_area_read(trace_fcb.fap, FCB_ENTRY_FA_DATA_OFF(entry) + skip,
-				   (uint8_t *)buf + copied, size_to_read);
-		if (err) {
-			LOG_ERR("flash_area_read (peek_at) failed, err %d", err);
-			k_sem_give(&fcb_sem);
-
-			return err;
-		}
-
-		/* We've consumed the skip within this entry. */
-		skip = 0;
-
-		copied += size_to_read;
-		if (copied >= len) {
-			k_sem_give(&fcb_sem);
-
-			/* Cache the exact requested starting position for repeat reads */
-			peek_at_cache_set(offset, &start_entry, start_in_entry_offset);
-
-			return (int)copied;
-		}
-
-		/* Next entry */
-		err = fcb_getnext(&trace_fcb, &entry);
-	}
-
-	/* After exhausting FCB, continue into RAM buffer if present. */
-	if (backend_state.flash_buf_written > 0 && (backend_state.flash_buf_written > skip)) {
-		size_t size_available = backend_state.flash_buf_written - skip;
-		size_t size_to_read = MIN(size_available, len - copied);
-
-		memcpy((uint8_t *)buf + copied, &backend_state.flash_buf[skip], size_to_read);
-
-		copied += size_to_read;
-	}
-
-	k_sem_give(&fcb_sem);
-
-	if (copied == 0) {
-		return -ENODATA;
-	}
-
-	/* Set cache to requested starting position if we copied anything.
-	 * In case of RAM tail, we don't cache the entry as it will be invalidated when the RAM tail
-	 * is flushed.
-	 */
-	if (backend_state.flash_buf_written == 0) {
-		peek_at_cache_set(offset, &start_entry, start_in_entry_offset);
-	} else {
-		peek_at_cache_invalidate();
-	}
-
-	return (int)copied;
 }
 
 static int stream_write(const void *buf, size_t len)
@@ -547,32 +361,26 @@ static int stream_write(const void *buf, size_t len)
 		written = buffer_append(&bytes[len - bytes_left], bytes_left);
 		written_total += written;
 
-		if (backend_state.flash_buf_written >= sizeof(backend_state.flash_buf)) {
+		if (flash_buf_written >= sizeof(flash_buf)) {
 			ret = buffer_flush_to_flash();
 			if (ret) {
 				LOG_ERR("buffer_flush_to_flash error %d", ret);
-
 				if (written_total) {
 					ret = trace_processed_callback(written);
 					if (ret < 0) {
 						LOG_ERR("trace_processed_callback failed: %d", ret);
-
 						return ret;
 					}
-
 					return written_total;
 				}
-
 				return ret;
 			}
 		}
 		if (written > 0) {
 			bytes_left -= written;
-
 			ret = trace_processed_callback(written);
 			if (ret < 0) {
 				LOG_ERR("trace_processed_callback 2 failed: %d", ret);
-
 				return ret;
 			}
 		}
@@ -604,18 +412,14 @@ int trace_backend_clear(void)
 
 	k_sem_take(&fcb_sem, K_FOREVER);
 	LOG_DBG("Clearing trace storage");
-
+	flash_buf_written = 0;
 	err = fcb_clear(&trace_fcb);
 
-	backend_state.flash_buf_written = 0;
-	backend_state.loc.fe_sector = 0;
-	backend_state.loc.fe_elem_off = 0;
-	backend_state.trace_bytes_unread = 0;
-	backend_state.read_offset = 0;
-	backend_state.sector = NULL;
-
-	/* Storage rotated, invalidate cached peek_at iterator. */
-	peek_at_cache_invalidate();
+	loc.fe_sector = 0;
+	loc.fe_elem_off = 0;
+	trace_bytes_unread = 0;
+	read_offset = 0;
+	sector = NULL;
 
 	k_sem_give(&fcb_sem);
 
@@ -625,10 +429,6 @@ int trace_backend_clear(void)
 int trace_backend_deinit(void)
 {
 	buffer_flush_to_flash();
-	peek_at_cache_invalidate();
-
-	is_initialized = false;
-
 	return 0;
 }
 
@@ -638,6 +438,5 @@ struct nrf_modem_lib_trace_backend trace_backend = {
 	.write = trace_backend_write,
 	.data_size = trace_backend_data_size,
 	.read = trace_backend_read,
-	.peek_at = trace_backend_peek_at,
 	.clear = trace_backend_clear,
 };

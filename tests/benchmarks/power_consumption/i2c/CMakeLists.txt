@@ -12,8 +12,3 @@ project(i2c)
 
 target_sources(app PRIVATE ./../common/main.c)
 target_sources(app PRIVATE src/driver_test.c)
-
-if(CONFIG_SOC_NRF54H20_CPUPPR)
-  message(STATUS "Power Mode handler for RISC V is included.")
-  target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/power_off.c)
-endif()

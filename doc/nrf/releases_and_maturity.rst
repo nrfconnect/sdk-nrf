@@ -10,6 +10,7 @@ The versioning scheme adopted is similar to `Semantic versioning`_, but with imp
 
 * Every release of the |NCS| is identified with a version string in the ``MAJOR.MINOR.PATCH`` format.
 * Between two releases, ``99`` is added in place of ``PATCH`` to indicate ongoing development.
+* When a new functionality is introduced in the development state, ``devN`` postfix can be added at the end of the version number.
 
 To learn more about the versioning and the release criteria of the |NCS|, read :ref:`dm-revisions`.
 

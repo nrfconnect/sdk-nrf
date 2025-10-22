@@ -31,7 +31,7 @@ config NORDIC_SECURITY_BACKEND
 
 config NRF_SECURITY
 	bool
-	prompt "nRF Security" if !PSA_PROMPTLESS
+	prompt "Enable nRF Security" if !PSA_PROMPTLESS
 	depends on SOC_FAMILY_NORDIC_NRF
 	default y if BUILD_WITH_TFM
 	# entropy is provided by PSA and NRF_SECURITY on NRF54LX and NRF71X
@@ -59,7 +59,7 @@ if NRF_SECURITY
 
 config MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
 	bool
-	default y if HAS_HW_NRF_CRACEN && PSA_CRYPTO_DRIVER_CRACEN
+	default y if CRACEN_HW_PRESENT && PSA_CRYPTO_DRIVER_CRACEN
 	default y if PSA_WANT_PLATFORM_KEYS
 	help
 	  Promptless option used to control if the PSA Crypto core should have support for builtin keys or not.
@@ -86,7 +86,7 @@ config MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE
 	  This file is auto-generated with the values of the relevant Kconfig options.
 
 config MBEDTLS_ENABLE_HEAP
-	bool "Global heap for mbed TLS"
+	bool "Enable global heap for mbed TLS"
 	help
 	  This option enables the mbedtls to use the heap. This setting must
 	  be global so that various applications and libraries in Zephyr do not
@@ -142,7 +142,7 @@ menu "Zephyr legacy configurations"
 	depends on MBEDTLS_LIBRARY_NRF_SECURITY
 
 config MBEDTLS_TLS_VERSION_1_2
-	bool "Support for TLS 1.2 (DTLS 1.2)"
+	bool "Enable support for TLS 1.2 (DTLS 1.2)"
 	select PSA_WANT_ALG_SHA_1
 	select PSA_WANT_ALG_SHA_224
 	select PSA_WANT_ALG_SHA_256
@@ -151,26 +151,26 @@ config MBEDTLS_TLS_VERSION_1_2
 	select MBEDTLS_CIPHER
 
 config MBEDTLS_DTLS
-	bool "Support for DTLS"
+	bool "Enable support for DTLS"
 	depends on MBEDTLS_TLS_VERSION_1_2 || MBEDTLS_SSL_PROTO_TLS1_2
 	select MBEDTLS_SSL_PROTO_DTLS
 
 config MBEDTLS_KEY_EXCHANGE_ALL_ENABLED
-	bool "All available ciphersuites"
+	bool "Enable all available ciphersuites"
 	help
 	  The default behaviour with nrf_security is to always enable every ciphersuite
 	  that is available. This configuration has no effect, but ensures that samples
 	  and subsystem usage doesn't break.
 
 config MBEDTLS_KEY_EXCHANGE_SOME_PSK_ENABLED
-	bool "Some PSK ciphersuites"
+	bool "Enable some PSK ciphersuites"
 	help
 	  The default behaviour of nrf_security is to always enable some ciphersuites.
 	  This configuration has no effect but ensures that samples and subsystem usage
 	  doesn't break.
 
 config MBEDTLS_ECP_ALL_ENABLED
-	bool "All available elliptic curves"
+	bool "Enable all available elliptic curves"
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT
@@ -190,7 +190,7 @@ config MBEDTLS_ECP_ALL_ENABLED
 	select PSA_WANT_ECC_MONTGOMERY_448
 
 config MBEDTLS_CIPHER_ALL_ENABLED
-	bool "All available ciphers"
+	bool "Enable all available ciphers"
 	select PSA_WANT_KEY_TYPE_AES
 	select PSA_WANT_ALG_ECB_NO_PADDING
 	select PSA_WANT_ALG_CBC_NO_PADDING
@@ -203,7 +203,7 @@ config MBEDTLS_CIPHER_ALL_ENABLED
 	select PSA_WANT_ALG_STREAM_CIPHER
 
 config MBEDTLS_MAC_ALL_ENABLED
-	bool "All available MAC methods"
+	bool "Enable all available MAC methods"
 	select PSA_WANT_KEY_TYPE_AES
 	select PSA_WANT_ALG_CMAC
 	select PSA_WANT_ALG_HMAC
@@ -214,7 +214,7 @@ config MBEDTLS_MAC_ALL_ENABLED
 	select PSA_WANT_ALG_SHA_512
 
 config MBEDTLS_MAC_SHA256_ENABLED
-	bool "SHA-224 and SHA-256 hash algorithms"
+	bool "Enable the SHA-224 and SHA-256 hash algorithms"
 	default y
 	select PSA_WANT_ALG_SHA_224
 	select PSA_WANT_ALG_SHA_256
@@ -224,24 +224,24 @@ config MBEDTLS_MAC_MD5_ENABLED
 	bool "MD5 hash algorithm"
 
 config MBEDTLS_CTR_DRBG_ENABLED
-	bool "CTR_DRBG AES-256-based random generator"
+	bool "Enable the CTR_DRBG AES-256-based random generator"
 	select PSA_WANT_ALG_CTR_DRBG
 
 config MBEDTLS_HMAC_DRBG_ENABLED
-	bool "HMAC_DRBG random generator"
+	bool "Enable the HMAC_DRBG random generator"
 	select PSA_WANT_ALG_HMAC_DRBG
 
 config MBEDTLS_CIPHER
-	bool "Generic cipher layer"
+	bool "Enable the generic cipher layer"
 
 config MBEDTLS_MD
-	bool "Generic message digest layer"
+	bool "Enable the generic message digest layer"
 
 config MBEDTLS_ENTROPY_ENABLED
-	bool "mbedTLS generic entropy pool"
+	bool "Enable mbedTLS generic entropy pool"
 
 config MBEDTLS_GENPRIME_ENABLED
-	bool "Prime-number generation code"
+	bool "Enable the prime-number generation code"
 
 endmenu # Zephyr legacy configurations
 

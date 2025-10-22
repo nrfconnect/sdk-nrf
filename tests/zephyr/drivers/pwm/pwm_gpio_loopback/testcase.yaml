@@ -12,7 +12,5 @@ tests:
     platform_allow:
       - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp

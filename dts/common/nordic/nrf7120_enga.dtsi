@@ -6,7 +6,6 @@
 
 #include <mem.h>
 #include <nordic/nrf_common.dtsi>
-#include <zephyr/dt-bindings/clock/nrf-auxpll.h>
 
 /delete-node/ &sw_pwm;
 
@@ -113,7 +112,7 @@
 		ficr: ficr@ffc000 {
 			compatible = "nordic,nrf-ficr";
 			reg = <0xffc000 0x1000>;
-			#nordic,ficr-cells = <1>;
+			status = "disabled";
 		};
 
 #ifdef USE_NON_SECURE_ADDRESS_MAP
@@ -212,8 +211,6 @@
 				#address-cells = <1>;
 				#size-cells = <1>;
 				status = "disabled";
-				enable-secure;
-				enable-dma-secure;
 
 				cpuflpr_clic: interrupt-controller@f0000000 {
 					compatible = "nordic,nrf-clic";
@@ -817,25 +814,6 @@
 				compatible = "nordic,nrf-clock";
 				reg = <0x10e000 0x1000>;
 				interrupts = <270 NRF_DEFAULT_IRQ_PRIORITY>;
-				status = "disabled";
-			};
-
-			audio_auxpll: auxpll@130000 {
-				compatible = "nordic,nrf-auxpll";
-				reg = <0x130000 0x1000>;
-				interrupts = <304 NRF_DEFAULT_IRQ_PRIORITY>;
-				clocks = <&hfxo32m>;
-				#clock-cells = <0>;
-				/*
-				 * Temporarily reading FICR addr 0 as FICR offsets
-				 * not defined yet
-				 */
-				nordic,ficrs = <&ficr 0>;
-				nordic,out-div = <12>;
-				nordic,out-drive = <0>;
-				nordic,current-tune = <9>;
-				nordic,sdm-disable;
-				nordic,range = "mid";
 				status = "disabled";
 			};
 

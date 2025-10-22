@@ -38,38 +38,47 @@
       "id": 1,
       "name": "MA-rootdevice",
       "deviceTypeRef": {
-        "code": 22,
+        "code": 18,
         "profileId": 259,
-        "label": "MA-rootdevice",
-        "name": "MA-rootdevice",
+        "label": "MA-otarequestor",
+        "name": "MA-otarequestor",
         "deviceTypeOrder": 0
       },
       "deviceTypes": [
-        {
-          "code": 22,
-          "profileId": 259,
-          "label": "MA-rootdevice",
-          "name": "MA-rootdevice",
-          "deviceTypeOrder": 0
-        },
         {
           "code": 18,
           "profileId": 259,
           "label": "MA-otarequestor",
           "name": "MA-otarequestor",
+          "deviceTypeOrder": 0
+        },
+        {
+          "code": 17,
+          "profileId": 259,
+          "label": "MA-powersource",
+          "name": "MA-powersource",
           "deviceTypeOrder": 1
+        },
+        {
+          "code": 22,
+          "profileId": 259,
+          "label": "MA-rootdevice",
+          "name": "MA-rootdevice",
+          "deviceTypeOrder": 2
         }
       ],
       "deviceVersions": [
-        3,
-        1
+        1,
+        1,
+        3
       ],
       "deviceIdentifiers": [
-        22,
-        18
+        18,
+        17,
+        22
       ],
-      "deviceTypeName": "MA-rootdevice",
-      "deviceTypeCode": 22,
+      "deviceTypeName": "MA-otarequestor",
+      "deviceTypeCode": 18,
       "deviceTypeProfileId": 259,
       "clusters": [
         {
@@ -1015,6 +1024,176 @@
               "mfgCode": null,
               "side": "server",
               "included": 1
+            }
+          ]
+        },
+        {
+          "name": "Power Source",
+          "code": 47,
+          "mfgCode": null,
+          "define": "POWER_SOURCE_CLUSTER",
+          "side": "server",
+          "enabled": 1,
+          "attributes": [
+            {
+              "name": "Status",
+              "code": 0,
+              "mfgCode": null,
+              "side": "server",
+              "type": "PowerSourceStatusEnum",
+              "included": 1,
+              "storageOption": "RAM",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": "1",
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
+              "name": "Order",
+              "code": 1,
+              "mfgCode": null,
+              "side": "server",
+              "type": "int8u",
+              "included": 1,
+              "storageOption": "RAM",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": "1",
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
+              "name": "Description",
+              "code": 2,
+              "mfgCode": null,
+              "side": "server",
+              "type": "char_string",
+              "included": 1,
+              "storageOption": "RAM",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": "",
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
+              "name": "WiredCurrentType",
+              "code": 5,
+              "mfgCode": null,
+              "side": "server",
+              "type": "WiredCurrentTypeEnum",
+              "included": 1,
+              "storageOption": "RAM",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": "1",
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
+              "name": "EndpointList",
+              "code": 31,
+              "mfgCode": null,
+              "side": "server",
+              "type": "array",
+              "included": 1,
+              "storageOption": "External",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": null,
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
+              "name": "GeneratedCommandList",
+              "code": 65528,
+              "mfgCode": null,
+              "side": "server",
+              "type": "array",
+              "included": 1,
+              "storageOption": "External",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": null,
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
+              "name": "AcceptedCommandList",
+              "code": 65529,
+              "mfgCode": null,
+              "side": "server",
+              "type": "array",
+              "included": 1,
+              "storageOption": "External",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": null,
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
+              "name": "AttributeList",
+              "code": 65531,
+              "mfgCode": null,
+              "side": "server",
+              "type": "array",
+              "included": 1,
+              "storageOption": "External",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": null,
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
+              "name": "FeatureMap",
+              "code": 65532,
+              "mfgCode": null,
+              "side": "server",
+              "type": "bitmap32",
+              "included": 1,
+              "storageOption": "RAM",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": "1",
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
+              "name": "ClusterRevision",
+              "code": 65533,
+              "mfgCode": null,
+              "side": "server",
+              "type": "int16u",
+              "included": 1,
+              "storageOption": "RAM",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": "3",
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
             }
           ]
         },
@@ -3379,30 +3558,6 @@
               "source": "client",
               "isIncoming": 1,
               "isEnabled": 1
-            },
-            {
-              "name": "SetVIDVerificationStatement",
-              "code": 12,
-              "mfgCode": null,
-              "source": "client",
-              "isIncoming": 1,
-              "isEnabled": 1
-            },
-            {
-              "name": "SignVIDVerificationRequest",
-              "code": 13,
-              "mfgCode": null,
-              "source": "client",
-              "isIncoming": 1,
-              "isEnabled": 1
-            },
-            {
-              "name": "SignVIDVerificationResponse",
-              "code": 14,
-              "mfgCode": null,
-              "source": "server",
-              "isIncoming": 0,
-              "isEnabled": 1
             }
           ],
           "attributes": [
@@ -4126,6 +4281,14 @@
               "source": "client",
               "isIncoming": 1,
               "isEnabled": 1
+            },
+            {
+              "name": "TriggerEffect",
+              "code": 64,
+              "mfgCode": null,
+              "source": "client",
+              "isIncoming": 1,
+              "isEnabled": 1
             }
           ],
           "attributes": [
@@ -4235,7 +4398,7 @@
               "storageOption": "RAM",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "6",
+              "defaultValue": "5",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,

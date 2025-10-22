@@ -49,9 +49,7 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 /* 4 Mb RX wait for acknowledgment time-out value. */
 #define RX_ACK_TIMEOUT_US_4MBPS 160
 
-/* Minimum retransmit time for the worst case scenario = 435.
- * In general = wait_for_ack_timeout_us + ADDR_EVENT_LATENCY_US + ramp_up.
- */
+/* Minimum retransmit time */
 #define RETRANSMIT_DELAY_MIN 435
 
 /* Radio Tx ramp-up time in microseconds. */
@@ -1031,6 +1029,8 @@ static bool update_radio_parameters(void)
 	params_valid &= update_radio_protocol();
 	params_valid &= update_radio_crc();
 	update_rf_payload_format(esb_cfg.payload_length);
+	params_valid &=
+	    (esb_cfg.retransmit_delay >= RETRANSMIT_DELAY_MIN);
 
 	return params_valid;
 }
@@ -1206,7 +1206,6 @@ static void start_tx_transaction(void)
 
 		if (fast_switching) {
 			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
-			nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 			nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
 		} else {
 			nrf_radio_shorts_set(NRF_RADIO,
@@ -1236,7 +1235,6 @@ static void start_tx_transaction(void)
 		if (ack) {
 			if (fast_switching) {
 				nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
-				nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 				nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
 			} else {
 				nrf_radio_shorts_set(NRF_RADIO,
@@ -1409,8 +1407,6 @@ static void on_radio_disabled_tx(void)
 
 	nrf_radio_packetptr_set(NRF_RADIO, rx_payload_buffer);
 	if (fast_switching) {
-		nrf_radio_int_disable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
-		nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common | ESB_SHORT_DISABLE_MASK));
 		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
 	}
 	on_radio_disabled = on_radio_disabled_tx_wait_for_ack;
@@ -1444,10 +1440,6 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 				nrf_radio_txaddress_get(NRF_RADIO), rx_pdu->type.dpl_pdu.pid)) {
 				interrupt_flags |= INT_RX_DATA_RECEIVED_MSK;
 			}
-		}
-
-		if (fast_switching) {
-			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
 		}
 
 		if ((tx_fifo.count == 0) || (esb_cfg.tx_mode == ESB_TXMODE_MANUAL)) {
@@ -1487,8 +1479,6 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 			 */
 			if (fast_switching) {
 				nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
-				nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
-				nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
 			} else {
 				nrf_radio_shorts_set(NRF_RADIO,
 					(radio_shorts_common | NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
@@ -1909,17 +1899,7 @@ int esb_init(const struct esb_config *config)
 	memset(rx_pipe_info, 0, sizeof(rx_pipe_info));
 	memset(pids, 0, sizeof(pids));
 
-	if (!update_radio_parameters()) {
-		LOG_ERR("Failed to update radio parameters");
-		return -EINVAL;
-	}
-
-	if (esb_cfg.retransmit_delay < RETRANSMIT_DELAY_MIN) {
-		LOG_ERR("Configured retransmission delay is below the required minimum of %d us",
-			RETRANSMIT_DELAY_MIN);
-
-		return -EINVAL;
-	}
+	update_radio_parameters();
 
 	/* Configure radio address registers according to ESB default values */
 	nrf_radio_base0_set(NRF_RADIO, 0xE7E7E7E7);
@@ -2267,13 +2247,11 @@ int esb_start_rx(void)
 
 	if (esb_cfg.mode == ESB_MODE_MONITOR) {
 		nrf_radio_shorts_set(NRF_RADIO, RADIO_SHORTS_MONITOR);
-		nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 		nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
 		on_radio_disabled = NULL;
 	} else {
 		if (fast_switching) {
 			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
-			nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 			nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
 		} else {
 			nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common |

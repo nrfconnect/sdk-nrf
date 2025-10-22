@@ -53,7 +53,7 @@ config LOCK_MAX_HOLIDAY_SCHEDULES
 endif
 
 config LOCK_ENABLE_DEBUG
-	bool "Debug features to print users and credentials"
+	bool "Enable debug features to print users and credentials"
 	depends on SHELL
 	help
 	  Debug features allows to checking and printing current users, their state, and
@@ -130,15 +130,12 @@ config OPENTHREAD_DEFAULT_TX_POWER
 
 endif # OPENTHREAD
 
-if BOARD_NRF7002DK_NRF5340_CPUAPP || SHIELD_NRF7002EK
-
-config CHIP_WIFI
-	default y
+if CHIP_WIFI
 
 config NRF_WIFI_LOW_POWER
 	default y
 
-endif # BOARD_NRF7002DK_NRF5340_CPUAPP || SHIELD_NRF7002EK
+endif # CHIP_WIFI
 
 config NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
 	default y

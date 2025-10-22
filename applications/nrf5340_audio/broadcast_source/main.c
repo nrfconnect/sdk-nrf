@@ -258,7 +258,7 @@ static int zbus_subscribers_create(void)
 		&button_msg_sub_thread_data, button_msg_sub_thread_stack,
 		CONFIG_BUTTON_MSG_SUB_STACK_SIZE, (k_thread_entry_t)button_msg_sub_thread, NULL,
 		NULL, NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
-	ret = k_thread_name_set(button_msg_sub_thread_id, "Msg_sub_btn");
+	ret = k_thread_name_set(button_msg_sub_thread_id, "BUTTON_MSG_SUB");
 	if (ret) {
 		LOG_ERR("Failed to create button_msg thread");
 		return ret;
@@ -268,7 +268,7 @@ static int zbus_subscribers_create(void)
 		&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
 		CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE, (k_thread_entry_t)le_audio_msg_sub_thread, NULL,
 		NULL, NULL, K_PRIO_PREEMPT(CONFIG_LE_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
-	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "Msg_sub_LE_Audio");
+	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "LE_AUDIO_MSG_SUB");
 	if (ret) {
 		LOG_ERR("Failed to create le_audio_msg thread");
 		return ret;
@@ -594,7 +594,7 @@ int main(void)
 	ERR_CHK_MSG(ret, "Failed to enable broadcaster(s)");
 
 	ret = audio_system_config_set(
-		bt_audio_codec_cfg_freq_to_freq_hz(CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE),
+		bt_audio_codec_cfg_freq_to_freq_hz(CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE),
 		CONFIG_BT_AUDIO_BITRATE_BROADCAST_SRC, VALUE_NOT_SET);
 	ERR_CHK_MSG(ret, "Failed to set sample- and bitrate");
 

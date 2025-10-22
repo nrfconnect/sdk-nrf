@@ -18,11 +18,6 @@
 #include <radio_test/fmac_structs.h>
 #include <zephyr/drivers/wifi/nrf_wifi/bus/rpu_hw_if.h>
 
-/* RX capture display constants */
-#define SAMPLES_PER_LINE 16
-#define BYTES_PER_SAMPLE 3
-#define BYTES_PER_LINE 48
-
 struct nrf_wifi_ctx_zep_rt {
 	struct nrf_wifi_fmac_priv *fmac_priv;
 	struct rpu_conf_params conf_params;

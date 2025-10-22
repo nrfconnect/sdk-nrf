@@ -10,6 +10,7 @@
 
 #include <app-common/zap-generated/ids/Commands.h>
 #include <app-common/zap-generated/attributes/Accessors.h>
+// #include <app-common/zap-generated/cluster-objects.h>
 #include <app/clusters/switch-server/switch-server.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);

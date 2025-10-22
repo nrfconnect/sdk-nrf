@@ -33,7 +33,7 @@ config NRF_CLOUD_FOTA_PROGRESS_PCT_INCREMENT
 	  0 disables progress report.
 
 config NRF_CLOUD_FOTA_BLE_DEVICES
-	bool "API for FOTA of BLE devices"
+	bool "Enable API for FOTA of BLE devices"
 	depends on BT
 
 endif # NRF_CLOUD_FOTA
