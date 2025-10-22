@@ -25,8 +25,8 @@ class NrfBinaryRunnerNext(nrf_common.NrfBinaryRunner):
         self.family = family # Required to silence git complience checks
 
         super().__init__(cfg, family, softreset, pinreset, dev_id, erase=False,
-                 erase_mode=None, ext_erase_mode=None, reset=True,
-                 tool_opt=None, force=False, recover=False)
+                         erase_mode=None, ext_erase_mode=None, reset=reset,
+                         tool_opt=None, force=False, recover=False)
 
     @classmethod
     def do_add_parser(cls, parser):
@@ -78,7 +78,8 @@ class NrfBinaryRunnerNext(nrf_common.NrfBinaryRunner):
 
     def _get_core(self):
         if self.family in ('nrf54h', 'nrf71', 'nrf92'):
-            if self.build_conf.getboolean('CONFIG_SOC_NRF7120_ENGA_CPUAPP'):
+            if (self.build_conf.getboolean('CONFIG_SOC_NRF7120_ENGA_CPUAPP') or
+                self.build_conf.getboolean('CONFIG_SOC_NRF7120_ENGA_CPUFLPR')):
                 return 'Application'
             raise RuntimeError(f'Core not found for family: {self.family}')
         return None
