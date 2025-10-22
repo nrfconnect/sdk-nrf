@@ -8,11 +8,7 @@ choice PSA_CORE
 	prompt "PSA Core implementation"
 
 config PSA_CORE_OBERON
-	bool
-	prompt "PSA Core implementation - Oberon"
-	select PSA_WANT_AES_KEY_SIZE_128
-	select PSA_WANT_AES_KEY_SIZE_192
-	select PSA_WANT_AES_KEY_SIZE_256
+	bool "PSA Core implementation - Oberon"
 
 config PSA_CORE_LITE
 	bool "PSA core created for tiny footprint"

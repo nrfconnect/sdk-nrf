@@ -142,6 +142,9 @@ Security
   * The :ref:`security_index` page with a table that lists the versions of security components implemented in the |NCS|.
   * The :ref:`secure_storage_in_ncs` page with updated information about the secure storage configuration in the |NCS|.
     Also renamed the page from "Trusted storage in the |NCS|."
+  * The Oberon core to no longer enable all AES key sizes by default.
+    Instead, only the key sizes explicitly selected through Kconfig options are enabled.
+    See the :ref:`ug_crypto_supported_features_key_sizes` page for more information about selecting key sizes.
 
 Protocols
 =========
