@@ -18,6 +18,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
