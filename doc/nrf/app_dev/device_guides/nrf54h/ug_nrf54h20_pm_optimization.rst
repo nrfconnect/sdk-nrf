@@ -118,25 +118,23 @@ The power consumption targets of this sample for active currents (estimates at 5
 Recommended Kconfig configuration
 =================================
 
-For the application running on the application core, setting the following Kconfig options is recommended:
+For applications running on either the application core or the radio core, set the following Kconfig options:
 
   * :kconfig:option:`CONFIG_PM` to ``y``
   * :kconfig:option:`CONFIG_POWEROFF` to ``y``
-  * :kconfig:option:`CONFIG_PM_DEVICE` to ``y``
-  * :kconfig:option:`CONFIG_PM_DEVICE_RUNTIME` to ``y``
-
-For the application running on the radio core, setting the following Kconfig options is recommended:
-
-  * :kconfig:option:`CONFIG_PM` to ``y``
-  * :kconfig:option:`CONFIG_POWEROFF` to ``y``
-  * :kconfig:option:`CONFIG_PM_DEVICE` to ``y``
-  * :kconfig:option:`CONFIG_PM_DEVICE_RUNTIME` to ``y``
 
 Consider also the following recommendations:
 
   * Disable all unused peripherals before entering sleep (Zephyr's API does this automatically when supported).
-  * Add ``zephyr,pm-device-runtime-auto`` in the devicetree source (DTS) file for all peripherals with runtime PM support.
   * Build and program an empty image on any unused core to release shared resources.
+  * If one or more specific sleep states are not desired, disable them in the devicetree by setting their status
+    to ``disabled``:
+
+    .. code-block:: dts
+
+       &s2ram {
+               status = "disabled";
+       };
 
 .. _ug_nrf54h20_pm_optimizations_bootloader:
 
