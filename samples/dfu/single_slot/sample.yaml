@@ -1,0 +1,25 @@
+##
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+sample:
+  description: Single slot DFU sample application
+  name: single_slot
+common:
+  sysbuild: true
+  harness: console
+  harness_config:
+    type: one_line
+    regex:
+      - "Starting single_slot sample"
+tests:
+  sample.dfu.single_slot:
+    tags:
+      - dfu_single_slot
+      - ci_samples_dfu
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
