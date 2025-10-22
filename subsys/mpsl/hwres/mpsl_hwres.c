@@ -70,7 +70,7 @@ bool mpsl_hwres_ppib_channel_alloc(NRF_PPIB_Type *p_ppib, uint8_t *p_ppib_ch)
 		return false;
 	}
 
-	return (nrfx_ppib_channel_alloc(ppib_interconnect, p_ppib_ch) == NRFX_SUCCESS);
+	return (nrfx_ppib_channel_alloc(ppib_interconnect, p_ppib_ch) == 0);
 #else
 	(void)p_ppib;
 	(void)p_ppib_ch;

@@ -250,13 +250,13 @@ static uint8_t peri_ppib_ch = INVALID_CHANNEL;
 
 void nrf_802154_platform_sl_lptimer_hw_task_cross_domain_connections_setup(uint32_t cc_channel)
 {
-	nrfx_err_t err;
+	int err;
 
 	err = nrfx_dppi_channel_alloc(&dppi20, &peri_dppi_ch);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	__ASSERT_NO_MSG(err == 0);
 
 	err = nrfx_ppib_channel_alloc(&ppib11_21, &peri_ppib_ch);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	__ASSERT_NO_MSG(err == 0);
 
 	/* {c} PPIB_11 <-- PPIB_21
 	 * One of HW-fixed connections, so nothing to do.
@@ -273,13 +273,13 @@ void nrf_802154_platform_sl_lptimer_hw_task_cross_domain_connections_setup(uint3
 
 void nrf_802154_platform_sl_lptimer_hw_task_cross_domain_connections_clear(void)
 {
-	nrfx_err_t err;
+	int err;
 
 	err = nrfx_ppib_channel_free(&ppib11_21, peri_ppib_ch);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	__ASSERT_NO_MSG(err == 0);
 
 	err = nrfx_dppi_channel_free(&dppi20, peri_dppi_ch);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	__ASSERT_NO_MSG(err == 0);
 
 	peri_dppi_ch = INVALID_CHANNEL;
 	peri_ppib_ch = INVALID_CHANNEL;
