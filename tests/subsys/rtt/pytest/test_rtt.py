@@ -68,6 +68,9 @@ def test_rtt_logging(dut: DeviceAdapter):
         'nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp': {
             'device': 'NRF54LV10A_M33',
         },
+        'nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp': {
+            'device': 'NRF54LV10A_M33',
+        },
     }
 
     log_filename = f"{BUILD_DIR}/log_rtt.txt"
