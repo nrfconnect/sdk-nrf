@@ -9,6 +9,8 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
+import pytest
+
 from required_build import RequiredBuild
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.utils import find_in_config
@@ -150,6 +152,7 @@ class TestDirectXipWithRevert:
         # loaded original app from the primary slot
         tm.verify_direct_xip_primary_slot_loaded(version=tm.origin_mcuboot_version)
 
+    @pytest.mark.nightly
     def test_direct_xip_upgrade_multiple(self, dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
         """Verify that the application can be updated multiple times.
 

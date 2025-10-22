@@ -139,7 +139,7 @@ tests:
       - FILE_SUFFIX=direct_xip
 
   mcuboot.direct_xip.with_revert:
-    timeout: 900
+    timeout: 1200
     tags:
       - direct_xip
     platform_allow:
