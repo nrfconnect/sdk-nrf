@@ -1,0 +1,10 @@
+&comp {
+	main-mode = "SE";
+	psel = "AIN0"; /* P0.00 */
+	refsel = "INT_1V2";
+	sp-mode = "HIGH";
+	th-up = <63>;
+	th-down = <59>;
+	isource = "DISABLED";
+	status = "okay";
+};
