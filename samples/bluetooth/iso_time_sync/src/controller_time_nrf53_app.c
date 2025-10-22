@@ -48,8 +48,8 @@ static int rtc_config(void)
 	const nrfx_rtc_config_t rtc_cfg = NRFX_RTC_DEFAULT_CONFIG;
 
 	ret = nrfx_rtc_init(&app_rtc_instance, &rtc_cfg, rtc_isr_handler);
-	if (ret != NRFX_SUCCESS) {
-		printk("Failed initializing RTC (ret: %d)\n", ret - NRFX_ERROR_BASE_NUM);
+	if (ret != 0) {
+		printk("Failed initializing RTC (ret: %d)\n", ret);
 		return -ENODEV;
 	}
 
@@ -234,7 +234,7 @@ void controller_time_trigger_set(uint64_t timestamp_us)
 	timer_val = MAX(timer_val, 1);
 	timer_val = MIN(timer_val, 30);
 
-	if (nrfx_rtc_cc_set(&app_rtc_instance, 0, rtc_val, false) != NRFX_SUCCESS) {
+	if (nrfx_rtc_cc_set(&app_rtc_instance, 0, rtc_val, false) != 0) {
 		printk("Failed setting trigger\n");
 	}
 
