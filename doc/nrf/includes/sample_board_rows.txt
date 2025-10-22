@@ -214,6 +214,10 @@
 
 | :ref:`nRF54H20 DK <ug_nrf54h20_gs>` | PCA10175 | :zephyr:board:`nrf54h20dk <nrf54h20dk>` | ``nrf54h20dk/nrf54h20/cpuppr`` |
 
+.. nrf54h20dk_nrf54h20_cpuflpr
+
+| :ref:`nRF54H20 DK <ug_nrf54h20_gs>` | PCA10175 | :zephyr:board:`nrf54h20dk <nrf54h20dk>` | ``nrf54h20dk/nrf54h20/cpuflpr`` |
+
 .. native_posix
 
 | Native Posix | | native_posix | ``native_posix`` |
