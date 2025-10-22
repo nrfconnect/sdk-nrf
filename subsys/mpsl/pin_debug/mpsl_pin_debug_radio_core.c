@@ -29,22 +29,22 @@ static int m_ppi_config(void)
 	uint8_t ppi_chan_radio_end;
 	uint8_t ppi_chan_radio_disabled;
 
-	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_ready) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_ready) != 0) {
 		LOG_ERR("Failed allocating PPI chan");
 		return -ENOMEM;
 	}
 
-	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_address) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_address) != 0) {
 		LOG_ERR("Failed allocating PPI chan");
 		return -ENOMEM;
 	}
 
-	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_end) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_end) != 0) {
 		LOG_ERR("Failed allocating PPI chan");
 		return -ENOMEM;
 	}
 
-	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_disabled) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_alloc(&ppi_chan_radio_disabled) != 0) {
 		LOG_ERR("Failed allocating PPI chan");
 		return -ENOMEM;
 	}
@@ -71,19 +71,19 @@ static int m_ppi_config(void)
 		nrfx_gpiote_clr_task_address_get(&gpiote,
 						 CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
 
-	if (nrfx_ppi_channel_enable(ppi_chan_radio_ready) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_enable(ppi_chan_radio_ready) != 0) {
 		LOG_ERR("Failed enabling channel");
 		return -ENOMEM;
 	}
-	if (nrfx_ppi_channel_enable(ppi_chan_radio_address) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_enable(ppi_chan_radio_address) != 0) {
 		LOG_ERR("Failed enabling channel");
 		return -ENOMEM;
 	}
-	if (nrfx_ppi_channel_enable(ppi_chan_radio_end) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_enable(ppi_chan_radio_end) != 0) {
 		LOG_ERR("Failed enabling channel");
 		return -ENOMEM;
 	}
-	if (nrfx_ppi_channel_enable(ppi_chan_radio_disabled) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_enable(ppi_chan_radio_disabled) != 0) {
 		LOG_ERR("Failed enabling channel");
 		return -ENOMEM;
 	}

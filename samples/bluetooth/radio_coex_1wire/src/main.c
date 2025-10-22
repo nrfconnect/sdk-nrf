@@ -121,7 +121,7 @@ static nrf_ppi_channel_t allocate_gppi_channel(void)
 {
 	nrf_ppi_channel_t channel;
 
-	if (nrfx_ppi_channel_alloc(&channel) != NRFX_SUCCESS) {
+	if (nrfx_ppi_channel_alloc(&channel) != 0) {
 		__ASSERT(false, "(D)PPI channel allocation error");
 	}
 	return channel;
