@@ -12,6 +12,7 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     tags:
       - pytest
     harness: pytest
@@ -22,6 +23,7 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     harness: console
     harness_config:
       type: one_line
