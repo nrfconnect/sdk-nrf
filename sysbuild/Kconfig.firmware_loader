@@ -4,23 +4,23 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config SUPPORT_FIRMWARE_LOADER_SMP_SVR_MINI_BOOT
+config SUPPORT_FIRMWARE_LOADER_BLE_MCUMGR
 	bool
 	default y
 
 choice FIRMWARE_LOADER
 
-config FIRMWARE_LOADER_IMAGE_SMP_SVR_MINI_BOOT
-	bool "smp_svr_mini_boot"
-	depends on SUPPORT_FIRMWARE_LOADER_SMP_SVR_MINI_BOOT
+config FIRMWARE_LOADER_IMAGE_BLE_MCUMGR
+	bool "ble_mcumgr"
+	depends on SUPPORT_FIRMWARE_LOADER_BLE_MCUMGR
 	help
-	  Include the minified MCUmgr ``smp_svr_mini_boot`` sample as the firmware loader image
+	  Include the minified firmware loader ``ble_mcumgr`` sample as the firmware loader image
 	  to use.
 
 endchoice
 
 config FIRMWARE_LOADER_IMAGE_NAME
-	default "smp_svr_mini_boot" if FIRMWARE_LOADER_IMAGE_SMP_SVR_MINI_BOOT
+	default "ble_mcumgr" if FIRMWARE_LOADER_IMAGE_BLE_MCUMGR
 
 config FIRMWARE_LOADER_IMAGE_PATH
-	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/zephyr/smp_svr_mini_boot" if FIRMWARE_LOADER_IMAGE_SMP_SVR_MINI_BOOT
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/dfu/fw_loader/ble_mcumgr" if FIRMWARE_LOADER_IMAGE_BLE_MCUMGR
