@@ -68,7 +68,7 @@ Developing with nRF70 Series
 Developing with nRF54L Series
 =============================
 
-|no_changes_yet_note|
+* Added the :ref:`ug_nrf54l_otp_map` page, showing the OTP memory allocation for the nRF54L Series devices.
 
 Developing with nRF54H Series
 =============================
