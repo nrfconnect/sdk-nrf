@@ -51,6 +51,13 @@ runners:
               - nrf54ls05b/cpuapp
     '--reset':
       - runners:
+          - nrfutil_next
+        run: last
+        groups:
+          - qualifiers:
+              - nrf7120/cpuapp
+              - nrf7120/cpuflpr
+      - runners:
           - nrfutil
         run: last
         groups:
