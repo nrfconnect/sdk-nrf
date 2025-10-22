@@ -512,6 +512,8 @@ DFU samples
 
   * The :ref:`dfu_multi_image_sample` sample to demonstrate how to use the :ref:`lib_dfu_target` library.
   * The :ref:`ab_sample` sample to demonstrate how to implement the A/B firmware update strategy using :ref:`MCUboot <mcuboot_index_ncs>`.
+  * The :ref:`fw_loader_ble_mcumgr` sample that provides a minimal configuration for firmware loading using SMP over Bluetooth LE.
+    This sample is intended as a starting point for developing custom firmware loader applications that work with the MCUboot bootloader.
 
 Edge Impulse samples
 --------------------

@@ -146,6 +146,7 @@
   - "samples/zephyr/smp_svr_mini_boot/**/*"
   - "samples/zephyr/subsys/mgmt/mcumgr/smp_svr/**/*"
   - "scripts/bootloader/**/*"
+  - "samples/dfu/**/*"
   - "samples/mcuboot/**/*"
   - "scripts/nrf_compress/**/*"
   - "scripts/west_commands/ncs*"

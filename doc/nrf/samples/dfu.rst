@@ -17,3 +17,4 @@ This page lists |NCS| samples demonstrating the use of Device Firmware Update (D
    :glob:
 
    ../../../samples/dfu/*/README
+   ../../../samples/dfu/fw_loader/*/README
