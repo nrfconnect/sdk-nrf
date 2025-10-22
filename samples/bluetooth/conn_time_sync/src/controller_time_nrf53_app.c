@@ -23,7 +23,7 @@
 #include "conn_time_sync.h"
 
 static const nrfx_rtc_t app_rtc_instance = NRFX_RTC_INSTANCE(0);
-static const nrfx_timer_t app_timer_instance = NRFX_TIMER_INSTANCE(0);
+static nrfx_timer_t app_timer_instance = NRFX_TIMER_INSTANCE(NRF_TIMER0);
 
 static uint8_t ppi_chan_on_rtc_match;
 static volatile uint32_t num_rtc_overflows;
