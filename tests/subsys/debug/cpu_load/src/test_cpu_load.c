@@ -23,7 +23,7 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 static int dppi_shared_resources_init(void)
 {
 	nrfx_err_t err;
-	static nrfx_timer_t timer = NRFX_TIMER_INSTANCE(1);
+	static nrfx_timer_t timer = NRFX_TIMER_INSTANCE(NRF_TIMER1);
 	uint32_t base_frequency = NRF_TIMER_BASE_FREQUENCY_GET(timer.p_reg);
 	nrfx_timer_config_t config = NRFX_TIMER_DEFAULT_CONFIG(base_frequency);
 	uint8_t ch;

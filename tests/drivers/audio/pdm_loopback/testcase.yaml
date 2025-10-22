@@ -12,19 +12,19 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    extra_args: CONFIG_NRFX_TIMER00=y
+    extra_args: CONFIG_NRFX_TIMER=y
   drivers.audio.pdm_loopback.nrf54lm20.1000khz:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
-      - CONFIG_NRFX_TIMER00=y
+      - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=20000
   drivers.audio.pdm_loopback.nrf54l.1280khz:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
-      - CONFIG_NRFX_TIMER00=y
+      - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=16000
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1280000
   drivers.audio.pdm_loopback.nrf54l.1600khz:
@@ -32,21 +32,21 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
-      - CONFIG_NRFX_TIMER00=y
+      - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=32000
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1600000
   drivers.audio.pdm_loopback.nrf54lm20.aclk.1000khz:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
-      - CONFIG_NRFX_TIMER00=y
+      - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=20000
       - EXTRA_DTC_OVERLAY_FILE="boards/nrf54l_aclk.overlay"
   drivers.audio.pdm_loopback.nrf54lm20.aclk.1280khz:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
-      - CONFIG_NRFX_TIMER00=y
+      - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=16000
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1280000
       - EXTRA_DTC_OVERLAY_FILE="boards/nrf54l_aclk.overlay"
@@ -54,7 +54,7 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
-      - CONFIG_NRFX_TIMER00=y
+      - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=32000
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1600000
       - EXTRA_DTC_OVERLAY_FILE="boards/nrf54l_aclk.overlay"
@@ -62,14 +62,14 @@ tests:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      - CONFIG_NRFX_TIMER130=y
+      - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_TIME=10
       - CONFIG_TEST_USE_DMM=y
   drivers.audio.pdm_loopback.nrf54h20.1600khz:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      - CONFIG_NRFX_TIMER130=y
+      - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=16000
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1600000
       - CONFIG_TEST_PDM_SAMPLING_TIME=10
@@ -78,7 +78,7 @@ tests:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      - CONFIG_NRFX_TIMER130=y
+      - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=44100
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1411200
       - CONFIG_TEST_PDM_SAMPLING_TIME=10
@@ -89,7 +89,7 @@ tests:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      - CONFIG_NRFX_TIMER130=y
+      - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=48000
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1536000
       - CONFIG_TEST_PDM_SAMPLING_TIME=10
@@ -100,5 +100,5 @@ tests:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      - CONFIG_NRFX_TIMER130=y
+      - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_TIME=10
