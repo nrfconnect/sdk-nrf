@@ -49,10 +49,10 @@ static const nrfx_gpiote_t gpiote_instance = NRFX_GPIOTE_INSTANCE(
 static struct pcm_stream_cfg stream_config, stream_config_dummy;
 static struct dmic_cfg pdm_cfg, pdm_cfg_dummy;
 
-#if CONFIG_NRFX_TIMER00
-static const nrfx_timer_t timer_instance = NRFX_TIMER_INSTANCE(00);
-#elif CONFIG_NRFX_TIMER130
-static const nrfx_timer_t timer_instance = NRFX_TIMER_INSTANCE(130);
+#if defined(NRF_TIMER00)
+static nrfx_timer_t timer_instance = NRFX_TIMER_INSTANCE(NRF_TIMER00);
+#elif defined(NRF_TIMER130)
+static nrfx_timer_t timer_instance = NRFX_TIMER_INSTANCE(NRF_TIMER130);
 #else
 #error "No timer instance found"
 #endif
