@@ -22,7 +22,7 @@ tests:
       - platform:nrf54l15dk/nrf54l05/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54lv10dk/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_gpio_wakeup.overlay"
-      - platform:nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_gpio_wakeup.overlay"
+      - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54h20dk/nrf54h20/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54h20dk_nrf54h20_cpuapp_gpio_wakeup.overlay"
     harness: pytest
     harness_config:
@@ -48,7 +48,7 @@ tests:
       - platform:nrf54l15dk/nrf54l05/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54lv10dk/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_gpio_wakeup.overlay"
-      - platform:nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_gpio_wakeup.overlay"
+      - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54h20dk/nrf54h20/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54h20dk_nrf54h20_cpuapp_gpio_wakeup.overlay"
     extra_configs:
       - CONFIG_APP_USE_RETAINED_MEM=y
@@ -150,7 +150,7 @@ tests:
       - platform:nrf54l15dk/nrf54l05/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_lpcomp_wakeup.overlay"
       - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_lpcomp_wakeup.overlay"
       - platform:nrf54lv10dk/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_lpcomp_wakeup.overlay"
-      - platform:nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_lpcomp_wakeup.overlay"
+      - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_lpcomp_wakeup.overlay"
       - platform:nrf54h20dk/nrf54h20/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54h20dk_nrf54h20_cpuapp_lpcomp_wakeup.overlay"
     extra_configs:
       - CONFIG_LPCOMP_WAKEUP_ENABLE=y
