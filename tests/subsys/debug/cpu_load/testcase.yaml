@@ -28,4 +28,4 @@ tests:
       - ci_tests_subsys_debug
     extra_configs:
       - CONFIG_NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS=y
-      - CONFIG_NRFX_TIMER1=y
+      - CONFIG_NRFX_TIMER=y
