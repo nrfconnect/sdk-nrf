@@ -170,7 +170,7 @@ static void rtc_isr_handler(nrfx_rtc_int_type_t int_type)
  */
 static int audio_sync_timer_init(void)
 {
-	nrfx_err_t ret;
+	int ret;
 	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
 
 	ret = nrfx_timer_init(&audio_sync_hf_timer_instance, &cfg, unused_timer_isr_handler);
@@ -180,7 +180,7 @@ static int audio_sync_timer_init(void)
 	}
 
 	ret = nrfx_rtc_init(&audio_sync_lf_timer_instance, &rtc_cfg, rtc_isr_handler);
-	if (ret - NRFX_ERROR_BASE_NUM) {
+	if (ret != 0) {
 		LOG_ERR("nrfx rtc init error: %d", ret);
 		return -ENODEV;
 	}

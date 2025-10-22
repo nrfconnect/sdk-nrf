@@ -185,47 +185,47 @@ void esb_ppi_for_wait_for_rx_clear(void)
 
 int esb_ppi_init(void)
 {
-	nrfx_err_t err;
+	int err;
 
 	err = nrfx_ppi_channel_alloc(&egu_ramp_up);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		goto error;
 	}
 
 	err = nrfx_ppi_channel_alloc(&disabled_egu);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		goto error;
 	}
 
 	err = nrfx_ppi_channel_alloc(&egu_timer_start);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		goto error;
 	}
 
 	err = nrfx_ppi_channel_alloc(&radio_address_timer_stop);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		goto error;
 	}
 
 	err = nrfx_ppi_channel_alloc(&timer_compare0_radio_disable);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		goto error;
 	}
 
 	err = nrfx_ppi_channel_alloc(&timer_compare1_radio_txen);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		goto error;
 	}
 
 	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
 		err = nrfx_ppi_channel_alloc(&radio_end_timer_start);
-		if (err != NRFX_SUCCESS) {
+		if (err != 0) {
 			goto error;
 		}
 	}
 
 	err = nrfx_ppi_group_alloc(&ramp_up_ppi_group);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		LOG_ERR("gppi_group_alloc failed with: %d\n", err);
 		return -ENODEV;
 	}
@@ -258,47 +258,47 @@ void esb_ppi_disable_all(void)
 
 void esb_ppi_deinit(void)
 {
-	nrfx_err_t err;
+	int err;
 
 	err = nrfx_ppi_channel_free(egu_ramp_up);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		goto error;
 	}
 
 	err = nrfx_ppi_channel_free(disabled_egu);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		goto error;
 	}
 
 	err = nrfx_ppi_channel_free(egu_timer_start);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		goto error;
 	}
 
 	err = nrfx_ppi_channel_free(radio_address_timer_stop);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		goto error;
 	}
 
 	err = nrfx_ppi_channel_free(timer_compare0_radio_disable);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		goto error;
 	}
 
 	err = nrfx_ppi_channel_free(timer_compare1_radio_txen);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		goto error;
 	}
 
 	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
 		err = nrfx_ppi_channel_free(radio_end_timer_start);
-		if (err != NRFX_SUCCESS) {
+		if (err != 0) {
 			goto error;
 		}
 	}
 
 	err = nrfx_ppi_group_free(ramp_up_ppi_group);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		goto error;
 	}
 

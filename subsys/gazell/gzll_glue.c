@@ -128,7 +128,7 @@ bool gzll_glue_init(void)
 
 	for (i = 0; i < 3; i++) {
 		err_code = nrfx_ppi_channel_alloc(&ppi_channel[i]);
-		if (err_code != NRFX_SUCCESS) {
+		if (err_code != 0) {
 			is_ok = false;
 			break;
 		}

@@ -239,13 +239,13 @@ static uint8_t peri_ppib_ch = INVALID_CHANNEL;
 
 void nrf_802154_platform_timestamper_cross_domain_connections_setup(void)
 {
-	nrfx_err_t err;
+	int err;
 
 	err = nrfx_dppi_channel_alloc(&dppi20, &peri_dppi_ch);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	__ASSERT_NO_MSG(err == 0);
 
 	err = nrfx_ppib_channel_alloc(&ppib11_21, &peri_ppib_ch);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	__ASSERT_NO_MSG(err == 0);
 
 	/* {d} PPIB_21 --> DPPIC_20 */
 	NRF_DPPI_ENDPOINT_SETUP(
