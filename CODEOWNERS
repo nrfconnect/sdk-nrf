@@ -475,6 +475,7 @@
 /samples/bluetooth/peripheral_with_multiple_identities/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/radio_coex_1wire/      @nrfconnect/ncs-dragoon
 /samples/bluetooth/radio_notification_cb/ @nrfconnect/ncs-dragoon
+/samples/bluetooth/path_loss_monitoring/   @nrfconnect/ncs-dragoon
 /samples/bluetooth/rpc_host/              @nrfconnect/ncs-si-muffin
 /samples/bluetooth/scanning_while_connecting/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/shell_bt_nus/          @nrfconnect/ncs-si-muffin
@@ -589,6 +590,7 @@
 /samples/bluetooth/llpm/*.rst             @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/multiple_adv_sets/*.rst @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/nrf_dm/*.rst           @nrfconnect/ncs-si-muffin-doc
+/samples/bluetooth/path_loss_monitoring/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/peripheral_ams_client/*.rst @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/peripheral_ancs_client/*.rst @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/peripheral_bms/*.rst   @nrfconnect/ncs-si-muffin-doc
