@@ -229,6 +229,12 @@ struct nrf5_data {
 		 */
 		uint8_t psdu[PHR_SIZE + MAX_PACKET_SIZE];
 
+		/* TX buffer to store a copy of PSDU before transmitting a frame that requires link
+		 * security and dynamic element injection. Reason: retransmission of such a frame
+		 * requires re-calculating the dynamic element and re-securing the frame.
+		 */
+		uint8_t psdu_backup[PHR_SIZE + MAX_PACKET_SIZE];
+
 		/* TX result, updated in radio transmit callbacks. */
 		otError result;
 	} tx;
@@ -801,6 +807,12 @@ static otError transmit_frame(otInstance *aInstance)
 	}
 #endif
 
+	if (nrf5_data.tx.frame.mInfo.mTxInfo.mTxTimestampEnabled) {
+		PSDU_LENGTH(nrf5_data.tx.psdu_backup) = nrf5_data.tx.frame.mLength;
+		memcpy(PSDU_DATA(nrf5_data.tx.psdu_backup), nrf5_data.tx.frame.mPsdu,
+		       nrf5_data.tx.frame.mLength);
+	}
+
 	if ((nrf5_data.capabilities & OT_RADIO_CAPS_TRANSMIT_TIMING) &&
 	    (nrf5_data.tx.frame.mInfo.mTxInfo.mTxDelay != 0)) {
 
@@ -900,6 +912,19 @@ static void handle_tx_done(otInstance *aInstance)
 				/* Handle ACK packet. */
 				nrf5_data.tx.result = handle_ack();
 			}
+		}
+
+		if (nrf5_data.tx.frame.mInfo.mTxInfo.mTxTimestampEnabled &&
+		    nrf5_data.tx.frame.mInfo.mTxInfo.mIsSecurityProcessed) {
+			/* Restore PSDU to enable retransmitting the frame with updated dynamic
+			 * elements (which implies re-encryption).
+			 */
+			nrf5_data.tx.frame.mInfo.mTxInfo.mIsHeaderUpdated = false;
+			nrf5_data.tx.frame.mInfo.mTxInfo.mIsSecurityProcessed = false;
+			nrf5_data.tx.frame.mLength = PSDU_LENGTH(nrf5_data.tx.psdu_backup);
+			memcpy(nrf5_data.tx.frame.mPsdu, PSDU_DATA(nrf5_data.tx.psdu_backup),
+			       nrf5_data.tx.frame.mLength);
+			memset(nrf5_data.tx.psdu_backup, 0, nrf5_data.tx.frame.mLength);
 		}
 
 		if (IS_ENABLED(CONFIG_OPENTHREAD_DIAG) && otPlatDiagModeGet()) {
