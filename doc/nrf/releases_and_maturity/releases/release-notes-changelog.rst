@@ -368,18 +368,36 @@ Bluetooth Mesh samples
   * Updated:
 
     * To demonstrate the Bluetooth :ref:`ug_bt_mesh_nlc` HVAC Integration profile.
-    * The following Mesh samples to use individual NLC profile configurations instead of the deprecated options:
 
-      * :ref:`bluetooth_mesh_light_dim`
-      * :ref:`bluetooth_mesh_light_lc`
-      * :ref:`bluetooth_mesh_sensor_server`
-      * :ref:`bluetooth_mesh_sensor_client`
+    * To use individual NLC profile configurations instead of the deprecated options.
+    * The sample name to indicate NLC support.
 
     * Button functions.
       Assignments are shifted down one index to accommodate the new polling toggle.
       The descriptor action has been removed from button actions but is still available through mesh shell commands.
 
   * Removed support for the ``nrf52dk/nrf52832``, since it does not have enough RAM space after NLC support was added.
+
+* :ref:`bluetooth_mesh_sensor_server`:
+
+  * Updated:
+
+    * To use individual NLC profile configurations instead of the deprecated options.
+    * The sample name to indicate NLC support.
+
+* :ref:`bluetooth_mesh_light_dim`:
+
+  * Updated:
+
+    * To use individual NLC profile configurations instead of the deprecated options.
+    * The sample name to indicate NLC support.
+
+* :ref:`bluetooth_mesh_light_lc`:
+
+  * Updated:
+
+    * To use individual NLC profile configurations instead of the deprecated options.
+    * The sample name to indicate NLC support.
 
 Bluetooth Fast Pair samples
 ---------------------------

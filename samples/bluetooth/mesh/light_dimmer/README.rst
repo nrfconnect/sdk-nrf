@@ -1,13 +1,13 @@
 .. _bluetooth_mesh_light_dim:
 
-Bluetooth Mesh: Light dimmer and scene selector
-###############################################
+Bluetooth Mesh NLC: Dimming Control/Scene Selector
+##################################################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth® Mesh light dimmer and scene selector sample demonstrates how to set up a light dimmer and scene selector application, and control dimmable LEDs with Bluetooth Mesh using the :ref:`bt_mesh_lvl_readme`, the :ref:`bt_mesh_onoff_readme`, and the :ref:`bt_mesh_scene_readme`.
+The Bluetooth® Mesh NLC Dimming Control/Scene Selector sample demonstrates how to set up a light dimmer and scene selector application, and control dimmable LEDs with Bluetooth Mesh using the :ref:`bt_mesh_lvl_readme`, the :ref:`bt_mesh_onoff_readme`, and the :ref:`bt_mesh_scene_readme`.
 The sample provides the following functionality:
 
   * On/off and dim up/down using one button
