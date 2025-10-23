@@ -685,6 +685,13 @@ Modem libraries
   * Added the :c:func:`nrf_modem_lib_trace_peek_at` function to the :c:struct:`nrf_modem_lib_trace_backend` interface to peek trace data at a byte offset without consuming it.
     Support for this API has been added to the flash trace backend.
 
+* :ref:`pdn_readme` library:
+
+  * Fixed:
+
+    * An issue where wrong APN rate control event was sent.
+    * An issue where a malformed +CGEV notification was not handled correctly.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
