@@ -113,6 +113,35 @@ The following table shows how to connect UART1 of the DK to the nRF91 Series DK'
          * For nRF9160 DK, you can set the VDD voltage with the **VDD IO** switch (**SW9**).
            See the `VDD supply rail section in the nRF9160 DK User Guide`_ for more information related to nRF9160 DK.
 
+   .. group-tab:: nRF54L15 DK
+
+      .. list-table::
+         :header-rows: 1
+
+         * - nRF54L15 DK
+           - nRF91 Series DK
+         * - UART TX P1.11
+           - UART RX P0.11
+         * - UART RX P1.12
+           - UART TX P0.10
+         * - UART CTS P1.07 (optional)
+           - UART RTS P0.12 (optional)
+         * - UART RTS P1.06 (optional)
+           - UART CTS P0.13 (optional)
+         * - GPIO OUT P0.04 (Button 3)
+           - GPIO IN P0.31
+         * - GPIO IN P0.30 (optional)
+           - GPIO OUT P0.03 (optional)
+         * - GPIO GND
+           - GPIO GND
+
+      .. note::
+         The GPIO output level on the nRF91 Series device side must be 1.8 V to work with the nRF54L15 DK.
+
+         * For nRF91x1 DK, you can set the VDD voltage with the `Board Configurator app`_.
+         * For nRF9160 DK, you can set the VDD voltage with the **VDD IO** switch (**SW9**).
+           See the `VDD supply rail section in the nRF9160 DK User Guide`_ for more information related to nRF9160 DK.
+
 References
 **********
 

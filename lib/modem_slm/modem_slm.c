@@ -337,7 +337,7 @@ static void response_handler(const uint8_t *data, const size_t len)
 		resp_len = 0;
 	}
 
-	if (data_handler) {
+	if (!IS_ENABLED(CONFIG_MODEM_SLM_SHELL) && data_handler != NULL) {
 		data_handler(data, len);
 	}
 }
