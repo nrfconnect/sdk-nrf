@@ -132,6 +132,19 @@ static const char *modem_crash_reason_get(uint32_t reason)
 	}
 }
 
+static void modem_crash_work_fn(struct k_work *work)
+{
+	mosh_error("Modem crash detected, halting application execution");
+
+#if defined(CONFIG_NRF_MODEM_LIB_TRACE)
+	nrf_modem_lib_trace_processing_done_wait(K_SECONDS(5));
+#endif
+
+	k_oops();
+}
+
+K_WORK_DEFINE(modem_crash_work, modem_crash_work_fn);
+
 void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
 {
 	printk("Modem crash reason: 0x%x (%s), PC: 0x%x\n",
@@ -139,7 +152,7 @@ void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
 		modem_crash_reason_get(fault_info->reason),
 		fault_info->program_counter);
 
-	__ASSERT(false, "Modem crash detected, halting application execution");
+	k_work_submit(&modem_crash_work);
 }
 
 #if defined(CONFIG_NRF_MODEM_LIB_SHELL_TRACE)
