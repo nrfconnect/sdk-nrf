@@ -12,7 +12,6 @@
 #include <app_jwt.h>
 
 #include <psa/crypto.h>
-#include <psa/nrf_platform_key_ids.h>
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
