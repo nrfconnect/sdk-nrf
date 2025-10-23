@@ -1781,6 +1781,93 @@ void test_nrf9x_socket_offload_poll(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
+static struct nrf_modem_sendcb *nrf_sendcb;
+static int sendcb_calls;
+static struct nrf_modem_sendcb_params nrf_sendcb_params = { .fd = NRF_FD };
+
+static void sendcb(const struct socket_ncs_sendcb_params *params)
+{
+	sendcb_calls++;
+}
+
+static int stub_nrf_setsockopt_sendcb(int fd, int level, int opt, const void *val, size_t len,
+				      int cmock_calls)
+{
+	TEST_ASSERT_EQUAL(NRF_FD, fd);
+	TEST_ASSERT_EQUAL(NRF_SOL_SOCKET, level);
+	TEST_ASSERT_EQUAL(NRF_SO_SENDCB, opt);
+	if (len > 0) {
+		TEST_ASSERT_EQUAL(sizeof(struct nrf_modem_sendcb), len);
+	} else {
+		TEST_ASSERT_EQUAL(0, len);
+	}
+	/* Store the nRF send callback (which wraps the user callback) */
+	nrf_sendcb = (struct nrf_modem_sendcb *)val;
+	return 0;
+}
+
+static int stub_nrf_sendto_sendcb(int socket, const void *message, size_t length, int flags,
+				  const struct nrf_sockaddr *dest_addr, nrf_socklen_t dest_len,
+				  int cmock_calls)
+{
+	/* No need to verify parameters, simply call the nRF send callback, if there is one. */
+	if (nrf_sendcb && nrf_sendcb->callback) {
+		nrf_sendcb->callback(&nrf_sendcb_params);
+	}
+
+	return length;
+}
+
+void test_nrf9x_socket_offload_sendcb(void)
+{
+	int ret;
+	int fd;
+	int nrf_fd = NRF_FD;
+	int family = AF_INET6;
+	int type = SOCK_STREAM;
+	int proto = IPPROTO_TCP;
+	struct socket_ncs_sendcb sendcb_opt_val = { .callback = sendcb };
+	uint8_t data[8] = { 1 };
+	size_t data_len = sizeof(data);
+	int flags = ZSOCK_MSG_DONTWAIT;
+	struct sockaddr to = { .sa_family = family };
+
+	__cmock_nrf_socket_ExpectAndReturn(NRF_AF_INET6, NRF_SOCK_STREAM, NRF_IPPROTO_TCP, nrf_fd);
+
+	fd = zsock_socket(family, type, proto);
+	TEST_ASSERT_EQUAL(0, fd);
+
+	__cmock_nrf_setsockopt_Stub(stub_nrf_setsockopt_sendcb);
+
+	/* Set a send callback. */
+
+	ret = zsock_setsockopt(fd, SOL_SOCKET, SO_SENDCB, &sendcb_opt_val, sizeof(sendcb_opt_val));
+	TEST_ASSERT_EQUAL(0, ret);
+
+	/* Skip zsock_connect, etc. since for testing we just need a working zsock_socket */
+
+	__cmock_nrf_sendto_Stub(stub_nrf_sendto_sendcb);
+
+	/* Send and confirm that the registered callback is called. */
+
+	ret = zsock_sendto(fd, data, data_len, flags, &to, 42);
+	TEST_ASSERT_EQUAL(8, ret);
+	TEST_ASSERT_EQUAL(1, sendcb_calls);
+
+	__cmock_nrf_setsockopt_Stub(stub_nrf_setsockopt_sendcb);
+
+	/* Unset the send callback. */
+
+	ret = zsock_setsockopt(fd, SOL_SOCKET, SO_SENDCB, NULL, 0);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	/* Send and confirm that the callback is no longer called. */
+
+	ret = zsock_sendto(fd, data, data_len, flags, &to, 42);
+	TEST_ASSERT_EQUAL(8, ret);
+	TEST_ASSERT_EQUAL(1, sendcb_calls);
+}
+
 /* It is required to be added to each test. That is because unity's
  * main may return nonzero, while zephyr's main currently must
  * return 0 in all cases (other values are reserved).
