@@ -31,8 +31,8 @@ The following steps show how to add support for a new Bluetooth LE service calle
 
 #. Implement the ``Bridged Device Data Provider`` role.
 
-   a. Create the :file:`my_bt_service_data_provider.cpp` and :file:`my_bt_service_data_provider.h` files for your Bluetooth LE Data Provider in the :file:`src/ble_providers` directory.
-   #. Open the :file:`nrf/samples/matter/common/src/bridge/ble_bridged_device.h` header file and find the :c:struct:`BLEBridgedDeviceProvider` class constructor.
+   a. Create the :file:`my_bt_service_data_provider.cpp` and :file:`my_bt_service_data_provider.h` files for your Bluetooth LE Data Provider in the :file:`src/ble/data_providers` directory.
+   #. Open the :file:`nrf/applications/matter_bridge/src/ble/data_providers/ble_bridged_device.h` header file and find the :c:struct:`BLEBridgedDeviceProvider` class constructor.
       Note the constructor signature, it will be used in the child class implemented in the next steps.
    #. Add a new :c:struct:`MyBtServiceDataProvider` class inheriting :c:struct:`BLEBridgedDeviceProvider`, and implement its constructor in the :file:`my_bt_service_data_provider.h` file.
 
@@ -50,7 +50,7 @@ The following steps show how to add support for a new Bluetooth LE service calle
 
         };
 
-   #. Open the :file:`nrf/samples/matter/common/src/bridge/ble_bridged_device.h` header file again to see which methods of :c:struct:`BLEBridgedDeviceProvider` class are purely virtual (assigned with ``=0``) and have to be overridden by the :c:struct:`MyBtServiceDataProvider` class.
+   #. Open the :file:`nrf/applications/matter_bridge/src/ble/data_providers/ble_bridged_device.h` header file again to see which methods of :c:struct:`BLEBridgedDeviceProvider` class are purely virtual (assigned with ``=0``) and have to be overridden by the :c:struct:`MyBtServiceDataProvider` class.
 
       Note that :c:struct:`BLEBridgedDeviceProvider` inherits from the :c:struct:`BridgedDeviceDataProvider` class, so the :c:struct:`MyBtServiceDataProvider` class has to implement the purely virtual methods of :c:struct:`BridgedDeviceDataProvider` as well.
    #. Edit the :c:struct:`MyBtServiceDataProvider` class in the :file:`my_bt_service_data_provider.h` header file to declare the required methods as follows:
@@ -247,12 +247,12 @@ The following steps show how to add support for a new Bluetooth LE service calle
    .. code-block:: cmake
 
       target_sources(app PRIVATE
-        src/ble_providers/my_bt_service_data_provider.cpp
+        src/ble/data_providers/my_bt_service_data_provider.cpp
       )
 
 #. Provide an allocator for ``MyBtServiceDataProvider`` object creation.
    The Matter Bridge application uses a :c:struct:`BleBridgedDeviceFactory` factory module that creates paired ``Matter Bridged Device`` and ``Bridged Device Data Provider`` objects matching a specific Matter device type ID.
-   To add support for creating the ``MyBtServiceDataProvider`` object, edit the :file:`src/ble_providers/ble_bridged_device_factory.h` and :file:`src/ble_providers/ble_bridged_device_factory.cpp` files as follows:
+   To add support for creating the ``MyBtServiceDataProvider`` object, edit the :file:`src/ble/ble_bridged_device_factory.h` and :file:`src/ble/ble_bridged_device_factory.cpp` files as follows:
 
    - :file:`ble_bridged_device_factory.h`
 
@@ -270,7 +270,7 @@ The following steps show how to add support for a new Bluetooth LE service calle
 
 #. Provide mapping between the ``My Bt Service`` UUID and corresponding Matter device types in the helper methods.
 
-   a. Add the ``MyBtService`` UUID in the :c:enum:`ServiceUuid` declaration, in the :file:`src/ble_providers/ble_bridged_device_factory.h` header file.
-   #. Perform proper mapping of Bluetooth UUID and Matter device types in the :c:func:`MatterDeviceTypeToBleService` and :c:func:`BleServiceToMatterDeviceType` methods, in the :file:`src/ble_providers/ble_bridged_device_factory.cpp` file.
+   a. Add the ``MyBtService`` UUID in the :c:enum:`ServiceUuid` declaration, in the :file:`src/ble/ble_bridged_device_factory.h` header file.
+   #. Perform proper mapping of Bluetooth UUID and Matter device types in the :c:func:`MatterDeviceTypeToBleService` and :c:func:`BleServiceToMatterDeviceType` methods, in the :file:`src/ble/ble_bridged_device_factory.cpp` file.
 
 #. Compile the target and test it following the steps from the :ref:`Matter Bridge application testing <matter_bridge_testing>` section.
