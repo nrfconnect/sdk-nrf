@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "share/sysbuild/Kconfig"
+
+if SOC_NRF54H20_CPUAPP
+
+choice NETCORE
+	default NETCORE_EMPTY
+
+endchoice
+
+endif
