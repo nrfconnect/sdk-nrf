@@ -70,7 +70,7 @@ public:
 	/**
 	 * @brief Check if the bridged device has been initially connected.
 	 *
-	 * The bridged device should call the @ref mFirstConnectionCallback only when it is the first connection.
+	 * The bridged device should call the mFirstConnectionCallback only when it is the first connection.
 	 * This method returns indicates whether the callback has been called and the device is already initially
 	 * connected.
 	 *
@@ -80,9 +80,9 @@ public:
 	bool IsInitiallyConnected() { return mDevice.mInitiallyConnected; }
 
 	/**
-	 * @brief Confirm that the @ref mFirstConnectionCallback has been already called.
+	 * @brief Confirm that the mFirstConnectionCallback has been already called.
 	 *
-	 * This method informs the bridged device that the @ref mFirstConnectionCallback has been called
+	 * This method informs the bridged device that the mFirstConnectionCallback has been called
 	 * and connection has been established successfully.
 	 *
 	 */

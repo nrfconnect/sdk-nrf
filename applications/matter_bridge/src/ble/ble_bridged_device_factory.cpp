@@ -87,9 +87,9 @@ CHIP_ERROR StoreDevice(MatterBridgedDevice *device, BridgedDeviceDataProvider *p
 
 	bridgedDevice.mEndpointId = device->GetEndpointId();
 	bridgedDevice.mDeviceType = device->GetDeviceType();
-	bridgedDevice.mUniqueIDLength = strlen(device->GetUniqueID());
+	bridgedDevice.mUniqueIDLength = strnlen(device->GetUniqueID(),MatterBridgedDevice::kUniqueIDSize);
 	memcpy(bridgedDevice.mUniqueID, device->GetUniqueID(), bridgedDevice.mUniqueIDLength);
-	bridgedDevice.mNodeLabelLength = strlen(device->GetNodeLabel());
+	bridgedDevice.mNodeLabelLength = strnlen(device->GetNodeLabel(),MatterBridgedDevice::kNodeLabelSize);
 	memcpy(bridgedDevice.mNodeLabel, device->GetNodeLabel(), bridgedDevice.mNodeLabelLength);
 
 	/* Fill BT address information as a part of implementation specific user data. */
@@ -235,7 +235,7 @@ BleBridgedDeviceFactory::BridgedDeviceFactory &BleBridgedDeviceFactory::GetBridg
 {
 	auto checkUniqueID = [](const char *uniqueID) {
 		/* If node uniqueID is provided it must fit the maximum defined length */
-		if (!uniqueID || (uniqueID && (strlen(uniqueID) < Nrf::MatterBridgedDevice::kUniqueIDSize))) {
+		if (!uniqueID || (uniqueID && (strnlen(uniqueID,Nrf::MatterBridgedDevice::kUniqueIDSize) < Nrf::MatterBridgedDevice::kUniqueIDSize))) {
 			return true;
 		}
 		return false;
@@ -243,7 +243,7 @@ BleBridgedDeviceFactory::BridgedDeviceFactory &BleBridgedDeviceFactory::GetBridg
 
 	auto checkLabel = [](const char *nodeLabel) {
 		/* If node label is provided it must fit the maximum defined length */
-		if (!nodeLabel || (nodeLabel && (strlen(nodeLabel) < MatterBridgedDevice::kNodeLabelSize))) {
+		if (!nodeLabel || (nodeLabel && (strnlen(nodeLabel,Nrf::MatterBridgedDevice::kNodeLabelSize) < MatterBridgedDevice::kNodeLabelSize))) {
 			return true;
 		}
 		return false;
