@@ -1235,6 +1235,13 @@ void test_pdn_deactivate(void)
 	TEST_ASSERT_EQUAL(PDN_EVENT_DEACTIVATED, pdn_evt_event);
 }
 
+void test_detach(void)
+{
+	on_cgev("+CGEV: NW DETACH\r\n");
+
+	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
+	TEST_ASSERT_EQUAL(PDN_EVENT_NETWORK_DETACH, pdn_evt_event);
+}
 
 void test_pdn_id_get_eshutdown(void)
 {
@@ -1341,6 +1348,19 @@ void test_pdn_apn_rate_control_deactivate(void)
 	TEST_ASSERT_EQUAL(0, pdn_evt_event);
 
 	on_cgev("+CGEV: APNRATECTRL STAT 1,0");
+
+	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
+	TEST_ASSERT_EQUAL(PDN_EVENT_APN_RATE_CONTROL_OFF, pdn_evt_event);
+}
+
+void test_pdn_apn_rate_control_not_configured(void)
+{
+	on_cgev("+CGEV: APNRATECTRL STAT 2,2");
+	/* no callback */
+	TEST_ASSERT_EQUAL(0, pdn_evt_cid);
+	TEST_ASSERT_EQUAL(0, pdn_evt_event);
+
+	on_cgev("+CGEV: APNRATECTRL STAT 1,2");
 
 	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
 	TEST_ASSERT_EQUAL(PDN_EVENT_APN_RATE_CONTROL_OFF, pdn_evt_event);
