@@ -186,6 +186,6 @@ config BRIDGE_EXPERIMENTAL
 
 source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.features"
 source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.defaults"
-source "$(ZEPHYR_NRF_MODULE_DIR)/samples/matter/common/src/bridge/Kconfig"
+source "$(ZEPHYR_NRF_MODULE_DIR)/applications/matter_bridge/src/core/Kconfig"
 source "$(ZEPHYR_NRF_MODULE_DIR)/samples/matter/common/src/Kconfig"
 source "Kconfig.zephyr"

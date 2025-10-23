@@ -132,7 +132,7 @@ public:
 	 * method.
 	 *
 	 * @param callback callback with results to be called once scan is done
-	 * @param context context that will be passed as an argument once calling @ref callback
+	 * @param context context that will be passed as an argument once calling callback
 	 * @param scanTimeoutMs optional timeout on scan operation in ms (by default 10 s)
 	 * @return CHIP_NO_ERROR on success
 	 * @return other error code on failure
@@ -160,7 +160,7 @@ public:
 	CHIP_ERROR Connect(BLEBridgedDeviceProvider *provider, ConnectionSecurityRequest *request = nullptr);
 
 	/**
-	 * @brief Create connection to the first Bluetooth LE device on the @ref mProvidersToRecover recovery list.
+	 * @brief Create connection to the first Bluetooth LE device on the mProvidersToRecover recovery list.
 	 *
 	 * @return CHIP_NO_ERROR on success
 	 * @return other error code on failure

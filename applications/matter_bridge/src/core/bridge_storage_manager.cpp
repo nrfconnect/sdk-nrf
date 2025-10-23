@@ -28,7 +28,7 @@ Nrf::PersistentStorageNode CreateIndexNode(uint8_t bridgedDeviceIndex, Nrf::Pers
 
 	snprintf(index, sizeof(index), "%d", bridgedDeviceIndex);
 
-	return Nrf::PersistentStorageNode(index, strlen(index), parent);
+	return Nrf::PersistentStorageNode(index, strnlen(index,sizeof(index)), parent);
 }
 
 } /* namespace */

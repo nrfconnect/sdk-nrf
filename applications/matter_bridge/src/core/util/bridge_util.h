@@ -49,7 +49,7 @@ public:
 		if (mCreationMap.find(deviceType) == mCreationMap.end()) {
 			return nullptr;
 		}
-		return mCreationMap[deviceType](std::forward<Args>(params)...);
+		return mCreationMap[deviceType](params...);
 	}
 
 private:
