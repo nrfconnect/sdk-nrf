@@ -118,6 +118,7 @@ config MEMFAULT_NCS_FW_VERSION_PREFIX
 config MEMFAULT_NCS_FW_VERSION
 	string "Static firmware version to use"
 	depends on MEMFAULT_NCS_FW_VERSION_STATIC
+	default "$(APP_VERSION_TWEAK_STRING)" if "$(VERSION_MAJOR)" != ""
 	help
 	 When using a statically configured firmware version, this value
 	 will be reported to Memfault

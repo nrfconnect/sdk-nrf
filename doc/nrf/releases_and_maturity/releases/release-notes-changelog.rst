@@ -878,6 +878,8 @@ Memfault integration
 
   * The ``CONFIG_MEMFAULT_DEVICE_INFO_CUSTOM`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_CUSTOM`.
   * The ``CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_BUILTIN`.
+  * The :kconfig:option:`CONFIG_MEMFAULT_NCS_FW_VERSION` Kconfig option will now have a default value set from a :file:`VERSION` file, if present in the application root directory.
+    Previously, this option had no default value.
 
 * Added a metric tracking the unused stack space of the Bluetooth Long workqueue thread, when the :kconfig:option:`CONFIG_MEMFAULT_NCS_BT_METRICS` Kconfig option is enabled.
   The new metric is named ``ncs_bt_lw_wq_unused_stack``.
