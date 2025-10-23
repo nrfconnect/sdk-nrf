@@ -21,6 +21,7 @@ To use the library to request a JWT, complete the following steps:
    * :kconfig:option:`CONFIG_APP_JWT_PRINT_EXPORTED_PUBKEY_DER`
    * :kconfig:option:`CONFIG_NRF_SECURITY`
 
+#. Modify the Key ID used by the library as an IAK key depending on your supported platform keys.
 #. Generate a signing key pair if you do not want to use the IAK Key.
 #. Populate the :c:struct:`app_jwt_data` structure with your desired values.
    See :ref:`app_jwt_values` for more information.
@@ -39,7 +40,7 @@ Possible structure values
 You can configure the following values in the :c:struct:`app_jwt_data` structure:
 
 * :c:member:`app_jwt_data.sec_tag` - Optional, the ``sec_tag`` must contain a valid signing key.
-  If set to ``0``, the library will use the IAK for signing.
+  If set to ``0``, the library will use the default platform IAK for signing.
 * :c:member:`app_jwt_data.key_type` - Required if ``sec_tag`` is not zero.
   Defines the type of key in the sec tag.
 * :c:member:`app_jwt_data.alg` - Required, always use the value ``JWT_ALG_TYPE_ES256``.
