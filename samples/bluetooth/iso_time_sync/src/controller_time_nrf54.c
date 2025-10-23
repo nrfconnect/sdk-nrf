@@ -31,16 +31,7 @@ int controller_time_init(void)
 
 uint64_t controller_time_us_get(void)
 {
-	int ret;
-	uint64_t current_time_us;
-
-	ret = nrfx_grtc_syscounter_get(&current_time_us);
-	if (ret != NRFX_SUCCESS) {
-		printk("Failed obtaining system time (ret: %d)\n", ret - NRFX_ERROR_BASE_NUM);
-		return 0;
-	}
-
-	return current_time_us;
+	return nrfx_grtc_syscounter_get();
 }
 
 void controller_time_trigger_set(uint64_t timestamp_us)
