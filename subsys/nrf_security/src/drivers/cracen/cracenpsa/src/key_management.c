@@ -948,7 +948,7 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
-#ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
 		int slot_id = CRACEN_PSA_GET_KMU_SLOT(
 			MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
@@ -981,7 +981,7 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		return status;
 	}
 #endif
-#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
 	if (location == PSA_KEY_LOCATION_CRACEN) {
 		psa_key_lifetime_t lifetime;
 		psa_drv_slot_number_t slot_id;
@@ -1220,7 +1220,7 @@ psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
-#if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
 		return generate_key_for_kmu(attributes, key_buffer, key_buffer_size,
 					    key_buffer_length);
@@ -1363,10 +1363,10 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 	default:
-#if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
 		return cracen_kmu_get_builtin_key(slot_number, attributes, key_buffer,
 						  key_buffer_size, key_buffer_length);
-#elif CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+#elif PSA_NEED_CRACEN_PLATFORM_KEYS
 		return cracen_platform_get_builtin_key(slot_number, attributes, key_buffer,
 						       key_buffer_size, key_buffer_length);
 #else
@@ -1386,7 +1386,7 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
  * The function cracen_platform_get_key_slot will do the matching between the
  * platform key ids and the Cracen bulitin ids.
  */
-#if CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
 	return cracen_platform_get_key_slot(key_id, lifetime, slot_number);
 #else
 
@@ -1401,7 +1401,7 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
 		*slot_number = CRACEN_BUILTIN_MEXT_ID;
 		break;
 	default:
-#if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
 		return cracen_kmu_get_key_slot(key_id, lifetime, slot_number);
 #else
 		return PSA_ERROR_DOES_NOT_EXIST;
@@ -1412,14 +1412,14 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
 								   PSA_KEY_LOCATION_CRACEN);
 
 	return PSA_SUCCESS;
-#endif /* CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS */
+#endif /* PSA_NEED_CRACEN_PLATFORM_KEYS */
 }
 
 psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 			       size_t key_buffer_size, uint8_t *data, size_t data_size,
 			       size_t *data_length)
 {
-#ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
 	int status;
 	int nested_err;
 	psa_key_location_t location =
@@ -1472,7 +1472,7 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 			     size_t source_key_length, uint8_t *target_key_buffer,
 			     size_t target_key_buffer_size, size_t *target_key_buffer_length)
 {
-#ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
@@ -1526,10 +1526,10 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 
 psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes)
 {
-#ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
 	return cracen_kmu_destroy_key(attributes);
 #endif
-#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
 	return cracen_platform_destroy_key(attributes);
 #endif
 

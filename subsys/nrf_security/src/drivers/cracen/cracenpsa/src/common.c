@@ -5,7 +5,7 @@
  */
 
 #include "common.h"
-#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
 #include "platform_keys/platform_keys.h"
 #endif
 
@@ -30,14 +30,14 @@
 #include "rsa_key.h"
 
 LOG_MODULE_DECLARE(cracen, CONFIG_CRACEN_LOG_LEVEL);
-#if CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
 #include "platform_keys/platform_keys.h"
 #endif
 
 #define NOT_ENABLED_CURVE    (0)
 #define NOT_ENABLED_HASH_ALG (0)
 
-#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
 /* Address from the IPS. May come from the MDK in the future. */
 #define DEVICE_SECRET_LENGTH  4
 #define DEVICE_SECRET_ADDRESS ((uint32_t *)0x0E001620)
@@ -689,7 +689,7 @@ int cracen_prepare_ik_key(const uint8_t *user_data)
 
 	__attribute__((unused)) struct sx_pk_config_ik cfg = {};
 
-#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
 	cfg.device_secret = DEVICE_SECRET_ADDRESS;
 	cfg.device_secret_sz = DEVICE_SECRET_LENGTH;
 
@@ -753,7 +753,7 @@ static int cracen_clean_ik_key(const uint8_t *user_data)
 
 static bool cracen_is_ikg_key(const psa_key_attributes_t *attributes)
 {
-#if CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
 	return cracen_platform_keys_is_ikg_key(attributes);
 #else
 	switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes))) {
@@ -774,7 +774,7 @@ static psa_status_t cracen_load_ikg_keyref(const psa_key_attributes_t *attribute
 	k->prepare_key = cracen_prepare_ik_key;
 	k->clean_key = cracen_clean_ik_key;
 
-#if CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
 	if (key_buffer_size != sizeof(ikg_opaque_key)) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
@@ -808,7 +808,7 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 {
 	safe_memzero(k, sizeof(*k));
 
-#if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN_KMU) {
 		kmu_opaque_key_buffer *key = (kmu_opaque_key_buffer *)key_buffer;
@@ -878,7 +878,7 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 static psa_status_t cracen_get_ikg_opaque_key_size(const psa_key_attributes_t *attributes,
 						   size_t *key_size)
 {
-#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
 	return cracen_platform_keys_get_size(attributes, key_size);
 #else
 	switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes))) {
@@ -899,7 +899,7 @@ static psa_status_t cracen_get_ikg_opaque_key_size(const psa_key_attributes_t *a
 	}
 
 	return PSA_ERROR_INVALID_ARGUMENT;
-#endif /* CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS */
+#endif /* PSA_NEED_CRACEN_PLATFORM_KEYS */
 }
 
 psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size_t *key_size)
