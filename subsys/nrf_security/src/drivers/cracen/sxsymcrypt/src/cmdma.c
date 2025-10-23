@@ -11,6 +11,7 @@
 #include "hw.h"
 #include "cmdma.h"
 #include "security/cracen.h"
+#include <nrf_security_core.h>
 
 void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *desc_ptr, uint32_t cmd, uint32_t tag)
 {
@@ -121,7 +122,13 @@ void sx_cmdma_reset(void)
 {
 	uint32_t intrmask = sx_rdreg(REG_INT_EN);
 
+	/** Too short reset pulse may lead to the issues with
+	 *  the active DMA transaction for some MCUs.
+	 *
+	 *  See: NCSDK-35701
+	 */
 	sx_wrreg(REG_CONFIG, REG_SOFT_RESET_ENABLE);
+	nrf_security_core_delay_us(1);
 	sx_wrreg(REG_CONFIG, 0); /* clear SW reset */
 
 	/* Wait for soft-reset to end */
