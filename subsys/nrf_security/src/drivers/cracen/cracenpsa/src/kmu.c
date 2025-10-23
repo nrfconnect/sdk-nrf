@@ -363,16 +363,16 @@ static psa_status_t get_kmu_slot_id_and_metadata(mbedtls_svc_key_id_t key_id,
 	return read_primary_slot_metadata(*slot_id, metadata);
 }
 
-#if defined(CONFIG_PSA_WANT_ALG_PURE_EDDSA) || defined(CONFIG_PSA_WANT_ALG_ED25519PH) || \
-	defined CONFIG_PSA_WANT_ALG_ECDSA || defined(CONFIG_PSA_WANT_ALG_HMAC)
+#if defined(PSA_WANT_ALG_PURE_EDDSA) || defined(PSA_WANT_ALG_ED25519PH) || \
+	defined PSA_WANT_ALG_ECDSA || defined(PSA_WANT_ALG_HMAC)
 static bool can_sign(const psa_key_attributes_t *key_attr)
 {
 	return (psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_SIGN_MESSAGE) ||
 	       (psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_SIGN_HASH);
 }
-#endif /* defined(CONFIG_PSA_WANT_ALG_PURE_EDDSA) || define(CONFIG_PSA_WANT_ALG_ED25519PH) */
+#endif /* defined(PSA_WANT_ALG_PURE_EDDSA) || define(PSA_WANT_ALG_ED25519PH) */
 
-#if defined(CONFIG_PSA_WANT_ALG_ECDH)
+#if defined(PSA_WANT_ALG_ECDH)
 static bool can_derive(const psa_key_attributes_t *key_attr)
 {
 	return psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_DERIVE;
@@ -597,61 +597,61 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 	psa_set_key_usage_flags(key_attr, usage_flags);
 
 	switch (metadata->algorithm) {
-#ifdef CONFIG_PSA_WANT_ALG_STREAM_CIPHER
+#ifdef PSA_WANT_ALG_STREAM_CIPHER
 	case METADATA_ALG_CHACHA20:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_CHACHA20);
 		psa_set_key_algorithm(key_attr, PSA_ALG_STREAM_CIPHER);
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305
+#ifdef PSA_WANT_ALG_CHACHA20_POLY1305
 	case METADATA_ALG_CHACHA20_POLY1305:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_CHACHA20);
 		psa_set_key_algorithm(key_attr, PSA_ALG_CHACHA20_POLY1305);
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_GCM
+#ifdef PSA_WANT_ALG_GCM
 	case METADATA_ALG_AES_GCM:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_AES);
 		psa_set_key_algorithm(key_attr, PSA_ALG_GCM);
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_CCM
+#ifdef PSA_WANT_ALG_CCM
 	case METADATA_ALG_AES_CCM:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_AES);
 		psa_set_key_algorithm(key_attr, PSA_ALG_CCM);
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_ECB_NO_PADDING
+#ifdef PSA_WANT_ALG_ECB_NO_PADDING
 	case METADATA_ALG_AES_ECB:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_AES);
 		psa_set_key_algorithm(key_attr, PSA_ALG_ECB_NO_PADDING);
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_CTR
+#ifdef PSA_WANT_ALG_CTR
 	case METADATA_ALG_AES_CTR:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_AES);
 		psa_set_key_algorithm(key_attr, PSA_ALG_CTR);
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_CBC_NO_PADDING
+#ifdef PSA_WANT_ALG_CBC_NO_PADDING
 	case METADATA_ALG_AES_CBC:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_AES);
 		psa_set_key_algorithm(key_attr, PSA_ALG_CBC_NO_PADDING);
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_CMAC
+#ifdef PSA_WANT_ALG_SP800_108_COUNTER_CMAC
 	case METADATA_ALG_SP800_108_COUNTER_CMAC:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_AES);
 		psa_set_key_algorithm(key_attr, PSA_ALG_SP800_108_COUNTER_CMAC);
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_CMAC
+#ifdef PSA_WANT_ALG_CMAC
 	case METADATA_ALG_CMAC:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_AES);
 		psa_set_key_algorithm(key_attr, PSA_ALG_CMAC);
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_PURE_EDDSA
+#ifdef PSA_WANT_ALG_PURE_EDDSA
 	case METADATA_ALG_ED25519:
 		/* If the key can sign it is assumed it is a private key */
 		psa_set_key_type(
@@ -662,7 +662,7 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 		psa_set_key_algorithm(key_attr, PSA_ALG_PURE_EDDSA);
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_ED25519PH
+#ifdef PSA_WANT_ALG_ED25519PH
 	case METADATA_ALG_ED25519PH:
 		/* If the key can sign it is assumed it is a private key */
 		psa_set_key_type(
@@ -673,7 +673,7 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 		psa_set_key_algorithm(key_attr, PSA_ALG_ED25519PH);
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_ECDSA
+#ifdef PSA_WANT_ALG_ECDSA
 	case METADATA_ALG_ECDSA:
 		psa_set_key_type(key_attr,
 				 can_sign(key_attr)
@@ -682,13 +682,13 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 		psa_set_key_algorithm(key_attr, PSA_ALG_ECDSA(PSA_ALG_ANY_HASH));
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_HMAC
+#ifdef PSA_WANT_ALG_HMAC
 	case METADATA_ALG_HMAC:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_HMAC);
 		psa_set_key_algorithm(key_attr, PSA_ALG_HMAC(PSA_ALG_SHA_256));
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_ECDH
+#ifdef PSA_WANT_ALG_ECDH
 	case METADATA_ALG_ECDH:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1));
 		psa_set_key_algorithm(key_attr, PSA_ALG_ECDH);
@@ -769,7 +769,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 	}
 
 	switch (psa_get_key_algorithm(key_attr)) {
-#ifdef CONFIG_PSA_WANT_ALG_STREAM_CIPHER
+#ifdef PSA_WANT_ALG_STREAM_CIPHER
 	case PSA_ALG_STREAM_CIPHER:
 		metadata->algorithm = METADATA_ALG_CHACHA20;
 		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_CHACHA20) {
@@ -777,7 +777,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		}
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305
+#ifdef PSA_WANT_ALG_CHACHA20_POLY1305
 	case PSA_ALG_CHACHA20_POLY1305:
 		metadata->algorithm = METADATA_ALG_CHACHA20_POLY1305;
 		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_CHACHA20) {
@@ -785,7 +785,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		}
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_GCM
+#ifdef PSA_WANT_ALG_GCM
 	case PSA_ALG_GCM:
 		metadata->algorithm = METADATA_ALG_AES_GCM;
 		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
@@ -793,7 +793,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		}
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_CCM
+#ifdef PSA_WANT_ALG_CCM
 	case PSA_ALG_CCM:
 		metadata->algorithm = METADATA_ALG_AES_CCM;
 		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
@@ -801,7 +801,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		}
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_ECB_NO_PADDING
+#ifdef PSA_WANT_ALG_ECB_NO_PADDING
 	case PSA_ALG_ECB_NO_PADDING:
 		metadata->algorithm = METADATA_ALG_AES_ECB;
 		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
@@ -809,7 +809,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		}
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_CTR
+#ifdef PSA_WANT_ALG_CTR
 	case PSA_ALG_CTR:
 		metadata->algorithm = METADATA_ALG_AES_CTR;
 		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
@@ -817,7 +817,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		}
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_CBC_NO_PADDING
+#ifdef PSA_WANT_ALG_CBC_NO_PADDING
 	case PSA_ALG_CBC_NO_PADDING:
 		metadata->algorithm = METADATA_ALG_AES_CBC;
 		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
@@ -825,7 +825,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		}
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_CMAC
+#ifdef PSA_WANT_ALG_SP800_108_COUNTER_CMAC
 	case PSA_ALG_SP800_108_COUNTER_CMAC:
 		metadata->algorithm = METADATA_ALG_SP800_108_COUNTER_CMAC;
 		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
@@ -833,7 +833,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		}
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_CMAC
+#ifdef PSA_WANT_ALG_CMAC
 	case PSA_ALG_CMAC:
 		metadata->algorithm = METADATA_ALG_CMAC;
 		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
@@ -842,7 +842,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		break;
 
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_ED25519PH
+#ifdef PSA_WANT_ALG_ED25519PH
 	case PSA_ALG_ED25519PH:
 		if (PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(key_attr)) !=
 		    PSA_ECC_FAMILY_TWISTED_EDWARDS) {
@@ -856,7 +856,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		metadata->algorithm = METADATA_ALG_ED25519PH;
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_PURE_EDDSA
+#ifdef PSA_WANT_ALG_PURE_EDDSA
 	case PSA_ALG_PURE_EDDSA:
 		if (PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(key_attr)) !=
 		    PSA_ECC_FAMILY_TWISTED_EDWARDS) {
@@ -870,7 +870,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		metadata->algorithm = METADATA_ALG_ED25519;
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_ECDSA
+#ifdef PSA_WANT_ALG_ECDSA
 	case PSA_ALG_ECDSA(PSA_ALG_ANY_HASH):
 	case PSA_ALG_ECDSA(PSA_ALG_SHA_256):
 		if (PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(key_attr)) !=
@@ -886,7 +886,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		metadata->algorithm = METADATA_ALG_ECDSA;
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_HMAC
+#ifdef PSA_WANT_ALG_HMAC
 	case PSA_ALG_HMAC(PSA_ALG_SHA_256):
 		if (!can_sign(key_attr) && PSA_ALG_IS_HMAC(psa_get_key_type(key_attr))) {
 			return PSA_ERROR_NOT_SUPPORTED;
@@ -894,7 +894,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		metadata->algorithm = METADATA_ALG_HMAC;
 		break;
 #endif
-#ifdef CONFIG_PSA_WANT_ALG_ECDH
+#ifdef PSA_WANT_ALG_ECDH
 	case PSA_ALG_ECDH:
 		if (!can_derive(key_attr) || PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(
 						     key_attr)) != PSA_ECC_FAMILY_SECP_R1) {
