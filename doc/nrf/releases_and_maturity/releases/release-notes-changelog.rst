@@ -905,3 +905,4 @@ Documentation
   * The Emergency data storage section in the :ref:`bluetooth_mesh_light_lc` sample documentation to clarify the EMDS storage context implementation and usage.
   * The :ref:`ble_mesh_dfu_distributor` sample documentation to clarify the external flash support.
   * The :ref:`ble_mesh_dfu_target` sample documentation to clarify the external flash support.
+  * The :ref:`ug_nrf54h20_custom_pcb`  documentation to clarify how to configure the BICR for a custom pcb based on the nRF54H20 SoC.
