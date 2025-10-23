@@ -48,9 +48,11 @@
 
 /* Offloading context related to nRF socket. */
 static struct nrf_sock_ctx {
-	int nrf_fd; /* nRF socket descriptior. */
+	int nrf_fd; /* nRF socket descriptor. */
+	int zvfs_fd; /* ZVFS socket descriptor. */
 	struct k_mutex *lock; /* Mutex associated with the socket. */
 	struct k_poll_signal poll; /* poll() signal. */
+	struct socket_ncs_sendcb sendcb; /* Send callback. */
 } offload_ctx[NRF_MODEM_MAX_SOCKET_COUNT];
 
 static K_MUTEX_DEFINE(ctx_lock);
@@ -62,7 +64,7 @@ static bool offload_disabled;
 /* TLS offloading disabled only. */
 static bool tls_offload_disabled;
 
-static struct nrf_sock_ctx *allocate_ctx(int nrf_fd)
+static struct nrf_sock_ctx *allocate_ctx(int nrf_fd, int zvfs_fd)
 {
 	struct nrf_sock_ctx *ctx = NULL;
 
@@ -72,6 +74,7 @@ static struct nrf_sock_ctx *allocate_ctx(int nrf_fd)
 		if (offload_ctx[i].nrf_fd == -1) {
 			ctx = &offload_ctx[i];
 			ctx->nrf_fd = nrf_fd;
+			ctx->zvfs_fd = zvfs_fd;
 			break;
 		}
 	}
@@ -87,8 +90,21 @@ static void release_ctx(struct nrf_sock_ctx *ctx)
 
 	ctx->nrf_fd = -1;
 	ctx->lock = NULL;
+	ctx->zvfs_fd = -1;
+	memset(&ctx->sendcb, 0, sizeof(ctx->sendcb));
 
 	k_mutex_unlock(&ctx_lock);
+}
+
+static struct nrf_sock_ctx *find_ctx(int fd)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(offload_ctx); i++) {
+		if (offload_ctx[i].nrf_fd == fd) {
+			return &offload_ctx[i];
+		}
+	}
+
+	return NULL;
 }
 
 static void z_to_nrf_ipv4(const struct sockaddr *z_in,
@@ -218,6 +234,9 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 			break;
 		case SO_RAI:
 			*nrf_out_optname = NRF_SO_RAI;
+			break;
+		case SO_SENDCB:
+			*nrf_out_optname = NRF_SO_SENDCB;
 			break;
 		default:
 			retval = -1;
@@ -377,7 +396,7 @@ static int nrf9x_socket_offload_accept(void *obj, struct sockaddr *addr,
 		goto error;
 	}
 
-	ctx = allocate_ctx(new_sd);
+	ctx = allocate_ctx(new_sd, fd);
 	if (ctx == NULL) {
 		errno = ENOMEM;
 		goto error;
@@ -475,16 +494,40 @@ static int nrf9x_socket_offload_connect(void *obj, const struct sockaddr *addr,
 	return retval;
 }
 
+static void sendcb(const struct nrf_modem_sendcb_params *nrf_params)
+{
+	struct nrf_sock_ctx *ctx;
+	struct socket_ncs_sendcb_params params;
+
+	ctx = find_ctx(nrf_params->fd);
+	if (!ctx || !ctx->sendcb.callback) {
+		return;
+	}
+
+	/* The user is interested in the zvfs_fd, not nrf_fd. */
+	params.fd = ctx->zvfs_fd;
+	params.bytes_sent = nrf_params->bytes_sent;
+	params.status = (nrf_params->status == 0) ? 0 : EAGAIN;
+
+	/* User callback. */
+	ctx->sendcb.callback(&params);
+}
+
 static int nrf9x_socket_offload_setsockopt(void *obj, int level, int optname,
 					   const void *optval, socklen_t optlen)
 {
-	int sd = OBJ_TO_SD(obj);
+
+	struct nrf_sock_ctx *ctx = OBJ_TO_CTX(obj);
+	int sd = ctx->nrf_fd;
 	int retval;
 	int nrf_level = level;
 	int nrf_optname;
 	struct nrf_timeval nrf_timeo = { 0 };
 	void *nrf_optval = (void *)optval;
 	nrf_socklen_t nrf_optlen = optlen;
+	static struct nrf_modem_sendcb offload_sendcb = {
+		.callback = sendcb,
+	};
 
 	if ((level == SOL_SOCKET) && (optname == SO_BINDTODEVICE)) {
 		if (IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_DISPATCHER)) {
@@ -513,6 +556,15 @@ static int nrf9x_socket_offload_setsockopt(void *obj, int level, int optname,
 		}
 	} else if ((level == SOL_TLS) && (optname == TLS_SESSION_CACHE)) {
 		nrf_optlen = sizeof(int);
+	} else if ((level == SOL_SOCKET) && (optname == SO_SENDCB)) {
+		/* Register the user callback in the socket context. */
+		if (optval != NULL) {
+			ctx->sendcb = *(struct socket_ncs_sendcb *)optval;
+			nrf_optval = &offload_sendcb;
+			nrf_optlen = sizeof(struct socket_ncs_sendcb);
+		} else {
+			memset(&ctx->sendcb, 0, sizeof(ctx->sendcb));
+		}
 	}
 
 	retval = nrf_setsockopt(sd, nrf_level, nrf_optname, nrf_optval,
@@ -857,17 +909,6 @@ static int nrf9x_socket_offload_fcntl(int fd, int cmd, va_list args)
 	return retval;
 }
 
-static struct nrf_sock_ctx *find_ctx(int fd)
-{
-	for (size_t i = 0; i < ARRAY_SIZE(offload_ctx); i++) {
-		if (offload_ctx[i].nrf_fd == fd) {
-			return &offload_ctx[i];
-		}
-	}
-
-	return NULL;
-}
-
 static void pollcb(struct nrf_pollfd *pollfd)
 {
 	struct nrf_sock_ctx *ctx;
@@ -1095,7 +1136,7 @@ static int nrf9x_socket_create(int family, int type, int proto)
 		return -1;
 	}
 
-	ctx = allocate_ctx(sd);
+	ctx = allocate_ctx(sd, fd);
 	if (ctx == NULL) {
 		errno = ENOMEM;
 		nrf_close(sd);
