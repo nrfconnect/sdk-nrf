@@ -11,7 +11,6 @@ common:
       - "Starting .*bootloader"
       - "Jumping to the .*image slot"
       - "smp_sample: build time"
-      - "smp_bt_sample: Advertising successfully started"
   timeout: 15
   tags:
     - ci_samples_zephyr_subsys_mgmt_mcumgr_smp_svr
@@ -30,6 +29,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+
   sample.mcumgr.smp_svr.encryption.rsa:
     platform_allow:
       - nrf52840dk/nrf52840
@@ -126,7 +126,8 @@ tests:
     extra_args:
       - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
-  nsib.sample.mcumgr.smp_svr.kmu.basic:
+
+  sample.mcumgr.smp_svr.nsib.kmu.basic:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -222,6 +223,15 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
+    harness_config: &bt_harness_config
+      type: multi_line
+      ordered: false
+      regex:
+        - "Starting .*bootloader"
+        - "Jumping to the .*image slot"
+        - "smp_sample: build time"
+        - "smp_bt_sample: Advertising successfully started"
+
   sample.mcumgr.smp_svr.bt.nrf54l15:
     tags: bluetooth
     extra_args: EXTRA_CONF_FILE="overlay-bt.conf"
@@ -231,6 +241,8 @@ tests:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+    harness_config: *bt_harness_config
+
   sample.mcumgr.smp_svr.bt.nrf54l15dk.ext_flash:
     extra_args:
       - OVERLAY_CONFIG="overlay-bt.conf"
@@ -246,6 +258,8 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
+    harness_config: *bt_harness_config
+
   sample.mcumgr.smp_svr.bt.nrf54h20dk:
     sysbuild: true
     extra_args:
@@ -258,6 +272,8 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+    harness_config: *bt_harness_config
+
   sample.mcumgr.smp_svr.bt.nrf54h20dk.direct_xip_withrevert:
     sysbuild: true
     extra_args:
@@ -272,6 +288,8 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+    harness_config: *bt_harness_config
+
   sample.mcumgr.smp_svr.serial.nrf54h20dk.ecdsa:
     sysbuild: true
     extra_args:
@@ -283,13 +301,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
-    harness_config:
-      type: multi_line
-      ordered: true
-      regex:
-        - "Starting bootloader"
-        - "Jumping to the first image slot"
-        - "smp_sample: build time"
+
   sample.mcumgr.smp_svr.bt.nrf54h20dk.direct_xip_withrequests:
     sysbuild: true
     extra_args:
@@ -304,3 +316,4 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+    harness_config: *bt_harness_config
