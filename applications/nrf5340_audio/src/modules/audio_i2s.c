@@ -36,7 +36,7 @@ PINCTRL_DT_DEFINE(I2S_NL);
 #error "Current AUDIO_SAMPLE_RATE_HZ setting not supported"
 #endif
 
-static nrfx_i2s_t i2s_inst = NRFX_I2S_INSTANCE(0);
+static nrfx_i2s_t i2s_inst = NRFX_I2S_INSTANCE(NRF_I2S0);
 
 static nrfx_i2s_config_t cfg = {
 	/* Pins are configured by pinctrl. */
@@ -150,7 +150,7 @@ void audio_i2s_init(void)
 	ret = pinctrl_apply_state(PINCTRL_DT_DEV_CONFIG_GET(I2S_NL), PINCTRL_STATE_DEFAULT);
 	__ASSERT_NO_MSG(ret == 0);
 
-	IRQ_CONNECT(DT_IRQN(I2S_NL), DT_IRQ(I2S_NL, priority), nrfx_isr, nrfx_i2s_0_irq_handler, 0);
+	IRQ_CONNECT(DT_IRQN(I2S_NL), DT_IRQ(I2S_NL, priority), nrfx_i2s_irq_handler, &i2s_inst, 0);
 	irq_enable(DT_IRQN(I2S_NL));
 
 	ret = nrfx_i2s_init(&i2s_inst, &cfg, i2s_comp_handler);
