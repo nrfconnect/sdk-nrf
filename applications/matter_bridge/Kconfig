@@ -176,7 +176,7 @@ endchoice
 endif # OPENTHREAD
 
 config CHIP_WIFI
-	default y if BOARD_NRF7002DK_NRF5340_CPUAPP || SHIELD_NRF7002EK
+	default y if BOARD_NRF7002DK_NRF5340_CPUAPP || SHIELD_NRF7002EK || SHIELD_NRF7002EB2
 
 # Dummy Kconfig just to select experimental for some of the configurations.
 config BRIDGE_EXPERIMENTAL
