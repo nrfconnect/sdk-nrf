@@ -1,4 +1,10 @@
-// Only for running on babblesim instead of real DKs
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Only for running on babblesim instead of real DKs */
 
 #include <zephyr/kernel.h>
 #if defined(CONFIG_ARCH_POSIX)
