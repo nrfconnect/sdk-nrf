@@ -19,8 +19,8 @@ You can use the nRF7002-EB II to provide Wi-Fi connectivity to the :zephyr:board
 Pin mapping for the nRF54L15 DK and the nRF54LM20 DK
 ****************************************************
 
-For nRF54L15 DK and nRF54LM20 DK, refer to the following tables for the pin mapping for these kits.
-The board can be mounted on the **P1** connector of these DKs
+For the nRF54L15 DK and nRF54LM20 DK, refer to the following tables for the pin mappings for these kits.
+The board can be mounted on the **P1** connector of the nRF54L15 DK and the **P17** (Expansion) connector of the nRF54LM20 DK.
 
 .. tabs::
 
@@ -84,7 +84,7 @@ Building and programming with nRF7002-EB II
 To build an application with support for Wi-Fi using the nRF7002-EB II, use a compatible :ref:`board target <app_boards_names>` with the CMake ``SHIELD`` option set to the corresponding shield name.
 See :ref:`cmake_options` for instructions on how to provide CMake options.
 
-For example, if you build the :ref:`wifi_shell_sample` sample for nRF54L15 DK on the command line, use the following command:
+For example, if you build the :ref:`wifi_shell_sample` sample for the nRF54L15 DK from the command line, use the following command:
 
 .. code-block:: console
 
@@ -98,7 +98,7 @@ Alternatively, add the shield in the project's :file:`CMakeLists.txt` file by us
 
    set(SHIELD nrf7002eb2)
 
-To build an application with support for Wi-Fi using the nRF7002-EB II with nRF54LM20 DK, use the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target with the CMake ``SHIELD`` variable set to ``nrf7002eb2``.
+To build an application with support for Wi-Fi using the nRF7002-EB II with the nRF54LM20 DK, use the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target with the CMake ``SHIELD`` variable set to ``nrf7002eb2``.
 To build an application with support for Wi-Fi for a custom target, set ``-DSHIELD="nrf7002eb2"`` when you invoke ``west build`` or ``cmake`` in your |NCS| application.
 
 Alternatively, you can add the shield in the project's :file:`CMakeLists.txt` file by using the ``set(SHIELD nrf7002eb2)`` command.
