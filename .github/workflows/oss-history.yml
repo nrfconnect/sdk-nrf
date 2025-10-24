@@ -14,7 +14,7 @@ jobs:
 
       - name: Install extra python dependencies
         run: |
-          pip3 install west
+          pip3 install --upgrade pip setuptools west
           pip3 install -r ncs/nrf/scripts/requirements-extra.txt
 
       - name: Set upsteam
