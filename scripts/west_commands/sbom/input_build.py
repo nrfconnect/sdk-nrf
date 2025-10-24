@@ -207,20 +207,29 @@ class InputBuild:
         file_entry_re = (r'^(?:[ \t]+\.[^\s]+(?:\r?\n)?[ \t]+0x[0-9a-fA-F]{16}[ \t]+'
                          r'0x[0-9a-fA-F]+|LOAD)[ \t]+(.*?)(?:\((.*)\))?$')
         linker_stuff_re = r'(?:\s+|^)linker\s+|\s+linker(?:\s+|$)'
+        lto_markers = ('.ltrans', '.debug.temp', '.lto_priv', '.o')
         for match in re.finditer(file_entry_re, map_content, re.M):
             file = match.group(1)
             file_path = (self.build_dir / file).resolve()
+            file_name = Path(file).name
             if str(file_path) not in items:
                 exists = file_path.is_file()
                 possibly_linker = (match.group(2) is None and
                                    re.search(linker_stuff_re, file, re.I) is not None)
-                if (not exists) and (not possibly_linker):
+                is_transient = False
+                if not exists:
+                    if any(file_name.endswith(marker) for marker in lto_markers):
+                        is_transient = True
+                    if is_transient:
+                        log.dbg(f'Skipping temporary build artifact from map file: "{file_path}".')
+                optional = ((not exists) and possibly_linker) or is_transient
+                if (not exists) and (not optional):
                     raise SbomException(f'The input file {file}, extracted from a map file, '
                                         f'does not exists.')
                 content = dict()
                 item = SimpleNamespace(
                     path=file_path,
-                    optional=(not exists) and possibly_linker,
+                    optional=optional,
                     content=content,
                     extracted=False)
                 items[str(file_path)] = item
