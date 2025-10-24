@@ -15,3 +15,4 @@ stringcase==1.2.0
 toml
 wget
 python-dotenv
+ruff

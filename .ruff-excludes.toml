@@ -1,0 +1,859 @@
+[lint.per-file-ignores]
+"./applications/nrf5340_audio/tools/buildprog/buildprog.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./applications/nrf5340_audio/tools/buildprog/nrf5340_audio_dk_devices.py" = [
+    "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./applications/nrf5340_audio/tools/buildprog/program.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM103",   # https://docs.astral.sh/ruff/rules/needless-bool
+    "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./doc/_extensions/inventory_builder.py" = [
+    "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./doc/_extensions/manifest_revisions_table.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./doc/_extensions/ncs_include/__init__.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./doc/_extensions/ncs_include/ncs_include.py" = [
+    "B007",     # https://docs.astral.sh/ruff/rules/unused-loop-control-variable
+    "B904",     # https://docs.astral.sh/ruff/rules/raise-without-from-inside-except
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP024",    # https://docs.astral.sh/ruff/rules/os-error-alias
+    "UP025",    # https://docs.astral.sh/ruff/rules/unicode-kind-prefix
+    "UP031",    # https://docs.astral.sh/ruff/rules/printf-string-formatting
+]
+"./doc/_extensions/ncs_tool_versions.py" = [
+    "B006",     # https://docs.astral.sh/ruff/rules/mutable-argument-default
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./doc/_extensions/options_from_kconfig.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM112",   # https://docs.astral.sh/ruff/rules/uncapitalized-environment-variables
+    "SIM115",   # https://docs.astral.sh/ruff/rules/open-file-with-context-handler
+]
+"./doc/_extensions/page_filter.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "E731",     # https://docs.astral.sh/ruff/rules/lambda-assignment
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
+    "UP007",    # https://docs.astral.sh/ruff/rules/non-pep604-annotation
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./doc/_extensions/software_maturity_table.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./doc/_extensions/table_from_rows.py" = [
+    "B904",     # https://docs.astral.sh/ruff/rules/raise-without-from-inside-except
+    "B905",     # https://docs.astral.sh/ruff/rules/zip-without-explicit-strict
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
+    "UP024",    # https://docs.astral.sh/ruff/rules/os-error-alias
+    "UP031",    # https://docs.astral.sh/ruff/rules/printf-string-formatting
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./doc/_extensions/warnings_filter.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
+    "UP007",    # https://docs.astral.sh/ruff/rules/non-pep604-annotation
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./doc/_scripts/fix_markdown.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM115",   # https://docs.astral.sh/ruff/rules/open-file-with-context-handler
+]
+"./doc/_scripts/merge_search_indexes.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./doc/_utils/redirects.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+]
+"./doc/_utils/utils.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
+    "UP007",    # https://docs.astral.sh/ruff/rules/non-pep604-annotation
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./doc/_zoomin/footer_patch.py" = [
+    "F541",     # https://docs.astral.sh/ruff/rules/f-string-missing-placeholders
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+]
+"./doc/internal/conf.py" = [
+    "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
+    "F821",     # https://docs.astral.sh/ruff/rules/undefined-name
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./doc/kconfig/conf.py" = [
+    "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./doc/matter/conf.py" = [
+    "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./doc/mcuboot/conf.py" = [
+    "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./doc/nrf/conf.py" = [
+    "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
+    "F541",     # https://docs.astral.sh/ruff/rules/f-string-missing-placeholders
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./doc/nrfxlib/conf.py" = [
+    "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
+    "F541",     # https://docs.astral.sh/ruff/rules/f-string-missing-placeholders
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./doc/tfm/conf.py" = [
+    "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./doc/zephyr/conf.py" = [
+    "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
+    "F541",     # https://docs.astral.sh/ruff/rules/f-string-missing-placeholders
+    "F821",     # https://docs.astral.sh/ruff/rules/undefined-name
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./lib/bin/lwm2m_carrier/scripts/lwm2m_carrier_divided_dfu.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP030",    # https://docs.astral.sh/ruff/rules/format-literals
+    "UP031",    # https://docs.astral.sh/ruff/rules/printf-string-formatting
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./samples/cellular/fmfu_smp_svr/update_modem.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP030",    # https://docs.astral.sh/ruff/rules/format-literals
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./samples/cellular/lwm2m_client/scripts/atclient.py" = [
+    "E713",     # https://docs.astral.sh/ruff/rules/not-in-test
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./samples/cellular/lwm2m_client/scripts/coiote.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "F541",     # https://docs.astral.sh/ruff/rules/f-string-missing-placeholders
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM102",   # https://docs.astral.sh/ruff/rules/collapsible-if
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+    "UP039",    # https://docs.astral.sh/ruff/rules/unnecessary-class-parentheses
+]
+"./samples/cellular/lwm2m_client/scripts/device.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./samples/cellular/lwm2m_client/scripts/fota.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM110",   # https://docs.astral.sh/ruff/rules/reimplemented-builtin
+    "UP039",    # https://docs.astral.sh/ruff/rules/unnecessary-class-parentheses
+]
+"./samples/cellular/lwm2m_client/scripts/leshan.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./samples/cellular/lwm2m_client/scripts/provision.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM105",   # https://docs.astral.sh/ruff/rules/suppressible-exception
+]
+"./samples/openthread/cli/harness-thci/nRF_Connect_SDK_11_12.py" = [
+    "B011",     # https://docs.astral.sh/ruff/rules/assert-false
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "E711",     # https://docs.astral.sh/ruff/rules/none-comparison
+    "F841",     # https://docs.astral.sh/ruff/rules/unused-variable
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM102",   # https://docs.astral.sh/ruff/rules/collapsible-if
+    "UP004",    # https://docs.astral.sh/ruff/rules/useless-object-inheritance
+    "UP008",    # https://docs.astral.sh/ruff/rules/super-call-with-parameters
+    "UP024",    # https://docs.astral.sh/ruff/rules/os-error-alias
+    "UP031",    # https://docs.astral.sh/ruff/rules/printf-string-formatting
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+    "UP034",    # https://docs.astral.sh/ruff/rules/extraneous-parentheses
+]
+"./samples/openthread/cli/harness-thci/nRF_Connect_SDK_13_14.py" = [
+    "B006",     # https://docs.astral.sh/ruff/rules/mutable-argument-default
+    "B011",     # https://docs.astral.sh/ruff/rules/assert-false
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "E711",     # https://docs.astral.sh/ruff/rules/none-comparison
+    "E712",     # https://docs.astral.sh/ruff/rules/true-false-comparison
+    "E722",     # https://docs.astral.sh/ruff/rules/bare-except
+    "F811",     # https://docs.astral.sh/ruff/rules/redefined-while-unused
+    "F841",     # https://docs.astral.sh/ruff/rules/unused-variable
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM102",   # https://docs.astral.sh/ruff/rules/collapsible-if
+    "SIM210",   # https://docs.astral.sh/ruff/rules/if-expr-with-true-false
+    "UP004",    # https://docs.astral.sh/ruff/rules/useless-object-inheritance
+    "UP008",    # https://docs.astral.sh/ruff/rules/super-call-with-parameters
+    "UP024",    # https://docs.astral.sh/ruff/rules/os-error-alias
+    "UP031",    # https://docs.astral.sh/ruff/rules/printf-string-formatting
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+    "UP034",    # https://docs.astral.sh/ruff/rules/extraneous-parentheses
+]
+"./samples/wifi/provisioning/softap/scripts/provision.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./samples/zephyr/sysbuild/hello_world/pytest/test_both_uart.py" = [
+    "B011",     # https://docs.astral.sh/ruff/rules/assert-false
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./scripts/bluetooth/mesh/mesh_dfu_metadata.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM113",   # https://docs.astral.sh/ruff/rules/enumerate-for-loop
+    "SIM115",   # https://docs.astral.sh/ruff/rules/open-file-with-context-handler
+    "SIM118",   # https://docs.astral.sh/ruff/rules/in-dict-keys
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+]
+"./scripts/bootloader/asn1parse.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM102",   # https://docs.astral.sh/ruff/rules/collapsible-if
+]
+"./scripts/bootloader/dfu_multi_image_tool.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/bootloader/do_sign.py" = [
+    "SIM115",   # https://docs.astral.sh/ruff/rules/open-file-with-context-handler
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./scripts/bootloader/generate_zip.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM118",   # https://docs.astral.sh/ruff/rules/in-dict-keys
+]
+"./scripts/bootloader/hash.py" = [
+    "SIM115",   # https://docs.astral.sh/ruff/rules/open-file-with-context-handler
+]
+"./scripts/bootloader/keygen.py" = [
+    "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./scripts/bootloader/provision.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "SIM113",   # https://docs.astral.sh/ruff/rules/enumerate-for-loop
+    "UP031",    # https://docs.astral.sh/ruff/rules/printf-string-formatting
+]
+"./scripts/bootloader/validation_data.py" = [
+    "B904",     # https://docs.astral.sh/ruff/rules/raise-without-from-inside-except
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+]
+"./scripts/cert_tool.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM114",   # https://docs.astral.sh/ruff/rules/if-with-same-arms
+]
+"./scripts/ci/check_license.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM105",   # https://docs.astral.sh/ruff/rules/suppressible-exception
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+]
+"./scripts/ci/check_manifest_userdata.py" = [
+    "E713",     # https://docs.astral.sh/ruff/rules/not-in-test
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/ci/codeowners.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./scripts/ci/test_plan.py" = [
+    "B006",     # https://docs.astral.sh/ruff/rules/mutable-argument-default
+    "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "F541",     # https://docs.astral.sh/ruff/rules/f-string-missing-placeholders
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM102",   # https://docs.astral.sh/ruff/rules/collapsible-if
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./scripts/esb_sniffer/Sniffer.py" = [
+    "B006",     # https://docs.astral.sh/ruff/rules/mutable-argument-default
+    "B904",     # https://docs.astral.sh/ruff/rules/raise-without-from-inside-except
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP024",    # https://docs.astral.sh/ruff/rules/os-error-alias
+    "UP039",    # https://docs.astral.sh/ruff/rules/unnecessary-class-parentheses
+]
+"./scripts/esb_sniffer/capture_to_pcap.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM115",   # https://docs.astral.sh/ruff/rules/open-file-with-context-handler
+]
+"./scripts/esb_sniffer/extcap/esb_extcap.py" = [
+    "F821",     # https://docs.astral.sh/ruff/rules/undefined-name
+    "SIM115",   # https://docs.astral.sh/ruff/rules/open-file-with-context-handler
+    "UP024",    # https://docs.astral.sh/ruff/rules/os-error-alias
+]
+"./scripts/esb_sniffer/main.py" = [
+    "B904",     # https://docs.astral.sh/ruff/rules/raise-without-from-inside-except
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM105",   # https://docs.astral.sh/ruff/rules/suppressible-exception
+    "SIM115",   # https://docs.astral.sh/ruff/rules/open-file-with-context-handler
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+    "UP039",    # https://docs.astral.sh/ruff/rules/unnecessary-class-parentheses
+]
+"./scripts/generate_psa_key_attributes.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/get_pulls_in_range.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM105",   # https://docs.astral.sh/ruff/rules/suppressible-exception
+    "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
+    "UP007",    # https://docs.astral.sh/ruff/rules/non-pep604-annotation
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./scripts/hid_configurator/NrfHidDevice.py" = [
+    "B011",     # https://docs.astral.sh/ruff/rules/assert-false
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM103",   # https://docs.astral.sh/ruff/rules/needless-bool
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+    "UP039",    # https://docs.astral.sh/ruff/rules/unnecessary-class-parentheses
+]
+"./scripts/hid_configurator/NrfHidManager.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+    "UP039",    # https://docs.astral.sh/ruff/rules/unnecessary-class-parentheses
+]
+"./scripts/hid_configurator/configurator_cli.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "E721",     # https://docs.astral.sh/ruff/rules/type-comparison
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM102",   # https://docs.astral.sh/ruff/rules/collapsible-if
+    "SIM105",   # https://docs.astral.sh/ruff/rules/suppressible-exception
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./scripts/hid_configurator/modules/config.py" = [
+    "B905",     # https://docs.astral.sh/ruff/rules/zip-without-explicit-strict
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./scripts/hid_configurator/modules/dfu.py" = [
+    "E101",     # https://docs.astral.sh/ruff/rules/mixed-spaces-and-tabs
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "E701",     # https://docs.astral.sh/ruff/rules/multiple-statements-on-one-line-colon
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM103",   # https://docs.astral.sh/ruff/rules/needless-bool
+    "SIM105",   # https://docs.astral.sh/ruff/rules/suppressible-exception
+    "SIM115",   # https://docs.astral.sh/ruff/rules/open-file-with-context-handler
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+    "W191",     # https://docs.astral.sh/ruff/rules/tab-indentation
+]
+"./scripts/hid_configurator/modules/led_stream.py" = [
+    "F841",     # https://docs.astral.sh/ruff/rules/unused-variable
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/hid_configurator/modules/module_config.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./scripts/hid_configurator/modules/music_led_stream.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM115",   # https://docs.astral.sh/ruff/rules/open-file-with-context-handler
+    "UP039",    # https://docs.astral.sh/ruff/rules/unnecessary-class-parentheses
+]
+"./scripts/hpf/remove_comments.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+]
+"./scripts/memfault/mds_ble_gateway.py" = [
+    "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/nrf_profiler/calc_stats.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./scripts/nrf_profiler/data_collector.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./scripts/nrf_profiler/events.py" = [
+    "B905",     # https://docs.astral.sh/ruff/rules/zip-without-explicit-strict
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+    "UP039",    # https://docs.astral.sh/ruff/rules/unnecessary-class-parentheses
+]
+"./scripts/nrf_profiler/merge_data.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/nrf_profiler/model_creator.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP024",    # https://docs.astral.sh/ruff/rules/os-error-alias
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./scripts/nrf_profiler/plot_from_files.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/nrf_profiler/plot_nordic.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM102",   # https://docs.astral.sh/ruff/rules/collapsible-if
+    "UP031",    # https://docs.astral.sh/ruff/rules/printf-string-formatting
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+    "UP039",    # https://docs.astral.sh/ruff/rules/unnecessary-class-parentheses
+]
+"./scripts/nrf_profiler/processed_events.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM103",   # https://docs.astral.sh/ruff/rules/needless-bool
+    "SIM110",   # https://docs.astral.sh/ruff/rules/reimplemented-builtin
+    "SIM115",   # https://docs.astral.sh/ruff/rules/open-file-with-context-handler
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+    "UP024",    # https://docs.astral.sh/ruff/rules/os-error-alias
+    "UP039",    # https://docs.astral.sh/ruff/rules/unnecessary-class-parentheses
+]
+"./scripts/nrf_profiler/real_time_plot.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./scripts/nrf_profiler/rtt2stream.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./scripts/nrf_profiler/stats_nordic.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM102",   # https://docs.astral.sh/ruff/rules/collapsible-if
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+    "UP039",    # https://docs.astral.sh/ruff/rules/unnecessary-class-parentheses
+]
+"./scripts/nrf_profiler/stream.py" = [
+    "B007",     # https://docs.astral.sh/ruff/rules/unused-loop-control-variable
+    "B904",     # https://docs.astral.sh/ruff/rules/raise-without-from-inside-except
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP039",    # https://docs.astral.sh/ruff/rules/unnecessary-class-parentheses
+]
+"./scripts/nrf_provision/fast_pair/fp_provision_cli.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./scripts/partition_manager.py" = [
+    "B007",     # https://docs.astral.sh/ruff/rules/unused-loop-control-variable
+    "B904",     # https://docs.astral.sh/ruff/rules/raise-without-from-inside-except
+    "B905",     # https://docs.astral.sh/ruff/rules/zip-without-explicit-strict
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "F541",     # https://docs.astral.sh/ruff/rules/f-string-missing-placeholders
+    "SIM102",   # https://docs.astral.sh/ruff/rules/collapsible-if
+    "SIM118",   # https://docs.astral.sh/ruff/rules/in-dict-keys
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+    "UP034",    # https://docs.astral.sh/ruff/rules/extraneous-parentheses
+]
+"./scripts/partition_manager_output.py" = [
+    "B023",     # https://docs.astral.sh/ruff/rules/function-uses-loop-variable
+    "B905",     # https://docs.astral.sh/ruff/rules/zip-without-explicit-strict
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM102",   # https://docs.astral.sh/ruff/rules/collapsible-if
+    "SIM118",   # https://docs.astral.sh/ruff/rules/in-dict-keys
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./scripts/partition_manager_report.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+    "UP034",    # https://docs.astral.sh/ruff/rules/extraneous-parentheses
+]
+"./scripts/reglock.py" = [
+    "B028",     # https://docs.astral.sh/ruff/rules/no-explicit-stacklevel
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/runners/nrf_common_next.py" = [
+    "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
+]
+"./scripts/runners/nrfutil_next.py" = [
+    "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/shell/ble_console/BlueZ_communication.py" = [
+    "F401",     # https://docs.astral.sh/ruff/rules/unused-import
+    "F821",     # https://docs.astral.sh/ruff/rules/undefined-name
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP004",    # https://docs.astral.sh/ruff/rules/useless-object-inheritance
+]
+"./scripts/shell/ble_console/BluetoothConsole.py" = [
+    "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "F401",     # https://docs.astral.sh/ruff/rules/unused-import
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM102",   # https://docs.astral.sh/ruff/rules/collapsible-if
+]
+"./scripts/shell/ble_console/TerminalNotebook.py" = [
+    "E101",     # https://docs.astral.sh/ruff/rules/mixed-spaces-and-tabs
+    "E402",     # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file
+    "E712",     # https://docs.astral.sh/ruff/rules/true-false-comparison
+    "F401",     # https://docs.astral.sh/ruff/rules/unused-import
+    "F841",     # https://docs.astral.sh/ruff/rules/unused-variable
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM102",   # https://docs.astral.sh/ruff/rules/collapsible-if
+    "UP004",    # https://docs.astral.sh/ruff/rules/useless-object-inheritance
+    "W191",     # https://docs.astral.sh/ruff/rules/tab-indentation
+]
+"./scripts/shell/ble_console/setup_with_cx_freeze.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/tests/partition_manager_test.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "E741",     # https://docs.astral.sh/ruff/rules/ambiguous-variable-name
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./scripts/traffic_gen_server.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP041",    # https://docs.astral.sh/ruff/rules/timeout-error-alias
+]
+"./scripts/unity/func_name_list.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/unity/header_prepare.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/west_commands/create_board/ncs_create_board.py" = [
+    "F541",     # https://docs.astral.sh/ruff/rules/f-string-missing-placeholders
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+]
+"./scripts/west_commands/ncs_commands.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
+    "UP007",    # https://docs.astral.sh/ruff/rules/non-pep604-annotation
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./scripts/west_commands/ncs_ironside_se_update.py" = [
+    "B009",     # https://docs.astral.sh/ruff/rules/get-attr-with-constant
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM117",   # https://docs.astral.sh/ruff/rules/multiple-with-statements
+]
+"./scripts/west_commands/ncs_provision.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/west_commands/ncs_west_helpers.py" = [
+    "B023",     # https://docs.astral.sh/ruff/rules/function-uses-loop-variable
+    "B904",     # https://docs.astral.sh/ruff/rules/raise-without-from-inside-except
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP007",    # https://docs.astral.sh/ruff/rules/non-pep604-annotation
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./scripts/west_commands/pygit2_helpers.py" = [
+    "B007",     # https://docs.astral.sh/ruff/rules/unused-loop-control-variable
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP007",    # https://docs.astral.sh/ruff/rules/non-pep604-annotation
+]
+"./scripts/west_commands/sbom/args.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/west_commands/sbom/cache_database_detector.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+]
+"./scripts/west_commands/sbom/common.py" = [
+    "B905",     # https://docs.astral.sh/ruff/rules/zip-without-explicit-strict
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM300",   # https://docs.astral.sh/ruff/rules/yoda-conditions
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./scripts/west_commands/sbom/external_file_detector.py" = [
+    "E722",     # https://docs.astral.sh/ruff/rules/bare-except
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+]
+"./scripts/west_commands/sbom/file_input.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./scripts/west_commands/sbom/full_text_detector.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+]
+"./scripts/west_commands/sbom/git_info_detector.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/west_commands/sbom/helpers/update_spdx_licenses.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+]
+"./scripts/west_commands/sbom/input_build.py" = [
+    "E722",     # https://docs.astral.sh/ruff/rules/bare-except
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM102",   # https://docs.astral.sh/ruff/rules/collapsible-if
+    "SIM115",   # https://docs.astral.sh/ruff/rules/open-file-with-context-handler
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+]
+"./scripts/west_commands/sbom/input_post_process.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/west_commands/sbom/license_utils.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM401",   # https://docs.astral.sh/ruff/rules/if-else-block-instead-of-dict-get
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+]
+"./scripts/west_commands/sbom/main.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/west_commands/sbom/ncs_sbom_command.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/west_commands/sbom/output_pre_process.py" = [
+    "UP037",    # https://docs.astral.sh/ruff/rules/quoted-annotation
+]
+"./scripts/west_commands/sbom/output_template.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+]
+"./scripts/west_commands/sbom/scancode_toolkit_detector.py" = [
+    "B905",     # https://docs.astral.sh/ruff/rules/zip-without-explicit-strict
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./scripts/west_commands/sbom/spdx_tag_detector.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP015",    # https://docs.astral.sh/ruff/rules/redundant-open-modes
+]
+"./scripts/west_commands/thingy91x_dfu.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP008",    # https://docs.astral.sh/ruff/rules/super-call-with-parameters
+]
+"./subsys/net/lib/wifi_prov_core/proto/generate_wifi_prov_config.py" = [
+    "B904",     # https://docs.astral.sh/ruff/rules/raise-without-from-inside-except
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "F541",     # https://docs.astral.sh/ruff/rules/f-string-missing-placeholders
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "SIM102",   # https://docs.astral.sh/ruff/rules/collapsible-if
+    "UP024",    # https://docs.astral.sh/ruff/rules/os-error-alias
+]
+"./subsys/net/lib/wifi_prov_core/proto/test_auth_modes.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./tests/drivers/grtc/grtc_reset/pytest/tests.py" = [
+    "F401",     # https://docs.astral.sh/ruff/rules/unused-import
+]
+"./tests/drivers/uart/uart_passtrough/pytest/serial_port.py" = [
+    "UP024",    # https://docs.astral.sh/ruff/rules/os-error-alias
+]
+"./tests/drivers/uart/uart_passtrough/pytest/test_passtrough.py" = [
+    "UP012",    # https://docs.astral.sh/ruff/rules/unnecessary-encode-utf8
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+"./tests/lib/hw_unique_key_tfm/create_test_vector.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./tests/lib/hw_unique_key_tfm/write_kmu.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./tests/subsys/bluetooth/mesh/metadata_extraction/verify_metadata.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+]
+"./tests/subsys/bootloader/bl_crypto/test_generator.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "F821",     # https://docs.astral.sh/ruff/rules/undefined-name
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP031",    # https://docs.astral.sh/ruff/rules/printf-string-formatting
+    "W191",     # https://docs.astral.sh/ruff/rules/tab-indentation
+    "W291",     # https://docs.astral.sh/ruff/rules/trailing-whitespace
+]
+"./tests/subsys/bootloader/bl_validation_ff_key/generate_ff_key.py" = [
+    "B007",     # https://docs.astral.sh/ruff/rules/unused-loop-control-variable
+    "B905",     # https://docs.astral.sh/ruff/rules/zip-without-explicit-strict
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./tests/subsys/kmu/pytest/common.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./tests/subsys/kmu/pytest/conftest.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
+]
+"./tests/subsys/kmu/pytest/test_kmu_provision.py" = [
+    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./tests/subsys/kmu/pytest/test_kmu_verify_keys_in_app.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./tests/subsys/rtt/pytest/test_rtt.py" = [
+    "F541",     # https://docs.astral.sh/ruff/rules/f-string-missing-placeholders
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./tests/subsys/swo/pytest/test_swo.py" = [
+    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
+]
+"./tests/subsys/usb/negotiated_speed/pytest/test_usb_speed.py" = [
+    "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
+    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
+]
+[format]
+exclude = [
+    "./applications/nrf5340_audio/tools/buildprog/buildprog.py",
+    "./applications/nrf5340_audio/tools/buildprog/nrf5340_audio_dk_devices.py",
+    "./applications/nrf5340_audio/tools/buildprog/program.py",
+    "./doc/_extensions/inventory_builder.py",
+    "./doc/_extensions/manifest_revisions_table.py",
+    "./doc/_extensions/ncs_include/ncs_include.py",
+    "./doc/_extensions/options_from_kconfig.py",
+    "./doc/_extensions/page_filter.py",
+    "./doc/_extensions/software_maturity_table.py",
+    "./doc/_extensions/table_from_rows.py",
+    "./doc/_scripts/fix_markdown.py",
+    "./doc/_scripts/merge_search_indexes.py",
+    "./doc/_utils/redirects.py",
+    "./doc/_utils/utils.py",
+    "./doc/_zoomin/footer_patch.py",
+    "./doc/kconfig/conf.py",
+    "./doc/matter/conf.py",
+    "./doc/mcuboot/conf.py",
+    "./doc/nrf/conf.py",
+    "./doc/nrfxlib/conf.py",
+    "./doc/tfm/conf.py",
+    "./doc/zephyr/conf.py",
+    "./lib/bin/lwm2m_carrier/scripts/lwm2m_carrier_divided_dfu.py",
+    "./samples/cellular/fmfu_smp_svr/update_modem.py",
+    "./samples/cellular/lwm2m_client/scripts/atclient.py",
+    "./samples/cellular/lwm2m_client/scripts/coiote.py",
+    "./samples/cellular/lwm2m_client/scripts/device.py",
+    "./samples/cellular/lwm2m_client/scripts/fota.py",
+    "./samples/cellular/lwm2m_client/scripts/leshan.py",
+    "./samples/cellular/lwm2m_client/scripts/provision.py",
+    "./samples/openthread/cli/harness-thci/nRF_Connect_SDK_11_12.py",
+    "./samples/openthread/cli/harness-thci/nRF_Connect_SDK_13_14.py",
+    "./samples/wifi/provisioning/softap/scripts/provision.py",
+    "./scripts/bluetooth/mesh/mesh_dfu_metadata.py",
+    "./scripts/bootloader/asn1parse.py",
+    "./scripts/bootloader/dfu_multi_image_tool.py",
+    "./scripts/bootloader/do_sign.py",
+    "./scripts/bootloader/generate_zip.py",
+    "./scripts/bootloader/hash.py",
+    "./scripts/bootloader/keygen.py",
+    "./scripts/bootloader/keyhash_validate.py",
+    "./scripts/bootloader/provision.py",
+    "./scripts/bootloader/tests/asn1parse_test.py",
+    "./scripts/bootloader/tests/conftest.py",
+    "./scripts/bootloader/tests/do_sign_test.py",
+    "./scripts/bootloader/tests/keygen_test.py",
+    "./scripts/bootloader/tests/utils.py",
+    "./scripts/bootloader/tests/validation_data_test.py",
+    "./scripts/bootloader/validation_data.py",
+    "./scripts/cert_tool.py",
+    "./scripts/ci/check_license.py",
+    "./scripts/ci/check_manifest_userdata.py",
+    "./scripts/ci/codeowners.py",
+    "./scripts/ci/test_plan.py",
+    "./scripts/esb_sniffer/Sniffer.py",
+    "./scripts/esb_sniffer/capture_to_pcap.py",
+    "./scripts/esb_sniffer/extcap/esb_extcap.py",
+    "./scripts/esb_sniffer/main.py",
+    "./scripts/get_pulls_in_range.py",
+    "./scripts/hid_configurator/NrfHidDevice.py",
+    "./scripts/hid_configurator/NrfHidManager.py",
+    "./scripts/hid_configurator/configurator_cli.py",
+    "./scripts/hid_configurator/modules/config.py",
+    "./scripts/hid_configurator/modules/dfu.py",
+    "./scripts/hid_configurator/modules/led_stream.py",
+    "./scripts/hid_configurator/modules/module_config.py",
+    "./scripts/hid_configurator/modules/music_led_stream.py",
+    "./scripts/hpf/remove_comments.py",
+    "./scripts/memfault/mds_ble_gateway.py",
+    "./scripts/nrf_profiler/calc_stats.py",
+    "./scripts/nrf_profiler/data_collector.py",
+    "./scripts/nrf_profiler/events.py",
+    "./scripts/nrf_profiler/merge_data.py",
+    "./scripts/nrf_profiler/model_creator.py",
+    "./scripts/nrf_profiler/plot_from_files.py",
+    "./scripts/nrf_profiler/plot_nordic.py",
+    "./scripts/nrf_profiler/plot_nordic_config.py",
+    "./scripts/nrf_profiler/processed_events.py",
+    "./scripts/nrf_profiler/real_time_plot.py",
+    "./scripts/nrf_profiler/rtt2stream.py",
+    "./scripts/nrf_profiler/rtt_nordic_config.py",
+    "./scripts/nrf_profiler/stats_nordic.py",
+    "./scripts/nrf_profiler/stream.py",
+    "./scripts/nrf_provision/fast_pair/fp_provision_cli.py",
+    "./scripts/partition_manager.py",
+    "./scripts/partition_manager_output.py",
+    "./scripts/partition_manager_report.py",
+    "./scripts/reglock.py",
+    "./scripts/runners/nrf_common_next.py",
+    "./scripts/runners/nrfutil_next.py",
+    "./scripts/shell/ble_console/BlueZ_communication.py",
+    "./scripts/shell/ble_console/BluetoothConsole.py",
+    "./scripts/shell/ble_console/TerminalNotebook.py",
+    "./scripts/shell/ble_console/setup_with_cx_freeze.py",
+    "./scripts/shell/bt_nus_shell.py",
+    "./scripts/tests/partition_manager_test.py",
+    "./scripts/traffic_gen_server.py",
+    "./scripts/unity/func_name_list.py",
+    "./scripts/unity/header_prepare.py",
+    "./scripts/west_commands/create_board/ncs_create_board.py",
+    "./scripts/west_commands/ncs_commands.py",
+    "./scripts/west_commands/ncs_ironside_se_update.py",
+    "./scripts/west_commands/ncs_provision.py",
+    "./scripts/west_commands/ncs_west_helpers.py",
+    "./scripts/west_commands/pygit2_helpers.py",
+    "./scripts/west_commands/sbom/args.py",
+    "./scripts/west_commands/sbom/common.py",
+    "./scripts/west_commands/sbom/data_structure.py",
+    "./scripts/west_commands/sbom/external_file_detector.py",
+    "./scripts/west_commands/sbom/file_input.py",
+    "./scripts/west_commands/sbom/git_info_detector.py",
+    "./scripts/west_commands/sbom/helpers/update_spdx_licenses.py",
+    "./scripts/west_commands/sbom/input_build.py",
+    "./scripts/west_commands/sbom/input_post_process.py",
+    "./scripts/west_commands/sbom/license_utils.py",
+    "./scripts/west_commands/sbom/ncs_sbom_command.py",
+    "./scripts/west_commands/sbom/output_pre_process.py",
+    "./scripts/west_commands/sbom/output_template.py",
+    "./scripts/west_commands/sbom/scancode_toolkit_detector.py",
+    "./scripts/west_commands/sbom/spdx_tag_detector.py",
+    "./scripts/west_commands/thingy91x_dfu.py",
+    "./scripts/west_commands/utils/__init__.py",
+    "./subsys/net/lib/wifi_prov_core/proto/generate_wifi_prov_config.py",
+    "./subsys/net/lib/wifi_prov_core/proto/test_auth_modes.py",
+    "./tests/drivers/grtc/grtc_reset/pytest/tests.py",
+    "./tests/lib/hw_unique_key_tfm/create_test_vector.py",
+    "./tests/lib/hw_unique_key_tfm/write_kmu.py",
+    "./tests/subsys/bluetooth/mesh/metadata_extraction/verify_metadata.py",
+    "./tests/subsys/bootloader/bl_crypto/test_generator.py",
+    "./tests/subsys/bootloader/bl_validation_ff_key/generate_ff_key.py",
+    "./tests/subsys/kmu/pytest/common.py",
+    "./tests/subsys/kmu/pytest/test_kmu_provision.py",
+    "./tests/subsys/kmu/pytest/test_kmu_verify_keys_in_app.py",
+    "./tests/subsys/rtt/pytest/test_rtt.py",
+    "./tests/subsys/usb/negotiated_speed/pytest/test_usb_speed.py",
+]
