@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+sample:
+  description: >
+    Central device of a Bluetooth Low Energy Path Loss Monitor, where path loss
+    zones are indicated by LED0, LED1, and LED2.
+  name: Bluetooth LE Central Path Loss Monitoring Sample
+tests:
+  sample.bluetooth.central_path_loss_monitoring:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
