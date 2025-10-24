@@ -123,7 +123,6 @@ For the application running on the application core, setting the following Kconf
   * :kconfig:option:`CONFIG_PM` to ``y``
   * :kconfig:option:`CONFIG_PM_S2RAM` to ``y``
   * :kconfig:option:`CONFIG_POWEROFF` to ``y``
-  * :kconfig:option:`CONFIG_PM_S2RAM_CUSTOM_MARKING` to ``y``
   * :kconfig:option:`CONFIG_PM_DEVICE` to ``y``
   * :kconfig:option:`CONFIG_PM_DEVICE_RUNTIME` to ``y``
 
