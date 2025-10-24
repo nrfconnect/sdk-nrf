@@ -830,9 +830,10 @@
 .. _`nRF54L15 feature access control`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/spu.html#ariaid-title8
 .. _`nRF54L15 SoC Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54l15/page/COMP/nrf54l15/nrf54l15_comp_matrix.html
 .. _`nRF54L15 Key management unit`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/kmu.html
+.. _`nRF54L15 Key management unit provisioning`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/kmu.html#ariaid-title5
 .. _`nRF54L15 RRAMC`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/rramc.html
 .. _`nRF54L15 REGION.CONFIG`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/rramc.html#ariaid-title35
-.. _`nRF54L15 DK CRACEN`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/cracen.html
+.. _`nRF54L15 CRACEN`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/cracen.html
 
 .. _`nRF54LM20A Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54LM20A/page/keyfeatures_html5.html
 .. _`nRF54LM20 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf54lm20_dk/page/UG/nRF54LM20_DK/intro/intro.html
@@ -955,6 +956,9 @@
 .. _`AP-Protect for nRF52811`: https://docs.nordicsemi.com/bundle/ps_nrf52811/page/dif.html#ariaid-title3
 .. _`AP-Protect for nRF52810`: https://docs.nordicsemi.com/bundle/ps_nrf52810/page/dif.html#ariaid-title3
 .. _`AP-Protect for nRF52805`: https://docs.nordicsemi.com/bundle/ps_nrf52805/page/dif.html#ariaid-title3
+
+.. _`nRF54L Series Production Programming`: https://docs.nordicsemi.com/bundle/nan_047/page/APP/nan_production_programming/intro.html
+.. _`Provisioning KMU data`: https://docs.nordicsemi.com/bundle/nan_047/page/APP/nan_production_programming/nRF54L/nrf54l_provisioning_kmu_data.html
 
 .. _`nRF9160 Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9160/page/COMP/nrf9160/nrf9160_operator_certifications.html
 .. _`nRF9161 Mobile network operator certifications`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf9161/page/COMP/nrf9161/nrf9161_operator_certifications.html

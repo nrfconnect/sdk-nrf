@@ -11,7 +11,9 @@ Introduction to KMU key provisioning
 
    The MCUboot bootloader does not yet support KMU for nRF54LM20.
 
-The nRF54L devices are equipped with a Key Management Unit (KMU) that facilitates secure and confidential storage of keys.
+The nRF54L devices are equipped with a Key Management Unit (KMU) that facilitates secure and confidential storage of keys in a dedicated region of RRAM (secure information configuration region, or SICR).
+The process of storing a key and its metadata in a key slot in SICR is known as the KMU provisioning.
+
 This feature is crucial not only for private keys but also for public keys, as the :ref:`KMU can directly transfer a key to the CRACEN RAM<ug_nrf54l_crypto_kmu_cracen_peripherals>`.
 Even when keys must pass through addressable RAM, the KMU significantly reduces the risk of key exposure.
 Therefore, you should use KMU for managing secrets whenever possible.
@@ -20,7 +22,9 @@ When using an nRF54L device with Trusted Firmware-M, you can use the KMU to stor
 For this to work, you need to enable the :ref:`tfm_partition_crypto`, which enables the :ref:`ug_tfm_services_its` by default.
 You can then manually disable the ITS service and start using KMU instead.
 
-Key Types
+.. _ug_nrf54l_developing_basics_kmu_key_types:
+
+Key types
 *********
 
 Different types of keys, such as revocable and locked keys, serve distinct purposes and have unique policies associated with their use and management.
@@ -83,3 +87,10 @@ You can consider the following options:
   The disadvantage is that the method does not support multiple generations of keys.
 
 Always consider the specific security needs of your application and choose the most appropriate key management approach to safeguard your digital assets.
+
+More information
+****************
+
+For more conceptual information about the KMU hardware peripheral, see the page about KMU in the device datasheet, for example `KMU - Key management unit <nRF54L15 Key management unit_>`_ in the nRF54L15 datasheet.
+
+For the description of the KMU provisioning procedure, see :ref:`ug_nrf54l_developing_provision_kmu` in the |NCS| documentation and the `Provisioning KMU data`_ page in the `nRF54L Series Production Programming`_ guide.

@@ -11,31 +11,58 @@ Performing KMU provisioning
 
    The MCUboot bootloader does not yet support KMU for nRF54LM20.
 
-The nRF54L devices are equipped with Hardware Key Management Unit (KMU), that requires provisioning when in use.
-The |NCS| provides a west command, ``ncs-provision``, allowing to upload keys to the device though the Serial Write Debug (SWD) interface.
+When you perform KMU provisioning, you store one of the key types supported by the KMU and its metadata in the dedicated :ref:`provisioning slot <ug_nrf54l_crypto_kmu_slots>` in RRAM.
+
+You can perform KMU provisioning using the following methods:
+
+* Using the nRF Util and west tools in the |NCS| - for provisioning during development
+* Using PSA Crypto API - for provisioning during development or production
+* Using other tools for register-level programming - for provisioning during production
+
+.. _ug_nrf54l_developing_provision_kmu_prerequisites:
 
 Prerequisites
 *************
 
-First, ensure that the `nRF Util`_ tool is installed.
-It should install automatically during the setup of the |NCS| working environment.
-Once completed, install the required additional commands for nRF Util:
+Regardless of the method you use to perform KMU provisioning, you need to configure the following elements of the SRC data struct, as per the device datasheet (for example `KMU - Key management unit <nRF54L15 Key management unit_>`_ in the nRF54L15 datasheet):
 
-.. parsed-literal::
-   :class: highlight
+.. list-table:: Required SRC data struct fields for KMU provisioning
+   :widths: auto
+   :header-rows: 1
 
-    nrfutil install device
+   * - Field
+     - Description
+   * - VALUE
+     - The key material to be stored in the KMU slot.
+   * - RPOLICY
+     - The revocation policy for the key.
+   * - DEST
+     - | For symmetric encryption/decryption keys, this is the CRACEN Protected RAM address.
+       | For asymmetric keys, this is a different RAM location according to usage.
+   * - METADATA
+     - Information about the key type and its usage.
+       It is required by the CRACEN driver for the verification of some properties of the key and its intended usage.
 
-Additionally, before provisioning, make sure you familiarized yourself with the :ref:`ug_nrf54l_developing_basics_kmu_provisioning_keys` section.
+The CRACEN driver must be able to infer the correct values for these fields.
+Depending on the method you use to perform KMU provisioning:
+
+* For :ref:`ug_nrf54l_developing_provision_kmu_development` and :ref:`ug_nrf54l_developing_provision_kmu_psa_crypto_api`: VALUE, RPOLICY, DEST, and METADATA are automatically set for KMU slots.
+* For :ref:`ug_nrf54l_developing_provision_kmu_production`: you need to set up METADATA, RPOLICY and DEST manually according to the table in :ref:`ug_nrf54l_developing_provision_kmu_production_metadata`.
+
+See the following sections for more information about each of these steps.
 
 .. _ug_nrf54l_developing_provision_kmu_generate:
 
-Key generation
-**************
+Generating keys
+***************
 
-If you need a new key, you can generate it using imgtool or another tool that produces the required kind and format of key as a PEM file.
+You can generate keys using different methods and tools, depending on whether you are in development or in production.
+For example, you could generate the key on the device at the first reset (during production).
+You can also use OpenSSL, a Hardware Security Module (HSM), or other methods.
 
+If you need a new key for development, you can generate it using imgtool or another tool that produces the required kind and format of key as a PEM file.
 For instructions on how to generate a key using imgtool, see the :doc:`imgtool page in the MCUboot documentation<mcuboot:imgtool>`.
+
 See the following example for generating a private key:
 
 .. parsed-literal::
@@ -43,10 +70,24 @@ See the following example for generating a private key:
 
    imgtool keygen -k my_ed25519_priv_key.pem -t ed25519
 
+.. _ug_nrf54l_developing_provision_kmu_development:
+
+Provisioning KMU with development tools
+***************************************
+
+You can use the following tools to provision keys to the device during development:
+
+* west command ``ncs-provision``
+* nRF Util command ``nrfutil device x-provision-keys``
+
+Both methods allow to upload keys to the device though the Serial Write Debug (SWD) interface.
+
+When you install the |NCS|, you get both the west command and the nRF Util tool with the ``nrfutil device`` command installed with the |NCS| toolchain bundle.
+
 .. _ug_nrf54l_developing_provision_kmu_provisioning:
 
 Provisioning keys to the board
-******************************
+==============================
 
 Before uploading keys, ensure that the SoC is unprovisioned.
 If the SoC has been previously provisioned and you need to use a different set of keys, you must first erase the SoC with the following erase command:
@@ -141,8 +182,8 @@ Once you have an unprovisioned SoC, upload keys to the board by running one of t
          :start-after: nrfutil_provision_keys_command_start
          :end-before: nrfutil_provision_keys_command_end
 
-Alternative provisioning method
-*******************************
+Alternative provisioning method during development
+==================================================
 
 To simplify the development process, keys can be generated and then provisioned at the same time as the flashing process.
 You can provision keys during flashing when the build directory contains the :file:`keyfile.json` file with commands, such as ``west flash --recover`` or ``west flash --erase``.
@@ -159,3 +200,173 @@ Similarly, MCUboot uses the key file designated by the :Kconfig:option:`SB_CONFI
 At the end of the described process, the :file:`keyfile.json` file is generated in the build directory.
 This file allows key provisioning to occur simultaneously with the flashing process.
 Alternatively, you can bypass the mentioned Kconfig options and manually place a custom :file:`keyfile.json` in the build directory.
+
+.. _ug_nrf54l_developing_provision_kmu_psa_crypto_api:
+
+Provisioning KMU with PSA Crypto API
+************************************
+
+You can use the PSA Crypto API to create a provisioning image to be used to provision keys to the device during development or production.
+
+Detailed steps for creating such a provisioning image for your application are beyond the scope of this guide.
+Use the guidelines in :ref:`ug_nrf54l_crypto_kmu_key_programming_model` and in the `nRF54L Series Production Programming`_ guide.
+
+.. _ug_nrf54l_developing_provision_kmu_production:
+
+Provisioning KMU with production tools
+**************************************
+
+For production, `provision the KMU data <Provisioning KMU data_>`_ as described in the `nRF54L Series Production Programming`_ guide.
+
+Nordic Semiconductor recommends using other tools than the ones used for :ref:`provisioning for development <ug_nrf54l_developing_provision_kmu_development>`.
+For example, you could use SEGGER J-Link or other debugging tools.
+
+Using other tools means that you need to manually make sure that the values set in the :c:struct:`kmu_metadata` data structure's bitfields match the required values for different key types and the CRACEN driver's own requirements.
+
+.. _ug_nrf54l_developing_provision_kmu_production_metadata:
+
+Setting up KMU metadata and destination addresses for production
+================================================================
+
+The :c:struct:`kmu_metadata` structure is a 32-bit bitfield defined in the CRACEN driver source code (:file:`nrf/subsys/nrf_security/src/drivers/cracen/cracenpsa/src/kmu.c`):
+
+.. literalinclude:: ../../../../../subsys/nrf_security/src/drivers/cracen/cracenpsa/src/kmu.c
+   :start-after: #endif
+   :end-before: _Static_assert(sizeof(kmu_metadata)
+   :language: c
+   :class: highlight
+
+When you configure :c:struct:`psa_key_attributes_t`, the CRACEN driver converts the attributes to KMU metadata (:c:func:`convert_from_psa_attributes`).
+
+To make sure that this conversion is correct and the provisioning is successful, the key type used and the key you generated need to match the valid configuration ranges.
+
+Common KMU provisioning configuration ranges
+--------------------------------------------
+
+The following table shows common KMU provisioning configuration ranges for the nRF54L15 device.
+The values are provided for the :ref:`ug_nrf54l_developing_provision_kmu_prerequisites` (SRC data fields) mentioned at the beginning of this page.
+The table includes multiple KMU slots that work together for keys larger than 128 bits.
+
+.. list-table:: Example KMU provisioning configurations for nRF54L15
+   :header-rows: 1
+   :widths: auto
+
+   * - Use case
+     - METADATA (KMU slot #0)
+     - DEST (KMU slot #0)
+     - VALUE (KMU slot #0)
+     - RPOLICY (KMU slot #0)
+     - METADATA (KMU slot #1)
+     - DEST (KMU slot #1)
+     - VALUE (KMU slot #1)
+     - RPOLICY (KMU slot #1)
+   * - Ed25519 revokable signature verification key
+     - TODO
+     - ``0x20000000``
+     - key_data[0..15] inclusive
+     - TODO
+     - ``0xffffffff``
+     - ``0x20000010``
+     - key_data[16..31] inclusive
+     - TODO
+   * - Ed25519 read-only signature verification key
+     - TODO
+     - ``0x20000000``
+     - key_data[0..15] inclusive
+     - TODO
+     - ``0xffffffff``
+     - ``0x20000010``
+     - key_data[16..31] inclusive
+     - TODO
+   * - Ed25519 deletable key
+     - TODO
+     - ``0x20000000``
+     - key_data[0..15] inclusive
+     - TODO
+     - ``0xffffffff``
+     - ``0x20000010``
+     - key_data[16..31] inclusive
+     - TODO
+   * - AES-CTR 128-bit protected decryption key
+     - TODO
+     - TODO (protected key RAM)
+     - key_data
+     - TODO
+     - N/A
+     - N/A
+     - N/A
+     - N/A
+   * - AES-CTR 256 bit protected decryption key
+     - TODO
+     - TODO (protected key RAM + 16)
+     - key_data[0..15] inclusive
+     - TODO
+     - ``0xffffffff``
+     - TODO (protected key RAM + 16)
+     - key_data[16..31] inclusive
+     - TODO
+
+Example conversion
+------------------
+
+The following example shows how the PSA key attribute values are converted when creating metadata for the Ed25519 revokable signature verification key.
+
+1. User creates :c:struct:`psa_key_attributes_t` key attributes for the Ed25519 revokable verification key:
+
+   .. code-block:: c
+
+      psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
+      psa_set_key_type(&attr, PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS));
+      psa_set_key_bits(&attr, 255);
+      psa_set_key_algorithm(&attr, PSA_ALG_PURE_EDDSA);
+      psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_VERIFY_HASH);
+      psa_set_key_lifetime(&attr, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
+          CRACEN_KEY_PERSISTENCE_REVOKABLE, PSA_KEY_LOCATION_CRACEN_KMU));
+      psa_set_key_id(&attr, PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(
+          CRACEN_KMU_KEY_USAGE_SCHEME_RAW, 226));
+
+2. The CRACEN driver ``convert_from_psa_attributes()`` function converts these PSA attributes to the following :c:struct:`kmu_metadata` field values:
+
+   * ``metadata_version`` = ``0``
+   * ``key_usage_scheme`` = ``3`` (Raw, extracted from ``key_id``)
+   * ``reserved`` = ``0``
+   * ``algorithm`` = ``10`` (Ed25519)
+   * ``size`` = ``3`` (255 bits)
+   * ``rpolicy`` = ``3`` (Revokable)
+   * ``usage_flags`` = ``0b0001000`` (bit 3 set for Verify)
+
+   The metadata bitfields are packed from least-significant bit to most-significant bit:
+
+   .. code-block:: none
+
+      Bits  0-3:   metadata_version = 0        (0000)
+      Bits  4-5:   key_usage_scheme = 3        (11)
+      Bits  6-15:  reserved = 0                (0000000000)
+      Bits 16-19:  algorithm = 10              (1010)
+      Bits 20-22:  size = 3                    (011)
+      Bits 23-24:  rpolicy = 3                 (11)
+      Bits 25-31:  usage_flags = 8             (0001000)
+
+      Binary representation:
+      0001000_11_011_1010_0000000000_11_0000
+
+      Grouped by bytes (MSB first):
+      00001000 11011101 00000000 00110000
+
+      Hexadecimal: 0x11BA0030
+
+3. The KMU provisioning is executed with the following KMU slot configuration:
+
+   * **KMU slot #0 (first slot):**
+
+     * METADATA: ``0x11BA0030``
+     * DEST: ``0x20000000`` (kmu_push_area start address)
+     * VALUE: key_data[0..15] (first 16 bytes of the 32-byte Ed25519 public key)
+     * RPOLICY: ``0x3`` (Revokable)
+
+   * **KMU slot #1 (second slot):**
+
+     * METADATA: ``0xffffffff`` (secondary slot marker)
+     * DEST: ``0x20000010`` (kmu_push_area + 16 bytes)
+     * VALUE: key_data[16..31] (last 16 bytes of the 32-byte Ed25519 public key)
+     * RPOLICY: ``0x3`` (Revokable)
