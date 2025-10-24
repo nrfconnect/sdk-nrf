@@ -14,10 +14,12 @@ common:
     - ci_samples_zephyr_sysbuild_hello_world
 
 tests:
-  nrf.extended.sample.sysbuild.hello_world.lv10:
+  nrf.extended.sample.sysbuild.hello_world:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
     extra_args:
       - hello_world_SNIPPET=nordic-flpr
