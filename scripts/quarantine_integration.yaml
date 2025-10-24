@@ -112,6 +112,21 @@
   comment: "Configurations excluded to limit resources usage in integration Matter ns builds"
 
 - scenarios:
+    - sample.matter.light_bulb.nrf7002eb2.debug
+    - sample.matter.light_bulb.nrf7002eb2.release
+    - sample.matter.light_switch.nrf7002eb2.debug
+    - sample.matter.light_switch.nrf7002eb2.release
+    - sample.matter.lock.nrf7002eb2.debug
+    - sample.matter.lock.nrf7002eb2.release
+    - sample.matter.manufacturer_specific.nrf7002eb2.debug
+    - sample.matter.manufacturer_specific.nrf7002eb2.release
+    - sample.matter.thermostat.nrf7002eb2.debug
+    - sample.matter.thermostat.nrf7002eb2.release
+  platforms:
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  comment: "Configurations excluded to limit resources usage in Matter integration builds"
+
+- scenarios:
     - sample.nrf7002.iot_devices
     - sample.nrf7002.high_performance
     - sample.nrf7002.memory_optimized
