@@ -1911,6 +1911,15 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 				{ TLV_PASSWORD,
 				  "SET_NETWORK 0 password \"%s\"",
 				  NULL, true },
+				{ TLV_STA_IEEE80211_W,
+				  "SET_NETWORK 0 ieee80211w %s",
+				  NULL, true },
+				{ TLV_DOMAIN_MATCH,
+				  "SET_NETWORK 0 domain_match \"%s\"",
+				  NULL, true },
+				{ TLV_DOMAIN_SUFFIX_MATCH,
+				  "SET_NETWORK 0 domain_suffix_match \"%s\"",
+				  NULL, true },
 			};
 
 			for (size_t i = 0; i < ARRAY_SIZE(config_cmds); i++) {
@@ -1930,10 +1939,6 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 				}
 			}
 
-			ret = run_qt_command(buffer);
-			CHECK_RET();
-			ret = run_qt_command("SET_NETWORK 0 ieee80211w 1");
-			CHECK_RET();
 		}
 #else
 		}
