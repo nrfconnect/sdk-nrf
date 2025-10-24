@@ -7,6 +7,8 @@
 #include <stdint.h>
 
 /** @brief Antenna switching Callback for use in Channel Sounding.
+ *  @note  This function is called from interrupt context and must not
+ *         call Zephyr APIs or any blocking APIs.
  *
  *  See also @ref sdc_support_channel_sounding
  *
