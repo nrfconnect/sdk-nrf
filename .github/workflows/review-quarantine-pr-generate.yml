@@ -1,0 +1,151 @@
+name: Review Quarantine PR (Generate)
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  # No write permissions; runs in PR context with read-only token
+
+jobs:
+  generate-comment:
+    name: Generate quarantine comment artifacts
+    runs-on: ubuntu-24.04
+    if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+    permissions:
+      contents: read
+    env:
+      # Static file allowlist
+      QUARANTINE_FILES: |
+        scripts/quarantine.yaml
+        scripts/quarantine_integration.yaml
+        scripts/quarantine_no_optimization.yaml
+        scripts/quarantine_windows_mac.yaml
+        scripts/quarantine_llvm.yaml
+
+      # Pass PR metadata via env and use native $VAR in scripts (avoids injection).
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      FORK_FULL: ${{ github.event.pull_request.head.repo.full_name }}
+      REPO: ${{ github.repository }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+
+    steps:
+      # Checkout the trusted base repo; do NOT checkout untrusted PR head.
+      - name: Checkout base repository (safe)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      # Fetch the PR by immutable SHA from the fork via public HTTPS, without a token.
+      # Also validate inputs before use.
+      - name: Fetch PR HEAD safely (no checkout, no token)
+        shell: bash
+        run: |
+          set -euo pipefail
+          export GIT_TERMINAL_PROMPT=0
+
+          # Ensure no auth header leaks to the public fork.
+          git config --local --unset-all http.https://github.com/.extraheader || true
+
+          # Basic input validation
+          if ! [[ "$HEAD_SHA" =~ ^[0-9a-fA-F]{40}$ ]]; then
+            echo "Invalid HEAD_SHA: $HEAD_SHA"
+            exit 1
+          fi
+          if ! [[ "$FORK_FULL" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; then
+            echo "Invalid FORK_FULL: $FORK_FULL"
+            exit 1
+          fi
+
+          # Fetch by SHA into a local ref without adding a persistent remote.
+          git -c http.https://github.com/.extraheader= \
+              fetch --no-tags --depth=1 "https://github.com/$FORK_FULL.git" \
+              "$HEAD_SHA:refs/remotes/pr_head"
+
+      - name: Detect changes in quarantine files
+        id: changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Build an array of allowlisted files (skip blank lines)
+          mapfile -t QFILES < <(printf '%s\n' "$QUARANTINE_FILES" | sed '/^\s*$/d')
+          if [[ ${#QFILES[@]} -eq 0 ]]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if git diff --name-only "$BASE_SHA" pr_head -- "${QFILES[@]}" | grep -q .; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Stop early if not changed
+        if: steps.changed.outputs.changed != 'true'
+        run: echo "Quarantine files not changed; skipping."
+
+      - name: Generate diff of quarantine files only (U100 context)
+        if: steps.changed.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t QFILES < <(printf '%s\n' "$QUARANTINE_FILES" | sed '/^\s*$/d')
+          git diff -U100 "$BASE_SHA" pr_head -- "${QFILES[@]}" > diff_quarantine.txt
+          head -n 100 diff_quarantine.txt || true
+
+      - name: Checkout current repository (safe)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install Python deps
+        if: steps.changed.outputs.changed == 'true'
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install pyyaml
+
+      - name: Prepare comment body (token-free Python)
+        if: steps.changed.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/quarantine_notifier.py \
+            --repo-root . \
+            --diff-file diff_quarantine.txt \
+            --output quarantine_comment.md \
+            --audit-json quarantine_audit.json \
+            --inventory-json scenario_inventory.json \
+            --ref "$HEAD_SHA" \
+            --strict-missing-codeowners \
+            --strict-flag-file strict_missing_codeowners.flag
+
+      - name: Upload artifacts for publish workflow
+        if: steps.changed.outputs.changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: quarantine-artifacts-pr${{ github.event.pull_request.number }}-sha${{ github.event.pull_request.head.sha }}
+          path: |
+            diff_quarantine.txt
+            quarantine_comment.md
+            quarantine_audit.json
+            scenario_inventory.json
+            strict_missing_codeowners.flag
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Fail if strict violation (missing CODEOWNERS)
+        if: steps.changed.outputs.changed == 'true'
+        shell: bash
+        run: |
+          if [[ -f strict_missing_codeowners.flag ]]; then
+            echo "Strict mode: Missing CODEOWNERS detected. Failing the job."
+            cat strict_missing_codeowners.flag
+            exit 1
+          else
+            echo "Strict mode: no violations."
+          fi
