@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- /* Drive i2s peripheral from ACLK. */
+/* Drive i2s peripheral from ACLK. */
 
 &clock {
 	hfclkaudio-frequency = <11289600>;

@@ -15,7 +15,7 @@
 };
 
 &uart2 {
-	status="disabled";
+	status = "disabled";
 };
 
 &i2c2 {
