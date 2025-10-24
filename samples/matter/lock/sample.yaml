@@ -25,6 +25,16 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.matter.lock.nrf7002eb2.debug:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - lock_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.lock.release:
     sysbuild: true
     build_only: true
@@ -44,6 +54,19 @@ tests:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.matter.lock.nrf7002eb2.release:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=release
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - SB_CONFIG_PARTITION_MANAGER=y
+      - lock_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.lock.smp_dfu:
     sysbuild: true
     build_only: true
@@ -55,12 +78,25 @@ tests:
       - nrf7002dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp/nrf7001
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp
       - nrf7002dk/nrf5340/cpuapp/nrf7001
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.matter.lock.nrf7002eb2.smp_dfu:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - CONFIG_CHIP_DFU_OVER_BT_SMP=y
+      - lock_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.lock.no_dfu.no_fd:
     sysbuild: true
     build_only: true
