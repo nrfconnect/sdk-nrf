@@ -1,9 +1,21 @@
 sample:
   description: Bluetooth Low Energy Power Profiling sample
   name: Bluetooth LE Power Profiling
+common:
+  sysbuild: true
+  tags:
+    - bluetooth
+    - ci_build
+    - sysbuild
+    - ppk_power_measure
+  harness: pytest
+  harness_config:
+    fixture: ppk_power_measure
+    pytest_root:
+      - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
+  timeout: 150
 tests:
   sample.bluetooth.peripheral_power_profiling:
-    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf52dk/nrf52832
@@ -28,18 +40,11 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
+
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_0dBm_100ms:
-    sysbuild: true
-    harness: pytest
-    integration_platforms:
+    integration_platforms: &ppk_power_measure_integration_platforms
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-    platform_allow:
+    platform_allow: &ppk_power_measure_platform_allow
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
@@ -55,29 +60,25 @@ tests:
       - CONFIG_BT_CTLR_TX_PWR_0=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=31
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=100
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
-      - ppk_power_measure
-    harness_config:
-      fixture: ppk_power_measure
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
-    timeout: 120
+
+  sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_0dBm_30ms:
+    integration_platforms: *ppk_power_measure_integration_platforms
+    platform_allow: *ppk_power_measure_platform_allow
+    extra_args:
+      - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk/nrf54lv10a/cpuapp/ns:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp/ns:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+      - CONFIG_BT_CTLR_TX_PWR_0=y
+      - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=27
+      - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=30
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_8dBm_100ms:
-    sysbuild: true
-    harness: pytest
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+    integration_platforms: *ppk_power_measure_integration_platforms
+    platform_allow: *ppk_power_measure_platform_allow
     extra_args:
       - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
       - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
@@ -89,29 +90,25 @@ tests:
       - CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=31
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=100
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
-      - ppk_power_measure
-    harness_config:
-      fixture: ppk_power_measure
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
-    timeout: 120
+
+  sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_8dBm_30ms:
+    integration_platforms: *ppk_power_measure_integration_platforms
+    platform_allow: *ppk_power_measure_platform_allow
+    extra_args:
+      - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk/nrf54lv10a/cpuapp/ns:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp/ns:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+      - CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
+      - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=27
+      - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=30
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfxo_0dBm_100ms:
-    sysbuild: true
-    harness: pytest
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+    integration_platforms: *ppk_power_measure_integration_platforms
+    platform_allow: *ppk_power_measure_platform_allow
     extra_args:
       - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
       - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
@@ -123,29 +120,25 @@ tests:
       - CONFIG_BT_CTLR_TX_PWR_0=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=31
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=100
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
-      - ppk_power_measure
-    harness_config:
-      fixture: ppk_power_measure
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
-    timeout: 120
+
+  sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfxo_0dBm_30ms:
+    integration_platforms: *ppk_power_measure_integration_platforms
+    platform_allow: *ppk_power_measure_platform_allow
+    extra_args:
+      - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk/nrf54lv10a/cpuapp/ns:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp/ns:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
+      - CONFIG_BT_CTLR_TX_PWR_0=y
+      - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=27
+      - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=30
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfxo_8dBm_100ms:
-    sysbuild: true
-    harness: pytest
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+    integration_platforms: *ppk_power_measure_integration_platforms
+    platform_allow: *ppk_power_measure_platform_allow
     extra_args:
       - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
       - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
@@ -157,29 +150,25 @@ tests:
       - CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=31
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=100
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
-      - ppk_power_measure
-    harness_config:
-      fixture: ppk_power_measure
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
-    timeout: 120
+
+  sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfxo_8dBm_30ms:
+    integration_platforms: *ppk_power_measure_integration_platforms
+    platform_allow: *ppk_power_measure_platform_allow
+    extra_args:
+      - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk/nrf54lv10a/cpuapp/ns:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp/ns:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
+      - CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
+      - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=27
+      - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=30
 
   sample.bluetooth.peripheral_power_profiling.auto_non_conn_advert_lfxo_0dbm_100ms:
-    sysbuild: true
-    harness: pytest
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+    integration_platforms: *ppk_power_measure_integration_platforms
+    platform_allow: *ppk_power_measure_platform_allow
     extra_args:
       - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_non_conn_advert.overlay"
       - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_non_conn_advert.overlay"
@@ -191,20 +180,24 @@ tests:
       - CONFIG_BT_CTLR_TX_PWR_0=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=31
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=100
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
-      - ppk_power_measure
-    harness_config:
-      fixture: ppk_power_measure
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
-    timeout: 150
+
+  sample.bluetooth.peripheral_power_profiling.auto_non_conn_advert_lfxo_0dbm_30ms:
+    integration_platforms: *ppk_power_measure_integration_platforms
+    platform_allow: *ppk_power_measure_platform_allow
+    extra_args:
+      - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_non_conn_advert.overlay"
+      - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_non_conn_advert.overlay"
+      - platform:nrf54lv10dk/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_non_conn_advert.overlay"
+      - platform:nrf54lv10dk/nrf54lv10a/cpuapp/ns:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_non_conn_advert.overlay"
+      - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_non_conn_advert.overlay"
+      - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp/ns:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_non_conn_advert.overlay"
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
+      - CONFIG_BT_CTLR_TX_PWR_0=y
+      - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=27
+      - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=30
 
   sample.bluetooth.peripheral_power_profiling.llvm:
     toolchain_allow: llvm
-    sysbuild: true
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -213,7 +206,3 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
