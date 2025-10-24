@@ -1,8 +1,8 @@
 sample:
   description: |
-    This app provides an example of performing HMAC signing and verification
-    using the SHA256 hashing algorithm decryption using AES CBC mode
-  name: HMAC example
+    This sample demonstrates signing and verification using the HMAC algorithm
+    with SHA-256 as the hash function decryption in the AES CBC mode.
+  name: HMAC sample
 tests:
   sample.hmac.cc3xx:
     sysbuild: true

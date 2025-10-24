@@ -1,6 +1,7 @@
 sample:
-  description: HMAC key derivation function example
-  name: PBKDF2 example
+  description: |
+    This sample demonstrates key derivation using the PBKDF2 algorithm with HMAC-SHA-256.
+  name: PBKDF2 sample
 tests:
   sample.pbkdf2.cc3xx:
     sysbuild: true

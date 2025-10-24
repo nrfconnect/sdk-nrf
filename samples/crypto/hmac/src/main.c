@@ -111,7 +111,7 @@ int hmac_sign(void)
 	psa_status_t status;
 	psa_mac_operation_t operation = PSA_MAC_OPERATION_INIT;
 
-	LOG_INF("Signing using HMAC ...");
+	LOG_INF("Signing using the HMAC algorithm...");
 
 	/* Initialize the HMAC signing operation */
 	status = psa_mac_sign_setup(&operation, key_id, PSA_ALG_HMAC(PSA_ALG_SHA_256));

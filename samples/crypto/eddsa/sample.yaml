@@ -1,7 +1,7 @@
 sample:
   description: |
-    This app provides an example of signing/verifying using EdDSA signatures
-  name: EdDSA example
+    This sample demonstrates EdDSA signing and verification using the EdDSA signature algorithm.
+  name: EdDSA sample
 tests:
   sample.eddsa.cc3xx:
     sysbuild: true
