@@ -438,6 +438,7 @@
 /samples/bluetooth/central_nfc_pairing/   @nrfconnect/ncs-si-muffin
 /samples/bluetooth/central_smp_client/    @nrfconnect/ncs-si-muffin
 /samples/bluetooth/central_uart/          @nrfconnect/ncs-si-muffin
+/samples/bluetooth/channel_map_updates/   @nrfconnect/ncs-dragoon
 /samples/bluetooth/channel_sounding_ras_initiator/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/channel_sounding_ras_reflector/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/conn_time_sync/        @nrfconnect/ncs-dragoon
