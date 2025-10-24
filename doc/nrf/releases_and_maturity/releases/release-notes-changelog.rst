@@ -135,7 +135,7 @@ Security
     :kconfig:option:`CONFIG_TFM_PARTITION_CRYPTO` with Trusted Firmware-M (TF-M) through the
     :kconfig:option:`CONFIG_TFM_PARTITION_INTERNAL_TRUSTED_STORAGE` Kconfig option.
 
-  * Support for AES in counter mode using CRACEN for the :zephyr:board:`nrf54lm20dk`.
+  * Support for AES in counter mode and CBC mode using CRACEN for the :zephyr:board:`nrf54lm20dk`.
 
 * Updated:
 
@@ -468,6 +468,10 @@ Cryptography samples
   * The :ref:`crypto_kmu_usage_nrf54l` sample.
 
 * :ref:`crypto_aes_ctr` sample:
+
+  * Added support for ``nrf54lm20dk/nrf54lm20a/cpuapp``.
+
+* :ref:`crypto_aes_cbc` sample:
 
   * Added support for ``nrf54lm20dk/nrf54lm20a/cpuapp``.
 
