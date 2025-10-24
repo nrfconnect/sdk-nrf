@@ -39,4 +39,7 @@ endif # RISCV
 config SYS_CLOCK_HW_CYCLES_PER_SEC
 	default $(dt_nodelabel_int_prop,grtc,clock-frequency) if NRF_GRTC_TIMER
 
+config MSPI_DW_DDR
+	default n
+
 endif # SOC_SERIES_NRF71X
