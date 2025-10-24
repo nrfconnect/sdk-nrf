@@ -6,3 +6,4 @@ source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
 config REMOTE_BOARD
 	string
 	default "$(BOARD)/nrf54lv10a/cpuflpr" if SOC_NRF54LV10A_ENGA_CPUAPP
+	default "$(BOARD)/nrf7120/cpuflpr" if SOC_NRF7120_ENGA_CPUAPP
