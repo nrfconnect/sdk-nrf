@@ -935,6 +935,8 @@ Trusted Firmware-M
 Documentation
 =============
 
+* Added the Debug logging for the Bluetooth stack section in the :ref:`gs_debugging` page.
+
 * Updated:
 
   * The :ref:`emds_readme_application_integration` section in the :ref:`emds_readme` library documentation to clarify the EMDS storage context usage.
