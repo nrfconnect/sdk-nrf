@@ -1,0 +1,68 @@
+/*  This overlay file supports v0.9.X of the nrf9161dk board
+ *  and hopefully beyond.  V0.9.X uses the gd25wb256 SPI FLASH
+ *  instead of the gd25lb256 used on v0.7.X
+ *
+ *  Notes:
+ *  1. 9161DK v0.9.x uses gd25wb256 with jedec-id = [c8 65 19]
+ *  2. It should be possible to remove the &spi3 below
+ *     when Zephyr is upgraded to v.3.x (nrf SDK v2.5.x).
+ */
+
+&spi3 {
+
+	gd25wb256: gd25wb256e3ir@1 {
+		compatible = "jedec,spi-nor";
+		status = "disabled";
+		reg = <1>;
+		spi-max-frequency = <8000000>;
+		size = <268435456>;
+		has-dpd;
+		t-enter-dpd = <3000>;
+		t-exit-dpd = <40000>;
+		sfdp-bfp = [
+			e5 20 f3 ff  ff ff ff 0f  44 eb 08 6b  08 3b 42 bb
+			ee ff ff ff  ff ff 00 ff  ff ff 00 ff  0c 20 0f 52
+			10 d8 00 ff  44 7a c9 fe  83 67 26 62  ec 82 18 44
+			7a 75 7a 75  04 c4 d5 5c  00 06 74 00  08 50 00 01
+			];
+		jedec-id = [c8 65 19];
+	};
+};
+
+
+&gd25wb256 {
+	status = "okay";
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		lfs_part1: partition@0 {
+			label = "littlefs_storage";
+			reg = <0x00000000 0x1e84800>;
+		};
+	};
+};
+
+/* Add uart aliases for v2.2.0 of nRF SDK  */
+/ {
+	aliases {
+		uart0 = &uart0;
+		uart1 = &uart1;
+		spi-flash0 = &gd25wb256;
+	};
+	chosen {
+		nordic,pm-ext-flash = &gd25wb256;
+	};
+};
+
+&uart0 {
+	status = "okay";
+	current-speed = <921600>;
+};
+
+&uart1 {
+	status = "okay";
+	current-speed = <921600>;
+	hw-flow-control;
+};
