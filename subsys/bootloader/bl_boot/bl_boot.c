@@ -175,8 +175,8 @@ static void __ramfunc jump_in(uint32_t reset)
 		"   bx   r0\n"
 		:
 		: "r" (reset),
-		  "i" (CONFIG_SRAM_BASE_ADDRESS),
-		  "i" (CONFIG_SRAM_SIZE * 1024),
+		  "r" (CONFIG_SRAM_BASE_ADDRESS),
+		  "r" (CONFIG_SRAM_SIZE * 1024),
 		  "r" (CLEANUP_RAM_GAP_START),
 		  "r" (CLEANUP_RAM_GAP_SIZE),
 		  "i" (0)
