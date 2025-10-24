@@ -7,8 +7,7 @@ Crypto: Persistent key usage
    :local:
    :depth: 2
 
-The persistent key sample shows how to generate a persistent key using the Platform Security Architecture (PSA) APIs.
-Persistent keys are stored in the Internal Trusted Storage (ITS) of the device and retain their value between resets.
+The persistent key sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to generate and use persistent keys that are stored in the Internal Trusted Storage (ITS) of the device and retain their value between resets.
 The implementation of the PSA ITS API is provided in one of the following ways, depending on your configuration:
 
 * Through TF-M using Internal Trusted Storage and Protected Storage services.
@@ -31,21 +30,43 @@ The sample supports the following development kits:
 Overview
 ********
 
+The sample :ref:`enables PSA Crypto API <psa_crypto_support_enable>` and configures the following Kconfig options for the cryptographic features:
+
+* :kconfig:option:`CONFIG_MBEDTLS_PSA_CRYPTO_STORAGE_C` - Used to enable support for the `PSA Certified Secure Storage API`_.
+* :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES` - Used to enable support for AES key types from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_key_types`.
+* :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR` - Used to enable support for the CTR mode algorithm from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_cipher_modes`.
+
+.. include:: /samples/crypto/aes_cbc/README.rst
+   :start-after: crypto_sample_overview_driver_selection_start
+   :end-before: crypto_sample_overview_driver_selection_end
+
 In this sample, an AES 128-bit key is created.
 Persistent keys can be of any type supported by the PSA APIs.
 
-The sample performs the following operations:
+Builds without TF-M use the :ref:`secure_storage` subsystem as the PSA Secure Storage API provider.
+The :ref:`lib_hw_unique_key` is used to encrypt the key before storing it.
 
-1. Initialization of the Platform Security Architecture (PSA) API.
+Once built and run, the sample performs the following operations:
 
-#. Generation of a persistent AES 128-bit key.
+1. Initialization:
 
-#. Removal of the key from RAM.
+   a. The PSA Crypto API is initialized using :c:func:`psa_crypto_init`.
+   #. A random 128-bit AES key is generated using :c:func:`psa_generate_key` with persistent lifetime.
+      The key is configured with usage flags for encryption and decryption.
 
-#. Encryption and decryption of a message using the key.
+#. Key management:
 
-#. Cleanup.
-   The AES key is removed from the PSA crypto keystore.
+   a. The key is purged from RAM using :c:func:`psa_purge_key` to simulate device reset behavior.
+   #. The persistent key is used for encryption and decryption operations.
+
+#. Encryption and decryption:
+
+   a. A message is encrypted using :c:func:`psa_cipher_encrypt` with the persistent key.
+   #. The encrypted message is decrypted using :c:func:`psa_cipher_decrypt` with the persistent key.
+
+#. Cleanup:
+
+   a. The persistent AES key is removed from the PSA crypto keystore using :c:func:`psa_destroy_key`.
 
 .. note::
    The read-only type of persistent keys cannot be destroyed with the ``psa_destroy_key`` function.
@@ -66,20 +87,35 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, complete the following steps to test it:
+.. include:: /samples/crypto/aes_cbc/README.rst
+   :start-after: crypto_sample_testing_start
+   :end-before: crypto_sample_testing_end
 
-1. |connect_terminal|
-#. Compile and program the application.
-#. Observe the logs from the application using a terminal emulator.
+.. code-block:: text
 
-Dependencies
-************
-
-* PSA APIs:
-
-   * :file:`psa/crypto.h`
-
-* Builds without TF-M use the :ref:`secure_storage` subsystem as the PSA Secure Storage API
-  provider.
-
-   * The :ref:`lib_hw_unique_key` is used to encrypt the key before storing it.
+   *** Booting nRF Connect SDK v3.1.0-6c6e5b32496e ***
+   *** Using Zephyr OS v4.1.99-1612683d4010 ***
+   [00:00:00.251,159] <inf> persistent_key_usage: Starting persistent key example...
+   [00:00:00.251,190] <inf> persistent_key_usage: Generating random persistent AES key...
+   [00:00:00.251,342] <inf> persistent_key_usage: Persistent key generated successfully!
+   [00:00:00.251,373] <inf> persistent_key_usage: Encryption successful!
+   [00:00:00.251,404] <inf> persistent_key_usage: ---- Plaintext (len: 100): ----
+   [00:00:00.251,434] <inf> persistent_key_usage: Content:
+                                    Example string to demonstrate basic usage of a persistent key.
+   [00:00:00.251,465] <inf> persistent_key_usage: ---- Plaintext end  ----
+   [00:00:00.251,495] <inf> persistent_key_usage: ---- Encrypted text (len: 100): ----
+   [00:00:00.251,526] <inf> persistent_key_usage: Content:
+                                    a1 b2 c3 d4 e5 f6 07 18  29 3a 4b 5c 6d 7e 8f 90 |........):\m~..
+                                   a1 b2 c3 d4 e5 f6 07 18  29 3a 4b 5c 6d 7e 8f 90 |........):\m~..
+                                   a1 b2 c3 d4 e5 f6 07 18  29 3a 4b 5c 6d 7e 8f 90 |........):\m~..
+                                   a1 b2 c3 d4 e5 f6 07 18  29 3a 4b 5c 6d 7e 8f 90 |........):\m~..
+                                   a1 b2 c3 d4 e5 f6 07 18  29 3a 4b 5c 6d 7e 8f 90 |........):\m~..
+                                   a1 b2 c3 d4 e5 f6 07 18  29 3a 4b 5c 6d 7e 8f 90 |........):\m~..
+                                   a1 b2 c3 d4 e5 f6 07 18  29 3a 4b 5c 6d 7e 8f 90 |........):\m~..
+   [00:00:00.251,556] <inf> persistent_key_usage: ---- Encrypted text end  ----
+   [00:00:00.251,587] <inf> persistent_key_usage: ---- Decrypted text (len: 100): ----
+   [00:00:00.251,617] <inf> persistent_key_usage: Content:
+                                    Example string to demonstrate basic usage of a persistent key.
+   [00:00:00.251,648] <inf> persistent_key_usage: ---- Decrypted text end  ----
+   [00:00:00.251,678] <inf> persistent_key_usage: Decryption successful!
+   [00:00:00.251,709] <inf> persistent_key_usage: Example finished successfully!

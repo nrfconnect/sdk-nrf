@@ -142,7 +142,7 @@ int export_derived_key(void)
 	LOG_INF("Compare derived key with expected value...");
 	cmp_status = memcmp(m_expected_output_key, m_output_key, sizeof(m_output_key));
 	if (cmp_status != 0) {
-		LOG_INF("Error, the derived key doesn't match the expected value!");
+		LOG_INF("Error, the derived key does not match the expected value!");
 		return APP_ERROR;
 	}
 
@@ -158,7 +158,7 @@ int derive_hkdf(void)
 	psa_key_derivation_operation_t operation =
 		PSA_KEY_DERIVATION_OPERATION_INIT;
 
-	LOG_INF("Deriving a key using HKDF and SHA256...");
+	LOG_INF("Deriving a key using HKDF with SHA-256...");
 
 	/* Derived key settings
 	 * WARNING: This key usage makes the key exportable which is not safe and

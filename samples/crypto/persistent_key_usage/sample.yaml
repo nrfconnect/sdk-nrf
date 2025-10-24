@@ -1,8 +1,7 @@
 sample:
   description: |
-    This sample provides an example of using persistent keys with the
-    PSA Crypto API. A random AES persistent key is generated and used.
-  name: Persistent key usage
+    This sample demonstrates persistent key usage using the PSA Crypto API.
+  name: Persistent key usage sample
 
 common:
   sysbuild: true

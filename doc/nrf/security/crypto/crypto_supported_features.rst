@@ -3002,6 +3002,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                * - Configuration automatically generated based on the enabled key encapsulation algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_KEM`
 
+.. _ug_crypto_supported_features_kdf_algorithms:
 
 KDF algorithms
 ==============
@@ -5786,6 +5787,8 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                * - Configuration automatically generated based on the enabled asymmetric encryption algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
                  - | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_OAEP`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_CRYPT` (does not support RSA key pair generation)
+
+.. _ug_crypto_supported_features_ecc_curve_types:
 
 ECC curve types
 ===============
