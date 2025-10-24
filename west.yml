@@ -280,7 +280,7 @@ manifest:
       path: nrfx
       groups:
         - nrfx
-      revision: 2bb95f2bf701c060f795ab20cff1f57c27c96900
+      revision: d926e7575822748a6db7cbe1fb84d830f23e41b5
 
   # West-related configuration for the nrf repository.
   self:
