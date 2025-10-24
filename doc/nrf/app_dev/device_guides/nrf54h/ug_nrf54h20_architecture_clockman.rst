@@ -17,7 +17,6 @@ Each of the clock sources needs proper management for the following reasons:
 Some clock management operations are performed solely by hardware circuits, while others require software intervention.
 Most clocks can be locked to more accurate ones to improve their accuracy.
 
-
 Clock domains
 *************
 
@@ -78,6 +77,54 @@ Global HSFLL
 
 Global HSFLL clocks *fast* peripherals, FLPR, RAM, and MRAM blocks.
 
+Default configurations
+----------------------
+
+The local and global HSFLLs are clocked at their highest frequency by default. This ensures MRAM access is fast
+and every peripheral is clocked adequately to function on boot. The HFXO is not started.
+
+Runtime clock management considerations
+***************************************
+
+LFCLK, HFXO and FLL16M
+======================
+
+These clocks are fixed frequency, and are by default optimized for low power at the cost of accuracy and precision.
+Firmware can request minimum accuracy and precision if the default does not meet timing requirements using the
+``nrf_clock_control`` API provided by Zephyr RTOS.
+
+The startup time of these clocks may be considerably long, in the order of 100s of milliseconds. To ensure the
+clocks meet the timing requirements in time, get the startup time of a specific accuracy and precision to be met
+using the ``nrf_clock_control_get_startup_time`` API. See ``Zephyr clock control API`` section below.
+
+Global HSFLL
+============
+
+Firmware can request this clock to run at a lower frequency than its default of 320MHz. It is recommended to leave
+this clock at its default frequency. Note the following if frequency is lowered:
+
+* The MRAM access latency will be increased, thus lowering overall CPU performance when running code from MRAM.
+  This resuls in the CPU running for longer, thus increasing power consumption. Furthermore ISR handling latency
+  will be increased.
+* Some *fast* peripherals will not be able to operate below a certain frequency, thus the application must take
+  care to request a higher frequency before use of these fast peripherals.
+* If CAN is used, the Global HSFLL frequency must not be lower than 128MHz.
+
+If the Global HSFLL is to be managed at runtime, note that the clock control driver will force it to its lowest
+frequency. Firmware will need to request a higher frequency using the ``nrf_clock_control`` API.
+
+Local HSFLL
+===========
+
+Firmware can request this clock to run at a lower frequency than its default. It is recommended to leave this
+clock at its default frequency. Note the following if frequency is lowered:
+
+* The CPU performance will be lowered. This resuls in the CPU running for longer, thus increasing power
+  consumption. Furthermore ISR handling latency will be increased.
+
+If the local HSFLL is to be managed at runtime, note that the clock control driver will force it to its lowest
+frequency. Firmware will need to request a higher frequency using the ``nrf_clock_control`` API.
+
 Zephyr clock control API
 ************************
 
@@ -103,10 +150,12 @@ For more details, see the following links:
 
 * :ref:`zephyr:clock_control_api`.
 * The following calls in the `Zephyr's nRF clock control API extensions`_ (:file:`include/zephyr/drivers/clock_control/nrf_clock_control.h`):
+* The sample at ``zephyr/samples/boards/nordic/clock_control``
 
   * ``nrf_clock_control_request()``: Requests a reservation to use a given clock with specified attributes.
   * ``nrf_clock_control_release()``: Releases a reserved use of a clock.
   * ``nrf_clock_control_cancel_or_release()``: Safely cancels a reservation request.
+  * ``nrf_clock_control_get_startup_time()``: Gets the maximum time for a clock to apply specified attributes.
 
 * The following calls in the `clocks devicetree macro API`_ (:file:`include/zephyr/devicetree/clocks.h`):
 
