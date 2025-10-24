@@ -49,3 +49,10 @@
 &wdt31 {
 	status = "okay";
 };
+
+/* Workaround: Redirect Button3 to different pin as for now because it causes issues with
+ * nrf7002EB2 shield. For now rewire button3 to button2. Related to SHEL-3874.
+ */
+&button3 {
+	gpios = <&gpio1 0x8 0x11>;
+};
