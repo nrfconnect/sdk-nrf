@@ -19,8 +19,4 @@ config TEST_ROLE_REMOTE
 	  KConfig used in synchronization phase.
 	  Set TEST_ROLE_REMOTE=y on core that shall synchronize with the Host core.
 
-config GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING
-	bool "Enable global domain frequency changing from remote"
-	select CLOCK_CONTROL
-
 source "Kconfig.zephyr"

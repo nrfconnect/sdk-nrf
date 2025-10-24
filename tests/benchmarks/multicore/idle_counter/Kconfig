@@ -12,8 +12,4 @@ config TEST_SLEEP_DURATION_MS
 	  Based on the value of 'min-residency-us' specified for each power state defined in the DTS,
 	  core enters the lowest possible power state.
 
-config GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING
-	bool "Enable global domain frequency changing"
-	select CLOCK_CONTROL
-
 source "Kconfig.zephyr"
