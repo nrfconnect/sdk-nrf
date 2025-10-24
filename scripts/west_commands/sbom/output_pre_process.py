@@ -9,7 +9,7 @@ Pre-processing of data before it goes to the output.
 
 from data_structure import Data, License, LicenseExpr
 from license_utils import get_license, get_spdx_license_expr_info, is_spdx_license
-
+from urllib.parse import urlparse
 
 def pre_process(data: Data):
     '''Do pre-processing of data for simpler usage by the output modules.'''
@@ -98,8 +98,9 @@ def pre_process(data: Data):
             package.version = 'NoneVersion'
         if package.url is None:
             continue
-        if (package.name is None) and ('github.com' in package.url):
-            offs = package.url.find('github.com') + len('github.com') + 1
+        parsed_url = urlparse(package.url)
+        if (package.name is None) and (parsed_url.hostname and parsed_url.hostname.lower().endswith("github.com")):
+            offs = package.url.find(parsed_url.hostname) + len(parsed_url.hostname) + 1
             package.name = package.url[offs:]
             if package.name.endswith('.git'):
                 package.name = package.name[:-4]
