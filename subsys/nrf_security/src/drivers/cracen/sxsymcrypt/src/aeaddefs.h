@@ -23,7 +23,7 @@ struct sx_aead_cmdma_cfg {
 	uint32_t decr;
 	uint32_t mode;
 	const struct sx_aead_cmdma_tags *dmatags;
-	const char *verifier;
+	const uint8_t *verifier;
 	int (*lenAlenC)(size_t arg0, size_t arg1, uint8_t *arg2);
 	uint32_t ctxsave;
 	uint32_t ctxload;

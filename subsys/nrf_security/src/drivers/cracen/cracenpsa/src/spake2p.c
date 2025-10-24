@@ -136,7 +136,7 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 	uint8_t w0N[CRACEN_P256_POINT_SIZE];
 
 	MAKE_SX_POINT(pt_n_w0N, w0N, CRACEN_P256_POINT_SIZE);
-	MAKE_SX_POINT(pt_NM, (char *)operation->NM, CRACEN_P256_POINT_SIZE);
+	MAKE_SX_POINT(pt_NM, (uint8_t *)operation->NM, CRACEN_P256_POINT_SIZE);
 	sx_ecop w0 = {.bytes = operation->w0, .sz = sizeof(operation->w0)};
 
 	/* w0 * N. */
@@ -150,9 +150,9 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 	const struct sx_pk_cmd_def *cmd = SX_PK_CMD_MOD_SUB;
 	const uint8_t *field_size = sx_pk_field_size(operation->curve);
 
-	sx_op modulo = {.sz = CRACEN_P256_KEY_SIZE, .bytes = (char *)field_size};
+	sx_op modulo = {.sz = CRACEN_P256_KEY_SIZE, .bytes = (uint8_t *)field_size};
 	uint8_t zeroes[CRACEN_P256_KEY_SIZE] = {0};
-	sx_op a = {.sz = CRACEN_P256_KEY_SIZE, .bytes = (char *)zeroes};
+	sx_op a = {.sz = CRACEN_P256_KEY_SIZE, .bytes = zeroes};
 	sx_op b = {.sz = CRACEN_P256_KEY_SIZE, .bytes = &w0N[CRACEN_P256_KEY_SIZE]};
 
 	status = sx_mod_primitive_cmd(NULL, cmd, &modulo, &a, &b, &b);
@@ -178,7 +178,7 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 
 	/* Calculate V */
 	MAKE_SX_POINT(pt_V, V, CRACEN_P256_POINT_SIZE);
-	MAKE_SX_POINT(pt_L, (char *)operation->w1_or_L, CRACEN_P256_POINT_SIZE);
+	MAKE_SX_POINT(pt_L, operation->w1_or_L, CRACEN_P256_POINT_SIZE);
 	sx_ecop k = {.bytes = operation->role == PSA_PAKE_ROLE_CLIENT ? operation->w1_or_L
 								      : operation->xy,
 		     .sz = CRACEN_P256_KEY_SIZE};
@@ -317,8 +317,8 @@ static psa_status_t cracen_p256_reduce(cracen_spake2p_operation_t *operation,
 	}
 	const uint8_t *order = sx_pk_curve_order(operation->curve);
 
-	sx_op modulo = {.sz = CRACEN_P256_KEY_SIZE, .bytes = (char *)order};
-	sx_op b = {.sz = input_length, .bytes = (char *)input};
+	sx_op modulo = {.sz = CRACEN_P256_KEY_SIZE, .bytes = (uint8_t *)order};
+	sx_op b = {.sz = input_length, .bytes = input};
 	sx_op result = {.sz = CRACEN_P256_KEY_SIZE, .bytes = result_buffer};
 
 	/* The nistp256 curve order (n) is prime so we use the ODD variant of the reduce
@@ -408,7 +408,7 @@ static psa_status_t cracen_get_key_share(cracen_spake2p_operation_t *operation)
 	sx_ecop w0 = {.bytes = operation->w0, .sz = sizeof(operation->w0)};
 
 	MAKE_SX_POINT(pt_w0M, w0M, CRACEN_P256_POINT_SIZE);
-	MAKE_SX_POINT(pt_M, (char *)operation->MN, CRACEN_P256_POINT_SIZE);
+	MAKE_SX_POINT(pt_M, (uint8_t *)operation->MN, CRACEN_P256_POINT_SIZE);
 	status = sx_ecp_ptmult(operation->curve, &w0, &pt_M, &pt_w0M);
 	if (status != SX_OK) {
 		return silex_statuscodes_to_psa(status);
@@ -524,7 +524,7 @@ static psa_status_t set_password_key(cracen_spake2p_operation_t *operation,
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 
-		MAKE_SX_POINT(pt, (char *)password, CRACEN_P256_POINT_SIZE);
+		MAKE_SX_POINT(pt, (uint8_t *)password, CRACEN_P256_POINT_SIZE);
 		status = cracen_ecc_check_public_key(operation->curve, &pt);
 		if (status != PSA_SUCCESS) {
 			return status;

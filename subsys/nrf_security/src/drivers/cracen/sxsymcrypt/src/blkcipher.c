@@ -119,7 +119,7 @@ exit:
 }
 
 static int sx_blkcipher_create_aesxts(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key1,
-				      const struct sxkeyref *key2, const char *iv)
+				      const struct sxkeyref *key2, const uint8_t *iv)
 {
 	uint32_t keyszfld = 0;
 	uint32_t mode = 0;
@@ -163,7 +163,7 @@ static int sx_blkcipher_create_aesxts(struct sxblkcipher *cipher_ctx, const stru
 }
 
 int sx_blkcipher_create_aesxts_enc(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key1,
-				   const struct sxkeyref *key2, const char *iv)
+				   const struct sxkeyref *key2, const uint8_t *iv)
 {
 	int status;
 
@@ -178,7 +178,7 @@ int sx_blkcipher_create_aesxts_enc(struct sxblkcipher *cipher_ctx, const struct 
 }
 
 int sx_blkcipher_create_aesxts_dec(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key1,
-				   const struct sxkeyref *key2, const char *iv)
+				   const struct sxkeyref *key2, const uint8_t *iv)
 {
 	int status;
 
@@ -193,7 +193,8 @@ int sx_blkcipher_create_aesxts_dec(struct sxblkcipher *cipher_ctx, const struct 
 }
 
 static int sx_blkcipher_create_aes_ba411(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key,
-					 const char *iv, const struct sx_blkcipher_cmdma_cfg *cfg,
+					 const uint8_t *iv,
+					 const struct sx_blkcipher_cmdma_cfg *cfg,
 					 const uint32_t dir)
 {
 	int err;
@@ -230,13 +231,13 @@ static int sx_blkcipher_create_aes_ba411(struct sxblkcipher *cipher_ctx, const s
 }
 
 int sx_blkcipher_create_aesctr_enc(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key,
-				   const char *iv)
+				   const uint8_t *iv)
 {
 	return sx_blkcipher_create_aes_ba411(cipher_ctx, key, iv, &ba411ctrcfg, CM_CFG_ENCRYPT);
 }
 
 int sx_blkcipher_create_aesctr_dec(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key,
-				   const char *iv)
+				   const uint8_t *iv)
 {
 	return sx_blkcipher_create_aes_ba411(cipher_ctx, key, iv, &ba411ctrcfg, ba411ctrcfg.decr);
 }
@@ -252,18 +253,19 @@ int sx_blkcipher_create_aesecb_dec(struct sxblkcipher *cipher_ctx, const struct 
 }
 
 int sx_blkcipher_create_aescbc_enc(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key,
-				   const char *iv)
+				   const uint8_t *iv)
 {
 	return sx_blkcipher_create_aes_ba411(cipher_ctx, key, iv, &ba411cbccfg, CM_CFG_ENCRYPT);
 }
 
 int sx_blkcipher_create_aescbc_dec(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key,
-				   const char *iv)
+				   const uint8_t *iv)
 {
 	return sx_blkcipher_create_aes_ba411(cipher_ctx, key, iv, &ba411cbccfg, ba411cbccfg.decr);
 }
 
-int sx_blkcipher_crypt(struct sxblkcipher *cipher_ctx, const char *datain, size_t sz, char *dataout)
+int sx_blkcipher_crypt(struct sxblkcipher *cipher_ctx, const uint8_t *datain, size_t sz,
+		       uint8_t *dataout)
 {
 	if (!cipher_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
@@ -418,17 +420,17 @@ int sx_blkcipher_ecb_simple(uint8_t *key, size_t key_size, uint8_t *input, size_
 	/* This guards the static variables out_desc and in_descs */
 	sx_hw_reserve(NULL);
 
-	in_descs[0].addr = (char *)&cmd;
+	in_descs[0].addr = (uint8_t *)&cmd;
 	in_descs[0].sz = DMA_REALIGN | sizeof(cmd);
 	in_descs[0].dmatag = ba411tags.cfg;
 	in_descs[0].next = &in_descs[1];
 
-	in_descs[1].addr = (char *)key;
+	in_descs[1].addr = key;
 	in_descs[1].sz = DMA_REALIGN | key_size;
 	in_descs[1].dmatag = ba411tags.key;
 	in_descs[1].next = &in_descs[2];
 
-	in_descs[2].addr = (char *)input;
+	in_descs[2].addr = input;
 	in_descs[2].sz = DMA_REALIGN | input_size;
 	in_descs[2].dmatag = DMATAG_LAST | ba411tags.data;
 	in_descs[2].next = (void *)1;

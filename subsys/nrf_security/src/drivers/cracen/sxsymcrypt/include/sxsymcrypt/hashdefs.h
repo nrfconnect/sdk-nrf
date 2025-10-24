@@ -109,7 +109,7 @@ struct sxhash {
 	uint32_t cntindescs;
 	size_t totalfeedsz;
 	uint32_t feedsz;
-	void (*digest)(struct sxhash *c, char *digest);
+	void (*digest)(struct sxhash *c, uint8_t *digest);
 	struct sx_dmactl dma;
 	struct sxdesc descs[7 + SX_EXTRA_IN_DESCS];
 	uint8_t extramem[SX_HASH_OPERATION_CONTEXT_SZ];

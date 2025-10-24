@@ -39,7 +39,7 @@
 #define BA417_MODE_CHACHA20POLY1305 (0)
 #define BA417_MODE_CHACHA20	    (1)
 
-static const char zeros[SX_CHACHAPOLY_TAG_SIZE] = {0};
+static const uint8_t zeros[SX_CHACHAPOLY_TAG_SIZE] = {0};
 
 static int lenAlenC_chachapoly(size_t aadsz, size_t datasz, uint8_t *out);
 
@@ -103,7 +103,7 @@ static int lenAlenC_chachapoly(size_t aadsz, size_t datasz, uint8_t *out)
 }
 
 static int sx_aead_create_chacha20poly1305(struct sxaead *aead_ctx, const struct sxkeyref *key,
-					   const char *nonce, const uint32_t dir, size_t tagsz)
+					   const uint8_t *nonce, const uint32_t dir, size_t tagsz)
 {
 
 	if (key->sz != SX_CHACHAPOLY_KEY_SZ) {
@@ -145,7 +145,8 @@ static int sx_aead_create_chacha20poly1305(struct sxaead *aead_ctx, const struct
 }
 
 static int sx_blkcipher_create_chacha20(struct sxblkcipher *cipher_ctx, struct sxkeyref *key,
-					const char *counter, const char *nonce, const uint32_t dir)
+					const uint8_t *counter, const uint8_t *nonce,
+					const uint32_t dir)
 {
 	if (key->sz != SX_CHACHAPOLY_KEY_SZ) {
 		return SX_ERR_INVALID_KEY_SZ;
@@ -170,26 +171,26 @@ static int sx_blkcipher_create_chacha20(struct sxblkcipher *cipher_ctx, struct s
 }
 
 int sx_aead_create_chacha20poly1305_enc(struct sxaead *aead_ctx, const struct sxkeyref *key,
-					const char *nonce, size_t tagsz)
+					const uint8_t *nonce, size_t tagsz)
 {
 	return sx_aead_create_chacha20poly1305(aead_ctx, key, nonce, 0, tagsz);
 }
 
 int sx_aead_create_chacha20poly1305_dec(struct sxaead *aead_ctx, const struct sxkeyref *key,
-					const char *nonce, size_t tagsz)
+					const uint8_t *nonce, size_t tagsz)
 {
 	return sx_aead_create_chacha20poly1305(aead_ctx, key, nonce, ba417chachapolycfg.decr,
 					       tagsz);
 }
 
 int sx_blkcipher_create_chacha20_enc(struct sxblkcipher *cipher_ctx, struct sxkeyref *key,
-				     const char *counter, const char *nonce)
+				     const uint8_t *counter, const uint8_t *nonce)
 {
 	return sx_blkcipher_create_chacha20(cipher_ctx, key, counter, nonce, CM_CFG_ENCRYPT);
 }
 
 int sx_blkcipher_create_chacha20_dec(struct sxblkcipher *cipher_ctx, struct sxkeyref *key,
-				     const char *counter, const char *nonce)
+				     const uint8_t *counter, const uint8_t *nonce)
 {
 	return sx_blkcipher_create_chacha20(cipher_ctx, key, counter, nonce, ba417chacha20cfg.decr);
 }

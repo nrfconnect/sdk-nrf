@@ -72,7 +72,7 @@ static inline int sx_pk_curve_opsize(const struct sx_pk_ecurve *curve)
  * @param[in] curve Initialised curve
  * @return Pointer to the field size of the given curve
  */
-static inline const char *sx_pk_field_size(const struct sx_pk_ecurve *curve)
+static inline const uint8_t *sx_pk_field_size(const struct sx_pk_ecurve *curve)
 {
 	return curve->params;
 }
@@ -84,7 +84,7 @@ static inline const char *sx_pk_field_size(const struct sx_pk_ecurve *curve)
  * @param[in] curve Initialised curve
  * @return Pointer to the order of the base point of the curve
  */
-static inline const char *sx_pk_curve_order(const struct sx_pk_ecurve *curve)
+static inline const uint8_t *sx_pk_curve_order(const struct sx_pk_ecurve *curve)
 {
 	return &curve->params[curve->sz];
 }
@@ -96,7 +96,7 @@ static inline const char *sx_pk_curve_order(const struct sx_pk_ecurve *curve)
  *
  * @return Pointer to the generator point of the given curve.
  */
-static inline const char *sx_pk_generator_point(const struct sx_pk_ecurve *curve)
+static inline const uint8_t *sx_pk_generator_point(const struct sx_pk_ecurve *curve)
 {
 	return &curve->params[curve->sz * 2];
 }

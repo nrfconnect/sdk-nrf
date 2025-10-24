@@ -344,8 +344,8 @@ psa_status_t cracen_ecc_reduce_p256(const uint8_t *input, size_t input_size, uin
 {
 	const uint8_t *order = sx_pk_curve_order(&sx_curve_nistp256);
 
-	sx_op modulo = {.sz = CRACEN_P256_KEY_SIZE, .bytes = (char *)order};
-	sx_op operand = {.sz = input_size, .bytes = (char *)input};
+	sx_op modulo = {.sz = CRACEN_P256_KEY_SIZE, .bytes = (uint8_t *)order};
+	sx_op operand = {.sz = input_size, .bytes = (uint8_t *)input};
 	sx_op result = {.sz = output_size, .bytes = output};
 
 	/* The nistp256 curve order (n) is prime so we use the ODD variant of the reduce command. */
@@ -359,12 +359,12 @@ psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
 					 const sx_pk_affine_point *in_pnt)
 {
 	int sx_status;
-	char char_x[CRACEN_MAC_ECC_PRIVKEY_BYTES];
-	char char_y[CRACEN_MAC_ECC_PRIVKEY_BYTES];
+	uint8_t char_x[CRACEN_MAC_ECC_PRIVKEY_BYTES];
+	uint8_t char_y[CRACEN_MAC_ECC_PRIVKEY_BYTES];
 
 	/* Get the order of the curve from the parameters */
 	struct sx_buf n = {.sz = sx_pk_curve_opsize(curve),
-			   .bytes = (char *)sx_pk_curve_order(curve)};
+			   .bytes = (uint8_t *)sx_pk_curve_order(curve)};
 
 	sx_pk_affine_point scratch_pnt = {.x = {.sz = n.sz, .bytes = char_x},
 					  .y = {.sz = n.sz, .bytes = char_y}};
@@ -430,7 +430,7 @@ psa_status_t rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit, size
 	return PSA_ERROR_INSUFFICIENT_ENTROPY;
 }
 
-void cracen_xorbytes(char *a, const char *b, size_t sz)
+void cracen_xorbytes(uint8_t *a, const uint8_t *b, size_t sz)
 {
 	for (size_t i = 0; i < sz; i++, a++, b++) {
 		*a = *a ^ *b;
@@ -469,7 +469,7 @@ static int cracen_asn1_get_len(uint8_t **p, const uint8_t *end, size_t *len)
 	return 0;
 }
 
-static int cracen_asn1_get_tag(uint8_t **p, const unsigned char *end, size_t *len, int tag)
+static int cracen_asn1_get_tag(uint8_t **p, const uint8_t *end, size_t *len, int tag)
 {
 	if ((end - *p) < 1) {
 		return SX_ERR_INVALID_PARAM;
@@ -484,7 +484,7 @@ static int cracen_asn1_get_tag(uint8_t **p, const unsigned char *end, size_t *le
 	return cracen_asn1_get_len(p, end, len);
 }
 
-static int cracen_asn1_get_int(unsigned char **p, const unsigned char *end, int *val)
+static int cracen_asn1_get_int(uint8_t **p, const uint8_t *end, int *val)
 {
 	int ret = SX_ERR_INVALID_PARAM;
 	size_t len;
@@ -549,7 +549,7 @@ int cracen_signature_asn1_get_operand(uint8_t **p, const uint8_t *end,
 			break;
 		}
 	}
-	op->bytes = (char *)(*p + i);
+	op->bytes = (uint8_t *)(*p + i);
 	op->sz = len - i;
 
 	*p += len;
