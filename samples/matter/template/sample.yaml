@@ -27,6 +27,16 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.matter.template.nrf7002eb2.debug:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - template_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.template.release:
     sysbuild: true
     build_only: true
@@ -48,6 +58,19 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.matter.template.nrf7002eb2.release:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=release
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - SB_CONFIG_PARTITION_MANAGER=y
+      - template_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.template.smp_dfu:
     sysbuild: true
@@ -71,6 +94,17 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.matter.template.nrf7002eb2.smp_dfu:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - CONFIG_CHIP_DFU_OVER_BT_SMP=y
+      - template_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.template.release.internal:
     sysbuild: true
     build_only: true
@@ -82,6 +116,18 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.matter.template.nrf7002eb2.release.internal:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=internal
+      - template_EXTRA_CONF_FILE=prj_release.conf
+      - template_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.template.release.internal.smp_dfu:
     sysbuild: true
@@ -95,6 +141,19 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.matter.template.nrf7002eb2.release.internal.smp_dfu:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=internal
+      - CONFIG_CHIP_DFU_OVER_BT_SMP=y
+      - template_EXTRA_CONF_FILE=prj_release.conf
+      - template_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.template.cc3xx_backend:
     sysbuild: true

@@ -19,7 +19,7 @@ endchoice
 endif # OPENTHREAD
 
 config CHIP_WIFI
-	default y if BOARD_NRF7002DK_NRF5340_CPUAPP
+	default y if BOARD_NRF7002DK_NRF5340_CPUAPP || SHIELD_NRF7002EB2
 
 source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.features"
 source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.defaults"

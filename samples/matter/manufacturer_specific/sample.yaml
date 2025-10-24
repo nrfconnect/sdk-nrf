@@ -25,3 +25,13 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf7002dk/nrf5340/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.matter.manufacturer_specific.nrf7002eb2.debug:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - manufacturer_specific_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
