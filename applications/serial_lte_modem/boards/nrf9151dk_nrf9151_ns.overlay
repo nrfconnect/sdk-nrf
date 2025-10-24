@@ -6,13 +6,57 @@
 
  / {
 	chosen {
-		ncs,slm-uart = &uart0;
+		ncs,slm-uart = &dtr_uart;
 	};
 };
 
+/*
+/ {
+	aliases {
+		/delete-property/ sw0;
+		/delete-property/ mcuboot-button0;
+	};
+};
+/delete-node/ &button0;
+*/
+
+/* DTR with DK */
+/*
 &uart0 {
 	status = "okay";
 	hw-flow-control;
+
+	lpuart: nrf-sw-lpuart {
+		compatible = "nordic,nrf-sw-lpuart";
+		dtr-pin = <8>;
+		dtr-pin-toggle;
+		dtr-pin-debounce = <50>;
+		ri-pin = <0>;
+		status = "okay";
+	};
+};
+*/
+
+&gpio0 {
+	status = "okay";
+	/* Use PORT event for DTR (31) and RI (30) pins to save power */
+	sense-edge-mask = <0xC0000000>;
+};
+
+/* DTR with external MCU */
+&uart1 {
+	status = "okay";
+	hw-flow-control;
+
+	dtr_uart: nrf-sw-dtr-uart {
+		compatible = "nordic,nrf-sw-dtr-uart";
+		dtr-gpios = <&gpio0 31 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+		ri-gpios = <&gpio0 30 GPIO_ACTIVE_LOW>;
+		status = "okay";
+	};
+	pinctrl-0 = <&uart2_default_alt>;
+	pinctrl-1 = <&uart2_sleep_alt>;
+	pinctrl-names = "default", "sleep";
 };
 
 &uart2 {
