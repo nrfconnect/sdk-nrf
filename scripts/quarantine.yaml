@@ -143,13 +143,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29460"
 
 - scenarios:
-    - mcuboot.nrf_compress.encryption_ed25519
-    - mcuboot.upgrade.encryption.ed25519
-  platforms:
-    - nrf54lv10dk.*
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35259"
-
-- scenarios:
     - sample.bluetooth.direct_test_mode
   platforms:
     - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp/ns
