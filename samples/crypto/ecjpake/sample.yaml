@@ -1,6 +1,7 @@
 sample:
-  description: This app provides an example of EC J-PAKE
-  name: EC J-PAKE example
+  description: |
+    This sample demonstrates EC J-PAKE key exchange using the EC J-PAKE algorithm.
+  name: EC J-PAKE sample
 tests:
   sample.ecjpake.oberon:
     sysbuild: true

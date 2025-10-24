@@ -89,7 +89,7 @@ int generate_eddsa_keypair(void)
 {
 	psa_status_t status;
 
-	LOG_INF("Generating random EDDSA keypair...");
+	LOG_INF("Generating random EdDSA key pair...");
 
 	/* Configure the key attributes */
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
@@ -158,7 +158,7 @@ int sign_message(void)
 {
 	psa_status_t status;
 
-	LOG_INF("Signing a message using EDDSA...");
+	LOG_INF("Signing a message using the EdDSA algorithm...");
 
 	/* Sign the message */
 	status = psa_sign_message(m_key_pair_id,
@@ -184,7 +184,7 @@ int verify_message(void)
 {
 	psa_status_t status;
 
-	LOG_INF("Verifying EDDSA signature...");
+	LOG_INF("Verifying the EdDSA signature...");
 
 	/* Verify the signature of the message */
 	status = psa_verify_message(m_pub_key_id,
@@ -207,7 +207,7 @@ int main(void)
 {
 	int status;
 
-	LOG_INF("Starting EDDSA example...");
+	LOG_INF("Starting EdDSA example...");
 
 	status = crypto_init();
 	if (status != APP_SUCCESS) {
