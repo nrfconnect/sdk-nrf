@@ -116,4 +116,3 @@ tests:
       - machine_learning_SHIELD=pca63566
       - FILE_SUFFIX="singlecore"
       - CONFIG_PM=y
-      - CONFIG_PM_S2RAM=y
