@@ -205,6 +205,7 @@ private:
 	 *
 	 * @param devices address of valid bridged device objects
 	 * @param dataProvider address of valid data provider object
+	 * @param deviceListSize size of the device list
 	 * @param devicesPairIndexes array of the index objects that will be filled with pairs' indexes
 	 * assigned by the bridge
 	 * @param endpointIds values of endpoint ids required to be assigned
@@ -223,9 +224,10 @@ private:
 	 * creates a map entry, matches the bridged device object with the data provider object and creates Matter
 	 * dynamic endpoint.
 	 *
-	 * @param device address of valid bridged device object
+	 * @param devices address of valid bridged device object
 	 * @param dataProvider address of valid data provider object
-	 * @param devicesPairIndex array of optional index objects that shall have a valid value set if
+	 * @param deviceListSize size of the device list
+	 * @param devicesPairIndexes array of optional index objects that shall have a valid value set if
 	 * the value is meant to be used to index assignment, or shall not have a value set if the default index
 	 * assignment should be used.
 	 * @param endpointIds values of endpoint ids required to be assigned

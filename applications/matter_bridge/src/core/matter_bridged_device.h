@@ -102,10 +102,10 @@ public:
 				  IdentifyType::kVisibleIndicator)
 	{
 		if (uniqueID) {
-			memcpy(mUniqueID, uniqueID, strlen(uniqueID));
+			memcpy(mUniqueID, uniqueID, strnlen(uniqueID,Nrf::MatterBridgedDevice::kUniqueIDSize));
 		}
 		if (nodeLabel) {
-			memcpy(mNodeLabel, nodeLabel, strlen(nodeLabel));
+			memcpy(mNodeLabel, nodeLabel, strnlen(nodeLabel,Nrf::MatterBridgedDevice::kNodeLabelSize));
 		}
 	}
 	virtual ~MatterBridgedDevice() { chip::Platform::MemoryFree(mDataVersion); }
@@ -141,7 +141,7 @@ public:
 	const char *GetNodeLabel() const { return mNodeLabel; }
 	static constexpr uint16_t GetBridgedDeviceBasicInformationClusterRevision() { return 4; }
 	static constexpr uint32_t GetBridgedDeviceBasicInformationFeatureMap() { return 0; }
-	static constexpr uint16_t GetIdentifyClusterRevision() { return 5; }
+	static constexpr uint16_t GetIdentifyClusterRevision() { return 6; }
 	static constexpr uint32_t GetIdentifyClusterFeatureMap() { return 0; }
 
 	EmberAfEndpointType *mEp;

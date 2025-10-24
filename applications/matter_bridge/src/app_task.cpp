@@ -15,11 +15,11 @@
 #include "app/matter_init.h"
 #include "app/task_executor.h"
 #include "board/board.h"
-#include "bridge/bridge_manager.h"
-#include "bridge/bridge_storage_manager.h"
+#include "bridge_manager.h"
+#include "bridge_storage_manager.h"
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
-#include "bridge/ble_connectivity_manager.h"
+#include "ble_connectivity_manager.h"
 #endif
 
 #include <app-common/zap-generated/attributes/Accessors.h>

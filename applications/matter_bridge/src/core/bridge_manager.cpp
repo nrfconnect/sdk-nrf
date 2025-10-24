@@ -5,7 +5,7 @@
  */
 
 #include "bridge_manager.h"
-#include "bridge/bridge_storage_manager.h"
+#include "bridge_storage_manager.h"
 
 #include "binding/binding_handler.h"
 
