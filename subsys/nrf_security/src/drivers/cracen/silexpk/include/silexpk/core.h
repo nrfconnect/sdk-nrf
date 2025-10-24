@@ -152,7 +152,7 @@ int sx_pk_get_opsize(sx_pk_req *req);
 /** Operand slot structure */
 struct sx_pk_slot {
 	/** Memory address of the operand slot **/
-	char *addr;
+	uint8_t *addr;
 };
 
 /** Pair of slots
@@ -257,7 +257,7 @@ int sx_pk_wait(sx_pk_req *req);
  * through sx_pk_acquire_req()
  * @return Array of addresses to output operands
  */
-const char **sx_pk_get_output_ops(sx_pk_req *req);
+const uint8_t **sx_pk_get_output_ops(sx_pk_req *req);
 
 /** Give back the public key acceleration request.
  *
@@ -295,7 +295,7 @@ sx_pk_req *sx_get_current_req(void);
 struct sx_pk_ecurve {
 	uint32_t curveflags;
 	int sz;
-	const char *params;
+	const uint8_t *params;
 };
 
 /** @} */

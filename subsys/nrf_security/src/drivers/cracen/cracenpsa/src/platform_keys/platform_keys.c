@@ -43,14 +43,14 @@
 
 static struct {
 	uint8_t id;
-	const char *label;
+	const uint8_t *label;
 } owner_to_label[] = {{DOMAIN_SECURE, "SECURE-"}, {DOMAIN_SYSCTRL, "SYSCTRL-"},
 		      {DOMAIN_CELL, "CELL-"}, {DOMAIN_WIFI, "WIFI-"},
 		      {DOMAIN_RADIO, "RADIOCORE-"},	  {DOMAIN_APPLICATION, "APPLICATION-"}};
 
 static struct {
 	uint8_t id;
-	const char *label;
+	const uint8_t *label;
 } key_type_to_label[] = {
 	{USAGE_FWENC, "FWENC-"}, {USAGE_STMTRACE, "STMTRACE-"}, {USAGE_COREDUMP, "COREDUMP-"}};
 
@@ -72,7 +72,7 @@ typedef struct sicr_key {
 } sicr_key;
 
 typedef struct derived_key {
-	char label[DERIVED_KEY_MAX_LABEL_SIZE];
+	uint8_t label[DERIVED_KEY_MAX_LABEL_SIZE];
 } derived_key;
 
 typedef struct ikg_key {
@@ -174,8 +174,8 @@ static key_type find_key(uint32_t id, platform_key *key)
 	}
 
 	if (usage == USAGE_FWENC || usage == USAGE_STMTRACE || usage == USAGE_COREDUMP) {
-		char *labelptr = key->derived.label;
-		char *end = labelptr + sizeof(key->derived.label);
+		uint8_t *labelptr = key->derived.label;
+		uint8_t *end = labelptr + sizeof(key->derived.label);
 
 		bool valid_owner = false;
 
@@ -197,7 +197,7 @@ static key_type find_key(uint32_t id, platform_key *key)
 			}
 		}
 
-		static const char *const genstr[] = {"0", "1", "2", "3"};
+		static const uint8_t *const genstr[] = {"0", "1", "2", "3"};
 
 		if (generation > ARRAY_SIZE(genstr) || !valid_key_type || !valid_owner) {
 			return INVALID;
@@ -393,25 +393,25 @@ psa_status_t cracen_platform_get_builtin_key(psa_drv_slot_number_t slot_number,
 		cracen_aead_operation_t op = {};
 
 		psa_status_t status = cracen_aead_decrypt_setup(
-			&op, &mkek_attr, (uint8_t *)&mkek_ikg_opaque_key,
+			&op, &mkek_attr, (const uint8_t *)&mkek_ikg_opaque_key,
 			sizeof(mkek_ikg_opaque_key),
 			PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, key.sicr.mac_size));
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
 
-		status = cracen_aead_set_nonce(&op, (uint8_t *)key.sicr.nonce,
+		status = cracen_aead_set_nonce(&op, (const uint8_t *)key.sicr.nonce,
 					       sizeof(key.sicr.nonce));
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
 
-		status = cracen_aead_update_ad(&op, (uint8_t *)&key.sicr.type,
+		status = cracen_aead_update_ad(&op, (const uint8_t *)&key.sicr.type,
 					       sizeof(key.sicr.type));
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-		status = cracen_aead_update_ad(&op, (uint8_t *)&key.sicr.bits,
+		status = cracen_aead_update_ad(&op, (const uint8_t *)&key.sicr.bits,
 					       sizeof(key.sicr.bits));
 		if (status != PSA_SUCCESS) {
 			return status;
@@ -635,20 +635,23 @@ psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attribut
 	cracen_aead_operation_t op = {};
 
 	status = cracen_aead_encrypt_setup(
-		&op, &mkek_attr, (uint8_t *)&mkek_ikg_opaque_key, sizeof(mkek_ikg_opaque_key),
+		&op, &mkek_attr, (const uint8_t *)&mkek_ikg_opaque_key, sizeof(mkek_ikg_opaque_key),
 		PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, key.sicr.mac_size));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-	status = cracen_aead_set_nonce(&op, (uint8_t *)key.sicr.nonce, sizeof(key.sicr.nonce));
+	status = cracen_aead_set_nonce(&op, (const uint8_t *)key.sicr.nonce,
+				       sizeof(key.sicr.nonce));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-	status = cracen_aead_update_ad(&op, (uint8_t *)&key.sicr.type, sizeof(key.sicr.type));
+	status = cracen_aead_update_ad(&op, (const uint8_t *)&key.sicr.type,
+				       sizeof(key.sicr.type));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-	status = cracen_aead_update_ad(&op, (uint8_t *)&key.sicr.bits, sizeof(key.sicr.bits));
+	status = cracen_aead_update_ad(&op, (const uint8_t *)&key.sicr.bits,
+				       sizeof(key.sicr.bits));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}

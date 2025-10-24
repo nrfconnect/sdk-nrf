@@ -46,7 +46,7 @@ int sx_ik_read_status(sx_pk_req *req)
 int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *inputs)
 {
 	int slots = req->cmd->inslots;
-	char *cryptoram = req->cryptoram;
+	uint8_t *cryptoram = req->cryptoram;
 	int i = 0;
 	const struct sx_pk_capabilities *caps;
 
@@ -62,7 +62,7 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 		req->ik_mode = 0;
 	} else {
 		if (!req->ik_mode) {
-			int status = cracen_prepare_ik_key((uint8_t *)&key);
+			int status = cracen_prepare_ik_key((const uint8_t *)&key);
 			if (status != SX_OK) {
 				sx_pk_release_req(req);
 				return SX_ERR_INVALID_PARAM;

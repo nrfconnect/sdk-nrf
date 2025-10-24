@@ -79,8 +79,9 @@ struct sx_pk_ecurve;
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req sx_async_ecdsa_generate_go(const struct sx_pk_ecurve *curve,
-							      const sx_ecop *d, const sx_ecop *k,
-							      const sx_ecop *h)
+							      const sx_const_op *d,
+							      const sx_const_op *k,
+							      const sx_const_op *h)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecdsa_generate inputs;
@@ -160,8 +161,9 @@ static inline void sx_async_ecdsa_generate_end(sx_pk_req *req, sx_ecop *r, sx_ec
  * @see sx_async_ecdsa_generate_go(), sx_async_ecdsa_generate_end() for
  * an asynchronous version
  */
-static inline int sx_ecdsa_generate(const struct sx_pk_ecurve *curve, const sx_ecop *d,
-				    const sx_ecop *k, const sx_ecop *h, sx_ecop *r, sx_ecop *s)
+static inline int sx_ecdsa_generate(const struct sx_pk_ecurve *curve, const sx_const_ecop *d,
+				    const sx_const_ecop *k, const sx_const_ecop *h, sx_ecop *r,
+				    sx_ecop *s)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
@@ -203,10 +205,9 @@ static inline int sx_ecdsa_generate(const struct sx_pk_ecurve *curve, const sx_e
  *
  * @return Acquired acceleration request for this operation
  */
-static inline struct sx_pk_acq_req sx_async_ecdsa_verify_go(const struct sx_pk_ecurve *curve,
-							    const sx_pk_affine_point *q,
-							    const sx_ecop *r, const sx_ecop *s,
-							    const sx_ecop *h)
+static inline struct sx_pk_acq_req
+sx_async_ecdsa_verify_go(const struct sx_pk_ecurve *curve, const sx_pk_const_affine_point *q,
+			 const sx_const_ecop *r, const sx_const_ecop *s, const sx_const_ecop *h)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecdsa_verify inputs;
@@ -269,8 +270,9 @@ static inline struct sx_pk_acq_req sx_async_ecdsa_verify_go(const struct sx_pk_e
  *
  * @see sx_async_ecdsa_verify_go() for an asynchronous version
  */
-static inline int sx_ecdsa_verify(const struct sx_pk_ecurve *curve, const sx_pk_affine_point *q,
-				  const sx_ecop *r, const sx_ecop *s, const sx_ecop *h)
+static inline int sx_ecdsa_verify(const struct sx_pk_ecurve *curve,
+				  const sx_pk_const_affine_point *q, const sx_const_ecop *r,
+				  const sx_const_ecop *s, const sx_const_ecop *h)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
@@ -317,8 +319,8 @@ static inline int sx_ecdsa_verify(const struct sx_pk_ecurve *curve, const sx_pk_
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req sx_async_ecp_mult_go(const struct sx_pk_ecurve *curve,
-							const sx_ecop *k,
-							const sx_pk_affine_point *p)
+							const sx_const_ecop *k,
+							const sx_pk_const_affine_point *p)
 {
 	struct sx_pk_acq_req pkreq;
 
@@ -389,8 +391,8 @@ static inline void sx_async_ecp_mult_end(sx_pk_req *req, sx_pk_affine_point *r)
  * @see sx_async_ecp_mult_go(), sx_async_ecp_mult_end()
  * for an asynchronous versions
  */
-static inline int sx_ecp_ptmult(const struct sx_pk_ecurve *curve, const sx_ecop *k,
-				const sx_pk_affine_point *p, sx_pk_affine_point *r)
+static inline int sx_ecp_ptmult(const struct sx_pk_ecurve *curve, const sx_const_ecop *k,
+				const sx_pk_const_affine_point *p, sx_pk_affine_point *r)
 {
 	int status;
 	struct sx_pk_acq_req pkreq;
@@ -430,7 +432,7 @@ static inline int sx_ecp_ptmult(const struct sx_pk_ecurve *curve, const sx_ecop 
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req sx_async_ecp_double_go(const struct sx_pk_ecurve *curve,
-							  const sx_pk_affine_point *p)
+							  const sx_pk_const_affine_point *p)
 {
 	struct sx_pk_acq_req pkreq;
 
@@ -496,7 +498,7 @@ static inline void sx_async_ecp_double_end(sx_pk_req *req, sx_pk_affine_point *r
  * @see sx_async_ecp_double_go(), sx_async_ecp_double_end()
  * for an asynchronous verion
  */
-static inline int sx_ecp_double(const struct sx_pk_ecurve *curve, const sx_pk_affine_point *p,
+static inline int sx_ecp_double(const struct sx_pk_ecurve *curve, const sx_pk_const_affine_point *p,
 				sx_pk_affine_point *r)
 {
 	int status;
@@ -528,7 +530,7 @@ static inline int sx_ecp_double(const struct sx_pk_ecurve *curve, const sx_pk_af
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req sx_async_ec_ptoncurve_go(const struct sx_pk_ecurve *curve,
-							    const sx_pk_affine_point *p)
+							    const sx_pk_const_affine_point *p)
 {
 	struct sx_pk_acq_req pkreq;
 
@@ -581,7 +583,8 @@ static inline struct sx_pk_acq_req sx_async_ec_ptoncurve_go(const struct sx_pk_e
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  */
-static inline int sx_ec_ptoncurve(const struct sx_pk_ecurve *curve, const sx_pk_affine_point *p)
+static inline int sx_ec_ptoncurve(const struct sx_pk_ecurve *curve,
+				  const sx_pk_const_affine_point *p)
 {
 	int status;
 	struct sx_pk_acq_req pkreq;
@@ -612,8 +615,9 @@ static inline int sx_ec_ptoncurve(const struct sx_pk_ecurve *curve, const sx_pk_
  *
  * @return Acquired acceleration request for this operation
  */
-static inline struct sx_pk_acq_req
-sx_async_ec_pt_decompression_go(const struct sx_pk_ecurve *curve, const sx_ecop *x, const int y_lsb)
+static inline struct sx_pk_acq_req sx_async_ec_pt_decompression_go(const struct sx_pk_ecurve *curve,
+								   const sx_const_ecop *x,
+								   const int y_lsb)
 {
 	struct sx_pk_acq_req pkreq;
 
@@ -682,7 +686,7 @@ static inline void sx_async_ec_pt_decompression_end(sx_pk_req *req, sx_ecop *y)
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  */
-static inline int sx_ec_pt_decompression(const struct sx_pk_ecurve *curve, const sx_ecop *x,
+static inline int sx_ec_pt_decompression(const struct sx_pk_ecurve *curve, const sx_const_ecop *x,
 					 const int y_lsb, sx_ecop *y)
 {
 	int status;
@@ -728,7 +732,7 @@ static inline int sx_ec_pt_decompression(const struct sx_pk_ecurve *curve, const
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req
-sx_async_eckcdsa_pubkey_generate_go(const struct sx_pk_ecurve *curve, const sx_ecop *d)
+sx_async_eckcdsa_pubkey_generate_go(const struct sx_pk_ecurve *curve, const sx_const_ecop *d)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_eckcdsa_generate inputs;
@@ -796,8 +800,8 @@ static inline void sx_async_eckcdsa_pubkey_generate_end(sx_pk_req *req, sx_pk_af
  * @see sx_async_eckcdsa_pubkey_generate_go(),
  * sx_async_eckcdsa_pubkey_generate_end() for an asynchronous verion
  */
-static inline int sx_eckcdsa_pubkey_generate(const struct sx_pk_ecurve *curve, const sx_op *d,
-					     sx_pk_affine_point *q)
+static inline int sx_eckcdsa_pubkey_generate(const struct sx_pk_ecurve *curve,
+					     const sx_const_ecop *d, sx_pk_affine_point *q)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
@@ -841,9 +845,9 @@ static inline int sx_eckcdsa_pubkey_generate(const struct sx_pk_ecurve *curve, c
  *
  * @return Acquired acceleration request for this operation
  */
-static inline struct sx_pk_acq_req sx_async_eckcdsa_sign_go(const struct sx_pk_ecurve *curve,
-							    const sx_ecop *d, const sx_ecop *k,
-							    const sx_ecop *h, const sx_ecop *r)
+static inline struct sx_pk_acq_req
+sx_async_eckcdsa_sign_go(const struct sx_pk_ecurve *curve, const sx_const_ecop *d,
+			 const sx_const_ecop *k, const sx_const_ecop *h, const sx_const_ecop *r)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_eckcdsa_sign inputs;
@@ -921,8 +925,9 @@ static inline void sx_async_eckcdsa_sign_end(sx_pk_req *req, sx_ecop *s)
  * @see sx_async_eckcdsa_sign_go(), sx_async_eckcdsa_sign_end()
  * for an asynchronous verion
  */
-static inline int sx_eckcdsa_sign(const struct sx_pk_ecurve *curve, const sx_ecop *d,
-				  const sx_ecop *k, const sx_ecop *h, const sx_ecop *r, sx_ecop *s)
+static inline int sx_eckcdsa_sign(const struct sx_pk_ecurve *curve, const sx_const_ecop *d,
+				  const sx_const_ecop *k, const sx_const_ecop *h,
+				  const sx_const_ecop *r, sx_ecop *s)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
@@ -955,10 +960,9 @@ static inline int sx_eckcdsa_sign(const struct sx_pk_ecurve *curve, const sx_eco
  *
  * @return Acquired acceleration request for this operation
  */
-static inline struct sx_pk_acq_req sx_async_eckcdsa_verify_go(const struct sx_pk_ecurve *curve,
-							      const sx_pk_affine_point *q,
-							      const sx_ecop *r, const sx_ecop *s,
-							      const sx_ecop *h)
+static inline struct sx_pk_acq_req
+sx_async_eckcdsa_verify_go(const struct sx_pk_ecurve *curve, const sx_pk_const_affine_point *q,
+			   const sx_const_ecop *r, const sx_const_ecop *s, const sx_const_ecop *h)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecdsa_verify inputs;
@@ -1040,8 +1044,9 @@ static inline void sx_async_eckcdsa_verify_end(sx_pk_req *req, sx_pk_affine_poin
  * @see sx_async_eckcdsa_verify_go(), sx_async_eckcdsa_verify_end()
  * for an asynchronous version
  */
-static inline int sx_eckcdsa_verify(const struct sx_pk_ecurve *curve, const sx_pk_affine_point *q,
-				    const sx_ecop *r, const sx_ecop *s, const sx_ecop *h,
+static inline int sx_eckcdsa_verify(const struct sx_pk_ecurve *curve,
+				    const sx_pk_const_affine_point *q, const sx_const_ecop *r,
+				    const sx_const_ecop *s, const sx_const_ecop *h,
 				    sx_pk_affine_point *w)
 {
 	uint32_t status;
@@ -1080,8 +1085,8 @@ static inline int sx_eckcdsa_verify(const struct sx_pk_ecurve *curve, const sx_p
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req sx_async_ecp_add_go(const struct sx_pk_ecurve *curve,
-						       const sx_pk_affine_point *p1,
-						       const sx_pk_affine_point *p2)
+						       const sx_pk_const_affine_point *p1,
+						       const sx_pk_const_affine_point *p2)
 {
 	struct sx_pk_acq_req pkreq;
 
@@ -1153,8 +1158,8 @@ static inline void sx_async_ecp_add_end(sx_pk_req *req, sx_pk_affine_point *r)
  * @remark Use point doubling operation for the addition of equal points
  * @see sx_ecp_double()
  */
-static inline int sx_ecp_ptadd(const struct sx_pk_ecurve *curve, const sx_pk_affine_point *p1,
-			       const sx_pk_affine_point *p2, sx_pk_affine_point *r)
+static inline int sx_ecp_ptadd(const struct sx_pk_ecurve *curve, const sx_pk_const_affine_point *p1,
+			       const sx_pk_const_affine_point *p2, sx_pk_affine_point *r)
 {
 	int status;
 	struct sx_pk_acq_req pkreq;
@@ -1185,7 +1190,7 @@ static inline int sx_ecp_ptadd(const struct sx_pk_ecurve *curve, const sx_pk_aff
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req sx_async_ecp_check_order_go(const struct sx_pk_ecurve *curve,
-							       const sx_pk_affine_point *p)
+							       const sx_pk_const_affine_point *p)
 {
 	struct sx_pk_acq_req pkreq;
 
@@ -1242,8 +1247,9 @@ static inline struct sx_pk_acq_req sx_async_ecp_check_order_go(const struct sx_p
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req sx_async_sm2_generate_go(const struct sx_pk_ecurve *curve,
-							    const sx_ecop *d, const sx_ecop *k,
-							    const sx_ecop *h)
+							    const sx_const_ecop *d,
+							    const sx_const_ecop *k,
+							    const sx_const_ecop *h)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecdsa_generate inputs;
@@ -1321,8 +1327,9 @@ static inline void sx_async_sm2_generate_end(sx_pk_req *req, sx_ecop *r, sx_ecop
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  */
-static inline int sx_sm2_generate(const struct sx_pk_ecurve *curve, const sx_ecop *d,
-				  const sx_ecop *k, const sx_ecop *h, sx_ecop *r, sx_ecop *s)
+static inline int sx_sm2_generate(const struct sx_pk_ecurve *curve, const sx_const_ecop *d,
+				  const sx_const_ecop *k, const sx_const_ecop *h, sx_ecop *r,
+				  sx_ecop *s)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
@@ -1364,10 +1371,9 @@ static inline int sx_sm2_generate(const struct sx_pk_ecurve *curve, const sx_eco
  *
  * @return Acquired acceleration request for this operation
  */
-static inline struct sx_pk_acq_req sx_async_sm2_verify_go(const struct sx_pk_ecurve *curve,
-							  const sx_pk_affine_point *q,
-							  const sx_ecop *r, const sx_ecop *s,
-							  const sx_ecop *h)
+static inline struct sx_pk_acq_req
+sx_async_sm2_verify_go(const struct sx_pk_ecurve *curve, const sx_pk_const_affine_point *q,
+		       const sx_const_ecop *r, const sx_const_ecop *s, const sx_const_ecop *h)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecdsa_verify inputs;
@@ -1425,8 +1431,9 @@ static inline struct sx_pk_acq_req sx_async_sm2_verify_go(const struct sx_pk_ecu
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  */
-static inline int sx_sm2_verify(const struct sx_pk_ecurve *curve, const sx_pk_affine_point *q,
-				const sx_ecop *r, const sx_ecop *s, const sx_ecop *h)
+static inline int sx_sm2_verify(const struct sx_pk_ecurve *curve, const sx_pk_const_affine_point *q,
+				const sx_const_ecop *r, const sx_const_ecop *s,
+				const sx_const_ecop *h)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
@@ -1467,9 +1474,10 @@ static inline int sx_sm2_verify(const struct sx_pk_ecurve *curve, const sx_pk_af
  * @see sx_async_sm2_exchange_end()
  */
 static inline struct sx_pk_acq_req
-sx_async_sm2_exchange_go(const struct sx_pk_ecurve *curve, const sx_ecop *d, const sx_ecop *k,
-			 const sx_pk_affine_point *q, const sx_pk_affine_point *rb,
-			 const sx_ecop *cof, const sx_ecop *rax, const sx_ecop *exp2_w)
+sx_async_sm2_exchange_go(const struct sx_pk_ecurve *curve, const sx_const_ecop *d,
+			 const sx_const_ecop *k, const sx_pk_const_affine_point *q,
+			 const sx_pk_const_affine_point *rb, const sx_const_ecop *cof,
+			 const sx_const_ecop *rax, const sx_const_ecop *exp2_w)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_sm2_exchange inputs;
@@ -1555,10 +1563,11 @@ static inline void sx_async_sm2_exchange_end(sx_pk_req *req, sx_pk_affine_point 
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  */
-static inline int sx_sm2_exchange(const struct sx_pk_ecurve *curve, const sx_ecop *d,
-				  const sx_ecop *k, const sx_pk_affine_point *q,
-				  const sx_pk_affine_point *rb, const sx_ecop *cof,
-				  const sx_ecop *rax, const sx_ecop *exp2_w, sx_pk_affine_point *u)
+static inline int sx_sm2_exchange(const struct sx_pk_ecurve *curve, const sx_const_ecop *d,
+				  const sx_const_ecop *k, const sx_pk_const_affine_point *q,
+				  const sx_pk_const_affine_point *rb, const sx_const_ecop *cof,
+				  const sx_const_ecop *rax, const sx_const_ecop *exp2_w,
+				  sx_pk_affine_point *u)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;

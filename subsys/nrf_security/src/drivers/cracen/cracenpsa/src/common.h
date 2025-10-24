@@ -11,6 +11,7 @@
 #include "sxsymcrypt/internal.h"
 
 #include <stddef.h>
+#include <stdint.h>
 #include <zephyr/sys/util.h>
 #include <silexpk/sxbuf/sxbufop.h>
 #include <sxsymcrypt/hashdefs.h>
@@ -116,7 +117,7 @@ static inline size_t cracen_ecc_wstr_expected_pub_key_bytes(size_t priv_key_size
  *
  */
 psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
-					 const sx_pk_affine_point *in_pnt);
+					 const sx_pk_const_affine_point *in_pnt);
 
 /**
  * \brief Tries to extract an RSA key from ASN.1.
@@ -132,7 +133,7 @@ psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
  * \return sxsymcrypt status code.
  */
 int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey, bool is_key_pair,
-				 const unsigned char *key, size_t keylen, struct sx_buf *modulus,
+				 const uint8_t *key, size_t keylen, struct sx_buf *modulus,
 				 struct sx_buf *exponent);
 
 /**
@@ -147,7 +148,7 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
  * \retval SX_OK on success.
  * \retval SX_ERR_INVALID_PARAM if the ASN.1 integer cannot be extracted.
  */
-int cracen_signature_asn1_get_operand(uint8_t **p, const uint8_t *end, struct sx_buf *op);
+int cracen_signature_asn1_get_operand(const uint8_t **p, const uint8_t *end, struct sx_buf *op);
 
 /**
  * @brief Use cracen_get_random up to generate a random number in the range [1, upperlimit).
@@ -170,7 +171,7 @@ psa_status_t rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit, size
  * @param[in] b Second buffer of size sz
  * @param[in] sz Size of the buffers
  */
-void cracen_xorbytes(char *a, const char *b, size_t sz);
+void cracen_xorbytes(uint8_t *a, const uint8_t *b, size_t sz);
 
 /**
  * @brief Loads key buffer and attributes.
@@ -313,7 +314,8 @@ psa_status_t cracen_ecc_reduce_p256(const uint8_t *input, size_t input_size, uin
  * status code.
  */
 int cracen_rsa_modexp(struct sx_pk_acq_req *pkreq, struct sx_pk_slot *inputs,
-		      struct cracen_rsa_key *rsa_key, uint8_t *base, size_t basez, int *sizes);
+		      struct cracen_rsa_key *rsa_key, const uint8_t *base, size_t basez,
+		      int *sizes);
 
 #define CRACEN_KEY_INIT_RSA(mod, expon)                                                            \
 	(struct cracen_rsa_key)                                                                    \

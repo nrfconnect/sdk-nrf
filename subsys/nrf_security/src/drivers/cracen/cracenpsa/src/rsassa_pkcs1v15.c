@@ -196,7 +196,7 @@ int cracen_rsa_pkcs1v15_sign_digest(struct cracen_rsa_key *rsa_key,
 }
 
 int cracen_rsa_pkcs1v15_verify_message(struct cracen_rsa_key *rsa_key,
-				       struct cracen_signature *signature,
+				       struct cracen_const_signature *signature,
 				       const struct sxhashalg *hashalg, const uint8_t *message,
 				       size_t message_length)
 {
@@ -213,7 +213,7 @@ int cracen_rsa_pkcs1v15_verify_message(struct cracen_rsa_key *rsa_key,
 }
 
 int cracen_rsa_pkcs1v15_verify_digest(struct cracen_rsa_key *rsa_key,
-				      struct cracen_signature *signature,
+				      struct cracen_const_signature *signature,
 				      const struct sxhashalg *hashalg, const uint8_t *digest,
 				      size_t digest_length)
 {
@@ -288,7 +288,7 @@ int cracen_rsa_pkcs1v15_verify_digest(struct cracen_rsa_key *rsa_key,
 	const uint8_t *const encodedmsgend = encodedmsgstart + modulussz;
 
 	/* pointer used to walk through the EM */
-	uint8_t *encmsg = (uint8_t *)encodedmsgstart;
+	const uint8_t *encmsg = (const uint8_t *)encodedmsgstart;
 
 	/* invalid signature if first two bytes of EM are not 0x00 0x01 */
 	r = (sx_rdpkmem_byte(encmsg) != 0x00);
