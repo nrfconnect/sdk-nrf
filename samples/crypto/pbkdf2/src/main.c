@@ -185,7 +185,7 @@ int derive_output_key(void)
 	PRINT_HEX("Password", m_input_password, sizeof(m_input_password));
 	PRINT_HEX("Salt", m_salt, sizeof(m_salt));
 	LOG_INF("Iteration count: %d", m_iteration_count);
-	PRINT_HEX("Derived Key:", m_output_key, sizeof(m_output_key));
+	PRINT_HEX("Derived key", m_output_key, sizeof(m_output_key));
 
 	return APP_SUCCESS;
 }

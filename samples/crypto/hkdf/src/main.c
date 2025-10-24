@@ -158,7 +158,7 @@ int derive_hkdf(void)
 	psa_key_derivation_operation_t operation =
 		PSA_KEY_DERIVATION_OPERATION_INIT;
 
-	LOG_INF("Deriving a key using HKDF and SHA256...");
+	LOG_INF("Deriving a key using the HKDF algorithm and SHA-256 hash algorithm...");
 
 	/* Derived key settings
 	 * WARNING: This key usage makes the key exportable which is not safe and

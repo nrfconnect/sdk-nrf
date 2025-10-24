@@ -1,6 +1,7 @@
 sample:
-  description: This app provides an example of how to produce random numbers
-  name: RNG example
+  description: |
+    This sample demonstrates random number generation using the PSA Crypto API.
+  name: RNG sample
 tests:
   sample.rng.cc3xx:
     sysbuild: true
