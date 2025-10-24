@@ -125,7 +125,6 @@ tests:
       - caf_sensor_manager_SNIPPET=nordic-ppr
       - SB_CONFIG_NETCORE_EMPTY=y
       - CONFIG_PM=y
-      - CONFIG_PM_S2RAM=y
     tags:
       - sysbuild
       - ci_samples_caf_sensor_manager
@@ -140,7 +139,6 @@ tests:
       - FILE_SUFFIX=singlecore
       - SB_CONFIG_NETCORE_EMPTY=y
       - CONFIG_PM=y
-      - CONFIG_PM_S2RAM=y
     tags:
       - sysbuild
       - ci_samples_caf_sensor_manager
