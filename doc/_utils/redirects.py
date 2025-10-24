@@ -342,6 +342,7 @@ NRF = (
     ("ug_gz", "protocols/gazell/index"), # Gazell (landing)
     ("ug_gzll", "protocols/gazell/gzll"), # Gazell Link Layer
     ("ug_gzp", "protocols/gazell/gzp"), # Gazell Pairing
+    ("test_and_optimize/optimizing/power_nrf91", "protocols/lte/power_nrf91"), # Power profiling cellular applications (moved from Test and optimizing general section)
     ("ug_matter", "protocols/matter/index"), # Matter (landing)
     ("ug_matter_intro_overview", "protocols/matter/overview/index"), # Matter overview (landing)
     ("ug_matter_overview_architecture", "protocols/matter/overview/architecture"), # Matter architecture

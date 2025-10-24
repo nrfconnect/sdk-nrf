@@ -233,6 +233,7 @@
 /doc/nrf/protocols/esb/                   @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/protocols/gazell/                @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/protocols/lte/                   @nrfconnect/ncs-carrier-doc
+/doc/nrf/protocols/lte/power_nrf91.rst    @nrfconnect/ncs-cia-doc
 /doc/nrf/protocols/matter/                @nrfconnect/ncs-matter-doc
 /doc/nrf/protocols/multiprotocol/         @nrfconnect/ncs-doc-leads
 /doc/nrf/protocols/nfc/                   @nrfconnect/ncs-si-muffin-doc
@@ -272,7 +273,6 @@
 /doc/nrf/security/                        @nrfconnect/ncs-aegir-doc
 /doc/nrf/templates/                       @nrfconnect/ncs-doc-leads
 /doc/nrf/test_and_optimize/               @nrfconnect/ncs-doc-leads
-/doc/nrf/test_and_optimize/optimizing/power_nrf91.rst @nrfconnect/ncs-cia-doc
 /doc/tfm/                                 @nrfconnect/ncs-aegir-doc
 /doc/wifi/                                @sachinthegreen @krish2718
 

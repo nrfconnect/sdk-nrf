@@ -1112,6 +1112,8 @@
 
 .. _`Online Power Profiler for Wi-Fi`: https://devzone.nordicsemi.com/power/w/opp/14/online-power-profiler-for-wi-fi
 .. _`Online Power Profiler (OPP)`: https://devzone.nordicsemi.com/nordic/power/w/opp/3/online-power-profiler-for-lte
+.. _`Online Power Profiler for Bluetooth LE`: https://devzone.nordicsemi.com/power/w/opp/2/online-power-profiler-for-bluetooth-le
+.. _`Online Power Profiler for LTE`: https://devzone.nordicsemi.com/power/w/opp/3/online-power-profiler-for-lte
 .. _`Online Power Profiler user guide`: https://devzone.nordicsemi.com/nordic/power/w/opp/4/user-guide-lte
 .. _`Online Power Profiler for Matter over Thread`: https://devzone.nordicsemi.com/power/w/opp/16/online-power-profiler-for-matter-over-thread
 

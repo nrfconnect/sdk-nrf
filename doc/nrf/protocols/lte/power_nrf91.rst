@@ -1,23 +1,19 @@
 .. _app_power_opt_nRF91:
 
-Power optimization for nRF91 Series
-###################################
+Power profiling cellular applications
+#####################################
 
 .. contents::
    :local:
    :depth: 2
 
-In addition to the :ref:`general power optimization recommendations <app_power_opt_general>`, you can use the `Online Power Profiler (OPP)`_ when optimizing the power consumption of your cellular application.
-
-Online Power Profiler for LTE is a tool to estimate the current consumption of the nRF91 Series LTE modem.
-See the `Online Power Profiler user guide`_ for a basic overview of the tool and explanation of different parameters.
+In addition to the :ref:`general power optimization recommendations <app_power_opt_general>` and :ref:`cellular-specific power saving techniques <cellular_psm>`, you can use the `Online Power Profiler for LTE`_ browser application when optimizing the power consumption of cellular applications.
+In particular, the tool estimates the current consumption of the nRF91 Series LTE modem.
 
 .. note::
-   Currently, Online Power Profiler has support only for the nRF9160 DK.
+   Online Power Profiler for LTE is only available for the nRF9160 DK.
 
-The following sections describe how you can use Online Power Profiler and other power profiling tools to optimize the power consumption in your nRF9160 DK.
-
-See the :ref:`cellular_psm` guide for more information on different power saving techniques.
+The following sections describe how you can use Online Power Profiler and other tools to optimize the power consumption in your nRF9160 DK.
 
 Cellular applications
 *********************
