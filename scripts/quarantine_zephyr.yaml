@@ -54,9 +54,12 @@
     - sample.mgmt.osdp.peripheral_device_sc
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
     - nrf54l15dk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24928"
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24928 and NCSDK-35494"
 
 - scenarios:
     - examples.nrfx_uarte.tx_rx_non_blocking
@@ -149,17 +152,23 @@
 - scenarios:
     - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
   platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
     - nrf54l15dk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34575"
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34575 and NCSDK-35492"
 
 - scenarios:
     - libraries.encoding.jwt.rsa.psa
     - libraries.encoding.jwt.rsa.legacy
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
     - nrf54l15dk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31783"
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31783 and sNCSDK-35543"
 
 - scenarios:
     - bluetooth.shell.shell_br
@@ -214,27 +223,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35402"
 
 - scenarios:
-    - sample.mgmt.osdp.peripheral_device
-    - sample.mgmt.osdp.control_panel_sc
-    - sample.mgmt.osdp.peripheral_device_sc
-    - sample.mgmt.osdp.control_panel
-  platforms:
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35494"
-
-- scenarios:
-    - sample.drivers.crypto.mbedtls
-  platforms:
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35493"
-
-- scenarios:
-    - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
-  platforms:
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35492"
-
-- scenarios:
     - kernel.common.misra
   platforms:
     - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -254,16 +242,16 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35542"
 
 - scenarios:
-    - libraries.encoding.jwt.rsa.legacy
-  platforms:
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35543"
-
-- scenarios:
     - net.http.server.tls.toolchain
   platforms:
     - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35519"
+
+- scenarios:
+    - drivers.mspi.flash.mspi_nor_no_multithreading
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35925"
 
 # ---------------------------------   Won't fix section -----------------------------------
 
@@ -299,10 +287,13 @@
 - scenarios:
     - sample.drivers.crypto.mbedtls
   platforms:
-    - nrf9160dk@0.14.0/nrf9160/ns
     - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
     - nrf54l15dk/nrf54l15/cpuapp
-  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15306"
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15306 and NCSDK-35493"
 
 - scenarios:
     - sample.net.sockets.websocket_client
@@ -577,3 +568,10 @@
 - scenarios:
     - buildsystem.sbom.spdx
   comment: "Missing toolchain python package. https://nordicsemi.atlassian.net/browse/NCSDK-35387"
+
+- scenarios:
+    - sample.psa.its.secure_storage.entropy_driver
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
+  comment: "Not compatible"
