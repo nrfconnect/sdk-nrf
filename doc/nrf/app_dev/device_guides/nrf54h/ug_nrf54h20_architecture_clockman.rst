@@ -17,7 +17,6 @@ Each of the clock sources needs proper management for the following reasons:
 Some clock management operations are performed solely by hardware circuits, while others require software intervention.
 Most clocks can be locked to more accurate ones to improve their accuracy.
 
-
 Clock domains
 *************
 
@@ -78,6 +77,59 @@ Global HSFLL
 
 Global HSFLL clocks *fast* peripherals, FLPR, RAM, and MRAM blocks.
 
+Default configurations
+----------------------
+
+The local and global HSFLLs are clocked at their highest frequency by default.
+This ensures that MRAM access is fast and every peripheral is clocked adequately to function on boot.
+
+The HFXO is not started.
+
+Runtime clock management considerations
+***************************************
+
+The clocks are managed at runtime by hardware, using default configurations.
+Firmware can override these configurations to meet specific clock requirements.
+The following sections describe the default configurations and what to consider if overriding them.
+
+LFCLK, HFXO and FLL16M
+======================
+
+These clocks are fixed frequency, and are by default optimized for low power at the cost of accuracy and precision.
+The firmware can request a minimum level of accuracy and precision using the ``nrf_clock_control`` API provided by Zephyr RTOS, if the default configuration does not meet the required timing specifications.
+
+The startup time of these clocks can be relatively long, typically on the order of hundreds of milliseconds.
+To ensure that the clocks meet the required timing constraints, retrieve the startup time for a given accuracy and precision using ``nrf_clock_control_get_startup_time``.
+For more information, see the `Zephyr clock control API`_ section.
+
+Global HSFLL
+============
+
+The firmware can request this clock to run at a lower frequency than its default of 320 MHz.
+It is recommended to leave this clock at its default frequency.
+Note the following if the frequency is lowered:
+
+* The MRAM access latency will be increased, thus lowering overall CPU performance when running code from MRAM.
+  This results in the CPU running for longer, thus increasing power consumption.
+  Furthermore, ISR handling latency will be increased.
+* Some fast peripherals cannot operate below a certain frequency, thus the application must request a higher frequency before using these fast peripherals.
+* If CAN is used, the Global HSFLL frequency must not be lower than 128 MHz.
+
+If the Global HSFLL is managed at runtime, the clock control driver will force it to its lowest frequency.
+The firmware must request a higher frequency using the ``nrf_clock_control`` API.
+
+Local HSFLL
+===========
+
+The firmware can request this clock to run at a lower frequency than its default.
+It is recommended to leave this clock at its default frequency.
+If the frequency is lowered, the CPU performance will decrease.
+This results in the CPU running for longer, thus increasing power consumption.
+Furthermore, the ISR handling latency will be increased.
+
+If the local HSFLL is managed at runtime, the clock control driver will force it to its lowest frequency.
+The firmware must request a higher frequency using the ``nrf_clock_control`` API.
+
 Zephyr clock control API
 ************************
 
@@ -103,10 +155,12 @@ For more details, see the following links:
 
 * :ref:`zephyr:clock_control_api`.
 * The following calls in the `Zephyr's nRF clock control API extensions`_ (:file:`include/zephyr/drivers/clock_control/nrf_clock_control.h`):
+* The sample at :file:`zephyr/samples/boards/nordic/clock_control`.
 
-  * ``nrf_clock_control_request()``: Requests a reservation to use a given clock with specified attributes.
-  * ``nrf_clock_control_release()``: Releases a reserved use of a clock.
-  * ``nrf_clock_control_cancel_or_release()``: Safely cancels a reservation request.
+  * ``nrf_clock_control_request()`` - Requests a reservation to use a given clock with specified attributes.
+  * ``nrf_clock_control_release()`` - Releases a reserved use of a clock.
+  * ``nrf_clock_control_cancel_or_release()`` - Safely cancels a reservation request.
+  * ``nrf_clock_control_get_startup_time()`` - Gets the maximum time for a clock to apply specified attributes.
 
 * The following calls in the `clocks devicetree macro API`_ (:file:`include/zephyr/devicetree/clocks.h`):
 
