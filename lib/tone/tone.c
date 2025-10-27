@@ -11,6 +11,9 @@
 #include <stdio.h>
 #include <arm_math.h>
 
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(tone, CONFIG_TONE_LOG_LEVEL);
+
 #define FREQ_LIMIT_LOW	100
 #define FREQ_LIMIT_HIGH 10000
 
@@ -118,11 +121,13 @@ int tone_gen_size(void *tone, size_t *tone_size, uint16_t tone_freq_hz, uint32_t
 	int32_t max;
 
 	if (tone == NULL || tone_size == NULL) {
+		LOG_DBG("Invalid input parameters\n");
 		return -ENXIO;
 	}
 
 	if (!sample_freq_hz || tone_freq_hz < FREQ_LIMIT_LOW || tone_freq_hz > FREQ_LIMIT_HIGH ||
 	    sample_freq_hz % tone_freq_hz) {
+		LOG_DBG("Invalid input parameters\n");
 		return -EINVAL;
 	}
 
