@@ -3,6 +3,8 @@ common:
   depends_on: spi
 
 tests:
+  # cpuapp - idle_spim test
+  # cpurad - remote_sleep_forever
   benchmarks.multicore.idle_spim.nrf54h20dk_cpuapp_cpurad.s2ram:
     tags:
       - ci_build
@@ -21,6 +23,30 @@ tests:
       fixture: pca63566
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_spim"
+    timeout: 90
+
+  # cpuapp - vpr_launcher
+  # cpurad - remote_sleep_forever
+  # cpuppr - idle_spim test
+  benchmarks.multicore.idle_spim.nrf54h20dk_cpuppr.s2ram:
+    tags:
+      - ci_build
+      - ci_tests_benchmarks_multicore
+      - spim
+      - ppk_power_measure
+    filter: not CONFIG_COVERAGE
+    harness: pytest
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuppr
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuppr
+    extra_args:
+      - SHIELD=pca63566
+      - vpr_launcher_SHIELD=pca63566_fwd
+    harness_config:
+      fixture: pca63566
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_spim_ppr"
     timeout: 90
 
   benchmarks.multicore.idle_spim.nrf54h20dk_cpuapp_cpurad.s2ram.mcuboot:

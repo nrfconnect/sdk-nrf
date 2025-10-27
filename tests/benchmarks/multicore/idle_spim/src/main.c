@@ -36,6 +36,8 @@ void spi_read_register(uint8_t register_address, uint8_t *register_value)
 	__ASSERT(rc == 0, "Error: spi_transceive_dt, err: %d\n", rc);
 	*register_value = rx_buffer[2];
 
+	__ASSERT(rx_buffer[2] == 0x24, "Invalid CHIP ID %x (0x24)", rx_buffer[2]);
+
 	printk("'spi_transceive_dt', rx_data: %x %x %x\n", rx_buffer[0], rx_buffer[1],
 	       rx_buffer[2]);
 }
