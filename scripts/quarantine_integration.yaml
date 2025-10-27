@@ -122,6 +122,11 @@
     - sample.matter.manufacturer_specific.nrf7002eb2.release
     - sample.matter.thermostat.nrf7002eb2.debug
     - sample.matter.thermostat.nrf7002eb2.release
+    - applications.matter_bridge.br_ble.memory_profiling
+    - applications.matter_bridge.release
+    - applications.matter_bridge.nrf7002eb2.release
+    - applications.matter_bridge.release.br_ble
+    - applications.matter_bridge.nrf7002eb2.release.br_ble
   platforms:
     - nrf54lm20dk/nrf54lm20a/cpuapp
   comment: "Configurations excluded to limit resources usage in Matter integration builds"

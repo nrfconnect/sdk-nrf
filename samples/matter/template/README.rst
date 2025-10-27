@@ -199,6 +199,11 @@ Building the Matter over Wi-Fi sample variant on nRF5340 DK with nRF7002 EK shie
 
 .. include:: /includes/matter_building_nrf5340dk_70ek
 
+Building the Matter over Wi-Fi sample variant on nRF54LM20 DK with nRF7002-EB II shield
+=======================================================================================
+
+.. include:: /includes/matter_building_nrf54lm20dk_7002eb2
+
 Flashing the Matter over Wi-Fi sample variant
 =============================================
 

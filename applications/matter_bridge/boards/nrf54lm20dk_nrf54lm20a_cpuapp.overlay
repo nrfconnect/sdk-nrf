@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		nordic,pm-ext-flash = &mx25r64;
+	};
+
+	aliases {
+		/* Use watchdog wdt31 as the application watchdog */
+		watchdog0 = &wdt31;
+	};
+};
+
+&mx25r64 {
+	status = "okay";
+};
+
+&wdt31 {
+	status = "okay";
+};
+
+/* Workaround: Redirect Button3 to different pin as for now because it causes issues with
+ * nrf7002EB2 shield. For now rewire button3 to button2. Related to SHEL-3874.
+ */
+&button3 {
+	gpios = <&gpio1 0x8 0x11>;
+};

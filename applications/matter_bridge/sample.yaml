@@ -16,9 +16,24 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  applications.matter_bridge.nrf7002eb2.release:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=release
+      - CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
+      - CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
+      - matter_bridge_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.debug:
     sysbuild: true
     build_only: true
@@ -28,9 +43,23 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  applications.matter_bridge.nrf7002eb2.debug:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
+      - CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
+      - matter_bridge_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.br_ble:
     sysbuild: true
     build_only: true
@@ -41,9 +70,24 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  applications.matter_bridge.nrf7002eb2.br_ble:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - CONFIG_BRIDGED_DEVICE_BT=y
+      - CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
+      - CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
+      - matter_bridge_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.release.br_ble:
     sysbuild: true
     build_only: true
@@ -55,9 +99,25 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  applications.matter_bridge.nrf7002eb2.release.br_ble:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=release
+      - CONFIG_BRIDGED_DEVICE_BT=y
+      - CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
+      - CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
+      - matter_bridge_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.br_ble.smp_dfu:
     sysbuild: true
     build_only: true
@@ -68,7 +128,24 @@ tests:
       - CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
-    platform_allow: nrf7002dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  applications.matter_bridge.nrf7002eb2.br_ble.smp_dfu:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - CONFIG_CHIP_DFU_OVER_BT_SMP=y
+      - CONFIG_BRIDGED_DEVICE_BT=y
+      - CONFIG_BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE=n
+      - CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE=y
+      - matter_bridge_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.nrf5340.wifi:
     sysbuild: true
     build_only: true
@@ -94,8 +171,10 @@ tests:
       - CONFIG_BRIDGE_MIGRATE_VERSION_1=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   applications.matter_bridge.memory_profiling:
     sysbuild: true
     build_only: true

@@ -167,7 +167,7 @@ User interface
 
          .. include:: /includes/matter_segger_usb.txt
 
-   .. group-tab:: nrf54 DKs
+   .. group-tab:: nRF54LM20 DK
 
       Button 0:
          .. include:: /includes/matter_sample_button.txt
@@ -589,7 +589,7 @@ The current maximum number of Bluetooth LE connections that can be selected usin
 
       .. tabs::
 
-         .. group-tab:: Matter-Bridge over Wi-Fi
+         .. group-tab:: Matter bridge over Wi-Fi
 
             You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
 
@@ -599,6 +599,32 @@ The current maximum number of Bluetooth LE connections that can be selected usin
                :class: highlight
 
                west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf"
+
+   .. group-tab:: nRF54LM20 DKs
+
+      The nRF54LM20 supports the Matter bridge over Wi-Fi and Matter bridge over Thread configurations.
+
+      .. tabs::
+
+         .. group-tab:: Matter bridge over Wi-Fi
+
+            You can increase the number of Bluetooth LE connections, but you may need to decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller to balance the memory usage, and this will decrease the communication throughput.
+            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` (which effectively means 19 bridged devices) by decreasing the sizes of Bluetooth LE TX/RX buffers:
+
+             .. parsed-literal::
+               :class: highlight
+
+               west build -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DSB_CONFIG_WIFI_NRF70=y -Dmatter_bridge_SHIELD=nrf7002eb2 -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf"
+
+         .. group-tab:: Matter bridge over Thread
+
+            You can increase the number of Bluetooth LE connections, but you may need to decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller to balance the memory usage, and this will decrease the communication throughput.
+            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` (which effectively means 19 bridged devices) by decreasing the sizes of Bluetooth LE TX/RX buffers:
+
+             .. parsed-literal::
+               :class: highlight
+
+               west build -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf"
 
 Configuring Bluetooth LE connection and scan parameters
 -------------------------------------------------------
@@ -689,7 +715,14 @@ The application supports the following configurations:
      - nRF5340 DK with the nRF7002 EK shield attached
      - Debug version of the application with Matter over Wi-Fi enabled.
 
-       Enables the Matter Bridge to work with Wi-Fi on nRF5340 DK.
+       Enables the Matter bridge to work with Wi-Fi on nRF5340 DK.
+   * - Matter bridge with nRF54LM20 DK using internal memory only
+     - ---
+     - ``internal``
+     - nRF54LM20 DK
+     - Debug version of the application with external flash disabled.
+
+       Enables the Matter bridge to work using internal memory only.
 
 Factory data support
 ====================
@@ -715,6 +748,11 @@ Building the application on nRF5340 DK with nRF7002 EK shield
 
 .. include:: /includes/matter_building_nrf5340dk_70ek
 
+Building the application on nRF54LM20 DK with nRF7002-EB II shield
+==================================================================
+
+.. include:: /includes/matter_building_nrf54lm20dk_7002eb2
+
 Flashing the Matter over Wi-Fi application variant
 ==================================================
 
@@ -728,7 +766,7 @@ See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information
 
 .. _matter_bridge_smart_plug_functionality:
 
-Configure the functionality of the Matter-Bridge device
+Configure the functionality of the Matter bridge device
 -------------------------------------------------------
 
 To enable the Matter smart plugin functionality, run the following command with *board_target* replaced with the board target name:
@@ -778,7 +816,7 @@ After building the sample and programming it to your development kit, complete t
 Testing with bridged device working as a client
 -----------------------------------------------
 
-To test the bridged device working as a client, you need to enable On/Off Light Switch device support (see `matter_bridge_app_overview_`).
+To test the bridged device working as a client, you need to enable On/Off Light Switch device support (see `matter_bridge_app_overview`_).
 The On/Off Light Switch device is capable of controlling the On/Off Light state of another device, such as the :ref:`Matter Light Bulb <matter_light_bulb_sample>` sample working on an additional development kit.
 After building this application and the :ref:`Matter Light Bulb <matter_light_bulb_sample>` sample, and programming them to the development kits, complete the following steps to test the bridged device working as a client:
 
