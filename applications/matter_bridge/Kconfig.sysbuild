@@ -60,6 +60,14 @@ config DFU_MULTI_IMAGE_PACKAGE_NET
 
 endif # SOC_SERIES_NRF53X
 
+if BOARD_NRF54LM20DK
+
+# Disable checking the external drivers for nRF54LM20 DK.
+config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
+	default y
+
+endif # BOARD_NRF54LM20DK
+
 endif # BOOTLOADER_MCUBOOT
 
 # Store the Wi-Fi firmware patch on external flash by default for nRF5340 with nRF7002

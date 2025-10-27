@@ -228,6 +228,9 @@ IPC radio firmware
 Matter bridge
 -------------
 
+* Added support for the nRF54LM20 DK working with both Thread and Wi-Fi protocol variants.
+  For the Wi-Fi protocol variant, the nRF54LM20 DK works with the nRF7002-EB II shield attached.
+
 * Updated:
 
   * The application to store a portion of the application code related to the nRF70 Series Wi-Fi firmware in the external flash memory by default.
@@ -545,6 +548,7 @@ Matter samples
   * The :ref:`matter_temperature_sensor_sample` sample that demonstrates how to implement and test a Matter temperature sensor device.
   * The :ref:`matter_contact_sensor_sample` sample that demonstrates how to implement and test a Matter contact sensor device.
   * The ``matter_custom_board`` toggle paragraph in the Matter advanced configuration section of all Matter samples that demonstrates how add and configure a custom board.
+  * Support for the Matter over Wi-Fi on the nRF54LM20 DK with the nRF7002-EB II shield attached to all Matter over Wi-Fi samples.
 
 * Updated:
 
