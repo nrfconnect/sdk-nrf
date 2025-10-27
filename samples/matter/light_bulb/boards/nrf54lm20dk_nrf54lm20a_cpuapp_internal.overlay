@@ -31,12 +31,12 @@
 &pinctrl {
 	pwm_default: pwm_default {
 		group1 {
-			psels = <NRF_PSEL(PWM_OUT1, 1, 10)>;
+			psels = <NRF_PSEL(PWM_OUT1, 1, 25)>;
 		};
 	};
 	pwm_sleep: pwm_sleep {
 		group1 {
-			psels = <NRF_PSEL(PWM_OUT1, 1, 10)>;
+			psels = <NRF_PSEL(PWM_OUT1, 1, 25)>;
 			low-power-enable;
 		};
 	};
