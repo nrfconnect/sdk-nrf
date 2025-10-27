@@ -141,6 +141,7 @@ tests:
     filter: CONFIG_COVERAGE
     extra_args:
       - idle_pwm_loopback_CONF_FILE=coverage.conf
+      - EXTRA_DTC_OVERLAY_FILE="disable_s2ram.overlay"
       - SHIELD=coverage_support
     harness: console
     harness_config:
