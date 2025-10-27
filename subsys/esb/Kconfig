@@ -70,47 +70,47 @@ choice ESB_SYS_TIMER
 config ESB_SYS_TIMER0
 	bool "TIMER0"
 	depends on $(dt_nodelabel_has_compat,timer0,$(DT_COMPAT_NORDIC_NRF_TIMER))
-	select NRFX_TIMER0
+	select NRFX_TIMER
 
 config ESB_SYS_TIMER1
 	bool "TIMER1"
 	depends on $(dt_nodelabel_has_compat,timer1,$(DT_COMPAT_NORDIC_NRF_TIMER))
-	select NRFX_TIMER1
+	select NRFX_TIMER
 
 config ESB_SYS_TIMER2
 	bool "TIMER2"
 	depends on $(dt_nodelabel_has_compat,timer2,$(DT_COMPAT_NORDIC_NRF_TIMER))
-	select NRFX_TIMER2
+	select NRFX_TIMER
 
 config ESB_SYS_TIMER3
 	bool "TIMER3"
 	depends on $(dt_nodelabel_has_compat,timer3,$(DT_COMPAT_NORDIC_NRF_TIMER))
-	select NRFX_TIMER3
+	select NRFX_TIMER
 
 config ESB_SYS_TIMER4
 	bool "TIMER4"
 	depends on $(dt_nodelabel_has_compat,timer4,$(DT_COMPAT_NORDIC_NRF_TIMER))
-	select NRFX_TIMER4
+	select NRFX_TIMER
 
 config ESB_SYS_TIMER10
 	bool "TIMER10"
 	depends on $(dt_nodelabel_has_compat,timer10,$(DT_COMPAT_NORDIC_NRF_TIMER))
-	select NRFX_TIMER10
+	select NRFX_TIMER
 
 config ESB_SYS_TIMER020
 	bool "TIMER020"
 	depends on $(dt_nodelabel_has_compat,timer020,$(DT_COMPAT_NORDIC_NRF_TIMER))
-	select NRFX_TIMER020
+	select NRFX_TIMER
 
 config ESB_SYS_TIMER021
 	bool "TIMER021"
 	depends on $(dt_nodelabel_has_compat,timer021,$(DT_COMPAT_NORDIC_NRF_TIMER))
-	select NRFX_TIMER021
+	select NRFX_TIMER
 
 config ESB_SYS_TIMER022
 	bool "TIMER022"
 	depends on $(dt_nodelabel_has_compat,timer022,$(DT_COMPAT_NORDIC_NRF_TIMER))
-	select NRFX_TIMER022
+	select NRFX_TIMER
 
 endchoice
 
