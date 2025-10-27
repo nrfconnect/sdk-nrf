@@ -29,7 +29,8 @@ LOG_MODULE_REGISTER(cpu_load, CONFIG_NRF_CPU_LOAD_LOG_LEVEL);
 #define CPU_LOAD_LOG_INTERVAL 0
 #endif
 
-static nrfx_timer_t timer = NRFX_TIMER_INSTANCE(CONFIG_NRF_CPU_LOAD_TIMER_INSTANCE);
+static nrfx_timer_t timer =
+	NRFX_TIMER_INSTANCE(NRF_TIMER_INST_GET(CONFIG_NRF_CPU_LOAD_TIMER_INSTANCE));
 static bool ready;
 static struct k_work_delayable cpu_load_log;
 static uint32_t cycle_ref;
