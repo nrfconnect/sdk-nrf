@@ -45,9 +45,6 @@ LOG_MODULE_REGISTER(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 #define NFC_TIMER_IRQn		NRFX_CONCAT_3(TIMER,				  \
 					      NRFX_NFCT_CONFIG_TIMER_INSTANCE_ID, \
 					      _IRQn)
-#define nfc_timer_irq_handler	NRFX_CONCAT_3(nrfx_timer_,			  \
-					      NRFX_NFCT_CONFIG_TIMER_INSTANCE_ID, \
-					      _irq_handler)
 #endif /* NFC_PLATFORM_USE_TIMER_WORKAROUND */
 
 #if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
@@ -123,7 +120,7 @@ nrfx_err_t nfc_platform_setup(nfc_lib_cb_resolve_t nfc_lib_cb_resolve, uint8_t *
 
 #if NFC_PLATFORM_USE_TIMER_WORKAROUND
 	IRQ_CONNECT(NFC_TIMER_IRQn, DT_IRQ(NFCT, priority),
-		    nfc_timer_irq_handler, NULL,  0);
+		    nrfx_nfct_workaround_timer_handler, NULL,  0);
 #endif /* NFC_PLATFORM_USE_TIMER_WORKAROUND */
 
 	*p_irq_priority = DT_IRQ(NFCT, priority);
