@@ -152,14 +152,22 @@ After programming the sample to your dongle or development kit, one of the LEDs 
             #. Connect to the device from the application.
                The device is advertising as ``Nordic_LBS``.
                The services of the connected device are shown.
-            #. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic.
+            #. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic, using the downward arrow icon.
+
+               .. figure:: /images/nrf_connect_enable_notify.png
+                  :scale: 50 %
+
             #. Press **Button 1** on the device.
             #. Observe that notifications with the following values are displayed:
 
                * ``Button released`` when **Button 1** is released.
                * ``Button pressed`` when **Button 1** is pressed.
 
-            #. Write the following values to the LED characteristic in the **Nordic LED Button Service**.
+            #. Write the following values to the LED characteristic in the **Nordic LED Button Service**, using the up arrow icon.
+
+               .. figure:: /images/nrf_connect_write.png
+                  :scale: 50 %
+
                Depending on the hardware platform, this produces results described in the table.
 
                +------------------------+---------+----------------------------------------------+
@@ -188,14 +196,22 @@ After programming the sample to your dongle or development kit, one of the LEDs 
             #. Connect to the device from the application.
                The device is advertising as ``Nordic_LBS``.
                The services of the connected device are shown.
-            #. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic.
+            #. In **Nordic LED Button Service**, enable notifications for the **Button** characteristic, using the downward arrow icon.
+
+               .. figure:: /images/nrf_connect_enable_notify.png
+                  :scale: 50 %
+
             #. Press **Button 0** on the device.
             #. Observe that notifications with the following values are displayed:
 
                * ``Button released`` when **Button 0** is released.
                * ``Button pressed`` when **Button 0** is pressed.
 
-            #. Write the following values to the LED characteristic in the **Nordic LED Button Service**.
+            #. Write the following values to the LED characteristic in the **Nordic LED Button Service**, using the up arrow icon.
+
+               .. figure:: /images/nrf_connect_write.png
+                  :scale: 50 %
+
                Depending on the hardware platform, this produces results described in the table.
 
                +------------------------+---------+----------------------------------------------+
