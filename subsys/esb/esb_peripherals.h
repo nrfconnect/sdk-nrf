@@ -104,8 +104,7 @@ extern "C" {
 	NRFX_CONCAT_2(NRF_TIMER, ESB_TIMER_INSTANCE_NO)
 
 /** ESB nrfx timer instance. */
-#define ESB_NRFX_TIMER_INSTANCE NRFX_TIMER_INSTANCE(ESB_TIMER_INSTANCE_NO)
-
+#define ESB_NRFX_TIMER_INSTANCE_REG NRF_TIMER_INST_GET(ESB_TIMER_INSTANCE_NO)
 #if !defined(CONFIG_NRFX_DPPI)
 /** Use fixed DPPI channels and groups if nrfx_dppi is not available. */
 #define ESB_DPPI_FIXED
