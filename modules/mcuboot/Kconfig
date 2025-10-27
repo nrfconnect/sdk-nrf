@@ -101,4 +101,15 @@ config NRF_MCUBOOT_BOOT_REQUEST_IMPL_RETENTION
 
 endchoice
 
+config NCS_MCUBOOT_BOOT_REQUEST_TEST_SETS_BOOT_PREFERENCE
+	bool "Set boot preference if a slot is marked for test"
+	help
+	  This option allows to verify boot preference requests through issuing
+	  the image test.
+	  Using this option is not recommended in production systems, because
+	  it will boot any newly transferred image, even if it has a lower
+	  version than the current one.
+	  The rollback protection (using security counters) will still be
+	  effective.
+
 endif # NRF_MCUBOOT_BOOT_REQUEST
