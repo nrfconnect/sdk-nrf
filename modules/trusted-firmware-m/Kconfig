@@ -54,7 +54,6 @@ menu "Crypto component configs"
 
 config TFM_CRYPTO_SINGLE_PART_FUNCS_DISABLED
 	bool "Only enable multi-part operations"
-	default n
 	help
 	  Only enable multi-part operations in Hash, MAC, AEAD and symmetric
 	  ciphers, to optimize memory footprint in resource-constrained devices
@@ -141,7 +140,6 @@ config TFM_ATTEST_VERIFICATION_SERVICE_URL
 
 config TFM_ATTEST_INCLUDE_COSE_KEY_ID
 	bool "Include COSE key-id in initial attestation token"
-	default n
 
 # Only the PSA_IOT_1 profile is supported
 choice TFM_ATTEST_TOKEN_PROFILE
@@ -176,7 +174,6 @@ config TFM_ITS_CREATE_FLASH_LAYOUT
 
 config TFM_ITS_RAM_FS
 	bool "Emulated RAM FS"
-	default n
 	help
 	  Enable emulated RAM FS for platforms that don't have flash for
 	  Internal Trusted Storage partition
@@ -245,7 +242,6 @@ config TFM_PS_CREATE_FLASH_LAYOUT
 
 config TFM_PS_RAM_FS
 	bool "Emulated RAM FS"
-	default n
 	help
 	  Enable emulated RAM FS for platforms that don't have flash for
 	  Protected Storage partition
@@ -313,7 +309,7 @@ config TFM_CONN_HANDLE_MAX_NUM
 config TFM_DOORBELL_API
 	bool "Doorbell APIs"
 	depends on TFM_IPC
-	default n
+
 endmenu
 
 rsource "Kconfig.tfm.pm"
