@@ -124,27 +124,20 @@ Setup*
 Configuration options*
 ======================
 
-.. note::
-   * You do not need to list all configuration options of the sample, but only the ones that are important for the sample and make sense for the user to know about.
-   * The syntax below allows sample configuration options to link to the option descriptions in the same way as the library configuration options link to the corresponding Kconfig descriptions (``:kconfig:option:`SAMPLE_CONFIG```, which results in :kconfig:option:`SAMPLE_CONFIG`).
-   * For each configuration option, list the symbol name and the string describing it.
-   * For the |nRFVSC| instructions, list the configuration options as they are stated on the Generate Configuration screen.
-
 Check and configure the following Kconfig options:
 
-.. _SAMPLE_CONFIG:
-
-SAMPLE_CONFIG
-   The sample configuration defines ...
-
-.. _ANOTHER_CONFIG:
-
-ANOTHER_CONFIG
-   This configuration option specifies ...
-
 .. note::
+   * Use the following syntax to list all the sample-specific configuration options in the :file:`Kconfig` file.
 
-   Use :ref:`SAMPLE_CONFIG <SAMPLE_CONFIG>` to link to sample specific option.
+     .. code-block::
+
+        .. options-from-kconfig::
+           :show-type:
+
+   * The syntax allows sample configuration options to link to the option descriptions in the same way as the library configuration options link to the corresponding Kconfig descriptions (``:kconfig:option:`SAMPLE_CONFIG```, which results in :kconfig:option:`SAMPLE_CONFIG`).
+   * For the |nRFVSC| instructions, list the configuration options as they are stated on the **Generate Configuration** screen.
+   * Use ``:option:`CONFIG_STATS_PRINT_TIMEOUT``` to link to sample specific option from any documentation page.
+   * The tech writer team needs to review the :file:`Kconfig` file, where the sample-specific Kconfig options are defined.
 
 Additional configuration*
 =========================
