@@ -7,22 +7,188 @@ IronSide Secure Element
    :local:
    :depth: 2
 
-The IronSide Secure Element (|ISE|) is a firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` of the nRF54H20 SoC that provides security features based on the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>`, part of the :ref:`PSA Certified Security Framework <ug_psa_certified_api_overview>`.
+The IronSide Secure Element (|ISE|) is a firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` of the nRF54H20 SoC that provides security features based on the :ref:`PSA Certified Security Framework <ug_psa_certified_api_overview>`.
 
 |ISE| provides the following features:
 
 * Global memory configuration
 * Peripheral configuration (through UICR.PERIPHCONF)
 * Boot commands (ERASEALL, DEBUGWAIT)
+* An alternative boot path with a secondary firmware
 * CPUCONF service
 * Update service
 * PSA Crypto service - see also :ref:`ug_crypto_architecture_implementation_standards_ironside`
+* PSA Internal Trusted Storage service
 
-Distribution
-************
+.. _ug_nrf54h20_ironside_se_programming:
 
-The |ISE| is provided as a precompiled binary, which is part of the nRF54H20 SoC bundle and is provided independently from the |NCS| release cycle.
-For more information, see :ref:`abi_compatibility`.
+Programming |ISE| on the nRF54H20 SoC
+*************************************
+
+|ISE| is released independently of the |NCS| release cycle and is provided as a ZIP archive that contains the following components:
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - Component
+     - File
+     - Description
+   * - IronSide SE firmware
+     - :file:`ironside_se.hex`
+     - Used when bringing up a new DK and programming both the recovery firmware and |ISE| for the first time.
+   * - IronSide SE update firmware
+     - :file:`ironside_se_update.hex`
+     - Used when updating |ISE|.
+   * - IronSide SE Recovery update firmware
+     - :file:`ironside_se_recovery_update.hex`
+     - The recovery firmware, reserved for future recovery operations. Currently, it does not provide user-facing functionality. Used when updating the recovery firmware.
+   * - Update application
+     - :file:`update_application.hex`
+     - The local domain :zephyr:code-sample:`update application <nrf_ironside_update>` that is used to perform an |ISE| update. See :ref:`ug_nrf54h20_ironside_se_update_manual`.
+
+For instructions on how to program |ISE|, see :ref:`ug_nrf54h20_SoC_binaries`.
+
+By default, the nRF54H20 SoC uses the following memory and access configurations:
+
+* MRAMC configuration: MRAM operates in Direct Write mode with READYNEXTTIMEOUT disabled.
+* MPC configuration: All memory not reserved by Nordic firmware is accessible with read, write, and execute (RWX) permissions by any domain.
+* TAMPC configuration: The access ports (AP) for the local domains are enabled, allowing direct programming of all the memory not reserved by Nordic firmware in the default configuration.
+
+
+.. note::
+   * The Radio Domain AP is only usable when the Radio domain has booted.
+   * Access to external memory (EXMIF) requires a non-default configuration of the GPIO.CTRLSEL register.
+
+You can protect global domain memory from write operations by configuring the UICR registers.
+To remove these protections and disable all other protection mechanisms enforced through UICR settings, perform an ``ERASEALL`` operation.
+
+.. _ug_nrf54h20_ironside_se_update:
+
+Updating |ISE|
+**************
+
+|NCS| supports two methods for updating the |ISE| firmware on the nRF54H20 SoC:
+
+* Using the ``west`` command.
+  You can use the ``west`` command provided by the |NCS| to install the firmware update.
+  For step-by-step instructions, see :ref:`ug_nrf54h20_ironside_se_update_west`.
+
+* Using the nRF Util `device command <Device command overview_>`_.
+  Alternatively, you can perform the update by manually executing the same steps that the ``west`` command performs.
+  For step-by-step instructions, see :ref:`ug_nrf54h20_ironside_se_update_manual`.
+
+.. caution::
+   You cannot update |ISE| from a SUIT-based (up to 0.9.6) to an |ISE|-based (20.0.0 and onwards) version.
+
+.. _ug_nrf54h20_ironside_se_update_west:
+
+Updating using west
+===================
+
+To update the |ISE| firmware, you can use the ``west ncs-ironside-se-update`` command with the following syntax:
+
+.. code-block:: console
+
+   west ncs-ironside-se-update --zip <path_to_soc_binaries.zip> --allow-erase
+
+The command accepts the following main options:
+
+* ``--zip`` (required) - Sets the path to the nRF54H20 SoC binaries ZIP file.
+* ``--allow-erase`` (required) - Enables erasing the device during the update process.
+* ``--serial`` - Specifies the serial number of the target device.
+* ``--firmware-slot`` - Updates only a specific firmware slot (``uslot`` for |ISE| or ``rslot`` for |ISE| Recovery).
+* ``--wait-time`` - Specifies the timeout in seconds to wait for the device to boot (default: 2.0 seconds).
+
+.. _ug_nrf54h20_ironside_se_update_manual:
+
+Updating manually
+=================
+
+The manual update process involves the following steps:
+
+1. Executing the update application.
+   The :zephyr:code-sample:`update application <nrf_ironside_update>` runs on the application core and communicates with |ISE| using the :ref:`update service <ug_nrf54h20_ironside_se_update_service>`.
+   It reads the update firmware from memory and passes the update blob metadata to the |ISE|.
+   The |ISE| validates the update parameters and writes the update metadata to the Secure Information Configuration Registers (SICR).
+
+#. Installing the update.
+   After a reset, the Secure Domain ROM (SDROM) detects the pending update through the SICR registers, verifies the update firmware signature, and installs the new firmware.
+
+#. Completing the update.
+   The system boots with the updated |ISE| firmware, and the update status in the boot report can be read to verify successful installation.
+
+Updating manually using nRF Util
+--------------------------------
+
+To update |ISE|, you can use nRF Util instead of ``west ncs-ironside-se-update``.
+To use nRF Util for the update, you must install the nRF Util `device` command v2.14.0 or higher.
+See `Installing specific versions of nRF Util commands`_ for more information.
+
+To perform the manual update process using nRF Util's `device <Device command overview_>`_ command, complete the following steps:
+
+1. Extract the update bundle:
+
+   .. code-block:: console
+
+      unzip <soc_binaries.zip> -d /tmp/update_dir
+
+#. Erase non-volatile memory:
+
+   .. code-block:: console
+
+      nrfutil device recover --serial-number <serial>
+
+#. Program the update application:
+
+   .. code-block:: console
+
+      nrfutil device program --firmware /tmp/update_dir/update/update_application.hex --serial-number <serial>
+
+#. Program the |ISE| update firmware:
+
+   .. code-block:: console
+
+      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_update.hex --serial-number <serial>
+
+#. Reset the device to execute the update service:
+
+   .. code-block:: console
+
+      nrfutil device reset --serial-number <serial>
+
+#. Reset through Secure Domain to trigger the installation of the update:
+
+   .. code-block:: console
+
+      nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial>
+
+#. If you are updating both slots, complete the following additional steps:
+
+   a. Program the |ISE| Recovery update firmware:
+
+      .. code-block:: console
+
+         nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_recovery_update.hex --serial-number <serial>
+
+   #. Reset again to execute the update service:
+
+      .. code-block:: console
+
+         nrfutil device reset --serial-number <serial>
+
+   #. Reset again through Secure Domain to trigger the installation of the update:
+
+      .. code-block:: console
+
+         nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial>
+
+
+#. Erase the update application (regardless of whether you update one or both slots):
+
+   .. code-block:: console
+
+      nrfutil device erase --all --serial-number <serial>
 
 .. _ug_nrf54h20_ironside_se_uicr:
 
@@ -58,8 +224,7 @@ The following UICR fields are supported:
 | UICR.PERIPHCONF      | Points to an array of key-value entries used to initialize approved |
 |                      | global peripherals.                                                 |
 +----------------------+---------------------------------------------------------------------+
-| UICR.MPCCONF         | Points to an array of memory-protection entries used to configure   |
-|                      | global memory regions.                                              |
+| UICR.MPCCONF         | Not supported yet.                                                  |
 +----------------------+---------------------------------------------------------------------+
 | UICR.WDTSTART        | Configures automatic start of a local watchdog timer before the     |
 |                      | application core is booted, providing early system protection.      |
@@ -75,6 +240,139 @@ The following UICR fields are supported:
    If no UICR values are programmed, |ISE| applies a set of default configurations.
    Applications that do not require custom settings can rely on these defaults without modifying the UICR.
 
+UICR image generation
+=====================
+
+When applications need application-specific UICR contents they may use the UICR image.
+The UICR image is an automatically created build artifact that generates the UICR content and peripheral configuration (PERIPHCONF) entries.
+
+UICR image
+----------
+
+The UICR image will generate HEX files at :file:`build/uicr/zephyr/` inside the build directory.
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - Component
+     - File
+     - Description
+   * - Merged UICR image
+     - :file:`zephyr.hex`
+     - The merged hex file contains all other hex files. This file is automatically programmed when using ``west flash``.
+   * - UICR-only image
+     - :file:`uicr.hex`
+     - Contains only the UICR configuration structure.
+   * - PERIPHCONF-only image
+     - :file:`periphconf.hex`
+     - Contains only the PERIPHCONF entries. Generated when :kconfig:option:`CONFIG_GEN_UICR_GENERATE_PERIPHCONF` is enabled.
+   * - Secondary PERIPHCONF image
+     - :file:`secondary_periphconf.hex`
+     - Contains only the secondary firmware's PERIPHCONF entries. Generated when :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_GENERATE_PERIPHCONF` is enabled.
+
+UICR image generation process
+-----------------------------
+
+The UICR image generation process:
+
+1. Devicetree analysis: The build system analyzes all devicetrees in the sysbuild build to identify peripheral usage and pin assignments across all images.
+2. PERIPHCONF generation: Python scripts generate C source code containing UICR configuration macros based on the devicetree.
+3. Compilation: The generated C code is compiled into ELF binaries containing PERIPHCONF sections.
+4. ELF extraction: The UICR generator extracts PERIPHCONF data from ELF files and merges them together.
+5. Kconfig extraction: The UICR generator uses an application-specific UICR Kconfig to populate the UICR entries.
+6. HEX file creation: Multiple HEX files are generated for different purposes. See the table above for details.
+
+Configuring the UICR image
+--------------------------
+
+Applications that use UICR features must place a :file:`sysbuild/uicr.conf` Kconfig fragment file in their project directory to configure the Kconfig of the UICR image.
+
+The following code snippet shows an example configuration for secondary firmware support in :file:`sysbuild/uicr.conf`:
+
+.. code-block:: kconfig
+
+   # Configuration overlay for uicr image
+   # Enable UICR.SECONDARY.ENABLE
+   CONFIG_GEN_UICR_SECONDARY=y
+
+For more examples of UICR configuration, see :ref:`ironside_se`:
+
+* :ref:`secondary_boot_sample` - Basic secondary firmware configuration
+* :ref:`secondary_boot_trigger_lockup_sample` - Secondary firmware with automatic triggers
+
+UICR Kconfig configuration options
+----------------------------------
+
+The UICR Kconfig options are listed below, and are defined with more detailed Kconfig help texts in :file:`zephyr/soc/nordic/common/uicr/gen_uicr/Kconfig`.
+
+.. list-table:: UICR Kconfig Options
+   :widths: 50 50
+   :header-rows: 1
+
+   * - Kconfig option
+     - Description
+   * - :kconfig:option:`CONFIG_GEN_UICR_GENERATE_PERIPHCONF`
+     - Generate a PERIPHCONF hex in addition to the UICR hex
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECURESTORAGE`
+     - Enable UICR.SECURESTORAGE
+   * - :kconfig:option:`CONFIG_GEN_UICR_LOCK`
+     - Enable UICR.LOCK
+   * - :kconfig:option:`CONFIG_GEN_UICR_ERASEPROTECT`
+     - Enable UICR.ERASEPROTECT
+   * - :kconfig:option:`CONFIG_GEN_UICR_APPROTECT_APPLICATION_PROTECTED`
+     - Protect application domain access port
+   * - :kconfig:option:`CONFIG_GEN_UICR_APPROTECT_RADIOCORE_PROTECTED`
+     - Protect radio core access port
+   * - :kconfig:option:`CONFIG_GEN_UICR_APPROTECT_CORESIGHT_PROTECTED`
+     - Disable CoreSight subsystem
+   * - :kconfig:option:`CONFIG_GEN_UICR_PROTECTEDMEM`
+     - Enable UICR.PROTECTEDMEM
+   * - :kconfig:option:`CONFIG_GEN_UICR_PROTECTEDMEM_SIZE_BYTES`
+     - Protected memory size in bytes
+   * - :kconfig:option:`CONFIG_GEN_UICR_WDTSTART`
+     - Enable UICR.WDTSTART
+   * - :kconfig:option:`CONFIG_GEN_UICR_WDTSTART_INSTANCE_WDT0`
+     - Use watchdog timer instance 0
+   * - :kconfig:option:`CONFIG_GEN_UICR_WDTSTART_INSTANCE_WDT1`
+     - Use watchdog timer instance 1
+   * - :kconfig:option:`CONFIG_GEN_UICR_WDTSTART_CRV`
+     - Initial Counter Reload Value (CRV) for the watchdog timer
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY`
+     - Enable UICR.SECONDARY.ENABLE
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_GENERATE_PERIPHCONF`
+     - Generate SECONDARY.PERIPHCONF hex alongside UICR
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_PROCESSOR_APPLICATION`
+     - Boot secondary firmware on the APPLICATION processor
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_PROCESSOR_RADIOCORE`
+     - Boot secondary firmware on the RADIOCORE processor
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER`
+     - Enable UICR.SECONDARY.TRIGGER
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER_APPLICATIONWDT0`
+     - Trigger on Application domain watchdog 0 reset
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER_APPLICATIONWDT1`
+     - Trigger on Application domain watchdog 1 reset
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER_APPLICATIONLOCKUP`
+     - Trigger on Application domain CPU lockup reset
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER_RADIOCOREWDT0`
+     - Trigger on Radio core watchdog 0 reset
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER_RADIOCOREWDT1`
+     - Trigger on Radio core watchdog 1 reset
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER_RADIOCORELOCKUP`
+     - Trigger on Radio core CPU lockup reset
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_WDTSTART`
+     - Enable UICR.SECONDARY.WDTSTART
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_WDTSTART_INSTANCE_WDT0`
+     - Use watchdog timer instance 0 for secondary firmware
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_WDTSTART_INSTANCE_WDT1`
+     - Use watchdog timer instance 1 for secondary firmware
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_WDTSTART_CRV`
+     - Secondary initial Counter Reload Value (CRV) for the watchdog timer
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_PROTECTEDMEM`
+     - Enable UICR.SECONDARY.PROTECTEDMEM
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_PROTECTEDMEM_SIZE_BYTES`
+     - Secondary protected memory size in bytes
+
 UICR.VERSION
 ============
 
@@ -86,64 +384,59 @@ This versioning scheme allows IronSide to support multiple UICR formats, enablin
 UICR.LOCK
 =========
 
-Enabling UICR.LOCK locks the entire contents of the NVR0 page located in MRAM10.
+Enabling :kconfig:option:`CONFIG_GEN_UICR_LOCK` locks the entire contents of the NVR0 page located in MRAM10.
 This includes all values in both the UICR and the BICR (the Board Information Configuration Registers).
-When UICR.LOCK is enabled, you can modify the UICR only by performing an ERASEALL operation.
+When :kconfig:option:`CONFIG_GEN_UICR_LOCK` is enabled, you can modify the UICR only by performing an ERASEALL operation.
 
 .. note::
-   While BICR is not erased during an ERASEALL operation, executing ERASEALL lifts the UICR.LOCK restriction, allowing write access to BICR.
+   While BICR is not erased during an ERASEALL operation, executing ERASEALL lifts the :kconfig:option:`CONFIG_GEN_UICR_LOCK` restriction, allowing write access to BICR.
 
 Locking is enforced through an integrity check and by configuring the NVR page as read-only in the MRAMC.
 
-If the integrity check fails, the application is booted with the application domain's CPUWAIT set.
-It is not possible to boot the vendor-specified recovery firmware if the integrity check fails.
+If the integrity check fails, the application CPU subsystem will still be given clock and power, but the CPU will be stalled and prevented from executing instructions.
+It is not possible to boot the secondary firmware if the integrity check fails.
+
+.. _ug_nrf54h20_ironside_se_uicr_approtect:
 
 UICR.APPROTECT
 ==============
 
-UICR.APPROTECT controls debugger and access-port permissions through the TAMPC peripheral.
-The configuration consists of separate registers for each access port, allowing independent control over debugging capabilities for different processor domains and CoreSight access.
-
 The UICR.APPROTECT configuration consists of the following sub-registers:
 
-UICR.APPROTECT.APPLICATION
+:kconfig:option:`CONFIG_GEN_UICR_APPROTECT_APPLICATION_PROTECTED`
   Controls access port protection for the application domain processor.
   This setting determines whether the debugger can access the application domain memory, registers, and debug features.
 
-UICR.APPROTECT.RADIOCORE
+:kconfig:option:`CONFIG_GEN_UICR_APPROTECT_RADIOCORE_PROTECTED`
   Controls access port protection for the radio core processor.
   This setting determines whether the debugger can access the radio core memory, registers, and debug features.
 
-UICR.APPROTECT.CORESIGHT
+:kconfig:option:`CONFIG_GEN_UICR_APPROTECT_CORESIGHT_PROTECTED`
   Controls access port protection for the CoreSight debug infrastructure.
   This setting determines whether system-level trace features are accessible.
 
-Each of these sub-registers accepts the following values:
-
-* ``UICR_MAGIC_ERASE_VALUE`` - Full debug access is enabled, allowing unrestricted use of debugging tools and memory access.
-* ``UICR_PROTECTED`` - Debug access is disabled, preventing debugger connection and protecting the device from unauthorized access.
-
 .. note::
-   To fully protect a production device, set all three sub-registers (APPLICATION, RADIOCORE, and CORESIGHT) to ``UICR_PROTECTED``.
+   To fully protect a production device, enable all three Kconfig options.
 
 UICR.ERASEPROTECT
 =================
 
-Enabling UICR.ERASEPROTECT blocks the ERASEALL operation.
+Enabling :kconfig:option:`CONFIG_GEN_UICR_ERASEPROTECT` blocks the ERASEALL operation.
 However, it does not prevent erase operations initiated through other means, such as writing erase values via a debugger.
 
 .. note::
-   If this configuration is enabled and UICR.LOCK is also set, it is no longer possible to modify the UICR in any way.
+   If this configuration is enabled and :kconfig:option:`CONFIG_GEN_UICR_LOCK` is also set, it is no longer possible to modify the UICR in any way.
    Therefore, this configuration should only be enabled during the final stages of production.
 
 UICR.PROTECTEDMEM
 =================
 
-In the UICR.PROTECTEDMEM field, you can specify a memory region that will have its integrity ensured by |ISE|.
-This memory can contain immutable bootloaders, UICR.PERIPHCONF entries, UICR.MPCCONF entries, or any other data that should be immutable.
+Enabling :kconfig:option:`CONFIG_GEN_UICR_PROTECTEDMEM` enables UICR.PROTECTEDMEM.
+UICR.PROTECTEDMEM can be used to specify a memory region that will have its integrity ensured by |ISE|.
+This memory can contain immutable bootloaders, UICR.PERIPHCONF entries, or any other data that should be immutable.
 By ensuring the integrity of this memory region, |ISE| extends the Root of Trust to any immutable bootloader located in this region.
 
-The value in this field specifies the number of 4 kB blocks, starting from the lowest MRAM address of the application-owned memory.
+The memory region always starts at the lowest MRAM address of the application-owned memory and has an application-specific size specified in :kconfig:option:`CONFIG_GEN_UICR_PROTECTEDMEM_SIZE_BYTES`.
 
 UICR.PERIPHCONF
 ===============
@@ -383,22 +676,22 @@ See the following table for a mapping between the devicetree input used by ``nrf
 UICR.WDTSTART
 =============
 
-UICR.WDTSTART configures the automatic start of a local watchdog timer before the application core is booted.
+:kconfig:option:`CONFIG_GEN_UICR_WDTSTART` enables the automatic start of a local watchdog timer before the application core is booted.
 This provides early system protection ensuring that the system can recover from early boot failures.
 
 The UICR.WDTSTART configuration consists of three sub-registers:
 
-UICR.WDTSTART.ENABLE
+:kconfig:option:`CONFIG_GEN_UICR_WDTSTART`
   Controls whether the watchdog timer automatic start feature is enabled.
 
-UICR.WDTSTART.INSTANCE
+:kconfig:option:`CONFIG_GEN_UICR_WDTSTART_INSTANCE_WDT0` / :kconfig:option:`CONFIG_GEN_UICR_WDTSTART_INSTANCE_WDT1`
   Specifies which watchdog timer instance to configure and start.
   The following are valid values:
 
   * ``WDT0`` - Use watchdog timer instance 0
   * ``WDT1`` - Use watchdog timer instance 1
 
-UICR.WDTSTART.CRV
+:kconfig:option:`CONFIG_GEN_UICR_WDTSTART_CRV`
   Sets the initial Counter Reload Value (CRV) for the watchdog timer.
   This value determines the watchdog timeout period.
   The CRV must be at least 15 (0xF) to ensure proper watchdog operation.
@@ -406,7 +699,7 @@ UICR.WDTSTART.CRV
 UICR.SECURESTORAGE
 ==================
 
-UICR.SECURESTORAGE configures the secure storage system used by |ISE| for persistent storage of cryptographic keys and trusted data.
+:kconfig:option:`CONFIG_GEN_UICR_SECURESTORAGE` enables the secure storage system used by |ISE| for persistent storage of cryptographic keys and trusted data.
 The secure storage is divided into separate partitions for different services and processor domains.
 The total size of all configurations specified in ``UICR.SECURESTORAGE.*`` must be aligned to a 4 KB boundary.
 For more information, see :ref:`ug_nrf54h20_ironside_se_secure_storage`.
@@ -441,7 +734,7 @@ UICR.SECURESTORAGE.ITS
 UICR.SECONDARY
 ==============
 
-UICR.SECONDARY configures the secondary firmware boot system, which allows |ISE| to boot alternative firmware in response to specific conditions or triggers.
+:kconfig:option:`CONFIG_GEN_UICR_SECONDARY` configures the secondary firmware boot system, which allows |ISE| to boot alternative firmware in response to specific conditions or triggers.
 This feature enables a recovery firmware setup through a dual-firmware configuration that includes both main and recovery firmware.
 
 The UICR.SECONDARY configuration consists of multiple sub-registers organized into functional groups:
@@ -480,160 +773,14 @@ UICR.SECONDARY.TRIGGER
     * ``RADIOCORELOCKUP`` - Radio core CPU lockup reset
 
 UICR.SECONDARY.PROTECTEDMEM
-  Identical to UICR.PROTECTEDMEM, but applies to the secondary firmware.
+  Identical to :kconfig:option:`CONFIG_GEN_UICR_PROTECTEDMEM`, but applies to the secondary firmware.
 
 UICR.SECONDARY.WDTSTART
-  Identical to UICR.WDTSTART, but applies to the secondary firmware boot process.
+  Identical to :kconfig:option:`CONFIG_GEN_UICR_WDTSTART`, but applies to the secondary firmware boot process.
   Note that if RADIOCORE is specified in ``UICR.SECONDARY.PROCESSOR``, the WDT instances used are the ones in the radio core.
 
 UICR.SECONDARY.PERIPHCONF
   Identical to UICR.PERIPHCONF, but applies to the secondary firmware boot process.
-
-UICR.SECONDARY.MPCCONF
-  Identical to UICR.MPCCONF, but applies to the secondary firmware boot process.
-
-.. _ug_nrf54h20_ironside_se_programming:
-
-Programming |ISE| on the nRF54H20 SoC
-*************************************
-
-|ISE| is included in the nRF54H20 SoC binaries.
-The nRF54H20 SoC binaries are bundled in a ZIP archive that contains the following components:
-
-* *IronSide SE update firmware* (:file:`ironside_se_update.hex`) - The main |ISE| firmware
-* *IronSide SE Recovery update firmware* (:file:`ironside_se_recovery_update.hex`) - The recovery firmware
-* The update application (:file:`update_application.hex`) - The application firmware used to trigger the update process
-* Additional metadata and manifest files required for the update process
-
-The bundle ZIP file follows the naming convention :file:`<soc>_soc_binaries_v<version>.zip`.
-
-For more information on the nRF54H20 SoC binaries, see :ref:`nRF54H20 SoC binaries<abi_compatibility>`.
-For instructions on how to program the nRF54H20 SoC binaries, see :ref:`ug_nrf54h20_SoC_binaries`.
-
-By default, the nRF54H20 SoC uses the following memory and access configurations:
-
-* *MRAMC configuration*: MRAM operates in *Direct Write mode*.
-* *MPC configuration*: All memory not reserved by Nordic firmware is accessible with read, write, and execute (RWX) permissions by any domain.
-* *TAMPC configuration*: The Access Port (AP) for the application core is enabled and available, allowing direct programming of all the memory not reserved by Nordic firmware in the default configuration.
-
-.. note::
-   Access to external memory (EXMIF) requires a non-default configuration of the GPIO.CTRLSEL register.
-
-Global domain memory can be protected from write operations by configuring UICR registers.
-To remove these protections and disable all other protection mechanisms enforced through UICR settings, perform an ``ERASEALL`` operation.
-
-.. _ug_nrf54h20_ironside_se_update:
-
-Updating |ISE|
-**************
-
-|NCS| supports two methods for updating the |ISE| firmware on the nRF54H20 SoC:
-
-* Using the ``west`` command.
-  You can use the ``west`` command provided by the |NCS| to install the firmware update.
-  For step-by-step instructions, see :ref:`ug_nrf54h20_ironside_se_update_west`.
-
-* Updating the SoC binaries manually.
-  Alternatively, you can perform the update by manually executing the same steps carried out by the ``west`` command.
-  For step-by-step instructions, see :ref:`ug_nrf54h20_ironside_se_update_manual`.
-
-.. caution::
-   You cannot update the nRF54H20 SoC binaries from a SUIT-based (up to 0.9.6) to an IronSide-SE-based (2x.x.x) version.
-
-.. _ug_nrf54h20_ironside_se_update_west:
-
-Updating using west
-===================
-
-To update the |ISE| firmware, you can use the ``west ncs-ironside-se-update`` command with the following syntax:
-
-.. code-block:: console
-
-   west ncs-ironside-se-update --zip <path_to_soc_binaries.zip> --allow-erase
-
-The command accepts the following main options:
-
-* ``--zip`` (required) - Sets the path to the nRF54H20 SoC binaries ZIP file.
-* ``--allow-erase`` (required) - Enables erasing the device during the update process.
-* ``--serial`` - Specifies the serial number of the target device.
-* ``--firmware-slot`` - Updates only a specific firmware slot (``uslot`` for |ISE| or ``rslot`` for |ISE| Recovery).
-* ``--wait-time`` - Specifies the timeout in seconds to wait for the device to boot (default: 2.0 seconds).
-
-.. _ug_nrf54h20_ironside_se_update_manual:
-
-Updating manually
-=================
-
-The manual update process involves the following steps:
-
-1. Executing the update application.
-   The update application runs on the application core and communicates with the |ISE| update service.
-   It reads the update firmware from memory and passes the update blob metadata to the |ISE|.
-
-#. Preparing the update.
-   The |ISE| validates the update parameters and writes the update metadata to the Secure Information Configuration Registers (SICR).
-
-#. Installing the update.
-   After a reset, the Secure Domain ROM (SDROM) detects the pending update through the SICR registers, verifies the update firmware signature, and installs the new firmware.
-
-#. Completing the update.
-   The system boots with the updated |ISE| firmware, and the update status can be read to verify successful installation.
-
-Updating manually using nrfutil
--------------------------------
-
-``nrfutil`` commands can replicate the functionality of ``west ncs-ironside-se-update``.
-To perform the manual update process using ``nrfutil`` commands, complete the following steps:
-
-1. Extract the update bundle:
-
-   .. code-block:: console
-
-      unzip <soc_binaries.zip> -d /tmp/update_dir
-
-#. Erase non-volatile memory:
-
-   .. code-block:: console
-
-      nrfutil device recover --serial-number <serial> --x-sdfw-variant ironside
-
-#. Program the update application:
-
-   .. code-block:: console
-
-      nrfutil device program --firmware /tmp/update_dir/update/update_application.hex --serial-number <serial> --x-sdfw-variant ironside
-
-#. Program the |ISE| update firmware:
-
-   .. code-block:: console
-
-      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_update.hex --serial-number <serial> --x-sdfw-variant ironside
-
-#. Reset to execute the update service:
-
-   .. code-block:: console
-
-      nrfutil device reset --serial-number <serial> --x-sdfw-variant ironside
-
-#. Reset to trigger the installation of the update:
-
-   .. code-block:: console
-
-      nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial> --x-sdfw-variant ironside
-
-#. Program the |ISE| Recovery update firmware (if updating both slots):
-
-   .. code-block:: console
-
-      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_recovery_update.hex --serial-number <serial> --x-sdfw-variant ironside
-
-   Then repeat steps 5 and 6.
-
-#. Erase the update application:
-
-   .. code-block:: console
-
-      nrfutil device erase --all --serial-number <serial> --x-sdfw-variant ironside
 
 
 .. _ug_nrf54h20_ironside_se_debug:
@@ -655,18 +802,17 @@ This prevents the CPU from executing any instructions until a debugger manually 
 Protecting the device
 *********************
 
-To protect the nRF54H20 SoC in a production-ready device, you must enable the following UICR-based security mechanisms:
+To protect the nRF54H20 SoC in a production-ready device, you must enable the following UICR-based security mechanisms.
+For information on how to configure these UICR settings, see :ref:`ug_nrf54h20_ironside_se_uicr`.
 
-* UICR.APPROTECT - Disables all debug and AP access.
+* :kconfig:option:`CONFIG_GEN_UICR_APPROTECT_APPLICATION_PROTECTED` - Disables all debug and AP access.
   It restricts debugger and access-port (AP) permissions, preventing unauthorized read/write access to memory and debug interfaces.
-* UICR.LOCK - Freezes non-volatile configuration registers.
-  It locks the UICR, ensuring that no further UICR writes are possible without issuing an `ERASEALL` command.
-* UICR.PROTECTEDMEM - Enforces integrity checks on critical code and data.
+* :kconfig:option:`CONFIG_GEN_UICR_LOCK` - Freezes non-volatile configuration registers.
+  It locks the UICR, ensuring that no further UICR writes are possible without issuing an ``ERASEALL`` command.
+* :kconfig:option:`CONFIG_GEN_UICR_PROTECTEDMEM` - Enforces integrity checks on critical code and data.
   It defines a trailing region of application-owned MRAM whose contents are integrity-checked at each boot, extending the root of trust to your immutable bootloader or critical data.
-* UICR.MPCCONF - Configures memory protection for the bootloader region.
-  It should be used to set RX-only (read and execute) permissions on the PROTECTEDMEM region containing the bootloader, preventing unauthorized modification while allowing execution.
-* UICR.ERASEPROTECT - Prevent bulk erasure of protected memory.
-  It blocks all `ERASEALL` operations on NVR0, preserving UICR settings even if an attacker attempts a full-chip erase.
+* :kconfig:option:`CONFIG_GEN_UICR_ERASEPROTECT` - Prevents bulk erasure of protected memory.
+  It blocks all ``ERASEALL`` operations on NVR0, preserving UICR settings even if an attacker attempts a full-chip erase.
 
 
 .. _ug_nrf54h20_ironside_se_boot_report:
@@ -776,7 +922,7 @@ Secondary firmware
 ******************
 
 The secondary firmware feature provides an alternative boot path that can be triggered implicitly or explicitly.
-It can be used for different purposes, some examples are DFU applications in systems that don't use dual banking, recovery firmware, and analysis firmware.
+It can be used for different purposes, some examples are recovery firmware, analysis firmware, and DFU applications in systems that do not use dual banking.
 
 For more information on the boot sequence, see :ref:`ug_nrf54h20_architecture_boot`.
 
@@ -787,17 +933,51 @@ For more information on the boot sequence, see :ref:`ug_nrf54h20_architecture_bo
    The term "secondary slot" and "secondary image" are used in the MCUboot context.
    This usage is unrelated to the "secondary firmware" described in this section.
 
-Sample
-======
-
-For an example of how to create a secondary image with automatic triggers, see the :ref:`secondary_boot_trigger_lockup_sample` sample.
-
 .. _ug_nrf54h20_ironside_se_secondary_conf_trigger:
 
-Configuration and triggering
-=============================
+Configuration
+=============
 
-Configuring a secondary firmware is optional and is done through the ``UICR.SECONDARY`` fields.
+To enable secondary firmware support, you must complete the following steps:
+
+1. Enable UICR secondary configuration by adding the following to :file:`sysbuild/uicr.conf`:
+
+   .. code-block:: kconfig
+
+      CONFIG_GEN_UICR_SECONDARY=y
+
+2. Create a separate Zephyr application for your secondary firmware (for example in a :file:`secondary/` directory).
+
+3. Include the secondary image as an external project in :file:`sysbuild.cmake`:
+
+   .. code-block:: cmake
+
+      ExternalZephyrProject_Add(
+        APPLICATION secondary
+        SOURCE_DIR ${APP_DIR}/secondary
+      )
+
+4. **Configure secondary firmware**: The secondary firmware image itself must enable the appropriate Kconfig option to indicate it is a secondary firmware.
+   Add the following to your secondary firmware's :file:`prj.conf`:
+
+   .. code-block:: kconfig
+
+      CONFIG_IS_IRONSIDE_SE_SECONDARY_IMAGE=y
+
+5. **Optional: Configure automatic triggers**: If you want automatic triggering based on reset reasons, add trigger options to your :file:`sysbuild/uicr.conf`:
+
+   .. code-block:: kconfig
+
+      CONFIG_GEN_UICR_SECONDARY_TRIGGER=y
+      CONFIG_GEN_UICR_SECONDARY_TRIGGER_APPLICATIONLOCKUP=y
+
+For more examples of secondary firmware configuration, see the samples in :file:`nrf/samples/ironside_se/`:
+
+* :ref:`secondary_boot_sample` - Basic secondary firmware configuration
+* :ref:`secondary_boot_trigger_lockup_sample` - Secondary firmware with automatic triggers
+
+Triggering
+==========
 
 The secondary firmware can be triggered automatically, through ``CTRLAP.BOOTMODE`` or through an IPC service (``ironside_bootmode`` service).
 Any component that communicates with |ISE| over IPC can leverage this service.
@@ -805,18 +985,17 @@ Setting bit 5 in ``CTRLAP.BOOTMODE`` will also trigger secondary firmware.
 
 |ISE| automatically triggers the secondary firmware in any of the following situations:
 
-* The integrity check of the memory specified in ``UICR.PROTECTEDMEM`` fails.
-* Any boot failure occurs, such as missing primary firmware or failure to apply ``UICR.PERIPHCONF`` or ``UICR.MPCCONF`` configurations.
+* The integrity check of the memory specified in :kconfig:option:`CONFIG_GEN_UICR_PROTECTEDMEM` fails.
+* Any boot failure occurs, such as missing primary firmware or failure to apply ``UICR.PERIPHCONF`` configurations.
 * A local domain is reset with a reason configured to trigger the secondary firmware.
-* Secondary firmware will be booted by |ISE| if one of the triggers configured in ``UICR.SECONDARY.TRIGGER.RESETREAS`` occurs.
+* If one of the triggers configured in :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER` and related options occurs.
 
-The secondary firmware can be protected using ``UICR.SECONDARY.PROTECTEDMEM`` for integrity checking, and can be updated by other components when protection is not enabled.
 
 Protection
 ==========
 
-The secondary firmware can be protected through integrity checks by enabling ``UICR.SECONDARY.PROTECTEDMEM``.
-The ``PERIPHCONF`` entries for the secondary firmware can also be placed in memory covered by ``UICR.SECONDARY.PROTECTEDMEM`` to create a fully immutable secondary firmware and configuration.
+The secondary firmware can be protected through integrity checks by enabling :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_PROTECTEDMEM`.
+The ``PERIPHCONF`` entries for the secondary firmware can also be placed in memory covered by :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_PROTECTEDMEM` to create a fully immutable secondary firmware and configuration.
 
 If the integrity check of the memory specified in this configuration fails, the secondary firmware will not be booted.
 Instead, |ISE| will attempt to boot the primary firmware, and information about the failure is available in the boot report and boot status.
@@ -825,8 +1004,8 @@ Update
 ======
 
 As with the primary firmware, |ISE| does not facilitate updating the secondary firmware.
-The secondary image can be updated by other components as long as ``UICR.SECONDARY.PROTECTEDMEM`` is not set.
-Using the secondary firmware as a bootloader capable of validating and updating a second image enables updating firmware in the secondary boot flow while having secure boot enabled through ``UICR.SECONDARY.PROTECTEDMEM``.
+The secondary image can be updated by other components as long as :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_PROTECTEDMEM` is not set.
+Using the secondary firmware as a bootloader capable of validating and updating a second image enables updating firmware in the secondary boot flow while having secure boot enabled through :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_PROTECTEDMEM`.
 
 
 
@@ -854,6 +1033,8 @@ For details about the CPUCONF peripheral, refer to the nRF54H20 SoC datasheet.
 |ISE| update service
 ********************
 
+The |ISE| update service will update |ISE| itself.
+
 |ISE| is updated by the Secure Domain ROM (SDROM), which performs the update operation when triggered by a set of SICR registers.
 SDROM verifies and copies the update candidate specified through these registers.
 SDROM requires the |ISE| update to be located in MRAM.
@@ -879,13 +1060,13 @@ For more information, see :ref:`abi_compatibility`.
 Secure Storage
 **************
 
-|ISE| provides secure storage functionality through the UICR.SECURESTORAGE configuration.
+|ISE| provides secure storage functionality through the :kconfig:option:`CONFIG_GEN_UICR_SECURESTORAGE` configuration.
 This feature enables applications to store sensitive data in dedicated, encrypted storage regions that are protected by device-unique keys and access controls.
 
 UICR.SECURESTORAGE Configuration
 ================================
 
-The UICR.SECURESTORAGE field configures secure storage regions for PSA Crypto keys and PSA Internal Trusted Storage (ITS) data.
+The :kconfig:option:`CONFIG_GEN_UICR_SECURESTORAGE` field configures secure storage regions for PSA Crypto keys and PSA Internal Trusted Storage (ITS) data.
 To leverage this secure storage functionality, applications must set the key location to ``PSA_KEY_LOCATION_LOCAL_STORAGE`` (``0x000000``).
 
 The secure storage configuration includes two separate storage regions:
@@ -936,7 +1117,7 @@ Configuration Considerations
 When configuring secure storage, consider the following:
 
 * Ensure sufficient storage space is allocated in both ``UICR.SECURESTORAGE.CRYPTO`` and ``UICR.SECURESTORAGE.ITS`` regions based on your application's requirements
-* The sum of these to regions must be 4kB aligned.
+* The sum of these two regions must be 4kB aligned.
 * The secure storage regions should be properly sized to accommodate the expected number of keys and data items
 * Access to secure storage is only available when the key location is explicitly set to ``PSA_KEY_LOCATION_LOCAL_STORAGE``
 
@@ -1079,8 +1260,8 @@ See the following table for a summary of the available boot commands:
 
 The following chapters describe each command in detail.
 
-``ERASEALL`` commmand
-=====================
+``ERASEALL`` command
+====================
 
 The ``ERASEALL`` command instructs |ISE| to erase all application-owned memory.
 When executed, the ``ERASEALL`` command performs the following operations:
@@ -1093,13 +1274,13 @@ When executed, the ``ERASEALL`` command performs the following operations:
 .. note::
   Page 1 of the MRAM10 NVR is preserved and not erased.
 
-To explicitly permit the ``ERASEALL`` command, disable erase protection by clearing the UICR.ERASEPROTECT field in the application's UICR.
+To explicitly permit the ``ERASEALL`` command, disable erase protection by clearing the :kconfig:option:`CONFIG_GEN_UICR_ERASEPROTECT` field in the application's UICR.
 
 Erase protection prevents unauthorized device repurposing.
-In production-ready devices, enabling both access-port protection (UICR.APPROTECT) and erase protection (UICR.ERASEPROTECT) prevents the device from re-entering the *configuration* state using a debugger.
+In production-ready devices, enabling both access-port protection (:kconfig:option:`CONFIG_GEN_UICR_APPROTECT_APPLICATION_PROTECTED`) and erase protection (:kconfig:option:`CONFIG_GEN_UICR_ERASEPROTECT`) prevents the device from re-entering the *configuration* state using a debugger.
 
 .. note::
-   When an ``ERASEALL`` request is blocked by UICR.ERASEPROTECT, CTRLAP.BOOTSTATUS.CMDERROR is set to ``0x1``.
+   When an ``ERASEALL`` request is blocked by :kconfig:option:`CONFIG_GEN_UICR_ERASEPROTECT`, CTRLAP.BOOTSTATUS.CMDERROR is set to ``0x1``.
 
 ``DEBUGWAIT`` command
 =====================
