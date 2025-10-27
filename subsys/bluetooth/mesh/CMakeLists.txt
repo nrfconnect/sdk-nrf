@@ -83,6 +83,6 @@ zephyr_library_sources_ifdef(CONFIG_BT_MESH_RPL_STORAGE_MODE_EMDS rpl.c)
 
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_KEY_IMPORTER key_importer.c)
 
-if(CONFIG_BT_MESH_USES_MBEDTLS_PSA AND (NOT CONFIG_SOC_FAMILY_NORDIC_NRF))
+if(CONFIG_PSA_CRYPTO_PROVIDER_MBEDTLS AND (NOT CONFIG_SOC_FAMILY_NORDIC_NRF))
   zephyr_library_link_libraries(mbedTLS)
 endif()
