@@ -48,7 +48,6 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf52833dk/nrf52833
       - nrf52840dk/nrf52840
@@ -60,6 +59,24 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_benchmarks
+    harness: console
+    harness_config:
+      ordered: false
+      regex:
+        - "CoreMark started!"
+        - "Correct operation validated."
+      type: multi_line
+    extra_args: FILE_SUFFIX=flash_and_run
+  sample.benchmark.coremark.flash_and_run.nrf7120:
+    sysbuild: true
+    build_only: false
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    integration_platforms:
       - nrf7120pdk/nrf7120/cpuapp
     tags:
       - ci_build
@@ -72,6 +89,7 @@ tests:
         - "CoreMark started!"
         - "Correct operation validated."
       type: multi_line
+    timeout: 180
     extra_args: FILE_SUFFIX=flash_and_run
   sample.benchmark.coremark.heap_memory:
     sysbuild: true
