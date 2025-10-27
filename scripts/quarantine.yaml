@@ -119,12 +119,16 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35676"
 
 - scenarios:
+    - benchmarks.current_consumption.sample.boards.nrf.system_off
+    - benchmarks.current_consumption.sample.boards.nrf.system_off.lpcomp_wakeup
+    - benchmarks.current_consumption.sample.boards.nrf.system_off.retained_mem
+    - benchmarks.current_consumption.sample.boards.nrf.system_off.retained_mem_16k
+    - benchmarks.current_consumption.sample.boards.nrf.system_off.retained_mem_32k
+    - benchmarks.current_consumption.sample.boards.nrf.system_off.retained_mem_4k
     - benchmarks.current_consumption.systemoff.gpio_wakeup
     - benchmarks.current_consumption.systemoff.gpio_wakeup.retained_mem
+    - benchmarks.current_consumption.systemoff.gpio_wakeup.retained_mem_4k
     - benchmarks.current_consumption.systemoff.grtc_wakeup
-    - benchmarks.current_consumption.sample.boards.nrf.system_off
-    - benchmarks.current_consumption.sample.boards.nrf.system_off.retained_mem
-    - benchmarks.current_consumption.sample.boards.nrf.system_off.lpcomp_wakeup
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "Wait for lilium support"
