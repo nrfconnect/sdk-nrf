@@ -61,6 +61,7 @@ tests:
     extra_args:
       - SHIELD=pca63566;coverage_support
       - CONF_FILE=coverage.conf
+      - EXTRA_DTC_OVERLAY_FILE="disable_s2ram.overlay"
     harness: console
     harness_config:
       fixture: pca63566

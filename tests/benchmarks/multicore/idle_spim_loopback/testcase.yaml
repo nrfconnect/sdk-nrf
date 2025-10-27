@@ -499,6 +499,7 @@ tests:
     extra_args:
       - SHIELD=coverage_support
       - CONF_FILE=coverage.conf
+      - EXTRA_DTC_OVERLAY_FILE="disable_s2ram.overlay"
     harness: console
     harness_config:
       fixture: spi_loopback
