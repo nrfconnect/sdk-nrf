@@ -51,6 +51,7 @@ Configure, generate, and program the BICR
 *****************************************
 
 The Board Information Configuration Registers (BICR) are non-volatile memory (NVM) registers that contain information on how the nRF54H20 SoC must interact with other board elements, including the information about the power and clock delivery to the SoC.
+The nRF54H20 SoC requires a valid Board Information Configuration Registers (BICR) configuration to function properly.
 The power and clock control firmware uses this information to apply the proper regulator and oscillator configurations.
 
 .. caution::
@@ -75,16 +76,324 @@ This is useful when making a change on the PCB (for example, when changing the c
 This initial calibration is only performed once.
 Each subsequent start will use this initial calibration as the starting point.
 
-Configure the BICR
-==================
+Configuring BICR in JSON for nRF54H20 SoC
+=========================================
 
-You can find the nRF54H20 DK BICR configuration in the board configuration directory as :file:`sdk-zephyr/boards/nordic/nrf54h20dk/bicr.json`, and the details of the file scheme in the :file:`sdk-zephyr/soc/nordic/nrf54h/bicr/bicr-schema.json` file.
+You configure BICR for your custom board based on the nRF54H20 SoC using a JSON file.
+
+Sources
+-------
+
+The following files define the JSON schema and provide examples for configuring BICR:
+
+* `JSON format definition`_: :file:`sdk-zephyr/soc/nordic/nrf54h/bicr/bicr-schema.json`.
+* `BICR configuration example in JSON format`_: :file:`sdk-zephyr/boards/nordic/nrf54h20dk/bicr.json` (for nRF54H20 DK).
+
 You can use these files as a reference for your own BICR configuration.
 
 The |NCS| build system uses the BICR configuration JSON files to generate the corresponding HEX file.
 
 .. caution::
    A mismatch between the board and the configuration values in BICR can damage the device or set it in an unrecoverable state.
+
+Supply configuration
+--------------------
+
+Supply options are configured in the ``power->scheme`` property.
+Two standard hardware layouts are supported.
+
+Layout 1 (VDDH_2V1_5V5)
+^^^^^^^^^^^^^^^^^^^^^^^
+
+This layout is configured as follows:
+
+.. code-block:: json
+
+   {
+     "power": {
+       "scheme": "VDDH_2V1_5V5"
+     }
+   }
+
+Layout 2 (VDD_VDDH_1V8)
+^^^^^^^^^^^^^^^^^^^^^^^
+
+This layout is configured as follows:
+
+.. code-block:: json
+
+   {
+     "power": {
+       "scheme": "VDD_VDDH_1V8"
+     }
+   }
+
+Inductor configuration
+----------------------
+
+Each supported supply scheme includes an inductor.
+No additional configuration is needed beyond setting the ``power->scheme`` property.
+
+GPIO power configuration
+------------------------
+
+In the JSON configuration, GPIO port assignments are specified within the ``ioPortPower`` object, with each mode explicitly indicated.
+
+The available port configuration keys are the following:
+
++------+--------------------+
+| Port | Port configuration |
+|      | key                |
++======+====================+
+| P1   | p1Supply           |
++------+--------------------+
+| P2   | p2Supply           |
++------+--------------------+
+| P6   | p6Supply           |
++------+--------------------+
+| P7   | p7Supply           |
++------+--------------------+
+| P9   | p9Supply           |
++------+--------------------+
+
+The supported operating modes for these ports are the following:
+
++--------------------------+--------------------+
+| Supported operating mode | JSON configuration |
++==========================+====================+
+| Disconnected             | DISCONNECTED       |
++--------------------------+--------------------+
+| Shorted                  | SHORTED            |
++--------------------------+--------------------+
+| External1v8              | EXTERNAL_1V8       |
++--------------------------+--------------------+
+| ExternalFull             | EXTERNAL_FULL      |
++--------------------------+--------------------+
+
+The resulting JSON configuration is structured as follows:
+
+.. code-block:: json
+
+   {
+     "ioPortPower": {
+       "p1Supply": "EXTERNAL_1V8",
+       "p2Supply": "EXTERNAL_1V8",
+       "p6Supply": "EXTERNAL_1V8",
+       "p7Supply": "EXTERNAL_1V8",
+       "p9Supply": "EXTERNAL_FULL"
+     }
+   }
+
+GPIO power drive and impedance configuration
+--------------------------------------------
+
+This section specifies the IO port impedance settings for **P6** and **P7**.
+
+The nRF54H20 SoC allows you to select from these supported impedance values:
+
+* 33 Ohms
+* 40 Ohms
+* 50 Ohms
+* 66 Ohms
+* 100 Ohms
+
+The configuration can be represented as follows:
+
+.. code-block:: json
+
+   {
+     "ioPortImpedance": {
+       "p6ImpedanceOhms": 50,
+       "p7ImpedanceOhms": 50
+     }
+   }
+
+Low Frequency Oscillator (LFOSC) configuration
+----------------------------------------------
+
+The JSON format is inside ``lfosc: { lfxo: { ... } }``.
+
+ACCURACY
+^^^^^^^^
+
++--------------------+
+| JSON (accuracyPPM) |
++====================+
+| 20                 |
++--------------------+
+| 30                 |
++--------------------+
+| 50                 |
++--------------------+
+| 75                 |
++--------------------+
+| 100                |
++--------------------+
+| 150                |
++--------------------+
+| 250                |
++--------------------+
+| 500                |
++--------------------+
+
+MODE
+^^^^
+
++-------------+
+| JSON (mode) |
++=============+
+| CRYSTAL     |
++-------------+
+| EXT_SINE    |
++-------------+
+| EXT_SQUARE  |
++-------------+
+
+LOADCAP
+^^^^^^^
+
++---------------------------------+
+| JSON (builtInLoadCapacitancePf) |
++=================================+
+| Integer [pF], min 1, max 25     |
++---------------------------------+
+
+.. note::
+   In the JSON configuration, the load capacitance parameter is only applied if the option ``builtInLoadCapacitors`` is explicitly set to true.
+
+TIME (LFXO startup time)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
++-----------------------------+
+| JSON (startupTimeMs)        |
++=============================+
+| Integer [ms], min 1, max 25 |
++-----------------------------+
+
+See the following example:
+
+.. code-block:: json
+
+   {
+     "lfosc": {
+       "source": "LFXO",
+       "lfxo": {
+         "mode": "CRYSTAL",
+         "accuracyPPM": 20,
+         "startupTimeMs": 600,
+         "builtInLoadCapacitancePf": 15,
+         "builtInLoadCapacitors": true
+       }
+     }
+   }
+
+Source
+^^^^^^
+
+The ``source`` option can be one of the following:
+
+* ``LFXO``, when an external crystal oscillator is in place.
+* ``LFRC``, when an external Crystal Oscillator is not in place.
+
+This means that the device can use either ``LFRC`` or ``SYNTH`` as clock sources.
+
+LFRC autocalibration configuration
+----------------------------------
+
+The three values provided correspond to the LFRC autocalibration configuration:
+
+* ``temp-interval`` specifies the interval between temperature measurements, expressed in 0.25-second increments.
+* ``temp-delta`` defines the temperature change, in 0.25-degree Celsius steps, that triggers a calibration event.
+* ``interval-max-count`` indicates the maximum number of measurement intervals allowed between calibrations, regardless of temperature variations.
+
+Use these parameters to precisely control the LFRC autocalibration behavior.
+
+Datasheet register field
+^^^^^^^^^^^^^^^^^^^^^^^^
+
++---------------------+------------------------------------+-------------------------------+
+| Datasheet field     | JSON variable                      | JSON value                    |
++=====================+====================================+===============================+
+| TEMPINTERVAL (A)    | tempMeasIntervalSeconds            | 5                             |
++---------------------+------------------------------------+-------------------------------+
+| TEMPDELTA (B)       | tempDeltaCalibrationTriggerCelsius | 10                            |
++---------------------+------------------------------------+-------------------------------+
+| INTERVALMAXNO (C)   | maxMeasIntervalBetweenCalibrations | 3                             |
++---------------------+------------------------------------+-------------------------------+
+| ENABLE              | calibrationEnabled                 | -                             |
++---------------------+------------------------------------+-------------------------------+
+
+LFRC Autocalibration is not configured in the JSON configuration files for the DK, as the default values (``4``, ``0.5`` and ``2``) will be good enough for most use-cases.
+However, the example would be as follows:
+
+.. code-block:: json
+
+   {
+     "lfrccal": {
+       "calibrationEnabled": true,
+       "tempMeasIntervalSeconds": 5,
+       "tempDeltaCalibrationTriggerCelsius": 10,
+       "maxMeasIntervalBetweenCalibrations": 3
+     }
+   }
+
+.. note::
+
+   * Use the default values unless a custom calibration profile is needed.
+   * ``tempDeltaCalibrationTriggerCelsius``: In the JSON BICR format, the maximum allowable value for this field is 31.75 °C.
+     Therefore, 31.75 is used in place of 40 to ensure compatibility.
+
+HFXO configuration and startup
+------------------------------
+
+The following table maps configuration options for HFXO modes:
+
++------------------------+-------------------------------+
+| Datasheet register     | JSON variable                 |
+| field                  | (within ``hfxo``)             |
++========================+===============================+
+| HFXO.CONFIG: MODE      | mode                          |
++------------------------+-------------------------------+
+| HFXO.CONFIG: LOADCAP   | builtInLoadCapacitancePf      |
++------------------------+-------------------------------+
+| HFXO.STARTUPTIME: TIME | startupTimeUs*                |
++------------------------+-------------------------------+
+
+(*) Depends on ``"builtInLoadCapacitors": true``
+
+hfxo-mode
+^^^^^^^^^
+
++-----------------+-------------------+
+| Datasheet (MODE)| JSON (mode)       |
++=================+===================+
+| Crystal         | CRYSTAL           |
++-----------------+-------------------+
+
+The corresponding JSON configuration, based on the previous table, is as follows:
+
+.. code-block:: json
+
+   {
+     "hfxo": {
+       "mode": "CRYSTAL",
+       "builtInLoadCapacitors": true,
+       "builtInLoadCapacitancePf": 14
+     }
+   }
+
+The current standard configuration for the DK is as follows:
+
+.. code-block:: json
+
+   {
+     "hfxo": {
+       "mode": "CRYSTAL",
+       "startupTimeUs": 850,
+       "builtInLoadCapacitors": true,
+       "builtInLoadCapacitancePf": 14
+     }
+   }
 
 Generate the BICR binary
 ========================
