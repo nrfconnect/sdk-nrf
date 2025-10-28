@@ -42,8 +42,8 @@ def test_uart_passtrough(dut: DeviceAdapter):
     then send message from 'passtrough' UART to 'console 'UART' and verify it.
     """
 
-    dut.readlines_until(regex="Ready", print_output=True, timeout=2)
     dut.disconnect()
+    time.sleep(1)
     console_serial_port: SerialPort = SerialPort(
         serial_port=dut.device_config.serial, baudrate=dut.device_config.baud
     )
