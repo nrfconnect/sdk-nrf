@@ -10,7 +10,7 @@
 #include <hal/nrf_radio.h>
 #include <hal/nrf_timer.h>
 #ifdef DPPI_PRESENT
-#include <nrfx_dppi.h>
+#include <helpers/nrfx_gppi.h>
 #endif
 #include <nrfx.h>
 
@@ -29,9 +29,9 @@
 
 #ifdef DPPI_PRESENT
 #if defined(NRF53_SERIES)
-#define RADIO_DOMAIN_NRFX_DPPI_INSTANCE NRFX_DPPI_INSTANCE(0)
+#define RADIO_DOMAIN_NRF_DPPI (uint32_t)NRF_DPPIC
 #elif defined(NRF54L_SERIES)
-#define RADIO_DOMAIN_NRFX_DPPI_INSTANCE NRFX_DPPI_INSTANCE(10)
+#define RADIO_DOMAIN_NRF_DPPI (uint32_t)NRF_DPPIC10
 #else
 #error Unsupported SoC type.
 #endif
@@ -357,25 +357,23 @@ int8_t fem_default_tx_output_power_get(void)
 }
 
 #if defined(DPPI_PRESENT)
-static nrfx_err_t radio_domain_nrfx_dppi_channel_alloc(uint8_t *channel)
+static int radio_domain_nrfx_dppi_channel_alloc(uint8_t *channel)
 {
-	nrfx_err_t err;
-	nrfx_dppi_t radio_domain_nrfx_dppi = RADIO_DOMAIN_NRFX_DPPI_INSTANCE;
+	int ch;
 
-	err = nrfx_dppi_channel_alloc(&radio_domain_nrfx_dppi, channel);
+	ch = nrfx_gppi_channel_alloc(nrfx_gppi_domain_id_get(RADIO_DOMAIN_NRF_DPPI), channel);
+	if (ch < 0) {
+		return ch;
+	}
 
-	return err;
+	*channel = (uint8_t)ch;
+
+	return 0;
 }
 
 static void radio_domain_nrfx_dppi_channel_enable(uint8_t channel)
 {
-	nrfx_err_t err;
-	nrfx_dppi_t radio_domain_nrfx_dppi = RADIO_DOMAIN_NRFX_DPPI_INSTANCE;
-
-	err = nrfx_dppi_channel_enable(&radio_domain_nrfx_dppi, channel);
-
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
-	(void)err;
+	nrfx_gppi_channels_enable(nrfx_gppi_domain_id_get(RADIO_DOMAIN_NRF_DPPI), BIT(channel));
 }
 #endif
 
@@ -389,11 +387,11 @@ int fem_init(NRF_TIMER_Type *timer_instance, uint8_t compare_channel_mask)
 	fem_activate_event.event.timer.compare_channel_mask = compare_channel_mask;
 
 #if defined(DPPI_PRESENT)
-	nrfx_err_t err;
+	int err;
 	uint8_t fem_dppi_ch;
 
 	err = radio_domain_nrfx_dppi_channel_alloc(&fem_dppi_ch);
-	if (err != NRFX_SUCCESS) {
+	if (err < 0) {
 		printk("radio_domain_nrfx_dppi_channel_alloc failed with: %d\n", err);
 		return -ENODEV;
 	}
