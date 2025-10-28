@@ -204,3 +204,13 @@
     - nrf9160dk@0.14.0/nrf52840
     - nrf9160dk@0.14.0/nrf9160
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-8562"
+
+- scenarios:
+    - applications.matter_weather_station.nrf7002eb
+    - sample.nrf7002_eb.thingy53.*
+    - sample.sensor.bme68x.*
+    - sample.bluetooth.peripheral_.*
+    - sample.bluetooth.mesh.*
+  platforms:
+    - thingy53/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8605"
