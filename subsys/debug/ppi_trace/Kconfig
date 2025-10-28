@@ -8,15 +8,13 @@ config PPI_TRACE
 	bool "Enable PPI trace"
 	select NRFX_GPIOTE
 	select NRFX_GPPI
-	select NRFX_PPI if HAS_HW_NRF_PPI
-	select NRFX_DPPI0 if SOC_SERIES_NRF53X
-	select NRFX_DPPI00 if SOC_SERIES_NRF54LX
-	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
-	select NRFX_DPPI20 if SOC_SERIES_NRF54LX
-	select NRFX_DPPI30 if SOC_SERIES_NRF54LX
 	help
 	  Enable PPI trace module which enables forwarding hardware events to
 	  GPIOs.
+
+config PPI_TRACE_PIN_CNT
+	int "Maximum number of trace pins"
+	default 8
 
 if PPI_TRACE
 module = PPI_TRACE
