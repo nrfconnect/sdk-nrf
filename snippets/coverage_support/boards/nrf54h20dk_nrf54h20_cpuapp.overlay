@@ -22,3 +22,22 @@
 		};
 	};
 };
+
+/* Trim this RAM block for power management related features (256B) */
+/* Trim more (256B) to enable coverage */
+&cpuapp_ram0 {
+	reg = <0x22000000 (DT_SIZE_K(32) - 512)>;
+	ranges = <0x0 0x22000000 (0x8000 - 0x200)>;
+};
+
+/* Extend by 256B */
+/delete-node/ &pm_ramfunc;
+/ {
+	soc {
+		pm_ramfunc: cpuapp_s2ram@22007e00 {
+			compatible = "zephyr,memory-region", "mmio-sram";
+			reg = <0x22007e00 448>;
+			zephyr,memory-region = "PMLocalRamfunc";
+		};
+	};
+};
