@@ -80,13 +80,7 @@ config MPSL_FEM_NRF21540_GPIO
 	select NRFX_GPIOTE
 	select GPIO if ($(dt_nodelabel_has_prop,nrf_radio_fem,mode-gpios) || \
 		$(dt_nodelabel_has_prop,nrf_radio_fem,ant-sel-gpios))
-	select NRFX_PPI if HAS_HW_NRF_PPI
-	select NRFX_DPPI if HAS_HW_NRF_DPPIC
 	select NRFX_GPPI
-	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
-	select NRFX_DPPI20 if SOC_SERIES_NRF54LX
-	select NRFX_PPIB11 if SOC_SERIES_NRF54LX
-	select NRFX_PPIB21 if SOC_SERIES_NRF54LX
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool "nRF21540 front-end module in GPIO mode"
 	help
@@ -97,13 +91,7 @@ config MPSL_FEM_NRF21540_GPIO_SPI
 	select NRFX_GPIOTE
 	select GPIO if ($(dt_nodelabel_has_prop,nrf_radio_fem,mode-gpios) || \
 		$(dt_nodelabel_has_prop,nrf_radio_fem,ant-sel-gpios))
-	select NRFX_PPI if HAS_HW_NRF_PPI
-	select NRFX_DPPI if HAS_HW_NRF_DPPIC
 	select NRFX_GPPI
-	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
-	select NRFX_DPPI20 if SOC_SERIES_NRF54LX
-	select NRFX_PPIB11 if SOC_SERIES_NRF54LX
-	select NRFX_PPIB21 if SOC_SERIES_NRF54LX
 	select PINCTRL
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	imply MPSL_FEM_POWER_MODEL if MPSL_FEM   # Don't force the model, but make it a default
@@ -114,8 +102,7 @@ config MPSL_FEM_NRF21540_GPIO_SPI
 config MPSL_FEM_SIMPLE_GPIO
 	depends on MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT
 	select NRFX_GPIOTE
-	select NRFX_PPI if HAS_HW_NRF_PPI
-	select NRFX_DPPI if HAS_HW_NRF_DPPIC
+	select NRFX_GPPI
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool "Generic front-end module with two-pin control"
 	help
@@ -127,13 +114,7 @@ config MPSL_FEM_SIMPLE_GPIO
 config MPSL_FEM_NRF2220
 	depends on MPSL_FEM_NRF2220_SUPPORT
 	select NRFX_GPIOTE
-	select NRFX_PPI if SOC_SERIES_NRF52X
-	select NRFX_DPPI0 if SOC_SERIES_NRF53X
-	select NRFX_GPPI if SOC_SERIES_NRF54LX
-	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
-	select NRFX_DPPI20 if SOC_SERIES_NRF54LX
-	select NRFX_PPIB11 if SOC_SERIES_NRF54LX
-	select NRFX_PPIB21 if SOC_SERIES_NRF54LX
+	select NRFX_GPPI
 	select PINCTRL
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool "nRF2220 front-end module"
@@ -144,13 +125,7 @@ config MPSL_FEM_NRF2240
 	depends on MPSL_FEM_NRF2240_SUPPORT
 	select EXPERIMENTAL
 	select NRFX_GPIOTE
-	select NRFX_PPI if SOC_SERIES_NRF52X
-	select NRFX_DPPI0 if SOC_SERIES_NRF53X
-	select NRFX_GPPI if SOC_SERIES_NRF54LX
-	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
-	select NRFX_DPPI20 if SOC_SERIES_NRF54LX
-	select NRFX_PPIB11 if SOC_SERIES_NRF54LX
-	select NRFX_PPIB21 if SOC_SERIES_NRF54LX
+	select NRFX_GPPI
 	select PINCTRL
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool "nRF2240 front-end module"
