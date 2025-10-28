@@ -7,8 +7,8 @@
 #include <hal/nrf_egu.h>
 #include <hal/nrf_radio.h>
 #include <hal/nrf_timer.h>
-
-#include <nrfx_dppi.h>
+#include <hal/nrf_dppi.h>
+#include <helpers/nrfx_gppi.h>
 
 #include <zephyr/logging/log.h>
 
@@ -203,52 +203,59 @@ uint32_t esb_ppi_radio_disabled_get(void)
 
 int esb_ppi_init(void)
 {
-	nrfx_err_t err;
+	int ch;
+	uint32_t domain_id = nrfx_gppi_domain_id_get((uint32_t)ESB_DPPIC);
 
-	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(ESB_DPPIC_INSTANCE_NO);
-
-	err = nrfx_dppi_channel_alloc(&dppi, &radio_address_timer_stop);
-	if (err != NRFX_SUCCESS) {
+	ch = nrfx_gppi_channel_alloc(domain_id, NULL);
+	if (ch < 0) {
 		goto error;
 	}
+	radio_address_timer_stop = (uint8_t)ch;
 
-	err = nrfx_dppi_channel_alloc(&dppi, &timer_compare0_radio_disable);
-	if (err != NRFX_SUCCESS) {
+	ch = nrfx_gppi_channel_alloc(domain_id, NULL);
+	if (ch < 0) {
 		goto error;
 	}
+	timer_compare0_radio_disable = (uint8_t)ch;
 
-	err = nrfx_dppi_channel_alloc(&dppi, &timer_compare1_radio_txen);
-	if (err != NRFX_SUCCESS) {
+	ch = nrfx_gppi_channel_alloc(domain_id, NULL);
+	if (ch < 0) {
 		goto error;
 	}
+	timer_compare1_radio_txen = (uint8_t)ch;
 
-	err = nrfx_dppi_channel_alloc(&dppi, &disabled_phy_end_egu);
-	if (err != NRFX_SUCCESS) {
+	ch = nrfx_gppi_channel_alloc(domain_id, NULL);
+	if (ch < 0) {
 		goto error;
 	}
+	disabled_phy_end_egu = (uint8_t)ch;
 
-	err = nrfx_dppi_channel_alloc(&dppi, &egu_timer_start);
-	if (err != NRFX_SUCCESS) {
+	ch = nrfx_gppi_channel_alloc(domain_id, NULL);
+	if (ch < 0) {
 		goto error;
 	}
+	egu_timer_start = (uint8_t)ch;
 
-	err = nrfx_dppi_channel_alloc(&dppi, &egu_ramp_up);
-	if (err != NRFX_SUCCESS) {
+	ch = nrfx_gppi_channel_alloc(domain_id, NULL);
+	if (ch < 0) {
 		goto error;
 	}
+	egu_ramp_up = (uint8_t)ch;
 
 	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
-		err = nrfx_dppi_channel_alloc(&dppi, &radio_end_timer_start);
-		if (err != NRFX_SUCCESS) {
+		ch = nrfx_gppi_channel_alloc(domain_id, NULL);
+		if (ch < 0) {
 			goto error;
 		}
+		radio_end_timer_start = (uint8_t)ch;
 	}
 
-	err = nrfx_dppi_group_alloc(&dppi, &ramp_up_dppi_group);
-	if (err != NRFX_SUCCESS) {
-		LOG_ERR("gppi_group_alloc failed with: %d\n", err);
-		return -ENODEV;
+	ch = nrfx_gppi_group_channel_alloc(domain_id, NULL);
+	if (ch < 0) {
+		LOG_ERR("gppi_group_alloc failed with: %d\n", ch);
+		return ch;
 	}
+	ramp_up_dppi_group = (uint8_t)ch;
 
 	nrf_radio_publish_set(NRF_RADIO, NRF_RADIO_EVENT_DISABLED, disabled_phy_end_egu);
 	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
@@ -259,7 +266,7 @@ int esb_ppi_init(void)
 	return 0;
 
 error:
-	LOG_ERR("gppi_channel_alloc failed with: %d\n", err);
+	LOG_ERR("gppi_channel_alloc failed with: %d\n", ch);
 	return -ENODEV;
 }
 
@@ -303,62 +310,24 @@ void esb_ppi_disable_all(void)
 
 void esb_ppi_deinit(void)
 {
-	nrfx_err_t err;
-
 	nrf_dppi_channels_disable(ESB_DPPIC, BIT(disabled_phy_end_egu));
 	nrf_radio_publish_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
 		nrf_radio_publish_clear(NRF_RADIO, NRF_RADIO_EVENT_PHYEND);
 	}
 
-	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(ESB_DPPIC_INSTANCE_NO);
+	uint32_t domain_id = nrfx_gppi_domain_id_get((uint32_t)ESB_DPPIC);
 
-	err = nrfx_dppi_channel_free(&dppi, radio_address_timer_stop);
-	if (err != NRFX_SUCCESS) {
-		goto error;
-	}
-
-	err = nrfx_dppi_channel_free(&dppi, timer_compare0_radio_disable);
-	if (err != NRFX_SUCCESS) {
-		goto error;
-	}
-
-	err = nrfx_dppi_channel_free(&dppi, timer_compare1_radio_txen);
-	if (err != NRFX_SUCCESS) {
-		goto error;
-	}
-
-	err = nrfx_dppi_channel_free(&dppi, disabled_phy_end_egu);
-	if (err != NRFX_SUCCESS) {
-		goto error;
-	}
-
-	err = nrfx_dppi_channel_free(&dppi, egu_timer_start);
-	if (err != NRFX_SUCCESS) {
-		goto error;
-	}
-
-	err = nrfx_dppi_channel_free(&dppi, egu_ramp_up);
-	if (err != NRFX_SUCCESS) {
-		goto error;
-	}
+	nrfx_gppi_channel_free(domain_id, radio_address_timer_stop);
+	nrfx_gppi_channel_free(domain_id, timer_compare0_radio_disable);
+	nrfx_gppi_channel_free(domain_id, timer_compare1_radio_txen);
+	nrfx_gppi_channel_free(domain_id, disabled_phy_end_egu);
+	nrfx_gppi_channel_free(domain_id, egu_timer_start);
+	nrfx_gppi_channel_free(domain_id, egu_ramp_up);
 
 	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
-		err = nrfx_dppi_channel_free(&dppi, radio_end_timer_start);
-		if (err != NRFX_SUCCESS) {
-			goto error;
-		}
+		nrfx_gppi_channel_free(domain_id, radio_end_timer_start);
 	}
 
-	err = nrfx_dppi_group_free(&dppi, ramp_up_dppi_group);
-	if (err != NRFX_SUCCESS) {
-		goto error;
-	}
-
-
-	return;
-
-/* Should not happen. */
-error:
-	__ASSERT(false, "Failed to free DPPI resources");
+	nrfx_gppi_group_channel_free(domain_id, ramp_up_dppi_group);
 }
