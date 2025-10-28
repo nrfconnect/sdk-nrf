@@ -66,9 +66,6 @@ extern "C" {
 	/** The ESB Radio interrupt number. */
 	#define ESB_RADIO_IRQ_NUMBER RADIO_IRQn
 
-	/** DPPIC instance number used by ESB. */
-	#define ESB_DPPIC_INSTANCE_NO 0
-
 	/** ESB EGU instance configuration. */
 	#define ESB_EGU NRF_EGU0
 

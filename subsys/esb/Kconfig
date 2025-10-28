@@ -6,13 +6,9 @@
 
 menuconfig ESB
 	bool "Enhanced ShockBurst"
-	select NRFX_PPI if HAS_HW_NRF_PPI
-	select NRFX_DPPI if HAS_HW_NRF_DPPIC
+	select NRFX_GPPI
 	select MPSL
 	select MPSL_FEM_ONLY if !ESB_DYNAMIC_INTERRUPTS
-	select NRFX_DPPI020 if SOC_SERIES_NRF54HX
-	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
-	select NRFX_DPPI0 if SOC_SERIES_NRF53X
 	help
 	  Enable ESB functionality.
 
