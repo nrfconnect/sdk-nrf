@@ -10,160 +10,47 @@
 #include <mpsl_dppi_protocol_api.h>
 #include <nrfx_gpiote.h>
 #include <helpers/nrfx_gppi.h>
-#include <nrfx_dppi.h>
 #include <hal/nrf_radio.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
 
 const nrfx_gpiote_t gpiote = NRFX_GPIOTE_INSTANCE(20);
-const nrfx_dppi_t dppi_radio_domain = NRFX_DPPI_INSTANCE(10);
-const nrfx_dppi_t dppi_gpio_domain = NRFX_DPPI_INSTANCE(20);
 LOG_MODULE_REGISTER(mpsl_radio_pin_debug, CONFIG_MPSL_LOG_LEVEL);
 
 static int m_ppi_config(void)
 {
-	uint8_t gppi_chan_radio_ready;
-	uint8_t gppi_chan_radio_disabled;
-	uint8_t gppi_chan_radio_address;
-	uint8_t gppi_chan_radio_end;
+	uint32_t rad_domain = nrfx_gppi_domain_id_get(NRF_DPPIC10);
+	uint32_t dst_domain = nrfx_gppi_domain_id_get(gpiote.p_reg);
+	nrfx_gppi_resource_t rad_resource;
+	nrfx_gppi_handle_t handle;
+	uint32_t tep[4];
+	int err;
+	static const uint32_t pub_ch[] = {
+		MPSL_DPPI_RADIO_PUBLISH_READY_CHANNEL_IDX,
+		MPSL_DPPI_RADIO_PUBLISH_DISABLED_CH_IDX,
+		MPSL_DPPI_RADIO_PUBLISH_ADDRESS_CHANNEL_IDX,
+		MPSL_DPPI_RADIO_PUBLISH_END_CHANNEL_IDX
+	};
 
-	uint8_t dppi_chan_gpio_ready;
-	uint8_t dppi_chan_gpio_disabled;
-	uint8_t dppi_chan_gpio_address;
-	uint8_t dppi_chan_gpio_end;
+	tep[0] = nrfx_gpiote_set_task_address_get(&gpiote,
+			CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN);
+	tep[1] = nrfx_gpiote_clr_task_address_get(&gpiote,
+			CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN);
+	tep[2] = nrfx_gpiote_set_task_address_get(&gpiote,
+			CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN);
+	tep[3] = nrfx_gpiote_clr_task_address_get(&gpiote,
+			CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN);
+	rad_resource.rad_domain = nrfx_gppi_domain_id_get(NRF_DPPIC10);
 
-	if (nrfx_gppi_channel_alloc(&gppi_chan_radio_ready) !=
-	    NRFX_SUCCESS) {
-		LOG_ERR("Failed allocating gppi_chan_radio_ready");
-		return -ENOMEM;
-	}
-
-	if (nrfx_gppi_channel_alloc(&gppi_chan_radio_disabled) !=
-	    NRFX_SUCCESS) {
-		LOG_ERR("Failed allocating gppi_chan_radio_disabled");
-		return -ENOMEM;
-	}
-
-	if (nrfx_gppi_channel_alloc(&gppi_chan_radio_address) !=
-	    NRFX_SUCCESS) {
-		LOG_ERR("Failed allocating gppi_chan_radio_address");
-		return -ENOMEM;
-	}
-
-	if (nrfx_gppi_channel_alloc(&gppi_chan_radio_end) !=
-	    NRFX_SUCCESS) {
-		LOG_ERR("Failed allocating gppi_chan_radio_end");
-		return -ENOMEM;
-	}
-
-	if (nrfx_dppi_channel_alloc(&dppi_gpio_domain, &dppi_chan_gpio_ready) !=
-	    NRFX_SUCCESS) {
-		LOG_ERR("Failed allocating dppi_chan_gpio_ready");
-		return -ENOMEM;
-	}
-
-	if (nrfx_dppi_channel_alloc(&dppi_gpio_domain, &dppi_chan_gpio_disabled) !=
-	    NRFX_SUCCESS) {
-		LOG_ERR("Failed allocating dppi_chan_gpio_disabled");
-		return -ENOMEM;
-	}
-
-	if (nrfx_dppi_channel_alloc(&dppi_gpio_domain, &dppi_chan_gpio_address) !=
-	    NRFX_SUCCESS) {
-		LOG_ERR("Failed allocating dppi_chan_gpio_address");
-		return -ENOMEM;
-	}
-
-	if (nrfx_dppi_channel_alloc(&dppi_gpio_domain, &dppi_chan_gpio_end) !=
-	    NRFX_SUCCESS) {
-		LOG_ERR("Failed allocating dppi_chan_gpio_end");
-		return -ENOMEM;
-	}
-
-	if (nrfx_gppi_edge_connection_setup(gppi_chan_radio_ready,
-					    &dppi_radio_domain,
-					    MPSL_DPPI_RADIO_PUBLISH_READY_CHANNEL_IDX,
-					    &dppi_gpio_domain,
-					    dppi_chan_gpio_ready) != NRFX_SUCCESS) {
-		LOG_ERR("Failed edge setup chan ready");
-		return -ENOMEM;
-	}
-
-	if (nrfx_gppi_edge_connection_setup(gppi_chan_radio_disabled,
-					    &dppi_radio_domain,
-					    MPSL_DPPI_RADIO_PUBLISH_DISABLED_CH_IDX,
-					    &dppi_gpio_domain,
-					    dppi_chan_gpio_disabled) != NRFX_SUCCESS) {
-		LOG_ERR("Failed edge setup chan disabled");
-		return -ENOMEM;
-	}
-
-	if (nrfx_gppi_edge_connection_setup(gppi_chan_radio_address,
-					    &dppi_radio_domain,
-					    MPSL_DPPI_RADIO_PUBLISH_ADDRESS_CHANNEL_IDX,
-					    &dppi_gpio_domain,
-					    dppi_chan_gpio_address) != NRFX_SUCCESS) {
-		LOG_ERR("Failed edge setup chan address");
-		return -ENOMEM;
-	}
-
-	/* Setup a PPI bridge between the radio domain and the domain of the GPIO pin. */
-	if (nrfx_gppi_edge_connection_setup(gppi_chan_radio_address,
-					    &dppi_radio_domain,
-					    MPSL_DPPI_RADIO_PUBLISH_END_CHANNEL_IDX,
-					    &dppi_gpio_domain,
-					    dppi_chan_gpio_end) != NRFX_SUCCESS) {
-		LOG_ERR("Failed edge setup chan end");
-		return -ENOMEM;
-	}
-
-	nrf_gpiote_subscribe_set(
-		gpiote.p_reg,
-		nrfx_gpiote_set_task_address_get(
-			&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN),
-		dppi_chan_gpio_ready);
-
-	nrf_gpiote_subscribe_set(
-		gpiote.p_reg,
-		nrfx_gpiote_clr_task_address_get(
-			&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN),
-		dppi_chan_gpio_disabled);
-
-	nrf_gpiote_subscribe_set(
-		gpiote.p_reg,
-		nrfx_gpiote_set_task_address_get(&gpiote,
-						 CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN),
-		dppi_chan_gpio_address);
-
-	nrf_gpiote_subscribe_set(
-		gpiote.p_reg,
-		nrfx_gpiote_clr_task_address_get(&gpiote,
-						 CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN),
-		dppi_chan_gpio_end);
-
-	nrfx_gppi_channels_enable(NRFX_BIT(gppi_chan_radio_ready) |
-				  NRFX_BIT(gppi_chan_radio_disabled) |
-				  NRFX_BIT(gppi_chan_radio_address) |
-				  NRFX_BIT(gppi_chan_radio_end));
-
-	if (nrfx_dppi_channel_enable(&dppi_gpio_domain, dppi_chan_gpio_ready) != NRFX_SUCCESS) {
-		LOG_ERR("Failed chan enable gpio_ready");
-		return -ENOMEM;
-	}
-
-	if (nrfx_dppi_channel_enable(&dppi_gpio_domain, dppi_chan_gpio_disabled) != NRFX_SUCCESS) {
-		LOG_ERR("Failed chan enable gpio_disabled");
-		return -ENOMEM;
-	}
-
-	if (nrfx_dppi_channel_enable(&dppi_gpio_domain, dppi_chan_gpio_address) != NRFX_SUCCESS) {
-		LOG_ERR("Failed chan enable gpio_address");
-		return -ENOMEM;
-	}
-
-	if (nrfx_dppi_channel_enable(&dppi_gpio_domain, dppi_chan_gpio_end) != NRFX_SUCCESS) {
-		LOG_ERR("Failed chan enable gpio_end");
-		return -ENOMEM;
+	for (size_t i = 0; i < ARRAY_SIZE(pub_ch); i++) {
+		rad_resource.channel = pub_ch[i];
+		err = nrfx_gppi_ext_conn_alloc(rad_domain, dst_domain, &handle, &rad_resource);
+		if (err < 0) {
+			return err;
+		}
+		nrfx_gppi_ep_attach(handle, tep[i]);
+		/* Channel in radio domain is not enabled by this function. */
+		nrfx_gppi_conn_enable(handle);
 	}
 
 	return 0;
