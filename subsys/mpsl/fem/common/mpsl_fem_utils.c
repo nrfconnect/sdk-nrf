@@ -6,33 +6,25 @@
 
 #include <mpsl_fem_utils.h>
 #include <hal/nrf_gpio.h>
-#if IS_ENABLED(CONFIG_HAS_HW_NRF_PPI)
-#include <nrfx_ppi.h>
-#elif IS_ENABLED(CONFIG_HAS_HW_NRF_DPPIC)
-#include <nrfx_dppi.h>
-#endif
+#include <helpers/nrfx_gppi.h>
 
 int mpsl_fem_utils_ppi_channel_alloc(uint8_t *ppi_channels, size_t size)
 {
-	nrfx_err_t err = NRFX_ERROR_NOT_SUPPORTED;
-#ifdef DPPI_PRESENT
-#if defined(NRF53_SERIES)
-	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
-#elif defined(NRF54L_SERIES)
-	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(10);
+	int ch;
+#if defined(NRF54L_SERIES)
+	uint32_t domain_id = nrfx_gppi_domain_id_get((uint32_t)NRF_DPPIC10);
+#elif defined(NRF53_SERIES) || defined(PPI_PRESENT)
+	uint32_t domain_id = 0;
 #else
 #error Unsupported SoC series
 #endif
-#endif
 
 	for (int i = 0; i < size; i++) {
-		IF_ENABLED(CONFIG_HAS_HW_NRF_PPI,
-			(err = nrfx_ppi_channel_alloc(&ppi_channels[i]);));
-		IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
-			(err = nrfx_dppi_channel_alloc(&dppi, &ppi_channels[i]);));
-		if (err != NRFX_SUCCESS) {
-			return -ENOMEM;
+		ch = nrfx_gppi_channel_alloc(domain_id, NULL);
+		if (ch < 0) {
+			return ch;
 		}
+		ppi_channels[i] = (uint8_t)ch;
 	}
 
 	return 0;
