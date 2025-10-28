@@ -1,0 +1,11 @@
+sample:
+  name: Minimal nRF9151 Vercel Client
+  description: Minimal firmware with LTE, HTTP, GPS, and FOTA for nRF9151
+
+tests:
+  sample.cellular.minimal_vercel_client:
+    tags: ci_build
+    platform_allow:
+      - nrf9151dk_nrf9151_ns
+    integration_platforms:
+      - nrf9151dk_nrf9151_ns
