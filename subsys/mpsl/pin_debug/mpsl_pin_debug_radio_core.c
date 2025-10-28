@@ -20,96 +20,42 @@ LOG_MODULE_REGISTER(mpsl_radio_pin_debug, CONFIG_MPSL_LOG_LEVEL);
 
 static int m_ppi_config(void)
 {
-#if defined(PPI_PRESENT)
-	uint8_t ppi_chan_radio_ready;
-	uint8_t ppi_chan_radio_address;
-	uint8_t ppi_chan_radio_end;
-	uint8_t ppi_chan_radio_disabled;
+	nrfx_gppi_handle_t handle[4];
+	uint32_t tep[4];
 
-	if (nrfx_gppi_channel_alloc(&ppi_chan_radio_ready) != NRFX_SUCCESS) {
-		LOG_ERR("Failed allocating PPI chan");
-		return -ENOMEM;
-	}
-
-	if (nrfx_gppi_channel_alloc(&ppi_chan_radio_address) != NRFX_SUCCESS) {
-		LOG_ERR("Failed allocating PPI chan");
-		return -ENOMEM;
-	}
-
-	if (nrfx_gppi_channel_alloc(&ppi_chan_radio_end) != NRFX_SUCCESS) {
-		LOG_ERR("Failed allocating PPI chan");
-		return -ENOMEM;
-	}
-
-	if (nrfx_gppi_channel_alloc(&ppi_chan_radio_disabled) != NRFX_SUCCESS) {
-		LOG_ERR("Failed allocating PPI chan");
-		return -ENOMEM;
-	}
-
-	nrfx_gppi_channel_endpoints_setup(
-		ppi_chan_radio_ready, nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_READY),
-		nrfx_gpiote_set_task_address_get(
-			&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN));
-
-	nrfx_gppi_channel_endpoints_setup(
-		ppi_chan_radio_disabled,
-		nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_DISABLED),
-		nrfx_gpiote_clr_task_address_get(
-			&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN));
-
-	nrfx_gppi_channel_endpoints_setup(
-		ppi_chan_radio_address,
-		nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS),
-		nrfx_gpiote_set_task_address_get(&gpiote,
-						 CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
-
-	nrfx_gppi_channel_endpoints_setup(
-		ppi_chan_radio_end, nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_END),
-		nrfx_gpiote_clr_task_address_get(&gpiote,
-						 CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
-
-	if (nrfx_ppi_channel_enable(ppi_chan_radio_ready) != NRFX_SUCCESS) {
-		LOG_ERR("Failed enabling channel");
-		return -ENOMEM;
-	}
-	if (nrfx_ppi_channel_enable(ppi_chan_radio_address) != NRFX_SUCCESS) {
-		LOG_ERR("Failed enabling channel");
-		return -ENOMEM;
-	}
-	if (nrfx_ppi_channel_enable(ppi_chan_radio_end) != NRFX_SUCCESS) {
-		LOG_ERR("Failed enabling channel");
-		return -ENOMEM;
-	}
-	if (nrfx_ppi_channel_enable(ppi_chan_radio_disabled) != NRFX_SUCCESS) {
-		LOG_ERR("Failed enabling channel");
-		return -ENOMEM;
-	}
-
-#elif defined(DPPI_PRESENT)
-	/* Radio events are published on predefined channels. */
-
-	nrfx_gppi_task_endpoint_setup(
-		MPSL_DPPI_RADIO_PUBLISH_READY_CHANNEL_IDX,
-		nrfx_gpiote_set_task_address_get(
-			&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN));
-
-	nrfx_gppi_task_endpoint_setup(
-		MPSL_DPPI_RADIO_PUBLISH_DISABLED_CH_IDX,
-		nrfx_gpiote_clr_task_address_get(
-			&gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN));
-
-	nrfx_gppi_task_endpoint_setup(
-		MPSL_DPPI_RADIO_PUBLISH_ADDRESS_CHANNEL_IDX,
-		nrfx_gpiote_set_task_address_get(&gpiote,
-						 CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
-
-	nrfx_gppi_task_endpoint_setup(
-		MPSL_DPPI_RADIO_PUBLISH_END_CHANNEL_IDX,
-		nrfx_gpiote_clr_task_address_get(&gpiote,
-						 CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN));
+	tep[0] = nrfx_gpiote_set_task_address_get(&gpiote,
+			CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN);
+	tep[1] = nrfx_gpiote_clr_task_address_get(&gpiote,
+			CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN);
+	tep[2] = nrfx_gpiote_set_task_address_get(&gpiote,
+			CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN);
+	tep[3] = nrfx_gpiote_clr_task_address_get(&gpiote,
+			CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN);
+#if defined(DPPI_PRESENT)
+	handle[0] = MPSL_DPPI_RADIO_PUBLISH_READY_CHANNEL_IDX;
+	handle[1] = MPSL_DPPI_RADIO_PUBLISH_DISABLED_CH_IDX;
+	handle[2] = MPSL_DPPI_RADIO_PUBLISH_ADDRESS_CHANNEL_IDX;
+	handle[3] = MPSL_DPPI_RADIO_PUBLISH_END_CHANNEL_IDX;
 #else
-#error "Expect either PPI or DPPI to be present."
+	uint32_t eep[4];
+
+	eep[0] = nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_READY);
+	eep[1] = nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
+	eep[2] = nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS);
+	eep[3] = nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_END);
 #endif
+	for (size_t i = 0; ARRAY_SIZE(tep); i++) {
+#if defined(DPPI_PRESENT)
+		nrfx_gppi_ep_attach(handle[i], tep[i]);
+#else
+		int err = nrfx_gppi_conn_alloc(eep[i], tep[i], &handle[i]);
+
+		if (err < 0) {
+			return err;
+		}
+		nrfx_gppi_conn_enable(handle[i]);
+#endif
+	}
 
 	return 0;
 }
