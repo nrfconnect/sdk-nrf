@@ -268,20 +268,6 @@ tests:
       - ci_build
       - sysbuild
       - ci_applications_serial_lte_modem
-  applications.serial_lte_modem.lwm2m_carrier.thingy91:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      - EXTRA_CONF_FILE=overlay-carrier.conf
-      - SB_CONFIG_THINGY91_STATIC_PARTITIONS_LWM2M_CARRIER=y
-    platform_allow:
-      - thingy91/nrf9160/ns
-    integration_platforms:
-      - thingy91/nrf9160/ns
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_applications_serial_lte_modem
   applications.serial_lte_modem.tracing:
     sysbuild: true
     build_only: true
