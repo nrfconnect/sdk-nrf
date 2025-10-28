@@ -1409,6 +1409,23 @@
 #cmakedefine MBEDTLS_PSA_CRYPTO_SPM
 
 /**
+ * \def MBEDTLS_PSA_KEY_STORE_DYNAMIC
+ *
+ * Dynamically resize the PSA key store to accommodate any number of
+ * volatile keys (until the heap memory is exhausted).
+ *
+ * If this option is disabled, the key store has a fixed size
+ * #MBEDTLS_PSA_KEY_SLOT_COUNT for volatile keys and loaded persistent keys
+ * together.
+ *
+ * This option has no effect when #MBEDTLS_PSA_CRYPTO_C is disabled.
+ *
+ * Module:  library/psa_crypto.c
+ * Requires: MBEDTLS_PSA_CRYPTO_C
+ */
+#cmakedefine MBEDTLS_PSA_KEY_STORE_DYNAMIC
+
+/**
  * Uncomment to enable p256-m. This is an alternative implementation of
  * key generation, ECDH and (randomized) ECDSA on the curve SECP256R1.
  * Compared to the default implementation:
@@ -1778,23 +1795,100 @@
 #cmakedefine MBEDTLS_SSL_PROTO_TLS1_2
 
 /**
- * \def MBEDTLS_SSL_PROTO_TLS1_3_EXPERIMENTAL
+ * \def MBEDTLS_SSL_PROTO_TLS1_3
  *
- * This macro is used to selectively enable experimental parts
- * of the code that contribute to the ongoing development of
- * the prototype TLS 1.3 and DTLS 1.3 implementation, and provide
- * no other purpose.
+ * Enable support for TLS 1.3.
  *
- * \warning TLS 1.3 and DTLS 1.3 aren't yet supported in Mbed TLS,
- *          and no feature exposed through this macro is part of the
- *          public API. In particular, features under the control
- *          of this macro are experimental and don't come with any
- *          stability guarantees.
+ * \note See docs/architecture/tls13-support.md for a description of the TLS
+ *       1.3 support that this option enables.
  *
- * Uncomment this macro to enable experimental and partial
- * functionality specific to TLS 1.3.
+ * Requires: MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
+ * Requires: MBEDTLS_PSA_CRYPTO_C
+ *
+ * \note TLS 1.3 uses PSA crypto for cryptographic operations that are
+ *       directly performed by TLS 1.3 code. As a consequence, when TLS 1.3
+ *       is enabled, a TLS handshake may call psa_crypto_init(), even
+ *       if it ends up negotiating a different TLS version.
+ *
+ * \note Cryptographic operations performed indirectly via another module
+ *       (X.509, PK) or by code shared with TLS 1.2 (record protection,
+ *       running handshake hash) only use PSA crypto if
+ *       #MBEDTLS_USE_PSA_CRYPTO is enabled.
+ *
+ * \note In multithreaded applications, you must also enable
+ *       #MBEDTLS_THREADING_C, even if individual TLS contexts are not
+ *       shared between threads, unless only one thread ever calls
+ *       TLS functions.
+ *
+ * Uncomment this macro to enable the support for TLS 1.3.
  */
-//#define MBEDTLS_SSL_PROTO_TLS1_3_EXPERIMENTAL
+#cmakedefine MBEDTLS_SSL_PROTO_TLS1_3
+
+/**
+ * \def MBEDTLS_SSL_TLS1_3_COMPATIBILITY_MODE
+ *
+ * Enable TLS 1.3 middlebox compatibility mode.
+ *
+ * As specified in Section D.4 of RFC 8446, TLS 1.3 offers a compatibility
+ * mode to make a TLS 1.3 connection more likely to pass through middle boxes
+ * expecting TLS 1.2 traffic.
+ *
+ * Turning on the compatibility mode comes at the cost of a few added bytes
+ * on the wire, but it doesn't affect compatibility with TLS 1.3 implementations
+ * that don't use it. Therefore, unless transmission bandwidth is critical and
+ * you know that middlebox compatibility issues won't occur, it is therefore
+ * recommended to set this option.
+ *
+ * Comment to disable compatibility mode for TLS 1.3. If
+ * MBEDTLS_SSL_PROTO_TLS1_3 is not enabled, this option does not have any
+ * effect on the build.
+ *
+ */
+#cmakedefine MBEDTLS_SSL_TLS1_3_COMPATIBILITY_MODE
+
+/**
+ * \def MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED
+ *
+ * Enable TLS 1.3 PSK key exchange mode.
+ *
+ * Comment to disable support for the PSK key exchange mode in TLS 1.3. If
+ * MBEDTLS_SSL_PROTO_TLS1_3 is not enabled, this option does not have any
+ * effect on the build.
+ *
+ */
+#cmakedefine MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED
+
+/**
+ * \def MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED
+ *
+ * Enable TLS 1.3 ephemeral key exchange mode.
+ *
+ * Requires: PSA_WANT_ALG_ECDH or PSA_WANT_ALG_FFDH
+ *           MBEDTLS_X509_CRT_PARSE_C
+ *           and at least one of:
+ *               MBEDTLS_ECDSA_C or (MBEDTLS_USE_PSA_CRYPTO and PSA_WANT_ALG_ECDSA)
+ *               MBEDTLS_PKCS1_V21
+ *
+ * Comment to disable support for the ephemeral key exchange mode in TLS 1.3.
+ * If MBEDTLS_SSL_PROTO_TLS1_3 is not enabled, this option does not have any
+ * effect on the build.
+ *
+ */
+#cmakedefine MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED
+
+/**
+ * \def MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED
+ *
+ * Enable TLS 1.3 PSK ephemeral key exchange mode.
+ *
+ * Requires: PSA_WANT_ALG_ECDH or PSA_WANT_ALG_FFDH
+ *
+ * Comment to disable support for the PSK ephemeral key exchange mode in
+ * TLS 1.3. If MBEDTLS_SSL_PROTO_TLS1_3 is not enabled, this option does not
+ * have any effect on the build.
+ *
+ */
+#cmakedefine MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED
 
 /**
  * \def MBEDTLS_SSL_EARLY_DATA
@@ -3199,6 +3293,26 @@
 //#define MBEDTLS_PSA_ITS_FILE_C
 
 /**
+ * \def MBEDTLS_PSA_STATIC_KEY_SLOTS
+ *
+ * Statically preallocate memory to store keys' material in PSA instead
+ * of allocating it dynamically when required. This allows builds without a
+ * heap, if none of the enabled cryptographic implementations or other features
+ * require it.
+ * This feature affects both volatile and persistent keys which means that
+ * it's not possible to persistently store a key which is larger than
+ * #MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE.
+ *
+ * \note This feature comes with a (potentially) higher RAM usage since:
+ *       - All the key slots are allocated no matter if they are used or not.
+ *       - Each key buffer's length is #MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE bytes.
+ *
+ * Requires: MBEDTLS_PSA_CRYPTO_C
+ *
+ */
+#cmakedefine MBEDTLS_PSA_STATIC_KEY_SLOTS
+
+/**
  * \def MBEDTLS_RIPEMD160_C
  *
  * Enable the RIPEMD-160 hash algorithm.
@@ -4041,7 +4155,7 @@ it is (2^48 - 1), our restriction is :  (int - 0xFFFF - 0xF).*/
  * in order to store larger objects (ex: raw keys), but please note that this
  * will increase RAM usage.
  */
-//#define MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE       256
+#cmakedefine MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE @MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE@
 
 /* RSA OPTIONS */
 //#define MBEDTLS_RSA_GEN_KEY_MIN_BITS            1024 /**<  Minimum RSA key size that can be generated in bits (Minimum possible value is 128 bits) */
@@ -4171,15 +4285,47 @@ it is (2^48 - 1), our restriction is :  (int - 0xFFFF - 0xF).*/
 //#define MBEDTLS_SSL_MAX_EARLY_DATA_SIZE        1024
 
 /**
+ * \def MBEDTLS_SSL_TLS1_3_TICKET_AGE_TOLERANCE
  *
+ * Maximum allowed ticket age difference in milliseconds tolerated between
+ * server and client. Default value is 6000. This is not used in TLS 1.2.
+ *
+ * - The client ticket age is the time difference between the time when the
+ *   client proposes to the server to use the ticket and the time the client
+ *   received the ticket from the server.
+ * - The server ticket age is the time difference between the time when the
+ *   server receives a proposition from the client to use the ticket and the
+ *   time when the ticket was created by the server.
+ *
+ * The ages might be different due to the client and server clocks not running
+ * at the same pace. The typical accuracy of an RTC crystal is ±100 to ±20 parts
+ * per million (360 to 72 milliseconds per hour). Default tolerance window is
+ * 6s, thus in the worst case clients and servers must sync up their system time
+ * every 6000/360/2~=8 hours.
+ *
+ * See section 8.3 of the TLS 1.3 specification(RFC 8446) for more information.
  */
+//#define MBEDTLS_SSL_TLS1_3_TICKET_AGE_TOLERANCE 6000
 
 /**
+ * \def MBEDTLS_SSL_TLS1_3_TICKET_NONCE_LENGTH
  *
+ * Size in bytes of a ticket nonce. This is not used in TLS 1.2.
+ *
+ * This must be less than 256.
  */
+//#define MBEDTLS_SSL_TLS1_3_TICKET_NONCE_LENGTH 32
 
 /**
+ * \def MBEDTLS_SSL_TLS1_3_DEFAULT_NEW_SESSION_TICKETS
+ *
+ * Default number of NewSessionTicket messages to be sent by a TLS 1.3 server
+ * after handshake completion. This is not used in TLS 1.2 and relevant only if
+ * the MBEDTLS_SSL_SESSION_TICKETS option is enabled.
+ *
  */
+//#define MBEDTLS_SSL_TLS1_3_DEFAULT_NEW_SESSION_TICKETS 1
+
 /* X509 options */
 //#define MBEDTLS_X509_MAX_INTERMEDIATE_CA   8   /**< Maximum number of intermediate CAs in a verification chain. */
 //#define MBEDTLS_X509_MAX_FILE_PATH_LEN     512 /**< Maximum length of a path/filename string in bytes including the null terminator character ('\0'). */
