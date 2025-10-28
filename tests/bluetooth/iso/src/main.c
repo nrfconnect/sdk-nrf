@@ -23,8 +23,10 @@ static int hfclock_config_and_start(void)
 		return ret;
 	}
 
+	nrf_clock_hfclk_t clk_src;
+
 	nrfx_clock_hfclk_start();
-	while (!nrfx_clock_hfclk_is_running()) {
+	while (!nrfx_clock_hfclk_running_check(&clk_src)) {
 	}
 
 	return 0;
