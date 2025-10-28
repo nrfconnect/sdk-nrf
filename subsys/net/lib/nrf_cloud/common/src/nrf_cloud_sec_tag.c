@@ -33,7 +33,12 @@ static sec_tag_t coap_jwt_sec_tag = CONFIG_NRF_CLOUD_COAP_JWT_SEC_TAG;
 void nrf_cloud_sec_tag_coap_jwt_set(const sec_tag_t sec_tag)
 {
 	coap_jwt_sec_tag = sec_tag;
-	LOG_DBG("CoAP JWT sec tag updated: %d", coap_jwt_sec_tag);
+
+#if defined(CONFIG_NRF_MODEM_LIB)
+	LOG_DBG("CoAP JWT Sec tag updated:  %u", (uint32_t) coap_jwt_sec_tag);
+#else
+	LOG_DBG("CoAP JWT Sec tag updated:  %d", coap_jwt_sec_tag);
+#endif /* defined(CONFIG_NRF_MODEM_LIB) */
 }
 
 sec_tag_t nrf_cloud_sec_tag_coap_jwt_get(void)
