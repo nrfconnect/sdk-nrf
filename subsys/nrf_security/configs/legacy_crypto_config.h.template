@@ -19,7 +19,7 @@
  */
 
 /**
- * This is an optional version symbol that enables comatibility handling of
+ * This is an optional version symbol that enables compatibility handling of
  * config files.
  *
  * It is equal to the #MBEDTLS_VERSION_NUMBER of the Mbed TLS version that
@@ -123,7 +123,7 @@
  * MBEDTLS_PLATFORM_TIME_MACRO, MBEDTLS_PLATFORM_TIME_TYPE_MACRO and
  * MBEDTLS_PLATFORM_STD_TIME.
  *
- * Comment if your system does not support time functions
+ * Comment if your system does not support time functions.
  */
 //#define MBEDTLS_HAVE_TIME
 
@@ -153,16 +153,16 @@
  *
  * Enable the memory allocation layer.
  *
- * By default mbed TLS uses the system-provided calloc() and free().
+ * By default Mbed TLS uses the system-provided calloc() and free().
  * This allows different allocators (self-implemented or provided) to be
  * provided to the platform abstraction layer.
  *
- * Enabling MBEDTLS_PLATFORM_MEMORY without the
+ * Enabling #MBEDTLS_PLATFORM_MEMORY without the
  * MBEDTLS_PLATFORM_{FREE,CALLOC}_MACROs will provide
  * "mbedtls_platform_set_calloc_free()" allowing you to set an alternative calloc() and
  * free() function pointer at runtime.
  *
- * Enabling MBEDTLS_PLATFORM_MEMORY and specifying
+ * Enabling #MBEDTLS_PLATFORM_MEMORY and specifying
  * MBEDTLS_PLATFORM_{CALLOC,FREE}_MACROs will allow you to specify the
  * alternate function at compile time.
  *
@@ -194,10 +194,10 @@
 /**
  * \def MBEDTLS_PLATFORM_EXIT_ALT
  *
- * MBEDTLS_PLATFORM_XXX_ALT: Uncomment a macro to let mbed TLS support the
+ * MBEDTLS_PLATFORM_XXX_ALT: Uncomment a macro to let Mbed TLS support the
  * function in the platform abstraction layer.
  *
- * Example: In case you uncomment MBEDTLS_PLATFORM_PRINTF_ALT, mbed TLS will
+ * Example: In case you uncomment MBEDTLS_PLATFORM_PRINTF_ALT, Mbed TLS will
  * provide a function "mbedtls_platform_set_printf()" that allows you to set an
  * alternative printf function pointer.
  *
@@ -249,10 +249,10 @@
  */
 #cmakedefine MBEDTLS_DEPRECATED_REMOVED
 
-/* \} name SECTION: System support */
+/** \} name SECTION: System support */
 
 /**
- * \name SECTION: mbed TLS feature support
+ * \name SECTION: Mbed TLS feature support
  *
  * This section sets support for features that are or are not needed
  * within the modules that are enabled.
@@ -275,7 +275,7 @@
 /**
  * \def MBEDTLS_AES_ALT
  *
- * MBEDTLS__MODULE_NAME__ALT: Uncomment a macro to let mbed TLS use your
+ * MBEDTLS__MODULE_NAME__ALT: Uncomment a macro to let Mbed TLS use your
  * alternate core implementation of a symmetric crypto, an arithmetic or hash
  * module (e.g. platform specific assembly optimized implementations). Keep
  * in mind that the function prototypes should remain the same.
@@ -283,7 +283,7 @@
  * This replaces the whole module. If you only want to replace one of the
  * functions, use one of the MBEDTLS__FUNCTION_NAME__ALT flags.
  *
- * Example: In case you uncomment MBEDTLS_AES_ALT, mbed TLS will no longer
+ * Example: In case you uncomment MBEDTLS_AES_ALT, Mbed TLS will no longer
  * provide the "struct mbedtls_aes_context" definition and omit the base
  * function declarations and implementations. "aes_alt.h" will be included from
  * "aes.h" to include the new function definitions.
@@ -318,7 +318,7 @@
 #cmakedefine MBEDTLS_SHA512_ALT
 
 /*
- * When replacing the elliptic curve module, pleace consider, that it is
+ * When replacing the elliptic curve module, please consider, that it is
  * implemented with two .c files:
  *      - ecp.c
  *      - ecp_curves.c
@@ -331,14 +331,14 @@
 /**
  * \def MBEDTLS_SHA256_PROCESS_ALT
  *
- * MBEDTLS__FUNCTION_NAME__ALT: Uncomment a macro to let mbed TLS use you
+ * MBEDTLS__FUNCTION_NAME__ALT: Uncomment a macro to let Mbed TLS use you
  * alternate core implementation of symmetric crypto or hash function. Keep in
  * mind that function prototypes should remain the same.
  *
- * This replaces only one function. The header file from mbed TLS is still
+ * This replaces only one function. The header file from Mbed TLS is still
  * used, in contrast to the MBEDTLS__MODULE_NAME__ALT flags.
  *
- * Example: In case you uncomment MBEDTLS_SHA256_PROCESS_ALT, mbed TLS will
+ * Example: In case you uncomment MBEDTLS_SHA256_PROCESS_ALT, Mbed TLS will
  * no longer provide the mbedtls_sha1_process() function, but it will still provide
  * the other function (using your mbedtls_sha1_process() function) and the definition
  * of mbedtls_sha1_context, so your implementation of mbedtls_sha1_process must be compatible
@@ -392,7 +392,7 @@
  * alternative core implementation of elliptic curve arithmetic. Keep in mind
  * that function prototypes should remain the same.
  *
- * This partially replaces one function. The header file from mbed TLS is still
+ * This partially replaces one function. The header file from Mbed TLS is still
  * used, in contrast to the MBEDTLS_ECP_ALT flag. The original implementation
  * is still present and it is used for group structures not supported by the
  * alternative.
@@ -416,11 +416,11 @@
  * implement optimized set up and tear down instructions.
  *
  * Example: In case you set MBEDTLS_ECP_INTERNAL_ALT and
- * MBEDTLS_ECP_DOUBLE_JAC_ALT, mbed TLS will still provide the ecp_double_jac()
+ * MBEDTLS_ECP_DOUBLE_JAC_ALT, Mbed TLS will still provide the ecp_double_jac()
  * function, but will use your mbedtls_internal_ecp_double_jac() if the group
  * for the operation is supported by your implementation (i.e. your
  * mbedtls_internal_ecp_grp_capable() function returns 1 for this group). If the
- * group is not supported by your implementation, then the original mbed TLS
+ * group is not supported by your implementation, then the original Mbed TLS
  * implementation of ecp_double_jac() is used instead, unless this fallback
  * behaviour is disabled by setting MBEDTLS_ECP_NO_FALLBACK (in which case
  * ecp_double_jac() will return MBEDTLS_ERR_ECP_FEATURE_UNAVAILABLE).
@@ -451,7 +451,7 @@
 /**
  * \def MBEDTLS_ENTROPY_HARDWARE_ALT
  *
- * Uncomment this macro to let mbed TLS use your own implementation of a
+ * Uncomment this macro to let Mbed TLS use your own implementation of a
  * hardware entropy collector.
  *
  * Your function must be called \c mbedtls_hardware_poll(), have the same
@@ -1077,7 +1077,7 @@
  * Include backtrace information with each allocated block.
  *
  * Requires: MBEDTLS_MEMORY_BUFFER_ALLOC_C
- *           GLIBC-compatible backtrace() an backtrace_symbols() support
+ *           GLIBC-compatible backtrace() and backtrace_symbols() support
  *
  * Uncomment this macro to include backtrace information
  */
@@ -1165,8 +1165,8 @@
  * );
  * ```
  * The \c context value is initialized to 0 before the first call.
- * The function must fill the \c output buffer with \p output_size bytes
- * of random data and set \c *output_length to \p output_size.
+ * The function must fill the \c output buffer with \c output_size bytes
+ * of random data and set \c *output_length to \c output_size.
  *
  * Requires: MBEDTLS_PSA_CRYPTO_C
  *
@@ -1230,7 +1230,7 @@
  * Enable an implementation of SHA-256 that has lower ROM footprint but also
  * lower performance.
  *
- * The default implementation is meant to be a reasonnable compromise between
+ * The default implementation is meant to be a reasonable compromise between
  * performance and size. This version optimizes more aggressively for size at
  * the expense of performance. Eg on Cortex-M4 it reduces the size of
  * mbedtls_sha256_process() from ~2KB to ~0.5KB for a performance hit of about
@@ -1254,7 +1254,7 @@
  * \def MBEDTLS_SSL_ALL_ALERT_MESSAGES
  *
  * Enable sending of alert messages in case of encountered errors as per RFC.
- * If you choose not to send the alert messages, mbed TLS can still communicate
+ * If you choose not to send the alert messages, Mbed TLS can still communicate
  * with other servers, only debugging of failures is harder.
  *
  * The advantage of not sending alert messages, is that no information is given
@@ -1367,7 +1367,7 @@
  * Enable support for RFC 7627: Session Hash and Extended Master Secret
  * Extension.
  *
- * This was introduced as "the proper fix" to the Triple Handshake familiy of
+ * This was introduced as "the proper fix" to the Triple Handshake family of
  * attacks, but it is recommended to always use it (even if you disable
  * renegotiation), since it actually fixes a more fundamental issue in the
  * original SSL/TLS design, and has implications beyond Triple Handshake.
@@ -1393,7 +1393,7 @@
  * \note This option has no influence on the protection against the
  *       triple handshake attack. Even if it is disabled, Mbed TLS will
  *       still ensure that certificates do not change during renegotiation,
- *       for exaple by keeping a hash of the peer's certificate.
+ *       for example by keeping a hash of the peer's certificate.
  *
  * Comment this macro to disable storing the peer's certificate
  * after the handshake.
@@ -1509,7 +1509,7 @@
  * unless you know for sure amplification cannot be a problem in the
  * environment in which your server operates.
  *
- * \warning Disabling this can ba a security risk! (see above)
+ * \warning Disabling this can be a security risk! (see above)
  *
  * Requires: MBEDTLS_SSL_PROTO_DTLS
  *
@@ -1782,12 +1782,12 @@
  * Comment this macro to disallow using RSASSA-PSS in certificates.
  */
 #cmakedefine MBEDTLS_X509_RSASSA_PSS_SUPPORT
-/* \} name SECTION: mbed TLS feature support */
+/** \} name SECTION: Mbed TLS feature support */
 
 /**
- * \name SECTION: mbed TLS modules
+ * \name SECTION: Mbed TLS modules
  *
- * This section enables or disables entire modules in mbed TLS
+ * This section enables or disables entire modules in Mbed TLS
  * \{
  */
 
@@ -2153,7 +2153,7 @@
  *
  * PEM_PARSE uses DES/3DES for decrypting encrypted keys.
  *
- * \warning   DES is considered a weak cipher and its use constitutes a
+ * \warning   DES/3DES are considered weak ciphers and their use constitutes a
  *            security risk. We recommend considering stronger ciphers instead.
  */
 //#define MBEDTLS_DES_C
@@ -2310,7 +2310,7 @@
  *
  * Requires: MBEDTLS_MD_C
  *
- * Uncomment to enable the HMAC_DRBG random number geerator.
+ * Uncomment to enable the HMAC_DRBG random number generator.
  */
 #cmakedefine MBEDTLS_HMAC_DRBG_C
 
@@ -2370,7 +2370,7 @@
  * Module:  library/memory_buffer_alloc.c
  *
  * Requires: MBEDTLS_PLATFORM_C
- *           MBEDTLS_PLATFORM_MEMORY (to use it within mbed TLS)
+ *           MBEDTLS_PLATFORM_MEMORY (to use it within Mbed TLS)
  *
  * Enable this module to enable the buffer memory allocator.
  */
@@ -2469,7 +2469,7 @@
 /**
  * \def MBEDTLS_PK_C
  *
- * Enable the generic public (asymetric) key layer.
+ * Enable the generic public (asymmetric) key layer.
  *
  * Module:  library/pk.c
  * Caller:  library/ssl_tls.c
@@ -2485,7 +2485,7 @@
 /**
  * \def MBEDTLS_PK_PARSE_C
  *
- * Enable the generic public (asymetric) key parser.
+ * Enable the generic public (asymmetric) key parser.
  *
  * Module:  library/pkparse.c
  * Caller:  library/x509_crt.c
@@ -2500,7 +2500,7 @@
 /**
  * \def MBEDTLS_PK_WRITE_C
  *
- * Enable the generic public (asymetric) key writer.
+ * Enable the generic public (asymmetric) key writer.
  *
  * Module:  library/pkwrite.c
  * Caller:  library/x509write.c
@@ -2550,7 +2550,7 @@
  * above to be specified at runtime or compile time respectively.
  *
  * \note This abstraction layer must be enabled on Windows (including MSYS2)
- * as other module rely on it for a fixed snprintf implementation.
+ * as other modules rely on it for a fixed snprintf implementation.
  *
  * Module:  library/platform.c
  * Caller:  Most other .c files
@@ -2843,7 +2843,7 @@
  * You will have to enable either MBEDTLS_THREADING_ALT or
  * MBEDTLS_THREADING_PTHREAD.
  *
- * Enable this layer to allow use of mutexes within mbed TLS
+ * Enable this layer to allow use of mutexes within Mbed TLS
  */
 #cmakedefine MBEDTLS_THREADING_C
 
@@ -2978,7 +2978,7 @@
  */
 #cmakedefine MBEDTLS_X509_CSR_WRITE_C
 
-/* \} name SECTION: mbed TLS modules */
+/** \} name SECTION: Mbed TLS modules */
 
 /**
  * \name SECTION: Module configuration options
@@ -3164,7 +3164,7 @@ it is (2^48 - 1), our restriction is :  (int - 0xFFFF - 0xF).*/
  * Maximum number of heap-allocated bytes for the purpose of
  * DTLS handshake message reassembly and future message buffering.
  *
- * This should be at least 9/8 * MBEDTLSSL_IN_CONTENT_LEN
+ * This should be at least 9/8 * MBEDTLS_SSL_IN_CONTENT_LEN
  * to account for a reassembled handshake message of maximum size,
  * together with its reassembly bitmap.
  *
@@ -3261,6 +3261,6 @@ it is (2^48 - 1), our restriction is :  (int - 0xFFFF - 0xF).*/
 #define MBEDTLS_CIPHER_MODE_CBC
 #endif
 
-/* \} name SECTION: Customisation configuration options */
+/** \} name SECTION: Module configuration options */
 
 #endif /* LEGACY_CRYPTO_CONFIG_H */
