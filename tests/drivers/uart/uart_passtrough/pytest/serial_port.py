@@ -19,7 +19,7 @@ class SerialPort:
     8 data bits, 1 stop bit, no parity
     """
 
-    def __init__(self, serial_port: str, baudrate: int, timeout: int = 15):
+    def __init__(self, serial_port: str, baudrate: int, timeout: int = 5):
         """
         :param serial_port: full name of the serial device port
         :param baudrate: buadrate [bps]
@@ -75,20 +75,21 @@ class SerialPort:
             raise OSError("Serial port is closed")
 
         try:
-            time.sleep(0.25)
             self.serial_port.write_timeout = self._timeout
             logger.info(f"[{self.serial_port.port}] Serial --> {message}")
             line_termination: str = "\n" if add_line_termination else ""
             self.serial_port.write((message + line_termination).encode())
+            time.sleep(0.25)
             if get_response:
-                start = time.time()
-                while (self.serial_port.in_waiting == 0) and (time.time() - start < self._timeout):
-                    # no data in buffer yet
-                    time.sleep(0.1)
-                while (self.serial_port.in_waiting > 0) and (time.time() - start < self._timeout):
-                    time.sleep(0.1)
-                    response += self.serial_port.read_all().decode()
-                logger.info(f"Serial <-- {response}")
+                start = time.perf_counter()
+                while time.perf_counter() - start < self._timeout:
+                    if self.serial_port.in_waiting == 0:
+                        time.sleep(0.1)
+                    else:
+                        response += self.serial_port.read_all().decode()
+                        logger.info(f"Serial <-- {response}")
+                        if response:
+                            break
             return response
 
         except serial.SerialTimeoutException as exc:
