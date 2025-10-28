@@ -1,0 +1,100 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires two wire connections:
+ *  - SPIM_MOSI with SPIM_MISO -> P0.07 - P0.06;
+ *  - SPI cs-gpios with test-gpios -> P0.10 - P0.11.
+ * Test-gpios and cs-gpios must have identical active level flag.
+ */
+
+/ {
+	zephyr,user {
+		test-gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
+	};
+
+	aliases {
+		led = &led0;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		led0: led_0 {
+			gpios = <&gpio9 0x0 0x0>;
+			label = "Green LED 0";
+		};
+	};
+
+	cpus {
+		power-states {
+			wait: wait {
+				compatible = "zephyr,power-state";
+				power-state-name = "standby";
+				substate-id = <0>;
+				min-residency-us = <20000>;
+			};
+
+			hibernate: hibernate {
+				compatible = "zephyr,power-state";
+				power-state-name = "suspend-to-ram";
+				substate-id = <0>;
+				min-residency-us = <400000>;
+			};
+		};
+	};
+};
+
+&cpu {
+	cpu-power-states = <&wait &hibernate>;
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio9 {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <7>;
+};
+
+&pinctrl {
+	spi130_default_alt: spi130_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 0)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 7)>,
+				<NRF_PSEL(SPIM_MISO, 0, 6)>;
+		};
+	};
+
+	spi130_sleep_alt: spi130_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 0)>,
+				<NRF_PSEL(SPIM_MISO, 0, 6)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 7)>;
+			low-power-enable;
+		};
+	};
+};
+
+&spi130 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+	pinctrl-0 = <&spi130_default_alt>;
+	pinctrl-1 = <&spi130_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	cs-gpios = <&gpio0 10 GPIO_ACTIVE_LOW>;
+
+	dut_spi_dt: test-spi-dev@0 {
+		compatible = "vnd,spi-device";
+		reg = <0>;
+		spi-max-frequency = <DT_FREQ_M(4)>;
+	};
+};
