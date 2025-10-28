@@ -18,12 +18,6 @@
 #include <mpsl_fem_utils.h>
 #include <mpsl_fem_twi_drv.h>
 
-#if IS_ENABLED(CONFIG_HAS_HW_NRF_PPI)
-#include <nrfx_ppi.h>
-#elif IS_ENABLED(CONFIG_HAS_HW_NRF_DPPIC)
-#include <nrfx_dppi.h>
-#endif
-
 #include <soc_secure.h>
 
 #if IS_ENABLED(CONFIG_PINCTRL)
