@@ -78,7 +78,6 @@ config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT
 config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT
 	bool "Provision protected RAM invalidation slots using psa_import_key"
 	depends on CRACEN_LIB_KMU
-	depends on !CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT
 	help
 	  Provision the protected RAM invalidation KMU slots (248,249) in the KMU using a
 	  psa_import_key call. The application is required to call psa_import_key with the
