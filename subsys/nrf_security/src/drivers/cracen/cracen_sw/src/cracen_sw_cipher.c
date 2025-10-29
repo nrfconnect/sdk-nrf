@@ -22,6 +22,7 @@
 #include <cracen/statuscodes.h>
 #include <zephyr/sys/__assert.h>
 #include <cracen_sw_aes_ctr.h>
+#include <cracen_sw_aes_cbc.h>
 #include <cracen_sw_common.h>
 
 #include "cracen_psa_primitives.h"
@@ -123,107 +124,6 @@ static psa_status_t crypt(cracen_cipher_operation_t *operation,
 	return status;
 }
 
-static psa_status_t encrypt_cbc(const struct sxkeyref *key, const uint8_t *input,
-				size_t input_length, uint8_t *output, size_t output_size,
-				size_t *output_length, const uint8_t *iv)
-{
-	int sx_status;
-	struct sxblkcipher cipher_ctx;
-	uint8_t padded_input_block[SX_BLKCIPHER_AES_BLK_SZ];
-	size_t remaining_bytes = input_length % SX_BLKCIPHER_AES_BLK_SZ;
-	uint8_t padding = SX_BLKCIPHER_AES_BLK_SZ - remaining_bytes;
-	size_t padded_input_length = input_length + padding;
-	size_t full_blocks_length = input_length - remaining_bytes;
-
-	if (output_size < padded_input_length) {
-		return PSA_ERROR_BUFFER_TOO_SMALL;
-	}
-
-	sx_status = sx_blkcipher_create_aescbc_enc(&cipher_ctx, key, iv);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	if (full_blocks_length > 0) {
-		sx_status = sx_blkcipher_crypt(&cipher_ctx, input, full_blocks_length, output);
-		if (sx_status != SX_OK) {
-			return silex_statuscodes_to_psa(sx_status);
-		}
-	}
-
-	memset(padded_input_block, padding, sizeof(padded_input_block));
-	memcpy(padded_input_block, input + full_blocks_length, remaining_bytes);
-
-	sx_status = sx_blkcipher_crypt(&cipher_ctx, padded_input_block, sizeof(padded_input_block),
-				       output + full_blocks_length);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	sx_status = sx_blkcipher_run(&cipher_ctx);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	sx_status = sx_blkcipher_wait(&cipher_ctx);
-	if (sx_status == SX_OK) {
-		*output_length = padded_input_length;
-	}
-
-	return silex_statuscodes_to_psa(sx_status);
-}
-
-static psa_status_t decrypt_cbc(const struct sxkeyref *key, const uint8_t *input,
-				size_t input_length, uint8_t *output, size_t output_size,
-				size_t *output_length, const uint8_t *iv)
-{
-	int sx_status;
-	struct sxblkcipher cipher_ctx;
-
-	if (input_length % SX_BLKCIPHER_AES_BLK_SZ != 0) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-
-	if (output_size < input_length) {
-		return PSA_ERROR_BUFFER_TOO_SMALL;
-	}
-
-	sx_status = sx_blkcipher_create_aescbc_dec(&cipher_ctx, key, iv);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	sx_status = sx_blkcipher_crypt(&cipher_ctx, input, input_length, output);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	sx_status = sx_blkcipher_run(&cipher_ctx);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	sx_status = sx_blkcipher_wait(&cipher_ctx);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	size_t padding_length = output[input_length - 1];
-	size_t padding_index = input_length - padding_length;
-	uint32_t failure = 0;
-
-	failure |= (padding_length > SX_BLKCIPHER_AES_BLK_SZ);
-	failure |= (padding_length == 0);
-
-	for (size_t i = 0; i < input_length; i++) {
-		failure |= (output[i] ^ padding_length) * (i >= padding_index);
-	}
-
-	*output_length = padding_index;
-
-	return (failure == 0) ? PSA_SUCCESS : PSA_ERROR_INVALID_PADDING;
-}
-
 psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 				   const uint8_t *key_buffer, size_t key_buffer_size,
 				   psa_algorithm_t alg, const uint8_t *iv, size_t iv_length,
@@ -263,24 +163,57 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 		}
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES) && alg == PSA_ALG_ECB_NO_PADDING) {
-		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
-					    &operation.keyref);
-		if (status != PSA_SUCCESS) {
-			return status;
+	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES)) {
+		if (alg == PSA_ALG_ECB_NO_PADDING) {
+			status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
+						    &operation.keyref);
+			if (status != PSA_SUCCESS) {
+				return status;
+			}
+			return cracen_aes_ecb_encrypt(&operation.cipher, &operation.keyref, input,
+						      input_length, output, output_size,
+						      output_length);
 		}
-		return cracen_aes_ecb_encrypt(&operation.cipher, &operation.keyref, input,
-					      input_length, output, output_size, output_length);
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES) && alg == PSA_ALG_CBC_PKCS7) {
-		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
-					    &operation.keyref);
-		if (status != PSA_SUCCESS) {
-			return status;
+	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES)) {
+		if (alg == PSA_ALG_CBC_PKCS7) {
+
+			/* Handle inplace encryption by moving plaintext to the right by iv_length
+			 * bytes. This is done because in inplace encryption the input and output
+			 * should point to the same data so that the output can overwrite its own
+			 * input. If they are not in sync the output will overwrite the input of
+			 * another operation which is of course wrong.
+			 *
+			 */
+			if (output == input + iv_length) {
+				memmove(output, input, input_length);
+				input = output;
+			}
+			return cracen_sw_aes_cbc_encrypt(attributes, key_buffer, key_buffer_size,
+							 alg, iv, iv_length, input, input_length,
+							 output, output_size, output_length);
 		}
-		return encrypt_cbc(&operation.keyref, input, input_length, output, output_size,
-				   output_length, iv);
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES)) {
+		if (alg == PSA_ALG_CBC_NO_PADDING) {
+
+			/* Handle inplace encryption by moving plaintext to the right by iv_length
+			 * bytes. This is done because in inplace encryption the input and output
+			 * should point to the same data so that the output can overwrite its own
+			 * input. If they are not in sync the output will overwrite the input of
+			 * another operation which is of course wrong.
+			 *
+			 */
+			if (output == input + iv_length) {
+				memmove(output, input, input_length);
+				input = output;
+			}
+			return cracen_sw_aes_cbc_encrypt(attributes, key_buffer, key_buffer_size,
+							 alg, iv, iv_length, input, input_length,
+							 output, output_size, output_length);
+		}
 	}
 
 	status = setup(CRACEN_ENCRYPT, &operation, attributes, key_buffer, key_buffer_size, alg);
@@ -325,24 +258,35 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 		}
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES) && alg == PSA_ALG_ECB_NO_PADDING) {
-		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
-					    &operation.keyref);
-		if (status != PSA_SUCCESS) {
-			return status;
+	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES)) {
+		if (alg == PSA_ALG_ECB_NO_PADDING) {
+			status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
+						    &operation.keyref);
+			if (status != PSA_SUCCESS) {
+				return status;
+			}
+			return cracen_aes_ecb_decrypt(&operation.cipher, &operation.keyref, input,
+						      input_length, output, output_size,
+						      output_length);
 		}
-		return cracen_aes_ecb_decrypt(&operation.cipher, &operation.keyref, input,
-					      input_length, output, output_size, output_length);
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES) && alg == PSA_ALG_CBC_PKCS7) {
-		status = cracen_load_keyref(attributes, key_buffer, key_buffer_size,
-					    &operation.keyref);
-		if (status != PSA_SUCCESS) {
-			return status;
+	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES)) {
+		if (alg == PSA_ALG_CBC_PKCS7) {
+			return cracen_sw_aes_cbc_decrypt(attributes, key_buffer, key_buffer_size,
+							 alg, input, iv_size, input + iv_size,
+							 input_length - iv_size, output,
+							 output_size, output_length);
 		}
-		return decrypt_cbc(&operation.keyref, input + iv_size, input_length - iv_size,
-				   output, output_size, output_length, input);
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES)) {
+		if (alg == PSA_ALG_CBC_NO_PADDING) {
+			return cracen_sw_aes_cbc_decrypt(attributes, key_buffer, key_buffer_size,
+							 alg, input, iv_size, input + iv_size,
+							 input_length - iv_size, output,
+							 output_size, output_length);
+		}
 	}
 
 	if (input_length < iv_size) {
@@ -368,28 +312,6 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 	int sx_status = SX_ERR_UNINITIALIZED_OBJ;
 
 	switch (operation->alg) {
-	case PSA_ALG_CBC_NO_PADDING:
-		if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES)) {
-			sx_status = operation->dir == CRACEN_DECRYPT
-					    ? sx_blkcipher_create_aescbc_dec(&operation->cipher,
-									     &operation->keyref,
-									     operation->iv)
-					    : sx_blkcipher_create_aescbc_enc(&operation->cipher,
-									     &operation->keyref,
-									     operation->iv);
-		}
-		break;
-	case PSA_ALG_CBC_PKCS7:
-		if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES)) {
-			sx_status = operation->dir == CRACEN_DECRYPT
-					    ? sx_blkcipher_create_aescbc_dec(&operation->cipher,
-									     &operation->keyref,
-									     operation->iv)
-					    : sx_blkcipher_create_aescbc_enc(&operation->cipher,
-									     &operation->keyref,
-									     operation->iv);
-		}
-		break;
 	case PSA_ALG_CTR:
 		if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
 			sx_status = operation->dir == CRACEN_DECRYPT
@@ -437,6 +359,20 @@ psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
 		}
 	}
 
+	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES)) {
+		if (alg == PSA_ALG_CBC_NO_PADDING) {
+			return cracen_sw_aes_cbc_setup(operation, attributes, key_buffer,
+						       key_buffer_size, alg, CRACEN_ENCRYPT);
+		}
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES)) {
+		if (alg == PSA_ALG_CBC_PKCS7) {
+			return cracen_sw_aes_cbc_setup(operation, attributes, key_buffer,
+						       key_buffer_size, alg, CRACEN_ENCRYPT);
+		}
+	}
+
 	return setup(CRACEN_ENCRYPT, operation, attributes, key_buffer, key_buffer_size, alg);
 }
 
@@ -450,7 +386,24 @@ psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
-		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size);
+		if (alg == PSA_ALG_CTR) {
+			return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer,
+						       key_buffer_size);
+		}
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES)) {
+		if (alg == PSA_ALG_CBC_NO_PADDING) {
+			return cracen_sw_aes_cbc_setup(operation, attributes, key_buffer,
+						       key_buffer_size, alg, CRACEN_DECRYPT);
+		}
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES)) {
+		if (alg == PSA_ALG_CBC_PKCS7) {
+			return cracen_sw_aes_cbc_setup(operation, attributes, key_buffer,
+						       key_buffer_size, alg, CRACEN_DECRYPT);
+		}
 	}
 
 	return setup(CRACEN_DECRYPT, operation, attributes, key_buffer, key_buffer_size, alg);
@@ -464,6 +417,14 @@ psa_status_t cracen_cipher_set_iv(cracen_cipher_operation_t *operation, const ui
 	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
 		if (operation->alg == PSA_ALG_CTR) {
 			return cracen_sw_aes_ctr_set_iv(operation, iv, iv_length);
+		}
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES) ||
+	    IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES)) {
+		if (operation->alg == PSA_ALG_CBC_NO_PADDING ||
+		    operation->alg == PSA_ALG_CBC_PKCS7) {
+			return cracen_sw_aes_cbc_set_iv(operation, iv, iv_length);
 		}
 	}
 
@@ -522,6 +483,15 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 		}
 	}
 
+	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES) ||
+	    IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES)) {
+		if (operation->alg == PSA_ALG_CBC_NO_PADDING ||
+		    operation->alg == PSA_ALG_CBC_PKCS7) {
+			return cracen_sw_aes_cbc_update(operation, input, input_length, output,
+							output_size, output_length);
+		}
+	}
+
 	if (operation->unprocessed_input_bytes > 0) {
 		size_t fill_block_bytes = operation->blk_size - operation->unprocessed_input_bytes;
 
@@ -543,16 +513,6 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 
 	/* Clamp processed data to multiple of block size */
 	size_t block_bytes = input_length & ~((uint32_t)operation->blk_size - 1);
-
-	if (operation->dir == CRACEN_DECRYPT && operation->alg == PSA_ALG_CBC_PKCS7) {
-		/* The last block contains padding. The block containing padding
-		 * must be handled in finish operation. If input data is block
-		 * aligned we must postpone processing of the last block.
-		 */
-		if (block_bytes == input_length) {
-			block_bytes -= (uint32_t)operation->blk_size;
-		}
-	}
 
 	if (block_bytes || operation->unprocessed_input_bytes) {
 		size_t total_output = block_bytes + operation->unprocessed_input_bytes;
@@ -692,7 +652,16 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 		}
 	}
 
-	if (operation->unprocessed_input_bytes == 0 && operation->alg != PSA_ALG_CBC_PKCS7) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES) ||
+	    IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES)) {
+		if (operation->alg == PSA_ALG_CBC_NO_PADDING ||
+		    operation->alg == PSA_ALG_CBC_PKCS7) {
+			return cracen_sw_aes_cbc_finish(operation, output, output_size,
+							output_length);
+		}
+	}
+
+	if (operation->unprocessed_input_bytes == 0) {
 		return PSA_SUCCESS;
 	}
 
@@ -732,85 +701,10 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 		}
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES)) {
-		if (operation->alg == PSA_ALG_CBC_PKCS7) {
-			if (operation->dir == CRACEN_ENCRYPT) {
-				uint8_t padding = (uint32_t)operation->blk_size -
-						  operation->unprocessed_input_bytes;
-
-				/* The value to pad which equals the number of
-				 * padded bytes as described in PKCS7 (rfc2315).
-				 */
-				memset(&operation->unprocessed_input
-						[operation->unprocessed_input_bytes],
-				       padding, padding);
-				operation->unprocessed_input_bytes = SX_BLKCIPHER_AES_BLK_SZ;
-			} else {
-				__ASSERT_NO_MSG(operation->blk_size == SX_BLKCIPHER_AES_BLK_SZ);
-
-				if (operation->unprocessed_input_bytes != SX_BLKCIPHER_AES_BLK_SZ) {
-					return PSA_ERROR_INVALID_ARGUMENT;
-				}
-
-				uint8_t out_with_padding[SX_BLKCIPHER_AES_BLK_SZ];
-
-				sx_status = sx_blkcipher_crypt(
-					&operation->cipher, operation->unprocessed_input,
-					operation->unprocessed_input_bytes, out_with_padding);
-				if (sx_status) {
-					return silex_statuscodes_to_psa(sx_status);
-				}
-
-				sx_status = sx_blkcipher_run(&operation->cipher);
-				if (sx_status) {
-					return silex_statuscodes_to_psa(sx_status);
-				}
-
-				sx_status = sx_blkcipher_wait(&operation->cipher);
-				if (sx_status) {
-					return silex_statuscodes_to_psa(sx_status);
-				}
-
-				uint8_t padding = out_with_padding[SX_BLKCIPHER_AES_BLK_SZ - 1];
-				/* Verify that padding is in the valid
-				 * range.
-				 */
-				if (padding > SX_BLKCIPHER_AES_BLK_SZ || padding == 0) {
-					return PSA_ERROR_INVALID_PADDING;
-				}
-
-				/* Verify all padding bytes. */
-				for (unsigned int i = SX_BLKCIPHER_AES_BLK_SZ;
-				     i > (SX_BLKCIPHER_AES_BLK_SZ - padding); i--) {
-					if (out_with_padding[i - 1] != padding) {
-						return PSA_ERROR_INVALID_PADDING;
-					}
-				}
-
-				/* Verify output buffer. */
-				*output_length = SX_BLKCIPHER_AES_BLK_SZ - padding;
-				if (*output_length > output_size) {
-					*output_length = 0;
-					return PSA_ERROR_BUFFER_TOO_SMALL;
-				}
-
-				/* Copy plaintext without padding. */
-				memcpy(output, out_with_padding, *output_length);
-
-				return PSA_SUCCESS;
-			}
-		}
-	}
-
 	*output_length = operation->unprocessed_input_bytes;
 	if (*output_length > output_size) {
 		*output_length = 0;
 		return PSA_ERROR_BUFFER_TOO_SMALL;
-	}
-
-	if (operation->alg == PSA_ALG_CBC_NO_PADDING &&
-	    (operation->unprocessed_input_bytes % SX_BLKCIPHER_AES_BLK_SZ) != 0) {
-		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	sx_status = sx_blkcipher_crypt(&operation->cipher, operation->unprocessed_input,
