@@ -1243,6 +1243,30 @@ void test_detach(void)
 	TEST_ASSERT_EQUAL(PDN_EVENT_NETWORK_DETACH, pdn_evt_event);
 }
 
+void test_detach_me_no_cp_id(void)
+{
+	on_cgev("+CGEV: ME DETACH\r\n");
+
+	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
+	TEST_ASSERT_EQUAL(PDN_EVENT_NETWORK_DETACH, pdn_evt_event);
+}
+
+void test_detach_me_with_cp_id(void)
+{
+	on_cgev("+CGEV: ME DETACH 0\r\n");
+
+	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
+	TEST_ASSERT_EQUAL(PDN_EVENT_NETWORK_DETACH, pdn_evt_event);
+}
+
+void test_detach_nw_with_cp_id(void)
+{
+	on_cgev("+CGEV: NW DETACH 10\r\n");
+
+	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
+	TEST_ASSERT_EQUAL(PDN_EVENT_NETWORK_DETACH, pdn_evt_event);
+}
+
 void test_pdn_id_get_eshutdown(void)
 {
 	int ret;
