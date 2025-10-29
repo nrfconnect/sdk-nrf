@@ -24,7 +24,7 @@
 static const nrfx_rtc_t app_rtc_instance = NRFX_RTC_INSTANCE(2);
 static nrfx_timer_t app_timer_instance = NRFX_TIMER_INSTANCE(NRF_TIMER1);
 
-static uint8_t ppi_chan_on_rtc_match;
+static nrfx_gppi_handle_t ppi_on_rtc_match;
 static volatile uint32_t num_rtc_overflows;
 
 static uint32_t offset_ticks_and_controller_to_app_rtc;
@@ -110,13 +110,15 @@ static int rtc_config(void)
 static int timer_config(void)
 {
 	int ret;
-	uint8_t ppi_chan_timer_clear_on_rtc_tick;
+	nrfx_gppi_handle_t ppi_timer_clear_on_rtc_tick;
 	const nrfx_timer_config_t timer_cfg = {
 		.frequency = NRFX_MHZ_TO_HZ(1UL),
 		.mode = NRF_TIMER_MODE_TIMER,
 		.bit_width = NRF_TIMER_BIT_WIDTH_8,
 		.interrupt_priority = NRFX_TIMER_DEFAULT_CONFIG_IRQ_PRIORITY,
 		.p_context = NULL};
+	uint32_t eep = nrfx_rtc_event_address_get(&app_rtc_instance, NRF_RTC_EVENT_TICK);
+	uint32_t tep = nrfx_timer_task_address_get(&app_timer_instance, NRF_TIMER_TASK_CLEAR);
 
 	ret = nrfx_timer_init(&app_timer_instance, &timer_cfg, unused_timer_isr_handler);
 	if (ret != NRFX_SUCCESS) {
@@ -125,18 +127,13 @@ static int timer_config(void)
 	}
 
 	/* Clear the TIMER every RTC tick. */
-	if (nrfx_gppi_channel_alloc(&ppi_chan_timer_clear_on_rtc_tick) != NRFX_SUCCESS) {
+	ret = nrfx_gppi_conn_alloc(eep, tep, &ppi_timer_clear_on_rtc_tick);
+	if (ret < 0) {
 		printk("Failed allocating for clearing TIMER on RTC TICK\n");
-		return -ENOMEM;
+		return ret;
 	}
 
-	nrfx_gppi_channel_endpoints_setup(ppi_chan_timer_clear_on_rtc_tick,
-					  nrfx_rtc_event_address_get(&app_rtc_instance,
-								     NRF_RTC_EVENT_TICK),
-					  nrfx_timer_task_address_get(&app_timer_instance,
-								      NRF_TIMER_TASK_CLEAR));
-
-	nrfx_gppi_channels_enable(BIT(ppi_chan_timer_clear_on_rtc_tick));
+	nrfx_gppi_conn_enable(ppi_timer_clear_on_rtc_tick);
 
 	nrfx_timer_enable(&app_timer_instance);
 
@@ -154,36 +151,31 @@ static int timer_config(void)
  */
 int config_egu_trigger_on_rtc_and_timer_match(void)
 {
-	uint8_t ppi_chan_on_timer_match;
+	nrfx_gppi_handle_t ppi_on_timer_match;
+	nrfx_gppi_group_handle_t group;
+	uint32_t eep0 = nrfx_rtc_event_address_get(&app_rtc_instance, NRF_RTC_EVENT_COMPARE_0);
+	uint32_t eep1 = nrfx_timer_event_address_get(&app_timer_instance, NRF_TIMER_EVENT_COMPARE0);
+	uint32_t tep1 = nrf_egu_task_address_get(NRF_EGU0, NRF_EGU_TASK_TRIGGER0);
+	int ret;
 
-	if (nrfx_gppi_channel_alloc(&ppi_chan_on_rtc_match) != NRFX_SUCCESS) {
+	ret = nrfx_gppi_group_alloc(&eep0, 1, &group);
+	if (ret < 0) {
+		printk("Failed allocating group\n");
+		return ret;
+	}
+
+	ret = nrfx_gppi_conn_alloc(eep0, nrfx_gppi_group_task_en_addr(group), &ppi_on_rtc_match);
+	if (ret < 0) {
 		printk("Failed allocating for RTC match\n");
-		return -ENOMEM;
+		return ret;
 	}
 
-	if (nrfx_gppi_channel_alloc(&ppi_chan_on_timer_match) != NRFX_SUCCESS) {
-		printk("Failed allocating for TIMER match\n");
-		return -ENOMEM;
+	ret = nrfx_gppi_conn_alloc(eep1, tep1, &ppi_on_timer_match);
+	if (ret < 0) {
+		printk("Failed allocating for RTC match\n");
+		return ret;
 	}
-
-	nrfx_gppi_group_clear(NRFX_GPPI_CHANNEL_GROUP0);
-	nrfx_gppi_group_disable(NRFX_GPPI_CHANNEL_GROUP0);
-	nrfx_gppi_channels_include_in_group(
-		BIT(ppi_chan_on_timer_match) | BIT(ppi_chan_on_rtc_match),
-		NRFX_GPPI_CHANNEL_GROUP0);
-
-	nrfx_gppi_channel_endpoints_setup(ppi_chan_on_rtc_match,
-					  nrfx_rtc_event_address_get(&app_rtc_instance,
-								     NRF_RTC_EVENT_COMPARE_0),
-					  nrfx_gppi_task_address_get(NRFX_GPPI_TASK_CHG0_EN));
-
-	nrfx_gppi_channel_endpoints_setup(ppi_chan_on_timer_match,
-					  nrfx_timer_event_address_get(&app_timer_instance,
-								       NRF_TIMER_EVENT_COMPARE0),
-					  nrf_egu_task_address_get(NRF_EGU0,
-								   NRF_EGU_TASK_TRIGGER0));
-	nrfx_gppi_fork_endpoint_setup(ppi_chan_on_timer_match,
-				      nrfx_gppi_task_address_get(NRFX_GPPI_TASK_CHG0_DIS));
+	(void)nrfx_gppi_ep_attach(ppi_on_timer_match, nrfx_gppi_group_task_dis_addr(group));
 
 	return 0;
 }
@@ -279,7 +271,7 @@ void controller_time_trigger_set(uint64_t timestamp_us)
 	}
 
 	nrfx_timer_compare(&app_timer_instance, 0, timer_val, false);
-	nrfx_gppi_channels_enable(BIT(ppi_chan_on_rtc_match));
+	nrfx_gppi_conn_enable(ppi_on_rtc_match);
 }
 
 uint32_t controller_time_trigger_event_addr_get(void)
