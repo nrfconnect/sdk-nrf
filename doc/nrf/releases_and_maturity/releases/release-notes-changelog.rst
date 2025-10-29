@@ -184,6 +184,7 @@ Matter
   See :ref:`ug_matter_platform_and_dmp`.
 * Updated to using the :kconfig:option:`CONFIG_PICOLIBC` Kconfig option as the C library instead of :kconfig:option:`CONFIG_NEWLIB_LIBC`, in compliance with Zephyr requirements.
 * Removed the ``CONFIG_CHIP_SPI_NOR`` and ``CONFIG_CHIP_QSPI_NOR`` Kconfig options.
+* Released the `Matter Quick Start app`_ v1.0.0 as part of nRF Connect for Desktop.
 
 Matter fork
 +++++++++++

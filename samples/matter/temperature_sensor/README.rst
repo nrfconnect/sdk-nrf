@@ -36,6 +36,13 @@ You can test the device remotely over a Thread network, which requires more devi
 The remote control testing requires a Matter controller that you can configure either on a PC or a mobile device.
 You can enable both methods after :ref:`building and running the sample <matter_temperature_sensor_sample_remote_control>`.
 
+Testing with the Matter Quick Start app
+=======================================
+
+.. |sample_type| replace:: sample
+
+.. include:: /includes/matter_quick_start.txt
+
 .. _matter_temperature_sensor_sample_lit:
 
 ICD LIT device type

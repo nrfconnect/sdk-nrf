@@ -35,6 +35,13 @@ The application supports over-the-air (OTA) :term:`Device Firmware Update (DFU)`
 In both cases, the MCUboot secure bootloader is used to apply the new firmware image.
 For information about how to upgrade the device firmware using a PC or a mobile, see the :ref:`matter_weather_station_app_dfu` section.
 
+Testing with the Matter Quick Start app
+=======================================
+
+.. |sample_type| replace:: application
+
+.. include:: /includes/matter_quick_start.txt
+
 .. _matter_weather_station_network_mode:
 
 Remote testing in a network

@@ -54,6 +54,13 @@ You can test it in the following ways:
 The remote control testing requires a Matter controller that you can configure either on a PC or a mobile device (for remote testing in a network).
 You can enable both methods after :ref:`building and running the sample <matter_light_bulb_sample_remote_control>`.
 
+Testing with the Matter Quick Start app
+=======================================
+
+.. |sample_type| replace:: sample
+
+.. include:: /includes/matter_quick_start.txt
+
 .. _matter_light_bulb_network_mode:
 
 Remote testing in a network

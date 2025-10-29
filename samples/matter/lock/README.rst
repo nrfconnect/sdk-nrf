@@ -58,6 +58,13 @@ You can test it in the following ways:
 
 You can enable both methods after :ref:`building and running the sample <matter_lock_sample_remote_control>`.
 
+Testing with the Matter Quick Start app
+=======================================
+
+.. |sample_type| replace:: sample
+
+.. include:: /includes/matter_quick_start.txt
+
 .. _matter_lock_sample_network_mode:
 
 Remote testing in a network
