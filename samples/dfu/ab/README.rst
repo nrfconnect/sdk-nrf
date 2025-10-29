@@ -72,8 +72,8 @@ Otherwise, it is running from slot A.
 If the project does not use the Partition Manager (a configuration currently only supported on the nRF54H20), the currently running slot can be identified by comparing the address pointed `zephyr,code-partition` to specific node addresses defined in the device tree.
 The following node partitions are used by default:
 
-* ``slot0_partition`` - Application core, slot A
-* ``slot1_partition`` - Application core, slot B
+* ``cpuapp_slot0_partition`` - Application core, slot A
+* ``cpuapp_slot1_partition`` - Application core, slot B
 * ``cpurad_slot0_partition`` - Radio core, slot A
 * ``cpurad_slot1_partition`` - Radio core, slot B
 
@@ -83,7 +83,7 @@ For example, verifying that the application is running from slot A can be done b
 
     #define IS_RUNNING_FROM_SLOT_A \
         (FIXED_PARTITION_NODE_OFFSET(DT_CHOSEN(zephyr_code_partition)) == \
-         FIXED_PARTITION_OFFSET(slot0_partition))
+         FIXED_PARTITION_OFFSET(cpuapp_slot0_partition))
 
 .. _ab_build_files:
 
@@ -123,7 +123,11 @@ LED 1:
     It will remain off if the application is running from slot A.
 
 Button 0:
-    By pressing this button, the non-active slot will be selected as the preferred slot on the next reboot.
+    By pressing this button, the slot A will be selected as the preferred slot on the next reboot.
+    This preference applies only to the next boot and is cleared after the subsequent reset.
+
+Button 1:
+    By pressing this button, the slot B will be selected as the preferred slot on the next reboot.
     This preference applies only to the next boot and is cleared after the subsequent reset.
 
 Configuration

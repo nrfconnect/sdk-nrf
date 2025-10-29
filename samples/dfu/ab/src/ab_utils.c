@@ -164,18 +164,18 @@ static void device_healthcheck(void)
 	}
 }
 
-static void toggle_slot_for_single_boot(void)
+static void select_slot_for_single_boot(enum ab_boot_slot slot)
 {
 	int err = 0;
-	enum ab_boot_slot active_slot = active_boot_slot_get();
+	char active_slot = (active_boot_slot_get() == SLOT_A) ? 'A' : 'B';
 	enum boot_slot new_slot = BOOT_SLOT_NONE;
 
-	if (active_slot == SLOT_A) {
-		LOG_INF("Temporarily switching slots (A -> B)");
-		new_slot = BOOT_SLOT_SECONDARY;
-	} else if (active_slot == SLOT_B) {
-		LOG_INF("Temporarily switching slots (B -> A)");
+	if (slot == SLOT_A) {
+		LOG_INF("Temporarily switching slots (%c -> A)", active_slot);
 		new_slot = BOOT_SLOT_PRIMARY;
+	} else if (slot == SLOT_B) {
+		LOG_INF("Temporarily switching slots (%c -> B)", active_slot);
+		new_slot = BOOT_SLOT_SECONDARY;
 	} else {
 		LOG_ERR("Cannot determine active slot, cannot toggle");
 		return;
@@ -206,7 +206,9 @@ static void boot_state_report(void)
 static void button_handler(uint32_t button_state, uint32_t has_changed)
 {
 	if ((has_changed & DK_BTN1_MSK) && (button_state & DK_BTN1_MSK)) {
-		toggle_slot_for_single_boot();
+		select_slot_for_single_boot(SLOT_A);
+	} else if ((has_changed & DK_BTN2_MSK) && (button_state & DK_BTN2_MSK)) {
+		select_slot_for_single_boot(SLOT_B);
 	}
 }
 
