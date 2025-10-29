@@ -24,6 +24,10 @@ if(CONFIG_MBEDTLS_PSA_CRYPTO_C)
     add_subdirectory(nrf_oberon)
   endif()
 
+  if(CONFIG_PSA_CRYPTO_DRIVER_IRONSIDE)
+    add_subdirectory(ironside)
+  endif()
+
   add_subdirectory(zephyr)
 endif()
 

@@ -498,6 +498,7 @@ kconfig_check_and_set_base_to_one(PSA_NEED_CRACEN_TRNG_DRIVER)
 
 # Nordic specific
 kconfig_check_and_set_base_to_one(PSA_CRYPTO_DRIVER_ALG_PRNG_TEST)
+kconfig_check_and_set_base_to_one(PSA_CRYPTO_DRIVER_IRONSIDE)
 
 # PSA and Drivers
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_STORAGE_C)
