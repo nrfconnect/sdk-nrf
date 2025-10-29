@@ -641,7 +641,7 @@ psa_status_t psa_driver_wrapper_import_key(const psa_key_attributes_t *attribute
 		return psa_import_key_into_slot(attributes, data, data_length, key_buffer,
 						key_buffer_size, key_buffer_length, bits);
 
-#if defined(PSA_NEED_CRACEN_PLATFORM_KEYS) || defined(PSA_NEED_CRACEN_KMU_DRIVER)
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN:
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 		status = cracen_import_key(attributes, data, data_length, key_buffer,
@@ -1664,9 +1664,6 @@ psa_status_t psa_driver_wrapper_aead_decrypt_setup(psa_aead_operation_t *operati
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 	case TFM_BUILTIN_KEY_LOADER_KEY_LOCATION:
 #endif /* defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER) */
-#if defined(PSA_NEED_CRACEN_PLATFORM_KEYS)
-	case PSA_KEY_LOCATION_CRACEN:
-#endif
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 #endif
