@@ -368,4 +368,7 @@ psa_status_t cracen_derive_key(const psa_key_attributes_t *attributes, const uin
 
 psa_status_t cracen_get_trng(uint8_t *output, size_t output_size);
 
+psa_status_t cracen_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
+				 psa_drv_slot_number_t *slot_number);
+
 #endif /* CRACEN_PSA_H */

@@ -9,6 +9,13 @@ add_library(psa_core STATIC
   ${NRF_SECURITY_ROOT}/src/psa_crypto_driver_wrappers.c
 )
 
+if(CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
+  target_sources(psa_core
+    PRIVATE
+      ${NRF_SECURITY_ROOT}/src/mbedtls_psa_platform.c
+  )
+endif()
+
 target_link_libraries(psa_core
   PRIVATE
     psa_crypto_library_config

@@ -1350,9 +1350,8 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 	}
 }
 
-psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
-						  psa_key_lifetime_t *lifetime,
-						  psa_drv_slot_number_t *slot_number)
+psa_status_t cracen_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
+				 psa_drv_slot_number_t *slot_number)
 {
 	switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id)) {
 	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
