@@ -16,3 +16,10 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="boards/tdm_audiopll.overlay"
+  nrf.extended.drivers.i2s_speed.gpio_loopback.nrf71:
+    harness_config:
+      fixture: i2s_loopback
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120pdk/nrf7120/cpuapp
