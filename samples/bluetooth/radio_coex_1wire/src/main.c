@@ -116,27 +116,18 @@ static void console_print_thread(void)
 	}
 }
 
-#if defined(PPI_PRESENT)
-static nrf_ppi_channel_t allocate_gppi_channel(void)
-{
-	nrf_ppi_channel_t channel;
-
-	if (nrfx_ppi_channel_alloc(&channel) != NRFX_SUCCESS) {
-		__ASSERT(false, "(D)PPI channel allocation error");
-	}
-	return channel;
-}
-#endif
-
 static void setup_radio_event_counter(void)
 {
 #if defined(PPI_PRESENT)
-	nrf_ppi_channel_t channel = allocate_gppi_channel();
+	nrfx_gppi_handle_t handle;
+	uint32_t eep = nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_READY);
+	uint32_t tep = nrf_egu_task_address_get(NRF_EGU, EGU_TASK);
+	int rv;
 
-	nrfx_gppi_channel_endpoints_setup(
-		channel, nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_READY),
-		nrf_egu_task_address_get(NRF_EGU, EGU_TASK));
-	nrfx_ppi_channel_enable(channel);
+	rv = nrfx_gppi_conn_alloc(eep, tep, &handle);
+	(void)rv;
+	__ASSERT(rv == 0, "Failed to allocate PPI channel.");
+	nrfx_gppi_conn_enable(handle);
 #else
 	/* Radio events are published on predefined channels. */
 	nrf_egu_subscribe_set(NRF_EGU, EGU_TASK, MPSL_DPPI_RADIO_PUBLISH_READY_CHANNEL_IDX);
