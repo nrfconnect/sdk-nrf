@@ -605,6 +605,18 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v3-1-1 v3-0-2 v3-0-1 v3-0-0
+
+KRKNWK-20948: The Matter west :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool_generate` command may not work properly on Windows
+  The matter west ``zap-generate`` command may return several errors when using it on Windows with the ``--full`` option.
+  You may encounter the following errors:
+
+    * Error regarding long paths.
+    * Error when the script clears the generated files and a file is removed while being used by the script.
+    * Error when generating the data model files from the :file:`.matter` file because of the :file:`python.exe` executable not being provided before calling the Python script.
+
+  **Workaround:** Manually cherry-pick and apply two commits with the fix to ``sdk-connectedhomeip`` (commit hash: ``c34b9e57f0cea9e010c140a02b6e63954ef91bbe`` and ``bba2e5b6997f4adaed64c86469f0726caffe6337``).
+
 .. rst-class:: v3-1-1
 
 KRKNWK-20774: Fatal error on the nRF54LM20 SoC after enabling the :kconfig:option:`CONFIG_PICOLIBC` Kconfig option or dynamic heap memory allocation
