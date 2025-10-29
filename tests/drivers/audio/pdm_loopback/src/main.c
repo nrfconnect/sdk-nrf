@@ -253,18 +253,13 @@ ZTEST(pdm_loopback, test_pdm_clk_frequency)
 
 	nrfx_timer_enable(&timer_instance);
 
-	uint8_t gppi_channel;
+	nrfx_gppi_handle_t gppi_handle;
+	uint32_t eep = nrfx_gpiote_in_event_address_get(&gpiote_instance, CLOCK_INPUT_PIN);
+	uint32_t tep = nrfx_timer_task_address_get(&timer_instance, NRF_TIMER_TASK_COUNT);
 
-	ret = nrfx_gppi_channel_alloc(&gppi_channel);
-
-	zassert_true(ret == NRFX_SUCCESS,
-			    "GPPI channel allocation failed, return code = 0x%08X", ret);
-	nrfx_gppi_channel_endpoints_setup(gppi_channel,
-					  nrfx_gpiote_in_event_address_get(&gpiote_instance,
-									   CLOCK_INPUT_PIN),
-					  nrfx_timer_task_address_get(&timer_instance,
-								      NRF_TIMER_TASK_COUNT));
-	nrfx_gppi_channels_enable(BIT(gppi_channel));
+	ret = nrfx_gppi_conn_alloc(eep, tep, &gppi_handle);
+	zassert_equal(ret, 0, "GPPI channel allocation failed, return code = %d", ret);
+	nrfx_gppi_conn_enable(gppi_handle);
 
 	pdm_transfer(pdm_dev, &pdm_cfg, BLOCK_COUNT);
 
