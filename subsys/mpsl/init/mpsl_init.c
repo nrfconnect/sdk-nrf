@@ -511,8 +511,7 @@ static int mpsl_low_prio_init(void)
 
 #if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
 	atomic_set(&do_calibration, 1);
-	mpsl_work_schedule(&calibration_work,
-			   K_MSEC(CONFIG_MPSL_CALIBRATION_PERIOD));
+	mpsl_work_schedule(&calibration_work, K_NO_WAIT);
 #endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
 
 	return 0;
