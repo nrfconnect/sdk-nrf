@@ -31,7 +31,7 @@
 #endif
 
 #include <nrfx.h>
-#include <soc/nrfx_coredep.h>
+#include <lib/nrfx_coredep.h>
 
 #include <hal/nrf_spu.h>
 #include <hal/nrf_mpc.h>
