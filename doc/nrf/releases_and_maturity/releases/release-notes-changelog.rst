@@ -729,6 +729,12 @@ Security libraries
 Modem libraries
 ---------------
 
+* Removed:
+
+  * The AT command parser library.
+    Use the :ref:`at_parser_readme` library instead.
+  * The AT parameters library.
+
 * :ref:`lte_lc_readme` library:
 
   * Added:

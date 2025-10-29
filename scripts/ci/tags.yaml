@@ -90,7 +90,6 @@ ci_samples_net: &ci_net
     - nrf/drivers/net/
     - nrf/include/modem/
     - nrf/include/net/
-    - nrf/lib/at_cmd_parser/
     - nrf/lib/at_host/
     - nrf/lib/at_monitor/
     - nrf/lib/dk_buttons_and_leds/
@@ -411,7 +410,6 @@ ci_samples_cellular:
     - nrf/include/net/
     - nrf/lib/adp536x/
     - nrf/lib/at_cmd_custom/
-    - nrf/lib/at_cmd_parser/
     - nrf/lib/at_host/
     - nrf/lib/at_monitor/
     - nrf/lib/at_shell/
@@ -903,13 +901,6 @@ ci_tests_lib_nrf_fuel_gauge:
     - nrf/tests/lib/nrf_fuel_gauge/
     - nrfxlib/nrf_fuel_gauge/
 
-ci_tests_lib_at_cmd_parser:
-  files:
-    - nrf/include/modem/
-    - nrf/lib/at_cmd_parser/
-    - nrf/lib/modem_info/
-    - nrf/tests/lib/at_cmd_parser/
-
 ci_tests_lib_at_parser:
   files:
     - nrf/lib/at_parser/
@@ -918,7 +909,6 @@ ci_tests_lib_at_parser:
 ci_tests_lib_location:
   files:
     - modules/lib/cjson/
-    - nrf/lib/at_cmd_parser/
     - nrf/lib/at_monitor/
     - nrf/lib/location/
     - nrf/lib/lte_link_control/
@@ -1142,7 +1132,6 @@ ci_tests_lib_pcm_mix:
 
 ci_tests_lib_lte_lc:
   files:
-    - nrf/lib/at_cmd_parser/
     - nrf/lib/lte_link_control/
     - nrf/tests/lib/lte_lc/
     - nrf/tests/lib/lte_lc_api/
@@ -1180,7 +1169,6 @@ ci_tests_lib_modem_battery:
 
 ci_tests_lib_sms:
   files:
-    - nrf/lib/at_cmd_parser/
     - nrf/lib/at_monitor/
     - nrf/lib/lte_link_control/
     - nrf/lib/sms/

@@ -11,9 +11,7 @@
 #include <cJSON.h>
 #endif
 
-#include <modem/at_params.h>
-/* Include to use the __deprecated attribute */
-#include <zephyr/toolchain.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -321,19 +319,6 @@ int modem_info_short_get(enum modem_info info, uint16_t *buf);
  *         Otherwise, a (negative) error code is returned.
  */
 int modem_info_name_get(enum modem_info info, char *name);
-
-/**
- * @deprecated Use @ref modem_info_data_type_get instead.
- *
- * @brief Request the data type of the current modem information
- *        type.
- *
- * @param info The requested information type.
- *
- * @return The data type of the requested modem information data.
- *         Otherwise, a (negative) error code is returned.
- */
-__deprecated enum at_param_type modem_info_type_get(enum modem_info info);
 
 /** @brief Request the data type of the current modem information
  *         type.

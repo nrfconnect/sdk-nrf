@@ -37,7 +37,7 @@ The following code snippet shows how to initialize the AT parser for an AT comma
 Usage
 =====
 
-Based on the type of the element at a given index, you can obtain its value by calling the type-generic macro :c:macro:`at_parser_num_get` for integer values, or the function :c:func:`at_params_string_get` for string values.
+Based on the type of the element at a given index, you can obtain its value by calling the type-generic macro :c:macro:`at_parser_num_get` for integer values, or the function :c:func:`at_parser_string_get` for string values.
 
 The following code snippet shows how to retrieve the prefix, a ``uint16_t`` value, and a string value from an AT command response using the AT parser:
 

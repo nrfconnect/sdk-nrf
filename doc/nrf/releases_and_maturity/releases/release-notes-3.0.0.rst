@@ -1162,7 +1162,7 @@ DFU libraries
 Modem libraries
 ---------------
 
-* Deprecated the :ref:`at_params_readme` library.
+* Deprecated the AT parameters library.
 
 * :ref:`pdn_readme` library:
 

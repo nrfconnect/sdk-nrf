@@ -195,7 +195,7 @@ Updated libraries
   * Updated to use a dedicated workqueue instead of the system workqueue.
   * Miscellaneous fixes and improvements.
 
-* :ref:`at_cmd_parser_readme`:
+* AT command parser:
 
   * Refactored the library.
 

@@ -398,7 +398,7 @@ Serial LTE modem
 
 * Updated:
 
-  * AT string parsing to utilize the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+  * AT string parsing to utilize the :ref:`at_parser_readme` library instead of the AT command parser library.
   * The ``#XUDPCLI`` and ``#XSSOCKET`` (UDP client sockets) AT commands to use Zephyr's Mbed TLS with DTLS when the :file:`overlay-native_tls.conf` configuration file is used.
 
 * Removed:
@@ -523,12 +523,12 @@ Cellular samples
 
 * :ref:`fmfu_smp_svr_sample` sample:
 
-  * Removed the unused :ref:`at_cmd_parser_readme` library.
+  * Removed the unused AT command parser library.
 
 * :ref:`modem_shell_application` sample:
 
   * Added ``link modem`` command for initializing and shutting down the modem.
-  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+  * Updated to use the :ref:`at_parser_readme` library instead of the AT command parser library.
 
 * :ref:`nrf_cloud_rest_fota` sample:
 
@@ -879,20 +879,20 @@ Modem libraries
 
    * The :ref:`at_parser_readme` library.
      The :ref:`at_parser_readme` is a library that parses AT command responses, notifications, and events.
-     Compared to the deprecated :ref:`at_cmd_parser_readme` library, it does not allocate memory dynamically and has a smaller footprint.
-     For more information on how to transition from the :ref:`at_cmd_parser_readme` library to the :ref:`at_parser_readme` library, see the :ref:`migration guide <migration_2.8_recommended>`.
+     Compared to the deprecated AT command parser library, it does not allocate memory dynamically and has a smaller footprint.
+     For more information on how to transition from the AT command parser library to the :ref:`at_parser_readme` library, see the :ref:`migration guide <migration_2.8_recommended>`.
    * The :ref:`lib_uicc_lwm2m` library.
      This library reads the LwM2M bootstrap configuration from SIM.
 
-* :ref:`at_cmd_parser_readme` library:
+* AT command parser library:
 
   * Updated to use the :c:func:`at_parser_cmd_type_get` function instead of :c:func:`at_parser_at_cmd_type_get` to prevent a name collision.
   * Deprecated:
 
-    * The :ref:`at_cmd_parser_readme` library in favor of the :ref:`at_parser_readme` library.
-      The :ref:`at_cmd_parser_readme` library will be removed in a future version.
-      For more information on how to transition from the :ref:`at_cmd_parser_readme` library to the :ref:`at_parser_readme` library, see the :ref:`migration guide <migration_2.8_recommended>`.
-    * The :kconfig:option:`CONFIG_AT_CMD_PARSER`.
+    * The AT command parser library in favor of the :ref:`at_parser_readme` library.
+      The AT command parser library will be removed in a future version.
+      For more information on how to transition from the AT command parser library to the :ref:`at_parser_readme` library, see the :ref:`migration guide <migration_2.8_recommended>`.
+    * The ``CONFIG_AT_CMD_PARSER``.
       This option will be removed in a future version.
 
 * :ref:`lte_lc_readme` library:
@@ -912,7 +912,7 @@ Modem libraries
 
   * Updated:
 
-    * To use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+    * To use the :ref:`at_parser_readme` library instead of the AT command parser library.
     * The :c:func:`lte_lc_neighbor_cell_measurement` function to return an error for invalid GCI count.
     * The library was reorganized into modules that are enabled through their respective Kconfig options.
       By default, the library now enables only the core features related to the network connectivity.
@@ -961,17 +961,17 @@ Modem libraries
     * A bug causing the GNSS obstructed visibility detection to sometimes count only part of the tracked satellites.
     * A bug causing the GNSS obstructed visibility detection to be sometimes performed twice.
 
-  * Removed the unused :ref:`at_cmd_parser_readme` library.
+  * Removed the unused AT command parser library.
 
 * :ref:`lib_zzhc`:
 
-  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+  * Updated to use the :ref:`at_parser_readme` library instead of the AT command parser library.
 
 * :ref:`modem_info_readme` library:
 
   * Updated:
 
-    * To use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+    * To use the :ref:`at_parser_readme` library instead of the AT command parser library.
     * The formulas of RSRP and RSRQ values in :c:macro:`RSRP_IDX_TO_DBM` and :c:macro:`RSRQ_IDX_TO_DB` based on AT command reference guide updates.
       The formulas are now aligned with the modem implementation that has not changed
       but the AT command reference guide has not been up to date with the modem implementation.
@@ -1048,7 +1048,7 @@ Libraries for networking
 
 * :ref:`lib_lwm2m_client_utils` library:
 
-  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+  * Updated to use the :ref:`at_parser_readme` library instead of the AT command parser library.
 
 * :ref:`lib_nrf_cloud_rest` library:
 

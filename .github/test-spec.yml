@@ -34,7 +34,6 @@
 
 "CI-iot-serial-lte-modem-test":
   - "applications/serial_lte_modem/**/*"
-  - "lib/at_cmd_parser/**/*"
   - "lib/at_monitor/**/*"
   - "lib/date_time/**/*"
   - "lib/modem_info/**/*"
@@ -50,7 +49,6 @@
 "CI-iot-zephyr-lwm2m-test":
   - "lib/nrf_modem_lib/**/*"
   - "lib/at_monitor/**/*"
-  - "lib/at_cmd_parser/**/*"
   - "lib/lte_link_control/**/*"
   - "lib/modem_info/**/*"
   - "lib/modem_key_mgmt/**/*"
@@ -79,7 +77,6 @@
 
 "CI-iot-samples-test":
   - "include/modem/at_monitor.h"
-  - "include/modem/at_params.h"
   - "include/modem/lte_lc*.h"
   - "include/modem/modem_key_mgmt.h"
   - "include/modem/nrf_modem_lib.h"
@@ -124,7 +121,6 @@
   - "include/modem/sms.h"
   - "lib/pdn/**/*"
   - "include/modem/pdn.h"
-  - "include/modem/at_params.h"
   - "include/modem/modem_key_mgmt.h"
   - "subsys/dfu/dfu_target/**/*"
 
@@ -461,9 +457,7 @@
   - "ext/iperf3/**/*"
   - "include/date_time.h"
   - "include/dk_buttons_and_leds.h"
-  - "include/modem/at_cmd_parser.h"
   - "include/modem/at_monitor.h"
-  - "include/modem/at_params.h"
   - "include/modem/location.h"
   - "include/modem/lte_lc.h"
   - "include/modem/modem_info.h"
@@ -481,7 +475,6 @@
   - "include/net/nrf_cloud_pgps.h"
   - "include/net/nrf_cloud_rest.h"
   - "include/net/rest_client.h"
-  - "lib/at_cmd_parser/**/*"
   - "lib/at_monitor/**/*"
   - "lib/at_shell/**/*"
   - "lib/date_time/**/*"
@@ -504,9 +497,7 @@
 "CI-positioning-test":
   - "include/date_time.h"
   - "include/dk_buttons_and_leds.h"
-  - "include/modem/at_cmd_parser.h"
   - "include/modem/at_monitor.h"
-  - "include/modem/at_params.h"
   - "include/modem/location.h"
   - "include/modem/lte_lc.h"
   - "include/modem/modem_info.h"
@@ -519,7 +510,6 @@
   - "include/net/nrf_cloud_pgps.h"
   - "include/net/nrf_cloud_rest.h"
   - "include/net/rest_client.h"
-  - "lib/at_cmd_parser/**/*"
   - "lib/at_monitor/**/*"
   - "lib/date_time/**/*"
   - "lib/dk_buttons_and_leds/**/*"
