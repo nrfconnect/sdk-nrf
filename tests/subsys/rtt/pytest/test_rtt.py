@@ -74,6 +74,10 @@ def test_rtt_logging(dut: DeviceAdapter):
         'nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp': {
             'device': 'NRF54LV10A_M33',
         },
+        'nrf7120pdk/nrf7120/cpuapp' : {
+            'device': 'CORTEX-M33',
+            'RTTAddress': '0x20000410',
+        },
     }
 
     log_filename = f"{BUILD_DIR}/log_rtt.txt"
@@ -90,6 +94,10 @@ def test_rtt_logging(dut: DeviceAdapter):
     cmd = f"JLinkRTTLoggerExe -USB {SEGGER_ID}"
     cmd += f" -device {SWD_CONFIG[PLATFORM]['device']}"
     cmd += " -If SWD -Speed 1000 -RTTChannel 0"
+
+    if 'RTTAddress' in SWD_CONFIG[PLATFORM]:
+        cmd += f" -RTTAddress {SWD_CONFIG[PLATFORM]['RTTAddress']}"
+
     cmd += f" {log_filename}"
 
     try:
