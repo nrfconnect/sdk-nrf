@@ -91,7 +91,7 @@ int import_rsa_keypair(void)
 {
 	psa_status_t status;
 
-	LOG_INF("Importing RSA keypair...");
+	LOG_INF("Importing RSA key pair...");
 
 	/* Configure the key attributes */
 	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
@@ -203,7 +203,7 @@ int main(void)
 {
 	int status;
 
-	LOG_INF("Starting the RSA example...");
+	LOG_INF("Starting RSA example...");
 
 	status = crypto_init();
 	if (status != APP_SUCCESS) {

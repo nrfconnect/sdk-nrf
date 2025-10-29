@@ -1,7 +1,7 @@
 sample:
   description: |
-    This app provides an example of performing RSA signing and verification
-  name: RSA example
+    This sample demonstrates message signing and verification using the RSA signature algorithm.
+  name: RSA sample
 tests:
   sample.rsa.cc3xx:
     sysbuild: true
