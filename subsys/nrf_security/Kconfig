@@ -66,7 +66,6 @@ endchoice
 config MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
 	bool
 	default y if HAS_HW_NRF_CRACEN && PSA_CRYPTO_DRIVER_CRACEN
-	default y if PSA_WANT_PLATFORM_KEYS
 	help
 	  Promptless option used to control if the PSA Crypto core should have support for builtin keys or not.
 

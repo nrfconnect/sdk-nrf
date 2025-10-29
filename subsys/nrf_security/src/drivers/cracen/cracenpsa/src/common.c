@@ -5,9 +5,6 @@
  */
 
 #include "common.h"
-#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
-#include "platform_keys/platform_keys.h"
-#endif
 
 #include <hal/nrf_cracen.h>
 #include <cracen/lib_kmu.h>
@@ -30,18 +27,9 @@
 #include "rsa_key.h"
 
 LOG_MODULE_DECLARE(cracen, CONFIG_CRACEN_LOG_LEVEL);
-#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
-#include "platform_keys/platform_keys.h"
-#endif
 
 #define NOT_ENABLED_CURVE    (0)
 #define NOT_ENABLED_HASH_ALG (0)
-
-#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
-/* Address from the IPS. May come from the MDK in the future. */
-#define DEVICE_SECRET_LENGTH  4
-#define DEVICE_SECRET_ADDRESS ((uint32_t *)0x0E001620)
-#endif
 
 static const uint8_t RSA_ALGORITHM_IDENTIFIER[] = {0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7,
 						   0x0d, 0x01, 0x01, 0x01, 0x05, 0x00};
@@ -689,51 +677,6 @@ int cracen_prepare_ik_key(const uint8_t *user_data)
 
 	__attribute__((unused)) struct sx_pk_config_ik cfg = {};
 
-#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
-	cfg.device_secret = DEVICE_SECRET_ADDRESS;
-	cfg.device_secret_sz = DEVICE_SECRET_LENGTH;
-
-	switch (((uint32_t *)user_data)[0]) {
-		/* Helper macro to set up an array containing the personalization string.
-		 * The array is a multiple of 4, since the IKG takes a number of uint32_t
-		 * as personalization string.
-		 */
-#define SET_STR(x)                                                                                 \
-	{                                                                                          \
-		static const char lstr_##x[((sizeof(#x) + 3) / 4) * 4] = #x;                       \
-		cfg.key_bundle = (uint32_t *)lstr_##x;                                             \
-		cfg.key_bundle_sz = sizeof(lstr_##x) / sizeof(uint32_t);                           \
-	}
-	case DOMAIN_NONE:
-		SET_STR(NONE0);
-		break;
-	case DOMAIN_SECURE:
-		SET_STR(SECURE0);
-		break;
-	case DOMAIN_APPLICATION:
-		SET_STR(APPLICATION0);
-		break;
-	case DOMAIN_RADIO:
-		SET_STR(RADIOCORE0);
-		break;
-	case DOMAIN_CELL:
-		SET_STR(CELL0);
-		break;
-	case DOMAIN_ISIM:
-		SET_STR(ISIM0);
-		break;
-	case DOMAIN_WIFI:
-		SET_STR(WIFI0);
-		break;
-	case DOMAIN_SYSCTRL:
-		SET_STR(SYSCTRL0);
-		break;
-
-	default:
-		return SX_ERR_INVALID_KEYREF;
-	}
-#endif
-
 #ifdef CONFIG_CRACEN_IKG_PERSONALIZED_KEYS
 	cfg.key_bundle = (const uint32_t *)user_data;
 	cfg.key_bundle_sz = 1; /* size of the owner_id is one 32-bit word */
@@ -753,9 +696,6 @@ static int cracen_clean_ik_key(const uint8_t *user_data)
 
 static bool cracen_is_ikg_key(const psa_key_attributes_t *attributes)
 {
-#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
-	return cracen_platform_keys_is_ikg_key(attributes);
-#else
 	switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes))) {
 	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
 	case CRACEN_BUILTIN_MKEK_ID:
@@ -764,7 +704,6 @@ static bool cracen_is_ikg_key(const psa_key_attributes_t *attributes)
 	default:
 		return false;
 	}
-#endif
 };
 
 static psa_status_t cracen_load_ikg_keyref(const psa_key_attributes_t *attributes,
@@ -774,14 +713,6 @@ static psa_status_t cracen_load_ikg_keyref(const psa_key_attributes_t *attribute
 	k->prepare_key = cracen_prepare_ik_key;
 	k->clean_key = cracen_clean_ik_key;
 
-#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
-	if (key_buffer_size != sizeof(ikg_opaque_key)) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-
-	k->cfg = ((ikg_opaque_key *)key_buffer)->slot_number;
-	k->owner_id = ((ikg_opaque_key *)key_buffer)->owner_id;
-#else
 	/* IKG keys are identified from the ID */
 	(void)key_buffer;
 	(void)key_buffer_size;
@@ -798,7 +729,6 @@ static psa_status_t cracen_load_ikg_keyref(const psa_key_attributes_t *attribute
 	};
 
 	k->owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes));
-#endif
 	k->user_data = (uint8_t *)&k->owner_id;
 	return PSA_SUCCESS;
 }
@@ -878,9 +808,6 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 static psa_status_t cracen_get_ikg_opaque_key_size(const psa_key_attributes_t *attributes,
 						   size_t *key_size)
 {
-#ifdef PSA_NEED_CRACEN_PLATFORM_KEYS
-	return cracen_platform_keys_get_size(attributes, key_size);
-#else
 	switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes))) {
 	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
 		if (psa_get_key_type(attributes) ==
@@ -899,7 +826,6 @@ static psa_status_t cracen_get_ikg_opaque_key_size(const psa_key_attributes_t *a
 	}
 
 	return PSA_ERROR_INVALID_ARGUMENT;
-#endif /* PSA_NEED_CRACEN_PLATFORM_KEYS */
 }
 
 psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size_t *key_size)

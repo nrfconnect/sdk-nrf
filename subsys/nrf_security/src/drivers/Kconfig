@@ -36,11 +36,6 @@ config PSA_CRYPTO_DRIVER_CRACEN
 	help
 	  PSA crypto driver for the CRACEN HW peripheral.
 
-config PSA_WANT_PLATFORM_KEYS
-	bool
-	help
-	  Hidden option if platform keys are supported.
-
 menu "Choose DRBG algorithm"
 config PSA_WANT_ALG_CTR_DRBG
 	prompt "CTR_DRBG"
