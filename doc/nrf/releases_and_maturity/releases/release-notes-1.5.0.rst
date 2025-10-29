@@ -107,7 +107,7 @@ nRF9160
     * Removed :kconfig:option:`CONFIG_CLOUD_API` dependency from :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD`.
     * Added a new API :c:func:`nrf_cloud_send` that can be used for sending pre-encoded data to specified endpoint topics in nRF Connect for Cloud.
 
-  * :ref:`at_cmd_parser_readme` library - The library can now parse AT command strings with negative numbers in the range supported by the int32_t type.
+  * AT command parser library - The library can now parse AT command strings with negative numbers in the range supported by the int32_t type.
   * :ref:`lib_azure_iot_hub` library - Improved the internal connection state handling.
   * :ref:`lte_lc_readme` library - Added support for manufacturer-specific default eDRX/PSM values.
   * :ref:`liblwm2m_carrier_readme` library - Updated to v0.10.2. See :ref:`liblwm2m_carrier_changelog` for details.

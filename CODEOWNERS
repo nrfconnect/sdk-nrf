@@ -134,10 +134,8 @@
 /doc/nrf/libraries/gazell/                @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/modem/nrf_modem_lib/   @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/at_cmd_custom.rst @nrfconnect/ncs-modem-doc
-/doc/nrf/libraries/modem/at_cmd_parser.rst @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/at_host.rst      @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/at_monitor.rst   @nrfconnect/ncs-modem-doc
-/doc/nrf/libraries/modem/at_params.rst    @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/at_parser.rst    @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/at_shell.rst     @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/modem/gcf_sms_lib.rst  @nrfconnect/ncs-modem-doc
@@ -365,7 +363,6 @@
 # Libraries
 /lib/adp536x/                             @nrfconnect/ncs-cia
 /lib/app_jwt/                             @nrfconnect/ncs-modem @ayla-nordicsemi
-/lib/at_cmd_parser/                       @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /lib/at_cmd_custom/                       @nrfconnect/ncs-modem
 /lib/at_host/                             @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /lib/at_monitor/                          @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
@@ -874,7 +871,6 @@
 /tests/drivers/watchdog/                  @nrfconnect/ncs-low-level-test
 /tests/drivers/adc/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/flash/multicore_soc_flash/ @nrfconnect/ncs-low-level-test
-/tests/lib/at_cmd_parser/                 @nrfconnect/ncs-modem
 /tests/lib/at_cmd_custom/                 @nrfconnect/ncs-modem
 /tests/lib/at_parser/                     @nrfconnect/ncs-modem
 /tests/lib/contin_array/                  @nrfconnect/ncs-audio

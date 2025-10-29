@@ -186,7 +186,7 @@ Documentation
   * :ref:`dk_buttons_and_leds_readme`
   * :ref:`lib_nfc_ndef`
   * :ref:`app_event_manager` and :ref:`nrf_profiler`
-  * :ref:`at_cmd_parser_readme`, :ref:`at_params_readme`, and :ref:`modem_info_readme`
+  * AT command parser, AT parameters, and :ref:`modem_info_readme`
   * Download client
   * Secure Partition Manager (SPM)
   * :ref:`st25r3911b_nfc_readme`

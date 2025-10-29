@@ -602,7 +602,7 @@ Modem libraries
     * Added :c:macro:`AT_MONITOR_ISR` macro to monitor AT notifications in an interrupt service routine. See Deferred dispatching and Direct dispatching sections in the library documentation for more information.
     * Removed :c:func:`at_monitor_init` function and :kconfig:option:`CONFIG_AT_MONITOR_SYS_INIT` option. The library now initializes automatically when enabled.
 
-  * :ref:`at_cmd_parser_readme` library:
+  * AT command parser library:
 
     * Updated the library to parse AT command responses containing the response result, for example, ``OK`` or ``ERROR``.
 

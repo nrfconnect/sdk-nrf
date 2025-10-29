@@ -547,14 +547,14 @@ AT command parser
 
 .. toggle::
 
-   * The :ref:`at_cmd_parser_readme` library has been deprecated in favor of the :ref:`at_parser_readme` library and will be removed in a future version.
+   * The AT command parser library has been deprecated in favor of the :ref:`at_parser_readme` library and will be removed in a future version.
 
      You can follow this guide to migrate your application to use the :ref:`at_parser_readme` library.
      This will reduce the footprint of the application and will decrease memory requirements on the heap.
 
-     To replace :ref:`at_cmd_parser_readme` with the :ref:`at_parser_readme`, complete the following steps:
+     To replace AT command parser with the :ref:`at_parser_readme`, complete the following steps:
 
-     1. Replace the :kconfig:option:`CONFIG_AT_CMD_PARSER` Kconfig option with the :kconfig:option:`CONFIG_AT_PARSER` Kconfig option.
+     1. Replace the ``CONFIG_AT_CMD_PARSER`` Kconfig option with the :kconfig:option:`CONFIG_AT_PARSER` Kconfig option.
 
      #. Replace header files:
 
