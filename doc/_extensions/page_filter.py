@@ -199,7 +199,7 @@ def page_filter_install(
     if visitor.found_filter_dropdown:
         app.add_css_file("page_filter.css")
         app.add_js_file("page_filter.mjs", type="module")
-        script = app.builder.get_script_files()[-1]
+        script = app.builder.script_files[-1]
 
         page_depth = len(Path(pagename).parents) - 1
         body = f"import setupFiltering from './{page_depth * '../'}{script.filename}'; "
