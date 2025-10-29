@@ -33,7 +33,7 @@ static uint8_t previous_led_value;
 int timed_led_toggle_init(void)
 {
 	int err;
-	uint8_t ppi_chan_led_toggle;
+	nrfx_gppi_handle_t ppi_led_toggle;
 	uint8_t gpiote_chan_led_toggle;
 
 	const nrfx_gpiote_output_config_t gpiote_output_cfg = NRFX_GPIOTE_DEFAULT_OUTPUT_CONFIG;
@@ -63,16 +63,15 @@ int timed_led_toggle_init(void)
 		return -ENOMEM;
 	}
 
-	if (nrfx_gppi_channel_alloc(&ppi_chan_led_toggle) != NRFX_SUCCESS) {
+	err = nrfx_gppi_conn_alloc(controller_time_trigger_event_addr_get(),
+				   nrfx_gpiote_out_task_address_get(&gpiote, LED_PIN),
+				   &ppi_led_toggle);
+	if (err < 0) {
 		printk("Failed allocating PPI chan for toggling led\n");
 		return -ENOMEM;
 	}
 
-	nrfx_gppi_channel_endpoints_setup(ppi_chan_led_toggle,
-					  controller_time_trigger_event_addr_get(),
-					  nrfx_gpiote_out_task_address_get(&gpiote, LED_PIN));
-
-	nrfx_gppi_channels_enable(BIT(ppi_chan_led_toggle));
+	nrfx_gppi_conn_enable(ppi_led_toggle);
 	nrfx_gpiote_out_task_enable(&gpiote, LED_PIN);
 
 	return 0;
