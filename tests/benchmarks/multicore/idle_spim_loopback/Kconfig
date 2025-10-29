@@ -45,4 +45,10 @@ config TEST_SPI_RELEASE_BEFORE_SLEEP
 	  first test iteration will see SPI CS signal activation. Next test iterations
 	  will NOT observe changes on SPI CS signal.
 
+config APP_PROVIDE_PM_HOOKS
+	bool "Application provides PM hooks"
+	default y if SOC_NRF54H20_CPUPPR
+	select HAS_PM
+	select HAS_POWEROFF
+
 source "Kconfig.zephyr"
