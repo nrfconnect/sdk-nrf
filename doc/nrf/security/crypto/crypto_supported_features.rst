@@ -8636,6 +8636,8 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_PASSWORD_HASH`
 
+.. _ug_crypto_supported_features_key_pair_ops:
+
 Key pair operations
 ===================
 
@@ -9140,6 +9142,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+
+.. _ug_crypto_supported_features_spake2p_key_pair_ops:
 
 SPAKE2P key pair operations
 ---------------------------

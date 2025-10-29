@@ -54,7 +54,7 @@ static psa_status_t send_message(psa_pake_operation_t *from, psa_pake_operation_
 	if (status) {
 		return status;
 	}
-	PRINT_HEX("send_message", data, length);
+	PRINT_HEX("Sending message", data, length);
 	status = psa_pake_input(to, step, data, length);
 	return status;
 }
@@ -66,38 +66,38 @@ static psa_status_t pake_setup(psa_pake_operation_t *op, psa_pake_role_t role, p
 
 	status = psa_pake_setup(op, key, cipher_suite);
 	if (status != PSA_SUCCESS) {
-		LOG_INF("psa_pake_setup failed. (Error: %d)", status);
+		LOG_INF("Setting up PAKE operation failed! (Error: %d)", status);
 		return status;
 	}
 
 	status = psa_pake_set_role(op, role);
 	if (status != PSA_SUCCESS) {
-		LOG_INF("psa_pake_set_role failed. (Error: %d)", status);
+		LOG_INF("Setting role failed! (Error: %d)", status);
 		return status;
 	}
 
 	if (role == PSA_PAKE_ROLE_SERVER) {
 		status = psa_pake_set_user(op, "client", strlen("client"));
 		if (status != PSA_SUCCESS) {
-			LOG_INF("psa_pake_set_user failed. (Error: %d)", status);
+			LOG_INF("Setting user for client failed! (Error: %d)", status);
 			return status;
 		}
 
 		status = psa_pake_set_peer(op, "server", strlen("server"));
 		if (status != PSA_SUCCESS) {
-			LOG_INF("psa_pake_set_peer failed. (Error: %d)", status);
+			LOG_INF("Setting peer for server failed! (Error: %d)", status);
 			return status;
 		}
 	} else {
 		status = psa_pake_set_user(op, "server", strlen("server"));
 		if (status != PSA_SUCCESS) {
-			LOG_INF("psa_pake_set_user failed. (Error: %d)", status);
+			LOG_INF("Setting user for server failed! (Error: %d)", status);
 			return status;
 		}
 
 		status = psa_pake_set_peer(op, "client", strlen("client"));
 		if (status != PSA_SUCCESS) {
-			LOG_INF("psa_pake_set_peer failed. (Error: %d)", status);
+			LOG_INF("Setting peer for client failed! (Error: %d)", status);
 			return status;
 		}
 	}
@@ -107,12 +107,15 @@ static psa_status_t pake_setup(psa_pake_operation_t *op, psa_pake_role_t role, p
 
 int main(void)
 {
+	LOG_INF("Starting Spake2+ example...");
+
 	/* For Matter-compatible Spake2+, this will be PSA_ALG_SPAKE2P_MATTER */
 	psa_algorithm_t psa_spake_alg = PSA_ALG_SPAKE2P_HMAC(PSA_ALG_SHA_256);
 	psa_status_t status = psa_crypto_init();
 
 	if (status != PSA_SUCCESS) {
-		LOG_INF("psa_crypto_init failed. (Error: %d)", status);
+		LOG_INF("PSA Crypto initialization failed! (Error: %d)", status);
+		goto error;
 	}
 
 	psa_pake_cipher_suite_t cipher_suite = PSA_PAKE_CIPHER_SUITE_INIT;
@@ -133,7 +136,7 @@ int main(void)
 
 	status = psa_import_key(&key_attributes, key_pair, sizeof(key_pair), &key);
 	if (status != PSA_SUCCESS) {
-		LOG_INF("Key pair psa_import_key failed. (Error: %d)", status);
+		LOG_INF("Importing key pair failed! (Error: %d)", status);
 		goto error;
 	}
 
@@ -146,7 +149,7 @@ int main(void)
 
 	status = psa_import_key(&key_attributes, public_key, sizeof(public_key), &key_server);
 	if (status != PSA_SUCCESS) {
-		LOG_INF("Public key psa_import_key failed. (Error: %d)", status);
+		LOG_INF("Importing public key failed! (Error: %d)", status);
 		goto error;
 	}
 
@@ -169,7 +172,7 @@ int main(void)
 	/* Share P */
 	status = send_message(&client_op, &server_op, PSA_PAKE_STEP_KEY_SHARE);
 	if (status != PSA_SUCCESS) {
-		LOG_INF("send_message failed. (Error: %d, step: %d)", status,
+		LOG_INF("Sending key share message failed! (Error: %d, step: %d)", status,
 			PSA_PAKE_STEP_KEY_SHARE);
 		goto error;
 	}
@@ -177,7 +180,7 @@ int main(void)
 	/* Share V */
 	status = send_message(&server_op, &client_op, PSA_PAKE_STEP_KEY_SHARE);
 	if (status != PSA_SUCCESS) {
-		LOG_INF("send_message failed. (Error: %d, step: %d)", status,
+		LOG_INF("Sending key share message failed! (Error: %d, step: %d)", status,
 			PSA_PAKE_STEP_KEY_SHARE);
 		goto error;
 	}
@@ -185,7 +188,7 @@ int main(void)
 	/* Confirm P */
 	status = send_message(&server_op, &client_op, PSA_PAKE_STEP_CONFIRM);
 	if (status != PSA_SUCCESS) {
-		LOG_INF("send_message failed. (Error: %d, step: %d)", status,
+		LOG_INF("Sending confirmation message failed! (Error: %d, step: %d)", status,
 			PSA_PAKE_STEP_CONFIRM);
 		goto error;
 	}
@@ -193,7 +196,7 @@ int main(void)
 	/* Confirm V */
 	status = send_message(&client_op, &server_op, PSA_PAKE_STEP_CONFIRM);
 	if (status != PSA_SUCCESS) {
-		LOG_INF("send_message failed. (Error: %d, step: %d)", status,
+		LOG_INF("Sending confirmation message failed! (Error: %d, step: %d)", status,
 			PSA_PAKE_STEP_CONFIRM);
 		goto error;
 	}
@@ -218,52 +221,52 @@ int main(void)
 
 		status = psa_pake_get_shared_key(client_server[i].op, &shared_key_attributes, &key);
 		if (status != PSA_SUCCESS) {
-			LOG_INF("psa_pake_get_shared_key failed. (Error: %d)", status);
+			LOG_INF("Getting shared key failed! (Error: %d)", status);
 			goto error;
 		}
 
 		status = psa_key_derivation_setup(&kdf, PSA_ALG_HKDF(PSA_ALG_SHA_256));
 		if (status != PSA_SUCCESS) {
-			LOG_INF("psa_key_derivation_setup failed. (Error: %d)", status);
+			LOG_INF("Setting up key derivation failed! (Error: %d)", status);
 			goto error;
 		}
 
 		status = psa_key_derivation_input_key(&kdf, PSA_KEY_DERIVATION_INPUT_SECRET, key);
 		if (status != PSA_SUCCESS) {
-			LOG_INF("psa_key_derivation_input_key failed. (Error: %d)", status);
+			LOG_INF("Inputting secret key failed! (Error: %d)", status);
 			goto error;
 		}
 
 		status = psa_key_derivation_input_bytes(&kdf, PSA_KEY_DERIVATION_INPUT_INFO, "Info",
 							4);
 		if (status != PSA_SUCCESS) {
-			LOG_INF("psa_key_derivation_input_bytes failed. (Error: %d)", status);
+			LOG_INF("Inputting info failed! (Error: %d)", status);
 			goto error;
 		}
 
 		status = psa_key_derivation_output_bytes(&kdf, client_server[i].secret,
 							 sizeof(client_secret));
 		if (status != PSA_SUCCESS) {
-			LOG_INF("psa_key_derivation_output_bytes failed. (Error: %d)", status);
+			LOG_INF("Outputting secret key failed! (Error: %d)", status);
 			goto error;
 		}
 
 		status = psa_key_derivation_abort(&kdf);
 		if (status != PSA_SUCCESS) {
-			LOG_INF("psa_key_derivation_abort failed. (Error: %d)", status);
+			LOG_INF("Aborting key derivation failed! (Error: %d)", status);
 			goto error;
 		}
 
 		status = psa_destroy_key(key);
 		if (status != PSA_SUCCESS) {
-			LOG_INF("psa_destroy_key failed. (Error: %d)", status);
+			LOG_INF("Destroying key failed! (Error: %d)", status);
 			goto error;
 		}
 	}
 
 	psa_reset_key_attributes(&shared_key_attributes);
-	PRINT_HEX("server_secret", client_secret, sizeof(client_secret));
-	PRINT_HEX("client_secret", server_secret, sizeof(server_secret));
+	PRINT_HEX("Server secret", client_secret, sizeof(client_secret));
+	PRINT_HEX("Client secret", server_secret, sizeof(server_secret));
 
 	bool compare_eq = true;
 
@@ -274,10 +277,11 @@ int main(void)
 	}
 
 	if (!compare_eq) {
-		LOG_ERR("Derived keys for server and client are not equal.");
+		LOG_INF("The derived keys do not match!");
 		goto error;
 	}
 
+	LOG_INF("Spake2+ key exchange successful!");
 	LOG_INF(APP_SUCCESS_MESSAGE);
 	return APP_SUCCESS;
 

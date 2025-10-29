@@ -1,6 +1,7 @@
 sample:
-  description: This app provides an example of hashing using SHA256
-  name: SHA256 example
+  description: |
+    This sample demonstrates hash computation and verification using the SHA-256 hash algorithm.
+  name: SHA-256 sample
 tests:
   sample.sha256.cc3xx:
     sysbuild: true

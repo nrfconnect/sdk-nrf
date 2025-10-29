@@ -1,6 +1,7 @@
 sample:
-  description: This app provides an example of Spake2+
-  name: Spake2+ example
+  description: |
+    This sample demonstrates password-authenticated key exchange using the Spake2+ protocol.
+  name: Spake2+ sample
 tests:
   sample.spake2p.oberon:
     sysbuild: true
