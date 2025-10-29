@@ -33,21 +33,30 @@ if MEMFAULT_DEVICE_INFO_BUILTIN
 
 choice
 	prompt "Memfault device ID generation method"
-	default MEMFAULT_NCS_DEVICE_ID_IMEI if (BOARD_NRF9160DK_NRF9160_NS || BOARD_NRF9161DK_NRF9161_NS || BOARD_THINGY91_NRF9160_NS)
-	default MEMFAULT_NCS_DEVICE_ID_NET_MAC if BOARD_NRF7002DK_NRF5340_CPUAPP
-	default MEMFAULT_NCS_DEVICE_ID_STATIC
+	default MEMFAULT_NCS_DEVICE_ID_HW_ID
 
 config MEMFAULT_NCS_DEVICE_ID_IMEI
-	bool "Use IMEI as Memfault device ID"
-	select HW_ID_LIBRARY
+	bool "Use IMEI as Memfault device ID [DEPRECATED]"
+	select DEPRECATED
+	depends on NRF_MODEM_LIB
 	help
-	  Use the device's IMEI as Memfault device ID
+	  Use the device's IMEI as Memfault device ID. Deprecated, use
+	  MEMFAULT_NCS_DEVICE_ID_HW_ID and HW_ID_LIBRARY_SOURCE_IMEI instead.
 
 config MEMFAULT_NCS_DEVICE_ID_NET_MAC
-	bool "Use network interface MAC address as device ID"
+	bool "Use network interface MAC address as device ID [DEPRECATED]"
+	select DEPRECATED
+	depends on NETWORKING
+	help
+	  Use the device's network interface MAC address as Memfault device ID.
+	  Deprecated, use MEMFAULT_NCS_DEVICE_ID_HW_ID and
+	  HW_ID_LIBRARY_SOURCE_NET_MAC instead.
+
+config MEMFAULT_NCS_DEVICE_ID_HW_ID
+	bool "Use hw_id for Memfault Device ID"
 	select HW_ID_LIBRARY
 	help
-	  Use the device's network interface MAC address as Memfault device ID
+	  Helper symbol to use hw_id API for Memfault Device ID if a corresponding option is selected.
 
 config MEMFAULT_NCS_DEVICE_ID_STATIC
 	bool "Set Memfault device ID in Kconfig"
@@ -273,24 +282,6 @@ choice MEMFAULT_HTTP_PERIODIC_UPLOAD_CONTEXT
 	depends on MEMFAULT_HTTP_PERIODIC_UPLOAD
 	default MEMFAULT_HTTP_PERIODIC_UPLOAD_USE_DEDICATED_WORKQUEUE
 endchoice
-
-# Workaround to select the correct HW ID source
-
-if HW_ID_LIBRARY
-
-choice HW_ID_LIBRARY_SOURCE
-	default HW_ID_LIBRARY_SOURCE_IMEI if MEMFAULT_NCS_DEVICE_ID_IMEI
-	default HW_ID_LIBRARY_SOURCE_NET_MAC if MEMFAULT_NCS_DEVICE_ID_NET_MAC
-
-config HW_ID_LIBRARY_SOURCE_IMEI
-	bool "IMEI"
-
-config HW_ID_LIBRARY_SOURCE_NET_MAC
-	bool "Network interface MAC address"
-
-endchoice # HW_ID_LIBRARY_SOURCE
-
-endif # HW_ID_LIBRARY
 
 module = MEMFAULT_NCS
 module-dep = LOG
