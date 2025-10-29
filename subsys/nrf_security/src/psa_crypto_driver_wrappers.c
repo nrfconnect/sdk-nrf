@@ -121,6 +121,10 @@
 #include <psa/nrf_rng_entropy.h>
 #endif
 
+#if defined(PSA_CRYPTO_DRIVER_IRONSIDE)
+#include "ironside_psa.h"
+#endif
+
 /* Repeat above block for each JSON-declared driver during autogeneration */
 #endif /* MBEDTLS_PSA_CRYPTO_DRIVERS */
 
@@ -136,6 +140,8 @@
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 #define PSA_CRYPTO_TFM_BUILTIN_KEY_LOADER_DRIVER_ID (6)
 #endif /* PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER */
+
+#define PSA_CRYPTO_IRONSIDE_DRIVER_ID (7)
 
 #define PSA_CRYPTO_OBERON_DRIVER_ID (28)
 
@@ -511,6 +517,10 @@ psa_status_t psa_driver_wrapper_get_key_buffer_size(const psa_key_attributes_t *
 
 	*key_buffer_size = 0;
 	switch (location) {
+#if defined(PSA_CRYPTO_DRIVER_IRONSIDE)
+	case PSA_KEY_LOCATION_LOCAL_STORAGE:
+		return ironside_psa_get_key_buffer_size(attributes, key_buffer_size);
+#endif
 #if defined(PSA_CRYPTO_DRIVER_CRACEN)
 	case PSA_KEY_LOCATION_CRACEN:
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
@@ -542,6 +552,14 @@ psa_status_t psa_driver_wrapper_generate_key(const psa_key_attributes_t *attribu
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 	case TFM_BUILTIN_KEY_LOADER_KEY_LOCATION:
 #endif /* defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER) */
+#if defined(PSA_CRYPTO_DRIVER_IRONSIDE)
+		status = ironside_psa_generate_key(attributes, key_buffer, key_buffer_size,
+						   key_buffer_length);
+		/* Declared with fallback == true */
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_CRYPTO_DRIVER_IRONSIDE */
 		/* Transparent drivers are limited to generating asymmetric keys */
 		if (PSA_KEY_TYPE_IS_ASYMMETRIC(attributes->type)) {
 			/* Cycle through all known transparent accelerators */
@@ -609,6 +627,14 @@ psa_status_t psa_driver_wrapper_import_key(const psa_key_attributes_t *attribute
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_CRYPTO_DRIVER_IRONSIDE)
+		status = ironside_psa_import_key(attributes, data, data_length, key_buffer,
+						 key_buffer_size, key_buffer_length, bits);
+		/* Declared with fallback == true */
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif
 #if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
 		status = cracen_import_key(attributes, data, data_length, key_buffer,
 					   key_buffer_size, key_buffer_length, bits);
@@ -752,6 +778,11 @@ psa_status_t psa_driver_wrapper_get_builtin_key(psa_drv_slot_number_t slot_numbe
 	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
+#if defined(PSA_CRYPTO_DRIVER_IRONSIDE)
+	case PSA_KEY_LOCATION_LOCAL_STORAGE:
+		return ironside_psa_get_builtin_key(slot_number, attributes, key_buffer,
+						    key_buffer_size, key_buffer_length);
+#endif
 #if defined(PSA_CRYPTO_DRIVER_CRACEN)
 	case PSA_KEY_LOCATION_CRACEN:
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
@@ -783,6 +814,12 @@ psa_status_t psa_driver_wrapper_copy_key(psa_key_attributes_t *attributes,
 	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
+#if defined(PSA_CRYPTO_DRIVER_IRONSIDE)
+	case PSA_KEY_LOCATION_LOCAL_STORAGE:
+		return ironside_psa_copy_key(attributes, source_key, source_key_length,
+					     target_key_buffer, target_key_buffer_size,
+					     target_key_buffer_length);
+#endif
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 		return cracen_copy_key(attributes, source_key, source_key_length, target_key_buffer,
@@ -809,6 +846,15 @@ psa_status_t psa_driver_wrapper_derive_key(const psa_key_attributes_t *attribute
 	switch (PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime)) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
 		/* Add cases for transparent drivers here */
+#ifdef PSA_CRYPTO_DRIVER_IRONSIDE
+		status = ironside_psa_derive_key(attributes, input, input_length, key_buffer,
+						 key_buffer_size, key_buffer_length);
+
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_CRYPTO_DRIVER_IRONSIDE */
+
 #ifdef PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER
 		status = cracen_derive_key(attributes, input, input_length, key_buffer,
 					   key_buffer_size, key_buffer_length);
@@ -2414,10 +2460,18 @@ psa_status_t psa_driver_wrapper_key_agreement(const psa_key_attributes_t *attrib
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
-#if defined(PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER)
-#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+#if defined(PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER) && defined(PSA_NEED_CRACEN_KMU_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN_KMU:
-#endif /* defined(PSA_NEED_CRACEN_KMU_DRIVER) */
+#endif
+#if defined(PSA_CRYPTO_DRIVER_IRONSIDE)
+		status = ironside_psa_key_agreement(attributes, priv_key, priv_key_size, alg,
+						    publ_key, publ_key_size, output, output_size,
+						    output_length);
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_CRYPTO_DRIVER_IRONSIDE */
+#if defined(PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER)
 		status = cracen_key_agreement(attributes, priv_key, priv_key_size, publ_key,
 					      publ_key_size, output, output_size, output_length,
 					      alg);
@@ -2470,9 +2524,22 @@ psa_status_t psa_driver_wrapper_key_encapsulate(const psa_key_attributes_t *attr
 						size_t *output_key_length, uint8_t *ciphertext,
 						size_t ciphertext_size, size_t *ciphertext_length)
 {
+	psa_status_t status;
+	(void)status;
+
 	switch (PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime)) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
 		/* Add cases for transparent drivers here */
+#ifdef PSA_CRYPTO_DRIVER_IRONSIDE
+		status = ironside_psa_key_encapsulate(
+			attributes, key, key_length, alg, output_attributes, output_key,
+			output_key_size, output_key_length, ciphertext, ciphertext_size,
+			ciphertext_length);
+		/* Declared with fallback == true */
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_CRYPTO_DRIVER_IRONSIDE */
 #ifdef PSA_NEED_OBERON_KEY_ENCAPSULATION_DRIVER
 		return oberon_key_encapsulate(attributes, key, key_length, alg, output_attributes,
 					      output_key, output_key_size, output_key_length,
@@ -2504,9 +2571,21 @@ psa_status_t psa_driver_wrapper_key_decapsulate(const psa_key_attributes_t *attr
 						uint8_t *output_key, size_t output_key_size,
 						size_t *output_key_length)
 {
+	psa_status_t status;
+	(void)status;
+
 	switch (PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime)) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
 		/* Add cases for transparent drivers here */
+#ifdef PSA_CRYPTO_DRIVER_IRONSIDE
+		status = ironside_psa_key_decapsulate(
+			attributes, key, key_length, alg, ciphertext, ciphertext_length,
+			output_attributes, output_key, output_key_size, output_key_length);
+		/* Declared with fallback == true */
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_CRYPTO_DRIVER_IRONSIDE */
 #ifdef PSA_NEED_OBERON_KEY_ENCAPSULATION_DRIVER
 		return oberon_key_decapsulate(attributes, key, key_length, alg, ciphertext,
 					      ciphertext_length, output_attributes, output_key,
@@ -2543,6 +2622,17 @@ psa_status_t psa_driver_wrapper_pake_setup(psa_pake_operation_t *operation,
 	switch (PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime)) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
 		/* Add cases for transparent drivers here */
+#ifdef PSA_CRYPTO_DRIVER_IRONSIDE
+		status = ironside_psa_pake_setup(&operation->ctx.ironside_pake_ctx, attributes,
+						 password, password_length, cipher_suite);
+		if (status == PSA_SUCCESS) {
+			operation->id = PSA_CRYPTO_IRONSIDE_DRIVER_ID;
+		}
+		if (status != PSA_ERROR_NOT_SUPPORTED) {
+			return status;
+		}
+#endif /* PSA_CRYPTO_DRIVER_IRONSIDE */
+
 #ifdef PSA_NEED_CRACEN_PAKE_DRIVER
 		status = cracen_pake_setup(&operation->ctx.cracen_pake_ctx, attributes, password,
 					   password_length, cipher_suite);
@@ -2584,6 +2674,10 @@ psa_status_t psa_driver_wrapper_pake_set_role(psa_pake_operation_t *operation, p
 	case PSA_CRYPTO_CRACEN_DRIVER_ID:
 		return cracen_pake_set_role(&operation->ctx.cracen_pake_ctx, role);
 #endif /* PSA_NEED_CRACEN_PAKE_DRIVER */
+#ifdef PSA_CRYPTO_DRIVER_IRONSIDE
+	case PSA_CRYPTO_IRONSIDE_DRIVER_ID:
+		return ironside_psa_pake_set_role(&operation->ctx.ironside_pake_ctx, role);
+#endif /* PSA_CRYPTO_DRIVER_IRONSIDE */
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_pake_set_role(&operation->ctx.oberon_pake_ctx, role);
@@ -2604,6 +2698,11 @@ psa_status_t psa_driver_wrapper_pake_set_user(psa_pake_operation_t *operation,
 		return cracen_pake_set_user(&operation->ctx.cracen_pake_ctx, user_id,
 					    user_id_length);
 #endif /* PSA_NEED_CRACEN_PAKE_DRIVER */
+#ifdef PSA_CRYPTO_DRIVER_IRONSIDE
+	case PSA_CRYPTO_IRONSIDE_DRIVER_ID:
+		return ironside_psa_pake_set_user(&operation->ctx.ironside_pake_ctx, user_id,
+						  user_id_length);
+#endif /* PSA_CRYPTO_DRIVER_IRONSIDE */
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_pake_set_user(&operation->ctx.oberon_pake_ctx, user_id,
@@ -2626,6 +2725,11 @@ psa_status_t psa_driver_wrapper_pake_set_peer(psa_pake_operation_t *operation,
 		return cracen_pake_set_peer(&operation->ctx.cracen_pake_ctx, peer_id,
 					    peer_id_length);
 #endif
+#ifdef PSA_CRYPTO_DRIVER_IRONSIDE
+	case PSA_CRYPTO_IRONSIDE_DRIVER_ID:
+		return ironside_psa_pake_set_peer(&operation->ctx.ironside_pake_ctx, peer_id,
+						  peer_id_length);
+#endif /* PSA_CRYPTO_DRIVER_IRONSIDE */
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_pake_set_peer(&operation->ctx.oberon_pake_ctx, peer_id,
@@ -2648,6 +2752,11 @@ psa_status_t psa_driver_wrapper_pake_set_context(psa_pake_operation_t *operation
 		return cracen_pake_set_context(&operation->ctx.cracen_pake_ctx, context,
 					       context_length);
 #endif
+#ifdef PSA_CRYPTO_DRIVER_IRONSIDE
+	case PSA_CRYPTO_IRONSIDE_DRIVER_ID:
+		return ironside_psa_pake_set_context(&operation->ctx.ironside_pake_ctx, context,
+						     context_length);
+#endif /* PSA_CRYPTO_DRIVER_IRONSIDE */
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_pake_set_context(&operation->ctx.oberon_pake_ctx, context,
@@ -2670,6 +2779,11 @@ psa_status_t psa_driver_wrapper_pake_output(psa_pake_operation_t *operation, psa
 	case PSA_CRYPTO_CRACEN_DRIVER_ID:
 		return cracen_pake_output(&operation->ctx.cracen_pake_ctx, step, output,
 					  output_size, output_length);
+#endif
+#ifdef PSA_CRYPTO_DRIVER_IRONSIDE
+	case PSA_CRYPTO_IRONSIDE_DRIVER_ID:
+		return ironside_psa_pake_output(&operation->ctx.ironside_pake_ctx, step, output,
+						output_size, output_length);
 #endif
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
@@ -2694,6 +2808,11 @@ psa_status_t psa_driver_wrapper_pake_input(psa_pake_operation_t *operation, psa_
 	case PSA_CRYPTO_CRACEN_DRIVER_ID:
 		return cracen_pake_input(&operation->ctx.cracen_pake_ctx, step, input,
 					 input_length);
+#endif
+#ifdef PSA_CRYPTO_DRIVER_IRONSIDE
+	case PSA_CRYPTO_IRONSIDE_DRIVER_ID:
+		return ironside_psa_pake_input(&operation->ctx.ironside_pake_ctx, step, input,
+					       input_length);
 #endif
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
@@ -2720,6 +2839,12 @@ psa_status_t psa_driver_wrapper_pake_get_shared_key(psa_pake_operation_t *operat
 		return cracen_pake_get_shared_key(&operation->ctx.cracen_pake_ctx, attributes,
 						  key_buffer, key_buffer_size, key_buffer_length);
 #endif
+#ifdef PSA_CRYPTO_DRIVER_IRONSIDE
+	case PSA_CRYPTO_IRONSIDE_DRIVER_ID:
+		return ironside_psa_pake_get_shared_key(&operation->ctx.ironside_pake_ctx,
+							attributes, key_buffer, key_buffer_size,
+							key_buffer_length);
+#endif
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_pake_get_shared_key(&operation->ctx.oberon_pake_ctx, attributes,
@@ -2742,6 +2867,10 @@ psa_status_t psa_driver_wrapper_pake_abort(psa_pake_operation_t *operation)
 	case PSA_CRYPTO_CRACEN_DRIVER_ID:
 		return cracen_pake_abort(&operation->ctx.cracen_pake_ctx);
 #endif
+#ifdef PSA_CRYPTO_DRIVER_IRONSIDE
+	case PSA_CRYPTO_IRONSIDE_DRIVER_ID:
+		return ironside_psa_pake_abort(&operation->ctx.ironside_pake_ctx);
+#endif /* PSA_CRYPTO_DRIVER_IRONSIDE */
 #ifdef PSA_NEED_OBERON_PAKE_DRIVER
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_pake_abort(&operation->ctx.oberon_pake_ctx);
@@ -3051,6 +3180,10 @@ psa_status_t psa_driver_wrapper_destroy_builtin_key(const psa_key_attributes_t *
 	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
+#if defined(PSA_CRYPTO_DRIVER_IRONSIDE)
+	case PSA_KEY_LOCATION_LOCAL_STORAGE:
+		return ironside_psa_destroy_builtin_key(attributes);
+#endif
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 		return cracen_destroy_key(attributes);
