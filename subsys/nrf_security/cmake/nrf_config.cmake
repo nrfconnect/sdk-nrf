@@ -146,6 +146,7 @@ if (NOT MBEDTLS_PSA_CRYPTO_SPM)
   kconfig_check_and_set_base(MBEDTLS_X509_CREATE_C)
   kconfig_check_and_set_base(MBEDTLS_X509_CRT_WRITE_C)
   kconfig_check_and_set_base(MBEDTLS_X509_CSR_WRITE_C)
+  kconfig_check_and_set_base(MBEDTLS_PKCS7_C)
 
   # KRKNWK-20181
   kconfig_check_and_set_base(MBEDTLS_SSL_CLI_ALLOW_WEAK_CERTIFICATE_VERIFICATION_WITHOUT_HOSTNAME)

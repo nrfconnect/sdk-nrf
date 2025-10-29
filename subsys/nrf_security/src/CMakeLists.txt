@@ -216,6 +216,7 @@ endif()
 
 if (CONFIG_MBEDTLS_X509_LIBRARY)
   append_with_prefix(src_x509 ${ARM_MBEDTLS_PATH}/library
+    pkcs7.c
     x509.c
     x509_create.c
     x509_crl.c
