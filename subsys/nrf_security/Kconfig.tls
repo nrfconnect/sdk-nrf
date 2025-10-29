@@ -75,6 +75,14 @@ config MBEDTLS_X509_REMOVE_INFO
 	  Disable mbedtls_x509_*_info() and related APIs.
 	  This can save several KB
 
+config MBEDTLS_PKCS7_C
+	bool "PKCS#7 core support [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Add support for PKCS #7-formatted signatures.
+	  See https://tools.ietf.org/html/rfc2315 for details.
+	  This feature is currently experimental.
+
 endif
 
 menuconfig MBEDTLS_TLS_LIBRARY
