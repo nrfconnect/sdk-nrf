@@ -4,89 +4,149 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+menu "Bridge configuration"
+
 config BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER
-	int "Maximum number of dynamic endpoints supported by the Bridge"
+	int "Maximum dynamic endpoints"
 	default 16
+	help
+	  Maximum number of endpoints supported by the bridge.
 
 config BRIDGE_MAX_BRIDGED_DEVICES_NUMBER
-	int "Maximum number of physical non-Matter devices supported by the Bridge"
+	int "Maximum bridged devices"
 	default 16
+	help
+	  Maximum number of physical non-Matter devices supported by the bridge.
 
 config BRIDGE_MAX_BRIDGED_DEVICES_NUMBER_PER_PROVIDER
-	int "Maximum number of endpoints paired to the one non-Matter provider device"
+	int "Maximum endpoints per provider"
 	default 2
+	help
+	  Maximum number of endpoints paired to one non-Matter provider device.
 
 config BRIDGE_AGGREGATOR_ENDPOINT_ID
-	int "Id of an endpoint implementing Aggregator device type functionality"
+	int "Aggregator endpoint ID"
 	default 1
+	help
+	  ID of the endpoint implementing Aggregator device type functionality.
+
+menu "Migration options"
 
 config BRIDGE_MIGRATE_PRE_2_7_0
-	bool "Migration of bridged device data stored in old scheme from pre nRF SDK 2.7.0 releases"
+	bool "Migrate pre-2.7.0 data"
+	help
+	  Enable migration of bridged device data stored in the old scheme (pre-nRF SDK 2.7.0).
 
 config BRIDGE_MIGRATE_VERSION_1
-	bool "Migration of bridged device data stored in version 1 of new scheme"
+	bool "Migrate version 1 data"
 	default y
+	help
+	  Enable migration of bridged device data stored in version 1 of the new scheme.
+
+endmenu
 
 if BRIDGED_DEVICE_BT
 
+menu "Bluetooth bridge configuration"
+
 config BRIDGE_BT_RECOVERY_MAX_INTERVAL
-	int "Maximum time (in s) between recovery attempts when the BLE connection to the bridged device is lost"
+	int "Recovery interval (s)"
 	default 300
+	help
+	  Maximum time (in seconds) between recovery attempts when a Bluetooth LE connection is lost.
 
 config BRIDGE_BT_RECOVERY_SCAN_TIMEOUT_MS
-	int "Time (in ms) within which the Bridge will try to re-establish a connection to the lost BT LE device"
+	int "Recovery scan timeout (ms)"
 	default 2000
+	help
+	  Time (in milliseconds) to attempt reconnection to a lost Bluetooth LE device.
 
 config BRIDGE_BT_MAX_SCANNED_DEVICES
-	int "Maximum amount of scanned devices"
+	int "Maximum scanned devices"
 	default 16
+	help
+	  Maximum number of Bluetooth devices that can be scanned at once.
 
 config BRIDGE_BT_SCAN_TIMEOUT_MS
-	int "Bluetooth scan timeout in milliseconds"
+	int "Scan timeout (ms)"
 	default 10000
+	help
+	  Bluetooth scan timeout in milliseconds.
 
 config BRIDGE_BT_MINIMUM_SECURITY_LEVEL
-	int "Minimum Bluetooth security level of bridged devices that will be accepted by the bridge device"
+	int "Minimum security level"
 	default 2
 	range 2 4
 	depends on BT_SMP
 	help
-	   The minimum Bluetooth security level means that the bridged devices using this or a higher level will be
-	   allowed to connect to the bridge. The level cannot be set to a value smaller than 2, as it would mean that
-	   the communication with the connected devices will not be encrypted, what is not considered to be secure.
+	  The minimum Bluetooth security level means that the bridged devices using this or a higher level will be
+	  allowed to connect to the bridge. The level cannot be set to a value smaller than 2, as it would mean that
+	  the communication with the connected devices will not be encrypted, what is not considered to be secure.
 
 config BRIDGE_BT_SCAN_WINDOW
-	int "Time duration of a central actively scanning for devices within scan interval, it is equal BRIDGE_BT_SCAN_WINDOW*0.625 ms"
+	int "Scan window"
 	default 40  if OPENTHREAD # It is necessary to decrease Bluetooth LE activity to leave some radio time to Thread
 	default 48
+	help
+	  Duration of active scanning per interval (x0.625 ms).
+	  Default: 40 (25 ms).
+	  Longer windows improve discovery speed but increase power use.
 
 config BRIDGE_BT_SCAN_INTERVAL
-	int "Time between consecutive Bluetooth scan windows, it is equal BRIDGE_BT_SCAN_INTERVAL*0.625 ms"
+	int "Scan interval"
 	default 160 if OPENTHREAD # It is necessary to decrease Bluetooth LE activity to leave some radio time to Thread
 	default 96
+	help
+	  Time between consecutive scan windows (x0.625 ms).
+	  Default: 160 (100 ms).
+	  Must be ≥ scan window.
+	  Shorter intervals speed discovery but increase power use.
 
 config BRIDGE_BT_CONNECTION_INTERVAL_MIN
-	int "It is the minimum duration of time requested by central after the peripheral device should wake up to communicate, it is equal BRIDGE_BT_CONNECTION_INTERVAL_MIN*1.25 ms"
+	int "Minimum connection interval"
 	range 6 3200
 	default 80 if OPENTHREAD # It is necessary to decrease Bluetooth LE activity to leave some radio time to Thread
 	default 24
+	help
+	  Minimum time between connection events (x1.25 ms).
+	  Default: 80 (100 ms).
+	  Shorter intervals reduce latency but increase power consumption.
 
 config BRIDGE_BT_CONNECTION_INTERVAL_MAX
-	int "It is the maximum duration of time requested by central after the peripheral device should wake up to communicate, it is equal BRIDGE_BT_CONNECTION_INTERVAL_MAX*1.25 ms"
+	int "Maximum connection interval"
 	range 6 3200
 	default 80 if OPENTHREAD # It is necessary to decrease Bluetooth LE activity to leave some radio time to Thread
 	default 40
+	help
+	  Maximum time between connection events (x1.25 ms).
+	  Default: 80 (100 ms).
+	  Must be ≥ minimum interval.
 
 config BRIDGE_BT_CONNECTION_TIMEOUT
-	int "The time since the last packet was successfully received until the devices consider the connection lost, it is equal BRIDGE_BT_CONNECTION_TIMEOUT cs"
+	int "Connection timeout"
 	default 400
+	help
+	  Time until connection is considered lost (x10 ms).
+	  Default: 400 (4 sec).
+	  Must be > (1 + latency) x interval_max x 2.
 
 config BRIDGE_BT_CONNECTION_LATENCY
-	int "It allows the peripheral to skip waking up for a certain number of connection events if it does not have any data to send"
+	int "Connection latency"
 	default 0
+	help
+	  Number of connection events peripheral can skip when idle.
+	  Default: 0.
+	  Higher values save power but increase latency.
 
 config BRIDGE_FORCE_BT_CONNECTION_PARAMS
-	bool "Determines whether the Matter bridge forces connection parameters or accepts the Bluetooth LE peripheral device selection"
+	bool "Force connection parameters"
 	default y
+	help
+	  Enforce bridge-defined connection parameters instead of accepting the peripheral's preferred values.
+	  Enable for guaranteed timing, disable for peripheral optimization.
+
+endmenu
 
 endif
+
+endmenu
