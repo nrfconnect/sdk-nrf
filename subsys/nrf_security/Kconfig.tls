@@ -151,9 +151,6 @@ config MBEDTLS_SSL_COOKIE_C
 
 endif # MBEDTLS_SSL_PROTO_TLS1_2
 
-config MBEDTLS_TLS_VERSION_1_3
-	bool "Support for TLS 1.3"
-
 config MBEDTLS_DEBUG_C
 	bool
 	prompt "Debug functions for TLS"
@@ -345,11 +342,10 @@ config MBEDTLS_SSL_CIPHERSUITES
 	  Warning: This field has offers no validation checks.
 	  MBEDTLS_SSL_CIPHERSUITES setting in mbed TLS config file.
 
-if MBEDTLS_TLS_VERSION_1_3
-
 config MBEDTLS_SSL_PROTO_TLS1_3
-	bool
-	default y
+	bool "Support for TLS 1.3"
+
+if MBEDTLS_SSL_PROTO_TLS1_3
 
 config MBEDTLS_SSL_TLS1_3_COMPATIBILITY_MODE
 	bool "TLS1.3 middlebox compatibility mode"
@@ -368,7 +364,7 @@ config MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED
 config MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED
 	bool "TLS 1.3 PSK ephemeral key exchange mode"
 
-endif # MBEDTLS_TLS_VERSION_1_3
+endif # MBEDTLS_SSL_PROTO_TLS1_3
 
 menu "TLS/DTL Cipher Suites"
 
