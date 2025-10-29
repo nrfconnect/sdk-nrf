@@ -1061,6 +1061,9 @@ Memfault integration
   * The :kconfig:option:`CONFIG_MEMFAULT_NCS_FW_VERSION` Kconfig option will now have a default value set from a :file:`VERSION` file, if present in the application root directory.
     Previously, this option had no default value.
 
+  * Simplified the options for ``CONFIG_MEMFAULT_NCS_DEVICE_ID_*``, which sets the Memfault Device Serial. The default is now :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID`, which uses the :ref:`lib_hw_id` library to provide a unique device ID.
+    See the `Migration guide for nRF Connect SDK v3.2.0`_ for more information.
+
 * Added a metric tracking the unused stack space of the Bluetooth Long workqueue thread, when the :kconfig:option:`CONFIG_MEMFAULT_NCS_BT_METRICS` Kconfig option is enabled.
   The new metric is named ``ncs_bt_lw_wq_unused_stack``.
 

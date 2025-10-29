@@ -183,3 +183,19 @@ Libraries
 This section describes the changes related to libraries.
 
 |no_changes_yet_note|
+
+Integrations
+============
+
+This section provides detailed lists of changes by :ref:`integration <integrations>`.
+
+Memfault integration
+--------------------
+
+* The options have changed for the ``CONFIG_MEMFAULT_NCS_DEVICE_ID_*`` choice, which sets the Memfault Device Serial:
+
+  * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID` (new, and default) - Use ``hw_id`` provided device ID, which is also what nRF Cloud uses for device identity. See the :ref:`lib_hw_id` library for options for device ID source.
+  * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_STATIC` - Used to set a custom build-time defined static device ID, primarily useful for testing.
+  * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_RUNTIME` - Use a runtime-applied device ID, commonly used when the serial number of the device is written into settings at manufacturing time, for example.
+  * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI` (deprecated) - Use the LTE modem IMEI as the device ID.
+  * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC` (deprecated) - Use the network interface MAC address as the device ID.

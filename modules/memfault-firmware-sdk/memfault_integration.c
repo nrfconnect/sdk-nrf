@@ -17,6 +17,11 @@
 #include <nrf_modem_at.h>
 #endif
 
+#if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC)
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/wifi.h>
+#endif /* defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC) */
+
 #include <memfault/core/build_info.h>
 #include <memfault/core/compiler.h>
 #include <memfault/core/platform/device_info.h>
@@ -30,15 +35,15 @@ LOG_MODULE_REGISTER(memfault_ncs, CONFIG_MEMFAULT_NCS_LOG_LEVEL);
 #define IMEI_LEN 15
 
 #if defined(CONFIG_SOC_SERIES_NRF91X)
-#define MEMFAULT_URL	"https://goto.memfault.com/create-key/nrf91"
+#define MEMFAULT_URL "https://goto.memfault.com/create-key/nrf91"
 #else
-#define MEMFAULT_URL	"https://goto.memfault.com/create-key/nrf"
+#define MEMFAULT_URL "https://goto.memfault.com/create-key/nrf"
 #endif
 
 #if defined(CONFIG_BT_MDS) || defined(CONFIG_MEMFAULT_HTTP_ENABLE)
 /* Project key check */
 BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_PROJECT_KEY) > 1,
-	"Memfault Project Key not configured. Please visit " MEMFAULT_URL " ");
+	     "Memfault Project Key not configured. Please visit " MEMFAULT_URL " ");
 #endif
 
 extern void memfault_ncs_metrics_init(void);
@@ -62,14 +67,15 @@ BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_FW_VERSION_STATIC) > 1,
 	     "Firmware version must be configured");
 #endif
 
-#if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI) || defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC)
-	static char device_serial[HW_ID_LEN + 1];
+#if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID)
+static char device_serial[HW_ID_LEN + 1];
+#elif defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC) || defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI)
+static char device_serial[15 + 1]; /* IMEI is 15 characters, NET_MAC is 12 characters */
 #elif defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_STATIC)
-	BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_DEVICE_ID) > 1,
-		     "The device ID must be configured");
-	static char device_serial[] = CONFIG_MEMFAULT_NCS_DEVICE_ID;
+BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_DEVICE_ID) > 1, "The device ID must be configured");
+static char device_serial[] = CONFIG_MEMFAULT_NCS_DEVICE_ID;
 #elif defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_RUNTIME)
-	static char device_serial[CONFIG_MEMFAULT_NCS_DEVICE_ID_MAX_LEN + 1];
+static char device_serial[CONFIG_MEMFAULT_NCS_DEVICE_ID_MAX_LEN + 1];
 #endif
 
 /* Hardware version check */
@@ -81,13 +87,13 @@ void memfault_platform_get_device_info(sMemfaultDeviceInfo *info)
 	static bool is_init;
 
 	static char fw_version[sizeof(CONFIG_MEMFAULT_NCS_FW_VERSION_PREFIX) + 8] =
-	    CONFIG_MEMFAULT_NCS_FW_VERSION_PREFIX;
+		CONFIG_MEMFAULT_NCS_FW_VERSION_PREFIX;
 
 	if (!is_init) {
 		const size_t version_len = strlen(fw_version);
 		const size_t build_id_chars = 6 + 1 /* '\0' */;
 		const size_t build_id_num_chars =
-		    MIN(build_id_chars, sizeof(fw_version) - version_len - 1);
+			MIN(build_id_chars, sizeof(fw_version) - version_len - 1);
 
 		memfault_build_id_get_string(&fw_version[version_len], build_id_num_chars);
 		is_init = true;
@@ -128,7 +134,7 @@ int memfault_ncs_device_id_set(const char *device_id, size_t len)
 }
 #endif /* defined(CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN) */
 
-#if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI) || defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC)
+#if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID)
 static int device_info_init(void)
 {
 	int err;
@@ -148,12 +154,63 @@ static int device_info_init(void)
 
 	return err;
 }
-#endif /* CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI || defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC) */
+#elif defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI)
+/* Note: IMEI and NET MAC implementations below duplicates functionality in the
+ * hw_id library, but these are deprecated options and will be removed in the
+ * future.
+ */
+static int device_info_init(void)
+{
+	char imei_buf[IMEI_LEN + 6 + 1]; /* Add 6 for \r\nOK\r\n and 1 for \0 */
+
+	/* Retrieve device IMEI from modem. */
+	int err = nrf_modem_at_cmd(imei_buf, ARRAY_SIZE(imei_buf), "AT+CGSN");
+
+	if (err) {
+		LOG_ERR("Failed to get IMEI, error: %d", err);
+		return err;
+	}
+
+	/* Set null character at the end of the device IMEI. */
+	imei_buf[IMEI_LEN] = 0;
+
+	(void)strncpy(device_serial, imei_buf, sizeof(device_serial) - 1);
+	device_serial[sizeof(device_serial) - 1] = '\0';
+
+	return 0;
+}
+#elif defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC)
+static int device_info_init(void)
+{
+	struct net_if *iface = net_if_get_default();
+
+	if (iface == NULL) {
+		return -EIO;
+	}
+
+	struct net_linkaddr *linkaddr = net_if_get_link_addr(iface);
+
+	if ((linkaddr == NULL) || (linkaddr->len != WIFI_MAC_ADDR_LEN)) {
+		LOG_ERR("Invalid link address");
+		return -EIO;
+	}
+
+	int ret = snprintk(device_serial, sizeof(device_serial), "%02X%02X%02X%02X%02X%02X",
+			   linkaddr->addr[0], linkaddr->addr[1], linkaddr->addr[2],
+			   linkaddr->addr[3], linkaddr->addr[4], linkaddr->addr[5]);
+
+	if (ret < 0 || ret >= sizeof(device_serial)) {
+		LOG_ERR("Failed to format device serial");
+		return -ENOMEM;
+	}
+
+	return 0;
+}
+#endif /* defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID) */
 
 static int init(void)
 {
 	int err = 0;
-
 
 	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_PROVISION_CERTIFICATES)) {
 		err = memfault_zephyr_port_install_root_certs();
@@ -166,12 +223,13 @@ static int init(void)
 		}
 	}
 
-#if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI) || defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC)
+#if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID) || defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI) || \
+		defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC)
 	err = device_info_init();
 	if (err) {
 		LOG_ERR("Device info initialization failed, error: %d", err);
 	}
-#endif /* CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI || CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC */
+#endif
 
 	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_USE_DEFAULT_METRICS)) {
 		memfault_ncs_metrics_init();
