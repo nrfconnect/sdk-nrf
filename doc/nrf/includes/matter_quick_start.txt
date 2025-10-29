@@ -1,0 +1,5 @@
+The |sample_type| is available in the `Matter Quick Start app`_ desktop application.
+Use this app to enable fast and easy evaluation of the |sample_type| without a need of compiling it or setting the development environment thanks to the pre-compiled hex files.
+After flashing, follow the step-by-step instructions to commission the |sample_type| to the Matter network and interact with commercial ecosystems.
+
+Download the Matter Quick Start app though the `nRF Connect for Desktop`_ .
