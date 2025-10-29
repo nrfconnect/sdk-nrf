@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -25,6 +26,7 @@
 LOG_MODULE_REGISTER(pdn, CONFIG_PDN_LOG_LEVEL);
 
 #define CID_UNASSIGNED (-1)
+#define CP_ID_UNASSIGNED (-1)
 
 #define PDN_ACT_REASON_NONE	 (-1)
 #define PDN_ACT_REASON_IPV4_ONLY (0)
@@ -155,9 +157,7 @@ static void on_cnec_esm(const char *notif)
 
 static void parse_cgev(const char *notif)
 {
-	char *p;
-	int8_t cid;
-	struct pdn *pdn;
+	const char *response;
 
 	/* we are on the system workqueue, let's not put this on the stack */
 	static const struct {
@@ -170,9 +170,9 @@ static void parse_cgev(const char *notif)
 		{"ME PDN DEACT", PDN_EVENT_DEACTIVATED},
 		/* +CGEV: NW PDN DEACT <cid> */
 		{"NW PDN DEACT", PDN_EVENT_DEACTIVATED},
-		/* +CGEV: ME DETACH */
+		/* +CGEV: ME DETACH [<cp_id>] */
 		{"ME DETACH",  PDN_EVENT_NETWORK_DETACH},
-		/* +CGEV: NW DETACH */
+		/* +CGEV: NW DETACH [<cp_id>] */
 		{"NW DETACH",  PDN_EVENT_NETWORK_DETACH},
 		/* --- Order is important from here --- */
 		/* +CGEV: IPV6 FAIL <cid> */
@@ -181,36 +181,67 @@ static void parse_cgev(const char *notif)
 		{"IPV6", PDN_EVENT_IPV6_UP},
 	};
 
+	/* Skip the '+CGEV:' prefix and any spaces */
+	response = strchr(notif, ':');
+	if (!response) {
+		return;
+	}
+
+	response++;
+
+	while (isspace(*response)) {
+		response++;
+	}
+
+	/* Loop through the map and find the event */
 	for (size_t i = 0; i < ARRAY_SIZE(map); i++) {
-		p = strstr(notif, map[i].notif);
-		if (!p) {
+		size_t notif_len = strlen(map[i].notif);
+		enum pdn_event event;
+		int8_t cid = CID_UNASSIGNED;
+		int8_t reason = PDN_ACT_REASON_NONE;
+		struct pdn *pdn;
+		char *p;
+
+		if (strncmp(response, map[i].notif, notif_len) != 0) {
 			continue;
 		}
 
-		/* parse <cid> */
-		p += strlen(map[i].notif);
+		event = map[i].event;
+		p = (char *)(response + notif_len);
+
+		/* Parse optional <cid> */
 		if (*p == ' ') {
-			cid = (uint8_t)strtoul(p, &p, 10);
-		} else {
-			cid = CID_UNASSIGNED;
+			switch (event) {
+				case PDN_EVENT_ACTIVATED:
+				case PDN_EVENT_DEACTIVATED:
+				case PDN_EVENT_IPV6_UP:
+				case PDN_EVENT_IPV6_DOWN:
+					cid = (int8_t)strtoul(p, &p, 10);
+
+					break;
+				default:
+					break;
+			}
 		}
 
-		if (map[i].event == PDN_EVENT_ACTIVATED && cid == pdn_act_notif.cid) {
-			/* parse <reason> */
+		/* Handle special case where pdn_activate() is waiting for the ACTIVATED event */
+		if (event == PDN_EVENT_ACTIVATED && cid == pdn_act_notif.cid) {
 			if (*p == ',') {
-				pdn_act_notif.reason = (int8_t)strtol(p + 1, NULL, 10);
-			} else {
-				pdn_act_notif.reason = PDN_ACT_REASON_NONE;
+				reason = (int8_t)strtol(p + 1, NULL, 10);
 			}
+
+			pdn_act_notif.reason = reason;
+
 			k_sem_give(&sem_cgev);
 		}
 
 		SYS_SLIST_FOR_EACH_CONTAINER(&pdn_contexts, pdn, node) {
 			if (pdn->callback &&
-			    (pdn->context_id == cid || map[i].event == PDN_EVENT_NETWORK_DETACH)) {
-				pdn->callback(pdn->context_id, map[i].event, 0);
+			    (pdn->context_id == cid || event == PDN_EVENT_NETWORK_DETACH)) {
+				pdn->callback(pdn->context_id, event, 0);
 			}
 		}
+
 		return;
 	}
 }
