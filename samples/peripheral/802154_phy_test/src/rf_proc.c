@@ -15,11 +15,7 @@
 #include <nrfx_gpiote.h>
 #endif /* IS_ENABLED(CONFIG_PTT_ANTENNA_DIVERSITY) */
 
-#if defined(DPPI_PRESENT)
-#include <nrfx_dppi.h>
-#else
-#include <nrfx_ppi.h>
-#endif
+#include <helpers/nrfx_gppi.h>
 
 #include "nrf_802154.h"
 #include "nrf_802154_sl_ant_div.h"
@@ -145,7 +141,6 @@ void rf_uninit(void)
 #if CONFIG_PTT_ANTENNA_DIVERSITY
 static void configure_antenna_diversity(void)
 {
-	nrf_ppi_channel_t ppi_channel;
 	uint8_t gpiote_channel;
 	NRF_TIMER_Type *ad_timer = NRF_TIMER3;
 
@@ -155,8 +150,7 @@ static void configure_antenna_diversity(void)
 		.p_timer = ad_timer
 	};
 
-	nrfx_ppi_channel_alloc(&ppi_channel);
-	cfg.ppi_ch = (uint8_t)ppi_channel;
+	(void)nrfx_gppi_channel_alloc(0 ,&cfg.ppi_ch);
 	nrfx_gpiote_channel_alloc(&gpiote, &gpiote_channel);
 	cfg.gpiote_ch = gpiote_channel;
 	nrf_802154_sl_ant_div_mode_t ant_div_auto = 0x02;
