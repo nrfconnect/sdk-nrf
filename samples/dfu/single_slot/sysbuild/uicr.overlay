@@ -1,0 +1,11 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * As periphconf_partition has been moved, the new
+ * partitioning has to be passed to the UICR generator.
+ */
+#include "nrf54h20.overlay"
