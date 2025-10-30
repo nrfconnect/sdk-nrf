@@ -129,6 +129,13 @@ int bl_root_of_trust_verify_external(
 					firmware, firmware_len, true);
 }
 
+void bl_root_of_trust_housekeeping(void)
+{
+#if defined(CONFIG_SB_CRYPTO_PSA_ED25519)
+	bl_ed25519_keys_housekeeping();
+#endif
+}
+
 #if !defined(CONFIG_BL_SHA256_EXT_API_REQUIRED) && !defined(CONFIG_SB_CRYPTO_NONE)
 int bl_sha256_verify(const uint8_t *data, uint32_t data_len, const uint8_t *expected)
 {

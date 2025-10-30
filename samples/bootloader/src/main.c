@@ -122,6 +122,14 @@ static void validate_and_boot(const struct fw_info *fw_info, counter_t slot)
 		}
 	}
 
+	/*
+	 * We can lock the keys and other resources now, as any failures
+	 * in the bl_boot function are considered fatal and would prevent
+	 * the alternate image from booting as well.
+	 * Thus, we meet the criteria for calling bl_validate_housekeeping.
+	 */
+	bl_validate_housekeeping();
+
 	bl_boot(fw_info);
 }
 
@@ -156,5 +164,6 @@ int main(void)
 	}
 
 	printk("No bootable image found. Aborting boot.\r\n");
+	bl_validate_housekeeping();
 	return 0;
 }
