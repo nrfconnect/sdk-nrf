@@ -6,6 +6,7 @@
 
 #include <hal/nrf_gpiote.h>
 #include <nrfx_gpiote.h>
+#include <gpiote_nrfx.h>
 #include <helpers/nrfx_gppi.h>
 
 #include <debug/ppi_trace.h>
@@ -14,36 +15,26 @@
 LOG_MODULE_REGISTER(ppi_trace, CONFIG_PPI_TRACE_LOG_LEVEL);
 
 #define GPIOTE_NODE(gpio_node) DT_PHANDLE(gpio_node, gpiote_instance)
-#define INVALID_NRFX_GPIOTE_INSTANCE \
-	{ .p_reg = NULL }
-#define GPIOTE_INST_AND_COMMA(gpio_node) \
-	[DT_PROP(gpio_node, port)] = \
-		COND_CODE_1(DT_NODE_HAS_PROP(gpio_node, gpiote_instance), \
-			(NRFX_GPIOTE_INSTANCE(DT_PROP(GPIOTE_NODE(gpio_node), instance))), \
-			(INVALID_NRFX_GPIOTE_INSTANCE)),
+#define GPIOTE_INST_AND_COMMA(gpio_node) [DT_PROP(gpio_node, port)] =	  \
+	COND_CODE_1(DT_NODE_HAS_PROP(gpio_node, gpiote_instance),	  \
+		    (&GPIOTE_NRFX_INST_BY_NODE(GPIOTE_NODE(gpio_node))), \
+		    (NULL)),
 
 typedef struct {
-	const nrfx_gpiote_t *gpiote;
-	uint8_t              gpiote_channel;
+	nrfx_gpiote_t *gpiote;
+	uint8_t        gpiote_channel;
 } ppi_trace_gpiote_pin_t;
 
 static atomic_t alloc_cnt;
 static uint32_t handle_pool[CONFIG_PPI_TRACE_PIN_CNT];
 
-static const nrfx_gpiote_t *get_gpiote(nrfx_gpiote_pin_t pin)
+static nrfx_gpiote_t *get_gpiote(nrfx_gpiote_pin_t pin)
 {
-	static const nrfx_gpiote_t gpiote[GPIO_COUNT] = {
+	static nrfx_gpiote_t * const gpiote_per_port[GPIO_COUNT] = {
 		DT_FOREACH_STATUS_OKAY(nordic_nrf_gpio, GPIOTE_INST_AND_COMMA)
 	};
 
-	const nrfx_gpiote_t *result = &gpiote[pin >> 5];
-
-	if (result->p_reg == NULL) {
-		/* On given pin's port there is no GPIOTE. */
-		result = NULL;
-	}
-
-	return result;
+	return gpiote_per_port[NRF_PIN_NUMBER_TO_PORT(pin)];
 }
 
 static bool ppi_trace_gpiote_pin_init(
