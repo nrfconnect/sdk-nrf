@@ -142,6 +142,7 @@ Security
   * The :ref:`security_index` page with a table that lists the versions of security components implemented in the |NCS|.
   * The :ref:`secure_storage_in_ncs` page with updated information about the secure storage configuration in the |NCS|.
     Also renamed the page from "Trusted storage in the |NCS|."
+  * The :ref:`ug_crypto_supported_features` page with the missing entries for the HMAC key type (:kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`).
 
 Protocols
 =========

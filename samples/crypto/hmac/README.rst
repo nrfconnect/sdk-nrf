@@ -23,8 +23,8 @@ Overview
 
 The sample :ref:`enables PSA Crypto API <psa_crypto_support_enable>` and configures the following Kconfig options for the cryptographic features:
 
-* :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC` - Used to enable support for HMAC key types.
-* :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC` - Used to enable support for the HMAC message authentication code algorithm from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_mac_algorithms`.
+* :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC` - Used to enable support for the HMAC key type from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_key_types`.
+* :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC` - Used to enable support for the HMAC algorithm from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_mac_algorithms`.
 * :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256` - Used to enable support for the SHA-256 hash algorithm from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_hash_algorithms`.
 
 .. include:: /samples/crypto/aes_cbc/README.rst
