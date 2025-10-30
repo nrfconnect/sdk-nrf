@@ -102,6 +102,16 @@ int bl_root_of_trust_verify_external(const uint8_t *public_key,
 				     const uint32_t firmware_len);
 
 /**
+ * @brief Perform root of trust housekeeping operations.
+ *
+ * This function performs cleanup and security housekeeping tasks for the
+ * root of trust crypto subsystems. It ensures that cryptographic keys are
+ * properly secured and non-essential key material is removed from volatile
+ * memory after the bootloader no longer needs access to them.
+ */
+void bl_root_of_trust_housekeeping(void);
+
+/**
  * @brief Initialize a sha256 operation context variable.
  *
  * @param[out]  ctx  Context to be initialized.
@@ -270,6 +280,17 @@ typedef int (*bl_secp256r1_validate_t)(
 int bl_ed25519_validate(const uint8_t *hash,
 			uint32_t hash_len,
 			const uint8_t *signature);
+
+/**
+ * @brief Perform ED25519 key storage housekeeping operations.
+ *
+ * This function performs crypto key storage housekeeping for ED25519 keys.
+ * It iterates through KMU (Key Management Unit) keys, applies security
+ * policies by locking them, and purges key material from volatile memory.
+ * This ensures keys are secured and memory is cleaned up after the bootloader
+ * completes its cryptographic operations.
+ */
+void bl_ed25519_keys_housekeeping(void);
 
 /**
  * @brief Structure describing the BL_ROT_VERIFY EXT_API.

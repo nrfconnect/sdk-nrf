@@ -524,6 +524,11 @@ bool bl_validate_firmware_local(uint32_t fw_address, const struct fw_info *fwinf
 {
 	return validate_firmware(fw_address, fw_address, fwinfo, false);
 }
+
+void bl_validate_housekeeping(void)
+{
+	bl_root_of_trust_housekeeping();
+}
 #endif
 
 bool bl_validate_firmware_available(void)
