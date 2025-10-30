@@ -28,9 +28,6 @@ CONFIG_NRF_GRTC_START_SYSCOUNTER=y
 # LFRC is not working in EMU at the moment
 # CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
 
-# CRACEN not available on emulator
-CONFIG_CRACEN_LIB_KMU=n
-
 # Enable Debugging when working with emulator
 CONFIG_OUTPUT_DISASSEMBLY=y
 CONFIG_DEBUG=y

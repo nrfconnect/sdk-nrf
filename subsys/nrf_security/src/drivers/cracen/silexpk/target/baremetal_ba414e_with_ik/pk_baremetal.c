@@ -28,6 +28,11 @@
 then update this error
 #endif
 
+#if defined(CONFIG_CRACEN_NEED_RNG_NO_ENTROPY_WORKAROUND)
+#warning "CONFIG_CRACEN_NEED_RNG_NO_ENTROPY_WORKAROUND is enabled, any use of CRACEN IKG module \
+with entropy will fail"
+#endif
+
 #ifndef ADDR_BA414EP_REGS_BASE
 #define ADDR_BA414EP_REGS_BASE CRACEN_ADDR_BA414EP_REGS_BASE
 #endif
@@ -123,7 +128,16 @@ int sx_pk_wait(sx_pk_req *req)
 			 * Error code is returned here so the entire operation can be rerun
 			 */
 			if (sx_pk_rdreg(&req->regs, IK_REG_STATUS) == IK_ENTROPY_ERROR) {
-				return SX_ERR_RETRY;
+				if (IS_ENABLED(CONFIG_CRACEN_NEED_RNG_NO_ENTROPY_WORKAROUND)) {
+					/* Do a soft reset of the IKG to ensure entropy error status
+					 * register is cleared for the next use
+					 */
+					sx_pk_wrreg(&req->regs, IK_REG_SOFT_RST, 1);
+					sx_pk_wrreg(&req->regs, IK_REG_SOFT_RST, 0);
+					return SX_OK;
+				} else {
+					return SX_ERR_RETRY;
+				}
 			}
 		} else {
 			/* For compliance */
