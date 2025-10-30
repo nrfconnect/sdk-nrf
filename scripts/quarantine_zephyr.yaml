@@ -598,3 +598,7 @@
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "Requires rebase on collab-nrfx-4.0 branch"
+
+- scenarios:
+    - examples.nrfx.*
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8588"
