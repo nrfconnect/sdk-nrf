@@ -132,6 +132,10 @@ int sx_trng_open(struct sx_trng *ctx, const struct sx_trng_config *config)
 	control |= ctrlbitmask;
 	control |= BA431_FLD_Control_Enable_MASK;
 
+	if (IS_ENABLED(CONFIG_CRACEN_NEED_RNG_NO_ENTROPY_WORKAROUND)) {
+		control |= RNG_RAW_MODE;
+	}
+
 	sx_wr_trng(BA431_REG_Control_OFST, control);
 
 	return SX_OK;
