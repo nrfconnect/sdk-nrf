@@ -15,17 +15,13 @@
 #include <zephyr/drivers/gpio.h>
 #include <soc.h>
 #include <nrfx_gpiote.h>
+#include <gpiote_nrfx.h>
 #include <helpers/nrfx_gppi.h>
 #include "iso_time_sync.h"
 
-#define GPIOTE_INST NRF_DT_GPIOTE_INST(DT_ALIAS(led1), gpios)
-#define GPIOTE_NODE DT_NODELABEL(_CONCAT(gpiote, GPIOTE_INST))
+#define GPIOTE_NODE NRF_DT_GPIOTE_NODE(DT_ALIAS(led1), gpios)
 #define LED_PIN NRF_DT_GPIOS_TO_PSEL(DT_ALIAS(led1), gpios)
 
-BUILD_ASSERT(IS_ENABLED(_CONCAT(CONFIG_, _CONCAT(NRFX_GPIOTE, GPIOTE_INST))),
-	     "NRFX_GPIOTE" STRINGIFY(GPIOTE_INST) " must be enabled in Kconfig");
-
-static const nrfx_gpiote_t gpiote = NRFX_GPIOTE_INSTANCE(GPIOTE_INST);
 static struct gpio_dt_spec led = GPIO_DT_SPEC_GET_OR(DT_ALIAS(led1), gpios, {0});
 
 static uint8_t previous_led_value;
@@ -35,6 +31,7 @@ int timed_led_toggle_init(void)
 	int err;
 	nrfx_gppi_handle_t ppi_led_toggle;
 	uint8_t gpiote_chan_led_toggle;
+	nrfx_gpiote_t *gpiote = &GPIOTE_NRFX_INST_BY_NODE(GPIOTE_NODE);
 
 	const nrfx_gpiote_output_config_t gpiote_output_cfg = NRFX_GPIOTE_DEFAULT_OUTPUT_CONFIG;
 
@@ -45,7 +42,7 @@ int timed_led_toggle_init(void)
 		return err;
 	}
 
-	if (nrfx_gpiote_channel_alloc(&gpiote, &gpiote_chan_led_toggle) != NRFX_SUCCESS) {
+	if (nrfx_gpiote_channel_alloc(gpiote, &gpiote_chan_led_toggle) != 0) {
 		printk("Failed allocating GPIOTE chan for setting led\n");
 		return -ENOMEM;
 	}
@@ -57,8 +54,8 @@ int timed_led_toggle_init(void)
 			NRF_GPIOTE_INITIAL_VALUE_HIGH : NRF_GPIOTE_INITIAL_VALUE_LOW,
 	};
 
-	if (nrfx_gpiote_output_configure(&gpiote, LED_PIN, &gpiote_output_cfg,
-					 &task_cfg_led_toggle) != NRFX_SUCCESS) {
+	if (nrfx_gpiote_output_configure(gpiote, LED_PIN, &gpiote_output_cfg,
+					 &task_cfg_led_toggle) != 0) {
 		printk("Failed configuring GPIOTE chan for toggling led\n");
 		return -ENOMEM;
 	}
@@ -72,7 +69,7 @@ int timed_led_toggle_init(void)
 	}
 
 	nrfx_gppi_conn_enable(ppi_led_toggle);
-	nrfx_gpiote_out_task_enable(&gpiote, LED_PIN);
+	nrfx_gpiote_out_task_enable(gpiote, LED_PIN);
 
 	return 0;
 }
