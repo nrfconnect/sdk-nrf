@@ -10,3 +10,5 @@ board:
       cpucluster: cpuapp
     - name: emu
       cpucluster: cpuapp
+    - name: fpga
+      cpucluster: cpuapp
