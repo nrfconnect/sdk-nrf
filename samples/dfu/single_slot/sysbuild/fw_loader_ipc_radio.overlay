@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "nrf54h20.overlay"
+
+/* The zephyr,code-partition is always set to fw_loader_partition in firmware
+ * loader image(s).
+ */
+/delete-node/ &slot1_partition;
+slot1_partition: &cpurad_slot0_partition {};
