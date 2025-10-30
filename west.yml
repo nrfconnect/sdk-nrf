@@ -280,7 +280,7 @@ manifest:
       path: nrfx
       groups:
         - nrfx
-      revision: pull/996/head
+      revision: pull/999/head
 
   # West-related configuration for the nrf repository.
   self:
