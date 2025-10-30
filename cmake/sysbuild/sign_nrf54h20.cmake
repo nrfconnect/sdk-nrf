@@ -272,11 +272,9 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
     CONFIG_KERNEL_BIN_NAME KCONFIG)
   cmake_path(GET BINARY_DIR PARENT_PATH sysbuild_build_dir)
   if(CONFIG_NCS_IS_VARIANT_IMAGE)
-    cmake_path(APPEND sysbuild_build_dir "zephyr"
-      "${BINARY_BIN_FILE}_secondary_app" OUTPUT_VARIABLE output)
+    cmake_path(APPEND sysbuild_build_dir "${BINARY_BIN_FILE}_secondary_app" OUTPUT_VARIABLE output)
   else()
-    cmake_path(APPEND sysbuild_build_dir "zephyr" "${BINARY_BIN_FILE}"
-      OUTPUT_VARIABLE output)
+    cmake_path(APPEND sysbuild_build_dir "${BINARY_BIN_FILE}" OUTPUT_VARIABLE output)
   endif()
 
   # List of additional build byproducts.

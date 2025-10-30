@@ -178,8 +178,8 @@ function(dfu_app_zip_package)
           )
         else()
           list(APPEND bin_files
-               "${CMAKE_BINARY_DIR}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
-               "${CMAKE_BINARY_DIR}/zephyr/${CONFIG_KERNEL_BIN_NAME}_secondary_app.signed.bin"
+               "${CMAKE_BINARY_DIR}/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
+               "${CMAKE_BINARY_DIR}/${CONFIG_KERNEL_BIN_NAME}_secondary_app.signed.bin"
           )
         endif()
 

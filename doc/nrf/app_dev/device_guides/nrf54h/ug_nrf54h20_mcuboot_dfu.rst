@@ -167,8 +167,8 @@ For DFU over a serial connection, use the :ref:`dfu_tools_mcumgr_cli`.
    Refer to the sample's DTS overlay files to understand the partition layout.
    In contrast, Swap modes place application and radio images in separate MCUboot slots, enabling multi-image updates.
 
-   Direct XIP (merged) build artifacts are generated in ``build/zephyr``.
-   Swap-mode artifacts reside in subdirectories under ``build`` (for example, ``build/smp_svr/zephyr`` or ``build/ipc_radio/zephyr``).
+   Direct-xip (merged) build artifacts are generated in the :file:`build` directory.
+   Swap-mode artifacts reside in subdirectories of the applications build folders under the :file:`build/<application>/zephyr` directory path (for example, :file:`build/smp_svr/zephyr` or :file:`build/ipc_radio/zephyr`).
 
 .. note::
    DFU from external flash is currently not supported on the nRF54H20 SoC.

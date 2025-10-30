@@ -85,7 +85,7 @@ class UpgradeTestDirectXipUseMCUmgrNRF54H(UpgradeTestDirectXipUseMCUmgr):
         """Generate image for direct XIP secondary slot."""
         logger.info("Generate image for direct xip secondary slot")
         req_build_dir = get_required_build_for_direct_xip_nRF54H(self.dut, self.get_current_sign_version())
-        secondary_image = req_build_dir / "zephyr" / "zephyr_secondary_app.signed.bin"
+        secondary_image = req_build_dir / "zephyr_secondary_app.signed.bin"
         assert secondary_image.is_file(), f"Secondary image not found: {secondary_image}"
         return secondary_image
 
@@ -93,7 +93,7 @@ class UpgradeTestDirectXipUseMCUmgrNRF54H(UpgradeTestDirectXipUseMCUmgr):
         """Generate image for direct XIP primary slot."""
         logger.info("Generate image for direct xip primary slot")
         req_build_dir = get_required_build_for_direct_xip_nRF54H(self.dut, self.get_current_sign_version())
-        primary_image = req_build_dir / "zephyr" / "zephyr.signed.bin"
+        primary_image = req_build_dir / "zephyr.signed.bin"
         assert primary_image.is_file(), f"Primary image not found: {primary_image}"
         return primary_image
 
@@ -233,7 +233,7 @@ class TestDirectXip:
         # not downgraded, upload the original app to the secondary slot,
         # and verify that the primary slot is still loaded
         if "nrf54h" in dut.device_config.platform:
-            tm.image_upload(dut.device_config.build_dir / "zephyr" / "zephyr.signed.bin")
+            tm.image_upload(dut.device_config.build_dir / "zephyr_secondary_app.signed.bin")
         else:
             tm.image_upload(dut.device_config.build_dir / "mcuboot_secondary_app" / "zephyr" / "zephyr.signed.bin")
         tm.reset_device_from_shell()

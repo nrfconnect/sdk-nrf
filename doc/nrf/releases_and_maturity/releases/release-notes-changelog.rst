@@ -73,7 +73,7 @@ Developing with nRF54L Series
 Developing with nRF54H Series
 =============================
 
-|no_changes_yet_note|
+* Updated the location of the merged binaries in direct-xip mode from :file:`build/zephyr` to :file:`build`.
 
 Developing with nRF53 Series
 ============================
