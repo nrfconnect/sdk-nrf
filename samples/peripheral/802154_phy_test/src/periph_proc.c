@@ -84,7 +84,7 @@ static const struct device *gpio_port1_dev = DEVICE_DT_GET(DT_NODELABEL(gpio1));
 #endif
 
 #if IS_ENABLED(CONFIG_PTT_CLK_OUT)
-uint8_t ppi_channel;
+nrfx_gppi_handle_t ppi_handle;
 uint8_t task_channel;
 #endif /* IS_ENABLED(CONFIG_PTT_CLK_OUT) */
 
@@ -143,6 +143,7 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 {
 #if IS_ENABLED(CONFIG_PTT_CLK_OUT)
 	uint32_t compare_evt_addr;
+	uint32_t tep;
 	nrfx_err_t err;
 	const nrfx_gpiote_t *gpiote = NRF_GPIOTE_FOR_PSEL(pin);
 
@@ -178,35 +179,30 @@ bool ptt_clk_out_ext(uint8_t pin, bool mode)
 
 		compare_evt_addr =
 			nrfx_timer_event_address_get(&clk_timer, NRF_TIMER_EVENT_COMPARE0);
-
+		tep = nrfx_gpiote_out_task_address_get(gpiote, pin);
 		nrfx_gpiote_out_task_enable(gpiote, pin);
 
 		/* Allocate a (D)PPI channel. */
-		err = nrfx_gppi_channel_alloc(&ppi_channel);
-
-		if (err != NRFX_SUCCESS) {
+		err = nrfx_gppi_conn_alloc(compare_evt_addr, tep, &ppi_handle);
+		if (err < 0) {
 			LOG_ERR("(D)PPI channel allocation error: %08x", err);
 			return false;
 		}
 
-		nrfx_gppi_channel_endpoints_setup(
-			ppi_channel, compare_evt_addr,
-			nrf_gpiote_task_address_get(gpiote->p_reg,
-						    nrfx_gpiote_in_event_get(gpiote, pin)));
-
 		/* Enable (D)PPI channel. */
-		nrfx_gppi_channels_enable(BIT(ppi_channel));
+		nrfx_gppi_conn_enable(ppi_handle);
 
 		nrfx_timer_enable(&clk_timer);
 	} else {
 		nrfx_timer_disable(&clk_timer);
 		nrfx_gpiote_out_task_disable(gpiote, pin);
-		err = nrfx_gppi_channel_free(ppi_channel);
 
-		if (err != NRFX_SUCCESS) {
-			LOG_ERR("Failed to disable (D)PPI channel, error: %08x", err);
-			return false;
-		}
+		compare_evt_addr =
+			nrfx_timer_event_address_get(&clk_timer, NRF_TIMER_EVENT_COMPARE0);
+		tep = nrfx_gpiote_out_task_address_get(gpiote, pin);
+		nrfx_gppi_conn_disable(ppi_handle);
+		nrfx_gppi_conn_free(compare_evt_addr, tep, ppi_handle);
+
 		nrfx_gpiote_pin_uninit(gpiote, pin);
 		err = nrfx_gpiote_channel_free(gpiote, task_channel);
 
