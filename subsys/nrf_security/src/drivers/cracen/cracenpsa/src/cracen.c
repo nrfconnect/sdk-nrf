@@ -55,6 +55,10 @@ void cracen_acquire(void)
 	nrf_security_mutex_lock(cracen_mutex);
 
 	if (users++ == 0) {
+		/* Wait for KMU's erase key completion */
+		while (NRF_KMU->STATUS == KMU_STATUS_STATUS_Busy) {
+		}
+
 		nrf_cracen_module_enable(NRF_CRACEN, CRACEN_ENABLE_CRYPTOMASTER_Msk |
 							     CRACEN_ENABLE_RNG_Msk |
 							     CRACEN_ENABLE_PKEIKG_Msk);
