@@ -46,7 +46,7 @@ LOG_MODULE_REGISTER(log_rpc);
 	sizeof((meta).assert_line) + 1 + \
 	((meta).assert_line ? (strlen((meta).assert_filename) + 3) : 1)
 
-#ifdef CONFIG_LOG_BACKEND_RPC_HISTORY
+#ifdef CONFIG_LOG_BACKEND_RPC_CRASH_LOG
 struct arm_arch_block {
 	struct {
 		uint32_t r0;
@@ -90,6 +90,12 @@ static struct coredump_mem_region_node dump_region = {
 };
 
 static const uint8_t CRASH_INFO_MAGIC[] = { 'D', 'U', 'M', 'P', 'I', 'N', 'F', 'O' };
+#endif
+
+#ifdef CONFIG_LOG_TIMESTAMP_64BIT
+typedef int64_t log_timedelta_t;
+#else
+typedef int32_t log_timedelta_t;
 #endif
 
 static const uint32_t common_output_flags =
@@ -938,7 +944,7 @@ static void log_rpc_set_time_handler(const struct nrf_rpc_group *group,
 	k_sched_unlock();
 
 	LOG_WRN("Log time shifted by %" PRId64 " us",
-		((int64_t)log_timestamp_delta - (int64_t)old_delta) * USEC_PER_TICK);
+		(int64_t)(log_timedelta_t)(log_timestamp_delta - old_delta) * USEC_PER_TICK);
 
 	nrf_rpc_rsp_send_void(group);
 }
