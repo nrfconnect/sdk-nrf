@@ -15,6 +15,7 @@
 
 #include <mpsl_fem_config_nrf2220.h>
 #include <nrfx_gpiote.h>
+#include <gpiote_nrfx.h>
 #include <mpsl_fem_utils.h>
 #include <mpsl_fem_twi_drv.h>
 
@@ -32,6 +33,8 @@
 #if !defined(CONFIG_PINCTRL)
 #error "The nRF2220 driver must be used with CONFIG_PINCTRL! Set CONFIG_PINCTRL=y"
 #endif
+
+#define RADIO_FEM_NODE DT_NODELABEL(nrf_radio_fem)
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), twi_if)
 #define MPSL_FEM_TWI_IF      DT_PHANDLE(DT_NODELABEL(nrf_radio_fem), twi_if)
@@ -97,15 +100,17 @@ static int fem_nrf2220_configure(void)
 {
 	int err;
 
-	const nrfx_gpiote_t cs_gpiote = NRFX_GPIOTE_INSTANCE(
-		NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), cs_gpios));
-	if (nrfx_gpiote_channel_alloc(&cs_gpiote, &cs_gpiote_channel) != NRFX_SUCCESS) {
+	nrfx_gpiote_t *cs_gpiote =
+		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(RADIO_FEM_NODE, cs_gpios));
+
+	if (nrfx_gpiote_channel_alloc(cs_gpiote, &cs_gpiote_channel) != 0) {
 		return -ENOMEM;
 	}
 
-	const nrfx_gpiote_t md_gpiote = NRFX_GPIOTE_INSTANCE(
-		NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), md_gpios));
-	if (nrfx_gpiote_channel_alloc(&md_gpiote, &md_gpiote_channel) != NRFX_SUCCESS) {
+	nrfx_gpiote_t *md_gpiote =
+		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(RADIO_FEM_NODE, md_gpios));
+
+	if (nrfx_gpiote_channel_alloc(md_gpiote, &md_gpiote_channel) != 0) {
 		return -ENOMEM;
 	}
 
@@ -124,7 +129,7 @@ static int fem_nrf2220_configure(void)
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(cs_gpios),
 			.gpiote_ch_id  = cs_gpiote_channel,
 #if defined(NRF54L_SERIES)
-			.p_gpiote = cs_gpiote.p_reg,
+			.p_gpiote = cs_gpiote->p_reg,
 #endif
 		},
 		.md_pin_config = {
@@ -137,7 +142,7 @@ static int fem_nrf2220_configure(void)
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(md_gpios),
 			.gpiote_ch_id  = md_gpiote_channel,
 #if defined(NRF54L_SERIES)
-			.p_gpiote = md_gpiote.p_reg,
+			.p_gpiote = md_gpiote->p_reg,
 #endif
 		}
 	};
