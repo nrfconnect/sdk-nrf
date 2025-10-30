@@ -16,6 +16,7 @@
 #include "mpsl_fem_power_model_interface.h"
 #endif
 #include <nrfx_gpiote.h>
+#include <gpiote_nrfx.h>
 #include <mpsl_fem_utils.h>
 #else /* !defined(CONFIG_MPSL_FEM_PIN_FORWARDER) */
 #include <soc_secure.h>
@@ -24,6 +25,8 @@
 #endif
 #endif /* !defined(CONFIG_MPSL_FEM_PIN_FORWARDER) */
 
+#define RADIO_FEM_NODE DT_NODELABEL(nrf_radio_fem)
+
 #if !defined(CONFIG_MPSL_FEM_PIN_FORWARDER)
 static int fem_nrf21540_gpio_configure(void)
 {
@@ -31,30 +34,30 @@ static int fem_nrf21540_gpio_configure(void)
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), tx_en_gpios)
 	uint8_t txen_gpiote_channel;
-	const nrfx_gpiote_t txen_gpiote = NRFX_GPIOTE_INSTANCE(
-		NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), tx_en_gpios));
+	nrfx_gpiote_t *txen_gpiote =
+		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(RADIO_FEM_NODE, tx_en_gpios));
 
-	if (nrfx_gpiote_channel_alloc(&txen_gpiote, &txen_gpiote_channel) != NRFX_SUCCESS) {
+	if (nrfx_gpiote_channel_alloc(txen_gpiote, &txen_gpiote_channel) != 0) {
 		return -ENOMEM;
 	}
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), rx_en_gpios)
 	uint8_t rxen_gpiote_channel;
-	const nrfx_gpiote_t rxen_gpiote = NRFX_GPIOTE_INSTANCE(
-		NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), rx_en_gpios));
+	nrfx_gpiote_t *rxen_gpiote =
+		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(RADIO_FEM_NODE, rx_en_gpios));
 
-	if (nrfx_gpiote_channel_alloc(&rxen_gpiote, &rxen_gpiote_channel) != NRFX_SUCCESS) {
+	if (nrfx_gpiote_channel_alloc(rxen_gpiote, &rxen_gpiote_channel) != 0) {
 		return -ENOMEM;
 	}
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios)
 	uint8_t pdn_gpiote_channel;
-	const nrfx_gpiote_t pdn_gpiote = NRFX_GPIOTE_INSTANCE(
-		NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), pdn_gpios));
+	nrfx_gpiote_t *pdn_gpiote =
+		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(RADIO_FEM_NODE, pdn_gpios));
 
-	if (nrfx_gpiote_channel_alloc(&pdn_gpiote, &pdn_gpiote_channel) != NRFX_SUCCESS) {
+	if (nrfx_gpiote_channel_alloc(pdn_gpiote, &pdn_gpiote_channel) != 0) {
 		return -ENOMEM;
 	}
 #endif
@@ -93,7 +96,7 @@ static int fem_nrf21540_gpio_configure(void)
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(tx_en_gpios),
 			.gpiote_ch_id  = txen_gpiote_channel,
 #if defined(NRF54L_SERIES)
-			.p_gpiote = txen_gpiote.p_reg,
+			.p_gpiote = txen_gpiote->p_reg,
 #endif
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
@@ -110,7 +113,7 @@ static int fem_nrf21540_gpio_configure(void)
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(rx_en_gpios),
 			.gpiote_ch_id  = rxen_gpiote_channel,
 #if defined(NRF54L_SERIES)
-			.p_gpiote = rxen_gpiote.p_reg,
+			.p_gpiote = rxen_gpiote->p_reg,
 #endif
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
@@ -127,7 +130,7 @@ static int fem_nrf21540_gpio_configure(void)
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(pdn_gpios),
 			.gpiote_ch_id  = pdn_gpiote_channel,
 #if defined(NRF54L_SERIES)
-			.p_gpiote = pdn_gpiote.p_reg,
+			.p_gpiote = pdn_gpiote->p_reg,
 #endif
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
