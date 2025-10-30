@@ -1,0 +1,92 @@
+common:
+  sysbuild: true
+  depends_on: gpio
+  tags:
+    - drivers
+    - uart
+    - ci_tests_drivers_uart
+  harness_config:
+    fixture: gpio_loopback
+
+tests:
+  drivers.uart.async_int.nrf54h:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - CONFIG_ASYNC_AND_INT=y
+      - CONFIG_UART_ASYNC_API=y
+      - CONFIG_UART_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_134_INTERRUPT_DRIVEN=n
+      - CONFIG_UART_134_ASYNC=y
+      - CONFIG_UART_131_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_131_ASYNC=n
+
+  drivers.uart.async_poll.nrf54h:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - CONFIG_ASYNC_AND_POLL=y
+      - CONFIG_UART_ASYNC_API=y
+      - CONFIG_UART_INTERRUPT_DRIVEN=n
+      - CONFIG_UART_134_ASYNC=y
+      - CONFIG_UART_131_ASYNC=n
+
+  drivers.uart.int_poll.nrf54h:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - CONFIG_INT_AND_POLL=y
+      - CONFIG_UART_ASYNC_API=n
+      - CONFIG_UART_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_134_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_131_INTERRUPT_DRIVEN=n
+
+  drivers.uart.async_int.nrf54l:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args:
+      - CONFIG_ASYNC_AND_INT=y
+      - CONFIG_UART_ASYNC_API=y
+      - CONFIG_UART_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_21_INTERRUPT_DRIVEN=n
+      - CONFIG_UART_21_ASYNC=y
+      - CONFIG_UART_22_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_22_ASYNC=n
+
+  drivers.uart.async_poll.nrf54l:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args:
+      - CONFIG_ASYNC_AND_POLL=y
+      - CONFIG_UART_ASYNC_API=y
+      - CONFIG_UART_INTERRUPT_DRIVEN=n
+      - CONFIG_UART_21_ASYNC=y
+      - CONFIG_UART_22_ASYNC=n
+
+  drivers.uart.int_poll.nrf54l:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args:
+      - CONFIG_INT_AND_POLL=y
+      - CONFIG_UART_ASYNC_API=n
+      - CONFIG_UART_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_21_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_22_INTERRUPT_DRIVEN=n

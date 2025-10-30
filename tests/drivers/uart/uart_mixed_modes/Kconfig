@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+config ASYNC_AND_INT
+	bool "Async and int mode uart transmission test"
+
+config ASYNC_AND_POLL
+	bool "Async and poll mode uart transmission test"
+
+config INT_AND_POLL
+	bool "Int and poll mode uart transmission test"
