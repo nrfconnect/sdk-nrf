@@ -443,7 +443,26 @@ def generate_input(data: Data):
                 domain_build_dir = Path(os.path.join(build_dir, domain))
                 if len(targets) == 0:
                     targets = [DEFAULT_TARGET]
-                log.dbg(f'INPUT: build directory: {domain_build_dir}, targets: {targets}')
-                b = InputBuild(data, domain_build_dir)
+
+                valid_targets = []
                 for target in targets:
+                    target_name, _, map_override = target.partition(':')
+                    elf_path = domain_build_dir / target_name
+                    if map_override:
+                        map_path = domain_build_dir / map_override
+                    else:
+                        map_path = elf_path.with_suffix('.map')
+                    if not map_path.exists():
+                        log.wrn(f'Skipping domain "{domain}": map file expected at '
+                                f'"{map_path}" is missing.')
+                        continue
+                    valid_targets.append(target)
+                if len(valid_targets) == 0:
+                    log.wrn(f'No eligible targets found in domain "{domain}". Skipping SBOM '
+                            f'input collection for that domain.')
+                    continue
+
+                log.dbg(f'INPUT: build directory: {domain_build_dir}, targets: {valid_targets}')
+                b = InputBuild(data, domain_build_dir)
+                for target in valid_targets:
                     b.generate_from_target(target)
