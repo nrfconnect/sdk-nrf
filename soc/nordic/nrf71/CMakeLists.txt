@@ -4,6 +4,9 @@
 zephyr_library_sources(
   soc.c
 )
+zephyr_library_sources_ifdef(CONFIG_SOC_NRF7120_PREENG
+  soc_preeng.c
+)
 zephyr_include_directories(.)
 add_subdirectory(${ZEPHYR_BASE}/soc/nordic/common ${CMAKE_BINARY_DIR}/common)
 
