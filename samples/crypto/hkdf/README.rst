@@ -27,6 +27,7 @@ The sample :ref:`enables PSA Crypto API <psa_crypto_support_enable>` and configu
 * :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF` - Used to enable support for the HKDF key derivation algorithm from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_kdf_algorithms`.
 * :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC` - Used to enable support for the HMAC algorithm from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_mac_algorithms`.
 * :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256` - Used to enable support for the SHA-256 hash algorithm from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_hash_algorithms`.
+* :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC` - Used to enable support for the HMAC key type from among the supported cryptographic operations for :ref:`ug_crypto_supported_features_key_types`.
 
 .. include:: /samples/crypto/aes_cbc/README.rst
    :start-after: crypto_sample_overview_driver_selection_start

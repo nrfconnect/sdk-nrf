@@ -117,6 +117,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - XChaCha20
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XCHACHA20`
                  - --
+               * - HMAC
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
+                 - --
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
                  - --
@@ -251,6 +254,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - XChaCha20
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XCHACHA20`
+                 - Supported
+                 - Supported
+                 - Supported
+               * - HMAC
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
                  - Supported
                  - Supported
                  - Supported
@@ -409,6 +417,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - XChaCha20
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XCHACHA20`
                  - --
+               * - HMAC
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
+                 - --
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
                  - --
@@ -517,6 +528,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - XChaCha20
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XCHACHA20`
+                 - Supported
+               * - HMAC
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
                  - Supported
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
@@ -637,6 +651,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - XChaCha20
                  - ``PSA_WANT_KEY_TYPE_XCHACHA20``
+                 - --
+               * - HMAC
+                 - ``PSA_WANT_KEY_TYPE_HMAC``
                  - --
                * - HSS Public Key
                  - ``PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY``
@@ -813,6 +830,13 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
+              * - HMAC
+                - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
+                - Supported
+                - Supported
+                - Supported
+                - Experimental
+                - Experimental
               * - HSS Public Key
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
                 - --
@@ -1058,6 +1082,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - HMAC
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
                  - Supported
@@ -1295,6 +1326,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+               * - HMAC
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
+                 - --
+                 - --
+                 - --
+                 - --
                * - HSS Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
                  - --
@@ -1502,6 +1539,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - XChaCha20
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XCHACHA20`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+               * - HMAC
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
                  - Supported
                  - Supported
                  - Supported
