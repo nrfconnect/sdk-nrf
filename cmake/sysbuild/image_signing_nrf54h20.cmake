@@ -7,8 +7,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
   # Build path to the sysbuild build directory.
   cmake_path(ABSOLUTE_PATH ZEPHYR_BINARY_DIR OUTPUT_VARIABLE app_binary_dir)
   cmake_path(GET app_binary_dir PARENT_PATH app_build_dir)
-  cmake_path(GET app_build_dir PARENT_PATH sysbuild_build_dir)
-  cmake_path(APPEND sysbuild_build_dir "zephyr" OUTPUT_VARIABLE sysbuild_binary_dir)
+  cmake_path(GET app_build_dir PARENT_PATH sysbuild_binary_dir)
   cmake_path(APPEND sysbuild_binary_dir ${KERNEL_NAME} OUTPUT_VARIABLE output)
 
   if(CONFIG_BUILD_OUTPUT_BIN)

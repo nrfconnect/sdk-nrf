@@ -94,9 +94,9 @@ When building for the nRF54H20, the merge slot feature is used if Direct XIP is 
 This means that, for both slot A and slot B, the application image and the radio image are merged and treated as a single image by MCUboot.
 In this case, the following files should be sent to the device when performing an update:
 
-* :file:`build/zephyr/zephyr_secondary_app.merged.bin` - Contains the slot B image.
+* :file:`build/zephyr_secondary_app.merged.bin` - Contains the slot B image.
   This file should be uploaded to the secondary slot when the device is running from slot A.
-* :file:`build/zephyr/zephyr.merged.bin` - Contains the slot A image.
+* :file:`build/zephyr.merged.bin` - Contains the slot A image.
   This file should be uploaded to the primary slot when the device is running from slot B.
 
 If building on other supported platforms, where there is no separate radio core, only the application core is updated.
