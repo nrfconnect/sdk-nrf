@@ -12,6 +12,7 @@
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
 #include <nrfx_gpiote.h>
+#include <gpiote_nrfx.h>
 #if defined(CONFIG_HAS_NORDIC_DMM)
 #include <dmm.h>
 #endif
@@ -43,9 +44,6 @@ K_MEM_SLAB_DEFINE_STATIC(mem_slab, MAX_BLOCK_SIZE, BLOCK_COUNT, 4);
 #define CLOCK_INPUT_PIN	NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(pulse_counter), gpios)
 
 static const struct device *const pdm_dev = DEVICE_DT_GET(DT_NODELABEL(pdm_dev));
-static const nrfx_gpiote_t gpiote_instance = NRFX_GPIOTE_INSTANCE(
-					     NRF_DT_GPIOTE_INST(
-					     DT_NODELABEL(pulse_counter), gpios));
 static struct pcm_stream_cfg stream_config, stream_config_dummy;
 static struct dmic_cfg pdm_cfg, pdm_cfg_dummy;
 
@@ -250,12 +248,12 @@ ZTEST(pdm_loopback, test_start_trigger)
 ZTEST(pdm_loopback, test_pdm_clk_frequency)
 {
 	int ret;
-
 	uint8_t gpiote_channel;
+	nrfx_gpiote_t *gpiote_instance =
+		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(DT_NODELABEL(pulse_counter), gpios));
 
-	ret = nrfx_gpiote_channel_alloc(&gpiote_instance, &gpiote_channel);
-	zassert_true(ret == NRFX_SUCCESS,
-		     "GPIOTE channel allocation failed, return code = 0x%08X", ret);
+	ret = nrfx_gpiote_channel_alloc(gpiote_instance, &gpiote_channel);
+	zassert_true(ret == 0, "GPIOTE channel allocation failed, return code = %d", ret);
 
 	nrfx_gpiote_trigger_config_t trigger_cfg = {
 		.p_in_channel = &gpiote_channel,
@@ -269,11 +267,10 @@ ZTEST(pdm_loopback, test_pdm_clk_frequency)
 		.p_trigger_config = &trigger_cfg,
 	};
 
-	ret = nrfx_gpiote_input_configure(&gpiote_instance, CLOCK_INPUT_PIN, &gpiote_cfg);
-	zassert_true(ret == NRFX_SUCCESS,
-		     "GPIOTE input configuration failed, return code = 0x%08X", ret);
+	ret = nrfx_gpiote_input_configure(gpiote_instance, CLOCK_INPUT_PIN, &gpiote_cfg);
+	zassert_true(ret == 0, "GPIOTE input configuration failed, return code = %d", ret);
 
-	nrfx_gpiote_trigger_enable(&gpiote_instance, CLOCK_INPUT_PIN, false);
+	nrfx_gpiote_trigger_enable(gpiote_instance, CLOCK_INPUT_PIN, false);
 
 	nrfx_timer_config_t timer_config = NRFX_TIMER_DEFAULT_CONFIG(
 					   NRFX_TIMER_BASE_FREQUENCY_GET(&timer_instance));
@@ -287,7 +284,7 @@ ZTEST(pdm_loopback, test_pdm_clk_frequency)
 	nrfx_timer_enable(&timer_instance);
 
 	nrfx_gppi_handle_t gppi_handle;
-	uint32_t eep = nrfx_gpiote_in_event_address_get(&gpiote_instance, CLOCK_INPUT_PIN);
+	uint32_t eep = nrfx_gpiote_in_event_address_get(gpiote_instance, CLOCK_INPUT_PIN);
 	uint32_t tep = nrfx_timer_task_address_get(&timer_instance, NRF_TIMER_TASK_COUNT);
 
 	ret = nrfx_gppi_conn_alloc(eep, tep, &gppi_handle);
