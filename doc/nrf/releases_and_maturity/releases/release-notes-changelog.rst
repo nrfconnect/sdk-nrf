@@ -730,6 +730,8 @@ Security libraries
 Modem libraries
 ---------------
 
+* Added the :ref:`lib_ntn` library to provide helper functionality for NTN (Non-Terrestrial Network) usage.
+
 * Removed:
 
   * The AT command parser library.

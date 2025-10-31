@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NTN
+	bool "Internal"
+	#depends on NRF_MODEM_LIB
+	select AT_PARSER
+	select AT_MONITOR
+	imply CBPRINTF_FP_SUPPORT if LOG
+	help
+	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
