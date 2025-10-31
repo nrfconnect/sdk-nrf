@@ -79,7 +79,7 @@ kconfig_check_and_set_base(MBEDTLS_X509_LIBRARY)
 kconfig_check_and_set_base(MBEDTLS_MD_C)
 
 # Guard against setting legacy configurations in TF-M image
-if (NOT MBEDTLS_PSA_CRYPTO_SPM)
+if(NOT MBEDTLS_PSA_CRYPTO_SPM)
   # Platform configuration
   kconfig_check_and_set_base(MBEDTLS_ASN1_PARSE_C)
   kconfig_check_and_set_base(MBEDTLS_ASN1_WRITE_C)
