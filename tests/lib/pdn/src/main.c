@@ -544,6 +544,36 @@ static int nrf_modem_at_printf_on_init(const char *cmd, va_list args)
 	return 0;
 }
 
+#define CMD_CELLULARPRFL_SET	"AT%%CELLULARPRFL=2,%u,%u,%u"
+#define CMD_CELLULARPRFL_NOTIF	"AT%%CELLULARPRFL=1"
+#define CELLULARPRFL_CP_ID	0
+#define CELLULARPRFL_ACT	PDN_ACT_NTN
+#define CELLULARPRFL_SIM_SLOT	PDN_SIM_SLOT_1
+
+static int nrf_modem_at_printf_cellularprfl(const char *cmd, va_list args)
+{
+	int cp_id;
+	int act;
+	int sim_slot;
+
+	if (strncmp(cmd, CMD_CELLULARPRFL_NOTIF, sizeof(CMD_CELLULARPRFL_NOTIF) - 1) == 0) {
+		return 0;
+	}
+
+	TEST_ASSERT_EQUAL_STRING(CMD_CELLULARPRFL_SET, cmd);
+
+	cp_id = va_arg(args, int);
+	TEST_ASSERT_EQUAL(CELLULARPRFL_CP_ID, cp_id);
+
+	act = va_arg(args, int);
+	TEST_ASSERT_EQUAL(CELLULARPRFL_ACT, act);
+
+	sim_slot = va_arg(args, int);
+	TEST_ASSERT_EQUAL(CELLULARPRFL_SIM_SLOT, sim_slot);
+
+	return 0;
+}
+
 #define CMD_XNEWCID "AT%XNEWCID?"
 #define RESP_XNEWCID "%%XNEWCID: %d"
 
@@ -1601,6 +1631,76 @@ void test_on_modem_init(void)
 	on_modem_init(0, NULL);
 
 	TEST_ASSERT_EQUAL(2, nrf_modem_at_printf_fake.call_count);
+}
+
+void test_pdn_cellular_profile_configure_einval(void)
+{
+	int ret;
+
+	ret = pdn_cellular_profile_configure(NULL);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_pdn_cellular_profile_configure(void)
+{
+	int ret;
+	struct pdn_cellular_profile profile = {
+		.id = 0,
+		.act = PDN_ACT_NTN,
+		.sim_slot = PDN_SIM_SLOT_1,
+	};
+
+	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cellularprfl;
+
+	ret = pdn_cellular_profile_configure(&profile);
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+extern void on_cellularprfl(const char *notif);
+
+void test_pdn_cellular_profile_notif(void)
+{
+	int err;
+
+	k_malloc_fake.custom_fake = k_malloc_PDN1;
+
+	err = pdn_default_ctx_cb_reg(pdn_event_handler);
+	TEST_ASSERT_EQUAL(0, err);
+
+	on_cellularprfl("%CELLULARPRFL: 1");
+
+	TEST_ASSERT_EQUAL(PDN_EVENT_CELLULAR_PROFILE_ACTIVE, pdn_evt_event);
+	/* The default context ID for the second profile is 10. */
+	TEST_ASSERT_EQUAL(10, pdn_evt_cid);
+
+	on_cellularprfl("%CELLULARPRFL: 0");
+
+	TEST_ASSERT_EQUAL(PDN_EVENT_CELLULAR_PROFILE_ACTIVE, pdn_evt_event);
+	/* The default context ID for the first profile is 0. */
+	TEST_ASSERT_EQUAL(0, pdn_evt_cid);
+
+	/* Verify that the callback is not called when the cellular profile ID is invalid.
+	 * In this case, pdn_evt_cid and pdn_evt_event are not changed.
+	 */
+	on_cellularprfl("%CELLULARPRFL: 3");
+
+	TEST_ASSERT_EQUAL(PDN_EVENT_CELLULAR_PROFILE_ACTIVE, pdn_evt_event);
+	TEST_ASSERT_EQUAL(0, pdn_evt_cid);
+}
+
+void test_pdn_cellular_profile_notif_no_callback(void)
+{
+	int err;
+
+	k_malloc_fake.custom_fake = k_malloc_PDN1;
+
+	err = pdn_default_ctx_cb_dereg(pdn_event_handler);
+	TEST_ASSERT_EQUAL(0, err);
+
+	on_cellularprfl("%CELLULARPRFL: 1");
+
+	TEST_ASSERT_EQUAL(0, pdn_evt_cid);
+	TEST_ASSERT_EQUAL(0, pdn_evt_event);
 }
 
 /* It is required to be added to each test. That is because unity's

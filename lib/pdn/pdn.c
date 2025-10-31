@@ -54,6 +54,9 @@ LOG_MODULE_REGISTER(pdn, CONFIG_PDN_LOG_LEVEL);
 	"+%*[^+]"\
 	"+CGCONTRDP: %*u,,\"%*[^\"]\",\"\",\"\",\"%39[0-9A-Fa-f:]\",\"%39[0-9A-Fa-f:]\",,,,,%u"
 
+#define AT_CMD_PDN_CELLULAR_PROFILE_NOTIF_SUBSCRIBE "AT%%CELLULARPRFL=1"
+#define AT_CMD_PDN_CELLULAR_PROFILE_CONFIGURE "AT%%CELLULARPRFL=2,%u,%u,%u"
+
 static K_MUTEX_DEFINE(list_mutex);
 
 static sys_slist_t pdn_contexts = SYS_SLIST_STATIC_INIT(&pdn_context);
@@ -83,6 +86,7 @@ static K_SEM_DEFINE(sem_cnec, 0, 1);
 #ifndef CONFIG_UNITY
 AT_MONITOR(pdn_cgev, "+CGEV", on_cgev);
 AT_MONITOR(pdn_cnec_esm, "+CNEC_ESM", on_cnec_esm);
+AT_MONITOR(pdn_cellular_profile_notif, "%CELLULARPRFL", on_cellularprfl);
 #endif
 
 /* Expect enough added heap for the default PDN context */
@@ -275,6 +279,43 @@ static void parse_cgev_apn_rate_ctrl(const char *notif)
 				      apn_rate_ctrl_status == 1 ? PDN_EVENT_APN_RATE_CONTROL_ON
 								: PDN_EVENT_APN_RATE_CONTROL_OFF,
 				      0);
+		}
+	}
+}
+
+#ifdef CONFIG_UNITY
+void on_cellularprfl(const char *notif)
+#else
+static void on_cellularprfl(const char *notif)
+#endif
+{
+	char *p;
+	int8_t cp_id;
+	uint8_t cid;
+	struct pdn *pdn;
+
+	p = strstr(notif, "%CELLULARPRFL: ");
+	if (!p) {
+		return;
+	}
+
+	p += sizeof("%CELLULARPRFL: ") - 1;
+	cp_id = (int8_t)strtoul(p, &p, 10);
+
+	if (cp_id < 0 || cp_id > 1) {
+		LOG_ERR("Invalid cellular profile ID: %d", cp_id);
+
+		return;
+	}
+
+	/* The default context ID for each profile is the first context in the range.
+	 * The context ID for the first profile is 0, the second profile is 10.
+	 */
+	cid = 10 * cp_id;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&pdn_contexts, pdn, node) {
+		if (pdn->callback) {
+			pdn->callback(cid, PDN_EVENT_CELLULAR_PROFILE_ACTIVE, 0);
 		}
 	}
 }
@@ -820,4 +861,30 @@ static void pdn_on_modem_cfun(int mode, void *ctx)
 		pdn_defaults_override();
 #endif
 	}
+}
+
+int pdn_cellular_profile_configure(struct pdn_cellular_profile *profile)
+{
+	int err;
+
+	if (!profile) {
+		return -EINVAL;
+	}
+
+	err = nrf_modem_at_printf(AT_CMD_PDN_CELLULAR_PROFILE_CONFIGURE,
+				  profile->id,
+				  profile->act,
+				  profile->sim_slot);
+	if (err) {
+		LOG_ERR("Failed to configure cellular profile, err %d", err);
+
+		return err;
+	}
+
+	err = nrf_modem_at_printf(AT_CMD_PDN_CELLULAR_PROFILE_NOTIF_SUBSCRIBE);
+	if (err) {
+		LOG_ERR("Failed to subscribe to cellular profile notifications, err %d", err);
+	}
+
+	return 0;
 }
