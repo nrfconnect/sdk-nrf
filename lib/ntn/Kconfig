@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NTN
+	bool "NTN (Non-Terrestrial Network) library"
+	depends on NRF_MODEM_LIB
+	select AT_PARSER
+	select AT_MONITOR
+	imply CBPRINTF_FP_SUPPORT if LOG
+	help
+	  Library for NTN (Non-Terrestrial Network) helper functionality.
+
+if NTN
+
+config NTN_LOCATION_REQUEST_ADVANCE
+	int "Location request advance in seconds"
+	default 30
+	help
+	  Sets how many seconds in advance the NTN_EVT_LOCATION_REQUEST event is sent to
+	  request location when modem needs location at a specific time. The value should be long
+	  enough so that the application has enough time to update the current location before
+	  modem needs it. This should include for example time to start GNSS and get a valid fix.
+
+config NTN_WORKQUEUE_STACK_SIZE
+	int "NTN library work queue stack size"
+	default 1024
+	help
+	  Stack size for the NTN library work queue.
+
+config NTN_WORKQUEUE_PRIORITY
+	int "NTN library work queue priority"
+	default 5
+	help
+	  Priority for the NTN library work queue.
+
+module = NTN
+module-str = NTN library
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NTN
