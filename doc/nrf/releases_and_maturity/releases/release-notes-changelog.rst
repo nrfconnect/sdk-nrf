@@ -505,7 +505,7 @@ Cryptography samples
 
   * Support for the ``nrf54lv10dk/nrf54lv10a/cpuapp`` and ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` board targets to all samples (except :ref:`crypto_test`).
   * Support for the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` board target in all supported cryptography samples.
-  * The :ref:`crypto_kmu_usage_nrf54l` sample.
+  * The :ref:`crypto_kmu_cracen_usage` sample.
 
 * Updated documentation of all samples for style consistency: added lists of cryptographic features used by each sample and sample output in the testing section.
 

@@ -1,9 +1,9 @@
 sample:
   description: |
     This sample provides an example of using key provisioning and the KMU
-    (Key Management Unit) with the PSA Crypto API.
+    (Key Management Unit) with the PSA Crypto API, on devices with the CRACEN hardware peripheral.
     Different types of keys are generated and stored to the KMU.
-  name: KMU usage for nRF54L
+  name: KMU usage with CRACEN
 
 common:
   sysbuild: true
@@ -19,7 +19,7 @@ common:
       - ".*Example finished successfully!.*"
 
 tests:
-  sample.kmu_usage_nrf54l:
+  sample.kmu_cracen_usage:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -30,9 +30,11 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54l15dk/nrf54l05/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf7120pdk/nrf7120/cpuapp
