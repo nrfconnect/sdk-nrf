@@ -29,12 +29,18 @@
 		};
 
 		cpuapp_slot0_partition: partition@36800 {
-			reg = <0x36800 DT_SIZE_K(586)>;
+			reg = <0x36800 DT_SIZE_K(330)>;
 		};
 
-		cpurad_slot0_partition: partition@c9000 {
-			reg = <0xc9000 DT_SIZE_K(220)>;
+		cpurad_slot0_partition: partition@89000 {
+			reg = <0x89000 DT_SIZE_K(220)>;
 		};
+
+		/* Leave free space at the end of the slot0_partition that can be used to increase
+		 * the existing application or radio partition. Optimizining the size of the
+		 * application and radio partition results in a smaller DFU package and faster DFU
+		 * transfer.
+		 */
 
 		/* Partitions belonging to the MRAM_11 memory block. */
 
@@ -43,12 +49,18 @@
 		};
 
 		cpuapp_slot1_partition: partition@100800 {
-			reg = <0x100800 DT_SIZE_K(586)>;
+			reg = <0x100800 DT_SIZE_K(330)>;
 		};
 
-		cpurad_slot1_partition: partition@193000 {
-			reg = <0x193000 DT_SIZE_K(220)>;
+		cpurad_slot1_partition: partition@153000 {
+			reg = <0x153000 DT_SIZE_K(220)>;
 		};
+
+		/* Leave free space at the end of the slot1_partition that can be used to increase
+		 * the existing application or radio partition. Optimizining the size of the
+		 * application and radio partition results in a smaller DFU package and faster DFU
+		 * transfer.
+		 */
 
 		storage_partition: partition@1ca000 {
 			reg = <0x1ca000 DT_SIZE_K(40)>;
