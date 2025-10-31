@@ -303,7 +303,8 @@ Thread
 Wi-Fi®
 ------
 
-|no_changes_yet_note|
+* Added support for Wi-Fi Direct (P2P) mode.
+  See :ref:`ug_wifi_direct` for details.
 
 Applications
 ============
