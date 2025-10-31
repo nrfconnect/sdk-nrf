@@ -31,6 +31,11 @@ LOG_MODULE_REGISTER(slm_cmux, CONFIG_SLM_LOG_LEVEL);
 #define DLCI_TO_INDEX(dlci) ((dlci) - 1)
 #define INDEX_TO_DLCI(index) ((index) + 1)
 
+/* Workaround before upmerge */
+#ifndef MODEM_CMUX_WORK_BUFFER_SIZE
+#define MODEM_CMUX_WORK_BUFFER_SIZE CONFIG_MODEM_CMUX_WORK_BUFFER_SIZE
+#endif
+
 static struct {
 	/* UART backend */
 	struct modem_pipe *uart_pipe;
@@ -42,8 +47,8 @@ static struct {
 
 	/* CMUX */
 	struct modem_cmux instance;
-	uint8_t cmux_receive_buf[CONFIG_MODEM_CMUX_WORK_BUFFER_SIZE];
-	uint8_t cmux_transmit_buf[CONFIG_MODEM_CMUX_WORK_BUFFER_SIZE];
+	uint8_t cmux_receive_buf[MODEM_CMUX_WORK_BUFFER_SIZE];
+	uint8_t cmux_transmit_buf[MODEM_CMUX_WORK_BUFFER_SIZE];
 
 	/* CMUX channels (Data Link Connection Identifier); index = address - 1 */
 	struct cmux_dlci {
