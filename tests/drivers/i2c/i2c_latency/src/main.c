@@ -18,18 +18,6 @@
 
 #include <zephyr/ztest.h>
 
-#if CONFIG_NRFX_TWIS1
-#define I2C_S_INSTANCE 1
-#elif CONFIG_NRFX_TWIS2
-#define I2C_S_INSTANCE 2
-#elif CONFIG_NRFX_TWIS22
-#define I2C_S_INSTANCE 22
-#elif CONFIG_NRFX_TWIS131
-#define I2C_S_INSTANCE 131
-#else
-#error "TWIS instance not enabled or not supported"
-#endif
-
 #define NODE_TWIM	    DT_NODELABEL(sensor)
 #define NODE_TWIS	    DT_ALIAS(i2c_slave)
 #define MEASUREMENT_REPEATS 10
@@ -42,7 +30,9 @@
 
 #define TEST_TIMER_COUNT_TIME_LIMIT_MS 500
 #define MAX_TEST_DATA_SIZE	       255
-static const nrfx_twis_t twis = NRFX_TWIS_INSTANCE(I2C_S_INSTANCE);
+static nrfx_twis_t twis = {
+	.p_reg = (NRF_TWIS_Type *)DT_REG_ADDR(NODE_TWIS)
+};
 const struct device *const tst_timer_dev = DEVICE_DT_GET(DT_ALIAS(tst_timer));
 
 static uint8_t i2c_slave_buffer[MAX_TEST_DATA_SIZE] TWIS_MEMORY_SECTION;
@@ -143,7 +133,7 @@ static void assess_measurement_result(uint64_t timer_value_us,
 		     "Measured call latency is over the specified limit");
 }
 
-static void i2s_slave_handler(nrfx_twis_evt_t const *p_event)
+static void i2s_slave_handler(nrfx_twis_event_t const *p_event)
 {
 	switch (p_event->type) {
 	case NRFX_TWIS_EVT_READ_REQ:
@@ -182,7 +172,7 @@ static void *test_setup(void)
 	zassert_ok(ret);
 
 	IRQ_CONNECT(DT_IRQN(NODE_TWIS), DT_IRQ(NODE_TWIS, priority),
-		    NRFX_TWIS_INST_HANDLER_GET(I2C_S_INSTANCE), NULL, 0);
+		    nrfx_twis_irq_handler, &twis, 0);
 
 	nrfx_twis_enable(&twis);
 
