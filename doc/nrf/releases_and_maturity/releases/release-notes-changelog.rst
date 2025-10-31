@@ -910,6 +910,10 @@ Modem libraries
 
   * Removed the deprecated ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR`` kconfig option.
 
+* :ref:`at_parser_readme` library:
+
+  * Fixed an issue where an unquoted string parameter in the middle of a response would not be parsed correctly.
+
 * :ref:`pdn_readme` library:
 
   * Fixed:

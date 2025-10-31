@@ -871,6 +871,9 @@ yy45:
 		case 'x':
 		case 'y':
 		case 'z': goto yy45;
+		case ',':
+			yyt2 = cursor;
+			goto yy49;
 		default:
 			yyt2 = cursor;
 			goto yy46;
@@ -879,10 +882,13 @@ yy46:
 	t1 = yyt1;
 	t2 = yyt2;
 	{
-		if (remainder) *remainder = t2;
+		char last = *(cursor - 1);
+
+		if (remainder) *remainder = cursor;
 		return (struct at_token){
 			.start = t1, .len = t2 - t1,
 			.type = AT_TOKEN_TYPE_STRING,
+			.var = last == ',' ? AT_TOKEN_VAR_COMMA : AT_TOKEN_VAR_NO_COMMA,
 		};
 	}
 yy47:

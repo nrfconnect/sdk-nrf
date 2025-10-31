@@ -168,6 +168,108 @@ ZTEST(at_parser, test_at_parser_quoted_string)
 	zassert_mem_equal("FOOBAR", buffer, buffer_len);
 }
 
+ZTEST(at_parser, test_unquoted_string)
+{
+	int ret;
+	struct at_parser parser;
+	char buffer[32];
+	uint32_t buffer_len;
+	int32_t num;
+
+	const char *str1 = "+TEST:1,AB\r\n";
+	const char *str2 = "%TEST:1,C\r\n";
+	const char *str3 = "+TEST:1,DE,2\r\n";
+	const char *str4 = "#TEST:1,F,2\r\n";
+
+	/* Unquoted string at the end of the parameters (str1) */
+	ret = at_parser_init(&parser, str1);
+	zassert_ok(ret);
+
+	buffer_len = sizeof(buffer);
+	ret = at_parser_string_get(&parser, 0, buffer, &buffer_len);
+	zassert_ok(ret);
+	zassert_equal(strlen("+TEST"), buffer_len);
+	zassert_mem_equal("+TEST", buffer, buffer_len);
+
+	ret = at_parser_num_get(&parser, 1, &num);
+	zassert_ok(ret);
+	zassert_equal(num, 1);
+
+	buffer_len = sizeof(buffer);
+	ret = at_parser_string_get(&parser, 2, buffer, &buffer_len);
+	zassert_ok(ret);
+	zassert_equal(strlen("AB"), buffer_len);
+	zassert_mem_equal("AB", buffer, buffer_len);
+
+	/* Unquoted single character string at the end of the parameters (str2) */
+	ret = at_parser_init(&parser, str2);
+	zassert_ok(ret);
+
+	buffer_len = sizeof(buffer);
+	ret = at_parser_string_get(&parser, 0, buffer, &buffer_len);
+	zassert_ok(ret);
+	zassert_equal(strlen("%TEST"), buffer_len);
+	zassert_mem_equal("%TEST", buffer, buffer_len);
+
+	ret = at_parser_num_get(&parser, 1, &num);
+	zassert_ok(ret);
+	zassert_equal(num, 1);
+
+	buffer_len = sizeof(buffer);
+	ret = at_parser_string_get(&parser, 2, buffer, &buffer_len);
+	zassert_ok(ret);
+	zassert_equal(strlen("C"), buffer_len);
+	zassert_mem_equal("C", buffer, buffer_len);
+
+	/* Unquoted string between parameters (str3) */
+	ret = at_parser_init(&parser, str3);
+	zassert_ok(ret);
+
+	buffer_len = sizeof(buffer);
+	ret = at_parser_string_get(&parser, 0, buffer, &buffer_len);
+	zassert_ok(ret);
+	zassert_equal(strlen("+TEST"), buffer_len);
+	zassert_mem_equal("+TEST", buffer, buffer_len);
+
+	ret = at_parser_num_get(&parser, 1, &num);
+	zassert_ok(ret);
+	zassert_equal(num, 1);
+
+	buffer_len = sizeof(buffer);
+	ret = at_parser_string_get(&parser, 2, buffer, &buffer_len);
+	zassert_ok(ret);
+	zassert_equal(strlen("DE"), buffer_len);
+	zassert_mem_equal("DE", buffer, buffer_len);
+
+	ret = at_parser_num_get(&parser, 3, &num);
+	zassert_ok(ret);
+	zassert_equal(num, 2);
+
+	/* Unquoted single character string between parameters (str4) */
+	ret = at_parser_init(&parser, str4);
+	zassert_ok(ret);
+
+	buffer_len = sizeof(buffer);
+	ret = at_parser_string_get(&parser, 0, buffer, &buffer_len);
+	zassert_ok(ret);
+	zassert_equal(strlen("#TEST"), buffer_len);
+	zassert_mem_equal("#TEST", buffer, buffer_len);
+
+	ret = at_parser_num_get(&parser, 1, &num);
+	zassert_ok(ret);
+	zassert_equal(num, 1);
+
+	buffer_len = sizeof(buffer);
+	ret = at_parser_string_get(&parser, 2, buffer, &buffer_len);
+	zassert_ok(ret);
+	zassert_equal(strlen("F"), buffer_len);
+	zassert_mem_equal("F", buffer, buffer_len);
+
+	ret = at_parser_num_get(&parser, 3, &num);
+	zassert_ok(ret);
+	zassert_equal(num, 2);
+}
+
 ZTEST(at_parser, test_at_parser_empty)
 {
 	int ret;
