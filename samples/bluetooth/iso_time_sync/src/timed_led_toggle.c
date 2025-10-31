@@ -61,7 +61,7 @@ int timed_led_toggle_init(void)
 	}
 
 	err = nrfx_gppi_conn_alloc(controller_time_trigger_event_addr_get(),
-				   nrfx_gpiote_out_task_address_get(&gpiote, LED_PIN),
+				   nrfx_gpiote_out_task_address_get(gpiote, LED_PIN),
 				   &ppi_led_toggle);
 	if (err < 0) {
 		printk("Failed allocating PPI chan for toggling led\n");
