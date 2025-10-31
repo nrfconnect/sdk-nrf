@@ -223,21 +223,6 @@ int pdn_id_get(uint8_t cid);
 /**
  * @brief Retrieve dynamic parameters of a given PDN connection.
  *
- * @deprecated Use #pdn_dynamic_info_get instead.
- *
- * @param cid The PDP context ID.
- * @param[out] dns4_pri The address of the primary IPv4 DNS server. Optional, can be NULL.
- * @param[out] dns4_sec The address of the secondary IPv4 DNS server. Optional, can be NULL.
- * @param[out] ipv4_mtu The IPv4 MTU. Optional, can be NULL.
- *
- * @return Zero on success or an error code on failure.
- */
-__deprecated int pdn_dynamic_params_get(uint8_t cid, struct in_addr *dns4_pri,
-					struct in_addr *dns4_sec, unsigned int *ipv4_mtu);
-
-/**
- * @brief Retrieve dynamic parameters of a given PDN connection.
- *
  * @param[in] cid The PDP context ID.
  * @param[out] pdn_info PDN dynamic info.
  *

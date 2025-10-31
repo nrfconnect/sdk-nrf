@@ -743,6 +743,9 @@ Modem libraries
     * An issue where wrong APN rate control event was sent.
     * An issue where a malformed +CGEV notification was not handled correctly.
 
+  * Removed the deprecated ``pdn_dynamic_params_get()`` function.
+    Use the :c:func:`pdn_dynamic_info_get` function instead.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 

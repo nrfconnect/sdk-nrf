@@ -635,51 +635,6 @@ int pdn_id_get(uint8_t cid)
 	return strtoul(p + 1, NULL, 10);
 }
 
-int pdn_dynamic_params_get(uint8_t cid, struct in_addr *dns4_pri,
-			   struct in_addr *dns4_sec, unsigned int *ipv4_mtu)
-{
-	int matched;
-	const char *fmt;
-	unsigned int mtu;
-	char dns4_pri_str[INET_ADDRSTRLEN];
-	char dns4_sec_str[INET_ADDRSTRLEN];
-	char at_cmd[sizeof("AT+CGCONTRDP=###")];
-
-	if (snprintf(at_cmd, sizeof(at_cmd), AT_CMD_PDN_CONTEXT_READ_INFO, cid) >= sizeof(at_cmd)) {
-		return -E2BIG;
-	}
-
-	fmt = AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE1;
-
-	/* If IPv4 is enabled, it will be the first response line. */
-	matched = nrf_modem_at_scanf(at_cmd, fmt, &dns4_pri_str, &dns4_sec_str, &mtu);
-	/* Need to match at least the two IP addresses, or there is an error */
-	if (matched < 2) {
-		return -EBADMSG;
-	}
-
-	if (dns4_pri) {
-		if (zsock_inet_pton(AF_INET, dns4_pri_str, dns4_pri) != 1) {
-			return -EADDRNOTAVAIL;
-		}
-	}
-	if (dns4_sec) {
-		if (zsock_inet_pton(AF_INET, dns4_sec_str, dns4_sec) != 1) {
-			return -EADDRNOTAVAIL;
-		}
-	}
-	if (ipv4_mtu) {
-		/* If we matched the MTU, copy it here, otherwise report zero */
-		if (matched == 3) {
-			*ipv4_mtu = mtu;
-		} else {
-			*ipv4_mtu = 0;
-		}
-	}
-
-	return 0;
-}
-
 static int pdn_sa_family_from_ip_string(const char *src)
 {
 	char buf[INET6_ADDRSTRLEN];
