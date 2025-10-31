@@ -23,6 +23,3 @@ CONFIG_NULL_POINTER_EXCEPTION_DETECTION_NONE=y
 
 # Start SYSCOUNTER on driver init
 CONFIG_NRF_GRTC_START_SYSCOUNTER=y
-
-# Temporarily disable whilst resolving issue with CI
-CONFIG_CRACEN_LIB_KMU=n

@@ -13,7 +13,7 @@
 
 #include <cracen_psa_kmu.h>
 
-LOG_MODULE_DECLARE(kmu_usage_nrf54l, LOG_LEVEL_DBG);
+LOG_MODULE_DECLARE(kmu_cracen_usage, LOG_LEVEL_DBG);
 
 /* ====================================================================== */
 /*			Global variables/defines for operations on the KMU keys		  */

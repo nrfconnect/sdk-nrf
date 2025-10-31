@@ -1,13 +1,13 @@
-.. _crypto_kmu_usage_nrf54l:
+.. _crypto_kmu_cracen_usage:
 
-Crypto: KMU usage (nRF54L Series)
-#################################
+Crypto: KMU usage with CRACEN
+#############################
 
 .. contents::
    :local:
    :depth: 2
 
-The KMU usage sample demonstrates how to generate cryptographic keys for nRF54L Series devices and securely store them in the Key Management Unit (KMU).
+The KMU usage with CRACEN sample demonstrates how to generate cryptographic keys and securely store them in the Key Management Unit (KMU) on devices with the CRACEN hardware peripheral.
 
 The sample also demonstrates how to use the :ref:`generate_psa_key_attributes_script` to generate the :file:`keys.json` file and then provision it to the KMU using `nRF Util`_.
 This provisioning operation can be done before the sample generates the keys.
@@ -17,18 +17,16 @@ Requirements
 
 The sample supports the following development kits:
 
-.. table-from-rows:: /includes/sample_board_rows.txt
-   :header: heading
-   :rows: nrf54l15dk_nrf54l05_cpuapp, nrf54l15dk_nrf54l10_cpuapp, nrf54l15dk_nrf54l15_cpuapp, nrf54l15dk_nrf54l15_cpuapp_ns, nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lv10dk_nrf54lv10a_cpuapp
+.. table-from-sample-yaml::
 
 .. include:: /includes/tfm.txt
 
 Overview
 ********
 
-The KMU usage sample enables the :ref:`PSA Crypto API <psa_crypto_support_enable>` and uses it to generate various persistent keys.
-These keys are stored in the :ref:`Key Management Unit (KMU) <ug_nrf54l_developing_basics_kmu>` of the nRF54L Series device and retain their value between device resets.
-The KMU is one of the :ref:`key storage <key_storage>` options in the |NCS|, available only on the nRF54L Series devices.
+The KMU usage with CRACEN sample enables the :ref:`PSA Crypto API <psa_crypto_support_enable>` to generate various persistent keys.
+These keys are stored in the :ref:`Key Management Unit (KMU) <ug_nrf54l_developing_basics_kmu>` of the device and retain their value between device resets.
+The KMU is one of the :ref:`key storage <key_storage>` options in the |NCS|.
 
 The sample uses the :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>` and the :ref:`crypto_drivers_cracen`.
 The usage of the :ref:`crypto_drivers_oberon` is disabled in the sample.
@@ -198,7 +196,7 @@ Building and running
    Program the sample only after provisioning the keys to the board using nRF Util.
    See the `Testing`_ section for more information.
 
-.. |sample path| replace:: :file:`samples/crypto/kmu_usage_nrf54l`
+.. |sample path| replace:: :file:`samples/crypto/kmu_cracen_usage`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -228,7 +226,7 @@ Before you program the sample to your development kit, complete the following st
    For more information, see :ref:`ug_nrf54l_developing_provision_kmu_provisioning`.
 
 #. :ref:`Build <building>` the sample if you have not built it yet.
-#. :ref:`Program <programming>` the sample to your nRF54L Series device.
+#. :ref:`Program <programming>` the sample to your device.
    The sample now runs the steps listed in the `Sample operations`_ section and generates a second pair of keys.
 #. In the terminal, observe the logs from the application.
    Expand the following section for a sample output.
@@ -239,23 +237,23 @@ Before you program the sample to your development kit, complete the following st
 
          *** Booting nRF Connect SDK v3.1.99-08eeaae7de8f ***
          *** Using Zephyr OS v4.2.99-318b87179093 ***
-         [00:00:00.011,510] <inf> kmu_usage_nrf54l: Starting KMU usage example...
-         [00:00:00.011,519] <inf> kmu_usage_nrf54l: Preparing non-provisioned keys...
-         [00:00:00.011,523] <inf> kmu_usage_nrf54l: Generating key [2]
+         [00:00:00.011,510] <inf> kmu_cracen_usage: Starting KMU Cracen usage example...
+         [00:00:00.011,519] <inf> kmu_cracen_usage: Preparing non-provisioned keys...
+         [00:00:00.011,523] <inf> kmu_cracen_usage: Generating key [2]
 
-         [00:00:00.011,528] <inf> kmu_usage_nrf54l: Generating random AES key...
-         [00:00:00.014,202] <inf> kmu_usage_nrf54l: A key generated successfully!
-         [00:00:00.014,208] <inf> kmu_usage_nrf54l: Generating key [3]
+         [00:00:00.011,528] <inf> kmu_cracen_usage: Generating random AES key...
+         [00:00:00.014,202] <inf> kmu_cracen_usage: A key generated successfully!
+         [00:00:00.014,208] <inf> kmu_cracen_usage: Generating key [3]
 
-         [00:00:00.014,212] <inf> kmu_usage_nrf54l: Generating random ECDSA keypair...
-         [00:00:00.015,768] <inf> kmu_usage_nrf54l: ECDSA key pair generated successfully!
-         [00:00:00.015,774] <inf> kmu_usage_nrf54l: All keys prepared
-         [00:00:00.015,778] <inf> kmu_usage_nrf54l: Using keys...
-         [00:00:00.015,783] <inf> kmu_usage_nrf54l: Using key [0]
+         [00:00:00.014,212] <inf> kmu_cracen_usage: Generating random ECDSA keypair...
+         [00:00:00.015,768] <inf> kmu_cracen_usage: ECDSA key pair generated successfully!
+         [00:00:00.015,774] <inf> kmu_cracen_usage: All keys prepared
+         [00:00:00.015,778] <inf> kmu_cracen_usage: Using keys...
+         [00:00:00.015,783] <inf> kmu_cracen_usage: Using key [0]
 
-         [00:00:00.016,114] <inf> kmu_usage_nrf54l: Encryption successful!
-         [00:00:00.016,133] <inf> kmu_usage_nrf54l: ---- Plaintext (len: 100): ----
-         [00:00:00.016,148] <inf> kmu_usage_nrf54l: Content:
+         [00:00:00.016,114] <inf> kmu_cracen_usage: Encryption successful!
+         [00:00:00.016,133] <inf> kmu_cracen_usage: ---- Plaintext (len: 100): ----
+         [00:00:00.016,148] <inf> kmu_cracen_usage: Content:
                                                    45 78 61 6d 70 6c 65 20  73 74 72 69 6e 67 20 74 |Example  string t
                                                    6f 20 64 65 6d 6f 6e 73  74 72 61 74 65 20 62 61 |o demons trate ba
                                                    73 69 63 20 75 73 61 67  65 20 6f 66 20 4b 4d 55 |sic usag e of KMU
@@ -263,9 +261,9 @@ Before you program the sample to your development kit, complete the following st
                                                    00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 |........ ........
                                                    00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 |........ ........
                                                    00 00 00 00                                      |....
-         [00:00:00.016,159] <inf> kmu_usage_nrf54l: ---- Plaintext end  ----
-         [00:00:00.016,170] <inf> kmu_usage_nrf54l: ---- Encrypted text (len: 116): ----
-         [00:00:00.016,186] <inf> kmu_usage_nrf54l: Content:
+         [00:00:00.016,159] <inf> kmu_cracen_usage: ---- Plaintext end  ----
+         [00:00:00.016,170] <inf> kmu_cracen_usage: ---- Encrypted text (len: 116): ----
+         [00:00:00.016,186] <inf> kmu_cracen_usage: Content:
                                                    3a df a0 75 54 5a 39 c5  ec 42 a1 3e ec 0e a3 01 |:..uTZ9. .B.>....
                                                    1a 67 bf 85 fa 25 ff 17  24 47 34 fb a7 c2 de af |.g...%.. $G4.....
                                                    f4 99 e4 4d 6b cb 0c d4  78 31 4f 5e c3 ef 22 aa |...Mk... x1O^..".
@@ -274,9 +272,9 @@ Before you program the sample to your development kit, complete the following st
                                                    04 05 e1 fe 32 60 87 19  3b e0 0f c3 4a 2b da 8d |....2`.. ;...J+..
                                                    1f 10 82 f3 77 db 77 3a  a9 69 58 da 4e 8d 3b cb |....w.w: .iX.N.;.
                                                    dd c8 45 46                                      |..EF
-         [00:00:00.016,198] <inf> kmu_usage_nrf54l: ---- Encrypted text end  ----
-         [00:00:00.016,390] <inf> kmu_usage_nrf54l: ---- Decrypted text (len: 100): ----
-         [00:00:00.016,406] <inf> kmu_usage_nrf54l: Content:
+         [00:00:00.016,198] <inf> kmu_cracen_usage: ---- Encrypted text end  ----
+         [00:00:00.016,390] <inf> kmu_cracen_usage: ---- Decrypted text (len: 100): ----
+         [00:00:00.016,406] <inf> kmu_cracen_usage: Content:
                                                    45 78 61 6d 70 6c 65 20  73 74 72 69 6e 67 20 74 |Example  string t
                                                    6f 20 64 65 6d 6f 6e 73  74 72 61 74 65 20 62 61 |o demons trate ba
                                                    73 69 63 20 75 73 61 67  65 20 6f 66 20 4b 4d 55 |sic usag e of KMU
@@ -284,20 +282,20 @@ Before you program the sample to your development kit, complete the following st
                                                    00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 |........ ........
                                                    00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 |........ ........
                                                    00 00 00 00                                      |....
-         [00:00:00.016,418] <inf> kmu_usage_nrf54l: ---- Decrypted text end  ----
-         [00:00:00.016,433] <inf> kmu_usage_nrf54l: Decryption successful!
-         [00:00:00.016,438] <inf> kmu_usage_nrf54l: Using key [1]
+         [00:00:00.016,418] <inf> kmu_cracen_usage: ---- Decrypted text end  ----
+         [00:00:00.016,433] <inf> kmu_cracen_usage: Decryption successful!
+         [00:00:00.016,438] <inf> kmu_cracen_usage: Using key [1]
 
-         [00:00:00.016,442] <inf> kmu_usage_nrf54l: Using EdDSA key pair...
-         [00:00:00.017,553] <inf> kmu_usage_nrf54l: ---- Public-key (len: 32): ----
-         [00:00:00.017,567] <inf> kmu_usage_nrf54l: Content:
+         [00:00:00.016,442] <inf> kmu_cracen_usage: Using EdDSA key pair...
+         [00:00:00.017,553] <inf> kmu_cracen_usage: ---- Public-key (len: 32): ----
+         [00:00:00.017,567] <inf> kmu_cracen_usage: Content:
                                                    c3 ee 92 c7 67 1c 53 38  9e 00 95 b1 0a 09 32 e7 |....g.S8 ......2.
                                                    64 37 8b 33 31 93 59 e9  54 2e 8b b4 ac 49 cb 28 |d7.31.Y. T....I.(
-         [00:00:00.017,578] <inf> kmu_usage_nrf54l: ---- Public-key end  ----
-         [00:00:00.017,620] <inf> kmu_usage_nrf54l: Signing a message using EDDSA...
-         [00:00:00.019,918] <inf> kmu_usage_nrf54l: Message signed successfully!
-         [00:00:00.019,937] <inf> kmu_usage_nrf54l: ---- Plaintext (len: 100): ----
-         [00:00:00.019,952] <inf> kmu_usage_nrf54l: Content:
+         [00:00:00.017,578] <inf> kmu_cracen_usage: ---- Public-key end  ----
+         [00:00:00.017,620] <inf> kmu_cracen_usage: Signing a message using EDDSA...
+         [00:00:00.019,918] <inf> kmu_cracen_usage: Message signed successfully!
+         [00:00:00.019,937] <inf> kmu_cracen_usage: ---- Plaintext (len: 100): ----
+         [00:00:00.019,952] <inf> kmu_cracen_usage: Content:
                                                    45 78 61 6d 70 6c 65 20  73 74 72 69 6e 67 20 74 |Example  string t
                                                    6f 20 64 65 6d 6f 6e 73  74 72 61 74 65 20 62 61 |o demons trate ba
                                                    73 69 63 20 75 73 61 67  65 20 6f 66 20 4b 4d 55 |sic usag e of KMU
@@ -305,21 +303,21 @@ Before you program the sample to your development kit, complete the following st
                                                    00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 |........ ........
                                                    00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 |........ ........
                                                    00 00 00 00                                      |....
-         [00:00:00.019,963] <inf> kmu_usage_nrf54l: ---- Plaintext end  ----
-         [00:00:00.019,974] <inf> kmu_usage_nrf54l: ---- Signature (len: 64): ----
-         [00:00:00.019,988] <inf> kmu_usage_nrf54l: Content:
+         [00:00:00.019,963] <inf> kmu_cracen_usage: ---- Plaintext end  ----
+         [00:00:00.019,974] <inf> kmu_cracen_usage: ---- Signature (len: 64): ----
+         [00:00:00.019,988] <inf> kmu_cracen_usage: Content:
                                                    33 08 d6 64 ce 2f c1 9e  99 da 85 47 06 06 e5 1d |3..d./.. ...G....
                                                    8a f7 5f 8f 5b 6f d8 eb  9b 1f 11 30 07 4f a0 2e |.._.[o.. ...0.O..
                                                    da 43 27 f6 89 d9 fa 9c  b2 e2 01 60 d0 0e 9a 79 |.C'..... ...`...y
                                                    fe 76 25 c3 c7 2c 13 9f  ee 34 fb 6a 61 90 58 09 |.v%..,.. .4.ja.X.
-         [00:00:00.020,001] <inf> kmu_usage_nrf54l: ---- Signature end  ----
-         [00:00:00.020,005] <inf> kmu_usage_nrf54l: Verifying EDDSA signature...
-         [00:00:00.021,464] <inf> kmu_usage_nrf54l: EdDSA signature verification was successful!
-         [00:00:00.021,489] <inf> kmu_usage_nrf54l: Using key [2]
+         [00:00:00.020,001] <inf> kmu_cracen_usage: ---- Signature end  ----
+         [00:00:00.020,005] <inf> kmu_cracen_usage: Verifying EDDSA signature...
+         [00:00:00.021,464] <inf> kmu_cracen_usage: EdDSA signature verification was successful!
+         [00:00:00.021,489] <inf> kmu_cracen_usage: Using key [2]
 
-         [00:00:00.022,813] <inf> kmu_usage_nrf54l: Encryption successful!
-         [00:00:00.022,832] <inf> kmu_usage_nrf54l: ---- Plaintext (len: 100): ----
-         [00:00:00.022,847] <inf> kmu_usage_nrf54l: Content:
+         [00:00:00.022,813] <inf> kmu_cracen_usage: Encryption successful!
+         [00:00:00.022,832] <inf> kmu_cracen_usage: ---- Plaintext (len: 100): ----
+         [00:00:00.022,847] <inf> kmu_cracen_usage: Content:
                                                    45 78 61 6d 70 6c 65 20  73 74 72 69 6e 67 20 74 |Example  string t
                                                    6f 20 64 65 6d 6f 6e 73  74 72 61 74 65 20 62 61 |o demons trate ba
                                                    73 69 63 20 75 73 61 67  65 20 6f 66 20 4b 4d 55 |sic usag e of KMU
@@ -327,9 +325,9 @@ Before you program the sample to your development kit, complete the following st
                                                    00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 |........ ........
                                                    00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 |........ ........
                                                    00 00 00 00                                      |....
-         [00:00:00.022,859] <inf> kmu_usage_nrf54l: ---- Plaintext end  ----
-         [00:00:00.022,870] <inf> kmu_usage_nrf54l: ---- Encrypted text (len: 116): ----
-         [00:00:00.022,885] <inf> kmu_usage_nrf54l: Content:
+         [00:00:00.022,859] <inf> kmu_cracen_usage: ---- Plaintext end  ----
+         [00:00:00.022,870] <inf> kmu_cracen_usage: ---- Encrypted text (len: 116): ----
+         [00:00:00.022,885] <inf> kmu_cracen_usage: Content:
                                                    03 da 50 08 37 e9 26 a0  5b 82 71 dc 82 fb 1e 44 |..P.7.&. [.q....D
                                                    e0 ad 9b 38 87 e1 4f 67  a7 39 67 4b 70 39 ad 08 |...8..Og .9gKp9..
                                                    00 c3 b6 9c 25 de a5 9d  79 3f 52 61 bf 4d 43 1b |....%... y?Ra.MC.
@@ -338,9 +336,9 @@ Before you program the sample to your development kit, complete the following st
                                                    9e 16 79 b0 32 e7 4a 4b  42 5f 52 8b c1 d9 5a fe |..y.2.JK B_R...Z.
                                                    ab 7f 25 45 f0 f9 f2 39  c5 ee 80 d9 33 81 4f 34 |..%E...9 ....3.O4
                                                    ea 45 6b 24                                      |.Ek$
-         [00:00:00.022,897] <inf> kmu_usage_nrf54l: ---- Encrypted text end  ----
-         [00:00:00.024,081] <inf> kmu_usage_nrf54l: ---- Decrypted text (len: 100): ----
-         [00:00:00.024,097] <inf> kmu_usage_nrf54l: Content:
+         [00:00:00.022,897] <inf> kmu_cracen_usage: ---- Encrypted text end  ----
+         [00:00:00.024,081] <inf> kmu_cracen_usage: ---- Decrypted text (len: 100): ----
+         [00:00:00.024,097] <inf> kmu_cracen_usage: Content:
                                                    45 78 61 6d 70 6c 65 20  73 74 72 69 6e 67 20 74 |Example  string t
                                                    6f 20 64 65 6d 6f 6e 73  74 72 61 74 65 20 62 61 |o demons trate ba
                                                    73 69 63 20 75 73 61 67  65 20 6f 66 20 4b 4d 55 |sic usag e of KMU
@@ -348,23 +346,23 @@ Before you program the sample to your development kit, complete the following st
                                                    00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 |........ ........
                                                    00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 |........ ........
                                                    00 00 00 00                                      |....
-         [00:00:00.024,109] <inf> kmu_usage_nrf54l: ---- Decrypted text end  ----
-         [00:00:00.024,124] <inf> kmu_usage_nrf54l: Decryption successful!
-         [00:00:00.024,129] <inf> kmu_usage_nrf54l: Using key [3]
+         [00:00:00.024,109] <inf> kmu_cracen_usage: ---- Decrypted text end  ----
+         [00:00:00.024,124] <inf> kmu_cracen_usage: Decryption successful!
+         [00:00:00.024,129] <inf> kmu_cracen_usage: Using key [3]
 
-         [00:00:00.024,133] <inf> kmu_usage_nrf54l: Using ECDSA key pair...
-         [00:00:00.025,163] <inf> kmu_usage_nrf54l: ---- Public-key (len: 65): ----
-         [00:00:00.025,178] <inf> kmu_usage_nrf54l: Content:
+         [00:00:00.024,133] <inf> kmu_cracen_usage: Using ECDSA key pair...
+         [00:00:00.025,163] <inf> kmu_cracen_usage: ---- Public-key (len: 65): ----
+         [00:00:00.025,178] <inf> kmu_cracen_usage: Content:
                                                    04 2e 82 70 82 27 1e 1a  ea d1 84 aa 51 5a d1 78 |...p.'.. ....QZ.x
                                                    12 d2 10 ac 25 88 5a d7  53 12 6d 03 42 12 de 84 |....%.Z. S.m.B...
                                                    35 3a c5 a7 75 29 00 ea  7f e3 3b d2 d1 a0 a3 ba |5:..u).. ..;.....
                                                    18 2b b1 42 3c bd d9 9b  c8 99 14 61 f4 b6 1c bc |.+.B<... ...a....
                                                    42                                               |B
-         [00:00:00.025,190] <inf> kmu_usage_nrf54l: ---- Public-key end  ----
-         [00:00:00.025,240] <inf> kmu_usage_nrf54l: Signing a message using ECDSA...
-         [00:00:00.026,471] <inf> kmu_usage_nrf54l: Message signed successfully!
-         [00:00:00.026,490] <inf> kmu_usage_nrf54l: ---- Plaintext (len: 100): ----
-         [00:00:00.026,505] <inf> kmu_usage_nrf54l: Content:
+         [00:00:00.025,190] <inf> kmu_cracen_usage: ---- Public-key end  ----
+         [00:00:00.025,240] <inf> kmu_cracen_usage: Signing a message using ECDSA...
+         [00:00:00.026,471] <inf> kmu_cracen_usage: Message signed successfully!
+         [00:00:00.026,490] <inf> kmu_cracen_usage: ---- Plaintext (len: 100): ----
+         [00:00:00.026,505] <inf> kmu_cracen_usage: Content:
                                                    45 78 61 6d 70 6c 65 20  73 74 72 69 6e 67 20 74 |Example  string t
                                                    6f 20 64 65 6d 6f 6e 73  74 72 61 74 65 20 62 61 |o demons trate ba
                                                    73 69 63 20 75 73 61 67  65 20 6f 66 20 4b 4d 55 |sic usag e of KMU
@@ -372,24 +370,24 @@ Before you program the sample to your development kit, complete the following st
                                                    00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 |........ ........
                                                    00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 |........ ........
                                                    00 00 00 00                                      |....
-         [00:00:00.026,516] <inf> kmu_usage_nrf54l: ---- Plaintext end  ----
-         [00:00:00.026,528] <inf> kmu_usage_nrf54l: ---- SHA256 hash (len: 32): ----
-         [00:00:00.026,540] <inf> kmu_usage_nrf54l: Content:
+         [00:00:00.026,516] <inf> kmu_cracen_usage: ---- Plaintext end  ----
+         [00:00:00.026,528] <inf> kmu_cracen_usage: ---- SHA256 hash (len: 32): ----
+         [00:00:00.026,540] <inf> kmu_cracen_usage: Content:
                                                    09 55 cb 12 be 3e ab 93  ef d8 3b a8 1d 4c 7c a8 |.U...>.. ..;..L|.
                                                    47 83 26 c6 f1 d5 ee ae  b7 b6 43 08 82 e8 64 03 |G.&..... ..C...d.
-         [00:00:00.026,552] <inf> kmu_usage_nrf54l: ---- SHA256 hash end  ----
-         [00:00:00.026,564] <inf> kmu_usage_nrf54l: ---- Signature (len: 64): ----
-         [00:00:00.026,577] <inf> kmu_usage_nrf54l: Content:
+         [00:00:00.026,552] <inf> kmu_cracen_usage: ---- SHA256 hash end  ----
+         [00:00:00.026,564] <inf> kmu_cracen_usage: ---- Signature (len: 64): ----
+         [00:00:00.026,577] <inf> kmu_cracen_usage: Content:
                                                    26 ed 21 c1 85 28 f2 6c  65 2e 87 82 4c 71 e9 41 |&.!..(.l e...Lq.A
                                                    99 90 f8 12 c0 06 c0 ea  f5 d7 06 1c 30 c6 3d eb |........ ....0.=.
                                                    0a 9e 61 6f 0f 48 54 5c  6b 75 6a 37 38 ee a9 15 |..ao.HT\ kuj78...
                                                    57 8f 6f 0b 60 d5 56 03  0a 6c ee f8 c2 84 73 d4 |W.o.`.V. .l....s.
-         [00:00:00.026,589] <inf> kmu_usage_nrf54l: ---- Signature end  ----
-         [00:00:00.026,594] <inf> kmu_usage_nrf54l: Verifying ECDSA signature...
-         [00:00:00.027,899] <inf> kmu_usage_nrf54l: ECDSA signature verification was successful!
-         [00:00:00.027,925] <inf> kmu_usage_nrf54l: Key usage finished
-         [00:00:00.027,930] <inf> kmu_usage_nrf54l: Destroying non-provisioned keys...
-         [00:00:00.029,407] <inf> kmu_usage_nrf54l: Example finished successfully!
+         [00:00:00.026,589] <inf> kmu_cracen_usage: ---- Signature end  ----
+         [00:00:00.026,594] <inf> kmu_cracen_usage: Verifying ECDSA signature...
+         [00:00:00.027,899] <inf> kmu_cracen_usage: ECDSA signature verification was successful!
+         [00:00:00.027,925] <inf> kmu_cracen_usage: Key usage finished
+         [00:00:00.027,930] <inf> kmu_cracen_usage: Destroying non-provisioned keys...
+         [00:00:00.029,407] <inf> kmu_cracen_usage: Example finished successfully!
 
 Testing with KMU encryption
 ===========================
@@ -405,7 +403,7 @@ Complete the following steps instead of the ones listed in the `Testing`_ sectio
 
       nrfutil device erase --all
 
-#. :ref:`Program <programming>` the sample to your nRF54L Series device.
+#. :ref:`Program <programming>` the sample to your device.
    The 384-bit seed value is generated automatically and stored to the KMU during the first boot.
    The sample also runs the steps listed in the `Sample operations`_ section and generates a second pair of keys.
 #. Run the following command to provision the example keys to the board:

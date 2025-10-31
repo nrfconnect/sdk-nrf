@@ -25,10 +25,10 @@
 #define APP_SUCCESS_MESSAGE "Example finished successfully!"
 #define APP_ERROR_MESSAGE   "Example exited with error!"
 
-LOG_MODULE_REGISTER(kmu_usage_nrf54l, LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(kmu_cracen_usage, LOG_LEVEL_DBG);
 
 /* ====================================================================== */
-/*			Global variables/defines for the KMU usage example			  */
+/*       Global variables/defines for the KMU Cracen usage example        */
 
 #define SAMPLE_MAX_KEY_COUNT (4)
 
@@ -187,7 +187,7 @@ int main(void)
 {
 	int status;
 
-	LOG_INF("Starting KMU usage example...");
+	LOG_INF("Starting KMU Cracen usage example...");
 
 	status = crypto_init();
 	if (status != APP_SUCCESS) {
