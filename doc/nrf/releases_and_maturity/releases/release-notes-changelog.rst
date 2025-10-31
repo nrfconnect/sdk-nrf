@@ -221,11 +221,14 @@ nRF5340 Audio
     For an end user, this change requires no action.
     macOS will now work out of the box, fixing OCT-2154.
 
-  * Buildprog/programming script.
+  * Programming script.
     Devices are now halted before programming.
     Furthermore, the devices are kept halted until they are all programmed, and then started together
     with the headsets starting first.
     This eases sniffing of advertisement packets.
+
+  * With the latest release of |nRFVSC|, you can build and program the nRF5340 Audio application using the |nRFVSC| GUI.
+    Updated the :ref:`nrf53_audio_app_building` accordingly: the note about missing support in |nRFVSC| has been removed and the section about programming using standard methods now lists the steps for |nRFVSC| and the command line.
 
 nRF Desktop
 -----------

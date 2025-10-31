@@ -1098,6 +1098,7 @@
 .. _`Application-specific flash options`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/bd_work_with_boards.html#how-to-flash-boards
 .. _`CMake build system`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_overview.html#cmake-build-system
 .. _`How to work with build configurations`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_config.html
+.. _`How to set up a build configuration`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_config.html#how-to-set-up-a-build-configuration
 .. _`Welcome View`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_welcome.html
 .. _`Applications View`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_applications.html
 .. _`Actions View`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_actions.html
