@@ -1,0 +1,10 @@
+tests:
+  ntn.unit_test:
+    sysbuild: true
+    tags:
+      - ntn
+      - sysbuild
+      - ci_tests_lib_ntn
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim

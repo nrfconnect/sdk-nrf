@@ -145,6 +145,7 @@
 /doc/nrf/libraries/modem/modem_info.rst   @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/modem_jwt.rst    @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/libraries/modem/modem_key_mgmt.rst @nrfconnect/ncs-modem-doc
+/doc/nrf/libraries/modem/ntn.rst          @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/libraries/modem/pdn.rst          @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/sms.rst          @nrfconnect/ncs-iot-positioning-doc
 /doc/nrf/libraries/modem/uicc_lwm2m.rst   @nrfconnect/ncs-modem-doc
@@ -390,6 +391,7 @@
 /lib/modem_key_mgmt/                      @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /lib/multithreading_lock/                 @nrfconnect/ncs-dragoon
 /lib/nrf_modem_lib/                       @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
+/lib/ntn/                                 @nrfconnect/ncs-modem-tre
 /lib/pcm_mix/                             @nrfconnect/ncs-audio
 /lib/pcm_stream_channel_modifier/         @nrfconnect/ncs-audio
 /lib/pdn/                                 @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
@@ -889,6 +891,7 @@
 /tests/lib/nrf_fuel_gauge/                @nordic-auko
 /tests/lib/nrf_modem_lib/                 @nrfconnect/ncs-modem
 /tests/lib/nrf_modem_lib/nrf9x_sockets/   @nrfconnect/ncs-modem
+/tests/lib/ntn/                           @nrfconnect/ncs-modem-tre
 /tests/lib/pdn/                           @nrfconnect/ncs-modem
 /tests/lib/pcm_mix/                       @nrfconnect/ncs-audio
 /tests/lib/pcm_stream_channel_modifier/   @nrfconnect/ncs-audio
