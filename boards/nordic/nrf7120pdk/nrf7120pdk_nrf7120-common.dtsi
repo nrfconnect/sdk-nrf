@@ -114,3 +114,7 @@
 	pinctrl-1 = <&pwm20_sleep>;
 	pinctrl-names = "default", "sleep";
 };
+
+&nfct {
+	status = "okay";
+};
