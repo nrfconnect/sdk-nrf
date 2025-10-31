@@ -119,6 +119,15 @@ config MPSL_INIT_PRIORITY
 	  must be lower than CONFIG_NRFS_BACKEND_IPC_SERVICE_INIT_PRIO. The nrf2 clock control depends
 	  on the nRFS backend.
 
+config MPSL_FORCE_RRAM_ON_ALL_THE_TIME
+	bool "Force RRAM to stay on"
+	depends on TRUSTED_EXECUTION_NONSECURE
+	default y
+	help
+	  This option forces RRAM to stay on.
+	  This is not needed when only basic bluetooth features are used.
+	  Only needed when for example LLPM, Frame space update, ISO or Channel Sounding is used.
+
 module=MPSL
 module-str=MPSL
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
