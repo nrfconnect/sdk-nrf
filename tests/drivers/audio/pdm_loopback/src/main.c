@@ -245,7 +245,7 @@ ZTEST(pdm_loopback, test_pdm_clk_frequency)
 	timer_config.mode      = NRF_TIMER_MODE_COUNTER;
 
 	ret = nrfx_timer_init(&timer_instance, &timer_config, timer_handler);
-	zassert_true(ret == NRFX_SUCCESS,
+	zassert_true(ret == 0,
 		     "TIMER initialization failed, return code = 0x%08X", ret);
 
 	nrfx_timer_enable(&timer_instance);
