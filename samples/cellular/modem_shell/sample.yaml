@@ -430,6 +430,21 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_cellular
+  sample.cellular.modem_shell.ntn_external_gnss:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+    extra_configs:
+      - CONFIG_GNSS=y
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE=ext_gnss_uart.overlay
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
   sample.cellular.modem_shell.modem_trace_shell_ext_flash:
     sysbuild: true
     build_only: true
