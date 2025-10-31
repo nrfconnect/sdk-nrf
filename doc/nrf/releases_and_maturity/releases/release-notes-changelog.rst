@@ -485,6 +485,7 @@ Cellular samples
 
     * Support for environment evaluation using the ``link enveval`` command.
     * Support for NTN NB-IoT to the ``link sysmode`` and ``link edrx`` commands.
+    * Support for Non-Terrestrial Network (NTN) helper functionality using the ``ntn`` command.
 
 * :ref:`nrf_cloud_multi_service` sample:
 

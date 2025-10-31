@@ -702,6 +702,39 @@ Examples
 
 ----
 
+NTN
+===
+
+MoSh command: ``ntn``
+
+You can use the command for NTN helper functionality provided by the :ref:`lib_ntn` library.
+The command provides support for setting and invalidating the location to the modem, and enabling and disabling modem location updates from an external GNSS.
+
+Internal GNSS is not supported when NTN NB-IoT is enabled in the system mode.
+To use internal GNSS to get the location, GNSS must be enabled and NTN NB-IoT disabled in the system mode.
+You can use the ``location`` or ``gnss`` commands to get the location using internal GNSS.
+After GNSS has been stopped, you can enable NTN NB-IoT in the system mode.
+
+To enable location updates from an external GNSS, you need to build the sample with external GNSS support and connect UART pins to the development kit.
+With external GNSS support, location is automatically updated to the modem periodically.
+The update interval is calculated based on the requested accuracy.
+See :ref:`modem_shell_ext_gnss_support` for information about building the sample with external GNSS support.
+
+Examples
+--------
+
+* Set location to the modem:
+
+  .. code-block:: console
+
+     ntn location set 60.171000 24.941000 30.0 3600
+
+* Invalidate location:
+
+  .. code-block:: console
+
+     ntn location invalidate
+
 Remote control using nRF Cloud
 ==============================
 
@@ -1458,6 +1491,39 @@ For example:
    west build -p -b *board_target* -- -Dmodem_shell_SNIPPET="nrf91-modem-trace-ext-flash"
 
 |board_target|
+
+.. _modem_shell_ext_gnss_support:
+
+nRF9151 DK with external GNSS support
+=====================================
+
+To build the MoSh sample for an nRF9151 DK with external GNSS support, use the ``-DEXTRA_DTC_OVERLAY_FILE=ext_gnss_uart.overlay`` and ``-DCONFIG_GNSS=y`` options.
+For example:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_DTC_OVERLAY_FILE=ext_gnss_uart.overlay -DCONFIG_GNSS=y
+
+The external GNSS support requires an external GNSS module with UART interface and NMEA output.
+For example, you can use an nRF91 Series DK with the :ref:`gnss_sample` sample in NMEA only mode.
+
+After programming the development kit, connect the UART TX and GND pins from the external GNSS module to the UART RX and GND pins of the nRF9151 DK.
+The RX pin for UART2 is set to P0.30 in the :file:`ext_gnss_uart.overlay` file.
+The speed is set to 115200 bps by default, but you can change it by modifying the overlay file.
+
+MoSh automatically provides periodic location updates when requested by the modem.
+
+Example output with NTN library debug logging enabled:
+
+.. code-block:: console
+
+   NTN location request event: requested: true, accuracy: 200 m
+   NTN location updates from external GNSS enabled
+   [00:00:01.788,696] <inf> ntn: Location updates requested immediately, accuracy: 200 m
+   [00:00:02.565,734] <dbg> ntn: ntn_location_set: lat: 61.493776, lon: 23.775918, alt: 146.5 m, validity: 12 s
+   [00:00:08.553,009] <dbg> ntn: ntn_location_set: lat: 61.493777, lon: 23.775916, alt: 147.2 m, validity: 12 s
+   [00:00:13.555,145] <dbg> ntn: ntn_location_set: lat: 61.493779, lon: 23.775901, alt: 147.3 m, validity: 12 s
 
 References
 **********
