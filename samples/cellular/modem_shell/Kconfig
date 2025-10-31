@@ -110,6 +110,13 @@ config MOSH_GPIO_COUNT
 	help
 	  Tool for counting the number of pulses on a GPIO pin.
 
+config MOSH_NTN
+	bool "Non-Terrestrial Network (NTN)"
+	default y if BOARD_NRF9151DK_NRF9151_NS
+	select NTN
+	help
+	  Helper functionality for NTN usage.
+
 config MOSH_PRINT_BUFFER_SIZE
 	int "Buffer size used when printing modem shell output"
 	default 1024
