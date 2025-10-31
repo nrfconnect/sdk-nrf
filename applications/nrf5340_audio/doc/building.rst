@@ -13,10 +13,7 @@ You can build and program the applications in one of the following ways:
 
 * :ref:`nrf53_audio_app_building_script` - This is the suggested method.
   Using this method allows you to build and program multiple development kits at the same time.
-* :ref:`nrf53_audio_app_building_standard` - Using this method requires building and programming each development kit separately.
-
-.. important::
-   Building and programming using |nRFVSC| is currently not supported.
+* :ref:`nrf53_audio_app_building_standard` - Using either of these methods requires manually providing source files for building each build configuration.
 
 .. note::
    Check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>` before building and programming the applications.
@@ -215,23 +212,24 @@ See the following table for the meaning of each column and the list of possible 
 
 .. _nrf53_audio_app_building_standard:
 
-Building and programming using command line
-*******************************************
+Building and programming using standard methods
+***********************************************
 
-You can also build the nRF5340 Audio applications using the standard |NCS| :ref:`build steps <programming_cmd>` for the command line.
+You can build the nRF5340 Audio applications using the standard |NCS| :ref:`build steps <programming_cmd>` for |nRFVSC| or the command line.
+This method requires manually providing source files for building each build configuration.
 
 .. _nrf53_audio_app_building_config_files:
 
 Application configuration files
 ===============================
 
-The application uses a :file:`prj.conf` configuration file located in the sample root directory for the default configuration.
+The application uses a :file:`prj.conf` configuration file located in the application root directory for the default configuration.
 It also uses application-specific overlay files and can use additional files for different custom configurations.
-When you build the sample, you can select one of these configurations using the :makevar:`FILE_SUFFIX` variable.
+When you build the application, you can select one of these configurations using the :makevar:`FILE_SUFFIX` variable.
 
 See :ref:`nrf53_audio_app_configuration_files`, :ref:`app_build_file_suffixes`, and :ref:`cmake_options` for more information.
 
-The application supports the following configuration files:
+The nRF5340 Audio applications come with the following configuration files:
 
 .. list-table:: Application configurations
    :widths: auto
@@ -276,54 +274,116 @@ The application supports the following configuration files:
 Building the application
 ========================
 
-Complete the following steps to build the application:
+When you build the application, make sure to create the combination of configurations that matches the application mode you want to work with.
 
-1. Choose the combination of build flags:
+.. literalinclude:: ../index.rst
+   :start-after: nrf53_audio_app_overview_table_start
+   :end-before: nrf53_audio_app_overview_table_end
 
-   a. Choose the configuration file for the device selected by using one of the following options:
+Complete the following steps to build each of the configurations you need:
 
-      * For unicast headset: ``-DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf"``
-      * For unicast gateway: ``-DEXTRA_CONF_FILE=".\unicast_client\overlay-unicast_client.conf"``
-      * For broadcast headset: ``-DEXTRA_CONF_FILE=".\broadcast_sink\overlay-broadcast_sink.conf"``
-      * For broadcast gateway: ``-DEXTRA_CONF_FILE=".\broadcast_source\overlay-broadcast_source.conf"``
+.. tabs::
 
-   #. Choose the application version (:ref:`nrf53_audio_app_building_config_files`) by using one of the following options:
+   .. group-tab:: |nRFVSC|
 
-      * For the debug version: No build flag needed.
-      * For the release version: ``-DFILE_SUFFIX=release``
+      1. Open |nRFVSC|.
+      #. Create a new audio application in |nRFVSC| by completing the steps listed in the :ref:`creating_vsc` section.
+         Use the :guilabel:`Copy a sample` option and select the :guilabel:`nRF5340 Audio` application when prompted.
+      #. Complete the steps listed on the `How to set up a build configuration`_ section in the |nRFVSC| documentation to create a build configuration.
+         Depending on the configuration and applications you want to build, set the correct combination of :ref:`nrf53_audio_app_building_config_files` in the extension UI:
 
-#. Build the application using the standard :ref:`build steps <building>` for the command line.
-   For example, if you want to build the firmware for the application core as a headset using the ``release`` application version, you can run the following command from the :file:`applications/nrf5340_audio/` directory:
+         * :guilabel:`Base configuration files (Kconfig fragments)`:
 
-   .. code-block:: console
+           * For the debug version: No file selected.
+           * For the release version: :file:`prj_release.conf`
 
-      west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf" -DFILE_SUFFIX=release
+         * :guilabel:`Extra Kconfig fragments`:
 
-   This command creates the build files for a unicast headset device directly in the :file:`build` directory.
-   What this means is that you cannot create build files for all devices you want to program, because the subsequent commands will overwrite the files in the :file:`build` directory.
+           * For the unicast server application: :file:`unicast_server/overlay-unicast_server.conf`
+           * For the unicast client application: :file:`unicast_client/overlay-unicast_client.conf`
+           * For the broadcast sink application: :file:`broadcast_sink/overlay-broadcast_sink.conf`
+           * For the broadcast source application: :file:`broadcast_source/overlay-broadcast_source.conf`
 
-   To work around this standard west behavior, you can add the ``-d`` parameter to the ``west`` command to specify a custom build folder for each device.
-   This way, you can build firmware for headset and gateway to separate directories before programming the development kits.
-   Alternatively, you can use the :ref:`nrf53_audio_app_building_script`, which handles this automatically.
+         For other sections, check the tooltips in the extension UI.
+
+      #. Make sure the :guilabel:`Generate only` checkbox is *not* selected.
+      #. Generate and build the application by clicking the :guilabel:`Generate and Build` button.
+
+      You can now program the application to one or more development kits.
+      See :ref:`nrf53_audio_app_building_standard_programming`.
+
+   .. group-tab:: Command line
+
+      1. Choose the combination of build flags:
+
+         a. Choose the configuration file for the device selected by using one of the following options:
+
+            * For unicast headset: ``-DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf"``
+            * For unicast gateway: ``-DEXTRA_CONF_FILE=".\unicast_client\overlay-unicast_client.conf"``
+            * For broadcast headset: ``-DEXTRA_CONF_FILE=".\broadcast_sink\overlay-broadcast_sink.conf"``
+            * For broadcast gateway: ``-DEXTRA_CONF_FILE=".\broadcast_source\overlay-broadcast_source.conf"``
+
+         #. Choose the application version (:ref:`nrf53_audio_app_building_config_files`) by using one of the following options:
+
+            * For the debug version: No build flag needed.
+            * For the release version: ``-DFILE_SUFFIX=release``
+
+      #. Build the application using the standard :ref:`build steps <building>` for the command line.
+         For example, if you want to build the firmware for the application core as a headset using the ``release`` application version, you can run the following command from the :file:`applications/nrf5340_audio/` directory:
+
+         .. code-block:: console
+
+            west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf" -DFILE_SUFFIX=release
+
+         This command creates the build files directly in the :file:`build` directory.
+         This means that you cannot create build files for all devices you want to program, because the subsequent commands will overwrite the files in the :file:`build` directory.
+
+         To work around this standard west behavior, you can add the ``-d`` parameter to the ``west`` command to specify a custom build folder for each device.
+         This way, you can build firmware for different device configurations to separate directories before programming the development kits.
+         Alternatively, you can use the :ref:`nrf53_audio_app_building_script`, which handles this automatically.
 
 Building the application for FOTA
 ---------------------------------
 
-The following command example builds the application for :ref:`nrf53_audio_app_fota`:
+To build the application for :ref:`nrf53_audio_app_fota` depending on the environment you are using:
 
-.. code-block:: console
+.. tabs::
 
-   west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf" -DFILE_SUFFIX=fota
+   .. group-tab:: |nRFVSC|
 
-The command uses ``-DFILE_SUFFIX=fota`` to pick :file:`prj_fota.conf` instead of the default :file:`prj.conf`.
-It also uses the ``--pristine`` to clean the existing directory before starting the build process.
+      Set the following options in the extension UI:
+
+      * :guilabel:`Base configuration files (Kconfig fragments)` - :file:`prj_fota.conf`
+      * :guilabel:`Extra Kconfig fragments` - :file:`unicast_server/overlay-unicast_server.conf`
+
+      When generating and building the application, this selection picks :file:`prj_fota.conf` instead of the default :file:`prj.conf`.
+
+   .. group-tab:: Command line
+
+      Use the following command:
+
+      .. code-block:: console
+
+         west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf" -DFILE_SUFFIX=fota
+
+      The command uses ``-DFILE_SUFFIX=fota`` to pick :file:`prj_fota.conf` instead of the default :file:`prj.conf`.
+      It also uses the ``--pristine`` to clean the existing directory before starting the build process.
 
 .. _nrf53_audio_app_building_standard_programming:
 
 Programming the application
 ===========================
 
-After building the files for the development kit you want to program, follow the :ref:`standard procedure for programming applications <building>` in the |NCS|.
+After building the files for the development kit you want to program, follow the :ref:`standard procedure for programming applications <programming>` in the |NCS|.
+
+If you want to program the same audio application to multiple development kits connected to your PC, you can use the following methods:
+
+* If you are programming using |nRFVSC|, you can select several development kits for programming in the picker that appears after clicking the :guilabel:`Flash` action.
+  See "How to flash multiple boards" under `How to work with boards and devices`_ in the |nRFVSC| documentation for more information.
+* If you are programming using the command line, you need to program the application to each development kit using separate commands.
+
+Programming CIS transport mode with two headsets or stereo
+----------------------------------------------------------
 
 When using the :ref:`default CIS transport mode configuration <nrf53_audio_transport_mode_configuration>`, if you want to use two headset devices or the stereo configuration, you must :ref:`configure the headset location <nrf53_audio_app_configuration_headset_location>`.
 Use the combined bitfield values, depending on which headset you want to configure:

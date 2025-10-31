@@ -8,6 +8,8 @@ The nRF5340 Audio applications demonstrate audio playback over isochronous chann
 .. note::
    nRF5340 Audio applications and their DFU/FOTA functionality are marked as :ref:`experimental <software_maturity>`.
 
+.. nrf53_audio_app_overview_table_start
+
 The following table summarizes the differences between the available nRF5340 Audio applications.
 
 .. list-table:: Differences between nRF5340 Audio applications
@@ -33,6 +35,8 @@ The following table summarizes the differences between the available nRF5340 Aud
      - CIS (headset)
      - 2 (three for CIS with TWS)
      - ✔
+
+.. nrf53_audio_app_overview_table_end
 
 See the subpages for detailed documentation of each of the nRF5340 applications and their internal modules:
 
