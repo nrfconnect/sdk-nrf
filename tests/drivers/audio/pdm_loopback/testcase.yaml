@@ -111,3 +111,28 @@ tests:
     extra_args:
       - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_TIME=10
+  drivers.audio.pdm_loopback.nrf7120.1280khz:
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    extra_args:
+      - CONFIG_NRFX_TIMER=y
+      - CONFIG_TEST_PDM_SAMPLING_RATE=16000
+      - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1280000
+  drivers.audio.pdm_loopback.nrf7120.auxpll.44k1hz:
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    extra_args:
+      - CONFIG_NRFX_TIMER=y
+      - CONFIG_TEST_PDM_SAMPLING_RATE=44100
+      - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1411200
+      - CONFIG_CLOCK_CONTROL=y
+      - DTC_OVERLAY_FILE="boards/nrf7120pdk_nrf7120_cpuapp_audio_auxpll_44k1hz.overlay"
+  drivers.audio.pdm_loopback.nrf7120.auxpll.48khz:
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    extra_args:
+      - CONFIG_NRFX_TIMER=y
+      - CONFIG_TEST_PDM_SAMPLING_RATE=48000
+      - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1536000
+      - CONFIG_CLOCK_CONTROL=y
+      - DTC_OVERLAY_FILE="boards/nrf7120pdk_nrf7120_cpuapp_audio_auxpll_48khz.overlay"
