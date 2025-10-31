@@ -1,10 +1,5 @@
 # Copyright (c) 2025 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
-
-# Set path to the latest version of nrfx
-set(NRFX_DIR ${CMAKE_CURRENT_LIST_DIR}/../../../nrfx/)
-set(NRFX_DIR ${NRFX_DIR} CACHE STRING "Path to nrfx")
-
 zephyr_get(NRFX_DIR SYSBUILD GLOBAL)
 
 if(NOT DEFINED NRFX_DIR)
