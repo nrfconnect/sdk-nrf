@@ -164,7 +164,7 @@ static void *test_setup(void)
 	zassert_equal(dk_leds_init(), 0, "DK leds init failed");
 
 	dk_set_led_off(DK_LED1);
-	zassert_equal(NRFX_SUCCESS, nrfx_twis_init(&twis, &config, i2s_slave_handler),
+	zassert_equal(0, nrfx_twis_init(&twis, &config, i2s_slave_handler),
 		      "TWIS initialization failed");
 
 	PINCTRL_DT_DEFINE(NODE_TWIS);
