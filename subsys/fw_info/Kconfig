@@ -29,7 +29,7 @@ config FW_INFO_OFFSET
 
 config FW_INFO_FIRMWARE_VERSION
 	int "Version number of the firmware"
-	range 0 32766 if SB_MONOTONIC_COUNTER
+	range 0 32767 if SB_MONOTONIC_COUNTER_IS_ENABLED
 	default 1
 	help
 	  When SB_MONOTONIC_COUNTER is enabled, the firmware version is limited

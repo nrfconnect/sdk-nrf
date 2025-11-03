@@ -271,7 +271,7 @@ int get_monotonic_counter(uint16_t counter_desc, counter_t *counter_value);
  * @retval -EINVAL  @p new_counter is invalid (must be larger than current
  *                  counter, and cannot be 0xFFFF).
  * @retval -ENOMEM  There are no more free counter slots (see
- *                  @kconfig{CONFIG_SB_NUM_VER_COUNTER_SLOTS}).
+ *                  @kconfig{SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS}).
  */
 int set_monotonic_counter(uint16_t counter_desc, counter_t new_counter);
 
@@ -284,7 +284,7 @@ int set_monotonic_counter(uint16_t counter_desc, counter_t new_counter);
  * @retval 0        The counter was updated successfully.
  * @retval -EINVAL  @p counter_desc is invalid.
  * @retval -ENOMEM  There are no more free counter slots (see
- *                  @kconfig{CONFIG_SB_NUM_VER_COUNTER_SLOTS}).
+ *                  @kconfig{SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS}).
  */
 int is_monotonic_counter_update_possible(uint16_t counter_desc);
 
