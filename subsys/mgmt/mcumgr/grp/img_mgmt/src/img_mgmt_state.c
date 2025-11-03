@@ -131,6 +131,20 @@ img_mgmt_state_flags(int query_slot)
 	int image = query_slot / 2;	/* We support max 2 images for now */
 	int active_slot = img_mgmt_active_slot(image);
 
+#ifdef CONFIG_NCS_MCUBOOT_MANIFEST_UPDATES
+	/* If manifest-based updates are used, overwrite the image and slot with
+	 * the manifest image.
+	 */
+	image = CONFIG_NCS_MCUBOOT_MANIFEST_IMAGE_INDEX;
+	if (query_slot == active_slot) {
+		active_slot = img_mgmt_active_slot(image);
+		query_slot = active_slot;
+	} else {
+		active_slot = img_mgmt_active_slot(image);
+		query_slot = img_mgmt_get_opposite_slot(active_slot);
+	}
+#endif /* CONFIG_NCS_MCUBOOT_MANIFEST_UPDATES */
+
 	/* In case when MCUboot is configured for FW loader/updater mode, slots
 	 * can be either active or non-active. There is no concept of pending
 	 * or confirmed slots.
@@ -258,18 +272,24 @@ int img_mgmt_get_next_boot_slot(int image, enum img_mgmt_next_boot_type *type)
 {
 	struct image_version aver;
 	struct image_version over;
-	int active_slot = img_mgmt_active_slot(image);
-	int other_slot = img_mgmt_get_opposite_slot(active_slot);
 #if defined(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
 	int active_slot_state;
 	int other_slot_state;
 #endif /* defined(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT) */
 	enum img_mgmt_next_boot_type lt = NEXT_BOOT_TYPE_NORMAL;
-	int return_slot = active_slot;
 
+#ifdef CONFIG_NCS_MCUBOOT_MANIFEST_UPDATES
+	/* If manifest-based updates are used, only the manifest image is considered. */
+	int query_image = image;
 
+	image = CONFIG_NCS_MCUBOOT_MANIFEST_IMAGE_INDEX;
+#endif /* CONFIG_NCS_MCUBOOT_MANIFEST_UPDATES */
+
+	int active_slot = img_mgmt_active_slot(image);
+	int other_slot = img_mgmt_get_opposite_slot(active_slot);
 	int rcs = img_mgmt_read_info(other_slot, &over, NULL, NULL);
 	int rca = img_mgmt_read_info(active_slot, &aver, NULL, NULL);
+	int return_slot = active_slot;
 
 #if defined(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
 	active_slot_state = read_directxip_state(active_slot);
@@ -363,6 +383,14 @@ out:
 	if (type != NULL) {
 		*type = lt;
 	}
+
+#ifdef CONFIG_NCS_MCUBOOT_MANIFEST_UPDATES
+	if (return_slot != active_slot) {
+		return_slot = img_mgmt_get_opposite_slot(img_mgmt_active_slot(query_image));
+	} else {
+		return_slot = img_mgmt_active_slot(query_image);
+	}
+#endif /* CONFIG_NCS_MCUBOOT_MANIFEST_UPDATES */
 
 	return return_slot;
 }
