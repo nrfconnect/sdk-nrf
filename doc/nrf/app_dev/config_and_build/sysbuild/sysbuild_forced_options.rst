@@ -100,3 +100,5 @@ Trying to change them directly in an image will result in the new value being ov
 |                                                                         + :kconfig:option:`SB_CONFIG_SECURE_BOOT_NETCORE`                           | Network core main image,|
 |                                                                         +                                                                           | MCUboot                 |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+-------------------------+
+| :kconfig:option:`CONFIG_SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION`       + :kconfig:option:`SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER`                 | :ref:`b0 <bootloader>`  |
++-------------------------------------------------------------------------+---------------------------------------------------------------------------+-------------------------+

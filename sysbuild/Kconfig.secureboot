@@ -106,6 +106,41 @@ config SECURE_BOOT_APPCORE_SIGNATURE_TYPE_UNUSED
 
 endchoice
 
+config SECURE_BOOT_MONOTONIC_COUNTER
+	bool "HW monotonic version counter"
+	default y
+	help
+	  The counter stores the current firmware version in a way that ensures that the value
+	  can only increase. This is used to prevent malicious rollback of the firmware.
+	  An array of slots is used for the counter. One slot is used per
+	  counter update, and each new slot must have a larger value than the
+	  previous. Application versions are checked against the largest
+	  counter value before being booted.
+
+config SECURE_BOOT_NUM_VER_COUNTER_SLOTS
+	int "Number of monotonic counter slots used for the firmware version"
+	default 20 if BOOTLOADER_MCUBOOT
+	default 240
+	range 2 300 if SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X || SOC_SERIES_NRF54LX
+	range 2 1800 if SOC_SERIES_NRF52X
+	range 2 288 if SOC_SERIES_NRF51X
+	depends on SECURE_BOOT_MONOTONIC_COUNTER
+	help
+	  The number of monotonic counter slots available for the counter,
+	  i.e., the number of times the counter can be updated.
+	  The slots are 16 bits each.
+	  Rationale for the default number (240): Assume one update a month for
+	  10 years, then double that value just in case. This default fits
+	  comfortably within the OTP region of UICR.
+	  When a second stage bootloader is enabled, such as MCUboot, this counter is used
+	  for the updates of the second stage bootloader and not of the application image. Thus
+	  the default when MCUboot is enabled is 20, to allow two updates a year for 10 years.
+	  Regarding ranges: The actual maximum depends on the number of
+	  provisioned public keys, since they share the space. The same is true if
+	  other data is stored in the "OTP" region (on for example nRF91 and nRF53).
+	  This configuration should not be used in code. Instead, the header before the
+	  slots should be read at run-time.
+
 endif # SECURE_BOOT_APPCORE
 
 menuconfig SECURE_BOOT_NETCORE

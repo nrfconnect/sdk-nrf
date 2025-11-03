@@ -25,15 +25,14 @@ function(provision application prefix_name)
   endif()
 
   if(CONFIG_SECURE_BOOT)
-    if(DEFINED CONFIG_SB_MONOTONIC_COUNTER)
+    if(SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER)
       set(monotonic_counter_arg
-          --num-counter-slots-version ${CONFIG_SB_NUM_VER_COUNTER_SLOTS})
+          --num-counter-slots-version ${SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS})
     endif()
 
     # Skip signing if MCUBoot is to be booted and its not built from source
     if((CONFIG_SB_VALIDATE_FW_SIGNATURE OR CONFIG_SB_VALIDATE_FW_HASH) AND
         NCS_SYSBUILD_PARTITION_MANAGER)
-
       if(${SB_CONFIG_SECURE_BOOT_DEBUG_SIGNATURE_PUBLIC_KEY_LAST})
         message(WARNING
           "

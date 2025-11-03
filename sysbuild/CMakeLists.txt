@@ -569,6 +569,32 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(${DEFAULT_IMAGE} CONFIG_FW_INFO y)
     endif()
 
+    if(SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER)
+      set_config_bool(b0 CONFIG_SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION y)
+
+      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+        set_config_bool(mcuboot CONFIG_SB_MONOTONIC_COUNTER_IS_ENABLED y)
+      else()
+        set_config_bool(${DEFAULT_IMAGE} CONFIG_SB_MONOTONIC_COUNTER_IS_ENABLED y)
+      endif()
+
+      if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
+        set_config_bool(s1_image CONFIG_SB_MONOTONIC_COUNTER_IS_ENABLED y)
+      endif()
+    else()
+      set_config_bool(b0 CONFIG_SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION n)
+
+      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+        set_config_bool(mcuboot CONFIG_SB_MONOTONIC_COUNTER_IS_ENABLED n)
+      else()
+        set_config_bool(${DEFAULT_IMAGE} CONFIG_SB_MONOTONIC_COUNTER_IS_ENABLED n)
+      endif()
+
+      if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
+        set_config_bool(s1_image CONFIG_SB_MONOTONIC_COUNTER_IS_ENABLED n)
+      endif()
+    endif()
+
     # Apply configuration for hashing
     if(SB_CONFIG_SECURE_BOOT_HASH_TYPE_SHA256 AND NOT SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_NONE)
       if(SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE)

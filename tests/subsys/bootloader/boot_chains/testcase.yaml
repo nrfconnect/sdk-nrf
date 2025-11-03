@@ -46,14 +46,14 @@ tests:
   boot_chains.secure_boot_and_nv_counters:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
-      - CONFIG_SB_MONOTONIC_COUNTER=y
-      - CONFIG_SB_NUM_VER_COUNTER_SLOTS=64
+      - SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER=y
+      - SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS=64
   boot_chains.secure_boot_and_mcuboot_and_nv_counters:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - mcuboot_CONFIG_SB_MONOTONIC_COUNTER=y
-      - mcuboot_CONFIG_SB_NUM_VER_COUNTER_SLOTS=64
+      - SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER=y
+      - SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS=64
   boot_chains.secure_boot_and_optimizations_speed:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y

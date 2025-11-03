@@ -13,11 +13,11 @@
 
 LOG_MODULE_REGISTER(bl_validation, CONFIG_SECURE_BOOT_VALIDATION_LOG_LEVEL);
 
+#ifdef CONFIG_SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION
 /* The 15 bit version is encoded into the most significant bits of
  * the 16 bit monotonic_counter, and the 1 bit slot is encoded
  * into the least significant bit.
  */
-
 int set_monotonic_version(counter_t version, uint16_t slot)
 {
 	__ASSERT(version <= 0x7FFF, "version too large.\r\n");
@@ -91,6 +91,7 @@ int get_monotonic_slot(counter_t *slot_out)
 
 	return 0;
 }
+#endif /* CONFIG_SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION */
 
 #ifndef CONFIG_BL_VALIDATE_FW_EXT_API_UNUSED
 #ifdef CONFIG_BL_VALIDATE_FW_EXT_API_REQUIRED
@@ -412,6 +413,7 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 		LOG_INF("Trying to get Firmware version");
 	}
 
+#ifdef CONFIG_SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION
 #if defined(CONFIG_NRFX_NVMC)
 	uint16_t stored_version;
 #elif defined(CONFIG_NRFX_RRAMC)
@@ -423,18 +425,8 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 	if (err) {
 		if (!external) {
 			LOG_ERR("Cannot read the firmware version. %d", err);
-			LOG_INF("We assume this is due to the firmware version not being enabled.");
 		}
-
-		/*
-		 * Errors in reading the firmware version are assumed to be
-		 * due to the firmware version not being enabled. When the
-		 * firmware version is disabled we want no version checking to
-		 * be done so we set the version to 0 as this version is not
-		 * permitted in fwinfo and will therefore pass all version
-		 * checks.
-		 */
-		stored_version = 0;
+		return false;
 	}
 
 	if (fwinfo->version < stored_version) {
@@ -444,6 +436,7 @@ static bool validate_firmware(uint32_t fw_dst_address, uint32_t fw_src_address,
 		}
 		return false;
 	}
+#endif /* CONFIG_SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION */
 
 #if defined(PM_S0_SIZE) && defined(PM_S1_SIZE)
 	BUILD_ASSERT(PM_S0_SIZE == PM_S1_SIZE,
