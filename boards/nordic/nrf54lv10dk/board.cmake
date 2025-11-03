@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 if(CONFIG_SOC_NRF54LV10A_ENGA_CPUAPP)
-  board_runner_args(jlink "--device=cortex-m33" "--speed=4000")
+  board_runner_args(jlink "--device=NRF54LV10A_M33" "--speed=4000")
 elseif(CONFIG_SOC_NRF54LV10A_ENGA_CPUFLPR)
-  board_runner_args(jlink "--speed=4000")
+  board_runner_args(jlink "--device=NRF54LV10A_RV32" "--speed=4000")
 endif()
 
 if(CONFIG_BOARD_NRF54LV10DK_NRF54LV10A_CPUAPP_NS)
