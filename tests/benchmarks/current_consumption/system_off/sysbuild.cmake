@@ -7,8 +7,8 @@
 if(SB_CONFIG_SOC_NRF54H20)
   # Add remote project
   ExternalZephyrProject_Add(
-    APPLICATION radio
-    SOURCE_DIR ${APP_DIR}/radio
+    APPLICATION remote
+    SOURCE_DIR ${ZEPHYR_BASE}/samples/boards/nordic/system_off/remote
     BOARD ${SB_CONFIG_BOARD}/${SB_CONFIG_SOC}/cpurad
     BOARD_REVISION ${BOARD_REVISION}
   )
