@@ -945,24 +945,24 @@ Modem libraries
     * The deprecated functions ``lte_lc_reduced_mobility_get()``, ``lte_lc_reduced_mobility_set()``, and ``lte_lc_factory_reset()``.
     * The deprecated macro ``LTE_LC_ON_CFUN()``.
 
-* :ref:`lib_modem_slm` library:
+* Modem SLM library:
 
   * Added the following Kconfig options:
 
-    * :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_COUNT` for configuring RX buffer count.
-    * :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_SIZE` for configuring RX buffer size.
-    * :kconfig:option:`CONFIG_MODEM_SLM_UART_TX_BUF_SIZE` for configuring TX buffer size.
-    * :kconfig:option:`CONFIG_MODEM_SLM_AT_CMD_RESP_MAX_SIZE` for buffering AT command responses.
+    * ``CONFIG_MODEM_SLM_UART_RX_BUF_COUNT`` for configuring RX buffer count.
+    * ``CONFIG_MODEM_SLM_UART_RX_BUF_SIZE`` for configuring RX buffer size.
+    * ``CONFIG_MODEM_SLM_UART_TX_BUF_SIZE`` for configuring TX buffer size.
+    * ``CONFIG_MODEM_SLM_AT_CMD_RESP_MAX_SIZE`` for buffering AT command responses.
 
   * Updated:
 
       * The software maturity of the library to supported instead of experimental.
-      * The UART implementation between the host device, using the :ref:`lib_modem_slm` library, and the device running the :ref:`Serial LTE Modem <slm_description>` application.
+      * The UART implementation between the host device, using the Modem SLM library, and the device running the Serial LTE modem application.
 
   * Removed:
 
     * The ``CONFIG_MODEM_SLM_DMA_MAXLEN`` Kconfig option.
-      Use :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_SIZE` instead.
+      Use ``CONFIG_MODEM_SLM_UART_RX_BUF_SIZE`` instead.
     * The ``modem_slm_reset_uart()`` function, as there is no longer a need to reset the UART.
 
 * :ref:`modem_info_readme` library:

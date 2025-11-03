@@ -27,5 +27,4 @@ Applications are also available through the `nRF Connect SDK Add-ons`_, a curate
    ../../applications/nrf_desktop/README
    ../../applications/machine_learning/README
    ../../applications/hpf/hpf
-   ../../applications/serial_lte_modem/README
    ../../applications/matter_weather_station/README

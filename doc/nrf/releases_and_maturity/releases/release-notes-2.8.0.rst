@@ -619,7 +619,7 @@ Serial LTE modem
 * Added:
 
   * DTLS support for the ``#XUDPSVR`` and ``#XSSOCKET`` (UDP server sockets) AT commands when the :file:`overlay-native_tls.conf` configuration file is used.
-  * The :ref:`CONFIG_SLM_PPP_FALLBACK_MTU <CONFIG_SLM_PPP_FALLBACK_MTU>` Kconfig option that is used to control the MTU used by PPP when the cellular link MTU is not returned by the modem in response to the ``AT+CGCONTRDP=0`` AT command.
+  * The ``CONFIG_SLM_PPP_FALLBACK_MTU`` Kconfig option that is used to control the MTU used by PPP when the cellular link MTU is not returned by the modem in response to the ``AT+CGCONTRDP=0`` AT command.
   * Handler for new nRF Cloud event type :c:enumerator:`NRF_CLOUD_EVT_RX_DATA_DISCON`.
   * Support for socket option ``AT_SO_IPV6_DELAYED_ADDR_REFRESH``.
 
@@ -628,7 +628,7 @@ Serial LTE modem
   * AT string parsing to utilize the :ref:`at_parser_readme` library instead of the AT command parser library.
   * The ``#XUDPCLI`` and ``#XSSOCKET`` (UDP client sockets) AT commands to use Zephyr's Mbed TLS with DTLS when the :file:`overlay-native_tls.conf` configuration file is used.
 
-* Fixed reading network registration status with ``AT+CEREG`` when the :ref:`CONFIG_SLM_AUTO_CONNECT <CONFIG_SLM_AUTO_CONNECT>` option is enabled.
+* Fixed reading network registration status with ``AT+CEREG`` when the ``CONFIG_SLM_AUTO_CONNECT`` option is enabled.
 
 * Removed:
 

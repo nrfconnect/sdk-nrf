@@ -233,8 +233,7 @@ The library offers two different ways to control the timing of P-GPS cloud reque
    * Call :c:func:`nrf_cloud_pgps_preemptive_updates`.
    * Call :c:func:`nrf_cloud_pgps_notify_prediction`.
 
-The indirect methods are used in the :ref:`serial_lte_modem` application.
-They are simpler to use than the direct methods.
+The indirect methods are simpler to use than the direct methods.
 The direct method is used in the :ref:`gnss_sample` sample.
 
 When nRF Cloud responds with the requested P-GPS data, the library sends the :c:enum:`CLOUD_EVT_DATA_RECEIVED` event.
@@ -249,7 +248,7 @@ A P-GPS prediction for the current date and time can be retrieved using one of t
 * Directly, by calling the function :c:func:`nrf_cloud_pgps_find_prediction`
 * Indirectly, by calling the function :c:func:`nrf_cloud_pgps_notify_prediction`
 
-The indirect method is used in the :ref:`gnss_sample` sample and in the :ref:`serial_lte_modem` application.
+The indirect method is used in the :ref:`gnss_sample` sample.
 
 The application can inject the data contained in the prediction to the GNSS module in the modem by calling the :c:func:`nrf_cloud_pgps_inject` function.
 This must be done when event :c:enumerator:`NRF_MODEM_GNSS_EVT_AGNSS_REQ` is received from the GNSS interface.

@@ -314,7 +314,7 @@ nRF9160: Serial LTE modem
     Both are *High* when the SLM application starts.
 
 * Fixed an issue where the features of the Mbed TLS v3.1 were not enabled by default, which caused the native TLS to not work.
-  The documentation of the :ref:`SLM_AT_SOCKET`' socket option numbers was updated accordingly.
+  The documentation of the Socket AT commands’ socket option numbers was updated accordingly.
 * Removed the software toggle of ``INDICATE_PIN`` in case of reset.
 
 nRF5340 Audio

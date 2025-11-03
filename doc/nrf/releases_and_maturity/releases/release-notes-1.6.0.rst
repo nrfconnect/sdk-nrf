@@ -169,7 +169,7 @@ nRF9160
     * Added support for %XMODEMSLEEP AT command notifications, which allows the application to get notifications related to modem sleep.
     * Added support for %CONEVAL AT command that can be used to evaluate the LTE radio signal state in a cell prior to data transmission.
 
-  * :ref:`serial_lte_modem` application:
+  * Serial LTE modem application:
 
     * Fixed TCP/UDP port range issue (0~65535).
     * Added AT#XSLEEP=2 to power off UART interface.
@@ -608,7 +608,7 @@ Applications and samples
       * Added a table showing cloud services and the corresponding cloud-side instances.
       * Extended the documentation to include Azure IoT Hub and nRF Cloud support.
 
-   * :ref:`serial_lte_modem` - Added links to AT command reference guides.
+   * Serial LTE modem - Added links to AT command reference guides.
    * :ref:`agps_sample` - Added a section on using nRF Cloud A-GPS or P-GPS.
    * nRF9160: AWS FOTA sample - Changes in the sample configuration section.
    * :ref:`fmfu_smp_svr_sample` - Updated the Building and running section.

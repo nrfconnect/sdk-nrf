@@ -55,7 +55,7 @@ Added the following features as supported:
 * Cellular IoT:
 
   * Support for nRF9151 DK on the majority of :ref:`cellular IoT samples <cellular_samples>`.
-  * The :ref:`serial_lte_modem` application can now be used to turn an nRF91 Series SiP into a standalone modem that can be used through Zephyr's cellular modem driver.
+  * The Serial LTE modem application can now be used to turn an nRF91 Series SiP into a standalone modem that can be used through Zephyr's cellular modem driver.
 
 * Security:
 
@@ -478,19 +478,19 @@ Serial LTE modem
     It can be used in conjunction with CMUX to use a single UART for both AT data and PPP.
     The ``#XPPP`` AT command is added to manage the PPP link.
   * ``#XMQTTCFG`` AT command to configure the MQTT client before connecting to the broker.
-  * The :ref:`CONFIG_SLM_AUTO_CONNECT <CONFIG_SLM_AUTO_CONNECT>` Kconfig option to support automatic LTE connection at start-up or reset.
-  * The :ref:`CONFIG_SLM_CUSTOMER_VERSION <CONFIG_SLM_CUSTOMER_VERSION>` Kconfig option for customers to define their own version string after customization.
+  * The ``CONFIG_SLM_AUTO_CONNECT`` Kconfig option to support automatic LTE connection at start-up or reset.
+  * The ``CONFIG_SLM_CUSTOMER_VERSION`` Kconfig option for customers to define their own version string after customization.
   * The optional ``path`` parameter to the ``#XCARRIEREVT`` AT notification.
   * ``#XCARRIERCFG`` AT command to configure the LwM2M carrier library using the LwM2M carrier settings (see the :kconfig:option:`CONFIG_LWM2M_CARRIER_SETTINGS` Kconfig option).
   * Support for Zephyr's cellular modem driver, which allows a Zephyr application running on an external MCU to seamlessly use Zephyr's IP stack instead of AT commands for connectivity.
-    See :ref:`slm_as_zephyr_modem` for more information.
+    See nRF91 Series as a Zephyr-compatible modem for more information.
 
 * Updated:
 
-  * The ``CONFIG_SLM_WAKEUP_PIN`` Kconfig option has been renamed to :ref:`CONFIG_SLM_POWER_PIN <CONFIG_SLM_POWER_PIN>`.
+  * The ``CONFIG_SLM_WAKEUP_PIN`` Kconfig option has been renamed to ``CONFIG_SLM_POWER_PIN``.
     In addition to its already existing functionality, it can now be used to power off the SiP.
   * ``#XMQTTCON`` AT command to exclude MQTT client ID from the parameter list.
-  * ``#XSLMVER`` AT command to report :ref:`CONFIG_SLM_CUSTOMER_VERSION <CONFIG_SLM_CUSTOMER_VERSION>` if it is defined.
+  * ``#XSLMVER`` AT command to report ``CONFIG_SLM_CUSTOMER_VERSION`` if it is defined.
   * The ``#XTCPCLI``, ``#XUDPCLI``, and ``#XHTTPCCON`` AT commands with options for the following purposes:
 
     * Set the ``PEER_VERIFY`` socket option.
@@ -676,7 +676,7 @@ Cellular samples
 
   * :ref:`lte_sensor_gateway`
   * :ref:`smp_svr`
-  * :ref:`slm_shell_sample`
+  * SLM Shell
 
 * :ref:`ciphersuites` sample:
 
@@ -1153,7 +1153,7 @@ Modem libraries
     * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE``.
     * The ``NRF_MODEM_LIB_NET_IF_DOWN`` flag support in the ``lte_net_if`` network interface driver.
 
-* :ref:`lib_modem_slm`:
+* Modem SLM:
 
     * Updated the library by making the used GPIO to be configurable using devicetree.
 

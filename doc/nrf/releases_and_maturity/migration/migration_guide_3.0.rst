@@ -527,7 +527,7 @@ Serial LTE Modem
 
 .. toggle::
 
-   The error event ``LWM2M_CARRIER_ERROR_RUN`` has been removed from the :ref:`SLM_AT_CARRIER`.
+   The error event ``LWM2M_CARRIER_ERROR_RUN`` has been removed from the LwM2M carrier library AT commands.
 
    * Errors that were previously notified to the application with the ``LWM2M_CARRIER_ERROR_RUN`` event type have instead been added to :c:macro:`LWM2M_CARRIER_ERROR_CONFIGURATION`.
 
@@ -723,11 +723,11 @@ Modem SLM
 
 .. toggle::
 
-   For applications and samples using the :ref:`lib_modem_slm` library:
+   For applications and samples using the Modem SLM library:
 
-    * Replace the ``CONFIG_MODEM_SLM_WAKEUP_PIN`` Kconfig option with :kconfig:option:`CONFIG_MODEM_SLM_POWER_PIN`.
-    * Replace the ``CONFIG_MODEM_SLM_WAKEUP_TIME`` Kconfig option with :kconfig:option:`CONFIG_MODEM_SLM_POWER_PIN_TIME`.
-    * Replace the :c:func:`modem_slm_wake_up` function with :c:func:`modem_slm_power_pin_toggle`.
+    * Replace the ``CONFIG_MODEM_SLM_WAKEUP_PIN`` Kconfig option with ``CONFIG_MODEM_SLM_POWER_PIN``.
+    * Replace the ``CONFIG_MODEM_SLM_WAKEUP_TIME`` Kconfig option with ``CONFIG_MODEM_SLM_POWER_PIN_TIME``.
+    * Replace the ``modem_slm_wake_up()`` function with ``modem_slm_power_pin_toggle()``.
 
 Protocols
 =========

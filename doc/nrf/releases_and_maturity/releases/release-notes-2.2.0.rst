@@ -262,7 +262,7 @@ nRF9160: Serial LTE modem
 
 * Added:
 
-  * Optional data modem flow control Kconfig option :ref:`CONFIG_SLM_DATAMODE_URC <CONFIG_SLM_DATAMODE_URC>`.
+  * Optional data modem flow control Kconfig option ``CONFIG_SLM_DATAMODE_URC``.
   * Handling for the new data receive events in the :ref:`lib_nrf_cloud` library.
 
 * Updated the service info JSON payload to use ``GNSS`` instead of ``GPS``.

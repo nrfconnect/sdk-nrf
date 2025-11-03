@@ -87,9 +87,8 @@ Configure the following options to fine-tune the behavior of the library:
 Samples using the library
 *************************
 
-The following |NCS| samples and applications use this library:
+The following |NCS| samples use this library:
 
-* :ref:`serial_lte_modem`
 * :ref:`location_sample`
 * :ref:`gnss_sample`
 * :ref:`modem_shell_application`

@@ -199,7 +199,7 @@ For more information on how to do this, see the `Cellular Monitor app`_ document
 To enable the modem traces in the modem and to forward them to the :ref:`modem_trace_module` over UART, include the ``nrf91-modem-trace-uart`` snippet while building your application as described in :ref:`nrf91_modem_trace_uart_snippet`.
 
 .. note::
-   For the :ref:`serial_lte_modem` application and the :ref:`at_client_sample` sample, you must also run ``AT%XMODEMTRACE=1,2`` to manually activate the predefined trace set.
+   For the :ref:`at_client_sample` sample, you must also run ``AT%XMODEMTRACE=1,2`` to manually activate the predefined trace set.
 
 You can set the trace level using the AT command ``AT%XMODEMTRACE``.
 For more information, see the `modem trace activation %XMODEMTRACE`_ section in the nRF9160 AT Commands Reference Guide or the `same section <nRF91x1 modem trace activation %XMODEMTRACE_>`_ in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
@@ -348,7 +348,7 @@ Samples using GNSS in |NCS|
 There are many examples in |NCS| that use GNSS.
 Following is a list of the samples and applications with some information about the GNSS usage:
 
-* The :ref:`serial_lte_modem` application uses AT commands to start and stop GNSS and supports nRF Cloud A-GNSS and P-GPS.
-  The application displays tracking and GNSS fix information in the serial console.
 * The :ref:`gnss_sample` sample does not use assistance by default but can be configured to use nRF Cloud A-GNSS, P-GPS, or a combination of both.
   The sample displays tracking and fix information as well as NMEA strings in the serial console.
+* The :ref:`location_sample` sample uses GNSS through the :ref:`lib_location` with nRF Cloud A-GNSS, P-GPS, or a combination of both.
+* The :ref:`modem_shell_application` sample has various usages of GNSS through different APIs with or without nRF Cloud A-GNSS and P-GPS.

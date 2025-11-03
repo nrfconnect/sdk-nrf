@@ -305,13 +305,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.cellular.slm_shell
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp
-    - nrf7002dk/nrf5340/cpuapp
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
     - samples.cellular.nidd
     - sample.cellular.udp
   platforms:
@@ -414,28 +407,6 @@
   platforms:
     - qemu_cortex_m3
   comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - applications.serial_lte_modem
-    - applications.serial_lte_modem.lwm2m_carrier
-  platforms:
-    - nrf9160dk@0.14.0/nrf9160/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - applications.serial_lte_modem
-    - applications.serial_lte_modem.native_tls
-  platforms:
-    - nrf9161dk/nrf9161/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - applications.serial_lte_modem.lwm2m_carrier
-    - applications.serial_lte_modem.native_tls
-  platforms:
-    - thingy91/nrf9160/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
 
 - scenarios:
     - nrf5340_audio.sw_codec_lc3_test
