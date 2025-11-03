@@ -405,6 +405,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         # Set required options if MCUmgr img mgmt is used
         if(SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP)
           set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_IMAGE y)
+          set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUMGR_GRP_IMG_NRF y)
         else()
           set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_IMAGE n)
         endif()
