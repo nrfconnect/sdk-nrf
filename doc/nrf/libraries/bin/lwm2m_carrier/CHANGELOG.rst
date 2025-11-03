@@ -347,7 +347,7 @@ Changes
   Instead, the :c:member:`LWM2M_CARRIER_ERROR_FOTA_FAIL` error event indicates an error code ``error.value`` in :c:struct:`lwm2m_carrier_event_t` (when :c:member:`LWM2M_CARRIER_ERROR_FOTA_FAIL` is received).
 * Removed the dependency on the :ref:`lte_lc_readme` library.
 
-  * This was primarily done to save space in the :ref:`serial_lte_modem` application.
+  * This was primarily done to save space in the Serial LTE modem application.
   * All other relevant samples and applications use the :ref:`lte_lc_readme` library.
     It is highly recommended that you include it in your applications.
 

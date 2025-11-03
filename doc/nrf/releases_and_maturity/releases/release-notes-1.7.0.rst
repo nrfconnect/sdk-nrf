@@ -104,15 +104,15 @@ nRF9160
     * Removed the function ``nrf_cloud_sensor_attach()``, the associated structure ``nrf_cloud_sa_param``, and the event ``NRF_CLOUD_EVT_SENSOR_ATTACHED``.
       These items provided no useful functionality.
 
-  * :ref:`serial_lte_modem` application:
+  * Serial LTE modem application:
 
     * Added IPv6 support to all SLM services.
     * Added the GNSS service to replace the existing GPS test functionality.
     * Added the optional support of location services from nRF Cloud, such as A-GPS, P-GPS, and cellular positioning.
     * Removed datatype in all sending AT commands.
       If no sending data is specified, switch data mode to receive and send any arbitrary data.
-    * Added the :ref:`slm_data_mode` documentation page to explain the data mode mechanism and how it works.
-    * Added the :ref:`SLM_AT_FOTA` documentation page to describe the FOTA service.
+    * Added the Running in data mode documentation page to explain the data mode mechanism and how it works.
+    * Added the FOTA AT commands documentation page to describe the FOTA service.
 
   * Asset Tracker v2 application:
 
@@ -487,12 +487,12 @@ In addition to documentation related to the changes listed above, the following 
 
   * Added the :ref:`ug_thingy53` user guide.
   * Added the :ref:`ug_nrf_cloud` user guide.
-  * Added :ref:`serial_lte_modem` application pages:
+  * Added Serial LTE modem application pages:
 
-    * :ref:`slm_data_mode` page
-    * :ref:`SLM_AT_FOTA` page
-    * :ref:`SLM_AT_SOCKET` page
-    * :ref:`SLM_AT_GNSS` page
+    *  Running in data mode page
+    * FOTA AT commands page
+    * Socket AT commands page
+    * GNSS AT command page
 
   * Added the :ref:`matter_weather_station_app` application page.
   * Added the :ref:`crypto_tls` sample page.
@@ -547,7 +547,7 @@ In addition to documentation related to the changes listed above, the following 
       * Updated the device modes section.
       * Added links and information about A-GPS and P-GPS support with nRF Cloud.
 
-    * :ref:`serial_lte_modem` pages:
+    * Serial LTE modem pages:
 
       * Removed the GPS AT commands page.
 

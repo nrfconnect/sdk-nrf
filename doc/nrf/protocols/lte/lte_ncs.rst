@@ -37,9 +37,8 @@ The following |NCS| libraries are used for cellular IoT:
 Applications and samples
 ========================
 
-The following applications use the cellular IoT in |NCS|:
+The following application uses the cellular IoT in |NCS|:
 
-* :ref:`serial_lte_modem`
 * :ref:`connectivity_bridge`
 
 The following samples are used for the cellular IoT development in |NCS|:

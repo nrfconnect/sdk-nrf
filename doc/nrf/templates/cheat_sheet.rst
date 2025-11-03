@@ -627,7 +627,7 @@ To link to doxygen macros, enums or functions use:
 * :c:macro:`BT_HIDS_INFORMATION_LEN`
 * :c:func:`bt_hids_init`
 * :c:struct:`bt_gatt_dm`
-* :c:type:`slm_data_handler_t`
+* :c:type:`lte_lc_evt_handler_t`
 * :c:enum:`at_param_type` (for the whole list)
 * :c:enumerator:`PEER_STATE_CONN_FAILED` (for a list item)
 * :c:member:`ble_peer_event.state`

@@ -88,7 +88,7 @@ Serial LTE Modem (SLM)
 
    The AT command parsing has been updated to utilize the :ref:`at_cmd_custom_readme` library.
    If you have introduced custom AT commands to the SLM, you need to update the command parsing to use the new library.
-   See the :ref:`slm_extending` page for more information.
+   See the Serial LTE modem's Extending the application page for more information.
 
 Peripheral samples
 ------------------
@@ -230,4 +230,4 @@ LwM2M carrier library
 
    * Many event defines have received new values.
      If you are using the values directly in your application, you need to check the events listed in :file:`lwm2m_carrier.h`.
-     The most likely place these changes are needed is :ref:`serial_lte_modem` application, where :ref:`SLM_AT_CARRIER` are relying on the value of the defines instead of the names.
+     The most likely place these changes are needed is Serial LTE modem application, where LwM2M carrier library AT commands are relying on the value of the defines instead of the names.

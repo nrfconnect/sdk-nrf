@@ -133,7 +133,7 @@ nRF9160
   * Improved stability.
   * Various bugfixes.
 
-* :ref:`serial_lte_modem` application:
+* Serial LTE modem application:
 
   * Moved from samples to applications.
   * Added low-power idle mode.

@@ -21,11 +21,10 @@ For more information, see the following pages:
    It is *mandatory* to include the LwM2M carrier library in any Verizon certified product.
 
 The :ref:`lwm2m_carrier` sample demonstrates how to run this library in an application.
-In addition to this stand-alone sample, the following applications and samples include an overlay file to easily integrate the LwM2M carrier library:
+In addition to this stand-alone sample, the following samples include an overlay file to easily integrate the LwM2M carrier library:
 
   * :ref:`modem_shell_application`
   * :ref:`http_application_update_sample`
-  * :ref:`serial_lte_modem`
 
 .. note::
 

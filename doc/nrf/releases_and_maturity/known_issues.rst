@@ -2161,10 +2161,10 @@ IRIS-2676: Missing support for FOTA on nRF Cloud
 					* 156d4cf3a568869adca445d43a786d819ae10250
 					* f520159f0415f011ae66efb816384a8f7bade83d
 
-Serial LTE Modem
+Serial LTE modem
 ================
 
-The issues in this section are related to the :ref:`serial_lte_modem` application.
+The issues in this section are related to the Serial LTE modem application.
 
 .. rst-class:: wontfix v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0
 
@@ -2184,11 +2184,11 @@ NCSDK-20457: Modem traces captured through UART are corrupted if RTT logs are si
       hw-flow-control;
      };
 
-  This increases the overall power consumption even when Serial LTE Modem is in sleep mode.
+  This increases the overall power consumption even when Serial LTE modem is in sleep mode.
 
 .. rst-class:: v2-5-0
 
-NCSDK-24135: Serial LTE Modem (SLM) attempts to use UART hardware flow control even though Connectivity bridge does not support it
+NCSDK-24135: Serial LTE modem (SLM) attempts to use UART hardware flow control even though Connectivity bridge does not support it
   With Thingy:91, Connectivity bridge in the nRF52840 SoC terminates the USB traffic and sends the traffic through UART to SLM in the nRF9160 SiP.
   The Connectivity bridge does not enable UART hardware flow control and since both ends need to enable it, SLM should not enable it either.
   Without hardware flow control, the buffer sizes must be set accordingly for the worst-case scenario.
@@ -2196,8 +2196,8 @@ NCSDK-24135: Serial LTE Modem (SLM) attempts to use UART hardware flow control e
 
   **Affected platforms:** Thingy:91
 
-  **Workaround:** Set the :ref:`CONFIG_SLM_UART_RX_BUF_SIZE <CONFIG_SLM_UART_RX_BUF_SIZE>` Kconfig option to ``2048`` to ensure that there is adequate buffer space to receive traffic from the Connectivity bridge and disable the ``hw-flow-control`` from :file:`boards\thingy91_nrf9160_ns.overlay`.
-  If even larger buffer spaces are required, set the :kconfig:option:`CONFIG_BRIDGE_BUF_SIZE` Kconfig option for Connectivity bridge and the :ref:`CONFIG_SLM_UART_RX_BUF_SIZE <CONFIG_SLM_UART_RX_BUF_SIZE>` Kconfig option for SLM, must be set accordingly.
+  **Workaround:** Set the ``CONFIG_SLM_UART_RX_BUF_SIZE`` Kconfig option to ``2048`` to ensure that there is adequate buffer space to receive traffic from the Connectivity bridge and disable the ``hw-flow-control`` from :file:`boards\thingy91_nrf9160_ns.overlay`.
+  If even larger buffer spaces are required, set the :kconfig:option:`CONFIG_BRIDGE_BUF_SIZE` Kconfig option for Connectivity bridge and the ``CONFIG_SLM_UART_RX_BUF_SIZE`` Kconfig option for SLM, must be set accordingly.
 
 .. rst-class:: v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
 

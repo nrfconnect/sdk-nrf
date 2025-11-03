@@ -265,20 +265,20 @@ nRF9160: Serial LTE modem
 
 * Updated:
 
-  * :ref:`slm_description` as part of adding the overlay for Thingy:91 target:
+  * Application description as part of adding the overlay for Thingy:91 target:
 
     * Added:
 
-      * :ref:`slm_testing_twi` in :ref:`slm_testing`.
-      * :ref:`slm_connecting_thingy91`.
+      * TWI AT commands in Testing scenarios.
+      * Communicating with the modem on Thingy:91.
 
     * Updated:
 
-      * :ref:`SLM_AT_TWI`.
+      * TWI AT commands.
       * Additional configuration section by adding information about the configuration files for Thingy:91.
 
-  * SLM UART #XSLMUART section in :ref:`SLM_AT_gen`.
-  * :ref:`slm_config_options` with the configuration option related to SLM UART.
+  * SLM UART #XSLMUART section in Generic AT commands.
+  * Configuration options with the configuration option related to SLM UART.
 
 
 Samples

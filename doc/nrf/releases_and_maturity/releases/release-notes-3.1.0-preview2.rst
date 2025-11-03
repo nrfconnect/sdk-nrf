@@ -532,21 +532,21 @@ Modem libraries
     Even within the same network, the PDN connection establishment method (PCO vs ePCO) might change when the device operates in NB-IoT or LTE Cat-M1, resulting in missing DNS addresses when one method is used, but not the other.
     Having a fallback DNS address ensures that the device always has a DNS to fallback to.
 
-* :ref:`lib_modem_slm` library:
+* Modem SLM library:
 
   * Added:
 
-    * The :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_COUNT` Kconfig option for configuring RX buffer count.
-    * The :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_SIZE` Kconfig option for configuring RX buffer size.
-    * The :kconfig:option:`CONFIG_MODEM_SLM_UART_TX_BUF_SIZE` Kconfig option for configuring TX buffer size.
-    * The :kconfig:option:`CONFIG_MODEM_SLM_AT_CMD_RESP_MAX_SIZE` Kconfig option for buffering AT command responses.
+    * The ``CONFIG_MODEM_SLM_UART_RX_BUF_COUNT`` Kconfig option for configuring RX buffer count.
+    * The ``CONFIG_MODEM_SLM_UART_RX_BUF_SIZE`` Kconfig option for configuring RX buffer size.
+    * The ``CONFIG_MODEM_SLM_UART_TX_BUF_SIZE`` Kconfig option for configuring TX buffer size.
+    * The ``CONFIG_MODEM_SLM_AT_CMD_RESP_MAX_SIZE`` Kconfig option for buffering AT command responses.
 
-  * Updated the UART implementation between the host device, using the :ref:`lib_modem_slm` library, and the device running the :ref:`Serial LTE Modem <slm_description>` application.
+  * Updated the UART implementation between the host device, using the Modem SLM library, and the device running the Serial LTE modem application.
 
   * Removed:
 
     * The ``CONFIG_MODEM_SLM_DMA_MAXLEN`` Kconfig option.
-      Use :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_SIZE` instead.
+      Use ``CONFIG_MODEM_SLM_UART_RX_BUF_SIZE`` instead.
     * The ``modem_slm_reset_uart()`` function, as there is no longer a need to reset the UART.
 
 Multiprotocol Service Layer libraries

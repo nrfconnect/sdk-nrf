@@ -408,9 +408,9 @@ Serial LTE modem
 
   * Support for Thingy:91 X.
   * New behavior for when a connection is closed unexpectedly while SLM is in data mode.
-    SLM now sends the :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` string when this happens.
+    SLM now sends the ``CONFIG_SLM_DATAMODE_TERMINATOR`` string when this happens.
   * Sending of GNSS data to carrier library when the library is enabled.
-  * New :kconfig:option:`CONFIG_SLM_CARRIER_AUTO_STARTUP` Kconfig option to enable automatic startup of the carrier library on device boot.
+  * New ``CONFIG_SLM_CARRIER_AUTO_STARTUP`` Kconfig option to enable automatic startup of the carrier library on device boot.
   * New custom carrier library commands: ``AT#XCARRIER="app_data_create"``, ``AT#XCARRIER="dereg"``, ``AT#XCARRIER="regup"`` and ``AT#XCARRIERCFG="auto_register"``.
 
 * Updated:

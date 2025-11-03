@@ -70,7 +70,7 @@ nRF9160
 * Updated:
 
   * nRF9160: Asset Tracker application - Updated to use the new FOTA (fota_v2) based on nRF Connect for Cloud.
-  * :ref:`serial_lte_modem` application:
+  * Serial LTE modem application:
 
     * Fixed an issue where FOTA downloads were interrupted if an AT command was issued.
     * Fixed an issue with overflowing HTTP request buffers.
@@ -990,7 +990,7 @@ Applications and samples
 
 * nRF9160:
 
-  * :ref:`serial_lte_modem` - Added documentation for new commands.
+  * Serial LTE modem - Added documentation for new commands.
     Fixed the syntax and examples of some existing commands.
   * Added a note about :kconfig:option:`CONFIG_MQTT_KEEPALIVE` option to the :ref:`aws_iot`, :ref:`azure_iot_hub`, and cloud client samples.
 * Bluetooth:

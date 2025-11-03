@@ -39,9 +39,9 @@ Serial LTE Modem (SLM)
     The setting controls whether the SLM connects automatically to the network on startup.
     You can read and write it using the ``AT#XCARRIER="auto_connect"`` command.
 
-  * The ``AT#XCMNG`` AT command, which is activated with the :file:`overlay-native_tls.conf` overlay file, has been changed from using modem certificate storage to Zephyr settings storage.
+  * The ``AT#XCMNG`` AT command, which is activated with the ``overlay-native_tls.conf`` overlay file, has been changed from using modem certificate storage to Zephyr settings storage.
     You need to use the ``AT#XCMNG`` command to store previously stored credentials again.
-  * The ``CONFIG_SLM_WAKEUP_PIN`` Kconfig option was renamed to :ref:`CONFIG_SLM_POWER_PIN <CONFIG_SLM_POWER_PIN>`.
+  * The ``CONFIG_SLM_WAKEUP_PIN`` Kconfig option was renamed to ``CONFIG_SLM_POWER_PIN``.
     If you have defined it separately from the default configurations, you need to update its name accordingly.
 
 Matter

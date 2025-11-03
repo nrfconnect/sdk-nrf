@@ -315,12 +315,6 @@ nRF Machine Learning (Edge Impulse)
 
 * Removed support for the ``thingy53/nrf5340/cpuapp/ns`` build target.
 
-Serial LTE modem
-----------------
-
-* Updated to use the new ``SEC_TAG_TLS_INVALID`` definition as a placeholder for security tags.
-
-
 Thingy:53: Matter weather station
 ---------------------------------
 

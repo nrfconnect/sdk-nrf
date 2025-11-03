@@ -568,7 +568,7 @@ Binary libraries
 * :ref:`liblwm2m_carrier_readme` library:
 
   * Updated the :ref:`req_appln_limitations` page to clarify carrier-specific requirements.
-    Added overlay files and documentation to :ref:`serial_lte_modem` application and :ref:`lwm2m_carrier` sample to guide in the correct usage of LwM2M carrier library for SoftBank and LG U+.
+    Added overlay files and documentation to Serial LTE modem application and :ref:`lwm2m_carrier` sample to guide in the correct usage of LwM2M carrier library for SoftBank and LG U+.
 
 Bluetooth libraries and services
 --------------------------------

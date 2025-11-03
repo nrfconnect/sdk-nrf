@@ -110,7 +110,7 @@ nRF9160
 
   * Cloud client - shows how to connect to and communicate with a cloud service using the generic cloud API.
   * :ref:`https_client` - shows how to provision a TLS certificate and connect to an HTTPS server.
-  * :ref:`serial_lte_modem` - demonstrates sending AT commands between a host and a client device.
+  * Serial LTE modem - demonstrates sending AT commands between a host and a client device.
     The sample is an enhancement to the :ref:`at_client_sample` sample.
 
 * Added the following libraries:
@@ -440,7 +440,7 @@ Documentation
     * Cloud client - added
     * :ref:`gps_with_supl_support_sample` - added
     * :ref:`https_client` - added
-    * :ref:`serial_lte_modem` - added
+    * Serial LTE modem - added
     * :ref:`nrf_coap_client_sample` - updated
 
   * Bluetooth Low Energy:

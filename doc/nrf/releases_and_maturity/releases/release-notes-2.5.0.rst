@@ -175,8 +175,8 @@ Working with nRF91 Series
   Snippet is used for nRF91 modem tracing with the UART backend for the following applications and samples:
 
   * Asset Tracker v2
-  * :ref:`serial_lte_modem`
-  * All samples that use nRF91 Series DK except for :ref:`slm_shell_sample`, :ref:`modem_trace_flash`, :ref:`modem_trace_backend_sample`.
+  * Serial LTE modem
+  * All samples that use nRF91 Series DK except for SLM Shell sample, :ref:`modem_trace_flash`, :ref:`modem_trace_backend_sample`.
 
   For samples where the UART trace backend is enabled by default, the configuration is added to the sample overlays and project configuration.
 

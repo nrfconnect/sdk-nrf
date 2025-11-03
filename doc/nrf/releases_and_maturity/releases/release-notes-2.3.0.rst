@@ -30,7 +30,7 @@ Sign up for the `nRF Connect SDK v2.3.0 webinar`_ to learn more about the new fe
     This is demonstrated in Asset Tracker v2, :ref:`modem_shell_application`, and :ref:`lwm2m_client`.
   * Writing modem trace to external flash for later retrieval.
     The :ref:`modem_shell_application` sample now demonstrates how to store and upload modem trace to cloud.
-  * New :ref:`Serial LTE Modem (SLM) Shell <slm_shell_sample>` sample:
+  * New Serial LTE Modem (SLM) Shell sample:
     The sample demonstrates sending AT commands to the nRF9160 SiP from shell for nRF53 and nRF52 Series SoCs.
   * New :ref:`mqtt_sample` sample supporting Wi-Fi together with cellular connectivity (replacing the Simple MQTT sample).
 
@@ -482,7 +482,7 @@ nRF9160 samples
 
   * The :ref:`mqtt_sample` sample that supports Wi-Fi and LTE connectivity.
   * The :ref:`nidd_sample` sample that demonstrates how to use Non-IP Data Delivery (NIDD).
-  * The :ref:`slm_shell_sample` sample for nRF52 and nRF53 Series devices to send AT commands to nRF9160 SiP from shell.
+  * The SLM Shell sample for nRF52 and nRF53 Series devices to send AT commands to nRF9160 SiP from shell.
 
 * :ref:`modem_shell_application` sample:
 
@@ -786,8 +786,8 @@ Modem libraries
 
   * Fixed an issue causing the A-GPS data download to be delayed until the RRC connection release.
 
-* Added the :ref:`lib_modem_slm` library.
-  This library is meant for the external MCU to work with nRF9160 SiP through the :ref:`serial_lte_modem` application.
+* Added the Modem SLM library.
+  This library is meant for the external MCU to work with nRF9160 SiP through the Serial LTE modem application.
 
 * Multicell location library is :ref:`deprecated <api_deprecation>` and will be removed in one of the future releases.
 

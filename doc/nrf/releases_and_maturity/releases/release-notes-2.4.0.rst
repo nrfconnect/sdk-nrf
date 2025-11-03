@@ -568,7 +568,7 @@ nRF9160 samples
 
   * Added IPv6 support and wait time for PDN to fully activate (including IPv6, if available) before looking up the address.
 
-* :ref:`slm_shell_sample` sample:
+* SLM Shell sample:
 
   * Added support for the nRF7002 DK (PCA10143).
 

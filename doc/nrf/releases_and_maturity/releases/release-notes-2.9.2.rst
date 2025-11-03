@@ -134,7 +134,7 @@ Cellular samples
 
 * Decreased the fragment size on the following cellular samples that include the :ref:`liblwm2m_carrier_readme` library:
 
-  * :ref:`slm_description`
+  * Serial LTE modem
   * :ref:`http_application_update_sample`
   * :ref:`lwm2m_carrier`
   * :ref:`modem_shell_application`
