@@ -9,6 +9,7 @@ menu "Additional MCUmgr image management group functionality"
 config MCUMGR_GRP_IMG_NRF
 	bool "Use an extended version of the image management implementation"
 	depends on MCUMGR_GRP_IMG
+	default y if PARTITION_MANAGER_ENABLED
 	help
 	  Enables use of an extended version of the image management implementation that adds
 	  Nordic-specific functionalities.
