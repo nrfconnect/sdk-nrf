@@ -40,6 +40,8 @@ if PDN_DEFAULTS_OVERRIDE
 
 config PDN_DEFAULT_APN
 	string "Access point name (APN)"
+	help
+	  The access point name to use for the default PDP context for the first cellular profile (CID 0).
 
 choice
 	prompt "Address family"
@@ -66,6 +68,8 @@ config PDN_DEFAULT_FAM
 choice
 	prompt "Authentication method"
 	default PDN_DEFAULT_AUTH_NONE
+	help
+	  The authentication method to use for the default PDP context for the first cellular profile (CID 0).
 
 config PDN_DEFAULT_AUTH_NONE
 	bool "None"
@@ -84,10 +88,14 @@ config PDN_DEFAULT_AUTH
 config PDN_DEFAULT_USERNAME
 	string "Username"
 	depends on !PDN_DEFAULT_AUTH_NONE
+	help
+	  The username to use for authentication for the default PDP context for the first cellular profile (CID 0).
 
 config PDN_DEFAULT_PASSWORD
 	string "Password"
 	depends on !PDN_DEFAULT_AUTH_NONE
+	help
+	  The password to use for authentication for the default PDP context for the first cellular profile (CID 0).
 
 endif # PDN_DEFAULTS_OVERRIDE
 
