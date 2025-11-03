@@ -239,24 +239,24 @@ static int shadow_topics_construct(const char *const client_id)
 	int index = 0;
 
 	err = snprintk(get_topic, sizeof(get_topic), GET_TOPIC, client_id);
-	if ((err < 0) && (err >= GET_TOPIC_LEN)) {
+	if ((err < 0) || (err >= GET_TOPIC_LEN)) {
 		return -ENOMEM;
 	}
 
 	err = snprintk(update_topic, sizeof(update_topic), UPDATE_TOPIC, client_id);
-	if ((err < 0) && (err >= UPDATE_TOPIC_LEN)) {
+	if ((err < 0) || (err >= UPDATE_TOPIC_LEN)) {
 		return -ENOMEM;
 	}
 
 	err = snprintk(delete_topic, sizeof(delete_topic), DELETE_TOPIC, client_id);
-	if ((err < 0) && (err >= DELETE_TOPIC_LEN)) {
+	if ((err < 0) || (err >= DELETE_TOPIC_LEN)) {
 		return -ENOMEM;
 	}
 
 	if (IS_ENABLED(CONFIG_AWS_IOT_TOPIC_GET_ACCEPTED_SUBSCRIBE)) {
 		err = snprintk(get_accepted_topic, sizeof(get_accepted_topic),
 			       GET_ACCEPTED_TOPIC, client_id);
-		if ((err < 0) && (err >= GET_ACCEPTED_TOPIC_LEN)) {
+		if ((err < 0) || (err >= GET_ACCEPTED_TOPIC_LEN)) {
 			return -ENOMEM;
 		}
 
@@ -270,7 +270,7 @@ static int shadow_topics_construct(const char *const client_id)
 	if (IS_ENABLED(CONFIG_AWS_IOT_TOPIC_GET_REJECTED_SUBSCRIBE)) {
 		err = snprintk(get_rejected_topic, sizeof(get_rejected_topic),
 			       GET_REJECTED_TOPIC, client_id);
-		if ((err < 0) && (err >= GET_REJECTED_TOPIC_LEN)) {
+		if ((err < 0) || (err >= GET_REJECTED_TOPIC_LEN)) {
 			return -ENOMEM;
 		}
 
@@ -284,7 +284,7 @@ static int shadow_topics_construct(const char *const client_id)
 	if (IS_ENABLED(CONFIG_AWS_IOT_TOPIC_UPDATE_ACCEPTED_SUBSCRIBE)) {
 		err = snprintk(update_accepted_topic, sizeof(update_accepted_topic),
 			       UPDATE_ACCEPTED_TOPIC, client_id);
-		if ((err < 0) && (err >= UPDATE_ACCEPTED_TOPIC_LEN)) {
+		if ((err < 0) || (err >= UPDATE_ACCEPTED_TOPIC_LEN)) {
 			return -ENOMEM;
 		}
 
@@ -298,7 +298,7 @@ static int shadow_topics_construct(const char *const client_id)
 	if (IS_ENABLED(CONFIG_AWS_IOT_TOPIC_UPDATE_REJECTED_SUBSCRIBE)) {
 		err = snprintk(update_rejected_topic, sizeof(update_rejected_topic),
 			       UPDATE_REJECTED_TOPIC, client_id);
-		if ((err < 0) && (err >= UPDATE_REJECTED_TOPIC_LEN)) {
+		if ((err < 0) || (err >= UPDATE_REJECTED_TOPIC_LEN)) {
 			return -ENOMEM;
 		}
 
@@ -312,7 +312,7 @@ static int shadow_topics_construct(const char *const client_id)
 	if (IS_ENABLED(CONFIG_AWS_IOT_TOPIC_UPDATE_DELTA_SUBSCRIBE)) {
 		err = snprintk(update_delta_topic, sizeof(update_delta_topic),
 			       UPDATE_DELTA_TOPIC, client_id);
-		if ((err < 0) && (err >= UPDATE_DELTA_TOPIC_LEN)) {
+		if ((err < 0) || (err >= UPDATE_DELTA_TOPIC_LEN)) {
 			return -ENOMEM;
 		}
 
@@ -326,7 +326,7 @@ static int shadow_topics_construct(const char *const client_id)
 	if (IS_ENABLED(CONFIG_AWS_IOT_TOPIC_DELETE_ACCEPTED_SUBSCRIBE)) {
 		err = snprintk(delete_accepted_topic, sizeof(delete_accepted_topic),
 			       DELETE_ACCEPTED_TOPIC, client_id);
-		if ((err < 0) && (err >= DELETE_ACCEPTED_TOPIC_LEN)) {
+		if ((err < 0) || (err >= DELETE_ACCEPTED_TOPIC_LEN)) {
 			return -ENOMEM;
 		}
 
@@ -340,7 +340,7 @@ static int shadow_topics_construct(const char *const client_id)
 	if (IS_ENABLED(CONFIG_AWS_IOT_TOPIC_DELETE_REJECTED_SUBSCRIBE)) {
 		err = snprintk(delete_rejected_topic, sizeof(delete_rejected_topic),
 			       DELETE_REJECTED_TOPIC, client_id);
-		if ((err < 0) && (err >= DELETE_REJECTED_TOPIC_LEN)) {
+		if ((err < 0) || (err >= DELETE_REJECTED_TOPIC_LEN)) {
 			return -ENOMEM;
 		}
 
