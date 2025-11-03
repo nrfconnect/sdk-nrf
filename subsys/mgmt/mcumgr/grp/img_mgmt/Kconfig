@@ -13,4 +13,16 @@ config MCUMGR_GRP_IMG_NRF
 	  Enables use of an extended version of the image management implementation that adds
 	  Nordic-specific functionalities.
 
+if MCUMGR_GRP_IMG_NRF
+
+config MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_IMAGE
+	bool "QSPI XIP Split image mode"
+	depends on MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
+	help
+	  This option should not be selected by users and should automatically be selected by
+	  sysbuild if needed. This enables selecting the correct slot when running a QSPI XIP
+	  split image application in DirectXIP mode.
+
+endif # MCUMGR_GRP_IMG_NRF
+
 endmenu
