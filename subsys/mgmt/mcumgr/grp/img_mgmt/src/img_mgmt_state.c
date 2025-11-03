@@ -32,6 +32,10 @@
 #include <mgmt/mcumgr/transport/smp_internal.h>
 #endif
 
+#ifdef CONFIG_NRF_MCUBOOT_BOOT_REQUEST
+#include <bootutil/boot_request.h>
+#endif /* CONFIG_NRF_MCUBOOT_BOOT_REQUEST */
+
 LOG_MODULE_DECLARE(mcumgr_img_grp, CONFIG_MCUMGR_GRP_IMG_LOG_LEVEL);
 
 #ifndef CONFIG_MCUMGR_GRP_IMG_FRUGAL_LIST
@@ -140,6 +144,12 @@ img_mgmt_state_flags(int query_slot)
 	if (image == img_mgmt_active_image() && query_slot == active_slot) {
 		flags = IMG_MGMT_STATE_F_ACTIVE;
 #ifdef CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
+#ifdef CONFIG_NRF_MCUBOOT_BOOT_REQUEST
+	} else if (boot_request_get_preferred_slot(image) == active_slot) {
+		/* Active slot is preferred. All updates are postponed. */
+	} else if (boot_request_get_preferred_slot(image) == query_slot) {
+		flags = IMG_MGMT_STATE_F_PENDING | IMG_MGMT_STATE_F_PERMANENT;
+#endif /* CONFIG_NRF_MCUBOOT_BOOT_REQUEST */
 	} else {
 		struct image_version sver;
 		struct image_version aver;
@@ -294,6 +304,17 @@ int img_mgmt_get_next_boot_slot(int image, enum img_mgmt_next_boot_type *type)
 		if (active_slot_state == DIRECT_XIP_BOOT_ONCE) {
 			lt = NEXT_BOOT_TYPE_TEST;
 		}
+#ifdef CONFIG_NRF_MCUBOOT_BOOT_REQUEST
+	} else if (boot_request_get_preferred_slot(image) == active_slot) {
+		/* Active slot is preferred. All updates are postponed. */
+	} else if (boot_request_get_preferred_slot(image) == other_slot) {
+		if (other_slot_state == DIRECT_XIP_BOOT_FOREVER) {
+			return_slot = other_slot;
+		} else if (other_slot_state == DIRECT_XIP_BOOT_ONCE) {
+			lt = NEXT_BOOT_TYPE_TEST;
+			return_slot = other_slot;
+		}
+#endif /* CONFIG_NRF_MCUBOOT_BOOT_REQUEST */
 	} else if ((img_mgmt_vercmp(&aver, &over) < 0) ||
 		   ((img_mgmt_vercmp(&aver, &over) == 0) && (active_slot > other_slot))) {
 		/* Check if MCUboot will select the non-active slot during the next boot.
@@ -316,17 +337,27 @@ int img_mgmt_get_next_boot_slot(int image, enum img_mgmt_next_boot_type *type)
 
 out:
 #else
-	if (rcs == 0 && rca == 0 &&
-	    ((img_mgmt_vercmp(&aver, &over) < 0) ||
-	     ((img_mgmt_vercmp(&aver, &over) == 0) && (active_slot > other_slot)))) {
-		/* Check if MCUboot will select the non-active slot during the next boot.
-		 * The logic is as follows:
-		 * - If both slots are valid, a slot with higher version is preferred.
-		 * - If both slots are valid and the versions are equal, a slot with lower number
-		 *   is preferred.
-		 */
+#ifdef CONFIG_NRF_MCUBOOT_BOOT_REQUEST
+	if (boot_request_get_preferred_slot(image) == active_slot) {
+		/* Active slot is preferred. All updates are postponed. */
+	} else if (boot_request_get_preferred_slot(image) == other_slot) {
 		return_slot = other_slot;
+	} else {
+#endif /* CONFIG_NRF_MCUBOOT_BOOT_REQUEST */
+		if (rcs == 0 && rca == 0 &&
+		    ((img_mgmt_vercmp(&aver, &over) < 0) ||
+		     ((img_mgmt_vercmp(&aver, &over) == 0) && (active_slot > other_slot)))) {
+			/* Check if MCUboot will select the non-active slot during the next boot.
+			 * The logic is as follows:
+			 * - If both slots are valid, a slot with higher version is preferred.
+			 * - If both slots are valid and the versions are equal, a slot with lower
+			 * number is preferred.
+			 */
+			return_slot = other_slot;
+		}
+#ifdef CONFIG_NRF_MCUBOOT_BOOT_REQUEST
 	}
+#endif /* CONFIG_NRF_MCUBOOT_BOOT_REQUEST */
 #endif /* defined(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT) */
 
 	if (type != NULL) {
@@ -643,7 +674,7 @@ static int img_mgmt_set_next_boot_slot_common(int slot, int active_slot, bool co
 	rc = boot_set_next(fa, slot == active_slot, confirm);
 	if (rc != 0) {
 		/* Failed to set next slot for boot as desired */
-		LOG_ERR("Faled boot_set_next with code %d, for slot %d,"
+		LOG_ERR("Failed boot_set_next with code %d, for slot %d,"
 			" with active slot %d and confirm %d",
 			 rc, slot, active_slot, confirm);
 

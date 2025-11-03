@@ -76,6 +76,7 @@ endmenu
 
 config NRF_MCUBOOT_BOOT_REQUEST
 	bool "MCUboot bootloader requests"
+	imply MCUMGR_GRP_IMG_NRF
 	help
 	  Handle bootloader requests.
 
