@@ -36,7 +36,8 @@
 #include <nrfx_gpiote.h>
 #include <mpsl_fem_utils.h>
 
-#include "fem_psemi_common.h"
+#include "power_model.h"
+#include "./psemi/include/mpsl_fem_psemi_interface.h"
 
 static int fem_psemi_configure(void)
 {
@@ -62,7 +63,7 @@ static int fem_psemi_configure(void)
 	}
 #endif
 
-	fem_psemi_interface_config_t cfg = {
+	mpsl_fem_psemi_interface_config_t cfg = {
 		.fem_config =
 			{
 				.pa_time_gap_us =
@@ -171,11 +172,10 @@ static int fem_psemi_configure(void)
 				MPSL_FEM_DISABLED_GPIO_CONFIG_INIT
 #endif
 			},
+		.bypass_ble_enabled = IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_BYPASS_BLE),
+		.pa_ldo_switch_enabled = IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_PA_LDO),
 	};
 
-	IF_ENABLED(CONFIG_HAS_HW_NRF_PPI,
-		   (err = mpsl_fem_utils_ppi_channel_alloc(cfg.ppi_channels,
-							   ARRAY_SIZE(cfg.ppi_channels));));
 	IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
 		   (err = mpsl_fem_utils_ppi_channel_alloc(cfg.dppi_channels,
 							   ARRAY_SIZE(cfg.dppi_channels));));
@@ -197,12 +197,16 @@ static int fem_psemi_configure(void)
 		return err;
 	}
 
-	return fem_psemi_interface_config_set(&cfg);
+	return mpsl_fem_psemi_interface_config_set(&cfg);
 }
 
 static int mpsl_fem_init(void)
 {
 	mpsl_fem_device_config_254_apply_set(IS_ENABLED(CONFIG_MPSL_FEM_DEVICE_CONFIG_254));
+
+	if (IS_ENABLED(CONFIG_POWER_MAP_MODEL)) {
+		power_model_init();
+	}
 
 	return fem_psemi_configure();
 }

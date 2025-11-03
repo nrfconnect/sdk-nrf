@@ -28,30 +28,15 @@
  *
  */
 
-#ifndef FEM_PSEMI_CONFIG_H__
-#define FEM_PSEMI_CONFIG_H__
+#ifndef MPSL_FEM_CONFIG_PSEMI_H__
+#define MPSL_FEM_CONFIG_PSEMI_H__
 
 #include <stdint.h>
-#include <stdbool.h>
 #include <mpsl_fem_config_common.h>
-#include <nrf.h>
-
-#if defined(NRF54L_SERIES)
-// #include "../../../../../dragoon/mpsl/libs/fem/include_private/mpsl_fem_task.h"
+#include "mpsl_fem_pins_common.h"
 #include "mpsl_fem_task.h"
-#endif
 
-/** Number of ATT pins used by FEM. */
-#define FEM_ATT_PINS_NUMBER 4
-
-/** Maximal value of FEM gain. */
-#define FEM_MAX_GAIN 20
-
-/** Minimal value of FEM gain. */
-#define FEM_MIN_GAIN 5
-
-/** FEM gain that indicates FEM bypass. */
-#define FEM_GAIN_BYPASS 0
+#include "include/mpsl_fem_psemi_interface.h"
 
 /** @brief Configuration parameters for the Front End Module Simple GPIO variant.
  *
@@ -60,7 +45,7 @@
  *  Noise Amplifier (LNA).
  */
 typedef struct {
-	/** Configration structure of the Simple GPIO Front End Module. */
+	/** Configuration structure of the Simple GPIO Front End Module. */
 	struct {
 		/** Time between the activation of the PA pin and the start of the radio
 		 * transmission. Should be no bigger than Radio Ramp-Up time. */
@@ -74,46 +59,31 @@ typedef struct {
 	} fem_config;
 
 	/** Power Amplifier pin configuration. */
-	mpsl_fem_gpiote_pin_config_t pa_pin_config;
+	mpsl_fem_gpiote_pin_t pa_gpiote_pin;
 	/** Low Noise Amplifier pin configuration. */
-	mpsl_fem_gpiote_pin_config_t lna_pin_config;
+	mpsl_fem_gpiote_pin_t lna_gpiote_pin;
+
 	/** Pins for controlling fem gain. Ignored if the amplifier is not supporting this feature.
 	 */
 	mpsl_fem_gpio_pin_config_t att_pins[FEM_ATT_PINS_NUMBER];
 
-#if defined(NRF52_SERIES)
-	/** Array of PPI channels which need to be provided to Front End Module to operate. */
-	uint8_t ppi_channels[2];
-#elif defined(NRF54L_SERIES)
+	bool bypass_ble_enabled; /**< Enable BLE bypass mode. */
+	bool pa_ldo_switch_enabled; /**< Enable PA LDO power supply switching. */
+
+#if defined(NRF54L_SERIES)
 	/** Array of DPPI channels which need to be provided to Front End Module to operate. */
-	uint8_t dppi_channels[3];
+	uint8_t dppi_channels[DPPI_CHANNELS_NUMBER];
 	/** Number of EGU instance for which @c egu_channels apply. */
 	uint8_t egu_instance_no;
 	/** Array of EGU channels (belonging to EGU instance number @c egu_instance_no) which
 	 *  need to be provided to Front End Module to operate. */
-	uint8_t egu_channels[3];
+	uint8_t egu_channels[EGU_CHANNELS_NUMBER];
 	mpsl_fem_task_t pa_task[2];
 	mpsl_fem_task_t lna_task[2];
 #else
 #error "Unsupported platform"
 #endif
 
-} fem_psemi_interface_config_t;
+} mpsl_fem_psemi_t;
 
-/** @brief Configures the PA and LNA device interface.
- *
- * This function sets device interface parameters for the PA/LNA module.
- * The module can then be used to control PA or LNA (or both) through the given interface and
- * resources.
- *
- * The function also sets the PPI and GPIOTE channels to be configured for the PA/LNA interface.
- *
- * @param[in] p_config Pointer to the interface parameters for the PA/LNA device.
- *
- * @retval   0             PA/LNA control successfully configured.
- * @retval   -NRF_EPERM    PA/LNA is not available.
- *
- */
-int32_t fem_psemi_interface_config_set(fem_psemi_interface_config_t const *const p_config);
-
-#endif // FEM_PSEMI_CONFIG_H__
+#endif /* MPSL_FEM_CONFIG_PSEMI_H__ */

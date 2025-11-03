@@ -19,3 +19,8 @@ target_sources_ifdef(CONFIG_CLI_SAMPLE_LOW_POWER app PRIVATE src/low_power.c)
 if(CONFIG_CLI_SAMPLE_MULTIPROTOCOL AND CONFIG_OPENTHREAD_BLE_TCAT)
   message(FATAL_ERROR "Multiprotocol support and TCAT functionality are not compatible." )
 endif()
+
+# Do not include obfuscated symbols in case of building from sources
+if (CONFIG_MPSL_BUILD_TYPE_SRC_DEBUG)
+  target_compile_definitions(nrf-802154-driver-interface INTERFACE OBFUSCATE_LIBMPSL_PROTOCOL_DEFINES_H__=1)
+endif()

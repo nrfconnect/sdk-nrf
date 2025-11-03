@@ -7,11 +7,7 @@
 name: hot_potato
 append:
   EXTRA_CONF_FILE: hot_potato.conf
-
 boards:
-  nrf52840dk/nrf52840:
-    append:
-      EXTRA_DTC_OVERLAY_FILE: ../../../../../subsys/mpsl/fem/hot_potato/boards/nrf52840dk_hot_potato.overlay
   nrf54l15dk/nrf54l15/cpuapp:
     append:
       EXTRA_DTC_OVERLAY_FILE: ../../../../../subsys/mpsl/fem/hot_potato/boards/nrf54l15dk_hot_potato.overlay

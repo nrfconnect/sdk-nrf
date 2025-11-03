@@ -34,16 +34,7 @@
 #include <stdint.h>
 
 #include "protocol/mpsl_fem_protocol_api.h"
-#include "fem_psemi_common.h"
-#include "fem_psemi_config.h"
-
-typedef enum {
-	FEM_PSEMI_STATE_DISABLED = 0,
-	FEM_PSEMI_STATE_LNA_ACTIVE = 1,
-	FEM_PSEMI_STATE_PA_ACTIVE = 2,
-	FEM_PSEMI_STATE_BYPASS = 3,
-	FEM_PSEMI_STATE_AUTO = 4
-} fem_psemi_state_t;
+#include "mpsl_fem_psemi.h"
 
 /** @brief Gets the capabilities of the FEM.
  *
@@ -77,27 +68,12 @@ int32_t fem_psemi_pa_power_control_set(mpsl_fem_pa_power_control_t pa_power_cont
  *
  * @param[in] p_config  Pointer to the FEM configuration.
  */
-void fem_psemi_pa_gain_default(fem_psemi_interface_config_t const *const p_config);
+void fem_psemi_pa_gain_default(mpsl_fem_psemi_t const *const p_config);
 
 /** @brief Configure GPIO for gain control.
  *
  * @param[in] p_config  Pointer to the FEM configuration.
  */
-void fem_psemi_gain_gpio_configure(fem_psemi_interface_config_t const *const p_config);
-
-/** @brief Set the state of the FEM.
- *
- * @param[in] state  State to be set.
- *
- * @retval   0             State has been set successfully.
- * @retval   -NRF_EINVAL   Provided @p state is invalid.
- */
-int32_t fem_psemi_state_set(fem_psemi_state_t state);
-
-/** @brief Get the state of the FEM.
- *
- * @return Current state of the FEM.
- */
-fem_psemi_state_t fem_psemi_state_get(void);
+void fem_psemi_gain_gpio_configure(mpsl_fem_psemi_t const *const p_config);
 
 #endif /* FEM_PSEMI_COMMON_H_ */

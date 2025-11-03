@@ -28,22 +28,23 @@
  *
  */
 
-#include <hal/nrf_gpio.h>
-#include <nrf_errno.h>
-#include <mpsl_fem_power_model.h>
-#include <mpsl_tx_power.h>
-#include <protocol/mpsl_fem_protocol_api.h>
+#include "hal/nrf_gpio.h"
+#include "nrf_errno.h"
+#include "mpsl_fem_pins_common.h"
+#include "mpsl_tx_power.h"
+#include "protocol/mpsl_fem_protocol_api.h"
 
-#include "fem_psemi_common.h"
-#include "fem_psemi_config.h"
-#include "mpsl_fem_psemi_pins.h"
-#include "power_model.h"
+#include "mpsl_fem_psemi_common.h"
+#include "mpsl_fem_psemi.h"
+
+#include "hot_potato_callbacks.h"
+
 
 /**< Front End Module controller configuration. */
-fem_psemi_interface_config_t m_fem_interface_config;
+mpsl_fem_psemi_t m_psemi_config;
 
 /**< Is the bypass mode currently active. */
-static fem_psemi_state_t m_fem_state = FEM_PSEMI_STATE_AUTO;
+static mpsl_fem_psemi_state_t m_fem_state = FEM_PSEMI_STATE_AUTO;
 
 void fem_psemi_caps_get(mpsl_fem_caps_t *p_caps)
 {
@@ -57,13 +58,7 @@ int8_t fem_psemi_tx_power_split(const mpsl_tx_power_t power,
 {
 	mpsl_fem_power_model_output_t output;
 
-#if defined(CONFIG_POWER_MAP_MODEL)
 	power_model_output_fetch(power, phy, freq_mhz, &output, tx_power_ceiling);
-#else
-	output.soc_pwr = mpsl_tx_power_radio_supported_power_adjust(power, tx_power_ceiling);
-	output.fem_pa_power_control = FEM_GAIN_BYPASS;
-	output.achieved_pwr = output.soc_pwr;
-#endif
 
 	p_tx_power_split->radio_tx_power = output.soc_pwr;
 	p_tx_power_split->fem_pa_power_control = output.fem_pa_power_control;
@@ -106,7 +101,7 @@ int32_t fem_psemi_pa_power_control_set(mpsl_fem_pa_power_control_t pa_power_cont
 	uint8_t att_mask = fem_gain_to_att_pin_mask(pa_power_control);
 
 	for (uint8_t pin_id = 0U; pin_id < FEM_ATT_PINS_NUMBER; pin_id++) {
-		mpsl_fem_gpio_pin_config_t *pin_cfg = &m_fem_interface_config.att_pins[pin_id];
+		mpsl_fem_gpio_pin_config_t *pin_cfg = &m_psemi_config.att_pins[pin_id];
 		bool level = att_mask & (1U << pin_id);
 
 		if (pin_cfg->enable) {
@@ -119,7 +114,7 @@ int32_t fem_psemi_pa_power_control_set(mpsl_fem_pa_power_control_t pa_power_cont
 }
 
 /** Set default PA gain. */
-void fem_psemi_pa_gain_default(fem_psemi_interface_config_t const *const p_config)
+void fem_psemi_pa_gain_default(mpsl_fem_psemi_t const *const p_config)
 {
 	for (uint8_t i = 0; i < FEM_ATT_PINS_NUMBER; i++) {
 		const mpsl_fem_gpio_pin_config_t *pin_cfg = &p_config->att_pins[i];
@@ -131,7 +126,7 @@ void fem_psemi_pa_gain_default(fem_psemi_interface_config_t const *const p_confi
 }
 
 /** Configure GPIO module. */
-void fem_psemi_gain_gpio_configure(fem_psemi_interface_config_t const *const p_config)
+void fem_psemi_gain_gpio_configure(mpsl_fem_psemi_t const *const p_config)
 {
 	for (uint8_t i = 0; i < FEM_ATT_PINS_NUMBER; i++) {
 		mpsl_fem_gpio_pin_config_configure(&p_config->att_pins[i]);
@@ -139,55 +134,28 @@ void fem_psemi_gain_gpio_configure(fem_psemi_interface_config_t const *const p_c
 	fem_psemi_pa_gain_default(p_config);
 }
 
-void gpiote_output_write(const mpsl_fem_gpiote_pin_config_t *p_pin_cfg, bool level)
-{
-	NRF_GPIOTE_Type *p_gpiote = mpsl_fem_gpiote_pin_config_gpiote_instance_get(p_pin_cfg);
-	uint32_t task_event_idx = p_pin_cfg->gpiote_ch_id;
-	uint32_t gpio_pin =
-		NRF_GPIO_PIN_MAP(p_pin_cfg->gpio_pin.port_no, p_pin_cfg->gpio_pin.port_pin);
-
-	nrf_gpiote_task_disable(p_gpiote, task_event_idx);
-
-	nrf_gpio_pin_write(gpio_pin, level);
-	nrf_gpio_cfg_output(gpio_pin);
-}
-
-void gpiote_configure(const mpsl_fem_gpiote_pin_config_t *p_pin_cfg)
-{
-	NRF_GPIOTE_Type *p_gpiote = mpsl_fem_gpiote_pin_config_gpiote_instance_get(p_pin_cfg);
-	uint32_t task_event_idx = p_pin_cfg->gpiote_ch_id;
-	uint32_t gpio_pin =
-		NRF_GPIO_PIN_MAP(p_pin_cfg->gpio_pin.port_no, p_pin_cfg->gpio_pin.port_pin);
-
-	nrf_gpiote_task_configure(p_gpiote, task_event_idx, gpio_pin,
-				  (nrf_gpiote_polarity_t)GPIOTE_CONFIG_POLARITY_None,
-				  (nrf_gpiote_outinit_t) !(p_pin_cfg->active_high));
-
-	nrf_gpiote_task_enable(p_gpiote, task_event_idx);
-}
-
 static void pa_gain_enable(void)
 {
 	for (uint8_t i = 0; i < FEM_ATT_PINS_NUMBER; i++) {
-		m_fem_interface_config.att_pins[i].enable = true;
+		m_psemi_config.att_pins[i].enable = true;
 	}
 
-	fem_psemi_pa_gain_default(&m_fem_interface_config);
+	fem_psemi_pa_gain_default(&m_psemi_config);
 }
 
 static void pa_gain_disable(void)
 {
-	fem_psemi_pa_gain_default(&m_fem_interface_config);
+	fem_psemi_pa_gain_default(&m_psemi_config);
 
 	for (uint8_t i = 0; i < FEM_ATT_PINS_NUMBER; i++) {
-		m_fem_interface_config.att_pins[i].enable = false;
+		m_psemi_config.att_pins[i].enable = false;
 	}
 }
 
-int32_t fem_psemi_state_set(fem_psemi_state_t state)
+int32_t mpsl_fem_psemi_state_set(mpsl_fem_psemi_state_t state)
 {
-	mpsl_fem_gpiote_pin_config_t *p_pa_pin = &m_fem_interface_config.pa_pin_config;
-	mpsl_fem_gpiote_pin_config_t *p_lna_pin = &m_fem_interface_config.lna_pin_config;
+	mpsl_fem_gpiote_pin_t *p_pa_pin = &m_psemi_config.pa_gpiote_pin;
+	mpsl_fem_gpiote_pin_t *p_lna_pin = &m_psemi_config.lna_gpiote_pin;
 
 	if (state == m_fem_state) {
 		return 0;
@@ -196,30 +164,27 @@ int32_t fem_psemi_state_set(fem_psemi_state_t state)
 	m_fem_state = state;
 	pa_gain_disable();
 
-	p_pa_pin->enable = state == FEM_PSEMI_STATE_AUTO;
-	p_lna_pin->enable = state == FEM_PSEMI_STATE_AUTO;
-
 	switch (state) {
 	case FEM_PSEMI_STATE_DISABLED:
-		gpiote_output_write(p_pa_pin, !p_pa_pin->active_high);
-		gpiote_output_write(p_lna_pin, !p_lna_pin->active_high);
+		mpsl_fem_gpiote_pin_output_active_write(p_pa_pin, false);
+		mpsl_fem_gpiote_pin_output_active_write(p_lna_pin, false);
 		break;
 	case FEM_PSEMI_STATE_LNA_ACTIVE:
-		gpiote_output_write(p_pa_pin, !p_pa_pin->active_high);
-		gpiote_output_write(p_lna_pin, p_lna_pin->active_high);
+		mpsl_fem_gpiote_pin_output_active_write(p_pa_pin, false);
+		mpsl_fem_gpiote_pin_output_active_write(p_lna_pin, true);
 		break;
 	case FEM_PSEMI_STATE_PA_ACTIVE:
-		gpiote_output_write(p_pa_pin, p_pa_pin->active_high);
-		gpiote_output_write(p_lna_pin, !p_lna_pin->active_high);
+		mpsl_fem_gpiote_pin_output_active_write(p_pa_pin, true);
+		mpsl_fem_gpiote_pin_output_active_write(p_lna_pin, false);
 		pa_gain_enable();
 		break;
 	case FEM_PSEMI_STATE_BYPASS:
-		gpiote_output_write(p_pa_pin, p_pa_pin->active_high);
-		gpiote_output_write(p_lna_pin, p_lna_pin->active_high);
+		mpsl_fem_gpiote_pin_output_active_write(p_pa_pin, true);
+		mpsl_fem_gpiote_pin_output_active_write(p_lna_pin, true);
 		break;
 	case FEM_PSEMI_STATE_AUTO:
-		gpiote_configure(p_pa_pin);
-		gpiote_configure(p_lna_pin);
+		mpsl_fem_gpiote_pin_output_active_write(p_pa_pin, false);
+		mpsl_fem_gpiote_pin_output_active_write(p_lna_pin, false);
 		pa_gain_enable();
 		break;
 	default:
@@ -229,7 +194,7 @@ int32_t fem_psemi_state_set(fem_psemi_state_t state)
 	return 0;
 }
 
-fem_psemi_state_t fem_psemi_state_get(void)
+mpsl_fem_psemi_state_t mpsl_fem_psemi_state_get(void)
 {
 	return m_fem_state;
 }

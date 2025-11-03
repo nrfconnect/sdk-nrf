@@ -158,38 +158,45 @@
  *                       +--------------------------------- GPIOTE[pin_txen].TASK_<off>
  */
 
-#include <assert.h>
-#include <nrf.h>
-#include <hal/nrf_dppi.h>
-#include <hal/nrf_egu.h>
-#include <hal/nrf_timer.h>
-#include <hal/nrf_radio.h>
-#include <hal/nrf_regulators.h>
+#include "nrf.h"
+#include "nrf_radio.h"
+#include "nrf_regulators.h"
 
-#include "../../../../../dragoon/mpsl/libs/fem/src/mpsl_fem_abstract_interface.h"
+#include "mpsl_fem_abstract_interface.h"
+#include "mpsl_fem_pins_common.h"
+#include "mpsl_fem_psemi.h"
+#include "mpsl_fem_psemi_common.h"
 
-#include "fem_psemi_config.h"
-#include "mpsl_fem_psemi_pins.h"
-#include "fem_psemi_common.h"
-#include "power_model.h"
+#include "hot_potato_callbacks.h"
+
+#ifdef DPPIC_PRESENT
+
+#include "nrf_dppi.h"
+#if defined(__GNUC__) && !defined(_lint)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#include "nrf_egu.h"
+#pragma GCC diagnostic pop
+#else
+#include "nrf_egu.h"
+#endif
+#include "nrf_timer.h"
+
+#define ASSERT_FILE_ID 114
+#include "mpsl_assert.h"
 
 extern uint8_t mpsl_fem_utils_available_cc_channel_get(uint8_t mask, uint32_t number);
-extern fem_psemi_interface_config_t m_fem_interface_config;
+extern mpsl_fem_psemi_t m_psemi_config;
 
-extern void VendorUsageCpuMeasureBegin(void);
-extern void VendorUsageCpuMeasureEnd(void);
+#define M_EGU0 (m_psemi_config.egu_channels[0])
+#define M_EGU1 (m_psemi_config.egu_channels[1])
+#define M_EGU2 (m_psemi_config.egu_channels[2])
 
-#define M_EGU0 (m_fem_interface_config.egu_channels[0])
-#define M_EGU1 (m_fem_interface_config.egu_channels[1])
-#define M_EGU2 (m_fem_interface_config.egu_channels[2])
-
-#define M_DPPI0 (m_fem_interface_config.dppi_channels[0])
-#define M_DPPI1 (m_fem_interface_config.dppi_channels[1])
-#define M_DPPI2 (m_fem_interface_config.dppi_channels[2])
+#define M_DPPI0 (m_psemi_config.dppi_channels[0])
+#define M_DPPI1 (m_psemi_config.dppi_channels[1])
+#define M_DPPI2 (m_psemi_config.dppi_channels[2])
 
 static bool m_abort_event_is_set;
-static mpsl_fem_gpiote_pin_t m_pa_gpiote_pin;
-static mpsl_fem_gpiote_pin_t m_lna_gpiote_pin;
 
 /** Holders for events provided by the @ref mpsl_fem_pa_configuration_set */
 static const mpsl_fem_event_t *mp_pa_activate_event = NULL;
@@ -248,7 +255,7 @@ static void activation_on_timer_set(const mpsl_fem_event_t *const p_event,
 	if (mpsl_fem_task_is_valid(p_pin_task)) {
 		uint32_t cc_no = mpsl_fem_utils_available_cc_channel_get(
 			p_event->event.timer.compare_channel_mask, v_cc_no);
-		assert(cc_no != UINT8_MAX);
+		MPSL_ASSERT(cc_no != UINT8_MAX);
 
 		nrf_timer_publish_set(p_event->event.timer.p_timer_instance,
 				      nrf_timer_compare_event_get((uint8_t)cc_no), dppi_ch);
@@ -265,7 +272,7 @@ static void activation_on_timer_set(const mpsl_fem_event_t *const p_event,
 		nrf_timer_cc_set(p_event->event.timer.p_timer_instance,
 				 (nrf_timer_cc_channel_t)cc_no, target_time);
 
-		nrf_dppi_channels_enable(NRF_DPPIC10, 1U << dppi_ch);
+		nrf_dppi_channels_enable(MPSL_NRF_DPPIC, 1U << dppi_ch);
 	}
 }
 
@@ -274,11 +281,11 @@ static void activation_on_timer_clear(const mpsl_fem_event_t *const p_event,
 				      uint32_t v_cc_no)
 {
 	if (mpsl_fem_task_is_valid(p_pin_task)) {
-		nrf_dppi_channels_disable(NRF_DPPIC10, (1U << dppi_ch));
+		nrf_dppi_channels_disable(MPSL_NRF_DPPIC, (1U << dppi_ch));
 
 		uint32_t cc_no = mpsl_fem_utils_available_cc_channel_get(
 			p_event->event.timer.compare_channel_mask, v_cc_no);
-		assert(cc_no != UINT8_MAX);
+		MPSL_ASSERT(cc_no != UINT8_MAX);
 
 		mpsl_fem_task_subscribe_clear(p_pin_task);
 
@@ -299,9 +306,9 @@ static int32_t fem_psemi_disable(void)
 }
 
 static int32_t pa_activation_on_generic_set(const mpsl_fem_event_t *const p_event,
-					    fem_psemi_interface_config_t *p_obj)
+					    mpsl_fem_psemi_t *p_obj)
 {
-	if (!mpsl_fem_gpiote_pin_is_enabled(&m_pa_gpiote_pin)) {
+	if (!mpsl_fem_gpiote_pin_is_enabled(&p_obj->pa_gpiote_pin)) {
 		return -NRF_EPERM;
 	}
 
@@ -310,19 +317,19 @@ static int32_t pa_activation_on_generic_set(const mpsl_fem_event_t *const p_even
 	}
 
 	// Case 3.f) of the doc
-	nrf_egu_subscribe_set(NRF_EGU10, nrf_egu_trigger_task_get(M_EGU2),
+	nrf_egu_subscribe_set(MPSL_NRF_EGU, nrf_egu_trigger_task_get(M_EGU2),
 			      p_event->event.generic.event);
-	nrf_egu_publish_set(NRF_EGU10, nrf_egu_triggered_event_get(M_EGU2), M_DPPI2);
+	nrf_egu_publish_set(MPSL_NRF_EGU, nrf_egu_triggered_event_get(M_EGU2), M_DPPI2);
 	mpsl_fem_task_subscribe_set(&p_obj->pa_task[1], M_DPPI2);
 
-	nrf_dppi_channels_enable(NRF_DPPIC10, (1U << M_DPPI2));
+	nrf_dppi_channels_enable(MPSL_NRF_DPPIC, (1U << M_DPPI2));
 
 	return 0;
 }
 
-static void pa_activation_on_generic_clear(fem_psemi_interface_config_t *p_obj)
+static void pa_activation_on_generic_clear(mpsl_fem_psemi_t *p_obj)
 {
-	if (!mpsl_fem_gpiote_pin_is_enabled(&m_pa_gpiote_pin)) {
+	if (!mpsl_fem_gpiote_pin_is_enabled(&p_obj->pa_gpiote_pin)) {
 		return;
 	}
 
@@ -330,18 +337,18 @@ static void pa_activation_on_generic_clear(fem_psemi_interface_config_t *p_obj)
 		return;
 	}
 
-	nrf_dppi_channels_disable(NRF_DPPIC10, (1U << M_DPPI2));
+	nrf_dppi_channels_disable(MPSL_NRF_DPPIC, (1U << M_DPPI2));
 
 	mpsl_fem_task_subscribe_clear(&p_obj->pa_task[1]);
 
-	nrf_egu_publish_clear(NRF_EGU10, nrf_egu_triggered_event_get(M_EGU2));
+	nrf_egu_publish_clear(MPSL_NRF_EGU, nrf_egu_triggered_event_get(M_EGU2));
 
-	nrf_egu_subscribe_clear(NRF_EGU10, nrf_egu_trigger_task_get(M_EGU2));
+	nrf_egu_subscribe_clear(MPSL_NRF_EGU, nrf_egu_trigger_task_get(M_EGU2));
 }
 
 static int32_t deactivation_on_generic_set(const mpsl_fem_event_t *const p_event,
 					   mpsl_fem_task_t *p_pin_task,
-					   fem_psemi_interface_config_t *p_obj)
+					   mpsl_fem_psemi_t *p_obj)
 {
 	if (!mpsl_fem_task_is_valid(p_pin_task)) {
 		return -NRF_EPERM;
@@ -355,9 +362,9 @@ static int32_t deactivation_on_generic_set(const mpsl_fem_event_t *const p_event
 			 * M_DPPI1 is enabled
 			 * Any number of tasks can publish to M_DPPI1 to trigger gpiote_task
 			 */
-			nrf_egu_subscribe_set(NRF_EGU10, nrf_egu_trigger_task_get(M_EGU0),
+			nrf_egu_subscribe_set(MPSL_NRF_EGU, nrf_egu_trigger_task_get(M_EGU0),
 					      p_event->event.generic.event);
-			nrf_egu_publish_set(NRF_EGU10, nrf_egu_triggered_event_get(M_EGU0),
+			nrf_egu_publish_set(MPSL_NRF_EGU, nrf_egu_triggered_event_get(M_EGU0),
 					    M_DPPI1);
 		} else {
 			// Other cases, including 3.e) not supported, would require additional egu
@@ -373,7 +380,7 @@ static int32_t deactivation_on_generic_set(const mpsl_fem_event_t *const p_event
 }
 
 static void deactivation_on_generic_clear(mpsl_fem_task_t *p_pin_task,
-					  fem_psemi_interface_config_t *p_obj)
+					  mpsl_fem_psemi_t *p_obj)
 {
 	if (!mpsl_fem_task_is_valid(p_pin_task)) {
 		return;
@@ -382,8 +389,8 @@ static void deactivation_on_generic_clear(mpsl_fem_task_t *p_pin_task,
 	if (m_abort_event_is_set) {
 		if (p_pin_task == &p_obj->lna_task[0]) {
 			// Case 3.c) 3.f)
-			nrf_egu_publish_clear(NRF_EGU10, nrf_egu_triggered_event_get(M_EGU0));
-			nrf_egu_subscribe_clear(NRF_EGU10, nrf_egu_trigger_task_get(M_EGU0));
+			nrf_egu_publish_clear(MPSL_NRF_EGU, nrf_egu_triggered_event_get(M_EGU0));
+			nrf_egu_subscribe_clear(MPSL_NRF_EGU, nrf_egu_trigger_task_get(M_EGU0));
 		} else {
 			// Other cases unsupported, more egu would be needed
 		}
@@ -396,14 +403,16 @@ static void deactivation_on_generic_clear(mpsl_fem_task_t *p_pin_task,
 static int32_t fem_psemi_pa_configuration_set(const mpsl_fem_event_t *const p_activate_event,
 					      const mpsl_fem_event_t *const p_deactivate_event)
 {
-	fem_psemi_interface_config_t *p_obj = &m_fem_interface_config;
+	mpsl_fem_psemi_t *p_obj = &m_psemi_config;
 	int32_t ret_val = 0;
-	bool is_802154;
-	bool switch_to_ldo;
-	bool bypass;
-
-	is_802154 = nrf_radio_mode_get(NRF_RADIO) == NRF_RADIO_MODE_IEEE802154_250KBIT;
-	switch_to_ldo = IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_PA_LDO) && is_802154 &&
+	/*
+	 * When the bypass for BLE is enabled, and the radio has been configured to use a BLE PHY,
+	 * put FEM in the bypass mode by asserting both PA & LNA pins.
+	 */
+	bool bypass = m_psemi_config.bypass_ble_enabled &&
+		      nrf_radio_mode_get(NRF_RADIO) != NRF_RADIO_MODE_IEEE802154_250KBIT;
+	bool is_802154 = nrf_radio_mode_get(NRF_RADIO) == NRF_RADIO_MODE_IEEE802154_250KBIT;
+	bool switch_to_ldo = m_psemi_config.pa_ldo_switch_enabled && is_802154 &&
 			nrf_regulators_vreg_enable_check(NRF_REGULATORS, NRF_REGULATORS_VREG_MAIN);
 
 	if (switch_to_ldo) {
@@ -411,38 +420,29 @@ static int32_t fem_psemi_pa_configuration_set(const mpsl_fem_event_t *const p_ac
 		m_switched_to_ldo = true;
 	}
 
-	if (IS_ENABLED(CONFIG_OPENTHREAD_CLI_VENDOR_CPU_USAGE)) {
-		VendorUsageCpuMeasureBegin();
-	}
+	VendorUsageCpuMeasureBegin();
 
-	if (fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
+	if (mpsl_fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
 		return -NRF_EPERM;
 	}
-
-	/*
-	 * When the bypass for BLE is enabled, and the radio has been configured to use a BLE PHY,
-	 * put FEM in the bypass mode by asserting both PA & LNA pins.
-	 */
-
-	bypass = IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_BYPASS_BLE) && !is_802154;
 
 	if (p_activate_event != NULL) {
 		switch (p_activate_event->type) {
 		case MPSL_FEM_EVENT_TYPE_TIMER:
 			activation_on_timer_set(p_activate_event, &p_obj->pa_task[1], M_DPPI0,
-						m_fem_interface_config.fem_config.pa_time_gap_us,
+						m_psemi_config.fem_config.pa_time_gap_us,
 						0);
 
 			if (bypass) {
 				activation_on_timer_set(
 					p_activate_event, &p_obj->lna_task[1], M_DPPI0,
-					m_fem_interface_config.fem_config.pa_time_gap_us, 0);
+					m_psemi_config.fem_config.pa_time_gap_us, 0);
 			}
 			break;
 
 		case MPSL_FEM_EVENT_TYPE_GENERIC:
 			ret_val = pa_activation_on_generic_set(p_activate_event, p_obj);
-			assert(!bypass);
+			MPSL_ASSERT(!bypass);
 			break;
 
 		default:
@@ -487,32 +487,30 @@ static int32_t fem_psemi_pa_configuration_set(const mpsl_fem_event_t *const p_ac
 static int32_t fem_psemi_lna_configuration_set(const mpsl_fem_event_t *const p_activate_event,
 					       const mpsl_fem_event_t *const p_deactivate_event)
 {
-	fem_psemi_interface_config_t *p_obj = &m_fem_interface_config;
+	mpsl_fem_psemi_t *p_obj = &m_psemi_config;
 	int32_t ret_val = 0;
-	bool bypass;
-
-	if (fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
-		return -NRF_EPERM;
-	}
-
 	/*
 	 * When the bypass for BLE is enabled, and the radio has been configured to use a BLE PHY,
 	 * put FEM in the bypass mode by asserting both PA & LNA pins.
 	 */
-	bypass = IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_BYPASS_BLE) &&
-		 nrf_radio_mode_get(NRF_RADIO) != NRF_RADIO_MODE_IEEE802154_250KBIT;
+	bool bypass = m_psemi_config.bypass_ble_enabled &&
+		      nrf_radio_mode_get(NRF_RADIO) != NRF_RADIO_MODE_IEEE802154_250KBIT;
+
+	if (mpsl_fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
+		return -NRF_EPERM;
+	}
 
 	if (p_activate_event != NULL) {
 		switch (p_activate_event->type) {
 		case MPSL_FEM_EVENT_TYPE_TIMER:
 			activation_on_timer_set(p_activate_event, &p_obj->lna_task[1], M_DPPI0,
-						m_fem_interface_config.fem_config.lna_time_gap_us,
+						m_psemi_config.fem_config.lna_time_gap_us,
 						0);
 
 			if (bypass) {
 				activation_on_timer_set(
 					p_activate_event, &p_obj->pa_task[1], M_DPPI0,
-					m_fem_interface_config.fem_config.lna_time_gap_us, 0);
+					m_psemi_config.fem_config.lna_time_gap_us, 0);
 			}
 			break;
 
@@ -565,28 +563,24 @@ static int32_t fem_psemi_lna_configuration_set(const mpsl_fem_event_t *const p_a
 
 static int32_t fem_psemi_pa_configuration_clear(void)
 {
-	fem_psemi_interface_config_t *p_obj = &m_fem_interface_config;
-	bool bypass;
-
-	if (IS_ENABLED(CONFIG_OPENTHREAD_CLI_VENDOR_CPU_USAGE)) {
-		VendorUsageCpuMeasureEnd();
-	}
-
-	if (IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_PA_LDO) && m_switched_to_ldo) {
-		nrf_regulators_vreg_enable_set(NRF_REGULATORS, NRF_REGULATORS_VREG_MAIN, true);
-		m_switched_to_ldo = false;
-	}
-
-	if (fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
-		return -NRF_EPERM;
-	}
-
+	mpsl_fem_psemi_t *p_obj = &m_psemi_config;
 	/*
 	 * When the bypass for BLE is enabled, and the radio has been configured to use a BLE PHY,
 	 * put FEM in the bypass mode by asserting both PA & LNA pins.
 	 */
-	bypass = IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_BYPASS_BLE) &&
-		 nrf_radio_mode_get(NRF_RADIO) != NRF_RADIO_MODE_IEEE802154_250KBIT;
+	bool bypass = m_psemi_config.bypass_ble_enabled &&
+		      nrf_radio_mode_get(NRF_RADIO) != NRF_RADIO_MODE_IEEE802154_250KBIT;
+
+	VendorUsageCpuMeasureEnd();
+
+	if (m_switched_to_ldo) {
+		nrf_regulators_vreg_enable_set(NRF_REGULATORS, NRF_REGULATORS_VREG_MAIN, true);
+		m_switched_to_ldo = false;
+	}
+
+	if (mpsl_fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
+		return -NRF_EPERM;
+	}
 
 	fem_psemi_pa_gain_default(p_obj);
 
@@ -604,11 +598,11 @@ static int32_t fem_psemi_pa_configuration_clear(void)
 
 		case MPSL_FEM_EVENT_TYPE_GENERIC:
 			pa_activation_on_generic_clear(p_obj);
-			assert(!bypass);
+			MPSL_ASSERT(!bypass);
 			break;
 
 		default:
-			assert(false);
+			MPSL_ASSERT(false);
 			return -NRF_EINVAL;
 		}
 
@@ -625,7 +619,7 @@ static int32_t fem_psemi_pa_configuration_clear(void)
 			}
 			break;
 		default:
-			assert(false);
+			MPSL_ASSERT(false);
 			return -NRF_EINVAL;
 		}
 		mp_pa_deactivate_event = NULL;
@@ -636,19 +630,17 @@ static int32_t fem_psemi_pa_configuration_clear(void)
 
 static int32_t fem_psemi_lna_configuration_clear(void)
 {
-	fem_psemi_interface_config_t *p_obj = &m_fem_interface_config;
-	bool bypass;
-
-	if (!(m_fem_interface_config.lna_pin_config.enable)) {
-		return -NRF_EPERM;
-	}
-
+	mpsl_fem_psemi_t *p_obj = &m_psemi_config;
 	/*
 	 * When the bypass for BLE is enabled, and the radio has been configured to use a BLE PHY,
 	 * put FEM in the bypass mode by asserting both PA & LNA pins.
 	 */
-	bypass = IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_BYPASS_BLE) &&
-		 nrf_radio_mode_get(NRF_RADIO) != NRF_RADIO_MODE_IEEE802154_250KBIT;
+	bool bypass = m_psemi_config.bypass_ble_enabled &&
+		      nrf_radio_mode_get(NRF_RADIO) != NRF_RADIO_MODE_IEEE802154_250KBIT;
+
+	if (mpsl_fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
+		return -NRF_EPERM;
+	}
 
 	if (mp_lna_activate_event != NULL) {
 		switch (mp_lna_activate_event->type) {
@@ -668,7 +660,7 @@ static int32_t fem_psemi_lna_configuration_clear(void)
 			 */
 			/* fallthrough */
 		default:
-			assert(false);
+			MPSL_ASSERT(false);
 			return -NRF_EINVAL;
 		}
 
@@ -685,7 +677,7 @@ static int32_t fem_psemi_lna_configuration_clear(void)
 			}
 			break;
 		default:
-			assert(false);
+			MPSL_ASSERT(false);
 			return -NRF_EINVAL;
 		}
 		mp_lna_deactivate_event = NULL;
@@ -696,29 +688,33 @@ static int32_t fem_psemi_lna_configuration_clear(void)
 
 static void fem_psemi_deactivate_now(mpsl_fem_functionality_t type)
 {
-	if (mpsl_fem_gpiote_pin_is_enabled(&m_pa_gpiote_pin) && (type & MPSL_FEM_PA)) {
-		mpsl_fem_gpiote_pin_output_active_write(&m_pa_gpiote_pin, false);
+	if (mpsl_fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
+		return;
 	}
 
-	if (mpsl_fem_gpiote_pin_is_enabled(&m_lna_gpiote_pin) && (type & MPSL_FEM_LNA)) {
-		mpsl_fem_gpiote_pin_output_active_write(&m_lna_gpiote_pin, false);
+	if (mpsl_fem_gpiote_pin_is_enabled(&m_psemi_config.pa_gpiote_pin) && (type & MPSL_FEM_PA)) {
+		mpsl_fem_gpiote_pin_output_active_write(&m_psemi_config.pa_gpiote_pin, false);
+	}
+
+	if (mpsl_fem_gpiote_pin_is_enabled(&m_psemi_config.lna_gpiote_pin) && (type & MPSL_FEM_LNA)) {
+		mpsl_fem_gpiote_pin_output_active_write(&m_psemi_config.lna_gpiote_pin, false);
 	}
 }
 
-static int32_t fem_psemi_soc_init(fem_psemi_interface_config_t *p_obj)
+static int32_t fem_psemi_soc_init(mpsl_fem_psemi_t *p_obj)
 {
-	if (mpsl_fem_gpiote_pin_is_enabled(&m_pa_gpiote_pin)) {
+	if (mpsl_fem_gpiote_pin_is_enabled(&p_obj->pa_gpiote_pin)) {
 		if (!mpsl_fem_task_init(
 			    &p_obj->pa_task[0],
-			    mpsl_fem_gpiote_pin_action_task_address_get(&m_pa_gpiote_pin, false),
-			    (uintptr_t)NRF_DPPIC10)) {
+			    mpsl_fem_gpiote_pin_action_task_address_get(&p_obj->pa_gpiote_pin, false),
+			    (uintptr_t)MPSL_NRF_DPPIC)) {
 			return -NRF_ENOMEM;
 		}
 
 		if (!mpsl_fem_task_init(
 			    &p_obj->pa_task[1],
-			    mpsl_fem_gpiote_pin_action_task_address_get(&m_pa_gpiote_pin, true),
-			    (uintptr_t)NRF_DPPIC10)) {
+			    mpsl_fem_gpiote_pin_action_task_address_get(&p_obj->pa_gpiote_pin, true),
+			    (uintptr_t)MPSL_NRF_DPPIC)) {
 			return -NRF_ENOMEM;
 		}
 	} else {
@@ -726,18 +722,18 @@ static int32_t fem_psemi_soc_init(fem_psemi_interface_config_t *p_obj)
 		(void)mpsl_fem_task_init(&p_obj->pa_task[1], 0U, 0U);
 	}
 
-	if (mpsl_fem_gpiote_pin_is_enabled(&m_lna_gpiote_pin)) {
+	if (mpsl_fem_gpiote_pin_is_enabled(&p_obj->lna_gpiote_pin)) {
 		if (!mpsl_fem_task_init(
 			    &p_obj->lna_task[0],
-			    mpsl_fem_gpiote_pin_action_task_address_get(&m_lna_gpiote_pin, false),
-			    (uintptr_t)NRF_DPPIC10)) {
+			    mpsl_fem_gpiote_pin_action_task_address_get(&p_obj->lna_gpiote_pin, false),
+			    (uintptr_t)MPSL_NRF_DPPIC)) {
 			return -NRF_ENOMEM;
 		}
 
 		if (!mpsl_fem_task_init(
 			    &p_obj->lna_task[1],
-			    mpsl_fem_gpiote_pin_action_task_address_get(&m_lna_gpiote_pin, true),
-			    (uintptr_t)NRF_DPPIC10)) {
+			    mpsl_fem_gpiote_pin_action_task_address_get(&p_obj->lna_gpiote_pin, true),
+			    (uintptr_t)MPSL_NRF_DPPIC)) {
 			return -NRF_ENOMEM;
 		}
 	} else {
@@ -748,21 +744,28 @@ static int32_t fem_psemi_soc_init(fem_psemi_interface_config_t *p_obj)
 	return 0;
 }
 
-int32_t fem_psemi_interface_config_set(fem_psemi_interface_config_t const *const p_config)
+int32_t mpsl_fem_psemi_interface_config_set(mpsl_fem_psemi_interface_config_t const *const p_config)
 {
 	int32_t ret_code;
-	m_fem_interface_config = *p_config;
 
-#if defined(CONFIG_POWER_MAP_MODEL)
-	power_model_init();
-#endif
+	m_psemi_config.fem_config.pa_time_gap_us = p_config->fem_config.pa_time_gap_us;
+	m_psemi_config.fem_config.lna_time_gap_us = p_config->fem_config.lna_time_gap_us;
+	m_psemi_config.fem_config.lna_gain_db = p_config->fem_config.lna_gain_db;
+	m_psemi_config.bypass_ble_enabled = p_config->bypass_ble_enabled;
+	m_psemi_config.pa_ldo_switch_enabled = p_config->pa_ldo_switch_enabled;
+	m_psemi_config.egu_instance_no = p_config->egu_instance_no;
+	memcpy(m_psemi_config.att_pins, p_config->att_pins, sizeof(m_psemi_config.att_pins));
+	memcpy(m_psemi_config.dppi_channels, p_config->dppi_channels,
+	       sizeof(m_psemi_config.dppi_channels));
+	memcpy(m_psemi_config.egu_channels, p_config->egu_channels,
+	       sizeof(m_psemi_config.egu_channels));
 
-	mpsl_fem_gpiote_pin_init(&m_pa_gpiote_pin, &p_config->pa_pin_config);
-	mpsl_fem_gpiote_pin_init(&m_lna_gpiote_pin, &p_config->lna_pin_config);
+	mpsl_fem_gpiote_pin_init(&m_psemi_config.pa_gpiote_pin, &p_config->pa_pin_config);
+	mpsl_fem_gpiote_pin_init(&m_psemi_config.lna_gpiote_pin, &p_config->lna_pin_config);
 
-	fem_psemi_gain_gpio_configure(p_config);
-
-	ret_code = fem_psemi_soc_init(&m_fem_interface_config);
+	fem_psemi_gain_gpio_configure(&m_psemi_config);
+	
+	ret_code = fem_psemi_soc_init(&m_psemi_config);
 	if (ret_code != 0) {
 		return ret_code;
 	}
@@ -787,7 +790,7 @@ static int32_t fem_psemi_abort_set(mpsl_subscribable_hw_event_t event, uint32_t 
 {
 	// Case 3.a) of the doc.
 
-	fem_psemi_interface_config_t *p_obj = &m_fem_interface_config;
+	mpsl_fem_psemi_t *p_obj = &m_psemi_config;
 
 	(void)group;
 
@@ -795,15 +798,15 @@ static int32_t fem_psemi_abort_set(mpsl_subscribable_hw_event_t event, uint32_t 
 		return -NRF_EINVAL;
 	}
 
-	if (fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
+	if (mpsl_fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
 		return -NRF_EPERM;
 	}
 
 	if (mpsl_fem_task_is_valid(&p_obj->lna_task[0])) {
-		nrf_egu_subscribe_set(NRF_EGU10, nrf_egu_trigger_task_get(M_EGU1), event);
-		nrf_egu_publish_set(NRF_EGU10, nrf_egu_triggered_event_get(M_EGU1), M_DPPI1);
+		nrf_egu_subscribe_set(MPSL_NRF_EGU, nrf_egu_trigger_task_get(M_EGU1), event);
+		nrf_egu_publish_set(MPSL_NRF_EGU, nrf_egu_triggered_event_get(M_EGU1), M_DPPI1);
 		mpsl_fem_task_subscribe_set(&p_obj->lna_task[0], M_DPPI1);
-		nrf_dppi_channels_enable(NRF_DPPIC10, (1U << M_DPPI1));
+		nrf_dppi_channels_enable(MPSL_NRF_DPPIC, (1U << M_DPPI1));
 	}
 
 	if (mpsl_fem_task_is_valid(&p_obj->pa_task[0])) {
@@ -833,22 +836,22 @@ static int32_t fem_psemi_abort_reduce(uint32_t channel_to_remove, uint32_t group
 
 static int32_t fem_psemi_abort_clear(void)
 {
-	fem_psemi_interface_config_t *p_obj = &m_fem_interface_config;
+	mpsl_fem_psemi_t *p_obj = &m_psemi_config;
 
 	if (!m_abort_event_is_set) {
 		// There's nothing to clear.
 		return -NRF_EPERM;
 	}
 
-	if (fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
+	if (mpsl_fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
 		return -NRF_EPERM;
 	}
 
 	if (mpsl_fem_task_is_valid(&p_obj->lna_task[0])) {
-		nrf_dppi_channels_disable(NRF_DPPIC10, (1U << M_DPPI1));
+		nrf_dppi_channels_disable(MPSL_NRF_DPPIC, (1U << M_DPPI1));
 		mpsl_fem_task_subscribe_clear(&p_obj->lna_task[0]);
-		nrf_egu_publish_clear(NRF_EGU10, nrf_egu_triggered_event_get(M_EGU1));
-		nrf_egu_subscribe_clear(NRF_EGU10, nrf_egu_trigger_task_get(M_EGU1));
+		nrf_egu_publish_clear(MPSL_NRF_EGU, nrf_egu_triggered_event_get(M_EGU1));
+		nrf_egu_subscribe_clear(MPSL_NRF_EGU, nrf_egu_trigger_task_get(M_EGU1));
 	}
 	if (mpsl_fem_task_is_valid(&p_obj->pa_task[0])) {
 		mpsl_fem_task_subscribe_clear(&p_obj->pa_task[0]);
@@ -861,5 +864,7 @@ static int32_t fem_psemi_abort_clear(void)
 
 static void fem_psemi_lna_check_is_configured(int8_t *const p_gain)
 {
-	*p_gain = m_fem_interface_config.fem_config.lna_gain_db;
+	*p_gain = m_psemi_config.fem_config.lna_gain_db;
 }
+
+#endif //DPPIC_PRESENT

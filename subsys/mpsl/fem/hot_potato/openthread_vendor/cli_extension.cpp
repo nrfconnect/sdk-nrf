@@ -59,8 +59,7 @@ extern "C" {
 #if defined(NRF54L_SERIES)
 #include <haly/nrfy_grtc.h>
 #endif
-#include "../fem_psemi_config.h"
-#include "../fem_psemi_common.h"
+#include "../psemi/include/mpsl_fem_psemi_interface.h"
 }
 
 const uint8_t ATTENUATION_MIN = 0;
@@ -593,10 +592,10 @@ static otError VendorFem(void *aContext, uint8_t aArgsLength, char *aArgs[])
 {
 	otError error = OT_ERROR_NONE;
 	const char *femStateStr[] = {"Disabled", "VC0", "VC1", "Bypass", "Auto"};
-	fem_psemi_state_t state;
+	mpsl_fem_psemi_state_t state;
 
 	if (aArgsLength == 0) {
-		state = fem_psemi_state_get();
+		state = mpsl_fem_psemi_state_get();
 		otCliOutputFormat("%s\r\n", femStateStr[state]);
 	} else if (aArgsLength == 1) {
 		if (strcmp(aArgs[0], "disable") == 0) {
@@ -612,7 +611,7 @@ static otError VendorFem(void *aContext, uint8_t aArgsLength, char *aArgs[])
 		} else {
 			ExitNow(error = OT_ERROR_INVALID_ARGS);
 		}
-		VerifyOrExit(!fem_psemi_state_set(state), error = OT_ERROR_FAILED);
+		VerifyOrExit(!mpsl_fem_psemi_state_set(state), error = OT_ERROR_FAILED);
 	} else {
 		ExitNow(error = OT_ERROR_INVALID_ARGS);
 	}
@@ -623,10 +622,10 @@ exit:
 static otError VendorFemBypass(void *aContext, uint8_t aArgsLength, char *aArgs[])
 {
 	otError error = OT_ERROR_NONE;
-	fem_psemi_state_t state;
+	mpsl_fem_psemi_state_t state;
 
 	if (aArgsLength == 0) {
-		state = fem_psemi_state_get();
+		state = mpsl_fem_psemi_state_get();
 		otCliOutputFormat("Fem bypass is %s.\r\n",
 				  state == FEM_PSEMI_STATE_BYPASS ? "on" : "off");
 	} else if (aArgsLength == 1) {
@@ -637,7 +636,7 @@ static otError VendorFemBypass(void *aContext, uint8_t aArgsLength, char *aArgs[
 		} else {
 			ExitNow(error = OT_ERROR_INVALID_ARGS);
 		}
-		VerifyOrExit(!fem_psemi_state_set(state), error = OT_ERROR_FAILED);
+		VerifyOrExit(!mpsl_fem_psemi_state_set(state), error = OT_ERROR_FAILED);
 	} else {
 		ExitNow(error = OT_ERROR_INVALID_ARGS);
 	}

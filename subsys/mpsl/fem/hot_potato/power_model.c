@@ -39,7 +39,7 @@
 
 #include "models/power_map/vendor_radio_power_map.h"
 #include "models/power_map/vendor_radio_power_limit.h"
-#include "fem_psemi_common.h"
+#include "./psemi/include/mpsl_fem_psemi_interface.h"
 
 /** @brief Offset between 802.15.4 and tx_power channel numbering. */
 #define CHANNEL_OFFSET (11u)
@@ -113,7 +113,7 @@ void power_model_output_fetch(int8_t requested_power, mpsl_phy_t phy, uint16_t f
 		return;
 	}
 
-	switch (fem_psemi_state_get()) {
+	switch (mpsl_fem_psemi_state_get()) {
 	case FEM_PSEMI_STATE_AUTO:
 		if (IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_BYPASS_BLE) &&
 		    phy != MPSL_PHY_Ieee802154_250Kbit) {

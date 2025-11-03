@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Nordic Semiconductor ASA
+/* Copyright (c) 2025, Nordic Semiconductor ASA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,31 +28,50 @@
  *
  */
 
-#ifndef POWER_MODEL_H_
-#define POWER_MODEL_H_
+/**
+ * @file
+ * @brief This file implements a weak functions of hot potato callbacks.
+ */
 
-#include <stdint.h>
 #include "mpsl_fem_power_model.h"
-#include "mpsl_tx_power.h"
 
-/** @brief Initializes the power model.
- *
- *  This function initializes the power model which is based on the power map table
- *  and the power limit table.
+#ifndef __WEAK
+#define __WEAK __attribute__((weak))
+#endif
+
+/**
+ * @brief Starts CPU usage measurement for the vendor.
  */
-void power_model_init(void);
+__WEAK void VendorUsageCpuMeasureBegin(void)
+{
+	return;
+}
 
-/** @brief Fetches the power model output.
- *
- *  This function fetches the power model output for the given requested power and frequency.
- *
- *  @param[in]  requested_power   Requested power in dBm.
- *  @param[in]  phy               PHY to calculate TX power split for.
- *  @param[in]  freq_mhz          Frequency in MHz.
- *  @param[out] p_output          Pointer to the output structure.
- *  @param[in]  tx_power_ceiling  Flag indicating if the TX power ceiling should be applied.
+/**
+ * @brief Ends CPU usage measurement for the vendor.
  */
-void power_model_output_fetch(int8_t requested_power, mpsl_phy_t phy, uint16_t freq_mhz,
-			      mpsl_fem_power_model_output_t *p_output, bool tx_power_ceiling);
+__WEAK void VendorUsageCpuMeasureEnd(void)
+{
+	return;
+}
 
-#endif /* POWER_MODEL_H_ */
+/**
+ * @brief Fetches the output parameters from the FEM power model for a given requested power.
+ *
+ * @param[in]  requested_power    The desired transmit power in dBm.
+ * @param[in]  phy                The PHY type (see mpsl_phy_t).
+ * @param[in]  freq_mhz           The frequency in MHz.
+ * @param[out] p_output           Pointer to the structure to receive the power model output.
+ * @param[in]  tx_power_ceiling   If true, the requested power is treated as a ceiling.
+ */
+__WEAK void power_model_output_fetch(int8_t requested_power, mpsl_phy_t phy, uint16_t freq_mhz,
+				     mpsl_fem_power_model_output_t *p_output, bool tx_power_ceiling)
+{
+	(void)phy;
+	(void)freq_mhz;
+
+	p_output->soc_pwr =
+		mpsl_tx_power_radio_supported_power_adjust(requested_power, tx_power_ceiling);
+	p_output->fem_pa_power_control = FEM_GAIN_BYPASS;
+	p_output->achieved_pwr = p_output->soc_pwr;
+}

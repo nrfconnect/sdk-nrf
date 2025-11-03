@@ -222,3 +222,17 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+  sample.openthread.cli.hot_potato:
+    sysbuild: true
+    build_only: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_openthread
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - cli_SNIPPET="ci;logging;multiprotocol;tcp;hot_potato"
+      - FILE_SUFFIX=ble
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp

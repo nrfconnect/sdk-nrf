@@ -1,4 +1,4 @@
-/* Copyright (c) 2024, Nordic Semiconductor ASA
+/* Copyright (c) 2025, Nordic Semiconductor ASA
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,31 +28,28 @@
  *
  */
 
-#ifndef POWER_MODEL_H_
-#define POWER_MODEL_H_
+/**
+ * @file
+ *   This file implements stubs for Front End Module control when the "psemi" implementation
+ *   of Front End Module is selected. It applies to not yet supported devices.
+ *
+ */
 
 #include <stdint.h>
-#include "mpsl_fem_power_model.h"
-#include "mpsl_tx_power.h"
 
-/** @brief Initializes the power model.
- *
- *  This function initializes the power model which is based on the power map table
- *  and the power limit table.
- */
-void power_model_init(void);
+#include "mpsl_fem_psemi.h"
 
-/** @brief Fetches the power model output.
- *
- *  This function fetches the power model output for the given requested power and frequency.
- *
- *  @param[in]  requested_power   Requested power in dBm.
- *  @param[in]  phy               PHY to calculate TX power split for.
- *  @param[in]  freq_mhz          Frequency in MHz.
- *  @param[out] p_output          Pointer to the output structure.
- *  @param[in]  tx_power_ceiling  Flag indicating if the TX power ceiling should be applied.
- */
-void power_model_output_fetch(int8_t requested_power, mpsl_phy_t phy, uint16_t freq_mhz,
-			      mpsl_fem_power_model_output_t *p_output, bool tx_power_ceiling);
+#if defined(NRF_PLATFORM_HALTIUM) || defined(NRF_PLATFORM_LUMOS)
 
-#endif /* POWER_MODEL_H_ */
+#define ASSERT_FILE_ID 122
+#include "mpsl_assert.h"
+
+int32_t
+mpsl_fem_psemi_interface_config_set(mpsl_fem_simple_gpio_interface_config_t const *const p_config)
+{
+  (void)p_config;
+	MPSL_ASSERT(false);
+	return 0;
+}
+
+#endif /* NRF_PLATFORM_HALTIUM || NRF_PLATFORM_LUMOS */
