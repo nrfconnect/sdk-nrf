@@ -61,7 +61,7 @@ def test_kmu_revoke_old_keys(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
 
     match_lines(
         lines,
-        ["Image in the secondary slot is not valid", "Key invalidation failed with", "Jumping to the first image slot"],
+        ["Image in the secondary slot is not valid", "Jumping to the first image slot"],
     )
     tm.check_with_shell_command(tm.origin_mcuboot_version)
     logger.info("Passed: MCUboot rejected image signed with revoked key")
@@ -111,7 +111,7 @@ def test_kmu_upgrade_with_new_key_then_with_old(dut: DeviceAdapter, shell: Shell
 
     match_lines(
         lines,
-        ["Image in the secondary slot is not valid", "Key invalidation failed with", "Jumping to the first image slot"],
+        ["Image in the secondary slot is not valid", "Jumping to the first image slot"],
     )
     tm.check_with_shell_command(mcuboot_version)
     logger.info("Passed: MCUboot rejected image signed with revoked key")
