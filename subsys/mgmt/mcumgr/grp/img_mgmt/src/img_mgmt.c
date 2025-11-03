@@ -31,6 +31,11 @@
 #include <zephyr/dfu/flash_img.h>
 #endif
 
+#ifdef CONFIG_NCS_MCUBOOT_MANIFEST_UPDATES
+#include <bootutil/bootutil_public.h>
+#include <bootutil/mcuboot_manifest.h>
+#endif
+
 #ifdef CONFIG_MCUMGR_MGMT_NOTIFICATION_HOOKS
 #include <zephyr/mgmt/mcumgr/mgmt/callbacks.h>
 #include <mgmt/mcumgr/transport/smp_internal.h>
@@ -274,6 +279,124 @@ int img_mgmt_active_image(void)
 	return ACTIVE_IMAGE_IS;
 }
 
+#ifdef CONFIG_NCS_MCUBOOT_MANIFEST_UPDATES
+/**
+ * Checks whether the manifest of the image in the specified slot can be used for booting.
+ *
+ * @param slot  The slot to check the manifest for.
+ *
+ * @return true if the manifest can be used, false otherwise.
+ */
+static bool boot_check_manifest(enum boot_slot slot)
+{
+	struct image_header hdr;
+	struct image_tlv tlv;
+	size_t data_off;
+	size_t data_end;
+	bool manifest_found;
+	uint8_t erased_val;
+	uint32_t erased_val_32;
+	struct mcuboot_manifest tmp_manifest;
+	uint8_t hash[IMAGE_HASH_SIZE];
+	int rc;
+	int image_slot = CONFIG_NCS_MCUBOOT_MANIFEST_IMAGE_INDEX * BOOT_SLOT_COUNT + slot;
+
+	rc = img_mgmt_erased_val(image_slot, &erased_val);
+	if (rc != 0) {
+		return false;
+	}
+
+	rc = img_mgmt_read(image_slot,
+			   boot_get_image_start_offset(img_mgmt_flash_area_id(image_slot)),
+			   &hdr, sizeof(hdr));
+	if (rc != 0) {
+		return false;
+	}
+
+	erased_val_32 = ERASED_VAL_32(erased_val);
+	if (hdr.ih_magic != IMAGE_MAGIC) {
+		return false;
+	}
+
+	/* Read the image's TLVs. We try to find manifest only inside the protected TLVs.
+	 * If the manifest is missing, the image is considered invalid.
+	 */
+	data_off = hdr.ih_hdr_size + hdr.ih_img_size +
+		   boot_get_image_start_offset(img_mgmt_flash_area_id(image_slot));
+
+	rc = img_mgmt_find_tlvs(image_slot, &data_off, &data_end, IMAGE_TLV_PROT_INFO_MAGIC);
+	if (rc != 0) {
+		return false;
+	}
+
+	manifest_found = false;
+	while (data_off + sizeof(tlv) <= data_end) {
+		rc = img_mgmt_read(image_slot, data_off, &tlv, sizeof(tlv));
+		if (rc != 0) {
+			return false;
+		}
+		if (tlv.it_type == 0xff && tlv.it_len == 0xffff) {
+			return false;
+		}
+		if ((tlv.it_type != IMAGE_TLV_MANIFEST) ||
+		    (tlv.it_len != sizeof(struct mcuboot_manifest))) {
+			/* Non-manifest TLV. Skip it. */
+			data_off += sizeof(tlv) + tlv.it_len;
+			continue;
+		}
+
+		if (manifest_found) {
+			/* More than one manifest. */
+			return false;
+		}
+		manifest_found = true;
+
+		data_off += sizeof(tlv);
+		if (data_off + sizeof(struct mcuboot_manifest) > data_end) {
+			return false;
+		}
+		rc = img_mgmt_read(image_slot, data_off, &tmp_manifest,
+				   sizeof(struct mcuboot_manifest));
+		if (rc != 0) {
+			return false;
+		}
+	}
+
+	if (!manifest_found) {
+		return false;
+	}
+
+	for (size_t i = 0; i < BOOT_IMAGE_NUMBER; i++) {
+		if (i == CONFIG_NCS_MCUBOOT_MANIFEST_IMAGE_INDEX) {
+			continue;
+		}
+
+		rc = img_mgmt_read_info(i * BOOT_SLOT_COUNT + slot, NULL, hash, NULL);
+		if ((rc == 0) && bootutil_verify_manifest_image_hash(&tmp_manifest, hash, i)) {
+			/* Hash matches */
+			continue;
+		}
+
+#if !defined(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP) && \
+	!defined(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT) && \
+	!defined(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD)
+		/* In SWAP modes, the image may be placed in either primary or secondary slot. */
+		rc = img_mgmt_read_info(i * BOOT_SLOT_COUNT + ((slot + 1) % BOOT_SLOT_COUNT), NULL,
+					hash, NULL);
+		if ((rc == 0) && bootutil_verify_manifest_image_hash(&tmp_manifest, hash, i)) {
+			/* Hash matches */
+			continue;
+		}
+#endif
+
+		LOG_ERR("Manifest hash does not match image %d hash", i);
+		return false;
+	}
+
+	return true;
+}
+#endif /* CONFIG_NCS_MCUBOOT_MANIFEST_UPDATES */
+
 /*
  * Reads the version and build hash from the specified image slot.
  */
@@ -317,6 +440,12 @@ int img_mgmt_read_info(int image_slot, struct image_version *ver, uint8_t *hash,
 
 	if (flags != NULL) {
 		*flags = hdr.ih_flags;
+#ifdef CONFIG_NCS_MCUBOOT_MANIFEST_UPDATES
+		/* Mark slot as unbootable if manifest is not satisfied. */
+		if (!boot_check_manifest(image_slot % SLOTS_PER_IMAGE)) {
+			*flags |= IMAGE_F_NON_BOOTABLE;
+		}
+#endif
 	}
 
 	/* Read the image's TLVs. We first try to find the protected TLVs, if the protected
