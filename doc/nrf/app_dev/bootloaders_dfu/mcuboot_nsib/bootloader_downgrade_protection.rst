@@ -89,7 +89,7 @@ Downgrade protection using |NSIB|
 
 .. bootloader_monotonic_counter_nsib_start
 
-To enable anti-rollback protection with monotonic counter for |NSIB|, set the following configurations in the ``b0`` image: :kconfig:option:`CONFIG_SB_MONOTONIC_COUNTER` and :kconfig:option:`CONFIG_SB_NUM_VER_COUNTER_SLOTS`
+To enable anti-rollback protection with monotonic counter for |NSIB|, set the following sysbuild configuration options: :kconfig:option:`SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER` and :kconfig:option:`SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS`
 
 Special handling is needed when updating the S1 variant of an image when :ref:`ug_bootloader_adding_sysbuild_upgradable`.
 See :ref:`ug_bootloader_adding_sysbuild_presigned_variants` for details.
