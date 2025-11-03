@@ -51,6 +51,7 @@ Apache-2.0: |
   ^nrf/tests/benchmarks/kernel_freq_change/src/kernel_context.c
   ^nrf/tests/subsys/suit/common/tls_config/user-tls-conf.h
   ^nrf/subsys/settings/
+  ^nrf/subsys/mgmt/mcumgr/grp/img_mgmt/src/img_mgmt.c
   ^nrf/subsys/mgmt/mcumgr/grp/img_mgmt/src/img_mgmt_state.c
   ^nrf/tests/zephyr/subsys/settings/
   ^nrf/samples/zephyr/
