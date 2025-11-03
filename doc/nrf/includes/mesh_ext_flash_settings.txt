@@ -1,5 +1,5 @@
-This sample supports relocating mesh settings to external flash on ``nrf52840dk/nrf52840`` board target.
-See the `nRF52840 DK User Guide`_ for details about the external flash memory available on the board.
+This sample supports relocating mesh settings to external flash on ``nrf52840dk/nrf52840``, ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp``, and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
+See the `nRF52840 DK User Guide`_ or the `nRF54L15 DK User Guide`_ for details about the external flash memory available on the board.
 This provides additional storage space for mesh persistent data.
 
 To enable external flash settings storage, set :makevar:`FILE_SUFFIX` to ``settings_ext_flash`` when building the sample.
@@ -8,10 +8,26 @@ Build the sample using the following command:
 
 .. code-block:: console
 
-   west build -p -b nrf52840dk/nrf52840 -- -DFILE_SUFFIX=settings_ext_flash
+   west build -p -b *board_target* -- -DFILE_SUFFIX=settings_ext_flash
 
 .. note::
    The external flash is not erased during the internal flash erasing procedure.
    See `nRF Util`_ for more information on how to erase the external flash.
 
-Currently, the external flash settings partition is only supported on the ``nrf52840dk/nrf52840`` board target.
+The :ref:`settings <zephyr:settings_api>` subsystem requires allocating some persistent memory area, which is done through the settings subsystem backend configuration in the form of an allocated number of sectors.
+
+For :ref:`NVS <zephyr:nvs_api>` backend:
+
+* :kconfig:option:`CONFIG_SETTINGS_NVS_SECTOR_COUNT`
+* :kconfig:option:`CONFIG_SETTINGS_NVS_SECTOR_SIZE_MULT`
+
+For :ref:`ZMS <zephyr:zms_api>` backend:
+
+* :kconfig:option:`CONFIG_SETTINGS_ZMS_CUSTOM_SECTOR_COUNT`
+* :kconfig:option:`CONFIG_SETTINGS_ZMS_SECTOR_COUNT`
+* :kconfig:option:`CONFIG_SETTINGS_ZMS_SECTOR_SIZE_MULT`
+
+The sector size depends on the flash memory layout.
+
+Apart from this, the allocated partitions are managed by the :ref:`partition_manager`.
+It is required that the size of the partition allocated by the partition manager must be equal to the memory size configured for the settings subsystem.

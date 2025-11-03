@@ -31,8 +31,16 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: FILE_SUFFIX=settings_ext_flash
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
     tags:
       - bluetooth
       - ci_build
