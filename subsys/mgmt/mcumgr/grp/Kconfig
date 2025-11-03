@@ -7,5 +7,6 @@
 menu "Additional MCUmgr group configuration"
 
 rsource "os_mgmt/Kconfig"
+rsource "img_mgmt/Kconfig"
 
 endmenu
