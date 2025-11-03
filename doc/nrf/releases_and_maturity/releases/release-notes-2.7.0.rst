@@ -1063,7 +1063,7 @@ Modem libraries
 
   * Fixed an issue with the CFUN hooks when the Modem library is initialized during ``SYS_INIT`` at kernel level and makes calls to the :ref:`nrf_modem_at` before the application level initialization is done.
 
-  * Deprecated the Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR`.
+  * Deprecated the Kconfig option ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR``.
 
   * Removed the deprecated Kconfig options ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ASYNC`` and ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_SYNC``.
 

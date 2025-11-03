@@ -156,7 +156,7 @@ Modem library
 
    For applications using :ref:`nrf_modem_lib_readme`:
 
-     * The option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR` is now deprecated.
+     * The option ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR`` is now deprecated.
        To enable the UART trace backend, use the ``nrf91-modem-trace-uart`` snippet instead, or add a similar configuration in application overlays.
        The snippet is located in :file:`snippets/nrf91-modem-trace-uart/`.
 
