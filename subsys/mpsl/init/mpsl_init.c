@@ -553,10 +553,9 @@ int32_t mpsl_lib_uninit(void)
 	atomic_set(&do_calibration, 0);
 #endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
 
-	mpsl_lib_irq_disable();
-
 	mpsl_uninit();
 
+	mpsl_lib_irq_disable();
 #if defined(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
 	err = mpsl_clock_ctrl_uninit();
 	if (err) {
