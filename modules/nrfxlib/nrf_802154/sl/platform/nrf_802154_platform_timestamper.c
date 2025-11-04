@@ -228,7 +228,7 @@ void nrf_802154_platform_timestamper_local_domain_connections_setup(uint32_t dpp
  */
 
 #include <helpers/nrfx_gppi.h>
-#include <helpers/nrfx_gppi_lumos.h>
+#include <soc/interconnect/nrfx_gppi_lumos.h>
 
 static nrfx_gppi_handle_t rad_peri_handle;
 static uint32_t ppib_chan;
