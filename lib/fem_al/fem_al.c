@@ -361,7 +361,7 @@ static int radio_domain_nrfx_dppi_channel_alloc(uint8_t *channel)
 {
 	int ch;
 
-	ch = nrfx_gppi_channel_alloc(nrfx_gppi_domain_id_get(RADIO_DOMAIN_NRF_DPPI), channel);
+	ch = nrfx_gppi_channel_alloc(nrfx_gppi_domain_id_get(RADIO_DOMAIN_NRF_DPPI));
 	if (ch < 0) {
 		return ch;
 	}
