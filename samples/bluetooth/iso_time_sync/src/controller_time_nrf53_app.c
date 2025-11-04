@@ -131,9 +131,15 @@ int config_egu_trigger_on_rtc_and_timer_match(void)
 	uint32_t tep1 = nrf_egu_task_address_get(NRF_EGU0, NRF_EGU_TASK_TRIGGER0);
 	int ret;
 
-	ret = nrfx_gppi_group_alloc(&eep0, 1, &group);
+	ret = nrfx_gppi_group_alloc(nrfx_gppi_domain_id_get(eep0), &group);
 	if (ret < 0) {
 		printk("Failed allocating group\n");
+		return ret;
+	}
+
+	ret = nrfx_gppi_group_ep_add(group, eep0);
+	if (ret < 0) {
+		printk("Failed attaching an event to the group\n");
 		return ret;
 	}
 
