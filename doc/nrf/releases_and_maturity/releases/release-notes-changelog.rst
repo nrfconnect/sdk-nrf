@@ -198,6 +198,10 @@ Bluetooth Mesh
   * Deprecated the :kconfig:option:`CONFIG_BT_MESH_NLC_PERF_CONF` and :kconfig:option:`CONFIG_BT_MESH_NLC_PERF_DEFAULT` Kconfig options.
     Existing configurations continue to work but you should migrate to individual profile options.
 
+* Updated the LE Pairing Responder model:
+
+  * Deprecated the :kconfig:option:`CONFIG_BT_FIXED_PASSKEY` option in favor of the new and supported :kconfig:option:`CONFIG_BT_APP_PASSKEY` option.
+
 DECT NR+
 --------
 
@@ -483,6 +487,10 @@ Bluetooth Mesh samples
    * Added:
 
     * Support for external flash memory for the ``nrf52840dk/nrf52840`` and the ``nrf54l15dk/nrf54l15/cpuapp`` as the secondary partition for the DFU process.
+
+   * Updated:
+
+    * The sample to use the :kconfig:option:`CONFIG_BT_APP_PASSKEY` option instead of the deprecated :kconfig:option:`CONFIG_BT_FIXED_PASSKEY` option.
 
 * :ref:`ble_mesh_dfu_target` sample:
 

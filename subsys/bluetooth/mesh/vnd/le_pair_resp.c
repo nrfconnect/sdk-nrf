@@ -24,14 +24,13 @@ LOG_MODULE_REGISTER(bt_mesh_le_pair_resp);
 #define STATUS_PASSKEY_SET 0x00
 #define STATUS_PASSKEY_NOT_SET 0x01
 
-static uint32_t predefined_passkey = BT_PASSKEY_INVALID;
+static uint32_t predefined_passkey = BT_PASSKEY_RAND;
 
 static int handle_reset(const struct bt_mesh_model *model, struct bt_mesh_msg_ctx *ctx,
 			struct net_buf_simple *buf)
 {
 	uint32_t passkey;
 	uint8_t status = STATUS_PASSKEY_SET;
-	int err;
 
 	if (buf->len != 0) {
 		return -EINVAL;
@@ -39,16 +38,15 @@ static int handle_reset(const struct bt_mesh_model *model, struct bt_mesh_msg_ct
 
 	BT_MESH_MODEL_BUF_DEFINE(rsp, BT_MESH_LE_PAIR_OP, 5);
 
-	if (predefined_passkey != BT_PASSKEY_INVALID) {
+	if (predefined_passkey != BT_PASSKEY_RAND) {
 		passkey = predefined_passkey;
 	} else {
 		passkey = sys_rand32_get() % 1000000;
-	}
-
-	err = bt_passkey_set(passkey);
-	if (err) {
-		LOG_ERR("Unable to set passkey (err: %d)", err);
-		status = STATUS_PASSKEY_NOT_SET;
+		/* Overwrite the predefined passkey with the randomly generated passkey.
+		 * LE pair responder can use the randomly generated passkey for the next
+		 * pairing request.
+		 */
+		predefined_passkey = passkey;
 	}
 
 	bt_mesh_model_msg_init(&rsp, BT_MESH_LE_PAIR_OP);
@@ -112,10 +110,15 @@ const struct bt_mesh_model_cb _bt_mesh_le_pair_resp_cb = {
 
 void bt_mesh_le_pair_resp_passkey_invalidate(void)
 {
-	(void)bt_passkey_set(BT_PASSKEY_INVALID);
+	predefined_passkey = BT_PASSKEY_RAND;
 }
 
 void bt_mesh_le_pair_resp_passkey_set(uint32_t passkey)
 {
 	predefined_passkey = passkey;
+}
+
+uint32_t bt_mesh_le_pair_resp_passkey_get(void)
+{
+	return predefined_passkey;
 }
