@@ -18,10 +18,9 @@ int controller_time_init(void)
 	int ret;
 
 	ret = nrfx_grtc_channel_alloc(&grtc_channel);
-	if (ret != NRFX_SUCCESS) {
-		printk("Failed allocating GRTC channel (ret: %d)\n",
-		       ret - NRFX_ERROR_BASE_NUM);
-		return -ENODEV;
+	if (ret < 0) {
+		printk("Failed allocating GRTC channel (ret: %d)\n", ret);
+		return ret;
 	}
 
 	nrf_grtc_sys_counter_compare_event_enable(NRF_GRTC, grtc_channel);
