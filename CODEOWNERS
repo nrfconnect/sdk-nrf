@@ -28,6 +28,7 @@
 
 # Applications
 /applications/asset_tracker_template/README.rst @nrfconnect/ncs-cia-doc
+/applications/serial_modem/README.rst     @nrfconnect/ncs-modem-doc
 /applications/connectivity_bridge/        @nrfconnect/ncs-cia @nordic-auko
 /applications/ipc_radio/                  @nrfconnect/ncs-si-muffin
 /applications/machine_learning/           @nrfconnect/ncs-si-muffin

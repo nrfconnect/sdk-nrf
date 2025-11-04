@@ -214,7 +214,8 @@ Wi-Fi®
 Applications
 ============
 
-|no_changes_yet_note|
+* Removed the Serial LTE modem application.
+  Instead, use `Serial Modem`_, an |NCS| add-on application.
 
 Connectivity bridge
 -------------------
@@ -460,6 +461,9 @@ Cellular samples
   * The :ref:`nrf_cloud_coap_fota_sample` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for FOTA updates.
   * The :ref:`nrf_cloud_coap_device_message` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for device messages.
   * The :ref:`nrf_cloud_mqtt_device_message` sample to demonstrate how to use the `nRF Cloud MQTT API`_ for device messages.
+
+* Removed the SLM Shell sample.
+  Use the `Serial Modem Host Shell`_ sample instead.
 
 * :ref:`nrf_cloud_rest_cell_location` sample:
 
@@ -728,6 +732,8 @@ Modem libraries
   * The AT command parser library.
     Use the :ref:`at_parser_readme` library instead.
   * The AT parameters library.
+  * The Modem SLM library.
+    Use the `Serial Modem Host`_ library instead.
 
 * :ref:`lte_lc_readme` library:
 
