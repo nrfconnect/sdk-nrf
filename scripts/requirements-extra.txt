@@ -10,3 +10,4 @@ nrfcredstore>=1.0.0,<2
 idna>=3.7 # https://github.com/advisories/GHSA-jjg7-2v4v-x38h
 libusb>=1.0.26
 matter_idl
+python-path>=0.1.3
