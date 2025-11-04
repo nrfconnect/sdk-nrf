@@ -308,6 +308,8 @@ nRF Desktop
     * The :ref:`nrf_desktop_hid_state_pm` to skip submitting the :c:struct:`keep_alive_event` if the :c:enum:`POWER_MANAGER_LEVEL_ALIVE` power level is enforced by any application module through the :c:struct:`power_manager_restrict_event`.
       This is done to improve performance.
     * The documentation of the :ref:`nrf_desktop_hid_state` and default HID report providers to simplify getting started with updating HID input reports used by the application or introducing support for a new HID input report.
+    * The default value of the :kconfig:option:`CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL_NORMAL_PRIORITY_TIMEOUT_US` Kconfig option to ``0``.
+      This is done to start using high MPSL timeslot priority quicker and speed up non-volatile memory operations.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

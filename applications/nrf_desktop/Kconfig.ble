@@ -351,6 +351,16 @@ config BT_L2CAP_TX_BUF_COUNT
 	  For an nRF Desktop device, the maximum number of L2CAP buffers
 	  is aligned to the number of outgoing ACL buffers.
 
+if SOC_FLASH_NRF_RADIO_SYNC_MPSL
+
+config SOC_FLASH_NRF_RADIO_SYNC_MPSL_NORMAL_PRIORITY_TIMEOUT_US
+	default 0
+	help
+	  Start using high MPSL timeslot priority quicker to speed up
+	  non-volatile memory operations.
+
+endif # SOC_FLASH_NRF_RADIO_SYNC_MPSL
+
 choice BT_HCI_CORE_LOG_LEVEL_CHOICE
 	default BT_HCI_CORE_LOG_LEVEL_WRN
 	help
