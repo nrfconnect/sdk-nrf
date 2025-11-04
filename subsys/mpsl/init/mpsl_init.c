@@ -308,16 +308,22 @@ void m_assert_handler(const char *const file, const uint32_t line)
 #else /* !IS_ENABLED(CONFIG_MPSL_ASSERT_HANDLER) */
 static void m_assert_handler(const char *const file, const uint32_t line)
 {
+	volatile char assert_file_id[11] = { 0 };
+	volatile uint32_t assert_line = line;
+
+	strncpy((char *)assert_file_id, file, sizeof(assert_file_id) - 1);
+
 #if defined(CONFIG_ASSERT) && defined(CONFIG_ASSERT_VERBOSE) && !defined(CONFIG_ASSERT_NO_MSG_INFO)
-	__ASSERT(false, "MPSL ASSERT: %s, %d\n", file, line);
+	__ASSERT(false, "MPSL ASSERT: %s, %d\n", (char *)assert_file_id, assert_line);
 #elif defined(CONFIG_LOG)
-	LOG_ERR("MPSL ASSERT: %s, %d", file, line);
+	LOG_ERR("MPSL ASSERT: %s, %d", (char *)assert_file_id, assert_line);
 	k_oops();
 #elif defined(CONFIG_PRINTK)
-	printk("MPSL ASSERT: %s, %d\n", file, line);
+	printk("MPSL ASSERT: %s, %d\n", (char *)assert_file_id, assert_line);
 	printk("\n");
 	k_oops();
 #else
+	(void)assert_line;
 	k_oops();
 #endif
 }
