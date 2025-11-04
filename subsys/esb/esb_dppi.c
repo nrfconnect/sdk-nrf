@@ -142,6 +142,8 @@ void esb_ppi_for_wait_for_ack_set(void)
 
 	nrf_timer_subscribe_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_STOP,
 				radio_address_timer_stop);
+	nrf_timer_subscribe_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_CLEAR,
+				radio_address_timer_stop);
 
 	nrf_radio_subscribe_set(NRF_RADIO, NRF_RADIO_TASK_DISABLE, timer_compare0_radio_disable);
 
@@ -164,6 +166,7 @@ void esb_ppi_for_wait_for_ack_clear(void)
 	nrf_timer_publish_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_EVENT_COMPARE0);
 
 	nrf_timer_subscribe_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_STOP);
+	nrf_timer_subscribe_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_CLEAR);
 
 	nrf_radio_subscribe_clear(NRF_RADIO, NRF_RADIO_TASK_DISABLE);
 }
