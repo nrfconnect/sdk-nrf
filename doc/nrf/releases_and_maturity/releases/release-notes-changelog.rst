@@ -113,7 +113,9 @@ Developing with custom boards
 Security
 ========
 
-|no_changes_yet_note|
+* Added:
+
+  * Support for AES-CCM AEAD using CRACEN for the :zephyr:board:`nrf54lm20dk`.
 
 Protocols
 =========
@@ -248,7 +250,9 @@ Cellular samples
 Cryptography samples
 --------------------
 
-|no_changes_yet_note|
+* :ref:`crypto_aes_ccm` sample:
+
+  * Added support for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
 
 Debug samples
 -------------
