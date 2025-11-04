@@ -111,6 +111,10 @@
 #include "security/cracen.h"
 #endif /* PSA_CRYPTO_DRIVER_CRACEN */
 
+#if defined(PSA_CRYPTO_DRIVER_WIFI_KEYS)
+#include "wifi_keys.h"
+#endif /* PSA_CRYPTO_DRIVER_WIFI_KEYS */
+
 /* Include TF-M builtin key driver */
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 #include "tfm_crypto_defs.h"
@@ -466,6 +470,11 @@ psa_driver_wrapper_get_key_buffer_size_from_key_data(const psa_key_attributes_t 
 
 	*key_buffer_size = 0;
 	switch (location) {
+#if defined(PSA_CRYPTO_DRIVER_WIFI_KEYS)
+	case PSA_KEY_LOCATION_WIFI_KEYS:
+		*key_buffer_size = 32; /* max key size in bytes */
+		return PSA_SUCCESS;
+#endif /* PSA_CRYPTO_DRIVER_WIFI_KEYS */
 #if defined(PSA_CRYPTO_DRIVER_CRACEN)
 	case PSA_KEY_LOCATION_CRACEN:
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
@@ -607,6 +616,12 @@ psa_status_t psa_driver_wrapper_import_key(const psa_key_attributes_t *attribute
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
 	switch (location) {
+#if defined(PSA_CRYPTO_DRIVER_WIFI_KEYS)
+	case PSA_KEY_LOCATION_WIFI_KEYS:
+		status = wifi_keys_import_key(attributes, data, data_length, key_buffer,
+					      key_buffer_size, key_buffer_length, bits);
+		return status;
+#endif /* PSA_CRYPTO_DRIVER_WIFI_KEYS */
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
 	case TFM_BUILTIN_KEY_LOADER_KEY_LOCATION:
