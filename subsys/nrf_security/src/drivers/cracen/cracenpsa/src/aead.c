@@ -19,6 +19,10 @@
 #include <zephyr/sys/__assert.h>
 #include "common.h"
 
+#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
+#include <cracen_sw_aes_ccm.h>
+#endif
+
 #define CCM_HEADER_MAX_LENGTH 26
 
 /*
@@ -51,8 +55,7 @@ static bool is_nonce_length_supported(psa_algorithm_t alg, size_t nonce_length)
 {
 	switch (alg) {
 	case PSA_ALG_GCM:
-		IF_ENABLED(PSA_NEED_CRACEN_GCM_AES,
-			   (return nonce_length == SX_GCM_IV_SZ));
+		IF_ENABLED(PSA_NEED_CRACEN_GCM_AES, (return nonce_length == SX_GCM_IV_SZ));
 	case PSA_ALG_CHACHA20_POLY1305:
 		IF_ENABLED(PSA_NEED_CRACEN_CHACHA20_POLY1305,
 			   (return nonce_length == SX_CHACHAPOLY_IV_SZ));
@@ -336,11 +339,15 @@ psa_status_t cracen_aead_encrypt_setup(cracen_aead_operation_t *operation,
 				       const uint8_t *key_buffer, size_t key_buffer_size,
 				       psa_algorithm_t alg)
 {
-#ifdef CONFIG_SOC_NRF54LM20A
-	return PSA_ERROR_NOT_SUPPORTED;
-#else
-	return setup(operation, CRACEN_ENCRYPT, attributes, key_buffer, key_buffer_size, alg);
+#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
+	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
+	if (alg == PSA_ALG_CCM) {
+		return cracen_sw_aes_ccm_encrypt_setup(operation, attributes, key_buffer,
+						       key_buffer_size, alg);
+	}
 #endif
+
+	return setup(operation, CRACEN_ENCRYPT, attributes, key_buffer, key_buffer_size, alg);
 }
 
 psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
@@ -348,11 +355,15 @@ psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
 				       const uint8_t *key_buffer, size_t key_buffer_size,
 				       psa_algorithm_t alg)
 {
-#ifdef CONFIG_SOC_NRF54LM20A
-	return PSA_ERROR_NOT_SUPPORTED;
-#else
-	return setup(operation, CRACEN_DECRYPT, attributes, key_buffer, key_buffer_size, alg);
+#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
+	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
+	if (alg == PSA_ALG_CCM) {
+		return cracen_sw_aes_ccm_decrypt_setup(operation, attributes, key_buffer,
+						       key_buffer_size, alg);
+	}
 #endif
+
+	return setup(operation, CRACEN_DECRYPT, attributes, key_buffer, key_buffer_size, alg);
 }
 
 static psa_status_t set_nonce(cracen_aead_operation_t *operation, const uint8_t *nonce,
@@ -371,9 +382,13 @@ static psa_status_t set_nonce(cracen_aead_operation_t *operation, const uint8_t 
 psa_status_t cracen_aead_set_nonce(cracen_aead_operation_t *operation, const uint8_t *nonce,
 				   size_t nonce_length)
 {
-#ifdef CONFIG_SOC_NRF54LM20A
-	return PSA_ERROR_NOT_SUPPORTED;
-#else
+#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
+	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
+	if (operation->alg == PSA_ALG_CCM) {
+		return cracen_sw_aes_ccm_set_nonce(operation, nonce, nonce_length);
+	}
+#endif
+
 	psa_status_t status;
 
 	status = set_nonce(operation, nonce, nonce_length);
@@ -393,18 +408,11 @@ psa_status_t cracen_aead_set_nonce(cracen_aead_operation_t *operation, const uin
 	}
 
 	return PSA_SUCCESS;
-#endif
 }
 
 static psa_status_t set_lengths(cracen_aead_operation_t *operation, size_t ad_length,
-			size_t plaintext_length)
+				size_t plaintext_length)
 {
-#if defined(CRACEN_MAX_CCM_DATA_SIZE)
-	if ((operation->alg == PSA_ALG_CCM) && (plaintext_length > CRACEN_MAX_CCM_DATA_SIZE)) {
-		return PSA_ERROR_NOT_SUPPORTED;
-	}
-#endif /* CRACEN_MAX_CCM_DATA_SIZE */
-
 	operation->ad_length = ad_length;
 	operation->plaintext_length = plaintext_length;
 	return PSA_SUCCESS;
@@ -413,17 +421,19 @@ static psa_status_t set_lengths(cracen_aead_operation_t *operation, size_t ad_le
 psa_status_t cracen_aead_set_lengths(cracen_aead_operation_t *operation, size_t ad_length,
 				     size_t plaintext_length)
 {
-#ifdef CONFIG_SOC_NRF54LM20A
-	return PSA_ERROR_NOT_SUPPORTED;
-#else
-	return set_lengths(operation, ad_length, plaintext_length);
+#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
+	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
+	if (operation->alg == PSA_ALG_CCM) {
+		return cracen_sw_aes_ccm_set_lengths(operation, ad_length, plaintext_length);
+	}
 #endif
+
+	return set_lengths(operation, ad_length, plaintext_length);
 }
 
-static __maybe_unused psa_status_t cracen_aead_update_internal(cracen_aead_operation_t *operation,
-						const uint8_t *input, size_t input_length,
-						uint8_t *output, size_t output_size,
-						size_t *output_length, bool is_ad_update)
+static __maybe_unused psa_status_t cracen_aead_update_internal(
+	cracen_aead_operation_t *operation, const uint8_t *input, size_t input_length,
+	uint8_t *output, size_t output_size, size_t *output_length, bool is_ad_update)
 {
 	psa_status_t psa_status = PSA_ERROR_CORRUPTION_DETECTED;
 	size_t blk_bytes = 0;
@@ -484,8 +494,8 @@ static __maybe_unused psa_status_t cracen_aead_update_internal(cracen_aead_opera
 	 * processed immediately. So to buffer the input and prevent processing
 	 * we subtract one block from blk_bytes.
 	 */
-	if (IS_ENABLED(PSA_NEED_CRACEN_CCM_AES) &&
-	    operation->alg == PSA_ALG_CCM && input_length != 0 && blk_bytes == input_length) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_CCM_AES) && operation->alg == PSA_ALG_CCM &&
+	    input_length != 0 && blk_bytes == input_length) {
 		blk_bytes -= get_block_size(operation->alg);
 	}
 
@@ -531,20 +541,28 @@ static __maybe_unused psa_status_t cracen_aead_update_internal(cracen_aead_opera
 psa_status_t cracen_aead_update_ad(cracen_aead_operation_t *operation, const uint8_t *input,
 				   size_t input_length)
 {
-#ifdef CONFIG_SOC_NRF54LM20A
-	return PSA_ERROR_NOT_SUPPORTED;
-#else
-	return cracen_aead_update_internal(operation, input, input_length, NULL, 0, NULL, true);
+#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
+	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
+	if (operation->alg == PSA_ALG_CCM) {
+		return cracen_sw_aes_ccm_update_ad(operation, input, input_length);
+	}
 #endif
+
+	return cracen_aead_update_internal(operation, input, input_length, NULL, 0, NULL, true);
 }
 
 psa_status_t cracen_aead_update(cracen_aead_operation_t *operation, const uint8_t *input,
 				size_t input_length, uint8_t *output, size_t output_size,
 				size_t *output_length)
 {
-#ifdef CONFIG_SOC_NRF54LM20A
-	return PSA_ERROR_NOT_SUPPORTED;
-#else
+#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
+	if (operation->alg == PSA_ALG_CCM) {
+		/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
+		return cracen_sw_aes_ccm_update(operation, input, input_length, output, output_size,
+						output_length);
+	}
+#endif
+
 	/*
 	 * Even if no plain/ciphertext is provided we still wanna have one block
 	 * of AD buffered before creating/verifying the tag
@@ -577,7 +595,6 @@ psa_status_t cracen_aead_update(cracen_aead_operation_t *operation, const uint8_
 
 	return cracen_aead_update_internal(operation, input, input_length, output, output_size,
 					   output_length, false);
-#endif
 }
 
 static psa_status_t finalize_aead_encryption(cracen_aead_operation_t *operation, uint8_t *tag,
@@ -608,9 +625,14 @@ psa_status_t cracen_aead_finish(cracen_aead_operation_t *operation, uint8_t *cip
 				size_t ciphertext_size, size_t *ciphertext_length, uint8_t *tag,
 				size_t tag_size, size_t *tag_length)
 {
-#ifdef CONFIG_SOC_NRF54LM20A
-	return PSA_ERROR_NOT_SUPPORTED;
-#else
+#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
+	if (operation->alg == PSA_ALG_CCM) {
+		/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
+		return cracen_sw_aes_ccm_finish(operation, ciphertext, ciphertext_size,
+						ciphertext_length, tag, tag_size, tag_length);
+	}
+#endif
+
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
 	if (operation->ad_finished && (ciphertext_size < operation->unprocessed_input_bytes)) {
@@ -635,7 +657,6 @@ psa_status_t cracen_aead_finish(cracen_aead_operation_t *operation, uint8_t *cip
 	}
 
 	return finalize_aead_encryption(operation, tag, tag_size, tag_length);
-#endif
 }
 
 static psa_status_t finalize_aead_decryption(cracen_aead_operation_t *operation, const uint8_t *tag)
@@ -659,9 +680,14 @@ psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *pla
 				size_t plaintext_size, size_t *plaintext_length, const uint8_t *tag,
 				size_t tag_length)
 {
-#ifdef CONFIG_SOC_NRF54LM20A
-	return PSA_ERROR_NOT_SUPPORTED;
-#else
+#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
+	if (operation->alg == PSA_ALG_CCM) {
+		/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
+		return cracen_sw_aes_ccm_verify(operation, plaintext, plaintext_size,
+						plaintext_length, tag, tag_length);
+	}
+#endif
+
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
 	if (operation->ad_finished && plaintext_size < operation->unprocessed_input_bytes) {
@@ -686,11 +712,17 @@ psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *pla
 	}
 
 	return finalize_aead_decryption(operation, tag);
-#endif
 }
 
 psa_status_t cracen_aead_abort(cracen_aead_operation_t *operation)
 {
+#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
+	if (operation->alg == PSA_ALG_CCM) {
+		/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
+		return cracen_sw_aes_ccm_abort(operation);
+	}
+#endif
+
 	safe_memzero((void *)operation, sizeof(cracen_aead_operation_t));
 	return PSA_SUCCESS;
 }
@@ -717,8 +749,8 @@ static psa_status_t feed_singlepart_ccm_aad(cracen_aead_operation_t *operation,
 		/* Data fed to CRACEN needs to be block size-aligned, so
 		 * complete the header with the beginning of the user-provided AAD.
 		 */
-		aad_fed_count = MIN(additional_data_length,
-				    sizeof(ccm_header_aad) - ccm_header_length);
+		aad_fed_count =
+			MIN(additional_data_length, sizeof(ccm_header_aad) - ccm_header_length);
 		memcpy(ccm_header_aad + ccm_header_length, additional_data, aad_fed_count);
 	} else {
 		aad_fed_count = 0;
@@ -748,6 +780,16 @@ psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const u
 				 size_t plaintext_length, uint8_t *ciphertext,
 				 size_t ciphertext_size, size_t *ciphertext_length)
 {
+#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
+	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
+	if (alg == PSA_ALG_CCM) {
+		return cracen_sw_aes_ccm_encrypt(
+			attributes, key_buffer, key_buffer_size, alg, nonce, nonce_length,
+			additional_data, additional_data_length, plaintext, plaintext_length,
+			ciphertext, ciphertext_size, ciphertext_length);
+	}
+#endif
+
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	cracen_aead_operation_t operation = {0};
 	size_t tag_length = 0;
@@ -780,8 +822,8 @@ psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const u
 		status = feed_singlepart_ccm_aad(&operation, additional_data,
 						 additional_data_length);
 	} else {
-		status = cracen_feed_data_to_hw(&operation, additional_data,
-						additional_data_length, NULL, true);
+		status = cracen_feed_data_to_hw(&operation, additional_data, additional_data_length,
+						NULL, true);
 	}
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
@@ -814,6 +856,16 @@ psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const u
 				 size_t ciphertext_length, uint8_t *plaintext,
 				 size_t plaintext_size, size_t *plaintext_length)
 {
+#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
+	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
+	if (alg == PSA_ALG_CCM) {
+		return cracen_sw_aes_ccm_decrypt(
+			attributes, key_buffer, key_buffer_size, alg, nonce, nonce_length,
+			additional_data, additional_data_length, ciphertext, ciphertext_length,
+			plaintext, plaintext_size, plaintext_length);
+	}
+#endif
+
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	cracen_aead_operation_t operation = {0};
 
@@ -848,15 +900,15 @@ psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const u
 		status = feed_singlepart_ccm_aad(&operation, additional_data,
 						 additional_data_length);
 	} else {
-		status = cracen_feed_data_to_hw(&operation, additional_data,
-						additional_data_length, NULL, true);
+		status = cracen_feed_data_to_hw(&operation, additional_data, additional_data_length,
+						NULL, true);
 	}
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}
 
-	status = cracen_feed_data_to_hw(&operation, ciphertext,
-					*plaintext_length, plaintext, false);
+	status =
+		cracen_feed_data_to_hw(&operation, ciphertext, *plaintext_length, plaintext, false);
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}

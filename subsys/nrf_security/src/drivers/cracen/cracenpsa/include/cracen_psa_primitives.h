@@ -44,14 +44,6 @@
 #define CRACEN_MAX_CHACHA20_KEY_SIZE (32u)
 
 /*
- * HW limitation for devices with smaller CTR size:
- * a maximum of 1 MB of plaintext or ciphertext is supported for CCM.
- */
-#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS)
-#define CRACEN_MAX_CCM_DATA_SIZE (65536U * SX_BLKCIPHER_AES_BLK_SZ)
-#endif /* CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS */
-
-/*
  * There are two key types supported for ciphers, CHACHA20 and AES,
  * and they both have a max key size of 32.
  */
@@ -172,6 +164,20 @@ struct cracen_cipher_operation {
 };
 typedef struct cracen_cipher_operation cracen_cipher_operation_t;
 
+struct cracen_sw_ccm_context_s {
+	uint8_t cbc_mac[SX_BLKCIPHER_AES_BLK_SZ]; /* CBC-MAC state */
+	uint8_t ctr_block[SX_BLKCIPHER_AES_BLK_SZ]; /* Counter block for CTR mode */
+	uint8_t keystream[SX_BLKCIPHER_AES_BLK_SZ]; /* Generated keystream */
+	uint8_t partial_block[SX_BLKCIPHER_AES_BLK_SZ]; /* Buffer for partial blocks */
+	size_t keystream_offset; /* Position in keystream buffer */
+	size_t total_ad_fed; /* Total AD bytes processed */
+	size_t data_partial_len; /* Partial data block length */
+	bool cbc_mac_initialized; /* CBC-MAC initialization flag */
+	bool ctr_initialized; /* CTR initialization flag */
+	bool has_partial_ad_block; /* Partial AD block flag */
+};
+typedef struct cracen_sw_ccm_context_s cracen_sw_ccm_context_t;
+
 struct cracen_aead_operation {
 	psa_algorithm_t alg;
 	struct sxkeyref keyref;
@@ -187,6 +193,9 @@ struct cracen_aead_operation {
 	enum cracen_context_state context_state;
 	bool ad_finished;
 	struct sxaead ctx;
+#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS)
+	cracen_sw_ccm_context_t sw_ccm_ctx;
+#endif
 };
 typedef struct cracen_aead_operation cracen_aead_operation_t;
 
