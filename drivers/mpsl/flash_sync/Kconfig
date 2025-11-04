@@ -38,6 +38,17 @@ endchoice
 
 endif
 
+config SOC_FLASH_NRF_RADIO_SYNC_MPSL_NORMAL_PRIORITY_TIMEOUT_US
+	int "Timeout for normal priority MPSL request [us]"
+	depends on SOC_FLASH_NRF_RADIO_SYNC_MPSL
+	range 0 1000000
+	default 30000
+	help
+	  The flash synchronization mechanism relies on MPSL timeslots.
+	  Initially the MPSL timeslot is requested with normal priority. After
+	  timeout specified by this Kconfig option, a higher timeslot priority
+	  is used to increase priority of the flash operation.
+
 config SOC_FLASH_NRF_RADIO_SYNC_RPC_CONTROLLER
 	bool "Nordic nRFx flash driver RPC synchronization controller"
 	default y if SOC_FLASH_NRF_RADIO_SYNC_RPC
