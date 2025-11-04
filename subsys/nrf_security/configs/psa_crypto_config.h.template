@@ -491,6 +491,7 @@
 /* Nordic specific */
 #cmakedefine PSA_CRYPTO_DRIVER_ALG_PRNG_TEST                    @PSA_CRYPTO_DRIVER_ALG_PRNG_TEST@
 #cmakedefine PSA_CRYPTO_DRIVER_IRONSIDE                         @PSA_CRYPTO_DRIVER_IRONSIDE@
+#cmakedefine PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS              @PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS@
 
 /* PSA and drivers */
 #cmakedefine MBEDTLS_PSA_CRYPTO_C

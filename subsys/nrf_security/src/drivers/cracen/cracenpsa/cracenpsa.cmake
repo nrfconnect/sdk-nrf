@@ -25,7 +25,7 @@ list(APPEND cracen_driver_sources
 
 # Include hardware cipher implementation for all devices except nRF54LM20A
 # nRF54LM20A uses only cracen_sw
-if(NOT CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)
+if(NOT CONFIG_PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/cipher.c
   )
@@ -89,7 +89,7 @@ if(CONFIG_PSA_NEED_CRACEN_HASH_DRIVER)
   )
 endif()
 
-if(CONFIG_PSA_NEED_CRACEN_MAC_DRIVER AND NOT CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)
+if(CONFIG_PSA_NEED_CRACEN_MAC_DRIVER AND NOT CONFIG_PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/mac.c
   )
