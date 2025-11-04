@@ -32,21 +32,34 @@ extern "C" {
 			     _bt_mesh_le_pair_resp_op, NULL, NULL,                                 \
 			     &_bt_mesh_le_pair_resp_cb)
 
-/* @brief Invalidate previously used passkey.
+/** @brief Invalidate previously used passkey.
  *
  * A user must call this function when a pairing request completes regardless of the status.
  */
 void bt_mesh_le_pair_resp_passkey_invalidate(void);
 
-/* @brief Set own passkey instead of using randomly generating passkeys.
+/** @brief Set own passkey instead of using randomly generating passkeys.
  *
  * By default, passkeys will be randomly generated on every new request. This function allows to use
  * pre-defined passkey instead.
  *
- * @params passkey Passkey to use for the pairing, or @ref BT_PASSKEY_INVALID to use randomly
+ * @param passkey Passkey to use for the pairing, or BT_PASSKEY_RAND to use randomly
  *		   generated passkey again.
  */
 void bt_mesh_le_pair_resp_passkey_set(uint32_t passkey);
+
+/** @brief Get passkey to be used in the very next pairing.
+ *
+ * This function will return the passkey set by the @ref bt_mesh_le_pair_resp_passkey_set function
+ * or it will return a randomly generated passkey by the reset message.
+ *
+ * If the passkey has never been set or the Reset message has never been received,
+ * BT_PASSKEY_RAND will be returned.
+ *
+ * @return Passkey to be used in the very next pairing;
+ *		   BT_PASSKEY_RAND if passkey is not set.
+ */
+uint32_t bt_mesh_le_pair_resp_passkey_get(void);
 
 /** @cond INTERNAL_HIDDEN */
 
