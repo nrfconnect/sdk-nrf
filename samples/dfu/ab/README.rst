@@ -47,7 +47,7 @@ A/B functionality
 
 When the A/B functionality is used, the device has two slots for the application: slot A and slot B.
 The slots are equivalent, and the device can boot from either of them.
-In the case of MCUboot, this is achieved by using the Direct XIP feature.
+In the case of MCUboot, this is achieved by using the Direct-xip feature.
 Thus, note that the terms slot 0, primary slot, slot A and slot 1, secondary slot, slot B are used interchangeably throughout the documentation.
 This configuration allows a background update of the non-active slot while the application runs from the active slot.
 After the update is complete, the device can quickly switch to the updated slot on the next reboot.
@@ -90,7 +90,7 @@ For example, verifying that the application is running from slot A can be done b
 Build files
 -----------
 
-When building for the nRF54H20, the merge slot feature is used if Direct XIP is enabled.
+When building for the nRF54H20, the merge slot feature is used if Direct-xip is enabled.
 This means that, for both slot A and slot B, the application image and the radio image are merged and treated as a single image by MCUboot.
 In this case, the following files should be sent to the device when performing an update:
 

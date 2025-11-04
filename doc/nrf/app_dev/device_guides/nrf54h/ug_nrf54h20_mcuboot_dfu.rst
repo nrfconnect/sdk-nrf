@@ -163,7 +163,7 @@ You can test BLE-based FOTA samples with the `nRF Connect Device Manager`_.
 For DFU over a serial connection, use the :ref:`dfu_tools_mcumgr_cli`.
 
 .. note::
-   On the nRF54H20 SoC, Direct XIP mode uses a merged image slot that combines both application and radio core images.
+   On the nRF54H20 SoC, Direct-xip mode uses a merged image slot that combines both application and radio core images.
    Refer to the sample's DTS overlay files to understand the partition layout.
    In contrast, Swap modes place application and radio images in separate MCUboot slots, enabling multi-image updates.
 
