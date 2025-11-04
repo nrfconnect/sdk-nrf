@@ -29,6 +29,8 @@ Overview
 The sample can act as either a network server or a network client.
 By default, the sample is configured to act as a server.
 
+After a successful TLS handshake, the client and server echo any message received over the secured connection.
+
 TLS version support
 ===================
 
@@ -268,36 +270,24 @@ The following combinations are *not* supported:
 Configuration options
 *********************
 
-You can configure the following options to make the sample act as either a server or a client:
+The sample comes with several sample-specific Kconfig options.
+Depending on the configuration, it also sets different IP addresses for the client and server, using Zephyr's Kconfig options :kconfig:option:`CONFIG_NET_CONFIG_MY_IPV4_ADDR` and :kconfig:option:`CONFIG_NET_CONFIG_PEER_IPV4_ADDR`.
 
-.. _CONFIG_PSA_TLS_SAMPLE_TYPE_SERVER:
-
-CONFIG_PSA_TLS_SAMPLE_TYPE_SERVER
-   Set to ``y`` to make the sample act as a server.
-   When acting as a server, the sample waits for a connection from the client on port 4243.
-   After the TCP connection is established, the sample automatically initiates the TLS handshake by waiting for the "ClientHello" message from the client.
-
-.. _CONFIG_PSA_TLS_SAMPLE_TYPE_CLIENT:
-
-CONFIG_PSA_TLS_SAMPLE_TYPE_CLIENT
-   Set to ``y`` to make the sample act as a client.
-   When acting as a client, the sample tries to connect to the server on port 4243.
-   After the TCP connection is established, the sample automatically initiates the TLS handshake by sending the "ClientHello" message.
-
-After a successful TLS handshake, the client and server echo any message received over the secured connection.
+.. options-from-kconfig::
+   :show-type:
 
 Certificates
 ============
 
 The sample supports certificates signed with either ECDSA or RSA.
-By default, the sample is configured to use ECDSA certificates.
-Set the ``CONFIG_PSA_TLS_CERTIFICATE_TYPE_RSA`` option to ``y`` to make the sample use RSA certificates.
+The sample uses ECDSA certificates by default.
+Set the :option:`CONFIG_PSA_TLS_CERTIFICATE_TYPE_RSA` option to ``y`` to make the sample use RSA certificates.
 
 Certificates when running with CMSE
 -----------------------------------
 
-When the sample is compiled for NSPE alongside SPE, that is with CMSE enabled, it stores its TLS certificates and keys in the TF-M Protected Storage.
-During the sample initialization, the certificates and keys are fetched from TF-M Protected Storage and kept in non-secure RAM for use during every subsequent TLS handshake.
+When the sample is compiled for the ``*/ns`` :ref:`variant <app_boards_names>` of the board, that is, with TF-M enabled, it stores its TLS certificates and keys in TF-M's :ref:`Protected Storage <tfm_partition_ps>`.
+During the sample initialization, the certificates and keys are fetched from Protected Storage and kept in non-secure RAM for use during every subsequent TLS handshake.
 
 .. note::
    Currently, applications with CMSE enabled only support ECDSA certificates.
