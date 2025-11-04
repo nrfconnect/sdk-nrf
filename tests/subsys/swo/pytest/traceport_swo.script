@@ -1,9 +1,9 @@
-// SWO configuration for nRF54L
+// SWO configuration supporting Nordic SoCs with TAD.TRACEPORTSPEED register
 
-// Secure address for TAD.TRACEPPORTSPEED
+// Secure address for TAD.TRACEPORTSPEED
 __constant U32 _TAD_TRACEPORTSPEED = 0x50053518;
 
-// The nRF54L chips have an additional divider for the SWO frequency, which
+// These chips have an additional divider for the SWO frequency, which
 // is configured in TAD.TRACEPORTSPEED. The J-Link needs to be aware of this.
 U32 SWO_GetSWOBaseClock(U32 CPUClock) {
     U32 divider;

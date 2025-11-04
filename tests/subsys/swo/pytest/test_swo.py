@@ -38,7 +38,7 @@ def test_swo_logging(dut: DeviceAdapter):
     COLLECT_TIMEOUT = 10.0
     EXPECTED = rf"log_swo: \d+: Hello from {PLATFORM}"
 
-    NRF54L_JLINK_SCRIPT = Path(__file__).parent.resolve() / "nrf54l_swo.script"
+    TRACEPORT_JLINK_SCRIPT = Path(__file__).parent.resolve() / "traceport_swo.script"
 
     logger.debug(f"{dut.device_config=}")
 
@@ -65,49 +65,55 @@ def test_swo_logging(dut: DeviceAdapter):
             "device": "nRF54L05_M33",
             "cpufreq": 128000000,
             "swofreq": 1000000,
-            "args": f"-jlinkscriptfile {NRF54L_JLINK_SCRIPT}",
+            "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
         },
         "nrf54l15dk/nrf54l10/cpuapp": {
             "device": "nRF54L10_M33",
             "cpufreq": 128000000,
             "swofreq": 1000000,
-            "args": f"-jlinkscriptfile {NRF54L_JLINK_SCRIPT}",
+            "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
         },
         "nrf54l15dk/nrf54l15/cpuapp": {
             "device": "nRF54L15_M33",
             "cpufreq": 128000000,
             "swofreq": 1000000,
-            "args": f"-jlinkscriptfile {NRF54L_JLINK_SCRIPT}",
+            "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
         },
         "nrf54lm20dk/nrf54lm20a/cpuapp": {
             "device": "NRF54LM20A_M33",
             "cpufreq": 128000000,
             "swofreq": 1000000,
-            "args": f"-jlinkscriptfile {NRF54L_JLINK_SCRIPT}",
+            "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
         },
         "nrf54lv10dk/nrf54lv10a/cpuapp": {
             "device": "NRF54LV10A_M33",
             "cpufreq": 128000000,
             "swofreq": 1000000,
-            "args": f"-jlinkscriptfile {NRF54L_JLINK_SCRIPT}",
+            "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
         },
         "nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp": {
             "device": "NRF54LV10A_M33",
             "cpufreq": 128000000,
             "swofreq": 1000000,
-            "args": f"-jlinkscriptfile {NRF54L_JLINK_SCRIPT}",
+            "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
         },
         "nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp/ns": {
             "device": "NRF54LV10A_M33",
             "cpufreq": 128000000,
             "swofreq": 1000000,
-            "args": f"-jlinkscriptfile {NRF54L_JLINK_SCRIPT}",
+            "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
         },
         "nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp": {
             "device": "NRF54LV10A_M33",
             "cpufreq": 128000000,
             "swofreq": 1000000,
-            "args": f"-jlinkscriptfile {NRF54L_JLINK_SCRIPT}",
+            "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
+        },
+        "nrf7120pdk/nrf7120/cpuapp": {
+            "device": "CORTEX_M33",
+            "cpufreq": 256000000,
+            "swofreq": 1000000,
+            "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
         },
     }
 
