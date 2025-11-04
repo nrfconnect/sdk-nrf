@@ -38,3 +38,15 @@ if(CONFIG_CRACEN_NEED_CTR_SIZE_WORKAROUNDS AND CONFIG_PSA_NEED_CRACEN_CTR_AES)
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_sw_aes_ctr.c
   )
 endif()
+
+if(CONFIG_CRACEN_NEED_CTR_SIZE_WORKAROUNDS AND CONFIG_PSA_NEED_CRACEN_AEAD_DRIVER)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_sw_aead.c
+  )
+
+  if(CONFIG_PSA_NEED_CRACEN_CCM_AES)
+    list(APPEND cracen_driver_sources
+      ${CMAKE_CURRENT_LIST_DIR}/src/cracen_sw_aes_ccm.c
+    )
+  endif()
+endif()

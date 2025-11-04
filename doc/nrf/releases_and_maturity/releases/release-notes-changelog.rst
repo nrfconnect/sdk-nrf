@@ -140,6 +140,8 @@ Security
 
   * Support for AES in counter mode using CRACEN for the :zephyr:board:`nrf54lm20dk`.
 
+  * Support for AES-CCM AEAD using CRACEN for the :zephyr:board:`nrf54lm20dk`.
+
 * Updated:
 
   * The :ref:`security_index` page with a table that lists the versions of security components implemented in the |NCS|.
@@ -529,6 +531,10 @@ Cryptography samples
   * Added support for the ``nrf54h20dk/nrf54h20/cpuapp`` board target, demonstrating use of Internal Trusted Storage (ITS) on the nRF54H20 DK.
 
 * :ref:`crypto_aes_ctr` sample:
+
+  * Added support for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
+
+* :ref:`crypto_aes_ccm` sample:
 
   * Added support for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
 
