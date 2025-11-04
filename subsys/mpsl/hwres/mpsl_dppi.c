@@ -10,7 +10,7 @@
 #if defined(DPPI_PRESENT) || defined(LUMOS_XXAA)
 static bool mpsl_hwres_channel_alloc(uint32_t node_id, uint8_t *p_ch)
 {
-	int ch = nrfx_gppi_channel_alloc(node_id, NULL);
+	int ch = nrfx_gppi_channel_alloc(node_id);
 
 	if (ch < 0) {
 		return false;
