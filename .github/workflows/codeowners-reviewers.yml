@@ -16,4 +16,4 @@ jobs:
       - name: Assign
         uses: nrfconnect/action-codeowners-reviewers@29eaf88d1bd10daa42e481bea6c14fe6ea14bfc4
         with:
-          github_token: ${{ secrets.NCS_NORDICBUILDER_ACTION_TOKEN }}
+          github_token: ${{ secrets.NCS_GITHUB_TOKEN }}
