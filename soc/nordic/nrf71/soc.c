@@ -111,7 +111,7 @@ static inline NRF_SPU_Type *spu_instance_from_peripheral_addr(uint32_t periphera
 	return (NRF_SPU_Type *)(0x50000000 | apb_bus_number);
 }
 
-void spu_peripheral_config_non_secure(const uint32_t periph_base_address, bool periph_lock)
+static void spu_peripheral_config_non_secure(const uint32_t periph_base_address, bool periph_lock)
 {
 	uint8_t periph_id = NRFX_PERIPHERAL_ID_GET(periph_base_address);
 
