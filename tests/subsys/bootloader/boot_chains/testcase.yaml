@@ -74,3 +74,7 @@ tests:
       - SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE=y
     platform_exclude:
       - nrf5340dk/nrf5340/cpuapp
+  boot_chains.secure_boot_minimal:
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - b0_FILE_SUFFIX=minimal
