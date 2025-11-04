@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config HAS_HW_NRF_WIFI_KEYS
+	def_bool SOC_SERIES_NRF71
+
+config WIFI_KEYS_DRIVER
+	bool "Wi-Fi Keys driver"
+	depends on HAS_HW_NRF_WIFI_KEYS
+	depends on PSA_CRYPTO_DRIVER_KMU_PUSH
+	help
+	  Driver for Wi-Fi security key management.
+	  This driver handles cryptographic keys for Wi-Fi security
+	  using KMU (Key Management Unit) slots on nRF71 series devices.
