@@ -47,12 +47,18 @@ static void pairing_confirm(struct bt_conn *conn)
 	printk("Pairing confirmed: %s\n", addr);
 }
 
+static uint32_t app_passkey(struct bt_conn *conn)
+{
+	return bt_mesh_le_pair_resp_passkey_get();
+}
+
 static struct bt_conn_auth_cb auth_cb = {
 	/* Enable passkey_display callback to enable the display capability. */
 	.passkey_display = passkey_display,
 	/* These 2 callbacks are required for passkey_display callback. */
 	.cancel = cancel,
 	.pairing_confirm = pairing_confirm,
+	.app_passkey = app_passkey,
 };
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)
