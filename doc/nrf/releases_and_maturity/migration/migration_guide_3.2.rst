@@ -89,6 +89,14 @@ Matter
 
       To build your custom board with Wi-Fi support, set both the :kconfig:option:`CONFIG_CHIP_WIFI` and :kconfig:option:`CONFIG_WIFI_NRF70` Kconfig options to ``y``.
 
+Serial LTE modem
+----------------
+
+.. toggle::
+
+   * The Serial LTE modem application has been removed.
+     Instead, use `Serial Modem`_, an |NCS| add-on application.
+
 Libraries
 =========
 
