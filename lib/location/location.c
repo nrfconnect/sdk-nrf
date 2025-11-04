@@ -91,7 +91,7 @@ static const char LOCATION_METHOD_UNKNOWN_STR[] = "Unknown";
 int location_handler_register(location_event_handler_t handler)
 {
 	if (handler == NULL) {
-		LOG_ERR("NULL as a handler received");
+		LOG_ERR("NULL as a handler received sdlfj sdklfj slkdjflks djf lksdjf lksd too loooooooooooooooooooooooooooooooooooooong");
 		return -EINVAL;
 	}
 
