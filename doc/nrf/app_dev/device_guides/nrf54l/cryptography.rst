@@ -216,7 +216,8 @@ The following list shows available schemes that determine how the keys are used:
 Key types that can be stored in the KMU
 =======================================
 
-The following table lists all key types that can be stored in the KMU, indicating which usage schemes (Protected, Encrypted, and Raw) support them and the number of key slots they require.
+The following table lists all key types that can be stored in the KMU.
+For each key type, the table lists the supported algorithms and indicates which usage schemes (Protected, Encrypted, and Raw) support the key types and the number of key slots they require.
 
 .. note::
    This list does not include the key types that are supported by the CRACEN driver, but not stored in the KMU.
@@ -227,71 +228,116 @@ The following table lists all key types that can be stored in the KMU, indicatin
    :header-rows: 1
 
    * - Key type
-     - PSA key attributes
-     - KMU slots [1]_
+     - PSA key attributes and algorithms [1]_
+     - KMU slots [2]_
      - Protected
      - Encrypted
      - Raw
    * - AES 128-bit keys
-     - | ``key_type``: ``PSA KEY_TYPE_AES``
+     - | ``key_type``: ``PSA_KEY_TYPE_AES``
+       |
        | ``key_bits``: 128
+       |
+       | ``key_algorithm`` - one of the following:
+       | - ``PSA_ALG_AES_ECB_NO_PADDING``
+       | - ``PSA_ALG_AES_CBC_NO_PADDING``
+       | - ``PSA_ALG_AES_CTR``
+       | - ``PSA_ALG_CCM``
+       | - ``PSA_ALG_GCM``
+       | - ``PSA_ALG_CMAC*``
+       | - ``PSA_ALG_SP800_108_COUNTER_CMAC``
      - 1
      - Yes
      - Yes
      - Yes
    * - AES 192-bit and 256-bit keys
      - | ``key_type``: ``PSA_KEY_TYPE_AES``
-       | ``key_bits``: 192 [2]_
+       |
+       | ``key_bits``: 192 [3]_
        | ``key_bits``: 256
+       |
+       | ``key_algorithm`` - one of the following:
+       | - ``PSA_ALG_AES_ECB_NO_PADDING``
+       | - ``PSA_ALG_AES_CBC_NO_PADDING``
+       | - ``PSA_ALG_AES_CTR``
+       | - ``PSA_ALG_CCM``
+       | - ``PSA_ALG_GCM``
+       | - ``PSA_ALG_CMAC*``
+       | - ``PSA_ALG_SP800_108_COUNTER_CMAC``
      - 2
      - Yes
      - Yes
      - Yes
    * - ChaCha20-Poly1305
-     - ``key_type``: ``PSA_KEY_TYPE_CHACHA20``
+     - | ``key_type``: ``PSA_KEY_TYPE_CHACHA20``
+       |
+       | ``key_algorithm`` - one of the following:
+       | - ``PSA_ALG_CHACHA20``
+       | - ``PSA_ALG_CHACHA20_POLY1305``
      - 2
      - No
      - Yes
      - Yes
-   * - ECC secp256r1 key pair (ECDSA and ECDH usage) [3]_
+   * - ECC secp256r1 key pair (ECDSA and ECDH usage) [4]_
      - | ``key_type``: ``PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)``
+       |
        | ``key_bits``: 256
+       |
+       | ``key_algorithm`` - one of the following:
+       | - ``PSA_ALG_ECDSA``
+       | - ``PSA_ALG_ECDH``
      - 2
      - No
      - Yes
      - Yes
    * - ECC secp256r1 public key (ECDSA usage only)
      - | ``key_type``: ``PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)``
+       |
        | ``key_bits``: 256
+       |
+       | ``key_algorithm``: ``PSA_ALG_ECDSA``
      - 4
      - No
      - Yes
      - Yes
    * - Ed25519 key pair
      - | ``key_type``: ``PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS)``
+       |
        | ``key_bits``: 255
+       |
+       | ``key_algorithm`` - one of the following:
+       | - ``PSA_ALG_ED25519``
+       | - ``PSA_ALG_ED25519PH``
      - 2
      - No
      - Yes
      - Yes
    * - ED25519 public key
      - | ``key_type``: ``PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS)``
+       |
        | ``key_bits``: 255
+       |
+       | ``key_algorithm`` - one of the following:
+       | - ``PSA_ALG_ED25519``
+       | - ``PSA_ALG_ED25519PH``
      - 2
      - No
      - Yes
      - Yes
    * - HMAC SHA-256 128-bit keys
      - | ``key_type``: ``PSA_KEY_TYPE_HMAC``
+       |
        | ``key_bits``: 128
+       |
        | ``key_algorithm``: ``PSA_ALG_HMAC(PSA_ALG_SHA_256)``
      - 1
      - No
      - No
      - Yes
-.. [1] Keys with the Encrypted usage scheme (``CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED``) will require two additional KMU slots to store the nonce and the authentication tag.
-.. [2] Not supported on nRF54LM20.
-.. [3] ECDH not supported for key derivation.
+.. [1] Store each key with only one algorithm to follow PSA Crypto best practices.
+.. [2] Keys with the Encrypted usage scheme (``CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED``) will require two additional KMU slots to store the nonce and the authentication tag.
+.. [3] 192-bit key size is not supported on nRF54LM20.
+.. [4] ECDH not supported for key derivation.
 
 Storing keys in KMU
 ===================
