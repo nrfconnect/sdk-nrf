@@ -257,8 +257,7 @@ static void enable_xip_and_set_cpu_freq(void)
 		/* Set CPU frequency to 64MHz (DIV_2) */
 		int ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_2);
 
-		if (ret != NRFX_SUCCESS) {
-			ret -= NRFX_ERROR_BASE_NUM;
+		if (ret != 0) {
 			LOG_ERR("Failed to set CPU frequency: %d", ret);
 			return;
 		}
@@ -293,8 +292,7 @@ static void disable_xip_and_restore_cpu_freq(void)
 	if (current_divider != saved_divider) {
 		int ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, saved_divider);
 
-		if (ret != NRFX_SUCCESS) {
-			ret -= NRFX_ERROR_BASE_NUM;
+		if (ret != 0) {
 			LOG_ERR("Failed to restore CPU frequency: %d", ret);
 		} else {
 			LOG_DBG("CPU frequency restored to original value");
