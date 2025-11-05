@@ -125,7 +125,8 @@ However, repeated packets will always be ACKed by the PRX, even though they are 
 
 A PTX can select that individual packets that are transmitted to the PRX do not require an ACK to be sent in return from the PRX.
 This decision is taken by the application when uploading a packet to the TX FIFO using the :c:member:`esb_payload.noack` field of the :c:struct:`esb_payload` parameter that is passed to the :c:func:`esb_write_payload` function.
-When the :c:member:`selective_auto_ack` field in the :c:struct:`esb_config` configuration structure is disabled, all packets will be acknowledged, ignoring the :c:member:`esb_payload.noack` field.
+When the :c:member:`esb_config.selective_auto_ack` field in the :c:struct:`esb_config` configuration structure is disabled, all packets will be acknowledged, ignoring the :c:member:`esb_payload.noack` field.
+The :c:member:`esb_config.selective_auto_ack` field must be configured with the same value on both the PTX and PRX sides to ensure consistent behavior.
 
 When the PRX receives a packet that does not require an ACK, it does not send an ACK packet to the PTX.
 In this case, when :c:member:`esb_payload.noack` = ``true``, packet retransmission does not occur.

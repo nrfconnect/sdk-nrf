@@ -204,8 +204,8 @@ struct esb_radio_dynamic_pdu {
 	uint8_t rfu0:2;
 #endif /* CONFIG_ESB_MAX_PAYLOAD_LENGTH > 63 */
 
-	/* Disable acknowledge. */
-	uint8_t no_ack:1;
+	/* Acknowledge. */
+	uint8_t ack:1;
 
 	/* Packet ID of the last received packet. Used to detect retransmits. */
 	uint8_t pid:2;
@@ -1127,7 +1127,7 @@ static bool rx_fifo_push_rfbuf(uint8_t pipe, uint8_t pid)
 	rx_fifo.payload[rx_fifo.back]->pipe = pipe;
 	rx_fifo.payload[rx_fifo.back]->rssi = nrf_radio_rssi_sample_get(NRF_RADIO);
 	rx_fifo.payload[rx_fifo.back]->pid = pid;
-	rx_fifo.payload[rx_fifo.back]->noack = !rx_pdu->type.dpl_pdu.no_ack;
+	rx_fifo.payload[rx_fifo.back]->noack = !rx_pdu->type.dpl_pdu.ack;
 
 	if (++rx_fifo.back >= CONFIG_ESB_RX_FIFO_SIZE) {
 		rx_fifo.back = 0;
@@ -1229,10 +1229,10 @@ static void start_tx_transaction(void)
 	case ESB_PROTOCOL_ESB_DPL:
 		memset(&pdu->type.dpl_pdu, 0, sizeof(pdu->type.dpl_pdu));
 		ack = !current_payload->noack || !esb_cfg.selective_auto_ack;
-
 		pdu->type.dpl_pdu.length = current_payload->length;
 		pdu->type.dpl_pdu.pid = current_payload->pid;
-		pdu->type.dpl_pdu.no_ack = current_payload->noack ? 0x00 : 0x01;
+		/* nRF24L01 chip inverts ACK bit */
+		pdu->type.dpl_pdu.ack = !current_payload->noack;
 
 		memcpy(pdu->data, current_payload->data, current_payload->length);
 
@@ -1657,7 +1657,7 @@ static void prepare_ack_pdu_dpl(bool retransmit_payload, struct pipe_info *pipe_
 	}
 
 	tx_pdu->type.dpl_pdu.pid = rx_pdu->type.dpl_pdu.pid;
-	tx_pdu->type.dpl_pdu.no_ack = rx_pdu->type.dpl_pdu.no_ack;
+	tx_pdu->type.dpl_pdu.ack = rx_pdu->type.dpl_pdu.ack;
 }
 
 static void on_radio_disabled_rx(void)
@@ -1690,7 +1690,7 @@ static void on_radio_disabled_rx(void)
 	pipe_info->crc = nrf_radio_rxcrc_get(NRF_RADIO);
 
 	/* Check if an ack should be sent */
-	if ((esb_cfg.selective_auto_ack == false) || rx_pdu->type.dpl_pdu.no_ack) {
+	if ((esb_cfg.selective_auto_ack == false) || rx_pdu->type.dpl_pdu.ack) {
 		esb_fem_for_tx_ack();
 
 		switch (esb_cfg.protocol) {
