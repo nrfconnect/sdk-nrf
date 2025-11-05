@@ -101,11 +101,11 @@ void nrfx_clock_enable(void)
 
 }
 
-nrfx_err_t nrfx_clock_init(nrfx_clock_event_handler_t handler)
+int nrfx_clock_init(nrfx_clock_event_handler_t handler)
 {
 	event_handler = handler;
 
-	return NRFX_SUCCESS;
+	return 0;
 }
 
 
