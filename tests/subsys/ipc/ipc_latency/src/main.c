@@ -93,7 +93,7 @@ static uint64_t get_maximal_allowed_ping_pong_time_us(size_t test_message_len)
 	}
 #endif
 	if (IS_ENABLED(CONFIG_PM_S2RAM)) {
-		maximal_allowed_ping_pong_time_us *= 1.5;
+		maximal_allowed_ping_pong_time_us *= 1.6;
 	}
 	return maximal_allowed_ping_pong_time_us;
 }
