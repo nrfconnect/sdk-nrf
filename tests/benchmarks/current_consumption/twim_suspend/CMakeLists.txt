@@ -13,6 +13,6 @@ project(twim_suspend)
 target_sources(app PRIVATE src/main.c)
 
 if(CONFIG_SOC_NRF54H20_CPUPPR)
-  message(STATUS "Power Mode handler for RISC V is included.")
+  message(DEBUG "Power Mode handler for RISC V is included.")
   target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/power_off.c)
 endif()
