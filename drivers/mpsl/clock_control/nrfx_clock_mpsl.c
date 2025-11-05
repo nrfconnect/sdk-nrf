@@ -38,6 +38,26 @@ static void mpsl_hfclk_src_callback(mpsl_clock_evt_type_t evt_type)
 	}
 }
 
+void nrfx_clock_lfclk_start(void)
+{
+	nrfx_clock_start(NRF_CLOCK_DOMAIN_LFCLK);
+}
+
+void nrfx_clock_lfclk_stop(void)
+{
+	nrfx_clock_stop(NRF_CLOCK_DOMAIN_LFCLK);
+}
+
+void nrfx_clock_hfclk_start(void)
+{
+	nrfx_clock_start(NRF_CLOCK_DOMAIN_HFCLK);
+}
+
+void nrfx_clock_hfclk_stop(void)
+{
+	nrfx_clock_stop(NRF_CLOCK_DOMAIN_HFCLK);
+}
+
 void nrfx_clock_start(nrf_clock_domain_t domain)
 {
 	switch (domain) {
