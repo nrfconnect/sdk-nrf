@@ -19,14 +19,14 @@
  * @param[in] mem Memory address to write the operand to
  * @param[in] sz Size in bytes of the operand
  */
-void sx_pk_ecop2mem(const sx_ecop *op, uint8_t *mem, int sz);
+void sx_pk_ecop2mem(const sx_const_ecop *op, uint8_t *mem, int sz);
 
 /** Write the operand into memory which has the exact size needed
  *
  * @param[in] op Operand written to memory. Data should be in big endian
  * @param[in] mem Memory address to write the operand to
  */
-void sx_pk_op2vmem(const sx_op *op, uint8_t *mem);
+void sx_pk_op2vmem(const sx_const_op *op, uint8_t *mem);
 
 /** Convert raw bytes to operand
  *
@@ -65,7 +65,7 @@ void sx_pk_mem2affpt(const uint8_t *mem_x, const uint8_t *mem_y, int sz, sx_pk_a
  * @param[in] mem_y Memory address to write the y-coordinate of the operand to
  * @param[in] sz Size in bytes of a single coordinate
  */
-void sx_pk_affpt2mem(const sx_pk_affine_point *op, uint8_t *mem_x, uint8_t *mem_y, int sz);
+void sx_pk_affpt2mem(const sx_pk_const_affine_point *op, uint8_t *mem_x, uint8_t *mem_y, int sz);
 
 /** Return the size in bytes of the operand.
  *
@@ -73,5 +73,12 @@ void sx_pk_affpt2mem(const sx_pk_affine_point *op, uint8_t *mem_x, uint8_t *mem_
  * @return Operand size in bytes
  */
 int sx_op_size(const sx_op *op);
+
+/** Return the size in bytes of the const operand.
+ *
+ * @param[in] op Const operand
+ * @return Operand size in bytes
+ */
+int sx_const_op_size(const sx_const_op *op);
 
 #endif
