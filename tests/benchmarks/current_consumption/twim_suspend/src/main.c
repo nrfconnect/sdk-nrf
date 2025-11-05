@@ -19,7 +19,9 @@ LOG_MODULE_REGISTER(twim_suspend);
 #define DEVICE_ADDRESS (uint8_t) DT_REG_ADDR(SENSOR_NODE)
 
 #define CHIP_ID_REGISTER_ADDRESS    0xD0
+#define CHIP_ID_VALUE				0x61
 #define VARIANT_ID_REGISTER_ADDRESS 0xF0
+#define VARIANT_ID_VALUE			0x01
 
 static const struct device *const i2c_device = DEVICE_DT_GET(I2C_TEST_NODE);
 
@@ -73,11 +75,11 @@ int main(void)
 
 		response = read_sensor_register(CHIP_ID_REGISTER_ADDRESS);
 		printk("Chip_Id: %d\n", response);
-		__ASSERT_NO_MSG(response != 0);
+		__ASSERT_NO_MSG(response == CHIP_ID_VALUE);
 
 		response = read_sensor_register(VARIANT_ID_REGISTER_ADDRESS);
 		printk("Variant_Id: %d\n", response);
-		__ASSERT_NO_MSG(response != 0);
+		__ASSERT_NO_MSG(response == VARIANT_ID_VALUE);
 
 		response = pm_device_runtime_put(i2c_device);
 		if (response != 0) {
