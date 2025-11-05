@@ -105,7 +105,17 @@ static bool test_in_progress;
 static bool rx_test_in_progress;
 
 K_SEM_DEFINE(cpu_activity_thread_start, 0, 1);
-uint8_t cpu_activity = 0;
+volatile uint8_t cpu_activity;
+volatile uint8_t cpu_activity_duty_cycle;
+volatile uint8_t cpu_active;
+
+static void cpu_duty_cycle_timer_handler(struct k_timer *timer_id)
+{
+	ARG_UNUSED(timer_id);
+	cpu_active = false;
+}
+
+K_TIMER_DEFINE(cpu_duty_cycle_timer, cpu_duty_cycle_timer_handler, NULL);
 
 #if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 static void ieee_channel_check(uint8_t channel)
@@ -204,39 +214,78 @@ static otError cmd_print_gpio(void *ctx, uint8_t argc, char *argv[])
 	return exec_subcommand(cmds, ARRAY_SIZE(cmds), ctx, argc, argv);
 }
 
-__attribute__((section(".ramfunc"))) void cpu_work_ram(void)
+__attribute__((section(".ramfunc"))) void cpu_work_ram(uint8_t duty_cycle)
 {
 	volatile int64_t i = 0;
 	while (1) {
-		for (int j = 0; j < 50000; j++) {
-			i++;
-			i = i * 2;
-			i = i / 2;
-			i--;
-			i++;
+		if (duty_cycle == 100) {
+			for (int j = 0; j < 50000; j++) {
+				i++;
+				i = i * 2;
+				i = i / 2;
+				i--;
+				i++;
+			}
+			k_yield(); /* Yield to allow other threads to run */
+		} else {
+			uint32_t sleep_time_us = (100 - cpu_activity_duty_cycle) * 200;
+			uint32_t work_time_us = cpu_activity_duty_cycle * 200;
+
+			cpu_active = true;
+			k_timer_start(&cpu_duty_cycle_timer, K_USEC(work_time_us), K_NO_WAIT);
+
+			while (cpu_active) {
+				i++;
+				i = i * 2;
+				i = i / 2;
+				i--;
+				i++;
+				k_yield(); /* Yield to allow other threads to run */
+			}
+
+			k_sleep(K_USEC(sleep_time_us));
 		}
-		k_usleep(1);
 
 		if (cpu_activity != 1) {
-			return; // Exit if CPU activity is changed
+			return;
 		}
 	}
 }
 
-void cpu_work_rram(void)
+void cpu_work_rram(uint8_t duty_cycle)
 {
 	volatile int64_t i = 0;
 	while (1) {
-		for (int j = 0; j < 50000; j++) {
-			i++;
-			i = i * 2;
-			i = i / 2;
-			i--;
-			i++;
+		if (duty_cycle == 100) {
+			for (int j = 0; j < 50000; j++) {
+				i++;
+				i = i * 2;
+				i = i / 2;
+				i--;
+				i++;
+			}
+			k_yield(); /* Yield to allow other threads to run */
+		} else {
+			uint32_t sleep_time_us = (100 - cpu_activity_duty_cycle) * 200;
+			uint32_t work_time_us = cpu_activity_duty_cycle * 200;
+
+			cpu_active = true;
+			k_timer_start(&cpu_duty_cycle_timer, K_USEC(work_time_us), K_NO_WAIT);
+
+			while (cpu_active) {
+				i++;
+				i = i * 2;
+				i = i / 2;
+				i--;
+				i++;
+				k_yield(); /* Yield to allow other threads to run */
+			}
+
+			k_sleep(K_USEC(sleep_time_us));
 		}
-		k_usleep(1);
+
 		if (cpu_activity != 2) {
-			return; // Exit if CPU activity is changed
+			return;
 		}
 	}
 }
@@ -248,9 +297,9 @@ void cpu_activity_thread(void)
 		if (cpu_activity == 0) { // IDLE
 			k_sem_take(&cpu_activity_thread_start, K_FOREVER);
 		} else if (cpu_activity == 1) { // Blocking RAM
-			cpu_work_ram();
+			cpu_work_ram(cpu_activity_duty_cycle);
 		} else if (cpu_activity == 2) { // Blocking RRAM
-			cpu_work_rram();
+			cpu_work_rram(cpu_activity_duty_cycle);
 		}
 	}
 }
@@ -266,6 +315,7 @@ static otError cmd_cpu_activity_idle(void *ctx, uint8_t argc, char *argv[])
 
 static otError cmd_cpu_activity_blocking_ram(void *ctx, uint8_t argc, char *argv[])
 {
+	cpu_activity_duty_cycle = 100;
 	cpu_activity = 1;
 	k_sem_give(&cpu_activity_thread_start);
 	return OT_ERROR_NONE;
@@ -273,8 +323,55 @@ static otError cmd_cpu_activity_blocking_ram(void *ctx, uint8_t argc, char *argv
 
 static otError cmd_cpu_activity_blocking_rram(void *ctx, uint8_t argc, char *argv[])
 {
+	cpu_activity_duty_cycle = 100;
 	cpu_activity = 2;
 	k_sem_give(&cpu_activity_thread_start);
+	return OT_ERROR_NONE;
+}
+
+static otError cmd_cpu_activity_blocking_ram_duty_cycle(void *ctx, uint8_t argc, char *argv[])
+{
+	int duty_cycle;
+
+	if (argc != 1) {
+		shell_print("Bad parameters count");
+		return OT_ERROR_INVALID_ARGS;
+	}
+
+	duty_cycle = atoi(argv[0]);
+
+	if (duty_cycle < 10 || duty_cycle > 90) {
+		shell_print("Invalid duty cycle: %d. Should be between 10-90 (%%)", duty_cycle);
+		return -EINVAL;
+	}
+
+	cpu_activity_duty_cycle = duty_cycle;
+	cpu_activity = 1;
+	k_sem_give(&cpu_activity_thread_start);
+
+	return OT_ERROR_NONE;
+}
+
+static otError cmd_cpu_activity_blocking_rram_duty_cycle(void *ctx, uint8_t argc, char *argv[])
+{
+	int duty_cycle;
+
+	if (argc != 1) {
+		shell_print("Bad parameters count");
+		return OT_ERROR_INVALID_ARGS;
+	}
+
+	duty_cycle = atoi(argv[0]);
+
+	if (duty_cycle < 10 || duty_cycle > 90) {
+		shell_print("Invalid duty cycle: %d. Should be between 10-90 (%%)", duty_cycle);
+		return -EINVAL;
+	}
+
+	cpu_activity_duty_cycle = duty_cycle;
+	cpu_activity = 2;
+	k_sem_give(&cpu_activity_thread_start);
+
 	return OT_ERROR_NONE;
 }
 
@@ -282,14 +379,19 @@ static otError cmd_cpu_activity_set(void *ctx, uint8_t argc, char *argv[])
 {
 	struct radio_test_cmd cmds[] = {
 		{"idle", "CPU goes to sleep whenever it can (default)", cmd_cpu_activity_idle},
-		{"ram_function",
-		 "CPU executes a function from RAM doing calculations. Chip must be reset to "
-		 "recover",
+		{"ram_function", "CPU executes a function from RAM doing calculations",
 		 cmd_cpu_activity_blocking_ram},
-		{"rram_function",
-		 "CPU executes a function from RRAM (NVM) doing calculations. Chip must be reset "
-		 "to recover",
-		 cmd_cpu_activity_blocking_rram}};
+		{"rram_function", "CPU executes a function from RRAM (NVM) doing calculations",
+		 cmd_cpu_activity_blocking_rram},
+		{"ram_duty_cycle",
+		 "CPU switches between executing a function from RAM doing calculations and going "
+		 "to sleep",
+		 cmd_cpu_activity_blocking_ram_duty_cycle},
+		{"rram_duty_cycle",
+		 "CPU switches between executing a function from RRAM (NVM) doing calculations and "
+		 "going to sleep",
+		 cmd_cpu_activity_blocking_rram_duty_cycle},
+	};
 
 	return exec_subcommand(cmds, ARRAY_SIZE(cmds), ctx, argc, argv);
 }
