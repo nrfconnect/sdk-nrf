@@ -87,6 +87,10 @@ int main(void)
 
 		if (memcmp(test_data_buffer, test_data_pattern, FLASH_WORD_SIZE)) {
 			printk("Data read does not match data written\n");
+			for (size_t i = 0; i < FLASH_WORD_SIZE; ++i) {
+				printk("[%d] got: 0x%x != 0x%x\n", i, test_data_buffer[i],
+				       test_data_pattern[i]);
+			}
 			return -1;
 		}
 
