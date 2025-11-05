@@ -123,6 +123,7 @@ tests:
       - CONFIG_SERIAL=n
       - CONFIG_GPIO=n
       - CONFIG_BOOT_BANNER=n
+      - CONFIG_NCS_BOOT_BANNER=n
       - remote_CONFIG_PM_DEVICE=y
       - remote_CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - remote_CONFIG_PM=y
@@ -132,6 +133,7 @@ tests:
       - remote_CONFIG_SERIAL=n
       - remote_CONFIG_GPIO=n
       - remote_CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_NCS_BOOT_BANNER=n
     harness: pytest
     harness_config:
       fixture: lfclk_at_lfxo
@@ -157,6 +159,7 @@ tests:
       - CONFIG_SERIAL=n
       - CONFIG_GPIO=n
       - CONFIG_BOOT_BANNER=n
+      - CONFIG_NCS_BOOT_BANNER=n
       - CONFIG_FPU=y
       - remote_CONFIG_PM_DEVICE=y
       - remote_CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
@@ -167,6 +170,7 @@ tests:
       - remote_CONFIG_SERIAL=n
       - remote_CONFIG_GPIO=n
       - remote_CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_NCS_BOOT_BANNER=n
     harness: pytest
     harness_config:
       fixture: lfclk_at_lfxo
@@ -192,6 +196,7 @@ tests:
       - CONFIG_SERIAL=n
       - CONFIG_GPIO=n
       - CONFIG_BOOT_BANNER=n
+      - CONFIG_NCS_BOOT_BANNER=n
       - remote_CONFIG_PM_DEVICE=y
       - remote_CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - remote_CONFIG_PM=y
@@ -201,6 +206,7 @@ tests:
       - remote_CONFIG_SERIAL=n
       - remote_CONFIG_GPIO=n
       - remote_CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_NCS_BOOT_BANNER=n
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_ram_high_usage.overlay"
     harness: pytest
     harness_config:
@@ -227,6 +233,7 @@ tests:
       - CONFIG_SERIAL=n
       - CONFIG_GPIO=n
       - CONFIG_BOOT_BANNER=n
+      - CONFIG_NCS_BOOT_BANNER=n
       - remote_CONFIG_PM_DEVICE=y
       - remote_CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - remote_CONFIG_PM=y
@@ -236,6 +243,7 @@ tests:
       - remote_CONFIG_SERIAL=n
       - remote_CONFIG_GPIO=n
       - remote_CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_NCS_BOOT_BANNER=n
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_ram_low_usage.overlay"
     harness: pytest
     harness_config:
@@ -262,6 +270,7 @@ tests:
       - CONFIG_SERIAL=n
       - CONFIG_GPIO=n
       - CONFIG_BOOT_BANNER=n
+      - CONFIG_NCS_BOOT_BANNER=n
       - remote_CONFIG_PM_DEVICE=y
       - remote_CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - remote_CONFIG_PM=y
@@ -271,6 +280,7 @@ tests:
       - remote_CONFIG_SERIAL=n
       - remote_CONFIG_GPIO=n
       - remote_CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_NCS_BOOT_BANNER=n
     harness: pytest
     harness_config:
       fixture: lfclk_at_lfrc
@@ -296,6 +306,7 @@ tests:
       - CONFIG_SERIAL=n
       - CONFIG_GPIO=n
       - CONFIG_BOOT_BANNER=n
+      - CONFIG_NCS_BOOT_BANNER=n
       - remote_CONFIG_PM_DEVICE=y
       - remote_CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - remote_CONFIG_PM=y
@@ -305,6 +316,7 @@ tests:
       - remote_CONFIG_SERIAL=n
       - remote_CONFIG_GPIO=n
       - remote_CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_NCS_BOOT_BANNER=n
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_ram_high_usage.overlay"
     harness: pytest
     harness_config:
@@ -331,6 +343,7 @@ tests:
       - CONFIG_SERIAL=n
       - CONFIG_GPIO=n
       - CONFIG_BOOT_BANNER=n
+      - CONFIG_NCS_BOOT_BANNER=n
       - remote_CONFIG_PM_DEVICE=y
       - remote_CONFIG_PM_DEVICE_RUNTIME_ASYNC=n
       - remote_CONFIG_PM=y
@@ -340,6 +353,7 @@ tests:
       - remote_CONFIG_SERIAL=n
       - remote_CONFIG_GPIO=n
       - remote_CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_NCS_BOOT_BANNER=n
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_ram_low_usage.overlay"
     harness: pytest
     harness_config:
