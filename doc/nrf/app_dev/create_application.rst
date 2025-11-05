@@ -45,7 +45,6 @@ In the following example, the :ref:`Bluetooth Peripheral UART <peripheral_uart>`
    <home>/
    ├─── .west/
    ├─── bootloader/
-   ├─── mbedtls/
    ├─── modules/
    ├─── nrf/
    │    ├─── applications/
