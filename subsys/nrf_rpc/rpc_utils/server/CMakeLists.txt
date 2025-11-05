@@ -12,6 +12,7 @@ zephyr_library_sources_ifdef(CONFIG_NRF_RPC_UTILS_DIE_TEMP die_temp.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_RPC_UTILS_REMOTE_SHELL remote_shell.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_RPC_UTILS_SYSTEM_HEALTH system_health.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_RPC_UTILS_HEALTH_MONITOR health_monitor.c)
+zephyr_library_sources_ifdef(CONFIG_NRF_802154_RADIO_DRIVER radio.c)
 
 zephyr_library_include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../common

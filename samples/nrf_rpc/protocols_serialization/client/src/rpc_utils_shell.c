@@ -10,6 +10,7 @@
 #include <nrf_rpc/rpc_utils/die_temp.h>
 #include <nrf_rpc/rpc_utils/remote_shell.h>
 #include <nrf_rpc/rpc_utils/system_health.h>
+#include <nrf_rpc/rpc_utils/radio.h>
 #include <nrf_rpc.h>
 
 #include <stdlib.h>
@@ -182,6 +183,28 @@ static int cmd_rpc(const struct shell *sh, size_t argc, char *argv[])
 	return err;
 }
 
+static int cmd_sdm(const struct shell *sh, size_t argc, char *argv[])
+{
+	static bool enabled = true;
+	int err = 0;
+
+	if (argc > 1) {
+		bool enable = shell_strtobool(argv[1], 10, &err);
+
+		if (err == 0) {
+			nrf_802154_pa_modulation_fix_set(enable);
+		} else {
+			shell_print(sh, "Invalid argument: %s", argv[1]);
+			return -EINVAL;
+		}
+	}
+	enabled = nrf_802154_pa_modulation_fix_get();
+
+	shell_print(sh, "SDM mode is: %s", enabled ? "Enabled" : "Disabled");
+
+	return err;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	util_cmds,
 #if defined(CONFIG_NRF_RPC_UTILS_DEV_INFO)
@@ -202,6 +225,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(die_temp, NULL, "Get server die temperature", cmd_die_temp, 1, 0),
 #endif
 	SHELL_CMD_ARG(control, NULL, "Control RPC subsystem ", cmd_rpc, 2, 0),
+	SHELL_CMD_ARG(sdm, NULL, "Turn SDM mode on or off ", cmd_sdm, 1, 1),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_ARG_REGISTER(rpc, &util_cmds, "nRF RPC utility commands", NULL, 1, 0);
