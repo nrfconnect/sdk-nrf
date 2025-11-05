@@ -2386,6 +2386,23 @@ NCSDK-25928: :ref:`nrf_desktop_hid_state` keeps sending empty HID reports to low
 
 .. rst-class:: wontfix v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
+
+NCSDK-35817: The HID configurator returns an Input/Output error (EIO) in the Linux environment during a long exchange of HID feature reports
+  The BlueZ stack passes an incorrect report exchange identifier to the Linux Userspace HID driver (UHID), which causes an EIO.
+  The issue is caused by the 16-bit unsigned integer overflow and appears after devices exchange more than 65535 HID feature reports.
+  The 16-bit variable overflow can be observed in BlueZ versions 5.73 or lower.
+
+  The overflow for BlueZ versions from 5.74 to 5.84 happens even earlier.
+  It appears after devices exchange more than 255 HID feature reports (8-bit unsigned integer overflow).
+
+  For more details, see the `Ubuntu bug report`_.
+
+  **Workaround:** Build the BlueZ stack from sources using the ``master`` branch to replace your default BlueZ package.
+  Alternatively, use the ``sudo systemctl restart bluetooth`` command to restart the counter used to identify HID feature report exchanges.
+  After using the command, an interrupted configuration channel DFU operation can be resumed.
+
+.. rst-class:: wontfix v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
 NCSDK-8304: HID configurator issues for peripherals connected over Bluetooth LE to Linux host
   Using :ref:`nrf_desktop_config_channel_script` for peripherals connected to host directly over Bluetooth LE might result in receiving improper HID feature report ID.
   In such case, the device will provide HID input reports, but it cannot be configured with the HID configurator.

@@ -1635,6 +1635,10 @@
 .. _`Linux - Ubuntu 22.04 LTS`: https://releases.ubuntu.com/22.04/
 .. _`Linux - Ubuntu 20.04 LTS`: https://releases.ubuntu.com/20.04/
 
+.. ### Source: bugs.launchpad.net
+
+.. _`Ubuntu bug report`: https://bugs.launchpad.net/ubuntu/+source/bluez/+bug/2130724
+
 .. ### Source: apple.com
 
 .. _`macOS 26`: https://www.apple.com/os/macos/
