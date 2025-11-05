@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <zephyr/kernel.h>
+#include <zephyr/net/net_ip.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -152,7 +153,7 @@ enum lte_lc_system_mode {
  * LTE mode.
  *
  * The values for LTE-M and NB-IoT correspond to the values for the access technology field in AT
- * responses.
+ * commands.
  */
 enum lte_lc_lte_mode {
 	/** None. */
@@ -471,6 +472,22 @@ enum lte_lc_evt_type {
 	 */
 	LTE_LC_EVT_ENV_EVAL_RESULT		= 13,
 #endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
+
+	/**
+	 * PDN event
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN				= 14,
+
+	/**
+	 * A cellular profile is activated for the current access technology.
+	 *
+	 * The associated payload is the @c lte_lc_evt.cellular_profile_id member in the event,
+	 * which is the cellular profile ID of the active cellular profile.
+	 */
+	LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE	= 15,
 };
 
 /** RRC connection state. */
@@ -1426,6 +1443,98 @@ struct lte_lc_cfun_cb {
 	void *context;
 };
 
+enum lte_lc_pdn_evt_type {
+	/** PDN connection activated.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_ACTIVATED,
+
+	/**
+	 * PDN connection deactivated.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_DEACTIVATED,
+
+	/**
+	 * PDN has IPv6 connectivity.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_IPV6_UP,
+
+	/**
+	 * PDN has lost IPv6 connectivity.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_IPV6_DOWN,
+
+	/**
+	 * Network detached.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_NETWORK_DETACH,
+
+	/**
+	 * APN rate control is ON for the given PDN.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_APN_RATE_CONTROL_ON,
+
+	/**
+	 * APN rate control is OFF for the given PDN.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_APN_RATE_CONTROL_OFF,
+
+	/**
+	 * PDP context is destroyed for the given PDN.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_CTX_DESTROYED,
+
+	/**
+	 * ESM error notification for PDN.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event. The @c lte_lc_pdn_evt.esm_err member contains
+	 * the ESM error code.
+	 */
+	LTE_LC_EVT_PDN_ESM_ERROR,
+};
+
+/** PDN event payload. */
+struct lte_lc_pdn_evt {
+	/** Event type. */
+	enum lte_lc_pdn_evt_type type;
+	/** PDP context ID. */
+	uint8_t cid;
+	/** ESM error code. Only valid for @ref LTE_LC_EVT_PDN_ESM_ERROR event. */
+	int esm_err;
+	/**
+	 * Cellular profile ID.
+	 *
+	 * Only valid for @ref LTE_LC_EVT_PDN_NETWORK_DETACH event when a
+	 * cellular profile ID is present in the notification from the modem.
+	 * The value is set to @c -1 when no cellular profile ID was provided.
+	 */
+	int8_t cellular_profile_id;
+};
+
 /** LTE event. */
 struct lte_lc_evt {
 	/** Event type. */
@@ -1486,8 +1595,108 @@ struct lte_lc_evt {
 		/** Payload for event @ref LTE_LC_EVT_ENV_EVAL_RESULT. */
 		struct lte_lc_env_eval_result env_eval_result;
 #endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
+
+#if defined(CONFIG_LTE_LC_PDN_MODULE)
+		/** Payload for event @ref LTE_LC_EVT_PDN. */
+		struct lte_lc_pdn_evt pdn;
+#endif /* CONFIG_LTE_LC_PDN_MODULE */
 	};
 };
+
+/** PDN address family. */
+enum lte_lc_pdn_family {
+	/** IPv4 */
+	LTE_LC_PDN_FAM_IPV4   = 0,
+	/** IPv6 */
+	LTE_LC_PDN_FAM_IPV6   = 1,
+	/** IPv4 and IPv6 */
+	LTE_LC_PDN_FAM_IPV4V6 = 2,
+	/** Non-IP */
+	LTE_LC_PDN_FAM_NONIP  = 3,
+};
+
+/** Additional Packet Data Protocol (PDP) context configuration options. */
+struct lte_lc_pdn_pdp_context_opts {
+	/**
+	 * IPv4 address allocation.
+	 *
+	 * - 0: IPv4 address through Non-access Stratum (NAS) signaling (default)
+	 * - 1: IPv4 address through Dynamic Host Configuration Protocol (DHCP)
+	 */
+	uint8_t ip4_addr_alloc;
+	/**
+	 * NAS Signalling Low Priority Indication.
+	 *
+	 * - 0: Use Non-access Stratum (NAS) Signalling Low Priority Indication (NSLPI) value
+	 *      from configuration (default)
+	 * - 1: Use value "Not configured" for NAS Signalling Low Priority Indication
+	 */
+	uint8_t nslpi;
+	/**
+	 * Protected transmission of Protocol Configuration Options (PCO).
+	 *
+	 * - 0: Protected transmission of PCO is not requested (default)
+	 * - 1: Protected transmission of PCO is requested
+	 */
+	uint8_t secure_pco;
+};
+
+/**
+ * PDN connection dynamic information structure.
+ *
+ * This structure holds dynamic information about the PDN connection.
+ */
+struct lte_lc_pdn_dynamic_info {
+	/** IPv4 Maximum Transmission Unit. */
+	uint32_t ipv4_mtu;
+	/** IPv6 Maximum Transmission Unit. */
+	uint32_t ipv6_mtu;
+	/** Primary IPv4 DNS address. */
+	struct in_addr dns_addr4_primary;
+	/** Secondary IPv4 DNS address. */
+	struct in_addr dns_addr4_secondary;
+	/** Primary IPv6 DNS address. */
+	struct in6_addr dns_addr6_primary;
+	/** Secondary IPv6 DNS address. */
+	struct in6_addr dns_addr6_secondary;
+};
+
+/** Authentication method. */
+enum lte_lc_pdn_auth {
+	/** No authentication. */
+	LTE_LC_PDN_AUTH_NONE = 0,
+	/** Password Authentication Protocol (PAP). */
+	LTE_LC_PDN_AUTH_PAP  = 1,
+	/** Challenge-Handshake Authentication Protocol (CHAP). */
+	LTE_LC_PDN_AUTH_CHAP = 2,
+};
+
+/** @brief UICC configuration type, used for cellular profile selection */
+enum lte_lc_uicc {
+	/** Physical SIM or eSIM */
+	LTE_LC_UICC_PHYSICAL	= 0,
+	/** SoftSIM */
+	LTE_LC_UICC_SOFTSIM	= 1,
+};
+
+/**
+ * @brief Cellular profile.
+ *
+ * Used to set the cellular profile for the PDN connection.
+ *
+ * @note The profile ID 0 is associated with PDN contexts in the range 0-9, while profile ID 1
+ *	 is associated with PDN contexts in the range 10-19. The default context for each profile
+ *	 is the first context in the range.
+ */
+struct lte_lc_cellular_profile {
+	/** Cellular profile ID. Valid values are 0 and 1. */
+	uint8_t id;
+	/** LTE mode for the profile (access technology) */
+	enum lte_lc_lte_mode lte_mode;
+	/** UICC configuration */
+	enum lte_lc_uicc uicc;
+};
+
 
 /**
  * Handler for LTE events.
@@ -1553,6 +1762,8 @@ int lte_lc_connect_async(lte_lc_evt_handler_t handler);
 /**
  * Set the modem to offline mode.
  *
+ * @note Requires `CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE` to be enabled.
+ *
  * @retval 0 if successful.
  * @retval -EFAULT if the functional mode could not be configured.
  */
@@ -1561,6 +1772,8 @@ int lte_lc_offline(void);
 /**
  * Set the modem to power off mode.
  *
+ * @note Requires `CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE` to be enabled.
+ *
  * @retval 0 if successful.
  * @retval -EFAULT if the functional mode could not be configured.
  */
@@ -1568,6 +1781,8 @@ int lte_lc_power_off(void);
 
 /**
  * Set the modem to normal mode.
+ *
+ * @note Requires `CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE` to be enabled.
  *
  * @retval 0 if successful.
  * @retval -EFAULT if the functional mode could not be configured.
@@ -1845,6 +2060,8 @@ int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status);
  * @param[in] mode System mode.
  * @param[in] preference System mode preference.
  *
+ * @note Requires `CONFIG_LTE_LC_SYSTEM_MODE_MODULE` to be enabled.
+ *
  * @retval 0 if successful.
  * @retval -EINVAL if input argument was invalid.
  * @retval -EFAULT if the network registration could not be retrieved from the modem.
@@ -1858,6 +2075,8 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
  * @param[out] mode System mode.
  * @param[out] preference System mode preference. Can be @c NULL.
  *
+ * @note Requires `CONFIG_LTE_LC_SYSTEM_MODE_MODULE` to be enabled.
+ *
  * @retval 0 if successful.
  * @retval -EINVAL if input argument was invalid.
  * @retval -EFAULT if the system mode could not be retrieved from the modem.
@@ -1870,6 +2089,8 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
  *
  * @param[in] mode Functional mode.
  *
+ * @note Requires `CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE` to be enabled.
+ *
  * @retval 0 if successful.
  * @retval -EINVAL if input argument was invalid.
  * @retval -EFAULT if the functional mode could not be retrieved from the modem.
@@ -1881,6 +2102,8 @@ int lte_lc_func_mode_set(enum lte_lc_func_mode mode);
  *
  * @param[out] mode Functional mode.
  *
+ * @note Requires `CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE` to be enabled.
+ *
  * @retval 0 if successful.
  * @retval -EINVAL if input argument was invalid.
  * @retval -EFAULT if the functional mode could not be retrieved from the modem.
@@ -1891,6 +2114,8 @@ int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
  * Get the currently active LTE mode.
  *
  * @param[out] mode LTE mode.
+ *
+ * @note Requires `CONFIG_LTE_LC_CONNECTION_STATUS_MODULE` to be enabled.
  *
  * @retval 0 if successful.
  * @retval -EINVAL if input argument was invalid.
@@ -2094,6 +2319,192 @@ int lte_lc_periodic_search_clear(void);
  * @retval -EFAULT if an AT command could not be sent to the modem.
  */
 int lte_lc_periodic_search_request(void);
+
+/**
+ * Create a PDP context.
+ *
+ * In LTE terminology, this creates a PDP context (configuration) that can be activated
+ * into a PDN connection. The context contains settings like APN, address family,
+ * and authentication parameters.
+ *
+ * PDN events will be sent to all registered lte_lc event handlers.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[out] cid The context ID.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_ctx_create(uint8_t *cid);
+
+/**
+ * Configure a PDP context.
+ *
+ * The PDN connection must be inactive when the PDP context is configured.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[in] cid The context ID.
+ * @param[in] apn The Access Point Name.
+ * @param[in] family The IP address family for the PDN connection.
+ * @param[in] opts Additional configuration options. Optional, can be NULL.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_ctx_configure(uint8_t cid, const char *apn, enum lte_lc_pdn_family family,
+			     struct lte_lc_pdn_pdp_context_opts *opts);
+
+/**
+ * Set PDP context authentication parameters.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[in] cid The context ID.
+ * @param[in] method The desired authentication method.
+ * @param[in] user The username to use for authentication.
+ * @param[in] password The password to use for authentication.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_ctx_auth_set(uint8_t cid, enum lte_lc_pdn_auth method,
+				const char *user, const char *password);
+
+/**
+ * Destroy a PDP context.
+ *
+ * The PDN connection must be inactive when the PDP context is destroyed.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[in] cid The context ID.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_ctx_destroy(uint8_t cid);
+
+/**
+ * Activate a PDN connection.
+ *
+ * Activates the PDP context with the given CID, establishing a PDN connection.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[in] cid The context ID.
+ * @param[out] esm If provided, the function will block to return the ESM error reason.
+ * @param[out] family If provided, the function will block to return
+ *		      @c LTE_LC_PDN_FAM_IPV4 if only IPv4 is supported, or
+ *		      @c LTE_LC_PDN_FAM_IPV6 if only IPv6 is supported.
+ *		      Otherwise, this value will remain unchanged.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_activate(uint8_t cid, int *esm, enum lte_lc_pdn_family *family);
+
+/**
+ * Deactivate a PDN connection.
+ *
+ * Deactivates the PDN connection associated with the given context ID.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[in] cid The context ID.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_deactivate(uint8_t cid);
+
+/**
+ * Retrieve the PDN ID for a given PDP context.
+ *
+ * The PDN ID can be used to route traffic through a PDN connection.
+ * Multiple contexts (CIDs) may share the same PDN ID if they route through
+ * the same network connection.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[in] cid The context ID.
+ *
+ * @return A non-negative PDN ID on success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_id_get(uint8_t cid);
+
+/**
+ * Retrieve dynamic parameters of a given PDN connection.
+ *
+ * @param[in] cid The context ID.
+ * @param[out] info PDN dynamic info.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *info);
+
+/**
+ * Retrieve the default Access Point Name (APN).
+ *
+ * The default APN is the APN of the default PDP context (zero).
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[out] buf The buffer to copy the APN into. The string is null-terminated.
+ * @param[in] len The size of the output buffer.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_ctx_default_apn_get(char *buf, size_t len);
+
+#if defined(CONFIG_LTE_LC_PDN_ESM_STRERROR)
+
+/**
+ * Retrieve a statically allocated textual description for a given ESM error reason.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_ESM_STRERROR` to be enabled.
+ *
+ * @param[in] reason ESM error reason.
+ *
+ * @return ESM error reason description.
+ *         If no textual description for the given error is found,
+ *         a placeholder string is returned instead.
+ */
+const char *lte_lc_pdn_esm_strerror(int reason);
+
+#endif /* CONFIG_LTE_LC_PDN_ESM_STRERROR */
+
+/**
+ * Configure a cellular profile.
+ *
+ * The cellular profile to be used for a specific access technology is decided by the modem.
+ * The active cellular profile is reported in the @ref LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE
+ * event if an event handler is registered.
+ *
+ * @param[in] profile The cellular profile to set.
+ *
+ * @retval 0 on success, otherwise negative error code.
+ */
+int lte_lc_cellular_profile_configure(struct lte_lc_cellular_profile *profile);
+
+#if CONFIG_LTE_LC_PDN_ESM_STRERROR
+
+/**
+ * Retrieve a statically allocated textual description for a given ESM error reason.
+ *
+ * @param[in] reason ESM error reason.
+ *
+ * @return ESM error reason description.
+ *         If no textual description for the given error is found,
+ *         a placeholder string is returned instead.
+ */
+const char *lte_lc_pdn_esm_strerror(int reason);
+
+#endif /* CONFIG_LTE_LC_PDN_ESM_STRERROR */
 
 /** @} */
 

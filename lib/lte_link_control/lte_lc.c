@@ -25,6 +25,7 @@
 #include "modules/mdmev.h"
 #include "modules/ncellmeas.h"
 #include "modules/periodicsearchconf.h"
+#include "modules/pdn.h"
 #include "modules/psm.h"
 #include "modules/xmodemsleep.h"
 #include "modules/xsystemmode.h"
@@ -224,6 +225,62 @@ int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg)
 {
 	return periodicsearchconf_get(cfg);
 }
+
+/* PDN API wrappers */
+
+int lte_lc_pdn_ctx_create(uint8_t *cid)
+{
+	return pdn_ctx_create(cid);
+}
+
+int lte_lc_pdn_ctx_configure(uint8_t cid, const char *apn, enum lte_lc_pdn_family family,
+			     struct lte_lc_pdn_pdp_context_opts *opts)
+{
+	return pdn_ctx_configure(cid, apn, family, opts);
+}
+
+int lte_lc_pdn_ctx_auth_set(uint8_t cid, enum lte_lc_pdn_auth method,
+			    const char *user, const char *password)
+{
+	return pdn_ctx_auth_set(cid, method, user, password);
+}
+
+int lte_lc_pdn_ctx_destroy(uint8_t cid)
+{
+	return pdn_ctx_destroy(cid);
+}
+
+int lte_lc_pdn_activate(uint8_t cid, int *esm, enum lte_lc_pdn_family *family)
+{
+	return pdn_activate(cid, esm, family);
+}
+
+int lte_lc_pdn_deactivate(uint8_t cid)
+{
+	return pdn_deactivate(cid);
+}
+
+int lte_lc_pdn_id_get(uint8_t cid)
+{
+	return pdn_id_get(cid);
+}
+
+int lte_lc_pdn_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *info)
+{
+	return pdn_dynamic_info_get(cid, info);
+}
+
+int lte_lc_pdn_ctx_default_apn_get(char *buf, size_t len)
+{
+	return pdn_ctx_default_apn_get(buf, len);
+}
+
+#if defined(CONFIG_LTE_LC_PDN_ESM_STRERROR)
+const char *lte_lc_pdn_esm_strerror(int reason)
+{
+	return pdn_esm_strerror(reason);
+}
+#endif
 
 static int lte_lc_sys_init(void)
 {

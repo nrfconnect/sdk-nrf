@@ -50,6 +50,9 @@ config LTE_LC_TAU_PRE_WARNING_MODULE
 config LTE_LC_ENV_EVAL_MODULE
 	bool "Environment Evaluation module"
 
+config LTE_LC_PDN_MODULE
+	bool "Packet Data Network (PDN) module"
+
 menuconfig LTE_LC_DNS_FALLBACK_MODULE
 	bool "DNS Fallback module"
 	default y
@@ -470,6 +473,107 @@ config LTE_LC_WORKQUEUE_STACK_SIZE
 	int "Stack size for the library work queue"
 	default 1280 if LOG_MODE_IMMEDIATE
 	default 1024
+
+# PDN (Packet Data Network) Configuration
+if LTE_LC_PDN_MODULE
+
+config LTE_LC_PDN_LEGACY_PCO
+	bool "Use legacy PCO mode"
+	help
+	  If selected, PCO will be used instead of ePCO during PDN connection establishment.
+
+config LTE_LC_PDN_ESM_TIMEOUT
+	int "ESM timeout (ms)"
+	default 1000
+	help
+	  Timeout for waiting for an ESM notification when activating a PDN, in milliseconds.
+
+config LTE_LC_PDN_DEFAULTS_OVERRIDE
+	bool "Override defaults for PDP context 0"
+	help
+	  The defaults are overridden automatically as soon as the modem has been initialized.
+
+if LTE_LC_PDN_DEFAULTS_OVERRIDE
+
+config LTE_LC_PDN_DEFAULT_APN
+	string "Access point name (APN)"
+	help
+	  The access point name to use for the default PDP context for the first cellular
+	  profile (CID 0).
+
+choice
+	prompt "Address family"
+	default LTE_LC_PDN_DEFAULT_FAM_IPV4V6
+
+config LTE_LC_PDN_DEFAULT_FAM_IPV4
+	bool "IPv4"
+
+config LTE_LC_PDN_DEFAULT_FAM_IPV6
+	bool "IPv6"
+
+config LTE_LC_PDN_DEFAULT_FAM_IPV4V6
+	bool "IPv4v6"
+
+config LTE_LC_PDN_DEFAULT_FAM_NONIP
+	bool "Non-IP"
+
+endchoice
+
+config LTE_LC_PDN_DEFAULT_FAM
+	int
+	default 0 if LTE_LC_PDN_DEFAULT_FAM_IPV4
+	default 1 if LTE_LC_PDN_DEFAULT_FAM_IPV6
+	default 2 if LTE_LC_PDN_DEFAULT_FAM_IPV4V6
+	default 3 if LTE_LC_PDN_DEFAULT_FAM_NONIP
+
+choice
+	prompt "Authentication method"
+	default LTE_LC_PDN_DEFAULT_AUTH_NONE
+	help
+	  The authentication method to use for the default PDP context for the first cellular
+	  profile (CID 0).
+
+config LTE_LC_PDN_DEFAULT_AUTH_NONE
+	bool "None"
+
+config LTE_LC_PDN_DEFAULT_AUTH_PAP
+	bool "PAP"
+
+config LTE_LC_PDN_DEFAULT_AUTH_CHAP
+	bool "CHAP"
+
+endchoice
+
+config LTE_LC_PDN_DEFAULT_AUTH
+	int
+	default 0 if LTE_LC_PDN_DEFAULT_AUTH_NONE
+	default 1 if LTE_LC_PDN_DEFAULT_AUTH_PAP
+	default 2 if LTE_LC_PDN_DEFAULT_AUTH_CHAP
+
+config LTE_LC_PDN_DEFAULT_USERNAME
+	string "Username"
+	depends on !LTE_LC_PDN_DEFAULT_AUTH_NONE
+	help
+	  The username to use for authentication for the default PDP context for the first
+	  cellular profile (CID 0).
+
+config LTE_LC_PDN_DEFAULT_PASSWORD
+	string "Password"
+	depends on !LTE_LC_PDN_DEFAULT_AUTH_NONE
+	help
+	  The password to use for authentication for the default PDP context for the first
+	  cellular profile (CID 0).
+
+endif # LTE_LC_PDN_DEFAULTS_OVERRIDE
+
+config LTE_LC_PDN_ESM_STRERROR
+	bool "Compile ESM error table"
+	help
+	  Compile a table with a textual description of ESM error reasons.
+	  The description can be retrieved with lte_lc_pdn_esm_strerror().
+	  The table and function take about 2 kB of FLASH.
+
+endif # LTE_LC_PDN_MODULE
 
 module = LTE_LINK_CONTROL
 module-dep = LOG
