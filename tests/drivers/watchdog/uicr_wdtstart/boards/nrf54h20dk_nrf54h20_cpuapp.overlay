@@ -1,0 +1,10 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* It must match with CONFIG_GEN_UICR_WDTSTART_INSTANCE_WDTx in sysbuild/uicr.conf */
+&wdt011 {
+	status = "okay";
+};
