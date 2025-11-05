@@ -28,7 +28,7 @@ config HEALTH_MONITOR_HEALTHCHECK_PERIOD
 
 config HEALTH_MONITOR_SRP_TIMEOUT
 	int "SRP registration timeout [s]"
-	default 300
+	default 120
 	help
 	  If SRP registrations are not complete after the given time event is generated.
 	  0 for immediate notification, negative to disable.
@@ -39,6 +39,30 @@ config HEALTH_MONITOR_SINGLETON_LEADER_TIMEOUT
 	help
 	  If state changes to Leader with no connection to other devices for the given time event is generated.
 	  0 for immediate notification, negative to disable.
+
+config HEALTH_MONITOR_PREFIX_BASED_ADDRESS_TIMEOUT
+	int "Prefix based address timeout [s]"
+	default 60
+	help
+	  If the device does not have a prefix based address for the given time after thread is started
+	  event in is generated.
+	  0 for immediate notification, negative to disable.
+
+config HEALTH_MONITOR_THREAD_BUFFER_THRESHOLD_TIMEOUT
+	int "Thread buffers low timeout [s]"
+	default 0
+	help
+	  If Thread buffers usage is above the threshold for the given time event is generated.
+	  0 for immediate notification, negative to disable.
+
+config HEALTH_MONITOR_THREAD_BUFFER_THRESHOLD
+	int "Percentage of buffers used for the low buffers event to activate."
+	range 30 100
+	default 90
+	help
+	  Ratio of IP buffers used to the total number of IP buffers in percent when the health monitor
+	  event should be generated.
+
 
 module = HEALTH_MONITOR
 module-str = health_monitor

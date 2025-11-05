@@ -12,6 +12,8 @@
 
 #include <health_monitor.h>
 
+#include "health_monitor_encoding.h"
+
 
 static health_monitor_event_callback  event_callback;
 static void			     *callback_context;
@@ -22,15 +24,13 @@ static void decode_event(struct nrf_rpc_cbor_ctx *ctx, struct health_event_data 
 
 	switch (event->event_type) {
 	case HEALTH_EVENT_STATS:
+		XCODE_COUNTERS(counters, ctx);
 		event->counters = &counters;
-		counters.state_changes = nrf_rpc_decode_uint(ctx);
-		counters.child_added = nrf_rpc_decode_uint(ctx);
-		counters.child_removed = nrf_rpc_decode_uint(ctx);
-		counters.partition_id_changes = nrf_rpc_decode_uint(ctx);
-		counters.key_sequence_changes = nrf_rpc_decode_uint(ctx);
-		counters.network_data_changes = nrf_rpc_decode_uint(ctx);
-		counters.active_dataset_changes = nrf_rpc_decode_uint(ctx);
-		counters.pending_dataset_changes = nrf_rpc_decode_uint(ctx);
+		break;
+	case HEALTH_EVENT_NO_BUFFERS:
+		event->no_buffers.total_count = nrf_rpc_decode_uint(ctx);
+		event->no_buffers.max_used = nrf_rpc_decode_uint(ctx);
+		event->no_buffers.current_free = nrf_rpc_decode_uint(ctx);
 		break;
 	default:
 		/* unknown or no args event. */

@@ -10,13 +10,12 @@
 /** @brief Health Monitor Event type. */
 typedef enum health_event_type_t {
 	HEALTH_EVENT_INVALID = 0,
-	HEALTH_EVENT_OUT_OF_TX_BUFFERS,
-	HEALTH_EVENT_OUT_OF_RX_BUFFERS,
+	HEALTH_EVENT_NO_BUFFERS,
 	HEALTH_EVENT_DISCONNECTED,
 	HEALTH_EVENT_SRP_REG,
 	HEALTH_EVENT_NO_PREFIX,
 	HEALTH_EVENT_WEAK_SIGNAL,
-	HEALTH_EVENT_NO_NEIGBOURS,
+	HEALTH_EVENT_NO_NEIGHBORS,
 	HEALTH_EVENT_STATS,
 	HEALTH_EVENT__COUNT
 
@@ -24,14 +23,48 @@ typedef enum health_event_type_t {
 
 /** @brief Health Monitor counters structure. */
 struct counters_data {
-	uint32_t state_changes;
-	uint32_t child_added;
-	uint32_t child_removed;
+	/* MLE */
+	uint16_t role_disabled;
+	uint16_t role_detached;
+	uint16_t role_child;
+	uint16_t role_router;
+	uint16_t role_leader;
+	uint16_t attach_attempts;
 	uint32_t partition_id_changes;
+	uint16_t better_partition_attach_attempts;
 	uint32_t key_sequence_changes;
 	uint32_t network_data_changes;
 	uint32_t active_dataset_changes;
 	uint32_t pending_dataset_changes;
+	uint16_t child_supervision_failure;
+	uint16_t child_max;
+	uint32_t child_added;
+	uint32_t child_removed;
+	uint16_t router_max;
+	uint32_t router_added;
+	uint32_t router_removed;
+
+	/* IP */
+	uint32_t ip_tx_success;
+	uint32_t ip_rx_success;
+	uint32_t ip_tx_failure;
+	uint32_t ip_rx_failure;
+
+	/* MAC */
+	uint32_t mac_tx_unicast;
+	uint32_t mac_tx_broadcast;
+	uint32_t mac_tx_retry;
+	uint32_t mac_rx_unicast;
+	uint32_t mac_rx_broadcast;
+
+	/* other */
+	uint32_t srp_server_changes;
+};
+
+struct healthmon_buffer_data {
+	uint32_t total_count;
+	uint32_t max_used;
+	uint32_t current_free;
 };
 
 /** @brief Health Monitor event structure containing event with data. */
@@ -43,6 +76,7 @@ struct health_event_data {
 	union {
 		/** Health Monitor HEALTH_EVENT_STATS parameters */
 		struct counters_data *counters; /* counters passed as pointer to limit the size */
+		struct healthmon_buffer_data no_buffers;
 	};
 };
 

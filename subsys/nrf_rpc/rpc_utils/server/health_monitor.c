@@ -11,20 +11,20 @@
 
 #include <nrf_rpc_cbor.h>
 
+#include "health_monitor_encoding.h"
+
 static void rpc_util_health_moniotor_event(struct health_event_data *event, void *context);
 
 static bool encode_event_data(struct nrf_rpc_cbor_ctx *ctx, struct health_event_data *event)
 {
 	switch (event->event_type) {
 	case HEALTH_EVENT_STATS:
-		nrf_rpc_encode_uint(ctx, event->counters->state_changes);
-		nrf_rpc_encode_uint(ctx, event->counters->child_added);
-		nrf_rpc_encode_uint(ctx, event->counters->child_removed);
-		nrf_rpc_encode_uint(ctx, event->counters->partition_id_changes);
-		nrf_rpc_encode_uint(ctx, event->counters->key_sequence_changes);
-		nrf_rpc_encode_uint(ctx, event->counters->network_data_changes);
-		nrf_rpc_encode_uint(ctx, event->counters->active_dataset_changes);
-		nrf_rpc_encode_uint(ctx, event->counters->pending_dataset_changes);
+		XCODE_COUNTERS((*event->counters), ctx);
+		break;
+	case HEALTH_EVENT_NO_BUFFERS:
+		nrf_rpc_encode_uint(ctx, event->no_buffers.total_count);
+		nrf_rpc_encode_uint(ctx, event->no_buffers.max_used);
+		nrf_rpc_encode_uint(ctx, event->no_buffers.current_free);
 		break;
 	default:
 		/* unknown or no args event. */
