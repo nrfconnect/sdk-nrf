@@ -898,6 +898,8 @@ Modem libraries
     * Description of new features supported by mfw_nrf91x1 and mfw_nrf9151-ntn in receive only functional mode.
     * Sending of the ``LTE_LC_EVT_PSM_UPDATE`` event with ``tau`` and ``active_time`` set to ``-1`` when registration status is ``LTE_LC_NW_REG_NOT_REGISTERED``.
     * New registration statuses and functional modes for the ``mfw_nrf9151-ntn`` modem firmware.
+    * Support for PDP context and PDN connection management.
+      The functionality is available when the :kconfig:option:`CONFIG_LTE_LC_PDN_MODULE` Kconfig option is enabled.
 
   * Updated:
 
