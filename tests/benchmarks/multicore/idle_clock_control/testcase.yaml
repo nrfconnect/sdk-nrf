@@ -35,6 +35,7 @@ tests:
       - remote_CONFIG_PM_DEVICE=y
       - remote_CONFIG_PM_DEVICE_RUNTIME=y
       - remote_CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_NCS_BOOT_BANNER=n
       - remote_CONFIG_CLOCK_CONTROL=n
       - remote_CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
     harness_config:
@@ -79,6 +80,7 @@ tests:
       - remote_CONFIG_PM_DEVICE=y
       - remote_CONFIG_PM_DEVICE_RUNTIME=y
       - remote_CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_NCS_BOOT_BANNER=n
       - remote_CONFIG_CLOCK_CONTROL=n
       - remote_CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
     harness_config:
