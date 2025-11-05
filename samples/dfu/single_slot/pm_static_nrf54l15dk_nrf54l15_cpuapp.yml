@@ -31,7 +31,7 @@ mcuboot_secondary:
   - mcuboot_secondary_pad
   - firmware_loader
   region: flash_primary
-  size: 0x1c000
+  size: 0x1d000
   span: *id003
 mcuboot_secondary_pad:
   region: flash_primary
