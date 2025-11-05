@@ -216,10 +216,10 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-8605"
 
 - scenarios:
-    - sample.mcumgr.smp_svr.bt.*
-    - sample.mcumgr.smp_svr.serial.*
+    - sample.mcumgr.smp_svr.*
     - sample.dfu.dfu_target
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
+    - thingy53/nrf5340/cpuapp
   comment: "Requires rebase on collab-nrfx-4.0 branch"
