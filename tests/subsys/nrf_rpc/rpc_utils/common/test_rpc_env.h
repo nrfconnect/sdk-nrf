@@ -4,10 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/bluetooth/byteorder.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/sys/util_macro.h>
 
-/* Macros for constructing CBOR data items. */
+/* Macros for constructing CBOR data items.
+ * CBOR encoding reference: RFC 8949 - https://www.rfc-editor.org/rfc/rfc8949.html
+ */
 
 #define CBOR_FALSE 0xf4
 #define CBOR_TRUE  0xf5

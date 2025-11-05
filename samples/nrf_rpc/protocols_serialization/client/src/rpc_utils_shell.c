@@ -7,9 +7,12 @@
 #include <zephyr/shell/shell.h>
 #include <nrf_rpc/rpc_utils/crash_gen.h>
 #include <nrf_rpc/rpc_utils/dev_info.h>
+#include <nrf_rpc/rpc_utils/die_temp.h>
 #include <nrf_rpc/rpc_utils/remote_shell.h>
 #include <nrf_rpc/rpc_utils/system_health.h>
 #include <nrf_rpc.h>
+
+#include <stdlib.h>
 
 #if defined(CONFIG_NRF_RPC_UTILS_DEV_INFO)
 static int remote_version_cmd(const struct shell *sh, size_t argc, char *argv[])
@@ -119,6 +122,42 @@ static int cmd_system_health(const struct shell *sh, size_t argc, char *argv[])
 }
 #endif /* CONFIG_NRF_RPC_UTILS_SYSTEM_HEALTH */
 
+#if defined(CONFIG_NRF_RPC_UTILS_DIE_TEMP)
+static int cmd_die_temp(const struct shell *sh, size_t argc, char *argv[])
+{
+	int32_t temperature;
+	int ret;
+
+	ret = nrf_rpc_die_temp_get(&temperature);
+	if (ret != NRF_RPC_DIE_TEMP_SUCCESS) {
+		const char *error_msg;
+
+		switch (ret) {
+		case NRF_RPC_DIE_TEMP_ERR_NOT_READY:
+			error_msg = "Temperature sensor not ready";
+			break;
+		case NRF_RPC_DIE_TEMP_ERR_FETCH_FAILED:
+			error_msg = "Failed to fetch temperature sample";
+			break;
+		case NRF_RPC_DIE_TEMP_ERR_CHANNEL_GET_FAILED:
+			error_msg = "Failed to get temperature channel";
+			break;
+		default:
+			error_msg = "Unknown error";
+			break;
+		}
+
+		shell_error(sh, "Failed to get die temperature: %s (error code: %d)", error_msg,
+			    ret);
+		return -ENOEXEC;
+	}
+
+	shell_print(sh, "Die temperature: %d.%02d°C", temperature / 100, abs(temperature % 100));
+
+	return 0;
+}
+#endif /* CONFIG_NRF_RPC_UTILS_DIE_TEMP */
+
 static int cmd_rpc(const struct shell *sh, size_t argc, char *argv[])
 {
 	static bool enabled = true;
@@ -158,6 +197,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 #endif
 #if defined(CONFIG_NRF_RPC_UTILS_SYSTEM_HEALTH)
 	SHELL_CMD_ARG(system_health, NULL, "Get system health", cmd_system_health, 0, 0),
+#endif
+#if defined(CONFIG_NRF_RPC_UTILS_DIE_TEMP)
+	SHELL_CMD_ARG(die_temp, NULL, "Get server die temperature", cmd_die_temp, 1, 0),
 #endif
 	SHELL_CMD_ARG(control, NULL, "Control RPC subsystem ", cmd_rpc, 2, 0),
 	SHELL_SUBCMD_SET_END);

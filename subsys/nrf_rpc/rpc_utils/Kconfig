@@ -46,6 +46,15 @@ config NRF_RPC_UTILS_CRASH_GEN
 	help
 	  Enables nRF RPC commands for generating a crash on the remote device.
 
+config NRF_RPC_UTILS_DIE_TEMP
+	bool "Die temperature"
+	depends on !NRF_RPC_UTILS_SERVER || $(dt_nodelabel_enabled,temp)
+	select SENSOR if NRF_RPC_UTILS_SERVER
+	help
+	  Enables nRF RPC command for reading the die temperature from the
+	  remote device.
+	  Server requires a temperature sensor device with nodelabel 'temp' in devicetree.
+
 config NRF_RPC_UTILS_HEALTH_MONITOR
 	bool "RPC Health Monitor support"
 	help

@@ -19,6 +19,7 @@ target_include_directories(app PRIVATE
 target_sources(app PRIVATE
   ${app_sources}
   ../common/nrf_rpc_single_thread.c
+  src/die_temp_suite.c
 )
 
 # Enforce single-threaded nRF RPC command processing.
