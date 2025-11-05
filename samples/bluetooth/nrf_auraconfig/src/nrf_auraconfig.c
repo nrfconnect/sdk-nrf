@@ -703,7 +703,6 @@ void nrf_auraconfig_main(void)
 	LOG_DBG("Main started");
 
 	ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_1);
-	ret -= NRFX_ERROR_BASE_NUM;
 	ERR_CHK_MSG(ret, "Failed to set HFCLK divider");
 
 	ret = led_init();
