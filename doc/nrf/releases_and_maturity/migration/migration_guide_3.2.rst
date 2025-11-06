@@ -110,6 +110,24 @@ Matter
       To fix this, you must now manually create the :file:`CodeDrivenCallback.h` and :file:`CodeDrivenInitShutdown.cpp` files, and implement the ``MatterClusterServerInitCallback`` and ``MatterClusterServerShutdownCallback`` callbacks to handle server initialization, shutdown, and Matter cluster commands.
       Ensure that these callbacks contain your application's command handling logic as required.
 
+    * :ref:`matter_lock_sample` sample:
+
+      * The :kconfig:option:`CONFIG_BT_FIXED_PASSKEY` Kconfig option has been deprecated, replace it with the :kconfig:option:`CONFIG_BT_APP_PASSKEY` Kconfig option.
+        Now, if you want to use a fixed passkey for the Matter Lock NUS service, register the :c:member:`bt_conn_auth_cb.app_passkey` callback in the :c:struct:`bt_conn_auth_cb` structure.
+
+        For example:
+
+       .. code-block:: c
+
+          static uint32_t AuthAppPasskey(struct bt_conn *conn)
+          {
+              return 123456;
+          }
+
+          static struct bt_conn_auth_cb sConnAuthCallbacks = {
+              .app_passkey = AuthAppPasskey,
+          };
+
 Serial LTE modem
 ----------------
 
