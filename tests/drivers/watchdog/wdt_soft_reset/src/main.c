@@ -21,6 +21,20 @@ static uint32_t watchdog_window = 5000U;
 #define NOINIT_SECTION ".noinit.test_wdt"
 static uint32_t supported __attribute__((section(NOINIT_SECTION)));
 
+#if defined(CONFIG_TEST_CPU_LOCKUP_RESET)
+#include <errno.h>
+#include <zephyr/logging/log_ctrl.h>
+
+void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *pEsf)
+{
+	LOG_INF("%s(%d)", __func__, reason);
+	LOG_PANIC();
+
+	/* Assert inside Assert handler - shall result in reset due to cpu lockup. */
+	__ASSERT(0, "Intentionally failed assert inside kernel panic");
+}
+#endif
+
 void configure_watchdog(void)
 {
 	int32_t ret;
@@ -54,14 +68,19 @@ int main(void)
 {
 	uint32_t cause;
 
+#if defined(CONFIG_TEST_SOFTWARE_RESET)
 	LOG_INF("WDT and software reset test on %s", CONFIG_BOARD_TARGET);
+#endif
+#if defined(CONFIG_TEST_CPU_LOCKUP_RESET)
+	LOG_INF("WDT and cpu lockup reset test on %s", CONFIG_BOARD_TARGET);
+#endif
 	print_bar();
 
 	/* Test relies on RESET_PIN to correctly start. */
 	get_current_reset_cause(&cause);
 
 	/* Report unexpected reset type. */
-	if (cause & ~(RESET_PIN | RESET_SOFTWARE | RESET_WATCHDOG)) {
+	if (cause & ~(RESET_PIN | RESET_SOFTWARE | RESET_CPU_LOCKUP | RESET_WATCHDOG)) {
 		LOG_INF("Unexpected reset cause was found!");
 	}
 
@@ -76,14 +95,26 @@ int main(void)
 
 		configure_watchdog();
 
+#if defined(CONFIG_TEST_SOFTWARE_RESET)
 		LOG_INF("Trigger Software reset");
 		k_msleep(2000);
 		sys_reboot(SYS_REBOOT_COLD);
+#endif
+#if defined(CONFIG_TEST_CPU_LOCKUP_RESET)
+		LOG_INF("Trigger CPU Lockup reset");
+		k_msleep(2000);
+		__ASSERT(0, "Intentionally failed assertion");
+#endif
 	}
 
-	/* Check if reset was due to software reset. */
-	if (cause & RESET_SOFTWARE) {
-		LOG_INF("RESET_SOFTWARE detected");
+	/* Check if reset was due to expected software reset (or cpu lockup reset). */
+	if ((cause & RESET_SOFTWARE) || (cause & RESET_CPU_LOCKUP)) {
+		if (cause & RESET_SOFTWARE) {
+			LOG_INF("RESET_SOFTWARE detected");
+		}
+		if (cause & RESET_CPU_LOCKUP) {
+			LOG_INF("RESET_CPU_LOCKUP detected");
+		}
 		print_bar();
 		clear_reset_cause();
 
