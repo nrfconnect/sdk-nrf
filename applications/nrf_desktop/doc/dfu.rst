@@ -27,7 +27,7 @@ Configuration
 
 You can use this module for the following devices:
 
-* nRF52, nRF53, and nRF54L Series - To perform the firmware upgrade, you must enable the bootloader.
+* nRF52, nRF53, and nRF54 Series - To perform the firmware upgrade, you must enable the bootloader.
   You can use the DFU module with either MCUboot or B0 bootloader.
   For more information on how to enable and configure a bootloader, see the :ref:`nrf_desktop_bootloader` section.
 
@@ -60,6 +60,16 @@ In that case, the DFU module assumes that the MCUboot direct-xip bootloader simp
 The :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` Kconfig option is used to inform the DFU module that the device uses the MCUboot bootloader in the direct-xip mode.
 If the option is enabled, the DFU module reports the ``MCUBOOT+XIP`` bootloader name instead of ``MCUBOOT`` to indicate that the bootloader working in the direct-xip mode is used.
 See the :ref:`nrf_desktop_bootloader` section for more information on the MCUboot bootloader configuration.
+
+Partitioning methods
+====================
+
+The DFU module stores the update image received over the configuration channel to a dedicated memory partition.
+Due to this responsibility, it uses one of the supported partitioning methods to get the information about this partition location.
+
+The DFU module is compatible with the memory layout defined using the Partition Manager (PM).
+It is also compatible with the memory layout defined using the Devicetree Source (DTS) when you use it with the MCUboot bootloader.
+For more details about the memory layout methods, see the :ref:`nrf_desktop_memory_layout` documentation.
 
 Device identification information
 =================================
@@ -133,16 +143,6 @@ fwinfo
 
    * Version and length of the image.
    * Partition ID of the currently booted image, used to specify the image placement.
-
-   Additionally, for the nRF54H Series, the following applies:
-
-   * The reported image size is set to zero.
-   * The booted image version is indicated by:
-
-     * Root manifest sequence number that is encoded in the build number field.
-     * Manifest semantic version, if supported by the SDFW (requires v0.6.2 or higher).
-       The semantic version is encoded in the major, minor and patch fields.
-       If semantic versioning is not supported, these fields are set to zero.
 
 .. _dfu_devinfo:
 
