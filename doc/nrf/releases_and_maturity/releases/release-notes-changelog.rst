@@ -878,6 +878,11 @@ Scripts
   * The documentation page for :ref:`nrf_profiler_script`.
     The page also describes the script for calculating statistics (:file:`calc_stats.py`).
 
+* Removed:
+
+  * The SUIT support from the :ref:`nrf_desktop_config_channel_script`.
+    The :ref:`nrf_desktop_config_channel_script` from older |NCS| versions can still be used to perform the SUIT DFU operation.
+
 Integrations
 ============
 
