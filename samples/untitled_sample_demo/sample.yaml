@@ -1,0 +1,20 @@
+sample:
+  description: Untitled sample demo
+  name: Untitled sample demo
+common:
+  sysbuild: true
+  build_only: true
+  harness: bluetooth
+  tags: bluetooth
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+tests:
+  todo.untitled_sample_demo: {}
+  todo.untitled_sample_demo.security:
+    extra_args: EXTRA_CONF_FILE="authentication.conf"

@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# For this sample, we build without using partition manager
+config PARTITION_MANAGER
+	default n
+
+# After the application sysbuild configuration section is the Zephyr sysbuild configuration, which
+# must be included
+source "share/sysbuild/Kconfig"
