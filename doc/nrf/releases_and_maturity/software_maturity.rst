@@ -648,7 +648,7 @@ The following table indicates the software maturity levels of the support for ea
            * - **Connection Subrating**
              - Supported
            * - **Channel Sounding**
-             - --
+             - Experimental
            * - **GATT Database Hash**
              - Supported
            * - **Enhanced ATT**
@@ -723,8 +723,8 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Experimental
            * - **Channel Sounding**
-             - --
-             - --
+             - Supported
+             - Supported
              - Supported
              - Experimental
            * - **GATT Database Hash**
