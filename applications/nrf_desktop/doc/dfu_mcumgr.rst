@@ -69,6 +69,8 @@ Make sure that the DFU lock utility is enabled if your nRF Desktop application c
 You cannot use this module with the :ref:`caf_ble_smp`.
 In other words, you cannot simultaneously enable the :ref:`CONFIG_DESKTOP_DFU_MCUMGR_ENABLE <config_desktop_app_options>` option and the :kconfig:option:`CONFIG_CAF_BLE_SMP` Kconfig option.
 
+Currently, this module supports only one bootloader backend: the MCUboot bootloader backend.
+
 .. note::
     B0 bootloader is not integrated with MCUmgr.
 
