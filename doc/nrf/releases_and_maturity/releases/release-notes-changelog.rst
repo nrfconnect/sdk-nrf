@@ -1,16 +1,13 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v3.1.99
-###########################
+Changelog for |NCS| v3.2.0-preview3
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -136,6 +133,11 @@ Security
     :kconfig:option:`CONFIG_TFM_PARTITION_INTERNAL_TRUSTED_STORAGE` Kconfig option.
 
   * Support for AES in counter mode using CRACEN for the :zephyr:board:`nrf54lm20dk`.
+
+  * Experimental support for TF-M on the nRF54LV10A SoC.
+  * Experimental support for NSIB and MCUBoot on the nRF54LV10A SoC.
+  * Experimental support for KMU on the nRF54LV10A SoC.
+  * Experimental support for compression and encryption on the nRF54LV10A SoC.
 
 * Updated:
 
@@ -327,6 +329,8 @@ Bluetooth samples
 -----------------
 
 * Added the :ref:`samples_test_app` application to demonstrate how to use the Bluetooth LE Test GATT Server and test Bluetooth LE functionality in peripheral samples.
+
+* Added support for the nRF54LV10A SoC to multiple bluetooth samples.
 
 * Updated the network core image applications for the following samples from the :zephyr:code-sample:`bluetooth_hci_ipc` sample to the :ref:`ipc_radio` application for multicore builds:
 
@@ -615,6 +619,13 @@ Wi-Fi samples
 
 Other samples
 -------------
+
+* Added support for the nRF54LV10A SoC in the following samples:
+
+  * :ref:`esb_prx`
+  * :ref:`esb_ptx`
+  * :ref:`event_manager_proxy_sample`
+  * :ref:`ipc_service_sample`
 
 * Added the :ref:`secondary_boot_sample` sample that demonstrates how to build and boot a secondary application image on the nRF54H20 DK.
 
