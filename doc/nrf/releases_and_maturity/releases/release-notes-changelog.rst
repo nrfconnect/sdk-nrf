@@ -314,6 +314,10 @@ nRF Desktop
     * The documentation of the :ref:`nrf_desktop_hid_state` and default HID report providers to simplify getting started with updating HID input reports used by the application or introducing support for a new HID input report.
     * The default value of the :kconfig:option:`CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL_NORMAL_PRIORITY_TIMEOUT_US` Kconfig option to ``0``.
       This is done to start using high MPSL timeslot priority quicker and speed up non-volatile memory operations.
+    * The number of preemptive priorities (:kconfig:option:`CONFIG_NUM_PREEMPT_PRIORITIES`).
+      The Kconfig option value was increased to ``15`` (default value from Zephyr).
+      The priority of ``10`` is used by default for preemptive contexts (for example, :kconfig:option:`CONFIG_BT_GATT_DM_WORKQ_PRIO` and :kconfig:option:`CONFIG_BT_LONG_WQ_PRIO`).
+      The previously used Kconfig option value of ``11`` leads to using the same priority for the mentioned preemptive contexts as the lowest available application thread priority (used for example, by the log processing thread).
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
