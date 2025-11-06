@@ -12,7 +12,7 @@ include(sxsymcrypt/sxsymcrypt.cmake)
 include(silexpk/silexpk.cmake)
 include(cracenpsa/cracenpsa.cmake)
 if(CONFIG_PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS OR
-  (CONFIG_SOC_NRF54LV10A AND CONFIG_PSA_NEED_CRACEN_CTR_AES))
+   (CONFIG_SOC_NRF54LV10A AND CONFIG_PSA_NEED_CRACEN_CTR_AES))
   include(cracen_sw/cracen_sw.cmake)
 endif()
 
