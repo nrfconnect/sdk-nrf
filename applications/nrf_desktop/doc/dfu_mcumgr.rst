@@ -70,7 +70,8 @@ You cannot use this module with the :ref:`caf_ble_smp`.
 In other words, you cannot simultaneously enable the :option:`CONFIG_DESKTOP_DFU_MCUMGR_ENABLE` option and the :kconfig:option:`CONFIG_CAF_BLE_SMP` Kconfig option.
 
 .. note::
-    B0 bootloader is not integrated with MCUmgr.
+   Currently, this module supports only one bootloader backend, the MCUboot bootloader backend.
+   B0 bootloader is not integrated with MCUmgr.
 
 .. _nrf_desktop_dfu_mcumgr_mcuboot:
 
