@@ -568,7 +568,8 @@ config BT_CTLR_FRAME_SPACE_UPDATE
 	select EXPERIMENTAL
 
 config BT_CTLR_CHANNEL_SOUNDING
-	bool "Channel Sounding support"
+	bool "Channel Sounding support [EXPERIMENTAL for nRF54H20 radio core]"
+	select EXPERIMENTAL if SOC_NRF54H20_CPURAD
 	help
 	  Enable Channel Sounding support.
 
