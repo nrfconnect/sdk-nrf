@@ -11,7 +11,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <sxsymcrypt/keyref.h>
-#include "cracen_psa_primitives.h"
+#include <cracen_psa_primitives.h>
 
 /**
  * @brief Setup software AES-CTR operation
