@@ -2727,11 +2727,13 @@ The lists are organized by device Series and implementation.
              - nRF54L10
              - nRF54L15
              - nRF54LM20
+             - nRF54LV10
            * - **Immutable Bootloader as part of build**
              - Experimental
              - Experimental
              - Experimental
-             - --
+             - Experimental
+             - Experimental
 
       .. tab:: nRF91 Series
 
@@ -3052,36 +3054,36 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Experimental
-              - Supported
+              - Experimental
             * - **Updatable MCUboot as part of build**
               - Experimental
               - Experimental
               - Experimental
-              - --
+              - Experimental
               - Experimental
             * - **Application image compression**
               - --
               - Supported
               - Supported
               - Experimental
-              - Supported
+              - Experimental
             * - **Hardware cryptography acceleration**
               - Supported
               - Supported
               - Supported
-              - --
-              - Supported
+              - Experimental
+              - Experimental
             * - **Multiple signature keys**
               - Supported
               - Supported
               - Supported
-              - --
-              - Supported
+              - Experimental
+              - Experimental
             * - **Image encryption**
               - Experimental
               - Experimental
               - Experimental
-              - --
+              - Experimental
               - Experimental
 
       .. tab:: nRF91 Series
