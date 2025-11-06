@@ -15,8 +15,17 @@
 struct test_data {
 	struct counter_alarm_cfg alarm_cfg;
 	int32_t tx_pin;
+	uint32_t req_rdy_pin;
+	uint32_t req_rdy_cnf;
 };
 
-void floating_pins_start(int32_t tx_pin);
+/** @brief Starting pin floating.
+ *
+ *
+ * @param use_req_pin Float REQ pin if true. Float RDY pin if false.
+ * @param tx_pin Additionally float TX pin, valid only if @p use_req_pin is true.
+ */
+void floating_pins_start(bool use_req_pin, int32_t tx_pin);
 
-void floating_pins_stop(int32_t tx_pin);
+/** @brief Stop pin floating. */
+void floating_pins_stop(bool use_req_pin, int32_t tx_pin);

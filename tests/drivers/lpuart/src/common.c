@@ -7,6 +7,7 @@
 
 static const struct device *counter =
 	DEVICE_DT_GET(DT_PHANDLE(DT_COMPAT_GET_ANY_STATUS_OKAY(vnd_busy_sim), counter));
+static struct test_data test_data;
 
 static void next_alarm(const struct device *counter, struct counter_alarm_cfg *alarm_cfg)
 {
@@ -30,22 +31,21 @@ void pins_toggle(int32_t tx_pin)
 {
 	static nrf_gpio_pin_pull_t pull = NRF_GPIO_PIN_PULLUP;
 	static nrf_gpio_pin_pull_t tx_pull = NRF_GPIO_PIN_PULLUP;
-	nrfx_gpiote_pin_t req_pin = DT_INST_PROP(0, req_pin);
-	bool req_pin_toggle;
+	bool req_rdy_pin_toggle;
 	bool tx_pin_toggle;
 
 	if (tx_pin > 0) {
 		uint32_t rnd = sys_rand32_get();
 
-		req_pin_toggle = (rnd & 0x6) == 0;
+		req_rdy_pin_toggle = (rnd & 0x6) == 0;
 		tx_pin_toggle = rnd & 0x1;
 	} else {
-		req_pin_toggle = true;
+		req_rdy_pin_toggle = true;
 		tx_pin_toggle = false;
 	}
 
-	if (req_pin_toggle) {
-		pull = pin_toggle(req_pin, pull);
+	if (req_rdy_pin_toggle) {
+		pull = pin_toggle(test_data.req_rdy_pin, pull);
 	}
 
 	if (tx_pin_toggle) {
@@ -53,13 +53,12 @@ void pins_toggle(int32_t tx_pin)
 	}
 }
 
-void pins_to_default(int32_t tx_pin)
+void pins_to_default(bool use_req_pin, int32_t tx_pin)
 {
-	nrfx_gpiote_pin_t req_pin = DT_INST_PROP(0, req_pin);
+	uint32_t pin = test_data.req_rdy_pin;
+	NRF_GPIO_Type *reg = nrf_gpio_pin_port_decode(&pin);
 
-	nrf_gpio_cfg(req_pin, NRF_GPIO_PIN_DIR_OUTPUT, NRF_GPIO_PIN_INPUT_DISCONNECT,
-		     NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_S0S1, NRF_GPIO_PIN_NOSENSE);
-
+	reg->PIN_CNF[pin] = test_data.req_rdy_cnf;
 	if (tx_pin > 0) {
 		nrf_gpio_cfg(tx_pin, NRF_GPIO_PIN_DIR_OUTPUT, NRF_GPIO_PIN_INPUT_DISCONNECT,
 			     NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_S0S1, NRF_GPIO_PIN_NOSENSE);
@@ -75,22 +74,28 @@ void counter_alarm_callback(const struct device *dev, uint8_t chan_id, uint32_t 
 	next_alarm(dev, &data->alarm_cfg);
 }
 
-void floating_pins_start(int32_t tx_pin)
+void floating_pins_start(bool use_req_pin, int32_t tx_pin)
 {
-	static struct test_data data;
+	uint32_t req_rdy_pin = use_req_pin ?
+		DT_INST_PROP(0, req_pin) : DT_INST_PROP(0, rdy_pin);
 
-	data.alarm_cfg.callback = counter_alarm_callback;
-	data.alarm_cfg.flags = COUNTER_ALARM_CFG_EXPIRE_WHEN_LATE;
-	data.alarm_cfg.user_data = (void *)&data;
-	data.tx_pin = tx_pin;
+	test_data.alarm_cfg.callback = counter_alarm_callback;
+	test_data.alarm_cfg.flags = COUNTER_ALARM_CFG_EXPIRE_WHEN_LATE;
+	test_data.alarm_cfg.user_data = (void *)&test_data;
+	test_data.tx_pin = use_req_pin ? tx_pin : -1;
+	test_data.req_rdy_pin = req_rdy_pin;
+
+	NRF_GPIO_Type *reg = nrf_gpio_pin_port_decode(&req_rdy_pin);
+
+	test_data.req_rdy_cnf = reg->PIN_CNF[req_rdy_pin];
 
 	counter_start(counter);
-	next_alarm(counter, &data.alarm_cfg);
+	next_alarm(counter, &test_data.alarm_cfg);
 }
 
-void floating_pins_stop(int32_t tx_pin)
+void floating_pins_stop(bool use_req_pin, int32_t tx_pin)
 {
 	counter_cancel_channel_alarm(counter, 0);
 	counter_stop(counter);
-	pins_to_default(tx_pin);
+	pins_to_default(use_req_pin, tx_pin);
 }

@@ -61,7 +61,7 @@ static void lpuart_isr_handler(const struct device *dev, void *user_data)
 	}
 }
 
-static void test_transmission(bool is_tx_pin_float_enabled)
+static void test_transmission(bool rx, bool is_tx_pin_float_enabled)
 {
 	int err;
 	NRF_UARTE_Type *uarte = (NRF_UARTE_Type *)DT_REG_ADDR(DT_INST_BUS(0));
@@ -72,23 +72,29 @@ static void test_transmission(bool is_tx_pin_float_enabled)
 
 	err = uart_irq_callback_user_data_set(lpuart, lpuart_isr_handler, (void *)test_buffer);
 	zassert_equal(err, 0, "Unexpected error when setting user data for callback %d", err);
-	uart_irq_err_enable(lpuart);
-	uart_irq_rx_enable(lpuart);
-	uart_irq_tx_enable(lpuart);
 
-	if (is_tx_pin_float_enabled) {
-		TC_PRINT("Starting floating pins\n");
-		floating_pins_start(tx_pin);
-		k_msleep(90);
-		TC_PRINT("Stopping floating pins\n");
-		floating_pins_stop(tx_pin);
-		k_msleep(2);
+	uart_irq_err_enable(lpuart);
+	if (rx) {
+		uart_irq_rx_enable(lpuart);
 	} else {
-		// k_msleep(100);
-		TC_PRINT("Waiting for transmission to finish\n");
-		zassert_equal(k_sem_take(&uart_transmission_done_sem, K_MSEC(100)), 0);
-		TC_PRINT("Transmission done\n");
+		uart_irq_tx_enable(lpuart);
 	}
+
+	TC_PRINT("Starting floating pins\n");
+	floating_pins_start(rx, is_tx_pin_float_enabled ? tx_pin : -1);
+	k_msleep(90);
+	TC_PRINT("Stopping floating pins\n");
+	floating_pins_stop(rx, is_tx_pin_float_enabled ? tx_pin : -1);
+
+	if (rx) {
+		uart_irq_tx_enable(lpuart);
+	} else {
+		uart_irq_rx_enable(lpuart);
+	}
+
+	TC_PRINT("Waiting for transmission to finish\n");
+	zassert_equal(k_sem_take(&uart_transmission_done_sem, K_MSEC(100)), 0);
+	TC_PRINT("Transmission done\n");
 
 	uart_irq_tx_disable(lpuart);
 	uart_irq_rx_disable(lpuart);
@@ -101,24 +107,34 @@ static void test_transmission(bool is_tx_pin_float_enabled)
 	}
 }
 
-ZTEST(test_lpuart_int_driven, test_transmission_no_tx_pin_float)
+ZTEST(test_lpuart_int_driven, test_rx_no_tx_pin_float)
 {
 	Z_TEST_SKIP_IFNDEF(CONFIG_TEST_LPUART_LOOPBACK);
 
 	tx_byte_offset = 0;
 	rx_byte_offset = 0;
 
-	test_transmission(false);
+	test_transmission(true, false);
 }
 
-ZTEST(test_lpuart_int_driven, test_transmission_with_tx_pin_float)
+ZTEST(test_lpuart_int_driven, test_rx_with_tx_pin_float)
 {
 	Z_TEST_SKIP_IFNDEF(CONFIG_TEST_LPUART_LOOPBACK);
 
 	tx_byte_offset = 0;
 	rx_byte_offset = 0;
 
-	test_transmission(true);
+	test_transmission(true, true);
+}
+
+ZTEST(test_lpuart_int_driven, test_tx_resiliency)
+{
+	Z_TEST_SKIP_IFNDEF(CONFIG_TEST_LPUART_LOOPBACK);
+
+	tx_byte_offset = 0;
+	rx_byte_offset = 0;
+
+	test_transmission(false, false);
 }
 
 static void *suite_setup(void)

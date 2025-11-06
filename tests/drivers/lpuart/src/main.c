@@ -361,9 +361,9 @@ static void test_resilency(bool tx_pin_float)
 		err = uart_rx_enable(lpuart, rx_buf, sizeof(rx_buf), 100);
 		zassert_equal(err, 0, "Unexpected err:%d", err);
 
-		floating_pins_start(tx_pin_float ? tx_pin : -1);
+		floating_pins_start(true, tx_pin_float ? tx_pin : -1);
 		k_msleep(100);
-		floating_pins_stop(tx_pin_float ? tx_pin : -1);
+		floating_pins_stop(true, tx_pin_float ? tx_pin : -1);
 		k_msleep(2);
 
 		validate_lpuart(lpuart);
