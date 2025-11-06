@@ -1244,6 +1244,7 @@ ci_tests_benchmarks_current_consumption:
     - nrf/include/nfc/
     - nrf/subsys/nfc/
     - nrf/tests/benchmarks/current_consumption/
+    - nrf/tests/benchmarks/pm_states/
     - nrf/tests/benchmarks/power_consumption/
     - nrfxlib/nfc/
     - zephyr/boards/nordic/
