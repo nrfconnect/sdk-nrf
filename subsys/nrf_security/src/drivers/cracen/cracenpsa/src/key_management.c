@@ -14,6 +14,7 @@
 #include <cracen_psa_montgomery.h>
 #include <cracen_psa_ikg.h>
 #include <cracen_psa_rsa_keygen.h>
+#include <cracen_psa_builtin_key_policy.h>
 #include <nrf_security_mutexes.h>
 #include "ecc.h"
 #include <silexpk/sxops/rsa.h>
@@ -894,6 +895,10 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
+	if (!cracen_builtin_key_user_allowed(attributes)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_EXPORT)) {
 		if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
 			return export_ecc_public_key_from_keypair(attributes, key_buffer,
@@ -943,6 +948,10 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 
 	if (key_buffer_size == 0) {
 		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (!cracen_builtin_key_user_allowed(attributes)) {
+		return PSA_ERROR_NOT_PERMITTED;
 	}
 
 	psa_key_location_t location =
@@ -1205,6 +1214,10 @@ psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
+	if (!cracen_builtin_key_user_allowed(attributes)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 #ifdef PSA_NEED_CRACEN_KMU_DRIVER
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
 		return generate_key_for_kmu(attributes, key_buffer, key_buffer_size,
@@ -1337,6 +1350,11 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 	 * and the `lifetime` field of the attribute struct. We will fill all the other
 	 * attributes, and update the `lifetime` field to be more specific.
 	 */
+
+	if (!cracen_builtin_key_user_allowed(attributes)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	switch (slot_number) {
 	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
 	case CRACEN_BUILTIN_MKEK_ID:
@@ -1394,6 +1412,10 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
+	if (!cracen_builtin_key_user_allowed(attributes)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
 		/* The keys will already be in the key buffer as they got loaded their by a previous
 		 * call to cracen_get_builtin_key or cached in the memory.
@@ -1442,6 +1464,10 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 			     size_t target_key_buffer_size, size_t *target_key_buffer_length)
 {
 #ifdef PSA_NEED_CRACEN_KMU_DRIVER
+	if (!cracen_builtin_key_user_allowed(attributes)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
@@ -1496,6 +1522,10 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes)
 {
 #ifdef PSA_NEED_CRACEN_KMU_DRIVER
+	if (!cracen_builtin_key_user_allowed(attributes)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	return cracen_kmu_destroy_key(attributes);
 #endif
 
@@ -1507,6 +1537,10 @@ psa_status_t cracen_derive_key(const psa_key_attributes_t *attributes, const uin
 			       size_t *key_length)
 {
 	psa_key_type_t key_type = psa_get_key_type(attributes);
+
+	if (!cracen_builtin_key_user_allowed(attributes)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
 
 	if (PSA_KEY_TYPE_IS_SPAKE2P_KEY_PAIR(key_type) && IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
 		return cracen_derive_spake2p_key(attributes, input, input_length, key, key_size,
