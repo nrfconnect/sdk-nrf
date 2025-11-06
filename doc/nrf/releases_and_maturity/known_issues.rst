@@ -605,6 +605,16 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v3-1-1 v3-1-0
+
+KRKNWK-20979: The Matter NUS service does not function correctly after the device is commissioned to the Matter network
+  After commissioning the device to the Matter network, the Matter Bluetooth Low Energy connection is dropped if you try to connect to the device using the Matter NUS service.
+  This issue occurs due to an issue in the SoftDevice Controller library when the :kconfig:option:`CONFIG_BT_LL_SOFTDEVICE_PERIPHERAL` Kconfig option is set to ``y``.
+
+  **Affected platforms:** nRF54L10, nRF54L15, nRF54LM20
+
+  **Workaround:** Set the :kconfig:option:`CONFIG_BT_LL_SOFTDEVICE_MULTIROLE` Kconfig option to ``y``.
+
 .. rst-class:: v3-1-1 v3-0-2 v3-0-1 v3-0-0
 
 KRKNWK-20948: The Matter west :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool_generate` command may not work properly on Windows
