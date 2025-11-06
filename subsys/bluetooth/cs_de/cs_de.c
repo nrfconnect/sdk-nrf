@@ -161,27 +161,42 @@ static int32_t calculate_left_null_compensation_of_peak(int32_t peak_index,
 	return compensated_peak_index;
 }
 
-
-static void calculate_dist_ifft(float *dist, float iq_tones_comb[2 * CONFIG_BT_CS_DE_NFFT_SIZE])
+static void calculate_ifft_mag(float iq_tones_comb[2 * CONFIG_BT_CS_DE_NFFT_SIZE])
 {
+	/* This function calculates the magnitude of the IFFT of the input IQ values.
+	 * Note that the result is written back to the input array.
+	 * Also note that the input array is a complex array of size CONFIG_BT_CS_DE_NFFT_SIZE
+	 * Odd indexes contain the real part and even indexes contain the imaginary part.
+	 *
+	 * To find the IFFT this the function uses FFT functions provided by the CMSIS-DSP library.
+	 * To calculate the IFFT using FFT the following steps can be used:
+	 *  1. Complex conjugate the input.
+	 *  2. Perform the FFT.
+	 *  3. Complex conjugate the output.
+	 * Since we are interested in the magnitude of the IFFT, we can skip step 3.
+	 * and directly calculate the magnitude of the output of step 2.
+	 */
 
 	/* Complex conjugate the input. */
 	for (uint32_t i = 0; i < NUM_CHANNELS; i++) {
 		iq_tones_comb[i * 2 + 1] = -iq_tones_comb[i * 2 + 1];
 	}
 
-#if CONFIG_BT_CS_DE_NFFT_SIZE == 512
-	arm_cfft_f32(&arm_cfft_sR_f32_len512, iq_tones_comb, 0, 1);
-#elif CONFIG_BT_CS_DE_NFFT_SIZE == 1024
-	arm_cfft_f32(&arm_cfft_sR_f32_len1024, iq_tones_comb, 0, 1);
-#elif CONFIG_BT_CS_DE_NFFT_SIZE == 2048
-	arm_cfft_f32(&arm_cfft_sR_f32_len2048, iq_tones_comb, 0, 1);
-#else
-#error
-#endif
+	/* Perform the FFT. */
+	#if CONFIG_BT_CS_DE_NFFT_SIZE == 512
+		arm_cfft_f32(&arm_cfft_sR_f32_len512, iq_tones_comb, 0, 1);
+	#elif CONFIG_BT_CS_DE_NFFT_SIZE == 1024
+		arm_cfft_f32(&arm_cfft_sR_f32_len1024, iq_tones_comb, 0, 1);
+	#elif CONFIG_BT_CS_DE_NFFT_SIZE == 2048
+		arm_cfft_f32(&arm_cfft_sR_f32_len2048, iq_tones_comb, 0, 1);
+	#else
+	#error
+	#endif
 
-	/* Compute the magnitude of iq_tones_comb[0:2*CONFIG_BT_CS_DE_NFFT_SIZE - 1], store output
-	 * in iq_tones_comb[0:CONFIG_BT_CS_DE_NFFT_SIZE - 1]
+	/* Compute the magnitude of complex values in
+	 * iq_tones_comb[0:2*CONFIG_BT_CS_DE_NFFT_SIZE - 1]
+	 * and scale by 1/CONFIG_BT_CS_DE_NFFT_SIZE.
+	 * Store output in iq_tones_comb[0:CONFIG_BT_CS_DE_NFFT_SIZE - 1]
 	 */
 	for (uint32_t n = 0; n < CONFIG_BT_CS_DE_NFFT_SIZE; n++) {
 		float realIn = iq_tones_comb[2 * n] / CONFIG_BT_CS_DE_NFFT_SIZE;
@@ -189,12 +204,18 @@ static void calculate_dist_ifft(float *dist, float iq_tones_comb[2 * CONFIG_BT_C
 
 		arm_sqrt_f32((realIn * realIn) + (imagIn * imagIn), &iq_tones_comb[n]);
 	}
+}
 
-	/* The iq_tones_comb array now contains the ifft_mag in the indices
-	 * [0:CONFIG_BT_CS_DE_NFFT_SIZE-1]
+static uint32_t find_ifft_peak_index(float ifft_mag[2 * CONFIG_BT_CS_DE_NFFT_SIZE])
+{
+	/* This function tries to find the peak index of the input IFFT magnitude.
+	 *
+	 * The function uses the following approach:
+	 *  1. Find the index of the strongest peak,
+	 *     corresponding to the maximum value in the IFFT magnitude.
+	 *  2. Search for strong peaks closer than the max peak.
+	 *  3. When applicable: Compensate peak based on left null location.
 	 */
-	float *ifft_mag = iq_tones_comb;
-
 	uint32_t ifft_mag_max_index;
 	float ifft_mag_max;
 
@@ -230,7 +251,28 @@ static void calculate_dist_ifft(float *dist, float iq_tones_comb[2 * CONFIG_BT_C
 			calculate_left_null_compensation_of_peak(shortest_path_idx, ifft_mag);
 	}
 
-	*dist = calculate_ifft_peak_index_to_distance(compensated_peak_index, ifft_mag);
+	return compensated_peak_index;
+}
+
+static void calculate_dist_ifft(float *dist, float iq_tones_comb[2 * CONFIG_BT_CS_DE_NFFT_SIZE])
+{
+	/* This function calculates a distance estimate
+	 * based on the IFFT magnitude of the input IQ values.
+	 *
+	 * To do this the function uses the following steps:
+	 *  1. Calculate the IFFT magnitude of the input IQ values.
+	 *  2. Find index of the peak in the IFFT magnitude which is believed
+	 *     to correspond to the path with the shortest propagattion time.
+	 *  3. Convert the peak index to a distance estimate.
+	 */
+	calculate_ifft_mag(iq_tones_comb);
+
+	/* The input IQ values are overwritten with the IFFT magnitude. */
+	float *ifft_mag = iq_tones_comb;
+
+	uint32_t ifft_peak_index = find_ifft_peak_index(ifft_mag);
+
+	*dist = calculate_ifft_peak_index_to_distance(ifft_peak_index, ifft_mag);
 }
 
 static void calculate_dist_rtt(cs_de_report_t *p_report)
