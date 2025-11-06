@@ -25,7 +25,7 @@
 #include <cracen_sw_aes_cbc.h>
 #include <cracen_sw_common.h>
 
-#include "cracen_psa_primitives.h"
+#include <cracen_psa_primitives.h>
 
 static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *attributes)
 {
