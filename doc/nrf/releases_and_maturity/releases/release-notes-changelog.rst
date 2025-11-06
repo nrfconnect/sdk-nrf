@@ -715,6 +715,7 @@ Matter samples
 
    * Added a callback for the auto-relock feature.
      This resolves the :ref:`known issue <known_issues>` KRKNWK-20691.
+   * Updated the NUS service to use the :kconfig:option:`CONFIG_BT_APP_PASSKEY` Kconfig option instead of the deprecated :kconfig:option:`CONFIG_BT_FIXED_PASSKEY` Kconfig option.
 
 Networking samples
 ------------------
