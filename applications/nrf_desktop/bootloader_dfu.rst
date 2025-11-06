@@ -35,7 +35,7 @@ The nRF Desktop application can use one of the following bootloaders:
 
   * nRF52 Series
   * nRF53 Series
-  * nRF54L Series
+  * nRF54 Series
 
   The MCUboot bootloader can be used in the following scenarios:
 
@@ -189,24 +189,47 @@ For an example of a bootloader Kconfig configuration file defined by the applica
   Both mentioned firmware upgrade methods are not used simultaneously by any of the configurations.
   For example, the ``nrf52840dk/nrf52840`` board in ``mcuboot_smp`` file suffix uses only the background DFU and does not enable the serial recovery feature.
 
-MCUboot bootloader on nRF54L
-----------------------------
+MCUboot bootloader on nRF54
+---------------------------
 
-The nRF54L SoC Series enhances security and reduces boot times by using hardware cryptography in the MCUboot immutable bootloader.
-The |NCS| allows using hardware cryptography for ED25519 signature (:kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519`) on the nRF54L SoC Series.
+The nRF54 SoC Series enhances security and reduces boot times by using hardware cryptography in the MCUboot immutable bootloader.
+The |NCS| allows using hardware cryptography for ED25519 signature (:kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519`) on the nRF54 SoC Series.
 
-You can enhance security further by enabling the following sysbuild Kconfig options:
+You can enhance security further by enabling the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE` sysbuild Kconfig option.
+This option enables using a pure signature of the image, verifying the signature directly on the image, rather than on its hash.
+However, you cannot use this option if the secondary image slot uses external memory.
 
-* :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE` - This option enables using a pure signature of the image, verifying signature directly on image, rather than on its hash.
-  However, you cannot use this option if the secondary image slot uses external memory.
-* :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU` - This option enables using Key Management Unit (KMU) to store keys for signature verification instead of compiling key data into the MCUboot bootloader image.
-  To use KMU, the public key must first be provisioned.
-  See the :ref:`ug_nrf54l_developing_provision_kmu` documentation for details.
+Bootloader features that are specific to the nRF54L and the nRF54H series are listed in their respective subsections below.
 
-  .. note::
-     To use automatic provisioning, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` sysbuild Kconfig option.
-     This option enables generating a default :file:`keyfile.json` file during the build process based on the input file provided by the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` sysbuild Kconfig option.
-     The automatic provisioning is only performed if the west flash command is executed with the ``--erase`` or ``--recover`` flag.
+MCUboot bootloader features specific to nRF54L series
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The nRF54L devices support the use of the Key Management Unit (KMU) to store keys for signature verification instead of compiling key data into the MCUboot bootloader image.
+To use KMU in the MCUboot bootloader, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU` sysbuild Kconfig option.
+You must also make sure to provision the public key to your target device before running the firmware.
+See the :ref:`ug_nrf54l_developing_provision_kmu` documentation for details.
+
+.. note::
+    To use automatic provisioning, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` sysbuild Kconfig option.
+    This option enables generating a default :file:`keyfile.json` file during the build process based on the input file provided by the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` sysbuild Kconfig option.
+    The automatic provisioning is only performed if the west flash command is executed with the ``--erase`` or ``--recover`` flag.
+
+MCUboot bootloader features specific to nRF54H series
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+On the nRF54H devices, the MCUboot direct-xip mode uses by default a merged image slot that combines both application and radio core images.
+The merged binary size is the sum of the application image, the radio core image, and the padding between them.
+The merged image slot configuration is indicated by the :kconfig:option:`SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY` sysbuild Kconfig option.
+
+.. note::
+   Because padding is added between the application and radio core images, the merged binary ends up including the unused NVM from the application image partition.
+   To limit the impact of this unused NVM on the merged binary size, you can tailor the partition size of the application image to the image size.
+   If more space is needed for the application image in the future, you can increase the partition size of the application image using DFU.
+
+The MCUboot bootloader on the nRF54H devices requires additional configuration to properly support Suspend to RAM (S2RAM) feature.
+For further details, see the :ref:`ug_nrf54h20_pm_optimizations_bootloader` documentation.
+
+For more general information regarding the MCUboot bootloader on the nRF54H devices, see the :ref:`ug_nrf54h20_mcuboot_dfu` documentation.
 
 .. _nrf_desktop_bootloader_background_dfu:
 
