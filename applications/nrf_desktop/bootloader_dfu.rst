@@ -35,7 +35,7 @@ The nRF Desktop application can use one of the following bootloaders:
 
   * nRF52 Series
   * nRF53 Series
-  * nRF54L Series
+  * nRF54 Series
 
   The MCUboot bootloader can be used in the following scenarios:
 
@@ -189,11 +189,11 @@ For an example of a bootloader Kconfig configuration file defined by the applica
   Both mentioned firmware upgrade methods are not used simultaneously by any of the configurations.
   For example, the ``nrf52840dk/nrf52840`` board in ``mcuboot_smp`` file suffix uses only the background DFU and does not enable the serial recovery feature.
 
-MCUboot bootloader on nRF54L
-----------------------------
+MCUboot bootloader on nRF54
+---------------------------
 
-The nRF54L SoC Series enhances security and reduces boot times by using hardware cryptography in the MCUboot immutable bootloader.
-The |NCS| allows using hardware cryptography for ED25519 signature (:kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519`) on the nRF54L SoC Series.
+The nRF54 SoC Series enhances security and reduces boot times by using hardware cryptography in the MCUboot immutable bootloader.
+The |NCS| allows using hardware cryptography for ED25519 signature (:kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519`) on the nRF54 SoC Series.
 
 You can enhance security further by enabling the following sysbuild Kconfig options:
 
@@ -202,6 +202,9 @@ You can enhance security further by enabling the following sysbuild Kconfig opti
 * :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU` - This option enables using Key Management Unit (KMU) to store keys for signature verification instead of compiling key data into the MCUboot bootloader image.
   To use KMU, the public key must first be provisioned.
   See the :ref:`ug_nrf54l_developing_provision_kmu` documentation for details.
+
+  .. note::
+     The KMU feature is only supported for the nRF54L SoC Series.
 
   .. note::
      To use automatic provisioning, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` sysbuild Kconfig option.
