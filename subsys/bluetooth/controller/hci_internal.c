@@ -81,6 +81,9 @@ static bool command_generates_command_complete_event(uint16_t hci_opcode)
 #if defined(CONFIG_BT_CTLR_FRAME_SPACE_UPDATE)
 	case SDC_HCI_OPCODE_CMD_LE_FRAME_SPACE_UPDATE:
 #endif /* CONFIG_BT_CTLR_FRAME_SPACE_UPDATE */
+#if defined(CONFIG_BT_CTLR_SHORTER_CONNECTION_INTERVALS)
+	case SDC_HCI_OPCODE_CMD_LE_CONN_RATE_REQUEST:
+#endif /* CONFIG_BT_CTLR_SHORTER_CONNECTION_INTERVALS */
 		return false;
 	default:
 		return true;
@@ -1405,6 +1408,9 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_LE_SET_HOST_FEATURE:
 		return sdc_hci_cmd_le_set_host_feature(
 			(sdc_hci_cmd_le_set_host_feature_t const *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_SET_HOST_FEATURE_V2:
+		return sdc_hci_cmd_le_set_host_feature_v2(
+			(sdc_hci_cmd_le_set_host_feature_v2_t const *)cmd_params);
 #endif
 
 #if defined(CONFIG_BT_CTLR_SDC_PAWR_ADV)
@@ -1498,6 +1504,29 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_LE_FRAME_SPACE_UPDATE:
 		return sdc_hci_cmd_le_frame_space_update((void *)cmd_params);
 #endif /* CONFIG_BT_CTLR_FRAME_SPACE_UPDATE */
+
+#if defined(CONFIG_BT_CTLR_SHORTER_CONNECTION_INTERVALS)
+	case SDC_HCI_OPCODE_CMD_LE_CONN_RATE_REQUEST:
+		return sdc_hci_cmd_le_conn_rate_request((void *)cmd_params);
+#if defined(CONFIG_BT_CENTRAL)
+	case SDC_HCI_OPCODE_CMD_LE_SET_DEFAULT_RATE_PARAMS:
+		return sdc_hci_cmd_le_set_default_rate_params((void *)cmd_params);
+#endif /* CONFIG_BT_CENTRAL */
+	case SDC_HCI_OPCODE_CMD_LE_READ_MIN_SUPPORTED_CONN_INTERVAL: {
+		uint8_t status =
+			sdc_hci_cmd_le_read_min_supported_conn_interval((void *)event_out_params);
+		*param_length_out +=
+			sizeof(sdc_hci_cmd_le_read_min_supported_conn_interval_return_t);
+		if (status == BT_HCI_ERR_SUCCESS) {
+			*param_length_out +=
+				((sdc_hci_cmd_le_read_min_supported_conn_interval_return_t *)
+					 event_out_params)
+					->num_groups *
+				sizeof(sdc_hci_le_read_min_supported_conn_interval_group_t);
+		}
+		return status;
+	}
+#endif /* CONFIG_BT_CTLR_SHORTER_CONNECTION_INTERVALS */
 
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;

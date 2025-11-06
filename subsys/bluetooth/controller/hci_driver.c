@@ -204,6 +204,13 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 #define SDC_FRAME_SPACE_UPDATE_MEM_SIZE 0
 #endif
 
+#if defined(CONFIG_BT_CTLR_SHORTER_CONNECTION_INTERVALS)
+#define SDC_SHORTER_CONNECTION_INTERVALS_MEM_SIZE                                                  \
+	SDC_MEM_SHORTER_CONNECTION_INTERVALS(SDC_CENTRAL_COUNT + PERIPHERAL_COUNT)
+#else
+#define SDC_SHORTER_CONNECTION_INTERVALS_MEM_SIZE 0
+#endif
+
 #if defined(CONFIG_BT_CTLR_EXTENDED_FEAT_SET)
 #define SDC_EXTENDED_FEAT_SET_MEM_SIZE                                                             \
 	SDC_MEM_EXTENDED_FEATURE_SET(SDC_CENTRAL_COUNT + PERIPHERAL_COUNT,                         \
@@ -293,6 +300,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 		      (SDC_SUBRATING_MEM_SIZE) + \
 		      (SDC_SYNC_TRANSFER_MEM_SIZE) + \
 		      (SDC_FRAME_SPACE_UPDATE_MEM_SIZE) + \
+		      (SDC_SHORTER_CONNECTION_INTERVALS_MEM_SIZE) + \
 		      (SDC_EXTENDED_FEAT_SET_MEM_SIZE) + \
 		      (SDC_PERIODIC_ADV_MEM_SIZE) + \
 		      (SDC_PERIODIC_ADV_RSP_MEM_SIZE) + \
@@ -893,6 +901,15 @@ static void configure_supported_features(void)
 		}
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
 			sdc_support_frame_space_update_peripheral();
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_SHORTER_CONNECTION_INTERVALS)) {
+		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+			sdc_support_shorter_connection_intervals_central();
+		}
+		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+			sdc_support_shorter_connection_intervals_peripheral();
 		}
 	}
 
