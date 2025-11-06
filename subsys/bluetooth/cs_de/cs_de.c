@@ -281,7 +281,7 @@ static void calculate_dist_rtt(cs_de_report_t *p_report)
 		float rtt_avg_measured_ns =
 			(p_report->rtt_accumulated_half_ns * 0.5f) / p_report->rtt_count;
 		float tof_ns = rtt_avg_measured_ns / 2.0f;
-		float rtt_distance_m = tof_ns * (SPEED_OF_LIGHT_M_PER_S / 1e9f);
+		float rtt_distance_m = fmaxf(tof_ns * (SPEED_OF_LIGHT_M_PER_S / 1e9f), 0.0f);
 
 		for (uint8_t ap = 0; ap < p_report->n_ap; ap++) {
 			if (rtt_distance_m >= 0.0f) {
