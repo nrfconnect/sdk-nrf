@@ -74,12 +74,20 @@ class Package(DataBaseClass):
         url            URL pointing to the source of this package
         version        Version string of this package
         browser_url    URL that can be opened in a web browser
+        supplier       Supplier name
+        purl           Package URL (PURL) identifier
+        cpe            Common Platform Enumeration (CPE) identifier
+        dependencies   List of package IDs this package depends on
     '''
     id: str = ''
     name: 'str|None' = None
     url: 'str|None' = None
     version: 'str|None' = None
     browser_url: 'str|None' = None
+    supplier: 'str|None' = None
+    purl: 'str|None' = None
+    cpe: 'str|None' = None
+    dependencies: 'list[str]' = list()
 
 
 class LicenseExpr(DataBaseClass):
