@@ -4,16 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	nrf_radio_coex: coex {
-		compatible = "nordic,nrf7002-coex";
-		status = "disabled";
-		status0-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
-		req-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
-		grant-gpios = <&gpio1 7 (GPIO_PULL_DOWN | GPIO_ACTIVE_LOW)>;
-	};
-};
-
 &nrf70 {
 	iovdd-ctrl-gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
 	bucken-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
