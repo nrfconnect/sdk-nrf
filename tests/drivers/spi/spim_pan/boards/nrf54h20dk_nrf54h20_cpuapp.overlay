@@ -57,4 +57,4 @@ tst_timer: &timer131 {
 	owned-channels = <1>;
 	sink-channels = <1>;
 	status = "okay";
-	};
+};
