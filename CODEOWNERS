@@ -503,6 +503,7 @@
 /samples/dfu/dfu_target/                  @nrfconnect/ncs-eris
 /samples/dfu/dfu_multi_image/             @nrfconnect/ncs-eris
 /samples/dfu/fw_loader/                   @nrfconnect/ncs-eris
+/samples/dfu/mcuboot_with_encryption/     @nrfconnect/ncs-eris
 /samples/dfu/single_slot/                 @nrfconnect/ncs-eris
 /samples/edge_impulse/                    @nrfconnect/ncs-si-muffin
 /samples/esb/                             @nrfconnect/ncs-si-muffin
@@ -635,6 +636,7 @@
 /samples/dfu/dfu_target/*.rst             @nrfconnect/ncs-eris-doc
 /samples/dfu/dfu_multi_image/*.rst        @nrfconnect/ncs-eris-doc
 /samples/dfu/fw_loader/**/*.rst           @nrfconnect/ncs-eris-doc
+/samples/dfu/mcuboot_with_encryption/*.rst @nrfconnect/ncs-eris @nrfconnect/ncs-eris-doc
 /samples/dfu/single_slot/*.rst            @nrfconnect/ncs-eris-doc
 /samples/esb/**/*.rst                     @nrfconnect/ncs-si-muffin-doc
 /samples/edge_impulse/**/*.rst            @nrfconnect/ncs-si-muffin-doc

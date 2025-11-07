@@ -24,4 +24,5 @@ This section lists single |NCS| samples for various uses that are not part of ot
    ../../../samples/ironside_se/*/README
    ../../../tests/benchmarks/multicore/*/README
    ../../../samples/zephyr/smp_svr_mini_boot/README
+   ../../../samples/dfu/mcuboot_with_encryption/README
    ../../../samples/basic/*/README

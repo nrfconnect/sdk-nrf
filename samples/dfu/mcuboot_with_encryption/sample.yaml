@@ -1,0 +1,116 @@
+sample:
+  description: MCUboot build with image encryption
+  name: mcuboot_with_encryption
+common:
+  sysbuild: true
+  tags:
+    - mcuboot_with_encryption
+tests:
+  sample.mcuboot_with_encryption.nrf54l15dk.image_v1.0.0:
+    build_only: true
+    extra_args:
+      - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="1.0.0"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+  sample.mcuboot_with_encryption.nrf54l15dk.image_v2.0.0:
+    build_only: true
+    extra_args:
+      - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="2.0.0"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+  sample.mcuboot_with_encryption.nrf54l15dk.kmu.image_v1.0.0:
+    build_only: true
+    extra_args:
+      - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="1.0.0"
+      - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+  sample.mcuboot_with_encryption.nrf54l15dk.kmu.image_v2.0.0:
+    build_only: true
+    extra_args:
+      - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="2.0.0"
+      - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+  sample.mcuboot_with_encryption.nrf54lm20dk.image_v1.0.0:
+    build_only: true
+    extra_args:
+      - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="1.0.0"
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.mcuboot_with_encryption.nrf54lm20dk.image_v2.0.0:
+    build_only: true
+    extra_args:
+      - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="2.0.0"
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.mcuboot_with_encryption.nrf54lm20dk.kmu.image_v1.0.0:
+    build_only: true
+    extra_args:
+      - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="1.0.0"
+      - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.mcuboot_with_encryption.nrf54lm20dk.kmu.image_v2.0.0:
+    build_only: true
+    extra_args:
+      - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="2.0.0"
+      - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  sample.mcuboot_with_encryption.nrf54lv10dk.image_v1.0.0:
+    build_only: true
+    extra_args:
+      - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="1.0.0"
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+  sample.mcuboot_with_encryption.nrf54lv10dk.image_v2.0.0:
+    build_only: true
+    extra_args:
+      - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="2.0.0"
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+  sample.mcuboot_with_encryption.nrf54lv10dk.kmu.image_v1.0.0:
+    build_only: true
+    extra_args:
+      - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="1.0.0"
+      - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+  sample.mcuboot_with_encryption.nrf54lv10dk.kmu.image_v2.0.0:
+    build_only: true
+    extra_args:
+      - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="2.0.0"
+      - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
