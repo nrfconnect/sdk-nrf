@@ -191,7 +191,7 @@ static bool img_mgmt_slot_max_size(size_t *area_sizes, zcbor_state_t *zse)
 
 	ARG_UNUSED(area_sizes);
 
-	rc = blinfo_lookup(BLINFO_MAX_APPLICATION_SIZE, &max_app_size, sizeof(max_app_size))
+	rc = blinfo_lookup(BLINFO_MAX_APPLICATION_SIZE, &max_app_size, sizeof(max_app_size));
 
 	if (rc < 0) {
 		LOG_ERR("Failed to lookup max application size: %d", rc);
@@ -651,7 +651,7 @@ static int img_mgmt_slot_info(struct smp_streamer *ctxt)
 			}
 
 #if defined(CONFIG_MCUMGR_GRP_IMG_TOO_LARGE_SYSBUILD) || \
-	defined(MCUMGR_GRP_IMG_TOO_LARGE_BOOTLOADER_INFO)
+	defined(CONFIG_MCUMGR_GRP_IMG_TOO_LARGE_BOOTLOADER_INFO)
 			ok = img_mgmt_slot_max_size(area_sizes, zse);
 
 			if (!ok) {
@@ -1139,8 +1139,6 @@ static const struct mgmt_handler img_mgmt_handlers[] = {
 	},
 #endif
 };
-
-static const struct mgmt_handler img_mgmt_handlers[];
 
 #define IMG_MGMT_HANDLER_CNT ARRAY_SIZE(img_mgmt_handlers)
 
