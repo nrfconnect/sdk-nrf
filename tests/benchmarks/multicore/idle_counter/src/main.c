@@ -122,9 +122,7 @@ int main(void)
 		start_time = start_timer(counter_dev);
 		k_msleep(100);
 		verify_timer(start_time);
-		ret = gpio_pin_set_dt(&led, 1);
-		__ASSERT(ret == 0, "Unable to turn on LED");
-		k_msleep(100);
+		k_busy_wait(100000);
 	}
 
 	return 0;
