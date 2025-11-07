@@ -289,11 +289,35 @@ void esb_ppi_disable_all(void)
 				  BIT(egu_timer_start) |
 				  BIT(radio_address_timer_stop) |
 				  BIT(timer_compare0_radio_disable) |
-				  BIT(radio_end_timer_start) |
+				  BIT(timer_compare1_radio_txen) |
 				  (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX) ?
-					BIT(timer_compare1_radio_txen) : 0));
+					BIT(radio_end_timer_start) : 0));
 
 	nrf_dppi_channels_disable(ESB_DPPIC, channels_mask);
+
+	/* Clear all publish/subscribe connections to fully disconnect peripherals */
+	/* Clear EGU */
+	nrf_egu_publish_clear(ESB_EGU, ESB_EGU_EVENT);
+	nrf_egu_publish_clear(ESB_EGU, ESB_EGU_DPPI_EVENT);
+	nrf_egu_subscribe_clear(ESB_EGU, ESB_EGU_TASK);
+	nrf_egu_subscribe_clear(ESB_EGU, ESB_EGU_DPPI_TASK);
+
+	/* Clear Radio */
+	nrf_radio_publish_clear(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS);
+	nrf_radio_subscribe_clear(NRF_RADIO, NRF_RADIO_TASK_RXEN);
+	nrf_radio_subscribe_clear(NRF_RADIO, NRF_RADIO_TASK_TXEN);
+	nrf_radio_subscribe_clear(NRF_RADIO, NRF_RADIO_TASK_DISABLE);
+
+	/* Clear Timer */
+	nrf_timer_publish_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_EVENT_COMPARE0);
+	nrf_timer_publish_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_EVENT_COMPARE1);
+	nrf_timer_subscribe_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_START);
+	nrf_timer_subscribe_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_STOP);
+
+	/* Clear DPPI */
+	nrf_dppi_subscribe_clear(ESB_DPPIC,
+				 nrf_dppi_group_disable_task_get((uint8_t)ramp_up_dppi_group));
+	nrf_dppi_channels_remove_from_group(ESB_DPPIC, BIT(egu_ramp_up), ramp_up_dppi_group);
 }
 
 void esb_ppi_deinit(void)
