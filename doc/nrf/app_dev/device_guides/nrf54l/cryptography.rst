@@ -14,7 +14,7 @@ On nRF54L Series devices, the CRACEN cryptographic driver provides entropy and h
 The CRACEN driver supports the following features:
 
 * Executing :ref:`cryptographic operations <ug_crypto_supported_features>` using the CRACEN hardware peripheral.
-* Importing, using, and revoking keys stored in the :ref:`Key Management Unit (KMU) <ug_nrf54l_developing_basics_kmu>`.
+* Importing, using, and revoking keys stored in the Key Management Unit (KMU) hardware peripheral.
 * Pushing symmetric keys directly from the KMU to the CRACEN symmetric engine, without exposing the key material to the CPU.
 * Using isolated keys derived from CRACEN's Isolated Key Generator (IKG) for encryption and signing purposes.
 
@@ -26,11 +26,15 @@ KMU and CRACEN peripherals
 **************************
 
 The CRACEN and the KMU hardware peripherals, along with the CRACEN driver, are central when ensuring that the assets of an nRF54L device are protected.
-While CRACEN is not accessed by the CPU and typically not directly used by the end-users and their applications, the KMU provides operations to import, use, revoke, or delete assets.
+
+The CRACEN hardware peripheral is not accessed by the CPU and typically not directly used by the end-users and their applications.
+
+The KMU acts as an intermediary between the CPU and the CRACEN hardware peripheral.
+It is designed to hide information from the CPU, while providing operations to import, use, revoke, or delete assets (keys and metadata).
 Only the KMU is able to push assets to CRACEN's protected RAM and the SEED register.
 
 .. note::
-   CRACEN relies on microcode for asymmetric cryptography operations like signature validation.
+   The CRACEN hardware peripheral relies on microcode for asymmetric cryptography operations like signature validation.
    On the nRF54L15, nRF54L10, and nRF54L05 devices, this microcode must be uploaded to a special CRACEN RAM area before first use and after each reset.
 
    If a bootloader uploads this microcode, there is no need to re-upload it for application use.
@@ -39,7 +43,7 @@ Only the KMU is able to push assets to CRACEN's protected RAM and the SEED regis
 
 The KMU can store cryptographic keys and 384-bit random seeds for the IKG in key storage slots.
 The CRACEN driver exposes the KMU operations through standard PSA Crypto API calls, with some vendor-specific extensions.
-The following KMU operations are supported:
+The following KMU operations are supported by the driver:
 
 * Importing/provisioning keys to KMU slots.
 * Deleting a key from the KMU, allowing the underlying storage location to be reused.
@@ -50,15 +54,20 @@ The following KMU operations are supported:
 
 Additionally, the CRACEN driver supports storing encrypted keys in KMU slots, transparently decrypting them to a temporary RAM location before using them in cryptographic operations.
 
+For more information about these hardware peripherals, see the related pages in the device datasheet, for example `KMU - Key management unit <nRF54L15 Key management unit_>`_ and `CRACEN - Crypto accelerator engine <nRF54L15 CRACEN_>`_ in the nRF54L15 datasheet.
+
 .. _ug_nrf54l_crypto_kmu_slots:
 
 KMU slots
 =========
 
-The KMU is partitioned into 256 numbered slots, each capable of storing 128 bits of key material, a 32-bit target push address and 32 bits of metadata.
+The KMU is partitioned into 256 numbered slots.
+Each KMU slot is capable of storing 128 bits of key material, a 32-bit destination address (``kmu_push_area``), and 32 bits of KMU metadata (:c:struct:`kmu_metadata`).
 Storing keys that are larger than 128 bits is supported by using multiple, consecutive slots.
 
-The application can use the KMU slots to store key data for their own purposes.
+See the device datasheet, for example `KMU - Key management unit <nRF54L15 Key management unit_>`_ in the nRF54L15 datasheet.
+
+The application can use the KMU slots to store key data for its own purposes.
 Some KMU slots are reserved for current and future |NCS| use cases.
 The following table gives an overview of the KMU slots and their usage:
 
@@ -151,12 +160,12 @@ The keys are not exportable, except for the public key associated with the asymm
 
 .. _ug_nrf54l_crypto_kmu_key_programming_model:
 
-Programming model for referencing keys
-**************************************
+PSA Crypto API programming model for KMU keys
+*********************************************
 
 The keys that are stored in the KMU can be used by most cryptographic functions and key management functions in the PSA Crypto API (see `PSA Certified Crypto API 1.3.1`_), with a built-in key ID representing a particular KMU slot.
 
-To identify that the KMU is used as a persistent storage backend for a specific ``psa_key_id_t``, you need to create a ``psa_key_attributes_t`` structure and set the required attributes from the list below.
+To identify that the KMU is used as a persistent storage backend for a specific ``psa_key_id_t``, you need to create a :c:struct:`psa_key_attributes_t` structure and set the required attributes from the following list.
 
 +----------------------------------------------+-----------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 | Attribute (setter function)                  | Parameters                                                                  | Description                                                                                                                                        |
@@ -169,7 +178,7 @@ To identify that the KMU is used as a persistent storage backend for a specific 
 |                                              |                                                                             |                                                                                                                                                    |
 |                                              |                                                                             | See :ref:`ug_nrf54l_crypto_kmu_supported_key_types` for overview of the supported key types for each driver.                                       |
 +----------------------------------------------+-----------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``key lifetime`` (``psa_set_key_lifetime``)  | ``PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(persistence, location)``   | ``CRACEN_KEY_PERSISTENCE_REVOKABLE`` is a custom persistence mode, which will revoke the key slots when the key is destroyed.                      |
+| ``key_lifetime`` (``psa_set_key_lifetime``)  | ``PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(persistence, location)``   | ``CRACEN_KEY_PERSISTENCE_REVOKABLE`` is a custom persistence mode, which will revoke the key slots when the key is destroyed.                      |
 |                                              | where persistence is set to one of the following:                           |                                                                                                                                                    |
 |                                              | ``PSA_KEY_PERSISTENCE_DEFAULT``,                                            | ``PSA_KEY_PERSISTENCE_DEFAULT`` should be used by applications that have no specific needs beyond what is met by implementation-specific features. |
 |                                              | ``CRACEN_KEY_PERSISTENCE_READ_ONLY``,                                       |                                                                                                                                                    |
@@ -181,7 +190,7 @@ To identify that the KMU is used as a persistent storage backend for a specific 
 |                                              |                                                                             |                                                                                                                                                    |
 |                                              |                                                                             | For correct ``kmu_slot_nr`` values, see :ref:`ug_nrf54l_crypto_kmu_slots`.                                                                         |
 +----------------------------------------------+-----------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``key_usage`` (``psa_set_key_usage_flags``)  | Standard PSA Crypto key usage flags                                         | ``PSA_KEY_USAGE_EXPORT`` and ``PSA_KEY_USAGE_COPY`` are not allowed for keys with the usage scheme ``CRACEN_KEY_USAGE_SCHEME_PROTECTED``.          |
+| ``key_usage`` (``psa_set_key_usage_flags``)  | Standard PSA Crypto key usage flags.                                        | ``PSA_KEY_USAGE_EXPORT`` and ``PSA_KEY_USAGE_COPY`` are not allowed for keys with the usage scheme ``CRACEN_KEY_USAGE_SCHEME_PROTECTED``.          |
 +----------------------------------------------+-----------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 
 .. _ug_nrf54l_crypto_kmu_key_usage_schemes:
@@ -293,11 +302,14 @@ The following table lists all key types that can be stored in the KMU, indicatin
 .. [2] Not supported on nRF54LM20.
 .. [3] ECDH not supported for key derivation.
 
+.. _ug_nrf54l_crypto_kmu_storing_keys:
+
 Storing keys in KMU
 ===================
 
-Applications can store keys in KMU slots using the standard PSA cryptographic key management operations ``psa_import_key``, ``psa_generate_key`` or ``psa_copy_key``.
-Additionally, the KMU slots can be provisioned :ref:`using the nRF Util development tool <ug_nrf54l_developing_provision_kmu_provisioning>`.
+Applications can store keys in KMU slots using the standard PSA Crypto API key management operations, such as ``psa_import_key``, ``psa_generate_key``, or ``psa_copy_key``.
+Additionally, the KMU slots can be provisioned :ref:`for development or for production <ug_nrf54l_developing_provision_kmu_provisioning>`.
+Provisioning for production requires manually setting up the :c:struct:`kmu_metadata` data structure for each key slot.
 
 .. note::
    If a power failure occurs during provisioning of a key with persistence ``CRACEN_KEY_PERSISTENCE_READ_ONLY`` or ``CRACEN_KEY_PERSISTENCE_REVOKABLE``, it might not be possible to recover the key slot.
@@ -308,6 +320,47 @@ You might encounter the following KMU-specific error codes when storing keys in 
 * ``PSA_ERROR_ALREADY_EXIST``: One of the required key slots has already been provisioned.
 * ``PSA_ERROR_NOT_SUPPORTED``: Unsupported key type.
 
+.. _ug_nrf54l_crypto_kmu_metadata:
+
+KMU metadata
+------------
+
+After you store the keys in KMU, you need the CRACEN driver to be able to verify some properties of the key and its intended usage.
+Only then can it use the key material, for example for a decryption operation or for a signature verification operation.
+
+For the verification of the key, the CRACEN driver requires information from the METADATA field of the SRC data struct, as explained in the in the device datasheet, for example `KMU - Key management unit <nRF54L15 Key management unit_>`_ in the nRF54L15 datasheet.
+The encoding of information in the METADATA field is detailed in the :c:struct:`kmu_metadata` structure, a 32-bit bitfield defined in the CRACEN driver source code (:file:`nrf/subsys/nrf_security/src/drivers/cracen/cracenpsa/src/kmu.c`).
+
+When the application uses ``psa_import_key`` or ``psa_generate_key`` to store a key in KMU slots, the CRACEN driver encodes :c:struct:`kmu_metadata` with the appropriate values based on the :ref:`PSA key attributes given to the functions <ug_nrf54l_crypto_kmu_key_programming_model>` (:c:struct:`psa_key_attributes_t`).
+The CRACEN driver performs the following steps:
+
+1. Checks ``key_id`` to determine the KMU slot usage.
+#. Converts PSA key attributes to :c:struct:`kmu_metadata` bitfields.
+#. Sets the KMU slot's RPOLICY field (whether the key should be revokable, read-only, or deletable).
+#. Sets the KMU slot's DEST address to one of the following locations:
+
+   * CRACEN's protected RAM if the key is a symmetric key (has the usage scheme set to :ref:`Protected <ug_nrf54l_crypto_kmu_key_usage_schemes>`)
+   * CRACEN's SEED register (for IKG keys)
+   * The reserved RAM area ``kmu_push_area`` (0x20000000-0x20000064) for other keys
+
+#. Stores the :c:struct:`kmu_metadata` information in the KMU slot's METADATA field.
+#. Stores the key material in the KMU slot's VALUE field.
+
+When the keys are larger than 128 bits and span several consecutive KMU slots, the following rules apply:
+
+* Only the first slot (primary slot) contains the complete :c:struct:`kmu_metadata` structure.
+* Secondary slots have their METADATA field set to ``0xffffffff`` (``SECONDARY_SLOT_METADATA_VALUE``).
+* Each secondary slot's DEST address is incremented by 16 bytes (128 bits) compared to the previous slot.
+* All slots used by a key must have the same RPOLICY value.
+
+KMU metadata handling in development and production
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+During development, you can use the tools for :ref:`ug_nrf54l_developing_provision_kmu_development` to automatically set up and encode the :c:struct:`kmu_metadata` data structure based on :c:struct:`psa_key_attributes_t` in a way that they match the required values for different key types and CRACEN driver's own requirements.
+
+When programming for production, you need to manually make sure that the values set in the :c:struct:`kmu_metadata` data structure's bitfields match the required values.
+See :ref:`ug_nrf54l_developing_provision_kmu_production` for more information.
+
 Removing or revoking keys from KMU
 ==================================
 
@@ -317,7 +370,7 @@ Calling the ``psa_destroy_key`` function on keys that have the persistence ``CRA
 Using KMU keys
 ==============
 
-Keys stored in the KMU can be used in standard PSA Crypto operations for encryption, decryption, signing a hash or a message, and verifying a hash or a message, given that the corresponding ``PSA_KEY_USAGE_*`` flags are set.
+Keys stored in the KMU can be used in standard PSA Crypto API operations for encryption, decryption, signing a hash or a message, and verifying a hash or a message, given that the corresponding ``PSA_KEY_USAGE_*`` flags are set.
 
 Depending on the usage scheme:
 
