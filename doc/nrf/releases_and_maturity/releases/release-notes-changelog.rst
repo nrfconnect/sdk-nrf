@@ -277,6 +277,9 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
+  * Added support for the DTS-based memory layout in the :ref:`nrf_desktop_dfu`.
+    This layout is only supported for the MCUboot bootloader.
+
   * Updated:
 
     * The memory layouts for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to make more space for the application code.
@@ -314,6 +317,9 @@ nRF Desktop
     * The documentation of the :ref:`nrf_desktop_hid_state` and default HID report providers to simplify getting started with updating HID input reports used by the application or introducing support for a new HID input report.
     * The default value of the :kconfig:option:`CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL_NORMAL_PRIORITY_TIMEOUT_US` Kconfig option to ``0``.
       This is done to start using high MPSL timeslot priority quicker and speed up non-volatile memory operations.
+    * The :ref:`nrf_desktop_dfu` and the :ref:`nrf_desktop_dfu_mcumgr` to handle the ``nrf54h20dk/nrf54h20/cpuapp`` board target with the IronSide SE architecture and the MCUboot bootloader.
+
+  * Removed the SUIT support from the :ref:`nrf_desktop_dfu` and the :ref:`nrf_desktop_dfu_mcumgr`.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
