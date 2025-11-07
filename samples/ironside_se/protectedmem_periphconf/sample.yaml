@@ -1,0 +1,35 @@
+sample:
+  name: Protected Memory PERIPHCONF Sample
+  description: |
+    Sample demonstrating UICR.PROTECTEDMEM protection of the periphconf_partition.
+    The sample relocates periphconf_partition to be right after
+    cpuapp_boot_partition and configures PROTECTEDMEM to protect both partitions.
+    The sample writes to the protected area, reboots, and demonstrates that the
+    integrity check fails on boot, preventing the device from booting when the
+    protected memory is modified.
+
+common:
+  sysbuild: true
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+      - "=== Protected Memory Demo ==="
+      - "Attempting to write test pattern"
+      - "Write successful \\(in current boot\\)\\."
+      - "Rebooting\\.\\.\\."
+      # When PROTECTEDMEM integrity check fails, secondary firmware boots
+      - "=== Secondary Firmware Booted ==="
+      - "PROTECTEDMEM integrity check FAILED"
+
+tests:
+  samples.protectedmem_periphconf.nrf54h20dk:
+    tags:
+      - sysbuild
+      - ci_samples_sdfw
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    timeout: 7
