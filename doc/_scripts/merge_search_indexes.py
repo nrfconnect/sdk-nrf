@@ -61,8 +61,8 @@ def dump_search_index(index: dict, dst: Path) -> None:
 
     with open(dst, "w") as f:
         f.write("Search.setIndex(")
-        f.write(json.dumps(index))
-        f.write(");")
+        f.write(json.dumps(index, separators=(",", ":"), sort_keys=True))
+        f.write(")")
 
 
 def merge_doc_file_names(src: dict, dst: dict, src_docset: str) -> None:
