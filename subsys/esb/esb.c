@@ -1072,7 +1072,7 @@ static void initialize_fifos(void)
 	}
 }
 
-static void tx_fifo_remove_last(void)
+static void tx_fifo_remove_first(void)
 {
 	if (tx_fifo.count == 0) {
 		return;
@@ -1332,7 +1332,7 @@ static void on_timer_compare1_tx_noack(void)
 	esb_ppi_for_wait_for_rx_clear();
 
 	interrupt_flags |= INT_TX_SUCCESS_MSK;
-	tx_fifo_remove_last();
+	tx_fifo_remove_first();
 
 	if (tx_fifo.count == 0) {
 		esb_state = ESB_STATE_PTX_TXIDLE;
@@ -1349,7 +1349,7 @@ static void on_radio_disabled_tx_noack(void)
 	esb_ppi_for_txrx_clear(false, false);
 
 	interrupt_flags |= INT_TX_SUCCESS_MSK;
-	tx_fifo_remove_last();
+	tx_fifo_remove_first();
 
 	if (tx_fifo.count == 0) {
 		esb_state = ESB_STATE_IDLE;
@@ -1440,7 +1440,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 		interrupt_flags |= INT_TX_SUCCESS_MSK;
 		last_tx_attempts = esb_cfg.retransmit_count - retransmits_remaining + 1;
 
-		tx_fifo_remove_last();
+		tx_fifo_remove_first();
 
 		if ((esb_cfg.protocol != ESB_PROTOCOL_ESB) && (rx_pdu->type.dpl_pdu.length > 0)) {
 			if (rx_fifo_push_rfbuf(
@@ -2100,15 +2100,31 @@ int esb_init(const struct esb_config *config)
 
 int esb_suspend(void)
 {
-	if (esb_state != ESB_STATE_IDLE) {
-		return -EBUSY;
+	if (esb_state == ESB_STATE_IDLE) {
+		return -EALREADY;
+	}
+	on_radio_disabled = NULL;
+
+	/* Stop radio */
+	nrf_radio_shorts_disable(NRF_RADIO, 0xFFFFFFFF);
+	nrf_radio_int_disable(NRF_RADIO, 0xFFFFFFFF);
+
+	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
+	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_DISABLE);
+
+	while (!nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_DISABLED)) {
+		/* wait for register to settle */
 	}
 
-	/*  Clear PPI */
-	esb_ppi_disable_all();
+	/* Stop timer */
+	nrf_timer_shorts_disable(esb_timer.p_reg, 0xFFFFFFFF);
+	nrf_timer_int_disable(esb_timer.p_reg, 0xFFFFFFFF);
 
-	esb_state = ESB_STATE_IDLE;
+	esb_ppi_disable_all();
+	esb_fem_reset();
+
 	errata_216_off();
+	esb_state = ESB_STATE_IDLE;
 
 	return 0;
 }
@@ -2313,33 +2329,19 @@ int esb_stop_rx(void)
 		return -EINVAL;
 	}
 
-	on_radio_disabled = NULL;
-
-	esb_ppi_for_txrx_clear(true, false);
-	esb_fem_reset();
-
-	nrf_radio_shorts_disable(NRF_RADIO, 0xFFFFFFFF);
-	nrf_radio_int_disable(NRF_RADIO, 0xFFFFFFFF);
-
-	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
-	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_DISABLE);
-
-	while (!nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_DISABLED)) {
-		/* wait for register to settle */
-	}
-
-	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
-
-	esb_state = ESB_STATE_IDLE;
-	errata_216_off();
-
-	return 0;
+	return esb_suspend();
 }
 
 int esb_flush_tx(void)
 {
 	if (!esb_initialized) {
 		return -EACCES;
+	}
+	if (esb_state != ESB_STATE_IDLE) {
+		return -EBUSY;
+	}
+	if (tx_fifo.count == 0) {
+		return 0;
 	}
 
 	unsigned int key = irq_lock();
@@ -2367,14 +2369,17 @@ int esb_pop_tx(void)
 	if (!esb_initialized) {
 		return -EACCES;
 	}
+	if (esb_state != ESB_STATE_IDLE) {
+		return -EBUSY;
+	}
 	if (tx_fifo.count == 0) {
 		return -ENODATA;
 	}
 
 	unsigned int key = irq_lock();
 
-	if (++tx_fifo.back >= CONFIG_ESB_TX_FIFO_SIZE) {
-		tx_fifo.back = 0;
+	if (++tx_fifo.front >= CONFIG_ESB_TX_FIFO_SIZE) {
+		tx_fifo.front = 0;
 	}
 	tx_fifo.count--;
 
