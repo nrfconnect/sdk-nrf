@@ -147,6 +147,21 @@ Security
     Also renamed the page from "Trusted storage in the |NCS|."
   * The :ref:`ug_crypto_supported_features` page with the missing entries for the HMAC key type (:kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`).
 
+Mbed TLS
+--------
+
+* Updated to version 3.6.5.
+
+Trusted Firmware-M
+------------------
+
+* Updated:
+
+  * The TF-M version to 2.2.0.
+  * Documentation to clarify the support for TF-M on devices emulated using the nRF54L15 DK.
+    nRF54L05 does not support TF-M.
+    nRF54L10 supports TF-M experimentally.
+
 Protocols
 =========
 
@@ -978,17 +993,6 @@ zcbor
 =====
 
 |no_changes_yet_note|
-
-Trusted Firmware-M
-==================
-
-* Updated:
-
-  * The TF-M version to 2.2.0.
-  * Documentation to clarify the support for TF-M on devices emulated using the nRF54L15 DK.
-    nRF54L05 does not support TF-M.
-    nRF54L10 supports TF-M experimentally.
-
 
 Documentation
 =============
