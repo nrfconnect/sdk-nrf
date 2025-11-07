@@ -91,7 +91,7 @@ static psa_status_t psa_call_buffered(psa_handle_t handle, int32_t type, const p
 /*
  * Both the start address and end address of buffers that the cpusec
  * writes must be 4-byte aligned. bounce_buffers, when enabled with
- * PSA_SSF_CRYPTO_CLIENT_OUT_BOUNCE_BUFFERS, will correct the
+ * NRF_IRONSIDE_SE_PSA_SERVICES_OUT_BOUNCE_BUFFERS, will correct the
  * alignment by buffering such buffers when necessary.
  */
 psa_status_t psa_call(psa_handle_t handle, int32_t type, const psa_invec *in_vec, size_t in_len,

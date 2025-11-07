@@ -77,7 +77,7 @@ macro(generate_mbedcrypto_library_configs)
       nrf_security_debug(FATAL_ERROR "generate_mbedcrypto_library_configs expects PSA_CRYPTO_CONFIG_LIBRARY_PATH to be set")
   endif()
 
-  if(NOT (CONFIG_MBEDTLS_PSA_CRYPTO_SPM OR CONFIG_PSA_SSF_CRYPTO_CLIENT))
+  if(NOT (CONFIG_MBEDTLS_PSA_CRYPTO_SPM OR CONFIG_NRF_IRONSIDE_SE_PSA_SERVICES))
 
     nrf_security_debug("=========== Generating psa_crypto_library_config ===============")
 

@@ -42,7 +42,7 @@ endif()
 # Add a meta-target of the PSA config interface to avoid using generator expressions
 add_library(psa_crypto_config_chosen INTERFACE)
 
-if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
+if(CONFIG_BUILD_WITH_TFM OR CONFIG_NRF_IRONSIDE_SE_PSA_SERVICES)
   target_link_libraries(psa_crypto_config_chosen INTERFACE psa_crypto_config)
 else()
   target_link_libraries(psa_crypto_config_chosen INTERFACE psa_crypto_library_config)
@@ -104,8 +104,8 @@ target_link_libraries(${mbedcrypto_target}
     psa_interface
 )
 
-if(CONFIG_PSA_SSF_CRYPTO_CLIENT)
-  add_subdirectory(ssf_secdom)
+if(CONFIG_NRF_IRONSIDE_SE_PSA_SERVICES)
+  add_subdirectory(ironside_se)
 endif()
 
 nrf_security_add_zephyr_options(${mbedcrypto_target})

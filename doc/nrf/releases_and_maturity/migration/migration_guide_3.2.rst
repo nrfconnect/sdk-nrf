@@ -29,6 +29,11 @@ nRF54H20
 
 This section describes the changes specific to the nRF54H20 SoC and DK support in the |NCS|.
 
+nRF54H20 cryptography
+---------------------
+
+* The ``CONFIG_PSA_SSF_CRYPTO_CLIENT`` Kconfig option has been renamed to :kconfig:option:`CONFIG_NRF_IRONSIDE_SE_PSA_SERVICES`.
+
 nRF54H20 IronSide SE binaries
 -----------------------------
 

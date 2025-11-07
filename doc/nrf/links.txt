@@ -701,7 +701,6 @@
 
 .. _`CONFIG_BT_CTLR_TX_PWR_MINUS`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_MINUS
 .. _`CONFIG_BT_CTLR_TX_PWR_PLUS`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_PLUS
-.. _`CONFIG_PSA_SSF_CRYPTO_CLIENT`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_PSA_SSF_CRYPTO_CLIENT
 .. _`Matter factory data Kconfig options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CHIP_FACTORY_DATA
 .. _`Kconfig search results`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_PM_PARTITION_SIZE
 .. _`CONFIG_PSA_WANT_*`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_PSA_WANT_*

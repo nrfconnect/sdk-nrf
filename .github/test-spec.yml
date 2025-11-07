@@ -623,7 +623,7 @@
   - "samples/crypto/ecdsa/**/*"
   - "lib/dk_buttons_and_leds/**/*"
   - "subsys/app_event_manager/**/*"
-  - "subsys/nrf_security/src/ssf_secdom/**/*"
+  - "subsys/nrf_security/src/ironside_se/**/*"
   - "include/nfc/ndef/msg.h"
   - "include/nfc/ndef/record.h"
   - "include/nfc/ndef/text_rec.h"

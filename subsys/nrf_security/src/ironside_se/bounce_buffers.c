@@ -17,15 +17,15 @@
  */
 BUILD_ASSERT(CACHE_DATA_UNIT_SIZE == sizeof(uintptr_t));
 
-static K_HEAP_DEFINE(out_buffer_heap,
-		     ROUND_UP(CONFIG_PSA_SSF_CRYPTO_CLIENT_OUT_HEAP_SIZE, CACHE_DATA_UNIT_SIZE));
+static K_HEAP_DEFINE(out_buffer_heap, ROUND_UP(CONFIG_NRF_IRONSIDE_SE_PSA_SERVICES_OUT_HEAP_SIZE,
+					       CACHE_DATA_UNIT_SIZE));
 
 void *bounce_buffers_prepare(void *original_buffer, size_t size)
 {
 	void *out_buffer = NULL;
 
 	if (((IS_ALIGNED(original_buffer, CACHE_DATA_UNIT_SIZE)) &&
-		(IS_ALIGNED(size, CACHE_DATA_UNIT_SIZE))) ||
+	     (IS_ALIGNED(size, CACHE_DATA_UNIT_SIZE))) ||
 	    (size == 0)) {
 		out_buffer = original_buffer;
 	} else {

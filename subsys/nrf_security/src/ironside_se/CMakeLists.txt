@@ -21,8 +21,8 @@ zephyr_library_include_directories(
   .
   )
 
-if(CONFIG_PSA_SSF_CRYPTO_CLIENT_OUT_BOUNCE_BUFFERS)
+if(CONFIG_NRF_IRONSIDE_SE_PSA_SERVICES_OUT_BOUNCE_BUFFERS)
   zephyr_library_sources(
-    ${CMAKE_CURRENT_LIST_DIR}/bounce_buffers.c
+    bounce_buffers.c
     )
 endif()

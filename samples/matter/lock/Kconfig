@@ -145,7 +145,7 @@ config NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
 	default y
 
 # PSA SSF Crypto Client is not ready for the secure storage backend
-if !PSA_SSF_CRYPTO_CLIENT
+if !NRF_IRONSIDE_SE_PSA_SERVICES
 
 config NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND
 	default y if !CHIP_WIFI
