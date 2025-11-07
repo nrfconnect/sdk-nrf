@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+cmake_minimum_required(VERSION 3.20.0)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+project(mcuboot_with_encryption)
+
+add_subdirectory(${ZEPHYR_BASE}/samples/subsys/mgmt/mcumgr/smp_svr ${PROJECT_BINARY_DIR}/smp_svr)

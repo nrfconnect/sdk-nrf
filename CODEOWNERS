@@ -677,6 +677,7 @@
 /samples/zephyr/drivers/spi_bitbang/      @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/spi_flash/        @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/watchdog/         @nrfconnect/ncs-low-level-test
+/samples/zephyr/mcuboot_with_encryption   @nrfconnect/ncs-eris
 /samples/zephyr/sensor/accel_polling/     @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/bme680/            @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/qdec/              @nrfconnect/ncs-low-level-test
