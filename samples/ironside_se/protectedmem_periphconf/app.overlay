@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Delete the original partitions before redefining them */
+/delete-node/ &cpuapp_slot0_partition;
+/delete-node/ &periphconf_partition;
+
+&mram1x {
+	partitions {
+		/* cpuapp_boot_partition is at 0x30000 with size 64KB (0x10000) */
+		/* Move periphconf_partition to 0x40000 (right after cpuapp_boot_partition) */
+		periphconf_partition: partition@40000 {
+			reg = <0x40000 DT_SIZE_K(8)>;
+		};
+
+		/* Move cpuapp_slot0_partition to start after periphconf_partition */
+		/* periphconf_partition ends at 0x42000, so slot0 starts there */
+		cpuapp_slot0_partition: partition@42000 {
+			reg = <0x42000 DT_SIZE_K(328)>;
+		};
+	};
+};
