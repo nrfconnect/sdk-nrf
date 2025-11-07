@@ -11,7 +11,7 @@
 
 #define CACHE_DATA_UNIT_SIZE (DCACHEDATA_DATAWIDTH * 4)
 
-#ifdef CONFIG_PSA_SSF_CRYPTO_CLIENT_OUT_BOUNCE_BUFFERS
+#ifdef CONFIG_NRF_IRONSIDE_SE_PSA_SERVICES_OUT_BOUNCE_BUFFERS
 
 /**
  * @brief Prepare an out buffer in case the original buffer is not aligned
@@ -39,7 +39,7 @@ void *bounce_buffers_prepare(void *original_buffer, size_t size);
  */
 void bounce_buffers_release(void *original_buffer, void *out_buffer, size_t size);
 
-#else /* CONFIG_PSA_SSF_CRYPTO_CLIENT_OUT_BOUNCE_BUFFERS */
+#else /* CONFIG_NRF_IRONSIDE_SE_PSA_SERVICES_OUT_BOUNCE_BUFFERS */
 
 NRF_STATIC_INLINE
 void *bounce_buffers_prepare(void *original_buffer, size_t size)
@@ -57,6 +57,6 @@ void bounce_buffers_release(void *original_buffer, void *out_buffer, size_t size
 	ARG_UNUSED(size);
 }
 
-#endif  /* CONFIG_PSA_SSF_CRYPTO_CLIENT_OUT_BOUNCE_BUFFERS */
+#endif  /* CONFIG_NRF_IRONSIDE_SE_PSA_SERVICES_OUT_BOUNCE_BUFFERS */
 
 #endif /* __BOUNCE_BUFFERS_H__ */

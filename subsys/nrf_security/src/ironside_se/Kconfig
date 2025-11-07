@@ -4,38 +4,38 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config PSA_SSF_CRYPTO_CLIENT
+config NRF_IRONSIDE_SE_PSA_SERVICES
 	bool
-	prompt "PSA crypto provided through SSF"
+	prompt "PSA services provided by IronSide SE"
 	default y
 	depends on SOC_NRF54H20 || SOC_SERIES_NRF92X
 	select NRF_IRONSIDE_CALL
 
-if PSA_SSF_CRYPTO_CLIENT
+if NRF_IRONSIDE_SE_PSA_SERVICES
 
-config PSA_SSF_CRYPTO_CLIENT_OUT_BOUNCE_BUFFERS
-	bool "Support PSA crypto with output buffers that are not cache-safe"
+config NRF_IRONSIDE_SE_PSA_SERVICES_OUT_BOUNCE_BUFFERS
+	bool "Support PSA services with output buffers that are not cache-safe"
 	default y
 	depends on DCACHE
 	help
-	  When this option is enabled, the PSA Crypto service will
+	  When this option is enabled, the PSA service will
 	  allocate bounce buffers for all PSA output vectors that are not
 	  aligned to the DCache DataUnit size. When this option is
-	  disabled, the PSA Crypto service will never use bounce buffers,
+	  disabled, the PSA service will never use bounce buffers,
 	  and the user of PSA APIs must ensure that the structures are
 	  cache-safe. The structures are cache-safe if there are no writes
 	  locally to any of the DataUnits that contain the structure
 	  getting written from the remote.
 
-if PSA_SSF_CRYPTO_CLIENT_OUT_BOUNCE_BUFFERS
+if NRF_IRONSIDE_SE_PSA_SERVICES_OUT_BOUNCE_BUFFERS
 
-config PSA_SSF_CRYPTO_CLIENT_OUT_HEAP_SIZE
+config NRF_IRONSIDE_SE_PSA_SERVICES_OUT_HEAP_SIZE
 	int "Size of the heap used to buffer output from PSA function calls"
 	default 4096
 	help
 	  Size of the heap buffer used for out buffer.
 	  Reducing the size may trigger PSA_ERROR_INSUFFICIENT_MEMORY in PSA calls.
 
-endif # PSA_SSF_CRYPTO_CLIENT_OUT_BOUNCE_BUFFERS
+endif # NRF_IRONSIDE_SE_PSA_SERVICES_OUT_BOUNCE_BUFFERS
 
-endif # PSA_SSF_CRYPTO_CLIENT
+endif # NRF_IRONSIDE_SE_PSA_SERVICES
