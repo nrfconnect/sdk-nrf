@@ -910,6 +910,7 @@
 /tests/subsys/audio/audio_module_template/ @nrfconnect/ncs-audio
 /tests/subsys/audio_module/               @nrfconnect/ncs-audio
 /tests/subsys/bluetooth/controller/        @nrfconnect/ncs-dragoon
+/tests/subsys/bluetooth/cs_de/            @nrfconnect/ncs-dragoon
 /tests/subsys/bluetooth/gatt_dm/          @nrfconnect/ncs-si-muffin
 /tests/subsys/bluetooth/enocean/          @nrfconnect/ncs-paladin
 /tests/subsys/bluetooth/fast_pair/        @nrfconnect/ncs-si-bluebagel
