@@ -857,11 +857,6 @@ ci_tests_subsys_pcd:
     - nrf/subsys/pcd/
     - nrf/tests/subsys/pcd/
 
-ci_tests_subsys_sdfw_services:
-  files:
-    - nrf/subsys/sdfw_services/
-    - nrf/tests/subsys/sdfw_services/
-
 ci_tests_subsys_event_manager_proxy:
   files:
     - modules/lib/open-amp/
