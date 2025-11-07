@@ -888,6 +888,11 @@ ci_tests_subsys_bluetooth_controller:
     - nrf/subsys/bluetooth/controller/
     - nrf/tests/subsys/bluetooth/controller/
 
+ci_tests_subsys_bluetooth_cs_de:
+  files:
+    - nrf/subsys/bluetooth/cs_de/
+    - nrf/tests/subsys/bluetooth/cs_de/
+
 ci_tests_subsys_mpsl:
   files:
     - nrf/subsys/mpsl/
