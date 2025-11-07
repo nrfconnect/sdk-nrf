@@ -1,0 +1,19 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+dut_pwm: &pwm130 {
+	status = "okay";
+};
+
+tst_timer: &timer131 {
+	status = "okay";
+};
+
+&dppic133 {
+	owned-channels = <1>;
+	sink-channels = <1>;
+	status = "okay";
+};
