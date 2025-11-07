@@ -87,9 +87,8 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - thread_coex_SHIELD="nrf7002eb2"
+      - SHIELD="nrf7002eb2;nrf7002eb2_coex"
       - CONFIG_MPSL_CX=y
-      - ipc_radio_CONFIG_MPSL_CX=y
       - CONFIG_COEX_SEP_ANTENNAS=y
       - EXTRA_CONF_FILE="overlay-wifi-udp-client-thread-udp-client.conf"
     integration_platforms:

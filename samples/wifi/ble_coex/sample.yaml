@@ -96,9 +96,8 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - ble_coex_SHIELD="nrf7002eb2"
+      - SHIELD="nrf7002eb2;nrf7002eb2_coex"
       - CONFIG_MPSL_CX=y
-      - ipc_radio_CONFIG_MPSL_CX=y
       - CONFIG_COEX_SEP_ANTENNAS=y
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
