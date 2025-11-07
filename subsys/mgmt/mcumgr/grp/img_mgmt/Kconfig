@@ -10,6 +10,7 @@ config MCUMGR_GRP_IMG_NRF
 	bool "Use an extended version of the image management implementation"
 	depends on MCUMGR_GRP_IMG
 	default y if PARTITION_MANAGER_ENABLED
+	default y if MCUMGR_GRP_IMG_TOO_LARGE_BOOTLOADER_INFO
 	help
 	  Enables use of an extended version of the image management implementation that adds
 	  Nordic-specific functionalities.
