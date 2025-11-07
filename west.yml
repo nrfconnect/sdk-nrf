@@ -64,7 +64,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: dc05376c170fc2739a4881629caf49c40d485a9e
+      revision: 428ce9f27bc368f8023de98cdd494b060374962b
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -126,7 +126,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 093efc87ca3057ab2bc3844af6bd924251ead62d
+      revision: 0d9411f5dda336b999c56c4eb13c502af8b59851
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -143,11 +143,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 6ab70a90ada3ffa173cd816f725a2cd9f35962f7
+      revision: 9b969cc34b07d44c8b3ad5bb6fa5cab6646e7ed1
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 565a30c7f4426cdf644bff03766a292dd509ee9c
+      revision: cc5a59a410adc66d3b1b34a24efe00a7ac2fcf5b
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
