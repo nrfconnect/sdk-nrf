@@ -1,0 +1,35 @@
+common:
+  tags:
+    - drivers
+    - ci_tests_drivers_pwm
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+      - "TESTING PWM EVENTS_COMPAREMATCH"
+      - "PWM EVENTS_COMPAREMATCH TEST: PASS"
+      - "TESTING PWM EVENTS_STOPPED"
+      - "PWM EVENTS_STOPPED TEST: PASS"
+      - "TESTING PWM EVENTS_PWMPERIODEND"
+      - "PWM EVENTS_PWMPERIODEND TEST: PASS"
+      - "TESTING PWM EVENTS_LOOPSDONE"
+      - "PWM EVENTS_LOOPSDONE TEST: PASS"
+  timeout: 20
+
+tests:
+  drivers.pwm.pwm_events.nrf54h:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - CONFIG_NRFX_PWM130=y
+
+  drivers.pwm.pwm_events.nrf54l:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - CONFIG_NRFX_PWM20=y
