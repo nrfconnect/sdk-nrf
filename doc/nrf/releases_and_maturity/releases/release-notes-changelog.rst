@@ -697,6 +697,7 @@ DFU samples
   * The :ref:`fw_loader_ble_mcumgr` sample that provides a minimal configuration for firmware loading using SMP over Bluetooth LE.
     This sample is intended as a starting point for developing custom firmware loader applications that work with the MCUboot bootloader.
   * The :ref:`single_slot_sample` sample to demonstrate how to maximize the available space for the application with MCUboot using firmware loader mode (single-slot layout).
+  * The :ref:`mcuboot_with_encryption` sample demonstrating how to build MCUboot with image encryption enabled.
 
 Edge Impulse samples
 --------------------
