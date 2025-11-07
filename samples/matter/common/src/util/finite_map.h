@@ -36,12 +36,23 @@ namespace Nrf
    key.
      * T2 must have move semantics and bool()/==operators implemented
 */
+
+template <typename T, bool IsEnum> struct KeyTypeHelper {
+	using type = T;
+};
+
+template <typename T> struct KeyTypeHelper<T, true> {
+	using type = typename std::underlying_type<T>::type;
+};
+
 template <typename T1, typename T2, uint16_t N> struct FiniteMap {
 	static_assert(std::is_trivial_v<T1>);
 
-	static constexpr T1 kInvalidKey{ std::numeric_limits<T1>::max() };
-	static constexpr std::size_t kNoSlotsFound{ N + 1 };
+	using KeyType = typename KeyTypeHelper<T1, std::is_enum_v<T1>>::type;
 	using ElementCounterType = uint16_t;
+
+	static constexpr T1 kInvalidKey{ static_cast<T1>(std::numeric_limits<KeyType>::max()) };
+	static constexpr std::size_t kNoSlotsFound{ N + 1 };
 
 	struct Item {
 		/* Initialize with invalid key (0 is a valid key) */
