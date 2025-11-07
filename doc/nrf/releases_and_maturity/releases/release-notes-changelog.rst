@@ -148,6 +148,21 @@ Security
   * The :ref:`ug_crypto_supported_features` page with the missing entries for the HMAC key type (:kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`).
   * The :ref:`ug_nrf54l_crypto_kmu_supported_key_types` section specific for the nRF54L Series devices to list the supported algorithms for each key type.
 
+Mbed TLS
+--------
+
+* Updated to version 3.6.5.
+
+Trusted Firmware-M
+------------------
+
+* Updated:
+
+  * The TF-M version to 2.2.0.
+  * Documentation to clarify the support for TF-M on devices emulated using the nRF54L15 DK.
+    nRF54L05 does not support TF-M.
+    nRF54L10 supports TF-M experimentally.
+
 Protocols
 =========
 
@@ -1000,17 +1015,6 @@ zcbor
 =====
 
 |no_changes_yet_note|
-
-Trusted Firmware-M
-==================
-
-* Updated:
-
-  * The TF-M version to 2.2.0.
-  * Documentation to clarify the support for TF-M on devices emulated using the nRF54L15 DK.
-    nRF54L05 does not support TF-M.
-    nRF54L10 supports TF-M experimentally.
-
 
 Documentation
 =============
