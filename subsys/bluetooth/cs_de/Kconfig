@@ -23,14 +23,9 @@ module = BT_CS_DE
 module-str = CS_DE
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
-config BT_CS_DE_NFFT_SIZE
-	int
-	default 512
-	default 512 if BT_CS_DE_512_NFFT
-	default 1024 if BT_CS_DE_1024_NFFT
-	default 2048 if BT_CS_DE_2048_NFFT
-	help
-	  Internal config. Not intended for use.
+choice BT_CS_DE_NFFT_SIZE_SELECTION
+	prompt "FFT size used in the CS_DE IFFT algorithm"
+	default BT_CS_DE_512_NFFT
 
 config BT_CS_DE_512_NFFT
 	bool "Use NFFT with 512 samples."
@@ -40,5 +35,15 @@ config BT_CS_DE_1024_NFFT
 
 config BT_CS_DE_2048_NFFT
 	bool "Use NFFT with 2048 samples."
+
+endchoice
+
+config BT_CS_DE_NFFT_SIZE
+	int
+	default 512 if BT_CS_DE_512_NFFT
+	default 1024 if BT_CS_DE_1024_NFFT
+	default 2048 if BT_CS_DE_2048_NFFT
+	help
+	  Internal config. Not intended for use.
 
 endif # BT_CS_DE
