@@ -584,7 +584,9 @@ int32_t mpsl_lib_uninit(void)
 #if defined(CONFIG_SOC_COMPATIBLE_NRF54LX)
 void mpsl_constlat_request_callback(void)
 {
-#if defined(CONFIG_NRFX_POWER)
+#if defined(CONFIG_SOC_NRF_FORCE_CONSTLAT)
+	/* Do nothing since CONSTLAT is forced on by the SOC */
+#elif defined(CONFIG_NRFX_POWER)
 	nrfx_power_constlat_mode_request();
 #else
 	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
@@ -593,7 +595,9 @@ void mpsl_constlat_request_callback(void)
 
 void mpsl_lowpower_request_callback(void)
 {
-#if defined(CONFIG_NRFX_POWER)
+#if defined(CONFIG_SOC_NRF_FORCE_CONSTLAT)
+	/* Do nothing since CONSTLAT is forced on by the SOC */
+#elif defined(CONFIG_NRFX_POWER)
 	nrfx_power_constlat_mode_free();
 #else
 	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_LOWPWR);
