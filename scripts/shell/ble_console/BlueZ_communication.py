@@ -49,7 +49,7 @@ class BluetoothConnection(object):
     def get_bluez_version(self):
         bashCommand = 'bluetoothd -v'
         process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-        output, error = process.communicate()
+        output, _error = process.communicate()
         output = output.split('.')
         return (int(output[0],10), int(output[1],10))
 
@@ -145,9 +145,9 @@ class BluetoothConnection(object):
                         self.list_objects(service, new_path)
             except dbus.DBusException as e:
                 if "Not connected" in e.args:
-                    self.display_message("Not connected to " + device)
+                    self.display_message("Not connected to")
                 elif "Did not receive a reply" in e.args:
-                    self.display_message("Timeout exceeded " + device)
+                    self.display_message("Timeout exceeded")
                 elif "The name" in e.args[0]:
                     pass
                 else:
