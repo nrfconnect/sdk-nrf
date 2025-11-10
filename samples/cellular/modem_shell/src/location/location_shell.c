@@ -206,7 +206,10 @@ static int location_cloud_send(char *body)
 	} else {
 		mosh_error("Failed to get device ID, error: %d", ret);
 	}
+#else
+	ret = -EOPNOTSUPP;
 #endif
+
 	return ret;
 }
 

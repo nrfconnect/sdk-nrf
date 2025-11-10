@@ -56,12 +56,13 @@ BUILD_ASSERT(false, "nRF Cloud assistance and SUPL library cannot be enabled at 
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS) || defined(CONFIG_NRF_CLOUD_PGPS)
-/* Verify that MQTT, REST or COAP is enabled */
+/* Verify that nRF Cloud MQTT, REST or COAP, or LwM2M is enabled */
 BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_CLOUD_MQTT) ||
 	     IS_ENABLED(CONFIG_NRF_CLOUD_REST) ||
-	     IS_ENABLED(CONFIG_NRF_CLOUD_COAP),
+	     IS_ENABLED(CONFIG_NRF_CLOUD_COAP) ||
+	     IS_ENABLED(CONFIG_MOSH_CLOUD_LWM2M),
 	     "CONFIG_NRF_CLOUD_MQTT, CONFIG_NRF_CLOUD_REST or CONFIG_NRF_CLOUD_COAP "
-	     "transport must be enabled");
+	     "transport, or CONFIG_MOSH_CLOUD_LWM2M must be enabled");
 #endif
 
 #define GNSS_DATA_HANDLER_THREAD_STACK_SIZE 1536
