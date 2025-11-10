@@ -54,4 +54,7 @@ if(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)
                                   INPUT "config_channel_modules"
                                   SYMBOLS __start_config_channel_modules __stop_config_channel_modules
                                   KEEP SORT NAME)
+  if(CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_RAM_LOAD)
+    zephyr_linker_sources(RODATA linker/config_channel_dfu_ram_load.ld)
+  endif()
 endif()

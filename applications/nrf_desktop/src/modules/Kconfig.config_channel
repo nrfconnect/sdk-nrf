@@ -73,10 +73,18 @@ config DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE
 	  The host must perform progress synchronization at least
 	  every synchronization buffer bytes count.
 
-config DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
-	bool "Device uses MCUboot bootloader in direct-xip mode"
+choice DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT
+	prompt "Adjust the DFU module to be compatible with the specific mode of MCUboot"
 	depends on BOOTLOADER_MCUBOOT
-	default y if MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
+	default DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP if MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
+	default DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_RAM_LOAD if MCUBOOT_BOOTLOADER_MODE_RAM_LOAD
+	default DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_UNSPECIFIED
+	help
+	  Adjust the DFU module behavior to the MCUboot bootloader mode. The choice options are
+	  only available for the bootloader modes that require adjustments.
+
+config DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
+	bool "Adjust the DFU module to be compatible with the direct-xip mode of MCUboot"
 	help
 	  The option informs the DFU module that the MCUboot bootloader supports
 	  direct-xip mode. In this mode, the image is booted directly from the
@@ -87,6 +95,46 @@ config DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
 	  The DFU module assumes that MCUboot direct-xip bootloader simply boots
 	  the image with a higher version. The module does not mark the newly
 	  uploaded image as pending nor confirm it after a successful boot.
+
+config DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_RAM_LOAD
+	bool "Adjust the DFU module to be compatible with the RAM load mode of MCUboot"
+	depends on USE_DT_CODE_PARTITION
+	depends on $(dt_nodelabel_exists,cpuapp_sram_mcuboot_ram_region)
+	select EXPERIMENTAL
+	help
+	  The option informs the DFU module that the MCUboot bootloader supports
+	  RAM load mode. In this mode, the image with the higher version is copied to
+	  the RAM and booted from there.
+
+	  The DFU module assumes that MCUboot RAM load bootloader simply copies
+	  the image with a higher version and boots it from there. The module does not
+	  mark the newly uploaded image as pending nor confirm it after a successful boot.
+
+	  This option also requires the definition of the cpuapp_sram_mcuboot_ram_region DTS node
+	  to indicate the RAM region reserved for the MCUboot image. This information is used to
+	  validate if the executable RAM region of the application image does not overlap with
+	  the RAM region of the MCUboot image.
+
+config DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_UNSPECIFIED
+	bool "Use this option when the bootloader mode does not require any adjustments"
+	help
+	  Use this option when the bootloader mode does not require any adjustments. For example,
+	  the bootloader in the swap mode defaults to this option as it does not require any
+	  adjustments.
+
+endchoice
+
+if DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_RAM_LOAD
+
+config DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_RAM_LOAD_MCUBOOT_RAM_START_ADDR
+	hex
+	default $(dt_nodelabel_reg_addr_hex,cpuapp_sram_mcuboot_ram_region)
+	help
+	  The start address of the MCUboot RAM region. The Kconfig option is used to validate
+	  if the executable RAM region of the application image (also called the ROM section)
+	  does not overlap with the RAM region of the MCUboot image.
+
+endif # DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_RAM_LOAD
 
 config DESKTOP_CONFIG_CHANNEL_DFU_VID
 	hex "Configuration channel Vendor ID"
