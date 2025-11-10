@@ -41,6 +41,12 @@ Glossary
    Application Programming Interface (API)
       A language and message format used by a program to communicate with an operating system, application, or other services.
 
+   Application RoT
+      A concept related to `Platform Security Architecture (PSA)`_ and :term:`Root of Trust (RoT)`.
+      It is the security domain in which additional security services are implemented.
+      In the |NCS|, Trusted Firmware-M (TF-M) implements a set of Application RoT Services.
+      For more information, see :ref:`ug_tfm_architecture_rot_services_application`.
+
    Assisted GNSS (A-GNSS)
       A form of assistance provided to devices trying to obtain a :term:`Global Navigation Satellite System (GNSS)` fix.
       It improves the :term:`Time to First Fix (TTFF)` by utilizing a connection (for example, over cellular) to the internet to retrieve the :term:`almanac data` and :term:`ephemeris data`.
@@ -182,7 +188,7 @@ Glossary
       Most memory and peripherals can be flexibly allocated to cores at compile time.
 
    Cortex Microcontroller Software Interface Standard (CMSIS)
-      A vendor-independent hardware abstraction layer for the Cortex-M processor series that defines generic tool interfaces.
+      A vendor-independent :term:`Hardware Abstraction Layer (HAL)` for the Cortex-M processor series that defines generic tool interfaces.
 
    Cortex-M Security Extensions (CMSE)
       A group term for different security extensions for the Arm Cortex-M33 processor.
@@ -377,6 +383,9 @@ Glossary
    Global Positioning System (GPS)
       A satellite-based radio navigation system that provides its users with accurate location and time information over the globe.
 
+   Hardware Abstraction Layer (HAL)
+      An interface to abstract hardware-oriented operations and provide a set of APIs to the upper layers.
+
    Hardware Flow Control (HWFC)
       A handshaking mechanism used to prevent an overflow of bytes in modems.
       It uses two dedicated pins on the RS-232 connector, :term:`Request to Send (RTS)` and :term:`Clear to Send (CTS)`.
@@ -435,6 +444,10 @@ Glossary
 
    Isochronous channels (ISO)
       A feature of the :term:`LE Audio` standard that allows for relaying audio data to multiple devices at the same time (isochronously) without having to split the stereo stream.
+
+   Internal Trusted Storage (ITS)
+      One of :term:`Platform RoT` services, which provides trusted storage of key material in internal flash.
+      For more information, see :ref:`ug_tfm_services_its`.
 
    Just In Time Provisioning (JITP)
       A device is provisioned when it first tries to connect to the IoT broker and presents its device certificate.
@@ -537,6 +550,7 @@ Glossary
    Memory Privilege Controller (MPC)
       Performs security configuration, enforcement, and bus decoding.
       It implements security filtering, checking bus accesses against the configured access properties and blocking any unauthorized accesses.
+      Do not confuse this with Memory Protection Controller from the Arm architecture, which is not used in the |NCS|.
 
    Memory-to-memory Vector Direct Memory Access (MVDMA)
       A peripheral capable of copying data from one memory address to another memory address.
@@ -601,6 +615,11 @@ Glossary
 
    Noise Factor (NF)
       The relation of the :term:`Signal-to-Noise Ratio (SNR)` in the device input to the SNR in the device output.
+
+   Non-secure image
+      A concept related to :ref:`ug_tfm_security_by_separation`.
+      In the context of the |NCS| and `ARM TrustZone`_, this is a firmware image that is executed in the :term:`Non-Secure Processing Environment (NSPE)`.
+      It is typically built using the ``*/ns`` :ref:`board target variant <app_boards_names>`.
 
    Non-Secure Processing Environment (NSPE)
       One of the two processing environments when using Cortex-M Security Extensions.
@@ -701,6 +720,12 @@ Glossary
    Physically Unclonable Function (PUF)
       A function device that exploits inherent randomness introduced during manufacturing to give a physical entity a unique "fingerprint" or a trust anchor.
 
+   Platform RoT
+      A concept related to `Platform Security Architecture (PSA)`_ and :term:`Root of Trust (RoT)`.
+      It is the security domain in which platform-specific services are implemented.
+      In the |NCS|, Trusted Firmware-M (TF-M) implements a set of Platform RoT Services.
+      For more information, see :ref:`ug_tfm_architecture_rot_services_platform`.
+
    Platform Security Architecture Certified (PSA Certified)
       A security certification scheme for Internet of Things (IoT) hardware, software and devices.
 
@@ -735,6 +760,10 @@ Glossary
 
    Programmable Peripheral Interconnect (PPI)
       It enables peripherals to interact autonomously with each other using tasks and events independently of the CPU.
+
+   Protected Storage (PS)
+      One of :term:`Application RoT` services, which provides secure storage with encryption, integrity protection, and rollback protection for non-secure applications.
+      For more information, see :ref:`tfm_partition_ps`.
 
    Protocol Data Unit (PDU)
       Information transferred as a single unit between peer entities of a computer network and containing control and address information or data.
@@ -829,6 +858,14 @@ Glossary
    Secure domain (SecDom)
       A dedicated :term:`Domain` which executes a pre-compiled firmware component that is signed by Nordic Semiconductor.
       It exposes security services to the other domains through an Interprocess Communication interface.
+
+   Secure image
+      A concept related to :ref:`ug_tfm_security_by_separation`.
+      In the context of the |NCS| and `ARM TrustZone`_, this is a firmware image that is provided by Trusted Firmware-M and executed in the :term:`Secure Processing Environment (SPE)`.
+      It is typically built using the ``*/ns`` :ref:`board target variant <app_boards_names>`.
+
+   Secure partition
+      A memory partition used to store the data of the :term:`Secure Processing Environment (SPE)`.
 
    Serial Peripheral Interface (SPI)
       An interface bus commonly used to send data between microcontrollers and small peripherals such as shift registers, sensors, and SD cards.

@@ -1667,6 +1667,7 @@
 .. _`ARM Platform Security Model 1.1`: https://developer.arm.com/documentation/den0128/0101b/
 .. _`Trusted Base System Architecture for M (TBSA-M) Specification`: https://developer.arm.com/-/media/Arm%20Developer%20Community/PDF/PSA/DEN0083_PSA_TBSA-M_1.0-bet2.pdf?revision=5f9de99f-a7b5-4851-b041-f698521bf6bf
 .. _`Platform Security Architectures`: https://www.arm.com/architecture/security-features/platform-security
+.. _`Memory Protection Controllers`: https://developer.arm.com/documentation/102803/0000/Functional-Description/Memory-Protection-Controllers
 
 .. ### Source: psacertified.org
 
