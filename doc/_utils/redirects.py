@@ -170,7 +170,8 @@ NRF = (
     ("device_guides/nrf91/nrf91_updating_fw_programmer", "app_dev/device_guides/nrf91/nrf91_dk_updating_fw_programmer"), # Updating the DK firmware using Programmer
     ("device_guides/nrf91/nrf91_building", "app_dev/device_guides/nrf91/nrf91_building"), # Configuring and building with nRF91 Series
     ("device_guides/nrf91/nrf91_programming", "app_dev/device_guides/nrf91/nrf91_programming"), # Programming onto nRF91 Series devices
-    ("device_guides/nrf91/nrf91_testing_at_client", "app_dev/device_guides/nrf91/nrf91_testing_at_client"), # Testing the cellular connection on nRF91 Series DK
+    ("device_guides/nrf91/nrf91_testing_at_client", "app_dev/device_guides/nrf91/nrf91_testing"), # Testing the cellular connection on nRF91 Series DK
+    ("app_dev/device_guides/nrf91/nrf91_testing_at_client", "app_dev/device_guides/nrf91/nrf91_testing"),
     ("device_guides/working_with_nrf/nrf91/nrf91_snippet", "app_dev/device_guides/nrf91/nrf91_snippet"), # Snippets for an nRF91 Series device
     ("device_guides/nrf91/nrf91_snippet", "app_dev/device_guides/nrf91/nrf91_snippet"),
     ("device_guides/nrf91/nrf9160_external_flash", "app_dev/device_guides/nrf91/nrf9160_external_flash"), # Configuring external flash memory on the nRF9160 DK
