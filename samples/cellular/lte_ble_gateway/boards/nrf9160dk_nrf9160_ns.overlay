@@ -18,6 +18,7 @@
 	pinctrl-0 = <&uart2_default_alt>;
 	pinctrl-1 = <&uart2_sleep_alt>;
 	pinctrl-names = "default", "sleep";
+
 	lpuart: nrf-sw-lpuart {
 		compatible = "nordic,nrf-sw-lpuart";
 		status = "okay";
@@ -46,5 +47,4 @@
 			low-power-enable;
 		};
 	};
-
 };
