@@ -121,10 +121,10 @@ Updating manually using nRF Util
 --------------------------------
 
 You can use nRF Util instead of ``west ncs-ironside-se-update``.
-To perform the manual update process using nRF Util's `device command <Device command overview_>`_ command, complete the following steps:
+If you decide to use nRF Util, make sure to install the `device` command v2.14.0 or higher.
+See `Installing specific versions of nRF Util commands`_ for more information.
 
-.. note::
-   nRF Util version ``2.14.0`` or higher is required.
+To perform the manual update process using nRF Util's `device command <Device command overview_>`_ command, complete the following steps:
 
 1. Extract the update bundle:
 
