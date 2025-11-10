@@ -39,7 +39,7 @@ Programming |ISE| on the nRF54H20 SoC
      - The main |ISE| firmware
    * - IronSide SE Recovery update firmware
      - :file:`ironside_se_recovery_update.hex`
-     - The recovery firmware. The firmware does not yet do anything.
+     - The recovery firmware, reserved for future recovery operations. Currently, it does not provide user-facing functionality.
    * - Update application
      - :file:`update_application.hex`
      - The :zephyr:code-sample:`application firmware <nrf_ironside_update>` used to update |ISE|. See :ref:`ug_nrf54h20_ironside_se_update_manual`.
