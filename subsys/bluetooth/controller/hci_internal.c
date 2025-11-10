@@ -585,6 +585,7 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 
 #if defined(CONFIG_BT_CTLR_SET_HOST_FEATURE)
 	cmds->hci_le_set_host_feature = 1;
+	cmds->hci_le_set_host_feature_v2 = 1;
 #endif
 
 #if defined(CONFIG_BT_CTLR_CENTRAL_ISO)
@@ -661,6 +662,13 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 #if defined(CONFIG_BT_CTLR_FRAME_SPACE_UPDATE)
 	cmds->hci_le_frame_space_update = 1;
 #endif /* CONFIG_BT_CTLR_FRAME_SPACE_UPDATE */
+#if defined(CONFIG_BT_CTLR_SHORTER_CONNECTION_INTERVALS)
+	cmds->hci_le_connection_rate_request = 1;
+#if defined(CONFIG_BT_CENTRAL)
+	cmds->hci_le_set_default_rate_parameters = 1;
+#endif /* CONFIG_BT_CENTRAL */
+	cmds->hci_le_read_minimum_supported_connection_interval = 1;
+#endif /* CONFIG_BT_CTLR_SHORTER_CONNECTION_INTERVALS */
 }
 
 #if defined(CONFIG_BT_HCI_VS)
