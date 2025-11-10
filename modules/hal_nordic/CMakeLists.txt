@@ -2,6 +2,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 zephyr_get(NRFX_DIR SYSBUILD GLOBAL)
 
+# Set path to the latest version of nrfx
+set(NRFX_DIR ${CMAKE_CURRENT_LIST_DIR}/../../../nrfx/)
+set(NRFX_DIR ${NRFX_DIR} CACHE STRING "Path to nrfx")
+
 if(NOT DEFINED NRFX_DIR)
   set(NRFX_DIR ${ZEPHYR_CURRENT_MODULE_DIR}/nrfx/ CACHE PATH "nrfx Directory")
 endif()
