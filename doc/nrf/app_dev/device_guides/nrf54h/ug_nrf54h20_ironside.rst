@@ -162,15 +162,28 @@ To perform the manual update process using nRF Util's `device command <Device co
 
       nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial>
 
-#. (If updating both slots) Program the |ISE| Recovery update firmware:
+#. If you are updating both slots, complete the following additional steps:
+    
+   a. Program the |ISE| Recovery update firmware:
 
-   .. code-block:: console
+      .. code-block:: console
 
-      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_recovery_update.hex --serial-number <serial>
+         nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_recovery_update.hex --serial-number <serial>
 
-#. (If updating both slots) Repeat steps 5 and 6 to complete the update of the |ISE| recovery firmware.
+   b. Reset again to execute the update service:
 
-#. Erase the update application:
+      .. code-block:: console
+        
+         nrfutil device reset --serial-number <serial>
+    
+    c. Reset again through Secure Domain to trigger the installation of the update:
+    
+       .. code-block:: console
+ 
+          nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial>
+      
+
+#. Erase the update application (regardless if you update one or both slots):
 
    .. code-block:: console
 
