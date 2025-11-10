@@ -156,7 +156,7 @@ To perform the manual update process using nRF Util's `device command <Device co
 
       nrfutil device reset --serial-number <serial>
 
-#. Reset to trigger the installation of the update:
+#. Reset through Secure Domain to trigger the installation of the update:
 
    .. code-block:: console
 
