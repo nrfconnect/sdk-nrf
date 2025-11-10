@@ -164,6 +164,12 @@ static int32_t calculate_left_null_compensation_of_peak(int32_t peak_index,
 
 static void calculate_dist_ifft(float *dist, float iq_tones_comb[2 * CONFIG_BT_CS_DE_NFFT_SIZE])
 {
+
+	/* Complex conjugate the input. */
+	for (uint32_t i = 0; i < NUM_CHANNELS; i++) {
+		iq_tones_comb[i * 2 + 1] = -iq_tones_comb[i * 2 + 1];
+	}
+
 #if CONFIG_BT_CS_DE_NFFT_SIZE == 512
 	arm_cfft_f32(&arm_cfft_sR_f32_len512, iq_tones_comb, 0, 1);
 #elif CONFIG_BT_CS_DE_NFFT_SIZE == 1024
@@ -178,17 +184,10 @@ static void calculate_dist_ifft(float *dist, float iq_tones_comb[2 * CONFIG_BT_C
 	 * in iq_tones_comb[0:CONFIG_BT_CS_DE_NFFT_SIZE - 1]
 	 */
 	for (uint32_t n = 0; n < CONFIG_BT_CS_DE_NFFT_SIZE; n++) {
-		float realIn = iq_tones_comb[2 * n];
-		float imagIn = iq_tones_comb[(2 * n) + 1];
+		float realIn = iq_tones_comb[2 * n] / CONFIG_BT_CS_DE_NFFT_SIZE;
+		float imagIn = iq_tones_comb[(2 * n) + 1] / CONFIG_BT_CS_DE_NFFT_SIZE;
 
 		arm_sqrt_f32((realIn * realIn) + (imagIn * imagIn), &iq_tones_comb[n]);
-	}
-	/* Reverse the elements in iq_tones_comb[0:CONFIG_BT_CS_DE_NFFT_SIZE-1] */
-	for (uint32_t n = 0; n < CONFIG_BT_CS_DE_NFFT_SIZE / 2; n++) {
-		float temp = iq_tones_comb[n];
-
-		iq_tones_comb[n] = iq_tones_comb[CONFIG_BT_CS_DE_NFFT_SIZE - 1 - n];
-		iq_tones_comb[CONFIG_BT_CS_DE_NFFT_SIZE - 1 - n] = temp;
 	}
 
 	/* The iq_tones_comb array now contains the ifft_mag in the indices
