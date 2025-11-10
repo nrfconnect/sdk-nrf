@@ -163,6 +163,9 @@ Trusted Firmware-M
     nRF54L05 does not support TF-M.
     nRF54L10 supports TF-M experimentally.
 
+* Removed several documentation pages from the :ref:`tfm_wrapper` section that were misleading or not relevant for understanding the TF-M integration in the |NCS|.
+  The section now includes only pages that provide background information about TF-M design that are relevant for the |NCS|.
+
 Protocols
 =========
 
