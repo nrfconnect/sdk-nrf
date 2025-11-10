@@ -187,8 +187,8 @@ mapping_topics:
                                                              "nrf9161", "nrf9151",
                                                              "development-kits",
                                                              "prototyping-platforms"]
-  - nrf/app_dev/device_guides/nrf91/nrf91_testing_at_client.html: ["nrf9160", "nrf9161", "nrf9151",
-                                                                   "development-kits"]
+  - nrf/app_dev/device_guides/nrf91/nrf91_testing.html: ["nrf9160", "nrf9161", "nrf9151",
+                                                         "development-kits"]
   - nrf/app_dev/device_guides/nrf91/nrf91_snippet.html: ["nrf9160", "thingy91", "thingy91x",
                                                          "nrf9161", "nrf9151", "nrf9131",
                                                          "development-kits",
