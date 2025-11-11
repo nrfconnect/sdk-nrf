@@ -141,6 +141,7 @@ err:
 
 static int run_qt_command(const char *cmd)
 {
+	struct wpa_supplicant *wpa_s;
 	char buffer[64] = { 0 }, response[16] = { 0 };
 	size_t resp_len = sizeof(response);
 	int ret = 0;
@@ -152,8 +153,9 @@ static int run_qt_command(const char *cmd)
 		goto done;
 	}
 
-	if (ctrl_conn) {
-		ret = wpa_ctrl_request(ctrl_conn, buffer, sizeof(buffer),
+	wpa_s = zephyr_get_handle_by_ifname(CONFIG_WFA_QT_DEFAULT_INTERFACE);
+	if (wpa_s && wpa_s->ctrl_conn) {
+		ret = wpa_ctrl_request(wpa_s->ctrl_conn, buffer, sizeof(buffer),
 					response, &resp_len, NULL);
 		if (ret) {
 			indigo_logger(LOG_LEVEL_ERROR,
@@ -169,7 +171,13 @@ static int run_qt_command(const char *cmd)
 		if (ret < 0) {
 			goto done;
 		}
+	} else {
+		indigo_logger(LOG_LEVEL_ERROR,
+			      "WPA Supplicant ready event received, but no handle found for %s",
+			      CONFIG_WFA_QT_DEFAULT_INTERFACE);
+		return -1;
 	}
+
 	indigo_logger(LOG_LEVEL_DEBUG, "Response: %s", response);
 	return 0;
 done:
