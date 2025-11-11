@@ -110,6 +110,12 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 
+		wicr: wicr@3fd000 {
+			compatible = "nordic,nrf-wicr";
+			reg = <0x3fd000 0x1000>;
+			status = "disabled";
+		};
+
 		ficr: ficr@ffc000 {
 			compatible = "nordic,nrf-ficr";
 			reg = <0xffc000 0x1000>;
