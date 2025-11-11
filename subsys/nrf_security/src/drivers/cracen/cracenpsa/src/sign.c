@@ -105,7 +105,8 @@ cracen_signature_prepare_ec_pubkey(const uint8_t *key_buffer, size_t key_buffer_
 			if (key_buffer_size != sizeof(ikg_opaque_key)) {
 				return PSA_ERROR_INVALID_ARGUMENT;
 			}
-			sx_status = cracen_ikg_create_pub_key(key_buffer[0], pubkey_buffer);
+			sx_status = cracen_ikg_create_pub_key(
+				((const ikg_opaque_key *)key_buffer)->owner_id, pubkey_buffer);
 		}
 		return silex_statuscodes_to_psa(sx_status);
 	}
@@ -226,11 +227,13 @@ static psa_status_t handle_ikg_sign(bool is_message, const uint8_t *key_buffer,
 	status = hash_get_algo(alg, &hashalgpointer);
 	*signature_length = 2 * ecurve->sz;
 	if (is_message) {
-		status = cracen_ikg_sign_message(key_buffer[0], hashalgpointer, ecurve, input,
-						 input_length, signature);
+		status = cracen_ikg_sign_message(((const ikg_opaque_key *)key_buffer)->owner_id,
+						 hashalgpointer, ecurve, input, input_length,
+						 signature);
 	} else {
-		status = cracen_ikg_sign_digest(key_buffer[0], hashalgpointer, ecurve, input,
-						input_length, signature);
+		status = cracen_ikg_sign_digest(((const ikg_opaque_key *)key_buffer)->owner_id,
+						hashalgpointer, ecurve, input, input_length,
+						signature);
 	}
 	return silex_statuscodes_to_psa(status);
 }
