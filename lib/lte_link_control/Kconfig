@@ -23,6 +23,26 @@ config HEAP_MEM_POOL_ADD_SIZE_LTE_LINK_CONTROL
 
 # Modules: these Kconfig options enable specific features of the library.
 
+config LTE_LC_NETWORK_REGISTRATION_MODULE
+	bool "Network registration module"
+	default y
+
+config LTE_LC_FUNCTIONAL_MODE_MODULE
+	bool "Functional mode module"
+	default y
+
+config LTE_LC_CONNECTION_STATUS_MODULE
+	bool "Connection status module"
+	default y
+
+config LTE_LC_MODEM_EVENTS_MODULE
+	bool "Modem events module"
+	default y
+
+config LTE_LC_SYSTEM_MODE_MODULE
+	bool "System mode module"
+	default y
+
 config LTE_LC_CONN_EVAL_MODULE
 	bool "Connection Parameters Evaluation module"
 

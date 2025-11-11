@@ -4,11 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-zephyr_library_sources(cereg.c)
-zephyr_library_sources(cfun.c)
-zephyr_library_sources(cscon.c)
-zephyr_library_sources(mdmev.c)
-zephyr_library_sources(xsystemmode.c)
+zephyr_library_sources_ifdef(CONFIG_LTE_LC_NETWORK_REGISTRATION_MODULE cereg.c)
+zephyr_library_sources_ifdef(CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE cfun.c)
+zephyr_library_sources_ifdef(CONFIG_LTE_LC_CONNECTION_STATUS_MODULE cscon.c)
+zephyr_library_sources_ifdef(CONFIG_LTE_LC_MODEM_EVENTS_MODULE mdmev.c)
+zephyr_library_sources_ifdef(CONFIG_LTE_LC_SYSTEM_MODE_MODULE xsystemmode.c)
 zephyr_library_sources_ifdef(CONFIG_LTE_LC_CONN_EVAL_MODULE coneval.c)
 zephyr_library_sources_ifdef(CONFIG_LTE_LC_EDRX_MODULE edrx.c)
 zephyr_library_sources_ifdef(CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE ncellmeas.c)
