@@ -10,8 +10,8 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project("Audio module Template")
 
 target_sources(app PRIVATE
-	src/main.c
-	src/template_test.c
+  src/main.c
+  src/template_test.c
 )
 
 target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/subsys/audio/audio_module_template)

@@ -354,7 +354,7 @@ add_doxygen_docset(wifi ${ZEPHYR_NRF_WIFI_MODULE_DIR} "" STANDALONE)
 #-------------------------------------------------------------------------------
 # docset: internal
 
-if (EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
+if(EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
   message(STATUS "Internal documentation included")
   add_docset(internal "")
 endif()
@@ -391,7 +391,7 @@ add_dependencies(merge-search-indexes
     tfm-all
     kconfig-all
 )
-if (EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
+if(EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
   add_dependencies(merge-search-indexes internal-all)
 endif()
 
@@ -423,7 +423,7 @@ add_dependencies(build-all
     kconfig-all
     wifi
 )
-if (EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
+if(EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
   add_dependencies(build-all internal-all)
 endif()
 

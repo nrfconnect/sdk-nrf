@@ -13,9 +13,10 @@ project(date_time_test)
 test_runner_generate(src/main.c)
 
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h
-	     FUNC_EXCLUDE ".*nrf_modem_at_scanf"
-	     FUNC_EXCLUDE ".*nrf_modem_at_printf"
-	     WORD_EXCLUDE "__nrf_modem_(printf|scanf)_like\(.*\)")
+  FUNC_EXCLUDE ".*nrf_modem_at_scanf"
+  FUNC_EXCLUDE ".*nrf_modem_at_printf"
+  WORD_EXCLUDE "__nrf_modem_(printf|scanf)_like\(.*\)"
+)
 
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/sntp.h)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/socket.h)

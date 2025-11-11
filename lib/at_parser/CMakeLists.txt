@@ -6,8 +6,8 @@
 
 zephyr_library()
 zephyr_library_sources(
-	at_parser.c
-	generated/at_match.c
+  at_parser.c
+  generated/at_match.c
 )
 
 zephyr_include_directories(include)

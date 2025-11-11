@@ -24,24 +24,24 @@ target_sources(app PRIVATE src/sample_reboot.c)
 target_sources(app PRIVATE src/shadow_config.c)
 
 if(CONFIG_LOCATION_TRACKING)
-target_sources(app PRIVATE src/location_tracking.c)
+  target_sources(app PRIVATE src/location_tracking.c)
 endif()
 
 if(CONFIG_COAP_SHADOW)
-target_sources(app PRIVATE src/shadow_support_coap.c)
+  target_sources(app PRIVATE src/shadow_support_coap.c)
 endif()
 
 if(CONFIG_COAP_FOTA)
-target_sources(app PRIVATE src/fota_support_coap.c)
+  target_sources(app PRIVATE src/fota_support_coap.c)
 endif()
 
 if(CONFIG_NRF_PROVISIONING)
-target_sources(app PRIVATE src/provisioning_support.c)
+  target_sources(app PRIVATE src/provisioning_support.c)
 endif()
 
 # Include modem-specific features if supported
 if(CONFIG_NRF_MODEM_LIB)
-	target_sources(app PRIVATE src/at_commands.c)
+  target_sources(app PRIVATE src/at_commands.c)
 endif()
 
 # NORDIC SDK APP END

@@ -12,7 +12,7 @@ if(SB_CONFIG_APP_DFU)
         ${APP_DIR}/sysbuild/common/dfu_speedup_fragment.conf
     )
 
-    if (EXISTS ${dfu_speedup_kconfig_fragment})
+    if(EXISTS ${dfu_speedup_kconfig_fragment})
       add_overlay_config(
           ${SB_CONFIG_NETCORE_IMAGE_NAME}
           ${dfu_speedup_kconfig_fragment}

@@ -6,23 +6,23 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(NONE)
+project(bluetooth_mesh_light)
 
-include_directories(
-	${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common
-)
+include_directories(${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common)
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE
-	src/main.c
-	src/model_handler.c)
+  src/main.c
+  src/model_handler.c
+)
 target_include_directories(app PRIVATE
-	include
-	${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common
+  include
+  ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common
 )
 
 # Preinitialization related to DFU over SMP
 target_sources_ifdef(CONFIG_MCUMGR_TRANSPORT_BT app PRIVATE
-	${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common/smp_bt.c)
+  ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common/smp_bt.c
+)
 
 # NORDIC SDK APP END

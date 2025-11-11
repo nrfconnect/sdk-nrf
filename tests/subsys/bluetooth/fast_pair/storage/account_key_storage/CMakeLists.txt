@@ -11,10 +11,10 @@ project("Fast Pair storage of Account Keys unit test")
 
 # Add test sources
 target_sources(app PRIVATE
-	       src/main.c
-	       src/settings_mock.c
-	       src/test_corrupted_data.c
-	       ../common/src/common_utils.c
+  src/main.c
+  src/settings_mock.c
+  src/test_corrupted_data.c
+  ../common/src/common_utils.c
 )
 target_include_directories(app PRIVATE include)
 target_include_directories(app PRIVATE ../common/include)

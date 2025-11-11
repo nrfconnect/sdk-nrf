@@ -34,7 +34,7 @@ function(provision application prefix_name)
     if((CONFIG_SB_VALIDATE_FW_SIGNATURE OR CONFIG_SB_VALIDATE_FW_HASH) AND
         NCS_SYSBUILD_PARTITION_MANAGER)
 
-      if (${SB_CONFIG_SECURE_BOOT_DEBUG_SIGNATURE_PUBLIC_KEY_LAST})
+      if(${SB_CONFIG_SECURE_BOOT_DEBUG_SIGNATURE_PUBLIC_KEY_LAST})
         message(WARNING
           "
       -----------------------------------------------------------------

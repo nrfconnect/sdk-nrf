@@ -12,7 +12,7 @@ project(NONE)
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE ${app_sources})
 
-if (DEFINED CONFIG_SOC_NRF9160)
+if(DEFINED CONFIG_SOC_NRF9160)
   set(family_arg NRF91)
 else()
   set(family_arg NRF53)
@@ -21,7 +21,7 @@ endif()
 
 if("${CONFIG_HUK_TEST_BOARD_SNR}" STREQUAL "")
   message(WARNING "If it is to be run on target, this test requires setting "
-      "CONFIG_HUK_TEST_BOARD_SNR")
+    "CONFIG_HUK_TEST_BOARD_SNR")
 else()
   add_custom_command(TARGET app
     POST_BUILD

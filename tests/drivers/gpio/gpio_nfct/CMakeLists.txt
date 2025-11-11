@@ -9,5 +9,4 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(gpio_nfct)
 
-FILE(GLOB app_sources ${ZEPHYR_NRF_MODULE_DIR}/tests/drivers/gpio/gpio_more_loops/src/main.c)
-target_sources(app PRIVATE ${app_sources})
+target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/tests/drivers/gpio/gpio_more_loops/src/main.c)

@@ -17,14 +17,14 @@ zephyr_library_include_directories(src/events)
 target_sources(app PRIVATE src/main.c)
 
 target_sources(app PRIVATE
-		src/events/five_sec_event.c
-		src/events/config_event.c
-		src/events/one_sec_event.c
-		src/events/burst_event.c
+  src/events/five_sec_event.c
+  src/events/config_event.c
+  src/events/one_sec_event.c
+  src/events/burst_event.c
 )
 
 target_sources(app PRIVATE
-		src/modules/module_a.c
-		src/modules/module_b.c
+  src/modules/module_a.c
+  src/modules/module_b.c
 )
 # NORDIC SDK APP END

@@ -4,9 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 zephyr_library()
-zephyr_library_sources(
-	azure_fota.c
-)
+zephyr_library_sources(azure_fota.c)
 
 find_package(Git QUIET)
 if(NOT AZURE_FOTA_APP_VERSION AND GIT_FOUND)

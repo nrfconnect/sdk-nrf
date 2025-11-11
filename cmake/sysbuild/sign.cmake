@@ -192,13 +192,13 @@ function(b0_sign_image slot cpunet_target)
     set(custom_sign_cmd "${SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND}")
     string(CONFIGURE "${custom_sign_cmd}" custom_sign_cmd)
 
-    if (("${custom_sign_cmd}" STREQUAL "") OR (NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE}))
+    if(("${custom_sign_cmd}" STREQUAL "") OR (NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE}))
       message(FATAL_ERROR "You must specify a signing command and valid public key file for custom signing.")
     endif()
 
     string(APPEND custom_sign_cmd " ${hash_file} > ${signature_file}")
     string(REPLACE " " ";" sign_cmd ${custom_sign_cmd})
-  else ()
+  else()
     message(WARNING "Unable to parse signing config.")
   endif()
 
