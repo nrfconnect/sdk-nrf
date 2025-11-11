@@ -909,6 +909,9 @@ Modem libraries
     * New registration statuses and functional modes for the ``mfw_nrf9151-ntn`` modem firmware.
     * Support for PDP context and PDN connection management.
       The functionality is available when the :kconfig:option:`CONFIG_LTE_LC_PDN_MODULE` Kconfig option is enabled.
+    * Support for also disabling the default modules that are enabled by default.
+      This is useful when the application only needs a subset of the functionality provided by the library and to reduce the size of the application image.
+      To disable a module, set the corresponding ``CONFIG_LTE_LC_<MODULE_NAME>_MODULE`` Kconfig option to ``n``.
 
   * Updated:
 

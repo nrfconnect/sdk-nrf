@@ -17,14 +17,37 @@ if LTE_LINK_CONTROL
 config HEAP_MEM_POOL_ADD_SIZE_LTE_LINK_CONTROL
 	int "Heap required for event handlers"
 	default 32
+	default 96 if LTE_LC_PDN_MODULE
 	help
 	  Extra heap size required for allocating event handlers.
 	  Default is enough for 4 handlers.
 
 # Modules: these Kconfig options enable specific features of the library.
 
+config LTE_LC_FUNCTIONAL_MODE_MODULE
+	bool "Functional mode module"
+	default y
+
+config LTE_LC_NETWORK_REGISTRATION_MODULE
+	bool "Network registration module"
+	depends on LTE_LC_FUNCTIONAL_MODE_MODULE
+	default y
+
+config LTE_LC_CONNECTION_STATUS_MODULE
+	bool "Connection status module"
+	default y
+
+config LTE_LC_MODEM_EVENTS_MODULE
+	bool "Modem events module"
+	default y
+
+config LTE_LC_SYSTEM_MODE_MODULE
+	bool "System mode module"
+	default y
+
 config LTE_LC_CONN_EVAL_MODULE
 	bool "Connection Parameters Evaluation module"
+	depends on LTE_LC_FUNCTIONAL_MODE_MODULE
 
 config LTE_LC_EDRX_MODULE
 	bool "Extended Discontinuous Reception (eDRX) module"
@@ -49,6 +72,7 @@ config LTE_LC_TAU_PRE_WARNING_MODULE
 
 config LTE_LC_ENV_EVAL_MODULE
 	bool "Environment Evaluation module"
+	depends on LTE_LC_FUNCTIONAL_MODE_MODULE
 
 config LTE_LC_PDN_MODULE
 	bool "Packet Data Network (PDN) module"
