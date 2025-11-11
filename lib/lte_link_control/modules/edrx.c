@@ -133,30 +133,6 @@ static void edrx_ptw_send_work_fn(struct k_work *work_item)
 	}
 }
 
-#if defined(CONFIG_UNITY)
-void lte_lc_edrx_on_modem_cfun(int mode, void *ctx)
-#else
-NRF_MODEM_LIB_ON_CFUN(lte_lc_edrx_cfun_hook, lte_lc_edrx_on_modem_cfun, NULL);
-
-static void lte_lc_edrx_on_modem_cfun(int mode, void *ctx)
-#endif /* CONFIG_UNITY */
-{
-	ARG_UNUSED(ctx);
-
-	/* If eDRX is enabled and modem is powered off, subscription of unsolicited eDRX
-	 * notifications must be re-newed because modem forgets that information
-	 * although it stores eDRX value and PTW for both system modes.
-	 */
-	if (mode == LTE_LC_FUNC_MODE_POWER_OFF && requested_edrx_enable) {
-		lte_lc_edrx_current_values_clear();
-		/* We want to avoid sending AT commands in the callback. However,
-		 * when modem is powered off, we are not expecting AT notifications
-		 * that could cause an assertion or missing notification.
-		 */
-		edrx_request(requested_edrx_enable);
-	}
-}
-
 /* Get Paging Time Window multiplier for the LTE mode.
  * Multiplier is 1.28 s for LTE-M, and 2.56 s for NB-IoT, derived from
  * Figure 10.5.5.32/3GPP TS 24.008.
@@ -533,4 +509,12 @@ int edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx)
 	}
 
 	return 0;
+}
+
+void edrx_set(void)
+{
+	if (requested_edrx_enable) {
+		lte_lc_edrx_current_values_clear();
+		edrx_request(requested_edrx_enable);
+	}
 }

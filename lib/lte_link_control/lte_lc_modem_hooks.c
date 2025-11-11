@@ -9,11 +9,27 @@
 #include <modem/nrf_modem_lib.h>
 #include <zephyr/logging/log.h>
 
+#include "modules/edrx.h"
 #include "modules/rai.h"
 #include "modules/dns.h"
 #include "common/helpers.h"
 
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
+
+#if defined(CONFIG_LTE_LOCK_BANDS)
+static void band_lock_set(void)
+{
+	int err;
+
+	/* Set LTE band lock (volatile setting).
+	 * Has to be done every time before activating the modem.
+	 */
+	err = nrf_modem_at_printf("AT%%XBANDLOCK=2,\""CONFIG_LTE_LOCK_BAND_MASK "\"");
+	if (err) {
+		LOG_ERR("Failed to lock LTE bands, err %d", err);
+	}
+}
+#endif /* CONFIG_LTE_LOCK_BANDS */
 
 #if defined(CONFIG_UNITY)
 void on_modem_init(int err, void *ctx)
@@ -37,7 +53,6 @@ static void on_modem_init(int err, void *ctx)
 		err = lte_lc_system_mode_set(lte_lc_sys_mode, lte_lc_sys_mode_pref);
 		if (err) {
 			LOG_ERR("Failed to set system mode and mode preference, err %d", err);
-			return;
 		}
 	}
 
@@ -47,37 +62,32 @@ static void on_modem_init(int err, void *ctx)
 						   CONFIG_LTE_PSM_REQ_RAT_SECONDS);
 		if (err) {
 			LOG_ERR("Failed to set PSM params, err %d", err);
-			return;
+		} else {
+			LOG_DBG("PSM configs set from seconds: tau=%ds, rat=%ds",
+				CONFIG_LTE_PSM_REQ_RPTAU_SECONDS,
+				CONFIG_LTE_PSM_REQ_RAT_SECONDS);
 		}
-
-		LOG_DBG("PSM configs set from seconds: tau=%ds, rat=%ds",
-			CONFIG_LTE_PSM_REQ_RPTAU_SECONDS,
-			CONFIG_LTE_PSM_REQ_RAT_SECONDS);
 	} else {
 		__ASSERT_NO_MSG(IS_ENABLED(CONFIG_LTE_PSM_REQ_FORMAT_STRING));
 
 		err = lte_lc_psm_param_set(CONFIG_LTE_PSM_REQ_RPTAU, CONFIG_LTE_PSM_REQ_RAT);
 		if (err) {
 			LOG_ERR("Failed to set PSM params, err %d", err);
-			return;
+		} else {
+			LOG_DBG("PSM configs set from string: tau=%s, rat=%s",
+				CONFIG_LTE_PSM_REQ_RPTAU, CONFIG_LTE_PSM_REQ_RAT);
 		}
-
-		LOG_DBG("PSM configs set from string: tau=%s, rat=%s",
-			CONFIG_LTE_PSM_REQ_RPTAU, CONFIG_LTE_PSM_REQ_RAT);
 	}
 
-	/* Request configured PSM and eDRX settings to save power. */
 	err = lte_lc_psm_req(IS_ENABLED(CONFIG_LTE_PSM_REQ));
 	if (err) {
 		LOG_ERR("Failed to configure PSM, err %d", err);
-		return;
 	}
 
 	if (IS_ENABLED(CONFIG_LTE_PROPRIETARY_PSM_REQ)) {
 		err = lte_lc_proprietary_psm_req(true);
 		if (err) {
 			LOG_ERR("Failed to configure proprietary PSM, err %d", err);
-			return;
 		}
 	} else {
 		/* Return value is ignored because this feature is not supported by all MFW
@@ -99,41 +109,69 @@ static void on_modem_init(int err, void *ctx)
 	err = lte_lc_edrx_req(IS_ENABLED(CONFIG_LTE_EDRX_REQ));
 	if (err) {
 		LOG_ERR("Failed to configure eDRX, err %d", err);
-		return;
-	}
-#endif
-
-#if defined(CONFIG_LTE_LOCK_BANDS)
-	/* Set LTE band lock (volatile setting).
-	 * Has to be done every time before activating the modem.
-	 */
-	err = nrf_modem_at_printf("AT%%XBANDLOCK=2,\""CONFIG_LTE_LOCK_BAND_MASK "\"");
-	if (err) {
-		LOG_ERR("Failed to lock LTE bands, err %d", err);
-		return;
 	}
 #endif
 
 #if defined(CONFIG_LTE_LOCK_PLMN)
-	/* Manually select Operator (volatile setting).
-	 * Has to be done every time before activating the modem.
-	 */
+	/* Manually select the PLMN. */
 	err = nrf_modem_at_printf("AT+COPS=1,2,\"" CONFIG_LTE_LOCK_PLMN_STRING "\"");
 	if (err) {
 		LOG_ERR("Failed to lock PLMN, err %d", err);
-		return;
 	}
 #elif defined(CONFIG_LTE_UNLOCK_PLMN)
-	/* Automatically select Operator (volatile setting). */
+	/* Automatically select the PLMN. */
 	err = nrf_modem_at_printf("AT+COPS=0");
 	if (err) {
 		LOG_ERR("Failed to unlock PLMN, err %d", err);
-		return;
 	}
 #endif
 
+#if defined(CONFIG_LTE_LOCK_BANDS)
+	band_lock_set();
+#endif
+
 #if defined(CONFIG_LTE_LC_RAI_MODULE)
-	/* Configure Release Assistance Indication (RAI). */
+	rai_set();
+#endif
+
+#if defined(CONFIG_LTE_LC_DNS_FALLBACK_MODULE)
+	dns_fallback_set();
+#endif
+}
+
+#if defined(CONFIG_UNITY)
+void lte_lc_on_modem_cfun(int mode, void *ctx)
+#else
+NRF_MODEM_LIB_ON_CFUN(lte_lc_cfun_hook, lte_lc_on_modem_cfun, NULL);
+
+static void lte_lc_on_modem_cfun(int mode, void *ctx)
+#endif /* CONFIG_UNITY */
+{
+	ARG_UNUSED(ctx);
+
+	/* Settings not stored into NVM are lost when modem is put into functional mode
+	 * LTE_LC_FUNC_MODE_POWER_OFF. Because of this some of the settings need to be applied
+	 * again.
+	 *
+	 * We want to avoid sending AT commands in the callback. However, when modem is
+	 * powered off, we are not expecting AT notifications that could cause an assertion or
+	 * a missing notification.
+	 */
+
+	if (mode != LTE_LC_FUNC_MODE_POWER_OFF) {
+		/* Nothing to do */
+		return;
+	}
+
+#if defined(CONFIG_LTE_LC_EDRX_MODULE)
+	edrx_set();
+#endif
+
+#if defined(CONFIG_LTE_LOCK_BANDS)
+	band_lock_set();
+#endif
+
+#if defined(CONFIG_LTE_LC_RAI_MODULE)
 	rai_set();
 #endif
 
