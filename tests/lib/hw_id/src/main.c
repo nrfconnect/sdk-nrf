@@ -22,7 +22,7 @@
 
 DEFINE_FFF_GLOBALS;
 
-FAKE_VALUE_FUNC(int, bt_le_oob_get_local, uint8_t, struct bt_le_oob *);
+FAKE_VOID_FUNC(bt_id_get, bt_addr_le_t *, size_t *);
 FAKE_VALUE_FUNC(int, modem_jwt_get_uuids, struct nrf_device_uuid *, struct nrf_modem_fw_uuid *);
 FAKE_VALUE_FUNC(struct net_if *, net_if_get_default);
 FAKE_VALUE_FUNC(ssize_t, z_impl_hwinfo_get_device_id, uint8_t *, size_t);
@@ -38,8 +38,8 @@ static struct net_if net_if_example =  {
 	.if_dev = &net_if_dev_example
 };
 
-static struct bt_le_oob bt_le_oob_example = {
-	.addr.a.val = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66}
+static bt_addr_le_t bt_addr_example = {
+	.a.val = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66}
 };
 static uint8_t serial_nr[8] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88};
 static struct nrf_device_uuid uuid_example = {
@@ -47,11 +47,11 @@ static struct nrf_device_uuid uuid_example = {
 };
 static const char imei[] = "985802356545846";
 
-static int custom_bt_le_oob_get_local(uint8_t id, struct bt_le_oob *oob)
+static void custom_bt_id_get(bt_addr_le_t *addrs, size_t *count)
 {
-	TEST_ASSERT_EQUAL(BT_ID_DEFAULT, id);
-	*oob = bt_le_oob_example;
-	return 0;
+	TEST_ASSERT_EQUAL(*count, 1);
+	*addrs = bt_addr_example;
+	*count = 1;
 }
 
 static ssize_t custom_z_impl_hwinfo_get_device_id(uint8_t *buffer, size_t length)
@@ -80,12 +80,12 @@ static int custom_nrf_modem_at_cmd(void *buf, size_t len, const char *fmt, va_li
 
 void setUp(void)
 {
-	RESET_FAKE(bt_le_oob_get_local);
+	RESET_FAKE(bt_id_get);
 	RESET_FAKE(modem_jwt_get_uuids);
 	RESET_FAKE(net_if_get_default);
 	RESET_FAKE(z_impl_hwinfo_get_device_id);
 	RESET_FAKE(nrf_modem_at_cmd);
-	bt_le_oob_get_local_fake.custom_fake = custom_bt_le_oob_get_local;
+	bt_id_get_fake.custom_fake = custom_bt_id_get;
 	modem_jwt_get_uuids_fake.custom_fake = custom_modem_jwt_get_uuids;
 	net_if_get_default_fake.return_val = &net_if_example;
 	z_impl_hwinfo_get_device_id_fake.custom_fake = custom_z_impl_hwinfo_get_device_id;
