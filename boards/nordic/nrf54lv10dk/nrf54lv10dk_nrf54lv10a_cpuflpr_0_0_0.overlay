@@ -4,43 +4,4 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	leds {
-		compatible = "gpio-leds";
-
-		led0: led_0 {
-			gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
-			label = "Green LED 1";
-		};
-
-		led1: led_1 {
-			gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
-			label = "Green LED 2";
-		};
-	};
-
-	buttons {
-		compatible = "gpio-keys";
-
-		button0: button_0 {
-			gpios = <&gpio1 15 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
-		};
-
-		button1: button_1 {
-			gpios = <&gpio1 9 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
-		};
-
-		button2: button_2 {
-			gpios = <&gpio1 8 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
-		};
-
-		button3: button_3 {
-			gpios = <&gpio0 4 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
-		};
-	};
-};
-
-&hfpll {
-	/* For now use 64 MHz clock for CPU and fast peripherals. */
-	clock-frequency = <DT_FREQ_M(64)>;
-};
+#include "nrf54lv10dk_nrf54lv10a_common_0_0_0.overlay"
