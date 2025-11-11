@@ -792,6 +792,8 @@ Modem libraries
     * The order of the ``LTE_LC_MODEM_EVT_SEARCH_DONE`` modem event, and registration and cell related events.
       See the :ref:`migration guide <migration_3.2_required>` for more information.
 
+  * Fixed an issue where band lock, RAI notification subscription, and DNS fallback address were lost when the modem was put into :c:enumerator:`LTE_LC_FUNC_MODE_POWER_OFF` functional mode.
+
 * :ref:`nrf_modem_lib_readme` library:
 
   * Added the :c:func:`nrf_modem_lib_trace_peek_at` function to the :c:struct:`nrf_modem_lib_trace_backend` interface to peek trace data at a byte offset without consuming it.

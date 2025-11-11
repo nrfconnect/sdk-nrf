@@ -25,6 +25,11 @@ int edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx);
 /* Request modem to enable or disable use of eDRX. */
 int edrx_request(bool enable);
 
+/* Apply current eDRX configuration. Used after +CFUN=0 to restore the eDRX notification
+ * subscription, which is not stored into NVM by the modem.
+ */
+void edrx_set(void);
+
 #ifdef __cplusplus
 }
 #endif
