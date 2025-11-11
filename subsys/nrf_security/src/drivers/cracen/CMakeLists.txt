@@ -11,8 +11,7 @@ set(cracen_driver_sources)
 include(sxsymcrypt/sxsymcrypt.cmake)
 include(silexpk/silexpk.cmake)
 include(cracenpsa/cracenpsa.cmake)
-if(CONFIG_PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS OR
-   (CONFIG_SOC_NRF54LV10A AND CONFIG_PSA_NEED_CRACEN_CTR_AES))
+if(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS)
   include(cracen_sw/cracen_sw.cmake)
 endif()
 

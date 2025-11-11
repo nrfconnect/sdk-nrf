@@ -44,12 +44,12 @@
 #define CRACEN_MAX_CHACHA20_KEY_SIZE (32u)
 
 /*
- * There is a HW limitation for nRF54LM20A and nRF54LV10A:
- * a maximum of 1 MB of plaintext or ciphertext is supported.
+ * HW limitation for devices with smaller CTR size:
+ * a maximum of 1 MB of plaintext or ciphertext is supported for CCM.
  */
-#if defined(CONFIG_SOC_NRF54LM20A) || defined(CONFIG_SOC_NRF54LV10A)
+#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS)
 #define CRACEN_MAX_CCM_DATA_SIZE (65536U * SX_BLKCIPHER_AES_BLK_SZ)
-#endif /* CONFIG_SOC_NRF54LM20A || CONFIG_SOC_NRF54LV10A */
+#endif /* CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS */
 
 /*
  * There are two key types supported for ciphers, CHACHA20 and AES,
