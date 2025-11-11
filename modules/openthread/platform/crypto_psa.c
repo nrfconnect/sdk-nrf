@@ -304,7 +304,6 @@ otError otPlatCryptoImportKey(otCryptoKeyRef *aKeyRef, otCryptoKeyType aKeyType,
 	psa_set_key_type(&attributes, toPsaKeyType(aKeyType));
 	psa_set_key_algorithm(&attributes, toPsaAlgorithm(aKeyAlgorithm));
 	psa_set_key_usage_flags(&attributes, toPsaKeyUsage(aKeyUsage));
-	psa_set_key_bits(&attributes, getKeyBits(aKeyType));
 
 	switch (aKeyPersistence) {
 	case OT_CRYPTO_KEY_STORAGE_PERSISTENT: {
@@ -314,6 +313,7 @@ otError otPlatCryptoImportKey(otCryptoKeyRef *aKeyRef, otCryptoKeyType aKeyType,
 		 */
 		otCryptoKeyRef keyRef = *aKeyRef;
 
+		psa_set_key_bits(&attributes, getKeyBits(aKeyType));
 		psa_set_key_lifetime(&attributes, PSA_KEY_LIFETIME_PERSISTENT);
 
 		GET_KEY_REF(&keyRef, &attributes);
