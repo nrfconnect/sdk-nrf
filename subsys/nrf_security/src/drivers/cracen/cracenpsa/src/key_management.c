@@ -671,7 +671,8 @@ static psa_status_t handle_identity_key(const uint8_t *key_buffer, size_t key_bu
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1_256)) {
 		data[0] = CRACEN_ECC_PUBKEY_UNCOMPRESSED;
-		return silex_statuscodes_to_psa(cracen_ikg_create_pub_key(key_buffer[0], data + 1));
+		return silex_statuscodes_to_psa(cracen_ikg_create_pub_key(
+			((const ikg_opaque_key *)key_buffer)->owner_id, data + 1));
 	}
 	return PSA_ERROR_NOT_SUPPORTED;
 }
