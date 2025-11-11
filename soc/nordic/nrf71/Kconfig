@@ -55,4 +55,14 @@ config SOC_NRF7120_HAS_AMBIX03
 	bool "AMBIX03 available"
 	depends on SOC_NRF7120_PREENG
 
+config NRF_WIFI_WICR_GENERATE_HEX
+	bool "Generate WICR hex file from device tree"
+	depends on DT_HAS_NORDIC_NRF_WICR_ENABLED
+	default y
+	help
+	  Automatically validate and generate wicr.hex file from device tree
+	  WICR configuration during build. The hex file will be created in
+	  the build directory and can be loaded to the device to program
+	  the WiFi Information Configuration Registers.
+
 endif # SOC_SERIES_NRF71X
