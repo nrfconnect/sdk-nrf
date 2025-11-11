@@ -1,0 +1,54 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&wicr {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	status = "okay";
+
+	firmware {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		lmacinitpc: lmacinitpc@0 {
+			reg = <0x0 0x4>;
+			value = <0x28080000>;
+		};
+		umacinitpc: umacinitpc@4 {
+			reg = <0x4 0x4>;
+			value = <0x28180000>;
+		};
+		lmacrompatchaddr: lmacrompatchaddr@8 {
+			reg = <0x8 0x4>;
+			value = <0x002e0000>;
+		};
+		umacrompatchaddr: umacrompatchaddr@c {
+			reg = <0xc 0x4>;
+			value = <0x002f0000>;
+		};
+	};
+
+	ipcconfig {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		commandmboxaddr: commandmboxaddr@80 {
+			reg = <0x80 0x4>;
+			value = <0x200c0000>;
+		};
+		commandmboxsize: commandmboxsize@84 {
+			reg = <0x84 0x4>;
+			value = <0x800>;
+		};
+		eventmboxaddr: eventmboxaddr@88 {
+			reg = <0x88 0x4>;
+			value = <0x200c0800>;
+		};
+		eventmboxsize: eventmboxsize@8c {
+			reg = <0x8c 0x4>;
+			value = <0x800>;
+		};
+	};
+};
