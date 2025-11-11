@@ -4,6 +4,4 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-zephyr_sources_ifdef(CONFIG_PSA_INTERNAL_TRUSTED_STORAGE
-		backend_interface.c
-)
+zephyr_sources_ifdef(CONFIG_PSA_INTERNAL_TRUSTED_STORAGE backend_interface.c)

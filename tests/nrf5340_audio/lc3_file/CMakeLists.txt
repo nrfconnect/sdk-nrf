@@ -11,15 +11,15 @@ project(test_lc3_file)
 
 # lc3_file source must be added manually as kconfigs and CMakeLists in nRF5340 audio application
 # is not available from here.
-target_sources(app
-	PRIVATE
-	src/main.c
-	${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/modules/lc3_file.c
-	${ZEPHYR_NRF_MODULE_DIR}/tests/nrf5340_audio/fakes/sd_card/sd_card_fake.c
-	${ZEPHYR_NRF_MODULE_DIR}/tests/nrf5340_audio/fakes/sd_card/lc3_file_data.c
-	)
+target_sources(app PRIVATE
+  src/main.c
+  ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/modules/lc3_file.c
+  ${ZEPHYR_NRF_MODULE_DIR}/tests/nrf5340_audio/fakes/sd_card/sd_card_fake.c
+  ${ZEPHYR_NRF_MODULE_DIR}/tests/nrf5340_audio/fakes/sd_card/lc3_file_data.c
+)
 
 target_compile_definitions(app PRIVATE CONFIG_MODULE_SD_CARD_LC3_FILE_LOG_LEVEL=3)
 target_include_directories(app PRIVATE
-	${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src
-	${ZEPHYR_NRF_MODULE_DIR}/tests/nrf5340_audio/fakes)
+  ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src
+  ${ZEPHYR_NRF_MODULE_DIR}/tests/nrf5340_audio/fakes
+)

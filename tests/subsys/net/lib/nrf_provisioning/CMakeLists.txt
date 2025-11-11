@@ -19,12 +19,14 @@ set(options
 
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/date_time.h)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/lte_lc.h
-	FUNC_EXCLUDE ".*(lte_lc_rai_req|lte_lc_rai_param_set)"
-	WORD_EXCLUDE "__deprecated")
+  FUNC_EXCLUDE ".*(lte_lc_rai_req|lte_lc_rai_param_set)"
+  WORD_EXCLUDE "__deprecated"
+)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_key_mgmt.h)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_attest_token.h)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_info.h
-	WORD_EXCLUDE "__deprecated")
+  WORD_EXCLUDE "__deprecated"
+)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/nrf_modem_lib.h)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/settings/settings.h)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_at.h)
@@ -37,7 +39,6 @@ if(CONFIG_SETTINGS_CUSTOM)
   test_runner_generate(src/http_jwt.c)
   list(APPEND app_sources src/http_jwt.c)
   cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_jwt.h)
-
 elseif(CONFIG_NRF_PROVISIONING_COAP)
   test_runner_generate(src/coap.c)
   list(APPEND app_sources src/coap.c)
@@ -53,18 +54,16 @@ elseif(CONFIG_NRF_PROVISIONING_COAP)
   cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/coap_client.h)
   cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_jwt.h)
   cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_internal.h)
-
 elseif(CONFIG_NRF_PROVISIONING_HTTP AND NOT CONFIG_NRF_PROVISIONING_SCHEDULED)
-        test_runner_generate(src/main.c)
-        list(APPEND app_sources src/main.c)
-        cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_jwt.h)
-        cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_internal.h)
-
+  test_runner_generate(src/main.c)
+  list(APPEND app_sources src/main.c)
+  cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_jwt.h)
+  cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_internal.h)
 elseif(CONFIG_NRF_PROVISIONING_HTTP AND CONFIG_NRF_PROVISIONING_SCHEDULED)
-        test_runner_generate(src/scheduled.c)
-        list(APPEND app_sources src/scheduled.c)
-        cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_jwt.h)
-        cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_internal.h FUNC_EXCLUDE ".*(nrf_provisioning_schedule)")
+  test_runner_generate(src/scheduled.c)
+  list(APPEND app_sources src/scheduled.c)
+  cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_jwt.h)
+  cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_internal.h FUNC_EXCLUDE ".*(nrf_provisioning_schedule)")
 endif()
 
 target_sources(app PRIVATE ${app_sources})

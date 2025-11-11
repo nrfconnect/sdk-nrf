@@ -9,7 +9,7 @@ function(generate_dfu_zip)
   set(multiValueArgs BIN_FILES SCRIPT_PARAMS DEPENDS EXCLUDE INCLUDE ZIP_NAMES)
   cmake_parse_arguments(GENZIP "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if (NOT(
+  if(NOT(
     GENZIP_BIN_FILES AND
     GENZIP_SCRIPT_PARAMS AND
     GENZIP_OUTPUT AND

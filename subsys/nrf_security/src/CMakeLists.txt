@@ -59,7 +59,7 @@ target_include_directories(psa_crypto_library_config
 )
 
 if(CONFIG_MBEDTLS_ENABLE_HEAP)
-  if (CONFIG_BUILD_WITH_TFM)
+  if(CONFIG_BUILD_WITH_TFM)
     # Add replacement for memory_buffer_alloc.c for NS build
     list(APPEND src_crypto ${NRF_SECURITY_ROOT}/src/legacy/memory_buffer_alloc.c)
   else()
@@ -209,12 +209,12 @@ set_property(TARGET ${mbedcrypto_target}
 )
 
 # NEWLIB requires linking with the C library
-if (CONFIG_NEWLIB_LIBC)
+if(CONFIG_NEWLIB_LIBC)
   target_link_libraries(${mbedcrypto_target} PRIVATE -lc)
   target_link_libraries(mbedcrypto_base PRIVATE -lc)
 endif()
 
-if (CONFIG_MBEDTLS_X509_LIBRARY)
+if(CONFIG_MBEDTLS_X509_LIBRARY)
   append_with_prefix(src_x509 ${ARM_MBEDTLS_PATH}/library
     pkcs7.c
     x509.c
@@ -244,7 +244,7 @@ if (CONFIG_MBEDTLS_X509_LIBRARY)
 endif()
 
 # Library for TLS protocol support
-if (CONFIG_MBEDTLS_TLS_LIBRARY)
+if(CONFIG_MBEDTLS_TLS_LIBRARY)
   # TLS files
   append_with_prefix(src_tls ${ARM_MBEDTLS_PATH}/library
     debug.c
@@ -264,7 +264,7 @@ if (CONFIG_MBEDTLS_TLS_LIBRARY)
     ssl_tls13_generic.c
   )
 
-  if (CONFIG_MBEDTLS_DEBUG)
+  if(CONFIG_MBEDTLS_DEBUG)
     list(APPEND src_tls
       ${ARM_MBEDTLS_PATH}/library/ssl_debug_helpers_generated.c
     )
@@ -285,7 +285,7 @@ if (CONFIG_MBEDTLS_TLS_LIBRARY)
   nrf_security_add_zephyr_options(mbedtls)
 endif()
 
-if (NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
+if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
   # Add zephyr-specific code
   add_subdirectory(zephyr)
 endif()

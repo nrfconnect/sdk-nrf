@@ -9,7 +9,7 @@ menuconfig FW_INFO
 	prompt "Firmware Metadata"
 	imply NRFX_NVMC if !SOC_SERIES_NRF54LX
 
-if (FW_INFO)
+if FW_INFO
 
 config FW_INFO_API
 	bool "Only provide APIs to locate metadata"

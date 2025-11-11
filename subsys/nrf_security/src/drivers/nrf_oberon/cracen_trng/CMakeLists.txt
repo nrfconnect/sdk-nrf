@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if (PSA_NEED_CRACEN_TRNG_DRIVER)
+if(PSA_NEED_CRACEN_TRNG_DRIVER)
   target_sources(psa_core
     PRIVATE
       cracen_trng.c

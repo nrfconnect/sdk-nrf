@@ -5,6 +5,4 @@
 #
 
 zephyr_library()
-zephyr_library_sources(
-	tone.c
-)
+zephyr_library_sources(tone.c)

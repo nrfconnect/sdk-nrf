@@ -5,8 +5,6 @@
 #
 
 zephyr_library()
-zephyr_library_sources(
-	pcm_mix.c
-)
+zephyr_library_sources(pcm_mix.c)
 
 zephyr_include_directories(.)

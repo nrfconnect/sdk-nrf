@@ -14,6 +14,4 @@ target_include_directories(app PRIVATE modules/traffic_gen/inc)
 
 add_subdirectory(modules/traffic_gen)
 
-target_sources(app PRIVATE
-	src/main.c
-)
+target_sources(app PRIVATE src/main.c)

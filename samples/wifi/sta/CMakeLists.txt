@@ -11,6 +11,4 @@ project(nrf_wifi_sta)
 
 target_include_directories(app PUBLIC ${ZEPHYR_BASE}/subsys/net/ip)
 
-target_sources(app PRIVATE
-	src/main.c
-)
+target_sources(app PRIVATE src/main.c)

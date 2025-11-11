@@ -12,7 +12,7 @@ project(peripheral_path_loss_monitoring)
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE
-	src/main.c
+  src/main.c
 )
 
 # NORDIC SDK APP END

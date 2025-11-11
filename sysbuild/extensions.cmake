@@ -28,7 +28,7 @@ function(add_overlay image overlay_file overlay_type)
 
   set(old_overlays ${${overlay_var}})
   string(FIND "${old_overlays}" "${overlay_file}" found)
-  if (${found} EQUAL -1)
+  if(${found} EQUAL -1)
     set(${overlay_var} "${old_overlays};${overlay_file}" CACHE STRING
       "Extra config fragments for ${image} image" FORCE
     )

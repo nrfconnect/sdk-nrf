@@ -12,12 +12,12 @@ macro(add_region)
   list(APPEND region_arguments "--${REGION_NAME}-base-address;${REGION_BASE}")
   list(APPEND region_arguments
     "--${REGION_NAME}-placement-strategy;${REGION_PLACEMENT}")
-  if (REGION_DEVICE)
+  if(REGION_DEVICE)
     list(APPEND region_arguments "--${REGION_NAME}-device;${REGION_DEVICE}")
   list(APPEND region_arguments
        "--${REGION_NAME}-default-driver-kconfig;${REGION_DEFAULT_DRIVER_KCONFIG}")
   endif()
-  if (REGION_DYNAMIC_PARTITION)
+  if(REGION_DYNAMIC_PARTITION)
     list(APPEND region_arguments
       "--${REGION_NAME}-dynamic-partition;${REGION_DYNAMIC_PARTITION}")
   endif()
@@ -56,11 +56,11 @@ ncs_file(CONF_FILES ${BOARD_DIR}
 
 if(EXISTS "${user_def_pm_static}" AND NOT IS_DIRECTORY "${user_def_pm_static}")
   set(static_configuration_file ${user_def_pm_static})
-elseif (EXISTS ${conf_dir_pm_static})
+elseif(EXISTS ${conf_dir_pm_static})
   set(static_configuration_file ${conf_dir_pm_static})
-elseif (EXISTS ${board_dir_pm_static})
+elseif(EXISTS ${board_dir_pm_static})
   set(static_configuration_file ${board_dir_pm_static})
-elseif (EXISTS ${board_dir_pm_static_common})
+elseif(EXISTS ${board_dir_pm_static_common})
   set(static_configuration_file ${board_dir_pm_static_common})
 endif()
 

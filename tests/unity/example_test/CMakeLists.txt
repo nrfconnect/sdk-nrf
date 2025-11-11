@@ -31,5 +31,4 @@ target_include_directories(app PRIVATE src/foo)
 
 # Preinclude file to the module under test to redefine IS_ENABLED() macro
 # which is used in the module.
-set_property(SOURCE src/uut/uut.c PROPERTY COMPILE_FLAGS
-	"-include src/example_test.h")
+set_property(SOURCE src/uut/uut.c PROPERTY COMPILE_FLAGS "-include src/example_test.h")

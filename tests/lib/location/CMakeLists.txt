@@ -16,46 +16,52 @@ cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_key_mgmt.h)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/rest_client.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_gnss.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h
-	     FUNC_EXCLUDE ".*nrf_modem_at_printf"
-             FUNC_EXCLUDE ".*nrf_modem_at_scanf"
-	     WORD_EXCLUDE "__nrf_modem_(printf|scanf)_like\(.*\)")
+  FUNC_EXCLUDE ".*nrf_modem_at_printf"
+  FUNC_EXCLUDE ".*nrf_modem_at_scanf"
+  WORD_EXCLUDE "__nrf_modem_(printf|scanf)_like\(.*\)"
+)
 
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/nrf_cloud.h
-	     FUNC_EXCLUDE ".*nrf_cloud_obj_shadow_update")
+  FUNC_EXCLUDE ".*nrf_cloud_obj_shadow_update"
+)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/nrf_cloud_agnss.h)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/nrf_cloud_rest.h)
 
 # Net and Wi-Fi management API mocking requires tricks as the headers have code structures
 # that CMock is not able to parse properly.
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/net_if.h
-	     FUNC_EXCLUDE ".*net_if_send_data"
-	     FUNC_EXCLUDE ".*net_if_try_send_data"
-	     FUNC_EXCLUDE ".*net_if_recv_data"
-	     FUNC_EXCLUDE ".*net_if_queue_tx"
-	     FUNC_EXCLUDE ".*net_if_try_queue_tx"
-	     FUNC_EXCLUDE ".*net_if_register_timestamp_cb"
-	     FUNC_EXCLUDE ".*net_if_call_timestamp_cb"
-	     FUNC_EXCLUDE ".*net_if_add_tx_timestamp"
-	     FUNC_EXCLUDE ".*net_if_ipv4_get_netmask"
-	     FUNC_EXCLUDE ".*net_if_ipv4_set_netmask"
-	     WORD_EXCLUDE ".*deprecated.*"
-	     WORD_EXCLUDE ".*net_if_send_data.*"
-	     WORD_EXCLUDE ".*net_if_try_send_data.*"
-	     WORD_EXCLUDE ".*net_if_try_queue_tx.*"
-	     WORD_EXCLUDE ".*net_if_register_timestamp_cb.*")
+  FUNC_EXCLUDE ".*net_if_send_data"
+  FUNC_EXCLUDE ".*net_if_try_send_data"
+  FUNC_EXCLUDE ".*net_if_recv_data"
+  FUNC_EXCLUDE ".*net_if_queue_tx"
+  FUNC_EXCLUDE ".*net_if_try_queue_tx"
+  FUNC_EXCLUDE ".*net_if_register_timestamp_cb"
+  FUNC_EXCLUDE ".*net_if_call_timestamp_cb"
+  FUNC_EXCLUDE ".*net_if_add_tx_timestamp"
+  FUNC_EXCLUDE ".*net_if_ipv4_get_netmask"
+  FUNC_EXCLUDE ".*net_if_ipv4_set_netmask"
+  WORD_EXCLUDE ".*deprecated.*"
+  WORD_EXCLUDE ".*net_if_send_data.*"
+  WORD_EXCLUDE ".*net_if_try_send_data.*"
+  WORD_EXCLUDE ".*net_if_try_queue_tx.*"
+  WORD_EXCLUDE ".*net_if_register_timestamp_cb.*"
+)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/net_mgmt.h
-	     FUNC_EXCLUDE ".*net_mgmt_event_notify"
-	     FUNC_EXCLUDE ".*net_mgmt_event_notify_with_info"
-	     FUNC_EXCLUDE ".*net_mgmt_event_wait_on_iface"
-	     WORD_EXCLUDE ".*struct net_if.*")
+  FUNC_EXCLUDE ".*net_mgmt_event_notify"
+  FUNC_EXCLUDE ".*net_mgmt_event_notify_with_info"
+  FUNC_EXCLUDE ".*net_mgmt_event_wait_on_iface"
+  WORD_EXCLUDE ".*struct net_if.*"
+)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/wifi_mgmt.h
-	     FUNC_EXCLUDE "NET_MGMT_DEFINE_REQUEST_HANDLER"
-	     FUNC_EXCLUDE "BUILD_ASSERT"
-	     FUNC_EXCLUDE "offsetof")
+  FUNC_EXCLUDE "NET_MGMT_DEFINE_REQUEST_HANDLER"
+  FUNC_EXCLUDE "BUILD_ASSERT"
+  FUNC_EXCLUDE "offsetof"
+)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/device.h
-	     FUNC_EXCLUDE ".*DEVICE_DT_NAME_GET"
-	     FUNC_EXCLUDE ".*device_get_dt_nodelabels"
-	     WORD_EXCLUDE ".*device_visitor_callback_t.*")
+  FUNC_EXCLUDE ".*DEVICE_DT_NAME_GET"
+  FUNC_EXCLUDE ".*device_get_dt_nodelabels"
+  WORD_EXCLUDE ".*device_visitor_callback_t.*"
+)
 
 zephyr_include_directories(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include)
 zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_cloud/include)
@@ -85,25 +91,22 @@ target_compile_options(app PRIVATE "-Wno-unused-function")
 # ..__nrf__lib__location is the name assigned to nrf/lib/location by the zephyr_library() macro in
 # zephyr/cmake/modules/extensions.cmake
 
-if (CONFIG_LOCATION_TEST_AGNSS)
-
-target_compile_options(
-	..__nrf__lib__location PRIVATE
-	"SHELL: -imacros ${PROJECT_SOURCE_DIR}/location_lib_autoconf_ext.h"
-	"SHELL: -imacros ${PROJECT_SOURCE_DIR}/location_lib_autoconf_ext_agnss.h"
-)
+if(CONFIG_LOCATION_TEST_AGNSS)
+  target_compile_options(
+    ..__nrf__lib__location PRIVATE
+    "SHELL: -imacros ${PROJECT_SOURCE_DIR}/location_lib_autoconf_ext.h"
+    "SHELL: -imacros ${PROJECT_SOURCE_DIR}/location_lib_autoconf_ext_agnss.h"
+  )
 else()
-
-target_compile_options(
-	..__nrf__lib__location PRIVATE
-	"SHELL: -imacros ${PROJECT_SOURCE_DIR}/location_lib_autoconf_ext.h"
-)
+  target_compile_options(
+    ..__nrf__lib__location PRIVATE
+    "SHELL: -imacros ${PROJECT_SOURCE_DIR}/location_lib_autoconf_ext.h"
+  )
 endif()
 
 # Add definitions also for test application.
 # A-GNSS definitions do not distract when using tests without A-GNSS.
-target_compile_options(
-	app PRIVATE
-	"SHELL: -imacros ${PROJECT_SOURCE_DIR}/location_lib_autoconf_ext.h"
-	"SHELL: -imacros ${PROJECT_SOURCE_DIR}/location_lib_autoconf_ext_agnss.h"
+target_compile_options(app PRIVATE
+  "SHELL: -imacros ${PROJECT_SOURCE_DIR}/location_lib_autoconf_ext.h"
+  "SHELL: -imacros ${PROJECT_SOURCE_DIR}/location_lib_autoconf_ext_agnss.h"
 )

@@ -9,7 +9,7 @@
 # sets it to True
 #
 macro(kconfig_check_and_set_base_val base val)
-  if (CONFIG_${base})
+  if(CONFIG_${base})
     nrf_security_debug("Setting ${base} to ${val}")
     set(${base} ${val})
   endif()
@@ -46,7 +46,7 @@ macro(kconfig_check_and_set_base_to_val_depends base val)
   if(NOT ${base})
   set(_argn_all_true TRUE)
   foreach(arg ${ARGN})
-    if (NOT CONFIG_${arg})
+    if(NOT CONFIG_${arg})
       set(_argn_all_true FALSE)
       set(_argn_false_arg ${arg})
       break()
@@ -116,7 +116,7 @@ endmacro()
 # is met
 #
 macro(append_with_prefix_ifdef cond var prefix)
-  if (${${cond}})
+  if(${${cond}})
     append_with_prefix(${var} ${prefix} ${ARGN})
   endif()
 endmacro()
@@ -190,7 +190,6 @@ macro(nrf_security_add_zephyr_options_library lib_name)
     )
   endif()
 endmacro()
-
 
 # Include debugging
 include(${CMAKE_CURRENT_LIST_DIR}/nrf_security_debug.cmake)

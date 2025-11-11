@@ -16,15 +16,16 @@ add_subdirectory_ifdef(CONFIG_TRUSTED_STORAGE trusted_storage)
 add_subdirectory_ifdef(CONFIG_SECURE_STORAGE secure_storage)
 
 add_subdirectory(net)
-add_subdirectory_ifdef(CONFIG_ESB		esb)
-add_subdirectory_ifdef(CONFIG_APP_EVENT_MANAGER	app_event_manager)
-add_subdirectory_ifdef(CONFIG_APP_EVENT_MANAGER	app_event_manager_profiler_tracer)
-add_subdirectory_ifdef(CONFIG_EVENT_MANAGER_PROXY	event_manager_proxy)
-add_subdirectory_ifdef(CONFIG_CAF		caf)
-add_subdirectory_ifdef(CONFIG_NRF_PROFILER		nrf_profiler)
+add_subdirectory_ifdef(CONFIG_ESB esb)
+add_subdirectory_ifdef(CONFIG_APP_EVENT_MANAGER app_event_manager)
+add_subdirectory_ifdef(CONFIG_APP_EVENT_MANAGER app_event_manager_profiler_tracer)
+add_subdirectory_ifdef(CONFIG_EVENT_MANAGER_PROXY event_manager_proxy)
+add_subdirectory_ifdef(CONFIG_CAF caf)
+add_subdirectory_ifdef(CONFIG_NRF_PROFILER nrf_profiler)
 add_subdirectory(dfu)
-if (CONFIG_PCD OR CONFIG_PCD_APP OR CONFIG_PCD_NET)
-add_subdirectory(pcd)
+
+if(CONFIG_PCD OR CONFIG_PCD_APP OR CONFIG_PCD_NET)
+  add_subdirectory(pcd)
 endif()
 
 add_subdirectory(mpsl)
@@ -32,22 +33,17 @@ add_subdirectory(mpsl)
 add_subdirectory_ifdef(CONFIG_MGMT_FMFU mgmt/fmfu)
 add_subdirectory_ifdef(CONFIG_GAZELL gazell)
 
-if (CONFIG_NFC_T2T_NRFXLIB OR
-    CONFIG_NFC_T4T_NRFXLIB OR
-    CONFIG_NFC_T2T_PARSER  OR
-    CONFIG_NFC_NDEF_PARSER OR
-    CONFIG_NFC_T4T_ISODEP OR
-    CONFIG_NFC_T4T_APDU OR
-    CONFIG_NFC_T4T_CC_FILE OR
-    CONFIG_NFC_T4T_HL_PROCEDURE OR
-    CONFIG_NFC_TNEP_TAG OR
-    CONFIG_NFC_TNEP_POLLER OR
-    CONFIG_NFC_RPC)
-        add_subdirectory(nfc)
+if(CONFIG_NFC_T2T_NRFXLIB OR CONFIG_NFC_T4T_NRFXLIB OR CONFIG_NFC_T2T_PARSER OR
+   CONFIG_NFC_NDEF_PARSER OR CONFIG_NFC_T4T_ISODEP OR CONFIG_NFC_T4T_APDU OR
+   CONFIG_NFC_T4T_CC_FILE OR CONFIG_NFC_T4T_HL_PROCEDURE OR CONFIG_NFC_TNEP_TAG OR
+   CONFIG_NFC_TNEP_POLLER OR CONFIG_NFC_RPC)
+  add_subdirectory(nfc)
 endif()
+
 if(CONFIG_FW_INFO OR CONFIG_FW_INFO_API)
   add_subdirectory(fw_info)
 endif()
+
 add_subdirectory(logging)
 add_subdirectory(shell)
 

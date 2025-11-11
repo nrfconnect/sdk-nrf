@@ -6,5 +6,5 @@
 
 zephyr_library()
 zephyr_library_sources(
-	pcm_stream_channel_modifier.c
+  pcm_stream_channel_modifier.c
 )
