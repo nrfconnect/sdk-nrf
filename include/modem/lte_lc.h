@@ -473,6 +473,7 @@ enum lte_lc_evt_type {
 	LTE_LC_EVT_ENV_EVAL_RESULT		= 13,
 #endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 
+#if defined(CONFIG_LTE_LC_PDN_MODULE)
 	/**
 	 * PDN event
 	 *
@@ -480,6 +481,7 @@ enum lte_lc_evt_type {
 	 * @ref lte_lc_pdn_evt in the event.
 	 */
 	LTE_LC_EVT_PDN				= 14,
+#endif /* CONFIG_LTE_LC_PDN_MODULE */
 
 	/**
 	 * A cellular profile is activated for the current access technology.

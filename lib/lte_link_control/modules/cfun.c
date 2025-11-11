@@ -27,17 +27,21 @@ LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
 static int enable_notifications(void)
 {
-	int err;
+	int err = 0;
 
+#if defined(CONFIG_LTE_LC_NETWORK_REGISTRATION_MODULE)
 	err = cereg_notifications_enable();
 	if (err) {
 		return err;
 	}
+#endif
 
+#if defined(CONFIG_LTE_LC_CONNECTION_STATUS_MODULE)
 	err = cscon_notifications_enable();
 	if (err) {
 		return err;
 	}
+#endif
 
 #if defined(CONFIG_LTE_LC_MODEM_SLEEP_MODULE)
 	err = xmodemsleep_notifications_enable();
@@ -53,6 +57,7 @@ static int enable_notifications(void)
 	}
 #endif
 
+#if defined(CONFIG_LTE_LC_MODEM_EVENTS_MODULE)
 	if (mdmev_enabled) {
 		/* Modem events have been enabled by the application, so the notifications need
 		 * to be subscribed to again. This is done using the same function which is used
@@ -63,6 +68,7 @@ static int enable_notifications(void)
 			return err;
 		}
 	}
+#endif /* CONFIG_LTE_LC_MODEM_EVENTS_MODULE */
 
 	return 0;
 }
