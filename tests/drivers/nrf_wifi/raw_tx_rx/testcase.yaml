@@ -15,3 +15,4 @@ tests:
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="ipc.overlay"
       - EXTRA_CONF_FILE="overlay-nrf71-tlm.conf"
+      - SNIPPET=nrf71-wicr
