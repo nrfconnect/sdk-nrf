@@ -1,0 +1,40 @@
+description: |
+  Nordic WICR (Wi-Fi Information Configuration Registers)
+
+compatible: "nordic,nrf-wicr"
+
+include: base.yaml
+
+properties:
+  reg:
+    type: array
+    required: true
+    description: Base address and size of the WICR register block.
+
+child-binding:
+  description: |
+    Child nodes can be either:
+      - Clusters (groups) containing register nodes
+      - Individual register nodes
+  properties:
+    reg:
+      type: array
+      required: false
+      description: Offset and size of the WICR field within the WICR block.
+    value:
+      type: int
+      required: false
+      description: Value for WICR field.
+
+  # Allow clusters as child nodes
+  child-binding:
+    description: WICR fields/registers within a cluster
+    properties:
+      reg:
+        type: array
+        required: true
+        description: Offset and size of the WICR field within the WICR block.
+      value:
+        type: int
+        required: true
+        description: Value for WICR field.
