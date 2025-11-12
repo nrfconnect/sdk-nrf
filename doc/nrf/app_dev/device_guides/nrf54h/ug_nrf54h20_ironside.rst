@@ -947,7 +947,7 @@ To enable secondary firmware support, you must complete the following steps:
 
 2. **Create a secondary firmware Zephyr image**: Create a separate Zephyr application for your secondary firmware (e.g., in a ``secondary/`` directory).
 
-3. **Add secondary image to sysbuild**: Include the secondary image as an external project in your ``sysbuild.cmake`` file:
+3. Include the secondary image as an external project in ``sysbuild.cmake``:
 
    .. code-block:: cmake
 
