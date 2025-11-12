@@ -50,9 +50,4 @@ config NRF_TRUSTZONE_RAM_REGION_SIZE
 	  This abstraction allows us to configure TRUSTZONE without depending
 	  on peripheral specific symbols.
 
-# TODO: Remove this option once all pre-ENG variants support AMBIX03
-config SOC_NRF7120_HAS_AMBIX03
-	bool "AMBIX03 available"
-	depends on SOC_NRF7120_PREENG
-
 endif # SOC_SERIES_NRF71X
