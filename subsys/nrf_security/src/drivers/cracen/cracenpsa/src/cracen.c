@@ -146,7 +146,14 @@ int cracen_init(void)
 
 #if defined(CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT)
 	status = cracen_provision_prot_ram_inv_slots();
+	if (status != PSA_SUCCESS) {
+		goto exit;
+	}
 #endif /* CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT */
+
+#if defined(CONFIG_PSA_NEED_CRACEN_KMU_DRIVER)
+	status = cracen_push_prot_ram_inv_slots();
+#endif
 
 exit:
 	cracen_release();

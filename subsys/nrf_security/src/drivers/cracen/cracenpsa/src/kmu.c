@@ -301,24 +301,34 @@ int cracen_kmu_prepare_key(const uint8_t *user_data)
 	return SX_OK;
 }
 
+psa_status_t cracen_push_prot_ram_inv_slots(void)
+{
+	bool any_slot_empty;
+
+	any_slot_empty = lib_kmu_is_slot_empty(PROTECTED_RAM_INVALIDATION_DATA_SLOT1) ||
+			 lib_kmu_is_slot_empty(PROTECTED_RAM_INVALIDATION_DATA_SLOT2);
+	if (any_slot_empty) {
+		return PSA_ERROR_HARDWARE_FAILURE;
+	}
+
+	if (lib_kmu_push_slot(PROTECTED_RAM_INVALIDATION_DATA_SLOT1) != LIB_KMU_SUCCESS) {
+		return PSA_ERROR_HARDWARE_FAILURE;
+	}
+
+	if (lib_kmu_push_slot(PROTECTED_RAM_INVALIDATION_DATA_SLOT2) != LIB_KMU_SUCCESS) {
+		return PSA_ERROR_HARDWARE_FAILURE;
+	}
+
+	return PSA_SUCCESS;
+}
+
 int cracen_kmu_clean_key(const uint8_t *user_data)
 {
 	const kmu_opaque_key_buffer *key = (const kmu_opaque_key_buffer *)user_data;
-	bool any_slot_empty;
 
 	switch (key->key_usage_scheme) {
 	case CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED:
-		any_slot_empty = lib_kmu_is_slot_empty(PROTECTED_RAM_INVALIDATION_DATA_SLOT1) ||
-				 lib_kmu_is_slot_empty(PROTECTED_RAM_INVALIDATION_DATA_SLOT2);
-		if (any_slot_empty) {
-			return SX_ERR_UNKNOWN_ERROR;
-		}
-
-		if (lib_kmu_push_slot(PROTECTED_RAM_INVALIDATION_DATA_SLOT1) != LIB_KMU_SUCCESS) {
-			return SX_ERR_UNKNOWN_ERROR;
-		}
-
-		if (lib_kmu_push_slot(PROTECTED_RAM_INVALIDATION_DATA_SLOT2) != LIB_KMU_SUCCESS) {
+		if (cracen_push_prot_ram_inv_slots() != PSA_SUCCESS) {
 			return SX_ERR_UNKNOWN_ERROR;
 		}
 

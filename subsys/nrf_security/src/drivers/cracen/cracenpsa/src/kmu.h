@@ -83,3 +83,13 @@ psa_status_t cracen_kmu_destroy_key(const psa_key_attributes_t *attributes);
  * @return PSA status code.
  */
 psa_status_t cracen_provision_prot_ram_inv_slots(void);
+
+/**
+ * @brief Push the protected RAM invalidation slots to protected RAM.
+ *
+ * This function pushes the two KMU slots with random data to the protected RAM,
+ * thereby invalidating any existing key material.
+ *
+ * @return PSA status code.
+ */
+psa_status_t cracen_push_prot_ram_inv_slots(void);
