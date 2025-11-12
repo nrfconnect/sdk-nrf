@@ -986,7 +986,7 @@ Setting bit 5 in ``CTRLAP.BOOTMODE`` will also trigger secondary firmware.
 * The integrity check of the memory specified in :kconfig:option:`CONFIG_GEN_UICR_PROTECTEDMEM` fails.
 * Any boot failure occurs, such as missing primary firmware or failure to apply ``UICR.PERIPHCONF`` configurations.
 * A local domain is reset with a reason configured to trigger the secondary firmware.
-* Secondary firmware will be booted by |ISE| if one of the triggers configured in :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER` and related options occurs.
+* If one of the triggers configured in :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER` and related options occurs.
 
 The secondary firmware can be protected using :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_PROTECTEDMEM` for integrity checking, and can be updated by other components when protection is not enabled.
 
