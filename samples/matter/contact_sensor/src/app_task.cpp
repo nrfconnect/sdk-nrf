@@ -12,6 +12,7 @@
 #include "lib/core/CHIPError.h"
 
 #include <app-common/zap-generated/attributes/Accessors.h>
+#include <app/clusters/boolean-state-server/CodegenIntegration.h>
 #include <app/clusters/identify-server/identify-server.h>
 
 #include <zephyr/logging/log.h>
@@ -55,13 +56,14 @@ void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChan
 			LOG_INF("Contact sensor stopped detecting a contact (button released).");
 		}
 		Nrf::PostTask([state] {
-			Protocols::InteractionModel::Status status =
-				Clusters::BooleanState::Attributes::StateValue::Set(
-					AppTask::Instance().kContactSensorEndpointId, state);
-
-			if (status != Protocols::InteractionModel::Status::Success) {
-				LOG_ERR("Updating contact sensor state failed %x", to_underlying(status));
+			auto booleanState =
+				app::Clusters::BooleanState::FindClusterOnEndpoint(kContactSensorEndpointId);
+			if (booleanState == nullptr) {
+				LOG_ERR("Updating contact sensor state failed");
+				return;
 			}
+
+			booleanState->SetStateValue(state);
 
 			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(state);
 		});

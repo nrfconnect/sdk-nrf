@@ -72,13 +72,15 @@ constexpr chip::CommandId sIdentifyIncomingCommands[] = {
 inline void IdentifyStartDefaultCb(Identify *identify)
 {
 	VerifyOrReturn(identify);
-	ChipLogProgress(DeviceLayer, "Starting bridged device identify on endpoint %d", identify->mEndpoint);
+	ChipLogProgress(DeviceLayer, "Starting bridged device identify on endpoint %d",
+			identify->mCluster.Cluster().GetPaths()[0].mEndpointId);
 }
 
 inline void IdentifyStopDefaultCb(Identify *identify)
 {
 	VerifyOrReturn(identify);
-	ChipLogProgress(DeviceLayer, "Stopping bridged device identify on endpoint %d", identify->mEndpoint);
+	ChipLogProgress(DeviceLayer, "Stopping bridged device identify on endpoint %d",
+			identify->mCluster.Cluster().GetPaths()[0].mEndpointId);
 }
 
 class MatterBridgedDevice {
@@ -102,20 +104,15 @@ public:
 				  IdentifyType::kVisibleIndicator)
 	{
 		if (uniqueID) {
-			memcpy(mUniqueID, uniqueID, strnlen(uniqueID,Nrf::MatterBridgedDevice::kUniqueIDSize));
+			memcpy(mUniqueID, uniqueID, strnlen(uniqueID, Nrf::MatterBridgedDevice::kUniqueIDSize));
 		}
 		if (nodeLabel) {
-			memcpy(mNodeLabel, nodeLabel, strnlen(nodeLabel,Nrf::MatterBridgedDevice::kNodeLabelSize));
+			memcpy(mNodeLabel, nodeLabel, strnlen(nodeLabel, Nrf::MatterBridgedDevice::kNodeLabelSize));
 		}
 	}
 	virtual ~MatterBridgedDevice() { chip::Platform::MemoryFree(mDataVersion); }
 
-	void Init(chip::EndpointId endpoint)
-	{
-		mEndpointId = endpoint;
-		mIdentifyServer.mEndpoint = mEndpointId;
-		ConfigureIdentifyServer(&mIdentifyServer);
-	}
+	void Init(chip::EndpointId endpoint) {}
 	chip::EndpointId GetEndpointId() const { return mEndpointId; }
 
 	virtual uint16_t GetDeviceType() const = 0;
@@ -126,7 +123,6 @@ public:
 	virtual CHIP_ERROR HandleAttributeChange(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
 						 size_t dataSize) = 0;
 
-	virtual void ConfigureIdentifyServer(Identify *identifyServer) {};
 	CHIP_ERROR CopyAttribute(const void *attribute, size_t attributeSize, void *buffer, uint16_t maxBufferSize);
 	CHIP_ERROR HandleWriteDeviceBasicInformation(chip::ClusterId clusterId, chip::AttributeId attributeId,
 						     void *data, size_t dataSize);

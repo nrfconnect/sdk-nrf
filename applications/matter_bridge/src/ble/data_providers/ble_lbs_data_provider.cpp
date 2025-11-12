@@ -21,6 +21,7 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 using namespace ::chip;
 using namespace ::chip::app;
 using namespace Nrf;
+using namespace chip::app::Clusters;
 
 static const bt_uuid *sServiceUuid = BT_UUID_LBS;
 static const bt_uuid *sUuidLED = BT_UUID_LBS_LED;
@@ -28,7 +29,7 @@ static const bt_uuid *sUuidButton = BT_UUID_LBS_BUTTON;
 static const bt_uuid *sUuidCcc = BT_UUID_GATT_CCC;
 
 #ifdef CONFIG_BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
-void ProcessCommand(const EmberBindingTableEntry &aBinding, OperationalDeviceProxy *aDevice,
+void ProcessCommand(const Binding::TableEntry &aBinding, OperationalDeviceProxy *aDevice,
 		    Nrf::Matter::BindingHandler::BindingData &aData)
 {
 	CHIP_ERROR ret = CHIP_NO_ERROR;

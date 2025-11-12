@@ -31,7 +31,7 @@ public:
 	void InitiateActionSwitch(Action action);
 	void DimmerChangeBrightness();
 	chip::EndpointId GetLightSwitchEndpointId() { return mLightSwitchEndpoint; }
-	static void SwitchChangedHandler(const EmberBindingTableEntry &binding,
+	static void SwitchChangedHandler(const chip::app::Clusters::Binding::TableEntry &binding,
 					 chip::OperationalDeviceProxy *deviceProxy,
 					 Nrf::Matter::BindingHandler::BindingData &bindingData);
 
@@ -42,10 +42,12 @@ public:
 	}
 
 private:
-	static void OnOffProcessCommand(chip::CommandId commandId, const EmberBindingTableEntry &binding,
+	static void OnOffProcessCommand(chip::CommandId commandId,
+					const chip::app::Clusters::Binding::TableEntry &binding,
 					chip::OperationalDeviceProxy *device,
 					Nrf::Matter::BindingHandler::BindingData &bindingData);
-	static void LevelControlProcessCommand(chip::CommandId commandId, const EmberBindingTableEntry &binding,
+	static void LevelControlProcessCommand(chip::CommandId commandId,
+					       const chip::app::Clusters::Binding::TableEntry &binding,
 					       chip::OperationalDeviceProxy *device,
 					       Nrf::Matter::BindingHandler::BindingData &bindingData);
 	constexpr static auto kOnePercentBrightnessApproximation = 3;

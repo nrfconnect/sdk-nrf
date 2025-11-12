@@ -12,6 +12,7 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace chip;
 using namespace chip::app;
+using namespace chip::app::Clusters;
 
 namespace Nrf::Matter
 {
@@ -52,7 +53,7 @@ namespace Nrf::Matter
 			bindingData->CaseSessionRecovered = true;
 
 			/* Establish new CASE session and retrasmit command that was not applied. */
-			error = BindingManager::GetInstance().NotifyBoundClusterChanged(
+			error = Binding::Manager::GetInstance().NotifyBoundClusterChanged(
 				bindingData->EndpointId, bindingData->ClusterId, static_cast<void *>(bindingData));
 
 			if (CHIP_NO_ERROR != error) {
@@ -64,20 +65,20 @@ namespace Nrf::Matter
 		}
 	}
 
-	void BindingHandler::DeviceChangedCallback(const EmberBindingTableEntry &binding,
+	void BindingHandler::DeviceChangedCallback(const Binding::TableEntry &binding,
 						   OperationalDeviceProxy *deviceProxy, void *context)
 	{
 		VerifyOrReturn(context != nullptr, LOG_ERR("Invalid context for device handler"));
 		BindingData *data = static_cast<BindingData *>(context);
 
-		if (binding.type == MATTER_MULTICAST_BINDING) {
+		if (binding.type == Binding::MATTER_MULTICAST_BINDING) {
 
 			if (data->IsGroup.HasValue() && !data->IsGroup.Value()) {
 				return;
 			}
 
 			data->InvokeCommandFunc(binding, nullptr, *data);
-		} else if (binding.type == MATTER_UNICAST_BINDING) {
+		} else if (binding.type == Binding::MATTER_UNICAST_BINDING) {
 
 			if (data->IsGroup.HasValue() && data->IsGroup.Value()) {
 				return;
@@ -99,25 +100,25 @@ namespace Nrf::Matter
 		LOG_INF("Initialize binding Handler");
 		auto &server = Server::GetInstance();
 		if (CHIP_NO_ERROR !=
-		    BindingManager::GetInstance().Init({ &server.GetFabricTable(), server.GetCASESessionManager(),
+		    Binding::Manager::GetInstance().Init({ &server.GetFabricTable(), server.GetCASESessionManager(),
 							 &server.GetPersistentStorage() })) {
 			LOG_ERR("BindingHandler::InitInternal failed");
 		}
 
-		BindingManager::GetInstance().RegisterBoundDeviceChangedHandler(DeviceChangedCallback);
-		BindingManager::GetInstance().RegisterBoundDeviceContextReleaseHandler(DeviceContextReleaseHandler);
+		Binding::Manager::GetInstance().RegisterBoundDeviceChangedHandler(DeviceChangedCallback);
+		Binding::Manager::GetInstance().RegisterBoundDeviceContextReleaseHandler(DeviceContextReleaseHandler);
 		BindingHandler::PrintBindingTable();
 	}
 
 	void BindingHandler::PrintBindingTable()
 	{
-		BindingTable &bindingTable = BindingTable::GetInstance();
+		Binding::Table &bindingTable = Binding::Table::GetInstance();
 
 		LOG_INF("Binding Table size: [%d]:", bindingTable.Size());
 		uint8_t i = 0;
 		for (auto &entry : bindingTable) {
 			switch (entry.type) {
-			case MATTER_UNICAST_BINDING:
+			case Binding::MATTER_UNICAST_BINDING:
 				LOG_INF("[%d] UNICAST:", i++);
 				LOG_INF("\t\t+ Fabric: %d\n \
             \t+ LocalEndpoint %d \n \
@@ -127,7 +128,7 @@ namespace Nrf::Matter
 					(int)entry.fabricIndex, (int)entry.local, (int)entry.clusterId.value(),
 					(int)entry.remote, (int)entry.nodeId);
 				break;
-			case MATTER_MULTICAST_BINDING:
+			case Binding::MATTER_MULTICAST_BINDING:
 				LOG_INF("[%d] GROUP:", i++);
 				LOG_INF("\t\t+ Fabric: %d\n \
             \t+ LocalEndpoint %d \n \
@@ -136,7 +137,7 @@ namespace Nrf::Matter
 					(int)entry.fabricIndex, (int)entry.local, (int)entry.remote,
 					(int)entry.groupId);
 				break;
-			case MATTER_UNUSED_BINDING:
+			case Binding::MATTER_UNUSED_BINDING:
 				LOG_INF("[%d] UNUSED", i++);
 				break;
 			default:
@@ -150,9 +151,9 @@ namespace Nrf::Matter
 		VerifyOrDie(context != 0);
 		BindingData *data = reinterpret_cast<BindingData *>(context);
 
-		if (BindingTable::GetInstance().Size() != 0) {
+		if (Binding::Table::GetInstance().Size() != 0) {
 			LOG_INF("Notify Bounded Cluster | endpoint: %d cluster: %d", data->EndpointId, data->ClusterId);
-			BindingManager::GetInstance().NotifyBoundClusterChanged(data->EndpointId, data->ClusterId,
+			Binding::Manager::GetInstance().NotifyBoundClusterChanged(data->EndpointId, data->ClusterId,
 										static_cast<void *>(data));
 		} else {
 			LOG_INF("NO DEVICE BOUND");
