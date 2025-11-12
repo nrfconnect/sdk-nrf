@@ -7,3 +7,8 @@
 &uart0 {
 	zephyr,pm-device-runtime-auto;
 };
+
+/* Disabling uart rx pin to get low power */
+&uart0 {
+	disable-rx;
+};
