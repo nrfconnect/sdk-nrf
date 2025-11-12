@@ -24,6 +24,8 @@ tests:
   sample.smp_svr_mini_boot.swap_move:
     extra_args:
       - SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE=y
+    extra_configs:
+      - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
