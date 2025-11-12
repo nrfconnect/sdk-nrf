@@ -580,7 +580,7 @@
   - "samples/zephyr/sensor/qdec/**/*"
   - "samples/zephyr/subsys/settings/**/*"
   - "snippets/hpf/**/*"
-  - "snippets/nrf54l09-switch-uart/**/*"
+  - "snippets/nordic-flpr/**/*"
   - "soc/nordic/nrf54l/**/*"
   - "soc/nordic/nrf71/**/*"
   - "tests/benchmarks/multicore/idle/**/*"
