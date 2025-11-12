@@ -80,10 +80,8 @@ namespace app
 						encoder.Encode(to_underlying(Fields::kMaxResolution), maxResolution);
 						encoder.Encode(to_underlying(Fields::kMinBitRate), minBitRate);
 						encoder.Encode(to_underlying(Fields::kMaxBitRate), maxBitRate);
-						encoder.Encode(to_underlying(Fields::kMinKeyFrameInterval),
-							       minKeyFrameInterval);
-						encoder.Encode(to_underlying(Fields::kMaxKeyFrameInterval),
-							       maxKeyFrameInterval);
+						encoder.Encode(to_underlying(Fields::kKeyFrameInterval),
+							       keyFrameInterval);
 						encoder.Encode(to_underlying(Fields::kWatermarkEnabled),
 							       watermarkEnabled);
 						encoder.Encode(to_underlying(Fields::kOSDEnabled), OSDEnabled);
@@ -128,11 +126,8 @@ namespace app
 								   to_underlying(Fields::kMaxBitRate)) {
 								err = DataModel::Decode(reader, maxBitRate);
 							} else if (__context_tag ==
-								   to_underlying(Fields::kMinKeyFrameInterval)) {
-								err = DataModel::Decode(reader, minKeyFrameInterval);
-							} else if (__context_tag ==
-								   to_underlying(Fields::kMaxKeyFrameInterval)) {
-								err = DataModel::Decode(reader, maxKeyFrameInterval);
+								   to_underlying(Fields::kKeyFrameInterval)) {
+								err = DataModel::Decode(reader, keyFrameInterval);
 							} else if (__context_tag ==
 								   to_underlying(Fields::kWatermarkEnabled)) {
 								err = DataModel::Decode(reader, watermarkEnabled);

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace BorderRouterName
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -66,11 +68,18 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace PendingDatasetTimestamp
+				constexpr std::array<DataModel::AttributeEntry, 6> kMandatoryMetadata = {
+					BorderRouterName::kMetadataEntry,	BorderAgentID::kMetadataEntry,
+					ThreadVersion::kMetadataEntry,		InterfaceEnabled::kMetadataEntry,
+					ActiveDatasetTimestamp::kMetadataEntry, PendingDatasetTimestamp::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace GetActiveDatasetRequest
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -103,6 +112,11 @@ namespace app
 				} // namespace SetPendingDatasetRequest
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace ThreadBorderRouterManagement
 	} // namespace Clusters
 } // namespace app

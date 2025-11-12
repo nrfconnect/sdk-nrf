@@ -282,6 +282,24 @@ namespace app
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
 				} // namespace NetworkRecoveryReason
+				namespace IsCommissioningWithoutPower
+				{
+					struct TypeInfo {
+						using Type = bool;
+						using DecodableType = bool;
+						using DecodableArgType = bool;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::GeneralCommissioning::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::IsCommissioningWithoutPower::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace IsCommissioningWithoutPower
 				namespace GeneratedCommandList
 				{
 					struct TypeInfo
@@ -368,6 +386,8 @@ namespace app
 							recoveryIdentifier;
 						Attributes::NetworkRecoveryReason::TypeInfo::DecodableType
 							networkRecoveryReason;
+						Attributes::IsCommissioningWithoutPower::TypeInfo::DecodableType
+							isCommissioningWithoutPower = static_cast<bool>(0);
 						Attributes::GeneratedCommandList::TypeInfo::DecodableType
 							generatedCommandList;
 						Attributes::AcceptedCommandList::TypeInfo::DecodableType

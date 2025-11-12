@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace PhaseList
 				{
 					inline constexpr DataModel::AttributeEntry kMetadataEntry(
@@ -68,11 +70,20 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace OperationalError
+				constexpr std::array<DataModel::AttributeEntry, 5> kMandatoryMetadata = {
+					PhaseList::kMetadataEntry,
+					CurrentPhase::kMetadataEntry,
+					OperationalStateList::kMetadataEntry,
+					OperationalState::kMetadataEntry,
+					OperationalError::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace Pause
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -93,6 +104,23 @@ namespace app
 				} // namespace GoHome
 
 			} // namespace Commands
+
+			namespace Events
+			{
+				namespace OperationalError
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace OperationalError
+				namespace OperationCompletion
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace OperationCompletion
+
+			} // namespace Events
 		} // namespace RvcOperationalState
 	} // namespace Clusters
 } // namespace app

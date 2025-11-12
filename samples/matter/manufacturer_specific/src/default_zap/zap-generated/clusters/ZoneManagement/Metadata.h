@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace MaxUserDefinedZones
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -75,11 +77,19 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace TwoDCartesianMax
+				constexpr std::array<DataModel::AttributeEntry, 4> kMandatoryMetadata = {
+					MaxZones::kMetadataEntry,
+					Zones::kMetadataEntry,
+					Triggers::kMetadataEntry,
+					SensitivityMax::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace CreateTwoDCartesianZone
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -117,6 +127,23 @@ namespace app
 				} // namespace RemoveTrigger
 
 			} // namespace Commands
+
+			namespace Events
+			{
+				namespace ZoneTriggered
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace ZoneTriggered
+				namespace ZoneStopped
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace ZoneStopped
+
+			} // namespace Events
 		} // namespace ZoneManagement
 	} // namespace Clusters
 } // namespace app

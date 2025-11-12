@@ -44,45 +44,6 @@ namespace app
 			namespace Attributes
 			{
 
-				namespace IdentifyTime
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace IdentifyTime
-
-				namespace IdentifyType
-				{
-					Protocols::InteractionModel::Status
-					Get(EndpointId endpoint,
-					    chip::app::Clusters::Identify::IdentifyTypeEnum *value); // IdentifyTypeEnum
-					Protocols::InteractionModel::Status
-					Set(EndpointId endpoint, chip::app::Clusters::Identify::IdentifyTypeEnum value);
-					Protocols::InteractionModel::Status
-					Set(EndpointId endpoint, chip::app::Clusters::Identify::IdentifyTypeEnum value,
-					    MarkAttributeDirty markDirty);
-				} // namespace IdentifyType
-
-				namespace FeatureMap
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint32_t *value); // bitmap32
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
-
 			} // namespace Attributes
 		} // namespace Identify
 
@@ -451,16 +412,6 @@ namespace app
 			namespace Attributes
 			{
 
-				namespace EndpointUniqueID
-				{
-					Protocols::InteractionModel::Status
-					Get(EndpointId endpoint, chip::MutableCharSpan &value); // char_string
-					Protocols::InteractionModel::Status Set(EndpointId endpoint,
-										chip::CharSpan value);
-					Protocols::InteractionModel::Status
-					Set(EndpointId endpoint, chip::CharSpan value, MarkAttributeDirty markDirty);
-				} // namespace EndpointUniqueID
-
 			} // namespace Attributes
 		} // namespace Descriptor
 
@@ -468,24 +419,6 @@ namespace app
 		{
 			namespace Attributes
 			{
-
-				namespace FeatureMap
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint32_t *value); // bitmap32
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
 
 			} // namespace Attributes
 		} // namespace Binding
@@ -539,34 +472,6 @@ namespace app
 			namespace Attributes
 			{
 
-				namespace NodeLabel
-				{
-					Protocols::InteractionModel::Status
-					Get(EndpointId endpoint, chip::MutableCharSpan &value); // char_string
-					Protocols::InteractionModel::Status Set(EndpointId endpoint,
-										chip::CharSpan value);
-					Protocols::InteractionModel::Status
-					Set(EndpointId endpoint, chip::CharSpan value, MarkAttributeDirty markDirty);
-				} // namespace NodeLabel
-
-				namespace LocalConfigDisabled
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										bool *value); // boolean
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value,
-										MarkAttributeDirty markDirty);
-				} // namespace LocalConfigDisabled
-
-				namespace Reachable
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										bool *value); // boolean
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value,
-										MarkAttributeDirty markDirty);
-				} // namespace Reachable
-
 				namespace RandomNumber
 				{
 					Protocols::InteractionModel::Status Get(EndpointId endpoint,
@@ -575,33 +480,6 @@ namespace app
 					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
 										MarkAttributeDirty markDirty);
 				} // namespace RandomNumber
-
-				namespace ConfigurationVersion
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint32_t *value); // int32u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ConfigurationVersion
-
-				namespace FeatureMap
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint32_t *value); // bitmap32
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
 
 			} // namespace Attributes
 		} // namespace BasicInformation
@@ -723,15 +601,6 @@ namespace app
 										MarkAttributeDirty markDirty);
 				} // namespace FeatureMap
 
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
-
 			} // namespace Attributes
 		} // namespace LocalizationConfiguration
 
@@ -778,15 +647,6 @@ namespace app
 					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
 										MarkAttributeDirty markDirty);
 				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
 
 			} // namespace Attributes
 		} // namespace TimeFormatLocalization
@@ -1214,15 +1074,6 @@ namespace app
 										MarkAttributeDirty markDirty);
 				} // namespace FeatureMap
 
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
-
 			} // namespace Attributes
 		} // namespace PowerSource
 
@@ -1230,15 +1081,6 @@ namespace app
 		{
 			namespace Attributes
 			{
-
-				namespace Breadcrumb
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint64_t *value); // int64u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint64_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint64_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace Breadcrumb
 
 				namespace TCAcceptedVersion
 				{
@@ -1333,23 +1175,14 @@ namespace app
 					    MarkAttributeDirty markDirty);
 				} // namespace NetworkRecoveryReason
 
-				namespace FeatureMap
+				namespace IsCommissioningWithoutPower
 				{
 					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint32_t *value); // bitmap32
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
+										bool *value); // boolean
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value);
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value,
 										MarkAttributeDirty markDirty);
-				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
+				} // namespace IsCommissioningWithoutPower
 
 			} // namespace Attributes
 		} // namespace GeneralCommissioning
@@ -1366,24 +1199,6 @@ namespace app
 		{
 			namespace Attributes
 			{
-
-				namespace FeatureMap
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint32_t *value); // bitmap32
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
 
 			} // namespace Attributes
 		} // namespace DiagnosticLogs
@@ -1427,15 +1242,6 @@ namespace app
 										MarkAttributeDirty markDirty);
 				} // namespace FeatureMap
 
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
-
 			} // namespace Attributes
 		} // namespace ThreadNetworkDiagnostics
 
@@ -1478,15 +1284,6 @@ namespace app
 					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
 										MarkAttributeDirty markDirty);
 				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
 
 			} // namespace Attributes
 		} // namespace EthernetNetworkDiagnostics
@@ -1831,24 +1628,6 @@ namespace app
 			namespace Attributes
 			{
 
-				namespace FeatureMap
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint32_t *value); // bitmap32
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
-
 			} // namespace Attributes
 		} // namespace OperationalCredentials
 
@@ -1865,24 +1644,6 @@ namespace app
 			namespace Attributes
 			{
 
-				namespace FeatureMap
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint32_t *value); // bitmap32
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
-
 			} // namespace Attributes
 		} // namespace FixedLabel
 
@@ -1890,24 +1651,6 @@ namespace app
 		{
 			namespace Attributes
 			{
-
-				namespace FeatureMap
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint32_t *value); // bitmap32
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
 
 			} // namespace Attributes
 		} // namespace UserLabel
@@ -1994,33 +1737,6 @@ namespace app
 		{
 			namespace Attributes
 			{
-
-				namespace StateValue
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										bool *value); // boolean
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value,
-										MarkAttributeDirty markDirty);
-				} // namespace StateValue
-
-				namespace FeatureMap
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint32_t *value); // bitmap32
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
 
 			} // namespace Attributes
 		} // namespace BooleanState
@@ -2138,15 +1854,6 @@ namespace app
 					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
 										MarkAttributeDirty markDirty);
 				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
 
 			} // namespace Attributes
 		} // namespace OvenCavityOperationalState
@@ -2965,15 +2672,6 @@ namespace app
 										MarkAttributeDirty markDirty);
 				} // namespace FeatureMap
 
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
-
 			} // namespace Attributes
 		} // namespace OperationalState
 
@@ -2990,15 +2688,6 @@ namespace app
 					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
 										MarkAttributeDirty markDirty);
 				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
 
 			} // namespace Attributes
 		} // namespace RvcOperationalState
@@ -3038,6 +2727,41 @@ namespace app
 			} // namespace Attributes
 		} // namespace ScenesManagement
 
+		namespace Groupcast
+		{
+			namespace Attributes
+			{
+
+				namespace MaxMembershipCount
+				{
+					Protocols::InteractionModel::Status Get(EndpointId endpoint,
+										uint16_t *value); // int16u
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
+										MarkAttributeDirty markDirty);
+				} // namespace MaxMembershipCount
+
+				namespace FeatureMap
+				{
+					Protocols::InteractionModel::Status Get(EndpointId endpoint,
+										uint32_t *value); // bitmap32
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
+										MarkAttributeDirty markDirty);
+				} // namespace FeatureMap
+
+				namespace ClusterRevision
+				{
+					Protocols::InteractionModel::Status Get(EndpointId endpoint,
+										uint16_t *value); // int16u
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
+										MarkAttributeDirty markDirty);
+				} // namespace ClusterRevision
+
+			} // namespace Attributes
+		} // namespace Groupcast
+
 		namespace HepaFilterMonitoring
 		{
 			namespace Attributes
@@ -3071,6 +2795,100 @@ namespace app
 
 			} // namespace Attributes
 		} // namespace ActivatedCarbonFilterMonitoring
+
+		namespace WaterTankLevelMonitoring
+		{
+			namespace Attributes
+			{
+
+				namespace Condition
+				{
+					Protocols::InteractionModel::Status Get(EndpointId endpoint,
+										chip::Percent *value); // percent
+					Protocols::InteractionModel::Status Set(EndpointId endpoint,
+										chip::Percent value);
+					Protocols::InteractionModel::Status
+					Set(EndpointId endpoint, chip::Percent value, MarkAttributeDirty markDirty);
+				} // namespace Condition
+
+				namespace DegradationDirection
+				{
+					Protocols::InteractionModel::Status
+					Get(EndpointId endpoint,
+					    chip::app::Clusters::WaterTankLevelMonitoring::DegradationDirectionEnum
+						    *value); // DegradationDirectionEnum
+					Protocols::InteractionModel::Status
+					Set(EndpointId endpoint,
+					    chip::app::Clusters::WaterTankLevelMonitoring::DegradationDirectionEnum
+						    value);
+					Protocols::InteractionModel::Status
+					Set(EndpointId endpoint,
+					    chip::app::Clusters::WaterTankLevelMonitoring::DegradationDirectionEnum
+						    value,
+					    MarkAttributeDirty markDirty);
+				} // namespace DegradationDirection
+
+				namespace ChangeIndication
+				{
+					Protocols::InteractionModel::Status
+					Get(EndpointId endpoint,
+					    chip::app::Clusters::WaterTankLevelMonitoring::ChangeIndicationEnum
+						    *value); // ChangeIndicationEnum
+					Protocols::InteractionModel::Status
+					Set(EndpointId endpoint,
+					    chip::app::Clusters::WaterTankLevelMonitoring::ChangeIndicationEnum value);
+					Protocols::InteractionModel::Status
+					Set(EndpointId endpoint,
+					    chip::app::Clusters::WaterTankLevelMonitoring::ChangeIndicationEnum value,
+					    MarkAttributeDirty markDirty);
+				} // namespace ChangeIndication
+
+				namespace InPlaceIndicator
+				{
+					Protocols::InteractionModel::Status Get(EndpointId endpoint,
+										bool *value); // boolean
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value);
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value,
+										MarkAttributeDirty markDirty);
+				} // namespace InPlaceIndicator
+
+				namespace LastChangedTime
+				{
+					Protocols::InteractionModel::Status
+					Get(EndpointId endpoint, DataModel::Nullable<uint32_t> &value); // epoch_s
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
+										MarkAttributeDirty markDirty);
+					Protocols::InteractionModel::Status SetNull(EndpointId endpoint);
+					Protocols::InteractionModel::Status SetNull(EndpointId endpoint,
+										    MarkAttributeDirty markDirty);
+					Protocols::InteractionModel::Status
+					Set(EndpointId endpoint, const chip::app::DataModel::Nullable<uint32_t> &value);
+					Protocols::InteractionModel::Status
+					Set(EndpointId endpoint, const chip::app::DataModel::Nullable<uint32_t> &value,
+					    MarkAttributeDirty markDirty);
+				} // namespace LastChangedTime
+
+				namespace FeatureMap
+				{
+					Protocols::InteractionModel::Status Get(EndpointId endpoint,
+										uint32_t *value); // bitmap32
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
+										MarkAttributeDirty markDirty);
+				} // namespace FeatureMap
+
+				namespace ClusterRevision
+				{
+					Protocols::InteractionModel::Status Get(EndpointId endpoint,
+										uint16_t *value); // int16u
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
+										MarkAttributeDirty markDirty);
+				} // namespace ClusterRevision
+
+			} // namespace Attributes
+		} // namespace WaterTankLevelMonitoring
 
 		namespace BooleanStateConfiguration
 		{
@@ -4421,15 +4239,6 @@ namespace app
 										MarkAttributeDirty markDirty);
 				} // namespace FeatureMap
 
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
-
 			} // namespace Attributes
 		} // namespace WindowCovering
 
@@ -4570,6 +4379,23 @@ namespace app
 					    chip::app::Clusters::ClosureDimension::ModulationTypeEnum value,
 					    MarkAttributeDirty markDirty);
 				} // namespace ModulationType
+
+				namespace LatchControlModes
+				{
+					Protocols::InteractionModel::Status
+					Get(EndpointId endpoint,
+					    chip::BitMask<chip::app::Clusters::ClosureDimension::LatchControlModesBitmap>
+						    *value); // LatchControlModesBitmap
+					Protocols::InteractionModel::Status
+					Set(EndpointId endpoint,
+					    chip::BitMask<chip::app::Clusters::ClosureDimension::LatchControlModesBitmap>
+						    value);
+					Protocols::InteractionModel::Status
+					Set(EndpointId endpoint,
+					    chip::BitMask<chip::app::Clusters::ClosureDimension::LatchControlModesBitmap>
+						    value,
+					    MarkAttributeDirty markDirty);
+				} // namespace LatchControlModes
 
 			} // namespace Attributes
 		} // namespace ClosureDimension
@@ -5740,15 +5566,6 @@ namespace app
 					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
 										MarkAttributeDirty markDirty);
 				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
 
 			} // namespace Attributes
 		} // namespace Thermostat
@@ -7483,15 +7300,6 @@ namespace app
 										MarkAttributeDirty markDirty);
 				} // namespace PhysicalContactUnoccupiedToOccupiedThreshold
 
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
-
 			} // namespace Attributes
 		} // namespace OccupancySensing
 
@@ -7669,15 +7477,6 @@ namespace app
 		{
 			namespace Attributes
 			{
-
-				namespace FeatureMap
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint32_t *value); // bitmap32
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace FeatureMap
 
 			} // namespace Attributes
 		} // namespace SoilMeasurement
@@ -8395,60 +8194,6 @@ namespace app
 			namespace Attributes
 			{
 
-				namespace MaxUserDefinedZones
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint8_t *value); // int8u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint8_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint8_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace MaxUserDefinedZones
-
-				namespace MaxZones
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint8_t *value); // int8u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint8_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint8_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace MaxZones
-
-				namespace SensitivityMax
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint8_t *value); // int8u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint8_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint8_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace SensitivityMax
-
-				namespace Sensitivity
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint8_t *value); // int8u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint8_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint8_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace Sensitivity
-
-				namespace FeatureMap
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint32_t *value); // bitmap32
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
-
 			} // namespace Attributes
 		} // namespace ZoneManagement
 
@@ -8527,6 +8272,23 @@ namespace app
 					Protocols::InteractionModel::Status Set(EndpointId endpoint, int16_t value,
 										MarkAttributeDirty markDirty);
 				} // namespace PanMax
+
+				namespace MovementState
+				{
+					Protocols::InteractionModel::Status
+					Get(EndpointId endpoint,
+					    chip::app::Clusters::CameraAvSettingsUserLevelManagement::PhysicalMovementEnum
+						    *value); // PhysicalMovementEnum
+					Protocols::InteractionModel::Status
+					Set(EndpointId endpoint,
+					    chip::app::Clusters::CameraAvSettingsUserLevelManagement::PhysicalMovementEnum
+						    value);
+					Protocols::InteractionModel::Status
+					Set(EndpointId endpoint,
+					    chip::app::Clusters::CameraAvSettingsUserLevelManagement::PhysicalMovementEnum
+						    value,
+					    MarkAttributeDirty markDirty);
+				} // namespace MovementState
 
 				namespace FeatureMap
 				{
@@ -8992,24 +8754,6 @@ namespace app
 			namespace Attributes
 			{
 
-				namespace MaxRootCertificates
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint8_t *value); // int8u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint8_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint8_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace MaxRootCertificates
-
-				namespace MaxClientCertificates
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint8_t *value); // int8u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint8_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint8_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace MaxClientCertificates
-
 				namespace FeatureMap
 				{
 					Protocols::InteractionModel::Status Get(EndpointId endpoint,
@@ -9018,15 +8762,6 @@ namespace app
 					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
 										MarkAttributeDirty markDirty);
 				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
 
 			} // namespace Attributes
 		} // namespace TlsCertificateManagement
@@ -9036,15 +8771,6 @@ namespace app
 			namespace Attributes
 			{
 
-				namespace MaxProvisioned
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint8_t *value); // int8u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint8_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint8_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace MaxProvisioned
-
 				namespace FeatureMap
 				{
 					Protocols::InteractionModel::Status Get(EndpointId endpoint,
@@ -9053,15 +8779,6 @@ namespace app
 					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
 										MarkAttributeDirty markDirty);
 				} // namespace FeatureMap
-
-				namespace ClusterRevision
-				{
-					Protocols::InteractionModel::Status Get(EndpointId endpoint,
-										uint16_t *value); // int16u
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
-										MarkAttributeDirty markDirty);
-				} // namespace ClusterRevision
 
 			} // namespace Attributes
 		} // namespace TlsClientManagement
@@ -9087,51 +8804,6 @@ namespace app
 		{
 			namespace Attributes
 			{
-
-				namespace MeteredQuantityTimestamp
-				{
-					Protocols::InteractionModel::Status
-					Get(EndpointId endpoint, DataModel::Nullable<uint32_t> &value); // epoch_s
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value);
-					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint32_t value,
-										MarkAttributeDirty markDirty);
-					Protocols::InteractionModel::Status SetNull(EndpointId endpoint);
-					Protocols::InteractionModel::Status SetNull(EndpointId endpoint,
-										    MarkAttributeDirty markDirty);
-					Protocols::InteractionModel::Status
-					Set(EndpointId endpoint, const chip::app::DataModel::Nullable<uint32_t> &value);
-					Protocols::InteractionModel::Status
-					Set(EndpointId endpoint, const chip::app::DataModel::Nullable<uint32_t> &value,
-					    MarkAttributeDirty markDirty);
-				} // namespace MeteredQuantityTimestamp
-
-				namespace MeasurementType
-				{
-					Protocols::InteractionModel::Status
-					Get(EndpointId endpoint,
-					    DataModel::Nullable<
-						    chip::app::Clusters::CommodityMetering::MeasurementTypeEnum>
-						    &value); // MeasurementTypeEnum
-					Protocols::InteractionModel::Status
-					Set(EndpointId endpoint,
-					    chip::app::Clusters::CommodityMetering::MeasurementTypeEnum value);
-					Protocols::InteractionModel::Status
-					Set(EndpointId endpoint,
-					    chip::app::Clusters::CommodityMetering::MeasurementTypeEnum value,
-					    MarkAttributeDirty markDirty);
-					Protocols::InteractionModel::Status SetNull(EndpointId endpoint);
-					Protocols::InteractionModel::Status SetNull(EndpointId endpoint,
-										    MarkAttributeDirty markDirty);
-					Protocols::InteractionModel::Status
-					Set(EndpointId endpoint,
-					    const chip::app::DataModel::Nullable<
-						    chip::app::Clusters::CommodityMetering::MeasurementTypeEnum> &value);
-					Protocols::InteractionModel::Status
-					Set(EndpointId endpoint,
-					    const chip::app::DataModel::Nullable<
-						    chip::app::Clusters::CommodityMetering::MeasurementTypeEnum> &value,
-					    MarkAttributeDirty markDirty);
-				} // namespace MeasurementType
 
 				namespace FeatureMap
 				{
@@ -9598,6 +9270,15 @@ namespace app
 					Set(EndpointId endpoint, chip::app::Clusters::Globals::TestGlobalEnum value,
 					    MarkAttributeDirty markDirty);
 				} // namespace GlobalEnum
+
+				namespace UnsupportedAttributeRequiringAdminPrivilege
+				{
+					Protocols::InteractionModel::Status Get(EndpointId endpoint,
+										bool *value); // boolean
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value);
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value,
+										MarkAttributeDirty markDirty);
+				} // namespace UnsupportedAttributeRequiringAdminPrivilege
 
 				namespace Unsupported
 				{

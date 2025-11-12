@@ -1,10 +1,12 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster GeneralCommissioning (cluster code: 48/0x30)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on
+// /home/arbl/ncs/zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +26,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace Breadcrumb
 				{
 					inline constexpr DataModel::AttributeEntry kMetadataEntry(
@@ -107,11 +110,27 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kManage, std::nullopt);
 				} // namespace NetworkRecoveryReason
+				namespace IsCommissioningWithoutPower
+				{
+					inline constexpr DataModel::AttributeEntry
+						kMetadataEntry(IsCommissioningWithoutPower::Id,
+							       BitFlags<DataModel::AttributeQualityFlags>(),
+							       Access::Privilege::kView, std::nullopt);
+				} // namespace IsCommissioningWithoutPower
+				constexpr std::array<DataModel::AttributeEntry, 5> kMandatoryMetadata = {
+					Breadcrumb::kMetadataEntry,
+					BasicCommissioningInfo::kMetadataEntry,
+					RegulatoryConfig::kMetadataEntry,
+					LocationCapability::kMetadataEntry,
+					SupportsConcurrentConnection::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace ArmFailSafe
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -143,6 +162,11 @@ namespace app
 				} // namespace SetTCAcknowledgements
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace GeneralCommissioning
 	} // namespace Clusters
 } // namespace app

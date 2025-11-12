@@ -42,7 +42,7 @@ namespace app
 		{
 			namespace Structs
 			{
-				namespace CurrentStateStruct
+				namespace DimensionStateStruct
 				{
 					enum class Fields : uint8_t {
 						kPosition = 0,
@@ -52,8 +52,8 @@ namespace app
 
 					struct Type {
 					public:
-						Optional<chip::Percent100ths> position;
-						Optional<bool> latch;
+						Optional<DataModel::Nullable<chip::Percent100ths>> position;
+						Optional<DataModel::Nullable<bool>> latch;
 						Optional<Globals::ThreeLevelAutoEnum> speed;
 
 						CHIP_ERROR Decode(TLV::TLVReader &reader);
@@ -65,7 +65,7 @@ namespace app
 
 					using DecodableType = Type;
 
-				} // namespace CurrentStateStruct
+				} // namespace DimensionStateStruct
 				namespace RangePercent100thsStruct
 				{
 					enum class Fields : uint8_t {
@@ -88,30 +88,6 @@ namespace app
 					using DecodableType = Type;
 
 				} // namespace RangePercent100thsStruct
-				namespace TargetStruct
-				{
-					enum class Fields : uint8_t {
-						kPosition = 0,
-						kLatch = 1,
-						kSpeed = 2,
-					};
-
-					struct Type {
-					public:
-						Optional<chip::Percent100ths> position;
-						Optional<bool> latch;
-						Optional<Globals::ThreeLevelAutoEnum> speed;
-
-						CHIP_ERROR Decode(TLV::TLVReader &reader);
-
-						static constexpr bool kIsFabricScoped = false;
-
-						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
-					};
-
-					using DecodableType = Type;
-
-				} // namespace TargetStruct
 				namespace UnitRangeStruct
 				{
 					enum class Fields : uint8_t {

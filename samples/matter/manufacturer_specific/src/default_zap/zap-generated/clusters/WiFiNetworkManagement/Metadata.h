@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace Ssid
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -37,11 +39,17 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kManage, std::nullopt);
 				} // namespace PassphraseSurrogate
+				constexpr std::array<DataModel::AttributeEntry, 2> kMandatoryMetadata = {
+					Ssid::kMetadataEntry,
+					PassphraseSurrogate::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace NetworkPassphraseRequest
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -51,6 +59,11 @@ namespace app
 				} // namespace NetworkPassphraseRequest
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace WiFiNetworkManagement
 	} // namespace Clusters
 } // namespace app

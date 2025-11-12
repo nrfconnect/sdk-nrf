@@ -1,10 +1,12 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster Descriptor (cluster code: 29/0x1D)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on
+// /home/arbl/ncs/zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +26,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace DeviceTypeList
 				{
 					inline constexpr DataModel::AttributeEntry kMetadataEntry(
@@ -71,6 +74,13 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace EndpointUniqueID
+				constexpr std::array<DataModel::AttributeEntry, 4> kMandatoryMetadata = {
+					DeviceTypeList::kMetadataEntry,
+					ServerList::kMetadataEntry,
+					ClientList::kMetadataEntry,
+					PartsList::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
@@ -78,6 +88,11 @@ namespace app
 			{
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace Descriptor
 	} // namespace Clusters
 } // namespace app

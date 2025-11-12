@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace MPTZPosition
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -87,11 +89,22 @@ namespace app
 						kMetadataEntry(PanMax::Id, BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace PanMax
+				namespace MovementState
+				{
+					inline constexpr DataModel::AttributeEntry
+						kMetadataEntry(MovementState::Id,
+							       BitFlags<DataModel::AttributeQualityFlags>(),
+							       Access::Privilege::kView, std::nullopt);
+				} // namespace MovementState
+				constexpr std::array<DataModel::AttributeEntry, 0> kMandatoryMetadata = {
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace MPTZSetPosition
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -143,6 +156,11 @@ namespace app
 				} // namespace DPTZRelativeMove
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace CameraAvSettingsUserLevelManagement
 	} // namespace Clusters
 } // namespace app

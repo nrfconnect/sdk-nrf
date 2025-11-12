@@ -1,7 +1,8 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Identifier constant values for cluster GeneralCommissioning (cluster code: 48/0x30)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on
+// /home/arbl/ncs/zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <clusters/shared/GlobalIds.h>
@@ -17,6 +18,10 @@ namespace app
 		{
 			namespace Attributes
 			{
+
+				// Total number of attributes supported by the cluster, including global attributes
+				inline constexpr uint32_t kAttributesCount = 18;
+
 				namespace Breadcrumb
 				{
 					inline constexpr AttributeId Id = 0x00000000;
@@ -76,6 +81,11 @@ namespace app
 				{
 					inline constexpr AttributeId Id = 0x0000000B;
 				} // namespace NetworkRecoveryReason
+
+				namespace IsCommissioningWithoutPower
+				{
+					inline constexpr AttributeId Id = 0x0000000C;
+				} // namespace IsCommissioningWithoutPower
 
 				namespace GeneratedCommandList
 				{

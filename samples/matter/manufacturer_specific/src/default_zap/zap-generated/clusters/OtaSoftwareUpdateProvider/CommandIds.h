@@ -1,7 +1,8 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Identifier constant values for cluster OtaSoftwareUpdateProvider (cluster code: 41/0x29)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on
+// /home/arbl/ncs/zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <lib/core/DataModelTypes.h>
@@ -16,6 +17,14 @@ namespace app
 		{
 			namespace Commands
 			{
+
+				// Total number of client to server commands supported by the cluster
+				inline constexpr uint32_t kAcceptedCommandsCount = 3;
+
+				// Total number of server to client commands supported by the cluster (response
+				// commands)
+				inline constexpr uint32_t kGeneratedCommandsCount = 2;
+
 				namespace QueryImage
 				{
 					inline constexpr CommandId Id = 0x00000000;

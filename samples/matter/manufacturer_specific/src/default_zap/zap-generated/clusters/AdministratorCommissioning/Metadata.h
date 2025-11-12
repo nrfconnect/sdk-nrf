@@ -1,10 +1,12 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster AdministratorCommissioning (cluster code: 60/0x3C)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on
+// /home/arbl/ncs/zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +26,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace WindowStatus
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -45,11 +48,18 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace AdminVendorId
+				constexpr std::array<DataModel::AttributeEntry, 3> kMandatoryMetadata = {
+					WindowStatus::kMetadataEntry,
+					AdminFabricIndex::kMetadataEntry,
+					AdminVendorId::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace OpenCommissioningWindow
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -76,6 +86,11 @@ namespace app
 				} // namespace RevokeCommissioning
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace AdministratorCommissioning
 	} // namespace Clusters
 } // namespace app

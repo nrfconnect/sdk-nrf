@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace MaxRootCertificates
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -54,11 +56,19 @@ namespace app
 							DataModel::AttributeQualityFlags::kListAttribute),
 						Access::Privilege::kView, std::nullopt);
 				} // namespace ProvisionedClientCertificates
+				constexpr std::array<DataModel::AttributeEntry, 4> kMandatoryMetadata = {
+					MaxRootCertificates::kMetadataEntry,
+					ProvisionedRootCertificates::kMetadataEntry,
+					MaxClientCertificates::kMetadataEntry,
+					ProvisionedClientCertificates::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace ProvisionRootCertificate
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -91,14 +101,14 @@ namespace app
 								       DataModel::CommandQualityFlags::kFabricScoped),
 							       Access::Privilege::kAdminister);
 				} // namespace RemoveRootCertificate
-				namespace TLSClientCSR
+				namespace ClientCSR
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
-						kMetadataEntry(TLSClientCSR::Id,
+						kMetadataEntry(ClientCSR::Id,
 							       BitFlags<DataModel::CommandQualityFlags>(
 								       DataModel::CommandQualityFlags::kFabricScoped),
 							       Access::Privilege::kAdminister);
-				} // namespace TLSClientCSR
+				} // namespace ClientCSR
 				namespace ProvisionClientCertificate
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -133,6 +143,11 @@ namespace app
 				} // namespace RemoveClientCertificate
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace TlsCertificateManagement
 	} // namespace Clusters
 } // namespace app

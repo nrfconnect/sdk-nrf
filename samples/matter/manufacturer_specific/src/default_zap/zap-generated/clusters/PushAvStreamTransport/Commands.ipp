@@ -203,6 +203,7 @@ namespace app
 						encoder.Encode(to_underlying(Fields::kActivationReason),
 							       activationReason);
 						encoder.Encode(to_underlying(Fields::kTimeControl), timeControl);
+						encoder.Encode(to_underlying(Fields::kUserDefined), userDefined);
 						return encoder.Finalize();
 					}
 
@@ -225,6 +226,9 @@ namespace app
 							} else if (__context_tag ==
 								   to_underlying(Fields::kTimeControl)) {
 								err = DataModel::Decode(reader, timeControl);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kUserDefined)) {
+								err = DataModel::Decode(reader, userDefined);
 							}
 
 							ReturnErrorOnFailure(err);

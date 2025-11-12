@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace MeterType
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -59,6 +61,12 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace PowerThreshold
+				constexpr std::array<DataModel::AttributeEntry, 3> kMandatoryMetadata = {
+					MeterType::kMetadataEntry,
+					PointOfDelivery::kMetadataEntry,
+					MeterSerialNumber::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
@@ -66,6 +74,11 @@ namespace app
 			{
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace MeterIdentification
 	} // namespace Clusters
 } // namespace app

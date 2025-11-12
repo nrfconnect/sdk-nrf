@@ -1,10 +1,12 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster OtaSoftwareUpdateRequestor (cluster code: 42/0x2A)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on
+// /home/arbl/ncs/zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +26,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace DefaultOTAProviders
 				{
 					inline constexpr DataModel::AttributeEntry kMetadataEntry(
@@ -53,20 +56,51 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace UpdateStateProgress
+				constexpr std::array<DataModel::AttributeEntry, 4> kMandatoryMetadata = {
+					DefaultOTAProviders::kMetadataEntry,
+					UpdatePossible::kMetadataEntry,
+					UpdateState::kMetadataEntry,
+					UpdateStateProgress::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace AnnounceOTAProvider
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
 						kMetadataEntry(AnnounceOTAProvider::Id,
 							       BitFlags<DataModel::CommandQualityFlags>(),
-							       Access::Privilege::kOperate);
+							       Access::Privilege::kAdminister);
 				} // namespace AnnounceOTAProvider
 
 			} // namespace Commands
+
+			namespace Events
+			{
+				namespace StateTransition
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace StateTransition
+				namespace VersionApplied
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace VersionApplied
+				namespace DownloadError
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace DownloadError
+
+			} // namespace Events
 		} // namespace OtaSoftwareUpdateRequestor
 	} // namespace Clusters
 } // namespace app

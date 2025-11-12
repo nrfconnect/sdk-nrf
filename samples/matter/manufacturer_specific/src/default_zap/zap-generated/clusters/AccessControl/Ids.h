@@ -1,7 +1,8 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
-// Identifier constant values for cluster AccessControl (cluster code: 31/0x041F)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// Identifier constant values for cluster AccessControl (cluster code: 31/0x001F)
+// based on
+// /home/arbl/ncs/zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <clusters/AccessControl/AttributeIds.h>

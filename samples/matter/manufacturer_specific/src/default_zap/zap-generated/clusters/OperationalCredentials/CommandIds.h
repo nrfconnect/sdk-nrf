@@ -1,7 +1,8 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Identifier constant values for cluster OperationalCredentials (cluster code: 62/0x3E)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on
+// /home/arbl/ncs/zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <lib/core/DataModelTypes.h>
@@ -16,6 +17,14 @@ namespace app
 		{
 			namespace Commands
 			{
+
+				// Total number of client to server commands supported by the cluster
+				inline constexpr uint32_t kAcceptedCommandsCount = 10;
+
+				// Total number of server to client commands supported by the cluster (response
+				// commands)
+				inline constexpr uint32_t kGeneratedCommandsCount = 5;
+
 				namespace AttestationRequest
 				{
 					inline constexpr CommandId Id = 0x00000000;

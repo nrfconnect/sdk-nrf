@@ -17,6 +17,10 @@ namespace app
 		{
 			namespace Attributes
 			{
+
+				// Total number of attributes supported by the cluster, including global attributes
+				inline constexpr uint32_t kAttributesCount = 46;
+
 				namespace MaxConcurrentEncoders
 				{
 					inline constexpr AttributeId Id = 0x00000000;
@@ -37,10 +41,10 @@ namespace app
 					inline constexpr AttributeId Id = 0x00000003;
 				} // namespace NightVisionUsesInfrared
 
-				namespace MinViewport
+				namespace MinViewportResolution
 				{
 					inline constexpr AttributeId Id = 0x00000004;
-				} // namespace MinViewport
+				} // namespace MinViewportResolution
 
 				namespace RateDistortionTradeOffPoints
 				{

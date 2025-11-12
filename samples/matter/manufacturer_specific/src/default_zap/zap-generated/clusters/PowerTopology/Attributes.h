@@ -88,6 +88,30 @@ namespace app
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
 				} // namespace ActiveEndpoints
+				namespace ElectricalCircuitNodes
+				{
+					struct TypeInfo {
+						using Type = chip::app::DataModel::List<
+							const chip::app::Clusters::PowerTopology::Structs::
+								CircuitNodeStruct::Type>;
+						using DecodableType = chip::app::DataModel::DecodableList<
+							chip::app::Clusters::PowerTopology::Structs::CircuitNodeStruct::
+								DecodableType>;
+						using DecodableArgType = const chip::app::DataModel::DecodableList<
+							chip::app::Clusters::PowerTopology::Structs::CircuitNodeStruct::
+								DecodableType> &;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::PowerTopology::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::ElectricalCircuitNodes::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace ElectricalCircuitNodes
 				namespace GeneratedCommandList
 				{
 					struct TypeInfo
@@ -151,6 +175,8 @@ namespace app
 						Attributes::AvailableEndpoints::TypeInfo::DecodableType
 							availableEndpoints;
 						Attributes::ActiveEndpoints::TypeInfo::DecodableType activeEndpoints;
+						Attributes::ElectricalCircuitNodes::TypeInfo::DecodableType
+							electricalCircuitNodes;
 						Attributes::GeneratedCommandList::TypeInfo::DecodableType
 							generatedCommandList;
 						Attributes::AcceptedCommandList::TypeInfo::DecodableType

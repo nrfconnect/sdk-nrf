@@ -175,28 +175,6 @@ namespace app
 					};
 
 				} // namespace MeasurementAccuracyStruct
-				namespace ApplicationStruct
-				{
-					enum class Fields : uint8_t {
-						kCatalogVendorID = 0,
-						kApplicationID = 1,
-					};
-
-					struct Type {
-					public:
-						uint16_t catalogVendorID = static_cast<uint16_t>(0);
-						chip::CharSpan applicationID;
-
-						CHIP_ERROR Decode(TLV::TLVReader &reader);
-
-						static constexpr bool kIsFabricScoped = false;
-
-						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
-					};
-
-					using DecodableType = Type;
-
-				} // namespace ApplicationStruct
 				namespace ErrorStateStruct
 				{
 					enum class Fields : uint8_t {
@@ -533,6 +511,33 @@ namespace app
 
 				} // namespace PowerThresholdStruct
 
+				namespace SemanticTagStruct
+				{
+					enum class Fields : uint8_t {
+						kMfgCode = 0,
+						kNamespaceID = 1,
+						kTag = 2,
+						kLabel = 3,
+					};
+
+					struct Type {
+					public:
+						DataModel::Nullable<chip::VendorId> mfgCode;
+						uint8_t namespaceID = static_cast<uint8_t>(0);
+						uint8_t tag = static_cast<uint8_t>(0);
+						Optional<DataModel::Nullable<chip::CharSpan>> label;
+
+						CHIP_ERROR Decode(TLV::TLVReader &reader);
+
+						static constexpr bool kIsFabricScoped = false;
+
+						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
+					};
+
+					using DecodableType = Type;
+
+				} // namespace SemanticTagStruct
+
 				namespace TestGlobalStruct
 				{
 					enum class Fields : uint8_t {
@@ -607,7 +612,7 @@ namespace app
 							static_cast<Globals::StreamUsageEnum>(0);
 						DataModel::Nullable<uint16_t> videoStreamID;
 						DataModel::Nullable<uint16_t> audioStreamID;
-						Optional<bool> metadataEnabled;
+						bool metadataEnabled = static_cast<bool>(0);
 						chip::FabricIndex fabricIndex = static_cast<chip::FabricIndex>(0);
 
 						CHIP_ERROR Decode(TLV::TLVReader &reader);

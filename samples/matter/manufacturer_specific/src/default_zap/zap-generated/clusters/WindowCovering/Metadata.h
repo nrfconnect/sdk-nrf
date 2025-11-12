@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace Type
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -176,11 +178,20 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace SafetyStatus
+				constexpr std::array<DataModel::AttributeEntry, 5> kMandatoryMetadata = {
+					Type::kMetadataEntry,
+					ConfigStatus::kMetadataEntry,
+					OperationalStatus::kMetadataEntry,
+					EndProductType::kMetadataEntry,
+					Mode::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace UpOrOpen
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -231,6 +242,11 @@ namespace app
 				} // namespace GoToTiltPercentage
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace WindowCovering
 	} // namespace Clusters
 } // namespace app

@@ -304,10 +304,9 @@ namespace app
 						kMaxResolution = 5,
 						kMinBitRate = 6,
 						kMaxBitRate = 7,
-						kMinKeyFrameInterval = 8,
-						kMaxKeyFrameInterval = 9,
-						kWatermarkEnabled = 10,
-						kOSDEnabled = 11,
+						kKeyFrameInterval = 8,
+						kWatermarkEnabled = 9,
+						kOSDEnabled = 10,
 					};
 
 					struct Type {
@@ -332,8 +331,7 @@ namespace app
 						Structs::VideoResolutionStruct::Type maxResolution;
 						uint32_t minBitRate = static_cast<uint32_t>(0);
 						uint32_t maxBitRate = static_cast<uint32_t>(0);
-						uint16_t minKeyFrameInterval = static_cast<uint16_t>(0);
-						uint16_t maxKeyFrameInterval = static_cast<uint16_t>(0);
+						uint16_t keyFrameInterval = static_cast<uint16_t>(0);
 						Optional<bool> watermarkEnabled;
 						Optional<bool> OSDEnabled;
 
@@ -366,8 +364,7 @@ namespace app
 						Structs::VideoResolutionStruct::DecodableType maxResolution;
 						uint32_t minBitRate = static_cast<uint32_t>(0);
 						uint32_t maxBitRate = static_cast<uint32_t>(0);
-						uint16_t minKeyFrameInterval = static_cast<uint16_t>(0);
-						uint16_t maxKeyFrameInterval = static_cast<uint16_t>(0);
+						uint16_t keyFrameInterval = static_cast<uint16_t>(0);
 						Optional<bool> watermarkEnabled;
 						Optional<bool> OSDEnabled;
 

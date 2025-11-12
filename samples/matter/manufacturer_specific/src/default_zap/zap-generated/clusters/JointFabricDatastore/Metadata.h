@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace AnchorRootCA
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -130,11 +132,29 @@ namespace app
 							DataModel::AttributeQualityFlags::kListAttribute),
 						Access::Privilege::kAdminister, std::nullopt);
 				} // namespace NodeEndpointList
+				constexpr std::array<DataModel::AttributeEntry, 14> kMandatoryMetadata = {
+					AnchorRootCA::kMetadataEntry,
+					AnchorNodeID::kMetadataEntry,
+					AnchorVendorID::kMetadataEntry,
+					FriendlyName::kMetadataEntry,
+					GroupKeySetList::kMetadataEntry,
+					GroupList::kMetadataEntry,
+					NodeList::kMetadataEntry,
+					AdminList::kMetadataEntry,
+					Status::kMetadataEntry,
+					EndpointGroupIDList::kMetadataEntry,
+					EndpointBindingList::kMetadataEntry,
+					NodeKeySetList::kMetadataEntry,
+					NodeACLList::kMetadataEntry,
+					NodeEndpointList::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace AddKeySet
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -275,6 +295,11 @@ namespace app
 				} // namespace RemoveACLFromNode
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace JointFabricDatastore
 	} // namespace Clusters
 } // namespace app

@@ -1,10 +1,12 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster OtaSoftwareUpdateProvider (cluster code: 41/0x29)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on
+// /home/arbl/ncs/zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -25,10 +27,15 @@ namespace app
 			namespace Attributes
 			{
 
+				constexpr std::array<DataModel::AttributeEntry, 0> kMandatoryMetadata = {
+
+				};
+
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace QueryImage
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -52,6 +59,11 @@ namespace app
 				} // namespace NotifyUpdateApplied
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace OtaSoftwareUpdateProvider
 	} // namespace Clusters
 } // namespace app

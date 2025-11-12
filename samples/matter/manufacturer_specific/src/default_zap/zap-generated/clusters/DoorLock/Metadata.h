@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace LockState
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -342,11 +344,20 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace NumberOfAliroEndpointKeysSupported
+				constexpr std::array<DataModel::AttributeEntry, 5> kMandatoryMetadata = {
+					LockState::kMetadataEntry,
+					LockType::kMetadataEntry,
+					ActuatorEnabled::kMetadataEntry,
+					OperatingMode::kMetadataEntry,
+					SupportedOperatingModes::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace LockDoor
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -505,6 +516,41 @@ namespace app
 				} // namespace ClearAliroReaderConfig
 
 			} // namespace Commands
+
+			namespace Events
+			{
+				namespace DoorLockAlarm
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace DoorLockAlarm
+				namespace DoorStateChange
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace DoorStateChange
+				namespace LockOperation
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace LockOperation
+				namespace LockOperationError
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace LockOperationError
+				namespace LockUserChange
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace LockUserChange
+
+			} // namespace Events
 		} // namespace DoorLock
 	} // namespace Clusters
 } // namespace app
