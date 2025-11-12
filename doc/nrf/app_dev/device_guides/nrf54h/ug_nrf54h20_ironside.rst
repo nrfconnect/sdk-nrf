@@ -115,7 +115,7 @@ The manual update process involves the following steps:
    After a reset, the Secure Domain ROM (SDROM) detects the pending update through the SICR registers, verifies the update firmware signature, and installs the new firmware.
 
 #. Completing the update.
-   The system boots with the updated |ISE| firmware, and the update status can be read to verify successful installation.
+   The system boots with the updated |ISE| firmware, and the update status in the boot report can be read to verify successful installation.
 
 Updating manually using nRF Util
 --------------------------------
