@@ -945,7 +945,7 @@ To enable secondary firmware support, you must complete the following steps:
 
       CONFIG_GEN_UICR_SECONDARY=y
 
-2. **Create a secondary firmware Zephyr image**: Create a separate Zephyr application for your secondary firmware (e.g., in a ``secondary/`` directory).
+2. Create a separate Zephyr application for your secondary firmware (e.g., in a ``secondary/`` directory).
 
 3. Include the secondary image as an external project in ``sysbuild.cmake``:
 
