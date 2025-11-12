@@ -163,7 +163,6 @@ To perform the manual update process using nRF Util's `device command <Device co
       nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial>
 
 #. If you are updating both slots, complete the following additional steps:
-    
    a. Program the |ISE| Recovery update firmware:
 
       .. code-block:: console
