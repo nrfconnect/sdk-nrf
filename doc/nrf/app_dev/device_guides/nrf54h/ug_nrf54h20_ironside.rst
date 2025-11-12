@@ -988,7 +988,6 @@ Setting bit 5 in ``CTRLAP.BOOTMODE`` will also trigger secondary firmware.
 * A local domain is reset with a reason configured to trigger the secondary firmware.
 * If one of the triggers configured in :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER` and related options occurs.
 
-The secondary firmware can be protected using :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_PROTECTEDMEM` for integrity checking, and can be updated by other components when protection is not enabled.
 
 Protection
 ==========
