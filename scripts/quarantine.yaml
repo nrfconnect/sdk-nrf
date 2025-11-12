@@ -149,3 +149,15 @@
   platforms:
     - nrf54lv10dk.*
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35259"
+
+- scenarios:
+    - net.lib.app_jwt
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36289"
+
+- scenarios:
+    - sample.dfu.dfu_multi_image.encryption
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36289"
