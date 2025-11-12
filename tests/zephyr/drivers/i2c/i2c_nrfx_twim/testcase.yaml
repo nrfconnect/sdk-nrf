@@ -11,6 +11,11 @@ common:
 tests:
   nrf.extended.drivers.i2c.nrfx_twim_async_api:
     platform_allow:
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
