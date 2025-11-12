@@ -704,6 +704,7 @@
 # Scripts
 /scripts/docker/                          @nrfconnect/ncs-ci
 /scripts/ci/test_plan.py                  @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
+/scripts/ci/check_compliance_with_allowlist.py @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/tags.yaml                     @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/tags_sdk_zephyr.yaml          @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/twister_ignore.txt            @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
