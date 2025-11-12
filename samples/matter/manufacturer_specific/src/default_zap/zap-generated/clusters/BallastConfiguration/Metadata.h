@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace PhysicalMinLevel
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -122,6 +124,12 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, Access::Privilege::kManage);
 				} // namespace LampBurnHoursTripPoint
+				constexpr std::array<DataModel::AttributeEntry, 5> kMandatoryMetadata = {
+					PhysicalMinLevel::kMetadataEntry, PhysicalMaxLevel::kMetadataEntry,
+					MinLevel::kMetadataEntry,	  MaxLevel::kMetadataEntry,
+					LampQuantity::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
@@ -129,6 +137,11 @@ namespace app
 			{
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace BallastConfiguration
 	} // namespace Clusters
 } // namespace app

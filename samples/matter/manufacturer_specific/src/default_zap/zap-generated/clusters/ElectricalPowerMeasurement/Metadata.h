@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace PowerMode
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -161,6 +163,13 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace NeutralCurrent
+				constexpr std::array<DataModel::AttributeEntry, 4> kMandatoryMetadata = {
+					PowerMode::kMetadataEntry,
+					NumberOfMeasurementTypes::kMetadataEntry,
+					Accuracy::kMetadataEntry,
+					ActivePower::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
@@ -168,6 +177,17 @@ namespace app
 			{
 
 			} // namespace Commands
+
+			namespace Events
+			{
+				namespace MeasurementPeriodRanges
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace MeasurementPeriodRanges
+
+			} // namespace Events
 		} // namespace ElectricalPowerMeasurement
 	} // namespace Clusters
 } // namespace app

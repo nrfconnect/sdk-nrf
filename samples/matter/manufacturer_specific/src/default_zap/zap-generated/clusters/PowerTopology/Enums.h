@@ -38,6 +38,7 @@ namespace app
 				kTreeTopology = 0x2,
 				kSetTopology = 0x4,
 				kDynamicPowerFlow = 0x8,
+				kElectricalCircuit = 0x10,
 			};
 		} // namespace PowerTopology
 	} // namespace Clusters

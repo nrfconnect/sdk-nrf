@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace UTCTime
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -117,11 +119,17 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace SupportsDNSResolve
+				constexpr std::array<DataModel::AttributeEntry, 2> kMandatoryMetadata = {
+					UTCTime::kMetadataEntry,
+					Granularity::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace SetUTCTime
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -160,6 +168,41 @@ namespace app
 				} // namespace SetDefaultNTP
 
 			} // namespace Commands
+
+			namespace Events
+			{
+				namespace DSTTableEmpty
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace DSTTableEmpty
+				namespace DSTStatus
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace DSTStatus
+				namespace TimeZoneStatus
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace TimeZoneStatus
+				namespace TimeFailure
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace TimeFailure
+				namespace MissingTrustedTimeSource
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace MissingTrustedTimeSource
+
+			} // namespace Events
 		} // namespace TimeSynchronization
 	} // namespace Clusters
 } // namespace app

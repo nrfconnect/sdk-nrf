@@ -1,10 +1,12 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster OperationalCredentials (cluster code: 62/0x3E)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on
+// /home/arbl/ncs/zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +26,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace NOCs
 				{
 					inline constexpr DataModel::AttributeEntry kMetadataEntry(
@@ -69,11 +72,21 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace CurrentFabricIndex
+				constexpr std::array<DataModel::AttributeEntry, 6> kMandatoryMetadata = {
+					NOCs::kMetadataEntry,
+					Fabrics::kMetadataEntry,
+					SupportedFabrics::kMetadataEntry,
+					CommissionedFabrics::kMetadataEntry,
+					TrustedRootCertificates::kMetadataEntry,
+					CurrentFabricIndex::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace AttestationRequest
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -148,6 +161,11 @@ namespace app
 				} // namespace SignVIDVerificationRequest
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace OperationalCredentials
 	} // namespace Clusters
 } // namespace app

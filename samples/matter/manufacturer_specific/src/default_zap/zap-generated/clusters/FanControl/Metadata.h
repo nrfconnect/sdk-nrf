@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace FanMode
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -108,11 +110,19 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, Access::Privilege::kOperate);
 				} // namespace AirflowDirection
+				constexpr std::array<DataModel::AttributeEntry, 4> kMandatoryMetadata = {
+					FanMode::kMetadataEntry,
+					FanModeSequence::kMetadataEntry,
+					PercentSetting::kMetadataEntry,
+					PercentCurrent::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace Step
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -121,6 +131,11 @@ namespace app
 				} // namespace Step
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace FanControl
 	} // namespace Clusters
 } // namespace app

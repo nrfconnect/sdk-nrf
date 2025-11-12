@@ -1,10 +1,12 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster GroupKeyManagement (cluster code: 63/0x3F)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on
+// /home/arbl/ncs/zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -20,10 +22,11 @@ namespace app
 		namespace GroupKeyManagement
 		{
 
-			inline constexpr uint32_t kRevision = 1;
+			inline constexpr uint32_t kRevision = 2;
 
 			namespace Attributes
 			{
+
 				namespace GroupKeyMap
 				{
 					inline constexpr DataModel::AttributeEntry kMetadataEntry(
@@ -54,11 +57,19 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace MaxGroupKeysPerFabric
+				constexpr std::array<DataModel::AttributeEntry, 4> kMandatoryMetadata = {
+					GroupKeyMap::kMetadataEntry,
+					GroupTable::kMetadataEntry,
+					MaxGroupsPerFabric::kMetadataEntry,
+					MaxGroupKeysPerFabric::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace KeySetWrite
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -93,6 +104,11 @@ namespace app
 				} // namespace KeySetReadAllIndices
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace GroupKeyManagement
 	} // namespace Clusters
 } // namespace app

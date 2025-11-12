@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace TariffInfo
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -165,11 +167,32 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace DefaultRandomizationType
+				constexpr std::array<DataModel::AttributeEntry, 17> kMandatoryMetadata = {
+					TariffInfo::kMetadataEntry,
+					TariffUnit::kMetadataEntry,
+					StartDate::kMetadataEntry,
+					DayEntries::kMetadataEntry,
+					DayPatterns::kMetadataEntry,
+					CalendarPeriods::kMetadataEntry,
+					IndividualDays::kMetadataEntry,
+					CurrentDay::kMetadataEntry,
+					NextDay::kMetadataEntry,
+					CurrentDayEntry::kMetadataEntry,
+					CurrentDayEntryDate::kMetadataEntry,
+					NextDayEntry::kMetadataEntry,
+					NextDayEntryDate::kMetadataEntry,
+					TariffComponents::kMetadataEntry,
+					TariffPeriods::kMetadataEntry,
+					CurrentTariffComponents::kMetadataEntry,
+					NextTariffComponents::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace GetTariffComponent
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -186,6 +209,11 @@ namespace app
 				} // namespace GetDayEntry
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace CommodityTariff
 	} // namespace Clusters
 } // namespace app

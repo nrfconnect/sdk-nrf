@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace PHYRate
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -87,11 +89,15 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace TimeSinceReset
+				constexpr std::array<DataModel::AttributeEntry, 0> kMandatoryMetadata = {
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace ResetCounts
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -101,6 +107,11 @@ namespace app
 				} // namespace ResetCounts
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace EthernetNetworkDiagnostics
 	} // namespace Clusters
 } // namespace app

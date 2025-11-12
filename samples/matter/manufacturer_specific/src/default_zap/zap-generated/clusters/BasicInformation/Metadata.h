@@ -1,10 +1,12 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster BasicInformation (cluster code: 40/0x28)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on
+// /home/arbl/ncs/zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +26,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace DataModelRevision
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -198,11 +201,32 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace ConfigurationVersion
+				constexpr std::array<DataModel::AttributeEntry, 17> kMandatoryMetadata = {
+					DataModelRevision::kMetadataEntry,
+					VendorName::kMetadataEntry,
+					VendorID::kMetadataEntry,
+					ProductName::kMetadataEntry,
+					ProductID::kMetadataEntry,
+					NodeLabel::kMetadataEntry,
+					Location::kMetadataEntry,
+					HardwareVersion::kMetadataEntry,
+					HardwareVersionString::kMetadataEntry,
+					SoftwareVersion::kMetadataEntry,
+					SoftwareVersionString::kMetadataEntry,
+					UniqueID::kMetadataEntry,
+					CapabilityMinima::kMetadataEntry,
+					SpecificationVersion::kMetadataEntry,
+					MaxPathsPerInvoke::kMetadataEntry,
+					RandomNumber::kMetadataEntry,
+					ConfigurationVersion::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace GenerateRandom
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -219,6 +243,41 @@ namespace app
 				} // namespace MfgSpecificPing
 
 			} // namespace Commands
+
+			namespace Events
+			{
+				namespace StartUp
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace StartUp
+				namespace ShutDown
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace ShutDown
+				namespace Leave
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace Leave
+				namespace ReachableChanged
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace ReachableChanged
+				namespace RandomNumberChanged
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace RandomNumberChanged
+
+			} // namespace Events
 		} // namespace BasicInformation
 	} // namespace Clusters
 } // namespace app

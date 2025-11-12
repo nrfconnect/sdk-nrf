@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -20,10 +21,11 @@ namespace app
 		namespace ApplicationLauncher
 		{
 
-			inline constexpr uint32_t kRevision = 1;
+			inline constexpr uint32_t kRevision = 2;
 
 			namespace Attributes
 			{
+
 				namespace CatalogList
 				{
 					inline constexpr DataModel::AttributeEntry kMetadataEntry(
@@ -39,11 +41,15 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace CurrentApp
+				constexpr std::array<DataModel::AttributeEntry, 0> kMandatoryMetadata = {
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace LaunchApp
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -65,6 +71,11 @@ namespace app
 				} // namespace HideApp
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace ApplicationLauncher
 	} // namespace Clusters
 } // namespace app

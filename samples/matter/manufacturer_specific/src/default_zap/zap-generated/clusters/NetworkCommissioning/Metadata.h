@@ -1,10 +1,12 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster NetworkCommissioning (cluster code: 49/0x31)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on
+// /home/arbl/ncs/zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +26,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace MaxNetworks
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -102,11 +105,18 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace ThreadVersion
+				constexpr std::array<DataModel::AttributeEntry, 6> kMandatoryMetadata = {
+					MaxNetworks::kMetadataEntry,	  Networks::kMetadataEntry,
+					InterfaceEnabled::kMetadataEntry, LastNetworkingStatus::kMetadataEntry,
+					LastNetworkID::kMetadataEntry,	  LastConnectErrorValue::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace ScanNetworks
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -158,6 +168,11 @@ namespace app
 				} // namespace QueryIdentity
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace NetworkCommissioning
 	} // namespace Clusters
 } // namespace app

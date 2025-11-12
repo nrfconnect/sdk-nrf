@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace FlipFlop
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -31,11 +33,16 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, Access::Privilege::kOperate);
 				} // namespace FlipFlop
+				constexpr std::array<DataModel::AttributeEntry, 1> kMandatoryMetadata = {
+					FlipFlop::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace Ping
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -51,6 +58,17 @@ namespace app
 				} // namespace AddArguments
 
 			} // namespace Commands
+
+			namespace Events
+			{
+				namespace PingCountEvent
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace PingCountEvent
+
+			} // namespace Events
 		} // namespace SampleMei
 	} // namespace Clusters
 } // namespace app

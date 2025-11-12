@@ -28,6 +28,18 @@ namespace app
 {
 	namespace Clusters
 	{
+		static auto __attribute__((unused))
+		EnsureKnownEnumValue(CameraAvSettingsUserLevelManagement::PhysicalMovementEnum val)
+		{
+			using EnumType = CameraAvSettingsUserLevelManagement::PhysicalMovementEnum;
+			switch (val) {
+			case EnumType::kIdle:
+			case EnumType::kMoving:
+				return val;
+			default:
+				return EnumType::kUnknownEnumValue;
+			}
+		}
 	} // namespace Clusters
 } // namespace app
 } // namespace chip

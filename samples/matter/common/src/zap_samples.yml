@@ -54,6 +54,7 @@
   zap_file: samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.zap
   full: true
   zcl_file: samples/matter/manufacturer_specific/src/default_zap/zcl.json
+  clusters: [samples/matter/manufacturer_specific/src/default_zap/NordicDevKitCluster.xml]
 
 # temperature sensor
 - name: temperature_sensor

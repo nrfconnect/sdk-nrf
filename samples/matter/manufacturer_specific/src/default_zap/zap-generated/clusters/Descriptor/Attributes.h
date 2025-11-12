@@ -136,13 +136,13 @@ namespace app
 				{
 					struct TypeInfo {
 						using Type = chip::app::DataModel::List<
-							const chip::app::Clusters::Descriptor::Structs::
-								SemanticTagStruct::Type>;
+							const chip::app::Clusters::Globals::Structs::SemanticTagStruct::
+								Type>;
 						using DecodableType = chip::app::DataModel::DecodableList<
-							chip::app::Clusters::Descriptor::Structs::SemanticTagStruct::
+							chip::app::Clusters::Globals::Structs::SemanticTagStruct::
 								DecodableType>;
 						using DecodableArgType = const chip::app::DataModel::DecodableList<
-							chip::app::Clusters::Descriptor::Structs::SemanticTagStruct::
+							chip::app::Clusters::Globals::Structs::SemanticTagStruct::
 								DecodableType> &;
 
 						static constexpr ClusterId GetClusterId()

@@ -58,7 +58,7 @@ namespace app
 						encoder.Encode(to_underlying(Fields::kPort), port);
 						encoder.Encode(to_underlying(Fields::kCaid), caid);
 						encoder.Encode(to_underlying(Fields::kCcdid), ccdid);
-						encoder.Encode(to_underlying(Fields::kStatus), status);
+						encoder.Encode(to_underlying(Fields::kReferenceCount), referenceCount);
 						if (aAccessingFabricIndex.HasValue()) {
 							encoder.Encode(to_underlying(Fields::kFabricIndex),
 								       fabricIndex);
@@ -87,8 +87,9 @@ namespace app
 								err = DataModel::Decode(reader, caid);
 							} else if (__context_tag == to_underlying(Fields::kCcdid)) {
 								err = DataModel::Decode(reader, ccdid);
-							} else if (__context_tag == to_underlying(Fields::kStatus)) {
-								err = DataModel::Decode(reader, status);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kReferenceCount)) {
+								err = DataModel::Decode(reader, referenceCount);
 							} else if (__context_tag ==
 								   to_underlying(Fields::kFabricIndex)) {
 								err = DataModel::Decode(reader, fabricIndex);

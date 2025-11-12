@@ -17,15 +17,19 @@ namespace app
 		{
 			namespace Attributes
 			{
+
+				// Total number of attributes supported by the cluster, including global attributes
+				inline constexpr uint32_t kAttributesCount = 17;
+
 				namespace CurrentState
 				{
 					inline constexpr AttributeId Id = 0x00000000;
 				} // namespace CurrentState
 
-				namespace Target
+				namespace TargetState
 				{
 					inline constexpr AttributeId Id = 0x00000001;
-				} // namespace Target
+				} // namespace TargetState
 
 				namespace Resolution
 				{
@@ -71,6 +75,11 @@ namespace app
 				{
 					inline constexpr AttributeId Id = 0x0000000A;
 				} // namespace ModulationType
+
+				namespace LatchControlModes
+				{
+					inline constexpr AttributeId Id = 0x0000000B;
+				} // namespace LatchControlModes
 
 				namespace GeneratedCommandList
 				{

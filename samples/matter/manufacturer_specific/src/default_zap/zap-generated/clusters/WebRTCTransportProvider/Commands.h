@@ -108,6 +108,7 @@ namespace app
 						kICEServers = 4,
 						kICETransportPolicy = 5,
 						kMetadataEnabled = 6,
+						kSFrameConfig = 7,
 					};
 
 					struct Type {
@@ -133,6 +134,7 @@ namespace app
 							ICEServers;
 						Optional<chip::CharSpan> ICETransportPolicy;
 						Optional<bool> metadataEnabled;
+						Optional<Structs::SFrameStruct::Type> SFrameConfig;
 
 						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
 
@@ -165,6 +167,7 @@ namespace app
 							ICEServers;
 						Optional<chip::CharSpan> ICETransportPolicy;
 						Optional<bool> metadataEnabled;
+						Optional<Structs::SFrameStruct::DecodableType> SFrameConfig;
 
 						CHIP_ERROR Decode(TLV::TLVReader &reader,
 								  FabricIndex aAccessingFabricIndex);
@@ -236,6 +239,7 @@ namespace app
 						kICEServers = 6,
 						kICETransportPolicy = 7,
 						kMetadataEnabled = 8,
+						kSFrameConfig = 9,
 					};
 
 					struct Type {
@@ -263,6 +267,7 @@ namespace app
 							ICEServers;
 						Optional<chip::CharSpan> ICETransportPolicy;
 						Optional<bool> metadataEnabled;
+						Optional<Structs::SFrameStruct::Type> SFrameConfig;
 
 						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
 
@@ -297,6 +302,7 @@ namespace app
 							ICEServers;
 						Optional<chip::CharSpan> ICETransportPolicy;
 						Optional<bool> metadataEnabled;
+						Optional<Structs::SFrameStruct::DecodableType> SFrameConfig;
 
 						CHIP_ERROR Decode(TLV::TLVReader &reader,
 								  FabricIndex aAccessingFabricIndex);

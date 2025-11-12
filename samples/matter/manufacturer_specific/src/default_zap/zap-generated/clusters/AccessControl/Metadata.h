@@ -1,10 +1,12 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Cluster metadata information for cluster AccessControl (cluster code: 31/0x1F)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on
+// /home/arbl/ncs/zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -20,10 +22,11 @@ namespace app
 		namespace AccessControl
 		{
 
-			inline constexpr uint32_t kRevision = 2;
+			inline constexpr uint32_t kRevision = 3;
 
 			namespace Attributes
 			{
+
 				namespace Acl
 				{
 					inline constexpr DataModel::AttributeEntry kMetadataEntry(
@@ -77,11 +80,27 @@ namespace app
 							DataModel::AttributeQualityFlags::kListAttribute),
 						Access::Privilege::kView, std::nullopt);
 				} // namespace Arl
+				namespace AuxiliaryACL
+				{
+					inline constexpr DataModel::AttributeEntry kMetadataEntry(
+						AuxiliaryACL::Id,
+						BitFlags<DataModel::AttributeQualityFlags>(
+							DataModel::AttributeQualityFlags::kListAttribute),
+						Access::Privilege::kAdminister, std::nullopt);
+				} // namespace AuxiliaryACL
+				constexpr std::array<DataModel::AttributeEntry, 4> kMandatoryMetadata = {
+					Acl::kMetadataEntry,
+					SubjectsPerAccessControlEntry::kMetadataEntry,
+					TargetsPerAccessControlEntry::kMetadataEntry,
+					AccessControlEntriesPerFabric::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace ReviewFabricRestrictions
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -92,6 +111,35 @@ namespace app
 				} // namespace ReviewFabricRestrictions
 
 			} // namespace Commands
+
+			namespace Events
+			{
+				namespace AccessControlEntryChanged
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kAdminister
+					};
+				} // namespace AccessControlEntryChanged
+				namespace AccessControlExtensionChanged
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kAdminister
+					};
+				} // namespace AccessControlExtensionChanged
+				namespace FabricRestrictionReviewUpdate
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kAdminister
+					};
+				} // namespace FabricRestrictionReviewUpdate
+				namespace AuxiliaryAccessUpdated
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kAdminister
+					};
+				} // namespace AuxiliaryAccessUpdated
+
+			} // namespace Events
 		} // namespace AccessControl
 	} // namespace Clusters
 } // namespace app

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace ActionList
 				{
 					inline constexpr DataModel::AttributeEntry kMetadataEntry(
@@ -47,11 +49,17 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace SetupURL
+				constexpr std::array<DataModel::AttributeEntry, 2> kMandatoryMetadata = {
+					ActionList::kMetadataEntry,
+					EndpointLists::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace InstantAction
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -138,6 +146,23 @@ namespace app
 				} // namespace DisableActionWithDuration
 
 			} // namespace Commands
+
+			namespace Events
+			{
+				namespace StateChanged
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace StateChanged
+				namespace ActionFailed
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace ActionFailed
+
+			} // namespace Events
 		} // namespace Actions
 	} // namespace Clusters
 } // namespace app

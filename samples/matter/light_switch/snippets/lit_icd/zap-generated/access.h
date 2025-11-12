@@ -128,6 +128,7 @@
     0x00000004, /* Cluster: Groups, Command: RemoveGroup, Privilege: manage */ \
     0x00000004, /* Cluster: Groups, Command: RemoveAllGroups, Privilege: manage */ \
     0x00000004, /* Cluster: Groups, Command: AddGroupIfIdentifying, Privilege: manage */ \
+    0x0000002A, /* Cluster: OTA Software Update Requestor, Command: AnnounceOTAProvider, Privilege: administer */ \
     0x00000030, /* Cluster: General Commissioning, Command: ArmFailSafe, Privilege: administer */ \
     0x00000030, /* Cluster: General Commissioning, Command: SetRegulatoryConfig, Privilege: administer */ \
     0x00000030, /* Cluster: General Commissioning, Command: CommissioningComplete, Privilege: administer */ \
@@ -158,7 +159,6 @@
     0x0000003F, /* Cluster: Group Key Management, Command: KeySetReadAllIndices, Privilege: administer */ \
     0x00000046, /* Cluster: ICD Management, Command: RegisterClient, Privilege: manage */ \
     0x00000046, /* Cluster: ICD Management, Command: UnregisterClient, Privilege: manage */ \
-    0x00000046, /* Cluster: ICD Management, Command: StayActiveRequest, Privilege: manage */ \
 }
 
 // Parallel array data (cluster, *command*, privilege) for invoke command
@@ -168,6 +168,7 @@
     0x00000003, /* Cluster: Groups, Command: RemoveGroup, Privilege: manage */ \
     0x00000004, /* Cluster: Groups, Command: RemoveAllGroups, Privilege: manage */ \
     0x00000005, /* Cluster: Groups, Command: AddGroupIfIdentifying, Privilege: manage */ \
+    0x00000000, /* Cluster: OTA Software Update Requestor, Command: AnnounceOTAProvider, Privilege: administer */ \
     0x00000000, /* Cluster: General Commissioning, Command: ArmFailSafe, Privilege: administer */ \
     0x00000002, /* Cluster: General Commissioning, Command: SetRegulatoryConfig, Privilege: administer */ \
     0x00000004, /* Cluster: General Commissioning, Command: CommissioningComplete, Privilege: administer */ \
@@ -198,7 +199,6 @@
     0x00000004, /* Cluster: Group Key Management, Command: KeySetReadAllIndices, Privilege: administer */ \
     0x00000000, /* Cluster: ICD Management, Command: RegisterClient, Privilege: manage */ \
     0x00000002, /* Cluster: ICD Management, Command: UnregisterClient, Privilege: manage */ \
-    0x00000003, /* Cluster: ICD Management, Command: StayActiveRequest, Privilege: manage */ \
 }
 
 // Parallel array data (cluster, command, *privilege*) for invoke command
@@ -208,6 +208,7 @@
     chip::Access::Privilege::kManage, /* Cluster: Groups, Command: RemoveGroup, Privilege: manage */ \
     chip::Access::Privilege::kManage, /* Cluster: Groups, Command: RemoveAllGroups, Privilege: manage */ \
     chip::Access::Privilege::kManage, /* Cluster: Groups, Command: AddGroupIfIdentifying, Privilege: manage */ \
+    chip::Access::Privilege::kAdminister, /* Cluster: OTA Software Update Requestor, Command: AnnounceOTAProvider, Privilege: administer */ \
     chip::Access::Privilege::kAdminister, /* Cluster: General Commissioning, Command: ArmFailSafe, Privilege: administer */ \
     chip::Access::Privilege::kAdminister, /* Cluster: General Commissioning, Command: SetRegulatoryConfig, Privilege: administer */ \
     chip::Access::Privilege::kAdminister, /* Cluster: General Commissioning, Command: CommissioningComplete, Privilege: administer */ \
@@ -238,7 +239,6 @@
     chip::Access::Privilege::kAdminister, /* Cluster: Group Key Management, Command: KeySetReadAllIndices, Privilege: administer */ \
     chip::Access::Privilege::kManage, /* Cluster: ICD Management, Command: RegisterClient, Privilege: manage */ \
     chip::Access::Privilege::kManage, /* Cluster: ICD Management, Command: UnregisterClient, Privilege: manage */ \
-    chip::Access::Privilege::kManage, /* Cluster: ICD Management, Command: StayActiveRequest, Privilege: manage */ \
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -248,6 +248,7 @@
     0x0000001F, /* Cluster: Access Control, Event: AccessControlEntryChanged, Privilege: administer */ \
     0x0000001F, /* Cluster: Access Control, Event: AccessControlExtensionChanged, Privilege: administer */ \
     0x0000001F, /* Cluster: Access Control, Event: FabricRestrictionReviewUpdate, Privilege: administer */ \
+    0x0000001F, /* Cluster: Access Control, Event: AuxiliaryAccessUpdated, Privilege: administer */ \
 }
 
 // Parallel array data (cluster, *event*, privilege) for read event
@@ -255,6 +256,7 @@
     0x00000000, /* Cluster: Access Control, Event: AccessControlEntryChanged, Privilege: administer */ \
     0x00000001, /* Cluster: Access Control, Event: AccessControlExtensionChanged, Privilege: administer */ \
     0x00000002, /* Cluster: Access Control, Event: FabricRestrictionReviewUpdate, Privilege: administer */ \
+    0x00000003, /* Cluster: Access Control, Event: AuxiliaryAccessUpdated, Privilege: administer */ \
 }
 
 // Parallel array data (cluster, event, *privilege*) for read event
@@ -262,6 +264,7 @@
     chip::Access::Privilege::kAdminister, /* Cluster: Access Control, Event: AccessControlEntryChanged, Privilege: administer */ \
     chip::Access::Privilege::kAdminister, /* Cluster: Access Control, Event: AccessControlExtensionChanged, Privilege: administer */ \
     chip::Access::Privilege::kAdminister, /* Cluster: Access Control, Event: FabricRestrictionReviewUpdate, Privilege: administer */ \
+    chip::Access::Privilege::kAdminister, /* Cluster: Access Control, Event: AuxiliaryAccessUpdated, Privilege: administer */ \
 }
 
 ////////////////////////////////////////////////////////////////////////////////

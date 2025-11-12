@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace VendorName
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -150,11 +152,17 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace ConfigurationVersion
+				constexpr std::array<DataModel::AttributeEntry, 2> kMandatoryMetadata = {
+					Reachable::kMetadataEntry,
+					UniqueID::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace KeepActive
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -164,6 +172,41 @@ namespace app
 				} // namespace KeepActive
 
 			} // namespace Commands
+
+			namespace Events
+			{
+				namespace StartUp
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace StartUp
+				namespace ShutDown
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace ShutDown
+				namespace Leave
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace Leave
+				namespace ReachableChanged
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace ReachableChanged
+				namespace ActiveChanged
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace ActiveChanged
+
+			} // namespace Events
 		} // namespace BridgedDeviceBasicInformation
 	} // namespace Clusters
 } // namespace app

@@ -975,6 +975,24 @@ namespace app
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
 				} // namespace GlobalStruct
+				namespace UnsupportedAttributeRequiringAdminPrivilege
+				{
+					struct TypeInfo {
+						using Type = bool;
+						using DecodableType = bool;
+						using DecodableArgType = bool;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::UnitTesting::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::UnsupportedAttributeRequiringAdminPrivilege::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace UnsupportedAttributeRequiringAdminPrivilege
 				namespace Unsupported
 				{
 					struct TypeInfo {
@@ -1904,6 +1922,9 @@ namespace app
 						Attributes::GlobalEnum::TypeInfo::DecodableType globalEnum =
 							static_cast<chip::app::Clusters::Globals::TestGlobalEnum>(0);
 						Attributes::GlobalStruct::TypeInfo::DecodableType globalStruct;
+						Attributes::UnsupportedAttributeRequiringAdminPrivilege::TypeInfo::
+							DecodableType unsupportedAttributeRequiringAdminPrivilege =
+								static_cast<bool>(0);
 						Attributes::Unsupported::TypeInfo::DecodableType unsupported =
 							static_cast<bool>(0);
 						Attributes::ReadFailureCode::TypeInfo::DecodableType readFailureCode =
