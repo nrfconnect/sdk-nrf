@@ -939,7 +939,7 @@ Configuration
 
 To enable secondary firmware support, you must complete the following steps:
 
-1. **Enable UICR secondary configuration**: Add the following to your ``sysbuild/uicr.conf`` file:
+1. Enable UICR secondary configuration by adding the following to ``sysbuild/uicr.conf``:
 
    .. code-block:: kconfig
 
