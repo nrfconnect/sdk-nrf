@@ -1,0 +1,24 @@
+common:
+  sysbuild: true
+  depends_on: gpio
+  tags:
+    - drivers
+    - uart
+    - ci_tests_drivers_uart
+  harness: ztest
+  harness_config:
+    fixture: gpio_loopback
+
+tests:
+  drivers.uart.uart_fifo_flush:
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
