@@ -14,6 +14,7 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 using namespace ::chip;
 using namespace ::chip::app;
 using namespace Nrf;
+using namespace chip::app::Clusters;
 
 void SimulatedOnOffLightSwitchDataProvider::Init() {}
 
@@ -22,7 +23,7 @@ void SimulatedOnOffLightSwitchDataProvider::NotifyUpdateState(chip::ClusterId cl
 {
 }
 
-void ProcessCommand(const EmberBindingTableEntry &aBinding, OperationalDeviceProxy *aDevice,
+void ProcessCommand(const Binding::TableEntry &aBinding, OperationalDeviceProxy *aDevice,
 		    Nrf::Matter::BindingHandler::BindingData &aData)
 {
 	CHIP_ERROR ret = CHIP_NO_ERROR;

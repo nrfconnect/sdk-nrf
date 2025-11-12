@@ -37,7 +37,7 @@ target_sources(app PRIVATE
   src/app_task.cpp
   src/main.cpp
   src/zcl_callbacks.cpp
-  ${CHIP_ROOT}/src/app/util/persistence/DeferredAttributePersistenceProvider.cpp
+  ${CHIP_ROOT}/src/app/persistence/DeferredAttributePersistenceProvider.cpp
 )
 
 ncs_configure_data_model()

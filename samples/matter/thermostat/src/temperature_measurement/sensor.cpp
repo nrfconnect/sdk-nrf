@@ -94,9 +94,9 @@ void TemperatureSensor::ExternalMeasurement()
 	}
 }
 
-void TemperatureSensor::ExternalTemperatureMeasurementReadHandler(const EmberBindingTableEntry &binding,
-								  OperationalDeviceProxy *deviceProxy,
-								  Nrf::Matter::BindingHandler::BindingData &bindingData)
+void TemperatureSensor::ExternalTemperatureMeasurementReadHandler(
+	const chip::app::Clusters::Binding::TableEntry &binding, OperationalDeviceProxy *deviceProxy,
+	Nrf::Matter::BindingHandler::BindingData &bindingData)
 {
 	auto onSuccess = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
 				 const ConcreteDataAttributePath &attributePath, const auto &dataResponse) {

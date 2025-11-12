@@ -18,15 +18,17 @@ namespace Nrf::Matter
 class BindingHandler {
 public:
 	struct BindingData;
-	using InvokeCommand = void (*)(const EmberBindingTableEntry &, chip::OperationalDeviceProxy *, BindingData &);
+	using InvokeCommand = void (*)(const chip::app::Clusters::Binding::TableEntry &, chip::OperationalDeviceProxy *,
+				       BindingData &);
 	struct BindingData {
 		chip::EndpointId EndpointId;
 		chip::CommandId CommandId;
 		chip::ClusterId ClusterId;
 		InvokeCommand InvokeCommandFunc;
 		uint8_t Value;
-		/* It can be optionally forced to apply specific command only to the group (groupcast) or only to the specific
-		 * device (unicast). The default behavior is to send data to all targets defined in the binding table.
+		/* It can be optionally forced to apply specific command only to the group (groupcast) or only to the
+		 * specific device (unicast). The default behavior is to send data to all targets defined in the binding
+		 * table.
 		 */
 		chip::Optional<bool> IsGroup;
 		bool CaseSessionRecovered{ false };
@@ -63,7 +65,7 @@ public:
 
 private:
 	static void DeviceWorkerHandler(intptr_t context);
-	static void DeviceChangedCallback(const EmberBindingTableEntry &binding,
+	static void DeviceChangedCallback(const chip::app::Clusters::Binding::TableEntry &binding,
 					  chip::OperationalDeviceProxy *deviceProxy, void *context);
 	static void DeviceContextReleaseHandler(void *context);
 	static void InitInternal();
