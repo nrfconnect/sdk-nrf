@@ -9,16 +9,17 @@
 #include <string.h>
 #include <inttypes.h>
 
-#if !(defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX))
-#include <hal/nrf_power.h>
-#endif /* !(defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX)) */
-
-#include <nrfx_timer.h>
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #include <zephyr/kernel.h>
 #include <zephyr/random/random.h>
 
 #include <hal/nrf_egu.h>
+#include <hal/nrf_power.h>
 #include <helpers/nrfx_gppi.h>
+#include <nrfx_timer.h>
+#include <nrf_erratas.h>
+
+#include <mpsl/mpsl_lib.h>
 
 /* IEEE 802.15.4 default frequency. */
 #define IEEE_DEFAULT_FREQ         (5)
@@ -998,7 +999,12 @@ static void timer_init(const struct radio_test_config *config)
 	}
 }
 
-void radio_handler(const void *context)
+void timer_irq_handler(const void *context)
+{
+	RADIO_TEST_TIMER_IRQ_HANDLER();
+}
+
+void radio_irq_handler(const void *context)
 {
 	const struct radio_test_config *config =
 		(const struct radio_test_config *) context;
@@ -1028,14 +1034,63 @@ void radio_handler(const void *context)
 	}
 }
 
+static bool clock_init(void)
+{
+	int err;
+	int res;
+	struct onoff_manager *clk_mgr;
+	struct onoff_client clk_cli;
+
+	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
+	if (!clk_mgr) {
+		printk("Unable to get the Clock manager\n");
+		return false;
+	}
+
+	sys_notify_init_spinwait(&clk_cli.notify);
+
+	err = onoff_request(clk_mgr, &clk_cli);
+	if (err < 0) {
+		printk("Clock request failed: %d\n", err);
+		return false;
+	}
+
+	do {
+		err = sys_notify_fetch_result(&clk_cli.notify, &res);
+		if (!err && res) {
+			printk("Clock could not be started: %d\n", res);
+			return false;
+		}
+	} while (err);
+
+#if NRF54L_ERRATA_20_PRESENT
+	if (nrf54l_errata_20()) {
+		nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
+	}
+#endif /* NRF54L_ERRATA_20_PRESENT */
+
+	printk("Clock has started\n");
+
+	return true;
+}
+
 int radio_test_init(struct radio_test_config *config)
 {
 	nrfx_err_t nrfx_err;
 
-	IRQ_CONNECT(RADIO_TEST_TIMER_IRQn, IRQ_PRIO_LOWEST, RADIO_TEST_TIMER_IRQ_HANDLER, NULL, 0);
+	/* Request HFCLK before unloading MPSL as the latter disables CLOCK interrupts,
+	 * which are necessary to complete the HFCLK startup.
+	 */
+	if (!clock_init()) {
+		return -EFAULT;
+	}
+
+	mpsl_lib_uninit();
+
+	irq_connect_dynamic(RADIO_TEST_TIMER_IRQn, IRQ_PRIO_LOWEST, timer_irq_handler, NULL, 0);
 	timer_init(config);
 
-	irq_connect_dynamic(RADIO_TEST_RADIO_IRQn, IRQ_PRIO_LOWEST, radio_handler, config, 0);
+	irq_connect_dynamic(RADIO_TEST_RADIO_IRQn, IRQ_PRIO_LOWEST, radio_irq_handler, config, 0);
 	irq_enable(RADIO_TEST_RADIO_IRQn);
 
 	nrfx_err = nrfx_gppi_channel_alloc(&ppi_radio_start);

@@ -10,7 +10,6 @@
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_power.h>
 #include <openthread/cli.h>
-#include <mpsl.h>
 
 #include "radio_test.h"
 
@@ -26,7 +25,7 @@
 #endif
 
 #define shell_print(fmt, ...)	otCliOutputFormat(fmt "\r\n" __VA_OPT__(, ) __VA_ARGS__)
-#define shell_hexdump(ptr, len) otCliOutputBytes(ptr, len)
+#define shell_hexdump(ptr, len) otCliOutputBytes(ptr, len), otCliOutputFormat("\r\n")
 
 /* Subcommand definition */
 struct radio_test_cmd {
@@ -1478,8 +1477,6 @@ static otError cmd_temp_get(void *ctx, uint8_t argc, char *argv[])
 static otError cmd_start(void *ctx, uint8_t argc, char *argv[])
 {
 	int rc;
-
-	mpsl_uninit();
 
 	rc = radio_test_init(&test_config);
 
