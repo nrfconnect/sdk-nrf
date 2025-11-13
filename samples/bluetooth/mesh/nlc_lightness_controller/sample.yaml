@@ -1,8 +1,8 @@
 sample:
-  description: Bluetooth Mesh light fixture sample
-  name: Bluetooth Mesh light fixture
+  description: Bluetooth Mesh NLC light control sample
+  name: Bluetooth Mesh NLC lightness controller
 tests:
-  sample.bluetooth.mesh.light_ctrl:
+  sample.bluetooth.mesh.nlc_lightness_controller:
     sysbuild: true
     build_only: true
     integration_platforms:
@@ -35,7 +35,7 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
-  sample.bluetooth.mesh.light_ctrl.emds:
+  sample.bluetooth.mesh.nlc_lightness_controller.emds:
     sysbuild: true
     extra_args: OVERLAY_CONFIG="overlay-emds.conf"
     build_only: true
@@ -65,7 +65,7 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
-  sample.bluetooth.mesh.light_ctrl.settings_ext_flash:
+  sample.bluetooth.mesh.nlc_lightness_controller.settings_ext_flash:
     sysbuild: true
     build_only: true
     integration_platforms:
