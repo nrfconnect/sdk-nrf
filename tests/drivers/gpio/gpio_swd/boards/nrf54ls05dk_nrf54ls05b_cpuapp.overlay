@@ -9,11 +9,15 @@
 	 * No other driver on out-gpios[n]
 	 */
 	zephyr,user {
-		out-gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>, <&gpio1 31 GPIO_ACTIVE_HIGH>,
+		out-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>, <&gpio1 31 GPIO_ACTIVE_HIGH>,
 			<&gpio1 29 GPIO_ACTIVE_HIGH>, <&gpio1 30 GPIO_ACTIVE_HIGH>;
 	};
 };
 
 &gpio1 {
 	status = "okay";
+};
+
+&tampc {
+	swd-pins-as-gpios;
 };
