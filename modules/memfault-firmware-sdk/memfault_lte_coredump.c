@@ -15,7 +15,6 @@
 
 #include <modem/lte_lc.h>
 #include <modem/nrf_modem_lib.h>
-#include <modem/pdn.h>
 #include <nrf_modem_at.h>
 
 #include "memfault_lte_coredump_modem_trace.h"
@@ -75,7 +74,6 @@ struct fsm_state_object {
 };
 
 /* Forward declarations: Local functions */
-static void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason);
 static void lte_handler(const struct lte_lc_evt *const evt);
 static void on_modem_lib_init(int ret, void *ctx);
 static void on_modem_lib_shutdown(void *ctx);
@@ -181,48 +179,54 @@ static void on_modem_lib_shutdown(void *ctx)
 
 static void lte_handler(const struct lte_lc_evt *const evt)
 {
-	if (evt->type == LTE_LC_EVT_NW_REG_STATUS) {
+	switch (evt->type) {
+	case LTE_LC_EVT_NW_REG_STATUS:
 		switch (evt->nw_reg_status) {
 		case LTE_LC_NW_REG_REGISTERED_HOME:
 			__fallthrough;
 		case LTE_LC_NW_REG_REGISTERED_ROAMING:
 			event_send(EVENT_LTE_REGISTERED);
+
 			break;
 		case LTE_LC_NW_REG_UNKNOWN:
 			__fallthrough;
 		case LTE_LC_NW_REG_UICC_FAIL:
 			__fallthrough;
 		case LTE_LC_NW_REG_NOT_REGISTERED:
-			 __fallthrough;
+			__fallthrough;
 		case LTE_LC_NW_REG_REGISTRATION_DENIED:
 			event_send(EVENT_LTE_DEREGISTERED);
+
+			break;
 		default:
-			/* Don't care */
 			break;
 		}
-	}
-}
-
-static void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
-{
-	switch (event) {
-	case PDN_EVENT_ACTIVATED:
-		if (cid == 0) {
-			event_send(EVENT_PDN_ACTIVATED);
-		}
 
 		break;
-	case PDN_EVENT_DEACTIVATED:
-		if (cid == 0) {
+	case LTE_LC_EVT_PDN:
+		switch (evt->pdn.type) {
+		case LTE_LC_EVT_PDN_ACTIVATED:
+			if (evt->pdn.cid == 0) {
+				event_send(EVENT_PDN_ACTIVATED);
+			}
+
+			break;
+		case LTE_LC_EVT_PDN_DEACTIVATED:
+			if (evt->pdn.cid == 0) {
+				event_send(EVENT_PDN_DEACTIVATED);
+			}
+
+			break;
+		case LTE_LC_EVT_PDN_NETWORK_DETACH:
 			event_send(EVENT_PDN_DEACTIVATED);
+
+			break;
+		default:
+			break;
 		}
 
-		break;
-	case PDN_EVENT_NETWORK_DETACH:
-		event_send(EVENT_PDN_DEACTIVATED);
 		break;
 	default:
-		/* Don't care */
 		break;
 	}
 }
@@ -318,13 +322,6 @@ static void state_running_entry(void *o)
 	}
 
 	lte_lc_register_handler(lte_handler);
-
-	err = pdn_default_ctx_cb_reg(pdn_event_handler);
-	if (err) {
-		LOG_ERR("pdn_default_ctx_cb_reg, error: %d", err);
-		event_send(EVENT_ERROR);
-		return;
-	}
 }
 
 static enum smf_state_result state_running_run(void *o)
@@ -370,13 +367,6 @@ static void state_running_exit(void *o)
 	err = lte_lc_deregister_handler(lte_handler);
 	if (err) {
 		LOG_ERR("lte_lc_deregister_handler, error: %d", err);
-		event_send(EVENT_ERROR);
-		return;
-	}
-
-	err = pdn_default_ctx_cb_dereg(pdn_event_handler);
-	if (err) {
-		LOG_ERR("pdn_default_ctx_cb_dereg, error: %d", err);
 		event_send(EVENT_ERROR);
 		return;
 	}

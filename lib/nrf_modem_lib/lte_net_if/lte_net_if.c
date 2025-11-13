@@ -296,41 +296,41 @@ static void on_pdn_ipv6_down(void)
 static void lte_evt_handler(const struct lte_lc_evt *const evt)
 {
 	switch (evt->type) {
-		case LTE_LC_EVT_NW_REG_STATUS:
-			switch (evt->nw_reg_status) {
-			case LTE_LC_NW_REG_REGISTERED_HOME:
-				__fallthrough;
-			case LTE_LC_NW_REG_REGISTERED_ROAMING:
-				/* Mark serving cell as available. */
-				LOG_DBG("Registered to serving cell");
-				update_has_cell(true);
-				break;
-			case LTE_LC_NW_REG_SEARCHING:
-				/* Searching for a new cell, do not consider this cell loss unless it
-				 * fails (which will generate a new LTE_LC_EVT_NW_REG_STATUS event with
-				 * an unregistered status).
-				 */
-				break;
-			case LTE_LC_NW_REG_UICC_FAIL:
-				LOG_WRN("The modem reports a UICC failure. Is SIM installed?");
-				__fallthrough;
-			default:
-				LOG_DBG("Not registered to serving cell");
-				/* Mark the serving cell as lost. */
-				update_has_cell(false);
-				break;
-			}
+	case LTE_LC_EVT_NW_REG_STATUS:
+		switch (evt->nw_reg_status) {
+		case LTE_LC_NW_REG_REGISTERED_HOME:
+			__fallthrough;
+		case LTE_LC_NW_REG_REGISTERED_ROAMING:
+			/* Mark serving cell as available. */
+			LOG_DBG("Registered to serving cell");
+			update_has_cell(true);
 			break;
-		case LTE_LC_EVT_MODEM_EVENT:
-			if (evt->modem_evt.type == LTE_LC_MODEM_EVT_RESET_LOOP) {
-				LOG_WRN("The modem has detected a reset loop. LTE network attach is now "
-					"restricted for the next 30 minutes.");
-
-				LOG_DBG("For more information, see the AT command documentation "
-					"for the %%MDMEV notification");
-			}
-
+		case LTE_LC_NW_REG_SEARCHING:
+			/* Searching for a new cell, do not consider this cell loss unless it
+			 * fails (which will generate a new LTE_LC_EVT_NW_REG_STATUS event with
+			 * an unregistered status).
+			 */
 			break;
+		case LTE_LC_NW_REG_UICC_FAIL:
+			LOG_WRN("The modem reports a UICC failure. Is SIM installed?");
+			__fallthrough;
+		default:
+			LOG_DBG("Not registered to serving cell");
+			/* Mark the serving cell as lost. */
+			update_has_cell(false);
+			break;
+		}
+		break;
+	case LTE_LC_EVT_MODEM_EVENT:
+		if (evt->modem_evt.type == LTE_LC_MODEM_EVT_RESET_LOOP) {
+			LOG_WRN("The modem has detected a reset loop. LTE network attach is now "
+				"restricted for the next 30 minutes.");
+
+			LOG_DBG("For more information, see the AT command documentation "
+				"for the %%MDMEV notification");
+		}
+
+		break;
 	case LTE_LC_EVT_PDN:
 		switch (evt->pdn.type) {
 		case LTE_LC_EVT_PDN_ACTIVATED:

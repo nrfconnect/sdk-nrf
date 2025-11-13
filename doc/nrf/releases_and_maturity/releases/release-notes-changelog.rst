@@ -1110,18 +1110,18 @@ Edge Impulse integration
 Memfault integration
 --------------------
 
+* Added a metric tracking the unused stack space of the Bluetooth Long workqueue thread, when the :kconfig:option:`CONFIG_MEMFAULT_NCS_BT_METRICS` Kconfig option is enabled.
+  The new metric is named ``ncs_bt_lw_wq_unused_stack``.
+
 * Updated:
 
   * The ``CONFIG_MEMFAULT_DEVICE_INFO_CUSTOM`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_CUSTOM`.
   * The ``CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_BUILTIN`.
   * The :kconfig:option:`CONFIG_MEMFAULT_NCS_FW_VERSION` Kconfig option will now have a default value set from a :file:`VERSION` file, if present in the application root directory.
     Previously, this option had no default value.
-
   * Simplified the options for ``CONFIG_MEMFAULT_NCS_DEVICE_ID_*``, which sets the Memfault Device Serial. The default is now :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID`, which uses the :ref:`lib_hw_id` library to provide a unique device ID.
     See the `Migration guide for nRF Connect SDK v3.2.0`_ for more information.
-
-* Added a metric tracking the unused stack space of the Bluetooth Long workqueue thread, when the :kconfig:option:`CONFIG_MEMFAULT_NCS_BT_METRICS` Kconfig option is enabled.
-  The new metric is named ``ncs_bt_lw_wq_unused_stack``.
+  * The LTE-related integration to obtain PDN information and events through the PDN management functionality in the :ref:`lte_lc_readme` library instead of the :ref:`pdn_readme` library.
 
 * Removed a metric for the tracking Bluetooth TX thread unused stack ``ncs_bt_tx_unused_stack``.
   The thread in question was removed in Zephyr v3.7.0.
