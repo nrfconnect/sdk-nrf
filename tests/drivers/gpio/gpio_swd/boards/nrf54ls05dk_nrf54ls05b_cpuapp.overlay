@@ -17,3 +17,7 @@
 &gpio1 {
 	status = "okay";
 };
+
+&tampc {
+	swd-pins-as-gpios;
+}
