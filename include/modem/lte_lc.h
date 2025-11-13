@@ -2410,7 +2410,7 @@ int lte_lc_context_pdn_id_get(uint8_t cid);
  * @retval 0 On success.
  * @return A negative errno otherwise.
  */
-int lte_lc_context_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *info);
+int lte_lc_context_pdn_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *info);
 
 /**
  * Retrieve the default Access Point Name (APN).

@@ -265,7 +265,7 @@ int lte_lc_context_pdn_id_get(uint8_t cid)
 	return pdn_id_get(cid);
 }
 
-int lte_lc_context_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *info)
+int lte_lc_context_pdn_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *info)
 {
 	return pdn_dynamic_info_get(cid, info);
 }

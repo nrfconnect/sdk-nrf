@@ -1437,7 +1437,7 @@ void test_lte_lc_pdn_dynamic_info_get_einval(void)
 {
 	int ret;
 
-	ret = lte_lc_context_dynamic_info_get(0, NULL);
+	ret = lte_lc_context_pdn_dynamic_info_get(0, NULL);
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
@@ -1448,7 +1448,7 @@ void test_lte_lc_pdn_dynamic_info_get_ebadmsg(void)
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp_no_match;
 
-	ret = lte_lc_context_dynamic_info_get(0, &pdn_info);
+	ret = lte_lc_context_pdn_dynamic_info_get(0, &pdn_info);
 	TEST_ASSERT_EQUAL(-EBADMSG, ret);
 }
 
@@ -1459,7 +1459,7 @@ void test_lte_lc_pdn_dynamic_info_get(void)
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp;
 
-	ret = lte_lc_context_dynamic_info_get(0, &pdn_info);
+	ret = lte_lc_context_pdn_dynamic_info_get(0, &pdn_info);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	TEST_ASSERT_EQUAL(1500, pdn_info.ipv4_mtu);
@@ -1481,7 +1481,7 @@ void test_lte_lc_pdn_dynamic_info_get_match_ipv4(void)
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp_match_ipv4;
 
-	ret = lte_lc_context_dynamic_info_get(0, &pdn_info);
+	ret = lte_lc_context_pdn_dynamic_info_get(0, &pdn_info);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	TEST_ASSERT_EQUAL(1500, pdn_info.ipv4_mtu);
@@ -1500,7 +1500,7 @@ void test_lte_lc_pdn_dynamic_info_get_match_ipv6(void)
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp_match_ipv6;
 
-	ret = lte_lc_context_dynamic_info_get(0, &pdn_info);
+	ret = lte_lc_context_pdn_dynamic_info_get(0, &pdn_info);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	TEST_ASSERT_EQUAL(0, pdn_info.ipv4_mtu);
