@@ -7,8 +7,8 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 
 import pytest
 from helpers import reset_board
@@ -25,16 +25,28 @@ logger = logging.getLogger(__name__)
 def kmu_provision_mcuboot(dut: DeviceAdapter) -> Generator[DeviceAdapter, None, None]:  # type: ignore
     """Provision MCUboot keys using west ncs-provision upload command."""
     sysbuild_config = Path(dut.device_config.build_dir) / "zephyr" / ".config"
-    assert find_in_config(sysbuild_config, "SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU"), "KMU keys not configured"
+    assert find_in_config(sysbuild_config, "SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU"), (
+        "KMU keys not configured"
+    )
 
     lines = dut.readlines_until(
-        regex="Unable to find bootable image|Jumping to the first image slot", print_output=True, timeout=20
+        regex="Unable to find bootable image|Jumping to the first image slot",
+        print_output=True,
+        timeout=20,
     )
-    assert not any("Jumping to the first image slot" in line for line in lines), "MCUboot: already provisioned"
+    assert not any("Jumping to the first image slot" in line for line in lines), (
+        "MCUboot: already provisioned"
+    )
 
-    logger.info("Provision KMU keys for MCUboot, Second key is a current key.First key should be revoked.")
+    logger.info(
+        "Provision KMU keys for MCUboot, Second key is a current key.First key should be revoked."
+    )
     key_file = find_in_config(sysbuild_config, "SB_CONFIG_BOOT_SIGNATURE_KEY_FILE")
-    keys = [APP_KEYS_FOR_KMU / "root-ed25519-1.pem", key_file, APP_KEYS_FOR_KMU / "root-ed25519-2.pem"]
+    keys = [
+        APP_KEYS_FOR_KMU / "root-ed25519-1.pem",
+        key_file,
+        APP_KEYS_FOR_KMU / "root-ed25519-2.pem",
+    ]
 
     keyname = get_keyname_for_mcuboot(sysbuild_config)
     provision_keys_for_kmu(keys=keys, keyname=keyname, dev_id=dut.device_config.id)
@@ -56,7 +68,9 @@ def test_kmu_revoke_old_keys(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
     tm.run_upgrade(updated_app)
 
     lines = dut.readlines_until(
-        regex="Unable to find bootable image|Jumping to the first image slot", print_output=True, timeout=20
+        regex="Unable to find bootable image|Jumping to the first image slot",
+        print_output=True,
+        timeout=20,
     )
 
     match_lines(
@@ -86,7 +100,9 @@ def test_kmu_upgrade_with_new_key_then_with_old(dut: DeviceAdapter, shell: Shell
     tm.run_upgrade(updated_app, confirm=True)
 
     lines = dut.readlines_until(
-        regex="Unable to find bootable image|Jumping to the first image slot", print_output=True, timeout=20
+        regex="Unable to find bootable image|Jumping to the first image slot",
+        print_output=True,
+        timeout=20,
     )
     match_no_lines(lines, ["Unable to find bootable image"])
 
@@ -95,7 +111,9 @@ def test_kmu_upgrade_with_new_key_then_with_old(dut: DeviceAdapter, shell: Shell
 
     logger.info("Reset DUT to revoke old keys (swap type: none must be applied)")
     tm.reset_device_from_shell()
-    lines = dut.readlines_until(regex="Jumping to the first image slot", print_output=True, timeout=20)
+    lines = dut.readlines_until(
+        regex="Jumping to the first image slot", print_output=True, timeout=20
+    )
     match_lines(lines, ["Swap type: none"])
 
     logger.info("Sign image with second provisioned key, that should be revoked")
@@ -106,7 +124,9 @@ def test_kmu_upgrade_with_new_key_then_with_old(dut: DeviceAdapter, shell: Shell
     tm.run_upgrade(updated_app)
 
     lines = dut.readlines_until(
-        regex="Unable to find bootable image|Jumping to the first image slot", print_output=True, timeout=20
+        regex="Unable to find bootable image|Jumping to the first image slot",
+        print_output=True,
+        timeout=20,
     )
 
     match_lines(
