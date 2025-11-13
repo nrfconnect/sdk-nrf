@@ -126,7 +126,8 @@ config PSA_HAS_KEY_SUPPORT
 		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_EXPORT	|| \
 		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_GENERATE	|| \
 		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE	|| \
-		   PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
+		   PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY		|| \
+		   PSA_WANT_KEY_TYPE_WPA3_SAE_PT
 	help
 	  Prompt-less configuration that states that key types are supported.
 
@@ -146,7 +147,8 @@ config PSA_HAS_PAKE_SUPPORT
 		   PSA_WANT_ALG_SPAKE2P_CMAC		|| \
 		   PSA_WANT_ALG_SPAKE2P_MATTER 		|| \
 		   PSA_WANT_ALG_SRP_6 			|| \
-		   PSA_WANT_ALG_SRP_PASSWORD_HASH
+		   PSA_WANT_ALG_SRP_PASSWORD_HASH	|| \
+		   PSA_WANT_ALG_WPA3_SAE
 	help
 	  Prompt-less configuration that states that PAKE is supported.
 
@@ -436,6 +438,7 @@ config PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
 
 config PSA_WANT_KEY_TYPE_WPA3_SAE_PT
 	bool "WPA3-SAE-PT key support" if !PSA_PROMPTLESS
+	select PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY
 
 config PSA_WANT_KEY_TYPE_XCHACHA20
 	bool "PSA XCHACHA20 key type support" if !PSA_PROMPTLESS
