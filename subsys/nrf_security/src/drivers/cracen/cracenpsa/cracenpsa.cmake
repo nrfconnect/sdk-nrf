@@ -150,6 +150,12 @@ if(CONFIG_PSA_NEED_CRACEN_SRP_6)
   )
 endif()
 
+if(CONFIG_PSA_NEED_CRACEN_WPA3_SAE)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/wpa3_sae.c
+  )
+endif()
+
 if(CONFIG_PSA_NEED_CRACEN_KMU_DRIVER)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/kmu.c

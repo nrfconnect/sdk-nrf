@@ -89,6 +89,18 @@ static inline const uint8_t *sx_pk_curve_order(const struct sx_pk_ecurve *curve)
 	return &curve->params[curve->sz];
 }
 
+/** Return a pointer to the order of the curve
+ *
+ * This function works only for Weierstrass curves
+ *
+ * @param[in] curve Initialised curve
+ * @return Pointer to the order of the curve
+ */
+static inline const uint8_t *sx_pk_curve_prime(const struct sx_pk_ecurve *curve)
+{
+	return &curve->params[0];
+}
+
 /**
  * Return a pointer to the generator point of the given curve.
  *
@@ -99,6 +111,30 @@ static inline const uint8_t *sx_pk_curve_order(const struct sx_pk_ecurve *curve)
 static inline const uint8_t *sx_pk_generator_point(const struct sx_pk_ecurve *curve)
 {
 	return &curve->params[curve->sz * 2];
+}
+
+/**
+ * Return a pointer to the parameter A of the given curve.
+ *
+ * @param[in] curve Initialised curve
+ *
+ * @return Pointer to the A parameter of the given curve.
+ */
+static inline const uint8_t *sx_pk_curve_param_a(const struct sx_pk_ecurve *curve)
+{
+	return &curve->params[curve->sz * 4];
+}
+
+/**
+ * Return a pointer to the parameter B of the given curve.
+ *
+ * @param[in] curve Initialised curve
+ *
+ * @return Pointer to the B parameter of the given curve.
+ */
+static inline const uint8_t *sx_pk_curve_param_b(const struct sx_pk_ecurve *curve)
+{
+	return &curve->params[curve->sz * 5];
 }
 
 /** @} */
