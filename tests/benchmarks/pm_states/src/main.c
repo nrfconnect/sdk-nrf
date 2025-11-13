@@ -37,7 +37,7 @@ static void notify_pm_state_entry(enum pm_state state)
 		gpio_pin_set_dt(&leds[0], 1);
 		break;
 	case PM_STATE_SUSPEND_TO_RAM:
-		gpio_pin_set_dt(&leds[2], 1);
+		gpio_pin_set_dt(&leds[1], 1);
 		break;
 	default:
 		__ASSERT(true, "Unexpected PM state: %d", state);
