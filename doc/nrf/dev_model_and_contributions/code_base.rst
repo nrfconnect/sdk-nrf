@@ -189,6 +189,8 @@ The |NCS| revision entry changes every time a Git commit is merged into the `sdk
 The revision of the SDK is considered to be equivalent to the repository revision of ``sdk-nrf``, because it is the :ref:`manifest repository <zephyr:west-manifests>`.
 This means that, by virtue of containing the `west manifest file`_, its revision uniquely identifies the revisions of all other repositories included in the SDK.
 
+.. _dm_revisions_git_tags:
+
 Git tags
 ========
 
