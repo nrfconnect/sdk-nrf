@@ -858,6 +858,30 @@ void cracen_be_add(uint8_t *v, size_t sz, size_t summand)
 	}
 }
 
+int cracen_be_sub(const uint8_t *a, const uint8_t *b, uint8_t *c, size_t sz)
+{
+	unsigned int borrow = 0;
+	unsigned int ai;
+	unsigned int bi;
+	unsigned int tmp;
+
+	while (sz > 0) {
+		sz--;
+		ai = (unsigned int)a[sz];
+		bi = (unsigned int)b[sz];
+
+		/* tmp will be in 0..0xFFFFFFFF; if underflow occurred for the byte subtraction
+		 * (ai < bi + borrow) then the high bits of tmp will be set (tmp >= 0xFFFFFF00).
+		 * Shifting right by 8 and masking the LSB yields 1 in that case, 0 otherwise.
+		 */
+		tmp = ai - bi - borrow;
+		c[sz] = (uint8_t)tmp;
+		borrow = (tmp >> 8) & 1u;
+	}
+
+	return borrow ? -1 : 0;
+}
+
 int cracen_be_cmp(const uint8_t *a, const uint8_t *b, size_t sz, int carry)
 {
 	unsigned int neq = 0;

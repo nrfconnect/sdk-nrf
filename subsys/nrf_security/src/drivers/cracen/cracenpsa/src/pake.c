@@ -11,6 +11,7 @@
 #include "psa/crypto_types.h"
 #include "psa/crypto_values.h"
 #include <psa_crypto_driver_wrappers.h>
+#include "cracen_psa_wpa3_sae.h"
 
 psa_status_t cracen_pake_setup(cracen_pake_operation_t *operation,
 			       const psa_key_attributes_t *attributes, const uint8_t *password,
@@ -35,6 +36,14 @@ psa_status_t cracen_pake_setup(cracen_pake_operation_t *operation,
 		status = cracen_spake2p_setup(&operation->cracen_spake2p_ctx, attributes, password,
 					      password_length, cipher_suite);
 #endif /* PSA_NEED_CRACEN_SPAKE2P */
+	} else if (PSA_ALG_IS_WPA3_SAE(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_WPA3_SAE
+		status = cracen_wpa3_sae_setup(&operation->cracen_wpa3_sae_ctx,
+					       attributes, password, password_length,
+					       cipher_suite);
+#endif /* PSA_NEED_CRACEN_WPA3_SAE */
+	} else {
+		status = PSA_ERROR_NOT_SUPPORTED;
 	}
 
 	return status;
@@ -58,6 +67,13 @@ psa_status_t cracen_pake_set_user(cracen_pake_operation_t *operation, const uint
 		status = cracen_spake2p_set_user(&operation->cracen_spake2p_ctx, user_id,
 						 user_id_len);
 #endif /* PSA_NEED_CRACEN_SPAKE2P */
+	} else if (PSA_ALG_IS_WPA3_SAE(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_WPA3_SAE
+		status = cracen_wpa3_sae_set_user(&operation->cracen_wpa3_sae_ctx, user_id,
+						  user_id_len);
+#endif /* PSA_NEED_CRACEN_WPA3_SAE */
+	} else {
+		status = PSA_ERROR_BAD_STATE;
 	}
 
 	return status;
@@ -66,6 +82,8 @@ psa_status_t cracen_pake_set_user(cracen_pake_operation_t *operation, const uint
 psa_status_t cracen_pake_set_peer(cracen_pake_operation_t *operation, const uint8_t *peer_id,
 				  size_t peer_id_len)
 {
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+
 	if (PSA_ALG_IS_JPAKE(operation->alg) && IS_ENABLED(PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256)) {
 #ifdef PSA_NEED_CRACEN_ECJPAKE
 		return cracen_jpake_set_peer(&operation->cracen_jpake_ctx, peer_id, peer_id_len);
@@ -75,9 +93,16 @@ psa_status_t cracen_pake_set_peer(cracen_pake_operation_t *operation, const uint
 		return cracen_spake2p_set_peer(&operation->cracen_spake2p_ctx, peer_id,
 					       peer_id_len);
 #endif /* PSA_NEED_CRACEN_SPAKE2P */
+	} else if (PSA_ALG_IS_WPA3_SAE(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_WPA3_SAE
+		return cracen_wpa3_sae_set_peer(&operation->cracen_wpa3_sae_ctx, peer_id,
+						peer_id_len);
+#endif /* PSA_NEED_CRACEN_WPA3_SAE */
 	} else {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
+
+	return status;
 }
 
 psa_status_t cracen_pake_set_context(cracen_pake_operation_t *operation, const uint8_t *context,
@@ -121,6 +146,10 @@ psa_status_t cracen_pake_set_role(cracen_pake_operation_t *operation, psa_pake_r
 #else
 		status = PSA_ERROR_NOT_SUPPORTED;
 #endif /* PSA_NEED_CRACEN_SPAKE2P */
+	} else if (PSA_ALG_IS_WPA3_SAE(operation->alg)) {
+		status = PSA_ERROR_NOT_SUPPORTED;
+	} else {
+		status = PSA_ERROR_BAD_STATE;
 	}
 
 	return status;
@@ -146,6 +175,13 @@ psa_status_t cracen_pake_output(cracen_pake_operation_t *operation, psa_pake_ste
 		status = cracen_spake2p_output(&operation->cracen_spake2p_ctx, step, output,
 					       output_size, output_length);
 #endif /* PSA_NEED_CRACEN_SPAKE2P */
+	} else if (PSA_ALG_IS_WPA3_SAE(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_WPA3_SAE
+		status = cracen_wpa3_sae_output(&operation->cracen_wpa3_sae_ctx, step, output,
+						output_size, output_length);
+#endif /* PSA_NEED_CRACEN_WPA3_SAE */
+	} else {
+		status = PSA_ERROR_BAD_STATE;
 	}
 
 	return status;
@@ -170,6 +206,13 @@ psa_status_t cracen_pake_input(cracen_pake_operation_t *operation, psa_pake_step
 		status = cracen_spake2p_input(&operation->cracen_spake2p_ctx, step, input,
 					      input_length);
 #endif /* PSA_NEED_CRACEN_SPAKE2P */
+	} else if (PSA_ALG_IS_WPA3_SAE(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_WPA3_SAE
+		status = cracen_wpa3_sae_input(&operation->cracen_wpa3_sae_ctx, step, input,
+					       input_length);
+#endif /* PSA_NEED_CRACEN_WPA3_SAE */
+	} else {
+		status = PSA_ERROR_BAD_STATE;
 	}
 
 	return status;
@@ -198,6 +241,14 @@ psa_status_t cracen_pake_get_shared_key(cracen_pake_operation_t *operation,
 						       key_buffer, key_buffer_size,
 						       key_buffer_length);
 #endif /* PSA_NEED_CRACEN_SPAKE2P */
+	} else if (PSA_ALG_IS_WPA3_SAE(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_WPA3_SAE
+		status = cracen_wpa3_sae_get_shared_key(&operation->cracen_wpa3_sae_ctx, attributes,
+							key_buffer, key_buffer_size,
+							key_buffer_length);
+#endif /* PSA_NEED_CRACEN_WPA3_SAE */
+	} else {
+		status = PSA_ERROR_BAD_STATE;
 	}
 
 	return status;
@@ -219,6 +270,12 @@ psa_status_t cracen_pake_abort(cracen_pake_operation_t *operation)
 #ifdef PSA_NEED_CRACEN_SPAKE2P
 		status = cracen_spake2p_abort(&operation->cracen_spake2p_ctx);
 #endif /* PSA_NEED_CRACEN_SPAKE2P */
+	} else if (PSA_ALG_IS_WPA3_SAE(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_WPA3_SAE
+		status = cracen_wpa3_sae_abort(&operation->cracen_wpa3_sae_ctx);
+#endif /* PSA_NEED_CRACEN_WPA3_SAE */
+	} else {
+		status = PSA_ERROR_BAD_STATE;
 	}
 
 	return status;

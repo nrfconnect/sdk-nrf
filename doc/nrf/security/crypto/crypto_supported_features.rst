@@ -8296,6 +8296,12 @@ The options are grouped by Series and drivers available for the device Series, a
                * - SRP password hashing
                  - ``PSA_WANT_ALG_SRP_PASSWORD_HASH``
                  - --
+               * - WPA3-SAE
+                 - ``PSA_WANT_ALG_WPA3_SAE``
+                 - --
+               * - WPA3-SAE hash-to-element
+                 - ``PSA_WANT_ALG_WPA3_SAE_H2E``
+                 - --
 
 
    .. tab:: nRF54L Series
@@ -8359,6 +8365,20 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - --
                  - Experimental
+               * - WPA3-SAE
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - WPA3-SAE hash-to-element
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
 
          .. tab:: nrf_oberon
 
@@ -8410,6 +8430,20 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - SRP password hashing
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_PASSWORD_HASH`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - WPA3-SAE
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - WPA3-SAE hash-to-element
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
                  - Experimental
                  - Experimental
                  - Experimental
@@ -8544,6 +8578,8 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_MATTER`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_PASSWORD_HASH`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
 
          .. tab:: nrf_oberon
 
@@ -8560,6 +8596,8 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_MATTER`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_PASSWORD_HASH`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
 
    .. tab:: nRF91 Series
 
