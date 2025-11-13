@@ -557,4 +557,4 @@ cJSON
 Documentation
 =============
 
-|no_changes_yet_note|
+* Updated the :ref:`install_ncs` page with minor updates and fixes to the :ref:`additional_deps` section.
