@@ -851,6 +851,14 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_nrf54h20.cmake"
          CACHE INTERNAL "MCUboot signing script" FORCE)
     endforeach()
+
+    FirmwareUpdaterImage_Get(images ALL)
+    foreach(image ${images})
+      set_config_bool(${image} CONFIG_NCS_MCUBOOT_BOOTLOADER_SIGN_MERGED_BINARY true)
+      set(${image}_SIGNING_SCRIPT
+        "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_nrf54h20.cmake"
+         CACHE INTERNAL "MCUboot signing script" FORCE)
+    endforeach()
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
