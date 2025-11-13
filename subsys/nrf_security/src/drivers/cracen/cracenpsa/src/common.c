@@ -126,6 +126,8 @@ hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash_algo)
 	case PSA_ALG_SHA3_512:
 		IF_ENABLED(PSA_NEED_CRACEN_SHA3_512, (*sx_hash_algo = &sxhashalg_sha3_512));
 		break;
+	case PSA_ALG_SHAKE256_512:
+		IF_ENABLED(PSA_NEED_CRACEN_SHAKE_256,(*sx_hash_algo = &sxhashalg_shake256_114);)
 	default:
 		return PSA_ALG_IS_HASH(alg) ? PSA_ERROR_NOT_SUPPORTED : PSA_ERROR_INVALID_ARGUMENT;
 	}
