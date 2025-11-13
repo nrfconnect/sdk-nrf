@@ -1492,7 +1492,7 @@
 
 .. _`Memfault`: https://memfault.com/
 
-.. _`Memfault registration page`: https://app.memfault.com/register-nordic
+.. _`Memfault registration page`: https://app.nrfcloud.com/#/register
 .. _`Memfault Dashboards`: https://app.memfault.com
 
 .. _`Memfault Docs`: https://docs.memfault.com/
@@ -1513,11 +1513,10 @@
 .. _`Memfault MCU Guide`: https://docs.memfault.com/docs/mcu/introduction
 .. _`Memfault: Reboot tracking`: https://docs.memfault.com/docs/mcu/reboot-reason-tracking
 .. _`Memfault: Coredumps`: https://docs.memfault.com/docs/mcu/coredumps
-.. _`Memfault Sandbox`: https://mflt.io/demo
 
 .. ### Source: *.nrfcloud.com, https://docs.nordicsemi.com/bundle/nrf-cloud/
 
-.. _`nRF Cloud`:
+.. _`nRF Cloud`: https://nrfcloud.com/
 .. _`nRF Connect for Cloud`: https://nrfcloud.com/
 .. _`User Account`: https://nrfcloud.com/#/account
 .. _`Provision Devices`: https://nrfcloud.com/#/provision-devices
