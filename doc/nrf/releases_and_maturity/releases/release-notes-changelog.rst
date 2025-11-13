@@ -154,6 +154,12 @@ Security
   * The :ref:`ug_crypto_supported_features` page with the missing entries for the HMAC key type (:kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`).
   * The :ref:`ug_nrf54l_crypto_kmu_supported_key_types` section specific for the nRF54L Series devices to list the supported algorithms for each key type.
 
+* Removed:
+
+  * Support for curve types smaller than 224 bytes from the :ref:`CRACEN driver <crypto_drivers_cracen>`.
+  * Support for some curve types that were marked as unsupported.
+    The :ref:`ug_crypto_supported_features` page has been updated accordingly.
+
 Mbed TLS
 --------
 
