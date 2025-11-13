@@ -138,10 +138,6 @@ static psa_status_t get_sx_brainpool_curve(size_t curve_bits, const struct sx_pk
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;
 
 	switch (curve_bits) {
-	case 192:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1_192,
-			   (selected_curve = &sx_curve_brainpoolP192r1));
-		break;
 	case 224:
 		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1_224,
 			   (selected_curve = &sx_curve_brainpoolP224r1));
@@ -179,10 +175,6 @@ static psa_status_t get_sx_secp_r1_curve(size_t curve_bits, const struct sx_pk_e
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;
 
 	switch (curve_bits) {
-	case 192:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1_192,
-			   (selected_curve = &sx_curve_nistp192));
-		break;
 	case 224:
 		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1_224,
 			   (selected_curve = &sx_curve_nistp224));
@@ -216,10 +208,6 @@ static psa_status_t get_sx_secp_k1_curve(size_t curve_bits, const struct sx_pk_e
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;
 
 	switch (curve_bits) {
-	case 192:
-		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1_192,
-			   (selected_curve = &sx_curve_secp192k1));
-		break;
 	case 225:
 		return PSA_ERROR_NOT_SUPPORTED;
 	case 256:
