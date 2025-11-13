@@ -6,9 +6,14 @@
 
 #pragma once
 
+#include "app/server-cluster/ServerClusterInterfaceRegistry.h"
+#include "data-model-providers/codegen/CodegenDataModelProvider.h"
 #include <app-common/zap-generated/ids/Attributes.h>
 #include <app-common/zap-generated/ids/Clusters.h>
-#include <app/clusters/identify-server/identify-server.h>
+#include <app/AttributeAccessInterfaceRegistry.h>
+#include <app/CommandHandlerInterfaceRegistry.h>
+#include <app/DefaultTimerDelegate.h>
+#include <app/clusters/identify-server/IdentifyCluster.h>
 #include <app/util/attribute-storage.h>
 #include <platform/ConfigurationManager.h>
 
@@ -52,36 +57,33 @@ namespace Nrf
 			0), /* feature map */                                                                          \
 		DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 
-/* Declare Bridged Device Identify cluster attributes */
+/* Codedriven delegate for the Identify cluster */
+class IdentifyBridgedDeviceDelegateImpl : public chip::app::Clusters::IdentifyDelegate {
+public:
+	void OnIdentifyStart(chip::app::Clusters::IdentifyCluster &cluster) override
+	{
+		ChipLogError(DeviceLayer, "Starting bridged device identify on endpoint %d",
+			     cluster.GetPaths()[0].mEndpointId);
+	}
 
-constexpr chip::CommandId sIdentifyIncomingCommands[] = {
-	chip::app::Clusters::Identify::Commands::Identify::Id,
-	chip::kInvalidCommandId,
+	void OnIdentifyStop(chip::app::Clusters::IdentifyCluster &cluster) override
+	{
+		ChipLogError(DeviceLayer, "Stopping bridged device identify on endpoint %d",
+			     cluster.GetPaths()[0].mEndpointId);
+		mIsTriggerEffectEnabled = false;
+	}
+
+	void OnTriggerEffect(chip::app::Clusters::IdentifyCluster &cluster) override
+	{
+		ChipLogError(DeviceLayer, "Triggering effect on endpoint %d", cluster.GetPaths()[0].mEndpointId);
+		mIsTriggerEffectEnabled = true;
+	}
+
+	bool IsTriggerEffectEnabled() const override { return mIsTriggerEffectEnabled; }
+
+private:
+	bool mIsTriggerEffectEnabled = false;
 };
-
-#define IDENTIFY_CLUSTER_ATTRIBUTES(identifyAttrs)                                                                     \
-	DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(identifyAttrs)                                                            \
-	DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Identify::Attributes::IdentifyTime::Id, INT16U, 2,              \
-				  ZAP_ATTRIBUTE_MASK(WRITABLE)), /* identify time*/                                    \
-		DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Identify::Attributes::IdentifyType::Id, ENUM8, 1,       \
-					  0), /* identify type */                                                      \
-		DECLARE_DYNAMIC_ATTRIBUTE(chip::app::Clusters::Identify::Attributes::FeatureMap::Id, BITMAP32, 4,      \
-					  0), /* feature map */                                                        \
-		DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
-
-inline void IdentifyStartDefaultCb(Identify *identify)
-{
-	VerifyOrReturn(identify);
-	ChipLogProgress(DeviceLayer, "Starting bridged device identify on endpoint %d",
-			identify->mCluster.Cluster().GetPaths()[0].mEndpointId);
-}
-
-inline void IdentifyStopDefaultCb(Identify *identify)
-{
-	VerifyOrReturn(identify);
-	ChipLogProgress(DeviceLayer, "Stopping bridged device identify on endpoint %d",
-			identify->mCluster.Cluster().GetPaths()[0].mEndpointId);
-}
 
 class MatterBridgedDevice {
 public:
@@ -100,8 +102,14 @@ public:
 	static constexpr uint8_t kDescriptorAttributeArraySize = 254;
 
 	explicit MatterBridgedDevice(const char *uniqueID, const char *nodeLabel)
-		: mIdentifyServer(mEndpointId, IdentifyStartDefaultCb, IdentifyStopDefaultCb,
-				  IdentifyType::kVisibleIndicator)
+		/* TODO: Currently the mEndpointId cannot be used here because it is initialized later.
+		 * We need to refactor this construtor to initialize the mEndpointId here.
+		 * Ref: KRKNWK-21020
+		 */
+		: mIdentifyCluster(
+			  chip::app::Clusters::IdentifyCluster::Config(mEndpointId, mTimerDelegate)
+				  .WithIdentifyType(chip::app::Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator)
+				  .WithDelegate(&mIdentifyDelegate))
 	{
 		if (uniqueID) {
 			memcpy(mUniqueID, uniqueID, strnlen(uniqueID, Nrf::MatterBridgedDevice::kUniqueIDSize));
@@ -112,7 +120,17 @@ public:
 	}
 	virtual ~MatterBridgedDevice() { chip::Platform::MemoryFree(mDataVersion); }
 
-	void Init(chip::EndpointId endpoint) {}
+	void Init(chip::EndpointId endpoint)
+	{
+		mEndpointId = endpoint;
+
+		CHIP_ERROR err = chip::app::CodegenDataModelProvider::Instance().Registry().Register(
+			mIdentifyCluster.Registration());
+		if (err != CHIP_NO_ERROR) {
+			ChipLogError(DeviceLayer, "Failed to register Identify cluster: %s", ErrorStr(err));
+		}
+	}
+
 	chip::EndpointId GetEndpointId() const { return mEndpointId; }
 
 	virtual uint16_t GetDeviceType() const = 0;
@@ -156,8 +174,9 @@ private:
 	bool mIsReachable = true;
 	char mUniqueID[kUniqueIDSize] = "";
 	char mNodeLabel[kNodeLabelSize] = "";
-	Identify mIdentifyServer;
-	uint16_t mIdentifyTime{};
+	chip::app::RegisteredServerCluster<chip::app::Clusters::IdentifyCluster> mIdentifyCluster;
+	chip::app::DefaultTimerDelegate mTimerDelegate;
+	IdentifyBridgedDeviceDelegateImpl mIdentifyDelegate;
 };
 
 } /* namespace Nrf */

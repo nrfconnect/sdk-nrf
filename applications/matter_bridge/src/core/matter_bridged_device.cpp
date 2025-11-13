@@ -6,6 +6,11 @@
 
 #include "matter_bridged_device.h"
 #include <app-common/zap-generated/callback.h>
+#include <app/AttributeValueDecoder.h>
+#include <app/clusters/identify-server/IdentifyCluster.h>
+#include <app/data-model/Encode.h>
+#include <lib/core/TLVReader.h>
+#include <lib/core/TLVWriter.h>
 #include <lib/support/ZclString.h>
 
 using namespace ::chip;
@@ -85,12 +90,42 @@ CHIP_ERROR MatterBridgedDevice::HandleWriteIdentify(chip::AttributeId attributeI
 {
 	switch (attributeId) {
 	case Clusters::Identify::Attributes::IdentifyTime::Id:
-		if (data && dataSize == sizeof(mIdentifyTime)) {
-			memcpy(&mIdentifyTime, data, sizeof(mIdentifyTime));
-			/* Externally stored attribute was updated, now we need to notify identify-server to
-			   leverage the Identify cluster implementation */
-			app::ConcreteAttributePath attributePath{ mEndpointId, Clusters::Identify::Id, attributeId };
-			MatterIdentifyClusterServerAttributeChangedCallback(attributePath);
+		if (data && dataSize == sizeof(uint16_t)) {
+			uint16_t identifyTime = *reinterpret_cast<uint16_t *>(data);
+
+			uint8_t tlvBuffer[64];
+			TLV::TLVWriter writer;
+			writer.Init(tlvBuffer, sizeof(tlvBuffer));
+
+			TLV::TLVType outerContainerType;
+			ReturnErrorOnFailure(writer.StartContainer(TLV::AnonymousTag(), TLV::kTLVType_Structure,
+								   outerContainerType));
+			ReturnErrorOnFailure(DataModel::Encode(writer, TLV::ContextTag(1), identifyTime));
+			ReturnErrorOnFailure(writer.EndContainer(outerContainerType));
+			ReturnErrorOnFailure(writer.Finalize());
+
+			TLV::TLVReader reader;
+			reader.Init(tlvBuffer, writer.GetLengthWritten());
+			ReturnErrorOnFailure(reader.Next());
+			ReturnErrorOnFailure(reader.EnterContainer(outerContainerType));
+			ReturnErrorOnFailure(reader.Next());
+
+			Access::SubjectDescriptor subjectDescriptor;
+			subjectDescriptor.fabricIndex = kUndefinedFabricIndex;
+			subjectDescriptor.authMode = Access::AuthMode::kNone;
+
+			AttributeValueDecoder decoder(reader, subjectDescriptor);
+
+			DataModel::WriteAttributeRequest request;
+			request.path.mEndpointId = mEndpointId;
+			request.path.mClusterId = Clusters::Identify::Id;
+			request.path.mAttributeId = attributeId;
+			request.subjectDescriptor = &subjectDescriptor;
+
+			DataModel::ActionReturnStatus status = mIdentifyCluster.Cluster().WriteAttribute(request, decoder);
+			if (!status.IsSuccess()) {
+				return status.GetUnderlyingError();
+			}
 			return CHIP_NO_ERROR;
 		}
 	default:
@@ -111,11 +146,12 @@ CHIP_ERROR MatterBridgedDevice::HandleReadIdentify(chip::AttributeId attributeId
 		return CopyAttribute(&featureMap, sizeof(featureMap), buffer, maxReadLength);
 	}
 	case Clusters::Identify::Attributes::IdentifyType::Id: {
-		MatterBridgedDevice::IdentifyType type = mIdentifyServer.mIdentifyType;
+		MatterBridgedDevice::IdentifyType type = mIdentifyCluster.Cluster().GetIdentifyType();
 		return CopyAttribute(&type, sizeof(type), buffer, maxReadLength);
 	}
 	case Clusters::Identify::Attributes::IdentifyTime::Id: {
-		return CopyAttribute(&mIdentifyTime, sizeof(mIdentifyTime), buffer, maxReadLength);
+		uint16_t identifyTime = mIdentifyCluster.Cluster().GetIdentifyTime();
+		return CopyAttribute(&identifyTime, sizeof(identifyTime), buffer, maxReadLength);
 	}
 	default:
 		return CHIP_ERROR_INVALID_ARGUMENT;
