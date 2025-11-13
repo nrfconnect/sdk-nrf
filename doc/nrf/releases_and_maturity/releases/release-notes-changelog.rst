@@ -966,7 +966,9 @@ Modem libraries
   * Added the :c:func:`nrf_modem_lib_trace_peek_at` function to the :c:struct:`nrf_modem_lib_trace_backend` interface to peek trace data at a byte offset without consuming it.
     Support for this API has been added to the flash trace backend.
 
-  * Removed the deprecated ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR`` kconfig option.
+  * Updated the PDN functionality to use the PDN management in the :ref:`lte_lc_readme` library instead of the :ref:`pdn_readme` library.
+
+  * Removed the deprecated ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR`` Kconfig option.
 
 * :ref:`at_parser_readme` library:
 
