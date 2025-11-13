@@ -96,8 +96,8 @@ Simply put, you can work with the following versions of the |NCS|:
    * - Specific release (recommended)
      - Release tag (for example, |release_tt|)
      - :ref:`Release_notes` of the release
-   * - :ref:`Preview tag <dm-revisions>`
-     - Development tag (for example, ``v2.8.0-preview1``)
+   * - :ref:`Git tag <dm_revisions_git_tags>`
+     - Development tag (for example, ``v2.8.0-rc1``)
      - :ref:`Changelog <release_notes>` of the tag
    * - Branch
      - Branch name (for example, ``main``)
@@ -132,10 +132,10 @@ Depending on your preferred development environment, complete the following step
 
          * :guilabel:`Pre-packaged SDKs & Toolchains` - Available on the Nordic Semiconductor server.
            The package downloads both the SDK and toolchain, but skips the toolchain if you have it already installed.
-           Available mostly for stable releases and some preview tags.
+           Available mostly for stable releases and some Git tags.
            Recommended for faster and more reliable download and installation.
          * :guilabel:`GitHub` - Taken from the `nRF Connect by Nordic Semiconductor GitHub organization <nrfconnect GitHub organization_>`_.
-           Available for stable releases, but also preview tags and branches.
+           Available for stable releases, but also Git tags and branches.
 
       #. Select an |NCS| version to install from the :guilabel:`Pre-packaged SDKs & Toolchains` category.
          |install_latest_version|
@@ -181,6 +181,11 @@ Depending on your preferred development environment, complete the following step
 
          This example command installs both the SDK code and the toolchain for the |NCS| |release|.
          |install_latest_version|
+
+         .. note::
+            If you plan to work with a specific branch, use the command for installing the latest |NCS| release (|release|) to install the latest toolchain.
+            Then, you must use the ``west init`` command several steps below to get the code of the desired branch.
+            This is because the ``sdk-manager`` command only supports installing specific release versions.
 
          The ``sdk-manager`` command installs the SDK by default at :file:`C:/ncs/` on Windows and at :file:`~/ncs/` on Linux, and the toolchain in the :file:`toolchains` subdirectory.
          The SDK installation location can be modified, as explained in the `command documentation <sdk-manager Configuration settings_>`_.
@@ -272,17 +277,18 @@ Depending on your preferred development environment, complete the following step
          See the table above for more information.
          |install_latest_version|
 
-      #. Initialize west with the revision of the |NCS| that you want to check out, replacing *nRFConnectSDK_revision* with the identifier:
+      #. Initialize west with the revision of the |NCS| that you want to check out, replacing the required parameters:
 
          .. parsed-literal::
             :class: highlight
 
-            west init -m https\://github.com/nrfconnect/sdk-nrf --mr *nRFConnectSDK_revision* *nRFConnectSDK_revision*
+            west init -m https\://github.com/nrfconnect/sdk-nrf --mr *nRFConnectSDK_revision* *nRFConnectSDK_revision_workspace_dir*
 
          In this command:
 
          - The first *nRFConnectSDK_revision* identifies the revision of the |NCS|.
-         - The second *nRFConnectSDK_revision* is the name of the workspace directory that will be created by west.
+         - The second *nRFConnectSDK_revision_workspace_dir* is the name of the workspace directory that will be created by west.
+           For this installation method, it should be the same as the *nRFConnectSDK_revision*.
 
          The command creates the *nRFConnectSDK_revision* subdirectory and checks out the given revision of the |NCS| inside it.
          For example:
@@ -294,11 +300,11 @@ Depending on your preferred development environment, complete the following step
 
               west init -m https\://github.com/nrfconnect/sdk-nrf --mr |release| |release|
 
-         * **Preview tag:** To check out the ``v2.8.0-preview1`` tag, enter the following command:
+         * **Git tag:** To check out the ``v2.8.0-rc1`` tag, enter the following command:
 
            .. code-block:: console
 
-              west init -m https://github.com/nrfconnect/sdk-nrf --mr v2.8.0-preview1
+              west init -m https://github.com/nrfconnect/sdk-nrf --mr v2.8.0-rc1 v2.8.0-rc1
 
          * **Branch**: To check out the ``main`` branch that includes the latest state of development, enter the following command:
 
@@ -493,12 +499,6 @@ To install the |NCS| system-wide, complete the following steps:
 
                .. group-tab:: Install within virtual environment
 
-                  #. Use ``apt`` to install Python ``venv`` package:
-
-                     .. code-block:: bash
-
-                        sudo apt install python3-venv
-
                   #. Create a new virtual environment:
 
                      .. code-block:: bash
@@ -579,9 +579,66 @@ To install the |NCS| system-wide, complete the following steps:
 
    ..
 
-#. Get the |NCS| code as described in :ref:`cloning_the_repositories` for the command line.
-   (You can skip step 2.)
+#. Enter the :file:`ncs` directory you created when setting up the virtual environment:
+
+   .. tabs::
+
+      .. group-tab:: Windows
+
+         .. code-block:: console
+
+            cd %HOMEPATH%/ncs
+
+      .. group-tab:: Linux
+
+         .. code-block:: console
+
+            cd ~/ncs
+
+      .. group-tab:: macOS
+
+         .. code-block:: console
+
+            cd ~/ncs
+
+#. Get the |NCS| code.
    When you first install the |NCS|, it is recommended to install the latest released version of the SDK.
+   Run the following command, where *nRFConnectSDK_revision* is the revision of the |NCS| you want to get the code of:
+
+   .. code-block:: console
+
+      west init -m https://github.com/nrfconnect/sdk-nrf --mr *nRFConnectSDK_revision*
+
+   The command initializes a west workspace in the :file:`ncs` directory and checks out the given revision of the |NCS| `sdk-nrf`_ in the :file:`nrf` subdirectory.
+   For example:
+
+   * **Specific release:** To check out the |release| release, enter the following command:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west init -m https\://github.com/nrfconnect/sdk-nrf --mr |release|
+
+   * **Git tag:** To check out the ``v2.8.0-rc1`` tag, enter the following command:
+
+      .. code-block:: console
+
+         west init -m https://github.com/nrfconnect/sdk-nrf --mr v2.8.0-rc1
+
+   * **Branch**: To check out the ``main`` branch that includes the latest state of development, enter the following command:
+
+      .. code-block:: console
+
+         west init -m https://github.com/nrfconnect/sdk-nrf --mr main
+
+     Alternatively, you can omit the ``--mr`` parameter, in which case west uses ``main`` as the default *nRFConnectSDK_revision*.
+
+#. In the :file:`ncs` directory, run the following command to clone the project repositories:
+
+   .. code-block:: console
+
+      west update
+
 #. Install the Python dependencies.
    Expand the section below to see the commands.
 
@@ -596,7 +653,7 @@ To install the |NCS| system-wide, complete the following steps:
 
          .. group-tab:: Windows
 
-            #. Enter the following commands in a ``cmd.exe`` terminal window in the :file:`ncs` folder:
+            #. In the :file:`ncs` directory, enter the following commands in a ``cmd.exe`` terminal window:
 
                .. code-block:: bash
 
@@ -606,7 +663,7 @@ To install the |NCS| system-wide, complete the following steps:
 
          .. group-tab:: Linux
 
-            #. Enter the following commands in a terminal window in the :file:`ncs` folder:
+            #. In the :file:`ncs` directory, enter the following commands in a terminal window:
 
                .. code-block:: bash
 
@@ -616,7 +673,7 @@ To install the |NCS| system-wide, complete the following steps:
 
          .. group-tab:: macOS
 
-            #. Enter the following commands in a terminal window in the :file:`ncs` folder:
+            #. In the :file:`ncs` directory, enter the following commands in a terminal window:
 
                .. code-block:: bash
 
