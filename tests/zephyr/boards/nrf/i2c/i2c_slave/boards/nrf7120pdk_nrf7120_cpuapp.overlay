@@ -8,14 +8,14 @@
 	i2c21_default_alt: i2c21_default_alt {
 		group1 {
 			psels = <NRF_PSEL(TWIM_SDA, 1, 8)>,
-				<NRF_PSEL(TWIM_SCL, 1, 14)>;
+				<NRF_PSEL(TWIM_SCL, 1, 2)>;
 		};
 	};
 
 	i2c21_sleep_alt: i2c21_sleep_alt {
 		group1 {
 			psels = <NRF_PSEL(TWIM_SDA, 1, 8)>,
-				<NRF_PSEL(TWIM_SCL, 1, 14)>;
+				<NRF_PSEL(TWIM_SCL, 1, 2)>;
 			low-power-enable;
 		};
 	};
@@ -26,7 +26,7 @@
 			 * to configure pins for TWIS with pinctrl.
 			 */
 			psels = <NRF_PSEL(TWIM_SDA, 1, 9)>,
-				<NRF_PSEL(TWIM_SCL, 1, 15)>;
+				<NRF_PSEL(TWIM_SCL, 1, 3)>;
 			bias-pull-up;
 		};
 	};
@@ -34,7 +34,7 @@
 	i2c22_sleep_alt: i2c22_sleep_alt {
 		group1 {
 			psels = <NRF_PSEL(TWIM_SDA, 1, 9)>,
-				<NRF_PSEL(TWIM_SCL, 1, 15)>;
+				<NRF_PSEL(TWIM_SCL, 1, 3)>;
 			low-power-enable;
 		};
 	};
