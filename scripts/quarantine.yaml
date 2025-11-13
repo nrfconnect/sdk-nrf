@@ -150,12 +150,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36289"
 
 - scenarios:
-    - sample.dfu.dfu_multi_image.encryption
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36289"
-
-- scenarios:
     - sample.nrf7002.thread_coex_sep_ant
   platforms:
     - nrf7002dk/nrf5340/cpuapp
