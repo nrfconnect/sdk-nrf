@@ -89,6 +89,24 @@ Matter
 
       To build your custom board with Wi-Fi support, set both the :kconfig:option:`CONFIG_CHIP_WIFI` and :kconfig:option:`CONFIG_WIFI_NRF70` Kconfig options to ``y``.
 
+    * :ref:`matter_lock_sample` sample:
+
+      * The :kconfig:option:`CONFIG_BT_FIXED_PASSKEY` Kconfig option has been deprecated, replace it with the :kconfig:option:`CONFIG_BT_APP_PASSKEY` Kconfig option.
+        Now, if you want to use a fixed passkey for the Matter Lock NUS service, register the :c:member:`bt_conn_auth_cb.app_passkey` callback in the :c:struct:`bt_conn_auth_cb` structure.
+
+        For example:
+
+       .. code-block:: c
+
+          static uint32_t AuthAppPasskey(struct bt_conn *conn)
+          {
+              return 123456;
+          }
+
+          static struct bt_conn_auth_cb sConnAuthCallbacks = {
+              .app_passkey = AuthAppPasskey,
+          };
+
 Serial LTE modem
 ----------------
 

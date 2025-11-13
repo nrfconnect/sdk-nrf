@@ -43,10 +43,23 @@ void bt_mesh_le_pair_resp_passkey_invalidate(void);
  * By default, passkeys will be randomly generated on every new request. This function allows to use
  * pre-defined passkey instead.
  *
- * @params passkey Passkey to use for the pairing, or @ref BT_PASSKEY_INVALID to use randomly
+ * @params passkey Passkey to use for the pairing, or @ref BT_PASSKEY_RAND to use randomly
  *		   generated passkey again.
  */
 void bt_mesh_le_pair_resp_passkey_set(uint32_t passkey);
+
+/** @brief Get passkey to be used in the very next pairing.
+ *
+ * This function will return the passkey set by the @ref bt_mesh_le_pair_resp_passkey_set function
+ * or it will return a randomly generated passkey by the reset message.
+ *
+ * If the passkey has never been set or the Reset message has never been received,
+ * @ref BT_PASSKEY_RAND will be returned.
+ *
+ * @return Passkey to be used in the very next pairing;
+ *		   @ref BT_PASSKEY_RAND if passkey is not set.
+ */
+uint32_t bt_mesh_le_pair_resp_passkey_get(void);
 
 /** @cond INTERNAL_HIDDEN */
 

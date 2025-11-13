@@ -85,6 +85,9 @@ private:
 	static void PairingComplete(struct bt_conn *conn, bool bonded);
 	static void PairingFailed(struct bt_conn *conn, enum bt_security_err reason);
 	static char* LogAddress(struct bt_conn *conn);
+#if defined(CONFIG_BT_APP_PASSKEY)
+	static uint32_t AuthAppPasskey(struct bt_conn *conn);
+#endif /* defined(CONFIG_BT_APP_PASSKEY) */
 
 	static struct bt_conn_auth_cb sConnAuthCallbacks;
 	static struct bt_conn_auth_info_cb sConnAuthInfoCallbacks;
