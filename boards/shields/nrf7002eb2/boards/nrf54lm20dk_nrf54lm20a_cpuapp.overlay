@@ -15,6 +15,14 @@
 		zephyr,bt-mon-uart = &uart30;
 		zephyr,bt-c2h-uart = &uart30;
 	};
+
+	buttons {
+		/delete-node/ button_3;
+	};
+
+	aliases {
+		/delete-property/ sw3;
+	};
 };
 
 &gpio3 {
