@@ -76,7 +76,7 @@ Updating |ISE|
   You can use the ``west`` command provided by the |NCS| to install the firmware update.
   For step-by-step instructions, see :ref:`ug_nrf54h20_ironside_se_update_west`.
 
-* Using the nRF Util `device command <Device command overview_>`_
+* Using the nRF Util `device command <Device command overview_>`_.
   Alternatively, you can perform the update by manually executing the same steps carried out by the ``west`` command.
   For step-by-step instructions, see :ref:`ug_nrf54h20_ironside_se_update_manual`.
 
@@ -127,7 +127,7 @@ You can use nRF Util instead of ``west ncs-ironside-se-update``.
 If you decide to use nRF Util, make sure to install the `device` command v2.14.0 or higher.
 See `Installing specific versions of nRF Util commands`_ for more information.
 
-To perform the manual update process using nRF Util's `device command <Device command overview_>`_ command, complete the following steps:
+To perform the manual update process using nRF Util's `device <Device command overview_>`_ command, complete the following steps:
 
 1. Extract the update bundle:
 
