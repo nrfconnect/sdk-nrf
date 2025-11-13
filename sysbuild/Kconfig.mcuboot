@@ -32,7 +32,7 @@ config MCUBOOT_BUILD_DIRECT_XIP_VARIANT
 
 menuconfig MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 	bool "Downgrade prevention using hardware security counters"
-	depends on (SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X || SOC_SERIES_NRF54LX)
+	depends on (SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X || SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX)
 	depends on !SECURE_BOOT_APPCORE
 	depends on !QSPI_XIP_SPLIT_IMAGE
 	help
@@ -48,7 +48,9 @@ if MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
 	int "Number of available hardware counter slots"
 	default 240
+	range 2 288 if SOC_SERIES_NRF54LX
 	range 2 300
+	depends on !SOC_SERIES_NRF54HX
 	help
 	  When MCUBOOT_HW_DOWNGRADE_PREVENTION is enabled, MCUboot will use one hardware counter
 	  for each updatable image (UPDATEABLE_IMAGE_NUMBER). This configuration specifies how many
@@ -60,7 +62,8 @@ config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
 config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE
 	int "Security counter value"
 	default 1
-	range 1 65535
+	range 1 65535 if !SOC_SERIES_NRF54HX
+	range 1 4294967295 if SOC_SERIES_NRF54HX
 	help
 	  The security counter value for this image.
 	  This is the value that will be passed to the --security-counter parameter of imgtool.py
