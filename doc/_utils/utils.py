@@ -22,6 +22,7 @@ ALL_DOCSETS = {
     "nrfxlib": ("nrfxlib", "README", "nrfxlib"),
     "zephyr": ("Zephyr Project", "index", "zephyr"),
     "mcuboot": ("MCUboot", "wrapper", "mcuboot"),
+    "oberon": ("Oberon PSA Crypto", "wrapper", "oberon-psa-crypto"),
     "tfm": ("Trusted Firmware-M", "wrapper", "trusted-firmware-m"),
     "matter": ("Matter", "index", "matter"),
     "kconfig": ("Kconfig Reference", "index", None),
