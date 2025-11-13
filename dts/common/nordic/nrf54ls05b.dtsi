@@ -403,6 +403,11 @@
 				status = "disabled";
 			};
 
+			tampc: tampc@e7000 {
+				compatible = "nordic,nrf-tampc";
+				reg = <0xe7000 0x1000>;
+				status = "disabled";
+			};
 
 			dppic30: dppic@102000 {
 				compatible = "nordic,nrf-dppic";
