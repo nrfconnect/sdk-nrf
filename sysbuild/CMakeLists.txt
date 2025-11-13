@@ -381,7 +381,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(mcuboot CONFIG_BOOT_FIH_PROFILE_DEFAULT_LOW y)
     endif()
 
-    if(SB_CONFIG_PARTITION_MANAGER OR SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP OR SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT OR SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT OR (SB_CONFIG_SOC_SERIES_NRF54LX AND SB_CONFIG_BOOT_ENCRYPTION))
+    if(SB_CONFIG_PARTITION_MANAGER OR SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP
+       OR SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT
+       OR SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT
+       OR (SB_CONFIG_SOC_SERIES_NRF54LX AND SB_CONFIG_BOOT_ENCRYPTION)
+       OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
       # Use NCS signing script with support for PM or direct XIP (NCS specific features)
       if(SB_CONFIG_QSPI_XIP_SPLIT_IMAGE)
         set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
@@ -469,8 +473,13 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
     if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
       set_config_bool(mcuboot CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION y)
-      set_config_bool(mcuboot CONFIG_SECURE_BOOT_STORAGE y)
-      set_config_bool(mcuboot CONFIG_SECURE_BOOT_CRYPTO y)
+
+      # nRF54H20 uses SDFW-based counters.
+      # There is no need for a dedicated secure boot storage implementation.
+      if(NOT SB_CONFIG_SOC_SERIES_NRF54HX)
+        set_config_bool(mcuboot CONFIG_SECURE_BOOT_STORAGE y)
+        set_config_bool(mcuboot CONFIG_SECURE_BOOT_CRYPTO y)
+      endif()
     else()
       set_config_bool(mcuboot CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION n)
     endif()
@@ -478,8 +487,12 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     foreach(image ${updateable_images})
       if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
         set_config_bool(${image} CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION y)
-        set_config_int(${image} CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS})
         set_config_int(${image} CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE})
+
+        # The number of slots is unlimited in the current SDFW-based implementation.
+        if(SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS)
+          set_config_int(${image} CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS})
+        endif()
       else()
         set_config_bool(${image} CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION n)
       endif()
@@ -816,7 +829,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
   include_packaging()
 
-  if(SB_CONFIG_SECURE_BOOT OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+  # nRF54H20 uses SDFW-based counters.
+  # There is no need to generate a provisioning hex file.
+  if(SB_CONFIG_SECURE_BOOT OR (SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION AND NOT
+     SB_CONFIG_SOC_SERIES_NRF54HX))
     include_provision_hex()
   endif()
 
