@@ -116,6 +116,7 @@ Security
 * Added:
 
   * Support for AES-CCM AEAD using CRACEN for the :zephyr:board:`nrf54lm20dk`.
+  * Support for the WPA3-SAE in the :ref:`CRACEN driver <crypto_drivers_cracen>`.
 
 Protocols
 =========

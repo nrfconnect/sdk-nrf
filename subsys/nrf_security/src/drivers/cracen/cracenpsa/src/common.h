@@ -204,6 +204,19 @@ int cracen_prepare_ik_key(const uint8_t *user_data);
 void cracen_be_add(uint8_t *v, size_t v_size, size_t summand);
 
 /**
+ * @brief Compute c = a - b.
+ *
+ * @param a	Big-endian value a.
+ * @param b	Big-endian value b.
+ * @param c	The substraction result.
+ * @param sz	Size of the buffers.
+ *
+ * @retval 0 Success.
+ * @retval -1 For a < b.
+ */
+int cracen_be_sub(const uint8_t *a, const uint8_t *b, uint8_t *c, size_t sz);
+
+/**
  * @brief Big-Endian compare with carry.
  * \note
  *
