@@ -2493,7 +2493,7 @@ const char *lte_lc_pdn_esm_strerror(int reason);
  */
 int lte_lc_cellular_profile_configure(struct lte_lc_cellular_profile *profile);
 
-#if CONFIG_LTE_LC_PDN_ESM_STRERROR
+#if defined(CONFIG_LTE_LC_PDN_ESM_STRERROR)
 
 /**
  * Retrieve a statically allocated textual description for a given ESM error reason.
