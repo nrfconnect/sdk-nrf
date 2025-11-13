@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#define CONFIG_HW_ID_LIBRARY_SOURCE_BLE_MAC y
+#define CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS y

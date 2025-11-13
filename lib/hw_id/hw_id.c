@@ -8,9 +8,9 @@
 #include <zephyr/kernel.h>
 
 /* includes for the different HW ID sources */
-#if defined(CONFIG_HW_ID_LIBRARY_SOURCE_BLE_MAC)
+#if defined(CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS)
 #include <zephyr/bluetooth/bluetooth.h>
-#endif /* defined(CONFIG_HW_ID_LIBRARY_SOURCE_BLE_MAC) */
+#endif /* defined(CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS) */
 #if defined(CONFIG_HW_ID_LIBRARY_SOURCE_DEVICE_ID)
 #include <zephyr/drivers/hwinfo.h>
 #endif /* defined(CONFIG_HW_ID_LIBRARY_SOURCE_DEVICE_ID) */
@@ -26,8 +26,8 @@
 
 #define IMEI_LEN 15
 
-#if defined(CONFIG_HW_ID_LIBRARY_SOURCE_BLE_MAC)
-/* Ask BLE stack for default MAC address */
+#if defined(CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS)
+/* Ask Bluetooth stack for default MAC address */
 
 int hw_id_get(char *buf, size_t buf_len)
 {
@@ -53,7 +53,7 @@ int hw_id_get(char *buf, size_t buf_len)
 		addr.a.val[0]);
 	return 0;
 }
-#endif /* defined(CONFIG_HW_ID_LIBRARY_SOURCE_BLE_MAC) */
+#endif /* defined(CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS) */
 
 #if defined(CONFIG_HW_ID_LIBRARY_SOURCE_DEVICE_ID)
 /* Directly read Device ID from registers */
