@@ -18,7 +18,6 @@ cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/lte_lc.h
   WORD_EXCLUDE "__deprecated"
 )
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/nrf_modem_lib.h FUNC_EXCLUDE ".*nrf_modem_lib_shutdown_wait")
-cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/pdn.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h
   FUNC_EXCLUDE ".*nrf_modem_at_scanf"
   WORD_EXCLUDE "__nrf_modem_(printf|scanf)_like\(.*\)"
@@ -49,8 +48,12 @@ target_include_directories(app PRIVATE
   ${ZEPHYR_BASE}/subsys/net/lib/sockets
 )
 
-add_compile_definitions(CONFIG_NRF_MODEM_LIB_MEM_DIAG)
-add_compile_definitions(CONFIG_NRF_MODEM_LIB_NET_IF_CONNECT_TIMEOUT_SECONDS=30)
-add_compile_definitions(CONFIG_NRF_MODEM_LIB_NET_IF)
-add_compile_definitions(CONFIG_NRF_MODEM_LIB_NET_IF_WORKQUEUE_STACK_SIZE=1024)
-add_compile_definitions(CONFIG_NRF_MODEM_LIB_NET_IF_CONNECTION_PERSISTENCE)
+add_compile_definitions(
+  CONFIG_NRF_MODEM_LIB_MEM_DIAG=1
+  CONFIG_LTE_LC_NETWORK_REGISTRATION_MODULE=1
+  CONFIG_LTE_LC_PDN_MODULE=1
+  CONFIG_NRF_MODEM_LIB_NET_IF=1
+  CONFIG_NRF_MODEM_LIB_NET_IF_CONNECT_TIMEOUT_SECONDS=30
+  CONFIG_NRF_MODEM_LIB_NET_IF_WORKQUEUE_STACK_SIZE=1024
+  CONFIG_NRF_MODEM_LIB_NET_IF_CONNECTION_PERSISTENCE=1
+)

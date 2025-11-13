@@ -12,7 +12,6 @@
 #include <zephyr/logging/log.h>
 #include <modem/nrf_modem_lib.h>
 #include <modem/lte_lc.h>
-#include <modem/pdn.h>
 
 #include "lte_ip_addr_helper.h"
 
@@ -74,16 +73,18 @@ static void modem_fault_work_fn(struct k_work *work)
 
 static uint16_t pdn_mtu(void)
 {
-	struct pdn_dynamic_info info;
+	struct lte_lc_pdn_dynamic_info info;
 	int rc;
 
-	rc = pdn_dynamic_info_get(0, &info);
+	rc = lte_lc_pdn_dynamic_info_get(0, &info);
 	if ((rc != 0) || (info.ipv4_mtu == 0)) {
 		LOG_WRN("MTU query failed, error: %d, MTU: %d", rc, info.ipv4_mtu);
 		/* Fallback to the minimum value that IPv4 is required to support */
 		info.ipv4_mtu = NET_IPV4_MTU;
 	}
+
 	LOG_DBG("Network MTU: %d", info.ipv4_mtu);
+
 	return info.ipv4_mtu;
 }
 
@@ -292,85 +293,91 @@ static void on_pdn_ipv6_down(void)
 }
 #endif /* CONFIG_NET_IPV6 */
 
-/* Event handlers */
-static void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
+static void lte_evt_handler(const struct lte_lc_evt *const evt)
 {
-	switch (event) {
-#if CONFIG_PDN_ESM_STRERROR
-	case PDN_EVENT_CNEC_ESM:
-		LOG_DBG("Event: PDP context %d, %s", cid, pdn_esm_strerror(reason));
-		break;
-#endif
-	case PDN_EVENT_ACTIVATED:
-		LOG_DBG("PDN connection activated");
-		on_pdn_activated();
-		break;
-	case PDN_EVENT_NETWORK_DETACH:
-		LOG_DBG("PDN network detached");
-		on_pdn_deactivated();
-		break;
-	case PDN_EVENT_DEACTIVATED:
-		LOG_DBG("PDN connection deactivated");
-		on_pdn_deactivated();
-		break;
+	switch (evt->type) {
+		case LTE_LC_EVT_NW_REG_STATUS:
+			switch (evt->nw_reg_status) {
+			case LTE_LC_NW_REG_REGISTERED_HOME:
+				__fallthrough;
+			case LTE_LC_NW_REG_REGISTERED_ROAMING:
+				/* Mark serving cell as available. */
+				LOG_DBG("Registered to serving cell");
+				update_has_cell(true);
+				break;
+			case LTE_LC_NW_REG_SEARCHING:
+				/* Searching for a new cell, do not consider this cell loss unless it
+				 * fails (which will generate a new LTE_LC_EVT_NW_REG_STATUS event with
+				 * an unregistered status).
+				 */
+				break;
+			case LTE_LC_NW_REG_UICC_FAIL:
+				LOG_WRN("The modem reports a UICC failure. Is SIM installed?");
+				__fallthrough;
+			default:
+				LOG_DBG("Not registered to serving cell");
+				/* Mark the serving cell as lost. */
+				update_has_cell(false);
+				break;
+			}
+			break;
+		case LTE_LC_EVT_MODEM_EVENT:
+			if (evt->modem_evt.type == LTE_LC_MODEM_EVT_RESET_LOOP) {
+				LOG_WRN("The modem has detected a reset loop. LTE network attach is now "
+					"restricted for the next 30 minutes.");
+
+				LOG_DBG("For more information, see the AT command documentation "
+					"for the %%MDMEV notification");
+			}
+
+			break;
+	case LTE_LC_EVT_PDN:
+		switch (evt->pdn.type) {
+		case LTE_LC_EVT_PDN_ACTIVATED:
+			LOG_DBG("PDN connection activated");
+			on_pdn_activated();
+			break;
+		case LTE_LC_EVT_PDN_NETWORK_DETACH:
+			LOG_DBG("PDN network detached");
+			on_pdn_deactivated();
+			break;
+		case LTE_LC_EVT_PDN_DEACTIVATED:
+			LOG_DBG("PDN connection deactivated");
+			on_pdn_deactivated();
+			break;
 #if CONFIG_NET_IPV6
-	case PDN_EVENT_IPV6_UP:
-		LOG_DBG("PDN IPv6 up");
-		on_pdn_ipv6_up();
-		break;
-	case PDN_EVENT_IPV6_DOWN:
-		LOG_DBG("PDN IPv6 down");
-		on_pdn_ipv6_down();
-		break;
+		case LTE_LC_EVT_PDN_IPV6_UP:
+			LOG_DBG("PDN IPv6 up");
+			on_pdn_ipv6_up();
+			break;
+		case LTE_LC_EVT_PDN_IPV6_DOWN:
+			LOG_DBG("PDN IPv6 down");
+			on_pdn_ipv6_down();
+			break;
 #endif /* CONFIG_NET_IPV6 */
-	case PDN_EVENT_CTX_DESTROYED:
-		LOG_DBG("PDN context destroyed");
-		break;
-	default:
-		LOG_ERR("Unexpected PDN event: %d", event);
-		break;
-	}
-}
-
-static void lte_reg_handler(const struct lte_lc_evt *const evt)
-{
-	if (evt->type == LTE_LC_EVT_MODEM_EVENT &&
-	    evt->modem_evt.type == LTE_LC_MODEM_EVT_RESET_LOOP) {
-		LOG_WRN("The modem has detected a reset loop. LTE network attach is now "
-			"restricted for the next 30 minutes.");
-
-		LOG_DBG("For more information, see the AT command documentation "
-			"for the %%MDMEV notification");
-	} else if (evt->type == LTE_LC_EVT_NW_REG_STATUS) {
-		switch (evt->nw_reg_status) {
-		case LTE_LC_NW_REG_REGISTERED_HOME:
-			__fallthrough;
-		case LTE_LC_NW_REG_REGISTERED_ROAMING:
-			/* Mark serving cell as available. */
-			LOG_DBG("Registered to serving cell");
-			update_has_cell(true);
+		case LTE_LC_EVT_PDN_CTX_DESTROYED:
+			LOG_DBG("PDN context destroyed");
 			break;
-		case LTE_LC_NW_REG_SEARCHING:
-			/* Searching for a new cell, do not consider this cell loss unless it
-			 * fails (which will generate a new LTE_LC_EVT_NW_REG_STATUS event with
-			 * an unregistered status).
-			 */
+
+#if CONFIG_LTE_LC_PDN_ESM_STRERROR
+		case LTE_LC_EVT_PDN_ESM_ERROR:
+			LOG_DBG("Event: PDP context %d, %s", evt->pdn.cid,
+				lte_lc_pdn_esm_strerror(evt->pdn.esm_err));
 			break;
-		case LTE_LC_NW_REG_UICC_FAIL:
-			LOG_WRN("The modem reports a UICC failure. Is SIM installed?");
-			__fallthrough;
+#endif /* CONFIG_LTE_LC_PDN_ESM_STRERROR */
 		default:
-			LOG_DBG("Not registered to serving cell");
-			/* Mark the serving cell as lost. */
-			update_has_cell(false);
 			break;
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
 static void lte_net_if_init(struct conn_mgr_conn_binding *if_conn)
 {
-	int ret;
+	int err;
 	int timeout = CONFIG_NRF_MODEM_LIB_NET_IF_CONNECT_TIMEOUT_SECONDS;
 
 	net_if_dormant_on(if_conn->iface);
@@ -399,17 +406,16 @@ static void lte_net_if_init(struct conn_mgr_conn_binding *if_conn)
 	LOG_DBG("Connection persistence is %s",
 		(if_conn->flags & BIT(CONN_MGR_IF_PERSISTENT)) ? "enabled" : "disabled");
 
-	/* Register handler for default PDP context 0. */
-	ret = pdn_default_ctx_cb_reg(pdn_event_handler);
-	if (ret) {
-		LOG_ERR("pdn_default_ctx_cb_reg, error: %d", ret);
+	/* Register handler for registration status notifications */
+	lte_lc_register_handler(lte_evt_handler);
+
+	err = lte_lc_pdn_default_ctx_events_enable();
+	if (err) {
+		LOG_ERR("lte_lc_pdn_default_ctx_events_enable, error: %d", err);
 		net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, if_conn->iface);
+
 		return;
 	}
-
-	/* Register handler for registration status notifications */
-	lte_lc_register_handler(lte_reg_handler);
-
 	/* Keep local reference to the network interface that the connectivity layer is bound to. */
 	iface_bound = if_conn->iface;
 

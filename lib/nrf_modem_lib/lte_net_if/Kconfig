@@ -5,9 +5,9 @@
 
 menuconfig NRF_MODEM_LIB_NET_IF
 	bool "Zephyr networking API support"
-	select PDN
-	select PDN_ESM_STRERROR
 	select LTE_LINK_CONTROL
+	select LTE_LC_PDN_MODULE
+	imply LTE_LC_PDN_ESM_STRERROR
 	depends on NRF_MODEM_LIB
 	depends on NET_CONNECTION_MANAGER
 	depends on NET_IPV4 || NET_IPV6

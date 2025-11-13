@@ -17,11 +17,9 @@
 #include "mock_nrf_modem_at.h"
 #include "cmock_nrf_modem_at.h"
 #include "cmock_nrf_modem.h"
-#include "cmock_pdn.h"
 
 extern int unity_main(void);
 
-static pdn_event_handler_t pdn_event_handler_callback;
 static lte_lc_evt_handler_t lte_lc_event_handler_callback;
 
 /* Initial condition tracking */
@@ -31,12 +29,17 @@ static bool initial_auto_connect;
 static bool initial_auto_down;
 static int initial_connect_timeout;
 
-/* Stub used to register test local PDN event handler used to invoke PDN event in UUT. */
-static int pdn_default_ctx_cb_reg_stub(pdn_event_handler_t cb, int num_of_calls)
+/* Ensure that CMock has a call instance for lte_lc_pdn_default_ctx_events_enable() before
+ * lte_net_if_init() is invoked during system startup.
+ */
+static int test_sysinit_stub_pdn_default_ctx_events_enable(void)
 {
-	pdn_event_handler_callback = cb;
+	__cmock_lte_lc_pdn_default_ctx_events_enable_IgnoreAndReturn(0);
+
 	return 0;
 }
+
+SYS_INIT(test_sysinit_stub_pdn_default_ctx_events_enable, PRE_KERNEL_1, 0);
 
 /* Stub used to register test local CEREG event handler used to invoke CEREG event in UUT. */
 static void lte_lc_register_handler_stub(lte_lc_evt_handler_t cb, int num_of_calls)
@@ -45,10 +48,11 @@ static void lte_lc_register_handler_stub(lte_lc_evt_handler_t cb, int num_of_cal
 }
 
 /* Stub used to report a non-default link MTU */
-static int pdn_dynamic_info_get_1000_stub(
-	uint8_t cid,  struct pdn_dynamic_info *pdn_info, int num_of_calls)
+static int lte_lc_pdn_dynamic_info_get_1000_stub(
+	uint8_t cid,  struct lte_lc_pdn_dynamic_info *pdn_info, int num_of_calls)
 {
 	pdn_info->ipv4_mtu = 1000;
+
 	return 0;
 }
 
@@ -65,7 +69,12 @@ static void bring_network_interface_up(void)
 void setUp(void)
 {
 	struct net_if *net_if = net_if_get_default();
-
+	struct lte_lc_evt pdn_evt = {
+		.type = LTE_LC_EVT_PDN,
+		.pdn = {
+			.type = LTE_LC_EVT_PDN_DEACTIVATED,
+		},
+	};
 	/* Set up dummy CEREG event struct. */
 	struct lte_lc_evt cereg_evt = {
 		.type = LTE_LC_EVT_NW_REG_STATUS,
@@ -86,9 +95,8 @@ void setUp(void)
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
 	__cmock_nrf_modem_lib_shutdown_IgnoreAndReturn(0);
 
-	/* Lose PDN and CEREG */
-	pdn_event_handler_callback(0, PDN_EVENT_DEACTIVATED, 0);
 	lte_lc_event_handler_callback(&cereg_evt);
+	lte_lc_event_handler_callback(&pdn_evt);
 
 	/* Remove IP addresses if any */
 	if (net_if_ipv6_get_global_addr(NET_ADDR_PREFERRED, &net_if)) {
@@ -160,27 +168,16 @@ void test_initial_settings_should_match_kconfig(void)
 	);
 }
 
-/* Expect pdn_default_ctx_cb_reg() to be called at SYS init. We need to expect this at SYS init
- * due to the mock being called before the test runner.
- */
-static int test_init_should_set_pdn_event_handler(void)
-{
-	__cmock_pdn_default_ctx_cb_reg_Stub(&pdn_default_ctx_cb_reg_stub);
-	__cmock_pdn_default_ctx_cb_reg_ExpectAnyArgsAndReturn(0);
-	return 0;
-}
-SYS_INIT(test_init_should_set_pdn_event_handler, POST_KERNEL, 0);
-
 /* Expect lte_lc_register_handler() to be called at SYS init. We need to expect this at SYS init
  * due to the mock being called before the test runner.
  */
-static int test_init_should_set_cereg_event_handler(void)
+static int test_init_should_set_lte_lc_event_handler(void)
 {
 	__cmock_lte_lc_register_handler_Stub(&lte_lc_register_handler_stub);
 	__cmock_lte_lc_register_handler_ExpectAnyArgs();
 	return 0;
 }
-SYS_INIT(test_init_should_set_cereg_event_handler, POST_KERNEL, 0);
+SYS_INIT(test_init_should_set_lte_lc_event_handler, POST_KERNEL, 0);
 
 /* Verify lte_connectivity_enable() */
 
@@ -250,7 +247,6 @@ void test_disable_should_return_error_if_shutdown_of_modem_fails(void)
 	TEST_ASSERT_EQUAL(-1, net_if_down(net_if_get_default()));
 }
 
-
 /* Verify nrf_modem_lib_netif_connect() */
 
 void test_connect_should_set_functional_mode(void)
@@ -300,6 +296,12 @@ void test_disconnect_should_return_error_if_setting_of_functional_mode_fails(voi
 void test_pdn_events_should_trigger_ipv4_address_changes(void)
 {
 	struct net_if *net_if = net_if_get_default();
+	struct lte_lc_evt lte_lc_evt = {
+		.type = LTE_LC_EVT_PDN,
+		.pdn = {
+			.type = LTE_LC_EVT_PDN_ACTIVATED,
+		},
+	};
 
 	/* Expect lte_connectivity to check for an IPv4 address when PDN is activated */
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
@@ -309,13 +311,15 @@ void test_pdn_events_should_trigger_ipv4_address_changes(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("192.9.201.39");
 
 	/* Activate PDN */
-	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
+	lte_lc_event_handler_callback(&lte_lc_evt);
 
 	/* Verify IPv4 was added */
 	TEST_ASSERT_TRUE(net_if_ipv4_get_global_addr(net_if, NET_ADDR_PREFERRED));
 
 	/* Dectivate PDN */
-	pdn_event_handler_callback(0, PDN_EVENT_DEACTIVATED, 0);
+	lte_lc_evt.pdn.type = LTE_LC_EVT_PDN_DEACTIVATED;
+
+	lte_lc_event_handler_callback(&lte_lc_evt);
 
 	/* Verify that IPv4 was removed */
 	TEST_ASSERT_FALSE(net_if_ipv4_get_global_addr(net_if, NET_ADDR_PREFERRED));
@@ -325,6 +329,12 @@ void test_pdn_events_should_trigger_ipv4_address_changes(void)
 void test_pdn_act_should_not_add_nonexistant_ipv4(void)
 {
 	struct net_if *net_if = net_if_get_default();
+	struct lte_lc_evt lte_lc_evt = {
+		.type = LTE_LC_EVT_PDN,
+		.pdn = {
+			.type = LTE_LC_EVT_PDN_ACTIVATED,
+		},
+	};
 
 	/* Expect lte_connectivity to check for an IPv4 address when PDN is activated */
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
@@ -334,7 +344,7 @@ void test_pdn_act_should_not_add_nonexistant_ipv4(void)
 	__cmock_lte_lc_func_mode_set_ExpectAndReturn(LTE_LC_FUNC_MODE_DEACTIVATE_LTE, 0);
 
 	/* Activate PDN */
-	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
+	lte_lc_event_handler_callback(&lte_lc_evt);
 
 	/* Verify IPv4 was not added */
 	TEST_ASSERT_FALSE(net_if_ipv4_get_global_addr(net_if, NET_ADDR_PREFERRED));
@@ -346,6 +356,12 @@ void test_pdn_act_should_not_add_nonexistant_ipv4(void)
 void test_pdn_events_should_trigger_ipv6_address_changes(void)
 {
 	struct net_if *net_if = net_if_get_default();
+	struct lte_lc_evt lte_lc_evt = {
+		.type = LTE_LC_EVT_PDN,
+		.pdn = {
+			.type = LTE_LC_EVT_PDN_IPV6_UP,
+		},
+	};
 
 	/* Expect lte_connectivity to check for an IPv6 address when PDN is activated */
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
@@ -356,23 +372,30 @@ void test_pdn_events_should_trigger_ipv6_address_changes(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("2001:8c0:5140:801:1b4d:4ce8:6eed:7b69");
 
 	/* Activate PDN */
-	pdn_event_handler_callback(0, PDN_EVENT_IPV6_UP, 0);
+	lte_lc_event_handler_callback(&lte_lc_evt);
 
 	/* Verify IPv6 was added */
 	TEST_ASSERT_TRUE(net_if_ipv6_get_global_addr(NET_ADDR_PREFERRED, &net_if));
 
 	/* Dectivate PDN */
-	pdn_event_handler_callback(0, PDN_EVENT_DEACTIVATED, 0);
+	lte_lc_evt.pdn.type = LTE_LC_EVT_PDN_IPV6_DOWN;
+
+	lte_lc_event_handler_callback(&lte_lc_evt);
 
 	/* Verify that IPv6 was removed */
 	TEST_ASSERT_FALSE(net_if_ipv6_get_global_addr(NET_ADDR_PREFERRED, &net_if));
 }
 
-
 /* Verify that PDN activation does not add an IPv6 address if none is provided */
 void test_pdn_act_should_not_add_nonexistant_ipv6(void)
 {
 	struct net_if *net_if = net_if_get_default();
+	struct lte_lc_evt lte_lc_evt = {
+		.type = LTE_LC_EVT_PDN,
+		.pdn = {
+			.type = LTE_LC_EVT_PDN_ACTIVATED,
+		},
+	};
 
 	/* Expect lte_connectivity to check for an IPv4 address when PDN is activated */
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
@@ -382,7 +405,7 @@ void test_pdn_act_should_not_add_nonexistant_ipv6(void)
 	__cmock_lte_lc_func_mode_set_ExpectAndReturn(LTE_LC_FUNC_MODE_DEACTIVATE_LTE, 0);
 
 	/* Activate PDN */
-	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
+	lte_lc_event_handler_callback(&lte_lc_evt);
 
 	/* Verify IPv6 was not added */
 	TEST_ASSERT_FALSE(net_if_ipv6_get_global_addr(NET_ADDR_PREFERRED, &net_if));
@@ -394,6 +417,12 @@ void test_pdn_act_should_not_add_nonexistant_ipv6(void)
 void test_pdn_act_without_cereg_should_not_activate_iface(void)
 {
 	struct net_if *net_if = net_if_get_default();
+	struct lte_lc_evt lte_lc_evt = {
+		.type = LTE_LC_EVT_PDN,
+		.pdn = {
+			.type = LTE_LC_EVT_PDN_ACTIVATED,
+		},
+	};
 
 	/* We do not care about modem init, initialization checks, or func mode changes for this
 	 * test. Set up some sane values, but ignore call counts.
@@ -413,7 +442,7 @@ void test_pdn_act_without_cereg_should_not_activate_iface(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("192.9.201.39");
 
 	/* Fire PDN active */
-	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
+	lte_lc_event_handler_callback(&lte_lc_evt);
 
 	/* Check that iface remains inactive */
 	TEST_ASSERT_TRUE(net_if_is_dormant(net_if));
@@ -423,11 +452,19 @@ void test_pdn_act_without_cereg_should_not_activate_iface(void)
 void test_pdn_act_with_cereg_should_activate_iface(void)
 {
 	struct net_if *net_if = net_if_get_default();
-
+	struct lte_lc_evt pdn_evt = {
+		.type = LTE_LC_EVT_PDN,
+		.pdn = {
+			.type = LTE_LC_EVT_PDN_ACTIVATED,
+		},
+	};
 	/* Set up dummy CEREG event struct. */
 	struct lte_lc_evt cereg_evt = {
 		.type = LTE_LC_EVT_NW_REG_STATUS
 	};
+
+	/* Network MTU is 1000 */
+	__cmock_lte_lc_pdn_dynamic_info_get_Stub(&lte_lc_pdn_dynamic_info_get_1000_stub);
 
 	/* We do not care about modem init, initialization checks, or func mode changes for this
 	 * test. Set up some sane values, but ignore call counts.
@@ -450,11 +487,8 @@ void test_pdn_act_with_cereg_should_activate_iface(void)
 			"AT+CGPADDR=0", "+CGPADDR: %*d,\"%46[.:0-9A-F]\",\"%46[:0-9A-F]\"", 1);
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("192.9.201.39");
 
-	/* Netowrk MTU is 1000 */
-	__cmock_pdn_dynamic_info_get_Stub(&pdn_dynamic_info_get_1000_stub);
-
 	/* Fire PDN active */
-	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
+	lte_lc_event_handler_callback(&pdn_evt);
 
 	/* Check that iface becomes active */
 	TEST_ASSERT_FALSE(net_if_is_dormant(net_if));
@@ -463,12 +497,10 @@ void test_pdn_act_with_cereg_should_activate_iface(void)
 	TEST_ASSERT_EQUAL(1000, net_if_get_mtu(net_if));
 }
 
-
 /* Verify that CEREG registration does not activate iface if PDN is inactive */
 void test_cereg_registered_without_pdn_should_not_activate_iface(void)
 {
 	struct net_if *net_if = net_if_get_default();
-
 	/* Set up dummy CEREG event struct. */
 	struct lte_lc_evt cereg_evt = {
 		.type = LTE_LC_EVT_NW_REG_STATUS
@@ -488,6 +520,7 @@ void test_cereg_registered_without_pdn_should_not_activate_iface(void)
 
 	/* Fire CEREG registered */
 	cereg_evt.nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
+
 	lte_lc_event_handler_callback(&cereg_evt);
 
 	/* Check that iface remains inactive */
@@ -498,7 +531,12 @@ void test_cereg_registered_without_pdn_should_not_activate_iface(void)
 void test_cereg_registered_home_with_pdn_should_activate_iface(void)
 {
 	struct net_if *net_if = net_if_get_default();
-
+	struct lte_lc_evt pdn_evt = {
+		.type = LTE_LC_EVT_PDN,
+		.pdn = {
+			.type = LTE_LC_EVT_PDN_ACTIVATED,
+		},
+	};
 	/* Set up dummy CEREG event struct. */
 	struct lte_lc_evt cereg_evt = {
 		.type = LTE_LC_EVT_NW_REG_STATUS
@@ -519,10 +557,10 @@ void test_cereg_registered_home_with_pdn_should_activate_iface(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("192.9.201.39");
 
 	/* MTU query fails */
-	__cmock_pdn_dynamic_info_get_IgnoreAndReturn(-1);
+	__cmock_lte_lc_pdn_dynamic_info_get_IgnoreAndReturn(-1);
 
 	/* Fire PDN active */
-	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
+	lte_lc_event_handler_callback(&pdn_evt);
 
 	/* Check that the iface is still dormant. */
 	TEST_ASSERT_TRUE(net_if_is_dormant(net_if));
@@ -542,7 +580,12 @@ void test_cereg_registered_home_with_pdn_should_activate_iface(void)
 void test_cereg_registered_roaming_with_pdn_should_activate_iface(void)
 {
 	struct net_if *net_if = net_if_get_default();
-
+	struct lte_lc_evt pdn_evt = {
+		.type = LTE_LC_EVT_PDN,
+		.pdn = {
+			.type = LTE_LC_EVT_PDN_ACTIVATED,
+		},
+	};
 	/* Set up dummy CEREG event struct. */
 	struct lte_lc_evt cereg_evt = {
 		.type = LTE_LC_EVT_NW_REG_STATUS
@@ -563,10 +606,10 @@ void test_cereg_registered_roaming_with_pdn_should_activate_iface(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("192.9.201.39");
 
 	/* MTU not set by function */
-	__cmock_pdn_dynamic_info_get_IgnoreAndReturn(0);
+	__cmock_lte_lc_pdn_dynamic_info_get_IgnoreAndReturn(-1);
 
 	/* Fire PDN active */
-	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
+	lte_lc_event_handler_callback(&pdn_evt);
 
 	/* Check that the iface is still dormant. */
 	TEST_ASSERT_TRUE(net_if_is_dormant(net_if));
@@ -612,12 +655,16 @@ void test_cereg_searching_should_not_activate_iface(void)
 	TEST_ASSERT_TRUE(net_if_is_dormant(net_if));
 }
 
-
 /* Verify that CEREG searching does not affect iface activation (from active to inactive) */
 void test_cereg_searching_should_not_deactivate_iface(void)
 {
 	struct net_if *net_if = net_if_get_default();
-
+	struct lte_lc_evt pdn_evt = {
+		.type = LTE_LC_EVT_PDN,
+		.pdn = {
+			.type = LTE_LC_EVT_PDN_ACTIVATED,
+		},
+	};
 	/* Set up dummy CEREG event struct. */
 	struct lte_lc_evt cereg_evt = {
 		.type = LTE_LC_EVT_NW_REG_STATUS
@@ -628,7 +675,7 @@ void test_cereg_searching_should_not_deactivate_iface(void)
 	 */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_pdn_dynamic_info_get_IgnoreAndReturn(0);
+	__cmock_lte_lc_pdn_dynamic_info_get_IgnoreAndReturn(0);
 
 	/* Take the iface admin-up */
 	net_if_up(net_if);
@@ -639,7 +686,7 @@ void test_cereg_searching_should_not_deactivate_iface(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("192.9.201.39");
 
 	/* Fire PDN active */
-	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
+	lte_lc_event_handler_callback(&pdn_evt);
 
 	/* Fire CEREG registered */
 	cereg_evt.nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
@@ -660,7 +707,12 @@ void test_cereg_searching_should_not_deactivate_iface(void)
 void test_cereg_unregistered_should_deactivate_iface(void)
 {
 	struct net_if *net_if = net_if_get_default();
-
+	struct lte_lc_evt pdn_evt = {
+		.type = LTE_LC_EVT_PDN,
+		.pdn = {
+			.type = LTE_LC_EVT_PDN_ACTIVATED,
+		},
+	};
 	/* Set up dummy CEREG event struct. */
 	struct lte_lc_evt cereg_evt = {
 		.type = LTE_LC_EVT_NW_REG_STATUS
@@ -671,7 +723,7 @@ void test_cereg_unregistered_should_deactivate_iface(void)
 	 */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_pdn_dynamic_info_get_IgnoreAndReturn(0);
+	__cmock_lte_lc_pdn_dynamic_info_get_IgnoreAndReturn(0);
 
 	/* Take the iface admin-up */
 	net_if_up(net_if);
@@ -682,7 +734,7 @@ void test_cereg_unregistered_should_deactivate_iface(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("192.9.201.39");
 
 	/* Fire PDN active */
-	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
+	lte_lc_event_handler_callback(&pdn_evt);
 
 	/* Fire CEREG registered */
 	cereg_evt.nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
@@ -703,7 +755,12 @@ void test_cereg_unregistered_should_deactivate_iface(void)
 void test_pdn_deact_should_deactivate_iface(void)
 {
 	struct net_if *net_if = net_if_get_default();
-
+	struct lte_lc_evt pdn_evt = {
+		.type = LTE_LC_EVT_PDN,
+		.pdn = {
+			.type = LTE_LC_EVT_PDN_ACTIVATED,
+		},
+	};
 	/* Set up dummy CEREG event struct. */
 	struct lte_lc_evt cereg_evt = {
 		.type = LTE_LC_EVT_NW_REG_STATUS
@@ -714,7 +771,7 @@ void test_pdn_deact_should_deactivate_iface(void)
 	 */
 	__cmock_nrf_modem_is_initialized_IgnoreAndReturn(1);
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
-	__cmock_pdn_dynamic_info_get_IgnoreAndReturn(0);
+	__cmock_lte_lc_pdn_dynamic_info_get_IgnoreAndReturn(0);
 
 	/* Take the iface admin-up */
 	net_if_up(net_if);
@@ -725,7 +782,7 @@ void test_pdn_deact_should_deactivate_iface(void)
 	__mock_nrf_modem_at_scanf_ReturnVarg_string("192.9.201.39");
 
 	/* Fire PDN active */
-	pdn_event_handler_callback(0, PDN_EVENT_ACTIVATED, 0);
+	lte_lc_event_handler_callback(&pdn_evt);
 
 	/* Fire CEREG registered */
 	cereg_evt.nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
@@ -735,7 +792,9 @@ void test_pdn_deact_should_deactivate_iface(void)
 	TEST_ASSERT_FALSE(net_if_is_dormant(net_if));
 
 	/* Fire PDN inactive */
-	pdn_event_handler_callback(0, PDN_EVENT_DEACTIVATED, 0);
+	pdn_evt.pdn.type = LTE_LC_EVT_PDN_DEACTIVATED;
+
+	lte_lc_event_handler_callback(&pdn_evt);
 
 	/* Check that iface becomes inactive */
 	TEST_ASSERT_TRUE(net_if_is_dormant(net_if));
