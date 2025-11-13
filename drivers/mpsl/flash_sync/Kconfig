@@ -42,7 +42,7 @@ config SOC_FLASH_NRF_RADIO_SYNC_MPSL_NORMAL_PRIORITY_TIMEOUT_US
 	int "Timeout for normal priority MPSL request [us]"
 	depends on SOC_FLASH_NRF_RADIO_SYNC_MPSL
 	range 0 1000000
-	default 30000
+	default 10000
 	help
 	  The flash synchronization mechanism relies on MPSL timeslots.
 	  Initially the MPSL timeslot is requested with normal priority. After
