@@ -472,13 +472,13 @@ Bluetooth mesh samples
   * Added support for the Scene Server model.
   * Updated to demonstrate the use of a Sensor Server model to report additional useful information about the device.
 
-* :ref:`bluetooth_mesh_sensor_server` and :ref:`bluetooth_mesh_sensor_client` samples:
+* :ref:`bluetooth_mesh_sensor_server` and :ref:`bluetooth_mesh_nlc_hvac_integration` samples:
 
   * Added:
 
     * Support for motion threshold as a setting for the presence detection.
     * Support for ambient light level sensor.
-    * Shell support to :ref:`bluetooth_mesh_sensor_client` sample.
+    * Shell support to :ref:`bluetooth_mesh_nlc_hvac_integration` sample.
 
 * :ref:`bluetooth_mesh_sensor_server`, :ref:`bluetooth_mesh_light_lc` and :ref:`bluetooth_mesh_light_dim` samples:
 

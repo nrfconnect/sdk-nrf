@@ -673,7 +673,7 @@ Bluetooth Mesh samples
 
   * Support for nRF54L10 in the following samples:
 
-    * :ref:`bluetooth_mesh_sensor_client`
+    * :ref:`bluetooth_mesh_nlc_hvac_integration`
     * :ref:`bluetooth_mesh_sensor_server`
     * :ref:`bluetooth_ble_peripheral_lbs_coex`
     * :ref:`bt_mesh_chat`
@@ -687,7 +687,7 @@ Bluetooth Mesh samples
 
   * Support for nRF54L05 in the following samples:
 
-    * :ref:`bluetooth_mesh_sensor_client`
+    * :ref:`bluetooth_mesh_nlc_hvac_integration`
     * :ref:`bluetooth_mesh_sensor_server`
     * :ref:`bluetooth_ble_peripheral_lbs_coex`
     * :ref:`bt_mesh_chat`

@@ -464,7 +464,7 @@ Bluetooth mesh samples
   * :ref:`bluetooth_ble_peripheral_lbs_coex`
   * :ref:`bt_mesh_chat`
   * :ref:`bluetooth_mesh_light`
-  * :ref:`bluetooth_mesh_sensor_client`
+  * :ref:`bluetooth_mesh_nlc_hvac_integration`
   * :ref:`bluetooth_mesh_sensor_server`
   * :ref:`bluetooth_mesh_light_lc`
 

@@ -404,7 +404,7 @@ Bluetooth mesh samples
     * Ability to persistently store the sensor type setting.
     * A sensor descriptor of the temperature sensor.
 
-* :ref:`bluetooth_mesh_sensor_client` sample:
+* :ref:`bluetooth_mesh_nlc_hvac_integration` sample:
 
   * Added the ability to use buttons to send ``get`` and ``set`` messages for a sensor setting, as well as a ``get`` message for a sensor descriptor.
 

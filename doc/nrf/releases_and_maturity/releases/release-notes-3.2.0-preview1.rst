@@ -313,7 +313,7 @@ Bluetooth Mesh samples
 
   * Added support for external flash memory for the ``nrf52840dk/nrf52840`` as the secondary partition for the DFU process.
 
-* :ref:`bluetooth_mesh_sensor_client` sample:
+* :ref:`bluetooth_mesh_nlc_hvac_integration` sample:
 
   * Updated:
 
@@ -323,7 +323,7 @@ Bluetooth Mesh samples
       * :ref:`bluetooth_mesh_light_dim`
       * :ref:`bluetooth_mesh_light_lc`
       * :ref:`bluetooth_mesh_sensor_server`
-      * :ref:`bluetooth_mesh_sensor_client`
+      * :ref:`bluetooth_mesh_nlc_hvac_integration`
 
 Bluetooth Fast Pair samples
 ---------------------------

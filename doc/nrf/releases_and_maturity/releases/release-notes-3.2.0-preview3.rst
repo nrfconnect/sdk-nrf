@@ -387,7 +387,7 @@ Bluetooth Mesh samples
   * Updated the :makevar:`FILE_SUFFIX` make variable to use more descriptive suffixes for external flash configurations.
     The new suffixes are ``_dfu_ext_flash`` for external flash DFU storage and ``_ext_flash_settings`` for external flash settings storage.
 
-* :ref:`bluetooth_mesh_sensor_client` sample:
+* :ref:`bluetooth_mesh_nlc_hvac_integration` sample:
 
   * Added polling toggle to **Button 1** (**Button 0** on nRF54 DKs) to start/stop the periodic Sensor Get loop, ensuring the functionality is available on all supported devices including single-button hardware.
 
@@ -399,7 +399,7 @@ Bluetooth Mesh samples
       * :ref:`bluetooth_mesh_light_dim`
       * :ref:`bluetooth_mesh_light_lc`
       * :ref:`bluetooth_mesh_sensor_server`
-      * :ref:`bluetooth_mesh_sensor_client`
+      * :ref:`bluetooth_mesh_nlc_hvac_integration`
 
     * Button functions.
       Assignments are shifted down one index to accommodate the new polling toggle.

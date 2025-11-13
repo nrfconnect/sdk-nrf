@@ -3299,9 +3299,9 @@ NCSDK-26403: Point-to-point DFU procedure :guilabel:`Test and Confirm` with eras
 
 .. rst-class:: v2-4-3 v2-4-2 v2-4-1 v2-4-0
 
-NCSDK-21590: :ref:`bluetooth_mesh_sensor_client` sample does not compile for nRF52832
-  Adding mesh shell support for the :ref:`bluetooth_mesh_sensor_client` sample increases the need for RAM.
-  The :ref:`bluetooth_mesh_sensor_client` sample cannot compile because of RAM shortage.
+NCSDK-21590: :ref:`bluetooth_mesh_nlc_hvac_integration` sample does not compile for nRF52832
+  Adding mesh shell support for the :ref:`bluetooth_mesh_nlc_hvac_integration` sample increases the need for RAM.
+  The :ref:`bluetooth_mesh_nlc_hvac_integration` sample cannot compile because of RAM shortage.
 
   **Affected platforms:** nRF52832
 
