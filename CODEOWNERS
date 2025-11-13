@@ -884,6 +884,7 @@
 /tests/lib/hw_id/                         @nrfconnect/ncs-cia
 /tests/lib/location/                      @nrfconnect/ncs-modem-tre
 /tests/lib/lte_lc_api/                    @nrfconnect/ncs-modem-tre
+/tests/lib/lte_lc_pdn/                    @nrfconnect/ncs-modem-tre @nrfconnect/ncs-cia
 /tests/lib/modem_battery/                 @nrfconnect/ncs-modem
 /tests/lib/modem_info/                    @nrfconnect/ncs-cia
 /tests/lib/modem_jwt/                     @nrfconnect/ncs-iot-oulu
