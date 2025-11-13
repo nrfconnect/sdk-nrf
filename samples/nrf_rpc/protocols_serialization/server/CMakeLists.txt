@@ -8,8 +8,8 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 # manually enable NRF54L_CONFIGURATION_56_ENABLE until nrfx 4.0.0 is integrated
-if (CONFIG_SOC_SERIES_NRF54LX)
-  target_compile_definitions(nrf-802154-driver-interface INTERFACE NRF54L_CONFIGURATION_56_ENABLE=1)
+if ((CONFIG_SOC_SERIES_NRF54LX) AND (CONFIG_NRF_802154_SOURCE_INTERNAL))
+    target_compile_definitions(nrf-802154-driver-interface INTERFACE NRF54L_CONFIGURATION_56_ENABLE=1)
 endif()
 
 # # Do not include obfuscated symbols in case of building from sources
