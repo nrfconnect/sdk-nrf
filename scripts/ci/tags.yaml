@@ -154,6 +154,7 @@ ci_samples_wifi:
     - nrf/subsys/net/lib/hostap_crypto/
     - nrf/subsys/net/lib/nrf70_fw_ext/
     - nrf/subsys/net/openthread/
+    - nrf/subsys/nrf_security/
     - nrfxlib/nrf_wifi/
     - zephyr/drivers/wifi/
     - zephyr/modules/hostap/
