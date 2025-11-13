@@ -219,7 +219,7 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.bluetooth.mesh.sensor_client
+    - sample.bluetooth.mesh.sensor_observer
   platforms:
     - nrf21540dk/nrf52840
     - nrf52840dk/nrf52840

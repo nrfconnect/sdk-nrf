@@ -2,7 +2,7 @@ sample:
   description: Bluetooth Mesh sensor observer sample
   name: Bluetooth Mesh sensor observer
 tests:
-  sample.bluetooth.mesh.sensor_client:
+  sample.bluetooth.mesh.nlc_sensor_observer:
     sysbuild: true
     build_only: true
     integration_platforms:
@@ -23,7 +23,7 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
-  sample.bluetooth.mesh.sensor_client.settings_ext_flash:
+  sample.bluetooth.mesh.nlc_sensor_observer.settings_ext_flash:
     sysbuild: true
     build_only: true
     integration_platforms:

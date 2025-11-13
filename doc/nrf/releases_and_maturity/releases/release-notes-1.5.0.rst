@@ -1004,7 +1004,7 @@ Applications and samples
   * Renamed the following samples:
 
     * Bluetooth: Mesh light control sample to :ref:`bluetooth_mesh_light_lc`.
-    * Bluetooth: Mesh sensor client to :ref:`bluetooth_mesh_sensor_client`.
+    * Bluetooth: Mesh sensor client to :ref:`bluetooth_mesh_nlc_sensor_observer`.
     * Bluetooth: Mesh sensor server to :ref:`bluetooth_mesh_sensor_server`.
 * Thread:
 

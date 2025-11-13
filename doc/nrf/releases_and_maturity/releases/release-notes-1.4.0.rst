@@ -278,7 +278,7 @@ Bluetooth Mesh
 * Added:
 
   * :ref:`bluetooth_mesh_light_lc` sample - This sample demonstrates how to set up a light control Mesh server model application and control a dimmable LED with the Bluetooth Mesh, using the Generic OnOff models.
-  * :ref:`bluetooth_mesh_sensor_client` - This sample demonstrates how to set up a basic Bluetooth Mesh sensor client model application that gets sensor data from one sensor server model.
+  * :ref:`bluetooth_mesh_nlc_sensor_observer` - This sample demonstrates how to set up a basic Bluetooth Mesh sensor client model application that gets sensor data from one sensor server model.
   * :ref:`bluetooth_mesh_sensor_server` - This sample demonstrates how to set up a basic Mesh sensor server model application that provides sensor data to one Mesh sensor client model.
   * :ref:`bt_mesh_time_readme` - These models allow network-wide time and date synchronization.
   * :ref:`bt_mesh_light_ctl_readme` - These models allow remote control and configuration of CTLs on a mesh device.
