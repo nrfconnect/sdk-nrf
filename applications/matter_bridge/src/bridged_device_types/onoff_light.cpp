@@ -16,18 +16,11 @@ namespace
 {
 DESCRIPTOR_CLUSTER_ATTRIBUTES(descriptorAttrs);
 BRIDGED_DEVICE_BASIC_INFORMATION_CLUSTER_ATTRIBUTES(bridgedDeviceBasicAttrs);
-IDENTIFY_CLUSTER_ATTRIBUTES(identifyAttrs);
 }; /* namespace */
 
 using namespace ::chip;
 using namespace ::chip::app;
 using namespace Nrf;
-
-constexpr CommandId identifyIncomingCommands[] = {
-	app::Clusters::Identify::Commands::Identify::Id,
-	app::Clusters::Identify::Commands::TriggerEffect::Id,
-	kInvalidCommandId,
-};
 
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(onOffAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(Clusters::OnOff::Attributes::OnOff::Id, BOOLEAN, 1, 0),
@@ -80,8 +73,7 @@ DECLARE_DYNAMIC_CLUSTER(Clusters::OnOff::Id, onOffAttrs, ZAP_CLUSTER_MASK(SERVER
 				groupsGeneratedCommands),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs,
 				ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
-	DECLARE_DYNAMIC_CLUSTER(Clusters::Identify::Id, identifyAttrs, ZAP_CLUSTER_MASK(SERVER),
-				identifyIncomingCommands, nullptr) DECLARE_DYNAMIC_CLUSTER_LIST_END;
+	DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 DECLARE_DYNAMIC_ENDPOINT(bridgedLightEndpoint, bridgedLightClusters);
 
