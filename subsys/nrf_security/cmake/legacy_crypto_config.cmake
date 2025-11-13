@@ -222,10 +222,6 @@ kconfig_check_and_set_base_depends(MBEDTLS_ECDSA_DETERMINISTIC
   PSA_WANT_ALG_HMAC_DRBG
 )
 
-Kconfig_check_and_set_base_depends(MBEDTLS_ECP_DP_SECP192R1_ENABLED
-  PSA_WANT_ECC_SECP_R1_192
-)
-
 Kconfig_check_and_set_base_depends(MBEDTLS_ECP_DP_SECP224R1_ENABLED
   PSA_WANT_ECC_SECP_R1_224
 )
@@ -240,10 +236,6 @@ Kconfig_check_and_set_base_depends(MBEDTLS_ECP_DP_SECP384R1_ENABLED
 
 Kconfig_check_and_set_base_depends(MBEDTLS_ECP_DP_SECP521R1_ENABLED
   PSA_WANT_ECC_SECP_R1_521
-)
-
-Kconfig_check_and_set_base_depends(MBEDTLS_ECP_DP_SECP192K1_ENABLED
-  PSA_WANT_ECC_SECP_K1_192
 )
 
 Kconfig_check_and_set_base_depends(MBEDTLS_ECP_DP_SECP224K1_ENABLED
