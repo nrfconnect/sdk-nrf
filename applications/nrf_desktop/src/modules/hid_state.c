@@ -74,21 +74,18 @@ struct hid_state {
 
 static struct hid_state state;
 
-
-static struct report_state *get_report_state(struct subscriber *subscriber,
-					     uint8_t report_id)
+static size_t get_input_report_idx(uint8_t report_id)
 {
-	BUILD_ASSERT(ARRAY_SIZE(input_reports) == ARRAY_SIZE(subscriber->state));
-	__ASSERT_NO_MSG(subscriber);
-
 	for (size_t i = 0; i < ARRAY_SIZE(input_reports); i++) {
 		if (input_reports[i] == report_id) {
-			return &subscriber->state[i];
+			return i;
 		}
 	}
 
-	LOG_ERR("No state for report ID:0x%" PRIx8, report_id);
-	return NULL;
+	/* Should not happen. */
+	LOG_ERR("No index for input report ID:0x%" PRIx8, report_id);
+	__ASSERT_NO_MSG(false);
+	return 0;
 }
 
 static size_t get_output_report_idx(uint8_t report_id)
@@ -100,8 +97,18 @@ static size_t get_output_report_idx(uint8_t report_id)
 	}
 
 	/* Should not happen. */
+	LOG_ERR("No index for output report ID:0x%" PRIx8, report_id);
 	__ASSERT_NO_MSG(false);
 	return 0;
+}
+
+static struct report_state *get_report_state(struct subscriber *subscriber,
+					     uint8_t report_id)
+{
+	BUILD_ASSERT(ARRAY_SIZE(input_reports) == ARRAY_SIZE(subscriber->state));
+	__ASSERT_NO_MSG(subscriber);
+
+	return &subscriber->state[get_input_report_idx(report_id)];
 }
 
 static struct subscriber *get_subscriber(const void *subscriber_id)
@@ -120,14 +127,7 @@ static struct provider *get_provider(uint8_t report_id)
 {
 	BUILD_ASSERT(ARRAY_SIZE(input_reports) == ARRAY_SIZE(state.provider));
 
-	for (size_t i = 0; i < ARRAY_SIZE(input_reports); i++) {
-		if (input_reports[i] == report_id) {
-			return &state.provider[i];
-		}
-	}
-
-	LOG_ERR("No provider for report ID:0x%" PRIx8, report_id);
-	return NULL;
+	return &state.provider[get_input_report_idx(report_id)];
 }
 
 static bool report_send(struct report_state *rs,
@@ -245,7 +245,6 @@ static void report_issued(const void *subscriber_id, uint8_t report_id, bool err
 	subscriber->report_cnt--;
 
 	struct report_state *rs = get_report_state(subscriber, report_id);
-	__ASSERT_NO_MSG(rs);
 
 	if (rs->state != STATE_DISCONNECTED) {
 		__ASSERT_NO_MSG(rs->cnt > 0);
@@ -356,15 +355,12 @@ static void connect(const void *subscriber_id, uint8_t report_id)
 	}
 
 	struct report_state *rs = get_report_state(subscriber, report_id);
-	__ASSERT_NO_MSG(rs);
 
 	rs->subscriber = subscriber;
 	rs->state = STATE_CONNECTED_IDLE;
 	rs->report_id = report_id;
 
 	struct provider *provider = get_provider(report_id);
-
-	__ASSERT_NO_MSG(provider);
 
 	rs->provider = provider;
 
@@ -385,7 +381,6 @@ static void disconnect(const void *subscriber_id, uint8_t report_id)
 	}
 
 	struct report_state *rs = get_report_state(subscriber, report_id);
-	__ASSERT_NO_MSG(rs);
 
 	rs->subscriber = NULL;
 	rs->state = STATE_DISCONNECTED;
@@ -591,7 +586,7 @@ static int hid_state_report_trigger(uint8_t report_id)
 	int err = 0;
 	struct provider *provider = get_provider(report_id);
 
-	__ASSERT_NO_MSG(provider && provider->api);
+	__ASSERT_NO_MSG(provider->api);
 
 	if (provider->linked_rs) {
 		if (!report_send(NULL, provider, false)) {
@@ -612,7 +607,7 @@ static bool handle_hid_report_provider_event(struct hid_report_provider_event *e
 	};
 	struct provider *provider = get_provider(event->report_id);
 
-	__ASSERT_NO_MSG(provider && !provider->api);
+	__ASSERT_NO_MSG(!provider->api);
 
 	__ASSERT_NO_MSG(event->provider_api);
 	__ASSERT_NO_MSG(event->provider_api->send_report);
@@ -628,7 +623,6 @@ static bool handle_hid_report_provider_event(struct hid_report_provider_event *e
 	if (state.active_subscriber) {
 		struct report_state *rs = get_report_state(state.active_subscriber,
 							   event->report_id);
-		__ASSERT_NO_MSG(rs);
 
 		if (rs->provider == provider) {
 			link_provider_to_rs(provider, rs);
