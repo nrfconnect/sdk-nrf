@@ -708,6 +708,7 @@ Flash drivers
 
 * Added a Kconfig option to configure timeout for normal priority MPSL request (:kconfig:option:`CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL_NORMAL_PRIORITY_TIMEOUT_US`) in MPSL flash synchronization driver (:file:`nrf/drivers/mpsl/flash_sync/flash_sync_mpsl.c`).
   After the timeout specified by this Kconfig option, a higher timeslot priority is used to increase the priority of the flash operation.
+  The default timeout has been reduced from 30 milliseconds to 10 milliseconds to speed up non-volatile memory operations.
 
 Libraries
 =========
