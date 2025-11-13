@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/audio/dmic.h>
 #include <zephyr/ztest.h>
+#include "nrfx_pdm.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(pdm_instances);
@@ -39,6 +40,11 @@ static const struct device *const devices[] = {
 	DEVS_FOR_DT_COMPAT(nordic_nrf_pdm)
 #endif
 };
+
+/* Generate a list of device's addresses for all instances of the "compat" */
+#define DEVICE_DT_REG_ADDR_AND_COMMA(node_id) (NRF_PDM_Type *)DT_REG_ADDR(node_id),
+#define DEV_REGS_FOR_DT_COMPAT(compat) \
+	DT_FOREACH_STATUS_OKAY(compat, DEVICE_DT_REG_ADDR_AND_COMMA)
 
 typedef void (*test_func_t)(const struct device *dev);
 typedef bool (*capability_func_t)(const struct device *dev);
@@ -149,6 +155,48 @@ static bool test_get_any_data_capable(const struct device *dev)
 ZTEST(pdm_instances, test_get_any_data)
 {
 	test_all_instances(test_get_any_data_instance, test_get_any_data_capable);
+}
+
+/* Check that following issue is not observed:
+ * Subsequent PDM PRESCALER value not updated
+ * after the first time the register is written
+ * while the PDM is stopped.
+ */
+ZTEST(pdm_instances, test_prescaler_can_be_changed_when_pdm_is_stopped)
+{
+#if defined(CONFIG_SOC_NRF54H20)
+	/* On nrf54H20 there is no PRESCALER register */
+	ztest_test_skip();
+#else
+	volatile NRF_PDM_Type *p_reg[] = {
+#if defined(CONFIG_AUDIO_DMIC_NRFX_PDM)
+		DEV_REGS_FOR_DT_COMPAT(nordic_nrf_pdm)
+#endif /* defined(CONFIG_AUDIO_DMIC_NRFX_PDM) */
+	};
+
+	zassert_true(ARRAY_SIZE(devices) > 0, "No device found");
+	for (int i = 0; i < ARRAY_SIZE(devices); i++) {
+		TC_PRINT("Instance %u: Testing %s at %p\n",
+			i + 1, devices[i]->name, p_reg[i]);
+
+		/* Stop PDM */
+		p_reg[i]->TASKS_STOP = 1;
+
+		TC_PRINT("prescaler =");
+		/* Check that PRESCALER can be modified multiple times */
+		for (uint32_t val = PDM_PRESCALER_DIVISOR_Min;
+			val <= PDM_PRESCALER_DIVISOR_Max; val++) {
+
+			TC_PRINT(" %u,", val);
+			p_reg[i]->PRESCALER = val;
+			zassert_equal(p_reg[i]->PRESCALER, val);
+		}
+		TC_PRINT("\n");
+
+		/* Allow logs to be printed. */
+		k_sleep(K_MSEC(100));
+	}
+#endif /* defined(CONFIG_SOC_NRF54H20) */
 }
 
 static void *test_setup(void)
