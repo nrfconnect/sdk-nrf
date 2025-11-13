@@ -31,7 +31,8 @@ enum state {
 	STATE_CONNECTED_BUSY	/* Connected, report is generated. */
 };
 
-#define SUBSCRIBER_COUNT CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT
+#define SUBSCRIBER_COUNT		CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT
+#define SUBSCRIBER_PRIORITY_UNUSED	0
 
 #define OUTPUT_REPORT_STATE_COUNT (ARRAY_SIZE(output_reports))
 #define INPUT_REPORT_STATE_COUNT  (ARRAY_SIZE(input_reports))
@@ -68,7 +69,7 @@ struct subscriber {
 struct hid_state {
 	struct provider provider[INPUT_REPORT_STATE_COUNT];
 	struct subscriber subscriber[SUBSCRIBER_COUNT];
-	struct subscriber *active_subscriber;
+	uint8_t active_subscriber_priority;
 };
 
 static struct hid_state state;
@@ -108,6 +109,31 @@ static struct report_state *get_report_state(struct subscriber *subscriber,
 	__ASSERT_NO_MSG(subscriber);
 
 	return &subscriber->state[get_input_report_idx(report_id)];
+}
+
+static struct report_state *get_active_report_state(uint8_t report_id)
+{
+	if (state.active_subscriber_priority == SUBSCRIBER_PRIORITY_UNUSED) {
+		return NULL;
+	}
+
+	size_t report_idx = get_input_report_idx(report_id);
+
+	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
+		struct subscriber *sub = &state.subscriber[i];
+
+		if (sub->priority == state.active_subscriber_priority) {
+			__ASSERT_NO_MSG(sub->id);
+			struct report_state *rs = &sub->state[report_idx];
+
+			__ASSERT_NO_MSG(!rs->provider || !rs->provider->api ||
+					(rs->provider->linked_rs == rs));
+
+			return rs->provider ? rs : NULL;
+		}
+	}
+
+	return NULL;
 }
 
 static struct subscriber *get_subscriber(const void *subscriber_id)
@@ -207,6 +233,8 @@ static void link_provider_to_rs(struct provider *provider, struct report_state *
 		return;
 	}
 
+	__ASSERT_NO_MSG(state.active_subscriber_priority != SUBSCRIBER_PRIORITY_UNUSED);
+
 	__ASSERT_NO_MSG(!rs || rs->subscriber);
 	const struct subscriber_conn_state cs = {
 		.subscriber = (rs ? rs->subscriber->id : NULL),
@@ -223,10 +251,12 @@ static void link_provider_to_rs(struct provider *provider, struct report_state *
 	provider->api->connection_state_changed(provider->report_id, &cs);
 
 	if (rs) {
+		__ASSERT_NO_MSG(rs->subscriber->priority == state.active_subscriber_priority);
 		/* Refresh state of the newly linked subscriber. */
 		(void)report_send(rs, NULL, true);
 	} else if (prev_rs->state != STATE_DISCONNECTED) {
 		/* Provide an empty HID report to the unlinked subscriber to clear state. */
+		__ASSERT_NO_MSG(prev_rs->subscriber->priority == state.active_subscriber_priority);
 		(void)report_send(prev_rs, NULL, true);
 	}
 }
@@ -318,7 +348,8 @@ static void broadcast_keyboard_leds(void)
 	BUILD_ASSERT(HID_KEYBOARD_LEDS_COUNT <= CHAR_BIT);
 	BUILD_ASSERT(REPORT_SIZE_KEYBOARD_LEDS == 1);
 
-	const struct subscriber *sub = state.active_subscriber;
+	const struct report_state *active_rs = get_active_report_state(REPORT_ID_KEYBOARD_KEYS);
+	const struct subscriber *sub = active_rs ? active_rs->subscriber : NULL;
 	size_t idx = get_output_report_idx(REPORT_ID_KEYBOARD_LEDS);
 
 	static uint8_t displayed_leds_state;
@@ -362,9 +393,11 @@ static void connect(const void *subscriber_id, uint8_t report_id)
 
 	rs->provider = provider;
 
-	if (subscriber == state.active_subscriber) {
+	if (subscriber->priority == state.active_subscriber_priority) {
 		link_provider_to_rs(provider, rs);
 	}
+
+	update_output_report_state();
 }
 
 static void disconnect(const void *subscriber_id, uint8_t report_id)
@@ -390,9 +423,10 @@ static void disconnect(const void *subscriber_id, uint8_t report_id)
 
 	__ASSERT_NO_MSG(!provider->api || provider->linked_rs);
 	if (provider->linked_rs == rs) {
-		__ASSERT_NO_MSG(subscriber == state.active_subscriber);
 		link_provider_to_rs(provider, NULL);
 	}
+
+	update_output_report_state();
 }
 
 static struct subscriber *find_empty_subscriber_slot(void)
@@ -423,16 +457,46 @@ static void unlink_providers(struct subscriber *subscriber)
 	}
 }
 
+static void update_active_subscriber_priority(uint8_t new_priority)
+{
+	uint8_t old_priority = state.active_subscriber_priority;
+
+	if (old_priority != SUBSCRIBER_PRIORITY_UNUSED) {
+		/* Unlink providers from previously linked subscribers. */
+		for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
+			struct subscriber *s = &state.subscriber[i];
+
+			if (s->priority == old_priority) {
+				__ASSERT_NO_MSG(s->id);
+				unlink_providers(s);
+			}
+		}
+	}
+
+	state.active_subscriber_priority = new_priority;
+
+	if (new_priority != SUBSCRIBER_PRIORITY_UNUSED) {
+		/* Link providers to subscribers that become active. */
+		for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
+			struct subscriber *s = &state.subscriber[i];
+
+			if (s->priority == new_priority) {
+				__ASSERT_NO_MSG(s->id);
+				link_providers(s);
+			}
+		}
+	}
+}
+
 static void connect_subscriber(const void *subscriber_id, uint8_t priority,
 			       uint8_t pipeline_size, uint8_t report_max)
 {
 	__ASSERT_NO_MSG(subscriber_id);
-	__ASSERT_NO_MSG(priority > 0);
+	__ASSERT_NO_MSG(priority != SUBSCRIBER_PRIORITY_UNUSED);
 	__ASSERT_NO_MSG(pipeline_size > 0);
 	__ASSERT_NO_MSG(report_max > 0);
 
 	struct subscriber *sub = find_empty_subscriber_slot();
-	struct subscriber *prev_sub = state.active_subscriber;
 
 	sub->id = subscriber_id;
 	sub->priority = priority;
@@ -440,41 +504,33 @@ static void connect_subscriber(const void *subscriber_id, uint8_t priority,
 	sub->report_max = report_max;
 	sub->report_cnt = 0;
 
-	/* Select new active subscriber if needed. */
-	if (!state.active_subscriber) {
-		state.active_subscriber = sub;
-	} else if (state.active_subscriber->priority <= sub->priority) {
-		__ASSERT_NO_MSG(state.active_subscriber->priority !=
-				sub->priority);
-		unlink_providers(state.active_subscriber);
-		state.active_subscriber = sub;
-	}
-
-	if (prev_sub != state.active_subscriber) {
+	if (sub->priority > state.active_subscriber_priority) {
+		update_active_subscriber_priority(sub->priority);
 		update_output_report_state();
+	} else {
+		/* No need to do anything. The new HID subscriber has not yet subscribed for any HID
+		 * input report.
+		 */
 	}
 
 	LOG_INF("Subscriber %p connected", subscriber_id);
 }
 
-static struct subscriber *find_next_subscriber(struct subscriber *prev_sub)
+static uint8_t get_active_sub_priority(const struct subscriber *dc_sub)
 {
-	struct subscriber *next_sub = NULL;
+	uint8_t active_sub_prio = SUBSCRIBER_PRIORITY_UNUSED;
 
 	for (size_t i = 0; i < ARRAY_SIZE(state.subscriber); i++) {
-		struct subscriber *sub = &state.subscriber[i];
+		const struct subscriber *s = &state.subscriber[i];
 
-		if (!sub->id || (sub == prev_sub)) {
-			continue;
-		}
-
-		if (!next_sub || (next_sub->priority <= sub->priority)) {
-			__ASSERT_NO_MSG(!next_sub || (next_sub->priority != sub->priority));
-			next_sub = sub;
+		/* The function omits the subscriber that is about to disconnect. */
+		if ((s->priority > active_sub_prio) && (s != dc_sub)) {
+			__ASSERT_NO_MSG(s->id);
+			active_sub_prio = s->priority;
 		}
 	}
 
-	return next_sub;
+	return active_sub_prio;
 }
 
 static void disconnect_subscriber(const void *subscriber_id)
@@ -487,13 +543,16 @@ static void disconnect_subscriber(const void *subscriber_id)
 		return;
 	}
 
-	if (sub == state.active_subscriber) {
-		unlink_providers(sub);
+	if (sub->priority == state.active_subscriber_priority) {
+		uint8_t new_priority = get_active_sub_priority(sub);
 
-		state.active_subscriber = find_next_subscriber(sub);
-
-		if (state.active_subscriber) {
-			link_providers(state.active_subscriber);
+		if (new_priority != state.active_subscriber_priority) {
+			update_active_subscriber_priority(new_priority);
+		} else {
+			/* Other HID subscribers with the same priority are not allowed to
+			 * simultaneously subscribe for the same HID input report.
+			 */
+			unlink_providers(sub);
 		}
 
 		update_output_report_state();
@@ -618,13 +677,12 @@ static bool handle_hid_report_provider_event(struct hid_report_provider_event *e
 	__ASSERT_NO_MSG(!event->hid_state_api);
 	event->hid_state_api = &hid_state_api;
 
-	if (state.active_subscriber) {
-		struct report_state *rs = get_report_state(state.active_subscriber,
-							   event->report_id);
+	struct report_state *rs = get_active_report_state(event->report_id);
 
-		if (rs->provider == provider) {
-			link_provider_to_rs(provider, rs);
-		}
+	if (rs) {
+		link_provider_to_rs(provider, rs);
+		/* Ensure that provider links to the subscriber. */
+		__ASSERT_NO_MSG(provider->linked_rs == rs);
 	}
 
 	return false;
