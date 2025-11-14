@@ -188,16 +188,7 @@ Bluetooth Mesh
 DECT NR+
 --------
 
-* :ref:`dect_shell_application` sample:
-
-  * Added:
-
-    * ``dect perf`` command client: LBT (Listen Before Talk) support with configurable LBT period and busy threshold.
-
-  * Updated:
-
-    * PCC and PDC printings improved to show SNR and RSSI-2 values with actual dB/dBm resolutions.
-    * ``dect perf`` command: improved operation schedulings to avoid scheduling conflicts and fix to TX the results in server side.
+|no_changes_yet_note|
 
 Enhanced ShockBurst (ESB)
 -------------------------
@@ -548,7 +539,17 @@ Debug samples
 DECT NR+ samples
 ----------------
 
-|no_changes_yet_note|
+* :ref:`dect_shell_application` sample:
+
+  * Added:
+
+    * ``dect perf`` command client: LBT (Listen Before Talk) support with configurable LBT period and busy threshold.
+
+  * Updated:
+
+    * PCC and PDC printings improved to show SNR and RSSI-2 values with actual dB/dBm resolutions.
+    * ``dect perf`` command: improved operation schedulings to avoid scheduling conflicts and fix to TX the results in server side.
+    * ``dect ping`` command: improved operation schedulings to avoid scheduling conflicts.
 
 DFU samples
 -----------

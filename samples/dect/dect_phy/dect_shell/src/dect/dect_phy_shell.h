@@ -221,9 +221,18 @@ struct dect_phy_common_op_event_msgq_item {
 #define DECT_PHY_PERF_SERVER_RX_HANDLE_IN_RANGE(x)                                                 \
 	(x >= DECT_PHY_PERF_SERVER_RX_HANDLE_START && x <= DECT_PHY_PERF_SERVER_RX_HANDLE_END)
 
-#define DECT_PHY_PING_CLIENT_TX_HANDLE	  13000 /* For sending ping req */
-#define DECT_PHY_PING_CLIENT_RE_TX_HANDLE 13001 /* For re-sending ping req */
-#define DECT_PHY_PING_CLIENT_RX_HANDLE	  13500 /* For receiving ping resp */
+/* For sending ping req */
+#define DECT_PHY_PING_CLIENT_TX_HANDLE_START 13000
+#define DECT_PHY_PING_CLIENT_TX_HANDLE_END   13049
+#define DECT_PHY_PING_CLIENT_TX_HANDLE_IN_RANGE(x)                                                 \
+	(x >= DECT_PHY_PING_CLIENT_TX_HANDLE_START && x <= DECT_PHY_PING_CLIENT_TX_HANDLE_END)
+
+#define DECT_PHY_PING_CLIENT_RE_TX_HANDLE 13100 /* For re-sending ping req */
+
+#define DECT_PHY_PING_CLIENT_RX_HANDLE_START 13500 /* For receiving ping resp */
+#define DECT_PHY_PING_CLIENT_RX_HANDLE_END 13549
+#define DECT_PHY_PING_CLIENT_RX_HANDLE_IN_RANGE(x)                                                 \
+	(x >= DECT_PHY_PING_CLIENT_RX_HANDLE_START && x <= DECT_PHY_PING_CLIENT_RX_HANDLE_END)
 
 #define DECT_PHY_PING_SERVER_RX_HANDLE 14000 /* For receiving ping req */
 #define DECT_PHY_PING_SERVER_TX_HANDLE 14500 /* For sending ping resp */
