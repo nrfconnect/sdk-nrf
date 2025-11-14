@@ -42,6 +42,21 @@ nRF54H20 SoC binaries
      * :ref:`abi_compatibility` for details about the SoC binaries.
      * :ref:`ug_nrf54h20_ironside_se_update` for instructions on updating the SoC binaries.
 
+nRF54H20 power management
+-------------------------
+
+.. toggle::
+
+   * The Kconfig options :kconfig:option:`PM_S2RAM` and :kconfig:option:`PM_S2RAM_CUSTOM_MARKING` have been reworked to be managed automatically based on the suspend-to-ram ``power-states`` in the devicetree.
+     Any occurrences of ``CONFIG_PM_S2RAM=y`` and ``CONFIG_PM_S2RAM_CUSTOM_MARKING=y`` must be removed.
+     Any occurrence of ``CONFIG_PM_S2RAM=n`` or when the code requires S2RAM state to be disabled (the default value of :kconfig:option:`PM_S2RAM` has changed from ``n`` to ``y``) must be replaced by disabling the ``s2ram`` power state in the devicetree.
+
+     .. code-block:: dts
+
+        &s2ram {
+                status = "disabled";
+        };
+
 Samples and applications
 ========================
 
