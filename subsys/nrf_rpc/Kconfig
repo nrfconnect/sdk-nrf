@@ -138,6 +138,7 @@ config NRF_RPC_RESPONSE_TIMEOUT
 config NRF_RPC_SERIALIZE_API
 	bool "API for serialization"
 	default y
+	select NET_BUF
 	help
 	  API for serialization and deserialization of several major CBOR types.
 
