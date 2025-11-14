@@ -354,10 +354,10 @@ static void deactivate_rx(struct lpuart_data *data)
 	int err;
 
 	if (IS_ENABLED(CONFIG_NRF_SW_LPUART_HFXO_ON_RX)) {
-		struct onoff_manager *mgr =
-		     z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
-
-		err = onoff_cancel_or_release(mgr, &data->rx_clk_cli);
+		struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1((NRF_CLOCK_HAS_HFCLK),
+								   (nordic_nrf_clock_hfclk),
+								   (nordic_nrf_clock_xo)));
+		err = nrf_clock_control_cancel_or_release(dev, NULL, &data->rx_clk_cli);
 		__ASSERT_NO_MSG(err >= 0);
 	}
 
@@ -413,12 +413,13 @@ static void rx_hfclk_callback(struct onoff_manager *mgr,
 
 static void rx_hfclk_request(struct lpuart_data *data)
 {
-	struct onoff_manager *mgr =
-		z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
+	struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1((NRF_CLOCK_HAS_HFCLK),
+							   (nordic_nrf_clock_hfclk),
+							   (nordic_nrf_clock_xo)));
 	int err;
 
 	sys_notify_init_callback(&data->rx_clk_cli.notify, rx_hfclk_callback);
-	err = onoff_request(mgr, &data->rx_clk_cli);
+	err = nrf_clock_control_request(dev, NULL, &data->rx_clk_cli);
 	__ASSERT_NO_MSG(err >= 0);
 }
 

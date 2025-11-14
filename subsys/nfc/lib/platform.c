@@ -48,7 +48,9 @@ LOG_MODULE_REGISTER(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 #endif /* NFC_PLATFORM_USE_TIMER_WORKAROUND */
 
 #if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
-static struct onoff_manager *hf_mgr;
+static const struct device *clk_dev = DEVICE_DT_GET_ONE(COND_CODE_1((NRF_CLOCK_HAS_HFCLK),
+								    (nordic_nrf_clock_hfclk),
+								    (nordic_nrf_clock_xo)));
 #elif IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2)
 static const struct device *clk_dev = DEVICE_DT_GET(DT_NODELABEL(hfxo));
 #else
@@ -109,11 +111,6 @@ static void clock_handler(struct onoff_manager *mgr, int res)
 int nfc_platform_setup(nfc_lib_cb_resolve_t nfc_lib_cb_resolve, uint8_t *p_irq_priority)
 {
 	int err;
-
-#if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
-	hf_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
-	__ASSERT_NO_MSG(hf_mgr);
-#endif /* IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) */
 
 	IRQ_DIRECT_CONNECT(DT_IRQN(NFCT), DT_IRQ(NFCT, priority),
 			   nfc_isr_wrapper, 0);
@@ -244,24 +241,13 @@ void nfc_platform_event_handler(nrfx_nfct_evt_t const *event)
 	switch (event->evt_id) {
 	case NRFX_NFCT_EVT_FIELD_DETECTED:
 		LOG_DBG("Field detected");
-
-#if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
-		sys_notify_init_callback(&cli.notify, clock_handler);
-		err = onoff_request(hf_mgr, &cli);
-#elif IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2)
 		sys_notify_init_callback(&cli.notify, clock_handler);
 		err = nrf_clock_control_request(clk_dev, NULL, &cli);
-#endif /* IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) */
 		__ASSERT_NO_MSG(err >= 0);
 		break;
 	case NRFX_NFCT_EVT_FIELD_LOST:
 		LOG_DBG("Field lost");
-
-#if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
-		err = onoff_cancel_or_release(hf_mgr, &cli);
-#elif IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2)
 		err = nrf_clock_control_cancel_or_release(clk_dev, NULL, &cli);
-#endif /* IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) */
 		__ASSERT_NO_MSG(err >= 0);
 		break;
 	default:
