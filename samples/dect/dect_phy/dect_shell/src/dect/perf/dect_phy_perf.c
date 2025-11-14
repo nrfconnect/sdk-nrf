@@ -108,6 +108,8 @@ struct dect_phy_perf_client_data {
 struct dect_phy_perf_server_data {
 	bool rx_results_sent;
 
+	uint32_t rx_handle;
+
 	/* HARQ data */
 	/* For sending HARQ feedback for RX data when requested by the client in a header */
 	struct dect_phy_common_harq_feedback_data harq_feedback_data;
@@ -245,7 +247,6 @@ static int dect_phy_perf_server_rx_start(uint64_t start_time)
 
 	struct dect_phy_perf_params *params = &(perf_data.cmd_params);
 	struct nrf_modem_dect_phy_rx_params rx_op = {
-		.handle = DECT_PHY_PERF_SERVER_RX_HANDLE,
 		.start_time = start_time,
 		.mode = NRF_MODEM_DECT_PHY_RX_MODE_CONTINUOUS,
 		.link_id = NRF_MODEM_DECT_PHY_LINK_UNSPECIFIED,
@@ -256,6 +257,12 @@ static int dect_phy_perf_server_rx_start(uint64_t start_time)
 	};
 	int ret;
 	uint64_t used_duration_mdm_ticks;
+
+	perf_data.server_data.rx_handle++;
+	if (perf_data.server_data.rx_handle > DECT_PHY_PERF_SERVER_RX_HANDLE_END) {
+		perf_data.server_data.rx_handle = DECT_PHY_PERF_SERVER_RX_HANDLE_START;
+	}
+	rx_op.handle = perf_data.server_data.rx_handle;
 
 	rx_op.filter.is_short_network_id_used = true;
 	rx_op.filter.short_network_id = (uint8_t)(current_settings->common.network_id & 0xFF);
@@ -916,6 +923,7 @@ static int dect_phy_perf_start(struct dect_phy_perf_params *params,
 		perf_data.time_started_ms = k_uptime_get();
 		dect_phy_perf_harq_tx_process_table_init(params->client_harq_process_nbr_max);
 		dect_phy_perf_data_rx_metrics_init();
+		perf_data.server_data.rx_handle = DECT_PHY_PERF_SERVER_RX_HANDLE_START;
 	}
 
 	perf_data.perf_ongoing = true;
@@ -1232,7 +1240,7 @@ static void dect_phy_perf_server_report_local_and_tx_results(void)
 		   (strlen(results_str) + 1), results_str);
 
 	/* Send results to client: */
-	(void)nrf_modem_dect_phy_cancel(DECT_PHY_PERF_SERVER_RX_HANDLE);
+	(void)nrf_modem_dect_phy_cancel(perf_data.server_data.rx_handle);
 	if (dect_phy_perf_server_results_tx(results_str)) {
 		desh_error("Cannot start sending server results");
 	}
@@ -1309,7 +1317,7 @@ void dect_phy_perf_mdm_op_completed(
 				dect_phy_perf_client_tx(next_possible_tx);
 			}
 
-		} else if (mdm_completed_params->handle == DECT_PHY_PERF_SERVER_RX_HANDLE) {
+		} else if (DECT_PHY_PERF_SERVER_RX_HANDLE_IN_RANGE(mdm_completed_params->handle)) {
 			/* Restart server in case of when max duration of RX operation elapses */
 			uint16_t secs_left = dect_phy_perf_time_secs_left();
 			int64_t z_ticks_rx_scheduled = perf_data.rx_metrics.rx_enabled_z_ticks;
@@ -1489,7 +1497,7 @@ static void dect_phy_perf_thread_fn(void)
 					params->status, params->temperature, tmp_str);
 
 				if (DECT_PHY_PERF_TX_HANDLE_IN_RANGE(params->handle) ||
-				    params->handle == DECT_PHY_PERF_SERVER_RX_HANDLE ||
+				    DECT_PHY_PERF_SERVER_RX_HANDLE_IN_RANGE(params->handle) ||
 				    params->handle == DECT_PHY_PERF_RESULTS_REQ_TX_HANDLE ||
 				    params->handle == DECT_PHY_PERF_RESULTS_RESP_TX_HANDLE ||
 				    params->handle == DECT_PHY_PERF_RESULTS_RESP_RX_HANDLE) {
@@ -1515,7 +1523,7 @@ static void dect_phy_perf_thread_fn(void)
 				}
 			} else {
 				if (DECT_PHY_PERF_TX_HANDLE_IN_RANGE(params->handle) ||
-				    params->handle == DECT_PHY_PERF_SERVER_RX_HANDLE ||
+				    DECT_PHY_PERF_SERVER_RX_HANDLE_IN_RANGE(params->handle) ||
 				    params->handle == DECT_PHY_PERF_RESULTS_REQ_TX_HANDLE ||
 				    params->handle == DECT_PHY_PERF_RESULTS_RESP_TX_HANDLE ||
 				    params->handle == DECT_PHY_PERF_RESULTS_RESP_RX_HANDLE) {
