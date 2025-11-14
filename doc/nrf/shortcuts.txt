@@ -6,7 +6,7 @@
 .. |release_tt| replace:: ``v3.1.0``
 .. |release_number_tt| replace:: ``3.1.0``
 
-.. |jlink_ver| replace:: v8.66
+.. |jlink_ver| replace:: v8.76
 
 .. |54H_nrfutil_device_ver| replace:: 2.13.1
 .. |54H_nrfutil_trace_ver| replace:: 4.0.1
