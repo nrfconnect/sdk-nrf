@@ -229,6 +229,18 @@ Matter
 Matter fork
 +++++++++++
 
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``v1.5.0.0`` tag.
+
+* Added:
+
+  * The :ref:`ug_matter_gs_tools_matter_west_commands_sync` command to synchronize the ZAP and :file:`zcl.json` files after updating the ZAP tool version.
+  * The check to all :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool` commands that verify whether ZAP tool sandbox permissions are correctly set.
+    In case of detecting incorrect permissions, the command will prompt the user to accept automatically updating the permissions to required ones.
+
+* Updated:
+
+  * The :ref:`ug_matter_gs_tools_matter_west_commands_append` command to accept ``--clusters`` argument instead of ``new_clusters`` argument.
+
 * Removed dependencies on Nordic DK-specific configurations in Matter configurations.
   See the `Migration guide for nRF Connect SDK v3.2.0`_ for more information.
 

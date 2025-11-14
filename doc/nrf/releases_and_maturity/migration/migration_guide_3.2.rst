@@ -104,6 +104,12 @@ Matter
 
       To build your custom board with Wi-Fi support, set both the :kconfig:option:`CONFIG_CHIP_WIFI` and :kconfig:option:`CONFIG_WIFI_NRF70` Kconfig options to ``y``.
 
+    * The :file:`zap-generated` directory now includes the :file:`CodeDrivenCallback.h` and :file:`CodeDrivenInitShutdown.cpp` files.
+      The Matter build system gradually moves to the new approach of data model handling and does not auto-generate some bits of a code responsible for command handling anymore.
+      Invoking the ``west zap-generate`` command removes command handler implementations from the existing :file:`IMClusterCommandHandler.cpp` file.
+      To fix this, you must now manually create the :file:`CodeDrivenCallback.h` and :file:`CodeDrivenInitShutdown.cpp` files, and implement the ``MatterClusterServerInitCallback`` and ``MatterClusterServerShutdownCallback`` callbacks to handle server initialization, shutdown, and Matter cluster commands.
+      Ensure that these callbacks contain your application's command handling logic as required.
+
 Serial LTE modem
 ----------------
 

@@ -260,7 +260,7 @@ You can use the following arguments:
   Use this option if you want to store the generated JSON file in a custom location.
   If not provided, the base :file:`zcl.json` file will be updated.
 
-* Positional arguments to provide paths to the XML files with the cluster definition.
+* ``--clusters`` to provide paths to the XML files that contain the custom cluster definitions.
   You can provide multiple XML files at once.
 
 .. _ug_matter_gs_tools_matter_west_commands_zap_tool_gui:
@@ -330,6 +330,33 @@ You can use the following optional arguments:
 
 * ``-m`` or ``--matter-path`` to provide a path to a different Matter SDK location than the default one.
   The command will use this path to read the required ZAP tool version and use the generation script from it.
+
+.. _ug_matter_gs_tools_matter_west_commands_sync:
+
+``zap-sync`` command
+--------------------
+
+This command will synchronize the ZAP file with the Matter Data Model and the :file:`zcl.json` file with the base :file:`zcl.json` file in the Matter SDK.
+Use this command when you are about to update the Matter SDK revision in your project.
+
+If you have custom clusters or device types in your project, you need to call this function with the additional ``-j`` and ``--clusters`` arguments.
+For example:
+
+.. code-block:: console
+
+    west zap-sync -j zcl.json --clusters MyCluster.xml
+
+You can use the following optional arguments:
+
+* ``-z`` or ``--zap-file`` to provide a path to the :file:`.zap` file.
+  Use this option if you invoke the ``zap-sync`` command outside the project directory.
+
+* ``-j`` or ``--zcl-json`` to provide a path to the data model definition file (:file:`zcl.json`).
+  If the argument is not provided, the :file:`<default Matter SDK location>/src/app/zap-templates/zcl/zcl.json` file will be used.
+
+* ``-c`` or ``--clusters`` to provide paths to the XML files that contain the custom cluster definitions.
+
+* ``-m`` or ``--matter-path`` to provide a path to a different Matter SDK location than the default one.
 
 .. _ug_matter_gs_tools_matter_quickstart:
 

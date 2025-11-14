@@ -41,6 +41,8 @@ The table also lists the release date for that Matter specification version, and
 |                 |                                                                                                          | Specification         | |NCS| version    |
 | Matter version  | Overview of changes                                                                                      | release date          |                  |
 +=================+==========================================================================================================+=======================+==================+
+| 1.5.0           |                                                                                                          | November 10, 2025     | v3.2.0           |
++-----------------+----------------------------------------------------------------------------------------------------------+-----------------------+------------------+
 | 1.4.2           | - Added Wi-Fi Only Commissioning using Wi-Fi Unsynchronized Service Discovery (USD) for device           | July 9, 2025          | v3.1.0           |
 |                 |   onboarding without requiring Bluetooth LE radios.                                                      |                       |                  |
 |                 | - Added Vendor ID (VID) Verification for cryptographic verification of Admins in Multi-Admin             |                       |                  |
