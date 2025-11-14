@@ -21,7 +21,7 @@
 #include <helpers/nrfx_reset_reason.h>
 #include <app_version.h>
 #include <dk_buttons_and_leds.h>
-#if CONFIG_NRF_CLOUD_FOTA_SMP
+#ifdef CONFIG_NRF_CLOUD_FOTA_SMP
 #include "smp_reset.h"
 #endif
 
@@ -457,7 +457,7 @@ static int setup(void)
 	struct nrf_cloud_init_param params = {
 		.event_handler = cloud_event_handler,
 		.fmfu_dev_inf = get_full_modem_fota_fdev(),
-#if CONFIG_NRF_CLOUD_FOTA_SMP
+#ifdef CONFIG_NRF_CLOUD_FOTA_SMP
 		.smp_reset_cb = nrf52840_reset_api,
 #endif
 		.application_version = APP_VERSION_STRING
