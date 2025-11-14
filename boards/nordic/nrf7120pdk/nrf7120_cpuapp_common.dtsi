@@ -196,3 +196,8 @@
 &wifi_bellboard {
 	status = "okay";
 };
+
+&qspi00 {
+	status = "okay";
+	op-mode = "MSPI_OP_MODE_CONTROLLER";
+};

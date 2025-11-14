@@ -282,6 +282,36 @@
 				status = "disabled";
 			};
 
+			qspi00: qspi@5b000 {
+				compatible = "nordic,nrf-qspi-v2", "snps,designware-ssi";
+				interrupts = <91 NRF_DEFAULT_IRQ_PRIORITY>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+				reg = <0x5b000 0x900 0x5b900 0x700>;
+				reg-names = "wrapper", "core";
+				clock-frequency = <DT_FREQ_M(256)>;
+				fifo-depth = <16>;
+				packet-data-limit = <65536>;
+				dma-transmit-data-level = <8>;
+				dma-receive-data-level = <8>;
+				status = "disabled";
+			};
+
+			qspi01: qspi@5c000 {
+				compatible = "nordic,nrf-qspi-v2", "snps,designware-ssi";
+				interrupts = <92 NRF_DEFAULT_IRQ_PRIORITY>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+				reg = <0x5c000 0x900 0x5c900 0x700>;
+				reg-names = "wrapper", "core";
+				clock-frequency = <DT_FREQ_M(256)>;
+				fifo-depth = <16>;
+				packet-data-limit = <65536>;
+				dma-transmit-data-level = <8>;
+				dma-receive-data-level = <8>;
+				status = "disabled";
+			};
+
 			spi01: spi@5d000 {
 				compatible = "nordic,nrf-spim";
 				reg = <0x5d000 0x1000>;
