@@ -632,6 +632,10 @@ Cellular samples
 
   * Updated the PDN connection management to use the PDN functionality in the :ref:`lte_lc_readme` library instead of the :ref:`pdn_readme` library.
 
+* :ref:`pdn_sample` sample:
+
+  * Updated the PDN functionality to use the PDN management in the :ref:`lte_lc_readme` library instead of the :ref:`pdn_readme` library.
+
 * :ref:`gnss_sample` sample:
 
   * Added TLS support for connection to the SUPL server.
