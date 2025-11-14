@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -13,32 +13,47 @@
 #include <zephyr/fff.h>
 #include <nrf_modem_at.h>
 
-#include "pdn.h"
+#include <modem/lte_lc.h>
 
 DEFINE_FFF_GLOBALS;
 
-#define CID_1 1
-#define CID_2 2
-#define CID_MAX 0x7f
-#define CID_MIN -0x80
+#define CID_1				1
+#define CID_2				2
+#define CID_MAX				0x7f
+#define CID_MIN				-0x80
 
-#define PDN_AUTH_DEFAULT PDN_AUTH_PAP
-#define AUTH_USR_DEFAULT "usr"
-#define AUTH_PWD_DEFAULT "pwd"
+#define CELLULAR_PROFILE_ID_0		0
+#define CELLULAR_PROFILE_ID_1		1
 
-static int pdn_evt_reason;
-uint8_t pdn_evt_cid;
-enum pdn_event pdn_evt_event;
+#define AUTH_USR_DEFAULT		"usr"
+#define AUTH_PWD_DEFAULT		"pwd"
 
-struct pdn pdn1;
-struct pdn pdn2;
+#define IPv4_DNS_PRIMARY_STR		"192.168.1.23"
+#define IPv4_DNS_SECONDARY_STR		"192.168.1.24"
+#define IPv6_DNS_PRIMARY_STR		"1111:2222:3:fff::55"
+#define IPv6_DNS_SECONDARY_STR		"2222:3333:4:eee:7777::66"
 
-/* Defined in pdn.c, we redefine it here */
-struct pdn {
-	sys_snode_t node; /* list handling */
-	pdn_event_handler_t callback;
-	int8_t context_id;
-};
+#define CMD_CGDCONT_CID			"AT+CGDCONT=%u"
+#define CMD_CGDCONT_CID_FAM		"AT+CGDCONT=%u,%s"
+#define CMD_CGDCONT_CID_FAM_APN		"AT+CGDCONT=%u,%s,%s"
+#define CMD_CGDCONT_CID_FAM_APN_OPT	"AT+CGDCONT=%u,%s,%s,,,,%u,,,,%u,%u"
+
+#define CMD_CGACT			"AT+CGACT=%u,%u"
+#define CMD_CGAUTH			"AT+CGAUTH=%u,%d,%s,%s"
+
+#define RESP_AT_CMD_ERROR		"ERROR"
+#define CMD_XGETPDNID			"AT%%XGETPDNID=%u"
+#define RESP_XGETPDNID			"%XGETPDNID: 1"
+
+#define FAM_IPV4_STR			"IP"
+#define FAM_IPV6_STR			"IPV6"
+#define FAM_IPV4V6_STR			"IPV4V6"
+#define FAM_NONIP_STR			"Non-IP"
+#define APN_DEFAULT			"apn0"
+
+#define OPT_IPv4_ADDR_ALLOC_EXP		0xbe
+#define OPT_NSLPI_EXP			0x1
+#define OPT_SECURE_PCO_EXP		0xC0
 
 FAKE_VALUE_FUNC(void *, k_malloc, size_t);
 FAKE_VOID_FUNC(k_free, void *);
@@ -47,8 +62,36 @@ FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_printf, const char *, ...);
 FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_cmd, void *, size_t, const char *, ...);
 FAKE_VALUE_FUNC(int, z_impl_zsock_inet_pton, sa_family_t, const char *, void *);
 
+/* Defined in modules/pdn.c, we redefine it here. */
+struct pdn {
+	sys_snode_t node; /* list handling */
+	int8_t context_id;
+};
+
+static struct pdn pdn1;
+static struct pdn pdn2;
+
+static struct lte_lc_evt pdn_evt;
+
+static const char ipv4_dns_primary[] = {192, 168, 1, 23};
+static const char ipv4_dns_secondary[] = {192, 168, 1, 24};
+static const char ipv6_dns_primary[] = {17, 17, 34, 34, 0, 3, 15, 255, 0, 0, 0, 0, 0, 0, 0, 85};
+static const char ipv6_dns_secondary[] =
+	{34, 34, 51, 51, 0, 4, 14, 238, 119, 119, 0, 0, 0, 0, 0, 102};
+
 extern void on_cgev(const char *notif);
 extern void on_cnec_esm(const char *notif);
+extern void on_cellularprfl(const char *notif);
+
+static void *k_malloc_custom(size_t size)
+{
+	return malloc(size);
+}
+
+static void k_free_custom(void *ptr)
+{
+	free(ptr);
+}
 
 static void *k_malloc_NULL(size_t size)
 {
@@ -58,12 +101,14 @@ static void *k_malloc_NULL(size_t size)
 static void *k_malloc_PDN1(size_t size)
 {
 	TEST_ASSERT_EQUAL(sizeof(struct pdn), size);
+
 	return &pdn1;
 }
 
 static void *k_malloc_PDN2(size_t size)
 {
 	TEST_ASSERT_EQUAL(sizeof(struct pdn), size);
+
 	return &pdn2;
 }
 
@@ -76,17 +121,6 @@ static void k_free_PDN2(void *data)
 {
 	TEST_ASSERT_EQUAL_PTR(&pdn2, data);
 }
-
-#define IPv4_DNS_PRIMARY_STR "192.168.1.23"
-#define IPv4_DNS_SECONDARY_STR "192.168.1.24"
-#define IPv6_DNS_PRIMARY_STR "1111:2222:3:fff::55"
-#define IPv6_DNS_SECONDARY_STR "2222:3333:4:eee:7777::66"
-
-char ipv4_dns_primary[] = {192, 168, 1, 23};
-char ipv4_dns_secondary[] = {192, 168, 1, 24};
-char ipv6_dns_primary[] = {17, 17, 34, 34, 0, 3, 15, 255, 0, 0, 0, 0, 0, 0, 0, 85};
-char ipv6_dns_secondary[] = {34, 34, 51, 51, 0, 4, 14, 238, 119, 119, 0, 0, 0, 0, 0, 102};
-
 
 static int z_impl_zsock_inet_pton_custom(sa_family_t family, const char *src, void *dst)
 {
@@ -160,8 +194,6 @@ static int nrf_modem_at_scanf_no_match(const char *cmd, const char *fmt, va_list
 	return 0;
 }
 
-#define RESP_AT_CMD_ERROR "ERROR"
-
 static int nrf_modem_at_cmd_error(void *buf, size_t len, const char *cmd, va_list args)
 {
 	ARG_UNUSED(cmd);
@@ -173,17 +205,6 @@ static int nrf_modem_at_cmd_error(void *buf, size_t len, const char *cmd, va_lis
 
 	return 65536; /* Modem respond "ERROR" */
 }
-
-#define CMD_CGDCONT_CID "AT+CGDCONT=%u"
-#define CMD_CGDCONT_CID_FAM "AT+CGDCONT=%u,%s"
-#define CMD_CGDCONT_CID_FAM_APN "AT+CGDCONT=%u,%s,%s"
-#define CMD_CGDCONT_CID_FAM_APN_OPT "AT+CGDCONT=%u,%s,%s,,,,%u,,,,%u,%u"
-
-#define FAM_IPV4_STR "IP"
-#define FAM_IPV6_STR "IPV6"
-#define FAM_IPV4V6_STR "IPV4V6"
-#define FAM_NONIP_STR "Non-IP"
-static const char apn_default[] = "apn0";
 
 static int nrf_modem_at_printf_cmd_cgdcont_cid_fam_ipv4(const char *cmd, va_list args)
 {
@@ -264,14 +285,10 @@ static int nrf_modem_at_printf_cmd_cgdcont_cid_fam_ipv4_apn(const char *cmd, va_
 	TEST_ASSERT_EQUAL_STRING(FAM_IPV4_STR, fam);
 
 	apn = va_arg(args, const char *);
-	TEST_ASSERT_EQUAL_STRING(apn_default, apn);
+	TEST_ASSERT_EQUAL_STRING(APN_DEFAULT, apn);
 
 	return 0;
 }
-
-#define OPT_IPv4_ADDR_ALLOC_EXP 0xbe
-#define OPT_NSLPI_EXP 0x1
-#define OPT_SECURE_PCO_EXP 0xC0
 
 static int nrf_modem_at_printf_cmd_cgdcont_cid_fam_ipv4_apn_opt(const char *cmd, va_list args)
 {
@@ -291,7 +308,7 @@ static int nrf_modem_at_printf_cmd_cgdcont_cid_fam_ipv4_apn_opt(const char *cmd,
 	TEST_ASSERT_EQUAL_STRING(FAM_IPV4_STR, fam);
 
 	apn = va_arg(args, const char *);
-	TEST_ASSERT_EQUAL_STRING(apn_default, apn);
+	TEST_ASSERT_EQUAL_STRING(APN_DEFAULT, apn);
 
 	opt_ip4_addr_alloc = va_arg(args, int);
 	TEST_ASSERT_EQUAL(OPT_IPv4_ADDR_ALLOC_EXP, opt_ip4_addr_alloc);
@@ -332,7 +349,7 @@ static int nrf_modem_at_printf_cgdcont_cid2(const char *cmd, va_list args)
 static int nrf_modem_at_printf_cgauth(const char *cmd, va_list args)
 {
 	uint8_t cid;
-	enum pdn_auth method;
+	enum lte_lc_pdn_auth method;
 	const char *usr;
 	const char *pwd;
 
@@ -342,7 +359,7 @@ static int nrf_modem_at_printf_cgauth(const char *cmd, va_list args)
 	TEST_ASSERT_EQUAL(CID_1, cid);
 
 	method = va_arg(args, int);
-	TEST_ASSERT_EQUAL(PDN_AUTH_PAP, method);
+	TEST_ASSERT_EQUAL(LTE_LC_PDN_AUTH_PAP, method);
 
 	usr = va_arg(args, char *);
 	TEST_ASSERT_EQUAL_STRING(AUTH_USR_DEFAULT, usr);
@@ -352,8 +369,6 @@ static int nrf_modem_at_printf_cgauth(const char *cmd, va_list args)
 
 	return 0;
 }
-
-#define CMD_CGACT "AT+CGACT=%u,%u"
 
 static int nrf_modem_at_printf_cgact_activate_fam_unknown(const char *cmd, va_list args)
 {
@@ -369,6 +384,8 @@ static int nrf_modem_at_printf_cgact_activate_fam_unknown(const char *cmd, va_li
 	TEST_ASSERT_EQUAL(CID_1, cid);
 
 	on_cgev("+CGEV: ME PDN ACT 1\r\n");
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_ACTIVATED, pdn_evt.type);
+	TEST_ASSERT_EQUAL(CID_1, pdn_evt.pdn.cid);
 
 	return 0;
 }
@@ -386,13 +403,22 @@ static int nrf_modem_at_printf_cgact_activate_ipv4(const char *cmd, va_list args
 	cid = va_arg(args, int);
 	TEST_ASSERT_EQUAL(CID_1, cid);
 
+	memset(&pdn_evt, 0, sizeof(struct lte_lc_evt));
+
 	/* Bad format */
 	on_cgev("+CGEV: ME PDN ACT1\r\n");
+	TEST_ASSERT_EQUAL(0, pdn_evt.type);
+	TEST_ASSERT_EQUAL(0, pdn_evt.pdn.cid);
 
 	/* different CID*/
 	on_cgev("+CGEV: ME PDN ACT 0\r\n");
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_ACTIVATED, pdn_evt.type);
+	TEST_ASSERT_EQUAL(0, pdn_evt.pdn.cid);
 
 	on_cgev("+CGEV: ME PDN ACT 1,0\r\n");
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_ACTIVATED, pdn_evt.type);
+	TEST_ASSERT_EQUAL(CID_1, pdn_evt.pdn.cid);
+	TEST_ASSERT_EQUAL(0, pdn_evt.pdn.esm_err);
 
 	return 0;
 }
@@ -410,13 +436,22 @@ static int nrf_modem_at_printf_cgact_activate_ipv6(const char *cmd, va_list args
 	cid = va_arg(args, int);
 	TEST_ASSERT_EQUAL(CID_1, cid);
 
+	memset(&pdn_evt, 0, sizeof(struct lte_lc_evt));
+
 	/* Bad format */
 	on_cgev("+CGEV: ME PDN ACT1\r\n");
+	TEST_ASSERT_EQUAL(0, pdn_evt.type);
+	TEST_ASSERT_EQUAL(0, pdn_evt.pdn.cid);
 
 	/* different CID*/
 	on_cgev("+CGEV: ME PDN ACT 0\r\n");
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_ACTIVATED, pdn_evt.type);
+	TEST_ASSERT_EQUAL(0, pdn_evt.pdn.cid);
 
 	on_cgev("+CGEV: ME PDN ACT 1,1\r\n");
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_ACTIVATED, pdn_evt.type);
+	TEST_ASSERT_EQUAL(CID_1, pdn_evt.pdn.cid);
+	TEST_ASSERT_EQUAL(1, pdn_evt.pdn.esm_err);
 
 	return 0;
 }
@@ -435,9 +470,13 @@ static int nrf_modem_at_printf_cgact_activate_esm_cid1(const char *cmd, va_list 
 	TEST_ASSERT_EQUAL(CID_1, cid);
 
 	on_cgev("+CGEV: ME PDN ACT 1\r\n");
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_ACTIVATED, pdn_evt.type);
+	TEST_ASSERT_EQUAL(CID_1, pdn_evt.pdn.cid);
 
 	on_cnec_esm("+CNEC_ESM: 2,1");
-	on_cnec_esm("+CNEC_ESM: 2,2");
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_ESM_ERROR, pdn_evt.type);
+	TEST_ASSERT_EQUAL(CID_1, pdn_evt.pdn.cid);
+	TEST_ASSERT_EQUAL(2, pdn_evt.pdn.esm_err);
 
 	return 0;
 }
@@ -456,8 +495,13 @@ static int nrf_modem_at_printf_cgact_activate_esm_cid2(const char *cmd, va_list 
 	TEST_ASSERT_EQUAL(CID_2, cid);
 
 	on_cgev("+CGEV: ME PDN ACT 2\r\n");
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_ACTIVATED, pdn_evt.type);
+	TEST_ASSERT_EQUAL(2, pdn_evt.pdn.cid);
 
 	on_cnec_esm("+CNEC_ESM: 2,2");
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_ESM_ERROR, pdn_evt.type);
+	TEST_ASSERT_EQUAL(CID_2, pdn_evt.pdn.cid);
+	TEST_ASSERT_EQUAL(2, pdn_evt.pdn.esm_err);
 
 	return 0;
 }
@@ -503,73 +547,37 @@ static int nrf_modem_at_printf_cgact_deactivate(const char *cmd, va_list args)
 	return 0;
 }
 
-static int nrf_modem_at_printf_on_cfun_pwr_off(const char *cmd, va_list args)
+static int nrf_modem_at_cmd_xgetpdnid(void *buf, size_t len, const char *cmd, va_list args)
 {
-	TEST_ASSERT_EQUAL_STRING("AT+CGDCONT=%u,%s,%s", cmd);
+	uint8_t cid;
+
+	TEST_ASSERT_NOT_NULL(buf);
+	TEST_ASSERT_EQUAL_STRING(CMD_XGETPDNID, cmd);
+	TEST_ASSERT_TRUE(len >= sizeof(RESP_XGETPDNID));
+
+	cid = va_arg(args, int);
+	TEST_ASSERT_EQUAL(CID_1, cid);
+
+	memcpy(buf, RESP_XGETPDNID, sizeof(RESP_XGETPDNID));
 
 	return 0;
 }
 
-static int nrf_modem_at_printf_on_cfun_lte_on(const char *cmd, va_list args)
+#define RESP_XGETPDNID_BAD_RESP "%XGETPDNID"
+
+static int nrf_modem_at_cmd_cgetpdnid_bad_resp(void *buf, size_t len, const char *cmd,
+	va_list args)
 {
-	switch (nrf_modem_at_printf_fake.call_count) {
-	case 1:
-		TEST_ASSERT_EQUAL_STRING("AT+CNEC=16", cmd);
-		break;
-	case 2:
-		TEST_ASSERT_EQUAL_STRING("AT+CGEREP=1", cmd);
-		break;
-	default:
-		TEST_ASSERT_TRUE(false);
-		break;
-	}
+	uint8_t cid;
 
-	return 0;
-}
+	TEST_ASSERT_NOT_NULL(buf);
+	TEST_ASSERT_EQUAL_STRING(CMD_XGETPDNID, cmd);
+	TEST_ASSERT_TRUE(len >= sizeof(RESP_XGETPDNID));
 
-static int nrf_modem_at_printf_on_init(const char *cmd, va_list args)
-{
-	switch (nrf_modem_at_printf_fake.call_count) {
-	case 1:
-		TEST_ASSERT_EQUAL_STRING("AT%%XEPCO=1", cmd);
-		break;
-	case 2:
-		TEST_ASSERT_EQUAL_STRING("AT+CGDCONT=%u,%s,%s", cmd);
-		break;
-	default:
-		TEST_ASSERT_TRUE(false);
-		break;
-	}
+	cid = va_arg(args, int);
+	TEST_ASSERT_EQUAL(CID_1, cid);
 
-	return 0;
-}
-
-#define CMD_CELLULARPRFL_SET	"AT%%CELLULARPRFL=2,%u,%u,%u"
-#define CMD_CELLULARPRFL_NOTIF	"AT%%CELLULARPRFL=1"
-#define CELLULARPRFL_CP_ID	0
-#define CELLULARPRFL_ACT	PDN_ACT_NTN
-#define CELLULARPRFL_SIM_SLOT	PDN_UICC_PHYSICAL
-
-static int nrf_modem_at_printf_cellularprfl(const char *cmd, va_list args)
-{
-	int cp_id;
-	int act;
-	int sim_slot;
-
-	if (strncmp(cmd, CMD_CELLULARPRFL_NOTIF, sizeof(CMD_CELLULARPRFL_NOTIF) - 1) == 0) {
-		return 0;
-	}
-
-	TEST_ASSERT_EQUAL_STRING(CMD_CELLULARPRFL_SET, cmd);
-
-	cp_id = va_arg(args, int);
-	TEST_ASSERT_EQUAL(CELLULARPRFL_CP_ID, cp_id);
-
-	act = va_arg(args, int);
-	TEST_ASSERT_EQUAL(CELLULARPRFL_ACT, act);
-
-	sim_slot = va_arg(args, int);
-	TEST_ASSERT_EQUAL(CELLULARPRFL_SIM_SLOT, sim_slot);
+	memcpy(buf, RESP_XGETPDNID_BAD_RESP, sizeof(RESP_XGETPDNID_BAD_RESP));
 
 	return 0;
 }
@@ -645,7 +653,7 @@ static int nrf_modem_at_scanf_custom_cgdcont(const char *cmd, const char *fmt, v
 #define AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE1 \
 	"+CGCONTRDP: %*u,,\"%*[^\"]\",\"\",\"\",\"%15[0-9.]\",\"%15[0-9.]\",,,,,%u"
 #define AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE2 \
-	"+%*[^+]"\
+	"+%*[^+]" \
 	"+CGCONTRDP: %*u,,\"%*[^\"]\",\"\",\"\",\"%39[0-9A-Fa-f:]\",\"%39[0-9A-Fa-f:]\",,,,,%u"
 
 static int nrf_modem_at_scanf_custom_cgcontrdp(const char *cmd, const char *fmt, va_list args)
@@ -747,265 +755,235 @@ static int nrf_modem_at_scanf_custom_cgcontrdp_no_match(
 	const char *cmd, const char *fmt, va_list args)
 {
 	TEST_ASSERT_EQUAL_STRING("AT+CGCONTRDP=0", cmd);
+
 	return -EBADMSG;
 }
 
+#define CMD_CELLULARPRFL_SET "AT%%CELLULARPRFL=2,%d,%d,%d"
+#define CMD_CELLULARPRFL_NOTIF "AT%%CELLULARPRFL=1"
+#define CELLULARPRFL_CP_ID 0
+#define CELLULARPRFL_ACT 2
+#define CELLULARPRFL_SIM_SLOT LTE_LC_UICC_PHYSICAL
 
-#define CMD_XGETPDNID "AT%%XGETPDNID=%u"
-#define RESP_XGETPDNID "%XGETPDNID: 1"
-
-static int nrf_modem_at_cmd_xgetpdnid(void *buf, size_t len, const char *cmd, va_list args)
+static int nrf_modem_at_printf_cellularprfl(const char *cmd, va_list args)
 {
-	uint8_t cid;
+	int cp_id;
+	int act;
+	int sim_slot;
 
-	TEST_ASSERT_NOT_NULL(buf);
-	TEST_ASSERT_EQUAL_STRING(CMD_XGETPDNID, cmd);
-	TEST_ASSERT_TRUE(len >= sizeof(RESP_XGETPDNID));
+	if (strncmp(cmd, CMD_CELLULARPRFL_NOTIF, sizeof(CMD_CELLULARPRFL_NOTIF) - 1) == 0) {
+		return 0;
+	}
 
-	cid = va_arg(args, int);
-	TEST_ASSERT_EQUAL(CID_1, cid);
+	TEST_ASSERT_EQUAL_STRING(CMD_CELLULARPRFL_SET, cmd);
 
-	memcpy(buf, RESP_XGETPDNID, sizeof(RESP_XGETPDNID));
+	cp_id = va_arg(args, int);
+	TEST_ASSERT_EQUAL(CELLULARPRFL_CP_ID, cp_id);
+
+	act = va_arg(args, int);
+	TEST_ASSERT_EQUAL(CELLULARPRFL_ACT, act);
+
+	sim_slot = va_arg(args, int);
+	TEST_ASSERT_EQUAL(CELLULARPRFL_SIM_SLOT, sim_slot);
 
 	return 0;
 }
 
-#define RESP_XGETPDNID_BAD_RESP "%XGETPDNID"
-
-static int nrf_modem_at_cmd_cgetpdnid_bad_resp(void *buf, size_t len, const char *cmd, va_list args)
+/* Unified lte_lc event handler that extracts PDN events */
+static void lte_lc_event_handler(const struct lte_lc_evt *const evt)
 {
-	uint8_t cid;
+	/* Only handle PDN events. */
 
-	TEST_ASSERT_NOT_NULL(buf);
-	TEST_ASSERT_EQUAL_STRING(CMD_XGETPDNID, cmd);
-	TEST_ASSERT_TRUE(len >= sizeof(RESP_XGETPDNID));
+	switch (evt->type) {
+	case LTE_LC_EVT_PDN_ACTIVATED:
+	case LTE_LC_EVT_PDN_DEACTIVATED:
+	case LTE_LC_EVT_PDN_IPV6_UP:
+	case LTE_LC_EVT_PDN_IPV6_DOWN:
+	case LTE_LC_EVT_PDN_NETWORK_DETACH:
+	case LTE_LC_EVT_PDN_APN_RATE_CONTROL_ON:
+	case LTE_LC_EVT_PDN_APN_RATE_CONTROL_OFF:
+	case LTE_LC_EVT_PDN_CTX_DESTROYED:
+	case LTE_LC_EVT_PDN_ESM_ERROR:
+	case LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE:
+		break;
+	default:
+		TEST_ASSERT(false);
 
-	cid = va_arg(args, int);
-	TEST_ASSERT_EQUAL(CID_1, cid);
+		break;
+	}
 
-	memcpy(buf, RESP_XGETPDNID_BAD_RESP, sizeof(RESP_XGETPDNID_BAD_RESP));
-
-	return 0;
-}
-
-static void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
-{
-	pdn_evt_cid = cid;
-	pdn_evt_reason = reason;
-	pdn_evt_event = event;
+	pdn_evt = *evt;
 }
 
 void setUp(void)
 {
 	RESET_FAKE(k_malloc);
 	RESET_FAKE(k_free);
-	RESET_FAKE(k_free);
 	RESET_FAKE(nrf_modem_at_printf);
 	RESET_FAKE(nrf_modem_at_scanf);
 	RESET_FAKE(nrf_modem_at_cmd);
 
-	pdn_evt_cid = 0;
-	pdn_evt_event = PDN_EVENT_CNEC_ESM;
-	pdn_evt_reason = 0;
+	memset(&pdn_evt, 0, sizeof(struct lte_lc_evt));
+
 	z_impl_zsock_inet_pton_fake.custom_fake = z_impl_zsock_inet_pton_custom;
+	k_malloc_fake.custom_fake = k_malloc_custom;
+	k_free_fake.custom_fake = k_free_custom;
+
+	lte_lc_register_handler(lte_lc_event_handler);
 }
 
 void tearDown(void)
 {
+	/* Ensure that the correct k_free is called */
+	k_free_fake.custom_fake = k_free_custom;
+
+	lte_lc_deregister_handler(lte_lc_event_handler);
 }
 
-void test_pdn_pdn_default_ctx_cb_reg_efault(void)
-{
-	int ret;
-
-	ret = pdn_default_ctx_cb_reg(NULL);
-	TEST_ASSERT_EQUAL(-EFAULT, ret);
-}
-
-void test_pdn_pdn_default_ctx_cb_reg_enomem(void)
-{
-	int ret;
-
-	k_malloc_fake.custom_fake = k_malloc_NULL;
-
-	ret = pdn_default_ctx_cb_reg(pdn_event_handler);
-	TEST_ASSERT_EQUAL(-ENOMEM, ret);
-}
-
-void test_pdn_pdn_default_ctx_cb_reg(void)
-{
-	int ret;
-
-	k_malloc_fake.custom_fake = k_malloc_PDN1;
-
-	ret = pdn_default_ctx_cb_reg(pdn_event_handler);
-	TEST_ASSERT_EQUAL(0, ret);
-
-	/* If already registered we should allow tha call but not register again */
-	ret = pdn_default_ctx_cb_reg(pdn_event_handler);
-	TEST_ASSERT_EQUAL(0, ret);
-	TEST_ASSERT_EQUAL(1, k_malloc_fake.call_count);
-}
-
-void test_pdn_default_ctx_cb_dereg_efault(void)
-{
-	int ret;
-
-	ret = pdn_default_ctx_cb_dereg(NULL);
-	TEST_ASSERT_EQUAL(-EFAULT, ret);
-}
-
-void test_pdn_default_ctx_cb_dereg(void)
-{
-	int ret;
-
-	k_free_fake.custom_fake = k_free_PDN1;
-
-	ret = pdn_default_ctx_cb_dereg(pdn_event_handler);
-	TEST_ASSERT_EQUAL(0, ret);
-
-	/* Context is removed */
-	ret = pdn_default_ctx_cb_dereg(pdn_event_handler);
-	TEST_ASSERT_EQUAL(-EINVAL, ret);
-}
-
-void test_pdn_ctx_create_eshutdown(void)
+void test_lte_lc_pdp_context_create_eshutdown(void)
 {
 	int ret;
 	uint8_t cid = 0;
 
 	k_malloc_fake.custom_fake = k_malloc_PDN1;
+	k_free_fake.custom_fake = k_free_PDN1;
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_eshutdown;
 
-	ret = pdn_ctx_create(&cid, pdn_event_handler);
+	ret = lte_lc_context_create(&cid);
 	TEST_ASSERT_EQUAL(-ESHUTDOWN, ret);
 }
 
-void test_pdn_ctx_create_ebadmsg(void)
+void test_lte_lc_pdp_context_create_ebadmsg(void)
 {
 	int ret;
 	uint8_t cid = 0;
 
 	k_malloc_fake.custom_fake = k_malloc_PDN1;
+	k_free_fake.custom_fake = k_free_PDN1;
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_no_match;
 
-	ret = pdn_ctx_create(&cid, pdn_event_handler);
+	ret = lte_lc_context_create(&cid);
 	TEST_ASSERT_EQUAL(-EBADMSG, ret);
 }
 
-void test_pdn_ctx_create_efault(void)
+void test_lte_lc_pdp_context_create_efault(void)
 {
 	int ret;
 	uint8_t cid = 0;
 
-	ret = pdn_ctx_create(NULL, pdn_event_handler);
+	ret = lte_lc_context_create(NULL);
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 
 	k_malloc_fake.custom_fake = k_malloc_PDN1;
+	k_free_fake.custom_fake = k_free_PDN1;
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_xnewcid_too_big;
 
-	ret = pdn_ctx_create(&cid, pdn_event_handler);
+	ret = lte_lc_context_create(&cid);
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_xnewcid_too_small;
 
-	ret = pdn_ctx_create(&cid, pdn_event_handler);
+	ret = lte_lc_context_create(&cid);
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
 
-void test_pdn_ctx_create_enomem(void)
+void test_lte_lc_pdp_context_create_enomem(void)
 {
 	int ret;
 	uint8_t cid = 1;
 
 	k_malloc_fake.custom_fake = k_malloc_NULL;
 
-	ret = pdn_ctx_create(&cid, pdn_event_handler);
+	ret = lte_lc_context_create(&cid);
 	TEST_ASSERT_EQUAL(-ENOMEM, ret);
 }
 
-void test_pdn_ctx_create_at_cmd_scanf_eshutdown(void)
+void test_lte_lc_pdp_context_create_at_cmd_scanf_eshutdown(void)
 {
 	int ret;
 	uint8_t cid = 0;
 
 	k_malloc_fake.custom_fake = k_malloc_PDN1;
+	k_free_fake.custom_fake = k_free_PDN1;
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_eshutdown;
 
-	ret = pdn_ctx_create(&cid, pdn_event_handler);
+	ret = lte_lc_context_create(&cid);
 	TEST_ASSERT_EQUAL(-ESHUTDOWN, ret);
 }
 
-void test_pdn_ctx_create_cid1(void)
+void test_lte_lc_pdp_context_create_cid1(void)
 {
 	int ret;
 	uint8_t cid = CID_1;
 
 	k_malloc_fake.custom_fake = k_malloc_PDN1;
+	k_free_fake.custom_fake = k_free_PDN1;
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_xnewcid_1;
 
-	ret = pdn_ctx_create(&cid, pdn_event_handler);
+	ret = lte_lc_context_create(&cid);
 	TEST_ASSERT_EQUAL(0, ret);
 }
 
-void test_pdn_ctx_create_cid2(void)
+void test_lte_lc_pdp_context_create_cid2(void)
 {
 	int ret;
 	uint8_t cid = CID_2;
 
 	k_malloc_fake.custom_fake = k_malloc_PDN2;
+	k_free_fake.custom_fake = k_free_PDN2;
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_xnewcid_2;
 
-	ret = pdn_ctx_create(&cid, NULL);
+	ret = lte_lc_context_create(&cid);
 	TEST_ASSERT_EQUAL(0, ret);
 }
 
-void test_pdn_ctx_configure_einval(void)
+void test_lte_lc_pdp_context_configure_einval(void)
 {
 	int ret;
 	/* APN_STR_MAX_LEN + 1 */
 	static const char apn_toobig[] = "loremipsumdolorsitametconsectet "
 					 "uradipiscingelitnamaceleifendaug";
-	enum pdn_fam fam = PDN_FAM_IPV4;
-	struct pdn_pdp_opt opt;
+	enum lte_lc_pdn_family fam = LTE_LC_PDN_FAM_IPV4;
+	struct lte_lc_pdp_context_opts opt;
 
-	ret = pdn_ctx_configure(CID_1, apn_toobig, fam, &opt);
+	ret = lte_lc_context_configure(CID_1, apn_toobig, fam, &opt);
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
 	fam = 4; /* Invalid */
-	ret = pdn_ctx_configure(CID_1, apn_default, fam, &opt);
+
+	ret = lte_lc_context_configure(CID_1, APN_DEFAULT, fam, &opt);
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
-void test_pdn_ctx_configure_eshutdown(void)
+void test_lte_lc_pdp_context_configure_eshutdown(void)
 {
 	int ret;
-	enum pdn_fam fam = PDN_FAM_IPV4;
-	struct pdn_pdp_opt opt;
+	enum lte_lc_pdn_family fam = LTE_LC_PDN_FAM_IPV4;
+	struct lte_lc_pdp_context_opts opt;
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_eshutdown;
 
-	ret = pdn_ctx_configure(CID_1, apn_default, fam, &opt);
+	ret = lte_lc_context_configure(CID_1, APN_DEFAULT, fam, &opt);
 	TEST_ASSERT_EQUAL(-ESHUTDOWN, ret);
 }
 
-void test_pdn_ctx_configure_enoexec(void)
+void test_lte_lc_pdp_context_configure_enoexec(void)
 {
 	int ret;
-	enum pdn_fam fam = PDN_FAM_IPV4;
-	struct pdn_pdp_opt opt;
+	enum lte_lc_pdn_family fam = LTE_LC_PDN_FAM_IPV4;
+	struct lte_lc_pdp_context_opts opt;
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_error;
 
-	ret = pdn_ctx_configure(CID_1, apn_default, fam, &opt);
+	ret = lte_lc_context_configure(CID_1, APN_DEFAULT, fam, &opt);
 	TEST_ASSERT_EQUAL(-ENOEXEC, ret);
 }
 
-void test_pdn_ctx_configure(void)
+void test_lte_lc_pdp_context_configure(void)
 {
 	int ret;
-	struct pdn_pdp_opt opt = {
+	struct lte_lc_pdp_context_opts opt = {
 		.ip4_addr_alloc =  OPT_IPv4_ADDR_ALLOC_EXP,
 		.nslpi = OPT_NSLPI_EXP,
 		.secure_pco = OPT_SECURE_PCO_EXP
@@ -1013,553 +991,475 @@ void test_pdn_ctx_configure(void)
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cmd_cgdcont_cid_fam_ipv4;
 
-	ret = pdn_ctx_configure(CID_1, NULL, PDN_FAM_IPV4, NULL);
+	ret = lte_lc_context_configure(CID_1, NULL, LTE_LC_PDN_FAM_IPV4, NULL);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cmd_cgdcont_cid_fam_ipv6;
 
-	ret = pdn_ctx_configure(CID_1, NULL, PDN_FAM_IPV6, NULL);
+	ret = lte_lc_context_configure(CID_1, NULL, LTE_LC_PDN_FAM_IPV6, NULL);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cmd_cgdcont_cid_fam_ipv4v6;
 
-	ret = pdn_ctx_configure(CID_1, NULL, PDN_FAM_IPV4V6, NULL);
+	ret = lte_lc_context_configure(CID_1, NULL, LTE_LC_PDN_FAM_IPV4V6, NULL);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cmd_cgdcont_cid_fam_nonip;
 
-	ret = pdn_ctx_configure(CID_1, NULL, PDN_FAM_NONIP, NULL);
+	ret = lte_lc_context_configure(CID_1, NULL, LTE_LC_PDN_FAM_NONIP, NULL);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cmd_cgdcont_cid_fam_ipv4_apn;
 
-	ret = pdn_ctx_configure(CID_1, apn_default, PDN_FAM_IPV4, NULL);
+	ret = lte_lc_context_configure(CID_1, APN_DEFAULT, LTE_LC_PDN_FAM_IPV4, NULL);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cmd_cgdcont_cid_fam_ipv4_apn_opt;
 
-	ret = pdn_ctx_configure(CID_1, apn_default, PDN_FAM_IPV4, &opt);
+	ret = lte_lc_context_configure(CID_1, APN_DEFAULT, LTE_LC_PDN_FAM_IPV4, &opt);
 	TEST_ASSERT_EQUAL(0, ret);
 }
 
-void test_pdn_ctx_auth_set_einval(void)
+void test_lte_lc_pdp_context_auth_set_einval(void)
 {
 	int ret;
-
-	static const char user[] = "usr";
+	static const char user[] = AUTH_USR_DEFAULT;
 	static const char password[] = "pwd";
 
-	ret = pdn_ctx_auth_set(CID_1, PDN_AUTH_PAP, NULL, password);
+	ret = lte_lc_context_auth_set(CID_1, LTE_LC_PDN_AUTH_PAP, NULL, password);
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
-	ret = pdn_ctx_auth_set(CID_1, PDN_AUTH_PAP, user, NULL);
+	ret = lte_lc_context_auth_set(CID_1, LTE_LC_PDN_AUTH_PAP, user, NULL);
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
-	ret = pdn_ctx_auth_set(CID_1, PDN_AUTH_CHAP, NULL, password);
+	ret = lte_lc_context_auth_set(CID_1, LTE_LC_PDN_AUTH_CHAP, NULL, password);
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
-	ret = pdn_ctx_auth_set(CID_1, PDN_AUTH_CHAP, user, NULL);
+	ret = lte_lc_context_auth_set(CID_1, LTE_LC_PDN_AUTH_CHAP, user, NULL);
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
 
-void test_pdn_ctx_auth_set_enoexec(void)
+void test_lte_lc_pdp_context_auth_set_enoexec(void)
 {
 	int ret;
-
-	const char user[] = AUTH_USR_DEFAULT;
-	const char password[] = AUTH_PWD_DEFAULT;
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_error;
 
-	ret = pdn_ctx_auth_set(CID_1, PDN_AUTH_DEFAULT, user, password);
+	ret = lte_lc_context_auth_set(CID_1, LTE_LC_PDN_AUTH_PAP, AUTH_USR_DEFAULT,
+				      AUTH_PWD_DEFAULT);
 	TEST_ASSERT_EQUAL(-ENOEXEC, ret);
 }
 
-void test_pdn_ctx_auth_set_eshutdown(void)
+void test_lte_lc_pdp_context_auth_set_eshutdown(void)
 {
 	int ret;
-
-	const char user[] = AUTH_USR_DEFAULT;
-	const char password[] = AUTH_PWD_DEFAULT;
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_eshutdown;
 
-	ret = pdn_ctx_auth_set(CID_1, PDN_AUTH_DEFAULT, user, password);
+	ret = lte_lc_context_auth_set(CID_1, LTE_LC_PDN_AUTH_PAP, AUTH_USR_DEFAULT,
+				      AUTH_PWD_DEFAULT);
 	TEST_ASSERT_EQUAL(-ESHUTDOWN, ret);
 }
 
-void test_pdn_ctx_auth_set(void)
+void test_lte_lc_pdp_context_auth_set(void)
 {
 	int ret;
 
-	const char user[] = AUTH_USR_DEFAULT;
-	const char password[] = AUTH_PWD_DEFAULT;
-
-	ret = pdn_ctx_auth_set(CID_1, PDN_AUTH_NONE, NULL, NULL);
+	ret = lte_lc_context_auth_set(CID_1, LTE_LC_PDN_AUTH_NONE, NULL, NULL);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cgauth;
 
-	ret = pdn_ctx_auth_set(CID_1, PDN_AUTH_DEFAULT, user, password);
+	ret = lte_lc_context_auth_set(CID_1, LTE_LC_PDN_AUTH_PAP, AUTH_USR_DEFAULT,
+				      AUTH_PWD_DEFAULT);
 	TEST_ASSERT_EQUAL(0, ret);
 }
 
-void test_pdn_activate_esm_timeout(void)
+void test_lte_lc_pdn_activate_esm_timeout(void)
 {
 	int ret;
 	int esm = 1;
-	enum pdn_fam fam;
+	enum lte_lc_pdn_family fam;
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cgact_activate_ipv4;
 
-	ret = pdn_activate(CID_1, &esm, &fam);
+	ret = lte_lc_context_activate(CID_1, &esm, &fam);
 	TEST_ASSERT_EQUAL(0, ret);
 	TEST_ASSERT_EQUAL(0, esm);
 }
 
-void test_pdn_activate_eshutdown(void)
+void test_lte_lc_pdn_activate_eshutdown(void)
 {
 	int ret;
 	int esm = 1;
-	enum pdn_fam fam;
+	enum lte_lc_pdn_family fam;
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_eshutdown;
 
-	ret = pdn_activate(CID_1, &esm, &fam);
+	ret = lte_lc_context_activate(CID_1, &esm, &fam);
 	TEST_ASSERT_EQUAL(-ESHUTDOWN, ret);
+
 	TEST_ASSERT_EQUAL(0, esm);
 }
 
-void test_pdn_activate_error(void)
+void test_lte_lc_pdn_activate_error(void)
 {
 	int ret;
 	int esm = 1;
-	enum pdn_fam fam;
+	enum lte_lc_pdn_family fam;
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_error;
 
-	ret = pdn_activate(CID_1, &esm, &fam);
+	ret = lte_lc_context_activate(CID_1, &esm, &fam);
 	TEST_ASSERT_EQUAL(-ENOEXEC, ret);
+
 	TEST_ASSERT_EQUAL(0, esm);
 }
 
-void test_pdn_activate_esm_bad_format(void)
+void test_lte_lc_pdn_activate_esm_bad_format(void)
 {
 	int ret;
 	int esm = 1;
-	enum pdn_fam fam;
+	enum lte_lc_pdn_family fam;
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cgact_activate_ipv4;
 
-	ret = pdn_activate(CID_1, NULL, &fam);
+	ret = lte_lc_context_activate(CID_1, NULL, &fam);
 	TEST_ASSERT_EQUAL(0, ret);
-	/* esm unchanged */
+
+	/* ESM unchanged */
 	TEST_ASSERT_EQUAL(1, esm);
 
-	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(PDN_EVENT_ACTIVATED, pdn_evt_event); /* Activated*/
+	TEST_ASSERT_EQUAL(CID_1, pdn_evt.pdn.cid);
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_ACTIVATED, pdn_evt.type); /* Activated*/
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cgact_activate_esm_bad_format;
 
-	ret = pdn_activate(CID_1, &esm, &fam);
+	ret = lte_lc_context_activate(CID_1, &esm, &fam);
 	TEST_ASSERT_EQUAL(0, ret);
 	TEST_ASSERT_EQUAL(0, esm);
-	TEST_ASSERT_EQUAL(0, pdn_evt_reason);
+	TEST_ASSERT_EQUAL(0, pdn_evt.pdn.esm_err);
 
-	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(PDN_EVENT_CNEC_ESM, pdn_evt_event); /* Activated*/
+	TEST_ASSERT_EQUAL(CID_1, pdn_evt.pdn.cid);
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_ESM_ERROR, pdn_evt.type); /* Activated*/
 }
 
-void test_pdn_activate(void)
+void test_lte_lc_pdn_activate(void)
 {
 	int ret;
 	int esm = 1;
-	enum pdn_fam fam;
+	enum lte_lc_pdn_family fam;
+
+	/* Events are checked in the fake functions */
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cgact_activate_fam_unknown;
 
-	ret = pdn_activate(CID_1, NULL, NULL);
+	ret = lte_lc_context_activate(CID_1, NULL, NULL);
 	TEST_ASSERT_EQUAL(0, ret);
-	/* esm unchanged */
+	/* ESM unchanged */
 	TEST_ASSERT_EQUAL(1, esm);
-
-	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(PDN_EVENT_ACTIVATED, pdn_evt_event);
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cgact_activate_ipv4;
 
-	ret = pdn_activate(CID_1, NULL, &fam);
+	ret = lte_lc_context_activate(CID_1, NULL, &fam);
 	TEST_ASSERT_EQUAL(0, ret);
-	/* esm unchanged */
+	/* ESM unchanged */
 	TEST_ASSERT_EQUAL(1, esm);
-	TEST_ASSERT_EQUAL(PDN_FAM_IPV4, fam);
-
-	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(PDN_EVENT_ACTIVATED, pdn_evt_event);
+	TEST_ASSERT_EQUAL(LTE_LC_PDN_FAM_IPV4, fam);
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cgact_activate_ipv6;
 
-	ret = pdn_activate(CID_1, NULL, &fam);
+	ret = lte_lc_context_activate(CID_1, NULL, &fam);
 	TEST_ASSERT_EQUAL(0, ret);
-	/* esm unchanged */
 	TEST_ASSERT_EQUAL(1, esm);
-	TEST_ASSERT_EQUAL(PDN_FAM_IPV6, fam);
-
-	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(PDN_EVENT_ACTIVATED, pdn_evt_event);
+	TEST_ASSERT_EQUAL(LTE_LC_PDN_FAM_IPV6, fam);
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cgact_activate_esm_cid1;
 
-	ret = pdn_activate(CID_1, &esm, &fam);
+	ret = lte_lc_context_activate(CID_1, &esm, &fam);
 	TEST_ASSERT_EQUAL(0, ret);
 	TEST_ASSERT_EQUAL(2, esm);
-	TEST_ASSERT_EQUAL(2, pdn_evt_reason);
-
-	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(PDN_EVENT_CNEC_ESM, pdn_evt_event);
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cgact_activate_esm_cid2;
-	pdn_evt_cid = 0;
-	pdn_evt_event = 0;
 
-	ret = pdn_activate(CID_2, &esm, &fam);
+	memset(&pdn_evt, 0, sizeof(struct lte_lc_evt));
+
+	ret = lte_lc_context_activate(CID_2, &esm, &fam);
 	TEST_ASSERT_EQUAL(0, ret);
 	TEST_ASSERT_EQUAL(2, esm);
-	TEST_ASSERT_EQUAL(2, pdn_evt_reason);
-
-	/* no callback */
-	TEST_ASSERT_EQUAL(0, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(0, pdn_evt_event);
 }
 
-
-void test_pdn_deactivate_eshutdown(void)
+void test_lte_lc_pdn_deactivate_eshutdown(void)
 {
 	int ret;
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_eshutdown;
 
-	ret = pdn_deactivate(CID_1);
+	ret = lte_lc_context_deactivate(CID_1);
 	TEST_ASSERT_EQUAL(-ESHUTDOWN, ret);
 }
 
-void test_pdn_deactivate_error(void)
+void test_lte_lc_pdn_deactivate_error(void)
 {
 	int ret;
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_error;
 
-	ret = pdn_deactivate(CID_1);
+	ret = lte_lc_context_deactivate(CID_1);
 	TEST_ASSERT_EQUAL(-ENOEXEC, ret);
 }
 
-void test_pdn_deactivate(void)
+void test_lte_lc_pdn_deactivate(void)
 {
 	int ret;
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cgact_deactivate;
 
-	ret = pdn_deactivate(CID_1);
+	ret = lte_lc_context_deactivate(CID_1);
 	TEST_ASSERT_EQUAL(0, ret);
-	TEST_ASSERT_EQUAL(PDN_EVENT_DEACTIVATED, pdn_evt_event);
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_DEACTIVATED, pdn_evt.type);
 }
 
-void test_detach(void)
+void test_lte_lc_pdn_detach(void)
 {
 	on_cgev("+CGEV: NW DETACH\r\n");
-
-	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(PDN_EVENT_NETWORK_DETACH, pdn_evt_event);
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_NETWORK_DETACH, pdn_evt.type);
 }
 
-void test_detach_me_no_cp_id(void)
+void test_lte_lc_pdn_detach_me_no_cp_id(void)
 {
 	on_cgev("+CGEV: ME DETACH\r\n");
-
-	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(PDN_EVENT_NETWORK_DETACH, pdn_evt_event);
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_NETWORK_DETACH, pdn_evt.type);
 }
 
-void test_detach_me_with_cp_id(void)
+void test_lte_lc_pdn_detach_me_with_cp_id(void)
 {
-	on_cgev("+CGEV: ME DETACH 0\r\n");
-
-	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(PDN_EVENT_NETWORK_DETACH, pdn_evt_event);
+	on_cgev("+CGEV: ME DETACH " STRINGIFY(CELLULAR_PROFILE_ID_0) "\r\n");
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_NETWORK_DETACH, pdn_evt.type);
+	TEST_ASSERT_EQUAL(CELLULAR_PROFILE_ID_0, pdn_evt.cellular_profile_id);
 }
 
-void test_detach_nw_with_cp_id(void)
+void test_lte_lc_pdn_detach_nw_with_cp_id(void)
 {
-	on_cgev("+CGEV: NW DETACH 10\r\n");
-
-	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(PDN_EVENT_NETWORK_DETACH, pdn_evt_event);
+	on_cgev("+CGEV: NW DETACH " STRINGIFY(CELLULAR_PROFILE_ID_1) "\r\n");
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_NETWORK_DETACH, pdn_evt.type);
+	TEST_ASSERT_EQUAL(CELLULAR_PROFILE_ID_1, pdn_evt.cellular_profile_id);
 }
 
-void test_pdn_id_get_eshutdown(void)
+void test_lte_lc_pdn_id_get_eshutdown(void)
 {
 	int ret;
 
 	nrf_modem_at_cmd_fake.custom_fake = nrf_modem_at_cmd_eshutdown;
 
-	ret = pdn_id_get(CID_1);
+	ret = lte_lc_context_pdn_id_get(CID_1);
 	TEST_ASSERT_EQUAL(-ESHUTDOWN, ret);
 }
 
-void test_pdn_id_get_ebadmsg(void)
+void test_lte_lc_pdn_id_get_ebadmsg(void)
 {
 	int ret;
 
 	nrf_modem_at_cmd_fake.custom_fake = nrf_modem_at_cmd_cgetpdnid_bad_resp;
 
-	ret = pdn_id_get(CID_1);
+	ret = lte_lc_context_pdn_id_get(CID_1);
 	TEST_ASSERT_EQUAL(-EBADMSG, ret);
 }
 
-void test_pdn_id_get_error(void)
+void test_lte_lc_pdn_id_get_error(void)
 {
 	int ret;
 
 	nrf_modem_at_cmd_fake.custom_fake = nrf_modem_at_cmd_error;
 
-	ret = pdn_id_get(CID_1);
+	ret = lte_lc_context_pdn_id_get(CID_1);
 	TEST_ASSERT_EQUAL(-ENOEXEC, ret);
 }
 
-void test_pdn_id_get(void)
+void test_lte_lc_pdn_id_get(void)
 {
 	int ret;
 
 	nrf_modem_at_cmd_fake.custom_fake = nrf_modem_at_cmd_xgetpdnid;
 
-	ret = pdn_id_get(CID_1);
+	ret = lte_lc_context_pdn_id_get(CID_1);
 	TEST_ASSERT_EQUAL(1, ret);
 }
 
-void test_pdn_default_apn_get_eshutdown(void)
+void test_lte_lc_pdn_default_apn_get_eshutdown(void)
 {
 	int ret;
 	char buf[64];
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_eshutdown;
 
-	ret = pdn_default_apn_get(buf, sizeof(buf));
+	ret = lte_lc_default_apn_get(buf, sizeof(buf));
 	TEST_ASSERT_EQUAL(-ESHUTDOWN, ret);
 }
 
-void test_pdn_default_apn_get_e2big(void)
+void test_lte_lc_pdn_default_apn_get_e2big(void)
 {
 	int ret;
 	char buf[1];
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgdcont;
 
-	ret = pdn_default_apn_get(buf, sizeof(buf));
+	ret = lte_lc_default_apn_get(buf, sizeof(buf));
 	TEST_ASSERT_EQUAL(-E2BIG, ret);
 }
 
-void test_pdn_default_apn_get_no_match(void)
+void test_lte_lc_pdn_default_apn_get_no_match(void)
 {
 	int ret;
 	char buf[64];
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_no_match;
 
-	ret = pdn_default_apn_get(buf, sizeof(buf));
+	ret = lte_lc_default_apn_get(buf, sizeof(buf));
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
 
-void test_pdn_default_apn_get(void)
+void test_lte_lc_pdn_default_apn_get(void)
 {
 	int ret;
 	char buf[64];
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgdcont;
 
-	ret = pdn_default_apn_get(buf, sizeof(buf));
+	ret = lte_lc_default_apn_get(buf, sizeof(buf));
 	TEST_ASSERT_EQUAL(0, ret);
 }
 
 void test_pdn_apn_rate_control_activate(void)
 {
 	on_cgev("+CGEV: APNRATECTRL STAT 2,1");
-	/* no callback */
-	TEST_ASSERT_EQUAL(0, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(0, pdn_evt_event);
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_APN_RATE_CONTROL_ON, pdn_evt.type);
+	TEST_ASSERT_EQUAL(2, pdn_evt.pdn.cid);
 
 	on_cgev("+CGEV: APNRATECTRL STAT 1,1");
-
-	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(PDN_EVENT_APN_RATE_CONTROL_ON, pdn_evt_event);
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_APN_RATE_CONTROL_ON, pdn_evt.type);
+	TEST_ASSERT_EQUAL(1, pdn_evt.pdn.cid);
 }
 
 void test_pdn_apn_rate_control_deactivate(void)
 {
 	on_cgev("+CGEV: APNRATECTRL STAT 2,0");
-	/* no callback */
-	TEST_ASSERT_EQUAL(0, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(0, pdn_evt_event);
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_APN_RATE_CONTROL_OFF, pdn_evt.type);
+	TEST_ASSERT_EQUAL(2, pdn_evt.pdn.cid);
 
 	on_cgev("+CGEV: APNRATECTRL STAT 1,0");
-
-	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(PDN_EVENT_APN_RATE_CONTROL_OFF, pdn_evt_event);
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_APN_RATE_CONTROL_OFF, pdn_evt.type);
+	TEST_ASSERT_EQUAL(1, pdn_evt.pdn.cid);
 }
 
 void test_pdn_apn_rate_control_not_configured(void)
 {
 	on_cgev("+CGEV: APNRATECTRL STAT 2,2");
-	/* no callback */
-	TEST_ASSERT_EQUAL(0, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(0, pdn_evt_event);
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_APN_RATE_CONTROL_OFF, pdn_evt.type);
+	TEST_ASSERT_EQUAL(2, pdn_evt.pdn.cid);
 
 	on_cgev("+CGEV: APNRATECTRL STAT 1,2");
-
-	TEST_ASSERT_EQUAL(CID_1, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(PDN_EVENT_APN_RATE_CONTROL_OFF, pdn_evt_event);
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_APN_RATE_CONTROL_OFF, pdn_evt.type);
+	TEST_ASSERT_EQUAL(1, pdn_evt.pdn.cid);
 }
 
-void test_pdn_ctx_destroy_einval(void)
+void test_lte_lc_pdp_context_destroy_einval(void)
 {
 	int ret;
 
-	ret = pdn_ctx_destroy(0);
+	ret = lte_lc_context_destroy(0);
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 
-	ret = pdn_ctx_destroy(3); /* does not exist */
+	ret = lte_lc_context_destroy(3); /* does not exist */
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
-void test_pdn_ctx_destroy_enoexec_eshutdown(void)
+void test_lte_lc_pdp_context_destroy_enoexec_eshutdown(void)
 {
 	int ret;
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_eshutdown;
 	k_free_fake.custom_fake = k_free_PDN1;
 
-	ret = pdn_ctx_destroy(CID_1);
+	ret = lte_lc_context_destroy(CID_1);
 	TEST_ASSERT_EQUAL(-ESHUTDOWN, ret);
 
 }
 
-void test_pdn_ctx_destroy_enoexec(void)
+void test_lte_lc_pdp_context_destroy_enoexec(void)
 {
 	int ret;
 
 	/* Context is destroyed locally regardless of modem error response so we recreate it here */
-	test_pdn_ctx_create_cid1();
+	test_lte_lc_pdp_context_create_cid1();
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_error;
 	k_free_fake.custom_fake = k_free_PDN1;
 
-	ret = pdn_ctx_destroy(CID_1);
+	ret = lte_lc_context_destroy(CID_1);
 	TEST_ASSERT_EQUAL(-ENOEXEC, ret);
 
 }
 
-void test_pdn_ctx_destroy(void)
+void test_lte_lc_pdp_context_destroy(void)
 {
 	int ret;
 
 	/* Context is destroyed locally regardless of modem error response so we recreate it here */
-	test_pdn_ctx_create_cid1();
+	test_lte_lc_pdp_context_create_cid1();
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cgdcont_cid1;
 	k_free_fake.custom_fake = k_free_PDN1;
 
-	ret = pdn_ctx_destroy(CID_1);
+	ret = lte_lc_context_destroy(CID_1);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cgdcont_cid2;
 	k_free_fake.custom_fake = k_free_PDN2;
 
-	ret = pdn_ctx_destroy(CID_2);
+	ret = lte_lc_context_destroy(CID_2);
 	TEST_ASSERT_EQUAL(0, ret);
 }
 
-/* We dont add the PDN and PDN_ESM_STRERROR Kconfigs so we add this as extern. */
-extern const char *pdn_esm_strerror(int reason);
-
-void test_pdn_esm_strerror(void)
+void test_lte_lc_pdn_esm_strerror(void)
 {
 	const char *str;
 
-	str = pdn_esm_strerror(0x26);
+	str = lte_lc_pdn_esm_strerror(0x26);
 	TEST_ASSERT_EQUAL_STRING("Network failure", str);
 
-	str = pdn_esm_strerror(0xbad);
+	str = lte_lc_pdn_esm_strerror(0xbad);
 	TEST_ASSERT_EQUAL_STRING("<unknown>", str);
 }
 
-extern void pdn_on_modem_cfun(int mode, void *ctx);
-void test_on_modem_cfun_pwr_off(void)
+void test_lte_lc_pdn_dynamic_info_get_einval(void)
 {
 	int ret;
 
-	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_on_cfun_pwr_off;
-
-	/* we don't expect anything to happen in this case. */
-	pdn_on_modem_cfun(0, NULL);
-
-	TEST_ASSERT_EQUAL(1, nrf_modem_at_printf_fake.call_count);
-
-
-	RESET_FAKE(nrf_modem_at_printf);
-	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_on_cfun_pwr_off;
-	test_pdn_ctx_create_cid1();
-
-	pdn_on_modem_cfun(0, NULL);
-
-	TEST_ASSERT_EQUAL(1, nrf_modem_at_printf_fake.call_count);
-
-	/* Context destroyed on FCUN=0 */
-	ret = pdn_ctx_destroy(1);
+	ret = lte_lc_context_pdn_dynamic_info_get(0, NULL);
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
-void test_on_modem_cfun_lte_on(void)
-{
-	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_on_cfun_lte_on;
-
-	pdn_on_modem_cfun(1, NULL);
-
-	TEST_ASSERT_EQUAL(2, nrf_modem_at_printf_fake.call_count);
-
-	RESET_FAKE(nrf_modem_at_printf);
-	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_on_cfun_lte_on;
-	pdn_on_modem_cfun(21, NULL);
-
-	TEST_ASSERT_EQUAL(2, nrf_modem_at_printf_fake.call_count);
-}
-
-void test_pdn_dynamic_info_get_einval(void)
+void test_lte_lc_pdn_dynamic_info_get_ebadmsg(void)
 {
 	int ret;
-
-	ret = pdn_dynamic_info_get(0, NULL);
-	TEST_ASSERT_EQUAL(-EINVAL, ret);
-}
-
-void test_pdn_dynamic_info_get_ebadmsg(void)
-{
-	int ret;
-	struct pdn_dynamic_info pdn_info = {};
+	struct lte_lc_pdn_dynamic_info pdn_info = {};
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp_no_match;
 
-	ret = pdn_dynamic_info_get(0, &pdn_info);
+	ret = lte_lc_context_pdn_dynamic_info_get(0, &pdn_info);
 	TEST_ASSERT_EQUAL(-EBADMSG, ret);
 }
 
-void test_pdn_dynamic_info_get(void)
+void test_lte_lc_pdn_dynamic_info_get(void)
 {
 	int ret;
-	struct pdn_dynamic_info pdn_info = {};
+	struct lte_lc_pdn_dynamic_info pdn_info = {};
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp;
 
-	ret = pdn_dynamic_info_get(0, &pdn_info);
+	ret = lte_lc_context_pdn_dynamic_info_get(0, &pdn_info);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	TEST_ASSERT_EQUAL(1500, pdn_info.ipv4_mtu);
@@ -1574,14 +1474,14 @@ void test_pdn_dynamic_info_get(void)
 				 sizeof(ipv6_dns_secondary));
 }
 
-void test_pdn_dynamic_info_get_match_ipv4(void)
+void test_lte_lc_pdn_dynamic_info_get_match_ipv4(void)
 {
 	int ret;
-	struct pdn_dynamic_info pdn_info = {};
+	struct lte_lc_pdn_dynamic_info pdn_info = {};
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp_match_ipv4;
 
-	ret = pdn_dynamic_info_get(0, &pdn_info);
+	ret = lte_lc_context_pdn_dynamic_info_get(0, &pdn_info);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	TEST_ASSERT_EQUAL(1500, pdn_info.ipv4_mtu);
@@ -1593,14 +1493,14 @@ void test_pdn_dynamic_info_get_match_ipv4(void)
 				 sizeof(ipv4_dns_secondary));
 }
 
-void test_pdn_dynamic_info_get_match_ipv6(void)
+void test_lte_lc_pdn_dynamic_info_get_match_ipv6(void)
 {
 	int ret;
-	struct pdn_dynamic_info pdn_info = {};
+	struct lte_lc_pdn_dynamic_info pdn_info = {};
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp_match_ipv6;
 
-	ret = pdn_dynamic_info_get(0, &pdn_info);
+	ret = lte_lc_context_pdn_dynamic_info_get(0, &pdn_info);
 	TEST_ASSERT_EQUAL(0, ret);
 
 	TEST_ASSERT_EQUAL(0, pdn_info.ipv4_mtu);
@@ -1612,95 +1512,58 @@ void test_pdn_dynamic_info_get_match_ipv6(void)
 				 sizeof(ipv6_dns_secondary));
 }
 
-extern void on_modem_init(int ret, void *ctx);
-void test_on_modem_init(void)
-{
-	/* we don't expect anything to happen in this case. */
-	on_modem_init(-ESHUTDOWN, NULL);
-
-	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_eshutdown;
-
-	on_modem_init(0, NULL);
-
-	TEST_ASSERT_EQUAL(1, nrf_modem_at_printf_fake.call_count);
-
-	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_on_init;
-
-	RESET_FAKE(nrf_modem_at_printf);
-
-	on_modem_init(0, NULL);
-
-	TEST_ASSERT_EQUAL(2, nrf_modem_at_printf_fake.call_count);
-}
-
-void test_pdn_cellular_profile_configure_einval(void)
+void test_lte_lc_cellular_profile_configure_einval(void)
 {
 	int ret;
 
-	ret = pdn_cellular_profile_configure(NULL);
+	ret = lte_lc_cellular_profile_configure(NULL);
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
-void test_pdn_cellular_profile_configure(void)
+void test_lte_lc_cellular_profile_configure(void)
 {
 	int ret;
-	struct pdn_cellular_profile profile = {
+	struct lte_lc_cellular_profile profile = {
 		.id = 0,
-		.act = PDN_ACT_NTN,
-		.uicc = PDN_UICC_PHYSICAL,
+		.lte_mode = LTE_LC_LTE_MODE_NBIOT,
+		.uicc = LTE_LC_UICC_PHYSICAL,
 	};
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cellularprfl;
 
-	ret = pdn_cellular_profile_configure(&profile);
+	ret = lte_lc_cellular_profile_configure(&profile);
 	TEST_ASSERT_EQUAL(0, ret);
 }
 
-extern void on_cellularprfl(const char *notif);
-
 void test_pdn_cellular_profile_notif(void)
 {
-	int err;
-
 	k_malloc_fake.custom_fake = k_malloc_PDN1;
 
-	err = pdn_default_ctx_cb_reg(pdn_event_handler);
-	TEST_ASSERT_EQUAL(0, err);
-
 	on_cellularprfl("%CELLULARPRFL: 1");
-
-	TEST_ASSERT_EQUAL(PDN_EVENT_CELLULAR_PROFILE_ACTIVE, pdn_evt_event);
-	/* The default context ID for the second profile is 10. */
-	TEST_ASSERT_EQUAL(10, pdn_evt_cid);
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE, pdn_evt.type);
+	TEST_ASSERT_EQUAL(1, pdn_evt.cellular_profile_id);
 
 	on_cellularprfl("%CELLULARPRFL: 0");
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE, pdn_evt.type);
+	TEST_ASSERT_EQUAL(0, pdn_evt.cellular_profile_id);
 
-	TEST_ASSERT_EQUAL(PDN_EVENT_CELLULAR_PROFILE_ACTIVE, pdn_evt_event);
-	/* The default context ID for the first profile is 0. */
-	TEST_ASSERT_EQUAL(0, pdn_evt_cid);
+	memset(&pdn_evt, 0, sizeof(struct lte_lc_evt));
 
-	/* Verify that the callback is not called when the cellular profile ID is invalid.
-	 * In this case, pdn_evt_cid and pdn_evt_event are not changed.
-	 */
 	on_cellularprfl("%CELLULARPRFL: 3");
-
-	TEST_ASSERT_EQUAL(PDN_EVENT_CELLULAR_PROFILE_ACTIVE, pdn_evt_event);
-	TEST_ASSERT_EQUAL(0, pdn_evt_cid);
+	TEST_ASSERT_EQUAL(0, pdn_evt.type);
+	TEST_ASSERT_EQUAL(0, pdn_evt.cellular_profile_id);
 }
 
 void test_pdn_cellular_profile_notif_no_callback(void)
 {
-	int err;
-
 	k_malloc_fake.custom_fake = k_malloc_PDN1;
 
-	err = pdn_default_ctx_cb_dereg(pdn_event_handler);
-	TEST_ASSERT_EQUAL(0, err);
+	lte_lc_deregister_handler(lte_lc_event_handler);
 
 	on_cellularprfl("%CELLULARPRFL: 1");
 
-	TEST_ASSERT_EQUAL(0, pdn_evt_cid);
-	TEST_ASSERT_EQUAL(0, pdn_evt_event);
+	TEST_ASSERT_EQUAL(0, pdn_evt.cellular_profile_id);
+	TEST_ASSERT_EQUAL(0, pdn_evt.type);
 }
 
 /* It is required to be added to each test. That is because unity's

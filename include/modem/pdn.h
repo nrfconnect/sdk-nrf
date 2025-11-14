@@ -108,6 +108,11 @@ enum pdn_event {
 	 *  This happens if modem is switched to minimum functionality mode.
 	 */
 	PDN_EVENT_CTX_DESTROYED,
+	/** A cellular profile is activated for the current access technology.
+	 *  The ``cid`` parameter in the callback is the context ID of the default PDP context
+	 *  for the active cellular profile.
+	 */
+	PDN_EVENT_CELLULAR_PROFILE_ACTIVE,
 };
 
 /** @brief Authentication method */
@@ -115,6 +120,42 @@ enum pdn_auth {
 	PDN_AUTH_NONE = 0,	/**< No authentication */
 	PDN_AUTH_PAP  = 1,	/**< Password Authentication Protocol (PAP) */
 	PDN_AUTH_CHAP = 2,	/**< Challenge-Handshake Authentication Protocol (CHAP) */
+};
+
+/** @brief Cellular profile access technology type. Decides for which access technology the profile
+ *	   is valid.
+ */
+enum pdn_act {
+	/** LTE-M access technology */
+	PDN_ACT_LTE_M		= 1,
+	/** NB-IoT access technology */
+	PDN_ACT_NB_IOT		= 2,
+	/** LTE-M and NB-IoT access technology */
+	PDN_ACT_LTE_M_NB_IOT	= 3,
+	/** NTN access technology */
+	PDN_ACT_NTN		= 4,
+};
+
+/** @brief UICC configuration type, used for cellular profile selection */
+enum pdn_uicc_config {
+	/** Physical SIM or eSIM */
+	PDN_UICC_PHYSICAL	= 0,
+	/** SoftSIM */
+	PDN_UICC_SOFTSIM	= 1,
+};
+
+/** @brief Cellular profile. Used to set the cellular profile for the PDN connection.
+ *  @note The profile ID 0 is associated with PDN contexts in the range 0-9, while profile ID 1
+ *	  is associated with PDN contexts in the range 10-19. The default context for each profile
+ *	  is the first context in the range.
+ */
+struct pdn_cellular_profile {
+	/** Cellular profile ID. Valid values are 0 and 1. */
+	uint8_t id;
+	/** Access technology */
+	enum pdn_act act;
+	/** UICC configuration */
+	enum pdn_uicc_config uicc;
 };
 
 /**
@@ -128,7 +169,9 @@ enum pdn_auth {
  *
  * This handler is executed in the same context that dispatches AT notifications.
  *
- * @param cid The PDP context ID.
+ * @param cid The PDP context ID. For cellular profile selection events,
+ *	      this is the default context ID for the active cellular profile.
+ *	      For other events, this is the PDP context ID.
  * @param event The event.
  * @param reason The ESM error reason, if available.
  */
@@ -264,6 +307,17 @@ int pdn_default_ctx_cb_reg(pdn_event_handler_t cb);
  *                 the callback was not registered upon calling this function.
  */
 int pdn_default_ctx_cb_dereg(pdn_event_handler_t cb);
+
+/**
+ * @brief Configure a cellular profile. The cellular profile to be used for a specific access
+ *	  technology is decided by the modem. The active cellular profile is reported in the
+ *	  ``PDN_EVENT_CELLULAR_PROFILE_ACTIVE`` event if a callback is registered.
+ *
+ * @param profile The cellular profile to set.
+ *
+ * @return Zero on success or a negative error code on failure.
+ */
+int pdn_cellular_profile_configure(struct pdn_cellular_profile *profile);
 
 #if CONFIG_PDN_ESM_STRERROR
 
