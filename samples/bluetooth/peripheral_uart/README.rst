@@ -156,15 +156,15 @@ Configuration
 
 |config|
 
+.. _peripheral_uart_configuration_options:
+
 Configuration options
 =====================
 
-Check and configure the following configuration options for the sample:
+The following sample-specific Kconfig options are used in this sample (located in :file:`samples/bluetooth/peripheral_uart/Kconfig`) :
 
-.. _CONFIG_UART_ASYNC_ADAPTER:
-
-CONFIG_UART_ASYNC_ADAPTER - Enable UART async adapter
-   Enables asynchronous adapter for UART drives that supports only IRQ interface.
+.. options-from-kconfig::
+   :show-type:
 
 Building and running
 ********************
@@ -275,25 +275,46 @@ To perform the test, complete the following steps:
             #. |connect_terminal|
             #. Optionally, you can display debug messages.
                See :ref:`peripheral_uart_debug` for details.
-            #. Install and start the `nRF Connect for Mobile`_ application on your Android device or tablet.
+            #. Install and start the `nRF Connect for Mobile`_ application on your Android device.
             #. If the application does not automatically start scanning, tap the Play icon in the upper right corner.
             #. Connect to the device using nRF Connect for Mobile.
 
                Observe that **LED 2** is lit.
             #. Optionally, pair or bond with the device with MITM protection.
                This requires using the passkey value displayed in debug messages.
-               See :ref:`peripheral_uart_debug` for details on how to access debug messages.
+
+               See :ref:`peripheral_uart_configuration_options` for details on how to enable the MITM protection.
+
+               See :ref:`peripheral_uart_debug` for details on how to access debug messages containing passkey.
+
                To confirm pairing or bonding, press **Button 1** on the device and accept the passkey value on the smartphone.
             #. In the application, observe that the services are shown in the connected device.
-            #. Select the **UART RX characteristic** option in nRF Connect for Mobile and tap the up arrow button.
+            #. Select **Nordic UART Service** and tap the up arrow button for the **UART RX characteristic**.
+               A pop-up window with a text input field appears.
                You can write to the UART RX and get the text displayed on the COM listener.
+
+               .. figure:: /images/bt_peripheral_uart_rx_button_android.png
+                  :scale: 50 %
+                  :alt: Screenshot of Android nRF Connect, showing UART RX characteristic up arrow button
             #. Type "0123456789" and tap :guilabel:`SEND`.
 
                Verify that the text "0123456789" is displayed on the COM listener.
+
+               .. figure:: /images/bt_peripheral_uart_rx_popup_android.png
+                  :scale: 50 %
+                  :alt: Screenshot of Android nRF Connect, showing UART RX characteristic write value popup window
             #. To send data from the device to your phone or tablet, in the terminal emulator connected to the sample, enter any text, for example, "Hello", and press Enter to see it on the COM listener.
 
                The text is sent through the development kit to your mobile device over a Bluetooth LE link.
-            #. On your Android device or tablet, tap the three-dot menu next to **Disconnect** and select **Show log**.
+               It appears in the **Value** field of **UART TX characteristic**.
+
+               If the text does not appear, check if notifications are enabled for this characteristic.
+               You can toggle the notification settings with a button in the upper right corner of **UART TX Characteristic**.
+
+               .. figure:: /images/bt_peripheral_uart_tx_android.png
+                  :scale: 50 %
+                  :alt: Screenshot of Android nRF Connect, showing UART TX characteristic with notification toggle and received text
+            #. On your Android device, tap the three-dot menu next to **Disconnect** and select **Show log**.
 
                The device displays the text in the nRF Connect for Mobile log.
             #. Disconnect the device in nRF Connect for Mobile.
@@ -309,27 +330,46 @@ To perform the test, complete the following steps:
             #. |connect_terminal|
             #. Optionally, you can display debug messages.
                See :ref:`peripheral_uart_debug` for details.
-            #. Install and start the `nRF Connect for Mobile`_ application on your iOS device or tablet.
+            #. Install and start the `nRF Connect for Mobile`_ application on your iOS device.
             #. If the application does not automatically start scanning, tap the Play icon in the upper right corner.
             #. Connect to the device using nRF Connect for Mobile.
 
                Observe that **LED 2** is lit.
             #. Optionally, pair or bond with the device with MITM protection.
                This requires using the passkey value displayed in debug messages.
-               See :ref:`peripheral_uart_debug` for details on how to access debug messages.
-               To confirm pairing or bonding, press **Button 1** on the device and accept the passkey value on the smartphone.
-            #. In the application, observe that the services are shown in the connected device.
-            #. Select the **UART RX characteristic** option in nRF Connect for Mobile and tap the up arrow button.
 
-               The **Write Value** window opens.
+               See :ref:`peripheral_uart_configuration_options` for details on how to enable the MITM protection.
+
+               See :ref:`peripheral_uart_debug` for details on how to access debug messages containing passkey.
+
+               To confirm pairing or bonding, press **Button 1** on the device and accept the passkey value on the smartphone.
+            #. In the application, change to **Client** tab and observe that the services are shown in the connected device.
+            #. In **Nordic UART Service**, tap the up arrow button for the **UART RX characteristic**.
+               A **Write Value** pop-up window with a text input field appears.
                You can write to the UART RX and get the text displayed on the COM listener.
-            #. Type "0123456789" and tap **Write**.
+
+               .. figure:: /images/bt_peripheral_uart_rx_button_ios.png
+                  :scale: 50 %
+                  :alt: Screenshot of iOS nRF Connect, showing UART RX characteristic up arrow button
+            #. Type "0123456789", select "UTF8" input type and tap :guilabel:`Write`.
 
                Verify that the text "0123456789" is displayed on the COM listener.
+
+               .. figure:: /images/bt_peripheral_uart_rx_popup_ios.png
+                  :scale: 50 %
+                  :alt: Screenshot of iOS nRF Connect, showing UART RX characteristic write value popup window
             #. To send data from the device to your phone or tablet, in the terminal emulator connected to the sample, enter any text, for example, "Hello", and press Enter to see it on the COM listener.
 
                The text is sent through the development kit to your mobile device over a Bluetooth LE link.
-            #. On your iOS device or tablet, select the **Log** tab.
+               It appears in the **Value** field of **UART TX characteristic**.
+
+               If the text does not appear, check if notifications are enabled for this characteristic.
+               You can toggle the notification settings with a button in the lower right corner of **UART TX Characteristic**.
+
+               .. figure:: /images/bt_peripheral_uart_tx_ios.png
+                  :scale: 50 %
+                  :alt: Screenshot of iOS nRF Connect, showing UART TX characteristic with notification toggle and received text
+            #. On your iOS device, select the **Log** tab.
 
                The device displays the text in the nRF Connect for Mobile log.
             #. Disconnect the device in nRF Connect for Mobile.
@@ -352,25 +392,46 @@ To perform the test, complete the following steps:
             #. |connect_terminal|
             #. Optionally, you can display debug messages.
                See :ref:`peripheral_uart_debug` for details.
-            #. Install and start the `nRF Connect for Mobile`_ application on your Android device or tablet.
+            #. Install and start the `nRF Connect for Mobile`_ application on your Android device.
             #. If the application does not automatically start scanning, tap the Play icon in the upper right corner.
             #. Connect to the device using nRF Connect for Mobile.
 
                Observe that **LED 1** is lit.
             #. Optionally, pair or bond with the device with MITM protection.
                This requires using the passkey value displayed in debug messages.
-               See :ref:`peripheral_uart_debug` for details on how to access debug messages.
+
+               See :ref:`peripheral_uart_configuration_options` for details on how to enable the MITM protection.
+
+               See :ref:`peripheral_uart_debug` for details on how to access debug messages containing passkey.
+
                To confirm pairing or bonding, press **Button 0** on the device and accept the passkey value on the smartphone.
             #. In the application, observe that the services are shown in the connected device.
-            #. Select the **UART RX characteristic** option in nRF Connect for Mobile and tap the up arrow button.
+            #. Select **Nordic UART Service** and tap the up arrow button for the **UART RX characteristic**.
+               A pop-up window with a text input field appears.
                You can write to the UART RX and get the text displayed on the COM listener.
+
+               .. figure:: /images/bt_peripheral_uart_rx_button_android.png
+                  :scale: 50 %
+                  :alt: Screenshot of Android nRF Connect, showing UART RX characteristic up arrow button
             #. Type "0123456789" and tap :guilabel:`SEND`.
 
                Verify that the text "0123456789" is displayed on the COM listener.
+
+               .. figure:: /images/bt_peripheral_uart_rx_popup_android.png
+                  :scale: 50 %
+                  :alt: Screenshot of Android nRF Connect, showing UART RX characteristic write value popup window
             #. To send data from the device to your phone or tablet, in the terminal emulator connected to the sample, enter any text, for example, "Hello", and press Enter to see it on the COM listener.
 
                The text is sent through the development kit to your mobile device over a Bluetooth LE link.
-            #. On your Android device or tablet, tap the three-dot menu next to **Disconnect** and select **Show log**.
+               It appears in the **Value** field of **UART TX characteristic**.
+
+               If the text does not appear, check if notifications are enabled for this characteristic.
+               You can toggle the notification settings with a button in the upper right corner of **UART TX Characteristic**.
+
+               .. figure:: /images/bt_peripheral_uart_tx_android.png
+                  :scale: 50 %
+                  :alt: Screenshot of Android nRF Connect, showing UART TX characteristic with notification toggle and received text
+            #. On your Android device, tap the three-dot menu next to **Disconnect** and select **Show log**.
 
                The device displays the text in the nRF Connect for Mobile log.
             #. Disconnect the device in nRF Connect for Mobile.
@@ -386,27 +447,46 @@ To perform the test, complete the following steps:
             #. |connect_terminal|
             #. Optionally, you can display debug messages.
                See :ref:`peripheral_uart_debug` for details.
-            #. Install and start the `nRF Connect for Mobile`_ application on your iOS device or tablet.
+            #. Install and start the `nRF Connect for Mobile`_ application on your iOS device.
             #. If the application does not automatically start scanning, tap the Play icon in the upper right corner.
             #. Connect to the device using nRF Connect for Mobile.
 
                Observe that **LED 1** is lit.
             #. Optionally, pair or bond with the device with MITM protection.
                This requires using the passkey value displayed in debug messages.
-               See :ref:`peripheral_uart_debug` for details on how to access debug messages.
-               To confirm pairing or bonding, press **Button 0** on the device and accept the passkey value on the smartphone.
-            #. In the application, observe that the services are shown in the connected device.
-            #. Select the **UART RX characteristic** option in nRF Connect for Mobile and tap the up arrow button.
 
-               The **Write Value** window opens.
+               See :ref:`peripheral_uart_configuration_options` for details on how to enable the MITM protection.
+
+               See :ref:`peripheral_uart_debug` for details on how to access debug messages containing passkey.
+
+               To confirm pairing or bonding, press **Button 0** on the device and accept the passkey value on the smartphone.
+            #. In the application, change to **Client** tab and observe that the services are shown in the connected device.
+            #. In **Nordic UART Service**, tap the up arrow button for the **UART RX characteristic**.
+               A **Write Value** pop-up window with a text input field appears.
                You can write to the UART RX and get the text displayed on the COM listener.
-            #. Type "0123456789" and tap **Write**.
+
+               .. figure:: /images/bt_peripheral_uart_rx_button_ios.png
+                  :scale: 50 %
+                  :alt: Screenshot of iOS nRF Connect, showing UART RX characteristic up arrow button
+            #. Type "0123456789", select "UTF8" input type and tap :guilabel:`Write`.
 
                Verify that the text "0123456789" is displayed on the COM listener.
+
+               .. figure:: /images/bt_peripheral_uart_rx_popup_ios.png
+                  :scale: 50 %
+                  :alt: Screenshot of iOS nRF Connect, showing UART RX characteristic write value popup window
             #. To send data from the device to your phone or tablet, in the terminal emulator connected to the sample, enter any text, for example, "Hello", and press Enter to see it on the COM listener.
 
                The text is sent through the development kit to your mobile device over a Bluetooth LE link.
-            #. On your iOS device or tablet, select the **Log** tab.
+               It appears in the **Value** field of **UART TX characteristic**.
+
+               If the text does not appear, check if notifications are enabled for this characteristic.
+               You can toggle the notification settings with a button in the lower right corner of **UART TX Characteristic**.
+
+               .. figure:: /images/bt_peripheral_uart_tx_ios.png
+                  :scale: 50 %
+                  :alt: Screenshot of iOS nRF Connect, showing UART TX characteristic with notification toggle and received text
+            #. On your iOS device, select the **Log** tab.
 
                The device displays the text in the nRF Connect for Mobile log.
             #. Disconnect the device in nRF Connect for Mobile.
