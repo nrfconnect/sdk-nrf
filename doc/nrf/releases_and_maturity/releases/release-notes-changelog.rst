@@ -686,6 +686,7 @@ Matter samples
 
   * The :ref:`matter_temperature_sensor_sample` sample that demonstrates how to implement and test a Matter temperature sensor device.
   * The :ref:`matter_contact_sensor_sample` sample that demonstrates how to implement and test a Matter contact sensor device.
+  * The :ref:`matter_closure_sample` sample that demonstrates how to implement and test a Matter closure device.
   * The ``matter_custom_board`` toggle paragraph in the Matter advanced configuration section of all Matter samples that demonstrates how add and configure a custom board.
   * Support for the Matter over Wi-Fi on the nRF54LM20 DK with the nRF7002-EB II shield attached to all Matter over Wi-Fi samples.
 
