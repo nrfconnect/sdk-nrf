@@ -848,20 +848,58 @@ static int send_response(struct http_req *request, char *response, size_t len, i
 	return 0;
 }
 
+/* Append CORS headers and final CRLF to HTTP response.
+ *
+ * @param[in,out] response Response buffer to append CORS headers to.
+ * @param[in] len Maximum size of the response buffer.
+ * @param[in,out] current_len Current length of the response string, updated
+ *			       to new length after appending CORS headers and CRLF.
+ *
+ * @retval 0 on success.
+ * @retval -ENOMEM if buffer is too small.
+ */
+static int append_cors_headers_and_crlf(char *response, size_t len, size_t *current_len)
+{
+	int ret;
+	size_t remaining = len - *current_len;
+
+	ret = snprintk(response + *current_len, remaining,
+		       "Access-Control-Allow-Origin: *\r\n"
+		       "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n"
+		       "Access-Control-Allow-Headers: Content-Type\r\n"
+		       "Access-Control-Max-Age: 86400\r\n"
+		       "\r\n");
+	if ((ret < 0) || (ret >= remaining)) {
+		LOG_ERR("snprintk, error: %d", ret);
+		return -ENOMEM;
+	}
+
+	*current_len += ret;
+	return 0;
+}
+
 int method_verify(enum http_method method, enum http_method method_expected,
 		  char *response, size_t len, int socket)
 {
 	int ret;
+	size_t current_len;
 
 	if (method != method_expected) {
-		ret = snprintk(response, len, "%sContent-Length: %d\r\n\r\n",
+		ret = snprintk(response, len, "%sContent-Length: %d\r\n",
 			       RESPONSE_405, 0);
 		if ((ret < 0) || (ret >= len)) {
 			LOG_DBG("snprintk, error: %d", ret);
 			return ret;
 		}
 
-		ret = send_response(&request, response, strlen(response), socket);
+		current_len = ret;
+		ret = append_cors_headers_and_crlf(response, len, &current_len);
+		if (ret) {
+			LOG_ERR("append_cors_headers_and_crlf, error: %d", ret);
+			return ret;
+		}
+
+		ret = send_response(&request, response, current_len, socket);
 		if (ret) {
 			LOG_ERR("send_response, error: %d", ret);
 			return ret;
@@ -877,6 +915,32 @@ int method_verify(enum http_method method, enum http_method method_expected,
 static int http_request_handle(struct http_req *request, char *response, size_t len, int socket)
 {
 	int ret;
+	size_t current_len;
+
+	/* Handle OPTIONS preflight requests for CORS */
+	if (request->method == HTTP_OPTIONS) {
+		ret = snprintk(response, len, "%sContent-Length: %d\r\n",
+			       RESPONSE_200, 0);
+		if ((ret < 0) || (ret >= len)) {
+			LOG_DBG("snprintk, error: %d", ret);
+			return ret;
+		}
+
+		current_len = ret;
+		ret = append_cors_headers_and_crlf(response, len, &current_len);
+		if (ret) {
+			LOG_ERR("append_cors_headers_and_crlf, error: %d", ret);
+			return ret;
+		}
+
+		ret = send_response(request, response, current_len, socket);
+		if (ret) {
+			LOG_ERR("send_response, error: %d", ret);
+			return ret;
+		}
+
+		return 0;
+	}
 
 	if ((strlen(request->url) == sizeof("/prov/networks") - 1) &&
 	    (strncmp(request->url, "/prov/networks", strlen(request->url)) == 0)) {
@@ -892,15 +956,22 @@ static int http_request_handle(struct http_req *request, char *response, size_t 
 		}
 
 		ret = snprintk(response, len,
-			"%sContent-Type: application/x-protobuf\r\nContent-Length: %d\r\n\r\n",
+			"%sContent-Type: application/x-protobuf\r\nContent-Length: %d\r\n",
 			RESPONSE_200, scan_result_buffer_len);
 		if ((ret < 0) || (ret >= len)) {
 			LOG_DBG("snprintk, error: %d", ret);
 			return ret;
 		}
 
+		current_len = ret;
+		ret = append_cors_headers_and_crlf(response, len, &current_len);
+		if (ret) {
+			LOG_ERR("append_cors_headers_and_crlf, error: %d", ret);
+			return ret;
+		}
+
 		/* Send headers */
-		ret = send_response(request, response, strlen(response), socket);
+		ret = send_response(request, response, current_len, socket);
 		if (ret) {
 			LOG_ERR("send_response (headers), error: %d", ret);
 			return ret;
@@ -932,13 +1003,21 @@ static int http_request_handle(struct http_req *request, char *response, size_t 
 			return ret;
 		}
 
-		ret = snprintk(response, len, "%sContent-Length: %d\r\n\r\n", RESPONSE_200, 0);
+		ret = snprintk(response, len, "%sContent-Length: %d\r\n",
+			       RESPONSE_200, 0);
 		if ((ret < 0) || (ret >= len)) {
 			LOG_DBG("snprintk, error: %d", ret);
 			return ret;
 		}
 
-		ret = send_response(request, response, strlen(response), socket);
+		current_len = ret;
+		ret = append_cors_headers_and_crlf(response, len, &current_len);
+		if (ret) {
+			LOG_ERR("append_cors_headers_and_crlf, error: %d", ret);
+			return ret;
+		}
+
+		ret = send_response(request, response, current_len, socket);
 		if (ret) {
 			LOG_ERR("send_response, error: %d", ret);
 			return ret;
@@ -949,14 +1028,22 @@ static int http_request_handle(struct http_req *request, char *response, size_t 
 	} else {
 		LOG_DBG("Unrecognized HTTP resource, ignoring...");
 
-		ret = snprintk(response, len, "%sContent-Length: %d\r\n\r\n", RESPONSE_404, 0);
+		ret = snprintk(response, len, "%sContent-Length: %d\r\n",
+			       RESPONSE_404, 0);
 		if ((ret < 0) || (ret >= len)) {
 			LOG_DBG("snprintk, error: %d", ret);
 			return ret;
 		}
 
+		current_len = ret;
+		ret = append_cors_headers_and_crlf(response, len, &current_len);
+		if (ret) {
+			LOG_ERR("append_cors_headers_and_crlf, error: %d", ret);
+			return ret;
+		}
+
 		/* Send headers */
-		ret = send_response(request, response, strlen(response), socket);
+		ret = send_response(request, response, current_len, socket);
 		if (ret) {
 			LOG_ERR("send_response (headers), error: %d", ret);
 			return ret;
