@@ -7,7 +7,7 @@ Cellular: PDN
    :local:
    :depth: 2
 
-The PDN sample demonstrates how to create and configure a Packet Data Protocol (PDP) context, activate a Packet Data Network connection, and receive events on its state and connectivity using the :ref:`pdn_readme` library.
+The PDN sample demonstrates how to create and configure a Packet Data Protocol (PDP) context, activate a Packet Data Network connection, and receive events on its state and connectivity using the PDN functionality in the :ref:`lte_lc_readme` library.
 
 Requirements
 ************
@@ -22,14 +22,14 @@ Overview
 ********
 
 The sample first initializes the :ref:`nrfxlib:nrf_modem`.
-Next, the sample initializes the :ref:`pdn_readme` library and registers a callback for events pertaining to the default PDP context.
+Next, the sample registers a callback for PDN events using the :ref:`lte_lc_readme` library, including events pertaining to the default PDP context.
 This is done before changing the function mode to 1 (``AT+CFUN=1``) to receive the activation event for the default PDP context.
-The sample then creates a new PDP context and configures it to use the default APN, registers a callback for its events and activates the PDN connection.
+The sample then creates a new PDP context and configures it to use the default APN, and activates the PDN connection.
 Finally, the sample prints the PDP context IDs and PDN IDs of both the default PDP context and the new PDP context that it has created.
 
 .. note::
    The sample uses the :ref:`lte_lc_readme` library to change the modem's functional mode.
-   Hence, the :ref:`pdn_readme` library can automatically register to the necessary packet domain events notifications using the ``AT+CGEREP=1`` AT command, and notifications for unsolicited reporting of error codes sent by the network using the ``AT+CNEC=16`` AT command.
+   Hence, the :ref:`lte_lc_readme` library can automatically register to the necessary packet domain events notifications using the ``AT+CGEREP=1`` AT command, and notifications for unsolicited reporting of error codes sent by the network using the ``AT+CNEC=16`` AT command.
    See the `AT+CGEREP set command`_ and the `AT+CNEC set command`_ sections, respectively, in the nRF9160 AT Commands Reference Guide or the `nRF91x1 AT+CGEREP set command`_  and the `nRF91x1 AT+CNEC set command`_ sections in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
    If your application does not use the :ref:`lte_lc_readme` library to change the modem's functional mode, you have to subscribe to these notifications manually before the functional mode is changed.
 
@@ -104,7 +104,6 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`at_monitor_readme`
 * :ref:`lte_lc_readme`
-* :ref:`pdn_readme`
 
 It uses the following `sdk-nrfxlib`_ library:
 

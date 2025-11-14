@@ -9,7 +9,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/net/net_ip.h>
 #include <zephyr/net/socket.h>
-#include <modem/pdn.h>
 #include <modem/lte_lc.h>
 #include <modem/nrf_modem_lib.h>
 #include <nrf_modem_at.h>
@@ -18,19 +17,21 @@
 #define SIN(addr)  ((struct nrf_sockaddr_in *)(addr))
 
 static const char * const fam_str[] = {
-	[PDN_FAM_IPV4V6] = "IPV4V6",
-	[PDN_FAM_IPV6] = "IPV6",
-	[PDN_FAM_IPV4] = "IPV4",
+	[LTE_LC_PDN_FAM_IPV4V6] = "IPV4V6",
+	[LTE_LC_PDN_FAM_IPV6] = "IPV6",
+	[LTE_LC_PDN_FAM_IPV4] = "IPV4",
 };
 
 static const char * const event_str[] = {
-	[PDN_EVENT_CNEC_ESM] = "ESM",
-	[PDN_EVENT_ACTIVATED] = "activated",
-	[PDN_EVENT_DEACTIVATED] = "deactivated",
-	[PDN_EVENT_IPV6_UP] = "IPv6 up",
-	[PDN_EVENT_IPV6_DOWN] = "IPv6 down",
-	[PDN_EVENT_NETWORK_DETACH] = "network detach",
-	[PDN_EVENT_CTX_DESTROYED] = "context destroyed",
+	[LTE_LC_EVT_PDN_ESM_ERROR] = "ESM",
+	[LTE_LC_EVT_PDN_ACTIVATED] = "activated",
+	[LTE_LC_EVT_PDN_DEACTIVATED] = "deactivated",
+	[LTE_LC_EVT_PDN_IPV6_UP] = "IPv6 up",
+	[LTE_LC_EVT_PDN_IPV6_DOWN] = "IPv6 down",
+	[LTE_LC_EVT_PDN_NETWORK_DETACH] = "network detach",
+	[LTE_LC_EVT_PDN_APN_RATE_CONTROL_ON] = "APN rate control on",
+	[LTE_LC_EVT_PDN_APN_RATE_CONTROL_OFF] = "APN rate control off",
+	[LTE_LC_EVT_PDN_CTX_DESTROYED] = "context destroyed",
 };
 
 static void snprintaddr(int fam, char *str, size_t size, void *addr)
@@ -81,12 +82,12 @@ static void ifaddrs_print(void)
 static void dynamic_info_print(uint32_t cid)
 {
 	int err;
-	struct pdn_dynamic_info info;
+	struct lte_lc_pdn_dynamic_info info;
 	char buf[NRF_INET6_ADDRSTRLEN] = {0};
 
-	err = pdn_dynamic_info_get(cid, &info);
+	err = lte_lc_pdn_dynamic_info_get(cid, &info);
 	if (err) {
-		printk("pdn_dynamic_info_get() failed, err %d\n", err);
+		printk("lte_lc_pdn_dynamic_info_get() failed, err %d\n", err);
 		return;
 	}
 
@@ -104,14 +105,22 @@ static void dynamic_info_print(uint32_t cid)
 	}
 }
 
-void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
+void lte_lc_evt_handler(const struct lte_lc_evt *const evt)
 {
-	switch (event) {
-	case PDN_EVENT_CNEC_ESM:
-		printk("Event: PDP context %d, %s\n", cid, pdn_esm_strerror(reason));
+	switch (evt->type) {
+	case LTE_LC_EVT_PDN:
+		switch (evt->pdn.type) {
+		case LTE_LC_EVT_PDN_ESM_ERROR:
+			printk("Event: PDP context %d, %s\n", evt->pdn.cid,
+			       lte_lc_pdn_esm_strerror(evt->pdn.esm_err));
+			break;
+		default:
+			printk("Event: PDP context %d %s\n", evt->pdn.cid,
+							     event_str[evt->pdn.type]);
+			break;
+		}
 		break;
 	default:
-		printk("Event: PDP context %d %s\n", cid, event_str[event]);
 		break;
 	}
 }
@@ -131,58 +140,54 @@ int main(void)
 		return 0;
 	}
 
-	/* Setup a callback for the default PDP context (zero).
+	/* Setup a callback for LTE events.
 	 * Do this before switching to function mode 1 (CFUN=1)
 	 * to receive the first activation event.
 	 */
-	err = pdn_default_ctx_cb_reg(pdn_event_handler);
-	if (err) {
-		printk("pdn_default_ctx_cb_reg() failed, err %d\n", err);
-		return 0;
-	}
+	lte_lc_register_handler(lte_lc_evt_handler);
 
 	err = lte_lc_connect();
 	if (err) {
 		return 0;
 	}
 
-	err = pdn_default_apn_get(apn, sizeof(apn));
+	err = lte_lc_pdn_ctx_default_apn_get(apn, sizeof(apn));
 	if (err) {
-		printk("pdn_default_apn_get() failed, err %d\n", err);
+		printk("lte_lc_pdn_ctx_default_apn_get() failed, err %d\n", err);
 		return 0;
 	}
 
 	printk("Default APN is %s\n", apn);
 
 	/* Create a PDP context and assign an event handler to receive events */
-	err = pdn_ctx_create(&cid, pdn_event_handler);
+	err = lte_lc_pdn_ctx_create(&cid);
 	if (err) {
-		printk("pdn_ctx_create() failed, err %d\n", err);
+		printk("lte_lc_pdn_ctx_create() failed, err %d\n", err);
 		return 0;
 	}
 
 	printk("Created new PDP context %d\n", cid);
 
 	/* Configure a PDP context with APN and Family */
-	err = pdn_ctx_configure(cid, apn, PDN_FAM_IPV4V6, NULL);
+	err = lte_lc_pdn_ctx_configure(cid, apn, LTE_LC_PDN_FAM_IPV4V6, NULL);
 	if (err) {
-		printk("pdn_ctx_configure() failed, err %d\n", err);
+		printk("lte_lc_pdn_ctx_configure() failed, err %d\n", err);
 		return 0;
 	}
 
 	printk("PDP context %d configured: APN %s, Family %s\n",
-	       cid, apn, fam_str[PDN_FAM_IPV4V6]);
+	       cid, apn, fam_str[LTE_LC_PDN_FAM_IPV4V6]);
 
 	/* Activate a PDN connection */
-	err = pdn_activate(cid, &esm, NULL);
+	err = lte_lc_pdn_activate(cid, &esm, NULL);
 	if (err) {
-		printk("pdn_activate() failed, err %d esm %d %s\n",
-			err, esm, pdn_esm_strerror(err));
+		printk("lte_lc_pdn_activate() failed, err %d esm %d %s\n",
+			err, esm, lte_lc_pdn_esm_strerror(err));
 		return 0;
 	}
 
-	printk("PDP Context %d, PDN ID %d\n", 0, pdn_id_get(0));
-	printk("PDP Context %d, PDN ID %d\n", cid, pdn_id_get(cid));
+	printk("PDP Context %d, PDN ID %d\n", 0, lte_lc_pdn_id_get(0));
+	printk("PDP Context %d, PDN ID %d\n", cid, lte_lc_pdn_id_get(cid));
 
 	dynamic_info_print(0);
 	dynamic_info_print(cid);
