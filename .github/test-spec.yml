@@ -117,7 +117,6 @@
   - "include/fw_info.*"
   - "include/mgmt/*"
   - "include/net/**/*"
-  - "include/sdfw/sdfw_services/*"
   - "lib/dk_buttons_and_leds/**/*"
   - "lib/lte_link_control/**/*"
   - "modules/mcuboot/**/*"
@@ -144,7 +143,6 @@
   - "subsys/nrf_security/**/*"
   - "subsys/partition_manager/*"
   - "subsys/pcd/*"
-  - "subsys/sdfw_services/**/*"
 
 "CI-boot-test":
   - "include/bl*"
