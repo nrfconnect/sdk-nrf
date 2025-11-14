@@ -19,6 +19,18 @@ The most relevant changes that are present on the main branch of the |NCS|, as c
    Add the sections you need, as only a handful of sections are kept when the changelog is cleaned.
    The "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and other components that implement or support protocol functionality.
 
+Highlights
+**********
+
+Added the following features as supported:
+
+* Matter:
+
+  * Integration of Matter 1.5.0.
+  * Experimental support for the Matter over Wi-Fi with the nRF54LM20A SoC combined with the nRF7002-EB II shield.
+  * Introduced the `Matter Quick Start app`_ as part of nRF Connect for Desktop.
+    This tool allows users to set up and configure Matter accessory devices, and evaluate Matter samples without the need of setting up the development environment.
+
 Known issues
 ************
 
@@ -211,6 +223,18 @@ Matter
 
 Matter fork
 +++++++++++
+
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``v1.5.0.0`` tag.
+
+* Added:
+
+  * The ``west zap-sync`` command to synchronize the ZAP and zcl.json files after updating the ZAP tool version.
+  * The check to all ``west zap`` commands that verifies whether ZAP tool sandbox permissions are correctly set.
+    In case of detecting incorrect permissions, the command will prompt the user to accept automatically updating the permissions to required ones.
+
+* Updated:
+
+  * The ``west zap-append`` command to accept ``--clusters`` argument instead of ``new_clusters`` argument.
 
 * Removed dependencies on Nordic DK-specific configurations in Matter configurations.
   See the `Migration guide for nRF Connect SDK v3.2.0`_ for more information.
