@@ -1,0 +1,53 @@
+sample:
+  name: nRF Cloud MQTT FOTA
+tests:
+  sample.cellular.nrf_cloud_mqtt_fota:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - thingy91x/nrf9151/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - thingy91x/nrf9151/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
+  sample.cellular.nrf_cloud_mqtt_fota_fmfu:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - thingy91x/nrf9151/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - thingy91x/nrf9151/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
+    extra_args:
+      - -DEXTRA_CONF_FILE="full_modem_fota.conf"
+  sample.cellular.nrf_cloud_mqtt_fota_smp:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9160dk/nrf9160/ns
+    platform_allow:
+      - nrf9160dk/nrf9160/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
+    extra_args:
+      - -DEXTRA_CONF_FILE="smp_fota.conf"
+      - -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay"
