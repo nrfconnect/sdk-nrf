@@ -34,6 +34,7 @@ static void cts_reinit(struct bt_cts_client *cts_c)
 	cts_c->conn = NULL;
 	cts_c->handle_ct = 0;
 	cts_c->handle_ct_ccc = 0;
+	cts_c->handle_lti = 0;
 	cts_c->state = ATOMIC_INIT(0);
 }
 
@@ -84,6 +85,17 @@ int bt_cts_handles_assign(struct bt_gatt_dm *dm, struct bt_cts_client *cts_c)
 	cts_c->handle_ct_ccc = gatt_desc->handle;
 
 	LOG_DBG("Current Time characteristic found.");
+
+	/* Try to locate optional Local Time Information characteristic. */
+	gatt_chrc = bt_gatt_dm_char_by_uuid(dm, BT_UUID_GATT_LTI);
+	if (gatt_chrc) {
+		gatt_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc, BT_UUID_GATT_LTI);
+		if (gatt_desc) {
+			cts_c->handle_lti = gatt_desc->handle;
+			LOG_DBG("Local Time Information characteristic found. handle: %u",
+				cts_c->handle_lti);
+		}
+	}
 
 	/* Finally - save connection object */
 	cts_c->conn = bt_gatt_dm_conn_get(dm);
@@ -228,6 +240,83 @@ static uint8_t bt_cts_notify_callback(struct bt_conn *conn,
 	return BT_GATT_ITER_CONTINUE;
 }
 
+/**@brief Function for decoding a read from the Local Time Information characteristic.
+ *
+ * @param[in] lti     Local Time Information structure.
+ * @param[in] data    Pointer to the buffer containing the Local Time Information.
+ * @param[in] length  Length of the buffer containing the Local Time Information.
+ *
+ * @retval 0        If the lti struct is valid.
+ * @retval -EINVAL  If the length does not match the expected size of the data.
+ */
+static int local_time_info_decode(struct bt_cts_local_time_info *lti, uint8_t const *data,
+				  uint32_t const length)
+{
+	if (length < 2) {
+		return -EINVAL;
+	}
+
+	/* Time zone in 15 minute increments (signed 8-bit) or BT_CTS_TZ_UNKNOWN. */
+	int8_t tz = (int8_t)data[0];
+	/* DST offset (uint8_t as defined in header enum). */
+	uint8_t dst_u = data[1];
+
+	/* Validate timezone: allowed values are -128 (unknown) or -48..56 (inclusive). */
+	if ((tz != BT_CTS_TZ_UNKNOWN) && (tz < -48 || tz > 56)) {
+		return -EINVAL;
+	}
+
+	/* Validate DST offset according to spec enumerations:
+	 * Allowed: 0 (Standard), 2 (Half hour), 4 (Daylight), 8 (Double daylight),
+	 * 255 = DST is not known. Other values are reserved/invalid.
+	 */
+	if (!(dst_u == 0 || dst_u == 2 || dst_u == 4 || dst_u == 8 || dst_u == 255)) {
+		return -EINVAL;
+	}
+
+	lti->timezone = tz;
+	lti->dst = (bt_cts_dst_offset_t)dst_u;
+
+	return 0;
+}
+
+/**@brief Function for handling of Local Time Information read response.
+ *
+ * @param[in] conn    Connection object.
+ * @param[in] err     ATT error code.
+ * @param[in] params  Read parameters used.
+ * @param[in] data    Pointer to the data buffer.
+ * @param[in] length  The size of the received data.
+ *
+ * @retval BT_GATT_ITER_STOP  Stop reading
+ */
+static uint8_t bt_cts_read_lti_callback(struct bt_conn *conn, uint8_t err,
+					struct bt_gatt_read_params *params, const void *data,
+					uint16_t length)
+{
+	struct bt_cts_client *cts_c;
+	struct bt_cts_local_time_info lti;
+	bt_cts_lti_read_cb read_cb;
+	int err_cb;
+
+	/* Retrieve CTS client module context. */
+	cts_c = CONTAINER_OF(params, struct bt_cts_client, read_params_lti);
+
+	if (!err) {
+		err_cb = local_time_info_decode(&lti, data, length);
+	} else {
+		err_cb = err;
+	}
+
+	read_cb = cts_c->read_lti_cb;
+	atomic_clear_bit(&cts_c->state, CTS_ASYNC_READ_PENDING);
+	if (read_cb) {
+		cts_c->read_lti_cb(cts_c, &lti, err_cb);
+	}
+
+	return BT_GATT_ITER_STOP;
+}
+
 int bt_cts_read_current_time(struct bt_cts_client *cts_c, bt_cts_read_cb func)
 {
 	int err;
@@ -250,6 +339,39 @@ int bt_cts_read_current_time(struct bt_cts_client *cts_c, bt_cts_read_cb func)
 	cts_c->read_params.single.offset = 0;
 
 	err = bt_gatt_read(cts_c->conn, &cts_c->read_params);
+	if (err) {
+		atomic_clear_bit(&cts_c->state, CTS_ASYNC_READ_PENDING);
+	}
+
+	return err;
+}
+
+int bt_cts_read_local_time_info(struct bt_cts_client *cts_c, bt_cts_lti_read_cb func)
+{
+	int err;
+
+	if (!cts_c || !func) {
+		return -EINVAL;
+	}
+	if (!cts_c->conn) {
+		return -EINVAL;
+	}
+	if (!cts_c->handle_lti) {
+		/* Characteristic not present on peer. */
+		return -ENOTSUP;
+	}
+	if (atomic_test_and_set_bit(&cts_c->state, CTS_ASYNC_READ_PENDING)) {
+		return -EBUSY;
+	}
+
+	cts_c->read_lti_cb = func;
+
+	cts_c->read_params_lti.func = bt_cts_read_lti_callback;
+	cts_c->read_params_lti.handle_count = 1;
+	cts_c->read_params_lti.single.handle = cts_c->handle_lti;
+	cts_c->read_params_lti.single.offset = 0;
+
+	err = bt_gatt_read(cts_c->conn, &cts_c->read_params_lti);
 	if (err) {
 		atomic_clear_bit(&cts_c->state, CTS_ASYNC_READ_PENDING);
 	}
