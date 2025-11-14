@@ -177,18 +177,22 @@ struct at_token at_match_str(const char *at, const char **remainder)
 
 	SPACE = " ";
 	CRLF = "\r\n";
+	TERM = ","|CRLF;
 	STR = [A-Za-z0-9][A-Za-z_\-+.0-9 ]*;
 
-	str         = SPACE? @t1 STR @t2 CRLF?;
+	str         = SPACE? @t1 STR @t2 TERM?;
 
 	*           { return (struct at_token){ .type = AT_TOKEN_TYPE_INVALID }; }
 
 	str
 	{
-		if (remainder) *remainder = t2;
+		char last = *(cursor - 1);
+
+		if (remainder) *remainder = cursor;
 		return (struct at_token){
 			.start = t1, .len = t2 - t1,
 			.type = AT_TOKEN_TYPE_STRING,
+			.var = last == ',' ? AT_TOKEN_VAR_COMMA : AT_TOKEN_VAR_NO_COMMA,
 		};
 	}
 */
