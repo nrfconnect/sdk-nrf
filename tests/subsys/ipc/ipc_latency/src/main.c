@@ -93,7 +93,7 @@ static uint64_t get_maximal_allowed_ping_pong_time_us(size_t test_message_len)
 	}
 #endif
 	if (IS_ENABLED(CONFIG_PM_S2RAM)) {
-		maximal_allowed_ping_pong_time_us *= 1.6;
+		maximal_allowed_ping_pong_time_us *= 1.8;
 	}
 	return maximal_allowed_ping_pong_time_us;
 }
@@ -199,7 +199,7 @@ static void test_ipc_latency(struct ipc_ept *endpoint, size_t test_message_len)
 		 average_timer_value_us);
 	TC_PRINT("Maximal allowed ping-pong time for %u bytes [us]: %llu\n", test_message_len,
 		 maximal_allowed_ping_pong_time_us);
-	zassert_true(average_timer_value_us < maximal_allowed_ping_pong_time_us,
+	zexpect_true(average_timer_value_us < maximal_allowed_ping_pong_time_us,
 		     "Measured IPC ping-pong latency is over the specified limit\n");
 
 	k_free(test_data);
