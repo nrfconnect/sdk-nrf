@@ -438,15 +438,22 @@ int esb_stop_rx(void);
  *
  * This function clears the TX FIFO buffer.
  *
- * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @note The radio must not be in transmission state for this operation to succeed.
+ *       This requirement prevents erroneous operations on the FIFO queue that could
+ *       occur if the buffer is cleared while the radio is transmitting.
+ *
+ * @retval 0       If successful (FIFO cleared).
+ * @retval -EACCES If ESB is not initialized.
+ * @retval -EBUSY  If radio is transmitting.
  */
 int esb_flush_tx(void);
 
 /** @brief Pop the first item from the TX buffer.
  *
  * @retval 0 If successful.
- *           Otherwise, a (negative) error code is returned.
+ * @retval -EACCES If ESB is not initialized.
+ * @retval -EBUSY  If radio is transmitting.
+ * @retval -ENODATA If TX FIFO is empty.
  */
 int esb_pop_tx(void);
 
