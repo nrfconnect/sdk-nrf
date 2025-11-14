@@ -1,0 +1,18 @@
+sample:
+  description: AB update sample with separated slots
+  name: ab_split
+common:
+  sysbuild: true
+  build_only: true
+  tags:
+    - dfu_ab
+    - ci_samples_dfu
+
+tests:
+  sample.dfu.ab_split:
+    extra_configs:
+      - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
