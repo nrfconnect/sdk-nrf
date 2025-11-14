@@ -64,6 +64,15 @@ static int setup_dtls_client_socket(void)
 		return -errno;
 	}
 
+	int cache = TLS_SESSION_CACHE_ENABLED;
+
+	err = setsockopt(sock, SOL_TLS, TLS_SESSION_CACHE, &cache, sizeof(cache));
+	if (err < 0) {
+		LOG_ERR("Failed to set TLS Session cache. Err: %d", errno);
+		(void)close(sock);
+		return -errno;
+	}
+
 	return sock;
 }
 
