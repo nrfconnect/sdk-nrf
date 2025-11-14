@@ -218,7 +218,9 @@ static bool m_hfclk_is_running(void)
 
 		unsigned int key = irq_lock();
 
-		(void)nrfx_clock_is_running(NRF_CLOCK_DOMAIN_HFCLK, &type);
+		COND_CODE_1((NRF_CLOCK_HAS_HFCLK),
+			    (nrfx_clock_hfclk_running_check),
+			    (nrfx_clock_xo_running_check))(&type);
 
 		irq_unlock(key);
 
