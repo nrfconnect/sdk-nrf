@@ -57,6 +57,7 @@ extensions = [
     "page_filter",
     "sphinxcontrib.plantuml",
     "sphinxcontrib.programoutput",
+    "sphinx_llms_txt",
 ]
 
 linkcheck_ignore = [
@@ -244,3 +245,35 @@ def setup(app):
 
     utils.add_google_analytics(app, html_theme_options)
     utils.add_announcement_banner(html_theme_options)
+
+# Options for sphinx-llms-txt ---------------------------------------------------
+
+llms_txt_summary = """
+# nRF Connect SDK Documentation
+
+Version: {version}
+
+The nRF Connect SDK is Nordic Semiconductor's software development kit for
+building products based on Nordic Semiconductor SoCs.
+
+Quick start: gsg_guides.html
+Installing the nRF Connect SDK: installation/install_ncs.html
+"""
+
+# DO NOT GENERATE llms-full.txt
+llms_txt_full = False
+llms_txt_exclude_patterns = [
+    # EXCLUDE release notes - including latest tag
+    "releases_and_maturity/releases/release-notes-{}".format(
+    "changelog" if version.endswith("99") else version
+    ),
+]
+
+# INCLUDE source files
+llms_txt_source_files = [
+]
+
+# SET base URL - including latest tag
+llms_txt_html_base_url = "https://docs.nordicsemi.com/bundle/ncs-{}/page/nrf/".format(
+    "latest" if version.endswith("99") else version
+)
