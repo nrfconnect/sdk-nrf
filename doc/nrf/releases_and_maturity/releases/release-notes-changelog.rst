@@ -185,7 +185,11 @@ Bluetooth Mesh
 DECT NR+
 --------
 
-|no_changes_yet_note|
+* :ref:`dect_shell_application` sample:
+
+  * Updated:
+
+    * PCC and PDC printings improved to show SNR and RSSI-2 values with actual dB/dBm resolutions.
 
 Enhanced ShockBurst (ESB)
 -------------------------

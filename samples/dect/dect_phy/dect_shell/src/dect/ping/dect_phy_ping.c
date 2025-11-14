@@ -1583,11 +1583,16 @@ void dect_phy_ping_mdm_op_completed(
 			}
 		} else if (mdm_completed_params->handle == DECT_PHY_PING_RESULTS_RESP_RX_HANDLE) {
 			/* Client */
+			if (ping_data.client_data.tx_results_from_server_requested) {
+				desh_warn("No results from ping server. "
+					  "Make sure that server is running and reachable.");
+			}
 			if (mdm_completed_params->status == NRF_MODEM_DECT_PHY_SUCCESS) {
 				desh_print("RX for ping results done.");
 			} else {
 				desh_print("RX for ping results failed.");
 			}
+			ping_data.client_data.tx_results_from_server_requested = false;
 			dect_phy_ping_cmd_done();
 		} else if (mdm_completed_params->handle == DECT_PHY_PING_SERVER_RX_HANDLE) {
 			int64_t z_ticks_rx_scheduled = ping_data.server_data.rx_enabled_z_ticks;
@@ -1769,6 +1774,7 @@ static void dect_phy_ping_thread_fn(void)
 				dect_common_utils_phy_tx_power_to_dbm(phy_h->transmit_power);
 			uint16_t transmitter_id, receiver_id;
 			int16_t rssi_level = params->pcc_status.rssi_2 / 2;
+			double snr = (double)params->pcc_status.snr / 4.0;
 
 			dect_common_utils_modem_phy_header_status_to_string(
 				params->pcc_status.header_status, tmp_str);
@@ -1808,11 +1814,10 @@ static void dect_phy_ping_thread_fn(void)
 
 			if (cmd_params->debugs) {
 				desh_print("PCC received (time %llu, handle %d): "
-					   "status: \"%s\", snr %d, "
-					   "RSSI-2 %d (RSSI %d), stf_start_time %llu",
+					   "status: \"%s\", snr %.2f dB, "
+					   "RSSI-2 %d dBm, stf_start_time %llu",
 					   params->time, params->pcc_status.handle,
-					   tmp_str, params->pcc_status.snr,
-					   params->pcc_status.rssi_2, rssi_level,
+					   tmp_str, snr, rssi_level,
 					   params->pcc_status.stf_start_time);
 				desh_print("  phy header:");
 				desh_print("    short nw id %d, transmitter id %d", short_nw_id,
@@ -1900,11 +1905,12 @@ static void dect_phy_ping_thread_fn(void)
 			};
 			struct nrf_modem_dect_phy_pdc_event *p_rx_status = &(params->rx_status);
 			int16_t rssi_level = p_rx_status->rssi_2 / 2;
+			double snr = (double)p_rx_status->snr / 4.0;
 
-			desh_print("PDC received (time %llu, handle %d): snr %d, RSSI-2 %d "
-				   "(RSSI %d), len %d",
+			desh_print("PDC received (time %llu, handle %d): snr %.2f dB, "
+				   "RSSI-2 %d dBm, len %d",
 				   params->time, p_rx_status->handle,
-				   p_rx_status->snr, p_rx_status->rssi_2, rssi_level,
+				   snr, rssi_level,
 				   params->data_length);
 
 			if (params->data_length) {
