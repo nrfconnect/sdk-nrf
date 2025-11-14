@@ -19,7 +19,7 @@
 #include <cracen_psa_primitives.h>
 #include "../../../cracenpsa/src/common.h"
 #include <cracen_sw_common.h>
-#include "cracen_sw_aes_ctr.h"
+#include <cracen_sw_aes_ctr.h>
 
 /* AES CTR mode counter field is the entire 16-byte block */
 #define AES_BLOCK_LAST_BYTE_INDEX  (SX_BLKCIPHER_AES_BLK_SZ - 1)

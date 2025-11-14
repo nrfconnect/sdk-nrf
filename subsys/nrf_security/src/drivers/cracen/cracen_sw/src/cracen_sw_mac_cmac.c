@@ -11,8 +11,8 @@
 #include <sxsymcrypt/keyref.h>
 #include <sxsymcrypt/aes.h>
 #include "../../../cracenpsa/src/common.h"
-#include "cracen_sw_common.h"
-#include "cracen_sw_mac_cmac.h"
+#include <cracen_sw_common.h>
+#include <cracen_sw_mac_cmac.h>
 
 #define CMAC_PADDING_BYTE (0x80)
 #define AES_CMAC_MSB	  (0x80)
