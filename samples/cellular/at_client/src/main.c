@@ -15,12 +15,13 @@
 /* To strictly comply with UART timing, enable external XTAL oscillator */
 void enable_xtal(void)
 {
-	struct onoff_manager *clk_mgr;
 	static struct onoff_client cli = {};
 
-	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
+	struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1((NRF_CLOCK_HAS_HFCLK),
+							   (nordic_nrf_clock_hfclk),
+							   (nordic_nrf_clock_xo)));
 	sys_notify_init_spinwait(&cli.notify);
-	(void)onoff_request(clk_mgr, &cli);
+	(void)nrf_clock_control_request(dev, &cli);
 }
 
 int main(void)

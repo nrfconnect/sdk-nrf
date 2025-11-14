@@ -246,7 +246,6 @@ static bool m_lfclk_calibration_is_enabled(void)
 
 static int32_t m_lfclk_request(void)
 {
-	struct onoff_manager *mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_LF);
 	int32_t err;
 
 	/* Workaround for NRFX-6865. The nrf clock control as well as nrfx_clock doesn't enable
@@ -259,7 +258,8 @@ static int32_t m_lfclk_request(void)
 	sys_notify_init_callback(&m_lfclk_state.cli.notify, m_clock_request_cb);
 	(void)k_sem_init(&m_lfclk_state.sem, 0, 1);
 
-	err = onoff_request(mgr, &m_lfclk_state.cli);
+	err = nrf_clock_control_request(DEVICE_DT_GET_ONE(nordic_nrf_clock_lfclk), NULL,
+					&m_lfclk_state.cli);
 	if (err < 0) {
 		return err;
 	}
@@ -271,11 +271,11 @@ static int32_t m_lfclk_request(void)
 
 static int32_t m_lfclk_release(void)
 {
-	struct onoff_manager *mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_LF);
 	int32_t err;
 
 	/* In case there is other ongoing request, cancel it. */
-	err = onoff_cancel_or_release(mgr, &m_lfclk_state.cli);
+	err = nrf_clock_control_cancel_or_release(DEVICE_DT_GET_ONE(nordic_nrf_clock_lfclk), NULL,
+						  &m_lfclk_state.cli);
 	if (err < 0) {
 		return err;
 	}
