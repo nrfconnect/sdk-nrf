@@ -862,7 +862,7 @@ static int link_shell_connect(const struct shell *shell, size_t argc, char **arg
 		mosh_error("When setting authentication, all auth options must be given");
 		goto show_usage;
 	} else {
-		enum pdn_auth method;
+		enum lte_lc_pdn_auth method;
 
 		ret = link_shell_pdn_auth_prot_to_pdn_lib_method_map(
 			protocol, &method);
@@ -1131,7 +1131,7 @@ static int link_shell_defcont(const struct shell *shell, size_t argc, char **arg
 		(void)link_sett_save_defcont_apn(apn);
 	}
 	if (family != NULL) {
-		enum pdn_fam pdn_lib_fam;
+		enum lte_lc_pdn_family pdn_lib_fam;
 
 		ret = link_family_str_to_pdn_lib_family(&pdn_lib_fam, family);
 		if (ret) {

@@ -19,14 +19,14 @@ bool link_sett_is_defcont_enabled(void);
 void link_sett_defcont_conf_shell_print(void);
 int link_sett_save_defcont_apn(const char *default_apn_str);
 char *link_sett_defcont_apn_get(void);
-int link_sett_save_defcont_pdn_family(enum pdn_fam family);
-enum pdn_fam link_sett_defcont_pdn_family_get(void);
+int link_sett_save_defcont_pdn_family(enum lte_lc_pdn_family family);
+enum lte_lc_pdn_family link_sett_defcont_pdn_family_get(void);
 
 int link_sett_save_defcontauth_enabled(bool enabled);
 bool link_sett_is_defcontauth_enabled(void);
 void link_sett_defcontauth_conf_shell_print(void);
 int link_sett_save_defcontauth_prot(int auth_prot);
-enum pdn_auth link_sett_defcontauth_prot_get(void);
+enum lte_lc_pdn_auth link_sett_defcontauth_prot_get(void);
 int link_sett_save_defcontauth_username(const char *username_str);
 char *link_sett_defcontauth_username_get(void);
 int link_sett_save_defcontauth_password(const char *password_str);
