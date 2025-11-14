@@ -813,7 +813,7 @@ Bluetooth® Mesh
    * For the Bluetooth Mesh samples and applications, a new sensor API (see :ref:`bt_mesh_sensors_readme`) is introduced with |NCS| v2.6.0.
      The previous sensor API is deprecated.
 
-     The usage of the new sensor API is demonstrated in samples :ref:`bluetooth_mesh_sensor_client`, :ref:`bluetooth_mesh_sensor_server` and :ref:`bluetooth_mesh_light_lc`.
+     The usage of the new sensor API is demonstrated in samples :ref:`bluetooth_mesh_nlc_sensor_observer`, :ref:`bluetooth_mesh_sensor_server` and :ref:`bluetooth_mesh_light_lc`.
 
      The Kconfig option :kconfig:option:`CONFIG_BT_MESH_SENSOR_USE_LEGACY_SENSOR_VALUE` is enabled by default in the deprecation period.
      This means that the existing samples and applications can continue using the deprecated sensor API as normal during the deprecation period, without the additional configuration.

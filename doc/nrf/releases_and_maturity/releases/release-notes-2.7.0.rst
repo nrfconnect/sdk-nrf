@@ -640,7 +640,7 @@ Bluetooth Mesh samples
 
 * Added support for the nRF54L15 PDK board in the following samples:
 
-  * :ref:`bluetooth_mesh_sensor_client` sample
+  * :ref:`bluetooth_mesh_nlc_sensor_observer` sample
   * :ref:`bluetooth_mesh_sensor_server` sample
   * :ref:`bluetooth_ble_peripheral_lbs_coex` sample
   * :ref:`bt_mesh_chat` sample
@@ -654,7 +654,7 @@ Bluetooth Mesh samples
 
 * Updated the Bluetooth Mesh samples that used the :zephyr:code-sample:`bluetooth_hci_ipc` radio core firmware so that they now use the :ref:`ipc_radio`.
 
-* :ref:`bluetooth_mesh_sensor_client` sample:
+* :ref:`bluetooth_mesh_nlc_sensor_observer` sample:
 
   * Added motion sensing, time since motion sensed, and people count occupancy sensor types.
 

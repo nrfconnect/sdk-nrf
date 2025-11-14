@@ -507,7 +507,7 @@ Bluetooth mesh samples
 
 * Fixed an issue where some samples copied using the `nRF Connect for Visual Studio Code`_ extension would not compile due to relative paths in :file:`CMakeLists.txt`, which were referencing files outside of the applications folder.
 
-* :ref:`bluetooth_mesh_sensor_client` sample:
+* :ref:`bluetooth_mesh_nlc_sensor_observer` sample:
 
   * Fixed an issue with the sample not fitting into RAM size on the ``nrf52dk_nrf52832`` board.
 

@@ -411,7 +411,7 @@ Bluetooth Mesh samples
 
     * Support for external flash memory for the ``nrf52840dk/nrf52840`` and the ``nrf54l15dk/nrf54l15/cpuapp`` as the secondary partition for the DFU process.
 
-* :ref:`bluetooth_mesh_sensor_client` sample:
+* :ref:`bluetooth_mesh_nlc_sensor_observer` sample:
 
   * Added polling toggle to **Button 1** (**Button 0** on nRF54 DKs) to start/stop the periodic Sensor Get loop, ensuring the functionality is available on all supported devices including single-button hardware.
 
