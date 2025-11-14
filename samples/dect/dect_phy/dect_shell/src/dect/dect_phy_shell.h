@@ -31,6 +31,8 @@ struct dect_phy_perf_params {
 	int16_t duration_secs;
 	int8_t tx_power_dbm;
 	uint8_t tx_mcs;
+	uint8_t tx_lbt_period_symbols;
+	int8_t tx_lbt_rssi_busy_threshold_dbm;
 	uint8_t slot_count;
 	uint8_t subslot_gap_count;
 	uint8_t slot_gap_count;
