@@ -932,23 +932,19 @@ static int dect_phy_perf_start(struct dect_phy_perf_params *params,
 		ret = dect_phy_perf_client_start();
 	} else {
 		__ASSERT_NO_MSG(params->role == DECT_PHY_COMMON_ROLE_SERVER);
-		enum nrf_modem_dect_phy_radio_mode radio_mode;
-		uint64_t next_possible_start_time = 0;
-
-		ret = dect_phy_ctrl_current_radio_mode_get(&radio_mode);
-
-		desh_print("Starting server RX: channel %d, exp_rssi_level %d, duration %d secs.",
-			   params->channel, params->expected_rx_rssi_level, params->duration_secs);
-
-		if (!ret && radio_mode != NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY) {
-			uint64_t time_now = dect_app_modem_time_now();
-			struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
-
-			next_possible_start_time =
+		struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
+		uint64_t time_now = dect_app_modem_time_now();
+		uint64_t next_possible_start_time =
 				time_now + (3 * US_TO_MODEM_TICKS(
 					current_settings->scheduler.scheduling_delay_us));
-		}
+
 		ret = dect_phy_perf_server_rx_start(next_possible_start_time);
+		if (!ret) {
+			desh_print("Starting server RX: channel %d, exp_rssi_level %d, "
+				   "duration %d secs.",
+				params->channel, params->expected_rx_rssi_level,
+				params->duration_secs);
+		}
 	}
 	return ret;
 }
@@ -1143,6 +1139,7 @@ static int dect_phy_perf_server_results_tx(char *result_str)
 	int ret = 0;
 
 	uint64_t time_now = dect_app_modem_time_now();
+	/* RX cancel should be over: */
 	uint64_t first_possible_tx = time_now + SECONDS_TO_MODEM_TICKS(2);
 
 	uint16_t bytes_to_send = DECT_PHY_PERF_PDU_COMMON_PART_LEN + (strlen(result_str) + 1);
@@ -1239,8 +1236,9 @@ static void dect_phy_perf_server_report_local_and_tx_results(void)
 	desh_print("server: sending result response of total length: %d:\n\"%s\"\n",
 		   (strlen(results_str) + 1), results_str);
 
-	/* Send results to client: */
-	(void)nrf_modem_dect_phy_cancel(perf_data.server_data.rx_handle);
+	/* Send results to client, but 1st cancel all and wait completion */
+	dect_phy_ctrl_mdm_op_cancel_all();
+
 	if (dect_phy_perf_server_results_tx(results_str)) {
 		desh_error("Cannot start sending server results");
 	}
@@ -1346,7 +1344,8 @@ void dect_phy_perf_mdm_op_completed(
 						dect_phy_perf_start(&copy_params, RESTART);
 					}
 				}
-			} else {
+			} else if (mdm_completed_params->status !=
+				   NRF_MODEM_DECT_PHY_ERR_OP_CANCELED) {
 				/* Let's restart only if failure is not happening very fast which
 				 * usually means a fundamental failure and then it is better to
 				 * quit.
