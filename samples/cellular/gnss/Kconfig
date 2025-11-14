@@ -112,9 +112,19 @@ config GNSS_SAMPLE_SUPL_HOSTNAME
 config GNSS_SAMPLE_SUPL_PORT
 	int "SUPL server port number"
 	range 0 65535
+	default 7275 if GNSS_SAMPLE_SUPL_SEC_TAG > 0
 	default 7276
 	help
-	  SUPL server port number.
+	  SUPL server port number. The OMA UserPlane Location Protocol (ULP) port number is 7275,
+	  but some servers are known to use port 7276 for non-TLS connections.
+
+config GNSS_SAMPLE_SUPL_SEC_TAG
+	int "Security tag for connection to the SUPL server"
+	range 0 2147483667
+	default 0
+	help
+	  Set a non-zero value to use TLS for connection to the SUPL server. When TLS is enabled,
+	  a root CA certificate must be stored on the modem.
 
 endif # GNSS_SAMPLE_ASSISTANCE_SUPL
 

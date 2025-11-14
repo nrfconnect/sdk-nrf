@@ -114,11 +114,36 @@ static int open_supl_socket(void)
 		char ip[INET6_ADDRSTRLEN] = { 0 };
 		struct sockaddr *const sa = addr->ai_addr;
 
+#if (CONFIG_GNSS_SAMPLE_SUPL_SEC_TAG > 0)
+		supl_fd = zsock_socket(sa->sa_family, SOCK_STREAM, IPPROTO_TLS_1_2);
+#else
 		supl_fd = zsock_socket(sa->sa_family, SOCK_STREAM, IPPROTO_TCP);
+#endif
 		if (supl_fd < 0) {
 			LOG_ERR("Failed to create socket, errno %d", errno);
 			goto cleanup;
 		}
+
+#if (CONFIG_GNSS_SAMPLE_SUPL_SEC_TAG > 0)
+		int sec_tag_list[] = { CONFIG_GNSS_SAMPLE_SUPL_SEC_TAG };
+
+		err = zsock_setsockopt(supl_fd, SOL_TLS, TLS_SEC_TAG_LIST,
+				       sec_tag_list, sizeof(sec_tag_list));
+		if (err) {
+			LOG_ERR("Failed to set TLS sec tag list, errno %d", errno);
+			goto cleanup;
+		}
+
+		/* Do not require peer verification */
+		int peer_verify = TLS_PEER_VERIFY_NONE;
+
+		err = zsock_setsockopt(supl_fd, SOL_TLS, TLS_PEER_VERIFY,
+				       &peer_verify, sizeof(peer_verify));
+		if (err) {
+			LOG_ERR("Failed to set TLS peer verify, errno %d", errno);
+			goto cleanup;
+		}
+#endif
 
 		/* The SUPL library expects a 1 second timeout for the read function. */
 		struct timeval timeout = {
@@ -136,7 +161,13 @@ static int open_supl_socket(void)
 				(void *)&((struct sockaddr_in *)sa)->sin_addr,
 				ip,
 				INET6_ADDRSTRLEN);
-		LOG_INF("Connecting to %s port %d", ip, SUPL_SERVER_PORT);
+		LOG_INF("Connecting to %s port %d using %s", ip, SUPL_SERVER_PORT,
+#if (CONFIG_GNSS_SAMPLE_SUPL_SEC_TAG > 0)
+			"TLS"
+#else
+			"TCP"
+#endif
+			);
 
 		err = zsock_connect(supl_fd, sa, addr->ai_addrlen);
 		if (err) {
