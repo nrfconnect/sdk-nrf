@@ -39,7 +39,6 @@ enum state {
 struct report_state {
 	enum state state;
 	uint8_t cnt;
-	uint8_t report_id;
 	struct subscriber *subscriber;
 	struct provider *provider;
 	bool update_needed;
@@ -358,7 +357,6 @@ static void connect(const void *subscriber_id, uint8_t report_id)
 
 	rs->subscriber = subscriber;
 	rs->state = STATE_CONNECTED_IDLE;
-	rs->report_id = report_id;
 
 	struct provider *provider = get_provider(report_id);
 
