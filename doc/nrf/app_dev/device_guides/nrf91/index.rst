@@ -66,6 +66,6 @@ If you want to go through a hands-on online training to familiarize yourself wit
    nrf91_dk_updating_fw_programmer
    nrf91_building
    nrf91_programming
-   nrf91_testing_at_client
+   nrf91_testing
    nrf91_snippet
    nrf9160_external_flash

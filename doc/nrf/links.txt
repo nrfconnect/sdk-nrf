@@ -1516,6 +1516,7 @@
 
 .. _`nRF Cloud documentation`:
 .. _`nRF Connect for Cloud documentation`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/index.html
+.. _`Adding a device to your account`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/GettingStarted.html#adding-a-device-to-your-account
 .. _`nRF Cloud Device Messages`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/MessagesAndAlerts/DeviceMessages.html
 .. _`nRF Cloud Device ID`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Properties/DeviceId.html
 .. _`nRF Cloud Device Shadows`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Properties/Shadows.html
