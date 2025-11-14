@@ -385,7 +385,9 @@ void dect_phy_ping_harq_client_nak_handle(void)
 	first_possible_tx =
 		time_now + (2 * US_TO_MODEM_TICKS(current_settings->scheduler.scheduling_delay_us));
 
-	/* Overwrite handle, complete_cb, tx/rx timing and redundancy version to header */
+	/* For scheduled list copy:
+	 * overwrite tx handle, complete_cb, tx/rx timing and redundancy version to header
+	 */
 	new_sched_list_item->phy_op_handle = DECT_PHY_PING_CLIENT_RE_TX_HANDLE;
 	new_sched_list_item_conf->frame_time = first_possible_tx;
 	new_sched_list_item_conf->tx.combined_tx_rx_use = true;
@@ -431,9 +433,9 @@ static void dect_phy_ping_server_data_on_going_rx_count_decrease(void)
 
 static bool dect_phy_ping_handle_is(uint32_t phy_op_handle)
 {
-	if (phy_op_handle == DECT_PHY_PING_CLIENT_TX_HANDLE ||
+	if (DECT_PHY_PING_CLIENT_TX_HANDLE_IN_RANGE(phy_op_handle) ||
+	    DECT_PHY_PING_CLIENT_RX_HANDLE_IN_RANGE(phy_op_handle) ||
 	    phy_op_handle == DECT_PHY_PING_CLIENT_RE_TX_HANDLE ||
-	    phy_op_handle == DECT_PHY_PING_CLIENT_RX_HANDLE ||
 	    phy_op_handle == DECT_PHY_PING_SERVER_RX_HANDLE ||
 	    phy_op_handle == DECT_PHY_PING_SERVER_TX_HANDLE ||
 	    phy_op_handle == DECT_PHY_PING_RESULTS_REQ_TX_HANDLE ||
@@ -776,7 +778,7 @@ static void dect_phy_ping_mdm_rssi_cb(const struct nrf_modem_dect_phy_rssi_event
 
 static void dect_phy_ping_client_tx_all_intervals_done(uint32_t handle)
 {
-	__ASSERT_NO_MSG(handle == DECT_PHY_PING_CLIENT_TX_HANDLE);
+	__ASSERT_NO_MSG(DECT_PHY_PING_CLIENT_TX_HANDLE_IN_RANGE(handle));
 
 	/* Pinging done in a scheduler. Request results from server. */
 	dect_phy_ping_msgq_non_data_op_add(DECT_PHY_PING_EVENT_CLIENT_SCHEDULER_PINGING_DONE);
@@ -856,7 +858,18 @@ static void dect_phy_ping_client_tx_schedule(uint64_t first_possible_tx)
 	       &ping_data.client_data.tx_phy_header.type_2,
 	       sizeof(ping_data.client_data.tx_phy_header.type_2));
 
+	sched_list_item_conf->phy_op_handle_range_used = true;
+	sched_list_item_conf->phy_op_handle_range_start =
+		DECT_PHY_PING_CLIENT_TX_HANDLE_START;
+	sched_list_item_conf->phy_op_handle_range_end =
+		DECT_PHY_PING_CLIENT_TX_HANDLE_END;
 	sched_list_item->phy_op_handle = ping_data.client_data.tx_op.handle;
+
+	sched_list_item_conf->tx.combined_rx_op_handle_range_used = true;
+	sched_list_item_conf->tx.combined_rx_op_handle_range_start =
+		DECT_PHY_PING_CLIENT_RX_HANDLE_START;
+	sched_list_item_conf->tx.combined_rx_op_handle_range_end =
+		DECT_PHY_PING_CLIENT_RX_HANDLE_END;
 
 	/* Add beacon tx operation to scheduler list */
 	if (!dect_phy_api_scheduler_list_item_add(sched_list_item)) {
@@ -984,7 +997,7 @@ static int dect_phy_ping_client_start(void)
 	ping_data.client_data.tx_next_seq_nbr = ping_pdu.message.tx_data.seq_nbr;
 	ping_data.client_data.tx_data_len = ping_pdu_byte_count;
 
-	ping_data.client_data.tx_op.handle = DECT_PHY_PING_CLIENT_TX_HANDLE;
+	ping_data.client_data.tx_op.handle = DECT_PHY_PING_CLIENT_TX_HANDLE_START;
 	ping_data.client_data.tx_op.bs_cqi = NRF_MODEM_DECT_PHY_BS_CQI_NOT_USED;
 	ping_data.client_data.tx_op.carrier = params->channel;
 	ping_data.client_data.tx_op.data_size = ping_pdu_byte_count;
@@ -999,7 +1012,7 @@ static int dect_phy_ping_client_start(void)
 	ping_data.client_data.tx_op.phy_type = DECT_PHY_HEADER_TYPE2;
 
 	/* For ping response: */
-	ping_data.client_data.rx_op.handle = DECT_PHY_PING_CLIENT_RX_HANDLE;
+	ping_data.client_data.rx_op.handle = DECT_PHY_PING_CLIENT_RX_HANDLE_START;
 
 	/* RX time is relative from TX end. We use HARQ setting here even if no HARQ */
 	ping_data.client_data.rx_op.start_time =
@@ -1193,10 +1206,11 @@ dect_phy_ping_client_report_local_results_and_req_server_results(int64_t *elapse
 	double elapsed_time_secs = elapsed_time_ms / 1000;
 
 	/* Stop client ping tx and rx for ping_resp in a scheduler */
-	dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(
-		DECT_PHY_PING_CLIENT_TX_HANDLE);
-	dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(
-		DECT_PHY_PING_CLIENT_RX_HANDLE);
+	dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle_range(
+		DECT_PHY_PING_CLIENT_TX_HANDLE_START, DECT_PHY_PING_CLIENT_TX_HANDLE_END);
+	dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle_range(
+		DECT_PHY_PING_CLIENT_RX_HANDLE_START, DECT_PHY_PING_CLIENT_RX_HANDLE_END);
+	(void)dect_phy_ctrl_mdm_op_cancel_all();
 
 	desh_print("ping client operation completed:");
 	desh_print("  elapsed time:                            %.2f seconds", elapsed_time_secs);
@@ -1493,7 +1507,7 @@ void dect_phy_ping_mdm_op_completed(
 	struct dect_phy_common_op_completed_params *mdm_completed_params)
 {
 	if (ping_data.on_going) {
-		if (mdm_completed_params->handle == DECT_PHY_PING_CLIENT_TX_HANDLE) {
+		if (DECT_PHY_PING_CLIENT_TX_HANDLE_IN_RANGE(mdm_completed_params->handle)) {
 			if (mdm_completed_params->status != NRF_MODEM_DECT_PHY_SUCCESS) {
 				/* TX was not done */
 				dect_phy_ping_client_data_tx_total_data_amount_decrease();
@@ -1501,6 +1515,12 @@ void dect_phy_ping_mdm_op_completed(
 			} else {
 				desh_print("ping sent (seq_nbr %d).",
 					   ping_data.client_data.tx_next_seq_nbr);
+			}
+			uint32_t next_handle = mdm_completed_params->handle;
+
+			next_handle++;
+			if (next_handle > DECT_PHY_PING_CLIENT_TX_HANDLE_END) {
+				next_handle = DECT_PHY_PING_CLIENT_TX_HANDLE_START;
 			}
 			/* We count both success and failures here */
 			ping_data.tx_metrics.tx_total_ping_req_count++;
@@ -1518,7 +1538,7 @@ void dect_phy_ping_mdm_op_completed(
 
 				/* Update header to scheduler for a next round */
 				dect_phy_api_scheduler_list_item_tx_phy_header_update_by_phy_handle(
-					DECT_PHY_PING_CLIENT_TX_HANDLE,
+					next_handle,
 					&(ping_data.client_data.tx_phy_header),
 					DECT_PHY_HEADER_TYPE2);
 			}
@@ -1534,7 +1554,7 @@ void dect_phy_ping_mdm_op_completed(
 			if (!ping_data.client_data.tx_scheduler_intervals_done) {
 				/* Modify seq nbr for the next round */
 				dect_phy_api_scheduler_list_item_pdu_payload_update_by_phy_handle(
-					DECT_PHY_PING_CLIENT_TX_HANDLE, encoded_data_to_send,
+					next_handle, encoded_data_to_send,
 					ping_data.client_data.tx_data_len);
 			}
 		} else if (mdm_completed_params->handle == DECT_PHY_PING_SERVER_TX_HANDLE) {
@@ -1546,7 +1566,7 @@ void dect_phy_ping_mdm_op_completed(
 					   ping_data.server_data.rx_last_seq_nbr);
 				ping_data.tx_metrics.tx_total_ping_resp_count++;
 			}
-		} else if (mdm_completed_params->handle == DECT_PHY_PING_CLIENT_RX_HANDLE) {
+		} else if (DECT_PHY_PING_CLIENT_RX_HANDLE_IN_RANGE(mdm_completed_params->handle)) {
 			dect_phy_ping_rssi_done_evt_send();
 			if (!ping_data.client_data.tx_ping_resp_received &&
 			    !harq_processes[DECT_HARQ_CLIENT].rtx_ongoing) {
@@ -1665,8 +1685,8 @@ static void dect_phy_ping_thread_fn(void)
 			break;
 		}
 		case DECT_PHY_PING_EVENT_CLIENT_SCHEDULER_PINGING_DONE: {
-			desh_print("pinging done by scheduler");
 			ping_data.client_data.tx_scheduler_intervals_done = true;
+			desh_print("pinging done by scheduler");
 			break;
 		}
 		case DECT_PHY_PING_EVENT_CMD_DONE: {
@@ -1871,11 +1891,11 @@ static void dect_phy_ping_thread_fn(void)
 						dect_phy_ping_harq_process_round_end(
 							DECT_HARQ_CLIENT);
 					} else {
-						/* NACK: stop current RX, TX a retransmit,
-						 * restart RX for a remaining duration.
+						/* NACK: stop all scheduled items from modem,
+						 * TX a retransmit, restart RX for a remaining
+						 * duration.
 						 */
-						(void)nrf_modem_dect_phy_cancel(
-							DECT_PHY_PING_CLIENT_RX_HANDLE);
+						(void)dect_phy_ctrl_mdm_op_cancel_all();
 						dect_phy_ping_harq_client_nak_handle();
 					}
 				} else {
@@ -2183,9 +2203,10 @@ static int dect_phy_ping_rx_pdc_data_handle(struct dect_phy_data_rcv_common_para
 			phy_h->transmit_power = dect_common_utils_dbm_to_phy_tx_power(
 				dect_phy_ping_auto_pwr_ctrl_target_pwr_calculate());
 
-			/* Update header to scheduler */
-			dect_phy_api_scheduler_list_item_tx_phy_header_update_by_phy_handle(
-				DECT_PHY_PING_CLIENT_TX_HANDLE,
+			/* Update header to all items in scheduler */
+			dect_phy_api_scheduler_list_item_tx_phy_header_update_by_phy_handle_range(
+				DECT_PHY_PING_CLIENT_TX_HANDLE_START,
+				DECT_PHY_PING_CLIENT_TX_HANDLE_END,
 				&(ping_data.client_data.tx_phy_header), DECT_PHY_HEADER_TYPE2);
 		}
 
