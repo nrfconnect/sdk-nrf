@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Disable the external flash, as it's not needed
+ * for the configuration with secondary slot residing
+ * in the internal RRAM.
+ */
+&mx25r64 {
+	status = "disabled";
+};
