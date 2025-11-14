@@ -551,13 +551,12 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 				params->pcc_status.header_status, tmp_str);
 			if (ctrl_data.debug) {
 				int16_t rssi_level = params->pcc_status.rssi_2 / 2;
+				double snr = (double)params->pcc_status.snr / 4;
 
 				desh_print("PCC received (stf start time %llu, handle %d): "
-					   "status: \"%s\", snr %d, "
-					   "RSSI-2 %d (RSSI %d)",
+					   "status: \"%s\", snr %.2f dB, RSSI-2 %d dBm",
 					   params->stf_start_time, params->pcc_status.handle,
-					   tmp_str, params->pcc_status.snr,
-					   params->pcc_status.rssi_2, rssi_level);
+					   tmp_str, snr, rssi_level);
 			}
 			if (params->pcc_status.header_status ==
 			    NRF_MODEM_DECT_PHY_HDR_STATUS_VALID) {
@@ -599,11 +598,11 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 				struct nrf_modem_dect_phy_pdc_event *p_rx_status =
 					&(params->rx_status);
 				int16_t rssi_level = p_rx_status->rssi_2 / 2;
+				double snr = (double)p_rx_status->snr / 4.0;
 
-				desh_print("PDC received (time %llu): snr %d, RSSI-2 %d "
-					   "(RSSI %d), len %d",
-					   params->time, p_rx_status->snr, p_rx_status->rssi_2,
-					   rssi_level, params->data_length);
+				desh_print("PDC received (time %llu): snr %.2f dB, "
+					   "RSSI-2 %d dBm, len %d",
+					   params->time, snr, rssi_level, params->data_length);
 				for (i = 0; i < 128 && i < params->data_length; i++) {
 					sprintf(&hex_data[i], "%02x ", params->data[i]);
 				}
@@ -611,7 +610,6 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 				desh_warn("Received unknown data, len %d, hex data: %s\n",
 					  params->data_length, hex_data);
 			}
-
 			break;
 		}
 

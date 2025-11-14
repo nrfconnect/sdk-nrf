@@ -1387,6 +1387,13 @@ void dect_phy_perf_mdm_op_completed(
 		} else if (mdm_completed_params->handle == DECT_PHY_PERF_RESULTS_RESP_RX_HANDLE) {
 			/* Client */
 			if (mdm_completed_params->status == NRF_MODEM_DECT_PHY_SUCCESS) {
+				if (perf_data.client_data.tx_results_from_server_requested) {
+					desh_warn(
+						"No results from perf server. "
+						"Make sure that server is running and reachable.");
+					perf_data.client_data.tx_results_from_server_requested =
+						false;
+				}
 				desh_print("RX for perf results done.");
 			} else {
 				desh_print("RX for perf results failed.");
@@ -1621,6 +1628,7 @@ rx_pcc_debug:
 
 				if (since_last_print_ms >= 5000) {
 					char tmp_str[128] = {0};
+					double snr = (double)params->pcc_status.snr / 4.0;
 
 					dect_common_utils_modem_phy_header_status_to_string_short(
 						params->pcc_status.header_status, tmp_str);
@@ -1628,11 +1636,10 @@ rx_pcc_debug:
 					perf_data.rx_metrics.rx_last_pcc_print_zticks =
 						z_ticks_last_pcc_print;
 					desh_print("Periodic debug: PCC received (time %llu, "
-						   "handle %d): status: \"%s\", snr %d, "
-						   "RSSI %d, tx pwr %d dbm",
+						   "handle %d): status: \"%s\", snr %.2f dB, "
+						   "RSSI-2 %d dBm, tx pwr %.2f dBm",
 						   params->time, params->pcc_status.handle,
-						   tmp_str, params->pcc_status.snr,
-						   rssi_level,
+						   tmp_str, snr, rssi_level,
 						   dect_common_utils_phy_tx_power_to_dbm(
 							   phy_h->transmit_power));
 				}
@@ -1675,13 +1682,13 @@ rx_pcc_debug:
 					struct nrf_modem_dect_phy_pdc_event *p_rx_status =
 						&(params->rx_status);
 					int16_t rssi_level = p_rx_status->rssi_2 / 2;
+					double snr = (double)p_rx_status->snr / 4.0;
 
 					desh_print("PDC received (time %llu, handle %d): "
-						   "snr %d, RSSI-2 %d "
-						   "(RSSI %d), len %d",
+						   "snr %.2f dB, RSSI-2 %d dBm, len %d",
 						   params->time, p_rx_status->handle,
-						   p_rx_status->snr,
-						   p_rx_status->rssi_2, rssi_level,
+						   snr,
+						   rssi_level,
 						   params->data_length);
 
 					for (i = 0; i < 64 && i < params->data_length; i++) {
@@ -1929,6 +1936,7 @@ static int dect_phy_perf_rx_pdc_data_handle(struct dect_phy_data_rcv_common_para
 	} else if (pdu.header.message_type == DECT_MAC_MESSAGE_TYPE_PERF_RESULTS_RESP) {
 		desh_print("Server results received:");
 		desh_print("%s", pdu.message.results.results_str);
+		perf_data.client_data.tx_results_from_server_requested = false;
 	} else {
 		desh_warn("type %d", pdu.header.message_type);
 	}

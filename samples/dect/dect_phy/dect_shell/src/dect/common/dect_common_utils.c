@@ -440,8 +440,8 @@ dect_common_utils_modem_phy_header_status_to_string(enum nrf_modem_dect_phy_hdr_
 						    char *out_str_buff)
 {
 	struct mapping_tbl_item const mapping_table[] = {
-		{NRF_MODEM_DECT_PHY_HDR_STATUS_VALID, "valid - PDC can be received"},
-		{NRF_MODEM_DECT_PHY_HDR_STATUS_INVALID, "invalid - PDC can't be received"},
+		{NRF_MODEM_DECT_PHY_HDR_STATUS_VALID, "valid"},
+		{NRF_MODEM_DECT_PHY_HDR_STATUS_INVALID, "invalid"},
 		{NRF_MODEM_DECT_PHY_HDR_STATUS_VALID_RX_END,
 		 "valid - but RX op ends before PDC reception"},
 		{-1, NULL}};
