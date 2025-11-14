@@ -1,0 +1,25 @@
+# Minimal Vercel Client Configuration
+
+menu "Minimal Vercel Client"
+
+config VERCEL_SERVER_HOSTNAME
+	string "Vercel server hostname"
+	default "your-app.vercel.app"
+	help
+	  Hostname of the Vercel server to connect to
+
+config GPS_UPDATE_INTERVAL_SEC
+	int "GPS update interval in seconds"
+	default 60
+	help
+	  How often to send GPS updates to the server
+
+config FOTA_CHECK_INTERVAL_MIN
+	int "FOTA check interval in minutes"
+	default 5
+	help
+	  How often to check for firmware updates
+
+endmenu
+
+source "Kconfig.zephyr"
