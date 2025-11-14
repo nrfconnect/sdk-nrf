@@ -17,6 +17,7 @@
 #endif
 
 #define PDM_SAMPLING_RATE   CONFIG_TEST_PDM_SAMPLING_RATE
+#define PDM_SAMPLING_RATE_DUMMY  32000
 #define PDM_EXPECTED_FREQ   CONFIG_TEST_PDM_EXPECTED_FREQUENCY
 #define PDM_SAMPLING_TIME   CONFIG_TEST_PDM_SAMPLING_TIME
 #define PDM_READ_TIMEOUT    1000
@@ -45,8 +46,8 @@ static const struct device *const pdm_dev = DEVICE_DT_GET(DT_NODELABEL(pdm_dev))
 static const nrfx_gpiote_t gpiote_instance = NRFX_GPIOTE_INSTANCE(
 					     NRF_DT_GPIOTE_INST(
 					     DT_NODELABEL(pulse_counter), gpios));
-static struct pcm_stream_cfg stream_config;
-static struct dmic_cfg pdm_cfg;
+static struct pcm_stream_cfg stream_config, stream_config_dummy;
+static struct dmic_cfg pdm_cfg, pdm_cfg_dummy;
 
 #if CONFIG_NRFX_TIMER00
 static const nrfx_timer_t timer_instance = NRFX_TIMER_INSTANCE(00);
@@ -94,7 +95,23 @@ static void setup(void *unused)
 	pdm_cfg.channel.req_num_streams = 1;
 	pdm_cfg.channel.req_num_chan = 1;
 	pdm_cfg.channel.req_chan_map_lo = dmic_build_channel_map(0, 0, PDM_CHAN_LEFT);
+
+	/* Dummy cfg to test that reconfiguration works */
+	stream_config_dummy.pcm_width = SAMPLE_BIT_WIDTH;
+	stream_config_dummy.pcm_rate = PDM_SAMPLING_RATE_DUMMY;
+	stream_config_dummy.mem_slab = &mem_slab;
+	stream_config_dummy.block_size = BLOCK_SIZE(PDM_SAMPLING_RATE, 1);
+
+	pdm_cfg_dummy.io.min_pdm_clk_freq = 1000000;
+	pdm_cfg_dummy.io.max_pdm_clk_freq = 2000000;
+	pdm_cfg_dummy.io.min_pdm_clk_dc   = 40;
+	pdm_cfg_dummy.io.max_pdm_clk_dc   = 60;
+	pdm_cfg_dummy.streams = &stream_config_dummy,
+	pdm_cfg_dummy.channel.req_num_streams = 1;
+	pdm_cfg_dummy.channel.req_num_chan = 1;
+	pdm_cfg_dummy.channel.req_chan_map_lo = dmic_build_channel_map(0, 0, PDM_CHAN_LEFT);
 }
+
 static void teardown(void *unused)
 {
 	ARG_UNUSED(unused);
@@ -118,6 +135,16 @@ static void pdm_transfer(const struct device *pdm_dev,
 			   size_t block_count)
 {
 	int ret;
+
+#if PDM_SAMPLING_RATE != PDM_SAMPLING_RATE_DUMMY
+	/* Dummy configuration to test if device can be reconfigured.
+	 *
+	 * When both configurations are the same, apply it only once
+	 * to test that single configuration also works.
+	 */
+	ret = dmic_configure(pdm_dev, &pdm_cfg_dummy);
+	zassert_true(ret >= 0, "PDM configuration failed, return code = %d", ret);
+#endif
 
 	ret = dmic_configure(pdm_dev, pdm_cfg);
 	zassert_true(ret >= 0, "PDM configuration failed, return code = %d", ret);
