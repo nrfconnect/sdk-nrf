@@ -15,3 +15,10 @@ tests:
       fixture: gpio_loopback
     depends_on:
       - future_target
+  nrf.extended.drivers.i2s.additional.gpio_loopback.nrf71:
+    harness_config:
+      fixture: i2s_loopback
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120pdk/nrf7120/cpuapp
