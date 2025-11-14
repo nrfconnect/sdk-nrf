@@ -162,6 +162,12 @@ ZTEST(pdm_loopback, test_pdm_configure)
 	ret = dmic_configure(pdm_dev, &pdm_cfg);
 	zassert_true(ret == -EINVAL, "PDM configuration should fail, return code = %d", ret);
 
+	/* Streams not equal to 1. */
+	pdm_cfg.channel.req_num_chan = 1;
+	pdm_cfg.channel.req_num_streams = 2;
+	ret = dmic_configure(pdm_dev, &pdm_cfg);
+	zassert_true(ret == -EINVAL, "PDM configuration should fail, return code = %d", ret);
+
 	/* Invalid sample bit width. */
 	pdm_cfg.channel.req_num_streams = 1;
 	pdm_cfg.streams->pcm_width = 32;
