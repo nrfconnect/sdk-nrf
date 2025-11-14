@@ -7,3 +7,4 @@ tests:
     tags:
       - unittest
       - ci_tests_subsys_bluetooth_controller
+      - bluetooth
