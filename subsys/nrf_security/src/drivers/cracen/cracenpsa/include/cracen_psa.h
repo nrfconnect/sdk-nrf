@@ -18,10 +18,6 @@
 #include "cracen_psa_key_ids.h"
 #include "sxsymcrypt/keyref.h"
 
-#ifdef __NRF_TFM__
-#include <tfm_builtin_key_loader.h>
-#endif
-
 /**
  * See "PSA Cryptography API" for documentation.
  */
