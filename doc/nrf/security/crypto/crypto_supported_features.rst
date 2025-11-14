@@ -5858,9 +5858,6 @@ The options are grouped by Series and drivers available for the device Series, a
                * - ECC curve type
                  - Configuration option
                  - nRF52840
-               * - BrainpoolP192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_192`
-                 - --
                * - BrainpoolP224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`
                  - --
@@ -5918,11 +5915,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF52832
                  - nRF52833
                  - nRF52840
-               * - BrainpoolP192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_192`
-                 - --
-                 - --
-                 - --
                * - BrainpoolP224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`
                  - --
@@ -6014,9 +6006,6 @@ The options are grouped by Series and drivers available for the device Series, a
                * - ECC curve type
                  - Configuration option
                  - nRF5340
-               * - BrainpoolP192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_192`
-                 - --
                * - BrainpoolP224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`
                  - --
@@ -6072,9 +6061,6 @@ The options are grouped by Series and drivers available for the device Series, a
                * - ECC curve type
                  - Configuration option
                  - nRF5340
-               * - BrainpoolP192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_192`
-                 - --
                * - BrainpoolP224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`
                  - --
@@ -6209,13 +6195,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L15
                  - nRF54LM20
                  - nRF54LV10
-               * - BrainpoolP192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_192`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
-                 - Experimental
                * - BrainpoolP224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`
                  - Supported
@@ -6335,13 +6314,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L15
                  - nRF54LM20
                  - nRF54LV10
-               * - BrainpoolP192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_192`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
                * - BrainpoolP224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`
                  - --
@@ -6466,12 +6438,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF9151
                  - nRF9160
                  - nRF9161
-               * - BrainpoolP192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_192`
-                 - --
-                 - --
-                 - --
-                 - --
                * - BrainpoolP224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`
                  - --
@@ -6575,12 +6541,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF9151
                  - nRF9160
                  - nRF9161
-               * - BrainpoolP192r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_192`
-                 - --
-                 - --
-                 - --
-                 - --
                * - BrainpoolP224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`
                  - --
@@ -6777,8 +6737,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                * - Kconfig option
                  - Supported ECC curve types
                * - :kconfig:option:`CONFIG_PSA_USE_CRACEN_KEY_MANAGEMENT_DRIVER`
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_192`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`
+                 - | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_320`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_384`
