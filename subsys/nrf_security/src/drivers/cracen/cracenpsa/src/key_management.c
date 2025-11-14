@@ -81,7 +81,7 @@ static struct {
 	/* Twisted Edwards */
 	{PSA_ECC_FAMILY_TWISTED_EDWARDS, 255, 32, 32,
 	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS)},
-	{PSA_ECC_FAMILY_TWISTED_EDWARDS, 448, 57, 57, false},
+	{PSA_ECC_FAMILY_TWISTED_EDWARDS, 448, 57, 57, IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS)},
 };
 
 static psa_status_t check_ecc_key_attributes(const psa_key_attributes_t *attributes,
@@ -120,7 +120,8 @@ static psa_status_t check_ecc_key_attributes(const psa_key_attributes_t *attribu
 
 	if (status == PSA_SUCCESS) {
 		if (curve == PSA_ECC_FAMILY_TWISTED_EDWARDS) {
-			if (key_alg != PSA_ALG_PURE_EDDSA && key_alg != PSA_ALG_ED25519PH) {
+			if (key_alg != PSA_ALG_PURE_EDDSA && (key_alg != PSA_ALG_ED25519PH || 
+				key_alg !=PSA_ALG_ED448PH )) {
 				return PSA_ERROR_INVALID_ARGUMENT;
 			}
 		}
