@@ -651,10 +651,10 @@ Example: Starting of cluster beacon and sending RA data to it
       total scanning count                  102
       highest RSSI                          -105
       lowest RSSI                           -112
-      PCC received (stf start time 16878096625): status: "valid - PDC can be received", snr 97, RSSI-2 -121 (RSSI -60)
+      PCC received (stf start time 16878096625): status: "valid", snr 24.25 dB, RSSI-2 -60 dBm
       phy header: short nw id 120 (0x78), transmitter id 27462
       len 1, MCS 0, TX pwr: 0 dBm
-      PDC received (stf start time 16878096625): snr 99, RSSI-2 -122 (RSSI -61), len 50
+      PDC received (stf start time 16878096625): snr 24.00 dB, RSSI-2 -61 dBm, len 50
       DECT NR+ MAC PDU:
       MAC header:
          Version: 0
@@ -758,11 +758,11 @@ Example: Starting of cluster beacon and sending RA data to it
       beacon interval 2000, frame time 24205018225, beacon received 17016336625
       Association request TX started.
       TX for Association Request completed.
-      PCC received (stf start time 24205392665): status: "valid - PDC can be received", snr 94, RSSI-2 -122 (RSSI -61)
+      PCC received (stf start time 24205392665): status: "valid", snr 23.5 dB, RSSI-2 -61 dBm
       phy header: short nw id 120 (0x78), transmitter id 27462
       receiver id: 27761
       len 0, MCS 0, TX pwr: 0 dBm
-      PDC received (stf start time 24205392665): snr 100, RSSI-2 -122 (RSSI -61), len 17
+      PDC received (stf start time 24205392665): snr 25 dB, RSSI-2 -61 dBm, len 17
       DECT NR+ MAC PDU:
       MAC header:
          Version: 0
@@ -831,11 +831,11 @@ Example: Starting of cluster beacon and sending RA data to it
 
   .. code-block:: console
 
-      PCC received (stf start time 32017011258): status: "valid - PDC can be received", snr 91, RSSI-2 -123 (RSSI -61)
+      PCC received (stf start time 32017011258): status: "valid", snr 22.75 dB, RSSI-2 -61 dBm
       phy header: short nw id 120 (0x78), transmitter id 27761
       receiver id: 27462
       len 0, MCS 0, TX pwr: 0 dBm
-      PDC received (stf start time 32017011258): snr 98, RSSI-2 -123 (RSSI -61), len 17
+      PDC received (stf start time 32017011258): snr 22.5 dB, RSSI-2 -61 dBm, len 17
       DECT NR+ MAC PDU:
       MAC header:
          Version: 0
@@ -886,11 +886,11 @@ Example: Starting of cluster beacon and sending RA data to it
 
   .. code-block:: console
 
-      PCC received (stf start time 37131891398): status: "valid - PDC can be received", snr 93, RSSI-2 -123 (RSSI -61)
+      PCC received (stf start time 37131891398): status: "valid", snr 23.5 dB, RSSI-2 -61 dBm
       phy header: short nw id 120 (0x78), transmitter id 27761
       receiver id: 27462
       len 0, MCS 0, TX pwr: 0 dBm
-      PDC received (stf start time 37131891398): snr 94, RSSI-2 -123 (RSSI -61), len 17
+      PDC received (stf start time 37131891398): snr 23.5 dB, RSSI-2 -61 dBm, len 17
       DECT NR+ MAC PDU:
       MAC header:
          Version: 0

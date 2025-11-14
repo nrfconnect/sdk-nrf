@@ -381,6 +381,31 @@ void dect_phy_api_scheduler_list_item_tx_phy_header_update_by_phy_handle(
 	k_mutex_unlock(&to_be_sheduled_list_mutex);
 }
 
+void dect_phy_api_scheduler_list_item_tx_phy_header_update_by_phy_handle_range(
+	uint32_t range_start, uint32_t range_end,
+	union nrf_modem_dect_phy_hdr *phy_header,
+	dect_phy_header_type_t header_type)
+{
+	struct dect_phy_api_scheduler_list_item *iterator = NULL;
+
+	k_mutex_lock(&to_be_sheduled_list_mutex, K_FOREVER);
+	SYS_DLIST_FOR_EACH_CONTAINER(&to_be_sheduled_list, iterator, dnode) {
+		if (iterator->phy_op_handle >= range_start &&
+		    iterator->phy_op_handle <= range_end) {
+			if (header_type == DECT_PHY_HEADER_TYPE1) {
+				memcpy(&iterator->sched_config.tx.phy_header.type_1,
+				       &(phy_header->type_1), sizeof(phy_header->type_1));
+			} else {
+				__ASSERT_NO_MSG(header_type == DECT_PHY_HEADER_TYPE2);
+
+				memcpy(&iterator->sched_config.tx.phy_header.type_2,
+				       &(phy_header->type_2), sizeof(phy_header->type_2));
+			}
+		}
+	}
+	k_mutex_unlock(&to_be_sheduled_list_mutex);
+}
+
 void dect_phy_api_scheduler_list_item_beacon_tx_sched_config_update_by_phy_op_handle(
 	uint32_t handle, struct dect_phy_api_scheduler_list_item_config *tx_conf)
 {
@@ -440,7 +465,7 @@ void dect_phy_api_scheduler_list_item_sched_config_frame_time_update_by_phy_op_h
 }
 
 void dect_phy_api_scheduler_list_item_beacon_rx_sched_config_update_by_phy_op_handle_range(
-	uint16_t range_start, uint16_t range_end,
+	uint32_t range_start, uint32_t range_end,
 	struct dect_phy_api_scheduler_list_item_config *rx_conf)
 {
 	struct dect_phy_api_scheduler_list_item *iterator = NULL;
@@ -1214,6 +1239,21 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 					}
 					iterator->phy_op_handle = next_handle;
 				}
+				if (DECT_PHY_API_SCHEDULER_PRIORITY_IS_TX(iterator->priority) &&
+				    iterator->sched_config.tx.combined_rx_op_handle_range_used) {
+					uint32_t next_handle =
+						iterator->sched_config.tx.combined_rx_op.handle;
+
+					next_handle++;
+					if (next_handle >
+					    iterator->sched_config.tx
+						.combined_rx_op_handle_range_end) {
+						next_handle = iterator->sched_config.tx
+								.combined_rx_op_handle_range_start;
+					}
+					iterator->sched_config.tx
+						.combined_rx_op.handle = next_handle;
+				}
 				if (iterator->priority == DECT_PRIORITY1_RX_RSSI) {
 					iterator->sched_config.rssi.rssi_op_params.start_time =
 						new_frame_time;
@@ -1344,6 +1384,22 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 					}
 					iterator->phy_op_handle = next_handle;
 				}
+				if (DECT_PHY_API_SCHEDULER_PRIORITY_IS_TX(iterator->priority) &&
+				    iterator->sched_config.tx.combined_rx_op_handle_range_used) {
+					uint32_t next_handle =
+						iterator->sched_config.tx.combined_rx_op.handle;
+
+					next_handle++;
+					if (next_handle >
+					    iterator->sched_config.tx
+						.combined_rx_op_handle_range_end) {
+						next_handle = iterator->sched_config.tx
+								.combined_rx_op_handle_range_start;
+					}
+					iterator->sched_config.tx
+						.combined_rx_op.handle = next_handle;
+				}
+
 				if (iterator->priority == DECT_PRIORITY1_RX_RSSI) {
 					iterator->sched_config.rssi.rssi_op_params.start_time =
 						new_frame_time;

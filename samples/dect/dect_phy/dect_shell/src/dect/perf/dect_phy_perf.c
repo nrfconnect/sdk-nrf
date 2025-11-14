@@ -50,6 +50,7 @@ struct dect_phy_perf_tx_metrics {
 	uint32_t tx_total_data_amount;
 	uint32_t tx_total_pkt_count;
 	uint32_t tx_harq_timeout_count;
+	uint32_t tx_failed_due_to_lbt;
 };
 
 struct dect_phy_perf_rx_metrics {
@@ -106,6 +107,8 @@ struct dect_phy_perf_client_data {
 
 struct dect_phy_perf_server_data {
 	bool rx_results_sent;
+
+	uint32_t rx_handle;
 
 	/* HARQ data */
 	/* For sending HARQ feedback for RX data when requested by the client in a header */
@@ -244,7 +247,6 @@ static int dect_phy_perf_server_rx_start(uint64_t start_time)
 
 	struct dect_phy_perf_params *params = &(perf_data.cmd_params);
 	struct nrf_modem_dect_phy_rx_params rx_op = {
-		.handle = DECT_PHY_PERF_SERVER_RX_HANDLE,
 		.start_time = start_time,
 		.mode = NRF_MODEM_DECT_PHY_RX_MODE_CONTINUOUS,
 		.link_id = NRF_MODEM_DECT_PHY_LINK_UNSPECIFIED,
@@ -255,6 +257,12 @@ static int dect_phy_perf_server_rx_start(uint64_t start_time)
 	};
 	int ret;
 	uint64_t used_duration_mdm_ticks;
+
+	perf_data.server_data.rx_handle++;
+	if (perf_data.server_data.rx_handle > DECT_PHY_PERF_SERVER_RX_HANDLE_END) {
+		perf_data.server_data.rx_handle = DECT_PHY_PERF_SERVER_RX_HANDLE_START;
+	}
+	rx_op.handle = perf_data.server_data.rx_handle;
 
 	rx_op.filter.is_short_network_id_used = true;
 	rx_op.filter.short_network_id = (uint8_t)(current_settings->common.network_id & 0xFF);
@@ -811,7 +819,7 @@ static int dect_phy_perf_client_start(void)
 	uint64_t time_now = dect_app_modem_time_now();
 	uint64_t first_possible_tx =
 		time_now +
-		(US_TO_MODEM_TICKS(2 * current_settings->scheduler.scheduling_delay_us + 4000));
+		(US_TO_MODEM_TICKS(4 * current_settings->scheduler.scheduling_delay_us));
 
 	/* Sending max amount of data that can be encoded to given slot amount */
 	int16_t perf_pdu_byte_count =
@@ -834,10 +842,11 @@ static int dect_phy_perf_client_start(void)
 
 	desh_print(
 		"Starting perf client on channel %d: byte count per TX: %d, slots %d, gap %lld mdm "
-		"ticks, mcs %d, duration %d secs, expected RSSI level on RX %d.",
+		"ticks, mcs %d, LBT period %d, duration %d secs, "
+		"expected RSSI level on RX %d.",
 		params->channel, perf_pdu_byte_count, params->slot_count,
-		params->slot_gap_count_in_mdm_ticks, params->tx_mcs, params->duration_secs,
-		params->expected_rx_rssi_level);
+		params->slot_gap_count_in_mdm_ticks, params->tx_mcs, params->tx_lbt_period_symbols,
+		params->duration_secs, params->expected_rx_rssi_level);
 
 	uint16_t perf_pdu_payload_byte_count =
 		perf_pdu_byte_count - DECT_PHY_PERF_TX_DATA_PDU_LEN_WITHOUT_PAYLOAD;
@@ -866,7 +875,10 @@ static int dect_phy_perf_client_start(void)
 	perf_data.client_data.tx_op.carrier = params->channel;
 	perf_data.client_data.tx_op.data_size = perf_pdu_byte_count;
 	perf_data.client_data.tx_op.data = encoded_data_to_send;
-	perf_data.client_data.tx_op.lbt_period = 0;
+	perf_data.client_data.tx_op.lbt_period = params->tx_lbt_period_symbols *
+		NRF_MODEM_DECT_SYMBOL_DURATION;
+	perf_data.client_data.tx_op.lbt_rssi_threshold_max =
+		params->tx_lbt_rssi_busy_threshold_dbm;
 	perf_data.client_data.tx_op.network_id = current_settings->common.network_id;
 	perf_data.client_data.tx_op.phy_header = &perf_data.client_data.tx_phy_header;
 	perf_data.client_data.tx_op.phy_type = DECT_PHY_HEADER_TYPE2;
@@ -911,6 +923,7 @@ static int dect_phy_perf_start(struct dect_phy_perf_params *params,
 		perf_data.time_started_ms = k_uptime_get();
 		dect_phy_perf_harq_tx_process_table_init(params->client_harq_process_nbr_max);
 		dect_phy_perf_data_rx_metrics_init();
+		perf_data.server_data.rx_handle = DECT_PHY_PERF_SERVER_RX_HANDLE_START;
 	}
 
 	perf_data.perf_ongoing = true;
@@ -919,23 +932,19 @@ static int dect_phy_perf_start(struct dect_phy_perf_params *params,
 		ret = dect_phy_perf_client_start();
 	} else {
 		__ASSERT_NO_MSG(params->role == DECT_PHY_COMMON_ROLE_SERVER);
-		enum nrf_modem_dect_phy_radio_mode radio_mode;
-		uint64_t next_possible_start_time = 0;
-
-		ret = dect_phy_ctrl_current_radio_mode_get(&radio_mode);
-
-		desh_print("Starting server RX: channel %d, exp_rssi_level %d, duration %d secs.",
-			   params->channel, params->expected_rx_rssi_level, params->duration_secs);
-
-		if (!ret && radio_mode != NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY) {
-			uint64_t time_now = dect_app_modem_time_now();
-			struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
-
-			next_possible_start_time =
+		struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
+		uint64_t time_now = dect_app_modem_time_now();
+		uint64_t next_possible_start_time =
 				time_now + (3 * US_TO_MODEM_TICKS(
 					current_settings->scheduler.scheduling_delay_us));
-		}
+
 		ret = dect_phy_perf_server_rx_start(next_possible_start_time);
+		if (!ret) {
+			desh_print("Starting server RX: channel %d, exp_rssi_level %d, "
+				   "duration %d secs.",
+				params->channel, params->expected_rx_rssi_level,
+				params->duration_secs);
+		}
 	}
 	return ret;
 }
@@ -1065,6 +1074,8 @@ dect_phy_perf_client_report_local_results_and_req_srv_results(int64_t *elapsed_t
 	desh_print("  total amount of data sent: %d bytes",
 		   perf_data.tx_metrics.tx_total_data_amount);
 	desh_print("  packet count:              %d", perf_data.tx_metrics.tx_total_pkt_count);
+	desh_print("  tx failed due to LBT:      %d",
+		   perf_data.tx_metrics.tx_failed_due_to_lbt);
 	desh_print("  elapsed time:              %.2f seconds", (double)elapsed_time_ms / 1000);
 	desh_print("  data rates:                %.2f kbits/seconds", (perf / 1000));
 
@@ -1128,6 +1139,7 @@ static int dect_phy_perf_server_results_tx(char *result_str)
 	int ret = 0;
 
 	uint64_t time_now = dect_app_modem_time_now();
+	/* RX cancel should be over: */
 	uint64_t first_possible_tx = time_now + SECONDS_TO_MODEM_TICKS(2);
 
 	uint16_t bytes_to_send = DECT_PHY_PERF_PDU_COMMON_PART_LEN + (strlen(result_str) + 1);
@@ -1224,8 +1236,9 @@ static void dect_phy_perf_server_report_local_and_tx_results(void)
 	desh_print("server: sending result response of total length: %d:\n\"%s\"\n",
 		   (strlen(results_str) + 1), results_str);
 
-	/* Send results to client: */
-	(void)nrf_modem_dect_phy_cancel(DECT_PHY_PERF_SERVER_RX_HANDLE);
+	/* Send results to client, but 1st cancel all and wait completion */
+	dect_phy_ctrl_mdm_op_cancel_all();
+
 	if (dect_phy_perf_server_results_tx(results_str)) {
 		desh_error("Cannot start sending server results");
 	}
@@ -1263,6 +1276,10 @@ void dect_phy_perf_mdm_op_completed(
 				/* TX was not done */
 				dect_phy_perf_tx_total_data_decrease();
 				perf_data.tx_metrics.tx_total_pkt_count--;
+				if (mdm_completed_params->status ==
+					NRF_MODEM_DECT_PHY_ERR_LBT_CHANNEL_BUSY) {
+					perf_data.tx_metrics.tx_failed_due_to_lbt++;
+				}
 			}
 
 			if (mdm_completed_params->handle ==
@@ -1298,7 +1315,7 @@ void dect_phy_perf_mdm_op_completed(
 				dect_phy_perf_client_tx(next_possible_tx);
 			}
 
-		} else if (mdm_completed_params->handle == DECT_PHY_PERF_SERVER_RX_HANDLE) {
+		} else if (DECT_PHY_PERF_SERVER_RX_HANDLE_IN_RANGE(mdm_completed_params->handle)) {
 			/* Restart server in case of when max duration of RX operation elapses */
 			uint16_t secs_left = dect_phy_perf_time_secs_left();
 			int64_t z_ticks_rx_scheduled = perf_data.rx_metrics.rx_enabled_z_ticks;
@@ -1327,7 +1344,8 @@ void dect_phy_perf_mdm_op_completed(
 						dect_phy_perf_start(&copy_params, RESTART);
 					}
 				}
-			} else {
+			} else if (mdm_completed_params->status !=
+				   NRF_MODEM_DECT_PHY_ERR_OP_CANCELED) {
 				/* Let's restart only if failure is not happening very fast which
 				 * usually means a fundamental failure and then it is better to
 				 * quit.
@@ -1387,6 +1405,13 @@ void dect_phy_perf_mdm_op_completed(
 		} else if (mdm_completed_params->handle == DECT_PHY_PERF_RESULTS_RESP_RX_HANDLE) {
 			/* Client */
 			if (mdm_completed_params->status == NRF_MODEM_DECT_PHY_SUCCESS) {
+				if (perf_data.client_data.tx_results_from_server_requested) {
+					desh_warn(
+						"No results from perf server. "
+						"Make sure that server is running and reachable.");
+					perf_data.client_data.tx_results_from_server_requested =
+						false;
+				}
 				desh_print("RX for perf results done.");
 			} else {
 				desh_print("RX for perf results failed.");
@@ -1471,13 +1496,16 @@ static void dect_phy_perf_thread_fn(void)
 					params->status, params->temperature, tmp_str);
 
 				if (DECT_PHY_PERF_TX_HANDLE_IN_RANGE(params->handle) ||
-				    params->handle == DECT_PHY_PERF_SERVER_RX_HANDLE ||
+				    DECT_PHY_PERF_SERVER_RX_HANDLE_IN_RANGE(params->handle) ||
 				    params->handle == DECT_PHY_PERF_RESULTS_REQ_TX_HANDLE ||
 				    params->handle == DECT_PHY_PERF_RESULTS_RESP_TX_HANDLE ||
 				    params->handle == DECT_PHY_PERF_RESULTS_RESP_RX_HANDLE) {
-					desh_warn("%s: perf modem operation failed: %s, "
-						  "handle %d",
-						  __func__, tmp_str, params->handle);
+					if (params->status !=
+						NRF_MODEM_DECT_PHY_ERR_LBT_CHANNEL_BUSY) {
+						desh_warn("%s: perf modem operation failed: %s, "
+							"handle %d",
+							__func__, tmp_str, params->handle);
+					}
 					dect_phy_perf_mdm_op_completed(params);
 				} else if (params->handle == DECT_HARQ_FEEDBACK_TX_HANDLE) {
 					desh_error("%s: cannot TX HARQ feedback: %s", __func__,
@@ -1494,7 +1522,7 @@ static void dect_phy_perf_thread_fn(void)
 				}
 			} else {
 				if (DECT_PHY_PERF_TX_HANDLE_IN_RANGE(params->handle) ||
-				    params->handle == DECT_PHY_PERF_SERVER_RX_HANDLE ||
+				    DECT_PHY_PERF_SERVER_RX_HANDLE_IN_RANGE(params->handle) ||
 				    params->handle == DECT_PHY_PERF_RESULTS_REQ_TX_HANDLE ||
 				    params->handle == DECT_PHY_PERF_RESULTS_RESP_TX_HANDLE ||
 				    params->handle == DECT_PHY_PERF_RESULTS_RESP_RX_HANDLE) {
@@ -1621,6 +1649,7 @@ rx_pcc_debug:
 
 				if (since_last_print_ms >= 5000) {
 					char tmp_str[128] = {0};
+					double snr = (double)params->pcc_status.snr / 4.0;
 
 					dect_common_utils_modem_phy_header_status_to_string_short(
 						params->pcc_status.header_status, tmp_str);
@@ -1628,11 +1657,10 @@ rx_pcc_debug:
 					perf_data.rx_metrics.rx_last_pcc_print_zticks =
 						z_ticks_last_pcc_print;
 					desh_print("Periodic debug: PCC received (time %llu, "
-						   "handle %d): status: \"%s\", snr %d, "
-						   "RSSI %d, tx pwr %d dbm",
+						   "handle %d): status: \"%s\", snr %.2f dB, "
+						   "RSSI-2 %d dBm, tx pwr %.2f dBm",
 						   params->time, params->pcc_status.handle,
-						   tmp_str, params->pcc_status.snr,
-						   rssi_level,
+						   tmp_str, snr, rssi_level,
 						   dect_common_utils_phy_tx_power_to_dbm(
 							   phy_h->transmit_power));
 				}
@@ -1675,13 +1703,13 @@ rx_pcc_debug:
 					struct nrf_modem_dect_phy_pdc_event *p_rx_status =
 						&(params->rx_status);
 					int16_t rssi_level = p_rx_status->rssi_2 / 2;
+					double snr = (double)p_rx_status->snr / 4.0;
 
 					desh_print("PDC received (time %llu, handle %d): "
-						   "snr %d, RSSI-2 %d "
-						   "(RSSI %d), len %d",
+						   "snr %.2f dB, RSSI-2 %d dBm, len %d",
 						   params->time, p_rx_status->handle,
-						   p_rx_status->snr,
-						   p_rx_status->rssi_2, rssi_level,
+						   snr,
+						   rssi_level,
 						   params->data_length);
 
 					for (i = 0; i < 64 && i < params->data_length; i++) {
@@ -1929,6 +1957,7 @@ static int dect_phy_perf_rx_pdc_data_handle(struct dect_phy_data_rcv_common_para
 	} else if (pdu.header.message_type == DECT_MAC_MESSAGE_TYPE_PERF_RESULTS_RESP) {
 		desh_print("Server results received:");
 		desh_print("%s", pdu.message.results.results_str);
+		perf_data.client_data.tx_results_from_server_requested = false;
 	} else {
 		desh_warn("type %d", pdu.header.message_type);
 	}

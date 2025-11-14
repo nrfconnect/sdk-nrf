@@ -31,6 +31,8 @@ struct dect_phy_perf_params {
 	int16_t duration_secs;
 	int8_t tx_power_dbm;
 	uint8_t tx_mcs;
+	uint8_t tx_lbt_period_symbols;
+	int8_t tx_lbt_rssi_busy_threshold_dbm;
 	uint8_t slot_count;
 	uint8_t subslot_gap_count;
 	uint8_t slot_gap_count;
@@ -214,11 +216,23 @@ struct dect_phy_common_op_event_msgq_item {
 
 #define DECT_PHY_PERF_RESULTS_RESP_RX_HANDLE 11002 /* Client for receiving perf results */
 
-#define DECT_PHY_PERF_SERVER_RX_HANDLE 12000
+#define DECT_PHY_PERF_SERVER_RX_HANDLE_START 12000
+#define DECT_PHY_PERF_SERVER_RX_HANDLE_END   12049
+#define DECT_PHY_PERF_SERVER_RX_HANDLE_IN_RANGE(x)                                                 \
+	(x >= DECT_PHY_PERF_SERVER_RX_HANDLE_START && x <= DECT_PHY_PERF_SERVER_RX_HANDLE_END)
 
-#define DECT_PHY_PING_CLIENT_TX_HANDLE	  13000 /* For sending ping req */
-#define DECT_PHY_PING_CLIENT_RE_TX_HANDLE 13001 /* For re-sending ping req */
-#define DECT_PHY_PING_CLIENT_RX_HANDLE	  13500 /* For receiving ping resp */
+/* For sending ping req */
+#define DECT_PHY_PING_CLIENT_TX_HANDLE_START 13000
+#define DECT_PHY_PING_CLIENT_TX_HANDLE_END   13049
+#define DECT_PHY_PING_CLIENT_TX_HANDLE_IN_RANGE(x)                                                 \
+	(x >= DECT_PHY_PING_CLIENT_TX_HANDLE_START && x <= DECT_PHY_PING_CLIENT_TX_HANDLE_END)
+
+#define DECT_PHY_PING_CLIENT_RE_TX_HANDLE 13100 /* For re-sending ping req */
+
+#define DECT_PHY_PING_CLIENT_RX_HANDLE_START 13500 /* For receiving ping resp */
+#define DECT_PHY_PING_CLIENT_RX_HANDLE_END 13549
+#define DECT_PHY_PING_CLIENT_RX_HANDLE_IN_RANGE(x)                                                 \
+	(x >= DECT_PHY_PING_CLIENT_RX_HANDLE_START && x <= DECT_PHY_PING_CLIENT_RX_HANDLE_END)
 
 #define DECT_PHY_PING_SERVER_RX_HANDLE 14000 /* For receiving ping req */
 #define DECT_PHY_PING_SERVER_TX_HANDLE 14500 /* For sending ping resp */

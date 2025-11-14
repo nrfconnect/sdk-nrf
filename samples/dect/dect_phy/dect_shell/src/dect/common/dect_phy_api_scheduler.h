@@ -92,6 +92,14 @@ struct dect_phy_api_scheduler_list_item_config_tx {
 	/* Combined TX & RX req  */
 	bool combined_tx_rx_use;
 
+	/* Can be used only with interval_mdm_ticks is used.
+	 * Replaces handle in combined_rx_op if
+	 * combined_rx_op_handle_range_used is set
+	 */
+	bool combined_rx_op_handle_range_used;
+	uint32_t combined_rx_op_handle_range_start;
+	uint32_t combined_rx_op_handle_range_end;
+
 	/* RX operation data structure must be fully filled.
 	 * Note that RX start time is relative to TX end.
 	 */
@@ -206,10 +214,14 @@ void dect_phy_api_scheduler_list_item_sched_config_frame_time_update_by_phy_op_h
 	uint32_t handle, int64_t frame_time_diff);
 
 void dect_phy_api_scheduler_list_item_beacon_rx_sched_config_update_by_phy_op_handle_range(
-	uint16_t range_start, uint16_t range_end,
+	uint32_t range_start, uint32_t range_end,
 	struct dect_phy_api_scheduler_list_item_config *rx_conf);
 void dect_phy_api_scheduler_list_item_tx_phy_header_update_by_phy_handle(
 	uint32_t handle, union nrf_modem_dect_phy_hdr *phy_header,
+	dect_phy_header_type_t header_type);
+void dect_phy_api_scheduler_list_item_tx_phy_header_update_by_phy_handle_range(
+	uint32_t range_start, uint32_t range_end,
+	union nrf_modem_dect_phy_hdr *phy_header,
 	dect_phy_header_type_t header_type);
 
 void dect_phy_api_scheduler_list_status_print(void);

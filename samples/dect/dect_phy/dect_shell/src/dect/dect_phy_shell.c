@@ -75,6 +75,8 @@ enum {
 	DECT_SHELL_PERF_SUBSLOT_GAP_COUNT,
 	DECT_SHELL_PERF_TX_PWR,
 	DECT_SHELL_PERF_TX_MCS,
+	DECT_SHELL_PERF_TX_LBT_PERIOD,
+	DECT_SHELL_PERF_TX_LBT_RSSI_BUSY_THRESHOLD,
 	DECT_SHELL_PERF_DEST_SERVER_TX_ID,
 	DECT_SHELL_PERF_HARQ_MDM_PROCESS_COUNT,
 	DECT_SHELL_PERF_HARQ_MDM_EXPIRY_TIME,
@@ -107,6 +109,11 @@ static const char dect_phy_perf_cmd_usage_str[] =
 	"                                 \"dect status\" -command output.\n"
 	"                                 Default: from common tx settings.\n"
 	"      --c_tx_mcs <int>,          Set client TX MCS. Default: from common tx settings.\n"
+	"      --c_tx_lbt_period <cnt>,   Listen Before Talk (LBT) period (symbol count).\n"
+	"                                 Zero value disables LBT (default).\n"
+	"                                 Valid range for symbol count: 2-110.\n"
+	"      --c_tx_lbt_busy_th <dbm>,  LBT busy RSSI threshold (dBm). Valid only when LBT\n"
+	"                                 is enabled. Default from RSSI busy threshold setting.\n"
 	"  -d, --debug,                   Print CRC errors. Note: might impact on actual\n"
 	"                                 perf & timings.\n"
 	"For HARQ only:\n"
@@ -177,6 +184,8 @@ static struct option long_options_perf[] = {
 	 DECT_SHELL_PERF_HARQ_MDM_EXPIRY_TIME},
 	{"c_tx_pwr", required_argument, 0, DECT_SHELL_PERF_TX_PWR},
 	{"c_tx_mcs", required_argument, 0, DECT_SHELL_PERF_TX_MCS},
+	{"c_tx_lbt_period", required_argument, 0, DECT_SHELL_PERF_TX_LBT_PERIOD },
+	{"c_tx_lbt_busy_th", required_argument, 0, DECT_SHELL_PERF_TX_LBT_RSSI_BUSY_THRESHOLD },
 	{0, 0, 0, 0}};
 
 static int dect_phy_perf_cmd(const struct shell *shell, size_t argc, char **argv)
@@ -205,6 +214,8 @@ static int dect_phy_perf_cmd(const struct shell *shell, size_t argc, char **argv
 	params.duration_secs = 5;
 	params.tx_power_dbm = current_settings->tx.power_dbm;
 	params.tx_mcs = current_settings->tx.mcs;
+	params.tx_lbt_period_symbols = 0;
+	params.tx_lbt_rssi_busy_threshold_dbm = current_settings->rssi_scan.busy_threshold;
 	params.role = DECT_PHY_COMMON_ROLE_NONE;
 	params.channel = 1665;
 	params.slot_count = 2;
@@ -257,6 +268,31 @@ static int dect_phy_perf_cmd(const struct shell *shell, size_t argc, char **argv
 		}
 		case DECT_SHELL_PERF_TX_PWR: {
 			params.tx_power_dbm = atoi(optarg);
+			break;
+		}
+		case DECT_SHELL_PERF_TX_LBT_PERIOD: {
+			temp = atoi(optarg);
+			if (temp < DECT_PHY_LBT_PERIOD_MIN_SYM ||
+				temp > DECT_PHY_LBT_PERIOD_MAX_SYM) {
+				desh_error("Invalid LBT period %d (range: [%d,%d])",
+					   temp,
+					   DECT_PHY_LBT_PERIOD_MIN_SYM,
+					   DECT_PHY_LBT_PERIOD_MAX_SYM);
+				goto show_usage;
+			}
+			params.tx_lbt_period_symbols = temp;
+			break;
+		}
+		case DECT_SHELL_PERF_TX_LBT_RSSI_BUSY_THRESHOLD: {
+			temp = atoi(optarg);
+			if (temp >= 0 ||
+			    temp < INT8_MIN) {
+				desh_error("Invalid LBT RSSI busy threshold %d (range: [%d,-1])",
+					   temp,
+					   INT8_MIN);
+				goto show_usage;
+			}
+			params.tx_lbt_rssi_busy_threshold_dbm = temp;
 			break;
 		}
 		case DECT_SHELL_PERF_TX_MCS: {
@@ -352,6 +388,8 @@ static int dect_phy_perf_cmd(const struct shell *shell, size_t argc, char **argv
 		params.slot_gap_count_in_mdm_ticks =
 			DECT_RADIO_SLOT_DURATION_IN_MODEM_TICKS * params.slot_gap_count;
 	}
+	params.slot_gap_count_in_mdm_ticks +=
+		(params.tx_lbt_period_symbols * NRF_MODEM_DECT_SYMBOL_DURATION);
 
 	ret = dect_phy_ctrl_perf_cmd(&params);
 	if (ret) {
