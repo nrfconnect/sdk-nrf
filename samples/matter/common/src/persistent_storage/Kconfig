@@ -13,8 +13,8 @@ config NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND
 
 config NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND
 	bool "Secure storage implementation for Matter samples"
-	select TRUSTED_STORAGE if (!PSA_SSF_CRYPTO_CLIENT && !BUILD_WITH_TFM)
-	select PSA_PROTECTED_STORAGE if (!PSA_SSF_CRYPTO_CLIENT && !BUILD_WITH_TFM)
+	select TRUSTED_STORAGE if (!NRF_IRONSIDE_SE_PSA_SERVICES && !BUILD_WITH_TFM)
+	select PSA_PROTECTED_STORAGE if (!NRF_IRONSIDE_SE_PSA_SERVICES && !BUILD_WITH_TFM)
 	help
 	  Enables the secure persistent storage wrapper API that
 	  imitates Zephyr Settings' key-value data format.
