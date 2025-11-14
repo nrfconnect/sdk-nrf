@@ -9,7 +9,7 @@
 #if defined(CONFIG_MULTITHREADING) && !defined(__NRF_TFM__)
 #include <zephyr/kernel.h>
 #else
-#include <soc/nrfx_coredep.h>
+#include <lib/nrfx_coredep.h>
 #endif
 
 #if defined(CONFIG_MULTITHREADING) && !defined(__NRF_TFM__)

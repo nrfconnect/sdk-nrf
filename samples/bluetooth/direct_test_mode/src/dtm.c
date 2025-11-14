@@ -37,7 +37,6 @@
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
 
-#include <nrf_erratas.h>
 #if NRF54L_ERRATA_20_PRESENT
 #include <hal/nrf_power.h>
 #endif /* NRF54L_ERRATA_20_PRESENT */
@@ -70,9 +69,6 @@
 #define DEFAULT_TIMER_IRQ          NRFX_CONCAT_3(TIMER,			 \
 						 DEFAULT_TIMER_INSTANCE, \
 						 _IRQn)
-#define DEFAULT_TIMER_IRQ_HANDLER  NRFX_CONCAT_3(nrfx_timer_,		 \
-						 DEFAULT_TIMER_INSTANCE, \
-						 _irq_handler)
 
 /* Note that the timer instance 1 can be used in the communication module. */
 
@@ -84,19 +80,6 @@
 #define ANOMALY_172_TIMER_IRQ          NRFX_CONCAT_3(TIMER,		    \
 						ANOMALY_172_TIMER_INSTANCE, \
 						_IRQn)
-#define ANOMALY_172_TIMER_IRQ_HANDLER  NRFX_CONCAT_3(nrfx_timer_,	    \
-						ANOMALY_172_TIMER_INSTANCE, \
-						_irq_handler)
-#endif /* NRF52_ERRATA_172_PRESENT */
-
-/* Helper macro for labeling timer instances. */
-#define NRFX_TIMER_CONFIG_LABEL(_num) NRFX_CONCAT_3(CONFIG_, NRFX_TIMER, _num)
-
-BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(DEFAULT_TIMER_INSTANCE) == 1,
-	     "Core DTM timer needs additional KConfig configuration");
-#if NRF52_ERRATA_172_PRESENT
-BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(ANOMALY_172_TIMER_INSTANCE) == 1,
-	     "Anomaly DTM timer needs additional KConfig configuration");
 #endif /* NRF52_ERRATA_172_PRESENT */
 
 #define DTM_EGU_EVENT NRF_EGU_EVENT_TRIGGERED0
@@ -400,11 +383,11 @@ static struct dtm_instance {
 	uint32_t address;
 
 	/* Timer to be used for scheduling TX packets. */
-	const nrfx_timer_t timer;
+	nrfx_timer_t timer;
 
 #if NRF52_ERRATA_172_PRESENT
 	/* Timer to be used to handle Anomaly 172. */
-	const nrfx_timer_t anomaly_timer;
+	nrfx_timer_t anomaly_timer;
 
 	/* Enable or disable the workaround for Errata 172. */
 	bool anomaly_172_wa_enabled;
@@ -428,7 +411,7 @@ static struct dtm_instance {
 #endif
 
 	/* Radio Enable PPI channel. */
-	uint8_t ppi_radio_start;
+	nrfx_gppi_handle_t ppi_radio_start;
 
 	/* PPI endpoint status.*/
 	atomic_t endpoint_state;
@@ -436,9 +419,9 @@ static struct dtm_instance {
 	.state = STATE_UNINITIALIZED,
 	.packet_hdr_plen = NRF_RADIO_PREAMBLE_LENGTH_8BIT,
 	.address = DTM_RADIO_ADDRESS,
-	.timer = NRFX_TIMER_INSTANCE(DEFAULT_TIMER_INSTANCE),
+	.timer = NRFX_TIMER_INSTANCE(NRF_TIMER_INST_GET(DEFAULT_TIMER_INSTANCE)),
 #if NRF52_ERRATA_172_PRESENT
-	.anomaly_timer = NRFX_TIMER_INSTANCE(ANOMALY_172_TIMER_INSTANCE),
+	.anomaly_timer = NRFX_TIMER_INSTANCE(NRF_TIMER_INST_GET(ANOMALY_172_TIMER_INSTANCE)),
 #endif /* NRF52_ERRATA_172_PRESENT */
 	.radio_mode = NRF_RADIO_MODE_BLE_1MBIT,
 	.txpower = 0,
@@ -826,7 +809,7 @@ static int timer_init(void)
 	}
 
 	IRQ_CONNECT(DEFAULT_TIMER_IRQ, CONFIG_DTM_TIMER_IRQ_PRIORITY,
-		    DEFAULT_TIMER_IRQ_HANDLER, NULL, 0);
+		    nrfx_timer_irq_handler, &dtm_inst.timer, 0);
 
 	return 0;
 }
@@ -850,8 +833,8 @@ static int anomaly_timer_init(void)
 
 	IRQ_CONNECT(ANOMALY_172_TIMER_IRQ,
 		    CONFIG_ANOMALY_172_TIMER_IRQ_PRIORITY,
-		    ANOMALY_172_TIMER_IRQ_HANDLER,
-		    NULL, 0);
+		    nrfx_timer_irq_handler,
+		    &dtm_inst.anomaly_timer, 0);
 
 	nrfx_timer_compare(&dtm_inst.anomaly_timer,
 		NRF_TIMER_CC_CHANNEL0,
@@ -866,11 +849,12 @@ static int anomaly_timer_init(void)
 static int gppi_init(void)
 {
 	nrfx_err_t err;
+	uint32_t rad_domain = nrfx_gppi_domain_id_get((uint32_t)NRF_RADIO);
 
-	err = nrfx_gppi_channel_alloc(&dtm_inst.ppi_radio_start);
-	if (err != NRFX_SUCCESS) {
-		printk("nrfx_gppi_channel_alloc failed with: %d\n", err);
-		return -EAGAIN;
+	err = nrfx_gppi_domain_conn_alloc(rad_domain, rad_domain, &dtm_inst.ppi_radio_start);
+	if (err < 0) {
+		printk("nrfx_gppi_domain_conn_alloc failed with: %d\n", err);
+		return err;
 	}
 
 	return 0;
@@ -1161,9 +1145,7 @@ static void radio_tx_power_set(uint8_t channel, int8_t tx_power, nrf_radio_mode_
 
 static void radio_reset(void)
 {
-	if (nrfx_gppi_channel_check(dtm_inst.ppi_radio_start)) {
-		nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_start));
-	}
+	nrfx_gppi_conn_disable(dtm_inst.ppi_radio_start);
 
 	nrf_radio_shorts_set(NRF_RADIO, 0);
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
@@ -1635,34 +1617,27 @@ static void errata_191_handle(bool enable)
 static void endpoints_clear(void)
 {
 	if (atomic_test_and_clear_bit(&dtm_inst.endpoint_state, ENDPOINT_FORK_EGU_TIMER)) {
-		nrfx_gppi_fork_endpoint_clear(dtm_inst.ppi_radio_start,
+		nrfx_gppi_ep_clear(
 			nrf_timer_task_address_get(dtm_inst.timer.p_reg, NRF_TIMER_TASK_START));
 	}
 	if (atomic_test_and_clear_bit(&dtm_inst.endpoint_state, ENDPOINT_EGU_RADIO_TX)) {
-		nrfx_gppi_channel_endpoints_clear(
-			dtm_inst.ppi_radio_start,
-			nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT),
-			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
+		nrfx_gppi_ep_clear(nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT));
+		nrfx_gppi_ep_clear(nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
 	}
 	if (atomic_test_and_clear_bit(&dtm_inst.endpoint_state, ENDPOINT_EGU_RADIO_RX)) {
-		nrfx_gppi_channel_endpoints_clear(
-			dtm_inst.ppi_radio_start,
-			nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT),
-			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_RXEN));
+		nrfx_gppi_ep_clear(nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT));
+		nrfx_gppi_ep_clear(nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_RXEN));
 	}
 	if (atomic_test_and_clear_bit(&dtm_inst.endpoint_state, ENDPOINT_TIMER_RADIO_TX)) {
-		nrfx_gppi_channel_endpoints_clear(
-			dtm_inst.ppi_radio_start,
-			nrf_timer_event_address_get(dtm_inst.timer.p_reg, NRF_TIMER_EVENT_COMPARE0),
-			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
+		nrfx_gppi_ep_clear(
+		   nrf_timer_event_address_get(dtm_inst.timer.p_reg, NRF_TIMER_EVENT_COMPARE0));
+		nrfx_gppi_ep_clear(nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
 	}
 }
 
 static void radio_ppi_clear(void)
 {
-	if (nrfx_gppi_channel_check(dtm_inst.ppi_radio_start)) {
-		nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_start));
-	}
+	nrfx_gppi_conn_disable(dtm_inst.ppi_radio_start);
 
 	nrf_egu_event_clear(DTM_EGU, DTM_EGU_EVENT);
 
@@ -1672,19 +1647,19 @@ static void radio_ppi_clear(void)
 
 static void radio_ppi_configure(bool rx, uint32_t timer_short_mask)
 {
-	nrfx_gppi_channel_endpoints_setup(
-		dtm_inst.ppi_radio_start,
-		nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT),
-		nrf_radio_task_address_get(NRF_RADIO,
+	nrfx_gppi_ep_attach(dtm_inst.ppi_radio_start,
+			    nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT));
+	nrfx_gppi_ep_attach(dtm_inst.ppi_radio_start,
+			    nrf_radio_task_address_get(NRF_RADIO,
 					   rx ? NRF_RADIO_TASK_RXEN : NRF_RADIO_TASK_TXEN));
 	atomic_set_bit(&dtm_inst.endpoint_state,
 		       (rx ? ENDPOINT_EGU_RADIO_RX : ENDPOINT_EGU_RADIO_TX));
 
-	nrfx_gppi_fork_endpoint_setup(dtm_inst.ppi_radio_start,
+	nrfx_gppi_ep_attach(dtm_inst.ppi_radio_start,
 		nrf_timer_task_address_get(dtm_inst.timer.p_reg, NRF_TIMER_TASK_START));
 	atomic_set_bit(&dtm_inst.endpoint_state, ENDPOINT_FORK_EGU_TIMER);
 
-	nrfx_gppi_channels_enable(BIT(dtm_inst.ppi_radio_start));
+	nrfx_gppi_conn_enable(dtm_inst.ppi_radio_start);
 
 	if (timer_short_mask) {
 		nrf_timer_shorts_set(dtm_inst.timer.p_reg, timer_short_mask);
@@ -1693,18 +1668,16 @@ static void radio_ppi_configure(bool rx, uint32_t timer_short_mask)
 
 static void radio_tx_ppi_reconfigure(void)
 {
-	if (nrfx_gppi_channel_check(dtm_inst.ppi_radio_start)) {
-		nrfx_gppi_channels_disable(BIT(dtm_inst.ppi_radio_start));
-	}
+	nrfx_gppi_conn_disable(dtm_inst.ppi_radio_start);
 
 	endpoints_clear();
 
-	nrfx_gppi_channel_endpoints_setup(
-		dtm_inst.ppi_radio_start,
-		nrf_timer_event_address_get(dtm_inst.timer.p_reg, NRF_TIMER_EVENT_COMPARE0),
+	nrfx_gppi_ep_attach(dtm_inst.ppi_radio_start,
+		nrf_timer_event_address_get(dtm_inst.timer.p_reg, NRF_TIMER_EVENT_COMPARE0));
+	nrfx_gppi_ep_attach(dtm_inst.ppi_radio_start,
 		nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
 	atomic_set_bit(&dtm_inst.endpoint_state, ENDPOINT_TIMER_RADIO_TX);
-	nrfx_gppi_channels_enable(BIT(dtm_inst.ppi_radio_start));
+	nrfx_gppi_conn_enable(dtm_inst.ppi_radio_start);
 }
 
 static void dtm_test_done(void)

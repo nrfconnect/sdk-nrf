@@ -66,9 +66,6 @@ extern "C" {
 	/** The ESB Radio interrupt number. */
 	#define ESB_RADIO_IRQ_NUMBER RADIO_IRQn
 
-	/** DPPIC instance number used by ESB. */
-	#define ESB_DPPIC_INSTANCE_NO 0
-
 	/** ESB EGU instance configuration. */
 	#define ESB_EGU NRF_EGU0
 
@@ -104,10 +101,9 @@ extern "C" {
 	NRFX_CONCAT_2(NRF_TIMER, ESB_TIMER_INSTANCE_NO)
 
 /** ESB nrfx timer instance. */
-#define ESB_NRFX_TIMER_INSTANCE NRFX_TIMER_INSTANCE(ESB_TIMER_INSTANCE_NO)
-
-#if !defined(CONFIG_NRFX_DPPI)
-/** Use fixed DPPI channels and groups if nrfx_dppi is not available. */
+#define ESB_NRFX_TIMER_INSTANCE_REG NRF_TIMER_INST_GET(ESB_TIMER_INSTANCE_NO)
+#if !defined(CONFIG_NRFX_GPPI)
+/** Use fixed DPPI channels and groups if nrfx_gppi is not available. */
 #define ESB_DPPI_FIXED
 /** First fixed DPPI channel, total used channels: 7. */
 #define ESB_DPPI_FIRST_FIXED_CHANNEL 0
