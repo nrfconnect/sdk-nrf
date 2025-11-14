@@ -295,7 +295,7 @@ static void run_ik_cmd(sx_pk_req *req)
 	sx_pk_wrreg(&req->regs, IK_REG_PK_CONTROL,
 		    IK_PK_CONTROL_START_OP | IK_PK_CONTROL_CLEAR_IRQ);
 
-	if (IS_ENABLED(CONFIG_CRACEN_NEED_IKG_INTERRUPT_WORKAROUND)) {
+	if (IS_ENABLED(CONFIG_PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND)) {
 		/* Workaround to handle IKG freezing on CRACEN lite.
 		 * THE PKE-IKG interrupt can not be cleared from software, but can
 		 * be cleared by hardware when in PK mode.
