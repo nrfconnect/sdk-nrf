@@ -336,6 +336,8 @@ nRF Desktop
       The Kconfig option value was increased to ``15`` (default value from Zephyr).
       The priority of ``10`` is used by default for preemptive contexts (for example, :kconfig:option:`CONFIG_BT_GATT_DM_WORKQ_PRIO` and :kconfig:option:`CONFIG_BT_LONG_WQ_PRIO`).
       The previously used Kconfig option value of ``11`` leads to using the same priority for the mentioned preemptive contexts as the lowest available application thread priority (used for example, by the log processing thread).
+    * Application image configurations to explicitly specify the LED driver used by the :ref:`nrf_desktop_leds` (:kconfig:option:`CONFIG_CAF_LEDS_GPIO` or :kconfig:option:`CONFIG_CAF_LEDS_PWM`).
+      Also, disabled unused LED drivers enabled by default to reduce memory footprint.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
