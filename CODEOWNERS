@@ -67,6 +67,7 @@
 
 # All doc related files
 /doc/_zoomin/                             @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
+/doc/_extensions/                         @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
 /doc/kconfig/                             @nrfconnect/ncs-doc-leads
 /doc/matter/                              @nrfconnect/ncs-matter-doc
 /doc/mcuboot/                             @nrfconnect/ncs-eris-doc
