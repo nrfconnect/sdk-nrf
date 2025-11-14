@@ -7,61 +7,7 @@
 #include "nrf54lv10dk_nrf54lv10a-pinctrl.dtsi"
 
 / {
-	leds {
-		compatible = "gpio-leds";
-
-		led0: led_0 {
-			gpios = <&gpio1 24 GPIO_ACTIVE_HIGH>;
-		};
-
-		led1: led_1 {
-			gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
-		};
-
-		led2: led_2 {
-			gpios = <&gpio1 25 GPIO_ACTIVE_HIGH>;
-		};
-
-		led3: led_3 {
-			gpios = <&gpio1 22 GPIO_ACTIVE_HIGH>;
-		};
-	};
-
-	buttons {
-		compatible = "gpio-keys";
-
-		button0: button_0 {
-			gpios = <&gpio1 21 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
-			label = "Push button 0";
-			zephyr,code = <INPUT_KEY_0>;
-		};
-
-		button1: button_1 {
-			gpios = <&gpio1 9 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
-			label = "Push button 1";
-			zephyr,code = <INPUT_KEY_1>;
-		};
-
-		button2: button_2 {
-			gpios = <&gpio1 8 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
-			label = "Push button 2";
-			zephyr,code = <INPUT_KEY_2>;
-		};
-
-		button3: button_3 {
-			gpios = <&gpio0 4 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
-			label = "Push button 3";
-			zephyr,code = <INPUT_KEY_3>;
-		};
-	};
-
 	aliases {
-		led0 = &led0;
-		led1 = &led1;
-		sw0 = &button0;
-		sw1 = &button1;
-		sw2 = &button2;
-		sw3 = &button3;
 		watchdog0 = &wdt31;
 	};
 
