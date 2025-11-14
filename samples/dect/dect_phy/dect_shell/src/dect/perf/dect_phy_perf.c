@@ -50,6 +50,7 @@ struct dect_phy_perf_tx_metrics {
 	uint32_t tx_total_data_amount;
 	uint32_t tx_total_pkt_count;
 	uint32_t tx_harq_timeout_count;
+	uint32_t tx_failed_due_to_lbt;
 };
 
 struct dect_phy_perf_rx_metrics {
@@ -811,7 +812,7 @@ static int dect_phy_perf_client_start(void)
 	uint64_t time_now = dect_app_modem_time_now();
 	uint64_t first_possible_tx =
 		time_now +
-		(US_TO_MODEM_TICKS(2 * current_settings->scheduler.scheduling_delay_us + 4000));
+		(US_TO_MODEM_TICKS(4 * current_settings->scheduler.scheduling_delay_us));
 
 	/* Sending max amount of data that can be encoded to given slot amount */
 	int16_t perf_pdu_byte_count =
@@ -834,10 +835,11 @@ static int dect_phy_perf_client_start(void)
 
 	desh_print(
 		"Starting perf client on channel %d: byte count per TX: %d, slots %d, gap %lld mdm "
-		"ticks, mcs %d, duration %d secs, expected RSSI level on RX %d.",
+		"ticks, mcs %d, LBT period %d, duration %d secs, "
+		"expected RSSI level on RX %d.",
 		params->channel, perf_pdu_byte_count, params->slot_count,
-		params->slot_gap_count_in_mdm_ticks, params->tx_mcs, params->duration_secs,
-		params->expected_rx_rssi_level);
+		params->slot_gap_count_in_mdm_ticks, params->tx_mcs, params->tx_lbt_period_symbols,
+		params->duration_secs, params->expected_rx_rssi_level);
 
 	uint16_t perf_pdu_payload_byte_count =
 		perf_pdu_byte_count - DECT_PHY_PERF_TX_DATA_PDU_LEN_WITHOUT_PAYLOAD;
@@ -866,7 +868,10 @@ static int dect_phy_perf_client_start(void)
 	perf_data.client_data.tx_op.carrier = params->channel;
 	perf_data.client_data.tx_op.data_size = perf_pdu_byte_count;
 	perf_data.client_data.tx_op.data = encoded_data_to_send;
-	perf_data.client_data.tx_op.lbt_period = 0;
+	perf_data.client_data.tx_op.lbt_period = params->tx_lbt_period_symbols *
+		NRF_MODEM_DECT_SYMBOL_DURATION;
+	perf_data.client_data.tx_op.lbt_rssi_threshold_max =
+		params->tx_lbt_rssi_busy_threshold_dbm;
 	perf_data.client_data.tx_op.network_id = current_settings->common.network_id;
 	perf_data.client_data.tx_op.phy_header = &perf_data.client_data.tx_phy_header;
 	perf_data.client_data.tx_op.phy_type = DECT_PHY_HEADER_TYPE2;
@@ -1065,6 +1070,8 @@ dect_phy_perf_client_report_local_results_and_req_srv_results(int64_t *elapsed_t
 	desh_print("  total amount of data sent: %d bytes",
 		   perf_data.tx_metrics.tx_total_data_amount);
 	desh_print("  packet count:              %d", perf_data.tx_metrics.tx_total_pkt_count);
+	desh_print("  tx failed due to LBT:      %d",
+		   perf_data.tx_metrics.tx_failed_due_to_lbt);
 	desh_print("  elapsed time:              %.2f seconds", (double)elapsed_time_ms / 1000);
 	desh_print("  data rates:                %.2f kbits/seconds", (perf / 1000));
 
@@ -1263,6 +1270,10 @@ void dect_phy_perf_mdm_op_completed(
 				/* TX was not done */
 				dect_phy_perf_tx_total_data_decrease();
 				perf_data.tx_metrics.tx_total_pkt_count--;
+				if (mdm_completed_params->status ==
+					NRF_MODEM_DECT_PHY_ERR_LBT_CHANNEL_BUSY) {
+					perf_data.tx_metrics.tx_failed_due_to_lbt++;
+				}
 			}
 
 			if (mdm_completed_params->handle ==
@@ -1482,9 +1493,12 @@ static void dect_phy_perf_thread_fn(void)
 				    params->handle == DECT_PHY_PERF_RESULTS_REQ_TX_HANDLE ||
 				    params->handle == DECT_PHY_PERF_RESULTS_RESP_TX_HANDLE ||
 				    params->handle == DECT_PHY_PERF_RESULTS_RESP_RX_HANDLE) {
-					desh_warn("%s: perf modem operation failed: %s, "
-						  "handle %d",
-						  __func__, tmp_str, params->handle);
+					if (params->status !=
+						NRF_MODEM_DECT_PHY_ERR_LBT_CHANNEL_BUSY) {
+						desh_warn("%s: perf modem operation failed: %s, "
+							"handle %d",
+							__func__, tmp_str, params->handle);
+					}
 					dect_phy_perf_mdm_op_completed(params);
 				} else if (params->handle == DECT_HARQ_FEEDBACK_TX_HANDLE) {
 					desh_error("%s: cannot TX HARQ feedback: %s", __func__,

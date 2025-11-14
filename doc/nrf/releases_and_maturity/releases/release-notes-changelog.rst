@@ -187,6 +187,10 @@ DECT NR+
 
 * :ref:`dect_shell_application` sample:
 
+  * Added:
+
+    * ``dect perf`` command client: LBT (Listen Before Talk) support with configurable LBT period and busy threshold.
+
   * Updated:
 
     * PCC and PDC printings improved to show SNR and RSSI-2 values with actual dB/dBm resolutions.
