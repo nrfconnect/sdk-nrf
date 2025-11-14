@@ -194,6 +194,7 @@ DECT NR+
   * Updated:
 
     * PCC and PDC printings improved to show SNR and RSSI-2 values with actual dB/dBm resolutions.
+    * ``dect perf`` command: improved operation schedulings to avoid scheduling conflicts.
 
 Enhanced ShockBurst (ESB)
 -------------------------

@@ -216,7 +216,10 @@ struct dect_phy_common_op_event_msgq_item {
 
 #define DECT_PHY_PERF_RESULTS_RESP_RX_HANDLE 11002 /* Client for receiving perf results */
 
-#define DECT_PHY_PERF_SERVER_RX_HANDLE 12000
+#define DECT_PHY_PERF_SERVER_RX_HANDLE_START 12000
+#define DECT_PHY_PERF_SERVER_RX_HANDLE_END   12049
+#define DECT_PHY_PERF_SERVER_RX_HANDLE_IN_RANGE(x)                                                 \
+	(x >= DECT_PHY_PERF_SERVER_RX_HANDLE_START && x <= DECT_PHY_PERF_SERVER_RX_HANDLE_END)
 
 #define DECT_PHY_PING_CLIENT_TX_HANDLE	  13000 /* For sending ping req */
 #define DECT_PHY_PING_CLIENT_RE_TX_HANDLE 13001 /* For re-sending ping req */
