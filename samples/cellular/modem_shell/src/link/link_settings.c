@@ -12,7 +12,6 @@
 #include <nrf_modem_at.h>
 
 #include <modem/lte_lc.h>
-#include <modem/pdn.h>
 
 #include "mosh_defines.h"
 #include "mosh_print.h"
@@ -83,8 +82,8 @@ struct link_sett_t {
 
 	enum lte_lc_system_mode sysmode;
 	enum lte_lc_system_mode_preference sysmode_lte_preference;
-	enum pdn_fam pdn_family;
-	enum pdn_auth defcontauth_prot;
+	enum lte_lc_pdn_family pdn_family;
+	enum lte_lc_pdn_auth defcontauth_prot;
 
 	/* Note: if adding more memory slots, remember also update
 	 * LINK_SETT_NMODEAT_MEM_SLOT_INDEX_START/END accordingly.
@@ -269,18 +268,18 @@ bool link_sett_is_defcont_enabled(void)
 	return link_settings.defcont_enabled;
 }
 
-enum pdn_fam link_sett_defcont_pdn_family_get(void)
+enum lte_lc_pdn_family link_sett_defcont_pdn_family_get(void)
 {
 	return link_settings.pdn_family;
 }
 
-int link_sett_save_defcont_pdn_family(enum pdn_fam family)
+int link_sett_save_defcont_pdn_family(enum lte_lc_pdn_family family)
 {
 	int err;
 	const char *key = LINK_SETT_KEY "/" LINK_SETT_DEFCONT_IP_FAMILY_KEY;
 	char tmp_str[16];
 
-	err = settings_save_one(key, &family, sizeof(enum pdn_fam));
+	err = settings_save_one(key, &family, sizeof(enum lte_lc_pdn_family));
 
 	if (err) {
 		mosh_error("Saving of family failed with err %d", err);
@@ -416,7 +415,7 @@ int link_sett_save_defcontauth_prot(int auth_prot)
 	int err;
 	const char *key =
 		LINK_SETT_KEY "/" LINK_SETT_DEFCONTAUTH_PROTOCOL_KEY;
-	enum pdn_auth method;
+	enum lte_lc_pdn_auth method;
 
 	err = link_shell_pdn_auth_prot_to_pdn_lib_method_map(auth_prot,
 							     &method);
@@ -425,7 +424,7 @@ int link_sett_save_defcontauth_prot(int auth_prot)
 		return -EINVAL;
 	}
 
-	err = settings_save_one(key, &auth_prot, sizeof(enum pdn_auth));
+	err = settings_save_one(key, &auth_prot, sizeof(enum lte_lc_pdn_auth));
 	if (err) {
 		mosh_error("Saving of authentication protocol failed with err %d", err);
 		return err;
@@ -437,7 +436,7 @@ int link_sett_save_defcontauth_prot(int auth_prot)
 	return 0;
 }
 
-enum pdn_auth link_sett_defcontauth_prot_get(void)
+enum lte_lc_pdn_auth link_sett_defcontauth_prot_get(void)
 {
 	int prot = link_settings.defcontauth_prot;
 
@@ -755,7 +754,7 @@ static void link_sett_ram_data_init(void)
 
 	link_settings.normal_mode_autoconn_enabled = true;
 	link_settings.sysmode = LINK_SYSMODE_NONE;
-	link_settings.pdn_family = PDN_FAM_IPV4V6;
+	link_settings.pdn_family = LTE_LC_PDN_FAM_IPV4V6;
 
 	strcpy(link_settings.defcont_apn_str, LINK_SETT_DEFCONT_DEFAULT_APN);
 	strcpy(link_settings.defcontauth_uname_str, LINK_SETT_DEFCONTAUTH_DEFAULT_USERNAME);
@@ -779,13 +778,13 @@ void link_sett_defaults_set(void)
 	link_sett_ram_data_init();
 
 	link_sett_save_defcont_enabled(false);
-	link_sett_save_defcont_pdn_family(PDN_FAM_IPV4V6);
+	link_sett_save_defcont_pdn_family(LTE_LC_PDN_FAM_IPV4V6);
 	link_sett_save_defcont_apn(LINK_SETT_DEFCONT_DEFAULT_APN);
 
 	link_sett_save_defcontauth_enabled(false);
 	link_sett_save_defcontauth_username(LINK_SETT_DEFCONTAUTH_DEFAULT_USERNAME);
 	link_sett_save_defcontauth_password(LINK_SETT_DEFCONTAUTH_DEFAULT_PASSWORD);
-	link_sett_save_defcontauth_prot(PDN_AUTH_NONE);
+	link_sett_save_defcontauth_prot(LTE_LC_PDN_AUTH_NONE);
 
 	link_sett_save_dnsaddr_enabled(false);
 	link_sett_save_dnsaddr_ip("");
