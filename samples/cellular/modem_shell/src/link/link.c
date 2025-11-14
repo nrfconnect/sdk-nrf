@@ -15,7 +15,6 @@
 
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
-#include <modem/pdn.h>
 
 #include <dk_buttons_and_leds.h>
 
@@ -116,7 +115,7 @@ static void link_api_activate_mosh_contexts(
 	for (i = 0; i < size; i++) {
 		if (pdn_act_status_arr[i].activated == false &&
 		    link_shell_pdn_info_is_in_list(pdn_act_status_arr[i].cid)) {
-			ret = pdn_activate(pdn_act_status_arr[i].cid, &esm, NULL);
+			ret = lte_lc_pdn_activate(pdn_act_status_arr[i].cid, &esm, NULL);
 			if (ret) {
 				mosh_warn(
 					"Cannot reactivate ctx with CID #%d, err: %d, removing from the list",
@@ -516,11 +515,11 @@ static int link_default_pdp_context_set(void)
 	int ret;
 
 	if (link_sett_is_defcont_enabled() == true) {
-		ret = pdn_ctx_configure(0, link_sett_defcont_apn_get(),
-					link_sett_defcont_pdn_family_get(),
-					NULL);
+		ret = lte_lc_pdn_ctx_configure(0, link_sett_defcont_apn_get(),
+					       link_sett_defcont_pdn_family_get(),
+					       NULL);
 		if (ret) {
-			mosh_error("pdn_ctx_configure returned err %d", ret);
+			mosh_error("lte_lc_pdn_ctx_configure returned err %d", ret);
 			return ret;
 		}
 	}
@@ -532,12 +531,12 @@ static int link_default_pdp_context_auth_set(void)
 	int ret;
 
 	if (link_sett_is_defcontauth_enabled() == true) {
-		ret = pdn_ctx_auth_set(0, link_sett_defcontauth_prot_get(),
-				       link_sett_defcontauth_username_get(),
-				       link_sett_defcontauth_password_get());
+		ret = lte_lc_pdn_ctx_auth_set(0, link_sett_defcontauth_prot_get(),
+					      link_sett_defcontauth_username_get(),
+					      link_sett_defcontauth_password_get());
 
 		if (ret) {
-			mosh_error("pdn_ctx_auth_set returned err  %d", ret);
+			mosh_error("lte_lc_pdn_ctx_auth_set returned err  %d", ret);
 			return ret;
 		}
 	}

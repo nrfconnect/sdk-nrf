@@ -21,7 +21,6 @@
 #include <zephyr/shell/shell.h>
 
 #include <modem/modem_info.h>
-#include <modem/pdn.h>
 
 #include <zephyr/posix/arpa/inet.h>
 #include <zephyr/net/net_ip.h>
@@ -350,8 +349,9 @@ static void link_api_modem_operator_info_read_for_shell(void)
 
 static int link_api_pdp_context_dynamic_params_get(struct pdp_context_info *populated_info)
 {
-	struct pdn_dynamic_info pdn_dynamic_info;
-	const int ret = pdn_dynamic_info_get(populated_info->cid, &pdn_dynamic_info);
+	struct lte_lc_pdn_dynamic_info pdn_dynamic_info;
+	const int ret = lte_lc_pdn_dynamic_info_get(populated_info->cid,
+						    &pdn_dynamic_info);
 
 	populated_info->ipv4_mtu = pdn_dynamic_info.ipv4_mtu;
 	populated_info->ipv6_mtu = pdn_dynamic_info.ipv6_mtu;
@@ -427,7 +427,7 @@ parse:
 		mosh_error("Could not parse CID, err: %d", ret);
 		goto clean_exit;
 	}
-	ret = pdn_id_get(populated_info[iterator].cid);
+	ret = lte_lc_pdn_id_get(populated_info[iterator].cid);
 	if (ret < 0) {
 		mosh_error(
 			"Could not get PDN for CID %d, err: %d\n",

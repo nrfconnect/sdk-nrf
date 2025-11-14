@@ -628,6 +628,8 @@ Cellular samples
     * Support for NTN NB-IoT to the ``link sysmode`` and ``link edrx`` commands.
     * Support for Non-Terrestrial Network (NTN) helper functionality using the ``ntn`` command.
 
+  * Updated the PDN connection management to use the PDN functionality in the :ref:`lte_lc_readme` library instead of the :ref:`pdn_readme` library.
+
 * :ref:`gnss_sample` sample:
 
   * Added TLS support for connection to the SUPL server.

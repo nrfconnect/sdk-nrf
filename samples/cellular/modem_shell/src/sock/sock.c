@@ -15,7 +15,7 @@
 #include <zephyr/net/tls_credentials.h>
 #include <fcntl.h>
 #include <nrf_socket.h>
-#include <modem/pdn.h>
+#include <modem/lte_lc.h>
 
 #include "sock.h"
 #include "mosh_defines.h"
@@ -328,7 +328,7 @@ static int sock_getaddrinfo_req(
 		char *service = NULL;
 
 		if (pdn_cid > 0) {
-			snprintf(pdn_serv, sizeof(pdn_serv), "%d", pdn_id_get(pdn_cid));
+			snprintf(pdn_serv, sizeof(pdn_serv), "%d", lte_lc_pdn_id_get(pdn_cid));
 			service = pdn_serv;
 			hints.ai_flags = AI_PDNSERV;
 		}
