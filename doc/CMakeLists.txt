@@ -326,6 +326,11 @@ add_doxygen_docset(nrf ${NRF_BASE} ${NRF_VERSION})
 add_docset(mcuboot "2.2.0-rc2")
 
 #-------------------------------------------------------------------------------
+# docset: oberon
+
+add_docset(oberon "0.0.0")
+
+#-------------------------------------------------------------------------------
 # docset: nrfx
 
 add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "" STANDALONE)
@@ -406,7 +411,7 @@ endfunction()
 add_dependencies(nrfxlib-inventory-all kconfig-all zephyr-all)
 add_doc_dependencies(zephyr kconfig-all)
 add_doc_dependencies(mcuboot kconfig-all)
-add_doc_dependencies(nrf zephyr-all nrfxlib-inventory-all mcuboot-all matter-all tfm-all kconfig-all wifi)
+add_doc_dependencies(nrf zephyr-all nrfxlib-inventory-all mcuboot-all oberon-all matter-all tfm-all kconfig-all wifi)
 add_doc_dependencies(nrfxlib nrf-all)
 
 add_custom_target(build-all ALL)
@@ -418,6 +423,7 @@ add_dependencies(build-all
     nrfxlib-all
     zephyr-all
     mcuboot-all
+    oberon-all
     tfm-all
     matter-all
     kconfig-all
