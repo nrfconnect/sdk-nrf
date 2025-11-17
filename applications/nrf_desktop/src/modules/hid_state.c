@@ -498,6 +498,11 @@ static void connect_subscriber(const void *subscriber_id, uint8_t priority,
 
 	struct subscriber *sub = find_empty_subscriber_slot();
 
+	/* The CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT must be large enough to handle all of the
+	 * simultaneously connected subscribers.
+	 */
+	__ASSERT_NO_MSG(sub);
+
 	sub->id = subscriber_id;
 	sub->priority = priority;
 	sub->pipeline_size = pipeline_size;
