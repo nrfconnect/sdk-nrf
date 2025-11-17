@@ -373,6 +373,7 @@
   - "drivers/mpsl/**/*"
   - "drivers/hw_cc3xx/*"
   - "drivers/wifi/**/*"
+  - "boards/shields/nrf7002eb2/**/*"
   - "modules/hostap/**/*"
   - "modules/lib/hostap/**/*"
   - "subsys/net/lib/nrf70_fw_ext/**/*"
@@ -517,6 +518,7 @@
   - "modules/lib/hostap/**/*"
   - "subsys/net/lib/nrf70_fw_ext/**/*"
   - "subsys/net/lib/hostap_crypto/**/*"
+  - "boards/shields/nrf7002eb2/**/*"
 
 "CI-cloud-test":
   - "include/caf/**/*"
