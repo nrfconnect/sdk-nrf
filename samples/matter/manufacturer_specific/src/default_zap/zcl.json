@@ -4,12 +4,9 @@
     "version": 1,
     "requiredFeatureLevel": 102,
     "xmlRoot": [
-        "../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/../../../../../../modules/lib/matter/src/app/zap-templates/zcl",
-        "../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/../../../../../../modules/lib/matter/src/app/zap-templates/zcl/data-model/chip",
-        "../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap",
-        "../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap",
-        "../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap",
-        "../../../../../../zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap"
+        "../../../../../../modules/lib/matter/src/app/zap-templates/zcl",
+        "../../../../../../modules/lib/matter/src/app/zap-templates/zcl/data-model/chip",
+        "."
     ],
     "_comment": "Ensure access-control-definitions.xml is first in xmlFile array",
     "xmlFile": [

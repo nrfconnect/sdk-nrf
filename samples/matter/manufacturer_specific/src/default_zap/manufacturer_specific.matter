@@ -1457,6 +1457,36 @@ cluster GroupKeyManagement = 63 {
   fabric command access(invoke: administer) KeySetReadAllIndices(): KeySetReadAllIndicesResponse = 4;
 }
 
+/** The NordicDevKit cluster showcases a cluster manufacturer extensions */
+cluster NordicDevKit = 4294048769 {
+  revision 1; // NOTE: Default/not specifically set
+
+  enum LEDActionEnum : enum8 {
+    kOff = 0;
+    kOn = 1;
+    kToggle = 2;
+  }
+
+  info event UserButtonChanged = 4293984256 {
+  }
+
+  readonly attribute command_id generatedCommandList[] = 65528;
+  readonly attribute command_id acceptedCommandList[] = 65529;
+  readonly attribute attrib_id attributeList[] = 65531;
+  readonly attribute bitmap32 featureMap = 65532;
+  readonly attribute int16u clusterRevision = 65533;
+  attribute char_string<254> devKitName = 4293984256;
+  provisional readonly nosubscribe attribute boolean userLED = 4293984257;
+  provisional readonly nosubscribe attribute boolean userButton = 4293984258;
+
+  request struct SetLEDRequest {
+    LEDActionEnum action = 0;
+  }
+
+  /** Change LED state */
+  command SetLED(SetLEDRequest): DefaultSuccess = 4293984256;
+}
+
 endpoint 0 {
   device type ma_rootdevice = 22, version 4;
   device type ma_otarequestor = 18, version 1;
@@ -1509,11 +1539,14 @@ endpoint 0 {
     callback attribute capabilityMinima;
     callback attribute specificationVersion;
     callback attribute maxPathsPerInvoke;
+    ram      attribute randomNumber default = 0;
     callback attribute generatedCommandList;
     callback attribute acceptedCommandList;
     callback attribute attributeList;
     callback attribute featureMap;
     callback attribute clusterRevision;
+
+    handle command GenerateRandom;
   }
 
   server cluster OtaSoftwareUpdateRequestor {
@@ -1665,5 +1698,20 @@ endpoint 0 {
   }
 }
 endpoint 1 {
+  device type nordic_dev_kit = 4293984257, version 1;
 
+
+  server cluster NordicDevKit {
+    emits event UserButtonChanged;
+    callback attribute generatedCommandList;
+    callback attribute acceptedCommandList;
+    callback attribute attributeList;
+    ram      attribute featureMap default = 0;
+    ram      attribute clusterRevision default = 1;
+    ram      attribute devKitName default = "Nordic Development Kit";
+    ram      attribute userLED default = false;
+    ram      attribute userButton default = false;
+
+    handle command SetLED;
+  }
 }

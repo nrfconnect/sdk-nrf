@@ -1,6 +1,6 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
-// Identifier constant values for cluster NordicDevKit (cluster code: 4294048769/0x04FFF1FC01)
+// Identifier constant values for cluster NordicDevKit (cluster code: 4294048769/0xFFF1FC01)
 // based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 

@@ -29,6 +29,7 @@ void MatterGeneralDiagnosticsPluginServerInitCallback();
 void MatterAdministratorCommissioningPluginServerInitCallback();
 void MatterOperationalCredentialsPluginServerInitCallback();
 void MatterGroupKeyManagementPluginServerInitCallback();
+void MatterNordicDevKitPluginServerInitCallback();
 
 #define MATTER_PLUGINS_INIT                                                                                            \
 	MatterDescriptorPluginServerInitCallback();                                                                    \
@@ -40,4 +41,5 @@ void MatterGroupKeyManagementPluginServerInitCallback();
 	MatterGeneralDiagnosticsPluginServerInitCallback();                                                            \
 	MatterAdministratorCommissioningPluginServerInitCallback();                                                    \
 	MatterOperationalCredentialsPluginServerInitCallback();                                                        \
-	MatterGroupKeyManagementPluginServerInitCallback();
+	MatterGroupKeyManagementPluginServerInitCallback();                                                            \
+	MatterNordicDevKitPluginServerInitCallback();
