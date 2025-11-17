@@ -18,7 +18,6 @@ config THINGY91X_STATIC_PARTITIONS_FACTORY
 
 config THINGY91X_STATIC_PARTITIONS_NRF53_EXTERNAL_FLASH
 	bool "External flash Thingy:91 X partition layout"
-	depends on SOC_SERIES_NRF53X
 	help
 	   The Thingy:91 X partition layout used when the nRF53 owns the external flash.
 
