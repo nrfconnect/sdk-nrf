@@ -373,15 +373,14 @@ def make_comment(
 # ---------- Grouping & audit ----------
 
 
-def group_and_collect_unowned(
+def resolve_codeowners_for_scenarios(
     scenario_to_paths: dict[str, set[str]],
-    patterns: Iterable[str],
+    scenarios: Iterable[str],
     codeowners_rules: list[tuple[str, list[str]]],
-) -> tuple[dict[str, list[tuple[str, str]]], list[tuple[str, str]], set[str]]:
+) -> tuple[dict[str, list[tuple[str, str]]], list[tuple[str, str]]]:
     owners_map: dict[str, list[tuple[str, str]]] = {}
     unowned: list[tuple[str, str]] = []
-    expanded = expand_patterns(patterns, scenario_to_paths.keys())
-    for scen in expanded:
+    for scen in scenarios:
         for p in scenario_to_paths.get(scen, set()):
             owners = owners_for_path(p, codeowners_rules)
             if not owners:
@@ -389,7 +388,13 @@ def group_and_collect_unowned(
                 continue
             key = ",".join(sorted(set(owners), key=str.lower))
             owners_map.setdefault(key, []).append((scen, p))
-    return owners_map, unowned, expanded
+    return owners_map, unowned
+
+
+def filter_neutral_scenarios(added: set[str], removed: set[str]) -> tuple[set[str], set[str]]:
+    """Remove scenarios that appear in both added and removed sets."""
+    neutral = added & removed
+    return added - neutral, removed - neutral
 
 
 def write_json(path: Path, obj: dict) -> None:
@@ -415,11 +420,16 @@ def main() -> int:
     scenario_map = discover_scenarios(root)
     code_rules = load_codeowners(root)
 
-    owned_add, unowned_add, expanded_add = group_and_collect_unowned(
-        scenario_map, sorted(added_patterns), code_rules
+    expanded_add = expand_patterns(sorted(added_patterns), scenario_map.keys())
+    expanded_del = expand_patterns(sorted(removed_patterns), scenario_map.keys())
+    expanded_add, expanded_del = filter_neutral_scenarios(expanded_add, expanded_del)
+
+    # Resolve CODEOWNERS only for non-neutral scenarios
+    owned_add, unowned_add = resolve_codeowners_for_scenarios(
+        scenario_map, expanded_add, code_rules
     )
-    owned_del, unowned_del, expanded_del = group_and_collect_unowned(
-        scenario_map, sorted(removed_patterns), code_rules
+    owned_del, unowned_del = resolve_codeowners_for_scenarios(
+        scenario_map, expanded_del, code_rules
     )
 
     body = make_comment(
@@ -443,8 +453,8 @@ def main() -> int:
         "added_patterns": sorted(added_patterns),
         "removed_patterns": sorted(removed_patterns),
         "expanded": {
-            "added": sorted(expanded_add),
-            "removed": sorted(expanded_del),
+            "added": sorted(list(expanded_add)),
+            "removed": sorted(list(expanded_del)),
         },
         "owners": {
             key: {
