@@ -33,10 +33,6 @@ tests:
     sysbuild: true
     integration_platforms:
       - nrf21540dk/nrf52840
-      - nrf52833dk/nrf52833
-      - nrf52840dk/nrf52840
-      - nrf52dk/nrf52810
-      - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpunet
       - nrf54h20dk/nrf54h20/cpurad
       - nrf54l15dk/nrf54l05/cpuapp

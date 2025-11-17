@@ -13,8 +13,6 @@ tests:
       - native_sim
     integration_platforms:
       - nrf52840dk/nrf52840
-      - nrf9160dk/nrf9160
-      - nrf5340dk/nrf5340/cpuapp
       - native_sim
   dfu.target_stream.store_progress:
     sysbuild: true
@@ -32,6 +30,4 @@ tests:
       - native_sim
     integration_platforms:
       - nrf52840dk/nrf52840
-      - nrf9160dk/nrf9160
-      - nrf5340dk/nrf5340/cpuapp
       - native_sim

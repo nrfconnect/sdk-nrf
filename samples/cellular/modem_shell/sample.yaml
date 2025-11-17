@@ -6,7 +6,6 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -21,8 +20,6 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
@@ -37,7 +34,6 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -55,8 +51,6 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
@@ -73,7 +67,6 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -91,8 +84,6 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
@@ -107,8 +98,6 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
@@ -127,8 +116,6 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
@@ -148,7 +135,6 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -216,7 +202,6 @@ tests:
     extra_args: EXTRA_CONF_FILE=overlay-carrier.conf
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -234,7 +219,6 @@ tests:
     extra_args: EXTRA_CONF_FILE=overlay-lwm2m.conf
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -252,7 +236,6 @@ tests:
     extra_args: EXTRA_CONF_FILE="overlay-lwm2m.conf;overlay-lwm2m_bootstrap.conf"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -270,7 +253,6 @@ tests:
     extra_args: EXTRA_CONF_FILE="overlay-lwm2m.conf;overlay-lwm2m_pgps.conf;overlay-pgps.conf"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -286,7 +268,6 @@ tests:
     extra_args: EXTRA_CONF_FILE=overlay-pgps.conf
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -320,7 +301,6 @@ tests:
     extra_args: EXTRA_CONF_FILE=overlay-cloud_mqtt.conf
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -343,7 +323,6 @@ tests:
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -361,7 +340,6 @@ tests:
       - EXTRA_DTC_OVERLAY_FILE="ppp.overlay"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -391,7 +369,6 @@ tests:
     extra_args: EXTRA_CONF_FILE=overlay-rtt.conf
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
@@ -470,8 +447,6 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
@@ -494,8 +469,6 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
@@ -518,8 +491,6 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
@@ -542,8 +513,6 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
@@ -561,8 +530,6 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
@@ -674,7 +641,6 @@ tests:
     extra_args: modem_shell_SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
@@ -696,7 +662,6 @@ tests:
       - modem_shell_SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns

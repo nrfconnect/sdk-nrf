@@ -5,7 +5,6 @@ tests:
     sysbuild: true
     build_only: true
     integration_platforms:
-      - nrf9161dk/nrf9161/ns
       - nrf7002dk/nrf5340/cpuapp/ns
       - native_sim
     platform_allow:
@@ -39,7 +38,6 @@ tests:
       - CONFIG_SAMPLE_COMPUTE_HASH=y
     integration_platforms:
       - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
       - nrf7002dk/nrf5340/cpuapp/ns
     platform_allow:

@@ -11,7 +11,6 @@ common:
     - nrf9160dk/nrf9160/ns
     - nrf9161dk/nrf9161/ns
   integration_platforms:
-    - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9151dk/nrf9151/ns
     - nrf9160dk/nrf9160/ns
     - nrf9161dk/nrf9161/ns

@@ -32,7 +32,6 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
   tfm.regression_ipc_lvl2.cc3xx:
     sysbuild: true
@@ -52,7 +51,6 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
   tfm.regression_ipc_lvl2.oberon:
     sysbuild: true
@@ -72,7 +70,6 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
   tfm.regression_ipc_lvl2.cc3xx_oberon:
     sysbuild: true
@@ -128,7 +125,6 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
   tfm.regression_fp_hardabi:
     sysbuild: true
@@ -149,5 +145,4 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
