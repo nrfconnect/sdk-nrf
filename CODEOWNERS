@@ -381,8 +381,8 @@
 /lib/hw_unique_key/                       @nrfconnect/ncs-aegir
 /lib/identity_key/                        @nrfconnect/ncs-aegir
 /lib/location/                            @nrfconnect/ncs-modem-tre
-/lib/lte_link_control/                    @nrfconnect/ncs-modem-tre @nrfconnect/ncs-modem
-/lib/modem_antenna/                       @nrfconnect/ncs-modem-tre @nrfconnect/ncs-modem
+/lib/lte_link_control/                    @nrfconnect/ncs-modem-tre
+/lib/modem_antenna/                       @nrfconnect/ncs-modem-tre
 /lib/modem_attest_token/                  @nrfconnect/ncs-modem
 /lib/modem_battery/                       @nrfconnect/ncs-modem
 /lib/modem_info/                          @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
@@ -512,7 +512,7 @@
 /samples/matter/                          @nrfconnect/ncs-matter
 /samples/mcuboot/                         @nrfconnect/ncs-eris
 /samples/mpsl/                            @nrfconnect/ncs-dragoon
-/samples/net/                             @nrfconnect/ncs-cia @nrfconnect/ncs-modem
+/samples/net/                             @nrfconnect/ncs-cia
 /samples/nfc/                             @nrfconnect/ncs-si-muffin
 /samples/nrf5340/netboot/                 @nrfconnect/ncs-eris
 /samples/nrf5340/extxip_smp_svr/          @nrfconnect/ncs-eris
