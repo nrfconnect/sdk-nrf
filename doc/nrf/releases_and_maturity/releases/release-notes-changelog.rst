@@ -546,6 +546,7 @@ Cellular samples
   * The :ref:`nrf_cloud_coap_device_message` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for device messages.
   * The :ref:`nrf_cloud_mqtt_device_message` sample to demonstrate how to use the `nRF Cloud MQTT API`_ for device messages.
   * The :ref:`nrf_cloud_mqtt_fota` sample to demonstrate how to use the `nRF Cloud MQTT API`_ for FOTA updates.
+  * The :ref:`nrf_cloud_mqtt_cell_location` sample to demonstrate how to use the `nRF Cloud MQTT API`_ for nRF Cloud's cellular location service.
 
 * Updated the following samples to use the new ``SEC_TAG_TLS_INVALID`` definition:
 
