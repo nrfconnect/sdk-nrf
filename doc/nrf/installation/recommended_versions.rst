@@ -328,11 +328,11 @@ For firmware OS support, see :ref:`the table at the top of the page <supported_O
     - ARM64
   * - `Windows 11`_
     - n/a
-    - Tier 3
+    - Tier 1
     - Not supported
   * - `Windows 10`_
     - Tier 3
-    - Tier 1
+    - Tier 3
     - Not supported
   * - `Linux - Ubuntu 24.04 LTS`_
     - Not supported
@@ -352,16 +352,16 @@ For firmware OS support, see :ref:`the table at the top of the page <supported_O
     - Tier 3
   * - `macOS 15`_
     - n/a
-    - Tier 3
-    - Tier 3
+    - Tier 1
+    - Tier 1
   * - `macOS 14`_
     - n/a
     - Tier 3
     - Tier 3
   * - `macOS 13`_
     - n/a
-    - Tier 1
-    - Tier 1
+    - Tier 3
+    - Tier 3
 
 Tier definitions
   .. toggle:: Support levels
