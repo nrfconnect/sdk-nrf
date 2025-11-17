@@ -147,6 +147,9 @@ Security
   * Experimental support for KMU on the nRF54LV10A SoC.
   * Experimental support for compression and encryption on the nRF54LV10A SoC.
 
+  * Support for the PureEdDSA and HashEdDSA for Ed448 curve in the :ref:`CRACEN driver <crypto_drivers_cracen>`.
+  * Support for the SHAKE256 hash function with 64-byte and 114-byte digests in the :ref:`CRACEN driver <crypto_drivers_cracen>`.
+
 * Updated:
 
   * The :ref:`security_index` page with a table that lists the versions of security components implemented in the |NCS|.

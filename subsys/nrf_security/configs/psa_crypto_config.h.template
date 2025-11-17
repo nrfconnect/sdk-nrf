@@ -319,6 +319,7 @@
 #cmakedefine PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_448     @PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_448@
 #cmakedefine PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS         @PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS@
 #cmakedefine PSA_NEED_CRACEN_ED25519PH                          @PSA_NEED_CRACEN_ED25519PH@
+#cmakedefine PSA_NEED_CRACEN_ED448PH                            @PSA_NEED_CRACEN_ED448PH@
 #cmakedefine PSA_NEED_CRACEN_RSA_PKCS1V15_SIGN                  @PSA_NEED_CRACEN_RSA_PKCS1V15_SIGN@
 #cmakedefine PSA_NEED_CRACEN_RSA_PSS                            @PSA_NEED_CRACEN_RSA_PSS@
 #cmakedefine PSA_NEED_CRACEN_RSA_OAEP                           @PSA_NEED_CRACEN_RSA_OAEP@
@@ -332,6 +333,7 @@
 #cmakedefine PSA_NEED_CRACEN_SHA3_256                           @PSA_NEED_CRACEN_SHA3_256@
 #cmakedefine PSA_NEED_CRACEN_SHA3_384                           @PSA_NEED_CRACEN_SHA3_384@
 #cmakedefine PSA_NEED_CRACEN_SHA3_512                           @PSA_NEED_CRACEN_SHA3_512@
+#cmakedefine PSA_NEED_CRACEN_SHAKE256_512                       @PSA_NEED_CRACEN_SHAKE256_512@
 
 /* Key management driver configurations */
 #cmakedefine PSA_NEED_CRACEN_KEY_TYPE_ECC_PUBLIC_KEY_SECP_R1_224                @PSA_NEED_CRACEN_KEY_TYPE_ECC_PUBLIC_KEY_SECP_R1_224@

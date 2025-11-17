@@ -150,3 +150,8 @@ const struct sxhashalg sxhashalg_shake256_114 = {
 	SHA3_MODE_SHAKE(7, 114), SHA3_SW_PAD, SHA3_SAVE_CONTEXT, 114,
 	SX_HASH_BLOCKSZ_SHA3_256, 200, 136, sx_hash_create_ba418_shake256
 };
+
+const struct sxhashalg sxhashalg_shake256_64 = {
+	SHA3_MODE_SHAKE(7, 64), SHA3_SW_PAD, SHA3_SAVE_CONTEXT, 64,
+	SX_HASH_BLOCKSZ_SHA3_256, 200, 136, sx_hash_create_ba418_shake256
+};
