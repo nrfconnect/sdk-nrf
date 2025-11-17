@@ -345,7 +345,7 @@ void sdc_assertion_handler(const char *const file, const uint32_t line)
 		(char *)assert_file_id, assert_line);
 #elif defined(CONFIG_LOG)
 	LOG_ERR("SoftDevice Controller ASSERT: %s, %d", (char *)assert_file_id, assert_line);
-	k_oops();
+	k_oops(); /* dummy change to check CI scope */
 #elif defined(CONFIG_PRINTK)
 	printk("SoftDevice Controller ASSERT: %s, %d\n", (char *)assert_file_id, assert_line);
 	printk("\n");
