@@ -171,6 +171,7 @@ ci_applications_matter: &ci_matter
     - nrf/applications/ipc_radio/
     - nrf/applications/matter_bridge/
     - nrf/applications/matter_weather_station/
+    - nrf/boards/shields/nrf7002eb2/
     - nrf/cmake/
     - nrf/drivers/hw_cc3xx/
     - nrf/drivers/mpsl/
