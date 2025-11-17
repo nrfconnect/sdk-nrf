@@ -48,7 +48,7 @@ LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
 #define AT_CMD_PDN_CONTEXT_READ_RSP_DELIM "\r\n"
 
-     /* "+CGCONTRDP: 0,,"example.com","","","198.276.154.230","12.34.56.78",,,,,1464\r\n
+     /* "+CGCONTRDP: 0,,"example.com","","","198.176.154.230","12.34.56.78",,,,,1464\r\n
       *  +CGCONTRDP: 0,,"example.com","","","1111:2222:3:FFF::55","1111:2222:3:FFF::55",,,,,1464"
       */
 #define AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE1 \

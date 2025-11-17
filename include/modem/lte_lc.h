@@ -483,13 +483,15 @@ enum lte_lc_evt_type {
 	LTE_LC_EVT_PDN				= 14,
 #endif /* CONFIG_LTE_LC_PDN_MODULE */
 
+#if defined(CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE)
 	/**
 	 * A cellular profile is activated for the current access technology.
 	 *
-	 * The associated payload is the @c lte_lc_evt.cellular_profile_id member in the event,
-	 * which is the cellular profile ID of the active cellular profile.
+	 * The associated payload is the @c lte_lc_evt.cellular_profile member of type
+	 * @ref lte_lc_cellular_profile_evt in the event.
 	 */
 	LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE	= 15,
+#endif /* CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE */
 };
 
 /** RRC connection state. */
@@ -1537,6 +1539,11 @@ struct lte_lc_pdn_evt {
 	int8_t cellular_profile_id;
 };
 
+struct lte_lc_cellular_profile_evt {
+	/** Cellular profile ID. */
+	int8_t profile_id;
+};
+
 /** LTE event. */
 struct lte_lc_evt {
 	/** Event type. */
@@ -1602,6 +1609,11 @@ struct lte_lc_evt {
 		/** Payload for event @ref LTE_LC_EVT_PDN. */
 		struct lte_lc_pdn_evt pdn;
 #endif /* CONFIG_LTE_LC_PDN_MODULE */
+
+#if defined(CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE)
+		/** Payload for event @ref LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE. */
+		struct lte_lc_cellular_profile_evt cellular_profile;
+#endif /* CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE */
 	};
 };
 
@@ -1678,23 +1690,51 @@ enum lte_lc_uicc {
 	/** Physical SIM or eSIM */
 	LTE_LC_UICC_PHYSICAL	= 0,
 	/** SoftSIM */
-	LTE_LC_UICC_SOFTSIM	= 1,
+	LTE_LC_UICC_SOFTSIM	= 2,
+};
+
+/**
+ * @brief LTE access technology (AcT) bitmap.
+ *
+ * This bitmap selects which access technologies are enabled for an operation.
+ * It maps directly to the AcT bitmask in AT commands such as `AT%CELLULARPRFL`
+ * and `AT%PALL`.
+ */
+enum lte_lc_act {
+	/** LTE-M (Cat-M1). */
+	LTE_LC_ACT_LTEM		= BIT(0),
+	/** NB-IoT. */
+	LTE_LC_ACT_NBIOT	= BIT(1),
+	/** NTN NB-IoT. */
+	LTE_LC_ACT_NTN		= BIT(2),
 };
 
 /**
  * @brief Cellular profile.
  *
- * Used to set the cellular profile for the PDN connection.
+ * Cellular profiles are used when there is a need for simultaneous terrestrial and
+ * non-terrestrial LTE registrations and PDN connections. There can be only one physical
+ * access at a time, but a second access is logically stored by the modem. Typically,
+ * this means that there are more than one USIM card or profile, so that certain USIM
+ * card or profile is used in certain access technology. A cellular profile combines
+ * the information that is needed for LTE registration and is identified by the
+ * cellular profile ID.
  *
- * @note The profile ID 0 is associated with PDN contexts in the range 0-9, while profile ID 1
- *	 is associated with PDN contexts in the range 10-19. The default context for each profile
+ * @note The profile ID 0 is associated with PDP contexts in the range 0-9, while profile ID 1
+ *	 is associated with PDP contexts in the range 10-19. The default context for each profile
  *	 is the first context in the range.
  */
 struct lte_lc_cellular_profile {
 	/** Cellular profile ID. Valid values are 0 and 1. */
 	uint8_t id;
-	/** LTE mode for the profile (access technology) */
-	enum lte_lc_lte_mode lte_mode;
+
+	/**
+	 * Access technology bitmap for the profile.
+	 *
+	 * This is a combination of @ref lte_lc_act values.
+	 */
+	uint8_t act;
+
 	/** UICC configuration */
 	enum lte_lc_uicc uicc;
 };
@@ -2487,26 +2527,32 @@ const char *lte_lc_pdn_esm_strerror(int reason);
  * The active cellular profile is reported in the @ref LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE
  * event if an event handler is registered.
  *
+ * @note Requires `CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE` to be enabled.
+ *
+ * @note A cellular profile can only be configured when the modem is in functional mode
+ *	 @ref LTE_LC_FUNC_MODE_POWER_OFF or @ref LTE_LC_FUNC_MODE_OFFLINE.
+ *
  * @param[in] profile The cellular profile to set.
  *
  * @retval 0 on success, otherwise negative error code.
  */
 int lte_lc_cellular_profile_configure(struct lte_lc_cellular_profile *profile);
 
-#if defined(CONFIG_LTE_LC_PDN_ESM_STRERROR)
-
 /**
- * Retrieve a statically allocated textual description for a given ESM error reason.
+ * Remove a cellular profile.
  *
- * @param[in] reason ESM error reason.
+ * This clears the configuration for the given cellular profile ID.
  *
- * @return ESM error reason description.
- *         If no textual description for the given error is found,
- *         a placeholder string is returned instead.
+ * @note Requires `CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE` to be enabled.
+ *
+ * @note A cellular profile can only be removed when the modem is in functional mode
+ *	 @ref LTE_LC_FUNC_MODE_POWER_OFF or @ref LTE_LC_FUNC_MODE_OFFLINE.
+ *
+ * @param[in] id Cellular profile ID to remove.
+ *
+ * @retval 0 on success, otherwise negative error code.
  */
-const char *lte_lc_pdn_esm_strerror(int reason);
-
-#endif /* CONFIG_LTE_LC_PDN_ESM_STRERROR */
+int lte_lc_cellular_profile_remove(uint8_t id);
 
 /** @} */
 

@@ -2472,7 +2472,8 @@ PREDEFINED             = __DOXYGEN__ \
                          "CONFIG_LTE_LC_TAU_PRE_WARNING_MODULE=y" \
                          "CONFIG_LTE_LC_ENV_EVAL_MODULE=y" \
                          "CONFIG_LTE_LC_PDN_MODULE=y" \
-                         "CONFIG_LTE_LC_DNS_FALLBACK_MODULE=y"
+                         "CONFIG_LTE_LC_DNS_FALLBACK_MODULE=y" \
+                         "CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE=y"
 
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
