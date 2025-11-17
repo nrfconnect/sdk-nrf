@@ -24,7 +24,7 @@
 	};
 };
 
-&spi21 {
+dut_spi: &spi21 {
 	zephyr,pm-device-runtime-auto;
 };
 
@@ -35,4 +35,9 @@
 
 &mx25r64 {
 	status = "disabled";
+};
+
+&uart20 {
+	zephyr,pm-device-runtime-auto;
+	disable-rx;
 };

@@ -7,10 +7,15 @@
 
 /delete-node/ &led1;
 
-&spi131 {
+dut_spi: &spi131 {
 	zephyr,pm-device-runtime-auto;
 };
 
 &exmif {
 	status = "disabled";
+};
+
+&uart136 {
+	zephyr,pm-device-runtime-auto;
+	disable-rx;
 };
