@@ -13,8 +13,6 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
     harness: pytest
     harness_config:
       fixture: ppk_power_measure

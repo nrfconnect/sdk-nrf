@@ -105,7 +105,6 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
     integration_platforms:
-      - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
 
   sample.benchmarks.peripheral_stress_test.nrf54l15:
