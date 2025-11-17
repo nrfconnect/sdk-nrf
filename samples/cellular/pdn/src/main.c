@@ -159,7 +159,7 @@ int main(void)
 
 	printk("Default APN is %s\n", apn);
 
-	/* Create a PDP context and assign an event handler to receive events */
+	/* Create a PDP context */
 	err = lte_lc_pdn_ctx_create(&cid);
 	if (err) {
 		printk("lte_lc_pdn_ctx_create() failed, err %d\n", err);
