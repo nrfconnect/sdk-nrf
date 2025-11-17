@@ -7,8 +7,7 @@
 // If used without parameters it will instatiate metadata
 // for all clusters and might incur a big overhead.
 //
-// based on
-// /home/arbl/ncs/zephyr/../nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <clusters/AccessControl/Ids.h>
@@ -27,6 +26,8 @@
 #include <clusters/GroupKeyManagement/MetadataProvider.h>
 #include <clusters/NetworkCommissioning/Ids.h>
 #include <clusters/NetworkCommissioning/MetadataProvider.h>
+#include <clusters/NordicDevKit/Ids.h>
+#include <clusters/NordicDevKit/MetadataProvider.h>
 #include <clusters/OperationalCredentials/Ids.h>
 #include <clusters/OperationalCredentials/MetadataProvider.h>
 #include <clusters/OtaSoftwareUpdateProvider/Ids.h>
@@ -102,6 +103,12 @@ namespace app
 						return ClusterMetadataProvider<
 							DataModel::AcceptedCommandEntry,
 							NetworkCommissioning::Id>::EntryFor(command);
+				}
+				if constexpr (sizeof...(TClusterIds) == 0 ||
+					      ((TClusterIds == NordicDevKit::Id) || ...)) {
+					if (id == NordicDevKit::Id)
+						return ClusterMetadataProvider<DataModel::AcceptedCommandEntry,
+									       NordicDevKit::Id>::EntryFor(command);
 				}
 				if constexpr (sizeof...(TClusterIds) == 0 ||
 					      ((TClusterIds == OperationalCredentials::Id) || ...)) {

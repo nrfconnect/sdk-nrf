@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace DevKitName
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -45,11 +47,18 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace UserButton
+				constexpr std::array<DataModel::AttributeEntry, 3> kMandatoryMetadata = {
+					DevKitName::kMetadataEntry,
+					UserLED::kMetadataEntry,
+					UserButton::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace SetLED
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -58,6 +67,17 @@ namespace app
 				} // namespace SetLED
 
 			} // namespace Commands
+
+			namespace Events
+			{
+				namespace UserButtonChanged
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace UserButtonChanged
+
+			} // namespace Events
 		} // namespace NordicDevKit
 	} // namespace Clusters
 } // namespace app
