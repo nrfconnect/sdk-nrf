@@ -6246,11 +6246,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - Edwards448 (Ed448)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Experimental
                * - secp192k1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
                  - Supported
@@ -6744,6 +6744,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_512`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_192`
@@ -7688,11 +7689,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - SHAKE256 512 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Experimental
 
          .. tab:: nrf_oberon
 
@@ -8116,6 +8117,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_384`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_512`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
 
          .. tab:: nrf_oberon
 

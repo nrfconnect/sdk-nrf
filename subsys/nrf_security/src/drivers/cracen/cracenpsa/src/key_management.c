@@ -81,7 +81,8 @@ static struct {
 	/* Twisted Edwards */
 	{PSA_ECC_FAMILY_TWISTED_EDWARDS, 255, 32, 32,
 	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS)},
-	{PSA_ECC_FAMILY_TWISTED_EDWARDS, 448, 57, 57, false},
+	{PSA_ECC_FAMILY_TWISTED_EDWARDS, 448, 57, 57,
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS)},
 };
 
 static psa_status_t check_ecc_key_attributes(const psa_key_attributes_t *attributes,
@@ -119,10 +120,9 @@ static psa_status_t check_ecc_key_attributes(const psa_key_attributes_t *attribu
 	}
 
 	if (status == PSA_SUCCESS) {
-		if (curve == PSA_ECC_FAMILY_TWISTED_EDWARDS) {
-			if (key_alg != PSA_ALG_PURE_EDDSA && key_alg != PSA_ALG_ED25519PH) {
-				return PSA_ERROR_INVALID_ARGUMENT;
-			}
+		if ((curve == PSA_ECC_FAMILY_TWISTED_EDWARDS) && (key_alg != PSA_ALG_PURE_EDDSA &&
+			key_alg != PSA_ALG_ED25519PH && key_alg != PSA_ALG_ED448PH)) {
+			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 	}
 
@@ -716,9 +716,8 @@ static psa_status_t handle_curve_family(psa_ecc_family_t psa_curve, size_t key_b
 				cracen_ed25519_create_pubkey(key_buffer, data));
 		} else if (key_bits_attr == 448 &&
 			   IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_448)) {
-			/* This if-statement is kept to make it easier to add ed448 in the future
-			 * even though it does nothing.
-			 */
+			return silex_statuscodes_to_psa(
+				cracen_ed448_create_pubkey(key_buffer, data));
 			return PSA_ERROR_NOT_SUPPORTED;
 		} else {
 			return PSA_ERROR_NOT_SUPPORTED;
