@@ -60,7 +60,9 @@ The following conditions decide which slot will be booted (active) on the next r
 #. If none of the above conditions is met, slot A is selected as active.
 
 You can set the preferred slot using the ``boot_request_set_preferred_slot`` function.
-Currently, this only sets the boot preference for a single reboot.
+If the :kconfig:option:`CONFIG_NRF_MCUBOOT_BOOT_REQUEST_PREFERENCE_KEEP` is enabled, the preference is persistent across reboots.
+Otherwise, the preference is cleared after a reboot.
+To enable the persistence of a preferred slot, you need to define a backup region for bootloader requests area through the ``nrf,bootloader-request-backup`` chosen node inside device tree.
 
 Identifying the active slot
 ---------------------------
