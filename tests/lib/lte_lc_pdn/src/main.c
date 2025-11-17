@@ -55,6 +55,14 @@ DEFINE_FFF_GLOBALS;
 #define OPT_NSLPI_EXP			0x1
 #define OPT_SECURE_PCO_EXP		0xC0
 
+#define CMD_CELLULARPRFL_SET		"AT%%CELLULARPRFL=2,%d,%d,%d"
+#define CMD_CELLULARPRFL_REMOVE		"AT%%CELLULARPRFL=2,%d"
+#define CMD_CELLULARPRFL_NOTIF		"AT%%CELLULARPRFL=1"
+#define CELLULARPRFL_CP_ID		0
+#define CELLULARPRFL_ACT		2
+#define CELLULARPRFL_SIM_SLOT		LTE_LC_UICC_PHYSICAL
+#define CELLULARPRFL_SIM_SLOT_SOFTSIM	LTE_LC_UICC_SOFTSIM
+
 FAKE_VALUE_FUNC(void *, k_malloc, size_t);
 FAKE_VOID_FUNC(k_free, void *);
 FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_scanf, const char *, const char *, ...);
@@ -769,12 +777,6 @@ static int nrf_modem_at_scanf_custom_cgcontrdp_no_match(
 	return -EBADMSG;
 }
 
-#define CMD_CELLULARPRFL_SET "AT%%CELLULARPRFL=2,%d,%d,%d"
-#define CMD_CELLULARPRFL_NOTIF "AT%%CELLULARPRFL=1"
-#define CELLULARPRFL_CP_ID 0
-#define CELLULARPRFL_ACT 2
-#define CELLULARPRFL_SIM_SLOT LTE_LC_UICC_PHYSICAL
-
 static int nrf_modem_at_printf_cellularprfl(const char *cmd, va_list args)
 {
 	int cp_id;
@@ -797,6 +799,55 @@ static int nrf_modem_at_printf_cellularprfl(const char *cmd, va_list args)
 	TEST_ASSERT_EQUAL(CELLULARPRFL_SIM_SLOT, sim_slot);
 
 	return 0;
+}
+
+static int nrf_modem_at_printf_cellularprfl_softsim(const char *cmd, va_list args)
+{
+	int cp_id;
+	int act;
+	int sim_slot;
+
+	if (strncmp(cmd, CMD_CELLULARPRFL_NOTIF,
+		    sizeof(CMD_CELLULARPRFL_NOTIF) - 1) == 0) {
+		return 0;
+	}
+
+	TEST_ASSERT_EQUAL_STRING(CMD_CELLULARPRFL_SET, cmd);
+
+	cp_id = va_arg(args, int);
+	TEST_ASSERT_EQUAL(CELLULARPRFL_CP_ID, cp_id);
+
+	act = va_arg(args, int);
+	TEST_ASSERT_EQUAL(CELLULARPRFL_ACT, act);
+
+	sim_slot = va_arg(args, int);
+	TEST_ASSERT_EQUAL(CELLULARPRFL_SIM_SLOT_SOFTSIM, sim_slot);
+
+	return 0;
+}
+
+static int nrf_modem_at_printf_cellularprfl_remove_cid0(const char *cmd, va_list args)
+{
+	int cp_id;
+
+	TEST_ASSERT_EQUAL_STRING(CMD_CELLULARPRFL_REMOVE, cmd);
+
+	cp_id = va_arg(args, int);
+	TEST_ASSERT_EQUAL(CELLULAR_PROFILE_ID_0, cp_id);
+
+	return 0;
+}
+
+static int nrf_modem_at_printf_cellularprfl_remove_cid2(const char *cmd, va_list args)
+{
+	int cp_id;
+
+	TEST_ASSERT_EQUAL_STRING(CMD_CELLULARPRFL_REMOVE, cmd);
+
+	cp_id = va_arg(args, int);
+	TEST_ASSERT_EQUAL(2, cp_id);
+
+	return -EINVAL;
 }
 
 /* Unified lte_lc event handler that extracts PDN events */
@@ -1562,11 +1613,26 @@ void test_lte_lc_cellular_profile_configure(void)
 	int ret;
 	struct lte_lc_cellular_profile profile = {
 		.id = 0,
-		.lte_mode = LTE_LC_LTE_MODE_NBIOT,
+		.act = LTE_LC_ACT_NBIOT,
 		.uicc = LTE_LC_UICC_PHYSICAL,
 	};
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cellularprfl;
+
+	ret = lte_lc_cellular_profile_configure(&profile);
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+void test_lte_lc_cellular_profile_configure_softsim(void)
+{
+	int ret;
+	struct lte_lc_cellular_profile profile = {
+		.id = 0,
+		.act = LTE_LC_ACT_NBIOT,
+		.uicc = LTE_LC_UICC_SOFTSIM,
+	};
+
+	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cellularprfl_softsim;
 
 	ret = lte_lc_cellular_profile_configure(&profile);
 	TEST_ASSERT_EQUAL(0, ret);
@@ -1578,17 +1644,17 @@ void test_pdn_cellular_profile_notif(void)
 
 	on_cellularprfl("%CELLULARPRFL: 1");
 	TEST_ASSERT_EQUAL(LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE, pdn_evt.type);
-	TEST_ASSERT_EQUAL(1, pdn_evt.cellular_profile_id);
+	TEST_ASSERT_EQUAL(1, pdn_evt.cellular_profile.profile_id);
 
 	on_cellularprfl("%CELLULARPRFL: 0");
 	TEST_ASSERT_EQUAL(LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE, pdn_evt.type);
-	TEST_ASSERT_EQUAL(0, pdn_evt.cellular_profile_id);
+	TEST_ASSERT_EQUAL(0, pdn_evt.cellular_profile.profile_id);
 
 	memset(&pdn_evt, 0, sizeof(struct lte_lc_evt));
 
 	on_cellularprfl("%CELLULARPRFL: 3");
 	TEST_ASSERT_EQUAL(0, pdn_evt.type);
-	TEST_ASSERT_EQUAL(0, pdn_evt.cellular_profile_id);
+	TEST_ASSERT_EQUAL(0, pdn_evt.cellular_profile.profile_id);
 }
 
 void test_pdn_cellular_profile_notif_no_callback(void)
@@ -1599,8 +1665,28 @@ void test_pdn_cellular_profile_notif_no_callback(void)
 
 	on_cellularprfl("%CELLULARPRFL: 1");
 
-	TEST_ASSERT_EQUAL(0, pdn_evt.cellular_profile_id);
+	TEST_ASSERT_EQUAL(0, pdn_evt.cellular_profile.profile_id);
 	TEST_ASSERT_EQUAL(0, pdn_evt.type);
+}
+
+void test_lte_lc_cellular_profile_remove(void)
+{
+	int ret;
+
+	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cellularprfl_remove_cid0;
+
+	ret = lte_lc_cellular_profile_remove(CELLULAR_PROFILE_ID_0);
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+void test_lte_lc_cellular_profile_remove_invalid_id(void)
+{
+	int ret;
+
+	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cellularprfl_remove_cid2;
+
+	ret = lte_lc_cellular_profile_remove(2U);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
 /* It is required to be added to each test. That is because unity's

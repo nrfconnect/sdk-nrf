@@ -77,6 +77,9 @@ config LTE_LC_ENV_EVAL_MODULE
 config LTE_LC_PDN_MODULE
 	bool "Packet Data Network (PDN) module"
 
+config LTE_LC_CELLULAR_PROFILE_MODULE
+	bool "Cellular profile module"
+
 menuconfig LTE_LC_DNS_FALLBACK_MODULE
 	bool "DNS Fallback module"
 	default y
