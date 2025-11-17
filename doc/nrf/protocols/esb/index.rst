@@ -358,10 +358,11 @@ If you are sure that you do not require support for revision 2 chips, you may re
 Examples
 ========
 
-The |NCS| provides the following three samples that show how to use the ESB protocol:
+The |NCS| provides the following samples that show how to use the ESB protocol:
 
 * :ref:`esb_ptx`
 * :ref:`esb_prx`
+* :ref:`esb_prx_ble`
 * :ref:`esb_monitor`
 
 .. _esb_fast_ramp_up:
