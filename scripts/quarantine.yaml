@@ -148,3 +148,18 @@
   platforms:
     - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36289"
+
+- scenarios:
+    - applications.matter_bridge.nrf7002eb2.br_ble
+    - applications.matter_bridge.nrf7002eb2.br_ble.smp_dfu
+    - applications.matter_bridge.nrf7002eb2.debug
+    - sample.matter.light_bulb.nrf7002eb2.memory_profiling
+    - sample.matter.lock.nrf7002eb2.smp_dfu
+    - sample.matter.template.nrf7002eb2.debug
+    - sample.matter.template.nrf7002eb2.release
+    - sample.matter.template.nrf7002eb2.release.internal
+    - sample.matter.template.nrf7002eb2.release.internal.smp_dfu
+    - sample.matter.template.nrf7002eb2.smp_dfu
+  platforms:
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36350"
