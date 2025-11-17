@@ -76,9 +76,13 @@ config MCUBOOT_USE_ALL_AVAILABLE_RAM
 
 endmenu
 
+DT_CHOSEN_BOOTLOADER_REQUEST := nrf,bootloader-request
+DT_CHOSEN_BOOTLOADER_REQUEST_BACKUP := nrf,bootloader-request-backup
+
 config NRF_MCUBOOT_BOOT_REQUEST
 	bool "MCUboot bootloader requests"
 	imply MCUMGR_GRP_IMG_NRF
+	depends on $(dt_chosen_enabled,$(DT_CHOSEN_BOOTLOADER_REQUEST))
 	help
 	  Handle bootloader requests.
 
@@ -88,12 +92,10 @@ choice NRF_MCUBOOT_BOOT_REQUEST_IMPL
 	prompt "Shared memory backend"
 	default NRF_MCUBOOT_BOOT_REQUEST_IMPL_RETENTION if RETENTION
 
-DT_CHOSEN_BOOTLOADER_REQUEST := nrf,bootloader-request
-
 config NRF_MCUBOOT_BOOT_REQUEST_IMPL_RETENTION
 	bool "Retention"
 	depends on RETENTION
-	depends on $(dt_chosen_enabled,$(DT_CHOSEN_BOOTLOADER_REQUEST))
+	depends on $(dt_chosen_has_compat,$(DT_CHOSEN_BOOTLOADER_REQUEST),$(DT_COMPAT_ZEPHYR_RETENTION))
 	help
 	  Use zephyr,bootloader-request chosen node compatible with the
 	  zephyr,retention driver as the memory area to store and read from the
@@ -102,7 +104,29 @@ config NRF_MCUBOOT_BOOT_REQUEST_IMPL_RETENTION
 	  structure version to ensure compatibility between the bootloader and
 	  the application.
 
+config NRF_MCUBOOT_BOOT_REQUEST_IMPL_FLASH
+	bool "NVM partition"
+	depends on FLASH
+	depends on CRC
+	depends on !PARTITION_MANAGER_ENABLED # Partition manager uses an incompatible flash_map.h
+	help
+	  Use zephyr,bootloader-request chosen node compatible with the
+	  flash driver as the memory area to store and read from the bootloader
+	  requests.
+
 endchoice
+
+config NRF_MCUBOOT_BOOT_REQUEST_PREFERENCE_KEEP
+	bool "Keep boot preference value across reboots"
+	depends on $(dt_chosen_enabled,$(DT_CHOSEN_BOOTLOADER_REQUEST_BACKUP))
+	default y
+	help
+	  Use zephyr,bootloader-request-backup chosen node compatible with the
+	  zephyr,retention driver as the memory area to store a copy of
+	  bootloader requests.
+	  If this optional node is defined, the module will keep a copy of data
+	  inside a backup region, allowing to preserve the preferred slot
+	  selection across device resets.
 
 config NCS_MCUBOOT_BOOT_REQUEST_TEST_SETS_BOOT_PREFERENCE
 	bool "Set boot preference if a slot is marked for test"
