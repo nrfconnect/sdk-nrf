@@ -1,0 +1,64 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	leds {
+		compatible = "gpio-leds";
+
+		led0: led_0 {
+			gpios = < &gpio9 0 GPIO_ACTIVE_HIGH >;
+			label = "Green LED 0";
+		};
+
+		led1: led_1 {
+			gpios = < &gpio9 1 GPIO_ACTIVE_HIGH >;
+			label = "Green LED 1";
+		};
+
+		led2: led_2 {
+			gpios = < &gpio9 2 GPIO_ACTIVE_HIGH >;
+			label = "Green LED 2";
+		};
+
+		led3: led_3 {
+			gpios = < &gpio9 3 GPIO_ACTIVE_HIGH >;
+			label = "Green LED 3";
+		};
+	};
+
+	aliases {
+		led0 = &led0;
+		led1 = &led1;
+		led2 = &led2;
+		led3 = &led3;
+	};
+
+	cpurad_cpusys_errata216_mboxes: errata216_mboxes {
+		compatible = "zephyr,mbox-ipm";
+		status = "okay";
+		mboxes = < &cpusys_vevif 0x14 >, < &cpusys_vevif 0x15 >;
+		mbox-names = "on_req", "off_req";
+	};
+};
+
+&gpio9 {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpiote130 {
+	owned-channels = <0 1 2 3 4 5 6 7>;
+	status = "okay";
+};
+
+&dppic020 {
+	status = "okay";
+	source-channels = < 0 1 2 3 4 5 >;
+	sink-channels = < 6 7 8 9 10 11 >;
+};

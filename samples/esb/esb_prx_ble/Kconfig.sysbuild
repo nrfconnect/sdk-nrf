@@ -1,0 +1,4 @@
+source "share/sysbuild/Kconfig"
+
+config NRF_DEFAULT_EMPTY
+	default y if SOC_SERIES_NRF53X
