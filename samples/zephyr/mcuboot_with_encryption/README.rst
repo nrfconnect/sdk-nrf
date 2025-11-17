@@ -1,40 +1,14 @@
 .. _mcuboot_with_encryption:
 
-MCUboot with Encryption Enabled
-################################
+MCUboot with encryption enabled
+###############################
 
 .. contents::
    :local:
    :depth: 2
 
-MCUboot reference sample demonstrating how to enable and use encryption.
-The sample is based on SMP Server sample as DFU functionality is important part of demonstration.
-
-Overview
-********
-
-The sample demonstrates how to build MCUboot with application image encryption enabled and upload encrypted images to target board.
-MCUboot, in this sample, is not configured to be optimized down and has extensive debugging enabled, which allows to observe the boot process.
-For review of optimizations please consider trying the :ref:`MCUboot minimal configuration <mcuboot_minimal_configuration>` sample.
-The sample used with MCUboot is the MCUmgr SMP Server sample, which means that all the MCUmgr configuration options apply to it.
-
-Platform specific information
-*****************************
-
-nrf54lXX platforms use ED25519 for signature verification and X25519 for random AES key exchange.
-
-Security warnings
-*****************
-
-MCUboot sample has :kconfig:option:`CONFIG_FPROTECT` disabled in MCUboot only to make it easier for uploading sample without erasing entire device when MCUboot update is required, and user should consider turning the option on, for production builds, to prevent MCUboot being overwritten at run-time.
-MCUboot sample does not use KMU by default.
-MCUmgr sample has shell enabled.
-Even with KMU enabled for MCUboot, asymmetric private key, used for transport encryption of random AES key, is compiled into MCUboot in a plain text form.
-:kconfig:option:`CONFIG_BOOT_SWAP_SAVE_ENCTLV` should be enabled, in MCUboot configuration, in case
-when DFU is performed to external storage device, to avoid random AES key, for currently swapped image, leaking.
-MCUboot will not reject unencrypted image in secondary slot and is capable to boot it if signature verification passes.
-MCUboot uses default encryption key, to change it, point :kconfig:option:`SB_CONFIG_BOOT_ENCRYPTION_KEY_FILE` to your generated key.
-
+This sample demonstrates secure device firmware update (DFU) using MCUboot with encryption enabled.
+You will learn how to build encrypted images and deploy them to supported development kits, protecting application code from unauthorized access during updates.
 
 Requirements
 ************
@@ -43,12 +17,61 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-Note that nrf54lv10dk has the SMP Server configuration cut down, in comparison to other platforms, to fit into application designated slot.
+.. note::
 
-Sample specific Kconfig options
-*******************************
+   On the nRF54LV10 DK, the :zephyr:code-sample:`smp-svr` configuration is trimmed to fit the application slot size.
 
-Sample provides :kconfig:option:`SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_KMU`, by default set to `n`, that allows to enable KMU support for storage of signature keys.
+Overview
+********
+
+This sample provides a practical starting point for using MCUboot with application image encryption enabled.
+It walks you through the process of building encrypted firmware images and updating them securely on a supported development kit.
+
+MCUboot in this sample is built with enhanced debug output, making it easier to observe and understand the secure boot process.
+For more information on minimal builds and optimization, see the :ref:`MCUboot minimal configuration <mcuboot_minimal_configuration>` documentation.
+
+The firmware update protocol is handled by the :ref:`MCUmgr SMP server<zephyr:mcu_mgr>`, so you can use all related configuration options.
+
+Platform-specific information
+=============================
+
+The nRF54L Series platforms use the following cryptographic algorithms:
+
+* ED25519 is used for digital signature verification.
+* X25519 is used for securely exchanging AES encryption keys during image updates.
+
+.. _mcuboot_with_encryption_config:
+
+Configuration
+*************
+
+You can use the following Kconfig options to configure the sample:
+
+* :kconfig:option:`CONFIG_FPROTECT` - This option is disabled by default.
+  It enables flash protection for the MCUboot code.
+  You can disable it for development and enable it for production purposes to prevent MCUboot overwriting at runtime.
+* :kconfig:option:`SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_KMU` - This option is disabled by default.
+  Set it to ``y`` to enable Hardware Key Management Unit (KMU) support for secure storage of signature keys.
+* :kconfig:option:`CONFIG_BOOT_SWAP_SAVE_ENCTLV` - Enable this option in the MCUboot configuration if you are performing DFU to an external storage device.
+  This ensures that the random AES key used for the currently swapped image is not exposed.
+* :kconfig:option:`SB_CONFIG_BOOT_ENCRYPTION_KEY_FILE` - MCUboot uses a default encryption key.
+  To override it, adjust this option by setting a path to your custom encryption key file.
+* :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` - Use this option to set the application image version for software updates.
+
+Security considerations
+***********************
+
+* For secure production builds, enable the :kconfig:option:`CONFIG_FPROTECT`, :kconfig:option:`SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_KMU`, and :kconfig:option:`CONFIG_BOOT_SWAP_SAVE_ENCTLV`.
+  See the :ref:`mcuboot_with_encryption_config` section for details.
+* MCUmgr's shell is enabled by default, allowing to manage commands using a serial terminal.
+* MCUboot accepts unencrypted images in the secondary slot if signature verification passes.
+  For higher security, use encrypted images wherever possible.
+* KMU key handling:
+
+  * By default, KMU is not used to store keys in MCUboot.
+  * If KMU is enabled, the asymmetric private key used for transport encryption of the random AES key is still compiled into MCUboot in plain text.
+    Use hardware-backed key storage in production.
+  * Do not leave encryption keys or private keys in plain text inside the MCUboot binary.
 
 Building and running
 ********************
@@ -57,19 +80,17 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-By default, sample builds without KMU support and with the key built into the MCUboot binary.
-To demonstrate working encryption at least two application builds are required.
-Here we can achieve that by building the same sample with :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` set to version 1.0.0 and 2.0.0.
-Build both applications using separate build directories.
+By default, the sample builds without KMU support and the encryption key is embedded within the MCUboot binary.
+To see the encryption workflow, you must build two application images with different version numbers (for example, set the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option to ``1.0.0`` and ``2.0.0``), using separate build directories.
 
 Testing
 =======
 
-After programming the device with the first image, complete the following steps to verify its functionality:
+After programming the device with the first image, verify its functionality:
 
 1. Connect to the device's serial console.
 #. Reset the device.
-#. Observe the boot logs confirming the successful start of the SMP Server application, as shown in the serial console output:
+#. Observe the boot output confirming successful start of the SMP Server application:
 
    .. code-block:: console
 
@@ -93,19 +114,29 @@ After programming the device with the first image, complete the following steps 
       [00:00:00.077,299] <inf> bt_hci_core: LMP: version 6.1 (0x0f) subver 0x30c0
       [00:00:00.077,765] <inf> smp_bt_sample: Advertising successfully started
 
+#. To test encrypted updates, upload the second (encrypted) image using any supported method, such as MCUmgr over Bluetooth, serial shell, or another DFU transport.
+   For more information on DFU, see the :ref:`Zephyr Device Firmware Upgrade documentation <zephyr:dfu>`.
+#. After uploading the image, mark the new image for test.
+#. On reboot, verify that the new firmware version is running.
+   If the image is not confirmed, the bootloader will revert to the previous version.
+   The image will then be re-encrypted if swapped out of the boot slot.
 
-Now you can check how encryption works. Depending on the selected upload method, you may either use the zephyr.signed.encrypted.bin from the second build image, or dfu_application.zip, which also contains an already encrypted image.
-You can upload the second image to the device using one of the supported methods, such as Bluetooth (using MCUmgr), serial shell, or other DFU mechanisms. For more details on available upload methods and instructions, refer to the `Zephyr Device Firmware Upgrade (DFU) documentation <https://docs.zephyrproject.org/latest/guides/device_mgmt/dfu.html>`_.
-After uploading, mark the image for test. After reboot you may see, on image list, that the version 2.0.0 has been booted for test, if you have named the image as such.
-Unless you confirm the image, the reset will bring back the previous one. Note that image will be re-encrypted when it is swapped out of the boot slot.
+.. note::
 
+   This sample also accepts unencrypted firmware updates.
+   If you upload an unencrypted and properly signed image, MCUboot will successfully boot it.
 
-Generating X25519 key
-=====================
+Generating the X25519 key
+=========================
 
-You may generate x25519 key using openssl command:
+To generate an X25519 key for encryption, use the following OpenSSL command:
 
    .. code-block:: console
 
       openssl genpkey -algorithm X25519 -out your_new_private_key.pem
 
+
+Dependencies
+************
+
+TBD
