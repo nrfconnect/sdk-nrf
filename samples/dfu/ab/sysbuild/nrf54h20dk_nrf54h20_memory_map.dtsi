@@ -53,37 +53,20 @@
 		cpurad_slot1_partition: partition@152000 {
 			reg = <0x152000 DT_SIZE_K(328)>;
 		};
+
+		boot_request: partition@1ad000 {
+			reg = <0x1ad000 16>;
+		};
+
+		boot_request_backup: partition@1ad010 {
+			reg = <0x1ad010 16>;
+		};
 	};
 };
 
 / {
 	chosen {
 		nrf,bootloader-request = &boot_request;
-	};
-};
-
-/ {
-	reserved-memory {
-		cpuapp_retained_mem: memory@e1ad000 {
-			compatible = "zephyr,memory-region";
-			reg = <0xe1ad000 DT_SIZE_K(4)>;
-			zephyr,memory-region = "RetainedMem";
-			status = "okay";
-
-			retainedmem {
-				compatible = "zephyr,retained-ram";
-				status = "okay";
-				#address-cells = <1>;
-				#size-cells = <1>;
-
-				boot_request: boot_request@0 {
-					compatible = "zephyr,retention";
-					status = "okay";
-					reg = <0x0 16>;
-					prefix = [0B 01];
-					checksum = <4>;
-				};
-			};
-		};
+		nrf,bootloader-request-backup = &boot_request_backup;
 	};
 };
