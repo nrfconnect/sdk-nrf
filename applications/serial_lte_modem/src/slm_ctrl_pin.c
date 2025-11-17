@@ -40,15 +40,17 @@ static int ext_xtal_control(bool xtal_on)
 {
 	int err = 0;
 #if defined(CONFIG_SLM_EXTERNAL_XTAL)
-	static struct onoff_manager *clk_mgr;
+	static struct device *clk_dev;
 
 	if (xtal_on) {
 		struct onoff_client cli = {};
 
 		/* request external XTAL for UART */
-		clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
+		clk_dev = DEVICE_DT_GET_ONE(COND_CODE_1((NRF_CLOCK_HAS_HFCLK),
+							(nordic_nrf_clock_hfclk),
+							(nordic_nrf_clock_xo)));
 		sys_notify_init_spinwait(&cli.notify);
-		err = onoff_request(clk_mgr, &cli);
+		err = nrf_clock_control_request(clk_dev, NULL, &cli);
 		if (err < 0) {
 			LOG_ERR("Clock request failed: %d", err);
 			return err;
@@ -58,7 +60,7 @@ static int ext_xtal_control(bool xtal_on)
 		}
 	} else {
 		/* release external XTAL for UART */
-		err = onoff_release(clk_mgr);
+		err = nrf_clock_control_release(clk_dev, NULL);
 		if (err < 0) {
 			LOG_ERR("Clock release failed: %d", err);
 			return err;

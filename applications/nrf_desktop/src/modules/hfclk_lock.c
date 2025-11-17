@@ -17,25 +17,27 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE);
 
-static struct onoff_manager *mgr;
+static struct device *dev;
 static struct onoff_client cli;
 
 static void hfclk_lock(void)
 {
-	if (mgr) {
+	if (dev) {
 		return;
 	}
 
-	mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
-	if (!mgr) {
+	dev = DEVICE_DT_GET_ONE(COND_CODE_1((NRF_CLOCK_HAS_HFCLK),
+					    (nordic_nrf_clock_hfclk),
+					    (nordic_nrf_clock_xo)));
+	if (!dev) {
 		module_set_state(MODULE_STATE_ERROR);
 	} else {
 		int err;
 
 		sys_notify_init_spinwait(&cli.notify);
-		err = onoff_request(mgr, &cli);
+		err = nrf_clock_control_request(dev, NULL, &cli);
 		if (err < 0) {
-			mgr = NULL;
+			dev = NULL;
 			module_set_state(MODULE_STATE_ERROR);
 		} else {
 			module_set_state(MODULE_STATE_READY);
@@ -47,13 +49,13 @@ static void hfclk_unlock(void)
 {
 	int err;
 
-	if (!mgr) {
+	if (!dev) {
 		return;
 	}
 
-	err = onoff_cancel_or_release(mgr, &cli);
+	err = nrf_clock_control_cancel_or_release(dev, NULL, &cli);
 	module_set_state((err < 0) ? MODULE_STATE_ERROR : MODULE_STATE_OFF);
-	mgr = NULL;
+	dev = NULL;
 }
 
 
