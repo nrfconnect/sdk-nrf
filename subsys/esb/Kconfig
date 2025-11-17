@@ -10,7 +10,9 @@ menuconfig ESB
 	select NRFX_DPPI if HAS_HW_NRF_DPPIC
 	select MPSL
 	select MPSL_FEM_ONLY if !ESB_DYNAMIC_INTERRUPTS
-	default n
+	select NRFX_DPPI020 if SOC_SERIES_NRF54HX
+	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
+	select NRFX_DPPI0 if SOC_SERIES_NRF53X
 	help
 	  Enable ESB functionality.
 
