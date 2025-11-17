@@ -433,7 +433,9 @@ Edge Impulse samples
 Enhanced ShockBurst samples
 ---------------------------
 
-|no_changes_yet_note|
+* Added:
+
+  * The :ref:`esb_prx` sample that demonstrates how to use the ESB protocol in receiver mode concurrently with the Bluetooth LE LBS service.
 
 Gazell samples
 --------------
