@@ -82,7 +82,8 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      - SHIELD=pca63566;coverage_support
+      - SHIELD=pca63566
+      - SNIPPET=coverage_support
       - CONF_FILE=coverage.conf
       - EXTRA_DTC_OVERLAY_FILE="disable_s2ram.overlay"
     harness: console

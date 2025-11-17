@@ -630,7 +630,7 @@ tests:
   benchmarks.multicore.idle_spim_loopback.coverage:
     filter: CONFIG_COVERAGE
     extra_args:
-      - SHIELD=coverage_support
+      - SNIPPET=coverage_support
       - CONF_FILE=coverage.conf
       - EXTRA_DTC_OVERLAY_FILE="disable_s2ram.overlay"
     harness: console

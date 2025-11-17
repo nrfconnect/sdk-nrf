@@ -72,7 +72,7 @@ tests:
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="boards/lpcomp.overlay;disable_s2ram.overlay"
       - CONF_FILE=coverage.conf
-      - SHIELD=coverage_support
+      - SNIPPET=coverage_support
     harness: console
     harness_config:
       fixture: gpio_loopback

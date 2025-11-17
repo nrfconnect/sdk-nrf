@@ -57,7 +57,7 @@ tests:
     extra_args:
       - CONF_FILE=coverage.conf
       - EXTRA_DTC_OVERLAY_FILE="disable_s2ram.overlay"
-      - SHIELD=coverage_support
+      - SNIPPET=coverage_support
     harness: console
     harness_config:
       type: multi_line

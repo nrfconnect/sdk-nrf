@@ -45,7 +45,8 @@ tests:
         - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\\
         .]*$"
     extra_args:
-      - SHIELD=pca63566;coverage_support
+      - SHIELD=pca63566
+      - SNIPPET=coverage_support
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
 
   nrf.extended.sample.sensor.bme680.nrf54l:
@@ -71,7 +72,8 @@ tests:
         - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\\
         .]*$"
     extra_args:
-      - SHIELD=pca63565;coverage_support
+      - SHIELD=pca63565
+      - SNIPPET=coverage_support
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
