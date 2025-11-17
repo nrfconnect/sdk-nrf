@@ -39,6 +39,7 @@ IDE, OS, and tool support
   * The required `SEGGER J-Link`_ version to v8.76.
   * Steps on the :ref:`install_ncs` page for installing the |NCS| and toolchain together.
     With this change, the separate steps to install the toolchain and the SDK were merged into a single step.
+  * The table listing :ref:`supported operating systems for proprietary tools <additional_nordic_sw_tools_os_support>`: Windows 11 is now Tier 1, Windows 10 is now Tier 3, macOS 15 is now Tier 1, and macOS 13 is now Tier 3.
 
 Board support
 =============
