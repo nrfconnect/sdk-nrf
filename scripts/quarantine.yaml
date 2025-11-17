@@ -3,14 +3,6 @@
 # https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
 
 - scenarios:
-    - net.lib.wifi_credentials_backend_psa
-  comment: "Fix not known at time of upmerge, temporarily excluded to be fixed after upmerge"
-
-- platforms:
-    - native_posix
-  comment: "native_posix will be removed soon - native_sim platform is the default simulator now"
-
-- scenarios:
     - sample.matter.light_bulb.aws
   platforms:
     - nrf7002dk/nrf5340/cpuapp
@@ -24,34 +16,6 @@
     - nrf7002dk/nrf5340/cpuapp
     - nrf5340dk/nrf5340/cpuapp
   comment: "Variant does not fit in FLASH area - it should be probably removed in the future"
-
-- scenarios:
-    - sample.matter.light_bulb.memory_profiling
-  platforms:
-    - nrf7002dk/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-20715"
-
-- scenarios:
-    - nrf.extended.drivers.uart.uart_elementary_dual_l09
-    - nrf.extended.drivers.uart.uart_elementary_dual_setup_mismatch_l09
-  platforms:
-    - nrf54l09pdk/nrf54l09/cpuflpr
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-7265"
-
-- scenarios:
-    - sample.suit.*
-    - suit-platform.integration.*
-    - suit.integration.*
-    - suit-processor.integration.*
-    - suit.unit.*
-    - dfu.dfu_target.suit.*
-    - drivers.flash.flash_ipuc
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
-    - nrf52840dk/nrf52840
-    - unit.*
-    - native_sim.*
-  comment: "SUIT is planned to be removed from NCS soon"
 
 - scenarios:
     - sample.find_my.*
@@ -73,12 +37,6 @@
   comment: "Needs alignment to work with IronSide SE"
 
 - scenarios:
-    - drivers.counter.basic_api
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34187"
-
-- scenarios:
     - sample.nrf7002_eb.thingy53.shell
   platforms:
     - thingy53/nrf5340/cpuapp
@@ -87,15 +45,10 @@
 - scenarios:
     - applications.machine_learning.zrelease
     - applications.machine_learning.zdebug
-  platforms:
-    - thingy53/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35522"
-
-- scenarios:
     - applications.machine_learning.zdebug_rtt
   platforms:
     - thingy53/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35672"
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35522,NCSDK-35672"
 
 - scenarios:
     - benchmarks.multicore.idle_twim.nrf54h20dk_cpuapp_cpurad.s2ram
