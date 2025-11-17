@@ -106,15 +106,6 @@ extern "C" {
 /** ESB nrfx timer instance. */
 #define ESB_NRFX_TIMER_INSTANCE NRFX_TIMER_INSTANCE(ESB_TIMER_INSTANCE_NO)
 
-#if !defined(CONFIG_NRFX_DPPI)
-/** Use fixed DPPI channels and groups if nrfx_dppi is not available. */
-#define ESB_DPPI_FIXED
-/** First fixed DPPI channel, total used channels: 7. */
-#define ESB_DPPI_FIRST_FIXED_CHANNEL 0
-/** First fixed DPPI group, total used groups: 1. */
-#define ESB_DPPI_FIRST_FIXED_GROUP 0
-#endif
-
 /** ESB EGU events and tasks configuration. */
 #define ESB_EGU_EVENT NRF_EGU_EVENT_TRIGGERED6
 #define ESB_EGU_TASK  NRF_EGU_TASK_TRIGGER6

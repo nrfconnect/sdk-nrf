@@ -205,21 +205,6 @@ int esb_ppi_init(void)
 {
 	nrfx_err_t err;
 
-#if defined(ESB_DPPI_FIXED)
-
-	radio_address_timer_stop = ESB_DPPI_FIRST_FIXED_CHANNEL + 0;
-	timer_compare0_radio_disable = ESB_DPPI_FIRST_FIXED_CHANNEL + 1;
-	timer_compare1_radio_txen = ESB_DPPI_FIRST_FIXED_CHANNEL + 2;
-	disabled_phy_end_egu = ESB_DPPI_FIRST_FIXED_CHANNEL + 3;
-	egu_timer_start = ESB_DPPI_FIRST_FIXED_CHANNEL + 4;
-	egu_ramp_up = ESB_DPPI_FIRST_FIXED_CHANNEL + 5;
-	radio_end_timer_start = ESB_DPPI_FIRST_FIXED_CHANNEL + 6;
-	ramp_up_dppi_group = ESB_DPPI_FIRST_FIXED_GROUP + 0;
-
-	ARG_UNUSED(err);
-
-#else
-
 	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(ESB_DPPIC_INSTANCE_NO);
 
 	err = nrfx_dppi_channel_alloc(&dppi, &radio_address_timer_stop);
@@ -265,8 +250,6 @@ int esb_ppi_init(void)
 		return -ENODEV;
 	}
 
-#endif /* defined(ESB_DPPI_FIXED) */
-
 	nrf_radio_publish_set(NRF_RADIO, NRF_RADIO_EVENT_DISABLED, disabled_phy_end_egu);
 	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
 		nrf_radio_publish_set(NRF_RADIO, NRF_RADIO_EVENT_PHYEND, disabled_phy_end_egu);
@@ -275,11 +258,9 @@ int esb_ppi_init(void)
 
 	return 0;
 
-#if !defined(ESB_DPPI_FIXED)
 error:
 	LOG_ERR("gppi_channel_alloc failed with: %d\n", err);
 	return -ENODEV;
-#endif /* !defined(ESB_DPPI_FIXED) */
 }
 
 void esb_ppi_disable_all(void)
@@ -330,12 +311,6 @@ void esb_ppi_deinit(void)
 		nrf_radio_publish_clear(NRF_RADIO, NRF_RADIO_EVENT_PHYEND);
 	}
 
-#if defined(ESB_DPPI_FIXED)
-
-	ARG_UNUSED(err);
-
-#else
-
 	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(ESB_DPPIC_INSTANCE_NO);
 
 	err = nrfx_dppi_channel_free(&dppi, radio_address_timer_stop);
@@ -380,13 +355,10 @@ void esb_ppi_deinit(void)
 		goto error;
 	}
 
-#endif /* defined(ESB_DPPI_FIXED) */
 
 	return;
 
-#if !defined(ESB_DPPI_FIXED)
 /* Should not happen. */
 error:
 	__ASSERT(false, "Failed to free DPPI resources");
-#endif
 }

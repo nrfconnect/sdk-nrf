@@ -63,14 +63,6 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 /* Radio Rx ramp-up time in microseconds. */
 #define RX_RAMP_UP_TIME_US 124
 
-/* Interrupt flags */
-/* Interrupt mask value for TX success. */
-#define INT_TX_SUCCESS_MSK BIT(0)
-/* Interrupt mask value for TX failure. */
-#define INT_TX_FAILED_MSK BIT(1)
-/* Interrupt mask value for RX_DR. */
-#define INT_RX_DATA_RECEIVED_MSK BIT(2)
-
 /* Mask value to signal updating BASE0 radio address. */
 #define ADDR_UPDATE_MASK_BASE0  BIT(0)
 /* Mask value to signal updating BASE1 radio address. */
@@ -133,16 +125,17 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 
 /* Internal Enhanced ShockBurst module state. */
 enum esb_state {
-	ESB_STATE_IDLE,		/* Idle. */
-	ESB_STATE_PTX_TX,       /* Transmitting without acknowledgment. */
-	ESB_STATE_PTX_TX_ACK,   /* Transmitting with acknowledgment. */
-	ESB_STATE_PTX_RX_ACK,   /* Transmitting with acknowledgment and
-				 * reception of payload with the
-				 * acknowledgment response.
-				 */
-	ESB_STATE_PRX,		/* Receiving packets without ACK. */
-	ESB_STATE_PRX_SEND_ACK, /* Transmitting ACK in RX mode. */
-	ESB_STATE_PTX_TXIDLE,   /* Transmitter stage is idle but enabled */
+	ESB_STATE_UNINITIALIZED, /* Uninitialized */
+	ESB_STATE_IDLE,		 /* Idle. */
+	ESB_STATE_PTX_TX,	 /* Transmitting without acknowledgment. */
+	ESB_STATE_PTX_TX_ACK,	 /* Transmitting with acknowledgment. */
+	ESB_STATE_PTX_RX_ACK,	 /* Transmitting with acknowledgment and
+				  * reception of payload with the
+				  * acknowledgment response.
+				  */
+	ESB_STATE_PRX,		 /* Receiving packets without ACK. */
+	ESB_STATE_PRX_SEND_ACK,	 /* Transmitting ACK in RX mode. */
+	ESB_STATE_PTX_TXIDLE,	 /* Transmitter stage is idle but enabled */
 };
 
 /* Pipe info PID and CRC and acknowledgment payload. */
@@ -173,7 +166,7 @@ struct payload_tx_fifo {
 
 	uint32_t back;	/* Back of the queue (last in). */
 	uint32_t front;	/* Front of queue (first out). */
-	uint32_t count;	/* Number of elements in the queue. */
+	atomic_t count;	/* Number of elements in the queue. */
 };
 
 /* First-in, first-out queue of received payloads. */
@@ -183,7 +176,7 @@ struct payload_rx_fifo {
 
 	uint32_t back;	/* Back of the queue (last in). */
 	uint32_t front;	/* Front of queue (first out). */
-	uint32_t count;	/* Number of elements in the queue. */
+	atomic_t count;	/* Number of elements in the queue. */
 };
 
 /* Fixed radio PDU header definition. */
@@ -249,9 +242,8 @@ struct esb_address {
 
 static nrfx_timer_t esb_timer = ESB_NRFX_TIMER_INSTANCE;
 
-static bool esb_initialized;
 static struct esb_config esb_cfg;
-static volatile enum esb_state esb_state = ESB_STATE_IDLE;
+static volatile enum esb_state esb_state = ESB_STATE_UNINITIALIZED;
 
 /* Default address configuration for ESB.
  * Roughly equal to the nRF24Lxx defaults, except for the number of pipes,
@@ -301,7 +293,7 @@ struct payload_wrap *ack_pl_wrap_pipe[CONFIG_ESB_PIPE_COUNT];
 /* Run time variables */
 static uint8_t pids[CONFIG_ESB_PIPE_COUNT];
 static struct pipe_info rx_pipe_info[CONFIG_ESB_PIPE_COUNT];
-static volatile uint32_t interrupt_flags;
+static atomic_t interrupt_flags;
 static volatile uint32_t retransmits_remaining;
 static volatile uint32_t last_tx_attempts;
 static volatile uint32_t wait_for_ack_timeout_us;
@@ -313,7 +305,7 @@ static const mpsl_fem_event_t rx_event = {
 	.type = MPSL_FEM_EVENT_TYPE_TIMER,
 	.event.timer = {
 		.p_timer_instance = ESB_NRF_TIMER_INSTANCE,
-		.compare_channel_mask = (BIT(NRF_TIMER_CC_CHANNEL2) | BIT(NRF_TIMER_CC_CHANNEL3)),
+		.compare_channel_mask = BIT(NRF_TIMER_CC_CHANNEL2),
 		.counter_period = {
 			.end = RX_RAMP_UP_TIME_US,
 		},
@@ -324,7 +316,7 @@ static const mpsl_fem_event_t tx_event = {
 	.type = MPSL_FEM_EVENT_TYPE_TIMER,
 	.event.timer = {
 		.p_timer_instance = ESB_NRF_TIMER_INSTANCE,
-		.compare_channel_mask = (BIT(NRF_TIMER_CC_CHANNEL2) | BIT(NRF_TIMER_CC_CHANNEL3)),
+		.compare_channel_mask = BIT(NRF_TIMER_CC_CHANNEL2),
 		.counter_period = {
 			.end = TX_RAMP_UP_TIME_US,
 		},
@@ -335,7 +327,7 @@ static mpsl_fem_event_t tx_time_shifted = {
 	.type = MPSL_FEM_EVENT_TYPE_TIMER,
 	.event.timer = {
 		.p_timer_instance = ESB_NRF_TIMER_INSTANCE,
-		.compare_channel_mask = (BIT(NRF_TIMER_CC_CHANNEL2) | BIT(NRF_TIMER_CC_CHANNEL3)),
+		.compare_channel_mask = BIT(NRF_TIMER_CC_CHANNEL2),
 	},
 };
 
@@ -348,7 +340,6 @@ static mpsl_fem_event_t disable_event = {
  */
 static void (*on_radio_disabled)(void);
 static void (*on_timer_compare1)(void);
-static void (*update_rf_payload_format)(uint32_t payload_length);
 
 /*  The following functions are assigned to the function pointers above. */
 static void on_radio_disabled_tx_noack(void);
@@ -456,6 +447,73 @@ static void errata_216_off(void)
 		atomic_set(&errata_216_status, ERRATA_216_DISABLED);
 	}
 #endif /* NRF54H_ERRATA_216_PRESENT */
+}
+
+static void apply_radio_init_workarounds(void)
+{
+	if (nrf52_errata_182()) {
+		/* Check if the device is an nRF52832 Rev. 2. */
+		/* Workaround for nRF52832 rev 2 errata 182 */
+		*(volatile uint32_t *)0x4000173C |= (1 << 10);
+	}
+
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
+	/* Apply HMPAN-102 workaround for nRF54H series */
+	*(volatile uint32_t *)0x5302C7E4 =
+		(((*((volatile uint32_t *)0x5302C7E4)) & 0xFF000FFF) | 0x0012C000);
+
+	/* Apply HMPAN-18 workaround for nRF54H series - load trim values*/
+	if (*(volatile uint32_t *)0x0FFFE458 != TRIM_VALUE_EMPTY) {
+		*(volatile uint32_t *)0x5302C734 = *(volatile uint32_t *)0x0FFFE458;
+	}
+
+	if (*(volatile uint32_t *)0x0FFFE45C != TRIM_VALUE_EMPTY) {
+		*(volatile uint32_t *)0x5302C738 = *(volatile uint32_t *)0x0FFFE45C;
+	}
+
+	if (*(volatile uint32_t *)0x0FFFE460 != TRIM_VALUE_EMPTY) {
+		*(volatile uint32_t *)0x5302C73C = *(volatile uint32_t *)0x0FFFE460;
+	}
+
+	if (*(volatile uint32_t *)0x0FFFE464 != TRIM_VALUE_EMPTY) {
+		*(volatile uint32_t *)0x5302C740 = *(volatile uint32_t *)0x0FFFE464;
+	}
+
+	if (*(volatile uint32_t *)0x0FFFE468 != TRIM_VALUE_EMPTY) {
+		*(volatile uint32_t *)0x5302C74C = *(volatile uint32_t *)0x0FFFE468;
+	}
+
+	if (*(volatile uint32_t *)0x0FFFE46C != TRIM_VALUE_EMPTY) {
+		*(volatile uint32_t *)0x5302C7D8 = *(volatile uint32_t *)0x0FFFE46C;
+	}
+
+	if (*(volatile uint32_t *)0x0FFFE470 != TRIM_VALUE_EMPTY) {
+		*(volatile uint32_t *)0x5302C840 = *(volatile uint32_t *)0x0FFFE470;
+	}
+
+	if (*(volatile uint32_t *)0x0FFFE474 != TRIM_VALUE_EMPTY) {
+		*(volatile uint32_t *)0x5302C844 = *(volatile uint32_t *)0x0FFFE474;
+	}
+
+	if (*(volatile uint32_t *)0x0FFFE478 != TRIM_VALUE_EMPTY) {
+		*(volatile uint32_t *)0x5302C848 = *(volatile uint32_t *)0x0FFFE478;
+	}
+
+	if (*(volatile uint32_t *)0x0FFFE47C != TRIM_VALUE_EMPTY) {
+		*(volatile uint32_t *)0x5302C84C = *(volatile uint32_t *)0x0FFFE47C;
+	}
+
+	/* Apply HMPAN-103 workaround for nRF54H series*/
+	if ((*(volatile uint32_t *)0x5302C8A0 == 0x80000000) ||
+	    (*(volatile uint32_t *)0x5302C8A0 == 0x0058120E)) {
+		*(volatile uint32_t *)0x5302C8A0 = 0x0058090E;
+	}
+
+	*(volatile uint32_t *)0x5302C8A4 = 0x00F8AA5F;
+	*(volatile uint32_t *)0x5302C7AC = 0x8672827A;
+	*(volatile uint32_t *)0x5302C7B0 = 0x7E768672;
+	*(volatile uint32_t *)0x5302C7B4 = 0x0406007E;
+#endif /* (CONFIG_SOC_SERIES_NRF54HX) */
 }
 
 static void esb_fem_for_tx_set(bool ack)
@@ -643,7 +701,7 @@ static void radio_start(void)
 	}
 }
 
-static void update_rf_payload_format_esb_dpl(uint32_t payload_length)
+static void update_rf_payload_format_esb_dpl(void)
 {
 	nrf_radio_packet_conf_t packet_config = { 0 };
 
@@ -657,23 +715,23 @@ static void update_rf_payload_format_esb_dpl(uint32_t payload_length)
 	packet_config.balen = (esb_addr.addr_length - 1);
 	packet_config.statlen = 0;
 	packet_config.maxlen = CONFIG_ESB_MAX_PAYLOAD_LENGTH;
-#if defined(RADIO_PCNF0_PLEN_Msk)
-	if (esb_cfg.bitrate == ESB_BITRATE_2MBPS) {
-		packet_config.plen = NRF_RADIO_PREAMBLE_LENGTH_16BIT;
-	}
 
-#if defined(RADIO_MODE_MODE_Ble_2Mbit)
-	if (esb_cfg.bitrate == ESB_BITRATE_2MBPS_BLE) {
-		packet_config.plen = NRF_RADIO_PREAMBLE_LENGTH_16BIT;
-	}
-#endif /* defined(RADIO_MODE_MODE_Ble_2Mbit) */
+#if defined(RADIO_PCNF0_PLEN_Msk)
+	switch (esb_cfg.bitrate) {
 
 #if defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6)
-	if (esb_cfg.bitrate == ESB_BITRATE_4MBPS) {
-		packet_config.plen = NRF_RADIO_PREAMBLE_LENGTH_16BIT;
-	}
+	case ESB_BITRATE_4MBPS:
 #endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6) */
+	case ESB_BITRATE_2MBPS:
+#if defined(RADIO_MODE_MODE_Ble_2Mbit)
+	case ESB_BITRATE_2MBPS_BLE:
+#endif /* defined(RADIO_MODE_MODE_Ble_2Mbit) */
+		packet_config.plen = NRF_RADIO_PREAMBLE_LENGTH_16BIT;
+		break;
 
+	default:
+		packet_config.plen = NRF_RADIO_PREAMBLE_LENGTH_8BIT;
+	}
 #endif /* defined(RADIO_PCNF0_PLEN_Msk) */
 
 	nrf_radio_packet_configure(NRF_RADIO, &packet_config);
@@ -693,6 +751,18 @@ static void update_rf_payload_format_esb(uint32_t payload_length)
 	};
 
 	nrf_radio_packet_configure(NRF_RADIO, &packet_config);
+}
+
+static void update_rf_payload_format(uint32_t payload_length)
+{
+	switch (esb_cfg.protocol) {
+	case ESB_PROTOCOL_ESB:
+		update_rf_payload_format_esb(payload_length);
+		break;
+	case ESB_PROTOCOL_ESB_DPL:
+		update_rf_payload_format_esb_dpl();
+		break;
+	}
 }
 
 static void update_radio_addresses(uint8_t update_mask)
@@ -934,11 +1004,9 @@ static void update_radio_tx_power(void)
 #endif /* !(defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX)) */
 }
 
-static bool update_radio_bitrate(void)
+static bool update_radio_bitrate(enum esb_bitrate bitrate)
 {
-	nrf_radio_mode_set(NRF_RADIO, esb_cfg.bitrate);
-
-	switch (esb_cfg.bitrate) {
+	switch (bitrate) {
 
 #if defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6)
 	case ESB_BITRATE_4MBPS:
@@ -974,25 +1042,23 @@ static bool update_radio_bitrate(void)
 		return false;
 	}
 
+	esb_cfg.bitrate = bitrate;
+	nrf_radio_mode_set(NRF_RADIO, (nrf_radio_mode_t)bitrate);
+
 	return true;
 }
 
-static bool update_radio_protocol(void)
+static bool verify_radio_protocol(void)
 {
 	switch (esb_cfg.protocol) {
-	case ESB_PROTOCOL_ESB_DPL:
-		update_rf_payload_format = update_rf_payload_format_esb_dpl;
-		break;
-
 	case ESB_PROTOCOL_ESB:
-		update_rf_payload_format = update_rf_payload_format_esb;
-		break;
+	case ESB_PROTOCOL_ESB_DPL:
+		return true;
 
 	default:
 		/* Should not be reached */
 		return false;
 	}
-	return true;
 }
 
 static bool update_radio_crc(void)
@@ -1027,10 +1093,13 @@ static bool update_radio_parameters(void)
 {
 	bool params_valid = true;
 
-	params_valid &= update_radio_bitrate();
-	params_valid &= update_radio_protocol();
+	params_valid &= update_radio_bitrate(esb_cfg.bitrate);
+	params_valid &= verify_radio_protocol();
 	params_valid &= update_radio_crc();
-	update_rf_payload_format(esb_cfg.payload_length);
+
+	if (params_valid) {
+		update_rf_payload_format(esb_cfg.payload_length);
+	}
 
 	return params_valid;
 }
@@ -1039,11 +1108,11 @@ static void reset_fifos(void)
 {
 	tx_fifo.back = 0;
 	tx_fifo.front = 0;
-	tx_fifo.count = 0;
+	atomic_clear(&tx_fifo.count);
 
 	rx_fifo.back = 0;
 	rx_fifo.front = 0;
-	rx_fifo.count = 0;
+	atomic_clear(&rx_fifo.count);
 }
 
 static void initialize_fifos(void)
@@ -1074,18 +1143,15 @@ static void initialize_fifos(void)
 
 static void tx_fifo_remove_first(void)
 {
-	if (tx_fifo.count == 0) {
+	if (atomic_get(&tx_fifo.count) == 0) {
 		return;
 	}
 
-	unsigned int key = irq_lock();
-
-	tx_fifo.count--;
 	if (++tx_fifo.front >= CONFIG_ESB_TX_FIFO_SIZE) {
 		tx_fifo.front = 0;
 	}
 
-	irq_unlock(key);
+	atomic_dec(&tx_fifo.count);
 }
 
 /*  Function to push the content of the rx_buffer to the RX FIFO.
@@ -1104,7 +1170,7 @@ static bool rx_fifo_push_rfbuf(uint8_t pipe, uint8_t pid)
 {
 	struct esb_radio_pdu *rx_pdu = (struct esb_radio_pdu *)rx_payload_buffer;
 
-	if (rx_fifo.count >= CONFIG_ESB_RX_FIFO_SIZE) {
+	if (atomic_get(&rx_fifo.count) >= CONFIG_ESB_RX_FIFO_SIZE) {
 		return false;
 	}
 
@@ -1132,14 +1198,14 @@ static bool rx_fifo_push_rfbuf(uint8_t pipe, uint8_t pid)
 	if (++rx_fifo.back >= CONFIG_ESB_RX_FIFO_SIZE) {
 		rx_fifo.back = 0;
 	}
-	rx_fifo.count++;
+	atomic_inc(&rx_fifo.count);
 
 	return true;
 }
 
 static void esb_timer_handler(nrf_timer_event_t event_type, void *context)
 {
-	if (event_type == NRF_TIMER_EVENT_COMPARE1) {
+	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX) && event_type == NRF_TIMER_EVENT_COMPARE1) {
 		if (on_timer_compare1 != NULL) {
 			on_timer_compare1();
 		}
@@ -1204,7 +1270,7 @@ static void start_tx_transaction(void)
 	switch (esb_cfg.protocol) {
 	case ESB_PROTOCOL_ESB:
 		memset(&pdu->type.fixed_pdu, 0, sizeof(pdu->type.fixed_pdu));
-		update_rf_payload_format(current_payload->length);
+		update_rf_payload_format_esb(current_payload->length);
 
 		pdu->type.fixed_pdu.pid = current_payload->pid;
 
@@ -1331,10 +1397,10 @@ static void on_timer_compare1_tx_noack(void)
 	nrf_timer_int_disable(esb_timer.p_reg, NRF_TIMER_INT_COMPARE1_MASK);
 	esb_ppi_for_wait_for_rx_clear();
 
-	interrupt_flags |= INT_TX_SUCCESS_MSK;
+	atomic_set_bit(&interrupt_flags, ESB_EVENT_TX_SUCCESS);
 	tx_fifo_remove_first();
 
-	if (tx_fifo.count == 0) {
+	if (atomic_get(&tx_fifo.count) == 0) {
 		esb_state = ESB_STATE_PTX_TXIDLE;
 		set_evt_interrupt();
 	} else {
@@ -1348,10 +1414,10 @@ static void on_radio_disabled_tx_noack(void)
 	esb_fem_pa_reset();
 	esb_ppi_for_txrx_clear(false, false);
 
-	interrupt_flags |= INT_TX_SUCCESS_MSK;
+	atomic_set_bit(&interrupt_flags, ESB_EVENT_TX_SUCCESS);
 	tx_fifo_remove_first();
 
-	if (tx_fifo.count == 0) {
+	if (atomic_get(&tx_fifo.count) == 0) {
 		esb_state = ESB_STATE_IDLE;
 		errata_216_off();
 		set_evt_interrupt();
@@ -1407,7 +1473,7 @@ static void on_radio_disabled_tx(void)
 	nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 
 	if (esb_cfg.protocol == ESB_PROTOCOL_ESB) {
-		update_rf_payload_format(0);
+		update_rf_payload_format_esb(0);
 	}
 
 	nrf_radio_packetptr_set(NRF_RADIO, rx_payload_buffer);
@@ -1437,7 +1503,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 	/* If the radio has received a packet and the CRC status is OK */
 	if (nrf_radio_event_check(NRF_RADIO, ESB_RADIO_EVENT_END) &&
 	    nrf_radio_crc_status_check(NRF_RADIO)) {
-		interrupt_flags |= INT_TX_SUCCESS_MSK;
+		atomic_set_bit(&interrupt_flags, ESB_EVENT_TX_SUCCESS);
 		last_tx_attempts = esb_cfg.retransmit_count - retransmits_remaining + 1;
 
 		tx_fifo_remove_first();
@@ -1445,7 +1511,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 		if ((esb_cfg.protocol != ESB_PROTOCOL_ESB) && (rx_pdu->type.dpl_pdu.length > 0)) {
 			if (rx_fifo_push_rfbuf(
 				nrf_radio_txaddress_get(NRF_RADIO), rx_pdu->type.dpl_pdu.pid)) {
-				interrupt_flags |= INT_RX_DATA_RECEIVED_MSK;
+				atomic_set_bit(&interrupt_flags, ESB_EVENT_RX_RECEIVED);
 			}
 		}
 
@@ -1453,7 +1519,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
 		}
 
-		if ((tx_fifo.count == 0) || (esb_cfg.tx_mode == ESB_TXMODE_MANUAL)) {
+		if ((atomic_get(&tx_fifo.count) == 0) || (esb_cfg.tx_mode == ESB_TXMODE_MANUAL)) {
 			esb_state = ESB_STATE_IDLE;
 			errata_216_off();
 			set_evt_interrupt();
@@ -1471,7 +1537,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 #endif
 
 		last_tx_attempts = esb_cfg.retransmit_count + 1;
-		interrupt_flags |= INT_TX_FAILED_MSK;
+		atomic_set_bit(&interrupt_flags, ESB_EVENT_TX_FAILED);
 
 		esb_state = ESB_STATE_IDLE;
 		errata_216_off();
@@ -1492,7 +1558,10 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 			nrf_radio_shorts_set(NRF_RADIO,
 				(radio_shorts_common | NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
 		}
-		update_rf_payload_format(current_payload->length);
+
+		if (esb_cfg.protocol == ESB_PROTOCOL_ESB) {
+			update_rf_payload_format_esb(current_payload->length);
+		}
 
 		nrf_radio_packetptr_set(NRF_RADIO, tx_payload_buffer);
 
@@ -1591,7 +1660,9 @@ static void clear_events_restart_rx(void)
 
 	nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
 
-	update_rf_payload_format(esb_cfg.payload_length);
+	if (esb_cfg.protocol == ESB_PROTOCOL_ESB) {
+		update_rf_payload_format_esb(0);
+	}
 
 	nrf_radio_packetptr_set(NRF_RADIO, rx_payload_buffer);
 
@@ -1619,7 +1690,7 @@ static void prepare_ack_pdu_dpl(bool retransmit_payload, struct pipe_info *pipe_
 
 	uint32_t pipe = nrf_radio_rxmatch_get(NRF_RADIO);
 
-	if (tx_fifo.count > 0 && ack_pl_wrap_pipe[pipe] != NULL) {
+	if (atomic_get(&tx_fifo.count) > 0 && ack_pl_wrap_pipe[pipe] != NULL) {
 		current_payload = ack_pl_wrap_pipe[pipe]->p_payload;
 
 		/* Pipe stays in ACK with payload until TX FIFO is empty */
@@ -1627,8 +1698,8 @@ static void prepare_ack_pdu_dpl(bool retransmit_payload, struct pipe_info *pipe_
 		if (pipe_info->ack_payload == true && !retransmit_payload) {
 			ack_pl_wrap_pipe[pipe]->in_use = false;
 			ack_pl_wrap_pipe[pipe] = ack_pl_wrap_pipe[pipe]->p_next;
-			tx_fifo.count--;
-			if (tx_fifo.count > 0 && ack_pl_wrap_pipe[pipe] != NULL) {
+			atomic_dec(&tx_fifo.count);
+			if (atomic_get(&tx_fifo.count) > 0 && ack_pl_wrap_pipe[pipe] != NULL) {
 				current_payload = ack_pl_wrap_pipe[pipe]->p_payload;
 			} else {
 				current_payload = 0;
@@ -1636,23 +1707,20 @@ static void prepare_ack_pdu_dpl(bool retransmit_payload, struct pipe_info *pipe_
 
 			/* ACK payloads also require TX_DS */
 			/* (page 40 of the 'nRF24LE1_Product_Specification_rev1_6.pdf') */
-			interrupt_flags |= INT_TX_SUCCESS_MSK;
+			atomic_set_bit(&interrupt_flags, ESB_EVENT_TX_SUCCESS);
 		}
 
 		if (current_payload != 0) {
 			pipe_info->ack_payload = true;
-			update_rf_payload_format(current_payload->length);
 
 			tx_pdu->type.dpl_pdu.length = current_payload->length;
 			memcpy(tx_pdu->data, current_payload->data, current_payload->length);
 		} else {
 			pipe_info->ack_payload = false;
-			update_rf_payload_format(0);
 			tx_pdu->type.dpl_pdu.length = 0;
 		}
 	} else {
 		pipe_info->ack_payload = false;
-		update_rf_payload_format(0);
 		tx_pdu->type.dpl_pdu.length = 0;
 	}
 
@@ -1673,7 +1741,7 @@ static void on_radio_disabled_rx(void)
 		return;
 	}
 
-	if (rx_fifo.count >= CONFIG_ESB_RX_FIFO_SIZE) {
+	if (atomic_get(&rx_fifo.count) >= CONFIG_ESB_RX_FIFO_SIZE) {
 		clear_events_restart_rx();
 		return;
 	}
@@ -1699,7 +1767,7 @@ static void on_radio_disabled_rx(void)
 			break;
 
 		case ESB_PROTOCOL_ESB:
-			update_rf_payload_format(0);
+			update_rf_payload_format_esb(0);
 
 			tx_pdu->type.fixed_pdu.pid = rx_pdu->type.fixed_pdu.pid;
 			tx_pdu->type.fixed_pdu.rfu1 = 0;
@@ -1733,7 +1801,7 @@ static void on_radio_disabled_rx(void)
 		 * successful.
 		 */
 		if (rx_fifo_push_rfbuf(nrf_radio_rxmatch_get(NRF_RADIO), pipe_info->pid)) {
-			interrupt_flags |= INT_RX_DATA_RECEIVED_MSK;
+			atomic_set_bit(&interrupt_flags, ESB_EVENT_RX_RECEIVED);
 			set_evt_interrupt();
 		}
 	}
@@ -1743,7 +1811,9 @@ static void on_radio_disabled_rx_send_ack(void)
 {
 	esb_fem_for_ack_rx();
 
-	update_rf_payload_format(esb_cfg.payload_length);
+	if (esb_cfg.protocol == ESB_PROTOCOL_ESB) {
+		update_rf_payload_format_esb(0);
+	}
 
 	nrf_radio_packetptr_set(NRF_RADIO, rx_payload_buffer);
 	if (fast_switching) {
@@ -1765,7 +1835,7 @@ static void on_radio_end_monitor(void)
 
 	pipe.pid = rx_pdu->type.dpl_pdu.pid;
 	if (rx_fifo_push_rfbuf(nrf_radio_rxmatch_get(NRF_RADIO), pipe.pid)) {
-		interrupt_flags |= INT_RX_DATA_RECEIVED_MSK;
+		atomic_set_bit(&interrupt_flags, ESB_EVENT_RX_RECEIVED);
 		set_evt_interrupt();
 	}
 }
@@ -1785,12 +1855,7 @@ static void get_and_clear_irqs(uint32_t *interrupts)
 {
 	__ASSERT_NO_MSG(interrupts != NULL);
 
-	unsigned int key = irq_lock();
-
-	*interrupts = interrupt_flags;
-	interrupt_flags = 0;
-
-	irq_unlock(key);
+	*interrupts = atomic_clear(&interrupt_flags);
 }
 
 static void radio_irq_handler(void)
@@ -1843,15 +1908,15 @@ static void esb_evt_irq_handler(void)
 
 	get_and_clear_irqs(&interrupts);
 	if (event_handler != NULL) {
-		if (interrupts & INT_TX_SUCCESS_MSK) {
+		if (interrupts & BIT(ESB_EVENT_TX_SUCCESS)) {
 			event.evt_id = ESB_EVENT_TX_SUCCESS;
 			event_handler(&event);
 		}
-		if (interrupts & INT_TX_FAILED_MSK) {
+		if (interrupts & BIT(ESB_EVENT_TX_FAILED)) {
 			event.evt_id = ESB_EVENT_TX_FAILED;
 			event_handler(&event);
 		}
-		if (interrupts & INT_RX_DATA_RECEIVED_MSK) {
+		if (interrupts & BIT(ESB_EVENT_RX_RECEIVED)) {
 			event.evt_id = ESB_EVENT_RX_RECEIVED;
 			event_handler(&event);
 		}
@@ -1932,7 +1997,7 @@ int esb_init(const struct esb_config *config)
 		return -EINVAL;
 	}
 
-	if (esb_initialized) {
+	if (esb_state != ESB_STATE_UNINITIALIZED) {
 		esb_disable();
 	}
 
@@ -1946,15 +2011,12 @@ int esb_init(const struct esb_config *config)
 		}
 	}
 
-	interrupt_flags = 0;
+	atomic_clear(&interrupt_flags);
 
 	memset(rx_pipe_info, 0, sizeof(rx_pipe_info));
 	memset(pids, 0, sizeof(pids));
 
-	if (!update_radio_parameters()) {
-		LOG_ERR("Failed to update radio parameters");
-		return -EINVAL;
-	}
+	initialize_fifos();
 
 	if (esb_cfg.retransmit_delay < RETRANSMIT_DELAY_MIN) {
 		LOG_ERR("Configured retransmission delay is below the required minimum of %d us",
@@ -1963,13 +2025,18 @@ int esb_init(const struct esb_config *config)
 		return -EINVAL;
 	}
 
+	if (!update_radio_parameters()) {
+		LOG_ERR("Failed to update radio parameters");
+		return -EINVAL;
+	}
+
+	update_radio_addresses(0xFF);
+
 	/* Configure radio address registers according to ESB default values */
 	nrf_radio_base0_set(NRF_RADIO, 0xE7E7E7E7);
 	nrf_radio_base1_set(NRF_RADIO, 0x43434343);
 	nrf_radio_prefix0_set(NRF_RADIO, 0x23C343E7);
 	nrf_radio_prefix1_set(NRF_RADIO, 0x13E363A3);
-
-	initialize_fifos();
 
 	err = sys_timer_init();
 	if (err) {
@@ -1988,8 +2055,12 @@ int esb_init(const struct esb_config *config)
 	nrf_radio_fast_ramp_up_enable_set(NRF_RADIO, esb_cfg.use_fast_ramp_up);
 
 #if defined(CONFIG_ESB_FAST_CHANNEL_SWITCHING)
-		nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_RXREADY_MASK);
+	nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_RXREADY_MASK);
 #endif /* defined(CONFIG_ESB_FAST_CHANNEL_SWITCHING) */
+
+	apply_radio_init_workarounds();
+
+	esb_state = ESB_STATE_IDLE;
 
 #if IS_ENABLED(CONFIG_ESB_DYNAMIC_INTERRUPTS)
 
@@ -2028,85 +2099,22 @@ int esb_init(const struct esb_config *config)
 	}
 	irq_enable(ESB_TIMER_IRQ);
 
-	esb_state = ESB_STATE_IDLE;
-	esb_initialized = true;
-
-	if (nrf52_errata_182()) {
-		/* Check if the device is an nRF52832 Rev. 2. */
-		/* Workaround for nRF52832 rev 2 errata 182 */
-		*(volatile uint32_t *)0x4000173C |= (1 << 10);
-	}
-
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
-	/* Apply HMPAN-102 workaround for nRF54H series */
-	*(volatile uint32_t *)0x5302C7E4 =
-				(((*((volatile uint32_t *)0x5302C7E4)) & 0xFF000FFF) | 0x0012C000);
-
-	/* Apply HMPAN-18 workaround for nRF54H series - load trim values*/
-	if (*(volatile uint32_t *) 0x0FFFE458 != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *) 0x5302C734 = *(volatile uint32_t *) 0x0FFFE458;
-	}
-
-	if (*(volatile uint32_t *) 0x0FFFE45C != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *) 0x5302C738 = *(volatile uint32_t *) 0x0FFFE45C;
-	}
-
-	if (*(volatile uint32_t *) 0x0FFFE460 != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *) 0x5302C73C = *(volatile uint32_t *) 0x0FFFE460;
-	}
-
-	if (*(volatile uint32_t *) 0x0FFFE464 != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *) 0x5302C740 = *(volatile uint32_t *) 0x0FFFE464;
-	}
-
-	if (*(volatile uint32_t *) 0x0FFFE468 != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *) 0x5302C74C = *(volatile uint32_t *) 0x0FFFE468;
-	}
-
-	if (*(volatile uint32_t *) 0x0FFFE46C != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *) 0x5302C7D8 = *(volatile uint32_t *) 0x0FFFE46C;
-	}
-
-	if (*(volatile uint32_t *) 0x0FFFE470 != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *) 0x5302C840 = *(volatile uint32_t *) 0x0FFFE470;
-	}
-
-	if (*(volatile uint32_t *) 0x0FFFE474 != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *) 0x5302C844 = *(volatile uint32_t *) 0x0FFFE474;
-	}
-
-	if (*(volatile uint32_t *) 0x0FFFE478 != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *) 0x5302C848 = *(volatile uint32_t *) 0x0FFFE478;
-	}
-
-	if (*(volatile uint32_t *) 0x0FFFE47C != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *) 0x5302C84C = *(volatile uint32_t *) 0x0FFFE47C;
-	}
-
-	/* Apply HMPAN-103 workaround for nRF54H series*/
-	if ((*(volatile uint32_t *) 0x5302C8A0 == 0x80000000) ||
-		(*(volatile uint32_t *) 0x5302C8A0 == 0x0058120E)) {
-		*(volatile uint32_t *) 0x5302C8A0 = 0x0058090E;
-	}
-
-	*(volatile uint32_t *) 0x5302C8A4 = 0x00F8AA5F;
-	*(volatile uint32_t *) 0x5302C7AC = 0x8672827A;
-	*(volatile uint32_t *) 0x5302C7B0 = 0x7E768672;
-	*(volatile uint32_t *) 0x5302C7B4 = 0x0406007E;
-#endif /* (CONFIG_SOC_SERIES_NRF54HX) */
-
 	return 0;
 }
 
 int esb_suspend(void)
 {
+	if (esb_state == ESB_STATE_UNINITIALIZED) {
+		return -EACCES;
+	}
 	if (esb_state == ESB_STATE_IDLE) {
 		return -EALREADY;
 	}
+
 	on_radio_disabled = NULL;
 
 	/* Stop radio */
-	nrf_radio_shorts_disable(NRF_RADIO, 0xFFFFFFFF);
+	nrf_radio_shorts_set(NRF_RADIO, 0);
 	nrf_radio_int_disable(NRF_RADIO, 0xFFFFFFFF);
 
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
@@ -2117,7 +2125,7 @@ int esb_suspend(void)
 	}
 
 	/* Stop timer */
-	nrf_timer_shorts_disable(esb_timer.p_reg, 0xFFFFFFFF);
+	nrf_timer_shorts_set(esb_timer.p_reg, 0);
 	nrf_timer_int_disable(esb_timer.p_reg, 0xFFFFFFFF);
 
 	esb_ppi_disable_all();
@@ -2131,39 +2139,17 @@ int esb_suspend(void)
 
 void esb_disable(void)
 {
-	on_radio_disabled = NULL;
-
-	esb_irq_disable();
-
-	nrf_radio_shorts_disable(NRF_RADIO, 0xFFFFFFFF);
-	nrf_radio_int_disable(NRF_RADIO, 0xFFFFFFFF);
-
-	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
-	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_DISABLE);
-
-	while (!nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_DISABLED)) {
-		/* wait for register to settle */
+	if (esb_state == ESB_STATE_UNINITIALIZED) {
+		return;
 	}
 
-	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
-
-	esb_ppi_disable_all();
-	esb_fem_reset();
+	esb_irq_disable();
+	esb_suspend();
 
 	sys_timer_deinit();
 	esb_ppi_deinit();
 
-	/* Radio ramp-up time to default mode */
-	nrf_radio_fast_ramp_up_enable_set(NRF_RADIO, false);
-
-	esb_state = ESB_STATE_IDLE;
-	errata_216_off();
-	esb_initialized = false;
-
-	reset_fifos();
-
-	memset(rx_pipe_info, 0, sizeof(rx_pipe_info));
-	memset(pids, 0, sizeof(pids));
+	esb_state = ESB_STATE_UNINITIALIZED;
 }
 
 bool esb_is_idle(void)
@@ -2184,7 +2170,7 @@ static struct payload_wrap *find_free_payload_cont(void)
 
 int esb_write_payload(const struct esb_payload *payload)
 {
-	if (!esb_initialized) {
+	if (esb_state == ESB_STATE_UNINITIALIZED) {
 		return -EACCES;
 	}
 
@@ -2202,15 +2188,13 @@ int esb_write_payload(const struct esb_payload *payload)
 		return -EMSGSIZE;
 	}
 
-	if (tx_fifo.count >= CONFIG_ESB_TX_FIFO_SIZE) {
+	if (atomic_get(&tx_fifo.count) >= CONFIG_ESB_TX_FIFO_SIZE) {
 		return -ENOMEM;
 	}
 
 	if (payload->pipe >= CONFIG_ESB_PIPE_COUNT) {
 		return -EINVAL;
 	}
-
-	unsigned int key = irq_lock();
 
 	if (esb_cfg.mode == ESB_MODE_PTX) {
 		memcpy(tx_fifo.payload[tx_fifo.back], payload, sizeof(struct esb_payload));
@@ -2222,7 +2206,8 @@ int esb_write_payload(const struct esb_payload *payload)
 			tx_fifo.back = 0;
 		}
 
-		tx_fifo.count++;
+
+		atomic_inc(&tx_fifo.count);
 	} else {
 		struct payload_wrap *new_ack_payload = find_free_payload_cont();
 
@@ -2231,8 +2216,7 @@ int esb_write_payload(const struct esb_payload *payload)
 			new_ack_payload->p_next = NULL;
 			memcpy(new_ack_payload->p_payload, payload, sizeof(struct esb_payload));
 
-			pids[payload->pipe] = (pids[payload->pipe] + 1) % (PID_MAX + 1);
-			new_ack_payload->p_payload->pid = pids[payload->pipe];
+			irq_disable(ESB_RADIO_IRQ_NUMBER);
 
 			if (ack_pl_wrap_pipe[payload->pipe] == NULL) {
 				ack_pl_wrap_pipe[payload->pipe] = new_ack_payload;
@@ -2244,11 +2228,12 @@ int esb_write_payload(const struct esb_payload *payload)
 				}
 				pl->p_next = (struct payload_wrap *)new_ack_payload;
 			}
-			tx_fifo.count++;
+
+			atomic_inc(&tx_fifo.count);
+
+			irq_enable(ESB_RADIO_IRQ_NUMBER);
 		}
 	}
-
-	irq_unlock(key);
 
 	if (esb_cfg.mode == ESB_MODE_PTX && esb_cfg.tx_mode == ESB_TXMODE_AUTO &&
 	    (esb_state == ESB_STATE_IDLE ||
@@ -2261,18 +2246,15 @@ int esb_write_payload(const struct esb_payload *payload)
 
 int esb_read_rx_payload(struct esb_payload *payload)
 {
-	if (!esb_initialized) {
+	if (esb_state == ESB_STATE_UNINITIALIZED) {
 		return -EACCES;
 	}
 	if (payload == NULL) {
 		return -EINVAL;
 	}
-
-	if (rx_fifo.count == 0) {
+	if (atomic_get(&rx_fifo.count) == 0) {
 		return -ENODATA;
 	}
-
-	unsigned int key = irq_lock();
 
 	payload->length = rx_fifo.payload[rx_fifo.front]->length;
 	payload->pipe = rx_fifo.payload[rx_fifo.front]->pipe;
@@ -2286,24 +2268,20 @@ int esb_read_rx_payload(struct esb_payload *payload)
 		rx_fifo.front = 0;
 	}
 
-	rx_fifo.count--;
-
-	irq_unlock(key);
+	atomic_dec(&rx_fifo.count);
 
 	return 0;
 }
 
 int esb_start_tx(void)
 {
-	if (esb_cfg.mode == ESB_MODE_MONITOR) {
-		return -EPERM;
-	}
-
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
 	}
-
-	if (tx_fifo.count == 0) {
+	if (esb_cfg.mode != ESB_MODE_PTX) {
+		return -EPERM;
+	}
+	if (atomic_get(&tx_fifo.count) == 0) {
 		return -ENODATA;
 	}
 
@@ -2317,6 +2295,9 @@ int esb_start_rx(void)
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
 	}
+	if (esb_cfg.mode == ESB_MODE_PTX) {
+		return -EPERM;
+	}
 
 	start_rx_listening();
 
@@ -2325,8 +2306,8 @@ int esb_start_rx(void)
 
 int esb_stop_rx(void)
 {
-	if ((esb_state != ESB_STATE_PRX) && (esb_state != ESB_STATE_PRX_SEND_ACK)) {
-		return -EINVAL;
+	if (esb_cfg.mode == ESB_MODE_PTX) {
+		return -EPERM;
 	}
 
 	return esb_suspend();
@@ -2334,19 +2315,17 @@ int esb_stop_rx(void)
 
 int esb_flush_tx(void)
 {
-	if (!esb_initialized) {
+	if (esb_state == ESB_STATE_UNINITIALIZED) {
 		return -EACCES;
 	}
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
 	}
-	if (tx_fifo.count == 0) {
+	if (atomic_get(&tx_fifo.count) == 0) {
 		return 0;
 	}
 
-	unsigned int key = irq_lock();
-
-	tx_fifo.count = 0;
+	atomic_clear(&tx_fifo.count);
 	tx_fifo.back = 0;
 	tx_fifo.front = 0;
 
@@ -2359,55 +2338,46 @@ int esb_flush_tx(void)
 		ack_pl_wrap_pipe[i] = NULL;
 	}
 
-	irq_unlock(key);
-
 	return 0;
 }
 
 int esb_pop_tx(void)
 {
-	if (!esb_initialized) {
+	if (esb_state == ESB_STATE_UNINITIALIZED) {
 		return -EACCES;
 	}
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
 	}
-	if (tx_fifo.count == 0) {
+	if (atomic_get(&tx_fifo.count) == 0) {
 		return -ENODATA;
 	}
 
-	unsigned int key = irq_lock();
-
-	if (++tx_fifo.front >= CONFIG_ESB_TX_FIFO_SIZE) {
-		tx_fifo.front = 0;
-	}
-	tx_fifo.count--;
-
-	irq_unlock(key);
+	tx_fifo_remove_first();
 
 	return 0;
 }
 
 bool esb_tx_full(void)
 {
-	return tx_fifo.count >= CONFIG_ESB_TX_FIFO_SIZE;
+	return atomic_get(&tx_fifo.count) >= CONFIG_ESB_TX_FIFO_SIZE;
 }
 
 int esb_flush_rx(void)
 {
-	if (!esb_initialized) {
+	if (esb_state == ESB_STATE_UNINITIALIZED) {
 		return -EACCES;
 	}
 
-	unsigned int key = irq_lock();
+	irq_disable(ESB_RADIO_IRQ_NUMBER);
 
-	rx_fifo.count = 0;
+	atomic_clear(&rx_fifo.count);
 	rx_fifo.back = 0;
 	rx_fifo.front = 0;
 
 	memset(rx_pipe_info, 0, sizeof(rx_pipe_info));
 
-	irq_unlock(key);
+	irq_enable(ESB_RADIO_IRQ_NUMBER);
 
 	return 0;
 }
@@ -2589,9 +2559,11 @@ int esb_set_bitrate(enum esb_bitrate bitrate)
 		return -EBUSY;
 	}
 
-	esb_cfg.bitrate = bitrate;
+	if (!update_radio_bitrate(bitrate)) {
+		return -EINVAL;
+	}
 
-	return update_radio_bitrate() ? 0 : -EINVAL;
+	return 0;
 }
 
 int esb_reuse_pid(uint8_t pipe)
