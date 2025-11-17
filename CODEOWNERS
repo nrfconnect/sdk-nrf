@@ -55,7 +55,6 @@
 
 **/shields/                               @nrfconnect/ncs-co-build-system
 
-/boards/shields/coverage_support/         @nrfconnect/ncs-co-build-system @nrfconnect/ncs-low-level-test
 /boards/shields/nrf2220ek/                @nrfconnect/ncs-co-build-system @nrfconnect/ncs-radio-sw
 /boards/shields/nrf2240ek/                @nrfconnect/ncs-co-build-system @nrfconnect/ncs-radio-sw
 /boards/shields/nrf21540ek/               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-radio-sw
@@ -739,10 +738,11 @@
 
 # Snippets
 /snippets/ci-shell/                       @nrfconnect/ncs-protocols-serialization
+/snippets/coverage_support/               @nrfconnect/ncs-low-level-test
 /snippets/hpf/                            @nrfconnect/ncs-ll-ursus
 /snippets/hw-flow-control/                @nrfconnect/ncs-low-level-test @miha-nordic
-/snippets/matter-diagnostic-logs/         @nrfconnect/ncs-matter
 /snippets/matter-debug/                   @nrfconnect/ncs-matter
+/snippets/matter-diagnostic-logs/         @nrfconnect/ncs-matter
 /snippets/nordic-bt-rpc/                  @ppryga-nordic
 /snippets/nrf70-driver-debug/             @krish2718 @sachinthegreen
 /snippets/nrf70-driver-verbose-debug/     @krish2718 @sachinthegreen
