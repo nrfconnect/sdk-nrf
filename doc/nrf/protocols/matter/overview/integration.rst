@@ -97,6 +97,11 @@ For this design, the Wi-Fi driver on the application core communicates with the 
 
    Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF53 with the nRF7002 Wi-Fi 6 Companion IC)
 
+.. figure:: images/matter_platform_design_nRF54lm20_wifi.svg
+   :alt: Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF54LM20 with the nRF7002)
+
+   Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF54LM20 with the nRF7002)
+
 .. _ug_matter_overview_architecture_integration_designs_switchable:
 
 Switchable Matter over Wi-Fi and Matter over Thread
