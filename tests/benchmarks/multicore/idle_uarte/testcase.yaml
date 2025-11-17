@@ -118,7 +118,7 @@ tests:
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_normal.overlay;disable_s2ram.overlay"
       - CONF_FILE=coverage.conf
-      - SHIELD=coverage_support
+      - SNIPPET=coverage_support
     harness: console
     harness_config:
       fixture: gpio_loopback

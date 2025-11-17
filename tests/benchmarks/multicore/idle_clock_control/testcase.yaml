@@ -102,6 +102,6 @@ tests:
         - ".*Testing done.*"
     extra_args:
       - CONF_FILE=coverage.conf
-      - SHIELD=coverage_support
+      - SNIPPET=coverage_support
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
