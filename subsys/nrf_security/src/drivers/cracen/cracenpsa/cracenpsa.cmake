@@ -70,6 +70,7 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
     ${CMAKE_CURRENT_LIST_DIR}/src/ecdsa.c
     ${CMAKE_CURRENT_LIST_DIR}/src/ecc.c
     ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/ed448.c
     ${CMAKE_CURRENT_LIST_DIR}/src/hmac.c
     ${CMAKE_CURRENT_LIST_DIR}/src/rndinrange.c
   )
@@ -152,6 +153,7 @@ endif()
 if(CONFIG_PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/ed448.c
     ${CMAKE_CURRENT_LIST_DIR}/src/montgomery.c
   )
 endif()

@@ -115,7 +115,58 @@ Developing with custom boards
 Security
 ========
 
-|no_changes_yet_note|
+* Added:
+
+  * CRACEN and nrf_oberon driver support for nRF54LM20 and nRF54LV10.
+    For the list of supported features and limitations, see the :ref:`ug_crypto_supported_features` page.
+
+  * Support for disabling Internal Trusted Storage (ITS) on nRF54L series devices when using
+    :kconfig:option:`CONFIG_TFM_PARTITION_CRYPTO` with Trusted Firmware-M (TF-M) through the
+    :kconfig:option:`CONFIG_TFM_PARTITION_INTERNAL_TRUSTED_STORAGE` Kconfig option.
+
+  * Support for AES in counter mode and CBC mode using CRACEN for the :zephyr:board:`nrf54lm20dk`.
+
+  * Experimental support for TF-M on the nRF54LV10A SoC.
+  * Experimental support for NSIB and MCUBoot on the nRF54LV10A SoC.
+  * Experimental support for KMU on the nRF54LV10A SoC.
+  * Experimental support for compression and encryption on the nRF54LV10A SoC.
+
+  * Support for the PureEdDSA and HashEdDSA for Ed448 curve in the :ref:`CRACEN driver <crypto_drivers_cracen>`.
+  * Support for the SHAKE256 hash function with 64-byte and 114-byte digests in the :ref:`CRACEN driver <crypto_drivers_cracen>`.
+
+* Updated:
+
+  * The :ref:`security_index` page with a table that lists the versions of security components implemented in the |NCS|.
+  * The :ref:`secure_storage_in_ncs` page with updated information about the secure storage configuration in the |NCS|.
+    Also renamed the page from "Trusted storage in the |NCS|."
+  * The :ref:`ug_crypto_supported_features` page with the missing entries for the HMAC key type (:kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`).
+  * The :ref:`ug_nrf54l_crypto_kmu_supported_key_types` section specific for the nRF54L Series devices to list the supported algorithms for each key type.
+  * The :ref:`ug_nrf54l_developing_provision_kmu` page with more detailed information about requirements for KMU provisioning and steps for provisioning KMU for development and production.
+    This also led to some updates to the :ref:`ug_nrf54l_crypto_kmu_storing_keys` section on the :ref:`ug_nrf54l_cryptography` page.
+
+* Removed:
+
+  * Support for curve types smaller than 224 bytes from the :ref:`CRACEN driver <crypto_drivers_cracen>`.
+  * Support for some curve types that were marked as unsupported.
+    The :ref:`ug_crypto_supported_features` page has been updated accordingly.
+
+Mbed TLS
+--------
+
+* Updated to version 3.6.5.
+
+Trusted Firmware-M
+------------------
+
+* Updated:
+
+  * The TF-M version to 2.2.0.
+  * Documentation to clarify the support for TF-M on devices emulated using the nRF54L15 DK.
+    nRF54L05 does not support TF-M.
+    nRF54L10 supports TF-M experimentally.
+
+* Removed several documentation pages from the :ref:`tfm_wrapper` section that were misleading or not relevant for understanding the TF-M integration in the |NCS|.
+  The section now includes only pages that provide background information about TF-M design that are relevant for the |NCS|.
 
 Protocols
 =========

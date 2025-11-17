@@ -39,8 +39,7 @@
  */
 #if defined(PSA_NEED_CRACEN_SHA3_224)
 #define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA3_224
-#elif defined(PSA_NEED_CRACEN_SHA3_256)
-/* SHAKE256 has the same size but doesn't have a PSA_NEED yet */
+#elif defined(PSA_NEED_CRACEN_SHA3_256) || defined(PSA_NEED_CRACEN_SHAKE256_512)
 #define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA3_256
 #elif defined(PSA_NEED_CRACEN_SHA_512) || defined(PSA_NEED_CRACEN_SHA_384)
 #define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA2_512
@@ -67,8 +66,7 @@
  */
 #if defined(PSA_NEED_CRACEN_SHA3_224)
 #define SX_HASH_OPERATION_CONTEXT_SZ 344
-#elif defined(PSA_NEED_CRACEN_SHA3_256)
-/* SHAKE256 has the same size but doesn't have a PSA_NEED yet */
+#elif defined(PSA_NEED_CRACEN_SHA3_256) || defined(PSA_NEED_CRACEN_SHAKE256_512)
 #define SX_HASH_OPERATION_CONTEXT_SZ 336
 #elif defined(PSA_NEED_CRACEN_SHA3_384)
 #define SX_HASH_OPERATION_CONTEXT_SZ 304
@@ -172,6 +170,7 @@ extern const struct sxhashalg sxhashalg_sha3_512;
 
 /** Hash algorithm SHAKE256, with output size fixed to 114 bytes (for Ed448). */
 extern const struct sxhashalg sxhashalg_shake256_114;
+extern const struct sxhashalg sxhashalg_shake256_64;
 
 /** GM/T 0004-2012: SM3 cryptographic hash algorithm */
 extern const struct sxhashalg sxhashalg_sm3;
