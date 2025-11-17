@@ -28,6 +28,20 @@ extern "C" {
  *        acknowledgment, and automatic retransmission of lost packets.
  */
 
+
+#ifdef CONFIG_ESB
+#define ESB_MAX_PAYLOAD_LENGTH CONFIG_ESB_MAX_PAYLOAD_LENGTH
+#elif CONFIG_ESB_MAX_DATA_PAYLOAD_LENGTH > CONFIG_ESB_MAX_ACK_PAYLOAD_LENGTH
+#define ESB_MAX_PAYLOAD_LENGTH CONFIG_ESB_MAX_DATA_PAYLOAD_LENGTH
+#else
+#define ESB_MAX_PAYLOAD_LENGTH CONFIG_ESB_MAX_ACK_PAYLOAD_LENGTH
+#endif
+
+#define ESB_FAST_SWITCHING_SUPPORTED (!IS_ENABLED(CONFIG_SOC_SERIES_NRF51X) && \
+	!IS_ENABLED(CONFIG_SOC_SERIES_NRF52X) && !IS_ENABLED(CONFIG_SOC_SERIES_NRF53X))
+
+#if defined(CONFIG_ESB) || defined(__DOXYGEN__)
+
 /** @brief Default radio parameters.
  *
  *  Roughly equal to the nRF24Lxx default parameters except for CRC,
@@ -69,6 +83,27 @@ extern "C" {
 		.use_fast_ramp_up = false                                      \
 	}
 
+#endif /* CONFIG_ESB */
+
+#if defined(CONFIG_ESB_LITE)
+
+#define ESB_DEFAULT_CONFIG                                                     \
+	{                                                                      \
+		.protocol = ESB_PROTOCOL_ESB_DPL,                              \
+		.mode = ESB_MODE_PTX,                                          \
+		.event_handler = 0,                                            \
+		.bitrate = ESB_BITRATE_2MBPS,                                  \
+		.crc = ESB_CRC_16BIT,                                          \
+		.tx_output_power = 0,                                          \
+		.retransmit_delay = 600,                                       \
+		.retransmit_count = 3,                                         \
+		.tx_mode = ESB_TXMODE_AUTO,                                    \
+		.ack_sending_mode = ESB_ACK_DYNAMIC,                           \
+		.switching_time = ESB_SWITCHING_DEFAULT,                       \
+	}
+
+#endif
+
 /** @brief Macro to create an initializer for a TX data packet.
  *
  *  This macro generates an initializer.
@@ -92,7 +127,9 @@ extern "C" {
 
 /** @brief Enhanced ShockBurst protocols. */
 enum esb_protocol {
+#if defined(CONFIG_ESB) || defined(__DOXYGEN__)
 	ESB_PROTOCOL_ESB,	/**< Fixed payload length. */
+#endif /* CONFIG_ESB */
 	ESB_PROTOCOL_ESB_DPL	/**< Dynamic payload length. */
 };
 
@@ -100,7 +137,9 @@ enum esb_protocol {
 enum esb_mode {
 	ESB_MODE_PTX,		/**< Primary transmitter mode. */
 	ESB_MODE_PRX,		/**< Primary receiver mode.    */
+#if defined(CONFIG_ESB) || defined(__DOXYGEN__)
 	ESB_MODE_MONITOR	/**< Primary monitor mode.     */
+#endif /* CONFIG_ESB */
 };
 
 /** @brief Enhanced ShockBurst bitrate modes. */
@@ -131,133 +170,16 @@ enum esb_bitrate {
 
 /** @brief Enhanced ShockBurst CRC modes. */
 enum esb_crc {
+#if defined(CONFIG_ESB_LITE) || defined(__DOXYGEN__)
+	ESB_CRC_24BIT = 3, /**< Use three-byte CRC. Only LITE implementation. */
+	ESB_CRC_16BIT = 2, /**< Use two-byte CRC. */
+	ESB_CRC_8BIT = 1,  /**< Use one-byte CRC. */
+	ESB_CRC_OFF = 0,   /**< Disable CRC. */
+#else
 	ESB_CRC_16BIT = RADIO_CRCCNF_LEN_Two,	/**< Use two-byte CRC. */
 	ESB_CRC_8BIT = RADIO_CRCCNF_LEN_One,	/**< Use one-byte CRC. */
 	ESB_CRC_OFF = RADIO_CRCCNF_LEN_Disabled /**< Disable CRC. */
-};
-
-/** @brief Enhanced ShockBurst radio transmission power modes. */
-enum esb_tx_power {
-#if defined(RADIO_TXPOWER_TXPOWER_Pos10dBm) || defined(__DOXYGEN__)
-	/** +10 dBm radio transmit power. */
-	ESB_TX_POWER_10DBM = RADIO_TXPOWER_TXPOWER_Pos10dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos9dBm) || defined(__DOXYGEN__)
-	/** +9 dBm radio transmit power. */
-	ESB_TX_POWER_9DBM = RADIO_TXPOWER_TXPOWER_Pos9dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos8dBm) || defined(__DOXYGEN__)
-	/** +8 dBm radio transmit power. */
-	ESB_TX_POWER_8DBM = RADIO_TXPOWER_TXPOWER_Pos8dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos7dBm) || defined(__DOXYGEN__)
-	/** +7 dBm radio transmit power. */
-	ESB_TX_POWER_7DBM = RADIO_TXPOWER_TXPOWER_Pos7dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos6dBm) || defined(__DOXYGEN__)
-	/** +6 dBm radio transmit power. */
-	ESB_TX_POWER_6DBM = RADIO_TXPOWER_TXPOWER_Pos6dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos5dBm) || defined(__DOXYGEN__)
-	/** +5 dBm radio transmit power. */
-	ESB_TX_POWER_5DBM = RADIO_TXPOWER_TXPOWER_Pos5dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos4dBm) || defined(__DOXYGEN__)
-	/** +4 dBm radio transmit power. */
-	ESB_TX_POWER_4DBM = RADIO_TXPOWER_TXPOWER_Pos4dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos3dBm) || defined(__DOXYGEN__)
-	/** +3 dBm radio transmit power. */
-	ESB_TX_POWER_3DBM = RADIO_TXPOWER_TXPOWER_Pos3dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos2dBm) || defined(__DOXYGEN__)
-	/** +2 dBm radio transmit power. */
-	ESB_TX_POWER_2DBM = RADIO_TXPOWER_TXPOWER_Pos2dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos1dBm) || defined(__DOXYGEN__)
-	/** +1 dBm radio transmit power. */
-	ESB_TX_POWER_1DBM = RADIO_TXPOWER_TXPOWER_Pos1dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_0dBm) || defined(__DOXYGEN__)
-	/** 0 dBm radio transmit power. */
-	ESB_TX_POWER_0DBM = RADIO_TXPOWER_TXPOWER_0dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg1dBm) || defined(__DOXYGEN__)
-	/** -1 dBm radio transmit power. */
-	ESB_TX_POWER_NEG1DBM = RADIO_TXPOWER_TXPOWER_Neg1dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg2dBm) || defined(__DOXYGEN__)
-	/** -2 dBm radio transmit power. */
-	ESB_TX_POWER_NEG2DBM = RADIO_TXPOWER_TXPOWER_Neg2dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg3dBm) || defined(__DOXYGEN__)
-	/** -3 dBm radio transmit power. */
-	ESB_TX_POWER_NEG3DBM = RADIO_TXPOWER_TXPOWER_Neg3dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg4dBm) || defined(__DOXYGEN__)
-	/** -4 dBm radio transmit power. */
-	ESB_TX_POWER_NEG4DBM = RADIO_TXPOWER_TXPOWER_Neg4dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg5dBm) || defined(__DOXYGEN__)
-	/** -5 dBm radio transmit power. */
-	ESB_TX_POWER_NEG5DBM = RADIO_TXPOWER_TXPOWER_Neg5dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg6dBm) || defined(__DOXYGEN__)
-	/** -6 dBm radio transmit power. */
-	ESB_TX_POWER_NEG6DBM = RADIO_TXPOWER_TXPOWER_Neg6dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg7dBm) || defined(__DOXYGEN__)
-	/** -7 dBm radio transmit power. */
-	ESB_TX_POWER_NEG7DBM = RADIO_TXPOWER_TXPOWER_Neg7dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg8dBm) || defined(__DOXYGEN__)
-	/** -8 dBm radio transmit power. */
-	ESB_TX_POWER_NEG8DBM = RADIO_TXPOWER_TXPOWER_Neg8dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg9dBm) || defined(__DOXYGEN__)
-	/** -9 dBm radio transmit power. */
-	ESB_TX_POWER_NEG9DBM = RADIO_TXPOWER_TXPOWER_Neg9dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg10dBm) || defined(__DOXYGEN__)
-	/** -10 dBm radio transmit power. */
-	ESB_TX_POWER_NEG10DBM = RADIO_TXPOWER_TXPOWER_Neg10dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg12dBm) || defined(__DOXYGEN__)
-	/** -12 dBm radio transmit power. */
-	ESB_TX_POWER_NEG12DBM = RADIO_TXPOWER_TXPOWER_Neg12dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg14dBm) || defined(__DOXYGEN__)
-	/** -14 dBm radio transmit power. */
-	ESB_TX_POWER_NEG14DBM = RADIO_TXPOWER_TXPOWER_Neg14dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg16dBm) || defined(__DOXYGEN__)
-	/** -16 dBm radio transmit power. */
-	ESB_TX_POWER_NEG16DBM = RADIO_TXPOWER_TXPOWER_Neg16dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg20dBm) || defined(__DOXYGEN__)
-	/** -20 dBm radio transmit power. */
-	ESB_TX_POWER_NEG20DBM = RADIO_TXPOWER_TXPOWER_Neg20dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg26dBm) || defined(__DOXYGEN__)
-	/** -26 dBm radio transmit power. */
-	ESB_TX_POWER_NEG26DBM = RADIO_TXPOWER_TXPOWER_Neg26dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg30dBm) || defined(__DOXYGEN__)
-	/** -30 dBm radio transmit power. */
-	ESB_TX_POWER_NEG30DBM = RADIO_TXPOWER_TXPOWER_Neg30dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg40dBm) || defined(__DOXYGEN__)
-	/** -40 dBm radio transmit power. */
-	ESB_TX_POWER_NEG40DBM = RADIO_TXPOWER_TXPOWER_Neg40dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg46dBm) || defined(__DOXYGEN__)
-	/** -46 dBm radio transmit power. */
-	ESB_TX_POWER_NEG46DBM = RADIO_TXPOWER_TXPOWER_Neg46dBm,
-#endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg70dBm) || defined(__DOXYGEN__)
-	/** -70 dBm radio transmit power. */
-	ESB_TX_POWER_NEG70DBM = RADIO_TXPOWER_TXPOWER_Neg70dBm,
-#endif
+#endif /* CONFIG_ESB_LITE */
 };
 
 /** @brief Enhanced ShockBurst transmission modes. */
@@ -277,6 +199,32 @@ enum esb_tx_mode {
 	ESB_TXMODE_MANUAL_START
 };
 
+#if defined(CONFIG_ESB_LITE) || defined(__DOXYGEN__)
+
+enum esb_ack_sending_mode {
+	ESB_ACK_NEVER,      /**< No ACKs are sent ignoring noack flag in packets. */
+	ESB_ACK_ALWAYS,     /**< ACKs are sent for all packets ignoring noack flag. */
+	ESB_ACK_DYNAMIC,    /**< ACKs are sent for packets with the noack flag cleared. */
+};
+
+enum esb_switching_time {
+	ESB_SWITCHING_FAST,    /**< 20 µs, requires at least nRF54 series. */
+	ESB_SWITCHING_NORMAL,  /**< 40 µs, requires at least nRF52 series. */
+	ESB_SWITCHING_LEGACY,  /**< 130 µs for compatibility with older devices. */
+#if ESB_FAST_SWITCHING_SUPPORTED || defined(__DOXYGEN__)
+	ESB_SWITCHING_DEFAULT = ESB_SWITCHING_FAST, /**< It is equal to ESB_SWITCHING_FAST if
+						      *  available, otherwise it is
+						      *  ESB_SWITCHING_NORMAL.
+						      */
+#else
+	ESB_SWITCHING_DEFAULT = ESB_SWITCHING_NORMAL,
+#endif
+};
+
+
+
+#endif /* CONFIG_ESB_LITE */
+
 /** @brief Enhanced ShockBurst event IDs. */
 enum esb_evt_id {
 	ESB_EVENT_TX_SUCCESS, /**< Event triggered on TX success. */
@@ -290,15 +238,20 @@ enum esb_evt_id {
  *  received packet with a payload.
  */
 struct esb_payload {
-	uint8_t length; /**< Length of the packet when not in DPL mode. */
-	uint8_t pipe;   /**< Pipe used for this payload. */
-	int8_t rssi;   /**< RSSI for the received packet. */
-	uint8_t noack;  /**< Flag indicating that this packet will not be
-		       *  acknowledged. Flag is ignored when selective auto
-		       *  ack is enabled.
-		       */
-	uint8_t pid;    /**< PID assigned during communication. */
-	uint8_t data[CONFIG_ESB_MAX_PAYLOAD_LENGTH]; /**< The payload data. */
+	uint8_t length;  /**< Length of the packet when not in DPL mode. */
+	uint8_t pipe;    /**< Pipe used for this payload. */
+	int8_t rssi;     /**< RSSI for the received packet. */
+	uint8_t noack;   /**< Flag indicating that this packet will not be
+			   *  acknowledged. Flag is ignored when selective auto
+			   *  ack is enabled.
+			   */
+#if defined(CONFIG_ESB_LITE) || defined(__DOXYGEN__)
+	uint8_t hold_tx; /**< Flag indicating that the transmitter should
+			   *  hold TX after transmission.
+			   */
+#endif /* CONFIG_ESB_LITE */
+	uint8_t pid;     /**< PID assigned during communication. */
+	uint8_t data[ESB_MAX_PAYLOAD_LENGTH]; /**< The payload data. */
 };
 
 /** @brief Enhanced ShockBurst event. */
@@ -337,13 +290,17 @@ struct esb_config {
 	/* Control settings */
 	enum esb_tx_mode tx_mode;	/**< Transmission mode. */
 
+#if defined(CONFIG_ESB) || defined(__DOXYGEN__)
+
 	uint8_t payload_length; /**< Length of the payload (maximum length depends
-			       *  on the platforms that are used on each side).
-			       */
+				  *  on the platforms that are used on each side).
+				  *  Removed in ESB Lite implementation.
+				  */
 	bool selective_auto_ack; /**< Selective auto acknowledgement.
 				   *  When this feature is disabled, all packets
 				   *  will be acknowledged ignoring the noack
-				   *  field.
+				   *  field. Removed in ESB Lite implementation,
+				   *  see `ack_sending_mode` field instead.
 				   */
 	bool use_fast_ramp_up; /**<  When this feature is enabled, radio TXEN and
 				 *  RXEN delays are reduced from 130 µs to 40 µs.
@@ -352,9 +309,28 @@ struct esb_config {
 				 *  nRF24L Series devices, a hard-coded 130 µs delay is
 				 *  implemented. If ESB connection is achieved only
 				 *  between nRF52 and/or nRF53 Series devices, this delay can
-				 *  be reduced to 40 µs.
+				 *  be reduced to 40 µs. Removed in ESB Lite implementation,
+				 *  see `switching_time` field instead.
 				 */
+
+#endif /* CONFIG_ESB */
+
+#if defined(CONFIG_ESB_LITE) || defined(__DOXYGEN__)
+
+	enum esb_ack_sending_mode ack_sending_mode; /**< ACK sending mode. Available only for
+						      * ESB Lite implementation.
+						      */
+	enum esb_switching_time switching_time;     /**< Radio switching time. Available only for
+						      * ESB Lite implementation.
+						      */
+#endif /* CONFIG_ESB_LITE */
 };
+
+#ifdef CONFIG_ESB_LITE
+#define ESB_LITE_INLINE static inline
+#else
+#define ESB_LITE_INLINE
+#endif
 
 /** @brief Initialize the Enhanced ShockBurst module.
  *
@@ -364,6 +340,8 @@ struct esb_config {
  */
 int esb_init(const struct esb_config *config);
 
+#if defined(CONFIG_ESB) || defined(__DOXYGEN__)
+
 /** @brief Suspend the Enhanced ShockBurst module.
  *
  *  Calling this function stops ongoing communications without changing the
@@ -372,7 +350,9 @@ int esb_init(const struct esb_config *config);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int esb_suspend(void);
+ESB_LITE_INLINE int esb_suspend(void);
+
+#endif /* CONFIG_ESB */
 
 /** @brief Disable the Enhanced ShockBurst module.
  *
@@ -382,7 +362,7 @@ int esb_suspend(void);
  *  @note All queues are flushed by this function.
  *
  */
-void esb_disable(void);
+ESB_LITE_INLINE void esb_disable(void);
 
 /** @brief Check if the Enhanced ShockBurst module is idle.
  *
@@ -402,7 +382,7 @@ bool esb_is_idle(void);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int esb_write_payload(const struct esb_payload *payload);
+ESB_LITE_INLINE int esb_write_payload(const struct esb_payload *payload);
 
 /** @brief Read a payload.
  *
@@ -411,28 +391,28 @@ int esb_write_payload(const struct esb_payload *payload);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int esb_read_rx_payload(struct esb_payload *payload);
+ESB_LITE_INLINE int esb_read_rx_payload(struct esb_payload *payload);
 
 /** @brief Start transmitting data.
  *
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int esb_start_tx(void);
+ESB_LITE_INLINE int esb_start_tx(void);
 
 /** @brief Start receiving data.
  *
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int esb_start_rx(void);
+ESB_LITE_INLINE int esb_start_rx(void);
 
 /** @brief Stop data reception.
  *
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int esb_stop_rx(void);
+ESB_LITE_INLINE int esb_stop_rx(void);
 
 /** @brief Flush the TX buffer.
  *
@@ -446,7 +426,7 @@ int esb_stop_rx(void);
  * @retval -EACCES If ESB is not initialized.
  * @retval -EBUSY  If radio is transmitting.
  */
-int esb_flush_tx(void);
+ESB_LITE_INLINE int esb_flush_tx(void);
 
 /** @brief Pop the first item from the TX buffer.
  *
@@ -455,20 +435,20 @@ int esb_flush_tx(void);
  * @retval -EBUSY  If radio is transmitting.
  * @retval -ENODATA If TX FIFO is empty.
  */
-int esb_pop_tx(void);
+ESB_LITE_INLINE int esb_pop_tx(void);
 
 /** @brief Check if there is some free space left in TX FIFO.
  *
  * @retval true when the TX FIFO is full, otherwise false.
  */
-bool esb_tx_full(void);
+ESB_LITE_INLINE bool esb_tx_full(void);
 
 /** @brief Flush the RX buffer.
  *
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int esb_flush_rx(void);
+ESB_LITE_INLINE int esb_flush_rx(void);
 
 /** @brief Set the length of the address.
  *
@@ -576,7 +556,7 @@ int esb_set_tx_power(int8_t tx_output_power);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int esb_set_retransmit_delay(uint16_t delay);
+ESB_LITE_INLINE int esb_set_retransmit_delay(uint16_t delay);
 
 /** @brief Set the number of retransmission attempts.
  *  @details If the CONFIG_ESB_NEVER_DISABLE_TX Kconfig option is enabled,
@@ -589,7 +569,7 @@ int esb_set_retransmit_delay(uint16_t delay);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int esb_set_retransmit_count(uint16_t count);
+ESB_LITE_INLINE int esb_set_retransmit_count(uint16_t count);
 
 /** @brief Set the radio bitrate.
  *
@@ -612,7 +592,134 @@ int esb_set_bitrate(enum esb_bitrate bitrate);
  * @retval 0 If successful.
  *           Otherwise, a (negative) error code is returned.
  */
-int esb_reuse_pid(uint8_t pipe);
+ESB_LITE_INLINE int esb_reuse_pid(uint8_t pipe);
+
+
+#if IS_ENABLED(CONFIG_ESB_PTX) && IS_ENABLED(CONFIG_ESB_PRX)
+extern enum esb_mode esb_active_mode;
+#define ESB_ACTIVE_MODE esb_active_mode
+#elif IS_ENABLED(CONFIG_ESB_PTX)
+#define ESB_ACTIVE_MODE ESB_MODE_PTX
+#elif IS_ENABLED(CONFIG_ESB_PRX)
+#define ESB_ACTIVE_MODE ESB_MODE_PRX
+#endif
+
+
+#ifdef CONFIG_ESB_LITE
+
+ESB_LITE_INLINE void esb_disable(void)
+{
+	void esb_ptx_disable(void);
+	void esb_prx_disable(void);
+	if (ESB_ACTIVE_MODE == ESB_MODE_PTX) {
+		esb_ptx_disable();
+	} else {
+		esb_prx_disable();
+	}
+}
+
+ESB_LITE_INLINE int esb_write_payload(const struct esb_payload *payload)
+{
+	int esb_ptx_write_payload(const struct esb_payload *payload);
+	int esb_prx_write_payload(const struct esb_payload *payload);
+	return ESB_ACTIVE_MODE == ESB_MODE_PTX
+		? esb_ptx_write_payload(payload)
+		: esb_prx_write_payload(payload);
+}
+
+ESB_LITE_INLINE int esb_read_rx_payload(struct esb_payload *payload)
+{
+	int esb_ptx_read_rx_payload(struct esb_payload *payload);
+	int esb_prx_read_rx_payload(struct esb_payload *payload);
+	return ESB_ACTIVE_MODE == ESB_MODE_PTX
+		? esb_ptx_read_rx_payload(payload)
+		: esb_prx_read_rx_payload(payload);
+}
+
+ESB_LITE_INLINE int esb_start_tx(void)
+{
+	int esb_ptx_start_tx(void);
+	return ESB_ACTIVE_MODE == ESB_MODE_PTX
+		? esb_ptx_start_tx()
+		: -EACCES;
+}
+
+ESB_LITE_INLINE int esb_start_rx(void)
+{
+	int esb_prx_start_rx(void);
+	return ESB_ACTIVE_MODE == ESB_MODE_PTX
+		? -EACCES
+		: esb_prx_start_rx();
+}
+
+ESB_LITE_INLINE int esb_stop_rx(void)
+{
+	int esb_prx_stop_rx(void);
+	return ESB_ACTIVE_MODE == ESB_MODE_PTX
+		? -EACCES
+		: esb_prx_stop_rx();
+}
+
+ESB_LITE_INLINE int esb_flush_tx(void)
+{
+	int esb_ptx_flush_tx(void);
+	int esb_prx_flush_tx(void);
+	return ESB_ACTIVE_MODE == ESB_MODE_PTX
+		? esb_ptx_flush_tx()
+		: esb_prx_flush_tx();
+}
+
+ESB_LITE_INLINE int esb_pop_tx(void)
+{
+	int esb_ptx_pop_tx(void);
+	return ESB_ACTIVE_MODE == ESB_MODE_PTX
+		? esb_ptx_pop_tx()
+		: -ENOSYS;
+}
+
+ESB_LITE_INLINE bool esb_tx_full(void)
+{
+	bool esb_ptx_tx_full(void);
+	bool esb_prx_tx_full(void);
+	return ESB_ACTIVE_MODE == ESB_MODE_PTX
+		? esb_ptx_tx_full()
+		: esb_prx_tx_full();
+}
+
+ESB_LITE_INLINE int esb_flush_rx(void)
+{
+	int esb_ptx_flush_rx(void);
+	int esb_prx_flush_rx(void);
+	return ESB_ACTIVE_MODE == ESB_MODE_PTX
+		? esb_ptx_flush_rx()
+		: esb_prx_flush_rx();
+}
+
+ESB_LITE_INLINE int esb_set_retransmit_delay(uint16_t delay)
+{
+	int esb_ptx_set_retransmit_delay(uint16_t delay);
+	return ESB_ACTIVE_MODE == ESB_MODE_PTX
+		? esb_ptx_set_retransmit_delay(delay)
+		: -EACCES;
+}
+
+ESB_LITE_INLINE int esb_set_retransmit_count(uint16_t count)
+{
+	int esb_ptx_set_retransmit_count(uint16_t count);
+	return ESB_ACTIVE_MODE == ESB_MODE_PTX
+		? esb_ptx_set_retransmit_count(count)
+		: -EACCES;
+}
+
+ESB_LITE_INLINE int esb_reuse_pid(uint8_t pipe)
+{
+	int esb_ptx_reuse_pid(uint8_t pipe);
+	return ESB_ACTIVE_MODE == ESB_MODE_PTX
+		? esb_ptx_reuse_pid(pipe)
+		: -EACCES;
+}
+
+#endif /* CONFIG_ESB_LITE */
 
 /** @} */
 

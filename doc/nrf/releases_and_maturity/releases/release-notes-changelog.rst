@@ -195,6 +195,8 @@ Enhanced ShockBurst (ESB)
 
 * Added the :ref:`esb_monitor_mode` feature.
 
+* Added a new experimental implementation of ESB PRX mode, enabling faster operation with rates of up to 8000 packets per second.
+
 Gazell
 ------
 
