@@ -7,6 +7,7 @@
 / {
 	chosen {
 		nrf,bootloader-request = &boot_request;
+		zephyr,bootloader-info = &boot_info0;
 	};
 };
 
@@ -15,7 +16,7 @@
 		cpuapp_retained_mem: memory@e1ad000 {
 			compatible = "zephyr,memory-region";
 			reg = <0xe1ad000 DT_SIZE_K(4)>;
-			zephyr,memory-region = "RetainedMem";
+			zephyr,memory-region = "RetainedNvm";
 			status = "okay";
 
 			retainedmem {
@@ -34,4 +35,28 @@
 			};
 		};
 	};
+
+	sram@22007FC0 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x22007FC0 0x40>;
+		zephyr,memory-region = "RetainedMem";
+		status = "okay";
+
+		retainedmem {
+			compatible = "zephyr,retained-ram";
+			status = "okay";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			boot_info0: boot_info@0 {
+				compatible = "zephyr,retention";
+				status = "okay";
+				reg = <0x0 0x40>;
+			};
+		};
+	};
+};
+
+&cpuapp_ram0 {
+	reg = <0x22000000 0x7FC0>;
 };
