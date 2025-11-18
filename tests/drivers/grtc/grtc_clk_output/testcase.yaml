@@ -19,11 +19,7 @@ tests:
       - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
 
   drivers.grtc.grtc_clk_out.fast:
     harness_config:
@@ -36,10 +32,6 @@ tests:
       - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
       - FILE_SUFFIX=fast

@@ -9,7 +9,6 @@ common:
     - nrf54h20dk/nrf54h20/cpurad
   integration_platforms:
     - nrf54h20dk/nrf54h20/cpuapp
-    - nrf54h20dk/nrf54h20/cpurad
   harness: console
   harness_config:
     type: multi_line

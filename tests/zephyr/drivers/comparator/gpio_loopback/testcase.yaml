@@ -12,7 +12,6 @@ common:
     - nrf7120pdk/nrf7120/cpuapp
   integration_platforms:
     - nrf54lv10dk/nrf54lv10a/cpuapp
-    - nrf7120pdk/nrf7120/cpuapp
 tests:
   nrf.extended.drivers.comparator.gpio_loopback.nrf_comp:
     extra_args:

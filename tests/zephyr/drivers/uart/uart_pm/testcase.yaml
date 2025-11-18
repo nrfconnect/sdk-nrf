@@ -15,7 +15,6 @@ common:
   depends_on: gpio
   integration_platforms:
     - nrf54ls05dk/nrf54ls05b/cpuapp
-    - nrf54lv10dk/nrf54lv10a/cpuapp
   timeout: 30
 tests:
   nrf.extended.drivers.uart.pm:
