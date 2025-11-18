@@ -5,8 +5,9 @@
 #
 
 menuconfig PDN
-	bool "Packet Domain Network library"
+	bool "Packet Domain Network library [DEPRECATED]"
 	depends on NRF_MODEM_LIB && AT_MONITOR
+	select DEPRECATED
 
 if PDN
 

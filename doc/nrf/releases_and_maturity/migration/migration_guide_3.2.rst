@@ -200,7 +200,81 @@ Libraries
 
 This section describes the changes related to libraries.
 
-|no_changes_yet_note|
+PDN library
+-----------
+
+.. toggle::
+
+   * The :ref:`pdn_readme` library has been deprecated in favor of the PDN management functionality provided by the :ref:`lte_lc_readme` library and will be removed in a future |NCS| release.
+
+     To migrate your application to use LTE link control PDN management instead of the PDN library, complete the following steps:
+
+     #. Kconfig options:
+
+        * Replace:
+
+           * The ``CONFIG_PDN`` Kconfig option with the :kconfig:option:`CONFIG_LTE_LC_PDN_MODULE` Kconfig option, which is available when the :kconfig:option:`CONFIG_LTE_LINK_CONTROL` Kconfig option is enabled.
+
+
+           * The ``CONFIG_PDN_DEFAULTS_OVERRIDE`` and related PDN Kconfig options with the corresponding LTE link control PDN defaults options:
+
+             * :kconfig:option:`CONFIG_LTE_LC_PDN_DEFAULTS_OVERRIDE`
+             * :kconfig:option:`CONFIG_LTE_LC_PDN_DEFAULT_APN`
+             * :kconfig:option:`CONFIG_LTE_LC_PDN_DEFAULT_FAM_IPV4`
+             * :kconfig:option:`CONFIG_LTE_LC_PDN_DEFAULT_FAM_IPV6`
+             * :kconfig:option:`CONFIG_LTE_LC_PDN_DEFAULT_FAM_IPV4V6`
+             * :kconfig:option:`CONFIG_LTE_LC_PDN_DEFAULT_FAM_NONIP`
+             * :kconfig:option:`CONFIG_LTE_LC_PDN_DEFAULT_AUTH_NONE`
+             * :kconfig:option:`CONFIG_LTE_LC_PDN_DEFAULT_AUTH_PAP`
+             * :kconfig:option:`CONFIG_LTE_LC_PDN_DEFAULT_AUTH_CHAP`
+
+        * Remove:
+
+           * The ``CONFIG_HEAP_MEM_POOL_ADD_SIZE_PDN`` Kconfig option.
+             Instead, use the :kconfig:option:`CONFIG_HEAP_MEM_POOL_ADD_SIZE_LTE_LINK_CONTROL` Kconfig option.
+
+     #. Replace header files:
+
+        * Remove:
+
+          .. code-block:: C
+
+             #include <modem/pdn.h>
+
+        * Add:
+
+          .. code-block:: C
+
+             #include <modem/lte_lc.h>
+
+     #. Replace PDN API calls:
+
+        * Replace the PDP context management APIs:
+
+          * :c:func:`pdn_ctx_create` with :c:func:`lte_lc_pdn_ctx_create`
+          * :c:func:`pdn_ctx_configure` with :c:func:`lte_lc_pdn_ctx_configure`
+          * :c:func:`pdn_ctx_auth_set` with :c:func:`lte_lc_pdn_ctx_auth_set`
+          * :c:func:`pdn_ctx_destroy` with :c:func:`lte_lc_pdn_ctx_destroy`
+
+        * Replace the PDN connection control APIs:
+
+          * :c:func:`pdn_activate` with :c:func:`lte_lc_pdn_activate`
+          * :c:func:`pdn_deactivate` with :c:func:`lte_lc_pdn_deactivate`
+
+        * Replace the PDN information APIs:
+
+          * :c:func:`pdn_id_get` with :c:func:`lte_lc_pdn_id_get`
+          * :c:func:`pdn_dynamic_info_get` with :c:func:`lte_lc_pdn_dynamic_info_get`
+          * :c:func:`pdn_default_apn_get` with :c:func:`lte_lc_pdn_ctx_default_apn_get`
+
+        * Replace the ESM error string helper:
+
+          * :c:func:`pdn_esm_strerror` with :c:func:`lte_lc_pdn_esm_strerror`
+
+        * Replace the default-context callback registration:
+
+          * :c:func:`pdn_default_ctx_cb_reg` and :c:func:`pdn_default_ctx_cb_dereg` with :c:func:`lte_lc_register_handler` in combination with :c:func:`lte_lc_pdn_default_ctx_events_enable` and :c:func:`lte_lc_pdn_default_ctx_events_disable`.
+            The PDN events are handled using the :c:member:`lte_lc_evt.pdn` member as documented in the :ref:`lte_lc_pdn` page.
 
 Integrations
 ============

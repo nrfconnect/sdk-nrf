@@ -898,7 +898,6 @@
 /tests/lib/nrf_modem_lib/                 @nrfconnect/ncs-modem
 /tests/lib/nrf_modem_lib/nrf9x_sockets/   @nrfconnect/ncs-modem
 /tests/lib/ntn/                           @nrfconnect/ncs-modem-tre
-/tests/lib/pdn/                           @nrfconnect/ncs-modem
 /tests/lib/pcm_mix/                       @nrfconnect/ncs-audio
 /tests/lib/pcm_stream_channel_modifier/   @nrfconnect/ncs-audio
 /tests/lib/qos/                           @nrfconnect/ncs-cia

@@ -8,6 +8,12 @@ PDN
    :depth: 2
 
 The PDN library can be used to manage Packet Data Protocol (PDP) contexts and Packet Data Network (PDN) connections.
+
+.. note::
+   The PDN library is deprecated.
+   Use the PDN functionality in the :ref:`lte_lc_readme` library instead.
+   See :ref:`lte_lc_pdn` for information about the LTE link control PDN APIs.
+
 It provides an API for the following purposes:
 
 * Creating and configuring PDP contexts
