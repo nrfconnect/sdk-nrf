@@ -172,6 +172,14 @@ config ESB_FAST_CHANNEL_SWITCHING
 	  Allows the radio channel to be changed in RX radio state
 	  without the need to switch the radio to DISABLE state.
 
+config ESB_DEFAULT_RF_CHANNEL
+	int "Default channel"
+	default 2
+	range 0 100
+	help
+	  The default RF channel on which the ESB will operate if
+	  "esb_set_rf_channel" function is not called.
+
 module=ESB
 module-str=ESB
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
