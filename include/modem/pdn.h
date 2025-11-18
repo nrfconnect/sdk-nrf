@@ -21,6 +21,10 @@ extern "C" {
  * @brief Public APIs for the Packet Data Network (PDN) library.
  * @defgroup pdn PDN library
  * @{
+ *
+ * @deprecated The PDN library is deprecated.
+ *	       Use the PDN functionality in the LTE link control library instead
+ *	       (see :file:`include/modem/lte_lc.h`).
  */
 
 /** @brief Address family */
@@ -141,17 +145,21 @@ typedef void (*pdn_event_handler_t)(uint8_t cid, enum pdn_event event, int reaso
  * generate events from the +CNEC and +GGEV AT notifications to report
  * state of the PDN connection.
  *
+ * @deprecated Use lte_lc_pdn_ctx_create().
+ *
  * @param[out] cid The ID of the new PDP context.
  * @param cb Optional event handler.
  *
  * @return int Zero on success or a negative errno otherwise.
  */
-int pdn_ctx_create(uint8_t *cid, pdn_event_handler_t cb);
+__deprecated int pdn_ctx_create(uint8_t *cid, pdn_event_handler_t cb);
 
 /**
  * @brief Configure a PDP context.
  *
  * The PDN connection must be inactive when the PDP context is configured.
+ *
+ * @deprecated Use lte_lc_pdn_ctx_configure().
  *
  * @param cid The PDP context ID.
  * @param apn The Access Point Name.
@@ -160,11 +168,14 @@ int pdn_ctx_create(uint8_t *cid, pdn_event_handler_t cb);
  *
  * @return int Zero on success or a negative errno otherwise.
  */
-int pdn_ctx_configure(uint8_t cid, const char *apn, enum pdn_fam family,
-		      struct pdn_pdp_opt *opts);
+__deprecated int pdn_ctx_configure(uint8_t cid, const char *apn,
+				   enum pdn_fam family,
+				   struct pdn_pdp_opt *opts);
 
 /**
  * @brief Set PDP context authentication parameters.
+ *
+ * @deprecated Use lte_lc_pdn_ctx_auth_set().
  *
  * @param cid The PDP context ID.
  * @param method The desired authentication method.
@@ -173,22 +184,26 @@ int pdn_ctx_configure(uint8_t cid, const char *apn, enum pdn_fam family,
  *
  * @return int Zero on success or a negative errno otherwise.
  */
-int pdn_ctx_auth_set(uint8_t cid, enum pdn_auth method,
-		     const char *user, const char *password);
+__deprecated int pdn_ctx_auth_set(uint8_t cid, enum pdn_auth method,
+				  const char *user, const char *password);
 
 /**
  * @brief Destroy a PDP context.
  *
  * The PDN connection must be inactive when the PDP context is destroyed.
  *
+ * @deprecated Use lte_lc_pdn_ctx_destroy().
+ *
  * @param cid The PDP context ID.
  *
  * @return int Zero on success or a negative errno otherwise.
  */
-int pdn_ctx_destroy(uint8_t cid);
+__deprecated int pdn_ctx_destroy(uint8_t cid);
 
 /**
  * @brief Activate a PDN connection.
+ *
+ * @deprecated Use lte_lc_pdn_activate().
  *
  * @param cid The PDP context ID.
  * @param[out] esm If provided, the function will block to return the ESM error reason.
@@ -198,52 +213,63 @@ int pdn_ctx_destroy(uint8_t cid);
  *
  * @return int Zero on success or a negative errno otherwise.
  */
-int pdn_activate(uint8_t cid, int *esm, enum pdn_fam *family);
+__deprecated int pdn_activate(uint8_t cid, int *esm, enum pdn_fam *family);
 
 /**
  * @brief Deactivate a PDN connection.
+ *
+ * @deprecated Use lte_lc_pdn_deactivate().
  *
  * @param cid The PDP context ID.
  *
  * @return int Zero on success or a negative errno otherwise.
  */
-int pdn_deactivate(uint8_t cid);
+__deprecated int pdn_deactivate(uint8_t cid);
 
 /**
  * @brief Retrieve the PDN ID for a given PDP context.
  *
  * The PDN ID can be used to route traffic through a PDN connection.
  *
+ * @deprecated Use lte_lc_pdn_id_get().
+ *
  * @param cid The PDP context ID.
  *
  * @return int A non-negative PDN ID on success, or a negative errno otherwise.
  */
-int pdn_id_get(uint8_t cid);
+__deprecated int pdn_id_get(uint8_t cid);
 
 /**
  * @brief Retrieve dynamic parameters of a given PDN connection.
+ *
+ * @deprecated Use lte_lc_pdn_dynamic_info_get().
  *
  * @param[in] cid The PDP context ID.
  * @param[out] pdn_info PDN dynamic info.
  *
  * @return Zero on success or an error code on failure.
  */
-int pdn_dynamic_info_get(uint8_t cid, struct pdn_dynamic_info *pdn_info);
+__deprecated int pdn_dynamic_info_get(uint8_t cid,
+				      struct pdn_dynamic_info *pdn_info);
 
 /**
  * @brief Retrieve the default Access Point Name (APN).
  *
  * The default APN is the APN of the default PDP context (zero).
  *
+ * @deprecated Use lte_lc_pdn_ctx_default_apn_get().
+ *
  * @param[out] buf The buffer to copy the APN into. The string is null-terminated.
  * @param len The size of the output buffer.
  *
  * @return int Zero on success or a negative errno otherwise.
  */
-int pdn_default_apn_get(char *buf, size_t len);
+__deprecated int pdn_default_apn_get(char *buf, size_t len);
 
 /**
  * @brief Register a callback for events pertaining to the default PDP context (zero).
+ *
+ * @deprecated Use lte_lc_register_handler() and handle PDN-related events.
  *
  * @param cb The PDN event handler.
  *
@@ -251,10 +277,12 @@ int pdn_default_apn_get(char *buf, size_t len);
  * @retval -EFAULT The provided cb parameter was \c NULL.
  * @retval -ENOMEM Insufficient heap to allocate the PDP context.
  */
-int pdn_default_ctx_cb_reg(pdn_event_handler_t cb);
+__deprecated int pdn_default_ctx_cb_reg(pdn_event_handler_t cb);
 
 /**
  * @brief Deregister a callback for events pertaining to the default PDP context (zero).
+ *
+ * @deprecated Use lte_lc_register_handler() and handle PDN-related events.
  *
  * @param cb The PDN event handler.
  *
@@ -263,12 +291,14 @@ int pdn_default_ctx_cb_reg(pdn_event_handler_t cb);
  * @retval -EINVAL PDP context with the provided callback was not found. This can be returned if
  *                 the callback was not registered upon calling this function.
  */
-int pdn_default_ctx_cb_dereg(pdn_event_handler_t cb);
+__deprecated int pdn_default_ctx_cb_dereg(pdn_event_handler_t cb);
 
 #if CONFIG_PDN_ESM_STRERROR
 
 /**
  * @brief Retrieve a statically allocated textual description for a given ESM error reason.
+ *
+ * @deprecated Use lte_lc_pdn_esm_strerror().
  *
  * @param reason ESM error reason.
  *
@@ -276,7 +306,7 @@ int pdn_default_ctx_cb_dereg(pdn_event_handler_t cb);
  *		       If no textual description for the given error is found,
  *		       a placeholder string is returned instead.
  */
-const char *pdn_esm_strerror(int reason);
+__deprecated const char *pdn_esm_strerror(int reason);
 
 #endif
 
