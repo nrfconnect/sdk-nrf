@@ -6,6 +6,9 @@
 
 # This hidden option is intended to enable (include into compilation) all nrfx
 # drivers that are available for the SoC that is the build target.
+
+source "Kconfig.zephyr"
+
 config NRFX_ALL_DRIVERS
 	def_bool y
 	depends on HAS_NRFX
@@ -35,9 +38,7 @@ config NRFX_ALL_DRIVERS
 	select NRFX_POWER	if HAS_HW_NRF_POWER
 	select NRFX_QSPI	if HAS_HW_NRF_QSPI
 	select NRFX_RNG		if HAS_HW_NRF_RNG
-	select NRFX_RTC0	if HAS_HW_NRF_RTC0
-	select NRFX_RTC1	if HAS_HW_NRF_RTC1
-	select NRFX_RTC2	if HAS_HW_NRF_RTC2
+	select NRFX_RTC		if $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_RTC))
 	select NRFX_SAADC	if HAS_HW_NRF_SAADC
 	select NRFX_SPI0	if HAS_HW_NRF_SPI0
 	select NRFX_SPI1	if HAS_HW_NRF_SPI1
@@ -75,5 +76,3 @@ config NRFX_ALL_DRIVERS
 	select NRFX_USBD	if HAS_HW_NRF_USBD
 	select NRFX_USBREG	if HAS_HW_NRF_USBREG
 	select NRFX_PRS_BOX_0
-
-source "Kconfig.zephyr"
