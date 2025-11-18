@@ -12,6 +12,7 @@ LOG_MODULE_REGISTER(spim_mosi_toggles, LOG_LEVEL_INF);
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
 #include <nrfx_gpiote.h>
+#include <gpiote_nrfx.h>
 #include <zephyr/drivers/spi.h>
 #include <zephyr/linker/devicetree_regions.h>
 
@@ -33,14 +34,10 @@ static uint8_t spim_buffer[2 * TEST_DATA_SIZE] MEMORY_SECTION(DT_BUS(DT_NODELABE
 /* Variables used to count edges on SPI MOSI line. */
 #define CLOCK_INPUT_PIN	NRF_DT_GPIOS_TO_PSEL(DT_PATH(zephyr_user), test_gpios)
 
-static const nrfx_gpiote_t gpiote_instance = NRFX_GPIOTE_INSTANCE(
-					     NRF_DT_GPIOTE_INST(
-					     DT_PATH(zephyr_user), test_gpios));
-
-#if CONFIG_NRFX_TIMER00
-static const nrfx_timer_t timer_instance = NRFX_TIMER_INSTANCE(00);
-#elif CONFIG_NRFX_TIMER130
-static const nrfx_timer_t timer_instance = NRFX_TIMER_INSTANCE(130);
+#if defined(NRF_TIMER00)
+static nrfx_timer_t timer_instance = NRFX_TIMER_INSTANCE(NRF_TIMER00);
+#elif defined(NRF_TIMER130)
+static nrfx_timer_t timer_instance = NRFX_TIMER_INSTANCE(NRF_TIMER130);
 #else
 #error "No timer instance found"
 #endif
@@ -87,9 +84,11 @@ int main(void)
 
 	/* Configure GPIOTE. */
 	uint8_t gpiote_channel;
+	nrfx_gpiote_t gpiote_instance =
+		GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(DT_PATH(zephyr_user), test_gpios));
 
 	ret = nrfx_gpiote_channel_alloc(&gpiote_instance, &gpiote_channel);
-	if (ret != NRFX_SUCCESS) {
+	if (ret != 0) {
 		LOG_ERR("nrfx_gpiote_channel_alloc(), err: %d", ret);
 	}
 
@@ -106,7 +105,7 @@ int main(void)
 	};
 
 	ret = nrfx_gpiote_input_configure(&gpiote_instance, CLOCK_INPUT_PIN, &gpiote_cfg);
-	if (ret != NRFX_SUCCESS) {
+	if (ret != 0) {
 		LOG_ERR("nrfx_gpiote_input_configure(), err: %d", ret);
 	}
 
@@ -119,25 +118,22 @@ int main(void)
 	timer_config.mode      = NRF_TIMER_MODE_COUNTER;
 
 	ret = nrfx_timer_init(&timer_instance, &timer_config, timer_handler);
-	if (ret != NRFX_SUCCESS) {
+	if (ret != 0) {
 		LOG_ERR("nrfx_timer_init(), err: %d", ret);
 	}
 
 	nrfx_timer_enable(&timer_instance);
 
 	/* Configure GPPI from GPIOTE to Timer. */
-	uint8_t gppi_channel;
+	nrfx_gppi_handle_t gppi_handle;
+	uint32_t eep = nrfx_gpiote_in_event_address_get(&gpiote_instance, CLOCK_INPUT_PIN);
+	uint32_t tep = nrfx_timer_task_address_get(&timer_instance, NRF_TIMER_TASK_COUNT);
 
-	ret = nrfx_gppi_channel_alloc(&gppi_channel);
-	if (ret != NRFX_SUCCESS) {
-		LOG_ERR("nrfx_gppi_channel_alloc(), err: %d", ret);
+	ret = nrfx_gppi_conn_alloc(eep, tep, &gppi_handle);
+	if (ret != 0) {
+		LOG_ERR("GPPI channel allocation failed, err: %d", ret);
 	}
-
-	nrfx_gppi_channel_endpoints_setup(gppi_channel,
-		nrfx_gpiote_in_event_address_get(&gpiote_instance, CLOCK_INPUT_PIN),
-		nrfx_timer_task_address_get(&timer_instance, NRF_TIMER_TASK_COUNT)
-	);
-	nrfx_gppi_channels_enable(BIT(gppi_channel));
+	nrfx_gppi_conn_enable(gppi_handle);
 
 	/* Set tx_data for current test. Test scenario reqires:
 	 * The first transmitted bit in the final byte is 1.
