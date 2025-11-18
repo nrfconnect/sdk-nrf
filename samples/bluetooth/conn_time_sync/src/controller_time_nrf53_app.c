@@ -22,15 +22,17 @@
 #include <hal/nrf_egu.h>
 #include "conn_time_sync.h"
 
-static const nrfx_rtc_t app_rtc_instance = NRFX_RTC_INSTANCE(0);
+static nrfx_rtc_t app_rtc_instance = NRFX_RTC_INSTANCE(NRF_RTC0);
 static nrfx_timer_t app_timer_instance = NRFX_TIMER_INSTANCE(NRF_TIMER0);
 
 static nrfx_gppi_handle_t ppi_on_rtc_match;
 static volatile uint32_t num_rtc_overflows;
 
-static void rtc_isr_handler(nrfx_rtc_int_type_t int_type)
+static void rtc_isr_handler(nrf_rtc_event_t event_type, void *ctx)
 {
-	if (int_type == NRFX_RTC_INT_OVERFLOW) {
+	ARG_UNUSED(ctx);
+
+	if (event_type == NRF_RTC_EVENT_OVERFLOW) {
 		num_rtc_overflows++;
 	}
 }
@@ -55,10 +57,10 @@ static int rtc_config(void)
 
 #ifndef CONFIG_SOC_SERIES_BSIM_NRFXX
 	IRQ_CONNECT(NRFX_IRQ_NUMBER_GET(NRF_RTC_INST_GET(0)), IRQ_PRIO_LOWEST,
-		    NRFX_RTC_INST_HANDLER_GET(0), NULL, 0);
+		    nrfx_rtc_irq_handler, &app_rtc_instance, 0);
 #else
 	IRQ_CONNECT(NRFX_IRQ_NUMBER_GET(NRF_RTC_INST_GET(0)), 0,
-		    (void *)NRFX_RTC_INST_HANDLER_GET(0), NULL, 0);
+		    (void *)nrfx_rtc_irq_handler, &app_rtc_instance, 0);
 #endif
 
 	nrfx_rtc_overflow_enable(&app_rtc_instance, true);
