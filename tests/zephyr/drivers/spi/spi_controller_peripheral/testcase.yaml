@@ -22,7 +22,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=0
-    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/250khz.overlay"
+    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/250khz.overlay"
 
   nrf.extended.drivers.spi.spi_mode1:
     platform_allow:
@@ -36,7 +36,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=1
-    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/500khz.overlay"
+    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/500khz.overlay"
 
   nrf.extended.drivers.spi.spi_mode2:
     platform_allow:
@@ -50,7 +50,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=2
-    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/1mhz.overlay"
+    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/1mhz.overlay"
 
   nrf.extended.drivers.spi.spi_mode3:
     platform_allow:
@@ -64,7 +64,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=3
-    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/2mhz.overlay"
+    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/2mhz.overlay"
 
   nrf.extended.drivers.spi.spi_4MHz:
     platform_allow:
@@ -78,7 +78,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=2
-    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/4mhz.overlay"
+    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/4mhz.overlay"
 
   nrf.extended.drivers.spi.spi_8MHz:
     platform_allow:
@@ -92,7 +92,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=1
-    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/8mhz.overlay"
+    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/8mhz.overlay"
 
   nrf.extended.drivers.spi.pm_runtime:
     platform_allow:
