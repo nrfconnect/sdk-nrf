@@ -21,7 +21,7 @@
 
 int ecc_genpubkey(const uint8_t *priv_key, uint8_t *pub_key, const struct sx_pk_ecurve *curve)
 {
-	const uint8_t **outputs;
+	const uint8_t **outputs = NULL;
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecp_mult inputs;
 	int opsz;
@@ -48,8 +48,8 @@ int ecc_genpubkey(const uint8_t *priv_key, uint8_t *pub_key, const struct sx_pk_
 		sx_pk_run(pkreq.req);
 
 		status = sx_pk_wait(pkreq.req);
-		if (status != SX_OK) {
-			return status;
+		if (status != SX_OK && status != SX_ERR_NOT_INVERTIBLE) {
+			break;
 		}
 		outputs = (const uint8_t **)sx_pk_get_output_ops(pkreq.req);
 
