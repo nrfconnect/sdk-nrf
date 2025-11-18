@@ -225,6 +225,9 @@ Matter
 * Updated to using the :kconfig:option:`CONFIG_PICOLIBC` Kconfig option as the C library instead of :kconfig:option:`CONFIG_NEWLIB_LIBC`, in compliance with Zephyr requirements.
 * Removed the ``CONFIG_CHIP_SPI_NOR`` and ``CONFIG_CHIP_QSPI_NOR`` Kconfig options.
 * Released the `Matter Quick Start app`_ v1.0.0 as part of nRF Connect for Desktop.
+* Deprecated the Matter over Wi-Fi samples that are using nRF5340 SoC (nRF7002 DK and nRF5340 DK with the nRF7002 EK shield attached).
+  This is mainly due to the very limited non-volatile memory space left for application code.
+  As an alternative, it is recommended to use the nRF54LM20A SoC in combination with the nRF7002-EB II shield, which provides a significantly greater amount of available non-volatile memory for Matter over Wi-Fi applications.
 
 Matter fork
 +++++++++++
@@ -676,6 +679,7 @@ Matter samples
   * The :ref:`matter_contact_sensor_sample` sample that demonstrates how to implement and test a Matter contact sensor device.
   * The ``matter_custom_board`` toggle paragraph in the Matter advanced configuration section of all Matter samples that demonstrates how add and configure a custom board.
   * Support for the Matter over Wi-Fi on the nRF54LM20 DK with the nRF7002-EB II shield attached to all Matter over Wi-Fi samples.
+  * Enabled deprecated warnings for all Matter over Wi-Fi samples that are using nRF5340 SoC.
 
 * Updated:
 
