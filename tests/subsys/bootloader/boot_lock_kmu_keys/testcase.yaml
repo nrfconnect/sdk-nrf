@@ -1,0 +1,45 @@
+common:
+  sysbuild: true
+  harness: pytest
+  harness_config:
+    pytest_root:
+      - "../upgrade/pytest/test_common_provision.py::test_passes_after_provisioning_all_keys"
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  tags:
+    - pytest
+    - kmu
+    - ci_tests_subsys_bootloader
+
+tests:
+  boot.kmu_keys_lock.smoke_test: {}
+
+  boot.mcuboot.kmu_keys_locked:
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+      - mcuboot_CONFIG_BOOT_SIGNATURE_KMU_SLOTS=3
+    tags:
+      - mcuboot
+
+  boot.b0.kmu_keys_locked:
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+    tags:
+      - b0
+
+  boot.b0.mcuboot.kmu_keys_locked:
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+      - mcuboot_CONFIG_BOOT_SIGNATURE_KMU_SLOTS=3
+      - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0xc800
+    tags:
+      - b0
+      - mcuboot
