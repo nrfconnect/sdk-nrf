@@ -19,6 +19,8 @@ tests:
       - nrf54l15dk/nrf54l15/cpuflpr
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuflpr
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54l_fast_speed:
     filter: not CONFIG_COVERAGE
@@ -34,6 +36,8 @@ tests:
       - nrf54l15dk/nrf54l15/cpuflpr
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuflpr
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54l_coverage:
     filter: CONFIG_COVERAGE
@@ -45,6 +49,8 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54l_coverage_fast_speed:
     filter: CONFIG_COVERAGE
@@ -57,6 +63,8 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54h:
     filter: not CONFIG_COVERAGE
@@ -69,6 +77,8 @@ tests:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpuppr
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54h_fast_speed:
     filter: not CONFIG_COVERAGE
@@ -82,6 +92,8 @@ tests:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpuppr
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54h_fast_plus_speed:
     filter: not CONFIG_COVERAGE
@@ -95,6 +107,8 @@ tests:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpuppr
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54h_coverage:
     filter: CONFIG_COVERAGE

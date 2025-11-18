@@ -53,7 +53,6 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
       - CONFIG_ASYNC_AND_INT=y
       - CONFIG_UART_ASYNC_API=y
@@ -69,7 +68,6 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
       - CONFIG_ASYNC_AND_POLL=y
       - CONFIG_UART_ASYNC_API=y
@@ -83,7 +81,6 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
       - CONFIG_INT_AND_POLL=y
       - CONFIG_UART_ASYNC_API=n

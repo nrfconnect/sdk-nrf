@@ -20,8 +20,6 @@ tests:
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=0
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/250khz.overlay"
@@ -36,8 +34,6 @@ tests:
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=1
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/500khz.overlay"
@@ -52,8 +48,6 @@ tests:
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=2
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/1mhz.overlay"
@@ -68,8 +62,6 @@ tests:
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=3
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/2mhz.overlay"
@@ -84,8 +76,6 @@ tests:
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=2
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/4mhz.overlay"
@@ -100,8 +90,6 @@ tests:
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=1
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/8mhz.overlay"
@@ -116,8 +104,6 @@ tests:
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_PM_DEVICE=y
       - CONFIG_PM_DEVICE_RUNTIME=y

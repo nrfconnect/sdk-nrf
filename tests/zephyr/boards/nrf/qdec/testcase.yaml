@@ -5,7 +5,6 @@ common:
     - nrf7120pdk/nrf7120/cpuapp
   integration_platforms:
     - nrf54ls05dk/nrf54ls05b/cpuapp
-    - nrf7120pdk/nrf7120/cpuapp
   harness: ztest
   harness_config:
     fixture: gpio_loopback

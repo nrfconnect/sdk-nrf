@@ -12,9 +12,6 @@ tests:
   nrf.extended.drivers.gpio.2pin:
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp

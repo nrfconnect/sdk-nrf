@@ -6,7 +6,6 @@ tests:
   nrf.extended.drivers.adc_error_cases:
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
     platform_allow:
       - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
