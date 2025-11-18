@@ -3,6 +3,7 @@ sample:
   name: ble_mcumgr
 common:
   sysbuild: true
+  build_only: true
 tests:
   sample.fw_loader_ble_mcumgr:
     tags:
