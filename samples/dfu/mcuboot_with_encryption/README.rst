@@ -76,7 +76,7 @@ Security considerations
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/zephyr/mcuboot_with_encryption`
+.. |sample path| replace:: :file:`samples/dfu/mcuboot_with_encryption`
 
 .. include:: /includes/build_and_run.txt
 
