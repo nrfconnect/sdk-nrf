@@ -95,9 +95,3 @@
   platforms:
     - nrf52840dk/nrf52840
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29460"
-
-- scenarios:
-    - net.lib.app_jwt
-  platforms:
-    - native_sim/native
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36289"
