@@ -127,16 +127,10 @@ After programming the device with the first image, verify its functionality:
    This sample also accepts unencrypted firmware updates.
    If you upload an unencrypted and properly signed image, MCUboot will successfully boot it.
 
-Generating the X25519 key
-=========================
+Further information on image encryption and generating keys
+==========================================================
 
-To generate an X25519 key for encryption, use the following OpenSSL command:
-
-   .. code-block:: console
-
-      openssl genpkey -algorithm X25519 -out your_new_private_key.pem
-
-
+More information on MCUboot support for image encryption can be found in the :ref:`mcuboot_wrapper` section under Encrypted images. Users should familiarize themselves with this section, as they will need to generate their own keys for encryption key exchange. The keys used in this sample are publicly known and should not be used in any product under any circumstances.
 Dependencies
 ************
 
