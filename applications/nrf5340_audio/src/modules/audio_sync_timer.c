@@ -33,7 +33,7 @@ static nrfx_timer_t audio_sync_hf_timer_instance =
 
 static nrfx_gppi_handle_t dppi_handle_i2s_frame_start;
 
-#define AUDIO_SYNC_LF_TIMER_INSTANCE_NUMBER 0
+#define AUDIO_SYNC_LF_TIMER_INSTANCE NRF_RTC0
 
 #define AUDIO_SYNC_LF_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL 0
 #define AUDIO_SYNC_LF_TIMER_I2S_FRAME_START_EVT_CAPTURE		NRF_RTC_TASK_CAPTURE_0
@@ -45,8 +45,7 @@ static nrfx_gppi_handle_t dppi_handle_curr_time_capture;
 
 static const nrfx_rtc_config_t rtc_cfg = NRFX_RTC_DEFAULT_CONFIG;
 
-static const nrfx_rtc_t audio_sync_lf_timer_instance =
-	NRFX_RTC_INSTANCE(AUDIO_SYNC_LF_TIMER_INSTANCE_NUMBER);
+static nrfx_rtc_t audio_sync_lf_timer_instance = NRFX_RTC_INSTANCE(AUDIO_SYNC_LF_TIMER_INSTANCE);
 
 static nrfx_gppi_handle_t dppi_handle_timer_sync_with_rtc;
 static nrfx_gppi_handle_t dppi_handle_rtc_start;
@@ -155,9 +154,11 @@ static void unused_timer_isr_handler(nrf_timer_event_t event_type, void *ctx)
 	ARG_UNUSED(ctx);
 }
 
-static void rtc_isr_handler(nrfx_rtc_int_type_t int_type)
+static void rtc_isr_handler(nrf_rtc_event_t event_type, void *ctx)
 {
-	if (int_type == NRFX_RTC_INT_OVERFLOW) {
+	ARG_UNUSED(ctx);
+
+	if (event_type == NRF_RTC_EVENT_OVERFLOW) {
 		num_rtc_overflows++;
 	}
 }
@@ -188,7 +189,8 @@ static int audio_sync_timer_init(void)
 		return -ENODEV;
 	}
 
-	IRQ_CONNECT(RTC0_IRQn, IRQ_PRIO_LOWEST, nrfx_isr, nrfx_rtc_0_irq_handler, 0);
+	IRQ_CONNECT(RTC0_IRQn, IRQ_PRIO_LOWEST, nrfx_rtc_irq_handler,
+			&audio_sync_lf_timer_instance, 0);
 	nrfx_rtc_overflow_enable(&audio_sync_lf_timer_instance, true);
 
 	/* Initialize capturing of I2S frame start event timestamps */
