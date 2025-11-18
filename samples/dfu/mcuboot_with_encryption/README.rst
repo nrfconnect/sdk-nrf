@@ -9,6 +9,7 @@ MCUboot with encryption enabled
 
 This sample demonstrates secure device firmware update (DFU) using MCUboot with encryption enabled.
 You will learn how to build encrypted images and deploy them to supported development kits, protecting application code from unauthorized access during updates.
+There is no code directly in the sample as it only presents how to configure encryption in MCUboot and get applications encrypted for DFU; sample uses SMP Server project as the application by directly importing its sources in main CMakeLists.txt
 
 Requirements
 ************
