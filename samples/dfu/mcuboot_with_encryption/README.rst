@@ -139,4 +139,8 @@ To generate an X25519 key for encryption, use the following OpenSSL command:
 Dependencies
 ************
 
-TBD
+The sample depends on following subsystems and libraries:
+
+* :ref:`MCUboot <mcuboot_index_ncs>`
+* :ref:`zephyr:mcu_mgr`
+* :ref:`nrf_security`
