@@ -23,7 +23,7 @@ zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_BOND_MANAGER fp_bond_manager.c)
 
 zephyr_linker_sources_ifdef(CONFIG_BT_FAST_PAIR_ACTIVATION SECTIONS fp_activation.ld)
 if(CONFIG_BT_FAST_PAIR_ACTIVATION)
-  zephyr_iterable_section(NAME fp_activation_module KVMA RAM_REGION GROUP RODATA_REGION SUBALIGN 4)
+  zephyr_iterable_section(NAME fp_activation_module KVMA RAM_REGION GROUP RODATA_REGION)
 endif()
 zephyr_library_sources_ifdef(CONFIG_BT_FAST_PAIR_ACTIVATION fp_activation.c)
 
