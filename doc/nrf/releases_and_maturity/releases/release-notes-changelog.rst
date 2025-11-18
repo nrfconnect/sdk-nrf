@@ -358,7 +358,12 @@ nRF Desktop
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-* Updated the application to change the default libc from the :ref:`zephyr:c_library_newlib` to the :ref:`zephyr:c_library_picolibc` to align with the |NCS| and Zephyr.
+* Updated:
+
+  * The application to change the default libc from the :ref:`zephyr:c_library_newlib` to the :ref:`zephyr:c_library_picolibc` to align with the |NCS| and Zephyr.
+  * By changing the number of preemptive priorities (:kconfig:option:`CONFIG_NUM_PREEMPT_PRIORITIES`) from ``11`` to default value ``15`` from Zephyr.
+    The priority of ``10`` is used by default for some preemptive contexts (for example, :kconfig:option:`CONFIG_BT_LONG_WQ_PRIO`).
+    The previously used Kconfig option value of ``11`` led to using the lowest available application thread priority for the mentioned preemptive contexts, which at the same time is used, for example, by the log processing thread.
 
 * Removed support for the ``thingy53/nrf5340/cpuapp/ns`` build target.
 
