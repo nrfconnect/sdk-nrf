@@ -264,7 +264,7 @@ static struct esb_address esb_addr = {
 	.pipe_prefixes = {0xE7, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8},
 	.addr_length = 5,
 	.num_pipes = CONFIG_ESB_PIPE_COUNT,
-	.rf_channel = 2,
+	.rf_channel = CONFIG_ESB_DEFAULT_RF_CHANNEL,
 	.rx_pipes_enabled = 0xFF
 };
 

@@ -4,8 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig ESB
+
+menu "Enhanced ShockBurst"
+
+config ESB
 	bool "Enhanced ShockBurst"
+	depends on !ESB_LITE
 	select NRFX_PPI if HAS_HW_NRF_PPI
 	select NRFX_DPPI if HAS_HW_NRF_DPPIC
 	select MPSL
@@ -13,6 +17,55 @@ menuconfig ESB
 	default n
 	help
 	  Enable ESB functionality.
+
+config ESB_PTX
+	bool
+	select ESB_LITE
+	select EXPERIMENTAL
+	help
+	  Enable PTX (Primary Transmitter) mode.
+	  The actual mode is selected at runtime with the esb_init() function.
+	  To reduce code size, consider disabling it if your application
+	  does not use PTX mode.
+
+config ESB_PRX
+	bool "Enhanced ShockBurst Lite in PRX mode [EXPERIMENTAL]"
+	select ESB_LITE
+	select EXPERIMENTAL
+	help
+	  Enable PRX (Primary Receiver) mode.
+	  The actual mode is selected at runtime with the esb_init() function.
+	  To reduce code size, consider disabling it if your application
+	  does not use PRX mode.
+
+config ESB_LITE
+	bool
+	select NRFX_PPI if HAS_HW_NRF_PPI
+	select NRFX_DPPI if HAS_HW_NRF_DPPIC
+	select NRFX_DPPI0 if SOC_SERIES_NRF53X
+	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
+	select NRFX_DPPI020 if SOC_SERIES_NRF54HX
+
+if ESB_LITE
+
+config ESB_MAX_DATA_PAYLOAD_LENGTH
+	int "Maximum payload size for data packets"
+	default 32
+	range 1 252
+	help
+	  The maximum size of the payload contained in the data packets.
+	  ACK packets are configured with ESB_MAX_ACK_PAYLOAD_LENGTH.
+
+config ESB_MAX_ACK_PAYLOAD_LENGTH
+	int "Maximum payload size for ACK packets"
+	default 32
+	range 0 252
+	help
+	  The maximum size of the payload contained in the ACK packets.
+	  You should set it to 0 if your application does not use ACK payloads.
+	  It will save data and program memory.
+
+endif # ESB_LITE
 
 if ESB
 
@@ -22,6 +75,10 @@ config ESB_MAX_PAYLOAD_LENGTH
 	range 1 252
 	help
 	  The maximum size of the payload.
+
+endif # ESB
+
+if ESB || ESB_LITE
 
 config ESB_TX_FIFO_SIZE
 	int "TX buffer length"
@@ -130,6 +187,10 @@ config ESB_SYS_TIMER_INSTANCE_LEADING_ZERO
 
 endmenu
 
+endif # ESB || ESB_LITE
+
+if ESB
+
 config ESB_DYNAMIC_INTERRUPTS
 	bool "Use direct dynamic interrupts"
 	select DYNAMIC_INTERRUPTS
@@ -163,6 +224,10 @@ config ESB_FAST_SWITCHING
 	  Enabling this feature can improve the responsiveness and efficiency of the radio
 	  communication system by reducing the latency.
 
+endif # ESB || ESB_LITE
+
+if ESB
+
 config ESB_FAST_CHANNEL_SWITCHING
 	select EXPERIMENTAL
 	depends on SOC_NRF54H20_CPURAD
@@ -172,8 +237,22 @@ config ESB_FAST_CHANNEL_SWITCHING
 	  Allows the radio channel to be changed in RX radio state
 	  without the need to switch the radio to DISABLE state.
 
+endif # ESB
+
+if ESB || ESB_LITE
+
+config ESB_DEFAULT_RF_CHANNEL
+	int "Default channel"
+	default 2
+	range 0 100
+	help
+	  The default RF channel on which the ESB will operate if
+	  "esb_set_rf_channel" function is not called.
+
 module=ESB
 module-str=ESB
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
-endif # NRF_ENHANCED_SHOCKBURST
+endif # ESB || ESB_LITE
+
+endmenu

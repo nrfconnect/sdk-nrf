@@ -173,10 +173,12 @@ int esb_initialize(void)
 	config.bitrate = ESB_BITRATE_2MBPS;
 	config.mode = ESB_MODE_PRX;
 	config.event_handler = event_handler;
+#if !defined(CONFIG_ESB_LITE)
 	config.selective_auto_ack = true;
 	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
 		config.use_fast_ramp_up = true;
 	}
+#endif
 
 	err = esb_init(&config);
 	if (err) {
