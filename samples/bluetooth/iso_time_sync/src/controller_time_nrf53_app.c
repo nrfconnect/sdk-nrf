@@ -22,15 +22,17 @@
 #include <hal/nrf_egu.h>
 #include "iso_time_sync.h"
 
-static const nrfx_rtc_t app_rtc_instance = NRFX_RTC_INSTANCE(0);
+static nrfx_rtc_t app_rtc_instance = NRFX_RTC_INSTANCE(NRF_RTC0);
 static nrfx_timer_t app_timer_instance = NRFX_TIMER_INSTANCE(NRF_TIMER0);
 
 static nrfx_gppi_handle_t ppi_on_rtc_match;
 static volatile uint32_t num_rtc_overflows;
 
-static void rtc_isr_handler(nrfx_rtc_int_type_t int_type)
+static void rtc_isr_handler(nrf_rtc_event_t event_type, void *ctx)
 {
-	if (int_type == NRFX_RTC_INT_OVERFLOW) {
+	ARG_UNUSED(ctx);
+
+	if (event_type == NRF_RTC_EVENT_OVERFLOW) {
 		num_rtc_overflows++;
 	}
 }
