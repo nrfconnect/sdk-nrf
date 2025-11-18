@@ -53,7 +53,7 @@ static enum state state;
 static struct k_work_delayable buttons_scan;
 static button_handler_t button_handler_cb;
 static atomic_t my_buttons;
-static struct gpio_callback gpio_cb;
+static struct gpio_callback gpio_cb0, gpio_cb1;
 static struct k_spinlock lock;
 static sys_slist_t button_handlers;
 static struct k_mutex button_handler_mut;
@@ -236,7 +236,7 @@ static void button_pressed(const struct device *gpio_dev, struct gpio_callback *
 
 int dk_buttons_init(button_handler_t button_handler)
 {
-	uint32_t pin_mask = 0;
+	uint32_t pin_mask0 = 0, pin_mask1 = 0;
 	int err;
 
 	button_handler_cb = button_handler;
@@ -269,13 +269,23 @@ int dk_buttons_init(button_handler_t button_handler)
 			return err;
 		}
 
-		pin_mask |= BIT(buttons[i].pin);
+		if (i < 3) {
+			pin_mask1 |= BIT(buttons[i].pin);
+		} else {
+			pin_mask0 |= BIT(buttons[i].pin);
+		}
 	}
 
-	gpio_init_callback(&gpio_cb, button_pressed, pin_mask);
+	gpio_init_callback(&gpio_cb0, button_pressed, pin_mask0);
+	gpio_init_callback(&gpio_cb1, button_pressed, pin_mask1);
 
 	for (size_t i = 0; i < ARRAY_SIZE(buttons); i++) {
-		err = gpio_add_callback(buttons[i].port, &gpio_cb);
+		if (i < 3)
+		{
+			err = gpio_add_callback(buttons[i].port, &gpio_cb1);
+		} else {
+			err = gpio_add_callback(buttons[i].port, &gpio_cb0);
+		}
 		if (err) {
 			LOG_ERR("Cannot add callback");
 			return err;
