@@ -143,10 +143,10 @@ The Secure Domain has its own CPU, local RAM, and local peripherals to provide b
 The Secure Domain provides the initial root of trust (RoT), handles all the global resource allocation, acts as a trusted third party (TTP) between other MCU domains, and is used to secure cryptographic operations.
 Since the nRF54H platform supports global resource sharing, where memory partitions and peripherals in the global domain can be assigned to different local domains, the Secure Domain Firmware controls this partitioning while also acting as the boot master for the entire system.
 
-IronSide Secure Element (IronSide SE) is part of the nRF54H20 SoC binaries.
+IronSide Secure Element (IronSide SE) is part of the nRF54H20 IronSide SE binaries.
 It runs on the Secure Domain and exposes security-related services to the Cores in the system located in local domains (like Application and Radio).
 
-For more information on IronSide SE and the nRF54H20 SoC binaries, see :ref:`abi_compatibility` and :ref:`ug_nrf54h20_ironside`.
+For more information on IronSide SE and the nRF54H20 IronSide SE binaries, see :ref:`abi_compatibility` and :ref:`ug_nrf54h20_ironside`.
 
 .. _ug_nrf54h20_secure_domain_cracen:
 
@@ -172,9 +172,9 @@ System Controller
 *****************
 
 System Controller is a VPR that implements system startup and power management functionalities that in the past would have been implemented in hardware.
-The System Controller Firmware (SCFW) is a component of the IronSide Secure Element (IronSide SE), and it is included in the nRF54H20 SoC binaries.
+The System Controller Firmware (SCFW) is a component of the IronSide Secure Element (IronSide SE), and it is included in the nRF54H20 IronSide SE binaries.
 
-For more information on the nRF54H20 SoC binaries, see :ref:`abi_compatibility`.
+For more information on the nRF54H20 IronSide SE binaries, see :ref:`abi_compatibility`.
 
 
 Cores management

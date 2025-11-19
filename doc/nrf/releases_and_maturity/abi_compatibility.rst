@@ -19,18 +19,18 @@ When ABI compatibility is maintained, binaries of one component can interface co
 For example, adding a new function to a library is typically an ABI-compatible change, as existing binaries remain functional.
 However, changes that affect data structure layouts, such as altering field order or size, break ABI compatibility because they change the memory layout expected by existing binaries.
 
-ABI compatibility for the nRF54H20 SoC binaries
-***********************************************
+ABI compatibility for the nRF54H20 IronSide SE binaries
+*******************************************************
 
-To use the most recent version of the |NCS|, download and provision your nRF54H20 SoC-based device with the `latest nRF54H20 SoC binaries`_ available.
+To use the most recent version of the |NCS|, download and provision your nRF54H20 SoC-based device with the `latest nRF54H20 IronSide SE binaries`_ available.
 
 .. caution::
-   The nRF54H20 SoC binaries do not support rollbacks to previous versions.
+   The nRF54H20 IronSide SE binaries do not support rollbacks to previous versions.
 
 Legacy ABI compatibility matrix for the nRF54H20 SoC binaries
 =============================================================
 
-The following table illustrates the legacy ABI compatibility between older versions of the nRF54H20 SoC binaries and older versions of the |NCS|:
+The following table illustrates the legacy ABI compatibility between SUIT-based (pre-IronSide SE) nRF54H20 SoC binaries and older versions of the |NCS|:
 
 .. caution::
    * Devices already provisioned using SUIT-based SoC binaries and in LCS ``RoT`` cannot be upgraded to IronSide SE.
@@ -62,15 +62,15 @@ The following table illustrates the legacy ABI compatibility between older versi
 Provisioning the nRF54H20 SoC
 *****************************
 
-To provision the nRF54H20 SoC using the nRF54H20 SoC binaries, see :ref:`ug_nrf54h20_gs_bringup`.
+To provision the nRF54H20 SoC using the nRF54H20 IronSide SE binaries, see :ref:`ug_nrf54h20_gs_bringup`.
 
 Updating the nRF54H20 SoC
 *************************
 
-To update the nRF54H20 SoC binaries to the latest version, see :ref:`ug_nrf54h20_ironside_se_update`.
+To update the nRF54H20 IronSide SE binaries to the latest version, see :ref:`ug_nrf54h20_ironside_se_update`.
 
-nRF54H20 SoC binaries changelog
-*******************************
+nRF54H20 IronSide SE binaries changelog
+***************************************
 
 The following sections provide detailed lists of changes by component.
 

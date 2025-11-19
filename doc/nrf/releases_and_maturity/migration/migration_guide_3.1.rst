@@ -72,16 +72,16 @@ nRF54H20
 
 This section describes the changes specific to the nRF54H20 SoC and DK support in the |NCS|.
 
-nRF54H20 SoC binaries
----------------------
+nRF54H20 IronSide SE binaries
+-----------------------------
 
 .. toggle::
 
-   * The nRF54H20 SoC binaries have been updated to version v22.2.0+14, and are now based on IronSide SE.
+   * The nRF54H20 IronSide SE binaries have been updated to version v22.2.0+14.
      For more information, see :ref:`abi_compatibility`.
 
      .. caution::
-        To program the nRF54H20 SoC binaries based on IronSide SE on your nRF54H20 SoC-based device, your device must be in lifecycle state (LCS) ``EMPTY``.
+        To program the nRF54H20 IronSide SE binaries on your nRF54H20 SoC-based device, your device must be in lifecycle state (LCS) ``EMPTY``.
         Devices already provisioned using SUIT-based SoC binaries and in LCS ``RoT`` cannot be transitioned back to LCS ``EMPTY``.
 
         For more information on provisioning devices, see :ref:`ug_nrf54h20_gs_bringup`.

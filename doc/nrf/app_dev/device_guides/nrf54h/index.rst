@@ -26,7 +26,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
        | ``nrf54h20dk/nrf54h20/cpuppr``
 
 .. note::
-   For details on the compatibility between nRF54H20 SoC binaries and |NCS| versions, see :ref:`abi_compatibility`.
+   For details on the compatibility between nRF54H20 IronSide SE binaries and |NCS| versions, see :ref:`abi_compatibility`.
 
 .. toctree::
    :maxdepth: 2
