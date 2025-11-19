@@ -201,7 +201,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 	printk("Connected as %s\n",
 	       conn_info.role == BT_CONN_ROLE_CENTRAL ? "central" : "peripheral");
-	__ASSERT_NO_MSG(conn_info.le.interval == INTERVAL_LLPM);
+	__ASSERT_NO_MSG(conn_info.le.interval_us == INTERVAL_LLPM * BT_HCI_LE_INTERVAL_UNIT_US);
 	printk("Conn. interval is 1 ms\n");
 }
 
