@@ -102,14 +102,6 @@ public:
 	static constexpr uint8_t kDescriptorAttributeArraySize = 254;
 
 	explicit MatterBridgedDevice(const char *uniqueID, const char *nodeLabel)
-		/* TODO: Currently the mEndpointId cannot be used here because it is initialized later.
-		 * We need to refactor this construtor to initialize the mEndpointId here.
-		 * Ref: KRKNWK-21020
-		 */
-		: mIdentifyCluster(
-			  chip::app::Clusters::IdentifyCluster::Config(mEndpointId, mTimerDelegate)
-				  .WithIdentifyType(chip::app::Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator)
-				  .WithDelegate(&mIdentifyDelegate))
 	{
 		if (uniqueID) {
 			memcpy(mUniqueID, uniqueID, strnlen(uniqueID, Nrf::MatterBridgedDevice::kUniqueIDSize));
@@ -118,11 +110,21 @@ public:
 			memcpy(mNodeLabel, nodeLabel, strnlen(nodeLabel, Nrf::MatterBridgedDevice::kNodeLabelSize));
 		}
 	}
-	virtual ~MatterBridgedDevice() { chip::Platform::MemoryFree(mDataVersion); }
+	virtual ~MatterBridgedDevice() {
+		if (mIdentifyCluster.IsConstructed()) {
+			mIdentifyCluster.Destroy();
+		}
+
+		chip::Platform::MemoryFree(mDataVersion); }
 
 	void Init(chip::EndpointId endpoint)
 	{
 		mEndpointId = endpoint;
+
+		mIdentifyCluster.Create(
+			chip::app::Clusters::IdentifyCluster::Config(mEndpointId, mTimerDelegate)
+				.WithIdentifyType(chip::app::Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator)
+				.WithDelegate(&mIdentifyDelegate));
 
 		CHIP_ERROR err = chip::app::CodegenDataModelProvider::Instance().Registry().Register(
 			mIdentifyCluster.Registration());
@@ -174,7 +176,7 @@ private:
 	bool mIsReachable = true;
 	char mUniqueID[kUniqueIDSize] = "";
 	char mNodeLabel[kNodeLabelSize] = "";
-	chip::app::RegisteredServerCluster<chip::app::Clusters::IdentifyCluster> mIdentifyCluster;
+	chip::app::LazyRegisteredServerCluster<chip::app::Clusters::IdentifyCluster> mIdentifyCluster;
 	chip::app::DefaultTimerDelegate mTimerDelegate;
 	IdentifyBridgedDeviceDelegateImpl mIdentifyDelegate;
 };
