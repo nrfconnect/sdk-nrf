@@ -8,6 +8,7 @@ common:
     - nrf54lm20dk/nrf54lm20a/cpuapp
     - nrf54lv10dk/nrf54lv10a/cpuapp
     - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk/nrf54h20/cpuppr
   tags:
     - ppk_power_measure
     - ci_tests_benchmarks_current_consumption
