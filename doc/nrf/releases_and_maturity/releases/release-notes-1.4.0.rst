@@ -47,7 +47,7 @@ This version of the |NCS| has been tested with the following modem firmware for 
 * mfw_nrf9160_1.2.2
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware`_ page for instructions.
 
 Changelog
 *********
