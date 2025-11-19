@@ -296,7 +296,7 @@ Bluetooth mesh samples
 * Updated:
 
   * :ref:`bluetooth_mesh_light` and :ref:`bluetooth_mesh_light_switch` with support for :zephyr:board:`thingy53` in non-secure configuration.
-  * :ref:`bluetooth_mesh_light_lc` and :ref:`bluetooth_mesh_sensor_server` with support for :zephyr:board:`thingy53`.
+  * :ref:`bluetooth_mesh_light_lc` and :ref:`bluetooth_mesh_nlc_ambient_light_sensor` with support for :zephyr:board:`thingy53`.
   * Updated some samples to use DTS overlays instead of Kconfig configuration files for setting up external flash memory.
 
 Gazell samples

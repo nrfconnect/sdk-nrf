@@ -2,7 +2,7 @@ sample:
   description: Bluetooth Mesh sensor sample
   name: Bluetooth Mesh sensor
 tests:
-  sample.bluetooth.mesh.sensor_server:
+  sample.bluetooth.mesh.nlc_ambient_light_sensor:
     sysbuild: true
     build_only: true
     integration_platforms:
@@ -27,7 +27,7 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
-  sample.bluetooth.mesh.sensor_server.settings_ext_flash:
+  sample.bluetooth.mesh.nlc_ambient_light_sensor.settings_ext_flash:
     sysbuild: true
     build_only: true
     integration_platforms:

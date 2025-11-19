@@ -14,7 +14,7 @@ In addition, the samples demonstrate usage of both :ref:`single-channel sensor t
 This sample also demonstrates how to implement the HVAC Integration NLC Profile (see :ref:`ug_bt_mesh_nlc`).
 
 .. note::
-   This sample must be paired with :ref:`bluetooth_mesh_sensor_server` to show any functionality.
+   This sample must be paired with :ref:`bluetooth_mesh_nlc_ambient_light_sensor` to show any functionality.
    The observer has no sensor data, and is dependent on a mesh sensor to provide it.
 
 Requirements
@@ -29,7 +29,7 @@ The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobil
 * `nRF Mesh mobile app for Android`_
 * `nRF Mesh mobile app for iOS`_
 
-Additionally, the sample requires the :ref:`bluetooth_mesh_sensor_server` sample application, programmed on a separate development kit and configured according to mesh sensor sample's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>`.
+Additionally, the sample requires the :ref:`bluetooth_mesh_nlc_ambient_light_sensor` sample application, programmed on a separate development kit and configured according to mesh sensor sample's :ref:`testing guide <bluetooth_mesh_nlc_ambient_light_sensor_testing>`.
 
 Overview
 ********
@@ -165,8 +165,8 @@ Testing
 =======
 
 .. note::
-   The mesh sensor observer sample cannot demonstrate any functionality on its own, and needs a device with the :ref:`bluetooth_mesh_sensor_server` sample running in the same mesh network.
-   Before testing the mesh sensor observer, go through the mesh sensor's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>` with a different development kit.
+   The mesh sensor observer sample cannot demonstrate any functionality on its own, and needs a device with the :ref:`bluetooth_mesh_nlc_ambient_light_sensor` sample running in the same mesh network.
+   Before testing the mesh sensor observer, go through the mesh sensor's :ref:`testing guide <bluetooth_mesh_nlc_ambient_light_sensor_testing>` with a different development kit.
 
 After programming the sample to your development kit, you can test it by using a smartphone with `nRF Mesh mobile app`_ installed.
 Testing consists of provisioning the device and configuring it for communication with the mesh models.

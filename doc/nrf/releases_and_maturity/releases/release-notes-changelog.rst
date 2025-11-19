@@ -492,7 +492,7 @@ Bluetooth Mesh samples
 
   * Removed support for the ``nrf52dk/nrf52832``, since it does not have enough RAM space after NLC support was added.
 
-* :ref:`bluetooth_mesh_sensor_server`:
+* :ref:`bluetooth_mesh_nlc_ambient_light_sensor`:
 
   * Updated:
 

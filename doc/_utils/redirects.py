@@ -436,6 +436,7 @@ NRF = (
     ("samples/bluetooth/central_and_peripheral_hr/README", "samples/bluetooth/central_and_peripheral_hrs/README"), # Renamed the folders to better match the sample names
     ("samples/cellular/ciphersuites/README","samples/cellular/tls_ciphersuites/README"),
     ("samples/cellular/nrf_provisioning/README", "samples/cellular/nrf_device_provisioning/README"),
+    ("samples/bluetooth/mesh/sensor_server/README", "samples/bluetooth/mesh/nlc_ambient_light_sensor/README"),
     ("samples/samples_nrf9160", "samples/cellular"), # Cellular samples (landing)
     ("samples/samples_crypto", "samples/crypto"), # Cryptography samples (landing)
     ("samples/samples_edge", "samples/edge"), # Edge Impulse samples (landing)

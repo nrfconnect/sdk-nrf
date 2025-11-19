@@ -465,7 +465,7 @@ Bluetooth mesh samples
   * :ref:`bt_mesh_chat`
   * :ref:`bluetooth_mesh_light`
   * :ref:`bluetooth_mesh_sensor_client`
-  * :ref:`bluetooth_mesh_sensor_server`
+  * :ref:`bluetooth_mesh_nlc_ambient_light_sensor`
   * :ref:`bluetooth_mesh_light_lc`
 
 * :ref:`bluetooth_mesh_light_lc` sample:

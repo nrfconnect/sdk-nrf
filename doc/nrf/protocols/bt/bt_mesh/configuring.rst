@@ -222,7 +222,7 @@ The following data is stored for each model by the Bluetooth Mesh stack:
 
 Model data stored persistently can be found under the ``Persistent storage`` section of the corresponding model documentation.
 
-Using the :ref:`bluetooth_mesh_sensor_server` sample as an example, configured according to the sample's :ref:`configuration guide <bluetooth_mesh_sensor_server_conf_models>`, results in the following list of possible entries (entries mentioned above are not included unless specifying the amount of entries):
+Using the :ref:`bluetooth_mesh_nlc_ambient_light_sensor` sample as an example, configured according to the sample's :ref:`configuration guide <bluetooth_mesh_nlc_ambient_light_sensor_conf_models>`, results in the following list of possible entries (entries mentioned above are not included unless specifying the amount of entries):
 
 * 32 RPL entries - since the default Networked Lighting Control (NLC) configuration is used (:kconfig:option:`CONFIG_BT_MESH_NLC_PERF_DEFAULT` is set), the RPL size is 32.
 * Application keys - three keys are used.

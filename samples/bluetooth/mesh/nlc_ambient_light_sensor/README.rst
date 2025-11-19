@@ -1,4 +1,4 @@
-.. _bluetooth_mesh_sensor_server:
+.. _bluetooth_mesh_nlc_ambient_light_sensor:
 
 Bluetooth Mesh NLC: Ambient Light Sensor/Occupancy Sensor
 #########################################################
@@ -36,7 +36,7 @@ For provisioning and configuring of the mesh model instances, the sample require
    |thingy53_sample_note|
 
 Additionally, the sample requires the :ref:`bluetooth_mesh_sensor_client` sample application.
-The application needs to be programmed on a separate device, and configured according to the sensor observer sample's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>`.
+The application needs to be programmed on a separate device, and configured according to the sensor observer sample's :ref:`testing guide <bluetooth_mesh_nlc_ambient_light_sensor_testing>`.
 
 .. include:: /includes/tfm.txt
 
@@ -58,12 +58,12 @@ The following Bluetooth Mesh sensor types, and their settings, are used in this 
 
     * :c:var:`bt_mesh_sensor_motion_threshold` - Used as a setting for the :c:var:`bt_mesh_sensor_presence_detected` sensor type to set the time (0-10 seconds) before the presence is detected.
 
-  * :c:var:`bt_mesh_sensor_time_since_presence_detected` - Periodically requested by the client and published by the server according to its publishing period (see :ref:`bluetooth_mesh_sensor_server_conf_models`).
+  * :c:var:`bt_mesh_sensor_time_since_presence_detected` - Periodically requested by the client and published by the server according to its publishing period (see :ref:`bluetooth_mesh_nlc_ambient_light_sensor_conf_models`).
 
 * On Sensor Server instance on Element 3:
 
   * :c:var:`bt_mesh_sensor_motion_sensed` - Published when a button is pressed on the server.
-  * :c:var:`bt_mesh_sensor_time_since_motion_sensed` - Periodically requested by the client and published by the server according to its publishing period (see :ref:`bluetooth_mesh_sensor_server_conf_models`).
+  * :c:var:`bt_mesh_sensor_time_since_motion_sensed` - Periodically requested by the client and published by the server according to its publishing period (see :ref:`bluetooth_mesh_nlc_ambient_light_sensor_conf_models`).
 
 * On Sensor Server instance on Element 4:
 
@@ -71,7 +71,7 @@ The following Bluetooth Mesh sensor types, and their settings, are used in this 
 
 * On Sensor Server instance on Element 5:
 
-  * :c:var:`bt_mesh_sensor_present_dev_op_temp` - Published by the server according to its publishing period (see :ref:`bluetooth_mesh_sensor_server_conf_models`), or periodically requested by the client.
+  * :c:var:`bt_mesh_sensor_present_dev_op_temp` - Published by the server according to its publishing period (see :ref:`bluetooth_mesh_nlc_ambient_light_sensor_conf_models`), or periodically requested by the client.
 
     * :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` - Used as a setting for the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor type to set the range of reported temperatures.
 
@@ -204,7 +204,7 @@ FEM support
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/mesh/sensor_server`
+.. |sample path| replace:: :file:`samples/bluetooth/mesh/nlc_ambient_light_sensor`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -213,7 +213,7 @@ Building and running
 
 .. include:: /includes/ipc_radio_conf.txt
 
-.. _bluetooth_mesh_sensor_server_testing:
+.. _bluetooth_mesh_nlc_ambient_light_sensor_testing:
 
 Testing
 =======
@@ -232,7 +232,7 @@ Provisioning the device
 
 .. include:: /includes/mesh_device_provisioning.txt
 
-.. _bluetooth_mesh_sensor_server_conf_models:
+.. _bluetooth_mesh_nlc_ambient_light_sensor_conf_models:
 
 Configuring models
 ------------------

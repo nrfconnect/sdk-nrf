@@ -1005,7 +1005,7 @@ Applications and samples
 
     * Bluetooth: Mesh light control sample to :ref:`bluetooth_mesh_light_lc`.
     * Bluetooth: Mesh sensor client to :ref:`bluetooth_mesh_sensor_client`.
-    * Bluetooth: Mesh sensor server to :ref:`bluetooth_mesh_sensor_server`.
+    * Bluetooth: Mesh sensor server to :ref:`bluetooth_mesh_nlc_ambient_light_sensor`.
 * Thread:
 
   * Added information on FEM support.

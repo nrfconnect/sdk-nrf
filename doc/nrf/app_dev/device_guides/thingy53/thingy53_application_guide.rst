@@ -150,4 +150,4 @@ The following samples and applications in the |NCS| enable FOTA for Thingy:53 by
   * :ref:`bluetooth_mesh_light`
   * :ref:`bluetooth_mesh_light_lc`
   * :ref:`bluetooth_mesh_light_switch`
-  * :ref:`bluetooth_mesh_sensor_server`
+  * :ref:`bluetooth_mesh_nlc_ambient_light_sensor`

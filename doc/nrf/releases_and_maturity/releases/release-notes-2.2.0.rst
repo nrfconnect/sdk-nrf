@@ -396,7 +396,7 @@ Bluetooth mesh samples
 
   * Added point-to-point Device Firmware Update (DFU) support over the Simple Management Protocol (SMP) for supported nRF52 Series development kits.
 
-* :ref:`bluetooth_mesh_sensor_server` sample:
+* :ref:`bluetooth_mesh_nlc_ambient_light_sensor` sample:
 
   * Added:
 
