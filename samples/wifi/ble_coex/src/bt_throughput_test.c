@@ -207,7 +207,7 @@ static void connected(struct bt_conn *conn, uint8_t hci_err)
 	}
 
 	LOG_INF("Connected as %s", info.role == BT_CONN_ROLE_CENTRAL ? "central" : "peripheral");
-	LOG_INF("Conn. interval is %u units", info.le.interval);
+	LOG_INF("Conn. interval is %u us", info.le.interval_us);
 
 	if (info.role == BT_CONN_ROLE_CENTRAL) {
 		err = bt_gatt_dm_start(default_conn,
@@ -475,7 +475,7 @@ int connection_configuration_set(const struct bt_le_conn_param *conn_param,
 		}
 	}
 
-	if (info.le.interval != conn_param->interval_max) {
+	if (BT_GAP_US_TO_CONN_INTERVAL(info.le.interval_us) != conn_param->interval_max) {
 		err = bt_conn_le_param_update(default_conn, conn_param);
 		if (err) {
 			LOG_ERR("Connection parameters update failed: %d", err);
