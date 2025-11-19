@@ -488,27 +488,29 @@ After applying the entry, |ISE| performs a read-back check: it reads back the re
 The configuration procedure is aborted if an entry fails either the validation or the read-back check.
 If a failure occurs, BOOTSTATUS.BOOTERROR is set to indicate the error condition, and a description of the failed entry is written to the boot report.
 
-Peripheral configuration using nrf-regtool
-------------------------------------------
+PERIPHCONF generation from devicetree
+-------------------------------------
 
-The ``nrf-regtool`` utility generates a UICR.PERIPHCONF configuration from the devicetree.
-To determine which peripherals are in use, it analyzes the devicetree as follows:
+When :kconfig:option:`CONFIG_NRF_PERIPHCONF_GENERATE_ENTRIES` is enabled, the build system automatically generates entries for the PERIPHCONF partition based on the devicetree.
+To determine which peripherals are in use, the build system analyzes the devicetree as follows:
 
 #. Enumerate all peripheral nodes and include only those with a ``status`` property set to ``okay``.
 #. Parse peripheral-specific attributes (for example, the ``owned-channels`` property in DPPIC nodes).
 #. Collect GPIO pin assignments from all pin references (for example, ``pinctrl`` entries).
 
 It then generates the appropriate configuration values by reusing existing properties.
+The build system outputs the generated entries as a C file named :file:`periphconf_entries_generated.c` in the build directory, which is added as a source file to the build.
+The generated C code uses the macros defined in :file:`zephyr/soc/nordic/common/uicr/uicr.h` to insert entries into a special PERIPHCONF section in the ELF file which can be read by the UICR image.
 
-See the following table for a mapping between the devicetree input used by ``nrf-regtool`` and the resulting output in the automatically migrated :file:`periconf_migrated.c` file.
+See the following table for a mapping between the devicetree input used by the PERIPHCONF entry generator script and the resulting output in the :file:`periphconf_entries_generated.c` file.
 
-.. list-table:: Mapping between devicetree and Migrated PERIPHCONF output (UICR Configuration)
+.. list-table:: Mapping between devicetree and PERIPHCONF entry output (UICR Configuration)
    :header-rows: 1
    :widths: 25 15 35 25
 
    * - Devicetree node type
      - Properties
-     - Migrated PERIPHCONF output
+     - PERIPHCONF entry output
      - Example generated output
    * - Peripheral Access Control
      -
