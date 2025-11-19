@@ -15,15 +15,15 @@ To follow this guide, you must meet the following prerequisites:
 * You have installed the |NCS| v3.1.0 and its toolchain.
   For more information, see :ref:`install_ncs`.
 
-Moreover, to program your modified application on the nRF54H20 SoC, your nRF54H20-based device must be provisioned with the relevant nRF54H20 SoC binaries version.
+Moreover, to program your modified application on the nRF54H20 SoC, your nRF54H20-based device must be provisioned with the relevant nRF54H20 IronSide SE binaries version.
 For more information, see :ref:`abi_compatibility`.
 
 .. caution::
-   To program the nRF54H20 SoC binaries based on IronSide SE on your nRF54H20 SoC-based device, your device must be in lifecycle state (LCS) ``EMPTY``.
+   To program the new nRF54H20 IronSide SE binaries on your nRF54H20 SoC-based device, your device must be in lifecycle state (LCS) ``EMPTY``.
    Devices already provisioned using SUIT-based SoC binaries and in LCS ``RoT`` cannot be transitioned back to LCS ``EMPTY``.
 
    For more information on provisioning devices, see :ref:`ug_nrf54h20_gs_bringup`.
-   For more information on the nRF54H20 SoC binaries, see :ref:`abi_compatibility`.
+   For more information on the new nRF54H20 IronSide SE binaries, see :ref:`abi_compatibility`.
 
 Breaking changes
 ****************

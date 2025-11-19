@@ -29,13 +29,13 @@ nRF54H20
 
 This section describes the changes specific to the nRF54H20 SoC and DK support in the |NCS|.
 
-nRF54H20 SoC binaries
----------------------
+nRF54H20 IronSide SE binaries
+-----------------------------
 
 .. toggle::
 
-   * The nRF54H20 SoC binaries based on IronSide SE have been updated to version v23.0.1+16.
-     Starting from the |NCS| v3.2.0, you should always upgrade your nRF54H20 SoC binaries to the latest version.
+   * The nRF54H20 IronSide SE binaries have been updated to version v23.0.1+16.
+     Starting from the |NCS| v3.2.0, you should always upgrade your nRF54H20 IronSide SE binaries to the latest version.
 
      For more information, see:
 
