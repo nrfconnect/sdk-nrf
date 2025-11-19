@@ -155,7 +155,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: a85100a3737728de6270845a314ddb318deebd5c
+      revision: pull/668/head
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -169,7 +169,7 @@ manifest:
       userdata:
         ncs:
           upstream-url: https://github.com/project-chip/connectedhomeip
-          upstream-sha: 181b0cb14ff007ec912f2ba6627e05dfb066c008
+          upstream-sha: 191158d3bb1dd6f5381bcb9a3e3b7b1f340a3185
           compare-by-default: false
     - name: nrf-802154
       repo-path: sdk-nrf-802154
