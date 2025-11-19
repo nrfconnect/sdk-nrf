@@ -162,7 +162,7 @@
 
 - scenarios:
     - sample.bluetooth.mesh.light
-    - sample.bluetooth.mesh.light_dimmer
+    - sample.bluetooth.mesh.nlc_dimming_control
   platforms:
     - nrf21540dk/nrf52840
     - nrf52833dk/nrf52833

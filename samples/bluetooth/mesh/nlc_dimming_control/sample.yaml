@@ -2,7 +2,7 @@ sample:
   description: Bluetooth Mesh light dimmer sample
   name: Bluetooth Mesh light dimmer
 tests:
-  sample.bluetooth.mesh.light_dimmer:
+  sample.bluetooth.mesh.nlc_dimming_control:
     sysbuild: true
     build_only: true
     integration_platforms:
@@ -35,7 +35,7 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
-  sample.bluetooth.mesh.light_dimmer.settings_ext_flash:
+  sample.bluetooth.mesh.nlc_dimming_control.settings_ext_flash:
     sysbuild: true
     build_only: true
     integration_platforms:
