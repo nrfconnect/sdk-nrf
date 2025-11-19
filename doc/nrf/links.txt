@@ -455,8 +455,6 @@
 
 .. _`Nordic Semiconductor TechDocs`: https://docs.nordicsemi.com
 
-.. _`nRF Connect for Desktop's additional requirements`: https://docs.nordicsemi.com/bundle/nrf-connect-desktop/page/download_cfd.html#additional-requirements
-
 .. _`nRF Connect SDK v1.4.0 documentation`: https://docs.nordicsemi.com/bundle/ncs-1.4.0/page/nrf/index.html
 .. _`nRF Connect SDK v1.3.0 documentation`: https://docs.nordicsemi.com/bundle/ncs-1.3.0/page/nrf/index.html
 .. _`nRF Connect SDK v1.2.1 documentation`: https://docs.nordicsemi.com/bundle/ncs-1.2.1/page/nrf/index.html
@@ -746,6 +744,7 @@
 .. _`Programming a Development Kit`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_dk.html
 .. _`Programming Nordic Thingy53`:
 .. _`Programming Nordic Thingy prototyping platforms`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_thingy.html
+.. _`Programming nRF91 Series DK firmware`: https://docs.nordicsemi.com/bundle/nrf-connect-programmer/page/programming_91dk.html
 
 .. _`Serial Terminal app`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/index.html
 .. _`Connecting using the Serial Terminal app`: https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/connecting.html
@@ -781,7 +780,6 @@
 .. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/hw_description/nrf9160_board_controller.html
 .. _`Measuring current on nRF9160 DK`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/measuring_current/hw_measure_current.html
 .. _`External memory section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/hw_description/external_memory.html
-.. _`Device programming section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/operating_modes/mcu_device_programming.html
 .. _`VDD supply rail section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/hw_description/power_sources_vdd.html
 .. _`nRF9160 RESETREAS`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/power.html#ariaid-title16
 

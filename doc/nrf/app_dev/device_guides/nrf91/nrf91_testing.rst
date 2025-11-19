@@ -12,7 +12,7 @@ You can use it to troubleshoot and debug any connection problems.
 
 Complete the following steps to test the cellular connection using the AT Client sample:
 
-1. Follow the steps in :ref:`nrf9160_gs_updating_fw_application` to program the sample to the DK.
+1. Follow the steps in the Updating the application firmware tab in the `Programming nRF91 Series DK firmware`_ page to program the sample to the DK.
    When selecting the HEX file, select the following file instead of the one for :ref:`nrf_cloud_multi_service`:
 
    * nRF9151 DK - :file:`nrf9151dk_at_client_<version-number>.hex`

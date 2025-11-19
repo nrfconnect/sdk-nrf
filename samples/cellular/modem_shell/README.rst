@@ -1038,7 +1038,7 @@ Getting nRF91 Series DK out-of-the-box and to nRF Cloud
 To program the certificates and connect to nRF Cloud, complete the following steps:
 
 1. `Download nRF Connect for Desktop`_.
-#. Update the modem firmware on the on-board modem of the nRF91 Series DK to the latest version as instructed in :ref:`nrf9160_updating_fw_modem`.
+#. Update the modem firmware on the on-board modem of the nRF91 Series DK to the latest version as instructed in `Programming nRF91 Series DK firmware`_.
 #. Build and program the MoSh to the nRF91 Series DK using the default MoSh configuration (with REST as the transport):
 
 .. parsed-literal::
