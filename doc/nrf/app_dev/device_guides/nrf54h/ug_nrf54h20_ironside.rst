@@ -857,6 +857,9 @@ The value of this register is copied to the |ISE| update status field of the boo
    After an update is installed or attempted, |ISE| resets the update status to ``0xFFFFFFFF`` on the next boot.
    This means that the update status is only valid for a single execution.
 
+When updating |ISE| Recovery, the status will always be ``0xFFFFFFFF``.
+The status of its update can be checked in its version field of the boot report.
+
 UICR error description
 ======================
 
