@@ -656,7 +656,7 @@ Cellular samples
     * Support for RX only mode to the ``link funmode`` command.
     * Support for ``AT%CMNG`` multi-line commands.
 
-* :ref:`nrf_cloud_multi_service` sample:
+* nRF Cloud multi-service sample:
 
   * Added support for native simulator platform and updated the documentation accordingly.
 

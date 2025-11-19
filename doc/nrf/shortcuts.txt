@@ -258,7 +258,7 @@
    When using any other DK, the Toolchain Manager installation is recommended for the |NCS| v1.9.x and earlier versions.
 
 .. |ATv2_maintenance_note| replace:: The Asset Tracker v2 application is in maintenance mode.
-   For new projects, it is recommended to use the :ref:`nrf_cloud_multi_service` sample instead.
+   For new projects, it is recommended to use the nRF Cloud multi-service sample instead.
 
 .. |filter_samples_by_board| replace:: If you want to list samples available for one or more specific boards, `use the nRF Connect for Visual Studio Code extension to filter them <Browse samples_>`_.
 

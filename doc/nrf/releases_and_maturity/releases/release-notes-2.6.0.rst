@@ -88,7 +88,7 @@ Added the following features as experimental:
 
 * nRF Cloud:
 
-  * The :ref:`nrf_cloud_multi_service` sample now includes experimental support for the following:
+  * The nRF Cloud multi-service sample now includes experimental support for the following:
 
     * Runtime installation of TLS certificates using the TLS Credentials Shell when built for :ref:`Wi-Fi connectivity <nrf_cloud_multi_service_building_wifi_conn>` on an nRF5340 DK with an nRF7002 EK.
     * Communication using either MQTT or CoAP over Wi-Fi.
@@ -724,7 +724,7 @@ Cellular samples
     * The nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
     * The ``modem_trace send memfault`` shell command.
 
-* :ref:`nrf_cloud_multi_service` sample:
+* nRF Cloud multi-service sample:
 
   * Added:
 
@@ -1270,7 +1270,7 @@ Libraries for networking
 
     * Support for the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` by selecting the :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_MGMT_TLS_CRED` Kconfig option.
       This is applicable to the :kconfig:option:`CONFIG_NRF_CLOUD_CHECK_CREDENTIALS` and :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig options.
-    * The :file:`nrf_cloud_fota_poll.c` file to consolidate the FOTA polling code from the :ref:`nrf_cloud_multi_service` and :ref:`nrf_cloud_rest_fota` samples.
+    * The :file:`nrf_cloud_fota_poll.c` file to consolidate the FOTA polling code from the nRF Cloud multi-service and :ref:`nrf_cloud_rest_fota` samples.
     * The :file:`nrf_cloud_fota_poll.h` file.
 
   * Updated:

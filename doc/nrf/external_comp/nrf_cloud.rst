@@ -238,12 +238,12 @@ Applications and samples
 
 The following sample demonstrates nRF Cloud-specific functionality using CoAP:
 
-* :ref:`nrf_cloud_multi_service`
+* nRF Cloud multi-service
 * :ref:`modem_shell_application`
 
 The following sample demonstrates nRF Cloud-specific functionality using MQTT:
 
-* :ref:`nrf_cloud_multi_service`
+* nRF Cloud multi-service
 
 The following samples demonstrate nRF Cloud-specific functionality using REST:
 

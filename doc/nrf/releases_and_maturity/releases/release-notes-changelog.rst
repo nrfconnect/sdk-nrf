@@ -572,6 +572,7 @@ Cellular samples
   * The SLM Shell sample.
     Use the `Serial Modem Host Shell`_ sample instead.
   * The deprecated LTE Sensor Gateway sample.
+  * The deprecated nRF Cloud multi-service sample.
 
 * :ref:`nrf_cloud_rest_cell_location` sample:
 
@@ -587,11 +588,6 @@ Cellular samples
 * :ref:`gnss_sample` sample:
 
   * Added TLS support for connection to the SUPL server.
-
-* :ref:`nrf_cloud_multi_service` sample:
-
-  * Fixed an issue where sporadically the application was stuck waiting for the device to connect to the internet.
-    This was due to wrong :ref:`Connection Manager <zephyr:conn_mgr_overview>` initialization.
 
 Cryptography samples
 --------------------

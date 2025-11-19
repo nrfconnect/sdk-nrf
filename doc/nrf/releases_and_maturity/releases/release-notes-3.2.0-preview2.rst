@@ -415,7 +415,7 @@ Cellular samples
     * Support for environment evaluation using the ``link enveval`` command.
     * Support for NTN NB-IoT to the ``link sysmode`` and ``link edrx`` commands.
 
-* :ref:`nrf_cloud_multi_service` sample:
+* nRF Cloud multi-service sample:
 
   * Fixed an issue where sporadically the application was stuck waiting for the device to connect to the internet.
     This was due to wrong :ref:`Connection Manager <zephyr:conn_mgr_overview>` initialization.

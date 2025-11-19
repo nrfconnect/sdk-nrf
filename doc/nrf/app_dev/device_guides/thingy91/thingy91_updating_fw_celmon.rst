@@ -12,7 +12,7 @@ Thingy:91 (v1.5.0 or earlier) comes preloaded with the nRF9160: Asset Tracker fi
 The data is transmitted to nRF Cloud.
 
 .. tip::
-   For a more compact nRF Cloud firmware application, you can build and install the :ref:`nrf_cloud_multi_service` sample.
+   For a more compact nRF Cloud firmware application, you can build and install the nRF Cloud multi-service sample.
    See the :ref:`building_pgming` section for more information.
 
 You can update the application and modem firmware on a Thingy:91 through a :term:`Universal Serial Bus (USB)` cable using MCUboot.

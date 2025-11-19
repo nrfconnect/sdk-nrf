@@ -15,7 +15,7 @@ The downloaded ZIP archive contains the following firmware:
 
 Application firmware
   The :file:`img_app_bl` folder contains full firmware images for different applications.
-  The guides in this section use the image for the :ref:`nrf_cloud_multi_service` sample as an example.
+  The guides in this section use the image for the nRF Cloud multi-service sample as an example.
   The nRF Cloud multi-service sample simulates sensor data and transmits it to Nordic Semiconductor's cloud solution, `nRF Cloud`_.
 
   The data is transmitted using either LTE-M or NB-IoT.
@@ -169,7 +169,7 @@ To update the application firmware using the Programmer app, complete the follow
 #. For the nRF9160 DK only: Make sure the **PROG/DEBUG SW10** switch (**SW5** on DK v0.9.0 and earlier) on the nRF9160 DK is set to **nRF91** or **nRF52** as appropriate for the application or sample you are programming.
    See the `Device programming section in the nRF9160 DK User Guide`_ for more information.
 
-   For the :ref:`nrf_cloud_multi_service` sample, the switch must be set to **nRF91**.
+   For the nRF Cloud multi-service sample, the switch must be set to **nRF91**.
 
 #. Connect the DK to the computer with a USB cable, and then turn the DK on.
 #. Click :guilabel:`SELECT DEVICE` and select the DK from the drop-down list.

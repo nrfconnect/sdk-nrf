@@ -773,7 +773,7 @@ Cellular samples
   * :ref:`lwm2m_carrier`
   * :ref:`lwm2m_client`
   * :ref:`modem_shell_application`
-  * :ref:`nrf_cloud_multi_service`
+  * nRF Cloud multi-service
   * :ref:`nrf_cloud_rest_fota`
 
 * :ref:`modem_shell_application` sample:
@@ -782,7 +782,7 @@ Cellular samples
   * Removed the ``CONFIG_MOSH_LINK`` Kconfig option.
     The link control functionality is now always enabled and cannot be disabled.
 
-* :ref:`nrf_cloud_multi_service` sample:
+* nRF Cloud multi-service sample:
 
   * Fixed:
 

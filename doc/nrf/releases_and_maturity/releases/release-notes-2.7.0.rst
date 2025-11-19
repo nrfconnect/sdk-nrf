@@ -719,7 +719,7 @@ Cellular samples
   * Removed sending GNSS UI service info to nRF Cloud.
     This is no longer required by the cloud.
 
-* :ref:`nrf_cloud_multi_service` sample:
+* nRF Cloud multi-service sample:
 
   * Added:
 

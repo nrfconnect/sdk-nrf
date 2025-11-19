@@ -301,7 +301,7 @@ Cellular samples
 * Deprecated the LTE Sensor Gateway sample.
   It is no longer maintained.
 
-* :ref:`nrf_cloud_multi_service` sample:
+* nRF Cloud multi-service sample:
 
   * Added support for native simulator platform and updated the documentation accordingly.
 

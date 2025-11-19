@@ -559,9 +559,9 @@ Cellular samples (renamed from nRF9160 samples)
   * The :ref:`battery` sample to show how to use the :ref:`modem_battery_readme` library.
   * The :ref:`nrf_provisioning_sample` sample that demonstrates how to use the :ref:`lib_nrf_provisioning` service.
 
-* :ref:`nrf_cloud_multi_service` sample:
+* nRF Cloud multi-service sample:
 
-  * Renamed Cellular: nRF Cloud MQTT multi-service to :ref:`nrf_cloud_multi_service`.
+  * Renamed Cellular: nRF Cloud MQTT multi-service to nRF Cloud multi-service.
   * Added:
 
     * Documentation for using the :ref:`lib_nrf_cloud_alert` and :ref:`lib_nrf_cloud_log` libraries.
