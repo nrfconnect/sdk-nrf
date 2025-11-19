@@ -8,6 +8,35 @@ rsource "Kconfig.defaults"
 
 menu "Broadcast"
 
+config BT_AUDIO_BROADCAST_SAMPLE_RATE_VALUE
+	hex
+	default 0x03 if BT_AUDIO_BROADCAST_SAMPLE_RATE_16KHZ
+	default 0x05 if BT_AUDIO_BROADCAST_SAMPLE_RATE_24KHZ
+	default 0x08 if BT_AUDIO_BROADCAST_SAMPLE_RATE_48KHZ
+
+choice BT_AUDIO_BROADCAST_SAMPLE_RATE
+	prompt "Broadcast audio sample rate"
+	default BT_AUDIO_BROADCAST_SAMPLE_RATE_16KHZ if BT_BAP_BROADCAST_16_2_1 || BT_BAP_BROADCAST_16_2_2
+	default BT_AUDIO_BROADCAST_SAMPLE_RATE_24KHZ if BT_BAP_BROADCAST_24_2_1 || BT_BAP_BROADCAST_24_2_2
+	default BT_AUDIO_BROADCAST_SAMPLE_RATE_48KHZ if BT_BAP_BROADCAST_48_2_1 || BT_BAP_BROADCAST_48_2_2 || BT_BAP_BROADCAST_48_4_1 || BT_BAP_BROADCAST_48_6_1 || BT_BAP_BROADCAST_48_6_2
+	default BT_AUDIO_BROADCAST_SAMPLE_RATE_48KHZ
+
+config  BT_AUDIO_BROADCAST_SAMPLE_RATE_48KHZ
+	bool "48 kHz"
+	help
+	  Select 48000 Hz as the preferred sink sample rate.
+
+config  BT_AUDIO_BROADCAST_SAMPLE_RATE_24KHZ
+	bool "24 kHz"
+	help
+	  Select 24000 Hz as the preferred sink sample rate.
+
+config  BT_AUDIO_BROADCAST_SAMPLE_RATE_16KHZ
+	bool "16 kHz"
+	help
+	  Select 16000 Hz as the preferred sink sample rate.
+endchoice
+
 choice BT_AUDIO_BROADCAST_BAP_CONFIGURATION
 	prompt "Broadcast codec configuration"
 	depends on TRANSPORT_BIS
@@ -78,7 +107,6 @@ config BT_BAP_BROADCAST_48_4_2
 	help
 	  Broadcast codec capability 48_4_2.
 	  48kHz, 96kbps, 4 retransmits, 65ms transport latency, and 40ms presentation delay.
-
 
 config BT_BAP_BROADCAST_48_6_1
 	bool "48_6_1"
@@ -265,6 +293,11 @@ config BT_AUDIO_BROADCAST_ZBUS_EVT_STREAM_SENT
 	  be prepared. As this event will trigger once for each frame it will cause significant
 	  overhead, even if the event is not used.
 
+config CUSTOM_BROADCASTER
+	bool "Allow custom broadcasters"
+	default n
+	help
+	  Incomplete feature for now, but will introduce support for multiple BIGs and subgroups.
 #----------------------------------------------------------------------------#
 menu "Log levels"
 

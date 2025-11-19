@@ -22,6 +22,7 @@
 #if CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE
 #define BT_BAP_LC3_BROADCAST_PRESET_NRF5340_AUDIO                                                  \
 	BT_BAP_LC3_PRESET_CONFIGURABLE(                                                            \
+		CONFIG_BT_AUDIO_BROADCAST_SAMPLE_RATE_VALUE,                                       \
 		BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT,                      \
 		BT_AUDIO_CONTEXT_TYPE_MEDIA, CONFIG_BT_AUDIO_BITRATE_BROADCAST_SRC)
 

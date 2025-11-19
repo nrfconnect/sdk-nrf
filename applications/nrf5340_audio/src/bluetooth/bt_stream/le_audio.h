@@ -45,10 +45,9 @@
 /** Configure LC3 codec preset with customizable parameters for LE Audio streams
  *  using location, stream context, and bitrate parameters.
  */
-#define BT_BAP_LC3_PRESET_CONFIGURABLE(_loc, _stream_context, _bitrate)                            \
-	BT_BAP_LC3_PRESET(BT_AUDIO_CODEC_LC3_CONFIG(CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE,   \
-						    BT_AUDIO_CODEC_CFG_DURATION_10, _loc,          \
-						    LE_AUDIO_SDU_SIZE_OCTETS(_bitrate), 1,         \
+#define BT_BAP_LC3_PRESET_CONFIGURABLE(_sample_rate, _loc, _stream_context, _bitrate)              \
+	BT_BAP_LC3_PRESET(BT_AUDIO_CODEC_LC3_CONFIG(_sample_rate, BT_AUDIO_CODEC_CFG_DURATION_10,  \
+						    _loc, LE_AUDIO_SDU_SIZE_OCTETS(_bitrate), 1,   \
 						    _stream_context),                              \
 			  BT_BAP_QOS_CFG_UNFRAMED(10000u, LE_AUDIO_SDU_SIZE_OCTETS(_bitrate),      \
 						  CONFIG_BT_AUDIO_RETRANSMITS,                     \
