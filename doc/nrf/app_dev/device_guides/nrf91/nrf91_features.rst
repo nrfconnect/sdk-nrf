@@ -121,7 +121,7 @@ Full update
     Both methods use the :term:`Serial Wire Debug (SWD)` interface to update the firmware.
 
     You can use the Programmer app to perform the update, regardless of the images that are part of the existing firmware of the device.
-    For example, you can update the modem on an nRF9160 DK using the instructions provided in the :ref:`nrf9160_updating_fw_modem` section.
+    For example, you can update the modem on an nRF9160 DK using the instructions provided in the `Programming nRF91 Series DK firmware`_ page.
 
   * When using a wireless connection, the update is applied over-the-air (OTA).
     See :ref:`nrf91_fota` for more information.

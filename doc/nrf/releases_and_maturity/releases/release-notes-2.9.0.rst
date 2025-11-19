@@ -94,7 +94,7 @@ See the following documentation for an overview of which modem firmware versions
 * `Modem firmware compatibility matrix for the nRF9160 SoC`_
 
 Use the latest version of the `Programmer app`_ of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Modem-related libraries and versions
 ====================================

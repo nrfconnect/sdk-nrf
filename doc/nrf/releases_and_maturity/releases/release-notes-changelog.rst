@@ -63,7 +63,7 @@ Bootloaders and DFU
 Developing with nRF91 Series
 ============================
 
-|no_changes_yet_note|
+* Moved the sections about updating the firmware using the Programmer app to the `Programming nRF91 Series DK firmware`_ tools page.
 
 Developing with nRF70 Series
 ============================
