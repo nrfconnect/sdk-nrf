@@ -234,5 +234,7 @@ tests:
     extra_args:
       - cli_SNIPPET="ci;logging;multiprotocol;tcp;hot_potato"
       - FILE_SUFFIX=ble
+    extra_configs:
+      - CONFIG_POWER_LIMIT_TABLE_ID=517
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
