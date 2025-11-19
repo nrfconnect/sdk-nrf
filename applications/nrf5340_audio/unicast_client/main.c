@@ -288,7 +288,7 @@ static void le_audio_msg_sub_thread(void)
 			if (ret) {
 				LOG_ERR("Failed to get conn info");
 			} else {
-				interval = conn_info.le.interval;
+				interval = BT_GAP_US_TO_CONN_INTERVAL(conn_info.le.interval_us);
 			}
 
 			/* Only update conn param once */

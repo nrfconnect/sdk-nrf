@@ -246,7 +246,10 @@ static const size_t bt_conn_info_buf_size =
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_info, type) +
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_info, role) +
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_info, id) +
-	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_info, le.interval) +
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_info, le.interval_us) +
+#if !defined(CONFIG_BT_SHORTER_CONNECTION_INTERVALS)
+	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_info, le._interval) +
+#endif
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_info, le.latency) +
 	1 + BT_RPC_SIZE_OF_FIELD(struct bt_conn_info, le.timeout) +
 	4 * (1 + sizeof(bt_addr_le_t)) +
@@ -269,7 +272,10 @@ static void bt_conn_info_enc(struct nrf_rpc_cbor_ctx *encoder, struct bt_conn_in
 	nrf_rpc_encode_uint(encoder, info->id);
 
 	if (info->type == BT_CONN_TYPE_LE) {
-		nrf_rpc_encode_uint(encoder, info->le.interval);
+		nrf_rpc_encode_uint(encoder, info->le.interval_us);
+#if !defined(CONFIG_BT_SHORTER_CONNECTION_INTERVALS)
+		nrf_rpc_encode_uint(encoder, info->le._interval);
+#endif
 		nrf_rpc_encode_uint(encoder, info->le.latency);
 		nrf_rpc_encode_uint(encoder, info->le.timeout);
 		nrf_rpc_encode_buffer(encoder, info->le.src, sizeof(bt_addr_le_t));

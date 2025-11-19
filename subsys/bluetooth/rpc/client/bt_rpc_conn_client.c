@@ -279,7 +279,10 @@ static void bt_conn_info_dec(struct nrf_rpc_cbor_ctx *ctx, struct bt_conn *conn,
 	info->id = nrf_rpc_decode_uint(ctx);
 
 	if (info->type == BT_CONN_TYPE_LE) {
-		info->le.interval = nrf_rpc_decode_uint(ctx);
+		info->le.interval_us = nrf_rpc_decode_uint(ctx);
+#if !defined(CONFIG_BT_SHORTER_CONNECTION_INTERVALS)
+		info->le._interval = nrf_rpc_decode_uint(ctx);
+#endif
 		info->le.latency = nrf_rpc_decode_uint(ctx);
 		info->le.timeout = nrf_rpc_decode_uint(ctx);
 		LOCK_CONN_INFO();

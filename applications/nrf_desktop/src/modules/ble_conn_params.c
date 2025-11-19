@@ -23,11 +23,12 @@
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_CONN_PARAMS_LOG_LEVEL);
 
 #define CONN_INTERVAL_LLPM_US		1000   /* 1 ms */
-#define CONN_INTERVAL_LLPM_REG		0x0d01 /* 1 ms */
 #if (CONFIG_CAF_BLE_USE_LLPM && (CONFIG_BT_MAX_CONN >= 2))
  #define CONN_INTERVAL_BLE_REG		0x0008 /* 10 ms */
+ #define CONN_INTERVAL_BLE_US           10000
 #else
  #define CONN_INTERVAL_BLE_REG		0x0006 /* 7.5 ms */
+ #define CONN_INTERVAL_BLE_US           7500
 #endif
 #define CONN_SUPERVISION_TIMEOUT	400
 
@@ -77,8 +78,10 @@ static int set_le_conn_param(struct bt_conn *conn, uint16_t interval, uint16_t l
 	return bt_conn_le_param_update(conn, &param);
 }
 
-static int interval_reg_to_us(uint16_t reg)
+/* Handle llpm encoding in interval_us values */
+static int strip_llpm_encoding_to_us(uint32_t interval_us)
 {
+	uint16_t reg = BT_GAP_US_TO_CONN_INTERVAL(interval_us);
 	bool is_llpm = ((reg & 0x0d00) == 0x0d00) ? true : false;
 
 	return (reg & BIT_MASK(8)) * ((is_llpm) ? 1000 : 1250);
@@ -128,7 +131,7 @@ static int set_conn_params(struct connected_peer *peer)
 			LOG_ERR("Cannot get conn info (%d)", err);
 			return err;
 		}
-		uint32_t curr_ci_us = interval_reg_to_us(info.le.interval);
+		uint32_t curr_ci_us = strip_llpm_encoding_to_us(info.le.interval_us);
 
 		if (curr_ci_us > CONN_INTERVAL_PRE_LLPM_MAX_US) {
 			err = set_le_conn_param(peer->conn, CONN_INTERVAL_BLE_REG,
@@ -192,13 +195,14 @@ static bool conn_params_update_required(struct connected_peer *peer)
 
 	__ASSERT_NO_MSG(info.role == BT_CONN_ROLE_CENTRAL);
 
+	uint32_t interval_us = strip_llpm_encoding_to_us(info.le.interval_us);
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_USB_MANAGED_CI) && usb_suspended) {
-		if ((info.le.interval != CONN_INTERVAL_USB_SUSPEND) ||
+		if ((interval_us != BT_CONN_INTERVAL_TO_US(CONN_INTERVAL_USB_SUSPEND)) ||
 		    (info.le.latency != CONN_LATENCY_USB_SUSPEND)) {
 			return true;
 		}
-	} else if ((peer->use_llpm && (info.le.interval != CONN_INTERVAL_LLPM_REG)) ||
-		   (!peer->use_llpm && (info.le.interval != CONN_INTERVAL_BLE_REG)) ||
+	} else if ((peer->use_llpm && (interval_us != CONN_INTERVAL_LLPM_US)) ||
+		   (!peer->use_llpm && (interval_us != CONN_INTERVAL_BLE_US)) ||
 		   (info.le.latency != peer->requested_latency)) {
 		return true;
 	}

@@ -199,7 +199,7 @@ static void connected(struct bt_conn *conn, uint8_t hci_err)
 
 	printk("Connected as %s\n",
 	       info.role == BT_CONN_ROLE_CENTRAL ? "central" : "peripheral");
-	printk("Conn. interval is %u units\n", info.le.interval);
+	printk("Conn. interval is %u us\n", info.le.interval_us);
 
 	if (info.role == BT_CONN_ROLE_PERIPHERAL) {
 		err = bt_conn_set_security(conn, BT_SECURITY_L2);
@@ -497,7 +497,7 @@ static int connection_configuration_set(const struct shell *shell,
 		return err;
 	}
 
-	if (info.le.interval != conn_param->interval_max) {
+	if (BT_GAP_US_TO_CONN_INTERVAL(info.le.interval_us) != conn_param->interval_max) {
 		err = bt_conn_le_param_update(default_conn, conn_param);
 		if (err) {
 			shell_error(shell,
