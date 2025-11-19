@@ -13,18 +13,23 @@
 
 #include <openthread/instance.h>
 
+/*
+ * The actual otInstance object resides on OT RPC server and is only accessed by OT RPC client using
+ * remote OpenThread API calls. Nevertheless, otInstanceInitSingle() on OT RPC client shall return a
+ * valid non-null address, so the variable below is defined to represent otInstance object.
+ */
+static char ot_instance;
+
 otInstance *otInstanceInitSingle(void)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	uintptr_t instance_rep;
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
-	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_INSTANCE_INIT_SINGLE, &ctx);
-	nrf_rpc_rsp_decode_uint(&ot_group, &ctx, &instance_rep, sizeof(instance_rep));
-	nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_INSTANCE_INIT_SINGLE, &ctx,
+				nrf_rpc_rsp_decode_void, NULL);
 
-	return (otInstance *)instance_rep;
+	return (otInstance *)&ot_instance;
 }
 
 uint32_t otInstanceGetId(otInstance *aInstance)
@@ -32,9 +37,9 @@ uint32_t otInstanceGetId(otInstance *aInstance)
 	struct nrf_rpc_cbor_ctx ctx;
 	uint32_t id;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(uintptr_t));
-	nrf_rpc_encode_uint(&ctx, (uintptr_t)aInstance);
+	ARG_UNUSED(aInstance);
 
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_INSTANCE_GET_ID, &ctx, nrf_rpc_rsp_decode_u32,
 				&id);
 
@@ -46,9 +51,9 @@ bool otInstanceIsInitialized(otInstance *aInstance)
 	struct nrf_rpc_cbor_ctx ctx;
 	bool initialized;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(uintptr_t));
-	nrf_rpc_encode_uint(&ctx, (uintptr_t)aInstance);
+	ARG_UNUSED(aInstance);
 
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_INSTANCE_IS_INITIALIZED, &ctx,
 				nrf_rpc_rsp_decode_bool, &initialized);
 
@@ -59,9 +64,9 @@ void otInstanceFinalize(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(uintptr_t));
-	nrf_rpc_encode_uint(&ctx, (uintptr_t)aInstance);
+	ARG_UNUSED(aInstance);
 
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_INSTANCE_FINALIZE, &ctx,
 				nrf_rpc_rsp_decode_void, NULL);
 }
@@ -71,9 +76,9 @@ otError otInstanceErasePersistentInfo(otInstance *aInstance)
 	struct nrf_rpc_cbor_ctx ctx;
 	otError error;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(uintptr_t));
-	nrf_rpc_encode_uint(&ctx, (uintptr_t)aInstance);
+	ARG_UNUSED(aInstance);
 
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_INSTANCE_ERASE_PERSISTENT_INFO, &ctx,
 				ot_rpc_decode_error, &error);
 
