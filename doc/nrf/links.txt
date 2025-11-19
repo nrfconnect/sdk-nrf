@@ -1974,8 +1974,10 @@
 .. _`nRF54H20 SoC binaries v0.9.6`: https://files.nordicsemi.com/ui/native/SDSC/external/nrf54h20_soc_binaries_v0.9.6.zip
 
 .. _`nRF54H20 SoC binaries v22.2.0+14`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v22.2.0%2B14.zip
+.. _`nRF54H20 IronSide SE binaries v22.2.0+14`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v22.2.0%2B14.zip
 
 .. _`latest nRF54H20 SoC binaries`: https://files.nordicsemi.com/artifactory/SDSC/external/
+.. _`latest nRF54H20 IronSide SE binaries`: https://files.nordicsemi.com/artifactory/SDSC/external/
 
 .. ### Descr: Old 54H BICR file
 

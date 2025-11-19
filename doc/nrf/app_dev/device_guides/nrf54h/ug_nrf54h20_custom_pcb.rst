@@ -137,13 +137,13 @@ After programming the BICR binary onto the device, validate whether the BICR wor
 
 .. _54h_soc_binaries_provision:
 
-Provision the nRF54H20 SoC binaries
-***********************************
+Provision the nRF54H20 IronSide SE binaries
+*******************************************
 
-After programming the BICR, the nRF54H20 SoC requires the provisioning of the nRF54H20 SoC binaries, a bundle containing the precompiled firmware for the Secure Domain and System Controller.
-To provision the nRF54H20 SoC binaries to the nRF54H20 SoC, do the following:
+After programming the BICR, the nRF54H20 SoC requires the provisioning of the nRF54H20 IronSide SE binaries, a bundle containing the precompiled firmware for the Secure Domain and System Controller.
+To provision the nRF54H20 IronSide SE binaries to the nRF54H20 SoC, do the following:
 
-1. Download the right nRF54H20 SoC binaries version for your |NCS| version.
+1. Download the right nRF54H20 IronSide SE binaries version for your |NCS| version.
    You can find the SoC binaries versions listed in the :ref:`abi_compatibility` page.
 #. Move the :file:`ZIP` bundle to a folder of your choice.
 #. |open_terminal_window_with_environment|
@@ -195,14 +195,14 @@ For more information on nRF54H20 SoC development, see :ref:`ug_nrf54h`.
 
 .. _54h_soc_binaries_update:
 
-Update the nRF54H20 SoC binaries
-********************************
+Update the nRF54H20 IronSide SE binaries
+****************************************
 
 .. caution::
-   It is not possible to update the nRF54H20 SoC binaries from a SUIT-based (up to 0.9.6) to an IronSide-SE-based (2x.x.x) version.
+   It is not possible to update the nRF54H20 binaries from a SUIT-based (up to 0.9.6) to an IronSide-SE-based (2x.x.x) version.
 
-To update the nRF54H20 SoC binaries (versions 2x.x.x, based on IronSide SE) using the debugger on a nRF54H20 SoC, use the west ``ncs-ironside-se-update`` command.
+To update the nRF54H20 IronSide SE binaries (versions 2x.x.x, based on IronSide SE) using the debugger on a nRF54H20 SoC, use the west ``ncs-ironside-se-update`` command.
 This command takes the nRF54H20 SoC binary ZIP file and uses the IronSide SE update service to update both the IronSide SE and IronSide SE Recovery (or optionally just one of them).
 
 For more information on how to use the ``ncs-ironside-se-update`` command, see :ref:`ug_nrf54h20_ironside_se_update`.
-For more information on the nRF54H20 SoC binaries, see :ref:`abi_compatibility`.
+For more information on the nRF54H20 IronSide SE binaries, see :ref:`abi_compatibility`.

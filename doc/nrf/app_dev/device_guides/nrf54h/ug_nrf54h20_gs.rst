@@ -17,7 +17,7 @@ It will guide you through the following:
 #. Preparing the nRF54H20 DK for first use:
 
    a. Programming the nRF54H20 DK's Board Information Configuration Registers (BICR) using the provided binary file.
-   #. Programming the Secure Domain and System Controller of the nRF54H20 SoC using the provided SoC binaries.
+   #. Programming the Secure Domain and System Controller of the nRF54H20 SoC using the provided IronSide SE binaries.
    #. Transitioning the SoC's lifecycle state (LCS) to Root of Trust (RoT).
 
 #. Programming the :zephyr:code-sample:`sysbuild_hello_world` sample on the DK.
@@ -134,21 +134,21 @@ To prepare the nRF54H20 DK for its first use, you must manually program the requ
 
 .. rst-class:: numbered-step
 
-Bring-up step: Programming the nRF54H20 SoC binaries
-****************************************************
+Bring-up step: Programming the nRF54H20 IronSide SE binaries
+************************************************************
 
 .. note::
-   To program the nRF54H20 SoC binaries based on IronSide SE on your nRF54H20 SoC-based device, your device must be in lifecycle state (LCS) ``EMPTY``.
+   To program the nRF54H20 IronSide SE binaries on your nRF54H20 SoC-based device, your device must be in lifecycle state (LCS) ``EMPTY``.
    This means that this is likely the first use of your nRF54H20 DK.
 
    Devices already provisioned using SUIT-based binaries and in LCS ``RoT`` cannot be transitioned back to LCS ``EMPTY``.
    For more information, see :ref:`abi_compatibility`.
 
-After programming the BICR, program the :ref:`nRF54H20 SoC binaries <abi_compatibility>`.
+After programming the BICR, program the :ref:`nRF54H20 IronSide SE binaries <abi_compatibility>`.
 This bundle contains the precompiled firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` and :ref:`System Controller <ug_nrf54h20_sys_ctrl>`.
-To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
+To program the nRF54H20 IronSide SE binaries to the nRF54H20 DK, do the following:
 
-1. Download the `latest nRF54H20 SoC binaries`_.
+1. Download the `latest nRF54H20 IronSide SE binaries`_.
 
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
