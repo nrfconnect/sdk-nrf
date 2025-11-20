@@ -643,7 +643,7 @@
 				gpio-controller;
 				#gpio-cells = <2>;
 				port = <1>;
-				ngpios = <20>;
+				ngpios = <16>;
 				gpiote-instance = <&gpiote20>;
 				status = "disabled";
 			};
@@ -654,7 +654,7 @@
 				gpio-controller;
 				#gpio-cells = <2>;
 				port = <3>;
-				ngpios = <13>;
+				ngpios = <12>;
 				gpiote-instance = <&gpiote20>;
 				status = "disabled";
 			};
@@ -842,7 +842,7 @@
 				gpio-controller;
 				#gpio-cells = <2>;
 				port = <0>;
-				ngpios = <10>;
+				ngpios = <13>;
 				gpiote-instance = <&gpiote30>;
 				status = "disabled";
 			};
