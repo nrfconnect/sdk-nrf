@@ -20,6 +20,5 @@ tests:
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
     extra_args:
       - hello_world_SNIPPET=nordic-flpr
