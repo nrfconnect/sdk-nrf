@@ -1,0 +1,40 @@
+board:
+  extend: nrf5340dk
+  variants:
+    - name: compress
+      qualifier: nrf5340/cpuapp
+    - name: compress
+      qualifier: nrf5340/cpunet
+runners:
+  run_once:
+    '--recover':
+      - runners:
+          - nrfjprog
+          - nrfutil
+        run: first
+        groups:
+          - boards:
+              - nrf5340dk/nrf5340/cpunet
+              - nrf5340dk/nrf5340/cpuapp/compress
+    '--erase':
+      - runners:
+          - nrfjprog
+          - jlink
+          - nrfutil
+        run: first
+        groups:
+          - boards:
+              - nrf5340dk/nrf5340/cpunet
+          - boards:
+              - nrf5340dk/nrf5340/cpuapp/compress
+    '--reset':
+      - runners:
+          - nrfjprog
+          - jlink
+          - nrfutil
+        run: last
+        groups:
+          - boards:
+              - nrf5340dk/nrf5340/cpunet
+          - boards:
+              - nrf5340dk/nrf5340/cpuapp/compress

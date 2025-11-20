@@ -50,6 +50,8 @@
 /boards/nordic/nrf7120pdk/                @nrfconnect/ncs-co-boards @rob-robinson-14 @Hi-Im-David
 /boards/nordic/nrf54l*/                   @nrfconnect/ncs-co-boards @kl-cruz
 /boards/nordic/nrf52*                     @nrfconnect/ncs-co-boards @nrfconnect/ncs-si-bluebagel
+/boards/nordic/nrf52840dk/                @nrfconnect/ncs-co-boards
+/boards/nordic/nrf5340dk/                 @nrfconnect/ncs-co-boards
 /boards/nordic/thingy91*/                 @nrfconnect/ncs-co-boards @nrfconnect/ncs-cia
 /boards/sercomm/                          @nrfconnect/ncs-co-boards @tokangas
 

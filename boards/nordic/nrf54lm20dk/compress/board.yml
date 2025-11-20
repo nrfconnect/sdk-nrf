@@ -1,0 +1,36 @@
+board:
+  extend: nrf54lm20dk
+  variants:
+    - name: compress
+      qualifier: nrf54lm20a/cpuapp
+runners:
+  run_once:
+    '--recover':
+      - runners:
+          - nrfjprog
+          - nrfutil
+        run: first
+        groups:
+          - boards:
+              - nrf54lm20dk/nrf54lm20a/cpuapp/compress
+              - nrf54lm20dk/nrf54lm20a/cpuflpr
+    '--erase':
+      - runners:
+          - nrfjprog
+          - jlink
+          - nrfutil
+        run: first
+        groups:
+          - boards:
+              - nrf54lm20dk/nrf54lm20a/cpuapp/compress
+              - nrf54lm20dk/nrf54lm20a/cpuflpr
+    '--reset':
+      - runners:
+          - nrfjprog
+          - jlink
+          - nrfutil
+        run: last
+        groups:
+          - boards:
+              - nrf54lm20dk/nrf54lm20a/cpuapp/compress
+              - nrf54lm20dk/nrf54lm20a/cpuflpr

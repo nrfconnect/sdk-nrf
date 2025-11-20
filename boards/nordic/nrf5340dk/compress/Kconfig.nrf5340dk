@@ -1,0 +1,5 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config BOARD_NRF5340DK
+	select SOC_NRF5340_CPUAPP_QKAA if BOARD_NRF5340DK_NRF5340_CPUAPP_COMPRESS
