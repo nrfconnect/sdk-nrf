@@ -15,3 +15,4 @@ tests:
       - b0
       - fw_info
       - sysbuild
+      - ci_tests_subsys_fw_info

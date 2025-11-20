@@ -1158,6 +1158,7 @@ ci_tests_drivers_flash:
     - nrf/drivers/flash/
     - nrf/subsys/nrf_rpc/
     - nrf/tests/drivers/flash/
+    - nrf/tests/drivers/flash_patch/
     - nrfxlib/nrf_rpc/
     - zephyr/drivers/flash/
 
@@ -1468,6 +1469,11 @@ ci_samples_nrf_rpc:
     - zephyr/subsys/ipc/ipc_service/
     - zephyr/subsys/net/
     - zephyr/subsys/random/
+
+ci_tests_subsys_fw_info:
+  files:
+    - nrf/subsys/fw_info/
+    - nrf/tests/subsys/fw_info/
 
 ci_tests_subsys_nrf_rpc:
   files:
