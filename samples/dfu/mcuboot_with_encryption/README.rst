@@ -134,6 +134,8 @@ Further information on image encryption and generating keys
 ==========================================================
 
 More information on MCUboot support for image encryption can be found in the :ref:`mcuboot_wrapper` section under Encrypted images. Users should familiarize themselves with this section, as they will need to generate their own keys for encryption key exchange. The keys used in this sample are publicly known and should not be used in any product under any circumstances.
+You may also want to visit :ref:`ug_nrf54l_dfu_config` to familiarize yourself with uploading custom keys to KMU.
+
 Dependencies
 ************
 
