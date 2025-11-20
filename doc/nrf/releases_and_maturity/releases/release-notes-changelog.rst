@@ -892,7 +892,13 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Binary libraries
 ----------------
 
-|no_changes_yet_note|
+* :ref:`liblwm2m_carrier_readme` library:
+
+  * Updated:
+
+    * The glue layer to manage PDN connections using the PDN management functionality in the :ref:`lte_lc_readme` library when the :kconfig:option:`CONFIG_LTE_LC_PDN_MODULE` Kconfig option is enabled, or direct AT commands otherwise.
+
+  * Removed the dependency on the deprecated :ref:`pdn_readme` library.
 
 Bluetooth libraries and services
 --------------------------------
