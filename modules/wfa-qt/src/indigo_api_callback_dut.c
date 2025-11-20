@@ -141,6 +141,7 @@ err:
 
 static int run_qt_command(const char *cmd)
 {
+	struct wpa_supplicant *wpa_s;
 	char buffer[64] = { 0 }, response[16] = { 0 };
 	size_t resp_len = sizeof(response);
 	int ret = 0;
@@ -152,8 +153,9 @@ static int run_qt_command(const char *cmd)
 		goto done;
 	}
 
-	if (ctrl_conn) {
-		ret = wpa_ctrl_request(ctrl_conn, buffer, sizeof(buffer),
+	wpa_s = zephyr_get_handle_by_ifname(CONFIG_WFA_QT_DEFAULT_INTERFACE);
+	if (wpa_s && wpa_s->ctrl_conn) {
+		ret = wpa_ctrl_request(wpa_s->ctrl_conn, buffer, sizeof(buffer),
 					response, &resp_len, NULL);
 		if (ret) {
 			indigo_logger(LOG_LEVEL_ERROR,
@@ -169,7 +171,13 @@ static int run_qt_command(const char *cmd)
 		if (ret < 0) {
 			goto done;
 		}
+	} else {
+		indigo_logger(LOG_LEVEL_ERROR,
+			      "WPA Supplicant ready event received, but no handle found for %s",
+			      CONFIG_WFA_QT_DEFAULT_INTERFACE);
+		return -1;
 	}
+
 	indigo_logger(LOG_LEVEL_DEBUG, "Response: %s", response);
 	return 0;
 done:
@@ -1864,8 +1872,16 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 				       "SET_NETWORK 0 psk \"%s\"", psk);
 			ret = run_qt_command(buffer);
 			CHECK_RET();
-			ret = run_qt_command("SET_NETWORK 0 ieee80211w 1");
-			CHECK_RET();
+			tlv = find_wrapper_tlv_by_id(req, TLV_STA_IEEE80211_W);
+			if (tlv) {
+				CHECK_SNPRINTF(buffer, sizeof(buffer), ret,
+					       "SET_NETWORK 0 ieee80211w %s", tlv->value);
+				ret = run_qt_command(buffer);
+				CHECK_RET();
+			} else {
+				ret = run_qt_command("SET_NETWORK 0 ieee80211w 0");
+				CHECK_RET();
+			}
 		} else if (strstr(tlv->value, "SAE")) {
 			CHECK_SNPRINTF(buffer, sizeof(buffer), ret,
 				       "SET_NETWORK 0 sae_password \"%s\"", psk);
@@ -1880,6 +1896,11 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 			 */
 
 			process_certificates();
+
+			if (strstr(tlv->value, "WPA-EAP-SHA256")) {
+				ret = run_qt_command("SET_NETWORK 0 ieee80211w 2");
+				CHECK_RET();
+			}
 
 			struct {
 				int tlv_id;
@@ -1911,6 +1932,15 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 				{ TLV_PASSWORD,
 				  "SET_NETWORK 0 password \"%s\"",
 				  NULL, true },
+				{ TLV_STA_IEEE80211_W,
+				  "SET_NETWORK 0 ieee80211w %s",
+				  NULL, true },
+				{ TLV_DOMAIN_MATCH,
+				  "SET_NETWORK 0 domain_match \"%s\"",
+				  NULL, true },
+				{ TLV_DOMAIN_SUFFIX_MATCH,
+				  "SET_NETWORK 0 domain_suffix_match \"%s\"",
+				  NULL, true },
 			};
 
 			for (size_t i = 0; i < ARRAY_SIZE(config_cmds); i++) {
@@ -1930,10 +1960,6 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 				}
 			}
 
-			ret = run_qt_command(buffer);
-			CHECK_RET();
-			ret = run_qt_command("SET_NETWORK 0 ieee80211w 1");
-			CHECK_RET();
 		}
 #else
 		}
