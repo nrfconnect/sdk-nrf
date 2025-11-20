@@ -404,6 +404,7 @@ nRF Desktop
       The previously used Kconfig option value of ``11`` leads to using the same priority for the mentioned preemptive contexts as the lowest available application thread priority (used for example, by the log processing thread).
     * Application image configurations to explicitly specify the LED driver used by the :ref:`nrf_desktop_leds` (:kconfig:option:`CONFIG_CAF_LEDS_GPIO` or :kconfig:option:`CONFIG_CAF_LEDS_PWM`).
       Also, disabled unused LED drivers enabled by default to reduce memory footprint.
+    * The :ref:`nrf_desktop_hid_forward` to allow using the module when configuration channel support (:ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE <config_desktop_app_options>`) is disabled in the application configuration.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
