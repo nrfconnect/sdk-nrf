@@ -22,7 +22,7 @@ The sample supports the following development kits:
 You need at least two development kits:
 
 * One development kit where you program this sample application (Silvair EnOcean Proxy Server model, including the Generic OnOff Client and the Generic Level Client)
-* At least one development kit where you program the :ref:`bluetooth_mesh_light_lc` sample application (the server), and configure according to the mesh light fixture sample's :ref:`testing guide <bluetooth_mesh_light_ctrl_testing>`
+* At least one development kit where you program the :ref:`bluetooth_mesh_light_lc` sample application (the server), and configure according to the mesh light fixture sample's :ref:`testing guide <bluetooth_mesh_nlc_light_ctrl_testing>`
 
 For provisioning and configuring of the mesh model instances, the sample requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
 
