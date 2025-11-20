@@ -1,17 +1,30 @@
+common:
+  tags:
+    - drivers
+    - clock_control
+    - ci_tests_drivers_timer
+  harness: console
+  harness_config:
+    fixture: lfclk_at_lfrc
+    type: multi_line
+    regex:
+      - "Tests status: PASS"
+
 tests:
-  drivers.timer.grtc_timer_lfrc:
-    tags:
-      - drivers
-      - clock_control
-      - ci_tests_drivers_timer
+  drivers.timer.grtc_timer_lfrc.nrf54h:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
-    harness: console
-    harness_config:
-      fixture: lfclk_at_lfrc
-      type: multi_line
-      regex:
-        - "Tests status: PASS"
+
+  drivers.timer.grtc_timer_lfrc.nrf54l:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
