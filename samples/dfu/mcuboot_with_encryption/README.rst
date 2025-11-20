@@ -21,6 +21,7 @@ The sample supports the following development kits:
 .. note::
 
    On the nRF54LV10 DK, the :zephyr:code-sample:`smp-svr` configuration is trimmed to fit the application slot size.
+   With the nRF54L15 overlay is used to increase size of MCUboot partition; the overlay is required since enabled logging takes too much space to fit into the default partitioning.
 
 Overview
 ********
@@ -51,6 +52,8 @@ You can use the following Kconfig options to configure the sample:
 * :kconfig:option:`CONFIG_FPROTECT` - This option is disabled by default.
   It enables flash protection for the MCUboot code.
   You can disable it for development and enable it for production purposes to prevent MCUboot overwriting at runtime.
+* :kconfig:option:`CONFIG_MCUBOOT_LOG_LEVEL_DBG` - is enabled by default to allow easier verification that MCUboot is indeed starting up.
+  The option should be disabled for production builds.
 * :kconfig:option:`SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_KMU` - This option is disabled by default.
   Set it to ``y`` to enable Hardware Key Management Unit (KMU) support for secure storage of signature keys.
 * :kconfig:option:`CONFIG_BOOT_SWAP_SAVE_ENCTLV` - Enable this option in the MCUboot configuration if you are performing DFU to an external storage device.
