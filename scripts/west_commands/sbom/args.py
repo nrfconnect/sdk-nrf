@@ -66,6 +66,9 @@ class ArgsClass:
     ar: 'str|None'
     ninja: 'str|None'
     help_detectors: bool
+    output_spdx: 'str|None'
+    package_supplier: 'str|None'
+    package_cpe: 'str|None'
 
 
 def split_arg_list(text: str) -> 'list[str]':
@@ -137,6 +140,12 @@ def add_arguments(parser: argparse.ArgumentParser):
                              'By default, it will be automatically detected.')
     parser.add_argument('--help-detectors', action='store_true',
                         help='Show help for each available detector and exit.')
+    parser.add_argument('--package-supplier', default=None,
+                        help='Set the supplier name for packages (for CRA/EO/FDA compliance). '
+                             'This will override auto-detected supplier from git URLs.')
+    parser.add_argument('--package-cpe', default=None,
+                        help='Set the Common Platform Enumeration (CPE) identifier for packages '
+                             '(for CRA/EO/FDA compliance). Format: cpe:2.3:...')
 
 
 def copy_arguments(source):

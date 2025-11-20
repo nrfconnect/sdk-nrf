@@ -23,7 +23,18 @@ SPDXID: SPDXRef-package-{{func.counter()}}
 {% if packages[package_id].version -%}
 PackageVersion: {{packages[package_id].version}}
 {% endif -%}
+{% if packages[package_id].supplier -%}
+PackageSupplier: Organization: {{packages[package_id].supplier}}
+{% else -%}
+PackageSupplier: NOASSERTION
+{% endif -%}
 PackageDownloadLocation: {{packages[package_id].url or 'NONE'}}
+{% if packages[package_id].purl -%}
+ExternalRef: PACKAGE-MANAGER purl {{packages[package_id].purl}}
+{% endif -%}
+{% if packages[package_id].cpe -%}
+ExternalRef: SECURITY cpe23Type {{packages[package_id].cpe}}
+{% endif -%}
 FilesAnalyzed: true
 PackageVerificationCode: {{files_by_package[package_id] | verification_code}}
 PackageLicenseConcluded: NOASSERTION
@@ -47,6 +58,23 @@ FileCopyrightText: NOASSERTION
 
 {% endfor -%}
 
+{% endfor -%}
+
+# Relationships
+{% set package_counter = {} -%}
+{% for package_id in files_by_package -%}
+{% set _ = package_counter.update({package_id: loop.index}) -%}
+{% endfor -%}
+{% for package_id in files_by_package -%}
+{% if packages[package_id].dependencies -%}
+{% for dep_id in packages[package_id].dependencies -%}
+{% if dep_id in package_counter -%}
+Relationship: SPDXRef-package-{{package_counter[package_id]}} DEPENDS_ON SPDXRef-package-{{package_counter[dep_id]}}
+{% endif -%}
+{% endfor -%}
+{% endif -%}
+# Document describes package
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-package-{{package_counter[package_id]}}
 {% endfor -%}
 
 # Extracted Licenses
