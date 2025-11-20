@@ -159,7 +159,8 @@ static psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *c
 #if defined(PSA_NEED_CRACEN_HKDF)                || \
 	defined(PSA_NEED_CRACEN_PBKDF2_HMAC)     || \
 	defined(PSA_NEED_CRACEN_TLS12_PRF)       || \
-	defined(PSA_NEED_CRACEN_TLS12_PSK_TO_MS)
+	defined(PSA_NEED_CRACEN_TLS12_PSK_TO_MS) || \
+	defined(PSA_NEED_CRACEN_WPA3_SAE_H2E)
 /**
  * \brief Initialize and set up the MAC operation that will be used to generate pseudo-random
  *        bytes for HKDF and PBKDF2.
@@ -305,6 +306,13 @@ psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *oper
 		return PSA_SUCCESS;
 	}
 #endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
+
+#if defined(PSA_NEED_CRACEN_WPA3_SAE_H2E)
+	if (PSA_ALG_IS_WPA3_SAE_H2E(alg)) {
+		operation->state = CRACEN_KD_STATE_WPA3_SAE_H2E_INIT;
+		return PSA_SUCCESS;
+	}
+#endif /* PSA_NEED_CRACEN_WPA3_SAE_H2E */
 
 	return PSA_ERROR_NOT_SUPPORTED;
 }
@@ -680,6 +688,74 @@ cracen_key_derivation_input_bytes_srp(cracen_key_derivation_operation_t *operati
 }
 #endif /* PSA_NEED_CRACEN_SRP_PASSWORD_HASH */
 
+#if defined(PSA_NEED_CRACEN_WPA3_SAE_H2E)
+static psa_status_t
+cracen_key_derivation_input_bytes_wpa3_sae(cracen_key_derivation_operation_t *operation,
+					   psa_key_derivation_step_t step, const uint8_t *data,
+					   size_t data_length)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+
+	/* Operation must be initialized to a WPA3-SAE H2E state */
+	if (!(operation->state & CRACEN_KD_STATE_WPA3_SAE_H2E_INIT)) {
+		return PSA_ERROR_BAD_STATE;
+	}
+
+	/* No more input can be provided after we've started outputting data. */
+	if (operation->state == CRACEN_KD_STATE_WPA3_SAE_H2E_OUTPUT) {
+		return PSA_ERROR_BAD_STATE;
+	}
+
+	switch (step) {
+	case PSA_KEY_DERIVATION_INPUT_SALT:
+		/* This must be the first input (SSID is a salt) */
+		if (operation->state != CRACEN_KD_STATE_WPA3_SAE_H2E_INIT) {
+			return PSA_ERROR_BAD_STATE;
+		}
+
+		status = start_mac_operation(operation, data, data_length);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		operation->state = CRACEN_KD_STATE_WPA3_SAE_H2E_SALT;
+		break;
+
+	case PSA_KEY_DERIVATION_INPUT_PASSWORD:
+		/* Input password */
+		if (operation->state != CRACEN_KD_STATE_WPA3_SAE_H2E_SALT) {
+			return PSA_ERROR_BAD_STATE;
+		}
+
+		status = cracen_mac_update(&operation->mac_op, data, data_length);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		operation->state = CRACEN_KD_STATE_WPA3_SAE_H2E_PASSWORD;
+		break;
+
+	case PSA_KEY_DERIVATION_INPUT_INFO:
+		/* PWID (password identifier) setting is optional */
+		if (operation->state != CRACEN_KD_STATE_WPA3_SAE_H2E_PASSWORD) {
+			return PSA_ERROR_BAD_STATE;
+		}
+
+		status = cracen_mac_update(&operation->mac_op, data, data_length);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		operation->state = CRACEN_KD_STATE_WPA3_SAE_H2E_INFO;
+		break;
+	default:
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	return PSA_SUCCESS;
+}
+#endif /* PSA_NEED_CRACEN_WPA3_SAE_H2E */
+
 psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t *operation,
 					       psa_key_derivation_step_t step, const uint8_t *data,
 					       size_t data_length)
@@ -748,6 +824,13 @@ psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t
 		return cracen_key_derivation_input_bytes_srp(operation, step, data, data_length);
 	}
 #endif /* PSA_NEED_CRACEN_SRP_PASSWORD_HASH */
+
+#if defined(PSA_NEED_CRACEN_WPA3_SAE_H2E)
+	if (PSA_ALG_IS_WPA3_SAE_H2E(operation->alg)) {
+		return cracen_key_derivation_input_bytes_wpa3_sae(operation, step,
+								  data, data_length);
+	}
+#endif /* PSA_NEED_CRACEN_WPA3_SAE_H2E */
 
 	return PSA_ERROR_NOT_SUPPORTED;
 }
@@ -1304,6 +1387,28 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 	}
 #endif /* PSA_NEED_CRACEN_SRP_PASSWORD_HASH */
 
+#if defined(PSA_NEED_CRACEN_WPA3_SAE_H2E)
+	if (PSA_ALG_IS_WPA3_SAE_H2E(operation->alg)) {
+
+		if (operation->state != CRACEN_KD_STATE_WPA3_SAE_H2E_PASSWORD &&
+		    operation->state != CRACEN_KD_STATE_WPA3_SAE_H2E_INFO) {
+			return PSA_ERROR_BAD_STATE;
+		}
+
+		operation->state = CRACEN_KD_STATE_WPA3_SAE_H2E_OUTPUT;
+
+		size_t outlen = 0;
+		psa_status_t status = cracen_mac_sign_finish(&operation->mac_op, output,
+							     output_length, &outlen);
+
+		if (output_length != outlen) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		return status;
+	}
+#endif /* PSA_NEED_CRACEN_WPA3_SAE_H2E */
+
 	if (generator == NULL) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
@@ -1348,11 +1453,12 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 
 psa_status_t cracen_key_derivation_abort(cracen_key_derivation_operation_t *operation)
 {
-#if defined(PSA_NEED_CRACEN_HKDF)
-	if (PSA_ALG_IS_HKDF(operation->alg)) {
+#if defined(PSA_NEED_CRACEN_HKDF) || defined(PSA_NEED_CRACEN_WPA3_SAE_H2E)
+	if (PSA_ALG_IS_HKDF(operation->alg) ||
+	    PSA_ALG_IS_WPA3_SAE_H2E(operation->alg)) {
 		cracen_mac_abort(&operation->mac_op);
 	}
-#endif /* PSA_NEED_CRACEN_HKDF */
+#endif /* PSA_NEED_CRACEN_HKDF || PSA_NEED_CRACEN_WPA3_SAE_H2E */
 
 #if defined(PSA_NEED_CRACEN_SRP_PASSWORD_HASH)
 	if (PSA_ALG_IS_SRP_PASSWORD_HASH(operation->alg)) {
