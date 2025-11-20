@@ -37,6 +37,7 @@ target_sources(app PRIVATE
   src/closure_manager.cpp
   src/closure_control_endpoint.cpp
   src/garage_door_impl.cpp
+  src/persistent_percent.cpp
 )
 
 ncs_configure_data_model()

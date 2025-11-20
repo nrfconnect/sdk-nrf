@@ -35,7 +35,7 @@ static Nrf::FiniteMap<TargetPositionEnum, uint16_t, 5> sPositionMapTarget = { {
 	{ TargetPositionEnum::kMoveToFullyOpen, 0 },
 	{ TargetPositionEnum::kMoveToPedestrianPosition, 0 },
 	{ TargetPositionEnum::kMoveToSignaturePosition, 0 },
-	{ TargetPositionEnum::kMoveToVentilationPosition, 7500 },
+	{ TargetPositionEnum::kMoveToVentilationPosition, 8000 },
 } };
 
 static Nrf::FiniteMap<CurrentPositionEnum, uint16_t, 5> sPositionMapCurr = { {
@@ -43,7 +43,7 @@ static Nrf::FiniteMap<CurrentPositionEnum, uint16_t, 5> sPositionMapCurr = { {
 	{ CurrentPositionEnum::kFullyOpened, 0 },
 	{ CurrentPositionEnum::kOpenedForPedestrian, 0 },
 	{ CurrentPositionEnum::kOpenedAtSignature, 0 },
-	{ CurrentPositionEnum::kOpenedForVentilation, 7500 },
+	{ CurrentPositionEnum::kOpenedForVentilation, 8000 },
 } };
 
 static Nrf::FiniteMap<Clusters::Globals::ThreeLevelAutoEnum, uint16_t, 4> sSpeedMap = { {
@@ -91,8 +91,8 @@ ClosureManager::ClosureManager(IPhysicalDevice &device, chip::EndpointId closure
 
 CHIP_ERROR ClosureManager::Init()
 {
-	ReturnErrorOnFailure(mPhysicalDevice.Init());
 	mPhysicalDevice.SetObserver(this);
+	ReturnErrorOnFailure(mPhysicalDevice.Init());
 	DeviceLayer::StackLock lock;
 
 	/* Closure endpoints initialization */
@@ -158,6 +158,10 @@ void ClosureManager::OnMovementStopped(uint16_t currentPosition)
 	} else {
 		LOG_DBG("Attributes updated on movement stopped");
 	}
+}
+void ClosureManager::OnSetup(uint16_t currentPosition)
+{
+	mCurrentState.position = MakeOptional(ExactPos2Enum(currentPosition));
 }
 
 void ClosureManager::OnMovementUpdate(uint16_t currentPosition, uint16_t timeLeft, bool justStarted)

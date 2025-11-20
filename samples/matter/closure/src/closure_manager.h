@@ -77,6 +77,7 @@ public:
 	chip::Protocols::InteractionModel::Status OnStopCommand();
 
 	void OnMovementStopped(uint16_t currentPosition) override;
+	void OnSetup(uint16_t currentPosition) override;
 	void OnMovementUpdate(uint16_t currentPosition, uint16_t timeLeft, bool justStarted = false) override;
 
 	ElapsedS GetMoveCountdownTime() { return mMoveCountdownTime; }

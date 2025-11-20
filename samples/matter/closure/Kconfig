@@ -5,6 +5,9 @@
 #
 mainmenu "Matter nRF Connect Closure Example Application"
 
+config NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
+	default y
+
 # Sample configuration used for Thread networking
 if OPENTHREAD
 
