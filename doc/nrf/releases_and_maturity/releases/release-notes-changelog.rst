@@ -1151,3 +1151,5 @@ Documentation
   * The :ref:`ble_mesh_dfu_distributor` sample documentation to clarify the external flash support.
   * The :ref:`ble_mesh_dfu_target` sample documentation to clarify the external flash support.
   * The :ref:`app_power_opt_nRF91` page by moving it under the :ref:`ug_lte` section.
+  * The :ref:`ug_nrf54h20_custom_pcb` documentation to clarify how to configure the BICR for a custom PCB based on the nRF54H20 SoC.
+
