@@ -1,0 +1,33 @@
+board:
+  extend: nrf52840dk
+  variants:
+    - name: compress
+      qualifier: nrf52840
+runners:
+  run_once:
+    '--recover':
+      - runners:
+          - nrfjprog
+          - nrfutil
+        run: first
+        groups:
+          - boards:
+              - nrf52840dk/nrf52840/compress
+    '--erase':
+      - runners:
+          - nrfjprog
+          - jlink
+          - nrfutil
+        run: first
+        groups:
+          - boards:
+              - nrf52840dk/nrf52840/compress
+    '--reset':
+      - runners:
+          - nrfjprog
+          - jlink
+          - nrfutil
+        run: last
+        groups:
+          - boards:
+              - nrf52840dk/nrf52840/compress
