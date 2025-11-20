@@ -33,9 +33,9 @@ It provides an abstraction of the following modules:
   * :ref:`at_monitor_readme`
   * :ref:`lib_downloader`
   * :ref:`sms_readme`
-  * :ref:`pdn_readme`
   * :ref:`lib_dfu_target`
   * :ref:`lib_uicc_lwm2m`
+  * :ref:`lte_lc_readme` (optional, when the :kconfig:option:`CONFIG_LTE_LC_PDN_MODULE` Kconfig option is enabled)
 
   The inclusion of the :ref:`lib_uicc_lwm2m` library is optional and is added using the :kconfig:option:`CONFIG_UICC_LWM2M` Kconfig option.
   This module allows the LwM2M carrier library to use the bootstrap information stored on the SIM card.
