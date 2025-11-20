@@ -1,0 +1,36 @@
+board:
+  extend: nrf54l15dk
+  variants:
+    - name: matter
+      qualifier: nrf54l15/cpuapp
+runners:
+  run_once:
+    '--recover':
+      - runners:
+          - nrfjprog
+          - nrfutil
+        run: first
+        groups:
+          - boards:
+              - nrf54l15dk/nrf54l15/cpuapp/matter
+              - nrf54l15dk/nrf54l15/cpuflpr
+    '--erase':
+      - runners:
+          - nrfjprog
+          - jlink
+          - nrfutil
+        run: first
+        groups:
+          - boards:
+              - nrf54l15dk/nrf54l15/cpuapp/matter
+              - nrf54l15dk/nrf54l15/cpuflpr
+    '--reset':
+      - runners:
+          - nrfjprog
+          - jlink
+          - nrfutil
+        run: last
+        groups:
+          - boards:
+              - nrf54l15dk/nrf54l15/cpuapp/matter
+              - nrf54l15dk/nrf54l15/cpuflpr

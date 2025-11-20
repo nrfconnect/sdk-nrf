@@ -1,0 +1,15 @@
+identifier: nrf54l15dk/nrf54l15/cpuapp/matter
+name: nRF54l15-DK-nRF54l15-Application (matter board variant)
+type: mcu
+arch: arm
+ram: 188
+flash: 1428
+toolchain:
+  - zephyr
+  - gnuarmemb
+supported:
+  - ble
+  - counter
+  - gpio
+  - watchdog
+vendor: nordic

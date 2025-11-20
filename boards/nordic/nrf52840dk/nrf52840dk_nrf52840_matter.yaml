@@ -1,0 +1,16 @@
+identifier: nrf52840dk/nrf52840/matter
+name: nRF52840-DK-NRF52840 (matter board variant)
+type: mcu
+arch: arm
+ram: 256
+flash: 960
+toolchain:
+  - zephyr
+  - gnuarmemb
+supported:
+  - ble
+  - counter
+  - gpio
+  - watchdog
+  - netif:openthread
+vendor: nordic
