@@ -104,6 +104,16 @@ if(CONFIG_TRUSTED_EXECUTION_NONSECURE OR CONFIG_TRUSTED_EXECUTION_SECURE)
   if(CONFIG_BOOTLOADER_MCUBOOT)
     ncs_add_partition_manager_config(pm.yml.mcuboot)
   endif()
+
+  if(CONFIG_SOC_SERIES_NRF54LX)
+    # If building with secure boot enabled (with or without MCUboot),
+    # place B0 SRAM inside sram_secure region.
+    #  - CONFIG_SECURE_BOOT is set only if B0 updates the main application.
+    #  - CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER is set only if B0 updates MCUboot.
+    if(CONFIG_SECURE_BOOT OR (NOT CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER EQUAL -1))
+      ncs_add_partition_manager_config(pm.yml.b0)
+    endif()
+  endif()
 endif()
 
 if(CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP)

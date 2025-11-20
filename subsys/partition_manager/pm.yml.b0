@@ -1,0 +1,4 @@
+#include <zephyr/autoconf.h>
+
+b0_sram:
+  span: sram_secure
