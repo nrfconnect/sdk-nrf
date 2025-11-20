@@ -279,9 +279,12 @@ enum esb_tx_mode {
 
 /** @brief Enhanced ShockBurst event IDs. */
 enum esb_evt_id {
-	ESB_EVENT_TX_SUCCESS, /**< Event triggered on TX success. */
-	ESB_EVENT_TX_FAILED,  /**< Event triggered on TX failure. */
-	ESB_EVENT_RX_RECEIVED /**< Event triggered on RX received. */
+	ESB_EVENT_TX_SUCCESS,	   /**< Event triggered on TX success. */
+	ESB_EVENT_TX_FAILED,	   /**< Event triggered on TX failure. */
+	ESB_EVENT_RX_RECEIVED,	   /**< Event triggered on RX received. */
+#if IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT) || defined(__DOXYGEN__)
+	ESB_EVENT_TIMESLOT_FAILED, /**< Event triggered on error during MPSL Timeslot handling. */
+#endif
 };
 
 /** @brief Enhanced ShockBurst payload.
