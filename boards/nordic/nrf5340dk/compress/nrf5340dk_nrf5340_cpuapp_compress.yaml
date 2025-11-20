@@ -1,0 +1,16 @@
+identifier: nrf5340dk/nrf5340/cpuapp/compress
+name: NRF5340-DK-NRF5340-application-MCU (compress board variant)
+type: mcu
+arch: arm
+ram: 448
+flash: 524
+toolchain:
+  - zephyr
+  - gnuarmemb
+supported:
+  - ble
+  - counter
+  - gpio
+  - watchdog
+  - netif:openthread
+vendor: nordic
