@@ -7,35 +7,24 @@
 / {
 	chosen {
 		nrf,bootloader-request = &boot_request;
+		nrf,bootloader-request-backup = &boot_request_backup;
 		zephyr,bootloader-info = &boot_info0;
 	};
 };
 
-/ {
-	reserved-memory {
-		cpuapp_retained_mem: memory@e1ad000 {
-			compatible = "zephyr,memory-region";
-			reg = <0xe1ad000 DT_SIZE_K(4)>;
-			zephyr,memory-region = "RetainedNvm";
-			status = "okay";
+&mram1x {
+	partitions {
+		boot_request: partition@1ad000 {
+			reg = <0x1ad000 16>;
+		};
 
-			retainedmem {
-				compatible = "zephyr,retained-ram";
-				status = "okay";
-				#address-cells = <1>;
-				#size-cells = <1>;
-
-				boot_request: boot_request@0 {
-					compatible = "zephyr,retention";
-					status = "okay";
-					reg = <0x0 16>;
-					prefix = [0B 01];
-					checksum = <4>;
-				};
-			};
+		boot_request_backup: partition@1ad010 {
+			reg = <0x1ad010 16>;
 		};
 	};
+};
 
+/ {
 	sram@22007FC0 {
 		compatible = "zephyr,memory-region", "mmio-sram";
 		reg = <0x22007FC0 0x40>;
