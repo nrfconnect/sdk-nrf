@@ -1226,7 +1226,7 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 
 static void timer_init(const struct radio_test_config *config)
 {
-	nrfx_err_t          err;
+	int                 err;
 	nrfx_timer_config_t timer_cfg = {
 		.frequency = NRFX_MHZ_TO_HZ(1),
 		.mode      = NRF_TIMER_MODE_TIMER,
@@ -1235,7 +1235,7 @@ static void timer_init(const struct radio_test_config *config)
 	};
 
 	err = nrfx_timer_init(&timer, &timer_cfg, timer_handler);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		printk("nrfx_timer_init failed with: %d\n", err);
 	}
 }
@@ -1293,7 +1293,7 @@ void radio_handler(const void *context)
 
 int radio_test_init(struct radio_test_config *config)
 {
-	nrfx_err_t nrfx_err;
+	int nrfx_err;
 	uint32_t rad_domain = nrfx_gppi_domain_id_get((uint32_t)NRF_RADIO);
 
 	timer_init(config);
@@ -1304,7 +1304,7 @@ int radio_test_init(struct radio_test_config *config)
 	irq_enable(RADIO_TEST_RADIO_IRQn);
 
 	nrfx_err = nrfx_gppi_domain_conn_alloc(rad_domain, rad_domain, &ppi_radio_start);
-	if (nrfx_err != NRFX_SUCCESS) {
+	if (nrfx_err != 0) {
 		printk("Failed to allocate gppi channel.\n");
 		return -EFAULT;
 	}
