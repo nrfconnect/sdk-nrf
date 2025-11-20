@@ -56,6 +56,7 @@ Apache-2.0: |
   ^nrf/subsys/mgmt/mcumgr/grp/img_mgmt/src/img_mgmt_state.c
   ^nrf/tests/zephyr/subsys/settings/
   ^nrf/samples/zephyr/
+  ^nrf/samples/nrf_compress/mcuboot_update/sysbuild/mcuboot/prj.conf
 curl: "^nrf/ext/"
 MIT: "^nrf/ext/"
 BSD-3-CLAUSE: |
