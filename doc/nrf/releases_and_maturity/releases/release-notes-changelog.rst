@@ -206,11 +206,14 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
-* Added the :ref:`esb_monitor_mode` feature.
-* Added experimental support for the nRF54LV10A SoC in the following samples:
+* Added:
 
-  * :ref:`esb_prx`
-  * :ref:`esb_ptx`
+  * Experimental support for the nRF54LV10A SoC in the following samples:
+
+    * :ref:`esb_prx`
+    * :ref:`esb_ptx`
+  * The :ref:`esb_monitor_mode` feature.
+  * The :ref:`esb_prx_ble` sample that demonstrates how to use the ESB protocol in receiver mode concurrently with the Bluetooth LE LBS service.
 
 Gazell
 ------
