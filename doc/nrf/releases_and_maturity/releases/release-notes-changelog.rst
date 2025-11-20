@@ -206,11 +206,15 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
-* Added the :ref:`esb_monitor_mode` feature.
-* Added experimental support for the nRF54LV10A SoC in the following samples:
+* Added:
 
-  * :ref:`esb_prx`
-  * :ref:`esb_ptx`
+  * The :ref:`esb_monitor_mode` feature.
+  * Experimental support for the nRF54LV10A SoC in the following samples:
+
+    * :ref:`esb_prx`
+    * :ref:`esb_ptx`
+
+  * A workaround for the hardware errata HMPAN-229 for the nRF54H20 SoC.
 
 Gazell
 ------
