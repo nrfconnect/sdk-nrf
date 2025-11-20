@@ -450,6 +450,7 @@
 /samples/bluetooth/mesh/                  @nrfconnect/ncs-paladin
 /samples/bluetooth/multiple_adv_sets/     @nrfconnect/ncs-si-muffin
 /samples/bluetooth/nrf_dm/                @nrfconnect/ncs-si-muffin
+/samples/bluetooth/rssi_power_control/    @nrfconnect/ncs-dragoon
 /samples/bluetooth/peripheral_ams_client/ @leewkb4567
 /samples/bluetooth/peripheral_ancs_client/ @leewkb4567
 /samples/bluetooth/peripheral_bms/        @nrfconnect/ncs-si-muffin
@@ -587,6 +588,7 @@
 /samples/bluetooth/multiple_adv_sets/*.rst @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/nrf_dm/*.rst           @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/path_loss_monitoring/*.rst @nrfconnect/ncs-dragoon-doc
+/samples/bluetooth/rssi_power_control/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/peripheral_ams_client/*.rst @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/peripheral_ancs_client/*.rst @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/peripheral_bms/*.rst   @nrfconnect/ncs-si-muffin-doc
