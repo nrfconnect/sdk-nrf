@@ -209,7 +209,7 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.bluetooth.mesh.sensor_server
+    - sample.bluetooth.mesh.nlc_ambient_light_sensor
     - sample.bluetooth.mesh.chat
   platforms:
     - nrf21540dk/nrf52840

@@ -344,7 +344,7 @@ Bluetooth mesh samples
 ----------------------
 
 * Updated all samples to use the :ref:`partition_manager`, replacing the use of the Device Tree Source flash partitions.
-* :ref:`bluetooth_mesh_sensor_server` sample:
+* :ref:`bluetooth_mesh_nlc_ambient_light_sensor` sample:
 
   * Definitions for sensor callbacks now include the :c:struct:`bt_mesh_sensor_srv` context.
 

@@ -472,7 +472,7 @@ Bluetooth mesh samples
   * Added support for the Scene Server model.
   * Updated to demonstrate the use of a Sensor Server model to report additional useful information about the device.
 
-* :ref:`bluetooth_mesh_sensor_server` and :ref:`bluetooth_mesh_sensor_client` samples:
+* :ref:`bluetooth_mesh_nlc_ambient_light_sensor` and :ref:`bluetooth_mesh_sensor_client` samples:
 
   * Added:
 
@@ -480,7 +480,7 @@ Bluetooth mesh samples
     * Support for ambient light level sensor.
     * Shell support to :ref:`bluetooth_mesh_sensor_client` sample.
 
-* :ref:`bluetooth_mesh_sensor_server`, :ref:`bluetooth_mesh_light_lc` and :ref:`bluetooth_mesh_light_dim` samples:
+* :ref:`bluetooth_mesh_nlc_ambient_light_sensor`, :ref:`bluetooth_mesh_light_lc` and :ref:`bluetooth_mesh_light_dim` samples:
 
   * Updated to demonstrate the Bluetooth :ref:`ug_bt_mesh_nlc`.
 

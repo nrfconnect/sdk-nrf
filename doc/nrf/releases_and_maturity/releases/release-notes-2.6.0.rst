@@ -661,7 +661,7 @@ Bluetooth Mesh samples
 
   * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :zephyr:board:`nrf5340dk` and :zephyr:board:`thingy53` boards.
 
-* :ref:`bluetooth_mesh_sensor_server` sample:
+* :ref:`bluetooth_mesh_nlc_ambient_light_sensor` sample:
 
   * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :zephyr:board:`nrf5340dk` and :zephyr:board:`thingy53` boards.
 
