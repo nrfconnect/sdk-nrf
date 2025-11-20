@@ -1,0 +1,15 @@
+identifier: nrf54lm20dk/nrf54lm20a/cpuapp/compress
+name: nRF54LM20-DK-nRF54LM20A-Application (compress board variant)
+type: mcu
+arch: arm
+ram: 512
+flash: 1228
+toolchain:
+  - zephyr
+  - gnuarmemb
+supported:
+  - ble
+  - counter
+  - gpio
+  - watchdog
+vendor: nordic
