@@ -66,7 +66,7 @@ static struct thread_monitor_entry *thread_monitor_entry_get(k_tid_t id)
 	struct thread_monitor_entry *new_entry = thread_event_monitor;
 	int entry_age, oldest_entry_age = 0;
 
-	for ( ; PART_OF_ARRAY(thread_event_monitor, entry); entry++) {
+	for ( ; PART_OF_ARRAY(thread_event_monitor, entry); ++entry) {
 		if (entry->id == id) {
 			return entry;
 		} else if (entry->id == 0) {
