@@ -173,6 +173,7 @@ Add the following SHIELD options for the nRF7002 EK and nRF7001 EK.
 
 The generated HEX file to be used is :file:`thread_coex/build/merged.hex`.
 
+.. include:: /includes/wifi_refer_sample_yaml_file.txt
 
 Testing
 =======

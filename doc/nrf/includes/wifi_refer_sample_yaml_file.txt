@@ -1,0 +1,1 @@
+Refer to the :file:`sample.yaml` file for a complete list of supported boards and their corresponding build command options.
