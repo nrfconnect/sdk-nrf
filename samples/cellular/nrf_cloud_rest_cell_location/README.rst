@@ -14,6 +14,10 @@ Cellular: nRF Cloud REST cellular location
 
 This sample demonstrates how to use the `nRF Cloud REST API`_ for nRF Cloud's cellular location service on your device.
 
+.. note::
+
+   This sample focuses on API usage. It is recommended to use the :ref:`lib_location` library to gather cell information in practice.
+
 Requirements
 ************
 
