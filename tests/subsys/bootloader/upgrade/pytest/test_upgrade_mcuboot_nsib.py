@@ -30,7 +30,7 @@ class UpgradeMCUBootUseMCUmgr(UpgradeTestWithMCUmgr):
         if self.build_params.sysbuild:
             image_index = find_in_config(
                 self.build_params.build_dir / "mcuboot" / "zephyr" / ".config",
-                "CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER"
+                "CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER",
             )
             if image_index and int(image_index) > 0:
                 return int(image_index)
@@ -51,7 +51,10 @@ def test_upgrade_of_mcuboot_with_nsib(dut: DeviceAdapter, shell: Shell, mcumgr: 
     tm.increase_version()
 
     _, _, s1_image = get_required_images_to_update(
-        dut, sign_version=tm.get_current_sign_version(), firmware_version=3, netcore_name=tm.build_params.net_core_name
+        dut,
+        sign_version=tm.get_current_sign_version(),
+        firmware_version=3,
+        netcore_name=tm.build_params.net_core_name,
     )
 
     tm.run_upgrade(s1_image, confirm=True)
@@ -62,14 +65,19 @@ def test_upgrade_of_mcuboot_with_nsib(dut: DeviceAdapter, shell: Shell, mcumgr: 
         ],
         no_lines=["insufficient version in secondary slot"],
     )
-    logger.info("Firmware was successfully updated.Reset once again to check current firmware version")
+    assert shell.wait_for_prompt(timeout=10.0), "No shell prompt after upgrade"
+    logger.info(
+        "Firmware was successfully updated. Reset once again to check current firmware version"
+    )
     tm.reset_device()
     tm.verify_after_reset(lines=["Firmware version 3"])
     logger.info("Firmware version is correct")
 
 
 @pytest.mark.usefixtures("kmu_provision")
-def test_sw_downgrade_prevention_of_mcuboot_with_nsib(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
+def test_sw_downgrade_prevention_of_mcuboot_with_nsib(
+    dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr
+):
     """Verify that the MCUboot firmware is not downgraded.
 
     APP based on smp_svr, NSIB is used as a primary bootloader,
@@ -82,17 +90,23 @@ def test_sw_downgrade_prevention_of_mcuboot_with_nsib(dut: DeviceAdapter, shell:
     tm.decrease_version()
 
     _, _, s1_image = get_required_images_to_update(
-        dut, sign_version=tm.get_current_sign_version(), firmware_version=1, netcore_name=tm.build_params.net_core_name
+        dut,
+        sign_version=tm.get_current_sign_version(),
+        firmware_version=1,
+        netcore_name=tm.build_params.net_core_name,
     )
 
     tm.run_upgrade(s1_image, confirm=True)
 
     # to be checked, for sysbuild, image is copied to secondary slot
     # but not used after reset .. without any log!
-    # the only defference is log after successful upgrade:
+    # the only difference is log after successful upgrade:
     #    'Setting monotonic counter (version: 3, slot: 1)'
-    tm.verify_after_reset(lines=["Firmware version 2", f"Image index: {tm.image_index}, Swap type: perm"])
-    logger.info("Firmware was not downgraded.Reset once again to check current firmware version")
+    tm.verify_after_reset(
+        lines=["Firmware version 2", f"Image index: {tm.image_index}, Swap type: perm"]
+    )
+    assert shell.wait_for_prompt(timeout=10.0), "No shell prompt after upgrade"
+    logger.info("Firmware was not downgraded. Reset once again to check current firmware version")
 
     tm.reset_device()
     tm.verify_after_reset(lines=["Firmware version 2"])
