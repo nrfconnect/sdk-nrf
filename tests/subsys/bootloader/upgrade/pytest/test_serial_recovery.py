@@ -2,7 +2,10 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-"""Test for upgrade scenario where the application is damaged and recovered using serial recovery."""
+"""
+Test for upgrade scenario where the application is damaged.
+Application is recovered using serial recovery.
+"""
 
 from __future__ import annotations
 
@@ -29,19 +32,23 @@ def get_image_list(mcumgr: MCUmgr):
 
 
 def test_serial_recovery_after_damaging_app(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
-    """Verify that the application is recovered with serial recovery after no bootable app was found."""
+    """Verify that the app is recovered with serial recovery after no bootable app was found."""
     tm = UpgradeTestWithMCUmgr(dut, shell, mcumgr)
     # change the welcome string, because logs from MCUboot are disabled
     tm.welcome_str = "smp_sample: build time:"
     dut.disconnect()
 
     logger.info("Damage the application by writing invalid data to the beginning of the image")
-    app_address = find_in_config(dut.device_config.build_dir / "pm.config", "PM_MCUBOOT_PRIMARY_ADDRESS")
+    app_address = find_in_config(
+        dut.device_config.build_dir / "pm.config", "PM_MCUBOOT_PRIMARY_ADDRESS"
+    )
     nrfutil_write(str(app_address), "0xdeadbeef", dut.device_config.id)
     reset_board(dut.device_config.id)
     time.sleep(2)  # wait for the device to reset and enter serial recovery mode
     image_list = get_image_list(mcumgr)
-    assert not image_list, "Image list should be empty in serial recovery mode, when no bootable app is present"
+    assert not image_list, (
+        "Image list should be empty in serial recovery mode, when no bootable app is present"
+    )
 
     tm.image_upload(dut.device_config.app_build_dir / "zephyr" / "zephyr.signed.bin")  # type: ignore
     image_list = get_image_list(mcumgr)

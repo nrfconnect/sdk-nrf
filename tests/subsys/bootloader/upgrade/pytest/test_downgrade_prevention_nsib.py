@@ -23,7 +23,8 @@ def test_b0_firmware_version_blocks_downgrade(dut: DeviceAdapter, shell: Shell, 
 
     current_firmware_version = int(
         find_in_config(
-            dut.device_config.build_dir / "mcuboot" / "zephyr" / ".config", "CONFIG_FW_INFO_FIRMWARE_VERSION"
+            dut.device_config.build_dir / "mcuboot" / "zephyr" / ".config",
+            "CONFIG_FW_INFO_FIRMWARE_VERSION",
         )
     )
 
@@ -35,7 +36,9 @@ def test_b0_firmware_version_blocks_downgrade(dut: DeviceAdapter, shell: Shell, 
 
     downgraded_firmware_version = current_firmware_version - 1
     _, _, s1_image = get_required_images_to_update(
-        dut, sign_version=tm.get_current_sign_version(), firmware_version=downgraded_firmware_version
+        dut,
+        sign_version=tm.get_current_sign_version(),
+        firmware_version=downgraded_firmware_version,
     )
 
     tm.run_upgrade(s1_image, confirm=True)
@@ -50,18 +53,25 @@ def test_b0_firmware_version_blocks_downgrade(dut: DeviceAdapter, shell: Shell, 
         lines=["Attempting to boot slot 0", f"Firmware version {current_firmware_version}"],
         no_lines=["Attempting to boot slot 1", f"Firmware version {downgraded_firmware_version}"],
     )
-    logger.info("PASSED: Application is not downgraded when firmware version is lower than the current one.")
+    logger.info(
+        "PASSED: Application is not downgraded when firmware version is lower than the current one."
+    )
 
 
 @pytest.mark.nightly
-@pytest.mark.xfail(reason="Quarantine: NCSDK-31918 Monotonic counter update protection does not work")
-def test_b0_monotonic_counters_limit_number_of_upgrades(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
+@pytest.mark.xfail(
+    reason="Quarantine: NCSDK-31918 Monotonic counter update protection does not work"
+)
+def test_b0_monotonic_counters_limit_number_of_upgrades(
+    dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr
+):
     """Verify that number of upgrades is limited by monotonic counters."""
     tm = UpgradeTestWithMCUmgr(dut, shell, mcumgr)
 
     current_firmware_version = int(
         find_in_config(
-            dut.device_config.build_dir / "mcuboot" / "zephyr" / ".config", "CONFIG_FW_INFO_FIRMWARE_VERSION"
+            dut.device_config.build_dir / "mcuboot" / "zephyr" / ".config",
+            "CONFIG_FW_INFO_FIRMWARE_VERSION",
         )
     )
     current_firmware_version += 1
@@ -99,6 +109,7 @@ def test_b0_monotonic_counters_limit_number_of_upgrades(dut: DeviceAdapter, shel
     tm.reset_device_from_shell()
 
     tm.verify_after_reset(
-        lines=["Failed during setting the monotonic counter"], no_lines=[f"Firmware version {current_firmware_version}"]
+        lines=["Failed during setting the monotonic counter"],
+        no_lines=[f"Firmware version {current_firmware_version}"],
     )
     logger.info("PASSED: Number of upgrades is limited by monotonic counters.")

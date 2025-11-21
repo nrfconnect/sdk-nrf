@@ -25,7 +25,9 @@ def check_sw_downgrade_prevention_is_not_configured(dut: DeviceAdapter) -> None:
     assert not find_in_config(mcuboot_config, "CONFIG_MCUBOOT_DOWNGRADE_PREVENTION")
 
 
-def test_hw_downgrade_prevention_with_sign_version(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
+def test_hw_downgrade_prevention_with_sign_version(
+    dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr
+):
     """Verify that the application is not downgraded.
 
     APP based on smp_svr, MCUboot is the primary bootloader.
@@ -54,12 +56,18 @@ def test_hw_downgrade_prevention_with_sign_version(dut: DeviceAdapter, shell: Sh
 def get_hw_counter_values(dut: DeviceAdapter) -> tuple[int, int]:
     """Get the current hardware counter value and the number of slots."""
     config_path = dut.device_config.build_dir / "zephyr" / ".config"
-    counter_slots = int(find_in_config(config_path, "SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS"))
-    current_counter_value = int(find_in_config(config_path, "SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE"))
+    counter_slots = int(
+        find_in_config(config_path, "SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS")
+    )
+    current_counter_value = int(
+        find_in_config(config_path, "SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE")
+    )
     return counter_slots, current_counter_value
 
 
-def test_hw_downgrade_prevention_with_monotonic_counters(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
+def test_hw_downgrade_prevention_with_monotonic_counters(
+    dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr
+):
     """Verify that APP is not downgraded when monotonic counter is lower than the current one."""
     tm = UpgradeTestWithMCUmgr(dut, shell, mcumgr)
 
@@ -89,12 +97,16 @@ def test_hw_downgrade_prevention_with_monotonic_counters(dut: DeviceAdapter, she
         ]
     )
     tm.check_with_shell_command(tm.origin_mcuboot_version)
-    logger.info("PASSED: Application is not downgraded when monotonic counter is lower than the current one.")
+    logger.info(
+        "PASSED: Application is not downgraded when monotonic counter is lower than the current "
+        "one."
+    )
 
 
 @pytest.mark.nightly
 def test_monotonic_counter_prevents_upgrade(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
-    """Verify that APP is not upgraded when monotonic counter value is greater than number of slots."""
+    """Verify that APP is not upgraded when monotonic counter value is greater than number of
+    slots."""
     tm = UpgradeTestWithMCUmgr(dut, shell, mcumgr)
 
     counter_slots, current_counter_value = get_hw_counter_values(dut)

@@ -39,7 +39,10 @@ def test_upgrade_with_netcore(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
     tm.increase_version()
 
     updated_app, updated_netcore, _ = get_required_images_to_update(
-        dut, sign_version=tm.get_current_sign_version(), netcore_name=tm.build_params.net_core_name, firmware_version=3
+        dut,
+        sign_version=tm.get_current_sign_version(),
+        netcore_name=tm.build_params.net_core_name,
+        firmware_version=3,
     )
 
     tm.upload_images(updated_app, updated_netcore)
@@ -74,7 +77,10 @@ def test_sw_downgrade_prevention_with_netcore(dut: DeviceAdapter, shell: Shell, 
     tm.decrease_version()
 
     updated_app, updated_netcore, _ = get_required_images_to_update(
-        dut, sign_version=tm.get_current_sign_version(), firmware_version=1, netcore_name=tm.build_params.net_core_name
+        dut,
+        sign_version=tm.get_current_sign_version(),
+        firmware_version=1,
+        netcore_name=tm.build_params.net_core_name,
     )
 
     tm.upload_images(updated_app, updated_netcore)

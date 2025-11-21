@@ -34,7 +34,7 @@ class ImageHeader:
     flags: int
 
     @classmethod
-    def from_bytes(cls, data: bytes) -> "ImageHeader":
+    def from_bytes(cls, data: bytes) -> ImageHeader:
         """Create an ImageHeader instance from bytes."""
         # 5 * 4 bytes (uint32_t) + 2 * 2 bytes (uint16_t)
         return cls(*struct.unpack("<I I H H I I", data))
@@ -78,7 +78,7 @@ class Image:
             tlv_off = self._parse_tlv_area(tlv_off, self.tlvs_protected)
         tlv_off = self._parse_tlv_area(tlv_off, self.tlvs)
 
-    def _parse_tlv_area(self, tlv_off: int, tlvs: list["TLV"]) -> int:
+    def _parse_tlv_area(self, tlv_off: int, tlvs: list[TLV]) -> int:
         """Parse a single TLV area and append TLVs to the list."""
         _, tlv_tot = struct.unpack("HH", self.ih.gets(tlv_off, TLV_INFO_SIZE))  # type: ignore
         tlv_end = tlv_off + tlv_tot
@@ -101,7 +101,9 @@ def copy_tlvs_areas(from_app: Path, to_app: Path, output_app: Path | None = None
     assert from_img.header == to_img.header, "Header of both images must be identical"
 
     for tlv in from_img.tlvs_protected + from_img.tlvs:
-        logger.debug(f"Copy protected TLV area of type 0x{tlv.tlv_type:x} at offset 0x{tlv.tlv_off:x}")
+        logger.debug(
+            f"Copy protected TLV area of type 0x{tlv.tlv_type:x} at offset 0x{tlv.tlv_off:x}"
+        )
         to_img.ih.puts(tlv.tlv_off, tlv.tlv_data)  # type: ignore
 
     # Save modified image
@@ -110,7 +112,9 @@ def copy_tlvs_areas(from_app: Path, to_app: Path, output_app: Path | None = None
     return output_app
 
 
-def change_byte_in_tlv_area(image_file: Path, tlv_type: int, output_app: Path | None = None) -> Path:
+def change_byte_in_tlv_area(
+    image_file: Path, tlv_type: int, output_app: Path | None = None
+) -> Path:
     """Modify the TLV area for given type."""
     img = Image(image_file)
     img.parse()

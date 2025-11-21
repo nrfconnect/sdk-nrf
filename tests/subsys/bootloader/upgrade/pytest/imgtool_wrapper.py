@@ -90,14 +90,16 @@ def imgtool_sign(
 
     if not output_bin:
         output_bin = app_to_sign.parent / "{}_{}{}.bin".format(
-            app_to_sign.stem, imgtool_params.version.replace(".", "_").replace("+", "_"), extend_output_name
+            app_to_sign.stem,
+            imgtool_params.version.replace(".", "_").replace("+", "_"),
+            extend_output_name,
         )
 
     command.extend([str(app_to_sign), str(output_bin)])
 
     logger.info(f"CMD: {shlex.join(command)}")
     output = check_output(command, text=True, timeout=timeout)
-    logger.debug("OUT: %s" % output)
+    logger.debug(f"OUT: {output}")
     return output_bin
 
 
@@ -126,5 +128,5 @@ def imgtool_keygen(key_file: str | Path, key_type: str, imgtool: str | Path = "i
     command = [str(imgtool), "keygen", "--key", str(key_file), "--type", key_type]
     logger.info(f"CMD: {shlex.join(command)}")
     output = check_output(command, text=True)
-    logger.debug("OUT: %s" % output)
+    logger.debug(f"OUT: {output}")
     return Path(key_file)

@@ -54,7 +54,9 @@ def test_invalid_signature(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr, tes
 
         # generate key file
         imgtool_params.key_file = app_to_sign.parent / f"generated_{sig_type}_{test_option}.pem"
-        keyfile = imgtool_keygen(key_file=imgtool_params.key_file, key_type=sig_type, imgtool=imgtool_params.tool_path)
+        keyfile = imgtool_keygen(
+            key_file=imgtool_params.key_file, key_type=sig_type, imgtool=imgtool_params.tool_path
+        )
         assert keyfile.is_file(), f"Key file not found: {keyfile}"
 
     invalid_app = app_to_sign.parent / f"{app_to_sign.stem}_{test_option}.bin"
@@ -99,9 +101,13 @@ def test_invalid_encryption(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr, te
     key_type = "x25519" if sig_type == "ED25519" else sig_type
 
     # generate key file
-    imgtool_params.encryption_key_file = app_to_sign.parent / f"generated_{key_type}_{test_option}.pem"
+    imgtool_params.encryption_key_file = (
+        app_to_sign.parent / f"generated_{key_type}_{test_option}.pem"
+    )
     keyfile = imgtool_keygen(
-        key_file=imgtool_params.encryption_key_file, key_type=key_type, imgtool=imgtool_params.tool_path
+        key_file=imgtool_params.encryption_key_file,
+        key_type=key_type,
+        imgtool=imgtool_params.tool_path,
     )
     assert keyfile.is_file(), f"Key file not found: {keyfile}"
 
@@ -112,7 +118,9 @@ def test_invalid_encryption(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr, te
 
     if "good_tlv" in test_option:
         # copy TLV from good image to invalid image
-        invalid_app = copy_tlvs_areas(app_to_sign.parent / "zephyr.signed.encrypted.bin", invalid_app)
+        invalid_app = copy_tlvs_areas(
+            app_to_sign.parent / "zephyr.signed.encrypted.bin", invalid_app
+        )
         # because SHA is copied from actual image, mcumgr CLI tool receives error when trying
         # to test/confirm an image (same signature)
         tm.upload_images(invalid_app)
