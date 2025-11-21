@@ -21,10 +21,6 @@ public:
 	};
 
 	CHIP_ERROR StartApp();
-	static void IdentifyStartHandler(Identify *);
-	static void IdentifyStopHandler(Identify *);
-
-	static constexpr chip::EndpointId kTemperatureSensorEndpointId = 1;
 
 	/* Defined by cluster temperature measured value = 100 x temperature in degC with resolution of
 	 * 0.01 degC. */

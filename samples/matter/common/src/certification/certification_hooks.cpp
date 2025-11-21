@@ -6,8 +6,10 @@
 
 #include "certification_hooks.h"
 #include "app/task_executor.h"
+#include "clusters/identify.h"
 
 #include <app-common/zap-generated/attributes/Accessors.h>
+#include <app/DefaultTimerDelegate.h>
 #include <app/server/Server.h>
 #include <platform/CHIPDeviceLayer.h>
 
@@ -24,15 +26,45 @@ using namespace ::chip;
 using namespace ::chip::app;
 using namespace ::chip::DeviceLayer;
 
-constexpr EndpointId kLightEndpointId = 1;
+namespace
+{
+class IdentifyDelegateImplCertification : public chip::app::Clusters::IdentifyDelegate {
+public:
+	void OnIdentifyStart(chip::app::Clusters::IdentifyCluster &cluster) override
+	{
+		LOG_INF("Identify started event received");
+	}
 
-Identify sIdentify = { kLightEndpointId, Nrf::Matter::Certification::IdentifyStartHandler, Nrf::Matter::Certification::IdentifyStopHandler,
-		       Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator, Nrf::Matter::Certification::TriggerIdentifyEffectHandler };
+	void OnIdentifyStop(chip::app::Clusters::IdentifyCluster &cluster) override
+	{
+		LOG_INF("Identify stopped event received");
+	}
+
+	void OnTriggerEffect(chip::app::Clusters::IdentifyCluster &cluster) override
+	{
+		LOG_INF("Trigger identify effect event received");
+	}
+
+	bool IsTriggerEffectEnabled() const override { return true; }
+};
+
+constexpr EndpointId kLightEndpointId = 1;
+IdentifyDelegateImplCertification sIdentifyDelegateImplCertification;
+DefaultTimerDelegate sTimerDelegate;
+
+Nrf::Matter::IdentifyCluster sIdentifyCluster(kLightEndpointId, sIdentifyDelegateImplCertification, sTimerDelegate);
+
+} // namespace
 
 namespace Nrf::Matter
 {
 namespace Certification
 {
+
+	void Init()
+	{
+		sIdentifyCluster.Init();
+	}
 
 	void ButtonHandler(ButtonState state, ButtonMask hasChanged)
 	{
@@ -64,21 +96,5 @@ namespace Certification
 			});
 		}
 	}
-
-	void IdentifyStartHandler(Identify *) {
-		/* Dummy handler, as certification sample does not require visual identification. */
-		LOG_INF("Identify started event received");
-	}
-
-	void IdentifyStopHandler(Identify *) {
-		/* Dummy handler, as certification sample does not require visual identification. */
-		LOG_INF("Identify stopped event received");
-	}
-
-	void TriggerIdentifyEffectHandler(Identify *){
-		/* Dummy handler, as certification sample does not require visual identification. */
-		LOG_INF("Trigger identify effect event received");
-	}
-
 } /* namespace Certification */
 } /* namespace Nrf::Matter */

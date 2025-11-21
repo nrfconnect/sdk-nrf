@@ -21,10 +21,6 @@ public:
 	};
 
 	CHIP_ERROR StartApp();
-	static void IdentifyStartHandler(Identify *);
-	static void IdentifyStopHandler(Identify *);
-
-	static constexpr chip::EndpointId kContactSensorEndpointId = 1;
 
 private:
 	CHIP_ERROR Init();

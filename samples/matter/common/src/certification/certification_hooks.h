@@ -8,15 +8,11 @@
 
 #include "board/board.h"
 
-#include <app/clusters/identify-server/identify-server.h>
-
 namespace Nrf::Matter
 {
 namespace Certification
 {
+	void Init();
 	void ButtonHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged);
-	void IdentifyStartHandler(Identify *);
-	void IdentifyStopHandler(Identify *);
-	void TriggerIdentifyEffectHandler(Identify *);
 } /* namespace Certification */
 } /* namespace Nrf::Matter */
