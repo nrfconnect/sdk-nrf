@@ -142,6 +142,166 @@ To link to the Kconfig options from RST, use the ``:kconfig:option:`` domain::
 
    :kconfig:option:`CONFIG_DEBUG`
 
+Kconfig |gl|
+************
+
+See Zephyr's :ref:`zephyr:kconfig` for a short introduction to Kconfig.
+
+The |NCS| documentation follows Zephyr's :ref:`zephyr:kconfig_style` and :ref:`kconfig_tips_and_tricks`, with the addition of the following rules.
+
+File structure
+==============
+
+* Always include the Nordic copyright header at the top of the file.
+
+  .. code-block:: kconfig
+
+     #
+     # Copyright (c) YEAR Nordic Semiconductor
+     #
+     # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+     #
+
+* For Kconfig files that include new Kconfig options, use the following pattern:
+
+  .. code-block:: kconfig
+
+     menu "Title"
+
+     # Sample-specific Kconfig option definitions
+
+     endmenu
+
+     menu "Zephyr Kernel"
+     source "Kconfig.zephyr"
+     endmenu
+
+* **Applications:** Use ``mainmenu`` and source ``Kconfig.zephyr`` at the end without wrapping in a menu.
+* **Subsystems and libraries:** Use ``menuconfig`` for the main feature and ``if`` blocks for related options.
+
+Example:
+
+.. literalinclude:: ../../../samples/net/mqtt/Kconfig
+   :language: kconfig
+
+Prompt and help text
+====================
+
+* All configuration options with prompts must have the help text.
+* Write clear, complete sentences ending with a period.
+* In the help text, explain what the option does, not just repeat the prompt.
+* Include units in the prompt or help text (for example, "in milliseconds" or "in bytes").
+* For thresholds or limits, explain the implications of different values.
+* For informative-only options, state clearly in both prompt and help: "Option name (informative only, do not change)".
+
+Type-specific patterns
+----------------------
+
+Follow these patterns based on the Kconfig option type:
+
+``bool`` options
+++++++++++++++++
+
+Start help text with an imperative verb.
+
+.. code-block:: kconfig
+
+   config MY_FEATURE
+     bool "My feature"
+     help
+       Enable support for my feature. This feature provides...
+
+.. note::
+   Use verbs such as *Enable*, *Allow*, *Use*, *Set*, or *Control*.
+   Avoid starting with "This option..." or using third-person forms ("Enables").
+
+Example:
+
+.. literalinclude:: ../../../subsys/dm/Kconfig
+   :language: kconfig
+   :start-after: if DM_MODULE
+   :end-before: config DM_TIMESLOT_RESCHEDULE
+
+``int`` and ``hex`` options
++++++++++++++++++++++++++++
+
+Start help text with a noun phrase describing the value.
+
+.. code-block:: kconfig
+
+   config MY_BUFFER_SIZE
+      int "Buffer size in bytes"
+      default 256
+      help
+        Size of the buffer used for data processing.
+
+  .. note::
+     Use noun phrases only.
+     Avoid starting with verbs, like "Set this" or "Configure".
+
+Example 1:
+
+.. literalinclude:: ../../../subsys/dm/Kconfig
+   :language: kconfig
+   :start-after: has succeeded.
+   :end-before: config DM_MIN_TIME_BETWEEN_TIMESLOTS_US
+
+Example 2:
+
+.. literalinclude:: ../../../subsys/fw_info/Kconfig
+   :language: kconfig
+   :start-after: Only provide APIs to locate metadata.
+   :end-before: config FW_INFO_FIRMWARE_VERSION
+
+``string`` options
+++++++++++++++++++
+
+Start with a noun phrase describing what the string represents.
+
+Example:
+
+.. literalinclude:: ../../../lib/lte_link_control/Kconfig
+   :language: kconfig
+   :start-after: if LTE_LOCK_PLMN
+   :end-before: endif # LTE_LOCK_PLMN
+
+Module logging template
+=======================
+
+For subsystems and libraries, include the standard logging template:
+
+.. code-block:: kconfig
+
+   module = MODULE_NAME
+   module-str = Module description
+   source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+Place this at the end of the module's configuration section, before the final ``endif``.
+
+Naming conventions
+==================
+
+* Use consistent prefixes for related options (for example, ``SAMPLE_NAME_*`` or ``LIB_NAME_*``).
+* Use descriptive names that indicate the option's purpose.
+
+Prompts
+=======
+
+* Keep prompts concise - detailed information belongs in the help text.
+* Use title case for the first word only (except proper nouns).
+* Avoid redundant phrases like "Enable support for" - just use the feature name.
+
+Comments
+========
+
+* Add comments to ``endif`` statements for readability:
+
+  .. code-block:: kconfig
+
+     endif # MY_FEATURE
+
+* Use comments sparingly and only when needed to explain complex dependencies or unusual configurations.
+
 Doxygen |gl|
 ************
 
@@ -335,18 +495,6 @@ Structs
 
 The documentation block must precede the documented element.
 
-In the RST file:
-
-.. code-block:: console
-
-   API documentation
-   *****************
-
-   | Header file: :file:`include/bluetooth/gatt_dm.h`
-   | Source file: :file:`subsys/bluetooth/gatt_dm.c`
-
-   .. doxygengroup:: bt_gatt_dm
-
 In the header file:
 
 .. code-block:: c
@@ -369,7 +517,6 @@ In the header file:
 .. note::
    Always add a name for the struct.
    Avoid using unnamed structs due to `Sphinx parser issue`_.
-
 
 References
 ==========
@@ -405,3 +552,18 @@ The documentation block must precede the documented element.
     * @retval non-zero The download stops.
     */
     typedef int (*download_client_callback_t)(const struct download_client_evt *event);
+
+Inclusion in RST files
+======================
+
+To include the doxygen documentation in the RST files, use the ``.. doxygengroup::`` directive and the doxygen group name.
+
+.. code-block:: console
+
+   API documentation
+   *****************
+
+   | Header file: :file:`include/bluetooth/gatt_dm.h`
+   | Source file: :file:`subsys/bluetooth/gatt_dm.c`
+
+   .. doxygengroup:: bt_gatt_dm
