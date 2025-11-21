@@ -3,7 +3,7 @@
 python:
   version: 3.12.4
 git:
-  version: 2.37.3.windows.1
+  version: 2.52.0.windows.1
 cmake:
   version: 3.21.0
 ninja:
