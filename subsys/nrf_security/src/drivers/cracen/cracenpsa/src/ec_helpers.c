@@ -21,5 +21,6 @@ void decode_scalar_25519(uint8_t *k)
 void decode_scalar_448(uint8_t *k)
 {
 	k[0] &= ~0x03; /* Clear bits 0 and 1. */
+	k[56] = 0x00;  /* Clear the last byte */
 	k[55] |= 0x80; /* Set bit 447. */
 }
