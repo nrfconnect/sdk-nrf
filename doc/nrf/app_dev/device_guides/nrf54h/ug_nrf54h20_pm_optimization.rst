@@ -64,6 +64,123 @@ The power management subsystem in a local domain is responsible for scheduling a
 The wake-up time scheduled in advance by the power management subsystem is combined with the advance time added by the software module.
 This approach ensures that the local domain and the software modules anticipating an event have sufficient time to fully restore before the event occurs, allowing the event to be handled without latency.
 
+Logical domains, power domains, and locality
+============================================
+
+The nRF54H20 SoC groups hardware into logical domains (software-visible functional groupings) and power domains (granular silicon regions that can be clock- or power-gated independently).
+
+The two domain types are defined as follows:
+
+Logical domain
+  Aggregates cores, memories, and peripherals behind a common isolation/security boundary (for example, application domain, radio domain, global domain).
+
+Power domain
+  A physical silicon region with its own retention/leakage characteristics and voltage/frequency constraints (for example, high-speed vs low-leakage subregions inside the application logical domain).
+
+A single logical domain can span multiple power domains.
+A logical domain frequently contains a low-leakage power domain (cheap retention, low frequency) and one or more high-speed power domains (higher leakage, higher attainable frequency). DVFS applies to high-speed domains.
+
+Locality principle
+------------------
+
+Power optimization is driven by keeping execution and data access local:
+
+* Prefer executing code from local RAM (TCM/local SRAM) within the active core's logical domain.
+* Minimize accesses to MRAM (global non-volatile memory) to avoid waking higher-power global domains and incurring cache refill energy.
+* Batch work: Gather peripheral data locally (auxiliary cores) and hand off larger buffers to high-performance cores for computation, instead of driving peripherals directly from high-performance cores.
+
+Peripheral access strategy
+--------------------------
+
+High-performance cores (application, radio main CPUs) are optimized for computation, not low-latency I/O paths.
+Accessing peripherals from these cores expands the active footprint (additional power domains and interconnect segments), increasing energy per transaction.
+
+Recommendations:
+
+* Use auxiliary/peripheral-oriented cores (for example, Pepper / Flipper type helper cores) to perform SPI/I2C/ADC/UART transactions, local preprocessing, and DMA into local RAM.
+* Signal (IPC or shared memory flag) the application or radio core only when a batch of data is ready.
+* Avoid fine-grained peripheral polling from high-performance cores.
+  Use the following instead:
+
+  * DMA transfers initiated by auxiliary cores.
+  * Hardware-trigger chains (PPI/DPPI) where possible to reduce wake-ups.
+* Keep high-speed power domains off unless necessary for bursts of compute.
+
+DMA locality constraints
+------------------------
+
+Local DMA controllers (for example, per-domain ECDMA instances) are restricted to source/destination addresses within their local RAM range.
+Plan buffer placement accordingly:
+
+* Peripheral DMA to/from local domain RAM only.
+* Cross-domain transfers should use the following:
+
+  * IPC messages indicating buffer readiness.
+  * Explicit software copy (only for infrequent cases).
+* Avoid placing frequent DMA targets in MRAM.
+  Use retained local RAM to reduce wake and bus activation.
+
+System-off entry prerequisites and wake-up sources
+--------------------------------------------------
+
+To reach the lowest power (system-off) state, all non-essential wake-up capable peripherals must be disabled.
+Only a limited set of wake-up sources should remain enabled.
+Retention of selected RAM blocks is optional and increases leakage.
+Retain only what is required for fast resume.
+
+Typical system-off wake-up sources are the following:
+
+* Port 0 GPIO (configured for wake-up, always powered pad group)
+* GRTC compare / channel event
+* LPCOMP (low-power comparator)
+* NFC field detection
+* USB power presence (VBUS connect/disconnect)
+* (Optional) Specific voltage detect events
+
+To optimize system-off entry, do the following:
+
+* Before requesting system-off, disable or runtime-suspend all other devices to allow hardware to drop unused power domains.
+* Audit enabled interrupts.
+  Any enabled interrupt tied to an active peripheral can prevent deep low-power entry.
+* Use runtime PM (using :kconfig:option:`CONFIG_PM_DEVICE_RUNTIME` and the ``zephyr,pm-device-runtime-auto`` DTS node) to guarantee peripherals are suspended before system-off.
+* Ensure only required GPIOs remain configured with sense settings.
+  Remove sense on unused pins.
+
+The following is an example sequence:
+
+1. Flush pending work and commit application context to retained low-leakage RAM.
+#. Suspend peripherals (runtime PM).
+#. Configure minimal wake-up sources (for example, one GRTC channel + a GPIO).
+#. Request system-off (pm_state_force or appropriate API).
+#. On wake, bootloader resumes (MCUboot Suspend-to-RAM (S2RAM) path if applicable) and application restores context.
+
+Local vs global wake-up planning
+--------------------------------
+
+On local domain wake-ups (suspend-to-RAM / suspend-to-idle), schedule GRTC events early enough to cover the following latencies:
+
+  * Core restore latency (cache, context).
+  * Software module restore latency (driver reconfiguration).
+
+On system-off wake-ups, System Controller advances the global wake event to hide warm boot latency from local software.
+For timing purposes, treat system-off restore similarly to local-off restore.
+
+Integration checklist
+---------------------
+
+For optimal power management integration, follow these guidelines:
+
+* Place time-critical ISR code and frequently used data structures in local RAM sections (see code/data relocation).
+* Profile cache miss sources.
+  Reduce MRAM fetches by relocating hot code paths.
+* Disable MRAM latency manager (set :kconfig:option:`CONFIG_MRAM_LATENCY` to ``n`` and :kconfig:option:`CONFIG_MRAM_LATENCY_AUTO_REQ` to ``n``) to allow MRAM power gating.
+* Ensure DVFS settings are evaluated across workloads.
+  Lowest or middle frequency often yields best energy/operation for periodic tasks.
+* Consolidate periodic tasks (sensor sample, radio tick) to a shared 1 ms or coarser schedule to avoid fragmented wake-ups.
+
+.. note::
+   The exact wake-up source list can evolve with silicon revisions. Always verify against the current SoC datasheet and release notes.
+
 Optimization example
 ********************
 
