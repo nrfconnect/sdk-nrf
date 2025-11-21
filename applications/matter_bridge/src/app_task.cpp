@@ -17,6 +17,7 @@
 #include "board/board.h"
 #include "bridge_manager.h"
 #include "bridge_storage_manager.h"
+#include "clusters/identify.h"
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 #include "ble_connectivity_manager.h"
@@ -25,7 +26,6 @@
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/ids/Attributes.h>
 #include <app-common/zap-generated/ids/Clusters.h>
-#include <app/clusters/identify-server/identify-server.h>
 #include <setup_payload/OnboardingCodesUtil.h>
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
@@ -47,14 +47,13 @@ namespace
 {
 
 constexpr EndpointId kBridgeEndpointId = 1;
-constexpr uint16_t kTriggerEffectTimeout = 5000;
-constexpr uint16_t kTriggerEffectFinishTimeout = 1000;
 
-k_timer sTriggerEffectTimer;
-bool sIsTriggerEffectActive;
-
-Identify sIdentify = { kBridgeEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
-		       Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator, AppTask::TriggerIdentifyEffectHandler };
+#ifndef CONFIG_BRIDGE_SMART_PLUG_SUPPORT
+/* Trigger effect is enabled for the bridge device */
+Nrf::Matter::IdentifyCluster sIdentifyCluster(kBridgeEndpointId, true);
+#else
+Nrf::Matter::IdentifyCluster sIdentifyCluster(kBridgeEndpointId);
+#endif
 
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 const bt_uuid *sUuidLbs = BT_UUID_LBS;
@@ -114,67 +113,6 @@ void AppFactoryResetHandler(const ChipDeviceEvent *event, intptr_t /* unused */)
 #endif
 
 } /* namespace */
-
-void AppTask::IdentifyStartHandler(Identify *)
-{
-	Nrf::PostTask(
-		[] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms); });
-}
-
-void AppTask::IdentifyStopHandler(Identify *)
-{
-	Nrf::PostTask([] {
-		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
-	});
-}
-
-void AppTask::TriggerEffectTimerTimeoutCallback(k_timer *timer)
-{
-	LOG_INF("Identify effect completed");
-
-	sIsTriggerEffectActive = false;
-
-	Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
-
-}
-
-void AppTask::TriggerIdentifyEffectHandler(Identify *identify)
-{
-	switch (identify->mCurrentEffectIdentifier) {
-	/* Just handle all effects in the same way. */
-	case Clusters::Identify::EffectIdentifierEnum::kBlink:
-	case Clusters::Identify::EffectIdentifierEnum::kBreathe:
-	case Clusters::Identify::EffectIdentifierEnum::kOkay:
-	case Clusters::Identify::EffectIdentifierEnum::kChannelChange:
-		LOG_INF("Identify effect identifier changed to %d",
-			static_cast<uint8_t>(identify->mCurrentEffectIdentifier));
-
-		sIsTriggerEffectActive = false;
-
-		k_timer_stop(&sTriggerEffectTimer);
-		k_timer_start(&sTriggerEffectTimer, K_MSEC(kTriggerEffectTimeout), K_NO_WAIT);
-
-		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms);
-		break;
-	case Clusters::Identify::EffectIdentifierEnum::kFinishEffect:
-		LOG_INF("Identify effect finish triggered");
-		k_timer_stop(&sTriggerEffectTimer);
-		k_timer_start(&sTriggerEffectTimer, K_MSEC(kTriggerEffectFinishTimeout), K_NO_WAIT);
-		break;
-	case Clusters::Identify::EffectIdentifierEnum::kStopEffect:
-		if (sIsTriggerEffectActive) {
-			sIsTriggerEffectActive = false;
-
-			k_timer_stop(&sTriggerEffectTimer);
-
-			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
-		}
-		break;
-	default:
-		LOG_ERR("Received invalid effect identifier.");
-		break;
-	}
-}
 
 CHIP_ERROR AppTask::RestoreBridgedDevices()
 {
@@ -289,8 +227,7 @@ CHIP_ERROR AppTask::Init()
 	ReturnErrorOnFailure(Nrf::Matter::RegisterEventHandler(AppFactoryResetHandler, 0));
 #endif
 
-	/* Initialize trigger effect timer */
-	k_timer_init(&sTriggerEffectTimer, &AppTask::TriggerEffectTimerTimeoutCallback, nullptr);
+	ReturnErrorOnFailure(sIdentifyCluster.Init());
 
 	return Nrf::Matter::StartServer();
 }

@@ -24,9 +24,6 @@ public:
 
 	CHIP_ERROR StartApp();
 
-	static void IdentifyStartHandler(Identify *ident);
-	static void IdentifyStopHandler(Identify *ident);
-
 private:
 	CHIP_ERROR Init();
 
