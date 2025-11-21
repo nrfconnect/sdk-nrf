@@ -25,16 +25,12 @@ public:
 		return sAppTask;
 	};
 
+	static constexpr chip::EndpointId kSmokeCoAlarmEndpointId = 1;
+
 	CHIP_ERROR StartApp();
-	static void IdentifyStartHandler(Identify *);
-	static void IdentifyStopHandler(Identify *);
 
 	void UpdatedExpressedLedState();
 	void SelfTestHandler();
-
-	static constexpr chip::EndpointId kSmokeCoAlarmEndpointId = 1;
-	static constexpr chip::EndpointId kWiredPowerSourceEndpointId = 0;
-	static constexpr chip::EndpointId kBatteryPowerSourceEndpointId = 1;
 
 private:
 	CHIP_ERROR Init();
@@ -46,8 +42,10 @@ private:
 	static void EndSelfTestEventHandler();
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
-	constexpr static Nrf::Matter::TestEventTrigger::EventTriggerId kPowerSourceOnEventTriggerId = 0xFFFF'FFFF'8000'0000;
-	constexpr static Nrf::Matter::TestEventTrigger::EventTriggerId kPowerSourceOffEventTriggerId = 0xFFFF'FFFF'8001'0000;
+	constexpr static Nrf::Matter::TestEventTrigger::EventTriggerId kPowerSourceOnEventTriggerId =
+		0xFFFF'FFFF'8000'0000;
+	constexpr static Nrf::Matter::TestEventTrigger::EventTriggerId kPowerSourceOffEventTriggerId =
+		0xFFFF'FFFF'8001'0000;
 	static CHIP_ERROR PowerSourceOnEventCallback(Nrf::Matter::TestEventTrigger::TriggerValue);
 	static CHIP_ERROR PowerSourceOffEventCallback(Nrf::Matter::TestEventTrigger::TriggerValue);
 #endif

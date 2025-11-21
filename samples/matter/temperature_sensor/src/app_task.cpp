@@ -9,10 +9,10 @@
 #include "app/matter_init.h"
 #include "app/task_executor.h"
 #include "board/board.h"
+#include "clusters/identify.h"
 #include "lib/core/CHIPError.h"
 
 #include <app-common/zap-generated/attributes/Accessors.h>
-#include <app/clusters/identify-server/identify-server.h>
 
 #include <zephyr/logging/log.h>
 
@@ -24,25 +24,14 @@ using namespace ::chip::DeviceLayer;
 
 namespace
 {
+constexpr chip::EndpointId kTemperatureSensorEndpointId = 1;
 
-Identify sIdentify = { AppTask::Instance().kTemperatureSensorEndpointId, AppTask::IdentifyStartHandler,
-		       AppTask::IdentifyStopHandler, Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator };
+Nrf::Matter::IdentifyCluster sIdentifyCluster(kTemperatureSensorEndpointId);
 
 #ifdef CONFIG_CHIP_ICD_UAT_SUPPORT
 #define UAT_BUTTON_MASK DK_BTN3_MSK
 #endif
 } /* namespace */
-
-void AppTask::IdentifyStartHandler(Identify *)
-{
-	Nrf::PostTask(
-		[] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms); });
-}
-
-void AppTask::IdentifyStopHandler(Identify *)
-{
-	Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false); });
-}
 
 void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
 {
@@ -66,8 +55,7 @@ void AppTask::UpdateTemperatureTimeoutCallback(k_timer *timer)
 
 			Protocols::InteractionModel::Status status =
 				Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Set(
-					AppTask::Instance().kTemperatureSensorEndpointId,
-					AppTask::Instance().GetCurrentTemperature());
+					kTemperatureSensorEndpointId, AppTask::Instance().GetCurrentTemperature());
 
 			if (status != Protocols::InteractionModel::Status::Success) {
 				LOG_ERR("Updating temperature measurement failed %x", to_underlying(status));
@@ -89,6 +77,8 @@ CHIP_ERROR AppTask::Init()
 	/* Register Matter event handler that controls the connectivity status LED based on the captured Matter network
 	 * state. */
 	ReturnErrorOnFailure(Nrf::Matter::RegisterEventHandler(Nrf::Board::DefaultMatterEventHandler, 0));
+
+	ReturnErrorOnFailure(sIdentifyCluster.Init());
 
 	return Nrf::Matter::StartServer();
 }

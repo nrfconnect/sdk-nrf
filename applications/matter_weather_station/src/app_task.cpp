@@ -13,6 +13,7 @@
 #include "app/task_executor.h"
 #include "board/board.h"
 #include "board/led_widget.h"
+#include "clusters/identify.h"
 
 #ifdef CONFIG_MCUMGR_TRANSPORT_BT
 #include "dfu/smp/dfu_over_smp.h"
@@ -20,6 +21,7 @@
 
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/cluster-objects.h>
+#include <app/DefaultTimerDelegate.h>
 #include <app/server/Server.h>
 #include <setup_payload/OnboardingCodesUtil.h>
 
@@ -76,32 +78,51 @@ k_timer sIdentifyTimer;
 
 const device *sBme688SensorDev = DEVICE_DT_GET_ONE(bosch_bme680);
 
-/* Add identify for all endpoints */
-Identify sIdentifyTemperature = { chip::EndpointId{ kTemperatureMeasurementEndpointId }, AppTask::OnIdentifyStart,
-				  AppTask::OnIdentifyStop, Clusters::Identify::IdentifyTypeEnum::kAudibleBeep };
-Identify sIdentifyHumidity = { chip::EndpointId{ kHumidityMeasurementEndpointId }, AppTask::OnIdentifyStart,
-			       AppTask::OnIdentifyStop, Clusters::Identify::IdentifyTypeEnum::kAudibleBeep };
-Identify sIdentifyPressure = { chip::EndpointId{ kPressureMeasurementEndpointId }, AppTask::OnIdentifyStart,
-			       AppTask::OnIdentifyStop, Clusters::Identify::IdentifyTypeEnum::kAudibleBeep };
+class IdentifyDelegateImplWeatherStation : public chip::app::Clusters::IdentifyDelegate {
+public:
+	void OnIdentifyStart(chip::app::Clusters::IdentifyCluster &cluster) override
+	{
+		Nrf::PostTask([] {
+			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms);
+			k_timer_start(&sIdentifyTimer, K_MSEC(kIdentifyTimerIntervalMs),
+				      K_MSEC(kIdentifyTimerIntervalMs));
+			BuzzerSetState(true);
+		});
+	}
+
+	void OnIdentifyStop(chip::app::Clusters::IdentifyCluster &cluster) override
+	{
+		Nrf::PostTask([] {
+			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
+			k_timer_stop(&sIdentifyTimer);
+			BuzzerSetState(false);
+		});
+	}
+
+	void OnTriggerEffect(chip::app::Clusters::IdentifyCluster &cluster) override
+	{
+		Nrf::PostTask([] { BuzzerToggleState(); });
+	}
+
+	bool IsTriggerEffectEnabled() const override { return true; }
+};
+
+IdentifyDelegateImplWeatherStation sIdentifyDelegateImplWeatherStation;
+DefaultTimerDelegate sTimerDelegate;
+
+Nrf::Matter::IdentifyCluster sIdentifyTemperature(kTemperatureMeasurementEndpointId,
+						  sIdentifyDelegateImplWeatherStation, sTimerDelegate,
+						  Clusters::Identify::IdentifyTypeEnum::kAudibleBeep);
+Nrf::Matter::IdentifyCluster sIdentifyHumidity(kHumidityMeasurementEndpointId, sIdentifyDelegateImplWeatherStation,
+					       sTimerDelegate, Clusters::Identify::IdentifyTypeEnum::kAudibleBeep);
+Nrf::Matter::IdentifyCluster sIdentifyPressure(kPressureMeasurementEndpointId, sIdentifyDelegateImplWeatherStation,
+					       sTimerDelegate, Clusters::Identify::IdentifyTypeEnum::kAudibleBeep);
 
 } /* namespace */
 
 void AppTask::MeasurementsTimerHandler()
 {
 	Instance().UpdateClustersState();
-}
-
-void AppTask::OnIdentifyStart(Identify *)
-{
-	Nrf::PostTask(
-		[] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms); });
-	k_timer_start(&sIdentifyTimer, K_MSEC(kIdentifyTimerIntervalMs), K_MSEC(kIdentifyTimerIntervalMs));
-}
-
-void AppTask::OnIdentifyStop(Identify *)
-{
-	k_timer_stop(&sIdentifyTimer);
-	BuzzerSetState(false);
 }
 
 void AppTask::IdentifyTimerHandler()
@@ -382,6 +403,10 @@ CHIP_ERROR AppTask::Init()
 		LOG_ERR("Buzzer init failed");
 		return chip::System::MapErrorZephyr(ret);
 	}
+
+	ReturnErrorOnFailure(sIdentifyTemperature.Init());
+	ReturnErrorOnFailure(sIdentifyHumidity.Init());
+	ReturnErrorOnFailure(sIdentifyPressure.Init());
 
 	/* Initialize timers */
 	k_timer_init(

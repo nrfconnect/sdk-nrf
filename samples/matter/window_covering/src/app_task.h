@@ -26,9 +26,6 @@ public:
 
 	CHIP_ERROR StartApp();
 
-	static void IdentifyStartHandler(Identify *);
-	static void IdentifyStopHandler(Identify *);
-
 private:
 	CHIP_ERROR Init();
 	void ToggleMoveType();

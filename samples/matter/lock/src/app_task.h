@@ -32,8 +32,6 @@ public:
 	CHIP_ERROR StartApp();
 
 	void UpdateClusterState(const BoltLockManager::StateData &stateData);
-	static void IdentifyStartHandler(Identify *);
-	static void IdentifyStopHandler(Identify *);
 
 private:
 	CHIP_ERROR Init();

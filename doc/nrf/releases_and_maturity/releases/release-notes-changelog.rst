@@ -298,6 +298,7 @@ Matter bridge
     To fix this, you need to disable storing the Wi-Fi firmware patch in external memory.
     See the :ref:`migration guide <migration_3.2_required>` for more information.
   * By moving code from :file:`samples/matter/common/src/bridge` to :file:`applications/matter_bridge/src/core` and :file:`applications/matter_bridge/src/ble` directories.
+  * The Identify cluster implementation in the application to use the code-driven approach instead of the zap-driven approach.
 
 nRF5340 Audio
 -------------
@@ -390,7 +391,7 @@ nRF Machine Learning (Edge Impulse)
 Thingy:53: Matter weather station
 ---------------------------------
 
-|no_changes_yet_note|
+* Updated the application to use the code-driven approach for the Identify cluster implementation instead of the zap-driven approach.
 
 Samples
 =======
@@ -710,6 +711,7 @@ Matter samples
     See the :ref:`migration guide <migration_3.2_required>` for more information.
   * All Matter samples that support low-power mode to use the :ref:`lib_ram_pwrdn` feature with the nRF54LM20 DK.
     This change resulted in decreasing the sleep current consumption by more than two uA.
+  * All Matter samples to use the code-driven approach for the Identify cluster implementation instead of the zap-driven approach.
 
 * :ref:`matter_lock_sample` sample:
 

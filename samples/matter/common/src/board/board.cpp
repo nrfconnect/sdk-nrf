@@ -68,6 +68,8 @@ bool Board::Init(button_handler_t buttonHandler, LedStateHandler ledStateHandler
 			.cb = Nrf::Matter::Certification::ButtonHandler,
 		};
 		dk_button_handler_add(&handler);
+
+		Nrf::Matter::Certification::Init();
 	}
 #endif
 
