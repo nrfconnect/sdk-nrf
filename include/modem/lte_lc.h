@@ -321,6 +321,7 @@ enum lte_lc_func_mode {
 
 /** Event type. */
 enum lte_lc_evt_type {
+#if defined(CONFIG_LTE_LC_NETWORK_REGISTRATION_MODULE)
 	/**
 	 * Network registration status.
 	 *
@@ -328,6 +329,7 @@ enum lte_lc_evt_type {
 	 * @ref lte_lc_nw_reg_status in the event.
 	 */
 	LTE_LC_EVT_NW_REG_STATUS		= 0,
+#endif /* CONFIG_LTE_LC_NETWORK_REGISTRATION_MODULE */
 
 #if defined(CONFIG_LTE_LC_PSM_MODULE)
 	/**

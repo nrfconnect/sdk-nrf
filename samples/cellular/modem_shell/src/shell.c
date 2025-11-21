@@ -28,7 +28,6 @@
 #endif
 
 #if defined(CONFIG_LWM2M_CARRIER)
-#include <modem/pdn.h>
 #include <lwm2m_carrier.h>
 #include "link.h"
 #include "link_settings.h"
