@@ -72,6 +72,15 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 		#define BOOTLOADER_NAME "MCUBOOT"
 	#endif
 
+	/* Validate the MCUboot bootloader mode compatibility with this DFU module. */
+	#if CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
+		BUILD_ASSERT(CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP);
+	#elif CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD
+		BUILD_ASSERT(CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_RAM_LOAD);
+	#else
+		BUILD_ASSERT(CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_UNSPECIFIED);
+	#endif
+
 	#if CONFIG_PARTITION_MANAGER_ENABLED
 		#include <pm_config.h>
 
@@ -123,18 +132,28 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 		#define MCUBOOT_PRIMARY_SLOT_ID   DT_FIXED_PARTITION_ID(MCUBOOT_PRIMARY_NODE)
 		#define MCUBOOT_SECONDARY_SLOT_ID DT_FIXED_PARTITION_ID(MCUBOOT_SECONDARY_NODE)
 
-		/* Use range check to allow for placing MCUboot header in a separate partition,
-		 * so the application code partition is not an alias for the MCUboot partition,
-		 * but a subpartition of the MCUboot partition.
-		 */
-		#if (CODE_PARTITION_START_ADDR >= MCUBOOT_PRIMARY_START_ADDR) && \
-		    (CODE_PARTITION_START_ADDR < MCUBOOT_PRIMARY_END_ADDR)
-			#define DFU_SLOT_ID MCUBOOT_SECONDARY_SLOT_ID
-		#elif (CODE_PARTITION_START_ADDR >= MCUBOOT_SECONDARY_START_ADDR) && \
-		      (CODE_PARTITION_START_ADDR < MCUBOOT_SECONDARY_END_ADDR)
-			#define DFU_SLOT_ID MCUBOOT_PRIMARY_SLOT_ID
+
+		#if CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_RAM_LOAD
+			/* Use the macro alias for the DFU slot ID that needs to be set in runtime
+			 * when the MCUboot is configured for the RAM load mode.
+			 */
+			#define DFU_SLOT_ID_INVALID (0xFF)
+			static uint8_t dfu_slot_id = DFU_SLOT_ID_INVALID;
+			#define DFU_SLOT_ID (dfu_slot_id)
 		#else
-			#error Missing partition definitions in DTS.
+			/* Use range check to allow for placing MCUboot header in a separate
+			 * partition,so the application code partition is not an alias for the
+			 * MCUboot partition, but a subpartition of the MCUboot partition.
+			 */
+			#if (CODE_PARTITION_START_ADDR >= MCUBOOT_PRIMARY_START_ADDR) && \
+			(CODE_PARTITION_START_ADDR < MCUBOOT_PRIMARY_END_ADDR)
+				#define DFU_SLOT_ID MCUBOOT_SECONDARY_SLOT_ID
+			#elif (CODE_PARTITION_START_ADDR >= MCUBOOT_SECONDARY_START_ADDR) && \
+			(CODE_PARTITION_START_ADDR < MCUBOOT_SECONDARY_END_ADDR)
+				#define DFU_SLOT_ID MCUBOOT_PRIMARY_SLOT_ID
+			#else
+				#error Missing partition definitions in DTS.
+			#endif
 		#endif
 	#else
 		#error Unsupported partitioning scheme.
@@ -142,6 +161,15 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 #else
 	#error Bootloader not supported.
 #endif
+
+/* This value denotes whether the revert feature is supported by the bootloader.
+ * Currently, the revert feature is only supported by the MCUboot bootloader that
+ * is not configured for the standard direct-xip or RAM load mode.
+ */
+#define DFU_REVERT_FEATURE_IS_SUPPORTED                            \
+	(CONFIG_BOOTLOADER_MCUBOOT) &&                             \
+	!(CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP) && \
+	!(CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_RAM_LOAD)
 
 static struct k_work_delayable dfu_timeout;
 static struct k_work_delayable reboot_request;
@@ -357,7 +385,7 @@ static void complete_dfu_data_store(void)
 
 	if (cur_offset == img_length) {
 		LOG_INF("DFU image written");
-#if CONFIG_BOOTLOADER_MCUBOOT && !CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
+#if DFU_REVERT_FEATURE_IS_SUPPORTED
 		int err = boot_request_upgrade(false);
 		if (err) {
 			LOG_ERR("Cannot request the image upgrade (err:%d)", err);
@@ -879,6 +907,26 @@ static void fetch_config(const uint8_t opt_id, uint8_t *data, size_t *size)
 	}
 }
 
+#if CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_RAM_LOAD
+static void dfu_slot_id_runtime_init(void)
+{
+	uint8_t active_slot_id;
+
+	__ASSERT_NO_MSG(dfu_slot_id == DFU_SLOT_ID_INVALID);
+
+	active_slot_id = boot_fetch_active_slot();
+	dfu_slot_id = (active_slot_id == MCUBOOT_SECONDARY_SLOT_ID) ?
+		MCUBOOT_PRIMARY_SLOT_ID : MCUBOOT_SECONDARY_SLOT_ID;
+
+	__ASSERT_NO_MSG(dfu_slot_id != DFU_SLOT_ID_INVALID);
+	__ASSERT_NO_MSG((active_slot_id == MCUBOOT_PRIMARY_SLOT_ID) ||
+			(active_slot_id == MCUBOOT_SECONDARY_SLOT_ID));
+
+	LOG_INF("DFU slot configured in runtime for the %s slot",
+		dfu_slot_id == MCUBOOT_PRIMARY_SLOT_ID ? "primary" : "secondary");
+}
+#endif
+
 static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_hid_report_event(aeh)) {
@@ -902,7 +950,12 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			int err;
-#if CONFIG_BOOTLOADER_MCUBOOT && !CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
+
+#if CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_RAM_LOAD
+			dfu_slot_id_runtime_init();
+#endif
+
+#if DFU_REVERT_FEATURE_IS_SUPPORTED
 			err = boot_write_img_confirmed();
 
 			if (err) {

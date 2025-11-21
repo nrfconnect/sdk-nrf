@@ -4,7 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* Application does not use cpuflpr core. Assign whole RRAM to cpuapp. */
-&cpuapp_rram {
-	reg = < 0x0 DT_SIZE_K(2036) >;
+#include "../../memory_map.dtsi"
+
+/ {
+	chosen {
+		/* We need to point where we want to place MCUboot code. */
+		zephyr,code-partition = &boot_partition;
+		/* We need to point where we want to place MCUboot RAM region. */
+		zephyr,sram = &cpuapp_sram_mcuboot_ram_region;
+		/* We need to point where we want to place the retained memory region that
+		 * is shared with the application image and contains the image metadata.
+		 */
+		zephyr,bootloader-info = &boot_info0;
+	};
 };
