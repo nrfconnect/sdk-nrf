@@ -4,11 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include <errno.h>
-#include <nrf.h>
+#include <nrfx.h>
 #include <esb.h>
 #include <stddef.h>
 #include <string.h>
-#include <nrf_erratas.h>
 
 #include <hal/nrf_radio.h>
 #include <hal/nrf_timer.h>
@@ -240,7 +239,8 @@ struct esb_address {
 	atomic_t rf_channel_flags; /* Flags for setting the channel. */
 };
 
-static nrfx_timer_t esb_timer = ESB_NRFX_TIMER_INSTANCE;
+static nrfx_timer_t esb_timer = NRFX_TIMER_INSTANCE(ESB_NRFX_TIMER_INSTANCE_REG);
+NRFX_INSTANCE_IRQ_HANDLER_DEFINE(timer, ESB_TIMER_INSTANCE_NO, &esb_timer);
 
 static struct esb_config esb_cfg;
 static volatile enum esb_state esb_state = ESB_STATE_UNINITIALIZED;
@@ -1945,7 +1945,7 @@ static void evt_dynamic_irq_handler(const void *args)
 static void timer_dynamic_irq_handler(const void *args)
 {
 	ARG_UNUSED(args);
-	ESB_TIMER_IRQ_HANDLER();
+	nrfx_timer_irq_handler(&esb_timer);
 	ISR_DIRECT_PM();
 }
 

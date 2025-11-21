@@ -36,7 +36,7 @@ PINCTRL_DT_DEFINE(I2S_NL);
 #error "Current AUDIO_SAMPLE_RATE_HZ setting not supported"
 #endif
 
-static nrfx_i2s_t i2s_inst = NRFX_I2S_INSTANCE(0);
+static nrfx_i2s_t i2s_inst = NRFX_I2S_INSTANCE(NRF_I2S0);
 
 static nrfx_i2s_config_t cfg = {
 	/* Pins are configured by pinctrl. */
@@ -46,8 +46,11 @@ static nrfx_i2s_config_t cfg = {
 	.mode = NRF_I2S_MODE_MASTER,
 	.format = NRF_I2S_FORMAT_I2S,
 	.alignment = NRF_I2S_ALIGN_LEFT,
-	.ratio = I2S_RATIO,
-	.mck_setup = 0x66666000,
+	.prescalers = {
+		.ratio = I2S_RATIO,
+		.mck_setup = 0x66666000,
+		.enable_bypass = false,
+	},
 #if (CONFIG_AUDIO_BIT_DEPTH_16)
 	.sample_width = NRF_I2S_SWIDTH_16BIT,
 #elif (CONFIG_AUDIO_BIT_DEPTH_32)
@@ -57,7 +60,6 @@ static nrfx_i2s_config_t cfg = {
 #endif /* (CONFIG_AUDIO_BIT_DEPTH_16) */
 	.channels = NRF_I2S_CHANNELS_STEREO,
 	.clksrc = NRF_I2S_CLKSRC_ACLK,
-	.enable_bypass = false,
 };
 
 static i2s_blk_comp_callback_t i2s_blk_comp_callback;
@@ -86,10 +88,10 @@ void audio_i2s_set_next_buf(const uint8_t *tx_buf, uint32_t *rx_buf)
 					    .p_tx_buffer = (uint32_t *)tx_buf,
 					    .buffer_size = I2S_SAMPLES_NUM};
 
-	nrfx_err_t ret;
+	int ret;
 
 	ret = nrfx_i2s_next_buffers_set(&i2s_inst, &i2s_buf);
-	__ASSERT_NO_MSG(ret == NRFX_SUCCESS);
+	__ASSERT_NO_MSG(ret == 0);
 }
 
 void audio_i2s_start(const uint8_t *tx_buf, uint32_t *rx_buf)
@@ -107,11 +109,11 @@ void audio_i2s_start(const uint8_t *tx_buf, uint32_t *rx_buf)
 					    .p_tx_buffer = (uint32_t *)tx_buf,
 					    .buffer_size = I2S_SAMPLES_NUM};
 
-	nrfx_err_t ret;
+	int ret;
 
 	/* Buffer size in 32-bit words */
 	ret = nrfx_i2s_start(&i2s_inst, &i2s_buf, 0);
-	__ASSERT_NO_MSG(ret == NRFX_SUCCESS);
+	__ASSERT_NO_MSG(ret == 0);
 
 	state = AUDIO_I2S_STATE_STARTED;
 }
@@ -134,7 +136,7 @@ void audio_i2s_init(void)
 {
 	__ASSERT_NO_MSG(state == AUDIO_I2S_STATE_UNINIT);
 
-	nrfx_err_t ret;
+	int ret;
 
 	nrfx_clock_hfclkaudio_config_set(HFCLKAUDIO_12_288_MHZ);
 
@@ -148,11 +150,11 @@ void audio_i2s_init(void)
 	ret = pinctrl_apply_state(PINCTRL_DT_DEV_CONFIG_GET(I2S_NL), PINCTRL_STATE_DEFAULT);
 	__ASSERT_NO_MSG(ret == 0);
 
-	IRQ_CONNECT(DT_IRQN(I2S_NL), DT_IRQ(I2S_NL, priority), nrfx_isr, nrfx_i2s_0_irq_handler, 0);
+	IRQ_CONNECT(DT_IRQN(I2S_NL), DT_IRQ(I2S_NL, priority), nrfx_i2s_irq_handler, &i2s_inst, 0);
 	irq_enable(DT_IRQN(I2S_NL));
 
 	ret = nrfx_i2s_init(&i2s_inst, &cfg, i2s_comp_handler);
-	__ASSERT_NO_MSG(ret == NRFX_SUCCESS);
+	__ASSERT_NO_MSG(ret == 0);
 
 	state = AUDIO_I2S_STATE_IDLE;
 }

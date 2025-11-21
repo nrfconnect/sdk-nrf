@@ -18,13 +18,14 @@ static int hfclock_config_and_start(void)
 	/* Use this to turn on 128 MHz clock for cpu_app */
 	ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_1);
 
-	ret -= NRFX_ERROR_BASE_NUM;
 	if (ret) {
 		return ret;
 	}
 
+	nrf_clock_hfclk_t clk_src;
+
 	nrfx_clock_hfclk_start();
-	while (!nrfx_clock_hfclk_is_running()) {
+	while (!nrfx_clock_hfclk_running_check(&clk_src)) {
 	}
 
 	return 0;

@@ -11,8 +11,8 @@
 
 #include <nrf_gzll_glue.h>
 #include <gzll_glue.h>
-#include <nrfx_ppi.h>
-
+#include <helpers/nrfx_gppi.h>
+#include <hal/nrf_ppi.h>
 
 #if defined(CONFIG_GAZELL_ZERO_LATENCY_IRQS)
 #define GAZELL_HIGH_IRQ_FLAGS IRQ_ZERO_LATENCY
@@ -93,8 +93,9 @@ bool gzll_glue_init(void)
 {
 	bool is_ok = true;
 	const struct device *clkctrl = DEVICE_DT_GET_ONE(nordic_nrf_clock);
-	nrfx_err_t err_code;
+	int err;
 	nrf_ppi_channel_t ppi_channel[3];
+	nrfx_gppi_handle_t handle;
 	uint8_t i;
 
 	irq_disable(RADIO_IRQn);
@@ -127,11 +128,12 @@ bool gzll_glue_init(void)
 	}
 
 	for (i = 0; i < 3; i++) {
-		err_code = nrfx_ppi_channel_alloc(&ppi_channel[i]);
-		if (err_code != NRFX_SUCCESS) {
+		err = nrfx_gppi_domain_conn_alloc(0, 0, &handle);
+		if (err < 0) {
 			is_ok = false;
 			break;
 		}
+		ppi_channel[i] = (nrf_ppi_channel_t)handle;
 	}
 
 	if (is_ok) {

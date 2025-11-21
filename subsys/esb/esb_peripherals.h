@@ -66,9 +66,6 @@ extern "C" {
 	/** The ESB Radio interrupt number. */
 	#define ESB_RADIO_IRQ_NUMBER RADIO_IRQn
 
-	/** DPPIC instance number used by ESB. */
-	#define ESB_DPPIC_INSTANCE_NO 0
-
 	/** ESB EGU instance configuration. */
 	#define ESB_EGU NRF_EGU0
 
@@ -104,7 +101,7 @@ extern "C" {
 	NRFX_CONCAT_2(NRF_TIMER, ESB_TIMER_INSTANCE_NO)
 
 /** ESB nrfx timer instance. */
-#define ESB_NRFX_TIMER_INSTANCE NRFX_TIMER_INSTANCE(ESB_TIMER_INSTANCE_NO)
+#define ESB_NRFX_TIMER_INSTANCE_REG NRF_TIMER_INST_GET(ESB_TIMER_INSTANCE_NO)
 
 /** ESB EGU events and tasks configuration. */
 #define ESB_EGU_EVENT NRF_EGU_EVENT_TRIGGERED6

@@ -7,7 +7,7 @@
 #ifndef HPF_GPIO_H
 #define HPF_GPIO_H
 
-#include <drivers/nrfx_common.h>
+#include <nrfx.h>
 #include <hpf/hpf_common.h>
 
 #ifdef __cplusplus
