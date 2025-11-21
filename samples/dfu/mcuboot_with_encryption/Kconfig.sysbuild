@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SAMPLE_MCUBOOT_ENCRYPTION_USE_CRYPTO_STORAGE
+	bool "Use KMU instead of compiled in keys"
+	depends on SOC_SERIES_NRF54LX
+	help
+	  Compile in KMU support and provision KMU with sample keys.
+	  Remember to flash sample with:
+	    west flash --erase -d <sample_build_dir>
+	  to provision the keys with software.
+
+config MCUBOOT_SIGNATURE_USING_KMU
+	default y if SAMPLE_MCUBOOT_ENCRYPTION_USE_CRYPTO_STORAGE
+
+config MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE
+	default y if SAMPLE_MCUBOOT_ENCRYPTION_USE_CRYPTO_STORAGE
+
+source "share/sysbuild/Kconfig"
