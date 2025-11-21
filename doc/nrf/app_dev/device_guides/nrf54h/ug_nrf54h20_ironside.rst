@@ -94,7 +94,7 @@ To update the |ISE| firmware, you can use the ``west ncs-ironside-se-update`` co
 
 The command accepts the following main options:
 
-* ``--zip`` (required) - Sets the path to the nRF54H20 SoC binaries ZIP file.
+* ``--zip`` (required) - Sets the path to the nRF54H20 IronSide SE binaries ZIP file.
 * ``--allow-erase`` (required) - Enables erasing the device during the update process.
 * ``--serial`` - Specifies the serial number of the target device.
 * ``--firmware-slot`` - Updates only a specific firmware slot (``uslot`` for |ISE| or ``rslot`` for |ISE| Recovery).
