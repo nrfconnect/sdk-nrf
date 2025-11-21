@@ -63,6 +63,7 @@ DEFINE_FFF_GLOBALS;
 #define CMD_CELLULARPRFL_NOTIF		"AT%%CELLULARPRFL=1"
 #define CELLULARPRFL_CP_ID		0
 #define CELLULARPRFL_ACT		2
+#define CELLULARPRFL_ACT_NBIOT_LTEM	(LTE_LC_ACT_NBIOT | LTE_LC_ACT_LTEM)
 #define CELLULARPRFL_SIM_SLOT		LTE_LC_UICC_PHYSICAL
 #define CELLULARPRFL_SIM_SLOT_SOFTSIM	LTE_LC_UICC_SOFTSIM
 
@@ -882,6 +883,26 @@ static int nrf_modem_at_printf_cellularprfl_softsim(const char *cmd, va_list arg
 
 	sim_slot = va_arg(args, int);
 	TEST_ASSERT_EQUAL(CELLULARPRFL_SIM_SLOT_SOFTSIM, sim_slot);
+
+	return 0;
+}
+
+static int nrf_modem_at_printf_cellularprfl_multiple_act(const char *cmd, va_list args)
+{
+	int cp_id;
+	int act;
+
+	if (strncmp(cmd, CMD_CELLULARPRFL_NOTIF, sizeof(CMD_CELLULARPRFL_NOTIF) - 1) == 0) {
+		return 0;
+	}
+
+	TEST_ASSERT_EQUAL_STRING(CMD_CELLULARPRFL_SET, cmd);
+
+	cp_id = va_arg(args, int);
+	TEST_ASSERT_EQUAL(CELLULARPRFL_CP_ID, cp_id);
+
+	act = va_arg(args, int);
+	TEST_ASSERT_EQUAL(CELLULARPRFL_ACT_NBIOT_LTEM, act);
 
 	return 0;
 }
@@ -1763,6 +1784,21 @@ void test_lte_lc_cellular_profile_configure_softsim(void)
 	};
 
 	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cellularprfl_softsim;
+
+	ret = lte_lc_cellular_profile_configure(&profile);
+	TEST_ASSERT_EQUAL(0, ret);
+}
+
+void test_lte_lc_cellular_profile_multiple_act(void)
+{
+	int ret;
+	struct lte_lc_cellular_profile profile = {
+		.id = 0,
+		.act = LTE_LC_ACT_NBIOT | LTE_LC_ACT_LTEM,
+		.uicc = LTE_LC_UICC_PHYSICAL,
+	};
+
+	nrf_modem_at_printf_fake.custom_fake = nrf_modem_at_printf_cellularprfl_multiple_act;
 
 	ret = lte_lc_cellular_profile_configure(&profile);
 	TEST_ASSERT_EQUAL(0, ret);
