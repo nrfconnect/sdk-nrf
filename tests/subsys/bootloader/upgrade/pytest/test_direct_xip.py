@@ -113,6 +113,7 @@ def factory_upgrade_test_direct_xip(
 class TestDirectXipWithRevert:
     """Test Direct XIP upgrade and revert scenarios."""
 
+    @pytest.mark.nightly
     def test_direct_xip_upgrade_with_confirm(
         self, dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr
     ):
