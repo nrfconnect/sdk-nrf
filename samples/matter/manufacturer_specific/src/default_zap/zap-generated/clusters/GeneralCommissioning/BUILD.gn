@@ -1,6 +1,6 @@
 # DO NOT EDIT MANUALLY - Generated file
 #
-# Cluster generated code for constants and metadata based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+# Cluster generated code for constants and metadata based on nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 import("//build_overrides/chip.gni")
 
 source_set("ids") {
