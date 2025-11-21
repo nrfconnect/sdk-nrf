@@ -483,8 +483,12 @@ static void apply_radio_init_workarounds(void)
 		*(volatile uint32_t *)0x5302C74C = *(volatile uint32_t *)0x0FFFE468;
 	}
 
-	if (*(volatile uint32_t *)0x0FFFE46C != TRIM_VALUE_EMPTY) {
+	/* HMPAN-229 provides hardcoded value if the trim value is 0 */
+	if ((*(volatile uint32_t *)0x0FFFE46C != TRIM_VALUE_EMPTY) &&
+							(*(volatile uint32_t *)0x0FFFE46C != 0)) {
 		*(volatile uint32_t *)0x5302C7D8 = *(volatile uint32_t *)0x0FFFE46C;
+	} else {
+		*(volatile uint32_t *)0x5302C7D8 = 0x00000004;
 	}
 
 	if (*(volatile uint32_t *)0x0FFFE470 != TRIM_VALUE_EMPTY) {
