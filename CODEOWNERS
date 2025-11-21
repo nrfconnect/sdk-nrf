@@ -309,25 +309,25 @@
 /include/audio_module/                    @nrfconnect/ncs-audio
 /include/bluetooth/                       @nrfconnect/ncs-dragoon
 /include/bluetooth/adv_prov.h             @nrfconnect/ncs-si-bluebagel
-/include/bluetooth/bt_rpc.h               @nrfconnect/ncs-si-muffin
+/include/bluetooth/bt_rpc.h               @nrfconnect/ncs-blenders
 /include/bluetooth/conn_ctx.h             @nrfconnect/ncs-si-muffin
-/include/bluetooth/gatt_dm.h              @nrfconnect/ncs-si-muffin
+/include/bluetooth/gatt_dm.h              @nrfconnect/ncs-blenders @nrfconnect/ncs-si-muffin
 /include/bluetooth/gatt_pool.h            @nrfconnect/ncs-si-muffin
 /include/bluetooth/mesh/                  @nrfconnect/ncs-paladin
-/include/bluetooth/scan.h                 @nrfconnect/ncs-si-muffin
-/include/bluetooth/services/bas_client.h  @nrfconnect/ncs-si-muffin
-/include/bluetooth/services/bms.h         @nrfconnect/ncs-si-muffin
-/include/bluetooth/services/cgms.h        @nrfconnect/ncs-si-muffin
-/include/bluetooth/services/ddfs.h        @nrfconnect/ncs-si-muffin
+/include/bluetooth/scan.h                 @nrfconnect/ncs-blenders @nrfconnect/ncs-si-muffin
+/include/bluetooth/services/bas_client.h  @nrfconnect/ncs-blenders
+/include/bluetooth/services/bms.h         @nrfconnect/ncs-blenders
+/include/bluetooth/services/cgms.h        @nrfconnect/ncs-blenders
+/include/bluetooth/services/ddfs.h        @nrfconnect/ncs-blenders
 /include/bluetooth/services/fast_pair/    @nrfconnect/ncs-si-bluebagel
 /include/bluetooth/services/hids.h        @nrfconnect/ncs-si-bluebagel
-/include/bluetooth/services/hrs_client.h  @nrfconnect/ncs-si-muffin
-/include/bluetooth/services/lbs.h         @nrfconnect/ncs-si-muffin
-/include/bluetooth/services/mds.h         @nrfconnect/ncs-si-muffin
-/include/bluetooth/services/nus_client.h  @nrfconnect/ncs-si-muffin
-/include/bluetooth/services/nus.h         @nrfconnect/ncs-si-muffin
-/include/bluetooth/services/rscs.h        @nrfconnect/ncs-si-muffin
-/include/bluetooth/services/throughput.h  @nrfconnect/ncs-si-muffin
+/include/bluetooth/services/hrs_client.h  @nrfconnect/ncs-blenders
+/include/bluetooth/services/lbs.h         @nrfconnect/ncs-blenders
+/include/bluetooth/services/mds.h         @nrfconnect/ncs-blenders
+/include/bluetooth/services/nus_client.h  @nrfconnect/ncs-blenders
+/include/bluetooth/services/nus.h         @nrfconnect/ncs-blenders
+/include/bluetooth/services/rscs.h        @nrfconnect/ncs-blenders
+/include/bluetooth/services/throughput.h  @nrfconnect/ncs-blenders
 /include/caf/                             @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /include/debug/                           @nrfconnect/ncs-co-drivers
 /include/debug/ppi_trace.h                @nrfconnect/ncs-co-drivers @nordic-krch
@@ -351,7 +351,7 @@
 /include/net/nrf_cloud_*                  @nrfconnect/ncs-nrf-cloud
 /include/nfc/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-muffin
 /include/nrf_compress/                    @nordicjm
-/include/nrf_rpc/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-muffin @nrfconnect/ncs-protocols-serialization
+/include/nrf_rpc/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-blenders @nrfconnect/ncs-protocols-serialization
 /include/power/                           @nrfconnect/ncs-co-drivers
 /include/shell/                           @nordic-krch
 /include/util/                            @nrfconnect/ncs-aegir @nordic-krch
@@ -410,7 +410,7 @@
 # Modules
 /modules/azure-sdk-for-c/                 @nrfconnect/ncs-cia
 /modules/cjson/                           @nrfconnect/ncs-cia @nrfconnect/ncs-nrf-cloud
-/modules/coremark/                        @nrfconnect/ncs-si-muffin
+/modules/coremark/                        @nrfconnect/ncs-blenders
 /modules/mcuboot/                         @nrfconnect/ncs-eris
 /modules/memfault-firmware-sdk/           @nrfconnect/ncs-cia @nrfconnect/ncs-memfault
 /modules/nrfxlib/                         @nrfconnect/ncs-code-owners
@@ -425,15 +425,15 @@
 /samples/app_event_manager_profiler_tracer/ @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/app_jwt/                             @nrfconnect/ncs-modem @ayla-nordicsemi
 /samples/basic/                           @nrfconnect/ncs-co-build-system
-/samples/benchmarks/coremark/             @nrfconnect/ncs-si-muffin
+/samples/benchmarks/coremark/             @nrfconnect/ncs-blenders
 /samples/bluetooth/nrf_auraconfig/        @nrfconnect/ncs-audio
-/samples/bluetooth/central_and_peripheral_hrs/ @nrfconnect/ncs-si-muffin
-/samples/bluetooth/central_bas/           @nrfconnect/ncs-si-muffin
+/samples/bluetooth/central_and_peripheral_hrs/ @nrfconnect/ncs-blenders
+/samples/bluetooth/central_bas/           @nrfconnect/ncs-blenders
 /samples/bluetooth/central_hids/          @nrfconnect/ncs-si-bluebagel
-/samples/bluetooth/central_hr_coded/      @nrfconnect/ncs-si-muffin
-/samples/bluetooth/central_nfc_pairing/   @nrfconnect/ncs-si-muffin
+/samples/bluetooth/central_hr_coded/      @nrfconnect/ncs-blenders
+/samples/bluetooth/central_nfc_pairing/   @nrfconnect/ncs-blenders
 /samples/bluetooth/central_smp_client/    @nrfconnect/ncs-si-muffin
-/samples/bluetooth/central_uart/          @nrfconnect/ncs-si-muffin
+/samples/bluetooth/central_uart/          @nrfconnect/ncs-blenders
 /samples/bluetooth/channel_sounding_ras_initiator/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/channel_sounding_ras_reflector/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/conn_time_sync/        @nrfconnect/ncs-dragoon
@@ -450,35 +450,35 @@
 /samples/bluetooth/iso_time_sync/         @nrfconnect/ncs-dragoon
 /samples/bluetooth/llpm/                  @nrfconnect/ncs-dragoon
 /samples/bluetooth/mesh/                  @nrfconnect/ncs-paladin
-/samples/bluetooth/multiple_adv_sets/     @nrfconnect/ncs-si-muffin
-/samples/bluetooth/nrf_dm/                @nrfconnect/ncs-si-muffin
+/samples/bluetooth/multiple_adv_sets/     @nrfconnect/ncs-blenders
+/samples/bluetooth/nrf_dm/                @nrfconnect/ncs-blenders
 /samples/bluetooth/rssi_power_control/    @nrfconnect/ncs-dragoon
 /samples/bluetooth/peripheral_ams_client/ @leewkb4567
 /samples/bluetooth/peripheral_ancs_client/ @leewkb4567
-/samples/bluetooth/peripheral_bms/        @nrfconnect/ncs-si-muffin
-/samples/bluetooth/peripheral_cgms/       @nrfconnect/ncs-si-muffin
-/samples/bluetooth/peripheral_cts_client/ @nrfconnect/ncs-si-muffin
-/samples/bluetooth/peripheral_gatt_dm/    @nrfconnect/ncs-si-muffin
+/samples/bluetooth/peripheral_bms/        @nrfconnect/ncs-blenders
+/samples/bluetooth/peripheral_cgms/       @nrfconnect/ncs-blenders
+/samples/bluetooth/peripheral_cts_client/ @nrfconnect/ncs-blenders
+/samples/bluetooth/peripheral_gatt_dm/    @nrfconnect/ncs-blenders
 /samples/bluetooth/peripheral_hids_keyboard/ @nrfconnect/ncs-si-bluebagel
 /samples/bluetooth/peripheral_hids_mouse/ @nrfconnect/ncs-si-bluebagel
-/samples/bluetooth/peripheral_hr_coded/   @nrfconnect/ncs-si-muffin
-/samples/bluetooth/peripheral_lbs/        @nrfconnect/ncs-si-muffin
-/samples/bluetooth/peripheral_mds/        @nrfconnect/ncs-si-muffin
-/samples/bluetooth/peripheral_nfc_pairing/ @nrfconnect/ncs-si-muffin
-/samples/bluetooth/peripheral_power_profiling/ @nrfconnect/ncs-si-muffin
-/samples/bluetooth/peripheral_rscs/       @nrfconnect/ncs-si-muffin
-/samples/bluetooth/peripheral_status/     @nrfconnect/ncs-si-muffin
-/samples/bluetooth/peripheral_uart/       @nrfconnect/ncs-si-muffin
+/samples/bluetooth/peripheral_hr_coded/   @nrfconnect/ncs-blenders
+/samples/bluetooth/peripheral_lbs/        @nrfconnect/ncs-blenders
+/samples/bluetooth/peripheral_mds/        @nrfconnect/ncs-blenders
+/samples/bluetooth/peripheral_nfc_pairing/ @nrfconnect/ncs-blenders
+/samples/bluetooth/peripheral_power_profiling/ @nrfconnect/ncs-blenders
+/samples/bluetooth/peripheral_rscs/       @nrfconnect/ncs-blenders
+/samples/bluetooth/peripheral_status/     @nrfconnect/ncs-blenders
+/samples/bluetooth/peripheral_uart/       @nrfconnect/ncs-blenders
 /samples/bluetooth/peripheral_with_multiple_identities/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/radio_coex_1wire/      @nrfconnect/ncs-dragoon
 /samples/bluetooth/radio_notification_cb/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/path_loss_monitoring/   @nrfconnect/ncs-dragoon
-/samples/bluetooth/rpc_host/              @nrfconnect/ncs-si-muffin
+/samples/bluetooth/rpc_host/              @nrfconnect/ncs-blenders
 /samples/bluetooth/scanning_while_connecting/ @nrfconnect/ncs-dragoon
-/samples/bluetooth/shell_bt_nus/          @nrfconnect/ncs-si-muffin
+/samples/bluetooth/shell_bt_nus/          @nrfconnect/ncs-blenders
 /samples/bluetooth/shorter_conn_intervals/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/subrating/             @nrfconnect/ncs-dragoon
-/samples/bluetooth/throughput/            @nrfconnect/ncs-si-muffin
+/samples/bluetooth/throughput/            @nrfconnect/ncs-blenders
 /samples/bootloader/                      @nrfconnect/ncs-eris
 /samples/caf/                             @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/caf_sensor_manager/              @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
@@ -521,7 +521,7 @@
 /samples/nfc/                             @nrfconnect/ncs-si-muffin
 /samples/nrf5340/netboot/                 @nrfconnect/ncs-eris
 /samples/nrf5340/extxip_smp_svr/          @nrfconnect/ncs-eris
-/samples/nrf_rpc/                         @nrfconnect/ncs-si-muffin
+/samples/nrf_rpc/                         @nrfconnect/ncs-blenders
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
 /samples/nrf5340/empty_app_core/          @nrfconnect/ncs-si-muffin
@@ -786,7 +786,7 @@
 /subsys/bluetooth/cs_de/                  @nrfconnect/ncs-dragoon
 /subsys/bluetooth/host_extensions/        @nrfconnect/ncs-dragoon
 /subsys/bluetooth/mesh/                   @nrfconnect/ncs-paladin
-/subsys/bluetooth/rpc/                    @nrfconnect/ncs-si-muffin @nrfconnect/ncs-protocols-serialization
+/subsys/bluetooth/rpc/                    @nrfconnect/ncs-blenders @nrfconnect/ncs-protocols-serialization
 /subsys/bluetooth/services/fast_pair/     @nrfconnect/ncs-si-bluebagel
 /subsys/bluetooth/services/ras/           @nrfconnect/ncs-dragoon
 /subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
@@ -798,7 +798,7 @@
 /subsys/dfu/                              @nrfconnect/ncs-eris
 /subsys/dfu/dfu_target/                   @nrfconnect/ncs-eris
 /subsys/dfu/dfu_multi_image/              @Damian-Nordic @nrfconnect/ncs-eris
-/subsys/dm/                               @nrfconnect/ncs-si-muffin
+/subsys/dm/                               @nrfconnect/ncs-blenders
 /subsys/dult/                             @nrfconnect/ncs-si-bluebagel
 /subsys/emds/                             @balaklaka @nrfconnect/ncs-paladin
 /subsys/esb/                              @nrfconnect/ncs-si-muffin
@@ -832,7 +832,7 @@
 /subsys/nfc/rpc/                          @nrfconnect/ncs-protocols-serialization
 /subsys/nrf_compress/                     @nordicjm
 /subsys/nrf_profiler/                     @nrfconnect/ncs-si-bluebagel
-/subsys/nrf_rpc/                          @nrfconnect/ncs-si-muffin @nrfconnect/ncs-protocols-serialization
+/subsys/nrf_rpc/                          @nrfconnect/ncs-blenders @nrfconnect/ncs-protocols-serialization
 /subsys/nrf_security/                     @nrfconnect/ncs-aegir
 /subsys/partition_manager/                @nordicjm @tejlmand
 /subsys/pcd/                              @nrfconnect/ncs-eris
@@ -921,7 +921,7 @@
 /tests/subsys/audio_module/               @nrfconnect/ncs-audio
 /tests/subsys/bluetooth/controller/        @nrfconnect/ncs-dragoon
 /tests/subsys/bluetooth/cs_de/            @nrfconnect/ncs-dragoon
-/tests/subsys/bluetooth/gatt_dm/          @nrfconnect/ncs-si-muffin
+/tests/subsys/bluetooth/gatt_dm/          @nrfconnect/ncs-blenders
 /tests/subsys/bluetooth/enocean/          @nrfconnect/ncs-paladin
 /tests/subsys/bluetooth/fast_pair/        @nrfconnect/ncs-si-bluebagel
 /tests/subsys/bluetooth/mesh/             @nrfconnect/ncs-paladin
