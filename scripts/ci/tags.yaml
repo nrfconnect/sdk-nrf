@@ -429,6 +429,7 @@ ci_samples_cellular:
     - nrf/lib/modem_jwt/
     - nrf/lib/modem_key_mgmt/
     - nrf/lib/nrf_modem_lib/
+    - nrf/lib/ntn/
     - nrf/lib/pdn/
     - nrf/lib/sms/
     - nrf/lib/wave_gen/
@@ -1052,9 +1053,19 @@ ci_tests_lib_pcm_mix:
 
 ci_tests_lib_lte_lc:
   files:
+    - nrf/lib/at_monitor/
+    - nrf/lib/at_parser/
     - nrf/lib/lte_link_control/
     - nrf/tests/lib/lte_lc/
     - nrf/tests/lib/lte_lc_api/
+    - nrf/tests/mocks/nrf_modem_at/
+
+ci_tests_lib_ntn:
+  files:
+    - nrf/lib/at_monitor/
+    - nrf/lib/at_parser/
+    - nrf/lib/ntn/
+    - nrf/tests/lib/ntn/
     - nrf/tests/mocks/nrf_modem_at/
 
 ci_tests_lib_contin_array:
