@@ -7,8 +7,6 @@
 #include "closure_manager.h"
 #include "garage_door_impl.h"
 
-static constexpr chip::EndpointId kClosureEndpoint = 1;
-
 class AppTask {
 public:
 	AppTask();

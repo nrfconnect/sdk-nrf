@@ -25,9 +25,6 @@ public:
 
 	void UpdateClusterState();
 
-	static void IdentifyStartHandler(Identify *);
-	static void IdentifyStopHandler(Identify *);
-
 private:
 	enum Timer : uint8_t { DimmerTrigger, Dimmer };
 

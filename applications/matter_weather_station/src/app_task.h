@@ -8,7 +8,6 @@
 
 #include "board/led_widget.h"
 
-#include <app/clusters/identify-server/identify-server.h>
 #include <platform/CHIPDeviceLayer.h>
 
 class AppTask {
@@ -22,8 +21,6 @@ public:
 	CHIP_ERROR StartApp();
 
 	void UpdateClustersState();
-	static void OnIdentifyStart(Identify *);
-	static void OnIdentifyStop(Identify *);
 	static void UpdateLedState();
 
 private:

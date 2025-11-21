@@ -11,9 +11,10 @@
 #include "board/board.h"
 #include "closure_control_endpoint.h"
 #include "closure_manager.h"
+#include "clusters/identify.h"
+
 #include "lib/core/CHIPError.h"
 #include "lib/support/CodeUtils.h"
-
 #include <app-common/zap-generated/ids/Attributes.h>
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app/data-model/Nullable.h>
@@ -29,7 +30,15 @@ using namespace ::chip::app;
 using namespace ::chip::DeviceLayer;
 using namespace chip::app::Clusters::Descriptor;
 
-static const struct pwm_dt_spec sPhysicalIndicatorPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
+namespace
+{
+const struct pwm_dt_spec sPhysicalIndicatorPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
+
+constexpr chip::EndpointId kClosureEndpoint = 1;
+
+/* TODO: Add a custom identify delegate to handle the custom identify stop behavior according to the closure state */
+Nrf::Matter::IdentifyCluster sIdentifyCluster(kClosureEndpoint);
+} // namespace
 
 AppTask::AppTask() : mPhysicalDevice(&sPhysicalIndicatorPwmDevice), mClosureManager(mPhysicalDevice, kClosureEndpoint)
 {
@@ -47,6 +56,8 @@ CHIP_ERROR AppTask::Init()
 	ReturnErrorOnFailure(Nrf::Matter::RegisterEventHandler(Nrf::Board::DefaultMatterEventHandler, 0));
 
 	ReturnErrorOnFailure(Nrf::Matter::StartServer());
+
+	ReturnErrorOnFailure(sIdentifyCluster.Init());
 
 	ReturnErrorOnFailure(mClosureManager.Init());
 	return CHIP_NO_ERROR;
