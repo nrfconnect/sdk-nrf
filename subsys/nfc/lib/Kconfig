@@ -6,6 +6,7 @@
 config NFC_PLATFORM
 	bool "Common NFC configuration"
 	default y if NFC_T2T_NRFXLIB || NFC_T4T_NRFXLIB
+	depends on HAS_HW_NRF_NFCT
 	select NRFX_NFCT
 	select CLOCK_CONTROL
 	help
