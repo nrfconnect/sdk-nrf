@@ -1025,6 +1025,10 @@ Other libraries
 
   * Added support for the nRF54LM20A SoC.
 
+* :ref:`lib_hw_id` library:
+
+  * The ``CONFIG_HW_ID_LIBRARY_SOURCE_BLE_MAC`` Kconfig option has been renamed to :kconfig:option:`CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS`.
+
 Shell libraries
 ---------------
 
