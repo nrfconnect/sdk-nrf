@@ -88,10 +88,10 @@ void audio_i2s_set_next_buf(const uint8_t *tx_buf, uint32_t *rx_buf)
 					    .p_tx_buffer = (uint32_t *)tx_buf,
 					    .buffer_size = I2S_SAMPLES_NUM};
 
-	nrfx_err_t ret;
+	int ret;
 
 	ret = nrfx_i2s_next_buffers_set(&i2s_inst, &i2s_buf);
-	__ASSERT_NO_MSG(ret == NRFX_SUCCESS);
+	__ASSERT_NO_MSG(ret == 0);
 }
 
 void audio_i2s_start(const uint8_t *tx_buf, uint32_t *rx_buf)
@@ -109,11 +109,11 @@ void audio_i2s_start(const uint8_t *tx_buf, uint32_t *rx_buf)
 					    .p_tx_buffer = (uint32_t *)tx_buf,
 					    .buffer_size = I2S_SAMPLES_NUM};
 
-	nrfx_err_t ret;
+	int ret;
 
 	/* Buffer size in 32-bit words */
 	ret = nrfx_i2s_start(&i2s_inst, &i2s_buf, 0);
-	__ASSERT_NO_MSG(ret == NRFX_SUCCESS);
+	__ASSERT_NO_MSG(ret == 0);
 
 	state = AUDIO_I2S_STATE_STARTED;
 }
@@ -136,7 +136,7 @@ void audio_i2s_init(void)
 {
 	__ASSERT_NO_MSG(state == AUDIO_I2S_STATE_UNINIT);
 
-	nrfx_err_t ret;
+	int ret;
 
 	nrfx_clock_hfclkaudio_config_set(HFCLKAUDIO_12_288_MHZ);
 
@@ -154,7 +154,7 @@ void audio_i2s_init(void)
 	irq_enable(DT_IRQN(I2S_NL));
 
 	ret = nrfx_i2s_init(&i2s_inst, &cfg, i2s_comp_handler);
-	__ASSERT_NO_MSG(ret == NRFX_SUCCESS);
+	__ASSERT_NO_MSG(ret == 0);
 
 	state = AUDIO_I2S_STATE_IDLE;
 }
