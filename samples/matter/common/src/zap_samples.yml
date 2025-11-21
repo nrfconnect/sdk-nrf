@@ -63,3 +63,7 @@
 # contact sensor
 - name: contact_sensor
   zap_file: samples/matter/contact_sensor/src/default_zap/contact_sensor.zap
+
+# closure
+- name: closure
+  zap_file: samples/matter/closure/src/default_zap/closure.zap
