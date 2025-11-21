@@ -169,7 +169,7 @@ static psa_status_t cracen_kmu_encrypt(const uint8_t *key, size_t key_length,
 	}
 
 	psa_status = cracen_aead_encrypt(&attr, key_buffer, sizeof(key_buffer), PSA_ALG_GCM, nonce,
-					 12, (uint8_t *)metadata, sizeof(*metadata), key,
+					 12, (const uint8_t *)metadata, sizeof(*metadata), key,
 					 key_length, encrypted_buffer, encrypted_buffer_size,
 					 encrypted_buffer_length);
 
@@ -198,7 +198,7 @@ static psa_status_t cracen_kmu_decrypt(kmu_metadata *metadata, size_t number_of_
 	size_t outlen = 0;
 
 	return cracen_aead_decrypt(&attr, key_buffer, sizeof(key_buffer), PSA_ALG_GCM,
-				   kmu_push_area, 12, (uint8_t *)metadata, sizeof(*metadata),
+				   kmu_push_area, 12, (const uint8_t *)metadata, sizeof(*metadata),
 				   kmu_push_area + CRACEN_KMU_SLOT_KEY_SIZE,
 				   (number_of_slots - 1) * CRACEN_KMU_SLOT_KEY_SIZE, kmu_push_area,
 				   sizeof(kmu_push_area), &outlen);

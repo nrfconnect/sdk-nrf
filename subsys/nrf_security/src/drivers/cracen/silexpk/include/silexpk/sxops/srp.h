@@ -61,8 +61,9 @@ struct sx_pk_cmd_def;
  *
  */
 static inline struct sx_pk_acq_req
-sx_async_srp_user_keygen_go(struct sx_pk_cnx *cnx, const sx_op *n, const sx_op *g, const sx_op *a,
-			    const sx_op *b, const sx_op *x, const sx_op *k, const sx_op *u)
+sx_async_srp_user_keygen_go(struct sx_pk_cnx *cnx, const sx_const_op *n, const sx_const_op *g,
+			    const sx_const_op *a, const sx_const_op *b, const sx_const_op *x,
+			    const sx_const_op *k, const sx_const_op *u)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_srp_user_keyparams inputs;
@@ -73,8 +74,9 @@ sx_async_srp_user_keygen_go(struct sx_pk_cnx *cnx, const sx_op *n, const sx_op *
 	}
 
 	/* convert and transfer operands */
-	int sizes[] = {sx_op_size(n), sx_op_size(g), sx_op_size(a), sx_op_size(b),
-		       sx_op_size(x), sx_op_size(k), sx_op_size(u)};
+	int sizes[] = {sx_const_op_size(n), sx_const_op_size(g), sx_const_op_size(a),
+		       sx_const_op_size(b), sx_const_op_size(x), sx_const_op_size(k),
+		       sx_const_op_size(u)};
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
 		return pkreq;
@@ -185,8 +187,9 @@ static inline int sx_srp_user_keygen(struct sx_pk_cnx *cnx, const sx_op *n, cons
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req
-sx_async_srp_server_public_key_gen_go(struct sx_pk_cnx *cnx, const sx_op *n, const sx_op *g,
-				      const sx_op *k, const sx_op *v, const sx_op *b)
+sx_async_srp_server_public_key_gen_go(struct sx_pk_cnx *cnx, const sx_const_op *n,
+				      const sx_const_op *g, const sx_const_op *k,
+				      const sx_const_op *v, const sx_const_op *b)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_srp_server_public_key_gen inputs;
@@ -196,7 +199,8 @@ sx_async_srp_server_public_key_gen_go(struct sx_pk_cnx *cnx, const sx_op *n, con
 		return pkreq;
 	}
 
-	int sizes[] = {sx_op_size(n), sx_op_size(g), sx_op_size(k), sx_op_size(v), sx_op_size(b)};
+	int sizes[] = {sx_const_op_size(n), sx_const_op_size(g), sx_const_op_size(k),
+		       sx_const_op_size(v), sx_const_op_size(b)};
 
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
@@ -298,8 +302,9 @@ static inline int sx_srp_server_public_key_gen(struct sx_pk_cnx *cnx, const sx_o
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req
-sx_async_srp_server_session_key_gen_go(struct sx_pk_cnx *cnx, const sx_op *n, const sx_op *a,
-				       const sx_op *u, const sx_op *v, const sx_op *b)
+sx_async_srp_server_session_key_gen_go(struct sx_pk_cnx *cnx, const sx_const_op *n,
+				       const sx_const_op *a, const sx_const_op *u,
+				       const sx_const_op *v, const sx_const_op *b)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_srp_server_session_key_gen inputs;
@@ -309,7 +314,8 @@ sx_async_srp_server_session_key_gen_go(struct sx_pk_cnx *cnx, const sx_op *n, co
 		return pkreq;
 	}
 
-	int sizes[] = {sx_op_size(n), sx_op_size(a), sx_op_size(u), sx_op_size(v), sx_op_size(b)};
+	int sizes[] = {sx_const_op_size(n), sx_const_op_size(a), sx_const_op_size(u),
+		       sx_const_op_size(v), sx_const_op_size(b)};
 
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {

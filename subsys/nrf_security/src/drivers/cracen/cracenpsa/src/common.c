@@ -320,8 +320,8 @@ psa_status_t cracen_ecc_reduce_p256(const uint8_t *input, size_t input_size, uin
 {
 	const uint8_t *order = sx_pk_curve_order(&sx_curve_nistp256);
 
-	sx_op modulo = {.sz = CRACEN_P256_KEY_SIZE, .bytes = (uint8_t *)order};
-	sx_op operand = {.sz = input_size, .bytes = (uint8_t *)input};
+	sx_const_op modulo = {.sz = CRACEN_P256_KEY_SIZE, .bytes = order};
+	sx_const_op operand = {.sz = input_size, .bytes = input};
 	sx_op result = {.sz = output_size, .bytes = output};
 
 	/* The nistp256 curve order (n) is prime so we use the ODD variant of the reduce command. */
@@ -332,15 +332,15 @@ psa_status_t cracen_ecc_reduce_p256(const uint8_t *input, size_t input_size, uin
 }
 
 psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
-					 const sx_pk_affine_point *in_pnt)
+					 const sx_pk_const_affine_point *in_pnt)
 {
 	int sx_status;
 	uint8_t char_x[CRACEN_MAC_ECC_PRIVKEY_BYTES];
 	uint8_t char_y[CRACEN_MAC_ECC_PRIVKEY_BYTES];
 
 	/* Get the order of the curve from the parameters */
-	struct sx_buf n = {.sz = sx_pk_curve_opsize(curve),
-			   .bytes = (uint8_t *)sx_pk_curve_order(curve)};
+	struct sx_const_buf n = {.sz = sx_pk_curve_opsize(curve),
+				 .bytes = sx_pk_curve_order(curve)};
 
 	sx_pk_affine_point scratch_pnt = {.x = {.sz = n.sz, .bytes = char_x},
 					  .y = {.sz = n.sz, .bytes = char_y}};
@@ -413,7 +413,7 @@ void cracen_xorbytes(uint8_t *a, const uint8_t *b, size_t sz)
 	}
 }
 
-static int cracen_asn1_get_len(uint8_t **p, const uint8_t *end, size_t *len)
+static int cracen_asn1_get_len(const uint8_t **p, const uint8_t *end, size_t *len)
 {
 	if ((end - *p) < 1) {
 		return SX_ERR_INVALID_PARAM;
@@ -445,7 +445,7 @@ static int cracen_asn1_get_len(uint8_t **p, const uint8_t *end, size_t *len)
 	return 0;
 }
 
-static int cracen_asn1_get_tag(uint8_t **p, const uint8_t *end, size_t *len, int tag)
+static int cracen_asn1_get_tag(const uint8_t **p, const uint8_t *end, size_t *len, int tag)
 {
 	if ((end - *p) < 1) {
 		return SX_ERR_INVALID_PARAM;
@@ -460,7 +460,7 @@ static int cracen_asn1_get_tag(uint8_t **p, const uint8_t *end, size_t *len, int
 	return cracen_asn1_get_len(p, end, len);
 }
 
-static int cracen_asn1_get_int(uint8_t **p, const uint8_t *end, int *val)
+static int cracen_asn1_get_int(const uint8_t **p, const uint8_t *end, int *val)
 {
 	int ret = SX_ERR_INVALID_PARAM;
 	size_t len;
@@ -503,7 +503,7 @@ static int cracen_asn1_get_int(uint8_t **p, const uint8_t *end, int *val)
 	return 0;
 }
 
-int cracen_signature_asn1_get_operand(uint8_t **p, const uint8_t *end,
+int cracen_signature_asn1_get_operand(const uint8_t **p, const uint8_t *end,
 				      struct sx_buf *op)
 {
 	int ret;
@@ -539,10 +539,10 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 {
 	int ret, version;
 	size_t len;
-	uint8_t *parser_ptr;
-	uint8_t *end;
+	const uint8_t *parser_ptr;
+	const uint8_t *end;
 
-	parser_ptr = (uint8_t *)key;
+	parser_ptr = key;
 	end = parser_ptr + keylen;
 
 	if (!extract_pubkey && !is_key_pair) {
@@ -591,7 +591,7 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 		}
 	} else {
 		/* Skip algorithm identifier prefix. */
-		uint8_t *id_seq = parser_ptr;
+		const uint8_t *id_seq = parser_ptr;
 
 		ret = cracen_asn1_get_tag(&id_seq, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
 		if (ret == 0) {
@@ -717,7 +717,7 @@ static psa_status_t cracen_load_ikg_keyref(const psa_key_attributes_t *attribute
 	};
 
 	k->owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes));
-	k->user_data = (uint8_t *)&k->owner_id;
+	k->user_data = (const uint8_t *)&k->owner_id;
 	return PSA_SUCCESS;
 }
 
@@ -745,7 +745,7 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 			return PSA_SUCCESS;
 		case CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED:
 			k->sz = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
-			k->key = (uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
+			k->key = (const uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
 
 			return PSA_SUCCESS;
 
@@ -767,14 +767,14 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 		}
 
 		k->owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes));
-		k->user_data = (uint8_t *)&k->owner_id;
+		k->user_data = (const uint8_t *)&k->owner_id;
 		k->prepare_key = NULL;
 		k->clean_key = NULL;
 
 		switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes))) {
 		case CRACEN_PROTECTED_RAM_AES_KEY0_ID:
 			k->sz = 32;
-			k->key = (uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
+			k->key = (const uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
 			break;
 		default:
 			if (key_buffer_size == 0) {
@@ -930,7 +930,7 @@ int cracen_hash_input_with_context(struct sxhash *hashopctx, const uint8_t *inpu
 }
 
 int cracen_rsa_modexp(struct sx_pk_acq_req *pkreq, struct sx_pk_slot *inputs,
-		      struct cracen_rsa_key *rsa_key, uint8_t *base, size_t basez, int *sizes)
+		      struct cracen_rsa_key *rsa_key, const uint8_t *base, size_t basez, int *sizes)
 {
 	*pkreq = sx_pk_acquire_req(rsa_key->cmd);
 	if (pkreq->status != SX_OK) {

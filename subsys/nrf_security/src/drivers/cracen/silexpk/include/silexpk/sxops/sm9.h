@@ -98,7 +98,7 @@ static const uint8_t sm9_f[32] = "\x3f\x23\xea\x58\xe5\x72\x0b\xdb\x84\x3c\x6c\x
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req
-sx_async_sm9_exp_go(struct sx_pk_cnx *cnx, const struct sx_pk_ef_12 *g, const sx_ecop *h)
+sx_async_sm9_exp_go(struct sx_pk_cnx *cnx, const struct sx_pk_ef_12 *g, const sx_const_ecop *h)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_sm9_exp inputs;
@@ -171,8 +171,8 @@ static inline void sx_async_sm9_exp_end(sx_pk_req *req, struct sx_pk_ef_12 *r)
  * @see sx_async_sm9_exp_go(), sx_async_sm9_exp_end() for
  * an asynchronous version
  */
-static inline int sx_sm9_exp(struct sx_pk_cnx *cnx, const struct sx_pk_ef_12 *g, const sx_ecop *h,
-			     struct sx_pk_ef_12 *z)
+static inline int sx_sm9_exp(struct sx_pk_cnx *cnx, const struct sx_pk_ef_12 *g,
+			     const sx_const_ecop *h, struct sx_pk_ef_12 *z)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
@@ -206,7 +206,7 @@ static inline int sx_sm9_exp(struct sx_pk_cnx *cnx, const struct sx_pk_ef_12 *g,
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req
-sx_async_sm9_pmulg1_go(struct sx_pk_cnx *cnx, const struct sx_pk_point *p1, const sx_ecop *ke)
+sx_async_sm9_pmulg1_go(struct sx_pk_cnx *cnx, const struct sx_pk_point *p1, const sx_const_ecop *ke)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_sm9_pmulg1 inputs;
@@ -281,7 +281,7 @@ static inline void sx_async_sm9_pmulg1_end(sx_pk_req *req, struct sx_pk_point *r
  * an asynchronous version
  */
 static inline int sx_sm9_pmulg1(struct sx_pk_cnx *cnx, const struct sx_pk_point *p1,
-				const sx_ecop *ke, struct sx_pk_point *ppube)
+				const sx_const_ecop *ke, struct sx_pk_point *ppube)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
@@ -315,7 +315,7 @@ static inline int sx_sm9_pmulg1(struct sx_pk_cnx *cnx, const struct sx_pk_point 
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req
-sx_async_sm9_pmulg2_go(struct sx_pk_cnx *cnx, const struct sx_pk_ef_4 *p2, const sx_ecop *ke)
+sx_async_sm9_pmulg2_go(struct sx_pk_cnx *cnx, const struct sx_pk_ef_4 *p2, const sx_const_ecop *ke)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_sm9_pmulg2 inputs;
@@ -393,7 +393,7 @@ static inline void sx_async_sm9_pmulg2_end(sx_pk_req *req, struct sx_pk_ef_4 *r)
  * an asynchronous version
  */
 static inline int sx_sm9_pmulg2(struct sx_pk_cnx *cnx, const struct sx_pk_ef_4 *p2,
-				const sx_ecop *ke, struct sx_pk_ef_4 *ppubs)
+				const sx_const_ecop *ke, struct sx_pk_ef_4 *ppubs)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
@@ -539,7 +539,7 @@ static inline int sx_sm9_pair(struct sx_pk_cnx *cnx, const struct sx_pk_point *p
  */
 static inline struct sx_pk_acq_req
 sx_async_sm9_generate_signature_private_key_go(struct sx_pk_cnx *cnx, const struct sx_pk_point *p1,
-					       const sx_ecop *h, const sx_ecop *ks)
+					       const sx_const_ecop *h, const sx_const_ecop *ks)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_sm9_sigpkgen inputs;
@@ -622,7 +622,8 @@ static inline void sx_async_sm9_generate_signature_private_key_end(sx_pk_req *re
  */
 static inline int sx_sm9_generate_signature_private_key(struct sx_pk_cnx *cnx,
 							const struct sx_pk_point *p1,
-							const sx_ecop *h, const sx_ecop *ks,
+							const sx_const_ecop *h,
+							const sx_const_ecop *ks,
 							struct sx_pk_point *ds)
 {
 	uint32_t status;
@@ -659,7 +660,8 @@ static inline int sx_sm9_generate_signature_private_key(struct sx_pk_cnx *cnx,
  */
 static inline struct sx_pk_acq_req sx_async_sm9_sign_go(struct sx_pk_cnx *cnx,
 							const struct sx_pk_point *ds,
-							const sx_ecop *h, const sx_ecop *r)
+							const sx_const_ecop *h,
+							const sx_const_ecop *r)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_sm9_signaturegen inputs;
@@ -736,8 +738,9 @@ static inline void sx_async_sm9_sign_end(sx_pk_req *req, struct sx_pk_point *s)
  * @see sx_async_sm9_sign_go(), sx_async_sm9_sign_end() for
  * an asynchronous version
  */
-static inline int sx_sm9_sign(struct sx_pk_cnx *cnx, const struct sx_pk_point *ds, const sx_ecop *h,
-			      const sx_ecop *r, struct sx_pk_point *s)
+static inline int sx_sm9_sign(struct sx_pk_cnx *cnx, const struct sx_pk_point *ds,
+			      const sx_const_ecop *h, const sx_const_ecop *r,
+			      struct sx_pk_point *s)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
@@ -775,9 +778,9 @@ static inline int sx_sm9_sign(struct sx_pk_cnx *cnx, const struct sx_pk_point *d
  * @return Acquired acceleration request for this operation
  */
 static inline struct sx_pk_acq_req
-sx_async_sm9_signature_verify_go(struct sx_pk_cnx *cnx, const sx_ecop *h1,
+sx_async_sm9_signature_verify_go(struct sx_pk_cnx *cnx, const sx_const_ecop *h1,
 				 const struct sx_pk_ef_4 *p2, const struct sx_pk_ef_4 *ppubs,
-				 const struct sx_pk_point *s, const sx_ecop *h,
+				 const struct sx_pk_point *s, const sx_const_ecop *h,
 				 const struct sx_pk_ef_12 *g)
 {
 	struct sx_pk_acq_req pkreq;
@@ -874,10 +877,10 @@ static inline void sx_async_sm9_signature_verify_end(sx_pk_req *req, struct sx_p
  * Truncation or padding should be done by user application
  *
  */
-static inline int sx_sm9_signature_verify(struct sx_pk_cnx *cnx, const sx_ecop *h1,
+static inline int sx_sm9_signature_verify(struct sx_pk_cnx *cnx, const sx_const_ecop *h1,
 					  const struct sx_pk_ef_4 *p2,
 					  const struct sx_pk_ef_4 *ppubs,
-					  const struct sx_pk_point *s, const sx_ecop *h,
+					  const struct sx_pk_point *s, const sx_const_ecop *h,
 					  const struct sx_pk_ef_12 *g, struct sx_pk_ef_12 *w)
 {
 	uint32_t status;
@@ -914,7 +917,7 @@ static inline int sx_sm9_signature_verify(struct sx_pk_cnx *cnx, const sx_ecop *
  */
 static inline struct sx_pk_acq_req
 sx_async_sm9_generate_encryption_private_key_go(struct sx_pk_cnx *cnx, const struct sx_pk_ef_4 *p2,
-						const sx_ecop *h, const sx_ecop *ke)
+						const sx_const_ecop *h, const sx_const_ecop *ke)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_sm9_privencrkeygen inputs;
@@ -1001,7 +1004,8 @@ static inline void sx_async_sm9_generate_encryption_private_key_end(sx_pk_req *r
  */
 static inline int sx_sm9_generate_encryption_private_key(struct sx_pk_cnx *cnx,
 							 const struct sx_pk_ef_4 *p2,
-							 const sx_ecop *h, const sx_ecop *ke,
+							 const sx_const_ecop *h,
+							 const sx_const_ecop *ke,
 							 struct sx_pk_ef_4 *de)
 {
 	uint32_t status;
@@ -1041,7 +1045,8 @@ static inline int sx_sm9_generate_encryption_private_key(struct sx_pk_cnx *cnx,
 static inline struct sx_pk_acq_req sx_async_sm9_send_key_go(struct sx_pk_cnx *cnx,
 							    const struct sx_pk_point *p1,
 							    const struct sx_pk_point *ppube,
-							    const sx_ecop *h, const sx_ecop *r)
+							    const sx_const_ecop *h,
+							    const sx_const_ecop *r)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_sm9_sendkey inputs;
@@ -1121,8 +1126,8 @@ static inline void sx_async_sm9_send_key_end(sx_pk_req *req, struct sx_pk_point 
  * an asynchronous version
  */
 static inline int sx_sm9_send_key(struct sx_pk_cnx *cnx, const struct sx_pk_point *p1,
-				  const struct sx_pk_point *ppube, const sx_ecop *h,
-				  const sx_ecop *r, struct sx_pk_point *rx)
+				  const struct sx_pk_point *ppube, const sx_const_ecop *h,
+				  const sx_const_ecop *r, struct sx_pk_point *rx)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
@@ -1154,7 +1159,8 @@ static inline int sx_sm9_send_key(struct sx_pk_cnx *cnx, const struct sx_pk_poin
  *
  * @return Acquired acceleration request for this operation
  */
-static inline struct sx_pk_acq_req sx_async_sm9_reduce_h_go(struct sx_pk_cnx *cnx, const sx_op *h)
+static inline struct sx_pk_acq_req sx_async_sm9_reduce_h_go(struct sx_pk_cnx *cnx,
+							    const sx_const_op *h)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_sm9_reduceh inputs;
@@ -1164,7 +1170,7 @@ static inline struct sx_pk_acq_req sx_async_sm9_reduce_h_go(struct sx_pk_cnx *cn
 		return pkreq;
 	}
 
-	int sizes[] = {sx_op_size(h), sizeof(sm9_t)};
+	int sizes[] = {sx_const_op_size(h), sizeof(sm9_t)};
 
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
@@ -1219,7 +1225,7 @@ static inline void sx_async_sm9_reduce_h_end(sx_pk_req *req, sx_ecop *rh)
  * @see sx_async_sm9_reduce_h_go(), sx_async_sm9_reduce_h_end() for
  * an asynchronous version
  */
-static inline int sx_sm9_reduce_h(struct sx_pk_cnx *cnx, const sx_ecop *h, sx_ecop *rh)
+static inline int sx_sm9_reduce_h(struct sx_pk_cnx *cnx, const sx_const_ecop *h, sx_ecop *rh)
 {
 	uint32_t status;
 	struct sx_pk_acq_req pkreq;
