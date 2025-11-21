@@ -7,18 +7,24 @@
 from __future__ import annotations
 
 import logging
+import os
 import pickle
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
-import devicetree.edtlib
 from imgtool_wrapper import ImgtoolParams
 from twister_harness.helpers.utils import find_in_config
+
+# This is needed to load edt.pickle files.
+ZEPHYR_BASE = os.getenv("ZEPHYR_BASE")
+sys.path.insert(0, os.path.join(ZEPHYR_BASE, "scripts", "dts", "python-devicetree", "src"))
+from devicetree import edtlib  # type: ignore  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
 
-def get_edt_node(edt_data: Path, node_label: str) -> devicetree.edtlib.EDTNode:  # type: ignore
+def get_edt_node(edt_data: Path, node_label: str) -> edtlib.EDTNode:  # type: ignore
     """Parse the EDT pickle file and return a node by its label.
 
     Args:
