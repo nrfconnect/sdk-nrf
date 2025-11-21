@@ -266,6 +266,8 @@ To build and run the sample, complete the following steps:
        uart:~$ wifi_prov get_status
        uart:~$ wifi_prov raw 0801
 
+.. include:: /includes/wifi_refer_sample_yaml_file.txt
+
 Testing
 =======
 

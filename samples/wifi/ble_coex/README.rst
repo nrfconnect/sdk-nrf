@@ -191,6 +191,8 @@ Build for the nRF5340 DK:
 
 The generated HEX file to be used is :file:`throughput/build/merged.hex`.
 
+.. include:: /includes/wifi_refer_sample_yaml_file.txt
+
 Testing
 =======
 

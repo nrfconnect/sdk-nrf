@@ -112,6 +112,8 @@ The sample generates header and source files based on protocol buffer definition
 You must install a protocol buffer compiler to generate the files.
 See the :zephyr:code-sample:`nanopb` in the Zephyr documentation for more information.
 
+.. include:: /includes/wifi_refer_sample_yaml_file.txt
+
 Testing
 =======
 

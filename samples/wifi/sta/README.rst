@@ -96,14 +96,14 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-Currently, only the nRF7002 DK is supported.
-
 To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
    west build -b nrf7002dk/nrf5340/cpuapp
+
+.. include:: /includes/wifi_refer_sample_yaml_file.txt
 
 Testing
 =======

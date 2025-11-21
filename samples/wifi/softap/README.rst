@@ -78,6 +78,8 @@ The following is an example of the CLI command:
 
 To build for the nRF7002 EK with nRF5340 DK, use the ``nrf5340dk/nrf5340/cpuapp`` board target with the ``SHIELD`` CMake option set to ``nrf7002ek``.
 
+.. include:: /includes/wifi_refer_sample_yaml_file.txt
+
 Testing
 =======
 

@@ -113,6 +113,8 @@ The following is an example of the CLI commands:
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 
+.. include:: /includes/wifi_refer_sample_yaml_file.txt
+
 Supported CLI commands
 ======================
 
