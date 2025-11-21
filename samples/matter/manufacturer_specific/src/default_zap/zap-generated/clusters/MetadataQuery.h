@@ -7,7 +7,7 @@
 // If used without parameters it will instatiate metadata
 // for all clusters and might incur a big overhead.
 //
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <clusters/AccessControl/Ids.h>

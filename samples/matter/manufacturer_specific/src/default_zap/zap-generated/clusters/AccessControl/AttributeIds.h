@@ -1,7 +1,7 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Identifier constant values for cluster AccessControl (cluster code: 31/0x1F)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <clusters/shared/GlobalIds.h>
@@ -19,7 +19,7 @@ namespace app
 			{
 
 				// Total number of attributes supported by the cluster, including global attributes
-				inline constexpr uint32_t kAttributesCount = 13;
+				inline constexpr uint32_t kAttributesCount = 12;
 
 				namespace Acl
 				{
@@ -55,11 +55,6 @@ namespace app
 				{
 					inline constexpr AttributeId Id = 0x00000006;
 				} // namespace Arl
-
-				namespace AuxiliaryACL
-				{
-					inline constexpr AttributeId Id = 0x00000007;
-				} // namespace AuxiliaryACL
 
 				namespace GeneratedCommandList
 				{

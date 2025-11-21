@@ -240,10 +240,6 @@ namespace app
 						if (includeSensitive) {
 							encoder.Encode(to_underlying(Fields::kTargets), targets);
 						}
-						if (includeSensitive) {
-							encoder.Encode(to_underlying(Fields::kAuxiliaryType),
-								       auxiliaryType);
-						}
 						if (aAccessingFabricIndex.HasValue()) {
 							encoder.Encode(to_underlying(Fields::kFabricIndex),
 								       fabricIndex);
@@ -270,9 +266,6 @@ namespace app
 								err = DataModel::Decode(reader, subjects);
 							} else if (__context_tag == to_underlying(Fields::kTargets)) {
 								err = DataModel::Decode(reader, targets);
-							} else if (__context_tag ==
-								   to_underlying(Fields::kAuxiliaryType)) {
-								err = DataModel::Decode(reader, auxiliaryType);
 							} else if (__context_tag ==
 								   to_underlying(Fields::kFabricIndex)) {
 								err = DataModel::Decode(reader, fabricIndex);
