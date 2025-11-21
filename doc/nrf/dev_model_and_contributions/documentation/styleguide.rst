@@ -142,6 +142,265 @@ To link to the Kconfig options from RST, use the ``:kconfig:option:`` domain::
 
    :kconfig:option:`CONFIG_DEBUG`
 
+Kconfig |gl|
+************
+
+The |NCS| documentation follows Zephyr's :ref:`zephyr:kconfig_style` and :ref:`zephyr:kconfig_tips_and_tricks`, with the addition of the following rules.
+
+See Zephyr's :ref:`zephyr:kconfig` for a short introduction to Kconfig.
+
+Additions to file structure
+===========================
+
+In addition to the Zephyr guidelines for :ref:`File Organization <zephyr:kconfig_style>`, observe the following guidelines in the |NCS|:
+
+* Always include the Nordic Semiconductor copyright header at the top of the Kconfig file in the |NCS|.
+
+  .. code-block:: kconfig
+
+     #
+     # Copyright (c) YEAR Nordic Semiconductor
+     #
+     # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+     #
+
+* For subsystems and libraries, include the standard logging template:
+
+   .. code-block:: kconfig
+
+      module = MODULE_NAME
+      module-str = Module description
+      source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+  Place this at the end of the module's configuration section, before the final ``endif``.
+
+Additions to symbol naming and structure
+========================================
+
+In addition to the Zephyr guidelines for :ref:`Symbol Naming and Structure <zephyr:kconfig_style>`, observe the following guidelines in the |NCS|:
+
+* General:
+
+  * Use title case for the first word only (except proper nouns).
+  * Write clear, complete sentences ending with a period.
+
+* Prompts:
+
+  * Keep prompts concise.
+    If needed, you can add more detailed information in the help text.
+  * Avoid redundant phrases like "Enable support for" - use the feature name only.
+    Prompts starting with "Enable" are invalid and can trigger CI failures.
+    However, you can use "Enable" in the help text to explain what the feature does.
+  * Always include units in the prompt (for example, "in milliseconds" or "in bytes").
+    Also consider including units in the option's symbol name (for example, ``MY_BUFFER_SIZE_BYTES``).
+  * Depending on the option status:
+
+    * If it is experimental, add the `` [EXPERIMENTAL]`` tag to the end of the prompt (with a space before it).
+    * If it is deprecated, add the `` [DEPRECATED]`` tag to the end of the prompt (with a space before it).
+    * If it is informational only or an option set by :ref:`sysbuild <configuration_system_overview_sysbuild>`, add the `` (informative only, do not change)`` information to the end of the prompt (with a space before it).
+
+* ``help`` text:
+
+  * Required for all complex configuration options.
+    If the option is very simple (without dependencies or defaults), you can omit the help text.
+  * Explain what the option does, not just repeat the prompt.
+  * When the prompt includes units (for example, "in milliseconds" or "in bytes") and the option involves conversions or calculations, include the units in the help text too.
+  * For thresholds or limits, explain the implications of different values.
+
+Symbol-specific patterns
+------------------------
+
+Follow these patterns based on the Kconfig option symbol type:
+
+``bool`` symbols
+^^^^^^^^^^^^^^^^
+
+Start help text with an imperative verb.
+
+.. code-block:: kconfig
+
+   config MY_FEATURE
+     bool "My feature"
+     help
+       Enable support for my feature. This feature provides...
+
+..
+
+.. note::
+   Use verbs such as *Enable*, *Allow*, *Use*, *Set*, or *Control*.
+   Avoid starting with "This option..." or using third-person forms ("Enables").
+
+Example:
+
+.. literalinclude:: ../../../../subsys/dm/Kconfig
+   :language: kconfig
+   :start-after: if DM_MODULE
+   :end-before: config DM_TIMESLOT_RESCHEDULE
+
+``int`` symbols
+^^^^^^^^^^^^^^^
+
+Start the prompt and help text with a noun phrase describing the value.
+
+.. code-block:: kconfig
+
+   config MY_BUFFER_SIZE
+      int "Buffer size in bytes"
+      default 256
+      help
+        Size of the buffer used for data processing.
+
+..
+
+.. note::
+   Use noun phrases only.
+   Avoid starting with verbs like "Set this" or "Configure."
+
+Example:
+
+.. literalinclude:: ../../../../subsys/dm/Kconfig
+   :language: kconfig
+   :start-after: has succeeded.
+   :end-before: config DM_MIN_TIME_BETWEEN_TIMESLOTS_US
+
+``hex`` symbols
+^^^^^^^^^^^^^^^
+
+Start the prompt and help text with a noun phrase describing the value.
+
+.. code-block:: kconfig
+
+   config FW_INFO_OFFSET
+      hex "Firmware info location offset"
+      default 0x200
+      help
+        Offset location of firmware information inside the current firmware image.
+        Valid values are 0x0, 0x200, 0x400, 0x600, 0x800.
+
+.. note::
+   Always provide help text explaining the meaning of values and valid ranges.
+
+Example:
+
+.. literalinclude:: ../../../../subsys/fw_info/Kconfig
+   :language: kconfig
+   :start-after: Only provide APIs to locate metadata.
+   :end-before: config FW_INFO_FIRMWARE_VERSION
+
+``string`` symbols
+^^^^^^^^^^^^^^^^^^
+
+Start the prompt and help text with a noun phrase describing what the string represents.
+
+.. code-block:: kconfig
+
+   config MY_VERSION_STRING
+      string "Application version identifier"
+      default "1.0.0"
+      help
+        Version string in semantic versioning format (MAJOR.MINOR.PATCH).
+        Used for tracking releases and compatibility.
+
+Example:
+
+.. literalinclude:: ../../../../lib/lte_link_control/Kconfig
+   :language: kconfig
+   :start-after: if LTE_LOCK_PLMN
+   :end-before: endif # LTE_LOCK_PLMN
+
+Comments
+--------
+
+* Use comments sparingly and only when needed to explain complex dependencies or unusual configurations.
+* Add comments to ``endif`` statements for readability:
+
+  .. code-block:: kconfig
+
+     endif # MY_FEATURE
+
+Additions to naming conventions
+===============================
+
+In addition to the Zephyr guidelines for :ref:`Naming Conventions <zephyr:kconfig_style>`, observe the following guidelines in the |NCS|:
+
+* Use consistent prefixes for related options (for example, ``SAMPLE_NAME_*`` or ``LIB_NAME_*``).
+* Use descriptive option names that indicate the option's purpose.
+* Use the prefix ``NCS_`` (for example, ``NCS_SAMPLE_NAME_*``) for options that are specific to a repo forked by the |NCS| ("noups").
+* If the option is about setting a value, consider including units in the option's symbol name (for example, ``MY_BUFFER_SIZE_BYTES``).
+
+Additions to configuration symbol organization
+==============================================
+
+In addition to the Zephyr guidelines for :ref:`Configuration Symbol Organization <zephyr:kconfig_style>`, observe the following guidelines in the |NCS|:
+
+* For Kconfig files that include new Kconfig options, use the following pattern:
+
+  .. code-block:: kconfig
+
+     [... menu type ...]
+
+     config SAMPLE_OPTION_1
+         int "Option 1"
+         default 100
+         help
+           Description of option 1.
+
+     config SAMPLE_OPTION_2
+         bool "Option 2"
+         help
+           Enable option 2 functionality.
+
+     [... more config options ...]
+
+     endmenu
+
+     source "Kconfig.zephyr"
+
+* The opening ``menu type`` statement can have the following values:
+
+  * ``menu`` for a new container menu to be added to the hierarchy.
+    This menu type cannot be toggled.
+    Use it for samples or for subsystems that are always included.
+
+    Example of how it is rendered:
+
+    .. code-block:: kconfig
+
+       [*] Download sample --->
+           [*] Use TLS/DTLS
+               (42) Security tag
+
+  * ``menuconfig`` for the enabling feature, in accordance with the Zephyr guidelines.
+    This menu type can have suboptions and can be toggled.
+    Use it for libraries or subsystems that can be enabled or disabled.
+
+    Example of how it is rendered:
+
+    .. code-block:: kconfig
+
+       [*] Enhanced ShockBurst
+           (32) Maximum payload size
+           (8)  TX buffer length
+
+  * ``mainmenu`` for the name of the top-level menu.
+    This menu type cannot have suboptions and cannot be toggled.
+    Use it for applications or when you want to replace the default menu naming.
+
+    Example of how it is rendered:
+
+    .. code-block:: kconfig
+
+       ====== Matter Lock sample application ======
+           (10) Maximum number of users
+           (4)  Maximum credentials per user
+
+* Add the source statement for ``Kconfig.zephyr`` at the end without wrapping it in a menu.
+
+Example:
+
+.. literalinclude:: ../../../../samples/debug/ppi_trace/Kconfig
+   :language: kconfig
+
 Doxygen |gl|
 ************
 
@@ -335,18 +594,6 @@ Structs
 
 The documentation block must precede the documented element.
 
-In the RST file:
-
-.. code-block:: console
-
-   API documentation
-   *****************
-
-   | Header file: :file:`include/bluetooth/gatt_dm.h`
-   | Source file: :file:`subsys/bluetooth/gatt_dm.c`
-
-   .. doxygengroup:: bt_gatt_dm
-
 In the header file:
 
 .. code-block:: c
@@ -369,7 +616,6 @@ In the header file:
 .. note::
    Always add a name for the struct.
    Avoid using unnamed structs due to `Sphinx parser issue`_.
-
 
 References
 ==========
@@ -405,3 +651,18 @@ The documentation block must precede the documented element.
     * @retval non-zero The download stops.
     */
     typedef int (*download_client_callback_t)(const struct download_client_evt *event);
+
+Inclusion in RST files
+======================
+
+To include the doxygen documentation in the RST files, use the ``.. doxygengroup::`` directive and the doxygen group name.
+
+.. code-block:: console
+
+   API documentation
+   *****************
+
+   | Header file: :file:`include/bluetooth/gatt_dm.h`
+   | Source file: :file:`subsys/bluetooth/gatt_dm.c`
+
+   .. doxygengroup:: bt_gatt_dm
