@@ -18,7 +18,7 @@
 #include "regs_addr.h"
 #include <silexpk/ec_curves.h>
 #include <silexpk/ik.h>
-#ifdef CONFIG_CRACEN_HW_VERSION_LITE
+#ifdef CONFIG_PSA_CRACEN_HW_VERSION_LITE
 #include "hal/nrf_cracen.h"
 #endif
 
@@ -51,7 +51,7 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 	const struct sx_pk_capabilities *caps;
 
 	if (req->cmd->cmdcode == PK_OP_IK_EXIT) {
-#ifdef CONFIG_CRACEN_HW_VERSION_LITE
+#ifdef CONFIG_PSA_CRACEN_HW_VERSION_LITE
 		/* Workaround to handle IKG freezing on CRACEN lite.
 		 * THE PKE-IKG interrupt can not be cleared from software, but can
 		 * be cleared by hardware when in PK mode.

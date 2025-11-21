@@ -23,7 +23,7 @@
 #include <security/cracen.h>
 #include <nrf_security_mutexes.h>
 
-#if defined(CONFIG_CRACEN_HW_VERSION_LITE) &&                                                      \
+#if defined(CONFIG_PSA_CRACEN_HW_VERSION_LITE) &&                                  \
 	!defined(CONFIG_PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND)
 #error Check to see if the current board needs the IKG-PKE interrupt workaround or not, \
 then update this error
@@ -52,7 +52,7 @@ module with entropy will fail"
 #define PK_BUSY_MASK_BA414EP 0x00010000
 #define PK_BUSY_MASK_IK	     0x00050000
 
-#define IK_ENTROPY_ERROR     0xc6
+#define IK_ENTROPY_ERROR 0xc6
 
 struct sx_pk_cnx {
 	struct sx_pk_req instance;
@@ -124,7 +124,7 @@ int sx_pk_wait(sx_pk_req *req)
 					cracen_wait_for_pke_interrupt();
 				}
 			}
-		} else if (IS_ENABLED(CONFIG_CRACEN_HW_VERSION_LITE)) {
+		} else if (IS_ENABLED(CONFIG_PSA_CRACEN_HW_VERSION_LITE)) {
 			/* In CRACEN Lite the IKG sometimes fails due to an entropy error.
 			 * Error code is returned here so the entire operation can be rerun
 			 */
