@@ -155,11 +155,11 @@ class NcsIronSideSEUpdate(WestCommand):
                     ]
                 case _:
                     update_hex_files = [
-                        (FirmwareSlot.USLOT, update_dir / "ironside_se_update.hex"),
                         (
                             FirmwareSlot.RSLOT,
                             update_dir / "ironside_se_recovery_update.hex",
                         ),
+                        (FirmwareSlot.USLOT, update_dir / "ironside_se_update.hex"),
                     ]
 
             if not update_app.exists():
