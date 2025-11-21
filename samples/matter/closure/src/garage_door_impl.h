@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "persistent_percent.h"
 #include "physical_device.h"
 #include "physical_device_observer.h"
 #include "pwm/pwm_device.h"
@@ -30,6 +31,6 @@ private:
 	const pwm_dt_spec *mSpec;
 	bool mJustStarted = false;
 	uint16_t mSpeed;
-	uint16_t mCurrentPosition;
+	PersistentPercent mCurrentPosition;
 	uint16_t mTargetPosition;
 };
