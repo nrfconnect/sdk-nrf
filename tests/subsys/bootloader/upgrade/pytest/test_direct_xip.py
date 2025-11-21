@@ -10,7 +10,6 @@ import logging
 from pathlib import Path
 
 import pytest
-
 from required_build import RequiredBuild
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.utils import find_in_config
@@ -84,7 +83,9 @@ class UpgradeTestDirectXipUseMCUmgrNRF54H(UpgradeTestDirectXipUseMCUmgr):
     def generate_image_for_direct_xip_secondary_slot(self) -> Path:
         """Generate image for direct XIP secondary slot."""
         logger.info("Generate image for direct xip secondary slot")
-        req_build_dir = get_required_build_for_direct_xip_nRF54H(self.dut, self.get_current_sign_version())
+        req_build_dir = get_required_build_for_direct_xip_nRF54H(
+            self.dut, self.get_current_sign_version()
+        )
         secondary_image = req_build_dir / "zephyr_secondary_app.signed.bin"
         assert secondary_image.is_file(), f"Secondary image not found: {secondary_image}"
         return secondary_image
@@ -92,13 +93,17 @@ class UpgradeTestDirectXipUseMCUmgrNRF54H(UpgradeTestDirectXipUseMCUmgr):
     def generate_image_for_direct_xip_primary_slot(self) -> Path:
         """Generate image for direct XIP primary slot."""
         logger.info("Generate image for direct xip primary slot")
-        req_build_dir = get_required_build_for_direct_xip_nRF54H(self.dut, self.get_current_sign_version())
+        req_build_dir = get_required_build_for_direct_xip_nRF54H(
+            self.dut, self.get_current_sign_version()
+        )
         primary_image = req_build_dir / "zephyr.signed.bin"
         assert primary_image.is_file(), f"Primary image not found: {primary_image}"
         return primary_image
 
 
-def factory_upgrade_test_direct_xip(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr) -> UpgradeTestDirectXipUseMCUmgr:
+def factory_upgrade_test_direct_xip(
+    dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr
+) -> UpgradeTestDirectXipUseMCUmgr:
     """Create an instance of UpgradeTestDirectXipUseMCUmgr."""
     if "nrf54h" in dut.device_config.platform:
         return UpgradeTestDirectXipUseMCUmgrNRF54H(dut, shell, mcumgr)
@@ -108,7 +113,9 @@ def factory_upgrade_test_direct_xip(dut: DeviceAdapter, shell: Shell, mcumgr: MC
 class TestDirectXipWithRevert:
     """Test Direct XIP upgrade and revert scenarios."""
 
-    def test_direct_xip_upgrade_with_confirm(self, dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
+    def test_direct_xip_upgrade_with_confirm(
+        self, dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr
+    ):
         """Verify that the application can be updated and confirmed.
 
         APP based on smp_svr, MCUboot is the primary bootloader.
@@ -176,7 +183,9 @@ class TestDirectXipWithRevert:
         tm.run_upgrade(third_app, confirm=True)
         tm.verify_direct_xip_primary_slot_loaded()
 
-    def test_direct_xip_downgrade_prevention(self, dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
+    def test_direct_xip_downgrade_prevention(
+        self, dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr
+    ):
         """Verify that the application is not downgraded.
 
         APP based on smp_svr, MCUboot is the primary bootloader.
@@ -197,8 +206,11 @@ class TestDirectXipWithRevert:
 class TestDirectXip:
     """Test Direct XIP upgrade and downgrade prevention without revert mode."""
 
-    def test_direct_xip_no_revert_and_downgrade_prev(self, dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
-        """Verify that the application can be updated from both slots and not downgraded with lower version.
+    def test_direct_xip_no_revert_and_downgrade_prev(
+        self, dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr
+    ):
+        """Verify that the application can be updated from both slots and not downgraded with lower
+        version.
 
         APP based on smp_svr, MCUboot is the primary bootloader.
         Direct XIP mode is enabled.
@@ -235,7 +247,12 @@ class TestDirectXip:
         if "nrf54h" in dut.device_config.platform:
             tm.image_upload(dut.device_config.build_dir / "zephyr_secondary_app.signed.bin")
         else:
-            tm.image_upload(dut.device_config.build_dir / "mcuboot_secondary_app" / "zephyr" / "zephyr.signed.bin")
+            tm.image_upload(
+                dut.device_config.build_dir
+                / "mcuboot_secondary_app"
+                / "zephyr"
+                / "zephyr.signed.bin"
+            )
         tm.reset_device_from_shell()
         tm.verify_direct_xip_primary_slot_loaded()
         logger.info("Not downgraded from secondary slot")

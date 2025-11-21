@@ -11,9 +11,9 @@ import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from parameters import BuildParameters
 from helpers import retry, timer
 from imgtool_wrapper import imgtool_sign
+from parameters import BuildParameters
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.shell import ShellMCUbootCommandParsed
 from twister_harness.helpers.utils import match_lines, match_no_lines
@@ -109,7 +109,9 @@ class UpgradeTestManager(ABC):
         return ShellMCUbootCommandParsed.create_from_cmd_output(self.shell.exec_command("mcuboot"))
 
     @retry(1)
-    def check_with_shell_command(self, version: str | None = None, slot: int = 0, swap_type: str | None = None) -> None:
+    def check_with_shell_command(
+        self, version: str | None = None, slot: int = 0, swap_type: str | None = None
+    ) -> None:
         """Check MCUboot state with shell command."""
         assert self.shell.wait_for_prompt(timeout=10), "No shell prompt"
         version = version or self.get_current_sign_version()
@@ -152,7 +154,9 @@ class UpgradeTestManager(ABC):
         if not app_to_sign:
             app_to_sign = self.build_params.app_to_sign
         updated_app = imgtool_sign(
-            app_to_sign, self.build_params.imgtool_params, extra_args=["--confirm"] if confirmed else None
+            app_to_sign,
+            self.build_params.imgtool_params,
+            extra_args=["--confirm"] if confirmed else None,
         )
         assert updated_app.is_file()
         return updated_app
@@ -170,7 +174,9 @@ class UpgradeTestManager(ABC):
         return netcore_image
 
     @timer
-    def verify_after_reset(self, lines: list[str] | None = None, no_lines: list[str] | None = None) -> None:
+    def verify_after_reset(
+        self, lines: list[str] | None = None, no_lines: list[str] | None = None
+    ) -> None:
         """Verify device output after reset."""
         regex = f"{self.welcome_str}|Unable to find bootable image"
         output = self.dut.readlines_until(regex=regex, timeout=120)
@@ -286,7 +292,7 @@ class UpgradeTestWithMCUmgr(UpgradeTestManager):
                 active_image = image
                 break
         else:
-            assert False, "No active image found"
+            raise UpgradeTestManagerException("No active image found")
         # version displayed by MCUmgr does not print +0 and changes + to '.' for non-zero values
         assert active_image.version == version.replace("+0", "").replace("+", ".")  # type: ignore
 

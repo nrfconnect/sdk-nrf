@@ -40,7 +40,7 @@ def get_edt_node(edt_data: Path, node_label: str) -> devicetree.edtlib.EDTNode: 
     except AttributeError as e:
         raise RuntimeError("Unexpected structure in loaded EDT data") from e
     except KeyError:
-        raise KeyError(f"Node label '{node_label}' not found in EDT data")
+        raise KeyError(f"Node label '{node_label}' not found in EDT data") from None
 
 
 @dataclass
@@ -62,7 +62,9 @@ class BuildParameters:
     mcuboot_secondary_app_to_sign: Path = field(init=False)
 
     @classmethod
-    def create_from_ncs_build_dir(cls, build_dir: Path, app_build_dir: Path | None = None) -> "BuildParameters":
+    def create_from_ncs_build_dir(
+        cls, build_dir: Path, app_build_dir: Path | None = None
+    ) -> BuildParameters:
         """Create BuildParameters from NCS build directory and optional app build directory."""
         app_build_dir = app_build_dir or build_dir
         sysbuild = app_build_dir != build_dir
@@ -77,7 +79,8 @@ class BuildParameters:
             header_size = find_in_config(pm_config, "PM_MCUBOOT_PAD_SIZE")
             slot_size = find_in_config(pm_config, "PM_MCUBOOT_PRIMARY_SIZE")
         else:
-            # No PM used, thus take header size from app config and slot size from DTS (EDT represenation)
+            # No PM used, thus take header size from app config and slot size from DTS
+            # (EDT representation)
             header_size = find_in_config(zephyr_config, "CONFIG_ROM_START_OFFSET")
             slot_size = str(get_edt_node(edt_data, "cpuapp_slot0_partition").regs[0].size)
         imgtool_params = ImgtoolParams(
@@ -115,17 +118,23 @@ class BuildParameters:
             sysbuild_config = self.build_dir / "zephyr" / ".config"
             self.net_core_name = find_in_config(sysbuild_config, "SB_CONFIG_NETCORE_IMAGE_NAME")
             self.netcore_to_sign = self.build_dir / f"signed_by_b0_{self.net_core_name}.bin"
-            self.mcuboot_secondary_app_to_sign = self.build_dir / "mcuboot_secondary_app" / "zephyr" / "zephyr.bin"
+            self.mcuboot_secondary_app_to_sign = (
+                self.build_dir / "mcuboot_secondary_app" / "zephyr" / "zephyr.bin"
+            )
         else:
             self.app_to_sign = self.build_dir / "zephyr" / "app_to_sign.bin"
             self.netcore_to_sign = self.build_dir / "zephyr" / "net_core_app_to_sign.bin"
-            self.mcuboot_secondary_app_to_sign = self.build_dir / "zephyr" / "mcuboot_secondary_app_to_sign.bin"
+            self.mcuboot_secondary_app_to_sign = (
+                self.build_dir / "zephyr" / "mcuboot_secondary_app_to_sign.bin"
+            )
 
     def _update_imgtool(self) -> None:
         """Update imgtool parameters based on build configuration."""
         self.imgtool_params.tool_path = str(self.mcuboot_dir / "scripts" / "imgtool.py")
         if self.sysbuild:
-            self.imgtool_params.key_file = find_in_config(self.zephyr_config, "CONFIG_MCUBOOT_SIGNATURE_KEY_FILE")  # type: ignore
+            self.imgtool_params.key_file = find_in_config(
+                self.zephyr_config, "CONFIG_MCUBOOT_SIGNATURE_KEY_FILE"
+            )  # type: ignore
             self.imgtool_params.encryption_key_file = (
                 find_in_config(self.zephyr_config, "CONFIG_MCUBOOT_ENCRYPTION_KEY_FILE") or None  # type: ignore
             )
@@ -138,11 +147,13 @@ class BuildParameters:
     def update_params_for_netcore(self) -> None:
         """Update imgtool parameters for netcore image slot size."""
         if not self.sysbuild:
-            self.imgtool_params.slot_size = find_in_config(self.pm_config, "PM_MCUBOOT_SECONDARY_1_SIZE")
+            self.imgtool_params.slot_size = find_in_config(
+                self.pm_config, "PM_MCUBOOT_SECONDARY_1_SIZE"
+            )
         else:
             cpunet_pm_config = self.build_dir / "pm_CPUNET.config"
             self.imgtool_params.slot_size = find_in_config(
-                cpunet_pm_config, "PM_{}_SIZE".format(self.net_core_name.upper())
+                cpunet_pm_config, f"PM_{self.net_core_name.upper()}_SIZE"
             )
 
     def _update_imgtool_next(self) -> None:
@@ -155,7 +166,7 @@ class BuildParameters:
             self.imgtool_params.pure = True
         elif find_in_config(sysbuild_config, "SB_CONFIG_BOOT_IMG_HASH_ALG_SHA512"):
             self.imgtool_params.sha = 512
-        if find_in_config(sysbuild_config, "SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519") and find_in_config(
-            sysbuild_config, "SB_CONFIG_SOC_SERIES_NRF54LX"
-        ):
+        if find_in_config(
+            sysbuild_config, "SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519"
+        ) and find_in_config(sysbuild_config, "SB_CONFIG_SOC_SERIES_NRF54LX"):
             self.imgtool_params.hmac_sha = 512

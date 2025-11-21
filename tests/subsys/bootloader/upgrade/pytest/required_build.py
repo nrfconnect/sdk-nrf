@@ -55,7 +55,9 @@ class RequiredBuild:
         if not source_dir:
             source_dir = find_in_config(
                 dut.device_config.build_dir / "CMakeCache.txt", "APP_DIR:PATH"
-            ) or find_in_config(dut.device_config.build_dir / "CMakeCache.txt", "APPLICATION_SOURCE_DIR:PATH")
+            ) or find_in_config(
+                dut.device_config.build_dir / "CMakeCache.txt", "APPLICATION_SOURCE_DIR:PATH"
+            )
             testsuite = testsuite or dut.device_config.build_dir.name
         if not source_dir:
             raise RequiredBuildException("Not found source dir")
@@ -69,7 +71,9 @@ class RequiredBuild:
             build_dir = str(build_dir) + suffix
         build_dir = Path(build_dir)  # type: ignore
         if build_dir == dut.device_config.build_dir:
-            raise RequiredBuildException("Build dir is the same as the current build dir, use suffix")
+            raise RequiredBuildException(
+                "Build dir is the same as the current build dir, use suffix"
+            )
         board = (
             board
             or dut.device_config.platform
@@ -91,7 +95,16 @@ class RequiredBuild:
     @timer
     def west_build(self):
         """Run west build for the required build configuration."""
-        command = ["west", "build", "-p", "-b", self.board, str(self.source_dir), "-d", str(self.build_dir)]
+        command = [
+            "west",
+            "build",
+            "-p",
+            "-b",
+            self.board,
+            str(self.source_dir),
+            "-d",
+            str(self.build_dir),
+        ]
         if self.testsuite:
             command.extend(["-T", self.testsuite])
         if self.extra_args:
@@ -103,11 +116,11 @@ class RequiredBuild:
             # create empty file to indicate a build error, will be used
             # to avoid unnecessary builds in other tests
             Path(self.build_dir / "build.error").touch()
-            raise RequiredBuildException("Failed to build required app")
+            raise RequiredBuildException("Failed to build required app") from None
         except subprocess.TimeoutExpired:
             logger.error("Timeout building required app")
             shutil.rmtree(self.build_dir)
-            raise RequiredBuildException("Timeout building required app")
+            raise RequiredBuildException("Timeout building required app") from None
 
     def get_ready_build(self):
         """Get or create a ready build directory, using file locking to avoid conflicts."""
@@ -133,7 +146,7 @@ class RequiredBuild:
                 with FileLock(str(lockfile), timeout=self.timeout):
                     pass
             except Timeout:
-                raise RequiredBuildException(f"Timeout waiting for {self.build_dir}")
+                raise RequiredBuildException(f"Timeout waiting for {self.build_dir}") from None
 
         if not self.is_build_ready():
             raise RequiredBuildException(f"Build is not ready: {self.build_dir}")
@@ -210,7 +223,9 @@ def get_required_images_to_update(
     )
     req_build_dir = req_build.get_ready_build()
 
-    updated_app = req_build_dir / req_build.build_info.default_domain / "zephyr" / "zephyr.signed.bin"  # type: ignore
+    updated_app = (
+        req_build_dir / req_build.build_info.default_domain / "zephyr" / "zephyr.signed.bin"
+    )  # type: ignore
     updated_netcore = req_build_dir / f"signed_by_mcuboot_and_b0_{netcore_name}.bin"
     s1_image = req_build_dir / "signed_by_mcuboot_and_b0_s1_image.bin"
     return updated_app, updated_netcore, s1_image

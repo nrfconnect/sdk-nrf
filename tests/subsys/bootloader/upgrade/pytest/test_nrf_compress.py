@@ -27,7 +27,9 @@ def get_image_padding(dut: DeviceAdapter) -> int:
     If partition manager is used, no padding is applied (returns 0).
     Otherwise, extracts the ROM start offset from Zephyr configuration.
     """
-    assert dut.device_config.app_build_dir is not None, "app_build_dir is required for compression tests"
+    assert dut.device_config.app_build_dir is not None, (
+        "app_build_dir is required for compression tests"
+    )
 
     pm_config = dut.device_config.build_dir / "pm.config"
     zephyr_config = dut.device_config.app_build_dir / "zephyr" / ".config"
@@ -37,14 +39,17 @@ def get_image_padding(dut: DeviceAdapter) -> int:
         return 0
 
 
-def check_compressed_file_is_smaller(app_to_sign: str | Path, compressed_app: str | Path, padding: int) -> None:
+def check_compressed_file_is_smaller(
+    app_to_sign: str | Path, compressed_app: str | Path, padding: int
+) -> None:
     """Check if the compressed application is smaller than the original."""
     app_to_sign_size = os.path.getsize(app_to_sign) - padding
     compressed_app_size = os.path.getsize(compressed_app)
 
     assert compressed_app_size < app_to_sign_size, (
-        f"Compressed application {compressed_app} is not smaller than the original application {app_to_sign}. "
-        f"Compressed application size: {compressed_app_size}, Original application size: {app_to_sign_size}"
+        f"Compressed application {compressed_app} is not smaller than the original application "
+        f"{app_to_sign}. Compressed application size: {compressed_app_size}, "
+        f"Original application size: {app_to_sign_size}"
     )
 
 
@@ -58,8 +63,11 @@ def test_compressed_image_is_smaller(unlaunched_dut: DeviceAdapter):
     )
 
 
-def test_decompressed_data_is_identical_as_before_compression(unlaunched_dut: DeviceAdapter, tmpdir):
-    """Decompress the application (zephyr.signed.bin) and verify that it is identical to the original application."""
+def test_decompressed_data_is_identical_as_before_compression(
+    unlaunched_dut: DeviceAdapter, tmpdir
+):
+    """Decompress the application (zephyr.signed.bin) and verify that it is identical to the
+    original."""
     assert unlaunched_dut.device_config.app_build_dir is not None, "app_build_dir is required"
     check_lzma_compression(
         unlaunched_dut.device_config.app_build_dir / "zephyr" / "zephyr.signed.bin",
@@ -81,7 +89,9 @@ def test_nrf_compress_upgrade(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
     tm.increase_version()
     updated_app = tm.generate_image()
 
-    check_compressed_file_is_smaller(tm.build_params.app_to_sign, updated_app, get_image_padding(dut))
+    check_compressed_file_is_smaller(
+        tm.build_params.app_to_sign, updated_app, get_image_padding(dut)
+    )
 
     tm.run_upgrade(updated_app, confirm=True)
     tm.verify_after_reset(

@@ -89,7 +89,9 @@ def reset_board(dev_id: str | None = None, reset_kind: str | None = None):
     run_command(command)
 
 
-def nrfutil_write(address: str, value: str, dev_id: str | None = None, core: str | None = None) -> None:
+def nrfutil_write(
+    address: str, value: str, dev_id: str | None = None, core: str | None = None
+) -> None:
     """Write a value to a specific address on the device.
 
     :param address: memory address to write to

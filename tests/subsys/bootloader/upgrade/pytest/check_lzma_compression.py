@@ -85,7 +85,9 @@ def check_lzma_compression(
     ih_unlzma.loadbin(workdir / "stream")
 
     if ih_unsigned.maxaddr() != ih_unlzma.maxaddr():
-        raise CheckCompressionError("Decompressed data length is not identical as before compression")
+        raise CheckCompressionError(
+            "Decompressed data length is not identical as before compression"
+        )
     if ih_unsigned.tobinarray() != ih_unlzma.tobinarray():
         raise CheckCompressionError("Decompressed data is not identical as before compression")
     logger.info("Decompressed data is identical as before compression")
@@ -114,7 +116,11 @@ def create_parser() -> argparse.ArgumentParser:
         help="Padding value for platforms that don't use partition manager (default: 0)",
     )
     parser.add_argument(
-        "-ll", "--log-level", type=str.upper, default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+        "-ll",
+        "--log-level",
+        type=str.upper,
+        default="INFO",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
     )
     return parser
 
