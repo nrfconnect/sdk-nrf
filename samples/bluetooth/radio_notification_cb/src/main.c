@@ -81,7 +81,7 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 		return;
 	}
 
-	conn_interval_us = BT_CONN_INTERVAL_TO_US(info.le.interval);
+	conn_interval_us = info.le.interval_us;
 
 	/*Start service discovery when link is encrypted*/
 	err = bt_gatt_dm_start(conn, BT_UUID_LATENCY, &discovery_cb,

@@ -102,8 +102,9 @@ static void set_conn_latency(bool low_latency)
 	/* Request with connection interval set to a LLPM value is rejected
 	 * by Zephyr Bluetooth API.
 	 */
-	uint16_t interval = (info.le.interval & REG_CONN_INTERVAL_LLPM_MASK) ?
-			  REG_CONN_INTERVAL_BLE_DEFAULT : info.le.interval;
+	uint16_t info_interval_1250us = BT_GAP_US_TO_CONN_INTERVAL(info.le.interval_us);
+	uint16_t interval = (info_interval_1250us & REG_CONN_INTERVAL_LLPM_MASK) ?
+			 REG_CONN_INTERVAL_BLE_DEFAULT : info_interval_1250us;
 	const struct bt_le_conn_param param = {
 		.interval_min = interval,
 		.interval_max = interval,

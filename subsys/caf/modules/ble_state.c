@@ -69,10 +69,11 @@ static void broadcast_init_conn_params(struct bt_conn *conn)
 		LOG_ERR("Cannot get conn info (%d)", err);
 	} else {
 		struct ble_peer_conn_params_event *event = new_ble_peer_conn_params_event();
+		uint16_t info_interval_1250us = BT_GAP_US_TO_CONN_INTERVAL(info.le.interval_us);
 
 		event->id = conn;
-		event->interval_min = info.le.interval;
-		event->interval_max = info.le.interval;
+		event->interval_min = info_interval_1250us;
+		event->interval_max = info_interval_1250us;
 		event->latency = info.le.latency;
 		event->timeout = info.le.timeout;
 		event->updated = true;
