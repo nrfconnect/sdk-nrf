@@ -62,6 +62,20 @@ You can use the following Kconfig options to configure the sample:
   To override it, adjust this option by setting a path to your custom encryption key file.
 * :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` - Use this option to set the application image version for software updates.
 
+Signature key
+*************
+
+Even with encryption enabled MCUboot relies on signature keys for image verification on each boot.
+On some of devices there are two ways to store public signature key: compile a key into a device or use crypto storage.
+
+In case when crypto storage is not used then a key can be set using :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`.
+MCUboot can only use one compiled in signature key file.
+
+On device that store key in crypto storage, the number of stored keys will depend on device and may be from one to several, usually there are three slots reserved for storing MCUboot signature keys.
+Usage of MCUboot with crypto storage, aside for compiling in the support, requires set of keys to be provisioned into a device.
+When KMU is used for signature key storage you should follow the :ref:`ug_nrf54l_developing_provision_kmu` for key provisioning.
+In this sample generated keys will be automatically provisioned when :kconfig:option:`SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_USE_CRYPTO_STORAGE` is enabled.
+
 Security considerations
 ***********************
 
