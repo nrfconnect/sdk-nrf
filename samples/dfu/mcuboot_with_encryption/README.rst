@@ -54,7 +54,7 @@ You can use the following Kconfig options to configure the sample:
   You can disable it for development and enable it for production purposes to prevent MCUboot overwriting at runtime.
 * :kconfig:option:`CONFIG_MCUBOOT_LOG_LEVEL_DBG` - is enabled by default to allow easier verification that MCUboot is indeed starting up.
   The option should be disabled for production builds.
-* :kconfig:option:`SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_KMU` - This option is disabled by default.
+* :kconfig:option:`SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_USE_CRYPTO_STORAGE` - This option is disabled by default.
   Set it to ``y`` to enable Hardware Key Management Unit (KMU) support for secure storage of signature keys.
 * :kconfig:option:`CONFIG_BOOT_SWAP_SAVE_ENCTLV` - Enable this option in the MCUboot configuration if you are performing DFU to an external storage device.
   This ensures that the random AES key used for the currently swapped image is not exposed.
@@ -65,7 +65,8 @@ You can use the following Kconfig options to configure the sample:
 Security considerations
 ***********************
 
-* For secure production builds, enable the :kconfig:option:`CONFIG_FPROTECT`, :kconfig:option:`SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_KMU`, and :kconfig:option:`CONFIG_BOOT_SWAP_SAVE_ENCTLV`.
+* For secure production builds, enable the :kconfig:option:`CONFIG_FPROTECT` and :kconfig:option:`CONFIG_BOOT_SWAP_SAVE_ENCTLV`.
+  For production builds you probably want to manage keys by yourself rather than relying on :kconfig:option:`SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_USE_CRYPTO_STORAGE`.
   See the :ref:`mcuboot_with_encryption_config` section for details.
 * MCUmgr's shell is enabled by default, allowing to manage commands using a serial terminal.
 * MCUboot accepts unencrypted images in the secondary slot if signature verification passes.

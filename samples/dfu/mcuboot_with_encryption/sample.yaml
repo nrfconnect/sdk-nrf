@@ -26,7 +26,7 @@ tests:
     build_only: true
     extra_args:
       - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="1.0.0"
-      - SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_KMU=y
+      - SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_USE_CRYPTO_STORAGE=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
@@ -35,7 +35,7 @@ tests:
     build_only: true
     extra_args:
       - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="2.0.0"
-      - SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_KMU=y
+      - SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_USE_CRYPTO_STORAGE=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
@@ -60,7 +60,7 @@ tests:
     build_only: true
     extra_args:
       - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="1.0.0"
-      - SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_KMU=y
+      - SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_USE_CRYPTO_STORAGE=y
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
@@ -69,7 +69,7 @@ tests:
     build_only: true
     extra_args:
       - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="2.0.0"
-      - SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_KMU=y
+      - SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_USE_CRYPTO_STORAGE=y
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
@@ -94,7 +94,7 @@ tests:
     build_only: true
     extra_args:
       - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="1.0.0"
-      - SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_KMU=y
+      - SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_USE_CRYPTO_STORAGE=y
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
@@ -103,7 +103,7 @@ tests:
     build_only: true
     extra_args:
       - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="2.0.0"
-      - SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_KMU=y
+      - SB_CONFIG_SAMPLE_MCUBOOT_ENCRYPTION_USE_CRYPTO_STORAGE=y
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
