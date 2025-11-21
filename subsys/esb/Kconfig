@@ -9,7 +9,7 @@ menuconfig ESB
 	select NRFX_PPI if HAS_HW_NRF_PPI
 	select NRFX_DPPI if HAS_HW_NRF_DPPIC
 	select MPSL
-	select MPSL_FEM_ONLY if !ESB_DYNAMIC_INTERRUPTS
+	select MPSL_FEM_ONLY if !ESB_DYNAMIC_INTERRUPTS && !ESB_MPSL_TIMESLOT
 	select NRFX_DPPI020 if SOC_SERIES_NRF54HX
 	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
 	select NRFX_DPPI0 if SOC_SERIES_NRF53X
@@ -62,6 +62,11 @@ config ESB_EVENT_IRQ_PRIORITY
 menu "Hardware selection (alter with care)"
 
 choice ESB_SYS_TIMER
+	# defaults to match ESB_TIMER with MPSL_TIMER0
+	default ESB_SYS_TIMER0 if ESB_MPSL_TIMESLOT
+	default ESB_SYS_TIMER10 if ESB_MPSL_TIMESLOT
+	default ESB_SYS_TIMER020 if ESB_MPSL_TIMESLOT
+
 	default ESB_SYS_TIMER021 if $(dt_nodelabel_has_compat,timer021,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	default ESB_SYS_TIMER10 if $(dt_nodelabel_has_compat,timer10,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	default ESB_SYS_TIMER2
@@ -140,6 +145,17 @@ config ESB_DYNAMIC_INTERRUPTS
 	  This option configures ESB IRQ handlers using direct dynamic
 	  interrupts. This allows reconfiguring ESB_SYS_TIMER_IRQn, ESB_EVT_IRQ,
 	  and RADIO_IRQn handlers during runtime when ESB is uninitialized.
+
+config ESB_MPSL_TIMESLOT
+	bool "Use ESB on MPSL Timeslot"
+	select EXPERIMENTAL
+	depends on MPSL
+	depends on !ESB_NEVER_DISABLE_TX
+	depends on !SOC_SERIES_NRF53X
+	help
+	  This option configures ESB to use MPSL Timeslot API as middleman in radio access.
+	  It allow to use many protocols in the same time. Using the Timeslot API can increase
+	  number of retransmissions, reduce ESB packets delivery rate and make retransmission delay vary.
 
 config ESB_NEVER_DISABLE_TX
 	select EXPERIMENTAL
