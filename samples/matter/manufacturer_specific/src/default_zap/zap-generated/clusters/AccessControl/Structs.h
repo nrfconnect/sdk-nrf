@@ -186,7 +186,6 @@ namespace app
 						kAuthMode = 2,
 						kSubjects = 3,
 						kTargets = 4,
-						kAuxiliaryType = 5,
 						kFabricIndex = 254,
 					};
 
@@ -200,7 +199,6 @@ namespace app
 						DataModel::Nullable<
 							DataModel::List<const Structs::AccessControlTargetStruct::Type>>
 							targets;
-						Optional<AccessControlAuxiliaryTypeEnum> auxiliaryType;
 						chip::FabricIndex fabricIndex = static_cast<chip::FabricIndex>(0);
 
 						static constexpr bool kIsFabricScoped = true;
@@ -232,7 +230,6 @@ namespace app
 						DataModel::Nullable<DataModel::DecodableList<
 							Structs::AccessControlTargetStruct::DecodableType>>
 							targets;
-						Optional<AccessControlAuxiliaryTypeEnum> auxiliaryType;
 						chip::FabricIndex fabricIndex = static_cast<chip::FabricIndex>(0);
 
 						CHIP_ERROR Decode(TLV::TLVReader &reader);
