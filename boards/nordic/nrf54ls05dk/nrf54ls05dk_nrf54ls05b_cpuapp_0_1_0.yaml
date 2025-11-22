@@ -1,8 +1,8 @@
 # Copyright (c) 2025 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-identifier: nrf54ls05dk/nrf54ls05b/cpuapp
-name: nRF54LS05-DK-nRF54LS05B-Application
+identifier: nrf54ls05dk@0.1.0/nrf54ls05b/cpuapp
+name: nRF54LS05-DK-nRF54LS05B-Application (rev. 0.1.0)
 type: mcu
 arch: arm
 toolchain:
@@ -12,10 +12,4 @@ sysbuild: true
 ram: 96
 flash: 508
 supported:
-  - adc
-  - counter
   - gpio
-  - i2c
-  - pwm
-  - spi
-  - watchdog
