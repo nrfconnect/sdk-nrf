@@ -503,7 +503,7 @@ Machine learning
 Asset Tracker v2
 ----------------
 
-* Added a note that the Asset Tracker v2 application is in the maintenance mode and that it is recommended to use the :ref:`nrf_cloud_multi_service` sample instead.
+* Added a note that the Asset Tracker v2 application is in the maintenance mode and that it is recommended to use the nRF Cloud multi-service sample instead.
 
 Connectivity bridge
 -------------------
@@ -773,7 +773,7 @@ Cellular samples
 
   * Removed redundant logging that is now done by the :ref:`lib_nrf_cloud` library.
 
-* :ref:`nrf_cloud_multi_service` sample:
+* nRF Cloud multi-service sample:
 
   * Added:
 

@@ -3325,17 +3325,17 @@ NCSDK-30050: The :ref:`nrf_cloud_rest_fota` sample with experimental SMP FOTA su
 
 .. rst-class:: v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0
 
-IRIS-8456: Wi-Fi builds of the :ref:`nrf_cloud_multi_service` sample crash and reboot
+IRIS-8456: Wi-Fi builds of the nRF Cloud multi-service sample crash and reboot
   This happens if no Wi-Fi APs are visible for more than a few minutes.
 
 .. rst-class:: v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0
 
-IRIS-8465: CoAP builds of the :ref:`nrf_cloud_multi_service` sample stall if connectivity is lost
+IRIS-8465: CoAP builds of the nRF Cloud multi-service sample stall if connectivity is lost
   If PDN detaches for too long while the sample is connected, the sample cannot reconnect to nRF Cloud after PDN returns.
 
 .. rst-class:: v2-5-3 v2-5-2 v2-5-1 v2-5-0
 
-IRIS-7398: The :ref:`nrf_cloud_multi_service` sample does not support using the MCUboot secondary partition in external flash fails on the nRF9161 DK
+IRIS-7398: The nRF Cloud multi-service sample does not support using the MCUboot secondary partition in external flash fails on the nRF9161 DK
   The sample can be built for the nRF9161 DK with the :file:`overlay_mcuboot_ext_flash.conf` overlay enabled, but the resultant application will not boot.
 
   **Affected platforms:** nRF9161
@@ -3562,9 +3562,9 @@ NCSDK-16856: Increased power consumption observed for the Low Power UART sample 
 
 .. rst-class:: v2-3-0
 
-NCSDK-19858: :ref:`at_monitor_readme` library and :ref:`nrf_cloud_multi_service` sample heap overrun
+NCSDK-19858: :ref:`at_monitor_readme` library and nRF Cloud multi-service sample heap overrun
   Occasionally, the :ref:`at_monitor_readme` library heap becomes overrun, presumably due to one of the registered AT event listeners becoming stalled.
-  This has only been observed with the :ref:`nrf_cloud_multi_service` sample.
+  This has only been observed with the nRF Cloud multi-service sample.
 
 .. rst-class:: v2-3-0 v2-2-0
 

@@ -118,7 +118,7 @@ You can add a device to an nRF Cloud account in the following three ways:
 * Using JITP with factory-installed certificates for Nordic development kits and Thingys: provide the device ID and PIN to nRF Cloud as indicated on the sticker.
 * Using scripted provisioning and onboarding: upload the :file:`onboard.csv` file to nRF Cloud's **Bulk Onboard** screen or use the REST API.
 
-See: the `nRF Cloud Provisioning`_ documentation and the :ref:`nrf_cloud_multi_service_provisioning_onboarding` section of the :ref:`nrf_cloud_multi_service` sample documentation for more information.
+See: the `nRF Cloud Provisioning`_ documentation and the :ref:`nrf_cloud_multi_service_provisioning_onboarding` section of the nRF Cloud multi-service sample documentation for more information.
 
 .. _configuration_device_id:
 

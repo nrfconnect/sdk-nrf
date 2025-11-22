@@ -365,7 +365,7 @@ The following |NCS| samples use this library:
 
 * :ref:`location_sample`
 * :ref:`modem_shell_application`
-* :ref:`nrf_cloud_multi_service`
+* nRF Cloud multi-service
 
 Limitations
 ***********

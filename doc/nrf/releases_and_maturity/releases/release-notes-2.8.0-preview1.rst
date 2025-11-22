@@ -301,7 +301,7 @@ Machine learning
 Asset Tracker v2
 ----------------
 
-* Added a note that the Asset Tracker v2 application is in the maintenance mode and recommended to use the :ref:`nrf_cloud_multi_service` sample instead.
+* Added a note that the Asset Tracker v2 application is in the maintenance mode and recommended to use the nRF Cloud multi-service sample instead.
 
 Connectivity Bridge
 -------------------
@@ -535,7 +535,7 @@ Cellular samples
   * Added support for setting the FOTA update check interval using the config section in the shadow.
   * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.
 
-* :ref:`nrf_cloud_multi_service` sample:
+* nRF Cloud multi-service sample:
 
   * Added:
 
