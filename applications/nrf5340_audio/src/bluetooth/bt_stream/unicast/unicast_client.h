@@ -31,14 +31,14 @@ enum unicast_discover_dir {
 
 #if CONFIG_BT_BAP_UNICAST_CONFIGURABLE
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
-	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                               \
-				       BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED,                          \
-				       CONFIG_BT_AUDIO_BITRATE_UNICAST_SINK)
+	BT_BAP_LC3_PRESET_CONFIGURABLE(                                                            \
+		CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE, BT_AUDIO_LOCATION_FRONT_LEFT,         \
+		BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED, CONFIG_BT_AUDIO_BITRATE_UNICAST_SINK)
 
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
-	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                               \
-				       BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED,                          \
-				       CONFIG_BT_AUDIO_BITRATE_UNICAST_SRC)
+	BT_BAP_LC3_PRESET_CONFIGURABLE(                                                            \
+		CONFIG_BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE, BT_AUDIO_LOCATION_FRONT_LEFT,       \
+		BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED, CONFIG_BT_AUDIO_BITRATE_UNICAST_SRC)
 
 #elif CONFIG_BT_BAP_UNICAST_16_2_1
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
@@ -80,7 +80,8 @@ int unicast_client_config_get(struct bt_bap_stream *stream, uint32_t *bitrate,
 			      uint32_t *sampling_rate_hz);
 
 /**
- * @brief	Start service discovery for a Bluetooth LE Audio unicast (CIS) server.
+ * @brief	Start service discovery for a Bluetooth LE Audio unicast (CIS)
+ * server.
  *
  * @param[in]	conn	Pointer to the connection.
  * @param[in]	dir	Direction of the stream.
@@ -103,7 +104,8 @@ void unicast_client_conn_disconnected(struct bt_conn *conn);
  *
  * @note	Will start both sink and source if present.
  *
- * @param[in]	cig_index	Index of the Connected Isochronous Group (CIG) to start.
+ * @param[in]	cig_index	Index of the Connected Isochronous Group (CIG) to
+ * start.
  *
  * @return	0 for success, error otherwise.
  */
@@ -114,7 +116,8 @@ int unicast_client_start(uint8_t cig_index);
  *
  * @note	Will stop both sink and source if present.
  *
-  @param[in]	cig_index	Index of the Connected Isochronous Group (CIG) to stop.
+  @param[in]	cig_index	Index of the Connected Isochronous Group (CIG) to
+ stop.
  *
  * @return	0 for success, error otherwise.
  */
@@ -124,7 +127,8 @@ int unicast_client_stop(uint8_t cig_index);
  * @brief	Send encoded audio using the Bluetooth LE Audio unicast.
  *
  * @param[in]	audio_frame	Pointer to the audio to send.
- * @param[in]	cig_index	Index of the Connected Isochronous Group (CIG) to send to.
+ * @param[in]	cig_index	Index of the Connected Isochronous Group (CIG) to
+ * send to.
  *
  * @return	0 for success, error otherwise.
  */
@@ -133,7 +137,8 @@ int unicast_client_send(struct net_buf const *const audio_frame, uint8_t cig_ind
 /**
  * @brief       Disable the Bluetooth LE Audio unicast (CIS) client.
  *
- * @param[in]	cig_index	Index of the Connected Isochronous Group (CIG) to disable.
+ * @param[in]	cig_index	Index of the Connected Isochronous Group (CIG) to
+ * disable.
  *
  * @return      0 for success, error otherwise.
  */
@@ -142,7 +147,8 @@ int unicast_client_disable(uint8_t cig_index);
 /**
  * @brief	Enable the Bluetooth LE Audio unicast (CIS) client.
  *
- * @param[in]	cig_index	Index of the Connected Isochronous Group (CIG) to enable.
+ * @param[in]	cig_index	Index of the Connected Isochronous Group (CIG) to
+ * enable.
  * @param[in]   recv_cb		Callback for handling received data.
  *
  * @return	0 for success, error otherwise.

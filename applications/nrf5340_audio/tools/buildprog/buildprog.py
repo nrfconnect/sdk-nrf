@@ -99,7 +99,7 @@ def __print_dev_conf(device_list):
 
 
 def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
-                    pristine, options):
+                    pristine, menuconfig, options):
 
     build_cmd = (f"west build {TARGET_AUDIO_FOLDER} "
                  f"-b {TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME} "
@@ -150,6 +150,8 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
         release_flag = release_flag.replace('\\', '/')
     if pristine:
         build_cmd += " --pristine"
+    if menuconfig:
+        build_cmd += " -t menuconfig"
 
     dest_folder = TARGET_AUDIO_BUILD_FOLDER / options.transport / device / core / build
 
@@ -162,6 +164,7 @@ def __build_module(build_config, options):
         build_config.device,
         build_config.build,
         build_config.pristine,
+        build_config.menuconfig,
         options,
     )
     west_str = f"{build_cmd} -d {dest_folder} "
@@ -196,10 +199,10 @@ def __find_snr():
 def __populate_hex_paths(dev, options):
     """Poplulate hex paths where relevant"""
 
-    _, temp_dest_folder, _, _, _ = __build_cmd_get(Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options)
+    _, temp_dest_folder, _, _, _ = __build_cmd_get(Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options.menuconfig, options)
     dev.hex_path_app = temp_dest_folder / "nrf5340_audio/zephyr/zephyr.hex"
 
-    _, temp_dest_folder, _, _, _ = __build_cmd_get(Core.net, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options)
+    _, temp_dest_folder, _, _, _ = __build_cmd_get(Core.net, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options.menuconfig, options)
     dev.hex_path_net = temp_dest_folder / "ipc_radio/zephyr/zephyr.hex"
 
 
@@ -248,6 +251,12 @@ def __main():
         default=False,
         action="store_true",
         help="Will build cleanly"
+    )
+    parser.add_argument(
+        "--menuconfig",
+        default=False,
+        action="store_true",
+        help="Will run menuconfig"
     )
     parser.add_argument(
         "-b",
@@ -416,6 +425,7 @@ def __main():
                         core=c,
                         device=AudioDevice.headset,
                         pristine=options.pristine,
+                        menuconfig=options.menuconfig,
                         build=options.build,
                     )
                 )
@@ -426,6 +436,7 @@ def __main():
                             core=c,
                             device=AudioDevice.gateway,
                             pristine=options.pristine,
+                            menuconfig=options.menuconfig,
                             build=options.build,
                         )
                     )
