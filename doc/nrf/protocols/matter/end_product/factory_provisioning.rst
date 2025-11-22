@@ -142,6 +142,9 @@ The following table lists the parameters of a factory data set:
 |                        |                                      |                      |              |             | This parameter should be protected against reading or writing over-the-air after initial introduction into the device, and stay fixed during the lifetime of the device.                                                    |
 |                        |                                      |                      |              |             | When building an application with the Factory Data support, the :ref:`CONFIG_CHIP_FACTORY_DATA_ROTATING_DEVICE_UID_MAX_LEN` must be set with the length of the actual ``rd_uid`` stored in the Factory Data partition.      |
 +------------------------+--------------------------------------+----------------------+--------------+-------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| ``enable_key``         | enable key                           | 16 B                 | byte string  | optional    | The enable key is a 16-byte hexadecimal string value that triggers manufacturer-specific action while invoking the :ref:`ug_matter_test_event_triggers`.                                                                    |
+|                        |                                      |                      |              |             | This value is used during Certification Tests, and should not be present on production devices.                                                                                                                             |
++------------------------+--------------------------------------+----------------------+--------------+-------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | ``user``               | User data                            | variable, max 1024 B | CBOR map     | optional    | The user data is provided in the JSON format.                                                                                                                                                                               |
 |                        |                                      |                      |              |             | This parameter is optional and depends on the device manufacturer's purpose.                                                                                                                                                |
 |                        |                                      |                      |              |             | It is provided as a CBOR map type from persistent storage and should be parsed in the user application.                                                                                                                     |
@@ -371,6 +374,12 @@ To use this script, complete the following steps:
       .. code-block:: console
 
          --include_passcode
+
+   #. (optional) Add an enable key for initiating device-specific test scenarios:
+
+      .. code-block:: console
+
+         --enable_key <enable key>
 
    #. (optional) Add the request to overwrite existing the JSON file:
 
