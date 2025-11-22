@@ -12,9 +12,9 @@ For an nRF91x1 DK, modem version v2.0.0 or later is required.
 
 For instructions on updating your device's modem firmware, see the following documents:
 
-  * :ref:`Updating modem firmware on nRF91x1 DK <nrf9161_updating_fw_modem>`
-  * :ref:`Updating modem firmware on nRF9160 DK <nrf9160_gs_updating_fw_modem>`
-  * :ref:`Updating modem firmware on Thingy:91 <programming_thingy>`
+  * `Updating modem firmware on nRF91x1 DK <Programming nRF91 Series DK firmware_>`_
+  * `Updating modem firmware on nRF9160 DK <Programming nRF91 Series DK firmware_>`_
+  * `Updating modem firmware on Thingy:91 <Programming Nordic Thingy prototyping platforms_>`_
 
 .. requirement_cert_provision_start
 
