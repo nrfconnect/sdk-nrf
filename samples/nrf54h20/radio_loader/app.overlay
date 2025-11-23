@@ -1,0 +1,14 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Use existing node as source partition for demo purposes. */
+&cpuapp_slot0_partition {
+	reg = <0x92000 DT_SIZE_K(128)>;
+};
+
+/* Mock the node labels to satisfy the build */
+cpurad_slot2_partition: &cpuapp_slot0_partition {};
+cpurad_slot3_partition: &cpuapp_slot0_partition {};
