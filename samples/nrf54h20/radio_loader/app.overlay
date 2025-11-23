@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+
+/* Dummy chosen node to satisfy the build */
+/{
+	chosen {
+		zephyr,loaded-fw-src = &cpuapp_slot0_partition;
+		zephyr,loaded-fw-dst = &cpurad_ram0;
+	};
+};
+
+&cpuapp_slot0_partition {
+	reg = <0x92000 DT_SIZE_K(128)>;
+};

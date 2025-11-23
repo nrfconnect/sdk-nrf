@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NRF_RADIO_LOADER
+	bool "Radio Core Firmware Loader [EXPERIMENTAL]"
+	depends on SOC_NRF54H20
+	select EXPERIMENTAL
+	help
+	  Enable the radio loader that copies firmware from MRAM to TCM
+	  (Tightly Coupled Memory) at boot time.
+
+	  The loader runs from MRAM and:
+	  - Copies firmware from MRAM partition to TCM
+	  - Jumps to the loaded firmware in TCM for optimal performance
+
+	  Requires devicetree memory map configuration with partitions
+	  and chosen nodes defined in the project's overlay files.
+
+if NRF_RADIO_LOADER
+
+config NRF_RADIO_LOADER_BOARD
+	string
+	default "nrf54h20dk/nrf54h20/cpurad"
+	help
+	  Target board for the radio loader application.
+
+endif # NRF_RADIO_LOADER
