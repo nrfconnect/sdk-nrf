@@ -119,7 +119,6 @@
 #ifdef USE_NON_SECURE_ADDRESS_MAP
 		/* Intentionally empty because uicr is hardware fixed to Secure */
 #else
-
 		uicr: uicr@ffd000 {
 			compatible = "nordic,nrf-uicr";
 			reg = <0xffd000 0x1000>;
@@ -166,7 +165,6 @@
 			#size-cells = <1>;
 			ranges = <0x0 0x40000000 0x10000000>;
 #else
-
 		global_peripherals: peripheral@50000000 {
 			reg = <0x50000000 0x10000000>;
 			#address-cells = <1>;
