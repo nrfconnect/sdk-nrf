@@ -190,7 +190,10 @@ Protocols
 Bluetooth® LE
 -------------
 
-|no_changes_yet_note|
+* Added the :c:func:`bt_nrf_conn_set_ltk` API.
+
+  This API allows you to set a custom Long Term Key (LTK) for a connection.
+  You can use it when two devices have a shared proprietary method for obtaining an LTK.
 
 Bluetooth Mesh
 --------------
