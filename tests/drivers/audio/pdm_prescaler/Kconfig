@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+config TEST_PDM_SAMPLING_RATE
+	int "PDM sample rate in Hz"
+	default 10000
+	help
+	  The test will use it to define frequency of PDM sampling and
+	  calculate the size of the buffer.
+
+config TEST_PDM_EXPECTED_FREQUENCY
+	int "Expected PDM_CLK frequency in Hz"
+	default 1000000
+	help
+	  The test will use it to confirm that the captured PDM_CLK
+	  frequency in correct.
+
+config TEST_PDM_SAMPLING_TIME
+	int "PDM sampling time for one block in ms"
+	default 100
+	help
+	  The test will use it to calculate the size of data block and
+	  determine the period of capturing timer.

@@ -249,10 +249,10 @@ ZTEST(pdm_loopback, test_pdm_clk_frequency)
 {
 	int ret;
 	uint8_t gpiote_channel;
-	nrfx_gpiote_t *gpiote_instance =
-		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(DT_NODELABEL(pulse_counter), gpios));
+	nrfx_gpiote_t gpiote_instance =
+		GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(DT_NODELABEL(pulse_counter), gpios));
 
-	ret = nrfx_gpiote_channel_alloc(gpiote_instance, &gpiote_channel);
+	ret = nrfx_gpiote_channel_alloc(&gpiote_instance, &gpiote_channel);
 	zassert_true(ret == 0, "GPIOTE channel allocation failed, return code = %d", ret);
 
 	nrfx_gpiote_trigger_config_t trigger_cfg = {
@@ -267,10 +267,10 @@ ZTEST(pdm_loopback, test_pdm_clk_frequency)
 		.p_trigger_config = &trigger_cfg,
 	};
 
-	ret = nrfx_gpiote_input_configure(gpiote_instance, CLOCK_INPUT_PIN, &gpiote_cfg);
+	ret = nrfx_gpiote_input_configure(&gpiote_instance, CLOCK_INPUT_PIN, &gpiote_cfg);
 	zassert_true(ret == 0, "GPIOTE input configuration failed, return code = %d", ret);
 
-	nrfx_gpiote_trigger_enable(gpiote_instance, CLOCK_INPUT_PIN, false);
+	nrfx_gpiote_trigger_enable(&gpiote_instance, CLOCK_INPUT_PIN, false);
 
 	nrfx_timer_config_t timer_config = NRFX_TIMER_DEFAULT_CONFIG(
 					   NRFX_TIMER_BASE_FREQUENCY_GET(&timer_instance));
@@ -284,7 +284,7 @@ ZTEST(pdm_loopback, test_pdm_clk_frequency)
 	nrfx_timer_enable(&timer_instance);
 
 	nrfx_gppi_handle_t gppi_handle;
-	uint32_t eep = nrfx_gpiote_in_event_address_get(gpiote_instance, CLOCK_INPUT_PIN);
+	uint32_t eep = nrfx_gpiote_in_event_address_get(&gpiote_instance, CLOCK_INPUT_PIN);
 	uint32_t tep = nrfx_timer_task_address_get(&timer_instance, NRF_TIMER_TASK_COUNT);
 
 	ret = nrfx_gppi_conn_alloc(eep, tep, &gppi_handle);
@@ -300,6 +300,21 @@ ZTEST(pdm_loopback, test_pdm_clk_frequency)
 		       PDM_EXPECTED_FREQ * SAMPLING_RATIO / 30,
 		       "Captured incorrect frequency Hz. Captured pulses = %lu, expected = %lu",
 		       pulses, PDM_EXPECTED_FREQ * SAMPLING_RATIO);
+
+	/* Remove GPPI configuration. */
+	nrfx_gppi_conn_disable(gppi_handle);
+	nrfx_gppi_conn_free(eep, tep, gppi_handle);
+
+	/* Remove GPIOTE configuration. */
+	ret = nrfx_gpiote_pin_uninit(&gpiote_instance, CLOCK_INPUT_PIN);
+	zexpect_true(ret == 0, "nrfx_gpiote_pin_uninit() ret %d", ret);
+	nrfx_gpiote_trigger_disable(&gpiote_instance, CLOCK_INPUT_PIN);
+	ret = nrfx_gpiote_channel_free(&gpiote_instance, gpiote_channel);
+	zexpect_true(ret == 0, "nrfx_gpiote_channel_free() ret %d", ret);
+
+	/* Remove NRFX Timer configuration. */
+	nrfx_timer_disable(&timer_instance);
+	nrfx_timer_uninit(&timer_instance);
 }
 
 ZTEST_SUITE(pdm_loopback, NULL, device_setup, setup, teardown, NULL);
