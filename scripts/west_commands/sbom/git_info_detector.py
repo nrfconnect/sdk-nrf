@@ -131,10 +131,13 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
     '''Read input file content and try to detect licenses by its content.'''
     files = func_args[0]
     data = func_args[1]
+    files_to_assign = [file for file in files if file.package in ('', None)]
+    if len(files_to_assign) == 0:
+        return
     modified_files = set()
     untracked_files = set()
-    absolute_path = Path(files[0].file_path).parent
-    relative_path = Path(files[0].file_rel_path).parent
+    absolute_path = Path(files_to_assign[0].file_path).parent
+    relative_path = Path(files_to_assign[0].file_rel_path).parent
     git_sha = get_sha(absolute_path)
     git_origin = get_origin(absolute_path, relative_path)
     if (git_sha is not None) and (git_origin is not None):
@@ -165,12 +168,12 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
         if args.package_cpe:
             package.cpe = args.package_cpe
         data.packages[package_id] = package
-    for file in files:
+    for file in files_to_assign:
         file.package = package_id
         file_name = Path(file.file_rel_path).name.upper()
         if file_name in modified_files:
             file.local_modifications = True
-        elif file_name.upper() in untracked_files:
+        elif file_name in untracked_files:
             file.package = ''
 
 

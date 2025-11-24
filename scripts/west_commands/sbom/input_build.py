@@ -16,7 +16,7 @@ from types import SimpleNamespace
 import yaml
 from args import args
 from common import SbomException, command_execute
-from data_structure import Data, FileInfo
+from data_structure import Data, FileInfo, Package
 from west import log, util
 
 DEFAULT_BUILD_DIR = 'build'
@@ -372,6 +372,9 @@ class InputBuild:
             file = FileInfo()
             file.file_path = leaf
             file.file_rel_path = Path(os.path.relpath(leaf, util.west_topdir()))
+            package_id = toolchain_package_for_file(self.data, leaf)
+            if package_id is not None:
+                file.package = package_id
             self.data.files.append(file)
 
 
@@ -434,6 +437,93 @@ def get_default_build_dir() -> 'str|None':
         return None
 
 
+def detect_toolchain_version(root: Path) -> 'str|None':
+    '''Read toolchain version detection from known marker files.'''
+    for candidate in ('sdk_version', 'version'):
+        version_file = root / candidate
+        if not version_file.exists():
+            continue
+        try:
+            version = version_file.read_text().strip()
+            if version:
+                return version
+        except OSError as ex:
+            log.dbg(f'Cannot read toolchain version file "{version_file}": {ex}')
+    return None
+
+
+def detect_toolchain(build_dir: Path) -> 'tuple[Path|None,str|None,str|None]':
+    '''
+    Detect toolchain path, name and version using build_info.yml or CMakeCache.txt.
+    Returns (root_path, name, version) or (None, None, None) if not found.
+    '''
+    info_file = build_dir / 'build_info.yml'
+    if info_file.exists():
+        try:
+            build_info = yaml.safe_load(info_file.read_text()) or dict()
+            toolchain = build_info.get('cmake', {}).get('toolchain', {})
+            path = toolchain.get('path')
+            name = toolchain.get('name')
+            if path:
+                root = Path(path).expanduser().resolve()
+                return (root, name, detect_toolchain_version(root))
+        except Exception as ex:  # pylint: disable=broad-except
+            log.wrn(f'Cannot parse "{info_file}" for toolchain information: {ex}')
+
+    cache_path = locate_cmake_cache(build_dir)
+    if cache_path is not None:
+        try:
+            cache_content = cache_path.read_text()
+            match = re.search(r'^\s*ZEPHYR_SDK_INSTALL_DIR(?:[:A-Z]+)?=(.*)$',
+                              cache_content, re.M)
+            if match:
+                root = Path(match.group(1).strip()).expanduser().resolve()
+                return (root, 'zephyr-sdk', detect_toolchain_version(root))
+        except OSError as ex:
+            log.dbg(f'Cannot read "{cache_path}" for toolchain information: {ex}')
+
+    return (None, None, None)
+
+
+def register_toolchain_for_build(data: Data, build_dir: Path):
+    '''Register detected toolchain as a package and remember its root.'''
+    root, name, version = detect_toolchain(build_dir)
+    if root is None:
+        return
+    resolved = root.resolve()
+    if not resolved.exists():
+        log.dbg(f'Skipping toolchain registration for missing path "{resolved}"')
+        return
+    resolved_str = str(resolved)
+    if resolved_str in data.toolchain_paths:
+        return
+    package = Package()
+    pkg_name = name or resolved.name or 'toolchain'
+    pkg_version = version or detect_toolchain_version(resolved) or 'UNKNOWN'
+    package.id = f'TOOLCHAIN#{pkg_name.upper()}#{pkg_version.upper()}'
+    package.name = pkg_name
+    package.url = str(resolved)
+    package.version = pkg_version
+    if args.package_supplier:
+        package.supplier = args.package_supplier
+    data.toolchain_paths[resolved_str] = package.id
+    data.packages[package.id] = package
+
+
+def toolchain_package_for_file(data: Data, file_path: Path) -> 'str|None':
+    '''Return toolchain package ID if file_path is inside a known toolchain root.'''
+    if not data.toolchain_paths:
+        return None
+    resolved = file_path.resolve()
+    for root_str, package_id in data.toolchain_paths.items():
+        try:
+            resolved.relative_to(Path(root_str))
+            return package_id
+        except ValueError:
+            continue
+    return None
+
+
 def generate_input(data: Data):
     '''
     Fill "data" with input files for application build directory specified in the script arguments.
@@ -442,6 +532,9 @@ def generate_input(data: Data):
         log.wrn('Fetching input files from a build directory is experimental for now.')
         check_external_tools(Path(args.build_dir[0][0]))
         for build_dir, *targets in args.build_dir:
+            register_toolchain_for_build(data, Path(build_dir))
+            register_application_root(data, Path(build_dir))
+            register_module_roots(data, Path(build_dir))
             try:
                 domains = yaml.safe_load(open(os.path.join(build_dir, 'domains.yaml')))
                 domains = [d['name'] for d in domains['domains']]
@@ -449,9 +542,108 @@ def generate_input(data: Data):
                 domains = ['.']
             for domain in domains:
                 domain_build_dir = Path(os.path.join(build_dir, domain))
-                if len(targets) == 0:
-                    targets = [DEFAULT_TARGET]
-                log.dbg(f'INPUT: build directory: {domain_build_dir}, targets: {targets}')
+                register_toolchain_for_build(data, domain_build_dir)
+                targets_to_process = targets if len(targets) > 0 else [DEFAULT_TARGET]
+                log.dbg(f'INPUT: build dir: {domain_build_dir}, targets: {targets_to_process}')
                 b = InputBuild(data, domain_build_dir)
-                for target in targets:
+                for target in targets_to_process:
                     b.generate_from_target(target)
+
+
+def register_application_root(data: Data, build_dir: Path):
+    '''Detect application source root and store as workspace-relative path.'''
+    root = detect_application_root(build_dir)
+    if root is None:
+        return
+    workspace = Path(util.west_topdir()).resolve()
+    try:
+        rel = root.resolve().relative_to(workspace)
+    except ValueError:
+        return
+    rel_str = rel.as_posix()
+    if rel_str == '.':
+        rel_str = ''
+    data.application_roots.add(rel_str)
+
+
+def register_module_roots(data: Data, build_dir: Path):
+    '''Parse module list files in the build directory and store their roots.'''
+    for file_name in ('zephyr_modules.txt', 'sysbuild_modules.txt'):
+        modules_file = Path(build_dir) / file_name
+        if not modules_file.exists():
+            continue
+        with open(modules_file) as fd:
+            for line in fd:
+                line = line.strip()
+                if not line or line.startswith('#'):
+                    continue
+                match = re.fullmatch(r'"([^"]*)":"([^"]*)":"([^"]*)"', line)
+                if match is None:
+                    continue
+                register_module_root_path(data, match.group(2))
+
+
+def register_module_root_path(data: Data, source: str):
+    '''Register module directory if it is inside the west workspace.'''
+    source = source.strip()
+    if (not source) or source.startswith('${'):
+        return
+    path = Path(source)
+    if not path.is_absolute():
+        path = (Path(util.west_topdir()) / path).resolve()
+    else:
+        path = path.resolve()
+    workspace = Path(util.west_topdir()).resolve()
+    try:
+        rel = path.relative_to(workspace)
+    except ValueError:
+        return
+    rel_str = rel.as_posix()
+    if rel_str == '.':
+        rel_str = ''
+    data.module_roots.add(rel_str)
+
+
+def detect_application_root(build_dir: Path) -> 'Path|None':
+    '''Try to detect application source directory for provided build directory.'''
+    cache_path = locate_cmake_cache(build_dir)
+    if cache_path is not None:
+        app_dir = parse_application_dir(cache_path)
+        if app_dir is not None:
+            return app_dir
+    parent = build_dir.parent
+    return parent if parent.exists() else None
+
+
+def locate_cmake_cache(build_dir: Path) -> 'Path|None':
+    '''Return best-matching CMakeCache.txt file.'''
+    domain_file = build_dir / 'domains.yaml'
+    if domain_file.exists():
+        try:
+            domains = yaml.safe_load(open(domain_file))
+            default_domain = domains.get('default')
+            if default_domain:
+                candidate = build_dir / default_domain / 'CMakeCache.txt'
+                if candidate.exists():
+                    return candidate
+        except Exception: # pylint: disable=broad-except
+            pass
+    candidate = build_dir / 'CMakeCache.txt'
+    return candidate if candidate.exists() else None
+
+
+def parse_application_dir(cache_path: Path) -> 'Path|None':
+    '''Extract APPLICATION_SOURCE_DIR from CMake cache.'''
+    try:
+        cache_content = cache_path.read_text()
+    except FileNotFoundError:
+        return None
+    match = re.search(r'^APPLICATION_SOURCE_DIR(?:[:A-Z]+)?=(.*)$', cache_content, re.M)
+    if match is not None:
+        value = match.group(1).strip()
+        if value:
+            path = Path(value)
+            if path.exists():
+                return path
+            return path
+    return None

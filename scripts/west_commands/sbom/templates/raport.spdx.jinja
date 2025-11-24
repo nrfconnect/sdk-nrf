@@ -13,41 +13,58 @@ Created: {{func.timestamp()}}
 CreatorComment:<text>Generated with west-ncs-sbom. For details, see https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/introduction.html#licenses.</text>
 
 {% set files_by_package = func.group_by(files, 'package') -%}
+{% set package_refs = {} -%}
+{% for package_id in packages_sorted -%}
+{% set _ = package_refs.update({package_id: 'SPDXRef-package-' ~ loop.index}) -%}
+{% endfor -%}
+{% set file_refs = {} -%}
+{% set ns = namespace(file_counter=0) -%}
+{% for package_id in packages_sorted -%}
+{% for file in files_by_package.get(package_id, []) -%}
+{% set ns.file_counter = ns.file_counter + 1 -%}
+{% set _ = file_refs.update({file.file_path: 'SPDXRef-file-' ~ ns.file_counter}) -%}
+{% endfor -%}
+{% endfor -%}
 
-{% for package_id in files_by_package -%}
+{% for package_id in packages_sorted -%}
+{% set package = packages[package_id] -%}
+{% set package_files = files_by_package.get(package_id, []) -%}
 
 # Package Information
 
-PackageName: {{packages[package_id].name or packages[package_id].url or 'unknown-package'}}
-SPDXID: SPDXRef-package-{{func.counter()}}
-{% if packages[package_id].version -%}
-PackageVersion: {{packages[package_id].version}}
+PackageName: {{package.name or package.url or 'unknown-package'}}
+SPDXID: {{package_refs[package_id]}}
+{% if package.version -%}
+PackageVersion: {{package.version}}
 {% endif -%}
-{% if packages[package_id].supplier -%}
-PackageSupplier: Organization: {{packages[package_id].supplier}}
+{% if package.supplier -%}
+PackageSupplier: Organization: {{package.supplier}}
 {% else -%}
 PackageSupplier: NOASSERTION
 {% endif -%}
-PackageDownloadLocation: {{packages[package_id].url or 'NONE'}}
-{% if packages[package_id].purl -%}
-ExternalRef: PACKAGE-MANAGER purl {{packages[package_id].purl}}
+PackageDownloadLocation: {{package.url or 'NONE'}}
+{% if package.purl -%}
+ExternalRef: PACKAGE-MANAGER purl {{package.purl}}
 {% endif -%}
-{% if packages[package_id].cpe -%}
-ExternalRef: SECURITY cpe23Type {{packages[package_id].cpe}}
+{% if package.cpe -%}
+ExternalRef: SECURITY cpe23Type {{package.cpe}}
 {% endif -%}
-FilesAnalyzed: true
-PackageVerificationCode: {{files_by_package[package_id] | verification_code}}
+FilesAnalyzed: {{'true' if package_files else 'false'}}
+{% if package_files -%}
+PackageVerificationCode: {{package_files | verification_code}}
+{% else -%}
+PackageVerificationCode: NOASSERTION
+{% endif -%}
 PackageLicenseConcluded: NOASSERTION
 PackageLicenseInfoFromFiles: NOASSERTION
 PackageLicenseDeclared: NOASSERTION
 PackageCopyrightText: NOASSERTION
-
-{% for file in files_by_package[package_id] -%}
+{% for file in package_files -%}
 
 # File
 
 FileName: {{func.relative_path(file.file_path)}}
-SPDXID: SPDXRef-file-{{func.counter()}}
+SPDXID: {{file_refs[file.file_path]}}
 FileChecksum: SHA1: {{file.sha1}}
 {% if file.local_modifications -%}
 FileComment: <text>This file is modified locally.</text>
@@ -61,20 +78,22 @@ FileCopyrightText: NOASSERTION
 {% endfor -%}
 
 # Relationships
-{% set package_counter = {} -%}
-{% for package_id in files_by_package -%}
-{% set _ = package_counter.update({package_id: loop.index}) -%}
+{% for package_id in packages_sorted -%}
+Relationship: SPDXRef-DOCUMENT DESCRIBES {{package_refs[package_id]}}
 {% endfor -%}
-{% for package_id in files_by_package -%}
+{% for package_id in packages_sorted -%}
+{% for file in files_by_package.get(package_id, []) -%}
+Relationship: {{package_refs[package_id]}} CONTAINS {{file_refs[file.file_path]}}
+{% endfor -%}
+{% endfor -%}
+{% for package_id in packages_sorted -%}
 {% if packages[package_id].dependencies -%}
 {% for dep_id in packages[package_id].dependencies -%}
-{% if dep_id in package_counter -%}
-Relationship: SPDXRef-package-{{package_counter[package_id]}} DEPENDS_ON SPDXRef-package-{{package_counter[dep_id]}}
+{% if dep_id in package_refs -%}
+Relationship: {{package_refs[package_id]}} DEPENDS_ON {{package_refs[dep_id]}}
 {% endif -%}
 {% endfor -%}
 {% endif -%}
-# Document describes package
-Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-package-{{package_counter[package_id]}}
 {% endfor -%}
 
 # Extracted Licenses
