@@ -33,6 +33,7 @@ class FileInfo(DataBaseClass):
         local_modifications The file was modified and does not match version of this package
         sha1                SHA-1 of the file
         detectors           Set of detectors that contributed to the list of licenses
+                             for the file
     '''
     file_path: Path
     file_rel_path: Path
@@ -129,6 +130,9 @@ class Data(DataBaseClass):
         inputs           List of user friendly input description.
         detectors        Set containing all detectors that were involved in license detection.
         report_uuid      Random UUID that can be used in the output.
+        application_roots Set of application source roots detected from build directories.
+        module_roots     Set of module source roots detected from build directories.
+        toolchain_paths  Mapping of detected toolchain root paths (resolved) to package IDs.
     '''
     files: 'list[FileInfo]' = list()
     licenses: 'dict[License|LicenseExpr]' = dict()
@@ -138,3 +142,6 @@ class Data(DataBaseClass):
     inputs: 'list[str]' = list()
     detectors: 'set[str]' = set()
     report_uuid: 'str' = uuid4()
+    application_roots: 'set[str]' = set()
+    module_roots: 'set[str]' = set()
+    toolchain_paths: 'dict[str,str]' = dict()
