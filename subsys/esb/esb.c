@@ -2220,6 +2220,12 @@ int esb_write_payload(const struct esb_payload *payload)
 			new_ack_payload->p_next = NULL;
 			memcpy(new_ack_payload->p_payload, payload, sizeof(struct esb_payload));
 
+			/* If system usage is high, other interrupts can postpone re-enabling of
+			 * RADIO IRQ, and therefore handling of the interrupt. This can result in
+			 * delay of sending ACK packet or air loss of next RX packet.
+			 * Adding @ref irq_lock can improve timing of RADIO IRQ handling at the cost
+			 * of delaying other interrupts.
+			 */
 			irq_disable(ESB_RADIO_IRQ_NUMBER);
 
 			if (ack_pl_wrap_pipe[payload->pipe] == NULL) {
@@ -2373,6 +2379,7 @@ int esb_flush_rx(void)
 		return -EACCES;
 	}
 
+	/* see note about irq_disable in @ref esb_write_payload */
 	irq_disable(ESB_RADIO_IRQ_NUMBER);
 
 	atomic_clear(&rx_fifo.count);
