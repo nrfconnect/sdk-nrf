@@ -20,7 +20,7 @@ int mpsl_fem_utils_ppi_channel_alloc(uint8_t *ppi_channels, size_t size)
 #endif
 
 	for (int i = 0; i < size; i++) {
-		ch = nrfx_gppi_channel_alloc(domain_id);
+		ch = nrfx_gppi_channel_alloc(domain_id, NULL);
 		if (ch < 0) {
 			return ch;
 		}

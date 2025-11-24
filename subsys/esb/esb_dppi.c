@@ -206,51 +206,51 @@ int esb_ppi_init(void)
 	int ch;
 	uint32_t domain_id = nrfx_gppi_domain_id_get((uint32_t)ESB_DPPIC);
 
-	ch = nrfx_gppi_channel_alloc(domain_id);
+	ch = nrfx_gppi_channel_alloc(domain_id, NULL);
 	if (ch < 0) {
 		goto error;
 	}
 	radio_address_timer_stop = (uint8_t)ch;
 
-	ch = nrfx_gppi_channel_alloc(domain_id);
+	ch = nrfx_gppi_channel_alloc(domain_id, NULL);
 	if (ch < 0) {
 		goto error;
 	}
 	timer_compare0_radio_disable = (uint8_t)ch;
 
-	ch = nrfx_gppi_channel_alloc(domain_id);
+	ch = nrfx_gppi_channel_alloc(domain_id, NULL);
 	if (ch < 0) {
 		goto error;
 	}
 	timer_compare1_radio_txen = (uint8_t)ch;
 
-	ch = nrfx_gppi_channel_alloc(domain_id);
+	ch = nrfx_gppi_channel_alloc(domain_id, NULL);
 	if (ch < 0) {
 		goto error;
 	}
 	disabled_phy_end_egu = (uint8_t)ch;
 
-	ch = nrfx_gppi_channel_alloc(domain_id);
+	ch = nrfx_gppi_channel_alloc(domain_id, NULL);
 	if (ch < 0) {
 		goto error;
 	}
 	egu_timer_start = (uint8_t)ch;
 
-	ch = nrfx_gppi_channel_alloc(domain_id);
+	ch = nrfx_gppi_channel_alloc(domain_id, NULL);
 	if (ch < 0) {
 		goto error;
 	}
 	egu_ramp_up = (uint8_t)ch;
 
 	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
-		ch = nrfx_gppi_channel_alloc(domain_id);
+		ch = nrfx_gppi_channel_alloc(domain_id, NULL);
 		if (ch < 0) {
 			goto error;
 		}
 		radio_end_timer_start = (uint8_t)ch;
 	}
 
-	ch = nrfx_gppi_group_channel_alloc(domain_id);
+	ch = nrfx_gppi_group_channel_alloc(domain_id, NULL);
 	if (ch < 0) {
 		LOG_ERR("gppi_group_alloc failed with: %d\n", ch);
 		return ch;

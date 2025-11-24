@@ -7,7 +7,7 @@
 menuconfig GAZELL
 	bool "Gazell"
 	depends on GZLL && CLOCK_CONTROL_NRF
-	select NRFX_GPPI
+	select NRFX_PPI if HAS_HW_NRF_PPI
 	help
 	  Enable Gazell functionality.
 

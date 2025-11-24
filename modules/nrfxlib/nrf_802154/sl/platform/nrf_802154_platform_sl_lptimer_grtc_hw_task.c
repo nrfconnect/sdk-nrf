@@ -227,7 +227,7 @@ void nrf_802154_platform_sl_lptimer_hw_task_local_domain_connections_clear(void)
 #elif defined(NRF54L_SERIES)
 
 #include <helpers/nrfx_gppi.h>
-#include <soc/interconnect/nrfx_gppi_lumos.h>
+#include <helpers/nrfx_gppi_lumos.h>
 
 /* To trigger RADIO.TASKS_x with GRTC.EVENT_CAPTURE{?}, the following connection chain must be
  * created:

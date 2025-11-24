@@ -140,7 +140,6 @@ static void configure_antenna_diversity(void)
 {
 	nrfx_gpiote_t *gpiote = &GPIOTE_NRFX_INST_BY_NODE(DT_NODELABEL(gpiote0));
 	NRF_TIMER_Type *ad_timer = NRF_TIMER3;
-	int rv;
 
 	nrf_802154_sl_ant_div_cfg_t cfg = {
 		.ant_sel_pin = CONFIG_PTT_ANT_PIN,
@@ -148,10 +147,7 @@ static void configure_antenna_diversity(void)
 		.p_timer = ad_timer
 	};
 
-	rv = nrfx_gppi_channel_alloc(0);
-	__ASSERT_NO_MSG(rv >= 0);
-	cfg.ppi_ch = (uint8_t)rv;
-
+	(void)nrfx_gppi_channel_alloc(0 ,&cfg.ppi_ch);
 	(void)nrfx_gpiote_channel_alloc(gpiote, &cfg.gpiote_ch);
 	nrf_802154_sl_ant_div_mode_t ant_div_auto = 0x02;
 

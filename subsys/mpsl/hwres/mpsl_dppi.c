@@ -10,7 +10,7 @@
 #if defined(DPPI_PRESENT) || defined(LUMOS_XXAA)
 static bool mpsl_hwres_channel_alloc(uint32_t node_id, uint8_t *p_ch)
 {
-	int ch = nrfx_gppi_channel_alloc(node_id);
+	int ch = nrfx_gppi_channel_alloc(node_id, NULL);
 
 	if (ch < 0) {
 		return false;
@@ -32,7 +32,7 @@ bool mpsl_hwres_dppi_channel_alloc(NRF_DPPIC_Type *p_dppic, uint8_t *p_dppi_ch)
 #if defined(PPIB_PRESENT)
 
 #if defined(LUMOS_XXAA)
-#include <soc/interconnect/nrfx_gppi_lumos.h>
+#include <helpers/nrfx_gppi_lumos.h>
 static uint32_t ppib_get_domain(NRF_PPIB_Type *p_ppib)
 {
 	switch ((uint32_t)p_ppib) {
