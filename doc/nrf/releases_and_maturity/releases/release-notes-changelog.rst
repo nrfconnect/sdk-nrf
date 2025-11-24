@@ -244,6 +244,32 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
 
 * Added:
 
+  * Support for the following new device types:
+    * Irrigation System
+    * Soil Sensor
+    * Closure
+    * Closure Panel
+    * Closure Controller
+    * Meter Reference Point
+    * Electrical Energy Tariff
+    * Electrical Meter
+    * Electrical Utility Meter
+    * Camera
+    * Floodlight Camera
+    * Video Doorbell
+    * Snapshot Camera
+    * Chime
+    * Camera Controller
+    * Doorbell
+    * Intercom
+    * Audio Doorbell
+
+  * Improved Data Transport by adding full support for operation over TCP transport, which enables more efficient and reliable transmission of large messages.
+  * The new code-driven approach for the Matter Data Model and Cluster configuration handling.
+    This approach assumes gradually replacing the configuration based on the ZAP files and the ZAP-generated code, and handling the configuration in the source code.
+    For example, to enable a specific cluster or its attribute, the new model requires calling a dedicated delegate and registering the cluster in a source code.
+    The code-driven approach is not yet fully implemented for all the available clusters, but the coverage will be increasing and it is used for the newly created clusters.
+    The new model is meant to be backward compatible with the previous configuration based on the ZAP files and the ZAP-generated code, until the code-driven approach is fully implemented for all the available clusters.
   * The :ref:`ug_matter_gs_tools_matter_west_commands_sync` command to synchronize the ZAP and :file:`zcl.json` files after updating the ZAP tool version.
   * The check to all :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool` commands that verify whether ZAP tool sandbox permissions are correctly set.
     In case of detecting incorrect permissions, the command will prompt the user to accept automatically updating the permissions to required ones.

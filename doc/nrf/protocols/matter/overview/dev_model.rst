@@ -41,7 +41,14 @@ The table also lists the release date for that Matter specification version, and
 |                 |                                                                                                          | Specification         | |NCS| version    |
 | Matter version  | Overview of changes                                                                                      | release date          |                  |
 +=================+==========================================================================================================+=======================+==================+
-| 1.5.0           |                                                                                                          | November 10, 2025     | v3.2.0           |
+| 1.5.0           | - Added support for Cameras that can be certified and interop with Matter-enabled ecosystems.            | November 10, 2025     | v3.2.0           |
+|                 | - Enhanced support for Closures by introducing unified approach and a broad range of devices             |                       |                  |
+|                 |   such as window shades, drapes, awnings, gates, and garage doors.                                       |                       |                  |
+|                 | - Added support for Soil Sensors for smarter water management in garden use cases.                       |                       |                  |
+|                 | - Enhanced Energy Management by enabling devices to exchange standardized information about energy       |                       |                  |
+|                 |   pricing, tariffs, and grid carbon intensity.                                                           |                       |                  |
+|                 | - Improved Data Transport by adding full support for operation over TCP transport, which enables more    |                       |                  |
+|                 |   efficient and reliable transmission of large messages.                                                 |                       |                  |
 +-----------------+----------------------------------------------------------------------------------------------------------+-----------------------+------------------+
 | 1.4.2           | - Added Wi-Fi Only Commissioning using Wi-Fi Unsynchronized Service Discovery (USD) for device           | July 9, 2025          | v3.1.0           |
 |                 |   onboarding without requiring Bluetooth LE radios.                                                      |                       |                  |
