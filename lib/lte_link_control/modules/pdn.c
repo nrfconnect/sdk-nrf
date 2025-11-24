@@ -214,7 +214,7 @@ static void parse_cgev(const char *notif)
 
 	response++;
 
-	while (isspace(*response)) {
+	while (isspace((unsigned char)*response)) {
 		response++;
 	}
 
