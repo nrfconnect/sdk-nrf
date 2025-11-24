@@ -63,9 +63,15 @@ static int exit_ikg(struct sx_pk_acq_req *pkreq)
 {
 
 	int status;
+	struct sx_pk_acq_req oldreq = *pkreq;
 
-	sx_pk_release_req(pkreq->req);
+	/* Acquiring just before releasing ensures that there is at least one user
+	 * requesting asymmetric engine support. This is done to avoid powering
+	 * down CRACEN before ongoing operations have finalized. This relies on
+	 * recursive mutex locking.
+	 */
 	*pkreq = sx_pk_acquire_req(SX_PK_CMD_IK_EXIT);
+	sx_pk_release_req(oldreq.req);
 	pkreq->status = sx_pk_list_ik_inslots(pkreq->req, 0, NULL);
 	if (pkreq->status) {
 		return pkreq->status;
