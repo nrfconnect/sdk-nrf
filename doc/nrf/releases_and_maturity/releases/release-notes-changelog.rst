@@ -490,12 +490,6 @@ Bluetooth samples
   The :ref:`ipc_radio` application is commonly used for multicore builds in other |NCS| samples and projects.
   Hence, this is to align with the common practice.
 
-* Removed support for the ``thingy53/nrf5340/cpuapp/ns`` build target from the following samples:
-
-   * :ref:`peripheral_lbs`
-   * :ref:`peripheral_status`
-   * :ref:`peripheral_uart`
-
 * Disabled legacy pairing in the following samples:
 
    * :ref:`central_nfc_pairing`
