@@ -1,0 +1,16 @@
+# Nordic Semiconductor nRF54H20 Radio MCU
+
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+if SOC_NRF54H20_CPURAD
+
+DT_CHOSEN_Z_CODE = zephyr,code-partition
+DT_CHOSEN_Z_SRAM = zephyr,sram
+
+config BUILD_OUTPUT_ADJUST_LMA
+	depends on !XIP
+	default "$(dt_chosen_partition_addr_hex,$(DT_CHOSEN_Z_CODE)) - \
+		 $(dt_chosen_reg_addr_hex,$(DT_CHOSEN_Z_SRAM))"
+
+endif # SOC_NRF54H20_CPURAD

@@ -1,0 +1,10 @@
+# Nordic Semiconductor nRF54H MCU line
+
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+if SOC_NRF54H20_CPURAD
+
+rsource "Kconfig.defconfig.nrf54h20_cpurad"
+
+endif # SOC_NRF54H20_CPURAD
