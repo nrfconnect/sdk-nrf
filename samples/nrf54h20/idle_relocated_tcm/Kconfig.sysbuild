@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "share/sysbuild/Kconfig"
+
+choice NETCORE
+
+default NETCORE_CUSTOM_RADIO
+
+config NETCORE_CUSTOM_RADIO
+	bool "Custom radio"
+	help
+	  Use custom radio.
+
+endchoice
+
+config NETCORE_IMAGE_NAME
+	default "remote_rad" if NETCORE_CUSTOM_RADIO
+
+config NETCORE_IMAGE_PATH
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/nrf54h20/idle_relocated_tcm/remote" if NETCORE_CUSTOM_RADIO
