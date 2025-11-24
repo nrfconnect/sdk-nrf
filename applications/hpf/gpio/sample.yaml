@@ -11,6 +11,7 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuflpr
       - nrf54lm20dk/nrf54lm20a/cpuflpr
+      - nrf7120dk/nrf7120/cpuflpr
     tags:
       - ci_build
       - sysbuild
@@ -25,6 +26,7 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuflpr
       - nrf54lm20dk/nrf54lm20a/cpuflpr
+      - nrf7120dk/nrf7120/cpuflpr
     tags:
       - ci_build
       - sysbuild
@@ -39,6 +41,7 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuflpr
       - nrf54lm20dk/nrf54lm20a/cpuflpr
+      - nrf7120dk/nrf7120/cpuflpr
     tags:
       - ci_build
       - sysbuild
