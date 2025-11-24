@@ -473,6 +473,7 @@
 /samples/bluetooth/rpc_host/              @nrfconnect/ncs-si-muffin
 /samples/bluetooth/scanning_while_connecting/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/shell_bt_nus/          @nrfconnect/ncs-si-muffin
+/samples/bluetooth/shorter_conn_intervals/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/subrating/             @nrfconnect/ncs-dragoon
 /samples/bluetooth/throughput/            @nrfconnect/ncs-si-muffin
 /samples/bootloader/                      @nrfconnect/ncs-eris
@@ -609,6 +610,7 @@
 /samples/bluetooth/rpc_host/*.rst         @nrfconnect/ncs-si-muffin-doc
 /samples/bluetooth/scanning_while_connecting/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/shell_bt_nus/*.rst     @nrfconnect/ncs-si-muffin-doc
+/samples/bluetooth/shorter_conn_intervals/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/subrating/*.rst        @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/throughput/*.rst       @nrfconnect/ncs-si-muffin-doc
 /samples/bootloader/*.rst                 @nrfconnect/ncs-eris-doc

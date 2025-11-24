@@ -436,6 +436,7 @@ Bluetooth samples
 
 * Added:
 
+  * The :ref:`ble_shorter_conn_intervals` sample to demonstrate how to use the Bluetooth Shorter Connection Intervals feature.
   * The :ref:`bluetooth_path_loss_monitoring` sample.
   * The :ref:`samples_test_app` application to demonstrate how to use the Bluetooth LE Test GATT Server and test Bluetooth LE functionality in peripheral samples.
   * Experimental support for the nRF54LV10A SoC in the following Bluetooth samples:
@@ -475,6 +476,7 @@ Bluetooth samples
     * :ref:`ble_radio_notification_conn_cb`
     * :ref:`bt_scanning_while_connecting`
     * :ref:`shell_bt_nus`
+    * :ref:`ble_shorter_conn_intervals`
     * :ref:`ble_subrating`
     * :ref:`ble_throughput`
 
