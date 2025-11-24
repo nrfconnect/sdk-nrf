@@ -61,6 +61,12 @@ static int handle_coap_auth(int socket)
 	uint16_t mid = sys_cpu_to_be16(coap_next_id());
 	size_t request_size;
 
+	if (!packet_buf) {
+		LOG_ERR("Failed to allocate memory for CoAP auth request buffer");
+		err = -ENOMEM;
+		goto end;
+	}
+
 	/* Make new random token */
 	sys_rand_get(token, COAP_TOKEN_MAX_LEN);
 
