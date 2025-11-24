@@ -1865,3 +1865,7 @@ ci_tests_subsys_rtt:
 ci_tests_subsys_swo:
   files:
     - nrf/tests/subsys/swo/
+
+ci_tests_drivers_can:
+  files:
+    - zephyr/drivers/can/
