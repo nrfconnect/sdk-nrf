@@ -92,6 +92,7 @@ config MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE
 
 config MBEDTLS_ENABLE_HEAP
 	bool "Global heap for mbed TLS"
+	default y if BT_HOST_CRYPTO_PRNG || BT_ECC || BT_GATT_CACHING || BT_CRYPTO
 	help
 	  This option enables the mbedtls to use the heap. This setting must
 	  be global so that various applications and libraries in Zephyr do not
