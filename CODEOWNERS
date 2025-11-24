@@ -523,6 +523,8 @@
 /samples/nrf5340/empty_app_core/          @nrfconnect/ncs-si-muffin
 /samples/nrf5340/extxip_smp_svr/          @nrfconnect/ncs-eris
 /samples/nrf54h20/empty_app_core/         @nrfconnect/ncs-aurora
+/samples/nrf54h20/idle_relocated_tcm/     @nrfconnect/ncs-si-muffin
+/samples/nrf54h20/radio_loader/           @nrfconnect/ncs-si-muffin
 /samples/ironside_se/                     @nrfconnect/ncs-aurora
 /samples/nrf_compress/                    @nordicjm
 /samples/nrf_profiler/                    @nrfconnect/ncs-si-bluebagel
@@ -646,6 +648,7 @@
 /samples/net/**/*.rst                     @nrfconnect/ncs-cia-doc
 /samples/net/coap_client/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/nfc/**/*.rst                     @nrfconnect/ncs-si-muffin-doc
+/samples/nrf54h20/idle_relocated_tcm/*.rst @nrfconnect/ncs-si-muffin-doc
 /samples/nrf5340/empty_app_core/*.rst     @nrfconnect/ncs-si-muffin-doc
 /samples/nrf5340/extxip_smp_svr/*.rst     @nrfconnect/ncs-eris-doc
 /samples/nrf5340/netboot/*.rst            @nrfconnect/ncs-eris-doc

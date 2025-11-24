@@ -855,6 +855,11 @@ Other samples
   * Added a new testing step demonstrating how to calculate event propagation statistics.
     Also added the related test preset for the :file:`calc_stats.py` script (:file:`nrf/scripts/nrf_profiler/stats_nordic_presets/app_event_manager_profiler_tracer.json`).
 
+* Added:
+
+  * The :ref:`idle_relocated_tcm_sample` sample to demonstrate how to relocate the firmware to the TCM memory at boot time.
+    The sample also uses the ``radio_loader`` sample image (located in :file:`nrf/samples/nrf54h20/radio_loader`), which cannot be tested as a standalone sample, to relocate the firmware from the MRAM to the TCM memory at boot time.
+
 Drivers
 =======
 

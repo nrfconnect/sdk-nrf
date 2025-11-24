@@ -1,0 +1,133 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/{
+	soc{
+		cpurad_data_ram: sram@23020000 {
+			compatible = "mmio-sram";
+			reg = < 0x23020000 0x10000 >;
+			#address-cells = < 0x1 >;
+			#size-cells = < 0x1 >;
+			ranges = < 0x0 0x23020000 0x10000 >;
+		};
+	};
+};
+
+&mram1x {
+	/delete-node/ partitions;
+
+	/* Redefine the "partitions" DTS node. */
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		cpuapp_boot_partition: boot_partition: partition@30000 {
+			reg = < 0x30000 0x10000 >;
+			label = "mcuboot";
+		};
+
+		slot0_partition: partition@40000 {
+			reg = <0x40000 DT_SIZE_K(656)>;
+		};
+
+		cpuapp_slot0_partition: partition@40800 {
+			reg = <0x40800 DT_SIZE_K(326)>;
+			label = "image-0";
+		};
+
+		cpurad_slot0_partition: cpurad_loader_partition: partition@92000 {
+			label = "cpurad_loader_partition";
+			reg = <0x92000 DT_SIZE_K(8)>;  /* 8 KB allocated (~4 KB actual) */
+		};
+
+		/* Remote firmware location in MRAM (fixed size for memcpy) */
+		cpurad_loaded_fw: partition@94000 {
+			label = "cpurad_loaded_fw";
+			reg = <0x94000 DT_SIZE_K(128)>;  /* 128 KB fixed */
+		};
+
+		cpurad_slot0_partition_container: partition@b2000 {
+			reg = <0xb2000 DT_SIZE_K(192)>; /* 238 - 128 - 8 = 192 KB allocated */
+		};
+
+		cpuppr_code_partition: partition@e4000 {
+			reg = <0xe4000 DT_SIZE_K(64)>;
+		};
+
+		cpuflpr_code_partition: partition@f4000 {
+			reg = <0xf4000 DT_SIZE_K(48)>;
+		};
+
+		slot1_partition: partition@100000 {
+			reg = <0x100000 DT_SIZE_K(656)>;
+		};
+
+		cpuapp_slot1_partition: partition@100800 {
+			reg = <0x100800 DT_SIZE_K(326)>;
+		};
+
+		cpurad_loader_partition_slot1: cpurad_slot1_partition: partition@152000 {
+			label = "cpurad_loader_partition_slot1";
+			reg = <0x152000 DT_SIZE_K(8)>;  /* 8 KB allocated (~4 KB actual) */
+		};
+
+		/* Remote firmware location in MRAM (fixed size for memcpy) */
+		cpurad_loaded_fw_slot1: partition@154000 {
+			label = "cpurad_loaded_fw_slot1";
+			reg = <0x154000 DT_SIZE_K(128)>;  /* 128 KB fixed */
+		};
+
+		cpurad_slot1_partition_container: partition@174000 {
+			reg = <0x174000 DT_SIZE_K(192)>; /* 238 - 128 - 8 = 192 KB allocated */
+		};
+
+		storage_partition: partition@1a4000 {
+			reg = <0x1a4000 DT_SIZE_K(40)>;
+		};
+
+		periphconf_partition: partition@1ae000 {
+			reg = <0x1ae000 DT_SIZE_K(8)>;
+		};
+
+		secondary_partition: partition@1b0000 {
+			reg = <0x1b0000 DT_SIZE_K(64)>;
+		};
+
+		secondary_periphconf_partition: partition@1c0000 {
+			reg = <0x1c0000 DT_SIZE_K(8)>;
+		};
+
+		/* NB: A gap has been left here for future partitions */
+
+		/* 0x1fd000 was chosen for secure_storage_partition such that
+		 * there is no more space after secure_storage_partition.
+		 */
+		secure_storage_partition: partition@1fd000 {
+			compatible = "fixed-subpartitions";
+			reg = <0x1fd000 DT_SIZE_K(12)>;
+			ranges = <0x0 0x1fd000 0x3000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			cpuapp_crypto_partition: partition@0 {
+				reg = <0x0 DT_SIZE_K(4)>;
+			};
+
+			cpurad_crypto_partition: partition@1000 {
+				reg = <0x1000 DT_SIZE_K(4)>;
+			};
+
+			cpuapp_its_partition: partition@2000 {
+				reg = <0x2000 DT_SIZE_K(2)>;
+			};
+
+			cpurad_its_partition: partition@2800 {
+				reg = <0x2800 DT_SIZE_K(2)>;
+			};
+		};
+	};
+};
