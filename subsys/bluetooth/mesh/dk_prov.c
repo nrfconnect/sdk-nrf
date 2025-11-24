@@ -8,6 +8,7 @@
 #include <dk_buttons_and_leds.h>
 #include <zephyr/drivers/hwinfo.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/sys/byteorder.h>
 
 LOG_MODULE_REGISTER(dk_bt_mesh_prov, CONFIG_BT_MESH_DK_PROV_LOG_LEVEL);
 
@@ -45,7 +46,7 @@ static void oob_button_timeout(void)
 	dk_button_handler_remove(&button_handler);
 	dk_set_leds(DK_NO_LEDS_MSK);
 
-	bt_mesh_input_number(button_press_count);
+	bt_mesh_input_numeric((uint8_t *)&button_press_count, sizeof(button_press_count));
 	oob_state = OOB_IDLE;
 }
 
@@ -64,8 +65,17 @@ static void oob_timer_handler(struct k_work *work)
 	}
 }
 
-static int output_number(bt_mesh_output_action_t action, uint32_t number)
+static int output_numeric(bt_mesh_output_action_t action, uint8_t *numeric, size_t size)
 {
+	uint32_t number = 0;
+
+	if (size > sizeof(number)) {
+		printk("Wrong OOB size: %u\n", size);
+		return -EINVAL;
+	}
+
+	sys_get_le(&number, numeric, size);
+
 	if (IS_ENABLED(CONFIG_BT_MESH_DK_PROV_OOB_LOG) &&
 	    action == BT_MESH_DISPLAY_NUMBER) {
 		printk("OOB Number: %u\n", number);
@@ -162,7 +172,7 @@ static const struct bt_mesh_prov prov = {
 		| BT_MESH_BLINK
 #endif
 		),
-	.output_number = output_number,
+	.output_numeric = output_numeric,
 	.output_string = output_string,
 	.input = input,
 #ifdef CONFIG_BT_MESH_DK_PROV_OOB_BUTTON
