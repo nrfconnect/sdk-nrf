@@ -320,8 +320,11 @@ IPC radio firmware
 Matter bridge
 -------------
 
-* Added support for the nRF54LM20 DK working with both Thread and Wi-Fi protocol variants.
-  For the Wi-Fi protocol variant, the nRF54LM20 DK works with the nRF7002-EB II shield attached.
+* Added:
+
+  * Support for the nRF54LM20 DK working with both Thread and Wi-Fi protocol variants.
+    For the Wi-Fi protocol variant, the nRF54LM20 DK works with the nRF7002-EB II shield attached.
+  * The ``matter_bridge list`` command to show a list of all bridged devices and their endpoints.
 
 * Updated:
 
@@ -331,6 +334,7 @@ Matter bridge
     See the :ref:`migration guide <migration_3.2_required>` for more information.
   * By moving code from :file:`samples/matter/common/src/bridge` to :file:`applications/matter_bridge/src/core` and :file:`applications/matter_bridge/src/ble` directories.
   * The Identify cluster implementation in the application to use the code-driven approach instead of the zap-driven approach.
+  * The default number of Bluetooth Low Energy connections that can be selected using the kconfig configuration from ``10`` to ``8`` for the Matter bridge over Thread configuration.
 
 nRF5340 Audio
 -------------
