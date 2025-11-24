@@ -109,6 +109,21 @@ struct sx_pk_acq_req {
  */
 struct sx_pk_acq_req sx_pk_acquire_req(const struct sx_pk_cmd_def *cmd);
 
+/** Get a SilexPK request to perform the given operation when already locked
+ *
+ * The returned sx_pk_acq_req structure contains a status and a pointer to
+ * a reserved hardware accelerator instance. The pointer is valid and
+ * usable only if status is ::SX_OK. Otherwise it's NULL.
+ *
+ * @note This API expects that the asymmetric mutex is already acquired.
+ *
+ * @param[in] cmd The command definition (for example ::SX_PK_CMD_MOD_EXP)
+ * @return The acceleration request for this operation
+ *
+ * @see sx_pk_release_req()
+ */
+struct sx_pk_acq_req sx_pk_acquire_req_locked(const struct sx_pk_cmd_def *cmd);
+
 struct sx_pk_ecurve;
 
 /** Least significant bit of Ax is 1 (flag A) */
