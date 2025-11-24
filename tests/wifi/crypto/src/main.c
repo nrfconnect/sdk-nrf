@@ -17,7 +17,7 @@
 #include <errno.h>
 
 #include <psa/crypto.h>
-#include "wifi_crypto.h"
+#include "wifi_keys.h"
 
 #include "ipc_if.h"
 
@@ -378,9 +378,9 @@ ZTEST(wifi_crypto, test_main)
 	uint32_t ccmp256_key[8] = {0x0C0D0E0F, 0x08090A0B, 0x04050607, 0x00010203,
 				   0xF2BDD52F, 0x514A8A19, 0xCE371185, 0xC97C1F67};
 
-	wifi_crypto_key_type_t type = PEER_UCST_ENC;
-	psa_key_attributes_t attr = wifi_crypto_key_attributes_init(type, 0, 0);
-	uint32_t key_length = wifi_crypto_get_key_size_in_bytes(type);
+	wifi_keys_key_type_t type = PEER_UCST_ENC;
+	psa_key_attributes_t attr = wifi_keys_key_attributes_init(type, 0, 0);
+	uint32_t key_length = wifi_keys_get_key_size_in_bytes(type);
 	psa_key_id_t key_id;
 
 	psa_status_t status;

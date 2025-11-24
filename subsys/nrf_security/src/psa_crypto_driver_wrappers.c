@@ -112,7 +112,7 @@
 #endif /* PSA_CRYPTO_DRIVER_CRACEN */
 
 // TODO ifdefs ??
-#include "wifi_crypto.h"
+#include "wifi_keys.h"
 
 /* Include TF-M builtin key driver */
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
@@ -481,7 +481,7 @@ psa_driver_wrapper_get_key_buffer_size_from_key_data(const psa_key_attributes_t 
 
 	*key_buffer_size = 0;
 	switch (location) {
-	case PSA_KEY_LOCATION_WIFI_CRYPTO:
+	case PSA_KEY_LOCATION_WIFI_KEYS:
 		*key_buffer_size = 32; // ?? max key size in bytes
 		return PSA_SUCCESS;
 #if defined(PSA_CRYPTO_DRIVER_CRACEN)
@@ -626,9 +626,9 @@ psa_status_t psa_driver_wrapper_import_key(const psa_key_attributes_t *attribute
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
 	switch (location) {
-	case PSA_KEY_LOCATION_WIFI_CRYPTO:
-		status = wifi_crypto_import_key(attributes, data, data_length, key_buffer,
-						key_buffer_size, key_buffer_length, bits);
+	case PSA_KEY_LOCATION_WIFI_KEYS:
+		status = wifi_keys_import_key(attributes, data, data_length, key_buffer,
+					      key_buffer_size, key_buffer_length, bits);
 		return status;
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
 #if defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER)
