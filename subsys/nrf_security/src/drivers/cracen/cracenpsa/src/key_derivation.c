@@ -193,6 +193,15 @@ static psa_status_t start_mac_operation(cracen_key_derivation_operation_t *opera
 #endif
 
 #if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
+static size_t pbkdf2_prf_block_length(psa_algorithm_t alg)
+{
+	if (alg == PSA_ALG_PBKDF2_AES_CMAC_PRF_128) {
+		return SX_BLKCIPHER_AES_BLK_SZ;
+	} else {
+		return PSA_HASH_BLOCK_LENGTH(PSA_ALG_GET_HASH(alg));
+	}
+}
+
 static size_t pbkdf2_prf_output_length(psa_algorithm_t alg)
 {
 	if (alg == PSA_ALG_PBKDF2_AES_CMAC_PRF_128) {
@@ -439,15 +448,15 @@ cracen_key_derivation_input_bytes_pbkdf2(cracen_key_derivation_operation_t *oper
 			return PSA_ERROR_BAD_STATE;
 		}
 
-		size_t output_length = pbkdf2_prf_output_length(operation->alg);
+		size_t block_length = pbkdf2_prf_block_length(operation->alg);
 		bool aes_cmac_prf = operation->alg == PSA_ALG_PBKDF2_AES_CMAC_PRF_128;
 
-		if (aes_cmac_prf && data_length != output_length) {
+		if (aes_cmac_prf && data_length != block_length) {
 			/* Password must be 128-bit (AES Key size) */
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 
-		if (data_length > output_length) {
+		if (data_length > block_length) {
 			size_t hash_length = 0;
 			/* Password needs to be hashed. */
 			psa_status_t status = cracen_hash_compute(
