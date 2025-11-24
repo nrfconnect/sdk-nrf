@@ -25,7 +25,11 @@ function(check_merged_slot_boundaries merged_partition images)
     set(end_offset)
     sysbuild_get(start_offset IMAGE ${image} VAR CONFIG_ROM_START_OFFSET KCONFIG)
     sysbuild_get(end_offset IMAGE ${image} VAR CONFIG_ROM_END_OFFSET KCONFIG)
-    dt_chosen(code_flash TARGET ${image} PROPERTY "zephyr,code-partition")
+    dt_chosen(code_flash TARGET ${image} PROPERTY "fw-to-relocate")
+    if("${code_flash}" STREQUAL "")
+      dt_chosen(code_flash TARGET ${image} PROPERTY "zephyr,code-partition")
+    endif()
+
     dt_partition_addr(code_addr PATH "${code_flash}" TARGET ${image} REQUIRED ABSOLUTE)
     dt_reg_size(code_size TARGET ${image} PATH ${code_flash})
 

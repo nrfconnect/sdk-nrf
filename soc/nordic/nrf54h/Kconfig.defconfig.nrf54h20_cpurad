@@ -1,0 +1,20 @@
+# Nordic Semiconductor nRF54H20 Radio MCU
+
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+if SOC_NRF54H20_CPURAD
+
+# Support for firmware relocation pattern (load from MRAM, run from TCM)
+# If 'fw-to-relocate' chosen node exists, use it to calculate LMA adjustment
+# Otherwise, fall back to standard code-partition calculation
+DT_CHOSEN_FW_TO_RELOCATE = fw-to-relocate
+DT_CHOSEN_Z_CODE = zephyr,code-partition
+DT_CHOSEN_Z_SRAM = zephyr,sram
+
+config BUILD_OUTPUT_ADJUST_LMA
+	default "$(dt_chosen_partition_addr_hex,$(DT_CHOSEN_FW_TO_RELOCATE)) - \
+		 $(dt_chosen_reg_addr_hex,$(DT_CHOSEN_Z_CODE))" \
+		if "$(dt_chosen_enabled,$(DT_CHOSEN_FW_TO_RELOCATE))" = "y"
+
+endif # SOC_NRF54H20_CPURAD
