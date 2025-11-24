@@ -433,6 +433,8 @@ def generate_input(data: Data):
         log.wrn('Fetching input files from a build directory is experimental for now.')
         check_external_tools(Path(args.build_dir[0][0]))
         for build_dir, *targets in args.build_dir:
+            register_application_root(data, Path(build_dir))
+            register_module_roots(data, Path(build_dir))
             try:
                 domains = yaml.safe_load(open(os.path.join(build_dir, 'domains.yaml')))
                 domains = [d['name'] for d in domains['domains']]
@@ -440,9 +442,107 @@ def generate_input(data: Data):
                 domains = ['.']
             for domain in domains:
                 domain_build_dir = Path(os.path.join(build_dir, domain))
-                if len(targets) == 0:
-                    targets = [DEFAULT_TARGET]
-                log.dbg(f'INPUT: build directory: {domain_build_dir}, targets: {targets}')
+                targets_to_process = targets if len(targets) > 0 else [DEFAULT_TARGET]
+                log.dbg(f'INPUT: build dir: {domain_build_dir}, targets: {targets_to_process}')
                 b = InputBuild(data, domain_build_dir)
-                for target in targets:
+                for target in targets_to_process:
                     b.generate_from_target(target)
+
+
+def register_application_root(data: Data, build_dir: Path):
+    '''Detect application source root and store as workspace-relative path.'''
+    root = detect_application_root(build_dir)
+    if root is None:
+        return
+    workspace = Path(util.west_topdir()).resolve()
+    try:
+        rel = root.resolve().relative_to(workspace)
+    except ValueError:
+        return
+    rel_str = rel.as_posix()
+    if rel_str == '.':
+        rel_str = ''
+    data.application_roots.add(rel_str)
+
+
+def register_module_roots(data: Data, build_dir: Path):
+    '''Parse module list files in the build directory and store their roots.'''
+    for file_name in ('zephyr_modules.txt', 'sysbuild_modules.txt'):
+        modules_file = Path(build_dir) / file_name
+        if not modules_file.exists():
+            continue
+        with open(modules_file) as fd:
+            for line in fd:
+                line = line.strip()
+                if not line or line.startswith('#'):
+                    continue
+                match = re.fullmatch(r'"([^"]*)":"([^"]*)":"([^"]*)"', line)
+                if match is None:
+                    continue
+                register_module_root_path(data, match.group(2))
+
+
+def register_module_root_path(data: Data, source: str):
+    '''Register module directory if it is inside the west workspace.'''
+    source = source.strip()
+    if (not source) or source.startswith('${'):
+        return
+    path = Path(source)
+    if not path.is_absolute():
+        path = (Path(util.west_topdir()) / path).resolve()
+    else:
+        path = path.resolve()
+    workspace = Path(util.west_topdir()).resolve()
+    try:
+        rel = path.relative_to(workspace)
+    except ValueError:
+        return
+    rel_str = rel.as_posix()
+    if rel_str == '.':
+        rel_str = ''
+    data.module_roots.add(rel_str)
+
+
+def detect_application_root(build_dir: Path) -> 'Path|None':
+    '''Try to detect application source directory for provided build directory.'''
+    cache_path = locate_cmake_cache(build_dir)
+    if cache_path is not None:
+        app_dir = parse_application_dir(cache_path)
+        if app_dir is not None:
+            return app_dir
+    parent = build_dir.parent
+    return parent if parent.exists() else None
+
+
+def locate_cmake_cache(build_dir: Path) -> 'Path|None':
+    '''Return best-matching CMakeCache.txt file.'''
+    domain_file = build_dir / 'domains.yaml'
+    if domain_file.exists():
+        try:
+            domains = yaml.safe_load(open(domain_file))
+            default_domain = domains.get('default')
+            if default_domain:
+                candidate = build_dir / default_domain / 'CMakeCache.txt'
+                if candidate.exists():
+                    return candidate
+        except Exception: # pylint: disable=broad-except
+            pass
+    candidate = build_dir / 'CMakeCache.txt'
+    return candidate if candidate.exists() else None
+
+
+def parse_application_dir(cache_path: Path) -> 'Path|None':
+    '''Extract APPLICATION_SOURCE_DIR from CMake cache.'''
+    try:
+        cache_content = cache_path.read_text()
+    except FileNotFoundError:
+        return None
+    match = re.search(r'^APPLICATION_SOURCE_DIR(?:[:A-Z]+)?=(.*)$', cache_content, re.M)
+    if match is not None:
+        value = match.group(1).strip()
+        if value:
+            path = Path(value)
+            if path.exists():
+                return path
+            return path
+    return None
