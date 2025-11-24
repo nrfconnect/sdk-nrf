@@ -8,7 +8,9 @@ tests:
   applications.hpf.gpio.mbox:
     build_only: true
     sysbuild: true
-    platform_allow: nrf54l15dk/nrf54l15/cpuflpr
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuflpr
+      - nrf7120pdk/nrf7120/cpuflpr
     tags:
       - ci_build
       - sysbuild
@@ -20,7 +22,9 @@ tests:
   applications.hpf.gpio.icmsg:
     build_only: true
     sysbuild: true
-    platform_allow: nrf54l15dk/nrf54l15/cpuflpr
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuflpr
+      - nrf7120pdk/nrf7120/cpuflpr
     tags:
       - ci_build
       - sysbuild
@@ -32,7 +36,9 @@ tests:
   applications.hpf.gpio.icbmsg:
     sysbuild: true
     build_only: true
-    platform_allow: nrf54l15dk/nrf54l15/cpuflpr
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuflpr
+      - nrf7120pdk/nrf7120/cpuflpr
     tags:
       - ci_build
       - sysbuild
