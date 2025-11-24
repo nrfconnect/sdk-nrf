@@ -236,8 +236,8 @@ Adding a simulated bridged device to the Matter bridge
       * ``770`` - Temperature Sensor.
       * ``775`` - Humidity Sensor.
 
-   * *["node label"]*  is the node label for the bridged device.
-      The argument is optional and you can use it to better personalize the device in your application.
+   * *["node label"]* is the node label for the bridged device.
+     The argument is optional and you can use it to better personalize the device in your application.
 
    Example command:
 
@@ -300,7 +300,7 @@ Adding a Bluetooth LE bridged device to the Matter bridge
    * *<ble_device_index>* is the Bluetooth LE device index on the list returned by the ``scan`` command.
      The argument is mandatory and accepts only the values returned by the ``scan`` command.
 
-   * *["node label"]*  is the node label for the bridged device.
+   * *["node label"]* is the node label for the bridged device.
      The argument is optional and you can use it to better personalize the device in your application.
 
    Example command:
@@ -371,6 +371,29 @@ Removing a bridged device from the Matter bridge
    .. code-block:: console
 
       uart:~$ matter_bridge remove 3
+
+Showing a list of all bridged devices and their endpoints
+   Use the following command:
+
+   .. parsed-literal::
+      :class: highlight
+
+      matter_bridge list
+
+   The terminal output is similar to the following one:
+
+   .. code-block:: console
+
+      Bridged devices list:
+      ---------------------------------------------------------------------
+      | Endpoint ID |        Name        |           Type
+      ---------------------------------------------------------------------
+      | 3           | My Light           | OnOffLight (0x0100)
+      | 4           | My Temperature     | TemperatureSensor (0x0302)
+      | 5           | My Humidity        | HumiditySensor (0x0307)
+      | 6           | My Light Switch    | OnOffLightSwitch (0x0103)
+      ---------------------------------------------------------------------
+      Total: 4 device(s)
 
 Configuration
 *************
@@ -553,7 +576,6 @@ Every Bluetooth LE bridged device uses a separate Bluetooth LE connection, so yo
 Since the Matter stack uses one Bluetooth LE connection for commissioning, the maximum number of connections you can use for bridged devices is one less than is configured using the :kconfig:option:`CONFIG_BT_MAX_CONN` Kconfig option.
 
 Increasing the number of Bluetooth LE connections affects the RAM usage on both the application and network cores.
-The current maximum number of Bluetooth LE connections that can be selected using the default configuration is ``10``, which effectively means 9 bridged devices.
 
 .. tabs::
 
@@ -568,6 +590,7 @@ The current maximum number of Bluetooth LE connections that can be selected usin
          .. group-tab:: Matter bridge over Wi-Fi
 
             You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
+            The default number of Bluetooth LE connections that you can select using the default configuration is ``10`` for Matter, which effectively means 9 bridged devices.
 
             Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` (which effectively means 19 bridged devices) by decreasing the size of Bluetooth LE TX/RX buffers:
 
@@ -581,7 +604,7 @@ The current maximum number of Bluetooth LE connections that can be selected usin
             You cannot increase the default number of Bluetooth LE connections in this configuration using overlays.
             This is because the configuration uses both Thread and Bluetooth LE protocols, and limited RAM memory.
             You can still increase the number of connections by modifying the board files and decreasing the buffer sizes.
-            The default number of connections is ``10``, which effectively means 9 bridged devices.
+            The default number of connections is ``8``, which effectively means 7 bridged devices.
 
    .. group-tab:: nRF70 DKs
 
