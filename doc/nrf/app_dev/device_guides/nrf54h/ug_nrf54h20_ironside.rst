@@ -735,58 +735,6 @@ UICR.SECURESTORAGE.ITS
   UICR.SECURESTORAGE.ITS.RADIOCORESIZE1KB
     Sets the size of the ``RADIOCORE`` domain partition for ITS, specified in 1 kiB blocks.
 
-UICR.SECONDARY
-==============
-
-:kconfig:option:`CONFIG_GEN_UICR_SECONDARY` configures the secondary firmware boot system, which allows |ISE| to boot alternative firmware in response to specific conditions or triggers.
-This feature enables a recovery firmware setup through a dual-firmware configuration that includes both main and recovery firmware.
-
-The UICR.SECONDARY configuration consists of multiple sub-registers organized into functional groups:
-
-UICR.SECONDARY.ENABLE
-  Controls whether the secondary firmware boot feature is enabled.
-
-UICR.SECONDARY.PROCESSOR
-  Specifies which processor should be used to boot the secondary firmware.
-  Valid values are:
-
-  * ``APPLICATION`` - Boot secondary firmware on the application domain CPU.
-  * ``RADIOCORE`` - Boot secondary firmware on the radio core CPU.
-
-UICR.SECONDARY.ADDRESS
-  Sets the start address of the secondary firmware.
-  This value is used as the initial value of the secure Vector Table Offset Register (VTOR) after CPU reset.
-  The address must be aligned to a 4 KiB boundary.
-  Bits [11:0] are ignored.
-
-UICR.SECONDARY.TRIGGER
-  Configures automatic triggers that cause |ISE| to boot the secondary firmware instead of the primary firmware.
-
-  UICR.SECONDARY.TRIGGER.ENABLE
-    Controls whether automatic triggers are enabled to boot the secondary firmware.
-
-  UICR.SECONDARY.TRIGGER.RESETREAS
-    Specifies which reset reasons will trigger an automatic boot into the secondary firmware.
-    Multiple triggers can be enabled simultaneously by setting the corresponding bits:
-
-    * ``APPLICATIONWDT0`` - Application domain watchdog 0 reset
-    * ``APPLICATIONWDT1`` - Application domain watchdog 1 reset
-    * ``APPLICATIONLOCKUP`` - Application domain CPU lockup reset
-    * ``RADIOCOREWDT0`` - Radio core watchdog 0 reset
-    * ``RADIOCOREWDT1`` - Radio core watchdog 1 reset
-    * ``RADIOCORELOCKUP`` - Radio core CPU lockup reset
-
-UICR.SECONDARY.PROTECTEDMEM
-  Identical to :kconfig:option:`CONFIG_GEN_UICR_PROTECTEDMEM`, but applies to the secondary firmware.
-
-UICR.SECONDARY.WDTSTART
-  Identical to :kconfig:option:`CONFIG_GEN_UICR_WDTSTART`, but applies to the secondary firmware boot process.
-  Note that if RADIOCORE is specified in ``UICR.SECONDARY.PROCESSOR``, the WDT instances used are the ones in the radio core.
-
-UICR.SECONDARY.PERIPHCONF
-  Identical to UICR.PERIPHCONF, but applies to the secondary firmware boot process.
-
-
 .. _ug_nrf54h20_ironside_se_debug:
 
 Debugging
@@ -953,9 +901,9 @@ To enable secondary firmware support, you must complete the following steps:
 
       CONFIG_GEN_UICR_SECONDARY=y
 
-2. Create a separate Zephyr application for your secondary firmware (for example in a :file:`secondary/` directory).
+#. Create a separate Zephyr application for your secondary firmware (for example in a :file:`secondary/` directory).
 
-3. Include the secondary image as an external project in :file:`sysbuild.cmake`:
+#. Include this Zephyr application as an external project in :file:`sysbuild.cmake`:
 
    .. code-block:: cmake
 
@@ -964,14 +912,27 @@ To enable secondary firmware support, you must complete the following steps:
         SOURCE_DIR ${APP_DIR}/secondary
       )
 
-4. **Configure secondary firmware**: The secondary firmware image itself must enable the appropriate Kconfig option to indicate it is a secondary firmware.
+#. *Configure secondary firmware Kconfig*: The secondary firmware image itself must enable the appropriate Kconfig option to indicate it is a secondary firmware.
    Add the following to your secondary firmware's :file:`prj.conf`:
 
    .. code-block:: kconfig
 
       CONFIG_IS_IRONSIDE_SE_SECONDARY_IMAGE=y
 
-5. **Optional: Configure automatic triggers**: If you want automatic triggering based on reset reasons, add trigger options to your :file:`sysbuild/uicr.conf`:
+#. *Configure secondary firmware placement*: The secondary firmware image must be placed in the DT partition named ``secondary_partition``.
+   Add the following to your secondary firmware's :file:`app.overlay`:
+
+   .. code-block:: devicetree
+
+      / {
+          chosen {
+              zephyr,code-partition = &secondary_partition;
+          };
+      };
+
+#. *Optional: Configure secondary firmware features*: Additional features can be configured by adding more options to your :file:`sysbuild/uicr.conf`:
+
+   For instance, if you want automatic triggering based on reset reasons, add trigger options:
 
    .. code-block:: kconfig
 
@@ -994,9 +955,27 @@ Setting bit 5 in ``CTRLAP.BOOTMODE`` will also trigger secondary firmware.
 
 * The integrity check of the memory specified in :kconfig:option:`CONFIG_GEN_UICR_PROTECTEDMEM` fails.
 * Any boot failure occurs, such as missing primary firmware or failure to apply ``UICR.PERIPHCONF`` configurations.
-* A local domain is reset with a reason configured to trigger the secondary firmware.
-* If one of the triggers configured in :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER` and related options occurs.
+* If :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER` is enabled, and a UICR-configurable trigger occurs.
+  See the following table for UICR-configurable triggers.
 
+.. list-table:: Secondary firmware trigger Kconfig options
+   :header-rows: 1
+   :widths: auto
+
+   * - Kconfig option
+     - Description
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER_APPLICATIONWDT0`
+     - Trigger on Application domain watchdog 0 reset
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER_APPLICATIONWDT1`
+     - Trigger on Application domain watchdog 1 reset
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER_APPLICATIONLOCKUP`
+     - Trigger on Application domain CPU lockup reset
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER_RADIOCOREWDT0`
+     - Trigger on Radio core watchdog 0 reset
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER_RADIOCOREWDT1`
+     - Trigger on Radio core watchdog 1 reset
+   * - :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER_RADIOCORELOCKUP`
+     - Trigger on Radio core CPU lockup reset
 
 Protection
 ==========
@@ -1014,7 +993,17 @@ As with the primary firmware, |ISE| does not facilitate updating the secondary f
 The secondary image can be updated by other components as long as :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_PROTECTEDMEM` is not set.
 Using the secondary firmware as a bootloader capable of validating and updating a second image enables updating firmware in the secondary boot flow while having secure boot enabled through :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_PROTECTEDMEM`.
 
+Secondary processor
+===================
 
+By default, the secondary firmware uses the application processor.
+The radio core can be used instead by enabling the :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_PROCESSOR_RADIOCORE` option.
+
+Changing the secondary firmware location
+========================================
+
+You can customize the location of the secondary firmware by modifying the ``secondary_partition`` DT partition in both the UICR image and the secondary firmware image.
+This is typically done by editing the relevant devicetree source files (such as ``nrf54h20dk_nrf54h20_common.dts`` or board-specific overlay files) in your application and UICR image projects.
 
 .. _ug_nrf54h20_ironside_se_cpuconf_service:
 
@@ -1137,11 +1126,11 @@ CTRLAP.BOOTMODE register format
 
 The format of the CTRLAP.MAILBOX.BOOTMODE register is described in the following table.
 
-+------------------+--------+------------------+-----+----------------+--------+------------+
-| Bit numbers      | 31-8   | 7                | 6-5 | 4              | 3-1    | 0          |
-+------------------+--------+------------------+-----+----------------+--------+------------+
-| Field            | N/A    | Reserved         | RFU | SAFEMODE (ROM) | OPCODE | MODE (ROM) |
-+------------------+--------+------------------+-----+----------------+--------+------------+
++------------------+--------+------------+-----+----------------+----------------+--------+------------+
+| Bit numbers      | 31-8   | 7          | 6   | 5              | 4              | 3-1    | 0          |
++------------------+--------+------------+-----+----------------+----------------+--------+------------+
+| Field            | N/A    | DEBUGWAIT  | RFU | SECONDARYMODE  | SAFEMODE (ROM) | OPCODE | MODE (ROM) |
++------------------+--------+------------+-----+----------------+----------------+--------+------------+
 
 .. _ug_nrf54h20_ironside_se_bootstatus_register_format:
 
@@ -1161,11 +1150,11 @@ The BOOTSTAGE field indicates which component in the boot sequence encountered a
 
 If ``BOOTSTAGE`` is set to ``0xC`` or ``0xD``, the register has the following format:
 
-+------------------+-------+-----------+-------+-----------+-----------+-----------+-----+-------------+
-| Bit numbers      | 31-28 | 27-24     | 23-22 | 21-15     | 14-12     | 11-9      | 8   | 7-0         |
-+------------------+-------+-----------+-------+-----------+-----------+-----------+-----+-------------+
-| Field            | RFU   | BOOTSTAGE | RFU   | FWVERSION | CMDOPCODE | CMDERROR  | RFU | BOOTERROR   |
-+------------------+-------+-----------+-------+-----------+-----------+-----------+-----+-------------+
++------------------+-------+-----------+-------+-----------+-----------+-----------+----------------+-------------+
+| Bit numbers      | 31-28 | 27-24     | 23-22 | 21-15     | 14-12     | 11-9      | 8              | 7-0         |
++------------------+-------+-----------+-------+-----------+-----------+-----------+----------------+-------------+
+| Field            | RFU   | BOOTSTAGE | RFU   | FWVERSION | CMDOPCODE | CMDERROR  | SECONDARYMODE  | BOOTERROR   |
++------------------+-------+-----------+-------+-----------+-----------+-----------+----------------+-------------+
 
 This field can have one of the following values:
 
@@ -1186,10 +1175,11 @@ This field can have one of the following values:
 +--------------------+--------------------------------------------------------------+
 
 .. note::
-   The value ``0xB`` indicates a boot status error reported by the Secure Domain running a version earlier than version 20.
+   The value ``0xB`` indicates a boot status error reported by the Secure Domain running a firmware version earlier than 20.
+   See :ref:`abi_compatibility` for more information.
 
 The register is written by |ISE| at the end of every cold boot sequence.
-A value of 0 indicates that |ISE| did not complete the boot process.
+A value of ``0`` indicates that |ISE| did not complete the boot process.
 
 The following fields are reported by |ISE|:
 
@@ -1200,20 +1190,24 @@ FWVERSION
 
 CMDOPCODE
   The opcode of the boot command issued to |ISE| in the CTRLAP.MAILBOX.BOOTMODE register.
-  A value of 0 indicates that no boot command has been issued.
+  A value of ``0`` indicates that no boot command has been issued.
 
 CMDERROR
   A code indicating the execution status of the boot command specified in CMDOPCODE:
 
-  * A status value of 0 indicates that the command was executed successfully.
+  * A status value of ``0`` indicates that the command was executed successfully.
   * A non-zero value indicates that an error condition occurred during execution of the command.
-    The error code 0x7 means that an unexpected condition happened that might have prevented the command from executing.
+    The error code ``0x7`` means that an unexpected condition happened that might have prevented the command from executing.
     Other error codes must be interpreted based on the boot command in CMDOPCODE.
+
+SECONDARYMODE
+  Indicates whether the secondary firmware was booted.
+  A value of ``1`` indicates that the secondary firmware was booted, while a value of ``0`` indicates that the primary firmware was booted.
 
 BOOTERROR
   A code indicating the status of the application domain boot sequence:
 
-  * A status value of 0 indicates that the CPU was started normally.
+  * A status value of ``0`` indicates that the CPU was started normally.
   * A non-zero value indicates that an error condition occurred, preventing the CPU from starting.
     Detailed information about the issue can be found in the boot report.
 
