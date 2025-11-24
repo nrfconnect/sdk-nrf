@@ -15,30 +15,13 @@ static bool wifi_keys_key_type_is_mic(wifi_keys_key_type_t type)
 
 static uint32_t wifi_keys_kmu_slot_id(wifi_keys_key_type_t type, uint32_t db_id, uint32_t key_index)
 {
-	/* TODO Can we use all these key slots?
-	 * Do we need to reserve some for other uses?
-	 * Is reusing the last slot a problem? */
+	/* TODO Coordinate with other users to reserve slots for Wi-Fi. */
 
-	const uint32_t cracen_max_kmu_slot = 4; /* See cracen_psa_kmu.h and cracen_pas_key_ids.h */
-	uint32_t slot = cracen_max_kmu_slot + 1;
+	(void)type;
+	(void)db_id;
+	(void)key_index;
 
-	uint32_t group =
-		(type & ~PSA_KEY_TYPE_VENDOR_FLAG) >> 1; /* PEER_UCST = 0, PEER_BCST = 1, VIF = 2 */
-
-	/* Each MIC key uses one slot, and each ENC key uses two slots. */
-	if (wifi_keys_key_type_is_mic(type)) {
-		slot += (group << 5) | (db_id << 2) | (key_index);
-	} else {
-		slot += (3 << 5);
-		slot += ((group << 5) | (db_id << 2) | (key_index)) * 2;
-	}
-
-	/* Reuse last slot if we don't have enough */
-	if (slot > KMU_KEYSLOT_ID_Max) {
-		slot = KMU_KEYSLOT_ID_Max;
-	}
-
-	return slot;
+	return 97;
 }
 
 static int wifi_keys_set_key_id(psa_key_attributes_t *attr, uint32_t db_id, uint32_t key_index)
