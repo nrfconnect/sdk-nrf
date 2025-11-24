@@ -6,4 +6,4 @@
 
 zephyr_library()
 
-zephyr_library_sources(mpsl_dppi.c)
+zephyr_library_sources(mpsl_hwres.c)
