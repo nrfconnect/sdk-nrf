@@ -39,6 +39,16 @@ if(CONFIG_NCS_IS_VARIANT_IMAGE)
     file(STRINGS ${preload_autoconf_h} autoconf_content)
     file(STRINGS ${preload_dotconfig} dotconfig_content)
 
+    # Needed for the correct CONFIG_BUILD_OUTPUT_ADJUST_LMA calculation in the variant image
+    # .config and autoconf.h files for nRF54H20 CPURAD.
+    dt_partition_addr(code_partition_abs_addr PATH "${code_partition}" REQUIRED ABSOLUTE)
+    dt_chosen(sram_property PROPERTY "zephyr,sram")
+    dt_reg_addr(sram_addr PATH "${sram_property}" REQUIRED)
+    set(soc_nrf54h20_cpurad 0)
+    if("${dotconfig_content}" MATCHES "CONFIG_SOC_NRF54H20_CPURAD=y")
+      set(soc_nrf54h20_cpurad 1)
+    endif()
+
     # Modify the CONFIG_FLASH_LOAD_OFFSET and CONFIG_FLASH_LOAD_SIZE for both the .config and autoconf.h files.
     # If partition manager is not used, these values should be taken from the device tree.
     # Additionally, convert primary slot dependencies to secondary slot dependencies.
@@ -56,6 +66,10 @@ if(CONFIG_NCS_IS_VARIANT_IMAGE)
         string(REGEX REPLACE "primary" "secondary" line ${line})
       endif()
 
+      if(soc_nrf54h20_cpurad AND "${line}" MATCHES "^CONFIG_BUILD_OUTPUT_ADJUST_LMA=.*$")
+        string(REGEX REPLACE "CONFIG_BUILD_OUTPUT_ADJUST_LMA=(.*)" "CONFIG_BUILD_OUTPUT_ADJUST_LMA=\"${code_partition_abs_addr}-${sram_addr}\"" line ${line})
+      endif()
+
       list(APPEND dotconfig_variant_content "${line}\n")
     endforeach()
 
@@ -71,6 +85,10 @@ if(CONFIG_NCS_IS_VARIANT_IMAGE)
 
       if("${line}" MATCHES "(--dependencies|-d).*\([0-9, ]+primary[0-9., ]+\)")
         string(REGEX REPLACE "primary" "secondary" line ${line})
+      endif()
+
+      if(soc_nrf54h20_cpurad AND "${line}" MATCHES "^#define CONFIG_BUILD_OUTPUT_ADJUST_LMA .*$")
+        string(REGEX REPLACE "#define CONFIG_BUILD_OUTPUT_ADJUST_LMA (.*)" "#define CONFIG_BUILD_OUTPUT_ADJUST_LMA \"${code_partition_abs_addr}-${sram_addr}\"" line ${line})
       endif()
 
       list(APPEND autoconf_variant_content "${line}\n")
