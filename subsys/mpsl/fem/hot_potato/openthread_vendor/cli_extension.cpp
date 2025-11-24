@@ -43,6 +43,7 @@
 #include <openthread/instance.h>
 #include <openthread/link.h>
 #include <zephyr/device.h>
+#include <zephyr/kernel.h>
 
 #include "common/code_utils.hpp"
 #include "utils/parse_cmdline.hpp"
@@ -61,6 +62,25 @@ extern "C" {
 #endif
 #include "../psemi/include/mpsl_fem_psemi_interface.h"
 }
+
+#ifdef CONFIG_THREAD_MONITOR
+#define MAX_THREADS 16
+
+struct thread_info
+{
+	char		name[CONFIG_THREAD_MAX_NAME_LEN];
+	uintptr_t	stack;
+	uint32_t	stack_size;
+	uintptr_t	entry;
+	int8_t		prio;
+};
+
+typedef struct
+{
+	uint32_t count;
+	struct thread_info threads[MAX_THREADS];
+} thread_processing_data;
+#endif /* CONFIG_THREAD_MONITOR */
 
 const uint8_t ATTENUATION_MIN = 0;
 const uint8_t ATTENUATION_MAX = 15;
@@ -666,6 +686,83 @@ exit:
 	return error;
 }
 
+#ifdef CONFIG_THREAD_MONITOR
+void process_thread_info(const struct k_thread *thread, void *user_data)
+{
+	thread_processing_data *data = (thread_processing_data*)user_data;
+	if (data->count < MAX_THREADS) {
+		data->threads[data->count].prio = thread->base.prio;
+
+#if defined(CONFIG_THREAD_NAME)
+		strncpy(data->threads[data->count].name, thread->name, CONFIG_THREAD_MAX_NAME_LEN);
+		data->threads[data->count].name[CONFIG_THREAD_MAX_NAME_LEN-1] = '\0';
+#endif
+
+#if defined(CONFIG_THREAD_STACK_INFO)
+		data->threads[data->count].stack =  thread->stack_info.start;
+		data->threads[data->count].stack_size =  thread->stack_info.size;
+#endif
+
+		data->threads[data->count].entry =  (uintptr_t)thread->entry.pEntry;
+	}
+	data->count++;
+}
+
+static void print_thread_info_header(void)
+{
+	otCliOutputFormat("%3s ", "id");
+	otCliOutputFormat("%30s ", "name");
+	otCliOutputFormat("prio ");
+	otCliOutputFormat("%s %12s   ", "stack", "size");
+	otCliOutputFormat("entry");
+	otCliOutputFormat("\r\n");
+}
+
+static void print_thread_info(uint8_t id, struct thread_info* info)
+{
+	otCliOutputFormat("%3u ", id);
+	if (info) {
+		otCliOutputFormat("%30s ", info->name);
+		otCliOutputFormat("%3d  ", info->prio);
+		otCliOutputFormat("%08p  %6u   ", info->stack, info->stack_size);
+		otCliOutputFormat("%08p", info->entry);
+	} else {
+		otCliOutputFormat("Thread data not available");
+	}
+	otCliOutputFormat("\r\n");
+}
+#endif /* CONFIG_THREAD_MONITOR */
+
+static otError VendorThreadsInfo(void *aContext, uint8_t aArgsLength, char *aArgs[])
+{
+	otError error = OT_ERROR_NONE;
+
+#ifdef CONFIG_THREAD_MONITOR
+	thread_processing_data data;
+
+
+	VerifyOrExit(aArgsLength == 0, error = OT_ERROR_INVALID_ARGS);
+
+	memset(&data, 0, sizeof(data));
+
+	k_thread_foreach(process_thread_info, &data);
+	print_thread_info_header();
+	for (uint8_t i = 0 ; i< data.count; i++) {
+		if (i < MAX_THREADS) {
+			print_thread_info(i, &data.threads[i]);
+		} else {
+			print_thread_info(i, NULL);
+		}
+	}
+exit:
+#else /* CONFIG_THREAD_MONITOR */
+	otCliOutputFormat("CONFIG_THREAD_MONITOR is disabled.\r\n");
+	error = OT_ERROR_NOT_CAPABLE;
+#endif /* CONFIG_THREAD_MONITOR */
+
+	return error;
+}
+
 static otError VendorClkoutLfclk(void *aContext, uint8_t aArgsLength, char *aArgs[])
 {
 	otError error = OT_ERROR_NONE;
@@ -817,6 +914,7 @@ static const otCliCommand sExtensionCommands[] = {
 	{"vendor:power:mapping:table:test", VendorPowerMappingTableTest},
 	{"vendor:power:mapping:table:version", VendorPowerMappingTableVersion},
 	{"vendor:temp", VendorTemp},
+	{"vendor:threads:info", VendorThreadsInfo},
 #ifdef CONFIG_OPENTHREAD_CLI_VENDOR_CPU_USAGE
 	{"vendor:usage:cpu", VendorUsageCpu},
 #endif
