@@ -408,6 +408,8 @@ nRF Desktop
     * Application image configurations to explicitly specify the LED driver used by the :ref:`nrf_desktop_leds` (:kconfig:option:`CONFIG_CAF_LEDS_GPIO` or :kconfig:option:`CONFIG_CAF_LEDS_PWM`).
       Also, disabled unused LED drivers enabled by default to reduce memory footprint.
     * The :ref:`nrf_desktop_hid_forward` to allow using the module when configuration channel support (:ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE <config_desktop_app_options>`) is disabled in the application configuration.
+    * The :ref:`nrf_desktop_keys_state` to rely on runtime assertions, ensuring that the initialization function is called only once and other APIs of the utility are called after the utility was initialized.
+      This is done to align the utility with other application utilities.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

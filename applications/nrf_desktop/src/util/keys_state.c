@@ -27,6 +27,8 @@ void keys_state_init(struct keys_state *ks, uint8_t key_cnt_max)
 {
 	LOG_DBG("ks:%p, key_cnt_max:%" PRIu8, (void *)ks, key_cnt_max);
 
+	ARG_UNUSED(keys_state_is_initialized);
+
 	__ASSERT_NO_MSG(!keys_state_is_initialized(ks));
 	__ASSERT_NO_MSG((key_cnt_max > 0) && (key_cnt_max <= ARRAY_SIZE(ks->keys)));
 
@@ -112,6 +114,7 @@ int keys_state_key_update(struct keys_state *ks, uint16_t key_id, bool pressed, 
 		(void *)ks, key_id, pressed ? "press" : "release");
 
 	__ASSERT_NO_MSG(ks_changed);
+	__ASSERT_NO_MSG(keys_state_is_initialized(ks));
 
 	int err = 0;
 	uint8_t prev_cnt = ks->cnt;
@@ -152,10 +155,10 @@ void keys_state_clear(struct keys_state *ks)
 {
 	LOG_DBG("ks:%p", (void *)ks);
 
-	if (keys_state_is_initialized(ks)) {
-		memset(ks->keys, 0, sizeof(ks->keys));
-		ks->cnt = 0;
-	}
+	__ASSERT_NO_MSG(keys_state_is_initialized(ks));
+
+	memset(ks->keys, 0, sizeof(ks->keys));
+	ks->cnt = 0;
 }
 
 size_t keys_state_keys_get(const struct keys_state *ks, uint16_t *res, size_t res_size)
@@ -165,6 +168,8 @@ size_t keys_state_keys_get(const struct keys_state *ks, uint16_t *res, size_t re
 	__ASSERT_NO_MSG(ks->cnt <= ks->cnt_max);
 	__ASSERT_NO_MSG(res_size >= ks->cnt_max);
 	ARG_UNUSED(res_size);
+
+	__ASSERT_NO_MSG(keys_state_is_initialized(ks));
 
 	for (uint8_t i = 0; i < ks->cnt; i++) {
 		res[i] = ks->keys[i].id;
