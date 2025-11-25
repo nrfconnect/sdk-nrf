@@ -31,5 +31,13 @@ public:
 	 * @param justStarted true if this is the first callback after the movement has started
 	 */
 	virtual void OnMovementUpdate(uint16_t currentPosition, uint16_t timeLeft, bool justStarted = false) = 0;
+	/**
+	 * @brief This callback is called when the closure initializes
+	 *
+	 * It is used to inform the controller what is the state of the closure after boot
+	 *
+	 * @param currenPosition position of the closure in 0.01% (0-10000)
+	 */
+	virtual void OnSetup(uint16_t currentPostion) = 0;
 	virtual ~IPhysicalDeviceObserver() = default;
 };

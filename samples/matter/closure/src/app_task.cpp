@@ -21,6 +21,8 @@
 #include <app/util/attribute-storage.h>
 #include <setup_payload/OnboardingCodesUtil.h>
 
+#include <persistent_storage/persistent_storage.h>
+
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
@@ -58,6 +60,10 @@ CHIP_ERROR AppTask::Init()
 	ReturnErrorOnFailure(Nrf::Matter::StartServer());
 
 	ReturnErrorOnFailure(sIdentifyCluster.Init());
+
+	if (Nrf::GetPersistentStorage().NonSecureInit(&mRootNode) != Nrf::PSErrorCode::Success) {
+		return CHIP_ERROR_PERSISTED_STORAGE_FAILED;
+	}
 
 	ReturnErrorOnFailure(mClosureManager.Init());
 	return CHIP_NO_ERROR;
