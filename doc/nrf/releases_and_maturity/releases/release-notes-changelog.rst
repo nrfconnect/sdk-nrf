@@ -917,7 +917,10 @@ Gazell libraries
 Security libraries
 ------------------
 
-|no_changes_yet_note|
+* :ref:`trusted_storage_readme` library:
+
+  * Updated the API documentation to be based on headers in :file:`subsys/trusted_storage/include/psa` instead of :file:`include/`.
+  * Removed the :file:`internal_trusted_storage.h` and :file:`protected_storage.h` files from :file:`include/` as they were duplicating the same files in :file:`subsys/trusted_storage/include/psa`.
 
 Modem libraries
 ---------------

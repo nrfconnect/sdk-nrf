@@ -962,7 +962,8 @@ INPUT                  = @DOCSET_SOURCE_BASE@/applications \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/psa/crypto_driver_contexts_composites.h \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/psa/crypto_driver_contexts_key_derivation.h \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/psa/crypto_driver_contexts_primitives.h \
-                         @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/nrf_security_api_structure.h
+                         @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/nrf_security_api_structure.h \
+                         @DOCSET_SOURCE_BASE@/subsys/trusted_storage/include/psa \
 
 # This tag can be used to specify the character encoding of the source files
 # that Doxygen parses. Internally Doxygen uses the UTF-8 encoding. Doxygen uses
