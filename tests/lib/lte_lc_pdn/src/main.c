@@ -1527,7 +1527,7 @@ void test_lte_lc_pdn_default_apn_get_eshutdown(void)
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_eshutdown;
 
-	ret = lte_lc_pdn_ctx_default_apn_get(buf, sizeof(buf));
+	ret = lte_lc_pdn_default_ctx_apn_get(buf, sizeof(buf));
 	TEST_ASSERT_EQUAL(-ESHUTDOWN, ret);
 }
 
@@ -1538,7 +1538,7 @@ void test_lte_lc_pdn_default_apn_get_e2big(void)
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgdcont;
 
-	ret = lte_lc_pdn_ctx_default_apn_get(buf, sizeof(buf));
+	ret = lte_lc_pdn_default_ctx_apn_get(buf, sizeof(buf));
 	TEST_ASSERT_EQUAL(-E2BIG, ret);
 }
 
@@ -1549,7 +1549,7 @@ void test_lte_lc_pdn_default_apn_get_no_match(void)
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_no_match;
 
-	ret = lte_lc_pdn_ctx_default_apn_get(buf, sizeof(buf));
+	ret = lte_lc_pdn_default_ctx_apn_get(buf, sizeof(buf));
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
 
@@ -1560,7 +1560,7 @@ void test_lte_lc_pdn_default_apn_get(void)
 
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgdcont;
 
-	ret = lte_lc_pdn_ctx_default_apn_get(buf, sizeof(buf));
+	ret = lte_lc_pdn_default_ctx_apn_get(buf, sizeof(buf));
 	TEST_ASSERT_EQUAL(0, ret);
 }
 

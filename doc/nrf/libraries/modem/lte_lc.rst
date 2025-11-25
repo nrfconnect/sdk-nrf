@@ -185,7 +185,7 @@ PDN (Packet Data Network):
   * :c:func:`lte_lc_pdn_ctx_destroy`
   * :c:func:`lte_lc_pdn_id_get`
   * :c:func:`lte_lc_pdn_dynamic_info_get`
-  * :c:func:`lte_lc_pdn_ctx_default_apn_get`
+  * :c:func:`lte_lc_pdn_default_ctx_apn_get`
   * :c:func:`lte_lc_pdn_esm_strerror`
   * :kconfig:option:`CONFIG_LTE_LC_PDN_DEFAULTS_OVERRIDE`
 
@@ -366,7 +366,7 @@ The application can use the following functions to manage PDP contexts and PDN c
 * :c:func:`lte_lc_pdn_id_get` - Retrieves the PDN ID for a given PDP context.
   The PDN ID can be used to route traffic through a specific PDN connection.
 * :c:func:`lte_lc_pdn_dynamic_info_get` - Retrieves dynamic parameters such as DNS addresses and MTU sizes for a given PDN connection.
-* :c:func:`lte_lc_pdn_ctx_default_apn_get` - Retrieves the default Access Point Name (APN) of the default PDP context (CID 0).
+* :c:func:`lte_lc_pdn_default_ctx_apn_get` - Retrieves the default Access Point Name (APN) of the default PDP context (CID 0).
 
 PDN events
 ----------
@@ -455,7 +455,7 @@ The following code snippet demonstrates how to use the PDN functionality:
            }
 
            /* Get default APN */
-           err = lte_lc_pdn_ctx_default_apn_get(apn, sizeof(apn));
+           err = lte_lc_pdn_default_ctx_apn_get(apn, sizeof(apn));
            if (err) {
                    return err;
            }
