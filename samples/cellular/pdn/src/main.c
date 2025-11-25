@@ -151,9 +151,9 @@ int main(void)
 		return 0;
 	}
 
-	err = lte_lc_pdn_ctx_default_apn_get(apn, sizeof(apn));
+	err = lte_lc_pdn_default_ctx_apn_get(apn, sizeof(apn));
 	if (err) {
-		printk("lte_lc_pdn_ctx_default_apn_get() failed, err %d\n", err);
+		printk("lte_lc_pdn_default_ctx_apn_get() failed, err %d\n", err);
 		return 0;
 	}
 

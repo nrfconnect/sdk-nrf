@@ -2521,7 +2521,7 @@ int lte_lc_pdn_default_ctx_events_disable(void);
  * @retval 0 On success.
  * @return A negative errno otherwise.
  */
-int lte_lc_pdn_ctx_default_apn_get(char *buf, size_t len);
+int lte_lc_pdn_default_ctx_apn_get(char *buf, size_t len);
 
 #if defined(CONFIG_LTE_LC_PDN_ESM_STRERROR)
 

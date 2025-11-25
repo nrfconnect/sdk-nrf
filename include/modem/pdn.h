@@ -257,7 +257,7 @@ __deprecated int pdn_dynamic_info_get(uint8_t cid,
  *
  * The default APN is the APN of the default PDP context (zero).
  *
- * @deprecated Use lte_lc_pdn_ctx_default_apn_get().
+ * @deprecated Use lte_lc_pdn_default_ctx_apn_get().
  *
  * @param[out] buf The buffer to copy the APN into. The string is null-terminated.
  * @param len The size of the output buffer.

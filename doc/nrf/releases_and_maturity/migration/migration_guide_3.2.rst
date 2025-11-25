@@ -265,7 +265,7 @@ PDN library
 
           * :c:func:`pdn_id_get` with :c:func:`lte_lc_pdn_id_get`
           * :c:func:`pdn_dynamic_info_get` with :c:func:`lte_lc_pdn_dynamic_info_get`
-          * :c:func:`pdn_default_apn_get` with :c:func:`lte_lc_pdn_ctx_default_apn_get`
+          * :c:func:`pdn_default_apn_get` with :c:func:`lte_lc_pdn_default_ctx_apn_get`
 
         * Replace the ESM error string helper:
 
