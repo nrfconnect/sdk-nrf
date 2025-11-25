@@ -24,11 +24,9 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_CONN_PARAMS_LOG_LEVEL);
 
 #define CONN_INTERVAL_LLPM_US		1000   /* 1 ms */
 #if (CONFIG_CAF_BLE_USE_LLPM && (CONFIG_BT_MAX_CONN >= 2))
- #define CONN_INTERVAL_BLE_REG		0x0008 /* 10 ms */
- #define CONN_INTERVAL_BLE_US           10000
+ #define CONN_INTERVAL_BLE_US		10000 /* 10 ms */
 #else
- #define CONN_INTERVAL_BLE_REG		0x0006 /* 7.5 ms */
- #define CONN_INTERVAL_BLE_US           7500
+ #define CONN_INTERVAL_BLE_US		7500 /* 7.5 ms */
 #endif
 #define CONN_SUPERVISION_TIMEOUT	400
 
@@ -134,13 +132,16 @@ static int set_conn_params(struct connected_peer *peer)
 		uint32_t curr_ci_us = strip_llpm_encoding_to_us(info.le.interval_us);
 
 		if (curr_ci_us > CONN_INTERVAL_PRE_LLPM_MAX_US) {
-			err = set_le_conn_param(peer->conn, CONN_INTERVAL_BLE_REG,
+			err = set_le_conn_param(peer->conn,
+						BT_GAP_US_TO_CONN_INTERVAL(CONN_INTERVAL_BLE_US),
 						peer->requested_latency);
 		} else {
 			err = set_llpm_conn_param(peer->conn, peer->requested_latency);
 		}
 	} else {
-		err = set_le_conn_param(peer->conn, CONN_INTERVAL_BLE_REG, peer->requested_latency);
+		err = set_le_conn_param(peer->conn,
+					BT_GAP_US_TO_CONN_INTERVAL(CONN_INTERVAL_BLE_US),
+					peer->requested_latency);
 	}
 
 	if (!err) {
