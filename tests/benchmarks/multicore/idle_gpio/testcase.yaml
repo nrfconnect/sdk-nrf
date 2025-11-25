@@ -59,6 +59,22 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_simple"
     tags: ppk_power_measure
 
+  benchmarks.multicore.idle_gpio.nrf54h20dk_cpuapp_cpurad.s2ram.mcuboot.direct_xip:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - FILE_SUFFIX=s2ram_merged_slot
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - SB_EXTRA_CONF_FILE="sysbuild/sysbuild_merged_slot.conf"
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_simple"
+    tags: ppk_power_measure
+
   benchmarks.multicore.idle_gpio.nrf54h20dk_cpuapp_cpurad.s2ram.wakeup_from_uart_pins:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
