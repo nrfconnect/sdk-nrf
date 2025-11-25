@@ -293,19 +293,6 @@ config BT_CTLR_DF_CONN_CTE_RSP
 config BT_CTLR_ADV_EXT_PDU_EXTRA_DATA_MEMORY
 	bool
 
-config BT_CTLR_SHORTER_CONNECTION_INTERVALS_SUPPORT
-	bool
-
-config BT_CTLR_SHORTER_CONNECTION_INTERVALS
-	bool "Shorter Connection Intervals"
-	depends on BT_CTLR_SHORTER_CONNECTION_INTERVALS_SUPPORT
-	depends on BT_CTLR_EXTENDED_FEAT_SET
-	depends on BT_CTLR_SUBRATING
-	select BT_CTLR_SET_HOST_FEATURE
-	help
-	  Enable support for Bluetooth 6.2 Shorter Connection Intervals
-	  in the controller.
-
 choice BT_LL_SOFTDEVICE_VARIANT
 	prompt "SoftDevice Controller variant"
 	default BT_LL_SOFTDEVICE_MULTIROLE if ((BT_OBSERVER && BT_BROADCASTER) || \
@@ -549,9 +536,6 @@ config BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
 	  If this parameter is set to zero, the subevent length
 	  is chosen by the controller.
 
-config BT_CTLR_EXTENDED_FEAT_SET
-	select EXPERIMENTAL
-
 config BT_CTLR_SDC_EXTENDED_FEAT_MAX_REMOTE_PAGE
 	int "Number of supported remote feature pages"
 	depends on BT_CTLR_EXTENDED_FEAT_SET
@@ -565,7 +549,7 @@ config BT_CTLR_SDC_EXTENDED_FEAT_MAX_REMOTE_PAGE
 	  Each feature page requires approximately 24 bytes of RAM per link.
 
 config BT_CTLR_FRAME_SPACE_UPDATE
-	select EXPERIMENTAL
+	depends on BT_CTLR_EXTENDED_FEAT_SET
 
 config BT_CTLR_CHANNEL_SOUNDING
 	bool "Channel Sounding support [EXPERIMENTAL for nRF54H20 radio core]"

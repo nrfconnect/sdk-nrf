@@ -588,6 +588,27 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Supported
+           * - **Shorter Connection Intervals**
+             - Supported
+             - Supported
+             - Supported
+             - Supported
+             - Supported
+             - Supported
+           * - **Frame Space Update**
+             - Supported
+             - Supported
+             - Supported
+             - Supported
+             - Supported
+             - Supported
+           * - **Extended Feature Set**
+             - Supported
+             - Supported
+             - Supported
+             - Supported
+             - Supported
+             - Supported
 
      .. group-tab:: nRF53 Series
 
@@ -627,6 +648,12 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
            * - **L2CAP Connection Oriented Channels**
              - Supported
+           * - **Shorter Connection Intervals**
+             - Supported
+           * - **Frame Space Update**
+             - Supported
+           * - **Extended Feature Set**
+             - Supported
 
      .. group-tab:: nRF54H Series
 
@@ -665,6 +692,12 @@ The following table indicates the software maturity levels of the support for ea
            * - **Enhanced ATT**
              - Supported
            * - **L2CAP Connection Oriented Channels**
+             - Supported
+           * - **Shorter Connection Intervals**
+             - Supported
+           * - **Frame Space Update**
+             - Supported
+           * - **Extended Feature Set**
              - Supported
 
      .. group-tab:: nRF54L Series
@@ -769,6 +802,24 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Experimental
              - Experimental
+           * - **Shorter Connection Intervals**
+             - Supported
+             - Supported
+             - Supported
+             - Experimental
+             - Experimental
+           * - **Frame Space Update**
+             - Supported
+             - Supported
+             - Supported
+             - Experimental
+             - Experimental
+           * - **Extended Feature Set**
+             - Supported
+             - Supported
+             - Supported
+             - Experimental
+             - Experimental
 
      .. group-tab:: nRF91 Series
 
@@ -852,6 +903,21 @@ The following table indicates the software maturity levels of the support for ea
              - --
              - --
            * - **L2CAP Connection Oriented Channels**
+             - --
+             - --
+             - --
+             - --
+           * - **Shorter Connection Intervals**
+             - --
+             - --
+             - --
+             - --
+           * - **Frame Space Update**
+             - --
+             - --
+             - --
+             - --
+           * - **Extended Feature Set**
              - --
              - --
              - --
