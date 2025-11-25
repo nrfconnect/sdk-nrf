@@ -32,6 +32,10 @@
 #include "nrf_cloud_fota.h"
 #include "nrf_cloud_transport.h"
 
+/**
+ * @defgroup nrf_cloud_codec_internal nRF Cloud Codec Internal API
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif

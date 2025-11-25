@@ -7,6 +7,10 @@
 #ifndef FOTA_DOWNLOAD_UTIL_H__
 #define FOTA_DOWNLOAD_UTIL_H__
 
+/**
+ * @file
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
