@@ -19,6 +19,8 @@ DEFINE_FFF_GLOBALS;
 
 #define CID_1				1
 #define CID_2				2
+#define CID_11				11
+#define CID_12				12
 #define CID_MAX				0x7f
 #define CID_MIN				-0x80
 
@@ -78,8 +80,12 @@ struct pdn {
 
 static struct pdn pdn1;
 static struct pdn pdn2;
+static struct pdn pdn11;
+static struct pdn pdn12;
 
 static struct lte_lc_evt pdn_evt;
+static uint8_t pdn_detach_cids[4];
+static size_t pdn_detach_cid_count;
 
 static const char ipv4_dns_primary[] = {192, 168, 1, 23};
 static const char ipv4_dns_secondary[] = {192, 168, 1, 24};
@@ -119,6 +125,20 @@ static void *k_malloc_PDN2(size_t size)
 	TEST_ASSERT_EQUAL(sizeof(struct pdn), size);
 
 	return &pdn2;
+}
+
+static void *k_malloc_PDN11(size_t size)
+{
+	TEST_ASSERT_EQUAL(sizeof(struct pdn), size);
+
+	return &pdn11;
+}
+
+static void *k_malloc_PDN12(size_t size)
+{
+	TEST_ASSERT_EQUAL(sizeof(struct pdn), size);
+
+	return &pdn12;
 }
 
 static void k_free_PDN1(void *data)
@@ -629,6 +649,32 @@ static int nrf_modem_at_scanf_xnewcid_2(const char *cmd, const char *fmt, va_lis
 	return 1;
 }
 
+static int nrf_modem_at_scanf_xnewcid_11(const char *cmd, const char *fmt, va_list args)
+{
+	int *cid;
+
+	TEST_ASSERT_EQUAL_STRING(CMD_XNEWCID, cmd);
+	TEST_ASSERT_EQUAL_STRING(RESP_XNEWCID, fmt);
+
+	cid = va_arg(args, int *);
+	*cid = CID_11;
+
+	return 1;
+}
+
+static int nrf_modem_at_scanf_xnewcid_12(const char *cmd, const char *fmt, va_list args)
+{
+	int *cid;
+
+	TEST_ASSERT_EQUAL_STRING(CMD_XNEWCID, cmd);
+	TEST_ASSERT_EQUAL_STRING(RESP_XNEWCID, fmt);
+
+	cid = va_arg(args, int *);
+	*cid = CID_12;
+
+	return 1;
+}
+
 static int nrf_modem_at_scanf_xnewcid_too_big(const char *cmd, const char *fmt, va_list args)
 {
 	int *cid;
@@ -883,6 +929,12 @@ static void lte_lc_event_handler(const struct lte_lc_evt *const evt)
 		break;
 	}
 
+	if ((evt->type == LTE_LC_EVT_PDN) &&
+	    (evt->pdn.type == LTE_LC_EVT_PDN_NETWORK_DETACH) &&
+	    (pdn_detach_cid_count < ARRAY_SIZE(pdn_detach_cids))) {
+		pdn_detach_cids[pdn_detach_cid_count++] = evt->pdn.cid;
+	}
+
 	pdn_evt = *evt;
 }
 
@@ -895,6 +947,9 @@ void setUp(void)
 	RESET_FAKE(nrf_modem_at_cmd);
 
 	memset(&pdn_evt, 0, sizeof(struct lte_lc_evt));
+	memset(pdn_detach_cids, 0, sizeof(pdn_detach_cids));
+
+	pdn_detach_cid_count = 0;
 
 	z_impl_zsock_inet_pton_fake.custom_fake = z_impl_zsock_inet_pton_custom;
 	k_malloc_fake.custom_fake = k_malloc_custom;
@@ -1322,11 +1377,69 @@ void test_lte_lc_pdn_detach_me_with_cp_id(void)
 
 void test_lte_lc_pdn_detach_nw_with_cp_id(void)
 {
+	int ret;
+	uint8_t cid = 0;
+
+	/* Create CID_11 and CID_12 contexts. */
+	k_malloc_fake.custom_fake = k_malloc_PDN11;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_xnewcid_11;
+
+	ret = lte_lc_pdn_ctx_create(&cid);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	k_malloc_fake.custom_fake = k_malloc_PDN12;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_xnewcid_12;
+
+	ret = lte_lc_pdn_ctx_create(&cid);
+	TEST_ASSERT_EQUAL(0, ret);
+
 	on_cgev("+CGEV: NW DETACH " STRINGIFY(CELLULAR_PROFILE_ID_1) "\r\n");
 	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN, pdn_evt.type);
 	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_NETWORK_DETACH, pdn_evt.pdn.type);
-	TEST_ASSERT_EQUAL(CELLULAR_PROFILE_ID_1,
-			 pdn_evt.pdn.cellular_profile_id);
+	TEST_ASSERT_EQUAL(CELLULAR_PROFILE_ID_1, pdn_evt.pdn.cellular_profile_id);
+}
+
+void test_lte_lc_pdn_detach_all_cids(void)
+{
+	int ret;
+	uint8_t cid = 0;
+
+	/* Create CID_1 context. */
+	k_malloc_fake.custom_fake = k_malloc_PDN1;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_xnewcid_1;
+
+	ret = lte_lc_pdn_ctx_create(&cid);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	/* Create CID_2 context. */
+	k_malloc_fake.custom_fake = k_malloc_PDN2;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_xnewcid_2;
+
+	ret = lte_lc_pdn_ctx_create(&cid);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	/* Create CID_11 context. */
+	k_malloc_fake.custom_fake = k_malloc_PDN11;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_xnewcid_11;
+
+	ret = lte_lc_pdn_ctx_create(&cid);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	/* Create CID_12 context. */
+	k_malloc_fake.custom_fake = k_malloc_PDN12;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_xnewcid_12;
+
+	ret = lte_lc_pdn_ctx_create(&cid);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	on_cgev("+CGEV: NW DETACH\r\n");
+	on_cgev("+CGEV: NW DETACH " STRINGIFY(CELLULAR_PROFILE_ID_1) "\r\n");
+
+	TEST_ASSERT_EQUAL(4, pdn_detach_cid_count);
+	TEST_ASSERT_EQUAL(CID_1, pdn_detach_cids[0]);
+	TEST_ASSERT_EQUAL(CID_2, pdn_detach_cids[1]);
+	TEST_ASSERT_EQUAL(CID_11, pdn_detach_cids[2]);
+	TEST_ASSERT_EQUAL(CID_12, pdn_detach_cids[3]);
 }
 
 void test_lte_lc_pdn_id_get_eshutdown(void)

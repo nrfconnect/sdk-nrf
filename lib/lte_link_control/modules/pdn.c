@@ -90,7 +90,8 @@ AT_MONITOR(pdn_cnec_esm, "+CNEC_ESM", on_cnec_esm);
 /* Expect enough added heap for the default PDN context */
 BUILD_ASSERT(sizeof(struct pdn) <= CONFIG_HEAP_MEM_POOL_ADD_SIZE_LTE_LINK_CONTROL);
 
-static void pdn_event_dispatch(uint8_t cid, enum lte_lc_pdn_evt_type pdn_event, int esm_err)
+static void pdn_event_dispatch(uint8_t cid, enum lte_lc_pdn_evt_type pdn_event, int esm_err,
+			       int8_t cp_id)
 {
 	struct lte_lc_evt evt = {
 		.type = LTE_LC_EVT_PDN,
@@ -98,7 +99,7 @@ static void pdn_event_dispatch(uint8_t cid, enum lte_lc_pdn_evt_type pdn_event, 
 			.type = pdn_event,
 			.cid = cid,
 			.esm_err = esm_err,
-			.cellular_profile_id = CP_ID_UNASSIGNED,
+			.cellular_profile_id = cp_id,
 		}
 	};
 
@@ -247,8 +248,7 @@ static void parse_cgev(const char *notif)
 
 				break;
 			case LTE_LC_EVT_PDN_NETWORK_DETACH:
-				evt.pdn.cellular_profile_id =
-					(int8_t)strtoul(p, &p, 10);
+				evt.pdn.cellular_profile_id = (int8_t)strtoul(p, &p, 10);
 
 				break;
 			default:
@@ -266,6 +266,32 @@ static void parse_cgev(const char *notif)
 			pdn_act_notif.reason = evt.pdn.esm_err;
 
 			k_sem_give(&sem_cgev);
+		}
+
+		/* Handle network detach event, where all registered CIDs should be notified */
+		if (evt.pdn.type == LTE_LC_EVT_PDN_NETWORK_DETACH) {
+			/* Valid CIDs are in the range 0-9 for each cellular profile, starting from
+			 * the cellular profile ID * 10 if present, or 0 if not present.
+			 */
+			size_t start_cid = 0;
+			size_t end_cid = 9;
+			struct pdn *pdn;
+
+			if (evt.pdn.cellular_profile_id != CP_ID_UNASSIGNED) {
+				start_cid = evt.pdn.cellular_profile_id * 10;
+				end_cid = start_cid + 9;
+			}
+
+			SYS_SLIST_FOR_EACH_CONTAINER(&pdp_contexts, pdn, node) {
+				if (pdn->context_id < start_cid || pdn->context_id > end_cid) {
+					continue;
+				}
+
+				pdn_event_dispatch(pdn->context_id, evt.pdn.type, 0,
+						   evt.pdn.cellular_profile_id);
+			}
+
+			return;
 		}
 
 		event_handler_list_dispatch(&evt);
@@ -800,7 +826,8 @@ static void pdn_on_modem_cfun(int mode, void *ctx)
 				continue;
 			}
 
-			pdn_event_dispatch(pdn->context_id, LTE_LC_EVT_PDN_CTX_DESTROYED, 0);
+			pdn_event_dispatch(pdn->context_id, LTE_LC_EVT_PDN_CTX_DESTROYED, 0,
+					   CP_ID_UNASSIGNED);
 
 			(void)pdn_ctx_free(pdn);
 		}
