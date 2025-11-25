@@ -631,6 +631,7 @@ Cellular samples
 
   * Fixed an issue where sporadically the application was stuck waiting for the device to connect to the internet.
     This was due to wrong :ref:`Connection Manager <zephyr:conn_mgr_overview>` initialization.
+  * Deprecated the sample.
 
 Cryptography samples
 --------------------
