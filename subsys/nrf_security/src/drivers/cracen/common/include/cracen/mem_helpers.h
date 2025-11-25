@@ -45,6 +45,20 @@ bool constant_memcmp_is_zero(const void *s1, size_t n);
  */
 int constant_memdiff_array_value(const uint8_t *a, uint8_t val, size_t sz);
 
+/**
+ * @brief Copy binary buffer based on selection.
+ *
+ * This function operates in constant time.
+ *
+ * @param[in]  select	 Value that identifies which buffer to copy.
+ * @param[in]  true_val  Buffer to copy to @p dst if @p select is true.
+ * @param[in]  false_val Buffer to copy to @p dst if @p select is false.
+ * @param[out] dst	 Destination buffer.
+ * @param[in]  sz	 Number of bytes to copy.
+ */
+void constant_select_bin(bool select, const uint8_t *true_val, const uint8_t *false_val,
+			 uint8_t *dst, size_t sz);
+
 /*!
  * \brief A memory set that is not optimized out by the compiler.
  *
