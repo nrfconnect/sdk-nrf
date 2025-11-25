@@ -231,37 +231,44 @@ void nrf_802154_platform_timestamper_local_domain_connections_setup(uint32_t dpp
 #include <soc/interconnect/nrfx_gppi_lumos.h>
 
 static nrfx_gppi_handle_t rad_peri_handle;
+static uint32_t ppib_chan;
 
 void nrf_802154_platform_timestamper_cross_domain_connections_setup(void)
 {
-	__ASSERT_NO_MSG(rad_peri_handle != 0);
+	nrfx_gppi_resource_t resource = {
+		.domain_id = NRFX_GPPI_DOMAIN_RAD,
+		.channel = 0
+	};
 	nrf_grtc_task_t capture_task =
 		nrfy_grtc_sys_counter_capture_task_get(m_timestamp_cc_channel);
 	uint32_t tep = nrfy_grtc_task_address_get(NRF_GRTC, capture_task);
 	int err;
 
+	err = nrfx_gppi_ext_conn_alloc(NRFX_GPPI_DOMAIN_RAD, NRFX_GPPI_DOMAIN_PERI,
+				       &rad_peri_handle, &resource);
+	__ASSERT_NO_MSG(err == 0);
+
 	/* Add task endpoint (GRTC capture) to the previously configured connection. */
 	err = nrfx_gppi_ep_attach(tep, rad_peri_handle);
 	__ASSERT_NO_MSG(err == 0);
+
+	/* Get PPIB channel used in the connection. */
+	ppib_chan = nrfx_gppi_domain_channel_get(rad_peri_handle, NRFX_GPPI_NODE_PPIB11_21);
+	__ASSERT_NO_MSG(ppib_chan >= 0);
+
+	/* Disable PPIB for now until exact channel from RADIO domain is known. */
+	nrf_ppib_subscribe_clear(NRF_PPIB11, nrf_ppib_send_task_get(ppib_chan));
 
 	nrfx_gppi_conn_enable(rad_peri_handle);
 }
 
 void nrf_802154_platform_timestamper_local_domain_connections_setup(uint32_t dppi_ch)
 {
-	nrfx_gppi_resource_t resource = {
-		.domain_id = NRFX_GPPI_DOMAIN_RAD,
-		.channel = dppi_ch
-	};
-	int err;
-
 	z_nrf_grtc_timer_capture_prepare(m_timestamp_cc_channel);
-	/* Setup a connection between Rad and Peri domain. For Rad domain use provided channel.
-	 * Remaining resources (bridge and dppi channel in PERI) allocate dynamically.
+	/* Configure PPIB to forward provided DPPI channel from Radio domain and enable
+	 * the connection.
 	 */
-	err = nrfx_gppi_ext_conn_alloc(NRFX_GPPI_DOMAIN_RAD, NRFX_GPPI_DOMAIN_PERI,
-				       &rad_peri_handle, &resource);
-	__ASSERT_NO_MSG(err == 0);
+	nrf_ppib_subscribe_set(NRF_PPIB11, nrf_ppib_send_task_get(ppib_chan), dppi_ch);
 }
 
 #endif
