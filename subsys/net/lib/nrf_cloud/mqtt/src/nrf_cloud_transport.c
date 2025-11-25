@@ -934,7 +934,7 @@ int nct_connect(void)
 {
 	int err = 0;
 	const char *const host_name = NRF_CLOUD_HOSTNAME;
-	uint16_t port = htons(NRF_CLOUD_PORT);
+	uint16_t port = NRF_CLOUD_PORT;
 	struct zsock_addrinfo hints = {.ai_socktype = SOCK_STREAM};
 	int sock = nrf_cloud_connect_host(host_name, port, &hints, &nct_connect_host_cb);
 

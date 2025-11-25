@@ -40,10 +40,10 @@ static int nrf_cloud_try_addresses(const char *const host_name, uint16_t port,
 
 		switch (sa->sa_family) {
 		case AF_INET6:
-			((struct sockaddr_in6 *)sa)->sin6_port = port;
+			((struct sockaddr_in6 *)sa)->sin6_port = htons(port);
 			break;
 		case AF_INET:
-			((struct sockaddr_in *)sa)->sin_port = port;
+			((struct sockaddr_in *)sa)->sin_port = htons(port);
 			break;
 		}
 
@@ -87,14 +87,14 @@ int nrf_cloud_connect_host(const char *hostname, uint16_t port, struct zsock_add
 
 #if defined(CONFIG_NRF_CLOUD_STATIC_IPV4)
 	static struct sockaddr_in static_addr;
-	uint16_t static_port = htons(CONFIG_NRF_CLOUD_PORT);
+	uint16_t static_port = CONFIG_NRF_CLOUD_PORT;
 
 	LOG_DBG("Trying static IPv4 address: %s, port: %d", CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR,
 		port);
 
 	zsock_inet_pton(AF_INET, CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR, &(static_addr.sin_addr));
 	static_addr.sin_family = AF_INET;
-	static_addr.sin_port = static_port;
+	static_addr.sin_port = htons(static_port);
 
 	sock = connect_cb((struct sockaddr *)&static_addr);
 
