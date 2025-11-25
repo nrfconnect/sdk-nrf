@@ -270,7 +270,17 @@ int lte_lc_pdn_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *inf
 	return pdn_dynamic_info_get(cid, info);
 }
 
-int lte_lc_pdn_ctx_default_apn_get(char *buf, size_t len)
+int lte_lc_pdn_default_ctx_events_enable(void)
+{
+	return pdn_default_ctx_events_enable();
+}
+
+int lte_lc_pdn_default_ctx_events_disable(void)
+{
+	return pdn_default_ctx_events_disable();
+}
+
+int lte_lc_pdn_default_ctx_apn_get(char *buf, size_t len)
 {
 	return pdn_ctx_default_apn_get(buf, len);
 }
