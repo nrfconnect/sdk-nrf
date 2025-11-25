@@ -701,6 +701,16 @@ config BT_CTLR_SDC_LE_POWER_CLASS_1
 	  See Bluetooth Core Specification, Vol 6, Part A, Section 3
 	  Transmitter Characteristics for more information.
 
+config BT_CTLR_SDC_ENABLE_LOWEST_FRAME_SPACE
+	bool "Support lowest frame space values"
+	depends on BT_CTLR_FRAME_SPACE_UPDATE
+	default y
+	help
+	  Enabling this kconfig allows the controller to achieve the lowest
+	  possible frame spaces for ACLs.
+	  Note: This option forces ACL connections to always use the same
+	  TX and RX PHY.
+
 config BT_LL_SOFTDEVICE_INIT_PRIORITY
 	int
 	default 53 if MPSL_USE_EXTERNAL_CLOCK_CONTROL

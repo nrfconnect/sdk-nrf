@@ -902,6 +902,9 @@ static void configure_supported_features(void)
 		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
 			sdc_support_frame_space_update_peripheral();
 		}
+		if (IS_ENABLED(CONFIG_BT_CTLR_SDC_ENABLE_LOWEST_FRAME_SPACE)) {
+			sdc_support_lowest_frame_space();
+		}
 	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SHORTER_CONNECTION_INTERVALS)) {
