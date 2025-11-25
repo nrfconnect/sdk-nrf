@@ -13,6 +13,14 @@ static const struct device *adc = DEVICE_DT_GET(ADC_NODE);
 static const struct adc_channel_cfg channel_cfgs[] = {
 DT_FOREACH_CHILD_SEP(ADC_NODE, ADC_CHANNEL_CFG_DT, (,))};
 
+static bool suspend_req;
+
+bool self_suspend_req(void)
+{
+	suspend_req = true;
+	return true;
+}
+
 void thread_definition(void)
 {
 	uint16_t channel_reading[5];
@@ -39,6 +47,11 @@ void thread_definition(void)
 		return;
 	}
 	while (1) {
+		if (suspend_req) {
+			suspend_req = false;
+			k_thread_suspend(k_current_get());
+		}
+
 #if defined(CONFIG_ADC_ASYNC)
 		ret = adc_read_async(adc, &sequence, NULL);
 #else
