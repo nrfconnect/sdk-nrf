@@ -790,6 +790,63 @@ int pdn_ctx_default_apn_get(char *buf, size_t len)
 	return 0;
 }
 
+int pdn_default_ctx_events_enable(void)
+{
+	struct pdn *pdn;
+	struct pdn *tmp;
+	bool exists = false;
+
+	k_mutex_lock(&list_mutex, K_FOREVER);
+
+	SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&pdp_contexts, pdn, tmp, node) {
+		if (pdn->context_id == 0) {
+			exists = true;
+
+			break;
+		}
+	}
+
+	k_mutex_unlock(&list_mutex);
+
+	if (exists) {
+		return 0;
+	}
+
+	pdn = pdn_ctx_new();
+	if (!pdn) {
+		return -ENOMEM;
+	}
+
+	pdn->context_id = 0;
+
+	return 0;
+}
+
+int pdn_default_ctx_events_disable(void)
+{
+	struct pdn *pdn;
+	struct pdn *tmp;
+	bool removed = false;
+
+	k_mutex_lock(&list_mutex, K_FOREVER);
+
+	SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&pdp_contexts, pdn, tmp, node) {
+		if (pdn->context_id == 0) {
+			removed = pdn_ctx_free(pdn);
+
+			break;
+		}
+	}
+
+	k_mutex_unlock(&list_mutex);
+
+	if (!removed) {
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
 #if defined(CONFIG_UNITY)
 void pdn_on_modem_cfun(int mode, void *ctx)
 #else

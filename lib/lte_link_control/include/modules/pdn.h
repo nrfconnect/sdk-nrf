@@ -25,6 +25,8 @@ int pdn_activate(uint8_t cid, int *esm, enum lte_lc_pdn_family *family);
 int pdn_deactivate(uint8_t cid);
 int pdn_id_get(uint8_t cid);
 int pdn_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *pdn_info);
+int pdn_default_ctx_events_enable(void);
+int pdn_default_ctx_events_disable(void);
 int pdn_ctx_default_apn_get(char *buf, size_t len);
 
 #if defined(CONFIG_LTE_LC_PDN_ESM_STRERROR) || defined(__DOXYGEN__)

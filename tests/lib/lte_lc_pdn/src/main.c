@@ -17,6 +17,7 @@
 
 DEFINE_FFF_GLOBALS;
 
+#define CID_0				0
 #define CID_1				1
 #define CID_2				2
 #define CID_11				11
@@ -78,6 +79,7 @@ struct pdn {
 	int8_t context_id;
 };
 
+static struct pdn pdn0;
 static struct pdn pdn1;
 static struct pdn pdn2;
 static struct pdn pdn11;
@@ -113,6 +115,13 @@ static void *k_malloc_NULL(size_t size)
 	return NULL;
 }
 
+static void *k_malloc_PDN0(size_t size)
+{
+	TEST_ASSERT_EQUAL(sizeof(struct pdn), size);
+
+	return &pdn0;
+}
+
 static void *k_malloc_PDN1(size_t size)
 {
 	TEST_ASSERT_EQUAL(sizeof(struct pdn), size);
@@ -139,6 +148,11 @@ static void *k_malloc_PDN12(size_t size)
 	TEST_ASSERT_EQUAL(sizeof(struct pdn), size);
 
 	return &pdn12;
+}
+
+static void k_free_PDN0(void *data)
+{
+	TEST_ASSERT_EQUAL_PTR(&pdn0, data);
 }
 
 static void k_free_PDN1(void *data)
@@ -956,6 +970,9 @@ void setUp(void)
 	k_free_fake.custom_fake = k_free_custom;
 
 	lte_lc_register_handler(lte_lc_event_handler);
+
+	/* Reset call count after lte_lc_register_handler() called it once. */
+	k_malloc_fake.call_count = 0;
 }
 
 void tearDown(void)
@@ -1800,6 +1817,54 @@ void test_lte_lc_cellular_profile_remove_invalid_id(void)
 
 	ret = lte_lc_cellular_profile_remove(2U);
 	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_lte_lc_pdn_default_ctx_events_enable(void)
+{
+	int ret;
+
+	k_malloc_fake.custom_fake = k_malloc_PDN0;
+	k_free_fake.custom_fake = k_free_PDN0;
+
+	pdn0.context_id = -1;
+
+	ret = lte_lc_pdn_default_ctx_events_enable();
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL(1, k_malloc_fake.call_count);
+	TEST_ASSERT_EQUAL(0, pdn0.context_id);
+
+	ret = lte_lc_pdn_default_ctx_events_enable();
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL(1, k_malloc_fake.call_count);
+	TEST_ASSERT_EQUAL(0, pdn0.context_id);
+}
+
+void test_lte_lc_pdn_default_ctx_events_disable(void)
+{
+	int ret;
+
+	k_malloc_fake.custom_fake = k_malloc_PDN0;
+	k_free_fake.custom_fake = k_free_PDN0;
+
+	ret = lte_lc_pdn_default_ctx_events_disable();
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL(1, k_free_fake.call_count);
+
+	ret = lte_lc_pdn_default_ctx_events_enable();
+	TEST_ASSERT_EQUAL(0, ret);
+	TEST_ASSERT_EQUAL(1, k_malloc_fake.call_count);
+
+	ret = lte_lc_pdn_default_ctx_events_disable();
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL(2, k_free_fake.call_count);
+
+	ret = lte_lc_pdn_default_ctx_events_disable();
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+	TEST_ASSERT_EQUAL(2, k_free_fake.call_count);
 }
 
 /* It is required to be added to each test. That is because unity's

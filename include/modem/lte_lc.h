@@ -2489,6 +2489,24 @@ int lte_lc_pdn_id_get(uint8_t cid);
 int lte_lc_pdn_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *info);
 
 /**
+ * @brief Enable events for default PDP context, CID 0.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @retval 0 on success, otherwise negative error code.
+ */
+int lte_lc_pdn_default_ctx_events_enable(void);
+
+/**
+ * @brief Disable events for default PDP context, CID 0.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @retval 0 on success, otherwise negative error code.
+ */
+int lte_lc_pdn_default_ctx_events_disable(void);
+
+/**
  * Retrieve the default Access Point Name (APN).
  *
  * The default APN is the APN of the default PDP context (zero).
