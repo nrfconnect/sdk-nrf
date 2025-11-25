@@ -11,6 +11,12 @@ This sample is a minimal, error tolerant, integrated demonstration of the :ref:`
 It demonstrates how you can integrate Firmware-Over-The-Air (FOTA), Location Services, Alert and Log Services, periodic sensor sampling, and more in your `nRF Cloud`_-enabled application.
 It also demonstrates how to build connected, error-tolerant applications without worrying about physical-level specifics using Zephyr's ``conn_mgr``.
 
+.. note::
+
+   This sample is deprecated.
+   Refer to the other nRF Cloud samples to explore nRF Cloud features.
+   It is recommended to base your application on the :ref:`asset_tracker_template_redirect`.
+
 .. _nrf_cloud_multi_service_requirements:
 
 Requirements
