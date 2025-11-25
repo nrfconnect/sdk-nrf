@@ -365,6 +365,11 @@ endif()
 add_docset(kconfig "")
 
 #-------------------------------------------------------------------------------
+# docset: psa_api
+
+add_docset(psa_api "1.3.1")
+
+#-------------------------------------------------------------------------------
 # Global targets
 
 add_custom_target(
@@ -390,6 +395,7 @@ add_dependencies(merge-search-indexes
     mcuboot-all
     tfm-all
     kconfig-all
+    psa_api-all
 )
 if(EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
   add_dependencies(merge-search-indexes internal-all)
@@ -422,6 +428,7 @@ add_dependencies(build-all
     matter-all
     kconfig-all
     wifi
+    psa_api-all
 )
 if(EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
   add_dependencies(build-all internal-all)
@@ -432,4 +439,5 @@ add_dependencies(linkcheck
     nrf-linkcheck
     nrfxlib-linkcheck
     mcuboot-linkcheck
+    psa_api-linkcheck
 )

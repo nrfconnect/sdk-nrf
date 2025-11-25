@@ -24,6 +24,7 @@ ALL_DOCSETS = {
     "mcuboot": ("MCUboot", "wrapper", "mcuboot"),
     "tfm": ("Trusted Firmware-M", "wrapper", "trusted-firmware-m"),
     "matter": ("Matter", "index", "matter"),
+    "psa_api": ("PSA Certified API", "wrapper", "psa-api"),
     "kconfig": ("Kconfig Reference", "index", None),
 }
 """All supported docsets (name: title, home page, manifest project name)."""

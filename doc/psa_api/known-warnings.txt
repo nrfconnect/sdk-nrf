@@ -1,0 +1,3 @@
+# Known warnings for PSA API documentation build
+# Add warnings here that should be filtered out during the build
+# Format: One regex pattern per line

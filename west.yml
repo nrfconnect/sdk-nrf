@@ -35,6 +35,8 @@ manifest:
       url-base: https://github.com/boschsensortec
     - name: eembc
       url-base: https://github.com/eembc
+    - name: arm-software
+      url-base: https://github.com/arm-software
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -272,6 +274,10 @@ manifest:
       revision: d5fad6bd094899101a4e5fd53af7298160ced6ab
       groups:
         - benchmark
+    - name: psa-api
+      remote: arm-software
+      path: modules/lib/psa-api
+      revision: 2b70e1dcb706c2c99911126b6f2ce764049f20ab
 
   # West-related configuration for the nrf repository.
   self:
