@@ -16,14 +16,21 @@ using namespace chip::DeviceLayer;
 
 static constexpr uint32_t kMoveIntervalMs = 100;
 
-GarageDoorImpl::GarageDoorImpl(const pwm_dt_spec *spec) : mSpec(spec) {}
+GarageDoorImpl::GarageDoorImpl(const pwm_dt_spec *spec) : mSpec(spec), mCurrentPosition("cp") {}
 
 CHIP_ERROR GarageDoorImpl::Init()
 {
+	ReturnErrorOnFailure(mCurrentPosition.Load());
+	mObserver->OnSetup(mCurrentPosition.Get());
+
 	if (mPhysicalIndicator.Init(mSpec, 0, 255) != 0) {
 		LOG_ERR("Cannot initialize the physical indicator");
 		return CHIP_ERROR_INCORRECT_STATE;
 	}
+	uint8_t brightness =
+		static_cast<uint8_t>((static_cast<uint32_t>(mCurrentPosition.Get()) * 255U + 5000U) / 10000U);
+	mPhysicalIndicator.InitiateAction(Nrf::PWMDevice::LEVEL_ACTION, 0, &brightness);
+
 	return CHIP_NO_ERROR;
 }
 
@@ -43,7 +50,7 @@ CHIP_ERROR GarageDoorImpl::Stop()
 {
 	SystemLayer().CancelTimer(TimerTimeoutCallback, this);
 	LOG_DBG("Movement stopped");
-	mObserver->OnMovementStopped(mCurrentPosition);
+	mObserver->OnMovementStopped(mCurrentPosition.Get());
 	return CHIP_NO_ERROR;
 }
 
@@ -60,25 +67,26 @@ void GarageDoorImpl::HandleTimer()
 	uint32_t movePerTick32 = (static_cast<uint32_t>(mSpeed) * kMoveIntervalMs) / 1000U;
 	uint16_t movePerTick = static_cast<uint16_t>(std::min<uint32_t>(movePerTick32, UINT16_MAX));
 	uint16_t distanceLeft = 0;
-	if (mCurrentPosition <= mTargetPosition) {
-		distanceLeft = mTargetPosition - mCurrentPosition;
+
+	if (mCurrentPosition.Get() <= mTargetPosition) {
+		distanceLeft = mTargetPosition - mCurrentPosition.Get();
 		if (movePerTick >= distanceLeft) {
 			finished = true;
-			mCurrentPosition = mTargetPosition;
+			mCurrentPosition.Set(mTargetPosition, true);
 		} else {
-			mCurrentPosition += movePerTick;
+			mCurrentPosition.Set(mCurrentPosition.Get() + movePerTick);
 		}
 	} else {
-		distanceLeft = mCurrentPosition - mTargetPosition;
+		distanceLeft = mCurrentPosition.Get() - mTargetPosition;
 		if (movePerTick >= distanceLeft) {
 			finished = true;
-			mCurrentPosition = mTargetPosition;
+			mCurrentPosition.Set(mTargetPosition, true);
 		} else {
-			mCurrentPosition -= movePerTick;
+			mCurrentPosition.Set(mCurrentPosition.Get() - movePerTick);
 		}
 	}
-
-	uint8_t brightness = static_cast<uint8_t>((static_cast<uint32_t>(mCurrentPosition) * 255U + 5000U) / 10000U);
+	uint8_t brightness =
+		static_cast<uint8_t>((static_cast<uint32_t>(mCurrentPosition.Get()) * 255U + 5000U) / 10000U);
 
 	mPhysicalIndicator.InitiateAction(Nrf::PWMDevice::LEVEL_ACTION, 0, &brightness);
 
@@ -87,7 +95,7 @@ void GarageDoorImpl::HandleTimer()
 	} else {
 		uint32_t timeLeftMs = (static_cast<uint32_t>(distanceLeft) * kMoveIntervalMs) / movePerTick;
 		uint16_t timeLeftS = static_cast<uint16_t>((timeLeftMs + 999) / 1000); /*ceil*/
-		mObserver->OnMovementUpdate(mCurrentPosition, timeLeftS, mJustStarted);
+		mObserver->OnMovementUpdate(mCurrentPosition.Get(), timeLeftS, mJustStarted);
 		mJustStarted = false;
 		auto err = SystemLayer().StartTimer(System::Clock::Milliseconds32(kMoveIntervalMs),
 						    TimerTimeoutCallback, this);

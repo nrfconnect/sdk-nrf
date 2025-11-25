@@ -6,6 +6,7 @@
 #pragma once
 #include "closure_manager.h"
 #include "garage_door_impl.h"
+#include <persistent_storage/persistent_storage_common.h>
 
 class AppTask {
 public:
@@ -20,6 +21,8 @@ public:
 	CHIP_ERROR StartApp();
 
 private:
+	constexpr static auto kAccessPrefix = "cs";
+	Nrf::PersistentStorageNode mRootNode{ kAccessPrefix, strlen(kAccessPrefix) };
 	GarageDoorImpl mPhysicalDevice;
 	ClosureManager mClosureManager;
 };
