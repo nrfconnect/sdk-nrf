@@ -257,13 +257,14 @@ static void parse_cgev(const char *notif)
 		}
 
 		/* Handle special case where pdn_activate() is waiting for the ACTIVATED event */
-		if (evt.pdn.type == LTE_LC_EVT_PDN_ACTIVATED &&
-		    evt.pdn.cid == pdn_act_notif.cid) {
+		if (evt.pdn.type == LTE_LC_EVT_PDN_ACTIVATED && evt.pdn.cid == pdn_act_notif.cid) {
 			if (*p == ',') {
-				evt.pdn.esm_err = (int8_t)strtol(p + 1, NULL, 10);
+				pdn_act_notif.reason = (int8_t)strtol(p + 1, NULL, 10);
+			} else {
+				pdn_act_notif.reason = PDN_ACT_REASON_NONE;
 			}
 
-			pdn_act_notif.reason = evt.pdn.esm_err;
+			evt.pdn.esm_err = pdn_act_notif.reason;
 
 			k_sem_give(&sem_cgev);
 		}
@@ -612,6 +613,7 @@ int pdn_activate(uint8_t cid, int *esm, enum lte_lc_pdn_family *family)
 	k_mutex_lock(&pdn_act_mutex, K_FOREVER);
 
 	pdn_act_notif.cid = cid;
+	pdn_act_notif.reason = PDN_ACT_REASON_NONE;
 
 	err = cgact(cid, true);
 	if (!err && family) {
