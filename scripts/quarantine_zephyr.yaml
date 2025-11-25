@@ -256,6 +256,13 @@
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35925"
 
+- scenarios:
+    - sample.bluetooth.ccp_call_control_server
+    - sample.bluetooth.ccp_call_control_client
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36532"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
