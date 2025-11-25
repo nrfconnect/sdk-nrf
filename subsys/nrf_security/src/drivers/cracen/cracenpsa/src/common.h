@@ -217,6 +217,17 @@ void cracen_be_add(uint8_t *v, size_t v_size, size_t summand);
 int cracen_be_sub(const uint8_t *a, const uint8_t *b, uint8_t *c, size_t sz);
 
 /**
+ * @brief Compute r = a >> n.
+ *
+ * @param a	Big-endian value a.
+ * @param n	Number of bits.
+ * @param c	Bitshift result.
+ * @param sz	Size of the buffers.
+ *
+ */
+void cracen_be_rshift(const uint8_t *a, int n, uint8_t *r, size_t sz);
+
+/**
  * @brief Big-Endian compare with carry.
  * \note
  *
@@ -319,6 +330,35 @@ int cracen_get_rnd_in_range(const uint8_t *n, size_t nsz, uint8_t *out);
  */
 psa_status_t cracen_ecc_reduce_p256(const uint8_t *input, size_t input_size, uint8_t *output,
 				    size_t output_size);
+
+/**
+ * @brief Check if the value is a quadratic residue modulo p,
+ *	  where p is an EC prime.
+ *
+ * @param[in] curve_prime EC prime.S
+ * @param[in] value       Value to check.
+ * @param[out] is_qr      Result of the check. This outputs true if the value
+ *			  is a quadratic residue; false otherwise.
+ *
+ * @return psa_status_t
+ */
+psa_status_t cracen_ecc_is_quadratic_residue(const sx_const_op *curve_prime,
+					     const sx_const_op *value,
+					     bool *is_qr);
+
+/**
+ * @brief Derive an element of an ECC group (point on the curve) from the given hash.
+ *	  The function implements the SSWU algorithm, as described in the RFC 9380 document.
+ *
+ * @param[in] curve_family PSA curve family.
+ * @param[in] curve_bits   Curve bits.
+ * @param[in] u            Hash to use.
+ * @param[out] result      Result (point on ECC curve).
+ *
+ * @return psa_status_t
+ */
+psa_status_t cracen_ecc_h2e_sswu(psa_ecc_family_t curve_family, size_t curve_bits,
+				 const sx_const_op *u, const sx_op *result);
 
 /** Modular exponentiation (base^key mod n).
  *
