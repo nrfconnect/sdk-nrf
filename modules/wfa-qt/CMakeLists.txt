@@ -19,6 +19,13 @@ zephyr_library_compile_options(
 )
 
 zephyr_library_compile_definitions(CONFIG_CTRL_IFACE_ZEPHYR)
+zephyr_library_compile_definitions_ifdef(CONFIG_WIFI_NM_WPA_SUPPLICANT_P2P
+  CONFIG_P2P
+)
+
+zephyr_library_compile_definitions_ifdef(CONFIG_WIFI_NM_WPA_SUPPLICANT_WPS
+  CONFIG_WPS
+)
 
 set(WFA_QT_BASE ${ZEPHYR_NRF_MODULE_DIR}/../modules/lib/wfa-qt-control-app)
 zephyr_include_directories(${WFA_QT_BASE})
