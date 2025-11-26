@@ -1594,6 +1594,8 @@ enum {
 	DECT_SHELL_SETT_CERT_TX_STF_COVER_SEQ_OFF,
 	DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_ON,
 	DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_OFF,
+	DECT_SHELL_SETT_CERT_NW_ID_VALIDATION_ON,
+	DECT_SHELL_SETT_CERT_NW_ID_VALIDATION_OFF,
 	DECT_SHELL_SETT_RESET_ALL,
 };
 
@@ -1663,7 +1665,7 @@ static const char dect_phy_sett_cmd_usage_str[] =
 	"                                                    starting a TX for providing\n"
 	"                                                    HARQ feedback if requested by\n"
 	"                                                    client.\n"
-	"                                                    Default: 4 (subslots)."
+	"                                                    Default: 4 (subslots).\n"
 	"Following only for certification purposes - set to modem after a bootup:\n"
 	"      Note: changing all of these requires a reboot.\n"
 	"      --tx_cw_ctrl_on                Enable Continuous Wave (CW) TX.\n"
@@ -1675,7 +1677,10 @@ static const char dect_phy_sett_cmd_usage_str[] =
 	"       --tx_stf_cover_seq_on,        Enable STF cover sequence on TX. Default.\n"
 	"       --tx_stf_cover_seq_off,       Disable STF cover sequence on TX.\n"
 	"       --rx_stf_cover_seq_on,        Enable STF cover sequence on RX. Default.\n"
-	"       --rx_stf_cover_seq_off,       Disable STF cover sequence on RX.\n";
+	"       --rx_stf_cover_seq_off,       Disable STF cover sequence on RX.\n"
+	"       --nw_id_valid_on,             Default. Network id validation enabled.\n"
+	"       --nw_id_valid_off,            Allow network id without validation.\n"
+	"                                     Might be needed for RX op to match tester vectors.\n";
 
 
 /* Specifying the expected options (both long and short): */
@@ -1713,6 +1718,8 @@ static struct option long_options_settings[] = {
 	{"tx_stf_cover_seq_off", no_argument, 0, DECT_SHELL_SETT_CERT_TX_STF_COVER_SEQ_OFF},
 	{"rx_stf_cover_seq_on", no_argument, 0, DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_ON},
 	{"rx_stf_cover_seq_off", no_argument, 0, DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_OFF},
+	{"nw_id_valid_on", no_argument, 0, DECT_SHELL_SETT_CERT_NW_ID_VALIDATION_ON},
+	{"nw_id_valid_off", no_argument, 0, DECT_SHELL_SETT_CERT_NW_ID_VALIDATION_OFF},
 	{"help", no_argument, 0, 'h'},
 	{"reset", no_argument, 0, DECT_SHELL_SETT_RESET_ALL},
 	{"read", no_argument, 0, 'r'},
@@ -1784,6 +1791,8 @@ static void dect_phy_sett_cmd_print(struct dect_phy_settings *dect_sett)
 		   dect_sett->cert.tx_stf_cover_seq_on ? "Enabled" : "Disabled");
 	desh_print("  STF cover sequence on RX.................................%s",
 		   dect_sett->cert.rx_stf_cover_seq_on ? "Enabled" : "Disabled");
+	desh_print("  Network id validation....................................%s",
+		   dect_sett->cert.network_id_validation_on ? "Enabled" : "Disabled");
 }
 
 static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv)
@@ -1815,7 +1824,8 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 		}
 		case 'n': {
 			tmp_value = shell_strtoul(optarg, 10, &ret);
-			if (ret || !dect_common_utils_32bit_network_id_validate(tmp_value)) {
+			if (ret || (current_settings.cert.network_id_validation_on &&
+				    !dect_common_utils_32bit_network_id_validate(tmp_value))) {
 				desh_error("%u (0x%08x) is not a valid network id.\n"
 					   "The network ID shall be set to a value where neither\n"
 					   "the 8 LSB bits are 0x00 nor the 24 MSB bits "
@@ -2004,6 +2014,16 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 			newsettings.cert.rx_stf_cover_seq_on = false;
 			desh_warn("STF cover sequence on RX disabled. "
 				  "Requires a reboot to have an impact.");
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_NW_ID_VALIDATION_ON: {
+			newsettings.cert.network_id_validation_on = true;
+			desh_print("Network id validation enabled.");
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_NW_ID_VALIDATION_OFF: {
+			newsettings.cert.network_id_validation_on = false;
+			desh_warn("Network id validation disabled.");
 			break;
 		}
 		case DECT_SHELL_SETT_RESET_ALL: {
