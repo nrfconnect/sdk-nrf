@@ -300,3 +300,17 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args: FILE_SUFFIX=llvm
     harness: console
+  applications.nrf_desktop.zdebug_ram_load.uart:
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args: FILE_SUFFIX=ram_load
+    harness: console
+  applications.nrf_desktop.zrelease_ram_load:
+    build_only: true
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args: FILE_SUFFIX=release_ram_load
