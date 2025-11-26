@@ -51,6 +51,28 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 
 #define SYNC_BUFFER_SIZE (CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE * sizeof(uint32_t)) /* bytes */
 
+/* This value denotes whether the revert feature is supported by the MCUboot bootloader.
+ * Currently, the revert feature is only supported by the MCUboot bootloader that is not
+ * configured for the standard direct-xip or RAM load mode.
+ */
+ #define MCUBOOT_REVERT_FEATURE_IS_SUPPORTED                       \
+	 (IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT) &&                 \
+	 !IS_ENABLED(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP) && \
+	 !IS_ENABLED(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD))
+
+/* This value denotes whether it is possible to resolve the DFU slot ID at build time.
+ * If the build time information is available, the DFU_SLOT_ID macro should be defined
+ * and point to the flash area where the new DFU image should be placed. Otherwise, if
+ * dynamic information is required, the function dfu_slot_id_get() should be extended
+ * to support the new bootloader mode. To support the dynamic resolution for the MCUboot
+ * bootloader, the user must define the MCUBOOT_PRIMARY_SLOT_ID and MCUBOOT_SECONDARY_SLOT_ID
+ * macros.
+ */
+#define BUILD_TIME_DFU_SLOT_ID_INFO_IS_AVAILABLE                   \
+	 ((IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT) &&                \
+	  !IS_ENABLED(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD)) || \
+	 IS_ENABLED(CONFIG_SECURE_BOOT))
+
 #if CONFIG_SECURE_BOOT
 	BUILD_ASSERT(IS_ENABLED(CONFIG_PARTITION_MANAGER_ENABLED),
 		     "B0 bootloader supported only with Partition Manager");
@@ -66,10 +88,16 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 	#endif
 #elif CONFIG_BOOTLOADER_MCUBOOT
 	#include <zephyr/dfu/mcuboot.h>
-	#if CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
+	#if CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
 		#define BOOTLOADER_NAME "MCUBOOT+XIP"
 	#else
 		#define BOOTLOADER_NAME "MCUBOOT"
+	#endif
+
+	#if CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD
+		/* The RAM load requires the code partition to be defined in DTS. */
+		BUILD_ASSERT(!IS_ENABLED(CONFIG_PARTITION_MANAGER_ENABLED) &&
+			     IS_ENABLED(CONFIG_USE_DT_CODE_PARTITION));
 	#endif
 
 	#if CONFIG_PARTITION_MANAGER_ENABLED
@@ -123,18 +151,20 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 		#define MCUBOOT_PRIMARY_SLOT_ID   DT_FIXED_PARTITION_ID(MCUBOOT_PRIMARY_NODE)
 		#define MCUBOOT_SECONDARY_SLOT_ID DT_FIXED_PARTITION_ID(MCUBOOT_SECONDARY_NODE)
 
-		/* Use range check to allow for placing MCUboot header in a separate partition,
-		 * so the application code partition is not an alias for the MCUboot partition,
-		 * but a subpartition of the MCUboot partition.
-		 */
-		#if (CODE_PARTITION_START_ADDR >= MCUBOOT_PRIMARY_START_ADDR) && \
-		    (CODE_PARTITION_START_ADDR < MCUBOOT_PRIMARY_END_ADDR)
-			#define DFU_SLOT_ID MCUBOOT_SECONDARY_SLOT_ID
-		#elif (CODE_PARTITION_START_ADDR >= MCUBOOT_SECONDARY_START_ADDR) && \
-		      (CODE_PARTITION_START_ADDR < MCUBOOT_SECONDARY_END_ADDR)
-			#define DFU_SLOT_ID MCUBOOT_PRIMARY_SLOT_ID
-		#else
-			#error Missing partition definitions in DTS.
+		#if BUILD_TIME_DFU_SLOT_ID_INFO_IS_AVAILABLE
+			/* Use range check to allow for placing MCUboot header in a separate
+			 * partition,so the application code partition is not an alias for the
+			 * MCUboot partition, but a subpartition of the MCUboot partition.
+			 */
+			#if (CODE_PARTITION_START_ADDR >= MCUBOOT_PRIMARY_START_ADDR) && \
+			(CODE_PARTITION_START_ADDR < MCUBOOT_PRIMARY_END_ADDR)
+				#define DFU_SLOT_ID MCUBOOT_SECONDARY_SLOT_ID
+			#elif (CODE_PARTITION_START_ADDR >= MCUBOOT_SECONDARY_START_ADDR) && \
+			(CODE_PARTITION_START_ADDR < MCUBOOT_SECONDARY_END_ADDR)
+				#define DFU_SLOT_ID MCUBOOT_PRIMARY_SLOT_ID
+			#else
+				#error Missing partition definitions in DTS.
+			#endif
 		#endif
 	#else
 		#error Unsupported partitioning scheme.
@@ -206,6 +236,25 @@ static void config_channel_dfu_lock_release(void)
 			__ASSERT_NO_MSG(false);
 		}
 	}
+}
+
+static uint8_t dfu_slot_id_get(void)
+{
+#if BUILD_TIME_DFU_SLOT_ID_INFO_IS_AVAILABLE
+	return DFU_SLOT_ID;
+#else
+	uint8_t active_slot_id;
+
+	/* Dynamic resolution of the DFU slot ID is supported only for MCUboot. */
+	BUILD_ASSERT(IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT));
+
+	active_slot_id = boot_fetch_active_slot();
+	__ASSERT_NO_MSG((active_slot_id == MCUBOOT_PRIMARY_SLOT_ID) ||
+			(active_slot_id == MCUBOOT_SECONDARY_SLOT_ID));
+
+	return (active_slot_id == MCUBOOT_SECONDARY_SLOT_ID) ?
+		MCUBOOT_PRIMARY_SLOT_ID : MCUBOOT_SECONDARY_SLOT_ID;
+#endif
 }
 
 static bool is_page_clean(const struct flash_area *fa, off_t off, size_t len)
@@ -298,7 +347,7 @@ static void background_erase_handler(struct k_work *work)
 	}
 
 	if (!flash_area) {
-		err = flash_area_open(DFU_SLOT_ID, &flash_area);
+		err = flash_area_open(dfu_slot_id_get(), &flash_area);
 		if (err) {
 			LOG_ERR("Cannot open flash area (%d)", err);
 			flash_area = NULL;
@@ -357,7 +406,7 @@ static void complete_dfu_data_store(void)
 
 	if (cur_offset == img_length) {
 		LOG_INF("DFU image written");
-#if CONFIG_BOOTLOADER_MCUBOOT && !CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
+#if MCUBOOT_REVERT_FEATURE_IS_SUPPORTED
 		int err = boot_request_upgrade(false);
 		if (err) {
 			LOG_ERR("Cannot request the image upgrade (err:%d)", err);
@@ -564,7 +613,7 @@ static void handle_dfu_start(const uint8_t *data, const size_t size)
 	}
 
 	__ASSERT_NO_MSG(flash_area == NULL);
-	int err = flash_area_open(DFU_SLOT_ID, &flash_area);
+	int err = flash_area_open(dfu_slot_id_get(), &flash_area);
 
 	if (err) {
 		LOG_ERR("Cannot open flash area (%d)", err);
@@ -721,7 +770,7 @@ static void handle_image_info_request(uint8_t *data, size_t *size)
 	const struct fw_info *info;
 	uint8_t flash_area_id;
 
-	if (DFU_SLOT_ID == PM_S1_IMAGE_ID) {
+	if (dfu_slot_id_get() == PM_S1_IMAGE_ID) {
 		info = fw_info_find(PM_S0_IMAGE_ADDRESS);
 		flash_area_id = 0;
 	} else {
@@ -779,7 +828,7 @@ static void handle_image_info_request(uint8_t *data, size_t *size)
 	uint8_t flash_area_id;
 	uint8_t bank_header_area_id;
 
-	if (DFU_SLOT_ID == MCUBOOT_SECONDARY_SLOT_ID) {
+	if (dfu_slot_id_get() == MCUBOOT_SECONDARY_SLOT_ID) {
 		flash_area_id = 0;
 		bank_header_area_id = MCUBOOT_PRIMARY_SLOT_ID;
 	} else {
@@ -902,7 +951,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 		if (check_state(event, MODULE_ID(main), MODULE_STATE_READY)) {
 			int err;
-#if CONFIG_BOOTLOADER_MCUBOOT && !CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
+
+#if MCUBOOT_REVERT_FEATURE_IS_SUPPORTED
 			err = boot_write_img_confirmed();
 
 			if (err) {
@@ -910,7 +960,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			}
 #endif
 
-			err = flash_area_open(DFU_SLOT_ID, &flash_area);
+			err = flash_area_open(dfu_slot_id_get(), &flash_area);
 			if (!err) {
 				flash_write_block_size = flash_area_align(flash_area);
 				erased_val = flash_area_erased_val(flash_area);
