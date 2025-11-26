@@ -31,10 +31,10 @@ You can use this module for the following devices:
   You can use the DFU module with either MCUboot or B0 bootloader.
   For more information on how to enable and configure a bootloader, see the :ref:`nrf_desktop_bootloader` section.
 
-To enable the DFU module, use the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE <config_desktop_app_options>` Kconfig option.
-It requires the transport option :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE <config_desktop_app_options>` to be selected, as it uses :ref:`nrf_desktop_config_channel` for the transmission of the update image.
+To enable the DFU module, use the :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE` Kconfig option.
+It requires the transport option :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE` to be selected, as it uses :ref:`nrf_desktop_config_channel` for the transmission of the update image.
 
-Set the value of :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE <config_desktop_app_options>` to specify the size of the sync buffer (in words).
+Set the value of :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE` to specify the size of the sync buffer (in words).
 During the DFU process, the data is initially stored in the buffer and then moved to non-volatile memory.
 The buffer is located in the RAM, so increasing the buffer size increases the RAM usage.
 If the buffer is small, the host must perform the DFU progress synchronization more often.
@@ -66,15 +66,15 @@ Device identification information
 
 The DFU module provides the following information about the device through the :ref:`nrf_desktop_config_channel`:
 
-* Vendor ID (:ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_VID <config_desktop_app_options>`)
-* Product ID (:ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_PID <config_desktop_app_options>`)
-* Generation (:ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_GENERATION <config_desktop_app_options>`)
+* Vendor ID (:option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_VID`)
+* Product ID (:option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_PID`)
+* Generation (:option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_GENERATION`)
 
 These values are fetched using the :ref:`devinfo <dfu_devinfo>` configuration channel option.
 
 .. note::
    By default, the reported Vendor ID, Product ID, and generation are aligned with the values defined globally for the nRF Desktop application.
-   The default values of Kconfig options used by the DFU module are based on respectively :ref:`CONFIG_DESKTOP_DEVICE_VID <config_desktop_app_options>`, :ref:`CONFIG_DESKTOP_DEVICE_PID <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_DEVICE_GENERATION <config_desktop_app_options>`.
+   The default values of Kconfig options used by the DFU module are based on respectively :option:`CONFIG_DESKTOP_DEVICE_VID`, :option:`CONFIG_DESKTOP_DEVICE_PID` and :option:`CONFIG_DESKTOP_DEVICE_GENERATION`.
 
 Non-volatile memory access synchronization with other DFU methods
 =================================================================
@@ -82,7 +82,7 @@ Non-volatile memory access synchronization with other DFU methods
 The DFU module leverages the :ref:`nrf_desktop_dfu_lock` to synchronize non-volatile memory access with other DFU methods (for example, SMP DFU).
 If multiple DFU transports are enabled in your application configuration, make sure that the following conditions are met:
 
-* The :ref:`CONFIG_DESKTOP_DFU_LOCK <config_desktop_app_options>` Kconfig option is enabled
+* The :option:`CONFIG_DESKTOP_DFU_LOCK` Kconfig option is enabled
 * All of the used DFU transports use the :ref:`nrf_desktop_dfu_lock`.
 
 On each DFU attempt, the module attempts to claim ownership over the DFU non-volatile memory using the DFU Lock API.

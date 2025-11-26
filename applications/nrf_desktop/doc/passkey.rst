@@ -28,8 +28,8 @@ The passkey input handling is based on ``button_event``.
 To configure the passkey module, complete the following steps:
 
 1. Enable and configure the :ref:`caf_buttons`.
-#. Enable the passkey module by using the :ref:`CONFIG_DESKTOP_PASSKEY_BUTTONS <config_desktop_app_options>` Kconfig option.
-#. Define the maximum number of digits in the passkey by using the :ref:`CONFIG_DESKTOP_PASSKEY_MAX_LEN <config_desktop_app_options>` option.
+#. Enable the passkey module by using the :option:`CONFIG_DESKTOP_PASSKEY_BUTTONS` Kconfig option.
+#. Define the maximum number of digits in the passkey by using the :option:`CONFIG_DESKTOP_PASSKEY_MAX_LEN` option.
 #. Define the IDs of the keys used by the passkey module in the :file:`passkey_buttons_def.h` file located in the board-specific directory in the :file:`configuration` directory.
    You must define the IDs of the following keys:
 

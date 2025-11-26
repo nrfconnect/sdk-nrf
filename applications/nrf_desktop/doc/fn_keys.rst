@@ -25,21 +25,21 @@ Configuration
 The module uses :c:struct:`button_event` sent by :ref:`caf_buttons`.
 Make sure mentioned CAF module is enabled.
 
-The module is enabled with :ref:`CONFIG_DESKTOP_FN_KEYS_ENABLE <config_desktop_app_options>` option.
+The module is enabled with :option:`CONFIG_DESKTOP_FN_KEYS_ENABLE` option.
 
 You must configure the following options:
 
-* :ref:`CONFIG_DESKTOP_FN_KEYS_SWITCH <config_desktop_app_options>` - Fn key button.
-* :ref:`CONFIG_DESKTOP_FN_KEYS_LOCK <config_desktop_app_options>` - Fn lock button.
-* :ref:`CONFIG_DESKTOP_STORE_FN_LOCK <config_desktop_app_options>` - Option for defining if the device should store the Fn lock state after reboot (set by default to storing the state).
-* :ref:`CONFIG_DESKTOP_FN_KEYS_MAX_ACTIVE <config_desktop_app_options>` - Maximum number of dual-purpose keys pressed at the same time (8 by default).
+* :option:`CONFIG_DESKTOP_FN_KEYS_SWITCH` - Fn key button.
+* :option:`CONFIG_DESKTOP_FN_KEYS_LOCK` - Fn lock button.
+* :option:`CONFIG_DESKTOP_STORE_FN_LOCK` - Option for defining if the device should store the Fn lock state after reboot (set by default to storing the state).
+* :option:`CONFIG_DESKTOP_FN_KEYS_MAX_ACTIVE` - Maximum number of dual-purpose keys pressed at the same time (8 by default).
   The module remembers the pressed keys to send proper key releases.
 
 In the file :file:`fn_keys_def.h`, define all the dual-purpose keys.
 The ``fn_keys`` array must be sorted by key ID (the module uses binary search).
 
 By default, the module subscribes for :c:struct:`button_event` as the first subscriber (:c:macro:`APP_EVENT_SUBSCRIBE_FIRST`).
-You can disable the :ref:`CONFIG_DESKTOP_FN_KEYS_BUTTON_EVENT_SUBSCRIBE_FIRST <config_desktop_app_options>` Kconfig option to use early subscription (:c:macro:`APP_EVENT_SUBSCRIBE_EARLY`).
+You can disable the :option:`CONFIG_DESKTOP_FN_KEYS_BUTTON_EVENT_SUBSCRIBE_FIRST` Kconfig option to use early subscription (:c:macro:`APP_EVENT_SUBSCRIBE_EARLY`).
 
 Implementation details
 **********************

@@ -14,8 +14,8 @@ The state of all active keys can be retrieved by the application module.
 Configuration
 *************
 
-Use the :ref:`CONFIG_DESKTOP_KEYS_STATE <config_desktop_app_options>` Kconfig option to enable the utility.
-You can change the maximum number of tracked keys that can be simultaneously active using the :ref:`CONFIG_DESKTOP_KEYS_STATE_KEY_CNT_MAX <config_desktop_app_options>` Kconfig option.
+Use the :option:`CONFIG_DESKTOP_KEYS_STATE` Kconfig option to enable the utility.
+You can change the maximum number of tracked keys that can be simultaneously active using the :option:`CONFIG_DESKTOP_KEYS_STATE_KEY_CNT_MAX` Kconfig option.
 
 See Kconfig help for more details.
 
@@ -28,7 +28,7 @@ Initialization
 ==============
 
 Initialize a utility instance before tracking active keys, using the :c:func:`keys_state_init` function.
-The maximum number of active keys specified through the function must be lower than or equal to the limit specified through :ref:`CONFIG_DESKTOP_KEYS_STATE_KEY_CNT_MAX <config_desktop_app_options>` Kconfig option.
+The maximum number of active keys specified through the function must be lower than or equal to the limit specified through :option:`CONFIG_DESKTOP_KEYS_STATE_KEY_CNT_MAX` Kconfig option.
 
 Updating keys state
 ===================

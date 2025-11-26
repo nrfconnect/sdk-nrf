@@ -23,19 +23,19 @@ Module events
 Configuration
 *************
 
-To enable the module, use the :ref:`CONFIG_DESKTOP_USB_ENABLE <config_desktop_app_options>` Kconfig option.
+To enable the module, use the :option:`CONFIG_DESKTOP_USB_ENABLE` Kconfig option.
 
-The :ref:`CONFIG_DESKTOP_USB_ENABLE <config_desktop_app_options>` option is implied by the :ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>` option.
+The :option:`CONFIG_DESKTOP_USB_ENABLE` option is implied by the :option:`CONFIG_DESKTOP_ROLE_HID_DONGLE` option.
 The module is enabled by default for the nRF Desktop dongles because the dongles forward the HID data to the host connected over USB.
 See the :ref:`nrf_desktop_hid_configuration` documentation for details.
 
 You can use the module with either the USB legacy stack or the USB next stack.
 To select the USB stack, enable one of the following Kconfig choice options:
 
-* :ref:`CONFIG_DESKTOP_USB_STACK_LEGACY <config_desktop_app_options>`
+* :option:`CONFIG_DESKTOP_USB_STACK_LEGACY`
   The option enables USB legacy stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK`).
   The USB legacy stack is used by default.
-* :ref:`CONFIG_DESKTOP_USB_STACK_NEXT <config_desktop_app_options>`
+* :option:`CONFIG_DESKTOP_USB_STACK_NEXT`
   The option enables USB next stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT`).
   This is the only USB stack that supports SoCs with USB High-Speed (such as the nRF54H20 SoC).
 
@@ -72,11 +72,11 @@ USB Start of Frame (SOF) synchronization
 The module receives a HID input report as :c:struct:`hid_report_event` and submits the report to the USB stack.
 The module informs that the HID report was sent using :c:struct:`hid_report_sent_event`.
 
-* If the :ref:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF <config_desktop_app_options>` Kconfig option is disabled, the :c:struct:`hid_report_sent_event` is instantly submitted when a HID report is sent over a USB during USB poll (on USB endpoint read).
+* If the :option:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF` Kconfig option is disabled, the :c:struct:`hid_report_sent_event` is instantly submitted when a HID report is sent over a USB during USB poll (on USB endpoint read).
   This approach results in shorter HID data latency as a HID report pipeline is not used.
   However, the USB peripheral might not provide a HID report during a USB poll if two subsequent USB polls for HID data happen in quick succession.
   USB polls for HID data are not guaranteed to be evenly spaced in time.
-* If the :ref:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF <config_desktop_app_options>` Kconfig option is enabled, submitting :c:struct:`hid_report_sent_event` is delayed until subsequent USB SOF is reported by the USB stack.
+* If the :option:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF` Kconfig option is enabled, submitting :c:struct:`hid_report_sent_event` is delayed until subsequent USB SOF is reported by the USB stack.
   USB SOFs, in contrast to USB polls, are always evenly spaced in time.
   Enabling the Kconfig option reduces the negative impact of jitter related to USB polls and ensures that a HID peripheral can provide a HID input report during every USB poll.
   However, the feature also increases HID data latency as a HID report pipeline with two sequential reports is used.
@@ -85,7 +85,7 @@ The module informs that the HID report was sent using :c:struct:`hid_report_sent
   In the case of :ref:`nrf_desktop_hid_mouse_report_handling`, enabling the USB SOF synchronization also synchronizes motion sensor sampling with the USB SOF instead of USB polls (motion sensor sampling is synchronized to :c:struct:`hid_report_sent_event`).
   This synchronization ensures that the sensor is sampled more evenly.
 
-The :ref:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF <config_desktop_app_options>` Kconfig option is enabled by default on devices (such as the nRF54H20 SoC) that use an UDC driver with High-Speed support (:kconfig:option:`CONFIG_UDC_DRIVER_HAS_HIGH_SPEED_SUPPORT`) to mitigate a negative impact of jitter related to USB polls.
+The :option:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF` Kconfig option is enabled by default on devices (such as the nRF54H20 SoC) that use an UDC driver with High-Speed support (:kconfig:option:`CONFIG_UDC_DRIVER_HAS_HIGH_SPEED_SUPPORT`) to mitigate a negative impact of jitter related to USB polls.
 The negative impact of the jitter is more visible for USB High-Speed.
 
 .. _nrf_desktop_usb_state_hid_class_instance:
@@ -96,9 +96,9 @@ USB HID class instance configuration
 The nRF Desktop device can provide multiple instances of HID-class USB.
 By default, the number of the HID-class USB instances should be set to:
 
-* ``1`` for HID peripherals (:ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>`).
-  You can use more HID-class USB instances if the selective HID report subscription feature is enabled (:ref:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION <config_desktop_app_options>`).
-* :ref:`CONFIG_DESKTOP_HID_DONGLE_BOND_COUNT <config_desktop_app_options>` for HID dongles (:ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>`).
+* ``1`` for HID peripherals (:option:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL`).
+  You can use more HID-class USB instances if the selective HID report subscription feature is enabled (:option:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION`).
+* :option:`CONFIG_DESKTOP_HID_DONGLE_BOND_COUNT` for HID dongles (:option:`CONFIG_DESKTOP_ROLE_HID_DONGLE`).
 
 See the subsections below for details.
 
@@ -108,7 +108,7 @@ nRF Desktop peripheral
 By default, the nRF Desktop peripheral devices use only a single HID-class USB instance.
 In that case, this instance is used for all the HID reports.
 
-Enable the :ref:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION <config_desktop_app_options>` Kconfig option to use more than one USB HID-class instance on the nRF Desktop peripheral.
+Enable the :option:`CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION` Kconfig option to use more than one USB HID-class instance on the nRF Desktop peripheral.
 Make sure to configure additional HID-class USB instances and create an additional :file:`usb_state_def.h` header in the configuration.
 The header assigns HID input reports to the HID-class USB instances.
 A given HID report can be handled only by a single HID-class USB instance.
@@ -138,7 +138,7 @@ In this example, the HID mouse input report is handled by the first HID-class US
 nRF Desktop dongle
 ------------------
 
-The nRF Desktop dongle device can use either a single HID-class USB instance or a number of instances equal to that specified in the :ref:`CONFIG_DESKTOP_HID_DONGLE_BOND_COUNT <config_desktop_app_options>` option.
+The nRF Desktop dongle device can use either a single HID-class USB instance or a number of instances equal to that specified in the :option:`CONFIG_DESKTOP_HID_DONGLE_BOND_COUNT` option.
 If only one instance is used, reports from all peripherals connected to the dongle are forwarded to the same instance.
 In other cases, reports from each of the bonded peripherals are forwarded to a dedicated HID-class USB instance.
 The same instance is used after reconnection.
@@ -146,7 +146,7 @@ The same instance is used after reconnection.
 USB HID configuration in USB legacy stack
 -----------------------------------------
 
-For the USB legacy stack, the :ref:`CONFIG_DESKTOP_USB_STACK_LEGACY <config_desktop_app_options>` Kconfig option selects the required dependencies: :kconfig:option:`CONFIG_USB_DEVICE_STACK` and :kconfig:option:`CONFIG_USB_DEVICE_HID`.
+For the USB legacy stack, the :option:`CONFIG_DESKTOP_USB_STACK_LEGACY` Kconfig option selects the required dependencies: :kconfig:option:`CONFIG_USB_DEVICE_STACK` and :kconfig:option:`CONFIG_USB_DEVICE_HID`.
 The number of HID-class USB instances in the USB legacy stack is specified by the :kconfig:option:`CONFIG_USB_HID_DEVICE_COUNT` option.
 The default value of this option is updated to match requirements for either an nRF Desktop peripheral or a dongle.
 
@@ -159,7 +159,7 @@ For low latency of HID reports, the device requests a polling rate of 1 ms.
 Boot protocol configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD <config_desktop_app_options>` Kconfig options are used to control support of HID boot reports in the nRF Desktop application.
+The :option:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE` and :option:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD` Kconfig options are used to control support of HID boot reports in the nRF Desktop application.
 The module aligns the USB HID boot protocol configuration with the application configuration.
 The module sets the default value of the :kconfig:option:`CONFIG_USB_HID_BOOT_PROTOCOL` Kconfig option and calls the :c:func:`usb_hid_set_proto_code` function during initialization to set the USB HID boot interface protocol code.
 Common HID boot protocol code is used for all of the HID-class USB instances.
@@ -167,7 +167,7 @@ Common HID boot protocol code is used for all of the HID-class USB instances.
 USB HID configuration in USB next stack
 ---------------------------------------
 
-For the USB next stack, the :ref:`CONFIG_DESKTOP_USB_STACK_NEXT <config_desktop_app_options>` selects the :kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT` Kconfig option.
+For the USB next stack, the :option:`CONFIG_DESKTOP_USB_STACK_NEXT` selects the :kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT` Kconfig option.
 Every USB HID-class instance is configured through a separate DTS node compatible with ``zephyr,hid-device``.
 The DTS node configures, among others, the used HID boot protocol, the size of the longest HID input report, and the HID polling rate.
 You can configure your preferred USB HID polling rate using the ``in-polling-period-us`` property of the DTS node.
@@ -183,7 +183,7 @@ USB wakeup configuration
 ========================
 
 The nRF Desktop device can work as a source of wakeup events for the host device if connected through the USB.
-To use the feature, enable the :ref:`CONFIG_DESKTOP_USB_REMOTE_WAKEUP <config_desktop_app_options>` option.
+To use the feature, enable the :option:`CONFIG_DESKTOP_USB_REMOTE_WAKEUP` option.
 This option selects the :kconfig:option:`CONFIG_USB_DEVICE_REMOTE_WAKEUP` Kconfig option to enable required dependencies if USB legacy stack is used.
 The USB next stack supports remote wakeup by default, and you do not need to select any additional Kconfig dependencies.
 
@@ -248,4 +248,4 @@ Instead, the function returns an error on timeout.
 The UDC is powered down whenever the USB cable is disconnected, failing to trigger the necessary callbacks to the USB stack.
 It may cause the USB stack to become non-functional.
 The USB stack is disabled upon disconnecting the cable to work around this issue.
-For more details, see the :ref:`CONFIG_DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL <config_desktop_app_options>` Kconfig option.
+For more details, see the :option:`CONFIG_DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL` Kconfig option.

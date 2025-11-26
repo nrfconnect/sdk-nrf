@@ -23,8 +23,8 @@ Module events
 Configuration
 *************
 
-To enable the module, use the :ref:`CONFIG_DESKTOP_SWIFT_PAIR <config_desktop_app_options>` Kconfig option.
-This option automatically selects the :ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO <config_desktop_app_options>` Kconfig option to enable the dongle peer ID information event.
+To enable the module, use the :option:`CONFIG_DESKTOP_SWIFT_PAIR` Kconfig option.
+This option automatically selects the :option:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ID_INFO` Kconfig option to enable the dongle peer ID information event.
 
 To use the Swift Pair module, you must enable the following Kconfig options:
 
@@ -33,10 +33,10 @@ To use the Swift Pair module, you must enable the following Kconfig options:
   The Swift Pair module uses API of the Swift Pair advertising data provider and depending on the application local identity it enables or disables the Swift Pair advertising payload.
 * :kconfig:option:`CONFIG_CAF_BLE_COMMON_EVENTS` - The module updates the Fast Pair advertising payload by reacting on the application events related to Bluetooth.
   See :ref:`nrf_desktop_bluetooth_guide` for Bluetooth configuration in the nRF Desktop.
-* :ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE <config_desktop_app_options>` - The module dynamically enables or disables the Swift Pair advertising payload for the dongle peer and for other Bluetooth peers relying on the values of the following Kconfig options:
+* :option:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE` - The module dynamically enables or disables the Swift Pair advertising payload for the dongle peer and for other Bluetooth peers relying on the values of the following Kconfig options:
 
-  * :ref:`CONFIG_DESKTOP_SWIFT_PAIR_ADV_DONGLE_PEER <config_desktop_app_options>`
-  * :ref:`CONFIG_DESKTOP_SWIFT_PAIR_ADV_GENERAL_PEER <config_desktop_app_options>`
+  * :option:`CONFIG_DESKTOP_SWIFT_PAIR_ADV_DONGLE_PEER`
+  * :option:`CONFIG_DESKTOP_SWIFT_PAIR_ADV_GENERAL_PEER`
 
   If the dongle peer is disabled, there is no reason to use the module.
 

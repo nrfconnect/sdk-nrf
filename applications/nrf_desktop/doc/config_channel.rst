@@ -376,7 +376,7 @@ For example, :ref:`nrf_desktop_motion` uses this option to identify a motion sen
 Handling configuration channel in firmware
 ******************************************
 
-To enable the configuration channel in the nRF Desktop firmware, set the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE <config_desktop_app_options>` Kconfig option.
+To enable the configuration channel in the nRF Desktop firmware, set the :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE` Kconfig option.
 This option also enables the mandatory :ref:`nrf_desktop_info`.
 
 Make sure you also configure the following configuration channel elements:
@@ -408,7 +408,7 @@ Depending on the connection method:
 
    The *GATT write without response* operation cannot be performed on the HID feature report.
    To allow the GATT write without response, the Peripheral must provide an additional HID output report.
-   Use the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT <config_desktop_app_options>` Kconfig option in the nRF Desktop peripheral configuration to add the mentioned HID output report.
+   Use the :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT` Kconfig option in the nRF Desktop peripheral configuration to add the mentioned HID output report.
    Disabling this option reduces the memory consumption.
 
 The :c:struct:`config_event` is used to propagate the configuration channel data.

@@ -29,7 +29,7 @@ Module events
 Configuration
 *************
 
-To enable the module, set the :ref:`CONFIG_DESKTOP_DFU_MCUMGR_ENABLE <config_desktop_app_options>` Kconfig option.
+To enable the module, set the :option:`CONFIG_DESKTOP_DFU_MCUMGR_ENABLE` Kconfig option.
 
 The module selects the following configurations:
 
@@ -63,11 +63,11 @@ With the :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT` Kconfig option enabled, th
 The event can be used to lower Bluetooth connection latency during the DFU process.
 
 The DFU module leverages the :ref:`nrf_desktop_dfu_lock` to synchronize non-volatile memory access with other DFU methods (for example, the :ref:`nrf_desktop_dfu`).
-Set the :ref:`CONFIG_DESKTOP_DFU_LOCK <config_desktop_app_options>` Kconfig option to enable this feature.
+Set the :option:`CONFIG_DESKTOP_DFU_LOCK` Kconfig option to enable this feature.
 Make sure that the DFU lock utility is enabled if your nRF Desktop application configuration uses multiple DFU transports.
 
 You cannot use this module with the :ref:`caf_ble_smp`.
-In other words, you cannot simultaneously enable the :ref:`CONFIG_DESKTOP_DFU_MCUMGR_ENABLE <config_desktop_app_options>` option and the :kconfig:option:`CONFIG_CAF_BLE_SMP` Kconfig option.
+In other words, you cannot simultaneously enable the :option:`CONFIG_DESKTOP_DFU_MCUMGR_ENABLE` option and the :kconfig:option:`CONFIG_CAF_BLE_SMP` Kconfig option.
 
 .. note::
     B0 bootloader is not integrated with MCUmgr.

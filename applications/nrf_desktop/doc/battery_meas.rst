@@ -29,14 +29,14 @@ For this reason, set the following options:
 * :kconfig:option:`CONFIG_ADC_ASYNC` - The module's implementation uses asynchronous calls.
 * :kconfig:option:`CONFIG_ADC_NRFX_SAADC` - The module's implementation uses nrfx SAADC driver for nRF52 MCU series.
 
-Set :ref:`CONFIG_DESKTOP_BATTERY_MEAS <config_desktop_app_options>` to enable the module.
-Also, make sure to define :ref:`CONFIG_DESKTOP_BATTERY_MEAS_POLL_INTERVAL_MS <config_desktop_app_options>`, that is the amount of time between the subsequent battery measurements (in ms).
+Set :option:`CONFIG_DESKTOP_BATTERY_MEAS` to enable the module.
+Also, make sure to define :option:`CONFIG_DESKTOP_BATTERY_MEAS_POLL_INTERVAL_MS`, that is the amount of time between the subsequent battery measurements (in ms).
 
-If the measurement circuit contains a voltage divider made of two resistors, set the :ref:`CONFIG_DESKTOP_BATTERY_MEAS_HAS_VOLTAGE_DIVIDER <config_desktop_app_options>` option.
+If the measurement circuit contains a voltage divider made of two resistors, set the :option:`CONFIG_DESKTOP_BATTERY_MEAS_HAS_VOLTAGE_DIVIDER` option.
 The following defines specify the values of these two resistors (in kOhm):
 
-* :ref:`CONFIG_DESKTOP_BATTERY_MEAS_VOLTAGE_DIVIDER_UPPER <config_desktop_app_options>` - Upper resistor.
-* :ref:`CONFIG_DESKTOP_BATTERY_MEAS_VOLTAGE_DIVIDER_LOWER <config_desktop_app_options>` - Lower resistor.
+* :option:`CONFIG_DESKTOP_BATTERY_MEAS_VOLTAGE_DIVIDER_UPPER` - Upper resistor.
+* :option:`CONFIG_DESKTOP_BATTERY_MEAS_VOLTAGE_DIVIDER_LOWER` - Lower resistor.
 
 The module measures the voltage over the lower resistor.
 
@@ -45,12 +45,12 @@ You can find this file the in board-specific directory in the application config
 
 Remember to also define the following battery parameters (otherwise, the default values will be used):
 
-* :ref:`CONFIG_DESKTOP_BATTERY_MEAS_MIN_LEVEL <config_desktop_app_options>` - Battery voltage in mV that corresponds to the 0% battery level.
-* :ref:`CONFIG_DESKTOP_BATTERY_MEAS_MAX_LEVEL <config_desktop_app_options>` - Battery voltage in mV that corresponds to the 100% battery level.
-* :ref:`CONFIG_DESKTOP_VOLTAGE_TO_SOC_DELTA <config_desktop_app_options>` - Difference in mV between the adjacent elements in the conversion lookup table.
+* :option:`CONFIG_DESKTOP_BATTERY_MEAS_MIN_LEVEL` - Battery voltage in mV that corresponds to the 0% battery level.
+* :option:`CONFIG_DESKTOP_BATTERY_MEAS_MAX_LEVEL` - Battery voltage in mV that corresponds to the 100% battery level.
+* :option:`CONFIG_DESKTOP_VOLTAGE_TO_SOC_DELTA` - Difference in mV between the adjacent elements in the conversion lookup table.
 
-If a pin is used to enable the battery measurement, enable the :ref:`CONFIG_DESKTOP_BATTERY_MEAS_HAS_ENABLE_PIN <config_desktop_app_options>` option.
-The number of the pin used for this purpose must be defined as :ref:`CONFIG_DESKTOP_BATTERY_MEAS_ENABLE_PIN <config_desktop_app_options>` option.
+If a pin is used to enable the battery measurement, enable the :option:`CONFIG_DESKTOP_BATTERY_MEAS_HAS_ENABLE_PIN` option.
+The number of the pin used for this purpose must be defined as :option:`CONFIG_DESKTOP_BATTERY_MEAS_ENABLE_PIN` option.
 The implementation uses the ``GPIO0`` port.
 Because Zephyr's :ref:`zephyr:gpio_api` driver is used to control this pin, also set the :kconfig:option:`CONFIG_GPIO` option.
 

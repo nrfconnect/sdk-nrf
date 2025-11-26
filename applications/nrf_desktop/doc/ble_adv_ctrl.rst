@@ -28,8 +28,8 @@ Configuration
 *************
 
 This module is disabled by default.
-To enable it, set the :ref:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE <config_desktop_app_options>` Kconfig option to ``y``.
-To enable the module to suspend and resume the :ref:`caf_ble_adv` when USB state changes, set the :ref:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB <config_desktop_app_options>` Kconfig option to ``y``.
+To enable it, set the :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE` Kconfig option to ``y``.
+To enable the module to suspend and resume the :ref:`caf_ble_adv` when USB state changes, set the :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB` Kconfig option to ``y``.
 It is recommended to enable this option if the device supports the USB High-Speed.
 
 Implementation details

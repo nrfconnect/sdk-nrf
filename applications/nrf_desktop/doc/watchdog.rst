@@ -25,18 +25,18 @@ Module events
 Configuration
 *************
 
-To enable the module, use the :ref:`CONFIG_DESKTOP_WATCHDOG_ENABLE <config_desktop_app_options>` Kconfig option.
+To enable the module, use the :option:`CONFIG_DESKTOP_WATCHDOG_ENABLE` Kconfig option.
 
 The module uses Zephyr's :ref:`zephyr:watchdog_api` driver.
 For this reason, it automatically selects the :kconfig:option:`CONFIG_WATCHDOG` option.
 The ``watchdog0`` DTS alias determines the watchdog instance used by the module.
 
-You must define :ref:`CONFIG_DESKTOP_WATCHDOG_TIMEOUT <config_desktop_app_options>` option.
+You must define :option:`CONFIG_DESKTOP_WATCHDOG_TIMEOUT` option.
 After this amount of time (in ms), the device will be restarted if the watchdog timer was not reset.
 
 .. note::
    By default, the module is used only in the ``release`` configurations that do not enable logs.
-   When the :ref:`CONFIG_DESKTOP_LOG <config_desktop_app_options>` Kconfig option is set, enabling the watchdog timer can cause losing logs, for example, when the logger is in the panic mode.
+   When the :option:`CONFIG_DESKTOP_LOG` Kconfig option is set, enabling the watchdog timer can cause losing logs, for example, when the logger is in the panic mode.
 
 Implementation details
 **********************
