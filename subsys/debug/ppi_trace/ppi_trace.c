@@ -47,7 +47,7 @@ static bool ppi_trace_gpiote_pin_init(
 	}
 
 	if (nrfx_gpiote_channel_alloc(ppi_trace_gpiote_pin->gpiote,
-		&ppi_trace_gpiote_pin->gpiote_channel) != NRFX_SUCCESS) {
+		&ppi_trace_gpiote_pin->gpiote_channel) < 0) {
 		LOG_ERR("Failed to allocate GPIOTE channel.");
 		return false;
 	}
