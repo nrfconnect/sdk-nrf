@@ -193,13 +193,14 @@ This library has dependencies to the following libraries:
 * :ref:`lib_hw_unique_key`
 * :ref:`Zephyr's settings subsystem <zephyr:settings_api>`
 
+
 API documentation
 *****************
 
 Protected storage
 =================
 
-| Header file: :file:`subsys/trusted_storage/include/psa/protected_storage.h`
+| Header file: :file:`include/protected_storage.h`
 | Source files: :file:`subsys/secure_storage/src/protected_storage/backend_interface.c`
 
 .. doxygengroup:: protected_storage
@@ -207,7 +208,7 @@ Protected storage
 Internal trusted storage
 ========================
 
-| Header file: :file:`subsys/trusted_storage/include/psa/internal_trusted_storage.h`
+| Header file: :file:`include/internal_trusted_storage.h`
 | Source files: :file:`subsys/secure_storage/src/internal_trusted_storage/backend_interface.c`
 
 .. doxygengroup:: internal_trusted_storage
