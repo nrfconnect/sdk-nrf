@@ -10,38 +10,51 @@
 Quick Start
 ###########
 
-Use the `Quick Start app`_, available from `nRF Connect for Desktop`_, to familiarize yourself with the |NCS| tools and components for some of the devices supported by the |NCS|.
-The application uses Nordic Semiconductor tools and precompiled binaries and does not require installing the |NCS|.
+You can quickly get started with Nordic Semiconductor devices by following a guided setup and installation procedure.
 
-.. important::
-    The following table does not list all devices supported in the |NCS|.
+.. note::
+    The following tables do not list all devices supported in the |NCS|.
+    For example, they do not list devices that use another device as the development platform, such as the nRF54L10 DK which uses the nRF54L15 DK.
+
     For the full list, see the :ref:`board support pages <programming_board_names>`.
 
+Use the `Quick Start app`_, available from `nRF Connect for Desktop`_, to get started with the following devices.
+The application uses Nordic Semiconductor tools and precompiled binaries and does not require installing the |NCS|.
+
++----------------------+---------------------------------------+
+| Device               | Device user guide                     |
++======================+=======================================+
+| Nordic Thingy:91 X   | `Nordic Thingy:91 X User Guide`_      |
++----------------------+---------------------------------------+
+| nRF9161 DK           | `nRF9161 DK Hardware`_                |
++----------------------+---------------------------------------+
+| nRF9160 DK           | `nRF9160 DK Hardware`_                |
++----------------------+---------------------------------------+
+| nRF9151 DK           | `nRF9151 DK Hardware`_                |
++----------------------+---------------------------------------+
+| nRF7002 DK           | `nRF7002 DK Hardware`_                |
++----------------------+---------------------------------------+
+| nRF54LM20 DK         | `nRF54LM20 DK User Guide`_            |
++----------------------+---------------------------------------+
+| nRF54L15 DK          | `nRF54L15 DK User Guide`_             |
++----------------------+---------------------------------------+
+| nRF5340 DK           | `nRF5340 DK User Guide`_              |
++----------------------+---------------------------------------+
+| nRF52840 DK          | `nRF52840 DK User Guide`_             |
++----------------------+---------------------------------------+
+| nRF52833 DK          | `nRF52833 DK User Guide`_             |
++----------------------+---------------------------------------+
+| nRF52 DK             | `nRF52 DK User Guide`_                |
++----------------------+---------------------------------------+
+
+The following devices are not currently supported by the Quick Start app.
+The table links to the instructions that guide you through the getting started process with each device.
+The nRF54H20 DK requires installing the |NCS|.
+The other devices use Nordic Semiconductor tools and precompiled binaries and do not require installing the |NCS|.
+
 +----------------------+--------------------------------------------------------------------+---------------------------------------+
-| Device               | Getting started method                                             | Device user guide                     |
+| Device               | Getting started instructions                                       | Device user guide                     |
 +======================+====================================================================+=======================================+
-| Nordic Thingy:91 X   |                                                                    | `Nordic Thingy:91 X User Guide`_      |
-+----------------------+                                                                    +---------------------------------------+
-| nRF9161 DK           |                                                                    | `nRF9161 DK Hardware`_                |
-+----------------------+                                                                    +---------------------------------------+
-| nRF9160 DK           |                                                                    | `nRF9160 DK Hardware`_                |
-+----------------------+                                                                    +---------------------------------------+
-| nRF9151 DK           |                                                                    | `nRF9151 DK Hardware`_                |
-+----------------------+                                                                    +---------------------------------------+
-| nRF7002 DK           |                                                                    | `nRF7002 DK Hardware`_                |
-+----------------------+                                                                    +---------------------------------------+
-| nRF54LM20 DK         |                                                                    | `nRF54LM20 DK User Guide`_            |
-+----------------------+                                                                    +---------------------------------------+
-| nRF54L15 DK          |  `Quick Start app`_                                                | `nRF54L15 DK User Guide`_             |
-+----------------------+                                                                    +---------------------------------------+
-| nRF5340 DK           |                                                                    | `nRF5340 DK User Guide`_              |
-+----------------------+                                                                    +---------------------------------------+
-| nRF52840 DK          |                                                                    | `nRF52840 DK User Guide`_             |
-+----------------------+                                                                    +---------------------------------------+
-| nRF52833 DK          |                                                                    | `nRF52833 DK User Guide`_             |
-+----------------------+                                                                    +---------------------------------------+
-| nRF52 DK             |                                                                    | `nRF52 DK User Guide`_                |
-+----------------------+--------------------------------------------------------------------+---------------------------------------+
 | nRF54H20 DK          | :ref:`ug_nrf54h20_gs`                                              | *Not yet available*                   |
 +----------------------+--------------------------------------------------------------------+---------------------------------------+
 | nRF7002 EB           | `Get started <nRF7002 EB get started_>`_ on the product page       | `nRF7002 EB User Guide`_              |
