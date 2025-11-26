@@ -76,7 +76,7 @@ With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the follo
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_LOW_THR` - The option configures the threshold percentage value for entering the low battery state as defined in the FMDN extension.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_CRITICAL_THR` - The option configures the threshold percentage value for entering the critically low battery state as defined in the FMDN extension.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` - The option configures the FMDN module to pass the battery information to the DULT module and to support its mechanism for providing battery information to the connected peers.
-      This option can only be used when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option is enabled.
+      You can only use this option when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option is enabled.
 
   * There are following read mode configuration options for the FMDN extension (see :ref:`ug_bt_fast_pair_gatt_service_fmdn_read_mode_callbacks`):
 
@@ -88,9 +88,9 @@ With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the follo
       The option with no ringing component is enabled by default.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_VOLUME` - The option enables ringing volume support.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_BT_GATT` - The option configures the ringing timeout for connected peers that use DULT-based ringing mechanism.
-      This option can only be used when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` is enabled.
+      You can only use this option when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option is enabled.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR` - The option configures the ringing timeout for ringing requests from the DULT motion detector.
-      This option can only be used when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option is enabled.
+      You can only use this option when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option is enabled.
 
   * There are following beacon clock service configuration options for the FMDN extension (see :ref:`ug_bt_fast_pair_prerequisite_ops_fmdn_clock_svc`):
 
@@ -191,16 +191,16 @@ For more details regarding the advertising policy of the FMDN extension, see the
 DULT module for the FMDN extension
 ----------------------------------
 
-The :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` of the FMDN extension selects the :kconfig:option:`CONFIG_DULT` Kconfig option to enable the DULT module.
+The :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option of the FMDN extension selects the :kconfig:option:`CONFIG_DULT` Kconfig option to enable the DULT module.
 The FMDN extension implementation also acts as middleware between the user application and the DULT module.
 The DULT module integration is required for small and not easily discoverable accessories.
-The :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` is enabled by default.
+The :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option is enabled by default.
 
-The :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` of the FMDN extension selects the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR` Kconfig option to enable the motion detector feature of the DULT module.
+The :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option of the FMDN extension selects the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR` Kconfig option to enable the motion detector feature of the DULT module.
 With this option enabled, the FMDN extension passes the DULT motion detector callbacks from the DULT module to application.
 To learn more about the DULT motion detector, see :ref:`ug_dult_motion_detector`.
 
-The :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` of the FMDN extension selects the :kconfig:option:`CONFIG_DULT_BATTERY` Kconfig option to enable the battery support in the DULT module.
+The :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig option of the FMDN extension selects the :kconfig:option:`CONFIG_DULT_BATTERY` Kconfig option to enable the battery support in the DULT module.
 With this option enabled, the FMDN extension passes the battery information also to the DULT module.
 
 For more details on the DULT module, see the :ref:`dult_readme` module documentation.
