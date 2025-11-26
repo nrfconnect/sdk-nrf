@@ -36,6 +36,7 @@ target_sources(app PRIVATE
   src/app_task.cpp
   src/zcl_callbacks.cpp
   src/main.cpp
+  src/basic_information_extension.cpp
 )
 
 ncs_configure_data_model(
