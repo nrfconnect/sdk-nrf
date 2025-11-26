@@ -634,7 +634,7 @@ This guide focuses on the :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool
 
    .. code-block::
 
-      west zap-gui -j ./zcl.json --clusters ./MyCluster.xml
+      west zap-gui -j src/default_zap/zcl.json --clusters ./MyCluster.xml
 
    This example command copies the original :file:`<default Matter SDK location>/src/app/zap-templates/zcl/zcl.json` file, adds the :file:`MyCluster.xml` cluster, and saves the new :file:`zcl.json` file in the sample directory.
    The newly generated :file:`zcl.json` file is used as an input to the ZAP tool.
@@ -693,6 +693,18 @@ Run the following command to use the modified ZAP file to generate the C++ code 
    .. code-block::
 
       west zap-generate --full
+
+Add the ``-j`` or ``--zcl-json`` argument to the command to specify the path to the :file:`zcl.json` file if the file is not stored in the ``sample_directory/src/default_zap/`` subdirectory.
+
+For example:
+
+   .. code-block::
+
+      west zap-generate --full -j ./zcl.json
+
+.. important::
+
+   In the |NCS| versions older than 3.2.0, the :file:`zcl.json` had to be stored in the ``sample_directory/src/default_zap/`` subdirectory.
 
 After completing these steps, the following changes will be visible within your sample directory:
 
@@ -773,18 +785,41 @@ Then, you need to implement the following command in the application code:
 
 .. code-block:: c
 
-   bool emberAfMyNewClusterMyCommandCallback(CommandHandler *commandObj, const ConcreteCommandPath &commandPath, const MyCommand::DecodableType &commandData)
+   #include <app-common/zap-generated/callback.h>
+
+   bool emberAfMyNewClusterClusterMyCommandCallback(chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
+                                                    const chip::app::Clusters::MyNewCluster::Commands::MyCommand::DecodableType &commandData)
    {
       // TODO: Implement the command.
+   }
+
+   void MatterMyNewClusterPluginServerInitCallback()
+   {
+      // TODO: Implement the plugin server init callback.
    }
 
 The same applies to the extended commands.
 
-For example, if you want to extend the ``BasicInformation`` cluster with the ``ExtendedCommand`` command, you need to implement it in the application code as follows:
+.. note::
 
-.. code-block:: c
+   Before the |NCS| v3.2.0, the extended commands callback were handled by the ``emberAf...`` functions.
 
-   bool emberAfBasicInformationClusterExtendedCommandCallback(CommandHandler *commandObj, const ConcreteCommandPath &commandPath, const ExtendedCommand::DecodableType &commandData)
-   {
-      // TODO: Implement the command.
-   }
+   For example, if you want to extend the ``BasicInformation`` cluster with the ``ExtendedCommand`` command, you need to implement it in the application code as follows:
+
+   .. code-block:: c
+
+      #include <app-common/zap-generated/callback.h>
+
+      bool emberAfBasicInformationClusterBasicInformationExtendedCommandCallback(chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
+                                                                                 const chip::app::Clusters::BasicInformation::Commands::ExtendedCommand::DecodableType &commandData)
+      {
+         // TODO: Implement the command.
+      }
+
+Synchronizing the ZAP files with the new Matter SDK
+***************************************************
+
+If you want to update the Matter SDK revision in your project and you have custom clusters or device types in your project, you need to call the :ref:`ug_matter_gs_tools_matter_west_commands_sync` with the additional ``-j`` and ``--clusters`` arguments.
+This command updates the :file:`.zap` file with all required changes from the new Matter SDK Device Type Library Specification and the :file:`zcl.json` file with the new cluster and relative paths to the Matter data model directory.
+
+This is needed especially when you notice an issue with opening the ZAP tool GUI.
