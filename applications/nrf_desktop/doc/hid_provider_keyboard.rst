@@ -29,14 +29,14 @@ Module events
 Configuration
 *************
 
-You can enable the default implementation of the HID provider using the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD <config_desktop_app_options>` Kconfig option.
-This option is enabled by default if the device uses HID provider events (:ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_EVENT <config_desktop_app_options>`) and supports HID keyboard reports (:ref:`CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT <config_desktop_app_options>`).
-The default implementation of the HID provider uses a predefined format of HID reports, which is aligned with the default HID report map in the common configuration (:ref:`CONFIG_DESKTOP_HID_REPORT_DESC <config_desktop_app_options>`).
-The module also provides HID boot keyboard input report if it is supported (:ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD <config_desktop_app_options>`).
+You can enable the default implementation of the HID provider using the :option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD` Kconfig option.
+This option is enabled by default if the device uses HID provider events (:option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_EVENT`) and supports HID keyboard reports (:option:`CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT`).
+The default implementation of the HID provider uses a predefined format of HID reports, which is aligned with the default HID report map in the common configuration (:option:`CONFIG_DESKTOP_HID_REPORT_DESC`).
+The module also provides HID boot keyboard input report if it is supported (:option:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD`).
 
 Alternatively, you can substitute the module with a custom HID keyboard report provider implementation.
 Using the custom provider allows you to modify the sources of user input and the HID report format.
-Enable the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_ALT <config_desktop_app_options>` Kconfig option to use a custom HID keyboard report provider.
+Enable the :option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_ALT` Kconfig option to use a custom HID keyboard report provider.
 The option disables the default HID keyboard report provider.
 Make sure to introduce the custom HID keyboard report provider if you enable this option.
 
@@ -61,7 +61,7 @@ HID keymap
 
 Since the keys on the board can be associated with a HID usage ID and thus be part of different HID reports, the first step is to identify if the key belongs to a HID report that is provided by this module.
 This is done by obtaining the key mapping from the :ref:`nrf_desktop_hid_keymap`.
-The module selects the :ref:`CONFIG_DESKTOP_HID_KEYMAP <config_desktop_app_options>` Kconfig option to enable the utility.
+The module selects the :option:`CONFIG_DESKTOP_HID_KEYMAP` Kconfig option to enable the utility.
 Make sure to configure the HID keymap utility.
 See the utility's documentation for details.
 
@@ -72,27 +72,27 @@ The :ref:`nrf_desktop_hid_eventq` is used to temporarily enqueue key state chang
 When a key is pressed or released before the connection is established, an element containing this key's usage ID is pushed onto the queue.
 The sequence of keypresses is replayed once the connection with a HID host is established.
 This ensures that all of the keypresses are replayed in order.
-The module selects the :ref:`CONFIG_DESKTOP_HID_EVENTQ <config_desktop_app_options>` Kconfig option to enable the utility.
+The module selects the :option:`CONFIG_DESKTOP_HID_EVENTQ` Kconfig option to enable the utility.
 
 Queue size
 ~~~~~~~~~~
 
-With the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option, you can set the number of elements on the queue where the keys are stored before the connection is established.
-For backwards compatibility, you can set the default value for this option using the deprecated :ref:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option.
+With the :option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_EVENT_QUEUE_SIZE` Kconfig option, you can set the number of elements on the queue where the keys are stored before the connection is established.
+For backwards compatibility, you can set the default value for this option using the deprecated :option:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE` Kconfig option.
 If there is no space in the queue to enqueue a new key state change, the oldest element is released.
 
 Report expiration
 ~~~~~~~~~~~~~~~~~
 
-With the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_KEYPRESS_EXPIRATION <config_desktop_app_options>` Kconfig option, you can set the amount of time after which a queued key will be considered expired.
-For backwards compatibility, you can set the default value for this option using the deprecated :ref:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION <config_desktop_app_options>` Kconfig option.
+With the :option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_KEYPRESS_EXPIRATION` Kconfig option, you can set the amount of time after which a queued key will be considered expired.
+For backwards compatibility, you can set the default value for this option using the deprecated :option:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION` Kconfig option.
 The higher the value, the longer the period from which the nRF Desktop application will recall pressed keys when the connection with HID host is established.
 
 Keys state
 ----------
 
 The :ref:`nrf_desktop_keys_state` is used to track the state of active keys after the connection with the HID host is established.
-The module selects the :ref:`CONFIG_DESKTOP_KEYS_STATE <config_desktop_app_options>` Kconfig option to enable the utility.
+The module selects the :option:`CONFIG_DESKTOP_KEYS_STATE` Kconfig option to enable the utility.
 
 Implementation details
 **********************
@@ -119,7 +119,7 @@ Discarding queued events
 ------------------------
 
 While key state changes go through the event queue and there is no space for a new input event, the module tries to free space by discarding the oldest event in the queue.
-Events stored in the queue are automatically discarded after the period defined by the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_KEYPRESS_EXPIRATION <config_desktop_app_options>` option.
+Events stored in the queue are automatically discarded after the period defined by the :option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_KEYPRESS_EXPIRATION` option.
 
 When discarding an event from the queue, the module checks if the key associated with the event is pressed.
 This is to avoid missing key releases for earlier key presses when the keys from the queue are replayed to the host.

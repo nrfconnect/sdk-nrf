@@ -26,14 +26,14 @@ The previous owner can use this callback for tracking the DFU non-volatile memor
 Configuration
 *************
 
-Use the :ref:`CONFIG_DESKTOP_DFU_LOCK <config_desktop_app_options>` option to enable the utility.
+Use the :option:`CONFIG_DESKTOP_DFU_LOCK` option to enable the utility.
 
 Currently, the DFU lock utility is automatically used if you enable both supported DFU transports in your application:
 
-* :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE <config_desktop_app_options>`
-* :ref:`CONFIG_DESKTOP_DFU_MCUMGR_ENABLE <config_desktop_app_options>`
+* :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE`
+* :option:`CONFIG_DESKTOP_DFU_MCUMGR_ENABLE`
 
-You can adjust the logging level of this utility by changing the :ref:`CONFIG_DESKTOP_DFU_LOCK_LOG_LEVEL <config_desktop_app_options>` Kconfig option.
+You can adjust the logging level of this utility by changing the ``CONFIG_DESKTOP_DFU_LOCK_LOG_LEVEL`` Kconfig option.
 
 Implementation details
 **********************

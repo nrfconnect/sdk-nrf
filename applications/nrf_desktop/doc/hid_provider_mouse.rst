@@ -29,14 +29,14 @@ Module events
 Configuration
 *************
 
-You can enable the default implementation of the HID provider using the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_MOUSE <config_desktop_app_options>` Kconfig option.
-This option is enabled by default if the device uses HID provider events (:ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_EVENT <config_desktop_app_options>`) and supports HID mouse reports (:ref:`CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT <config_desktop_app_options>`).
-The default implementation of the HID provider uses a predefined format of HID reports, which is aligned with the default HID report map in the common configuration (:ref:`CONFIG_DESKTOP_HID_REPORT_DESC <config_desktop_app_options>`).
-The module also provides HID boot mouse input report if it is supported (:ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE <config_desktop_app_options>`).
+You can enable the default implementation of the HID provider using the :option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_MOUSE` Kconfig option.
+This option is enabled by default if the device uses HID provider events (:option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_EVENT`) and supports HID mouse reports (:option:`CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT`).
+The default implementation of the HID provider uses a predefined format of HID reports, which is aligned with the default HID report map in the common configuration (:option:`CONFIG_DESKTOP_HID_REPORT_DESC`).
+The module also provides HID boot mouse input report if it is supported (:option:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE`).
 
 Alternatively, you can substitute the module with a custom HID mouse report provider implementation.
 Using the custom provider allows you to modify the sources of user input and the HID report format.
-Enable the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_MOUSE_ALT <config_desktop_app_options>` Kconfig option to use a custom HID mouse report provider.
+Enable the :option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_MOUSE_ALT` Kconfig option to use a custom HID mouse report provider.
 The option disables the default HID mouse report provider.
 Make sure to introduce the custom HID mouse report provider if you enable this option.
 
@@ -49,7 +49,7 @@ HID keymap
 ----------
 
 The module uses the :ref:`nrf_desktop_hid_keymap` to map an application-specific key ID to a HID report ID and HID usage ID pair.
-The module selects the :ref:`CONFIG_DESKTOP_HID_KEYMAP <config_desktop_app_options>` Kconfig option to enable the utility.
+The module selects the :option:`CONFIG_DESKTOP_HID_KEYMAP` Kconfig option to enable the utility.
 Make sure to configure the HID keymap utility.
 See the utility's documentation for details.
 

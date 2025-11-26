@@ -12,19 +12,19 @@ The nRF Desktop devices use :ref:`Zephyr's Bluetooth API <zephyr:bluetooth>` to 
 This API is used only by the application modules that handle such connections.
 The information about peer and connection state is propagated to other application modules using :ref:`app_event_manager` events.
 
-The :ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>` Kconfig option enables support for Bluetooth connectivity in the nRF Desktop.
+The :option:`CONFIG_DESKTOP_BT` Kconfig option enables support for Bluetooth connectivity in the nRF Desktop.
 Specific Bluetooth configurations and application modules are selected or implied according to the HID device role.
 Apart from that, the defaults of Bluetooth-related Kconfig options are aligned with the nRF Desktop use case.
 
 The nRF Desktop devices come in the following roles:
 
-* HID peripheral (:ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>`) that works as a Bluetooth Peripheral (:ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>`)
+* HID peripheral (:option:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL`) that works as a Bluetooth Peripheral (:option:`CONFIG_DESKTOP_BT_PERIPHERAL`)
 
   * Support only the Bluetooth Peripheral role (:kconfig:option:`CONFIG_BT_PERIPHERAL`).
   * Handle only one Bluetooth LE connection at a time.
   * Use more than one Bluetooth local identity.
 
-* HID dongle (:ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>`) that works as a Bluetooth Central (:ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>`)
+* HID dongle (:option:`CONFIG_DESKTOP_ROLE_HID_DONGLE`) that works as a Bluetooth Central (:option:`CONFIG_DESKTOP_BT_CENTRAL`)
 
   * Support only the Bluetooth Central role (:kconfig:option:`CONFIG_BT_CENTRAL`).
   * Handle multiple Bluetooth LE connections simultaneously.
@@ -55,7 +55,7 @@ For detailed information about every option, see the Kconfig help.
 * :kconfig:option:`CONFIG_BT_MAX_PAIRED`
 
   * nRF Desktop central: The maximum number of paired devices is greater than or equal to the maximum number of simultaneously connected peers.
-    The :kconfig:option:`CONFIG_BT_MAX_PAIRED` is by default set to :ref:`CONFIG_DESKTOP_HID_DONGLE_BOND_COUNT <config_desktop_app_options>`.
+    The :kconfig:option:`CONFIG_BT_MAX_PAIRED` is by default set to :option:`CONFIG_DESKTOP_HID_DONGLE_BOND_COUNT`.
   * nRF Desktop peripheral: The maximum number of paired devices is equal to the number of peers plus one, where the one additional paired device slot is used for erase advertising.
 
 * :kconfig:option:`CONFIG_BT_ID_MAX`
@@ -70,7 +70,7 @@ For detailed information about every option, see the Kconfig help.
 * :kconfig:option:`CONFIG_BT_MAX_CONN`
 
   * nRF Desktop central: This option is set to the maximum number of simultaneously connected devices.
-    The :kconfig:option:`CONFIG_BT_MAX_CONN` is by default set to :ref:`CONFIG_DESKTOP_HID_DONGLE_CONN_COUNT <config_desktop_app_options>`.
+    The :kconfig:option:`CONFIG_BT_MAX_CONN` is by default set to :option:`CONFIG_DESKTOP_HID_DONGLE_CONN_COUNT`.
   * nRF Desktop peripheral: The default value (one) is used.
 
 .. note::
@@ -174,21 +174,21 @@ The configurations that enable Fast Pair are specified in the files with filenam
    Both the Fast Pair integration in the nRF Desktop and the Fast Pair support in the |NCS| for the HID use case are :ref:`experimental <software_maturity_fast_pair>`.
    See :ref:`ug_bt_fast_pair` for details.
 
-These configurations support multiple bonds for each Bluetooth local identity (:kconfig:option:`CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS` is set to ``3``) and erase advertising (:ref:`CONFIG_DESKTOP_BLE_PEER_ERASE <config_desktop_app_options>`), but Bluetooth peer selection (:ref:`CONFIG_DESKTOP_BLE_PEER_SELECT <config_desktop_app_options>`) is disabled.
+These configurations support multiple bonds for each Bluetooth local identity (:kconfig:option:`CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS` is set to ``3``) and erase advertising (:option:`CONFIG_DESKTOP_BLE_PEER_ERASE`), but Bluetooth peer selection (:option:`CONFIG_DESKTOP_BLE_PEER_SELECT`) is disabled.
 You can now pair with your other hosts without switching the peripheral back in pairing mode (without triggering the erase advertising).
 The nRF Desktop peripheral that integrates Fast Pair behaves as follows:
 
   * The dongle peer does not use the Fast Pair advertising payload.
   * The bond erase operation is enabled for the dongle peer.
     This lets you change the bonded Bluetooth Central.
-  * If the dongle peer (:ref:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE <config_desktop_app_options>`) is enabled, the `Swift Pair`_ payload is, by default, included only for the mentioned peer.
+  * If the dongle peer (:option:`CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE`) is enabled, the `Swift Pair`_ payload is, by default, included only for the mentioned peer.
     In the Fast Pair configurations, the dongle peer is intended to be used for all of the peers that are not Fast Pair Seekers.
   * If the used Bluetooth local identity has no bonds, the device advertises in pairing mode, and the Fast Pair discoverable advertising is used.
     This allows to pair with the nRF Desktop device using both Fast Pair and normal Bluetooth pairing flows.
     This advertising payload is also used during the erase advertising.
   * If the used Bluetooth local identity already has a bond, the device is no longer in the pairing mode and the Fast Pair not discoverable advertising is used.
     This allows to pair only with the Fast Pair Seekers linked to Google Accounts that are already associated with the nRF Desktop device.
-    In this mode, the device rejects normal Bluetooth pairing by default (:ref:`CONFIG_DESKTOP_FAST_PAIR_LIMIT_NORMAL_PAIRING <config_desktop_app_options>` option is enabled).
+    In this mode, the device rejects normal Bluetooth pairing by default (:option:`CONFIG_DESKTOP_FAST_PAIR_LIMIT_NORMAL_PAIRING` option is enabled).
     The Fast Pair UI indication is hidden after the Provider reaches :kconfig:option:`CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS` bonded peers on the used local identity.
   * The :ref:`nrf_desktop_factory_reset` is enabled by default if the :ref:`nrf_desktop_config_channel` is supported by the device.
     The factory reset operation removes both Fast Pair and Bluetooth non-volatile data.
@@ -206,8 +206,8 @@ Apart from that, the following changes are applied in configurations that suppor
 * Bluetooth privacy feature (:kconfig:option:`CONFIG_BT_PRIVACY`) is enabled.
 * The fast and slow advertising intervals defined in the :ref:`nrf_desktop_ble_adv` are aligned with Fast Pair expectations.
 * The Bluetooth advertising filter accept list (:kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST`) is disabled to allow Fast Pair Seekers other than the bonded one to connect outside of the pairing mode.
-* The security failure timeout (:ref:`CONFIG_DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S <config_desktop_app_options>`) is longer to prevent disconnections during the Fast Pair procedure.
-* Passkey authentication (:ref:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY <config_desktop_app_options>`) is disabled on the keyboard.
+* The security failure timeout (:option:`CONFIG_DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S`) is longer to prevent disconnections during the Fast Pair procedure.
+* Passkey authentication (:option:`CONFIG_DESKTOP_BLE_ENABLE_PASSKEY`) is disabled on the keyboard.
   Currently, Fast Pair does not support devices that use a screen or keyboard for Bluetooth authentication.
 * TX power correction value (:kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL`) is configured to align the TX power included in the advertising data with the Fast Pair expectations.
 

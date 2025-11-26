@@ -26,8 +26,8 @@ Module events
 Configuration
 *************
 
-To enable the module, use the :ref:`CONFIG_DESKTOP_USB_PM_ENABLE <config_desktop_app_options>` Kconfig option.
-It depends on the options :ref:`CONFIG_DESKTOP_USB_ENABLE <config_desktop_app_options>` and :kconfig:option:`CONFIG_CAF_PM_EVENTS`.
+To enable the module, use the :option:`CONFIG_DESKTOP_USB_PM_ENABLE` Kconfig option.
+It depends on the options :option:`CONFIG_DESKTOP_USB_ENABLE` and :kconfig:option:`CONFIG_CAF_PM_EVENTS`.
 
 The log level is inherited from the :ref:`nrf_desktop_usb_state`.
 
@@ -38,7 +38,7 @@ Zephyr's system power management (:kconfig:option:`CONFIG_PM`) does not automati
 This results in entering low power states if no work is scheduled to be done in the nearest future.
 If you use Zephyr's system power management, the module automatically requires zero latency in the power management while USB is active.
 This is done to prevent entering power states that introduce wakeup latency and ensure high performance.
-You can control this feature using the :ref:`CONFIG_DESKTOP_USB_PM_REQ_NO_PM_LATENCY <config_desktop_app_options>` Kconfig option.
+You can control this feature using the :option:`CONFIG_DESKTOP_USB_PM_REQ_NO_PM_LATENCY` Kconfig option.
 
 Implementation details
 **********************
@@ -61,7 +61,7 @@ The application power level is imposed using the :c:struct:`power_manager_restri
   While disconnecting the USB cable, the :c:enum:`USB_STATE_SUSPENDED` USB state might be reported before the :c:enum:`USB_STATE_DISCONNECTED` USB state.
   For the application to behave consistently regardless of whether the :c:enum:`USB_STATE_SUSPENDED` USB state was reported, the module also submits a :c:struct:`force_power_down_event` to force a quick power down.
   The module initially restricts the power down level to the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED`.
-  Then, after the :ref:`CONFIG_DESKTOP_USB_PM_RESTRICT_REMOVE_DELAY_MS <config_desktop_app_options>` configurable delay, the module removes the power down level restriction.
+  Then, after the :option:`CONFIG_DESKTOP_USB_PM_RESTRICT_REMOVE_DELAY_MS` configurable delay, the module removes the power down level restriction.
   This allows you to take actions, such as restart Bluetooth LE advertising, after disconnecting the USB cable without going through reboot.
 
 System power management latency

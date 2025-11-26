@@ -23,7 +23,7 @@ Module Events
 Configuration
 *************
 
-Use the :ref:`CONFIG_DESKTOP_FAILSAFE_ENABLE <config_desktop_app_options>` option to enable the module.
+Use the :option:`CONFIG_DESKTOP_FAILSAFE_ENABLE` option to enable the module.
 
 Additionally, make sure that the following options are set as follows:
 

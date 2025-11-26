@@ -16,8 +16,8 @@ Make sure that heap size (:kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE`) is large 
 Data structures used to internally queue HID events are dynamically allocated using the :c:func:`k_malloc` function.
 When no longer needed, the structures are freed using the :c:func:`k_free` function.
 
-Use the :ref:`CONFIG_DESKTOP_HID_EVENTQ <config_desktop_app_options>` Kconfig option to enable the utility.
-You can use the utility only on HID peripherals (:ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>`).
+Use the :option:`CONFIG_DESKTOP_HID_EVENTQ` Kconfig option to enable the utility.
+You can use the utility only on HID peripherals (:option:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL`).
 
 See Kconfig help for more details.
 

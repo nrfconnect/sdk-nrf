@@ -25,14 +25,14 @@ Module events
 
 .. |consumer_system| replace:: consumer
 
-.. |config_consumer_system_crtl| replace:: :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_CONSUMER_CTRL <config_desktop_app_options>`
+.. |config_consumer_system_crtl| replace:: :option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_CONSUMER_CTRL`
 
-.. |config_consumer_system_crtl_support| replace:: :ref:`CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT <config_desktop_app_options>`
+.. |config_consumer_system_crtl_support| replace:: :option:`CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT`
 
-.. |config_consumer_system_crtl_alt| replace:: :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_CONSUMER_CTRL_ALT <config_desktop_app_options>`
+.. |config_consumer_system_crtl_alt| replace:: :option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_CONSUMER_CTRL_ALT`
 
-.. |config_consumer_system_crtl_event_queue_size| replace:: :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_CONSUMER_CTRL_EVENT_QUEUE_SIZE <config_desktop_app_options>`
+.. |config_consumer_system_crtl_event_queue_size| replace:: :option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_CONSUMER_CTRL_EVENT_QUEUE_SIZE`
 
-.. |config_consumer_system_crtl_keypress_expiration| replace:: :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_CONSUMER_CTRL_KEYPRESS_EXPIRATION <config_desktop_app_options>`
+.. |config_consumer_system_crtl_keypress_expiration| replace:: :option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_CONSUMER_CTRL_KEYPRESS_EXPIRATION`
 
 .. include:: /includes/hid_provider_consumer_system_control.txt

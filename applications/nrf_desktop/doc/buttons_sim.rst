@@ -28,13 +28,13 @@ To configure the |button_sim|:
 
 1. Enable and configure the :ref:`caf_buttons`.
    :c:struct:`button_event` is used to trigger the simulated button sequence.
-#. Enable the ``buttons_sim`` module by setting the :ref:`CONFIG_DESKTOP_BUTTONS_SIM_ENABLE <config_desktop_app_options>` Kconfig option.
+#. Enable the ``buttons_sim`` module by setting the :option:`CONFIG_DESKTOP_BUTTONS_SIM_ENABLE` Kconfig option.
 #. Define the output key ID sequence in the :file:`buttons_sim_def.h` file located in the board-specific directory in the :file:`configuration` directory.
    The mapping from the defined key ID to the HID report ID and usage ID is defined in :file:`hid_keymap_def.h` (this might be different for different boards).
-#. Define the interval between subsequent simulated button presses (:ref:`CONFIG_DESKTOP_BUTTONS_SIM_INTERVAL <config_desktop_app_options>`).
+#. Define the interval between subsequent simulated button presses (:option:`CONFIG_DESKTOP_BUTTONS_SIM_INTERVAL`).
    One second is used by default.
 
-If you want the sequence to automatically restart after it ends, set the :ref:`CONFIG_DESKTOP_BUTTONS_SIM_LOOP_FOREVER <config_desktop_app_options>` Kconfig option.
+If you want the sequence to automatically restart after it ends, set the :option:`CONFIG_DESKTOP_BUTTONS_SIM_LOOP_FOREVER` Kconfig option.
 By default, the sequence is generated only once.
 
 Implementation details
@@ -43,4 +43,4 @@ Implementation details
 The |button_sim| generates button sequence using :c:struct:`k_work_delayable`, which resubmits itself.
 The work handler submits the press and the release of a single button from the sequence.
 
-Receiving :c:struct:`button_event` with the key ID set to :ref:`CONFIG_DESKTOP_BUTTONS_SIM_TRIGGER_KEY_ID <config_desktop_app_options>` either stops generating the sequence (if it is already being generated) or starts generating it.
+Receiving :c:struct:`button_event` with the key ID set to :option:`CONFIG_DESKTOP_BUTTONS_SIM_TRIGGER_KEY_ID` either stops generating the sequence (if it is already being generated) or starts generating it.

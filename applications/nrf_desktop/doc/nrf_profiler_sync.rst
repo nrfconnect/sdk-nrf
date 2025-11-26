@@ -36,10 +36,10 @@ For this reason, the :c:struct:`sync_event` execution is not traced.
 
 You must also define the following options:
 
-* The GPIO port (:ref:`CONFIG_DESKTOP_NRF_PROFILER_SYNC_GPIO_PORT <config_desktop_app_options>`) and the pin (:ref:`CONFIG_DESKTOP_NRF_PROFILER_SYNC_GPIO_PIN <config_desktop_app_options>`) that are used for synchronization.
+* The GPIO port (:option:`CONFIG_DESKTOP_NRF_PROFILER_SYNC_GPIO_PORT`) and the pin (:option:`CONFIG_DESKTOP_NRF_PROFILER_SYNC_GPIO_PIN`) that are used for synchronization.
   These GPIOs must be defined separately for both devices and connected using a physical wire.
 * The device role.
-  One of the devices must be set as Central (:ref:`CONFIG_DESKTOP_NRF_PROFILER_SYNC_CENTRAL <config_desktop_app_options>`) and the other device must be set as Peripheral (:ref:`CONFIG_DESKTOP_NRF_PROFILER_SYNC_PERIPHERAL <config_desktop_app_options>`).
+  One of the devices must be set as Central (:option:`CONFIG_DESKTOP_NRF_PROFILER_SYNC_CENTRAL`) and the other device must be set as Peripheral (:option:`CONFIG_DESKTOP_NRF_PROFILER_SYNC_PERIPHERAL`).
 
 Implementation details
 **********************

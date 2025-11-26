@@ -33,14 +33,14 @@ Module events
 Configuration
 *************
 
-To enable the |hid_state|, use the :ref:`CONFIG_DESKTOP_HID_STATE_ENABLE <config_desktop_app_options>` Kconfig option that is implied by the :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` option.
+To enable the |hid_state|, use the :option:`CONFIG_DESKTOP_HID_STATE_ENABLE` Kconfig option that is implied by the :option:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL` option.
 Make sure to configure the peripheral type and the set of supported HID input reports and HID boot interface.
 For details related to HID configuration in the nRF Desktop, see the :ref:`nrf_desktop_hid_configuration` documentation.
 
 Number of supported HID subscribers
 ===================================
 
-If your application configuration supports more than one HID subscriber, you must align the maximum number of HID subscribers that can be handled simultaneously (:ref:`CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT <config_desktop_app_options>`).
+If your application configuration supports more than one HID subscriber, you must align the maximum number of HID subscribers that can be handled simultaneously (:option:`CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT`).
 For example, to use a configuration that allows to simultaneously subscribe to HID reports from HID over GATT (Bluetooth LE) and a single USB HID instance, set the value of this Kconfig option to ``2``.
 
 If multiple HID subscribers are simultaneously connected, the |hid_state| selects the one with the highest priority as the active subscriber.
@@ -82,7 +82,7 @@ For example, the file contents should look like follows:
 		[HID_KEYBOARD_LEDS_KANA] = LED_UNAVAILABLE,
 	};
 
-You must define all of the mentioned data in this configuration file, and specify its location with the :ref:`CONFIG_DESKTOP_HID_STATE_HID_KEYBOARD_LEDS_DEF_PATH <config_desktop_app_options>` Kconfig option.
+You must define all of the mentioned data in this configuration file, and specify its location with the :option:`CONFIG_DESKTOP_HID_STATE_HID_KEYBOARD_LEDS_DEF_PATH` Kconfig option.
 
 .. note::
    The configuration file should be included only by the configured module.
@@ -92,7 +92,7 @@ HID report providers
 ====================
 
 The |hid_state| relies on the HID report providers to collect user input, form HID input reports, and submit a :c:struct:`hid_report_event`.
-The module selects the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_EVENT <config_desktop_app_options>` Kconfig option to enable the HID report provider event and default HID report providers for all HID input reports enabled in the configuration.
+The module selects the :option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_EVENT` Kconfig option to enable the HID report provider event and default HID report providers for all HID input reports enabled in the configuration.
 The HID providers for mouse and keyboard input reports also handle the respective HID boot input reports if the boot report support is enabled in the configuration.
 
 .. note::
@@ -189,7 +189,7 @@ HID report map update
 ~~~~~~~~~~~~~~~~~~~~~
 
 If your HID report provider implementation uses a different HID input report format or you add a new HID input report, you need to align the HID report configuration (including the HID report map).
-If the default HID report descriptor is used (:ref:`CONFIG_DESKTOP_USE_DEFAULT_REPORT_DESCR <config_desktop_app_options>`), the configuration is defined by the following files:
+If the default HID report descriptor is used (:option:`CONFIG_DESKTOP_USE_DEFAULT_REPORT_DESCR`), the configuration is defined by the following files:
 
 * :file:`configuration/common/hid_report_desc.h`
 * :file:`configuration/common/hid_report_desc.c`

@@ -55,7 +55,7 @@ To enable the |led_state|, set the :kconfig:option:`CONFIG_CAF_LEDS` Kconfig opt
 You must also configure the :ref:`caf_leds` that is used as a sink module for ``led_state``.
 
 For every board that has this option enabled, you must define the module configuration.
-The configuration must be defined in the file named :ref:`CONFIG_DESKTOP_LED_STATE_DEF_PATH <config_desktop_app_options>` located in the board-specific directory in the application configuration directory.
+The configuration must be defined in the file named :option:`CONFIG_DESKTOP_LED_STATE_DEF_PATH` located in the board-specific directory in the application configuration directory.
 By default, the file is named as :file:`led_state_def.h`.
 
 The configuration consists of the following elements:

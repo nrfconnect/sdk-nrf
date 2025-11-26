@@ -28,18 +28,18 @@ Configuration
 *************
 
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` options are enabled.
-The Bluetooth LE latency application module is enabled by the :ref:`CONFIG_DESKTOP_BLE_LATENCY_ENABLE <config_desktop_app_options>` option.
-The option is implied by :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` together with other features used by a HID peripheral device.
+Make sure that both :option:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL` and :option:`CONFIG_DESKTOP_BT_PERIPHERAL` options are enabled.
+The Bluetooth LE latency application module is enabled by the :option:`CONFIG_DESKTOP_BLE_LATENCY_ENABLE` option.
+The option is implied by :option:`CONFIG_DESKTOP_BT_PERIPHERAL` together with other features used by a HID peripheral device.
 
-You can use the option :ref:`CONFIG_DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S <config_desktop_app_options>` to define the maximum allowed time for establishing the connection security.
+You can use the option :option:`CONFIG_DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S` to define the maximum allowed time for establishing the connection security.
 If the connection is not secured during this period of time, the peripheral device disconnects.
 
-You can set the option :ref:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK <config_desktop_app_options>` to keep the connection latency low for the LLPM connections.
+You can set the option :option:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK` to keep the connection latency low for the LLPM connections.
 This speeds up sending the first HID report after not sending a report for some connection intervals.
 Enabling this option increases the power consumption - the connection latency is kept low unless the device is in the low power mode.
 
-You can use the :ref:`CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS <config_desktop_app_options>` Kconfig option to enable or disable handling of the power management events, such as :c:struct:`power_down_event` and :c:struct:`wake_up_event`.
+You can use the :option:`CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS` Kconfig option to enable or disable handling of the power management events, such as :c:struct:`power_down_event` and :c:struct:`wake_up_event`.
 The option is enabled by default and depends on the :kconfig:option:`CONFIG_CAF_PM_EVENTS` Kconfig option.
 
 Implementation details
@@ -60,7 +60,7 @@ When these events are received, the module sets the connection latency to low.
 When the :ref:`nrf_desktop_config_channel` is no longer in use, and neither :ref:`nrf_desktop_ble_smp` nor :ref:`nrf_desktop_dfu_mcumgr` receive firmware updates (no mentioned events for ``LOW_LATENCY_CHECK_PERIOD_MS``), the module sets the connection latency to :kconfig:option:`CONFIG_BT_PERIPHERAL_PREF_LATENCY` to reduce the power consumption.
 
 .. note::
-   If the :ref:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK <config_desktop_app_options>` Kconfig option is enabled, the LLPM connection latency is not increased unless the device is in the low power mode.
+   If the :option:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK` Kconfig option is enabled, the LLPM connection latency is not increased unless the device is in the low power mode.
 
    When the device is in the low power mode and the events related to data transfer are not received, the connection latency is set to higher value to reduce the power consumption.
 
