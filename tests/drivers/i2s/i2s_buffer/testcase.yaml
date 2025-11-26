@@ -1,0 +1,104 @@
+common:
+  tags:
+    - drivers
+    - i2s
+    - ci_tests_zephyr_drivers_i2s
+  depends_on:
+    - i2s
+    - gpio
+  harness: ztest
+
+tests:
+  # buffer of 8 bytes
+  drivers.i2s.i2s_buffer.8bytes:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - CONFIG_I2S_TEST_BUFFER_SIZE=8
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+  drivers.i2s.i2s_buffer.8bytes.aclk:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/nrf5340dk_nrf5340_cpuapp_aclk.overlay"
+      - CONFIG_I2S_TEST_BUFFER_SIZE=8
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+  drivers.i2s.i2s_buffer.8bytes.nrf54h:
+    harness_config:
+      fixture: i2s_loopback
+    extra_args:
+      - CONFIG_I2S_TEST_BUFFER_SIZE=8
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+
+  # buffer of 16 bytes
+  drivers.i2s.i2s_buffer.16bytes:
+    harness_config:
+      fixture: gpio_loopback
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+  drivers.i2s.i2s_buffer.16bytes.aclk:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/nrf5340dk_nrf5340_cpuapp_aclk.overlay"
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+  drivers.i2s.i2s_buffer.16bytes.nrf54h:
+    harness_config:
+      fixture: i2s_loopback
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+
+  # buffer of 24 bytes
+  drivers.i2s.i2s_buffer.24bytes:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - CONFIG_I2S_TEST_BUFFER_SIZE=24
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+  drivers.i2s.i2s_buffer.24bytes.aclk:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/nrf5340dk_nrf5340_cpuapp_aclk.overlay"
+      - CONFIG_I2S_TEST_BUFFER_SIZE=24
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+  drivers.i2s.i2s_buffer.24bytes.nrf54h:
+    harness_config:
+      fixture: i2s_loopback
+    extra_args:
+      - CONFIG_I2S_TEST_BUFFER_SIZE=24
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp

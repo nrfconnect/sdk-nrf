@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "I2S Buffer Test"
+
+config I2S_TEST_ALLOWED_DATA_OFFSET
+	int "Allowed offset in received data"
+	default 2 if DT_HAS_NORDIC_NRF_I2S_ENABLED
+	default 0
+	help
+	  Maximum allowed offset between sent and received samples.
+	  Value is in "full" audio samples.
+	  Offset of 1 "full" audio sample is:
+	  - 1 byte for mono 8 bit word size.
+	  - 2 bytes for stereo 8 bit word size.
+	  - 2 bytes for mono 16 bit word size.
+	  - 4 bytes for stereo 16 bit word size.
+	  - 4 bytes for mono 32 bit word size.
+	  - 8 bytes for stereo 32 bit word size.
+
+config I2S_TEST_BUFFER_SIZE
+	int "Number of bytes send in one transaction"
+	default 16
+	help
+	  Value has to be a multiple of 8 bytes. Test supports up to 32 bytes.
+
+config I2S_TEST_WORD_SIZE_32_BIT_UNSUPPORTED
+	bool "32 bit word size is not supported by the driver"
+	help
+	  When set to 'y' testing 32 bit word size is skipped.
+
+config I2S_TEST_BLOCK_SIZE_8_UNSUPPORTED
+	bool "Block_size of 8 bytes is not supported by the driver"
+	default y if DT_HAS_NORDIC_NRF_TDM_ENABLED
+	help
+	  When set to 'y', test that use 8 bytes of data check if
+	  i2s_configure() returns -EINVAL.
+	  When set to 'n', test will do the I2S transmission.
+
+source "Kconfig.zephyr"
