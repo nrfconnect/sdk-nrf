@@ -12,7 +12,7 @@ from threading import Thread
 from nrf5340_audio_dk_devices import AudioDevice, DeviceConf, Location, SelectFlags
 
 MEM_ADDR_UICR_SNR = 0x00FF80F0
-MEM_ADDR_UICR_CH = 0x00FF80F4
+MEM_ADDR_UICR_LOC = 0x00FF80F4
 
 def print_location_labels(locations):
     labels = [loc.label for loc in locations if loc.value != 0]
@@ -30,7 +30,7 @@ def __populate_uicr(dev):
     """Program UICR in device with information from JSON file"""
     if dev.nrf5340_audio_dk_dev == AudioDevice.headset:
         print("Writing UICR with location value: " + str(locations_to_bitfield(dev.location)))
-        cmd = f"nrfutil device write --serial-number {dev.nrf5340_audio_dk_snr} --address {MEM_ADDR_UICR_CH} --value {locations_to_bitfield(dev.location)}"
+        cmd = f"nrfutil device write --serial-number {dev.nrf5340_audio_dk_snr} --address {MEM_ADDR_UICR_LOC} --value {locations_to_bitfield(dev.location)}"
         # Write location information to UICR
         print_location_labels(dev.location)
         ret_val = system(cmd)

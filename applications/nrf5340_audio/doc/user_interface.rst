@@ -55,14 +55,14 @@ The application uses the following buttons on the supported development kit:
      +---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
      | Button        | Function                                                                                                  | Applications                                |
      +===============+===========================================================================================================+=============================================+
-     | **VOL-**      | Long-pressed during startup: Changes the headset to the left channel one.                                 | * :ref:`nrf53_audio_broadcast_sink_app`     |
+     | **VOL-**      | Long-pressed during startup: Changes the headset location to left.                                        | * :ref:`nrf53_audio_broadcast_sink_app`     |
      |               |                                                                                                           | * :ref:`nrf53_audio_unicast_server_app`     |
      |               +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
      |               | Pressed on the headset or the CIS gateway during playback: Turns the playback volume down.                | * :ref:`nrf53_audio_broadcast_sink_app`     |
      |               |                                                                                                           | * :ref:`nrf53_audio_unicast_server_app`     |
      |               |                                                                                                           | * :ref:`nrf53_audio_unicast_client_app`     |
      +---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
-     | **VOL+**      | Long-pressed during startup: Changes the headset to the right channel one.                                | * :ref:`nrf53_audio_broadcast_sink_app`     |
+     | **VOL+**      | Long-pressed during startup: Changes the headset location to right.                                       | * :ref:`nrf53_audio_broadcast_sink_app`     |
      |               |                                                                                                           | * :ref:`nrf53_audio_unicast_server_app`     |
      |               +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
      |               | Pressed on the headset or the CIS gateway during playback: Turns the playback volume up.                  | * :ref:`nrf53_audio_broadcast_sink_app`     |
@@ -89,7 +89,7 @@ The application uses the following buttons on the supported development kit:
      |               | Pressed on a BIS headset during playback: Change the gateway, if more than one is available.              | :ref:`nrf53_audio_broadcast_sink_app`       |
      +---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
      | **RESET**     | Resets the device to the originally programmed settings.                                                  | All                                         |
-     |               | This reverts any changes made during testing, for example the channel switches with **VOL** buttons.      |                                             |
+     |               | This reverts any changes made during testing, for example the location switches with **VOL** buttons.     |                                             |
      +---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
 
   .. group-tab:: nRF5340 DK
@@ -97,14 +97,14 @@ The application uses the following buttons on the supported development kit:
      +---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
      | Button        | Function                                                                                                  | Applications                                |
      +===============+===========================================================================================================+=============================================+
-     | **Button 1**  | Long-pressed during startup: Changes the headset to the left channel one.                                 | * :ref:`nrf53_audio_broadcast_sink_app`     |
+     | **Button 1**  | Long-pressed during startup: Changes the headset location to left.                                        | * :ref:`nrf53_audio_broadcast_sink_app`     |
      |               |                                                                                                           | * :ref:`nrf53_audio_unicast_server_app`     |
      |               +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
      |               | Pressed on the headset or the CIS gateway during playback: Turns the playback volume down.                | * :ref:`nrf53_audio_broadcast_sink_app`     |
      |               |                                                                                                           | * :ref:`nrf53_audio_unicast_server_app`     |
      |               |                                                                                                           | * :ref:`nrf53_audio_unicast_client_app`     |
      +---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
-     | **Button 2**  | Long-pressed during startup: Changes the headset to the right channel one.                                | * :ref:`nrf53_audio_broadcast_sink_app`     |
+     | **Button 2**  | Long-pressed during startup: Changes the headset location to right.                                       | * :ref:`nrf53_audio_broadcast_sink_app`     |
      |               |                                                                                                           | * :ref:`nrf53_audio_unicast_server_app`     |
      |               +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
      |               | Pressed on the headset or the CIS gateway during playback: Turns the playback volume up.                  | * :ref:`nrf53_audio_broadcast_sink_app`     |
@@ -122,7 +122,7 @@ The application uses the following buttons on the supported development kit:
      |               | Pressed on a BIS headset during playback: Change the gateway, if more than one is available.              | :ref:`nrf53_audio_broadcast_sink_app`       |
      +---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
      | **RESET**     | Resets the device to the originally programmed settings.                                                  | All                                         |
-     |               | This reverts any changes made during testing, for example the channel switches with **VOL** buttons.      |                                             |
+     |               | This reverts any changes made during testing, for example the location switches with **VOL** buttons.     |                                             |
      +---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
 
 .. _nrf53_audio_app_ui_leds:

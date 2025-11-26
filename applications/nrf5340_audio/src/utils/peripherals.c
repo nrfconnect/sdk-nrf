@@ -55,7 +55,7 @@ static int leds_set(void)
 	return 0;
 }
 
-static int channel_assign_check(void)
+static int location_assign_check(void)
 {
 #if (CONFIG_AUDIO_DEV == HEADSET) && CONFIG_DEVICE_LOCATION_SET_RUNTIME
 	int ret;
@@ -107,9 +107,9 @@ int peripherals_init(void)
 		return ret;
 	}
 
-	ret = channel_assign_check();
+	ret = location_assign_check();
 	if (ret) {
-		LOG_ERR("Failed get channel assignment");
+		LOG_ERR("Failed get location assignment");
 		return ret;
 	}
 

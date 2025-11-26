@@ -13,24 +13,24 @@
 /* Memory address to store segger number of the board */
 #define MEM_ADDR_UICR_SNR UICR_APP_BASE_ADDR
 /* Memory address to store the location intended to be used for this board */
-#define MEM_ADDR_UICR_CH (MEM_ADDR_UICR_SNR + sizeof(uint32_t))
+#define MEM_ADDR_UICR_LOC (MEM_ADDR_UICR_SNR + sizeof(uint32_t))
 
 uint32_t uicr_location_get(void)
 {
-	return *(uint32_t *)MEM_ADDR_UICR_CH;
+	return *(uint32_t *)MEM_ADDR_UICR_LOC;
 }
 
-int uicr_location_set(uint32_t channel)
+int uicr_location_set(uint32_t location)
 {
-	if (channel == *(uint32_t *)MEM_ADDR_UICR_CH) {
+	if (location == *(uint32_t *)MEM_ADDR_UICR_LOC) {
 		return 0;
-	} else if (*(uint32_t *)MEM_ADDR_UICR_CH != 0xFFFFFFFF) {
+	} else if (*(uint32_t *)MEM_ADDR_UICR_LOC != 0xFFFFFFFF) {
 		return -EROFS;
 	}
 
-	nrfx_nvmc_word_write(MEM_ADDR_UICR_CH, channel);
+	nrfx_nvmc_word_write(MEM_ADDR_UICR_LOC, location);
 
-	if (channel == *(uint32_t *)MEM_ADDR_UICR_CH) {
+	if (location == *(uint32_t *)MEM_ADDR_UICR_LOC) {
 		return 0;
 	} else {
 		return -EIO;

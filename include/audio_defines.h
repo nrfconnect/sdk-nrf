@@ -109,16 +109,16 @@ struct audio_metadata {
 };
 
 /**
- * @brief Get the number of channels in the meta data.
+ * @brief Get the number of locations in the meta data.
  *
  * This function will count the number of bits set in the
  * locations field of the audio metadata.
  *
  * @param meta Pointer to the meta data structure.
  *
- * @return The number of channels.
+ * @return The number of locations.
  */
-static inline uint8_t audio_metadata_num_ch_get(struct audio_metadata const *const meta)
+static inline uint8_t audio_metadata_num_loc_get(struct audio_metadata const *const meta)
 {
 	if (meta == NULL) {
 		return 0;

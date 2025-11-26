@@ -36,8 +36,8 @@ This application uses specific mapping for the following user interface elements
 
 * Long-pressed on the broadcast sink device during startup:
 
-  * **VOL-** - Changes the headset to the left channel one.
-  * **VOL+** - Changes the headset to the right channel one.
+  * **VOL-** - Changes the headset location to left.
+  * **VOL+** - Changes the headset location to right.
 
 * Pressed on the broadcast sink device during playback:
 

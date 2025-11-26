@@ -685,7 +685,7 @@ int unicast_server_send(struct net_buf const *const audio_frame)
 		tx[num_active_streams].idx.lvl1 = 0;
 		tx[num_active_streams].idx.lvl2 = 0;
 		tx[num_active_streams].idx.lvl3 = i;
-		tx[num_active_streams].audio_channel = 0;
+		tx[num_active_streams].audio_location = 0;
 
 		num_active_streams++;
 	}

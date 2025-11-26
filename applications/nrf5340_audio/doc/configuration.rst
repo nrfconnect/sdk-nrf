@@ -131,7 +131,7 @@ You can set the location for each headset in the following ways, depending on th
 
 * When :ref:`nrf53_audio_app_building_standard`, set the location for each headset when running the :ref:`programming command <nrf53_audio_app_building_standard_programming>`.
   Use the combined bitfield values from the :file:`zephyr/include/zephyr/bluetooth/assigned_numbers.h` file to define the headset location.
-  For example, if you want to use the stereo configuration, use the combined bitfield value of the left and right channels (``1`` and ``2``, respectively):
+  For example, if you want to use the stereo configuration, use the ``0x3`` value, which is the combined bitfield value of the left (``0x01``) and right (``0x02``) location:
 
   .. code-block:: console
 

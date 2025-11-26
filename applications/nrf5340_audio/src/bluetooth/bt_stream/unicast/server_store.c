@@ -328,7 +328,7 @@ static bool pac_record_print(struct bt_data *data, void *user_data)
 		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_8);
 		strcat(supported_chan, "8");
 
-		LOG_INF("\tChannels supported: %s", supported_chan);
+		LOG_INF("\tNum channels supported: %s", supported_chan);
 	}
 
 	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FRAME_LEN) {
