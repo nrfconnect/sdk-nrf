@@ -49,6 +49,7 @@ Apache-2.0: |
   ^nrf/modules/openthread/
   ^nrf/samples/net/http_server/src/main.c
   ^nrf/tests/benchmarks/kernel_freq_change/src/kernel_context.c
+  ^nrf/tests/drivers/i2s/i2s_buffer/src/i2s_buffer.c
   ^nrf/tests/subsys/suit/common/tls_config/user-tls-conf.h
   ^nrf/subsys/settings/
   ^nrf/subsys/mgmt/mcumgr/grp/img_mgmt/src/img_mgmt.c
