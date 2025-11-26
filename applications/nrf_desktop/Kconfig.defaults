@@ -24,6 +24,18 @@ config DESKTOP_LTO_DEFAULTS
 	help
 	  nRF Desktop enables LTO to limit memory usage and improve performance.
 
+config DESKTOP_MCUBOOT_RAM_LOAD_MCUBOOT_RAM_START_ADDR
+	hex
+	depends on MCUBOOT_BOOTLOADER_MODE_RAM_LOAD
+	depends on $(dt_nodelabel_exists,cpuapp_sram_mcuboot_ram_region)
+	default $(dt_nodelabel_reg_addr_hex,cpuapp_sram_mcuboot_ram_region)
+	help
+	  The start address of the MCUboot RAM region. The Kconfig option is used to validate
+	  if the executable RAM region of the application image (also called the ROM section)
+	  does not overlap with the RAM region of the MCUboot image. The validation process
+	  assumes a specific RAM layout in DTS - you can refer to the following file as an example:
+	  ./configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi
+
 config APP_EVENT_MANAGER_MAX_EVENT_CNT
 	default 64
 	help
