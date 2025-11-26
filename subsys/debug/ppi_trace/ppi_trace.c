@@ -47,7 +47,7 @@ static bool ppi_trace_gpiote_pin_init(
 	}
 
 	if (nrfx_gpiote_channel_alloc(ppi_trace_gpiote_pin->gpiote,
-		&ppi_trace_gpiote_pin->gpiote_channel) != NRFX_SUCCESS) {
+		&ppi_trace_gpiote_pin->gpiote_channel) < 0) {
 		LOG_ERR("Failed to allocate GPIOTE channel.");
 		return false;
 	}
@@ -129,7 +129,7 @@ void *ppi_trace_pair_config(uint32_t pin, uint32_t start_evt, uint32_t stop_evt)
 	/* Address to aligned 32 bit variable will always have 0 on last two bits. Last bit is
 	 * used to indicated that it is a pair.
 	 */
-	return (void *)((uintptr_t)handle1 | 0x1);
+	return (void *)((uintptr_t)handle1 | BIT(0));
 #endif
 }
 
@@ -150,11 +150,18 @@ int ppi_trace_dppi_ch_trace(uint32_t pin, uint32_t dppi_ch, NRF_DPPIC_Type *p_dp
 		.domain_id = nrfx_gppi_domain_id_get((uint32_t)p_dppi),
 		.channel = dppi_ch
 	};
+	int err;
 
-	if (nrfx_gppi_ext_conn_alloc(resource.domain_id, dst_domain, &handle, &resource) < 0) {
+	err = nrfx_gppi_ext_conn_alloc(resource.domain_id, dst_domain, &handle, &resource);
+	if (err == -ENOTSUP) {
+		/* System with single DPPI instance. Just attach to the channel. */
+		nrfx_gppi_ep_attach(tep, dppi_ch);
+		return 0;
+	} else if (err < 0) {
 		LOG_ERR("Failed to allocate GPPI channel.");
 		return -ENOMEM;
 	}
+
 	nrfx_gppi_ep_attach(tep, handle);
 	nrfx_gppi_conn_enable(handle);
 
@@ -164,22 +171,22 @@ int ppi_trace_dppi_ch_trace(uint32_t pin, uint32_t dppi_ch, NRF_DPPIC_Type *p_dp
 
 void ppi_trace_enable(void *handle)
 {
-	nrfx_gppi_handle_t *handles = (nrfx_gppi_handle_t *)((uintptr_t)handle & 0x1);
+	nrfx_gppi_handle_t *handles = (nrfx_gppi_handle_t *)((uintptr_t)handle & ~BIT(0));
 
 	nrfx_gppi_conn_enable(handles[0]);
 	/* If LSB bit is set it indicates that handle is for pair of connections. */
-	if ((uintptr_t)handle & 0x1) {
+	if ((uintptr_t)handle & BIT(0)) {
 		nrfx_gppi_conn_enable(handles[1]);
 	}
 }
 
 void ppi_trace_disable(void *handle)
 {
-	nrfx_gppi_handle_t *handles = (nrfx_gppi_handle_t *)((uintptr_t)handle & 0x1);
+	nrfx_gppi_handle_t *handles = (nrfx_gppi_handle_t *)((uintptr_t)handle & ~BIT(0));
 
 	nrfx_gppi_conn_disable(handles[0]);
 	/* If LSB bit is set it indicates that handle is for pair of connections. */
-	if ((uintptr_t)handle & 0x1) {
+	if ((uintptr_t)handle & BIT(0)) {
 		nrfx_gppi_conn_disable(handles[1]);
 	}
 }
