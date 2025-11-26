@@ -184,10 +184,7 @@ psa_status_t psa_driver_wrapper_init(void)
 #endif /* PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER */
 
 #if defined(CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT)
-	status = hw_unique_key_provisioning();
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
+	return hw_unique_key_provisioning();
 #endif /* CONFIG_HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT */
 
 	return PSA_SUCCESS;
@@ -363,12 +360,8 @@ psa_status_t psa_driver_wrapper_sign_hash(const psa_key_attributes_t *attributes
 		}
 #endif /* PSA_NEED_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER */
 #if defined(PSA_NEED_OBERON_ASYMMETRIC_SIGNATURE_DRIVER)
-		status = oberon_sign_hash(attributes, key_buffer, key_buffer_size, alg, hash,
+		return oberon_sign_hash(attributes, key_buffer, key_buffer_size, alg, hash,
 					  hash_length, signature, signature_size, signature_length);
-		/* Declared with fallback == true */
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
 #endif /* PSA_NEED_OBERON_ASYMMETRIC_SIGNATURE_DRIVER */
 		/* Fell through, meaning nothing supports this operation */
 		(void)attributes;
@@ -431,13 +424,8 @@ psa_status_t psa_driver_wrapper_verify_hash(const psa_key_attributes_t *attribut
 		}
 #endif /* PSA_NEED_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER */
 #if defined(PSA_NEED_OBERON_ASYMMETRIC_SIGNATURE_DRIVER)
-		status = oberon_verify_hash(attributes, key_buffer, key_buffer_size, alg, hash,
+		return oberon_verify_hash(attributes, key_buffer, key_buffer_size, alg, hash,
 					    hash_length, signature, signature_length);
-
-		/* Declared with fallback == true */
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
 #endif /* PSA_NEED_OBERON_ASYMMETRIC_SIGNATURE_DRIVER */
 		/* Fell through, meaning nothing supports this operation */
 		(void)attributes;
@@ -596,9 +584,8 @@ psa_status_t psa_driver_wrapper_generate_key(const psa_key_attributes_t *attribu
 
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN_KMU:
-		status = cracen_generate_key(attributes, key_buffer, key_buffer_size,
+		return cracen_generate_key(attributes, key_buffer, key_buffer_size,
 					     key_buffer_length);
-		return status;
 #endif
 
 	default:
@@ -670,9 +657,8 @@ psa_status_t psa_driver_wrapper_import_key(const psa_key_attributes_t *attribute
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN:
 	case PSA_KEY_LOCATION_CRACEN_KMU:
-		status = cracen_import_key(attributes, data, data_length, key_buffer,
+		return cracen_import_key(attributes, data, data_length, key_buffer,
 					   key_buffer_size, key_buffer_length, bits);
-		return status;
 #endif
 
 	default:
@@ -810,7 +796,6 @@ psa_status_t psa_driver_wrapper_copy_key(psa_key_attributes_t *attributes,
 					 uint8_t *target_key_buffer, size_t target_key_buffer_size,
 					 size_t *target_key_buffer_length)
 {
-	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
@@ -831,9 +816,8 @@ psa_status_t psa_driver_wrapper_copy_key(psa_key_attributes_t *attributes,
 		(void)target_key_buffer;
 		(void)target_key_buffer_size;
 		(void)target_key_buffer_length;
-		status = PSA_ERROR_INVALID_ARGUMENT;
+		return PSA_ERROR_INVALID_ARGUMENT;
 	}
-	return status;
 }
 
 psa_status_t psa_driver_wrapper_derive_key(const psa_key_attributes_t *attributes,
@@ -865,12 +849,8 @@ psa_status_t psa_driver_wrapper_derive_key(const psa_key_attributes_t *attribute
 #endif /* PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER */
 
 #ifdef PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER
-		status = oberon_derive_key(attributes, input, input_length, key_buffer,
+		return oberon_derive_key(attributes, input, input_length, key_buffer,
 					   key_buffer_size, key_buffer_length);
-
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
 #endif /* PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER */
 		break;
 
@@ -933,14 +913,9 @@ psa_status_t psa_driver_wrapper_cipher_encrypt(const psa_key_attributes_t *attri
 		}
 #endif /* PSA_NEED_CC3XX_CIPHER_DRIVER */
 #if defined(PSA_NEED_OBERON_CIPHER_DRIVER)
-		status = oberon_cipher_encrypt(attributes, key_buffer, key_buffer_size, alg, iv,
+		return oberon_cipher_encrypt(attributes, key_buffer, key_buffer_size, alg, iv,
 					       iv_length, input, input_length, output, output_size,
 					       output_length);
-
-		/* Declared with fallback == true */
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
 #endif /* PSA_NEED_OBERON_CIPHER_DRIVER */
 		(void)attributes;
 		(void)key_buffer;
@@ -1012,12 +987,8 @@ psa_status_t psa_driver_wrapper_cipher_decrypt(const psa_key_attributes_t *attri
 		}
 #endif /* PSA_NEED_CC3XX_CIPHER_DRIVER */
 #if defined(PSA_NEED_OBERON_CIPHER_DRIVER)
-		status = oberon_cipher_decrypt(attributes, key_buffer, key_buffer_size, alg, input,
+		return oberon_cipher_decrypt(attributes, key_buffer, key_buffer_size, alg, input,
 					       input_length, output, output_size, output_length);
-		/* Declared with fallback == true */
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
 #endif /* PSA_NEED_OBERON_CIPHER_DRIVER */
 		return PSA_ERROR_NOT_SUPPORTED;
 	default:
@@ -1085,10 +1056,7 @@ psa_status_t psa_driver_wrapper_cipher_encrypt_setup(psa_cipher_operation_t *ope
 		if (status == PSA_SUCCESS) {
 			operation->id = PSA_CRYPTO_OBERON_DRIVER_ID;
 		}
-
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
+		return status;
 #endif /* PSA_NEED_OBERON_CIPHER_DRIVER */
 		return PSA_ERROR_NOT_SUPPORTED;
 	default:
@@ -1151,10 +1119,7 @@ psa_status_t psa_driver_wrapper_cipher_decrypt_setup(psa_cipher_operation_t *ope
 		if (status == PSA_SUCCESS) {
 			operation->id = PSA_CRYPTO_OBERON_DRIVER_ID;
 		}
-
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
+		return status;
 #endif /* PSA_NEED_OBERON_CIPHER_DRIVER */
 		return PSA_ERROR_NOT_SUPPORTED;
 	default:
@@ -1312,10 +1277,7 @@ psa_status_t psa_driver_wrapper_hash_compute(psa_algorithm_t alg, const uint8_t 
 	}
 #endif /* PSA_NEED_CC3XX_HASH_DRIVER */
 #if defined(PSA_NEED_OBERON_HASH_DRIVER)
-	status = oberon_hash_compute(alg, input, input_length, hash, hash_size, hash_length);
-	if (status != PSA_ERROR_NOT_SUPPORTED) {
-		return status;
-	}
+	return oberon_hash_compute(alg, input, input_length, hash, hash_size, hash_length);
 #endif /* PSA_NEED_OBERON_HASH_DRIVER */
 
 	(void)status;
@@ -1365,10 +1327,7 @@ psa_status_t psa_driver_wrapper_hash_setup(psa_hash_operation_t *operation, psa_
 	if (status == PSA_SUCCESS) {
 		operation->id = PSA_CRYPTO_OBERON_DRIVER_ID;
 	}
-
-	if (status != PSA_ERROR_NOT_SUPPORTED) {
-		return status;
-	}
+	return status;
 #endif /* PSA_NEED_OBERON_HASH_DRIVER */
 
 	/* Nothing left to try if we fall through here */
@@ -1521,14 +1480,10 @@ psa_status_t psa_driver_wrapper_aead_encrypt(const psa_key_attributes_t *attribu
 		}
 #endif /* PSA_NEED_CC3XX_AEAD_DRIVER */
 #if defined(PSA_NEED_OBERON_AEAD_DRIVER)
-		status = oberon_aead_encrypt(attributes, key_buffer, key_buffer_size, alg, nonce,
+		return oberon_aead_encrypt(attributes, key_buffer, key_buffer_size, alg, nonce,
 					     nonce_length, additional_data, additional_data_length,
 					     plaintext, plaintext_length, ciphertext,
 					     ciphertext_size, ciphertext_length);
-
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
 #endif /* PSA_NEED_OBERON_AEAD_DRIVER */
 		(void)attributes;
 		(void)key_buffer;
@@ -1598,14 +1553,10 @@ psa_status_t psa_driver_wrapper_aead_decrypt(const psa_key_attributes_t *attribu
 		}
 #endif /* PSA_NEED_CC3XX_AEAD_DRIVER */
 #if defined(PSA_NEED_OBERON_AEAD_DRIVER)
-		status = oberon_aead_decrypt(attributes, key_buffer, key_buffer_size, alg, nonce,
+		return oberon_aead_decrypt(attributes, key_buffer, key_buffer_size, alg, nonce,
 					     nonce_length, additional_data, additional_data_length,
 					     ciphertext, ciphertext_length, plaintext,
 					     plaintext_size, plaintext_length);
-
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
 #endif /* PSA_NEED_OBERON_AEAD_DRIVER */
 
 		(void)attributes;
@@ -1678,10 +1629,7 @@ psa_status_t psa_driver_wrapper_aead_encrypt_setup(psa_aead_operation_t *operati
 			operation->id = PSA_CRYPTO_OBERON_DRIVER_ID;
 		}
 
-		/* Declared with fallback == true */
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
+		return status;
 #endif /* PSA_NEED_OBERON_AEAD_DRIVER*/
 
 		(void)operation;
@@ -1744,10 +1692,7 @@ psa_status_t psa_driver_wrapper_aead_decrypt_setup(psa_aead_operation_t *operati
 			operation->id = PSA_CRYPTO_OBERON_DRIVER_ID;
 		}
 
-		/* Declared with fallback == true */
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
+	return status;
 #endif /* PSA_NEED_OBERON_AEAD_DRIVER */
 
 		(void)operation;
@@ -2008,12 +1953,8 @@ psa_status_t psa_driver_wrapper_mac_compute(const psa_key_attributes_t *attribut
 		}
 #endif /* PSA_NEED_CC3XX_MAC_DRIVER */
 #if defined(PSA_NEED_OBERON_MAC_DRIVER)
-		status = oberon_mac_compute(attributes, key_buffer, key_buffer_size, alg, input,
+		return oberon_mac_compute(attributes, key_buffer, key_buffer_size, alg, input,
 					    input_length, mac, mac_size, mac_length);
-		/* Declared with fallback == true */
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
 #endif /* PSA_NEED_OBERON_MAC_DRIVER */
 		return PSA_ERROR_NOT_SUPPORTED;
 	default:
@@ -2082,9 +2023,7 @@ psa_status_t psa_driver_wrapper_mac_sign_setup(psa_mac_operation_t *operation,
 		if (status == PSA_SUCCESS) {
 			operation->id = PSA_CRYPTO_OBERON_DRIVER_ID;
 		}
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
+		return status;
 #endif /* PSA_NEED_OBERON_MAC_DRIVER */
 
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -2149,9 +2088,7 @@ psa_status_t psa_driver_wrapper_mac_verify_setup(psa_mac_operation_t *operation,
 		if (status == PSA_SUCCESS) {
 			operation->id = PSA_CRYPTO_OBERON_DRIVER_ID;
 		}
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
+		return status;
 #endif /* PSA_NEED_OBERON_MAC_DRIVER */
 		return PSA_ERROR_NOT_SUPPORTED;
 	default:
@@ -2488,11 +2425,8 @@ psa_status_t psa_driver_wrapper_key_agreement(const psa_key_attributes_t *attrib
 		}
 #endif /* PSA_NEED_CC3XX_KEY_AGREEMENT_DRIVER */
 #if defined(PSA_NEED_OBERON_KEY_AGREEMENT_DRIVER)
-		status = oberon_key_agreement(attributes, priv_key, priv_key_size, alg, publ_key,
+		return oberon_key_agreement(attributes, priv_key, priv_key_size, alg, publ_key,
 					      publ_key_size, output, output_size, output_length);
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
 #endif /* PSA_NEED_OBERON_KEY_AGREEMENT_DRIVER */
 		(void)status;
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -2920,12 +2854,9 @@ psa_status_t psa_driver_wrapper_asymmetric_encrypt(
 		}
 #endif /* PSA_NEED_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER */
 #if defined(PSA_NEED_OBERON_ASYMMETRIC_ENCRYPTION_DRIVER)
-		status = oberon_asymmetric_encrypt(attributes, key_buffer, key_buffer_size, alg,
+		return oberon_asymmetric_encrypt(attributes, key_buffer, key_buffer_size, alg,
 						   input, input_length, salt, salt_length, output,
 						   output_size, output_length);
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
 #endif /* PSA_NEED_OBERON_ASYMMETRIC_ENCRYPTION_DRIVER */
 		(void)status;
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -2980,12 +2911,9 @@ psa_status_t psa_driver_wrapper_asymmetric_decrypt(
 		}
 #endif /* PSA_NEED_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER */
 #if defined(PSA_NEED_OBERON_ASYMMETRIC_ENCRYPTION_DRIVER)
-		status = oberon_asymmetric_decrypt(attributes, key_buffer, key_buffer_size, alg,
+		return oberon_asymmetric_decrypt(attributes, key_buffer, key_buffer_size, alg,
 						   input, input_length, salt, salt_length, output,
 						   output_size, output_length);
-		if (status != PSA_ERROR_NOT_SUPPORTED) {
-			return status;
-		}
 #endif /* PSA_NEED_OBERON_ASYMMETRIC_ENCRYPTION_DRIVER */
 		(void)status;
 		return PSA_ERROR_NOT_SUPPORTED;
