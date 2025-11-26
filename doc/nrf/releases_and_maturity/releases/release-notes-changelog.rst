@@ -611,7 +611,7 @@ Cellular samples
 * Removed:
 
   * The SLM Shell sample.
-    Use the `Serial Modem Host Shell`_ sample instead.
+    Use the sample from `Serial Modem`_ instead.
   * The deprecated LTE Sensor Gateway sample.
 
 * :ref:`nrf_cloud_rest_cell_location` sample:
@@ -926,7 +926,7 @@ Modem libraries
     Use the :ref:`at_parser_readme` library instead.
   * The AT parameters library.
   * The Modem SLM library.
-    Use the `Serial Modem Host`_ library instead.
+    Use the library from `Serial Modem`_ instead.
 
 * :ref:`lte_lc_readme` library:
 
