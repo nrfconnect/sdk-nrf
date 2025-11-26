@@ -89,9 +89,7 @@ The MCUboot backend configuration selects the following options:
 To use the module with this backend, you must also enable the :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` Kconfig option.
 
 By default, the MCUmgr DFU module confirms the image using the :c:func:`boot_write_img_confirmed` function during the system boot.
-If the :kconfig:option:`CONFIG_DESKTOP_DFU_MCUMGR_MCUBOOT_DIRECT_XIP` option is enabled, the MCUmgr DFU module assumes that the bootloader simply boots the image with a higher version and does not confirm the newly updated image after a successful boot.
-Make sure that :kconfig:option:`CONFIG_DESKTOP_DFU_MCUMGR_MCUBOOT_DIRECT_XIP` Kconfig option is enabled, if devices use the MCUboot bootloader in direct-xip mode without revert.
-The option is enabled by default if :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` is enabled.
+If the :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` option is enabled, the MCUmgr DFU module does not confirm the newly updated image after a successful boot, as the confirmation is not supported in this bootloader mode.
 
 Implementation details
 **********************

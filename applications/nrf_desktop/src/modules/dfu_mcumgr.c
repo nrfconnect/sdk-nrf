@@ -132,7 +132,7 @@ static struct mgmt_callback cmd_recv_cb = {
 
 static void dfu_backend_init(void)
 {
-	if (!IS_ENABLED(CONFIG_DESKTOP_DFU_MCUMGR_MCUBOOT_DIRECT_XIP)) {
+	if (!IS_ENABLED(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)) {
 		int err = boot_write_img_confirmed();
 
 		if (err) {
