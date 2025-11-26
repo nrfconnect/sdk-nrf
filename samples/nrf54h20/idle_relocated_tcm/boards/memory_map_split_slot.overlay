@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- /{
+/{
 	soc{
 		cpurad_data_ram: sram@23020000 {
 			compatible = "mmio-sram";
@@ -30,27 +30,24 @@
 			label = "mcuboot";
 		};
 
-		slot0_partition: partition@40000 {
-			reg = <0x40000 DT_SIZE_K(656)>;
+		/* Image 0: Application Core (primary slot) - main app */
+		slot0_partition:cpuapp_slot0_partition: partition@40000 {
+			reg = <0x40000 DT_SIZE_K(326)>;
 		};
 
-		cpuapp_slot0_partition: partition@40800 {
-			reg = <0x40800 DT_SIZE_K(326)>;
-			label = "image-0";
-		};
-
-		cpurad_slot0_partition: cpurad_loader_partition: partition@92000 {
+		/* Image 2: Radio Core (secondary slot) - radio loader */
+		slot4_partition: cpurad_slot0_partition: cpurad_loader_partition:
+		partition@92000 {
 			label = "cpurad_loader_partition";
 			reg = <0x92000 DT_SIZE_K(8)>;  /* 8 KB allocated (~4 KB actual) */
 		};
 
-		cpurad_loaded_fw: partition@94000 {
+		/* Image 1: Radio Core (primary slot) - remote firmware location in MRAM
+		   (fixed size for memcpy
+		 */
+		slot2_partition: cpurad_loaded_fw: partition@94000 {
 			label = "cpurad_loaded_fw";
 			reg = <0x94000 DT_SIZE_K(128)>;  /* 128 KB fixed */
-		};
-
-		cpurad_slot0_partition_container: partition@b2000 {
-			reg = <0xb2000 DT_SIZE_K(192)>; /* 238 - 128 - 8 = 192 KB allocated */
 		};
 
 		cpuppr_code_partition: partition@e4000 {
@@ -61,27 +58,24 @@
 			reg = <0xf4000 DT_SIZE_K(48)>;
 		};
 
-		slot1_partition: partition@100000 {
-			reg = <0x100000 DT_SIZE_K(656)>;
+		/* Image 0: Application Core (secondary slot) - main app */
+		slot1_partition: cpuapp_slot1_partition: partition@100000 {
+			reg = <0x100000 DT_SIZE_K(326)>;
 		};
 
-		cpuapp_slot1_partition: partition@100800 {
-			reg = <0x100800 DT_SIZE_K(326)>;
-		};
-
-		cpurad_loader_partition_slot1: cpurad_slot1_partition: partition@152000 {
+		/* Image 2: Radio Core (secondary slot) - radio loader */
+		slot5_partition: cpurad_slot1_partition: cpurad_loader_partition_slot1:
+		partition@152000 {
 			label = "cpurad_loader_partition_slot1";
 			reg = <0x152000 DT_SIZE_K(8)>;  /* 8 KB allocated (~4 KB actual) */
 		};
 
-		/* Remote firmware location in MRAM (fixed size for memcpy) */
-		cpurad_loaded_fw_slot1: partition@154000 {
+		/* Image 1: Radio Core (secondary slot) - remote firmware location in MRAM
+		   (fixed size for memcpy)
+		 */
+		slot3_partition: cpurad_loaded_fw_slot1: partition@154000 {
 			label = "cpurad_loaded_fw_slot1";
 			reg = <0x154000 DT_SIZE_K(128)>;  /* 128 KB fixed */
-		};
-
-		cpurad_slot1_partition_container: partition@174000 {
-			reg = <0x174000 DT_SIZE_K(192)>; /* 238 - 128 - 8 = 192 KB allocated */
 		};
 
 		storage_partition: partition@1a4000 {

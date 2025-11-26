@@ -1,0 +1,24 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../boards/memory_map_split_slot.overlay"
+
+/{
+	chosen {
+		zephyr,loaded-fw-src = &cpurad_loaded_fw_slot1;
+		zephyr,loaded-fw-dst = &cpurad_ram0;
+		zephyr,sram = &cpurad_data_ram;
+	};
+};
+
+&cpurad_ram0 {
+	compatible = "mmio-sram";
+	/delete-property/ reg;
+	reg = < 0x23000000 0x20000 >;
+	ranges = < 0x0 0x23000000 0x20000 >;
+};
+
+secondary_app_partition: &cpurad_loader_partition_slot1 {};
