@@ -1425,7 +1425,7 @@ static int get_mac_addr_handler(struct packet_wrapper *req, struct packet_wrappe
 	} else if (atoi(role) == DUT_TYPE_P2PUT) {
 #ifdef CONFIG_P2P
 		/* Get P2P GO/Client or Device MAC */
-		if (get_p2p_mac_addr(mac_addr, sizeof(mac_addr))) {
+		if (!get_p2p_mac_addr(mac_addr, sizeof(mac_addr))) {
 			indigo_logger(LOG_LEVEL_INFO,
 				      "Can't find P2P Device MAC. Use wireless IF MAC");
 			get_mac_address(mac_addr, sizeof(mac_addr), get_wireless_interface());
@@ -2302,7 +2302,7 @@ static int p2p_start_wps_handler(struct packet_wrapper *req, struct packet_wrapp
 	CHECK_RET();
 
 	/* Open wpa_supplicant UDS socket */
-	if (get_p2p_group_if(if_name, sizeof(if_name))) {
+	if (!get_p2p_group_if(if_name, sizeof(if_name))) {
 		indigo_logger(LOG_LEVEL_ERROR, "Failed to get P2P group interface");
 		goto done;
 	}
@@ -2473,8 +2473,8 @@ static int p2p_connect_handler(struct packet_wrapper *req, struct packet_wrapper
 			indigo_logger(LOG_LEVEL_ERROR, "Missed TLV PIN_METHOD???");
 		}
 		CHECK_SNPRINTF(buffer, sizeof(buffer), ret,
-			       "P2P_CONNECT %s %s %s%s%s%s%s", mac, pin_code,
-			       method, type, go_intent, he, persist);
+			       "P2P_CONNECT %s %s %s %s %s", mac, pin_code,
+			       method, type, go_intent);
 	} else {
 		tlv = find_wrapper_tlv_by_id(req, TLV_WSC_METHOD);
 		if (tlv) {
@@ -2483,8 +2483,7 @@ static int p2p_connect_handler(struct packet_wrapper *req, struct packet_wrapper
 			indigo_logger(LOG_LEVEL_ERROR, "Missed TLV WSC_METHOD");
 		}
 		CHECK_SNPRINTF(buffer, sizeof(buffer), ret,
-			       "P2P_CONNECT %s %s%s%s%s%s", mac, method,
-			       type, go_intent, he, persist);
+			       "P2P_CONNECT %s %s %s %s", mac, method, type, go_intent);
 	}
 	indigo_logger(LOG_LEVEL_DEBUG, "Command: %s", buffer);
 
@@ -2750,8 +2749,9 @@ static int start_dhcp_handler(struct packet_wrapper *req, struct packet_wrapper 
 		if (!strcmp("0.0.0.0", ip_addr)) {
 			CHECK_SNPRINTF(ip_addr, sizeof(ip_addr), ret, DHCP_SERVER_IP);
 		}
-		CHECK_SNPRINTF(buffer, sizeof(buffer), ret, "%s/24", ip_addr);
+		CHECK_SNPRINTF(buffer, sizeof(buffer), ret, "%s", ip_addr);
 		set_interface_ip(if_name, buffer);
+		set_netmask(if_name);
 		start_dhcp_server(if_name, ip_addr);
 	} else { /* DHCP Client */
 		start_dhcp_client(if_name);
