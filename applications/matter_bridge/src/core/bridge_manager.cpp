@@ -509,6 +509,18 @@ BridgedDeviceDataProvider *BridgeManager::GetProvider(EndpointId endpoint, uint1
 	return nullptr;
 }
 
+const char *BridgeManager::GetNodeLabel(EndpointId endpoint)
+{
+	uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpoint);
+	if (Instance().mDevicesMap.Contains(endpointIndex)) {
+		BridgedDevicePair &bridgedDevices = Instance().mDevicesMap[endpointIndex];
+		if (bridgedDevices.mDevice) {
+			return bridgedDevices.mDevice->GetNodeLabel();
+		}
+	}
+	return nullptr;
+}
+
 } /* namespace Nrf */
 
 Protocols::InteractionModel::Status
