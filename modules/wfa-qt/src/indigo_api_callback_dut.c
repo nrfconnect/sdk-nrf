@@ -2153,32 +2153,9 @@ done:
 #ifdef CONFIG_P2P
 static int start_up_p2p_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
 {
-	char *message = TLV_VALUE_WPA_S_START_UP_NOT_OK;
-	char buffer[S_BUFFER_LEN];
-	int len, status = TLV_VALUE_STATUS_NOT_OK, ret;
+	char *message = TLV_VALUE_WPA_S_START_UP_OK;
+	int status = TLV_VALUE_STATUS_OK;
 
-	/* TODO: Add functionality to stop Supplicant */
-
-	/* Generate P2P config file */
-	CHECK_SNPRINTF(buffer, sizeof(buffer), ret,
-		       "ctrl_interface=%s\n", WPAS_CTRL_PATH_DEFAULT);
-	/* Add Device name and Device type */
-	strcat(buffer, "device_name=WFA P2P Device\n");
-	strcat(buffer, "device_type=1-0050F204-1\n");
-	/* Add config methods */
-	strcat(buffer, "config_methods=keypad display push_button\n");
-	len = strlen(buffer);
-
-	if (len) {
-		write_file(get_wpas_conf_file(), buffer, len);
-	}
-
-	/* Start WPA supplicant */
-	/* TODO: Add functionality to start Supplicant */
-
-	status = TLV_VALUE_STATUS_OK;
-	message = TLV_VALUE_WPA_S_START_UP_OK;
-done:
 	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
 	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
 	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
@@ -2901,30 +2878,6 @@ static int start_wps_ap_handler(struct packet_wrapper *req, struct packet_wrappe
 		memset(pin_code, 0, sizeof(pin_code));
 		memcpy(pin_code, tlv->value, sizeof(pin_code));
 
-		/* Please implement the wsc pin validation function to
-		 * identify the invalid PIN code and DONOT start wps.
-		 */
-		#define WPS_PIN_VALIDATION_FILE "/tmp/pin_checksum.sh"
-		int len = 0;
-		char pipebuf[S_BUFFER_LEN];
-		static const char * const parameter[] = {"sh",
-							 WPS_PIN_VALIDATION_FILE,
-							 pin_code, NULL};
-
-		memset(pipebuf, 0, sizeof(pipebuf));
-		if (access(WPS_PIN_VALIDATION_FILE, F_OK) == 0) {
-			len = pipe_command(pipebuf, sizeof(pipebuf), "/bin/sh", parameter);
-			if (len && atoi(pipebuf)) {
-				indigo_logger(LOG_LEVEL_INFO, "Valid PIN Code: %s", pin_code);
-			} else {
-				indigo_logger(LOG_LEVEL_INFO, "Invalid PIN Code: %s", pin_code);
-				message = TLV_VALUE_AP_WSC_PIN_CODE_NOT_OK;
-				goto done;
-			}
-		}
-		/*
-		 * End of wsc pin validation function
-		 */
 		CHECK_SNPRINTF(buffer, sizeof(buffer), ret, "WPS_PIN any %s", pin_code);
 	} else {
 		CHECK_SNPRINTF(buffer, sizeof(buffer), ret, "WPS_PBC");
