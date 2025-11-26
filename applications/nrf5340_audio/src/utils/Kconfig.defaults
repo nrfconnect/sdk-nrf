@@ -4,6 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-# Channel assignment writes to UICR
+# Location assignment writes to UICR
 config NRFX_NVMC
 	default y

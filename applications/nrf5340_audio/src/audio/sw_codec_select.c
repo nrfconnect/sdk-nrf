@@ -129,14 +129,14 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 			return -EINVAL;
 		}
 
-		chan_in_num = audio_metadata_num_ch_get(meta_in);
+		chan_in_num = audio_metadata_num_loc_get(meta_in);
 		if (audio_frame_in->len < (meta_in->bytes_per_location * chan_in_num)) {
 			LOG_ERR("Encoder input buffer too small: %d (>=%d)", audio_frame_in->len,
 				meta_in->bytes_per_location * chan_in_num);
 			return -EINVAL;
 		}
 
-		chan_out_num = audio_metadata_num_ch_get(meta_out);
+		chan_out_num = audio_metadata_num_loc_get(meta_out);
 		if (audio_frame_out->size < (meta_out->bytes_per_location * chan_out_num)) {
 			LOG_ERR("Encoder output buffer too small: %d (>=%d)", audio_frame_out->size,
 				meta_out->bytes_per_location * chan_out_num);
@@ -219,7 +219,7 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 		meta_out->bytes_per_location = bytes_written;
 		meta_out->locations &= meta_in->locations;
 		net_buf_add(audio_frame_out,
-			    meta_out->bytes_per_location * audio_metadata_num_ch_get(meta_out));
+			    meta_out->bytes_per_location * audio_metadata_num_loc_get(meta_out));
 
 		return 0;
 #endif /* (CONFIG_SW_CODEC_LC3) */
@@ -273,13 +273,14 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 		}
 
 		if (audio_frame_in->len <
-		    meta_in->bytes_per_location * audio_metadata_num_ch_get(meta_in)) {
+		    meta_in->bytes_per_location * audio_metadata_num_loc_get(meta_in)) {
 			LOG_ERR("Decoder input frame too small: %d (< %d)", audio_frame_in->len,
-				(meta_in->bytes_per_location * audio_metadata_num_ch_get(meta_in)));
+				(meta_in->bytes_per_location *
+				 audio_metadata_num_loc_get(meta_in)));
 			return -EINVAL;
 		}
 
-		chans_out_num = audio_metadata_num_ch_get(meta_out);
+		chans_out_num = audio_metadata_num_loc_get(meta_out);
 		if (audio_frame_out->size < meta_out->bytes_per_location * chans_out_num) {
 			LOG_ERR("Decoder output buffer too small: %d (<%d for %d channel(s))",
 				audio_frame_out->size,
@@ -364,7 +365,7 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 
 		meta_out->bytes_per_location = inter_in_size;
 		net_buf_add(audio_frame_out,
-			    meta_out->bytes_per_location * audio_metadata_num_ch_get(meta_out));
+			    meta_out->bytes_per_location * audio_metadata_num_loc_get(meta_out));
 
 #endif /* (CONFIG_SW_CODEC_LC3) */
 		break;

@@ -99,7 +99,7 @@ static int audio_frame_add(struct net_buf *audio_frame, struct net_buf const *co
 
 /* Callback for handling ISO RX */
 void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metadata *meta,
-			      uint8_t channel_index)
+			      uint8_t location_index)
 {
 	int ret;
 	static struct net_buf *audio_frame;
@@ -111,16 +111,16 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 		ERR_CHK_MSG(-EPERM, "Data received but le_audio_rx is not initialized");
 	}
 
-	rx_stats[channel_index].recv_cnt++;
+	rx_stats[location_index].recv_cnt++;
 
 	if (meta->bad_data) {
-		rx_stats[channel_index].bad_frame_cnt++;
+		rx_stats[location_index].bad_frame_cnt++;
 	}
 
-	if ((rx_stats[channel_index].recv_cnt % 100) == 0 && rx_stats[channel_index].recv_cnt) {
+	if ((rx_stats[location_index].recv_cnt % 100) == 0 && rx_stats[location_index].recv_cnt) {
 		/* NOTE: The string below is used by the Nordic CI system */
-		LOG_DBG("ISO RX SDUs: Ch: %d Total: %d Bad: %d", channel_index,
-			rx_stats[channel_index].recv_cnt, rx_stats[channel_index].bad_frame_cnt);
+		LOG_DBG("ISO RX SDUs: Loc: %d Total: %d Bad: %d", location_index,
+			rx_stats[location_index].recv_cnt, rx_stats[location_index].bad_frame_cnt);
 	}
 
 	if (stream_state_get() != STATE_STREAMING) {
@@ -133,7 +133,7 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 		return;
 	}
 
-	if (channel_index != 0 && (CONFIG_AUDIO_DEV == GATEWAY)) {
+	if (location_index != 0 && (CONFIG_AUDIO_DEV == GATEWAY)) {
 		/* Only the first device will be used as mic input on gateway */
 		return;
 	}
@@ -235,7 +235,7 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 
 	/* Check if we have received all frames, send if we have */
 check_send:
-	if (num_active_streams == audio_metadata_num_ch_get(net_buf_user_data(audio_frame))) {
+	if (num_active_streams == audio_metadata_num_loc_get(net_buf_user_data(audio_frame))) {
 		/* We have received all frames we are waiting for, pass data on to
 		 * the next module
 		 */

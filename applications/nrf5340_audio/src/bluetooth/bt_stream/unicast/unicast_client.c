@@ -792,7 +792,7 @@ static void discover_cb_sink(struct bt_conn *conn, int err, struct server_store 
 		}
 	} else {
 		LOG_WRN("Unsupported unicast server/headset configuration");
-		LOG_WRN("Number of sink channels: %d, number of sink endpoints: %d",
+		LOG_WRN("Number of sink locations: %d, number of sink endpoints: %d",
 			POPCOUNT_ZERO(server->snk.locations), server->snk.num_eps);
 		le_audio_event_publish(LE_AUDIO_EVT_NO_VALID_CFG, conn, NULL, BT_AUDIO_DIR_SINK);
 		return;
@@ -1672,7 +1672,7 @@ static bool unicast_send_info_populate(struct server_store *server, void *user_d
 
 		/* Set channel location */
 		/* Both mono and left unicast_servers will receive left channel */
-		info->tx[info->num_active_streams].audio_channel =
+		info->tx[info->num_active_streams].audio_location =
 			*loc == BT_AUDIO_LOCATION_FRONT_RIGHT ? AUDIO_CH_R : AUDIO_CH_L;
 
 		info->num_active_streams++;

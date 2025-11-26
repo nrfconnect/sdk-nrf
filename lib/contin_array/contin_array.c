@@ -58,7 +58,7 @@ int contin_array_buf_create(struct net_buf *pcm_contin, void const *const pcm_fi
 			    uint16_t pcm_finite_size, uint32_t locations, uint16_t *_finite_pos)
 {
 	struct audio_metadata *meta_contin;
-	uint8_t num_ch;
+	uint8_t num_loc;
 	uint8_t count_ch;
 	uint8_t *output;
 	uint8_t carrier_bytes;
@@ -106,17 +106,17 @@ int contin_array_buf_create(struct net_buf *pcm_contin, void const *const pcm_fi
 
 	carrier_bytes = meta_contin->carried_bits_per_sample / 8;
 
-	num_ch = audio_metadata_num_ch_get(meta_contin);
+	num_loc = audio_metadata_num_loc_get(meta_contin);
 
 	if (pcm_contin->len == 0) {
-		memset(pcm_contin->data, 0, meta_contin->bytes_per_location * num_ch);
-		net_buf_add(pcm_contin, meta_contin->bytes_per_location * num_ch);
+		memset(pcm_contin->data, 0, meta_contin->bytes_per_location * num_loc);
+		net_buf_add(pcm_contin, meta_contin->bytes_per_location * num_loc);
 	}
 
 	finite_start_pos = *_finite_pos;
 
 	if (meta_contin->interleaved) {
-		step = carrier_bytes * (num_ch - 1);
+		step = carrier_bytes * (num_loc - 1);
 		frame_bytes = carrier_bytes;
 	} else {
 		step = 0;
@@ -175,7 +175,7 @@ int contin_array_net_buf_create(struct net_buf *pcm_contin, struct net_buf const
 	if ((meta_contin->sample_rate_hz != meta_finite->sample_rate_hz) ||
 	    (meta_contin->bits_per_sample != meta_finite->bits_per_sample) ||
 	    (meta_contin->carried_bits_per_sample != meta_finite->carried_bits_per_sample) ||
-	    audio_metadata_num_ch_get(meta_finite) > 1) {
+	    audio_metadata_num_loc_get(meta_finite) > 1) {
 		LOG_ERR("Sample/Carrier/Finite locations mismatch");
 		return -EINVAL;
 	}

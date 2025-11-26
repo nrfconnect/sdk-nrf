@@ -42,7 +42,7 @@ static void test_contin(uint8_t bits_per_samp, uint8_t carrier_bits, uint8_t con
 	struct audio_metadata *meta_contin;
 	struct audio_metadata *meta_finite;
 	uint8_t const *pcm_finite_buf = test_arr;
-	uint8_t num_ch;
+	uint8_t num_loc;
 	uint8_t carrier_bytes = carrier_bits / 8;
 	uint16_t finite_pos = 0;
 	uint16_t finite_start;
@@ -58,15 +58,15 @@ static void test_contin(uint8_t bits_per_samp, uint8_t carrier_bits, uint8_t con
 		meta_contin->carried_bits_per_sample = carrier_bits;
 		meta_contin->interleaved = interleaved;
 		meta_contin->locations = contin_locs;
-		num_ch = audio_metadata_num_ch_get(meta_contin);
-		meta_contin->bytes_per_location = pcm_contin->size / num_ch;
+		num_loc = audio_metadata_num_loc_get(meta_contin);
+		meta_contin->bytes_per_location = pcm_contin->size / num_loc;
 
 		if (filled) {
 			/* Fill all channels in the net_nuf with a known value for testing that the
 			 * function only writes to the required location(s) and no others.
 			 */
 			memset(pcm_contin->data, CONTIN_TEST_BYTE, pcm_contin->size);
-			net_buf_add(pcm_contin, meta_contin->bytes_per_location * num_ch);
+			net_buf_add(pcm_contin, meta_contin->bytes_per_location * num_loc);
 		} else {
 			memset(pcm_contin->data, 0, pcm_contin->size);
 		}
@@ -107,15 +107,15 @@ static void test_contin(uint8_t bits_per_samp, uint8_t carrier_bits, uint8_t con
 		carrier_bytes = carrier_bits / 8;
 		meta_contin->interleaved = interleaved;
 		meta_contin->locations = contin_locs;
-		num_ch = audio_metadata_num_ch_get(meta_contin);
-		meta_contin->bytes_per_location = pcm_contin->size / num_ch;
+		num_loc = audio_metadata_num_loc_get(meta_contin);
+		meta_contin->bytes_per_location = pcm_contin->size / num_loc;
 
 		if (filled) {
 			/* Fill all channels in the net_nuf with a known value for testing that the
 			 * function only writes to the required location(s) and no others.
 			 */
 			memset(pcm_contin->data, CONTIN_TEST_BYTE, pcm_contin->size);
-			net_buf_add(pcm_contin, meta_contin->bytes_per_location * num_ch);
+			net_buf_add(pcm_contin, meta_contin->bytes_per_location * num_loc);
 		} else {
 			memset(pcm_contin->data, 0, pcm_contin->size);
 		}

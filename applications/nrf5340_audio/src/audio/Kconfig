@@ -180,7 +180,7 @@ config DEVICE_LOCATION_SET_RUNTIME
 config DEVICE_LOCATION_SET_COMPILE_TIME
 	bool "Set at compile-time"
 	help
-	  Set channel selection at compile-time.
+	  Set location at compile-time.
 endchoice
 
 config DEVICE_LOCATION_AT_COMPILE_TIME

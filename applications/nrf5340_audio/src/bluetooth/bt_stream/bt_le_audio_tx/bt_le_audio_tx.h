@@ -24,7 +24,7 @@
 struct le_audio_tx_info {
 	struct stream_index idx;
 	struct bt_cap_stream *cap_stream;
-	uint8_t audio_channel;
+	uint8_t audio_location;
 };
 
 /**

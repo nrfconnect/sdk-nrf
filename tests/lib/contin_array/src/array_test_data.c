@@ -38,7 +38,7 @@ void validate_contin_array(struct net_buf const *const pcm_contin, uint8_t const
 			   bool interleaved, bool filled)
 {
 	struct audio_metadata *meta_contin = net_buf_user_data(pcm_contin);
-	uint8_t channels = audio_metadata_num_ch_get(meta_contin);
+	uint8_t locations = audio_metadata_num_loc_get(meta_contin);
 	int8_t test_byte;
 	uint16_t channel_step;
 	uint16_t frame_step;
@@ -56,8 +56,8 @@ void validate_contin_array(struct net_buf const *const pcm_contin, uint8_t const
 
 	bytes_per_sample = meta_contin->carried_bits_per_sample / 8;
 	if (interleaved) {
-		channel_step = bytes_per_sample * (channels - 1);
-		contin_end = (channels * meta_contin->bytes_per_location) - channel_step;
+		channel_step = bytes_per_sample * (locations - 1);
+		contin_end = (locations * meta_contin->bytes_per_location) - channel_step;
 		frame_step = bytes_per_sample;
 	} else {
 		channel_step = 0;
@@ -65,9 +65,9 @@ void validate_contin_array(struct net_buf const *const pcm_contin, uint8_t const
 		frame_step = meta_contin->bytes_per_location;
 	}
 
-	zassert_equal(pcm_contin->len, meta_contin->bytes_per_location * channels,
+	zassert_equal(pcm_contin->len, meta_contin->bytes_per_location * locations,
 		      "Incorrect continuous array length: %d (%d)", pcm_contin->len,
-		      meta_contin->bytes_per_location * channels);
+		      meta_contin->bytes_per_location * locations);
 
 	if (meta_contin->locations == 0 && locs_out == 0) {
 		locs_out = 0x00000001;

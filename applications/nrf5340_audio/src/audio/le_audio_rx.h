@@ -27,10 +27,10 @@
  *
  * @param[in]	audio_frame_rx	Pointer to the audio buffer.
  * @param[in]	meta		Pointer to the audio metadata.
- * @param[in]	channel_index	Which channel is received.
+ * @param[in]	location_index	Which location is received.
  */
 void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metadata *meta,
-			      uint8_t channel_index);
+			      uint8_t location_index);
 
 /**
  * @brief	Initialize the receive audio path.

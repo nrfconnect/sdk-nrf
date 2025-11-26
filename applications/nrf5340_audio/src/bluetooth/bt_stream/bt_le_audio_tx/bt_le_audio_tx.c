@@ -202,17 +202,17 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		return -EINVAL;
 	}
 
-	/* Get number of channels in the audio frame */
+	/* Get number of locations in the audio frame */
 	struct audio_metadata *meta = net_buf_user_data(audio_frame);
-	uint8_t num_ch = audio_metadata_num_ch_get(meta);
+	uint8_t num_loc = audio_metadata_num_loc_get(meta);
 
-	if (num_ch == 0 || (audio_frame->len % num_ch != 0)) {
-		LOG_ERR("Invalid number (%d) of channels in audio frame (%d)", num_ch,
+	if (num_loc == 0 || (audio_frame->len % num_loc != 0)) {
+		LOG_ERR("Invalid number (%d) of locations in audio frame (%d)", num_loc,
 			audio_frame->len);
 		return -EINVAL;
 	}
 
-	data_size_pr_stream = audio_frame->len / num_ch;
+	data_size_pr_stream = audio_frame->len / num_loc;
 
 	/* When sending ISO data, we always send ts = 0 to the first active transmitting channel.
 	 * The controller will populate with a ts which is fetched using bt_iso_chan_get_tx_sync.
@@ -243,8 +243,8 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 			continue;
 		}
 
-		if (tx[i].audio_channel > num_ch) {
-			LOG_WRN("Unsupported audio_channel: %d", tx[i].audio_channel);
+		if (tx[i].audio_location > num_loc) {
+			LOG_WRN("Unsupported audio_location: %d", tx[i].audio_location);
 			continue;
 		}
 
@@ -269,13 +269,13 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		}
 		common_interval = tx[i].cap_stream->bap_stream.qos->interval;
 
-		/* Check if same audio is sent to all channels */
-		if (num_ch == 1) {
+		/* Check if same audio is sent to all locations */
+		if (num_loc == 1) {
 			ret = iso_stream_send(audio_frame->data, data_size_pr_stream,
 					      tx[i].cap_stream, tx_info, common_tx_sync_ts_us);
 		} else {
 			ret = iso_stream_send(audio_frame->data +
-						      (tx[i].audio_channel * data_size_pr_stream),
+						      (tx[i].audio_location * data_size_pr_stream),
 					      data_size_pr_stream, tx[i].cap_stream, tx_info,
 					      common_tx_sync_ts_us);
 		}
@@ -293,7 +293,7 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		}
 
 		/* Strictly, it is only required to call get_tx_sync_sdc on the first streaming
-		 * channel to get the timestamp which is sent to all other channels.
+		 * location to get the timestamp which is sent to all other locations.
 		 * However, to be able to detect errors, this is called on each TX.
 		 */
 		ret = get_tx_sync_sdc(tx_info->iso_conn_handle, &tx_info->iso_tx_readback);
