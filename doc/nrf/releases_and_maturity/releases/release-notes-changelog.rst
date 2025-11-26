@@ -303,8 +303,10 @@ Thread
 Wi-Fi®
 ------
 
-* Added support for Wi-Fi Direct (P2P) mode.
-  See :ref:`ug_wifi_direct` for details.
+Added:
+
+  * Support for Wi-Fi Direct (P2P) mode, see :ref:`ug_wifi_direct` for details.
+  * Support for WPA3-SAE using the Oberon PSA PAKE implementation, see :ref:`ug_nrf70_wifi_advanced_security_modes` for details.
 
 Applications
 ============
