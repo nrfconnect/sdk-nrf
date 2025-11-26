@@ -52,8 +52,8 @@ To perform a FOTA update, complete the following steps:
    In its default configuration, the DFU target library is set to support all the types of FOTA updates except full modem firmware updates, but you can freely enable or disable the support for specific targets.
    In addition, the following requirements apply:
 
-   * To upgrade the application, you must use :doc:`mcuboot:index-ncs` as the upgradable bootloader (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` must be enabled).
-   * If you want to upgrade the upgradable bootloader, you must use the :ref:`bootloader` (:kconfig:option:`CONFIG_SECURE_BOOT` must be enabled).
+   * To upgrade the application, use :doc:`mcuboot:index-ncs` as the upgradable bootloader (:kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` must be enabled).
+   * If you want to upgrade the upgradable bootloader, use the :ref:`bootloader` (:kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` must be enabled).
    * If you want to update the modem firmware through modem delta updates, you do not need to use MCUboot or the immutable bootloader, because the modem firmware update is handled by the modem itself.
    * If you want to perform a full modem firmware update, an |external_flash_size| is required.
 
