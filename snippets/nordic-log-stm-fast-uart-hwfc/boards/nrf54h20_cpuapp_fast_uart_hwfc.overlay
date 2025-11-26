@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+&tbm {
+	status = "okay";
+};
+
+&coresight {
+	status = "okay";
+	mode = "stm-etr";
+};
+
+&uart136 {
+	current-speed = <1000000>;
+	hw-flow-control;
+};
