@@ -620,6 +620,60 @@ static psa_status_t cracen_wpa3_sae_reduce_p256(const uint8_t *input,
 	return silex_statuscodes_to_psa(sx_status);
 }
 
+static psa_status_t import_wpa3_sae_pt_key(const psa_key_attributes_t *attributes,
+					   const uint8_t *data, size_t data_length,
+					   uint8_t *key_buffer, size_t key_buffer_size,
+					   size_t *key_buffer_length, size_t *key_bits)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	int sx_status;
+	/** Note: input for this function is expected to be a pwd-seed value obtained
+	 *	  as a result of HKDF extraction
+	 */
+	size_t key_bits_attr = psa_get_key_bits(attributes);
+	psa_key_type_t type = psa_get_key_type(attributes);
+	psa_ecc_family_t psa_curve = PSA_KEY_TYPE_WPA3_SAE_PT_GET_FAMILY(type);
+
+	switch (type) {
+	case PSA_KEY_TYPE_WPA3_SAE_ECC_PT(PSA_ECC_FAMILY_SECP_R1):
+
+		if (data_length != CRACEN_P256_POINT_SIZE) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+
+		if (key_bits_attr != 0u && key_bits_attr != 256u) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		/* check point on curve */
+		const struct sx_pk_ecurve *sx_curve;
+
+		status = cracen_ecc_get_ecurve_from_psa(psa_curve, key_bits_attr,
+							&sx_curve);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		MAKE_SX_CONST_POINT(key_pt, data, CRACEN_P256_POINT_SIZE);
+		sx_status = sx_ec_ptoncurve(sx_curve, &key_pt);
+		if (sx_status) {
+			return silex_statuscodes_to_psa(sx_status);
+		}
+
+		if (!memcpy_check_non_zero(key_buffer, key_buffer_size,
+						data, data_length)) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		*key_buffer_length = data_length;
+		*key_bits = key_bits_attr;
+
+		return PSA_SUCCESS;
+	default:
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+}
+
 static psa_status_t cracen_derive_wpa3_sae_pt_key(const psa_key_attributes_t *attributes,
 						  const uint8_t *input, size_t input_length,
 						  uint8_t *key, size_t key_size, size_t *key_length)
@@ -1245,6 +1299,11 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 	if (PSA_KEY_TYPE_IS_SRP(key_type) && IS_ENABLED(PSA_NEED_CRACEN_SRP_6)) {
 		return import_srp_key(attributes, data, data_length, key_buffer, key_buffer_size,
 				      key_buffer_length, key_bits);
+	}
+
+	if (PSA_KEY_TYPE_IS_WPA3_SAE_ECC_PT(key_type) && IS_ENABLED(PSA_NEED_CRACEN_WPA3_SAE)) {
+		return import_wpa3_sae_pt_key(attributes, data, data_length, key_buffer,
+					  key_buffer_size, key_buffer_length, key_bits);
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;
