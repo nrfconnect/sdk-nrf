@@ -19,7 +19,8 @@ if(SB_CONFIG_NRF_RADIO_LOADER)
         BOARD_REVISION ${BOARD_REVISION}
     )
 
-
+    set_target_properties(radio_loader PROPERTIES
+      IMAGE_CONF_SCRIPT ${ZEPHYR_BASE}/share/sysbuild/image_configurations/MAIN_image_default.cmake)
     UpdateableImage_Add(APPLICATION radio_loader)
     # Note: Memory map configuration should be provided by the user project
     # in: sysbuild/radio_loader/boards/<board>.overlay
