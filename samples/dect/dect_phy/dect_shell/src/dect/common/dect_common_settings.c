@@ -62,6 +62,7 @@ static const struct dect_phy_settings_certification phy_certification_common_set
 	.tx_cw_ctrl_pwr_dbm = DECT_PHY_SETT_DEFAULT_TX_POWER_DBM,
 	.tx_stf_cover_seq_on = true,
 	.rx_stf_cover_seq_on = true,
+	.network_id_validation_on = true,
 };
 
 static const struct dect_phy_settings phy_settings_data_defaults = {

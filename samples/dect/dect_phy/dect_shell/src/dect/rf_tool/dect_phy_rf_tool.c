@@ -1204,9 +1204,10 @@ static int dect_phy_rf_tool_start(struct dect_phy_rf_tool_params *params, bool r
 			.rssi_interval = NRF_MODEM_DECT_PHY_RSSI_INTERVAL_OFF,
 		};
 
-		rx_op.filter.is_short_network_id_used = true;
-		rx_op.filter.short_network_id = current_settings->common.network_id;
-		rx_op.filter.receiver_identity = current_settings->common.transmitter_id;
+		/* No filters */
+		rx_op.filter.is_short_network_id_used = false;
+		rx_op.filter.short_network_id = 0;
+		rx_op.filter.receiver_identity = 0;
 		rx_op.duration = UINT32_MAX;
 
 		ret = dect_phy_common_rx_op(&rx_op);
