@@ -112,6 +112,8 @@ struct dect_phy_settings_certification {
 
 	bool tx_stf_cover_seq_on; /* Enable STF cover sequence on TX */
 	bool rx_stf_cover_seq_on; /* Enable STF cover sequence on RX */
+
+	bool network_id_validation_on; /* Network ID validation */
 };
 
 struct dect_phy_settings_common {
