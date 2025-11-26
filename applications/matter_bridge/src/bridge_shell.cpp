@@ -64,7 +64,9 @@ static int AddBridgedDeviceHandler(const struct shell *shell, size_t argc, char 
 	    CHIP_NO_ERROR) {
 		shell_fprintf(shell, SHELL_ERROR, "Invalid Bluetooth LE device index.\n");
 	} else {
-		shell_fprintf(shell, SHELL_ERROR, "Found device address\n");
+		shell_fprintf(shell, SHELL_INFO, "Found device address: %02x:%02x:%02x:%02x:%02x:%02x\n",
+			      address.a.val[5], address.a.val[4], address.a.val[3], address.a.val[2], address.a.val[1],
+			      address.a.val[0]);
 	}
 
 	uint16_t uuid;
@@ -122,6 +124,63 @@ static int RemoveBridgedDeviceHandler(const struct shell *shell, size_t argc, ch
 	else {
 		shell_fprintf(shell, SHELL_ERROR, "Error: device remove failed\n");
 	}
+	return 0;
+}
+
+static const char *GetDeviceTypeString(uint16_t deviceType)
+{
+	using DeviceType = Nrf::MatterBridgedDevice::DeviceType;
+	switch (deviceType) {
+	case DeviceType::BridgedNode:
+		return "BridgedNode (0x0013)";
+	case DeviceType::OnOffLight:
+		return "OnOffLight (0x0100)";
+	case DeviceType::OnOffLightSwitch:
+		return "OnOffLightSwitch (0x0103)";
+	case DeviceType::TemperatureSensor:
+		return "TemperatureSensor (0x0302)";
+	case DeviceType::HumiditySensor:
+		return "HumiditySensor (0x0307)";
+	case DeviceType::GenericSwitch:
+		return "GenericSwitch (0x000F)";
+	default:
+		return "Unknown";
+	}
+}
+
+static int ListBridgedDevicesHandler(const struct shell *shell, size_t argc, char **argv)
+{
+	shell_fprintf(shell, SHELL_INFO, "Bridged devices list:\n");
+	shell_fprintf(shell, SHELL_INFO, "---------------------------------------------------------------------\n");
+	shell_fprintf(shell, SHELL_INFO, "| Endpoint ID |        Name        |           Type           \n");
+	shell_fprintf(shell, SHELL_INFO, "---------------------------------------------------------------------\n");
+
+	uint8_t count = 0;
+	constexpr uint16_t kMaxEndpointId = CONFIG_BRIDGE_MAX_DYNAMIC_ENDPOINTS_NUMBER;
+
+	for (chip::EndpointId endpointId = 1; endpointId <= kMaxEndpointId; endpointId++) {
+		uint16_t deviceType = 0;
+		auto *provider = Nrf::BridgeManager().Instance().GetProvider(endpointId, deviceType);
+
+		if (provider != nullptr) {
+			const char *nodeLabel = Nrf::BridgeManager().Instance().GetNodeLabel(endpointId);
+			if (!nodeLabel || strnlen(nodeLabel, Nrf::MatterBridgedDevice::kNodeLabelSize) == 0) {
+				nodeLabel = "(no label)";
+			}
+
+			shell_fprintf(shell, SHELL_INFO, "| %-11d | %-18s | %-24s\n", endpointId, nodeLabel,
+				      GetDeviceTypeString(deviceType));
+			count++;
+		}
+	}
+
+	if (count == 0) {
+		shell_fprintf(shell, SHELL_INFO, "| No bridged devices found                                      |\n");
+	}
+
+	shell_fprintf(shell, SHELL_INFO, "---------------------------------------------------------------------\n");
+	shell_fprintf(shell, SHELL_INFO, "Total: %d device(s)\n", count);
+
 	return 0;
 }
 
@@ -265,6 +324,11 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		"Usage: remove <bridged_device_endpoint_id>\n"
 		"* bridged_device_endpoint_id - the bridged device's endpoint on which it was previously created\n",
 		RemoveBridgedDeviceHandler, 2, 0),
+	SHELL_CMD_ARG(list, NULL,
+		      "Lists all currently connected bridged devices. \n"
+		      "Usage: list\n"
+		      "Displays endpoint ID, node label (name), and device type for all bridged devices.\n",
+		      ListBridgedDevicesHandler, 1, 0),
 #ifdef CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL
 	SHELL_CMD_ARG(
 		onoff, NULL,
