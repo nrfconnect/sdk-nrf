@@ -15,13 +15,10 @@ common:
     type: multi_line
     ordered: true
     regex:
-      - "=== Protected Memory Demo ==="
-      - "Attempting to write test pattern"
-      - "Write successful \\(in current boot\\)\\."
-      - "Rebooting\\.\\.\\."
+      - "Writing test pattern to protected memory\\.\\.\\."
+      - "Rebooting\\. Secondary firmware should boot if protection is working\\."
       # When PROTECTEDMEM integrity check fails, secondary firmware boots
-      - "=== Secondary Firmware Booted ==="
-      - "PROTECTEDMEM integrity check FAILED"
+      - "PROTECTEDMEM integrity check failed - secondary firmware booted"
 
 tests:
   samples.protectedmem_periphconf.nrf54h20dk:
