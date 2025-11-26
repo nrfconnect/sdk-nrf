@@ -1,0 +1,65 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Network core configuration"
+	depends on SUPPORT_NETCORE
+
+config SUPPORT_FIRMWARE_LOADER_IPC_RADIO
+	bool
+	default y
+
+choice FIRMWARE_LOADER_RADIO
+	prompt "Firmware loader radio image"
+	default FIRMWARE_LOADER_RADIO_IMAGE_IPC_RADIO if FIRMWARE_LOADER_IMAGE_BLE_MCUMGR
+	default FIRMWARE_LOADER_RADIO_IMAGE_IPC_RADIO if NRF_DEFAULT_IPC_RADIO && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
+	default FIRMWARE_LOADER_RADIO_IMAGE_NONE if NRF_DEFAULT_EMPTY && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
+	depends on MCUBOOT_MODE_FIRMWARE_UPDATER
+	help
+	  Select the firmware loader radio image to include in the build.
+
+config FIRMWARE_LOADER_RADIO_IMAGE_NONE
+	bool "None"
+	help
+	  Do not include a firmware loader radio image in the build.
+
+menuconfig FIRMWARE_LOADER_RADIO_IMAGE_IPC_RADIO
+	bool "ipc_radio"
+	depends on SUPPORT_FIRMWARE_LOADER_IPC_RADIO
+	help
+	  Include the IPC Radio firmware loader image as the firmware loader radio image to use.
+
+if FIRMWARE_LOADER_RADIO_IMAGE_IPC_RADIO
+
+config FIRMWARE_LOADER_RADIO_IMAGE_IPC_RADIO_BT_HCI_IPC
+	bool "HCI serialization for Bluetooth"
+	default y
+	help
+	  Use HCI serialization for Bluetooth.
+
+endif # FIRMWARE_LOADER_RADIO_IMAGE_IPC_RADIO
+
+endchoice
+
+config FIRMWARE_LOADER_RADIO_IMAGE_NAME
+	string
+	default "fw_loader_ipc_radio" if FIRMWARE_LOADER_RADIO_IMAGE_IPC_RADIO_BT_HCI_IPC
+	help
+	  Name of firmware loader radio image.
+
+config FIRMWARE_LOADER_RADIO_IMAGE_PATH
+	string
+	default "$(ZEPHYR_NRF_MODULE_DIR)/applications/ipc_radio" if FIRMWARE_LOADER_RADIO_IMAGE_IPC_RADIO
+	help
+	  Source directory of firmware loader image.
+
+config FIRMWARE_LOADER_RADIO_BOARD
+	string
+	default "$(BOARD)/nrf54h20/cpurad" if SOC_NRF54H20
+	default "$(BOARD)/nrf54l15/cpurad" if SOC_NRF54L15
+	help
+	  Board for firmware loader radio image.
+
+endmenu
