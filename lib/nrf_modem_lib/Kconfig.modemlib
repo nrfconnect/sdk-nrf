@@ -280,6 +280,7 @@ config NRF_MODEM_LIB_FAULT_STRERROR
 	  The description can be retrieved with nrf_modem_lib_fault_strerror().
 
 rsource "lte_net_if/Kconfig"
+rsource "lte_net_if/Kconfig.ntn"
 rsource "shell/Kconfig"
 
 DT_IPC := $(dt_nodelabel_path,ipc)
