@@ -497,8 +497,6 @@
 
 .. _`Asset Tracker Template`: https://docs.nordicsemi.com/bundle/asset-tracker-template-latest/page/index.html
 .. _`Serial Modem`: https://docs.nordicsemi.com/bundle/addon-serial_modem-latest/page/index.html
-.. _`Serial Modem Host`: https://docs.nordicsemi.com/bundle/addon-serial_modem-latest/page/lib/sm_host.html
-.. _`Serial Modem Host Shell`: https://docs.nordicsemi.com/bundle/addon-serial_modem-latest/page/samples/sm_host_shell.html
 
 .. _`known issues page on the main branch`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html
 .. _`known issues for nRF Connect SDK v3.1.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v3-1-1
