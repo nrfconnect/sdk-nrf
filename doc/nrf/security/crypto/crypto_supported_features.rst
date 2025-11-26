@@ -715,6 +715,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - ML-KEM Public Key
                  - ``PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY``
                  - --
+               * - WPA3-SAE PT key
+                 - ``PSA_WANT_KEY_TYPE_WPA3_SAE_PT``
+                 - --
 
 
    .. tab:: nRF54L Series
@@ -977,6 +980,13 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
+              * - WPA3-SAE PT key
+                - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
 
          .. tab:: nrf_oberon
 
@@ -1229,6 +1239,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - WPA3-SAE PT key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
 
    .. tab:: nRF91 Series
 
@@ -1847,6 +1864,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`
 
          .. tab:: nrf_oberon
 
@@ -1890,6 +1908,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`
 
    .. tab:: nRF91 Series
 
