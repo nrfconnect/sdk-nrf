@@ -16,7 +16,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE:STRING="overlay-netusb.conf;overlay-enterprise.conf"
+      - EXTRA_CONF_FILE="overlay-netusb.conf;overlay-enterprise.conf"
       - wfa_qt_app_SNIPPET="wifi-enterprise"
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
