@@ -503,8 +503,10 @@ BridgedDeviceDataProvider *BridgeManager::GetProvider(EndpointId endpoint, uint1
 	uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpoint);
 	if (Instance().mDevicesMap.Contains(endpointIndex)) {
 		BridgedDevicePair &bridgedDevices = Instance().mDevicesMap[endpointIndex];
-		deviceType = bridgedDevices.mDevice->GetDeviceType();
-		return bridgedDevices.mProvider;
+		if (bridgedDevices.mDevice) {
+			deviceType = bridgedDevices.mDevice->GetDeviceType();
+			return bridgedDevices.mProvider;
+		}
 	}
 	return nullptr;
 }

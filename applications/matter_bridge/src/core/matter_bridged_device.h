@@ -110,12 +110,16 @@ public:
 			memcpy(mNodeLabel, nodeLabel, strnlen(nodeLabel, Nrf::MatterBridgedDevice::kNodeLabelSize));
 		}
 	}
-	virtual ~MatterBridgedDevice() {
+	virtual ~MatterBridgedDevice()
+	{
 		if (mIdentifyCluster.IsConstructed()) {
+			chip::app::CodegenDataModelProvider::Instance().Registry().Unregister(
+				&mIdentifyCluster.Cluster());
 			mIdentifyCluster.Destroy();
 		}
 
-		chip::Platform::MemoryFree(mDataVersion); }
+		chip::Platform::MemoryFree(mDataVersion);
+	}
 
 	void Init(chip::EndpointId endpoint)
 	{
