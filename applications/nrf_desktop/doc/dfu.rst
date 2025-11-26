@@ -57,9 +57,8 @@ If the MCUboot bootloader in the swap mode is selected, the DFU module does the 
 If the MCUboot bootloader's direct-xip mode is used, the module does not mark the newly uploaded image as pending and does not confirm it after a successful boot.
 In that case, the DFU module assumes that the MCUboot direct-xip bootloader simply boots an image with the higher version, so there is no need to mark the image as pending and confirm it.
 
-The :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP <config_desktop_app_options>` Kconfig option is used to inform the DFU module that the device uses the MCUboot bootloader in the direct-xip mode.
+The :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` Kconfig option is used to inform the DFU module that the device uses the MCUboot bootloader in the direct-xip mode.
 If the option is enabled, the DFU module reports the ``MCUBOOT+XIP`` bootloader name instead of ``MCUBOOT`` to indicate that the bootloader working in the direct-xip mode is used.
-The option depends on enabling the MCUboot bootloader (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`) and is enabled by default if the MCUboot direct-xip mode of operations is set (:kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP`).
 See the :ref:`nrf_desktop_bootloader` section for more information on the MCUboot bootloader configuration.
 
 Device identification information
