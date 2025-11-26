@@ -129,7 +129,9 @@ static struct report_state *get_active_report_state(uint8_t report_id)
 			__ASSERT_NO_MSG(!rs->provider || !rs->provider->api ||
 					(rs->provider->linked_rs == rs));
 
-			return rs->provider ? rs : NULL;
+			if (rs->provider) {
+				return rs;
+			}
 		}
 	}
 
@@ -668,6 +670,7 @@ static bool handle_hid_report_provider_event(struct hid_report_provider_event *e
 		.trigger_report_send = hid_state_report_trigger,
 	};
 	struct provider *provider = get_provider(event->report_id);
+	struct report_state *rs = get_active_report_state(event->report_id);
 
 	__ASSERT_NO_MSG(!provider->api);
 
@@ -681,8 +684,6 @@ static bool handle_hid_report_provider_event(struct hid_report_provider_event *e
 	/* Provide API to let provider trigger sending a HID report. */
 	__ASSERT_NO_MSG(!event->hid_state_api);
 	event->hid_state_api = &hid_state_api;
-
-	struct report_state *rs = get_active_report_state(event->report_id);
 
 	if (rs) {
 		link_provider_to_rs(provider, rs);
