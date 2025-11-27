@@ -1,0 +1,13 @@
+# Override Bluetooth host defaults for this sample to reduce RAM usage.
+# Provide a sample-level switch so boards can enable the reduction via their .conf.
+
+config DF_PERIPHERAL_DISABLE_BT_TX_THREAD
+	bool "Disable BT TX processor thread for DF peripheral"
+
+if DF_PERIPHERAL_DISABLE_BT_TX_THREAD
+
+config BT_TX_PROCESSOR_THREAD
+	bool
+	def_bool n
+
+endif
