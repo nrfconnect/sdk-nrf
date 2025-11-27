@@ -94,8 +94,17 @@
 .. _`sdk-nrf PR #14474`: https://github.com/nrfconnect/sdk-nrf/pull/14474
 .. _`sdk-nrf PR #16242`: https://github.com/nrfconnect/sdk-nrf/pull/16242
 .. _`sdk-nrf PR #20177`: https://github.com/nrfconnect/sdk-nrf/pull/20177
+.. _`sdk-nrf PR #24659`: https://github.com/nrfconnect/sdk-nrf/pull/24659
+.. _`sdk-nrf PR #25598`: https://github.com/nrfconnect/sdk-nrf/pull/25598
+.. _`sdk-nrf PR #25819`: https://github.com/nrfconnect/sdk-nrf/pull/25819
+.. _`sdk-nrf PR #24722`: https://github.com/nrfconnect/sdk-nrf/pull/24722
+.. _`sdk-nrf PR #26153`: https://github.com/nrfconnect/sdk-nrf/pull/26153
+.. _`sdk-nrf PR #26152`: https://github.com/nrfconnect/sdk-nrf/pull/26152
+.. _`sdk-nrf PR #26139`: https://github.com/nrfconnect/sdk-nrf/pull/26139
 
 .. _`sdk-zephyr PR #3323`: https://github.com/nrfconnect/sdk-zephyr/pull/3323
+.. _`sdk-zephyr PR #3617`: https://github.com/nrfconnect/sdk-zephyr/pull/3617
+.. _`sdk-zephyr PR #3623`: https://github.com/nrfconnect/sdk-zephyr/pull/3624
 
 .. _`sdk-nrfxlib`: https://github.com/nrfconnect/sdk-nrfxlib
 
