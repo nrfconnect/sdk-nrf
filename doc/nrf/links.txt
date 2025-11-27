@@ -728,6 +728,7 @@
 
 .. _`Cellular Monitor app`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/index.html
 .. _`Managing credentials`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/managing_credentials.html
+.. _`Programming Nordic Thingy:91 firmware`: https://docs.nordicsemi.com/bundle/nrf-connect-cellularmonitor/page/programming_thingy91.html
 
 .. _`Matter Quick Start app`: https://docs.nordicsemi.com/bundle/nrf-connect-matter-quickstart/page/index.html
 .. _`Matter Cluster Editor app`: https://docs.nordicsemi.com/bundle/nrf-connect-matter-cluster-editor/page/index.html
