@@ -104,6 +104,7 @@ int main(void)
 		__ASSERT(false, "wdt_install_timeout() returned %d\n", my_wdt_channel);
 	}
 
+#if defined(CONFIG_TEST_SYNCHRONIZE_CORES)
 /* Synchronize Remote core with Host core */
 #if !defined(CONFIG_TEST_ROLE_REMOTE)
 	LOG_DBG("HOST starts");
@@ -115,8 +116,8 @@ int main(void)
 		sys_cache_data_invd_range((void *) shared_var, sizeof(*shared_var));
 		LOG_DBG("shared_var is: %u", *shared_var);
 	}
-	LOG_DBG("HOST continues");
-#else
+	LOG_INF("HOST continues");
+#else /* !defined(CONFIG_TEST_ROLE_REMOTE) */
 	LOG_DBG("REMOTE starts");
 	while (*shared_var != HOST_IS_READY) {
 		k_msleep(1);
@@ -127,8 +128,9 @@ int main(void)
 	*shared_var = REMOTE_IS_READY;
 	sys_cache_data_flush_range((void *) shared_var, sizeof(*shared_var));
 	LOG_DBG("REMOTE wrote REMOTE_IS_READY: %u", *shared_var);
-	LOG_DBG("REMOTE continues");
-#endif
+	LOG_INF("REMOTE continues");
+#endif /* !defined(CONFIG_TEST_ROLE_REMOTE) */
+#endif /* defined(CONFIG_TEST_SYNCHRONIZE_CORES) */
 
 	/* Start Watchdog */
 	ret = wdt_setup(my_wdt_device, WDT_OPT_PAUSE_HALTED_BY_DBG | WDT_OPT_PAUSE_IN_SLEEP);
