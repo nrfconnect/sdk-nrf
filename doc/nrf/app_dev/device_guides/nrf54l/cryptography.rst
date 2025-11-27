@@ -287,7 +287,7 @@ For each key type, the table lists the supported algorithms and indicates which 
      - No
      - Yes
      - Yes
-   * - ECC secp256r1 key pair (ECDSA and ECDH usage) [4]_
+   * - ECC secp256r1 key pair (ECDSA and ECDH usage)
      - | ``key_type``: ``PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)``
        |
        | ``key_bits``: 256
@@ -346,7 +346,6 @@ For each key type, the table lists the supported algorithms and indicates which 
 .. [1] Store each key with only one algorithm to follow PSA Crypto best practices.
 .. [2] Keys with the Encrypted usage scheme (``CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED``) will require two additional KMU slots to store the nonce and the authentication tag.
 .. [3] 192-bit key size is not supported on nRF54LM20A.
-.. [4] ECDH not supported for key derivation.
 
 .. _ug_nrf54l_crypto_kmu_storing_keys:
 
