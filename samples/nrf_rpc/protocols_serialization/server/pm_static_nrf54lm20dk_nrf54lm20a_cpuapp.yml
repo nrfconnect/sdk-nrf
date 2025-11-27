@@ -1,0 +1,4 @@
+coredump_partition:
+  region: flash_primary
+  address: 0x1fa000
+  size: 0x3000
