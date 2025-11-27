@@ -90,6 +90,16 @@ See the related hardware documentation for more information about which implemen
      - n/a
      - n/a
      - See :ref:`UICR.APPROTECT <ug_nrf54h20_ironside_se_uicr_approtect>`.
+   * - nRF54LV10A
+     - n/a
+     - ✔
+     - `AP-Protect for nRF54LV10A`_
+     - Also :ref:`supports Secure AP-Protect <secure_approtect_support>`
+   * - nRF54LM20A
+     - n/a
+     - ✔
+     - `AP-Protect for nRF54LM20A`_
+     - Also :ref:`supports Secure AP-Protect <secure_approtect_support>`
    * - nRF54L15
      - n/a
      - ✔
