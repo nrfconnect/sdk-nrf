@@ -7,11 +7,15 @@ nRF54H20 domains
    :local:
    :depth: 2
 
-The nRF54H20 is partitioned into functional blocks, called *Domains*.
+The nRF54H20 is partitioned into functional blocks, called *domains* or *logical domains*.
 The domains containing the user-programmable main CPUs and associated functions are called *Cores*.
 Most memory and peripherals can be flexibly allocated to cores at compile time.
 To make this possible, the memory and peripherals are located in a separate area called the Global Domain.
 Security functions are centralized into the Secure Domain.
+
+The nRF54H20 also has *power domains*, which are sections of silicon that can be independently powered, clocked, or retained.
+A single logical domain can span multiple power domains.
+For information about power domains, see `Power domains`_.
 
 The following image shows the domains in the nRF54H20:
 
@@ -198,3 +202,116 @@ Cores managed by the user
    If the application firmware is executed in non-secure mode, the secure firmware (TF-M) is delivered as part of the |NCS|.
 
    You can choose to move some of the processing from the application core to the Peripheral Processor (PPR) or to the Fast Lightweight Processor (FLPR).
+
+Power domains
+*************
+
+Power domains let you turn off large sections of the chip when they are not needed.
+This reduces overall power consumption and leakage current.
+The hardware manages power domains automatically based on system activity.
+
+The nRF54H20 contains three types of power domains.
+Each type uses different silicon libraries with different characteristics.
+
+Low-leakage power domain
+========================
+
+The low-leakage power domain operates at 16 MHz and contains peripherals that do not need higher clock speeds.
+
+Characteristics:
+
+* Retention cost is very low.
+  Hardware flip-flops retain state inexpensively.
+* Clock speed is 16 MHz.
+* Contains low-speed peripherals and the PPR processor.
+
+The PPR processor runs at the same clock speed as these peripherals.
+This eliminates wait cycles when accessing peripheral registers.
+
+High-speed power domain
+=======================
+
+The high-speed power domain contains memories and peripherals that operate faster than 16 MHz.
+
+Characteristics:
+
+* Retention cost is moderate.
+  It is more expensive than the low-leakage power domain, but manageable.
+* Clock speed varies by peripheral, all greater than 16 MHz.
+* Contains MRAM, Global RAM, high-speed peripherals, and the FLPR processor.
+
+The FLPR processor runs at up to 320 MHz, making it ideal for software-defined peripherals.
+
+DVFS power domain
+=================
+
+The DVFS (Dynamic Voltage and Frequency Scaling) power domain contains the Application core and Secure Domain processors.
+
+Characteristics:
+
+* Retention cost is very high.
+  Context must be saved to low-leakage RAM before powering down the domain.
+* Clock speed varies. The Application core supports multiple frequencies.
+* Contains the Application core CPU, caches, and Secure Domain CPU.
+
+Because of the high retention cost, the system saves CPU context to low-leakage RAM and powers down this domain during deep sleep states.
+
+For more information on power states, see :ref:`ug_nrf54h20_architecture_pm`.
+
+Optimizing power consumption
+****************************
+
+Follow the *locality principle* to optimize power consumption: keep data accesses and processing as local as possible.
+The farther data travels through the system, the more power domains must stay active.
+
+Using VPR processors for peripheral I/O
+=======================================
+
+The PPR and FLPR processors handle I/O operations and peripheral management efficiently.
+Use them instead of the Arm cores for peripheral access to save power:
+
+* PPR runs at the same 16 MHz clock as low-leakage peripherals. This eliminates wait cycles when accessing peripheral registers.
+* FLPR implements software-defined peripherals at high speed while keeping the Arm cores asleep.
+
+The Arm cores (Application and Radio) are optimized for computing, not I/O.
+Accessing peripherals from these cores wastes cycles waiting for the slower peripheral bus.
+
+*Recommended workflow:*
+
+1. Use PPR or FLPR to manage peripherals and gather data.
+2. Store gathered data in local RAM.
+3. Wake the Application or Radio core to process data in batches.
+4. Return the Arm core to sleep.
+
+Minimizing global resource access
+=================================
+
+Accessing global resources from the Application or Radio core powers multiple domains along the data path.
+Global resources include Global RAM, MRAM, and peripherals in the Global domain.
+
+To minimize power consumption:
+
+* Execute code from local RAM (TCM) when possible. Avoid MRAM accesses.
+* Store frequently accessed data in local RAM.
+* Batch operations that need global resources. This minimizes the time those domains stay active.
+
+.. note::
+   MRAM access costs significant power.
+   Relocate frequently executed code to local RAM to reduce power consumption.
+
+For detailed optimization techniques, see :ref:`ug_nrf54h20_pm_optimization`.
+
+System Off wake-up sources
+**************************
+
+To enter the lowest power state (System Off), disable all wake-up sources except the following:
+
+* GPIO pin wake-ups from always-powered pins (Port 0)
+* GRTC (Global Real-Time Counter)
+* NFC field detection
+* LPCOMP (low-power comparator)
+* USB voltage connection or disconnection
+
+These peripherals remain powered in System Off and can wake the system.
+
+For more information on power states and transitions, see :ref:`ug_nrf54h20_architecture_pm`.

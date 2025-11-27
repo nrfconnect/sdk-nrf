@@ -493,6 +493,12 @@ Glossary
       `Bluetooth Core Specification`_, Vol 1, Part A, Section 1.2.
       It is implemented in the Bluetooth LE Controller layer.
 
+   Logical domain
+      A functional grouping of components in an SoC based on isolation and security principles.
+      In the nRF54H20 SoC, logical domains include Application, Radio, global, and Secure domains.
+      A single logical domain can span multiple power domains.
+      See :ref:`ug_nrf54h20_architecture_cpu` for more information.
+
    Logical Link Control and Adaptation Protocol (L2CAP)
       A protocol used within the Bluetooth protocol stack.
       "[It] provides a channel-based abstraction to applications and services.
@@ -738,6 +744,12 @@ Glossary
    Power Management Service
       A service that automatically handles the settings described by an application.
       It decides how registers will be retained, which parts of the device are put into what mode, and what clock signals are running.
+
+   Power domain
+      A section of silicon in an SoC that can be independently powered, clocked, or retained.
+      Power domains allow large sections of the chip to be turned off when not needed, reducing power consumption and leakage current.
+      The hardware manages power domains automatically based on system activity.
+      See :ref:`ug_nrf54h20_architecture_cpu` for more information.
 
    Power Saving Mode (PSM)
       A feature introduced in 3GPP Release 12 to improve the battery life of IoT (Internet of Things) devices by minimizing energy consumption.
