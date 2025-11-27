@@ -19,4 +19,9 @@ config TEST_ROLE_REMOTE
 	  KConfig used in synchronization phase.
 	  Set TEST_ROLE_REMOTE=y on core that shall synchronize with the Host core.
 
+config TEST_SYNCHRONIZE_CORES
+	bool "Synchronization with other core"
+	help
+	  When set to 'y' core will synchronize code execution with the other core.
+
 source "Kconfig.zephyr"

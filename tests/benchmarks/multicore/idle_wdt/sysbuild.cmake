@@ -4,14 +4,13 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if("${SB_CONFIG_REMOTE_BOARD}" STREQUAL "")
-  message(FATAL_ERROR "REMOTE_BOARD must be set to a valid board name")
-endif()
+if(SB_CONFIG_TEST_SYNCHRONIZE_CORES)
+  set_config_bool(${DEFAULT_IMAGE} CONFIG_TEST_SYNCHRONIZE_CORES y)
+  set_config_bool(${SB_CONFIG_NETCORE_IMAGE_NAME} CONFIG_TEST_SYNCHRONIZE_CORES y)
+else()
+  set_config_bool(${DEFAULT_IMAGE} CONFIG_TEST_SYNCHRONIZE_CORES n)
 
-# Add remote project
-ExternalZephyrProject_Add(
-    APPLICATION remote
-    SOURCE_DIR ${APP_DIR}/remote
-    BOARD ${SB_CONFIG_REMOTE_BOARD}
-    BOARD_REVISION ${BOARD_REVISION}
-)
+  if(SB_CONFIG_NETCORE_REMOTE)
+    set_config_bool(${SB_CONFIG_NETCORE_IMAGE_NAME} CONFIG_TEST_SYNCHRONIZE_CORES n)
+  endif()
+endif()
