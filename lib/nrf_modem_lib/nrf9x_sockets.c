@@ -203,6 +203,9 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		case TLS_DTLS_HANDSHAKE_STATUS:
 			*nrf_out_optname = NRF_SO_SEC_HANDSHAKE_STATUS;
 			break;
+		case TLS_DTLS_FRAG_EXT:
+			*nrf_out_optname = NRF_SO_SEC_DTLS_FRAG_EXT;
+			break;
 		default:
 			retval = -1;
 			break;
