@@ -39,7 +39,7 @@ To follow this guide, make sure you have all the required hardware:
 Installing the |NCS|
 ********************
 
-Install the |NCS| following the instructions in the :ref:`install_ncs` documentation page.
+Install the |NCS| following the instructions for both |nRFVSC| and the command line in the :ref:`install_ncs` documentation page.
 
 .. rst-class:: numbered-step
 
@@ -194,7 +194,58 @@ It uses the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
 To build and program the sample to the nRF54H20 DK, complete the following steps:
 
 1. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
-#. Open nRF Connect for Desktop, navigate to the Toolchain Manager, select the version |release| toolchain, and click the :guilabel:`Open terminal` button.
+#. Start the toolchain environment for your operating system using the following command pattern, with ``--ncs-version`` corresponding to the |NCS| version you have installed:
+
+   .. tabs::
+
+      .. tab:: Windows
+
+         .. parsed-literal::
+            :class: highlight
+
+            nrfutil sdk-manager toolchain launch --ncs-version *version* --terminal
+
+         For example:
+
+         .. parsed-literal::
+            :class: highlight
+
+            nrfutil sdk-manager toolchain launch --ncs-version |release| --terminal
+
+         This example command starts the toolchain environment for the |NCS| |release|.
+
+      .. tab:: Linux
+
+         .. parsed-literal::
+            :class: highlight
+
+            nrfutil sdk-manager toolchain launch --ncs-version *version* --shell
+
+         For example:
+
+         .. parsed-literal::
+            :class: highlight
+
+            nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
+
+         This example command starts the toolchain environment for the |NCS| |release|.
+
+      .. tab:: macOS
+
+         .. parsed-literal::
+            :class: highlight
+
+            nrfutil sdk-manager toolchain launch --ncs-version *version* --shell
+
+         For example:
+
+         .. parsed-literal::
+            :class: highlight
+
+            nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
+
+         This example command starts the toolchain environment for the |NCS| |release|.
+
 #. In the terminal window, navigate to the :file:`zephyr/samples/sysbuild/hello_world` folder containing the sample.
 #. Run the following command to build the sample for application and radio cores::
 
