@@ -226,6 +226,11 @@ Enhanced ShockBurst (ESB)
 
   * A workaround for the hardware errata HMPAN-229 for the nRF54H20 SoC.
 
+* Updated:
+
+  * Workaround handling for the hardware erratas.
+  * The implementation of the hardware errata HMPAN-103 for the nRF54H20 SoC.
+
 Gazell
 ------
 
