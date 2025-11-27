@@ -379,7 +379,7 @@ The following table indicates the software maturity levels of the support for ea
            - --
            - --
            - Experimental\ :sup:`3`
-           - --
+           - Experimental\ :sup:`3`
            - --
          * - **Zigbee**
            - --\ :sup:`5`
@@ -2063,25 +2063,25 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - --
-              - --
+              - Experimental\ :sup:`4`
               - --
             * - **Monitor Mode**
               - --
               - --
               - Experimental\ :sup:`4`
-              - --
+              - Experimental\ :sup:`4`
               - --
             * - **Promiscuous Mode**
               - --
               - --
               - Experimental\ :sup:`4`
-              - --
+              - Experimental\ :sup:`4`
               - --
             * - **STA Mode**
               - --
               - --
               - Experimental\ :sup:`4`
-              - --
+              - Experimental\ :sup:`4`
               - --
             * - **Scan only (for location accuracy)**
               - --
@@ -2093,13 +2093,13 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - Experimental\ :sup:`4`
-              - --
+              - Experimental\ :sup:`4`
               - --
             * - **TX injection Mode**
               - --
               - --
               - Experimental\ :sup:`4`
-              - --
+              - Experimental\ :sup:`4`
               - --
             * - **Thread Coexistence**
               - --
