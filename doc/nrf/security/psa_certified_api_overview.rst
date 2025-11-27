@@ -62,8 +62,7 @@ The following table provides an overview of the PSA Certified APIs support statu
    * - `PSA Certified Crypto API`_
      - Supported
      - | `PSA Certified Crypto API 1.3.1`_ for IronSide Secure Element firmware for nRF54H20
-       | `PSA Certified Crypto API 1.3.1`_ for :ref:`nRF54L cryptography <ug_nrf54l_cryptography>` and PSA Crypto API builds without TF-M
-       | `PSA Certified Crypto API 1.0.0`_ for builds with TF-M
+       | `PSA Certified Crypto API 1.3.1`_ for :ref:`nRF54L cryptography <ug_nrf54l_cryptography>` and PSA Crypto API builds with and without TF-M
    * - `PSA Certified Attestation API`_
      - Supported
      - `PSA Certified Attestation API 1.0`_ (not supported for IronSide Secure Element firmware for nRF54H20)
@@ -116,7 +115,7 @@ The PSA Crypto API has the following implementations in the |NCS|:
 * :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`- which provides PSA Crypto API access through TF-M for applications that require enhanced security.
 * :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>` - which provides PSA Crypto API interface for the :ref:`Secure Domain of nRF54H20 <ug_nrf54h20_secure_domain>`.
 
-Depending on the implementation you are using, the |NCS| build system uses different versions of the PSA Crypto API.
+Depending on the implementation you are using, the |NCS| build system can use different versions of the PSA Crypto API.
 
 .. psa_crypto_support_tfm_build_start
 
@@ -129,7 +128,7 @@ Depending on the implementation you are using, the |NCS| build system uses diffe
    * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
      - `v1.3.1 <PSA Certified Crypto API 1.3.1_>`_
    * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
-     - `v1.0.0 <PSA Certified Crypto API 1.0.0_>`_
+     - `v1.3.1 <PSA Certified Crypto API 1.3.1_>`_
    * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
      - `v1.3.1 <PSA Certified Crypto API 1.3.1_>`_
 

@@ -737,8 +737,8 @@ The options are grouped by Series and drivers available for the device Series, a
                 - nRF54L05
                 - nRF54L10
                 - nRF54L15
-                - nRF54LM20
-                - nRF54LV10
+                - nRF54LM20A
+                - nRF54LV10A
               * - AES
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
                 - Supported
@@ -989,8 +989,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - AES
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
                  - Supported
@@ -2174,8 +2174,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - ECB no padding
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECB_NO_PADDING`
                  - Supported
@@ -2188,14 +2188,14 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental (with exceptions, see note)
+                 - Experimental
                  - Experimental
                * - CBC PKCS#7 padding
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_PKCS7`
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental (with exceptions, see note)
+                 - Experimental
                  - Experimental
                * - CTR
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR`
@@ -2221,14 +2221,10 @@ The options are grouped by Series and drivers available for the device Series, a
 
             .. note::
 
-               The following limitations apply for nRF54LM20 when using the CRACEN driver:
+               The following limitations apply for nRF54LM20A and nRF54LV10A when using the CRACEN driver:
 
                * 192-bit keys are not supported.
                  See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
-
-               * For CBC no padding and CBC PKCS#7 padding cipher modes:
-
-                 * Multi-part encrypt and decrypt APIs are not supported.
 
          .. tab:: nrf_oberon
 
@@ -2241,8 +2237,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - ECB no padding
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECB_NO_PADDING`
                  - Supported
@@ -2670,8 +2666,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - ECDH
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDH`
                  - Supported
@@ -2691,8 +2687,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - ECDH
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDH`
                  - Supported
@@ -2934,8 +2930,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - ML-KEM
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_KEM`
                  - Experimental
@@ -3240,8 +3236,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - HKDF
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF`
                  - Supported
@@ -3324,8 +3320,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - HKDF
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF`
                  - Supported
@@ -3762,15 +3758,15 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - CMAC
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_CMAC`
                  - Supported
                  - Supported
                  - Supported
                  - Experimental (with exceptions, see note)
-                 - Experimental
+                 - Experimental (with exceptions, see note)
                * - HMAC
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC`
                  - Supported
@@ -3781,7 +3777,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
             .. note::
 
-               The following limitations apply for nRF54LM20 when using the CRACEN driver:
+               The following limitations apply for nRF54LM20A and nRF54LV10A when using the CRACEN driver:
 
                * 192-bit keys are not supported.
                  See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
@@ -3797,8 +3793,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - CMAC
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_CMAC`
                  - Supported
@@ -3958,7 +3954,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                * - Kconfig option
                  - Supported MAC algorithms
                * - :kconfig:option:`CONFIG_PSA_USE_CRACEN_MAC_DRIVER`
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CMAC`
+                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CMAC` (all AES key sizes except the 192-bit key size on nRF54LM20A and nRF54LV10A)
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC`
 
          .. tab:: nrf_oberon
@@ -4185,8 +4181,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - CCM
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM`
                  - Supported
@@ -4219,7 +4215,7 @@ The options are grouped by Series and drivers available for the device Series, a
             .. note::
 
                 * CRACEN only supports a 96-bit IV for AES GCM.
-                * The following limitations apply for nRF54LM20 when using the CRACEN driver:
+                * The following limitations apply for nRF54LM20A when using the CRACEN driver:
 
                   * 192-bit keys are not supported.
                     See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
@@ -4232,7 +4228,10 @@ The options are grouped by Series and drivers available for the device Series, a
 
                     * Multi-part encrypt and decrypt APIs are not supported.
 
-                * The following limitations apply for nRF54LV10 when using the CRACEN driver:
+                * The following limitations apply for nRF54LV10A when using the CRACEN driver:
+
+                  * 192-bit keys are not supported.
+                    See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
 
                   * CCM cipher mode:
 
@@ -4249,8 +4248,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - CCM
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM`
                  - Supported
@@ -4450,7 +4449,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                  - Supported AEAD algorithms
                * - :kconfig:option:`CONFIG_PSA_USE_CRACEN_AEAD_DRIVER`
                  - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM` (all AES key sizes except the 192-bit key size on nRF54LM20A and nRF54LV10A)
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
 
          .. tab:: nrf_oberon
@@ -4851,8 +4850,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - ECDSA
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA`
                  - Supported
@@ -4963,8 +4962,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - ECDSA
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA`
                  - Supported
@@ -5593,8 +5592,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - RSA OAEP
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_OAEP`
                  - Supported
@@ -5621,8 +5620,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - RSA OAEP
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_OAEP`
                  - Supported
@@ -6193,8 +6192,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - BrainpoolP224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`
                  - Supported
@@ -6312,8 +6311,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - BrainpoolP224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`
                  - --
@@ -6985,8 +6984,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - RNG support
                  - :kconfig:option:`CONFIG_PSA_WANT_GENERATE_RANDOM`
                  - Supported
@@ -7020,8 +7019,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - RNG support
                  - :kconfig:option:`CONFIG_PSA_WANT_GENERATE_RANDOM`
                  - Supported
@@ -7594,8 +7593,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - SHA-1 (weak)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`
                  - Supported
@@ -7706,8 +7705,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - SHA-1 (weak)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`
                  - Supported
@@ -8329,8 +8328,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - EC J-PAKE
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_JPAKE`
                  - Supported
@@ -8385,8 +8384,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - EC J-PAKE
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_JPAKE`
                  - Supported
@@ -8742,8 +8741,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT`
                  - Supported
@@ -8784,8 +8783,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT`
                  - Supported
@@ -8988,8 +8987,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_IMPORT`
                  - Supported
@@ -9030,8 +9029,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_IMPORT`
                  - Supported
@@ -9232,8 +9231,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT`
                  - Supported
@@ -9274,8 +9273,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT`
                  - Supported
@@ -9520,8 +9519,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE`
                  - Supported
@@ -9562,8 +9561,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE`
                  - Supported
@@ -9839,8 +9838,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - 128 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_AES_KEY_SIZE_128`
                  - Supported
@@ -9874,8 +9873,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - 128 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_AES_KEY_SIZE_128`
                  - Supported
@@ -10147,8 +10146,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - 1024 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_1024`
                  - --
@@ -10210,8 +10209,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
-                 - nRF54LM20
-                 - nRF54LV10
+                 - nRF54LM20A
+                 - nRF54LV10A
                * - 1024 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_1024`
                  - Supported
