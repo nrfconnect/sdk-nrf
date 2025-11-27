@@ -22,14 +22,12 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/drivers/gpio.h>
-#if NRF54H_ERRATA_216_PRESENT
-#include <zephyr/drivers/mbox.h>
-#endif /* NRF54H_ERRATA_216_PRESENT */
 
 #include <mpsl_fem_protocol_api.h>
 
 #include "esb_peripherals.h"
 #include "esb_ppi_api.h"
+#include "esb_workarounds.h"
 
 LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 
@@ -267,13 +265,6 @@ enum {
 static atomic_t errata_216_status = ATOMIC_INIT(ERRATA_216_DISABLED);
 static uint32_t errata_216_timer_shorts;
 
-#if NRF54H_ERRATA_216_PRESENT
-static const struct mbox_dt_spec on_channel =
-			MBOX_DT_SPEC_GET(DT_NODELABEL(cpurad_cpusys_errata216_mboxes), on_req);
-static const struct mbox_dt_spec off_channel =
-			MBOX_DT_SPEC_GET(DT_NODELABEL(cpurad_cpusys_errata216_mboxes), off_req);
-#endif /* NRF54H_ERRATA_216_PRESENT */
-
 static esb_event_handler event_handler;
 static struct esb_payload *current_payload;
 
@@ -380,39 +371,14 @@ static inline void apply_errata143_workaround(void)
 	 * use a unique address 0 since this will avoid the 3dBm penalty
 	 * incurred from the workaround.
 	 */
+
+	if (!nrf52_errata_143()) {
+		return;
+	}
+
 	uint32_t base_address_mask =
 		esb_addr.addr_length == 5 ? 0xFFFF0000 : 0xFF000000;
-
-	/* Load the two addresses before comparing them to ensure
-	 * defined ordering of volatile accesses.
-	 */
-	uint32_t addr0 = nrf_radio_base0_get(NRF_RADIO) & base_address_mask;
-	uint32_t addr1 = nrf_radio_base1_get(NRF_RADIO) & base_address_mask;
-
-	if (addr0 == addr1) {
-		uint32_t radio_prefix0 = nrf_radio_prefix0_get(NRF_RADIO);
-		uint32_t radio_prefix1 = nrf_radio_prefix1_get(NRF_RADIO);
-
-		uint8_t prefix0 = radio_prefix0 & RADIO_PREFIX0_AP0_Msk;
-		uint8_t prefix1 = (radio_prefix0 & RADIO_PREFIX0_AP1_Msk) >> RADIO_PREFIX0_AP1_Pos;
-		uint8_t prefix2 = (radio_prefix0 & RADIO_PREFIX0_AP2_Msk) >> RADIO_PREFIX0_AP2_Pos;
-		uint8_t prefix3 = (radio_prefix0 & RADIO_PREFIX0_AP3_Msk) >> RADIO_PREFIX0_AP3_Pos;
-		uint8_t prefix4 = radio_prefix1 & RADIO_PREFIX1_AP4_Msk;
-		uint8_t prefix5 = (radio_prefix1 & RADIO_PREFIX1_AP5_Msk) >> RADIO_PREFIX1_AP5_Pos;
-		uint8_t prefix6 = (radio_prefix1 & RADIO_PREFIX1_AP6_Msk) >> RADIO_PREFIX1_AP6_Pos;
-		uint8_t prefix7 = (radio_prefix1 & RADIO_PREFIX1_AP7_Msk) >> RADIO_PREFIX1_AP7_Pos;
-
-		if ((prefix0 == prefix1) || (prefix0 == prefix2) ||
-		    (prefix0 == prefix3) || (prefix0 == prefix4) ||
-		    (prefix0 == prefix5) || (prefix0 == prefix6) ||
-		    (prefix0 == prefix7)) {
-			/* This will cause a 3dBm sensitivity loss,
-			 * avoid using such address combinations if possible.
-			 */
-			*(volatile uint32_t *)0x40001774 =
-				((*(volatile uint32_t *)0x40001774) & 0xfffffffe) | 0x01000000;
-		}
-	}
+	esb_apply_nrf52_143(base_address_mask);
 }
 
 static void errata_216_on(void)
@@ -421,15 +387,11 @@ static void errata_216_on(void)
 		return;
 	}
 
-#if NRF54H_ERRATA_216_PRESENT
-	if (mbox_send_dt(&on_channel, NULL) != 0) {
-		LOG_ERR("Failed to enable Errata 216");
-		/* Should not happen. */
-		__ASSERT_NO_MSG(false);
-	} else {
-		atomic_set(&errata_216_status, ERRATA_216_ENABLED);
-	}
-#endif /* NRF54H_ERRATA_216_PRESENT */
+	esb_apply_nrf54h_216(true);
+
+#if NRF54H_ERRATA_216_ENABLE_WORKAROUND
+	atomic_set(&errata_216_status, ERRATA_216_ENABLED);
+#endif /* NRF54H_ERRATA_216_ENABLE_WORKAROUND */
 }
 
 static void errata_216_off(void)
@@ -438,86 +400,25 @@ static void errata_216_off(void)
 		return;
 	}
 
-#if NRF54H_ERRATA_216_PRESENT
-	if (mbox_send_dt(&off_channel, NULL) != 0) {
-		LOG_ERR("Failed to disable Errata 216");
-		/* Should not happen. */
-		__ASSERT_NO_MSG(false);
-	} else {
-		atomic_set(&errata_216_status, ERRATA_216_DISABLED);
-	}
-#endif /* NRF54H_ERRATA_216_PRESENT */
+	esb_apply_nrf54h_216(false);
+
+#if NRF54H_ERRATA_216_ENABLE_WORKAROUND
+	atomic_set(&errata_216_status, ERRATA_216_DISABLED);
+#endif /* NRF54H_ERRATA_216_ENABLE_WORKAROUND */
 }
 
 static void apply_radio_init_workarounds(void)
 {
 	if (nrf52_errata_182()) {
-		/* Check if the device is an nRF52832 Rev. 2. */
-		/* Workaround for nRF52832 rev 2 errata 182 */
-		*(volatile uint32_t *)0x4000173C |= (1 << 10);
+		esb_apply_nrf52_182();
 	}
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
-	/* Apply HMPAN-102 workaround for nRF54H series */
-	*(volatile uint32_t *)0x5302C7E4 =
-		(((*((volatile uint32_t *)0x5302C7E4)) & 0xFF000FFF) | 0x0012C000);
-
-	/* Apply HMPAN-18 workaround for nRF54H series - load trim values*/
-	if (*(volatile uint32_t *)0x0FFFE458 != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *)0x5302C734 = *(volatile uint32_t *)0x0FFFE458;
+	if (nrf54h_errata_103()) {
+		esb_apply_nrf54h_103();
 	}
 
-	if (*(volatile uint32_t *)0x0FFFE45C != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *)0x5302C738 = *(volatile uint32_t *)0x0FFFE45C;
-	}
-
-	if (*(volatile uint32_t *)0x0FFFE460 != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *)0x5302C73C = *(volatile uint32_t *)0x0FFFE460;
-	}
-
-	if (*(volatile uint32_t *)0x0FFFE464 != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *)0x5302C740 = *(volatile uint32_t *)0x0FFFE464;
-	}
-
-	if (*(volatile uint32_t *)0x0FFFE468 != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *)0x5302C74C = *(volatile uint32_t *)0x0FFFE468;
-	}
-
-	/* HMPAN-229 provides hardcoded value if the trim value is 0 */
-	if ((*(volatile uint32_t *)0x0FFFE46C != TRIM_VALUE_EMPTY) &&
-							(*(volatile uint32_t *)0x0FFFE46C != 0)) {
-		*(volatile uint32_t *)0x5302C7D8 = *(volatile uint32_t *)0x0FFFE46C;
-	} else {
-		*(volatile uint32_t *)0x5302C7D8 = 0x00000004;
-	}
-
-	if (*(volatile uint32_t *)0x0FFFE470 != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *)0x5302C840 = *(volatile uint32_t *)0x0FFFE470;
-	}
-
-	if (*(volatile uint32_t *)0x0FFFE474 != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *)0x5302C844 = *(volatile uint32_t *)0x0FFFE474;
-	}
-
-	if (*(volatile uint32_t *)0x0FFFE478 != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *)0x5302C848 = *(volatile uint32_t *)0x0FFFE478;
-	}
-
-	if (*(volatile uint32_t *)0x0FFFE47C != TRIM_VALUE_EMPTY) {
-		*(volatile uint32_t *)0x5302C84C = *(volatile uint32_t *)0x0FFFE47C;
-	}
-
-	/* Apply HMPAN-103 workaround for nRF54H series*/
-	if ((*(volatile uint32_t *)0x5302C8A0 == 0x80000000) ||
-	    (*(volatile uint32_t *)0x5302C8A0 == 0x0058120E)) {
-		*(volatile uint32_t *)0x5302C8A0 = 0x0058090E;
-	}
-
-	*(volatile uint32_t *)0x5302C8A4 = 0x00F8AA5F;
-	*(volatile uint32_t *)0x5302C7AC = 0x8672827A;
-	*(volatile uint32_t *)0x5302C7B0 = 0x7E768672;
-	*(volatile uint32_t *)0x5302C7B4 = 0x0406007E;
-#endif /* (CONFIG_SOC_SERIES_NRF54HX) */
+	/* Currently there is no check for this workaround */
+	esb_apply_nrf54h_229();
 }
 
 static void esb_fem_for_tx_set(bool ack)
