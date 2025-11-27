@@ -30,7 +30,7 @@ Module events
 Configuration
 *************
 
-To enable the module, use the :kconfig:option:`CONFIG_DESKTOP_HFCLK_LOCK_ENABLE` Kconfig option.
+To enable the module, use the :option:`CONFIG_DESKTOP_HFCLK_LOCK_ENABLE` Kconfig option.
 
 Make sure that you have enabled the Bluetooth LE Low Latency Packet Mode (LLPM) (:kconfig:option:`CONFIG_CAF_BLE_USE_LLPM`).
 Using LLPM connection parameters reduces HID data latency more than enabling the module.
