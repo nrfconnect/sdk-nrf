@@ -184,8 +184,11 @@ int clocks_start(void)
 		}
 	} while (err == -EAGAIN);
 
-	nrf_lrcconf_clock_always_run_force_set(NRF_LRCCONF000, 0, true);
-	nrf_lrcconf_task_trigger(NRF_LRCCONF000, NRF_LRCCONF_TASK_CLKSTART_0);
+	/* HMPAN-84 */
+	if (nrf54h_errata_84()) {
+		nrf_lrcconf_clock_always_run_force_set(NRF_LRCCONF000, 0, true);
+		nrf_lrcconf_task_trigger(NRF_LRCCONF000, NRF_LRCCONF_TASK_CLKSTART_0);
+	}
 
 	LOG_DBG("HF clock started");
 
