@@ -34,7 +34,7 @@ nRF54H20 IronSide SE binaries
 
 .. toggle::
 
-   * The nRF54H20 IronSide SE binaries have been updated to version v23.0.1+16.
+   * The nRF54H20 IronSide SE binaries have been updated to version v23.1.0+19.
      Starting from the |NCS| v3.2.0, you should always upgrade your nRF54H20 IronSide SE binaries to the latest version.
 
      For more information, see:

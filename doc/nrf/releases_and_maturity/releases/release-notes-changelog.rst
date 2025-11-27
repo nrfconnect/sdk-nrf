@@ -1245,3 +1245,4 @@ Documentation
   * The :ref:`ug_nrf54h20_custom_pcb` documentation to clarify how to configure the BICR for a custom PCB based on the nRF54H20 SoC.
   * The :ref:`abi_compatibility` page with the newest IronSide SE changelog updates.
   * The :ref:`ug_nrf54h20_architecture_lifecycle` page with an expanded introduction.
+  * The :ref:`ug_nrf54h20_gs` page to update the getting started instructions for the nRF54H20 DK.
