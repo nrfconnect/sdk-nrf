@@ -92,7 +92,7 @@ const struct bt_gatt_attr *bt_rpc_gatt_index_to_attr(uint32_t index)
 
 const struct bt_gatt_service *bt_rpc_gatt_get_service_by_index(uint16_t svc_index)
 {
-	if (svc_index > svc_cache.count) {
+	if (svc_index >= svc_cache.count) {
 		return NULL;
 	}
 
