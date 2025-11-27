@@ -40,18 +40,10 @@ dut_spi: &spi21 {
 	dut_spi_dt: test-spi-dev@0 {
 		compatible = "vnd,spi-device";
 		reg = <0>;
-		spi-max-frequency = <DT_FREQ_M(4)>;
+		spi-max-frequency = <DT_FREQ_M(1)>;
 	};
 };
 
 &gpio1 {
-	status = "okay";
-};
-
-tst_timer: &timer20 {
-	status = "okay";
-};
-
-&dppic20 {
 	status = "okay";
 };
