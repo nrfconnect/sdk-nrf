@@ -58,9 +58,11 @@ Bootloaders and DFU
   This allows applications to extend the built-in DFU functionality with additional firmware images beyond those natively supported by the |NCS|, for example, firmware for external devices.
   See :ref:`lib_dfu_extra` for details.
 * Added an option to restore progress after a power failure when using DFU multi-image with MCUboot.
-* Updated the NSIB monotonic counter configuration by moving it to sysbuild where it is now configured using the :kconfig:option:`SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER` and :kconfig:option:`SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS` Kconfig options.
-* :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` no longer implies :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP`.
-  The :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP` can now be selected to improve DFU speedup at cost of a RAM usage.
+* Updated:
+
+  * The NSIB monotonic counter configuration by moving it to sysbuild where it is now configured using the :kconfig:option:`SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER` and :kconfig:option:`SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS` Kconfig options.
+  * The :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` Kconfig option to no longer imply :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP`.
+    The :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP` Kconfig option can now be selected to speed up DFU at the cost of RAM usage.
 
 Developing with nRF91 Series
 ============================
