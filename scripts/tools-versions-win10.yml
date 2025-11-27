@@ -28,4 +28,4 @@ pip:
 nrfutil:
   version: 8.1.1
   subcommands:
-    device: 2.15.2
+    device: 2.15.6
