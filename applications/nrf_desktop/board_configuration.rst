@@ -176,7 +176,7 @@ Sample mouse (``nrf54lm20dk/nrf54lm20a/cpuapp``)
       * Bluetooth LE and USB High-Speed transports are enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
         USB High-Speed is configured to use the USB next stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT`).
-        The :kconfig:option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE` and :kconfig:option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB` Kconfig options are enabled in mouse configurations to improve the USB High-Speed report rate.
+        The :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE` and :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB` Kconfig options are enabled in mouse configurations to improve the USB High-Speed report rate.
       * In ``debug`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54LM20 DK, see the :ref:`ug_nrf54l15_gs` documentation.
       * In ``llvm`` configurations, the partition layout is different to accommodate for the higher memory footprint of the ``llvm``  toolchain.
@@ -193,7 +193,7 @@ Sample mouse or dongle (``nrf54h20dk/nrf54h20/cpuapp``)
       * Bluetooth LE and USB High-Speed transports are enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
         USB High-Speed is configured to use the USB next stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT`).
-        The :kconfig:option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE` and :kconfig:option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB` Kconfig options are enabled in mouse configurations to improve the USB High-Speed report rate.
+        The :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE` and :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB` Kconfig options are enabled in mouse configurations to improve the USB High-Speed report rate.
       * In ``debug`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54H20 DK, see the :ref:`ug_nrf54h20_gs` documentation.
       * The configurations use the Software Updates for Internet of Things (SUIT) and support firmware updates using the :ref:`nrf_desktop_dfu`.
