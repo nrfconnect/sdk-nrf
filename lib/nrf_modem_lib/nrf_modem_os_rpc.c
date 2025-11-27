@@ -17,8 +17,8 @@
 #include <zephyr/drivers/mbox.h>
 #include <zephyr/ipc/icmsg.h>
 #include <zephyr/ipc/pbuf.h>
-#if defined(CONFIG_NRF_IRONSIDE)
-#include <nrf_ironside/cpuconf.h>
+#if defined(CONFIG_IRONSIDE_SE_CALL)
+#include <ironside/se/api.h>
 #endif
 
 #define DCACHE_LINE_SIZE (CONFIG_DCACHE_LINE_SIZE)
@@ -119,7 +119,7 @@ uintptr_t nrf_modem_os_rpc_sigdev_modem_get(void)
 
 int nrf_modem_os_rpc_cellcore_boot(void)
 {
-#if defined(CONFIG_NRF_IRONSIDE)
+#if defined(CONFIG_IRONSIDE_SE_CALL)
 	struct boot_report_cellcore_ldc params;
 
 	params.ipc_buf_addr = DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl));
@@ -136,7 +136,7 @@ int nrf_modem_os_rpc_cellcore_boot(void)
 	/* TODO: Replace hardcoded value with NRF_PROCESSOR_CELLCORE when it's available
 	 * in the MDK.
 	 */
-	return ironside_cpuconf(4, NULL, cpu_wait, msg, msg_size);
+	return ironside_se_cpuconf(4, NULL, cpu_wait, msg, msg_size);
 #else
 	/* Without IronSide SE, cellcore is booted by the SDFW. */
 	return 0;
