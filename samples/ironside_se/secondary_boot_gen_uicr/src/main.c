@@ -6,7 +6,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
-#include <nrf_ironside/bootmode.h>
+#include <ironside/se/api.h>
 #include <string.h>
 
 int main(void)
@@ -16,7 +16,7 @@ int main(void)
 	printk("=== Hello World from Primary Image ===\n");
 
 	printk("Booting secondary image\n");
-	err = ironside_bootmode_secondary_reboot(NULL, 0);
+	err = ironside_se_bootmode_secondary_reboot(NULL, 0);
 	if (err != 0) {
 		printk("Secondary image boot failed: %d\n", err);
 		return err;
