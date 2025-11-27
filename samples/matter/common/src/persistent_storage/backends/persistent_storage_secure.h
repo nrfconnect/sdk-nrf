@@ -9,7 +9,7 @@
 #include "../persistent_storage_common.h"
 #include "util/finite_map.h"
 
-#include <protected_storage.h>
+#include <psa/protected_storage.h>
 
 namespace Nrf
 {
