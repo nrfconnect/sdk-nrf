@@ -282,9 +282,9 @@ mapping_topics:
                               "thingy91", "thingy91x", "thingy53", "kconfig"]
   - nrf/security/ap_protect.html: ["nrf91-series", "nrf54-series", "nrf53-series",
                                    "nrf52-series", "nrf9160", "nrf9161", "nrf9151", "nrf9131",
-                                   "nrf54h20", "nrf54l15", "nrf5340", "nrf52840", "nrf52833",
-                                   "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805",
-                                   "kconfig"]
+                                   "nrf54h20", "nrf54l15", "nrf54lm20a", "nrf54lv10a", "nrf5340",
+                                   "nrf52840", "nrf52833", "nrf52832", "nrf52820", "nrf52811",
+                                   "nrf52810", "nrf52805", "kconfig"]
   - nrf/security/secure_storage.html: ["nrf91-series", "nrf54-series", "nrf53-series",
                                        "nrf52-series", "nrf9160", "nrf9161", "nrf9151", "nrf9131",
                                        "nrf54l15", "nrf54l10", "nrf54lm20a", "nrf54lv10a",
