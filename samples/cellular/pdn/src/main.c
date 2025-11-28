@@ -146,6 +146,12 @@ int main(void)
 	 */
 	lte_lc_register_handler(lte_lc_evt_handler);
 
+	err = lte_lc_pdn_default_ctx_events_enable();
+	if (err) {
+		printk("lte_lc_pdn_default_ctx_events_enable() failed, err %d\n", err);
+		return 0;
+	}
+
 	err = lte_lc_connect();
 	if (err) {
 		return 0;
