@@ -20,7 +20,8 @@
 
 static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), SPI_MODE, 0);
 NRF_SPIM_Type *spim_reg = (NRF_SPIM_Type *)DT_REG_ADDR(DT_NODELABEL(dut_spi));
-NRF_TIMER_Type *timer_reg = (NRF_TIMER_Type *)DT_REG_ADDR(DT_NODELABEL(tst_timer));
+
+static nrfx_timer_t test_timer = NRFX_TIMER_INSTANCE(DT_REG_ADDR(DT_NODELABEL(tst_timer)));
 
 #define MEMORY_SECTION(node)                                                                       \
 	COND_CODE_1(DT_NODE_HAS_PROP(node, memory_regions),                                        \
@@ -44,16 +45,20 @@ static void set_buffers(void)
 	memset(rx_buffer, 0xFF, TEST_BUFFER_SIZE);
 }
 
-static uint32_t configure_test_timer(NRF_TIMER_Type *preg)
+static uint32_t configure_test_timer(nrfx_timer_t *timer)
 {
-	const nrfy_timer_config_t test_timer_config = {.prescaler = 1,
-						       .mode = NRF_TIMER_MODE_COUNTER,
-						       .bit_width = NRF_TIMER_BIT_WIDTH_16};
+	uint32_t base_frequency = NRF_TIMER_BASE_FREQUENCY_GET(timer->p_reg);
+	nrfx_timer_config_t timer_config = NRFX_TIMER_DEFAULT_CONFIG(base_frequency);
 
-	nrfy_timer_periph_configure(preg, &test_timer_config);
-	nrfy_timer_task_trigger(preg, NRF_TIMER_TASK_START);
+	timer_config.bit_width = NRF_TIMER_BIT_WIDTH_16;
+	timer_config.mode = NRF_TIMER_MODE_COUNTER;
 
-	return nrfy_timer_task_address_get(preg, NRF_TIMER_TASK_COUNT);
+	TC_PRINT("Timer base frequency: %d Hz\n", base_frequency);
+
+	zassert_ok(nrfx_timer_init(timer, &timer_config, NULL), "Timer init failed\n");
+	nrfx_timer_enable(timer);
+
+	return nrfx_timer_task_address_get(timer, NRF_TIMER_TASK_COUNT);
 }
 
 /*
@@ -95,7 +100,12 @@ ZTEST(spim_pan, test_spim_mltpan_8_workaround)
 ZTEST(spim_pan, test_spim_mltpan_55_workaround)
 {
 	int err;
+
 	uint8_t ppi_channel;
+
+	uint32_t domain_id;
+	nrfx_gppi_handle_t gppi_handle;
+
 	uint32_t timer_cc_before, timer_cc_after;
 
 	uint32_t timer_task;
@@ -109,19 +119,20 @@ ZTEST(spim_pan, test_spim_mltpan_55_workaround)
 
 	set_buffers();
 
-	err = nrfx_gppi_channel_alloc(&ppi_channel);
-	zassert_equal(nrfx_gppi_channel_alloc(&ppi_channel), NRFX_SUCCESS,
-		      "Failed to allocate GPPI channel");
+	domain_id = nrfx_gppi_domain_id_get((uint32_t)test_timer.p_reg);
+	ppi_channel = nrfx_gppi_channel_alloc(domain_id);
+	zassert_true(ppi_channel > 0, "Failed to allocate GPPI channel");
 
-	timer_task = configure_test_timer(timer_reg);
+	timer_task = configure_test_timer(&test_timer);
 	spim_event = nrf_spim_event_address_get(spim_reg, NRF_SPIM_EVENT_END);
 
-	nrfx_gppi_channel_endpoints_setup(ppi_channel, spim_event, timer_task);
-	nrfx_gppi_channels_enable(BIT(ppi_channel));
+	zassert_ok(nrfx_gppi_conn_alloc(spim_event, timer_task, &gppi_handle),
+		   "Failled to allocate DPPI connection\n");
+	nrfx_gppi_conn_enable(gppi_handle);
 
-	timer_cc_before = nrfy_timer_capture_get(timer_reg, NRF_TIMER_CC_CHANNEL0);
+	timer_cc_before = nrfx_timer_capture(&test_timer, NRF_TIMER_CC_CHANNEL0);
 	err = spi_transceive_dt(&spim_spec, &tx_spi_buf_set, &rx_spi_buf_set);
-	timer_cc_after = nrfy_timer_capture_get(timer_reg, NRF_TIMER_CC_CHANNEL0);
+	timer_cc_after = nrfx_timer_capture(&test_timer, NRF_TIMER_CC_CHANNEL0);
 
 	TC_PRINT("Timer count before: %u, timer count after: %u\n", timer_cc_before,
 		 timer_cc_after);
