@@ -12,8 +12,8 @@ It is responsible for the following operations:
 
 * Tracking the state of HID subscribers and HID input report subscriptions.
   The module can simultaneously handle HID input report subscriptions of multiple HID subscribers.
-  The module provides HID input reports only to one subscriber (*active subscriber*).
-* Providing HID input reports to the active HID subscriber.
+  The module provides HID input reports only to subscribers with the highest priority (*active subscribers*).
+* Providing HID input reports to the active HID subscribers.
   The module relies on HID report providers to aggregate the user input, form HID input reports, and submit a :c:struct:`hid_report_event`.
   The HID input reports can be formatted according to either HID report protocol or HID boot protocol.
 * Handling HID output reports.
@@ -40,18 +40,37 @@ For details related to HID configuration in the nRF Desktop, see the :ref:`nrf_d
 Number of supported HID subscribers
 ===================================
 
+A HID transport (for example, :ref:`nrf_desktop_hids` or :ref:`nrf_desktop_usb_state`) is a module that forwards HID reports to a HID host and forwards HID input report subscriptions of the HID host.
+In most cases, a HID transport registers a single HID subscriber that handles all HID input reports.
 If your application configuration supports more than one HID subscriber, you must align the maximum number of HID subscribers that can be handled simultaneously (:option:`CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT`).
-For example, to use a configuration that allows to simultaneously subscribe to HID reports from HID over GATT (Bluetooth LE) and a single USB HID instance, set the value of this Kconfig option to ``2``.
+For example, to use a configuration that allows to simultaneously subscribe to HID input reports from HID over GATT (Bluetooth LE) and a single USB HID instance, set the value of this Kconfig option to ``2``.
 
-If multiple HID subscribers are simultaneously connected, the |hid_state| selects the one with the highest priority as the active subscriber.
-The |hid_state| provides HID input reports only to the active subscriber.
-The |hid_state| displays the HID keyboard LED state associated with the active subscriber.
+Selective HID input report subscription
+---------------------------------------
 
-By default, the subscriber that is associated with USB has priority over a subscriber associated with Bluetooth LE.
-As a result, if a HID host connects through the USB while another HID host is connected over the Bluetooth LE, the HID reports will be routed to the USB.
+In some cases, a single HID transport can register multiple HID subscribers.
+Every HID subscriber handles a subset of HID input reports.
+
+For example, an nRF Desktop peripheral might use the USB selective HID report subscription feature to split HID input reports among multiple HID-class USB instances (every HID-class USB instance handles a predefined subset of HID input report IDs).
+For more details regarding the feature, see the :ref:`nrf_desktop_usb_state_hid_class_instance` documentation section of the USB state module.
+
+Using selective HID input report subscription requires increasing the value of the :option:`CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT` Kconfig option.
+For example, if a configuration allows simultaneously subscribing to HID input reports from HID over GATT (Bluetooth LE) and two USB HID instances, increase the value of the Kconfig option to ``3``.
+
+HID subscriber priority
+-----------------------
+
+If multiple HID subscribers are simultaneously connected, the |hid_state| selects the ones with the highest priority as the active subscribers.
+The |hid_state| provides HID input reports only to the active subscribers.
+The |hid_state| displays the HID keyboard LED state associated with the active subscriber of the HID keyboard input report.
+HID subscribers with the same priority cannot simultaneously subscribe to the same HID input report.
+
+If a HID transport uses a selective HID input report subscription, all subscribers registered by the transport must share the same priority.
+Otherwise, subscribers with lower priority would not receive HID input reports from the HID state.
 
 .. note::
-   The subscriber priority must be unique, which means that two or more subscribers cannot share the same priority value.
+   By default, a subscriber that is associated with USB has priority over a subscriber associated with Bluetooth LE.
+   If a HID host connects through the USB while another HID host is connected over the Bluetooth LE, the HID reports will be routed to the USB.
 
 HID keyboard LEDs
 =================
@@ -108,14 +127,13 @@ This section describes implementation details related to responsibilities of the
 Tracking state of HID subscribers
 =================================
 
-A HID transport (for example :ref:`nrf_desktop_hids` or :ref:`nrf_desktop_usb_state`) is a module that forwards HID reports to a HID host and forwards HID subscriptions of the HID host.
 A HID transport reports the state of a HID subscriber using the :c:struct:`hid_report_subscriber_event`.
 When the connection to the HID host is indicated by this event, the |hid_state| will create an associated subscriber.
 The |hid_state| tracks the state of the HID subscribers.
 
 As part of the :c:struct:`hid_report_subscriber_event`, the subscriber provides the following parameters:
 
-* Subscriber priority - The |hid_state| provides HID input reports only to the subscriber with the highest priority (active subscriber).
+* Subscriber priority - The |hid_state| provides HID input reports only to subscribers with the highest priority (active subscribers).
 * Pipeline size - The |hid_state| forwards this information to the HID report providers.
   The information can be used, for example, to synchronize sensor sampling with sending the HID input reports to the HID host.
   See the :ref:`nrf_desktop_hid_mouse_report_handling` section for information how the pipeline size is used for HID mouse reports.
@@ -125,7 +143,7 @@ Tracking state of HID report subscriptions
 ------------------------------------------
 
 For each subscriber, the |hid_state| tracks the state of HID input report subscriptions.
-The HID input reports are only provided after the active subscriber enables the subscription.
+The HID input reports are only provided after one of the active subscribers enables the subscription.
 The subscriber updates its HID report subscriptions using a :c:struct:`hid_report_subscription_event`.
 
 The HID report subscriptions are tracked in the subscriber's structure :c:struct:`subscriber`.
@@ -213,5 +231,5 @@ HID output reports
 When the |hid_state| receives a :c:struct:`hid_report_event` that contains a HID output report, it updates the stored information about the state of the HID output report of the appropriate subscriber.
 
 By default, nRF Desktop supports only HID keyboard LED output report.
-The nRF Desktop peripheral displays the state of the keyboard LEDs that was specified by the active HID subscriber.
-When the active subscriber is changed or it updates the state of the keyboard LEDs, the |hid_state| sends :c:struct:`leds_event` to update the state of the hardware LEDs.
+The nRF Desktop peripheral displays the state of the keyboard LEDs that was specified by the active HID subscriber of a HID keyboard input report.
+When the subscriber changes or updates the state of the keyboard LEDs, the |hid_state| sends a :c:struct:`leds_event` to update the state of the hardware LEDs.
