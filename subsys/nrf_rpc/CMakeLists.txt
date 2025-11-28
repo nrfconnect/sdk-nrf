@@ -18,4 +18,6 @@ zephyr_library_sources_ifdef(CONFIG_NRF_RPC_CALLBACK_PROXY nrf_rpc_cbkproxy.c)
 
 zephyr_library_sources_ifdef(CONFIG_NRF_RPC_UART_TRANSPORT nrf_rpc_uart.c)
 
+zephyr_library_sources_ifdef(CONFIG_NRF_RPC_INIT nrf_rpc_init.c)
+
 add_subdirectory_ifdef(CONFIG_NRF_RPC_UTILS rpc_utils)
