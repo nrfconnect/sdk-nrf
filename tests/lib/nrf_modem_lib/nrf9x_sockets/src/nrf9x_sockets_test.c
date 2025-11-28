@@ -1866,6 +1866,53 @@ void test_nrf9x_socket_offload_sendcb(void)
 	ret = zsock_sendto(fd, data, data_len, flags, &to, 42);
 	TEST_ASSERT_EQUAL(8, ret);
 	TEST_ASSERT_EQUAL(1, sendcb_calls);
+
+	__cmock_nrf_close_ExpectAndReturn(nrf_fd, 0);
+
+	ret = zsock_close(fd);
+
+	TEST_ASSERT_EQUAL(ret, 0);
+}
+
+void test_nrf9x_socket_offload_dtls_frag_ext(void)
+{
+	int ret;
+	int fd;
+	int nrf_fd = NRF_FD;
+	int family = AF_INET;
+	int type = SOCK_STREAM;
+	int proto = IPPROTO_TCP;
+	int data = 0;
+	size_t data_len = sizeof(data);
+
+	__cmock_nrf_socket_ExpectAndReturn(NRF_AF_INET, NRF_SOCK_STREAM, NRF_IPPROTO_TCP, nrf_fd);
+
+	fd = zsock_socket(family, type, proto);
+
+	TEST_ASSERT_EQUAL(fd, 0);
+
+	__cmock_nrf_setsockopt_ExpectAndReturn(nrf_fd, NRF_SOL_SECURE, NRF_SO_SEC_DTLS_FRAG_EXT,
+					       NULL, sizeof(int), 0);
+	__cmock_nrf_setsockopt_IgnoreArg_option_value();
+
+	ret = zsock_setsockopt(fd, SOL_TLS, TLS_DTLS_FRAG_EXT, &data, sizeof(data));
+
+	TEST_ASSERT_EQUAL(ret, 0);
+
+	__cmock_nrf_getsockopt_ExpectAndReturn(nrf_fd, NRF_SOL_SECURE, NRF_SO_SEC_DTLS_FRAG_EXT,
+					       NULL, NULL, 0);
+	__cmock_nrf_getsockopt_IgnoreArg_option_value();
+	__cmock_nrf_getsockopt_IgnoreArg_option_len();
+
+	ret = zsock_getsockopt(fd, SOL_TLS, TLS_DTLS_FRAG_EXT, &data, &data_len);
+
+	TEST_ASSERT_EQUAL(ret, 0);
+
+	__cmock_nrf_close_ExpectAndReturn(nrf_fd, 0);
+
+	ret = zsock_close(fd);
+
+	TEST_ASSERT_EQUAL(ret, 0);
 }
 
 /* It is required to be added to each test. That is because unity's
