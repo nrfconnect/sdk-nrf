@@ -99,7 +99,7 @@ void periph_init(void)
 	nrfx_timer_config_t clk_timer_cfg = NRFX_TIMER_DEFAULT_CONFIG(base_frequency);
 
 	err_code = nrfx_timer_init(&clk_timer, &clk_timer_cfg, clk_timer_handler);
-	NRFX_ASSERT(err_code);
+	__ASSERT_NO_MSG(err_code == 0);
 
 	for (int i = 0; i < GPIO_COUNT; ++i) {
 		nrfx_gpiote_t *gpiote = NRF_GPIOTE_FOR_GPIO(i);
