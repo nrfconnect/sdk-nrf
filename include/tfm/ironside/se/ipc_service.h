@@ -7,25 +7,6 @@
 #ifndef __SDFW_PSA_IPC_SERVICE_H__
 #define __SDFW_PSA_IPC_SERVICE_H__
 
-/*
- * This header contains symbols that are used by both the IronSide SE client
- * and the IronSide SE service.
- */
-enum {
-	IRONSIDE_SE_IPC_INDEX_HANDLE,
-	IRONSIDE_SE_IPC_INDEX_IN_VEC,
-	IRONSIDE_SE_IPC_INDEX_IN_LEN,
-	IRONSIDE_SE_IPC_INDEX_OUT_VEC,
-	IRONSIDE_SE_IPC_INDEX_OUT_LEN,
-	IRONSIDE_SE_IPC_INDEX_STATUS,
-	IRONSIDE_SE_IPC_INDEX_TYPE,
-	/* The last enum value is reserved for the size of the IPC buffer */
-	IRONSIDE_SE_IPC_DATA_LEN
-};
-
-/* IronSide call identifiers with implicit versions */
-#define IRONSIDE_CALL_ID_PSA_V1 0
-
 /* We are adding the source files for the TF-M Crypto partition
  * and the TF-M Internal Trusted Storage partition to the build.
  *

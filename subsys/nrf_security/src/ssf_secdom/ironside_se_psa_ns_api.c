@@ -9,7 +9,8 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/cache.h>
-#include <nrf_ironside/call.h>
+#include <ironside/se/glue.h>
+#include <ironside/se/internal/api_serialization.h>
 
 #include <psa/client.h>
 #include <psa/error.h>
@@ -30,26 +31,26 @@ static psa_status_t psa_call_buffered_and_flushed(psa_handle_t handle, int32_t t
 						  const psa_invec *in_vec, size_t in_len,
 						  psa_outvec *out_vec, size_t out_len)
 {
-	struct ironside_call_buf *const buf = ironside_call_alloc();
+	struct ironside_se_call_buf *const buf = ironside_se_call_alloc();
 
-	buf->id = IRONSIDE_CALL_ID_PSA_V1;
+	buf->id = IRONSIDE_SE_CALL_ID_PSA_V1;
 
-	buf->args[IRONSIDE_SE_IPC_INDEX_HANDLE] = handle;
-	buf->args[IRONSIDE_SE_IPC_INDEX_IN_VEC] = (uint32_t)in_vec;
-	buf->args[IRONSIDE_SE_IPC_INDEX_IN_LEN] = in_len;
-	buf->args[IRONSIDE_SE_IPC_INDEX_OUT_VEC] = (uint32_t)out_vec;
-	buf->args[IRONSIDE_SE_IPC_INDEX_OUT_LEN] = out_len;
-	buf->args[IRONSIDE_SE_IPC_INDEX_TYPE] = type;
+	buf->args[IRONSIDE_SE_PSA_REQ_IDX_HANDLE] = handle;
+	buf->args[IRONSIDE_SE_PSA_REQ_IDX_IN_VEC] = (uint32_t)in_vec;
+	buf->args[IRONSIDE_SE_PSA_REQ_IDX_IN_LEN] = in_len;
+	buf->args[IRONSIDE_SE_PSA_REQ_IDX_OUT_VEC] = (uint32_t)out_vec;
+	buf->args[IRONSIDE_SE_PSA_REQ_IDX_OUT_LEN] = out_len;
+	buf->args[IRONSIDE_SE_PSA_REQ_IDX_TYPE] = type;
 
-	ironside_call_dispatch(buf);
+	ironside_se_call_dispatch(buf);
 
 	psa_status_t status = PSA_ERROR_COMMUNICATION_FAILURE;
 
-	if (buf->status == IRONSIDE_CALL_STATUS_RSP_SUCCESS) {
-		status = buf->args[IRONSIDE_SE_IPC_INDEX_STATUS];
+	if (buf->status == IRONSIDE_SE_CALL_STATUS_RSP_SUCCESS) {
+		status = buf->args[IRONSIDE_SE_PSA_RSP_IDX_STATUS];
 	}
 
-	ironside_call_release(buf);
+	ironside_se_call_release(buf);
 
 	return status;
 }
