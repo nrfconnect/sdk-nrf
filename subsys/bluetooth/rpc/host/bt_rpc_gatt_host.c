@@ -729,6 +729,7 @@ static void bt_rpc_gatt_service_unregister_rpc_handler(const struct nrf_rpc_grou
 
 	svc = bt_rpc_gatt_get_service_by_index(svc_index);
 	if (!svc) {
+		LOG_ERR("Service unregister: Invalid service index %u", svc_index);
 		result = -EINVAL;
 	}
 

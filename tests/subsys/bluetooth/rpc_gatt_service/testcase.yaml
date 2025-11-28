@@ -1,0 +1,9 @@
+tests:
+  bluetooth.rpc_gatt_service:
+    platform_allow: native_sim
+    tags:
+      - ci_build
+      - bluetooth
+      - ci_tests_subsys_bluetooth
+    integration_platforms:
+      - native_sim
