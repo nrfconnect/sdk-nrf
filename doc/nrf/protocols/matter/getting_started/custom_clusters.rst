@@ -798,19 +798,159 @@ Then, you need to implement the following command in the application code:
       // TODO: Implement the plugin server init callback.
    }
 
-The same applies to the extended commands.
+Implement the extension handling in the application code
+********************************************************
 
-.. note::
+The way you handle cluster extensions depends on whether the cluster that you want to extend is implemented using the code-driven approach or with ZAP-generated code.
 
-   Before the |NCS| v3.2.0, the extended commands callback were handled by the ``emberAf...`` functions.
+If the cluster is implemented using the code-driven approach, you must inherit from this cluster delegate class and implement the methods to handle the customized part.
+Then, you must unregister the original cluster delegate and register the customized one.
+For example, if you want to extend the ``BasicInformation`` cluster, you need to implement it in the application code as follows:
 
-   For example, if you want to extend the ``BasicInformation`` cluster with the ``ExtendedCommand`` command, you need to implement it in the application code as follows:
+* Inherit from the ``BasicInformationCluster`` class and override the methods to handle the customized part.
+
+  .. code-block:: C++
+
+     #include <app/clusters/basic-information/BasicInformationCluster.h>
+     #include <app/server-cluster/ServerClusterContext.h>
+     #include <app/server-cluster/ServerClusterInterface.h>
+
+     class BasicInformationExtension : public chip::app::Clusters::BasicInformationCluster {
+     public:
+        BasicInformationExtension() {}
+
+        /* Overrides the default BasicInformationCluster implementation. */
+        chip::app::DataModel::ActionReturnStatus
+        ReadAttribute(const chip::app::DataModel::ReadAttributeRequest &request,
+                      chip::app::AttributeValueEncoder &encoder) override;
+
+	     CHIP_ERROR Attributes(const chip::app::ConcreteClusterPath &path,
+			      chip::ReadOnlyBufferBuilder<chip::app::DataModel::AttributeEntry> &builder) override;
+
+		  CHIP_ERROR AcceptedCommands(const chip::app::ConcreteClusterPath &path,
+			      chip::ReadOnlyBufferBuilder<chip::app::DataModel::AcceptedCommandEntry> &builder) override;
+
+		  CHIP_ERROR GeneratedCommands(const chip::app::ConcreteClusterPath &path,
+			      chip::ReadOnlyBufferBuilder<chip::app::DataModel::GeneratedCommandEntry> &builder) override;
+
+		  CHIP_ERROR Attributes(const chip::app::ConcreteClusterPath &path,
+			      chip::ReadOnlyBufferBuilder<chip::app::DataModel::AttributeEntry> &builder) override;
+
+        chip::app::DataModel::ActionReturnStatus SetExtendedAttribute(bool newExtendedAttribute);
+
+	  private:
+		  bool mExtendedAttribute;
+	  };
+
+* Implement the body of overridden methods to handle the custom attributes, commands and events.
+
+  .. code-block:: C++
+
+     #include <app/util/attribute-storage.h>
+     #include <clusters/BasicInformation/Events.h>
+     #include <clusters/BasicInformation/Metadata.h>
+
+     using namespace chip;
+     using namespace chip::app;
+
+     constexpr AttributeId kExtendedAttributeId = 0x17;
+
+     constexpr DataModel::AttributeEntry kExtraAttributeMetadata[] = {
+        { kExtendedAttributeId,
+        {} /* qualities */,
+        Access::Privilege::kView /* readPriv */,
+        std::nullopt /* writePriv */ },
+     };
+
+     DataModel::ActionReturnStatus BasicInformationExtension::SetExtendedAttribute(bool newExtendedAttribute)
+     {
+        mExtendedAttribute = newExtendedAttribute;
+        return CHIP_NO_ERROR;
+     }
+
+     DataModel::ActionReturnStatus BasicInformationExtension::ReadAttribute(const DataModel::ReadAttributeRequest &request,
+                                    AttributeValueEncoder &encoder)
+     {
+        switch (request.path.mAttributeId) {
+        case kExtendedAttributeId:
+           return encoder.Encode(mExtendedAttribute);
+        default:
+           return chip::app::Clusters::BasicInformationCluster::ReadAttribute(request, encoder);
+        }
+     }
+
+     DataModel::ActionReturnStatus BasicInformationExtension::WriteAttribute(const DataModel::WriteAttributeRequest &request,
+                                 AttributeValueDecoder &decoder)
+     {
+        switch (request.path.mAttributeId) {
+        case kExtendedAttributeId:
+           bool newExtendedAttribute;
+           ReturnErrorOnFailure(decoder.Decode(newExtendedAttribute));
+           return NotifyAttributeChangedIfSuccess(request.path.mAttributeId, SetExtendedAttribute(newExtendedAttribute));
+        default:
+           return chip::app::Clusters::BasicInformationCluster::WriteAttribute(request, decoder);
+        }
+     }
+
+     CHIP_ERROR BasicInformationExtension::Attributes(const ConcreteClusterPath &path,
+                       ReadOnlyBufferBuilder<DataModel::AttributeEntry> &builder)
+     {
+        ReturnErrorOnFailure(builder.ReferenceExisting(kExtraAttributeMetadata));
+
+        return chip::app::Clusters::BasicInformationCluster::Attributes(path, builder);
+     }
+
+     CHIP_ERROR BasicInformationExtension::AcceptedCommands(const ConcreteClusterPath &path,
+                              ReadOnlyBufferBuilder<DataModel::AcceptedCommandEntry> &builder)
+     {
+        /* The BasicInformationCluster does not have any commands, so it is not necessary to call the implementation of the base class. */
+        static constexpr DataModel::AcceptedCommandEntry kAcceptedCommands[] = {
+           Clusters::BasicInformation::Commands::ExtendedCommand::kMetadataEntry
+        };
+        return builder.ReferenceExisting(kAcceptedCommands);
+     }
+
+     std::optional<DataModel::ActionReturnStatus>
+     BasicInformationExtension::InvokeCommand(const DataModel::InvokeRequest &request, chip::TLV::TLVReader &input_arguments,
+                     CommandHandler *handler)
+     {
+        switch (request.path.mCommandId) {
+        case Clusters::BasicInformation::Commands::ExtendedCommand::Id: {
+           /* Implement the command handling logic here */
+        }
+        default:
+           /* The BasicInformationCluster does not have any commands, so it is not necessary to call the implementation of the base class. */
+           return Protocols::InteractionModel::Status::UnsupportedCommand;
+        }
+     }
+
+* Unregister the original cluster delegate and register the customized one.
+
+  .. code-block:: C++
+
+     #include <data-model-providers/codegen/CodegenDataModelProvider.h>
+
+     /* Replaces the registered BasicInformation cluster with a customized one that adds random number handling. */
+	  auto &registry = chip::app::CodegenDataModelProvider::Instance().Registry();
+
+	  ServerClusterInterface *interface =
+		  registry.Get({ kRootEndpointId, chip::app::Clusters::BasicInformation::Id });
+
+	  VerifyOrDie(interface != nullptr);
+
+	  registry.Unregister(interface);
+     static RegisteredServerCluster<BasicInformationExtension> sBasicInformationExtension;
+
+	  VerifyOrDie(registry.Register(sBasicInformationExtension.Registration()) == CHIP_NO_ERROR);
+
+If the cluster is implemented with ZAP-generated code, you must implement the required extension callbacks by defining the appropriate ``emberAf...Callback`` functions, as described in the code examples and in the cluster XML.
+For example, if you want to extend the ``LevelControl`` cluster with the ``ExtendedCommand`` command, you need to implement it in the application code as follows:
 
    .. code-block:: c
 
       #include <app-common/zap-generated/callback.h>
 
-      bool emberAfBasicInformationClusterBasicInformationExtendedCommandCallback(chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
+      bool emberAfLevelControlClusterExtendedCommandCallback(chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
                                                                                  const chip::app::Clusters::BasicInformation::Commands::ExtendedCommand::DecodableType &commandData)
       {
          // TODO: Implement the command.

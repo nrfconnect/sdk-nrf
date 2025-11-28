@@ -104,11 +104,72 @@ Matter
 
       To build your custom board with Wi-Fi support, set both the :kconfig:option:`CONFIG_CHIP_WIFI` and :kconfig:option:`CONFIG_WIFI_NRF70` Kconfig options to ``y``.
 
-    * The :file:`zap-generated` directory now includes the :file:`CodeDrivenCallback.h` and :file:`CodeDrivenInitShutdown.cpp` files.
-      The Matter build system gradually moves to the new approach of data model handling and does not auto-generate some bits of a code responsible for command handling anymore.
-      Invoking the ``west zap-generate`` command removes command handler implementations from the existing :file:`IMClusterCommandHandler.cpp` file.
-      To fix this, you must now manually create the :file:`CodeDrivenCallback.h` and :file:`CodeDrivenInitShutdown.cpp` files, and implement the ``MatterClusterServerInitCallback`` and ``MatterClusterServerShutdownCallback`` callbacks to handle server initialization, shutdown, and Matter cluster commands.
-      Ensure that these callbacks contain your application's command handling logic as required.
+    * The Matter build system is transitioning to a code-driven approach for Data Model and Cluster configuration handling.
+      This approach assumes gradual replacement of the configuration based on the ZAP files and the ZAP-generated code, and handling the configuration in the source code.
+      This change has the following impacts:
+
+      * The :file:`zap-generated` directory now includes the :file:`CodeDrivenCallback.h` and :file:`CodeDrivenInitShutdown.cpp` files.
+        Invoking the ``west zap-generate`` command removes command handler implementations from the existing :file:`IMClusterCommandHandler.cpp` file.
+        To fix this, you must now manually create the :file:`CodeDrivenCallback.h` and :file:`CodeDrivenInitShutdown.cpp` files, and implement the ``MatterClusterServerInitCallback`` and ``MatterClusterServerShutdownCallback`` callbacks to handle server initialization, shutdown, and Matter cluster commands.
+        Ensure that these callbacks contain your application's command handling logic.
+      * The code-driven approach is not yet fully implemented for all available clusters, but the coverage will be increasing and it is used for the newly created clusters.
+        The following clusters are already ported using the code-driven approach:
+
+        * Access Control
+        * Administrator Commissioning
+        * Basic Information
+        * Binding
+        * Boolean State
+        * Descriptor
+        * Diagnostic Logs
+        * Ethernet Network Diagnostics
+        * Fixed Label
+        * General Commissioning
+        * General Diagnostics
+        * Group Key Management
+        * Groupcast
+        * Identify
+        * Localization Configuration
+        * OTA Software Update Provider
+        * Operational Credentials
+        * Push AV Stream Transport
+        * Software Diagnostics
+        * Time Format Localization
+        * User Label
+        * Wi-Fi Network Diagnostics
+
+        For the full list of clusters and their migration status, see the `Matter Clusters Code-Driven support`_ file.
+
+      * By default, all the mandatory attributes are enabled for the cluster.
+        To enable an optional attribute or set an optional feature in the feature map, you must do that in the source code by calling dedicated methods.
+        For example, to enable the Positioning feature and the ``CountdownTime`` optional attribute for the Closure Control cluster, perform the following operations:
+
+        * Implement a delegate class for the Closure Control cluster.
+          See the :file:`samples/matter/closure/src/closure_control_endpoint.h` file for an example.
+        * Enable the attribute and set the feature on cluster initialization.
+          See the ``ClosureControlEndpoint::Init`` function in the :file:`samples/matter/closure/src/closure_control_endpoint.cpp` file for an example.
+
+      * To enable an optional cluster, you must register it in the source code by calling a dedicated method.
+        For example, to enable the Identify cluster, implement the following code:
+
+        .. code-block:: C++
+
+           #include <data-model-providers/codegen/CodegenDataModelProvider.h>
+           #include <app/clusters/identify-server/IdentifyCluster.h>
+
+           chip::app::RegisteredServerCluster<chip::app::Clusters::IdentifyCluster> mIdentifyCluster;
+           chip::app::CodegenDataModelProvider::Instance().Registry().Register(mIdentifyCluster.Registration());
+
+      * To enable a cluster extension for the cluster that is already implemented using the code-driven approach, you must inherit from this cluster delegate class and implement the methods to handle the customized part.
+        You also have to unregister the original cluster delegate and register the customized one.
+        For example, to enable a cluster extension for the Basic Information cluster, perform the following operations:
+
+        * Inherit from the ``BasicInformationCluster`` class and override the methods to handle the customized part.
+          See the :file:`samples/matter/manufacturer_specific/src/basic_information_extension.h` file for an example.
+        * Implement the body of overridden methods to handle the custom attributes, commands, and events.
+          See the :file:`samples/matter/manufacturer_specific/src/basic_information_extension.cpp` file for an example.
+        * Unregister the original cluster delegate and register the customized one.
+          See the ``AppTask::StartApp`` function in the :file:`samples/matter/manufacturer_specific/src/app_task.cpp` file for an example.
 
     * :ref:`matter_lock_sample` sample:
 

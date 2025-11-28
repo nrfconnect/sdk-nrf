@@ -259,6 +259,7 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
 * Added:
 
   * Support for the following new device types:
+
     * Irrigation System
     * Soil Sensor
     * Closure
@@ -284,10 +285,10 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
     For example, to enable a specific cluster or its attribute, the new model requires calling a dedicated delegate and registering the cluster in a source code.
     The code-driven approach is not yet fully implemented for all the available clusters, but the coverage will be increasing and it is used for the newly created clusters.
     The new model is meant to be backward compatible with the previous configuration based on the ZAP files and the ZAP-generated code, until the code-driven approach is fully implemented for all the available clusters.
+    See the `Migration guide for nRF Connect SDK v3.2.0`_ for more information.
   * The :ref:`ug_matter_gs_tools_matter_west_commands_sync` command to synchronize the ZAP and :file:`zcl.json` files after updating the ZAP tool version.
   * The check to all :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool` commands that verify whether ZAP tool sandbox permissions are correctly set.
     In case of detecting incorrect permissions, the command will prompt the user to accept automatically updating the permissions to required ones.
-
 * Updated:
 
   * The :ref:`ug_matter_gs_tools_matter_west_commands_append` command to accept ``--clusters`` argument instead of ``new_clusters`` argument.
