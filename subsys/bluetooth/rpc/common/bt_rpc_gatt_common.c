@@ -81,9 +81,14 @@ const struct bt_gatt_attr *bt_rpc_gatt_index_to_attr(uint32_t index)
 {
 	uint32_t service_index = index >> ATTR_INDEX_POS;
 	uint32_t attr_index = index & ATTR_INDEX_MASK;
-	const struct bt_gatt_service *service = svc_cache.services[service_index];
+	const struct bt_gatt_service *service;
 
-	if ((service_index >= svc_cache.count) || (attr_index >= service->attr_count)) {
+	if (service_index >= svc_cache.count) {
+		return NULL;
+	}
+
+	service = svc_cache.services[service_index];
+	if (!service || (attr_index >= service->attr_count)) {
 		return NULL;
 	}
 
@@ -203,7 +208,7 @@ void bt_rpc_gatt_foreach_attr_type(uint16_t start_handle, uint16_t end_handle,
 		}
 
 		for (size_t j = 0; j < svc->attr_count; j++) {
-			struct bt_gatt_attr *attr = &svc->attrs[j];
+			const struct bt_gatt_attr *attr = &svc->attrs[j];
 
 			handle = bt_gatt_attr_get_handle(attr);
 
