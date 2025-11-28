@@ -15,6 +15,12 @@ config _NRF_RPC_DUMMY_SELECT
 	default y
 	select THREAD_CUSTOM_DATA
 
+config NRF_RPC_CBOR
+	select ZCBOR
+	select ZCBOR_STOP_ON_ERROR
+
+# End of Zephyr port dependencies selection
+
 choice NRF_RPC_TRANSPORT
 	prompt "NRF RPC transport"
 	default NRF_RPC_IPC_SERVICE
@@ -109,13 +115,6 @@ endif # NRF_RPC_UART_RELIABLE
 
 endmenu # "nRF RPC over UART configuration"
 
-config NRF_RPC_CBOR
-	bool
-	select ZCBOR
-	select ZCBOR_STOP_ON_ERROR
-
-# End of Zephyr port dependencies selection
-
 config NRF_RPC_THREAD_STACK_SIZE
 	int "Stack size of thread from thread pool"
 	default 1024
@@ -174,6 +173,11 @@ config NRF_RPC_CBKPROXY_IN_SLOTS
 
 endif # NRF_RPC_CALLBACK_PROXY
 
+config NRF_RPC_INIT
+	bool "Automatically initialize nRF RPC library"
+	help
+	  Initialize nRF RPC library during the system startup.
+
 module = NRF_RPC
 module-str = NRF_RPC
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
@@ -193,6 +197,14 @@ module-str = NRF_RPC_CBOR
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # NRF_RPC_CBOR
+
+if NRF_RPC_INIT
+
+module = NRF_RPC_INIT
+module-str = NRF_RPC_INIT
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+endif # NRF_RPC_INIT
 
 rsource "rpc_utils/Kconfig"
 

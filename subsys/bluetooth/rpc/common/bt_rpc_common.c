@@ -28,34 +28,6 @@ NRF_RPC_IPC_TRANSPORT(bt_rpc_tr, DEVICE_DT_GET(DT_NODELABEL(ipc0)), "bt_rpc_ept"
 #endif
 NRF_RPC_GROUP_DEFINE(bt_rpc_grp, "bt_rpc", &bt_rpc_tr, NULL, NULL, NULL);
 
-#if CONFIG_BT_RPC_INITIALIZE_NRF_RPC
-static void err_handler(const struct nrf_rpc_err_report *report)
-{
-	LOG_ERR("nRF RPC error %d ocurred. See nRF RPC logs for more details.",
-		report->code);
-	k_oops();
-}
-
-static int serialization_init(void)
-{
-
-	int err;
-
-	LOG_DBG("Init begin");
-
-	err = nrf_rpc_init(err_handler);
-	if (err) {
-		return -EINVAL;
-	}
-
-	LOG_DBG("Init done\n");
-
-	return 0;
-}
-
-SYS_INIT(serialization_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
-#endif /* CONFIG_BT_RPC_INITIALIZE_NRF_RPC */
-
 enum {
 	CHECK_ENTRY_FLAGS,
 	CHECK_ENTRY_UINT,

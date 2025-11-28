@@ -9,6 +9,7 @@ config BT_RPC
 	default y if BT_RPC_STACK
 	select NRF_RPC
 	select NRF_RPC_CBOR
+	imply NRF_RPC_INIT
 	select EXPERIMENTAL
 	depends on BT
 	depends on !BT_ISO_UNICAST
@@ -47,13 +48,6 @@ config BT_RPC_HOST
 	  client on the remote core.
 
 endchoice
-
-config BT_RPC_INITIALIZE_NRF_RPC
-	bool "Automatically initialize nRF RPC library"
-	default y
-	help
-	  Initialize nRF RPC library during the system startup. Disabling this
-	  option allow user to initialize it in a different way.
 
 config BT_RPC_GATT_SRV_MAX
 	int "Maximum number of GATT services"
