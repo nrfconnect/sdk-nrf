@@ -35,25 +35,20 @@ bool mpsl_hwres_dppi_channel_alloc(NRF_DPPIC_Type *p_dppic, uint8_t *p_dppi_ch)
 #include <soc/interconnect/nrfx_gppi_lumos.h>
 static uint32_t ppib_get_domain(NRF_PPIB_Type *p_ppib)
 {
-	switch ((uint32_t)p_ppib) {
-	case (uint32_t)NRF_PPIB00:
-		/* fall through */
-	case (uint32_t)NRF_PPIB10:
+	if ((uint32_t)p_ppib == (uint32_t)NRF_PPIB00 ||
+	    (uint32_t)p_ppib == (uint32_t)NRF_PPIB10) {
 		return NRFX_GPPI_NODE_PPIB00_10;
-	case (uint32_t)NRF_PPIB11:
-		/* fall through */
-	case (uint32_t)NRF_PPIB21:
+	} else if ((uint32_t)p_ppib == (uint32_t)NRF_PPIB11 ||
+		   (uint32_t)p_ppib == (uint32_t)NRF_PPIB21) {
 		return NRFX_GPPI_NODE_PPIB11_21;
-	case (uint32_t)NRF_PPIB01:
-		/* fall through */
-	case (uint32_t)NRF_PPIB20:
+	} else if ((uint32_t)p_ppib == (uint32_t)NRF_PPIB01 ||
+		   (uint32_t)p_ppib == (uint32_t)NRF_PPIB20) {
 		return NRFX_GPPI_NODE_PPIB01_20;
-	case (uint32_t)NRF_PPIB22:
-		/* fall through */
-	case (uint32_t)NRF_PPIB30:
+	} else if ((uint32_t)p_ppib == (uint32_t)NRF_PPIB22 ||
+		   (uint32_t)p_ppib == (uint32_t)NRF_PPIB30) {
 		return NRFX_GPPI_NODE_PPIB22_30;
-	default:
-		__ASSERT_NO_MSG("Unexpected PPIB");
+	} else {
+		__ASSERT(false, "Unexpected PPIB");
 		return 0;
 	}
 }
