@@ -41,10 +41,20 @@ dut_spi: &spi130 {
 	dut_spi_dt: test-spi-dev@0 {
 		compatible = "vnd,spi-device";
 		reg = <0>;
-		spi-max-frequency = <DT_FREQ_M(1)>;
+		spi-max-frequency = <DT_FREQ_M(4)>;
 	};
 };
 
 &exmif {
 	status = "disabled";
 };
+
+tst_timer: &timer131 {
+	status = "okay";
+};
+
+&dppic133 {
+	owned-channels = <1>;
+	sink-channels = <1>;
+	status = "okay";
+	};
