@@ -56,6 +56,8 @@ cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/wifi_mgmt.h
   FUNC_EXCLUDE "NET_MGMT_DEFINE_REQUEST_HANDLER"
   FUNC_EXCLUDE "BUILD_ASSERT"
   FUNC_EXCLUDE "offsetof"
+  FUNC_EXCLUDE ".*wifi_mgmt_raise_p2p_device_found_event"
+  WORD_EXCLUDE ".*wifi_mgmt_raise_p2p_device_found_event.*"
 )
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/device.h
   FUNC_EXCLUDE ".*DEVICE_DT_NAME_GET"
