@@ -530,11 +530,11 @@ nRF5340 Audio
 
   * The functions ``bt_hci_err_to_str()`` and ``bt_security_err_to_str()`` that are used to allow printing error codes as strings.
     Each function returns string representations of the error codes when the corresponding Kconfig option, :kconfig:option:`CONFIG_BT_HCI_ERR_TO_STR` or :kconfig:option:`CONFIG_BT_SECURITY_ERR_TO_STR`, is enabled.
-  * CSIS to the BIS sink if the scan delegator feature, :ref:`CONFIG_BT_AUDIO_SCAN_DELEGATOR <config_audio_app_options>`, is enabled.
+  * CSIS to the BIS sink if the scan delegator feature, :ref:`CONFIG_BT_AUDIO_SCAN_DELEGATOR <nrf53_audio_app_config_audio_app_options>`, is enabled.
     Once a phone is connected to a BIS sink, the phone will find and connect to the second headset.
     Also, the phone can control the BIS headset in a group and deliver the PAST to both headsets at the same time.
   * Create CIG after reading the PACS from the first connected unicast server.
-  * A minimal scan delegator to the unicast server if the feature, :ref:`CONFIG_BT_AUDIO_SCAN_DELEGATOR <config_audio_app_options>`, is enabled.
+  * A minimal scan delegator to the unicast server if the feature, :ref:`CONFIG_BT_AUDIO_SCAN_DELEGATOR <nrf53_audio_app_config_audio_app_options>`, is enabled.
   * Available or support context type to PACS in broadcast sink and unicast client if the feature, :kconfig:option:`CONFIG_BT_PAC_SRC_NOTIFIABLE` is enabled.
   * The :ref:`nrf_auraconfig` sample.
 
