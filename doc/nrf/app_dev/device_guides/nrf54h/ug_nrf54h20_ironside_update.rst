@@ -7,9 +7,42 @@ Updating |ISE|
    :local:
    :depth: 2
 
-Updating the |ISE| is possible after it has been initially :ref:`provisioned <ug_nrf54h20_SoC_binaries>` on the nRF54H20 SoC.
+Updating the |ISE| is only possible after it has been initially :ref:`provisioned <ug_nrf54h20_SoC_binaries>` on the nRF54H20 SoC.
 
 The update operation is initiated through its :ref:`update service <ug_nrf54h20_ironside_se_update_service>` at runtime by application firmware.
+
+.. _ug_nrf54h20_ironside_se_deliverables:
+
+Release package
+***************
+
+The |ISE| is released independently of the |NCS| release cycle and is provided as a ZIP archive.
+
+The archive is used to update the existing |ISE| firmware on the nRF54H20 and consists of the following components:
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - Component
+     - File
+     - Description
+   * - IronSide SE firmware
+     - :file:`ironside_se.hex`
+     - Used when provisioning a new DK with |ISE| and |ISE| Recovery firmware for the first time.
+   * - IronSide SE update firmware
+     - :file:`ironside_se_update.hex`
+     - Used when updating |ISE|.
+   * - IronSide SE Recovery update firmware
+     - :file:`ironside_se_recovery_update.hex`
+     - The recovery firmware, reserved for future recovery operations. Currently, it does not provide user-facing functionality. Used when updating the recovery firmware.
+   * - Update application
+     - :file:`update_application.hex`
+     - The local domain :zephyr:code-sample:`update application <nrf_ironside_update>` that is used to perform an |ISE| update. See :ref:`ug_nrf54h20_ironside_se_update_architecture` for details on its role.
+
+For more information on |ISE| release binaries, see :ref:`abi_compatibility`.
+
+For instructions on how to provision the nRF54H20 with |ISE| for the first time, see :ref:`ug_nrf54h20_SoC_binaries`.
 
 .. _ug_nrf54h20_ironside_se_updating:
 
@@ -31,7 +64,7 @@ Manual update
 
 .. important::
    Manual updates will replace existing firmware running in the Application core.
-   User application firmware must be reprogrammed after a successfully updating the device.
+   User application firmware must be reprogrammed after successfully updating the device.
 
 .. tabs::
 
@@ -39,7 +72,7 @@ Manual update
 
     The |NCS| defines the west ``ncs-ironside-se-update`` command to update |ISE| firmware on a device via the debugger.
 
-    This command takes the nRF54H20 SoC binary ZIP file and uses the |ISE| update service to update both the |ISE| and |ISE| Recovery (or optionally just one of them). It uses the following syntax to program the release archive to the device:
+    This command takes the nRF54H20 SoC binary ZIP file and uses the |ISE| update service to update both the |ISE| and |ISE| Recovery (or optionally just one of them):
 
     .. code-block:: console
 
@@ -126,15 +159,18 @@ Manual update
 |ISE| update service
 ********************
 
-|ISE| exposes an update service that allows local domains to trigger the update process of |ISE| itself.
+|ISE| provides an update service that allows local domains to trigger the update process of |ISE| itself.
 
-The update service requires a release of |ISE| and/or the |ISE| Recovery images to be programmed within a valid memory range that is accessible by the Application core.
-
-.. note::
-   See :file:`nrf_ironside/update.h` for more details on the supported memory range.
+The update service requires a release of |ISE| or the |ISE| Recovery image to be programmed within a valid memory range that is accessible by the Application core.
+See :file:`nrf_ironside/update.h` for more details on the supported memory range.
 
 After the Application has invoked the service, |ISE| will update on the next system reset.
-The update can be verified by checking the listed versions in the boot report on startup.
+The update can be verified by checking the listed versions in the :ref:`boot report <ug_nrf54h20_ironside_se_boot_report>` on startup.
+
+.. note::
+   Updating through the service is limited to a single image at a time.
+
+   Updating both |ISE| and |ISE| Recovery images requires performing two rounds of the update service procedure, in which the |ISE| Recovery image is updated first.
 
 See the :zephyr:code-sample:`update application <nrf_ironside_update>` sample for an example on calling the service at runtime.
 

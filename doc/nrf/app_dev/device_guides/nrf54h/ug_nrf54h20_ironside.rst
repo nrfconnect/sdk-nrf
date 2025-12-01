@@ -23,55 +23,36 @@ The IronSide Secure Element (|ISE|) is a firmware for the :ref:`Secure Domain <u
 * PSA Crypto service (:ref:`ug_crypto_architecture_implementation_standards_ironside`)
 * PSA Internal Trusted Storage service
 
-See the following pages for details on some |ISE| features and subsystems.
+See the following pages for details on |ISE| features and subsystems.
 
 .. toctree::
    :maxdepth: 2
 
    ug_nrf54h20_ironside_update
 
-.. _ug_nrf54h20_ironside_se_programming:
+.. _ug_nrf54h20_ironside_defaults:
 
-Programming |ISE| on the nRF54H20 SoC
-*************************************
+Default policies
+****************
 
-|ISE| is released independently of the |NCS| release cycle and is provided as a ZIP archive that contains the following components:
+By default, |ISE| configures the system with the following access policies on the nRF54H20 SoC:
 
 .. list-table::
    :header-rows: 1
    :widths: auto
 
-   * - Component
-     - File
-     - Description
-   * - IronSide SE firmware
-     - :file:`ironside_se.hex`
-     - Used when bringing up a new DK and programming both the recovery firmware and |ISE| for the first time.
-   * - IronSide SE update firmware
-     - :file:`ironside_se_update.hex`
-     - Used when updating |ISE|.
-   * - IronSide SE Recovery update firmware
-     - :file:`ironside_se_recovery_update.hex`
-     - The recovery firmware, reserved for future recovery operations. Currently, it does not provide user-facing functionality. Used when updating the recovery firmware.
-   * - Update application
-     - :file:`update_application.hex`
-     - The local domain :zephyr:code-sample:`update application <nrf_ironside_update>` that is used to perform an |ISE| update. See :ref:`ug_nrf54h20_ironside_se_update_manual`.
-
-For instructions on how to program |ISE|, see :ref:`ug_nrf54h20_SoC_binaries`.
-
-By default, the nRF54H20 SoC uses the following memory and access configurations:
-
-* MRAMC configuration: MRAM operates in Direct Write mode with READYNEXTTIMEOUT disabled.
-* MPC configuration: All memory not reserved by Nordic firmware is accessible with read, write, and execute (RWX) permissions by any domain.
-* TAMPC configuration: The access ports (AP) for the local domains are enabled, allowing direct programming of all the memory not reserved by Nordic firmware in the default configuration.
-
+   * - Configuration
+     - Policy
+   * - MRAMC
+     - MRAM operates in Direct Write mode with READYNEXTTIMEOUT disabled.
+   * - MPC
+     - All memory not reserved by Nordic firmware is accessible with read, write, and execute (RWX) permissions by any domain.
+   * - TAMPC
+     - Access ports (AP) for the local domains are enabled, allowing direct programming of all the memory not reserved by Nordic firmware in the default configuration.
 
 .. note::
    * The Radio Domain AP is only usable when the Radio domain has booted.
    * Access to external memory (EXMIF) requires a non-default configuration of the GPIO.CTRLSEL register.
-
-You can protect global domain memory from write operations by configuring the UICR registers.
-To remove these protections and disable all other protection mechanisms enforced through UICR settings, perform an ``ERASEALL`` operation.
 
 .. _ug_nrf54h20_ironside_se_uicr:
 
@@ -120,8 +101,11 @@ The following UICR fields are supported:
 +----------------------+---------------------------------------------------------------------+
 
 .. note::
-   If no UICR values are programmed, |ISE| applies a set of default configurations.
+   If no UICR values are programmed, |ISE| applies a set of :ref:`default configurations <ug_nrf54h20_ironside_defaults>`.
    Applications that do not require custom settings can rely on these defaults without modifying the UICR.
+
+Performing an :ref:`ERASEALL <ug_nrf54h20_ironside_se_eraseall_command>` operation will erase all UICR contents and remove all protection mechanisms enforced through UICR.
+See :ref:`ug_nrf54h20_ironside_se_protecting` for more information on protecting UICR contents in the field.
 
 UICR image generation
 =====================
@@ -312,6 +296,8 @@ However, it does not prevent erase operations initiated through other means, suc
 .. note::
    If this configuration is enabled and :kconfig:option:`CONFIG_GEN_UICR_LOCK` is also set, it is no longer possible to modify the UICR in any way.
    Therefore, this configuration should only be enabled during the final stages of production.
+
+.. _ug_nrf54h20_ironside_se_protected_memory:
 
 UICR.PROTECTEDMEM
 =================
@@ -652,7 +638,6 @@ For information on how to configure these UICR settings, see :ref:`ug_nrf54h20_i
   It defines a trailing region of application-owned MRAM whose contents are integrity-checked at each boot, extending the root of trust to your immutable bootloader or critical data.
 * :kconfig:option:`CONFIG_GEN_UICR_ERASEPROTECT` - Prevents bulk erasure of protected memory.
   It blocks all ``ERASEALL`` operations on NVR0, preserving UICR settings even if an attacker attempts a full-chip erase.
-
 
 .. _ug_nrf54h20_ironside_se_boot_report:
 
