@@ -140,10 +140,7 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
-* Updated:
-
-  * Workaround handling for the hardware erratas.
-  * The implementation of the hardware errata HMPAN-103 for the nRF54H20 SoC.
+|no_changes_yet_note|
 
 Gazell
 ------
@@ -211,11 +208,6 @@ nRF Machine Learning (Edge Impulse)
 
 |no_changes_yet_note|
 
-Serial LTE modem
-----------------
-
-|no_changes_yet_note|
-
 Thingy:53: Matter weather station
 ---------------------------------
 
@@ -279,7 +271,7 @@ Gazell samples
 |no_changes_yet_note|
 
 |ISE| samples
--------------
+--------------
 
 |no_changes_yet_note|
 
@@ -443,8 +435,6 @@ nRF RPC libraries
 Other libraries
 ---------------
 
-|no_changes_yet_note|
-
 * :ref:`lib_hw_id` library:
 
   * The ``CONFIG_HW_ID_LIBRARY_SOURCE_BLE_MAC`` Kconfig option has been renamed to :kconfig:option:`CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS`.
@@ -482,7 +472,9 @@ Edge Impulse integration
 Memfault integration
 --------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * The ``CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_BUILTIN`.
 
 AVSystem integration
 --------------------
