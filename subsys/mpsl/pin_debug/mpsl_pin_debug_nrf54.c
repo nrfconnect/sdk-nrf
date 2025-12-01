@@ -22,8 +22,8 @@ LOG_MODULE_REGISTER(mpsl_radio_pin_debug, CONFIG_MPSL_LOG_LEVEL);
 static int m_ppi_config(void)
 {
 	nrfx_gpiote_t *gpiote = &GPIOTE_NRFX_INST_BY_NODE(GPIOTE_NODE);
-	uint32_t rad_domain = nrfx_gppi_domain_id_get(NRF_DPPIC10);
-	uint32_t dst_domain = nrfx_gppi_domain_id_get(gpiote->p_reg);
+	uint32_t rad_domain = nrfx_gppi_domain_id_get((uint32_t)NRF_DPPIC10);
+	uint32_t dst_domain = nrfx_gppi_domain_id_get((uint32_t)gpiote->p_reg);
 	nrfx_gppi_resource_t rad_resource;
 	nrfx_gppi_handle_t handle;
 	uint32_t tep[4];
@@ -43,7 +43,7 @@ static int m_ppi_config(void)
 			CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN);
 	tep[3] = nrfx_gpiote_clr_task_address_get(gpiote,
 			CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN);
-	rad_resource.rad_domain = nrfx_gppi_domain_id_get(NRF_DPPIC10);
+	rad_resource.domain_id = nrfx_gppi_domain_id_get((uint32_t)NRF_DPPIC10);
 
 	for (size_t i = 0; i < ARRAY_SIZE(pub_ch); i++) {
 		rad_resource.channel = pub_ch[i];
@@ -51,7 +51,7 @@ static int m_ppi_config(void)
 		if (err < 0) {
 			return err;
 		}
-		nrfx_gppi_ep_attach(handle, tep[i]);
+		nrfx_gppi_ep_attach(tep[i], handle);
 		/* Channel in radio domain is not enabled by this function. */
 		nrfx_gppi_conn_enable(handle);
 	}
