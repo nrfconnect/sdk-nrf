@@ -11,13 +11,16 @@ The IronSide Secure Element (|ISE|) is a firmware for the :ref:`Secure Domain <u
 
 |ISE| provides the following features:
 
-* Global memory configuration
-* Peripheral configuration (through UICR.PERIPHCONF)
-* Boot commands (ERASEALL, DEBUGWAIT)
-* An alternative boot path with a secondary firmware
-* CPUCONF service
-* Update service
-* PSA Crypto service - see also :ref:`ug_crypto_architecture_implementation_standards_ironside`
+* :ref:`Global memory configuration <ug_nrf54h20_ironside_se_uicr>`
+* :ref:`Peripheral configuration <ug_nrf54h20_ironside_se_periphconf_devicetree>` (through UICR.PERIPHCONF)
+* :ref:`Boot commands <ug_nrf54h20_ironside_se_boot_commands>`
+
+  * ERASEALL
+  * DEBUGWAIT
+* An alternative boot path with a :ref:`secondary firmware <ug_nrf54h20_ironside_se_secondary_firmware>`
+* :ref:`CPUCONF service <ug_nrf54h20_ironside_se_cpuconf_service>`
+* :ref:`Update service <ug_nrf54h20_ironside_se_update_service>`
+* PSA Crypto service (:ref:`ug_crypto_architecture_implementation_standards_ironside`)
 * PSA Internal Trusted Storage service
 
 See the following pages for details on some |ISE| features and subsystems.
@@ -367,6 +370,8 @@ After applying the entry, |ISE| performs a read-back check: it reads back the re
 
 The configuration procedure is aborted if an entry fails either the validation or the read-back check.
 If a failure occurs, BOOTSTATUS.BOOTERROR is set to indicate the error condition, and a description of the failed entry is written to the boot report.
+
+.. _ug_nrf54h20_ironside_se_periphconf_devicetree:
 
 PERIPHCONF generation from devicetree
 -------------------------------------
