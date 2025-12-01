@@ -1241,16 +1241,16 @@ static void esb_timer_handler(nrf_timer_event_t event_type, void *context)
 
 static int sys_timer_init(void)
 {
-	nrfx_err_t nrfx_err;
+	int err;
 	const nrfx_timer_config_t config = {
 		.frequency = NRFX_MHZ_TO_HZ(1),
 		.mode = NRF_TIMER_MODE_TIMER,
 		.bit_width = NRF_TIMER_BIT_WIDTH_16,
 	};
 
-	nrfx_err = nrfx_timer_init(&esb_timer, &config, esb_timer_handler);
-	if (nrfx_err != NRFX_SUCCESS) {
-		LOG_ERR("Failed to initialize nrfx timer (err %d)", nrfx_err);
+	err = nrfx_timer_init(&esb_timer, &config, esb_timer_handler);
+	if (err) {
+		LOG_ERR("Failed to initialize nrfx timer (err %d)", err);
 		return -EFAULT;
 	}
 
