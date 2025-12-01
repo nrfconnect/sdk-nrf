@@ -10,7 +10,7 @@
 
 #include <zephyr/ztest.h>
 
-#define EXPECTED  0
+#define EXPECTED 0
 
 static const struct device *const can_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_canbus));
 
