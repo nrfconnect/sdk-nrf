@@ -107,13 +107,11 @@ To get detailed information about a specific peer, use the following commands:
 
          wpa_cli p2p_peer <mac_address>
 
-For example:
+For example, to display detailed information about a specified peer device, use the following command:
 
 .. code-block:: console
 
    wpa_cli p2p_peer D2:39:FA:43:23:C1
-
-This command displays detailed information about the specified peer device.
 
 Connecting to a peer
 ====================
@@ -134,7 +132,7 @@ To establish a Wi-Fi Direct connection with a discovered peer:
 
          wpa_cli p2p_connect <mac_address> <pin|pbc> go_intent=<go_intent>
 
-Parameters:
+This command uses the following parameters:
 
 * ``<mac_address>`` - MAC address of the peer device to connect to.
 * ``<pbc|pin>`` - WPS provisioning method:
