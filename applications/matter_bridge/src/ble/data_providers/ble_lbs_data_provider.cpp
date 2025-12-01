@@ -69,8 +69,13 @@ void ProcessCommand(const Binding::TableEntry &aBinding, OperationalDeviceProxy 
 uint8_t BleLBSDataProvider::GattNotifyCallback(bt_conn *conn, bt_gatt_subscribe_params *params, const void *data,
 					       uint16_t length)
 {
-	BleLBSDataProvider *provider = static_cast<BleLBSDataProvider *>(
-		BLEConnectivityManager::Instance().FindBLEProvider(*bt_conn_get_dst(conn)));
+	BleLBSDataProvider *provider = nullptr;
+	const bt_addr_le_t *btAddr = bt_conn_get_dst(conn);
+
+	VerifyOrExit(conn && btAddr, );
+
+	provider = static_cast<BleLBSDataProvider *>(
+		BLEConnectivityManager::Instance().FindBLEProvider(*btAddr));
 
 	VerifyOrExit(data, );
 	VerifyOrExit(provider, );
