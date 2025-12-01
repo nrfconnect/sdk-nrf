@@ -11,6 +11,39 @@ Updating the |ISE| is possible after it has been initially :ref:`provisioned <ug
 
 The update operation is initiated through its :ref:`update service <ug_nrf54h20_ironside_se_update_service>` at runtime by application firmware.
 
+.. _ug_nrf54h20_ironside_se_deliverables:
+
+Release package
+***************
+
+The |ISE| is released independently of the |NCS| release cycle and is provided as a ZIP archive.
+
+The archive is used to update the existing |ISE| firmware on the nRF54H20 and consists of the following components:
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - Component
+     - File
+     - Description
+   * - IronSide SE firmware
+     - :file:`ironside_se.hex`
+     - Used when bringing up a new DK and programming both the recovery firmware and |ISE| for the first time.
+   * - IronSide SE update firmware
+     - :file:`ironside_se_update.hex`
+     - Used when updating |ISE|.
+   * - IronSide SE Recovery update firmware
+     - :file:`ironside_se_recovery_update.hex`
+     - The recovery firmware, reserved for future recovery operations. Currently, it does not provide user-facing functionality. Used when updating the recovery firmware.
+   * - Update application
+     - :file:`update_application.hex`
+     - The local domain :zephyr:code-sample:`update application <nrf_ironside_update>` that is used to perform an |ISE| update. See :ref:`ug_nrf54h20_ironside_se_update_architecture` for details on its role.
+
+For more information on |ISE| release binaries, see :ref:`abi_compatibility`.
+
+For instructions on how to provision the nRF54H20 with |ISE| for the first time, see :ref:`ug_nrf54h20_SoC_binaries`.
+
 .. _ug_nrf54h20_ironside_se_updating:
 
 Performing an update

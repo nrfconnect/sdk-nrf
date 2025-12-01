@@ -30,48 +30,34 @@ See the following pages for details on some |ISE| features and subsystems.
 
    ug_nrf54h20_ironside_update
 
-.. _ug_nrf54h20_ironside_se_programming:
+Default policies
+****************
 
-Programming |ISE| on the nRF54H20 SoC
-*************************************
-
-|ISE| is released independently of the |NCS| release cycle and is provided as a ZIP archive that contains the following components:
+By default, |ISE| uses the following memory and access configurations on the nRF54H20 SoC:
 
 .. list-table::
    :header-rows: 1
    :widths: auto
 
-   * - Component
-     - File
-     - Description
-   * - IronSide SE firmware
-     - :file:`ironside_se.hex`
-     - Used when bringing up a new DK and programming both the recovery firmware and |ISE| for the first time.
-   * - IronSide SE update firmware
-     - :file:`ironside_se_update.hex`
-     - Used when updating |ISE|.
-   * - IronSide SE Recovery update firmware
-     - :file:`ironside_se_recovery_update.hex`
-     - The recovery firmware, reserved for future recovery operations. Currently, it does not provide user-facing functionality. Used when updating the recovery firmware.
-   * - Update application
-     - :file:`update_application.hex`
-     - The local domain :zephyr:code-sample:`update application <nrf_ironside_update>` that is used to perform an |ISE| update. See :ref:`ug_nrf54h20_ironside_se_update_manual`.
-
-For instructions on how to program |ISE|, see :ref:`ug_nrf54h20_SoC_binaries`.
-
-By default, the nRF54H20 SoC uses the following memory and access configurations:
-
-* MRAMC configuration: MRAM operates in Direct Write mode with READYNEXTTIMEOUT disabled.
-* MPC configuration: All memory not reserved by Nordic firmware is accessible with read, write, and execute (RWX) permissions by any domain.
-* TAMPC configuration: The access ports (AP) for the local domains are enabled, allowing direct programming of all the memory not reserved by Nordic firmware in the default configuration.
-
+   * - Configuration
+     - Policy
+   * - MRAMC
+     - MRAM operates in Direct Write mode with READYNEXTTIMEOUT disabled.
+   * - MPC
+     - All memory not reserved by Nordic firmware is accessible with read, write, and execute (RWX) permissions by any domain.
+   * - TAMPC
+     - Access ports (AP) for the local domains are enabled, allowing direct programming of all the memory not reserved by Nordic firmware in the default configuration.
 
 .. note::
    * The Radio Domain AP is only usable when the Radio domain has booted.
    * Access to external memory (EXMIF) requires a non-default configuration of the GPIO.CTRLSEL register.
 
-You can protect global domain memory from write operations by configuring the UICR registers.
-To remove these protections and disable all other protection mechanisms enforced through UICR settings, perform an ``ERASEALL`` operation.
+Restricting default memory access
+=================================
+
+Global domain memory can be protected from write operations by configuring the :ref:`UICR.PROTECTEDMEM <ug_nrf54h20_ironside_se_protected_memory>` registers.
+
+Performing an ``ERASEALL`` operation will remove the memory protections and disable all other protection mechanisms enforced through default UICR settings.
 
 .. _ug_nrf54h20_ironside_se_uicr:
 
@@ -310,6 +296,8 @@ However, it does not prevent erase operations initiated through other means, suc
 .. note::
    If this configuration is enabled and :kconfig:option:`CONFIG_GEN_UICR_LOCK` is also set, it is no longer possible to modify the UICR in any way.
    Therefore, this configuration should only be enabled during the final stages of production.
+
+.. _ug_nrf54h20_ironside_se_protected_memory:
 
 UICR.PROTECTEDMEM
 =================
@@ -1118,6 +1106,8 @@ See the following table for a summary of the available boot commands:
      - Start the application CPU with ``CPUCONF.CPUWAIT = 1``.
 
 The following chapters describe each command in detail.
+
+.. _ug_nrf54h20_ironside_se_eraseall:
 
 ``ERASEALL`` command
 ====================
