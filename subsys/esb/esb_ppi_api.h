@@ -51,8 +51,10 @@ void esb_ppi_for_txrx_clear(bool rx, bool timer_start);
 /** @brief Configure PPIs/DPPIs for the external front-end module. The EGU event will be connected
  *         to the TIMER_START event. As a result, the front-end module ramp-up will be scheduled\
  *         during the radio ramp-up period, with timing based on the FEM implementation used.
+ *
+ * @param[in] capture_timer EGU event trigger timer capture into CC1.
  */
-void esb_ppi_for_fem_set(void);
+void esb_ppi_for_fem_set(bool capture_timer);
 
 /** @brief Clear PPIs/DDPIs for the external front-end module.
  */
