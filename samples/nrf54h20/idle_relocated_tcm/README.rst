@@ -34,6 +34,7 @@ Architecture
 
 The system uses the memory layout compatible with the MCUboot bootloader.
 By default, the system uses the MCUboot in the direct-xip mode in the merged slot configuration (no file suffix used).
+To configure the system to use the MCUboot in the direct-xip mode in the split slot configuration, build the test with the ``split_slot`` file suffix.
 
 Memory map configuration
 ========================
@@ -42,9 +43,20 @@ The memory maps are defined in the :file:`common` directory and are shared betwe
 
 The following changes are included in the project overlay files:
 
-1. Entire Radio TCM RAM region is used for the remote firmware (:file:`common/memory_map_ram_cpurad.dtsi`).
-#. A small part of Global RAM is used for the radio loader for the firmware relocation time (:file:`common/memory_map.dtsi`).
-#. The MRAM is partitioned for the MCUboot, application, and radio core images (:file:`common/memory_map.dtsi`).
+.. tabs::
+
+   .. group-tab:: Merged slot configuration
+
+      1. Entire Radio TCM RAM region is used for the remote firmware (:file:`common/memory_map_ram_cpurad.dtsi`).
+      #. A small part of Global RAM is used for the radio loader for the firmware relocation time (:file:`common/memory_map.dtsi`).
+      #. The MRAM is partitioned for the MCUboot, application, and radio core images (:file:`common/memory_map.dtsi`).
+
+   .. group-tab:: Split slot configuration
+
+      1. Entire Radio TCM RAM region is used for the remote firmware (:file:`common/memory_map_ram_cpurad.dtsi`).
+      #. A small part of Global RAM is used for the radio loader for the firmware relocation time (:file:`common/memory_map_split_slot.dtsi`).
+      #. The MRAM is partitioned for the MCUboot, application, and radio core images (:file:`common/memory_map_split_slot.dtsi`).
+      #. The ``pm_ramfunc`` DTS node is relocated to the end of the RAM block but before the MCUboot trailer (:file:`common/memory_map_ram_pm_cpurad.dtsi`) to make the image link properly.
 
 Enabling the Radio Loader
 *************************
@@ -112,42 +124,96 @@ After programming the test to your development kit, complete the following steps
 #. Reset the kit.
 #. Observe the console output for both cores:
 
-   * For the application core, the output should be as follows:
+   .. tabs::
 
-     .. code-block:: console
+      .. group-tab:: Merged slot configuration
 
-       *** Booting MCUboot v2.3.0-dev-0d9411f5dda3 ***
-       *** Using nRF Connect SDK v3.1.99-329079d0237c ***
-       *** Using Zephyr OS v4.2.99-56fbb4f3c7bb ***
-       I: Starting Direct-XIP bootloader
-       I: Primary slot: version=0.0.0+0
-       I: Image 0 Secondary slot: Image not found
-       I: Image 0 loaded from the primary slot
-       I: Bootloader chainload address offset: 0x40000
-       I: Image version: v0.0.0
-       I: Jumping to the image slot
-       *** Booting nRF Connect SDK v3.1.99-329079d0237c ***
-       *** Using Zephyr OS v4.2.99-56fbb4f3c7bb ***
-       [00:00:00.336,735] <inf> idle: Multicore idle test on nrf54h20dk@0.9.0/nrf54h20/cpuapp
-       [00:00:00.336,742] <inf> idle: build time: Dec  2 2025 08:52:18
-       [00:00:00.336,745] <inf> idle: Multicore idle test iteration 0
-       [00:00:02.336,834] <inf> idle: Multicore idle test iteration 1
-       ...
+         * For the application core, the output should be as follows:
 
-   * For the radio core, the output should be as follows:
+         .. code-block:: console
 
-     .. code-block:: console
+            *** Booting MCUboot v2.3.0-dev-0d9411f5dda3 ***
+            *** Using nRF Connect SDK v3.1.99-329079d0237c ***
+            *** Using Zephyr OS v4.2.99-56fbb4f3c7bb ***
+            I: Starting Direct-XIP bootloader
+            I: Primary slot: version=0.0.0+0
+            I: Image 0 Secondary slot: Image not found
+            I: Image 0 loaded from the primary slot
+            I: Bootloader chainload address offset: 0x40000
+            I: Image version: v0.0.0
+            I: Jumping to the image slot
+            *** Booting nRF Connect SDK v3.1.99-329079d0237c ***
+            *** Using Zephyr OS v4.2.99-56fbb4f3c7bb ***
+            [00:00:00.336,735] <inf> idle: Multicore idle test on nrf54h20dk@0.9.0/nrf54h20/cpuapp
+            [00:00:00.336,742] <inf> idle: build time: Dec  2 2025 08:52:18
+            [00:00:00.336,745] <inf> idle: Multicore idle test iteration 0
+            [00:00:02.336,834] <inf> idle: Multicore idle test iteration 1
+            ...
 
-       *** Booting nRF Connect SDK v3.1.99-329079d0237c ***
-       *** Using Zephyr OS v4.2.99-56fbb4f3c7bb ***
-       [00:00:00.512,002] <inf> idle: Multicore idle test on nrf54h20dk@0.9.0/nrf54h20/cpurad
-       [00:00:00.512,004] <inf> idle: Original code partition start address: 0xe094000
-       [00:00:00.512,006] <inf> idle: Running from the SRAM, start address: 0x23000000, size: 0x30000
-       [00:00:00.512,007] <inf> idle: Current PC (program counter) address: 0x23000a90
-       [00:00:00.512,009] <inf> idle: build time: Dec  2 2025 08:52:24
-       [00:00:00.512,012] <inf> idle: Multicore idle test iteration 0
-       [00:00:02.512,072] <inf> idle: Multicore idle test iteration 1
-       ...
+         * For the radio core, the output should be as follows:
+
+         .. code-block:: console
+
+            *** Booting nRF Connect SDK v3.1.99-329079d0237c ***
+            *** Using Zephyr OS v4.2.99-56fbb4f3c7bb ***
+            [00:00:00.512,002] <inf> idle: Multicore idle test on nrf54h20dk@0.9.0/nrf54h20/cpurad
+            [00:00:00.512,004] <inf> idle: Original code partition start address: 0xe094000
+            [00:00:00.512,006] <inf> idle: Running from the SRAM, start address: 0x23000000, size: 0x30000
+            [00:00:00.512,007] <inf> idle: Current PC (program counter) address: 0x23000a90
+            [00:00:00.512,009] <inf> idle: build time: Dec  2 2025 08:52:24
+            [00:00:00.512,012] <inf> idle: Multicore idle test iteration 0
+            [00:00:02.512,072] <inf> idle: Multicore idle test iteration 1
+            ...
+
+      .. group-tab:: Split slot configuration
+
+         * For the application core, the output should be as follows:
+
+         .. code-block:: console
+
+            *** Booting MCUboot v2.3.0-dev-0d9411f5dda3 ***
+            *** Using nRF Connect SDK v3.1.99-b9ff3eff5eb7 ***
+            *** Using Zephyr OS v4.2.99-56fbb4f3c7bb ***
+            I: Starting Direct-XIP bootloader
+            I: Primary slot: version=0.0.0+0
+            I: Image 0 Secondary slot: Image not found
+            I: Primary slot: version=0.0.0+0
+            I: Image 1 Secondary slot: Image not found
+            I: Primary slot: version=0.0.0+0
+            I: Image 2 Secondary slot: Image not found
+            I: Loading image 0 from slot 0
+            I: bootutil_img_validate: slot 0 manifest verified
+            I: Try to validate images using manifest in slot 0
+            I: Loading image 1 from slot 0
+            I: Loading image 2 from slot 0
+            I: Image 0 loaded from the primary slot
+            I: Image 1 loaded from the primary slot
+            I: Image 2 loaded from the primary slot
+            I: Bootloader chainload address offset: 0x40000
+            I: Image version: v0.0.0
+            I: Jumping to the image slot
+            *** Booting nRF Connect SDK v3.1.99-b9ff3eff5eb7 ***
+            *** Using Zephyr OS v4.2.99-56fbb4f3c7bb ***
+            [00:00:00.116,189] <inf> idle: Multicore idle test on nrf54h20dk@0.9.0/nrf54h20/cpuapp
+            [00:00:00.116,196] <inf> idle: build time: Dec  2 2025 09:01:59
+            [00:00:00.116,198] <inf> idle: Multicore idle test iteration 0
+            [00:00:02.116,271] <inf> idle: Multicore idle test iteration 1
+            ...
+
+         * For the radio core, the output should be as follows:
+
+         .. code-block:: console
+
+            *** Booting nRF Connect SDK v3.1.99-b9ff3eff5eb7 ***
+            *** Using Zephyr OS v4.2.99-56fbb4f3c7bb ***
+            [00:00:00.291,381] <inf> idle: Multicore idle test on nrf54h20dk@0.9.0/nrf54h20/cpurad
+            [00:00:00.291,383] <inf> idle: Original code partition start address: 0xe096000
+            [00:00:00.291,385] <inf> idle: Running from the SRAM, start address: 0x23000000, size: 0x30000
+            [00:00:00.291,386] <inf> idle: Current PC (program counter) address: 0x23001290
+            [00:00:00.291,388] <inf> idle: build time: Dec  2 2025 09:01:44
+            [00:00:00.291,391] <inf> idle: Multicore idle test iteration 0
+            [00:00:02.291,443] <inf> idle: Multicore idle test iteration 1
+            ...
 
    The radio loader first loads the firmware from MRAM to TCM and then jumps to the loaded firmware.
    This process is transparent and happens during the early boot stage.
@@ -162,15 +228,37 @@ After programming the test to your development kit, complete the following steps
 
    #. Build the firmware:
 
-      .. code-block:: console
+      .. tabs::
 
-         west build -p -b nrf54h20dk/nrf54h20/cpuapp
+         .. group-tab:: Merged slot configuration
+
+            .. code-block:: console
+
+               west build -p -b nrf54h20dk/nrf54h20/cpuapp
+
+         .. group-tab:: Split slot configuration
+
+            .. code-block:: console
+
+               west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DFILE_SUFFIX=split_slot
 
    #. Program the firmware to the secondary application slot:
 
-      .. code-block:: console
+      .. tabs::
 
-         nrfutil device program --firmware build/zephyr_secondary_app.merged.hex  --options chip_erase_mode=ERASE_NONE
+         .. group-tab:: Merged slot configuration
+
+            .. code-block:: console
+
+               nrfutil device program --firmware build/zephyr_secondary_app.merged.hex  --options chip_erase_mode=ERASE_NONE
+
+         .. group-tab:: Split slot configuration
+
+            .. code-block:: console
+
+               nrfutil device program --firmware build/mcuboot_secondary_app/zephyr/zephyr.signed.hex  --options chip_erase_mode=ERASE_NONE
+               nrfutil device program --firmware build/radio_loader_secondary_app/zephyr/zephyr.signed.hex  --options chip_erase_mode=ERASE_NONE
+               nrfutil device program --firmware build/remote_rad_secondary_app/zephyr/zephyr.signed.hex  --options chip_erase_mode=ERASE_NONE
 
    #. Reset the development kit.
 

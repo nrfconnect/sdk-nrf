@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../common/memory_map_split_slot.dtsi"
+#include "../common/memory_map_ram_cpurad.dtsi"
+#include "../common/memory_map_ram_pm_cpurad.dtsi"
+
+/{
+	chosen {
+		zephyr,code-partition = &cpurad_loaded_fw;
+		zephyr,sram = &cpurad_ram0;
+	};
+};
+
+secondary_app_partition: &cpurad_loaded_fw_slot1 {};
