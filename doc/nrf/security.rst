@@ -21,7 +21,7 @@ The |NCS| |release| allows you to develop applications with the following versio
        - Mbed TLS version
      * - |release|
        - v2.2.0
-       - v23.0.2+17
+       - v23.1.0+19
        - 3.6.5
 
 .. security_components_ver_table_end
@@ -52,11 +52,11 @@ Expand the following section to see the table listing versions of different secu
        - 3.6.5
      * - v3.2.0
        - v2.2.0
-       - v23.0.2+17
+       - v23.1.0+19
        - 3.6.5
      * - v3.1.0, v3.1.1
        - v2.1.2
-       - v20.0.0+1
+       - n/a
        - 3.6.4
      * - v3.0.0 (up to v3.0.2)
        - v2.1.1
