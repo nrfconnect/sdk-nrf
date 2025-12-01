@@ -62,6 +62,110 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
+nRF Desktop
+-----------
+
+.. toggle::
+
+   * The configuration of the ``nrf54h20dk/nrf54h20/cpuapp`` board target has been updated in the nRF Desktop application to migrate from the SUIT solution to the IronSide SE solution.
+     To migrate the configuration for your nRF Desktop based application, complete the following steps:
+
+     1. Remove the Kconfig options related to the SUIT solution in your project configuration files (for example, :file:`prj.conf`).
+     #. Configure the MCUboot bootloader in your sysbuild configuration file:
+
+        * :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` to ``y``.
+        * :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP` to ``y``.
+        * :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519` to ``y``.
+        * :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE` to ``y``.
+        * :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` to the path of the private key file which is used to sign the DFU package.
+        * :kconfig:option:`SB_CONFIG_MCUBOOT_IMAGES_ROM_END_OFFSET_AUTO` to ``ipc_radio;ipc_radio_secondary_app``.
+          In the case of a merged image slot, space for the MCUboot trailer is only reserved in the radio slots.
+
+        .. note::
+           The nRF Desktop configuration for the ``nrf54h20dk/nrf54h20/cpuapp`` board target uses the MCUboot bootloader in the direct-xip mode.
+           You can configure other MCUboot bootloader modes (for example, the swap mode) in the nRF Desktop application, but they are not used as part of the nRF Desktop configuration for the ``nrf54h20dk/nrf54h20/cpuapp`` board target and are not covered by this migration guide.
+           The nRF Desktop application also configures the MCUboot bootloader to use the merged image slot that combines both application and radio core images.
+           The merged image slot is the default configuration for the direct-xip mode.
+           Other ways of partitioning the application and radio core images are not covered by this migration guide.
+
+     #. Add the configuration files for the MCUboot bootloader image to your application configuration.
+        See the :file:`nrf/applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/images/mcuboot` directory for an example.
+
+        Note the following Kconfig options that are specific to the nRF54H configuration of the MCUboot bootloader:
+
+        * :kconfig:option:`CONFIG_SOC_EARLY_RESET_HOOK` to ``y`` - This option is required to support the Suspend to RAM (S2RAM) functionality in the application.
+          With this Kconfig option, the MCUboot bootloader can detect a wake-up from S2RAM and redirect the execution to the application’s resume routine.
+        * :kconfig:option:`CONFIG_POWER_DOMAIN` to ``n`` - This option is required to disable the power domain management in the bootloader and simplify its configuration.
+        * :kconfig:option:`CONFIG_NRF_SECURITY`, :kconfig:option:`CONFIG_MULTITHREADING` and :kconfig:option:`CONFIG_PSA_SSF_CRYPTO_CLIENT` to ``y`` - These options are required to support the hardware cryptography in the MCUboot bootloader and its dependencies.
+
+     #. Since the MCUboot bootloader in the direct-xip mode uses a merged image slot for the ``nrf54h20dk/nrf54h20/cpuapp`` board target, define the custom memory layout in DTS (the ``partitions`` DTS node) and ensure that this DTS customization is propagated to every image that is built as part of the nRF Desktop application.
+        See the :file:`nrf/applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/memory_map.dtsi` file for an example of the memory layout file and the :file:`nrf/applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/images/mcuboot/app.overlay` file for an example integration of the custom memory layout into the MCUboot bootloader image.
+        Apart from the MCUboot bootloader image, include the custom memory layout in the following images:
+
+        * The ``nrf_desktop`` image (the default application image)
+        * The ``ipc_radio`` image
+        * The ``uicr`` image
+
+        To verify that the custom memory layout is propagated to all the images, use the :file:`<build_dir>/<image_name>/zephyr/zephyr.dts` file and validate it for each image.
+
+        .. note::
+           The |NCS| v3.2.0 introduces a new image ``uicr`` for the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
+           Include the custom memory layout in the ``uicr`` image as well to prevent runtime issues.
+           See the :file:`nrf/applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/images/uicr/app.overlay` file for an example integration of the custom memory layout into the ``uicr`` image.
+
+        Assign the secondary image partition to the ``secondary_app_partition`` DTS label in the DTS configuration of your primary image:
+
+        * For the ``nrf_desktop`` (primary) image and the ``mcuboot_secondary_app`` (secondary) image, use the following DTS configuration:
+
+          .. code-block::
+
+             secondary_app_partition: &cpuapp_slot1_partition {};
+
+        * For the ``ipc_radio`` (primary) image and the ``ipc_radio_secondary_app`` (secondary) image, use the following DTS configuration:
+
+          .. code-block::
+
+             secondary_app_partition: &cpurad_slot1_partition {};
+
+     #. Optionally, you can enable the following Kconfig options to improve the HID report rate over USB by suspending Bluetooth when USB is connected:
+
+        * :kconfig:option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE`
+        * :kconfig:option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB`
+
+     #. Remove the usage of the following Kconfig options related to the S2RAM functionality:
+
+        * :kconfig:option:`CONFIG_PM_S2RAM`
+        * :kconfig:option:`CONFIG_PM_S2RAM_CUSTOM_MARKING`
+
+        .. note::
+           The S2RAM functionality is now enabled by default for the ``nrf54h20dk/nrf54h20/cpuapp`` board target when the :kconfig:option:`CONFIG_PM` Kconfig option is enabled.
+           The setting of the :kconfig:option:`CONFIG_PM_S2RAM` Kconfig option is now controlled by the devicetree (DTS) description.
+
+     #. Remove the ``pwmleds`` DTS node from the application configuration to prevent the :kconfig:option:`CONFIG_LED_PWM` and :kconfig:option:`CONFIG_CAF_LEDS_PWM` Kconfig options from being enabled for the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
+
+        .. code-block::
+
+           / {
+             /delete-node/ pwmleds;
+
+             aliases {
+               /delete-property/ pwm-led0;
+             };
+           };
+
+        .. note::
+           The nRF Desktop configuration for the ``nrf54h20dk/nrf54h20/cpuapp`` board target relies on GPIO LEDs - the PWM LEDs are not used.
+
+     #. Disable Link Time Optimization (LTO) as a workaround for linker warnings about the type mismatch (``-Wlto-type-mismatch``) that are caused by the :file:`device_deps.c` file (used by the Zephyr power domain driver):
+
+        * :kconfig:option:`CONFIG_LTO`
+        * :kconfig:option:`CONFIG_ISR_TABLES_LOCAL_DECLARATION`
+
+     #. Replace the ``interface-name`` property with the ``label`` property in all DTS nodes that set the ``compatible`` property to ``zephyr,hid-device``.
+        See the :file:`nrf/applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/app.overlay` file for an example.
+
+     For more information regarding differences between SUIT and IronSide SE solutions, see the :ref:`migration_3.1_54h_suit_ironside` document.
+
 Matter
 ------
 
