@@ -2002,6 +2002,9 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 		ret = run_qt_command(buffer);
 		CHECK_RET();
 	}
+
+	ret = run_qt_command("SET_NETWORK 0 scan_ssid 1");
+	CHECK_RET();
 done:
 	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
 	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
