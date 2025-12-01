@@ -92,11 +92,16 @@ void esb_ppi_for_txrx_clear(bool rx, bool timer_start)
 	}
 }
 
-void esb_ppi_for_fem_set(void)
+void esb_ppi_for_fem_set(bool capture_timer)
 {
 	nrf_egu_publish_set(ESB_EGU, ESB_EGU_EVENT, egu_timer_start);
 	nrf_timer_subscribe_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_START,
 				egu_timer_start);
+
+	if (capture_timer) {
+		nrf_timer_subscribe_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_CAPTURE1,
+					egu_timer_start);
+	}
 
 	nrf_dppi_channels_enable(ESB_DPPIC, BIT(egu_timer_start));
 }
@@ -107,6 +112,7 @@ void esb_ppi_for_fem_clear(void)
 
 	nrf_egu_publish_clear(ESB_EGU, ESB_EGU_EVENT);
 	nrf_timer_subscribe_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_START);
+	nrf_timer_subscribe_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_CAPTURE1);
 }
 
 void esb_ppi_for_retransmission_set(void)
