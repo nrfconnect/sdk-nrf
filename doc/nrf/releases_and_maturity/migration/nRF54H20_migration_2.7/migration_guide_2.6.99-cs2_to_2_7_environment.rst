@@ -210,7 +210,7 @@ Programming the BICR
 The Board Information Configuration Registers (BICR) are non-volatile memory (NVM) registers that contain information on how the nRF54H20 SoC must interact with other board elements, including the information about the power and clock delivery to the SoC.
 To prepare the nRF54H20 DK for first use, you must manually program the values of the BICR using a precompiled BICR binary file (:file:`bicr_ext_loadcap.hex`).
 
-1. Download the `BICR binary file`_ .
+1. Download the ``BICR binary file`` .
 #. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
 
 .. note::

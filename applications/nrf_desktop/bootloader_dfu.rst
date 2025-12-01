@@ -207,7 +207,7 @@ The application image is always built for the RAM address space in only one vari
 
 You can use the RAM load mode of the MCUboot bootloader to speed up the code execution for the application image, as code execution from the RAM is generally faster than from the NVM.
 This can improve the device performance during the activities that require high CPU usage.
-As an example, the nRF Desktop application uses the RAM load mode for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to achieve 8 kHz report rate over USB in the ``release_ram_load`` configuration variant (the second configuration variant - ``ram_load`` - is used for debugging purposes only).
+As an example, the nRF Desktop application uses the RAM load mode for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to improve HID report rate over USB.
 
 To set the MCUboot mode of operations to the RAM load mode, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_RAM_LOAD` Kconfig option in the sysbuild configuration.
 
