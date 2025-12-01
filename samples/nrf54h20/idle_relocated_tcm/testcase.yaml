@@ -18,3 +18,11 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+  benchmarks.multicore.idle_relocated_tcm.nrf54h20dk_cpuapp_cpurad.direct_xip.split_slot:
+    harness: console
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - FILE_SUFFIX=split_slot

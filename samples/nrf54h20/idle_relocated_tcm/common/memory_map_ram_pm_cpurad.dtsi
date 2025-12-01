@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Power Management relocates the key functions to TCM under the address
+ * from the pm_ramfunc DTS node.
+ * It is done at the zephyr/soc/nordic/nrf54h/CMakeLists.txt file.
+ * Theoretically it would not be necessary to relocate it if the whole code is in TCM.
+ * The changes in Zephyr would be required to allow it.
+ * As a workaround, relocate the pm_ramfunc to the end of the RAM block but before
+ * the MCUboot trailer.
+ */
+/delete-node/ &pm_ramfunc;
+
+/ {
+	soc {
+		/* cache control functions - must be executed from RAM */
+		pm_ramfunc: cpurad_s2ram@2302df40 {
+			compatible = "zephyr,memory-region", "mmio-sram";
+			reg = <0x2302df40 192>;
+			zephyr,memory-region = "PMLocalRamfunc";
+		};
+	};
+};
