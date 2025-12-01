@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <ot_rpc_ids.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_ids.h>
+#include <ot_rpc_macros.h>
+#include <ot_rpc_os.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 
 #include <nrf_rpc_cbor.h>
 
 #include <openthread/link_raw.h>
-
-#include <zephyr/kernel.h>
 
 #define RADIO_TIME_REFRESH_PERIOD (CONFIG_OPENTHREAD_RPC_CLIENT_RADIO_TIME_REFRESH_PERIOD * 1000000)
 
@@ -20,19 +20,14 @@ static bool sync_radio_time_valid;
 static uint64_t sync_local_time;
 static uint64_t sync_radio_time;
 
-static inline uint64_t get_local_time(void)
-{
-	return k_ticks_to_us_floor64(k_uptime_ticks());
-}
-
 uint64_t otLinkRawGetRadioTime(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	uint64_t now;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
-	now = get_local_time();
+	now = ot_rpc_os_time_us();
 
 	if (!sync_radio_time_valid || now >= sync_local_time + RADIO_TIME_REFRESH_PERIOD) {
 		NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
@@ -44,7 +39,7 @@ uint64_t otLinkRawGetRadioTime(otInstance *aInstance)
 		 */
 		sync_radio_time_valid = true;
 		sync_local_time = now / 2;
-		now = get_local_time();
+		now = ot_rpc_os_time_us();
 		sync_local_time += now / 2;
 		sync_radio_time = nrf_rpc_decode_uint64(&ctx);
 

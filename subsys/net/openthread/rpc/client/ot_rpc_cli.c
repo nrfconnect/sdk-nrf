@@ -4,9 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <ot_rpc_ids.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_ids.h>
 #include <ot_rpc_lock.h>
+#include <ot_rpc_macros.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 #include <nrf_rpc_cbor.h>
 
@@ -22,7 +23,7 @@ void otCliInit(otInstance *aInstance, otCliOutputCallback aCallback, void *aCont
 	const size_t cbor_buffer_size = 0;
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 	cli_output_callback = aCallback;
 	cli_output_context = aContext;
 

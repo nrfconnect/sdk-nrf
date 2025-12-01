@@ -7,6 +7,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_common.h>
 #include <ot_rpc_lock.h>
+#include <ot_rpc_macros.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 
 #include <nrf_rpc_cbor.h>
@@ -37,7 +38,7 @@ uint32_t otInstanceGetId(otInstance *aInstance)
 	struct nrf_rpc_cbor_ctx ctx;
 	uint32_t id;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_INSTANCE_GET_ID, &ctx, nrf_rpc_rsp_decode_u32,
@@ -51,7 +52,7 @@ bool otInstanceIsInitialized(otInstance *aInstance)
 	struct nrf_rpc_cbor_ctx ctx;
 	bool initialized;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_INSTANCE_IS_INITIALIZED, &ctx,
@@ -64,7 +65,7 @@ void otInstanceFinalize(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_INSTANCE_FINALIZE, &ctx,
@@ -76,7 +77,7 @@ otError otInstanceErasePersistentInfo(otInstance *aInstance)
 	struct nrf_rpc_cbor_ctx ctx;
 	otError error;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_INSTANCE_ERASE_PERSISTENT_INFO, &ctx,
@@ -89,7 +90,7 @@ void otInstanceFactoryReset(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_INSTANCE_FACTORY_RESET, &ctx,
@@ -103,7 +104,7 @@ otError otSetStateChangedCallback(otInstance *aInstance, otStateChangedCallback 
 	struct nrf_rpc_cbor_ctx ctx;
 	otError error;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
 	/* TODO: implement callback & address pseudonymization. */
@@ -122,7 +123,7 @@ void otRemoveStateChangeCallback(otInstance *aInstance, otStateChangedCallback a
 	const size_t cbor_buffer_size = 10;
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
 	/* TODO: implement callback & address pseudonymization. */

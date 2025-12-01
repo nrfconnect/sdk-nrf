@@ -14,10 +14,8 @@
 #include <openthread/instance.h>
 #include <openthread/link.h>
 #include <openthread/thread.h>
-#include <zephyr/logging/log.h>
 
 NRF_RPC_GROUP_DECLARE(ot_group);
-LOG_MODULE_DECLARE(ot_rpc, LOG_LEVEL_DBG);
 
 static char version[256];
 static otExtAddress mac = {.m8 = {0xF4, 0xCE, 0x36, 0x24, 0x95, 0x6A, 0xD1, 0xD0}};
@@ -87,7 +85,6 @@ const otExtAddress *otLinkGetExtendedAddress(otInstance *aInstance)
 	int ret_size = get_string(OT_RPC_CMD_LINK_GET_EXTENDED_ADDRESS, mac.m8, sizeof(mac.m8));
 
 	if (ret_size != sizeof(mac.m8)) {
-		LOG_ERR("Received mac addr size is too short");
 		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_LINK_GET_EXTENDED_ADDRESS);
 	}
 
