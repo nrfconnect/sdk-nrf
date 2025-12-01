@@ -155,7 +155,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: bce9dd5a9e2e58bf2c0b762c4385dbb3f11f686a
+      revision: pull/683/head
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
