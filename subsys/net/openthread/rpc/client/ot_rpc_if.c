@@ -6,6 +6,7 @@
 
 #include <ot_rpc_ids.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_macros.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 #include <nrf_rpc_cbor.h>
 
@@ -24,15 +25,15 @@ struct ot_rpc_l2_data {
 
 static enum net_verdict ot_rpc_l2_recv(struct net_if *iface, struct net_pkt *pkt)
 {
-	ARG_UNUSED(iface);
-	ARG_UNUSED(pkt);
+	OT_RPC_UNUSED(iface);
+	OT_RPC_UNUSED(pkt);
 
 	return NET_CONTINUE;
 }
 
 static int ot_rpc_l2_send(struct net_if *iface, struct net_pkt *pkt)
 {
-	ARG_UNUSED(iface);
+	OT_RPC_UNUSED(iface);
 
 	bool encoded_ok = false;
 	const size_t len = net_pkt_get_len(pkt);

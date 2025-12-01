@@ -8,6 +8,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_lock.h>
+#include <ot_rpc_macros.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 
 #include <openthread/netdiag.h>
@@ -252,7 +253,7 @@ otError otThreadSendDiagnosticGet(otInstance *aInstance, const otIp6Address *aDe
 	struct nrf_rpc_cbor_ctx ctx;
 	otError error;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	receive_diag_get_cb = aCallback;
 	receive_diag_get_cb_context = aCallbackContext;
@@ -273,7 +274,7 @@ otError otThreadSendDiagnosticReset(otInstance *aInstance, const otIp6Address *a
 	struct nrf_rpc_cbor_ctx ctx;
 	otError error;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + OT_IP6_ADDRESS_SIZE + 2 + aCount);
 	nrf_rpc_encode_buffer(&ctx, aDestination->mFields.m8, OT_IP6_ADDRESS_SIZE);
@@ -287,28 +288,28 @@ otError otThreadSendDiagnosticReset(otInstance *aInstance, const otIp6Address *a
 
 otError otThreadSetVendorName(otInstance *aInstance, const char *aVendorName)
 {
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	return ot_rpc_set_string(OT_RPC_CMD_THREAD_SET_VENDOR_NAME, aVendorName);
 }
 
 otError otThreadSetVendorModel(otInstance *aInstance, const char *aVendorModel)
 {
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	return ot_rpc_set_string(OT_RPC_CMD_THREAD_SET_VENDOR_MODEL, aVendorModel);
 }
 
 otError otThreadSetVendorSwVersion(otInstance *aInstance, const char *aVendorSwVersion)
 {
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	return ot_rpc_set_string(OT_RPC_CMD_THREAD_SET_VENDOR_SW_VERSION, aVendorSwVersion);
 }
 
 const char *otThreadGetVendorName(otInstance *aInstance)
 {
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	ot_rpc_get_string(OT_RPC_CMD_THREAD_GET_VENDOR_NAME, vendor_name, sizeof(vendor_name));
 	return vendor_name;
@@ -316,7 +317,7 @@ const char *otThreadGetVendorName(otInstance *aInstance)
 
 const char *otThreadGetVendorModel(otInstance *aInstance)
 {
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	ot_rpc_get_string(OT_RPC_CMD_THREAD_GET_VENDOR_MODEL, vendor_model, sizeof(vendor_model));
 	return vendor_model;
@@ -324,7 +325,7 @@ const char *otThreadGetVendorModel(otInstance *aInstance)
 
 const char *otThreadGetVendorSwVersion(otInstance *aInstance)
 {
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	ot_rpc_get_string(OT_RPC_CMD_THREAD_GET_VENDOR_SW_VERSION, vendor_sw_version,
 			  sizeof(vendor_sw_version));

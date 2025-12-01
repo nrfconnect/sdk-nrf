@@ -7,6 +7,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_coap.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_macros.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_lock.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
@@ -28,7 +29,7 @@ static struct ot_rpc_coap_request requests[CONFIG_OPENTHREAD_RPC_CLIENT_NUM_SENT
 static ot_rpc_coap_request_key ot_rpc_coap_request_alloc(otCoapResponseHandler handler,
 							 void *context)
 {
-	for (ot_rpc_coap_request_key i = 0; i < ARRAY_SIZE(requests); i++) {
+	for (ot_rpc_coap_request_key i = 0; i < OT_RPC_ARRAY_SIZE(requests); i++) {
 		if (requests[i].handler == NULL) {
 			requests[i].handler = handler;
 			requests[i].context = context;
@@ -422,7 +423,7 @@ otError otCoapSendRequestWithParameters(otInstance *aInstance, otMessage *aMessa
 	ot_rpc_encode_message_info(&ctx, aMessageInfo);
 	nrf_rpc_encode_uint(&ctx, request_rep);
 	/* Ignore aTXParameters as it is NULL for otCoapSendRequest() that we only need for now */
-	ARG_UNUSED(aTxParameters);
+	OT_RPC_UNUSED(aTxParameters);
 
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_COAP_SEND_REQUEST, &ctx, ot_rpc_decode_error,
 				&error);
@@ -454,7 +455,7 @@ static void ot_rpc_cmd_coap_response_handler(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	if (request_rep == 0 || request_rep > ARRAY_SIZE(requests)) {
+	if (request_rep == 0 || request_rep > OT_RPC_ARRAY_SIZE(requests)) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_RESPONSE_HANDLER);
 		return;
 	}
@@ -489,7 +490,7 @@ otError otCoapSendResponseWithParameters(otInstance *aInstance, otMessage *aMess
 	nrf_rpc_encode_uint(&ctx, (ot_rpc_res_tab_key)aMessage);
 	ot_rpc_encode_message_info(&ctx, aMessageInfo);
 	/* Ignore aTXParameters as it is NULL for otCoapSendResponse() that we only need for now */
-	ARG_UNUSED(aTxParameters);
+	OT_RPC_UNUSED(aTxParameters);
 
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_COAP_SEND_RESPONSE, &ctx, ot_rpc_decode_error,
 				&error);
