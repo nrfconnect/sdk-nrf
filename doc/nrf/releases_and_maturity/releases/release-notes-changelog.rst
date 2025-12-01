@@ -1,6 +1,6 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v3.1.99
+Changelog for |NCS| v3.2.99
 ###########################
 
 .. contents::
@@ -23,7 +23,7 @@ Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v3.1.0`_ for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v3.2.0`_ for the list of issues valid for the latest release.
 
 Changelog
 *********
@@ -138,10 +138,7 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
-* Updated:
-
-  * Workaround handling for the hardware erratas.
-  * The implementation of the hardware errata HMPAN-103 for the nRF54H20 SoC.
+|no_changes_yet_note|
 
 Gazell
 ------
@@ -209,11 +206,6 @@ nRF Machine Learning (Edge Impulse)
 
 |no_changes_yet_note|
 
-Serial LTE modem
-----------------
-
-|no_changes_yet_note|
-
 Thingy:53: Matter weather station
 ---------------------------------
 
@@ -272,6 +264,11 @@ Enhanced ShockBurst samples
 |no_changes_yet_note|
 
 Gazell samples
+--------------
+
+|no_changes_yet_note|
+
+|ISE| samples
 --------------
 
 |no_changes_yet_note|
@@ -436,8 +433,6 @@ nRF RPC libraries
 Other libraries
 ---------------
 
-|no_changes_yet_note|
-
 * :ref:`lib_hw_id` library:
 
   * The ``CONFIG_HW_ID_LIBRARY_SOURCE_BLE_MAC`` Kconfig option has been renamed to :kconfig:option:`CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS`.
@@ -475,7 +470,9 @@ Edge Impulse integration
 Memfault integration
 --------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * The ``CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_BUILTIN`.
 
 AVSystem integration
 --------------------
@@ -500,7 +497,7 @@ DULT integration
 MCUboot
 =======
 
-The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``81315483fcbdf1f1524c2b34a1fd4de6c77cd0f4``, with some |NCS| specific additions.
+The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``8d14eebfe0b7402ebdf77ce1b99ba1a3793670e9``, with some |NCS| specific additions.
 
 The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/modules/mcuboot` folder.
 
@@ -513,19 +510,19 @@ Zephyr
 
 .. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each nRF Connect SDK release.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``0fe59bf1e4b96122c3467295b09a034e399c5ee6``, with some |NCS| specific additions.
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``911b3da1394dc6846c706868b1d407495701926f``, with some |NCS| specific additions.
 
 For the list of upstream Zephyr commits (not including cherry-picked commits) incorporated into |NCS| since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline 0fe59bf1e4 ^fdeb735017
+   git log --oneline 911b3da139 ^0fe59bf1e4
 
 For the list of |NCS| specific commits, including commits cherry-picked from upstream, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^0fe59bf1e4
+   git log --oneline manifest-rev ^911b3da139
 
 The current |NCS| main branch is based on revision ``0fe59bf1e4`` of Zephyr.
 

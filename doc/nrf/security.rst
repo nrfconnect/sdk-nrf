@@ -48,7 +48,7 @@ Expand the following section to see the table listing versions of different secu
        - Mbed TLS version
      * - Upcoming release (currently on the ``main`` branch of `sdk-nrf`_)
        - v2.2.0
-       - v23.0.2+17
+       - |ironside_se_ver|
        - 3.6.5
      * - v3.2.0
        - v2.2.0
