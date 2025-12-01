@@ -82,8 +82,8 @@ Fixed
 -----
 
 * L2CACHE now prefetches several cache lines when an L2 cache miss occurs. (HM-26346)
-  This will improve L2 cache performance in some situations and reduce L2 cache performance in other situations.
-* Fixed unintentional behavior of ``psa_copy_key()`` when it was used in an attempt to create a revocable key. (NCSDK-36369)
+  This improves L2 cache performance in some situations and reduces it in others.
+* Fixed an unintentional behavior of ``psa_copy_key()`` when used to create a revocable key. (NCSDK-36369)
 
 IronSide Secure Element (IronSide SE) v23.1.0+19
 ================================================

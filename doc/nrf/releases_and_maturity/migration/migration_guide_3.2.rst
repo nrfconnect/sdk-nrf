@@ -1,7 +1,7 @@
 .. _migration_3.2:
 
-Migration guide for |NCS| v3.2.0 (Working draft)
-################################################
+Migration guide for |NCS| v3.2.0
+################################
 
 .. contents::
    :local:
@@ -47,7 +47,7 @@ nRF54H20 IronSide SE binaries
 
 .. toggle::
 
-   * The nRF54H20 IronSide SE binaries have been updated to version v23.1.0+19.
+   * The nRF54H20 IronSide SE binaries have been updated to version v23.1.1+20.
      Starting from the |NCS| v3.2.0, you should always upgrade your nRF54H20 IronSide SE binaries to the latest version.
 
      For more information, see:
@@ -60,9 +60,13 @@ nRF54H20 power management
 
 .. toggle::
 
-   * The Kconfig options :kconfig:option:`PM_S2RAM` and :kconfig:option:`PM_S2RAM_CUSTOM_MARKING` have been reworked to be managed automatically based on the suspend-to-ram ``power-states`` in the devicetree.
+   * The Kconfig options :kconfig:option:`CONFIG_PM_S2RAM` and :kconfig:option:`CONFIG_PM_S2RAM_CUSTOM_MARKING` have been reworked to be managed automatically based on the suspend-to-ram ``power-states`` in the devicetree.
      Any occurrences of ``CONFIG_PM_S2RAM=y`` and ``CONFIG_PM_S2RAM_CUSTOM_MARKING=y`` must be removed.
-     Any occurrence of ``CONFIG_PM_S2RAM=n`` or when the code requires S2RAM state to be disabled (the default value of :kconfig:option:`PM_S2RAM` has changed from ``n`` to ``y``) must be replaced by disabling the ``s2ram`` power state in the devicetree.
+
+     The default value of :kconfig:option:`CONFIG_PM_S2RAM` has changed from ``n`` to ``y``.
+     If your application explicitly disables S2RAM or relies on S2RAM being disabled, remove any instance of ``CONFIG_PM_S2RAM=n`` and instead disable the ``s2ram`` power state in the devicetree.
+
+     To disable the ``s2ram`` power state, see the following DTS example:
 
      .. code-block:: dts
 
@@ -462,13 +466,16 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Memfault integration
 --------------------
 
-* The options have changed for the ``CONFIG_MEMFAULT_NCS_DEVICE_ID_*`` choice, which sets the Memfault Device Serial:
+.. toggle::
 
-  * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID` (new, and default) - Use ``hw_id`` provided device ID, which is also what nRF Cloud uses for device identity. See the :ref:`lib_hw_id` library for options for device ID source.
-  * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_STATIC` - Used to set a custom build-time defined static device ID, primarily useful for testing.
-  * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_RUNTIME` - Use a runtime-applied device ID, commonly used when the serial number of the device is written into settings at manufacturing time, for example.
-  * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI` (deprecated) - Use the LTE modem IMEI as the device ID.
-  * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC` (deprecated) - Use the network interface MAC address as the device ID.
+   * The options have changed for the ``CONFIG_MEMFAULT_NCS_DEVICE_ID_*`` choice, which sets the Memfault Device Serial:
+
+     * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID` (new, and default) - Use ``hw_id`` provided device ID, which is also what nRF Cloud uses for device identity.
+       See the :ref:`lib_hw_id` library for options for device ID source.
+     * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_STATIC` - Used to set a custom build-time defined static device ID, primarily useful for testing.
+     * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_RUNTIME` - Use a runtime-applied device ID, commonly used when the serial number of the device is written into settings at manufacturing time, for example.
+     * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI` (deprecated) - Use the LTE modem IMEI as the device ID.
+     * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC` (deprecated) - Use the network interface MAC address as the device ID.
 
 Drivers
 =======
