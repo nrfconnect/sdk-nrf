@@ -27,13 +27,19 @@ static nrf_ppi_channel_t radio_end_timer_start;
 
 static nrf_ppi_channel_group_t ramp_up_ppi_group;
 
-void esb_ppi_for_fem_set(void)
+void esb_ppi_for_fem_set(bool capture_timer)
 {
 	uint32_t egu_event = nrf_egu_event_address_get(ESB_EGU, ESB_EGU_EVENT);
 	uint32_t timer_task = nrf_timer_task_address_get(ESB_NRF_TIMER_INSTANCE,
 							 NRF_TIMER_TASK_START);
+	uint32_t capture_task =
+		nrf_timer_task_address_get(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_CAPTURE1);
 
 	nrf_ppi_channel_endpoint_setup(NRF_PPI, egu_timer_start, egu_event, timer_task);
+	if (capture_timer) {
+		nrf_ppi_fork_endpoint_setup(NRF_PPI, egu_timer_start, capture_task);
+	}
+
 	nrf_ppi_channel_enable(NRF_PPI, egu_timer_start);
 }
 
@@ -41,6 +47,7 @@ void esb_ppi_for_fem_clear(void)
 {
 	nrf_ppi_channel_disable(NRF_PPI, egu_timer_start);
 	nrf_ppi_channel_endpoint_setup(NRF_PPI, egu_timer_start, 0, 0);
+	nrf_ppi_fork_endpoint_setup(NRF_PPI, egu_timer_start, 0);
 }
 
 void esb_ppi_for_txrx_set(bool rx, bool timer_start)
@@ -266,7 +273,7 @@ void esb_ppi_disable_all(void)
 	/* Clear all PPI endpoints to fully disconnect peripherals */
 	nrf_ppi_channel_and_fork_endpoint_setup(NRF_PPI, egu_ramp_up, 0, 0, 0);
 	nrf_ppi_channel_endpoint_setup(NRF_PPI, disabled_egu, 0, 0);
-	nrf_ppi_channel_endpoint_setup(NRF_PPI, egu_timer_start, 0, 0);
+	nrf_ppi_channel_and_fork_endpoint_setup(NRF_PPI, egu_timer_start, 0, 0, 0);
 	nrf_ppi_channel_endpoint_setup(NRF_PPI, radio_address_timer_stop, 0, 0);
 	nrf_ppi_channel_endpoint_setup(NRF_PPI, timer_compare0_radio_disable, 0, 0);
 	nrf_ppi_channel_endpoint_setup(NRF_PPI, radio_end_timer_start, 0, 0);
