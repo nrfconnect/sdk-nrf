@@ -64,8 +64,12 @@ Refer to the following information for the list of supported development kits (D
        | ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
        | ``nrf54lv10dk/nrf54lv10a/cpuflpr``
        | ``nrf54lv10dk/nrf54lv10a/cpuflpr/xip``
-     - *Documentation not yet available*
-     - *Product pages not yet available*
+     - | `Datasheet <nRF54LV10A Datasheet_>`_
+       | `Quick Start app`_
+       | `User Guide <nRF54LV10 DK User Guide_>`_
+       | `nRF54LV10 Compatibility Matrix`_
+     - | `nRF54LV10 DK product page <nRF54LV10 DK_>`_
+       | `nRF54LV10 System-on-Chip (SoC) <nRF54LV10A System-on-Chip_>`_
 
 For the full list of supported protocols, see the :ref:`software maturity documentation<software_maturity>`.
 
