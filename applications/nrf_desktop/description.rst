@@ -1131,6 +1131,11 @@ Building information
 Use the configuration with the ``release`` file suffix for the HID report rate measurement.
 Debug features, such as logging or assertions, decrease the application performance.
 
+.. note::
+   You can run the application code from RAM instead of NVM to improve performance as code execution from the RAM is generally faster than from the NVM.
+   You can configure MCUboot to use the RAM load mode to run the whole application image from RAM.
+   For details, see the :ref:`nrf_desktop_configuring_mcuboot_bootloader_ram_load` section.
+
 Use the nRF Desktop configuration that acts as a HID mouse reference design for the report rate measurement, as the motion data polling is synchronized with sending HID reports.
 
 Make sure your chosen motion data source will generate movement in each poll interval.

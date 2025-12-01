@@ -244,7 +244,7 @@ nRF5340 Audio
     This means that if another device appears with the same address, it will be treated as the same server.
   * Experimental support for stereo in :ref:`unicast server application<nrf53_audio_unicast_server_app_configuration_stereo>`.
   * The :ref:`Audio application API documentation <audio_api>` page.
-  * The :ref:`config_audio_app_options` page.
+  * The :ref:`nrf53_audio_app_config_audio_app_options` page.
   * The API documentation in the header files listed on the :ref:`audio_api` page.
   * Ability to connect by address as a unicast client.
 

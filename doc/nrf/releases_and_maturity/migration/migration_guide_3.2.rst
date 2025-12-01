@@ -1,7 +1,9 @@
+:orphan:
+
 .. _migration_3.2:
 
-Migration guide for |NCS| v3.2.0 (Working draft)
-################################################
+Migration guide for |NCS| v3.2.0
+################################
 
 .. contents::
    :local:
@@ -47,7 +49,7 @@ nRF54H20 IronSide SE binaries
 
 .. toggle::
 
-   * The nRF54H20 IronSide SE binaries have been updated to version v23.1.0+19.
+   * The nRF54H20 IronSide SE binaries have been updated to version v23.1.1+20.
      Starting from the |NCS| v3.2.0, you should always upgrade your nRF54H20 IronSide SE binaries to the latest version.
 
      For more information, see:
@@ -462,13 +464,15 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Memfault integration
 --------------------
 
-* The options have changed for the ``CONFIG_MEMFAULT_NCS_DEVICE_ID_*`` choice, which sets the Memfault Device Serial:
+.. toggle::
 
-  * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID` (new, and default) - Use ``hw_id`` provided device ID, which is also what nRF Cloud uses for device identity. See the :ref:`lib_hw_id` library for options for device ID source.
-  * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_STATIC` - Used to set a custom build-time defined static device ID, primarily useful for testing.
-  * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_RUNTIME` - Use a runtime-applied device ID, commonly used when the serial number of the device is written into settings at manufacturing time, for example.
-  * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI` (deprecated) - Use the LTE modem IMEI as the device ID.
-  * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC` (deprecated) - Use the network interface MAC address as the device ID.
+   * The options have changed for the ``CONFIG_MEMFAULT_NCS_DEVICE_ID_*`` choice, which sets the Memfault Device Serial:
+
+     * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID` (new, and default) - Use ``hw_id`` provided device ID, which is also what nRF Cloud uses for device identity. See the :ref:`lib_hw_id` library for options for device ID source.
+     * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_STATIC` - Used to set a custom build-time defined static device ID, primarily useful for testing.
+     * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_RUNTIME` - Use a runtime-applied device ID, commonly used when the serial number of the device is written into settings at manufacturing time, for example.
+     * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI` (deprecated) - Use the LTE modem IMEI as the device ID.
+     * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC` (deprecated) - Use the network interface MAC address as the device ID.
 
 Drivers
 =======
