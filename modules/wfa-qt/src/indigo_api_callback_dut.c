@@ -1883,7 +1883,7 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 				ret = run_qt_command(buffer);
 				CHECK_RET();
 			} else {
-				ret = run_qt_command("SET_NETWORK 0 ieee80211w 0");
+				ret = run_qt_command("SET_NETWORK 0 ieee80211w 1");
 				CHECK_RET();
 			}
 		} else if (strstr(tlv->value, "SAE")) {
