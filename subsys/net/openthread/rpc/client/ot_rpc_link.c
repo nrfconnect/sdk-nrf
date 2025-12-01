@@ -6,6 +6,8 @@
 
 #include <ot_rpc_ids.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_macros.h>
+#include <ot_rpc_os.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 
 #include <nrf_rpc_cbor.h>
@@ -17,7 +19,7 @@ otError otLinkSetPollPeriod(otInstance *aInstance, uint32_t aPollPeriod)
 	struct nrf_rpc_cbor_ctx ctx;
 	otError error;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 5);
 	nrf_rpc_encode_uint(&ctx, aPollPeriod);
@@ -32,7 +34,7 @@ uint32_t otLinkGetPollPeriod(otInstance *aInstance)
 	struct nrf_rpc_cbor_ctx ctx;
 	uint32_t poll_period;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
@@ -50,7 +52,7 @@ void otLinkSetMaxFrameRetriesDirect(otInstance *aInstance, uint8_t aMaxFrameRetr
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 2);
 	nrf_rpc_encode_uint(&ctx, aMaxFrameRetriesDirect);
@@ -62,7 +64,7 @@ void otLinkSetMaxFrameRetriesIndirect(otInstance *aInstance, uint8_t aMaxFrameRe
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 2);
 	nrf_rpc_encode_uint(&ctx, aMaxFrameRetriesIndirect);
@@ -75,7 +77,7 @@ otError otLinkSetEnabled(otInstance *aInstance, bool aEnable)
 	struct nrf_rpc_cbor_ctx ctx;
 	otError error;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1);
 	nrf_rpc_encode_bool(&ctx, aEnable);
@@ -95,9 +97,9 @@ void otLinkGetFactoryAssignedIeeeEui64(otInstance *aInstance, otExtAddress *aEui
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
-	__ASSERT_NO_MSG(aEui64 != NULL);
+	OT_RPC_ASSERT(aEui64 != NULL);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_LINK_GET_FACTORY_ASSIGNED_EUI64, &ctx,
@@ -109,7 +111,7 @@ const otMacCounters *otLinkGetCounters(otInstance *aInstance)
 	struct nrf_rpc_cbor_ctx ctx;
 	static otMacCounters counters;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_LINK_GET_COUNTERS, &ctx);
@@ -160,7 +162,7 @@ otError ot_rpc_set_factory_assigned_ieee_eui64(const otExtAddress *eui64)
 	struct nrf_rpc_cbor_ctx ctx;
 	otError error;
 
-	__ASSERT_NO_MSG(eui64 != NULL);
+	OT_RPC_ASSERT(eui64 != NULL);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + OT_EXT_ADDRESS_SIZE);
 	nrf_rpc_encode_buffer(&ctx, &eui64->m8, OT_EXT_ADDRESS_SIZE);
