@@ -196,11 +196,12 @@ Sample mouse or dongle (``nrf54h20dk/nrf54h20/cpuapp``)
         The :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE` and :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB` Kconfig options are enabled in mouse configurations to improve the USB High-Speed report rate.
       * In ``debug`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54H20 DK, see the :ref:`ug_nrf54h20_gs` documentation.
-      * The configurations use the Software Updates for Internet of Things (SUIT) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+      * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
         Configurations acting as HID peripherals also support firmware updates using the :ref:`nrf_desktop_dfu_mcumgr`.
+        For more details on MCUboot, see :ref:`nrf_desktop_bootloader`.
 
-      .. note::
-         The nRF Desktop application does not build or run for the ``nrf54h20dk/nrf54h20/cpuapp`` board target due to the IronSide SE migration.
-         See the ``NCSDK-34299`` in the :ref:`known_issues` page for more information.
-         The :ref:`nrf_desktop` documentation may still refer to concepts that were valid before the IronSide SE migration (for example, to the SUIT solution).
-         The codebase and documentation will be updated in the future releases to address this issue.
+        All configurations enable hardware cryptography for the MCUboot bootloader.
+        The MCUboot bootloader uses the :ref:`ug_crypto_architecture_implementation_standards_ironside` for hardware cryptography.
+        The application image is verified using a pure ED25519 signature.
+        In all configurations, the MCUboot bootloader uses a merged image slot that combines both application and radio core images.
+        For more details on nRF54H Series DFU, see :ref:`ug_nrf54h20_mcuboot_dfu`.
