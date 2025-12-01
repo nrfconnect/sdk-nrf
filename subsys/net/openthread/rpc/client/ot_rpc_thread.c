@@ -8,6 +8,7 @@
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
 #include <ot_rpc_lock.h>
+#include <ot_rpc_macros.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 #include <nrf_rpc/nrf_rpc_cbkproxy.h>
 
@@ -68,7 +69,7 @@ otError otThreadDiscover(otInstance *aInstance, uint32_t aScanChannels, uint16_t
 	size_t cbor_buffer_size = 0;
 	otError error;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	cbor_buffer_size += sizeof(uint32_t) + 1;  /* aScanChannels */
 	cbor_buffer_size += sizeof(uint16_t) + 1;  /* aPanId */
@@ -97,7 +98,7 @@ otError otThreadSetEnabled(otInstance *aInstance, bool aEnabled)
 	struct nrf_rpc_cbor_ctx ctx;
 	otError error;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1);
 	nrf_rpc_encode_bool(&ctx, aEnabled);
@@ -112,7 +113,7 @@ otDeviceRole otThreadGetDeviceRole(otInstance *aInstance)
 	struct nrf_rpc_cbor_ctx ctx;
 	otDeviceRole role = 0;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
@@ -133,7 +134,7 @@ otError otThreadSetLinkMode(otInstance *aInstance, otLinkModeConfig aConfig)
 	uint8_t mode_mask = 0;
 	otError error;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 2);
 
@@ -162,7 +163,7 @@ otLinkModeConfig otThreadGetLinkMode(otInstance *aInstance)
 	uint8_t mode_mask = 0;
 	otLinkModeConfig mode;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_THREAD_GET_LINK_MODE, &ctx);
@@ -244,7 +245,7 @@ uint16_t otThreadGetRloc16(otInstance *aInstance)
 	struct nrf_rpc_cbor_ctx ctx;
 	uint16_t rloc16;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_THREAD_GET_RLOC16, &ctx);
@@ -263,7 +264,7 @@ const otMleCounters *otThreadGetMleCounters(otInstance *aInstance)
 	struct nrf_rpc_cbor_ctx ctx;
 	static otMleCounters counters;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_THREAD_GET_MLE_COUNTERS, &ctx);
