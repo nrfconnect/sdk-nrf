@@ -17,11 +17,6 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. note::
-   This sample does not build or run for the ``nrf54h20dk/nrf54h20/cpuapp`` board target due to the IronSide SE migration.
-   See the ``NCSDK-34698`` in the :ref:`known_issues` page for more information.
-   The codebase and documentation will be updated in the future releases to address this issue.
-
 Overview
 ********
 
