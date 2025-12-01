@@ -341,6 +341,9 @@
 .. _`nRF54L05`: https://www.nordicsemi.com/Products/nRF54L05
 .. _`nRF54L10`: https://www.nordicsemi.com/Products/nRF54L10
 
+.. _`nRF54LV10 DK`: https://www.nordicsemi.com/Products/Development-hardware/nRF54LV10-DK
+.. _`nRF54LV10A System-on-Chip`: https://www.nordicsemi.com/Products/nRF54LV10A
+
 .. _`nRF54LM20A System-on-Chip`: https://www.nordicsemi.com/Products/nRF54LM20A
 .. _`nRF54LM20 DK`: https://www.nordicsemi.com/Products/Development-hardware/nRF54LM20-DK
 
@@ -847,6 +850,10 @@
 .. _`nRF54LM20A Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54LM20A/page/keyfeatures_html5.html
 .. _`nRF54LM20 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf54lm20_dk/page/UG/nRF54LM20_DK/intro/intro.html
 .. _`nRF54LM20A Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54lm20a/page/COMP/nrf54lm20a/nrf54lm20a_comp_matrix.html
+
+.. _`nRF54LV10A Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54LV10A/page/keyfeatures_html5.html
+.. _`nRF54LV10 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf54lv10_dk/page/UG/nRF54LV10_DK/intro/intro.html
+.. _`nRF54LV10 Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54lv10a/page/COMP/nrf54lv10a/nrf54lv10a_comp_matrix.html
 
 .. _`nRF53 Series`: https://docs.nordicsemi.com/category/nrf-53-series
 
