@@ -2,20 +2,31 @@ common:
   sysbuild: true
   depends_on: gpio
   harness: ztest
-  harness_config:
-    fixture: gpio_loopback
   tags:
     - drivers
     - spim
     - ci_tests_drivers_spi
-  platform_allow:
-    - nrf54h20dk/nrf54h20/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-    - nrf54ls05dk/nrf54ls05b/cpuapp
-    - nrf54lv10dk/nrf54lv10a/cpuapp
-  integration_platforms:
-    - nrf54l15dk/nrf54l15/cpuapp
 
 tests:
-  drivers.spim_pan: {}
+  drivers.spim_pan:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness_config:
+      fixture: gpio_loopback
+
+  drivers.spim_pan.fast:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args:
+      - DTC_OVERLAY_FILE='boards/nrf54lxx_cpuapp_fast.overlay'
+    harness_config:
+      fixture: external_flash
