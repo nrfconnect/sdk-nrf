@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../../common/boards/nrf54l15dk_nrf54l15_cpuapp_partitions.dtsi"
-
 / {
 	aliases {
 		/* Configure PWM module for led1 (LED2 on the board) */
@@ -24,11 +22,6 @@
 	};
 };
 
-/* TODO: re-enable HWFC once it's fixed */
-&uart20 {
-	/delete-property/ hw-flow-control;
-};
-
 &pwm20 {
 	status = "okay";
 	pinctrl-0 = <&pwm_default>;
@@ -39,16 +32,20 @@
 &pinctrl {
 	pwm_default: pwm_default {
 		group1 {
-			psels = <NRF_PSEL(PWM_OUT1, 1, 10)>, <NRF_PSEL(PWM_OUT2, 1, 14)>;
+			psels = <NRF_PSEL(PWM_OUT1, 1, 25)>;
 		};
 	};
 
 	pwm_sleep: pwm_sleep {
 		group1 {
-			psels = <NRF_PSEL(PWM_OUT1, 1, 10)>, <NRF_PSEL(PWM_OUT2, 1, 14)>;
+			psels = <NRF_PSEL(PWM_OUT1, 1, 25)>;
 			low-power-enable;
 		};
 	};
+};
+
+&mx25r64 {
+	status = "disabled";
 };
 
 &wdt31 {
