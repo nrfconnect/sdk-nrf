@@ -12,11 +12,25 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_wifi
-  sample.nrf7002.enterprise_mode.wfa_qt_app:
+  sample.nrf7002.enterprise_mode.wfa_qt_app.netusb:
     sysbuild: true
     build_only: true
     extra_args:
       - EXTRA_CONF_FILE="overlay-netusb.conf;overlay-enterprise.conf"
+      - wfa_qt_app_SNIPPET="wifi-enterprise"
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp
+    platform_allow: nrf7002dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7002.enterprise_mode.wfa_qt_app.slip:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE="overlay-slip.conf;overlay-enterprise.conf"
+      - EXTRA_DTC_OVERLAY_FILE="nrf7002_uart_pipe.overlay"
       - wfa_qt_app_SNIPPET="wifi-enterprise"
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
