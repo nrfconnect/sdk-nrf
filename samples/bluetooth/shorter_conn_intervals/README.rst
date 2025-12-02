@@ -139,8 +139,8 @@ The result should look similar to the following output:
    I: HCI: version 6.2 (0x10) revision 0x3012, manufacturer 0x0059
    I: LMP: version 6.2 (0x10) subver 0x3012
    I: Bluetooth initialized
-   I: Local minimum connection interval: 750 μs
-   I: SCI default connection rate parameters set (min=750 μs, max=10000 μs)
+   I: Local minimum connection interval: 750 us
+   I: SCI default connection rate parameters set (min=750 us, max=10000 us)
    I: Should this device initiate connection interval updates?
    Type y (yes, this device will initiate) or n (no, peer will initiate):
 
@@ -152,25 +152,25 @@ The result should look similar to the following output:
    I: Central. Starting scanning
    I: Scanning successfully started
    I: Connected as central
-   I: Conn. interval is 10000 μs
+   I: Conn. interval is 10000 us
    I: Security changed: level 2, err: 0
    I: Latency service discovery completed
    I: SCI service discovery completed
    I: Found SCI min interval characteristic, handle: 0x0013
    I: LE PHY updated: TX PHY LE 2M, RX PHY LE 2M
-   I: Frame space updated: 63 μs, PHYs: 0x02, spacing types: 0x0003, initiator: Local Host
-   I: Minimum connection intervals: Local: 750 μs, Peer: 750 μs, Common: 750 μs
-   I: Transmission Latency: 9153 μs
-   I: Requesting new connection interval: 750 μs
-   I: Connection rate changed: interval 750 μs, subrate factor 1, peripheral latency 0, continuation number 0, supervision timeout 4000 ms
-   I: Transmission Latency: 834 μs
-   I: Transmission Latency: 792 μs
-   I: Transmission Latency: 747 μs
-   I: Requesting new connection interval: 1000 μs
-   I: Connection rate changed: interval 1000 μs, subrate factor 1, peripheral latency 0, continuation number 0, supervision timeout 4000 ms
-   I: Transmission Latency: 1056 μs
-   I: Transmission Latency: 838 μs
-   I: Transmission Latency: 1161 μs
+   I: Frame space updated: 63 us, PHYs: 0x02, spacing types: 0x0003, initiator: Local Host
+   I: Minimum connection intervals: Local: 750 us, Peer: 750 us, Common: 750 us
+   I: Transmission Latency: 9153 us
+   I: Requesting new connection interval: 750 us
+   I: Connection rate changed: interval 750 us, subrate factor 1, peripheral latency 0, continuation number 0, supervision timeout 4000 ms
+   I: Transmission Latency: 834 us
+   I: Transmission Latency: 792 us
+   I: Transmission Latency: 747 us
+   I: Requesting new connection interval: 1000 us
+   I: Connection rate changed: interval 1000 us, subrate factor 1, peripheral latency 0, continuation number 0, supervision timeout 4000 ms
+   I: Transmission Latency: 1056 us
+   I: Transmission Latency: 838 us
+   I: Transmission Latency: 1161 us
 
 
 * For the device not initiating connection interval updates::
@@ -180,23 +180,23 @@ The result should look similar to the following output:
    I: Peripheral. Starting advertising
    I: Advertising successfully started
    I: Connected as peripheral
-   I: Conn. interval is 10000 μs
+   I: Conn. interval is 10000 us
    I: Security changed: level 2, err: 0
    I: Latency service discovery completed
    I: SCI service discovery completed
    I: Found SCI min interval characteristic, handle: 0x0013
-   I: Minimum connection intervals: Local: 750 μs, Peer: 750 μs, Common: 750 μs
+   I: Minimum connection intervals: Local: 750 us, Peer: 750 us, Common: 750 us
    I: LE PHY updated: TX PHY LE 2M, RX PHY LE 2M
-   I: Frame space updated: 63 μs, PHYs: 0x02, spacing types: 0x0003, initiator: Peer
-   I: Transmission Latency: 11551 μs
-   I: Connection rate changed: interval 750 μs, subrate factor 1, peripheral latency 0, continuation number 0, supervision timeout 4000 ms
-   I: Transmission Latency: 718 μs
-   I: Transmission Latency: 962 μs
-   I: Transmission Latency: 804 μs
-   I: Connection rate changed: interval 1000 μs, subrate factor 1, peripheral latency 0, continuation number 0, supervision timeout 4000 ms
-   I: Transmission Latency: 630 μs
-   I: Transmission Latency: 1056 μs
-   I: Transmission Latency: 838 μs
+   I: Frame space updated: 63 us, PHYs: 0x02, spacing types: 0x0003, initiator: Peer
+   I: Transmission Latency: 11551 us
+   I: Connection rate changed: interval 750 us, subrate factor 1, peripheral latency 0, continuation number 0, supervision timeout 4000 ms
+   I: Transmission Latency: 718 us
+   I: Transmission Latency: 962 us
+   I: Transmission Latency: 804 us
+   I: Connection rate changed: interval 1000 us, subrate factor 1, peripheral latency 0, continuation number 0, supervision timeout 4000 ms
+   I: Transmission Latency: 630 us
+   I: Transmission Latency: 1056 us
+   I: Transmission Latency: 838 us
 
 
 References
