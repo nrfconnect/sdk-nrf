@@ -91,3 +91,4 @@ This self-paced course introduces the hardware architecture, functionality, capa
    dfu_config
    ecies_x25519.rst
    otp_map_nrf54l
+   pinmap
