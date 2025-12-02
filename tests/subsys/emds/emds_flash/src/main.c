@@ -586,11 +586,6 @@ ZTEST(emds_flash, test_write_speed)
 	(void)dk_leds_init();
 	(void)dk_set_led(0, false);
 
-#if defined(CONFIG_BT)
-	/* This is done to turn off mpsl scheduler to speed up storage time. */
-	(void)sdc_disable();
-	mpsl_uninit();
-#endif
 	/* Initialize microsecond timer */
 	microsecond_timer_init();
 
