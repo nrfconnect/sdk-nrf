@@ -189,6 +189,8 @@ For an example of a bootloader Kconfig configuration file defined by the applica
   Both mentioned firmware upgrade methods are not used simultaneously by any of the configurations.
   For example, the ``nrf52840dk/nrf52840`` board in ``mcuboot_smp`` file suffix uses only the background DFU and does not enable the serial recovery feature.
 
+.. _nrf_desktop_configuring_mcuboot_bootloader_ram_load:
+
 RAM load mode
 ~~~~~~~~~~~~~
 
