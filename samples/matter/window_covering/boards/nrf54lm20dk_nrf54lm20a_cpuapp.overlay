@@ -4,11 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	chosen {
-		nordic,pm-ext-flash = &mx25r64;
-	};
+#include <samples/matter/nrf54lm20dk_nrf54lm20a_cpuapp_partitions.dtsi>
 
+/ {
 	aliases {
 		pwm-led1 = &pwm_led1;
 		pwm-led2 = &pwm_led2;
@@ -47,10 +45,6 @@
 			low-power-enable;
 		};
 	};
-};
-
-&mx25r64 {
-	status = "okay";
 };
 
 &wdt31 {

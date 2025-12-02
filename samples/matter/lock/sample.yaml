@@ -60,7 +60,6 @@ tests:
     extra_args:
       - FILE_SUFFIX=release
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - SB_CONFIG_PARTITION_MANAGER=y
       - lock_SHIELD=nrf7002eb2
       - SB_CONFIG_WIFI_NRF70=y
     integration_platforms:

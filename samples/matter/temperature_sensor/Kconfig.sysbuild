@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config PARTITION_MANAGER
+	default n if SOC_SERIES_NRF52X || SOC_NRF54L10 || SOC_NRF54L15 || SOC_NRF54LM20A
+
 #### Radio core selection
 config NRF_DEFAULT_IPC_RADIO
 	default y
