@@ -124,7 +124,7 @@
 .. _`Changelog for nrfx 2.3.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-230---2020-08-19
 .. _`Changelog for nrfx 2.4.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-240---2020-11-13
 .. _`Changelog for nrfx 2.5.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#250---2021-05-05
-
+.. _`nrfx 4.0 migration note`: https://github.com/NordicSemiconductor/nrfx/wiki/nrfx-3.14.0-to-4.0.0
 
 .. _`HIDAPI library`: https://github.com/libusb/hidapi
 .. _`HIDAPI releases`: https://github.com/libusb/hidapi/releases

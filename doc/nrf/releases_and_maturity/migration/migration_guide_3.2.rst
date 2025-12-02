@@ -469,3 +469,245 @@ Memfault integration
   * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_RUNTIME` - Use a runtime-applied device ID, commonly used when the serial number of the device is written into settings at manufacturing time, for example.
   * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI` (deprecated) - Use the LTE modem IMEI as the device ID.
   * :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC` (deprecated) - Use the network interface MAC address as the device ID.
+
+Drivers
+=======
+
+This section provides detailed lists of changes by drivers.
+
+nrfx
+----
+
+.. toggle::
+
+   * nrfx version has been updated to 4.0.
+     For nrfx changes see `nrfx 4.0 migration note`_.
+
+     Additionally, to migrate a Zephyr build system application that uses nrfx API directly, complete the following steps:
+
+     #. Kconfig options:
+
+        * Replace:
+
+            * Use :kconfig:option:`CONFIG_NRFX_GPPI` instead of the following:
+
+               * ``CONFIG_NRFX_DPPI``
+               * ``CONFIG_NRFX_DPPI0``
+               * ``CONFIG_NRFX_DPPI00``
+               * ``CONFIG_NRFX_DPPI10``
+               * ``CONFIG_NRFX_DPPI20``
+               * ``CONFIG_NRFX_DPPI30``
+               * ``CONFIG_NRFX_DPPI020``
+               * ``CONFIG_NRFX_DPPI120``
+               * ``CONFIG_NRFX_DPPI130``
+               * ``CONFIG_NRFX_DPPI131``
+               * ``CONFIG_NRFX_DPPI132``
+               * ``CONFIG_NRFX_DPPI133``
+               * ``CONFIG_NRFX_DPPI134``
+               * ``CONFIG_NRFX_DPPI135``
+               * ``CONFIG_NRFX_DPPI136``
+               * ``CONFIG_NRFX_PPI``
+
+            * Use :kconfig:option:`CONFIG_NRFX_I2S` instead of the following:
+
+               * ``CONFIG_NRFX_I2S0``
+               * ``CONFIG_NRFX_I2S20``
+
+            * Use :kconfig:option:`CONFIG_NRFX_PDM` instead of the following:
+
+               * ``CONFIG_NRFX_PDM0``
+               * ``CONFIG_NRFX_PDM20``
+               * ``CONFIG_NRFX_PDM21``
+
+            * Use :kconfig:option:`CONFIG_NRFX_PWM` instead of the following:
+
+               * ``CONFIG_NRFX_PWM0``
+               * ``CONFIG_NRFX_PWM1``
+               * ``CONFIG_NRFX_PWM2``
+               * ``CONFIG_NRFX_PWM3``
+               * ``CONFIG_NRFX_PWM20``
+               * ``CONFIG_NRFX_PWM21``
+               * ``CONFIG_NRFX_PWM22``
+               * ``CONFIG_NRFX_PWM120``
+               * ``CONFIG_NRFX_PWM130``
+               * ``CONFIG_NRFX_PWM131``
+               * ``CONFIG_NRFX_PWM132``
+               * ``CONFIG_NRFX_PWM133``
+
+            * Use :kconfig:option:`CONFIG_NRFX_QDEC` instead of the following:
+
+               * ``CONFIG_NRFX_QDEC0``
+               * ``CONFIG_NRFX_QDEC1``
+               * ``CONFIG_NRFX_QDEC20``
+               * ``CONFIG_NRFX_QDEC21``
+               * ``CONFIG_NRFX_QDEC130``
+               * ``CONFIG_NRFX_QDEC131``
+
+            * Use :kconfig:option:`CONFIG_NRFX_SPIM` instead of the following:
+
+               * ``CONFIG_NRFX_SPIM0``
+               * ``CONFIG_NRFX_SPIM1``
+               * ``CONFIG_NRFX_SPIM2``
+               * ``CONFIG_NRFX_SPIM3``
+               * ``CONFIG_NRFX_SPIM4``
+               * ``CONFIG_NRFX_SPIM00``
+               * ``CONFIG_NRFX_SPIM01``
+               * ``CONFIG_NRFX_SPIM20``
+               * ``CONFIG_NRFX_SPIM21``
+               * ``CONFIG_NRFX_SPIM22``
+               * ``CONFIG_NRFX_SPIM23``
+               * ``CONFIG_NRFX_SPIM24``
+               * ``CONFIG_NRFX_SPIM30``
+               * ``CONFIG_NRFX_SPIM120``
+               * ``CONFIG_NRFX_SPIM121``
+               * ``CONFIG_NRFX_SPIM130``
+               * ``CONFIG_NRFX_SPIM131``
+               * ``CONFIG_NRFX_SPIM132``
+               * ``CONFIG_NRFX_SPIM133``
+               * ``CONFIG_NRFX_SPIM134``
+               * ``CONFIG_NRFX_SPIM135``
+               * ``CONFIG_NRFX_SPIM136``
+               * ``CONFIG_NRFX_SPIM137``
+
+            * Use :kconfig:option:`CONFIG_NRFX_SPIS` instead of the following:
+
+               * ``CONFIG_NRFX_SPIS0``
+               * ``CONFIG_NRFX_SPIS1``
+               * ``CONFIG_NRFX_SPIS2``
+               * ``CONFIG_NRFX_SPIS3``
+               * ``CONFIG_NRFX_SPIS00``
+               * ``CONFIG_NRFX_SPIS01``
+               * ``CONFIG_NRFX_SPIS20``
+               * ``CONFIG_NRFX_SPIS21``
+               * ``CONFIG_NRFX_SPIS22``
+               * ``CONFIG_NRFX_SPIS23``
+               * ``CONFIG_NRFX_SPIS24``
+               * ``CONFIG_NRFX_SPIS30``
+               * ``CONFIG_NRFX_SPIS120``
+               * ``CONFIG_NRFX_SPIS130``
+               * ``CONFIG_NRFX_SPIS131``
+               * ``CONFIG_NRFX_SPIS132``
+               * ``CONFIG_NRFX_SPIS133``
+               * ``CONFIG_NRFX_SPIS134``
+               * ``CONFIG_NRFX_SPIS135``
+               * ``CONFIG_NRFX_SPIS136``
+               * ``CONFIG_NRFX_SPIS137``
+
+            * Use :kconfig:option:`CONFIG_NRFX_TIMER` instead of the following:
+
+               * ``CONFIG_NRFX_TIMER0``
+               * ``CONFIG_NRFX_TIMER1``
+               * ``CONFIG_NRFX_TIMER2``
+               * ``CONFIG_NRFX_TIMER3``
+               * ``CONFIG_NRFX_TIMER4``
+               * ``CONFIG_NRFX_TIMER00``
+               * ``CONFIG_NRFX_TIMER10``
+               * ``CONFIG_NRFX_TIMER20``
+               * ``CONFIG_NRFX_TIMER21``
+               * ``CONFIG_NRFX_TIMER22``
+               * ``CONFIG_NRFX_TIMER23``
+               * ``CONFIG_NRFX_TIMER24``
+               * ``CONFIG_NRFX_TIMER020``
+               * ``CONFIG_NRFX_TIMER021``
+               * ``CONFIG_NRFX_TIMER022``
+               * ``CONFIG_NRFX_TIMER120``
+               * ``CONFIG_NRFX_TIMER121``
+               * ``CONFIG_NRFX_TIMER130``
+               * ``CONFIG_NRFX_TIMER131``
+               * ``CONFIG_NRFX_TIMER132``
+               * ``CONFIG_NRFX_TIMER133``
+               * ``CONFIG_NRFX_TIMER134``
+               * ``CONFIG_NRFX_TIMER135``
+               * ``CONFIG_NRFX_TIMER136``
+               * ``CONFIG_NRFX_TIMER137``
+
+            * Use :kconfig:option:`CONFIG_NRFX_TWIM` instead of the following:
+
+               * ``CONFIG_NRFX_TWIM0``
+               * ``CONFIG_NRFX_TWIM1``
+               * ``CONFIG_NRFX_TWIM2``
+               * ``CONFIG_NRFX_TWIM3``
+               * ``CONFIG_NRFX_TWIM20``
+               * ``CONFIG_NRFX_TWIM21``
+               * ``CONFIG_NRFX_TWIM22``
+               * ``CONFIG_NRFX_TWIM23``
+               * ``CONFIG_NRFX_TWIM24``
+               * ``CONFIG_NRFX_TWIM30``
+               * ``CONFIG_NRFX_TWIM120``
+               * ``CONFIG_NRFX_TWIM130``
+               * ``CONFIG_NRFX_TWIM131``
+               * ``CONFIG_NRFX_TWIM132``
+               * ``CONFIG_NRFX_TWIM133``
+               * ``CONFIG_NRFX_TWIM134``
+               * ``CONFIG_NRFX_TWIM135``
+               * ``CONFIG_NRFX_TWIM136``
+               * ``CONFIG_NRFX_TWIM137``
+
+            * Use :kconfig:option:`CONFIG_NRFX_TWIS` instead of the following:
+
+               * ``CONFIG_NRFX_TWIS0``
+               * ``CONFIG_NRFX_TWIS1``
+               * ``CONFIG_NRFX_TWIS2``
+               * ``CONFIG_NRFX_TWIS3``
+               * ``CONFIG_NRFX_TWIS20``
+               * ``CONFIG_NRFX_TWIS21``
+               * ``CONFIG_NRFX_TWIS22``
+               * ``CONFIG_NRFX_TWIS23``
+               * ``CONFIG_NRFX_TWIS24``
+               * ``CONFIG_NRFX_TWIS30``
+               * ``CONFIG_NRFX_TWIS120``
+               * ``CONFIG_NRFX_TWIS130``
+               * ``CONFIG_NRFX_TWIS131``
+               * ``CONFIG_NRFX_TWIS132``
+               * ``CONFIG_NRFX_TWIS133``
+               * ``CONFIG_NRFX_TWIS134``
+               * ``CONFIG_NRFX_TWIS135``
+               * ``CONFIG_NRFX_TWIS136``
+               * ``CONFIG_NRFX_TWIS137``
+
+            * Use :kconfig:option:`CONFIG_NRFX_UARTE` instead of the following:
+
+               * ``CONFIG_NRFX_UARTE0``
+               * ``CONFIG_NRFX_UARTE1``
+               * ``CONFIG_NRFX_UARTE2``
+               * ``CONFIG_NRFX_UARTE3``
+               * ``CONFIG_NRFX_UARTE00``
+               * ``CONFIG_NRFX_UARTE20``
+               * ``CONFIG_NRFX_UARTE21``
+               * ``CONFIG_NRFX_UARTE22``
+               * ``CONFIG_NRFX_UARTE23``
+               * ``CONFIG_NRFX_UARTE24``
+               * ``CONFIG_NRFX_UARTE30``
+               * ``CONFIG_NRFX_UARTE120``
+               * ``CONFIG_NRFX_UARTE130``
+               * ``CONFIG_NRFX_UARTE131``
+               * ``CONFIG_NRFX_UARTE132``
+               * ``CONFIG_NRFX_UARTE133``
+               * ``CONFIG_NRFX_UARTE134``
+               * ``CONFIG_NRFX_UARTE135``
+               * ``CONFIG_NRFX_UARTE136``
+               * ``CONFIG_NRFX_UARTE137``
+
+            * Use :kconfig:option:`CONFIG_NRFX_WDT` instead of the following:
+
+               * ``CONFIG_NRFX_WDT0``
+               * ``CONFIG_NRFX_WDT1``
+               * ``CONFIG_NRFX_WDT30``
+               * ``CONFIG_NRFX_WDT31``
+               * ``CONFIG_NRFX_WDT010``
+               * ``CONFIG_NRFX_WDT011``
+               * ``CONFIG_NRFX_WDT130``
+               * ``CONFIG_NRFX_WDT131``
+               * ``CONFIG_NRFX_WDT132``
+
+        * Remove:
+
+            * ``CONFIG_NRFX_PPIB``
+            * ``CONFIG_NRFX_PPIB00``
+            * ``CONFIG_NRFX_PPIB01``
+            * ``CONFIG_NRFX_PPIB10``
+            * ``CONFIG_NRFX_PPIB11``
+            * ``CONFIG_NRFX_PPIB20``
+            * ``CONFIG_NRFX_PPIB21``
+            * ``CONFIG_NRFX_PPIB22``
+            * ``CONFIG_NRFX_PPIB30``
