@@ -257,6 +257,9 @@ Zephyr's Mesh security toolbox implementation uses third-party crypto library AP
   * :kconfig:option:`CONFIG_BT_MESH_USES_TFM_PSA` - Enables use of the `Trusted Firmware M`_ PSA API based security toolbox (default option for platforms that support TF-M).
     Zephyr's Mesh operates with open key values, including storing them in the persistent memory.
 
+.. note::
+   For Bluetooth Mesh provisioning, authenticating with the BTM_ECDH_P256_CMAC_AES128_AES_CCM (0x00) algorithm does not provide protection against an active man-in-the-middle (MITM) attacker during the provisioning process if OOB public keys are not used.
+
 The Bluetooth Mesh security toolbox based on the `PSA Certified Crypto API`_ does not operate with open key values.
 After Bluetooth Mesh receives an open key value, it immediately imports the key into the crypto library and receives the unique key identifier.
 The key identifiers are used in the security toolbox and stored in the persistent memory.
