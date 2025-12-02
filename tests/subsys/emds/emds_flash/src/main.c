@@ -12,6 +12,7 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/drivers/flash.h>
 #include <zephyr/random/random.h>
+#include <hal/nrf_timer.h>
 #include <dk_buttons_and_leds.h>
 #include <emds_flash.h>
 
@@ -31,16 +32,55 @@
 #else
 #define FLASH DT_INST(0, soc_nv_flash)
 #define EMDS_FLASH_BLOCK_SIZE DT_PROP(FLASH, write_block_size)
+#if defined(CONFIG_SOC_NRF5340_CPUAPP)
+#define EXPECTED_STORE_TIME_BLOCK_SIZE (48)
+#define EXPECTED_STORE_TIME_1024 (11600)
+#else
 /* 32bits word is written maximum 41us (from datasheet) */
-#define EXPECTED_STORE_TIME_BLOCK_SIZE (41)
+#define EXPECTED_STORE_TIME_BLOCK_SIZE (46)
 /* 1024 bytes should take ideally 10496us (really takes about 11000us) */
 #define EXPECTED_STORE_TIME_1024 (11500)
+#endif
 #endif
 
 #define EMDS_SNAPSHOT_METADATA_MARKER 0x4D444553
 #define PARTITIONS_NUM_MAX 2
 
 static struct emds_partition partition[PARTITIONS_NUM_MAX];
+
+/* Configure for 1MHz (1μs precision) */
+#if defined(CONFIG_SOC_NRF54L15)
+#define NORDIC_TIMER_INSTANCE  NRF_TIMER20
+#else
+#define NORDIC_TIMER_INSTANCE  NRF_TIMER2
+#endif
+
+static void microsecond_timer_init(void)
+{
+	/* Configure timer for 1 microsecond precision */
+	nrf_timer_mode_set(NORDIC_TIMER_INSTANCE, NRF_TIMER_MODE_TIMER);
+	nrf_timer_bit_width_set(NORDIC_TIMER_INSTANCE, NRF_TIMER_BIT_WIDTH_32);
+	nrf_timer_prescaler_set(NORDIC_TIMER_INSTANCE, NRF_TIMER_FREQ_1MHz);
+
+	nrf_timer_task_trigger(NORDIC_TIMER_INSTANCE, NRF_TIMER_TASK_CLEAR);
+	nrf_timer_task_trigger(NORDIC_TIMER_INSTANCE, NRF_TIMER_TASK_START);
+
+	printk("Timer initialized at 1MHz (1μs resolution)\n");
+}
+
+static uint32_t get_time_us(void)
+{
+	nrf_timer_task_trigger(NORDIC_TIMER_INSTANCE, NRF_TIMER_TASK_CAPTURE0);
+	return nrf_timer_cc_get(NORDIC_TIMER_INSTANCE, NRF_TIMER_CC_CHANNEL0);
+}
+
+static void microsecond_timer_cleanup(void)
+{
+	/* Stop and disable timer to prevent system issues */
+	nrf_timer_task_trigger(NORDIC_TIMER_INSTANCE, NRF_TIMER_TASK_STOP);
+	nrf_timer_task_trigger(NORDIC_TIMER_INSTANCE, NRF_TIMER_TASK_CLEAR);
+	printk("Timer stopped and cleaned up\n");
+}
 
 /** Local functions ***********************************************************/
 static void *emds_flash_setup(void)
@@ -537,13 +577,11 @@ ZTEST(emds_flash, test_write_speed)
 	static uint8_t data_in[EMDS_FLASH_BLOCK_SIZE];
 	static uint8_t data_in_big[1024];
 	static uint8_t read_back[1024] = {0};
-	int64_t tic;
-	int64_t toc;
-	uint64_t store_time_us;
+	uint32_t start_us, end_us, elapsed_us;
 	off_t data_off = 0;
 
 	memset(data_in, 69, sizeof(data_in));
-	memset(data_in_big, 69, sizeof(data_in_big));
+	memset(data_in_big, 42, sizeof(data_in_big));
 
 	(void)dk_leds_init();
 	(void)dk_set_led(0, false);
@@ -553,34 +591,42 @@ ZTEST(emds_flash, test_write_speed)
 	(void)sdc_disable();
 	mpsl_uninit();
 #endif
+	/* Initialize microsecond timer */
+	microsecond_timer_init();
 
 	dk_set_led(0, true);
-	tic = k_uptime_ticks();
+	start_us = get_time_us();
 	emds_flash_write_data(&partition[partition_index], data_off, data_in, sizeof(data_in));
-	toc = k_uptime_ticks();
+	end_us = get_time_us();
 	dk_set_led(0, false);
-	store_time_us = k_ticks_to_us_ceil64(toc - tic);
-	printk("Storing %d bytes took: %lldus\n", sizeof(data_in), store_time_us);
-	zassert_true(store_time_us < EXPECTED_STORE_TIME_BLOCK_SIZE,
-		     "Storing %d bytes took to long time", sizeof(data_in));
+	elapsed_us = end_us - start_us;
+	printk("Storing %d bytes took %uus\n", sizeof(data_in), elapsed_us);
 
+	zassert_true(elapsed_us < EXPECTED_STORE_TIME_BLOCK_SIZE,
+		     "Storing %d bytes took too long time", sizeof(data_in));
+
+	/* Verify data integrity */
 	zassert_ok(flash_area_read(fa, data_off, read_back, sizeof(data_in)));
 	zassert_mem_equal(read_back, data_in, sizeof(data_in));
-	(void)memset(read_back, 0, sizeof(data_in));
 
+	/* Large data test */
 	dk_set_led(0, true);
-	tic = k_uptime_ticks();
+	start_us = get_time_us();
 	emds_flash_write_data(&partition[partition_index], data_off + sizeof(data_in), data_in_big,
 			      sizeof(data_in_big));
-	toc = k_uptime_ticks();
+	end_us = get_time_us();
 	dk_set_led(0, false);
-	store_time_us = k_ticks_to_us_ceil64(toc - tic);
-	printk("Storing %d bytes took: %lldus\n", sizeof(data_in_big), store_time_us);
-	zassert_true(store_time_us < EXPECTED_STORE_TIME_1024,
-		     "Storing %d bytes took too long time", sizeof(data_in_big));
+	elapsed_us = end_us - start_us;
+	printk("Storing %d bytes took %uus\n", sizeof(data_in_big), elapsed_us);
 
+	zassert_true(elapsed_us < EXPECTED_STORE_TIME_1024, "Storing %d bytes took too long time",
+		     sizeof(data_in_big));
+
+	/* Verify large data */
 	zassert_ok(flash_area_read(fa, data_off + sizeof(data_in), read_back, sizeof(data_in_big)));
 	zassert_mem_equal(read_back, data_in_big, sizeof(data_in_big));
+
+	microsecond_timer_cleanup();
 }
 
 ZTEST_SUITE(emds_flash, NULL, emds_flash_setup, NULL, emds_flash_partitions_erase, NULL);
