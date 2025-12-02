@@ -16,6 +16,7 @@
 #include "common.h"
 #include "microcode_binary.h"
 #include <nrf_security_mutexes.h>
+#include <sxsymcrypt/trng.h>
 
 #if !defined(CONFIG_BUILD_WITH_TFM)
 #define LOG_ERR_MSG(msg) LOG_ERR(msg)
@@ -60,6 +61,16 @@ void cracen_acquire(void)
 							     CRACEN_ENABLE_PKEIKG_Msk);
 		irq_enable(CRACEN_IRQn);
 		LOG_DBG_MSG("Powered on CRACEN.");
+
+#ifdef CONFIG_CRACEN_HW_VERSION_LITE
+		/* CRACEN Lite TRNG workaround. Configure TRNG test thresholds after power-on.
+		 * The IKG's internal PRNG directly accesses the TRNG hardware, but these
+		 * registers reset to incorrect default values when CRACEN is powered down.
+		 * We must reconfigure them every time CRACEN powers up to prevent entropy
+		 * errors in IKG operations.
+		 */
+		sx_trng_configure_cracen_lite_workaround();
+#endif /* CONFIG_CRACEN_HW_VERSION_LITE */
 	}
 
 	nrf_security_mutex_unlock(cracen_mutex);

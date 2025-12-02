@@ -208,6 +208,21 @@ int sx_trng_restore_state(struct sx_trng *ctx, const struct sx_trng_config *conf
  */
 void sx_trng_restart(struct sx_trng *ctx);
 
+#if defined(CONFIG_CRACEN_HW_VERSION_LITE)
+/** Configure CRACEN Lite TRNG test threshold registers
+ *
+ * This function configures the TRNG REPEATTHRESHOLD and PROPTHRESHOLD registers
+ * with values that work around incorrect hardware defaults on CRACEN Lite.
+ *
+ * This must be called after CRACEN is powered on to ensure the IKG's internal
+ * CTR-DRBG can access the TRNG without entropy errors. The registers are lost
+ * when CRACEN powers down and must be reconfigured on every power-up.
+ *
+ * This function is safe to call even when the TRNG is not yet enabled.
+ */
+void sx_trng_configure_cracen_lite_workaround(void);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
