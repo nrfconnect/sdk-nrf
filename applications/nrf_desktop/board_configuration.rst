@@ -176,15 +176,19 @@ Sample mouse (``nrf54lm20dk/nrf54lm20a/cpuapp``)
       * Bluetooth LE and USB High-Speed transports are enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
         USB High-Speed is configured to use the USB next stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT`).
-        The :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE` and :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB` Kconfig options are enabled in mouse configurations to improve the USB High-Speed report rate.
-      * In ``debug`` configurations, logs are provided through the UART.
+        The :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE` and :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB` Kconfig options are enabled in mouse configurations to improve the HID report rate over USB.
+      * In ``debug``, ``ram_load``, and ``llvm`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54LM20 DK, see the :ref:`ug_nrf54l15_gs` documentation.
       * In ``llvm`` configurations, the partition layout is different to accommodate for the higher memory footprint of the ``llvm``  toolchain.
-      * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+      * The ``debug``, ``release``, and ``llvm`` configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
         All of the configurations enable hardware cryptography for the MCUboot bootloader.
         The application image is verified using a pure ED25519 signature.
         The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
         For more details on nRF54L Series cryptography, see :ref:`ug_nrf54l_cryptography`.
+      * The ``ram_load`` and ``release_ram_load`` configurations use the MCUboot bootloader built in the RAM load mode (``MCUBOOT``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+        Configurations in this bootloader mode use the same security features as direct-xip mode (``MCUBOOT+XIP``), including hardware cryptography, signature type, and public key storage.
+        The application code is executed from the RAM in this mode to improve the HID report rate over USB.
+        For more details on the RAM load mode, see the MCUboot :ref:`nrf_desktop_configuring_mcuboot_bootloader_ram_load` documentation section.
 
 Sample mouse or dongle (``nrf54h20dk/nrf54h20/cpuapp``)
       * The configuration uses the nRF54H20 DK.
@@ -193,7 +197,7 @@ Sample mouse or dongle (``nrf54h20dk/nrf54h20/cpuapp``)
       * Bluetooth LE and USB High-Speed transports are enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
         USB High-Speed is configured to use the USB next stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT`).
-        The :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE` and :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB` Kconfig options are enabled in mouse configurations to improve the USB High-Speed report rate.
+        The :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE` and :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB` Kconfig options are enabled in mouse configurations to improve the HID report rate over USB.
       * In ``debug`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54H20 DK, see the :ref:`ug_nrf54h20_gs` documentation.
       * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
