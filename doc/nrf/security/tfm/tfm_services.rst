@@ -36,6 +36,31 @@ See :ref:`lib_tfm_ioctl_api` for more information about APIs available for the n
 
 For more information about the general features of the TF-M Platform partition, see `TF-M Platform`_.
 
+.. _ug_tfm_services_system_reset:
+
+System Reset service
+--------------------
+
+The System Reset service is one of the default TF-M platform services that has a specific implementation for the |NCS|.
+It allows to perform a system reset through the TF-M platform service using the :c:func:`tfm_hal_system_reset` function.
+
+This service is enabled when you enable the :kconfig:option:`CONFIG_TFM_PARTITION_PLATFORM` Kconfig option.
+
+.. _ug_tfm_services_system_off:
+
+System OFF service
+------------------
+
+The System OFF service is one of the TF-M platform services specific to the |NCS|.
+It allows the non-secure application to request the system to enter the System OFF mode using a secure service call.
+
+The System OFF mode is part of the power and clock management system and is available on selected Nordic Semiconductor devices, including the nRF54L Series.
+For more details about the System OFF mode, see the device datasheet, for example the `nRF54L15 Power and clock management`_ page.
+
+To enable the System OFF service in the |NCS|, enable the :kconfig:option:`CONFIG_TFM_NRF_SYSTEM_OFF_SERVICE` Kconfig option.
+
+Zephyr's :zephyr:code-sample:`nrf_system_off` sample demonstrates how to use the System OFF service.
+
 .. _ug_tfm_services_its:
 
 Internal Trusted Storage service

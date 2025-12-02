@@ -141,3 +141,16 @@ Depending on the selected method, complete the following steps:
          .. code-block:: console
 
             west flash
+
+.. _building_nrf54l_system_off_service:
+
+Enabling the System OFF service
+*******************************
+
+When :ref:`building with Trusted Firmware-M <ug_tfm_building>`, you can build the nRF54L Series devices with the System OFF service enabled.
+
+The System OFF service is one of the :ref:`TF-M platform services <ug_tfm_services_platform>` specific to the |NCS|.
+
+.. include:: ../../../security/tfm/tfm_services.rst
+   :start-after: The System OFF service is one of the TF-M platform services specific to the |NCS|.
+   :end-before: .. _ug_tfm_services_its:
