@@ -21,7 +21,7 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 
 static int dppi_shared_resources_init(void)
 {
-	nrfx_err_t err;
+	int err;
 	static nrfx_timer_t timer = NRFX_TIMER_INSTANCE(NRF_TIMER1);
 	uint32_t base_frequency = NRF_TIMER_BASE_FREQUENCY_GET(timer.p_reg);
 	nrfx_timer_config_t config = NRFX_TIMER_DEFAULT_CONFIG(base_frequency);
@@ -35,7 +35,7 @@ static int dppi_shared_resources_init(void)
 	config.bit_width = NRF_TIMER_BIT_WIDTH_32;
 
 	err = nrfx_timer_init(&timer, &config, timer_handler);
-	zassert_equal(err, NRFX_SUCCESS, "Unexpected error:%d", err);
+	zassert_equal(err, 0, "Unexpected error:%d", err);
 
 	rv = nrfx_gppi_conn_alloc(evt, tsk, &handle);
 	zassert_equal(rv, 0);
