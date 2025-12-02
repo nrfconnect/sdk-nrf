@@ -79,6 +79,7 @@ Developing with nRF54H Series
 =============================
 
 * Updated the location of the merged binaries in direct-xip mode from :file:`build/zephyr` to :file:`build`.
+* The ``CONFIG_PSA_SSF_CRYPTO_CLIENT`` Kconfig option has been renamed to :kconfig:option:`CONFIG_NRF_IRONSIDE_SE_PSA_SERVICES`.
 
 Developing with nRF53 Series
 ============================

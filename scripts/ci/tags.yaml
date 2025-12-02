@@ -1425,7 +1425,7 @@ ci_samples_sdfw:
     - nrf/samples/ironside_se/
     - nrf/subsys/nrf_rpc/
     - nrf/subsys/sdfw_services/
-    - nrf/subsys/nrf_security/src/ssf_secdom/
+    - nrf/subsys/nrf_security/src/ironside_se/
     - nrfxlib/nrf_rpc/
     - zephyr/drivers/mbox/
     - zephyr/modules/hal_nordic/

@@ -39,7 +39,7 @@ if(CONFIG_BUILD_WITH_TFM)
   include(${NRF_SECURITY_ROOT}/cmake/config_to_tf-m.cmake)
 endif()
 
-if(CONFIG_BUILD_WITH_TFM OR CONFIG_PSA_SSF_CRYPTO_CLIENT)
+if(CONFIG_BUILD_WITH_TFM OR CONFIG_NRF_IRONSIDE_SE_PSA_SERVICES)
   # We enable either TF-M or the SSF client PSA crypto interface but we are
   # not in the secure image build
 
