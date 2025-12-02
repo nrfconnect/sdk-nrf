@@ -1,4 +1,4 @@
-.. _bluetooth_mesh_sensor_client:
+.. _bluetooth_mesh_nlc_hvac_integration:
 
 Bluetooth Mesh NLC: HVAC Integration (Sensor observer)
 ######################################################
@@ -155,11 +155,11 @@ FEM support
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/mesh/sensor_client`
+.. |sample path| replace:: :file:`samples/bluetooth/mesh/nlc_hvac_integration`
 
 .. include:: /includes/build_and_run.txt
 
-.. _bluetooth_mesh_sensor_client_testing:
+.. _bluetooth_mesh_nlc_hvac_integration_testing:
 
 Testing
 =======

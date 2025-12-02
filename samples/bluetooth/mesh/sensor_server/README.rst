@@ -12,7 +12,7 @@ Eight different sensor types are used to showcase different ways for the server 
 In addition, the samples demonstrate usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`, as well as how to add and write to a sensor setting.
 
 .. note::
-   This sample must be paired with the :ref:`bluetooth_mesh_sensor_client` sample to show any functionality.
+   This sample must be paired with the :ref:`bluetooth_mesh_nlc_hvac_integration` sample to show any functionality.
    The mesh sensor provides the sensor data used by the observer.
 
 This sample demonstrates how to implement the following :ref:`ug_bt_mesh_nlc`:
@@ -35,7 +35,7 @@ For provisioning and configuring of the mesh model instances, the sample require
 .. note::
    |thingy53_sample_note|
 
-Additionally, the sample requires the :ref:`bluetooth_mesh_sensor_client` sample application.
+Additionally, the sample requires the :ref:`bluetooth_mesh_nlc_hvac_integration` sample application.
 The application needs to be programmed on a separate device, and configured according to the sensor observer sample's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>`.
 
 .. include:: /includes/tfm.txt
@@ -78,7 +78,7 @@ The following Bluetooth Mesh sensor types, and their settings, are used in this 
   * :c:var:`bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range` - Periodically requested by the client.
 
 .. note::
-   These values can be requested through shell commands by the :ref:`bluetooth_mesh_sensor_client`.
+   These values can be requested through shell commands by the :ref:`bluetooth_mesh_nlc_hvac_integration`.
 
 Moreover, the on-chip ``TEMP_NRF5`` temperature sensor is used for the nRF52 series, and the ``BME680`` temperature sensor for Thingy:53.
 
@@ -219,8 +219,8 @@ Testing
 =======
 
 .. note::
-   The Bluetooth Mesh sensor sample cannot demonstrate any functionality on its own, and needs a device with the :ref:`bluetooth_mesh_sensor_client` sample running in the same mesh network.
-   Before testing the sensor sample, go through the sensor observer sample's :ref:`testing guide <bluetooth_mesh_sensor_client_testing>` with a different development kit.
+   The Bluetooth Mesh sensor sample cannot demonstrate any functionality on its own, and needs a device with the :ref:`bluetooth_mesh_nlc_hvac_integration` sample running in the same mesh network.
+   Before testing the sensor sample, go through the sensor observer sample's :ref:`testing guide <bluetooth_mesh_nlc_hvac_integration_testing>` with a different development kit.
 
 After programming the sample to your development kit, you can test it by using a smartphone with `nRF Mesh mobile app`_ installed.
 Testing consists of provisioning the device, and configuring it for communication with the mesh models.
