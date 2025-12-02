@@ -30,8 +30,9 @@ static void clock_init(void)
 {
 	int err;
 	int res;
-	struct onoff_manager *clk_mgr;
 	struct onoff_client clk_cli;
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
+	struct onoff_manager *clk_mgr;
 
 	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
 	if (!clk_mgr) {
@@ -42,6 +43,20 @@ static void clock_init(void)
 	sys_notify_init_spinwait(&clk_cli.notify);
 
 	err = onoff_request(clk_mgr, &clk_cli);
+#else
+	static struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1((NRF_CLOCK_HAS_HFCLK),
+								(nordic_nrf_clock_hfclk),
+								(nordic_nrf_clock_xo)));
+
+	if (!dev) {
+		printk("Unable to get the Clock device\n");
+		return;
+	}
+
+	sys_notify_init_spinwait(&clk_cli.notify);
+
+	err = nrf_clock_control_request(dev, NULL, &clk_cli);
+#endif
 	if (err < 0) {
 		printk("Clock request failed: %d\n", err);
 		return;

@@ -14,8 +14,9 @@
 #include <zephyr/device.h>
 #if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP) && defined(CONFIG_NORDIC_QSPI_NOR)
 #include <zephyr/drivers/flash/nrf_qspi_nor.h>
-#if NRFX_CLOCK_ENABLED && (defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
-#include <nrfx_clock.h>
+#if defined(NRFX_CLOCK_HFCLK) &&                                                                   \
+	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
+#include <nrfx_clock_hfclk.h>
 #endif
 #endif /* CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP */
 
@@ -242,20 +243,22 @@ out:
 	return status;
 }
 #elif CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP
-#if NRFX_CLOCK_ENABLED && (defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
+#if defined(NRFX_CLOCK_HFCLK) &&                                                                   \
+	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
 static nrf_clock_hfclk_div_t saved_divider = NRF_CLOCK_HFCLK_DIV_1;
 #endif
 static void enable_xip_and_set_cpu_freq(void)
 {
-#if NRFX_CLOCK_ENABLED && (defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
+#if defined(NRFX_CLOCK_HFCLK) &&                                                                   \
+	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
 	/* Save the current divider */
-	saved_divider = nrfx_clock_divider_get(NRF_CLOCK_DOMAIN_HFCLK);
+	saved_divider = nrfx_clock_hfclk_divider_get();
 
 	if (saved_divider == NRF_CLOCK_HFCLK_DIV_2) {
 		LOG_DBG("CPU frequency is already set to 64 MHz (DIV_2)");
 	} else {
 		/* Set CPU frequency to 64MHz (DIV_2) */
-		int ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_2);
+		int ret = nrfx_clock_hfclk_divider_set(NRF_CLOCK_HFCLK_DIV_2);
 
 		if (ret != 0) {
 			LOG_ERR("Failed to set CPU frequency: %d", ret);
@@ -285,12 +288,13 @@ static void disable_xip_and_restore_cpu_freq(void)
 	LOG_DBG("XIP disabled");
 #endif
 
-#if NRFX_CLOCK_ENABLED && (defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
+#if defined(NRFX_CLOCK_HFCLK) &&                                                                   \
+	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
 	/* Restore CPU frequency to the saved value */
-	nrf_clock_hfclk_div_t current_divider = nrfx_clock_divider_get(NRF_CLOCK_DOMAIN_HFCLK);
+	nrf_clock_hfclk_div_t current_divider = nrfx_clock_hfclk_divider_get();
 
 	if (current_divider != saved_divider) {
-		int ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, saved_divider);
+		int ret = nrfx_clock_hfclk_divider_set(saved_divider);
 
 		if (ret != 0) {
 			LOG_ERR("Failed to restore CPU frequency: %d", ret);

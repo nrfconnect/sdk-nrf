@@ -723,18 +723,30 @@ static int clock_init(void)
 {
 	int err;
 	int res;
-	struct onoff_manager *clk_mgr;
 	struct onoff_client clk_cli;
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
+	struct onoff_manager *clk_mgr;
 
 	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
 	if (!clk_mgr) {
+#else
+	struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1((NRF_CLOCK_HAS_HFCLK),
+							(nordic_nrf_clock_hfclk),
+							(nordic_nrf_clock_xo)));
+
+	if (!dev) {
+#endif
 		printk("Unable to get the Clock manager\n");
 		return -ENXIO;
 	}
 
 	sys_notify_init_spinwait(&clk_cli.notify);
 
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	err = onoff_request(clk_mgr, &clk_cli);
+#else
+	err = nrf_clock_control_request(dev, NULL, &clk_cli);
+#endif
 	if (err < 0) {
 		printk("Clock request failed: %d\n", err);
 		return err;

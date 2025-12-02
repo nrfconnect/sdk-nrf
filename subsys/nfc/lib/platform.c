@@ -51,6 +51,10 @@ LOG_MODULE_REGISTER(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 static struct onoff_manager *hf_mgr;
 #elif IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2)
 static const struct device *clk_dev = DEVICE_DT_GET(DT_NODELABEL(hfxo));
+#elif defined(CONFIG_CLOCK_CONTROL_NRF_HFCLK) || defined(CONFIG_CLOCK_CONTROL_NRF_XO)
+static const struct device *clk_dev = DEVICE_DT_GET_ONE(COND_CODE_1((NRF_CLOCK_HAS_HFCLK),
+								    (nordic_nrf_clock_hfclk),
+								    (nordic_nrf_clock_xo)));
 #else
 BUILD_ASSERT(false, "No Clock Control driver");
 #endif /* IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) */
@@ -248,7 +252,8 @@ void nfc_platform_event_handler(nrfx_nfct_evt_t const *event)
 #if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
 		sys_notify_init_callback(&cli.notify, clock_handler);
 		err = onoff_request(hf_mgr, &cli);
-#elif IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2)
+#elif IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2) || defined(CONFIG_CLOCK_CONTROL_NRF_HFCLK) || \
+	defined(CONFIG_CLOCK_CONTROL_NRF_XO)
 		sys_notify_init_callback(&cli.notify, clock_handler);
 		err = nrf_clock_control_request(clk_dev, NULL, &cli);
 #endif /* IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) */
@@ -259,7 +264,8 @@ void nfc_platform_event_handler(nrfx_nfct_evt_t const *event)
 
 #if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
 		err = onoff_cancel_or_release(hf_mgr, &cli);
-#elif IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2)
+#elif IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2) || defined(CONFIG_CLOCK_CONTROL_NRF_HFCLK) || \
+	defined(CONFIG_CLOCK_CONTROL_NRF_XO)
 		err = nrf_clock_control_cancel_or_release(clk_dev, NULL, &cli);
 #endif /* IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) */
 		__ASSERT_NO_MSG(err >= 0);
