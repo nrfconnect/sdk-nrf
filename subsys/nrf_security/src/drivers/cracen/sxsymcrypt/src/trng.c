@@ -30,7 +30,13 @@
 #if defined(CONFIG_CRACEN_HW_VERSION_LITE)
 #define RNG_REPEATTHRESHOLD_VAL (21)
 #define RNG_PROPTESTCUTOFF_VAL	(311)
-#endif
+
+void sx_trng_configure_cracen_lite_workaround(void)
+{
+	sx_wr_trng(BA431_REG_REPEATTHRESHOLD, RNG_REPEATTHRESHOLD_VAL);
+	sx_wr_trng(BA431_REG_PROPTHRESHOLD, RNG_PROPTESTCUTOFF_VAL);
+}
+#endif /* CONFIG_CRACEN_HW_VERSION_LITE */
 
 static int ba431_check_state(void)
 {
@@ -120,12 +126,10 @@ int sx_trng_open(struct sx_trng *ctx, const struct sx_trng_config *config)
 	sx_wr_trng(BA431_REG_ClkDiv_OFST, rng_clkdiv);
 	sx_wr_trng(BA431_REG_InitWaitVal_OFST, rng_init_wait_val);
 
-	/* CRACEN Lite has incorrect values for the TRNG tests. We update these here as a workaround
+	/* Note that CRACEN Lite TRNG test threshold registers (REPEATTHRESHOLD and PROPTHRESHOLD)
+	 * are configured in cracen_acquire() to ensure they're set correctly on every power-up,
+	 * including for IKG operations that access the TRNG hardware directly.
 	 */
-#if defined(CONFIG_CRACEN_HW_VERSION_LITE)
-	sx_wr_trng(BA431_REG_REPEATTHRESHOLD, RNG_REPEATTHRESHOLD_VAL);
-	sx_wr_trng(BA431_REG_PROPTHRESHOLD, RNG_PROPTESTCUTOFF_VAL);
-#endif /* CONFIG_CRACEN_HW_VERSION_LITE */
 
 	/* Configure the control register and set the enable bit */
 	control = (RNG_NB_128BIT_BLOCKS << BA431_FLD_Control_Nb128BitBlocks_LSB);
