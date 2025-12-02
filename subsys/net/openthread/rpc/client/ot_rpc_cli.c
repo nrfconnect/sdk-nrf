@@ -48,13 +48,15 @@ static void invoke_cli_output_callback(const char *format, ...)
 {
 	va_list args;
 
-	if (cli_output_callback == NULL) {
+	otCliOutputCallback callback = cli_output_callback;
+
+	if (callback == NULL) {
 		/* Not yet initialized, drop the output */
 		return;
 	}
 
 	va_start(args, format);
-	cli_output_callback(cli_output_context, format, args);
+	callback(cli_output_context, format, args);
 	va_end(args);
 }
 
@@ -72,9 +74,7 @@ static void ot_rpc_cmd_cli_output(const struct nrf_rpc_group *group, struct nrf_
 
 	/* Invoke the client's CLI output callback and release the input packet */
 
-	ot_rpc_mutex_lock();
 	invoke_cli_output_callback("%.*s", output_line.len, output_line.value);
-	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
 	/* Encode and send the response */
