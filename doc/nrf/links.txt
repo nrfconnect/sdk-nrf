@@ -846,6 +846,7 @@
 .. _`nRF54L15 RRAMC`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/rramc.html
 .. _`nRF54L15 REGION.CONFIG`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/rramc.html#ariaid-title35
 .. _`nRF54L15 CRACEN`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/cracen.html
+.. _`nRF54L15 Power and clock management`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/pmu.html
 
 .. _`nRF54LM20A Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54LM20A/page/keyfeatures_html5.html
 .. _`nRF54LM20 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf54lm20_dk/page/UG/nRF54LM20_DK/intro/intro.html

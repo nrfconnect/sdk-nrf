@@ -539,17 +539,17 @@ config TFM_PSA_FRAMEWORK_HAS_MM_IOVEC
 	  the Secure Partition.
 
 config TFM_NRF_SYSTEM_OFF_SERVICE
-	bool "TF-M NRF System Off Service [EXPERIMENTAL]"
+	bool "TF-M System OFF service [EXPERIMENTAL]"
 	depends on TFM_ISOLATION_LEVEL = 1
 	depends on TFM_SFN
 	depends on SOC_SERIES_NRF54LX
 	depends on !RETAINED_MEM_NRF_RAM_CTRL
 	select EXPERIMENTAL
 	help
-	  Provide a system off service for the nRF54L series SoCs.
+	  Provide a System OFF service for the nRF54L Series SoCs.
 	  This service allows the non-secure application to request
-	  the system to enter system off mode via a secure service call.
-	  This service will disable RAM retention for all RAM blocks
-	  before entering system off mode.
+	  the system to enter the System OFF mode using a secure service call.
+	  This service disables RAM retention for all RAM blocks
+	  before entering the System OFF mode.
 
 endif # BUILD_WITH_TFM
