@@ -13,13 +13,13 @@
 
 static psa_status_t cracen_trng_init(void)
 {
-	nrfx_err_t nrfx_error;
+	int nrfx_error;
 
 	/* This is TRNG even though the naming states otherwise.
 	 * On devices that don't support hardware crypto it will default to trng
 	 */
 	nrfx_error = nrfx_cracen_ctr_drbg_init();
-	if (nrfx_error != NRFX_SUCCESS) {
+	if (nrfx_error != 0) {
 		return PSA_ERROR_HARDWARE_FAILURE;
 	}
 
@@ -31,7 +31,7 @@ psa_status_t cracen_trng_get_entropy(uint32_t flags, size_t *estimate_bits,
 {
 	uint16_t request_len = MIN(UINT16_MAX, output_size);
 	psa_status_t status;
-	nrfx_err_t nrfx_error;
+	int nrfx_error;
 
 	/* Ignore flags as CRACEN TRNG doesn't support entropy generation flags */
 	(void)flags;
@@ -49,7 +49,7 @@ psa_status_t cracen_trng_get_entropy(uint32_t flags, size_t *estimate_bits,
 	 * On devices that don't support hardware crypto it will default to trng
 	 */
 	nrfx_error = nrfx_cracen_ctr_drbg_random_get(output, request_len);
-	if (nrfx_error != NRFX_SUCCESS) {
+	if (nrfx_error != 0) {
 		return PSA_ERROR_HARDWARE_FAILURE;
 	}
 
