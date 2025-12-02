@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config PARTITION_MANAGER
+	default n if SOC_SERIES_NRF52X || SOC_NRF54L10 || SOC_NRF54L15 || SOC_NRF54LM20A
+
 # This config has to be enabled manually for variants with shields, because sysbuild does not support it.
 config WIFI_NRF70
 	default y if BOARD_NRF7002DK
