@@ -26,20 +26,20 @@ An overview of the NLC profiles and the samples supporting them is provided in a
 .. table::
    :align: center
 
-   +-----------------------------------------+--------------------------------------+
-   | NLC profile                             | Sample                               |
-   +=========================================+======================================+
-   | Ambient Light Sensor NLC Profile        | :ref:`bluetooth_mesh_sensor_server`  |
-   +-----------------------------------------+--------------------------------------+
-   | Basic Lightness Controller NLC Profile  | :ref:`bluetooth_mesh_light_lc`       |
-   +-----------------------------------------+--------------------------------------+
-   | Basic Scene Selector NLC Profile        | :ref:`bluetooth_mesh_light_dim`      |
-   +-----------------------------------------+--------------------------------------+
-   | Dimming Control NLC Profile             | :ref:`bluetooth_mesh_light_dim`      |
-   +-----------------------------------------+--------------------------------------+
-   | Energy Monitor NLC Profile              | :ref:`bluetooth_mesh_light_lc`       |
-   +-----------------------------------------+--------------------------------------+
-   | HVAC Integration NLC Profile            | :ref:`bluetooth_mesh_sensor_client`  |
-   +-----------------------------------------+--------------------------------------+
-   | Occupancy Sensor NLC Profile            | :ref:`bluetooth_mesh_sensor_server`  |
-   +-----------------------------------------+--------------------------------------+
+   +-----------------------------------------+-----------------------------------------------+
+   | NLC profile                             | Sample                                        |
+   +=========================================+===============================================+
+   | Ambient Light Sensor NLC Profile        | :ref:`bluetooth_mesh_nlc_ambient_light_sensor`|
+   +-----------------------------------------+-----------------------------------------------+
+   | Basic Lightness Controller NLC Profile  | :ref:`bluetooth_mesh_light_lc`                |
+   +-----------------------------------------+-----------------------------------------------+
+   | Basic Scene Selector NLC Profile        | :ref:`bluetooth_mesh_light_dim`               |
+   +-----------------------------------------+-----------------------------------------------+
+   | Dimming Control NLC Profile             | :ref:`bluetooth_mesh_light_dim`               |
+   +-----------------------------------------+-----------------------------------------------+
+   | Energy Monitor NLC Profile              | :ref:`bluetooth_mesh_light_lc`                |
+   +-----------------------------------------+-----------------------------------------------+
+   | HVAC Integration NLC Profile            | :ref:`bluetooth_mesh_sensor_client`           |
+   +-----------------------------------------+-----------------------------------------------+
+   | Occupancy Sensor NLC Profile            | :ref:`bluetooth_mesh_nlc_ambient_light_sensor`|
+   +-----------------------------------------+-----------------------------------------------+

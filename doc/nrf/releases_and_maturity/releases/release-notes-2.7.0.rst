@@ -641,7 +641,7 @@ Bluetooth Mesh samples
 * Added support for the nRF54L15 PDK board in the following samples:
 
   * :ref:`bluetooth_mesh_sensor_client` sample
-  * :ref:`bluetooth_mesh_sensor_server` sample
+  * :ref:`bluetooth_mesh_nlc_ambient_light_sensor` sample
   * :ref:`bluetooth_ble_peripheral_lbs_coex` sample
   * :ref:`bt_mesh_chat` sample
   * :ref:`bluetooth_mesh_light_switch` sample
@@ -658,7 +658,7 @@ Bluetooth Mesh samples
 
   * Added motion sensing, time since motion sensed, and people count occupancy sensor types.
 
-* :ref:`bluetooth_mesh_sensor_server` sample:
+* :ref:`bluetooth_mesh_nlc_ambient_light_sensor` sample:
 
   * Added motion sensing, time since motion sensed, and people count occupancy sensor types.
 

@@ -290,18 +290,18 @@ The Sensor Server model is now configured and able to receive messages from and 
 Occupancy mode
 --------------
 
-You can combine this sample with the :ref:`bluetooth_mesh_sensor_server` sample to trigger the :ref:`Occupancy On <bt_mesh_light_ctrl_srv_occupancy_on_event>` event on the Light LC Server by the Occupancy sensor.
+You can combine this sample with the :ref:`bluetooth_mesh_nlc_ambient_light_sensor` sample to trigger the :ref:`Occupancy On <bt_mesh_light_ctrl_srv_occupancy_on_event>` event on the Light LC Server by the Occupancy sensor.
 
 To do this, first configure the Light LC Server on the **Mesh Light Fixture** node:
 
 * Bind the model to **Application Key 1**.
 * Set the subscription parameters: Create a dedicated group address.
 
-Prepare the :ref:`bluetooth_mesh_sensor_server` sample:
+Prepare the :ref:`bluetooth_mesh_nlc_ambient_light_sensor` sample:
 
 * Build, run and provision the **Mesh Sensor** node as described in the sample's documentation.
 
-Configure the Sensor Server that is instantiated on the Element 2 of the :ref:`bluetooth_mesh_sensor_server` sample:
+Configure the Sensor Server that is instantiated on the Element 2 of the :ref:`bluetooth_mesh_nlc_ambient_light_sensor` sample:
 
 * Bind the model to **Application Key 1**.
 * Set the publication parameters:

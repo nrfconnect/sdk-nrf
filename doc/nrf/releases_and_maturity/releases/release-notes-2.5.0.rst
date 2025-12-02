@@ -532,7 +532,7 @@ Bluetooth mesh samples
 
   * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :zephyr:board:`thingy53`.
 
-* :ref:`bluetooth_mesh_sensor_server` sample:
+* :ref:`bluetooth_mesh_nlc_ambient_light_sensor` sample:
 
   * Added:
 
