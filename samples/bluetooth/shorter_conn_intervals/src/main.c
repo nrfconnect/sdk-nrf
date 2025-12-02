@@ -349,7 +349,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 	LOG_INF("Connected as %s",
 		conn_info.role == BT_CONN_ROLE_CENTRAL ? "central" : "peripheral");
-	LOG_INF("Conn. interval is %u μs", conn_info.le.interval_us);
+	LOG_INF("Conn. interval is %u us", conn_info.le.interval_us);
 
 #if defined(CONFIG_BT_SMP)
 	if (conn_info.role == BT_CONN_ROLE_PERIPHERAL) {
@@ -436,7 +436,7 @@ static int set_conn_rate_defaults(uint32_t interval_min_us, uint32_t interval_ma
 		return err;
 	}
 
-	LOG_INF("SCI default connection rate parameters set (min=%u μs, max=%u μs)",
+	LOG_INF("SCI default connection rate parameters set (min=%u us, max=%u us)",
 		interval_min_us, interval_max_us);
 	return 0;
 }
@@ -491,7 +491,7 @@ static void conn_rate_changed(struct bt_conn *conn, uint8_t status,
 {
 	if (status == BT_HCI_ERR_SUCCESS) {
 		LOG_INF("Connection rate changed: "
-			"interval %u μs, "
+			"interval %u us, "
 			"subrate factor %d, "
 			"peripheral latency %d, "
 			"continuation number %d, "
@@ -534,7 +534,7 @@ static void frame_space_updated(struct bt_conn *conn,
 				const struct bt_conn_le_frame_space_updated *params)
 {
 	if (params->status == BT_HCI_ERR_SUCCESS) {
-		LOG_INF("Frame space updated: %u μs, PHYs: 0x%02x, spacing types: 0x%04x, "
+		LOG_INF("Frame space updated: %u us, PHYs: 0x%02x, spacing types: 0x%04x, "
 			"initiator: %s",
 			params->frame_space, params->phys, params->spacing_types,
 			fsu_initiator_to_str(params->initiator));
@@ -599,8 +599,8 @@ static void test_run(void)
 			common_min_interval_us = MAX(local_min_interval_us, remote_min_interval_us);
 			test_intervals[0] = common_min_interval_us;
 
-			LOG_INF("Minimum connection intervals: Local: %u μs, Peer: %u μs, "
-				"Common: %u μs",
+			LOG_INF("Minimum connection intervals: Local: %u us, Peer: %u us, "
+				"Common: %u us",
 				local_min_interval_us, remote_min_interval_us,
 				common_min_interval_us);
 		}
@@ -621,7 +621,7 @@ static void test_run(void)
 		k_sleep(K_MSEC(200)); /* wait for latency response */
 
 		if (latency_response) {
-			LOG_INF("Transmission Latency: %u μs", latency_response);
+			LOG_INF("Transmission Latency: %u us", latency_response);
 		} else {
 			LOG_WRN("Did not receive a latency response");
 		}
@@ -636,7 +636,7 @@ static void test_run(void)
 
 				uint32_t new_interval_us = test_intervals[interval_index];
 
-				LOG_INF("Requesting new connection interval: %u μs",
+				LOG_INF("Requesting new connection interval: %u us",
 					new_interval_us);
 
 				/* As a central, the lowest supported interval of the peripheral
@@ -694,7 +694,7 @@ int main(void)
 		LOG_WRN("Failed to read min conn interval (err %d)", err);
 		return 0;
 	}
-	LOG_INF("Local minimum connection interval: %u μs", local_min_interval_us);
+	LOG_INF("Local minimum connection interval: %u us", local_min_interval_us);
 
 	/* Set the initial allowed range of parameters that can be requested by the peripheral.
 	 * They will be overridden by any calls to bt_conn_le_conn_rate_request().
