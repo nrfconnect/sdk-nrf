@@ -189,6 +189,77 @@ For an example of a bootloader Kconfig configuration file defined by the applica
   Both mentioned firmware upgrade methods are not used simultaneously by any of the configurations.
   For example, the ``nrf52840dk/nrf52840`` board in ``mcuboot_smp`` file suffix uses only the background DFU and does not enable the serial recovery feature.
 
+RAM load mode
+~~~~~~~~~~~~~
+
+The RAM load mode is used for the :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`.
+In this mode, the MCUboot bootloader uses the same NVM partitioning as the direct-xip mode (the dual-bank DFU solution).
+Similarly to the direct-xip mode, the RAM load mode also relies on the image version to select the application image slot to be booted.
+However, instead of booting the image from the NVM slot, the bootloader in the RAM load mode copies the image from the non-volatile memory (NVM) to the RAM and boots it from there.
+The application image is always built for the RAM address space in only one variant.
+
+.. caution::
+   The RAM load mode of the MCUboot bootloader is not officially supported in |NCS|.
+   However, the mode is available in the |NCS| as the support for this feature has been developed as part of the Zephyr RTOS project.
+   This feature is only used in a limited context for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target configuration to improve performance.
+
+You can use the RAM load mode of the MCUboot bootloader to speed up the code execution for the application image, as code execution from the RAM is generally faster than from the NVM.
+This can improve the device performance during the activities that require high CPU usage.
+As an example, the nRF Desktop application uses the RAM load mode for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to achieve 8 kHz report rate over USB in the ``release_ram_load`` configuration variant (the second configuration variant - ``ram_load`` - is used for debugging purposes only).
+
+To set the MCUboot mode of operations to the RAM load mode, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_RAM_LOAD` Kconfig option in the sysbuild configuration.
+
+To support the RAM load mode, you must use DTS as the partitioning method, as the Partition Manager (PM) is not supported in this mode.
+To satisfy this requirement, disable explicitly the :kconfig:option:`SB_CONFIG_PARTITION_MANAGER` Kconfig option in your sysbuild configuration.
+Additionally, you must define the custom memory layout for the RAM in your target board configuration.
+Your RAM layout must define the following DTS child nodes as part of the ``cpuapp_sram`` DTS node in the address order listed below:
+
+* ``cpuapp_sram_app_rxm_region`` - This DTS node defines the hard limits for the executable ROM section (with the application image) and must be aligned with the :kconfig:option:`CONFIG_BOOT_IMAGE_EXECUTABLE_RAM_START` and the :kconfig:option:`CONFIG_BOOT_IMAGE_EXECUTABLE_RAM_SIZE` Kconfig options that are set in the MCUboot image configuration.
+  This DTS node describes the region in which the build system places the executable ROM section (code) and RAM section (data) of the application image.
+  The RAM section is located right after the ROM section - the RAM section may overflow the ``cpuapp_sram_app_rxm_region`` region and spill into the subsequent ``cpuapp_sram_mcuboot_ram_region`` region or even be entirely contained in this subsequent region.
+  The ``cpuapp_sram_mcuboot_ram_region`` region can be filled with the RAM section of the application image, as the application and bootloader code cannot run simultaneously.
+* ``cpuapp_sram_mcuboot_ram_region`` - This DTS node defines the RAM region for the MCUboot image and must be assigned to the MCUboot image as its chosen SRAM DTS node.
+
+For an example of the custom RAM layout that satisfies these requirements, see the :file:`nrf/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi` file.
+For an example of the RAM layout usage in the MCUboot bootloader image, see the :file:`nrf/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/images/mcuboot/app_ram_load.overlay` file.
+
+.. note::
+   The application image and the MCUboot image configuration must use the same memory layout.
+
+The RAM load mode requires using the Zephyr retention subsystem with the bootloader information sharing system.
+This subsystem is used by the MCUboot bootloader to provide image metadata to the application image.
+To enable the Zephyr retention subsystem, enable the following Kconfig options in your application image configuration and the MCUboot image configuration:
+
+* :kconfig:option:`CONFIG_RETENTION`
+* :kconfig:option:`CONFIG_RETAINED_MEM`
+* :kconfig:option:`CONFIG_RETAINED_MEM_ZEPHYR_RAM`
+
+In the application image configuration, enable the following Kconfig options:
+
+* :kconfig:option:`CONFIG_RETENTION_BOOTLOADER_INFO`
+* :kconfig:option:`CONFIG_RETENTION_BOOTLOADER_INFO_TYPE_MCUBOOT`
+* :kconfig:option:`CONFIG_RETENTION_BOOTLOADER_INFO_OUTPUT_FUNCTION`
+
+In the MCUboot image configuration, enable the following Kconfig options:
+
+* :kconfig:option:`CONFIG_BOOT_SHARE_DATA`
+* :kconfig:option:`CONFIG_BOOT_SHARE_DATA_BOOTINFO`
+* :kconfig:option:`CONFIG_BOOT_SHARE_BACKEND_RETENTION`
+
+The Zephyr retention subsystem requires the retention partition to be defined in the devicetree.
+For an example of the retention partition definition, see the :file:`nrf/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi` file.
+You must also assign the retention partition to the chosen DTS node ``zephyr,bootloader-info`` in both the application image configuration and the MCUboot image configuration.
+
+.. note::
+   If your board target uses the Key Management Unit (KMU) feature (:kconfig:option:`CONFIG_CRACEN_LIB_KMU`), you must additionally define the ``nrf_kmu_reserved_push_area`` DTS node in your custom memory layout.
+   Place this RAM section at the very beginning of the physical RAM due to the dependency on the ``nrfutil device`` tool and its KMU provisioning functionality.
+   For an example of the ``nrf_kmu_reserved_push_area`` DTS node definition, see the :file:`nrf/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi` file.
+
+   The KMU feature (:kconfig:option:`CONFIG_CRACEN_LIB_KMU`) is enabled by default for the nRF54L series.
+
+.. note::
+   The RAM load mode of the MCUboot bootloader is not yet integrated in the :ref:`nrf_desktop_dfu_mcumgr`.
+
 MCUboot bootloader on nRF54
 ---------------------------
 
