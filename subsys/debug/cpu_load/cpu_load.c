@@ -99,7 +99,7 @@ static int ppi_setup(uint32_t eep, uint32_t tep)
 
 int cpu_load_init_internal(void)
 {
-	nrfx_err_t err;
+	int err;
 	uint32_t base_frequency = NRF_TIMER_BASE_FREQUENCY_GET(timer.p_reg);
 	nrfx_timer_config_t config = NRFX_TIMER_DEFAULT_CONFIG(base_frequency);
 	int ret = 0;
@@ -135,7 +135,7 @@ int cpu_load_init_internal(void)
 	}
 
 	err = nrfx_timer_init(&timer, &config, timer_handler);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		return -EBUSY;
 	}
 
