@@ -10,7 +10,7 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/pinctrl.h>
 #include <nrfx_i2s.h>
-#include <nrfx_clock.h>
+#include <nrfx_clock_hfclkaudio.h>
 
 #include "audio_sync_timer.h"
 
