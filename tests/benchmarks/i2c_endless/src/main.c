@@ -121,7 +121,7 @@ void twis_setup(void)
 	int ret;
 
 	ret = nrfx_twis_init(&twis, &config, i2s_slave_handler);
-	if (ret != NRFX_SUCCESS) {
+	if (ret != 0) {
 		LOG_ERR("nrfx_twis_init returned %d", ret);
 	}
 
