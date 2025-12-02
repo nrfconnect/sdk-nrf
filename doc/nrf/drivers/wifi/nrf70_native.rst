@@ -36,7 +36,7 @@ Design overview
 The nRF Wi-Fi driver follows an OS-agnostic design, and the driver implementation is split into OS-agnostic and OS (Zephyr)-specific code.
 The OS-agnostic code is located in the :file:`${ZEPHYR_BASE}/../modules/nrf_wifi/` folder, and the Zephyr OS port is located in the :file:`${ZEPHYR_BASE}/drivers/wifi/nrf_wifi/` folder.
 
-The driver supports two modes of operation:
+The driver supports three modes of operation:
 
 Wi-Fi mode
 ==========
@@ -52,8 +52,7 @@ The driver supports the following IEEE 802.11 features:
 * Scan-only mode
 * IEEE 802.11 :term:`Station mode (STA)`
 * :term:`Software-enabled Access Point (SoftAP or SAP)` mode
-
-The Wi-Fi Direct® mode feature is in the driver code but is not yet supported.
+* :ref:`Wi-Fi Direct® <ug_wifi_direct>` (P2P) mode
 
 Except for scan-only mode, the driver uses the host access point daemon (hostapd) to implement AP Media Access Control (MAC) Sublayer Management Entity (AP MLME) and wpa_supplicant to implement 802.1X supplicant.
 
@@ -64,6 +63,14 @@ The nRF Wi-Fi driver supports Radio Test mode, which you can use to test the RF 
 This is a build time option that you can enable using the :kconfig:option:`CONFIG_NRF70_RADIO_TEST` Kconfig option.
 
 For more details about using this driver in Radio Test mode, see :ref:`wifi_radio_test`.
+
+Offloaded raw TX mode
+=====================
+
+The nRF Wi-Fi driver supports Offloaded raw TX mode, where the nRF70 Series device transmits frames at regular intervals with very low power consumption.
+Frame transmission is offloaded to the nRF70 device, minimizing host processing and memory requirements.
+
+For more details about using this driver in Offloaded raw TX mode, see :ref:`ug_nrf70_developing_offloaded_raw_tx`.
 
 Driver to nRF70 Series device communication
 *******************************************
