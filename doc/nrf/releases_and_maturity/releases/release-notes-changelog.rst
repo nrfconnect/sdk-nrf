@@ -1245,6 +1245,7 @@ Documentation
 
 * Updated:
 
+  * The :ref:`install_ncs` page with minor updates and fixes to the :ref:`additional_deps` section.
   * The :ref:`emds_readme_application_integration` section in the :ref:`emds_readme` library documentation to clarify the EMDS storage context usage.
   * The Emergency data storage section in the :ref:`bluetooth_mesh_light_lc` sample documentation to clarify the EMDS storage context implementation and usage.
   * The :ref:`ble_mesh_dfu_distributor` sample documentation to clarify the external flash support.
