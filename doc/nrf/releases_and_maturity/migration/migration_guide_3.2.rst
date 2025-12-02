@@ -24,6 +24,19 @@ Required changes
 
 The following changes are mandatory to make your application work in the same way as in previous releases.
 
+nRF54L
+======
+
+This section describes the changes specific to the nRF54L series SoCs and DKs support in the |NCS|.
+
+nRF54L pin cross power-domain use
+---------------------------------
+
+.. toggle::
+
+   * You must enable the Constant Latency sub-power mode from the application to allow cross power-domain pin mapping.
+     For details, see the :ref:`ug_nrf54l_pinmap` page.
+
 nRF54H20
 ========
 
