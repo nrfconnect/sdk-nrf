@@ -121,8 +121,8 @@ static int timer_config(void)
 	uint32_t tep = nrfx_timer_task_address_get(&app_timer_instance, NRF_TIMER_TASK_CLEAR);
 
 	ret = nrfx_timer_init(&app_timer_instance, &timer_cfg, unused_timer_isr_handler);
-	if (ret != NRFX_SUCCESS) {
-		printk("Failed initializing timer (ret: %d)\n", ret - NRFX_ERROR_BASE_NUM);
+	if (ret != 0) {
+		printk("Failed initializing timer (ret: %d)\n", ret);
 		return -ENODEV;
 	}
 

@@ -795,7 +795,7 @@ BUILD_ASSERT(false, "No Clock Control driver");
 
 static int timer_init(void)
 {
-	nrfx_err_t err;
+	int err;
 	nrfx_timer_config_t timer_cfg = {
 		.frequency = NRFX_MHZ_TO_HZ(1),
 		.mode      = NRF_TIMER_MODE_TIMER,
@@ -803,7 +803,7 @@ static int timer_init(void)
 	};
 
 	err = nrfx_timer_init(&dtm_inst.timer, &timer_cfg, dtm_timer_handler);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		printk("nrfx_timer_init failed with: %d\n", err);
 		return -EAGAIN;
 	}
@@ -817,7 +817,7 @@ static int timer_init(void)
 #if NRF52_ERRATA_172_PRESENT
 static int anomaly_timer_init(void)
 {
-	nrfx_err_t err;
+	int err;
 	nrfx_timer_config_t timer_cfg = {
 		.frequency = NRFX_KHZ_TO_HZ(125),
 		.mode      = NRF_TIMER_MODE_TIMER,
@@ -826,7 +826,7 @@ static int anomaly_timer_init(void)
 
 	err = nrfx_timer_init(&dtm_inst.anomaly_timer, &timer_cfg,
 			      anomaly_timer_handler);
-	if (err != NRFX_SUCCESS) {
+	if (err != 0) {
 		printk("nrfx_timer_init failed with: %d\n", err);
 		return -EAGAIN;
 	}
