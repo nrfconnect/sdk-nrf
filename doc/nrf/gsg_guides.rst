@@ -30,6 +30,8 @@ The application uses Nordic Semiconductor tools and precompiled binaries and doe
 +----------------------+                                                                    +---------------------------------------+
 | nRF7002 DK           |                                                                    | `nRF7002 DK Hardware`_                |
 +----------------------+                                                                    +---------------------------------------+
+| nRF54LV10 DK         |                                                                    | `nRF54LV10 DK User Guide`_            |
++----------------------+                                                                    +---------------------------------------+
 | nRF54LM20 DK         |                                                                    | `nRF54LM20 DK User Guide`_            |
 +----------------------+                                                                    +---------------------------------------+
 | nRF54L15 DK          |  `Quick Start app`_                                                | `nRF54L15 DK User Guide`_             |
