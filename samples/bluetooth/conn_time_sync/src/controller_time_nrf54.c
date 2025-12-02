@@ -42,8 +42,8 @@ void controller_time_trigger_set(uint64_t timestamp_us)
 	};
 
 	ret = nrfx_grtc_syscounter_cc_absolute_set(&chan_data, timestamp_us, false);
-	if (ret != NRFX_SUCCESS) {
-		printk("Failed setting CC (ret: %d)\n", ret - NRFX_ERROR_BASE_NUM);
+	if (ret != 0) {
+		printk("Failed setting CC (ret: %d)\n", ret);
 	}
 }
 
