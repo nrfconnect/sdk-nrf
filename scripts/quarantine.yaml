@@ -106,3 +106,9 @@
   platforms:
     - nrf5340dk/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-8480"
+
+- scenarios:
+    - sample.peripheral.radio_test
+  platforms:
+    - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36650"
