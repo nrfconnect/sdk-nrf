@@ -595,11 +595,12 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-8497"
 
 - scenarios:
-    - examples.nrfx.*
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8588"
-
-- scenarios:
-    - drivers.mspi.flash.mspi_nor_no_multithreading
+    - examples.nrfx_spim_spis.advanced_non_blocking
+    - examples.nrfx_spim_spis.non_blocking
+    - examples.nrfx_twim_twis.blocking
+    - examples.nrfx_twim_twis.non_blocking
+    - examples.nrfx_twim_twis.txrx
+    - examples.nrfx_twim_twis.txtx
   platforms:
-    - nrf54h20dk_nrf54h20_cpuapp
-  comment: "MRAM needs NRFS for nrf54h20 which requires multithreading"
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8652"
