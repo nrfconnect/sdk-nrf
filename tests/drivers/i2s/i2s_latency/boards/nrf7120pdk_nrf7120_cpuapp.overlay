@@ -1,0 +1,32 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		tst-timer = &timer20;
+	};
+};
+
+&pinctrl {
+	tdm20_default_test: tdm20_default_test {
+		group1 {
+			psels = <NRF_PSEL(TDM_SCK_M, 1, 3)>,
+				<NRF_PSEL(TDM_FSYNC_M, 1, 6)>,
+				<NRF_PSEL(TDM_SDOUT, 1, 4)>,
+				<NRF_PSEL(TDM_SDIN, 1, 5)>;
+		};
+	};
+};
+
+i2s_dut: &tdm {
+	status = "okay";
+	pinctrl-0 = <&tdm20_default_test>;
+	pinctrl-names = "default";
+};
+
+&timer20 {
+	status = "okay";
+};

@@ -9,6 +9,7 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     harness: ztest
@@ -21,6 +22,7 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     harness: ztest
@@ -32,6 +34,7 @@ tests:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     harness: ztest
