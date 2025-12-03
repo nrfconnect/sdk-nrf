@@ -17,6 +17,7 @@ The IronSide Secure Element (|ISE|) is a firmware for the :ref:`Secure Domain <u
 * CPUCONF service
 * Update service
 * PSA Crypto service - see also :ref:`ug_crypto_architecture_implementation_standards_ironside`
+* Counter Service
 
 Distribution
 ************
@@ -24,10 +25,18 @@ Distribution
 The |ISE| is provided as a precompiled binary, which is part of the nRF54H20 SoC bundle and is provided independently from the |NCS| release cycle.
 For more information, see :ref:`abi_compatibility`.
 
+SPU MRAMC Feature Configuration
+*******************************
+
+IronSide configures the SPU.FEATURES.MRAMC registers with default settings for both MRAMC110 and MRAMC111.
+Local domains have access to the READY/READYNEXT status registers for monitoring MRAM controller status.
+All other MRAMC features (WAITSTATES and AUTODPOWERDOWN) are managed by IronSide, with all configurations locked at boot time.
+
 .. _ug_nrf54h20_ironside_se_uicr:
 
 Global Resource configuration
 *****************************
+
 
 |ISE| uses the User Information Configuration Registers (UICR) to securely configure persistent global resource settings.
 The UICR is a dedicated non-volatile memory region (and its associated registers) located in the first NVR page (NVR0).
@@ -873,6 +882,131 @@ The release ZIP archive for |ISE| includes the following components:
 The |NCS| defines the west ``ncs-ironside-se-update`` command to update |ISE| on a device via the debugger.
 This command takes a nRF54H20 SoC binary ZIP file and uses the |ISE| update service to update both the |ISE| and |ISE| Recovery (or optionally just one of them).
 For more information, see :ref:`abi_compatibility`.
+
+.. _ug_nrf54h20_ironside_se_counter_service:
+
+|ISE| Counter service
+*********************
+
+The |ISE| Counter service provides secure monotonic counters that can be used for rollback protection, version tracking, and other security-critical applications that require strictly increasing values.
+
+Overview
+========
+
+The Counter service provides four independent 32-bit monotonic counters (``IRONSIDE_SE_COUNTER_0`` through ``IRONSIDE_SE_COUNTER_3``).
+Each counter can only be set to a higher or equal value, ensuring that counter values never decrease.
+
+Key properties:
+
+* **Monotonic**: Counter values can only increase or stay the same, never decrease
+* **Persistent**: Counter values are stored in secure storage and survive reboots
+* **Per-boot locking**: Counters can be locked for the current boot session to prevent further modifications
+* **Explicit initialization**: Counters are automatically initialized to 0 during the first boot with an unlocked UICR
+
+Operations
+==========
+
+The Counter service provides three primary operations:
+
+Set
+---
+
+Sets a counter to a specific value.
+The new value must be greater than or equal to the current value.
+
+Function prototype:
+
+.. code-block:: c
+
+   int ironside_se_counter_set(enum ironside_se_counter counter_id, uint32_t value);
+
+Parameters:
+
+* ``counter_id``: Counter identifier (``IRONSIDE_SE_COUNTER_0`` to ``IRONSIDE_SE_COUNTER_3``)
+* ``value``: New counter value (must be ≥ current value)
+
+Returns:
+
+* ``0`` on success
+* ``-IRONSIDE_SE_COUNTER_ERROR_INVALID_ID`` if counter_id is invalid
+* ``-IRONSIDE_SE_COUNTER_ERROR_TOO_LOW`` if value is lower than current value
+* ``-IRONSIDE_SE_COUNTER_ERROR_LOCKED`` if counter is locked for this boot
+* ``-IRONSIDE_SE_COUNTER_ERROR_STORAGE_FAILURE`` if storage operation failed
+
+Get
+---
+
+Retrieves the current value of a counter.
+
+Function prototype:
+
+.. code-block:: c
+
+   int ironside_se_counter_get(enum ironside_se_counter counter_id, uint32_t *value);
+
+Parameters:
+
+* ``counter_id``: Counter identifier (``IRONSIDE_SE_COUNTER_0`` to ``IRONSIDE_SE_COUNTER_3``)
+* ``value``: Pointer to store the counter value
+
+Returns:
+
+* ``0`` on success
+* ``-IRONSIDE_SE_COUNTER_ERROR_INVALID_ID`` if counter_id is invalid
+* ``-IRONSIDE_SE_COUNTER_ERROR_STORAGE_FAILURE`` if storage operation failed or counter not initialized
+
+Lock
+----
+
+Locks a counter for the current boot session, preventing any further modifications until the next reboot.
+Lock states are non-persistent and are cleared on reboot.
+
+Function prototype:
+
+.. code-block:: c
+
+   int ironside_se_counter_lock(enum ironside_se_counter counter_id);
+
+Parameters:
+
+* ``counter_id``: Counter identifier (``IRONSIDE_SE_COUNTER_0`` to ``IRONSIDE_SE_COUNTER_3``)
+
+Returns:
+
+* ``0`` on success
+* ``-IRONSIDE_SE_COUNTER_ERROR_INVALID_ID`` if counter_id is invalid
+
+Typical Usage
+=============
+
+The Counter service is typically used for:
+
+* **Firmware version tracking**: Store the current firmware version and prevent rollback to older versions
+* **Anti-rollback protection**: Ensure that security-critical updates cannot be reverted
+* **Nonce generation**: Generate unique, increasing values for cryptographic operations
+
+Example usage:
+
+.. code-block:: c
+
+   #include <ironside/se/api.h>
+
+   /* Read current firmware version counter */
+   uint32_t current_version;
+   int err = ironside_se_counter_get(IRONSIDE_SE_COUNTER_0, &current_version);
+   if (err != 0) {
+       /* Handle error */
+   }
+
+   /* Update to new firmware version */
+   uint32_t new_version = 42;
+   err = ironside_se_counter_set(IRONSIDE_SE_COUNTER_0, new_version);
+   if (err == -IRONSIDE_SE_COUNTER_ERROR_TOO_LOW) {
+       /* Firmware rollback detected - reject update */
+   }
+
+   /* Lock the counter to prevent tampering during this boot */
+   ironside_se_counter_lock(IRONSIDE_SE_COUNTER_0);
 
 .. _ug_nrf54h20_ironside_se_secure_storage:
 
