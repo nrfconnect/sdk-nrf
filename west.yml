@@ -117,7 +117,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: 528eb2d95e35c7c9b187a15d2fb7f6e5bb983181
+      revision: 5c3a37f96cc8c474afa6b05e5d50f1c739788755
     - name: wfa-qt-control-app
       repo-path: sdk-wi-fiquicktrack-controlappc
       path: modules/lib/wfa-qt-control-app
