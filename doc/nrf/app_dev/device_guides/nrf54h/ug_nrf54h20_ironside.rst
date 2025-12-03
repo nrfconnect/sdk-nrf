@@ -705,7 +705,7 @@ UICR.SECURESTORAGE
 
 :kconfig:option:`CONFIG_GEN_UICR_SECURESTORAGE` enables the secure storage system used by |ISE| for persistent storage of cryptographic keys and trusted data.
 The secure storage is divided into separate partitions for different services and processor domains.
-The total size of all configurations specified in ``UICR.SECURESTORAGE.*`` must be aligned to a 4 KB boundary.
+The total size of all configurations specified in UICR.SECURESTORAGE.\* must be aligned to a 4 KB boundary.
 For more information, see :ref:`ug_nrf54h20_ironside_se_secure_storage`.
 
 The UICR.SECURESTORAGE configuration consists of the following sub-registers:
@@ -769,10 +769,10 @@ For information on how to configure these UICR settings, see :ref:`ug_nrf54h20_i
 
 .. _ug_nrf54h20_ironside_se_boot_report:
 
-IronSide boot report
-********************
+|ISE| boot report
+*****************
 
-The IronSide boot report contains device state information communicated from |ISE| to the local domains.
+The |ISE| boot report contains device state information communicated from |ISE| to the local domains.
 It is written to a reserved region in RAM20, which is accessible to the local domain in the default system configuration.
 There is one boot report per processor that is booted, either directly by |ISE| or via the CPUCONF service.
 
@@ -954,7 +954,7 @@ Setting bit 5 in ``CTRLAP.BOOTMODE`` will also trigger secondary firmware.
 |ISE| automatically triggers the secondary firmware in any of the following situations:
 
 * The integrity check of the memory specified in :kconfig:option:`CONFIG_GEN_UICR_PROTECTEDMEM` fails.
-* Any boot failure occurs, such as missing primary firmware or failure to apply ``UICR.PERIPHCONF`` configurations.
+* Any boot failure occurs, such as missing primary firmware or failure to apply UICR.PERIPHCONF configurations.
 * If :kconfig:option:`CONFIG_GEN_UICR_SECONDARY_TRIGGER` is enabled, and a UICR-configurable trigger occurs.
   See the following table for UICR-configurable triggers.
 
@@ -1067,21 +1067,21 @@ To leverage this secure storage functionality, applications must set the key loc
 
 The secure storage configuration includes two separate storage regions:
 
-* **UICR.SECURESTORAGE.CRYPTO** - Used for PSA Crypto API operations when storing cryptographic keys
-* **UICR.SECURESTORAGE.ITS** - Used for PSA Internal Trusted Storage (ITS) API operations when storing general secure data
+* UICR.SECURESTORAGE.CRYPTO - Used for PSA Crypto API operations when storing cryptographic keys
+* UICR.SECURESTORAGE.ITS - Used for PSA Internal Trusted Storage (ITS) API operations when storing general secure data
 
 
 Secure Storage through PSA Crypto API
 =====================================
 
-When using the PSA Crypto API to operate on keys, the storage region specified by ``UICR.SECURESTORAGE.CRYPTO`` is automatically used if the key attributes are configured with **key location** set to ``PSA_KEY_LOCATION_LOCAL_STORAGE``.
+When using the PSA Crypto API to operate on keys, the storage region specified by UICR.SECURESTORAGE.CRYPTO is automatically used if the key attributes are configured with ``key location`` set to ``PSA_KEY_LOCATION_LOCAL_STORAGE``.
 
 This ensures that cryptographic keys are stored in the dedicated secure storage region rather than in regular application memory.
 
 Secure storage through PSA ITS API
 ==================================
 
-When using the PSA ITS API for storing general secure data, the storage region specified by ``UICR.SECURESTORAGE.ITS`` is used automatically.
+When using the PSA ITS API for storing general secure data, the storage region specified by UICR.SECURESTORAGE.ITS is used automatically.
 No special configuration is required for PSA ITS operations, as they inherently use the secure storage when available.
 
 Security Properties
@@ -1092,16 +1092,16 @@ The secure storage provided by |ISE| has the following security characteristics:
 Access Control
 --------------
 
-* **Domain Isolation**: Secure storage regions are not accessible by local domains directly.
-* **Ironside Exclusive Access**: Only the Ironside Secure Element can access the secure storage regions.
-* **Domain Separation**: Each local domain can only access its own secure storage data, ensuring isolation between different domains.
+* *Domain Isolation*: Secure storage regions are not accessible by local domains directly.
+* *Ironside Exclusive Access*: Only the |ISE| can access the secure storage regions.
+* *Domain Separation*: Each local domain can only access its own secure storage data, ensuring isolation between different domains.
 
 Data Protection
 ---------------
 
-* **Encryption**: All data stored in the secure storage regions is encrypted using device-unique keys.
-* **Integrity**: The stored data is protected against tampering through cryptographic integrity checks.
-* **Confidentiality**: The encryption ensures that stored data remains confidential even if the storage medium is physically accessed.
+* *Encryption*: All data stored in the secure storage regions is encrypted using device-unique keys.
+* *Integrity*: The stored data is protected against tampering through cryptographic integrity checks.
+* *Confidentiality*: The encryption ensures that stored data remains confidential even if the storage medium is physically accessed.
 
 .. note::
    The device-unique encryption keys are managed entirely by |ISE| and are not accessible to application code.
@@ -1112,7 +1112,7 @@ Configuration Considerations
 
 When configuring secure storage, consider the following:
 
-* Ensure sufficient storage space is allocated in both ``UICR.SECURESTORAGE.CRYPTO`` and ``UICR.SECURESTORAGE.ITS`` regions based on your application's requirements
+* Ensure sufficient storage space is allocated in both UICR.SECURESTORAGE.CRYPTO and UICR.SECURESTORAGE.ITS regions based on your application's requirements
 * The sum of these two regions must be 4kB aligned.
 * The secure storage regions should be properly sized to accommodate the expected number of keys and data items
 * Access to secure storage is only available when the key location is explicitly set to ``PSA_KEY_LOCATION_LOCAL_STORAGE``
@@ -1292,3 +1292,128 @@ This prevents the CPU from executing any instructions until the CPUWAIT register
 Use this command to begin debugging at the very first instruction or to program flash memory safely without concurrent CPU access.
 
 The ``DEBUGWAIT`` command does not define any command-specific values for the CTRLAP.BOOTSTATUS.CMDERROR field.
+
+.. _ug_nrf54h20_ironside_se_spu_mramc_feature_configuration:
+
+|ISE| SPU MRAMC feature configuration
+*************************************
+
+|ISE| configures the SPU.FEATURES.MRAMC registers with default settings for both MRAMC110 and MRAMC111.
+Local domains have access to the READY/READYNEXT status registers for monitoring the status of the MRAM controller.
+All other MRAMC features (like WAITSTATES and AUTODPOWERDOWN) are managed by |ISE|, with all configurations locked at boot time.
+
+.. _ug_nrf54h20_ironside_se_counter_service:
+
+|ISE| Counter service
+*********************
+
+The |ISE| Counter service provides secure monotonic counters for rollback protection, version tracking, and other security-critical applications that require strictly increasing values.
+
+The header file for this service is :file:`sdk-zephyr/soc/nordic/ironside/include/nrf_ironside/counter.h`.
+
+It provides four independent 32-bit monotonic counters (``IRONSIDE_COUNTER_0`` through ``IRONSIDE_COUNTER_3``).
+Each counter can only be set to a value greater than or equal to its current value, which ensures that counter values never decrease.
+
+The counters have the following properties:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Property
+     - Description
+   * - Monotonic
+     - Counter values can only increase or stay the same; they cannot decrease.
+   * - Persistent
+     - Counter values are stored in secure storage and survive reboots.
+   * - Per-boot locking
+     - Counters can be locked for the current boot session to prevent further modifications.
+   * - Automatic initialization
+     - Counters are initialized to 0 during the first boot with an unlocked UICR.
+
+Operations
+==========
+
+The Counter service provides three primary operations applicable to the counters: ``set``, ``get``, and ``lock``.
+
+Set
+---
+
+The ``ironside_counter_set()`` function sets a counter to a specified value.
+The new value must be greater than or equal to the current counter value.
+
+The function takes the following parameters:
+
+* ``counter_id`` - Counter identifier (``IRONSIDE_COUNTER_0`` through ``IRONSIDE_COUNTER_3``).
+* ``value`` - New counter value.
+  It must be greater than or equal to the current value.
+
+The function returns the following values:
+
+* ``0`` on success.
+* ``-IRONSIDE_COUNTER_ERROR_INVALID_ID`` if the counter ID is invalid.
+* ``-IRONSIDE_COUNTER_ERROR_TOO_LOW`` if the specified value is lower than the current value.
+* ``-IRONSIDE_COUNTER_ERROR_LOCKED`` if the counter is locked for this boot session.
+* ``-IRONSIDE_COUNTER_ERROR_STORAGE_FAILURE`` if the storage operation failed.
+
+Get
+---
+
+The ``ironside_counter_get()`` function retrieves the current value of a counter.
+
+The function takes the following parameters:
+
+* ``counter_id`` - Counter identifier (``IRONSIDE_COUNTER_0`` through ``IRONSIDE_COUNTER_3``).
+* ``value`` - Pointer to store the retrieved counter value.
+
+The function returns the following values:
+
+* ``0`` on success.
+* ``-IRONSIDE_COUNTER_ERROR_INVALID_ID`` if the counter ID is invalid.
+* ``-IRONSIDE_COUNTER_ERROR_STORAGE_FAILURE`` if the storage operation failed or the counter is not initialized.
+
+Lock
+----
+
+The ``ironside_counter_lock()`` function locks a counter for the current boot session, which prevents any further modifications until the next reboot.
+Lock states are non-persistent and are cleared on reboot.
+
+The function takes the following parameter:
+
+* ``counter_id`` - Counter identifier (``IRONSIDE_COUNTER_0`` through ``IRONSIDE_COUNTER_3``).
+
+The function returns the following values:
+
+* ``0`` on success.
+* ``-IRONSIDE_COUNTER_ERROR_INVALID_ID`` if the counter ID is invalid.
+
+Usage
+=====
+
+The Counter service is typically used for the following purposes:
+
+* *Firmware version tracking* - Store the current firmware version and prevent rollback to older versions.
+* *Anti-rollback protection* - Ensure that security-critical updates cannot be reverted.
+* *Nonce generation* - Generate unique, strictly increasing values for cryptographic operations.
+
+The following example demonstrates how to use the Counter service to track firmware versions and prevent rollback:
+
+.. code-block:: c
+
+   #include <nrf_ironside/counter.h>
+
+   /* Read the current firmware version counter */
+   uint32_t current_version;
+   int err = ironside_counter_get(IRONSIDE_COUNTER_0, &current_version);
+   if (err != 0) {
+       /* Handle error */
+   }
+
+   /* Update to the new firmware version */
+   uint32_t new_version = 42;
+   err = ironside_counter_set(IRONSIDE_COUNTER_0, new_version);
+   if (err == -IRONSIDE_COUNTER_ERROR_TOO_LOW) {
+       /* Firmware rollback detected - reject update */
+   }
+
+   /* Lock the counter to prevent tampering during this boot session */
+   ironside_counter_lock(IRONSIDE_COUNTER_0);
