@@ -11,7 +11,6 @@ orsource "./$(BOARD_DIR)/Kconfig.board"
 orsource "./$(BOARD_DIR)/Kconfig"
 orsource "./cmake/toolchain/$(ZEPHYR_TOOLCHAIN_VARIANT)/Kconfig.defconfig"
 
-rsource "boards/shields/*/Kconfig.shield"
 rsource "subsys/net/openthread/Kconfig.defconfig"
 
 if !TFM_PROFILE_TYPE_MINIMAL
