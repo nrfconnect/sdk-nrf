@@ -7,7 +7,7 @@
 if(CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_VALIDATION)
   if(CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP AND CONFIG_HAS_BT_CTLR)
     if((NOT (CONFIG_BT_BUF_ACL_TX_SIZE EQUAL 251)) OR
-        (NOT (CONFIG_BT_BUF_ACL_RX_SIZE EQUAL 502)) OR
+        (NOT (CONFIG_BT_BUF_ACL_RX_SIZE EQUAL 251)) OR
         (NOT (CONFIG_BT_CTLR_DATA_LENGTH_MAX EQUAL 251))
       )
       message(WARNING "MCUmgr Bluetooth OTA DFU: suboptimal configuration "
@@ -20,8 +20,8 @@ if(CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_VALIDATION)
 
   if(CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP AND CONFIG_BT_HCI_HOST)
     if((NOT (CONFIG_BT_BUF_ACL_TX_SIZE EQUAL 251)) OR
-        (NOT (CONFIG_BT_BUF_ACL_RX_SIZE EQUAL 502)) OR
-        (NOT (CONFIG_BT_L2CAP_TX_MTU EQUAL 498))
+        (NOT (CONFIG_BT_BUF_ACL_RX_SIZE EQUAL 251)) OR
+        (NOT (CONFIG_BT_L2CAP_TX_MTU EQUAL 247))
       )
       message(WARNING "MCUmgr Bluetooth OTA DFU: suboptimal configuration "
         "of Bluetooth Host buffers. Consider using optimal values "
@@ -33,7 +33,10 @@ if(CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_VALIDATION)
 
   if(CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU)
     if(CONFIG_MCUMGR_TRANSPORT_BT_REASSEMBLY)
-      if(NOT (CONFIG_MCUMGR_TRANSPORT_NETBUF_SIZE EQUAL 2475))
+      # Allow for using default value specified by `nrf/samples/common/mcumgr_bt_ota_dfu/Kconfig`
+      # or `nrf/Kconfig.nrf`.
+      if((NOT (CONFIG_MCUMGR_TRANSPORT_NETBUF_SIZE EQUAL 1230)) AND
+         (NOT (CONFIG_MCUMGR_TRANSPORT_NETBUF_SIZE EQUAL 2475)))
         message(WARNING "MCUmgr Bluetooth OTA DFU: suboptimal configuration "
           "of the MCUmgr buffer with the Reassembly feature support. Consider using"
           "the optimal value defined in the ${CMAKE_CURRENT_LIST_DIR}/Kconfig "
