@@ -11,7 +11,7 @@ This Python script generates Platform Security Architecture (PSA) key attribute 
 
 .. note::
    The script is primarily used for Key Management Unit (KMU) provisioning on nRF54L Series devices and nRF54H20.
-   For more details about KMU provisioning, see the :ref:`ug_nrf54l_developing_provision_kmu` in the nRF54L Series device guide and the :ref:`ug_nrf54h20_keys` in the nRF54H20 device guide.
+   For more details about KMU provisioning, see the :ref:`ug_nrf54l_developing_provision_kmu` in the nRF54L Series device guide.
 
 Overview
 ********

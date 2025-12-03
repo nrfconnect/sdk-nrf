@@ -77,5 +77,4 @@ For more information, see the following pages:
 
 * :ref:`ug_nrf54h20_gs` - nRF54H20 DK bring-up and initial setup guide
 * :ref:`ug_nrf54h20_custom_pcb` - Guidelines for designing a custom PCB
-* :ref:`ug_nrf54h20_keys` - Provisioning and managing security keys
 * :ref:`ug_nrf54h20_ironside` - |ISE| how-to guide, specifically the :ref:`ug_nrf54h20_ironside_se_update` section containing instructions for updating the |ISE| firmware

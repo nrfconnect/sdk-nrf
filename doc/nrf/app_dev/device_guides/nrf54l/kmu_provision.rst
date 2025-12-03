@@ -185,7 +185,7 @@ Once you have an unprovisioned SoC, upload keys to the board by running one of t
 
    .. tab:: nRF Util
 
-      You can use the :ref:`generate_psa_key_attributes_script`, :ref:`similarly to nRF54H20<ug_nrf54h20_keys_generating>`, to generate the JSON file and the metadata from the PEM file you :ref:`generated earlier <ug_nrf54l_developing_provision_kmu_generate>`.
+      You can use the :ref:`generate_psa_key_attributes_script` to generate the JSON file and the metadata from the PEM file you :ref:`generated earlier <ug_nrf54l_developing_provision_kmu_generate>`.
 
       .. include:: ../../../../../scripts/generate_psa_key_attributes/generate_psa_key_attributes.rst
          :start-after: nrfutil_provision_keys_info_start

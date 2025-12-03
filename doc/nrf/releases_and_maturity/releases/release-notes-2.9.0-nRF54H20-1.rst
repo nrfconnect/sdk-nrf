@@ -471,7 +471,7 @@ Documentation
   * The :ref:`matter_samples_config` page that documents Kconfig options and snippets shared by Matter samples and applications.
   * A page about :ref:`add_new_driver`.
   * A page for the :ref:`sdp_gpio` application.
-  * The :ref:`ug_nrf54h20_keys` page.
+  * The Provisioning keys on the nRF54H20 SoC page.
 
 * Updated:
 

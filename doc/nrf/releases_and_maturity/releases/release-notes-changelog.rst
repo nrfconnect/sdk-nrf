@@ -548,4 +548,5 @@ cJSON
 Documentation
 =============
 
-|no_changes_yet_note|
+* Removed the Provisioning keys on the nRF54H20 SoC page.
+  It was about provisioning SUIT manifest signing keys, which is no longer relevant for |ISE|.
