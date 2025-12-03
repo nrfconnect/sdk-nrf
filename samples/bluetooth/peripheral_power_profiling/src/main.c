@@ -653,7 +653,7 @@ static void reset_reason_print(void)
 
 static void system_off(void)
 {
-#if !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) && !IS_ENABLED(CONFIG_TFM_EXPERIMENTAL)
+#if !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX)
 	printk("Powering off\n");
 
 	/* Clear the reset reason if it didn't do previously. */
@@ -674,7 +674,7 @@ static void system_off(void)
 	}
 
 	sys_poweroff();
-#endif /* !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) && !IS_ENABLED(CONFIG_TFM_EXPERIMENTAL) */
+#endif /* !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) */
 }
 
 static void system_off_work_handler(struct k_work *work)
