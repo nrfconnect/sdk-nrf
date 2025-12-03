@@ -17,8 +17,10 @@ tests:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
+
   drivers.i2s.i2s_mclk.gpio_loopback.2ch.54h:
     harness_config:
       fixture: i2s_loopback
@@ -26,6 +28,17 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+
+  drivers.i2s.i2s_mclk.gpio_loopback.4ch:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - CONFIG_I2S_TEST_NUMBER_OF_CHANNELS=4
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
 
   drivers.i2s.i2s_mclk.gpio_loopback.4ch.54h:
     harness_config:
@@ -37,12 +50,15 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
-  drivers.i2s.i2s_mclk.gpio_loopback.4ch.54lm:
+  drivers.i2s.i2s_mclk.gpio_loopback.8ch:
     harness_config:
       fixture: gpio_loopback
     extra_args:
-      - CONFIG_I2S_TEST_NUMBER_OF_CHANNELS=4
+      - CONFIG_I2S_TEST_NUMBER_OF_CHANNELS=8
     platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
+    integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
 
   drivers.i2s.i2s_mclk.gpio_loopback.8ch.54h:
@@ -55,25 +71,27 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
-  drivers.i2s.i2s_mclk.gpio_loopback.8ch.54lm:
+  drivers.i2s.i2s_mclk.gpio_loopback.2ch.aclk_sck:
     harness_config:
       fixture: gpio_loopback
-    extra_args:
-      - CONFIG_I2S_TEST_NUMBER_OF_CHANNELS=8
     platform_allow:
-      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120pdk/nrf7120/cpuapp
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/tdm_sck_audio_auxpll.overlay"
 
-  drivers.i2s.i2s_mclk.gpio_loopback.2ch.54h.aclk_sck:
+  drivers.i2s.i2s_mclk.gpio_loopback.2ch.aclk_sck.54h:
     harness_config:
       fixture: i2s_loopback
-    extra_args:
-      - EXTRA_DTC_OVERLAY_FILE="boards/tdm_sck_audiopll.overlay"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/tdm_sck_audiopll.overlay"
 
-  drivers.i2s.i2s_mclk.gpio_loopback.2ch.54h.aclk_mck:
+  drivers.i2s.i2s_mclk.gpio_loopback.2ch.aclk_mck.54h:
     harness_config:
       fixture: i2s_loopback
     extra_args:
@@ -83,12 +101,23 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
-  drivers.i2s.i2s_mclk.gpio_loopback.2ch.54h.aclk_mck_sck:
+  drivers.i2s.i2s_mclk.gpio_loopback.2ch.aclk_mck_sck:
+    harness_config:
+      fixture: gpio_loopback
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120pdk/nrf7120/cpuapp
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/tdm_mck_audio_auxpll.overlay
+        boards/tdm_sck_audio_auxpll.overlay"
+
+  drivers.i2s.i2s_mclk.gpio_loopback.2ch.aclk_mck_sck.54h:
     harness_config:
       fixture: i2s_loopback
-    extra_args:
-      - EXTRA_DTC_OVERLAY_FILE="boards/tdm_mck_audiopll.overlay boards/tdm_sck_audiopll.overlay"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/tdm_mck_audiopll.overlay boards/tdm_sck_audiopll.overlay"

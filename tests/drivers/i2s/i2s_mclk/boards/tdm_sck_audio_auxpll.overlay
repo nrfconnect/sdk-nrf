@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&tdm {
+	sck-clock-source = "ACLK";
+};
+
+&audio_auxpll {
+	status = "okay";
+};
