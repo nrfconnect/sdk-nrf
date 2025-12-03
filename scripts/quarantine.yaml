@@ -112,3 +112,10 @@
   platforms:
     - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36650"
+
+- scenarios:
+    - boards.nrf.i2c.i2c_endless.host
+    - boards.nrf.i2c.i2c_endless.device
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36649"
