@@ -150,7 +150,7 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: ncs-v3.2.0-rc1
+      revision: e970da4b055033f70e1b5d7830c0488fb96d259c
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
