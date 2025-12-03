@@ -247,7 +247,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 1.31.0
+      revision: 1.32.0
       remote: memfault
     - name: bsim
       repo-path: bsim_west
