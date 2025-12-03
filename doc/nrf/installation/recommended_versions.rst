@@ -30,7 +30,7 @@ For OS support for additional software tools from Nordic Semiconductor, see :ref
   * - Operating System
     - x64
     - ARM64
-  * - `Windows 10`_
+  * - `Windows 11`_
     - Built and tested with :ref:`Twister <running_unit_tests>`.
     - Not supported.
   * - `Linux - Ubuntu 24.04 LTS`_
