@@ -17,7 +17,6 @@
 		zephyr,flash-controller = &rram_controller;
 		zephyr,flash = &cpuapp_rram;
 		zephyr,bt-hci = &bt_hci_sdc;
-		zephyr,ieee802154 = &ieee802154;
 	};
 };
 
@@ -84,9 +83,5 @@
 };
 
 &clock {
-	status = "okay";
-};
-
-&ieee802154 {
 	status = "okay";
 };
