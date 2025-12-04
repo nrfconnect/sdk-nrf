@@ -6,7 +6,7 @@
 
 / {
 	zephyr,user {
-		io-channels = <&adc 0>, <&adc 1>, <&adc 7>;
+		io-channels = <&adc 0>, <&adc 1>, <&adc 3>;
 	};
 };
 
@@ -34,8 +34,8 @@
 		zephyr,oversampling = <8>;
 	};
 
-	channel@7 {
-		reg = <7>;
+	channel@3 {
+		reg = <3>;
 		zephyr,gain = "ADC_GAIN_1";
 		zephyr,reference = "ADC_REF_INTERNAL";
 		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
