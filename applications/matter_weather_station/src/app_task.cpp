@@ -99,12 +99,17 @@ public:
 		});
 	}
 
+	/**
+	 * Trigger Effect command is not supported by default by this device
+	 * It can be enabled by returning true in the IsTriggerEffectEnabled function
+	 * When enabled handle the command in the function below
+	 */
 	void OnTriggerEffect(chip::app::Clusters::IdentifyCluster &cluster) override
 	{
 		Nrf::PostTask([] { BuzzerToggleState(); });
 	}
 
-	bool IsTriggerEffectEnabled() const override { return true; }
+	bool IsTriggerEffectEnabled() const override { return false; }
 };
 
 IdentifyDelegateImplWeatherStation sIdentifyDelegateImplWeatherStation;
