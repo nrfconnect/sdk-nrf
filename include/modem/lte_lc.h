@@ -455,8 +455,8 @@ enum lte_lc_evt_type {
 	 * @ref lte_lc_rai_cfg in the event.
 	 *
 	 * @note This is only supported by the following modem firmware:
-	 * - mfw_nrf91x1 >= v2.0.2
-	 * - mfw_nrf9151-ntn
+	 *       - mfw_nrf91x1 >= v2.0.2
+	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_EVT_RAI_UPDATE			= 12,
 #endif /* CONFIG_LTE_LC_RAI_MODULE */
@@ -1480,6 +1480,36 @@ enum lte_lc_pdn_evt_type {
 	 * @ref lte_lc_pdn_evt in the event.
 	 */
 	LTE_LC_EVT_PDN_IPV6_DOWN,
+
+	/**
+	 * PDN is suspended.
+	 *
+	 * PDNs can be suspended when cellular profiles are used. While suspended, the PDNs remain
+	 * active, but can not be used for data transmission. PDNs associated with a cellular
+	 * profile are suspended when the device is switched to flight mode using
+	 * @ref LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG or @ref LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG_UICC_ON.
+	 * The PDNs remain suspended when switching to a different access technology. When the
+	 * device is switched back to the original access technology and LTE is activated, the
+	 * associated PDNs are resumed.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_EVT_PDN_SUSPENDED,
+
+	/**
+	 * PDN is resumed.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_EVT_PDN_RESUMED,
 
 	/**
 	 * Network detached.

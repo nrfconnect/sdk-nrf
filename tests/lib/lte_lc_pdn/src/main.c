@@ -943,6 +943,8 @@ static void lte_lc_event_handler(const struct lte_lc_evt *const evt)
 		case LTE_LC_EVT_PDN_DEACTIVATED:
 		case LTE_LC_EVT_PDN_IPV6_UP:
 		case LTE_LC_EVT_PDN_IPV6_DOWN:
+		case LTE_LC_EVT_PDN_SUSPENDED:
+		case LTE_LC_EVT_PDN_RESUMED:
 		case LTE_LC_EVT_PDN_NETWORK_DETACH:
 		case LTE_LC_EVT_PDN_APN_RATE_CONTROL_ON:
 		case LTE_LC_EVT_PDN_APN_RATE_CONTROL_OFF:
@@ -1386,6 +1388,22 @@ void test_lte_lc_pdn_deactivate(void)
 	TEST_ASSERT_EQUAL(0, ret);
 	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN, pdn_evt.type);
 	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_DEACTIVATED, pdn_evt.pdn.type);
+}
+
+void test_lte_lc_pdn_suspended(void)
+{
+	on_cgev("+CGEV: ME PDN SUSPENDED " STRINGIFY(CID_0) "\r\n");
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN, pdn_evt.type);
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_SUSPENDED, pdn_evt.pdn.type);
+	TEST_ASSERT_EQUAL(CID_0, pdn_evt.pdn.cid);
+}
+
+void test_lte_lc_pdn_resumed(void)
+{
+	on_cgev("+CGEV: ME PDN RESUMED " STRINGIFY(CID_1) "\r\n");
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN, pdn_evt.type);
+	TEST_ASSERT_EQUAL(LTE_LC_EVT_PDN_RESUMED, pdn_evt.pdn.type);
+	TEST_ASSERT_EQUAL(CID_1, pdn_evt.pdn.cid);
 }
 
 void test_lte_lc_pdn_detach(void)
