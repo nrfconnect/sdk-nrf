@@ -83,7 +83,7 @@ static int ppi_setup(uint32_t eep, uint32_t tep)
 	if (err >= 0) {
 		/* It works only on single domain DPPI. */
 		handle = (nrfx_gppi_handle_t)err;
-		nrfx_gppi_ep_attach(handle, tep);
+		nrfx_gppi_ep_attach(tep, handle);
 		return 0;
 	}
 

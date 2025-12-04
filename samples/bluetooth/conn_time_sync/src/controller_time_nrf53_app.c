@@ -153,7 +153,7 @@ int config_egu_trigger_on_rtc_and_timer_match(void)
 		printk("Failed allocating for RTC match\n");
 		return ret;
 	}
-	(void)nrfx_gppi_ep_attach(ppi_on_timer_match, nrfx_gppi_group_task_dis_addr(group));
+	(void)nrfx_gppi_ep_attach(nrfx_gppi_group_task_dis_addr(group), ppi_on_timer_match);
 
 	return 0;
 }
