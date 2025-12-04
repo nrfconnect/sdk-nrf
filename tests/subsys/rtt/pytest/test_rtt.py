@@ -83,6 +83,10 @@ def test_rtt_logging(dut: DeviceAdapter):
         'nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp': {
             'device': 'NRF54LV10A_M33',
         },
+        'nrf54h20dk@0.9.0/nrf54h20/cpuapp': {
+            'device': 'Cortex-M33',
+            'RTTSearchRanges': '0x22000000 32768',
+        },
         # Using nRF54L15_M33 as the device because its RAM region closely matches nRF7120.
         # This enables automatic SEGGER RTT symbol detection by JLinkRTTLogger.
         # Update to the official nRF7120 device name when SEGGER adds support.
