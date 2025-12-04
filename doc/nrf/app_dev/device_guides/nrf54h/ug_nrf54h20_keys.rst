@@ -7,82 +7,77 @@ Provisioning keys on the nRF54H20 SoC
    :local:
    :depth: 2
 
-This guide describes how to generate and provision cryptographic public keys on an nRF54H20 SoC in the Root of Trust (RoT) lifecycle state.
-It is intended for developers defining manifest signing keys for the application core, radio core, and OEM root.
-A successful provisioning makes the keys available to Secure Domain Firmware through PSA Crypto key identifiers.
+This guide describes how to provision pre-generated cryptographic keys on an nRF54H20 SoC.
+It is intended for developers who wish to create a predefined set of keys for their application, made available through PSA Crypto key identifiers.
 
 Prerequisites
 =============
 
-To follow this guide, your nRF54H20 device must meet the following requirement:
+To follow this guide, your nRF54H20 device must meet the following requirements:
 
 * On the nRF54H20 DK, you must :ref:`provision <ug_nrf54h20_gs_bringup_soc_bin>` the DK as described in the :ref:`ug_nrf54h20_gs` page.
 * On a custom nRF54H20-based device, you must :ref:`configure, generate, and program the BICR <ug_nrf54h20_custom_pcb_bicr>` as described in the :ref:`ug_nrf54h20_custom_pcb` page.
-* You must configure :ref:`ug_nrf54h20_ironside_uicr_securestorage` in your |ISE| UICR configuration.
 
 Overview
 ========
 
-The keys provisioning workflow for the nRF54H20 SoC consists of two main steps:
+The keys provisioning workflow for the nRF54H20 SoC consists of three main steps:
 
-1. Generating the required metadata using a script provided with the |NCS|.
+1. Choosing key identifiers based on the desired properties for each key.
+#. Generating the required metadata using a script provided with the |NCS|.
 #. Provisioning the keys to the nRF54H20 SoC.
 
-.. note::
-   The nRF54H20 SoC must be in RoT lifecycle state for key provisioning to work.
-   For more details on lifecycle states, see :ref:`ug_nrf54h20_architecture_lifecycle`.
+.. rst-class:: numbered-step
+
+Choosing a key ID
+=================
+
+Key provisioning is supported by the |ISE| firmware through the :ref:`ug_crypto_architecture_implementation_standards_ironside` of the PSA Crypto API.
+|ISE| defines two categories of keys that can be provisioned: standard *user keys* and non-standard *revocable keys*.
+These categories are tied to distinct key ID ranges.
+
+User keys
+---------
+
+These are the standard persistent keys conforming to the :ref:`supported version of the PSA Crypto API <ug_psa_certified_api_overview_crypto_ncs>`:
+
+* Minimum ID: ``0x00000001`` (``PSA_KEY_ID_USER_MIN``)
+* Maximum ID: ``0x3FFFFFFF`` (``PSA_KEY_ID_USER_MAX``)
+
+In order to successfully provision user keys, you must first configure cryptographic partitions in your :ref:`ug_nrf54h20_ironside_uicr_securestorage` configuration.
+
+Revocable keys
+--------------
+
+These are an extension of user keys with special properties for secure provisioning during device manufacturing:
+
+* Minimum ID: ``0x40002000``
+* Maximum ID: ``0x4FFFFFFF``
+
+Revocable keys can only be provisioned as long as the :ref:`ug_nrf54h20_ironside_se_uicr_lock` configuration is disabled.
+Once the UICR is locked, no more keys can be created in this range, which means that when a revocable key is destroyed, it cannot be replaced.
+
+These keys are provisioned into |ISE|'s internal storage, not the location controlled by :ref:`ug_nrf54h20_ironside_uicr_securestorage`.
 
 .. _ug_nrf54h20_keys_generating:
 
-Generating the keys
-===================
+.. rst-class:: numbered-step
 
-A script is used to generate the necessary cryptographic keys, BLOBs, and metadata required for provisioning.
-The script follows the PSA Crypto standard to generate the required 28-byte key.
-It is located in the :file:`nrf/scripts/generate_psa_key_attributes.py` file.
+Generating key metadata
+=======================
 
-To generate the keys, follow these steps:
+The :ref:`generate_psa_key_attributes_script` is used to generate a JSON file containing the necessary cryptographic keys, BLOBs, and metadata required for provisioning.
 
-1. Generate private keys using Ed25519::
+Here is an example command to generate metadata for provisioning the public key part of an Ed25519 key, from a pre-existing PEM file, as a revocable key:
 
-      openssl genpkey -algorithm Ed25519 -out MANIFEST_APPLICATION_GEN1_priv.pem
-      openssl genpkey -algorithm Ed25519 -out MANIFEST_RADIOCORE_GEN1_priv.pem
-      openssl genpkey -algorithm Ed25519 -out MANIFEST_OEM_ROOT_GEN1_priv.pem
+.. parsed-literal::
+   :class: highlight
 
-#. Extract public keys::
+   python generate_psa_key_attributes.py --usage VERIFY --id 0x40002000 --type ECC_PUBLIC_KEY_TWISTED_EDWARDS --key-bits 255 --algorithm EDDSA_PURE --location LOCATION_LOCAL_STORAGE --key-from-file public_key.pem --file all_keys.json --persistence PERSISTENCE_DEFAULT
 
-      openssl pkey -in MANIFEST_APPLICATION_GEN1_priv.pem -pubout -out MANIFEST_APPLICATION_GEN1_pub.pem
-      openssl pkey -in MANIFEST_RADIOCORE_GEN1_priv.pem -pubout -out MANIFEST_RADIOCORE_GEN1_pub.pem
-      openssl pkey -in MANIFEST_OEM_ROOT_GEN1_priv.pem -pubout -out MANIFEST_OEM_ROOT_GEN1_pub.pem
+The output file (named :file:`all_keys.json` in the previous example) serves as an input for the next step.
 
-#. Check the required key IDs::
-
-      MANIFEST_PUBKEY_APPLICATION_GEN1 = 0x40022100
-      MANIFEST_PUBKEY_APPLICATION_GEN2 = 0x40022101
-      MANIFEST_PUBKEY_APPLICATION_GEN3 = 0x40022102
-      MANIFEST_PUBKEY_OEM_ROOT_GEN1 = 0x4000AA00
-      MANIFEST_PUBKEY_OEM_ROOT_GEN2 = 0x4000AA01
-      MANIFEST_PUBKEY_OEM_ROOT_GEN3 = 0x4000AA02
-      MANIFEST_PUBKEY_RADIOCORE_GEN1 = 0x40032100
-      MANIFEST_PUBKEY_RADIOCORE_GEN2 = 0x40032101
-      MANIFEST_PUBKEY_RADIOCORE_GEN3 = 0x40032102
-
-#. Create a JSON input file with the :ref:`generate_psa_key_attributes_script`:
-
-   * For the application core::
-
-        python generate_psa_key_attributes.py --usage VERIFY --allow-usage-export --id 0x40022100 --type ECC_PUBLIC_KEY_TWISTED_EDWARDS --key-bits 255 --algorithm EDDSA_PURE --location LOCATION_CRACEN --key-from-file MANIFEST_APPLICATION_GEN1_pub.pem  --file all_keys.json --cracen-usage RAW --persistence PERSISTENCE_DEFAULT
-
-   * For the radio core::
-
-        python generate_psa_key_attributes.py --usage VERIFY --allow-usage-export --id 0x40032100 --type ECC_PUBLIC_KEY_TWISTED_EDWARDS --key-bits 255 --algorithm EDDSA_PURE --location LOCATION_CRACEN --key-from-file MANIFEST_RADIOCORE_GEN1_pub.pem --file all_keys.json --cracen-usage RAW --persistence PERSISTENCE_DEFAULT
-
-   * For the main root manifest::
-
-        python generate_psa_key_attributes.py --usage VERIFY --allow-usage-export --id 0x4000AA00 --type ECC_PUBLIC_KEY_TWISTED_EDWARDS --key-bits 255 --algorithm EDDSA_PURE --location LOCATION_CRACEN --key-from-file MANIFEST_OEM_ROOT_GEN1_pub.pem --file all_keys.json --cracen-usage RAW --persistence PERSISTENCE_DEFAULT
-
-
-The generated key data is stored in a JSON file, which serves as an input for the next step.
+.. rst-class:: numbered-step
 
 Provisioning the keys
 =====================
@@ -91,13 +86,17 @@ Provisioning the keys
    :start-after: nrfutil_provision_keys_info_start
    :end-before: nrfutil_provision_keys_info_end
 
-The Secure Domain Firmware on the device handles the actual key provisioning using PSA Crypto's ``psa_import_key`` function.
+The |ISE| firmware on the device handles the actual key provisioning using PSA Crypto's ``psa_import_key`` function.
 Provisioning a key calls the function to import the key:
 
-* The ``metadata`` field from the JSON file is used for the function's attributes argument.
-* The ``value`` field is passed to the function's data argument.
-* The function's ``data_length`` is set to the length of the value field.
+* The ``metadata`` field from the JSON file is used for the function's ``attributes`` argument.
+* The ``value`` field is passed to the function's ``data`` argument.
+* The length of the ``value`` field is passed to the function's ``data_length`` argument.
 
 .. include:: ../../../../../scripts/generate_psa_key_attributes/generate_psa_key_attributes.rst
    :start-after: nrfutil_provision_keys_command_start
    :end-before: nrfutil_provision_keys_command_end
+
+.. note::
+   The :ref:`ug_nrf54h20_ironside_se_eraseall_command` destroys all keys stored on the device.
+   Whenever you execute this boot command, you have to provision your keys all over again.
