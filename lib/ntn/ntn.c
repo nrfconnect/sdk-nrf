@@ -194,13 +194,11 @@ static void at_handler_location(const char *notif)
 
 static void location_ntf_subscribe(void)
 {
-	int err;
-
-	err = nrf_modem_at_printf("AT%%LOCATION=1");
-	if (err) {
-		LOG_WRN("Enabling location notifications failed, error: %d", err);
-		LOG_WRN("Modem firmware with NTN support required");
-	}
+	/* Error is ignored because this basically only fails when the firmware does not have
+	 * NTN support. There are applications which support both NTN and non-NTN modem
+	 * firmware, so we don't want to log an error here with non-NTN firmware.
+	 */
+	(void)nrf_modem_at_printf("AT%%LOCATION=1");
 }
 
 #if defined(CONFIG_UNITY)
