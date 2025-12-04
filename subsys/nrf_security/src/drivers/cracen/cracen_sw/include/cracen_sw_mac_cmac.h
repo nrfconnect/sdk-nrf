@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #ifndef CRACEN_SW_CMAC_H
-#define CRACEN_PSA_SW_CMAC_H
+#define CRACEN_SW_CMAC_H
 
 #include <psa/crypto.h>
 #include <stdint.h>
