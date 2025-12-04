@@ -5,7 +5,7 @@ config HPF_MSPI_MAX_RESPONSE_SIZE
 config HPF_MSPI_IPC_NO_COPY
 	bool "IPC no copy mode"
 	default y
-	depends on SOC_NRF54L15
+	depends on SOC_NRF54L15 || SOC_NRF54LM20A
 	help
 	  If y Data is passed through IPC by reference,
 	  this requires both cores to be able to access each others memory spaces.

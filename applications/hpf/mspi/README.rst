@@ -9,7 +9,7 @@ High-Performance Framework MSPI
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 device.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF54LM20A devices.
 
 This application demonstrates how to write a :ref:`High-Performance Framework (HPF) <hpf_index>` application and communicate with it.
 The application implements a subset of the Zephyr MSPI API.
@@ -45,7 +45,7 @@ Configuration and data transfer management
 Data transfer between the MSPI driver and the HPF application is done through the ICMsg.
 Data can be configured to be passed either by copy or by reference.
 By default, data is passed by reference.
-To enable data passing by copy, you must disable the ``SDP_MSPI_IPC_NO_COPY`` Kconfig option.
+To enable data passing by copy, you must disable the ``HPF_MSPI_IPC_NO_COPY`` and its MSPI driver-side equivalent ``MSPI_HPF_IPC_NO_COPY`` Kconfig options.
 
 Initialization phase
 ====================
@@ -325,7 +325,7 @@ The process involves building a test or user application that is using MSPI driv
 
       .. code-block:: console
 
-         west build -p -b nrf54l15dk_nrf54l15_cpuapp
+         west build -p -b <build_target>
 
    .. tab:: Building with User Application
 
@@ -354,10 +354,14 @@ Testing
 
 The following tests utilize the MSPI driver along with this application:
 
+* ``nrf/tests/drivers/mspi/app_fault_timer``
+* ``nrf/tests/drivers/mspi/error_cases``
+* ``nrf/tests/drivers/mspi/trap_handler``
 * ``nrf/tests/zephyr/drivers/mspi/api``
+* ``nrf/tests/zephyr/drivers/mspi/flash``
 * ``nrf/tests/zephyr/drivers/flash/common``
 
-These tests report results through serial port (the USB debug port on the nFR54L15 DK).
+These tests report results through serial port (the USB debug port on the nRF54L15 or nRF54LM20 DK).
 
 Dependencies
 ************
@@ -389,4 +393,7 @@ FLPR application HRT
 
 * Header file: :file:`applications/hpf/mspi/src/hrt/hrt.h`
 * Source file :file:`applications/hpf/mspi/src/hrt/hrt.c`
-* Assembly: :file:`applications/hpf/mspi/src/hrt/hrt-nrf54l15.s`
+* Assembly:
+
+  * :file:`applications/hpf/mspi/src/hrt/hrt-nrf54l15.s`
+  * :file:`applications/hpf/mspi/src/hrt/hrt-nrf54lm20a.s`
