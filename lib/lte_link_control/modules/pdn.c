@@ -196,6 +196,10 @@ static void parse_cgev(const char *notif)
 		{"ME PDN DEACT ", LTE_LC_EVT_PDN_DEACTIVATED},
 		/* +CGEV: NW PDN DEACT <cid> */
 		{"NW PDN DEACT ", LTE_LC_EVT_PDN_DEACTIVATED},
+		/* +CGEV: ME PDN SUSPENDED <cid> */
+		{"ME PDN SUSPENDED ", LTE_LC_EVT_PDN_SUSPENDED},
+		/* +CGEV: ME PDN RESUMED <cid> */
+		{"ME PDN RESUMED ", LTE_LC_EVT_PDN_RESUMED},
 		/* +CGEV: ME DETACH [<cp_id>] */
 		{"ME DETACH",  LTE_LC_EVT_PDN_NETWORK_DETACH},
 		/* +CGEV: NW DETACH [<cp_id>] */
@@ -244,6 +248,8 @@ static void parse_cgev(const char *notif)
 			case LTE_LC_EVT_PDN_DEACTIVATED:
 			case LTE_LC_EVT_PDN_IPV6_UP:
 			case LTE_LC_EVT_PDN_IPV6_DOWN:
+			case LTE_LC_EVT_PDN_SUSPENDED:
+			case LTE_LC_EVT_PDN_RESUMED:
 				evt.pdn.cid = (int8_t)strtoul(p, &p, 10);
 
 				break;
