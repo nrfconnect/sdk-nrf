@@ -381,6 +381,8 @@ It is divided into a 16-bit major version and a 16-bit minor version.
 
 This versioning scheme allows IronSide to support multiple UICR formats, enabling updates to the format without breaking compatibility with existing configurations.
 
+.. _ug_nrf54h20_ironside_se_uicr_lock:
+
 UICR.LOCK
 =========
 
@@ -1260,6 +1262,8 @@ See the following table for a summary of the available boot commands:
      - Start the application CPU with ``CPUCONF.CPUWAIT = 1``.
 
 The following chapters describe each command in detail.
+
+.. _ug_nrf54h20_ironside_se_eraseall_command:
 
 ``ERASEALL`` command
 ====================
