@@ -31,12 +31,14 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 #define DATA_LINE_INDEX(pinctr_fun)  (pinctr_fun - NRF_FUN_HPF_MSPI_DQ0)
 #define DATA_PIN_UNUSED              UINT8_MAX
 
-#ifdef CONFIG_SOC_NRF54L15
+#if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A)
 
-#define HPF_MSPI_PORT_NUMBER	 2 /* Physical port number */
+#define HPF_MSPI_PORT_NUMBER	2 /* Physical port number */
 #define HPF_MSPI_SCK_PIN_NUMBER 1 /* Physical pin number on port 2 */
 
 #define HPF_MSPI_DATA_LINE_CNT_MAX 8
+#define HPF_MSPI_CS_LINE_CNT_MAX 5
+#define MAX_MSPI_DUMMY_CLOCKS 59
 #else
 #error "Unsupported SoC for HPF MSPI"
 #endif
@@ -73,11 +75,11 @@ static atomic_t ipc_atomic_sem = ATOMIC_INIT(0);
 #define MSPI_CONFIG                                                                                \
 	{                                                                                          \
 		.channel_num = 0,                                                                  \
-		.op_mode = DT_PROP_OR(MSPI_HPF_NODE, op_mode, MSPI_OP_MODE_CONTROLLER),           \
-		.duplex = DT_PROP_OR(MSPI_HPF_NODE, duplex, MSPI_FULL_DUPLEX),                    \
-		.dqs_support = DT_PROP_OR(MSPI_HPF_NODE, dqs_support, false),                     \
-		.num_periph = DT_CHILD_NUM(MSPI_HPF_NODE),                                        \
-		.max_freq = DT_PROP(MSPI_HPF_NODE, clock_frequency),                              \
+		.op_mode = DT_ENUM_IDX_OR(MSPI_HPF_NODE, op_mode, MSPI_OP_MODE_CONTROLLER),        \
+		.duplex = DT_ENUM_IDX_OR(MSPI_HPF_NODE, duplex, MSPI_HALF_DUPLEX),                 \
+		.dqs_support = DT_PROP_OR(MSPI_HPF_NODE, dqs_support, false),                      \
+		.num_periph = DT_CHILD_NUM(MSPI_HPF_NODE),                                         \
+		.max_freq = DT_PROP(MSPI_HPF_NODE, clock_frequency),                               \
 		.re_init = true,                                                                   \
 		.sw_multi_periph = false,                                                          \
 	}
@@ -462,6 +464,21 @@ static int api_config(const struct mspi_dt_spec *spec)
 		return -ENOTSUP;
 	}
 
+	if (config->duplex != MSPI_HALF_DUPLEX) {
+		LOG_ERR("Only half-duplex mode is supported.");
+		return -ENOTSUP;
+	}
+
+	if (config->num_ce_gpios > HPF_MSPI_CS_LINE_CNT_MAX) {
+		LOG_ERR("Wrong number of CE GPIOs: %d", config->num_ce_gpios);
+		return -EINVAL;
+	}
+
+	if (config->num_periph == UINT32_MAX) {
+		LOG_ERR("Wrong peripheral number.");
+		return -EINVAL;
+	}
+
 	/* Create pinout configuration */
 	uint8_t state_id;
 
@@ -668,6 +685,29 @@ static int api_dev_config(const struct device *dev, const struct mspi_dev_id *de
 		}
 	}
 
+	if (param_mask & MSPI_DEVICE_CONFIG_CE_NUM) {
+		if (cfg->ce_num > HPF_MSPI_CS_LINE_CNT_MAX) {
+			LOG_ERR("CE number %d not supported.", cfg->ce_num);
+			return -EINVAL;
+		}
+	}
+
+	if (param_mask & MSPI_DEVICE_CONFIG_RX_DUMMY) {
+		if (cfg->rx_dummy > MAX_MSPI_DUMMY_CLOCKS) {
+			LOG_ERR("Value of RX dummy clock is too big. Max: %d is supported.",
+				MAX_MSPI_DUMMY_CLOCKS);
+			return -ENOTSUP;
+		}
+	}
+
+	if (param_mask & MSPI_DEVICE_CONFIG_TX_DUMMY) {
+		if (cfg->tx_dummy > MAX_MSPI_DUMMY_CLOCKS) {
+			LOG_ERR("Value of TX dummy clock is too big. Max: %d is supported.",
+				MAX_MSPI_DUMMY_CLOCKS);
+			return -ENOTSUP;
+		}
+	}
+
 	mspi_dev_config_msg.opcode = HPF_MSPI_CONFIG_DEV;
 	mspi_dev_config_msg.device_index = dev_id->dev_idx;
 	mspi_dev_config_msg.dev_config.io_mode = cfg->io_mode;
@@ -813,8 +853,8 @@ static int start_next_packet(struct mspi_xfer *xfer, uint32_t packets_done)
  * @param req Pointer to the xfer structure.
  *
  * @retval 0 If successful.
- * @retval -ENOTSUP If asynchronous transfers are requested.
- * @retval -EIO If an I/O error occurs.
+ * @retval -ENOTSUP
+ * @retval -EIO General input / output error, failed to send over the bus.
  */
 static int api_transceive(const struct device *dev, const struct mspi_dev_id *dev_id,
 			  const struct mspi_xfer *req)
@@ -824,7 +864,8 @@ static int api_transceive(const struct device *dev, const struct mspi_dev_id *de
 	int rc;
 
 	/* TODO: add support for asynchronous transfers */
-	if (req->async) {
+	if ((req->async) || (req->xfer_mode != MSPI_PIO) ||
+	    (req->tx_dummy > MAX_MSPI_DUMMY_CLOCKS) || (req->rx_dummy > MAX_MSPI_DUMMY_CLOCKS)) {
 		return -ENOTSUP;
 	}
 
