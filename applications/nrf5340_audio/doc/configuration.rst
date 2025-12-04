@@ -25,7 +25,7 @@ See the :file:`Kconfig.defaults` file in the :file:`nrf5340_audio` directory for
 
    The default Kconfig option values are automatically updated if configuration changes are applied directly in the configuration files.
 
-The application-specific Kconfig options mentioned on this page are listed in :ref:`nRF5340 Audio: Application-specific Kconfig options <config_audio_app_options>`.
+The application-specific Kconfig options mentioned on this page are listed in :ref:`nRF5340 Audio: Application-specific Kconfig options <nrf53_audio_app_config_audio_app_options>`.
 
 |config|
 
@@ -211,7 +211,7 @@ Configuring audio quality
 The nRF5340 Audio application provides extensive configuration options for audio quality.
 These settings affect the :ref:`nrf53_audio_app_overview_architecture_sync_module` and overall audio performance.
 
-See :ref:`config_audio_app_options` for the list of options to configure the following audio quality settings:
+See :ref:`nrf53_audio_app_config_audio_app_options` for the list of options to configure the following audio quality settings:
 
 * Frame duration (example: :option:`CONFIG_AUDIO_FRAME_DURATION_10_MS`)
 * Sample rates (example: :option:`CONFIG_AUDIO_SAMPLE_RATE_16000_HZ`)
@@ -226,7 +226,7 @@ Configuring Bluetooth LE Audio
 The nRF5340 Audio application introduces application-specific configuration options related to Bluetooth LE Audio.
 These options configure the Bluetooth stack components described in :ref:`nrf53_audio_app_overview_architecture`.
 
-See :ref:`config_audio_app_options` for options starting with ``CONFIG_BT_AUDIO``.
+See :ref:`nrf53_audio_app_config_audio_app_options` for options starting with ``CONFIG_BT_AUDIO``.
 
 .. _nrf53_audio_app_configuration_power_measurements:
 
