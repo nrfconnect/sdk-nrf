@@ -179,13 +179,6 @@ Wi-Fi®
 Applications
 ============
 
-nRF5340 Audio
--------------
-
-* Added dynamic configuration of the number of channels for the encoder based on the configured audio locations.
-  The number of channels is set during runtime using the :c:func:`audio_system_encoder_num_ch_set` function.
-  This allows configuring mono or stereo encoding depending on the configured audio locations, potentially saving CPU and memory resources.
-
 Connectivity bridge
 -------------------
 
@@ -204,7 +197,13 @@ Matter bridge
 nRF5340 Audio
 -------------
 
-|no_changes_yet_note|
+* Added dynamic configuration of the number of channels for the encoder based on the configured audio locations.
+  The number of channels is set during runtime using the :c:func:`audio_system_encoder_num_ch_set` function.
+  This allows configuring mono or stereo encoding depending on the configured audio locations, potentially saving CPU and memory resources.
+* Added high CPU load callback using the Zephyr CPU load subsystem.
+  The callback uses a :c:func:`printk` function, as the logging subsystem is scheduled out if higher priority threads take all CPU time.
+  This makes debugging high CPU load situations easier in the application.
+  The threshold for high CPU load is set in :file:`peripherals.c` using :c:macro:`CPU_LOAD_HIGH_THRESHOLD_PERCENT`.
 
 nRF Desktop
 -----------
