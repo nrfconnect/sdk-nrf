@@ -41,6 +41,8 @@ const char *link_pdn_event_to_string(enum lte_lc_evt_type event, char *out_str_b
 		{ LTE_LC_EVT_PDN_DEACTIVATED, "deactivated" },
 		{ LTE_LC_EVT_PDN_IPV6_UP, "IPv6 up" },
 		{ LTE_LC_EVT_PDN_IPV6_DOWN, "IPv6 down" },
+		{ LTE_LC_EVT_PDN_SUSPENDED, "suspended" },
+		{ LTE_LC_EVT_PDN_RESUMED, "resumed" },
 		{ LTE_LC_EVT_PDN_NETWORK_DETACH, "network detach" },
 		{ LTE_LC_EVT_PDN_APN_RATE_CONTROL_ON, "APN rate control on" },
 		{ LTE_LC_EVT_PDN_APN_RATE_CONTROL_OFF, "APN rate control off" },
