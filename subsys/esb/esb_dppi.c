@@ -53,6 +53,10 @@ void esb_ppi_for_txrx_set(bool rx, bool timer_start)
 					egu_timer_start);
 	}
 
+	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING) && timer_start && !rx) {
+		nrf_radio_subscribe_set(NRF_RADIO, NRF_RADIO_TASK_RXEN, disabled_phy_end_egu);
+	}
+
 	channels_mask = (BIT(egu_timer_start) |
 			 BIT(egu_ramp_up));
 
@@ -81,6 +85,10 @@ void esb_ppi_for_txrx_clear(bool rx, bool timer_start)
 
 	if (timer_start) {
 		nrf_timer_subscribe_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_START);
+	}
+
+	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING) && timer_start && !rx) {
+		nrf_radio_subscribe_clear(NRF_RADIO, NRF_RADIO_TASK_RXEN);
 	}
 }
 
