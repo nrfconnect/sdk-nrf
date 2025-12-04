@@ -9,6 +9,7 @@ menuconfig MSPI_HPF
 	default y
 	depends on DT_HAS_NORDIC_HPF_MSPI_CONTROLLER_ENABLED
 	select MBOX
+	select PINCTRL
 	select IPC_SERVICE
 	select IPC_SERVICE_BACKEND_ICMSG
 	help
@@ -28,7 +29,7 @@ config MSPI_HPF_INIT_PRIORITY
 config MSPI_HPF_IPC_NO_COPY
 	bool "IPC no copy mode"
 	default y
-	depends on SOC_NRF54L15
+	depends on SOC_NRF54L15 || SOC_NRF54LM20A
 	help
 	  If y Data is passed through IPC by reference,
 	  this requires both cores to be able to access each others memory spaces.
