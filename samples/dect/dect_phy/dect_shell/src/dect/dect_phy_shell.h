@@ -65,6 +65,9 @@ enum dect_phy_rf_tool_mode {
 	DECT_PHY_RF_TOOL_MODE_RX_TX,
 };
 
+/* Maximum value for frame_repeat_count */
+#define DECT_PHY_RF_TOOL_FRAME_REPEAT_COUNT_MAX INT32_MAX
+
 struct dect_phy_rf_tool_params {
 	uint32_t destination_transmitter_id;
 	uint16_t channel;
@@ -91,7 +94,7 @@ struct dect_phy_rf_tool_params {
 	 * rx_frame_start_offset + rx_subslot_count + rx_post_idle_subslot_count + tx_subslot_count
 	 * + tx_post_idle_subslot_count
 	 */
-	uint32_t frame_repeat_count;
+	uint32_t frame_repeat_count; /* Maximum: DECT_PHY_RF_TOOL_FRAME_REPEAT_COUNT_MAX */
 	uint32_t frame_repeat_count_intervals;
 	uint8_t rx_frame_start_offset;
 	uint8_t rx_subslot_count;

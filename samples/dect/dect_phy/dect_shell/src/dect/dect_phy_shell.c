@@ -433,7 +433,11 @@ static const char dect_phy_rf_tool_cmd_usage_str[] =
 	"                                     Default: \"rx_cont\".\n"
 	"                                     Note: As a default, RF mode \"rx_cont\" is\n"
 	"                                     reporting the results only when\n"
-	"                                     \"dect rf_tool stop\" is given.\n"
+	"                                     \"dect rf_tool stop\" is given, and when max RX\n"
+	"                                     duration is reached and RX is restarted.\n"
+	"                                     Note: use --continuous option to enable continuous\n"
+	"                                     mode, i.e. to continue over default\n"
+	"                                     frame_repeat_count_intervals.\n"
 	"      --rf_mode_peer,                RF operation mode of the TX side peer,\n"
 	"                                     can be one of the following: \"tx\", \"rx_tx\".\n"
 	"                                     Only meaningful if rf_mode is set to \"rx_cont\".\n"
@@ -484,7 +488,6 @@ static const char dect_phy_rf_tool_cmd_usage_str[] =
 	"      --continuous,                  Enable continuous mode, can be stopped by using:\n"
 	"                                     \"dect rf_tool stop\".\n"
 	"                                     Default: disabled.\n"
-	"                                     i.e. only configured frame_repeat_count/interval.\n"
 	"      --rx_frame_start_offset <int>, Subslot count before RX operation\n"
 	"                                     calculated from a start of a frame.\n"
 	"                                     Default: 0 (=starting from the start of a frame).\n"
@@ -674,8 +677,10 @@ static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **a
 			if (ret <= 0) {
 				desh_error("Give decent value (> 0)");
 				goto show_usage;
-			} else if (ret > 50) {
-				desh_warn("Too high frame_repeat_count might cause issues.");
+			} else if (ret > DECT_PHY_RF_TOOL_FRAME_REPEAT_COUNT_MAX) {
+				desh_error("frame_repeat_count (%d) exceeds maximum (%d)",
+					   ret, DECT_PHY_RF_TOOL_FRAME_REPEAT_COUNT_MAX);
+				goto show_usage;
 			}
 			params.frame_repeat_count = ret;
 			break;

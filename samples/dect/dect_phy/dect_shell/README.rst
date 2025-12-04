@@ -318,49 +318,45 @@ Example 1: Bi-directional testing
 
      dect rssi_scan -c 0
 
-* Server side: Start RF mode RX_TX with default frame structure and put it waiting for RX synch:
+* Server side: Start RF mode RX_TX with 20 subslot frame structure and put it waiting for RX synch:
 
   .. code-block:: console
 
-     dect sett -t 39
-     dect rf_tool -m rx_tx --rx_find_sync --frame_repeat_count 15 --frame_repeat_count_intervals 10 -c 1677
+     dect rf_tool -c 1677 -m rx_tx --rx_find_sync --rx_subslot_count 6 --rx_idle_subslot_count 4 --tx_subslot_count 5 --tx_idle_subslot_count 5 --frame_repeat_count 500 --frame_repeat_count_intervals 5
 
-* Client side: Trigger to start operation:
+* Client side: Trigger to start operation with the matching length frame structure, transmitting one subslot less than receiving in the server side:
 
   .. code-block:: console
 
-     dect rf_tool -m rx_tx --frame_repeat_count 15 --frame_repeat_count_intervals 10 -t 39 -c 1677
+     dect rf_tool -c 1677 -m rx_tx --tx_subslot_count 5 --tx_idle_subslot_count 5 --rx_subslot_count 6 --rx_idle_subslot_count 4 --frame_repeat_count 500 --frame_repeat_count_intervals 5
 
 Example 2: Unidirectional testing
 ---------------------------------
 
 * On both TX and RX side - scan for a free channel (see previous example).
-* RX device option 1: RX single shot mode:
+* RX device option 1: RX single shot mode and staying in continuous RX over default ``frame_repeat_count_intervals``:
 
   .. code-block:: console
 
-     dect sett -t 39
-     dect rf_tool -m rx --rx_find_sync --frame_repeat_count 15 -c 1677
+     dect rf_tool -m rx --continuous --rx_find_sync --frame_repeat_count 200 -c 1677
 
-* RX device option 2: RX device on ``rx_cont`` mode:
+* RX device option 2: RX device on ``rx_cont`` mode and staying in continuous RX:
 
   .. code-block:: console
 
-     dect sett -t 39
-     dect rf_tool -m rx_cont -c 1677
+     dect rf_tool -m rx_cont --continuous -c 1677
 
 * RX device option 3: RX device in ``rx_cont`` mode with the information of TX side to have interval reporting:
 
   .. code-block:: console
 
-     dect sett -t 39
-     dect rf_tool -m rx_cont --rf_mode_peer tx --frame_repeat_count 15 --rx_find_sync -c 1677
+     dect rf_tool -m rx_cont --rf_mode_peer tx --tx_subslot_count 4 --tx_idle_subslot_count 6 --frame_repeat_count 200 --rx_find_sync --frame_repeat_count_intervals 1 -c 1677
 
 * TX device: Trigger to start operation:
 
   .. code-block:: console
 
-     dect rf_tool -m tx --frame_repeat_count 15 -c 1677 -t 39
+     dect rf_tool -m tx --tx_subslot_count 4 --tx_idle_subslot_count 6 --frame_repeat_count 200 --frame_repeat_count_intervals 1 -c 1677
 
 * RX device with option 2: Stop continuous RX to give a report:
 
@@ -378,14 +374,13 @@ Example 2.1: Unidirectional testing with LBT - RX single shot mode
 
    .. code-block:: console
 
-     dect sett -t 39
-     dect rf_tool -m rx --rx_find_sync --frame_repeat_count 30 --rx_frame_start_offset 0 --rx_subslot_count 5 --rx_idle_subslot_count 2  -c 1677
+     dect rf_tool -m rx --rx_find_sync --rx_frame_start_offset 0 --rx_subslot_count 5 --rx_idle_subslot_count 5 --frame_repeat_count 100 --frame_repeat_count_intervals 2 -c 1677
 
 * TX device: Trigger to start operation with LBT and TX frame start offset to have room for a LBT before the actual TX (``--tx_frame_start_offset 2``) within a frame:
 
   .. code-block:: console
 
-     dect rf_tool -m tx --frame_repeat_count 30 --tx_frame_start_offset 2 --tx_subslot_count 2 --tx_idle_subslot_count 3 --tx_lbt_period 2 -c 1677 -t 39
+     dect rf_tool -m tx --tx_frame_start_offset 2 --tx_lbt_period 2 --tx_subslot_count 2 --tx_idle_subslot_count 6 --frame_repeat_count 100 --frame_repeat_count_intervals 2 -c 1677
 
 Example 2.2: Unidirectional testing with LBT - Continuous RX mode
 -----------------------------------------------------------------
@@ -394,14 +389,13 @@ Example 2.2: Unidirectional testing with LBT - Continuous RX mode
 
    .. code-block:: console
 
-     dect sett -t 39
-     dect rf_tool -m rx_cont --rf_mode_peer tx --tx_frame_start_offset 2 --tx_idle_subslot_count 8 --frame_repeat_count 15 --rx_find_sync -c 1677
+     dect rf_tool -m rx_cont --rx_find_sync --rf_mode_peer tx --tx_frame_start_offset 2 --tx_lbt_period 2 --tx_idle_subslot_count 8 --frame_repeat_count 200 --frame_repeat_count_intervals 2 -c 1677
 
 * TX device: Trigger to start operation with LBT and TX frame start offset to have room for a LBT before the actual TX (``--tx_frame_start_offset 2``) within a frame:
 
   .. code-block:: console
 
-     dect rf_tool -m tx --frame_repeat_count 15 --tx_frame_start_offset 2 --tx_idle_subslot_count 8 --tx_lbt_period 2 -c 1677 -t 39
+     dect rf_tool -m tx --tx_frame_start_offset 2 --tx_lbt_period 2 --tx_idle_subslot_count 8 --frame_repeat_count 200 --frame_repeat_count_intervals 2 -c 1677
 
 Example 3: Duty cycle (RX+TX) testing
 -------------------------------------
@@ -414,20 +408,20 @@ Example 3: Duty cycle (RX+TX) testing
   .. code-block:: console
 
      server:
-     dect rf_tool -m rx_tx --rx_find_sync --rx_subslot_count 9 --rx_idle_subslot_count 3 --tx_subslot_count 8 --tx_idle_subslot_count 3 --frame_repeat_count 15 -c 1677
+     dect rf_tool -m rx_tx --rx_find_sync --rx_subslot_count 9 --rx_idle_subslot_count 3 --tx_subslot_count 8 --tx_idle_subslot_count 3 --frame_repeat_count 100 -c 1677
 
      client:
-     dect rf_tool -m rx_tx --rx_subslot_count 9 --rx_idle_subslot_count 3 --tx_subslot_count 8 --tx_idle_subslot_count 3 --frame_repeat_count 15 -c 1677 -t 39
+     dect rf_tool -m rx_tx --rx_subslot_count 9 --rx_idle_subslot_count 3 --tx_subslot_count 8 --tx_idle_subslot_count 3 --frame_repeat_count 100 -c 1677
 
   RX/TX duty cycle percentage 82.50%:
 
   .. code-block:: console
 
      server:
-     dect rf_tool -m rx_tx --rx_find_sync --rx_subslot_count 17 --rx_idle_subslot_count 3 --tx_subslot_count 16 --tx_idle_subslot_count 4 --frame_repeat_count 15 -c 1677
+     dect rf_tool -m rx_tx --rx_find_sync --rx_subslot_count 17 --rx_idle_subslot_count 3 --tx_subslot_count 16 --tx_idle_subslot_count 4 --frame_repeat_count 300 -c 1677
 
      client:
-     dect rf_tool -m rx_tx --rx_subslot_count 17 --rx_idle_subslot_count 3 --tx_subslot_count 16 --tx_idle_subslot_count 4 --frame_repeat_count 15 -c 1677 -t 39
+     dect rf_tool -m rx_tx --rx_subslot_count 17 --rx_idle_subslot_count 3 --tx_subslot_count 16 --tx_idle_subslot_count 4 --frame_repeat_count 300 -c 1677
 
 * TX/RX testing on separate devices:
 
@@ -439,17 +433,17 @@ Example 3: Duty cycle (RX+TX) testing
      dect rf_tool -m rx_cont -c 1677
 
      client:
-     dect rf_tool -m tx --tx_subslot_count 16 --tx_idle_subslot_count 3 -c 1677 -t 39
+     dect rf_tool -m tx --tx_subslot_count 16 --tx_idle_subslot_count 3 --frame_repeat_count 200 -c 1677
 
   Alternatively, RX side with the information of TX side to have interval reporting:
 
   .. code-block:: console
 
      server:
-     dect rf_tool -m rx_cont --rf_mode_peer tx --tx_subslot_count 16 --tx_idle_subslot_count 3 --rx_find_sync -c 1677
+     dect rf_tool -m rx_cont --rf_mode_peer tx --tx_subslot_count 16 --tx_idle_subslot_count 3 --frame_repeat_count 200 --rx_find_sync -c 1677
 
      client:
-     dect rf_tool -m tx --tx_subslot_count 16 --tx_idle_subslot_count 3 -c 1677 -t 39
+     dect rf_tool -m tx --tx_subslot_count 16 --tx_idle_subslot_count 3 --frame_repeat_count 200 -c 1677
 
 Example 4: Bi-directional testing with more data
 ------------------------------------------------
@@ -459,10 +453,10 @@ Example 4: Bi-directional testing with more data
   .. code-block:: console
 
      server:
-     dect rf_tool -m rx_tx --rx_find_sync --rx_subslot_count 9 --rx_idle_subslot_count 4 --tx_subslot_count 8 --tx_idle_subslot_count 4 --tx_mcs 4 --frame_repeat_count 15 -c 1677
+     dect rf_tool -m rx_tx --rx_find_sync --rx_subslot_count 9 --rx_idle_subslot_count 4 --tx_subslot_count 8 --tx_idle_subslot_count 4 --tx_mcs 4 --frame_repeat_count 1000 -c 1677
 
      client:
-     dect rf_tool -m rx_tx --rx_subslot_count 9 --rx_idle_subslot_count 4 --tx_subslot_count 8 --tx_idle_subslot_count 4 --tx_mcs 4 --frame_repeat_count 15 -c 1677 --tx_pwr 15 -t 39
+     dect rf_tool -m rx_tx --rx_subslot_count 9 --rx_idle_subslot_count 4 --tx_subslot_count 8 --tx_idle_subslot_count 4 --tx_mcs 4 --frame_repeat_count 1000 -c 1677
 
 Dect NR+ PHY MAC
 ================
