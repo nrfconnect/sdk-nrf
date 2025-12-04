@@ -21,6 +21,8 @@
 #define CLK_VIO		    0
 #define D0_VIO		    1
 #define D1_VIO		    2
+#define D2_VIO		    3
+#define D3_VIO		    4
 #define VIO_SINGLE_BUS_MASK 0x0004
 #define VIO_QUAD_BUS_MASK   0x001E
 
@@ -212,7 +214,7 @@ void hrt_write(volatile hrt_xfer_t *hrt_xfer_params)
 	uint16_t prev_out = 0;
 
 	/* Configure clock and pins */
-	nrf_vpr_csr_vio_dir_set(hrt_xfer_params->tx_direction_mask);
+	nrf_vpr_csr_vio_dir_set(hrt_xfer_params->used_pins_mask);
 
 	for (uint8_t i = 0; i < HRT_FE_MAX; i++) {
 
@@ -322,6 +324,164 @@ void hrt_write(volatile hrt_xfer_t *hrt_xfer_params)
 	}
 }
 
+#if defined(CONFIG_SOC_NRF54LM20A)
+void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
+{
+	nrf_vpr_csr_vio_shift_ctrl_t rx_shift_ctrl = {
+		.shift_count = SHIFTCNTB_VALUE(BITS_IN_WORD / hrt_xfer_params->bus_widths.data),
+		.out_mode = NRF_VPR_CSR_VIO_SHIFT_OUTB_TOGGLE,
+		.frame_width = hrt_xfer_params->bus_widths.data,
+		.in_mode = NRF_VPR_CSR_VIO_MODE_IN_SHIFT,
+	};
+	nrf_vpr_csr_vio_mode_out_t rx_out_mode = {
+		.mode = NRF_VPR_CSR_VIO_SHIFT_OUTB_TOGGLE,
+		.frame_width = hrt_xfer_params->bus_widths.data,
+	};
+	uint32_t word_count = hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count;
+	bool hold = hrt_xfer_params->ce_hold;
+	uint32_t *data = (uint32_t *)hrt_xfer_params->xfer_data[HRT_FE_DATA].data;
+	uint16_t prev_out;
+	uint16_t rx_pin_mask = 0;
+
+	/* Enable CE */
+	if (hrt_xfer_params->ce_polarity == MSPI_CE_ACTIVE_LOW) {
+		nrf_vpr_csr_vio_out_clear_set(BIT(hrt_xfer_params->ce_vio));
+	} else {
+		nrf_vpr_csr_vio_out_or_set(BIT(hrt_xfer_params->ce_vio));
+	}
+
+	/* Get state of all VIO to reset it correctly after transfer. */
+	prev_out = nrf_vpr_csr_vio_out_get();
+
+	if ((hrt_xfer_params->xfer_data[HRT_FE_COMMAND].word_count != 0) ||
+	    (hrt_xfer_params->xfer_data[HRT_FE_ADDRESS].word_count != 0) ||
+	    (hrt_xfer_params->xfer_data[HRT_FE_DUMMY_CYCLES].word_count != 0)) {
+		/* Write command, address and/or dummy cycles and keep CS active. */
+		hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count = 0;
+		hrt_xfer_params->ce_hold = true;
+		hrt_write(hrt_xfer_params);
+	}
+	/* Restore variables values for read phase. */
+	hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count = word_count;
+	hrt_xfer_params->ce_hold = hold;
+
+	nrf_vpr_csr_vio_shift_cnt_out_set(0);
+	nrf_vpr_csr_vtim_simple_wait_set(0, false, 0);
+
+	/* Set all needed data pins as inputs */
+	WRITE_BIT(rx_pin_mask, D1_VIO, VPRCSR_NORDIC_PIN_USED);
+	if (hrt_xfer_params->bus_widths.data >= 2) {
+		WRITE_BIT(rx_pin_mask, D0_VIO, VPRCSR_NORDIC_PIN_USED);
+		if (hrt_xfer_params->bus_widths.data == 4) {
+			WRITE_BIT(rx_pin_mask, D2_VIO, VPRCSR_NORDIC_PIN_USED);
+			WRITE_BIT(rx_pin_mask, D3_VIO, VPRCSR_NORDIC_PIN_USED);
+		}
+	}
+	nrf_vpr_csr_vio_dir_set(nrf_vpr_csr_vio_dir_get() & ~rx_pin_mask);
+
+	/* Start counters prior setting OutBBufToggleClk mode to avoid CNT1 stall */
+	nrf_vpr_csr_vtim_combined_counter_set(UINT32_MAX);
+
+	/* Initial configuration */
+	rx_out_mode.mode = NRF_VPR_CSR_VIO_SHIFT_OUTB_TOGGLE;
+	nrf_vpr_csr_vio_mode_out_set(&rx_out_mode);
+
+	/* Get shift count for index 0. */
+	rx_shift_ctrl.shift_count = get_next_shift_count(hrt_xfer_params, word_count, 0);
+	nrf_vpr_csr_vio_shift_cnt_out_buffered_set(rx_shift_ctrl.shift_count);
+	nrf_vpr_csr_vio_shift_cnt_out_set(0);
+	nrf_vpr_csr_vio_shift_cnt_in_set(0);
+
+	/* The workaround is to use direct registers */
+	nrf_vpr_csr_vio_mode_in_set(NRF_VPR_CSR_VIO_MODE_IN_SHIFT);
+
+	/* Counter settings */
+	nrf_vpr_csr_vtim_count_mode_set(0, NRF_VPR_CSR_VTIM_COUNT_RELOAD);
+	nrf_vpr_csr_vtim_count_mode_set(1, NRF_VPR_CSR_VTIM_COUNT_RELOAD);
+
+	/* Set top counters value. */
+	nrf_vpr_csr_vtim_simple_counter_top_set(0, hrt_xfer_params->counter_value);
+	nrf_vpr_csr_vtim_simple_counter_top_set(1,
+						CNT1_TOP_CALCULATE(hrt_xfer_params->counter_value));
+
+	/* CNT1 period should be double the CNT0 period according to IPS.
+	 * CNT1 has lowest possible value to generate CNT1 event as soon as possible. At that
+	 * time, SHIFTCNTIN should be automatically written with SHIFTCNTB. Some time after
+	 * that, CNT0 should generate first event (when CNT1 is halfway to overflow), which will
+	 * initialize output mode and generate VIO[0] driving edge if necessary. Then both CNT0
+	 * and CNT1 should generate events at almost the same time - CNT0 triggers sampling edge
+	 * on VIO[0] and CNT1 triggers VIO to sample input data. The sequence continues with
+	 * counters in sync, so alternately - one driving CNT0 event, then both CNT0 and CNT1
+	 * sampling events.
+	 */
+	nrf_vpr_csr_vtim_combined_counter_set(
+		NRF_VPR_CSR_VTIM_COUNTER_VAL(hrt_xfer_params->counter_value, CNT1_INIT_VALUE));
+	nrf_vpr_csr_vtim_simple_wait_set(0, false, 0);
+
+	/* Make dummy INB read, because first access will not stall VPR */
+	nrf_vpr_csr_vio_in_buffered_reversed_byte_get();
+
+	for (uint32_t i = 0; i < word_count-1; i++) {
+		rx_shift_ctrl.shift_count = get_next_shift_count(hrt_xfer_params, word_count, i+1);
+		nrf_vpr_csr_vio_shift_cnt_out_buffered_set(rx_shift_ctrl.shift_count);
+		data[i] = nrf_vpr_csr_vio_in_buffered_reversed_byte_get();
+	}
+	nrf_vpr_csr_vio_shift_cnt_out_buffered_set(0);
+
+
+	/* Wait until the last frame is to be received */
+	while (nrf_vpr_csr_vio_shift_cnt_in_get() > 0) {
+	}
+	nrf_vpr_csr_vtim_simple_wait_set(0, false, 0);
+
+	if ((hrt_xfer_params->cpp_mode == MSPI_CPP_MODE_0) ||
+	    (hrt_xfer_params->cpp_mode == MSPI_CPP_MODE_2)) {
+		nrf_vpr_csr_vtim_simple_wait_set(0, false, 0);
+	}
+
+	/* Stop counters before reading RX buffer. This will prevent VIO from generating
+	 * additional CLK edges
+	 */
+	nrf_vpr_csr_vtim_count_mode_set(0, NRF_VPR_CSR_VTIM_COUNT_STOP);
+	nrf_vpr_csr_vtim_count_mode_set(1, NRF_VPR_CSR_VTIM_COUNT_STOP);
+
+	uint32_t last_word = nrf_vpr_csr_vio_in_buffered_reversed_byte_get();
+
+	/* Special case when only 2 clocks are required. */
+	if ((word_count == 1) && (hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word_clocks == 2)) {
+		if (hrt_xfer_params->bus_widths.data == 8) {
+			hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word =
+				(uint16_t)(last_word >> BYTE_2_SHIFT);
+		} else {
+			hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word =
+				(uint8_t)(last_word >> BYTE_3_SHIFT);
+		}
+	} else {
+		hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word =
+			last_word >>
+			(BITS_IN_WORD - hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word_clocks *
+						hrt_xfer_params->bus_widths.data);
+	}
+
+	nrf_vpr_csr_vtim_simple_wait_set(0, false, 0);
+	nrf_vpr_csr_vio_shift_cnt_out_set(0);
+
+	/* Final configuration */
+	rx_out_mode.mode = NRF_VPR_CSR_VIO_SHIFT_NONE;
+	nrf_vpr_csr_vio_mode_out_set(&rx_out_mode);
+	nrf_vpr_csr_vio_mode_in_set(NRF_VPR_CSR_VIO_MODE_IN_CONTINUOUS);
+
+	/* Disable CS */
+	if (!hrt_xfer_params->ce_hold) {
+
+		if (hrt_xfer_params->ce_polarity == MSPI_CE_ACTIVE_LOW) {
+			nrf_vpr_csr_vio_out_or_set(BIT(hrt_xfer_params->ce_vio));
+		} else {
+			nrf_vpr_csr_vio_out_clear_set(BIT(hrt_xfer_params->ce_vio));
+		}
+	}
+}
+#else
 void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 {
 	nrf_vpr_csr_vio_shift_ctrl_t rx_shift_ctrl = {
@@ -339,6 +499,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 	uint32_t *data = (uint32_t *)hrt_xfer_params->xfer_data[HRT_FE_DATA].data;
 	uint32_t last_word;
 	uint16_t prev_out;
+	uint16_t rx_pin_mask = 0;
 
 	/* Workaround for hw issue: in modes 1-3 clock does 1 extra edge after being stopped.
 	 * To fix it, rx transfer is set up to do 1 clock cycle less and last clock edge is done,
@@ -361,7 +522,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 	if ((hrt_xfer_params->xfer_data[HRT_FE_COMMAND].word_count != 0) ||
 	    (hrt_xfer_params->xfer_data[HRT_FE_ADDRESS].word_count != 0) ||
 	    (hrt_xfer_params->xfer_data[HRT_FE_DUMMY_CYCLES].word_count != 0)) {
-		/* Write only command, address and dummy cycles and keep CS active. */
+		/* Write command, address and/or dummy cycles and keep CS active. */
 		hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count = 0;
 		hrt_xfer_params->ce_hold = true;
 		hrt_write(hrt_xfer_params);
@@ -371,15 +532,16 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 	hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count = word_count;
 	hrt_xfer_params->ce_hold = hold;
 
-	/* Configure clock and pins */
-	if (hrt_xfer_params->bus_widths.data == 1) {
-		/* Set DQ1 as input */
-		WRITE_BIT(hrt_xfer_params->tx_direction_mask, SPI_INPUT_PIN_NUM,
-			  VPRCSR_NORDIC_DIR_INPUT);
-		nrf_vpr_csr_vio_dir_set(hrt_xfer_params->tx_direction_mask);
-	} else {
-		nrf_vpr_csr_vio_dir_set(hrt_xfer_params->rx_direction_mask);
+	/* Set all needed data pins as inputs */
+	WRITE_BIT(rx_pin_mask, D1_VIO, VPRCSR_NORDIC_PIN_USED);
+	if (hrt_xfer_params->bus_widths.data >= 2) {
+		WRITE_BIT(rx_pin_mask, D0_VIO, VPRCSR_NORDIC_PIN_USED);
+		if (hrt_xfer_params->bus_widths.data == 4) {
+			WRITE_BIT(rx_pin_mask, D2_VIO, VPRCSR_NORDIC_PIN_USED);
+			WRITE_BIT(rx_pin_mask, D3_VIO, VPRCSR_NORDIC_PIN_USED);
+		}
 	}
+	nrf_vpr_csr_vio_dir_set(nrf_vpr_csr_vio_dir_get() & ~rx_pin_mask);
 
 	/* Initial configuration */
 	nrf_vpr_csr_vio_mode_in_set(NRF_VPR_CSR_VIO_MODE_IN_SHIFT);
@@ -427,7 +589,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 		 *    used because at higher frequencies shifting stops before it is called the
 		 *    first time.
 		 * Therefore the only solution that works is to wait for timer 0 to stop.
-		 * Here also the defaut way of doing that does not work,
+		 * Here also the default way of doing that does not work,
 		 * which is to use WAIT0 register, because at higher frequencies function
 		 * nrf_vpr_csr_vtim_simple_wait_set is called when CNT0 has already stopped,
 		 * making code wait indefinitely.
@@ -444,14 +606,15 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 		rx_out_mode.mode = NRF_VPR_CSR_VIO_SHIFT_NONE;
 		nrf_vpr_csr_vio_mode_out_set(&rx_out_mode);
 
+		/* Get last word. */
+		last_word = nrf_vpr_csr_vio_in_buffered_reversed_byte_get();
+
 		if (hrt_xfer_params->bus_widths.data == 8) {
-			last_word = nrf_vpr_csr_vio_in_buffered_reversed_byte_get();
 			hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word =
 				(uint16_t)(last_word >> BYTE_2_SHIFT);
 		} else {
 			hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word =
-				(uint8_t)(nrf_vpr_csr_vio_in_buffered_reversed_byte_get() >>
-					  BYTE_3_SHIFT);
+				(uint8_t)(last_word >> BYTE_3_SHIFT);
 		}
 	} else {
 		/* Get shift count for index 0.
@@ -496,7 +659,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 		 *    used because at higher frequencies shifting stops before it is called the
 		 *    first time.
 		 * Therefore the only solution that works is to wait for timer 0 to stop.
-		 * Here also the defaut way of doing that does not work,
+		 * Here also the default way of doing that does not work,
 		 * which is to use WAIT0 register, because at higher frequencies function
 		 * nrf_vpr_csr_vtim_simple_wait_set is called when CNT0 has already stopped,
 		 * making code wait indefinitely.
@@ -517,6 +680,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 		 * done, by writing directly to out register and reading in register.
 		 */
 		if (hrt_xfer_params->cpp_mode == MSPI_CPP_MODE_3) {
+			nrf_barrier_rw();
 			rx_end_procedure_mode_3(hrt_xfer_params);
 		} else {
 			hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word =
@@ -545,11 +709,5 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 			nrf_vpr_csr_vio_out_clear_set(BIT(hrt_xfer_params->ce_vio));
 		}
 	}
-
-	/* Set DQ1 back as output. */
-	if (hrt_xfer_params->bus_widths.data == 1) {
-		WRITE_BIT(hrt_xfer_params->tx_direction_mask, SPI_INPUT_PIN_NUM,
-			  VPRCSR_NORDIC_DIR_OUTPUT);
-		nrf_vpr_csr_vio_dir_set(hrt_xfer_params->tx_direction_mask);
-	}
 }
+#endif
