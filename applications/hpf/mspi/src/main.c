@@ -47,7 +47,7 @@
 #define VEVIF_IRQN(vevif)   VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
 
-#ifndef CONFIG_SOC_NRF54L15
+#if !defined(CONFIG_SOC_NRF54L15) && !defined(CONFIG_SOC_NRF54LM20A)
 #error "Unsupported SoC for HPF MSPI"
 #endif
 
@@ -345,8 +345,7 @@ static void config_pins(hpf_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 {
 	ce_vios_count = 0;
 	data_vios_count = 0;
-	xfer_params.tx_direction_mask = 0;
-	xfer_params.rx_direction_mask = 0;
+	xfer_params.used_pins_mask = 0;
 
 	for (uint8_t i = 0; i < DATA_PINS_MAX; i++) {
 		data_vios[i] = DATA_PIN_UNUSED;
@@ -367,10 +366,8 @@ static void config_pins(hpf_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 		if ((fun >= NRF_FUN_HPF_MSPI_CS0) && (fun <= NRF_FUN_HPF_MSPI_CS4)) {
 
 			ce_vios[ce_vios_count] = pin_to_vio_map[pin_number];
-			WRITE_BIT(xfer_params.tx_direction_mask, ce_vios[ce_vios_count],
-				  VPRCSR_NORDIC_DIR_OUTPUT);
-			WRITE_BIT(xfer_params.rx_direction_mask, ce_vios[ce_vios_count],
-				  VPRCSR_NORDIC_DIR_OUTPUT);
+			WRITE_BIT(xfer_params.used_pins_mask, ce_vios[ce_vios_count],
+				  VPRCSR_NORDIC_PIN_USED);
 			ce_vios_count++;
 
 		} else if ((fun >= NRF_FUN_HPF_MSPI_DQ0) && (fun <= NRF_FUN_HPF_MSPI_DQ7)) {
@@ -379,18 +376,14 @@ static void config_pins(hpf_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 			NRFX_ASSERT(data_vios[DATA_LINE_INDEX(fun)] == DATA_PIN_UNUSED);
 
 			data_vios[DATA_LINE_INDEX(fun)] = pin_to_vio_map[pin_number];
-			WRITE_BIT(xfer_params.tx_direction_mask, data_vios[DATA_LINE_INDEX(fun)],
-				  VPRCSR_NORDIC_DIR_OUTPUT);
-			WRITE_BIT(xfer_params.rx_direction_mask, data_vios[DATA_LINE_INDEX(fun)],
-				  VPRCSR_NORDIC_DIR_INPUT);
+			WRITE_BIT(xfer_params.used_pins_mask, data_vios[DATA_LINE_INDEX(fun)],
+				  VPRCSR_NORDIC_PIN_USED);
 			data_vios_count++;
 		} else if (fun == NRF_FUN_HPF_MSPI_SCK) {
 			clk_vio = pin_to_vio_map[pin_number];
-			WRITE_BIT(xfer_params.tx_direction_mask, clk_vio, VPRCSR_NORDIC_DIR_OUTPUT);
-			WRITE_BIT(xfer_params.rx_direction_mask, clk_vio, VPRCSR_NORDIC_DIR_OUTPUT);
+			WRITE_BIT(xfer_params.used_pins_mask, clk_vio, VPRCSR_NORDIC_PIN_USED);
 		}
 	}
-	nrf_vpr_csr_vio_dir_set(xfer_params.tx_direction_mask);
 
 	/* Set all devices as undefined. */
 	for (uint8_t i = 0; i < DEVICES_MAX; i++) {
@@ -455,21 +448,6 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		} else {
 			nrf_vpr_csr_vio_out_clear_set(
 				BIT(ce_vios[hpf_mspi_devices[dev_config->device_index].ce_index]));
-		}
-
-		if (dev_config->dev_config.io_mode == MSPI_IO_MODE_SINGLE) {
-			if (data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ2)] != DATA_PIN_UNUSED &&
-			    data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ3)] != DATA_PIN_UNUSED) {
-				nrf_vpr_csr_vio_out_or_set(
-					BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ2)]));
-				nrf_vpr_csr_vio_out_or_set(
-					BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ3)]));
-			}
-		} else {
-			nrf_vpr_csr_vio_out_clear_set(
-				BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ2)]));
-			nrf_vpr_csr_vio_out_clear_set(
-				BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ3)]));
 		}
 
 		break;
