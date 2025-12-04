@@ -1987,10 +1987,6 @@
 .. _`latest nRF54H20 SoC binaries`: https://files.nordicsemi.com/artifactory/SDSC/external/
 .. _`latest nRF54H20 IronSide SE binaries`: https://files.nordicsemi.com/artifactory/SDSC/external/
 
-.. ### Descr: Old 54H BICR file
-
-.. _`BICR binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr_ext_loadcap.hex
-
 .. ### Descr: New 54H BICR file
 
 .. _`nRF54H20 DK BICR binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr/bicr.hex
