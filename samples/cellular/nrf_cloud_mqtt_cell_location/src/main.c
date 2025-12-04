@@ -219,7 +219,7 @@ int main(void)
 
 	k_sem_take(&lte_connected, K_FOREVER);
 
-	/* A-GNSS/P-GPS needs to know the current time. */
+	/* Waiting for valid time. */
 	if (IS_ENABLED(CONFIG_DATE_TIME)) {
 		LOG_INF("Waiting for current time");
 
