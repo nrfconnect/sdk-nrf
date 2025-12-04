@@ -10,6 +10,47 @@ common:
     - ci_tests_subsys_bootloader
 
 tests:
+  no_mcuboot_uart:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP=y
+      - FILE_SUFFIX=direct_xip
+      - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
+      - ipc_radio_CONFIG_SERIAL=y
+      - ipc_radio_CONFIG_UART_CONSOLE=y
+      - ipc_radio_CONFIG_LOG=y
+      - mcuboot_CONFIG_SERIAL=n
+
+  swapped_uart_v1:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP=y
+      - FILE_SUFFIX=direct_xip
+      - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
+      - ipc_radio_CONFIG_SERIAL=y
+      - ipc_radio_CONFIG_UART_CONSOLE=y
+      - ipc_radio_CONFIG_LOG=y
+      - mcuboot_CONFIG_SERIAL=n
+    required_snippets:
+      - swap-uart
+
+  swapped_uart_v2:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP=y
+      - FILE_SUFFIX=direct_xip
+      - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
+      - ipc_radio_CONFIG_SERIAL=y
+      - ipc_radio_CONFIG_UART_CONSOLE=y
+      - ipc_radio_CONFIG_LOG=y
+      - mcuboot_CONFIG_SERIAL=n
+      - CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION="2.2.2+2"
+    required_snippets:
+      - swap-uart
+
   mcuboot.upgrade.basic:
     platform_allow:
       - nrf52840dk/nrf52840
