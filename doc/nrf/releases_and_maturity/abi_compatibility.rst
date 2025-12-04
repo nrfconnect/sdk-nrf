@@ -46,18 +46,6 @@ nRF54H20 IronSide SE binaries changelog
 
 The following sections provide detailed lists of changes by component.
 
-IronSide Secure Element (IronSide SE) v23.1.2+21
-================================================
-
-Fixed
------
-
-* An issue in the temperature service that could delay sending temperature responses. (NCSDK-36336)
-
-Updated
--------
-
-* Reduced MRAM latency when requesting ``no latency`` while MRAM was powered off by powering MRAM on immediately. (NRFX-8740)
 
 IronSide Secure Element (IronSide SE) v23.1.1+20
 ================================================
@@ -66,8 +54,8 @@ Fixed
 -----
 
 * L2CACHE now prefetches several cache lines when an L2 cache miss occurs. (HM-26346)
-  This improves L2 cache performance in some situations and reduces L2 cache performance in other situations.
-* Fixed unintentional behavior of ``psa_copy_key()`` when used to create a revocable key. (NCSDK-36369)
+  This will improve L2 cache performance in some situations and reduce L2 cache performance in other situations.
+* Fixed unintentional behavior of ``psa_copy_key()`` when it was used in an attempt to create a revocable key. (NCSDK-36369)
 
 IronSide Secure Element (IronSide SE) v23.1.0+19
 ================================================

@@ -55,7 +55,7 @@ Bootloaders and DFU
 Developing with nRF91 Series
 ============================
 
-* Moved the sections about updating the firmware using the Programmer app to the `Programming nRF91 Series DK firmware`_ tools page.
+|no_changes_yet_note|
 
 Developing with nRF70 Series
 ============================
@@ -139,8 +139,6 @@ DECT NR+
 
 Enhanced ShockBurst (ESB)
 -------------------------
-
-|no_changes_yet_note|
 
 * Updated:
 
