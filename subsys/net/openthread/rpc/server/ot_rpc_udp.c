@@ -83,12 +83,9 @@ static void handle_udp_receive(void *context, otMessage *message, const otMessag
 	ot_rpc_encode_message_info(&ctx, message_info);
 
 	ot_rpc_mutex_unlock();
-	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_UDP_RECEIVE_CB, &ctx);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_UDP_RECEIVE_CB, &ctx, ot_rpc_decode_void,
+				NULL);
 	ot_rpc_mutex_lock();
-
-	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
-		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_UDP_RECEIVE_CB);
-	}
 
 exit:
 	ot_res_tab_msg_free(msg_key); /* This is NULL safe. */
