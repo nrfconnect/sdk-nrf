@@ -105,19 +105,24 @@ def test_rtt_logging(dut: DeviceAdapter):
     time.sleep(2)
 
     # use JLinkRTTLoggerExe to collect logs
-    cmd = f"JLinkRTTLoggerExe -USB {SEGGER_ID}"
-    cmd += f" -device {SWD_CONFIG[PLATFORM]['device']}"
-    cmd += " -If SWD -Speed 1000 -RTTChannel 0"
+    cmd = []
+    cmd.extend(f"JLinkRTTLoggerExe -USB {SEGGER_ID}".split())
+    cmd.extend(f"-device {SWD_CONFIG[PLATFORM]['device']}".split())
+    cmd.extend("-If SWD -Speed 1000 -RTTChannel 0".split())
 
     if 'RTTAddress' in SWD_CONFIG[PLATFORM]:
-        cmd += f" -RTTAddress {SWD_CONFIG[PLATFORM]['RTTAddress']}"
+        cmd.extend(f"-RTTAddress {SWD_CONFIG[PLATFORM]['RTTAddress']}".split())
 
-    cmd += f" {log_filename}"
+    if 'RTTSearchRanges' in SWD_CONFIG[PLATFORM]:
+        cmd.append("-RTTSearchRanges")
+        cmd.append(f"{SWD_CONFIG[PLATFORM]['RTTSearchRanges']}")
+
+    cmd.append(f"{log_filename}")
 
     try:
-        logger.info(f"Executing:\n{cmd}")
+        logger.info(f"Executing:\n{" ".join(cmd)}")
         proc = subprocess.Popen(
-            cmd.split(),
+            cmd,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
