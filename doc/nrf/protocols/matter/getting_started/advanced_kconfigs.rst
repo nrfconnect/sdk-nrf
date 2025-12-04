@@ -181,6 +181,11 @@ Some of these can be configured using the Kconfig options listed below:
   This allows filtering of the discovery results to find the nodes that match the device type.
 * :kconfig:option:`CONFIG_CHIP_ROTATING_DEVICE_ID` enables an optional rotating device identifier feature that provides an additional unique identifier for each device.
   This identifier is similar to the serial number, but it additionally changes at predefined times to protect against long-term tracking of the device.
+* :kconfig:option:`CONFIG_CHIP_DEVICE_DISCRIMINATOR` sets the Bluetooth LE discriminator of the device.
+  In each sample, it is set to the same value by default (hexadecimal: ``0xF00``; decimal: ``3840``).
+  Without changing the discriminator only one uncommissioned device can be powered up at the same time.
+  If multiple devices with the same discriminator are powered simultaneously, the Matter controller will commission a random device.
+  To avoid confusion, keep only a single uncommissioned device powered up, or assign a unique discriminator to each device.
 
 .. _ug_matter_configuring_ffs:
 

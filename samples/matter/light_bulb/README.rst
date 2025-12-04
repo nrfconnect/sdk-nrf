@@ -379,6 +379,9 @@ Enabling remote control
 
 Remote control allows you to control the Matter light bulb device from an IPv6 network.
 
+.. note::
+   |matter_unique_discriminator_note|
+
 .. include:: ../lock/README.rst
     :start-after: matter_door_lock_sample_remote_control_start
     :end-before: matter_door_lock_sample_remote_control_end

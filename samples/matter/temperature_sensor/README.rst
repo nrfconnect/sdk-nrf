@@ -232,6 +232,9 @@ Enabling remote control
 
 Remote control allows you to control the Matter temperature sensor device from an IPv6 network.
 
+.. note::
+   |matter_unique_discriminator_note|
+
 `Commissioning the device`_ allows you to set up a testing environment and remotely control the sample over a Matter-enabled Thread network.
 
 .. _matter_temperature_sensor_sample_remote_control_commissioning:
