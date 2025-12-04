@@ -25,16 +25,8 @@ If it is not, follow the instructions in `Device on-boarding <nrf_cloud_coap_cel
 Overview
 ********
 
-The sample works in both single-cell and multi-cell mode.
-
-After the sample initializes and connects to the network, it enters the single-cell mode and sends a single-cell location request to nRF Cloud.
-For this purpose, the sample uses network data obtained from the :ref:`modem_info_readme` library.
-In the multi-cell mode, the sample requests for neighbor cell measurement using the :ref:`lte_lc_readme` library.
-
-If the modem provides neighbor cell data, the sample sends a multi-cell location request to nRF Cloud.
-Otherwise, the request is single-cell.
-
-In either mode, the sample sends a new location request if a change in cell ID is detected.
+After the sample initializes and connects to the network, it sends a cell location request to nRF Cloud.
+For this purpose, the sample uses network data obtained from the :ref:`lib_location` library.
 
 See the `nRF Cloud Location Services documentation`_ page for additional information.
 
@@ -136,6 +128,26 @@ If you are not getting the output similar to the one in `Testing`_, check the fo
 The network carrier does not provide date and time
    The sample requires the network carrier to provide date and time to the modem.
    Without a valid date and time, the modem cannot generate JWTs with an expiration time.
+
+Credentials are missing on the configured sec tag:
+
+.. note::
+
+   CoAP connections require a different root CA certificate compared to REST and MQTT.
+   It is possible to provision both certificates on the same sec tag.
+
+   .. code-block:: console
+
+      [00:00:03.067,291] <err> nrf_cloud_coap_transport: Could not connect to nRF Cloud CoAP server coap.nrfcloud.com, port: 5684. err: -111
+      [00:00:03.067,321] <err> nrf_cloud_coap_cell_location_sample: Connecting to nRF Cloud failed, error: -111
+
+Credentials are not registered or the device ID does not match the registered one:
+
+   .. code-block:: console
+
+      [00:00:05.081,756] <err> nrf_cloud_coap_transport: Device not authenticated; reconnection required.
+      [00:00:05.081,787] <inf> nrf_cloud_coap_transport: Authorization result_code: 4.01
+      [00:00:05.583,435] <err> nrf_cloud_coap_cell_location_sample: Connecting to nRF Cloud failed, error: -13
 
 Dependencies
 ************

@@ -25,16 +25,8 @@ If it is not, follow the instructions in `Device on-boarding <nrf_cloud_rest_cel
 Overview
 ********
 
-The sample works in both single-cell and multi-cell mode.
-
-After the sample initializes and connects to the network, it enters the single-cell mode and sends a single-cell location request to nRF Cloud.
-For this purpose, the sample uses network data obtained from the :ref:`modem_info_readme` library.
-In the multi-cell mode, the sample requests for neighbor cell measurement using the :ref:`lte_lc_readme` library.
-
-If the modem provides neighbor cell data, the sample sends a multi-cell location request to nRF Cloud.
-Otherwise, the request is single-cell.
-
-In either mode, the sample sends a new location request if a change in cell ID is detected.
+After the sample initializes and connects to the network, it sends a cell location request to nRF Cloud.
+For this purpose, the sample uses network data obtained from the :ref:`lib_location` library.
 
 See the `nRF Cloud Location Services documentation`_ page for additional information.
 
@@ -132,6 +124,26 @@ If you are not getting the output similar to the one in `Testing`_, check the fo
 The network carrier does not provide date and time
    The sample requires the network carrier to provide date and time to the modem.
    Without a valid date and time, the modem cannot generate JWTs with an expiration time.
+
+Credentials are missing on the configured sec tag:
+
+   .. code-block:: console
+
+      [00:00:02.738,159] <err> nrf_cloud_jwt: Failed to generate JWT, error: -8
+      [00:00:02.745,574] <err> nrf_cloud_rest: Failed to auto-generate JWT, error: -8
+      [00:00:02.753,601] <err> nrf_cloud_rest: Could not format HTTP auth header, err: -8
+      [00:00:02.761,962] <err> nrf_cloud_rest_cell_location_sample: Request failed, error: -8
+
+Credentials are not registered or the device ID does not match the registered one:
+
+   .. code-block:: console
+
+      [00:00:07.062,957] <err> nrf_cloud_codec_internal: REST error msg: Auth token is malformed.
+      [00:00:07.071,990] <err> nrf_cloud_rest: nRF Cloud REST error code: 40100
+      [00:00:07.079,437] <err> nrf_cloud_rest: REST request was rejected. Response status: 401
+      [00:00:07.088,226] <err> nrf_cloud_rest: Response body: {"message":"Auth token is malformed.","code":40100}
+      [00:00:07.098,846] <err> nrf_cloud_rest_cell_location_sample: Request failed, error: -77
+      [00:00:07.107,574] <err> nrf_cloud_rest_cell_location_sample: nRF Cloud error code: 40100
 
 Dependencies
 ************
