@@ -14,13 +14,19 @@
 #include "sd_card.h"
 #include "nrf5340_audio_dk_version.h"
 #include "device_location.h"
-
 #include "sd_card_playback.h"
 
+#include <zephyr/debug/cpu_load.h>
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(peripherals, CONFIG_PERIPHERALS_LOG_LEVEL);
 
 static struct board_version board_rev;
+#define CPU_LOAD_HIGH_THRESHOLD_PERCENT 98
+
+static void cpu_load_cb(uint8_t percent)
+{
+	printk("CPU load high: %d %%\n", percent);
+}
 
 static int leds_set(void)
 {
@@ -151,6 +157,14 @@ int peripherals_init(void)
 	ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_1);
 	if (ret) {
 		return ret;
+	}
+
+	if (IS_ENABLED(CONFIG_CPU_LOAD)) {
+		ret = cpu_load_cb_reg(cpu_load_cb, CPU_LOAD_HIGH_THRESHOLD_PERCENT);
+		if (ret) {
+			LOG_ERR("Failed to register CPU load callback");
+			return ret;
+		}
 	}
 
 	return 0;

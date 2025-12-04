@@ -173,7 +173,13 @@ Wi-Fi®
 Applications
 ============
 
-|no_changes_yet_note|
+nRF5340 Audio
+-------------
+
+* Added high CPU load callback using the Zephyr CPU load subsystem.
+  The callback uses a :c:func:`printk` function, as the logging subsystem is scheduled out if higher priority threads take all CPU time.
+  This makes debugging high CPU load situations easier in the application.
+  The threshold for high CPU load is set in :c:file:`peripherals.c` using :c:macro:`CPU_LOAD_HIGH_THRESHOLD_PERCENT`.
 
 Connectivity bridge
 -------------------
