@@ -90,8 +90,7 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 		NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK | NRF_RADIO_SHORT_DISABLED_RSSISTOP_MASK)
 #else
 /* Devices without RSSISTOP task will stop RSSI measurement after specific period. */
-#define RADIO_SHORTS_FAST_SWITCHING_NO_RSSISTOP                                                    \
-		(NRF_RADIO_SHORT_READY_START_MASK | NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK)
+#define RADIO_SHORTS_FAST_SWITCHING_NO_RSSISTOP (NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK)
 #define RADIO_SHORTS_NO_FAST_SWITCHING_NO_RSSISTOP                                                 \
 		(NRF_RADIO_SHORT_READY_START_MASK | ESB_SHORT_DISABLE_MASK |                       \
 		NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK)
@@ -110,6 +109,14 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 		(NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK | NRF_RADIO_SHORT_END_START_MASK | \
 		NRF_RADIO_SHORT_READY_START_MASK)
 #endif /* !defined(CONFIG_SOC_SERIES_NRF54LX) */
+
+/* Define empty shorts for nRF52 devices. These shorts are used only for fast switching. */
+#if !defined(RADIO_SHORTS_TXREADY_START_Msk)
+#define NRF_RADIO_SHORT_TXREADY_START_MASK 0
+#endif
+#if !defined(RADIO_SHORTS_RXREADY_START_Msk)
+#define NRF_RADIO_SHORT_RXREADY_START_MASK 0
+#endif
 
 /* Flag for changing radio channel. */
 #define RF_CHANNEL_UPDATE_FLAG 0
@@ -1182,7 +1189,8 @@ static void start_tx_transaction(void)
 		memcpy(pdu->data, current_payload->data, current_payload->length);
 
 		if (fast_switching) {
-			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+			nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common |
+							 NRF_RADIO_SHORT_TXREADY_START_MASK));
 			nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 			nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
 		} else {
@@ -1210,7 +1218,8 @@ static void start_tx_transaction(void)
 		/* Handling ack if noack is set to false or if selective auto ack is turned off */
 		if (ack) {
 			if (fast_switching) {
-				nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+				nrf_radio_shorts_set(NRF_RADIO,
+					(radio_shorts_common | NRF_RADIO_SHORT_TXREADY_START_MASK));
 				nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 				nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
 			} else {
@@ -1244,8 +1253,9 @@ static void start_tx_transaction(void)
 				      (esb_state == ESB_STATE_PTX_TX));
 			esb_state = ESB_STATE_PTX_TX;
 		} else {
-			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common |
-					     ESB_SHORT_DISABLE_MASK);
+			nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common |
+							 NRF_RADIO_SHORT_READY_START_MASK |
+							 ESB_SHORT_DISABLE_MASK));
 
 			on_radio_disabled = on_radio_disabled_tx_noack;
 			esb_state = ESB_STATE_PTX_TX;
@@ -1384,8 +1394,9 @@ static void on_radio_disabled_tx(void)
 	nrf_radio_packetptr_set(NRF_RADIO, rx_payload_buffer);
 	if (fast_switching) {
 		nrf_radio_int_disable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
-		nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common | ESB_SHORT_DISABLE_MASK));
-		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
+		nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common | ESB_SHORT_DISABLE_MASK |
+						 NRF_RADIO_SHORT_RXREADY_START_MASK));
+		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_START);
 	}
 	on_radio_disabled = on_radio_disabled_tx_wait_for_ack;
 	esb_state = ESB_STATE_PTX_RX_ACK;
@@ -1456,7 +1467,8 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_READY);
 
 		if (fast_switching) {
-			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+			nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common |
+							 NRF_RADIO_SHORT_TXREADY_START_MASK));
 			nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 			nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
 		} else {
@@ -1526,7 +1538,8 @@ static void start_rx_listening(void)
 		on_radio_disabled = NULL;
 	} else {
 		if (fast_switching) {
-			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+			nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common |
+							 NRF_RADIO_SHORT_READY_START_MASK));
 			nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 			nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
 		} else {
@@ -1580,7 +1593,8 @@ static void clear_events_restart_rx(void)
 
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 
-	nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common | NRF_RADIO_SHORT_DISABLED_TXEN_MASK));
+	nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common | NRF_RADIO_SHORT_READY_START_MASK |
+					 NRF_RADIO_SHORT_DISABLED_TXEN_MASK));
 
 	esb_ppi_for_txrx_set(true, false);
 	esb_fem_for_rx_set();
@@ -1688,7 +1702,8 @@ static void on_radio_disabled_rx(void)
 		nrf_radio_packetptr_set(NRF_RADIO, tx_pdu);
 
 		if (fast_switching) {
-			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+			nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common |
+							 NRF_RADIO_SHORT_READY_START_MASK));
 			nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_TXEN);
 		} else {
 			nrf_radio_shorts_set(NRF_RADIO,
@@ -1722,7 +1737,8 @@ static void on_radio_disabled_rx_send_ack(void)
 
 	nrf_radio_packetptr_set(NRF_RADIO, rx_payload_buffer);
 	if (fast_switching) {
-		nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+		nrf_radio_shorts_set(NRF_RADIO,
+				     (radio_shorts_common | NRF_RADIO_SHORT_READY_START_MASK));
 		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
 	} else {
 		nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common |
