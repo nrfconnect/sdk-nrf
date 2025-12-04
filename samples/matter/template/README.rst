@@ -237,6 +237,9 @@ Testing in a network
 
 To test the sample in a Matter-enabled Thread network, complete the following steps:
 
+.. note::
+   |matter_unique_discriminator_note|
+
 .. tabs::
 
    .. group-tab:: nRF52, nRF53 and nRF70 DKs

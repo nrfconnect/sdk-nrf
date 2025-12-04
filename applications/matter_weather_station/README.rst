@@ -56,6 +56,9 @@ If the Bluetooth LE advertising times out, you can re-enable it manually using *
 Additionally, the controller must get the `Onboarding information`_ from the Matter accessory device and provision the device into the network.
 For details, see the `Testing`_ section.
 
+.. note::
+   |matter_unique_discriminator_note|
+
 Requirements
 ************
 
