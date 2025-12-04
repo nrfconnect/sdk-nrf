@@ -49,7 +49,7 @@ static int m_ppi_config(void)
 #endif
 	for (size_t i = 0; ARRAY_SIZE(tep); i++) {
 #if defined(DPPI_PRESENT)
-		nrfx_gppi_ep_attach(handle[i], tep[i]);
+		nrfx_gppi_ep_attach(tep[i], handle[i]);
 #else
 		int err = nrfx_gppi_conn_alloc(eep[i], tep[i], &handle[i]);
 
