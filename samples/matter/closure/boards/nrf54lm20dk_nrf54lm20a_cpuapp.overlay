@@ -4,11 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	chosen {
-		nordic,pm-ext-flash = &mx25r64;
-	};
+#include "../../common/boards/nrf54lm20dk_nrf54lm20a_cpuapp_partitions.dtsi"
 
+/ {
 	aliases {
 		/* Use watchdog wdt31 as the application watchdog */
 		watchdog0 = &wdt31;
@@ -45,10 +43,6 @@
 			low-power-enable;
 		};
 	};
-};
-
-&mx25r64 {
-	status = "okay";
 };
 
 &wdt31 {
