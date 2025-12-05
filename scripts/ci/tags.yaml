@@ -1395,7 +1395,7 @@ ci_tests_drivers_nrf_wifi:
   files:
     - modules/lib/hostap/
     - modules/lib/nrf_wifi/
-    - nrf/boards/nordic/nrf7120pdk/
+    - nrf/boards/nordic/nrf7120dk/
     - nrf/soc/nordic/nrf71/
     - nrf/tests/drivers/nrf_wifi/
     - zephyr/modules/nrf_wifi/

@@ -6,6 +6,6 @@ common:
 tests:
   nrf.extended.drivers.flash.negative_tests_nrf7120.mramc:
     platform_allow:
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp

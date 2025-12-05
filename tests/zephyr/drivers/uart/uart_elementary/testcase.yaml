@@ -18,7 +18,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuflpr
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuflpr
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 
@@ -47,15 +47,15 @@ tests:
   nrf.extended.drivers.uart.uart_elementary_dual_nrf7120:
     filter: CONFIG_SERIAL_SUPPORT_INTERRUPT
     platform_allow:
-      - nrf7120pdk/nrf7120/cpuapp
-    extra_args: DTC_OVERLAY_FILE="boards/nrf7120pdk_nrf7120_cpuapp_dual_uart.overlay"
+      - nrf7120dk/nrf7120/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf7120dk_nrf7120_cpuapp_dual_uart.overlay"
     extra_configs:
       - CONFIG_DUAL_UART_TEST=y
   nrf.extended.drivers.uart.uart_elementary_dual_nrf7120_cpuflpr:
     filter: CONFIG_SERIAL_SUPPORT_INTERRUPT
     platform_allow:
-      - nrf7120pdk/nrf7120/cpuflpr
-    extra_args: DTC_OVERLAY_FILE="boards/nrf7120pdk_nrf7120_cpuflpr_dual_uart.overlay"
+      - nrf7120dk/nrf7120/cpuflpr
+    extra_args: DTC_OVERLAY_FILE="boards/nrf7120dk_nrf7120_cpuflpr_dual_uart.overlay"
     extra_configs:
       - CONFIG_DUAL_UART_TEST=y
 
@@ -85,16 +85,16 @@ tests:
   nrf.extended.drivers.uart.uart_elementary_dual_setup_mismatch_nrf7120:
     filter: CONFIG_SERIAL_SUPPORT_INTERRUPT
     platform_allow:
-      - nrf7120pdk/nrf7120/cpuapp
-    extra_args: DTC_OVERLAY_FILE="boards/nrf7120pdk_nrf7120_cpuapp_dual_uart.overlay"
+      - nrf7120dk/nrf7120/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf7120dk_nrf7120_cpuapp_dual_uart.overlay"
     extra_configs:
       - CONFIG_DUAL_UART_TEST=y
       - CONFIG_SETUP_MISMATCH_TEST=y
   nrf.extended.drivers.uart.uart_elementary_dual_setup_mismatch_nrf7120_cpuflpr:
     filter: CONFIG_SERIAL_SUPPORT_INTERRUPT
     platform_allow:
-      - nrf7120pdk/nrf7120/cpuflpr
-    extra_args: DTC_OVERLAY_FILE="boards/nrf7120pdk_nrf7120_cpuflpr_dual_uart.overlay"
+      - nrf7120dk/nrf7120/cpuflpr
+    extra_args: DTC_OVERLAY_FILE="boards/nrf7120dk_nrf7120_cpuflpr_dual_uart.overlay"
     extra_configs:
       - CONFIG_DUAL_UART_TEST=y
       - CONFIG_SETUP_MISMATCH_TEST=y

@@ -20,7 +20,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
   nrf.extended.drivers.spi.nrf_pm_runtime:
@@ -33,6 +33,6 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
