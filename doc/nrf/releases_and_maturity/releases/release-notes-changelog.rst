@@ -113,7 +113,11 @@ Developing with custom boards
 Security
 ========
 
-* Added support for the WPA3-SAE and WPA3-SAE-PT in the :ref:`CRACEN driver <crypto_drivers_cracen>`.
+* Added:
+
+  * Support for the WPA3-SAE and WPA3-SAE-PT in the :ref:`CRACEN driver <crypto_drivers_cracen>`.
+  * Support for the HMAC KDF algorithm in the CRACEN driver.
+    The algorithm implementation is conformant to the NIST SP 800-108 Rev. 1 recommendation.
 
 Protocols
 =========
