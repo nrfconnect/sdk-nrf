@@ -307,9 +307,10 @@ struct cracen_key_derivation_operation {
 #endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
 #if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
 		struct {
+			psa_key_lifetime_t key_lifetime;
+			mbedtls_svc_key_id_t key_id;
 			uint8_t key_buffer[CRACEN_MAX_AES_KEY_SIZE];
-			struct sxkeyref keyref;
-			struct sx_pk_cnx *pk_cnx;
+			size_t key_size;
 			uint32_t counter;
 			/* The +1 here is meant to store an algorithm specific byte needed after the
 			 * label
