@@ -13,6 +13,23 @@ rsource "src/hw_interface/Kconfig"
 rsource "src/modules/Kconfig"
 rsource "src/util/Kconfig"
 rsource "Kconfig.defaults"
+
+# RAM reduction control: allow app to disable hidden Bluetooth TX processor thread.
+# Use an app-level switch that can be set per board in prj.conf.
+
+config DESKTOP_DISABLE_BT_TX_PROCESSOR_THREAD
+	bool "Disable BT TX processor thread to reduce RAM"
+	help
+	  Enable this to force the Bluetooth host hidden symbol BT_TX_PROCESSOR_THREAD off.
+	  Use on very constrained RAM boards (e.g. nrf52833dk/nrf52820, nrf52820dongle/nrf52820).
+
+if DESKTOP_DISABLE_BT_TX_PROCESSOR_THREAD
+
+config BT_TX_PROCESSOR_THREAD
+	bool
+	def_bool n
+
+endif
 endmenu
 
 menu "Zephyr Kernel"
