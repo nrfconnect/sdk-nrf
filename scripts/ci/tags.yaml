@@ -1869,3 +1869,9 @@ ci_tests_subsys_swo:
 ci_tests_drivers_can:
   files:
     - zephyr/drivers/can/
+
+ci_tests_subsys_west_debug:
+  files:
+    - nrf/tests/subsys/west_debug/
+    - zephyr/boards/nordic/
+    - nrf/boards/nordic/54*
