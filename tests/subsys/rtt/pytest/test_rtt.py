@@ -78,7 +78,7 @@ def test_rtt_logging(dut: DeviceAdapter):
         # Using nRF54L15_M33 as the device because its RAM region closely matches nRF7120.
         # This enables automatic SEGGER RTT symbol detection by JLinkRTTLogger.
         # Update to the official nRF7120 device name when SEGGER adds support.
-        'nrf7120pdk/nrf7120/cpuapp' : {
+        'nrf7120dk/nrf7120/cpuapp' : {
             'device': 'nRF54L15_M33',
         },
     }
