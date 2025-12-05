@@ -9,8 +9,13 @@
 #include <nrfx_pwm.h>
 #include <nrfx_timer.h>
 #include <helpers/nrfx_gppi.h>
+#include <debug/ppi_trace.h>
 
 #define PWM_OUTPUT_PIN NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(pwm_led), gpios)
+
+#if defined(CONFIG_PPI_TRACE)
+#define DEBUG_PIN NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(debug_pin), gpios)
+#endif
 
 #define SLEEP_TIME_MS 500
 
@@ -30,6 +35,7 @@ static void configure_pwm(nrfx_pwm_t *pwm)
 					NRF_PWM_PIN_NOT_CONNECTED, NRF_PWM_PIN_NOT_CONNECTED);
 
 	pwm_config.count_mode = NRF_PWM_MODE_UP_AND_DOWN;
+	pwm_config.top_value = 0x1000;
 
 	zassert_ok(nrfx_pwm_init(pwm, &pwm_config, NULL, NULL), "NRFX PWM init failed\n");
 }
@@ -72,11 +78,27 @@ static void run_pwm_event_test_case(struct pwm_events_fixture *fixture,
 	uint32_t pwm_event_address;
 	uint32_t timer_cc_before, timer_cc_after;
 
+#if defined(CONFIG_PPI_TRACE)
+	void *handle;
+#endif
+
 	pwm_event_address = nrf_pwm_event_address_get(fixture->pwm->p_reg, tested_pwm_event);
 	setup_dppi_connection(&fixture->gppi_handle, fixture->domain_id,
 			      fixture->timer_task_address, pwm_event_address);
-
 	nrf_pwm_event_clear(fixture->pwm->p_reg, tested_pwm_event);
+
+#if defined(CONFIG_PPI_TRACE)
+	/*
+	 * Note that configuring PPI trace
+	 * will break DPPI connection to the timer.
+	 * Timer will not count events
+	 */
+	handle = ppi_trace_config(DEBUG_PIN, pwm_event_address);
+	zassert_not_null(handle, "PPI trace configuration failed\n");
+	ppi_trace_enable(handle);
+#endif
+
+
 	timer_cc_before = nrfx_timer_capture(fixture->test_timer, NRF_TIMER_CC_CHANNEL0);
 	nrfx_pwm_simple_playback(fixture->pwm, fixture->pwm_sequence, 1, NRFX_PWM_FLAG_STOP);
 	k_msleep(SLEEP_TIME_MS);
@@ -89,6 +111,10 @@ static void run_pwm_event_test_case(struct pwm_events_fixture *fixture,
 	nrf_pwm_event_clear(fixture->pwm->p_reg, tested_pwm_event);
 	clear_dppi_connection(&fixture->gppi_handle, fixture->domain_id,
 			      fixture->timer_task_address, pwm_event_address);
+
+#if defined(CONFIG_PPI_TRACE)
+	ppi_trace_disable(handle);
+#endif
 }
 
 ZTEST_F(pwm_events, test_pwm_stop_event)
@@ -117,12 +143,18 @@ ZTEST_F(pwm_events, test_pwm_loopsdone_event)
 	run_pwm_event_test_case(fixture, NRF_PWM_EVENT_LOOPSDONE, 1, "LOOPSDONE");
 }
 
+ZTEST_F(pwm_events, test_pwm_comparematch_event)
+{
+	run_pwm_event_test_case(fixture, offsetof(NRF_PWM_Type, EVENTS_COMPAREMATCH[0]),
+				fixture->pwm_sequence->length * 2, "COMPAREMATCH");
+}
+
 static void *test_setup(void)
 {
 	static struct pwm_events_fixture fixture;
 	static nrfx_timer_t test_timer = NRFX_TIMER_INSTANCE(DT_REG_ADDR(DT_NODELABEL(tst_timer)));
 	static nrfx_pwm_t pwm = NRFX_PWM_INSTANCE(DT_REG_ADDR(DT_NODELABEL(dut_pwm)));
-	static nrf_pwm_values_common_t pwm_duty_cycle_values[] = {0x500, 0x600};
+	static nrf_pwm_values_common_t pwm_duty_cycle_values[] = {0x500, 0x600, 0x500, 0x600};
 	static nrf_pwm_sequence_t pwm_sequence = {.values = {pwm_duty_cycle_values},
 						  .length = ARRAY_SIZE(pwm_duty_cycle_values),
 						  .repeats = 0,
