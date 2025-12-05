@@ -32,7 +32,7 @@ psa_status_t cracen_sw_cmac_setup(cracen_mac_operation_t *operation,
 	}
 
 	if (key_buffer_size != 16 && key_buffer_size != 24 && key_buffer_size != 32 &&
-	    location != PSA_KEY_LOCATION_CRACEN_KMU) {
+	    location != PSA_KEY_LOCATION_CRACEN_KMU && location != PSA_KEY_LOCATION_CRACEN) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
