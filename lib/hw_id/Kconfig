@@ -26,8 +26,8 @@ config HW_ID_LIBRARY_SOURCE_UUID
 	help
 	  This option requires modem firmware v1.3.0 or higher.
 
-config HW_ID_LIBRARY_SOURCE_BLE_MAC
-	bool "BLE MAC address"
+config HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS
+	bool "Bluetooth Device Address"
 	depends on BT
 
 config HW_ID_LIBRARY_SOURCE_NET_MAC

@@ -19,7 +19,7 @@
 extern "C" {
 #endif
 
-#if defined(CONFIG_HW_ID_LIBRARY_SOURCE_BLE_MAC)
+#if defined(CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS)
 #define HW_ID_LEN (12 + 1)
 #elif defined(CONFIG_HW_ID_LIBRARY_SOURCE_DEVICE_ID)
 #define HW_ID_LEN (16 + 1)
