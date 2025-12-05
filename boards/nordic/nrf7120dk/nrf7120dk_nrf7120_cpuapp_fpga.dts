@@ -7,10 +7,10 @@
 /dts-v1/;
 
 #include "nrf7120_cpuapp_common.dtsi"
-#include "nrf7120pdk_nrf7120-fpga-pinctrl.dtsi"
+#include "nrf7120dk_nrf7120-fpga-pinctrl.dtsi"
 
 / {
-	compatible = "nordic,nrf7120pdk_nrf7120-cpuapp";
+	compatible = "nordic,nrf7120dk_nrf7120-cpuapp";
 	model = "Nordic nRF7120 PDK nRF7120 Application MCU";
 
 	chosen {

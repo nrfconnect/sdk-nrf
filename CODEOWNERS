@@ -47,7 +47,7 @@
 /applications/nrf_desktop/**/*.rst        @nrfconnect/ncs-si-bluebagel-doc
 
 # Boards
-/boards/nordic/nrf7120pdk/                @nrfconnect/ncs-co-boards @rob-robinson-14 @Hi-Im-David
+/boards/nordic/nrf7120dk/                 @nrfconnect/ncs-co-boards @rob-robinson-14 @Hi-Im-David
 /boards/nordic/nrf54l*/                   @nrfconnect/ncs-co-boards @kl-cruz
 /boards/nordic/nrf52*                     @nrfconnect/ncs-co-boards @nrfconnect/ncs-si-bluebagel
 /boards/nordic/thingy91*/                 @nrfconnect/ncs-co-boards @nrfconnect/ncs-cia
