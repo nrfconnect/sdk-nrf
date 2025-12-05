@@ -31,7 +31,9 @@ static void media_control_cb(bool play)
 	}
 
 	ret = zbus_chan_pub(&cont_media_chan, &msg, K_NO_WAIT);
-	ERR_CHK_MSG(ret, "zbus publication failed");
+	if (ret) {
+		LOG_ERR("zbus publication failed: %d", ret);
+	}
 }
 
 int bt_content_ctrl_start(struct bt_conn *conn)
@@ -52,7 +54,9 @@ int bt_content_ctrl_start(struct bt_conn *conn)
 	msg.event = MEDIA_START;
 
 	ret = zbus_chan_pub(&cont_media_chan, &msg, K_NO_WAIT);
-	ERR_CHK_MSG(ret, "zbus publication failed");
+	if (ret) {
+		LOG_ERR("zbus publication failed: %d", ret);
+	}
 
 	return 0;
 }
@@ -75,7 +79,9 @@ int bt_content_ctrl_stop(struct bt_conn *conn)
 	msg.event = MEDIA_STOP;
 
 	ret = zbus_chan_pub(&cont_media_chan, &msg, K_NO_WAIT);
-	ERR_CHK_MSG(ret, "zbus publication failed");
+	if (ret) {
+		LOG_ERR("zbus publication failed: %d", ret);
+	}
 
 	return 0;
 }
