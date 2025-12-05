@@ -5,8 +5,9 @@
 #
 
 source "Kconfig.zephyr"
+source "${ZEPHYR_NRF_MODULE_DIR}/samples/wifi/common/Kconfig.usbd"
 
-menu "Nordic Raw Tx Packet sample"
+menu "Nordic Wi-Fi Promiscuous mode sample"
 
 config PROMISCUOUS_SAMPLE_CONNECTION_TIMEOUT_S
 	int "Wi-Fi connection timeout in seconds"

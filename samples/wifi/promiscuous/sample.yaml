@@ -40,6 +40,8 @@ tests:
     extra_args:
       - promiscuous_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
       - promiscuous_SNIPPET=nrf70-wifi
+      - EXTRA_CONF_FILE="usb-next.conf;overlay-net-capture.conf"
+      - EXTRA_DTC_OVERLAY_FILE=usbd_next_ecm.overlay
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
@@ -53,6 +55,8 @@ tests:
     build_only: true
     extra_args:
       - promiscuous_SHIELD="nrf7002eb2"
+      - EXTRA_CONF_FILE="usb-next.conf;overlay-net-capture.conf"
+      - EXTRA_DTC_OVERLAY_FILE=usbd_next_ecm.overlay
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp

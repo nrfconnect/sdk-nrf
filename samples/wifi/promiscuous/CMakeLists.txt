@@ -11,6 +11,13 @@ project(nrf_wifi_promiscuous)
 
 target_include_directories(app PUBLIC ${ZEPHYR_BASE}/subsys/net/ip)
 
+target_include_directories_ifdef(CONFIG_SAMPLE_WIFI_USBD
+  app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/samples/wifi/common/src
+)
+
+target_sources_ifdef(CONFIG_SAMPLE_WIFI_USBD
+  app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/samples/wifi/common/src/wifi_sample_usbd.c
+)
 target_sources(app PRIVATE
   src/main.c
   src/wifi_connection.c
