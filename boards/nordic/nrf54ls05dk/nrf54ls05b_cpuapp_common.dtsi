@@ -16,7 +16,6 @@
 		zephyr,bt-c2h-uart = &uart20;
 		zephyr,flash-controller = &rram_controller;
 		zephyr,flash = &cpuapp_rram;
-		zephyr,ieee802154 = &ieee802154;
 	};
 };
 
@@ -83,9 +82,5 @@
 };
 
 &clock {
-	status = "okay";
-};
-
-&ieee802154 {
 	status = "okay";
 };
