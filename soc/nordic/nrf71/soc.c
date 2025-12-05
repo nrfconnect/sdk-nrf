@@ -110,7 +110,7 @@ static inline NRF_SPU_Type *spu_instance_from_peripheral_addr(uint32_t periphera
 	return (NRF_SPU_Type *)(0x50000000 | apb_bus_number);
 }
 
-#ifdef CONFIG_BOARD_NRF7120PDK_NRF7120_CPUAPP_EMU
+#ifdef CONFIG_BOARD_NRF7120DK_NRF7120_CPUAPP_EMU
 static void spu_peripheral_config_non_secure(const uint32_t periph_base_address, bool periph_lock)
 {
 	uint8_t periph_id = NRFX_PERIPHERAL_ID_GET(periph_base_address);
@@ -135,7 +135,7 @@ static void spu_peripheral_config_non_secure(const uint32_t periph_base_address,
 	nrf_spu_periph_perm_lock_enable(nrf_spu, index);
 #endif
 }
-#endif /* CONFIG_BOARD_NRF7120PDK_NRF7120_CPUAPP_EMU */
+#endif /* CONFIG_BOARD_NRF7120DK_NRF7120_CPUAPP_EMU */
 /* End of TF-M native driver */
 
 void wifi_mpc_configuration(void)
@@ -186,7 +186,7 @@ void wifi_setup(void)
 	grtc_configuration();
 
 	/* EMU platform uses UART 20 for the Wi-Fi console */
-#ifdef CONFIG_BOARD_NRF7120PDK_NRF7120_CPUAPP_EMU
+#ifdef CONFIG_BOARD_NRF7120DK_NRF7120_CPUAPP_EMU
 	/* Wi-Fi VPR uses UART 20 (PORT 2 Pin 2 is for the TX) */
 	spu_peripheral_config_non_secure(NRF_UARTE20_S_BASE, true);
 	nrf_spu_feature_secattr_set(NRF_SPU00, NRF_SPU_FEATURE_GPIO_PIN, 2, 2,
