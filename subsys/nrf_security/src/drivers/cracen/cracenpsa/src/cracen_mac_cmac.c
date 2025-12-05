@@ -30,7 +30,9 @@ psa_status_t cracen_cmac_setup(cracen_mac_operation_t *operation,
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	if (key_buffer_size < AES_BLOCK_SIZE && location != PSA_KEY_LOCATION_CRACEN_KMU) {
+	if (key_buffer_size < AES_BLOCK_SIZE &&
+	    location != PSA_KEY_LOCATION_CRACEN_KMU &&
+	    location != PSA_KEY_LOCATION_CRACEN) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
