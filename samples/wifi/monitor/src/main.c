@@ -115,8 +115,10 @@ struct packet_data {
 static const struct device *capture_dev;
 #endif
 
-#ifdef CONFIG_USB_DEVICE_STACK
+#if defined(CONFIG_USB_DEVICE_STACK) || defined(CONFIG_USB_DEVICE_STACK_NEXT)
 #include <zephyr/usb/usb_device.h>
+#include <zephyr/usb/usbd.h>
+#include <sample_usbd.h>
 
 /* Fixed address as the static IP given from Kconfig will be
  * applied to Wi-Fi interface.
@@ -128,7 +130,13 @@ int init_usb(void)
 {
 	int ret;
 
+#ifdef CONFIG_USB_DEVICE_STACK
 	ret = usb_enable(NULL);
+#else
+	struct usbd_context *sample_usbd = sample_usbd_init_device(NULL);
+
+	ret = usbd_enable(sample_usbd);
+#endif
 	if (ret != 0) {
 		printk("Cannot enable USB (%d)", ret);
 		return ret;
@@ -534,17 +542,20 @@ static int wifi_net_capture(void)
 
 int main(void)
 {
-#ifdef CONFIG_USB_DEVICE_STACK
-	struct in_addr addr = { 0 };
-	struct in_addr mask;
-#endif
 	int ret;
 
-#ifdef CONFIG_USB_DEVICE_STACK
+#if defined(CONFIG_USB_DEVICE_STACK) || defined(CONFIG_USB_DEVICE_STACK_NEXT)
+	struct in_addr addr = { 0 };
+	struct in_addr mask;
+
 	init_usb();
 
+#ifdef CONFIG_USB_DEVICE_STACK
 	/* Redirect static IP address to netusb*/
 	const struct device *usb_dev = device_get_binding("eth_netusb");
+#else
+	const struct device *usb_dev = device_get_binding("cdc_ecm_eth0");
+#endif
 	struct net_if *iface = net_if_lookup_by_dev(usb_dev);
 
 	if (!iface) {
