@@ -1,5 +1,5 @@
 board:
-  name: nrf7120pdk
+  name: nrf7120dk
   vendor: nordic
   socs:
   - name: nrf7120

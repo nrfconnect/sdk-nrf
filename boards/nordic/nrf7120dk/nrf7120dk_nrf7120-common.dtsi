@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "nrf7120pdk_nrf7120-pinctrl.dtsi"
+#include "nrf7120dk_nrf7120-pinctrl.dtsi"
 
 / {
 	leds {
