@@ -19,3 +19,7 @@ tst_timer: &timer20 {
 pwm_led: &led0 {
 	status = "okay";
 };
+
+debug_pin: &led1 {
+	status = "okay";
+};
