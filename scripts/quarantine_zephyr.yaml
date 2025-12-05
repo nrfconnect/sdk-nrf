@@ -593,14 +593,3 @@
     - llext.writable_relocatable_slid_linking
     - llext.writable_relocatable
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-8497"
-
-- scenarios:
-    - examples.nrfx_spim_spis.advanced_non_blocking
-    - examples.nrfx_spim_spis.non_blocking
-    - examples.nrfx_twim_twis.blocking
-    - examples.nrfx_twim_twis.non_blocking
-    - examples.nrfx_twim_twis.txrx
-    - examples.nrfx_twim_twis.txtx
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8652"
