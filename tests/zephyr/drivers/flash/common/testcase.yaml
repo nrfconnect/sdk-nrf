@@ -33,6 +33,6 @@ tests:
       - DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_sqspi.overlay"
   nrf.extended.drivers.flash.common.mramc:
     platform_allow:
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
