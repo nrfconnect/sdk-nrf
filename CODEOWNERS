@@ -936,6 +936,7 @@
 /tests/subsys/emds/                       @balaklaka @nrfconnect/ncs-paladin
 /tests/subsys/event_manager_proxy/        @nrfconnect/ncs-si-muffin
 /tests/subsys/fw_info/                    @nrfconnect/ncs-eris
+/tests/subsys/ipc/                        @nrfconnect/ncs-low-level-test
 /tests/subsys/kmu/                        @nrfconnect/ncs-eris
 /tests/subsys/mpsl/                       @nrfconnect/ncs-dragoon
 /tests/subsys/net/lib/aws_*/              @nrfconnect/ncs-cia
@@ -959,7 +960,7 @@
 /tests/subsys/rtt/                        @nrfconnect/ncs-low-level-test
 /tests/subsys/swo/                        @nrfconnect/ncs-low-level-test
 /tests/subsys/usb/negotiated_speed/       @nrfconnect/ncs-low-level-test
-/tests/subsys/ipc/                        @nrfconnect/ncs-low-level-test
+/tests/subsys/west_debug/                 @nrfconnect/ncs-low-level-test
 /tests/tfm/                               @nrfconnect/ncs-aegir @magnev
 /tests/unity/                             @nordic-krch
 /tests/zephyr/boards/nrf/                 @nrfconnect/ncs-low-level-test
