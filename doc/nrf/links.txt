@@ -241,7 +241,7 @@
 
 .. _`Zephyr hostap fork`: https://github.com/zephyrproject-rtos/hostap
 
-.. _`tfm_secure_peripheral_partition.yaml`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/tfm/tfm_secure_peripheral/secure_peripheral_partition/tfm_secure_peripheral_partition.yaml
+.. _`tfm_secure_peripheral_partition.yaml`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/tfm/tfm_secure_peripheral/secure_peripheral_partition/tfm_secure_peripheral_partition.yaml.in
 
 .. ### Source: github.io
 
@@ -401,8 +401,9 @@
 
 .. #### Source: www.nordicsemi.com/Events/, https://www.nordicsemi.com/Resources/, https://webinars.nordicsemi.com/events
 
-.. _`nRF Connect SDK v3.0.0 webinar`:
-.. _`nRF Connect SDK v2.9.0 webinar`:
+.. _`nRF Connect SDK v3.2.0 webinar`: https://webinars.nordicsemi.com/events
+.. _`nRF Connect SDK v3.0.0 webinar`: https://webinars.nordicsemi.com/events
+.. _`nRF Connect SDK v2.9.0 webinar`: https://webinars.nordicsemi.com/events
 .. _`nRF Connect SDK v2.8.0 webinar`: https://webinars.nordicsemi.com/events
 .. _`nRF Connect SDK v2.7.0 webinar`: https://www.nordicsemi.com/Resources/Training/Webinars/2024/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v270
 .. _`nRF Connect SDK v2.6.0 webinar`: https://www.nordicsemi.com/Resources/Training/Webinars/2024/Webinar-Exciting-new-features-in-nRF-Connect-SDK-v260
@@ -500,6 +501,7 @@
 .. _`Serial Modem`: https://docs.nordicsemi.com/bundle/addon-serial_modem-latest/page/index.html
 
 .. _`known issues page on the main branch`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html
+.. _`known issues for nRF Connect SDK v3.2.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v3-2-0
 .. _`known issues for nRF Connect SDK v3.1.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v3-1-1
 .. _`known issues for nRF Connect SDK v3.1.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v3-1-0
 .. _`known issues for nRF Connect SDK v3.0.2`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v3-0-2
@@ -550,6 +552,7 @@
 .. _`known issues for nRF Connect SDK v1.4.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-4-1
 .. _`known issues for nRF Connect SDK v1.4.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v1-4-0
 
+.. _`Repositories and revisions for v3.2.0`: https://docs.nordicsemi.com/bundle/ncs-3.2.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v3.1.1`: https://docs.nordicsemi.com/bundle/ncs-3.1.1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v3.1.0`: https://docs.nordicsemi.com/bundle/ncs-3.1.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v3.0.2`: https://docs.nordicsemi.com/bundle/ncs-3.0.2/page/nrf/releases_and_maturity/repository_revisions.html
@@ -589,6 +592,7 @@
 .. _`Repositories and revisions for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrf/introduction.html#repositories_and_revisions
 .. _`Repositories and revisions`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrf/introduction.html#repositories_and_revisions
 
+.. _`Modem library changelog for v3.2.0`: https://docs.nordicsemi.com/bundle/ncs-3.2.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v3.1.1`: https://docs.nordicsemi.com/bundle/ncs-3.1.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v3.1.0`: https://docs.nordicsemi.com/bundle/ncs-3.1.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v3.0.2`: https://docs.nordicsemi.com/bundle/ncs-3.0.2/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
@@ -627,6 +631,7 @@
 .. _`Modem library changelog for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 .. _`Modem library changelog for v1.9.0`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 
+.. _`LwM2M carrier library changelog for v3.2.0`: https://docs.nordicsemi.com/bundle/ncs-3.2.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v3.1.1`: https://docs.nordicsemi.com/bundle/ncs-3.1.1/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v3.1.0`: https://docs.nordicsemi.com/bundle/ncs-3.1.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v3.0.2`: https://docs.nordicsemi.com/bundle/ncs-3.0.2/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
@@ -1087,6 +1092,8 @@
 
 .. ### Source: files.nordicsemi.com
 
+.. _`Twister test report for nRF Connect SDK v3.2.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v3.2.0/test-report/twister_test_results_report.html?isNativeBrowsing=true
+.. _`Hardware test report for nRF Connect SDK v3.2.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v3.2.0/test-report/common_ncs_test_results_report.html?isNativeBrowsing=true
 .. _`Twister test report for nRF Connect SDK v3.1.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v3.1.0/test-report/twister_test_results_report.html?isNativeBrowsing=true
 .. _`Hardware test report for nRF Connect SDK v3.1.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v3.1.0/test-report/common_ncs_test_results_report.html?isNativeBrowsing=true
 .. _`Twister test report for nRF Connect SDK v3.0.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v3.0.0/test-report/twister_test_results_report.html?isNativeBrowsing=true
@@ -1761,8 +1768,7 @@
 .. _`BME688`: https://www.bosch-sensortec.com/products/environmental-sensors/gas-sensors/bme688/
 .. _`BME680`: https://www.bosch-sensortec.com/products/environmental-sensors/gas-sensors/bme680/
 .. _`BMI270`: https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi270/
-.. _`Bosch BSEC`: https://www.bosch-sensortec.com/software-tools/software/bsec/
-.. _`BSEC license`: https://www.bosch-sensortec.com/media/boschsensortec/downloads/software/bme688_development_software/2023_04/license_terms_bme688_bme680_bsec.pdf
+.. _`BSEC license`: https://www.bosch-sensortec.com/media/boschsensortec/downloads/software/bme688_development_software/2024_12/20241219_clickthrough_license_terms_bsec_bme680_bme688_bme690.pdf
 
 .. ### Source: wireshark.org
 
@@ -1890,8 +1896,6 @@
 
 .. _`Semantic versioning`: https://semver.org/
 
-.. _`mbedtls_memory_buffer_alloc_init`: https://tls.mbed.org/api/memory__buffer__alloc_8h.html#ac70d134be54133c272d8eab2cb85dfbf
-
 .. _`HERE Positioning`: https://www.here.com/platform/positioning
 
 .. _`dfu-util tool`: http://dfu-util.sourceforge.net/
@@ -1986,10 +1990,6 @@
 
 .. _`latest nRF54H20 SoC binaries`: https://files.nordicsemi.com/artifactory/SDSC/external/
 .. _`latest nRF54H20 IronSide SE binaries`: https://files.nordicsemi.com/artifactory/SDSC/external/
-
-.. ### Descr: Old 54H BICR file
-
-.. _`BICR binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr_ext_loadcap.hex
 
 .. ### Descr: New 54H BICR file
 

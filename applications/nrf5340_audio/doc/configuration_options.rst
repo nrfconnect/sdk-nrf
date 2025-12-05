@@ -1,4 +1,4 @@
-.. _config_audio_app_options:
+.. _nrf53_audio_app_config_audio_app_options:
 
 nRF5340 Audio: Application-specific Kconfig options
 ###################################################
