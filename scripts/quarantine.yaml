@@ -106,5 +106,5 @@
     - drivers.audio.pdm_loopback.nrf7120.auxpll.48khz
     - drivers.audio.pdm_loopback.nrf7120.1280khz
   platforms:
-    - nrf7120pdk/nrf7120/cpuapp
+    - nrf7120dk/nrf7120/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-8621 GPPI changes also by NCS 3.2"
