@@ -5,4 +5,4 @@ tests:
       - clock_control
       - ci_tests_zephyr_drivers_clock_control
     platform_allow:
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
