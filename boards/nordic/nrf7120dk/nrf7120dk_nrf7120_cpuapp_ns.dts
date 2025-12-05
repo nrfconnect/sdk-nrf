@@ -11,8 +11,8 @@
 #include "nrf7120_cpuapp_common.dtsi"
 
 / {
-	compatible = "nordic,nrf7120pdk_nrf7120-cpuapp";
-	model = "Nordic nRF7120 PDK nRF7120 Application MCU";
+	compatible = "nordic,nrf7120dk_nrf7120-cpuapp";
+	model = "Nordic nRF7120 DK nRF7120 Application MCU";
 
 	chosen {
 		zephyr,code-partition = &slot0_ns_partition;
