@@ -15,3 +15,7 @@ tst_timer: &timer20 {
 &dppic20 {
 	status = "okay";
 };
+
+pwm_led: &led0 {
+	status = "okay";
+};
