@@ -10,7 +10,7 @@
 #include <nrfx_timer.h>
 #include <helpers/nrfx_gppi.h>
 
-#define PWM_OUTPUT_PIN NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(led2), gpios)
+#define PWM_OUTPUT_PIN NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(pwm_led), gpios)
 
 #define SLEEP_TIME_MS 500
 

@@ -17,3 +17,7 @@ tst_timer: &timer131 {
 	sink-channels = <1>;
 	status = "okay";
 };
+
+pwm_led: &led2 {
+	status = "okay";
+};
