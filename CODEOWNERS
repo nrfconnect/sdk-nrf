@@ -1004,6 +1004,8 @@
 /zephyr/                                  @nrfconnect/ncs-co-build-system
 
 # Global override file patterns
+/boards/**/*.dts                          @nrfconnect/ncs-co-boards
+/boards/**/*.dtsi                         @nrfconnect/ncs-co-boards
 Kconfig*                                  @nrfconnect/ncs-co-build-system
 CMakeLists*                               @nrfconnect/ncs-co-build-system
 *.cmake	                                  @nrfconnect/ncs-co-build-system
