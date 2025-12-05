@@ -6,7 +6,6 @@
 
 #include <zcbor_common.h>
 #include <zcbor_encode.h>
-#include <pm_config.h>
 #include <zephyr/mgmt/mcumgr/mgmt/callbacks.h>
 #include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
 #include <zephyr/logging/log.h>
@@ -20,26 +19,52 @@
 
 LOG_MODULE_REGISTER(os_mgmt_reboot_bt, CONFIG_MCUMGR_GRP_OS_LOG_LEVEL);
 
-static enum mgmt_cb_return reboot_bt_hook(uint32_t event, enum mgmt_cb_return prev_status,
-					  int32_t *rc, uint16_t *group, bool *abort_more,
-					  void *data, size_t data_size)
-{
-	int err_rc;
-	struct os_mgmt_reset_data *reboot_data = (struct os_mgmt_reset_data *)data;
+#ifdef CONFIG_MULTITHREADING
+static void bt_disable_work_handler(struct k_work *work);
 
-	if (event != MGMT_EVT_OP_OS_MGMT_RESET || data_size != sizeof(*reboot_data)) {
-		*rc = MGMT_ERR_EUNKNOWN;
-		return MGMT_CB_ERROR_RC;
-	}
+static K_WORK_DELAYABLE_DEFINE(bt_disable_work, bt_disable_work_handler);
+
+static void bt_disable_work_handler(struct k_work *work)
+{
+	ARG_UNUSED(work);
 
 #ifdef CONFIG_BT
-	err_rc = bt_disable();
+	int err_rc = bt_disable();
+
 	if (err_rc) {
 		LOG_ERR("BT disable failed before reboot: %d", err_rc);
 	}
 #endif
 #ifdef CONFIG_MPSL
 	mpsl_uninit();
+#endif
+}
+#endif
+
+static enum mgmt_cb_return reboot_bt_hook(uint32_t event, enum mgmt_cb_return prev_status,
+					  int32_t *rc, uint16_t *group, bool *abort_more,
+					  void *data, size_t data_size)
+{
+	struct os_mgmt_reset_data *reboot_data = (struct os_mgmt_reset_data *)data;
+
+	if (event != MGMT_EVT_OP_OS_MGMT_RESET || data_size != sizeof(*reboot_data)) {
+		*rc = MGMT_ERR_EUNKNOWN;
+		return MGMT_CB_ERROR_RC;
+	}
+#ifdef CONFIG_MULTITHREADING
+	/* disable bluetooth from the system workqueue thread. */
+	k_work_schedule(&bt_disable_work, K_MSEC(CONFIG_MCUMGR_GRP_OS_RESET_MS/2));
+#else
+#ifdef CONFIG_BT
+	int err_rc = bt_disable();
+
+	if (err_rc) {
+		LOG_ERR("BT disable failed before reboot: %d", err_rc);
+	}
+#endif
+#ifdef CONFIG_MPSL
+	mpsl_uninit();
+#endif
 #endif
 
 	return MGMT_CB_OK;
