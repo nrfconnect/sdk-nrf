@@ -691,7 +691,6 @@
 /samples/zephyr/smp_svr_mini_boot/        @nrfconnect/ncs-eris
 /samples/zephyr/subsys/ipc/               @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/mgmt/mcumgr/smp_svr/ @nrfconnect/ncs-eris
-/samples/zephyr/subsys/settings/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/usb/               @nrfconnect/ncs-low-level-test
 /samples/zephyr/sysbuild/                 @nrfconnect/ncs-low-level-test
 
