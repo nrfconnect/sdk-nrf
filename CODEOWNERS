@@ -549,6 +549,7 @@
 /samples/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/tfm/                             @nrfconnect/ncs-aegir
+/samples/wifi/common/                     @D-Triveni
 /samples/wifi/provisioning/ble/           @wentong-li @bama-nordic
 /samples/wifi/provisioning/softap/        @nrfconnect/ncs-cia
 /samples/wifi/provisioning/internal/      @krish2718 @rado17
