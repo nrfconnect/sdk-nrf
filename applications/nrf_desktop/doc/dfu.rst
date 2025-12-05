@@ -47,19 +47,43 @@ If the buffer is small, the host must perform the DFU progress synchronization m
 MCUboot bootloader mode
 =======================
 
-The MCUboot bootloader can either move the image to the primary slot before booting it (``swap mode``) or boot the image directly from the secondary slot (``direct-xip mode``).
+This module supports the following modes of the MCUboot bootloader and reports the corresponding bootloader name:
 
-If the MCUboot bootloader in the swap mode is selected, the DFU module does the following:
+* ``swap`` (:kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_SWAP_USING_MOVE`) - ``MCUBOOT``
+* ``direct-xip`` (:kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP`) - ``MCUBOOT+XIP``
+* ``RAM load`` (:kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD`) - ``MCUBOOT``
+
+The DFU module relies on the listed Kconfig options that indicate the MCUboot bootloader mode to determine the correct behavior.
+
+.. caution::
+   Other bootloader modes might be compatible with this module, but they are not actively tested as part of the nRF Desktop configurations.
+
+See the :ref:`nrf_desktop_bootloader` section for more information on the MCUboot bootloader modes.
+
+Swap mode
+---------
+
+If this bootloader mode is selected, the DFU module does the following:
 
  * Requests the image upgrade after the whole image is transferred over the :ref:`nrf_desktop_config_channel`.
  * Confirms the running image after the device is rebooted.
 
-If the MCUboot bootloader's direct-xip mode is used, the module does not mark the newly uploaded image as pending and does not confirm it after a successful boot.
-In that case, the DFU module assumes that the MCUboot direct-xip bootloader simply boots an image with the higher version, so there is no need to mark the image as pending and confirm it.
+Direct-xip mode
+---------------
 
-The :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` Kconfig option is used to inform the DFU module that the device uses the MCUboot bootloader in the direct-xip mode.
-If the option is enabled, the DFU module reports the ``MCUBOOT+XIP`` bootloader name instead of ``MCUBOOT`` to indicate that the bootloader working in the direct-xip mode is used.
-See the :ref:`nrf_desktop_bootloader` section for more information on the MCUboot bootloader configuration.
+If this bootloader mode is selected, the DFU module does not mark the newly uploaded image as pending and does not confirm it after a successful boot.
+
+RAM load mode
+-------------
+
+If this bootloader mode is selected, the DFU module does not mark the newly uploaded image as pending and does not confirm it after a successful boot.
+
+.. note::
+   Support for the RAM load mode in this module is experimental.
+   For more details about the support of the MCUboot RAM load mode in the nRF Desktop application, see the MCUboot :ref:`nrf_desktop_configuring_mcuboot_bootloader_ram_load` section in the nRF Desktop documentation.
+
+.. note::
+   DTS is the only supported partitioning method when you use the MCUboot bootloader in the RAM load mode.
 
 Partitioning methods
 ====================
