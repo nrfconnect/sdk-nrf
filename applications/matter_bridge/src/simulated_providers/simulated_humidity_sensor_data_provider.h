@@ -10,7 +10,11 @@
 
 class SimulatedHumiditySensorDataProvider : public Nrf::BridgedDeviceDataProvider {
 public:
-	SimulatedHumiditySensorDataProvider(UpdateAttributeCallback updateCallback, InvokeCommandCallback commandCallback) : Nrf::BridgedDeviceDataProvider(updateCallback, commandCallback) {}
+	SimulatedHumiditySensorDataProvider(UpdateAttributeCallback updateCallback,
+					    InvokeCommandCallback commandCallback)
+		: Nrf::BridgedDeviceDataProvider(updateCallback, commandCallback)
+	{
+	}
 	~SimulatedHumiditySensorDataProvider() { k_timer_stop(&mTimer); }
 	void Init() override;
 	void NotifyUpdateState(chip::ClusterId clusterId, chip::AttributeId attributeId, void *data,
@@ -21,8 +25,8 @@ private:
 	static void TimerTimeoutCallback(k_timer *timer);
 
 	static constexpr uint16_t kMeasurementsIntervalMs = 10000;
-	static constexpr uint16_t kMinRandomTemperature = 30;
-	static constexpr uint16_t kMaxRandomTemperature = 50;
+	static constexpr uint16_t kMinRandomHumidity = 3000;
+	static constexpr uint16_t kMaxRandomHumidity = 5000;
 
 	k_timer mTimer;
 	uint16_t mHumidity = 0;
