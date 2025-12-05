@@ -9,4 +9,11 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(nrf_wfa_qt_app)
 
+target_include_directories_ifdef(CONFIG_SAMPLE_WIFI_USBD
+  app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/samples/wifi/common/src
+)
+
+target_sources_ifdef(CONFIG_SAMPLE_WIFI_USBD
+  app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/samples/wifi/common/src/wifi_sample_usbd.c
+)
 target_sources(app PRIVATE src/qt_app_main.c)
