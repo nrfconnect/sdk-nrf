@@ -91,6 +91,16 @@ tests:
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="boards/tdm_sck_audiopll.overlay"
 
+  drivers.i2s.i2s_mclk.gpio_loopback.2ch.aclk_mck:
+    harness_config:
+      fixture: gpio_loopback
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120pdk/nrf7120/cpuapp
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/tdm_mck_audio_auxpll.overlay"
+
   drivers.i2s.i2s_mclk.gpio_loopback.2ch.aclk_mck.54h:
     harness_config:
       fixture: i2s_loopback
