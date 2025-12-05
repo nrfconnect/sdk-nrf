@@ -895,7 +895,14 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (!cracen_builtin_key_user_allowed(attributes)) {
+	/* The public key of the IAK needs to be allowed to get exported because there is no
+	 * way to provide the public key through the attestation service at the moment.
+	 * The check for IKG keys is skipped since the only IKG key that can use this operation
+	 * is the IAK.
+	 */
+	if (!cracen_builtin_key_user_allowed(attributes) &&
+	    PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) !=
+		    PSA_KEY_LOCATION_CRACEN) {
 		return PSA_ERROR_NOT_PERMITTED;
 	}
 
