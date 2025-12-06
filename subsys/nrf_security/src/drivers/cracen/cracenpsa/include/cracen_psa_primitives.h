@@ -88,6 +88,25 @@
 
 #define CRACEN_SPAKE2P_HASH_LEN PSA_HASH_LENGTH(PSA_ALG_SHA_256)
 
+#define CRACEN_WPA3_SAE_MAX_SSID_LEN	(32u)
+#define CRACEN_WPA3_SAE_MAX_PWD_LEN	(256u)
+#define CRACEN_WPA3_SAE_MAX_PWID_LEN	(256u)
+#define CRACEN_WPA3_SAE_PMK_LEN		(32u) /* According to IEEE802.11-2024, 12.7.1.3 */
+#define CRACEN_WPA3_SAE_PMKID_SIZE	(16u)
+#define CRACEN_WPA3_SAE_STA_ID_LEN	(6u)
+/** IANA group to identify the elliptic curve.
+ *  See IEEE802.11-2024, Table 12-2
+ */
+#define CRACEN_WPA3_SAE_IANA_GROUP_SIZE	(2u)
+#define CRACEN_WPA3_SAE_COMMIT_SIZE	(CRACEN_WPA3_SAE_IANA_GROUP_SIZE + \
+					 CRACEN_P256_KEY_SIZE		 + \
+					 CRACEN_P256_POINT_SIZE)
+
+/* Send-confirm counter size */
+#define CRACEN_WPA3_SAE_SEND_CONFIRM_SIZE	(2u)
+#define CRACEN_WPA3_SAE_CONFIRM_SIZE		(CRACEN_WPA3_SAE_SEND_CONFIRM_SIZE + \
+						 PSA_HASH_LENGTH(PSA_ALG_SHA_256))
+
 enum cipher_operation {
 	CRACEN_DECRYPT,
 	CRACEN_ENCRYPT
@@ -125,7 +144,14 @@ enum cracen_kd_state {
 
 	/* TLS12 EC J-PAKE to PMS state: */
 	CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_INIT = 0x200,
-	CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_OUTPUT
+	CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_OUTPUT,
+
+	/* WPA3-SAE H2E states: */
+	CRACEN_KD_STATE_WPA3_SAE_H2E_INIT = 0x400,
+	CRACEN_KD_STATE_WPA3_SAE_H2E_SALT,
+	CRACEN_KD_STATE_WPA3_SAE_H2E_PASSWORD,
+	CRACEN_KD_STATE_WPA3_SAE_H2E_INFO,
+	CRACEN_KD_STATE_WPA3_SAE_H2E_OUTPUT,
 };
 
 /* States to keep track of when the AEAD sxsymcrypt context has been initialized with xxx_create and
@@ -387,6 +413,35 @@ struct cracen_spake2p_operation {
 };
 typedef struct cracen_spake2p_operation cracen_spake2p_operation_t;
 
+struct cracen_wpa3_sae_operation {
+	cracen_mac_operation_t mac_op;
+	psa_algorithm_t hash_alg;
+	uint8_t password[CRACEN_WPA3_SAE_MAX_PWD_LEN];
+	uint16_t pw_length;
+	uint8_t pwe[CRACEN_P256_POINT_SIZE];
+	union {
+		struct {
+			uint8_t max_id[CRACEN_WPA3_SAE_STA_ID_LEN];
+			uint8_t min_id[CRACEN_WPA3_SAE_STA_ID_LEN];
+		};
+		uint8_t max_id_min_id[2 * CRACEN_WPA3_SAE_STA_ID_LEN];
+	};
+	uint8_t rand[CRACEN_P256_KEY_SIZE];
+	uint8_t kck[CRACEN_P256_KEY_SIZE];
+	uint8_t pmk[CRACEN_WPA3_SAE_PMK_LEN];
+	uint8_t pmkid[CRACEN_WPA3_SAE_PMKID_SIZE];
+	uint8_t commit[CRACEN_WPA3_SAE_COMMIT_SIZE];
+	uint8_t peer_commit[CRACEN_WPA3_SAE_COMMIT_SIZE];
+	uint8_t hash_length;
+	uint8_t pmk_length;
+	uint8_t use_h2e:1;
+	uint8_t keys_set:1;
+	uint8_t salt_set:1;
+	uint16_t send_confirm;
+	const struct sx_pk_ecurve *curve;
+};
+typedef struct cracen_wpa3_sae_operation cracen_wpa3_sae_operation_t;
+
 struct cracen_pake_operation {
 	psa_algorithm_t alg;
 	union {
@@ -399,6 +454,9 @@ struct cracen_pake_operation {
 #ifdef PSA_NEED_CRACEN_SPAKE2P
 		cracen_spake2p_operation_t cracen_spake2p_ctx;
 #endif /* PSA_NEED_CRACEN_SPAKE2P */
+#ifdef PSA_NEED_CRACEN_WPA3_SAE
+		cracen_wpa3_sae_operation_t cracen_wpa3_sae_ctx;
+#endif /* PSA_NEED_CRACEN_WPA3_SAE */
 		uint8_t _unused;
 	};
 };
