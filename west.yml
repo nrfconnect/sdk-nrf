@@ -147,11 +147,11 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: df48857af53909c91e02d75d84e46ce3a37f10b4
+      revision: pull/224/head
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
-      revision: ecd6864211894fca9d3cc4d87908f7b974c2a7d4
+      revision: pull/6/head
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
