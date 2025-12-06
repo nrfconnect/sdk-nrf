@@ -10,20 +10,14 @@ menuconfig NRF5340_AUDIO
 
 if NRF5340_AUDIO
 
-config CUSTOM_BROADCASTER
-	bool "Allow custom broadcasters"
-	default n
-	help
-	  Incomplete feature for now, but will introduce support for multiple BIGs and subgroups.
-
 config AUDIO_DEV
 	int "Select which device type to compile for. 1=HEADSET or 2=GATEWAY"
 	range 1 2
 	default 1
 	help
 	  Setting this variable to 1 selects that the project is compiled
-	  as a HEADSET device.
-	  Setting to 2 will compile as a GATEWAY.
+	  as a HEADSET (unicast server or broadcast sink) device.
+	  Setting to 2 will compile as a GATEWAY (unicast client or broadcast source) device.
 
 choice NRF5340_AUDIO_TRANSPORT_MODE
 	prompt "Choose BIS or CIS for ISO transport"
@@ -31,10 +25,10 @@ choice NRF5340_AUDIO_TRANSPORT_MODE
 	default TRANSPORT_CIS
 
 config TRANSPORT_BIS
-	bool "Use BIS (Broadcast Isochronous Stream)"
+	bool "BIS: Broadcast Isochronous Stream"
 
 config TRANSPORT_CIS
-	bool "Use CIS (Connected Isochronous Stream)"
+	bool "CIS: Connected Isochronous Stream"
 
 endchoice
 
