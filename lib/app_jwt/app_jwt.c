@@ -19,11 +19,7 @@
 #include <psa/crypto.h>
 #include <psa/crypto_extra.h>
 
-#if defined(CONFIG_BOARD_NATIVE_SIM)
-#define IAK_APPLICATION_GEN1 0x41020100
-#else
-#include <psa/nrf_platform_key_ids.h>
-#endif
+#include <ironside/include/nrf_ironside/boot_report.h>
 
 #include <cJSON.h>
 
@@ -38,6 +34,9 @@
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(app_jwt, CONFIG_APP_JWT_LOG_LEVEL);
+
+/* Use key ID defined in configuration file */
+#define IAK_APPLICATION_GEN1 ((uint32_t)CONFIG_APP_JWT_DEFAULT_IDENTITY_KEY_ID)
 
 /* Size of a UUID in words */
 #define UUID_BINARY_WORD_SZ (4)
@@ -634,6 +633,21 @@ static int jwt_signature_append(const char *const unsigned_jwt, const char *cons
 	return err;
 }
 
+static int device_info_get_uuid(uint8_t *uuid_bytes)
+{
+	int err = -EPERM;
+	const struct ironside_boot_report *report;
+
+	err = ironside_boot_report_get(&report);
+
+	if (err == 0) {
+		memcpy(uuid_bytes, (void *)&report->device_info_uuid,
+		       IRONSIDE_BOOT_REPORT_UUID_SIZE);
+	}
+
+	return err;
+}
+
 int app_jwt_generate(struct app_jwt_data *const jwt)
 {
 	if (jwt == NULL) {
@@ -703,12 +717,20 @@ finish_crypto_exit:
 
 int app_jwt_get_uuid(char *uuid_buffer, const size_t uuid_buffer_size)
 {
+	int err = -EPERM;
+
 	if ((NULL == uuid_buffer) || (uuid_buffer_size < APP_JWT_UUID_V4_STR_LEN)) {
 		/* Bad parameter */
 		return -EINVAL;
 	}
 
-	uint8_t uuid_bytes[UUID_BINARY_BYTES_SZ] = {0}; /* TODO NRFX-8297 */
+	uint8_t uuid_bytes[UUID_BINARY_BYTES_SZ] = {0};
+
+	err = device_info_get_uuid(uuid_bytes);
+	if (err) {
+		LOG_ERR("app_jwt_get_uuid() failed! (Error: %d)", err);
+		return err;
+	}
 
 	return bytes_to_uuid_str((uint32_t *)uuid_bytes, UUID_BINARY_BYTES_SZ, uuid_buffer,
 				 uuid_buffer_size);
