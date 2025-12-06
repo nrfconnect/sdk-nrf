@@ -26,8 +26,8 @@ public:
 
 private:
 	static constexpr uint16_t kMeasurementsIntervalMs = 10000;
-	static constexpr int16_t kMinRandomTemperature = -10;
-	static constexpr int16_t kMaxRandomTemperature = 10;
+	static constexpr int16_t kMinRandomTemperature = -1000;
+	static constexpr int16_t kMaxRandomTemperature = 1000;
 
 	static void TimerTimeoutCallback(k_timer *timer);
 

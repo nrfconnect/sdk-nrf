@@ -62,9 +62,8 @@ void SimulatedHumiditySensorDataProvider::TimerTimeoutCallback(k_timer *timer)
 				reinterpret_cast<SimulatedHumiditySensorDataProvider *>(p);
 
 			/* Get some random data to emulate sensor measurements. */
-			provider->mHumidity =
-				chip::Crypto::GetRandU16() % (kMaxRandomTemperature - kMinRandomTemperature) +
-				kMinRandomTemperature;
+			provider->mHumidity = chip::Crypto::GetRandU16() % (kMaxRandomHumidity - kMinRandomHumidity) +
+					      kMinRandomHumidity;
 
 			LOG_INF("SimulatedHumiditySensorDataProvider: Updated humidity value to %d",
 				provider->mHumidity);
