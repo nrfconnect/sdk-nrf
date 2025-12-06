@@ -99,12 +99,9 @@ public:
 		});
 	}
 
-	void OnTriggerEffect(chip::app::Clusters::IdentifyCluster &cluster) override
-	{
-		Nrf::PostTask([] { BuzzerToggleState(); });
-	}
+	void OnTriggerEffect(chip::app::Clusters::IdentifyCluster &cluster) override { return; }
 
-	bool IsTriggerEffectEnabled() const override { return true; }
+	bool IsTriggerEffectEnabled() const override { return false; }
 };
 
 IdentifyDelegateImplWeatherStation sIdentifyDelegateImplWeatherStation;
