@@ -4,8 +4,6 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf7120pdk/nrf7120/cpuapp
-
     tags:
       - tfm
       - psa_crypto
@@ -14,4 +12,3 @@ tests:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf7120pdk/nrf7120/cpuapp
