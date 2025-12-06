@@ -8,6 +8,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_macros.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -41,7 +42,7 @@ otMessage *otUdpNewMessage(otInstance *aInstance, const otMessageSettings *aSett
 	struct nrf_rpc_cbor_ctx ctx;
 	ot_rpc_res_tab_key key;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(otMessageSettings) + 3);
 

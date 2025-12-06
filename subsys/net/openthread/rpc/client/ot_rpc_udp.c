@@ -9,6 +9,8 @@
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
 #include <ot_rpc_lock.h>
+#include <ot_rpc_macros.h>
+#include <ot_rpc_os.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -25,7 +27,7 @@ otError otUdpConnect(otInstance *aInstance, otUdpSocket *aSocket, const otSockAd
 	ot_socket_key key = (ot_socket_key)aSocket;
 	otError error = OT_ERROR_NONE;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	if (aSocket == NULL || aSockName == NULL) {
 		return OT_ERROR_INVALID_ARGS;
@@ -48,7 +50,7 @@ otError otUdpClose(otInstance *aInstance, otUdpSocket *aSocket)
 	ot_socket_key key = (ot_socket_key)aSocket;
 	otError error = OT_ERROR_NONE;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	if (aSocket == NULL) {
 		return OT_ERROR_INVALID_ARGS;
@@ -69,7 +71,7 @@ otError otUdpBind(otInstance *aInstance, otUdpSocket *aSocket, const otSockAddr 
 	otError error = OT_ERROR_NONE;
 	uint32_t net_if = aNetif;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	if (aSocket == NULL || aSockName == NULL) {
 		return OT_ERROR_INVALID_ARGS;
@@ -126,7 +128,7 @@ otError otUdpOpen(otInstance *aInstance, otUdpSocket *aSocket, otUdpReceive aCal
 	ot_socket_key key = (ot_socket_key)aSocket;
 	otError error = OT_ERROR_NONE;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	if (aSocket == NULL) {
 		return OT_ERROR_INVALID_ARGS;
@@ -150,7 +152,7 @@ otError otUdpSend(otInstance *aInstance, otUdpSocket *aSocket, otMessage *aMessa
 	ot_rpc_res_tab_key msg_key = (ot_rpc_res_tab_key)aMessage;
 	otError error = OT_ERROR_NONE;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	if (aSocket == NULL || aMessage == NULL || aMessageInfo == NULL) {
 		return OT_ERROR_INVALID_ARGS;
@@ -171,8 +173,8 @@ bool otUdpIsOpen(otInstance *aInstance, const otUdpSocket *aSocket)
 	ot_socket_key key = (ot_socket_key)aSocket;
 	bool open;
 
-	ARG_UNUSED(aInstance);
-	__ASSERT_NO_MSG(aSocket != NULL);
+	OT_RPC_UNUSED(aInstance);
+	OT_RPC_ASSERT(aSocket != NULL);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(key) + 1);
 	nrf_rpc_encode_uint(&ctx, key);
