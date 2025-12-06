@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 import sys
+import re
 from pathlib import Path
 
 from args import args
@@ -17,6 +18,59 @@ from west import log
 def split_lines(text: str) -> 'tuple[str]':
     '''Split input text into stripped lines removing empty lines.'''
     return tuple(line.strip() for line in text.split('\n') if len(line.strip()))
+
+
+def git_url_to_purl(git_url: str, version: str) -> 'str|None':
+    '''Convert git URL to Package URL (PURL) format.
+
+    Supports GitHub, GitLab, and Bitbucket URLs.
+    Format: pkg:<type>/<namespace>/<name>@<version>
+    '''
+    if not git_url or not version:
+        return None
+
+    url = git_url.strip()
+    if url.endswith('.git'):
+        url = url[:-4]
+    if url.startswith('git@'):
+        url = url.replace(':', '/', 1).replace('git@', 'https://')
+
+    git_services = [
+        (r'https?://github\.com/([^/]+)/(.+)', 'github'),
+        (r'https?://gitlab\.com/([^/]+)/(.+)', 'gitlab'),
+        (r'https?://bitbucket\.org/([^/]+)/(.+)', 'bitbucket'),
+    ]
+
+    for pattern, purl_type in git_services:
+        match = re.match(pattern, url)
+        if match:
+            namespace, name = match.groups()
+            return f'pkg:{purl_type}/{namespace}/{name}@{version}'
+
+    return f'pkg:generic/{url.split("/")[-1]}@{version}'
+
+
+def extract_supplier_from_url(git_url: str) -> 'str|None':
+    '''Extract supplier/organization name from git URL.'''
+    if not git_url:
+        return None
+
+    url = git_url.strip()
+    if url.endswith('.git'):
+        url = url[:-4]
+    if url.startswith('git@'):
+        url = url.replace(':', '/', 1).replace('git@', 'https://')
+
+    for pattern in [
+        r'https?://github\.com/([^/]+)/',
+        r'https?://gitlab\.com/([^/]+)/',
+        r'https?://bitbucket\.org/([^/]+)/',
+    ]:
+        match = re.match(pattern, url)
+        if match:
+            return match.group(1)
+
+    return None
 
 
 def get_remote_url(path: Path, remote_name: str) -> str:
@@ -105,6 +159,11 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
         package.id = package_id
         package.url = git_origin
         package.version = git_sha
+        if git_origin and git_sha:
+            package.purl = git_url_to_purl(git_origin, git_sha)
+            package.supplier = args.package_supplier or extract_supplier_from_url(git_origin)
+        if args.package_cpe:
+            package.cpe = args.package_cpe
         data.packages[package_id] = package
     for file in files:
         file.package = package_id
