@@ -174,6 +174,9 @@ Testing
 After building the sample and programming it to your development kit, complete the following steps to test its basic features.
 
 .. note::
+   |matter_unique_discriminator_note|
+
+.. note::
    The following steps use the CHIP Tool controller as an example.
 
 .. tabs::

@@ -536,6 +536,9 @@ Enabling remote control
 
 Remote control allows you to control the Matter door lock device from a Thread or a Wi-Fi network.
 
+.. note::
+   |matter_unique_discriminator_note|
+
 .. matter_door_lock_sample_remote_control_start
 
 `Commissioning the device`_ allows you to set up a testing environment and remotely control the sample over a Matter-enabled Thread or Wi-Fi network.
