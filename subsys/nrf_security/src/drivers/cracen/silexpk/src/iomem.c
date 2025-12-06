@@ -133,13 +133,19 @@ void sx_wrpkmem(void *dst, const void *src, size_t sz)
 		const size_t byte_count = 4 - first_byte_pos;
 
 		write_incomplete_word((uint32_t *)(dst_addr & ~3), src, first_byte_pos, byte_count);
-		*(uint8_t **)&dst += byte_count;
-		*(const uint8_t **)&src += byte_count;
+		dst = (uint8_t *)dst + byte_count;
+		src = (const uint8_t *)src + byte_count;
 		sz -= byte_count;
 	}
 
+	/* Use memcpy to read from src since it may be unaligned.
+	 * dst is guaranteed to be 4-byte aligned at this point.
+	 */
 	for (size_t i = 0; i != sz / 4; ++i) {
-		((uint32_t *)dst)[i] = ((const uint32_t *)src)[i];
+		uint32_t word;
+
+		memcpy(&word, (const uint8_t *)src + i * 4, sizeof(word));
+		((uint32_t *)dst)[i] = word;
 	}
 
 	if (sz % 4) {
