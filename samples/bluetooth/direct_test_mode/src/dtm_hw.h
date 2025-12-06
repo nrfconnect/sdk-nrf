@@ -12,6 +12,12 @@
 
 #include <hal/nrf_radio.h>
 
+/**
+ * @file
+ * @defgroup dtm_hw DTM Hardware API
+ * @brief DTM Hardware API.
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
