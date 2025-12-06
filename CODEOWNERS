@@ -868,6 +868,7 @@
 /tests/drivers/lpuart/                    @nordic-krch @nrfconnect/ncs-low-level-test
 /tests/drivers/mspi/app_fault_timer/      @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/drivers/mspi/error_cases/          @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
+/tests/drivers/mspi/mspi_tx_rx_loopback/  @nrfconnect/ncs-low-level-test
 /tests/drivers/mspi/mspi_with_spis/       @nrfconnect/ncs-low-level-test
 /tests/drivers/mspi/trap_handler/         @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/drivers/nrf_wifi/                  @sachinthegreen @krish2718
