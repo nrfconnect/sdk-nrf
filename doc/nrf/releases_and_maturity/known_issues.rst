@@ -4475,6 +4475,14 @@ The issues in this section are related to :ref:`MCUboot <mcuboot_wrapper>`.
 
 .. rst-class:: v3-1-1
 
+NCSIDB-1173 Reading reset vector does not work with encrypted images
+  Due to how MCUboot process images, information on reset vector needed to recognize image destination is not available as it is encrypted, which makes it impossible to identify update slot and prevents MCUboot to follow with decryption.
+  Issue affects b0/b1 configurations and configurations that enable :kconfig:option:`CONFIG_MCUBOOT_VERIFY_IMG_ADDRESS` for MCUboot build.
+
+  **Affected platforms:** nRF54L, nRF52840, nRF5340
+
+.. rst-class:: v3-1-1
+
 NCSDK-35259 Upgrade failed when encryption was enabled
   Encryption is currently not supported for nRF54LM20.
 
