@@ -112,7 +112,7 @@ config MPSL_CALIBRATION_PERIOD
 
 config MPSL_INIT_PRIORITY
 	int
-	default 52 if MPSL_USE_EXTERNAL_CLOCK_CONTROL
+	default 53 if MPSL_USE_EXTERNAL_CLOCK_CONTROL
 	default KERNEL_INIT_PRIORITY_DEFAULT
 	help
 	  This option configures MPSL system init priority level. For nRF54H SoC series the priority
