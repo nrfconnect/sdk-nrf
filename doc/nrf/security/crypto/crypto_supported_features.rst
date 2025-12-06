@@ -4188,8 +4188,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental (with exceptions, see note)
-                 - Experimental (with exceptions, see note)
+                 - Experimental
+                 - Experimental
                * - GCM
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`
                  - Supported
@@ -4219,23 +4219,10 @@ The options are grouped by Series and drivers available for the device Series, a
 
                   * 192-bit keys are not supported.
                     See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
-                  * CCM cipher mode:
-
-                    * Multi-part encrypt and decrypt APIs are not supported.
-                    * A maximum of 1 MB of plaintext or ciphertext is supported.
 
                   * GCM and ChaCha20-Poly1305 cipher modes:
 
                     * Multi-part encrypt and decrypt APIs are not supported.
-
-                * The following limitations apply for nRF54LV10A when using the CRACEN driver:
-
-                  * 192-bit keys are not supported.
-                    See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
-
-                  * CCM cipher mode:
-
-                    * A maximum of 1 MB of plaintext or ciphertext is supported.
 
          .. tab:: nrf_oberon
 
