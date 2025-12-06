@@ -5,7 +5,6 @@ tests:
       - qemu_cortex_m3
       - native_sim
     integration_platforms:
-      - qemu_cortex_m3
       - native_sim
     tags:
       - mqtt_helper
