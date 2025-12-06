@@ -50,6 +50,12 @@
 			clock-frequency = <DT_FREQ_M(16)>;
 		};
 
+		pclk32m: pclk32m {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <DT_FREQ_M(32)>;
+		};
+
 		lfxo: lfxo {
 			compatible = "fixed-clock";
 			#clock-cells = <0>;
@@ -60,12 +66,6 @@
 			compatible = "fixed-clock";
 			#clock-cells = <0>;
 			clock-frequency = <DT_FREQ_M(64)>;
-		};
-
-		hfxo32m: hfxo32m {
-			compatible = "fixed-clock";
-			#clock-cells = <0>;
-			clock-frequency = <DT_FREQ_M(32)>;
 		};
 
 		hfpll: hfpll {
@@ -347,7 +347,7 @@
 				compatible = "nordic,nrf-timer";
 				reg = <0x85000 0x1000>;
 				interrupts = <133 NRF_DEFAULT_IRQ_PRIORITY>;
-				clocks = <&hfxo32m>;
+				clocks = <&pclk32m>;
 				cc-num = <8>;
 				max-bit-width = <32>;
 				prescaler = <0>;
@@ -707,7 +707,7 @@
 				reg = <0xe8000 0x1000>;
 				interrupts = <232 NRF_DEFAULT_IRQ_PRIORITY>;
 				status = "disabled";
-				clocks = <&pclk>;
+				clocks = <&pclk32m>;
 			};
 
 			spi23: spi@ed000 {
@@ -865,7 +865,7 @@
 				compatible = "nordic,nrf-auxpll";
 				reg = <0x130000 0x1000>;
 				interrupts = <304 NRF_DEFAULT_IRQ_PRIORITY>;
-				clocks = <&hfxo32m>;
+				clocks = <&pclk32m>;
 				#clock-cells = <0>;
 				/*
 				 * Temporarily reading FICR addr 0 as FICR offsets
