@@ -926,6 +926,7 @@
 /tests/subsys/bluetooth/enocean/          @nrfconnect/ncs-paladin
 /tests/subsys/bluetooth/fast_pair/        @nrfconnect/ncs-si-bluebagel
 /tests/subsys/bluetooth/mesh/             @nrfconnect/ncs-paladin
+/tests/subsys/bluetooth/rpc_gatt_service/  @nrfconnect/ncs-protocols-serialization
 /tests/subsys/bootloader/                 @nrfconnect/ncs-eris
 /tests/subsys/caf/                        @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /tests/subsys/debug/cpu_load/             @nordic-krch
