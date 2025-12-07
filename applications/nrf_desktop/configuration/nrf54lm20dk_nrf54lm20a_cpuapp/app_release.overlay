@@ -8,7 +8,7 @@
 
 /* Application does not use cpuflpr core. Assign whole RRAM to cpuapp. */
 &cpuapp_rram {
-	reg = < 0x0 DT_SIZE_K(2036) >;
+	reg = <0x0 DT_SIZE_K(2036)>;
 };
 
 / {

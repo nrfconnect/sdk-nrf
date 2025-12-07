@@ -7,7 +7,7 @@
 #include "../common/memory_map.dtsi"
 #include "../common/memory_map_ram_cpurad.dtsi"
 
-/{
+/ {
 	chosen {
 		zephyr,code-partition = &cpurad_loader_partition;
 		zephyr,sram = &cpurad_loader_ram;

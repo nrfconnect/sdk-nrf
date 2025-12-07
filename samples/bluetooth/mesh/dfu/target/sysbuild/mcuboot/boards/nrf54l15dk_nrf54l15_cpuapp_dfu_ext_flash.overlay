@@ -22,12 +22,12 @@
 
 		slot0_partition: partition@14000 {
 			label = "image-0";
-			reg = <0x000014000 0x0015A000>;
+			reg = <0x000014000 0x0015a000>;
 		};
 
-		storage_partition: partition@16E000 {
+		storage_partition: partition@16e000 {
 			label = "storage";
-			reg = <0x16E000 0x9000>;
+			reg = <0x16e000 0x9000>;
 		};
 	};
 };
@@ -42,7 +42,7 @@
 
 		slot1_partition: partition@0 {
 			label = "image-1";
-			reg = <0x000000000 0x0015A000>;
+			reg = <0x000000000 0x0015a000>;
 		};
 	};
 };

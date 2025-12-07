@@ -10,7 +10,7 @@
  * with board overlay.
  */
 
-/{
+/ {
 	chosen {
 		zephyr,code-partition = &boot_partition;
 	};
