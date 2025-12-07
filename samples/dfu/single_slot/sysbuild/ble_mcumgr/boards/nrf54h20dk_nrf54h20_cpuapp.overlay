@@ -10,4 +10,5 @@
  * loader image(s).
  */
 /delete-node/ &slot1_partition;
+
 slot1_partition: &fw_loader_partition {};

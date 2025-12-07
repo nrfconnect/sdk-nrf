@@ -10,7 +10,7 @@
 	 */
 	zephyr,user {
 		out-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>, <&gpio1 31 GPIO_ACTIVE_HIGH>,
-			<&gpio1 29 GPIO_ACTIVE_HIGH>, <&gpio1 30 GPIO_ACTIVE_HIGH>;
+			    <&gpio1 29 GPIO_ACTIVE_HIGH>, <&gpio1 30 GPIO_ACTIVE_HIGH>;
 	};
 };
 

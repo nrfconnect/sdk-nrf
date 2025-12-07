@@ -185,27 +185,27 @@
 				};
 			};
 
-			dppic20: dppic@C2000 {
+			dppic20: dppic@c2000 {
 				compatible = "nordic,nrf-dppic";
-				reg = <0xC2000 0x1000>;
+				reg = <0xc2000 0x1000>;
 				status = "disabled";
 			};
 
-			ppib20: ppib@C3000 {
+			ppib20: ppib@c3000 {
 				compatible = "nordic,nrf-ppib";
-				reg = <0xC3000 0x1000>;
+				reg = <0xc3000 0x1000>;
 				status = "disabled";
 			};
 
-			ppib21: ppib@C4000 {
+			ppib21: ppib@c4000 {
 				compatible = "nordic,nrf-ppib";
-				reg = <0xC4000 0x1000>;
+				reg = <0xc4000 0x1000>;
 				status = "disabled";
 			};
 
-			ppib22: ppib@C5000 {
+			ppib22: ppib@c5000 {
 				compatible = "nordic,nrf-ppib";
-				reg = <0xC5000 0x1000>;
+				reg = <0xc5000 0x1000>;
 				status = "disabled";
 			};
 

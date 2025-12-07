@@ -4,9 +4,9 @@
  */
 
 / {
-	cpuapp_sram@2002EF40 {
+	cpuapp_sram@2002ef40 {
 		compatible = "zephyr,memory-region", "mmio-sram";
-		reg = <0x2002EF40 0x10C0>;
+		reg = <0x2002ef40 0x10c0>;
 		zephyr,memory-region = "DiagnosticLogMem";
 		status = "okay";
 
@@ -20,7 +20,7 @@
 			crash_retention: retention@0 {
 				compatible = "zephyr,retention";
 				status = "okay";
-				reg = <0x0 0xC0>;
+				reg = <0x0 0xc0>;
 				prefix = [08 04];
 				checksum = <2>;
 			};
@@ -29,7 +29,7 @@
 			network_logs_retention: retention@c0 {
 				compatible = "zephyr,retention";
 				status = "okay";
-				reg = <0xC0 0x800>;
+				reg = <0xc0 0x800>;
 				prefix = [06 03];
 				checksum = <2>;
 			};
@@ -38,7 +38,7 @@
 			end_user_logs_retention: retention@8c0 {
 				compatible = "zephyr,retention";
 				status = "okay";
-				reg = <0x8C0 0x800>;
+				reg = <0x8c0 0x800>;
 				prefix = [05 02];
 				checksum = <2>;
 			};
@@ -48,5 +48,5 @@
 
 /* Reduce cpuapp_sram usage by 4288 B to account for non-init area */
 &cpuapp_sram {
-	reg = <0x20000000 0x2EF40>;
+	reg = <0x20000000 0x2ef40>;
 };
