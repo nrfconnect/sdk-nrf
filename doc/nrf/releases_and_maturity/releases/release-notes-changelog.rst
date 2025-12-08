@@ -283,7 +283,9 @@ Keys samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* :ref:`matter_manufacturer_specific_sample`:
+
+  * Added support for the ``NRF_MATTER_CLUSTER_INIT`` macro.
 
 Networking samples
 ------------------
