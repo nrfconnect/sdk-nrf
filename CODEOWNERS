@@ -854,6 +854,7 @@
 /tests/benchmarks/multicore/idle_gpio/    @adamkondraciuk @nrfconnect/ncs-low-level-test
 /tests/bluetooth/iso/                     @nrfconnect/ncs-audio @Frodevan
 /tests/bluetooth/bsim/nrf_auraconfig/     @nrfconnect/ncs-audio
+/tests/bluetooth/bsim/custom_ltk/         @nrfconnect/ncs-paladin
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/crypto/                            @magnev
 /tests/drivers/audio/                     @nrfconnect/ncs-low-level-test
