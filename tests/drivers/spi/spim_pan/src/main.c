@@ -118,9 +118,6 @@ ZTEST(spim_pan, test_spim_mltpan_55_workaround)
 
 	int err;
 
-	uint8_t ppi_channel;
-
-	uint32_t domain_id;
 	nrfx_gppi_handle_t gppi_handle;
 
 	uint32_t timer_cc_before, timer_cc_after;
@@ -135,10 +132,6 @@ ZTEST(spim_pan, test_spim_mltpan_55_workaround)
 	struct spi_buf_set rx_spi_buf_set = {.buffers = &rx_spi_buf, .count = 1};
 
 	set_buffers();
-
-	domain_id = nrfx_gppi_domain_id_get((uint32_t)test_timer.p_reg);
-	ppi_channel = nrfx_gppi_channel_alloc(domain_id);
-	zassert_true(ppi_channel > 0, "Failed to allocate GPPI channel");
 
 	timer_task = configure_test_timer(&test_timer);
 	spim_event = nrf_spim_event_address_get(spim_reg, NRF_SPIM_EVENT_END);
