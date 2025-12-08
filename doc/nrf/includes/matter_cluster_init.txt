@@ -1,0 +1,93 @@
+The Matter |NCS| common library provides a mechanism for automatic registration and initialization of custom Matter clusters using the ``NRF_MATTER_CLUSTER_INIT`` macro.
+This allows cluster implementations to register their initialization functions that are automatically called during Matter server startup without manual registration in the application code.
+This mechanism uses Zephyr's iterable sections feature, which allows the linker to collect all registered entries automatically at build time without explicit registration calls.
+
+Using the cluster initialization macro
+--------------------------------------
+
+To register a custom cluster for automatic initialization, complete the following steps in your cluster's :file:`.cpp` file:
+
+1. Include the cluster initialization header:
+
+   .. code-block:: cpp
+
+      #include "clusters/cluster_init.h"
+
+#. Create a cluster instance:
+
+   .. code-block:: cpp
+
+      static RegisteredServerCluster<MyClusterInstance> sMyClusterInstance;
+
+#. Create an initialization callback function that returns ``true`` on success and ``false`` on failure:
+
+   .. tabs::
+
+      .. tab:: Adding a new cluster
+
+         .. code-block:: cpp
+
+            static bool MyClusterInit()
+            {
+                auto &registry = chip::app::CodegenDataModelProvider::Instance().Registry();
+
+                return registry.Register(sMyClusterInstance.Registration()) == CHIP_NO_ERROR;
+            }
+
+      .. tab:: Extending the existing cluster
+
+         .. code-block:: cpp
+
+            static bool MyClusterInit()
+            {
+                auto &registry = chip::app::CodegenDataModelProvider::Instance().Registry();
+
+                // Get the existing cluster interface
+                chip::app::ServerClusterInterface *interface = registry.Get({ kEndpointId, chip::app::Clusters::MyCluster::Id });
+
+                if (interface == nullptr) {
+                    return false;
+                }
+
+                // Unregister the default implementation
+                registry.Unregister(interface);
+
+                // Register the updated implementation
+                return registry.Register(sMyClusterInstance.Registration()) == CHIP_NO_ERROR;
+            }
+
+#. Register the initialization function using the macro:
+
+   .. code-block:: cpp
+
+      NRF_MATTER_CLUSTER_INIT(my_cluster_id, MyClusterInit);
+
+#. All callbacks will be automatically run by the ``StartServer()`` function dedicated to the |NCS| Matter solution.
+
+The source file name is automatically captured at compile time for logging purposes.
+When a cluster initializes, the log displays the filename, for example:
+
+    .. code-block:: console
+
+       [DBG] Initializing cluster: basic_information_extension.cpp
+
+If you want to extend the existing cluster to register it, you must unregister the previous instance first as follows:
+
+1. Create an initialization callback function that unregisters the base instance and registers the new one:
+
+   .. code-block:: cpp
+
+      static RegisteredServerCluster<MyClusterInstance> sMyClusterInstance;
+
+      static bool MyClusterInit()
+      {
+          auto &registry = chip::app::CodegenDataModelProvider::Instance().Registry();
+
+          return registry.Register(sMyClusterInstance.Registration()) == CHIP_NO_ERROR;
+      }
+
+#. Register the initialization function using the macro:
+
+   .. code-block:: cpp
+
+      NRF_MATTER_CLUSTER_INIT(my_cluster_id, MyClusterInit);

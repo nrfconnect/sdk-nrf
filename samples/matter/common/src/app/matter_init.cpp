@@ -8,6 +8,7 @@
 
 #include "app/fabric_table_delegate.h"
 #include "app/group_data_provider.h"
+#include "clusters/cluster_init.h"
 #include "migration/migration_manager.h"
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL
@@ -429,7 +430,16 @@ CHIP_ERROR StartServer()
 	CHIP_ERROR err = PlatformMgr().StartEventLoopTask();
 	VerifyInitResultOrReturnError(err, "PlatformMgr().StartEventLoopTask() failed");
 
-	return WaitForReadiness();
+	/* Wait for the CHIP server to be initialized. */
+	err = WaitForReadiness();
+	VerifyInitResultOrReturnError(err, "CHIP server initialization failed");
+
+	/* Run all code-driven registered cluster initialization callbacks. */
+	if (!nrf_matter_cluster_init_run_all()) {
+		return CHIP_ERROR_INTERNAL;
+	}
+
+	return CHIP_NO_ERROR;
 }
 
 #ifdef CONFIG_CHIP_FACTORY_DATA

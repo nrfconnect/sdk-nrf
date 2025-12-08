@@ -17,7 +17,11 @@ target_sources(app PRIVATE
     ${MATTER_COMMONS_SRC_DIR}/app/task_executor.cpp
     ${MATTER_COMMONS_SRC_DIR}/app/matter_init.cpp
     ${MATTER_COMMONS_SRC_DIR}/app/matter_event_handler.cpp
+    ${MATTER_COMMONS_SRC_DIR}/clusters/cluster_init.cpp
 )
+
+# Include linker script for cluster initialization iterable section
+zephyr_linker_sources(SECTIONS ${MATTER_COMMONS_SRC_DIR}/clusters/cluster_init.ld)
 
 # Set specific sources that depend on Kconfigs
 if(CONFIG_CHIP_OTA_REQUESTOR OR CONFIG_MCUMGR_TRANSPORT_BT)
