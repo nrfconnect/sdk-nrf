@@ -13,7 +13,6 @@ config DESKTOP_BT
 	imply DESKTOP_BLE_BOND_ENABLE
 	select BT
 	select BT_SETTINGS
-	select BT_SIGNING
 	select BT_SMP
 	imply BT_CONN_TX_NOTIFY_WQ if BT_LL_SOFTDEVICE
 	help
