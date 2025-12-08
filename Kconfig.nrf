@@ -121,6 +121,24 @@ config NRF_SECURITY_ENABLER
 	imply MBEDTLS_ENABLE_HEAP if BT_HOST_CRYPTO_PRNG || BT_ECC || BT_GATT_CACHING || BT_CRYPTO
 	depends on !SOC_NRF5340_CPUNET
 
+# Bluetooth TX processor thread stack Thread Analyzer measurements
+# Apply SoC-specific defaults here to avoid touching upstream Zephyr files.
+# Applications can still override via prj.conf.
+configdefault BT_TX_PROCESSOR_STACK_SIZE
+	# nRF52 variants
+	default 768 if SOC_NRF52840
+	default 696 if SOC_NRF52832
+	default 969 if SOC_NRF52833
+	# nRF53 (application core)
+	default 688 if SOC_NRF5340_CPUAPP
+	# nRF54H20 (application core)
+	default 624 if SOC_NRF54H20_CPUAPP
+	# nRF54L15 (application core)
+	default 856 if SOC_NRF54L15_CPUAPP
+	# nRF54L V10A / LM20A (currently application core EngA variants are used)
+	default 856 if SOC_NRF54LV10A_ENGA_CPUAPP
+	default 856 if SOC_NRF54LM20A_ENGA_CPUAPP
+
 if SOC_SERIES_BSIM_NRFXX && ENTROPY_GENERATOR
 config MBEDTLS_HEAP_SIZE
 	int
