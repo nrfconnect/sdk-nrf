@@ -245,6 +245,7 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
   dt_chosen(code_flash TARGET ${main_image} PROPERTY "zephyr,code-partition")
   dt_partition_addr(code_addr PATH "${code_flash}" TARGET ${main_image} REQUIRED)
   set(start_offset)
+  set(pad_header)
   sysbuild_get(start_offset IMAGE ${main_image} VAR CONFIG_ROM_START_OFFSET
     KCONFIG)
 
@@ -265,7 +266,11 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
       set(slot_addr ${slot0_addr})
     endif()
     # Adjust start offset, based on the active slot and code partition address.
-    math(EXPR start_offset "${start_offset} + ${code_addr} - ${slot_addr}")
+    math(EXPR start_offset_dts "${code_addr} - ${slot_addr}")
+    if(start_offset_dts GREATER 0)
+      math(EXPR start_offset "${start_offset} + ${start_offset_dts}")
+      set(pad_header "--pad-header")
+    endif()
     set(imgtool_rom_command --rom-fixed ${slot_addr})
   elseif(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
     if(CONFIG_MCUBOOT_APPLICATION_FIRMWARE_UPDATER)
@@ -276,7 +281,11 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
       set(slot_addr ${slot0_addr})
     endif()
     # Adjust start offset, based on the active slot and code partition address.
-    math(EXPR start_offset "${start_offset} + ${code_addr} - ${slot_addr}")
+    math(EXPR start_offset_dts "${code_addr} - ${slot_addr}")
+    if(start_offset_dts GREATER 0)
+      math(EXPR start_offset "${start_offset} + ${start_offset_dts}")
+      set(pad_header "--pad-header")
+    endif()
     set(imgtool_rom_command --rom-fixed ${slot_addr})
   else()
     message(FATAL_ERROR "Only Direct XIP and firmware updater MCUboot modes are supported.")
@@ -290,7 +299,7 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
   # Basic 'imgtool sign' command with known image information.
   set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version
     ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --header-size ${start_offset} --slot-size ${slot_size}
-    --pad-header ${imgtool_rom_command})
+    ${pad_header} ${imgtool_rom_command})
   set(imgtool_args --align ${write_block_size} ${imgtool_args})
 
   # Extensionless prefix of any output file.
@@ -355,7 +364,7 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
       set(BYPRODUCT_KERNEL_SIGNED_CONFIRMED_HEX_NAME
         "${output}.signed.confirmed.hex" CACHE FILEPATH
         "Signed and confirmed kernel hex file" FORCE)
-      list(APPEND imgtool_cmd COMMAND ${imgtool_sign} ${imgtool_args} --pad --pad-header --confirm
+      list(APPEND imgtool_cmd COMMAND ${imgtool_sign} ${imgtool_args} --pad ${pad_header} --confirm
         ${merged_hex} ${output}.signed.confirmed.hex)
     endif()
 
