@@ -35,8 +35,11 @@
 
 #include <hal/nrf_spu.h>
 #include <hal/nrf_mpc.h>
+#include <hal/nrf_lfxo.h>
 
 LOG_MODULE_REGISTER(soc, CONFIG_SOC_LOG_LEVEL);
+
+#define LFXO_NODE DT_NODELABEL(lfxo)
 
 #if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 /* Copied from TF-M native driver */
@@ -212,6 +215,12 @@ void soc_early_init_hook(void)
 	/* Currently not supported for non-secure */
 	SystemCoreClockUpdate();
 	wifi_setup();
+
+	/* Configure LFXO capacitive load if internal load capacitors are used */
+#if DT_ENUM_HAS_VALUE(LFXO_NODE, load_capacitors, internal)
+	nrf_lfxo_cload_set(NRF_LFXO,
+		(uint8_t)(DT_PROP(LFXO_NODE, load_capacitance_femtofarad) / 1000));
+#endif
 #endif
 
 #ifdef __NRF_TFM__
