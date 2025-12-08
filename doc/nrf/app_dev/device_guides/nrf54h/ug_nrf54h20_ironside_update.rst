@@ -177,20 +177,60 @@ See the :zephyr:code-sample:`update application <nrf_ironside_update>` sample fo
 .. _ug_nrf54h20_ironside_se_update_architecture:
 
 Architecture
-************
+============
 
-The structure of the update procedure consists of the following steps:
+The |ISE| update process starts when Application firmware invokes the :ref:`update service <ug_nrf54h20_ironside_se_update_service>` with the address of where the update release package has been written in MRAM.
 
-1. The :zephyr:code-sample:`update application <nrf_ironside_update>` runs on the application core and communicates with |ISE| using the :ref:`update service <ug_nrf54h20_ironside_se_update_service>`.
+The diagram below illustrates the process flow between Application, |ISE|, and Secure Domain ROM (SDROM) in performing the firmware update.
 
-#. The application invokes the IronSide SE update service and passes the parameters that correspond to the location of the HEX file (blob metadata) of the |ISE| firmware update in memory.
+.. figure:: images/nrf54h20_ironside_update.svg
 
-#. The |ISE| validates the update parameters and writes the update metadata to the Secure Information Configuration Registers (SICR).
+.. _ug_nrf54h20_ironside_se_update_architecture_app:
 
-#. After the service call completes, the IronSide SE firmware updates the internal state of the device.
+Application side
+----------------
 
-#. The application prints the return value of the service call and outputs information from the update HEX file.
+The following describes the procedure for an |ISE| update from Application firmware:
 
-#. After a reset, the Secure Domain ROM (SDROM) detects the pending update through the SICR registers, verifies the update firmware signature, and installs the new firmware.
+1. Program update image into MRAM.
+#. Call the |ISE| update service with update image location.
+#. Verify update request is acknowledged.
+#. Trigger a reset.
+#. Check version in boot report on startup.
 
-Once the operation has completed, you can read the boot report to verify that the update has taken place.
+.. _ug_nrf54h20_ironside_se_update_architecture_ise:
+
+|ISE| side
+----------
+
+The |ISE| side of the update process involves both |ISE| firmware and SDROM.
+
+The following describes the update procedure in the |ISE| upon request:
+
+1. Service receives update request with update image location in MRAM.
+#. Update request is validated.
+#. SICR registers are updated with image metadata.
+#. Service request is acknowledged.
+#. Operation continues normally until a reset is performed.
+
+Once the device comes out of reset, SDROM performs the following:
+
+1. Enables write-protection on the update image and firmware contents.
+#. Checks firmware metadata stored in SICR registers against address range and size constraints.
+#. Verifies update version against current firmware to prevent downgrades.
+#. Computes and validates digest of the public key.
+#. Checks public key is not revoked.
+#. Computes and validates digest of update firmware.
+#. Verifies signature of the update firmware.
+#. Updates SICR's update status with result.
+
+If any of the above steps fail, the installation is aborted and the existing |ISE| is booted.
+Otherwise, the update firmware's metadata is stored in SICR and the new image is installed.
+
+If the updated firmware is for |ISE| Recovery, the device is reset into Safe Mode after installation.
+When Safe Mode has acknowledged its update, the device is reset to boot back into the |ISE| context.
+
+On boot, |ISE| reads the update result from the SICR update status register and writes the value into the boot report.
+
+.. note::
+   |ISE| does not delete the update image contents from MRAM after a successful update.
