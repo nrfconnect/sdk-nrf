@@ -23,7 +23,7 @@ To register a custom cluster for automatic initialization, complete the followin
 
    .. tabs::
 
-      .. tab:: Adding a new cluster
+      .. group-tab:: Adding a new cluster
 
          .. code-block:: cpp
 
@@ -34,7 +34,7 @@ To register a custom cluster for automatic initialization, complete the followin
                 return registry.Register(sMyClusterInstance.Registration()) == CHIP_NO_ERROR;
             }
 
-      .. tab:: Extending the existing cluster
+      .. group-tab:: Extending the existing cluster
 
          .. code-block:: cpp
 

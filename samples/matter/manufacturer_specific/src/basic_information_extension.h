@@ -41,3 +41,10 @@ public:
 private:
 	int16_t mRandomNumber;
 };
+
+/**
+ * @brief Get the global BasicInformationExtension instance.
+ *
+ * @return Reference to the BasicInformationExtension cluster instance.
+ */
+BasicInformationExtension &GetBasicInformationExtension();

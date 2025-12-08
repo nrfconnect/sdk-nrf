@@ -11,6 +11,7 @@
 #include "app/matter_init.h"
 #include "app/task_executor.h"
 #include "board/board.h"
+#include "clusters/cluster_init.h"
 #include "lib/core/CHIPError.h"
 #include "lib/support/CodeUtils.h"
 
@@ -19,8 +20,6 @@
 #include <app/EventLogging.h>
 #include <app/util/attribute-storage.h>
 #include <setup_payload/OnboardingCodesUtil.h>
-
-#include <data-model-providers/codegen/CodegenDataModelProvider.h>
 
 #include <dk_buttons_and_leds.h>
 #include <zephyr/logging/log.h>
@@ -35,10 +34,7 @@ using namespace ::chip::DeviceLayer;
 namespace
 {
 #define BUTTON2_MASK DK_BTN2_MSK
-constexpr EndpointId kBasicInformationEndpointId = 0;
 constexpr EndpointId kNordicDevKitEndpointId = 1;
-
-RegisteredServerCluster<BasicInformationExtension> sBasicInformationExtension;
 } /* namespace */
 
 static void ButtonEventHandler(Nrf::ButtonState /* unused */, Nrf::ButtonMask has_changed)
@@ -87,8 +83,7 @@ void AppTask::UpdateNordicDevkitClusterState()
 void AppTask::UpdateBasicInformationClusterState()
 {
 	SystemLayer().ScheduleLambda([] {
-		DataModel::ActionReturnStatus status =
-			sBasicInformationExtension.Cluster().SetRandomNumber(sys_rand16_get());
+		DataModel::ActionReturnStatus status = GetBasicInformationExtension().SetRandomNumber(sys_rand16_get());
 
 		if (status != CHIP_NO_ERROR) {
 			ChipLogError(Zcl, "Updating Basic information cluster failed");
@@ -116,17 +111,6 @@ CHIP_ERROR AppTask::Init()
 CHIP_ERROR AppTask::StartApp()
 {
 	ReturnErrorOnFailure(Init());
-
-	/* Replaces the registered BasicInformation cluster with a customized one that adds random number handling. */
-	auto &registry = chip::app::CodegenDataModelProvider::Instance().Registry();
-
-	ServerClusterInterface *interface =
-		registry.Get({ kRootEndpointId, chip::app::Clusters::BasicInformation::Id });
-
-	VerifyOrDie(interface != nullptr);
-
-	registry.Unregister(interface);
-	VerifyOrDie(registry.Register(sBasicInformationExtension.Registration()) == CHIP_NO_ERROR);
 
 	while (true) {
 		Nrf::DispatchNextTask();
