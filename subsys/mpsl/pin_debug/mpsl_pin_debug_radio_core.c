@@ -47,7 +47,7 @@ static int m_ppi_config(void)
 	eep[2] = nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS);
 	eep[3] = nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_END);
 #endif
-	for (size_t i = 0; ARRAY_SIZE(tep); i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(tep); i++) {
 #if defined(DPPI_PRESENT)
 		nrfx_gppi_ep_attach(tep[i], handle[i]);
 #else
