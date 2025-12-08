@@ -6,8 +6,8 @@
 
 #include "nrf54h20.overlay"
 
-/* The zephyr,code-partition is always set to fw_loader_partition in firmware
- * loader image(s).
- */
-/delete-node/ &slot1_partition;
-slot1_partition: &cpurad_slot0_partition {};
+/ {
+	chosen {
+		zephyr,code-partition = &cpurad_slot0_partition;
+	};
+};
