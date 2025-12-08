@@ -119,6 +119,11 @@ Factory data support
     :start-after: matter_door_lock_sample_factory_data_start
     :end-before: matter_door_lock_sample_factory_data_end
 
+Registering code-driven clusters
+--------------------------------
+
+.. include:: /includes/matter_cluster_init.txt
+
 User interface
 **************
 
