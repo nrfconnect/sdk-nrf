@@ -224,7 +224,7 @@ typecode[full]==30.0.2 ; python_version >= "3.12" and python_version < "4.0" and
 typing-extensions==4.14.1 ; python_version >= "3.12" and python_version < "4.0"
 unidiff==0.7.5 ; python_version >= "3.12" and python_version < "4.0"
 uritools==5.0.0 ; python_version >= "3.12" and python_version < "4.0"
-urllib3==2.5.0 ; python_version >= "3.12" and python_version < "4.0"
+urllib3==2.6.0 ; python_version >= "3.12" and python_version < "4.0"
 urlpy==0.5 ; python_version >= "3.12" and python_version < "4.0" and (platform_machine == "x86_64" or platform_machine == "AMD64")
 vermin==1.6.0 ; python_version >= "3.12" and python_version < "4.0"
 wasmtime==24.0.0 ; python_version >= "3.12" and python_version < "4.0"
