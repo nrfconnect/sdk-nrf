@@ -16,5 +16,9 @@ rsource "Kconfig.defaults"
 endmenu
 
 menu "Zephyr Kernel"
+# RAM for this application for these boards is too few to use
+# the BT TX processor thread.
+configdefault BT_TX_PROCESSOR_THREAD
+	default n if BOARD_NRF52833DK_NRF52820 || BOARD_NRF52820DONGLE
 source "Kconfig.zephyr"
 endmenu
