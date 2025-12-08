@@ -201,7 +201,8 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+* Updated the :option:`CONFIG_DESKTOP_BT` Kconfig option to no longer select the deprecated :kconfig:option:`CONFIG_BT_SIGNING` Kconfig option.
+  Application relies on Bluetooth LE security mode 1 and security level of at least 2 to ensure data confidentiality through encryption.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
