@@ -89,11 +89,6 @@ function(dt_partition_addr var)
   dt_get_parent(dt_partition_parent)
 
   if("${dt_partition_parent}" IN_LIST fixed_subpartitions)
-    # If the parent is a subpartition, add the parent partition address.
-    dt_reg_addr(parent_addr PATH "${dt_partition_parent}" TARGET "${arg_DT_PARTITION_TARGET}")
-    math(EXPR dt_partition_offset "${dt_partition_offset} + ${parent_addr}" OUTPUT_FORMAT
-      HEXADECIMAL)
-
     # Get the parent of the subpartition node, which should be a fixed-partitions node.
     dt_get_parent(dt_partition_parent)
   elseif(NOT "${dt_partition_parent}" IN_LIST fixed_partitions)
