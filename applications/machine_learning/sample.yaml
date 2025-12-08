@@ -97,7 +97,7 @@ tests:
       - sysbuild
       - ci_applications_machine_learning
     extra_args:
-      - SB_CONFIG_ML_APP_INCLUDE_REMOTE_IMAGE=y
+      - SB_CONFIG_PPRCORE_REMOTE=y
       - machine_learning_SNIPPET=nordic-ppr
       - machine_learning_SHIELD=pca63566_fwd
       - remote_SHIELD=pca63566
