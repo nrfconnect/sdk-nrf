@@ -142,7 +142,7 @@ jobs:
           mv "${ARCHIVE}" ../../../
 
       - name: Prepare Zoomin upload
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
+        if: ${{ github.event_name == 'push' }}
         working-directory: ncs/nrf
         run: |
           ROOT="$PWD"
