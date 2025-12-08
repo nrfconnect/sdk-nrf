@@ -120,6 +120,12 @@
 	};
 };
 
+&lfxo {
+	load-capacitors = "internal";
+	/* Placeholder value until dk is available */
+	load-capacitance-femtofarad = <15000>;
+};
+
 &uart30 {
 	status = "okay";
 };
