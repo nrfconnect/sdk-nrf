@@ -24,13 +24,32 @@ config NETCORE_APP_UPDATE
 config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	default y if BOARD_NRF5340DK_NRF5340_CPUAPP
 
-config ML_APP_INCLUDE_REMOTE_IMAGE
-	bool "Include remote image build"
-	depends on SOC_NRF54H20_CPUAPP
+if SUPPORT_PPRCORE
 
-config ML_APP_REMOTE_BOARD
-	string "The name of the board to be used by remote image"
-	depends on ML_APP_INCLUDE_REMOTE_IMAGE
-	default "nrf54h20dk/nrf54h20/cpuppr" if BOARD_NRF54H20DK_NRF54H20_CPUAPP
+config SUPPORT_PPRCORE_REMOTE
+	bool
+	default y
+
+choice PPRCORE
+
+config PPRCORE_REMOTE
+	bool "Remote"
+	depends on SUPPORT_PPRCORE_REMOTE
+	help
+	  Include remote image as the PPR core image to use.
+
+endchoice
+
+if !PPRCORE_NONE
+
+config PPRCORE_IMAGE_NAME
+	default "remote" if PPRCORE_REMOTE
+
+config PPRCORE_IMAGE_PATH
+	default "$(APP_DIR)/remote" if PPRCORE_REMOTE
+
+endif # !PPRCORE_NONE
+
+endif # SUPPORT_PPRCORE
 
 source "share/sysbuild/Kconfig"

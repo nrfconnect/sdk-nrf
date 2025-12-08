@@ -465,7 +465,7 @@ nRF54H20 DK
 
   .. code-block:: console
 
-     west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_ML_APP_INCLUDE_REMOTE_IMAGE=y -Dmachine_learning_SNIPPET=nordic-ppr -Dmachine_learning_SHIELD=pca63566_fwd -Dremote_SHIELD=pca63566
+     west build -b nrf54h20dk/nrf54h20/cpuapp -- -DSB_CONFIG_PPRCORE_REMOTE=y -Dmachine_learning_SNIPPET=nordic-ppr -Dmachine_learning_SHIELD=pca63566_fwd -Dremote_SHIELD=pca63566
 
   or use twister test case:
 
