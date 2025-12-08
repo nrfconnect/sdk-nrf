@@ -309,7 +309,7 @@ psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *oper
 #if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
 	if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
 		operation->capacity = PSA_ALG_SP800_108_COUNTER_MAC_INIT_CAPACITY;
-		operation->state = CRACEN_KD_STATE_CMAC_CTR_INIT;
+		operation->state = CRACEN_KD_STATE_MAC_CTR_INIT;
 		/* CMAC CTR key derivation starts the counter with 1, see NIST.SP.800-108r1 */
 		operation->mac_ctr.counter = 1;
 
@@ -320,7 +320,7 @@ psa_status_t cracen_key_derivation_setup(cracen_key_derivation_operation_t *oper
 #if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
 	if (PSA_ALG_IS_SP800_108_COUNTER_HMAC(operation->alg)) {
 		operation->capacity = PSA_ALG_SP800_108_COUNTER_MAC_INIT_CAPACITY;
-		operation->state = CRACEN_KD_STATE_HMAC_CTR_INIT;
+		operation->state = CRACEN_KD_STATE_MAC_CTR_INIT;
 		/* HMAC CTR key derivation starts the counter with 1, see NIST.SP.800-108r1 */
 		operation->mac_ctr.counter = 1;
 
@@ -519,66 +519,41 @@ cracen_key_derivation_input_bytes_mac_ctr(cracen_key_derivation_operation_t *ope
 					  psa_key_derivation_step_t step, const uint8_t *data,
 					  size_t data_length)
 {
-	/* Make sure the key is already loaded here and allow multiple calls to the function in
-	 * order to fill label/context
-	 */
-	bool is_state_correct;
-	is_state_correct = operation->state == CRACEN_KD_STATE_CMAC_CTR_KEY_LOADED  ||
-			   operation->state == CRACEN_KD_STATE_CMAC_CTR_INPUT_LABEL ||
-			   operation->state == CRACEN_KD_STATE_CMAC_CTR_INPUT_CONTEXT;
-
-	is_state_correct = is_state_correct ||
-			   operation->state == CRACEN_KD_STATE_HMAC_CTR_KEY_LOADED  ||
-			   operation->state == CRACEN_KD_STATE_HMAC_CTR_INPUT_LABEL ||
-			   operation->state == CRACEN_KD_STATE_HMAC_CTR_INPUT_CONTEXT;
-
-	if (!is_state_correct) {
-		return PSA_ERROR_BAD_STATE;
-	}
-
 	switch (step) {
 	case PSA_KEY_DERIVATION_INPUT_LABEL: {
-		size_t label_remaining_bytes =
-			sizeof(operation->mac_ctr.label) - operation->mac_ctr.label_length;
+		if (operation->state != CRACEN_KD_STATE_MAC_CTR_KEY_LOADED) {
+			return PSA_ERROR_BAD_STATE;
+		}
 
 		/* Reserve the last byte of the label for setting the byte 0x0 which is required
 		 * by the CMAC CTR key derivation.
 		 */
-		if (label_remaining_bytes > 0) {
-			label_remaining_bytes--;
-		}
+		size_t label_remaining_bytes = sizeof(operation->mac_ctr.label) - 1;
 
 		if (data_length > label_remaining_bytes) {
 			return PSA_ERROR_INSUFFICIENT_MEMORY;
 		}
 
-		memcpy(&operation->mac_ctr.label[operation->mac_ctr.label_length], data,
-		       data_length);
-		operation->mac_ctr.label_length += data_length;
+		memcpy(operation->mac_ctr.label, data, data_length);
+		operation->mac_ctr.label_length = data_length;
 
-		if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
-			operation->state = CRACEN_KD_STATE_CMAC_CTR_INPUT_LABEL;
-		} else {
-			operation->state = CRACEN_KD_STATE_HMAC_CTR_INPUT_LABEL;
-		}
+		operation->state = CRACEN_KD_STATE_MAC_CTR_INPUT_LABEL;
 		break;
 	}
 	case PSA_KEY_DERIVATION_INPUT_CONTEXT: {
-		size_t context_remaining_bytes =
-			sizeof(operation->mac_ctr.context) - operation->mac_ctr.context_length;
-		if (data_length > context_remaining_bytes) {
+		if (operation->state != CRACEN_KD_STATE_MAC_CTR_KEY_LOADED &&
+		    operation->state != CRACEN_KD_STATE_MAC_CTR_INPUT_LABEL) {
+			return PSA_ERROR_BAD_STATE;
+		}
+
+		if (data_length > sizeof(operation->mac_ctr.context)) {
 			return PSA_ERROR_INSUFFICIENT_MEMORY;
 		}
 
-		memcpy(&operation->mac_ctr.context[operation->mac_ctr.context_length], data,
-		       data_length);
-		operation->mac_ctr.context_length += data_length;
+		memcpy(operation->mac_ctr.context, data, data_length);
+		operation->mac_ctr.context_length = data_length;
 
-		if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
-			operation->state = CRACEN_KD_STATE_CMAC_CTR_INPUT_CONTEXT;
-		} else {
-			operation->state = CRACEN_KD_STATE_HMAC_CTR_INPUT_CONTEXT;
-		}
+		operation->state = CRACEN_KD_STATE_MAC_CTR_INPUT_CONTEXT;
 		break;
 	}
 
@@ -892,7 +867,7 @@ psa_status_t cracen_key_derivation_input_key_cmac(cracen_key_derivation_operatio
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	if (operation->state != CRACEN_KD_STATE_CMAC_CTR_INIT ||
+	if (operation->state != CRACEN_KD_STATE_MAC_CTR_INIT ||
 	    step != PSA_KEY_DERIVATION_INPUT_SECRET) {
 		return PSA_ERROR_BAD_STATE;
 	}
@@ -914,7 +889,7 @@ psa_status_t cracen_key_derivation_input_key_cmac(cracen_key_derivation_operatio
 	memcpy(operation->mac_ctr.key_buffer, key_buffer, key_buffer_size);
 	operation->mac_ctr.key_size = key_buffer_size;
 
-	operation->state = CRACEN_KD_STATE_CMAC_CTR_KEY_LOADED;
+	operation->state = CRACEN_KD_STATE_MAC_CTR_KEY_LOADED;
 	return PSA_SUCCESS;
 }
 #endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
@@ -932,7 +907,7 @@ cracen_key_derivation_input_key_hmac(cracen_key_derivation_operation_t *operatio
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	if (operation->state != CRACEN_KD_STATE_HMAC_CTR_INIT ||
+	if (operation->state != CRACEN_KD_STATE_MAC_CTR_INIT ||
 	    step != PSA_KEY_DERIVATION_INPUT_SECRET) {
 		return PSA_ERROR_BAD_STATE;
 	}
@@ -942,7 +917,7 @@ cracen_key_derivation_input_key_hmac(cracen_key_derivation_operation_t *operatio
 		return status;
 	}
 
-	operation->state = CRACEN_KD_STATE_HMAC_CTR_KEY_LOADED;
+	operation->state = CRACEN_KD_STATE_MAC_CTR_KEY_LOADED;
 	return PSA_SUCCESS;
 }
 #endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC */
@@ -1436,12 +1411,12 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 
 #if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
 	if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
-		if (operation->state == CRACEN_KD_STATE_CMAC_CTR_KEY_LOADED ||
-		    operation->state == CRACEN_KD_STATE_CMAC_CTR_INPUT_LABEL ||
-		    operation->state == CRACEN_KD_STATE_CMAC_CTR_INPUT_CONTEXT ||
-		    operation->state == CRACEN_KD_STATE_CMAC_CTR_OUTPUT) {
-			if (operation->state != CRACEN_KD_STATE_CMAC_CTR_OUTPUT) {
-				operation->state = CRACEN_KD_STATE_CMAC_CTR_OUTPUT;
+		if (operation->state == CRACEN_KD_STATE_MAC_CTR_KEY_LOADED ||
+		    operation->state == CRACEN_KD_STATE_MAC_CTR_INPUT_LABEL ||
+		    operation->state == CRACEN_KD_STATE_MAC_CTR_INPUT_CONTEXT ||
+		    operation->state == CRACEN_KD_STATE_MAC_CTR_OUTPUT) {
+			if (operation->state != CRACEN_KD_STATE_MAC_CTR_OUTPUT) {
+				operation->state = CRACEN_KD_STATE_MAC_CTR_OUTPUT;
 				psa_status_t status =
 					cracen_key_derivation_cmac_ctr_generate_K_0(operation);
 				if (status != PSA_SUCCESS) {
@@ -1458,12 +1433,12 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
 
 #if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
 	if (PSA_ALG_IS_SP800_108_COUNTER_HMAC(operation->alg)) {
-		if (operation->state == CRACEN_KD_STATE_HMAC_CTR_KEY_LOADED ||
-		    operation->state == CRACEN_KD_STATE_HMAC_CTR_INPUT_LABEL ||
-		    operation->state == CRACEN_KD_STATE_HMAC_CTR_INPUT_CONTEXT ||
-		    operation->state == CRACEN_KD_STATE_HMAC_CTR_OUTPUT) {
-			if (operation->state != CRACEN_KD_STATE_HMAC_CTR_OUTPUT) {
-				operation->state = CRACEN_KD_STATE_HMAC_CTR_OUTPUT;
+		if (operation->state == CRACEN_KD_STATE_MAC_CTR_KEY_LOADED ||
+		    operation->state == CRACEN_KD_STATE_MAC_CTR_INPUT_LABEL ||
+		    operation->state == CRACEN_KD_STATE_MAC_CTR_INPUT_CONTEXT ||
+		    operation->state == CRACEN_KD_STATE_MAC_CTR_OUTPUT) {
+			if (operation->state != CRACEN_KD_STATE_MAC_CTR_OUTPUT) {
+				operation->state = CRACEN_KD_STATE_MAC_CTR_OUTPUT;
 
 				/* The capacity changes when the output bytes are derived,
 				 * but L must not change, therefore saving it separately
