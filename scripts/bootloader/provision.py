@@ -6,7 +6,7 @@
 import argparse
 import os
 import struct
-from hashlib import sha256
+from hashlib import sha256, sha512
 
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec, ed25519
@@ -174,7 +174,11 @@ def get_hashes(public_key_files, verify_hashes):
     hashes = list()
     for fn in public_key_files:
         with open(fn, 'rb') as f:
-            digest = sha256(public_key_to_string(load_pem_public_key(f.read()))).digest()[:16]
+            key_data = load_pem_public_key(f.read())
+            if isinstance(key_data, ed25519.Ed25519PublicKey):
+                digest = sha512(public_key_to_string(key_data)).digest()[:16]
+            else:
+                digest = sha256(public_key_to_string(key_data)).digest()[:16]
             if verify_hashes and any([digest[n:n + 2] == b'\xff\xff' for n in range(0, len(digest), 2)]):
                 raise RuntimeError(f"Hash of key in '{os.path.abspath(f.name)}' contains 0xffff. Please regenerate the key.")
             hashes.append(digest)
