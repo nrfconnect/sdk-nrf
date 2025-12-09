@@ -78,6 +78,32 @@ static void test_configure_instance(const struct device *dev)
 	zassert_equal(-EIO, ret, "%s: i2c_write() failed (%d)", dev->name, ret);
 }
 
+
+/**
+ * Test if any unexpected device can be detected on instance bus.
+ * SMBus and i2c scan shell command based.
+ */
+static void test_scan_instance(const struct device *dev)
+{
+	uint8_t first_addr = 0x00, last_addr = 0x7F;
+	uint8_t dev_cnt = 0;
+
+	struct i2c_msg msg = {
+		.buf   = NULL,
+		.len   = 0U,
+		.flags = I2C_MSG_WRITE | I2C_MSG_STOP
+	};
+
+	for (uint8_t addr = first_addr; addr <= last_addr; addr += 1) {
+		if (i2c_transfer(dev, &msg, 1, addr) == 0) {
+			dev_cnt = dev_cnt + 1;
+		}
+	}
+	zassert_equal(dev_cnt, 0,
+		"i2c scan found %d unexpected devices on %s bus\n",
+		dev_cnt, dev->name);
+}
+
 static bool test_configure_capable(const struct device *dev)
 {
 	return true;
@@ -86,6 +112,11 @@ static bool test_configure_capable(const struct device *dev)
 ZTEST(twim_instances, test_configure)
 {
 	test_all_instances(test_configure_instance, test_configure_capable);
+}
+
+ZTEST(twim_instances, test_scan)
+{
+	test_all_instances(test_scan_instance, test_configure_capable);
 }
 
 static void *suite_setup(void)
