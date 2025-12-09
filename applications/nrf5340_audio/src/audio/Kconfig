@@ -155,6 +155,8 @@ choice AUDIO_SOURCE_GATEWAY
 
 config AUDIO_SOURCE_USB
 	bool "Use USB as audio source"
+	select USB_DEVICE_STACK_NEXT
+	select USBD_AUDIO2_CLASS
 	help
 	  Set USB as audio source. Note that this forces the
 	  stream to be unidirectional because of CPU load.

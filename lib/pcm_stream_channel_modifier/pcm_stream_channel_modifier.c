@@ -216,11 +216,12 @@ int pscm_interleave(void const *const input, size_t input_size, uint8_t channel,
 	    channel >= output_channels || pcm_bit_depth == 0 ||
 	    pcm_bit_depth > PSCM_MAX_CARRIER_BIT_DEPTH || pcm_bit_depth % 8 || output_size == 0 ||
 	    output_channels == 0) {
+		LOG_WRN("Invalid parameter(s) passed to interleaver");
 		return -EINVAL;
 	}
 
 	if (output_size < (input_size * output_channels)) {
-		LOG_DBG("Output buffer too small to interleave input into");
+		LOG_WRN("Output buffer too small to interleave input into");
 		return -EINVAL;
 	}
 
