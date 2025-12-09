@@ -133,10 +133,7 @@ int nrf_modem_os_rpc_cellcore_boot(void)
 	/* Don't wait as this is not yet supported. */
 	bool cpu_wait = false;
 
-	/* TODO: Replace hardcoded value with NRF_PROCESSOR_CELLCORE when it's available
-	 * in the MDK.
-	 */
-	return ironside_cpuconf(4, NULL, cpu_wait, msg, msg_size);
+	return ironside_cpuconf(NRF_PROCESSOR_CELLCORE, NULL, cpu_wait, msg, msg_size);
 #else
 	/* Without IronSide SE, cellcore is booted by the SDFW. */
 	return 0;
