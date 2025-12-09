@@ -1166,7 +1166,6 @@ static void start_tx_transaction(void)
 	bool ack = true;
 	bool is_tx_idle = false;
 	struct esb_radio_pdu *pdu = (struct esb_radio_pdu *)tx_payload_buffer;
-	last_tx_attempts = 1;
 	/* Prepare the payload */
 	current_payload = tx_fifo.payload[tx_fifo.front];
 
@@ -1303,6 +1302,7 @@ static void on_timer_compare1_tx_noack(void)
 	nrf_timer_int_disable(esb_timer.p_reg, NRF_TIMER_INT_COMPARE1_MASK);
 	esb_ppi_for_wait_for_rx_clear();
 
+	last_tx_attempts = 1;
 	atomic_set_bit(&interrupt_flags, ESB_EVENT_TX_SUCCESS);
 	tx_fifo_remove_first();
 
@@ -1320,6 +1320,7 @@ static void on_radio_disabled_tx_noack(void)
 	esb_fem_pa_reset();
 	esb_ppi_for_txrx_clear(false, false);
 
+	last_tx_attempts = 1;
 	atomic_set_bit(&interrupt_flags, ESB_EVENT_TX_SUCCESS);
 	tx_fifo_remove_first();
 
