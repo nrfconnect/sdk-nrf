@@ -288,8 +288,16 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 			return -EINVAL;
 		}
 
-		if (meta_out->locations == BT_AUDIO_LOCATION_MONO_AUDIO &&
-		    meta_in->locations == BT_AUDIO_LOCATION_MONO_AUDIO) {
+		/* If input is only one channel and not mono_audio and the output
+		 * is mono_audio we will set loc_out to 0xFFFF to accept any location
+		 */
+		if (meta_in->locations != BT_AUDIO_LOCATION_MONO_AUDIO &&
+		    meta_out->locations == BT_AUDIO_LOCATION_MONO_AUDIO &&
+		    audio_metadata_num_loc_get(meta_in) == 1) {
+			loc_out = 0xFFFF;
+			loc_in = meta_in->locations;
+		} else if (meta_out->locations == BT_AUDIO_LOCATION_MONO_AUDIO &&
+			   meta_in->locations == BT_AUDIO_LOCATION_MONO_AUDIO) {
 			loc_in = 1;
 			loc_out = 1;
 		} else if (meta_out->locations & meta_in->locations) {

@@ -5,11 +5,18 @@
 #
 
 target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/audio_i2s.c)
-target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/audio_usb.c)
 target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/button_handler.c)
 target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/led.c)
 target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/audio_sync_timer.c)
 
+zephyr_library_include_directories(
+        ${ZEPHYR_BASE}/subsys/usb/device_next/class
+	)
+
+target_sources_ifdef(CONFIG_AUDIO_SOURCE_USB app PRIVATE
+                     ${CMAKE_CURRENT_SOURCE_DIR}/audio_usb.c)
+target_sources_ifdef(CONFIG_AUDIO_SOURCE_USB app PRIVATE
+                     ${CMAKE_CURRENT_SOURCE_DIR}/audio_usb_init.c)
 target_sources_ifdef(CONFIG_NRF5340_AUDIO_CS47L63_DRIVER app PRIVATE
                      ${CMAKE_CURRENT_SOURCE_DIR}/hw_codec.c)
 target_sources_ifdef(CONFIG_NRF5340_AUDIO_POWER_MEASUREMENT app PRIVATE

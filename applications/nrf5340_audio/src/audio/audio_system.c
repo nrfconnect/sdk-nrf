@@ -72,9 +72,8 @@ static struct audio_metadata decoder_meta = {.data_coding = PCM,
 					     .bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
 					     .carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
 					     .bytes_per_location = PCM_NUM_BYTES_MONO,
-					     .interleaved = true,
-					     .locations = BT_AUDIO_LOCATION_FRONT_LEFT |
-							  BT_AUDIO_LOCATION_FRONT_RIGHT,
+					     .interleaved = false,
+					     .locations = BT_AUDIO_LOCATION_MONO_AUDIO,
 					     .bad_data = 0};
 
 bool sample_rate_valid(uint32_t sample_rate_hz)
@@ -423,12 +422,15 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 		struct audio_metadata *meta_blk = net_buf_user_data(audio_block);
 
 		net_buf_add_mem(audio_block,
-				(char *)audio_frame_out->data + (i * (BLOCK_SIZE_BYTES)),
-				BLOCK_SIZE_BYTES);
+				(char *)audio_frame_out->data +
+					(i * (audio_frame_out->len / CONFIG_FIFO_FRAME_SPLIT_NUM)),
+				(audio_frame_out->len / CONFIG_FIFO_FRAME_SPLIT_NUM));
 		net_buf_user_data_copy(audio_block, audio_frame_out);
 
 		meta_blk->data_len_us = meta_out->data_len_us / CONFIG_FIFO_FRAME_SPLIT_NUM;
-		meta_blk->bytes_per_location = BLOCK_SIZE_BYTES;
+		meta_blk->bytes_per_location =
+			(audio_frame_out->len / CONFIG_FIFO_FRAME_SPLIT_NUM) /
+			audio_metadata_num_loc_get(meta_out);
 
 		ret = k_msgq_put(&audio_q_tx, (void *)&audio_block, K_NO_WAIT);
 		if (ret) {
@@ -580,7 +582,13 @@ int audio_system_init(void)
 	int ret;
 
 #if ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_USB))
-	ret = audio_usb_init();
+	bool host_in = IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL);
+	/* TODO: OCT-3116 Change when microphone-only support (headset with only an audio source)
+	 * is added
+	 */
+	bool host_out = true;
+
+	ret = audio_usb_init(host_in, host_out);
 	if (ret) {
 		LOG_ERR("Failed to initialize USB: %d", ret);
 		return ret;
