@@ -199,18 +199,28 @@ Matter bridge
 nRF5340 Audio
 -------------
 
-* Added dynamic configuration of the number of channels for the encoder based on the configured audio locations.
-  The number of channels is set during runtime using the :c:func:`audio_system_encoder_num_ch_set` function.
-  This allows configuring mono or stereo encoding depending on the configured audio locations, potentially saving CPU and memory resources.
-* Added high CPU load callback using the Zephyr CPU load subsystem.
-  The callback uses a :c:func:`printk` function, as the logging subsystem is scheduled out if higher priority threads take all CPU time.
-  This makes debugging high CPU load situations easier in the application.
-  The threshold for high CPU load is set in :file:`peripherals.c` using :c:macro:`CPU_LOAD_HIGH_THRESHOLD_PERCENT`.
-* Updated the buildprog/programming script.
-  Devices are now halted before programming.
-  Furthermore, the devices are kept halted until they are all programmed, and then started together
-  with the headsets starting first.
-  This eases sniffing of advertisement packets.
+* Added:
+
+  * Dynamic configuration of the number of channels for the encoder based on the configured audio locations.
+    The number of channels is set during runtime using the :c:func:`audio_system_encoder_num_ch_set` function.
+    This allows configuring mono or stereo encoding depending on the configured audio locations, potentially saving CPU and memory resources.
+
+  * High CPU load callback using the Zephyr CPU load subsystem.
+    The callback uses a :c:func:`printk` function, as the logging subsystem is scheduled out if higher priority threads take all CPU time.
+    This makes debugging high CPU load situations easier in the application.
+    The threshold for high CPU load is set in :file:`peripherals.c` using :c:macro:`CPU_LOAD_HIGH_THRESHOLD_PERCENT`.
+
+* Updated:
+
+  * Switched to the new USB stack introduced in Zephyr 3.4.0.
+    For an end user, this change requires no action.
+    macOS will now work out of the box, fixing OCT-2154.
+
+  * Buildprog/programming script.
+    Devices are now halted before programming.
+    Furthermore, the devices are kept halted until they are all programmed, and then started together
+    with the headsets starting first.
+    This eases sniffing of advertisement packets.
 
 nRF Desktop
 -----------
