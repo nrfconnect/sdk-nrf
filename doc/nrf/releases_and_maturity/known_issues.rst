@@ -4237,6 +4237,12 @@ DFU and FOTA
 
 The issues in this section are related to :ref:`app_dfu`.
 
+.. rst-class:: v3-2-0
+
+NCSDK-36718: Build system falsely reports 'key hash contains 0xffff'
+
+  **Workaround:** Rerun build.
+
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1
 
 NCSDK-31270: [suit] Entering the recovery mode by **HW** button press is disabled by default
