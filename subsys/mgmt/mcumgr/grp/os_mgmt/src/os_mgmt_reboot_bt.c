@@ -35,7 +35,7 @@ static void bt_disable_work_handler(struct k_work *work)
 		LOG_ERR("BT disable failed before reboot: %d", err_rc);
 	}
 #endif
-#ifdef CONFIG_MPSL
+#if defined(CONFIG_MPSL) && !defined(CONFIG_BT_UNINIT_MPSL_ON_DISABLE)
 	mpsl_uninit();
 #endif
 }
@@ -62,7 +62,7 @@ static enum mgmt_cb_return reboot_bt_hook(uint32_t event, enum mgmt_cb_return pr
 		LOG_ERR("BT disable failed before reboot: %d", err_rc);
 	}
 #endif
-#ifdef CONFIG_MPSL
+#if defined(CONFIG_MPSL) && !defined(CONFIG_BT_UNINIT_MPSL_ON_DISABLE)
 	mpsl_uninit();
 #endif
 #endif
