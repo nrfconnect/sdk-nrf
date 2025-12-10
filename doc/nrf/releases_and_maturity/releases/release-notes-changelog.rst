@@ -145,6 +145,8 @@ Enhanced ShockBurst (ESB)
   * Workaround handling for the hardware erratas.
   * The implementation of the hardware errata HMPAN-103 for the nRF54H20 SoC.
 
+* Fixed invalid radio configuration for legacy ESB protocol.
+
 Gazell
 ------
 

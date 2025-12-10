@@ -1173,7 +1173,7 @@ static void start_tx_transaction(void)
 	switch (esb_cfg.protocol) {
 	case ESB_PROTOCOL_ESB:
 		memset(&pdu->type.fixed_pdu, 0, sizeof(pdu->type.fixed_pdu));
-		update_rf_payload_format_esb(current_payload->length);
+		update_rf_payload_format_esb(esb_cfg.payload_length);
 
 		pdu->type.fixed_pdu.pid = current_payload->pid;
 
@@ -1462,7 +1462,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 		}
 
 		if (esb_cfg.protocol == ESB_PROTOCOL_ESB) {
-			update_rf_payload_format_esb(current_payload->length);
+			update_rf_payload_format_esb(esb_cfg.payload_length);
 		}
 
 		nrf_radio_packetptr_set(NRF_RADIO, tx_payload_buffer);
@@ -1564,7 +1564,7 @@ static void clear_events_restart_rx(void)
 	nrf_radio_shorts_set(NRF_RADIO, 0);
 
 	if (esb_cfg.protocol == ESB_PROTOCOL_ESB) {
-		update_rf_payload_format_esb(0);
+		update_rf_payload_format_esb(esb_cfg.payload_length);
 	}
 
 	nrf_radio_packetptr_set(NRF_RADIO, rx_payload_buffer);
@@ -1722,7 +1722,7 @@ static void on_radio_disabled_rx_send_ack(void)
 	esb_fem_for_ack_rx();
 
 	if (esb_cfg.protocol == ESB_PROTOCOL_ESB) {
-		update_rf_payload_format_esb(0);
+		update_rf_payload_format_esb(esb_cfg.payload_length);
 	}
 
 	nrf_radio_packetptr_set(NRF_RADIO, rx_payload_buffer);
@@ -1916,6 +1916,10 @@ int esb_init(const struct esb_config *config)
 
 	memcpy(&esb_cfg, config, sizeof(esb_cfg));
 
+	if (esb_cfg.protocol == ESB_PROTOCOL_ESB) {
+		esb_cfg.selective_auto_ack = false;
+	}
+
 	if (fast_switching) {
 		if (!esb_cfg.use_fast_ramp_up) {
 			return -EINVAL;
@@ -2108,6 +2112,11 @@ int esb_write_payload(const struct esb_payload *payload)
 	}
 
 	if (esb_cfg.mode == ESB_MODE_PTX) {
+		if (esb_cfg.protocol == ESB_PROTOCOL_ESB &&
+		    esb_cfg.payload_length != payload->length) {
+			return -EINVAL;
+		}
+
 		memcpy(tx_fifo.payload[tx_fifo.back], payload, sizeof(struct esb_payload));
 
 		pids[payload->pipe] = (pids[payload->pipe] + 1) % (PID_MAX + 1);
@@ -2120,6 +2129,10 @@ int esb_write_payload(const struct esb_payload *payload)
 
 		atomic_inc(&tx_fifo.count);
 	} else {
+		if (esb_cfg.protocol == ESB_PROTOCOL_ESB) {
+			return -EPERM;
+		}
+
 		struct payload_wrap *new_ack_payload = find_free_payload_cont();
 
 		if (new_ack_payload != 0) {
