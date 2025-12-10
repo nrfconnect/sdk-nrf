@@ -41,13 +41,21 @@
 #define KMU_KEY_ID_PUBKEY_SECP256R1_READ_ONLY \
 	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW, 16)
 
+/* ECDSA secp384r1 public key to check usage and ability to revoke */
+#define KMU_KEY_ID_PUBKEY_SECP384R1_REVOKABLE \
+	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW, 20)
+
+/* ECDSA secp384r1 public key to check usage and ability to lock */
+#define KMU_KEY_ID_PUBKEY_SECP384R1_READ_ONLY \
+	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_RAW, 26)
+
 /* AES-256 key used to check usage and ability to revoke */
 #define KMU_KEY_ID_AES_256_KEY_REVOKABLE \
-	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED, 20)
+	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED, 32)
 
 /* AES-256 key used to check usage and ability to lock  */
 #define KMU_KEY_ID_AES_256_KEY_READ_ONLY \
-	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED, 22)
+	PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED, 34)
 
 #define KMU_GET_SLOT_ID(key_id) \
 	CRACEN_PSA_GET_KMU_SLOT(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id))
@@ -149,6 +157,51 @@ static uint8_t ecdsa_secp256r1_signature[ECDSA_SECP256R1_SIGNATURE_SIZE] = {
 	0xf7, 0xcb, 0x1c, 0x94, 0x2d, 0x65, 0x7c, 0x41, 0xd4, 0x36, 0xc7, 0xa1,
 	0xb6, 0xe2, 0x9f, 0x65, 0xf3, 0xe9, 0x00, 0xdb, 0xb9, 0xaf, 0xf4, 0x06,
 	0x4d, 0xc4, 0xab, 0x2f, 0x84, 0x3a, 0xcd, 0xa8
+};
+
+/* Test material for ECDSA secp384r1 SHA-384 (RFC6979 A.2.6) */
+#define ECDSA_SECP384R1_PUBKEY_SIZE	(97)
+#define ECDSA_SECP384R1_SIGNATURE_SIZE	(96)
+#define SHA384_HASH_SIZE		(48)
+
+static uint8_t ecdsa_secp384r1_pubkey[ECDSA_SECP384R1_PUBKEY_SIZE] = {
+	0x04,
+	/* Ux */
+	0xec, 0x3a, 0x4e, 0x41, 0x5b, 0x4e, 0x19, 0xa4, 0x56, 0x86, 0x18, 0x02,
+	0x9f, 0x42, 0x7f, 0xa5, 0xda, 0x9a, 0x8b, 0xc4, 0xae, 0x92, 0xe0, 0x2e,
+	0x06, 0xaa, 0xe5, 0x28, 0x6b, 0x30, 0x0c, 0x64, 0xde, 0xf8, 0xf0, 0xea,
+	0x90, 0x55, 0x86, 0x60, 0x64, 0xa2, 0x54, 0x51, 0x54, 0x80, 0xbc, 0x13,
+
+	/* Uy*/
+	0x80, 0x15, 0xd9, 0xb7, 0x2d, 0x7d, 0x57, 0x24, 0x4e, 0xa8, 0xef, 0x9a,
+	0xc0, 0xc6, 0x21, 0x89, 0x67, 0x08, 0xa5, 0x93, 0x67, 0xf9, 0xdf, 0xb9,
+	0xf5, 0x4c, 0xa8, 0x4b, 0x3f, 0x1c, 0x9d, 0xb1, 0x28, 0x8b, 0x23, 0x1c,
+	0x3a, 0xe0, 0xd4, 0xfe, 0x73, 0x44, 0xfd, 0x25, 0x33, 0x26, 0x47, 0x20
+};
+
+/* Test string without null-termination (6 octets)*/
+static uint8_t ecdsa_secp384r1_msg[6] = "sample";
+
+/* SHA-384 hash of the string "sample" (6 octets)*/
+static uint8_t ecdsa_secp384r1_hash[SHA384_HASH_SIZE] = {
+	0x9a, 0x90, 0x83, 0x50, 0x5b, 0xc9, 0x22, 0x76, 0xae, 0xc4, 0xbe, 0x31,
+	0x26, 0x96, 0xef, 0x7b, 0xf3, 0xbf, 0x60, 0x3f, 0x4b, 0xbd, 0x38, 0x11,
+	0x96, 0xa0, 0x29, 0xf3, 0x40, 0x58, 0x53, 0x12, 0x31, 0x3b, 0xca, 0x4a,
+	0x9b, 0x5b, 0x89, 0x0e, 0xfe, 0xe4, 0x2c, 0x77, 0xb1, 0xee, 0x25, 0xfe
+};
+
+/* Signature is the same for hash/message */
+static uint8_t ecdsa_secp384r1_signature[ECDSA_SECP384R1_SIGNATURE_SIZE] = {
+	/* r */
+	0x94, 0xed, 0xbb, 0x92, 0xa5, 0xec, 0xb8, 0xaa, 0xd4, 0x73, 0x6e, 0x56,
+	0xc6, 0x91, 0x91, 0x6b, 0x3f, 0x88, 0x14, 0x06, 0x66, 0xce, 0x9f, 0xa7,
+	0x3d, 0x64, 0xc4, 0xea, 0x95, 0xad, 0x13, 0x3c, 0x81, 0xa6, 0x48, 0x15,
+	0x2e, 0x44, 0xac, 0xf9, 0x6e, 0x36, 0xdd, 0x1e, 0x80, 0xfa, 0xbe, 0x46,
+	/* s */
+	0x99, 0xef, 0x4a, 0xeb, 0x15, 0xf1, 0x78, 0xce, 0xa1, 0xfe, 0x40, 0xdb,
+	0x26, 0x03, 0x13, 0x8f, 0x13, 0x0e, 0x74, 0x0a, 0x19, 0x62, 0x45, 0x26,
+	0x20, 0x3b, 0x63, 0x51, 0xd0, 0xa3, 0xa9, 0x4f, 0xa3, 0x29, 0xc1, 0x45,
+	0x78, 0x6e, 0x67, 0x9e, 0x7b, 0x82, 0xc7, 0x1a, 0x38, 0x62, 0x8a, 0xc8
 };
 
 /* Test material for AES 256-bits using a phony key */
@@ -286,6 +339,22 @@ static void init_attributes_ecdsa_secp256r1_public_key(mbedtls_svc_key_id_t key_
 	set_kmu_key_attributes(attributes, key_id, alg, lifetime, usage, key_type, key_bits);
 }
 
+static void init_attributes_ecdsa_secp384r1_public_key(mbedtls_svc_key_id_t key_id,
+						       psa_key_persistence_t persistence,
+						       psa_key_attributes_t *attributes)
+{
+	/* KMU currently doesn't support stating Deterministic ECDSA, using ECDSA for both */
+	psa_algorithm_t alg = PSA_ALG_ECDSA(PSA_ALG_SHA_384);
+	psa_key_type_t key_type = PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1);
+	psa_key_lifetime_t lifetime =
+		PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
+			persistence, PSA_KEY_LOCATION_CRACEN_KMU);
+	psa_key_usage_t usage = PSA_KEY_USAGE_VERIFY_MESSAGE | PSA_KEY_USAGE_VERIFY_HASH;
+	size_t key_bits = 384;
+
+	set_kmu_key_attributes(attributes, key_id, alg, lifetime, usage, key_type, key_bits);
+}
+
 static void provision_ed25519_public_key(mbedtls_svc_key_id_t key_id,
 					 psa_key_persistence_t persistence,
 					 uint8_t key_buffer[ED25519_PUBKEY_SIZE])
@@ -343,6 +412,36 @@ static void provision_ecdsa_secp256r1_public_key(mbedtls_svc_key_id_t key_id,
 
 	if (constant_memcmp(key_buffer, temp_buffer, pubkey_size) != 0) {
 		zassert_false(true, "Imported/exported Ed25519 key mismatch");
+	}
+}
+
+static void provision_ecdsa_secp384r1_public_key(mbedtls_svc_key_id_t key_id,
+						 psa_key_persistence_t persistence,
+						 uint8_t key_buffer[ECDSA_SECP384R1_PUBKEY_SIZE])
+{
+	psa_status_t err;
+	uint8_t temp_buffer[ECDSA_SECP384R1_PUBKEY_SIZE];
+	const size_t pubkey_size = ECDSA_SECP384R1_PUBKEY_SIZE;
+	size_t key_length;
+	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+
+	init_attributes_ecdsa_secp384r1_public_key(key_id, persistence, &attributes);
+
+	err = psa_import_key(&attributes, key_buffer, pubkey_size, &key_id);
+	zassert_equal(err, PSA_SUCCESS,
+		"Failed to import ECDSA secp384r1 key. slot_id: %d, err: %d",
+		KMU_GET_SLOT_ID(key_id), err);
+
+	/* Check that imported key is correct */
+	err = psa_export_key(key_id, temp_buffer, pubkey_size, &key_length);
+	zassert_equal(err, PSA_SUCCESS,
+		      "Failed to export ECDSA secp384r1 key. slot_id: %d, err: %d",
+		      KMU_GET_SLOT_ID(key_id), err);
+
+	zassert_equal(key_length, pubkey_size, "Exported ECDSA key size mismatch.");
+
+	if (constant_memcmp(key_buffer, temp_buffer, pubkey_size) != 0) {
+		zassert_false(true, "Imported/exported secp384r1 key mismatch");
 	}
 }
 
@@ -421,6 +520,22 @@ static void provision_keys(void)
 		provision_ecdsa_secp256r1_public_key(KMU_KEY_ID_PUBKEY_SECP256R1_READ_ONLY,
 						     CRACEN_KEY_PERSISTENCE_READ_ONLY,
 						     ecdsa_secp256r1_pubkey);
+
+		ran_provisioning = true;
+	}
+
+	/* ECDSA using secp384r1 and SHA-384 */
+	if (UTIL_CONCAT_AND(
+		IS_ENABLED_ANY(PSA_WANT_ALG_ECDSA, PSA_WANT_ALG_DETERMINISTIC_ECDSA),
+		IS_ENABLED_ALL(PSA_WANT_ALG_SHA_384, PSA_WANT_ECC_SECP_R1_384))) {
+
+		provision_ecdsa_secp384r1_public_key(KMU_KEY_ID_PUBKEY_SECP384R1_REVOKABLE,
+						     CRACEN_KEY_PERSISTENCE_REVOKABLE,
+						     ecdsa_secp384r1_pubkey);
+
+		provision_ecdsa_secp384r1_public_key(KMU_KEY_ID_PUBKEY_SECP384R1_READ_ONLY,
+						     CRACEN_KEY_PERSISTENCE_READ_ONLY,
+						     ecdsa_secp384r1_pubkey);
 
 		ran_provisioning = true;
 	}
@@ -537,7 +652,8 @@ static void test_ecdsa_secp256r1_verify_message(mbedtls_svc_key_id_t key_id)
 
 	err = psa_verify_message(key_id, alg, ecdsa_secp256r1_msg, ARRAY_SIZE(ecdsa_secp256r1_msg),
 				 ecdsa_secp256r1_signature, ECDSA_SECP256R1_SIGNATURE_SIZE);
-	zassert_equal(err, PSA_SUCCESS, "Failed to verify ECDSA message. slot_id: %d, Err: %d",
+	zassert_equal(err, PSA_SUCCESS,
+		      "Failed to verify ECDSA message with secp256r1. slot_id: %d, Err: %d",
 		      KMU_GET_SLOT_ID(key_id), err);
 }
 
@@ -554,7 +670,44 @@ static void test_ecdsa_secp256r1_verify_hash(mbedtls_svc_key_id_t key_id)
 
 	err = psa_verify_hash(key_id, alg, ecdsa_secp256r1_hash, SHA256_HASH_SIZE,
 			      ecdsa_secp256r1_signature, ECDSA_SECP256R1_SIGNATURE_SIZE);
-	zassert_equal(err, PSA_SUCCESS, "Failed to verify ECDSA hash. slot_id: %d, Err: %d",
+	zassert_equal(err, PSA_SUCCESS,
+		      "Failed to verify ECDSA hash with secp256r1. slot_id: %d, Err: %d",
+		      KMU_GET_SLOT_ID(key_id), err);
+}
+
+/**
+ * @brief Function to test ECDSA verify message with secp384r1 key
+ *
+ * @param key_id Valid, revoked or locked key to use for signature check
+ * @return PSA_SUCCESS if verify succeeded, otherwise a non-zero error code
+ */
+static void test_ecdsa_secp384r1_verify_message(mbedtls_svc_key_id_t key_id)
+{
+	psa_status_t err;
+	psa_algorithm_t alg = PSA_ALG_ECDSA(PSA_ALG_SHA_384);
+
+	err = psa_verify_message(key_id, alg, ecdsa_secp384r1_msg, ARRAY_SIZE(ecdsa_secp384r1_msg),
+				 ecdsa_secp384r1_signature, ECDSA_SECP384R1_SIGNATURE_SIZE);
+	zassert_equal(err, PSA_SUCCESS,
+		      "Failed to verify ECDSA message with secp384r1. slot_id: %d, Err: %d",
+		      KMU_GET_SLOT_ID(key_id), err);
+}
+
+/**
+ * @brief Function to test ECDSA verify hash with secp384r1 key
+ *
+ * @param key_id Valid, revoked or locked key to use for signature check
+ * @return PSA_SUCCESS if verify succeeded, otherwise a non-zero error code
+ */
+static void test_ecdsa_secp384r1_verify_hash(mbedtls_svc_key_id_t key_id)
+{
+	psa_status_t err;
+	psa_algorithm_t alg = PSA_ALG_ECDSA(PSA_ALG_SHA_384);
+
+	err = psa_verify_hash(key_id, alg, ecdsa_secp384r1_hash, SHA384_HASH_SIZE,
+			      ecdsa_secp384r1_signature, ECDSA_SECP384R1_SIGNATURE_SIZE);
+	zassert_equal(err, PSA_SUCCESS,
+		      "Failed to verify ECDSA hash with secp384r1. slot_id: %d, Err: %d",
 		      KMU_GET_SLOT_ID(key_id), err);
 }
 
@@ -696,6 +849,16 @@ static void test_verify(void)
 		ran_verify = true;
 	}
 
+	/* ECDSA secp384r1 (message/hash) */
+	if (UTIL_AND(IS_ENABLED_ANY(PSA_WANT_ALG_ECDSA, PSA_WANT_ALG_DETERMINISTIC_ECDSA),
+		     IS_ENABLED_ALL(PSA_WANT_ALG_SHA_384, PSA_WANT_ECC_SECP_R1_384))) {
+		test_ecdsa_secp384r1_verify_message(KMU_KEY_ID_PUBKEY_SECP384R1_REVOKABLE);
+		test_ecdsa_secp384r1_verify_message(KMU_KEY_ID_PUBKEY_SECP384R1_READ_ONLY);
+		test_ecdsa_secp384r1_verify_hash(KMU_KEY_ID_PUBKEY_SECP384R1_REVOKABLE);
+		test_ecdsa_secp384r1_verify_hash(KMU_KEY_ID_PUBKEY_SECP384R1_READ_ONLY);
+		ran_verify = true;
+	}
+
 	zassert_true(ran_verify, "Did not run any signature verify, check configs!");
 
 }
@@ -713,6 +876,19 @@ static void test_hash(void)
 
 		test_hash_incremental(alg, ecdsa_secp256r1_msg, ARRAY_SIZE(ecdsa_secp256r1_msg),
 				  ecdsa_secp256r1_hash, SHA256_HASH_SIZE);
+
+		ran_hash = true;
+	}
+
+	if (IS_ENABLED(PSA_WANT_ALG_SHA_384)) {
+		psa_algorithm_t alg = PSA_ALG_SHA_384;
+
+		test_hash_compute(alg, ecdsa_secp384r1_msg, ARRAY_SIZE(ecdsa_secp384r1_msg),
+				  ecdsa_secp384r1_hash, SHA384_HASH_SIZE);
+
+
+		test_hash_incremental(alg, ecdsa_secp384r1_msg, ARRAY_SIZE(ecdsa_secp384r1_msg),
+				  ecdsa_secp384r1_hash, SHA384_HASH_SIZE);
 
 		ran_hash = true;
 	}
@@ -820,6 +996,14 @@ static void test_revoke_keys(void)
 		ran_revoke = true;
 	}
 
+	/* ECDSA using secp384r1 and SHA-384 */
+	if (UTIL_AND(IS_ENABLED_ANY(PSA_WANT_ALG_ECDSA, PSA_WANT_ALG_DETERMINISTIC_ECDSA),
+		     IS_ENABLED_ALL(PSA_WANT_ALG_SHA_384, PSA_WANT_ECC_SECP_R1_384))) {
+		/* Try to revoke the revokable ECDSA key */
+		revoke_key(KMU_KEY_ID_PUBKEY_SECP384R1_REVOKABLE);
+		ran_revoke = true;
+	}
+
 	/* Any AES using 256-bits key */
 	if (IS_ENABLED_ALL(PSA_WANT_ALG_CTR, PSA_WANT_AES_KEY_SIZE_256)) {
 		/* Try to revoke the revokable AES key */
@@ -851,6 +1035,14 @@ static void test_lock_keys(void)
 		     IS_ENABLED_ALL(PSA_WANT_ALG_SHA_256, PSA_WANT_ECC_SECP_R1_256))) {
 		/* Try to lock the read-only ECDSA key */
 		lock_key(KMU_KEY_ID_PUBKEY_SECP256R1_READ_ONLY);
+		ran_lock = true;
+	}
+
+	/* ECDSA using secp384r1 and SHA-384 */
+	if (UTIL_AND(IS_ENABLED_ANY(PSA_WANT_ALG_ECDSA, PSA_WANT_ALG_DETERMINISTIC_ECDSA),
+		     IS_ENABLED_ALL(PSA_WANT_ALG_SHA_384, PSA_WANT_ECC_SECP_R1_384))) {
+		/* Try to lock the read-only ECDSA key */
+		lock_key(KMU_KEY_ID_PUBKEY_SECP384R1_READ_ONLY);
 		ran_lock = true;
 	}
 
@@ -896,6 +1088,14 @@ void test_invalid_kmu(void)
 
 		init_attributes_ecdsa_secp256r1_public_key(key_id, CRACEN_KEY_PERSISTENCE_READ_ONLY,
 							   &attributes);
+	} else if (UTIL_AND(IS_ENABLED_ANY(PSA_WANT_ALG_ECDSA, PSA_WANT_ALG_DETERMINISTIC_ECDSA),
+			    IS_ENABLED_ALL(PSA_WANT_ALG_SHA_384, PSA_WANT_ECC_SECP_R1_384))) {
+		key_id = KMU_KEY_ID_PUBKEY_SECP384R1_READ_ONLY;
+		pubkey_size = ECDSA_SECP384R1_PUBKEY_SIZE;
+		pubkey_buffer = ecdsa_secp384r1_pubkey;
+
+		init_attributes_ecdsa_secp384r1_public_key(key_id, CRACEN_KEY_PERSISTENCE_READ_ONLY,
+							   &attributes);
 	} else {
 		zassert_false(true, "No valid public key for invalid KMU test");
 		return;
@@ -929,7 +1129,8 @@ void test_main(void)
 	}
 
 	/* + Hashing if verify-hash strategy ECDSA or Ed25519ph */
-	if (IS_ENABLED_ANY(PSA_WANT_ALG_SHA_256, PSA_WANT_ALG_SHA_512)) {
+	if (IS_ENABLED_ANY(PSA_WANT_ALG_SHA_256, PSA_WANT_ALG_SHA_512,
+			   PSA_WANT_ALG_SHA_384)) {
 		test_hash();
 	}
 
