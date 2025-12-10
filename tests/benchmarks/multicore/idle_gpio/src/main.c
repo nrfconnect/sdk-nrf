@@ -29,8 +29,16 @@ LOG_MODULE_REGISTER(idle_gpio);
 #define SW_GPIO_CTLR   DT_GPIO_CTLR(SW_NODE, gpios)
 #define SW_GPIOTE_NODE DT_PHANDLE(SW_GPIO_CTLR, gpiote_instance)
 #define SW_GPIO_INT_FLAGS                                                                          \
-	(DT_PROP(SW_GPIOTE_NODE, no_port_event) ? GPIO_INT_EDGE_FALLING                   \
-							 : GPIO_INT_LEVEL_ACTIVE)
+	(DT_PROP(SW_GPIOTE_NODE, no_port_event) ? GPIO_INT_EDGE_FALLING : GPIO_INT_LEVEL_ACTIVE)
+
+#if IS_ENABLED(CONFIG_SOC_NRF54H20_CPUPPR)
+#include <ironside_zephyr/se/uicr_periphconf.h>
+
+/* The input pin must be configured as NS to be allowed to trigger PPR's GPIOTE IRQ. */
+UICR_PERIPHCONF_ENTRY(PERIPHCONF_SPU_FEATURE_GPIO_PIN(NRF_SPU131, DT_PROP(SW_GPIO_CTLR, port),
+						      DT_GPIO_PIN(SW_NODE, gpios), /* NS */ false,
+						      NRF_OWNER_APPLICATION, /* LOCK */ true));
+#endif
 
 static const struct gpio_dt_spec sw = GPIO_DT_SPEC_GET(SW_NODE, gpios);
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED_NODE, gpios);
