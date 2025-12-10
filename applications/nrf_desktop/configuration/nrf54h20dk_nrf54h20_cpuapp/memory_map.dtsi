@@ -18,18 +18,18 @@
 		 */
 
 		cpuapp_boot_partition: partition@30000 {
-			reg = <0x30000 DT_SIZE_K(24)>;
+			reg = <0x30000 DT_SIZE_K(32)>;
 		};
 
 		/* When using merged slots, the definition of MCUboot slots is common for all
 		 * images and points to the "merged" partition.
 		 */
-		slot0_partition: partition@36000 {
-			reg = <0x36000 DT_SIZE_K(808)>;
+		slot0_partition: partition@38000 {
+			reg = <0x38000 DT_SIZE_K(800)>;
 		};
 
-		cpuapp_slot0_partition: partition@36800 {
-			reg = <0x36800 DT_SIZE_K(330)>;
+		cpuapp_slot0_partition: partition@38800 {
+			reg = <0x38800 DT_SIZE_K(322)>;
 		};
 
 		cpurad_slot0_partition: partition@89000 {
@@ -45,15 +45,15 @@
 		/* Partitions belonging to the MRAM_11 memory block. */
 
 		slot1_partition: partition@100000 {
-			reg = <0x100000 DT_SIZE_K(808)>;
+			reg = <0x100000 DT_SIZE_K(800)>;
 		};
 
 		cpuapp_slot1_partition: partition@100800 {
-			reg = <0x100800 DT_SIZE_K(330)>;
+			reg = <0x100800 DT_SIZE_K(322)>;
 		};
 
-		cpurad_slot1_partition: partition@153000 {
-			reg = <0x153000 DT_SIZE_K(220)>;
+		cpurad_slot1_partition: partition@151000 {
+			reg = <0x151000 DT_SIZE_K(220)>;
 		};
 
 		/* Leave free space at the end of the slot1_partition that can be used to increase
