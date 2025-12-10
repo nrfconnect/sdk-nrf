@@ -8,7 +8,7 @@ set(NRF_BOARD_SELECTED True)
 
 add_subdirectory(${Trusted\ Firmware\ M_SOURCE_DIR}/platform/ext/target/nordic_nrf/common/nrf54l10 nrf54l10)
 
-add_subdirectory(.. tfm_board)
+add_subdirectory(${TFM_BOARDS_NRF_DIR} tfm_board)
 
 target_include_directories(platform_s
   PUBLIC
@@ -34,7 +34,7 @@ install(FILES       ${CMAKE_CURRENT_LIST_DIR}/ns/cpuarch_ns.cmake
 install(FILES       config.cmake
         DESTINATION ${INSTALL_PLATFORM_NS_DIR})
 
-install(FILES       ../common/config.cmake
+install(FILES       ${TFM_BOARDS_NRF_DIR}/common/config.cmake
         DESTINATION ${INSTALL_PLATFORM_NS_DIR}/../common/)
 
 install(DIRECTORY   ${Trusted\ Firmware\ M_SOURCE_DIR}/platform/ext/target/nordic_nrf/nrf54l15dk_nrf54l10_cpuapp/tests
