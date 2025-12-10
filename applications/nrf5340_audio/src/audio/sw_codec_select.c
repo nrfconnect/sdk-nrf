@@ -493,8 +493,14 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 		return false;
 	}
 
+	if (sw_codec_cfg.encoder.num_ch > CONFIG_AUDIO_ENCODE_CHANNELS_MAX) {
+		LOG_ERR("Number of encoder channels %d exceeds max %d", sw_codec_cfg.encoder.num_ch,
+			CONFIG_AUDIO_ENCODE_CHANNELS_MAX);
+		return -EINVAL;
+	}
+
 	if (sw_codec_cfg.encoder.enabled && IS_ENABLED(CONFIG_SAMPLE_RATE_CONVERTER)) {
-		for (int i = 0; i < sw_codec_cfg.encoder.channel_mode; i++) {
+		for (int i = 0; i < sw_codec_cfg.encoder.num_ch; i++) {
 			ret = sample_rate_converter_open(&encoder_converters[i]);
 			if (ret) {
 				LOG_ERR("Failed to initialize the sample rate converter for "
@@ -505,8 +511,14 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 		}
 	}
 
+	if (sw_codec_cfg.decoder.num_ch > CONFIG_AUDIO_DECODE_CHANNELS_MAX) {
+		LOG_ERR("Number of decoder channels %d exceeds max %d", sw_codec_cfg.decoder.num_ch,
+			CONFIG_AUDIO_DECODE_CHANNELS_MAX);
+		return -EINVAL;
+	}
+
 	if (sw_codec_cfg.decoder.enabled && IS_ENABLED(CONFIG_SAMPLE_RATE_CONVERTER)) {
-		for (int i = 0; i < sw_codec_cfg.decoder.channel_mode; i++) {
+		for (int i = 0; i < sw_codec_cfg.decoder.num_ch; i++) {
 			ret = sample_rate_converter_open(&decoder_converters[i]);
 			if (ret) {
 				LOG_ERR("Failed to initialize the sample rate converter for "

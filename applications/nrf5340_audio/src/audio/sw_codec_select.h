@@ -56,14 +56,6 @@ enum sw_codec_select {
 };
 
 /**
- * @brief Software codec channel mode enumeration.
- */
-enum sw_codec_channel_mode {
-	SW_CODEC_MONO = 1,
-	SW_CODEC_MULTICHANNEL,
-};
-
-/**
  * @brief  Private encoder context.
  */
 struct lc3_encoder_context {
@@ -85,7 +77,6 @@ struct lc3_decoder_context {
 struct sw_codec_encoder {
 	bool enabled;
 	int bitrate;
-	enum sw_codec_channel_mode channel_mode;
 	uint8_t num_ch;
 	enum bt_audio_location audio_loc;
 	uint32_t sample_rate_hz;
@@ -97,7 +88,6 @@ struct sw_codec_encoder {
  */
 struct sw_codec_decoder {
 	bool enabled;
-	enum sw_codec_channel_mode channel_mode;
 	uint8_t num_ch;
 	enum bt_audio_location audio_loc;
 	uint32_t sample_rate_hz;
@@ -126,7 +116,7 @@ bool sw_codec_is_initialized(void);
  * @brief	Encode PCM data and output encoded data.
  *
  * @note	Takes in a PCM stream, will encode either one or multiple
- *		channels, based on channel_mode set during init.
+ *		channels, based on num_ch set during init.
  *
  * @param[in]	audio_frame_in	Pointer to the audio PCM buffer.
  * @param[out]	audio_frame_out	Pointer to the audio encoded buffer.
@@ -139,7 +129,7 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
  * @brief	Decode encoded data and output PCM data.
  *
  * @note	Takes in a coded bitstream, will decode either one or multiple
- *		channels, based on channel_mode set during init.
+ *		channels, based on num_ch set during init.
  *
  * @param[in]	audio_frame_in	Pointer to the audio input buffer.
  * @param[out]	audio_frame_out	Pointer to the audio output buffer.
