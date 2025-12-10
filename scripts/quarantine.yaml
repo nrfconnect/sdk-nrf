@@ -64,18 +64,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35676"
 
 - scenarios:
-    - benchmarks.current_consumption.sample.boards.nrf.system_off
-    - benchmarks.current_consumption.sample.boards.nrf.system_off.lpcomp_wakeup
-    - benchmarks.current_consumption.sample.boards.nrf.system_off.retained_mem.*
-    - benchmarks.current_consumption.systemoff.gpio_wakeup
-    - benchmarks.current_consumption.systemoff.gpio_wakeup.retained_mem.*
-    - benchmarks.current_consumption.systemoff.grtc_wakeup
-    - benchmarks.current_consumption.systemoff.grtc_wakeup.retained_mem.*
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
-  comment: "Wait for lilium support"
-
-- scenarios:
     - sample.benchmark.coremark.heap_memory
     - sample.benchmark.coremark.multiple_threads
   platforms:
