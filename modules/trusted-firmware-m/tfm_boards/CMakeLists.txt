@@ -204,7 +204,7 @@ if(LOG_MEMORY_PROTECTION)
 endif()
 
 if(PSA_CRYPTO_EXTERNAL_CORE)
-  include(${TARGET_PLATFORM_PATH}/../external_core.cmake)
+  include(${TFM_BOARDS_NRF_DIR}/external_core.cmake)
 endif()
 
 #======================= Non Secure image ===========================
