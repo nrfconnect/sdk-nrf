@@ -46,19 +46,19 @@
 	partitions {
 		boot_partition: partition@30000 {
 			label = "mcuboot";
-			reg = <0x30000 DT_SIZE_K(24)>;
+			reg = <0x30000 DT_SIZE_K(36)>;
 		};
 
 		/* Main application with the MCUboot header. */
-		slot0_partition: partition@36000 {
-			reg = <0x36000 DT_SIZE_K(1628)>;
+		slot0_partition: partition@39000 {
+			reg = <0x39000 DT_SIZE_K(1616)>;
 		};
 
 		/* Main application without the MCUboot metadata.
 		 * Offset by the MCUboot header size (2048 bytes).
 		 */
-		cpuapp_slot0_partition: partition@36800 {
-			reg = <0x36800 DT_SIZE_K(1626)>;
+		cpuapp_slot0_partition: partition@39800 {
+			reg = <0x39800 DT_SIZE_K(1614)>;
 		};
 
 		/* Merged partition used by the FW loader. */
