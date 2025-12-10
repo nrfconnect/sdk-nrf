@@ -801,7 +801,9 @@ static otError transmit_frame(otInstance *aInstance)
 	if ((nrf5_data.capabilities & OT_RADIO_CAPS_TRANSMIT_TIMING) &&
 	    (nrf5_data.tx.frame.mInfo.mTxInfo.mTxDelay != 0)) {
 
-		nrf5_set_channel(nrf5_data.tx.frame.mChannel);
+		if (!IS_ENABLED(CONFIG_NRF5_SELECTIVE_TXCHANNEL)) {
+			nrf5_set_channel(nrf5_data.tx.frame.mChannel);
+		}
 
 		if (!nrf5_tx_at(&nrf5_data.tx.frame, nrf5_data.tx.psdu)) {
 			LOG_WRN("TX AT failed");
