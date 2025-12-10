@@ -10,3 +10,4 @@ board:
     revisions:
     - name: "0.0.0"
     - name: "0.1.0"
+    - name: "0.2.0"
