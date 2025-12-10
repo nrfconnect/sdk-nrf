@@ -6,8 +6,6 @@
 
 target_include_directories(app PRIVATE include)
 
-target_link_libraries(app PRIVATE app_ui)
-
 if(CONFIG_APP_PLATFORM_DK)
   target_sources(app PRIVATE platform_dk.c)
 elseif(CONFIG_APP_PLATFORM_THINGY)
