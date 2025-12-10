@@ -1580,6 +1580,11 @@ ci_samples_zephyr_sensor_qdec:
     - nrf/samples/zephyr/sensor/qdec/
     - zephyr/samples/sensor/qdec/
 
+ci_samples_zephyr_subsys_settings:
+  files:
+    - nrf/samples/zephyr/subsys/settings/
+    - zephyr/samples/subsys/settings/
+
 ci_samples_zephyr_sysbuild_hello_world:
   files:
     - nrf/samples/zephyr/sysbuild/hello_world/
