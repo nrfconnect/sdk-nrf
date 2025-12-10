@@ -325,6 +325,16 @@ static void le_audio_msg_sub_thread(void)
 				ret = audio_system_config_set(sampling_rate_hz, bitrate_bps,
 							      VALUE_NOT_SET);
 				ERR_CHK(ret);
+
+				/* Update the locations / number of encoder channels */
+				uint32_t locations = 0;
+
+				ret = unicast_client_locations_get(&locations, BT_AUDIO_DIR_SINK);
+				ERR_CHK(ret);
+
+				ret = audio_system_encoder_num_ch_set(locations);
+				ERR_CHK(ret);
+
 			} else if (msg.dir == BT_AUDIO_DIR_SOURCE) {
 				ret = audio_system_config_set(VALUE_NOT_SET, VALUE_NOT_SET,
 							      sampling_rate_hz);
@@ -470,6 +480,15 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 		LOG_INF("Disconnection event. Num connections: %u", num_conn);
 
 		unicast_client_conn_disconnected(msg->conn);
+
+		/* Update the locations / number of encoder channels */
+		uint32_t locations = 0;
+
+		ret = unicast_client_locations_get(&locations, BT_AUDIO_DIR_SINK);
+		ERR_CHK(ret);
+
+		ret = audio_system_encoder_num_ch_set(locations);
+		ERR_CHK(ret);
 
 		break;
 

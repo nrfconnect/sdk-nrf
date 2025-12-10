@@ -175,7 +175,12 @@ Wi-Fi®
 Applications
 ============
 
-|no_changes_yet_note|
+nRF5340 Audio
+-------------
+
+* Added dynamic configuration of the number of channels for the encoder based on the configured audio locations.
+  The number of channels is set during runtime using the :c:func:`audio_system_encoder_num_ch_set` function.
+  This allows configuring mono or stereo encoding depending on the configured audio locations, potentially saving CPU and memory resources.
 
 Connectivity bridge
 -------------------
