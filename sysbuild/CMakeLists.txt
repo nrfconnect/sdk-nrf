@@ -928,6 +928,13 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     endif()
   endif()
 
+  if(SB_CONFIG_ZEPHYR_CONNECTEDHOMEIP_MODULE AND SB_CONFIG_MATTER AND
+    SB_CONFIG_MATTER_FACTORY_DATA_GENERATE AND NOT SB_CONFIG_PARTITION_MANAGER
+  )
+    include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/generate_factory_data.cmake)
+    nrfconnect_generate_factory_data()
+  endif()
+
   if(SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/nrf700x.cmake)
   endif()
@@ -1058,5 +1065,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/radio_loader.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/secureboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/mcuboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/firmware_loader_radio.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/matter_factory_data.cmake)
 
 store_ncs_vars()
