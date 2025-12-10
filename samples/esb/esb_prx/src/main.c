@@ -30,7 +30,7 @@ LOG_MODULE_REGISTER(esb_prx, CONFIG_ESB_PRX_APP_LOG_LEVEL);
 
 static struct esb_payload rx_payload;
 static struct esb_payload tx_payload = ESB_CREATE_PAYLOAD(0,
-	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17);
+	0x00, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17);
 
 static void leds_update(uint8_t value)
 {
@@ -45,6 +45,8 @@ static void leds_update(uint8_t value)
 
 void event_handler(struct esb_evt const *event)
 {
+	int err;
+
 	switch (event->evt_id) {
 	case ESB_EVENT_TX_SUCCESS:
 		LOG_DBG("TX SUCCESS EVENT");
@@ -53,8 +55,6 @@ void event_handler(struct esb_evt const *event)
 		LOG_DBG("TX FAILED EVENT");
 		break;
 	case ESB_EVENT_RX_RECEIVED:
-		int err;
-
 		while ((err = esb_read_rx_payload(&rx_payload)) == 0) {
 			LOG_DBG("Packet received, len %d : "
 				"0x%02x, 0x%02x, 0x%02x, 0x%02x, "
@@ -239,14 +239,7 @@ int main(void)
 	}
 
 	LOG_INF("Initialization complete");
-
-	err = esb_write_payload(&tx_payload);
-	if (err) {
-		LOG_ERR("Write payload, err %d", err);
-		return 0;
-	}
-
-	LOG_INF("Setting up for packet receiption");
+	LOG_INF("Setting up for packet reception");
 
 	err = esb_start_rx();
 	if (err) {
@@ -254,6 +247,12 @@ int main(void)
 		return 0;
 	}
 
-	/* return to idle thread */
-	return 0;
+	while (true) {
+		err = esb_write_payload(&tx_payload);
+		if (err) {
+			LOG_WRN("Write payload, err %d", err);
+		}
+		tx_payload.data[0]++;
+		k_msleep(550);
+	}
 }
