@@ -11,9 +11,11 @@ The nRF91 Series SiPs integrate an application MCU, a full LTE modem, an RF fron
 These SiPs are designed to support a wide range of cellular IoT applications and DECT NR+ applications.
 
 Development Kits and Evaluation Kits
+  * nRF9151 DK - A development kit for designing and developing application firmware on the nRF9151 SiP, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 14 support and DECT NR+.
+  * nRF9151 SMA DK - A specialized version of nRF9151 DK with an SMA connector for high-performance external antenna connection or lab equipment for precise characterization and field testing.
+    It is recommended for any Non-Terrestrial Network (NTN) development.
   * nRF9160 DK - A development kit for designing and developing application firmware on the nRF9160 :term:`System in Package (SiP)`, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 13 support.
   * nRF9161 DK - A development kit for designing and developing application firmware on the nRF9161 SiP, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 14 support and DECT NR+.
-  * nRF9151 DK - A development kit for designing and developing application firmware on the nRF9151 SiP, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 14 support and DECT NR+.
   * nRF9131 EK - A single-board evaluation kit for the nRF9131 SiP, designed for DECT NR+ applications.
 
 Prototyping Platforms
