@@ -76,6 +76,16 @@ int audio_system_config_set(uint32_t encoder_sample_rate_hz, uint32_t encoder_bi
 			    uint32_t decoder_sample_rate_hz);
 
 /**
+ * @brief	Set the number of channels for the encoder based on the given audio locations.
+ *
+ * @param[in]	locations	Audio locations bitmask.
+ *
+ * @retval	-EINVAL	Invalid number of channels derived from locations.
+ * @retval	0	On success.
+ */
+int audio_system_encoder_num_ch_set(uint32_t locations);
+
+/**
  * @brief	Decode data and then add it to TX FIFO buffer.
  *
  * @param[in]	audio_frame	Pointer to the audio data.
