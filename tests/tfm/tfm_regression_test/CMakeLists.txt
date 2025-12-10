@@ -68,6 +68,7 @@ ExternalProject_Add(tfm_regression_test_app
                 -DQCBOR_PATH${QCBOR_PATH_TYPE}=${CONFIG_TFM_QCBOR_PATH}
                 -DCMAKE_BUILD_TYPE=RelWithDebInfo
                 -DZEPHYR_NRF_MODULE_DIR=${ZEPHYR_NRF_MODULE_DIR}
+                -DTFM_BOARDS_NRF_DIR=${TFM_BOARDS_NRF_DIR}
                 -DNRF_CONFIG_CPU_FREQ_MHZ=${CONFIG_TFM_CPU_FREQ_MHZ}
     BUILD_COMMAND ${CMAKE_COMMAND} --build .
     INSTALL_COMMAND ""
