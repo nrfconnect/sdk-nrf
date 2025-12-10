@@ -61,6 +61,23 @@ static void lpuart_isr_handler(const struct device *dev, void *user_data)
 	}
 }
 
+static void wait_and_check(uint32_t skip, uint32_t offset)
+{
+	TC_PRINT("Waiting for transmission to finish %d %d\n", skip, offset);
+	zassert_equal(k_sem_take(&uart_transmission_done_sem, K_MSEC(100)), 0);
+	TC_PRINT("Transmission done\n");
+
+	uart_irq_tx_disable(lpuart);
+	uart_irq_rx_disable(lpuart);
+	uart_irq_err_disable(lpuart);
+
+	for (int index = skip; index < (TEST_BUFFER_LEN - offset); index++) {
+		zassert_equal(test_buffer[index], test_pattern[index + offset],
+			      "Received data byte %d does not match pattern 0x%x != 0x%x", index,
+			      test_buffer[index], test_pattern[index + offset]);
+	}
+}
+
 static void test_transmission(bool rx, bool is_tx_pin_float_enabled)
 {
 	int err;
@@ -92,19 +109,7 @@ static void test_transmission(bool rx, bool is_tx_pin_float_enabled)
 		uart_irq_rx_enable(lpuart);
 	}
 
-	TC_PRINT("Waiting for transmission to finish\n");
-	zassert_equal(k_sem_take(&uart_transmission_done_sem, K_MSEC(100)), 0);
-	TC_PRINT("Transmission done\n");
-
-	uart_irq_tx_disable(lpuart);
-	uart_irq_rx_disable(lpuart);
-	uart_irq_err_disable(lpuart);
-
-	for (int index = 0; index < TEST_BUFFER_LEN; index++) {
-		zassert_equal(test_buffer[index], test_pattern[index],
-			      "Received data byte %d does not match pattern 0x%x != 0x%x", index,
-			      test_buffer[index], test_pattern[index]);
-	}
+	wait_and_check(0, 0);
 }
 
 ZTEST(test_lpuart_int_driven, test_rx_no_tx_pin_float)
@@ -135,6 +140,36 @@ ZTEST(test_lpuart_int_driven, test_tx_resiliency)
 	rx_byte_offset = 0;
 
 	test_transmission(false, false);
+}
+
+ZTEST(test_lpuart_int_driven, test_tx_timeout)
+{
+	Z_TEST_SKIP_IFNDEF(CONFIG_TEST_LPUART_LOOPBACK);
+	int err;
+
+	tx_byte_offset = 0;
+	rx_byte_offset = 0;
+
+	err = uart_irq_callback_set(lpuart, lpuart_isr_handler);
+	zassert_equal(err, 0, "Unexpected error when setting callback for LPUART %d", err);
+
+	err = uart_irq_callback_user_data_set(lpuart, lpuart_isr_handler, (void *)test_buffer);
+	zassert_equal(err, 0, "Unexpected error when setting user data for callback %d", err);
+
+	uart_irq_err_enable(lpuart);
+	uart_irq_tx_enable(lpuart);
+
+	k_sleep(K_USEC((CONFIG_NRF_SW_LPUART_DEFAULT_TX_TIMEOUT * 11) / 10));
+
+	zassert_true(tx_byte_offset != 0);
+
+	uart_irq_rx_enable(lpuart);
+	/* RX is enabled during the initialization so first byte will be received but as
+	 * it is not read out it will result in timeout and then second byte will be lost.
+	 * Starting from the third byte reception is ok. Received buffer validation need to
+	 * take that into account.
+	 */
+	wait_and_check(1, 1);
 }
 
 static void *suite_setup(void)
