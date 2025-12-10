@@ -318,6 +318,9 @@
 .. _`nRF9151 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF9151-DK
 .. _`nRF9151 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9151-DK/Download?lang=en#infotabs
 
+.. _`Nordic nRF9151 SMA DK`:
+.. _`nRF9151 SMA DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF9151-SMA-DK
+
 .. _`nRF9151 product website`: https://www.nordicsemi.com/Products/nRF9151
 .. _`nRF9161 product website`: https://www.nordicsemi.com/Products/nRF9161
 .. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160
@@ -797,6 +800,9 @@
 .. _`nRF9151 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9151_dk/page/UG/nrf91_DK/intro.html
 .. _`nRF9151 DK board control section in the nRF9151 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9151_dk/page/UG/nrf91_DK/hw_description/nrf9161_board_controller.html
 .. _`Measuring current on nRF9151 DK`: https://docs.nordicsemi.com/bundle/ug_nrf9151_dk/page/UG/nrf91_DK/measuring_current/hw_measure_current.html
+
+.. _`nRF9151 SMA DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9151_sma_dk/page/UG/nrf91_DK/intro.html
+.. _`nRF9151 SMA DK board control section in the nRF9151 SMA DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9151_sma_dk/page/UG/nrf91_DK/hw_description/nrf9161_board_controller.html
 
 .. _`AT Commands Reference Guide`:
 .. _`nRF9160 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/intro_nrf9160.html
