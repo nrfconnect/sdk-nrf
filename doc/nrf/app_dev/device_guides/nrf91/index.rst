@@ -19,6 +19,21 @@ Zephyr and the |NCS| provide support for developing cellular applications using 
      - Board targets
      - Documentation
      - Product pages
+   * - :zephyr:board:`nrf9151dk`
+     - PCA10171
+     - ``nrf9151dk/nrf9151``, ``nrf9151dk/nrf9151/ns``
+     - | `Product Specification <nRF9151 Product Specification_>`_
+       | `Quick Start app`_
+       | `User Guide <nRF9151 DK Hardware_>`_
+     - | `nRF9151 DK product page`_
+       | `nRF9151 System in Package (SiP) <nRF9151 product website_>`_
+   * - nRF9151 SMA DK
+     - PCA10201
+     - ``nrf9151dk/nrf9151``, ``nrf9151dk/nrf9151/ns``
+     - | `Quick Start app`_
+       | `User Guide <nRF9151 SMA DK Hardware_>`_
+     - | `nRF9151 SMA DK product page`_
+       | `nRF9151 System in Package (SiP) <nRF9151 product website_>`_
    * - :zephyr:board:`nrf9161dk`
      - PCA10153
      - ``nrf9161dk/nrf9161``, ``nrf9161dk/nrf9161/ns``
@@ -35,14 +50,6 @@ Zephyr and the |NCS| provide support for developing cellular applications using 
        | `User Guide <nRF9160 DK Hardware_>`_
      - | `nRF9160 DK product page`_
        | `nRF9160 System in Package (SiP) <nRF9160 product website_>`_
-   * - :zephyr:board:`nrf9151dk`
-     - PCA10171
-     - ``nrf9151dk/nrf9151``, ``nrf9151dk/nrf9151/ns``
-     - | `Product Specification <nRF9151 Product Specification_>`_
-       | `Quick Start app`_
-       | `User Guide <nRF9151 DK Hardware_>`_
-     - | `nRF9151 DK product page`_
-       | `nRF9151 System in Package (SiP) <nRF9151 product website_>`_
    * - :zephyr:board:`nrf9131ek`
      - PCA10165
      - ``nrf9131ek/nrf9131``, ``nrf9131ek/nrf9131/ns``
