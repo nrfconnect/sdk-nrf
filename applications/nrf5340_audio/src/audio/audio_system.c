@@ -97,21 +97,11 @@ static void audio_gateway_configure(void)
 	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
 		sw_codec_cfg.decoder.audio_loc = BT_AUDIO_LOCATION_MONO_AUDIO;
 		sw_codec_cfg.decoder.num_ch = 1;
-		sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
 	}
 
 	if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
-		sw_codec_cfg.encoder.num_ch = 2;
+		sw_codec_cfg.encoder.num_ch = 1;
 		sw_codec_cfg.encoder.audio_loc = BT_AUDIO_LOCATION_MONO_AUDIO;
-		sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
-	} else {
-		/* For multi-channel on the gateway, only left and
-		 * right front are currently supported
-		 */
-		sw_codec_cfg.encoder.num_ch = 2;
-		sw_codec_cfg.encoder.audio_loc =
-			BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT;
-		sw_codec_cfg.encoder.channel_mode = SW_CODEC_MULTICHANNEL;
 	}
 
 	LOG_INF("Gateway configured for %d encoder channels", sw_codec_cfg.encoder.num_ch);
@@ -128,7 +118,6 @@ static void audio_headset_configure(void)
 	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
 		sw_codec_cfg.encoder.audio_loc = BT_AUDIO_LOCATION_MONO_AUDIO;
 		sw_codec_cfg.encoder.num_ch = 1;
-		sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
 	}
 
 	device_location_get(&sw_codec_cfg.decoder.audio_loc);
@@ -137,23 +126,6 @@ static void audio_headset_configure(void)
 	} else {
 		sw_codec_cfg.decoder.num_ch = POPCOUNT(sw_codec_cfg.decoder.audio_loc);
 	}
-
-	switch ((uint32_t)sw_codec_cfg.decoder.audio_loc) {
-	case BT_AUDIO_LOCATION_MONO_AUDIO:
-	/* Fall through*/
-	case BT_AUDIO_LOCATION_FRONT_LEFT:
-	/* Fall through*/
-	case BT_AUDIO_LOCATION_FRONT_RIGHT:
-		sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
-		break;
-	case (BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT):
-		sw_codec_cfg.decoder.channel_mode = SW_CODEC_MULTICHANNEL;
-		break;
-	default:
-		LOG_ERR("Unsupported device location: 0x%08x", sw_codec_cfg.decoder.audio_loc);
-		ERR_CHK(-EINVAL);
-		break;
-	};
 
 	if (IS_ENABLED(CONFIG_SD_CARD_PLAYBACK)) {
 		/* Need an extra decoder channel to decode data from SD card */
@@ -574,6 +546,33 @@ int audio_system_fifo_rx_block_drop(void)
 int audio_system_decoder_num_ch_get(void)
 {
 	return sw_codec_cfg.decoder.num_ch;
+}
+
+int audio_system_encoder_num_ch_set(uint32_t locations)
+{
+	if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
+		LOG_DBG("Cannot set encoder channels when MONO_TO_ALL_RECEIVERS is enabled");
+		return 0;
+	}
+
+	int num_ch = POPCOUNT(locations);
+
+	if (locations == BT_AUDIO_LOCATION_MONO_AUDIO) {
+		num_ch = 1;
+	}
+
+	if (num_ch > CONFIG_AUDIO_ENCODE_CHANNELS_MAX) {
+		LOG_ERR("Invalid number of encoder channels: %d (max %d)", num_ch,
+			CONFIG_AUDIO_ENCODE_CHANNELS_MAX);
+		return -EINVAL;
+	}
+
+	LOG_DBG("Setting encoder channels to %d based on locations 0x%08x", num_ch, locations);
+
+	sw_codec_cfg.encoder.num_ch = num_ch;
+	sw_codec_cfg.encoder.audio_loc = locations;
+
+	return 0;
 }
 
 int audio_system_init(void)

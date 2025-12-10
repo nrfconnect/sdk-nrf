@@ -169,7 +169,7 @@ static int sd_card_playback_check_wav_header(struct wav_header wav_file_header)
 		return -EPERM;
 	}
 
-	if (wav_file_header.num_channels != SW_CODEC_MONO) {
+	if (wav_file_header.num_channels != 1) {
 		LOG_ERR("This is not a MONO file");
 		return -EPERM;
 	}

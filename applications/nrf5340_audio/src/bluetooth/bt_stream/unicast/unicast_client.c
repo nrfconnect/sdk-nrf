@@ -1373,6 +1373,66 @@ int unicast_client_config_get(struct bt_bap_stream *stream, uint32_t *bitrate,
 	return 0;
 }
 
+/* Get the supported sink locations from all connected unicast servers, called once per server */
+static bool sink_locations_get(struct server_store *server, void *user_data)
+{
+	uint32_t *locations = (uint32_t *)user_data;
+
+	*locations |= server->snk.locations;
+
+	return true;
+}
+/* Get the supported source locations from all connected unicast servers, called once per server */
+static bool source_locations_get(struct server_store *server, void *user_data)
+{
+	uint32_t *locations = (uint32_t *)user_data;
+
+	*locations |= server->src.locations;
+
+	return true;
+}
+
+int unicast_client_locations_get(uint32_t *locations, enum bt_audio_dir dir)
+{
+	int ret;
+
+	if (locations == NULL) {
+		return -EINVAL;
+	}
+
+	*locations = 0;
+
+	if (dir != BT_AUDIO_DIR_SINK && dir != BT_AUDIO_DIR_SOURCE) {
+		return -EINVAL;
+	}
+
+	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	if (ret < 0) {
+		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
+		return ret;
+	}
+
+	if (dir == BT_AUDIO_DIR_SINK) {
+		ret = srv_store_foreach_server(sink_locations_get, locations);
+		if (ret) {
+			LOG_ERR("Failed to get locations: %d", ret);
+			srv_store_unlock();
+			return ret;
+		}
+	} else if (dir == BT_AUDIO_DIR_SOURCE) {
+		ret = srv_store_foreach_server(source_locations_get, locations);
+		if (ret) {
+			LOG_ERR("Failed to get locations: %d", ret);
+			srv_store_unlock();
+			return ret;
+		}
+	}
+
+	srv_store_unlock();
+
+	return 0;
+}
+
 void unicast_client_conn_disconnected(struct bt_conn *conn)
 {
 	int ret;

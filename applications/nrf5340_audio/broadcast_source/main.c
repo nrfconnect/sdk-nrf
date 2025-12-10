@@ -581,6 +581,10 @@ int main(void)
 	ret = audio_system_init();
 	ERR_CHK(ret);
 
+	ret = audio_system_encoder_num_ch_set(BT_AUDIO_LOCATION_FRONT_LEFT |
+					      BT_AUDIO_LOCATION_FRONT_RIGHT);
+	ERR_CHK(ret);
+
 	ret = zbus_subscribers_create();
 	ERR_CHK_MSG(ret, "Failed to create zbus subscriber threads");
 
