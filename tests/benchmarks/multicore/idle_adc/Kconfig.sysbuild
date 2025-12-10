@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "share/sysbuild/Kconfig"
-
 choice NETCORE
 	default NETCORE_REMOTE_SLEEP_FOREVER
 
@@ -25,3 +23,5 @@ config SUPPORT_NETCORE
 
 config NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER
 	default "cpurad" if (SOC_NRF54H20_CPUPPR || SOC_NRF54H20_CPUAPP)
+
+source "share/sysbuild/Kconfig"
