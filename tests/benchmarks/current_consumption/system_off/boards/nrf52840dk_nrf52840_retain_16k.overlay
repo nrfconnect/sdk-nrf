@@ -1,7 +1,7 @@
 / {
-	sram0@2003C000 {
+	sram0@2003c000 {
 		compatible = "zephyr,memory-region", "mmio-sram";
-		reg = <0x2003C000 DT_SIZE_K(16)>;
+		reg = <0x2003c000 DT_SIZE_K(16)>;
 		zephyr,memory-region = "RetainedMem";
 		status = "okay";
 

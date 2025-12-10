@@ -19,9 +19,11 @@
 
 	encoder-emulate {
 		compatible = "gpio-leds";
+
 		phase_a: phase_a {
 			gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
 		};
+
 		phase_b: phase_b {
 			gpios = <&gpio1 14 GPIO_ACTIVE_HIGH>;
 		};
@@ -35,6 +37,7 @@
 				<NRF_PSEL(QDEC_B, 1, 15)>;
 		};
 	};
+
 	qdec_sleep_pinctrl: qdec_sleep_pinctrl {
 		group1 {
 			psels = <NRF_PSEL(QDEC_A, 1, 13)>,

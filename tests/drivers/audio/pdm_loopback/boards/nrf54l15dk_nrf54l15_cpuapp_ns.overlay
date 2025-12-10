@@ -7,6 +7,7 @@
 / {
 	gpio_test {
 		compatible = "gpio-leds";
+
 		pulse_counter: pulse_counter {
 			gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
 		};

@@ -1,7 +1,7 @@
 / {
-	cpuapp_sram@2f0BD000{
+	cpuapp_sram@2f0bd000 {
 		compatible = "zephyr,memory-region", "mmio-sram";
-		reg = <0x2f0BD000 DT_SIZE_K(4)>;
+		reg = <0x2f0bd000 DT_SIZE_K(4)>;
 		zephyr,memory-region = "RetainedMem";
 		status = "okay";
 

@@ -11,5 +11,5 @@
 
 &cpuapp_sram {
 	reg = <0x20000000 DT_SIZE_K(192)>;
-	ranges = <0x0 0x20000000  DT_SIZE_K(192)>;
+	ranges = <0x0 0x20000000 DT_SIZE_K(192)>;
 };

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- / {
+/ {
 	sensor_stub: sensor_stub {
 		compatible = "nordic,sensor-stub";
 		generator = "sensor_stub_gen";

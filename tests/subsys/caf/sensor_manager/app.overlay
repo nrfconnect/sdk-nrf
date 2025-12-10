@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- / {
+/ {
 	sensor_sim_1: sensor_sim_1 {
 		compatible = "nordic,sensor-sim";
 		acc-signal = "wave";
@@ -14,6 +14,7 @@
 		compatible = "nordic,sensor-sim";
 		acc-signal = "wave";
 	};
+
 	sensor_sim_3: sensor_sim_3 {
 		compatible = "nordic,sensor-sim";
 		acc-signal = "wave";
