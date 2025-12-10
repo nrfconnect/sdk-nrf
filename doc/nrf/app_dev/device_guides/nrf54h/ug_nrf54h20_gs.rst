@@ -112,6 +112,7 @@ Both of these terminal emulators start the required :ref:`toolchain environment 
 Bring-up step: Programming the BICR
 ***********************************
 
+
 The Board Information Configuration Registers (BICR) are non-volatile memory (NVM) registers that contain information on how the nRF54H20 SoC must interact with other board elements, including information about power and clock delivery to the SoC.
 To prepare the nRF54H20 DK for its first use, you must manually program the required values into the BICR using a precompiled BICR binary file (:file:`bicr.hex`).
 
