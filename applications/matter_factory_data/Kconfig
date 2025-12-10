@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config APPLICATION_NAME
+	string "Application name (informative only, do not change)"
+
+config PARTITION_MANAGER_ENABLED
+	bool "Partition manager is enabled (informative only, do not change)"
+
+config BUILD_OUTPUT_BIN
+	bool "Build a binary in BIN format (informative only, do not change)"
+
+config BUILD_OUTPUT_HEX
+	bool "Build a binary in HEX format (informative only, do not change)"
+	default y

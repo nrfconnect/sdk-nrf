@@ -27,7 +27,6 @@ tests:
     extra_args:
       - FILE_SUFFIX=release
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - SB_CONFIG_PARTITION_MANAGER=y
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
