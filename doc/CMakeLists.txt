@@ -33,7 +33,7 @@ separate_arguments(SPHINXOPTS_EXTRA)
 
 find_package(Python 3.8)
 set(DOXYGEN_SKIP_DOT True)
-find_package(Doxygen 1.8.18 REQUIRED)
+find_package(Doxygen 1.12.0 REQUIRED)
 
 find_program(SPHINXBUILD sphinx-build)
 if(NOT SPHINXBUILD)
