@@ -170,7 +170,7 @@
 /doc/nrf/libraries/networking/wifi_mgmt_ext.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/networking/wifi_prov_*.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/networking/wifi_ready.rst @nrfconnect/ncs-wifi-doc
-/doc/nrf/libraries/nfc/                   @nrfconnect/ncs-si-muffin-doc
+/doc/nrf/libraries/nfc/                   @nrfconnect/ncs-radio-sw
 /doc/nrf/libraries/nrf_rpc/*.rst          @nrfconnect/ncs-blenders-doc
 
 /doc/nrf/libraries/others/adp536x.rst     @nrfconnect/ncs-cia-doc
@@ -201,7 +201,7 @@
 /doc/nrf/libraries/others/qos.rst         @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/others/ram_pwrdn.rst   @nrfconnect/ncs-terahertz-doc
 /doc/nrf/libraries/others/sfloat.rst      @nrfconnect/ncs-si-muffin-doc
-/doc/nrf/libraries/others/st25r3911b_nfc.rst @nrfconnect/ncs-si-muffin-doc
+/doc/nrf/libraries/others/st25r3911b_nfc.rst @nrfconnect/ncs-radio-sw
 /doc/nrf/libraries/others/supl_os_client.rst @nrfconnect/ncs-iot-positioning-doc
 /doc/nrf/libraries/others/tone.rst        @nrfconnect/ncs-audio-doc
 /doc/nrf/libraries/others/uart_async_adapter.rst @nrfconnect/ncs-si-muffin-doc
@@ -228,7 +228,7 @@
 /doc/nrf/protocols/lte/power_nrf91.rst    @nrfconnect/ncs-cia-doc
 /doc/nrf/protocols/matter/                @nrfconnect/ncs-matter-doc
 /doc/nrf/protocols/multiprotocol/         @nrfconnect/ncs-doc-leads
-/doc/nrf/protocols/nfc/                   @nrfconnect/ncs-si-muffin-doc
+/doc/nrf/protocols/nfc/                   @nrfconnect/ncs-radio-sw
 /doc/nrf/protocols/thread/                @nrfconnect/ncs-terahertz-doc
 /doc/nrf/protocols/wifi/                  @nrfconnect/ncs-wifi-doc
 /doc/nrf/protocols/zigbee/                @nrfconnect/ncs-terahertz-doc
@@ -250,7 +250,7 @@
 /doc/nrf/samples/matter.rst               @nrfconnect/ncs-matter-doc
 /doc/nrf/samples/mesh.rst                 @nrfconnect/ncs-paladin-doc
 /doc/nrf/samples/net.rst                  @nrfconnect/ncs-doc-leads
-/doc/nrf/samples/nfc.rst                  @nrfconnect/ncs-si-muffin-doc
+/doc/nrf/samples/nfc.rst                  @nrfconnect/ncs-radio-sw
 /doc/nrf/samples/nrf5340.rst              @nrfconnect/ncs-doc-leads
 /doc/nrf/samples/other.rst                @nrfconnect/ncs-doc-leads
 /doc/nrf/samples/peripheral.rst           @nrfconnect/ncs-radio-sw-doc
@@ -346,7 +346,7 @@
 /include/net/azure_*                      @nrfconnect/ncs-cia
 /include/net/downloader*                  @nrfconnect/ncs-modem
 /include/net/nrf_cloud_*                  @nrfconnect/ncs-nrf-cloud
-/include/nfc/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-muffin
+/include/nfc/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-radio-sw
 /include/nrf_compress/                    @nordicjm
 /include/nrf_rpc/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-blenders @nrfconnect/ncs-protocols-serialization
 /include/power/                           @nrfconnect/ncs-co-drivers
@@ -516,7 +516,7 @@
 /samples/mcuboot/                         @nrfconnect/ncs-eris
 /samples/mpsl/                            @nrfconnect/ncs-dragoon
 /samples/net/                             @nrfconnect/ncs-cia
-/samples/nfc/                             @nrfconnect/ncs-si-muffin
+/samples/nfc/                             @nrfconnect/ncs-radio-sw
 /samples/nrf5340/netboot/                 @nrfconnect/ncs-eris
 /samples/nrf5340/extxip_smp_svr/          @nrfconnect/ncs-eris
 /samples/nrf_rpc/                         @nrfconnect/ncs-blenders
@@ -652,7 +652,7 @@
 /samples/mpsl/**/*.rst                    @nrfconnect/ncs-dragoon-doc
 /samples/net/**/*.rst                     @nrfconnect/ncs-cia-doc
 /samples/net/coap_client/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
-/samples/nfc/**/*.rst                     @nrfconnect/ncs-si-muffin-doc
+/samples/nfc/**/*.rst                     @nrfconnect/ncs-radio-sw
 /samples/nrf54h20/idle_relocated_tcm/*.rst @nrfconnect/ncs-si-muffin-doc
 /samples/nrf5340/empty_app_core/*.rst     @nrfconnect/ncs-si-muffin-doc
 /samples/nrf5340/extxip_smp_svr/*.rst     @nrfconnect/ncs-eris-doc
@@ -829,7 +829,7 @@
 /subsys/net/openthread/                   @nrfconnect/ncs-co-networking @nrfconnect/ncs-thread
 /subsys/net/openthread/rpc/               @nrfconnect/ncs-protocols-serialization
 /subsys/net_core_monitor/                 @nrfconnect/ncs-si-muffin
-/subsys/nfc/                              @nrfconnect/ncs-si-muffin
+/subsys/nfc/                              @nrfconnect/ncs-radio-sw
 /subsys/nfc/rpc/                          @nrfconnect/ncs-protocols-serialization
 /subsys/nrf_compress/                     @nordicjm
 /subsys/nrf_profiler/                     @nrfconnect/ncs-si-bluebagel
