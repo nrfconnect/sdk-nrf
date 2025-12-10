@@ -142,6 +142,8 @@ Enhanced ShockBurst (ESB)
 
 |no_changes_yet_note|
 
+* Fixed invalid radio configuration for legacy ESB protocol.
+
 Gazell
 ------
 

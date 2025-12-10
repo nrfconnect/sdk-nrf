@@ -293,10 +293,9 @@ struct esb_payload {
 	uint8_t length; /**< Length of the packet when not in DPL mode. */
 	uint8_t pipe;   /**< Pipe used for this payload. */
 	int8_t rssi;   /**< RSSI for the received packet. */
-	uint8_t noack;  /**< Flag indicating that this packet will not be
-		       *  acknowledged. Flag is ignored when selective auto
-		       *  ack is enabled.
-		       */
+	uint8_t noack; /**< Flag indicating that this packet will not be acknowledged.
+			 *  Flag is ignored when selective auto ack is disabled.
+			 */
 	uint8_t pid;    /**< PID assigned during communication. */
 	uint8_t data[CONFIG_ESB_MAX_PAYLOAD_LENGTH]; /**< The payload data. */
 };
@@ -341,10 +340,10 @@ struct esb_config {
 			       *  on the platforms that are used on each side).
 			       */
 	bool selective_auto_ack; /**< Selective auto acknowledgement.
-				   *  When this feature is disabled, all packets
-				   *  will be acknowledged ignoring the noack
-				   *  field.
-				   */
+				  *  When this feature is disabled, all packets will be acknowledged
+				  *  ignoring the noack field.
+				  *  Always disabled when using @ref ESB_PROTOCOL_ESB.
+				  */
 	bool use_fast_ramp_up; /**<  When this feature is enabled, radio TXEN and
 				 *  RXEN delays are reduced from 130 µs to 40 µs.
 				 *  The radio peripheral needs some time to start up
