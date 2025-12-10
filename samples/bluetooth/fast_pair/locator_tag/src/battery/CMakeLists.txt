@@ -9,7 +9,6 @@ target_sources(app PRIVATE common.c)
 
 if(CONFIG_APP_PLATFORM_DK)
   target_sources(app PRIVATE platform_dk.c)
-  target_link_libraries(app PRIVATE app_ui)
 elseif(CONFIG_APP_PLATFORM_THINGY)
   target_sources(app PRIVATE platform_thingy.c)
 else()

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef APP_UI_SPEAKER_H_
-#define APP_UI_SPEAKER_H_
+#ifndef APP_UI_SPEAKER_PRIV_H_
+#define APP_UI_SPEAKER_PRIV_H_
 
 #include <stdint.h>
 
@@ -36,4 +36,4 @@ int app_ui_speaker_on(void);
 int app_ui_speaker_off(void);
 
 
-#endif
+#endif  /* APP_UI_SPEAKER_PRIV_H_ */

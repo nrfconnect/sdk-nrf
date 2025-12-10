@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -11,7 +11,7 @@
 #include "app_ui.h"
 #include "app_ui_priv.h"
 
-#include "app_ui_speaker.h"
+#include "app_ui_speaker_priv.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fp_fmdn, LOG_LEVEL_DBG);
