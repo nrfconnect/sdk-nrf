@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "share/sysbuild/Kconfig"
-
 if SOC_NRF54H20_CPUAPP
 
 choice NETCORE
@@ -14,3 +12,5 @@ choice NETCORE
 endchoice
 
 endif
+
+source "share/sysbuild/Kconfig"

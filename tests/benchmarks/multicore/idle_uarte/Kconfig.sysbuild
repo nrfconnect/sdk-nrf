@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "share/sysbuild/Kconfig"
-
 choice NETCORE
 	default NETCORE_REMOTE_SLEEP_FOREVER
 
@@ -19,3 +17,5 @@ config NETCORE_IMAGE_NAME
 
 config NETCORE_IMAGE_PATH
 	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever" if NETCORE_REMOTE_SLEEP_FOREVER
+
+source "share/sysbuild/Kconfig"
