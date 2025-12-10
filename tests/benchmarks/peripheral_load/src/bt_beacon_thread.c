@@ -6,7 +6,7 @@
 
 #include "common.h"
 
-#if DT_NODE_HAS_STATUS(DT_CHOSEN(zephyr_bt_hci), okay)
+#if DT_NODE_HAS_STATUS(DT_CHOSEN(zephyr_bt_hci), okay) && defined(CONFIG_BT)
 #include <zephyr/types.h>
 #include <stddef.h>
 #include <zephyr/sys/printk.h>
@@ -101,5 +101,6 @@ K_THREAD_DEFINE(thread_bt_id, BT_THREAD_STACKSIZE, bt_thread, NULL, NULL, NULL,
 	K_PRIO_PREEMPT(BT_THREAD_PRIORITY), 0, 0);
 
 #else
-#pragma message("Bluetooth thread skipped due to missing 'bt_hci_sdc' node in the DTS")
+#pragma message(                                                                                   \
+	"Bluetooth thread skipped due to missing 'bt_hci_sdc' node in the DTS or CONFIG_BT=n")
 #endif
