@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/delete-node/ &cpuapp_boot_partition;
 /delete-node/ &cpuapp_slot0_partition;
 /delete-node/ &cpuapp_slot1_partition;
 /delete-node/ &cpurad_slot0_partition;
@@ -19,16 +20,21 @@
 
 &mram1x {
 	partitions {
-		cpuapp_slot0_partition: partition@40000 {
-			reg = <0x40000 DT_SIZE_K(216)>;
+
+		cpuapp_boot_partition: partition@30000 {
+			reg = <0x30000 DT_SIZE_K(72)>;
 		};
 
-		cpurad_slot0_partition: partition@76000 {
-			reg = <0x76000 DT_SIZE_K(216)>;
+		cpuapp_slot0_partition: partition@42000 {
+			reg = <0x42000 DT_SIZE_K(212)>;
 		};
 
-		cpuapp_slot1_partition: partition@ac000 {
-			reg = <0xac000 DT_SIZE_K(216)>;
+		cpurad_slot0_partition: partition@77000 {
+			reg = <0x77000 DT_SIZE_K(216)>;
+		};
+
+		cpuapp_slot1_partition: partition@ad000 {
+			reg = <0xad000 DT_SIZE_K(212)>;
 		};
 
 		cpurad_slot1_partition: partition@e2000 {
