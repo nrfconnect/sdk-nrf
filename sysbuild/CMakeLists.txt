@@ -1042,6 +1042,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
       set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
     endif()
   endif()
+
+  if(SB_CONFIG_SOC_NRF54LS05B_ENGA AND SB_CONFIG_PARTITION_MANAGER)
+    message(WARNING "nrf54ls05 needs to move away from partition manager, usage of PM is temporary")
+  endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
 # Enable use of partition manager with sysbuild.
