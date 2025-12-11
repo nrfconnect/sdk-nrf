@@ -12,11 +12,23 @@
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace chip;
+using namespace chip::app::Clusters::Descriptor::Structs;
 using namespace chip::DeviceLayer;
 
 static constexpr uint32_t kMoveIntervalMs = 100;
 
 GarageDoorImpl::GarageDoorImpl(const pwm_dt_spec *spec) : mSpec(spec), mCurrentPosition("cp") {}
+
+Span<const SemanticTagStruct::Type> GarageDoorImpl::GetSemanticTagList() const
+{
+	static SemanticTagStruct::Type kGarageDoorEndpointTagList[] = {
+		{ .namespaceID = kNamespaceClosure,
+		  .tag = kTagClosureGarageDoor,
+		  .label = chip::MakeOptional(
+			  chip::app::DataModel::Nullable<chip::CharSpan>("Closure.GarageDoor"_span)) }
+	};
+	return Span<const SemanticTagStruct::Type>(kGarageDoorEndpointTagList);
+}
 
 CHIP_ERROR GarageDoorImpl::Init()
 {
@@ -51,6 +63,7 @@ CHIP_ERROR GarageDoorImpl::Stop()
 	SystemLayer().CancelTimer(TimerTimeoutCallback, this);
 	LOG_DBG("Movement stopped");
 	mObserver->OnMovementStopped(mCurrentPosition.Get());
+	mCurrentPosition.Set(mCurrentPosition.Get(), true);
 	return CHIP_NO_ERROR;
 }
 
@@ -72,7 +85,7 @@ void GarageDoorImpl::HandleTimer()
 		distanceLeft = mTargetPosition - mCurrentPosition.Get();
 		if (movePerTick >= distanceLeft) {
 			finished = true;
-			mCurrentPosition.Set(mTargetPosition, true);
+			mCurrentPosition.Set(mTargetPosition);
 		} else {
 			mCurrentPosition.Set(mCurrentPosition.Get() + movePerTick);
 		}
@@ -80,7 +93,7 @@ void GarageDoorImpl::HandleTimer()
 		distanceLeft = mCurrentPosition.Get() - mTargetPosition;
 		if (movePerTick >= distanceLeft) {
 			finished = true;
-			mCurrentPosition.Set(mTargetPosition, true);
+			mCurrentPosition.Set(mTargetPosition);
 		} else {
 			mCurrentPosition.Set(mCurrentPosition.Get() - movePerTick);
 		}
