@@ -44,8 +44,14 @@ After the device is commissioned, it operates as a Closure device and identifies
 
 This sample implements the following features of the closure device:
 
-* Positioning (allowing for setting one of the predefined positions)
-* Speed (allowing for controlling the speed of the closure)
+* Positioning (Indicates that the closure can be set to discrete positions)
+* Speed (Indicates that the closure supports configurable speed during motion toward a target position)
+* Ventilation (Indicates that the closure can be set to a designated ventilation position, for example, partially open)
+
+.. note::
+
+   At least one of the Positioning or Motion Latching features must be supported.
+   To add support for additional features, enable them in the ``Init()`` function of the :file:`closure_control_endpoint.cpp` file and implement the corresponding functionality in the :file:`closure_manager.cpp` file.
 
 It implements the following attributes from the Closure Control cluster:
 
@@ -224,14 +230,14 @@ To test the sample in a Matter-enabled Thread network, complete the following st
 
          .. code-block:: console
 
-            ./chip-tool closurecontrol move-to <node_id> <endpoint_id> --Position <position> --Speed <speed> --timedInteractionTimeoutMs 5000
+            ./chip-tool closurecontrol move-to <node_id> <endpoint_id> --Position 0 --Speed 0 --timedInteractionTimeoutMs 5000
 
          Where:
 
             * *<position>* is of type ``CurrentPositionEnum`` (integer from 0 to 5 ``0`` for ``FullyClosed``, ``1`` for ``FullyOpened``)
             * *<speed>* is of type ``ThreeLevelAutoEnum`` (``0`` for auto, ``1`` to ``3`` for ``Low`` to ``High``)
 
-         **LED 1** will start to glow brighter and brighter, indicating the closing of the closure.
+         **LED 2** starts to glow brighter, indicating the closing of the closure.
       #. Wait for the closure to finish its movement.
          You should be notified with the ``MovementCompleted`` event after the movement is complete.
 
@@ -254,14 +260,14 @@ To test the sample in a Matter-enabled Thread network, complete the following st
 
          .. code-block:: console
 
-            ./chip-tool closurecontrol move-to <node_id> <endpoint_id> --Position <position> --Speed <speed> --timedInteractionTimeoutMs 5000
+            ./chip-tool closurecontrol move-to <node_id> <endpoint_id> --Position 0 --Speed 0 --timedInteractionTimeoutMs 5000
 
          Where:
 
             * *<position>* is of type ``CurrentPositionEnum`` (integer from 0 to 5 ``0`` for ``FullyClosed``, ``1`` for ``FullyOpened``)
             * *<speed>* is of type ``ThreeLevelAutoEnum`` (``0`` for auto, ``1`` to ``3`` for ``Low`` to ``High``)
 
-         **LED 0** will start to glow brighter and brighter, indicating the closing of the closure.
+         **LED 1** starts to glow brighter, indicating the closing of the closure.
       #. Wait for the closure to finish its movement.
          You should be notified with the ``MovementCompleted`` event after the movement is complete.
 

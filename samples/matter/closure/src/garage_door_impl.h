@@ -10,6 +10,7 @@
 #include "physical_device.h"
 #include "physical_device_observer.h"
 #include "pwm/pwm_device.h"
+#include <app/util/attribute-storage.h>
 #include <platform/CHIPDeviceLayer.h>
 
 /**
@@ -24,7 +25,13 @@ public:
 	CHIP_ERROR MoveTo(uint16_t position, uint16_t speed) override;
 	CHIP_ERROR Stop() override;
 
+	SemanticTagList GetSemanticTagList() const override;
+
 private:
+	/* Define the Namespace and Tag for the endpoint */
+	constexpr static uint8_t kNamespaceClosure = 0x44;
+	constexpr static uint8_t kTagClosureGarageDoor = 0x05;
+
 	static void TimerTimeoutCallback(chip::System::Layer *systemLayer, void *appState);
 	void HandleTimer();
 	Nrf::PWMDevice mPhysicalIndicator;

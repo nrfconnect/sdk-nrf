@@ -13,6 +13,10 @@
 #include <protocols/interaction_model/StatusCode.h>
 #include <zephyr/logging/log.h>
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+#include <event_triggers/event_triggers.h>
+#endif
+
 LOG_MODULE_DECLARE(closure_cntrl, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace chip;
@@ -27,7 +31,15 @@ namespace
 
 constexpr ElapsedS kDefaultCountdownTime = 30;
 
-}
+enum class ClosureControlTestEventTrigger : Nrf::Matter::TestEventTrigger::EventTriggerId {
+	kMainStateIsError = 0x0104000000000000,
+	kMainStateIsProtected = 0x0104000000000001,
+	kMainStateIsDisengaged = 0x0104000000000002,
+	kMainStateIsSetupRequired = 0x0104000000000003,
+	kClearEvent = 0x0104000000000004,
+};
+
+} /* namespace */
 
 Status ClosureControlDelegate::HandleCalibrateCommand()
 {
@@ -95,33 +107,74 @@ CHIP_ERROR ClosureControlEndpoint::Init()
 	ReturnErrorOnFailure(mLogic.Init(conformance, initParams));
 	ReturnErrorOnFailure(mInterface.Init());
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+	ReturnErrorOnFailure(Nrf::Matter::TestEventTrigger::Instance().RegisterTestEventTriggerHandler(&mDelegate));
+#endif
+
 	return CHIP_NO_ERROR;
 }
 
-CHIP_ERROR ClosureControlEndpoint::WriteAllAttributes(const MainStateEnum &mainState,
-						      const GenericOverallCurrentState &currentState,
-						      const GenericOverallTargetState &targetState)
+CHIP_ERROR
+ClosureControlEndpoint::WriteAllAttributes(const MainStateEnum &mainState,
+					   const GenericOverallCurrentState &currentState,
+					   const chip::app::DataModel::Nullable<GenericOverallTargetState> &targetState)
 {
 	chip::DeviceLayer::StackLock lock;
 	ReturnErrorOnFailure(mLogic.SetMainState(mainState));
 	ReturnErrorOnFailure(mLogic.SetOverallCurrentState(currentState));
-	ReturnErrorOnFailure(mLogic.SetOverallTargetState(targetState));
 	ReturnErrorOnFailure(mLogic.SetCountdownTimeFromDelegate(mDelegate.GetMovingCountdownTime()));
+
+	if (!targetState.IsNull()) {
+		ReturnErrorOnFailure(mLogic.SetOverallTargetState(targetState.Value()));
+	}
+
 	return CHIP_NO_ERROR;
 }
 
-CHIP_ERROR ClosureControlEndpoint::OnMovementStopped(const MainStateEnum &mainState,
-						     const GenericOverallCurrentState &currentState,
-						     const GenericOverallTargetState &targetState)
+CHIP_ERROR
+ClosureControlEndpoint::OnMovementStopped(const MainStateEnum &mainState,
+					  const GenericOverallCurrentState &currentState,
+					  const chip::app::DataModel::Nullable<GenericOverallTargetState> &targetState)
 {
 	ReturnErrorOnFailure(WriteAllAttributes(mainState, currentState, targetState));
 	ReturnErrorOnFailure(GetLogic().GenerateMovementCompletedEvent());
 	return CHIP_NO_ERROR;
 }
 
-CHIP_ERROR ClosureControlEndpoint::OnMovementUpdate(const MainStateEnum &mainState,
-						    const GenericOverallCurrentState &currentState,
-						    const GenericOverallTargetState &targetState)
+CHIP_ERROR
+ClosureControlEndpoint::OnMovementUpdate(const MainStateEnum &mainState, const GenericOverallCurrentState &currentState,
+					 const chip::app::DataModel::Nullable<GenericOverallTargetState> &targetState)
 {
 	return WriteAllAttributes(mainState, currentState, targetState);
+}
+
+CHIP_ERROR ClosureControlDelegate::HandleEventTrigger(uint64_t eventTrigger)
+{
+	eventTrigger = clearEndpointInEventTrigger(eventTrigger);
+
+	auto trigger = static_cast<ClosureControlTestEventTrigger>(eventTrigger);
+	auto logic = GetLogic();
+
+	switch (trigger) {
+	case ClosureControlTestEventTrigger::kMainStateIsError:
+		ReturnErrorOnFailure(logic->SetMainState(MainStateEnum::kError));
+		ReturnErrorOnFailure(logic->AddErrorToCurrentErrorList(ClosureErrorEnum::kBlockedBySensor));
+		break;
+	case ClosureControlTestEventTrigger::kMainStateIsProtected:
+		ReturnErrorOnFailure(logic->SetMainState(MainStateEnum::kProtected));
+		break;
+	case ClosureControlTestEventTrigger::kMainStateIsDisengaged:
+		ReturnErrorOnFailure(logic->SetMainState(MainStateEnum::kDisengaged));
+		break;
+	case ClosureControlTestEventTrigger::kMainStateIsSetupRequired:
+		ReturnErrorOnFailure(logic->SetMainState(MainStateEnum::kSetupRequired));
+		break;
+	case ClosureControlTestEventTrigger::kClearEvent:
+		ReturnErrorOnFailure(logic->SetMainState(MainStateEnum::kStopped));
+		logic->ClearCurrentErrorList();
+		break;
+	default:
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+	return CHIP_NO_ERROR;
 }
