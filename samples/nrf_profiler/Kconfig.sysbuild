@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config PARTITION_MANAGER
+	default n if !BOARD_IS_NON_SECURE
+
+source "share/sysbuild/Kconfig"
