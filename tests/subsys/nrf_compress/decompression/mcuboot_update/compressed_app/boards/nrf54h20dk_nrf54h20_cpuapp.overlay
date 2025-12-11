@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../sysbuild/nrf54h20dk_nrf54h20_cpuapp_memory_map.dtsi"
+#include "../../sysbuild/nrf54h20dk_nrf54h20_cpuapp_memory_map.dtsi"
 
 / {
 	chosen {
