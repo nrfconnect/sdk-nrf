@@ -6,8 +6,6 @@
 
 mainmenu "I2S MCLK Test"
 
-source "Kconfig.zephyr"
-
 config I2S_TEST_USE_GPIO_LOOPBACK
 	bool "Use GPIO loopback"
 	default y if DT_HAS_NORDIC_NRF_I2S_ENABLED || DT_HAS_NORDIC_NRF_TDM_ENABLED
@@ -42,3 +40,5 @@ config I2S_TEST_SKIP_I2S_DIR_TX
 	help
 	  When set to 'y', tests on I2S configured with I2S_DIR_TX
 	  will be skipped.
+
+source "Kconfig.zephyr"

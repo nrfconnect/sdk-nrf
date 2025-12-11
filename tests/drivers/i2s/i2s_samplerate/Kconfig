@@ -1,0 +1,184 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "I2S Samplerate Test"
+
+config I2S_TEST_8000_SKIP
+	bool "Skip testing at 8000 samples per second"
+	help
+	  When set to 'y', testing at 8000 samples per second will be skipped.
+
+config I2S_TEST_8000_DIVIDER
+	int "Expected clock divider value"
+	default 34222080
+	help
+	  I2S driver calculates clock divider value that sets requested samplerate.
+	  Test compares if value calculated by the driver matches with this Kconfig.
+
+config I2S_TEST_8000_EXPECTED
+	int "Expected samplerate for 8000 Sps"
+	default 8000
+	help
+	  Due to available clock dividers final samplerate may differ from
+	  the configured value.
+
+config I2S_TEST_8000_TOLERANCE
+	int "Maximal +/- deviation from expected result at 8000 Sps"
+	default 37
+	help
+	  Test is not ideal. Use this Kconfig to set tolerance.
+
+config I2S_TEST_16000_SKIP
+	bool "Skip testing at 16000 samples per second"
+	help
+	  When set to 'y', testing at 16000 samples per second will be skipped.
+
+config I2S_TEST_16000_DIVIDER
+	int "Expected clock divider value"
+	default 68173824
+	help
+	  I2S driver calculates clock divider value that sets requested samplerate.
+	  Test compares if value calculated by the driver matches with this Kconfig.
+
+config I2S_TEST_16000_EXPECTED
+	int "Expected samplerate for 16000 Sps"
+	default 15873
+	help
+	  Due to available clock dividers final samplerate may differ from
+	  the configured value.
+
+config I2S_TEST_16000_TOLERANCE
+	int "Maximal +/- deviation from expected result at 16000 Sps"
+	default 17
+	help
+	  Test is not ideal. Use this Kconfig to set tolerance.
+
+config I2S_TEST_32000_SKIP
+	bool "Skip testing at 32000 samples per second"
+	help
+	  When set to 'y', testing at 32000 samples per second will be skipped.
+
+config I2S_TEST_32000_DIVIDER
+	int "Expected clock divider value"
+	default 135274496
+	help
+	  I2S driver calculates clock divider value that sets requested samplerate.
+	  Test compares if value calculated by the driver matches with this Kconfig.
+
+config I2S_TEST_32000_EXPECTED
+	int "Expected samplerate for 32000 Sps"
+	default 32258
+	help
+	  Due to available clock dividers final samplerate may differ from
+	  the configured value.
+
+config I2S_TEST_32000_TOLERANCE
+	int "Maximal +/- deviation from expected result at 32000 Sps"
+	default 25
+	help
+	  Test is not ideal. Use this Kconfig to set tolerance.
+
+config I2S_TEST_44100_SKIP
+	bool "Skip testing at 44100 samples per second"
+	help
+	  When set to 'y', testing at 44100 samples per second will be skipped.
+
+config I2S_TEST_44100_DIVIDER
+	int "Expected clock divider value"
+	default 185319424
+	help
+	  I2S driver calculates clock divider value that sets requested samplerate.
+	  Test compares if value calculated by the driver matches with this Kconfig.
+
+config I2S_TEST_44100_EXPECTED
+	int "Expected samplerate for 44100 Sps"
+	default 43478
+	help
+	  Due to available clock dividers final samplerate may differ from
+	  the configured value.
+
+config I2S_TEST_44100_TOLERANCE
+	int "Maximal +/- deviation from expected result at 44100 Sps"
+	default 31
+	help
+	  Test is not ideal. Use this Kconfig to set tolerance.
+
+config I2S_TEST_48000_SKIP
+	bool "Skip testing at 48000 samples per second"
+	help
+	  When set to 'y', testing at 48000 samples per second will be skipped.
+
+config I2S_TEST_48000_DIVIDER
+	int "Expected clock divider value"
+	default 201326592
+	help
+	  I2S driver calculates clock divider value that sets requested samplerate.
+	  Test compares if value calculated by the driver matches with this Kconfig.
+
+config I2S_TEST_48000_EXPECTED
+	int "Expected samplerate for 48000 Sps"
+	default 47619
+	help
+	  Due to available clock dividers final samplerate may differ from
+	  the configured value.
+
+config I2S_TEST_48000_TOLERANCE
+	int "Maximal +/- deviation from expected result at 48000 Sps"
+	default 33
+	help
+	  Test is not ideal. Use this Kconfig to set tolerance.
+
+config I2S_TEST_88200_SKIP
+	bool "Skip testing at 88200 samples per second"
+	help
+	  When set to 'y', testing at 88200 samples per second will be skipped.
+
+config I2S_TEST_88200_DIVIDER
+	int "Expected clock divider value"
+	default 362815488
+	help
+	  I2S driver calculates clock divider value that sets requested samplerate.
+	  Test compares if value calculated by the driver matches with this Kconfig.
+
+config I2S_TEST_88200_EXPECTED
+	int "Expected samplerate for 88200 Sps"
+	default 90909
+	help
+	  Due to available clock dividers final samplerate may differ from
+	  the configured value.
+
+config I2S_TEST_88200_TOLERANCE
+	int "Maximal +/- deviation from expected result at 88200 Sps"
+	default 55
+	help
+	  Test is not ideal. Use this Kconfig to set tolerance.
+
+config I2S_TEST_96000_SKIP
+	bool "Skip testing at 96000 samples per second"
+	help
+	  When set to 'y', testing at 96000 samples per second will be skipped.
+
+config I2S_TEST_96000_DIVIDER
+	int "Expected clock divider value"
+	default 393428992
+	help
+	  I2S driver calculates clock divider value that sets requested samplerate.
+	  Test compares if value calculated by the driver matches with this Kconfig.
+
+config I2S_TEST_96000_EXPECTED
+	int "Expected samplerate for 96000 Sps"
+	default 100000
+	help
+	  Due to available clock dividers final samplerate may differ from
+	  the configured value.
+
+config I2S_TEST_96000_TOLERANCE
+	int "Maximal +/- deviation from expected result at 96000 Sps"
+	default 60
+	help
+	  Test is not ideal. Use this Kconfig to set tolerance.
+
+source "Kconfig.zephyr"
