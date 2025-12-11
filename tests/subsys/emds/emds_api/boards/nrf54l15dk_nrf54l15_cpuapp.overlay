@@ -1,0 +1,22 @@
+/delete-node/ &storage_partition;
+
+&cpuapp_rram {
+	reg = <0x0 DT_SIZE_K(1524)>;
+
+	partitions {
+		storage_partition: partition@15c000 {
+			label = "storage";
+			reg = <0x15c000 0x2000>;
+		};
+
+		emds_partition_0: partition@163000 {
+			label = "emds-0";
+			reg = <0x00163000 0x00001000>;
+		};
+
+		emds_partition_1: partition@164000 {
+			label = "emds-1";
+			reg = <0x00164000 0x00001000>;
+		};
+	};
+};
