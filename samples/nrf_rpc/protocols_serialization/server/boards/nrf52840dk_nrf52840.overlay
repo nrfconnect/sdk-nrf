@@ -1,9 +1,10 @@
-/* Copyright (c) 2024 Nordic Semiconductor ASA
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- / {
+/ {
 	chosen {
 		nordic,rpc-uart = &uart1;
 	};
@@ -11,6 +12,22 @@
 	aliases {
 		rpc-alive-led = &led0;
 		fatal-error-trigger = &button0;
+	};
+};
+
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		storage_partition: partition@fb000 {
+			label = "storage";
+			reg = <0x000fb000 0x00002000>;
+		};
+
+		coredump_partition: partition@fd000 {
+			label = "";
+			reg = <0x000fd000 0x00003000>;
+		};
 	};
 };
 
