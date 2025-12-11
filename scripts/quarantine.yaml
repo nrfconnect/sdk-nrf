@@ -120,3 +120,9 @@
   platforms:
     - nrf7120pdk/nrf7120/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-8621 GPPI changes also by NCS 3.2"
+
+- scenarios:
+    - nrf.extended.sample.subsys.settings.zms
+  platforms:
+    - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36852"
