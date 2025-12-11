@@ -1,0 +1,137 @@
+common:
+  depends_on:
+    - i2s
+    - gpio
+  tags:
+    - drivers
+    - i2s
+    - ci_tests_zephyr_drivers_i2s
+  harness: ztest
+
+tests:
+  drivers.i2s.samplerate:
+    harness_config:
+      fixture: gpio_loopback
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+  # divider set with enum instead of formula
+  drivers.i2s.samplerate.nrf52840:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - CONFIG_I2S_TEST_8000_DIVIDER=34340864
+      - CONFIG_I2S_TEST_16000_DIVIDER=68157440
+      - CONFIG_I2S_TEST_32000_DIVIDER=138412032
+      - CONFIG_I2S_TEST_44100_DIVIDER=184549376
+      - CONFIG_I2S_TEST_48000_DIVIDER=201326592
+      - CONFIG_I2S_TEST_88200_DIVIDER=369098752
+      - CONFIG_I2S_TEST_96000_DIVIDER=402653184
+    platform_allow:
+      - nrf52840dk/nrf52840
+    integration_platforms:
+      - nrf52840dk/nrf52840
+  # nrf54lm20 boards in CI have high deviation from each other
+  drivers.i2s.samplerate.nrf54lm20:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - CONFIG_I2S_TEST_8000_TOLERANCE=67
+      - CONFIG_I2S_TEST_16000_TOLERANCE=127
+      - CONFIG_I2S_TEST_32000_TOLERANCE=247
+      - CONFIG_I2S_TEST_44100_TOLERANCE=327
+      - CONFIG_I2S_TEST_48000_TOLERANCE=362
+      - CONFIG_I2S_TEST_88200_TOLERANCE=682
+      - CONFIG_I2S_TEST_96000_TOLERANCE=740
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  # ACLK allows to obtain more accurate actual samplerate
+  # ACLK instead of PCLK results in different divider and expected
+  drivers.i2s.samplerate.aclk:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/nrf5340dk_nrf5340_cpuapp_aclk.overlay"
+      - CONFIG_I2S_TEST_8000_EXPECTED=8018
+      - CONFIG_I2S_TEST_16000_EXPECTED=16036
+      - CONFIG_I2S_TEST_32000_EXPECTED=32072
+      - CONFIG_I2S_TEST_44100_EXPECTED=44100
+      - CONFIG_I2S_TEST_48000_EXPECTED=50400
+      - CONFIG_I2S_TEST_88200_EXPECTED=88200
+      - CONFIG_I2S_TEST_96000_EXPECTED=88200
+      - CONFIG_I2S_TEST_8000_DIVIDER=96296960
+      - CONFIG_I2S_TEST_16000_DIVIDER=190464000
+      - CONFIG_I2S_TEST_32000_DIVIDER=372662272
+      - CONFIG_I2S_TEST_44100_DIVIDER=505286656
+      - CONFIG_I2S_TEST_48000_DIVIDER=547127296
+      - CONFIG_I2S_TEST_88200_DIVIDER=954433536
+      - CONFIG_I2S_TEST_96000_DIVIDER=1028730880
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+  # PCLK is 16M instead of 32M -> different divider and expected values
+  drivers.i2s.samplerate.nrf54h:
+    harness_config:
+      fixture: i2s_loopback
+    extra_args:
+      - CONFIG_I2S_TEST_8000_EXPECTED=7936
+      - CONFIG_I2S_TEST_16000_EXPECTED=16129
+      - CONFIG_I2S_TEST_32000_EXPECTED=31250
+      - CONFIG_I2S_TEST_44100_EXPECTED=45454
+      - CONFIG_I2S_TEST_48000_EXPECTED=50000
+      - CONFIG_I2S_TEST_88200_EXPECTED=83333
+      - CONFIG_I2S_TEST_96000_EXPECTED=100000
+      - CONFIG_I2S_TEST_8000_TOLERANCE=29
+      - CONFIG_I2S_TEST_16000_TOLERANCE=56
+      - CONFIG_I2S_TEST_32000_TOLERANCE=102
+      - CONFIG_I2S_TEST_44100_TOLERANCE=135
+      - CONFIG_I2S_TEST_48000_TOLERANCE=149
+      - CONFIG_I2S_TEST_88200_TOLERANCE=222
+      - CONFIG_I2S_TEST_96000_TOLERANCE=263
+      - CONFIG_I2S_TEST_8000_DIVIDER=68173824
+      - CONFIG_I2S_TEST_16000_DIVIDER=135274496
+      - CONFIG_I2S_TEST_32000_DIVIDER=266350592
+      - CONFIG_I2S_TEST_44100_DIVIDER=362815488
+      - CONFIG_I2S_TEST_48000_DIVIDER=393428992
+      - CONFIG_I2S_TEST_88200_DIVIDER=696221696
+      - CONFIG_I2S_TEST_96000_DIVIDER=752402432
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+  # ACLK allows to obtain more accurate actual samplerate
+  # ACLK instead of PCLK results in different divider and expected
+  drivers.i2s.samplerate.nrf54h.aclk:
+    harness_config:
+      fixture: i2s_loopback
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_sck_audiopll.overlay"
+      - CONFIG_I2S_TEST_8000_EXPECTED=8018
+      - CONFIG_I2S_TEST_16000_EXPECTED=16036
+      - CONFIG_I2S_TEST_32000_EXPECTED=32072
+      - CONFIG_I2S_TEST_44100_EXPECTED=44099
+      - CONFIG_I2S_TEST_48000_EXPECTED=50399
+      - CONFIG_I2S_TEST_88200_EXPECTED=88199
+      - CONFIG_I2S_TEST_96000_EXPECTED=88199
+      - CONFIG_I2S_TEST_8000_TOLERANCE=11
+      - CONFIG_I2S_TEST_16000_TOLERANCE=23
+      - CONFIG_I2S_TEST_32000_TOLERANCE=37
+      - CONFIG_I2S_TEST_44100_TOLERANCE=49
+      - CONFIG_I2S_TEST_48000_TOLERANCE=54
+      - CONFIG_I2S_TEST_88200_TOLERANCE=87
+      - CONFIG_I2S_TEST_96000_TOLERANCE=87
+      - CONFIG_I2S_TEST_8000_DIVIDER=96296960
+      - CONFIG_I2S_TEST_16000_DIVIDER=190464000
+      - CONFIG_I2S_TEST_32000_DIVIDER=372662272
+      - CONFIG_I2S_TEST_44100_DIVIDER=505286656
+      - CONFIG_I2S_TEST_48000_DIVIDER=547127296
+      - CONFIG_I2S_TEST_88200_DIVIDER=954437632
+      - CONFIG_I2S_TEST_96000_DIVIDER=1028734976
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
