@@ -12,6 +12,10 @@
 	};
 };
 
+boot_partition: &cpuapp_boot_partition {
+	label = "mcuboot";
+};
+
 slot0_partition: &cpuapp_slot0_partition {
 	label = "image-0";
 };
