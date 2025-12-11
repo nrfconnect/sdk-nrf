@@ -126,7 +126,7 @@ When using MCUboot, you can store the storage partition for the secondary slot i
 
 To enable external flash with MCUboot, complete the following steps:
 
-1. Follow the instructions in :ref:`pm_external_flash`, which enables external flash use in the nRF5340 DK's DTS file.
+1. Follow the instructions in :ref:`pm_external_flash`, which enables external flash use in the board's DTS file.
 
 #. Enable the :kconfig:option:`SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY` sysbuild Kconfig option.
 
@@ -143,7 +143,7 @@ To enable external flash with MCUboot, complete the following steps:
    Lack of partition access will cause MCUboot to fail at runtime.
    For more details on configuring and enabling access to external flash devices, see :ref:`pm_external_flash`.
 
-The Quad Serial Peripheral Interface (QSPI) NOR flash memory driver supports these features, and it can access the QSPI external flash memory of the nRF52840 DK and nRF5340 DK.
+The Quad Serial Peripheral Interface (QSPI) NOR flash memory driver supports these features, and it can access the QSPI external flash memory of the nRF52840 DK, nRF5340 DK, nRF9160 DK and others.
 
 See the test in :file:`tests/modules/mcuboot/external_flash` for reference.
 This test passes both devicetree overlay files and Kconfig fragments to the MCUboot image through its :file:`sysbuild` folder.
