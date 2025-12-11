@@ -1,0 +1,20 @@
+/delete-node/ &storage_partition;
+
+&cpuapp_rram {
+	partitions {
+		storage_partition: partition@15c000 {
+			label = "storage";
+			reg = <0x15c000 0x2000>;
+		};
+
+		emds_partition_0: partition@15e000 {
+			label = "emds-0";
+			reg = <0x0015e000 0x00001000>;
+		};
+
+		emds_partition_1: partition@15f000 {
+			label = "emds-1";
+			reg = <0x0015f000 0x00001000>;
+		};
+	};
+};
