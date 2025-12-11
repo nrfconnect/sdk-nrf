@@ -8,7 +8,7 @@ common:
     regex:
       - "Enhanced ShockBurst prx sample"
       - "Initialization complete"
-      - "Setting up for packet receiption"
+      - "Setting up for packet reception"
   timeout: 15
 
 tests:
