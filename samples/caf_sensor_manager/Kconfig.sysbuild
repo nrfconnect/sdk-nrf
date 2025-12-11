@@ -4,14 +4,17 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "share/sysbuild/Kconfig"
+config PARTITION_MANAGER
+	default n
 
 config INCLUDE_REMOTE_IMAGE
 	bool "Include CAF Sensor Manager remote image"
 	default y
 
 config REMOTE_BOARD
-	string "The board used for remote target"
+	string
 	default "nrf5340dk/nrf5340/cpunet" if BOARD_NRF5340DK_NRF5340_CPUAPP
 	default "nrf5340dk/nrf5340/cpunet" if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 	default "nrf54h20dk/nrf54h20/cpuppr" if BOARD_NRF54H20DK_NRF54H20_CPUAPP
+
+source "share/sysbuild/Kconfig"
