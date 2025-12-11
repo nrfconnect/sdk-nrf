@@ -26,49 +26,36 @@ LOG_MODULE_DECLARE(closure_manager, CONFIG_CHIP_APP_LOG_LEVEL);
 using namespace chip;
 using namespace chip::app;
 using namespace chip::DeviceLayer;
+using namespace chip::app::Clusters;
 using namespace chip::app::Clusters::ClosureControl;
 using namespace chip::app::Clusters::Globals;
 
+namespace
+{
 /* If you plan to dynamically populate the maps change the ExactPos2Enum function to support that */
-static Nrf::FiniteMap<TargetPositionEnum, uint16_t, 5> sPositionMapTarget = { {
+constexpr Nrf::FiniteMap<TargetPositionEnum, uint16_t, 4> sPositionMapTarget = { {
 	{ TargetPositionEnum::kMoveToFullyClosed, 10000 },
 	{ TargetPositionEnum::kMoveToFullyOpen, 0 },
-	{ TargetPositionEnum::kMoveToPedestrianPosition, 0 },
-	{ TargetPositionEnum::kMoveToSignaturePosition, 0 },
+	{ TargetPositionEnum::kMoveToSignaturePosition, 4000 },
 	{ TargetPositionEnum::kMoveToVentilationPosition, 8000 },
 } };
 
-static Nrf::FiniteMap<CurrentPositionEnum, uint16_t, 5> sPositionMapCurr = { {
+constexpr Nrf::FiniteMap<CurrentPositionEnum, uint16_t, 4> sPositionMapCurr = { {
 	{ CurrentPositionEnum::kFullyClosed, 10000 },
 	{ CurrentPositionEnum::kFullyOpened, 0 },
-	{ CurrentPositionEnum::kOpenedForPedestrian, 0 },
-	{ CurrentPositionEnum::kOpenedAtSignature, 0 },
+	{ CurrentPositionEnum::kOpenedAtSignature, 4000 },
 	{ CurrentPositionEnum::kOpenedForVentilation, 8000 },
 } };
 
-static Nrf::FiniteMap<Clusters::Globals::ThreeLevelAutoEnum, uint16_t, 4> sSpeedMap = { {
-	{ Clusters::Globals::ThreeLevelAutoEnum::kLow, 1000 },
-	{ Clusters::Globals::ThreeLevelAutoEnum::kMedium, 2500 },
-	{ Clusters::Globals::ThreeLevelAutoEnum::kHigh, 5000 },
-	{ Clusters::Globals::ThreeLevelAutoEnum::kAuto, 2500 },
+constexpr Nrf::FiniteMap<ThreeLevelAutoEnum, uint16_t, 4> sSpeedMap = { {
+	{ ThreeLevelAutoEnum::kLow, 1000 },
+	{ ThreeLevelAutoEnum::kMedium, 2500 },
+	{ ThreeLevelAutoEnum::kHigh, 5000 },
+	{ ThreeLevelAutoEnum::kAuto, 2500 },
 } };
 
-namespace
-{
 constexpr uint32_t kCountdownTimeSeconds = 10;
 
-/* Define the Namespace and Tag for the endpoint */
-constexpr uint8_t kNamespaceClosure = 0x44;
-constexpr uint8_t kTagClosureGarageDoor = 0x05;
-
-/* Define the list of semantic tags for the endpoint */
-const Clusters::Descriptor::Structs::SemanticTagStruct::Type kClosureControlEndpointTagList[] = {
-	{ .namespaceID = kNamespaceClosure,
-	  .tag = kTagClosureGarageDoor,
-	  .label = chip::MakeOptional(DataModel::Nullable<chip::CharSpan>("Closure.GarageDoor"_span)) }
-};
-
-} // namespace
 CurrentPositionEnum ExactPos2Enum(uint16_t currPositionExact)
 {
 	/* This implementation assumes that the map is full (which it is) */
@@ -79,6 +66,7 @@ CurrentPositionEnum ExactPos2Enum(uint16_t currPositionExact)
 	}
 	return CurrentPositionEnum::kPartiallyOpened;
 }
+} // namespace
 
 ClosureManager::ClosureManager(IPhysicalDevice &device, chip::EndpointId closureEndpoint)
 	: mPhysicalDevice(device), mClosureControlEndpoint(closureEndpoint), mClosureEndpoint(closureEndpoint)
@@ -86,7 +74,9 @@ ClosureManager::ClosureManager(IPhysicalDevice &device, chip::EndpointId closure
 	mMainState = MainStateEnum::kStopped;
 	mCurrentState.position = chip::MakeOptional(CurrentPositionEnum::kFullyOpened);
 	mCurrentState.speed = chip::MakeOptional(ThreeLevelAutoEnum::kAuto);
-	mTargetState.speed = chip::MakeOptional(ThreeLevelAutoEnum::kAuto);
+
+	/* After the reboot data target should be null. */
+	mTargetState.SetNull();
 }
 
 CHIP_ERROR ClosureManager::Init()
@@ -100,9 +90,7 @@ CHIP_ERROR ClosureManager::Init()
 	ReturnErrorOnFailure(mClosureControlEndpoint.Init());
 
 	/* Set Taglist for Closure endpoints */
-	ReturnErrorOnFailure(SetTagList(
-		mClosureEndpoint,
-		Span<const Clusters::Descriptor::Structs::SemanticTagStruct::Type>(kClosureControlEndpointTagList)));
+	ReturnErrorOnFailure(SetTagList(mClosureEndpoint, mPhysicalDevice.GetSemanticTagList()));
 
 	ReturnErrorOnFailure(mClosureControlEndpoint.WriteAllAttributes(mMainState, mCurrentState, mTargetState));
 
@@ -124,16 +112,46 @@ chip::Protocols::InteractionModel::Status
 ClosureManager::OnMoveToCommand(const chip::Optional<TargetPositionEnum> position, const chip::Optional<bool> latch,
 				const chip::Optional<ThreeLevelAutoEnum> speed)
 {
-	if (!position.HasValue()) {
-		return chip::Protocols::InteractionModel::Status::Failure;
+	/* Currently we do not support latching. */
+	if (mClosureControlEndpoint.GetLogic().GetConformance().HasFeature(ClosureControl::Feature::kMotionLatching) &&
+	    latch.HasValue()) {
+		return chip::Protocols::InteractionModel::Status::UnsupportedCommand;
 	}
-	auto pos = sPositionMapTarget[position.Value()];
-	auto spd = sSpeedMap[speed.ValueOr(mCurrentState.speed.Value())];
-	mPhysicalDevice.MoveTo(pos, spd);
 
-	mMainState = MainStateEnum::kMoving;
-	mTargetState.position = position;
-	mTargetState.speed = speed;
+	/* Determine target position.
+	 * If position argument is provided, use it and have target position as a fallback.
+	 */
+	chip::Optional<TargetPositionEnum> targetPosition = NullOptional;
+	if (position.HasValue()) {
+		targetPosition.SetValue(position.Value());
+	} else if (!mTargetState.IsNull() && mTargetState.Value().position.HasValue() &&
+		   !mTargetState.Value().position.Value().IsNull()) {
+		targetPosition.SetValue(mTargetState.Value().position.Value().Value());
+	}
+
+	/* If we have a target position, initiate movement. */
+	if (targetPosition.HasValue()) {
+		auto pos = sPositionMapTarget.TryAt(targetPosition.Value());
+		if (!pos.has_value()) {
+			LOG_ERR("Target position not found in map");
+			return chip::Protocols::InteractionModel::Status::ConstraintError;
+		}
+
+		auto spd = sSpeedMap.TryAt(speed.ValueOr(mCurrentState.speed.Value()));
+		if (!spd.has_value()) {
+			LOG_ERR("Speed value not found in map");
+			return chip::Protocols::InteractionModel::Status::ConstraintError;
+		}
+
+		mPhysicalDevice.MoveTo(pos.value(), spd.value());
+
+		mMainState = MainStateEnum::kMoving;
+		mTargetState.SetNonNull(GenericOverallTargetState(
+			targetPosition, NullOptional, MakeOptional(speed.ValueOr(mCurrentState.speed.Value()))));
+		mCurrentState.secureState.SetNonNull(false);
+	}
+
+	mCurrentState.speed.SetValue(speed.ValueOr(mCurrentState.speed.ValueOr(ThreeLevelAutoEnum::kAuto)));
 
 	auto err = mClosureControlEndpoint.WriteAllAttributes(mMainState, mCurrentState, mTargetState);
 	if (err != CHIP_NO_ERROR) {
@@ -146,11 +164,21 @@ ClosureManager::OnMoveToCommand(const chip::Optional<TargetPositionEnum> positio
 void ClosureManager::OnMovementStopped(uint16_t currentPosition)
 {
 	mCurrentState.position = MakeOptional(ExactPos2Enum(currentPosition));
-	mCurrentState.speed = mTargetState.speed;
 	mMainState = MainStateEnum::kStopped;
-	mTargetState.position.ClearValue();
-	mTargetState.speed.ClearValue();
 	mMoveCountdownTime = 0;
+
+	auto currPosition = sPositionMapCurr.TryAt(CurrentPositionEnum::kFullyClosed);
+	if (currPosition.has_value() && currentPosition == currPosition.value()) {
+		mCurrentState.secureState.SetNonNull(true);
+	}
+
+	if (!mTargetState.IsNull() && mTargetState.Value().position.HasValue()) {
+		auto targetPosOpt = sPositionMapTarget.TryAt(mTargetState.Value().position.Value().Value());
+		if (targetPosOpt.has_value() && targetPosOpt.value() == currentPosition) {
+			mTargetState.SetNull();
+		}
+	}
+
 	auto err = mClosureControlEndpoint.OnMovementStopped(mMainState, mCurrentState, mTargetState);
 	if (err != CHIP_NO_ERROR) {
 		LOG_ERR("Unable to update attributes for closureControlEndpoint after stop, error code: %lx",

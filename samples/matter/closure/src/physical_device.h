@@ -5,6 +5,7 @@
  */
 
 #pragma once
+#include <app-common/zap-generated/cluster-objects.h>
 #include <lib/core/CHIPError.h>
 
 #include "physical_device_observer.h"
@@ -17,6 +18,8 @@
  */
 class IPhysicalDevice {
 public:
+	using SemanticTagList = chip::Span<const chip::app::Clusters::Descriptor::Structs::SemanticTagStruct::Type>;
+
 	virtual ~IPhysicalDevice() = default;
 
 	IPhysicalDevice() = default;
@@ -35,6 +38,12 @@ public:
 	 * @brief Used to stop movement
 	 */
 	virtual CHIP_ERROR Stop() = 0;
+
+	/**
+	 * @brief Used to get the semantic tag for the physical device
+	 * @return Clusters::Descriptor::Structs::SemanticTagStruct::Type semantic tag for the physical device
+	 */
+	virtual SemanticTagList GetSemanticTagList() const = 0;
 
 protected:
 	IPhysicalDeviceObserver *mObserver = nullptr;

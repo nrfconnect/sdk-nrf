@@ -87,7 +87,7 @@ private:
 	IPhysicalDevice &mPhysicalDevice;
 	MainStateEnum mMainState;
 	GenericOverallCurrentState mCurrentState;
-	GenericOverallTargetState mTargetState;
+	chip::app::DataModel::Nullable<GenericOverallTargetState> mTargetState;
 
 	ClosureControlEndpoint mClosureControlEndpoint;
 	const chip::EndpointId mClosureEndpoint;

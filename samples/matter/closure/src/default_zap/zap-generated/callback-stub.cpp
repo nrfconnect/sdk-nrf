@@ -43,6 +43,9 @@ void emberAfClusterInitCallback(EndpointId endpoint, ClusterId clusterId)
 	case app::Clusters::Descriptor::Id:
 		emberAfDescriptorClusterInitCallback(endpoint);
 		break;
+	case app::Clusters::DiagnosticLogs::Id:
+		emberAfDiagnosticLogsClusterInitCallback(endpoint);
+		break;
 	case app::Clusters::GeneralCommissioning::Id:
 		emberAfGeneralCommissioningClusterInitCallback(endpoint);
 		break;
@@ -66,6 +69,15 @@ void emberAfClusterInitCallback(EndpointId endpoint, ClusterId clusterId)
 		break;
 	case app::Clusters::OperationalCredentials::Id:
 		emberAfOperationalCredentialsClusterInitCallback(endpoint);
+		break;
+	case app::Clusters::SoftwareDiagnostics::Id:
+		emberAfSoftwareDiagnosticsClusterInitCallback(endpoint);
+		break;
+	case app::Clusters::ThreadNetworkDiagnostics::Id:
+		emberAfThreadNetworkDiagnosticsClusterInitCallback(endpoint);
+		break;
+	case app::Clusters::WiFiNetworkDiagnostics::Id:
+		emberAfWiFiNetworkDiagnosticsClusterInitCallback(endpoint);
 		break;
 	default:
 		// Unrecognized cluster ID
@@ -94,6 +106,11 @@ void __attribute__((weak)) emberAfClosureControlClusterInitCallback(EndpointId e
 	(void)endpoint;
 }
 void __attribute__((weak)) emberAfDescriptorClusterInitCallback(EndpointId endpoint)
+{
+	// To prevent warning
+	(void)endpoint;
+}
+void __attribute__((weak)) emberAfDiagnosticLogsClusterInitCallback(EndpointId endpoint)
 {
 	// To prevent warning
 	(void)endpoint;
@@ -134,6 +151,21 @@ void __attribute__((weak)) emberAfOtaSoftwareUpdateRequestorClusterInitCallback(
 	(void)endpoint;
 }
 void __attribute__((weak)) emberAfOperationalCredentialsClusterInitCallback(EndpointId endpoint)
+{
+	// To prevent warning
+	(void)endpoint;
+}
+void __attribute__((weak)) emberAfSoftwareDiagnosticsClusterInitCallback(EndpointId endpoint)
+{
+	// To prevent warning
+	(void)endpoint;
+}
+void __attribute__((weak)) emberAfThreadNetworkDiagnosticsClusterInitCallback(EndpointId endpoint)
+{
+	// To prevent warning
+	(void)endpoint;
+}
+void __attribute__((weak)) emberAfWiFiNetworkDiagnosticsClusterInitCallback(EndpointId endpoint)
 {
 	// To prevent warning
 	(void)endpoint;

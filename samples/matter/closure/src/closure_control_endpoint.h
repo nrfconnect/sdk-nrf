@@ -34,7 +34,8 @@ class ClosureManager;
  * @param mManager Pointer to the ClosureManager
  * @param mLogic Pointer to the ClusterLogic (Matter stack implementation of ClosureControl)
  */
-class ClosureControlDelegate : public chip::app::Clusters::ClosureControl::DelegateBase {
+class ClosureControlDelegate : public chip::app::Clusters::ClosureControl::DelegateBase,
+			       public chip::TestEventTriggerHandler {
 	using MainStateEnum = chip::app::Clusters::ClosureControl::MainStateEnum;
 	using ThreeLevelAutoEnum = chip::app::Clusters::Globals::ThreeLevelAutoEnum;
 	using GenericOverallCurrentState = chip::app::Clusters::ClosureControl::GenericOverallCurrentState;
@@ -50,6 +51,7 @@ class ClosureControlDelegate : public chip::app::Clusters::ClosureControl::Deleg
 public:
 	ClosureControlDelegate() {}
 
+	/* DelegateBase overrides */
 	Status HandleStopCommand() override;
 	Status HandleMoveToCommand(const chip::Optional<TargetPositionEnum> &position,
 				   const chip::Optional<bool> &latch,
@@ -61,8 +63,11 @@ public:
 	ElapsedS GetMovingCountdownTime() override;
 	ElapsedS GetWaitingForMotionCountdownTime() override;
 
-	void SetLogic(ClusterLogic *logic) { mLogic = logic; }
+	/* TestEventTriggerHandler overrides */
+	CHIP_ERROR HandleEventTrigger(uint64_t eventTrigger) override;
 
+	/* Delegate specific functions */
+	void SetLogic(ClusterLogic *logic) { mLogic = logic; }
 	ClusterLogic *GetLogic() const { return mLogic; }
 
 private:
@@ -113,7 +118,7 @@ public:
 	 */
 
 	CHIP_ERROR WriteAllAttributes(const MainStateEnum &mainState, const GenericOverallCurrentState &currentState,
-				      const GenericOverallTargetState &targetState);
+				      const chip::app::DataModel::Nullable<GenericOverallTargetState> &targetState);
 	/**
 	 * @brief Initializes the ClosureControlEndpoint instance.
 	 *
@@ -136,10 +141,10 @@ public:
 	ClusterLogic &GetLogic() { return mLogic; }
 
 	CHIP_ERROR OnMovementStopped(const MainStateEnum &mainState, const GenericOverallCurrentState &currentState,
-				     const GenericOverallTargetState &targetState);
+				     const chip::app::DataModel::Nullable<GenericOverallTargetState> &targetState);
 
 	CHIP_ERROR OnMovementUpdate(const MainStateEnum &mainState, const GenericOverallCurrentState &currentState,
-				    const GenericOverallTargetState &targetState);
+				    const chip::app::DataModel::Nullable<GenericOverallTargetState> &targetState);
 
 private:
 	EndpointId mEndpoint = chip::kInvalidEndpointId;
