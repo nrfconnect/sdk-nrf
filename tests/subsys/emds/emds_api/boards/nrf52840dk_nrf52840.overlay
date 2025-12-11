@@ -1,0 +1,20 @@
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		storage_partition: partition@fc000 {
+			label = "storage";
+			reg = <0x000fc000 0x00002000>;
+		};
+
+		emds_partition_0: partition@fe000 {
+			label = "emds-0";
+			reg = <0x000fe000 0x00001000>;
+		};
+
+		emds_partition_1: partition@ff000 {
+			label = "emds-1";
+			reg = <0x000ff000 0x00001000>;
+		};
+	};
+};
