@@ -26,6 +26,9 @@ static const cracen_builtin_ikg_key_policy_t g_builtin_ikg_policy[] = {
 #ifdef TFM_SP_PS
 	{.owner = TFM_SP_PS, .key_slot = TFM_BUILTIN_KEY_ID_HUK},
 #endif /* TFM_SP_PS */
+#ifdef TFM_SP_PS_TEST
+	{.owner = TFM_SP_PS_TEST, .key_slot = TFM_BUILTIN_KEY_ID_HUK},
+#endif /* TFM_SP_PS_TEST */
 #ifdef TFM_SP_INITIAL_ATTESTATION
 	{.owner = TFM_SP_INITIAL_ATTESTATION, .key_slot = TFM_BUILTIN_KEY_ID_IAK}
 #endif /* TFM_SP_INITIAL_ATTESTATION */
