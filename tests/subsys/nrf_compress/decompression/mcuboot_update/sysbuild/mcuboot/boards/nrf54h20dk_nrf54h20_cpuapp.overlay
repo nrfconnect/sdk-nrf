@@ -4,10 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../../../boards/nrf54h20dk_nrf54h20_cpuapp.overlay"
+#include "../../nrf54h20dk_nrf54h20_cpuapp_memory_map.dtsi"
 
 / {
 	chosen {
 		zephyr,code-partition = &boot_partition;
 	};
+};
+
+boot_partition: &cpuapp_boot_partition {
+	label = "mcuboot";
 };
