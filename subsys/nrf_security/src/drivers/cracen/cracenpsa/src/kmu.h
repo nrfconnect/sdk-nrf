@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include <cracen_psa.h>
 
-#define CRACEN_KMU_MAX_KEY_SIZE	 32
+#define CRACEN_KMU_MAX_KEY_SIZE	 48
 #define CRACEN_KMU_SLOT_KEY_SIZE 16
 
 enum kmu_metadata_key_bits {
@@ -17,7 +17,7 @@ enum kmu_metadata_key_bits {
 	METADATA_ALG_KEY_BITS_255 = 3,
 	METADATA_ALG_KEY_BITS_256 = 4,
 	METADATA_ALG_KEY_BITS_384_SEED = 5,
-	METADATA_ALG_KEY_BITS_RESERVED_1 = 6,
+	METADATA_ALG_KEY_BITS_384 = 6,
 	METADATA_ALG_KEY_BITS_RESERVED_2 = 7,
 };
 
@@ -35,7 +35,7 @@ typedef struct {
 #define PROTECTED_RAM_INVALIDATION_DATA_SLOT1 248
 #define PROTECTED_RAM_INVALIDATION_DATA_SLOT2 249
 
-extern uint8_t kmu_push_area[64];
+extern uint8_t kmu_push_area[96];
 
 /**
  * @brief Callback function that prepares a key for usage by Cracen.
