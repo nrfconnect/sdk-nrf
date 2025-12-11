@@ -5,6 +5,6 @@
 #
 
 config PARTITION_MANAGER
-	default n
+	default n if !BOARD_IS_NON_SECURE
 
 source "share/sysbuild/Kconfig"
