@@ -14,7 +14,11 @@
 
 #define BLOCK_SIZE			CONFIG_I2S_TEST_BUFFER_SIZE
 
+#if defined(CONFIG_COVERAGE)
+#define NUM_BLOCKS 2
+#else
 #define NUM_BLOCKS 4
+#endif
 #define TIMEOUT 2000
 
 #ifdef CONFIG_NOCACHE_MEMORY
