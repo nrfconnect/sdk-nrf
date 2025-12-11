@@ -1463,7 +1463,9 @@ psa_status_t generate_key_for_kmu(const psa_key_attributes_t *attributes, uint8_
 
 	if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type) &&
 	    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_GENERATE)) {
-		status = generate_ecc_private_key(attributes, key, sizeof(key), key_buffer_length);
+		status = generate_ecc_private_key(attributes, key,
+						  PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)),
+						  key_buffer_length);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}

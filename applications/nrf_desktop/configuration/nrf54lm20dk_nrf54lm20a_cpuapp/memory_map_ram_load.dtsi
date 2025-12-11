@@ -48,10 +48,10 @@
 
 		/* The KMU RAM section must be placed at the very beginning of the physical
 		 * RAM due to the dependency on the nrfutil device tool and its KMU
-		 * provisioning functionality. The section must also have size of 64 bytes.
+		 * provisioning functionality. The section must also have size of 96 bytes.
 		 */
 		nrf_kmu_reserved_push_area: memory@20000000 {
-			reg = <0x20000000 0x40>;
+			reg = <0x20000000 0x60>;
 			compatible = "zephyr,memory-region", "mmio-sram";
 			zephyr,memory-region = "nrf_kmu_reserved_push_area";
 			status = "okay";
@@ -62,9 +62,9 @@
 		 * the application. This region is retained across reboots only if the
 		 * CONFIG_RETAINED_MEM_NRF_RAM_CTRL Kconfig option is enabled.
 		 */
-		cpuapp_sram_retained_mem_region: memory@20000040 {
+		cpuapp_sram_retained_mem_region: memory@20000060 {
 			compatible = "zephyr,memory-region", "mmio-sram";
-			reg = <0x20000040 0x100>;
+			reg = <0x20000060 0x100>;
 			zephyr,memory-region = "RetainedMem";
 			status = "okay";
 
