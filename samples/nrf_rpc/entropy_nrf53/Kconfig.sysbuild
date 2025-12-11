@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config PARTITION_MANAGER
+	default n if !BOARD_IS_NON_SECURE
+
 if SUPPORT_NETCORE
 
 config SUPPORT_NETCORE_REMOTE
