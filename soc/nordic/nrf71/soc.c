@@ -205,6 +205,9 @@ void wifi_setup(void)
 
 void soc_early_init_hook(void)
 {
+#if defined(CONFIG_PWR_ANTSWC_FROM_GPIO)
+	*(volatile uint32_t *) PWR_ANTSWC_REG |= PWR_ANTSWC_ENABLE;
+#endif
 	/* Update the SystemCoreClock global variable with current core clock
 	 * retrieved from hardware state.
 	 */
