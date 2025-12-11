@@ -10,19 +10,28 @@
 	};
 };
 
+/delete-node/ &cpuapp_boot_partition;
 /delete-node/ &cpuapp_slot0_partition;
 /delete-node/ &cpuapp_slot1_partition;
 
 &mram1x {
 	partitions {
-		cpuapp_slot0_partition: partition@40000 {
-			reg = <0x40000 DT_SIZE_K(580)>;
+		cpuapp_boot_partition: partition@30000 {
+			reg = <0x30000 DT_SIZE_K(72)>;
 		};
 
-		cpuapp_slot1_partition: partition@D1000 {
-			reg = <0xD1000 DT_SIZE_K(580)>;
+		cpuapp_slot0_partition: partition@42000 {
+			reg = <0x42000 DT_SIZE_K(580)>;
+		};
+
+		cpuapp_slot1_partition: partition@D3000 {
+			reg = <0xD3000 DT_SIZE_K(580)>;
 		};
 	};
+};
+
+boot_partition: &cpuapp_boot_partition {
+	label = "mcuboot";
 };
 
 slot0_partition: &cpuapp_slot0_partition {
