@@ -7,10 +7,12 @@
 menu "Partition Manager"
 	depends on SOC_SERIES_NRF52X || SOC_SERIES_NRF53X || SOC_NRF9131_LACA || \
 		SOC_NRF9151_LACA || SOC_NRF9160_SICA || SOC_NRF9161_LACA || SOC_NRF54L05 || \
-		SOC_NRF54L10 || SOC_NRF54L15 || SOC_NRF54LM20A || SOC_NRF54LV10A_ENGA
+		SOC_NRF54L10 || SOC_NRF54L15 || SOC_NRF54LM20A || SOC_NRF54LV10A_ENGA || \
+		SOC_NRF54LS05B_ENGA
 
 config PARTITION_MANAGER_ENABLED
 	bool "Partition manager is enabled (read-only option)"
+	select DEPRECATED if SOC_NRF54LS05B_ENGA
 	help
 	  Option which can be checked to see whether or not the
 	  partition manager is enabled in the current build. Note that this
