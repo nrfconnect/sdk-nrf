@@ -12,11 +12,23 @@
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace chip;
+using namespace chip::app::Clusters::Descriptor::Structs;
 using namespace chip::DeviceLayer;
 
 static constexpr uint32_t kMoveIntervalMs = 100;
 
 GarageDoorImpl::GarageDoorImpl(const pwm_dt_spec *spec) : mSpec(spec), mCurrentPosition("cp") {}
+
+const Span<const SemanticTagStruct::Type> GarageDoorImpl::GetSemanticTagList() const
+{
+	static SemanticTagStruct::Type kGarageDoorEndpointTagList[] = {
+		{ .namespaceID = kNamespaceClosure,
+		  .tag = kTagClosureGarageDoor,
+		  .label = chip::MakeOptional(
+			  chip::app::DataModel::Nullable<chip::CharSpan>("Closure.GarageDoor"_span)) }
+	};
+	return Span<const SemanticTagStruct::Type>(kGarageDoorEndpointTagList);
+}
 
 CHIP_ERROR GarageDoorImpl::Init()
 {

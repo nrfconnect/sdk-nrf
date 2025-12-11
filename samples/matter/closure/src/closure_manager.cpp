@@ -26,6 +26,7 @@ LOG_MODULE_DECLARE(closure_manager, CONFIG_CHIP_APP_LOG_LEVEL);
 using namespace chip;
 using namespace chip::app;
 using namespace chip::DeviceLayer;
+using namespace chip::app::Clusters;
 using namespace chip::app::Clusters::ClosureControl;
 using namespace chip::app::Clusters::Globals;
 
@@ -46,27 +47,16 @@ static Nrf::FiniteMap<CurrentPositionEnum, uint16_t, 5> sPositionMapCurr = { {
 	{ CurrentPositionEnum::kOpenedForVentilation, 8000 },
 } };
 
-static Nrf::FiniteMap<Clusters::Globals::ThreeLevelAutoEnum, uint16_t, 4> sSpeedMap = { {
-	{ Clusters::Globals::ThreeLevelAutoEnum::kLow, 1000 },
-	{ Clusters::Globals::ThreeLevelAutoEnum::kMedium, 2500 },
-	{ Clusters::Globals::ThreeLevelAutoEnum::kHigh, 5000 },
-	{ Clusters::Globals::ThreeLevelAutoEnum::kAuto, 2500 },
+static Nrf::FiniteMap<ThreeLevelAutoEnum, uint16_t, 4> sSpeedMap = { {
+	{ ThreeLevelAutoEnum::kLow, 1000 },
+	{ ThreeLevelAutoEnum::kMedium, 2500 },
+	{ ThreeLevelAutoEnum::kHigh, 5000 },
+	{ ThreeLevelAutoEnum::kAuto, 2500 },
 } };
 
 namespace
 {
 constexpr uint32_t kCountdownTimeSeconds = 10;
-
-/* Define the Namespace and Tag for the endpoint */
-constexpr uint8_t kNamespaceClosure = 0x44;
-constexpr uint8_t kTagClosureGarageDoor = 0x05;
-
-/* Define the list of semantic tags for the endpoint */
-const Clusters::Descriptor::Structs::SemanticTagStruct::Type kClosureControlEndpointTagList[] = {
-	{ .namespaceID = kNamespaceClosure,
-	  .tag = kTagClosureGarageDoor,
-	  .label = chip::MakeOptional(DataModel::Nullable<chip::CharSpan>("Closure.GarageDoor"_span)) }
-};
 
 } // namespace
 CurrentPositionEnum ExactPos2Enum(uint16_t currPositionExact)
@@ -100,9 +90,7 @@ CHIP_ERROR ClosureManager::Init()
 	ReturnErrorOnFailure(mClosureControlEndpoint.Init());
 
 	/* Set Taglist for Closure endpoints */
-	ReturnErrorOnFailure(SetTagList(
-		mClosureEndpoint,
-		Span<const Clusters::Descriptor::Structs::SemanticTagStruct::Type>(kClosureControlEndpointTagList)));
+	ReturnErrorOnFailure(SetTagList(mClosureEndpoint, mPhysicalDevice.GetSemanticTagList()));
 
 	ReturnErrorOnFailure(mClosureControlEndpoint.WriteAllAttributes(mMainState, mCurrentState, mTargetState));
 
