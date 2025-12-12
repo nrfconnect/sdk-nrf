@@ -77,6 +77,8 @@ static void set_test_pattern(uint8_t *tx_buffer)
 
 ZTEST(uart_fifo_flush, test_rx_amount_handling)
 {
+	uint32_t rx_amount;
+
 	set_test_pattern(tx_buffer);
 	memset(rx_buffer_a, 0xFF, RX_BUFFER_A_SIZE);
 	memset(rx_buffer_b, 0xFF, RX_BUFFER_B_SIZE);
@@ -109,13 +111,18 @@ ZTEST(uart_fifo_flush, test_rx_amount_handling)
 	}
 	uart_rx_disable(uart_dev);
 	TC_PRINT("Transmission done\n");
-	zassert_equal(nrf_uarte_rx_amount_get(uart_reg), 0,
+	/* With STM logging some dealy is required before reading the register */
+	k_msleep(SLEEP_TIME_MS);
+	rx_amount = nrf_uarte_rx_amount_get(uart_reg);
+	TC_PRINT("RX amount: %u\n", rx_amount);
+	zassert_equal(rx_amount, 0,
 		      "RX AMOUNT should be 0 after RX disable\n");
 }
 
 void *test_setup(void)
 {
 	zassert_true(device_is_ready(uart_dev), "UART device is not ready");
+	TC_PRINT("Platform: %s\n", CONFIG_BOARD_TARGET);
 
 	return NULL;
 }
