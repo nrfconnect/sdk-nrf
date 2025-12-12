@@ -316,7 +316,6 @@
 
 .. _`Nordic nRF9151 DK`:
 .. _`nRF9151 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF9151-DK
-.. _`nRF9151 SMA DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF9151-SMA-DK
 .. _`nRF9151 DK Downloads`: https://www.nordicsemi.com/Products/Development-hardware/nRF9151-DK/Download?lang=en#infotabs
 
 .. _`Nordic nRF9151 SMA DK`:
