@@ -1,0 +1,10 @@
+tests:
+  bluetooth.custom_ltk:
+    build_only: true
+    tags:
+      - bluetooth
+    platform_allow:
+      - nrf52_bsim/native
+    harness: bsim
+    harness_config:
+      bsim_exe_name: tests_bluetooth_bsim_custom_ltk_prj_conf
