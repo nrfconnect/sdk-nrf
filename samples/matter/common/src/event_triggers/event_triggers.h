@@ -20,7 +20,7 @@ class TestEventTrigger : public chip::TestEventTriggerDelegate {
 public:
 	using EventTriggerId = uint64_t;
 	using TriggerValueMask = uint32_t;
-	using TriggerValue = uint32_t;
+	using TriggerValue = uint64_t;
 	using TriggerSlot = uint16_t;
 
 	/* A function callback recipe for handling the event triggers
