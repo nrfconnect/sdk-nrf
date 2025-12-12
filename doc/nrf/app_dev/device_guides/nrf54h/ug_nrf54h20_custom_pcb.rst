@@ -73,9 +73,9 @@ BICR allows for the configuration of various components on your custom board, li
 
 When the BICR has not been programmed, all the registers contain ``0xFFFFFFFF``.
 
-The ``LFOSC.LFXOCAL`` register is used by the device to store the calibration of the LFXO.
+The LFOSC.LFXOCAL register is used by the device to store the calibration of the LFXO.
 
-When ``LFOSC.LFXOCAL`` is ``0xFFFFFFFF`` at device boot, the firmware recalibrates the LFXO oscillator and writes the calibration data to the ``LFOSC.LFXOCAL`` register.
+When LFOSC.LFXOCAL is ``0xFFFFFFFF`` at device boot, the firmware recalibrates the LFXO oscillator and writes the calibration data to the LFOSC.LFXOCAL register.
 This is useful when making a change on the PCB (for example, when changing the crystal).
 This initial calibration is only performed once.
 Each subsequent start will use this initial calibration as the starting point.
@@ -393,6 +393,11 @@ To manually program the generated :file:`bicr.hex` file to the SoC, use nRF Util
 You only need to follow this programming process once, assuming the PCB configuration applied through the BICR is correct the first time.
 However, it is also possible to reprogram the BICR while in the LCS ``RoT``.
 This can be useful, for example, when adjusting the configuration as the PCB design gets refined or modified, requiring the process to be repeated.
+
+.. note::
+   After you program the BICR, the LFCLK calibrates on first boot.
+   Do not expect accurate LFCLK timing for about 3.5 to 4 seconds.
+   If calibration does not complete, the system controller (sysctrl) starts calibration on the next boot.
 
 Validate the BICR binary
 ------------------------
