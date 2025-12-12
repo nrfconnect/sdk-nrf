@@ -1,7 +1,7 @@
 .. _abi_compatibility:
 
-ABI compatibility
-#################
+|ISE| ABI compatibility
+#######################
 
 .. contents::
    :local:
@@ -19,45 +19,17 @@ When ABI compatibility is maintained, binaries of one component can interface co
 For example, adding a new function to a library is typically an ABI-compatible change, as existing binaries remain functional.
 However, changes that affect data structure layouts, such as altering field order or size, break ABI compatibility because they change the memory layout expected by existing binaries.
 
+This page describes the ABI compatibility between the |NCS| and the |ISE| binaries.
+
 ABI compatibility for the nRF54H20 IronSide SE binaries
 *******************************************************
 
-To use the most recent version of the |NCS|, download and provision your nRF54H20 SoC-based device with the `latest nRF54H20 IronSide SE binaries`_ available.
+To use the most recent version of the |NCS|, *always* download and provision your nRF54H20 SoC-based device with the `latest nRF54H20 IronSide SE binaries`_ available.
+
+For information on legacy versions of the nRF54H20 SoC binaries based on SUIT, see :ref:`abi_compatibility_legacy`.
 
 .. caution::
    The nRF54H20 IronSide SE binaries do not support rollbacks to previous versions.
-
-Legacy ABI compatibility matrix for the nRF54H20 SoC binaries
-=============================================================
-
-The following table illustrates the legacy ABI compatibility between SUIT-based (pre-IronSide SE) nRF54H20 SoC binaries and older versions of the |NCS|:
-
-.. caution::
-   * Devices already provisioned using SUIT-based SoC binaries and in LCS ``RoT`` cannot be upgraded to IronSide SE.
-
-.. list-table::
-   :header-rows: 1
-
-   * - |NCS| versions
-     - Compatible nRF54H20 SoC binaries version based on SUIT
-       (no longer usable with the newest |NCS| versions)
-   * - |NCS| v3.0.0
-     - nRF54H20 SoC binaries v0.9.6, compatible with the nRF54H20 DK v0.9.0 and later DK revisions.
-   * - |NCS| v2.9.0-nRF54H20-1
-     - nRF54H20 SoC binaries v0.9.2, compatible with the nRF54H20 DK v0.9.0 and later DK revisions.
-   * - |NCS| v2.9.0
-     - nRF54H20 SoC binaries v0.7.0 for EngC DKs, compatible with the nRF54H20 DK v0.8.3 and later DK revisions.
-   * - |NCS| v2.8.0
-     - nRF54H20 SoC binaries v0.7.0 for EngC DKs, compatible with the nRF54H20 DK v0.8.3 and later DK revisions.
-       nRF54H20 SoC binaries v0.7.0 for EngB DKs, compatible with the nRF54H20 DKs ranging from v0.8.0 to v0.8.2.
-   * - |NCS| v2.7.99-cs2
-     - nRF54H20 SoC binaries v0.6.5
-   * - |NCS| v2.7.99-cs1
-     - nRF54H20 SoC binaries v0.6.2
-   * - |NCS| v2.7.0
-     - nRF54H20 SoC binaries v0.5.0
-   * - |NCS| v2.6.99-cs2
-     - nRF54H20 SoC binaries v0.3.3
 
 Provisioning the nRF54H20 SoC
 *****************************
@@ -74,6 +46,18 @@ nRF54H20 IronSide SE binaries changelog
 
 The following sections provide detailed lists of changes by component.
 
+IronSide Secure Element (IronSide SE) v23.1.2+21
+================================================
+
+Fixed
+-----
+
+* Fixed an issue in the temperature service that could delay sending temperature responses. (NCSDK-36336)
+
+Updated
+-------
+
+* Reduced MRAM latency when requesting ``no latency`` while MRAM was powered off by powering MRAM on immediately. (NRFX-8740)
 
 IronSide Secure Element (IronSide SE) v23.1.1+20
 ================================================
@@ -647,3 +631,37 @@ Updated
     This allows proper selection of low power modes when supplying nRF54H20 with an external 1.8V, even if the ``VDDIO_x`` are configured as SHORTED.
 
 * Temperature sensor coefficients.
+
+.. _abi_compatibility_legacy:
+
+Legacy ABI compatibility matrix for the nRF54H20 SoC binaries
+=============================================================
+
+The following table illustrates the legacy ABI compatibility between SUIT-based (pre-IronSide SE) nRF54H20 SoC binaries and older versions of the |NCS|:
+
+.. caution::
+   * Devices already provisioned using SUIT-based SoC binaries and in LCS ``RoT`` cannot be upgraded to IronSide SE.
+
+.. list-table::
+   :header-rows: 1
+
+   * - |NCS| versions
+     - Compatible nRF54H20 SoC binaries version based on SUIT
+       (no longer usable with the newest |NCS| versions)
+   * - |NCS| v3.0.0
+     - nRF54H20 SoC binaries v0.9.6, compatible with the nRF54H20 DK v0.9.0 and later DK revisions.
+   * - |NCS| v2.9.0-nRF54H20-1
+     - nRF54H20 SoC binaries v0.9.2, compatible with the nRF54H20 DK v0.9.0 and later DK revisions.
+   * - |NCS| v2.9.0
+     - nRF54H20 SoC binaries v0.7.0 for EngC DKs, compatible with the nRF54H20 DK v0.8.3 and later DK revisions.
+   * - |NCS| v2.8.0
+     - nRF54H20 SoC binaries v0.7.0 for EngC DKs, compatible with the nRF54H20 DK v0.8.3 and later DK revisions.
+       nRF54H20 SoC binaries v0.7.0 for EngB DKs, compatible with the nRF54H20 DKs ranging from v0.8.0 to v0.8.2.
+   * - |NCS| v2.7.99-cs2
+     - nRF54H20 SoC binaries v0.6.5
+   * - |NCS| v2.7.99-cs1
+     - nRF54H20 SoC binaries v0.6.2
+   * - |NCS| v2.7.0
+     - nRF54H20 SoC binaries v0.5.0
+   * - |NCS| v2.6.99-cs2
+     - nRF54H20 SoC binaries v0.3.3
