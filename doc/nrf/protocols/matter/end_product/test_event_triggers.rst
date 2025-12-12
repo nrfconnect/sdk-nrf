@@ -172,6 +172,31 @@ The following table lists the available triggers and their activation codes:
     - Simulate the jammed lock state.
     - ``0xFFFFFFFF32774000``
     - This activation code does not contain any value.
+  * - Closure control - Main state is error
+    - Only for :ref:`Matter Closure <matter_closure_sample>`
+    - Trigger a main state error.
+    - ``0x0104000000000000``
+    - No additional value supported.
+  * - Closure control - Main state is protected
+    - Only for :ref:`Matter Closure <matter_closure_sample>`
+    - Trigger a main state protected.
+    - ``0x0104000000000001``
+    - No additional value supported.
+  * - Closure control - Main state is disengaged
+    - Only for :ref:`Matter Closure <matter_closure_sample>`
+    - Trigger a main state disengaged.
+    - ``0x0104000000000002``
+    - No additional value supported.
+  * - Closure control - Main state is setup required
+    - Only for :ref:`Matter Closure <matter_closure_sample>`
+    - Trigger a main state setup required.
+    - ``0x0104000000000003``
+    - No additional value supported.
+  * - Closure control - Main state test clear
+    - Only for :ref:`Matter Closure <matter_closure_sample>`
+    - Trigger a main state test clear.
+    - ``0x0104000000000004``
+    - No additional value supported.
 
 .. _matter_test_event_triggers_setting_enable_key:
 

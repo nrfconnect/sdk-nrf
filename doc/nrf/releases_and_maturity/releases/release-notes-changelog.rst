@@ -156,7 +156,7 @@ Gazell
 Matter
 ------
 
-|no_changes_yet_note|
+* Updated the :ref:`matter_test_event_triggers_default_test_event_triggers` section with the new Closure Control cluster test event triggers.
 
 Matter fork
 +++++++++++
@@ -296,6 +296,10 @@ Matter samples
 * :ref:`matter_manufacturer_specific_sample`:
 
   * Added support for the ``NRF_MATTER_CLUSTER_INIT`` macro.
+
+* :ref:`matter_closure_sample`:
+
+  * Added support for the Closure Control cluster test event triggers.
 
 Networking samples
 ------------------
