@@ -4,12 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	chosen {
-		zephyr,code-partition = &cpuapp_slot0_partition;
-	};
-};
-
 /delete-node/ &cpuapp_boot_partition;
 /delete-node/ &cpuapp_slot0_partition;
 /delete-node/ &cpuapp_slot1_partition;
@@ -21,11 +15,11 @@
 		};
 
 		cpuapp_slot0_partition: partition@42000 {
-			reg = <0x42000 DT_SIZE_K(580)>;
+			reg = <0x42000 DT_SIZE_K(320)>;
 		};
 
-		cpuapp_slot1_partition: partition@D3000 {
-			reg = <0xD3000 DT_SIZE_K(580)>;
+		cpuapp_slot1_partition: partition@100000 {
+			reg = <0x100000 DT_SIZE_K(320)>;
 		};
 	};
 };
