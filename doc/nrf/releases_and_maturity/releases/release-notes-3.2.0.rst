@@ -20,7 +20,7 @@ Added the following features as supported:
 
 * Matter:
 
-  * Integration of `Matter 1.5.0 <CSA press release for Matter 1.5>`_ with dedicated sample for closures:
+  * Integration of `Matter 1.5.0 <CSA press release for Matter 1.5_>`_ with dedicated sample for closures:
 
     * Better closures - Supporting different motion types (sliding, rotating, opening), configurations (single/dual panels, nested mechanisms), and improved safety features (through precise position reporting).
     * Soil sensors - Introducing soil sensors that enable Matter-based valves and irrigation systems to optimize water use for plants.
@@ -50,7 +50,7 @@ Added the following features as supported:
 * Cellular and Non-Terrestrial Networks (NTN):
 
   * Added a new library for :ref:`Non-Terrestrial Network (NTN) related helpers <lib_ntn>`.
-  * The `nRF9151 SMA DK <nRF9151 SMA DK product page>`_, using the same board build configurations as the regular nRF9151 DK.
+  * The `nRF9151 SMA DK <nRF9151 SMA DK product page_>`_, using the same board build configurations as the regular nRF9151 DK.
   * Merged the PDN library and the :ref:`lte_lc_readme` library to ensure compatibility with the upcoming version of modem firmware that will bring experimental support for NTN.
 
 * nRF Desktop:
@@ -70,7 +70,7 @@ Added the following features as experimental:
 
 * nRF54L Series:
 
-  * This is the first release of |NCS| that brings experimental support for the `nRF54LV10 DK`_ and the `nRF54LV10A SoC <nRF54LV10A System-on-Chip>`_.
+  * This is the first release of |NCS| that brings experimental support for the `nRF54LV10 DK`_ and the `nRF54LV10A SoC <nRF54LV10A System-on-Chip_>`_.
   * Protocols with experimental support include:
 
     * Bluetooth LE, including Channel Sounding
@@ -109,7 +109,7 @@ Deprecated:
 Removed:
 
 * The Serial LTE Modem application.
-  The application is replaced by the `Serial Modem`_, which is available as an `nRF Connect Add-on <nRF Connect SDK Add-ons>`_.
+  The application is replaced by the `Serial Modem`_, which is available as an `nRF Connect Add-on <nRF Connect SDK Add-ons_>`_.
 
 Release tag
 ***********
@@ -215,7 +215,7 @@ Bootloaders and DFU
 Developing with nRF91 Series
 ============================
 
-* Added support for the `nRF9151 SMA development kit <nRF9151 SMA DK product page>`_.
+* Added support for the `nRF9151 SMA development kit <nRF9151 SMA DK product page_>`_.
 * Moved the sections about updating the firmware using the Programmer app to the `Programming nRF91 Series DK firmware`_ tools page.
 
 Developing with nRF54L Series
@@ -550,7 +550,7 @@ nRF Desktop
       This is done to improve performance.
     * The documentation for the module and default HID report providers now has a simplified getting started guide for updating HID input reports used by the application or introducing support for a new HID input report.
     * Fixed issues related to selective HID report subscription.
-      This resolves the `known issue <known issues for nRF Connect SDK v3.2.0>`_ NCSDK-35718.
+      This resolves the `known issue <known issues for nRF Connect SDK v3.2.0_>`_ NCSDK-35718.
 
 * Removed:
 
@@ -899,7 +899,7 @@ Matter samples
 * :ref:`matter_lock_sample` sample:
 
    * Added a callback for the auto-relock feature.
-     This resolves the `known issue <known issues for nRF Connect SDK v3.2.0>`_ KRKNWK-20691.
+     This resolves the `known issue <known issues for nRF Connect SDK v3.2.0_>`_ KRKNWK-20691.
    * Updated the NUS service to use the :kconfig:option:`CONFIG_BT_APP_PASSKEY` Kconfig option instead of the deprecated :kconfig:option:`CONFIG_BT_FIXED_PASSKEY` Kconfig option.
 
 Networking samples
