@@ -129,6 +129,11 @@ To prepare the nRF54H20 DK for its first use, you must manually program the requ
 
       nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware bicr.hex --core Application --serial-number <serial_number>
 
+.. note::
+   After you program the BICR, the LFCLK calibrates on first boot.
+   Do not expect accurate LFCLK timing for about 3.5–4 seconds.
+   If calibration does not complete, the system controller (sysctrl) starts calibration on the next boot.
+
 .. _ug_nrf54h20_SoC_binaries:
 .. _ug_nrf54h20_gs_bringup_soc_bin:
 
