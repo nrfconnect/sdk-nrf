@@ -304,6 +304,14 @@ static int32_t m_lfclk_release(void)
  */
 static struct nrf_clock_spec m_lfclk_specs;
 
+/* Minimum allowed HFXO startup time in microseconds. Use conservative value that comes from BICR.
+ *
+ * The time is used by MPSL to request the clock before radio event start. If the time is too short
+ * there will be no time run low priority thread to handle Zephyr PM subsystem configuration of
+ * no-latency event and request the MRAM to be always on.
+ */
+#define MPSL_PM_HFCLK_MINIMUM_ALLOWED_STARTUP_TIME_US 850
+
 #define HFCLK_LABEL DT_NODELABEL(hfxo)
 
 #if DT_NODE_HAS_STATUS(HFCLK_LABEL, okay) && DT_NODE_HAS_COMPAT(HFCLK_LABEL, nordic_nrf54h_hfxo)
@@ -570,6 +578,12 @@ int32_t mpsl_clock_ctrl_init(void)
 		LOG_ERR("HFCLK startup time is too large: %d [us]", startup_time_us);
 		return -NRF_EFAULT;
 	}
+#if defined(CONFIG_SOC_SERIES_NRF54HX) && defined(CONFIG_MPSL_USE_ZEPHYR_PM)
+	else if (startup_time_us < MPSL_PM_HFCLK_MINIMUM_ALLOWED_STARTUP_TIME_US) {
+		/* Override the startup time to the minimum allowed value. */
+		startup_time_us = MPSL_PM_HFCLK_MINIMUM_ALLOWED_STARTUP_TIME_US;
+	}
+#endif /* CONFIG_SOC_SERIES_NRF54HX && CONFIG_MPSL_USE_ZEPHYR_PM */
 
 	m_nrf_hfclk_ctrl_data.startup_time_us = startup_time_us;
 #else
