@@ -50,7 +50,6 @@ static void test_uart_latency(size_t buffer_size, uint32_t baudrate)
 	for (uint32_t repeat_counter = 0; repeat_counter < MEASUREMENT_REPEATS; repeat_counter++) {
 		memset(rx_test_buffer, 0xFF, MAX_BUFFER_SIZE);
 		counter_reset(tst_timer_dev);
-		dk_set_led_on(DK_LED1);
 		counter_start(tst_timer_dev);
 		for (uint32_t counter = 0; counter < buffer_size; counter++) {
 			uart_poll_out(uart_dev, test_data.tx_buffer[counter]);
@@ -61,7 +60,6 @@ static void test_uart_latency(size_t buffer_size, uint32_t baudrate)
 		}
 		counter_get_value(tst_timer_dev, &tst_timer_value);
 		counter_stop(tst_timer_dev);
-		dk_set_led_off(DK_LED1);
 
 		timer_value_us[repeat_counter] =
 			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
@@ -112,9 +110,8 @@ ZTEST(uart_latency, test_uart_latency_in_polling_mode_baud_921k6)
 void *test_setup(void)
 {
 	zassert_true(device_is_ready(uart_dev), "UART device is not ready");
-	zassert_equal(dk_leds_init(), 0, "DK leds init failed");
+	TC_PRINT("Platform: %s\n", CONFIG_BOARD_TARGET);
 
-	dk_set_led_off(DK_LED1);
 	return NULL;
 }
 
