@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config PARTITION_MANAGER
+	default n if !BOARD_IS_NON_SECURE
+
 choice APPCORE
 	default APPCORE_REMOTE_HCI if DTM_TRANSPORT_HCI
 	default APPCORE_REMOTE_SHELL if SOC_NRF5340_CPUNET
