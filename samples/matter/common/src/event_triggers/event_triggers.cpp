@@ -87,7 +87,7 @@ bool TestEventTrigger::DoesEnableKeyMatch(const chip::ByteSpan &enableKey) const
 	return !mEnableKey.empty() && mEnableKey.data_equal(enableKey);
 }
 
-CHIP_ERROR TestEventTrigger::HandleEventTriggers(uint64_t eventTrigger)
+CHIP_ERROR TestEventTrigger::HandleEventTriggers(EventTriggerId eventTrigger)
 {
 	/* Check if the Enable Key is set to the "disabled" value. */
 	if (!IsEventTriggerEnabled()) {
