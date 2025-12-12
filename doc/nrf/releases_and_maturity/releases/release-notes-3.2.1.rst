@@ -1,37 +1,95 @@
-:orphan:
+.. _ncs_release_notes_321:
 
-.. _ncs_release_notes_changelog:
-
-Changelog for |NCS| v3.2.99
-###########################
+|NCS| v3.2.1 Release Notes
+##########################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
+|NCS| delivers reference software and supporting libraries for developing low-power wireless applications with Nordic Semiconductor products in the nRF52, nRF53, nRF54, nRF70, and nRF91 Series.
+The SDK includes open source projects (TF-M, MCUboot, OpenThread, Matter, and the Zephyr RTOS), which are continuously integrated and redistributed with the SDK.
 
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+Release notes might refer to "experimental" support for features, which indicates that the feature is incomplete in functionality or verification, and can be expected to change in future releases.
+To learn more, see :ref:`software_maturity`.
 
-.. HOWTO
+Highlights
+**********
 
-   When adding a new PR, decide whether it needs an entry in the changelog.
-   If it does, update this page.
-   Add the sections you need, as only a handful of sections are kept when the changelog is cleaned.
-   The "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and other components that implement or support protocol functionality.
+This patch release adds the following changes on top of the :ref:`nRF Connect SDK v3.2.0 <ncs_release_notes_320>`:
+#TODO
+
+Sign up for the `nRF Connect SDK v3.2.1 webinar`_ to learn more about the new features.
+
+Release tag
+***********
+
+The release tag for the |NCS| manifest repository (|ncs_repo|) is **v3.2.1**.
+Check the :file:`west.yml` file for the corresponding tags in the project repositories.
+
+To use this release, check out the tag in the manifest repository and run ``west update``.
+See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
+
+For information on the included repositories and revisions, see `Repositories and revisions for v3.2.1`_.
+
+Integration test results
+************************
+
+The integration test results for this tag can be found in the following external artifactory:
+
+* `Twister test report for nRF Connect SDK v3.2.1`_
+* `Hardware test report for nRF Connect SDK v3.2.1`_
+
+IDE and tool support
+********************
+
+`nRF Connect extension for Visual Studio Code <nRF Connect for Visual Studio Code_>`_ is the recommended IDE for |NCS| v3.2.1.
+See the :ref:`installation` section for more information about supported operating systems and toolchain.
+
+Supported modem firmware
+************************
+
+See the following documentation for an overview of which modem firmware versions have been tested with this version of the |NCS|:
+
+* `Modem firmware compatibility matrix for the nRF9151 SoC`_
+* `Modem firmware compatibility matrix for the nRF9160 SoC`_
+
+Use the latest version of the `Programmer app`_ of `nRF Connect for Desktop`_ to update the modem firmware.
+See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+
+Modem-related libraries and versions
+====================================
+
+.. list-table:: Modem-related libraries and versions
+   :widths: 15 10
+   :header-rows: 1
+
+   * - Library name
+     - Version information
+   * - Modem library
+     - `Changelog <Modem library changelog for v3.2.1_>`_
+   * - LwM2M carrier library
+     - `Changelog <LwM2M carrier library changelog for v3.2.1_>`_
+
+Migration notes
+***************
+
+See the `Migration guide for nRF Connect SDK v3.2.1`_ for the changes required or recommended when migrating your application from |NCS| v3.1.1 to |NCS| v3.2.1.
 
 Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v3.2.0`_ for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v3.2.1`_ for the list of issues valid for the latest release.
+
+.. _ncs_release_notes_321_changelog:
 
 Changelog
 *********
 
 The following sections provide detailed lists of changes by component.
 
+#TODO
 IDE, OS, and tool support
 =========================
 
@@ -216,7 +274,7 @@ Thingy:53: Matter weather station
 Samples
 =======
 
-|no_changes_yet_note|
+This section provides detailed lists of changes by :ref:`sample <samples>`.
 
 Bluetooth samples
 -----------------
@@ -264,6 +322,11 @@ Enhanced ShockBurst samples
 |no_changes_yet_note|
 
 Gazell samples
+--------------
+
+|no_changes_yet_note|
+
+|ISE| samples
 --------------
 
 |no_changes_yet_note|
@@ -346,7 +409,7 @@ Other samples
 Drivers
 =======
 
-|no_changes_yet_note|
+This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
 Wi-Fi drivers
 -------------
@@ -361,7 +424,7 @@ Flash drivers
 Libraries
 =========
 
-|no_changes_yet_note|
+This section provides detailed lists of changes by :ref:`library <libraries>`.
 
 Binary libraries
 ----------------
@@ -436,7 +499,7 @@ Shell libraries
 sdk-nrfxlib
 -----------
 
-|no_changes_yet_note|
+See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
 
 Scripts
 =======
@@ -446,7 +509,7 @@ Scripts
 Integrations
 ============
 
-|no_changes_yet_note|
+This section provides detailed lists of changes by :ref:`integration <integrations>`.
 
 Google Fast Pair integration
 ----------------------------
@@ -461,7 +524,10 @@ Edge Impulse integration
 Memfault integration
 --------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * The ``CONFIG_MEMFAULT_DEVICE_INFO_CUSTOM`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_CUSTOM`.
+  * The ``CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_BUILTIN`.
 
 AVSystem integration
 --------------------

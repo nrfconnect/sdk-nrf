@@ -92,3 +92,4 @@ This page is included only in the latest documentation, because it might contain
    releases/release-notes-0.4.0
    releases/release-notes-0.3.0
    releases/release-notes-0.1.0
+   releases/release-notes-3.2.1
