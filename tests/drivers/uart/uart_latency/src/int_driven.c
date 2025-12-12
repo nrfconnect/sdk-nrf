@@ -119,13 +119,11 @@ static void test_uart_latency(size_t buffer_size, uint32_t baudrate)
 		uart_irq_tx_enable(uart_dev);
 
 		counter_reset(tst_timer_dev);
-		dk_set_led_on(DK_LED1);
 		counter_start(tst_timer_dev);
 		while (k_sem_take(&uart_rx_done_sem, K_NO_WAIT) != 0) {
 		};
 		counter_get_value(tst_timer_dev, &tst_timer_value);
 		counter_stop(tst_timer_dev);
-		dk_set_led_off(DK_LED1);
 		timer_value_us[repeat_counter] =
 			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
 		average_timer_value_us += timer_value_us[repeat_counter];
@@ -166,12 +164,21 @@ ZTEST(uart_latency, test_uart_latency_in_interrupt_mode_baud_115k2)
 	test_uart_latency(3000, UART_BAUD_115k2);
 }
 
+#if defined(CONFIG_SOC_NRF54H20_CPUFLPR)
+ZTEST(uart_latency, test_uart_latency_in_async_mode_baud_10M)
+{
+	test_uart_latency(10, UART_BAUD_10M);
+	test_uart_latency(128, UART_BAUD_10M);
+	test_uart_latency(1024, UART_BAUD_10M);
+	test_uart_latency(3000, UART_BAUD_10M);
+}
+#endif
+
 void *test_setup(void)
 {
 	zassert_true(device_is_ready(uart_dev), "UART device is not ready");
-	zassert_equal(dk_leds_init(), 0, "DK leds init failed");
+	TC_PRINT("Platform: %s\n", CONFIG_BOARD_TARGET);
 
-	dk_set_led_off(DK_LED1);
 	return NULL;
 }
 
