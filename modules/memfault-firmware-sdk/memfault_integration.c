@@ -57,7 +57,7 @@ sMfltHttpClientConfig g_mflt_http_client_config = {
 	.api_key = CONFIG_MEMFAULT_NCS_PROJECT_KEY,
 };
 
-#if defined(CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN)
+#if defined(CONFIG_MEMFAULT_NCS_DEVICE_INFO_BUILTIN)
 /* Firmware type check */
 BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_FW_TYPE) > 1, "Firmware type must be configured");
 
@@ -132,7 +132,7 @@ int memfault_ncs_device_id_set(const char *device_id, size_t len)
 
 	return 0;
 }
-#endif /* defined(CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN) */
+#endif /* defined(CONFIG_MEMFAULT_NCS_DEVICE_INFO_BUILTIN) */
 
 #if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID)
 static int device_info_init(void)
