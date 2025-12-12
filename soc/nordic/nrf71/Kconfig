@@ -26,6 +26,13 @@ config SOC_NRF7120_ENGA_CPUAPP
 config SOC_NRF7120_ENGA_CPUFLPR
 	select RISCV_CORE_NORDIC_VPR
 
+config PWR_ANTSWC_FROM_GPIO
+	bool "Use P0.09 to power the antenna switch controller"
+	default y
+	help
+	  Select this option to power the antenna switch controller when
+	  required, using GPIO P0.09 - Configured in SOC_EARLY_INIT_HOOK.
+
 if SOC_SERIES_NRF71X
 
 DT_MPC_REGION_SIZE := $(dt_nodelabel_path,nrf_mpc_region)
