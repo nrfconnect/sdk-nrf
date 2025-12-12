@@ -118,6 +118,7 @@ Security
   * Support for the WPA3-SAE and WPA3-SAE-PT in the :ref:`CRACEN driver <crypto_drivers_cracen>`.
   * Support for the HMAC KDF algorithm in the CRACEN driver.
     The algorithm implementation is conformant to the NIST SP 800-108 Rev. 1 recommendation.
+  * Support for the secp384r1 key storage in the :ref:`Key Management Unit (KMU) <ug_nrf54l_crypto_kmu_supported_key_types>`.
 
 Protocols
 =========
@@ -215,6 +216,7 @@ nRF Desktop
 
 * Updated the :option:`CONFIG_DESKTOP_BT` Kconfig option to no longer select the deprecated :kconfig:option:`CONFIG_BT_SIGNING` Kconfig option.
   Application relies on Bluetooth LE security mode 1 and security level of at least 2 to ensure data confidentiality through encryption.
+* Updated memory map for RAM load configurations of nRF54LM20 target to increase KMU RAM section size to allow for secp384r1 key.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
