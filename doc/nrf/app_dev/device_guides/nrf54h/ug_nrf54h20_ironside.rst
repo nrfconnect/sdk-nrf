@@ -11,184 +11,48 @@ The IronSide Secure Element (|ISE|) is a firmware for the :ref:`Secure Domain <u
 
 |ISE| provides the following features:
 
-* Global memory configuration
-* Peripheral configuration (through UICR.PERIPHCONF)
-* Boot commands (ERASEALL, DEBUGWAIT)
-* An alternative boot path with a secondary firmware
-* CPUCONF service
-* Update service
-* PSA Crypto service - see also :ref:`ug_crypto_architecture_implementation_standards_ironside`
+* :ref:`Global memory configuration <ug_nrf54h20_ironside_se_uicr>`
+* :ref:`Peripheral configuration <ug_nrf54h20_ironside_se_periphconf_devicetree>` (through UICR.PERIPHCONF)
+* :ref:`Boot commands <ug_nrf54h20_ironside_se_boot_commands>`
+
+  * ERASEALL
+  * DEBUGWAIT
+* An alternative boot path with a :ref:`secondary firmware <ug_nrf54h20_ironside_se_secondary_firmware>`
+* :ref:`CPUCONF service <ug_nrf54h20_ironside_se_cpuconf_service>`
+* :ref:`Update service <ug_nrf54h20_ironside_se_update_service>`
+* PSA Crypto service (:ref:`ug_crypto_architecture_implementation_standards_ironside`)
 * PSA Internal Trusted Storage service
 
-.. _ug_nrf54h20_ironside_se_programming:
+See the following pages for details on |ISE| features and subsystems.
 
-Programming |ISE| on the nRF54H20 SoC
-*************************************
+.. toctree::
+   :maxdepth: 2
 
-|ISE| is released independently of the |NCS| release cycle and is provided as a ZIP archive that contains the following components:
+   ug_nrf54h20_ironside_update
+
+.. _ug_nrf54h20_ironside_defaults:
+
+Default policies
+****************
+
+By default, |ISE| configures the system with the following access policies on the nRF54H20 SoC:
 
 .. list-table::
    :header-rows: 1
    :widths: auto
 
-   * - Component
-     - File
-     - Description
-   * - IronSide SE firmware
-     - :file:`ironside_se.hex`
-     - Used when bringing up a new DK and programming both the recovery firmware and |ISE| for the first time.
-   * - IronSide SE update firmware
-     - :file:`ironside_se_update.hex`
-     - Used when updating |ISE|.
-   * - IronSide SE Recovery update firmware
-     - :file:`ironside_se_recovery_update.hex`
-     - The recovery firmware, reserved for future recovery operations. Currently, it does not provide user-facing functionality. Used when updating the recovery firmware.
-   * - Update application
-     - :file:`update_application.hex`
-     - The local domain :zephyr:code-sample:`update application <nrf_ironside_update>` that is used to perform an |ISE| update. See :ref:`ug_nrf54h20_ironside_se_update_manual`.
-
-For instructions on how to program |ISE|, see :ref:`ug_nrf54h20_SoC_binaries`.
-
-By default, the nRF54H20 SoC uses the following memory and access configurations:
-
-* MRAMC configuration: MRAM operates in Direct Write mode with READYNEXTTIMEOUT disabled.
-* MPC configuration: All memory not reserved by Nordic firmware is accessible with read, write, and execute (RWX) permissions by any domain.
-* TAMPC configuration: The access ports (AP) for the local domains are enabled, allowing direct programming of all the memory not reserved by Nordic firmware in the default configuration.
-
+   * - Configuration
+     - Policy
+   * - MRAMC
+     - MRAM operates in Direct Write mode with READYNEXTTIMEOUT disabled.
+   * - MPC
+     - All memory not reserved by Nordic firmware is accessible with read, write, and execute (RWX) permissions by any domain.
+   * - TAMPC
+     - Access ports (AP) for the local domains are enabled, allowing direct programming of all the memory not reserved by Nordic firmware in the default configuration.
 
 .. note::
    * The Radio Domain AP is only usable when the Radio domain has booted.
    * Access to external memory (EXMIF) requires a non-default configuration of the GPIO.CTRLSEL register.
-
-You can protect global domain memory from write operations by configuring the UICR registers.
-To remove these protections and disable all other protection mechanisms enforced through UICR settings, perform an ``ERASEALL`` operation.
-
-.. _ug_nrf54h20_ironside_se_update:
-
-Updating |ISE|
-**************
-
-|NCS| supports two methods for updating the |ISE| firmware on the nRF54H20 SoC:
-
-* Using the ``west`` command.
-  You can use the ``west`` command provided by the |NCS| to install the firmware update.
-  For step-by-step instructions, see :ref:`ug_nrf54h20_ironside_se_update_west`.
-
-* Using the nRF Util `device command <Device command overview_>`_.
-  Alternatively, you can perform the update by manually executing the same steps that the ``west`` command performs.
-  For step-by-step instructions, see :ref:`ug_nrf54h20_ironside_se_update_manual`.
-
-.. caution::
-   You cannot update |ISE| from a SUIT-based (up to 0.9.6) to an |ISE|-based (20.0.0 and onwards) version.
-
-.. _ug_nrf54h20_ironside_se_update_west:
-
-Updating using west
-===================
-
-To update the |ISE| firmware, you can use the ``west ncs-ironside-se-update`` command with the following syntax:
-
-.. code-block:: console
-
-   west ncs-ironside-se-update --zip <path_to_soc_binaries.zip> --allow-erase
-
-The command accepts the following main options:
-
-* ``--zip`` (required) - Sets the path to the nRF54H20 IronSide SE binaries ZIP file.
-* ``--allow-erase`` (required) - Enables erasing the device during the update process.
-* ``--serial`` - Specifies the serial number of the target device.
-* ``--firmware-slot`` - Updates only a specific firmware slot (``uslot`` for |ISE| or ``rslot`` for |ISE| Recovery).
-* ``--wait-time`` - Specifies the timeout in seconds to wait for the device to boot (default: 2.0 seconds).
-
-.. _ug_nrf54h20_ironside_se_update_manual:
-
-Updating manually
-=================
-
-The manual update process involves the following steps:
-
-1. Executing the update application.
-   The :zephyr:code-sample:`update application <nrf_ironside_update>` runs on the application core and communicates with |ISE| using the :ref:`update service <ug_nrf54h20_ironside_se_update_service>`.
-   It reads the update firmware from memory and passes the update blob metadata to the |ISE|.
-   The |ISE| validates the update parameters and writes the update metadata to the Secure Information Configuration Registers (SICR).
-
-#. Installing the update.
-   After a reset, the Secure Domain ROM (SDROM) detects the pending update through the SICR registers, verifies the update firmware signature, and installs the new firmware.
-
-#. Completing the update.
-   The system boots with the updated |ISE| firmware, and the update status in the boot report can be read to verify successful installation.
-
-Updating manually using nRF Util
---------------------------------
-
-To update |ISE|, you can use nRF Util instead of ``west ncs-ironside-se-update``.
-To use nRF Util for the update, you must install the nRF Util `device` command v2.14.0 or higher.
-See `Installing specific versions of nRF Util commands`_ for more information.
-
-To perform the manual update process using nRF Util's `device <Device command overview_>`_ command, complete the following steps:
-
-1. Extract the update bundle:
-
-   .. code-block:: console
-
-      unzip <soc_binaries.zip> -d /tmp/update_dir
-
-#. Erase non-volatile memory:
-
-   .. code-block:: console
-
-      nrfutil device recover --serial-number <serial>
-
-#. Program the update application:
-
-   .. code-block:: console
-
-      nrfutil device program --firmware /tmp/update_dir/update/update_application.hex --serial-number <serial>
-
-#. Program the |ISE| update firmware:
-
-   .. code-block:: console
-
-      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_update.hex --serial-number <serial>
-
-#. Reset the device to execute the update service:
-
-   .. code-block:: console
-
-      nrfutil device reset --serial-number <serial>
-
-#. Reset through Secure Domain to trigger the installation of the update:
-
-   .. code-block:: console
-
-      nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial>
-
-#. If you are updating both slots, complete the following additional steps:
-
-   a. Program the |ISE| Recovery update firmware:
-
-      .. code-block:: console
-
-         nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_recovery_update.hex --serial-number <serial>
-
-   #. Reset again to execute the update service:
-
-      .. code-block:: console
-
-         nrfutil device reset --serial-number <serial>
-
-   #. Reset again through Secure Domain to trigger the installation of the update:
-
-      .. code-block:: console
-
-         nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial>
-
-
-#. Erase the update application (regardless of whether you update one or both slots):
-
-   .. code-block:: console
-
-      nrfutil device erase --all --serial-number <serial>
 
 .. _ug_nrf54h20_ironside_se_uicr:
 
@@ -237,8 +101,11 @@ The following UICR fields are supported:
 +----------------------+---------------------------------------------------------------------+
 
 .. note::
-   If no UICR values are programmed, |ISE| applies a set of default configurations.
+   If no UICR values are programmed, |ISE| applies a set of :ref:`default configurations <ug_nrf54h20_ironside_defaults>`.
    Applications that do not require custom settings can rely on these defaults without modifying the UICR.
+
+Performing an :ref:`ERASEALL <ug_nrf54h20_ironside_se_eraseall_command>` operation will erase all UICR contents and remove all protection mechanisms enforced through UICR.
+See :ref:`ug_nrf54h20_ironside_se_protecting` for more information on protecting UICR contents in the field.
 
 UICR image generation
 =====================
@@ -430,6 +297,8 @@ However, it does not prevent erase operations initiated through other means, suc
    If this configuration is enabled and :kconfig:option:`CONFIG_GEN_UICR_LOCK` is also set, it is no longer possible to modify the UICR in any way.
    Therefore, this configuration should only be enabled during the final stages of production.
 
+.. _ug_nrf54h20_ironside_se_protected_memory:
+
 UICR.PROTECTEDMEM
 =================
 
@@ -489,6 +358,8 @@ After applying the entry, |ISE| performs a read-back check: it reads back the re
 
 The configuration procedure is aborted if an entry fails either the validation or the read-back check.
 If a failure occurs, BOOTSTATUS.BOOTERROR is set to indicate the error condition, and a description of the failed entry is written to the boot report.
+
+.. _ug_nrf54h20_ironside_se_periphconf_devicetree:
 
 PERIPHCONF generation from devicetree
 -------------------------------------
@@ -768,7 +639,6 @@ For information on how to configure these UICR settings, see :ref:`ug_nrf54h20_i
 * :kconfig:option:`CONFIG_GEN_UICR_ERASEPROTECT` - Prevents bulk erasure of protected memory.
   It blocks all ``ERASEALL`` operations on NVR0, preserving UICR settings even if an attacker attempts a full-chip erase.
 
-
 .. _ug_nrf54h20_ironside_se_boot_report:
 
 |ISE| boot report
@@ -1025,33 +895,6 @@ This feature is intended for debugging purposes.
    * INITNSVTOR of the CPUCONF instance of the processor being booted will not be supported.
 
 For details about the CPUCONF peripheral, refer to the nRF54H20 SoC datasheet.
-
-.. _ug_nrf54h20_ironside_se_update_service:
-
-|ISE| update service
-********************
-
-The |ISE| update service will update |ISE| itself.
-
-|ISE| is updated by the Secure Domain ROM (SDROM), which performs the update operation when triggered by a set of SICR registers.
-SDROM verifies and copies the update candidate specified through these registers.
-SDROM requires the |ISE| update to be located in MRAM.
-
-|ISE| exposes an update service that allows local domains to trigger the update process by indirectly writing to the relevant SICR registers.
-
-.. note::
-   The update data must be placed within a valid memory range.
-   See :file:`nrf_ironside/update.h` for more details.
-
-The release ZIP archive for |ISE| includes the following components:
-
-* A HEX file containing the update candidate for |ISE|.
-* A HEX file for |ISE| Recovery.
-* An application core image that executes the |ISE| update service to install the update candidate HEX files.
-
-The |NCS| defines the west ``ncs-ironside-se-update`` command to update |ISE| on a device via the debugger.
-This command takes a nRF54H20 SoC binary ZIP file and uses the |ISE| update service to update both the |ISE| and |ISE| Recovery (or optionally just one of them).
-For more information, see :ref:`abi_compatibility`.
 
 .. _ug_nrf54h20_ironside_se_secure_storage:
 
