@@ -1,0 +1,15 @@
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		hw_unique_key_partition: partition@fd000 {
+			label = "hw-unique-key";
+			reg = <0x000fd000 0x00001000>;
+		};
+
+		storage_partition: partition@fe000 {
+			label = "storage";
+			reg = <0x000fe000 0x00002000>;
+		};
+	};
+};
