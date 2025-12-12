@@ -23,6 +23,7 @@ The current implementation has the following limitations:
 * Encryption is not supported when using MCUboot in direct-xip mode.
 * Storing the ECIES-X25519 device private key in the Key Management Unit (KMU) is currently not supported.
 * HMAC and HKDF tools currently use the SHA-256 hash algorithm.
+* Encryption is not supported with immutable and upgradable bootloader configuration.
 
 HMAC and HKDF impact on TLV and key exchange
 ********************************************
