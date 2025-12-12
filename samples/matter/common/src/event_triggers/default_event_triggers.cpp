@@ -69,7 +69,7 @@ void DelayTimerCallback(k_timer *timer)
 			Nrf::PostTask([value] {
 				int64_t startTime = k_uptime_get();
 
-				LOG_INF("Blocking Main thread for %d seconds", value / 1000);
+				LOG_INF("Blocking Main thread for %llu seconds", value / 1000);
 
 				while (startTime + value > k_uptime_get()) {
 					;
@@ -88,7 +88,7 @@ void DelayTimerCallback(k_timer *timer)
 
 CHIP_ERROR FactoryResetCallback(TestEventTrigger::TriggerValue delayMs)
 {
-	LOG_DBG("Called Factory Reset event trigger with delay %d ms", delayMs);
+	LOG_DBG("Called Factory Reset event trigger with delay %llu ms", delayMs);
 
 	Platform::UniquePtr<DelayedCtx> delayedContext(Platform::New<DelayedCtx>());
 	if (!delayedContext) {
@@ -108,7 +108,7 @@ CHIP_ERROR FactoryResetCallback(TestEventTrigger::TriggerValue delayMs)
 
 CHIP_ERROR RebootCallback(TestEventTrigger::TriggerValue delayMs)
 {
-	LOG_DBG("Called Reboot event trigger with delay %d ms", delayMs);
+	LOG_DBG("Called Reboot event trigger with delay %llu ms", delayMs);
 
 	return chip::DeviceLayer::SystemLayer().StartTimer(
 		chip::System::Clock::Milliseconds32(delayMs),
@@ -147,7 +147,7 @@ CHIP_ERROR BlockMatterThreadCallback(TestEventTrigger::TriggerValue blockingTime
 	chip::DeviceLayer::SystemLayer().ScheduleLambda([blockingTimeS] {
 		int64_t startTime = k_uptime_get();
 
-		LOG_INF("Blocking Matter thread for %d seconds", blockingTimeS);
+		LOG_INF("Blocking Matter thread for %llu seconds", blockingTimeS);
 
 		while (startTime + static_cast<int64_t>(blockingTimeS) * 1000 > k_uptime_get()) {
 			;
