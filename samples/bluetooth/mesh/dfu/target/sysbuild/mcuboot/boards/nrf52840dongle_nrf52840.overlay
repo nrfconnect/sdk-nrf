@@ -1,0 +1,7 @@
+#include "../../../boards/nrf52840dongle_nrf52840.overlay"
+
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};
