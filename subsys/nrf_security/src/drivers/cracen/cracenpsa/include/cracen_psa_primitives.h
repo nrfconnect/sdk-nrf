@@ -59,9 +59,9 @@
  */
 #define CRACEN_HKDF_MAX_INFO_SIZE 128
 
-#define CRACEN_CMAC_MAX_LABEL_SIZE 127
+#define CRACEN_MAC_MAX_LABEL_SIZE 127
 
-#define CRACEN_CMAC_MAX_CONTEXT_SIZE 64
+#define CRACEN_MAC_MAX_CONTEXT_SIZE 64
 
 #define CRACEN_JPAKE_USER_ID_MAX_SIZE 16
 
@@ -119,12 +119,12 @@ enum cracen_kd_state {
 	CRACEN_KD_STATE_PBKDF2_PASSWORD,
 	CRACEN_KD_STATE_PBKDF2_OUTPUT,
 
-	/* CMAC CTR states: */
-	CRACEN_KD_STATE_CMAC_CTR_INIT = 0x40,
-	CRACEN_KD_STATE_CMAC_CTR_KEY_LOADED,
-	CRACEN_KD_STATE_CMAC_CTR_INPUT_LABEL,
-	CRACEN_KD_STATE_CMAC_CTR_INPUT_CONTEXT,
-	CRACEN_KD_STATE_CMAC_CTR_OUTPUT,
+	/* CMAC/HMAC CTR states: */
+	CRACEN_KD_STATE_MAC_CTR_INIT = 0x40,
+	CRACEN_KD_STATE_MAC_CTR_KEY_LOADED,
+	CRACEN_KD_STATE_MAC_CTR_INPUT_LABEL,
+	CRACEN_KD_STATE_MAC_CTR_INPUT_CONTEXT,
+	CRACEN_KD_STATE_MAC_CTR_OUTPUT,
 
 	/* TLS12 PRF states: */
 	CRACEN_KD_STATE_TLS12_PRF_INIT = 0x80,
@@ -305,23 +305,27 @@ struct cracen_key_derivation_operation {
 			uint8_t tj[PSA_MAC_MAX_SIZE];
 		} pbkdf2;
 #endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
-#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
+#if	defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC) || \
+	defined(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
 		struct {
+#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
+			psa_key_lifetime_t key_lifetime;
+			mbedtls_svc_key_id_t key_id;
 			uint8_t key_buffer[CRACEN_MAX_AES_KEY_SIZE];
-			struct sxkeyref keyref;
-			struct sx_pk_cnx *pk_cnx;
+			size_t key_size;
+			uint8_t K_0[SX_BLKCIPHER_AES_BLK_SZ];
+#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
 			uint32_t counter;
 			/* The +1 here is meant to store an algorithm specific byte needed after the
 			 * label
 			 */
-			uint8_t label[CRACEN_CMAC_MAX_LABEL_SIZE + 1];
+			uint8_t label[CRACEN_MAC_MAX_LABEL_SIZE + 1];
 			size_t label_length;
-			uint8_t context[CRACEN_CMAC_MAX_CONTEXT_SIZE];
+			uint8_t context[CRACEN_MAC_MAX_CONTEXT_SIZE];
 			size_t context_length;
 			uint32_t L;
-			uint8_t K_0[SX_BLKCIPHER_AES_BLK_SZ];
-		} cmac_ctr;
-#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
+		} mac_ctr;
+#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC || PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC */
 #if defined(PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS)
 		struct {
 			uint8_t key[32];
