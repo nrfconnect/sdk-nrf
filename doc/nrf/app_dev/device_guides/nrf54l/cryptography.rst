@@ -309,6 +309,28 @@ For each key type, the table lists the supported algorithms and indicates which 
      - No
      - Yes
      - Yes
+   * - ECC secp384r1 key pair (ECDSA and ECDH usage)
+     - | ``key_type``: ``PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1)``
+       |
+       | ``key_bits``: 384
+       |
+       | ``key_algorithm`` - one of the following:
+       | - ``PSA_ALG_ECDSA``
+       | - ``PSA_ALG_ECDH``
+     - 3
+     - No
+     - Yes
+     - Yes
+   * - ECC secp384r1 public key (ECDSA usage only)
+     - | ``key_type``: ``PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)``
+       |
+       | ``key_bits``: 384
+       |
+       | ``key_algorithm``: ``PSA_ALG_ECDSA``
+     - 6
+     - No
+     - No
+     - Yes
    * - Ed25519 key pair
      - | ``key_type``: ``PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS)``
        |
@@ -386,7 +408,7 @@ The CRACEN driver performs the following steps:
 
    * CRACEN's protected RAM if the key is a symmetric key (has the usage scheme set to :ref:`Protected <ug_nrf54l_crypto_kmu_key_usage_schemes>`)
    * CRACEN's SEED register (for IKG keys)
-   * The reserved RAM area ``kmu_push_area`` (0x20000000-0x20000064) for other keys
+   * The reserved RAM area ``kmu_push_area`` (0x20000000-0x20000060) for other keys
 
 #. Stores the :c:struct:`kmu_metadata` information in the KMU slot's METADATA field.
 #. Stores the key material in the KMU slot's VALUE field.
@@ -427,7 +449,7 @@ Depending on the usage scheme:
 * Key slots with the usage scheme Encrypted (``CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED``) also have to be decrypted to a temporary push location in RAM before they are used by CRACEN, which is handled by the CRACEN driver.
 
 When the application is built with TF-M (for nRF54L Series devices that :ref:`support TF-M <ug_tfm_supported_services>`), this temporary push location is protected inside the secure processing environment to avoid exposing the key material to the non-secure application.
-If TF-M is not used, the keys are pushed to a reserved RAM area at location 0x20000000-0x20000064 (``kmu_push_area``).
+If TF-M is not used, the keys are pushed to a reserved RAM area at location 0x20000000-0x20000060 (``kmu_push_area``).
 
 You might encounter the following KMU-specific error codes when using the KMU keys:
 

@@ -113,7 +113,10 @@ Developing with custom boards
 Security
 ========
 
-* Added support for the WPA3-SAE and WPA3-SAE-PT in the :ref:`CRACEN driver <crypto_drivers_cracen>`.
+* Added:
+
+  * Support for the WPA3-SAE and WPA3-SAE-PT in the :ref:`CRACEN driver <crypto_drivers_cracen>`.
+  * Support for the secp384r1 key storage in the :ref:`Key Management Unit (KMU) <ug_nrf54l_crypto_kmu_supported_key_types>`.
 
 Protocols
 =========
