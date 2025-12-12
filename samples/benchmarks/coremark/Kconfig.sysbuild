@@ -4,7 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "share/sysbuild/Kconfig"
+config PARTITION_MANAGER
+	default n
 
 config APP_CPUFLPR_RUN
 	bool "Run the CoreMark benchmark on the FLPR core"
@@ -20,3 +21,5 @@ config APP_CPUPPR_RUN
 	bool "Run the CoreMark benchmark on the PPR core"
 	depends on SUPPORT_PPRCORE
 	default y
+
+source "share/sysbuild/Kconfig"
