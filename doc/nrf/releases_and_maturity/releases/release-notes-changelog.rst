@@ -269,7 +269,7 @@ Gazell samples
 |no_changes_yet_note|
 
 |ISE| samples
---------------
+-------------
 
 |no_changes_yet_note|
 
@@ -466,10 +466,7 @@ Edge Impulse integration
 Memfault integration
 --------------------
 
-* Updated:
-
-  * The ``CONFIG_MEMFAULT_DEVICE_INFO_CUSTOM`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_CUSTOM`.
-  * The ``CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_BUILTIN`.
+* Updated the ``CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_BUILTIN`.
 
 AVSystem integration
 --------------------
@@ -549,4 +546,4 @@ cJSON
 Documentation
 =============
 
-* Updated the :ref:`install_ncs` page with minor updates and fixes to the :ref:`additional_deps` section.
+|no_changes_yet_note|
