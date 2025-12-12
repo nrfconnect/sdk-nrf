@@ -218,6 +218,8 @@ Samples
 
 This section provides detailed lists of changes by :ref:`sample <samples>`.
 
+|no_changes_yet_note|
+
 Bluetooth samples
 -----------------
 
@@ -264,11 +266,6 @@ Enhanced ShockBurst samples
 |no_changes_yet_note|
 
 Gazell samples
---------------
-
-|no_changes_yet_note|
-
-|ISE| samples
 --------------
 
 |no_changes_yet_note|
@@ -353,6 +350,8 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
+|no_changes_yet_note|
+
 Wi-Fi drivers
 -------------
 
@@ -367,6 +366,8 @@ Libraries
 =========
 
 This section provides detailed lists of changes by :ref:`library <libraries>`.
+
+|no_changes_yet_note|
 
 Binary libraries
 ----------------
@@ -443,6 +444,8 @@ sdk-nrfxlib
 
 See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:README>` for additional information.
 
+|no_changes_yet_note|
+
 Scripts
 =======
 
@@ -452,6 +455,8 @@ Integrations
 ============
 
 This section provides detailed lists of changes by :ref:`integration <integrations>`.
+
+|no_changes_yet_note|
 
 Google Fast Pair integration
 ----------------------------
@@ -466,10 +471,7 @@ Edge Impulse integration
 Memfault integration
 --------------------
 
-* Updated:
-
-  * The ``CONFIG_MEMFAULT_DEVICE_INFO_CUSTOM`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_CUSTOM`.
-  * The ``CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_BUILTIN`.
+|no_changes_yet_note|
 
 AVSystem integration
 --------------------
@@ -549,4 +551,4 @@ cJSON
 Documentation
 =============
 
-* Updated the :ref:`install_ncs` page with minor updates and fixes to the :ref:`additional_deps` section.
+|no_changes_yet_note|
