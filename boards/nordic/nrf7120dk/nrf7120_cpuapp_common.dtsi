@@ -7,7 +7,7 @@
 /* This file is common to the secure and non-secure domain */
 
 #include "arm/nordic/nrf7120_enga_cpuapp.dtsi"
-#include "nrf7120pdk_nrf7120-common.dtsi"
+#include "nrf7120dk_nrf7120-common.dtsi"
 
 / {
 	chosen {

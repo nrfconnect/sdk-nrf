@@ -37,6 +37,6 @@ install(FILES       config.cmake
 install(FILES       ../common/config.cmake
         DESTINATION ${INSTALL_PLATFORM_NS_DIR}/../common/)
 
-install(DIRECTORY   ${Trusted\ Firmware\ M_SOURCE_DIR}/platform/ext/target/nordic_nrf/nrf7120pdk_nrf7120_cpuapp/tests
+install(DIRECTORY   ${Trusted\ Firmware\ M_SOURCE_DIR}/platform/ext/target/nordic_nrf/nrf7120dk_nrf7120_cpuapp/tests
         DESTINATION ${INSTALL_PLATFORM_NS_DIR}
 )

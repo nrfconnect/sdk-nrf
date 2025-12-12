@@ -7,11 +7,11 @@
 /dts-v1/;
 
 #include "nordic/nrf7120_enga_cpuflpr.dtsi"
-#include "nrf7120pdk_nrf7120-common.dtsi"
+#include "nrf7120dk_nrf7120-common.dtsi"
 
 / {
-	model = "Nordic nRF7120 PDK nRF7120 FLPR MCU";
-	compatible = "nordic,nrf7120pdk_nrf7120-cpuflpr";
+	model = "Nordic nRF7120 DK nRF7120 FLPR MCU";
+	compatible = "nordic,nrf7120dk_nrf7120-cpuflpr";
 
 	chosen {
 		zephyr,console = &uart00;
