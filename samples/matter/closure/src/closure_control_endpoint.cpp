@@ -13,6 +13,10 @@
 #include <protocols/interaction_model/StatusCode.h>
 #include <zephyr/logging/log.h>
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+#include <event_triggers/event_triggers.h>
+#endif
+
 LOG_MODULE_DECLARE(closure_cntrl, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace chip;
@@ -27,7 +31,21 @@ namespace
 
 constexpr ElapsedS kDefaultCountdownTime = 30;
 
-}
+enum class ClosureControlTestEventTrigger : uint64_t {
+	kMainStateIsError = 0x0104000000000000, // MainState is Error(3) Test Event | Simulate that the device is in
+						// error state, add at least one element to the CurrentErrorList
+						// attribute
+	kMainStateIsProtected = 0x0104000000000001, // MainState is Protected(5) Test Event | Simulate that the device
+						    // is in protected state
+	kMainStateIsDisengaged = 0x0104000000000002, // MainState is Disengaged(6) Test Event | Simulate that the device
+						     // is in disengaged state
+	kMainStateIsSetupRequired = 0x0104000000000003, // MainState is SetupRequired(7) Test Event | Simulate that the
+							// device is in SetupRequired state
+	kClearEvent = 0x0104000000000004, // MainState Test clear Event | Returns the device to pre-test status for that
+					  // test event.
+};
+
+} // namespace
 
 Status ClosureControlDelegate::HandleCalibrateCommand()
 {
@@ -87,13 +105,21 @@ ElapsedS ClosureControlDelegate::GetWaitingForMotionCountdownTime()
 CHIP_ERROR ClosureControlEndpoint::Init()
 {
 	ClusterConformance conformance;
-	conformance.FeatureMap().Set(Feature::kPositioning).Set(Feature::kSpeed).Set(Feature::kVentilation);
+	conformance.FeatureMap()
+		.Set(Feature::kPositioning)
+		.Set(Feature::kSpeed)
+		.Set(Feature::kVentilation)
+		.Set(Feature::kPedestrian);
 	conformance.OptionalAttributes().Set(OptionalAttributeEnum::kCountdownTime);
 
 	ClusterInitParameters initParams;
 
 	ReturnErrorOnFailure(mLogic.Init(conformance, initParams));
 	ReturnErrorOnFailure(mInterface.Init());
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+	ReturnErrorOnFailure(Nrf::Matter::TestEventTrigger::Instance().RegisterTestEventTriggerHandler(&mDelegate));
+#endif
 
 	return CHIP_NO_ERROR;
 }
@@ -124,4 +150,34 @@ CHIP_ERROR ClosureControlEndpoint::OnMovementUpdate(const MainStateEnum &mainSta
 						    const GenericOverallTargetState &targetState)
 {
 	return WriteAllAttributes(mainState, currentState, targetState);
+}
+
+CHIP_ERROR ClosureControlDelegate::HandleEventTrigger(uint64_t eventTrigger)
+{
+	eventTrigger = clearEndpointInEventTrigger(eventTrigger);
+	ClosureControlTestEventTrigger trigger = static_cast<ClosureControlTestEventTrigger>(eventTrigger);
+	ClusterLogic *logic = GetLogic();
+
+	switch (trigger) {
+	case ClosureControlTestEventTrigger::kMainStateIsError:
+		ReturnErrorOnFailure(logic->SetMainState(MainStateEnum::kError));
+		ReturnErrorOnFailure(logic->AddErrorToCurrentErrorList(ClosureErrorEnum::kBlockedBySensor));
+		break;
+	case ClosureControlTestEventTrigger::kMainStateIsProtected:
+		ReturnErrorOnFailure(logic->SetMainState(MainStateEnum::kProtected));
+		break;
+	case ClosureControlTestEventTrigger::kMainStateIsDisengaged:
+		ReturnErrorOnFailure(logic->SetMainState(MainStateEnum::kDisengaged));
+		break;
+	case ClosureControlTestEventTrigger::kMainStateIsSetupRequired:
+		ReturnErrorOnFailure(logic->SetMainState(MainStateEnum::kSetupRequired));
+		break;
+	case ClosureControlTestEventTrigger::kClearEvent:
+		ReturnErrorOnFailure(logic->SetMainState(MainStateEnum::kStopped));
+		logic->ClearCurrentErrorList();
+		break;
+	default:
+		return CHIP_ERROR_INVALID_ARGUMENT;
+	}
+	return CHIP_NO_ERROR;
 }
