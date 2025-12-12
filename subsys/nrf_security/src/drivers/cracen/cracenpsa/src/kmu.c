@@ -19,6 +19,16 @@
 #include "common.h"
 #include "kmu.h"
 
+/* The size of the key CBR (Compact Binary Respresentation), bytes */
+#define CRACEN_KMU_CBR_SIZE	      (1u)
+/* Private key sizes of ECC curves (secpXXXr1), bytes */
+#define CRACEN_KMU_P128_PRIV_KEY_SIZE (16u)
+#define CRACEN_KMU_P192_PRIV_KEY_SIZE (24u)
+#define CRACEN_KMU_P256_PRIV_KEY_SIZE (32u)
+/* Public key sizes of ECC curves (secpXXXr1), bytes */
+#define CRACEN_KMU_P256_PUB_KEY_SIZE  (CRACEN_KMU_CBR_SIZE + 64u)
+#define CRACEN_KMU_P384_PUB_KEY_SIZE  (CRACEN_KMU_CBR_SIZE + 96u)
+
 /* Reserved slot, used to record whether provisioning is in progress for a set of slots.
  * We only use the metadata field, formatted as follows:
  *      Bits 31-16: Unused
@@ -31,14 +41,12 @@
 
 extern nrf_security_mutex_t cracen_mutex_symmetric;
 
-#define KMU_PUSH_AREA_SIZE 64
-
 #if DT_NODE_EXISTS(DT_NODELABEL(nrf_kmu_reserved_push_area))
 
 #include <zephyr/dt-bindings/memory-attr/memory-attr.h>
 #include <zephyr/linker/devicetree_regions.h>
 #define KMU_PUSH_AREA_NODE DT_NODELABEL(nrf_kmu_reserved_push_area)
-uint8_t kmu_push_area[KMU_PUSH_AREA_SIZE] Z_GENERIC_SECTION(
+uint8_t kmu_push_area[CRACEN_KMU_PUSH_AREA_SIZE] Z_GENERIC_SECTION(
 	LINKER_DT_NODE_REGION_NAME(KMU_PUSH_AREA_NODE));
 
 #else
@@ -48,7 +56,8 @@ uint8_t kmu_push_area[KMU_PUSH_AREA_SIZE] Z_GENERIC_SECTION(
  * Since this buffer is placed on the top of RAM we don't need to have the alignment
  * attribute anymore.
  */
-uint8_t kmu_push_area[KMU_PUSH_AREA_SIZE] __attribute__((section(".nrf_kmu_reserved_push_area")));
+uint8_t
+kmu_push_area[CRACEN_KMU_PUSH_AREA_SIZE] __attribute__((section(".nrf_kmu_reserved_push_area")));
 #endif
 
 typedef struct kmu_metadata {
@@ -483,6 +492,14 @@ static psa_status_t get_kmu_slot_count(kmu_metadata metadata, const psa_key_attr
 	case METADATA_ALG_KEY_BITS_384_SEED:
 		*slot_count = 3;
 		break;
+	case METADATA_ALG_KEY_BITS_384:
+		if (psa_get_key_type(key_attr) ==
+			PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
+			*slot_count = 6;
+		} else {
+			*slot_count = 3;
+		}
+		break;
 	default:
 		return PSA_ERROR_DATA_INVALID;
 	}
@@ -724,6 +741,9 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 	case METADATA_ALG_KEY_BITS_256:
 		psa_set_key_bits(key_attr, 256);
 		break;
+	case METADATA_ALG_KEY_BITS_384:
+		psa_set_key_bits(key_attr, 384);
+		break;
 	}
 
 	switch (metadata->key_usage_scheme) {
@@ -886,6 +906,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 #ifdef PSA_NEED_CRACEN_ECDSA
 	case PSA_ALG_ECDSA(PSA_ALG_ANY_HASH):
 	case PSA_ALG_ECDSA(PSA_ALG_SHA_256):
+	case PSA_ALG_ECDSA(PSA_ALG_SHA_384):
 		if (PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(key_attr)) !=
 		    PSA_ECC_FAMILY_SECP_R1) {
 			return PSA_ERROR_NOT_SUPPORTED;
@@ -952,6 +973,9 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		break;
 	case 256:
 		metadata->size = METADATA_ALG_KEY_BITS_256;
+		break;
+	case 384:
+		metadata->size = METADATA_ALG_KEY_BITS_384;
 		break;
 	default:
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -1021,24 +1045,34 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 		}
 		push_address = (uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
 		/* Only 128, 192 and 256 bit keys are supported. */
-		if (key_buffer_size != 16 && key_buffer_size != 24 && key_buffer_size != 32) {
+		if (key_buffer_size != CRACEN_KMU_P128_PRIV_KEY_SIZE &&
+		    key_buffer_size != CRACEN_KMU_P192_PRIV_KEY_SIZE &&
+		    key_buffer_size != CRACEN_KMU_P256_PRIV_KEY_SIZE) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		break;
 #ifdef PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS
 	case CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED:
+		if (key_buffer_size > CRACEN_KMU_PUSH_AREA_SIZE) {
+			/** ECC keys longer than CRACEN_KMU_PUSH_AREA_SIZE are not supported,
+			 *  e.g. secp384r1 since it would require two more KMU slots
+			 */
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
 #endif /* PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS */
 	case CRACEN_KMU_KEY_USAGE_SCHEME_RAW:
 		push_address = (uint8_t *)kmu_push_area;
-		if (key_buffer_size == 65) {
-			/* ECDSA public keys are 65 bytes, but the first byte is CBR and compressed
-			 * points are not supported so the first byte is removed here and appended
-			 * when retrieved
+		if (key_buffer_size == CRACEN_KMU_P256_PUB_KEY_SIZE ||
+		    key_buffer_size == CRACEN_KMU_P384_PUB_KEY_SIZE) {
+			/* ECC public keys are 65 bytes (or 97 bytes in case of P384 key),
+			 * but the first byte is CBR and compressed points are not supported
+			 * so the first byte is removed here and appended when retrieved
 			 */
 			key_buffer++;
 			key_buffer_size--;
-		} else if (key_buffer_size != 16 && key_buffer_size != 24 &&
-			   key_buffer_size != 32) {
+		} else if (key_buffer_size != CRACEN_KMU_P128_PRIV_KEY_SIZE &&
+			   key_buffer_size != CRACEN_KMU_P192_PRIV_KEY_SIZE &&
+			   key_buffer_size != CRACEN_KMU_P256_PRIV_KEY_SIZE) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		break;
