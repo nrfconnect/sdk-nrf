@@ -7,7 +7,6 @@
 #include <zephyr/ztest.h>
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
-#include <dk_buttons_and_leds.h>
 #include <zephyr/drivers/counter.h>
 #include <zephyr/drivers/uart.h>
 
@@ -20,6 +19,7 @@
 #define UART_BAUD_9k6	9600
 #define UART_BAUD_115k2 115200
 #define UART_BAUD_921k6 921600
+#define UART_BAUD_10M 10000000
 
 #if DT_NODE_EXISTS(DT_NODELABEL(dut))
 #define UART_NODE DT_NODELABEL(dut)
