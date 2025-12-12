@@ -116,6 +116,7 @@ ZTEST(uart_fifo_flush, test_rx_amount_handling)
 void *test_setup(void)
 {
 	zassert_true(device_is_ready(uart_dev), "UART device is not ready");
+	TC_PRINT("Platform: %s\n", CONFIG_BOARD_TARGET);
 
 	return NULL;
 }
