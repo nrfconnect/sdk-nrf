@@ -1,0 +1,14 @@
+tests:
+  benchmarks.bootup_time:
+    sysbuild: true
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    harness: pytest
+    harness_config:
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"
+    tags:
+      - ci_tests_benchmarks_current_consumption
+      - ppk_power_measure
