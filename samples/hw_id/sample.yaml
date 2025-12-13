@@ -8,7 +8,6 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
-      - nrf9160dk/nrf9160
       - nrf9160dk/nrf9160/ns
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
