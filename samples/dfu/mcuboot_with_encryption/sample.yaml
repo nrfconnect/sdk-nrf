@@ -5,6 +5,7 @@ common:
   sysbuild: true
   tags:
     - mcuboot_with_encryption
+    - ci_samples_dfu
 tests:
   sample.mcuboot_with_encryption.nrf54l15dk.image_v1.0.0:
     build_only: true
