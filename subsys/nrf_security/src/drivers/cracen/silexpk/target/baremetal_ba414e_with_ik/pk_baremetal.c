@@ -64,17 +64,17 @@ static struct sx_pk_cnx silex_pk_engine;
 
 NRF_SECURITY_MUTEX_DEFINE(cracen_mutex_asymmetric);
 
-bool ba414ep_is_busy(sx_pk_req *req)
+static bool ba414ep_is_busy(sx_pk_req *req)
 {
 	return (bool)(sx_pk_rdreg(&req->regs, PK_REG_STATUS) & PK_BUSY_MASK_BA414EP);
 }
 
-bool ik_is_busy(sx_pk_req *req)
+static bool ik_is_busy(sx_pk_req *req)
 {
 	return (bool)(sx_pk_rdreg(&req->regs, IK_REG_PK_STATUS) & PK_BUSY_MASK_IK);
 }
 
-bool is_busy(sx_pk_req *req)
+static bool is_busy(sx_pk_req *req)
 {
 #if defined(CONFIG_CRACEN_IKG)
 	if (sx_pk_is_ik_cmd(req)) {
@@ -83,6 +83,27 @@ bool is_busy(sx_pk_req *req)
 #endif
 
 	return ba414ep_is_busy(req);
+}
+
+static void wait_for_req(sx_pk_req *req)
+{
+	if (!IS_ENABLED(CONFIG_PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND) &&
+	    IS_ENABLED(CONFIG_CRACEN_USE_INTERRUPTS)) {
+		/* In CRACEN Lite the PKE-IKG interrupt is only active when in PK mode.
+		 * This is to work around a hardware issue where the interrupt is never cleared.
+		 * Therefore it is not enabled here for Cracen Lite.
+		 */
+		nrf_cracen_int_enable(NRF_CRACEN, NRF_CRACEN_INT_PKE_IKG_MASK);
+	}
+
+	/* Wait until initialized. */
+	while (ba414ep_is_busy(req) || ik_is_busy(req)) {
+		if (!IS_ENABLED(CONFIG_PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND) &&
+		    IS_ENABLED(CONFIG_CRACEN_USE_INTERRUPTS)) {
+
+			cracen_wait_for_pke_interrupt();
+		}
+	}
 }
 
 void sx_clear_interrupt(sx_pk_req *req)
@@ -245,23 +266,21 @@ struct sx_pk_acq_req sx_pk_acquire_req(const struct sx_pk_cmd_def *cmd)
 	req.req->cnx = &silex_pk_engine;
 
 	cracen_acquire();
-	if (!IS_ENABLED(CONFIG_PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND) &&
-	    IS_ENABLED(CONFIG_CRACEN_USE_INTERRUPTS)) {
-		/* In CRACEN Lite the PKE-IKG interrupt is only active when in PK mode.
-		 * This is to work around a hardware issue where the interrupt is never cleared.
-		 * Therefore it is not enabled here for Cracen Lite.
-		 */
-		nrf_cracen_int_enable(NRF_CRACEN, NRF_CRACEN_INT_PKE_IKG_MASK);
-	}
+	wait_for_req(req.req);
 
-	/* Wait until initialized. */
-	while (ba414ep_is_busy(req.req) || ik_is_busy(req.req)) {
-		if (!IS_ENABLED(CONFIG_PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND) &&
-		    IS_ENABLED(CONFIG_CRACEN_USE_INTERRUPTS)) {
+	return req;
+}
 
-			cracen_wait_for_pke_interrupt();
-		}
-	}
+struct sx_pk_acq_req sx_pk_acquire_req_locked(const struct sx_pk_cmd_def *cmd)
+{
+	struct sx_pk_acq_req req = {NULL, SX_OK};
+
+	/* The asymmetric mutex is already locked */
+	req.req = &silex_pk_engine.instance;
+	req.req->cmd = cmd;
+	req.req->cnx = &silex_pk_engine;
+
+	wait_for_req(req.req);
 
 	return req;
 }
