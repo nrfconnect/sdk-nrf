@@ -48,7 +48,7 @@ PROJECT_TAGS[find-my]=""
 PROJECT_TAGS[matter]=""
 PROJECT_TAGS[nrf-802154]=""
 
-# OSS repositories: vX.Y.Z-ncsN(-I)(-rcM)
+# OSS repositories: ncs-vX.Y.Z(-rcN)
 PROJECT_TAGS[zephyr]=""
 PROJECT_TAGS[mcuboot]=""
 PROJECT_TAGS[trusted-firmware-m]=""
