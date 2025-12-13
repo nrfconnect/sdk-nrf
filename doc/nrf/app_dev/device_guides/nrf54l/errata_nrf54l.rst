@@ -1,0 +1,116 @@
+.. _ug_errata_nrf54l:
+
+nRF54L Errata support in |NCS|
+##############################
+
+.. contents::
+   :local:
+   :depth: 2
+
+This page concludes on nRF54L Series anomalies workarounds implemented in |NCS|.
+
+.. list-table:: Anomaly workaround status for nRF54L Series devices
+    :header-rows: 1
+    :align: center
+    :widths: auto
+
+    * - Anomaly ID
+      - nRF54L05
+      - nRF54L10
+      - nRF54L15
+    * - 1
+      - \-
+      - \-
+      - \-
+    * - 6
+      - \-
+      - \-
+      - \-
+    * - 7
+      - Enabled
+      - Enabled
+      - Enabled
+    * - 8
+      - Enabled
+      - Enabled
+      - Enabled
+    * - 16
+      - Enabled
+      - Enabled
+      - Enabled
+    * - 17
+      - \-
+      - \-
+      - \-
+    * - 18
+      - \-
+      - \-
+      - \-
+    * - 20
+      - \-
+      - \-
+      - \-
+    * - 21
+      - \-
+      - \-
+      - \-
+    * - 22
+      - \-
+      - \-
+      - \-
+    * - 23
+      - \-
+      - \-
+      - \-
+    * - 24
+      - \-
+      - \-
+      - \-
+    * - 25
+      - \-
+      - \-
+      - \-
+    * - 26
+      - \-
+      - \-
+      - \-
+    * - 30
+      - Enabled via ``CONFIG_CLOCK_CONTROL_NRF_HFINT_CALIBRATION=y``
+      - Enabled via ``CONFIG_CLOCK_CONTROL_NRF_HFINT_CALIBRATION=y``
+      - Enabled via ``CONFIG_CLOCK_CONTROL_NRF_HFINT_CALIBRATION=y``
+    * - 31
+      - Enabled
+      - Enabled
+      - Enabled
+    * - 33
+      - \-
+      - \-
+      - \-
+    * - 37
+      - Enabled
+      - Enabled
+      - Enabled
+    * - 39
+      - Enabled
+      - Enabled
+      - Enabled
+    * - 41
+      - \-
+      - \-
+      - \-
+    * - 44
+      - \-
+      - \-
+      - \-
+    * - 47
+      - \-
+      - \-
+      - \-
+    * - 48
+      - Enabled
+      - Enabled
+      - Enabled
+    * - 49
+      - \-
+      - \-
+      - \-
