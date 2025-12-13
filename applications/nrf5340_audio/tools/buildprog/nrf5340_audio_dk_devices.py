@@ -146,3 +146,4 @@ class BuildConf:
     device: AudioDevice
     build: BuildType
     pristine: bool
+    menuconfig: bool
