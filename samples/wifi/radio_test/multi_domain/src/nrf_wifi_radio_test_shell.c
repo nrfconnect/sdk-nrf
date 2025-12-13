@@ -2232,6 +2232,7 @@ static int nrf_wifi_radio_test_set_reg_domain(const struct shell *shell,
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	int ret = -ENOEXEC;
 	struct nrf_wifi_fmac_reg_info reg_domain_info = {0};
+	struct nrf_wifi_fmac_reg_info reg_domain_info_get = {0};
 
 	if (strlen(argv[1]) != 2) {
 		shell_fprintf(shell, SHELL_WARNING,
@@ -2266,6 +2267,17 @@ static int nrf_wifi_radio_test_set_reg_domain(const struct shell *shell,
 			      "Regulatory programming failed\n");
 		goto out;
 	}
+
+	status = nrf_wifi_fmac_get_reg(ctx->rpu_ctx, &reg_domain_info_get);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Regulatory domain fetch failed\n");
+		goto out;
+	}
+
+	shell_fprintf(shell, SHELL_INFO, "Regulatory domain set to: %c%c\n",
+		      reg_domain_info_get.alpha2[0], reg_domain_info_get.alpha2[1]);
 
 	ret = 0;
 out:
