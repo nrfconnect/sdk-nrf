@@ -557,6 +557,7 @@
 /samples/wifi/promiscuous/                @D-Triveni
 /samples/wifi/wfa_qt_app/                 @D-Triveni
 /samples/wifi/offloaded_raw_tx/           @kapbh @sachinthegreen
+/samples/untitled_sample_demo/            @nrfconnect/ncs-co-build-system
 
 /samples/app_event_manager/*.rst          @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-bluebagel-doc
 /samples/app_event_manager_profiler_tracer/*.rst @nrfconnect/ncs-si-muffin-doc
