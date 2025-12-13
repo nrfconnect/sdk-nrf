@@ -212,7 +212,7 @@ For more information about configuration files in the |NCS|, see :ref:`app_build
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/mesh/light_ctrl`
+.. |sample path| replace:: :file:`samples/bluetooth/mesh/nlc_lightness_controller`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -221,7 +221,7 @@ Building and running
 
 .. include:: /includes/ipc_radio_conf.txt
 
-.. _bluetooth_mesh_light_ctrl_testing:
+.. _bluetooth_mesh_nlc_light_ctrl_testing:
 
 Testing
 =======
