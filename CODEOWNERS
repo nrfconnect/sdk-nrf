@@ -701,6 +701,7 @@
 
 # Scripts
 /scripts/docker/                          @nrfconnect/ncs-ci
+/scripts/ci/quarantine_notifier.py        @PerMac @katgiadla
 /scripts/ci/test_plan.py                  @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/tags.yaml                     @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/tags_sdk_zephyr.yaml          @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
