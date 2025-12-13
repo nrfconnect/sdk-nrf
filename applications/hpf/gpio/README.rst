@@ -10,7 +10,7 @@ High-Performance Framework GPIO
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 device.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF7120 devices.
 
 This application demonstrates how to write a :ref:`High-Performance Framework (HPF) <hpf_index>` application implementing a simple peripheral.
 The application implements a subset of the Zephyr GPIO API.
@@ -31,7 +31,7 @@ The GPIO HPF application is structured into the following main components:
 Requirements
 ************
 
-The firmware supports the following development kit:
+The firmware supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -54,11 +54,11 @@ Building and running
 To build and run the application, you must include code for both the application core and FLPR core.
 The process involves building the :zephyr:code-sample:`blinky` sample with the appropriate sysbuild configuration.
 
-For example, to build with icmsg backend, run the following commands:
+For example, to build with icmsg backend, run the following commands (replace ``<board>`` with your target board, such as ``nrf54l15dk/nrf54l15/cpuapp`` or ``nrf7120pdk/nrf7120/cpuapp``):
 
   .. code-block:: console
 
-     west build -b nrf54l15dk/nrf54l15/cpuapp -- -DSB_CONFIG_PARTITION_MANAGER=n -DSB_CONFIG_HPF=y -DSB_CONFIG_HPF_GPIO=y -DSB_CONFIG_HPF_GPIO_BACKEND_ICMSG=y -DEXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15dk_nrf54l15_cpuapp_hpf_gpio.overlay"
+     west build -b <board> -- -DSB_CONFIG_PARTITION_MANAGER=n -DSB_CONFIG_HPF=y -DSB_CONFIG_HPF_GPIO=y -DSB_CONFIG_HPF_GPIO_BACKEND_ICMSG=y -DEXTRA_DTC_OVERLAY_FILE="./boards/<board>_hpf_gpio.overlay"
      west flash
 
 Upon successful execution, **LED0** will start flashing.
