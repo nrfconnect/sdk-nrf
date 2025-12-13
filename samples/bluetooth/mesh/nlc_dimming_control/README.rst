@@ -193,7 +193,7 @@ FEM support
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/mesh/light_dimmer`
+.. |sample path| replace:: :file:`samples/bluetooth/mesh/nlc_dimming_control`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -202,7 +202,7 @@ Building and running
 
 .. include:: /includes/ipc_radio_conf.txt
 
-.. _bluetooth_mesh_light_dimmer_testing:
+.. _bluetooth_mesh_nlc_dimming_control_testing:
 
 Testing
 =======
