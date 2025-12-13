@@ -10,13 +10,13 @@
 #include <zephyr/devicetree.h>
 #include <zephyr/devicetree/clocks.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
-#include <zephyr/drivers/gpio.h>
+// #include <zephyr/drivers/gpio.h>
 
 #define REQUEST_SERVING_WAIT_TIME_US		10000
 #define ADDITIONAL_REQUEST_SERVING_WAIT_TIME_US 350000
 #define SLEEP_TIME_MS				1000
 
-static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
+// static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
 LOG_MODULE_REGISTER(idle_clock_control);
 
@@ -227,7 +227,7 @@ static void test_clock_control_request(const struct test_clk_ctx *clk_contexts,
 
 void run_tests(void)
 {
-	gpio_pin_set_dt(&led, 1);
+	// gpio_pin_set_dt(&led, 1);
 #if defined(CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP)
 	test_clock_control_request(auxpll_test_clk_ctx, ARRAY_SIZE(auxpll_test_clk_ctx));
 	test_clock_control_request(hfxo_test_clk_ctx, ARRAY_SIZE(hfxo_test_clk_ctx));
@@ -238,23 +238,23 @@ void run_tests(void)
 	test_clock_control_request(fll16m_test_clk_ctx, ARRAY_SIZE(fll16m_test_clk_ctx));
 	test_clock_control_request(lfclk_test_clk_ctx, ARRAY_SIZE(lfclk_test_clk_ctx));
 	k_busy_wait(ADDITIONAL_REQUEST_SERVING_WAIT_TIME_US);
-	gpio_pin_set_dt(&led, 0);
+	// gpio_pin_set_dt(&led, 0);
 	k_msleep(SLEEP_TIME_MS);
 }
 
 int main(void)
 {
-	int ret;
+	// int ret;
 
 	LOG_INF("Idle clock_control, %s", CONFIG_BOARD_TARGET);
 	k_msleep(10);
 
-	ret = gpio_is_ready_dt(&led);
-	__ASSERT(ret, "Error: GPIO Device not ready");
+	// ret = gpio_is_ready_dt(&led);
+	// __ASSERT(ret, "Error: GPIO Device not ready");
 
-	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
-	__ASSERT(ret == 0, "Could not configure led GPIO");
-	gpio_pin_set_dt(&led, 1);
+	// ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
+	// __ASSERT(ret == 0, "Could not configure led GPIO");
+	// gpio_pin_set_dt(&led, 1);
 
 #if defined(CONFIG_COVERAGE)
 	printk("Start testing\n");
