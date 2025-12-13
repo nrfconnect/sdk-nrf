@@ -195,7 +195,9 @@ Matter bridge
 nRF5340 Audio
 -------------
 
-|no_changes_yet_note|
+* Updated the buildprog/programming script. Devices are now halted before programming.
+  Furthermore, the devices are kept halted until they are all programmed, and then started together
+  with the headsets starting first. This eases sniffing of advertisement packets.
 
 nRF Desktop
 -----------
