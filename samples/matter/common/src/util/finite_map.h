@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <iterator>
 #include <limits>
+#include <optional>
 #include <type_traits>
 #include <utility>
 
@@ -31,7 +32,10 @@ namespace Nrf
 	 * retrieving a number of free slots available in the map (FreeSlots)
      * iterating though stored item via publicly available mMap member
      * retrieving the first free slot (GetFirstFreeSlot)
-	Prerequisites:
+	 * retrieving a value by key (At()) - this operation is not safe if the key may not exist in the map
+	 * retrieving a value by key (TryAt()) - this operation is safe if the key may not exist in the map, and returns
+       a std::nullopt if the key is not found
+   Prerequisites:
      * T1 must be trivial and the maximum numeric limit for the T1-type value is reserved and assigned as an invalid
    key.
      * T2 must have move semantics and bool()/==operators implemented
@@ -103,13 +107,32 @@ template <typename T1, typename T2, uint16_t N> struct FiniteMap {
 		return dummyObject;
 	}
 
-	bool Contains(T1 key)
+	bool Contains(T1 key) const
 	{
-		for (auto &it : mMap) {
+		for (const auto &it : mMap) {
 			if (key == it.key)
 				return true;
 		}
 		return false;
+	}
+
+	T2 At(T1 key) const
+	{
+		static T2 dummyObject;
+		for (const auto &it : mMap) {
+			if (key == it.key)
+				return it.value;
+		}
+		return dummyObject;
+	}
+
+	std::optional<T2> TryAt(T1 key) const
+	{
+		for (const auto &it : mMap) {
+			if (key == it.key)
+				return it.value;
+		}
+		return std::nullopt;
 	}
 
 	ElementCounterType FreeSlots() { return N - mElementsCount; }
