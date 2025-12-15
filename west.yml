@@ -181,7 +181,7 @@ manifest:
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: cf419408648ce1eee1fbea1d4b6a8366f9bcf737
+      revision: 9b8facc31d42ae44facd1fc348a0b42fcf29ee3d
       groups:
         - dragoon
     - name: cjson
