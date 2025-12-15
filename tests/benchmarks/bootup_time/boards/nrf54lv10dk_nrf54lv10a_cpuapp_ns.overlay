@@ -9,8 +9,3 @@
 		led = &led0;
 	};
 };
-
-&led0 {
-	/* Logic is inverted to adapt to measurement methods */
-	gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
-};

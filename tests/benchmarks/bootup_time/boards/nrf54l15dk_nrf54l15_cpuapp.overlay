@@ -6,6 +6,11 @@
 
 / {
 	aliases {
-		led = &led0;
+		led = &button3;
 	};
+};
+
+&button3 {
+	/* Logic is inverted to adapt to measurement methods */
+	gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
 };
