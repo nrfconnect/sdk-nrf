@@ -7,7 +7,9 @@
 #include <nordic/nrf54ls05b.dtsi>
 
 cpu: &cpuapp {};
+
 systick: &cpuapp_systick {};
+
 nvic: &cpuapp_nvic {};
 
 / {
@@ -43,7 +45,7 @@ nvic: &cpuapp_nvic {};
 };
 
 &grtc {
-	interrupts = <226 NRF_DEFAULT_IRQ_PRIORITY>,<229 NRF_DEFAULT_IRQ_PRIORITY>;
+	interrupts = <226 NRF_DEFAULT_IRQ_PRIORITY>, <229 NRF_DEFAULT_IRQ_PRIORITY>;
 };
 
 &gpiote20 {

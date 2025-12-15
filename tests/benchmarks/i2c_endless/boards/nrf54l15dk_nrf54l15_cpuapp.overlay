@@ -49,6 +49,7 @@
 	pinctrl-0 = <&i2c21_default_alt>;
 	pinctrl-1 = <&i2c21_sleep_alt>;
 	pinctrl-names = "default", "sleep";
+
 	sensor: sensor@54 {
 		reg = <0x54>;
 	};

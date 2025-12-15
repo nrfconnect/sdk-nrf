@@ -21,5 +21,5 @@ dmic_dev: &pdm20 {
 };
 
 &uart20 {
-	current-speed = < 921600 >;
+	current-speed = <921600>;
 };

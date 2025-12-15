@@ -5,5 +5,5 @@
 
 &uart135 {
 	status = "disabled";
-	/delete-property/memory-regions;
+	/delete-property/ memory-regions;
 };

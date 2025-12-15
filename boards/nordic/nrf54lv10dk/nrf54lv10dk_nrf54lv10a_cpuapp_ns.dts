@@ -19,7 +19,6 @@
 		zephyr,sram = &cpuapp_sram;
 		zephyr,bt-hci = &bt_hci_sdc;
 		zephyr,entropy = &psa_rng;
-
 	};
 
 	/delete-node/ rng;
@@ -91,14 +90,14 @@
 			reg = <0x00068000 DT_SIZE_K(8)>;
 		};
 
-		slot0_ns_partition: partition@6A000 {
+		slot0_ns_partition: partition@6a000 {
 			label = "image-0-nonsecure";
-			reg = <0x0006A000 DT_SIZE_K(504)>;
+			reg = <0x0006a000 DT_SIZE_K(504)>;
 		};
 
-		storage_partition: partition@E8000 {
+		storage_partition: partition@e8000 {
 			label = "storage";
-			reg = <0x000E8000 DT_SIZE_K(32)>;
+			reg = <0x000e8000 DT_SIZE_K(32)>;
 		};
 	};
 };

@@ -12,6 +12,7 @@
 
 	leds {
 		compatible = "gpio-leds";
+
 		led1: led_1 {
 			gpios = <&gpio9 1 GPIO_ACTIVE_HIGH>;
 			label = "Green LED 1";
@@ -20,6 +21,7 @@
 
 	pwmleds {
 		compatible = "pwm-leds";
+
 		pwm_gpio: pwm_gpio {
 			pwms = <&pwm131 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
 		};
