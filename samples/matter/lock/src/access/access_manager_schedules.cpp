@@ -48,13 +48,45 @@ DlStatus AccessManager<CRED_BIT_MASK>::SetWeekDaySchedule(uint8_t weekdayIndex, 
 
 	auto &schedule = mWeekDaySchedule[userIndex - 1][weekdayIndex - 1];
 
-	if (DlScheduleStatus::kAvailable == status && !schedule.mAvailable) {
+	if (DlScheduleStatus::kAvailable == status) {
+		/* If schedule is already available (doesn't exist), return success */
+		if (schedule.mAvailable) {
+			return DlStatus::kSuccess;
+		}
+
+		/* Clear the existing schedule */
 		schedule.mAvailable = true;
 		memset(schedule.mData.mRaw, 0, sizeof(schedule.mData.mRaw));
 		if (!AccessStorage::Instance().Remove(AccessStorage::Type::WeekDaySchedule, userIndex, weekdayIndex)) {
 			LOG_ERR("Cannot remove the WeekDay schedule");
 			return DlStatus::kFailure;
 		}
+
+		/* Remove the index from the schedule indexes list and update persistent storage */
+		auto &scheduleIndexes = mWeekDayScheduleIndexes.Get(userIndex);
+		if (CHIP_NO_ERROR != scheduleIndexes.RemoveIndex(weekdayIndex)) {
+			LOG_ERR("Cannot remove WeekDay schedule index from list");
+			return DlStatus::kFailure;
+		}
+
+		uint8_t scheduleIndexesSerialized[WeekDayScheduleIndexes::ScheduleList::RequiredBufferSize()] = { 0 };
+		size_t serializedIndexesSize = scheduleIndexes.Serialize(scheduleIndexesSerialized, sizeof(scheduleIndexesSerialized));
+
+		if (0 < serializedIndexesSize) {
+			if (!AccessStorage::Instance().Store(AccessStorage::Type::WeekDayScheduleIndexes,
+							    scheduleIndexesSerialized, serializedIndexesSize,
+							    userIndex)) {
+				LOG_ERR("Cannot store WeekDaySchedule counter. The persistent database will be corrupted.");
+				return DlStatus::kFailure;
+			}
+		} else {
+			/* If there are no more schedules, remove the indexes entry from storage */
+			if (!AccessStorage::Instance().Remove(AccessStorage::Type::WeekDayScheduleIndexes, userIndex)) {
+				LOG_ERR("Cannot remove WeekDaySchedule indexes entry");
+				return DlStatus::kFailure;
+			}
+		}
+
 		return DlStatus::kSuccess;
 	} else if (DlScheduleStatus::kOccupied == status && !schedule.mAvailable) {
 		LOG_DBG("Modifying week day schedule of index: %d for user %d", weekdayIndex, userIndex);
@@ -130,13 +162,45 @@ DlStatus AccessManager<CRED_BIT_MASK>::SetYearDaySchedule(uint8_t yeardayIndex, 
 
 	auto &schedule = mYearDaySchedule[userIndex - 1][yeardayIndex - 1];
 
-	if (DlScheduleStatus::kAvailable == status && !schedule.mAvailable) {
+	if (DlScheduleStatus::kAvailable == status) {
+		/* If schedule is already available (doesn't exist), return success */
+		if (schedule.mAvailable) {
+			return DlStatus::kSuccess;
+		}
+
+		/* Clear the existing schedule */
 		schedule.mAvailable = true;
 		memset(schedule.mData.mRaw, 0, sizeof(schedule.mData.mRaw));
 		if (!AccessStorage::Instance().Remove(AccessStorage::Type::YearDaySchedule, userIndex, yeardayIndex)) {
 			LOG_ERR("Cannot remove the YearDay schedule");
 			return DlStatus::kFailure;
 		}
+
+		/* Remove the index from the schedule indexes list and update persistent storage */
+		auto &scheduleIndexes = mYearDayScheduleIndexes.Get(userIndex);
+		if (CHIP_NO_ERROR != scheduleIndexes.RemoveIndex(yeardayIndex)) {
+			LOG_ERR("Cannot remove YearDay schedule index from list");
+			return DlStatus::kFailure;
+		}
+
+		uint8_t scheduleIndexesSerialized[YearDayScheduleIndexes::ScheduleList::RequiredBufferSize()] = { 0 };
+		size_t serializedIndexesSize = scheduleIndexes.Serialize(scheduleIndexesSerialized, sizeof(scheduleIndexesSerialized));
+
+		if (0 < serializedIndexesSize) {
+			if (!AccessStorage::Instance().Store(AccessStorage::Type::YearDayScheduleIndexes,
+							    scheduleIndexesSerialized, serializedIndexesSize,
+							    userIndex)) {
+				LOG_ERR("Cannot store YearDaySchedule counter. The persistent database will be corrupted.");
+				return DlStatus::kFailure;
+			}
+		} else {
+			/* If there are no more schedules, remove the indexes entry from storage */
+			if (!AccessStorage::Instance().Remove(AccessStorage::Type::YearDayScheduleIndexes, userIndex)) {
+				LOG_ERR("Cannot remove YearDaySchedule indexes entry");
+				return DlStatus::kFailure;
+			}
+		}
+
 		return DlStatus::kSuccess;
 	} else if (DlScheduleStatus::kOccupied == status && !schedule.mAvailable) {
 		LOG_DBG("Modifying year day schedule of index: %d for user %d", yeardayIndex, userIndex);
@@ -205,13 +269,43 @@ DlStatus AccessManager<CRED_BIT_MASK>::SetHolidaySchedule(uint8_t holidayIndex, 
 
 	auto &schedule = mHolidaySchedule[holidayIndex - 1];
 
-	if (DlScheduleStatus::kAvailable == status && !schedule.mAvailable) {
+	if (DlScheduleStatus::kAvailable == status) {
+		/* If schedule is already available (doesn't exist), return success */
+		if (schedule.mAvailable) {
+			return DlStatus::kSuccess;
+		}
+
+		/* Clear the existing schedule */
 		schedule.mAvailable = true;
 		memset(schedule.mData.mRaw, 0, sizeof(schedule.mData.mRaw));
 		if (!AccessStorage::Instance().Remove(AccessStorage::Type::HolidaySchedule, holidayIndex)) {
 			LOG_ERR("Cannot remove the Holiday schedule");
 			return DlStatus::kFailure;
 		}
+
+		/* Remove the index from the schedule indexes list and update persistent storage */
+		if (CHIP_NO_ERROR != mHolidayScheduleIndexes.RemoveIndex(holidayIndex)) {
+			LOG_ERR("Cannot remove Holiday schedule index from list");
+			return DlStatus::kFailure;
+		}
+
+		uint8_t scheduleIndexesSerialized[HolidayScheduleIndexes::RequiredBufferSize()] = { 0 };
+		size_t serializedIndexesSize = mHolidayScheduleIndexes.Serialize(scheduleIndexesSerialized, sizeof(scheduleIndexesSerialized));
+
+		if (0 < serializedIndexesSize) {
+			if (!AccessStorage::Instance().Store(AccessStorage::Type::HolidayScheduleIndexes,
+							    scheduleIndexesSerialized, serializedIndexesSize)) {
+				LOG_ERR("Cannot store HolidaySchedule counter. The persistent database will be corrupted.");
+				return DlStatus::kFailure;
+			}
+		} else {
+			/* If there are no more schedules, remove the indexes entry from storage */
+			if (!AccessStorage::Instance().Remove(AccessStorage::Type::HolidayScheduleIndexes)) {
+				LOG_ERR("Cannot remove HolidaySchedule indexes entry");
+				return DlStatus::kFailure;
+			}
+		}
+
 		return DlStatus::kSuccess;
 	} else if (DlScheduleStatus::kOccupied == status && !schedule.mAvailable) {
 		LOG_DBG("Modifying holiday schedule of index: %d", holidayIndex);
