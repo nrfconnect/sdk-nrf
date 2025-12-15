@@ -136,6 +136,14 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 			    bool *group_reconfig_needed,
 			    struct bt_cap_unicast_group *unicast_group);
 
+int srv_store_max_trans_lat_find(struct bt_bap_stream *stream, uint16_t *new_max_trans_lat_ms,
+				 uint16_t *existing_max_trans_lat_ms, bool *group_reconfig_needed,
+				 const struct bt_bap_qos_cfg_pref *server_qos_pref,
+				 struct bt_cap_unicast_group *unicast_group);
+
+int srv_store_max_trans_lat_set(struct bt_cap_unicast_group *unicast_group, enum bt_audio_dir dir,
+				uint16_t max_trans_lat_ms);
+
 /**
  * @brief	Set the valid locations of a unicast server.
  *
