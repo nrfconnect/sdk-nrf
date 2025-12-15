@@ -15,10 +15,11 @@
 
 /* Shrink by 160 KB */
 /delete-node/ &cpurad_slot0_partition;
+
 &mram1x {
 	partitions {
-		cpurad_slot0_partition: partition@BA000 {
-			reg = <0xBA000 DT_SIZE_K(168)>;
+		cpurad_slot0_partition: partition@ba000 {
+			reg = <0xba000 DT_SIZE_K(168)>;
 		};
 	};
 };
@@ -32,6 +33,7 @@
 
 /* Extend by 256B */
 /delete-node/ &pm_ramfunc;
+
 / {
 	soc {
 		pm_ramfunc: cpuapp_s2ram@22007e00 {

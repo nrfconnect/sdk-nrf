@@ -33,6 +33,7 @@
 			psels = <NRF_PSEL(PWM_OUT0, 0, 0)>;
 		};
 	};
+
 	/omit-if-no-ref/ pwm130_sleep: pwm130_sleep {
 		group1 {
 			psels = <NRF_PSEL(PWM_OUT0, 0, 0)>;
