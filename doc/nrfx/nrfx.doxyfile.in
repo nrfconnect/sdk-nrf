@@ -50,7 +50,7 @@ PROJECT_NAME           = nrfx
 
 ### EDIT THIS ###
 
-PROJECT_NUMBER         = 3.6
+PROJECT_NUMBER         = 4.0.1
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -967,11 +967,12 @@ WARN_LOGFILE           = warnings_nrfx.txt
 ### EDIT THIS ###
 
 INPUT                  = @DOCSET_SOURCE_BASE@/nrfx/doc/config_dox \
+                         @DOCSET_SOURCE_BASE@/nrfx/doc/nrfx_4_0_migration_guide.md \
                          @DOCSET_SOURCE_BASE@/nrfx/helpers \
                          @DOCSET_SOURCE_BASE@/nrfx/drivers \
                          @DOCSET_SOURCE_BASE@/nrfx/hal \
                          @DOCSET_SOURCE_BASE@/nrfx/haly \
-                         @DOCSET_SOURCE_BASE@/nrfx/soc \
+                         @DOCSET_SOURCE_BASE@/nrfx/lib \
                          @DOCSET_SOURCE_BASE@/nrfx/templates/nrfx_glue.h \
                          @DOCSET_SOURCE_BASE@/nrfx/templates/nrfx_log.h \
                          @DOCSET_SOURCE_BASE@/nrfx/CHANGELOG.md \
