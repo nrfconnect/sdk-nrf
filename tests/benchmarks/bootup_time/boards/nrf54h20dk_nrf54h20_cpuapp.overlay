@@ -13,6 +13,15 @@
 
 /delete-node/ &led1;
 
+&led0 {
+	/*
+	 * Lilium pulls GPIOs up during bootup, to adapt
+	 * to measurement methods, logic is inverted
+	 */
+	gpios = <&gpio9 0 GPIO_ACTIVE_LOW>;
+};
+
+
 &gpiote130 {
 	status = "okay";
 	owned-channels = <0>;
