@@ -405,13 +405,15 @@ otError otCoapSendRequestWithParameters(otInstance *aInstance, otMessage *aMessa
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t cbor_buffer_size = 0;
-	ot_rpc_coap_request_key request_rep;
+	ot_rpc_coap_request_key request_rep = 0;
 	otError error = OT_ERROR_PARSE;
 
-	request_rep = ot_rpc_coap_request_alloc(aHandler, aContext);
+	if (aHandler != NULL) {
+		request_rep = ot_rpc_coap_request_alloc(aHandler, aContext);
 
-	if (!request_rep) {
-		return OT_ERROR_NO_BUFS;
+		if (request_rep == 0) {
+			return OT_ERROR_NO_BUFS;
+		}
 	}
 
 	cbor_buffer_size += 1 + sizeof(ot_rpc_res_tab_key); /* aMessage */
@@ -428,7 +430,7 @@ otError otCoapSendRequestWithParameters(otInstance *aInstance, otMessage *aMessa
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_COAP_SEND_REQUEST, &ctx, ot_rpc_decode_error,
 				&error);
 
-	if (error != OT_ERROR_NONE) {
+	if (error != OT_ERROR_NONE && request_rep != 0) {
 		/* Release the request slot on failure. */
 		requests[request_rep - 1].handler = NULL;
 	}

@@ -28,6 +28,7 @@
 #define MSG_TX_CB_ID (UINT32_MAX - 1)
 
 FAKE_VOID_FUNC(otMessageRegisterTxCallback, otMessage *, otMessageTxCallback, void *);
+FAKE_VOID_FUNC(otMessageEnableTxTimestamp, otMessage *);
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {

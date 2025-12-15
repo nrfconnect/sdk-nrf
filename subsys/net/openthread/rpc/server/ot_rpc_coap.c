@@ -643,6 +643,7 @@ static void ot_rpc_cmd_coap_send_request(const struct nrf_rpc_group *group,
 	otMessageInfo message_info;
 	ot_rpc_coap_request_key request_rep;
 	otMessage *message;
+	otCoapResponseHandler handler;
 	otError error;
 
 	message_rep = nrf_rpc_decode_uint(ctx);
@@ -662,8 +663,9 @@ static void ot_rpc_cmd_coap_send_request(const struct nrf_rpc_group *group,
 	}
 
 	ot_rpc_mutex_lock();
+	handler = (request_rep != 0) ? ot_rpc_coap_response_handler : NULL;
 	error = otCoapSendRequest(openthread_get_default_instance(), message, &message_info,
-				  ot_rpc_coap_response_handler, (void *)request_rep);
+				  handler, (void *)request_rep);
 
 	if (error == OT_ERROR_NONE) {
 		ot_res_tab_msg_free(message_rep);

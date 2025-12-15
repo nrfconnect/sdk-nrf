@@ -397,6 +397,32 @@ ZTEST(ot_rpc_coap, test_otCoapSendRequest)
 	zassert_equal(error, OT_ERROR_NONE);
 }
 
+/* Test serialization of otCoapSendRequest() that takes null-handler */
+ZTEST(ot_rpc_coap, test_otCoapSendRequest_null_handler)
+{
+	ot_rpc_coap_request_key request_rep = 0;
+	otMessageInfo message_info = {
+		.mSockAddr = {.mFields.m8 = {ADDR_1}},
+		.mPeerAddr = {.mFields.m8 = {ADDR_2}},
+		.mSockPort = PORT_1,
+		.mPeerPort = PORT_2,
+		.mHopLimit = HOP_LIMIT,
+		.mEcn = 3,
+		.mIsHostInterface = true,
+		.mAllowZeroHopLimit = true,
+		.mMulticastLoop = true,
+	};
+	otError error;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_COAP_SEND_REQUEST, CBOR_UINT32(MSG_ADDR),
+					   CBOR_MSG_INFO, request_rep),
+				   RPC_RSP(OT_ERROR_NONE));
+	error = otCoapSendRequest(NULL, (otMessage *)MSG_ADDR, &message_info, NULL, NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(error, OT_ERROR_NONE);
+}
+
 /* Test serialization of otCoapSendRequest() returning OT_ERROR_INVALID_STATE */
 ZTEST(ot_rpc_coap, test_otCoapSendRequest_failure)
 {

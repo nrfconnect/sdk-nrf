@@ -509,6 +509,29 @@ ZTEST(ot_rpc_coap, test_otCoapSendRequest)
 }
 
 /*
+ * Test reception of otCoapSendRequest() with null-handler.
+ * Test serialization of the result: OT_ERROR_NONE.
+ * Test response handler invocation.
+ */
+ZTEST(ot_rpc_coap, test_otCoapSendRequest_null_handler)
+{
+	ot_rpc_coap_request_key request_rep = 0;
+	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
+
+	otCoapSendRequestWithParameters_fake.return_val = OT_ERROR_NONE;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
+	mock_nrf_rpc_tr_receive(
+		RPC_CMD(OT_RPC_CMD_COAP_SEND_REQUEST, message_rep, CBOR_MSG_INFO, request_rep));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otCoapSendRequestWithParameters_fake.call_count, 1);
+	zexpect_equal(otCoapSendRequestWithParameters_fake.arg1_val, (otMessage *)MSG_ADDR);
+	zexpect_not_null(otCoapSendRequestWithParameters_fake.arg2_val);
+	zexpect_is_null(otCoapSendRequestWithParameters_fake.arg3_val);
+}
+
+/*
  * Test reception of otCoapSendRequest().
  * Test serialization of the result: OT_ERROR_INVALID_STATE.
  * Test that the message handle has not been released on failure.
