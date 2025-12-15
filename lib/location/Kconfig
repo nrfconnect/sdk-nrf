@@ -46,6 +46,7 @@ config LOCATION_METHOD_WIFI_NET_IF_UPDOWN
 	bool "Use netif up/down for Wi-Fi"
 	default y if (BOARD_THINGY91X_NRF9151 || BOARD_THINGY91X_NRF9151_NS || BOARD_THINGY91X_NRF5340_CPUAPP || BOARD_THINGY91X_NRF5340_CPUAPP_NS)
 	depends on LOCATION_METHOD_WIFI_NET_MGMT
+	select WIFI_READY_LIB
 	help
 	  Use the Network Interface Up/Down APIs for Wi-Fi functionality to save power.
 
