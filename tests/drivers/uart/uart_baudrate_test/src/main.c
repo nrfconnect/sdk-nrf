@@ -56,6 +56,7 @@ static void check_timing(const struct gpio_dt_spec *gpio_dt, uint32_t baudrate)
 	int32_t start_index_count_zero;
 	double bit_diviation_mean;
 	double symbol_diviation_mean;
+	int key;
 
 	ret = uart_config_get(uart_dev, &test_uart_config);
 	zassert_equal(ret, 0, "uart_config_get: %d\n", ret);
@@ -78,6 +79,7 @@ static void check_timing(const struct gpio_dt_spec *gpio_dt, uint32_t baudrate)
 	 * Measure time needed to read gpios
 	 */
 	gpio_read_time_us_mean = 0;
+	key = irq_lock();
 	for (uint32_t t = 0; t < REPEAT_NUMBER; ++t) {
 		cycle_start_time = k_cycle_get_32();
 		for (uint32_t i = 0; i < PIN_STATE_SIZE; ++i) {
@@ -89,6 +91,7 @@ static void check_timing(const struct gpio_dt_spec *gpio_dt, uint32_t baudrate)
 			(1e6 / cycles_s_sys);
 		gpio_read_time_us_mean += gpio_read_time_us;
 	}
+	irq_unlock(key);
 	gpio_read_time_us_mean /= (double)REPEAT_NUMBER;
 	TC_PRINT("GPIO get takes: %.2f us\n", gpio_read_time_us_mean);
 
@@ -133,9 +136,11 @@ static void check_timing(const struct gpio_dt_spec *gpio_dt, uint32_t baudrate)
 		/*
 		 * Check gpio
 		 */
+		key = irq_lock();
 		for (uint32_t i = 0; i < PIN_STATE_SIZE; ++i) {
 			pin_state[i] = gpio_pin_get_dt(&gpio_spec);
 		}
+		irq_unlock(key);
 
 		/*
 		 * Find start of start bit and end of stop bit
