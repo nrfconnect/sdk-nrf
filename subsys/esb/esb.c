@@ -257,11 +257,6 @@ static struct esb_address esb_addr = {
 	.rx_pipes_enabled = 0xFF
 };
 
-enum {
-	ERRATA_216_DISABLED,
-	ERRATA_216_ENABLED,
-};
-static atomic_t errata_216_status = ATOMIC_INIT(ERRATA_216_DISABLED);
 static uint32_t errata_216_timer_shorts;
 
 static esb_event_handler event_handler;
@@ -370,10 +365,6 @@ static inline void apply_errata143_workaround(void)
 	 * incurred from the workaround.
 	 */
 
-	if (!nrf52_errata_143()) {
-		return;
-	}
-
 	uint32_t base_address_mask =
 		esb_addr.addr_length == 5 ? 0xFFFF0000 : 0xFF000000;
 	esb_apply_nrf52_143(base_address_mask);
@@ -381,37 +372,29 @@ static inline void apply_errata143_workaround(void)
 
 static void errata_216_on(void)
 {
-	if (!nrf54h_errata_216()) {
+	if (!NRF_ERRATA_DYNAMIC_CHECK(54H, 216)) {
 		return;
 	}
 
 	esb_apply_nrf54h_216(true);
-
-#if NRF54H_ERRATA_216_ENABLE_WORKAROUND
-	atomic_set(&errata_216_status, ERRATA_216_ENABLED);
-#endif /* NRF54H_ERRATA_216_ENABLE_WORKAROUND */
 }
 
 static void errata_216_off(void)
 {
-	if (!nrf54h_errata_216()) {
+	if (!NRF_ERRATA_DYNAMIC_CHECK(54H, 216)) {
 		return;
 	}
 
 	esb_apply_nrf54h_216(false);
-
-#if NRF54H_ERRATA_216_ENABLE_WORKAROUND
-	atomic_set(&errata_216_status, ERRATA_216_DISABLED);
-#endif /* NRF54H_ERRATA_216_ENABLE_WORKAROUND */
 }
 
 static void apply_radio_init_workarounds(void)
 {
-	if (nrf52_errata_182()) {
+	if (NRF_ERRATA_DYNAMIC_CHECK(52, 182)) {
 		esb_apply_nrf52_182();
 	}
 
-	if (nrf54h_errata_103()) {
+	if (NRF_ERRATA_DYNAMIC_CHECK(54H, 103)) {
 		esb_apply_nrf54h_103();
 	}
 
@@ -586,7 +569,7 @@ void esb_fem_for_tx_retry_clear(void)
 
 static void radio_start(void)
 {
-	if (nrf54h_errata_216() && atomic_get(&errata_216_status) == ERRATA_216_DISABLED) {
+	if (NRF_ERRATA_DYNAMIC_CHECK(54H, 216) && !esb_is_nrf54h_216_enabled()) {
 		errata_216_on();
 
 		nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL3,
@@ -684,11 +667,9 @@ static void update_radio_addresses(uint8_t update_mask)
 	}
 
 	/* Workaround for Errata 143 */
-#if NRF52_ERRATA_143_ENABLE_WORKAROUND
-	if (nrf52_errata_143()) {
+	if (NRF_ERRATA_DYNAMIC_CHECK(52, 143)) {
 		apply_errata143_workaround();
 	}
-#endif
 }
 
 #if defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX)
@@ -1119,10 +1100,10 @@ static void esb_timer_handler(nrf_timer_event_t event_type, void *context)
 			(NRF_TIMER_SHORT_COMPARE2_CLEAR_MASK | NRF_TIMER_SHORT_COMPARE2_STOP_MASK));
 	}
 
-	if (nrf54h_errata_216() && event_type == NRF_TIMER_EVENT_COMPARE3) {
+	if (NRF_ERRATA_DYNAMIC_CHECK(54H, 216) && event_type == NRF_TIMER_EVENT_COMPARE3) {
 		nrf_timer_int_disable(esb_timer.p_reg, NRF_TIMER_INT_COMPARE3_MASK);
 
-		if (atomic_get(&errata_216_status) == ERRATA_216_ENABLED) {
+		if (esb_is_nrf54h_216_enabled()) {
 			/* This case is triggered after calling the radio_start() function */
 
 			/* Restore timer shorts */
@@ -1358,7 +1339,7 @@ static void on_radio_disabled_tx(void)
 	nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL1,
 			   (esb_cfg.retransmit_delay - ramp_up), false);
 
-	if (nrf54h_errata_216()) {
+	if (NRF_ERRATA_DYNAMIC_CHECK(54H, 216)) {
 		int32_t min_time = esb_cfg.retransmit_delay - wait_for_ack_timeout_us -
 							      ramp_up - ADDR_EVENT_LATENCY_US;
 		if (min_time > ERRATA_216_MIN_TIME_TO_DISABLE_US) {
@@ -1500,7 +1481,7 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 			esb_fem_for_tx_set(true);
 
 			radio_start();
-		} else if (nrf54h_errata_216()) {
+		} else if (NRF_ERRATA_DYNAMIC_CHECK(54H, 216)) {
 			uint16_t ramp_up = esb_cfg.use_fast_ramp_up ? TX_FAST_RAMP_UP_TIME_US
 								    : TX_RAMP_UP_TIME_US;
 			int32_t min_time = esb_cfg.retransmit_delay - ramp_up -
