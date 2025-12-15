@@ -24,7 +24,7 @@
 		compatible = "gpio-leds";
 
 		led0: led_0 {
-			gpios = < &gpio9 0x0 0x0 >;
+			gpios = <&gpio9 0x0 0x0>;
 		};
 	};
 

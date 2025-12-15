@@ -16,8 +16,8 @@
 /delete-node/ &led1;
 
 &spi130 {
-	 status = "reserved";
-	 interrupt-parent = <&cpuppr_clic>;
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
 };
 
 &exmif {

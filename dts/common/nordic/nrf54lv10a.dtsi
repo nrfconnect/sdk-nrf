@@ -87,6 +87,7 @@
 			reg = <0xffd000 0x1000>;
 		};
  #endif
+
 		ficr: ficr@ffc000 {
 			compatible = "nordic,nrf-ficr";
 			reg = <0xffc000 0x1000>;
@@ -107,7 +108,6 @@
 			compatible = "mmio-sram";
 			#address-cells = <1>;
 			#size-cells = <1>;
-
 		};
 
  #ifdef USE_NON_SECURE_ADDRESS_MAP
@@ -611,7 +611,7 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 
-			cpuapp_nvic: interrupt-controller@e000e100  {
+			cpuapp_nvic: interrupt-controller@e000e100 {
 				#address-cells = <1>;
 				compatible = "arm,v8m-nvic";
 				reg = <0xe000e100 0xc00>;

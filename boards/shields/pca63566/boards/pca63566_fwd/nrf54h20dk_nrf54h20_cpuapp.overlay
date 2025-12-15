@@ -4,28 +4,28 @@
  */
 
 &i2c130 {
-	 status = "reserved";
-	 interrupt-parent = <&cpuppr_clic>;
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
 };
 
 &bme688 {
-	 status = "reserved";
+	status = "reserved";
 };
 
 &spi131 {
-	 status = "reserved";
-	 interrupt-parent = <&cpuppr_clic>;
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
 };
 
 &bmi270 {
-	 status = "reserved";
+	status = "reserved";
 };
 
 &adxl362 {
-	 status = "reserved";
+	status = "reserved";
 };
 
 &gpiote130 {
-	nonsecure-channels = < 7 >;
-	child-owned-channels = < 7 >;
+	nonsecure-channels = <7>;
+	child-owned-channels = <7>;
 };
