@@ -248,7 +248,7 @@ Local domain context
 ====================
 
 This field is populated by the local domain that is invoking the CPUCONF service.
-It is set to `0` for the application core which is booted by |ISE|.
+It is set to ``0`` for the application core which is booted by |ISE|.
 This service is used when one local domain boots another local domain.
 The caller can populate this field with arbitrary data that will be made available to the local domain being booted.
 Typical examples of data that could be passed include IPC buffer sizes or the application firmware version.

@@ -89,12 +89,12 @@ UICR image generation process
 
 The UICR image generation process:
 
-1. Devicetree analysis: The build system analyzes all devicetrees in the sysbuild build to identify peripheral usage and pin assignments across all images.
-2. PERIPHCONF generation: Python scripts generate C source code containing UICR configuration macros based on the devicetree.
-3. Compilation: The generated C code is compiled into ELF binaries containing PERIPHCONF sections.
-4. ELF extraction: The UICR generator extracts PERIPHCONF data from ELF files and merges them together.
-5. Kconfig extraction: The UICR generator uses an application-specific UICR Kconfig to populate the UICR entries.
-6. HEX file creation: Multiple HEX files are generated for different purposes. See the table above for details.
+1. Devicetree analysis - The build system analyzes all devicetrees in the sysbuild build to identify peripheral usage and pin assignments across all images.
+#. PERIPHCONF generation - Python scripts generate C source code containing UICR configuration macros based on the devicetree.
+#. Compilation - The generated C code is compiled into ELF binaries containing PERIPHCONF sections.
+#. ELF extraction - The UICR generator extracts PERIPHCONF data from ELF files and merges them together.
+#. Kconfig extraction - The UICR generator uses an application-specific UICR Kconfig to populate the UICR entries.
+#. HEX file creation - Multiple HEX files are generated for different purposes.
 
 Configuring the UICR image
 **************************
@@ -325,7 +325,7 @@ It then generates the appropriate configuration values by reusing existing prope
 The build system outputs the generated entries as a C file named :file:`periphconf_entries_generated.c` in the build directory, which is added as a source file to the build.
 The generated C code uses the macros defined in :file:`zephyr/soc/nordic/common/uicr/uicr.h` to insert entries into a special PERIPHCONF section in the ELF file which can be read by the UICR image.
 
-See the following table for a mapping between the devicetree input used by the PERIPHCONF entry generator script and the resulting output in the :file:`periphconf_entries_generated.c` file.
+See the following table for a mapping between the devicetree input used by the PERIPHCONF entry generator script and the resulting output in the :file:`periphconf_entries_generated.c` file:
 
 .. list-table:: Mapping between devicetree and PERIPHCONF entry output (UICR Configuration)
    :header-rows: 1
