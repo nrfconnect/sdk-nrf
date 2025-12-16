@@ -44,7 +44,7 @@ static ot_rpc_coap_request_key ot_rpc_coap_request_alloc(otCoapResponseHandler h
 otMessage *otCoapNewMessage(otInstance *aInstance, const otMessageSettings *aSettings)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	ot_rpc_res_tab_key message_rep;
+	ot_rpc_res_tab_key message_rep = 0;
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, OT_RPC_MESSAGE_SETTINGS_LENGTH);
 	ot_rpc_encode_message_settings(&ctx, aSettings);
@@ -79,7 +79,7 @@ otError otCoapMessageInitResponse(otMessage *aResponse, const otMessage *aReques
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t cbor_buffer_size = 0;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	cbor_buffer_size += 1 + sizeof(ot_rpc_res_tab_key); /* aResponse */
 	cbor_buffer_size += 1 + sizeof(ot_rpc_res_tab_key); /* aRequest */
@@ -102,7 +102,7 @@ otError otCoapMessageAppendUriPathOptions(otMessage *aMessage, const char *aUriP
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t cbor_buffer_size = 0;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	cbor_buffer_size += 1 + sizeof(ot_rpc_res_tab_key); /* aMessage */
 	cbor_buffer_size += 2 + strlen(aUriPath);	    /* aUriPath */
@@ -120,7 +120,7 @@ otError otCoapMessageAppendUriPathOptions(otMessage *aMessage, const char *aUriP
 otError otCoapMessageSetPayloadMarker(otMessage *aMessage)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(ot_rpc_res_tab_key));
 	nrf_rpc_encode_uint(&ctx, (ot_rpc_res_tab_key)aMessage);
@@ -199,7 +199,9 @@ const uint8_t *otCoapMessageGetToken(const otMessage *aMessage)
 
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_COAP_MESSAGE_GET_TOKEN, &ctx);
 
-	nrf_rpc_decode_buffer(&ctx, token, sizeof(token));
+	if (nrf_rpc_decode_buffer(&ctx, token, sizeof(token)) == NULL) {
+		memset(token, 0, sizeof(token));
+	}
 
 	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
 		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TOKEN);
@@ -211,7 +213,7 @@ const uint8_t *otCoapMessageGetToken(const otMessage *aMessage)
 otError otCoapStart(otInstance *aInstance, uint16_t aPort)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(aPort));
 	nrf_rpc_encode_uint(&ctx, aPort);
@@ -225,7 +227,7 @@ otError otCoapStart(otInstance *aInstance, uint16_t aPort)
 otError otCoapStop(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 

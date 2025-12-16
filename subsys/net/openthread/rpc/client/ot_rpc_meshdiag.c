@@ -80,7 +80,7 @@ otError otMeshDiagDiscoverTopology(otInstance *aInstance, const otMeshDiagDiscov
 				   otMeshDiagDiscoverCallback aCallback, void *aContext)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 	uint8_t config = 0;
 
 	OT_RPC_UNUSED(aInstance);

@@ -67,7 +67,7 @@ otError otThreadDiscover(otInstance *aInstance, uint32_t aScanChannels, uint16_t
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t cbor_buffer_size = 0;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -96,7 +96,7 @@ otError otThreadDiscover(otInstance *aInstance, uint32_t aScanChannels, uint16_t
 otError otThreadSetEnabled(otInstance *aInstance, bool aEnabled)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -132,7 +132,7 @@ otError otThreadSetLinkMode(otInstance *aInstance, otLinkModeConfig aConfig)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	uint8_t mode_mask = 0;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -161,7 +161,7 @@ otLinkModeConfig otThreadGetLinkMode(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	uint8_t mode_mask = 0;
-	otLinkModeConfig mode;
+	otLinkModeConfig mode = {0};
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -185,7 +185,7 @@ otLinkModeConfig otThreadGetLinkMode(otInstance *aInstance)
 uint16_t otThreadGetVersion(void)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	uint16_t version;
+	uint16_t version = 0;
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_THREAD_GET_VERSION, &ctx,
@@ -243,7 +243,7 @@ const char *otThreadErrorToString(otError error)
 uint16_t otThreadGetRloc16(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	uint16_t rloc16;
+	uint16_t rloc16 = 0;
 
 	OT_RPC_UNUSED(aInstance);
 

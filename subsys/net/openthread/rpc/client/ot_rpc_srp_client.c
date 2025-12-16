@@ -105,7 +105,7 @@ const char *otSrpClientItemStateToString(otSrpClientItemState state)
 
 otError otSrpClientStart(otInstance *aInstance, const otSockAddr *aServerSockAddr)
 {
-	otError error;
+	otError error = OT_ERROR_FAILED;
 	struct nrf_rpc_cbor_ctx ctx;
 
 	OT_RPC_UNUSED(aInstance);
@@ -135,7 +135,7 @@ void otSrpClientStop(otInstance *aInstance)
 bool otSrpClientIsRunning(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	bool running;
+	bool running = false;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -173,7 +173,7 @@ otError otSrpClientAddService(otInstance *aInstance, otSrpClientService *aServic
 	size_t cbor_buffer_size;
 	size_t name_len = strlen(aService->mName);
 	size_t instance_len = strlen(aService->mInstanceName);
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 	calc_subtypes_space(aService->mSubTypeLabels, &num_subtypes, &subtypes_size);
@@ -261,7 +261,7 @@ void otSrpClientClearHostAndServices(otInstance *aInstance)
 otError otSrpClientClearService(otInstance *aInstance, otSrpClientService *aService)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 	otSrpClientService **service_prev_next = find_service_prev_next(aService);
 
 	if (!service_prev_next) {
@@ -299,7 +299,7 @@ void otSrpClientDisableAutoStartMode(otInstance *aInstance)
 otError otSrpClientEnableAutoHostAddress(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
@@ -318,7 +318,7 @@ otError otSrpClientSetHostAddresses(otInstance *aInstance, const otIp6Address *a
 				    uint8_t aNumAddresses)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 5 + aNumAddresses * (OT_IP6_ADDRESS_SIZE + 1));
@@ -364,7 +364,7 @@ otError otSrpClientRemoveHostAndServices(otInstance *aInstance, bool aRemoveKeyL
 					 bool aSendUnregToServer)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 2);
@@ -380,7 +380,7 @@ otError otSrpClientRemoveHostAndServices(otInstance *aInstance, bool aRemoveKeyL
 otError otSrpClientRemoveService(otInstance *aInstance, otSrpClientService *aService)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(uintptr_t));
@@ -410,7 +410,7 @@ void otSrpClientSetCallback(otInstance *aInstance, otSrpClientCallback aCallback
 otError otSrpClientSetHostName(otInstance *aInstance, const char *aName)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	if (aName == NULL) {
 		return OT_ERROR_INVALID_ARGS;
@@ -447,7 +447,7 @@ const otSrpClientHostInfo *otSrpClientGetHostInfo(otInstance *aInstance)
 bool otSrpClientIsAutoStartModeEnabled(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	bool enabled;
+	bool enabled = false;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -462,7 +462,7 @@ bool otSrpClientIsAutoStartModeEnabled(otInstance *aInstance)
 uint32_t otSrpClientGetKeyLeaseInterval(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	uint32_t key_lease_int;
+	uint32_t key_lease_int = 0;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -489,7 +489,7 @@ void otSrpClientSetKeyLeaseInterval(otInstance *aInstance, uint32_t aInterval)
 uint32_t otSrpClientGetLeaseInterval(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	uint32_t lease_int;
+	uint32_t lease_int = 0;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -528,7 +528,7 @@ void otSrpClientSetTtl(otInstance *aInstance, uint32_t aTtl)
 uint32_t otSrpClientGetTtl(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	uint32_t ttl;
+	uint32_t ttl = 0;
 
 	OT_RPC_UNUSED(aInstance);
 

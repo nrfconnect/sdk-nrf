@@ -36,7 +36,7 @@ otInstance *otInstanceInitSingle(void)
 uint32_t otInstanceGetId(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	uint32_t id;
+	uint32_t id = 0;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -50,7 +50,7 @@ uint32_t otInstanceGetId(otInstance *aInstance)
 bool otInstanceIsInitialized(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	bool initialized;
+	bool initialized = false;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -75,7 +75,7 @@ void otInstanceFinalize(otInstance *aInstance)
 otError otInstanceErasePersistentInfo(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -102,7 +102,7 @@ otError otSetStateChangedCallback(otInstance *aInstance, otStateChangedCallback 
 {
 	const size_t cbor_buffer_size = 10;
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 

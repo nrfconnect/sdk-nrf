@@ -17,7 +17,7 @@
 otError otLinkSetPollPeriod(otInstance *aInstance, uint32_t aPollPeriod)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -75,7 +75,7 @@ void otLinkSetMaxFrameRetriesIndirect(otInstance *aInstance, uint8_t aMaxFrameRe
 otError otLinkSetEnabled(otInstance *aInstance, bool aEnable)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 
