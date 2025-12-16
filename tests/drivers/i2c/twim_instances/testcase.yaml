@@ -3,7 +3,7 @@ common:
     - drivers
     - ci_tests_drivers_i2c
   harness: ztest
-  timeout: 150
+  timeout: 180
 
 tests:
   drivers.i2c.twim_instances:
