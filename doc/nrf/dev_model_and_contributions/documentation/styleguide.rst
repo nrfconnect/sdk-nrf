@@ -9,9 +9,10 @@ Documentation |gl|
    :local:
    :depth: 2
 
-The |NCS| documentation is written in two formats:
+The |NCS| documentation is written in the following formats:
 
 * reStructuredText (RST) for conceptual documentation
+* Kconfig for configuration documentation
 * doxygen for API documentation
 
 RST |gl|
