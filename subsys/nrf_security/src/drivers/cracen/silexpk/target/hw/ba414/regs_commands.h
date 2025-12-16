@@ -68,6 +68,9 @@
 /** Even modular reduction operation */
 #define PK_OP_EVEN_MOD_RED (0x0a | SX_PK_OP_FLAGS_RESQUARE_R | SX_PK_OP_FLAGS_BIGENDIAN)
 
+/** Clear all PKE data memory */
+#define PK_OP_CLEAR_MEMORY (0x0f)
+
 /** Modular exponentiation operation */
 #define PK_OP_MDEXP (0x10 | SX_PK_OP_FLAGS_RESQUARE_R | SX_PK_OP_FLAGS_BIGENDIAN)
 

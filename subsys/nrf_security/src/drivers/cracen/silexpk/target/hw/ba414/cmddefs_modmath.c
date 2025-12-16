@@ -128,3 +128,7 @@ const struct sx_pk_cmd_def *const SX_PK_CMD_CHECK_PARAM_N = &CMD_CHECK_PARAM_N;
 static const struct sx_pk_cmd_def CMD_CHECK_XY = {
 	PK_OP_CHECK_XY, 0, (1 << OP_SLOT_ECC_PARAM_P) | (3 << OP_SLOT_PTR_A), OP_SLOT_PTR_A};
 const struct sx_pk_cmd_def *const SX_PK_CMD_CHECK_XY = &CMD_CHECK_XY;
+
+static const struct sx_pk_cmd_def CMD_CLEAR_MEMORY = {
+	PK_OP_CLEAR_MEMORY, 0, 0, OP_SLOT_DEFAULT_PTRS};
+const struct sx_pk_cmd_def *const SX_PK_CMD_CLEAR_MEMORY = &CMD_CLEAR_MEMORY;
