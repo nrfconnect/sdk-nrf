@@ -46,6 +46,18 @@ nRF54H20 IronSide SE binaries changelog
 
 The following sections provide detailed lists of changes by component.
 
+IronSide Secure Element (IronSide SE) v23.1.2+21
+================================================
+
+Fixed
+-----
+
+* An issue in the temperature service that could delay sending temperature responses. (NCSDK-36336)
+
+Updated
+-------
+
+* Reduced MRAM latency when requesting ``no latency`` while MRAM was powered off by powering MRAM on immediately. (NRFX-8740)
 
 IronSide Secure Element (IronSide SE) v23.1.1+20
 ================================================
