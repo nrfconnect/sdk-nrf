@@ -285,6 +285,17 @@ void sx_pk_release_req(sx_pk_req *req);
  */
 void sx_pk_set_cmd(sx_pk_req *req, const struct sx_pk_cmd_def *cmd);
 
+/** Memory clear command for an already-acquired request.
+ *
+ * Clear the memory before releasing CRACEN.
+ *
+ * @pre sx_pk_acquire_req() must have been called to acquire the request.
+ *
+ * @param[in,out] req The acceleration request obtained through sx_pk_acquire_req()
+ * @return Any \ref SX_PK_STATUS "status code"
+ */
+int sx_pk_clear_memory(sx_pk_req *req);
+
 /**
  * @brief Clear interrupt for Cracen PK Engine.
  *
