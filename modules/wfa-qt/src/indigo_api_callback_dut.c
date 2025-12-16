@@ -2311,7 +2311,7 @@ static int p2p_start_wps_handler(struct packet_wrapper *req, struct packet_wrapp
 	CHECK_RET();
 
 	/* Open wpa_supplicant UDS socket */
-	if (!get_p2p_group_if(if_name, sizeof(if_name))) {
+	if (get_p2p_group_if(if_name, sizeof(if_name))) {
 		indigo_logger(LOG_LEVEL_ERROR, "Failed to get P2P group interface");
 		goto done;
 	}
