@@ -3065,72 +3065,9 @@ done:
 
 static int enable_wsc_sta_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
 {
-	char *message = TLV_VALUE_WPA_S_START_UP_NOT_OK;
-	char buffer[L_BUFFER_LEN];
-	char value[S_BUFFER_LEN], cfg_item[2*S_BUFFER_LEN];
-	int i, len = 0, status = TLV_VALUE_STATUS_NOT_OK, ret;
-	struct tlv_hdr *tlv = NULL;
-	struct tlv_to_config_name *cfg = NULL;
+	char *message = TLV_VALUE_WPA_S_START_UP_OK;
+	int status = TLV_VALUE_STATUS_OK;
 
-	/* TODO: Add functionality to stop Supplicant */
-
-	/* Generate configuration */
-	memset(buffer, 0, sizeof(buffer));
-	CHECK_SNPRINTF(buffer, sizeof(buffer), ret,
-		       "ctrl_interface=%s\nap_scan=1\npmf=1\n", WPAS_CTRL_PATH_DEFAULT);
-
-	for (i = 0; i < req->tlv_num; i++) {
-		cfg = find_wpas_global_config_name(req->tlv[i]->id);
-		if (cfg) {
-			memset(value, 0, sizeof(value));
-			memcpy(value, req->tlv[i]->value, req->tlv[i]->len);
-			CHECK_SNPRINTF(cfg_item, sizeof(cfg_item), ret,
-				       "%s=%s\n", cfg->config_name, value);
-			strcat(buffer, cfg_item);
-		}
-	}
-
-	/* wps settings */
-	tlv = find_wrapper_tlv_by_id(req, TLV_WPS_ENABLE);
-	if (tlv) {
-		memset(value, 0, sizeof(value));
-		memcpy(value, tlv->value, sizeof(value));
-		/* To get STA wps vendor info */
-		wps_setting *s = get_vendor_wps_settings(WPS_STA);
-
-		if (!s) {
-			indigo_logger(LOG_LEVEL_WARNING, "Failed to get STAUT WPS settings");
-		} else if (atoi(value) == WPS_ENABLE_NORMAL) {
-			for (i = 0; i < STA_SETTING_NUM; i++) {
-				memset(cfg_item, 0, sizeof(cfg_item));
-				CHECK_SNPRINTF(cfg_item, sizeof(cfg_item), ret,
-					       "%s=%s\n", s[i].wkey, s[i].value);
-				strcat(buffer, cfg_item);
-			}
-			indigo_logger(LOG_LEVEL_INFO, "STAUT Configure WPS");
-		} else {
-			indigo_logger(LOG_LEVEL_ERROR,
-				      "Invalid WPS TLV value: %d (TLV ID 0x%04x)",
-				      atoi(value), tlv->id);
-		}
-	} else {
-		indigo_logger(LOG_LEVEL_WARNING,
-			      "No WSC TLV found. Failed to append STA WSC data");
-	}
-
-	len = strlen(buffer);
-
-	if (len) {
-		write_file(get_wpas_conf_file(), buffer, len);
-	}
-
-	/* Start wpa supplicant */
-	/* TODO: Add fucntionality to start Supplicant */
-
-	status = TLV_VALUE_STATUS_OK;
-	message = TLV_VALUE_WPA_S_START_UP_OK;
-
-done:
 	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
 	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
 	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
