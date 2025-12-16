@@ -4,8 +4,10 @@ common:
     - gpio
     - ci_tests_drivers_gpio
   depends_on: gpio
-  harness: ztest
+  harness: pytest
   harness_config:
+    pytest_root:
+      - "pytest/test_swd.py"
     fixture: gpio_loopback
 
 tests:
