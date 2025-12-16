@@ -2157,8 +2157,14 @@ done:
 static int start_up_p2p_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
 {
 	char *message = TLV_VALUE_WPA_S_START_UP_OK;
-	int status = TLV_VALUE_STATUS_OK;
+	int status = TLV_VALUE_STATUS_OK, ret;
 
+	ret = run_qt_command("SET device_type 6-0050F204-1");
+	CHECK_RET();
+	ret = run_qt_command("SET device_name 7002DK");
+	CHECK_RET();
+
+done:
 	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
 	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
 	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
