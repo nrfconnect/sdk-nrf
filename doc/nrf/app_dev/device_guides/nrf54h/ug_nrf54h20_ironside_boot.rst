@@ -435,6 +435,8 @@ In production-ready devices, enabling both access-port protection (:kconfig:opti
 .. note::
    When an ``ERASEALL`` request is blocked by :kconfig:option:`CONFIG_GEN_UICR_ERASEPROTECT`, CTRLAP.BOOTSTATUS.CMDERROR is set to ``0x1``.
 
+.. _ug_nrf54h20_ironside_se_debugwait_command:
+
 ``DEBUGWAIT`` command
 =====================
 
