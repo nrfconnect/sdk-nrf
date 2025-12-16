@@ -231,7 +231,9 @@ Bluetooth Mesh samples
 Bluetooth Fast Pair samples
 ---------------------------
 
-|no_changes_yet_note|
+* :ref:`fast_pair_locator_tag` sample:
+
+  * Added support for the ``nrf54lv10dk/nrf54lv10a/cpuapp`` board target.
 
 Cellular samples
 ----------------
