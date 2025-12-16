@@ -7,14 +7,17 @@ The IronSide Secure Element (|ISE|) is a firmware for the :ref:`Secure Domain <u
 
 |ISE| provides the following features:
 
-* Global memory configuration
-* Peripheral configuration (through UICR.PERIPHCONF)
-* Boot commands (ERASEALL, DEBUGWAIT)
-* An alternative boot path with a secondary firmware
-* CPUCONF service
-* Update service
-* PSA Crypto service - see also :ref:`ug_crypto_architecture_implementation_standards_ironside`
-* PSA Internal Trusted Storage service
+* :ref:`Global memory configuration <ug_nrf54h20_ironside_se_uicr>`
+* :ref:`Peripheral configuration <ug_nrf54h20_ironside_se_periphconf_devicetree>`
+* Boot commands
+
+  * :ref:`ERASEALL <ug_nrf54h20_ironside_se_eraseall_command>`
+  * :ref:`DEBUGWAIT <ug_nrf54h20_ironside_se_debugwait_command>`
+* An alternative boot path with a :ref:`secondary firmware <ug_nrf54h20_ironside_se_secondary_firmware>`
+* :ref:`CPUCONF service <ug_nrf54h20_ironside_se_cpuconf_service>`
+* :ref:`Update service <ug_nrf54h20_ironside_se_update_service>`
+* PSA Crypto service (:ref:`ug_crypto_architecture_implementation_standards_ironside`)
+* PSA Internal Trusted Storage service (:ref:`ug_nrf54h20_ironside_se_secure_storage`)
 
 .. toctree::
    :maxdepth: 2

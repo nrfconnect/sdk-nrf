@@ -50,8 +50,11 @@ The following UICR fields are supported:
 +----------------------+---------------------------------------------------------------------+
 
 .. note::
-   If no UICR values are programmed, |ISE| applies a set of default configurations.
+   If no UICR values are programmed, |ISE| applies a set of :ref:`default configurations <ug_nrf54h20_ironside_se_protecting>`.
    Applications that do not require custom settings can rely on these defaults without modifying the UICR.
+
+Performing an :ref:`ERASEALL <ug_nrf54h20_ironside_se_eraseall_command>` operation will erase all UICR contents and remove all protection mechanisms enforced through UICR.
+See :ref:`ug_nrf54h20_ironside_se_protecting` for more information on protecting UICR contents in the field.
 
 Generating the UICR image
 *************************
@@ -310,6 +313,8 @@ After applying the entry, |ISE| performs a read-back check: it reads back the re
 
 The configuration procedure is aborted if an entry fails either the validation or the read-back check.
 If a failure occurs, BOOTSTATUS.BOOTERROR is set to indicate the error condition, and a description of the failed entry is written to the boot report.
+
+.. _ug_nrf54h20_ironside_se_periphconf_devicetree:
 
 Generating PERIPHCONF from devicetree
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
