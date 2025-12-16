@@ -1,13 +1,26 @@
 .. _ug_nrf54h20_ironside_update:
+.. _ug_nrf54h20_ironside_se_update:
 
-Programming and updating |ISE|
-##############################
+Updating |ISE|
+##############
 
 .. contents::
    :local:
    :depth: 2
 
-|ISE| is released independently of the |NCS| release cycle and is provided as a ZIP archive that contains the following components:
+.. caution::
+   You cannot update |ISE| from a SUIT-based (up to 0.9.6) to an |ISE|-based (20.0.0 and onwards) version.
+
+The application initiates the update operation at runtime through the |ISE|'s :ref:`update service <ug_nrf54h20_ironside_se_update_service>`.
+
+.. _ug_nrf54h20_ironside_se_deliverables:
+
+Release package
+***************
+
+The |ISE| is released independently of the |NCS| release cycle and is provided as a ZIP archive.
+
+The archive is used to update the existing |ISE| firmware on the nRF54H20 and consists of the following components:
 
 .. list-table::
    :header-rows: 1
@@ -18,7 +31,7 @@ Programming and updating |ISE|
      - Description
    * - IronSide SE firmware
      - :file:`ironside_se.hex`
-     - Used when bringing up a new DK and programming both the recovery firmware and |ISE| for the first time.
+     - Used when provisioning a new DK with |ISE| and |ISE| Recovery firmware for the first time.
    * - IronSide SE update firmware
      - :file:`ironside_se_update.hex`
      - Used when updating |ISE|.
@@ -27,152 +40,176 @@ Programming and updating |ISE|
      - The recovery firmware, reserved for future recovery operations. Currently, it does not provide user-facing functionality. Used when updating the recovery firmware.
    * - Update application
      - :file:`update_application.hex`
-     - The local domain :zephyr:code-sample:`update application <nrf_ironside_update>` that is used to perform an |ISE| update. See :ref:`ug_nrf54h20_ironside_se_update_manual`.
+     - The local domain :zephyr:code-sample:`update application <nrf_ironside_update>` that is used to perform an |ISE| update. See :ref:`ug_nrf54h20_ironside_se_update_architecture` for details on its role.
 
-.. _ug_nrf54h20_ironside_se_programming:
+For more information on |ISE| release binaries, see :ref:`abi_compatibility`.
 
-Programming |ISE| on the nRF54H20 SoC
-*************************************
+For instructions on how to provision the nRF54H20 SoC with |ISE| for the first time, see :ref:`ug_nrf54h20_SoC_binaries`.
 
-For instructions on how to program |ISE|, see :ref:`ug_nrf54h20_SoC_binaries`.
+.. _ug_nrf54h20_ironside_se_updating:
 
-By default, the nRF54H20 SoC uses the following memory and access configurations:
-
-* MRAMC configuration: MRAM operates in Direct Write mode with READYNEXTTIMEOUT disabled.
-* MPC configuration: All memory not reserved by Nordic firmware is accessible with read, write, and execute (RWX) permissions by any domain.
-* TAMPC configuration: The access ports (AP) for the local domains are enabled, allowing direct programming of all the memory not reserved by Nordic firmware in the default configuration.
-
+Performing an update
+********************
 
 .. note::
-   * The Radio Domain AP is only usable when the Radio domain has booted.
-   * Access to external memory (EXMIF) requires a non-default configuration of the GPIO.CTRLSEL register.
+   You can update the |ISE| only on an nRF54H20 SoC that was initially :ref:`provisioned <ug_nrf54h20_SoC_binaries>` with it.
 
-You can protect global domain memory from write operations by configuring the UICR registers.
-To remove these protections and disable all other protection mechanisms enforced through UICR settings, perform an ``ERASEALL`` operation.
+|ISE| supports being updated in the following ways:
 
-.. _ug_nrf54h20_ironside_se_update:
-
-Updating |ISE|
-**************
-
-|NCS| supports two methods for updating the |ISE| firmware on the nRF54H20 SoC:
-
-* Using the ``west`` command.
-  You can use the ``west`` command provided by the |NCS| to install the firmware update.
-  For step-by-step instructions, see :ref:`ug_nrf54h20_ironside_se_update_west`.
-
-* Using the nRF Util `device command <Device command overview_>`_.
-  Alternatively, you can perform the update by manually executing the same steps that the ``west`` command performs.
-  For step-by-step instructions, see :ref:`ug_nrf54h20_ironside_se_update_manual`.
-
-.. caution::
-   You cannot update |ISE| from a SUIT-based (up to 0.9.6) to an |ISE|-based (20.0.0 and onwards) version.
-
-.. _ug_nrf54h20_ironside_se_update_west:
-
-Updating using west
-===================
-
-To update the |ISE| firmware, you can use the ``west ncs-ironside-se-update`` command with the following syntax:
-
-.. code-block:: console
-
-   west ncs-ironside-se-update --zip <path_to_soc_binaries.zip> --allow-erase
-
-The command accepts the following main options:
-
-* ``--zip`` (required) - Sets the path to the nRF54H20 IronSide SE binaries ZIP file.
-* ``--allow-erase`` (required) - Enables erasing the device during the update process.
-* ``--serial`` - Specifies the serial number of the target device.
-* ``--firmware-slot`` - Updates only a specific firmware slot (``uslot`` for |ISE| or ``rslot`` for |ISE| Recovery).
-* ``--wait-time`` - Specifies the timeout in seconds to wait for the device to boot (default: 2.0 seconds).
+* :ref:`Manual updates <ug_nrf54h20_ironside_se_update_manual>` with a debugger
 
 .. _ug_nrf54h20_ironside_se_update_manual:
 
-Updating manually
-=================
+Manual update
+=============
 
-The manual update process involves the following steps:
+.. caution::
+   Manual updates will replace existing firmware running in the Application core.
+   User application firmware must be reprogrammed after successfully updating the device.
 
-1. Executing the update application.
-   The :zephyr:code-sample:`update application <nrf_ironside_update>` runs on the application core and communicates with |ISE| using the :ref:`update service <ug_nrf54h20_ironside_se_update_service>`.
-   It reads the update firmware from memory and passes the update blob metadata to the |ISE|.
-   The |ISE| validates the update parameters and writes the update metadata to the Secure Information Configuration Registers (SICR).
+|NCS| supports the following methods for manually updating the |ISE| firmware on the nRF54H20 SoC:
 
-#. Installing the update.
-   After a reset, the Secure Domain ROM (SDROM) detects the pending update through the SICR registers, verifies the update firmware signature, and installs the new firmware.
+.. tabs::
 
-#. Completing the update.
-   The system boots with the updated |ISE| firmware, and the update status in the boot report can be read to verify successful installation.
+  .. group-tab:: West
 
-Updating manually using nRF Util
---------------------------------
+    The |NCS| defines the west ``ncs-ironside-se-update`` command to update |ISE| firmware on a device via the debugger.
 
-To update |ISE|, you can use nRF Util instead of ``west ncs-ironside-se-update``.
-To use nRF Util for the update, you must install the nRF Util `device` command v2.14.0 or higher.
-See `Installing specific versions of nRF Util commands`_ for more information.
+    This command takes the nRF54H20 Ironside SE binaries ZIP file and uses the |ISE| update service to update both the |ISE| and |ISE| Recovery (or optionally just one of them):
 
-To perform the manual update process using nRF Util's `device command <Device command overview_>`_, complete the following steps:
+    .. code-block:: console
 
-1. Extract the update bundle:
+      west ncs-ironside-se-update --allow-erase --zip <path_to_soc_binaries.zip>
 
-   .. code-block:: console
+    Use the ``--help`` option to see all possible options and descriptions of their use.
 
-      unzip <soc_binaries.zip> -d /tmp/update_dir
+  .. group-tab:: nrf Util
 
-#. Erase non-volatile memory:
+    .. note::
 
-   .. code-block:: console
+      To use nRF Util for the update, you must install the nRF Util `device` command v2.14.0 or higher.
+      See `Installing specific versions of nRF Util commands`_ for more information.
 
-      nrfutil device recover --serial-number <serial>
+    You can update |ISE| by manually executing nRF Util commands that perform the same steps that the ``west`` command performs.
 
-#. Program the update application:
+    To perform the manual update process using nRF Util's `device <Device command overview_>`_ command, complete the following steps:
 
-   .. code-block:: console
+    1. Extract the update bundle:
 
-      nrfutil device program --firmware /tmp/update_dir/update/update_application.hex --serial-number <serial>
+       .. code-block:: console
 
-#. Program the |ISE| update firmware:
+          unzip <soc_binaries.zip> -d /tmp/update_dir
 
-   .. code-block:: console
+    #. Erase non-volatile memory:
 
-      nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_update.hex --serial-number <serial>
+       .. code-block:: console
 
-#. Reset the device to execute the update service:
+          nrfutil device recover --serial-number <serial>
 
-   .. code-block:: console
+    #. Program the update application:
 
-      nrfutil device reset --serial-number <serial>
+       .. code-block:: console
 
-#. Reset through Secure Domain to trigger the installation of the update:
+          nrfutil device program --firmware /tmp/update_dir/update/update_application.hex --serial-number <serial>
 
-   .. code-block:: console
+    #. Program the |ISE| update firmware:
 
-      nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial>
+       .. code-block:: console
 
-#. If you are updating both slots, complete the following additional steps:
+          nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_update.hex --serial-number <serial>
 
-   a. Program the |ISE| Recovery update firmware:
+    #. Reset the device to execute the update service:
 
-      .. code-block:: console
+       .. code-block:: console
 
-         nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_recovery_update.hex --serial-number <serial>
+          nrfutil device reset --serial-number <serial>
 
-   #. Reset again to execute the update service:
+    #. Reset through Secure Domain to trigger the installation of the update:
 
-      .. code-block:: console
+       .. code-block:: console
 
-         nrfutil device reset --serial-number <serial>
+          nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial>
 
-   #. Reset again through Secure Domain to trigger the installation of the update:
+    #. If you are updating both slots, complete the following additional steps:
 
-      .. code-block:: console
+       a. Program the |ISE| Recovery update firmware:
 
-         nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial>
+          .. code-block:: console
+
+             nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_recovery_update.hex --serial-number <serial>
+
+       #. Reset again to execute the update service:
+
+          .. code-block:: console
+
+             nrfutil device reset --serial-number <serial>
+
+       #. Reset again through Secure Domain to trigger the installation of the update:
+
+          .. code-block:: console
+
+             nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial>
 
 
-#. Erase the update application (regardless of whether you update one or both slots):
+    #. Erase the update application (regardless of whether you update one or both slots):
 
-   .. code-block:: console
+       .. code-block:: console
 
-      nrfutil device erase --all --serial-number <serial>
+          nrfutil device erase --all --serial-number <serial>
+
+.. _ug_nrf54h20_ironside_se_update_architecture:
+
+Architecture
+************
+
+The |ISE| update process starts when the application firmware invokes the :ref:`update service <ug_nrf54h20_ironside_se_update_service>` with the address of where the update release package has been written in MRAM.
+
+.. _ug_nrf54h20_ironside_se_update_architecture_app:
+
+Application procedure
+=====================
+
+The following describes the process for an |ISE| update from the point of view of the application:
+
+1. The application MRAM is updated with the |ISE| update image.
+#. It calls the |ISE| update service with the update image location.
+#. It verifies that the update request is acknowledged.
+#. It triggers a reset.
+#. It checks the version in the boot report on startup.
+
+.. _ug_nrf54h20_ironside_se_update_architecture_ise:
+
+|ISE| procedure
+===============
+
+The |ISE| side of the update process involves both the |ISE| firmware and SDROM.
+
+The following describes the update process in the |ISE| upon request:
+
+#. The service receives an update request containing the location of the update image in MRAM.
+#. The update request is validated.
+#. The SICR registers are updated with the image metadata.
+#. The service acknowledges the update request.
+#. Normal operation continues until a reset is performed.
+
+Once the device comes out of reset, SDROM sees the update metadata and does the following to verify and apply the update:
+
+1. Enables write-protection on the update image and firmware contents.
+#. Checks firmware metadata stored in SICR registers against address range and size constraints.
+#. Verifies update version against current firmware to prevent downgrades.
+#. Computes and validates digest of the public key.
+#. Checks public key is not revoked.
+#. Computes and validates digest of update firmware.
+#. Verifies signature of the update firmware.
+#. Updates SICR's update status with result.
+
+If any of the above steps fail, the installation is aborted and the existing |ISE| is booted.
+Otherwise, the update firmware's metadata is stored in the SICR and the new image is installed.
+
+If the updated firmware is for the |ISE| Recovery, the device is reset into Safe Mode after installation.
+When Safe Mode has acknowledged its update, the device is reset to boot back into the |ISE| context.
+
+On boot, |ISE| reads the update result from the SICR update status register and writes the value into the boot report.
+
+.. note::
+   |ISE| does not delete the update image contents from MRAM after a successful update.
