@@ -25,7 +25,6 @@ The IronSide Secure Element (|ISE|) is a firmware for the :ref:`Secure Domain <u
 
    ug_nrf54h20_ironside_update
    ug_nrf54h20_ironside_global_resources
-   ug_nrf54h20_ironside_debug
    ug_nrf54h20_ironside_protect
    ug_nrf54h20_ironside_secure_storage
    ug_nrf54h20_ironside_boot

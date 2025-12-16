@@ -447,6 +447,9 @@ Use this command to begin debugging at the very first instruction or to program 
 
 The ``DEBUGWAIT`` command does not define any command-specific values for the CTRLAP.BOOTSTATUS.CMDERROR field.
 
+.. note::
+   You can also use the ``cpuconf`` service to set CPUWAIT when booting other cores.
+
 .. _ug_nrf54h20_ironside_se_spu_mramc_feature_configuration:
 
 Configuring |ISE| SPU MRAMC feature
