@@ -8,13 +8,18 @@
 #include <zephyr/init.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/net/net_event.h>
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/wifi.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <net/wifi_ready.h>
+
+#if defined(CONFIG_WIFI_NM_WPA_SUPPLICANT)
 #include <supp_events.h>
 #include <zephyr/net/wifi_nm.h>
+#endif
 
 LOG_MODULE_REGISTER(wifi_ready, CONFIG_WIFI_READY_LIB_LOG_LEVEL);
 
@@ -22,10 +27,13 @@ static wifi_ready_callback_t wifi_ready_callbacks[CONFIG_WIFI_READY_MAX_CALLBACK
 static unsigned char callback_count;
 static K_MUTEX_DEFINE(wifi_ready_mutex);
 
-#define WPA_SUPP_EVENTS (NET_EVENT_SUPPLICANT_READY) | \
-			(NET_EVENT_SUPPLICANT_NOT_READY)
-
+#if defined(CONFIG_WIFI_NM_WPA_SUPPLICANT)
+#define WPA_SUPP_EVENTS (NET_EVENT_SUPPLICANT_READY | NET_EVENT_SUPPLICANT_NOT_READY)
 static struct net_mgmt_event_callback net_wpa_supp_cb;
+#else
+#define NET_IF_EVENTS (NET_EVENT_IF_ADMIN_UP | NET_EVENT_IF_ADMIN_DOWN)
+static struct net_mgmt_event_callback net_if_cb;
+#endif
 
 /* In case Wi-Fi is already ready, call the callbacks */
 static void wifi_ready_work_handler(struct k_work *item);
@@ -53,6 +61,7 @@ static void wifi_ready_work_handler(struct k_work *item)
 	call_wifi_ready_callbacks(true, cb->iface);
 }
 
+#if defined(CONFIG_WIFI_NM_WPA_SUPPLICANT)
 static void handle_wpa_supp_event(struct net_if *iface, bool ready)
 {
 	LOG_DBG("Supplicant event %s for iface %p",
@@ -79,12 +88,44 @@ static void wpa_supp_event_handler(struct net_mgmt_event_callback *cb,
 		break;
 	}
 }
+#else
+static void handle_net_if_event(struct net_if *iface, bool ready)
+{
+	if (!net_if_is_wifi(iface)) {
+		return;
+	}
+
+	LOG_DBG("Net interface event %s for iface %p",
+		ready ? "up" : "down", iface);
+
+	call_wifi_ready_callbacks(ready, iface);
+}
+
+static void net_if_event_handler(struct net_mgmt_event_callback *cb,
+	uint64_t mgmt_event, struct net_if *iface)
+{
+	ARG_UNUSED(cb);
+
+	LOG_DBG("Event received: %llu", mgmt_event);
+	switch (mgmt_event) {
+	case NET_EVENT_IF_ADMIN_UP:
+		handle_net_if_event(iface, true);
+		break;
+	case NET_EVENT_IF_ADMIN_DOWN:
+		handle_net_if_event(iface, false);
+		break;
+	default:
+		LOG_DBG("Unhandled event (%llu)", mgmt_event);
+		break;
+	}
+}
+#endif /* CONFIG_WIFI_NM_WPA_SUPPLICANT */
 
 int register_wifi_ready_callback(wifi_ready_callback_t cb, struct net_if *iface)
 {
 	int ret = 0, i;
 	unsigned int next_avail_idx = CONFIG_WIFI_READY_MAX_CALLBACKS;
-	struct net_if *wpas_iface = NULL;
+	struct net_if *wifi_iface = NULL;
 
 	k_mutex_lock(&wifi_ready_mutex, K_FOREVER);
 
@@ -122,16 +163,22 @@ int register_wifi_ready_callback(wifi_ready_callback_t cb, struct net_if *iface)
 	wifi_ready_callbacks[next_avail_idx].iface = iface;
 
 	if (++callback_count == 1) {
+#if defined(CONFIG_WIFI_NM_WPA_SUPPLICANT)
 		net_mgmt_init_event_callback(&net_wpa_supp_cb,
 			wpa_supp_event_handler, WPA_SUPP_EVENTS);
 		net_mgmt_add_event_callback(&net_wpa_supp_cb);
+#else
+		net_mgmt_init_event_callback(&net_if_cb,
+			net_if_event_handler, NET_IF_EVENTS);
+		net_mgmt_add_event_callback(&net_if_cb);
+#endif
 	}
 
 	if (iface) {
-		wpas_iface = iface;
+		wifi_iface = iface;
 	} else {
-		wpas_iface = net_if_get_first_wifi();
-		if (!wpas_iface) {
+		wifi_iface = net_if_get_first_wifi();
+		if (!wifi_iface) {
 			LOG_ERR("Failed to get Wi-Fi interface");
 			ret = -ENODEV;
 			goto out;
@@ -139,14 +186,19 @@ int register_wifi_ready_callback(wifi_ready_callback_t cb, struct net_if *iface)
 	}
 
 	/* In case Wi-Fi is already ready, call the callback */
-	if (wifi_nm_get_instance_iface(wpas_iface)) {
+#if defined(CONFIG_WIFI_NM_WPA_SUPPLICANT)
+	if (wifi_nm_get_instance_iface(wifi_iface)) {
 		k_work_submit(&wifi_ready_callbacks[next_avail_idx].item);
 	}
+#else
+	if (net_if_is_admin_up(wifi_iface)) {
+		k_work_submit(&wifi_ready_callbacks[next_avail_idx].item);
+	}
+#endif
 
 out:
 	k_mutex_unlock(&wifi_ready_mutex);
 	return ret;
-
 }
 
 
@@ -178,7 +230,11 @@ int unregister_wifi_ready_callback(wifi_ready_callback_t cb, struct net_if *ifac
 	}
 
 	if (--callback_count == 0) {
+#if defined(CONFIG_WIFI_NM_WPA_SUPPLICANT)
 		net_mgmt_del_event_callback(&net_wpa_supp_cb);
+#else
+		net_mgmt_del_event_callback(&net_if_cb);
+#endif
 	}
 
 out:
