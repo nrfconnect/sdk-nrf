@@ -129,7 +129,7 @@ const otNetifMulticastAddress *otIp6GetMulticastAddresses(otInstance *aInstance)
 otError otIp6SetEnabled(otInstance *aInstance, bool aEnabled)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -144,7 +144,7 @@ otError otIp6SetEnabled(otInstance *aInstance, bool aEnabled)
 bool otIp6IsEnabled(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	bool enabled;
+	bool enabled = false;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -164,7 +164,7 @@ bool otIp6IsEnabled(otInstance *aInstance)
 otError otIp6SubscribeMulticastAddress(otInstance *aInstance, const otIp6Address *aAddress)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -179,7 +179,7 @@ otError otIp6SubscribeMulticastAddress(otInstance *aInstance, const otIp6Address
 otError otIp6UnsubscribeMulticastAddress(otInstance *aInstance, const otIp6Address *aAddress)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 

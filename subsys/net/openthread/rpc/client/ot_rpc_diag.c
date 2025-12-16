@@ -73,7 +73,7 @@ const char *otGetVersionString(void)
 
 uint8_t otLinkGetChannel(otInstance *aInstance)
 {
-	uint8_t ret;
+	uint8_t ret = 0;
 
 	get_uint_t(OT_RPC_CMD_LINK_GET_CHANNEL, &ret, sizeof(ret));
 
@@ -93,7 +93,7 @@ const otExtAddress *otLinkGetExtendedAddress(otInstance *aInstance)
 
 otPanId otLinkGetPanId(otInstance *aInstance)
 {
-	otPanId ret;
+	otPanId ret = 0;
 
 	get_uint_t(OT_RPC_CMD_LINK_GET_PAN_ID, &ret, sizeof(ret));
 
@@ -102,7 +102,7 @@ otPanId otLinkGetPanId(otInstance *aInstance)
 
 uint8_t otNetDataGetStableVersion(otInstance *aInstance)
 {
-	uint8_t ret;
+	uint8_t ret = 0;
 
 	get_uint_t(OT_RPC_CMD_NET_DATA_GET_STABLE_VERSION, &ret, sizeof(ret));
 
@@ -111,7 +111,7 @@ uint8_t otNetDataGetStableVersion(otInstance *aInstance)
 
 uint8_t otNetDataGetVersion(otInstance *aInstance)
 {
-	uint8_t ret;
+	uint8_t ret = 0;
 
 	get_uint_t(OT_RPC_CMD_NET_DATA_GET_VERSION, &ret, sizeof(ret));
 
@@ -127,7 +127,7 @@ const otExtendedPanId *otThreadGetExtendedPanId(otInstance *aInstance)
 
 uint8_t otThreadGetLeaderRouterId(otInstance *aInstance)
 {
-	uint8_t ret;
+	uint8_t ret = 0;
 
 	get_uint_t(OT_RPC_CMD_THREAD_GET_LEADER_ROUTER_ID, &ret, sizeof(ret));
 
@@ -136,7 +136,7 @@ uint8_t otThreadGetLeaderRouterId(otInstance *aInstance)
 
 uint8_t otThreadGetLeaderWeight(otInstance *aInstance)
 {
-	uint8_t ret;
+	uint8_t ret = 0;
 
 	get_uint_t(OT_RPC_CMD_THREAD_GET_LEADER_WEIGHT, &ret, sizeof(ret));
 
@@ -165,7 +165,7 @@ otError otThreadGetParentInfo(otInstance *aInstance, otRouterInfo *aParentInfo)
 
 uint32_t otThreadGetPartitionId(otInstance *aInstance)
 {
-	uint32_t ret;
+	uint32_t ret = 0;
 
 	get_uint_t(OT_RPC_CMD_THREAD_GET_PARTITION_ID, &ret, sizeof(ret));
 
