@@ -7,12 +7,15 @@
 menuconfig WIFI_READY_LIB
 	bool "Wi-Fi ready event handling library"
 	select EXPERIMENTAL
-	depends on WIFI_NM_WPA_SUPPLICANT
 	depends on NET_MGMT
+	depends on NET_MGMT_EVENT
 	help
 	  Enable WiFi ready management subsystem that allows the application to
 	  register callbacks that are called when the WiFi is ready to be used and
 	  when the WiFi is not ready to be used.
+
+	  If WIFI_NM_WPA_SUPPLICANT is enabled, the library waits for WPA supplicant
+	  ready events. Otherwise, it waits for standard network interface events.
 
 if WIFI_READY_LIB
 
