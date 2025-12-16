@@ -37,27 +37,19 @@ For details about the CPUCONF peripheral, refer to the nRF54H20 SoC datasheet.
 |ISE| update service
 ********************
 
-The |ISE| update service will update |ISE| itself.
+|ISE| provides an update service that allows local domains to trigger the :ref:`update process <ug_nrf54h20_ironside_se_update_architecture>` of |ISE| itself.
 
-|ISE| is updated by the Secure Domain ROM (SDROM), which performs the update operation when triggered by a set of SICR registers.
-SDROM verifies and copies the update candidate specified through these registers.
-SDROM requires the |ISE| update to be located in MRAM.
+The update service requires a release of |ISE| or the |ISE| Recovery image to be programmed within a valid memory range that is accessible by the application core.
+See :file:`nrf_ironside/update.h` for more details on the supported memory range.
 
-|ISE| exposes an update service that allows local domains to trigger the update process by indirectly writing to the relevant SICR registers.
+After the application has invoked the service, |ISE| will update on the next system reset.
+The update can be verified by checking the listed versions in the :ref:`boot report <ug_nrf54h20_ironside_se_boot_report>` on startup.
 
 .. note::
-   The update data must be placed within a valid memory range.
-   See :file:`nrf_ironside/update.h` for more details.
+   Updating through the service is limited to a single image at a time.
+   Updating both |ISE| and |ISE| Recovery images requires performing two rounds of the update service procedure, in which the |ISE| Recovery image is updated first.
 
-The release ZIP archive for |ISE| includes the following components:
-
-* A HEX file containing the update candidate for |ISE|.
-* A HEX file for |ISE| Recovery.
-* An application core image that executes the |ISE| update service to install the update candidate HEX files.
-
-The |NCS| defines the west ``ncs-ironside-se-update`` command to update |ISE| on a device via the debugger.
-This command takes a nRF54H20 SoC binary ZIP file and uses the |ISE| update service to update both the |ISE| and |ISE| Recovery (or optionally just one of them).
-For more information, see :ref:`abi_compatibility`.
+See the :zephyr:code-sample:`update application <nrf_ironside_update>` sample for an example on calling the service at runtime.
 
 .. _ug_nrf54h20_ironside_se_counter_service:
 
