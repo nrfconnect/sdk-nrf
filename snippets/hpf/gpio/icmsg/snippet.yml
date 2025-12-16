@@ -15,3 +15,11 @@ boards:
     append:
       EXTRA_CONF_FILE: flpr.conf
       EXTRA_DTC_OVERLAY_FILE: soc/nrf54l15_cpuflpr.overlay
+  /.*/nrf7120/cpuapp/:
+    append:
+      EXTRA_CONF_FILE: app.conf
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf7120_cpuapp.overlay
+  /.*/nrf7120/cpuflpr/:
+    append:
+      EXTRA_CONF_FILE: flpr.conf
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf7120_cpuflpr.overlay
