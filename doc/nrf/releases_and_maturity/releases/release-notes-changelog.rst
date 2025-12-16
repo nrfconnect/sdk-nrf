@@ -486,9 +486,7 @@ Edge Impulse integration
 Memfault integration
 --------------------
 
-* Updated:
-
-  * The ``CONFIG_MEMFAULT_DEVICE_INFO_BUILTIN`` Kconfig option has been renamed to :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_INFO_BUILTIN`.
+|no_changes_yet_note|
 
 AVSystem integration
 --------------------
@@ -568,4 +566,4 @@ cJSON
 Documentation
 =============
 
-* Updated the :ref:`install_ncs` page with minor updates and fixes to the :ref:`additional_deps` section.
+|no_changes_yet_note|
