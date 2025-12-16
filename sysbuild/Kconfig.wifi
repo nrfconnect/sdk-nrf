@@ -60,7 +60,6 @@ config WIFI_PATCHES_EXT_FLASH_XIP
 
 config WIFI_PATCHES_EXT_FLASH_STORE
 	bool "Relocate to external memory but execute from RAM"
-	depends on PARTITION_MANAGER
 
 endchoice
 
