@@ -27,7 +27,6 @@ def reset_dut(dut: DeviceAdapter, reset_kind: str = "RESET_PIN"):
     logger.info(output)
 
 def get_cycle_and_uptime_from_logs(dut: DeviceAdapter):
-    dut.clear_buffer()
     lines = dut.readlines_until(regex=r'.*k_uptime_get.*', timeout=5)
     for line in lines:
         match_cycle = re.search(r'k_cycle_get_32\s*=\s*(\d+)', line)
@@ -39,18 +38,22 @@ def get_cycle_and_uptime_from_logs(dut: DeviceAdapter):
     return cycle, uptime
 
 def test_grtc_after_reset_system(dut: DeviceAdapter):
+    dut.clear_buffer()
     reset_dut(dut, reset_kind="RESET_PIN")
     cycle_start, uptime_start = get_cycle_and_uptime_from_logs(dut)
     assert uptime_start in range(8, 30)
+    dut.clear_buffer()
     reset_dut(dut, reset_kind="RESET_SYSTEM")
     cycle_after_reset, uptime_after_reset = get_cycle_and_uptime_from_logs(dut)
     assert cycle_after_reset > cycle_start
     assert uptime_after_reset in range(8, 30)
 
 def test_grtc_after_reset_pin(dut: DeviceAdapter):
+    dut.clear_buffer()
     reset_dut(dut, reset_kind="RESET_PIN")
     cycle_start, uptime_start = get_cycle_and_uptime_from_logs(dut)
     assert uptime_start in range(8, 30)
+    dut.clear_buffer()
     reset_dut(dut, reset_kind="RESET_PIN")
     cycle_after_reset, uptime_after_reset = get_cycle_and_uptime_from_logs(dut)
     assert abs(cycle_after_reset - cycle_start) < cycle_start / 2
