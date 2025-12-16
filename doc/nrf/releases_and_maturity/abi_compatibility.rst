@@ -52,7 +52,7 @@ IronSide Secure Element (IronSide SE) v23.1.2+21
 Fixed
 -----
 
-* Fixed an issue in the temperature service that could delay sending temperature responses. (NCSDK-36336)
+* An issue in the temperature service that could delay sending temperature responses. (NCSDK-36336)
 
 Updated
 -------
