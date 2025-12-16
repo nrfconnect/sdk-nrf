@@ -251,7 +251,7 @@ otError otThreadSendDiagnosticGet(otInstance *aInstance, const otIp6Address *aDe
 				  otReceiveDiagnosticGetCallback aCallback, void *aCallbackContext)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -272,7 +272,7 @@ otError otThreadSendDiagnosticReset(otInstance *aInstance, const otIp6Address *a
 				    const uint8_t aTlvTypes[], uint8_t aCount)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 

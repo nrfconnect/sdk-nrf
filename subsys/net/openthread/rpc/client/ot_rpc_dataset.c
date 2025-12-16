@@ -15,7 +15,7 @@
 bool otDatasetIsCommissioned(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	bool result;
+	bool result = false;
 
 	OT_RPC_UNUSED(aInstance);
 
@@ -30,7 +30,7 @@ bool otDatasetIsCommissioned(otInstance *aInstance)
 static otError ot_rpc_dataset_set_tlvs(uint8_t cmd, const otOperationalDatasetTlvs *dataset)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_ASSERT(dataset);
 
@@ -60,7 +60,7 @@ static otError ot_rpc_dataset_get_tlvs(uint8_t cmd, otOperationalDatasetTlvs *da
 static otError ot_rpc_dataset_set(uint8_t cmd, const otOperationalDataset *dataset)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_ASSERT(dataset);
 
