@@ -73,7 +73,6 @@ jobs:
             pip-compile-cross-platform \
               bootloader/mcuboot/scripts/requirements.txt \
               zephyr/scripts/requirements.txt \
-              nrf/scripts/requirements-west-ncs-sbom.txt \
               nrf/scripts/requirements-ci.txt \
               nrf/scripts/requirements-extra.txt \
               nrf/scripts/requirements.txt \

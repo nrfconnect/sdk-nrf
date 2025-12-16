@@ -60,7 +60,7 @@ jobs:
       - name: Install requirements
         shell: bash
         run: |
-          pip3 install -r nrf/scripts/requirements-fixed.txt
+          pip3 install -r nrf/scripts/requirements-fixed.txt -r nrf/scripts/requirements-west-ncs-sbom.txt
       - name: Smoke test ncs-loot & ncs-compare
         shell: bash
         run: |
