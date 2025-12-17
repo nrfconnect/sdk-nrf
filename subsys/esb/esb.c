@@ -1187,6 +1187,7 @@ static void start_tx_transaction(void)
 			nrf_radio_shorts_set(NRF_RADIO, (RADIO_NORMAL_SW_SHORTS |
 							 NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
 		}
+		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 		nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
 
 		/* Configure the retransmit counter */
@@ -1223,6 +1224,7 @@ static void start_tx_transaction(void)
 			retransmits_remaining = esb_cfg.retransmit_count;
 			on_radio_disabled = on_radio_disabled_tx;
 			esb_state = ESB_STATE_PTX_TX_ACK;
+			nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 			nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
 		} else if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
 			nrf_radio_shorts_set(
@@ -1249,6 +1251,7 @@ static void start_tx_transaction(void)
 
 			on_radio_disabled = on_radio_disabled_tx_noack;
 			esb_state = ESB_STATE_PTX_TX;
+			nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 			nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
 		}
 
@@ -1534,6 +1537,7 @@ static void start_rx_listening(void)
 		}
 
 		on_radio_disabled = on_radio_disabled_rx;
+		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 		nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
 	}
 
@@ -1971,6 +1975,7 @@ int esb_init(const struct esb_config *config)
 	nrf_radio_fast_ramp_up_enable_set(NRF_RADIO, esb_cfg.use_fast_ramp_up);
 
 #if defined(CONFIG_ESB_FAST_CHANNEL_SWITCHING)
+	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_RXREADY);
 	nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_RXREADY_MASK);
 #endif /* defined(CONFIG_ESB_FAST_CHANNEL_SWITCHING) */
 
@@ -2011,6 +2016,7 @@ int esb_init(const struct esb_config *config)
 	irq_enable(ESB_RADIO_IRQ_NUMBER);
 	irq_enable(ESB_EVT_IRQ_NUMBER);
 	if (IS_ENABLED(ESB_EVT_USING_EGU)) {
+		nrf_egu_event_clear(ESB_EGU, ESB_EGU_EVT_EVENT);
 		nrf_egu_int_enable(ESB_EGU, ESB_EGU_EVT_INT);
 	}
 	irq_enable(ESB_TIMER_IRQ);
