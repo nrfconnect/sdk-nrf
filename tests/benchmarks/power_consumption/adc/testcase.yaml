@@ -1,29 +1,39 @@
 common:
-  integration_platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
-  platform_allow:
-    - nrf52840dk/nrf52840
-    - nrf5340dk/nrf5340/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-    - nrf54lv10dk/nrf54lv10a/cpuapp
-    - nrf54h20dk/nrf54h20/cpuapp
-    - nrf54h20dk/nrf54h20/cpuppr
   tags:
     - ppk_power_measure
     - ci_tests_benchmarks_current_consumption
+  harness: pytest
+  harness_config:
+    fixture: ppk_power_measure
+    pytest_root:
+      - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_adc"
+
 tests:
   benchmarks.power_consumption.adc:
-    harness: pytest
-    harness_config:
-      fixture: ppk_power_measure
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_adc"
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow: &pm_adc_platforms
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuppr
+
   benchmarks.power_consumption.adc_async:
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow: *pm_adc_platforms
     extra_configs:
       - CONFIG_ADC_ASYNC=y
-    harness: pytest
-    harness_config:
-      fixture: ppk_power_measure
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_adc"
+
+  benchmarks.power_consumption.adc.nrf54l_lfrc:
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
