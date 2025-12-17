@@ -626,7 +626,7 @@ static int fota_download_object_init(void)
 	/* Enable native TLS for the download client socket
 	 * if configured.
 	 */
-	dl_host_cfg.native_tls = CONFIG_FOTA_DOWNLOAD_NATIVE_TLS;
+	dl_host_cfg.set_native_tls = CONFIG_FOTA_DOWNLOAD_NATIVE_TLS;
 #endif
 
 	k_work_init_delayable(&dl_with_offset_work, download_with_offset);
