@@ -4239,7 +4239,7 @@ The options are grouped by Series and drivers available for the device Series, a
                   * 192-bit keys are not supported.
                     See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
 
-                  * GCM and ChaCha20-Poly1305 cipher modes:
+                  * ChaCha20-Poly1305 cipher mode:
 
                     * Multi-part encrypt and decrypt APIs are not supported.
 
