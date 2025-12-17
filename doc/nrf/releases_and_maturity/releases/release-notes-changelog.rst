@@ -191,6 +191,7 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
+* Added experimental support for concurrent operation of ESB with other radio protocols using the :ref:`mpsl_timeslot` feature.
 * Fixed invalid radio configuration for legacy ESB protocol.
 
 Gazell
