@@ -242,6 +242,17 @@ config MEMFAULT_NCS_POST_COREDUMP_THREAD_STACK_SIZE
 	int "Post coredump thread size"
 	default 512
 
+config MEMFAULT_NCS_POST_INITIAL_HEARTBEAT_ON_NETWORK_CONNECTED
+	bool "Post initial heartbeat on network connected without coredump"
+	default y
+	help
+	  When enabled, if no coredump is available on network connection, trigger
+	  an initial heartbeat and post data to Memfault. This is useful for sending
+	  initial metrics to Memfault after boot without having to wait for the first automatic upload
+	  set by CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_INTERVAL_SECONDS.
+	  Note that when a coredump is found, heartbeat data is always sent along with
+	  the coredump regardless of this setting.
+
 endif # MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED
 
 config MEMFAULT_NCS_ETB_CAPTURE
