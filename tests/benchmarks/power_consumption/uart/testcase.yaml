@@ -3,28 +3,65 @@ common:
   tags:
     - ppk_power_measure
     - ci_tests_benchmarks_current_consumption
-  integration_platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
-  platform_allow:
-    - nrf52840dk/nrf52840
-    - nrf5340dk/nrf5340/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-    - nrf54lv10dk/nrf54lv10a/cpuapp
-    - nrf54h20dk/nrf54h20/cpuapp
   harness: pytest
   harness_config:
     fixture: ppk_power_measure
     pytest_root:
       - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_uart"
+
 tests:
   benchmarks.power_consumption.uart.async:
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow: &pm_uart_platforms
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
     extra_configs:
       - CONFIG_UART_ASYNC_API=y
+
   benchmarks.power_consumption.uart.interrupt:
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow: *pm_uart_platforms
     extra_configs:
       - CONFIG_UART_INTERRUPT_DRIVEN=y
+
   benchmarks.power_consumption.uart.polling:
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow: *pm_uart_platforms
     extra_configs:
       - CONFIG_UART_ASYNC_API=n
       - CONFIG_UART_INTERRUPT_DRIVEN=n
+
+  benchmarks.power_consumption.uart.async.nrf54l_lfrc:
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow: &pm_uart_54l_lfrc_platforms
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_configs:
+      - CONFIG_UART_ASYNC_API=y
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+
+  benchmarks.power_consumption.uart.interrupt.nrf54l_lfrc:
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow: *pm_uart_54l_lfrc_platforms
+    extra_configs:
+      - CONFIG_UART_INTERRUPT_DRIVEN=y
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+
+  benchmarks.power_consumption.uart.polling.nrf54l_lfrc:
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow: *pm_uart_54l_lfrc_platforms
+    extra_configs:
+      - CONFIG_UART_ASYNC_API=n
+      - CONFIG_UART_INTERRUPT_DRIVEN=n
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
