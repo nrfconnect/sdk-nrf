@@ -8,8 +8,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#ifndef ZEPHYR_INCLUDE_BLUETOOTH_BUF_H_
-#define ZEPHYR_INCLUDE_BLUETOOTH_BUF_H_
+#ifndef BT_HOST_BUF_H_
+#define BT_HOST_BUF_H_
 
 /**
  * @brief Data buffers
@@ -281,4 +281,4 @@ static inline enum bt_buf_type __deprecated bt_buf_get_type(struct net_buf *buf)
 }
 #endif
 
-#endif /* ZEPHYR_INCLUDE_BLUETOOTH_BUF_H_ */
+#endif /* BT_HOST_BUF_H_ */

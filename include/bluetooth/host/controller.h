@@ -7,8 +7,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#ifndef ZEPHYR_INCLUDE_BLUETOOTH_CONTROLLER_H_
-#define ZEPHYR_INCLUDE_BLUETOOTH_CONTROLLER_H_
+#ifndef BT_HOST_CONTROLLER_H_
+#define BT_HOST_CONTROLLER_H_
 
 /**
  * @brief Bluetooth Controller
@@ -38,4 +38,4 @@ void bt_ctlr_set_public_addr(const uint8_t *addr);
  * @}
  */
 
-#endif /* ZEPHYR_INCLUDE_BLUETOOTH_CONTROLLER_H_ */
+#endif /* BT_HOST_CONTROLLER_H_ */

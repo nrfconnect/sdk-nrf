@@ -7,8 +7,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#ifndef ZEPHYR_INCLUDE_BLUETOOTH_CS_H_
-#define ZEPHYR_INCLUDE_BLUETOOTH_CS_H_
+#ifndef BT_HOST_CS_H_
+#define BT_HOST_CS_H_
 
 /**
  * @brief LE Channel Sounding (CS)
@@ -947,4 +947,4 @@ int bt_le_cs_get_antenna_path(uint8_t n_ap,
  * @}
  */
 
-#endif /* ZEPHYR_INCLUDE_BLUETOOTH_CS_H_ */
+#endif /* BT_HOST_CS_H_ */

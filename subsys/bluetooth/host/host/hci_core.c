@@ -4087,6 +4087,7 @@ static void bt_dev_show_info(void)
 {
 	int i;
 
+	LOG_INF("nRF Connect SDK Bluetooth Host");
 	LOG_INF("HCI transport: %s", BT_HCI_NAME);
 	LOG_INF("Identity%s: %s", bt_dev.id_count > 1 ? "[0]" : "",
 		bt_addr_le_str(&bt_dev.id_addr[0]));
