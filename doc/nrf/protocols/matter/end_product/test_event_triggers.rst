@@ -168,9 +168,9 @@ The following table lists the available triggers and their activation codes:
     - The range of ``0x0`` - ``0x1`` is the endpoint ID that has power source cluster instance enabled.
       An endpoint with ID ``0x0`` uses a wired power source and endpoint with ID ``0x1`` uses a battery power source.
   * - Door lock jammed
-    - :kconfig:option:`CONFIG_CHIP_DEVICE_PRODUCT_ID` = ``32774``
+    - Only for :ref:`Matter Lock <matter_lock_sample>`
     - Simulate the jammed lock state.
-    - ``0xFFFFFFFF32774000``
+    - ``0xFFFFFFF327740000``
     - This activation code does not contain any value.
   * - Closure control - Main state is error
     - Only for :ref:`Matter Closure <matter_closure_sample>`
@@ -387,6 +387,8 @@ For example, you can register and use the ``OTATestEventTriggerHandler`` handler
   /* Create the Trigger Handler object */
   static chip::OTATestEventTriggerHandler otaTestEventTrigger;
   ReturnErrorOnFailure(Nrf::Matter::TestEventTrigger::Instance().RegisterTestEventTriggerHandler(&otaTestEventTrigger));
+
+.. _matter_test_event_triggers_usage:
 
 Usage
 *****
