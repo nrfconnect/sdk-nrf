@@ -121,6 +121,9 @@ CHIP_ERROR BridgeManager::DoAddBridgedDevices(MatterBridgedDevice *devices[], Br
 CHIP_ERROR BridgeManager::RemoveBridgedDevice(uint16_t endpoint, uint8_t &devicesPairIndex)
 {
 	uint8_t index = 0;
+
+	DeviceLayer::StackLock lock;
+
 	while (index < kMaxBridgedDevices) {
 		if (mDevicesMap.Contains(index)) {
 			auto &devicePair = mDevicesMap[index];
@@ -311,6 +314,8 @@ CHIP_ERROR BridgeManager::CreateEndpoint(uint8_t index, uint16_t endpointId)
 	VerifyOrReturnError(storedDevice->mDataVersion && storedDevice->mDataVersionSize > 0, CHIP_ERROR_NO_MEMORY);
 	VerifyOrReturnError(storedDevice->mDeviceTypeList && storedDevice->mDeviceTypeListSize > 0,
 			    CHIP_ERROR_NO_MEMORY);
+
+	DeviceLayer::StackLock lock;
 
 	CHIP_ERROR err = emberAfSetDynamicEndpoint(
 		index, endpointId, storedDevice->mEp,
