@@ -6,8 +6,10 @@
 
 import logging
 import re
+import socket
 import subprocess
 import time
+from contextlib import closing
 
 import psutil
 from twister_harness import DeviceAdapter
@@ -24,6 +26,24 @@ def _kill(proc):
         logger.debug("Process was killed.")
     except Exception as e:
         logger.exception(f"Could not kill process - {e}")
+
+
+# get free port
+# bind to port 0 and get free port from system
+def find_free_port():
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+        s.bind(("", 0))
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        return s.getsockname()[1]
+
+
+def print_output(outs, errs):
+    if outs:
+        for out in outs.split("\n"):
+            logger.info(f"{out}")
+    if errs:
+        for err in errs.split("\n"):
+            logger.error(f"{err}")
 
 
 def run_communicate_check(cmd: str, input: str, expected: str):
@@ -43,10 +63,11 @@ def run_communicate_check(cmd: str, input: str, expected: str):
     try:
         outs, errs = proc.communicate(input=input, timeout=5.0)
     except subprocess.TimeoutExpired:
+        logger.error("TimeoutExpired")
         _kill(proc)
     finally:
         outs, errs = proc.communicate()
-        logger.info(f"{outs=}\n{errs=}")
+        print_output(outs, errs)
 
     expected_str = re.search(expected, outs)
     assert expected_str is not None, f"Failed to match {expected} in {outs}"
@@ -75,7 +96,7 @@ def test_swd(dut: DeviceAdapter):
     if PLATFORM == "nrf54l15dk/nrf54l15/cpuapp":
         return
 
-    gdb_port = int(SEGGER_ID) % 1000 + 2331
+    gdb_port = find_free_port()
 
     ### Check that west attach doesn't work
     run_communicate_check(
