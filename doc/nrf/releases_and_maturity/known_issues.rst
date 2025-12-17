@@ -3449,6 +3449,21 @@ Matter samples
 
 The issues in this section are related to :ref:`matter_samples`.
 
+.. rst-class:: v3-2-1 v3-2-0
+
+KRKNWK-21238: Certification test cases fail on the :ref:`matter_closure_sample` sample
+  The certification test cases ``TC-CLCTRL-4.3``, ``TC-CLCTRL-2.1``, ``TC-CLCTRL-4.1``, ``TC-CLCTRL-4.4`` and ``TC-CLCTRL-5.1`` fail on the :ref:`matter_closure_sample` sample.
+  There are multiple reasons for the failures:
+
+  * Speed feature configuration was broken in the closure manager and falls into the null pointer dereference.
+  * The positioning feature did not set the target position as a fallback if the position was not provided to the command.
+  * The Latch feature was not disabled properly.
+  * There were no event triggers registered for the closure control purposes.
+  * The Target State value shall be nullable and set to null after the reboot and when the target position is reached.
+  * The Secure State value was not handled properly.
+
+  **Workaround:** Manually cherry-pick and apply the following commits to ``sdk-nrf`` (commit hashes: ``8b30622fb3b6b6d5942a1c5b9c4a1e26d71de846``, ``49daf67de9541c1a6360e8195da7584d28d71420``, and ``802db3cfc0f97e179c66147a9f347bd9dcf22b51``).
+
 .. rst-class:: v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0
 
 KRKNWK-21228: The ``Jammed lock state`` event trigger does not work with the :ref:`matter_lock_sample` sample
