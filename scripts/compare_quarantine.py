@@ -57,26 +57,34 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Compare two quarantine.yaml files and report added/removed configurations."
     )
-    parser.add_argument("file1", type=Path, help="First quarantine file", required=True)
-    parser.add_argument("file2", type=Path, help="Second quarantine file", required=True)
-    parser.add_argument("suffix", help="Suffix for output report files", default=None)
+    parser.add_argument("file1", type=Path, help="First quarantine file")
+    parser.add_argument("file2", type=Path, help="Second quarantine file")
+    parser.add_argument("--suffix", default=None, help="Suffix for output report files")
+    parser.add_argument("--outdir", type=Path, default=Path("."), help="Directory for output txt files")
     
     args = parser.parse_args()
     
     file1 = args.file1
     file2 = args.file2
     suffix = args.suffix
+    outdir_arg = args.outdir
 
-    # Validate input files
-    if not file1.exists():
-        print(f"Error: File {file1} does not exist")
-        sys.exit(1)
+    # Determine output directory: if provided, resolve relative paths against cwd
+    # and create the directory (parents=True). If not provided, use current working dir.
+    if outdir_arg:
+        outdir = Path(outdir_arg).resolve(strict=False)
+        try:
+            outdir.mkdir(parents=True, exist_ok=True)
+        except PermissionError:
+            print(f"Error: insufficient permissions to create output directory '{outdir}'.")
+            sys.exit(1)
+        except Exception as e:
+            print(f"Error: unable to create output directory '{outdir}': {e}")
+            sys.exit(1)
+    else:
+        outdir = Path.cwd()
 
-    if not file2.exists():
-        print(f"Error: File {file2} does not exist")
-        sys.exit(1)
-
-    # Compare files
+    print(f"Writing reports to: {outdir}")
     added_configurations, removed_configurations = compare_quarantine_files(file1, file2)
 
     # Report results
@@ -105,9 +113,9 @@ if __name__ == "__main__":
     else:
         print(f"Total changes: {total_changes} ({len(added_configurations)} added, {len(removed_configurations)} removed)")
 
-    with open(f"configurations_added_{suffix}.txt", "w") as report_file:
+    with open(outdir / f"configurations_added_{suffix}.txt", "w") as report_file:
         for config in sorted(added_configurations):
             report_file.write(f"{config}\n")    
-    with open(f"configurations_removed_{suffix}.txt", "w") as report_file:
+    with open(outdir / f"configurations_removed_{suffix}.txt", "w") as report_file:
         for config in sorted(removed_configurations):
             report_file.write(f"{config}\n")
