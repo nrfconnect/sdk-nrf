@@ -2,9 +2,14 @@ common:
   tags:
     - ppk_power_measure
     - ci_tests_benchmarks_current_consumption
+  harness: pytest
+  harness_config:
+    fixture: ppk_power_measure
+    pytest_root:
+      - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_flash"
+
 tests:
   benchmarks.power_consumption.flash:
-    harness: pytest
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
@@ -13,7 +18,12 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    harness_config:
-      fixture: ppk_power_measure
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_flash"
+
+  benchmarks.power_consumption.flash.nrf54l_lfrc:
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y

@@ -16,6 +16,15 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+
+  benchmarks.current_consumption.beacon_vs_vdd.nrf54l_lfrc:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+
   benchmarks.current_consumption.beacon_vs_vdd.with_netcore:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp

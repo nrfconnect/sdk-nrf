@@ -2,6 +2,12 @@ common:
   tags:
     - ppk_power_measure
     - ci_tests_benchmarks_current_consumption
+  harness: pytest
+  harness_config:
+    fixture: gpio_loopback
+    pytest_root:
+      - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_lpcomp"
+
 tests:
   benchmarks.power_consumption.lpcomp:
     integration_platforms:
@@ -11,8 +17,11 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-    harness: pytest
-    harness_config:
-      fixture: gpio_loopback
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_lpcomp"
+
+  benchmarks.power_consumption.lpcomp.nrf54l_lfrc:
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp

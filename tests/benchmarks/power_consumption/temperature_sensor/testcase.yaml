@@ -5,6 +5,11 @@ common:
     - sensors
     - ci_tests_benchmarks_current_consumption
     - ppk_power_measure
+  harness: pytest
+  harness_config:
+    fixture: ppk_power_measure
+    pytest_root:
+      - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_gpio"
 
 tests:
   benchmarks.power_consumption.temperature:
@@ -14,8 +19,11 @@ tests:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    harness: pytest
-    harness_config:
-      fixture: ppk_power_measure
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_gpio"
+
+  benchmarks.power_consumption.temperature.nrf54l_lfrc:
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y

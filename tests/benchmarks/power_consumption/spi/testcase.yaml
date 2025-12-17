@@ -1,8 +1,8 @@
 common:
   tags:
-
     - ppk_power_measure
     - ci_tests_benchmarks_current_consumption
+
 tests:
   benchmarks.power_consumption.spi_nrf54l:
     harness: pytest
@@ -16,6 +16,21 @@ tests:
       fixture: pca63565
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_spi_54L"
+
+  benchmarks.power_consumption.spi_nrf54l.lfrc:
+    harness: pytest
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - SHIELD=pca63565
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+    harness_config:
+      fixture: pca63565
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_thread_suspend_resume_spi_54L"
+
   benchmarks.power_consumption.spi_nrf54h:
     harness: pytest
     sysbuild: true

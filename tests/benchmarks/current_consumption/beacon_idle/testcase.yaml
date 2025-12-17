@@ -22,6 +22,7 @@ tests:
       - ipc_radio_POWEROFF=y
       - SB_CONFIG_NETCORE_IPC_RADIO=y
       - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
+
   benchmarks.current_consumption.beacon_idle.nrf54l:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -29,3 +30,13 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+
+  benchmarks.current_consumption.beacon_idle.nrf54l.lfrc:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
