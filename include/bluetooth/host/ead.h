@@ -5,8 +5,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#ifndef ZEPHYR_INCLUDE_BLUETOOTH_EAD_H_
-#define ZEPHYR_INCLUDE_BLUETOOTH_EAD_H_
+#ifndef BT_HOST_EAD_H_
+#define BT_HOST_EAD_H_
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/kernel.h>
@@ -112,4 +112,4 @@ int bt_ead_decrypt(const uint8_t session_key[BT_EAD_KEY_SIZE], const uint8_t iv[
 }
 #endif
 
-#endif /* ZEPHYR_INCLUDE_BLUETOOTH_EAD_H_ */
+#endif /* BT_HOST_EAD_H_ */

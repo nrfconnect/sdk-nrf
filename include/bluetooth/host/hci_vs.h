@@ -6,8 +6,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#ifndef ZEPHYR_INCLUDE_BLUETOOTH_HCI_VS_H_
-#define ZEPHYR_INCLUDE_BLUETOOTH_HCI_VS_H_
+#ifndef BT_HOST_HCI_VS_H_
+#define BT_HOST_HCI_VS_H_
 
 #include <stdint.h>
 
@@ -473,4 +473,4 @@ struct net_buf *hci_vs_err_assert(const char *file, uint32_t line);
 }
 #endif
 
-#endif /* ZEPHYR_INCLUDE_BLUETOOTH_HCI_VS_H_ */
+#endif /* BT_HOST_HCI_VS_H_ */

@@ -7,8 +7,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#ifndef ZEPHYR_INCLUDE_BLUETOOTH_ATT_H_
-#define ZEPHYR_INCLUDE_BLUETOOTH_ATT_H_
+#ifndef BT_HOST_ATT_H_
+#define BT_HOST_ATT_H_
 
 /**
  * @brief Attribute Protocol (ATT)
@@ -191,4 +191,4 @@ enum bt_att_chan_opt {
  * @}
  */
 
-#endif /* ZEPHYR_INCLUDE_BLUETOOTH_ATT_H_ */
+#endif /* BT_HOST_ATT_H_ */

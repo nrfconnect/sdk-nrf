@@ -8,8 +8,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#ifndef ZEPHYR_INCLUDE_BLUETOOTH_CONN_H_
-#define ZEPHYR_INCLUDE_BLUETOOTH_CONN_H_
+#ifndef BT_HOST_CONN_H_
+#define BT_HOST_CONN_H_
 
 /**
  * @brief Connection management
@@ -3306,4 +3306,4 @@ int bt_conn_br_exit_sniff_mode(struct bt_conn *conn);
  * @}
  */
 
-#endif /* ZEPHYR_INCLUDE_BLUETOOTH_CONN_H_ */
+#endif /* BT_HOST_CONN_H_ */

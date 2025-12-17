@@ -7,8 +7,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#ifndef ZEPHYR_INCLUDE_BLUETOOTH_UUID_H_
-#define ZEPHYR_INCLUDE_BLUETOOTH_UUID_H_
+#ifndef BT_HOST_UUID_H_
+#define BT_HOST_UUID_H_
 
 /**
  * @brief UUIDs
@@ -5257,4 +5257,4 @@ void bt_uuid_to_str(const struct bt_uuid *uuid, char *str, size_t len);
  * @}
  */
 
-#endif /* ZEPHYR_INCLUDE_BLUETOOTH_UUID_H_ */
+#endif /* BT_HOST_UUID_H_ */

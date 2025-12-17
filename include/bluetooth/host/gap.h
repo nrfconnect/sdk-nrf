@@ -8,8 +8,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#ifndef ZEPHYR_INCLUDE_BLUETOOTH_GAP_H_
-#define ZEPHYR_INCLUDE_BLUETOOTH_GAP_H_
+#ifndef BT_HOST_GAP_H_
+#define BT_HOST_GAP_H_
 
 #include <zephyr/bluetooth/assigned_numbers.h>
 #include <zephyr/bluetooth/byteorder.h>
@@ -552,4 +552,4 @@ enum bt_gap_sca {
 }
 #endif
 
-#endif /* ZEPHYR_INCLUDE_BLUETOOTH_GAP_H_ */
+#endif /* BT_HOST_GAP_H_ */

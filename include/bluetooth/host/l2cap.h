@@ -8,8 +8,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#ifndef ZEPHYR_INCLUDE_BLUETOOTH_L2CAP_H_
-#define ZEPHYR_INCLUDE_BLUETOOTH_L2CAP_H_
+#ifndef BT_HOST_L2CAP_H_
+#define BT_HOST_L2CAP_H_
 
 /**
  * @brief L2CAP
@@ -1114,4 +1114,4 @@ int bt_l2cap_chan_recv_complete(struct bt_l2cap_chan *chan,
  * @}
  */
 
-#endif /* ZEPHYR_INCLUDE_BLUETOOTH_L2CAP_H_ */
+#endif /* BT_HOST_L2CAP_H_ */

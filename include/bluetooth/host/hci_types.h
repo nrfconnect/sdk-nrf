@@ -6,8 +6,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#ifndef ZEPHYR_INCLUDE_BLUETOOTH_HCI_TYPES_H_
-#define ZEPHYR_INCLUDE_BLUETOOTH_HCI_TYPES_H_
+#ifndef BT_HOST_HCI_TYPES_H_
+#define BT_HOST_HCI_TYPES_H_
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -4570,4 +4570,4 @@ struct bt_hci_evt_le_conn_rate_change {
 }
 #endif
 
-#endif /* ZEPHYR_INCLUDE_BLUETOOTH_HCI_TYPES_H_ */
+#endif /* BT_HOST_HCI_TYPES_H_ */

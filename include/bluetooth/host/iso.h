@@ -9,8 +9,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#ifndef ZEPHYR_INCLUDE_BLUETOOTH_ISO_H_
-#define ZEPHYR_INCLUDE_BLUETOOTH_ISO_H_
+#ifndef BT_HOST_ISO_H_
+#define BT_HOST_ISO_H_
 
 /**
  * @brief Isochronous channels (ISO)
@@ -1344,4 +1344,4 @@ int bt_iso_big_sync(struct bt_le_per_adv_sync *sync, struct bt_iso_big_sync_para
  * @}
  */
 
-#endif /* ZEPHYR_INCLUDE_BLUETOOTH_ISO_H_ */
+#endif /* BT_HOST_ISO_H_ */
