@@ -43,6 +43,9 @@ CHIP_ERROR TestEventTrigger::RegisterICDTestEventTriggers()
 
 CHIP_ERROR TestEventTrigger::RegisterTestEventTrigger(EventTriggerId id, EventTrigger trigger)
 {
+	/* Verify that the event trigger ID is a valid event trigger ID and does not contain the value part. */
+	VerifyOrDieWithMsg((id & kEventTriggerMask) == id, Zcl, "Invalid event trigger ID: 0x%llx", id);
+
 	VerifyOrReturnError(trigger.Callback != nullptr, CHIP_ERROR_INVALID_ARGUMENT);
 	VerifyOrReturnError(!mTriggersMap.Contains(id), CHIP_ERROR_INVALID_ARGUMENT);
 	VerifyOrReturnError(mTriggersMap.Insert(id, std::move(trigger)), CHIP_ERROR_NO_MEMORY);
