@@ -488,6 +488,11 @@ Memfault integration
 
 |no_changes_yet_note|
 
+* Added:
+
+  * The option ``CONFIG_MEMFAULT_NCS_POST_INITIAL_HEARTBEAT_ON_NETWORK_CONNECTED`` to control whether an initial heartbeat is sent when the device connects to a network.
+    Useful to be able to show device status and initial metrics in the Memfault dashboard as soon as possible after boot.
+
 AVSystem integration
 --------------------
 
