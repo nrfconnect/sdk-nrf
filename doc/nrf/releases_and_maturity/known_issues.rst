@@ -3449,6 +3449,26 @@ Matter samples
 
 The issues in this section are related to :ref:`matter_samples`.
 
+.. rst-class:: v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0
+
+KRKNWK-21228: The ``Jammed lock state`` event trigger does not work with the :ref:`matter_lock_sample` sample
+  The ``Jammed lock state`` event trigger ID is not correctly set in the sample.
+
+  **Workaround:** Set the ``Jammed lock state`` event trigger ID to ``0xFFFF'FFF3'2774'0000`` in the :ref:`matter_lock_sample` in the :file:`app_task.h` file.
+  Then use the new event trigger ID while executing the operations described in the :ref:`matter_test_event_triggers_usage` section of the :ref:`ug_matter_test_event_triggers` user guide.
+
+  For example, replace the following line in the :file:`app_task.h` file:
+
+  .. code-block:: c++
+
+     constexpr static Nrf::Matter::TestEventTrigger::EventTriggerId kDoorLockJammedEventTriggerId = 0xFFFF'FFFF'3277'4000;
+
+  with the following line:
+
+  .. code-block:: c++
+
+     constexpr static Nrf::Matter::TestEventTrigger::EventTriggerId kDoorLockJammedEventTriggerId = 0xFFFF'FFF3'2774'0000;
+
 .. rst-class:: v3-1-1 v3-1-0
 
 KRKNWK-20915: The :ref:`matter_lock_sample` sample does not work with the nRF54L Series and Nordic UART Service (NUS)
