@@ -1875,3 +1875,9 @@ ci_tests_subsys_west_debug:
     - nrf/tests/subsys/west_debug/
     - zephyr/boards/nordic/
     - nrf/boards/nordic/54*
+
+ci_tests_subsys_west_flash:
+  files:
+    - nrf/tests/subsys/west_flash/
+    - zephyr/boards/nordic/
+    - nrf/boards/nordic/54*
