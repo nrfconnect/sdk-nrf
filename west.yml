@@ -50,6 +50,7 @@ manifest:
     - -bsec
     - -doc-internal
     - +optional
+    - +testing
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
