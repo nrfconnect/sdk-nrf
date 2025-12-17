@@ -1,5 +1,3 @@
-#include <zephyr/autoconf.h>
-
 b0:
   size: CONFIG_PM_PARTITION_SIZE_B0_IMAGE
   placement:
@@ -36,9 +34,7 @@ s1_image:
   share_size: {one_of: [mcuboot, s0_image]}
   placement:
     after: [s1_pad, s0]
-#ifndef CONFIG_NCS_MCUBOOT_IN_BUILD
     align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
-#endif
     align_next: CONFIG_FPROTECT_BLOCK_SIZE
 
 s1:

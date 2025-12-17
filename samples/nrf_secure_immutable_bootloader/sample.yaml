@@ -1,7 +1,7 @@
 sample:
   name: Bootloader Sample
 tests:
-  sample.bootloader:
+  sample.nrf_secure_immutable_bootloader:
     sysbuild: true
     build_only: true
     integration_platforms:

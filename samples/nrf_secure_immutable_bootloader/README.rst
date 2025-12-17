@@ -93,7 +93,7 @@ For information how to erase the entire flash memory when flashing, see :ref:`pr
 Flash memory layout
 ===================
 
-The flash memory layout is defined by the :file:`samples/bootloader/pm.yml` file, which establishes four main partitions:
+The flash memory layout is defined by the :file:`samples/nrf_secure_immutable_bootloader/pm.yml` file, which establishes four main partitions:
 
 * *B0* - The NSIB image.
 * *Provision* - The provisioned data.
@@ -162,7 +162,7 @@ Monotonic counter
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bootloader`
+.. |sample path| replace:: :file:`samples/nrf_secure_immutable_bootloader`
 
 .. include:: /includes/build_and_run.txt
 
