@@ -1162,7 +1162,7 @@ ci_tests_drivers_lpuart:
     - nrf/subsys/debug/
     - nrf/tests/drivers/lpuart/
     - zephyr/boards/nordic/
-    - zephyr/drivers/
+    - zephyr/drivers/serial/
 
 ci_tests_drivers_flash:
   files:
