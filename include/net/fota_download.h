@@ -122,6 +122,15 @@ typedef void (*fota_download_callback_t)(const struct fota_download_evt *evt);
  */
 int fota_download_init(fota_download_callback_t client_callback);
 
+/**@brief Specify a network interface for the FOTA download library to use.
+ *
+ * The interface name is not copied, so the pointer should remain valid until
+ * download is finished.
+ *
+ * @param if_name A pointer to the network interface name. May be NULL.
+ */
+void fota_download_if_name_set(const char *if_name);
+
 /**@brief Download the given file with the specified image type from the given host.
  *
  * Validate that the file type matches the expected type before proceeding with the download.

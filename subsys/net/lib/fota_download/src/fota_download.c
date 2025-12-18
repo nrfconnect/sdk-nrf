@@ -731,3 +731,8 @@ int fota_download_target(void)
 {
 	return img_type;
 }
+
+void fota_download_if_name_set(const char *if_name)
+{
+	dl_host_cfg.if_name = if_name;
+}
