@@ -679,8 +679,6 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
            * - **Isochronous Channels**
              - Supported
-           * - **Direction Finding**\ :sup:`3`
-             - Supported
            * - **LE Power Control**
              - Supported
            * - **Connection Subrating**
