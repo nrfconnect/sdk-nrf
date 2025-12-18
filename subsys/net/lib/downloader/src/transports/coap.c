@@ -423,7 +423,7 @@ static int dl_coap_init(struct downloader *dl, struct downloader_host_cfg *dl_ho
 		LOG_DBG("Port not specified, using default: %d", coap->sock.port);
 	}
 
-	if (dl_host_cfg->set_native_tls) {
+	if (!IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_DISPATCHER) && dl_host_cfg->set_native_tls) {
 		LOG_DBG("Enabled native TLS");
 		coap->sock.type |= SOCK_NATIVE_TLS;
 	}

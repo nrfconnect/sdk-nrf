@@ -109,6 +109,24 @@ static int socket_dtls_cid_enable(int fd)
 	return err;
 }
 
+static int socket_tls_native_enable(int fd)
+{
+	int err;
+	int tls_native = 1;
+
+	err = zsock_setsockopt(fd, ZSOCK_SOL_TLS, ZSOCK_TLS_NATIVE, &tls_native,
+			       sizeof(tls_native));
+	if (err < 0) {
+		err = -errno;
+		LOG_ERR("Failed to set native TLS: %d", err);
+		return err;
+	}
+
+	LOG_DBG("Enabled native TLS");
+
+	return 0;
+}
+
 static bool is_ip_address(const char *hostname)
 {
 	struct net_sockaddr sa;
@@ -192,6 +210,13 @@ static int dl_socket_create_and_connect(int *fd, int proto, int type, uint16_t p
 	}
 
 	LOG_DBG("Socket opened, fd %d", *fd);
+
+	if (IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_DISPATCHER) && dl_host_cfg->set_native_tls) {
+		err = socket_tls_native_enable(*fd);
+		if (err < 0) {
+			goto cleanup;
+		}
+	}
 
 	if (dl_host_cfg->pdn_id) {
 		err = socket_pdn_id_set(*fd, dl_host_cfg->pdn_id);
