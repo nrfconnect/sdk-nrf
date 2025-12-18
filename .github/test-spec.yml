@@ -340,7 +340,7 @@
   - "subsys/ieee802154/**/*"
   - "subsys/nrf_rpc/**/*"
   - "drivers/mpsl/**/*"
-  - "boards/shields/**/*"
+  - "boards/shields/nrf*/*"
   - "dts/bindings/radio_fem/**/*"
   - "applications/ipc_radio/**/*"
   - "modules/nrfxlib/nrf_802154/**/*"
