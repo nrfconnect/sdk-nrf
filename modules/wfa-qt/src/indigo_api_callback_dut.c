@@ -1768,6 +1768,8 @@ static int get_ip_addr_handler(struct packet_wrapper *req, struct packet_wrapper
 		message = TLV_VALUE_NOT_OK;
 	}
 
+	k_sleep(K_SECONDS(13));
+
 	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
 	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
 	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
