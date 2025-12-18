@@ -549,4 +549,4 @@ cJSON
 Documentation
 =============
 
-|no_changes_yet_note|
+Fixed an issue in the documentation where the software maturity for Direction Finding was marked as supported on the nRF54H20 SoC.
