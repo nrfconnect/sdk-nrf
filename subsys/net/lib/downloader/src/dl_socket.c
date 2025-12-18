@@ -127,6 +127,27 @@ static int socket_tls_native_enable(int fd)
 	return 0;
 }
 
+static int socket_if_name_set(int fd, const char *if_name)
+{
+	int err;
+	struct net_ifreq ifname = { 0 };
+
+	strncpy(ifname.ifr_name, if_name, sizeof(ifname.ifr_name) - 1);
+	ifname.ifr_name[sizeof(ifname.ifr_name) - 1] = '\0';
+
+	err = zsock_setsockopt(fd, ZSOCK_SOL_SOCKET, ZSOCK_SO_BINDTODEVICE, &ifname,
+			       sizeof(struct net_ifreq));
+	if (err < 0) {
+		err = -errno;
+		NET_ERR("Failed to bind to interface %s: %d", ifname.ifr_name, err);
+		return err;
+	}
+
+	NET_DBG("Bound to interface %s", ifname.ifr_name);
+
+	return 0;
+}
+
 static bool is_ip_address(const char *hostname)
 {
 	struct net_sockaddr sa;
@@ -213,6 +234,13 @@ static int dl_socket_create_and_connect(int *fd, int proto, int type, uint16_t p
 
 	if (IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_DISPATCHER) && dl_host_cfg->set_native_tls) {
 		err = socket_tls_native_enable(*fd);
+		if (err < 0) {
+			goto cleanup;
+		}
+	}
+
+	if (dl_host_cfg->if_name != NULL) {
+		err = socket_if_name_set(*fd, dl_host_cfg->if_name);
 		if (err < 0) {
 			goto cleanup;
 		}
