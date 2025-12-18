@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#ifdef CONFIG_CLOCK_CONTROL_NRF2
+#ifdef CONFIG_CLOCK_CONTROL_NRFS
 #include "common.h"
 
 #include <zephyr/logging/log.h>
