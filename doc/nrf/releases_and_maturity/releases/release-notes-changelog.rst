@@ -120,6 +120,11 @@ Security
     The algorithm implementation is conformant to the NIST SP 800-108 Rev. 1 recommendation.
   * Support for the secp384r1 key storage in the :ref:`Key Management Unit (KMU) <ug_nrf54l_crypto_kmu_supported_key_types>`.
 
+Trusted Firmware-M (TF-M)
+-------------------------
+
+* Updated to version 2.2.2.
+
 Protocols
 =========
 
