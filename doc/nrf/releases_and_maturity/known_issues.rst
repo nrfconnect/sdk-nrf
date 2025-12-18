@@ -3449,6 +3449,18 @@ Matter samples
 
 The issues in this section are related to :ref:`matter_samples`.
 
+.. rst-class:: v3-2-1 v3-2-0 v3-1-1 v3-1-0
+
+KRKNWK-21213: :ref:`matter_bridge_app` over Thread does not work properly with commercial Matter ecosystem controllers
+  While adding a dynamic endpoint to the Matter Bridge over Thread application, it does not appear in commercial Matter ecosystem applications.
+  This issue occurs because the Matter stack thread is not locked during the addition or removal of a dynamic endpoint.
+  As a result, a race condition can happen when the :kconfig:option:`CONFIG_CHIP_USE_ZEPHYR_NETWORKING` kconfig option is set to ``n``.
+
+  **Workaround:** Do one of the following:
+
+  * Set the :kconfig:option:`CONFIG_CHIP_USE_ZEPHYR_NETWORKING` and :kconfig:option:`CONFIG_NET_L2_OPENTHREAD` Kconfig options to ``y``.
+  * Manually cherry-pick and apply the following commit to ``sdk-nrf`` (commit hash: ``7db48dc8c42a12aeb3913034b27f7ef59a9656d7``).
+
 .. rst-class:: v3-2-1 v3-2-0
 
 KRKNWK-21238: Certification test cases fail on the :ref:`matter_closure_sample` sample
