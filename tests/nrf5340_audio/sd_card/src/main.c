@@ -46,7 +46,7 @@ static int dir_name_get(char *name, size_t name_size, uint32_t curr_level, uint3
 		uint32_t numeric_name;
 	};
 
-	struct dir_tree f_tree[5];
+	struct dir_tree f_tree[curr_level+1];
 
 	uint32_t on_level = curr_level;
 
