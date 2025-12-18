@@ -1249,25 +1249,20 @@ ci_tests_benchmarks_spi_endless:
 ci_tests_benchmarks_current_consumption:
   files:
     - modules/hal/nordic/nrfx/
-    - nrf/include/nfc/
-    - nrf/subsys/nfc/
     - nrf/tests/benchmarks/current_consumption/
     - nrf/tests/benchmarks/pm_states/
     - nrf/tests/benchmarks/power_consumption/
-    - nrfxlib/nfc/
-    - zephyr/boards/nordic/
-    - zephyr/drivers/clock_control/
-    - zephyr/drivers/gpio/
-    - zephyr/drivers/serial/
+    - zephyr/boards/nordic/nrf54*
     - zephyr/dts/vendor/nordic/
-    - zephyr/drivers/adc/
-    - zephyr/drivers/gpio/
-    - zephyr/drivers/flash/
-    - zephyr/drivers/i2c/
-    - zephyr/drivers/spi/
-    - zephyr/drivers/counter/
     - zephyr/soc/nordic/
-    - zephyr/drivers/sensor/nordic/temp/
+  files-exclude:
+    - zephyr/soc/nordic/nrf51/
+    - zephyr/soc/nordic/nrf52/
+    - zephyr/soc/nordic/nrf53/
+    - zephyr/soc/nordic/nrf9*
+    - zephyr/dts/vendor/nordic/nrf52*
+    - zephyr/dts/vendor/nordic/nrf53*
+    - zephyr/dts/vendor/nordic/nrf9*
 
 ci_tests_benchmarks_early_logging:
   files:
