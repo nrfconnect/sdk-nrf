@@ -109,10 +109,10 @@ static void configure_twim(void)
 }
 
 /*
- * MLTPAN-105
+ * Verify driver ability to recover after long clock stretching (corner case)
  * During I2C transaction, TWIM SCL is 0 either before or after disabling TWIM.
  */
-ZTEST(i2c_pan, test_mltpan_105_workaround)
+ZTEST(i2c_pan, test_clock_stretching_recovery)
 {
 	int ret;
 	uint32_t scl_pin;
