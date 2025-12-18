@@ -44,7 +44,7 @@ static char recv_buf[RECV_BUF_SIZE];
 static K_SEM_DEFINE(network_connected_sem, 0, 1);
 /* Certificate for `example.com` */
 static const char cert[] = {
-	#include "DigiCertGlobalG3.pem.inc"
+	#include "CloudflareTLSIssuingECCCA3.pem.inc"
 
 	/* Null terminate certificate if running Mbed TLS on the application core.
 	 * Required by TLS credentials API.
