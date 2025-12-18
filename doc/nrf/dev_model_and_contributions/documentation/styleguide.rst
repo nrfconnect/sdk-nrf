@@ -222,6 +222,7 @@ Start help text with an imperative verb.
 
    config MY_FEATURE
      bool "My feature"
+     depends on MY_DEPENDENCY
      help
        Enable support for my feature. This feature provides...
 
@@ -395,6 +396,7 @@ In addition to the Zephyr guidelines for :ref:`Configuration Symbol Organization
            (10) Maximum number of users
            (4)  Maximum credentials per user
 
+* Symbol types (such as ``bool``, ``int``, ``hex``, ``string``) come before ``depends on``.
 * Add the source statement for ``Kconfig.zephyr`` at the end without wrapping it in a menu.
 
 Example:

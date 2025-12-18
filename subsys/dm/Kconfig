@@ -5,21 +5,21 @@
 #
 
 menuconfig DM_MODULE
-	bool "nRF DM (Distance Measurement) [EXPERIMENTAL]"
+	bool "nRF Distance Measurement (nRF DM) [EXPERIMENTAL]"
 	select NRF_DM
 	select EXPERIMENTAL
 	help
-	  Enable the DM (Distance Measurement) module.
+	  Enable the nRF Distance Measurement module.
 
 if DM_MODULE
 
 config DM_HIGH_PRECISION_CALC
-	# Due to memory limitations, functionality is not provided for nrf52832.
+	# Due to memory limitations, this functionality is not provided for nRF52832.
+	bool "High-precision distance estimation"
 	depends on !SOC_NRF52832
-	bool "Use high-precision distance estimation"
 	help
 	  Use a more compute-intensive algorithm for the distance estimation.
-	  Works only with MCPD ranging mode.
+	  This feature works only with the MCPD ranging mode.
 
 config DM_TIMESLOT_RESCHEDULE
 	bool "Timeslot reschedule"
