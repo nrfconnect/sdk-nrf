@@ -32,7 +32,7 @@
  */
 #define KEY_READVAL_MASK DK_BTN1_MSK
 
-#define BAS_READ_VALUE_INTERVAL (10 * MSEC_PER_SEC)
+#define BAS_READ_VALUE_INTERVAL (11 * MSEC_PER_SEC)
 
 
 static struct bt_conn *default_conn;
