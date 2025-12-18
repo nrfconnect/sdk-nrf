@@ -7,8 +7,6 @@
 menuconfig BT_CS_DE
 	bool "Bluetooth Channel Sounding Distance Estimation [EXPERIMENTAL]"
 	depends on BT_CHANNEL_SOUNDING
-	depends on BT_RAS
-	depends on BT_RAS_RREQ
 	imply FPU
 	select FPU_SHARING if FPU
 	select CMSIS_DSP
