@@ -74,6 +74,18 @@ nRF54H20 power management
                 status = "disabled";
         };
 
+   * For a correct configuration of power management on your custom nRF54H20-based device, you must define ``pm_ramfunc`` also for the radio core.
+     For a configuration example, see the `pm_ramfunc radio core configuration`_  in the :file:`nrf54h20dk_nrf54h20_cpurad.dts` file.
+
+nRF54H20 entropy provider
+-------------------------
+
+.. toggle::
+
+   * PSA RNG is the new default Zephyr entropy provider for the nRF54H20 DK.
+     It is recommended to use PSA RNG as your Zephyr entropy provider also on your custom nRF54H20-based device.
+     For a configuration example, see the new `PSA RNG configuration`_ in DTS for both the application and radio cores of the nRF54H20 DK.
+
 Samples and applications
 ========================
 
