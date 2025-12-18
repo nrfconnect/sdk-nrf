@@ -218,7 +218,9 @@ static bool m_hfclk_is_running(void)
 
 		unsigned int key = irq_lock();
 
-		(void)nrfx_clock_is_running(NRF_CLOCK_DOMAIN_HFCLK, &type);
+		COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
+			    (nrfx_clock_hfclk_running_check),
+			    (nrfx_clock_xo_running_check))(&type);
 
 		irq_unlock(key);
 
@@ -246,7 +248,9 @@ static bool m_lfclk_calibration_is_enabled(void)
 
 static int32_t m_lfclk_request(void)
 {
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	struct onoff_manager *mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_LF);
+#endif
 	int32_t err;
 
 	/* Workaround for NRFX-6865. The nrf clock control as well as nrfx_clock doesn't enable
@@ -259,7 +263,12 @@ static int32_t m_lfclk_request(void)
 	sys_notify_init_callback(&m_lfclk_state.cli.notify, m_clock_request_cb);
 	(void)k_sem_init(&m_lfclk_state.sem, 0, 1);
 
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	err = onoff_request(mgr, &m_lfclk_state.cli);
+#else
+	err = nrf_clock_control_request(DEVICE_DT_GET_ONE(nordic_nrf_clock_lfclk), NULL,
+					&m_lfclk_state.cli);
+#endif
 	if (err < 0) {
 		return err;
 	}
@@ -271,11 +280,17 @@ static int32_t m_lfclk_request(void)
 
 static int32_t m_lfclk_release(void)
 {
-	struct onoff_manager *mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_LF);
 	int32_t err;
+#if defined(CONFIG_CLOCK_CONTROL_NRFX)
+	struct onoff_manager *mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_LF);
 
 	/* In case there is other ongoing request, cancel it. */
 	err = onoff_cancel_or_release(mgr, &m_lfclk_state.cli);
+#else
+	/* In case there is other ongoing request, cancel it. */
+	err = nrf_clock_control_cancel_or_release(DEVICE_DT_GET_ONE(nordic_nrf_clock_lfclk), NULL,
+						&m_lfclk_state.cli);
+#endif
 	if (err < 0) {
 		return err;
 	}
@@ -292,7 +307,7 @@ static int32_t m_lfclk_release(void)
 	return 0;
 }
 
-#elif defined(CONFIG_CLOCK_CONTROL_NRF2)
+#elif defined(CONFIG_CLOCK_CONTROL_NRFS)
 
 /* Minimum accuracy of LFCLK that is required by Bluetooth Core Specification Version 6.1, Vol 6,
  * Part B, Section 4.2.2.
@@ -330,7 +345,7 @@ static const struct nrf_clock_spec m_hfclk_specs = {
 
 static void m_lfclk_calibration_start(void)
 {
-	/* This function is not supported when CONFIG_CLOCK_CONTROL_NRF2 is set.
+	/* This function is not supported when CONFIG_CLOCK_CONTROL_NRFS is set.
 	 * As of now MPSL does not use this API in this configuration.
 	 */
 	__ASSERT_NO_MSG(false);
@@ -338,7 +353,7 @@ static void m_lfclk_calibration_start(void)
 
 static bool m_lfclk_calibration_is_enabled(void)
 {
-	/* This function should not be called from MPSL if CONFIG_CLOCK_CONTROL_NRF2 is set */
+	/* This function should not be called from MPSL if CONFIG_CLOCK_CONTROL_NRFS is set */
 	__ASSERT_NO_MSG(false);
 	return false;
 }
@@ -519,7 +534,7 @@ static mpsl_clock_hfclk_ctrl_source_t m_nrf_hfclk_ctrl_data = {
 	.hfclk_is_running = m_hfclk_is_running,
 };
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF2)
+#if defined(CONFIG_CLOCK_CONTROL_NRFS)
 static int m_lfclk_accuracy_get(void)
 {
 	int err;
@@ -544,7 +559,7 @@ static int m_lfclk_accuracy_get(void)
 
 	return m_lfclk_specs.accuracy;
 }
-#endif /* CONFIG_CLOCK_CONTROL_NRF2 */
+#endif /* CONFIG_CLOCK_CONTROL_NRFS */
 
 int32_t mpsl_clock_ctrl_init(void)
 {
@@ -557,13 +572,13 @@ int32_t mpsl_clock_ctrl_init(void)
 	}
 #endif /* CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST */
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
+#if defined(CONFIG_CLOCK_CONTROL_NRFX)
 #if DT_NODE_EXISTS(DT_NODELABEL(hfxo))
 	m_nrf_hfclk_ctrl_data.startup_time_us = z_nrf_clock_bt_ctlr_hf_get_startup_time_us();
 #else
 	m_nrf_hfclk_ctrl_data.startup_time_us = CONFIG_MPSL_HFCLK_LATENCY;
 #endif /* DT_NODE_EXISTS(DT_NODELABEL(hfxo)) */
-#elif defined(CONFIG_CLOCK_CONTROL_NRF2)
+#elif defined(CONFIG_CLOCK_CONTROL_NRFS)
 #if DT_NODE_HAS_STATUS(HFCLK_LABEL, okay) && DT_NODE_HAS_COMPAT(HFCLK_LABEL, nordic_nrf54h_hfxo)
 	uint32_t startup_time_us;
 
@@ -595,9 +610,9 @@ int32_t mpsl_clock_ctrl_init(void)
 #error "Unsupported HFCLK statup time get operation"
 #endif /* CONFIG_CLOCK_CONTROL_NRF */
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF2)
+#if defined(CONFIG_CLOCK_CONTROL_NRFS)
 	m_nrf_lfclk_ctrl_data.accuracy_ppm = m_lfclk_accuracy_get();
-#endif /* CONFIG_CLOCK_CONTROL_NRF2 */
+#endif /* CONFIG_CLOCK_CONTROL_NRFS */
 
 	return mpsl_clock_ctrl_source_register(&m_nrf_lfclk_ctrl_data, &m_nrf_hfclk_ctrl_data);
 }
