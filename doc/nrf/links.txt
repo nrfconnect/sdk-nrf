@@ -2024,3 +2024,6 @@
 
 .. _`nRF54H20 DK memory map`: https://github.com/nrfconnect/sdk-zephyr/blob/main/boards/nordic/nrf54h20dk/nrf54h20dk_nrf54h20-memory_map.dtsi
 .. _`DFU with custom keys`: https://academy.nordicsemi.com/courses/nrf-connect-sdk-intermediate/lessons/lesson-9-bootloaders-and-dfu-fota/topic/exercise-2-dfu-over-usb-adding-external-flash
+
+.. _`pm_ramfunc radio core configuration`: https://github.com/nrfconnect/sdk-zephyr/blob/main/boards/nordic/nrf54h20dk/nrf54h20dk_nrf54h20_cpurad.dts#L134-L143
+.. _`PSA RNG configuration`: https://github.com/nrfconnect/sdk-zephyr/commit/8f80253e7ad61207e91412fad4f830cdc1e4288f
