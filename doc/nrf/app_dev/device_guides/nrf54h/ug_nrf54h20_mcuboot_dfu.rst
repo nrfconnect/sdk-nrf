@@ -93,13 +93,21 @@ For more information, see the :file:`samples/zephyr/subsys/mgmt/mcumgr/smp_svr` 
 This sample demonstrates how to configure DFU feature in both MCUboot and user application in your project.
 It uses Simple Management Protocol for DFU and querying device information from the application.
 
-The following build flavors are available:
+The following nRF54H20-specific build flavors are available:
 
 * ``sample.mcumgr.smp_svr.bt.nrf54h20dk`` - DFU over BLE using the default :ref:`ipc_radio` image and *Swap using move* MCUboot mode.
 * ``sample.mcumgr.smp_svr.bt.nrf54h20dk.direct_xip_withrevert`` - DFU over BLE using *Direct-XIP with revert* MCUboot mode.
 * ``sample.mcumgr.smp_svr.serial.nrf54h20dk.ecdsa`` - DFU over serial port with ECDSA P256 signature verification.
+* ``sample.mcumgr.smp_svr.bt.nrf54h20dk.direct_xip_withrequests`` - DFU over BLE using *Direct-XIP with revert* MCUboot mode and bootloader requests support.
+* ``sample.mcumgr.smp_svr.bt.nrf54h20dk.ext_flash`` - DFU over BLE from external flash using *Swap using move* MCUboot mode.
 
-To build and run the sample, use the following commands:
+The following additional build flavors are also available:
+
+* ``sample.mcumgr.smp_svr.encryption.ecdsa_p256`` - DFU using *Dual-bank swap with move* MCUboot mode with encryption support and ECDSA P256 signature verification.
+* ``sample.mcumgr.smp_svr.nrf_compress.basic`` - DFU using *Dual-bank overwrite* MCUboot mode with compression support.
+* ``sample.mcumgr.smp_svr.nrf_compress.encryption_ecdsa_p256`` - DFU using *Dual-bank overwrite* MCUboot mode with both compression and encryption support, and ECDSA P256 signature verification.
+
+You can build and flash the selected flavor of the :zephyr:code-sample:`smp-svr` sample with the following commands:
 
 .. code-block:: console
 
