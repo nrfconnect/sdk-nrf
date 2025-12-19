@@ -1,0 +1,10 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config DECT_UTILS_LIB
+	bool "DECT NR+ utilities library"
+	depends on DECT
+	help
+	  Utility functions for DECT NR+ operations, including long RD ID
+	  extraction and IPv6 address handling.
