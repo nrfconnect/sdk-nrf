@@ -11,6 +11,7 @@ if(CONFIG_NRF_CLOUD_MQTT OR CONFIG_NRF_CLOUD_AGNSS OR CONFIG_NRF_CLOUD_PGPS OR
   add_subdirectory(nrf_cloud)
 endif()
 
+add_subdirectory_ifdef(CONFIG_DECT dect)
 add_subdirectory_ifdef(CONFIG_REST_CLIENT rest_client)
 add_subdirectory_ifdef(CONFIG_AWS_JOBS aws_jobs)
 add_subdirectory_ifdef(CONFIG_AWS_FOTA aws_fota)
