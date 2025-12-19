@@ -1,0 +1,47 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menuconfig NET_L2_DECT
+	bool "L2 DECT NR+ Connectivity"
+	depends on DECT_MDM
+	help
+	  Enable support for DECT NR+ Net L2.
+
+if NET_L2_DECT
+
+config NET_L2_DECT_MGMT
+	bool "DECT NR+ Net Management support"
+	depends on NET_IPV6
+	select NET_MGMT
+	select NET_MGMT_EVENT
+	select NET_MGMT_EVENT_INFO
+	help
+	  Enable support for DECT NR+ Net Management interface.
+
+config NET_L2_DECT_BR
+	bool "Border router support for DECT NR+"
+	default y if NET_L2_ETHERNET || MODEM_CELLULAR
+	select NET_ROUTING if NET_IPV6 && NET_ROUTE
+	help
+	  Enable Border Router (BR) support.
+	  Serial Modem running with a LTE connection in the connected nRF9151 DK accessed
+	  through PPP by using MODEM_CELLULAR feature (preferred option),
+	  or Ethernet based NET_L2_ETHERNET mode can be used as a border router.
+	  If MODEM_CELLULAR is selected, then BR has only one sink and vice versa.
+
+module = NET_L2_DECT_BR
+module-str = Log level for DECT NR+ L2 Border Router / Sink
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+module = NET_L2_DECT
+module-str = Log level for DECT NR+ L2
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+module = NET_L2_DECT_MGMT
+module-str = Log level for DECT NR+ L2 management
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NET_L2_DECT
+
+rsource "Kconfig.conn_mgr"
