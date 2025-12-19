@@ -1064,5 +1064,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/secureboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/mcuboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/firmware_loader_radio.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/nrf70.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/dfu_extra_images.cmake)
 
 store_ncs_vars()
