@@ -8,3 +8,6 @@
 
 # Include utils library
 add_subdirectory_ifdef(CONFIG_DECT_UTILS_LIB utils)
+
+# Include l2_shell library
+add_subdirectory_ifdef(CONFIG_DECT_L2_SHELL_LIB l2_shell)

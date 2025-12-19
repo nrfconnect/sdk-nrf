@@ -1,0 +1,17 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config DECT_L2_SHELL_LIB
+	bool "DECT L2 shell library"
+	depends on NET_MGMT
+	depends on NET_MGMT_EVENT
+	depends on NET_MGMT_EVENT_INFO
+	depends on NET_L2_DECT_MGMT
+	depends on GETOPT_LIB
+	depends on !POSIX_C_LIB_EXT
+	depends on DECT_UTILS_LIB
+	help
+	  DECT L2 shell library providing shell commands for DECT NR+ network
+	  management interface. Uses GETOPT_LIB (freebsd-getopt) for argument
+	  parsing, which is incompatible with POSIX_C_LIB_EXT.
