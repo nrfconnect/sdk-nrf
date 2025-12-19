@@ -11,6 +11,7 @@ rsource "entropy/Kconfig"
 rsource "flash/Kconfig"
 rsource "gpio/Kconfig"
 rsource "hw_cc3xx/Kconfig"
+rsource "dect/Kconfig"
 
 if !MPSL_FEM_ONLY
 rsource "mpsl/Kconfig"
