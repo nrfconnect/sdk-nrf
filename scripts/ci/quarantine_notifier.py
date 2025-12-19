@@ -422,23 +422,17 @@ def main() -> int:
     for scen, plat in added_cfg:
         if scen is None and plat is not None:
             platform_only_added.add(plat)
-        elif scen is None and plat is None:
-            # ambiguous; ignore silently
-            continue
         else:
             add_pair(scenario_to_added_platforms, scen, plat)
 
     for scen, plat in removed_cfg:
         if scen is None and plat is not None:
             platform_only_removed.add(plat)
-        elif scen is None and plat is None:
-            continue
         else:
             add_pair(scenario_to_removed_platforms, scen, plat)
 
-    # Resolve CODEOWNERS for scenarios present in added/removed (ignore scenario == None)
-    expanded_add = set(scenario_to_added_platforms.keys())
-    expanded_del = set(scenario_to_removed_platforms.keys())
+    expanded_add = expand_patterns(sorted(set(scenario_to_added_platforms.keys())), scenario_map.keys())
+    expanded_del = expand_patterns(sorted(set(scenario_to_removed_platforms.keys())), scenario_map.keys())
 
     owned_add, unowned_add = resolve_codeowners_for_scenarios(
         scenario_map, expanded_add, code_rules
@@ -446,6 +440,7 @@ def main() -> int:
     owned_del, unowned_del = resolve_codeowners_for_scenarios(
         scenario_map, expanded_del, code_rules
     )
+
 
     body = make_comment(
         owner_to_added=owned_add,
