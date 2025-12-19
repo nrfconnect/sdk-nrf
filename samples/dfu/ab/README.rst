@@ -109,6 +109,21 @@ In this case, the following MCUboot files for the application image are used:
 * :file:`build/ab/zephyr/zephyr.signed.bin` - Contains the slot A image.
   This file should be uploaded to the primary slot when the device is running from slot B.
 
+Device health check
+===================
+
+This sample implements a device health check mechanism to ensure the firmware works correctly after an update.
+
+The radio image is verified by checking whether the Bluetooth stack initializes successfully using the ``bt_is_ready`` function.
+
+The application image is verified by checking the value of the :kconfig:option:`CONFIG_EMULATE_APP_HEALTH_CHECK_FAILURE` option.
+If this option is enabled, the application image is treated as faulty and the self-test fails.
+
+If either verification step fails, the application does not confirm the image.
+You can still confirm the image manually using the SMP command, which overrides the result of the health check.
+
+The implementation of these checks is located in :file:`src/ab_utils.c`.
+
 User interface
 **************
 
