@@ -9,6 +9,7 @@ menuconfig ESB
 	select NRFX_GPPI
 	select MPSL
 	select MPSL_FEM_ONLY if !ESB_DYNAMIC_INTERRUPTS
+	depends on !NRFX_GPPI_V1
 	help
 	  Enable ESB functionality.
 
