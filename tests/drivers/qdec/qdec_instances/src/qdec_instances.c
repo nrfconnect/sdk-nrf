@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/ztest.h>
+#include <zephyr/pm/device_runtime.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(test);
@@ -27,12 +28,12 @@ typedef bool (*capability_func_t)(const struct device *dev);
 
 static void setup_instance(const struct device *dev)
 {
-	/* Left for future test expansion. */
+	pm_device_runtime_get(dev);
 }
 
 static void tear_down_instance(const struct device *dev)
 {
-	/* Left for future test expansion. */
+	pm_device_runtime_put(dev);
 }
 
 static void test_all_instances(test_func_t func, capability_func_t capability_check)
