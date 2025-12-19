@@ -31,6 +31,8 @@ LICENSE_ERROR = '"*" license is not allowed for this file.'
 NONE_LICENSE_ERROR = 'Missing license information is not allowed for this file.'
 SKIP_MISSING_FILE_TEXT = 'The file does not exist anymore.'
 SKIP_DIRECTORY_TEXT = 'This is a directory.'
+SKIP_EXTERNAL_LICENSE_TEXT = 'External license metadata is not checked.'
+EXTERNAL_LICENSE_DIR = Path('nrf/scripts/west_commands/sbom/data/external-licenses')
 RECOMMENDATIONS_TEXT = textwrap.dedent('''\
     ===============================================================================
     You have some license problems. Check the following:
@@ -65,6 +67,13 @@ def unlink_quietly(path: Path) -> None:
     '''Delete a file if it exists.'''
     with contextlib.suppress(FileNotFoundError):
         path.unlink()
+
+
+def is_external_license_file(file_path: Path) -> bool:
+    '''Return True for external license metadata files that are not project files.'''
+    file_str = Path(file_path).as_posix()
+    prefix = EXTERNAL_LICENSE_DIR.as_posix().rstrip('/') + '/'
+    return file_str.startswith(prefix)
 
 
 class FileLicenseChecker:
@@ -215,6 +224,8 @@ class PatchLicenseChecker:
                 self.report('skip', SKIP_MISSING_FILE_TEXT, file_name)
             if not (self.west_workspace / file_name).is_file():
                 self.report('skip', SKIP_DIRECTORY_TEXT, file_name)
+            elif is_external_license_file(file_name):
+                self.report('skip', SKIP_EXTERNAL_LICENSE_TEXT, file_name)
             elif self.license_checker.check('ANY', file_name):
                 self.report('skip', ANY_LICENSE_ALLOWED, file_name)
             else:

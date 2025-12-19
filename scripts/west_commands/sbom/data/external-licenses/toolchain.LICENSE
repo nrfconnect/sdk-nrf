@@ -1,0 +1,7 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-OR-LATER WITH GCC-EXCEPTION-3.1
+ *
+ * Apply the GCC Runtime Library Exception to toolchain runtime archives that
+ * do not carry SPDX tags themselves.
+ * NCS-SBOM-Apply-To-File: **/toolchains/**/libgcc.a
+ */
