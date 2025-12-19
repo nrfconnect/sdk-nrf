@@ -492,7 +492,6 @@
 /samples/cellular/modem_trace_flash/      @nrfconnect/ncs-modem
 /samples/cellular/sms/                    @nrfconnect/ncs-modem-tre
 /samples/cellular/uicc_lwm2m/             @stig-bjorlykke
-/samples/common/                          @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/crypto/                          @nrfconnect/ncs-aegir
 /samples/debug/memfault/                  @nrfconnect/ncs-cia @nrfconnect/ncs-memfault
 /samples/debug/ppi_trace/                 @nordic-krch
