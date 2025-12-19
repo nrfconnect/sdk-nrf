@@ -60,6 +60,7 @@ static const char sock_connect_usage_str[] =
 	"  -V, --peer_verify, [int]  TLS peer verification level. None (0),\n"
 	"                            optional (1) or required (2). Default value is 2.\n"
 	"  -H, --hostname, [str]     Hostname for TLS peer verification.\n"
+	"  -C, --dtls_cid, [int]     DTLS CID setting: 0 (disabled), 1 (supported), 2 (enabled).\n"
 	"  -h, --help,               Shows this help information";
 
 static const char sock_close_usage_str[] =
@@ -208,8 +209,8 @@ static const char sock_option_id_list_str[] =
 	" - TLS_CIPHERSUITE_USED, [int] (get only)\n"
 	" - TLS_DTLS_CID, [int]\n"
 	" - TLS_DTLS_CID_STATUS [int] (get only)\n"
-	" - TLS_DTLS_CONN_SAVE, (set only)\n"
-	" - TLS_DTLS_CONN_LOAD, (set only)\n"
+	" - TLS_DTLS_CONN_SAVE [int], (set only)\n"
+	" - TLS_DTLS_CONN_LOAD [int], (set only)\n"
 	" - TLS_DTLS_HANDSHAKE_STATUS, [int] (get only)\n"
 	" - SO_ERROR, [int] (get only)\n"
 	" - SO_KEEPOPEN, [int]\n"
@@ -257,6 +258,7 @@ static struct option long_options[] = {
 	{ "cache",          no_argument,       0, 'c' },
 	{ "peer_verify",    required_argument, 0, 'V' },
 	{ "hostname",       required_argument, 0, 'H' },
+	{ "dtls_cid",       required_argument, 0, 'C' },
 	{ "data",           required_argument, 0, 'd' },
 	{ "length",         required_argument, 0, 'l' },
 	{ "period",         required_argument, 0, 'e' },
@@ -280,7 +282,7 @@ static struct option long_options[] = {
 	{ 0,                0,                 0, 0   }
 };
 
-static const char short_options[] = "i:I:a:p:f:t:b:ST:cV:H:d:l:e:s:xrB:WKP:o:v:h";
+static const char short_options[] = "i:I:a:p:f:t:b:ST:cV:H:C:d:l:e:s:xrB:WKP:o:v:h";
 
 static void sock_print_usage(enum sock_shell_command command)
 {
@@ -435,6 +437,7 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 	bool arg_keep_open = false;
 	int arg_peer_verify = 2;
 	char arg_peer_hostname[SOCK_MAX_ADDR_LEN + 1];
+	int arg_dtls_cid = 0;
 
 	memset(arg_address, 0, SOCK_MAX_ADDR_LEN + 1);
 	memset(arg_peer_hostname, 0, SOCK_MAX_ADDR_LEN + 1);
@@ -553,6 +556,15 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 			}
 			strcpy(arg_peer_hostname, optarg);
 			break;
+		case 'C': /* DTLS CID setting */
+			arg_dtls_cid = atoi(optarg);
+			if (arg_dtls_cid < 0 || arg_dtls_cid > 2) {
+				mosh_error(
+					"Valid values for DTLS CID setting (%d) are 0, 1 and 2.",
+					arg_dtls_cid);
+				return -EINVAL;
+			}
+			break;
 
 		case 'h':
 			goto show_usage;
@@ -580,7 +592,8 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 		arg_session_cache,
 		arg_keep_open,
 		arg_peer_verify,
-		arg_peer_hostname);
+		arg_peer_hostname,
+		arg_dtls_cid);
 
 	return err;
 
