@@ -56,13 +56,7 @@ It demonstrates how to enable :ref:`dfu_tools_mcumgr_cli` commands in the applic
 RAM cleanup
 ***********
 
-
-To prevent data leakage, enable MCUboot's RAM cleanup by setting the :kconfig:option:`SB_CLEANUP_RAM` Kconfig option as follows:
-
-* When building with CMake, add ``-Dmcuboot_CONFIG_SB_CLEANUP_RAM``.
-* When using sysbuild, add ``CONFIG_SB_CLEANUP_RAM=y`` to :file:`sysbuild/mcuboot.conf`.
-
-This feature is controlled by the :kconfig:option:`CONFIG_SB_CLEANUP_RAM` Kconfig option.
+Currently the feature to clean up the RAM used by MCUboot before jumping to the application is not available.
 
 Supported signatures
 ********************
