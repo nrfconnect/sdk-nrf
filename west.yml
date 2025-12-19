@@ -86,7 +86,6 @@ manifest:
           - cmsis_6
           - edtt
           - fatfs
-          - hal_nordic
           - hal_st # required for ST sensors (unrelated to STM32 MCUs)
           - hal_tdk # required for Invensense sensors such as ICM42670
           - hal_wurthelektronik
@@ -272,6 +271,15 @@ manifest:
       revision: d5fad6bd094899101a4e5fd53af7298160ced6ab
       groups:
         - benchmark
+    - name: hal_nordic
+      remote: zephyrproject
+      revision: pull/333/head
+      path: modules/hal/nor
+      groups:
+        - hal
+    - name: nrfx
+      revision: master
+      path: modules/hal/nor/nrfx
 
   # West-related configuration for the nrf repository.
   self:
