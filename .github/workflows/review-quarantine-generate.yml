@@ -26,7 +26,7 @@ jobs:
     steps:
       # Checkout PR head (fork) – read-only
       - name: Checkout PR head
-        uses: actions/checkout@v8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ env.HEAD_SHA }}
@@ -35,7 +35,7 @@ jobs:
 
       # Checkout the trusted base repo to run the notifier from trusted code
       - name: Checkout base repository
-        uses: actions/checkout@v8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ env.BASE_SHA }}
           path: base
