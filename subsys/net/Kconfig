@@ -8,5 +8,6 @@ menu "Networking"
 rsource "lib/Kconfig"
 rsource "openthread/Kconfig"
 rsource "l2_wifi_if_conn/Kconfig"
+rsource "l2_dect/Kconfig"
 
 endmenu
