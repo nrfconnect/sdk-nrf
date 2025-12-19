@@ -252,7 +252,10 @@ Bluetooth Fast Pair samples
 Cellular samples
 ----------------
 
-|no_changes_yet_note|
+* :ref:`nrf_cloud_mqtt_fota` and :ref:`nrf_cloud_mqtt_device_message` samples:
+
+  * Added support for JWT authentication by enabling the :kconfig:option:`CONFIG_MODEM_JWT` Kconfig option.
+    Enabling this option in the :file:`prj.conf` is necessary for using UUID as the device ID.
 
 Cryptography samples
 --------------------
