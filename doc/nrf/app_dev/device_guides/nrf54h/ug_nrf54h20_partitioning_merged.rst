@@ -24,13 +24,27 @@ The multi-core support in MCUboot design assumes that each core has its own inde
 In such case, the non-volatile memory is partitioned into multiple slots, defining two slots for each core.
 A binary that resides in each slot is wrapped with MCUboot metadata: the image header before and the image trailer with update flags after the firmware binary.
 
+.. figure:: images/mcuboot_default_partitions.svg
+   :alt: Default partitioning for multi-core applications
+
 Although the images are treated as independent during update and verification process, only one of them - the application firmware - is started by the bootloader.
 It is the application core firmware responsibility to start the correct radio core firmware.
 Unfortunately, there is no signalling mechanism to pass verification results of the radio core firmware from the bootloader to the application.
 
 This is not an issue when one of the swap update strategies is used, because these assume that each core is started from the corresponding primary slot.
 
+.. figure:: images/mcuboot_bootchain_swap.svg
+   :alt: Bootchain of the swap update strategies for multi-core applications
+
+The diagram below illustrates the logic of selection of the radio core slot, based on the currently running application core slot, implemented inside the :file:`zephyr/soc/nordic/nrf54h/soc.c`.
+
+.. figure:: images/mcuboot_bootchain_selection.svg
+   :alt: Selection of the radio core slot based on the application core slot
+
 A compatibility between those firmwares can be ensured through a mutual versioning dependency scheme, where each image depends on the rest of images, forcing the newest available version for each of them.
+
+.. figure:: images/mcuboot_dependencies.svg
+   :alt: Mutual versioning dependencies between multi-core firmwares
 
 A state of the device, in which there is no valid firmware for one of the cores, is considered as non-bootable.
 
@@ -38,10 +52,16 @@ However, when using the direct XIP update strategy, the bootloader picks one of 
 This can lead to a situation, in which the bootloader starts the application core firmware from the primary slot, but the radio core firmware should be started from the secondary slot.
 Without a signalling mechanism, the application core firmware cannot determine which radio core firmware to start, possibly booting an incompatible or simply unverified radio firmware.
 
+.. figure:: images/mcuboot_bootchain_xip.svg
+   :alt: Bootchain of the direct XIP update strategies for multi-core applications
+
 One solution to this problem is to simplify the bootloader logic by merging both firmwares together and present them as a single image to the bootloader.
 In this case all FW parts are first merged together and wrapped with metadata afterwards.
 This way, the bootloader always verifies and starts both cores from the same slot, either primary or secondary.
 This approach is called the *merged slot* update strategy.
+
+.. figure:: images/mcuboot_merged_slot.svg
+   :alt: Merged slot partitioning for multi-core applications
 
 There are several other advantages of using the merged slot strategy:
 
@@ -63,6 +83,26 @@ However, there are also some disadvantages to consider:
 * Building of individual core firmwares is not supported, as they are always merged together.
 * It requires a non-default, application-specific partitioning of the non-volatile memory, applied to all images in the build, which may be challenging to implement.
 * It uses a more complex build process, as it requires merging the two firmwares together before wrapping them with metadata.
+
+Merged slot memory map
+**********************
+
+The following diagram illustrates the memory map of the merged slot update strategy alongside a sample DTS fragment defining the partitions:
+
+.. figure:: images/mcuboot_merged_partitions.svg
+   :alt: Merged slot memory map for nRF54H20 applications
+
+The main application sets one of the "Main application partitions" as the ``zephyr,code-partition`` in the devicetree.
+The application firmware needs to be aware of the full memory layout to perform the folllowing tasks:
+
+* Downloading the merged update candidate as well as investigating the image state through ``slot0_partition`` or ``slot1_partition``.
+* Starting the radio core firmware from the respective ``cpurad_slot0_partition`` or ``cpurad_slot1_partition``.
+* Using either ``cpuapp_slot0_partition`` or ``cpuapp_slot1_partition`` as the ``zephyr,code-partition``.
+
+The "MCUboot partitions" are the only partitions interpreted by the bootloader.
+
+The "Radio partitions" are the only partitions interpreted by the radio core firmware.
+The radio firmware sets one of them as the ``zephyr,code-partition`` in its devicetree.
 
 Guidelines for enabling merged slot updates in an existing application
 **********************************************************************
