@@ -59,15 +59,20 @@ if __name__ == "__main__":
     )
     parser.add_argument("file1", type=Path, help="First quarantine file")
     parser.add_argument("file2", type=Path, help="Second quarantine file")
-    parser.add_argument("--suffix", default=None, help="Suffix for output report files")
     parser.add_argument("--outdir", type=Path, default=Path("."), help="Directory for output txt files")
     
     args = parser.parse_args()
     
     file1 = args.file1
     file2 = args.file2
-    suffix = args.suffix
     outdir_arg = args.outdir
+
+    if file1.stem != file2.stem:
+        print("Error: file1 and file2 must have the same stem.")
+        sys.exit(1)
+
+    # Determine suffix for output files
+    suffix = file1.stem.split("quarantine")[1]
 
     # Determine output directory: if provided, resolve relative paths against cwd
     # and create the directory (parents=True). If not provided, use current working dir.
@@ -113,9 +118,9 @@ if __name__ == "__main__":
     else:
         print(f"Total changes: {total_changes} ({len(added_configurations)} added, {len(removed_configurations)} removed)")
 
-    with open(outdir / f"configurations_added_{suffix}.txt", "w") as report_file:
+    with open(outdir / f"configurations_added{suffix}.txt", "w") as report_file:
         for config in sorted(added_configurations):
             report_file.write(f"{config}\n")    
-    with open(outdir / f"configurations_removed_{suffix}.txt", "w") as report_file:
+    with open(outdir / f"configurations_removed{suffix}.txt", "w") as report_file:
         for config in sorted(removed_configurations):
             report_file.write(f"{config}\n")
