@@ -1,0 +1,23 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config DECT_MDM_NRF_RX_EVENT_POOL_COUNT
+	int "DECT RX event pool size"
+	default 100
+	help
+	  Number of RX event structures that can be allocated simultaneously.
+	  Each block is sized for struct dect_mdm_ctrl_dlc_rx_data_with_pkt_ptr.
+	  Increase if you see allocation failure messages under high load.
+
+config DECT_MDM_NRF_RX_THREAD_STACK_SIZE
+	int "Driver's internal RX thread stack size"
+	default 3072
+	help
+	  This option sets the driver's stack size for its internal RX thread.
+
+config DECT_MDM_NRF_RX_MSGQ_SIZE
+	int "Driver's internal RX message queue size"
+	default 100
+	help
+	  This option sets the driver's internal RX message queue size.

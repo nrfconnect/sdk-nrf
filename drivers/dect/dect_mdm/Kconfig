@@ -1,0 +1,48 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menu "Nordic driver specific configs for DECT NR+"
+
+config DECT_MDM_NRF
+	bool "Nordic-specific DECT MDM driver configurations"
+	depends on DECT_MDM
+	default y if DECT_MDM_DRIVER_NRF
+	help
+	  Enable Nordic-specific configuration options for the DECT MDM driver.
+	  This includes RX RSSI settings, TX flow control, and thread stack sizes
+	  optimized for Nordic nRF91-based DECT modems.
+
+if DECT_MDM_NRF
+
+config DECT_MDM_NRF_RX_MCS1_EXPECTED_RSSI_LEVEL
+	int "Expected RSSI level for MCS1"
+	default -68
+	range -128 0
+	help
+	  RX RSSI level for power control in modem, value in dBm.
+	  Device expects to receive transmissions (MCS#1) at this RSSI level.
+
+config NET_LINK_ADDR_CUSTOM_LENGTH
+	int "Size of custom link layer address length for DECT NR+"
+	default 8
+
+config DECT_MDM_NRF_TX_FLOW_CTRL_BASED_ON_MDM_TX_DLC_REQS
+	bool "TX flow control support"
+	default y
+	help
+	  Enable TX window based flow ctrl on unacked mdm TX DLC data requests.
+
+config DECT_MDM_NRF_CTRL_THREAD_STACK_SIZE
+	int "Driver's internal ctrl thread stack size"
+	default 3072
+	help
+	  This option sets the driver's stack size for its internal ctrl thread.
+	  Note: Most probably, you might decrease this if size of net mgmt events
+	  are decreased.
+
+rsource "Kconfig.rx"
+
+endif # DECT_MDM_NRF
+
+endmenu

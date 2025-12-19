@@ -1,0 +1,186 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menu "Configure DECT NR+ stack below DECT NR+ HAL"
+
+config DECT
+	bool "DECT NR+"
+	help
+	  Main feature flag for DECT NR+.
+
+if DECT
+
+# Select architecture
+choice DECT_ARCH
+	prompt "Select DECT architecture for DECT NR+ stack below DECT NR+ HAL"
+	default DECT_MDM
+
+config DECT_MDM
+	bool "DECT MDM architecture"
+	depends on SETTINGS
+	select NET_L2_DECT
+	select NET_L2_DECT_MGMT
+	select DECT_UTILS_LIB
+	help
+	  DECT NR+ architecture where, for example, MAC is running on the modem.
+
+# Note: DECT_PHY is not supported.
+
+endchoice
+
+config DECT_CLUSTER_MAX_CHILD_ASSOCIATION_COUNT
+	int "Maximum number of associations"
+	default 20
+	help
+	  Maximum number of supported child associations.
+	  Should be aligned with CONFIG_NET_IPV6_MAX_NEIGHBORS.
+
+config DECT_DEFAULT_NW_ID
+	hex "Default network ID"
+	default 0x87654321
+	help
+	  Default network ID.
+
+choice DECT_DEFAULT_LONG_RD_ID_TYPE
+	prompt "Select default long RD ID type"
+	default DECT_DEFAULT_LONG_RD_ID_TYPE_RANDOM
+
+config DECT_DEFAULT_LONG_RD_ID_TYPE_HARD_CODED
+	bool "Default long RD ID as hard coded"
+	help
+	  Default long RD (Radio Device) ID is hard coded.
+
+config DECT_DEFAULT_LONG_RD_ID_TYPE_RANDOM
+	bool "Default long RD ID as random generated"
+	help
+	  Default long RD (Radio Device) ID is randomly generated at 1st bootup
+	  and later in settings reset.
+
+endchoice
+
+config DECT_DEFAULT_LONG_RD_ID
+	int "Default long RD ID"
+	range 1 4294967293
+	default 666
+	help
+	  Default long RD (Radio Device) ID used if
+	  DECT_DEFAULT_LONG_RD_ID_TYPE_HARD_CODED is selected.
+
+choice DECT_DEFAULT_DEV_TYPE
+	prompt "Select default device type"
+	default DECT_DEFAULT_DEV_TYPE_PT
+
+config DECT_DEFAULT_DEV_TYPE_PT
+	bool "PT device type"
+
+config DECT_DEFAULT_DEV_TYPE_FT
+	bool "FT device type"
+
+endchoice
+
+if DECT_MDM
+
+# Select actual driver for DECT_MDM
+choice DECT_MDM_DRIVER
+	prompt "Select DECT NR+ driver for DECT_MDM architecture"
+	default DECT_MDM_DRIVER_NRF
+
+config DECT_MDM_DRIVER_NRF
+	bool "nRF91x1 driver"
+
+endchoice
+
+config DECT_MDM_DEVICE_NAME
+	string "DECT NR+ device name"
+	default "dect0" if DECT_MDM_DRIVER_NRF
+	default "dect_none" if !DECT_MDM_DRIVER_NRF
+	help
+	  DECT NR+ device name.
+
+config DECT_MDM_DEFAULT_RSSI_SCAN_SUITABLE_PERCENT
+	int "Default RSSI scan suitable percentage"
+	range 0 100
+	default 75
+	help
+	  RSSI scan suitable percentage (SCAN_SUITABLE according to the MAC spec),
+	  which is the threshold when an operating channel can be considered
+	  fulfilling the operating conditions. Channel is considered as suitable if RSSI scanning
+	  results show that there are minimum of SCAN_SUITABLE percent of subslots free or
+	  possible.
+
+config DECT_MDM_DEFAULT_FT_CLUSTER_CHANNEL_LOADED_PERCENT
+	int "Default channel loaded percentage on FT side"
+	range 0 100
+	default 80
+	help
+	  Channel loaded percentage (CHANNEL_LOADED per MAC spec), which impacts
+	  on triggering cluster channel and subslot reselection procedure. If current cluster channel
+	  load is above this value, then cluster channel is considered as too loaded for running
+	  a cluster.
+
+config DECT_MDM_DEFAULT_FT_NEIGHBOR_INACTIVITY_DISCONNECT_TIMER_MS
+	int "Default neighbor inactivity disconnect timer on FT side"
+	range 0 4294967293
+	default 1800000
+	help
+	  Neighbor inactivity timer that triggers association releasing.
+	  Time in milliseconds, 30 minutes as a default value.
+	  Use 0 to disable timer.
+
+config DECT_MDM_DEFAULT_PT_ASSOCIATION_MAX_BEACON_RX_FAILURES
+	int "Default max beacon RX failures on PT side"
+	range 0 255
+	default 10
+	help
+	  Maximum number of consecutive cluster beacon misses before triggering
+	  procedures for a release of association.
+
+config DECT_MDM_DEFAULT_PT_ASSOCIATION_MIN_SENSITIVITY_DBM
+	int "Default min sensitivity on PT side"
+	range -128 0
+	default -95
+	help
+	  MIN_SENSITIVITY_LEVEL per MAC spec.
+	  Minimum RX sensitivity, which impacts cluster beacon RSSI, if it is
+	  below this value, then cluster beacon RSSI is considered as too low
+	  for an association.
+
+config DECT_MDM_RANDOM_RANGE_START
+	int "Random long RD ID range start"
+	range 1 4294967293
+	default 1
+	help
+	  Random long RD (Radio Device) ID range start.
+
+config DECT_MDM_RANDOM_RANGE_END
+	int "Random long RD ID range end"
+	range 1 4294967293
+	default 4294967293
+	help
+	  Random long RD (Radio Device) ID range end.
+
+config DECT_MDM_NET_IF_NO_AUTO_START
+	bool "DECT NR+ interface without auto-start"
+	help
+	  This option allows you to disable autostarting of the net interface
+	  immediately after initialization and instead call for net_if_up()
+	  manually.
+
+module = DECT_MDM
+module-str = Log level for DECT MDM driver
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+# Include vendor specifics
+
+if DECT_MDM_DRIVER_NRF
+
+rsource "dect_mdm/Kconfig"
+
+endif # DECT_MDM_DRIVER_NRF
+
+endif # DECT_MDM
+
+endif # DECT
+
+endmenu
