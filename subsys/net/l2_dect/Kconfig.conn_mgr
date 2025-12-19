@@ -1,0 +1,56 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menuconfig NET_L2_DECT_CONN_MGR
+	bool "L2 DECT NR+ Connection Manager"
+	depends on NET_CONNECTION_MANAGER && NET_L2_DECT && NET_L2_DECT_MGMT
+	default y if NET_CONNECTION_MANAGER
+	help
+	  Enable support for DECT NR+ Connection Manager integration.
+
+if NET_L2_DECT_CONN_MGR
+
+config NET_L2_DECT_CONN_MGR_CONNECT_TIMEOUT_SECONDS
+	int "Connect timeout in seconds"
+	default 0
+	help
+	  Time period in seconds that the library will try to establish a DECT
+	  connection, before timing out. The connect timeout can be updated by
+	  calling conn_mgr_if_set_timeout().
+	  Default value is 0 (timeout disabled). When the timeout is disabled,
+	  the library relies solely on the modem's internal connection handling
+	  to upkeep the connection.
+
+config NET_L2_DECT_CONN_MGR_CONNECTION_PERSISTENCE
+	bool "Connection persistency"
+	help
+	  Persistent connection. If the connection is lost the modem will try to
+	  reconnect itself without the need for explicit calls to the network
+	  interface.
+	  Persistence can be updated run-time by calling conn_mgr_if_set_flag()
+	  with CONN_MGR_IF_PERSISTENT as flag parameter.
+
+config NET_L2_DECT_CONN_MGR_AUTO_DOWN
+	bool "Auto down"
+	help
+	  If this option is set the Connection Manager will automatically take
+	  the network interface down when it stops trying to connect. This option
+	  sets the default value, the option can be changed at run time by calling
+	  conn_mgr_if_set_flag() with or without the CONN_MGR_IF_NO_AUTO_DOWN flag.
+
+config NET_L2_DECT_CONN_MGR_AUTO_CONNECT
+	bool "Auto connect"
+	help
+	  If this option is set, the Connection Manager will automatically call
+	  connect after the network interface has been brought up on when modem
+	  is activated (PT or FT without BR) or when the BR for the sink is
+	  connected (FT with BR support). This option sets the default value,
+	  the option has a corresponding flag that can be set at run time by
+	  calling conn_mgr_if_set_flag().
+
+module = NET_L2_DECT_CONN_MGR
+module-str = Log level for DECT NR+ connection manager
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NET_L2_DECT_CONN_MGR
