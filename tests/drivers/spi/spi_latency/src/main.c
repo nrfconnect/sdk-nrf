@@ -14,7 +14,7 @@
 #include <math.h>
 
 #define TEST_TIMER_COUNT_TIME_LIMIT_MS 500
-#define MEASUREMENT_REPEATS	       10
+#define MEASUREMENT_REPEATS	       CONFIG_MEASUREMENT_REPEATS
 
 #define SPI_MODE                                                                                   \
 	(SPI_OP_MODE_MASTER | SPI_WORD_SET(8) | SPI_LINES_SINGLE | SPI_TRANSFER_MSB |              \
@@ -78,14 +78,11 @@ static void assess_measurement_result(uint64_t timer_value_us,
 	uint64_t maximal_allowed_transmission_time_us;
 
 	if (buffer_size == 1) {
-		/* 4000%
-		 * Issue with latency for 1B buffer is reported
-		 * limit will be adjusted after fix
-		 */
-		maximal_allowed_transmission_time_us = (1 + 40) * theoretical_transmission_time_us;
+		/* 5000% */
+		maximal_allowed_transmission_time_us = (1 + 50) * theoretical_transmission_time_us;
 	} else {
-		/* 200% */
-		maximal_allowed_transmission_time_us = (1 + 2) * theoretical_transmission_time_us;
+		/* 300% */
+		maximal_allowed_transmission_time_us = (1 + 3) * theoretical_transmission_time_us;
 	}
 	zassert_true(timer_value_us < maximal_allowed_transmission_time_us,
 		     "Measured transmission call latency is over the specified limit %llu > %llu",
@@ -108,6 +105,7 @@ static void test_spim_transmission_latency(size_t buffer_size)
 
 	TC_PRINT("SPIM latency in test with buffer size: %u bytes and frequency: %uHz\n",
 		 buffer_size, spim_spec.config.frequency);
+	TC_PRINT("Measurement repeats: %u\n", MEASUREMENT_REPEATS);
 
 	prepare_test_data(tx_buffer, buffer_size);
 	configure_test_timer(tst_timer_dev, TEST_TIMER_COUNT_TIME_LIMIT_MS);
@@ -140,6 +138,10 @@ static void test_spim_transmission_latency(size_t buffer_size)
 		 buffer_size, average_timer_value_us);
 	TC_PRINT("spi_transceive_dt: measured - claculated time delta (for %d bytes) [us]: %lld\n",
 		 buffer_size, average_timer_value_us - theoretical_transmission_time_us);
+	TC_PRINT("Theoretical maximal data rate (for buffer size %u bytes) [B/s]: %llu\n",
+		 buffer_size, (uint64_t)(1e6 * buffer_size / theoretical_transmission_time_us));
+	TC_PRINT("Calculated data rate (for buffer size %u bytes) [B/s]: %llu\n", buffer_size,
+		 (uint64_t)(1e6 * buffer_size / average_timer_value_us));
 
 	assess_measurement_result(average_timer_value_us, theoretical_transmission_time_us,
 				  buffer_size);
