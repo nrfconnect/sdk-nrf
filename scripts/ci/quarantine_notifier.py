@@ -1,30 +1,32 @@
-#!/usr/bin/env python3
 
+#!/usr/bin/env python3
 # Copyright (c) 2025 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 """
-Token-free quarantine notifier (diff-driven) with strict mode + audit JSON.
+Token-free quarantine notifier (configuration-driven) with strict mode + audit JSON.
 
 INPUTS:
-  --diff-file diff_quarantine.txt        # file with diff (with context, e.g., -U100)
-  --repo-root .                          # repo root for scanning YAML tests and CODEOWNERS
-  --ref <sha>                            # head sha for blob URLs in the comment
-  --strict-missing-codeowners            # mark violation when any affected scenario lacks owners
+  --added-file  configurations_added.txt   # lines: ("scenario","platform")
+  --removed-file configurations_removed.txt # lines: ("scenario","platform")
+  --repo-root .                            # repo root for scanning YAML tests and CODEOWNERS
+  --ref <sha>                              # head sha for blob URLs in the comment
+  --strict-missing-codeowners              # mark violation when any affected scenario lacks owners
   --strict-flag-file strict_missing_codeowners.flag
-  --audit-json quarantine_audit.json     # JSON summary output (owners, scenarios, etc.)
-  --inventory-json scenario_inventory.json  # JSON map: scenario -> [yaml_paths]
+  --audit-json quarantine_audit.json       # JSON summary output (owners, scenarios, platforms, etc.)
+  --inventory-json scenario_inventory.json # JSON map: scenario -> [yaml_paths]
 
 OUTPUTS:
-  * quarantine_comment.md  # Markdown body to post
-  * quarantine_audit.json  # Full machine-readable summary for auditing
+  * quarantine_comment.md                  # Markdown body to post
+  * quarantine_audit.json                  # Full machine-readable summary for auditing
   * scenario_inventory.json
-  * strict_missing_codeowners.flag  # (only when strict mode enabled AND violations found)
+  * strict_missing_codeowners.flag         # (only when strict mode enabled AND violations found)
 
 No GitHub API calls here; the workflow will post the comment and upload artifacts.
 """
 
 import argparse
+import ast
 import json
 import os
 import re
@@ -38,19 +40,23 @@ except Exception:
     print("ERROR: PyYAML is required (pip install pyyaml).", file=sys.stderr)
     raise
 
-# ---------- CLI ----------
 
-
+# ---------------- CLI ----------------
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        description=("Prepare quarantine owners notification comment from a diff."),
+        description=("Prepare quarantine owners notification comment from configuration files."),
         allow_abbrev=False,
     )
     p.add_argument("--repo-root", default=".", help="Repository root (default: .)")
     p.add_argument(
-        "--diff-file",
+        "--added-file",
         required=True,
-        help="Unified diff file of scripts/quarantine.yaml",
+        help="Path to configurations_added.txt (lines: ('scenario','platform'))",
+    )
+    p.add_argument(
+        "--removed-file",
+        required=True,
+        help="Path to configurations_removed.txt (lines: ('scenario','platform'))",
     )
     p.add_argument(
         "--output", default="quarantine_comment.md", help="Output Markdown file with comment body."
@@ -81,111 +87,18 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
-# ---------- Diff parsing (find scenario patterns added/removed) ----------
-
+# ---------------- Diff parsing (legacy - unused now, kept untouched) ----------------
 DIFF_SKIP_PREFIXES = ("diff --git ", "index ", "--- ", "+++ ", "@@")
 
 
-def parse_diff_for_scenarios(diff_text: str) -> tuple[set[str], set[str]]:
-    """
-    Parse unified diff (with context, e.g. -U100) and extract values
-    added/removed under 'scenarios:' YAML keys.
-    Returns: (added_patterns, removed_patterns)
-    """
-    added: set[str] = set()
-    removed: set[str] = set()
-
-    in_scenarios = False
-    in_platforms = False
-    scenarios_for_platforms = set()  # scenarios for the current platform
-
-    DIFF_SKIP_PREFIXES = ("diff --git ", "index ", "--- ", "+++ ", "@@")
-
-    def get_prefix_and_body(line: str) -> tuple[str, str]:
-        if not line:
-            return "", ""
-        ch = line[0]
-        if ch in "+- ":
-            return ch, line[1:]
-        return "", line  # shouldn't happen in a standard unified diff
-
-    def strip_inline_comment(val: str) -> str:
-        # remove trailing " # ..." comment fragments (unquoted)
-        i = val.find(" #")
-        return val[:i] if i != -1 else val
-
-    def clean_value(val: str) -> str:
-        v = strip_inline_comment(val.strip())
-        if (v.startswith("'") and v.endswith("'")) or (v.startswith('"') and v.endswith('"')):
-            v = v[1:-1]
-        return v.strip()
-
-    for raw in diff_text.splitlines():
-        if any(raw.startswith(pfx) for pfx in DIFF_SKIP_PREFIXES):
-            continue
-
-        prefix, body = get_prefix_and_body(raw)
-        # DO NOT pre-trim a leading space from body; measure indent as-is
-        trimmed = body.lstrip()
-
-        if not trimmed or trimmed.startswith("#"):
-            continue
-        if trimmed.startswith("comment:"):
-            # reset all flags and go to next dictionary item
-            if prefix == "+":
-                added.update(scenarios_for_platforms)
-            elif prefix == "-":
-                removed.update(scenarios_for_platforms)
-
-            in_scenarios = False
-            in_platforms = False
-            scenarios_for_platforms = set()
-            continue
-
-        # Enter scenarios block whenever we see a 'scenarios:' key (context, +, or -)
-        if re.fullmatch(r"- scenarios:\s*", trimmed):
-            in_scenarios = True
-            in_platforms = False
-            scenarios_for_platforms = set()
-            continue
-        elif re.fullmatch(r"- platforms:\s*", trimmed) or re.fullmatch(r"^platforms:\s*", trimmed):
-            in_scenarios = False
-            in_platforms = True
-            continue
-
-        # Collect list items within scenarios
-        if in_scenarios or in_platforms:
-            m = re.match(r"^-\s+(.*)$", trimmed)
-            if m:
-                val = clean_value(m.group(1))
-                if not val:
-                    continue
-                if in_scenarios:
-                    if prefix == "+":
-                        added.add(val)
-                    elif prefix == "-":
-                        removed.add(val)
-                    scenarios_for_platforms.add(val)
-                elif in_platforms:
-                    if prefix == "+":
-                        added.update(scenarios_for_platforms)
-                    elif prefix == "-":
-                        removed.update(scenarios_for_platforms)
-                    else:
-                        continue
-
-    return added, removed
-
-
-# ---------- Scenario discovery ----------
-
+# ---------------- Scenario discovery ----------------
 SCENARIO_YAML_GLOBS = [
-    "samples/**/sample.yaml",
-    "samples/**/testcase.yaml",
-    "applications/**/sample.yaml",
-    "applications/**/testcase.yaml",
-    "tests/**/testcase.yaml",
-    "tests/**/sample.yaml",
+    "samples/**/*/sample.yaml",
+    "samples/**/*/testcase.yaml",
+    "applications/**/*/sample.yaml",
+    "applications/**/*/testcase.yaml",
+    "tests/**/*/testcase.yaml",
+    "tests/**/*/sample.yaml",
 ]
 
 
@@ -208,14 +121,12 @@ def discover_scenarios(repo_root: Path) -> dict[str, set[str]]:
                         if s:
                             rel = p.resolve().relative_to(repo_root.resolve()).as_posix()
                             mapping.setdefault(s, set()).add(rel)
-
             except Exception:
                 continue
     return mapping
 
 
-# ---------- CODEOWNERS parsing & matching ----------
-
+# ---------------- CODEOWNERS parsing & matching ----------------
 CODEOWNERS_PATH = "CODEOWNERS"
 CODEOWNER_LINE_RE = re.compile(r"^\s*([^\s#][^\s]*)\s+(.+?)\s*$")
 
@@ -243,15 +154,16 @@ def codeowners_pattern_to_regex(pattern: str) -> re.Pattern:
     anchored = pattern.startswith("/")
     pat = pattern[1:] if anchored else pattern
 
-    pat = pat.replace("**/", "___GLOBSTAR_DIR___/")
-    pat = pat.replace("/**", "/___GLOBSTAR_TAIL___")
-    pat = pat.replace("**", "___GLOBSTAR___")
+    # Globstar support and wildcard normalization
+    pat = pat.replace("**/", "__GLOBSTAR_DIR__/")
+    pat = pat.replace("/**", "/__GLOBSTAR_TAIL__")
+    pat = pat.replace("**", "__GLOBSTAR__")
 
     pat = re.escape(pat)
-    pat = pat.replace("___GLOBSTAR_DIR___", ".*")
-    pat = pat.replace("___GLOBSTAR_TAIL___", ".*")
-    pat = pat.replace("___GLOBSTAR___", ".*")
-    pat = pat.replace(r"\*", "[^/]*").replace(r"\?", "[^/]")
+    pat = pat.replace("__GLOBSTAR_DIR__", ".*")
+    pat = pat.replace("__GLOBSTAR_TAIL__", ".*")
+    pat = pat.replace("__GLOBSTAR__", ".*")
+    pat = pat.replace(r"\*", r"[^/]*").replace(r"\?", r"[^/]")
 
     if pattern.endswith("/"):
         pat += ".*"
@@ -259,6 +171,7 @@ def codeowners_pattern_to_regex(pattern: str) -> re.Pattern:
     if anchored:
         return re.compile("^" + pat + "$")
     else:
+        # Match anywhere within a path segment boundary
         return re.compile(r"(^|.*/)" + pat + r"($|/.*)")
 
 
@@ -270,9 +183,7 @@ def owners_for_path(path: str, rules: list[tuple[str, list[str]]]) -> list[str]:
     return matched or []
 
 
-# ---------- Pattern expansion ----------
-
-
+# ---------------- Pattern expansion (legacy, kept untouched) ----------------
 def compile_rx(pattern: str) -> re.Pattern:
     return re.compile(pattern + r"\Z")  # full-match semantics
 
@@ -293,9 +204,9 @@ def expand_patterns(patterns: Iterable[str], known_scenarios: Iterable[str]) -> 
     return out
 
 
-# ---------- Comment formatting ----------
-
+# ---------------- Comment formatting ----------------
 COMMENT_MARKER = "<!-- quarantine-notifier -->"
+ALL_PLATFORMS_TOKEN = "__ALL__"
 
 
 def make_comment(
@@ -305,13 +216,18 @@ def make_comment(
     unowned_removed: list[tuple[str, str]],
     repo_full: None | str,
     strict: bool,
+    scenario_to_added_platforms: dict[str, set[str]],
+    scenario_to_removed_platforms: dict[str, set[str]],
+    platform_only_added: set[str],
+    platform_only_removed: set[str],
 ) -> str:
     all_owner_keys = sorted(
         set(owner_to_added.keys()) | set(owner_to_removed.keys()), key=str.lower
     )
     any_owned = bool(all_owner_keys)
     any_unowned = bool(unowned_added or unowned_removed)
-    if not any_owned and not any_unowned:
+
+    if not any_owned and not any_unowned and not platform_only_added and not platform_only_removed:
         return ""  # nothing to notify
 
     def link(path: str) -> str:
@@ -335,11 +251,32 @@ def make_comment(
             f"{mention}: Please take a note of quarantine changes for scenarios "
             f"under your maintainership."
         )
-        add_lines, del_lines = [], []
+
+        add_lines: list[str] = []
+        del_lines: list[str] = []
+
         for scen, path in sorted(owner_to_added.get(key, [])):
-            add_lines.append(f"- **Added to quarantine**: `{scen}` (defined in {link(path)})")
+            plats = scenario_to_added_platforms.get(scen, set())
+            plat_str = (
+                "all platforms"
+                if ALL_PLATFORMS_TOKEN in plats
+                else ", ".join(sorted(plats)) if plats else "-"
+            )
+            add_lines.append(
+                f"- **Added to quarantine**: `{scen}` (platforms: {plat_str}) (defined in {link(path)})"
+            )
+
         for scen, path in sorted(owner_to_removed.get(key, [])):
-            del_lines.append(f"- **Removed from quarantine**: `{scen}` (defined in {link(path)})")
+            plats = scenario_to_removed_platforms.get(scen, set())
+            plat_str = (
+                "all platforms"
+                if ALL_PLATFORMS_TOKEN in plats
+                else ", ".join(sorted(plats)) if plats else "-"
+            )
+            del_lines.append(
+                f"- **Removed from quarantine**: `{scen}` (platforms: {plat_str}) (defined in {link(path)})"
+            )
+
         section("Added", add_lines, lines)
         section("Removed", del_lines, lines)
         lines.append("---")
@@ -349,16 +286,31 @@ def make_comment(
         if strict:
             header += " (strict mode enabled)"
         lines.append(header)
+
         if unowned_added:
             lines.append("**Added to quarantine – no owners resolved:**")
             for scen, path in sorted(unowned_added):
-                lines.append(f"- `{scen}` (defined in {link(path)})")
+                plats = scenario_to_added_platforms.get(scen, set())
+                plat_str = (
+                    "all platforms"
+                    if ALL_PLATFORMS_TOKEN in plats
+                    else ", ".join(sorted(plats)) if plats else "-"
+                )
+                lines.append(f"- `{scen}` (platforms: {plat_str}) (defined in {link(path)})")
+
         if unowned_removed:
             if unowned_added:
                 lines.append("")
             lines.append("**Removed from quarantine – no owners resolved:**")
             for scen, path in sorted(unowned_removed):
-                lines.append(f"- `{scen}` (defined in {link(path)})")
+                plats = scenario_to_removed_platforms.get(scen, set())
+                plat_str = (
+                    "all platforms"
+                    if ALL_PLATFORMS_TOKEN in plats
+                    else ", ".join(sorted(plats)) if plats else "-"
+                )
+                lines.append(f"- `{scen}` (platforms: {plat_str}) (defined in {link(path)})")
+
         if strict:
             lines.append("")
             lines.append(
@@ -367,12 +319,16 @@ def make_comment(
             )
         lines.append("---")
 
+    # Platform-only notices (scenario == None)
+    platform_add_lines = [f"- Platform {p} is quarantined" for p in sorted(platform_only_added)]
+    platform_del_lines = [f"- Platform {p} quarantine removed" for p in sorted(platform_only_removed)]
+    section("Added (platform-only)", platform_add_lines, lines)
+    section("Removed (platform-only)", platform_del_lines, lines)
+
     return "\n".join(lines).strip() + "\n"
 
 
-# ---------- Grouping & audit ----------
-
-
+# ---------------- Grouping & audit ----------------
 def resolve_codeowners_for_scenarios(
     scenario_to_paths: dict[str, set[str]],
     scenarios: Iterable[str],
@@ -380,6 +336,7 @@ def resolve_codeowners_for_scenarios(
 ) -> tuple[dict[str, list[tuple[str, str]]], list[tuple[str, str]]]:
     owners_map: dict[str, list[tuple[str, str]]] = {}
     unowned: list[tuple[str, str]] = []
+
     for scen in scenarios:
         for p in scenario_to_paths.get(scen, set()):
             owners = owners_for_path(p, codeowners_rules)
@@ -388,43 +345,101 @@ def resolve_codeowners_for_scenarios(
                 continue
             key = ",".join(sorted(set(owners), key=str.lower))
             owners_map.setdefault(key, []).append((scen, p))
+
     return owners_map, unowned
-
-
-def filter_neutral_scenarios(added: set[str], removed: set[str]) -> tuple[set[str], set[str]]:
-    """Remove scenarios that appear in both added and removed sets."""
-    neutral = added & removed
-    return added - neutral, removed - neutral
 
 
 def write_json(path: Path, obj: dict) -> None:
     path.write_text(json.dumps(obj, indent=2, sort_keys=False) + "\n", encoding="utf-8")
 
 
+def load_configurations(path: Path) -> list[tuple[str | None, str | None]]:
+    """
+    Each non-empty line should look like: ("scenario","platform")
+    Accepts 'None' (string) or actual None for either field.
+    """
+    if not path.exists():
+        return []
+    pairs: list[tuple[str | None, str | None]] = []
+    for raw in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+        s = raw.strip()
+        if not s or s.startswith("#"):
+            continue
+        try:
+            t = ast.literal_eval(s)
+        except Exception:
+            m = re.match(r'^\(\s*"?(.*?)"?\s*,\s*"?(.*?)"?\s*\)\s*$', s)
+            if not m:
+                continue
+            t = (m.group(1), m.group(2))
+        scen_raw = t[0]
+        plat_raw = t[1]
+        scen = None if (scen_raw is None or str(scen_raw).strip() == "None") else str(scen_raw).strip()
+        plat = None if (plat_raw is None or str(plat_raw).strip() == "None") else str(plat_raw).strip()
+        pairs.append((scen, plat))
+    return pairs
+
+
+# ---------------- Main ----------------
 def main() -> int:
     args = parse_args()
     root = Path(args.repo_root).resolve()
     repo_full = os.environ.get("GITHUB_REPOSITORY")
 
-    diff_path = Path(args.diff_file)
-    if not diff_path.exists():
-        print(f"Diff file not found: {diff_path}", file=sys.stderr)
+    added_path = Path(args.added_file)
+    removed_path = Path(args.removed_file)
+    if not added_path.exists() or not removed_path.exists():
+        missing = []
+        if not added_path.exists():
+            missing.append(str(added_path))
+        if not removed_path.exists():
+            missing.append(str(removed_path))
+        print(f"Configuration file(s) not found: {', '.join(missing)}", file=sys.stderr)
         Path(args.output).write_text("", encoding="utf-8")
-        write_json(Path(args.audit_json), {"error": "diff_not_found"})
+        write_json(Path(args.audit_json), {"error": "config_files_not_found", "missing": missing})
         write_json(Path(args.inventory_json), {})
         return 1
 
-    diff_text = diff_path.read_text(encoding="utf-8", errors="ignore")
-    added_patterns, removed_patterns = parse_diff_for_scenarios(diff_text)
+    added_cfg = load_configurations(added_path)
+    removed_cfg = load_configurations(removed_path)
 
     scenario_map = discover_scenarios(root)
     code_rules = load_codeowners(root)
 
-    expanded_add = expand_patterns(sorted(added_patterns), scenario_map.keys())
-    expanded_del = expand_patterns(sorted(removed_patterns), scenario_map.keys())
-    expanded_add, expanded_del = filter_neutral_scenarios(expanded_add, expanded_del)
+    # Build scenario -> platforms maps and platform-only sets
+    scenario_to_added_platforms: dict[str, set[str]] = {}
+    scenario_to_removed_platforms: dict[str, set[str]] = {}
+    platform_only_added: set[str] = set()
+    platform_only_removed: set[str] = set()
 
-    # Resolve CODEOWNERS only for non-neutral scenarios
+    def add_pair(target_map: dict[str, set[str]], scen: str, plat: str | None):
+        s = target_map.setdefault(scen, set())
+        if plat is None:
+            s.add(ALL_PLATFORMS_TOKEN)
+        else:
+            s.add(plat)
+
+    for scen, plat in added_cfg:
+        if scen is None and plat is not None:
+            platform_only_added.add(plat)
+        elif scen is None and plat is None:
+            # ambiguous; ignore silently
+            continue
+        else:
+            add_pair(scenario_to_added_platforms, scen, plat)
+
+    for scen, plat in removed_cfg:
+        if scen is None and plat is not None:
+            platform_only_removed.add(plat)
+        elif scen is None and plat is None:
+            continue
+        else:
+            add_pair(scenario_to_removed_platforms, scen, plat)
+
+    # Resolve CODEOWNERS for scenarios present in added/removed (ignore scenario == None)
+    expanded_add = set(scenario_to_added_platforms.keys())
+    expanded_del = set(scenario_to_removed_platforms.keys())
+
     owned_add, unowned_add = resolve_codeowners_for_scenarios(
         scenario_map, expanded_add, code_rules
     )
@@ -439,7 +454,12 @@ def main() -> int:
         unowned_removed=unowned_del,
         repo_full=repo_full,
         strict=args.strict_missing_codeowners,
+        scenario_to_added_platforms=scenario_to_added_platforms,
+        scenario_to_removed_platforms=scenario_to_removed_platforms,
+        platform_only_added=platform_only_added,
+        platform_only_removed=platform_only_removed,
     )
+
     Path(args.output).write_text(body, encoding="utf-8")
 
     # Inventory JSON (scenario -> [paths])
@@ -449,9 +469,18 @@ def main() -> int:
     audit = {
         "repo": repo_full,
         "ref": args.ref,
-        "quarantine_diff_file": str(diff_path),
-        "added_patterns": sorted(added_patterns),
-        "removed_patterns": sorted(removed_patterns),
+        "configurations_added_file": str(added_path),
+        "configurations_removed_file": str(removed_path),
+        "configurations": {
+            "added": [
+                {"scenario": s if s is not None else "None", "platform": p if p is not None else "None"}
+                for (s, p) in added_cfg
+            ],
+            "removed": [
+                {"scenario": s if s is not None else "None", "platform": p if p is not None else "None"}
+                for (s, p) in removed_cfg
+            ],
+        },
         "expanded": {
             "added": sorted(list(expanded_add)),
             "removed": sorted(list(expanded_del)),
@@ -459,9 +488,7 @@ def main() -> int:
         "owners": {
             key: {
                 "added": [{"scenario": s, "path": p} for (s, p) in sorted(owned_add.get(key, []))],
-                "removed": [
-                    {"scenario": s, "path": p} for (s, p) in sorted(owned_del.get(key, []))
-                ],
+                "removed": [{"scenario": s, "path": p} for (s, p) in sorted(owned_del.get(key, []))],
             }
             for key in sorted(set(owned_add.keys()) | set(owned_del.keys()), key=str.lower)
         },
@@ -470,16 +497,19 @@ def main() -> int:
             "removed": [{"scenario": s, "path": p} for (s, p) in sorted(unowned_del)],
         },
         "stats": {
-            "patterns_added": len(added_patterns),
-            "patterns_removed": len(removed_patterns),
+            "config_lines_added": len(added_cfg),
+            "config_lines_removed": len(removed_cfg),
             "scenarios_added": len(expanded_add),
             "scenarios_removed": len(expanded_del),
+            "platform_only_added": len(platform_only_added),
+            "platform_only_removed": len(platform_only_removed),
             "owners_groups": len(set(owned_add.keys()) | set(owned_del.keys())),
             "unowned_items": len(unowned_add) + len(unowned_del),
         },
         "strict_mode": bool(args.strict_missing_codeowners),
         "strict_violation": False,
     }
+
     strict_violation = args.strict_missing_codeowners and (
         len(unowned_add) > 0 or len(unowned_del) > 0
     )
@@ -495,9 +525,9 @@ def main() -> int:
     write_json(Path(args.audit_json), audit)
 
     if body.strip():
-        print("Prepared quarantine comment with maintainer mentions.")
+        print("Prepared quarantine comment with maintainer mentions and platforms.")
     else:
-        print("No content to post (no owners matched and no unowned items).")
+        print("No content to post (no owners matched, no platform-only items, and no unowned items).")
     return 0
 
 
