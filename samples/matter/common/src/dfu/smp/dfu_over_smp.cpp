@@ -137,9 +137,11 @@ void DFUOverSMP::Init()
 
 void DFUOverSMP::ConfirmNewImage()
 {
+#if !defined(CONFIG_BOOT_UPGRADE_ONLY)
 	/* Check if the image is run in the REVERT mode and eventually */
 	/* confirm it to prevent reverting on the next boot. */
 	VerifyOrReturn(mcuboot_swap_type() == BOOT_SWAP_TYPE_REVERT);
+#endif
 
 	if (boot_write_img_confirmed()) {
 		ChipLogError(SoftwareUpdate, "Failed to confirm firmware image, it will be reverted on the next boot");
