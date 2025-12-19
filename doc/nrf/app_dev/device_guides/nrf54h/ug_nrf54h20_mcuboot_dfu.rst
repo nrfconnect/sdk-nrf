@@ -53,17 +53,6 @@ To configure the :zephyr:code-sample:`hello_world` sample for using MCUboot, fol
 See the :zephyr:code-sample:`smp-svr` sample for a reference of how you can further configure your application with MCUboot.
 It demonstrates how to enable :ref:`dfu_tools_mcumgr_cli` commands in the application, allowing you to read information about images managed by MCUboot.
 
-RAM cleanup
-***********
-
-
-To prevent data leakage, enable MCUboot's RAM cleanup by setting the :kconfig:option:`SB_CLEANUP_RAM` Kconfig option as follows:
-
-* When building with CMake, add ``-Dmcuboot_CONFIG_SB_CLEANUP_RAM``.
-* When using sysbuild, add ``CONFIG_SB_CLEANUP_RAM=y`` to :file:`sysbuild/mcuboot.conf`.
-
-This feature is controlled by the :kconfig:option:`CONFIG_SB_CLEANUP_RAM` Kconfig option.
-
 Supported signatures
 ********************
 
