@@ -1798,3 +1798,6 @@ Documentation
   * The :ref:`abi_compatibility` page by adding a section about |ISE| known issues.
   * The :ref:`ug_nrf70_features` page by moving the :ref:`ug_nrf70_features_hostap` section to the :ref:`ug_wifi_overview` page.
   * The :ref:`software_maturity_security_features_psa` section on the :ref:`software_maturity` page by changing the support level of the :ref:`nrf_oberon <crypto_drivers_oberon>` driver on the nRF54LS05A SoC from experimental to supported.
+  * The :ref:`ug_nrf54h20_mcuboot_requests` page by adding figures that illustrate the initialization, read, clear, and write procedures of the bootloader requests module.
+  * The :ref:`ug_nrf54h20_partitioning_merged` page by adding figures that illustrate the partition layouts, the bootchains, the radio core slot selection, and the image version dependencies.
+  * The :ref:`ug_nrf54h20_mcuboot_manifest` page by adding figures that illustrate the manifest partitions and the manifest TLV structure, and by spelling out the term TLV.
