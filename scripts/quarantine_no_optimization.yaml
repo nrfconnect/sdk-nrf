@@ -4,9 +4,3 @@
 # To have an empty list use:
 # - scenarios:
 #     - None
-
-- scenarios:
-    - nrf5340_audio.sd_card_test
-  platforms:
-    - native_sim/native
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30885"
