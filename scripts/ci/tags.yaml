@@ -1876,3 +1876,8 @@ ci_tests_subsys_west_flash:
     - nrf/tests/subsys/west_flash/
     - zephyr/boards/nordic/
     - nrf/boards/nordic/54*
+
+ci_tests_zephyr_board_nrf_throttling:
+  files:
+    - nrf/tests/zephyr/boards/nrf/rram_throttling/
+    - zephyr/tests/boards/nrf/rram_throttling/
