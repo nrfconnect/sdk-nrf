@@ -617,3 +617,10 @@
   platforms:
     - native_sim/native
   comment: "Expects zephyr boot banner, but there is NCS version printed"
+
+- scenarios:
+    - boards.nrf.rram_throttling
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54l15dk/nrf54l10/cpuapp
+  comment: "Replaced with similar test in nrf without Partition Manager dependency"
