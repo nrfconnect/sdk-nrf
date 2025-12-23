@@ -1,0 +1,8 @@
+Testing with the Matter Quick Start app
+=======================================
+
+The |matter_name| |matter_type| is available in the `Matter Quick Start app`_ desktop application.
+Use this app to enable fast and easy evaluation of the |matter_type| without compiling it or setting the development environment thanks to the pre-compiled hex files.
+After flashing, follow the step-by-step instructions to commission the |matter_type| to the Matter network and interact with commercial ecosystems.
+
+Download the Matter Quick Start app from the `nRF Connect for Desktop`_ desktop application.

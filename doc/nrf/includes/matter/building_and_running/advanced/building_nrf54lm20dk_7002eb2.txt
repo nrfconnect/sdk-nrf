@@ -1,0 +1,35 @@
+Building the Matter over Wi-Fi variant on nRF54LM20 DK with nRF7002-EB II shield
+--------------------------------------------------------------------------------
+
+.. toggle::
+
+   To build the Matter over Wi-Fi |matter_type| variant on nRF54LM20 DK with nRF7002-EB II attached, perform the following actions depending on the build tool:
+
+   .. tabs::
+
+      .. group-tab:: nRF Connect for VS Code
+
+         1. When `building an application <How to build an application_>`_ as described in the |nRFVSC| documentation, follow the steps for setting up the build configuration.
+         #. In the :guilabel:`Add Build Configuration` screen, click the :guilabel:`Add argument` button under the :guilabel:`Extra CMake argument` section.
+         #. Add the following Kconfig options:
+
+            .. code-block:: console
+
+               -- -DSHIELD=nrf7002eb2 -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y
+
+      .. group-tab:: Command line
+
+         Use one of the following options:
+
+         * west with the following command:
+
+         .. code-block:: console
+
+            west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DSHIELD=nrf7002eb2 -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y
+
+         * CMake with the following command:
+
+         .. code-block:: console
+
+            cmake -GNinja -Bbuild -DBOARD=nrf54lm20dk/nrf54lm20a/cpuapp -DSHIELD=nrf7002eb2 -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y -DAPP_DIR=*app_path* *path_to_zephyr*/share/sysbuild
+            ninja -C build

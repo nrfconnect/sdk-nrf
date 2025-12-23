@@ -1,0 +1,14 @@
+ICD LIT device type
+-------------------
+
+.. toggle::
+
+    The device works as a Matter Intermittently Connected Device (ICD) with a :ref:`Long Idle Time (LIT) <ug_matter_device_low_power_icd_sit_lit>`.
+    The device starts operation in the Short Idle Time (SIT) mode and remains in it until it is commissioned to the Matter fabric and registers the first ICD client.
+    It then switches the operation mode to LIT to reduce the power consumption.
+
+    In the LIT mode, the device is less responsive than in the SIT mode.
+    However, you can request the device to become responsive, for example, to change its configuration.
+    Press the |Third Button| to use the User Active Mode Trigger (UAT) feature.
+
+    See the `User interface`_ section for information on how to switch the operation modes.

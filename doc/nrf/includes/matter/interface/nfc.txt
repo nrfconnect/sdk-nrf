@@ -1,0 +1,2 @@
+NFC port with antenna attached:
+    Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the `Commissioning the device`_ procedure.

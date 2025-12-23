@@ -1,0 +1,17 @@
+Device firmware update
+----------------------
+
+.. toggle::
+
+    The |matter_type| supports device firmware upgrade (DFU) over-the-air (OTA) using one of the following protocols:
+
+    * Matter OTA update protocol.
+      Querying and downloading a new firmware image is done using the Matter operational network.
+    * Simple Management Protocol (SMP) over Bluetooth LE.
+      The DFU is done using either a smartphone application or a PC command-line tool.
+      This protocol is not part of the Matter specification.
+
+    In both cases, the MCUboot secure bootloader is used to apply the new firmware image.
+
+    Matter OTA update protocol is enabled by default.
+    To configure the |matter_type| to support the DFU over both Matter and SMP, use the ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y`` build flag.

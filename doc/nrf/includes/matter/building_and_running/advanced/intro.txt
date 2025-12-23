@@ -1,0 +1,2 @@
+This section describes advanced building options that you can use with this |matter_type|.
+Use the ``click to show`` toggle to expand the content.

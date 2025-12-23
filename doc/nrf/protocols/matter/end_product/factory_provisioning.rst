@@ -847,7 +847,7 @@ The list below shows some Kconfig settings that are configured in the nRF Connec
 You can modify them to achieve the desired behavior of your application.
 
 * The device uses the test certificates located in the :file:`credentials/development/attestation/` directory, which are generated using all default values.
-  If you want to change the default ``vendor_id``, ``product_id``, ``vendor_name``, or ``device_name`` and generate new test certificates, set the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_CERT_SOURCE_GENERATED` Kconfig option to `` y``.
+  If you want to change the default ``vendor_id``, ``product_id``, ``vendor_name``, or ``device_name`` and generate new test certificates, set the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_CERT_SOURCE_GENERATED` Kconfig option to ``y``.
   Remember to build the ``chip-cert`` application and add it to the system PATH.
 
   For developing a production-ready device, you need to write the certificates obtained during the certification process.

@@ -2,7 +2,7 @@
 
    .. group-tab:: Testing with simulated bridged devices
 
-      a. Using the terminal emulator connected to the bridge, run the following :ref:`Matter CLI command <matter_bridge_cli>` to add a new bridged device:
+      1. Using the terminal emulator connected to the bridge, run the following :ref:`Matter CLI command <matter_bridge_cli>` to add a new bridged device:
 
          .. parsed-literal::
             :class: highlight
@@ -32,11 +32,11 @@
          .. parsed-literal::
             :class: highlight
 
-            ./chip-tool onoff read on-off *<bridge_node_ID>* *<bridged_device_endpoint_ID>*
+            ./chip-tool onoff read on-off *<node_ID>* *<bridged_device_endpoint_ID>*
 
    .. group-tab:: Testing with Bluetooth LE bridged devices
 
-      a. Build and program the one of the following Bluetooth LE samples to an additional development kit compatible with the sample:
+      1. Build and program the one of the following Bluetooth LE samples to an additional development kit compatible with the sample:
 
          * :ref:`peripheral_lbs`
          * :zephyr:code-sample:`ble_peripheral_esp`
@@ -142,7 +142,7 @@
          .. parsed-literal::
             :class: highlight
 
-            ./chip-tool onoff read on-off *<bridge_node_ID>* *<bridged_device_endpoint_ID>*
+            ./chip-tool onoff read on-off *<node_ID>* *<bridged_device_endpoint_ID>*
 
 
          If you are using the Generic Switch implementation, read the value of the *current-position* attribute from the *switch* cluster using the following command:
@@ -150,7 +150,7 @@
          .. parsed-literal::
             :class: highlight
 
-            ./chip-tool switch read current-position *<bridge_node_ID>* *<bridged_device_endpoint_ID>*
+            ./chip-tool switch read current-position *<node_ID>* *<bridged_device_endpoint_ID>*
 
          Note that the Generic Switch is implemented as a momentary switch.
          This means that, in contrast to the latching switch, it remains switched on only as long as the physical button is pressed.
@@ -162,11 +162,11 @@
                .. parsed-literal::
                   :class: highlight
 
-                  ./chip-tool temperaturemeasurement read measured-value *<bridge_node_ID>* *<bridged_device_endpoint_ID>*
+                  ./chip-tool temperaturemeasurement read measured-value *<node_ID>* *<bridged_device_endpoint_ID>*
 
             * humidity:
 
                .. parsed-literal::
                   :class: highlight
 
-                  ./chip-tool relativehumiditymeasurement read measured-value *<bridge_node_ID>* *<bridged_device_endpoint_ID>*
+                  ./chip-tool relativehumiditymeasurement read measured-value *<node_ID>* *<bridged_device_endpoint_ID>*

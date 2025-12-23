@@ -1,0 +1,16 @@
+Group communication
+-------------------
+
+.. toggle::
+
+   Group communication (groupcast or multicast) refers to messages and commands sent to the address of a group that includes multiple devices with the same Groups cluster.
+   The cluster manages the content of a node-wide Group Table that is part of the underlying interaction layer.
+   This is done for each endpoint.
+   After creating the Group cluster with specific ``ID`` and ``Name``, a device gets its own IPv6 multicast address and is ready to receive groupcast commands.
+
+   In this |matter_type|, the binding device can create a groupcast message and send it to the chosen IPv6 multicast address.
+   This allows the binding device to control multiple bound devices simultaneously.
+
+   .. note::
+      Writing the groupcast table on the devices blocks sending unicast commands.
+      If you want to return to the original state, perform a factory reset of the device.
