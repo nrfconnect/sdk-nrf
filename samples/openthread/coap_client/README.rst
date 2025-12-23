@@ -36,12 +36,12 @@ Overview
 ********
 
 This sample demonstrates how to access resources available on a Thread server node.
-After the Thread network is established, the client node can control the state of **LED 4** on server nodes.
+After the Thread network is established, the client node can control the state of LEDs on server nodes.
 It can turn on the LED either on every server node in the network with a multicast message, or on a single specific server node that is paired with the client node.
 
 The following CoAP resources are accessed on the server side:
 
-* ``/light`` - Used to control **LED 4**.
+* ``/light`` - Used to control LEDs.
 * ``/provisioning`` - Used to perform provisioning.
 
 This sample uses :ref:`Zephyr CoAP API<zephyr:coap_sock_interface>` for communication, which is the preferred API to use for new CoAP applications.
@@ -61,32 +61,52 @@ User interface
 
 The following LED and buttons of the client development kit are used by this sample:
 
-LED 1:
-  On when the OpenThread connection is established.
+.. tabs::
 
-Button 1:
-   Send a unicast ``LIGHT_TOGGLE`` message to the ``/light`` resource on a paired device.
-   If no device is paired with the specific client node, pressing the button has no effect.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-Button 2:
-   Send a multicast ``LIGHT_ON`` or ``LIGHT_OFF`` message (alternatively) to the ``/light`` resource.
-   Sending this multicast message instead of ``LIGHT_TOGGLE`` allows to synchronize the state of the LEDs on several server nodes.
+      LED 1:
+         On when the OpenThread connection is established.
 
-Button 4:
-   Send a multicast pairing request to the ``/provisioning`` resource.
+      Button 1:
+         Send a unicast ``LIGHT_TOGGLE`` message to the ``/light`` resource on a paired device.
+         If no device is paired with the specific client node, pressing the button has no effect.
+
+      Button 2:
+         Send a multicast ``LIGHT_ON`` or ``LIGHT_OFF`` message (alternatively) to the ``/light`` resource.
+         Sending this multicast message instead of ``LIGHT_TOGGLE`` allows to synchronize the state of the LEDs on several server nodes.
+
+      Button 4:
+         Send a multicast pairing request to the ``/provisioning`` resource.
+
+   .. group-tab:: nRF54 DKs
+
+      LED 0:
+         On when the OpenThread connection is established.
+
+      Button 0:
+         Send a unicast ``LIGHT_TOGGLE`` message to the ``/light`` resource on a paired device.
+         If no device is paired with the specific client node, pressing the button has no effect.
+
+      Button 1:
+         Send a multicast ``LIGHT_ON`` or ``LIGHT_OFF`` message (alternatively) to the ``/light`` resource.
+         Sending this multicast message instead of ``LIGHT_TOGGLE`` allows to synchronize the state of the LEDs on several server nodes.
+
+      Button 3:
+         Send a multicast pairing request to the ``/provisioning`` resource.
 
 Minimal Thread Device assignments
 =================================
 
 When the device is working as Minimal Thread Device (MTD), the following LED and Button assignments are also available:
 
-LED 3:
+Third LED:
     The mode the device is working in:
 
     * On when in the Minimal End Device (MED) mode.
     * Off when in the Sleepy End Device (SED) mode.
 
-Button 3:
+Third Button:
     Toggle the power consumption between SED and MED.
 
 For more information, see :ref:`thread_ug_device_type` in the Thread user guide.
@@ -94,15 +114,15 @@ For more information, see :ref:`thread_ug_device_type` in the Thread user guide.
 Multiprotocol Bluetooth LE extension assignments
 ================================================
 
-LED 2:
+Second LED:
    On when Bluetooth LE connection is established.
 
 UART command assignments:
    The following command assignments are configured and used in nRF Toolbox when :ref:`coap_client_sample_testing_ble`:
 
-   * ``u`` - Send a unicast CoAP message over Thread (the same operation as **Button 1**).
-   * ``m`` - Send a multicast CoAP message over Thread (the same operation as **Button 2**).
-   * ``p`` - Send a pairing request as CoAP message over Thread (the same operation as **Button 4**).
+   * ``u`` - Send a unicast CoAP message over Thread.
+   * ``m`` - Send a multicast CoAP message over Thread.
+   * ``p`` - Send a pairing request as CoAP message over Thread.
 
 Configuration
 *************
@@ -155,37 +175,75 @@ Testing
 
 After building the sample and programming it to your development kit, test it by performing the following steps:
 
-#. Program at least one development kit with :ref:`coap_server_sample` and reset it.
-#. Turn on the CoAP Client and at least one CoAP Server.
-   They will create the Thread network.
+.. tabs::
 
-   .. note::
-     It may take up to 15 seconds for nodes to establish the network.
-     When the sample application is ready, the **LED 1** starts blinking.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-#. Press **Button 2** on a client node to control **LED 4** on all server nodes.
-#. Pair a client with a server by completing the following steps:
+      #. Program at least one development kit with :ref:`coap_server_sample` and reset it.
+      #. Turn on the CoAP Client and at least one CoAP Server.
+         They will create the Thread network.
 
-   a. Press **Button 4** on a server node to enable pairing.
-   #. Press **Button 4** on a client node to pair it with the server node in the pairing mode.
+         .. note::
 
-#. Press **Button 1** on the client node to control the **LED 4** on the paired server node.
+            It may take up to 15 seconds for nodes to establish the network.
+            When the sample application is ready, the **LED 3** starts blinking.
+
+      #. Press **Button 2** on a client node to control **LED 4** on all server nodes.
+      #. Pair a client with a server by completing the following steps:
+
+         a. Press **Button 4** on a server node to enable pairing.
+         #. Press **Button 4** on a client node to pair it with the server node in the pairing mode.
+
+      #. Press **Button 1** on the client node to control the **LED 4** on the paired server node.
+
+   .. group-tab:: nRF54 DKs
+
+      #. Program at least one development kit with :ref:`coap_server_sample` and reset it.
+      #. Turn on the CoAP Client and at least one CoAP Server.
+         They will create the Thread network.
+
+         .. note::
+
+            It may take up to 15 seconds for nodes to establish the network.
+            When the sample application is ready, the **LED 0** starts blinking.
+
+      #. Press **Button 1** on a client node to control **LED 3** on all server nodes.
+      #. Pair a client with a server by completing the following steps:
+
+         a. Press **Button 3** on a server node to enable pairing.
+         #. Press **Button 3** on a client node to pair it with the server node in the pairing mode.
+
+      #. Press **Button 0** on the client node to control the **LED 3** on the paired server node.
 
 .. _coap_client_sample_testing_mtd:
 
 Testing Minimal Thread Device
 -----------------------------
 
-After building the MTD variant of this sample and programming it, the device starts in the SED mode with **LED 3** off.
-This means that the radio is disabled when idle and the serial console is not working to decrease the power consumption.
-You can switch to the MED mode at any moment during the standard testing procedure.
+.. tabs::
 
-To toggle MED, press **Button 3** on the client node.
-**LED 3** turns on to indicate the switch to the MED mode.
-At this point, the radio is enabled when it is idle and the serial console is operating.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-Pressing **Button 3** again will switch the mode back to SED.
-Switching between SED and MED modes does not affect the standard testing procedure, but terminal logs are not available in the SED mode.
+      After building the MTD variant of this sample and programming it, the device starts in the SED mode with **LED 3** off.
+      This means that the radio is disabled when idle and the serial console is not working to decrease the power consumption.
+      You can switch to the MED mode at any moment during the standard testing procedure.
+
+      To toggle MED, press **Button 3** on the client node.
+      **LED 3** turns on to indicate the switch to the MED mode.
+      At this point, the radio is enabled when it is idle and the serial console is operating.
+
+      Pressing **Button 3** again will switch the mode back to SED.
+      Switching between SED and MED modes does not affect the standard testing procedure, but terminal logs are not available in the SED mode.
+
+   .. group-tab:: nRF54 DKs
+
+      After building the MTD variant of this sample and programming it, the device starts in the SED mode with **LED 2** off.
+      This means that the radio is disabled when idle and the serial console is not working to decrease the power consumption.
+      You can switch to the MED mode at any moment during the standard testing procedure.
+
+      To toggle MED, press **Button 2** on the client node.
+      **LED 2** turns on to indicate the switch to the MED mode.
+      At this point, the radio is enabled when it is idle and the serial console is operating.
 
 .. _coap_client_sample_testing_ble:
 
@@ -211,8 +269,10 @@ First, you need to set up nRF Toolbox as follows:
 
    a. Bind the top left button to the ``u`` command, with EOL set to LF and an icon of your choice.
       For this testing procedure, the :guilabel:`>` icon is used.
+
    #. Bind the top middle button to the ``m`` command, with EOL set to LF and an icon of your choice.
       For this testing procedure, the play button icon is used.
+
    #. Bind the top right button to the ``p`` command, with EOL set to LF and an icon of your choice.
       For this testing procedure, the settings gear icon is used.
 
@@ -231,17 +291,31 @@ First, you need to set up nRF Toolbox as follows:
       The UART application of nRF Toolbox after establishing the connection
 
    .. note::
-      Observe that **LED 2** on your CoAP Multiprotocol Client node lights up, which indicates that the Bluetooth connection is established.
+      Observe that the second LED on your CoAP Multiprotocol Client node lights up, which indicates that the Bluetooth connection is established.
 
 When you have set up nRF Toolbox, complete the following steps after the standard `Testing`_ procedure:
 
-#. In nRF Toolbox, tap the middle button to control **LED 4** on all CoAP server nodes.
-#. To pair a client with a server, complete the following steps:
+.. tabs::
 
-   a. Press **Button 4** on a server node to enable pairing.
-   #. In nRF Toolbox, tap the right button to pair the two nodes.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-#. In nRF Toolbox, tap the left button to control **LED 4** on the paired server node.
+      #. In nRF Toolbox, tap the middle button to control **LED 4** on all CoAP server nodes.
+      #. To pair a client with a server, complete the following steps:
+
+         a. Press **Button 4** on a server node to enable pairing.
+         #. In nRF Toolbox, tap the right button to pair the two nodes.
+
+      #. In nRF Toolbox, tap the left button to control **LED 4** on the paired server node.
+
+   .. group-tab:: nRF54 DKs
+
+      #. In nRF Toolbox, tap the middle button to control **LED 3** on all CoAP server nodes.
+      #. To pair a client with a server, complete the following steps:
+
+         a. Press **Button 3** on a server node to enable pairing.
+         #. In nRF Toolbox, tap the right button to pair the two nodes.
+
+      #. In nRF Toolbox, tap the left button to control **LED 3** on the paired server node.
 
 Sample output
 =============

@@ -357,7 +357,10 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* Added support for the nRF54L Series DKs in the following Thread sample documents:
+
+  * :ref:`coap_client_sample`
+  * :ref:`coap_server_sample`
 
 Wi-Fi samples
 -------------

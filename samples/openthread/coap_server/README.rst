@@ -30,7 +30,7 @@ You can use this sample application as a starting point to implement a :ref:`CoA
 
 The following CoAP resources are exposed on the network by this sample:
 
-* ``/light`` - used to control **LED 4**
+* ``/light`` - used to control LEDs
 * ``/provisioning`` - used to perform provisioning
 
 This sample uses the native `OpenThread CoAP API`_ for communication.
@@ -47,17 +47,35 @@ Application architecture options
 User interface
 **************
 
-Button 4:
-  Pressing results in entering the pairing mode for a limited period of time.
+.. tabs::
 
-LED 1:
-  Lit when the OpenThread connection is established.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-LED 3:
-  Blinks when the pairing mode is enabled.
+      Button 4:
+        Pressing results in entering the pairing mode for a limited period of time.
 
-LED 4:
-  Turned on and off by messages sent from the client nodes.
+      LED 1:
+        Lit when the OpenThread connection is established.
+
+      LED 3:
+        Blinks when the pairing mode is enabled.
+
+      LED 4:
+        Turned on and off by messages sent from the client nodes.
+
+   .. group-tab:: nRF54 DKs
+
+      Button 3:
+        Pressing results in entering the pairing mode for a limited period of time.
+
+      LED 0:
+        Lit when the OpenThread connection is established.
+
+      LED 2:
+        Blinks when the pairing mode is enabled.
+
+      LED 3:
+        Turned on and off by messages sent from the client nodes.
 
 Configuration
 *************
@@ -99,22 +117,49 @@ Testing
 
 After building the sample and programming it to your development kit, complete the following steps to test it:
 
-#. Program at least one development kit with the :ref:`coap_client_sample` sample and reset it.
-#. Turn on the Simple CoAP Client node.
-   This node becomes the Thread network Leader.
-#. Turn on all the other nodes, including the Simple CoAP Server nodes.
-   They enter the network as Children, and gradually become Routers.
+.. tabs::
 
-   .. note::
-      It can take up to 15 seconds for Thread to establish the network.
+   .. group-tab:: nRF52 and nRF53 DKs
 
-#. Press **Button 2** on the client node to control **LED 4** on all server nodes.
-#. To pair a client with a server, complete the following steps:
+      #. Program at least one development kit with the :ref:`coap_client_sample` sample and reset it.
+      #. Turn on the Simple CoAP Client node.
+         This node becomes the Thread network Leader.
 
-   a. Press **Button 4** on a server node to enable pairing.
-   #. Press **Button 3** on a client node to pair it with the server node in the pairing mode.
+      #. Turn on all the other nodes, including the Simple CoAP Server nodes.
+         They enter the network as Children, and gradually become Routers.
 
-#. Press **Button 1** on the client node to control the **LED 4** on the paired server node.
+        .. note::
+
+           It can take up to 15 seconds for Thread to establish the network.
+
+      #. Press **Button 2** on the client node to control **LED 4** on all server nodes.
+      #. To pair a client with a server, complete the following steps:
+
+         a. Press **Button 4** on a server node to enable pairing.
+         #. Press **Button 3** on a client node to pair it with the server node in the pairing mode.
+
+      #. Press **Button 1** on the client node to control the **LED 4** on the paired server node.
+
+   .. group-tab:: nRF54 DKs
+
+      #. Program at least one development kit with the :ref:`coap_client_sample` sample and reset it.
+      #. Turn on the Simple CoAP Client node.
+         This node becomes the Thread network Leader.
+
+      #. Turn on all the other nodes, including the Simple CoAP Server nodes.
+         They enter the network as Children, and gradually become Routers.
+
+        .. note::
+
+           It can take up to 15 seconds for Thread to establish the network.
+
+      #. Press **Button 1** on the client node to control **LED 3** on all server nodes.
+      #. To pair a client with a server, complete the following steps:
+
+         a. Press **Button 3** on a server node to enable pairing.
+         #. Press **Button 2** on a client node to pair it with the server node in the pairing mode.
+
+      #. Press **Button 0** on the client node to control the **LED 3** on the paired server node.
 
 Running OpenThread CLI commands
 -------------------------------
