@@ -81,6 +81,8 @@ static char device_serial[CONFIG_MEMFAULT_NCS_DEVICE_ID_MAX_LEN + 1];
 /* Hardware version check */
 BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_HW_VERSION) > 1, "Hardware version must be configured");
 
+static int device_info_init(void);
+
 void memfault_platform_get_device_info(sMemfaultDeviceInfo *info)
 {
 #if defined(CONFIG_MEMFAULT_NCS_FW_VERSION_AUTO)
@@ -102,7 +104,22 @@ void memfault_platform_get_device_info(sMemfaultDeviceInfo *info)
 	static const char *fw_version = CONFIG_MEMFAULT_NCS_FW_VERSION;
 #endif /* defined(CONFIG_MEMFAULT_NCS_FW_VERSION_AUTO) */
 
-	*info = (sMemfaultDeviceInfo) {
+	/* When using hw_id and Bluetooth Address, the address is only available
+	 * after bt_enable() or settings_load() has completed (bt_enable() can run
+	 * deferred too!). It's possible the device serial has not been set: if this
+	 * is running from non-ISR context, check and try to retrieve it again.
+	 */
+#if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID) && \
+	defined(CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS)
+	if (!k_is_in_isr()) {
+		/* check if device_serial is "Unknown" */
+		if (strcmp(device_serial, "Unknown") == 0) {
+			(void)device_info_init();
+		}
+	}
+#endif
+
+	*info = (sMemfaultDeviceInfo){
 		.device_serial = device_serial,
 		.software_type = CONFIG_MEMFAULT_NCS_FW_TYPE,
 		.software_version = fw_version,
@@ -142,13 +159,16 @@ static int device_info_init(void)
 
 	err = hw_id_get(hw_id_buf, sizeof(hw_id_buf));
 	if (err) {
-		strncat(device_serial, "Unknown",
-			sizeof(device_serial) - strlen(device_serial) - 1);
+		strncpy(device_serial, "Unknown", sizeof(device_serial) - 1);
+#if defined(CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS)
+		err = 0; /* Not a critical error if BLE MAC is not ready yet */
+#else
 		LOG_ERR("Failed to get HW ID, error: %d", err);
+#endif
 	} else {
-		strncat(device_serial, hw_id_buf,
-			sizeof(device_serial) - strlen(device_serial) - 1);
+		strncpy(device_serial, hw_id_buf, sizeof(device_serial) - 1);
 	}
+	device_serial[sizeof(device_serial) - 1] = '\0';
 
 	LOG_DBG("Device serial generated: %s", device_serial);
 
@@ -224,7 +244,7 @@ static int init(void)
 	}
 
 #if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID) || defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_IMEI) || \
-		defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC)
+	defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_NET_MAC)
 	err = device_info_init();
 	if (err) {
 		LOG_ERR("Device info initialization failed, error: %d", err);
