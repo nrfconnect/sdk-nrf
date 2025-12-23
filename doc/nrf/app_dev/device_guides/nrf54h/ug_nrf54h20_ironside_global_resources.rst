@@ -53,6 +53,41 @@ The following UICR fields are supported:
    If no UICR values are programmed, |ISE| applies a set of default configurations.
    Applications that do not require custom settings can rely on these defaults without modifying the UICR.
 
+UICR integrity checking
+***********************
+
+Some UICR fields use integrity checking to protect their contents.
+The system performs this integrity checking by calculating a HMAC value over the UICR field itself or over associated data.
+The device-unique PUF provides the keying material for the HMAC calculation.
+The system stores the calculated HMAC values in non-volatile memory to ensure that the protection persists across resets.
+IronSide SE calculates and stores the HMAC values during the first reset that occurs after the corresponding UICR fields are written.
+The system sets and verifies HMAC values before booting any other domain.
+For this reason, a reset is required to enable integrity checking for a UICR field.
+The configuration associated with a UICR field does not take effect until this reset has completed.
+
+The system performs direct integrity checking on the values of UICR.PROTECTEDMEM, UICR.SECONDARY_PROTECTEDMEM, and UICR.ERASEPROTECT.
+When UICR.LOCK is set, the system protects the entire UICR region through a single integrity check.
+
+Only the Secure Domain can access the memory used to store HMAC values.
+The IPC interfaces, referred to as *IronSide calls*, implement software-based validation of all pointers and buffers.
+This validation prevents IronSide calls from accessing memory regions that store HMAC values.
+
+Modifying UICR fields with integrity checking
+=============================================
+
+You can modify UICR fields that use integrity checking, but certain limitations apply.
+You can update these fields directly only if no reset has occurred since integrity checking was enabled.
+ 
+UICR behavior after reset with integrity checking enabled
+---------------------------------------------------------
+
+When UICR.LOCK is enabled and its corresponding HMAC value is written to non-volatile memory, you cannot modify any UICR field directly.
+In this state, the only supported method to modify any UICR field is to perform an ERASEALL operation.
+See :ref:`ERASEALL <ug_nrf54h20_ironside_se_eraseall_command>`  for more information.
+
+You can update UICR.ERASEPROTECT, UICR.PROTECTEDMEM, and UICR.SECONDARY_PROTECTEDMEM directly after they are enabled and their HMAC values are written to non-volatile memory.
+However, these updates do not take effect until a reset has been performed.
+
 Generating the UICR image
 *************************
 
