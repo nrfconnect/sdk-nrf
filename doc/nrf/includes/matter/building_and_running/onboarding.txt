@@ -1,0 +1,27 @@
+Onboarding information
+----------------------
+
+When you start the commissioning procedure, the controller must get the onboarding information from the Matter accessory device.
+The onboarding information representation depends on your commissioner setup.
+
+For this |matter_type|, you can use one of the following :ref:`onboarding information formats <ug_matter_network_topologies_commissioning_onboarding_formats>` to provide the commissioner with the data payload that includes the device discriminator and the setup PIN code:
+
+  .. list-table:: |matter_name| |matter_type| onboarding information
+     :header-rows: 1
+
+     * - QR Code
+       - QR Code Payload
+       - Manual pairing code
+     * - Scan the following QR code with the app for your ecosystem:
+
+         |matter_qr_code_image|
+
+       - |matter_qr_code_payload|
+       - |matter_pairing_code|
+
+When the factory data support is enabled, the onboarding information will be stored in the build directory in the following files:
+
+   * The :file:`factory_data.png` file includes the generated QR code.
+   * The :file:`factory_data.txt` file includes the QR code payload and the manual pairing code.
+
+|matter_cd_info_note_for_samples|

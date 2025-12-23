@@ -1,0 +1,14 @@
+This |matter_type| uses the Matter library that includes the |NCS| platform integration layer:
+
+* `Matter`_
+
+In addition, the |matter_type| uses the following |NCS| components:
+
+* :ref:`dk_buttons_and_leds_readme`
+* :ref:`nfc_uri`
+* :ref:`lib_nfc_t2t`
+
+The |matter_type| depends on the following Zephyr libraries:
+
+* :ref:`zephyr:logging_api`
+* :ref:`zephyr:kernel_api`

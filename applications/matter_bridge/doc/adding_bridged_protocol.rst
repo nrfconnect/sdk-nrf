@@ -27,6 +27,7 @@ Complete the following steps to add support for a proprietary protocol:
 
 #. For each bridged device type, create a ``MyProtocol MyDevice Data Provider`` class that inherits from the ``MyProtocol Data Provider`` class.
    These classes keep the state of the Matter device synchronized with the state of the device, using the following functions:
+
    * :c:func:`NotifyUpdateState` - Called to notify the bridge when the bridged device changed state.
    * :c:func:`UpdateState` - Called by the bridge when the bridged device should update its state (for example, turning a light on or off).
 

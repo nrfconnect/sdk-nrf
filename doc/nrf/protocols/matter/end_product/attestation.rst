@@ -151,7 +151,7 @@ This is because the factory data is different for each device instance, while th
 Using a separate partition lets the manufacturer to apply write protection on device boot.
 Dedicating a separate partition for this purpose lets avoid recertification when the device's final application changes.
 
-For information about how to generate the factory data, read the detailed :doc:`matter:nrfconnect_factory_data_configuration` guide in the Matter documentation.
+For information about how to generate the factory data, read the detailed :ref:`ug_matter_device_factory_provisioning` guide in the Matter documentation.
 
 Requirements for secured communication
 ======================================
@@ -240,7 +240,7 @@ Testing Device Attestation during development
 The :ref:`matter_samples` in the |NCS| include temporary Device Attestation with data for testing purposes.
 If you want to test Device Attestation during development of your product without using the data from the samples, you can generate your own data:
 
-* Factory data - Read the detailed :doc:`matter:nrfconnect_factory_data_configuration` guide in the Matter documentation for more information.
+* Factory data - Read the detailed :ref:`ug_matter_device_factory_provisioning` guide in the Matter documentation for more information.
 * Certification Declaration only - Read :ref:`ug_matter_device_configuring_cd_generating_steps` for more information.
 
 The data created for integration testing is not to be included in final end products.

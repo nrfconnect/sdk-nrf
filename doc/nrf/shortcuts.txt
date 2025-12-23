@@ -180,6 +180,8 @@
    These are used for :ref:`ug_matter_device_attestation_commissioning_info`, and you can generate your own test Certification Declaration when you :ref:`work on Matter end product <ug_matter_device_attestation_testing_da>`.
 .. |matter_unique_discriminator_note| replace:: If you are working with multiple devices, set a unique discriminator for each one, or commission them one at a time.
    See :ref:`ug_matter_configuring_device_identification` for more information.
+.. |Bluetoothsc| replace:: Bluetooth®
+.. |WiFi| replace:: Wi-Fi
 
 .. ### Other shortcuts
 

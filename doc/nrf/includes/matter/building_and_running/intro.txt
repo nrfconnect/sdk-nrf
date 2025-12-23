@@ -1,0 +1,8 @@
+This section describes how to build the |matter_type| and commission it to the Matter network.
+
+.. include:: /includes/build_and_run.txt
+
+.. |sample_or_app| replace:: |matter_type|
+.. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
+
+.. include:: /includes/ipc_radio_conf.txt

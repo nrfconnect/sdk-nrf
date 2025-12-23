@@ -1,3 +1,14 @@
+.. |matter_name| replace:: Smoke CO Alarm
+.. |matter_type| replace:: sample
+.. |matter_dks_thread| replace:: ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf54l15dk/nrf54l15/cpuapp``, and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets
+.. |matter_dks_internal| replace:: nRF54LM20 DK
+.. |sample path| replace:: :file:`samples/matter/smoke_co_alarm`
+.. |matter_qr_code_payload| replace:: MT:Y.K9042C00KA0648G00
+.. |matter_pairing_code| replace:: 34970112332
+.. |matter_qr_code_image| image:: /images/matter_qr_code_smoke_co_alarm.png
+
+.. include:: /includes/matter/shortcuts.txt
+
 .. _matter_smoke_co_alarm_sample:
 
 Matter: Smoke CO Alarm
@@ -8,8 +19,8 @@ Matter: Smoke CO Alarm
    :depth: 2
 
 This sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a device capable of sensing smoke and carbon monoxide, and issuing an alarm if the their concentration is too high.
-This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
-You can use this sample as a reference for creating your own application.
+
+.. include:: /includes/matter/introduction/sleep_thread_sed_lit.txt
 
 Requirements
 ************
@@ -18,11 +29,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-If you want to commission the device and :ref:`control it remotely <matter_smoke_co_alarm_network_mode>`, you also need a Matter controller device :ref:`configured on PC or mobile <ug_matter_configuring>`.
-This requires additional hardware depending on the setup you choose.
-
-.. note::
-    |matter_gn_required_note|
+.. include:: /includes/matter/requirements/thread.txt
 
 Overview
 ********
@@ -39,13 +46,6 @@ In case multiple alarm conditions are met, the device expresses only the alarm w
 After the alarm with the highest priority is stopped, the device starts expressing the next alarm in the priority order until all alarm conditions have ceased.
 The implementation demonstrated in this sample supports issuing the following alarms, listed from the highest priority to the lowest:
 
-* Smoke alarm - Issued if allowed smoke concentration level is exceeded.
-* CO alarm - Issued if allowed carbon monoxide concentration level is exceeded.
-* Hardware fault alert - Issued if the device hardware is not operating properly.
-* Device self-test alert - Issued if the device self-test was started by the user.
-* End of service alert - Issued if the device service was ended either by the expiration date or other physical conditions, and it needs to be replaced.
-* Battery level alert - Issued if the device battery level is too low.
-
 The sample implements two instances of a Power Source cluster:
 
 * Wired power source on the endpoint 0
@@ -58,351 +58,163 @@ Every power source can be independently enabled or disabled using a dedicated te
 You can test the device remotely over a Thread network, which requires more devices.
 
 The remote control testing requires a Matter controller that you can configure either on a PC or a mobile device.
-You can enable both methods after :ref:`building and running the sample <matter_smoke_co_alarm_sample_remote_control>`.
+You can enable both methods after `Commissioning the device`_.
+
+Smoke CO Alarm features
+=======================
+
+The smoke CO alarm sample implements the following features:
+
+* Smoke alarm - Issued if allowed smoke concentration level is exceeded.
+* CO alarm - Issued if allowed carbon monoxide concentration level is exceeded.
+* Hardware fault alert - Issued if the device hardware is not operating properly.
+* Device self-test alert - Issued if the device self-test was started by the user.
+* End of service alert - Issued if the device service was ended either by the expiration date or other physical conditions, and it needs to be replaced.
+* Battery level alert - Issued if the device battery level is too low.
+* :ref:`ICD LIT <matter_smoke_co_alarm_sample_lit>` - The smoke CO alarm can be used as an Intermittently Connected Device (ICD) with a :ref:`Long Idle Time (LIT)<ug_matter_device_low_power_icd_sit_lit>`.
+
+Use the ``click to show`` toggle to expand the content.
 
 .. _matter_smoke_co_alarm_sample_lit:
 
-ICD LIT device type
-===================
-
-.. matter_smoke_co_alarm_sample_lit_start
-
-The device works as a Matter Intermittently Connected Device (ICD) with a :ref:`Long Idle Time (LIT)<ug_matter_device_low_power_icd_sit_lit>`.
-The device starts operation in the Short Idle Time (SIT) mode and remains in it until it is commissioned to the Matter fabric and registers the first ICD client.
-It then switches the operation mode to LIT to reduce the power consumption.
-
-In the LIT mode, the device responsiveness is much lower than in the SIT mode.
-However, you can request the device to become responsive to, for example, change its configuration.
-To do that, you need to use the User Active Mode Trigger (UAT) feature by pressing the appropriate button.
-
-See `User interface`_ for information about how to switch the operation modes.
-
-.. matter_smoke_co_alarm_sample_lit_end
-
-The sample supports ICD Dynamic SIT LIT switching (DSLS) feature to switch between SIT and LIT modes, depending on the used power source.
-The device uses the SIT mode, when the wired power source is active.
-Otherwise, it switches to the LIT mode, to indicate that it is possible to save the energy, when using a battery power source.
-Dynamic switching is possible only if the ICD device meets all criteria for operating in the LIT mode (it has at least one client registered).
-DSLS support is disabled by default.
-To enable it, set the :kconfig:option:`CONFIG_CHIP_ICD_DSLS_SUPPORT` Kconfig option to ``y`` and enable the feature support in the ICD Management cluster's feature map, by setting it to ``0xf`` in the sample's :file:`.zap` file.
-Regenerate the source files after modifying the :file:`.zap` file.
-
-.. _matter_smoke_co_alarm_network_mode:
-
-Remote testing in a network
-===========================
-
-.. |Bluetoothsc| replace:: Bluetooth®
-.. |WiFi| replace:: Wi-Fi®
-
-.. include:: ../light_bulb/README.rst
-    :start-after: matter_light_bulb_sample_remote_testing_start
-    :end-before: matter_light_bulb_sample_remote_testing_end
+.. include:: /includes/matter/overview/icd_lit.txt
 
 Configuration
 *************
 
-|config|
+.. include:: /includes/matter/configuration/intro.txt
 
-.. _matter_smoke_co_alarm_custom_configs:
+The |matter_type| supports the following build configurations:
 
-Matter smoke CO alarm custom configurations
-===========================================
+.. include:: /includes/matter/configuration/basic_internal.txt
 
-.. include:: ../light_bulb/README.rst
-    :start-after: matter_light_bulb_sample_configuration_file_types_start
-    :end-before: matter_light_bulb_sample_configuration_file_types_end
+Advanced configuration options
+==============================
 
-.. |Bluetooth| replace:: Bluetooth
-
-.. include:: /includes/advanced_conf_matter.txt
+.. include:: /includes/matter/configuration/advanced/intro.txt
+.. include:: /includes/matter/configuration/advanced/dfu.txt
+.. include:: /includes/matter/configuration/advanced/factory_data.txt
+.. include:: /includes/matter/configuration/advanced/custom_board.txt
+.. include:: /includes/matter/configuration/advanced/internal_memory.txt
 
 User interface
 **************
 
-.. tabs::
+.. include:: /includes/matter/interface/intro.txt
 
-   .. group-tab:: nRF52 and nRF53 DKs
+First LED:
+   .. include:: /includes/matter/interface/state_led.txt
 
-      LED 1:
-         .. include:: /includes/matter_sample_state_led.txt
+Second LED:
+   Shows the state of the alarm.
+   The following states are possible:
 
-      LED 2:
-         Shows the state of the alarm.
-         The following states are possible:
+   * Even Flashing (300 ms on/300 ms off) - The smoke alarm is expressed.
+   * Even Flashing (500 ms on/500 ms off) - The Identify command of the Identify cluster is received on the endpoint ``1``.
+      The command's argument can be used to specify the duration of the effect.
+   * Flashing in combination with |Third LED| and |Fourth LED| when other alarms are triggered.
 
-         * Even Flashing (300 ms on/300 ms off) - The smoke alarm is expressed.
-         * Even Flashing (500 ms on/500 ms off) - The Identify command of the Identify cluster is received on the endpoint ``1``.
-           The command's argument can be used to specify the duration of the effect.
-         * Flashing in combination with **LED3** and **LED4** when other alarms are triggered.
+Third LED:
+   Shows the state of the alarm.
+   The following states are possible:
 
-      LED 3:
-         Shows the state of the alarm.
-         The following states are possible:
+   * Even Flashing (300 ms on/300 ms off) - The CO alarm is expressed.
+   * Flashing in combination with |Second LED| and |Fourth LED| when other alarms are triggered.
 
-         * Even Flashing (300 ms on/300 ms off) - The CO alarm is expressed.
-         * Flashing in combination with **LED2** and **LED4** when other alarms are triggered.
+Fourth LED:
+   Shows the state of the alarm.
+   The following states are possible:
 
-      LED 4:
-         Shows the state of the alarm.
-         The following states are possible:
+   * Even Flashing (300 ms on/300 ms off) - The battery level low alarm is expressed.
+   * Flashing in combination with |Second LED| and |Third LED| when other alarms are triggered.
 
-         * Even Flashing (300 ms on/300 ms off) - The battery level low alarm is expressed.
-         * Flashing in combination with **LED2** and **LED3** when other alarms are triggered.
+Second, third and fourth LEDs combined:
+   Shows the state of the alarm.
+   The following states are possible:
 
-      LED 2, LED 3 and LED 4 combined:
-         Shows the state of the alarm.
-         The following states are possible:
+   * All three LEDs, Short Flash On (300 ms on/700 ms off) - The hardware fault alarm is expressed.
+   * All three LEDs, Long Flash On (700 ms on/300 ms off) - The end of service alarm is expressed.
+   * Flashing In Sequence from |Second LED|, through |Third LED| to |Fourth LED| (200 ms interval) - The self-test is triggered.
 
-         * All three LEDs, Short Flash On (300 ms on/700 ms off) - The hardware fault alarm is expressed.
-         * All three LEDs, Long Flash On (700 ms on/300 ms off) - The end of service alarm is expressed.
-         * Flashing In Sequence from **LED2**, through **LED3** to **LED4** (200 ms interval) - The self-test is triggered.
+First Button:
+   .. include:: /includes/matter/interface/main_button.txt
 
-      Button 1:
-         .. include:: /includes/matter_sample_button.txt
+Third Button:
+   Functions as the User Active Mode Trigger (UAT) button.
+   For more information about Intermittently Connected Devices (ICD) and User Active Mode Trigger, see the :ref:`ug_matter_device_low_power_icd` documentation section.
 
-      Button 3:
-         Functions as the User Active Mode Trigger (UAT) button.
-         For more information about Intermittently Connected Devices (ICD) and User Active Mode Trigger, see the :ref:`ug_matter_device_low_power_icd` documentation section.
-
-      .. include:: /includes/matter_segger_usb.txt
-
-   .. group-tab:: nRF54 DKs
-
-      LED 0:
-         .. include:: /includes/matter_sample_state_led.txt
-
-      LED 1:
-         Shows the state of the alarm.
-         The following states are possible:
-
-         * Even Flashing (300 ms on/300 ms off) - The smoke alarm is expressed.
-         * Even Flashing (500 ms on/500 ms off) - The Identify command of the Identify cluster is received on the endpoint ``1``.
-           The command's argument can be used to specify the duration of the effect.
-         * Flashing in combination with **LED2** and **LED3** when other alarms are triggered.
-
-      LED 2:
-         Shows the state of the alarm.
-         The following states are possible:
-
-         * Even Flashing (300 ms on/300 ms off) - The CO alarm is expressed.
-         * Flashing in combination with **LED1** and **LED3** when other alarms are triggered.
-
-      LED 3:
-         Shows the state of the alarm.
-         The following states are possible:
-
-         * Even Flashing (300 ms on/300 ms off) - The battery level low alarm is expressed.
-         * Flashing in combination with **LED1** and **LED2** when other alarms are triggered.
-
-      LED 1, LED 2 and LED 3 combined:
-         Shows the state of the alarm.
-         The following states are possible:
-
-         * All three LEDs, Short Flash On (300 ms on/700 ms off) - The hardware fault alarm is expressed.
-         * All three LEDs, Long Flash On (700 ms on/300 ms off) - The end of service alarm is expressed.
-         * Flashing In Sequence from **LED1**, through **LED2** to **LED3** (200 ms interval) - The self-test is triggered.
-
-      Button 0:
-         .. include:: /includes/matter_sample_button.txt
-
-      Button 2:
-         Functions as the User Active Mode Trigger (UAT) button.
-         For more information about Intermittently Connected Devices (ICD) and User Active Mode Trigger, see the :ref:`ug_matter_device_low_power_icd` documentation section.
-
-      .. include:: /includes/matter_segger_usb.txt
-
-NFC port with antenna attached:
-    Optionally used for obtaining the `Onboarding information`_ from the Matter accessory device to start the :ref:`commissioning procedure <matter_light_bulb_sample_remote_control_commissioning>`.
+.. include:: /includes/matter/interface/segger_usb.txt
+.. include:: /includes/matter/interface/nfc.txt
 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/matter/smoke_co_alarm`
+.. include:: /includes/matter/building_and_running/intro.txt
+.. include:: /includes/matter/building_and_running/select_configuration.txt
+.. include:: /includes/matter/building_and_running/commissioning.txt
 
-.. include:: /includes/build_and_run.txt
+|matter_ble_advertising_auto|
 
-.. |sample_or_app| replace:: sample
-.. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
-
-.. include:: /includes/ipc_radio_conf.txt
-
-See `Configuration`_ for information about building the sample with the DFU support.
-
-Selecting a custom configuration
-================================
-
-Before you start testing the application, you can select one of the :ref:`matter_smoke_co_alarm_custom_configs`.
-See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information how to select a configuration.
+.. include:: /includes/matter/building_and_running/onboarding.txt
 
 Testing
-=======
+*******
 
-After building the sample and programming it to your development kit, complete the following steps to test its basic features.
+.. |endpoint_name| replace:: **Smoke CO Alarm cluster**
+.. |endpoint_id| replace:: **1**
 
-.. note::
-   The following steps use the CHIP Tool controller as an example.
-   Visit the :ref:`test event triggers <ug_matter_test_event_triggers>` page to see the code values used for triggering specific alarms.
+.. include:: /includes/matter/testing/intro.txt
+.. include:: /includes/matter/testing/prerequisites.txt
+.. include:: /includes/matter/testing/prepare.txt
 
-.. tabs::
+Testing steps
+=============
 
-   .. group-tab:: nRF52 and nRF53 DKs
+#. Observe that |Second LED|, |Third LED| and |Fourth LED| are turned off, which means that the device does not express any alarm.
+#. Trigger the device self-test by invoking the following command:
 
-      #. |connect_kit|
-      #. |connect_terminal_ANSI|
-      #. If the device was not erased during the programming, press and hold **Button 1** until the factory reset takes place.
-      #. Commission the device to the Matter network.
-         See `Commissioning the device`_ for more information.
-      #. Observe that **LED 2**, **LED 3** and **LED 4** are turned off, which means that the device does not express any alarm.
-      #. Trigger the device self-test by invoking the following command with the *<node_id>* and *<endpoint_id>* replaced with values selected by you (for example, ``1`` and ``1``):
+   .. parsed-literal::
+      :class: highlight
 
-         .. code-block:: console
+      ./chip-tool smokecoalarm self-test-request <node_id> 1
 
-            ./chip-tool smokecoalarm self-test-request <node_id> <endpoint_id>
+   The |Second LED|, |Third LED| and |Fourth LED| will sequentially flash for 5 seconds.
 
-         The **LED2**, **LED3** and **LED4** will sequentially flash for 5 seconds.
+#. Test the Smoke alarm by invoking triggers from the General Diagnostics cluster.
+   Replace the *<test_event_enable_key>* and *<node_id>* arguments in the presented commands with values selected by you (for example, ``00112233445566778899AABBCCDDEEFF`` and ``1``):
+   Trigger the Smoke alarm by invoking the following command:
 
-      #. Test the Smoke alarm by invoking triggers from the General Diagnostics cluster.
-         Replace the *<test_event_enable_key>* and *<node_id>* arguments in the presented commands with values selected by you (for example, ``00112233445566778899AABBCCDDEEFF`` and ``1``):
-         Trigger the Smoke alarm by invoking the following command:
+   .. parsed-literal::
+      :class: highlight
 
-         .. code-block:: console
+      generaldiagnostics test-event-trigger hex:<test_event_enable_key> 0x005c00000000009c <node_id> 0
 
-            generaldiagnostics test-event-trigger hex:<test_event_enable_key> 0x005c00000000009c <node_id> 0
+   The |Second LED| will start blinking evenly with 300 ms interval.
 
-         The **LED2** will start blinking evenly with 300 ms interval.
+#. Trigger the CO alarm by invoking the following command with the *<test_event_enable_key>* and *<node_id>* replaced with the values you selected in the previous steps:
 
-      #. Trigger the CO alarm by invoking the following command with the *<test_event_enable_key>* and *<node_id>* replaced with the values you selected in the previous steps:
+   .. parsed-literal::
+      :class: highlight
 
-         .. code-block:: console
+      generaldiagnostics test-event-trigger hex:<test_event_enable_key> 0x005c00000000009d <node_id> 0
 
-            generaldiagnostics test-event-trigger hex:<test_event_enable_key> 0x005c00000000009d <node_id> 0
+   Nothing will change, because the CO alarm has lower priority than smoke alarm, so it will not be expressed.
 
-         Nothing will change, because the CO alarm has lower priority than smoke alarm, so it will not be expressed.
+#. Stop the Smoke alarm by invoking the following command with the *<test_event_enable_key>* and *<node_id>* replaced with the values you selected in the previous steps:
 
-      #. Stop the Smoke alarm by invoking the following command with the *<test_event_enable_key>* and *<node_id>* replaced with the values you selected in the previous steps:
+   .. parsed-literal::
+      :class: highlight
 
-         .. code-block:: console
+      generaldiagnostics test-event-trigger hex:<test_event_enable_key> 0x005c0000000000a0 <node_id> 0
 
-            generaldiagnostics test-event-trigger hex:<test_event_enable_key> 0x005c0000000000a0 <node_id> 0
+   The |Second LED| will be turned off and the |Third LED| will start blinking evenly with 300 ms interval, to express the CO alarm, as the next one in the order.
 
-         The **LED2** will be turned off and the **LED3** will start blinking evenly with 300 ms interval, to express the CO alarm, as the next one in the order.
+Factory reset
+=============
 
-   .. group-tab:: nRF54 DKs
-
-      #. |connect_kit|
-      #. |connect_terminal_ANSI|
-      #. If the device was not erased during the programming, press and hold **Button 0** until the factory reset takes place.
-      #. Commission the device to the Matter network.
-         See `Commissioning the device`_ for more information.
-      #. Observe that **LED 1**, **LED 2** and **LED 3** are turned off, which means that the device does not express any alarm.
-      #. Trigger the device self-test by invoking the following command with the *<node_id>* and *<endpoint_id>* replaced with values selected by you (for example, ``1`` and ``1``):
-
-         .. code-block:: console
-
-            ./chip-tool smokecoalarm self-test-request <node_id> <endpoint_id>
-
-         The **LED1**, **LED2** and **LED3** will sequentially flash for 5 seconds.
-
-      #. Test the Smoke alarm by invoking triggers from the General Diagnostics cluster.
-         Replace the *<test_event_enable_key>* and *<node_id>* arguments in the presented commands with values selected by you (for example, ``00112233445566778899AABBCCDDEEFF`` and ``1``):
-         Trigger the Smoke alarm by invoking the following command:
-
-         .. code-block:: console
-
-            generaldiagnostics test-event-trigger hex:<test_event_enable_key> 0x005c00000000009c <node_id> 0
-
-         The **LED1** will start blinking evenly with 300 ms interval.
-
-      #. Trigger the CO alarm by invoking the following command with the *<test_event_enable_key>* and *<node_id>* replaced with the values you selected in the previous steps:
-
-         .. code-block:: console
-
-            generaldiagnostics test-event-trigger hex:<test_event_enable_key> 0x005c00000000009d <node_id> 0
-
-         Nothing will change, because the CO alarm has lower priority than smoke alarm, so it will not be expressed.
-
-      #. Stop the Smoke alarm by invoking the following command with the *<test_event_enable_key>* and *<node_id>* replaced with the values you selected in the previous steps:
-
-         .. code-block:: console
-
-            generaldiagnostics test-event-trigger hex:<test_event_enable_key> 0x005c0000000000a0 <node_id> 0
-
-         The **LED1** will be turned off and the **LED2** will start blinking evenly with 300 ms interval, to express the CO alarm, as the next one in the order.
-
-.. _matter_smoke_co_alarm_sample_remote_control:
-
-Enabling remote control
-=======================
-
-Remote control allows you to control the Matter smoke CO alarm device from an IPv6 network.
-
-.. note::
-   |matter_unique_discriminator_note|
-
-`Commissioning the device`_ allows you to set up a testing environment and remotely control the sample over a Matter-enabled Thread network.
-
-.. _matter_smoke_co_alarm_sample_remote_control_commissioning:
-
-Commissioning the device
-------------------------
-
-.. include:: ../light_bulb/README.rst
-    :start-after: matter_light_bulb_sample_commissioning_start
-    :end-before: matter_light_bulb_sample_commissioning_end
-
-Before starting the commissioning procedure, the device must be made discoverable over Bluetooth LE.
-The device becomes discoverable automatically upon the device startup, but only for a predefined period of time (1 hour by default).
-If the Bluetooth LE advertising times out, enable it again.
-
-Onboarding information
-++++++++++++++++++++++
-
-When you start the commissioning procedure, the controller must get the onboarding information from the Matter accessory device.
-The onboarding information representation depends on your commissioner setup.
-
-For this sample, you can use one of the following :ref:`onboarding information formats <ug_matter_network_topologies_commissioning_onboarding_formats>` to provide the commissioner with the data payload that includes the device discriminator and the setup PIN code:
-
-  .. list-table:: Smoke CO alarm sample onboarding information
-     :header-rows: 1
-
-     * - QR Code
-       - QR Code Payload
-       - Manual pairing code
-     * - Scan the following QR code with the app for your ecosystem:
-
-         .. figure:: ../../../doc/nrf/images/matter_qr_code_smoke_co_alarm.png
-            :width: 200px
-            :alt: QR code for commissioning the smoke co alarm device
-
-       - MT:Y.K9042C00KA0648G00
-       - 34970112332
-
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_onboarding_start
-    :end-before: matter_door_lock_sample_onboarding_end
-
-|matter_cd_info_note_for_samples|
-
-Upgrading the device firmware
-=============================
-
-To upgrade the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial in the Matter documentation.
+|matter_factory_reset|
 
 Dependencies
 ************
 
-This sample uses the Matter library that includes the |NCS| platform integration layer:
-
-* `Matter`_
-
-In addition, it uses the following |NCS| components:
-
-* :ref:`dk_buttons_and_leds_readme`
-* :ref:`nfc_uri`
-* :ref:`lib_nfc_t2t`
-
-The sample depends on the following Zephyr libraries:
-
-* :ref:`zephyr:logging_api`
-* :ref:`zephyr:kernel_api`
+.. include:: /includes/matter/dependencies.txt

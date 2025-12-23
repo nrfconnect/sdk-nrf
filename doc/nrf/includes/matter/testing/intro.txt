@@ -1,0 +1,5 @@
+After building the |matter_type| and programming it to your development kit, complete the following steps to test its basic features.
+
+.. note::
+
+   |matter_unique_discriminator_note|

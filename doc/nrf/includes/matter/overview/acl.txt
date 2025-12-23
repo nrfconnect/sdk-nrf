@@ -1,0 +1,10 @@
+Access Control List
+-------------------
+
+.. toggle::
+
+   The Access Control List (ACL) is a list related to the Access Control cluster.
+   The list contains rules for managing and enforcing access control for a node's endpoints and their associated cluster instances.
+   In this |matter_type|'s case, this allows the lighting devices to receive messages from the light switch and run them.
+
+   For more details about ACLs, see the :doc:`matter:access-control-guide` in the Matter documentation.

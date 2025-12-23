@@ -1,0 +1,12 @@
+Binding
+-------
+
+.. toggle::
+
+   Binding refers to establishing a relationship between endpoints on the local and remote nodes.
+   With binding, local endpoints are pointed and bound to the corresponding remote endpoints.
+   Both must belong to the same cluster type.
+   Binding lets the local endpoint know which endpoints are the target for the client-generated actions on one or more remote nodes.
+
+   In this |matter_type|, the |matter_name| controls one or more bound devices, but does not know their remote endpoints (on remote nodes).
+   Using binding, the |matter_name| device updates its Binding cluster with all relevant information about the bound devices, such as their IPv6 address, node ID, and the IDs of the remote endpoints that contain the supported clusters, respectively.

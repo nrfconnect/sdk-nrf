@@ -1,0 +1,24 @@
+Remote testing in a network
+===========================
+
+By default, the Matter accessory device has no IPv6 network configured.
+You must pair it with the Matter controller over |Bluetoothsc| LE to get the configuration from the controller to use the device within a Thread or |WiFi| network.
+The controller must get the `Onboarding information`_ from the Matter accessory device and provision the device into the network.
+For details, see the `Commissioning the device`_ section.
+
+Remote control allows you to control the |matter_name| device from an IPv6 network.
+
+`Commissioning the device`_ allows you to set up a testing environment and remotely control the |matter_type| over a Matter-enabled Thread or Wi-Fi network.
+
+Commissioning the device
+========================
+
+To commission the device, see the instructions on the :ref:`ug_matter_gs_testing` page and complete the steps for the Matter over Thread or Matter over Wi-Fi development environment and the Matter controller you want to use.
+After choosing the environment configuration, the guide walks you through the following steps:
+
+* Configure the Thread Border Router (only for Matter over Thread communication).
+* Build and install the Matter controller.
+* Commission the device.
+* Send Matter commands that cover scenarios described in the `Testing`_ section.
+
+If you are new to Matter, the recommended approach is to use the :ref:`CHIP Tool for Linux or macOS <ug_matter_configuring_controller>`.

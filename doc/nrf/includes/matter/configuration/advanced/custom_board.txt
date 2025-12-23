@@ -1,6 +1,9 @@
+Custom board with Nordic SoC
+----------------------------
+
 .. toggle::
 
-   To prepare the sample to work with a custom board, complete the following steps:
+   To prepare the |matter_type| to work with a custom board, complete the following steps:
 
       1. Refer to the :ref:`create-your-board-directory` Zephyr guide and create your board directory.
       #. Modify the contents of the :file:`board.yaml` file according to the :ref:`board_description` user guide.

@@ -215,7 +215,7 @@ For secure operation, you need to ensure that the enable key is unique for all o
 To specify the enable key through the build system, enable the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option by setting it to ``y``.
 Then, set the :kconfig:option:`CONFIG_CHIP_DEVICE_ENABLE_KEY` Kconfig option to a 32-byte hexadecimal string value.
 
-If :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` is set to ``n``, you can follow the :doc:`matter:nrfconnect_factory_data_configuration` guide in the Matter documentation to generate the factory data set with the specific enable key value.
+If :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` is set to ``n``, follow the :ref:`ug_matter_device_factory_provisioning` guide in the Matter documentation to generate the factory data set with the specific key value.
 
 If you do not use the |NCS| Matter common module, you need to read the enable key value manually from the factory data set and provide it to the ``TestEventTrigger`` class.
 
@@ -347,7 +347,7 @@ To register a new test event trigger, follow these steps:
 
      /* Remember to check the CHIP_ERROR return code */
 
-   If the returning `CHIP_ERROR` code is equal to `CHIP_ERROR_NO_MEMORY`, you need to increase the :kconfig:option:`NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX` Kconfig option to the higher value.
+   If the returning ``CHIP_ERROR`` code is equal to ``CHIP_ERROR_NO_MEMORY``, you need to increase the value of the :option:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX_TRIGGERS_DELEGATES` Kconfig option.
 
    Here's an example to handle the ``0xFFFFFFFF00011234`` activation code, where 1234 is the event trigger value field:
 
@@ -378,7 +378,7 @@ Use the following example as a guide to register an existing event trigger handl
 
   /* Remember to check the CHIP_ERROR return code */
 
-If the returning ``CHIP_ERROR`` code is equal to ``CHIP_ERROR_NO_MEMORY``, you need to increase the :ref:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX_TRIGGERS_DELEGATES<CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX_TRIGGERS_DELEGATES>` Kconfig option to the higher value.
+If the returning ``CHIP_ERROR`` code is equal to ``CHIP_ERROR_NO_MEMORY``, you need to increase the value of the :option:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX_TRIGGERS_DELEGATES` Kconfig option.
 
 For example, you can register and use the ``OTATestEventTriggerHandler`` handler and trigger pre-defined Matter OTA DFU behaviors using the following code:
 
