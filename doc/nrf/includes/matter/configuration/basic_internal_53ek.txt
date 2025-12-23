@@ -1,0 +1,37 @@
+.. list-table:: |matter_name| build configurations
+   :widths: auto
+   :header-rows: 1
+
+   * - Configuration
+     - File name
+     - :makevar:`FILE_SUFFIX`
+     - Supported board
+     - Description
+   * - Debug (default)
+     - :file:`prj.conf`
+     - No suffix
+     - All from `Requirements`_
+     - Debug version of the application.
+
+       Enables additional features for verifying the application behavior, such as logs.
+   * - Release
+     - :file:`prj_release.conf`
+     - ``release``
+     - All from `Requirements`_
+     - Release version of the application.
+
+       Enables only the necessary application functionalities to optimize its performance.
+   * - Internal memory only
+     - ---
+     - ``internal``
+     - |matter_dks_internal|
+     - Debug version of the application with external flash disabled.
+
+       Enables the |matter_name| to work using internal memory only.
+   * - |matter_name| over Wi-Fi with nRF5340 DK and nRF7002 EK
+     - ---
+     - ``nrf70ek``
+     - nRF5340 DK with the nRF7002 EK shield attached
+     - Debug version of the |matter_type| with Matter over Wi-Fi enabled.
+
+       Enables the |matter_name| to work with Wi-Fi on nRF5340 DK.

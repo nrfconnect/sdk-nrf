@@ -1,0 +1,23 @@
+.. LEDs (anonymous hyperlinks to avoid cross-document conflicts)
+.. |First LED| replace:: `First LED <#buttons-and-leds-map>`__
+.. |Second LED| replace:: `Second LED <#buttons-and-leds-map>`__
+.. |Third LED| replace:: `Third LED <#buttons-and-leds-map>`__
+.. |Fourth LED| replace:: `Fourth LED <#buttons-and-leds-map>`__
+
+.. Buttons
+.. |First Button| replace:: `First Button <#buttons-and-leds-map>`__
+.. |Second Button| replace:: `Second Button <#buttons-and-leds-map>`__
+.. |Third Button| replace:: `Third Button <#buttons-and-leds-map>`__
+.. |Fourth Button| replace:: `Fourth Button <#buttons-and-leds-map>`__
+
+.. |matter_dfu| replace:: To upgrade the device firmware, complete the steps listed for the selected method in the :doc:`matter:nrfconnect_examples_software_update` tutorial in the Matter documentation.
+.. |matter_ble_advertising_auto| replace:: Before starting the commissioning procedure, make sure that the device is discoverable over Bluetooth LE.
+                                           The device becomes discoverable automatically upon the device startup, but only for a predefined period of time (one hour by default).
+                                           If the Bluetooth LE advertising times out, enable it again.
+
+.. |matter_ble_advertising_manual| replace:: Before starting the commissioning procedure, you need to enable the Bluetooth LE advertising on your device to make it discoverable.
+                                             To do it, press the |First Button|.
+                                             The device becomes discoverable automatically upon the device startup, but only for a predefined period of time (one hour by default).
+                                             If the Bluetooth LE advertising times out, enable it again.
+
+.. |matter_factory_reset| replace:: To restore the device settings and state to its factory set press the |First Button| for six seconds to initiate the factory reset of the device.

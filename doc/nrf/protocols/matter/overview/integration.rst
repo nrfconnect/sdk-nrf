@@ -107,6 +107,8 @@ For this design, the Wi-Fi driver on the application core communicates with the 
 Switchable Matter over Wi-Fi and Matter over Thread
 ===================================================
 
+.. |Third Button| replace:: **Button 3** on the nRF5340 DK or **Button 2** on the nRF54LM20 DK
+
 In this design, the Matter stack, the OpenThread stack, the Wi-Fi stack, and the Bluetooth LE stack run on a single SoC.
 
 .. include:: ../../../../../samples/matter/lock/README.rst

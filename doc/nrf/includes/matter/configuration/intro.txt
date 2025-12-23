@@ -1,0 +1,5 @@
+This section describes the configuration options for the |matter_type|.
+
+|config|
+
+.. include:: /includes/sample_custom_config_intro.txt

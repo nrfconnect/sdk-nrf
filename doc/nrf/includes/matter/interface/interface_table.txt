@@ -1,0 +1,45 @@
+Buttons and LEDs map
+====================
+
+This section explains the names of **Buttons** and **LEDs** visible on a board depending on the development kits that are used in this |matter_type| user guide.
+
+.. list-table:: Buttons and LEDs map
+   :widths: auto
+   :header-rows: 1
+
+   * - DK family
+     - First LED
+     - Second LED
+     - Third LED
+     - Fourth LED
+     - First Button
+     - Second Button
+     - Third Button
+     - Fourth Button
+   * - nRF52 and nRF53 DKs
+     - **LED 1**
+     - **LED 2**
+     - **LED 3**
+     - **LED 4**
+     - **Button 1**
+     - **Button 2**
+     - **Button 3**
+     - **Button 4**
+   * - nRF54 DKs
+     - **LED 0**
+     - **LED 1**
+     - **LED 2**
+     - **LED 3**
+     - **Button 0**
+     - **Button 1**
+     - **Button 2**
+     - **Button 3**
+   * - nRF70 DKs
+     - **LED 1**
+     - **LED 2**
+     - Not available
+     - Not available
+     - **Button 1**
+     - **Button 2**
+     - Not available
+     - Not available

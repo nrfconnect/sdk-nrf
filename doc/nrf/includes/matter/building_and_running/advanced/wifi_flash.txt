@@ -1,0 +1,32 @@
+Flashing the Matter over Wi-Fi sample variant
+---------------------------------------------
+
+.. toggle::
+
+   In the Matter over Wi-Fi variant of this sample, the :ref:`portion of the application code related to the nRF70 Series Wi-Fi firmware <ug_nrf70_developing_fw_patch_ext_flash>` is stored in the external memory.
+   When you program the sample onto your development kit, the build process automatically includes the Wi-Fi firmware patch and programs it into the external memory.
+
+   By default, using the ``west flash`` command erases the entire external flash memory before writing the new Wi-Fi firmware patch.
+   This full-chip erase ensures that the patch is written to a clean memory area, but it can significantly increase the programming time - sometimes taking several minutes, especially if the external flash is large.
+
+   To optimize the programming process and reduce the time required, you can instruct ``west flash`` to erase only the specific memory ranges that will be overwritten by the Wi-Fi firmware patch.
+   This is done by adding the ``--ext-erase-mode=ranges`` argument to the command.
+   With this option, only the necessary sections of external memory are erased, making the programming process faster.
+
+   For example, to program the sample and minimize the erase time, use the following command:
+
+   .. code-block:: console
+
+      west flash --ext-erase-mode=ranges
+
+   You can also observe a longer programming process when using the :guilabel:`Erase and Flash to Board` option in the |nRFVSC|.
+   To speed up this process, use the :guilabel:`Flash` button instead of :guilabel:`Erase and Flash to Board` in the `Actions View`_.
+
+   To disable storing the Wi-Fi firmware patch in the external memory, complete the following steps:
+
+   1. Remove the Wi-Fi firmware patch partition from the partition list.
+   #. Set the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option to ``n``.
+   #. Set the :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` Kconfig option to ``n``.
+   #. Set the :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option to ``2``.
+
+   To learn more about the Wi-Fi firmware patch, see the :ref:`nrf70_fw_patch_update_adding_partitions` user guide.

@@ -1,0 +1,2 @@
+This section describes advanced configuration options that you can apply in this |matter_type|.
+Use the ``click to show`` toggle to expand the content.

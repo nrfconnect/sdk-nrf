@@ -1,0 +1,23 @@
+.. list-table:: |matter_name| build configurations
+   :widths: auto
+   :header-rows: 1
+
+   * - Configuration
+     - File name
+     - :makevar:`FILE_SUFFIX`
+     - Supported board
+     - Description
+   * - Debug (default)
+     - :file:`prj.conf`
+     - No suffix
+     - All from `Requirements`_
+     - Debug version of the application.
+
+       Enables additional features for verifying the application behavior, such as logs.
+   * - Release
+     - :file:`prj_release.conf`
+     - ``release``
+     - All from `Requirements`_
+     - Release version of the application.
+
+       Enables only the necessary application functionalities to optimize its performance.

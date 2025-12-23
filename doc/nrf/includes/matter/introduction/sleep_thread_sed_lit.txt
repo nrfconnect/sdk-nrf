@@ -1,0 +1,5 @@
+This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.15.4 Thread network and works as a :ref:`Minimal Thread Device (MTD) in a Sleepy End Device (SED) variant <thread_ot_device_types>`.
+Additionally, it works as Matter Intermittently Connected Device (ICD) with a :ref:`Short Idle Time (SIT) and Long Idle Time (LIT) <ug_matter_device_low_power_icd_sit_lit>`
+
+You can use this |matter_type| as a reference for creating your own application.
+See the :ref:`ug_matter_creating_accessory` page for an overview of the process you need to follow.

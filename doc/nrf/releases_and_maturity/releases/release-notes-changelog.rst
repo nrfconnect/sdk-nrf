@@ -308,6 +308,8 @@ Keys samples
 Matter samples
 --------------
 
+* Refactored documentation for all Matter samples and applications to make it more consistent and easier to maintain and read.
+
 * :ref:`matter_manufacturer_specific_sample`:
 
   * Added support for the ``NRF_MATTER_CLUSTER_INIT`` macro.

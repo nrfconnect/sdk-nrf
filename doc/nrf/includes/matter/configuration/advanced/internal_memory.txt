@@ -1,0 +1,26 @@
+Internal memory only
+--------------------
+
+.. toggle::
+
+    For the |matter_dks_internal|, you can configure the |matter_type| to use only the internal RRAM for storage.
+    It applies to the DFU as well, which means that both the currently running firmware and the new firmware to be updated will be stored within the device's internal RRAM memory.
+
+    The DFU image fits in the internal flash memory if you use :ref:`MCUboot image compression <ug_matter_device_bootloader_image_compression>`.
+
+    This configuration is disabled by default for the Matter |matter_name| |matter_type|.
+    To enable it, set the ``FILE_SUFFIX`` CMake option to ``internal``.
+
+    The following is an example command to build the |matter_type| for the nRF54LM20 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal RRAM only:
+
+    .. code-block:: console
+
+        west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal
+
+    To build the |matter_type| for the same purpose in the ``release`` configuration, use the following command and replace <sample_name> with the actual |matter_type| name:
+
+    .. code-block:: console
+
+        west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal -D<sample_name>_EXTRA_CONF_FILE=prj_release.conf
+
+    In this case, the size of the MCUboot secondary partition used for storing the new application image is approximately 30-40% smaller than it would be when using a configuration with external flash memory support.
