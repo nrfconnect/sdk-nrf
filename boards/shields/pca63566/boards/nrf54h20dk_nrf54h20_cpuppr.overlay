@@ -6,5 +6,5 @@
 #include "nrf54h20dk_nrf54h20_common.dtsi"
 
 &gpiote130 {
-	owned-channels = <7>;
+	owned-channels = <6>;
 };
