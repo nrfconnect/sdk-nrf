@@ -232,17 +232,17 @@ struct cracen_aead_operation {
 	enum cracen_context_state context_state;
 	bool ad_finished;
 	struct sxaead ctx;
-#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS)
+#if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS)
 #if defined(PSA_NEED_CRACEN_CCM_AES)
 	cracen_sw_ccm_context_t sw_ccm_ctx;
 #endif /* PSA_NEED_CRACEN_CCM_AES */
-#endif /* CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS */
+#endif /* PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS */
 
-#if defined(CONFIG_PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
+#if defined(PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
 #if defined(PSA_NEED_CRACEN_GCM_AES)
 	cracen_sw_gcm_context_t sw_gcm_ctx;
 #endif /* PSA_NEED_CRACEN_GCM_AES */
-#endif /* CONFIG_PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS */
+#endif /* PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS */
 };
 typedef struct cracen_aead_operation cracen_aead_operation_t;
 

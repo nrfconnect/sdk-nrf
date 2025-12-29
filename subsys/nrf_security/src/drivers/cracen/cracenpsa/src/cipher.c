@@ -23,7 +23,7 @@
 
 #include "cracen_psa_primitives.h"
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
+#if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 #include <cracen_sw_aes_ctr.h>
 #endif
 
@@ -288,7 +288,7 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 	cracen_cipher_operation_t operation = {0};
 	*output_length = 0;
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
+#if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
 		if (output_size < input_length) {
@@ -364,7 +364,7 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 	const size_t iv_size = (alg == PSA_ALG_STREAM_CIPHER) ? 12 : SX_BLKCIPHER_IV_SZ;
 	*output_length = 0;
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
+#if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
 		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, input,
@@ -480,7 +480,7 @@ psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
 					 const uint8_t *key_buffer, size_t key_buffer_size,
 					 psa_algorithm_t alg)
 {
-#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
+#if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
 		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size);
@@ -496,7 +496,7 @@ psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
 					 psa_algorithm_t alg)
 {
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
+#if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
 		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size);
@@ -511,7 +511,7 @@ psa_status_t cracen_cipher_set_iv(cracen_cipher_operation_t *operation, const ui
 {
 	__ASSERT_NO_MSG(iv != NULL);
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
+#if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (operation->alg == PSA_ALG_CTR) {
 		return cracen_sw_aes_ctr_set_iv(operation, iv, iv_length);
@@ -554,7 +554,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 	__ASSERT_NO_MSG(input != NULL || input_length == 0);
 	__ASSERT_NO_MSG(output_length != NULL);
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
+#if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (operation->alg == PSA_ALG_CTR) {
 		return cracen_sw_aes_ctr_update(operation, input, input_length, output, output_size,
@@ -712,7 +712,7 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 {
 	__ASSERT_NO_MSG(output_length != NULL);
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
+#if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (operation->alg == PSA_ALG_CTR) {
 		return cracen_sw_aes_ctr_finish(operation, output_length);
@@ -859,7 +859,7 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 
 psa_status_t cracen_cipher_abort(cracen_cipher_operation_t *operation)
 {
-#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
+#if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (operation->alg == PSA_ALG_CTR) {
 		/* Software AES CTR implementation doesn't allocate hardware resources to free */
