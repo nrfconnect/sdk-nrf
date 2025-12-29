@@ -1,0 +1,58 @@
+name: Matter Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'v*-branch'
+
+    paths:
+      - 'samples/matter/**'
+      - 'applications/matter_bridge/**'
+      - 'applications/matter_weather_station/**'
+
+permissions:
+  contents: read
+
+jobs:
+  matter-validation:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          path: ncs/nrf
+
+      - name: Set up Python
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
+        with:
+          python-version: 3.12
+          cache: pip
+          cache-dependency-path: ncs/nrf/scripts/requirements.txt
+
+      - name: Install packages
+        working-directory: ncs/nrf
+        run: |
+          sudo apt update
+          sudo apt-get install -y wget python3-pip git
+          pip install -r scripts/requirements.txt
+
+      - name: Checkout Matter repository
+        working-directory: ncs
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          git clone https://github.com/nrfconnect/sdk-connectedhomeip modules/lib/matter
+          cd modules/lib/matter
+          if [ "$BASE_REF" = "main" ]; then
+            MATTER_BRANCH="master"
+          else
+            MATTER_BRANCH="$BASE_REF"
+          fi
+          echo "Checking out Matter branch: $MATTER_BRANCH"
+          git checkout "$MATTER_BRANCH"
+
+      - name: validate Matter samples and documentation
+        working-directory: ncs
+        run: |
+          python nrf/scripts/matter/matter_sample_checker/matter_sample_checker.py --samples-zap-yaml nrf/samples/matter/common/src/zap_samples.yml --base nrf

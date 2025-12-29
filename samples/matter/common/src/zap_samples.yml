@@ -7,13 +7,13 @@
 # Base dir related to ZEPHYR_BASE
 - base_dir: ../nrf
 
-# applications
-- name: matter_bridge
-  zap_file: applications/matter_bridge/src/default_zap/bridge.zap
-- name: matter_bridge_on_off_plug
-  zap_file: applications/matter_bridge/snippets/onoff_plug/bridge.zap
-- name: matter_weather_station
-  zap_file: applications/matter_weather_station/src/default_zap/weather-station.zap
+# # applications
+# - name: matter_bridge
+#   zap_file: applications/matter_bridge/src/default_zap/bridge.zap
+# - name: matter_bridge_on_off_plug
+#   zap_file: applications/matter_bridge/snippets/onoff_plug/bridge.zap
+# - name: matter_weather_station
+#   zap_file: applications/matter_weather_station/src/default_zap/weather-station.zap
 
 # light bulb
 - name: light_bulb

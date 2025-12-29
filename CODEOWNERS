@@ -727,6 +727,7 @@
 /scripts/tests/                           @nrfconnect/ncs-eris @fundakol
 /scripts/vale/                            @francescoser
 /scripts/esb_sniffer/                     @nrfconnect/ncs-si-xcake
+/scripts/matter/                          @nrfconnect/ncs-matter
 
 /scripts/docker/*.rst                     @nrfconnect/ncs-doc-leads
 /scripts/hid_configurator/*.rst           @nrfconnect/ncs-si-xcake-doc
