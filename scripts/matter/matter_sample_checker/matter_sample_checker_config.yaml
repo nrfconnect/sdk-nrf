@@ -1,0 +1,226 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+# NCS Matter Sample Checker Configuration
+# This file contains all the patterns, file lists, and rules used by the checker
+
+# Exclusion patterns for various checks
+exclusions:
+  # Directories to exclude from all checks
+  exclude_dirs:
+    - "build"
+    - "build*"
+  # File extensions to include in template comparison
+  exclude_file_extensions:
+    - "*.yaml"
+    - "*.yml"
+    - "*.conf"
+    - "*.overlay"
+
+  # Specific files to exclude from template comparison
+  # (sample-specific files that are expected to differ)
+  exclude_files:
+    - "prj.conf"
+    - "prj_release.conf"
+    - "sample.yaml"
+
+  application:
+    matter_weather_station:
+      - "File Structure"
+      - Configuration consistency
+
+    matter_bridge:
+      - "File Structure"
+      - "Compare with template sample"
+
+###################################################
+# Documentation checking configuration
+###################################################
+documentation:
+  # Files to check for documentation issues
+  index:
+    path: "doc/nrf/protocols/matter/index.rst"
+    matter_pattern: "Matter specification version (\\d+\\.\\d+\\.\\d+) \
+      and.*Matter SDK version.*?(\\d+\\.\\d+\\.\\d+\\.\\d+)"
+    line_pattern: "|NCS| |release| allows you"
+  requirements:
+    path: "doc/nrf/protocols/matter/getting_started/hw_requirements.rst"
+  link_txt:
+    path: "doc/nrf/links.txt"
+
+###################################################
+# Expected file structure for Matter samples
+###################################################
+file_structure:
+  required_files:
+    - "CMakeLists.txt"
+    - "prj.conf"
+    - "sample.yaml"
+    - "README.rst"
+    - "Kconfig"
+    - "Kconfig.sysbuild"
+    - "sysbuild.conf"
+    - "src/main.cpp"
+    - "src/app_task.cpp"
+    - "src/app_task.h"
+    - "VERSION"
+
+  required_directories:
+    - "src"
+    - "sysbuild"
+    - "sysbuild/mcuboot"
+
+###################################################
+# ZAP files configuration
+###################################################
+zap_files:
+  zap_directory: "src/default_zap"
+  required_extensions:
+    - ".zap"
+    - ".matter"
+  generated_directory: "src/default_zap/zap-generated"
+  generated_files:
+    - "access.h"
+    - "callback-stub.cpp"
+    - "gen_config.h"
+    - "endpoint_config.h"
+    - "IMClusterCommandHandler.cpp"
+    - "PluginApplicationCallbacks.h"
+
+###################################################
+# License checking configuration
+###################################################
+license:
+  # File extensions to check for copyright
+  source_extensions:
+    - ".cpp"
+    - ".c"
+    - ".h"
+    - ".hpp"
+    - "Kconfig"
+    - "Kconfig.sysbuild"
+    - ".conf"
+    - ".overlay"
+    - ".txt"
+
+  # Copyright pattern to search for
+  copyright_pattern: "Copyright \\(c\\) (\\d{4})"
+
+  # Disallowed copyright patterns - files with these patterns will be silently skipped
+  disallowed_copyright_patterns:
+    - "Copyright \\(c\\) \\d{4} Project CHIP Authors"
+
+  # Exclude directories from license checking
+  exclude_dirs:
+    - "build"
+    - "build*"
+    - "default_zap"
+    - "**/default_zap/**"
+
+###################################################
+# Copy-paste error detection configuration
+###################################################
+copy_paste_detection:
+  # Files to check for copy-paste errors
+  files_to_check:
+    - "prj.conf"
+    - "prj_release.conf"
+    - "sample.yaml"
+    - "README.rst"
+    - "CMakeLists.txt"
+    - "Kconfig"
+    - "Kconfig.sysbuild"
+    - "sysbuild.conf"
+    - "sysbuild_internal.conf"
+    - "src/main.cpp"
+    - "src/app_task.cpp"
+    - "src/app_task.h"
+    - "src/chip_project_config.h"
+
+  # Patterns to skip - legitimate technical contexts where words from other samples are OK
+  skip_patterns:
+    - ":ref:"
+    - ".. include::"
+    - ":start-after:"
+    - ":end-before:"
+    - '#.*sample'
+    - '//.*sample'
+    - '/*.*sample'
+    - '*.*sample.*/'
+    - 'template.*sample'
+    - 'sample.*template'
+
+  # Allowed names for the specific sample
+  skip_names:
+    matter_bridge:
+      - "temperature sensor"
+      - "temperature_sensor"
+      - "light switch"
+    light_bulb:
+      - "light switch"
+
+  # Minimum word length for copy-paste detection
+  min_word_length: 4
+
+###################################################
+# Configuration validation patterns
+###################################################
+validation:
+  # Required configurations for Matter samples
+  required_prj_configs:
+    - "CONFIG_CHIP_PROJECT_CONFIG"
+    - "CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH"
+    - "CONFIG_CHIP_FACTORY_DATA"
+    - "CONFIG_CHIP_FACTORY_DATA_BUILD"
+    - "CONFIG_CHIP_DEVICE_PRODUCT_ID"
+    - "CONFIG_BT_DEVICE_NAME"
+    - "CONFIG_STD_CPP17"
+    - "CONFIG_CHIP"
+    - "CONFIG_CHIP_DEVICE_PRODUCT_NAME"
+
+  # Required sysbuild configurations
+  required_sysbuild_configs:
+    - "SB_CONFIG_MATTER=y"
+
+  # Key configurations that should match between files
+  consistency_checks:
+    matter_configs:
+      - "CONFIG_CHIP_DEVICE_TYPE"
+      - "CONFIG_CHIP_DEVICE_PRODUCT_NAME"
+
+###################################################
+# Comment style validation configuration
+###################################################
+comment_style:
+  # File extensions to check for comment style
+  file_extensions:
+    - ".h"
+    - ".cpp"
+    - ".c"
+    - ".overlay"
+
+  # Directories to exclude from comment style checks
+  exclude_dirs:
+    - "build"
+    - "build*"
+    - "default_zap"
+    - "**/default_zap/**"
+    - "snippets"
+
+  # Required comment style (block_comment for /* */, line_comment for //)
+  required_style: "block_comment"
+
+###################################################
+# Sample YAML configuration
+###################################################
+sample_yaml:
+  # Required tags in the sample.yaml file, at least one of them must be present
+  required_tags:
+    - "ci_samples_matter"
+    - "ci_applications_matter"
+
+  # Pattern to match the sample name in the sample.yaml file
+  # (matches both "sample.matter.*" and "applications.matter*")
+  sample_name_pattern: "(sample\\.matter\\..*|applications\\.matter.*)"

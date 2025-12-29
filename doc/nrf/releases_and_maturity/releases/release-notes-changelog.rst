@@ -471,7 +471,9 @@ See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:R
 Scripts
 =======
 
-|no_changes_yet_note|
+This section provides detailed lists of changes by :ref:`script <scripts>`.
+
+* Added the :ref:`matter_sample_checker` script to check the consistency of Matter samples in the |NCS|.
 
 Integrations
 ============
