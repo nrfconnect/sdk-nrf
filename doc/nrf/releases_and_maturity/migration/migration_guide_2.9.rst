@@ -47,4 +47,4 @@ Matter
         Previously, the :ref:`ug_matter_device_watchdog_pause_mode` was enabled by default for all Matter samples.
         Now, this mode is disabled and all Matter watchdog sources must be fed within the specified time window.
 
-        To re-enable the pause mode, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP<CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP>` Kconfig option to ``y``.
+        To re-enable the pause mode, set the :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP` Kconfig option to ``y``.

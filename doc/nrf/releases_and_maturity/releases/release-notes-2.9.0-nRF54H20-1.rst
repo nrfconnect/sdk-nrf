@@ -236,7 +236,7 @@ Matter bridge
 
   * Support for the ``UniqueID`` attribute in the Bridged Device Basic Information cluster.
   * Version 2 of the bridged device data scheme containing ``UniqueID``.
-  * Kconfig options :ref:`CONFIG_BRIDGE_MIGRATE_PRE_2_7_0 <CONFIG_BRIDGE_MIGRATE_PRE_2_7_0>` and :ref:`CONFIG_BRIDGE_MIGRATE_VERSION_1 <CONFIG_BRIDGE_MIGRATE_VERSION_1>` to enable migration from older data schemes.
+  * Kconfig options :option:`CONFIG_BRIDGE_MIGRATE_PRE_2_7_0` and :option:`CONFIG_BRIDGE_MIGRATE_VERSION_1` to enable migration from older data schemes.
 
 nRF Desktop
 -----------
@@ -354,7 +354,7 @@ Matter samples
   * All Matter samples to enable the ZMS file subsystem in all devices that contain MRAM, such as the nRF54H Series devices.
 
 * Disabled pausing Matter watchdog while CPU is in idle state in all Matter samples.
-  To enable it, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP<CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP>` Kconfig option to ``y``.
+  To enable it, set the :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP` Kconfig option to ``y``.
 
 * :ref:`matter_smoke_co_alarm_sample` sample:
 

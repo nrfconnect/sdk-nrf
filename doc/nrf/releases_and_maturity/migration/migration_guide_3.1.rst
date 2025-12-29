@@ -112,10 +112,10 @@ Matter
 
    * For the Matter samples and applications:
 
-      * The :ref:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH <CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH>` Kconfig option has been introduced.
+      * The :option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option has been introduced.
         Previously, the path to the ZAP file was deduced based on hardcoded locations.
-        Now, the location is configured using the :ref:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH <CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH>` Kconfig option.
-        This change requires you to update your application :file:`prj.conf` file by setting the :ref:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH <CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH>` option to point to the location of you ZAP file.
+        Now, the location is configured using the :option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
+        This change requires you to update your application :file:`prj.conf` file by setting the :option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` option to point to the location of you ZAP file.
 
    * For the :ref:`Matter light bulb <matter_light_bulb_sample>` sample:
 
@@ -215,7 +215,7 @@ nRF Desktop
 .. toggle::
 
    * The :ref:`nrf_desktop_hid_state` has been updated to use the :ref:`nrf_desktop_hid_keymap` to map an application-specific key ID to a HID report ID and HID usage ID pair.
-     The ``CONFIG_DESKTOP_HID_STATE_HID_KEYMAP_DEF_PATH`` Kconfig option has been removed and needs to be replaced with the :ref:`CONFIG_DESKTOP_HID_KEYMAP_DEF_PATH <config_desktop_app_options>` Kconfig option.
+     The ``CONFIG_DESKTOP_HID_STATE_HID_KEYMAP_DEF_PATH`` Kconfig option has been removed and needs to be replaced with the :option:`CONFIG_DESKTOP_HID_KEYMAP_DEF_PATH` Kconfig option.
      The format of the configuration file remains the same.
 
 Libraries
