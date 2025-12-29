@@ -53,7 +53,8 @@ CHIP_ERROR PersistentPercent::Load()
 		mStored = mValue;
 		return CHIP_NO_ERROR;
 	}
-	// Not found, store default
+
+	/* Not found, store default value */
 	return Store(mValue);
 }
 

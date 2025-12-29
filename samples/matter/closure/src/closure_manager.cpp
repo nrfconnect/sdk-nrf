@@ -66,7 +66,7 @@ CurrentPositionEnum ExactPos2Enum(uint16_t currPositionExact)
 	}
 	return CurrentPositionEnum::kPartiallyOpened;
 }
-} // namespace
+} /* namespace */
 
 ClosureManager::ClosureManager(IPhysicalDevice &device, chip::EndpointId closureEndpoint)
 	: mPhysicalDevice(device), mClosureControlEndpoint(closureEndpoint), mClosureEndpoint(closureEndpoint)
