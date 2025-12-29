@@ -706,8 +706,8 @@ Matter samples
 
   * The Bluetooth Low Energy variant of the Soft Device Controller (SDC) to use the Peripheral-only role in all Matter samples.
   * The API of the ``ncs_configure_data_model()`` CMake method.
-    It does not use ``ZAP_FILE`` argument anymore, but creates path to ZAP file based on :ref:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH <CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH>` Kconfig option.
-  * By renaming the ``CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH`` Kconfig option to :ref:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH <CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH>` and changed its purpose to configure the absolute path under which the ZAP file is located.
+    It does not use ``ZAP_FILE`` argument anymore, but creates path to ZAP file based on :option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
+  * By renaming the ``CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH`` Kconfig option to :option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` and changed its purpose to configure the absolute path under which the ZAP file is located.
   * By enabling Matter persistent subscriptions by default for all Matter samples.
   * By changing the default values of the following ICD parameters:
 

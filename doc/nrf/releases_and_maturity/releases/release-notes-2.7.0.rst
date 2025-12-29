@@ -554,8 +554,8 @@ Matter Bridge
 
 * Added:
 
-  * The :ref:`CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES <CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES>` Kconfig option to set the maximum number of scanned Bluetooth LE devices.
-  * The :ref:`CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS <CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS>` Kconfig option to set the scan timeout.
+  * The :option:`CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES` Kconfig option to set the maximum number of scanned Bluetooth LE devices.
+  * The :option:`CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS` Kconfig option to set the scan timeout.
 
 * Updated the implementation of the persistent storage to leverage ``NonSecure``-prefixed methods from the common Persistent Storage module.
 * Changed data structure of information stored in the persistent storage to use fewer settings keys.

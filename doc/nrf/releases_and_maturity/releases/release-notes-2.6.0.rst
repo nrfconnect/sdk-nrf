@@ -308,10 +308,10 @@ Matter
   * Migration of the Node Operational Key Pair (NOK) from the generic Matter persistent storage to the PSA ITS secure storage.
     All existing NOKs for all Matter fabrics will be migrated to the PSA ITS secure storage at boot.
     After the migration, generic Matter persistent storage entries in the settings storage will be removed and are no longer available.
-    To enable operational keys migration, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS<CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS>` Kconfig option to ``y``.
+    To enable operational keys migration, set the :option:`CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS` Kconfig option to ``y``.
 
     In |NCS| Matter samples, the default reaction to migration failure is a factory reset of the device.
-    To change the default reaction, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE<CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE>` Kconfig option to ``n``.
+    To change the default reaction, set the :option:`CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE` Kconfig option to ``n``.
   * Experimental support for building Matter samples and applications with Link Time Optimization (LTO).
     To enable it, set the :kconfig:option:`CONFIG_LTO` and :kconfig:option:`CONFIG_ISR_TABLES_LOCAL_DECLARATION` Kconfig options to ``y``.
   * Documentation page about :ref:`ug_matter_gs_matter_api`.

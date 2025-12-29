@@ -869,12 +869,12 @@ KRKNWK-19300: The Matter weather station application has NVS size inconsistent w
 .. rst-class:: v2-7-0
 
 KRKNWK-19199: Matter Lock and Matter Template samples cannot be built in the release configuration for the nRF54H20 platform
-  In the DTS overlay file for the ``nrf54h20dk/nrf54h20/cpuapp`` target, the watchdog configuration is missing, whereas in the release configuration, the :ref:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG<CONFIG_NCS_SAMPLE_MATTER_WATCHDOG>` Kconfig option is set to ``y``.
+  In the DTS overlay file for the ``nrf54h20dk/nrf54h20/cpuapp`` target, the watchdog configuration is missing, whereas in the release configuration, the :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG` Kconfig option is set to ``y``.
   Building samples with :makevar:`FILE_SUFFIX` variable set to ``release`` will fail for the ``nrf54h20dk/nrf54h20/cpuapp`` target.
 
   **Affected platforms:** nRF54H20
 
-  **Workaround:** While building the Matter Lock or Matter Template sample with the :makevar:`FILE_SUFFIX` variable set to ``release``, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG<CONFIG_NCS_SAMPLE_MATTER_WATCHDOG>` Kconfig option to ``n``.
+  **Workaround:** While building the Matter Lock or Matter Template sample with the :makevar:`FILE_SUFFIX` variable set to ``release``, set the :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG` Kconfig option to ``n``.
 
 .. rst-class:: v2-7-0
 

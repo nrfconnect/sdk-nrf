@@ -27,10 +27,10 @@ This approach eliminates the need to directly call the ``Feed()`` method in your
 A time window specifies the period within which the feeding signal must be sent to each watchdog channel to reset the timer and prevent the device from rebooting.
 If the feeding signal is sent after the time window has elapsed, it does not prevent the device from rebooting.
 
-To enable the Matter watchdog feature in a Matter sample, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG<CONFIG_NCS_SAMPLE_MATTER_WATCHDOG>` Kconfig option to ``y``.
+To enable the Matter watchdog feature in a Matter sample, set the :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG` Kconfig option to ``y``.
 The feature is enabled by default for the release build type in all Matter samples and applications.
 
-To set the timeout for the watchdog timer, configure the :ref:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_TIMEOUT<CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_TIMEOUT>` with a value in milliseconds.
+To set the timeout for the watchdog timer, configure the :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_TIMEOUT` with a value in milliseconds.
 By default, the timeout is set to 10 minutes.
 
 .. note::
@@ -51,8 +51,8 @@ If pause mode is enabled, the device will only reboot if the task feeding the wa
 Pause mode is less accurate and may cause the device to reboot later than expected, but it allows feeding the watchdog only when the CPU is active.
 Non-pause mode requires periodic feeding to avoid a timeout, impacting power consumption as the CPU must wake up periodically.
 
-To enable pause mode while CPU is in the idle state, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP<CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP>` Kconfig option to ``y``.
-To enable pause mode during debugging, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_ON_DEBUG<CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_ON_DEBUG>` Kconfig option to ``y``.
+To enable pause mode while CPU is in the idle state, set the :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP` Kconfig option to ``y``.
+To enable pause mode during debugging, set the :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_ON_DEBUG` Kconfig option to ``y``.
 
 By default, Matter samples enable the pause mode only during debugging.
 
@@ -273,7 +273,7 @@ Default Matter watchdog implementation
 
 In the Matter common module, there is a default implementation of two watchdog sources that are automatically created for the release build version of a Matter sample.
 One source is dedicated to monitoring the Main thread, and the other is dedicated to monitoring the Matter thread.
-If at least one of the threads is blocked for a longer time than the value specified in the :ref:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_TIMEOUT<CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_TIMEOUT>` Kconfig option, a reboot will occur.
+If at least one of the threads is blocked for a longer time than the value specified in the :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_TIMEOUT` Kconfig option, a reboot will occur.
 The ``Nrf::Watchdog::Enable()``, and ``InstallSource(WatchdogSource &source)`` functions are called automatically.
 
-To disable the default Matter watchdog implementation, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT<CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT>` Kconfig option to ``n``.
+To disable the default Matter watchdog implementation, set the :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT` Kconfig option to ``n``.

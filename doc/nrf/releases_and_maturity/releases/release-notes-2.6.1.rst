@@ -122,8 +122,8 @@ Matter Bridge
 
 * Added:
 
-  * The :ref:`CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES <CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES>` Kconfig option to set the maximum number of scanned Bluetooth LE devices.
-  * The :ref:`CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS <CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS>` Kconfig option to set the scan timeout.
+  * The :option:`CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES` Kconfig option to set the maximum number of scanned Bluetooth LE devices.
+  * The :option:`CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS` Kconfig option to set the scan timeout.
 
 * Fixed an issue where the recovery mechanism for Bluetooth LE connections might not work correctly.
 
