@@ -160,6 +160,10 @@ copy_paste_detection:
       - "light switch"
     light_bulb:
       - "light switch"
+    thermostat:
+      - "temperature sensor"
+    light_switch:
+      - "light bulb"
 
   # Minimum word length for copy-paste detection
   min_word_length: 4

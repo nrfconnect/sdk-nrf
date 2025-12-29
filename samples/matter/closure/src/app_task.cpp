@@ -40,7 +40,7 @@ constexpr chip::EndpointId kClosureEndpoint = 1;
 
 /* TODO: Add a custom identify delegate to handle the custom identify stop behavior according to the closure state */
 Nrf::Matter::IdentifyCluster sIdentifyCluster(kClosureEndpoint);
-} // namespace
+} /* namespace */
 
 AppTask::AppTask() : mPhysicalDevice(&sPhysicalIndicatorPwmDevice), mClosureManager(mPhysicalDevice, kClosureEndpoint)
 {

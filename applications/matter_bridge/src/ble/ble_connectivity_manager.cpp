@@ -481,7 +481,7 @@ CHIP_ERROR BLEConnectivityManager::Init(const bt_uuid **serviceUuids, uint8_t se
 	bt_scan_cb_register(&scan_cb);
 
 	return PrepareFilterForUuid();
-} // namespace Nrf
+} /* namespace Nrf */
 
 CHIP_ERROR BLEConnectivityManager::PrepareFilterForUuid()
 {
