@@ -1576,6 +1576,12 @@ int unicast_client_start(uint8_t cig_index)
 		return ret;
 	}
 
+	if (unicast_group == NULL) {
+		LOG_WRN("No unicast group to start");
+		k_sem_give(&sem_cap_procedure_proceed);
+		return -EIO;
+	}
+
 	/* Start all unicast_servers with valid endpoints */
 	struct bt_cap_unicast_audio_start_stream_param
 		cap_stream_params[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT +
@@ -1663,6 +1669,12 @@ int unicast_client_stop(uint8_t cig_index)
 	if (cig_index >= CONFIG_BT_ISO_MAX_CIG) {
 		LOG_ERR("Trying to stop CIG %d out of %d", cig_index, CONFIG_BT_ISO_MAX_CIG);
 		return -EINVAL;
+	}
+
+	if (unicast_group == NULL) {
+		LOG_WRN("No unicast group to stop");
+		k_sem_give(&sem_cap_procedure_proceed);
+		return -EIO;
 	}
 
 	param.streams = streams;
