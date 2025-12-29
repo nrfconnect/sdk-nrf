@@ -67,13 +67,13 @@ Measuring memory usage
 ======================
 
 You can obtain the current memory statistics from the device using Kconfig options and UART shell commands.
-Set the :ref:`CONFIG_CHIP_MEMORY_PROFILING` Kconfig option to ``y``.
+Set the :option:`CONFIG_CHIP_MEMORY_PROFILING` Kconfig option to ``y``.
 This activates all the other necessary Kconfig options and enables all UART shell commands for measuring memory usage.
 Alternatively, you can enable each option separately.
 
 The Kconfig option enables the following functionalities on the Matter device:
 
-- :ref:`ug_matter_configuring_settings_shell` by setting the :ref:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL<CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL>` Kconfig option to ``y``.
+- :ref:`ug_matter_configuring_settings_shell` by setting the :option:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL` Kconfig option to ``y``.
 - :doc:`Command-line interface <matter:nrfconnect_examples_cli>` by setting the :kconfig:option:`CONFIG_CHIP_LIB_SHELL` Kconfig option to ``y``.
 - Zephyr Kernel commands by setting the :kconfig:option:`CONFIG_KERNEL_SHELL` Kconfig option to ``y``.
 - Zephyr Settings shell by setting the :kconfig:option:`CONFIG_SETTINGS_SHELL` Kconfig option to ``y``.

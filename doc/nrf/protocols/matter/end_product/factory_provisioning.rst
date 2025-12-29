@@ -140,7 +140,7 @@ The following table lists the parameters of a factory data set:
 | ``rd_uid``             | rotating device ID unique ID         | <16, 32> B           | byte string  | optional    | The unique ID for rotating device ID, which consists of a randomly-generated 128-bit (or longer) octet string.                                                                                                              |
 |                        |                                      |                      |              |             | The rotating device ID is an optional identifier that is used for the :ref:`ug_matter_configuring_ffs` purposes.                                                                                                            |
 |                        |                                      |                      |              |             | This parameter should be protected against reading or writing over-the-air after initial introduction into the device, and stay fixed during the lifetime of the device.                                                    |
-|                        |                                      |                      |              |             | When building an application with the Factory Data support, the :ref:`CONFIG_CHIP_FACTORY_DATA_ROTATING_DEVICE_UID_MAX_LEN` must be set with the length of the actual ``rd_uid`` stored in the Factory Data partition.      |
+|                        |                                      |                      |              |             | When building an application with the Factory Data support, the :option:`CONFIG_CHIP_FACTORY_DATA_ROTATING_DEVICE_UID_MAX_LEN` must be set with the length of the actual ``rd_uid`` stored in the Factory Data partition.   |
 +------------------------+--------------------------------------+----------------------+--------------+-------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | ``enable_key``         | enable key                           | 16 B                 | byte string  | optional    | The enable key is a 16-byte hexadecimal string value that triggers manufacturer-specific action while invoking the :ref:`ug_matter_test_event_triggers`.                                                                    |
 |                        |                                      |                      |              |             | This value is used during Certification Tests, and should not be present on production devices.                                                                                                                             |
@@ -977,10 +977,10 @@ To override the inherited classes, complete the following steps:
 #. Disable building both the default and the nRF Connect implementations of factory data providers to start using your own implementation of factory data parser and provider.
    This can be done in one of the following ways:
 
-   * Set the :ref:`CONFIG_FACTORY_DATA_CUSTOM_BACKEND` Kconfig option to ``y`` in the :file:`prj.conf` file.
+   * Set the :option:`CONFIG_CHIP_FACTORY_DATA_CUSTOM_BACKEND` Kconfig option to ``y`` in the :file:`prj.conf` file.
    * Build an example with the following option (replace ``<build_target>`` with your board name, for example ``nrf52840dk_nrf52840``):
 
      .. parsed-literal::
         :class: highlight
 
-        $ west build -b <build_target> -- -DCONFIG_FACTORY_DATA_CUSTOM_BACKEND=y
+        $ west build -b <build_target> -- -DCONFIG_CHIP_FACTORY_DATA_CUSTOM_BACKEND=y

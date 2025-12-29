@@ -248,7 +248,7 @@ When performing the power measurements on various development kits, the LEDs can
   This results in measurement results being increased by an additional, small leakage current that appears if an LED is turned on.
   To measure the current consumption of the nRF54L15 or nRF54LM20 SoC without including development kit components, such as LEDs, it is recommended to disable them.
 
-To disable LEDs in the Matter samples and applications, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_LEDS <CONFIG_NCS_SAMPLE_MATTER_LEDS>` Kconfig option to ``n``.
+To disable LEDs in the Matter samples and applications, set the :option:`CONFIG_NCS_SAMPLE_MATTER_LEDS` Kconfig option to ``n``.
 
 .. _ug_matter_enable_pm_module:
 

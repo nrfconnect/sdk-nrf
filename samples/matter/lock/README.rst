@@ -74,8 +74,8 @@ Door lock credentials
    The PIN code assigned by the Matter controller is stored persistently, which means that it can survive a device reboot.
    Depending on the IPv6 network technology in use, the following storage backends are supported by default to store the PIN code credential:
 
-   * Matter over Thread - secure storage backend (:ref:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND<CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND>` Kconfig option enabled by default).
-   * Matter over Wi-Fi - non-secure storage backend (:ref:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND<CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND>` Kconfig option enabled by default).
+   * Matter over Thread - secure storage backend (:option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND` Kconfig option enabled by default).
+   * Matter over Wi-Fi - non-secure storage backend (:option:`CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND` Kconfig option enabled by default).
 
    You can learn more about the |NCS| Matter persistent storage module and its configuration in the :ref:`ug_matter_persistent_storage` section of the :ref:`ug_matter_device_advanced_kconfigs` documentation.
 
@@ -597,7 +597,7 @@ Testing Bluetooth LE with Nordic UART Service
       Some of the steps depend on which :ref:`configuration <matter_lock_sample_custom_configs>` the sample was built with.
 
    #. Install `nRF Toolbox`_ on your Android (Android 11 or newer) or iOS (iOS 16.1 or newer) smartphone.
-   #. Build the door lock application for Matter over Thread with the :ref:`CONFIG_CHIP_NUS` set to ``y``.
+   #. Build the door lock application for Matter over Thread with the :option:`CONFIG_CHIP_NUS` set to ``y``.
       For example, if you build from command line for the ``nrf52840dk/nrf52840``, use the following command:
 
       .. code-block:: console

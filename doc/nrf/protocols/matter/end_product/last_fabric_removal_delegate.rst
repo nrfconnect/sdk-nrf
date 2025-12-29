@@ -72,7 +72,7 @@ You can define multiple delegations, but you need to disable the predefined one.
 Disabling the predefined reaction
 ---------------------------------
 
-To disable the predefined reaction to the last fabric removal, set the :kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE` Kconfig option to ``y``.
+To disable the predefined reaction to the last fabric removal, set the :option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE` Kconfig option to ``y``.
 
 Implementing the custom Fabric Table delegation
 -----------------------------------------------
