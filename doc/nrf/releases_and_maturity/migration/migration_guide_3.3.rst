@@ -29,7 +29,30 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-|no_changes_yet_note|
+Matter
+------
+
+.. toggle::
+
+   * Changed the factory data build system to use sysbuild only instead of building it within the application image.
+     
+     The :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD` Kconfig option is now read only and you cannot change its value.
+
+     Matter factory data generation is now controlled by the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option.
+     This option is enabled by default in all |NCS| Matter samples and applications.
+
+     To disable automatic generation of the factory data set, set the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option to ``n``.
+
+     The :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option is set automatically to ``y`` if the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option is enabled.
+     In this case, the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option is read only and you cannot disable it.
+
+     If you want to manually generate the factory data set, flash it to the device and use it, set the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option to ``n`` and enable the factory data support by setting the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option to ``y``.
+
+     For example:
+
+     .. code-block:: console
+
+        west build -b nrf52840dk_nrf52840 -- -DSB_CONFIG_MATTER_FACTORY_DATA_GENERATE=n -DCONFIG_CHIP_FACTORY_DATA=y
 
 Libraries
 =========

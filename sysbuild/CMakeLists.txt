@@ -832,6 +832,13 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     set(network_images)
   endif()
 
+  if(SB_CONFIG_MATTER_FACTORY_DATA_GENERATE)
+    set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP_FACTORY_DATA y)
+    set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP_FACTORY_DATA_BUILD y)
+  else()
+    set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP_FACTORY_DATA_BUILD n)
+  endif()
+
   if(SB_CONFIG_CRACEN_MICROCODE_LOAD_ONCE)
     if(SB_CONFIG_CRACEN_MICROCODE_LOAD_B0)
       set_config_bool(b0 CONFIG_CRACEN_LOAD_MICROCODE y)
@@ -900,9 +907,9 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/fast_pair/hex.cmake)
   endif()
 
+  # Generate Matter factory data by using the script from the Matter project
   if(SB_CONFIG_MATTER_FACTORY_DATA_GENERATE)
-    include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/generate_factory_data_sysbuild.cmake)
-    nrfconnect_generate_factory_data()
+    include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/generate_factory_data.cmake)
   endif()
 
   # Sign extra DFU images added via dfu_extra_add_binary()

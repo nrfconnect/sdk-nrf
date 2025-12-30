@@ -9,10 +9,11 @@ menuconfig MATTER
 if MATTER
 
 config MATTER_FACTORY_DATA_GENERATE
-	bool "Create matter factory data"
-	help
-	  Generate Matter factory data set and the HEX file for the sample during the building
-	  process.
+    bool "Create Matter factory data"
+    help
+      Enable Matter factory data generation at sysbuild time.
+      This generates factory data hex files without building a separate Zephyr image,
+      using device tree information from the main application.
 
 config MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE
 	bool "Merge generated factory data with merged.hex output"

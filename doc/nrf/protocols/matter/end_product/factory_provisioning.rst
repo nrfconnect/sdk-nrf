@@ -258,13 +258,20 @@ The ``appearance`` field in the factory data set describes the device's visible 
 Enabling factory data support
 *****************************
 
-By default, the factory data support is disabled in all nRF Connect examples and the nRF Connect device uses predefined parameters from the Matter core, which you should not change.
-To start using factory data stored in the flash memory and the ``Factory Data Provider`` from the nRF Connect platform, build an example with the following option (replace ``<build_target>`` with your board name, for example, ``nrf52840dk_nrf52840``):
+By default, the factory data support is enabled in all |NCS| samples and applications and the device uses predefined parameters from the Matter core.
+The build system automatically generates the factory data set from the device confiugration and includes it in the final firmware binary.
+This process is controlled by sysbuild.
 
-.. parsed-literal::
-   :class: highlight
+To disable automatic generation of the factory data set, set the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option to ``n`` in the example's :file:`sysbuild.conf` file.
+However, if you want to manually generate the factory data set, flash it to the device and only enable the factory data support enable the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option to ``y``.
 
-   west build -b <build_target> -- -DCONFIG_CHIP_FACTORY_DATA=y
+For example, to disable automatic generation of the factory data set and enable factory data support on the ``nrf54l15dk/nrf54l15/cpuapp`` target use the following command:
+
+.. code-block:: console
+
+   west build -b nrf54l15dk/nrf54l15/cpuapp -- -DSB_CONFIG_MATTER_FACTORY_DATA_GENERATE=n -DCONFIG_CHIP_FACTORY_DATA=y
+
+Note that without data stored in the factory data partition, the device will not be able to read all required parameters during startup and will return an error.
 
 .. _ug_matter_device_factory_provisioning_generating_factory_data:
 
@@ -655,7 +662,6 @@ For example, the build command for the nRF52840 DK could look like this:
    :class: highlight
 
    $ west build -b nrf52840dk_nrf52840 -- \
-   -DCONFIG_CHIP_FACTORY_DATA=y \
    -DSB_CONFIG_MATTER_FACTORY_DATA_GENERATE=y \
    -DCONFIG_CHIP_FACTORY_DATA_GENERATE_ONBOARDING_CODES=y
 
@@ -787,7 +793,7 @@ To enable generating the factory data set automatically, go to the example's dir
 .. parsed-literal::
    :class: highlight
 
-   $ west build -b nrf52840dk_nrf52840 -- -DCONFIG_CHIP_FACTORY_DATA=y -DSB_CONFIG_MATTER_FACTORY_DATA_GENERATE=y
+   $ west build -b nrf52840dk_nrf52840 -- -DSB_CONFIG_MATTER_FACTORY_DATA_GENERATE=y
 
 Alternatively, you can also add the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE=y` Kconfig setting to the example's :file:`sysbuild.conf` file.
 
@@ -886,15 +892,27 @@ Use the following command:
 .. note::
    For more information about how to use the ``nrfutil device`` utility, see `nRF Util`_.
 
+To work with the factory data set, you need to enable the factory data support by setting the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option to ``y``.
+
 Another way to program the factory data to a device is to use the nRF Connect platform build system described in :ref:`ug_matter_device_factory_provisioning_building_example_with_factory_data`, and build an example with the additional :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE` Kconfig option set to ``y``:
 
 .. parsed-literal::
    :class: highlight
 
    $ west build -b nrf52840dk_nrf52840 -- \
-   -DCONFIG_CHIP_FACTORY_DATA=y \
+   -DSB_CONFIG_MATTER_FACTORY_DATA_GENERATE=y
+
+This command automatically merges the factory data set with the final firmware binary.
+If you want to only generate the factory data set without merging it with the final firmware binary, set the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE` Kconfig option to ``n``:
+
+For example:
+
+.. parsed-literal::
+   :class: highlight
+
+   $ west build -b nrf52840dk_nrf52840 -- \
    -DSB_CONFIG_MATTER_FACTORY_DATA_GENERATE=y \
-   -DSB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE=y
+   -DSB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE=n
 
 You can also build an example with auto-generation of new CD, DAC and PAI certificates.
 The newly generated certificates will be added to factory data set automatically.
@@ -904,9 +922,7 @@ To generate new certificates disable using default certificates by building an e
    :class: highlight
 
    $ west build -b nrf52840dk_nrf52840 -- \
-   -DCONFIG_CHIP_FACTORY_DATA=y \
    -DSB_CONFIG_MATTER_FACTORY_DATA_GENERATE=y \
-   -DSB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE=y \
    -DCONFIG_CHIP_FACTORY_DATA_USE_DEFAULT_CERTS=n
 
 .. note::

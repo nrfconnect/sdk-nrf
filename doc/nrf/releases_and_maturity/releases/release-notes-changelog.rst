@@ -155,6 +155,8 @@ Matter
 ------
 
 * Updated the :ref:`matter_test_event_triggers_default_test_event_triggers` section with the new Closure Control cluster test event triggers.
+* Changed the factory data build system to use sysbuild only instead of building it within the application image.
+  To learn more about the change, see the :ref:`_migration_3.3`.
 
 Matter fork
 +++++++++++
