@@ -124,7 +124,8 @@ Security
 Protocols
 =========
 
-|no_changes_yet_note|
+This section provides detailed lists of changes by :ref:`protocol <protocols>`.
+See `Samples`_ for lists of changes for the protocol-related samples.
 
 Bluetooth® LE
 -------------
@@ -143,8 +144,6 @@ DECT NR+
 
 Enhanced ShockBurst (ESB)
 -------------------------
-
-|no_changes_yet_note|
 
 * Fixed invalid radio configuration for legacy ESB protocol.
 
@@ -180,6 +179,8 @@ Wi-Fi®
 
 Applications
 ============
+
+This section provides detailed lists of changes by :ref:`application <applications>`.
 
 Connectivity bridge
 -------------------
@@ -286,7 +287,7 @@ Gazell samples
 |no_changes_yet_note|
 
 |ISE| samples
---------------
+-------------
 
 |no_changes_yet_note|
 
@@ -492,8 +493,6 @@ Edge Impulse integration
 
 Memfault integration
 --------------------
-
-|no_changes_yet_note|
 
 * Added:
 
