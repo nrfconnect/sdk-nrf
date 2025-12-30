@@ -99,6 +99,11 @@
 #define CRACEN_WPA3_SAE_CONFIRM_SIZE		(CRACEN_WPA3_SAE_SEND_CONFIRM_SIZE + \
 						 PSA_HASH_LENGTH(PSA_ALG_SHA_256))
 
+/** 4-bit Shoup's table.
+ *  The size is defined as 2^4.
+ */
+#define CRACEN_AES_GCM_HTABLE_SIZE 16
+
 enum cipher_operation {
 	CRACEN_DECRYPT,
 	CRACEN_ENCRYPT
@@ -205,7 +210,8 @@ struct cracen_sw_ccm_context_s {
 typedef struct cracen_sw_ccm_context_s cracen_sw_ccm_context_t;
 
 struct cracen_sw_gcm_context_s {
-	uint8_t h[SX_BLKCIPHER_AES_BLK_SZ]; /* Initial H value */
+	/* Precalculated HTable */
+	uint8_t h_table[CRACEN_AES_GCM_HTABLE_SIZE][SX_BLKCIPHER_AES_BLK_SZ];
 	uint8_t ghash_block[SX_BLKCIPHER_AES_BLK_SZ]; /* GHASH calculation result */
 	uint8_t ctr_block[SX_BLKCIPHER_AES_BLK_SZ]; /* Counter block for CTR mode */
 	uint8_t keystream[SX_BLKCIPHER_AES_BLK_SZ]; /* Generated keystream */
