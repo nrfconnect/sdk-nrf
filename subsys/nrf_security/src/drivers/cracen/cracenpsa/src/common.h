@@ -174,6 +174,16 @@ psa_status_t rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit, size
 void cracen_xorbytes(uint8_t *a, const uint8_t *b, size_t sz);
 
 /**
+ * @brief XOR two byte buffers and store result in result buffer
+ *
+ * @param[out] r Result buffer of size sz
+ * @param[in]  a First buffer of size sz
+ * @param[in]  b Second buffer of size sz
+ * @param[in]  sz Size of the buffers
+ */
+void cracen_xorbuffers(uint8_t *r, const uint8_t *a, const uint8_t *b, size_t sz);
+
+/**
  * @brief Loads key buffer and attributes.
  *
  * @return PSA status code.

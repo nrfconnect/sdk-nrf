@@ -2,6 +2,14 @@
  * Copyright (c) 2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * Spec: http://csrc.nist.gov/publications/nistpubs/800-38D/SP-800-38D.pdf
+ *
+ * See also [MGV]:
+ * https://csrc.nist.rip/groups/ST/toolkit/BCM/documents/proposedmodes/gcm/gcm-revised-spec.pdf
+ *
+ * We use the algorithm described as Shoup's method with 4-bit tables in
+ * [MGV] 4.1, pp. 12-13, to enhance speed without using too much memory.
  */
 
 #include <cracen/mem_helpers.h>
@@ -33,6 +41,27 @@
 
 /* Compute Q (length field size) from nonce length: Q = 16 - nonce_len */
 #define GCM_Q_LEN_FROM_NONCE(nonce_len) (SX_BLKCIPHER_AES_BLK_SZ - (nonce_len))
+
+/** R is the element whose leftmost eight bits are 11100001,
+ *  and whose rightmost 120 bits are all zeros
+ */
+#define GCM_R_VALUE			0xE1
+
+#define GCM_SHOUP_TABLE_SIZE		16
+
+#define GCM_BSWAP16(value)		((value & 0x00FF) << 8) | \
+					((value & 0xFF00) >> 8)
+
+/*
+ * Shoup's method for multiplication use this table with last4[x] = x times P^128
+ * where x and last4[x] are seen as elements of GF(2^128)
+ */
+static const uint16_t shoup_last4[GCM_SHOUP_TABLE_SIZE] = {
+	0x0000, 0x1c20, 0x3840, 0x2460,
+	0x7080, 0x6ca0, 0x48c0, 0x54e0,
+	0xe100, 0xfd20, 0xd940, 0xc560,
+	0x9180, 0x8da0, 0xa9c0, 0xb5e0
+};
 
 static bool is_nonce_length_valid(size_t nonce_length)
 {
@@ -68,37 +97,103 @@ static void encode_big_endian_length(uint8_t *buffer, size_t buffer_size, size_t
 	}
 }
 
-static void rshift_block(uint8_t *block)
+static inline void gcm_gen_table_rightshift(uint8_t *y, const uint8_t *x)
 {
-	uint8_t result[SX_BLKCIPHER_AES_BLK_SZ];
-	cracen_be_rshift(block, 1, result, SX_BLKCIPHER_AES_BLK_SZ);
-	memcpy(block, result, SX_BLKCIPHER_AES_BLK_SZ);
+	const uint8_t r_value[SX_BLKCIPHER_AES_BLK_SZ] = {GCM_R_VALUE};
+	const uint8_t zero[SX_BLKCIPHER_AES_BLK_SZ] = {};
+	uint8_t xor_value[SX_BLKCIPHER_AES_BLK_SZ];
+	bool msb;
+
+	/** if MSB(X) == 0
+	 *	Y <- rightshift(X)
+	 *  else
+	 *	Y <- rightshift(X) XOR R
+	 */
+	msb = x[SX_BLKCIPHER_AES_BLK_SZ - 1] & 0x01;
+	cracen_be_rshift(x, 1, y, SX_BLKCIPHER_AES_BLK_SZ);
+	constant_select_bin(msb, r_value, zero, xor_value, SX_BLKCIPHER_AES_BLK_SZ);
+	cracen_xorbytes(y, xor_value, SX_BLKCIPHER_AES_BLK_SZ);
 }
 
-/* Multiplication operation on blocks in GF(2^128) */
-static void multiply_blocks_gf(const uint8_t *block_x, const uint8_t *block_y,
-			       uint8_t *block_product)
+/*
+ * From MbedTLS:
+ * Precompute small multiples of H, that is set
+ *      HH[i] || HL[i] = H times i,
+ * where i is seen as a field element as in [MGV], ie high-order bits
+ * correspond to low powers of P. The result is stored in the same way, that
+ * is the high-order bit of HH corresponds to P^0 and the low-order bit of HL
+ * corresponds to P^127.
+ */
+static void gcm_gen_table(cracen_aead_operation_t *operation, uint8_t *h)
 {
-	const uint8_t r[SX_BLKCIPHER_AES_BLK_SZ] = {0xE1};
-	uint8_t v[SX_BLKCIPHER_AES_BLK_SZ] = {};
+	cracen_sw_gcm_context_t *gcm_ctx = &operation->sw_gcm_ctx;
 
-	safe_memzero(block_product, SX_BLKCIPHER_AES_BLK_SZ);
-	memcpy(v, block_y, SX_BLKCIPHER_AES_BLK_SZ);
+	for (size_t i = 0; i < SX_BLKCIPHER_AES_BLK_SZ; i++) {
+		/* M[128] <- H */
+		gcm_ctx->h_table[CRACEN_AES_GCM_HTABLE_SIZE / 2][i] = h[i];
 
-	for (size_t byte = 0; byte < SX_BLKCIPHER_AES_BLK_SZ; byte++) {
-		for (size_t bit = 0; bit < PSA_BYTES_TO_BITS(sizeof(uint8_t)); bit++) {
-			if (block_x[byte] & (1 << (7 - bit))) {
-				cracen_xorbytes(block_product, v, SX_BLKCIPHER_AES_BLK_SZ);
-			}
+		/* 0 corresponds to 0 in GF(2^128) */
+		gcm_ctx->h_table[0][i] = 0;
+	}
 
-			if (v[SX_BLKCIPHER_AES_BLK_SZ - 1] & 0x01) {
-				rshift_block(v);
-				cracen_xorbytes(v, r, SX_BLKCIPHER_AES_BLK_SZ);
-			} else {
-				rshift_block(v);
-			}
+	/* i <- 64 */
+	for (size_t i = CRACEN_AES_GCM_HTABLE_SIZE / 4; i > 0; i >>= 1) {
+		/* M[i] <- M[2*i] * P */
+		gcm_gen_table_rightshift(gcm_ctx->h_table[i], gcm_ctx->h_table[i*2]);
+	}
+
+	for (size_t i = 2; i < CRACEN_AES_GCM_HTABLE_SIZE; i <<= 1) {
+		for (size_t j = 1; j < i; j++) {
+			cracen_xorbuffers(gcm_ctx->h_table[i+j],
+					  gcm_ctx->h_table[i],
+					  gcm_ctx->h_table[j],
+					  SX_BLKCIPHER_AES_BLK_SZ);
 		}
 	}
+
+	safe_memzero(gcm_ctx->h_table, SX_BLKCIPHER_AES_BLK_SZ);
+}
+
+static void h_table_xor(const uint8_t *table_entry, const uint8_t *in, uint8_t *out)
+{
+	uint8_t rem;
+	uint8_t tmp_prod[SX_BLKCIPHER_AES_BLK_SZ] = {};
+	uint16_t shoup_last4_be;
+
+	rem = (uint8_t) in[SX_BLKCIPHER_AES_BLK_SZ - 1] & 0xf;
+	cracen_be_rshift(in, 4, tmp_prod, SX_BLKCIPHER_AES_BLK_SZ);
+	shoup_last4_be = GCM_BSWAP16(shoup_last4[rem]);
+	cracen_xorbytes(tmp_prod, (uint8_t *)&shoup_last4_be, sizeof(shoup_last4_be));
+	cracen_xorbuffers(out, tmp_prod, table_entry, SX_BLKCIPHER_AES_BLK_SZ);
+}
+
+/** Multiplication operation on blocks in GF(2^128)
+ *  using 4-bit Shoup's table
+ *
+ * Algorithm is described in [MGV] 4.1.
+ */
+static void multiply_blocks_gf(cracen_aead_operation_t *operation, const uint8_t *block_x,
+			       uint8_t *block_product)
+{
+	cracen_sw_gcm_context_t *gcm_ctx = &operation->sw_gcm_ctx;
+	uint8_t lo;
+	uint8_t hi;
+	uint8_t result[SX_BLKCIPHER_AES_BLK_SZ] = {};
+
+	lo = block_x[SX_BLKCIPHER_AES_BLK_SZ - 1] & 0xf;
+	hi = (block_x[SX_BLKCIPHER_AES_BLK_SZ - 1] >> 4) & 0xf;
+
+	h_table_xor((uint8_t *) gcm_ctx->h_table[hi], gcm_ctx->h_table[lo], result);
+
+	for (size_t i = SX_BLKCIPHER_AES_BLK_SZ - 1; i > 0; i--) {
+		lo = block_x[i - 1] & 0xf;
+		hi = (block_x[i - 1] >> 4) & 0xf;
+
+		h_table_xor((uint8_t *) gcm_ctx->h_table[lo], result, result);
+		h_table_xor((uint8_t *) gcm_ctx->h_table[hi], result, result);
+	}
+
+	memcpy(block_product, result, SX_BLKCIPHER_AES_BLK_SZ);
 }
 
 /** GHASH_H(X1 || X2 || ... || Xm) = Ym
@@ -109,7 +204,6 @@ static void calc_gcm_ghash(cracen_aead_operation_t *operation, const uint8_t *in
 			   size_t input_len)
 {
 	cracen_sw_gcm_context_t *gcm_ctx = &operation->sw_gcm_ctx;
-	uint8_t product[SX_BLKCIPHER_AES_BLK_SZ] = {};
 
 	for (size_t i = 0; i < input_len; i++) {
 		operation->unprocessed_input[operation->unprocessed_input_bytes++] = input[i];
@@ -119,12 +213,10 @@ static void calc_gcm_ghash(cracen_aead_operation_t *operation, const uint8_t *in
 			 */
 			cracen_xorbytes(gcm_ctx->ghash_block, operation->unprocessed_input,
 					SX_BLKCIPHER_AES_BLK_SZ);
-			multiply_blocks_gf(gcm_ctx->h, gcm_ctx->ghash_block, product);
-			memcpy(gcm_ctx->ghash_block, product, SX_BLKCIPHER_AES_BLK_SZ);
+			multiply_blocks_gf(operation, gcm_ctx->ghash_block, gcm_ctx->ghash_block);
 			operation->unprocessed_input_bytes = 0;
 		}
 	}
-	safe_memzero(product, sizeof(product));
 }
 
 static psa_status_t setup(cracen_aead_operation_t *operation, enum cipher_operation dir,
@@ -160,13 +252,18 @@ static psa_status_t initialize_gcm_h(cracen_aead_operation_t *operation,
 {
 	cracen_sw_gcm_context_t *gcm_ctx = &operation->sw_gcm_ctx;
 	const uint8_t zero[SX_BLKCIPHER_AES_BLK_SZ] = {};
+	uint8_t h[SX_BLKCIPHER_AES_BLK_SZ] = {};
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
 	if (gcm_ctx->ghash_initialized) {
 		return PSA_SUCCESS;
 	}
-	status = cracen_aes_primitive(cipher, &operation->keyref, zero, gcm_ctx->h);
-	gcm_ctx->ghash_initialized = status == PSA_SUCCESS;
+	status = cracen_aes_primitive(cipher, &operation->keyref, zero, h);
+
+	if (status == PSA_SUCCESS) {
+		gcm_gen_table(operation, h);
+		gcm_ctx->ghash_initialized = true;
+	}
 	return status;
 }
 
