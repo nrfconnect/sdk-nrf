@@ -1,0 +1,26 @@
+.. rst-class:: numbered-step
+
+Commission to Matter network
+----------------------------
+
+To commission the device to the Matter network complete the following steps:
+
+.. tabs::
+
+   .. group-tab:: Matter over Thread
+
+      .. include:: /includes/matter/testing/thread/commission.txt
+
+   .. group-tab:: Matter over Wi-Fi
+
+      1. Collect the following parameters of your Wi-Fi access point:
+
+         * *<ssid>* - SSID of your Wi-Fi network.
+         * *<password>* - A password to your Wi-Fi network associated with the SSID.
+
+      #. Run the following command and fill the *<ssid>* and *<password>* arguments:
+
+         .. parsed-literal::
+            :class: highlight
+
+            chip-tool pairing ble-wifi |node_id| *<ssid>* *<password>* 20202021 3840

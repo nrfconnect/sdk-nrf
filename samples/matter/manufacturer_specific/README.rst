@@ -8,6 +8,8 @@
 .. |matter_qr_code_payload| replace:: MT:K.K9042C00KA0648G00
 .. |matter_pairing_code| replace:: 34970112332
 .. |matter_qr_code_image| image:: /images/matter_qr_code_template_sample.png
+                          :width: 200px
+                          :alt: QR code for commissioning the manufacturer-specific device
 
 .. include:: /includes/matter/shortcuts.txt
 
@@ -110,12 +112,8 @@ Building and running
 ********************
 
 .. include:: /includes/matter/building_and_running/intro.txt
-.. include:: /includes/matter/building_and_running/select_configuration.txt
-.. include:: /includes/matter/building_and_running/commissioning.txt
 
 |matter_ble_advertising_auto|
-
-.. include:: /includes/matter/building_and_running/onboarding.txt
 
 Advanced building options
 =========================
@@ -127,83 +125,183 @@ Advanced building options
 Testing
 *******
 
-.. |endpoint_name| replace:: **NordicDevkit cluster**
-.. |endpoint_id| replace:: **1**
-
 .. include:: /includes/matter/testing/intro.txt
-.. include:: /includes/matter/testing/prerequisites.txt
-.. include:: /includes/matter/testing/prepare.txt
 
-Testing steps
-=============
+Testing with CHIP Tool
+======================
 
-#. Run the chip-tool in the interactive mode:
+Complete the following steps to test the |matter_name| device using CHIP Tool:
 
-   .. code-block:: console
+.. |node_id| replace:: 1
 
-      chip-tool interactive start
+.. include:: /includes/matter/testing/1_prepare_matter_network_thread_wifi.txt
+.. include:: /includes/matter/testing/2_prepare_dk.txt
+.. include:: /includes/matter/testing/3_commission_thread_wifi.txt
 
-#. Read the ``NordicDevkit`` cluster's attributes by index:
+.. rst-class:: numbered-step
 
-   .. code-block:: console
+Run CHIP Tool interactive mode
+------------------------------
 
-      any read-by-id 0xFFF1FC01 *attribute-id* 1 1
+Enter the interactive mode by running the following command:
 
-   * *attribute-id* is the attribute's ID, equal to ``0xFFF10000`` for ``DevKitName``, ``0xFFF10001`` for ``UserLED`` and ``0xFFF10002`` for ``UserButton`` attributes for the ``NordicDevkit`` cluster in this sample.
+.. code-block:: console
 
-#. Verify that all attributes have been read correctly and are equal to the default values defined in cluster's configuration.
-#. Write the ``DevkitName`` attribute:
+   chip-tool interactive start
 
-   .. code-block:: console
+.. rst-class:: numbered-step
 
-      any write-by-id 0xFFF1FC01 0xFFF10000 "NewName" 1 1
+Read the ``NordicDevkit`` cluster's attributes by index
+-------------------------------------------------------
 
-#. Read the ``DevkitName`` attribute again to check if it has changed.
-#. Send the ``SetLED`` command to the device to control the LED state:
+.. parsed-literal::
+   :class: highlight
 
-   .. code-block:: console
+   any read-by-id 0xFFF1FC01 *attribute-id* |node_id| 1
 
-      any command-by-id 0xFFF1FC01 0xFFF10000 '{ "0x0": "u:*action*" }' 1 1
+Where:
 
-   * *action* is the action that should be performed on LED attribute: ``0`` to turn the LED off, ``1`` to turn it on, ``2`` to toggle the state.
+* *attribute-id* is the attribute's ID, equal to ``0xFFF10000`` for ``DevKitName``, ``0xFFF10001`` for ``UserLED`` and ``0xFFF10002`` for ``UserButton`` attributes for the ``NordicDevkit`` cluster in this sample.
 
-#. Verify that the LED state has changed and the attribute value is updated.
-#. Subscribe to the ``UserButton`` attribute to monitor the button state:
+.. rst-class:: numbered-step
 
-   .. code-block:: console
+Verify all the attributes
+-------------------------
 
-      any subscribe-by-id 0xFFF1FC01 0xFFF10002 0 120 1 1
+In the interactive mode, search the logs received by CHIP Tool and verify that all attributes have been read correctly and are equal to the default values defined in cluster's configuration.
 
-#. Press the button assigned to the ``UserButton`` and check if the attribute state is updated in the chip-tool.
-#. Read the ``UserButtonChanged`` event to check that events were generated on ``UserButton`` attribute changes.
+.. rst-class:: numbered-step
 
-   .. code-block:: console
+Write the ``DevkitName`` attribute
+----------------------------------
 
-      any read-event-by-id 0xFFF1FC01 0xFFF10000 1 1
+.. parsed-literal::
+   :class: highlight
 
-#. Read the ``Basic Information`` cluster's ``RandomNumber`` attribute:
+   any write-by-id 0xFFF1FC01 0xFFF10000 "NewName" |node_id| 1
 
-   .. code-block:: console
+Where:
 
-      any read-by-id 0x0028 0x17 1 0
+* *NewName* is the new name to be set for the ``DevkitName`` attribute.
 
-#. Send the ``GenerateRandom`` command to the device to update the ``RandomNumber`` attribute:
+.. rst-class:: numbered-step
 
-   .. code-block:: console
+Read the ``DevkitName`` attribute again
+---------------------------------------
 
-      any command-by-id 0x0028 0 '{}' 1 0
+In the interactive mode, read the ``DevkitName`` attribute again by running the following command, and check if it has changed:
 
-#. Verify that the random value has been generated and the attribute value is updated.
-#. Read the ``Basic Information`` cluster's ``RandomNumberChanged`` event to check that events were generated on ``RandomNumber`` attribute changes.
+.. parsed-literal::
+   :class: highlight
 
-   .. code-block:: console
+   any read-by-id 0xFFF1FC01 *attribute-id* |node_id| 1
 
-      any read-event-by-id 0x0028 0x4 1 0
+.. rst-class:: numbered-step
 
-Factory reset
-=============
+Send the ``SetLED`` command to control the LED state
+----------------------------------------------------
 
-|matter_factory_reset|
+In the interactive mode, send the ``SetLED`` command to control the LED state by running the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   any command-by-id 0xFFF1FC01 0xFFF10000 '{ "0x0": "u:*action*" }' |node_id| 1
+
+* *action* is the action that should be performed on LED attribute: ``0`` to turn the LED off, ``1`` to turn it on, ``2`` to toggle the state.
+
+.. rst-class:: numbered-step
+
+The LED state has changed and the attribute value is updated.
+
+.. rst-class:: numbered-step
+
+Subscribe to the ``UserButton`` attribute
+-----------------------------------------
+
+In the interactive mode, subscribe to the ``UserButton`` attribute to monitor the button state by running the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   any subscribe-by-id 0xFFF1FC01 0xFFF10002 0 120 |node_id| 1
+
+.. rst-class:: numbered-step
+
+Press the button assigned to the ``UserButton``
+-----------------------------------------------
+
+Being subscribed to the ``UserButton`` attribute, press the button assigned to the ``UserButton`` and wait for the attribute state to be updated.
+You should see the attribute state updated in the CHIP Tool interactive mode.
+
+.. rst-class:: numbered-step
+
+Read the ``UserButtonChanged`` event
+------------------------------------
+
+In the interactive mode, read the ``UserButtonChanged`` event to check that events were generated on ``UserButton`` attribute changes by running the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   any read-event-by-id 0xFFF1FC01 0xFFF10000 |node_id| 1
+
+.. rst-class:: numbered-step
+
+Read the ``Basic Information`` cluster's ``RandomNumber`` attribute
+--------------------------------------------------------------------
+
+In the interactive mode, read the ``Basic Information`` cluster's ``RandomNumber`` attribute by running the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   any read-by-id 0x0028 0x17 |node_id| 0
+
+.. rst-class:: numbered-step
+
+Send the ``GenerateRandom`` command
+-----------------------------------
+
+In the interactive mode, send the ``GenerateRandom`` command to update the ``RandomNumber`` attribute by running the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   any command-by-id 0x0028 0 '{}' |node_id| 0
+
+.. rst-class:: numbered-step
+
+Verify that the random value
+----------------------------
+
+In the interactive mode, read the ``Basic Information`` cluster's ``RandomNumber`` attribute again by running the following command:
+
+.. code-block:: console
+
+   any read-by-id 0x0028 0x17 |node_id| 0
+
+You should see the random value updated in the CHIP Tool logs.
+
+.. rst-class:: numbered-step
+
+Read the ``Basic Information`` cluster's ``RandomNumberChanged`` event
+----------------------------------------------------------------------
+
+In the interactive mode, read the ``Basic Information`` cluster's ``RandomNumberChanged`` event to check that events were generated on ``RandomNumber`` attribute changes by running the following command:
+
+.. code-block:: console
+
+   any read-event-by-id 0x0028 0x4 |node_id| 0
+
+Testing with commercial ecosystem
+=================================
+
+.. note::
+
+   |sample_not_in_ecosystem|
+
+.. include:: /includes/matter/testing/ecosystem.txt
 
 Dependencies
 ************

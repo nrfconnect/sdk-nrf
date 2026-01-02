@@ -6,6 +6,8 @@
 .. |matter_qr_code_payload| replace:: MT:Y.K9042C00KA0648G00
 .. |matter_pairing_code| replace:: 34970112332
 .. |matter_qr_code_image| image:: /images/matter_qr_code_contact_sensor.png
+                          :width: 200px
+                          :alt: QR code for commissioning the contact sensor device
 
 .. include:: /includes/matter/shortcuts.txt
 
@@ -41,7 +43,6 @@ The contact sensor state is represented by the BooleanState cluster on the endpo
 You can test the device remotely over a Thread network, which requires more devices.
 
 The remote control testing requires a Matter controller that you can configure either on a PC or a mobile device.
-You can enable both methods after `Commissioning the device`_ to the Matter network.
 
 .. include:: /includes/matter/overview/matter_quick_start.txt
 
@@ -49,7 +50,7 @@ Contact sensor features
 =======================
 
 The |matter_name| implements the following features.
-Click the ``click to show`` toggle to expand the content.
+Use the ``click to show`` toggle to expand the content.
 
 .. _matter_contact_sensor_sample_lit:
 
@@ -112,75 +113,98 @@ Building and running
 ********************
 
 .. include:: /includes/matter/building_and_running/intro.txt
-.. include:: /includes/matter/building_and_running/select_configuration.txt
-.. include:: /includes/matter/building_and_running/commissioning.txt
 
 |matter_ble_advertising_auto|
-
-.. include:: /includes/matter/building_and_running/onboarding.txt
 
 Testing
 *******
 
-.. |endpoint_name| replace:: **Boolean State cluster**
-.. |endpoint_id| replace:: **1**
-
 .. include:: /includes/matter/testing/intro.txt
-.. include:: /includes/matter/testing/prerequisites.txt
-.. include:: /includes/matter/testing/prepare.txt
 
-Testing steps
-=============
+Testing with CHIP Tool
+======================
 
-1. Enable CHIP Tool interactive mode by running the following command:
+Complete the following steps to test the |matter_name| device using CHIP Tool:
 
-   .. code-block:: console
+.. |node_id| replace:: 1
 
-      ./chip-tool interactive start
+.. include:: /includes/matter/testing/1_prepare_matter_network_thread.txt
+.. include:: /includes/matter/testing/2_prepare_dk.txt
+.. include:: /includes/matter/testing/3_commission_thread.txt
 
-#. Using the interactive mode, read the contact detection state by invoking the following command:
+.. rst-class:: numbered-step
 
-   .. parsed-literal::
-      :class: highlight
+Run CHIP Tool interactive mode
+------------------------------
 
-      booleanstate read state-value <node_id> 1
+Enter the interactive mode by running the following command:
 
-   The received output will look similar to the following:
+.. code-block:: console
 
-   .. code-block:: console
+   chip-tool interactive start
 
-      [1756375237.321] [61118:61120] [TOO] Endpoint: 1 Cluster: 0x0000_0045 Attribute 0x0000_0000 DataVersion: 2772696482
-      [1756375237.321] [61118:61120] [TOO]   StateValue: FALSE
+.. rst-class:: numbered-step
 
+Read the contact detection state
+--------------------------------
 
-#. Press and hold the |Second Button| to simulate contact detection.
-   Read the contact detection state again using the same command as before (do not release the button):
+In the interactive mode, read the contact detection state by running the following command:
 
-   .. parsed-literal::
-      :class: highlight
+.. parsed-literal::
+   :class: highlight
 
-      booleanstate read state-value <node_id> 1
+   booleanstate read state-value |node_id| 1
 
-   The received value will be different, for example:
+The received output will look similar to the following:
 
-   .. code-block:: console
+.. code-block:: console
 
-      [1756375237.321] [61118:61120] [TOO] Endpoint: 1 Cluster: 0x0000_0045 Attribute 0x0000_0000 DataVersion: 2772696482
-      [1756375237.321] [61118:61120] [TOO]   StateValue: TRUE
+   [1756375237.321] [61118:61120] [TOO] Endpoint: 1 Cluster: 0x0000_0045 Attribute 0x0000_0000 DataVersion: 2772696482
+   [1756375237.321] [61118:61120] [TOO]   StateValue: FALSE
 
-#. Subscribe to the contact detection state changes to see the state change in real time:
+.. rst-class:: numbered-step
 
-   .. parsed-literal::
-      :class: highlight
+Simulate contact detection
+---------------------------
 
-      booleanstate subscribe state-value 0 300 <node_id> 1
+Press and hold the |Second Button| to simulate contact detection.
+In the interactive mode, read the contact detection state again (do not release the button) by running the following command:
 
-#. Press and release the |Second Button| a few times and observe the state changes reported automatically in the CHIP Tool interactive mode.
+.. parsed-literal::
+   :class: highlight
 
-Factory reset
-=============
+   booleanstate read state-value |node_id| 1
 
-|matter_factory_reset|
+The received value will be different, for example:
+
+.. code-block:: console
+
+   [1756375237.321] [61118:61120] [TOO] Endpoint: 1 Cluster: 0x0000_0045 Attribute 0x0000_0000 DataVersion: 2772696482
+   [1756375237.321] [61118:61120] [TOO]   StateValue: TRUE
+
+.. rst-class:: numbered-step
+
+Subscribe to the contact detection state changes
+------------------------------------------------
+
+In the interactive mode, subscribe to the contact detection state changes to see the state change in real time by running the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   booleanstate subscribe state-value 0 300 |node_id| 1
+
+.. rst-class:: numbered-step
+
+Observe the contact detection state changes
+-------------------------------------------
+
+Press and release the |Second Button| a few times and observe the state changes reported automatically in the CHIP Tool interactive mode.
+
+Testing with commercial ecosystem
+=================================
+
+.. include:: /includes/matter/testing/ecosystem.txt
 
 Dependencies
 ************

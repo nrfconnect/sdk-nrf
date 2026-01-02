@@ -1,11 +1,14 @@
 .. |matter_name| replace:: Closure
 .. |matter_type| replace:: sample
 .. |matter_dks_thread| replace:: ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf54l15dk/nrf54l15/cpuapp``, and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets
+.. |matter_dks_wifi| replace:: ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target with the ``nrf7002eb2`` shield attached
 .. |matter_dks_internal| replace:: nRF54LM20 DK
 .. |sample path| replace:: :file:`samples/matter/closure`
 .. |matter_qr_code_payload| replace:: MT:Y.K9042C00KA0648G00
 .. |matter_pairing_code| replace:: 34970112332
 .. |matter_qr_code_image| image:: /images/matter_qr_code_closure.png
+                          :width: 200px
+                          :alt: QR code for commissioning the closure device
 
 .. include:: /includes/matter/shortcuts.txt
 
@@ -20,7 +23,7 @@ Matter: Closure
 
 This sample demonstrates the usage of the :ref:`Matter <ug_matter>` application layer to build a closure device.
 
-.. include:: /includes/matter/introduction/no_sleep_thread_ftd.txt
+.. include:: /includes/matter/introduction/no_sleep_thread_ftd_wifi.txt
 
 Requirements
 ************
@@ -29,7 +32,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/matter/requirements/thread.txt
+.. include:: /includes/matter/requirements/thread_wifi.txt
 
 Overview
 ********
@@ -105,86 +108,115 @@ Building and running
 ********************
 
 .. include:: /includes/matter/building_and_running/intro.txt
-.. include:: /includes/matter/building_and_running/select_configuration.txt
-.. include:: /includes/matter/building_and_running/commissioning.txt
 
 |matter_ble_advertising_auto|
 
-.. include:: /includes/matter/building_and_running/onboarding.txt
+Advanced building options
+=========================
+
+.. include:: /includes/matter/building_and_running/advanced/intro.txt
+.. include:: /includes/matter/building_and_running/advanced/building_nrf54lm20dk_7002eb2.txt
 
 Testing
 *******
 
-.. |endpoint_name| replace:: **Closure Control cluster**
-.. |endpoint_id| replace:: **1**
-
 .. include:: /includes/matter/testing/intro.txt
-.. include:: /includes/matter/testing/prerequisites.txt
-.. include:: /includes/matter/testing/prepare.txt
 
-Testing steps
-=============
+Testing with CHIP Tool
+======================
 
-1. Enable CHIP Tool interactive mode by running the following command:
+Complete the following steps to test the |matter_name| device using CHIP Tool:
 
-   .. code-block:: console
+.. |node_id| replace:: 1
 
-      ./chip-tool interactive start
+.. include:: /includes/matter/testing/1_prepare_matter_network_thread.txt
+.. include:: /includes/matter/testing/2_prepare_dk.txt
+.. include:: /includes/matter/testing/3_commission_thread.txt
 
-#. Using the interactive mode, subscribe to the ``MovementCompleted`` event with the following command:
+.. rst-class:: numbered-step
 
-   .. parsed-literal::
-      :class: highlight
+Run CHIP Tool interactive mode
+------------------------------
 
-      closurecontrol subscribe-event movement-completed 1 5 <node_id> 1
+Enter the interactive mode by running the following command:
 
-#. Set the target position of the closure with the following command:
+.. code-block:: console
 
-   .. parsed-literal::
-      :class: highlight
+   chip-tool interactive start
 
-      closurecontrol move-to <node_id> 1 --Position 0 --Speed 0 --timedInteractionTimeoutMs 5000
+.. rst-class:: numbered-step
 
-   Where:
+Subscribe to the ``MovementCompleted`` event
+--------------------------------------------
 
-      * *<position>* is of type ``CurrentPositionEnum`` (integer from 0 to 5 ``0`` for ``FullyClosed``, ``1`` for ``FullyOpened``)
-      * *<speed>* is of type ``ThreeLevelAutoEnum`` (``0`` for auto, ``1`` to ``3`` for ``Low`` to ``High``)
+In the interactive mode, subscribe to the ``MovementCompleted`` event by running the following command:
 
-   The |Second LED| starts to glow brighter, indicating the closing of the closure.
+.. parsed-literal::
+   :class: highlight
 
-#. Wait for the closure to finish its movement.
-   You should be notified with the ``MovementCompleted`` event after the movement is complete.
+   closurecontrol subscribe-event movement-completed 1 5 |node_id| 1
 
-#. Test the remaining functionalities in a similar manner
+.. rst-class:: numbered-step
 
-   * Read current state of the device by reading the attributes ``MainState``, ``OverallCurrentState``, and ``OverallTargetState``:
+Set the target position of the closure
+--------------------------------------
 
-   .. parsed-literal::
-      :class: highlight
+In the interactive mode, set the target position of the closure by running the following command:
 
-      closurecontrol read-attribute main-state <node_id> 1
-      closurecontrol read-attribute overall-current-state <node_id> 1
-      closurecontrol read-attribute overall-target-state <node_id> 1
+.. parsed-literal::
+   :class: highlight
 
-   * Call ``MoveTo`` command to move the closure to a different position and stop the closure by invoking the ``Stop`` command while the closure is moving:
+   closurecontrol move-to |node_id| 1 --Position *<position>* --Speed *<speed>* --timedInteractionTimeoutMs 5000
 
-   .. parsed-literal::
-      :class: highlight
+Where:
 
-      closurecontrol move-to <node_id> <endpoint_id> --Position 0 --Speed 0 --timedInteractionTimeoutMs 5000
-      closurecontrol stop <node_id> <endpoint_id>
+   * *<position>* is of type ``CurrentPositionEnum`` (integer from 0 to 5 ``0`` for ``FullyClosed``, ``1`` for ``FullyOpened``)
+   * *<speed>* is of type ``ThreeLevelAutoEnum`` (``0`` for auto, ``1`` to ``3`` for ``Low`` to ``High``)
 
-   * Get the estimated movement time by reading the ``CountdownTime`` attribute.
+The |Second LED| starts to glow brighter, indicating the closing of the closure.
 
-   .. parsed-literal::
-      :class: highlight
+.. rst-class:: numbered-step
 
-      closurecontrol read-attribute countdown-time <node_id> 1
+Wait for the closure to finish its movement
+-------------------------------------------
 
-Factory reset
-=============
+After the movement is complete, you should be notified with the ``MovementCompleted`` event.
 
-|matter_factory_reset|
+.. rst-class:: numbered-step
+
+Test the remaining functionalities in a similar manner
+------------------------------------------------------
+
+Complete the following points by calling the corresponding commands in the CHIP Tool interactive mode:
+
+* Read current state of the device by reading the attributes ``MainState``, ``OverallCurrentState``, and ``OverallTargetState``:
+
+.. parsed-literal::
+   :class: highlight
+
+   closurecontrol read-attribute main-state |node_id| 1
+   closurecontrol read-attribute overall-current-state |node_id| 1
+   closurecontrol read-attribute overall-target-state |node_id| 1
+
+* Call ``MoveTo`` command to move the closure to a different position and stop the closure by invoking the ``Stop`` command while the closure is moving:
+
+.. parsed-literal::
+   :class: highlight
+
+   closurecontrol move-to |node_id| 1 --Position 0 --Speed 0 --timedInteractionTimeoutMs 5000
+   closurecontrol stop |node_id| 1
+
+* Get the estimated movement time by reading the ``CountdownTime`` attribute.
+
+.. parsed-literal::
+   :class: highlight
+
+   closurecontrol read-attribute countdown-time |node_id| 1
+
+Testing with commercial ecosystem
+=================================
+
+.. include:: /includes/matter/testing/ecosystem.txt
 
 Dependencies
 ************

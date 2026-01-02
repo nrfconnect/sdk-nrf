@@ -132,3 +132,4 @@ In addition to these samples, check also the following Matter applications:
 
    ../../../samples/matter/*/README
    ../../../samples/matter/common/config
+   ../../../scripts/matter/matter_sample_checker/README

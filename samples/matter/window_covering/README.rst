@@ -7,6 +7,8 @@
 .. |matter_qr_code_payload| replace:: MT:SAGA442C00KA0648G00
 .. |matter_pairing_code| replace:: 34970112332
 .. |matter_qr_code_image| image:: /images/matter_qr_code_window_covering.png
+                          :width: 200px
+                          :alt: QR code for commissioning the window covering device
 
 .. include:: /includes/matter/shortcuts.txt
 
@@ -120,51 +122,109 @@ Building and running
 ********************
 
 .. include:: /includes/matter/building_and_running/intro.txt
-.. include:: /includes/matter/building_and_running/select_configuration.txt
-.. include:: /includes/matter/building_and_running/commissioning.txt
 
 |matter_ble_advertising_auto|
-
-.. include:: /includes/matter/building_and_running/onboarding.txt
 
 Testing
 *******
 
-.. |endpoint_name| replace:: **Window Covering cluster**
-.. |endpoint_id| replace:: **1**
-
 .. include:: /includes/matter/testing/intro.txt
-.. include:: /includes/matter/testing/prerequisites.txt
-.. include:: /includes/matter/testing/prepare.txt
 
-Testing steps
-=============
+Testing with CHIP Tool
+======================
 
-#. Observe that |Second LED| and |Third LED| are turned off, which means that the window cover is fully open.
+Complete the following steps to test the |matter_name| device using CHIP Tool:
 
-   The device starts in the lift movement mode by default.
+.. |node_id| replace:: 1
 
-#. Press the |Third Button| 20 times to fully close the cover in the lift movement mode.
+.. include:: /includes/matter/testing/1_prepare_matter_network_thread.txt
+.. include:: /includes/matter/testing/2_prepare_dk.txt
+.. include:: /includes/matter/testing/3_commission_thread.txt
 
-   |Second LED| lights up and its brightness increases with each button press until it reaches full brightness.
+.. rst-class:: numbered-step
 
-#. Press the |Second Button| 20 times to fully lift the cover up.
+Observe that |Second LED| and |Third LED| are turned off, which means that the window cover is fully open
+---------------------------------------------------------------------------------------------------------
 
-   The brightness of |Second LED| decreases with each button press until the LED turns off.
+.. rst-class:: numbered-step
 
-#. Press the |Second Button| and the |Third Button| together to switch into the tilt movement mode.
-#. Press the |Third Button| 20 times to fully tilt the cover into the closed position.
+Close the cover in the lift movement mode
+-----------------------------------------
 
-   |Third LED| light up and its brightness increases with each button press until it reaches full brightness.
+.. parsed-literal::
+   :class: highlight
 
-#. Press the |Second Button| 20 times to fully tilt the cover into the open position.
+   chip-tool windowcovering go-to-lift-percentage 100 |node_id| 1
 
-   The brightness of |Third LED| decreases with each button press until the LED turns off.
+|Second LED| lights up and its brightness increases until it reaches full brightness.
 
-Factory reset
-=============
+.. rst-class:: numbered-step
 
-|matter_factory_reset|
+Close the cover's slats in the tilt movement mode
+-------------------------------------------------
+
+.. parsed-literal::
+   :class: highlight
+
+   chip-tool windowcovering go-to-tilt-percentage 100 |node_id| 1
+
+|Third LED| light up and its brightness increases until it reaches full brightness.
+
+Testing using DK buttons
+========================
+
+Complete the following steps to test the |matter_name| device using the DK buttons:
+
+.. rst-class:: numbered-step
+
+Observe the initial state
+-------------------------
+
+Observe that |Second LED| and |Third LED| are turned off, which means that the window cover is fully open.
+
+.. rst-class:: numbered-step
+
+Press the |Third Button| 20 times
+---------------------------------
+
+Press the |Third Button| 20 times to fully close the cover in the lift movement mode.
+|Second LED| lights up and its brightness increases with each button press until it reaches full brightness.
+
+.. rst-class:: numbered-step
+
+Press the |Second Button| 20 times
+----------------------------------
+
+Press the |Second Button| 20 times to fully lift the cover up by running the following command:
+The brightness of |Second LED| decreases with each button press until the LED turns off.
+
+.. rst-class:: numbered-step
+
+Press the |Second Button| and the |Third Button| together
+---------------------------------------------------------
+
+Press the |Second Button| and the |Third Button| together to switch into the tilt movement mode
+
+.. rst-class:: numbered-step
+
+Press the |Third Button| 20 times
+---------------------------------
+
+Press the |Third Button| 20 times to fully tilt the cover's slats into the closed position.
+|Third LED| light up and its brightness increases with each button press until it reaches full brightness.
+
+.. rst-class:: numbered-step
+
+Press the |Second Button| 20 times
+----------------------------------
+
+Press the |Second Button| 20 times to fully tilt the cover into the open position.
+The brightness of |Third LED| decreases with each button press until the LED turns off.
+
+Testing with commercial ecosystem
+=================================
+
+.. include:: /includes/matter/testing/ecosystem.txt
 
 Dependencies
 ************

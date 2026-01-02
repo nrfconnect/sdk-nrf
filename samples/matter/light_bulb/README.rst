@@ -8,6 +8,8 @@
 .. |matter_qr_code_payload| replace:: MT:6FCJ142C00KA0648G00
 .. |matter_pairing_code| replace:: 34970112332
 .. |matter_qr_code_image| image:: /images/matter_qr_code_light_bulb.png
+                          :width: 200px
+                          :alt: QR code for commissioning the light bulb device
 
 .. include:: /includes/matter/shortcuts.txt
 
@@ -51,7 +53,6 @@ You can test it in the following ways:
 * Remotely over Thread or Wi-Fi, which requires more devices.
 
 The remote control testing requires a Matter controller that you can configure either on a PC or a mobile device (for remote testing in a network).
-You can enable both methods after `Commissioning the device`_ to the Matter network.
 
 .. include:: /includes/matter/overview/matter_quick_start.txt
 
@@ -136,7 +137,6 @@ AWS IoT setup and configuration
    #. |connect_kit|
    #. |connect_terminal_ANSI|
    #. Commission the device to the Matter network.
-      See `Commissioning the device`_ for more information.
    #. Observe that the device automatically connects to AWS IoT when an IP is obtained and the device is able to maintain the connection.
    #. Use the following bash function to populate the desired section of the shadow:
 
@@ -183,12 +183,8 @@ Building and running
 ********************
 
 .. include:: /includes/matter/building_and_running/intro.txt
-.. include:: /includes/matter/building_and_running/select_configuration.txt
-.. include:: /includes/matter/building_and_running/commissioning.txt
 
 |matter_ble_advertising_auto|
-
-.. include:: /includes/matter/building_and_running/onboarding.txt
 
 Advanced building options
 =========================
@@ -200,61 +196,73 @@ Advanced building options
 Testing
 *******
 
-.. |endpoint_name| replace:: **OnOff cluster**
-.. |endpoint_id| replace:: **1**
-
 .. include:: /includes/matter/testing/intro.txt
-.. include:: /includes/matter/testing/prerequisites.txt
 
-* In this sample, the ACL cluster is inserted into the light bulb's endpoint ``0``, and the Binding cluster is inserted into the light switch's endpoint ``1``.
+.. _prepare_light_bulb_for_testing:
 
-.. include:: /includes/matter/testing/prepare.txt
+Testing with CHIP Tool
+======================
 
-Testing Steps
-=============
+Complete the following steps to test the |matter_name| device using CHIP Tool:
 
-#. Observe that |Second LED| is off.
-#. Press the |Second Button| to turn on the light bulb.
-   The |Second LED| turns on and the following messages appear on the console:
+.. |node_id| replace:: 1
 
-   .. code-block:: console
+.. include:: /includes/matter/testing/1_prepare_matter_network_thread_wifi.txt
+.. include:: /includes/matter/testing/2_prepare_dk.txt
+.. include:: /includes/matter/testing/3_commission_thread_wifi.txt
 
-      I: Turn On Action has been initiated
-      I: Turn On Action has been completed
+.. rst-class:: numbered-step
 
-#. Press the |Second Button| again.
-   The |Second LED| turns off and the following messages appear on the console:
+Turn on the light bulb
+----------------------
 
-   .. code-block:: console
+Turn on the light bulb by running the following command:
 
-      I: Turn Off Action has been initiated
-      I: Turn Off Action has been completed
+.. parsed-literal::
+   :class: highlight
+
+   chip-tool onoff on |node_id| 1
+
+Observe that the |Second LED| is on.
+
+.. rst-class:: numbered-step
+
+Turn off the light bulb
+-----------------------
+
+Turn off the light bulb by running the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   chip-tool onoff off |node_id| 1
+
+Observe that the |Second LED| is off.
 
 Testing communication with another device
------------------------------------------
+=========================================
 
-After building this sample and the :ref:`Matter light switch <matter_light_switch_sample>` sample and programming them to the development kits, complete the steps in the following sections to test communication between both devices.
+After programming this sample and the :ref:`Matter light switch <matter_light_switch_sample>` sample to the development kits, complete the steps in the following steps to test communication between both devices.
 
-Bind both devices
-+++++++++++++++++
+.. rst-class:: numbered-step
 
-Complete the following steps to bind both devices:
+Prepare the light switch device
+-------------------------------
 
-.. include:: ../light_switch/README.rst
-   :start-after: matter_light_switch_sample_prepare_to_testing_start
-   :end-before: matter_light_switch_sample_prepare_to_testing_end
+To prepare the light switch device, follow the first three steps in the :ref:`Matter light switch <matter_light_switch_sample>` sample :ref:`prepare_light_switch_for_testing` section.
 
-Test connection
-+++++++++++++++
+.. note::
+
+   In this guide, the light bulb device's node ID is ``1`` and the light switch device's node ID is ``2``.
 
 .. include:: ../light_switch/README.rst
    :start-after: matter_light_switch_sample_testing_start
    :end-before: matter_light_switch_sample_testing_end
 
-Factory reset
-=============
+Testing with commercial ecosystem
+=================================
 
-|matter_factory_reset|
+.. include:: /includes/matter/testing/ecosystem.txt
 
 Dependencies
 ************

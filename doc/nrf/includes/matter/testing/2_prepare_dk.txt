@@ -1,0 +1,12 @@
+.. rst-class:: numbered-step
+
+Prepare your DK
+---------------
+
+To flash your DK with the |matter_type| and prepare it for testing, complete the following steps:
+
+1. |connect_kit|
+#. |connect_terminal_ANSI|
+#. If the device was not erased during the programming, perform the factory reset procedure.
+
+   |matter_factory_reset|

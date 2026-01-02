@@ -6,6 +6,8 @@
 .. |matter_qr_code_payload| replace:: MT:K.K9042C00KA0648G00
 .. |matter_pairing_code| replace:: 34970112332
 .. |matter_qr_code_image| image:: /images/matter_qr_code_temperature_sensor.png
+                          :width: 200px
+                          :alt: QR code for commissioning the temperature sensor device
 
 .. include:: /includes/matter/shortcuts.txt
 
@@ -41,7 +43,6 @@ The measurement results are updated every 10 s and after reaching the maximum va
 You can test the device remotely over a Thread network, which requires more devices.
 
 The remote control testing requires a Matter controller that you can configure either on a PC or a mobile device.
-You can enable both methods after `Commissioning the device`_.
 
 .. include:: /includes/matter/overview/matter_quick_start.txt
 
@@ -102,58 +103,67 @@ Building and running
 ********************
 
 .. include:: /includes/matter/building_and_running/intro.txt
-.. include:: /includes/matter/building_and_running/select_configuration.txt
-.. include:: /includes/matter/building_and_running/commissioning.txt
 
 |matter_ble_advertising_auto|
-
-.. include:: /includes/matter/building_and_running/onboarding.txt
 
 Testing
 *******
 
-.. |endpoint_name| replace:: **Temperature Measurement cluster**
-.. |endpoint_id| replace:: **1**
-
 .. include:: /includes/matter/testing/intro.txt
-.. include:: /includes/matter/testing/prerequisites.txt
-.. include:: /includes/matter/testing/prepare.txt
 
-Testing steps
-=============
+Testing with CHIP Tool
+======================
 
-#. Read the temperature measured by the device by invoking the following command:
+Complete the following steps to test the |matter_name| device using CHIP Tool:
 
-   .. parsed-literal::
-      :class: highlight
+.. |node_id| replace:: 1
 
-      ./chip-tool temperaturemeasurement read measured-value <node_id> 1
+.. include:: /includes/matter/testing/1_prepare_matter_network_thread.txt
+.. include:: /includes/matter/testing/2_prepare_dk.txt
+.. include:: /includes/matter/testing/3_commission_thread.txt
 
-   The received output will look similar to the following:
+.. rst-class:: numbered-step
 
-   .. code-block:: console
+Read the simulated temperature
+------------------------------
 
-      [1755081048.320] [99348:99350] [TOO] Endpoint: 1 Cluster: 0x0000_0402 Attribute 0x0000_0000 DataVersion: 1994139940
-      [1755081048.320] [99348:99350] [TOO]   MeasuredValue: 9
+To read the simulated temperature, run the following command:
 
-#. Wait some time, for example 30 s, and read the measured temperature again using the same command as before:
+.. parsed-literal::
+   :class: highlight
 
-   .. parsed-literal::
-      :class: highlight
+   chip-tool temperaturemeasurement read measured-value |node_id| 1
 
-      ./chip-tool temperaturemeasurement read measured-value <node_id> 1
+The received output will look similar to the following:
 
-   The received value will be different, for example:
+.. code-block:: console
 
-   .. code-block:: console
+   [1755081048.320] [99348:99350] [TOO] Endpoint: 1 Cluster: 0x0000_0402 Attribute 0x0000_0000 DataVersion: 1994139940
+   [1755081048.320] [99348:99350] [TOO]   MeasuredValue: 9
 
-      [1755081048.320] [99348:99350] [TOO] Endpoint: 1 Cluster: 0x0000_0402 Attribute 0x0000_0000 DataVersion: 1994139940
-      [1755081048.320] [99348:99350] [TOO]   MeasuredValue: 1200
+.. rst-class:: numbered-step
 
-Factory reset
-=============
+Read the temperature again
+--------------------------
 
-|matter_factory_reset|
+ Wait some time, for example 30 s, and read the measured temperature again using the same command as before:
+
+.. parsed-literal::
+   :class: highlight
+
+   chip-tool temperaturemeasurement read measured-value |node_id| 1
+
+The received value will be different, for example:
+
+.. code-block:: console
+
+   [1755081048.320] [99348:99350] [TOO] Endpoint: 1 Cluster: 0x0000_0402 Attribute 0x0000_0000 DataVersion: 1994139940
+   [1755081048.320] [99348:99350] [TOO]   MeasuredValue: 1200
+
+Testing with commercial ecosystem
+=================================
+
+.. include:: /includes/matter/testing/ecosystem.txt
 
 Dependencies
 ************

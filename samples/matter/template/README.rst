@@ -8,6 +8,8 @@
 .. |matter_qr_code_payload| replace:: MT:K.K9042C00KA0648G00
 .. |matter_pairing_code| replace:: 34970112332
 .. |matter_qr_code_image| image:: /images/matter_qr_code_template_sample.png
+                          :width: 200px
+                          :alt: QR code for commissioning the template device
 
 .. include:: /includes/matter/shortcuts.txt
 
@@ -33,13 +35,13 @@ The sample supports the following development kits:
 .. table-from-sample-yaml::
 
 .. include:: /includes/matter/requirements/thread_wifi.txt
+.. include:: /includes/matter/requirements/hardware.txt
 
 Overview
 ********
 
 The sample starts the Bluetooth® LE advertising automatically and prepares the Matter device for commissioning into a Matter-enabled Thread network.
 The sample uses an LED to show the state of the connection.
-You can press a button to start the `Factory reset`_ when needed.
 
 Configuration
 *************
@@ -78,14 +80,9 @@ Building and running
 ********************
 
 .. include:: /includes/matter/building_and_running/intro.txt
-.. include:: /includes/matter/building_and_running/select_configuration.txt
-.. include:: /includes/matter/building_and_running/commissioning.txt
 
 |matter_ble_advertising_auto|
 
-.. _matter_template_network_mode_onboarding:
-
-.. include:: /includes/matter/building_and_running/onboarding.txt
 
 Advanced building options
 =========================
@@ -97,12 +94,39 @@ Testing
 *******
 
 .. include:: /includes/matter/testing/intro.txt
-.. include:: /includes/matter/testing/prepare.txt
 
-Factory reset
-=============
+Testing with CHIP Tool
+======================
 
-|matter_factory_reset|
+Complete the following steps to test the |matter_name| device using CHIP Tool:
+
+.. |node_id| replace:: 1
+
+.. include:: /includes/matter/testing/1_prepare_matter_network_thread_wifi.txt
+.. include:: /includes/matter/testing/2_prepare_dk.txt
+.. include:: /includes/matter/testing/3_commission_thread_wifi.txt
+
+.. rst-class:: numbered-step
+
+Read basic information
+----------------------
+
+To see if the communication with the device is working, run the following command to read the basic information from the device:
+
+.. code-block:: console
+
+   chip-tool basicinformation read product-id |node_id| 0
+
+See the output and verify that the product ID is set to ``32768`` (0x8000 in hexadecimal).
+
+Testing with commercial ecosystem
+=================================
+
+.. note::
+
+   |sample_not_in_ecosystem|
+
+.. include:: /includes/matter/testing/ecosystem.txt
 
 Dependencies
 ************

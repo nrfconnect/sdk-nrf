@@ -149,6 +149,8 @@ To program the nRF device with the RCP application, complete the following steps
             This setting remains valid even if you program another firmware onto the device.
          #. Power-cycle the device to apply the changes.
 
+.. _ug_thread_tools_tbr_manual_pi:
+
 Installing OTBR manually (Raspberry Pi)
 =======================================
 
@@ -174,6 +176,8 @@ To set up and configure the OpenThread Border Router, follow the official `OpenT
      spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=1000000
 
 * Omit the *Build and flash RCP firmware* section, because that section duplicates the steps already performed in the `Configuring a radio co-processor`_ section of this guide.
+
+.. _ug_thread_tools_tbr_docker:
 
 Running OTBR using Docker
 =========================

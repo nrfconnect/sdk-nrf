@@ -116,57 +116,8 @@ Building and running
 ********************
 
 .. include:: /includes/matter/building_and_running/intro.txt
-.. include:: /includes/matter/building_and_running/select_configuration.txt
-.. include:: /includes/matter/building_and_running/commissioning.txt
 
 |matter_ble_advertising_auto|
-
-Onboarding information
-----------------------
-
-When you start the commissioning procedure, the controller must get the onboarding information from the Matter accessory device.
-The onboarding information representation depends on your commissioner setup.
-
-For this application, the data payload, which includes the device discriminator and setup PIN code, is encoded and shared using an NFC tag.
-When using the debug configuration, you can also get this type of information from the USB interface logs.
-
-Alternatively, depending on your configuration and selected overlay, you can also use one of the following :ref:`onboarding information formats <ug_matter_network_topologies_commissioning_onboarding_formats>` to provide the commissioner with the data required:
-
-* For the debug and release configurations:
-
-  .. list-table:: Weather station application onboarding information for the debug or release configurations
-     :header-rows: 1
-
-     * - QR Code
-       - QR Code Payload
-       - Manual pairing code
-     * - Scan the following QR code with the app for your ecosystem:
-
-         .. figure:: /images/matter_qr_code_weather_station_default.png
-            :width: 200px
-            :alt: QR code for commissioning the weather station device (debug or release configuration)
-
-       - MT:M1TJ342C00KA0648G00
-       - 34970112332
-
-* Additionally, if the factory data build configuration overlay is selected:
-
-  .. list-table:: Weather station application onboarding information for the factory data build configuration overlay
-     :header-rows: 1
-
-     * - QR Code
-       - QR Code Payload
-       - Manual pairing code
-     * - Scan the following QR code with the app for your ecosystem:
-
-         .. figure:: /images/matter_qr_code_weather_station_factory_data.png
-            :width: 200px
-            :alt: QR code for commissioning the weather station device (factory data build configuration overlay)
-
-       - MT:KAYA36PF1509673GE10
-       - 14575339844
-
-|matter_cd_info_note_for_samples|
 
 Advanced building options
 =========================
@@ -230,88 +181,141 @@ Building for the nRF7002 Wi-Fi expansion board
 Testing
 *******
 
-.. note::
-   The testing procedure assumes you are using the CHIP Tool for Android Matter controller application.
-   You can also obtain the measurement values using the PC-based CHIP Tool for Linux and iOS Matter controller and invoking the read commands manually.
-   Compared with the PC Matter controller, the mobile Matter controller only gives access to a subset of clusters supported by the Matter weather station application.
-   If you want to access all the supported clusters, including Descriptor, Identify, and Power Source clusters, use the PC Matter controller.
-   To see how to send commands from the PC Matter controller, read the :doc:`matter:chip_tool_guide` page in the Matter documentation.
+.. include:: /includes/matter/testing/intro.txt
 
-After programming the application, perform the following steps to test the Matter weather station application on the Thingy:53 with the mobile Matter controller application:
+Testing with CHIP Tool
+======================
 
-1. Turn on the Thingy:53.
-   The application starts in an unprovisioned state.
-   The advertising over Bluetooth LE and DFU start automatically, and **LED (LD1)** starts blinking blue (short flash on).
-#. Commission the device to the network of your choice:
+Complete the following steps to test the |matter_name| device using CHIP Tool:
 
-   * For Thread network, follow the steps in :ref:`ug_matter_gs_testing_thread_separate_otbr_linux_macos`.
+.. |node_id| replace:: 1
 
-   * For Wi-Fi network, follow the steps in :ref:`ug_matter_gs_testing_wifi_pc`.
+.. rst-class:: numbered-step
 
-   During the commissioning procedure, **LED (LD1)** of the Matter device starts blinking blue (rapid even flashing).
-   This indicates that the device is connected over Bluetooth LE, but does not yet have full Thread network connectivity.
+Turn on the Thingy:53
+---------------------
 
-   .. note::
-        To start commissioning, the controller must get the `Onboarding information`_ from the Matter accessory device.
+The application starts in an unprovisioned state.
+The advertising over Bluetooth LE and DFU start automatically, and **LED (LD1)** starts blinking blue (short flash on).
 
-   Once the commissioning is complete and the device has full Thread or Wi-Fi connectivity, **LED (LD1)** starts blinking purple (short flash on).
-#. Request to read sensor measurements in CHIP Tool for Linux or macOS:
+If the device does not start advertising over Bluetooth LE and it is not blinking blue, press the **Button (SW3)** for 6 seconds to initiate the factory reset of the device.
 
-   a. Choose one of the following measurement type and invoke the command using CHIP Tool for Linux or macOS (Fill the **Device ID** argument with the same as was used to commissioning):
+.. rst-class:: numbered-step
 
-      * To read temperature:
+.. include:: /includes/matter/testing/3_commission_thread_wifi.txt
 
-         .. code-block:: console
+Once the commissioning is complete and the device has full Thread or Wi-Fi connectivity, **LED (LD1)** starts blinking purple (short flash on).
 
-            chip-tool temperaturemeasurement read measured-value <Device ID> 1
+.. rst-class:: numbered-step
 
-      * To read relative humidity:
+Read temperature
+----------------
 
-         .. code-block:: console
+Run the following command:
 
-            chip-tool relativehumiditymeasurement read measured-value <Device ID> 2
+.. parsed-literal::
+   :class: highlight
 
-      * To read air pressure:
+   chip-tool temperaturemeasurement read measured-value |node_id| 1
 
-         .. code-block:: console
+Example of the temperature measurement value log:
 
-            chip-tool pressuremeasurement read measured-value <Device ID> 3
+.. code-block:: console
 
-   #. After invoking the chosen command, search the CHIP Tool for Linux or macOS console logs and look for the measurement value:
+   [1675846190.922905][72877:72879] CHIP:TOO: Endpoint: 1 Cluster: 0x0000_0402 Attribute 0x0000_0000 DataVersion: 1236968801
+   [1675846190.922946][72877:72879] CHIP:TOO:   MeasuredValue: 2348
 
-      * Example of the temperature measurement value log:
+This means that the current temperature value is equal to 23.48°C.
 
-         .. code-block:: console
+.. rst-class:: numbered-step
 
-            [1675846190.922905][72877:72879] CHIP:TOO: Endpoint: 1 Cluster: 0x0000_0402 Attribute 0x0000_0000 DataVersion: 1236968801
-            [1675846190.922946][72877:72879] CHIP:TOO:   MeasuredValue: 2348
+Read relative humidity
+----------------------
 
-         This means that the current temperature value is equal to 23.48°C.
+Run the following command:
 
-      * Example of the relative humidity measurement value log:
+.. parsed-literal::
+   :class: highlight
 
-         .. code-block:: console
+   chip-tool relativehumiditymeasurement read measured-value |node_id| 2
 
-            [1675849697.750923][164859:164861] CHIP:TOO: Endpoint: 2 Cluster: 0x0000_0405 Attribute 0x0000_0000 DataVersion: 385127250
-            [1675849697.750953][164859:164861] CHIP:TOO:   measured value: 2526
+Example of the relative humidity measurement value log:
 
-         This means that the current relative humidity value is equal to 25.26%.
+.. code-block:: console
 
-      * Example of the air pressure measurement value log:
+   [1675849697.750923][164859:164861] CHIP:TOO: Endpoint: 2 Cluster: 0x0000_0405 Attribute 0x0000_0000 DataVersion: 385127250
+   [1675849697.750953][164859:164861] CHIP:TOO:   measured value: 2526
 
-         .. code-block:: console
+This means that the current relative humidity value is equal to 25.26%.
 
-            [1675849714.536985][164896:164898] CHIP:TOO: Endpoint: 3 Cluster: 0x0000_0403 Attribute 0x0000_0000 DataVersion: 3096547
-            [1675849714.537008][164896:164898] CHIP:TOO:   MeasuredValue: 1015
+.. rst-class:: numbered-step
 
-         This means that the current air pressure value is equal to 1015 hPa.
+Read air pressure
+-----------------
 
-Factory reset
-=============
+Run the following command:
 
-To restore the device settings and state to its factory set complete the following action:
+.. parsed-literal::
+   :class: highlight
 
-* Press the **Button (SW3)** for six seconds to initiate the factory reset of the device.
+   chip-tool pressuremeasurement read measured-value |node_id| 3
+
+.. code-block:: console
+
+         [1675849714.536985][164896:164898] CHIP:TOO: Endpoint: 3 Cluster: 0x0000_0403 Attribute 0x0000_0000 DataVersion: 3096547
+         [1675849714.537008][164896:164898] CHIP:TOO:   MeasuredValue: 1015
+
+This means that the current air pressure value is equal to 1015 hPa.
+
+Testing with commercial ecosystem
+=================================
+
+You can also test the |matter_type| with the commercial ecosystems and the mobile apps.
+To test the |matter_type|, see the ecosystem manual page.
+
+When you start the commissioning procedure, the ecosystem controller must get the onboarding information from the Matter accessory device.
+The onboarding information representation depends on your commissioner setup.
+
+For this application, the data payload, which includes the device discriminator and setup PIN code, is encoded and shared using an NFC tag.
+When using the debug configuration, you can also get this type of information from the USB interface logs.
+
+Use one of the following onboarding information formats to provide the commissioner with the data required:
+
+* For the debug and release configurations:
+
+  .. list-table:: Weather station application onboarding information for the debug or release configurations
+     :header-rows: 1
+
+     * - QR Code
+       - QR Code Payload
+       - Manual pairing code
+     * - Scan the following QR code with the app for your ecosystem:
+
+         .. figure:: /images/matter_qr_code_weather_station_default.png
+            :width: 200px
+            :alt: QR code for commissioning the weather station device (debug or release configuration)
+
+       - MT:M1TJ342C00KA0648G00
+       - 34970112332
+
+* Additionally, if the factory data build configuration overlay is selected:
+
+  .. list-table:: Weather station application onboarding information for the factory data build configuration overlay
+     :header-rows: 1
+
+     * - QR Code
+       - QR Code Payload
+       - Manual pairing code
+     * - Scan the following QR code with the app for your ecosystem:
+
+         .. figure:: /images/matter_qr_code_weather_station_factory_data.png
+            :width: 200px
+            :alt: QR code for commissioning the weather station device (factory data build configuration overlay)
+
+       - MT:KAYA36PF1509673GE10
+       - 14575339844
+
+|matter_cd_info_note_for_samples|
 
 Dependencies
 ************

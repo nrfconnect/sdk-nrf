@@ -1,0 +1,22 @@
+To test this |matter_type|, you need the following hardware depending on the protocol you are using:
+
+.. tabs::
+
+   .. group-tab:: Matter over Thread
+
+      * Compatible Nordic Semiconductor's DK, see the table above.
+      * nRF52840 DK or nRF52840 Dongle - for the Radio Co-Processor device (Thread)
+      * One of the following:
+
+        * PC with Ubuntu (20.04 or newer) or macOS (11 or never)
+        * Raspberry Pi Model 3B+ or newer with Ubuntu (20.04 or newer) instead of Raspbian OS
+
+      For detailed requirements, see the :ref:`ug_thread_tools_tbr` page.
+
+   .. group-tab:: Matter over Wi-Fi
+
+      * PC with Ubuntu (20.04 or newer) or macOS (11 or newer)
+      * Compatible Nordic Semiconductor's DK, see the table above.
+      * Wi-Fi Access Point supporting IPv6
+
+      For detailed requirements, see the :ref:`ug_matter_gs_testing_wifi_pc` page.

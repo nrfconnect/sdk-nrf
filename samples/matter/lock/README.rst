@@ -8,6 +8,8 @@
 .. |matter_qr_code_payload| replace:: MT:8IXS142C00KA0648G00
 .. |matter_pairing_code| replace:: 34970112332
 .. |matter_qr_code_image| image:: /images/matter_qr_code_door_lock.png
+                          :width: 200px
+                          :alt: QR code for commissioning the door lock device
 
 .. include:: /includes/matter/shortcuts.txt
 
@@ -300,12 +302,8 @@ Building and running
 ********************
 
 .. include:: /includes/matter/building_and_running/intro.txt
-.. include:: /includes/matter/building_and_running/select_configuration.txt
-.. include:: /includes/matter/building_and_running/commissioning.txt
 
 |matter_ble_advertising_manual|
-
-.. include:: /includes/matter/building_and_running/onboarding.txt
 
 Advanced building options
 =========================
@@ -317,58 +315,62 @@ Advanced building options
 Testing
 *******
 
-.. |endpoint_name| replace:: **DoorLock cluster**
-.. |endpoint_id| replace:: **1**
-
 .. include:: /includes/matter/testing/intro.txt
-.. include:: /includes/matter/testing/prerequisites.txt
 
-.. _matter_sample_prepare_dk_for_testing:
+.. _matter_lock_sample_testing_start:
 
-.. include:: /includes/matter/testing/prepare.txt
+Testing with CHIP Tool
+======================
 
-Testing steps
-=============
+Complete the following steps to test the |matter_name| device using CHIP Tool:
 
-#. Observe that |Second LED| is lit, which means that the door lock is closed.
-#. Press the |Second Button| to unlock the door.
-   |Second LED| is blinking while the lock is opening.
+.. |node_id| replace:: 1
 
-   After approximately two seconds, |Second LED| turns off permanently.
-   The following messages appear on the console:
+.. include:: /includes/matter/testing/1_prepare_matter_network_thread_wifi.txt
+.. include:: /includes/matter/testing/2_prepare_dk.txt
+.. include:: /includes/matter/testing/3_commission_thread_wifi.txt
 
-   .. code-block:: console
+.. rst-class:: numbered-step
 
-      I: Unlock Action has been initiated
-      I: Unlock Action has been completed
+Unlock the door lock
+--------------------
 
-#. Press the |Second Button| one more time to lock the door again.
-   |Second LED| starts blinking and remains turned on.
-   The following messages appear on the console:
+Send the Unlock command to the door lock via Matter controller.
+Use the following command:
 
-   .. code-block:: console
+.. parsed-literal::
+   :class: highlight
 
-      I: Lock Action has been initiated
-      I: Lock Action has been completed
+   chip-tool doorlock unlock-door |node_id| 1 --timedInteractionTimeoutMs 5000
 
-#. Send the Unlock command to the door lock via Matter controller.
-   Use the following command:
+Observe that the door lock is unlocked.
 
-   .. parsed-literal::
-      :class: highlight
+.. rst-class:: numbered-step
 
-      ./chip-tool doorlock unlock-door <node_id> 1 --timedInteractionTimeoutMs 5000
+Lock the door lock
+------------------
 
-#. Observe that the door lock is unlocked.
-#. Send the Lock command to the door lock via Matter controller.
-   Use the following command:
+Send the Lock command to the door lock via Matter controller.
+Use the following command:
 
-   .. parsed-literal::
-      :class: highlight
+.. parsed-literal::
+   :class: highlight
 
-      ./chip-tool doorlock lock-door <node_id> 1 --timedInteractionTimeoutMs 5000
+   chip-tool doorlock lock-door |node_id| 1 --timedInteractionTimeoutMs 5000
 
-#. Observe that the door lock is locked again.
+Observe that the door lock is locked.
+
+Testing with commercial ecosystem
+=================================
+
+.. include:: /includes/matter/testing/ecosystem.txt
+
+Testing door lock features
+==========================
+
+Besides testing the basic functionality of the door lock, you can test the following features.
+Some of them requires a different command to build the sample.
+Expand the following toggles to see testing steps for each feature.
 
 .. _matter_lock_sample_remote_access_with_pin:
 
@@ -383,21 +385,19 @@ Testing remote access with PIN code credential
       For more information about setting user credentials, see the Saving users and credentials on door lock devices section of the :doc:`matter:chip_tool_guide` page in the :doc:`Matter documentation set <matter:index>`.
 
    #. Prepare the development kit for testing.
-      Refer to :ref:`Prepare the development kit for testing <matter_sample_prepare_dk_for_testing>` for more information.
+      Refer to the :ref:`matter_lock_sample_testing_start` section for more information.
 
-   #. Wait until the device boots.
-   #. Commission an accessory with node ID equal to 10 to the Matter network by following the steps described in the `Commissioning the device`_ section.
    #. Make the door lock require a PIN code for remote operations:
 
       .. code-block:: console
 
-         ./chip-tool doorlock write require-pinfor-remote-operation 1 10 1 --timedInteractionTimeoutMs 5000
+         chip-tool doorlock write require-pinfor-remote-operation 1 |node_id| 1 --timedInteractionTimeoutMs 5000
 
    #. Add the example ``Home`` door lock user:
 
       .. code-block:: console
 
-         ./chip-tool doorlock set-user 0 2 Home 123 1 0 0 10 1 --timedInteractionTimeoutMs 5000
+         chip-tool doorlock set-user 0 2 Home 123 1 0 0 |node_id| 1 --timedInteractionTimeoutMs 5000
 
       This command creates a ``Home`` user with a unique ID of ``123`` and an index of ``2``.
       The new user's status is set to ``1``, and both its type and credential rule to ``0``.
@@ -407,13 +407,13 @@ Testing remote access with PIN code credential
 
       .. code-block:: console
 
-         ./chip-tool doorlock set-credential 0 '{"credentialType": 1, "credentialIndex": 1}' 12345678 2 null null 10 1 --timedInteractionTimeoutMs 5000
+         chip-tool doorlock set-credential 0 '{"credentialType": 1, "credentialIndex": 1}' 12345678 2 null null |node_id| 1 --timedInteractionTimeoutMs 5000
 
    #. Unlock the door lock with the given PIN code:
 
       .. code-block:: console
 
-         ./chip-tool doorlock unlock-door 10 1 --PINCode 12345678 --timedInteractionTimeoutMs 5000
+         chip-tool doorlock unlock-door |node_id| 1 --PINCode 12345678 --timedInteractionTimeoutMs 5000
 
    #. Reboot the device.
    #. Wait until the device it rebooted and attached back to the Matter network.
@@ -421,7 +421,7 @@ Testing remote access with PIN code credential
 
       .. code-block:: console
 
-         ./chip-tool doorlock unlock-door 10 1 --PINCode 12345678 --timedInteractionTimeoutMs 5000
+         chip-tool doorlock unlock-door |node_id| 1 --PINCode 12345678 --timedInteractionTimeoutMs 5000
 
    .. note::
       Accessing the door lock remotely without a valid PIN code credential will fail.
@@ -441,26 +441,24 @@ Testing scheduled timed access
       Adding a single schedule for a user contributes to the settings partition memory occupancy increase.
 
    #. Prepare the development kit for testing.
-      Refer to :ref:`Prepare the development kit for testing <matter_sample_prepare_dk_for_testing>` for more information.
+      Refer to the :ref:`matter_lock_sample_testing_start` section for more information.
 
-   #. Wait until the device boots.
-   #. Commission an accessory with node ID equal to 10 to the Matter network by following the steps described in the `Commissioning the device`_ section.
    #. Add the example ``Home`` door lock user:
 
       .. code-block:: console
 
-         ./chip-tool doorlock set-user 0 2 Home 123 1 0 0 10 1 --timedInteractionTimeoutMs 5000
+         chip-tool doorlock set-user 0 2 Home 123 1 0 0 |node_id| 1 --timedInteractionTimeoutMs 5000
 
       This command creates a ``Home`` user with a unique ID of ``123`` and an index of ``2``.
       The new user's status is set to ``1``, and both its type and credential rule to ``0``.
-      The user is assigned to the door lock cluster residing on endpoint ``1`` of the node with ID ``10``.
+      The user is assigned to the door lock cluster residing on endpoint ``1`` of the node with ID |node_id|.
 
    #. Set the example ``Week-day`` schedule using the following command:
 
       .. parsed-literal::
          :class: highlight
 
-         ./chip-tool doorlock set-week-day-schedule *weekday-index* *user-index* *days-mask* *start-hour* *start-minute* *end-hour* *end-minute* *destination-id* *endpoint-id*
+         chip-tool doorlock set-week-day-schedule *weekday-index* *user-index* *days-mask* *start-hour* *start-minute* *end-hour* *end-minute* *destination-id* *endpoint-id*
 
       * *weekday-index* is the index of the new schedule, starting from ``1``.
         The maximum value is defined by the :kconfig:option:`CONFIG_LOCK_MAX_WEEKDAY_SCHEDULES_PER_USER` Kconfig option.
@@ -480,7 +478,7 @@ Testing scheduled timed access
 
       .. code-block:: console
 
-         ./chip-tool doorlock set-week-day-schedule 1 2 84 7 30 10 30 1 1
+         chip-tool doorlock set-week-day-schedule 1 2 84 7 30 10 30 |node_id| 1
 
 
    #. Set the example ``Year-day`` schedule using the following command:
@@ -488,7 +486,7 @@ Testing scheduled timed access
       .. parsed-literal::
          :class: highlight
 
-         ./chip-tool doorlock set-year-day-schedule *yearday-index* *user-index* *localtime-start* *localtime-end* *destination-id* *endpoint-id*
+         chip-tool doorlock set-year-day-schedule *yearday-index* *user-index* *localtime-start* *localtime-end* *destination-id* *endpoint-id*
 
 
       * *yearday-index* is the index of the new schedule, starting from ``1``.
@@ -506,14 +504,14 @@ Testing scheduled timed access
 
       .. code-block:: console
 
-         ./chip-tool doorlock set-year-day-schedule 1 2 1716786000 1717045200 1 1
+         chip-tool doorlock set-year-day-schedule 1 2 1716786000 1717045200 |node_id| 1
 
    #. Set the example ``Holiday`` schedule using the following command:
 
       .. parsed-literal::
          :class: highlight
 
-         ./chip-tool doorlock set-holiday-schedule *holiday-index* *localtime-start* *localtime-end* *operating-mode* *destination-id* *endpoint-id*
+         chip-tool doorlock set-holiday-schedule *holiday-index* *localtime-start* *localtime-end* *operating-mode* *destination-id* *endpoint-id*
 
       * *holiday-index* is the index of the new schedule, starting from ``1``.
       * *localtime-start* is the starting time in Epoch Time.
@@ -527,24 +525,24 @@ Testing scheduled timed access
       .. parsed-literal::
          :class: highlight
 
-         ./chip-tool doorlock set-holiday-schedule 1 1716786000 1717045200 1 1 1
+         chip-tool doorlock set-holiday-schedule 1 1716786000 1717045200 1 |node_id| 1
 
    #. Read saved schedules using the following commands and providing the same arguments you used in the earlier steps:
 
       .. parsed-literal::
          :class: highlight
 
-         ./chip-tool doorlock get-week-day-schedule *weekday-index* *user-index* *destination-id* *endpoint-id*
+         chip-tool doorlock get-week-day-schedule *weekday-index* *user-index* *destination-id* *endpoint-id*
 
       .. parsed-literal::
          :class: highlight
 
-         ./chip-tool doorlock get-year-day-schedule *yearday-index* *user-index* *destination-id* *endpoint-id*
+         chip-tool doorlock get-year-day-schedule *yearday-index* *user-index* *destination-id* *endpoint-id*
 
       .. parsed-literal::
          :class: highlight
 
-         ./chip-tool doorlock get-holiday-schedule *holiday-index* *destination-id* *endpoint-id*
+         chip-tool doorlock get-holiday-schedule *holiday-index* *destination-id* *endpoint-id*
 
 .. _matter_lock_sample_switching_thread_wifi:
 
@@ -567,9 +565,8 @@ Testing switching between Thread and Wi-Fi
          west build -b nrf5340dk/nrf5340/cpuapp -- -DFILE_SUFFIX=thread_wifi_switched -Dlock_SHIELD=nrf7002ek  -DSB_CONFIG_WIFI_NRF70=y
 
    #. Prepare the development kit for testing.
-      See :ref:`Prepare the development kit for testing <matter_sample_prepare_dk_for_testing>` for more information.
+      Refer to the :ref:`matter_lock_sample_testing_start` section for more information.
 
-   #. Wait until the device boots.
    #. Find the following log message which indicates that Wi-Fi transport protocol is activated:
 
       .. code-block:: console
@@ -605,15 +602,17 @@ Testing Bluetooth LE with Nordic UART Service
          west build -b nrf52840dk/nrf52840 -- -DCONFIG_CHIP_NUS=y
 
    #. Prepare the development kit for testing.
-      Refer to :ref:`Prepare the development kit for testing <matter_sample_prepare_dk_for_testing>` for more information.
+      Refer to the :ref:`matter_lock_sample_testing_start` section for more information.
 
    #. If you built the sample with the debug configuration, connect the board to a UART console to see the log entries from the device.
    #. Open the nRF Toolbox application on your smartphone.
    #. Select :guilabel:`Universal Asynchronous Receiver/Transmitter UART` from the list in the nRF Toolbox application.
    #. Tap on :guilabel:`Connect`.
       The application connects to the devices connected through UART.
+
    #. Select :guilabel:`MatterLock_NUS` from the list of available devices.
       The Bluetooth Pairing Request with an input field for passkey appears as a notification (Android) or on the screen (iOS).
+
    #. Depending on the configuration you are using:
 
       * For the release configuration: Enter the passkey ``123456``.
@@ -635,11 +634,6 @@ Testing Bluetooth LE with Nordic UART Service
 
    To read the current door lock state from the device, read the Bluetooth LE RX characteristic.
    The new lock state is updated after changing the state from any of the following sources: NUS, buttons, Matter stack.
-
-Factory reset
-=============
-
-|matter_factory_reset|
 
 Dependencies
 ************

@@ -1,5 +1,2 @@
-After building the |matter_type| and programming it to your development kit, complete the following steps to test its basic features.
-
-.. note::
-
-   |matter_unique_discriminator_note|
+This section shows how to test the |matter_type|.
+You can test it using your PC and the :ref:`CHIP Tool for Linux or macOS <ug_matter_configuring_controller>` or commercial ecosystem that supports Matter.
