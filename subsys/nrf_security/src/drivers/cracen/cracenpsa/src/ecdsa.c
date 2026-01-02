@@ -170,26 +170,22 @@ static void ecdsa_read_sig(struct cracen_signature *sig, const uint8_t *r, const
 	sx_rdpkmem(sig->s, s, opsz);
 }
 
-static int ecdsa_run_generate_sign(struct sx_pk_acq_req *pkreq,
-				   const struct cracen_ecc_priv_key *privkey,
-				   const struct sx_pk_ecurve *curve, const uint8_t *workmem,
-				   size_t digestsz, size_t opsz,
-				   struct sx_pk_inops_ecdsa_generate *inputs)
+static int ecdsa_run_generate_sign(sx_pk_req *req,
+				    const struct cracen_ecc_priv_key *privkey,
+				    const struct sx_pk_ecurve *curve, const uint8_t *workmem,
+				    size_t digestsz, size_t opsz,
+				    struct sx_pk_inops_ecdsa_generate *inputs)
 {
-	*pkreq = sx_pk_acquire_req(SX_PK_CMD_ECDSA_GEN);
-	if (pkreq->status) {
-		return pkreq->status;
-	}
+	int status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)inputs);
 
-	pkreq->status = sx_pk_list_ecc_inslots(pkreq->req, curve, 0, (struct sx_pk_slot *)inputs);
-	if (pkreq->status) {
-		return pkreq->status;
+	if (status) {
+		return status;
 	}
 
 	ecdsa_write_sk(privkey, inputs->d.addr, opsz);
 	sx_wrpkmem(inputs->k.addr, workmem + digestsz, opsz);
 	digest2op(workmem, digestsz, inputs->h.addr, opsz);
-	sx_pk_run(pkreq->req);
+	sx_pk_run(req);
 
 	return SX_OK;
 }
@@ -234,32 +230,44 @@ int cracen_ecdsa_sign_digest(const struct cracen_ecc_priv_key *privkey,
 	internal_signature.r = signature;
 	internal_signature.s = signature + opsz;
 
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECDSA_GEN);
+	if (pkreq.status) {
+		sx_pk_release_req(pkreq.req);
+		return pkreq.status;
+	}
+
 	for (int i = 0; i <= MAX_ECDSA_ATTEMPTS; i++) {
 		status = cracen_get_rnd_in_range(curve_n, opsz, workmem + digest_length);
 		if (status != SX_OK) {
+			sx_pk_release_req(pkreq.req);
 			return status;
 		}
-		status = ecdsa_run_generate_sign(&pkreq, privkey, curve, workmem, digest_length,
-						 opsz, &inputs);
 
-		if (status != SX_OK) {
-			return status;
+		if (i > 0) {
+			sx_pk_set_cmd(pkreq.req, SX_PK_CMD_ECDSA_GEN);
 		}
-		status = sx_pk_wait(pkreq.req);
+
+		status = ecdsa_run_generate_sign(pkreq.req, privkey, curve, workmem,
+						 digest_length, opsz, &inputs);
 		if (status != SX_OK) {
 			sx_pk_release_req(pkreq.req);
+			return status;
 		}
+
+		status = sx_pk_wait(pkreq.req);
 
 		/* SX_ERR_NOT_INVERTIBLE may be due to silexpk countermeasures. */
 		if ((status == SX_ERR_INVALID_SIGNATURE) || (status == SX_ERR_NOT_INVERTIBLE)) {
-			sx_pk_release_req(pkreq.req);
 			if (i == MAX_ECDSA_ATTEMPTS) {
+				sx_pk_release_req(pkreq.req);
 				return SX_ERR_TOO_MANY_ATTEMPTS;
 			}
+			/* Continue loop to retry */
 		} else {
 			break;
 		}
 	}
+
 	if (status != SX_OK) {
 		sx_pk_release_req(pkreq.req);
 		return status;
@@ -439,6 +447,12 @@ int cracen_ecdsa_sign_digest_deterministic(const struct cracen_ecc_priv_key *pri
 	internal_signature.s = signature + opsz;
 	memcpy(workmem, digest, digestsz);
 
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECDSA_GEN);
+	if (pkreq.status) {
+		sx_pk_release_req(pkreq.req);
+		return pkreq.status;
+	}
+
 	do {
 		hmac_op.deterministic_retries = 0;
 		hmac_op.step = 0;
@@ -451,20 +465,19 @@ int cracen_ecdsa_sign_digest_deterministic(const struct cracen_ecc_priv_key *pri
 								   blocksz, workmem, &hmac_op,
 								   privkey);
 			if (status != SX_OK && status != SX_ERR_HW_PROCESSING) {
+				sx_pk_release_req(pkreq.req);
 				return status;
 			}
 		}
-		status = ecdsa_run_generate_sign(&pkreq, privkey, curve, workmem, digestsz, opsz,
-						 &inputs);
 
-		if (status != SX_OK) {
-			return status;
-		}
-		status = sx_pk_wait(pkreq.req);
-
+		status = ecdsa_run_generate_sign(pkreq.req, privkey, curve, workmem, digestsz,
+						 opsz, &inputs);
 		if (status != SX_OK) {
 			sx_pk_release_req(pkreq.req);
+			return status;
 		}
+
+		status = sx_pk_wait(pkreq.req);
 
 	} while (--hmac_op.attempts &&
 		 (status == SX_ERR_INVALID_SIGNATURE || status == SX_ERR_NOT_INVERTIBLE));

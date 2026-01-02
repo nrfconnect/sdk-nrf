@@ -40,77 +40,47 @@
 #include "coprime_check.h"
 
 /* Perform modular inversion of a, using b as the modulo. */
-static int modular_inversion_start(struct cracen_coprimecheck *coprimecheck)
+static int modular_inversion_run(sx_pk_req *req, struct cracen_coprimecheck *coprimecheck)
 {
-	int sx_status;
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_mod_single_op_cmd inputs;
 	size_t bsz = coprimecheck->bsz;
 	size_t asz = coprimecheck->asz;
 	int sizes[] = {bsz, asz};
 
 	/* b is odd, we can use command SX_PK_CMD_ODD_MOD_INV */
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_ODD_MOD_INV);
-	if (pkreq.status) {
-		return pkreq.status;
-	}
+	sx_pk_set_cmd(req, SX_PK_CMD_ODD_MOD_INV);
 
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq.status;
+	int status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+
+	if (status != SX_OK) {
+		return status;
 	}
 
 	sx_wrpkmem(inputs.n.addr, coprimecheck->b, bsz);
 	sx_wrpkmem(inputs.b.addr, coprimecheck->a, asz);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	sx_status = sx_pk_wait(pkreq.req);
-	return sx_status;
-}
-
-static int modular_reduction_finish(uint8_t *workmem, struct sx_pk_acq_req *pkreq,
-				    struct cracen_coprimecheck *coprimecheck)
-{
-	const uint8_t **outputs = sx_pk_get_output_ops(pkreq->req);
-	int opsz = sx_pk_get_opsize(pkreq->req);
-	size_t bsz = coprimecheck->bsz;
-
-	/* copy to workmem the result of the modular reduction, to be found
-	 * at the end of the device memory slots
-	 */
-	sx_rdpkmem(workmem, outputs[0] + opsz - bsz, bsz);
-
-	sx_pk_release_req(pkreq->req);
-
-	/* update the task's parameters related to a */
-	coprimecheck->a = workmem;
-	coprimecheck->asz = bsz;
-
-	return modular_inversion_start(coprimecheck);
+	return sx_pk_wait(req);
 }
 
 /* Perform modular reduction of a, using b as the modulo. */
-static int modular_reduction_start(uint8_t *workmem, struct cracen_coprimecheck *coprimecheck)
+static int modular_reduction_run(sx_pk_req *req, uint8_t *workmem,
+				 struct cracen_coprimecheck *coprimecheck)
 {
-	int sx_status;
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_mod_single_op_cmd inputs;
 	size_t bsz = coprimecheck->bsz;
 	size_t asz = coprimecheck->asz;
 
-	/* b is odd, we can use command SX_PK_CMD_ODD_MOD_REDUCE */
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_ODD_MOD_REDUCE);
-	if (pkreq.status) {
-		return pkreq.status;
-	}
+	sx_pk_set_cmd(req, SX_PK_CMD_ODD_MOD_REDUCE);
 
 	/* give the largest size for both inputs, in this case it is asz */
 	int sizes[] = {asz, asz};
 
-	sx_status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
-	if (sx_status) {
-		return sx_status;
+	int status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+
+	if (status != SX_OK) {
+		return status;
 	}
 
 	/* Copy modulo and operand to the device memory slots. Note that the
@@ -120,19 +90,32 @@ static int modular_reduction_start(uint8_t *workmem, struct cracen_coprimecheck 
 	sx_wrpkmem(inputs.n.addr + asz - bsz, coprimecheck->b, bsz);
 	sx_wrpkmem(inputs.b.addr, coprimecheck->a, asz);
 
-	sx_pk_run(pkreq.req);
-	sx_status = sx_pk_wait(pkreq.req);
-	if (sx_status != SX_OK) {
-		sx_pk_release_req(pkreq.req);
-		return sx_status;
+	sx_pk_run(req);
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
 	}
-	return modular_reduction_finish(workmem, &pkreq, coprimecheck);
+
+	/* Read the result of the modular reduction */
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
+	int opsz = sx_pk_get_opsize(req);
+
+	/* copy to workmem the result of the modular reduction, to be found
+	 * at the end of the device memory slots
+	 */
+	sx_rdpkmem(workmem, outputs[0] + opsz - bsz, bsz);
+
+	/* update the task's parameters related to a */
+	coprimecheck->a = workmem;
+	coprimecheck->asz = bsz;
+
+	return SX_OK;
 }
 
-int cracen_coprime_check(uint8_t *workmem, size_t workmemsz, const uint8_t *a, size_t asz,
-			 const uint8_t *b, size_t bsz)
+int coprime_check_run(sx_pk_req *req, uint8_t *workmem, size_t workmemsz, const uint8_t *a,
+		      size_t asz, const uint8_t *b, size_t bsz)
 {
-	int sx_status;
+	int status;
 	int a_is_odd;
 	int b_is_odd;
 	size_t minworkmemsz;
@@ -184,9 +167,31 @@ int cracen_coprime_check(uint8_t *workmem, size_t workmemsz, const uint8_t *a, s
 	coprimecheck.bsz = bsz;
 
 	if (asz > bsz) {
-		sx_status = modular_reduction_start(workmem, &coprimecheck);
-	} else {
-		sx_status = modular_inversion_start(&coprimecheck);
+		/* First do modular reduction, then inversion */
+		status = modular_reduction_run(req, workmem, &coprimecheck);
+		if (status != SX_OK) {
+			return status;
+		}
 	}
-	return sx_status;
+
+	return modular_inversion_run(req, &coprimecheck);
+}
+
+int cracen_coprime_check(uint8_t *workmem, size_t workmemsz, const uint8_t *a, size_t asz,
+			 const uint8_t *b, size_t bsz)
+{
+	struct sx_pk_acq_req pkreq;
+	int status;
+
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_ODD_MOD_INV);
+	if (pkreq.status) {
+		sx_pk_release_req(pkreq.req);
+		return pkreq.status;
+	}
+
+	status = coprime_check_run(pkreq.req, workmem, workmemsz, a, asz, b, bsz);
+
+	sx_pk_release_req(pkreq.req);
+
+	return status;
 }

@@ -7,7 +7,9 @@
 
 #include <string.h>
 #include <silexpk/sxbuf/sxbufop.h>
+#include <silexpk/core.h>
 #include <silexpk/sxops/rsa.h>
+#include <silexpk/cmddefs/rsa.h>
 #include <silexpk/iomem.h>
 #include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
@@ -151,49 +153,37 @@ static uint8_t *get_candidate_prime(struct cracen_rsacheckpq *rsacheckpq)
 /* Offset to the part of workmem that is specific to the 'genprivkey' function. */
 #define GENPRIVKEY_WORKMEM_OFST(keysz) (keysz)
 
-/* Generate the remaining CRT parameters dp, dq and qinv. */
-static int rsagenpriv_crt_finish(struct sx_pk_acq_req *pkreq, size_t keysz, uint8_t *workmem,
+static int rsagenpriv_crt_finish(sx_pk_req *req, size_t keysz, uint8_t *workmem,
 				 struct cracen_rsa_key *priv_key)
 {
-	int sx_status;
+	struct sx_pk_inops_rsa_crt_keyparams inputs;
 	uint8_t *wmem = workmem + GENPRIVKEY_WORKMEM_OFST(keysz);
 	size_t primefactorsz = keysz >> 1;
-	sx_const_op p;
-	sx_const_op q;
-	sx_const_op privexp;
+	int sizes[] = {primefactorsz, primefactorsz, keysz};
 
-	/* p and q come out of the earlier key-gen call in workmem */
-	p.bytes = wmem;
-	p.sz = primefactorsz;
+	/* Copy p and q to output */
+	memcpy(priv_key->elements[0]->bytes, wmem, primefactorsz);
+	memcpy(priv_key->elements[1]->bytes, wmem + primefactorsz, primefactorsz);
 
-	q.bytes = wmem + primefactorsz;
-	q.sz = primefactorsz;
+	sx_pk_set_cmd(req, SX_PK_CMD_RSA_CRT_KEYPARAMS);
 
-	if (pkreq->status != SX_OK) {
-		sx_pk_release_req(pkreq->req);
-		return pkreq->status;
-	}
-	memcpy(priv_key->elements[0]->bytes, p.bytes, p.sz);
-	memcpy(priv_key->elements[1]->bytes, q.bytes, q.sz);
+	int status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
 
-	privexp.bytes = workmem;
-	privexp.sz = keysz;
-
-	*pkreq = sx_async_rsa_crt_keyparams_go(&p, &q, &privexp);
-	if (pkreq->status) {
-		return pkreq->status;
-	}
-	sx_status = sx_pk_wait(pkreq->req);
-	if (sx_status != SX_OK) {
-		return sx_status;
+	if (status != SX_OK) {
+		return status;
 	}
 
-	const uint8_t **outputs = sx_pk_get_output_ops(pkreq->req);
+	sx_wrpkmem(inputs.p.addr, wmem, primefactorsz);
+	sx_wrpkmem(inputs.q.addr, wmem + primefactorsz, primefactorsz);
+	sx_wrpkmem(inputs.privkey.addr, workmem, keysz);
 
-	if (pkreq->status != SX_OK) {
-		sx_pk_release_req(pkreq->req);
-		return pkreq->status;
+	sx_pk_run(req);
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
 	}
+
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
 
 	/* get dp, dq and qinv from device memory slots (take the last
 	 * primefactorsz bytes of each slot)
@@ -202,14 +192,12 @@ static int rsagenpriv_crt_finish(struct sx_pk_acq_req *pkreq, size_t keysz, uint
 	sx_rdpkmem(priv_key->elements[3]->bytes, outputs[1] + primefactorsz, primefactorsz);
 	sx_rdpkmem(priv_key->elements[4]->bytes, outputs[2] + primefactorsz, primefactorsz);
 
-	sx_pk_release_req(pkreq->req);
-
 	return SX_OK;
 }
 
-static int rsagenpriv_finish(struct sx_pk_acq_req *pkreq, struct cracen_rsa_key *key, size_t keysz)
+static int rsagenpriv_finish(sx_pk_req *req, struct cracen_rsa_key *key, size_t keysz)
 {
-	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(pkreq->req);
+	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(req);
 
 	/* get modulus n */
 	sx_rdpkmem(key->elements[0]->bytes, outputs[0], keysz);
@@ -217,17 +205,37 @@ static int rsagenpriv_finish(struct sx_pk_acq_req *pkreq, struct cracen_rsa_key 
 	/* get private exponent d */
 	sx_rdpkmem(key->elements[1]->bytes, outputs[2], keysz);
 
-	sx_pk_release_req(pkreq->req);
-
 	return SX_OK;
 }
 
-static int miller_rabin_get_random(uint8_t *workmem, struct cracen_rsacheckpq *rsacheckpq)
+static int miller_rabin_run(sx_pk_req *req, const uint8_t *candidate, const uint8_t *random,
+			    size_t candidatesz)
+{
+	struct sx_pk_inops_miller_rabin inputs;
+	int sizes[] = {candidatesz, candidatesz};
+
+	sx_pk_set_cmd(req, SX_PK_CMD_MILLER_RABIN);
+
+	int status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+
+	if (status != SX_OK) {
+		return status;
+	}
+
+	sx_wrpkmem(inputs.n.addr, candidate, candidatesz);
+	sx_wrpkmem(inputs.a.addr, random, candidatesz);
+
+	sx_pk_run(req);
+
+	return sx_pk_wait(req);
+}
+
+static int miller_rabin_get_random(sx_pk_req *req, uint8_t *workmem,
+				   struct cracen_rsacheckpq *rsacheckpq)
 {
 	int sx_status;
 	size_t candidatesz = rsacheckpq->candidatesz;
 	uint8_t *wmem = workmem + CHECKPQ_WORKMEM_OFST(candidatesz);
-	struct sx_pk_acq_req pkreq;
 
 	/* When using cracen_get_rnd_in_range, the upper limit argument must be odd,
 	 * which is the case here since it is equal to the candidate prime - 2. The
@@ -247,25 +255,13 @@ static int miller_rabin_get_random(uint8_t *workmem, struct cracen_rsacheckpq *r
 		 */
 		cracen_be_add(workmem, candidatesz, 1);
 		uint8_t *candprime = get_candidate_prime(rsacheckpq);
-		struct sx_const_buf random;
-		struct sx_const_buf candidate;
-
-		random.bytes = workmem;
-		random.sz = candidatesz;
-
-		candidate.bytes = candprime;
-		candidate.sz = candidatesz;
 
 		/* execute a Miller Rabin round */
-		pkreq = sx_async_miller_rabin_go(&candidate, &random);
-		if (pkreq.status) {
-			return pkreq.status;
-		}
+		sx_status = miller_rabin_run(req, candprime, workmem, candidatesz);
+
 		/* if the Miller Rabin round returned SX_ERR_COMPOSITE_VALUE or another
 		 * error code, this functions returns the error code.
 		 */
-		sx_status = sx_pk_wait(pkreq.req);
-		sx_pk_release_req(pkreq.req);
 		if (sx_status != SX_OK) {
 			return sx_status;
 		}
@@ -331,7 +327,7 @@ static int miller_rabin_get_random(uint8_t *workmem, struct cracen_rsacheckpq *r
  * directly from:
  *      max(candidatesz, min(candidatesz, pubexpsz), min(candidatesz, 128))
  */
-static int rsagenpq_get_random(uint8_t *workmem, struct cracen_rsagenpq *rsagenpq)
+static int rsagenpq_get_random(sx_pk_req *req, uint8_t *workmem, struct cracen_rsagenpq *rsagenpq)
 {
 	int sx_status;
 	/* step 4.2: get keysz/2 random bytes from the environment's PRNG
@@ -445,8 +441,8 @@ static int rsagenpq_get_random(uint8_t *workmem, struct cracen_rsagenpq *rsagenp
 	 */
 	size_t candidatesz = rsacheckpq.candidatesz;
 
-	sx_status = cracen_coprime_check(workmem, WORKMEM_SIZE, candprime, candidatesz,
-					 product_small_primes, sizeof(product_small_primes));
+	sx_status = coprime_check_run(req, workmem, WORKMEM_SIZE, candprime, candidatesz,
+				      product_small_primes, sizeof(product_small_primes));
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -463,8 +459,8 @@ static int rsagenpq_get_random(uint8_t *workmem, struct cracen_rsagenpq *rsagenp
 
 	/* step 4.5 (or 5.6): candprime - 1 and public exponent must be coprime
 	 */
-	sx_status = cracen_coprime_check(workmem, WORKMEM_SIZE, wmem, candidatesz,
-					 rsacheckpq.pubexp, rsacheckpq.pubexpsz);
+	sx_status = coprime_check_run(req, workmem, WORKMEM_SIZE, wmem, candidatesz,
+				      rsacheckpq.pubexp, rsacheckpq.pubexpsz);
 	/* the status code value here is SX_ERR_NOT_INVERTIBLE if
 	 * (candidate prime - 1) and the public exponent are not coprime
 	 */
@@ -481,7 +477,7 @@ static int rsagenpq_get_random(uint8_t *workmem, struct cracen_rsagenpq *rsagenp
 	 */
 	be_sub(wmem, candidatesz, 1);
 
-	return miller_rabin_get_random(workmem, &rsacheckpq);
+	return miller_rabin_get_random(req, workmem, &rsacheckpq);
 }
 
 /* function to generate an RSA private key, based on FIPS 186-4.
@@ -553,13 +549,21 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 		return SX_ERR_INVALID_ARG;
 	}
 	struct cracen_rsagenpq rsagenpq;
+	struct sx_pk_acq_req pkreq;
+	size_t primefactorsz = keysz >> 1;
 
 	rsagenpq.pubexp = pubexp;
 	rsagenpq.pubexpsz = pubexpsz;
-	rsagenpq.candidatesz = keysz >> 1;
+	rsagenpq.candidatesz = primefactorsz;
 	rsagenpq.p = wmem;
-	rsagenpq.q = wmem + (keysz >> 1);
+	rsagenpq.q = wmem + primefactorsz;
 	rsagenpq.qptr = NULL;
+
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_RSA_KEYGEN);
+	if (pkreq.status) {
+		sx_pk_release_req(pkreq.req);
+		return pkreq.status;
+	}
 
 	/* step 4.1 */
 	rsagenpq.attempts = 0;
@@ -568,29 +572,17 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 	rsagenpq.rndout = wmem;
 	rsagenpq.q = NULL;
 
-	struct sx_pk_acq_req pkreq;
-	size_t primefactorsz = keysz >> 1;
-	sx_const_op p;
-	sx_const_op q;
-	sx_const_op pubexp_struct;
-
-	p.bytes = wmem;
-	p.sz = primefactorsz;
-
-	q.bytes = wmem + primefactorsz;
-	q.sz = primefactorsz;
-
-	pubexp_struct.bytes = pubexp;
-	pubexp_struct.sz = pubexpsz;
 	do {
-		sx_status = rsagenpq_get_random(workmem, &rsagenpq);
+		sx_status = rsagenpq_get_random(pkreq.req, workmem, &rsagenpq);
 		if (sx_status == SX_ERR_COMPOSITE_VALUE || sx_status == SX_ERR_NOT_INVERTIBLE ||
 		    sx_status == SX_ERR_RSA_PQ_RANGE_CHECK_FAIL) {
 			rsagenpq.attempts++;
 			if (rsagenpq.attempts >= 5 * (primefactorsz << 3)) {
+				sx_pk_release_req(pkreq.req);
 				return SX_ERR_TOO_MANY_ATTEMPTS;
 			}
 		} else if (sx_status != SX_OK) {
+			sx_pk_release_req(pkreq.req);
 			return sx_status;
 		}
 	} while (sx_status != SX_OK);
@@ -600,28 +592,57 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 	rsagenpq.rndout = rsagenpq.q;	   /* feed the PRNG into q */
 
 	do {
-		sx_status = rsagenpq_get_random(workmem, &rsagenpq);
+		sx_status = rsagenpq_get_random(pkreq.req, workmem, &rsagenpq);
 		if (sx_status == SX_ERR_COMPOSITE_VALUE || sx_status == SX_ERR_NOT_INVERTIBLE ||
 		    sx_status == SX_ERR_RSA_PQ_RANGE_CHECK_FAIL) {
 			rsagenpq.attempts++;
 			if (rsagenpq.attempts >= 5 * (primefactorsz << 3)) {
+				sx_pk_release_req(pkreq.req);
 				return SX_ERR_TOO_MANY_ATTEMPTS;
 			}
 		} else if (sx_status != SX_OK) {
+			sx_pk_release_req(pkreq.req);
 			return sx_status;
 		}
 	} while (sx_status != SX_OK);
-	pkreq = sx_async_rsa_keygen_go(&p, &q, &pubexp_struct);
-	if (pkreq.status != SX_OK) {
-		return pkreq.status;
+
+	/* Run RSA keygen */
+	{
+		struct sx_pk_inops_rsa_keygen inputs;
+		int sizes[] = {primefactorsz, primefactorsz, pubexpsz};
+
+		sx_pk_set_cmd(pkreq.req, SX_PK_CMD_RSA_KEYGEN);
+
+		sx_status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
+		if (sx_status != SX_OK) {
+			sx_pk_release_req(pkreq.req);
+			return sx_status;
+		}
+
+		sx_wrpkmem(inputs.p.addr, wmem, primefactorsz);
+		sx_wrpkmem(inputs.q.addr, wmem + primefactorsz, primefactorsz);
+		sx_wrpkmem(inputs.e.addr, pubexp, pubexpsz);
+
+		sx_pk_run(pkreq.req);
+		sx_status = sx_pk_wait(pkreq.req);
+		if (sx_status != SX_OK) {
+			sx_pk_release_req(pkreq.req);
+			return sx_status;
+		}
 	}
-	sx_status = sx_pk_wait(pkreq.req);
-	if (sx_status != SX_OK) {
-		return sx_status;
-	}
+
+	/* Read private exponent d into workmem for CRT params computation */
+	const uint8_t **outputs = sx_pk_get_output_ops(pkreq.req);
+
+	sx_rdpkmem(workmem, outputs[2], keysz);
+
 	if (CRACEN_RSA_KEY_CRT(privkey)) {
-		return rsagenpriv_crt_finish(&pkreq, keysz, workmem, privkey);
+		sx_status = rsagenpriv_crt_finish(pkreq.req, keysz, workmem, privkey);
 	} else {
-		return rsagenpriv_finish(&pkreq, privkey, keysz);
+		sx_status = rsagenpriv_finish(pkreq.req, privkey, keysz);
 	}
+
+	sx_pk_release_req(pkreq.req);
+
+	return sx_status;
 }

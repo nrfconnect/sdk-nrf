@@ -33,99 +33,92 @@ static inline void encode_eddsa_pt(const uint8_t *pxbuf, const uint8_t *pybuf,
 	pt->encoded[SX_ED448_SZ - 1] |= (pxbuf[0] & 1) << 7;
 }
 
-struct sx_pk_acq_req sx_async_ed448_ptmult_go(const struct sx_ed448_dgst *r)
+static int ed448_ptmult_run(sx_pk_req *req, const struct sx_ed448_dgst *r)
 {
-	struct sx_pk_acq_req pkreq;
 	const struct sx_pk_ecurve *curve = &sx_curve_ed448;
 	struct sx_pk_inops_eddsa_ptmult inputs;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_EDDSA_PTMUL);
-	if (pkreq.status) {
-		return pkreq;
-	}
-	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
+	int status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
+
+	if (status != SX_OK) {
+		return status;
 	}
 	write_ed448dgst(r, &inputs.r);
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
-void sx_async_ed448_ptmult_end(sx_pk_req *req, struct sx_ed448_pt *pt)
+static void ed448_ptmult_read(sx_pk_req *req, struct sx_ed448_pt *pt)
 {
 	const uint8_t **outputs = sx_pk_get_output_ops(req);
 
 	encode_eddsa_pt(outputs[0], outputs[1], pt);
-
-	sx_pk_release_req(req);
 }
 
-int sx_ed448_ptmult(const struct sx_ed448_dgst *r, struct sx_ed448_pt *pt)
+int sx_ed448_ptmult(sx_pk_req *req, const struct sx_ed448_dgst *r, struct sx_ed448_pt *pt)
 {
-	struct sx_pk_acq_req pkreq;
-	uint32_t status;
+	sx_pk_set_cmd(req, SX_PK_CMD_EDDSA_PTMUL);
 
-	pkreq = sx_async_ed448_ptmult_go(r);
-	if (pkreq.status) {
-		return pkreq.status;
+	int status = ed448_ptmult_run(req, r);
+
+	if (status != SX_OK) {
+		return status;
 	}
-	status = sx_pk_wait(pkreq.req);
-	sx_async_ed448_ptmult_end(pkreq.req, pt);
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
+	ed448_ptmult_read(req, pt);
 
-	return status;
+	return SX_OK;
 }
 
-struct sx_pk_acq_req sx_pk_async_ed448_sign_go(const struct sx_ed448_dgst *k,
-					       const struct sx_ed448_dgst *r,
-					       const struct sx_ed448_v *s)
+static int ed448_sign_run(sx_pk_req *req, const struct sx_ed448_dgst *k,
+			  const struct sx_ed448_dgst *r, const struct sx_ed448_v *s)
 {
-	struct sx_pk_acq_req pkreq;
 	const struct sx_pk_ecurve *curve = &sx_curve_ed448;
 	struct sx_pk_inops_eddsa_sign inputs;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_EDDSA_SIGN);
-	if (pkreq.status) {
-		return pkreq;
-	}
-	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
+	int status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
+
+	if (status != SX_OK) {
+		return status;
 	}
 
 	write_ed448dgst(k, &inputs.k);
 	write_ed448dgst(r, &inputs.r);
 	sx_wrpkmem(inputs.s.addr, &s->bytes, sizeof(s->bytes));
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
-void sx_async_ed448_sign_end(sx_pk_req *req, struct sx_ed448_v *sig_s)
+static void ed448_sign_read(sx_pk_req *req, struct sx_ed448_v *sig_s)
 {
 	const uint8_t **outputs = sx_pk_get_output_ops(req);
 
 	sx_rdpkmem(&sig_s->bytes, outputs[0], sizeof(sig_s->bytes));
-
-	sx_pk_release_req(req);
 }
 
-int sx_ed448_sign(const struct sx_ed448_dgst *k, const struct sx_ed448_dgst *r,
+int sx_ed448_sign(sx_pk_req *req, const struct sx_ed448_dgst *k, const struct sx_ed448_dgst *r,
 		  const struct sx_ed448_v *s, struct sx_ed448_v *sig_s)
 {
-	struct sx_pk_acq_req pkreq;
-	uint32_t status;
+	sx_pk_set_cmd(req, SX_PK_CMD_EDDSA_SIGN);
 
-	pkreq = sx_pk_async_ed448_sign_go(k, r, s);
-	if (pkreq.status) {
-		return pkreq.status;
+	int status = ed448_sign_run(req, k, r, s);
+
+	if (status != SX_OK) {
+		return status;
 	}
-	status = sx_pk_wait(pkreq.req);
-	sx_async_ed448_sign_end(pkreq.req, sig_s);
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
+	ed448_sign_read(req, sig_s);
 
-	return status;
+	return SX_OK;
 }
 
 /** Returns the least significant bit of the x coordinate of the encoded point*/
@@ -141,12 +134,10 @@ static inline void ed448_pt_write_y(const struct sx_ed448_pt *pt, uint8_t *ay)
 	sx_wrpkmem_byte(&ay[SX_ED448_PT_SZ - 1], pt->encoded[SX_ED448_PT_SZ - 1] & 0x7f);
 }
 
-struct sx_pk_acq_req sx_async_ed448_verify_go(const struct sx_ed448_dgst *k,
-					      const struct sx_ed448_pt *a,
-					      const struct sx_ed448_v *sig_s,
-					      const struct sx_ed448_pt *r)
+static int ed448_verify_run(sx_pk_req *req, const struct sx_ed448_dgst *k,
+			    const struct sx_ed448_pt *a, const struct sx_ed448_v *sig_s,
+			    const struct sx_ed448_pt *r)
 {
-	struct sx_pk_acq_req pkreq;
 	const struct sx_pk_ecurve *curve = &sx_curve_ed448;
 	uint32_t encodingflags = 0;
 	struct sx_pk_inops_eddsa_ver inputs;
@@ -157,38 +148,33 @@ struct sx_pk_acq_req sx_async_ed448_verify_go(const struct sx_ed448_dgst *k,
 	if (ed448_decode_pt_x(r)) {
 		encodingflags |= PK_OP_FLAGS_EDDSA_RX_LSB;
 	}
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_EDDSA_VER);
-	if (pkreq.status) {
-		return pkreq;
-	}
 
-	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, encodingflags,
-					      (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
+	int status = sx_pk_list_ecc_inslots(req, curve, encodingflags,
+					    (struct sx_pk_slot *)&inputs);
+
+	if (status != SX_OK) {
+		return status;
 	}
 	write_ed448dgst(k, &inputs.k);
 	ed448_pt_write_y(a, inputs.ay.addr);
 	sx_wrpkmem(inputs.sig_s.addr, sig_s, sizeof(sig_s->bytes));
 	ed448_pt_write_y(r, inputs.ry.addr);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
-int sx_ed448_verify(const struct sx_ed448_dgst *k, const struct sx_ed448_pt *a,
+int sx_ed448_verify(sx_pk_req *req, const struct sx_ed448_dgst *k, const struct sx_ed448_pt *a,
 		    const struct sx_ed448_v *sig_s, const struct sx_ed448_pt *r)
 {
-	struct sx_pk_acq_req pkreq;
-	uint32_t status;
+	sx_pk_set_cmd(req, SX_PK_CMD_EDDSA_VER);
 
-	pkreq = sx_async_ed448_verify_go(k, a, sig_s, r);
-	if (pkreq.status) {
-		return pkreq.status;
+	int status = ed448_verify_run(req, k, a, sig_s, r);
+
+	if (status != SX_OK) {
+		return status;
 	}
-	status = sx_pk_wait(pkreq.req);
-	sx_pk_release_req(pkreq.req);
 
-	return status;
+	return sx_pk_wait(req);
 }
