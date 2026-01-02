@@ -21,3 +21,7 @@
                                              If the Bluetooth LE advertising times out, enable it again.
 
 .. |matter_factory_reset| replace:: To restore the device settings and state to its factory set press the |First Button| for six seconds to initiate the factory reset of the device.
+.. |sample_not_in_ecosystem| replace:: The |matter_type| sample, in its default configuration, is not recognized or supported by any major Matter ecosystem.
+                                       This is because it does not use a standard Matter device type that ecosystem controllers expect or can interact with.
+                                       To make your implementation compatible with a specific ecosystem, you must add an endpoint and assign a device type that is officially supported by that ecosystem.
+                                       For detailed instructions on how to add supported clusters and device types, refer to the :ref:`ug_matter_gs_adding_cluster` user guide.

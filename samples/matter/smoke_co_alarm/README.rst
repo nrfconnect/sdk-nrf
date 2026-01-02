@@ -6,6 +6,8 @@
 .. |matter_qr_code_payload| replace:: MT:Y.K9042C00KA0648G00
 .. |matter_pairing_code| replace:: 34970112332
 .. |matter_qr_code_image| image:: /images/matter_qr_code_smoke_co_alarm.png
+                          :width: 200px
+                          :alt: QR code for commissioning the smoke CO alarm device
 
 .. include:: /includes/matter/shortcuts.txt
 
@@ -58,7 +60,6 @@ Every power source can be independently enabled or disabled using a dedicated te
 You can test the device remotely over a Thread network, which requires more devices.
 
 The remote control testing requires a Matter controller that you can configure either on a PC or a mobile device.
-You can enable both methods after `Commissioning the device`_.
 
 Smoke CO Alarm features
 =======================
@@ -150,69 +151,92 @@ Building and running
 ********************
 
 .. include:: /includes/matter/building_and_running/intro.txt
-.. include:: /includes/matter/building_and_running/select_configuration.txt
-.. include:: /includes/matter/building_and_running/commissioning.txt
 
 |matter_ble_advertising_auto|
-
-.. include:: /includes/matter/building_and_running/onboarding.txt
 
 Testing
 *******
 
-.. |endpoint_name| replace:: **Smoke CO Alarm cluster**
-.. |endpoint_id| replace:: **1**
-
 .. include:: /includes/matter/testing/intro.txt
-.. include:: /includes/matter/testing/prerequisites.txt
-.. include:: /includes/matter/testing/prepare.txt
 
-Testing steps
-=============
+Testing with CHIP Tool
+======================
 
-#. Observe that |Second LED|, |Third LED| and |Fourth LED| are turned off, which means that the device does not express any alarm.
-#. Trigger the device self-test by invoking the following command:
+Complete the following steps to test the |matter_name| device using CHIP Tool:
 
-   .. parsed-literal::
-      :class: highlight
+.. |node_id| replace:: 1
 
-      ./chip-tool smokecoalarm self-test-request <node_id> 1
+.. include:: /includes/matter/testing/1_prepare_matter_network_thread.txt
+.. include:: /includes/matter/testing/2_prepare_dk.txt
+.. include:: /includes/matter/testing/3_commission_thread.txt
 
-   The |Second LED|, |Third LED| and |Fourth LED| will sequentially flash for 5 seconds.
+.. rst-class:: numbered-step
 
-#. Test the Smoke alarm by invoking triggers from the General Diagnostics cluster.
-   Replace the *<test_event_enable_key>* and *<node_id>* arguments in the presented commands with values selected by you (for example, ``00112233445566778899AABBCCDDEEFF`` and ``1``):
-   Trigger the Smoke alarm by invoking the following command:
+Observe the initial state
+-------------------------
 
-   .. parsed-literal::
-      :class: highlight
+Observe that |Second LED|, |Third LED| and |Fourth LED| are turned off, which means that the device does not express any alarm.
 
-      generaldiagnostics test-event-trigger hex:<test_event_enable_key> 0x005c00000000009c <node_id> 0
+.. rst-class:: numbered-step
 
-   The |Second LED| will start blinking evenly with 300 ms interval.
+Trigger the device self-test
+----------------------------
 
-#. Trigger the CO alarm by invoking the following command with the *<test_event_enable_key>* and *<node_id>* replaced with the values you selected in the previous steps:
+In the interactive mode, trigger the device self-test by running the following command:
 
-   .. parsed-literal::
-      :class: highlight
+.. parsed-literal::
+   :class: highlight
 
-      generaldiagnostics test-event-trigger hex:<test_event_enable_key> 0x005c00000000009d <node_id> 0
+   chip-tool smokecoalarm self-test-request |node_id| 1
 
-   Nothing will change, because the CO alarm has lower priority than smoke alarm, so it will not be expressed.
+The |Second LED|, |Third LED| and |Fourth LED| will sequentially flash for 5 seconds.
 
-#. Stop the Smoke alarm by invoking the following command with the *<test_event_enable_key>* and *<node_id>* replaced with the values you selected in the previous steps:
+.. rst-class:: numbered-step
 
-   .. parsed-literal::
-      :class: highlight
+Trigger the Smoke alarm
+-----------------------
 
-      generaldiagnostics test-event-trigger hex:<test_event_enable_key> 0x005c0000000000a0 <node_id> 0
+Replace the *<test_event_enable_key>* argument in the presented command with the value selected by you (by default, the enable key value is ``00112233445566778899AABBCCDDEEFF``):
 
-   The |Second LED| will be turned off and the |Third LED| will start blinking evenly with 300 ms interval, to express the CO alarm, as the next one in the order.
+.. parsed-literal::
+   :class: highlight
 
-Factory reset
-=============
+   generaldiagnostics test-event-trigger hex:*<test_event_enable_key>* 0x005c00000000009c |node_id| 0
 
-|matter_factory_reset|
+The |Second LED| will start blinking evenly with 300 ms interval.
+
+.. rst-class:: numbered-step
+
+Trigger the CO alarm
+--------------------
+
+Replace the *<test_event_enable_key>* argument in the presented command with the value selected by you (by default, the enable key value is ``00112233445566778899AABBCCDDEEFF``):
+
+.. parsed-literal::
+   :class: highlight
+
+   generaldiagnostics test-event-trigger hex:*<test_event_enable_key>* 0x005c00000000009d |node_id| 0
+
+Nothing will change, because the CO alarm has lower priority than smoke alarm, so it will not be expressed.
+
+.. rst-class:: numbered-step
+
+Stop the Smoke alarm
+--------------------
+
+In the interactive mode, stop the Smoke alarm by running the following command, replacing the *<test_event_enable_key>* argument with the value selected by you (by default, the enable key value is ``00112233445566778899AABBCCDDEEFF``):
+
+.. parsed-literal::
+   :class: highlight
+
+   generaldiagnostics test-event-trigger hex:*<test_event_enable_key>* 0x005c0000000000a0 |node_id| 0
+
+The |Second LED| will be turned off and the |Third LED| will start blinking evenly with 300 ms interval, to express the CO alarm, as the next one in the order.
+
+Testing with commercial ecosystem
+=================================
+
+.. include:: /includes/matter/testing/ecosystem.txt
 
 Dependencies
 ************

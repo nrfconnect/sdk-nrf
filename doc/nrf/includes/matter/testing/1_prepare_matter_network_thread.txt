@@ -1,0 +1,8 @@
+.. rst-class:: numbered-step
+
+Prepare Matter network
+----------------------
+
+To set up the Matter over Thread, complete the following steps:
+
+.. include:: /includes/matter/testing/thread/prepare_matter_network.txt

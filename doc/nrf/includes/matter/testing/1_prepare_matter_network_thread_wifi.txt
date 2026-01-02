@@ -1,0 +1,18 @@
+.. rst-class:: numbered-step
+
+Prepare Matter network
+----------------------
+
+To set up the Matter network, configure your environment according to the protocol you are using.
+Choose the appropriate tab below and follow the corresponding steps to prepare your Matter network.
+
+.. tabs::
+
+   .. group-tab:: Matter over Thread
+
+      .. include:: /includes/matter/testing/thread/prepare_matter_network.txt
+
+   .. group-tab:: Matter over Wi-Fi
+
+      1. Download the prebuilt CHIP tool package from the `Matter nRF Connect releases`_ GitHub page.
+         Make sure that the package is compatible with your |NCS| version.
