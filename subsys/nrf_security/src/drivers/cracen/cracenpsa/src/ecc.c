@@ -25,19 +25,27 @@ int ecc_genpubkey(const uint8_t *priv_key, uint8_t *pub_key, const struct sx_pk_
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecp_mult inputs;
 	int opsz;
-	int status = SX_ERR_NOT_INVERTIBLE;
+	int status = SX_ERR_CORRUPTION_DETECTED;
 	int attempts = 0;
 
 	opsz = sx_pk_curve_opsize(curve);
 
-	while (status == SX_ERR_NOT_INVERTIBLE) {
-		pkreq = sx_pk_acquire_req(SX_PK_CMD_ECC_PTMUL);
-		if (pkreq.status) {
-			return pkreq.status;
+	/* Acquire CRACEN once for all retry attempts */
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECC_PTMUL);
+	if (pkreq.status) {
+		sx_pk_release_req(pkreq.req);
+		return pkreq.status;
+	}
+
+	do {
+		if (attempts > 0) {
+			sx_pk_set_cmd(pkreq.req, SX_PK_CMD_ECC_PTMUL);
 		}
+
 		pkreq.status =
 			sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
 		if (pkreq.status) {
+			sx_pk_release_req(pkreq.req);
 			return pkreq.status;
 		}
 
@@ -48,22 +56,20 @@ int ecc_genpubkey(const uint8_t *priv_key, uint8_t *pub_key, const struct sx_pk_
 		sx_pk_run(pkreq.req);
 
 		status = sx_pk_wait(pkreq.req);
-		if (status != SX_OK) {
-			return status;
-		}
-		outputs = (const uint8_t **)sx_pk_get_output_ops(pkreq.req);
 
 		/* When countermeasures are used, the operation may fail with error code
 		 * SX_ERR_NOT_INVERTIBLE. In this case we can try again.
 		 */
 		if (status == SX_ERR_NOT_INVERTIBLE) {
-			sx_pk_release_req(pkreq.req);
 			if (++attempts == MAX_ECC_ATTEMPTS) {
-				status = SX_ERR_TOO_MANY_ATTEMPTS;
+				sx_pk_release_req(pkreq.req);
+				return SX_ERR_TOO_MANY_ATTEMPTS;
 			}
 		}
-	}
+	} while (status == SX_ERR_NOT_INVERTIBLE);
+
 	if (status == SX_OK) {
+		outputs = (const uint8_t **)sx_pk_get_output_ops(pkreq.req);
 		sx_rdpkmem(pub_key, outputs[0], opsz);
 		sx_rdpkmem(pub_key + opsz, outputs[1], opsz);
 	}

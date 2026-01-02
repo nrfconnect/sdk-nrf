@@ -273,7 +273,7 @@ const uint8_t **sx_pk_get_output_ops(sx_pk_req *req);
  */
 void sx_pk_release_req(sx_pk_req *req);
 
-/** Change the command for an already-acquired request.
+/** Set the command for an already-acquired request.
  *
  * Use this to run multiple operations without releasing CRACEN between them.
  *
