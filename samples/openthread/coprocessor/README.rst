@@ -17,7 +17,7 @@ However, it customizes Zephyr's sample to fulfill the |NCS| requirements (for ex
 * Lowered main stack size to increase user application space.
 * No obsolete configuration options.
 * Vendor hooks for co-processor architecture allowing users to extend handled properties by their own, customized functionalities.
-* Thread 1.2 features.
+* Thread 1.4 features, including support for Thread 1.3 and Thread 1.2.
 
 This sample supports optional :ref:`logging extension <ot_coprocessor_sample_logging>`, which can be turned on or off independently.
 See :ref:`ot_coprocessor_sample_activating_variants` for details.
