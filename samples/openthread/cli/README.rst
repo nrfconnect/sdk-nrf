@@ -32,7 +32,7 @@ To indicate a Thread command, the ``ot`` keyword needs to precede the command.
 
 The number of commands you can test depends on the application configuration.
 The CLI sample comes with the :ref:`full set of OpenThread functionalities <thread_ug_feature_sets>` enabled (:kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER`).
-Thread 1.2 version is selected as default.
+Thread 1.4 version is selected as default.
 
 If used alone, the sample allows you to test the network status.
 It is recommended to use at least two development kits running the same sample for testing the communication.
