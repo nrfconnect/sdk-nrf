@@ -290,6 +290,11 @@ void sx_pk_release_req(sx_pk_req *req)
 	nrf_security_mutex_unlock(cracen_mutex_asymmetric);
 }
 
+void sx_pk_set_cmd(sx_pk_req *req, const struct sx_pk_cmd_def *cmd)
+{
+	req->cmd = cmd;
+}
+
 struct sx_regs *sx_pk_get_regs(void)
 {
 	return &silex_pk_engine.instance.regs;
