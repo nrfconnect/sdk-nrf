@@ -273,6 +273,18 @@ const uint8_t **sx_pk_get_output_ops(sx_pk_req *req);
  */
 void sx_pk_release_req(sx_pk_req *req);
 
+/** Change the command for an already-acquired request.
+ *
+ * Use this to run multiple operations without releasing CRACEN between them.
+ *
+ * @pre sx_pk_acquire_req() must have been called to acquire the request.
+ * @pre Any previous operation on this request must have completed (via sx_pk_wait()).
+ *
+ * @param[in,out] req The acceleration request obtained through sx_pk_acquire_req()
+ * @param[in] cmd The new command definition
+ */
+void sx_pk_set_cmd(sx_pk_req *req, const struct sx_pk_cmd_def *cmd);
+
 /**
  * @brief Clear interrupt for Cracen PK Engine.
  *
