@@ -8,6 +8,7 @@
 #define COPRIME_CHECK_HEADER_FILE
 
 #include <stdint.h>
+#include <silexpk/core.h>
 
 /** Function to check if two integer numbers are coprime.
  * @param[in] a            Unsigned integer stored as a big endian byte array.
@@ -30,5 +31,11 @@
 
 int cracen_coprime_check(uint8_t *workmem, size_t workmemsz, const uint8_t *a, size_t asz,
 			 const uint8_t *b, size_t bsz);
+
+/** Same as cracen_coprime_check, but uses an already-acquired request.
+ * This allows chaining multiple CRACEN operations without releasing between them.
+ */
+int coprime_check_run(sx_pk_req *req, uint8_t *workmem, size_t workmemsz, const uint8_t *a,
+		      size_t asz, const uint8_t *b, size_t bsz);
 
 #endif

@@ -28,6 +28,8 @@
  */
 #include <string.h>
 #include <sxsymcrypt/hashdefs.h>
+#include <silexpk/core.h>
+#include <silexpk/cmddefs/edwards.h>
 #include <silexpk/ed25519.h>
 #include <cracen/ec_helpers.h>
 #include <sxsymcrypt/hash.h>
@@ -82,6 +84,7 @@ static int ed25519_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 	uint8_t *area_1 = workmem;
 	uint8_t *area_2 = workmem + AREA2_MEM_OFFSET;
 	uint8_t *area_4 = workmem + AREA4_MEM_OFFSET;
+	struct sx_pk_acq_req pkreq;
 
 	/* Hash the private key, the digest is stored in the first 64 bytes of workmem*/
 	status = cracen_hash_input(priv_key, SX_ED25519_SZ, &sxhashalg_sha2_512, area_1);
@@ -97,12 +100,19 @@ static int ed25519_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 		return status;
 	}
 
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_EDDSA_PTMUL);
+	if (pkreq.status) {
+		sx_pk_release_req(pkreq.req);
+		return pkreq.status;
+	}
+
 	/* Perform point multiplication R = [r]B. This is the encoded point R,
 	 * which is the first part of the signature.
 	 */
-	status = sx_ed25519_ptmult((const struct sx_ed25519_dgst *)area_4,
+	status = sx_ed25519_ptmult(pkreq.req, (const struct sx_ed25519_dgst *)area_4,
 				   (struct sx_ed25519_pt *)pnt_r);
 	if (status != SX_OK) {
+		sx_pk_release_req(pkreq.req);
 		return status;
 	}
 
@@ -115,28 +125,33 @@ static int ed25519_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 	 * works on an input of SX_ED25519_DGST_SZ bytes.
 	 */
 	safe_memset(area_2, sizeof(workmem) - SX_ED25519_SZ, 0, SX_ED25519_SZ);
+
 	/* Perform point multiplication A = [s]B,
 	 * to obtain the public key A. which is stored in workmem[32:63]
 	 */
-	status = sx_ed25519_ptmult((const struct sx_ed25519_dgst *)area_1,
+	status = sx_ed25519_ptmult(pkreq.req, (const struct sx_ed25519_dgst *)area_1,
 				   (struct sx_ed25519_pt *)area_2);
-
 	if (status != SX_OK) {
+		sx_pk_release_req(pkreq.req);
 		return status;
 	}
 
 	status = ed25519_calculate_k(area_2, pnt_r, message, message_length, prehash);
 	if (status != SX_OK) {
+		sx_pk_release_req(pkreq.req);
 		return status;
 	}
 
 	/* Compute (r + k * s) mod L. This gives the second part of the
 	 * signature, which is the encoded S which is stored in pnt_r.
 	 */
-	status = sx_ed25519_sign((const struct sx_ed25519_dgst *)area_2,
+	status = sx_ed25519_sign(pkreq.req, (const struct sx_ed25519_dgst *)area_2,
 				 (const struct sx_ed25519_dgst *)area_4,
 				 (const struct sx_ed25519_v *)area_1,
 				 (struct sx_ed25519_v *)(pnt_r + SX_ED25519_PT_SZ));
+
+	sx_pk_release_req(pkreq.req);
+
 	if (status != SX_OK) {
 		return status;
 	}
@@ -181,6 +196,7 @@ static int ed25519_verify_internal(const uint8_t *pub_key, const uint8_t *messag
 	size_t ed25519_sz = SX_ED25519_SZ;
 	size_t offset = prehash ? 0 : 1;
 	size_t input_count = 4 - offset;
+	struct sx_pk_acq_req pkreq;
 
 	uint8_t const *hash_array[] = {dom2, signature, pub_key, message};
 	size_t hash_array_lengths[] = {sizeof(dom2), ed25519_sz, ed25519_sz, message_length};
@@ -190,10 +206,19 @@ static int ed25519_verify_internal(const uint8_t *pub_key, const uint8_t *messag
 	if (status != SX_OK) {
 		return status;
 	}
-	status =
-		sx_ed25519_verify((struct sx_ed25519_dgst *)digest, (struct sx_ed25519_pt *)pub_key,
-				  (const struct sx_ed25519_v *)(signature + SX_ED25519_SZ),
-				  (const struct sx_ed25519_pt *)signature);
+
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_EDDSA_VER);
+	if (pkreq.status) {
+		sx_pk_release_req(pkreq.req);
+		return pkreq.status;
+	}
+
+	status = sx_ed25519_verify(pkreq.req, (struct sx_ed25519_dgst *)digest,
+				   (struct sx_ed25519_pt *)pub_key,
+				   (const struct sx_ed25519_v *)(signature + SX_ED25519_SZ),
+				   (const struct sx_ed25519_pt *)signature);
+
+	sx_pk_release_req(pkreq.req);
 
 	return status;
 }
@@ -228,6 +253,7 @@ int cracen_ed25519_create_pubkey(const uint8_t *priv_key, uint8_t *pub_key)
 	int status;
 	uint8_t digest[SX_ED25519_DGST_SZ];
 	uint8_t *pub_key_A = digest + SX_ED25519_SZ;
+	struct sx_pk_acq_req pkreq;
 
 	status = cracen_hash_input(priv_key, SX_ED25519_SZ, &sxhashalg_sha2_512, digest);
 	if (status != SX_OK) {
@@ -243,9 +269,17 @@ int cracen_ed25519_create_pubkey(const uint8_t *priv_key, uint8_t *pub_key)
 	 */
 	safe_memset(pub_key_A, SX_ED25519_SZ, 0, SX_ED25519_SZ);
 
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_EDDSA_PTMUL);
+	if (pkreq.status) {
+		sx_pk_release_req(pkreq.req);
+		return pkreq.status;
+	}
+
 	/* Perform point multiplication A = [s]B, to obtain the public key A. */
-	status = sx_ed25519_ptmult((const struct sx_ed25519_dgst *)digest,
+	status = sx_ed25519_ptmult(pkreq.req, (const struct sx_ed25519_dgst *)digest,
 				   (struct sx_ed25519_pt *)pub_key_A);
+
+	sx_pk_release_req(pkreq.req);
 
 	if (status != SX_OK) {
 		return status;

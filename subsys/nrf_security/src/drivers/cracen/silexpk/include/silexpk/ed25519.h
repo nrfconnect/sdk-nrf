@@ -57,6 +57,7 @@ struct sx_ed25519_dgst {
  * For signature step, the scalar 'r' is a digest based on the message,
  * prefix, context and flag (see rfc8032).
  *
+ * @param[in,out] req The acquired acceleration request
  * @param[in] r Scalar
  * @param[out] pt Encoded resulting R point
  *
@@ -69,43 +70,8 @@ struct sx_ed25519_dgst {
  * @return ::SX_ERR_PLATFORM_ERROR
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
- *
- * @see sx_async_ed25519_ptmult_go() and sx_async_ed25519_ptmult_end()
- * for an asynchronous version
  */
-int sx_ed25519_ptmult(const struct sx_ed25519_dgst *r, struct sx_ed25519_pt *pt);
-
-/** Asynchronous EdDSA point multiplication (Ed25519)
- *
- * Start an EdDSA point multiplication on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_ed25519_ptmult_end()
- *
- * @param[in] r Scalar
- *
- * @return Acquired acceleration request for this operation
- *
- * @see sx_async_ed25519_ptmult_end() and sx_ed25519_ptmult()
- */
-struct sx_pk_acq_req sx_async_ed25519_ptmult_go(const struct sx_ed25519_dgst *r);
-
-/** Collect the result of asynchronous EdDSA point multiplication (Ed25519)
- *
- * Get the output operands of the EdDSA point multiplication
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] pt Encoded resulting R point
- *
- * @see sx_async_ed25519_ptmult_go() and sx_ed25519_ptmult()
- */
-void sx_async_ed25519_ptmult_end(sx_pk_req *req, struct sx_ed25519_pt *pt);
+int sx_ed25519_ptmult(sx_pk_req *req, const struct sx_ed25519_dgst *r, struct sx_ed25519_pt *pt);
 
 /** Compute signature scalar s for pure EdDSA (Ed25519).
  *
@@ -114,6 +80,7 @@ void sx_async_ed25519_ptmult_end(sx_pk_req *req, struct sx_ed25519_pt *pt);
  * This step computes sig_s :
  *   sig_s = (r + k * s) % l
  *
+ * @param[in,out] req The acquired acceleration request
  * @param[in] k Hash of the encoded point R, the public key and the message.
  * It is interpreted as a scalar with a size double of other operands
  * @param[in] r Secret nonce already used in the first signature step
@@ -129,49 +96,10 @@ void sx_async_ed25519_ptmult_end(sx_pk_req *req, struct sx_ed25519_pt *pt);
  * @return ::SX_ERR_PLATFORM_ERROR
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
- *
- * @see sx_async_ed25519_sign_go() and sx_async_ed25519_sign_end()
- * for an asynchronous version
  */
-int sx_ed25519_sign(const struct sx_ed25519_dgst *k, const struct sx_ed25519_dgst *r,
-		    const struct sx_ed25519_v *s, struct sx_ed25519_v *sig_s);
-
-/** Asynchronous second part signature generation for pure EdDSA (Ed25519).
- *
- * Start an Ed25519 signature generation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_async_ed25519_sign_end()
- *
- * @param[in] k Hash of the encoded point R, the public key and the message.
- * It is interpreted as a scalar with a size double of other operands
- * @param[in] r Secret nonce already used in the first signature step
- * @param[in] s Secret scalar derived from the private key
- *
- * @return Acquired acceleration request for this operation
- *
- * @see sx_ed25519_sign() and sx_async_ed25519_sign_end()
- */
-struct sx_pk_acq_req sx_pk_async_ed25519_sign_go(const struct sx_ed25519_dgst *k,
-						 const struct sx_ed25519_dgst *r,
-						 const struct sx_ed25519_v *s);
-
-/** Collect the result of asynchronous computation of Ed25519 signature scalar
- *
- * Get the output operands of the Ed25519 signature generation
- * and release the reserved resources.
- *
- * @pre The operation on the accelerator must be finished before
- * calling this function.
- *
- * @param[in,out] req The previously acquired acceleration
- * request for this operation
- * @param[out] sig_s Second part of the Ed25519 signature
- *
- * @see sx_pk_async_ed25519_sign_go() and sx_ed25519_sign()
- */
-void sx_async_ed25519_sign_end(sx_pk_req *req, struct sx_ed25519_v *sig_s);
+int sx_ed25519_sign(sx_pk_req *req, const struct sx_ed25519_dgst *k,
+		    const struct sx_ed25519_dgst *r, const struct sx_ed25519_v *s,
+		    struct sx_ed25519_v *sig_s);
 
 /** Verify an EdDSA signature (Ed25519)
  *
@@ -180,6 +108,7 @@ void sx_async_ed25519_sign_end(sx_pk_req *req, struct sx_ed25519_v *sig_s);
  * sig_s and the encoded point R form the signature. The points A and R are
  * passed in their encoded form via 'a' and 'r'.
  *
+ * @param[in,out] req The acquired acceleration request
  * @param[in] k Hash of the encoded point R, the public key and the message.
  * It is interpreted as a scalar with a size double of other operands
  * @param[in] a Encoded public key
@@ -198,35 +127,10 @@ void sx_async_ed25519_sign_end(sx_pk_req *req, struct sx_ed25519_v *sig_s);
  * @return ::SX_ERR_PLATFORM_ERROR
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
- *
- * @see sx_async_ed25519_verify_go()
- * for an asynchronous version
  */
-int sx_ed25519_verify(const struct sx_ed25519_dgst *k, const struct sx_ed25519_pt *a,
-		      const struct sx_ed25519_v *sig_s, const struct sx_ed25519_pt *r);
-
-/**  Asynchronous (non-blocking) verify an Ed25519 signature.
- *
- * Start an Ed25519 signature generation on the accelerator
- * and return immediately.
- *
- * @remark When the operation finishes on the accelerator,
- * call sx_pk_release_req()
- *
- * @param[in] k Hash of the encoded point R, the public key and the message.
- * It is interpreted as a scalar with a size double of other operands
- * @param[in] a Encoded public key
- * @param[in] sig_s Second part of the signature
- * @param[in] r Encoded first part of the signature
- *
- * @return Acquired acceleration request for this operation
- *
- * @see sx_ed25519_verify()
- */
-struct sx_pk_acq_req sx_async_ed25519_verify_go(const struct sx_ed25519_dgst *k,
-						const struct sx_ed25519_pt *a,
-						const struct sx_ed25519_v *sig_s,
-						const struct sx_ed25519_pt *r);
+int sx_ed25519_verify(sx_pk_req *req, const struct sx_ed25519_dgst *k,
+		      const struct sx_ed25519_pt *a, const struct sx_ed25519_v *sig_s,
+		      const struct sx_ed25519_pt *r);
 
 /** @} */
 
