@@ -61,8 +61,6 @@ You can test the sample in the following ways:
 * Standalone, using a single DK that runs the thermostat application.
 * Remotely over the Thread or the Wi-Fi protocol, which in either case requires more devices, including a Matter controller that you can configure either on a PC or a mobile device.
 
-You can enable both methods after `Commissioning the device`_.
-
 Thermostat features
 ===================
 
@@ -130,12 +128,8 @@ Building and running
 ********************
 
 .. include:: /includes/matter/building_and_running/intro.txt
-.. include:: /includes/matter/building_and_running/select_configuration.txt
-.. include:: /includes/matter/building_and_running/commissioning.txt
 
 |matter_ble_advertising_auto|
-
-.. include:: /includes/matter/building_and_running/onboarding.txt
 
 Advanced building options
 =========================
@@ -146,73 +140,98 @@ Advanced building options
 Testing
 *******
 
-.. |endpoint_name| replace:: **Temperature Measurement cluster**
-.. |endpoint_id| replace:: **1**
-
 .. include:: /includes/matter/testing/intro.txt
-.. include:: /includes/matter/testing/prerequisites.txt
-.. include:: /includes/matter/testing/prepare.txt
 
-Testing steps
-=============
+.. _matter_thermostat_sample_testing_start:
 
-#. Press the |Second Button| to print the most recent temperature data to the terminal.
-#. Run the following command to read the temperature data from the thermostat via the Matter controller:
+Testing with CHIP Tool
+======================
 
-   .. parsed-literal::
-      :class: highlight
+Complete the following steps to test the |matter_name| device using CHIP Tool:
 
-      ./chip-tool temperaturemeasurement read measured-value <node_id> 1
+.. |node_id| replace:: 1
 
-   The received output will look similar to the following:
+.. include:: /includes/matter/testing/1_prepare_matter_network_thread_wifi.txt
+.. include:: /includes/matter/testing/2_prepare_dk.txt
+.. include:: /includes/matter/testing/3_commission_thread_wifi.txt
 
-   .. code-block:: console
+.. rst-class:: numbered-step
 
-      [1755081048.320] [99348:99350] [TOO] Endpoint: 1 Cluster: 0x0000_0402 Attribute 0x0000_0000 DataVersion: 1994139940
-      [1755081048.320] [99348:99350] [TOO]   MeasuredValue: 9
+Read the simulated temperature
+------------------------------
+
+Read the simulated temperature by running the following command:
+
+.. parsed-literal::
+   :class: highlight
+
+   ./chip-tool temperaturemeasurement read measured-value <node_id> 1
+
+The received output will look similar to the following:
+
+.. code-block:: console
+
+   [1755081048.320] [99348:99350] [TOO] Endpoint: 1 Cluster: 0x0000_0402 Attribute 0x0000_0000 DataVersion: 1994139940
+   [1755081048.320] [99348:99350] [TOO]   MeasuredValue: 9
 
 .. _matter_thermostat_sensor_testing:
 
 Testing with external sensor
-----------------------------
+============================
 
-After building this sample and the :ref:`Matter weather station <matter_weather_station_app>` application and programming each to the respective development kit and Nordic Thingy:53, complete the following steps to test communication between both devices:
+Complete the following steps to test communication between the thermostat and the temperature sensor:
 
+.. rst-class:: numbered-step
 
-#. Prepare both devices for testing by following the steps in the :ref:`Prepare the development kit for testing <matter_sample_prepare_dk_for_testing>` section.
+Prepare both devices
+--------------------
 
-   During the commissioning process, write down the values for the thermostat node ID, the temperature sensor node ID, and the temperature sensor endpoint ID.
-   These IDs are going to be used in the next steps (*<thermostat_node_ID>*, *<temperature_sensor_node_ID>*, and *<temperature_sensor_endpoint_ID>*, respectively).
+Follow the steps in the :ref:`matter_thermostat_sample_testing_start` section
+During the commissioning process, write down the values for the thermostat node ID, the temperature sensor node ID, and the temperature sensor endpoint ID.
+These IDs are going to be used in the next steps (*<thermostat_node_ID>*, *<temperature_sensor_node_ID>*, and *<temperature_sensor_endpoint_ID>*, respectively).
 
-#. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the temperature sensor device.
-   Use the following command, with *<thermostat_node_ID>*, *<temperature_sensor_node_ID>*, and *<temperature_sensor_endpoint_ID>* values from the previous step about commissioning:
+.. rst-class:: numbered-step
 
-   .. parsed-literal::
-      :class: highlight
+Add proper ACL for the temperature sensor device
+-------------------------------------------------
 
-      chip-tool accesscontrol write acl '[{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, {"fabricIndex": 1, "privilege": 1, "authMode": 2, "subjects": [<thermostat_node_ID>], "targets": [{"cluster": 1026, "endpoint": <temperature_sensor_endpoint_ID>, "deviceType": null}]}]' <temperature_sensor_node_ID> 0
+Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the temperature sensor device.
+Use the following command, with *<thermostat_node_ID>*, *<temperature_sensor_node_ID>*, and *<temperature_sensor_endpoint_ID>* values from the previous step about commissioning:
 
-#. Write a binding table to the thermostat to inform the device about the temperature sensor endpoint.
-   Use the following command, with *<thermostat_node_ID>*, *<temperature_sensor_node_ID>*, and *<temperature_sensor_endpoint_ID>* values from the previous step about commissioning:
+.. parsed-literal::
+   :class: highlight
 
-   .. parsed-literal::
-      :class: highlight
+   chip-tool accesscontrol write acl '[{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, {"fabricIndex": 1, "privilege": 1, "authMode": 2, "subjects": [<thermostat_node_ID>], "targets": [{"cluster": 1026, "endpoint": <temperature_sensor_endpoint_ID>, "deviceType": null}]}]' <temperature_sensor_node_ID> 0
 
-      chip-tool binding write binding '[{"fabricIndex": 1, "node": <temperature_sensor_node_ID>, "endpoint": <temperature_sensor_endpoint_ID>, "cluster": 1026}]' <thermostat_node_ID> 1
+.. rst-class:: numbered-step
 
-   (You can read more about this step in the "Adding a binding table to the ``binding`` cluster" in the CHIP Tool guide.)
+Write a binding table
+---------------------
 
-   The thermostat is now able to read the real temperature data from the temperature sensor device.
-   The connection is ensured by :ref:`matter_thermostat_sample_binding` to Matter's temperature measurement cluster.
+Write a binding table to the thermostat to inform the device about the temperature sensor endpoint by running the following command, with *<thermostat_node_ID>*, *<temperature_sensor_node_ID>*, and *<temperature_sensor_endpoint_ID>* values from the previous step about commissioning:
 
-#. Press the button that prints the most recent temperature data from the thermostat device to the UART terminal.
+.. parsed-literal::
+   :class: highlight
 
-Factory reset
-=============
+   chip-tool binding write binding '[{"fabricIndex": 1, "node": <temperature_sensor_node_ID>, "endpoint": <temperature_sensor_endpoint_ID>, "cluster": 1026}]' <thermostat_node_ID> 1
 
-|matter_factory_reset|
+(You can read more about this step in the "Adding a binding table to the ``binding`` cluster" in the :doc:`CHIP Tool <matter:chip_tool_guide>` guide.)
+
+The thermostat is now able to read the real temperature data from the temperature sensor device.
+The connection is ensured by :ref:`matter_thermostat_sample_binding` to Matter's temperature measurement cluster.
+
+.. rst-class:: numbered-step
+
+Press the |Second Button|
+-------------------------
+
+Press the |Second Button| to print the most recent temperature data from the thermostat device to the UART terminal.
+
+Testing with commercial ecosystem
+=================================
+
+.. include:: /includes/matter/testing/ecosystem.txt
 
 Dependencies
 ************
-
 .. include:: /includes/matter/dependencies.txt

@@ -1,7 +1,7 @@
-Onboarding information
-----------------------
+Before starting testing, ensure that the ecosystem supports the device types enabled in this |matter_type|.
+See the ecosystem manual page for instructions on how to use it.
 
-When you start the commissioning procedure, the controller must get the onboarding information from the Matter accessory device.
+When you start the commissioning procedure, the ecosystem controller must get the onboarding information from the Matter accessory device.
 The onboarding information representation depends on your commissioner setup.
 
 For this |matter_type|, you can use one of the following :ref:`onboarding information formats <ug_matter_network_topologies_commissioning_onboarding_formats>` to provide the commissioner with the data payload that includes the device discriminator and the setup PIN code:
