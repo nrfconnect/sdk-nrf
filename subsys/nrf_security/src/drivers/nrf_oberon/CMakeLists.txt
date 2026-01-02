@@ -37,6 +37,7 @@ append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_ASYMMETRIC_ENCRYPTION_DRIVER src
 append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_CTR_DRBG_DRIVER              src_crypto_oberon ${drivers_path} oberon_ctr_drbg.c)
 append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_HMAC_DRBG_DRIVER             src_crypto_oberon ${drivers_path} oberon_hmac_drbg.c)
 append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_KEY_WRAP_DRIVER              src_crypto_oberon ${drivers_path} oberon_key_wrap.c)
+append_with_prefix_ifdef(CONFIG_PSA_NEED_OBERON_XOF_DRIVER                   src_crypto_oberon ${drivers_path} oberon_xof.c)
 
 add_library(oberon_psa_driver STATIC
   ${src_crypto_oberon}

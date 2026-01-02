@@ -250,6 +250,11 @@
 #cmakedefine PSA_NEED_OBERON_XCHACHA20_POLY1305                                     @PSA_NEED_OBERON_XCHACHA20_POLY1305@
 #cmakedefine PSA_NEED_OBERON_XMSS_MT_VERIFY                                         @PSA_NEED_OBERON_XMSS_MT_VERIFY@
 #cmakedefine PSA_NEED_OBERON_XMSS_VERIFY                                            @PSA_NEED_OBERON_XMSS_VERIFY@
+#cmakedefine PSA_NEED_OBERON_SHAKE128                                               @PSA_NEED_OBERON_SHAKE128@
+#cmakedefine PSA_NEED_OBERON_SHAKE256                                               @PSA_NEED_OBERON_SHAKE256@
+#cmakedefine PSA_NEED_OBERON_ASCON_XOF128                                           @PSA_NEED_OBERON_ASCON_XOF128@
+#cmakedefine PSA_NEED_OBERON_ASCON_CXOF128                                          @PSA_NEED_OBERON_ASCON_CXOF128@
+#cmakedefine PSA_NEED_OBERON_XOF_DRIVER                                             @PSA_NEED_OBERON_XOF_DRIVER@
 
 #cmakedefine PSA_NEED_NRF_RNG_ENTROPY_DRIVER                    @PSA_NEED_NRF_RNG_ENTROPY_DRIVER@
 #cmakedefine PSA_NEED_CRACEN_TRNG_DRIVER                        @PSA_NEED_CRACEN_TRNG_DRIVER@
