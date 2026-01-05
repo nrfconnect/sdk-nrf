@@ -12,6 +12,7 @@ set(NRF_BOARD_SELECTED True)
 set(partition_includes
   partition
   ${CMAKE_BINARY_DIR}/../zephyr/include/generated
+  ${ZEPHYR_BASE}/include
 )
 
 set(board_includes
