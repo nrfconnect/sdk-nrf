@@ -31,15 +31,10 @@
 
 #define RTE_USART0 1
 
-#elif defined(CONFIG_SOC_SERIES_NRF54L) || defined(CONFIG_SOC_SERIES_NRF71)
-
-/* UART20 and UART30 are supported for TF-M tests on NRF54LX,
- * while UART00 and UART30 are supported on NRF71X
- */
-#if defined(CONFIG_SOC_SERIES_NRF54L) && defined(CONFIG_TFM_SECURE_UART30)
+#elif defined(CONFIG_NRF_PLATFORM_LUMOS)
+/* UART20 and UART30 are supported for TF-M tests on NRF54L and NRF71. */
+#if defined(CONFIG_TFM_SECURE_UART30)
 #define RTE_USART20 1
-#elif defined(CONFIG_SOC_SERIES_NRF71) && defined(CONFIG_TFM_SECURE_UART30)
-#define RTE_USART00 1
 #else
 #define RTE_USART30 1
 #endif
