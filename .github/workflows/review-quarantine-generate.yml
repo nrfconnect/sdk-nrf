@@ -101,7 +101,7 @@ jobs:
           while IFS= read -r rel; do
             [[ -z "$rel" ]] && continue
             echo "== Comparing affected quarantine file: $rel =="
-            python3 compare_quarantine.py "base/$rel" "pr/$rel" --outdir "$OUTDIR"
+            python3 base/scripts/compare_quarantine.py "base/$rel" "pr/$rel" --outdir "$OUTDIR"
           done <<< "$files"
 
       - name: Upload quarantine scenario diff artifacts
