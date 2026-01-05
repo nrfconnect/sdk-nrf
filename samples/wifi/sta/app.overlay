@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * This overlay is applied to all boards and sets the local MAC address
+ * for the Wi-Fi interface when the nRF70 OTP is not programmed.
+ *
+ * The MAC address should use a locally administered address (LAA) with
+ * the second least significant bit of the first octet set to 1.
+ * Nordic OUI prefix for LAA: F6:CE:36:xx:xx:xx
+ */
+
+&wlan0 {
+	local-mac-address = [F6 CE 36 00 00 01];
+};
