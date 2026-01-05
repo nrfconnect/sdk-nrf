@@ -13,7 +13,9 @@
 #ifdef CONFIG_TFM_PARTITION_PLATFORM
 #include <tfm_ioctl_api.h>
 #endif
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
 #include <pm_config.h>
+#endif
 #include <hal/nrf_gpio.h>
 
 #define HELLO_PATTERN "Hello World! %s"
