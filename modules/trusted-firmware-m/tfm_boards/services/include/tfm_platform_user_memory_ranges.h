@@ -7,7 +7,10 @@
 #ifndef TFM_PLATFORM_USER_MEMORY_RANGES_H__
 #define TFM_PLATFORM_USER_MEMORY_RANGES_H__
 
+#include <zephyr/autoconf.h>
+#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 #include <pm_config.h>
+#endif
 
 #include <tfm_ioctl_core_api.h>
 
@@ -56,8 +59,9 @@
 #define UICR_OTP_SIZE (sizeof(NRF_UICR_S->OTP))
 #endif
 
+/* We can't currently get PAD froom dts so ignore this for now if not using PM */
 static const struct tfm_read_service_range ranges[] = {
-#ifdef PM_MCUBOOT_ADDRESS
+#if defined(PM_MCUBOOT_ADDRESS) && defined(CONFIG_PARTITION_MANAGER_ENABLED)
 	/* Allow reads of mcuboot metadata */
 	{.start = PM_MCUBOOT_PAD_ADDRESS, .size = PM_MCUBOOT_PAD_SIZE},
 #endif
