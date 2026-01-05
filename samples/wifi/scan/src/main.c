@@ -29,6 +29,10 @@ LOG_MODULE_REGISTER(scan, CONFIG_LOG_DEFAULT_LEVEL);
 
 #define WIFI_SHELL_MODULE "wifi"
 
+/* DTS node for the Wi-Fi interface - MAC address from local-mac-address property */
+#define WIFI_NODE DT_CHOSEN(zephyr_wifi)
+static const uint8_t wifi_mac_addr[6] = DT_PROP_OR(WIFI_NODE, local_mac_address, {0});
+
 #ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS_ONLY
 #define WIFI_SHELL_MGMT_EVENTS (NET_EVENT_WIFI_RAW_SCAN_RESULT |                \
 				NET_EVENT_WIFI_SCAN_DONE)
@@ -273,12 +277,19 @@ int main(void)
 	k_sleep(K_SECONDS(1));
 	printk("Starting %s with CPU frequency: %d MHz\n", CONFIG_BOARD, SystemCoreClock / MHZ(1));
 
+	/* Set MAC from DTS if interface has no valid MAC and DTS provides one */
 	if (!is_mac_addr_set(net_if_get_default())) {
+		if (!net_eth_is_addr_valid((struct net_eth_addr *)wifi_mac_addr)) {
+			LOG_ERR("No valid MAC address: OTP not programmed and no valid "
+				"local-mac-address in DTS");
+			return -EINVAL;
+		}
+
 		struct net_if *iface = net_if_get_default();
 		int ret;
 		struct ethernet_req_params params;
 
-		/* Set a local MAC address with Nordic OUI */
+		/* Set a local MAC address from DTS overlay */
 		if (net_if_is_admin_up(iface)) {
 			ret = net_if_down(iface);
 			if (ret < 0 && ret != -EALREADY) {
@@ -287,13 +298,7 @@ int main(void)
 			}
 		}
 
-		ret = net_bytes_from_str(params.mac_address.addr, sizeof(CONFIG_WIFI_MAC_ADDRESS),
-					 CONFIG_WIFI_MAC_ADDRESS);
-		if (ret) {
-			LOG_ERR("Failed to parse MAC address: %s (%d)",
-				CONFIG_WIFI_MAC_ADDRESS, ret);
-			return ret;
-		}
+		memcpy(params.mac_address.addr, wifi_mac_addr, sizeof(wifi_mac_addr));
 
 		net_mgmt(NET_REQUEST_ETHERNET_SET_MAC_ADDRESS, iface,
 			 &params, sizeof(params));
@@ -304,7 +309,7 @@ int main(void)
 			return ret;
 		}
 
-		LOG_INF("OTP not programmed, proceeding with local MAC: %s", net_sprint_ll_addr(
+		LOG_INF("OTP not programmed, using MAC from DTS: %s", net_sprint_ll_addr(
 							net_if_get_link_addr(iface)->addr,
 							net_if_get_link_addr(iface)->len));
 	}
