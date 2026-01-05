@@ -62,12 +62,16 @@ struct dect_phy_rf_tool_rx_metrics {
 
 	uint32_t rx_pdc_crc_error_count;
 
+	int32_t rx_rssi_avg_q3; /* Q3 fixed-point RSSI average (value * 8) */
+	bool rx_rssi_avg_initialized;
 	int8_t rx_rssi_high_level;
 	int8_t rx_rssi_low_level;
 	uint8_t rx_phy_transmit_pwr_low;
 	uint8_t rx_phy_transmit_pwr_high;
 	int16_t rx_snr_low;
 	int16_t rx_snr_high;
+	int32_t rx_snr_avg_q3; /* Q3 fixed-point SNR average (value * 8), in 1/4 dB units */
+	bool rx_snr_avg_initialized;
 	uint8_t rx_latest_mcs;
 };
 
@@ -105,6 +109,50 @@ static struct dect_phy_rf_tool_tool_data {
 /**************************************************************************************************/
 
 #define DECT_PHY_RF_TOOL_RESTART_SCHEDULING_DELAY_SECS 2
+
+/* IIR low-pass filter for RSSI and SNR averaging.
+ *
+ * Raw RSSI/SNR measurements fluctuate due to multipath fading, interference,
+ * and measurement noise. The low-pass filter smooths these variations to show
+ * the overall signal trend while rejecting sudden spikes.
+ * Larger shift means more smoothing (less sensitivity to short-term fluctuations).
+ * Smaller shift means more sensitivity to short-term fluctuations.
+ *
+ * The shift value determines both the filter alpha (alpha = 1 / (1 << shift)) and the
+ * Q fixed-point precision (value * (1 << shift)). Using the same shift for both is
+ * intentional: it allows the alpha scaling and Q scaling to cancel out in the update
+ * formula, simplifying "alpha * input * Q_scale" to just "input". This avoids extra
+ * shift operations and keeps the code efficient for ISR context.
+ *
+ * shift = 3 means alpha = 0.125, so An = 0.875 * An-1 + 0.125 * input
+ */
+#define DECT_PHY_RF_TOOL_IIR_SHIFT 3
+
+/**
+ * @brief 1-tap IIR low-pass filter (exponential moving average) using fixed-point.
+ *
+ * Implements: An = (1 - alpha) * An-1 + alpha * input
+ * where alpha = 1 / (1 << DECT_PHY_RF_TOOL_IIR_SHIFT).
+ */
+static inline void dect_phy_rf_tool_iir_lpf_update(int32_t *avg_q, bool *initialized,
+						   int16_t input)
+{
+	if (!*initialized) {
+		*avg_q = (int32_t)input << DECT_PHY_RF_TOOL_IIR_SHIFT;
+		*initialized = true;
+	} else {
+		/* An = An-1 - alpha*An-1 + alpha*input (alpha terms cancel with Q scaling) */
+		*avg_q = *avg_q - (*avg_q >> DECT_PHY_RF_TOOL_IIR_SHIFT) + input;
+	}
+}
+
+/**
+ * @brief Get the filtered value from Q fixed-point average.
+ */
+static inline int16_t dect_phy_rf_tool_iir_lpf_value_get(int32_t avg_q)
+{
+	return (int16_t)(avg_q >> DECT_PHY_RF_TOOL_IIR_SHIFT);
+}
 
 /**************************************************************************************************/
 static int dect_phy_rf_tool_msgq_data_op_add(uint16_t event_id, const void *data, size_t data_size);
@@ -201,6 +249,12 @@ static void dect_phy_rf_tool_mdm_pcc_cb(const struct nrf_modem_dect_phy_pcc_even
 			rf_tool_data.rx_metrics.rx_rssi_low_level = rssi_level;
 		}
 
+		/* Update RSSI exponential moving average (1-tap IIR low-pass filter) */
+		dect_phy_rf_tool_iir_lpf_update(
+			&rf_tool_data.rx_metrics.rx_rssi_avg_q3,
+			&rf_tool_data.rx_metrics.rx_rssi_avg_initialized,
+			rssi_level);
+
 		/* Update transmit power min/max */
 		if (phy_h->transmit_power > rf_tool_data.rx_metrics.rx_phy_transmit_pwr_high) {
 			rf_tool_data.rx_metrics.rx_phy_transmit_pwr_high = phy_h->transmit_power;
@@ -209,13 +263,21 @@ static void dect_phy_rf_tool_mdm_pcc_cb(const struct nrf_modem_dect_phy_pcc_even
 			rf_tool_data.rx_metrics.rx_phy_transmit_pwr_low = phy_h->transmit_power;
 		}
 
-		/* Update SNR min/max */
-		if (evt->snr > rf_tool_data.rx_metrics.rx_snr_high) {
-			rf_tool_data.rx_metrics.rx_snr_high = evt->snr;
+		/* Update SNR min/max/avg (convert to dB by dividing by 4) */
+		int16_t snr_db = evt->snr / 4;
+
+		if (snr_db > rf_tool_data.rx_metrics.rx_snr_high) {
+			rf_tool_data.rx_metrics.rx_snr_high = snr_db;
 		}
-		if (evt->snr < rf_tool_data.rx_metrics.rx_snr_low) {
-			rf_tool_data.rx_metrics.rx_snr_low = evt->snr;
+		if (snr_db < rf_tool_data.rx_metrics.rx_snr_low) {
+			rf_tool_data.rx_metrics.rx_snr_low = snr_db;
 		}
+
+		/* Update SNR exponential moving average (1-tap IIR low-pass filter) */
+		dect_phy_rf_tool_iir_lpf_update(
+			&rf_tool_data.rx_metrics.rx_snr_avg_q3,
+			&rf_tool_data.rx_metrics.rx_snr_avg_initialized,
+			snr_db);
 
 		/* Update MCS and STF time */
 		rf_tool_data.rx_metrics.rx_latest_mcs = phy_h->df_mcs;
@@ -502,10 +564,19 @@ void dect_phy_rf_tool_print_results(void)
 				   rf_tool_data.rx_metrics.rx_pdc_crc_error_count);
 		}
 
-		desh_print("  - RX: RSSI high level:                         %d",
-			   rf_tool_data.rx_metrics.rx_rssi_high_level);
-		desh_print("  - RX: RSSI low level:                          %d",
-			   rf_tool_data.rx_metrics.rx_rssi_low_level);
+		if (cmd_params->rx_show_min_max_values) {
+			desh_print("  - RX: RSSI high level:                         %d",
+				   rf_tool_data.rx_metrics.rx_rssi_high_level);
+			desh_print("  - RX: RSSI low level:                          %d",
+				   rf_tool_data.rx_metrics.rx_rssi_low_level);
+		}
+		if (rf_tool_data.rx_metrics.rx_rssi_avg_initialized) {
+			desh_print("  - RX: RSSI average:                            %d",
+				   dect_phy_rf_tool_iir_lpf_value_get(
+					   rf_tool_data.rx_metrics.rx_rssi_avg_q3));
+		} else {
+			desh_print("  - RX: RSSI average:                            N/A");
+		}
 
 		desh_print("  - RX: transmit power high:                     %d dbm",
 			   dect_common_utils_phy_tx_power_to_dbm(
@@ -514,10 +585,19 @@ void dect_phy_rf_tool_print_results(void)
 			   dect_common_utils_phy_tx_power_to_dbm(
 				   rf_tool_data.rx_metrics.rx_phy_transmit_pwr_low));
 
-		desh_print("  - RX SNR high:                                 %d",
-			   rf_tool_data.rx_metrics.rx_snr_high);
-		desh_print("  - RX SNR low:                                  %d",
-			   rf_tool_data.rx_metrics.rx_snr_low);
+		if (cmd_params->rx_show_min_max_values) {
+			desh_print("  - RX SNR high:                                 %d",
+				   rf_tool_data.rx_metrics.rx_snr_high);
+			desh_print("  - RX SNR low:                                  %d",
+				   rf_tool_data.rx_metrics.rx_snr_low);
+		}
+		if (rf_tool_data.rx_metrics.rx_snr_avg_initialized) {
+			desh_print("  - RX SNR average:                              %d",
+				   dect_phy_rf_tool_iir_lpf_value_get(
+					   rf_tool_data.rx_metrics.rx_snr_avg_q3));
+		} else {
+			desh_print("  - RX SNR average:                              N/A");
+		}
 		desh_print("  - RX latest MCS:                               %d",
 			   rf_tool_data.rx_metrics.rx_latest_mcs);
 	}
@@ -1165,12 +1245,16 @@ static int dect_phy_rf_tool_start(struct dect_phy_rf_tool_params *params, bool r
 	memset(&rf_tool_data.rx_metrics, 0, sizeof(rf_tool_data.rx_metrics));
 	atomic_set(&rf_tool_data.rx_metrics.rx_total_pkt_count, 0);
 	atomic_set(&rf_tool_data.rx_metrics.rx_wait_for_synch, 0);
+	rf_tool_data.rx_metrics.rx_rssi_avg_q3 = 0;
+	rf_tool_data.rx_metrics.rx_rssi_avg_initialized = false;
 	rf_tool_data.rx_metrics.rx_rssi_high_level = -127;
 	rf_tool_data.rx_metrics.rx_rssi_low_level = 1;
 	rf_tool_data.rx_metrics.rx_phy_transmit_pwr_high = 0;
 	rf_tool_data.rx_metrics.rx_phy_transmit_pwr_low = 15;
 	rf_tool_data.rx_metrics.rx_snr_low = 9999;
 	rf_tool_data.rx_metrics.rx_snr_high = -9999;
+	rf_tool_data.rx_metrics.rx_snr_avg_q3 = 0;
+	rf_tool_data.rx_metrics.rx_snr_avg_initialized = false;
 
 	atomic_set(&rf_tool_data.on_going, 1);
 	rf_tool_data.cmd_params = *params;

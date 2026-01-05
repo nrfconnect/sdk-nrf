@@ -267,7 +267,13 @@ Debug samples
 DECT NR+ samples
 ----------------
 
-|no_changes_yet_note|
+* :ref:`dect_shell_application` sample:
+
+  * Updated:
+
+      * The ``dect rf_tool`` command - Major updates to improve usage for RX and TX testing.
+      * Scheduler - Dynamic flow control based on load tier to prevent modem out-of-memory errors.
+      * Settings - Continuous Wave (CW) support and possibility to disable Synchronization Training Field (STF) on TX and RX.
 
 Edge Impulse samples
 --------------------
