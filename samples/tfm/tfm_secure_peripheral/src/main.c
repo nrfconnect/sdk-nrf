@@ -18,7 +18,7 @@ static K_SEM_DEFINE(spp_process_sem, 0, 1);
 #define NRF_EGU_N  NRF_EGU0
 #define EGU_N_IRQn EGU0_IRQn
 
-#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#elif defined(CONFIG_SOC_SERIES_NRF54LX) || defined(CONFIG_SOC_SERIES_NRF71X)
 #define NRF_EGU_N NRF_EGU10
 #define EGU_N_IRQn EGU10_IRQn
 #endif
