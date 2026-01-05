@@ -95,7 +95,7 @@ static void content_control_msg_sub_thread(void)
 			break;
 		}
 
-		STACK_USAGE_PRINT("content_ctrl_msg_thread", &content_control_msg_sub_thread);
+		STACK_USAGE_PRINT("content_ctrl_msg_thread", &content_control_msg_sub_thread_data);
 	}
 }
 
