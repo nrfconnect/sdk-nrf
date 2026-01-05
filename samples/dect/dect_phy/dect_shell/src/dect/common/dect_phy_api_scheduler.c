@@ -930,7 +930,7 @@ dect_phy_api_scheduler_done_list_item_add(struct dect_phy_api_scheduler_list_ite
 	}
 
 	if (found) {
-		/* This handle already in list, no need to add */
+		/* This handle already in list, no need to add  */
 		return new_list_item;
 	}
 
@@ -1482,12 +1482,15 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 			/**************************************************************************/
 
 			if (iterator->sched_config.cb_op_to_mdm) {
+				sched_op_completed_params.status = NRF_MODEM_DECT_PHY_SUCCESS;
 				sched_op_completed_params.handle = iterator->phy_op_handle;
 				sched_op_completed_params.time = start_time;
 				sched_op_completed_params.temperature =
 					NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED;
-				sched_op_completed_params.status = ret;
-
+				if (ret != 0) {
+					sched_op_completed_params.status =
+						DECT_SCHEDULER_OP_TO_MODEM_ERROR;
+				}
 				iterator->sched_config.cb_op_to_mdm(
 					&sched_op_completed_params,
 					iterator->sched_config.frame_time);
@@ -1532,7 +1535,8 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 						iterator, frame_time, we_need_tx_data_in_done_list);
 				we_need_tx_data_in_done_list = false;
 				if (!scheduled_list_item) {
-					desh_error("(%s): cannot copy list item", (__func__));
+					desh_error("(%s): cannot copy list item for handle %d",
+						(__func__), iterator->phy_op_handle);
 				} else {
 					if (dect_phy_api_scheduler_done_list_item_add(
 						    scheduled_list_item) == NULL) {
@@ -1542,6 +1546,26 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 						dect_phy_api_scheduler_list_item_dealloc(
 							scheduled_list_item);
 						scheduled_list_item = NULL; /* Mark as not added */
+					}
+				}
+				if (!scheduled_list_item) {
+					/* Wasn't added to done_list, complete already here */
+					sched_op_completed_params.handle = iterator->phy_op_handle;
+					sched_op_completed_params.time =
+						iterator->sched_config.frame_time;
+					sched_op_completed_params.temperature =
+						NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED;
+					sched_op_completed_params.status =
+						DECT_SCHEDULER_FATAL_MEM_ALLOC_ERROR;
+					if (iterator->sched_config.cb_op_completed) {
+						iterator->sched_config.cb_op_completed(
+							&sched_op_completed_params,
+							iterator->sched_config.frame_time);
+					}
+					if (iterator->sched_config.cb_op_completed_with_count &&
+					    iterator->sched_config.interval_count_left == 0) {
+						iterator->sched_config.cb_op_completed_with_count(
+							iterator->phy_op_handle);
 					}
 				}
 			}
@@ -1598,7 +1622,7 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 					/* If repeateable item fails,
 					 * we need to inform users by using dedicated error
 					 */
-					ret = DECT_SCHEDULER_SCHEDULER_FATAL_MEM_ALLOC_ERROR;
+					ret = DECT_SCHEDULER_FATAL_MEM_ALLOC_ERROR;
 
 					if (iterator->sched_config
 						    .cb_op_to_mdm_with_interval_count_completed) {
@@ -1620,14 +1644,16 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 
 			if (ret) {
 				sched_op_completed_params.handle = iterator->phy_op_handle;
-				sched_op_completed_params.status = 0;
+				sched_op_completed_params.status = NRF_MODEM_DECT_PHY_SUCCESS;
 				sched_op_completed_params.time = time_now;
 				sched_op_completed_params.temperature =
 					NRF_MODEM_DECT_PHY_TEMP_NOT_MEASURED;
 
-				if (ret != -EAGAIN) { /* EAGAIN is when scheduler suspended */
-					/* phy op failed, complete right away */
-					sched_op_completed_params.status = ret;
+				if (ret != -EAGAIN) { /* EAGAIN is when scheduler suspended:
+						       * do not consider as error.
+						       */
+					sched_op_completed_params.status =
+						DECT_SCHEDULER_OP_TO_MODEM_ERROR;
 				}
 
 				/* Clean up done_list item if it was added (operation failed before
