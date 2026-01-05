@@ -22,6 +22,7 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/net_event.h>
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/net/ethernet_mgmt.h>
 
 #ifdef CONFIG_WIFI_READY_LIB
 #include <net/wifi_ready.h>
@@ -35,6 +36,10 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 #include "net_private.h"
 
 #define WIFI_SHELL_MODULE "wifi"
+
+/* DTS node for the Wi-Fi interface - MAC address from local-mac-address property */
+#define WIFI_NODE DT_CHOSEN(zephyr_wifi)
+static const uint8_t wifi_mac_addr[6] = DT_PROP_OR(WIFI_NODE, local_mac_address, {0});
 
 #define WIFI_SHELL_MGMT_EVENTS (NET_EVENT_WIFI_CONNECT_RESULT |		\
 				NET_EVENT_WIFI_DISCONNECT_RESULT)
@@ -256,6 +261,20 @@ int bytes_from_str(const char *str, uint8_t *bytes, size_t bytes_len)
 	return 0;
 }
 
+static bool is_mac_addr_set(struct net_if *iface)
+{
+	struct net_linkaddr *linkaddr = net_if_get_link_addr(iface);
+	struct net_eth_addr wifi_addr;
+
+	if (!linkaddr || linkaddr->len != WIFI_MAC_ADDR_LEN) {
+		return false;
+	}
+
+	memcpy(wifi_addr.addr, linkaddr->addr, WIFI_MAC_ADDR_LEN);
+
+	return net_eth_is_addr_valid(&wifi_addr);
+}
+
 int start_app(void)
 {
 #if defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001) || \
@@ -291,6 +310,79 @@ int start_app(void)
 		CONFIG_NET_CONFIG_MY_IPV4_ADDR,
 		CONFIG_NET_CONFIG_MY_IPV4_NETMASK,
 		CONFIG_NET_CONFIG_MY_IPV4_GW);
+
+	/* Set MAC from DTS if interface has no valid MAC and DTS provides one */
+	if (!is_mac_addr_set(net_if_get_default())) {
+		if (!net_eth_is_addr_valid((struct net_eth_addr *)wifi_mac_addr)) {
+			LOG_ERR("No valid MAC address: OTP not programmed and no valid "
+				"local-mac-address in DTS");
+			return -EINVAL;
+		}
+
+		struct net_if *iface = net_if_get_default();
+		int ret;
+		struct ethernet_req_params params;
+
+		/* Set a local MAC address from DTS overlay */
+		if (net_if_is_admin_up(iface)) {
+#ifdef CONFIG_WIFI_READY_LIB
+			/* Reset semaphore to discard any stale events before bringing down */
+			k_sem_reset(&wifi_ready_state_changed_sem);
+#endif /* CONFIG_WIFI_READY_LIB */
+			ret = net_if_down(iface);
+			if (ret < 0 && ret != -EALREADY) {
+				LOG_ERR("Cannot bring down iface (%d)", ret);
+				return ret;
+			}
+#ifdef CONFIG_WIFI_READY_LIB
+			/* Wait for Wi-Fi to be not ready (supplicant processed down event) */
+			LOG_INF("Waiting for Wi-Fi to be not ready");
+			ret = k_sem_take(&wifi_ready_state_changed_sem, K_SECONDS(10));
+			if (ret) {
+				LOG_ERR("Timeout waiting for Wi-Fi not ready: %d", ret);
+				return ret;
+			}
+			if (wifi_ready_status) {
+				LOG_WRN("Wi-Fi still ready after interface down");
+			}
+#endif /* CONFIG_WIFI_READY_LIB */
+		}
+
+		memcpy(params.mac_address.addr, wifi_mac_addr, sizeof(wifi_mac_addr));
+
+		net_mgmt(NET_REQUEST_ETHERNET_SET_MAC_ADDRESS, iface,
+				&params, sizeof(params));
+
+#ifdef CONFIG_WIFI_READY_LIB
+		/* Reset semaphore to discard any stale events before bringing up */
+		k_sem_reset(&wifi_ready_state_changed_sem);
+#endif /* CONFIG_WIFI_READY_LIB */
+		ret = net_if_up(iface);
+		if (ret < 0 && ret != -EALREADY) {
+			LOG_ERR("Cannot bring up iface (%d)", ret);
+			return ret;
+		}
+#ifdef CONFIG_WIFI_READY_LIB
+		/* Wait for Wi-Fi to be ready (supplicant processed up event) */
+		LOG_INF("Waiting for Wi-Fi to be ready after interface up");
+		ret = k_sem_take(&wifi_ready_state_changed_sem, K_SECONDS(10));
+		if (ret) {
+			LOG_ERR("Timeout waiting for Wi-Fi ready: %d", ret);
+			return ret;
+		}
+		if (!wifi_ready_status) {
+			LOG_ERR("Wi-Fi not ready after interface up");
+			return -EIO;
+		}
+		LOG_INF("Wi-Fi is ready");
+		/* Give semaphore back so the main loop can proceed */
+		k_sem_give(&wifi_ready_state_changed_sem);
+#endif /* CONFIG_WIFI_READY_LIB */
+
+		LOG_INF("OTP not programmed, using MAC from DTS: %s", net_sprint_ll_addr(
+							net_if_get_link_addr(iface)->addr,
+							net_if_get_link_addr(iface)->len));
+	}
 
 	while (1) {
 #ifdef CONFIG_WIFI_READY_LIB
