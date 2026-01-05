@@ -92,15 +92,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo "west init -l ."
-          west init -l .
+          echo "west init -l ./base"
+          west init -l ./base
           echo "ls"
           ls
           echo "ls .."
           ls ..
-          echo "ls ../zephyr"
-          ls  ../zephyr
-          export ZEPHYR_BASE="../zephyr"
+          echo "ls base"
+          ls base
+          echo "ls zephyr"
+          ls zephyr
+          export ZEPHYR_BASE="zephyr"
           OUTDIR="quarantine-diff-results"
           mkdir -p "$OUTDIR"
 
@@ -125,6 +127,7 @@ jobs:
         working-directory: base
         run: |
           set -euo pipefail
+          export ZEPHYR_BASE="../zephyr"
           python scripts/ci/quarantine_notifier.py \
             --repo-root . \
             --added-file "../quarantine-diff-results/configurations_added.txt" \
