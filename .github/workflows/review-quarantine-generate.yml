@@ -45,7 +45,7 @@ jobs:
       - name: Install Python deps
         run: |
           python -m pip install --upgrade pip
-          python -m pip install pyyaml
+          python -m pip install pyyaml west
 
 
       - name: Detect changed quarantine YAML files (base vs PR)
