@@ -117,6 +117,7 @@ jobs:
       - name: Prepare comment body
         working-directory: base
         run: |
+          set -euo pipefail
           echo "west init -l ."
           west init -l .
           echo "ls"
