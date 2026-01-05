@@ -94,6 +94,8 @@ jobs:
           set -euo pipefail
           echo "west init -l ./base"
           west init -l ./base
+          echo "west update"
+          west update
           echo "ls"
           ls
           echo "ls .."
