@@ -97,6 +97,7 @@ jobs:
           mkdir -p "$OUTDIR"
 
           files="${{ steps.quarantine_changed_files.outputs.files }}"
+          export ZEPHYR_BASE=
 
           while IFS= read -r rel; do
             [[ -z "$rel" ]] && continue
@@ -116,6 +117,15 @@ jobs:
       - name: Prepare comment body
         working-directory: base
         run: |
+          echo "west init -l ."
+          west init -l .
+          echo "ls"
+          ls
+          echo "ls .."
+          ls ..
+          echo "ls ../zephyr"
+          ls  ../zephyr
+          export ZEPHYR_BASE="../zephyr"
           python scripts/ci/quarantine_notifier.py \
             --repo-root . \
             --added-file "../quarantine-diff-results/configurations_added.txt" \
