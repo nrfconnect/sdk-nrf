@@ -5,6 +5,6 @@
 #
 
 config PARTITION_MANAGER
-	default n if !BOARD_IS_NON_SECURE
+	default n if !((SOC_SERIES_NRF91X || SOC_SERIES_NRF53X) && BOARD_IS_NON_SECURE)
 
 source "share/sysbuild/Kconfig"
