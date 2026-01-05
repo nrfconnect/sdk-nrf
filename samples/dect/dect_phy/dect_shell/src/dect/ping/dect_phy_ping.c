@@ -335,8 +335,9 @@ void dect_phy_ping_harq_store_tx_payload_data_scheduler_cb(
 static void dect_phy_ping_client_retx_complete_cb(
 	struct dect_phy_common_op_completed_params *params, uint64_t tx_frame_time)
 {
-	if (params->status == DECT_SCHEDULER_DELAYED_ERROR || params->status ==
-		DECT_SCHEDULER_SCHEDULER_FATAL_MEM_ALLOC_ERROR) {
+	if (params->status == DECT_SCHEDULER_DELAYED_ERROR ||
+		params->status == DECT_SCHEDULER_FATAL_MEM_ALLOC_ERROR ||
+		params->status == DECT_SCHEDULER_OP_TO_MODEM_ERROR) {
 		desh_error("DECT_HARQ_CLIENT: retransmit failed - scheduler error: %d\n",
 			params->status);
 	} else if (params->status != NRF_MODEM_DECT_PHY_SUCCESS) {
