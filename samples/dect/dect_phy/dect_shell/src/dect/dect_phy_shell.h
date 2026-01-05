@@ -102,6 +102,8 @@ struct dect_phy_rf_tool_params {
 	uint8_t tx_frame_start_offset;
 	uint8_t tx_subslot_count;
 	uint8_t tx_post_idle_subslot_count;
+
+	bool rx_show_min_max_values; /* Show min/max RSSI/SNR values in results */
 };
 
 struct dect_phy_ping_params {
