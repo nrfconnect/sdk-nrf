@@ -57,12 +57,10 @@ jobs:
           # Build union list of quarantine yaml files by relative path
           mapfile -t all_files < <(
             {
-              cd pr
-              find ./nrf/scripts -type f -name 'quarantine*.yaml' -print
+              find ./pr/scripts -type f -name 'quarantine*.yaml' -print
             }
             {
-              cd base
-              find ./nrf/scripts -type f -name 'quarantine*.yaml' -print
+              find ./base/scripts -type f -name 'quarantine*.yaml' -print
             } | sed 's|^\./||' | sort -u
           )
 
@@ -120,7 +118,8 @@ jobs:
         run: |
           python scripts/ci/quarantine_notifier.py \
             --repo-root . \
-            --diff-file "$RUNNER_TEMP/diff_quarantine.txt" \
+            --added-file "../quarantine-diff-results/configurations_added.txt" \
+            --removed-file "../quarantine-diff-results/configurations_removed.txt" \
             --output quarantine_comment.md \
             --audit-json quarantine_audit.json \
             --inventory-json scenario_inventory.json \
