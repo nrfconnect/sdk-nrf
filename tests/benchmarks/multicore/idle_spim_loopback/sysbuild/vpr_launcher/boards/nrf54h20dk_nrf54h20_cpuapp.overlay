@@ -25,6 +25,6 @@
 };
 
 &gpiote130 {
-	nonsecure-channels = <7>;
-	child-owned-channels = <7>;
+	nonsecure-channels = <6>;
+	child-owned-channels = <6>;
 };

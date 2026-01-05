@@ -18,3 +18,8 @@
 &exmif {
 	status = "disabled";
 };
+
+&gpiote130 {
+	nonsecure-channels = <6>;
+	child-owned-channels = <6>;
+};
