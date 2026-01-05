@@ -421,6 +421,7 @@ enum {
 	DECT_SHELL_CERT_TX_FRAME_START_OFFSET_SUBSLOTS,
 	DECT_SHELL_CERT_TX_SUBSLOT_COUNT,
 	DECT_SHELL_CERT_TX_POST_IDLE_SUBSLOT_COUNT,
+	DECT_SHELL_CERT_RX_SHOW_MIN_MAX_VALUES,
 };
 
 static const char dect_phy_rf_tool_cmd_usage_str[] =
@@ -455,6 +456,8 @@ static const char dect_phy_rf_tool_cmd_usage_str[] =
 	"                                     band #9 1703-1711, band #22 1691-1711.\n"
 	"  -e  --rx_exp_rssi_level <int>,     Set expected RSSI level on RX (dBm).\n"
 	"                                     Default: from common rx settings.\n"
+	"      --rx_show_min_max_values,      Show min/max RX RSSI/SNR values in results.\n"
+	"                                     Default: disabled (only average shown).\n"
 	"  -p  --tx_pwr <int>,                TX power (dBm),\n"
 	"                                     [-40,-30,-20,-16,-12,-8,-4,0,4,7,10,13,16,19,21,23]\n"
 	"                                     See supported max for the used band by using\n"
@@ -536,6 +539,7 @@ static struct option long_options_cert[] = {
 	 DECT_SHELL_CERT_TX_FRAME_START_OFFSET_SUBSLOTS},
 	{"tx_subslot_count", required_argument, 0, DECT_SHELL_CERT_TX_SUBSLOT_COUNT},
 	{"tx_idle_subslot_count", required_argument, 0, DECT_SHELL_CERT_TX_POST_IDLE_SUBSLOT_COUNT},
+	{"rx_show_min_max_values", no_argument, 0, DECT_SHELL_CERT_RX_SHOW_MIN_MAX_VALUES},
 	{0, 0, 0, 0}};
 
 static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **argv)
@@ -586,6 +590,7 @@ static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **a
 				       params.rx_post_idle_subslot_count;
 	params.tx_subslot_count = 4;
 	params.tx_post_idle_subslot_count = 6;
+	params.rx_show_min_max_values = false;
 
 	while ((opt = getopt_long(argc, argv, "m:t:c:e:p:sh", long_options_cert, &long_index)) !=
 	       -1) {
@@ -747,6 +752,10 @@ static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **a
 				goto show_usage;
 			}
 			params.tx_post_idle_subslot_count = ret;
+			break;
+		}
+		case DECT_SHELL_CERT_RX_SHOW_MIN_MAX_VALUES: {
+			params.rx_show_min_max_values = true;
 			break;
 		}
 		case 'h':
