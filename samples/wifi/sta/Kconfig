@@ -34,4 +34,5 @@ config STA_SAMPLE_START_WIFI_THREAD_STACK_SIZE
 	default 4096
 	help
 	  Set the stack size for the Wi-Fi start thread.
+
 endmenu
