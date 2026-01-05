@@ -5,6 +5,7 @@
  */
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
+#include <zephyr/sys/atomic.h>
 
 #include <dk_buttons_and_leds.h>
 #include <zephyr/random/random.h>
@@ -19,6 +20,29 @@
 
 #include "dect_phy_api_scheduler_integration.h"
 #include "dect_phy_api_scheduler.h"
+
+/* Flow control thresholds */
+#define DECT_FC_THRESHOLD_HIGH 18  /* Block new operations when this many are pending */
+#define DECT_FC_THRESHOLD_LOW  12  /* Resume operations when count drops to this */
+
+/* Dynamic max count thresholds and values */
+#define DECT_DYNAMIC_MAX_COUNT_VERY_LOW_THRESHOLD  8  /* Threshold for very low load */
+#define DECT_DYNAMIC_MAX_COUNT_VERY_LOW_VALUE      12 /* Max ops to send when very low load */
+#define DECT_DYNAMIC_MAX_COUNT_LOW_VALUE           10 /* Max ops to send when low load */
+#define DECT_DYNAMIC_MAX_COUNT_MEDIUM_VALUE        6  /* Max ops to send when medium load */
+#define DECT_DYNAMIC_MAX_COUNT_HIGH_VALUE          3  /* Max ops to send when high load */
+#define DECT_DYNAMIC_MAX_COUNT_CRITICAL_VALUE      1  /* Max ops to send when approaching mdm max */
+#define DECT_DYNAMIC_MAX_COUNT_MODEM_MAX           31 /* Mdm max capacity for ongoing operations */
+#define DECT_DYNAMIC_MAX_COUNT_CRITICAL_THRESHOLD  24 /* Threshold for critical load */
+
+/* Flow control signal for external notification */
+struct k_poll_signal scheduler_fc_signal;
+
+/* Atomic counter for pending modem operations */
+static atomic_t pending_mdm_op_count;
+
+/* Atomic counter for items in done_list (used to optimize event raising to scheduler thread) */
+static atomic_t done_list_item_count;
 
 /* Internals */
 
@@ -44,6 +68,9 @@ enum dect_phy_api_scheduler_state {
 /* Scheduler data */
 static struct dect_phy_api_scheduler_data {
 	enum dect_phy_api_scheduler_state state;
+	uint32_t empty_list_trigger_delay_ms; /* Delay before triggering scheduler when list
+					       * becomes non-empty
+					       */
 } scheduler_data;
 
 /* Scheduler lists */
@@ -499,8 +526,8 @@ void dect_phy_api_scheduler_list_item_beacon_rx_sched_config_update_by_phy_op_ha
 	k_mutex_unlock(&to_be_sheduled_list_mutex);
 }
 
-struct dect_phy_api_scheduler_list_item *
-dect_phy_api_scheduler_list_item_add(struct dect_phy_api_scheduler_list_item *new_list_item)
+struct dect_phy_api_scheduler_list_item *dect_phy_api_scheduler_list_item_add(
+	struct dect_phy_api_scheduler_list_item *new_list_item)
 {
 	struct dect_phy_api_scheduler_list_item *iterator = NULL;
 	uint32_t scheduler_offset = dect_phy_ctrl_modem_latency_min_margin_between_ops_get();
@@ -509,22 +536,26 @@ dect_phy_api_scheduler_list_item_add(struct dect_phy_api_scheduler_list_item *ne
 		return NULL;
 	}
 	const uint64_t new_frame_time = new_list_item->sched_config.frame_time;
-	const uint64_t next_frame_time = new_frame_time + DECT_RADIO_FRAME_DURATION_IN_MODEM_TICKS;
+	const uint32_t new_frame_length =
+		(new_list_item->sched_config.frame_length_mdm_ticks > 0)
+			? new_list_item->sched_config.frame_length_mdm_ticks
+			: DECT_RADIO_FRAME_DURATION_IN_MODEM_TICKS;
+	const uint64_t next_frame_time = new_frame_time + new_frame_length;
+	const uint64_t new_op_start_offset = new_list_item->sched_config.subslot_used
+						? (new_list_item->sched_config.start_subslot *
+							DECT_RADIO_SUBSLOT_DURATION_IN_MODEM_TICKS)
+						: (new_list_item->sched_config.start_slot *
+							DECT_RADIO_SLOT_DURATION_IN_MODEM_TICKS);
+	const uint64_t new_start_time = new_frame_time + new_op_start_offset;
 	const uint64_t new_length_mdm_ticks =
 		(new_list_item->sched_config.subslot_used)
 			? (new_list_item->sched_config.length_subslots *
-			   DECT_RADIO_SUBSLOT_DURATION_IN_MODEM_TICKS)
+				DECT_RADIO_SUBSLOT_DURATION_IN_MODEM_TICKS)
 			: (new_list_item->sched_config.length_slots *
-			   DECT_RADIO_SLOT_DURATION_IN_MODEM_TICKS);
+				DECT_RADIO_SLOT_DURATION_IN_MODEM_TICKS);
 	const uint64_t new_duration = (new_list_item->sched_config.rx.duration > 0)
-					      ? new_list_item->sched_config.rx.duration
-					      : new_length_mdm_ticks;
-	const uint64_t new_op_start_offset = new_list_item->sched_config.subslot_used
-						     ? (new_list_item->sched_config.start_subslot *
-							DECT_RADIO_SUBSLOT_DURATION_IN_MODEM_TICKS)
-						     : (new_list_item->sched_config.start_slot *
-							DECT_RADIO_SLOT_DURATION_IN_MODEM_TICKS);
-	const uint64_t new_start_time = new_frame_time + new_op_start_offset;
+					? new_list_item->sched_config.rx.duration
+						: new_length_mdm_ticks;
 	const dect_phy_api_scheduling_priority_t entry_prio = new_list_item->priority;
 	const uint64_t new_end_time = new_start_time + new_duration + scheduler_offset;
 
@@ -554,6 +585,10 @@ dect_phy_api_scheduler_list_item_add(struct dect_phy_api_scheduler_list_item *ne
 
 	SYS_DLIST_FOR_EACH_CONTAINER(&to_be_sheduled_list, iterator, dnode) {
 		const uint64_t list_frame_time = iterator->sched_config.frame_time;
+		const uint32_t list_frame_length =
+			(iterator->sched_config.frame_length_mdm_ticks > 0)
+				? iterator->sched_config.frame_length_mdm_ticks
+				: DECT_RADIO_FRAME_DURATION_IN_MODEM_TICKS;
 		const uint64_t list_op_start_offset =
 			iterator->sched_config.subslot_used
 				? (iterator->sched_config.start_subslot *
@@ -611,6 +646,20 @@ dect_phy_api_scheduler_list_item_add(struct dect_phy_api_scheduler_list_item *ne
 			sys_dlist_insert(&iterator->dnode, &new_list_item->dnode);
 			goto exit;
 		} else if (new_frame_time == list_frame_time) {
+			/* Same frame_time - items are in the same frame regardless of frame_length
+			 * (frame_length is used for calculating next frame boundary, not for
+			 * determining if items are in the same frame)
+			 */
+			if (new_frame_length != list_frame_length) {
+				/* Different frame lengths with same frame_time might indicate
+				 * configuration issue, but still treat as same frame for ordering
+				 */
+				desh_warn("(%s): items with same frame_time (%llu) but different "
+					  "frame_length (new: %u, existing: %u) - handles %d and %d",
+					  (__func__), new_frame_time, new_frame_length,
+					  list_frame_length, new_list_item->phy_op_handle,
+					  iterator->phy_op_handle);
+			}
 			/* Trying to fit in same frame, check if overlapping */
 			if (list_start_time <= new_end_time && list_end_time >= new_start_time) {
 				/* Overlapping */
@@ -652,20 +701,51 @@ dect_phy_api_scheduler_list_item_add(struct dect_phy_api_scheduler_list_item *ne
 				/* Insert before the current list item */
 				sys_dlist_insert(&iterator->dnode, &new_list_item->dnode);
 				goto exit;
-			} else {
-				/* Insert after the current list item */
-				sys_dnode_t *next =
-					sys_dlist_peek_next(&to_be_sheduled_list, &iterator->dnode);
+			}
 
-				if (next) {
-					sys_dlist_insert(next, &new_list_item->dnode);
-					goto exit;
-				} else {
-					/* append() */
-					break;
+			/* Insert after the current list item - check next item's start_time */
+			sys_dnode_t *next =
+				sys_dlist_peek_next(&to_be_sheduled_list, &iterator->dnode);
+
+			if (!next) {
+				/* No next item - append at end */
+				break;
+			}
+
+			struct dect_phy_api_scheduler_list_item *next_item =
+				CONTAINER_OF(next, struct dect_phy_api_scheduler_list_item, dnode);
+			const uint64_t next_frame_time = next_item->sched_config.frame_time;
+
+			/* Check if we should insert before next item */
+			bool insert_before_next = false;
+
+			if (next_frame_time != new_frame_time) {
+				/* Next item is in a different frame - insert before it */
+				insert_before_next = true;
+			} else {
+				/* Next item is in the same frame - check start_time */
+				const uint64_t next_op_start_offset =
+					next_item->sched_config.subslot_used ?
+						(next_item->sched_config.start_subslot *
+						 DECT_RADIO_SUBSLOT_DURATION_IN_MODEM_TICKS) :
+						(next_item->sched_config.start_slot *
+						 DECT_RADIO_SLOT_DURATION_IN_MODEM_TICKS);
+				const uint64_t next_start_time =
+					next_frame_time + next_op_start_offset;
+
+				if (new_start_time < next_start_time) {
+					/* Insert between current and next item */
+					insert_before_next = true;
 				}
 			}
+
+			if (insert_before_next) {
+				sys_dlist_insert(next, &new_list_item->dnode);
+				goto exit;
+			}
+			/* Otherwise, continue iteration to find the right position */
 		} else if (new_frame_time > list_frame_time) {
+			/* New item is in a later frame - continue to find insertion point */
 			/* Not starting in same frame: check still overlappings */
 			if (list_start_time <= new_end_time && list_end_time >= new_start_time) {
 				/* Overlapping
@@ -709,7 +789,18 @@ exit:
 	k_mutex_unlock(&to_be_sheduled_list_mutex);
 
 	if (list_was_empty_at_entry) {
-		dect_phy_api_scheduler_next_frame();
+		/* Use configurable delay to allow multiple operations (e.g., RX and TX)
+		 * with the same frame_time to be added together before the scheduler
+		 * processes them. This ensures they can be properly interleaved
+		 * chronologically. Default is 0 (immediate trigger).
+		 */
+		if (scheduler_data.empty_list_trigger_delay_ms > 0) {
+			k_timer_start(&scheduler_timer,
+				      K_MSEC(scheduler_data.empty_list_trigger_delay_ms),
+				      K_NO_WAIT);
+		} else {
+			dect_phy_api_scheduler_next_frame();
+		}
 	} else {
 		k_timer_start(&scheduler_timer, K_MSEC(5), K_NO_WAIT);
 	}
@@ -810,20 +901,15 @@ void dect_phy_api_scheduler_list_status_print(void)
 {
 	struct dect_phy_api_scheduler_list_item *iterator = NULL;
 	uint32_t count = 0;
-	uint32_t done_count = 0;
 
 	SYS_DLIST_FOR_EACH_CONTAINER(&to_be_sheduled_list, iterator, dnode) {
 		count++;
-	}
-	SYS_DLIST_FOR_EACH_CONTAINER(&done_sheduled_list, iterator, dnode) {
-		done_count++;
-		desh_print("  Done list item phy handle: %d", iterator->phy_op_handle);
 	}
 
 	desh_print("Scheduler list status:");
 	desh_print("  List item count: %d", count);
 	desh_print("Scheduler done list status:");
-	desh_print("  List item count: %d", done_count);
+	desh_print("  List item count: %d", atomic_get(&done_list_item_count));
 }
 
 /**************************************************************************************************/
@@ -844,11 +930,12 @@ dect_phy_api_scheduler_done_list_item_add(struct dect_phy_api_scheduler_list_ite
 	}
 
 	if (found) {
-		desh_warn("(%s): same phy op handle than was in list already: %d -- continue ",
-			  (__func__), new_list_item->phy_op_handle);
+		/* This handle already in list, no need to add */
+		return new_list_item;
 	}
 
 	sys_dlist_append(&done_sheduled_list, &new_list_item->dnode);
+	atomic_inc(&done_list_item_count);
 
 	return new_list_item;
 }
@@ -858,6 +945,7 @@ static void dect_phy_api_scheduler_done_list_item_remove_n_dealloc_by_item(
 {
 	if (list_item != NULL) {
 		sys_dlist_remove(&list_item->dnode);
+		atomic_dec(&done_list_item_count);
 		dect_phy_api_scheduler_list_item_dealloc(list_item);
 	}
 }
@@ -878,8 +966,7 @@ static bool dect_phy_api_scheduler_done_list_remove_from_tail(void)
 
 	list_item = CONTAINER_OF(node, struct dect_phy_api_scheduler_list_item, dnode);
 	__ASSERT_NO_MSG(node != NULL && list_item != NULL);
-	sys_dlist_remove(node);
-	dect_phy_api_scheduler_list_item_dealloc(list_item);
+	dect_phy_api_scheduler_done_list_item_remove_n_dealloc_by_item(list_item);
 
 exit:
 	return return_value;
@@ -890,8 +977,11 @@ static void dect_phy_api_scheduler_done_list_purge(void)
 	while (dect_phy_api_scheduler_done_list_remove_from_tail()) {
 	}
 	sys_dlist_init(&done_sheduled_list);
+	atomic_set(&done_list_item_count, 0);
 	__ASSERT_NO_MSG(sys_dlist_is_empty(&done_sheduled_list));
 }
+
+/**************************************************************************************************/
 
 bool dect_phy_api_scheduler_done_list_is_empty(void)
 {
@@ -979,14 +1069,41 @@ int dect_phy_api_scheduler_next_frame(void)
 	return dect_phy_api_scheduler_raise_event(DECT_PHY_API_EVENT_SCHEDULER_NEXT_FRAME);
 }
 
+int dect_phy_api_scheduler_set_empty_list_trigger_delay(uint32_t delay_ms)
+{
+	scheduler_data.empty_list_trigger_delay_ms = delay_ms;
+	return 0;
+}
+
 /**************************************************************************************************/
 
 int dect_phy_api_scheduler_mdm_op_completed(
 	struct dect_phy_common_op_completed_params *params)
 {
-	int ret = dect_phy_api_scheduler_raise_event_with_data(
-		DECT_PHY_API_EVENT_SCHEDULER_OP_COMPLETED, (void *)params,
-		sizeof(struct dect_phy_common_op_completed_params));
+	/* Decrement pending operation count when operation completes */
+	/* Use CAS to prevent counter from going negative (operations may bypass scheduler) */
+	atomic_val_t old_val, new_val;
+	int ret = 0;
+
+	do {
+		old_val = atomic_get(&pending_mdm_op_count);
+		if (old_val == 0) {
+			/* Counter already at 0 - don't decrement to prevent going negative */
+			/* This can happen if operations bypass the scheduler */
+			break;
+		}
+		new_val = old_val - 1;
+	} while (!atomic_cas(&pending_mdm_op_count, old_val, new_val));
+
+	/* Only raise event if there are items in done_list that need completion handling.
+	 * This optimization avoids unnecessary message queue operations when
+	 * no callbacks are registered
+	 */
+	if (atomic_get(&done_list_item_count) > 0) {
+		ret = dect_phy_api_scheduler_raise_event_with_data(
+			DECT_PHY_API_EVENT_SCHEDULER_OP_COMPLETED, (void *)params,
+			sizeof(struct dect_phy_common_op_completed_params));
+	}
 	return ret;
 }
 
@@ -1112,6 +1229,8 @@ dect_phy_api_scheduler_core_mdm_phy_op(struct dect_phy_api_scheduler_list_item *
 				       (__func__), err, tx_op.handle);
 				goto exit;
 			} else {
+				/* Operation successfully sent to modem - increment counter */
+				atomic_inc(&pending_mdm_op_count);
 #if defined(CONFIG_DK_LIBRARY)
 				dect_phy_api_scheduler_raise_event(
 					DECT_PHY_API_EVENT_SCHEDULER_LED_TX_ON);
@@ -1125,6 +1244,9 @@ dect_phy_api_scheduler_core_mdm_phy_op(struct dect_phy_api_scheduler_list_item *
 			if (err) {
 				desh_error("(%s): nrf_modem_dect_phy_rssi failed %d",
 					(__func__), err);
+			} else {
+				/* Operation successfully sent to modem - increment counter */
+				atomic_inc(&pending_mdm_op_count);
 			}
 		} else {
 			struct nrf_modem_dect_phy_rx_params rx_op = {
@@ -1155,11 +1277,61 @@ dect_phy_api_scheduler_core_mdm_phy_op(struct dect_phy_api_scheduler_list_item *
 			if (err) {
 				desh_error("nrf_modem_dect_phy_rx failed: err %d, handle %d", err,
 					   rx_op.handle);
+			} else {
+				/* Operation successfully sent to modem - increment counter */
+				atomic_inc(&pending_mdm_op_count);
 			}
 		}
 	}
 exit:
 	return err;
+}
+
+/**
+ * @brief Calculate dynamic maximum operation count based on pending operations
+ *
+ * Dynamic limits based on pending operation count using configurable thresholds and values.
+ * Made quite conservative as a default to prevent modem out-of-memory errors:
+ * - < DECT_DYNAMIC_MAX_COUNT_VERY_LOW_THRESHOLD: send DECT_DYNAMIC_MAX_COUNT_VERY_LOW_VALUE
+ *   operations per pass (very low load, plenty of capacity)
+ * - >= DECT_DYNAMIC_MAX_COUNT_VERY_LOW_THRESHOLD, < DECT_FC_THRESHOLD_LOW: send
+ *   DECT_DYNAMIC_MAX_COUNT_LOW_VALUE operations per pass (low load, below LOW threshold)
+ * - >= DECT_FC_THRESHOLD_LOW, < DECT_FC_THRESHOLD_HIGH: send DECT_DYNAMIC_MAX_COUNT_MEDIUM_VALUE
+ *   operations per pass (medium load, between LOW and HIGH thresholds)
+ * - >= DECT_FC_THRESHOLD_HIGH, < DECT_DYNAMIC_MAX_COUNT_CRITICAL_THRESHOLD: send
+ *   DECT_DYNAMIC_MAX_COUNT_HIGH_VALUE operations per pass (high load, approaching critical)
+ * - >= DECT_DYNAMIC_MAX_COUNT_CRITICAL_THRESHOLD, < DECT_DYNAMIC_MAX_COUNT_MODEM_MAX: send
+ *   DECT_DYNAMIC_MAX_COUNT_CRITICAL_VALUE operations per pass (critical load, very close to
+ *   modem max)
+ * - >= DECT_DYNAMIC_MAX_COUNT_MODEM_MAX: return 0 (modem at maximum capacity)
+ *
+ * @param pending_count Current number of pending modem operations
+ * @return Maximum number of operations to send in this scheduling pass
+ */
+static uint16_t dect_phy_api_scheduler_get_dynamic_max_count(uint16_t pending_count)
+{
+	if (pending_count < DECT_DYNAMIC_MAX_COUNT_VERY_LOW_THRESHOLD) {
+		/* Very low load: send more operations aggressively */
+		return DECT_DYNAMIC_MAX_COUNT_VERY_LOW_VALUE;
+	} else if (pending_count >= DECT_DYNAMIC_MAX_COUNT_VERY_LOW_THRESHOLD &&
+		   pending_count < DECT_FC_THRESHOLD_LOW) {
+		/* Low load: below LOW threshold, still send good batch */
+		return DECT_DYNAMIC_MAX_COUNT_LOW_VALUE;
+	} else if (pending_count >= DECT_FC_THRESHOLD_LOW &&
+		   pending_count < DECT_FC_THRESHOLD_HIGH) {
+		/* Medium load: between LOW and HIGH thresholds, moderate batch */
+		return DECT_DYNAMIC_MAX_COUNT_MEDIUM_VALUE;
+	} else if (pending_count >= DECT_FC_THRESHOLD_HIGH &&
+		   pending_count < DECT_DYNAMIC_MAX_COUNT_CRITICAL_THRESHOLD) {
+		/* High load: at/above HIGH threshold but below critical, be conservative */
+		return DECT_DYNAMIC_MAX_COUNT_HIGH_VALUE;
+	} else if (pending_count >= DECT_DYNAMIC_MAX_COUNT_CRITICAL_THRESHOLD &&
+		   pending_count < DECT_DYNAMIC_MAX_COUNT_MODEM_MAX) {
+		/* Critical load: very close to modem max, send only 1 operation at a time */
+		return DECT_DYNAMIC_MAX_COUNT_CRITICAL_VALUE;
+	}
+	/* Very high load (>= modem max): modem at maximum capacity, don't send more */
+	return 0;
 }
 
 static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
@@ -1173,9 +1345,17 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 	bool add_item_to_done_list = false;
 	bool we_need_tx_data_in_done_list = false;
 	uint16_t op_count_trials_to_mdm = 0;
+	uint16_t dynamic_max_count = 0;
 	struct dect_phy_common_op_completed_params sched_op_completed_params;
 
 	k_mutex_lock(&to_be_sheduled_list_mutex, K_FOREVER);
+
+	/* Calculate dynamic max count based on current pending operations */
+	{
+		uint16_t pending_count = atomic_get(&pending_mdm_op_count);
+
+		dynamic_max_count = dect_phy_api_scheduler_get_dynamic_max_count(pending_count);
+	}
 
 	SYS_DLIST_FOR_EACH_CONTAINER_SAFE(&to_be_sheduled_list, iterator, safe, dnode) {
 		uint64_t time_now = dect_app_modem_time_now();
@@ -1183,7 +1363,6 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 		int64_t time_to_frame = frame_time - time_now;
 
 		if (time_to_frame < 0) {
-
 			ret = DECT_SCHEDULER_DELAYED_ERROR;
 			sched_op_completed_params.handle = iterator->phy_op_handle;
 			sched_op_completed_params.time = time_now;
@@ -1228,38 +1407,16 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 			if (iterator->sched_config.interval_mdm_ticks) {
 				/* Remove from list and modify frame time and move back to scheduler
 				 * list
+				 * Note: Do NOT increment handle here because operation never
+				 * reached modem.
+				 * Handle will be incremented only when operation is successfully
+				 * sent.
 				 */
 				uint64_t new_frame_time =
 					frame_time + iterator->sched_config.interval_mdm_ticks;
 
 				dect_phy_api_scheduler_list_item_remove_by_item(iterator);
 				iterator->sched_config.frame_time = new_frame_time;
-				if (iterator->sched_config.phy_op_handle_range_used) {
-					uint32_t next_handle = iterator->phy_op_handle;
-
-					next_handle++;
-					if (next_handle >
-					    iterator->sched_config.phy_op_handle_range_end) {
-						next_handle = iterator->sched_config
-								      .phy_op_handle_range_start;
-					}
-					iterator->phy_op_handle = next_handle;
-				}
-				if (DECT_PHY_API_SCHEDULER_PRIORITY_IS_TX(iterator->priority) &&
-				    iterator->sched_config.tx.combined_rx_op_handle_range_used) {
-					uint32_t next_handle =
-						iterator->sched_config.tx.combined_rx_op.handle;
-
-					next_handle++;
-					if (next_handle >
-					    iterator->sched_config.tx
-						.combined_rx_op_handle_range_end) {
-						next_handle = iterator->sched_config.tx
-								.combined_rx_op_handle_range_start;
-					}
-					iterator->sched_config.tx
-						.combined_rx_op.handle = next_handle;
-				}
 				if (iterator->priority == DECT_PRIORITY1_RX_RSSI) {
 					iterator->sched_config.rssi.rssi_op_params.start_time =
 						new_frame_time;
@@ -1280,9 +1437,9 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 			if (dealloc_list_item) {
 				dect_phy_api_scheduler_list_item_dealloc(iterator);
 			}
-		} else if (op_count_trials_to_mdm >= DECT_PHY_API_SCHEDULER_OP_MAX_COUNT) {
-			/* We have sent already quite bunch of operations. Let's come back later */
-			k_timer_start(&scheduler_timer, K_MSEC(10), K_NO_WAIT);
+		} else if (dynamic_max_count == 0 || op_count_trials_to_mdm >= dynamic_max_count) {
+			/* We have sent enough operations based on dynamic limit. Retry later */
+			k_timer_start(&scheduler_timer, K_MSEC(5), K_NO_WAIT);
 			goto exit;
 		} else if (MODEM_TICKS_TO_MS(time_to_frame) >
 			   DECT_PHY_API_SCHEDULER_OP_TIME_WINDOW_MS) {
@@ -1292,6 +1449,26 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 				      K_NO_WAIT);
 			goto exit;
 		} else {
+			/* Flow control: check if too many operations are pending */
+			uint16_t pending_count = atomic_get(&pending_mdm_op_count);
+
+			/* Allow time-critical operations to bypass flow control to prevent
+			 * them from becoming too late
+			 */
+			uint32_t time_to_frame_ms = MODEM_TICKS_TO_MS(time_to_frame);
+			bool is_time_critical = (time_to_frame_ms <
+				(DECT_PHY_API_SCHEDULER_OP_TIME_WINDOW_MS / 4));
+
+			if (pending_count >= DECT_FC_THRESHOLD_HIGH && !is_time_critical) {
+				/* Too many operations pending and operation is not time-critical -
+				 * skip for now.
+				 * Schedule a short timer to retry when operations may have
+				 * completed
+				 */
+				k_timer_start(&scheduler_timer, K_MSEC(5), K_NO_WAIT);
+				goto exit;
+			}
+
 			const uint64_t op_start_offset =
 				iterator->sched_config.subslot_used
 					? (iterator->sched_config.start_subslot *
@@ -1364,6 +1541,7 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 							   (__func__), iterator->phy_op_handle);
 						dect_phy_api_scheduler_list_item_dealloc(
 							scheduled_list_item);
+						scheduled_list_item = NULL; /* Mark as not added */
 					}
 				}
 			}
@@ -1451,14 +1629,40 @@ static void dect_phy_api_scheduler_core_tick_th_schedule_next_frame(void)
 					/* phy op failed, complete right away */
 					sched_op_completed_params.status = ret;
 				}
-				dect_phy_api_scheduler_mdm_op_completed(&sched_op_completed_params);
+
+				/* Clean up done_list item if it was added (operation failed before
+				 * reaching modem)
+				 */
+				if (scheduled_list_item != NULL) {
+					/* Item was added to done_list but operation never
+					 * reached modem.
+					 * Call completion handler directly to clean up
+					 * done_list and call callbacks.
+					 */
+					dect_phy_api_scheduler_done_list_mdm_op_complete(
+						&sched_op_completed_params, scheduled_list_item);
+					scheduled_list_item = NULL; /* Already cleaned up */
+				}
+
+				/* Note: Don't call dect_phy_api_scheduler_mdm_op_completed() here
+				 * because the operation never made it to the modem, so the counter
+				 * was never incremented. Only call it for operations that actually
+				 * reached the modem.
+				 */
 				dect_phy_api_scheduler_mdm_op_req_failed_evt_send(
 					&sched_op_completed_params);
 
 				/* Something went wrong already when trying to send operation
 				 * to modem. So, let's break out for this time and come back later.
 				 */
-				op_count_trials_to_mdm = DECT_PHY_API_SCHEDULER_OP_MAX_COUNT;
+				/* Set to dynamic max to prevent further attempts in this pass */
+				{
+					uint16_t pending_count = atomic_get(&pending_mdm_op_count);
+
+					op_count_trials_to_mdm =
+						dect_phy_api_scheduler_get_dynamic_max_count(
+							pending_count);
+				}
 			} else {
 				op_count_trials_to_mdm++;
 			}
@@ -1486,6 +1690,9 @@ static int dect_phy_api_scheduler_init(void)
 	sys_dlist_init(&to_be_sheduled_list);
 	sys_dlist_init(&done_sheduled_list);
 	scheduler_data.state = SCHEDULER_STATE_NORMAL;
+	scheduler_data.empty_list_trigger_delay_ms = 0; /* Default: immediate trigger */
+	atomic_set(&pending_mdm_op_count, 0);
+	atomic_set(&done_list_item_count, 0);
 
 	return 0;
 }
