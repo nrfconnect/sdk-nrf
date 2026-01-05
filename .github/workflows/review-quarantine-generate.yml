@@ -53,8 +53,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          echo "ls"
           ls
+          echo "ls .."
           ls ..
+          echo "ls pr"
+          ls pr
 
           # Build union list of quarantine yaml files by relative path
           mapfile -t all_files < <(
