@@ -146,6 +146,12 @@ struct dect_phy_api_scheduler_list_item_config {
 	/** @brief scheduled frame in modem time (ticks) */
 	uint64_t frame_time;
 
+	/** @brief frame length in modem time (ticks)
+	 * If 0, defaults to DECT_RADIO_FRAME_DURATION_IN_MODEM_TICKS
+	 * Used for calculating next frame time and frame boundaries
+	 */
+	uint32_t frame_length_mdm_ticks;
+
 	/** @brief scheduled slot within a frame in modem time */
 	bool subslot_used;     /* Default: false, slots used.*/
 	uint8_t start_slot;    /* 0 = 1st slot */
@@ -264,6 +270,21 @@ int dect_phy_api_scheduler_suspend(void);
 int dect_phy_api_scheduler_resume(void);
 
 int dect_phy_api_scheduler_next_frame(void);
+
+/**
+ * @brief Set delay before triggering scheduler when list becomes non-empty.
+ *
+ * When the scheduler list transitions from empty to non-empty, this delay
+ * allows multiple operations (for example, RX and TX) with the same frame_time to be
+ * added together before the scheduler processes them. This ensures proper
+ * chronological interleaving.
+ *
+ * @param delay_ms Delay in milliseconds. 0 = immediate trigger (default).
+ *                 Non-zero = delay before triggering scheduler.
+ *
+ * @return 0 on success
+ */
+int dect_phy_api_scheduler_set_empty_list_trigger_delay(uint32_t delay_ms);
 
 /**************************************************************************************************/
 
