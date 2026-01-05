@@ -53,20 +53,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo "ls"
-          ls
-          echo "ls .."
-          ls ..
-          echo "ls pr"
-          ls pr
 
           # Build union list of quarantine yaml files by relative path
           mapfile -t all_files < <(
             {
-              find ./pr/nrf/scripts -type f -name 'quarantine*.yaml' -print
+              cd pr
+              find ./nrf/scripts -type f -name 'quarantine*.yaml' -print
             }
             {
-              find ./base/nrf/scripts -type f -name 'quarantine*.yaml' -print
+              cd base
+              find ./nrf/scripts -type f -name 'quarantine*.yaml' -print
             } | sed 's|^\./||' | sort -u
           )
 
@@ -124,8 +120,7 @@ jobs:
         run: |
           python scripts/ci/quarantine_notifier.py \
             --repo-root . \
-            --added-file "../quarantine-diff-results/configurations_added.txt" \
-            --removed-file "../quarantine-diff-results/configurations_removed.txt" \
+            --diff-file "$RUNNER_TEMP/diff_quarantine.txt" \
             --output quarantine_comment.md \
             --audit-json quarantine_audit.json \
             --inventory-json scenario_inventory.json \
