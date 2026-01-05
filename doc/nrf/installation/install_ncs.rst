@@ -126,7 +126,14 @@ Depending on your preferred development environment, complete the following step
       1. Open the nRF Connect extension in |VSC| by clicking its icon in the :guilabel:`Activity Bar`.
          The extension loads and the `Welcome View`_ appears with two buttons: :guilabel:`Install SDK` and :guilabel:`Install Toolchain`.
       #. Click on :guilabel:`Install SDK`.
+      #. Select the region for download.
+
+         You only need to select the region for downloads once.
+         The selected region applies to all future SDK and toolchain downloads.
+         You can later change it in the |VSC| settings.
+
          The list of available SDK types appears.
+
       #. Select :guilabel:`nRF Connect SDK`.
          The list of available stable versions for the |NCS| appears in the |VSC|'s quick pick, grouped into two categories:
 

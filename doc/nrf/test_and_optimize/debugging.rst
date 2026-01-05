@@ -31,10 +31,12 @@ The tool uses `Microsoft's debug adaptor`_ and integrates custom debugging featu
 Debug configuration
 *******************
 
-When you are following the `How to debug an application`_ process in the |nRFVSC| and select the :guilabel:`Enable debug options` checkbox in the **Add Build Configuration** page, the following Kconfig options are set to ``y`` when you add the configuration:
+When you are following the `How to debug an application`_ process in the |nRFVSC|, the following Kconfig options are set to ``y`` when you add the build configuration in the **Add Build Configuration** page:
 
-* :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` - This option limits the optimizations made by the compiler to only those that do not impact debugging.
-* :kconfig:option:`CONFIG_DEBUG_THREAD_INFO` - This option adds additional information to the thread object, so that the debugger can discover the threads.
+* When you select the :guilabel:`Optimize for debugging` optimization level, the corresponding :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` Kconfig option is set to ``y``.
+  This option limits the optimizations made by the compiler to only those that do not impact debugging.
+* If you also enable the :guilabel:`Include debug thread information` checkbox in addition to :guilabel:`Optimize for debugging`, the corresponding :kconfig:option:`CONFIG_DEBUG_THREAD_INFO` Kconfig option is set to ``y``.
+  This option adds additional information to the thread object, so that the debugger can discover the threads.
   This will work for any debugger.
 
 You can also set these options to ``y`` manually.
