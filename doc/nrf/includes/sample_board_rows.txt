@@ -309,4 +309,8 @@
 
 .. nrf7120dk_nrf7120_cpuapp
 
-| nRF7120 PDK |   | nrf7120dk | ``nrf7120dk/nrf7120/cpuapp`` |
+| nRF7120 DK |   | nrf7120dk | ``nrf7120dk/nrf7120/cpuapp`` |
+
+.. nrf7120dk_nrf7120_cpuapp_ns
+
+| nRF7120 DK |   | nrf7120dk | ``nrf7120dk/nrf7120/cpuapp/ns`` |
