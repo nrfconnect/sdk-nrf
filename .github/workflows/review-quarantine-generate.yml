@@ -53,16 +53,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          ls
+          ls ..
 
           # Build union list of quarantine yaml files by relative path
           mapfile -t all_files < <(
             {
-              cd pr
-              find ./nrf/scripts -type f -name 'quarantine*.yaml' -print
+              find ./pr/nrf/scripts -type f -name 'quarantine*.yaml' -print
             }
             {
-              cd base
-              find ./nrf/scripts -type f -name 'quarantine*.yaml' -print
+              find ./base/nrf/scripts -type f -name 'quarantine*.yaml' -print
             } | sed 's|^\./||' | sort -u
           )
 
