@@ -103,7 +103,8 @@ Provisioning keys to the board
 ==============================
 
 Before uploading keys, ensure that the SoC is unprovisioned.
-If the SoC has been previously provisioned and you need to use a different set of keys, you must first erase the SoC with the following erase command:
+If the SoC has been previously provisioned and you need to use a different set of keys, you must first erase the SoC.
+You can use nRF Util's `device command <Erasing the device_>`_ for this purpose:
 
 .. code-block::
 
