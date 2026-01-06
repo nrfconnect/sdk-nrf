@@ -22,20 +22,30 @@
 
 LOG_MODULE_REGISTER(ip_addr_helper, CONFIG_NRF_MODEM_LIB_NET_IF_LOG_LEVEL);
 
+/* Size of buffer for AT+CGPADDR command string */
+#define AT_CGPADDR_CMD_BUF_SIZE 32
+
+/* Maximum number of PDN contexts supported */
+#define LTE_NET_IF_MAX_PDN_CONTEXTS 20
+
 /* Structure that keeps track of the current IP addresses in use. */
 static struct ip_addr_helper_data {
 #if CONFIG_NET_IPV4
-	struct in_addr ipv4_addr_current;
-	bool ipv4_added;
+	struct {
+		struct in_addr addr;
+		bool added;
+	} ipv4[LTE_NET_IF_MAX_PDN_CONTEXTS];
 #endif
 #if CONFIG_NET_IPV6
-	struct in6_addr ipv6_addr_current;
-	bool ipv6_added;
+	struct {
+		struct in6_addr addr;
+		bool added;
+	} ipv6[LTE_NET_IF_MAX_PDN_CONTEXTS];
 #endif
 } ctx;
 
 /* @brief Function that obtains either the IPv4 or IPv6 address associated with
- *	  the default PDP context 0.
+ *	  a specific PDP context.
  *
  * @details Only a single IP family address is written to per call.
  *	    It's expected that only one of the input arguments points to a valid buffer when calling
@@ -45,12 +55,14 @@ static struct ip_addr_helper_data {
  *		will be written to.
  * @param [out] addr6 Pointer to a NULL terminated buffer that the current IPv6 address
  *		will be written to.
+ * @param [in] cid PDP context ID.
  *
- * @returns 0 on success, negative value on failure.
+ * @returns Length of the address string on success, negative value on failure.
  */
-static int ip_addr_get(char *addr4, char *addr6)
+static int ip_addr_get_cid(char *addr4, char *addr6, int cid)
 {
 	int ret;
+	char cmd[AT_CGPADDR_CMD_BUF_SIZE];
 	char tmp[sizeof(struct in6_addr)];
 	char addr1[NET_IPV6_ADDR_LEN] = { 0 };
 #if CONFIG_NET_IPV6
@@ -75,18 +87,17 @@ static int ip_addr_get(char *addr4, char *addr6)
 	}
 #endif /* !CONFIG_NET_IPV6 */
 
-
 	/* Parse +CGPADDR: <cid>,<PDP_addr_1>,<PDP_addr_2>
 	 * PDN type "IP": PDP_addr_1 is <IPv4>, max 16(INET_ADDRSTRLEN), '.' and digits
 	 * PDN type "IPV6": PDP_addr_1 is <IPv6>, max 46(INET6_ADDRSTRLEN),':', digits, 'A'~'F'
 	 * PDN type "IPV4V6": <IPv4>,<IPv6> or <IPV4> or <IPv6>
 	 */
+	snprintf(cmd, sizeof(cmd), "AT+CGPADDR=%d", cid);
 #if CONFIG_NET_IPV6
-	ret = nrf_modem_at_scanf("AT+CGPADDR=0", "+CGPADDR: %*d,\"%46[.:0-9A-F]\",\"%46[:0-9A-F]\"",
+	ret = nrf_modem_at_scanf(cmd, "+CGPADDR: %*d,\"%46[.:0-9A-F]\",\"%46[:0-9A-F]\"",
 				 addr1, addr2);
 #else
-	ret = nrf_modem_at_scanf("AT+CGPADDR=0", "+CGPADDR: %*d,\"%46[.:0-9A-F]\"",
-				 addr1);
+	ret = nrf_modem_at_scanf(cmd, "+CGPADDR: %*d,\"%46[.:0-9A-F]\"", addr1);
 #endif
 	if (ret <= 0) {
 		return -EFAULT;
@@ -116,8 +127,27 @@ static int ip_addr_get(char *addr4, char *addr6)
 	return -ENODATA;
 }
 
+/* @brief Function that obtains either the IPv4 or IPv6 address associated with
+ *	  the default PDP context 0.
+ *
+ * @details Only a single IP family address is written to per call.
+ *	    It's expected that only one of the input arguments points to a valid buffer when calling
+ *	    this function. The other buffer must be set to NULL.
+ *
+ * @param [out] addr4 Pointer to a NULL terminated buffer that the current IPv4 address
+ *		will be written to.
+ * @param [out] addr6 Pointer to a NULL terminated buffer that the current IPv6 address
+ *		will be written to.
+ *
+ * @returns 0 on success, negative value on failure.
+ */
+static int ip_addr_get(char *addr4, char *addr6)
+{
+	return ip_addr_get_cid(addr4, addr6, 0);
+}
+
 #if CONFIG_NET_IPV4
-int lte_ipv4_addr_add(const struct net_if *iface)
+int lte_ipv4_addr_add_cid(const struct net_if *iface, int cid)
 {
 	int len;
 	char ipv4_addr[NET_IPV4_ADDR_LEN] = { 0 };
@@ -128,7 +158,11 @@ int lte_ipv4_addr_add(const struct net_if *iface)
 		return -EINVAL;
 	}
 
-	len = ip_addr_get(ipv4_addr, NULL);
+	if (cid < 0 || cid > 19) {
+		return -EINVAL;
+	}
+
+	len = ip_addr_get_cid(ipv4_addr, NULL, cid);
 	if (len < 0) {
 		return len;
 	}
@@ -145,35 +179,49 @@ int lte_ipv4_addr_add(const struct net_if *iface)
 		return -ENODEV;
 	}
 
-	ctx.ipv4_addr_current = net_sin(&addr)->sin_addr;
-	ctx.ipv4_added = true;
+	ctx.ipv4[cid].addr = net_sin(&addr)->sin_addr;
+	ctx.ipv4[cid].added = true;
 
 	return 0;
 }
 
-int lte_ipv4_addr_remove(const struct net_if *iface)
+int lte_ipv4_addr_remove_cid(const struct net_if *iface, int cid)
 {
 	if (iface == NULL) {
 		return -EINVAL;
 	}
 
-	if (!ctx.ipv4_added) {
-		LOG_DBG("No IPv4 address to remove");
+	if (cid < 0 || cid > 19) {
+		return -EINVAL;
+	}
+
+	if (!ctx.ipv4[cid].added) {
+		LOG_DBG("No IPv4 address to remove for CID %d", cid);
 		return 0;
 	}
 
-	if (!net_if_ipv4_addr_rm((struct net_if *)iface, &ctx.ipv4_addr_current)) {
+	if (!net_if_ipv4_addr_rm((struct net_if *)iface, &ctx.ipv4[cid].addr)) {
 		return -EFAULT;
 	}
 
-	ctx.ipv4_added = false;
+	ctx.ipv4[cid].added = false;
 
 	return 0;
+}
+
+int lte_ipv4_addr_add(const struct net_if *iface)
+{
+	return lte_ipv4_addr_add_cid(iface, 0);
+}
+
+int lte_ipv4_addr_remove(const struct net_if *iface)
+{
+	return lte_ipv4_addr_remove_cid(iface, 0);
 }
 #endif
 
 #if CONFIG_NET_IPV6
-int lte_ipv6_addr_add(const struct net_if *iface)
+int lte_ipv6_addr_add_cid(const struct net_if *iface, int cid)
 {
 	int len;
 	char ipv6_addr[NET_IPV6_ADDR_LEN] = { 0 };
@@ -184,7 +232,11 @@ int lte_ipv6_addr_add(const struct net_if *iface)
 		return -EINVAL;
 	}
 
-	len = ip_addr_get(NULL, ipv6_addr);
+	if (cid < 0 || cid > 19) {
+		return -EINVAL;
+	}
+
+	len = ip_addr_get_cid(NULL, ipv6_addr, cid);
 	if (len < 0) {
 		return len;
 	}
@@ -201,29 +253,43 @@ int lte_ipv6_addr_add(const struct net_if *iface)
 		return -ENODEV;
 	}
 
-	ctx.ipv6_addr_current = net_sin6(&addr)->sin6_addr;
-	ctx.ipv6_added = true;
+	ctx.ipv6[cid].addr = net_sin6(&addr)->sin6_addr;
+	ctx.ipv6[cid].added = true;
 
 	return 0;
 }
 
-int lte_ipv6_addr_remove(const struct net_if *iface)
+int lte_ipv6_addr_remove_cid(const struct net_if *iface, int cid)
 {
 	if (iface == NULL) {
 		return -EINVAL;
 	}
 
-	if (!ctx.ipv6_added) {
-		LOG_DBG("No IPv6 address to remove");
+	if (cid < 0 || cid > 19) {
+		return -EINVAL;
+	}
+
+	if (!ctx.ipv6[cid].added) {
+		LOG_DBG("No IPv6 address to remove for CID %d", cid);
 		return 0;
 	}
 
-	if (!net_if_ipv6_addr_rm((struct net_if *)iface, &ctx.ipv6_addr_current)) {
+	if (!net_if_ipv6_addr_rm((struct net_if *)iface, &ctx.ipv6[cid].addr)) {
 		return -EFAULT;
 	}
 
-	ctx.ipv6_added = false;
+	ctx.ipv6[cid].added = false;
 
 	return 0;
+}
+
+int lte_ipv6_addr_add(const struct net_if *iface)
+{
+	return lte_ipv6_addr_add_cid(iface, 0);
+}
+
+int lte_ipv6_addr_remove(const struct net_if *iface)
+{
+	return lte_ipv6_addr_remove_cid(iface, 0);
 }
 #endif /* #if CONFIG_NET_IPV6 */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
@@ -7,15 +7,24 @@
 
 #include <zephyr/device.h>
 #include <zephyr/types.h>
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/net_ip.h>
+#include <zephyr/net/socket.h>
 #include <zephyr/net/offloaded_netdev.h>
 #include <zephyr/net/conn_mgr_connectivity_impl.h>
 #include <zephyr/logging/log.h>
 #include <modem/nrf_modem_lib.h>
+#include <nrf_modem_at.h>
+#include <nrf_modem_gnss.h>
 #include <modem/lte_lc.h>
+#include <modem/pdn.h>
+#include <modem/ntn.h>
+#include <date_time.h>
+
 #include "lte_ip_addr_helper.h"
 #include "lte_cell_prfl_helper.h"
 
-LOG_MODULE_REGISTER(nrf_modem_lib_netif, CONFIG_NRF_MODEM_LIB_NET_IF_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf_modem_lib_netif_ntn, CONFIG_NRF_MODEM_LIB_NET_IF_NTN_LOG_LEVEL);
 
 /* Forward declarations */
 static void connection_timeout_work_fn(struct k_work *work);
@@ -32,7 +41,7 @@ static K_WORK_DEFINE(modem_fault_handler_work, modem_fault_work_fn);
 /* Work item for deregistering handlers. */
 static K_WORK_DEFINE(deregister_handlers_work, deregister_handlers_work_fn);
 
-static int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn);
+static int lte_net_if_disconnect_ntn(struct conn_mgr_conn_binding *const if_conn);
 
 /* Local reference to the network interface the L2 connection layer is bound to. */
 static struct net_if *iface_bound;
@@ -46,9 +55,29 @@ static struct {
 	bool has_cell;
 } internal_state;
 
+static struct nrf_modem_gnss_pvt_data_frame last_pvt;
+static struct k_work gnss_location_work;
+
+static void gnss_event_handler(int event);
+
 static K_MUTEX_DEFINE(internal_state_lock);
+static K_SEM_DEFINE(gnss_fix_sem, 0, 1);
 
 /* Local functions */
+
+static void apply_gnss_time(const struct nrf_modem_gnss_pvt_data_frame *pvt_data)
+{
+	struct tm gnss_time = {
+		.tm_year = pvt_data->datetime.year - 1900,
+		.tm_mon = pvt_data->datetime.month - 1,
+		.tm_mday = pvt_data->datetime.day,
+		.tm_hour = pvt_data->datetime.hour,
+		.tm_min = pvt_data->datetime.minute,
+		.tm_sec = pvt_data->datetime.seconds,
+	};
+
+	date_time_set(&gnss_time);
+}
 
 /* Function called whenever an irrecoverable error occurs and LTE is activated.
  * Notifies a fatal connectivity error and deactivates LTE.
@@ -57,11 +86,11 @@ static void fatal_error_notify_and_disconnect(void)
 {
 	net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, iface_bound);
 	net_if_dormant_on(iface_bound);
-	(void)lte_net_if_disconnect(NULL);
+	(void)lte_net_if_disconnect_ntn(NULL);
 }
 
 /* Handler called on modem faults. */
-void lte_net_if_modem_fault_handler(void)
+void lte_net_if_ntn_modem_fault_handler(void)
 {
 	/* The net_mgmt event notification cannot be handled in interrupt context, so we
 	 * defer it to the system workqueue.
@@ -133,7 +162,7 @@ static void become_dormant(void)
 		/* If persistence is disabled, LTE is deactivated upon a lost connection.
 		 * Re-establishment is reliant on the application calling conn_mgr_if_connect().
 		 */
-		ret = lte_net_if_disconnect(NULL);
+		ret = lte_net_if_disconnect_ntn(NULL);
 		if (ret) {
 			LOG_ERR("lte_net_if_disconnect, error: %d", ret);
 			net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, iface_bound);
@@ -202,7 +231,7 @@ static void connection_timeout_work_fn(struct k_work *work)
 
 	LOG_DBG("LTE connection timeout");
 
-	int ret = lte_net_if_disconnect(NULL);
+	int ret = lte_net_if_disconnect_ntn(NULL);
 
 	if (ret) {
 		LOG_ERR("lte_net_if_disconnect, error: %d", ret);
@@ -229,19 +258,17 @@ static void on_pdn_activated(void)
 	int ret;
 
 	/* If IPv4 is enabled, check whether modem has been assigned an IPv4. */
-	ret = lte_ipv4_addr_add(iface_bound);
+	ret = lte_ipv4_addr_add_cid(iface_bound, 10);
 
 	if (ret == -ENODATA) {
 		LOG_WRN("No IPv4 address given by the network");
 	} else if (ret) {
-		LOG_ERR("ipv4_addr_add, error: %d", ret);
+		LOG_ERR("lte_ipv4_addr_add_cid, error: %d", ret);
 		fatal_error_notify_and_disconnect();
 		return;
 	}
 
 #endif /* CONFIG_NET_IPV4 */
-
-	/* IPv6 is updated on a aseparate event */
 
 	update_has_pdn(true);
 }
@@ -251,7 +278,7 @@ static void on_pdn_deactivated(void)
 	int ret;
 
 #if CONFIG_NET_IPV4
-	ret = lte_ipv4_addr_remove(iface_bound);
+	ret = lte_ipv4_addr_remove_cid(iface_bound, 10);
 	if (ret) {
 		LOG_ERR("ipv4_addr_remove, error: %d", ret);
 		fatal_error_notify_and_disconnect();
@@ -259,43 +286,71 @@ static void on_pdn_deactivated(void)
 	}
 #endif /* CONFIG_NET_IPV4 */
 
-#if CONFIG_NET_IPV6
-	ret = lte_ipv6_addr_remove(iface_bound);
-	if (ret) {
-		LOG_ERR("ipv6_addr_remove, error: %d", ret);
-		fatal_error_notify_and_disconnect();
-		return;
-	}
-#endif /* CONFIG_NET_IPV6 */
-
 	update_has_pdn(false);
 }
 
-#if CONFIG_NET_IPV6
-static void on_pdn_ipv6_up(void)
+static void gnss_location_work_handler(struct k_work *work)
 {
-	int ret;
+	int err;
+	struct nrf_modem_gnss_pvt_data_frame pvt_data;
 
-	ret = lte_ipv6_addr_add(iface_bound);
-	if (ret) {
-		LOG_ERR("ipv6_addr_add, error: %d", ret);
-		fatal_error_notify_and_disconnect();
+	/* Read PVT data in thread context */
+	err = nrf_modem_gnss_read(&pvt_data, sizeof(pvt_data), NRF_MODEM_GNSS_DATA_PVT);
+	if (err != 0) {
+		LOG_ERR("Failed to read GNSS data nrf_modem_gnss_read(), err: %d", err);
 		return;
+	}
+
+	if (pvt_data.flags & NRF_MODEM_GNSS_PVT_FLAG_FIX_VALID) {
+		LOG_DBG("Got valid GNSS location: lat: %f, lon: %f, alt: %f",
+		(double)pvt_data.latitude,
+		(double)pvt_data.longitude,
+		(double)pvt_data.altitude);
+		memcpy(&last_pvt, &pvt_data, sizeof(last_pvt));
+		apply_gnss_time(&last_pvt);
+		k_sem_give(&gnss_fix_sem);
+	}
+
+	/* Log SV (Satellite Vehicle) data */
+	for (int i = 0; i < NRF_MODEM_GNSS_MAX_SATELLITES; i++) {
+		if (pvt_data.sv[i].sv == 0) {
+			/* SV not valid, skip */
+			continue;
+		}
+
+		LOG_INF("SV: %3d C/N0: %4.1f el: %2d az: %3d signal: %d in fix: %d unhealthy: %d",
+		pvt_data.sv[i].sv,
+		pvt_data.sv[i].cn0 * 0.1,
+		pvt_data.sv[i].elevation,
+		pvt_data.sv[i].azimuth,
+		pvt_data.sv[i].signal,
+		pvt_data.sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_USED_IN_FIX ? 1 : 0,
+		pvt_data.sv[i].flags & NRF_MODEM_GNSS_SV_FLAG_UNHEALTHY ? 1 : 0);
 	}
 }
 
-static void on_pdn_ipv6_down(void)
+/* Event handlers */
+static void gnss_event_handler(int event)
 {
-	int ret;
-
-	ret = lte_ipv6_addr_remove(iface_bound);
-	if (ret) {
-		LOG_ERR("ipv6_addr_remove, error: %d", ret);
-		fatal_error_notify_and_disconnect();
-		return;
+	switch (event) {
+	case NRF_MODEM_GNSS_EVT_PVT:
+		k_work_submit(&gnss_location_work);
+		break;
+	case NRF_MODEM_GNSS_EVT_FIX:
+		LOG_DBG("NRF_MODEM_GNSS_EVT_FIX");
+		break;
+	case NRF_MODEM_GNSS_EVT_BLOCKED:
+		LOG_WRN("NRF_MODEM_GNSS_EVT_BLOCKED");
+		break;
+	case NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT:
+		LOG_ERR("NRF_MODEM_GNSS_EVT_SLEEP_AFTER_TIMEOUT");
+		k_sem_give(&gnss_fix_sem);
+		break;
+	default:
+		LOG_DBG("Unknown GNSS event: %d", event);
+		break;
 	}
 }
-#endif /* CONFIG_NET_IPV6 */
 
 static void lte_evt_handler(const struct lte_lc_evt *const evt)
 {
@@ -332,6 +387,15 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 
 			LOG_DBG("For more information, see the AT command documentation "
 				"for the %%MDMEV notification");
+		}
+
+		break;
+	case LTE_LC_EVT_RRC_UPDATE:
+		if (evt->rrc_mode == LTE_LC_RRC_MODE_CONNECTED) {
+			LOG_INF("LTE_LC_RRC_MODE_CONNECTED");
+
+		} else if (evt->rrc_mode == LTE_LC_RRC_MODE_IDLE) {
+			LOG_INF("LTE_LC_RRC_MODE_IDLE");
 		}
 
 		break;
@@ -387,8 +451,7 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-#if defined(CONFIG_NRF_MODEM_LIB_NET_IF_KEEP_REG_CONTEXT)
-static int set_tn_active(void)
+static int set_gnss_active_mode(void)
 {
 	int err;
 	enum lte_lc_func_mode mode;
@@ -418,30 +481,136 @@ static int set_tn_active(void)
 
 		break;
 	}
-
-	err = nrf_modem_at_printf("AT%%XBANDLOCK=0");
+	/* Configure GNSS system mode */
+	err = lte_lc_system_mode_set(LTE_LC_SYSTEM_MODE_GPS,
+				     LTE_LC_SYSTEM_MODE_PREFER_AUTO);
 	if (err) {
-		LOG_ERR("Failed to remove band lock, error: %d", err);
+		LOG_ERR("Failed to set GNSS system mode, error: %d", err);
 
 		return err;
 	}
 
-	err = lte_lc_system_mode_set(LTE_LC_SYSTEM_MODE_LTEM_NBIOT,
-				     LTE_LC_SYSTEM_MODE_PREFER_AUTO);
+	/* Activate GNSS functional mode */
+	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_GNSS);
 	if (err) {
-		LOG_ERR("lte_lc_system_mode_set, error: %d", err);
+		LOG_ERR("Failed to activate GNSS fun mode, error: %d", err);
 
 		return err;
+	}
+
+	/* Set GNSS to single fix mode */
+	err = nrf_modem_gnss_fix_interval_set(0);
+	if (err) {
+		LOG_ERR("Failed to set GNSS fix interval, error: %d", err);
+	}
+
+	/* Set GNSS fix timeout to 180 seconds */
+	err = nrf_modem_gnss_fix_retry_set(180);
+	if (err) {
+		LOG_ERR("Failed to set GNSS fix retry, error: %d", err);
+	}
+
+	err = nrf_modem_gnss_start();
+	if (err) {
+		LOG_ERR("Failed to start GNSS, error: %d", err);
 	}
 
 	return 0;
 }
 
-static int set_tn_offline_keep_reg_mode(void)
+static int set_gnss_inactive_mode(void)
 {
 	int err;
 
-	LOG_DBG("Going offline while keeping terrestrial registration context");
+	err = nrf_modem_gnss_stop();
+	if (err) {
+		LOG_ERR("Failed to stop GNSS, error: %d", err);
+	}
+
+	/* Set modem to CFUN=30 mode when exiting GNSS state */
+	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_DEACTIVATE_GNSS);
+	if (err) {
+		LOG_ERR("lte_lc_func_mode_set, error: %d", err);
+	}
+
+	return 0;
+}
+
+static void set_ntn_active_mode(void)
+{
+	int err;
+	enum lte_lc_func_mode mode;
+
+	err = lte_lc_func_mode_get(&mode);
+	if (err) {
+		LOG_ERR("Failed to get LTE function mode, error: %d", err);
+
+		return;
+	}
+
+	/* If needed, go offline to be able to set system mode */
+	switch (mode) {
+	case LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG:
+		__fallthrough;
+	case LTE_LC_FUNC_MODE_OFFLINE:
+		__fallthrough;
+	case LTE_LC_FUNC_MODE_POWER_OFF:
+		break;
+	default:
+		err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
+		if (err) {
+			LOG_ERR("lte_lc_func_mode_set, error: %d", err);
+
+			return;
+		}
+
+		break;
+	}
+
+	/* Configure NTN system mode */
+	err = lte_lc_system_mode_set(LTE_LC_SYSTEM_MODE_NTN_NBIOT,
+				     LTE_LC_SYSTEM_MODE_PREFER_AUTO);
+	if (err) {
+		LOG_ERR("Failed to set NTN system mode, error: %d", err);
+
+		return;
+	}
+
+	err = ntn_location_set((double)last_pvt.latitude,
+				(double)last_pvt.longitude,
+				(float)last_pvt.altitude,
+				0);
+	if (err) {
+		LOG_ERR("Failed to set location, error: %d", err);
+
+		return;
+	}
+
+	#if defined(CONFIG_NRF_MODEM_LIB_NET_IF_NTN_BANDLOCK_ENABLE)
+	err = nrf_modem_at_printf("AT%%XBANDLOCK=2,,\"%i\"",
+					CONFIG_NRF_MODEM_LIB_NET_IF_NTN_BANDLOCK);
+	if (err) {
+		LOG_ERR("Failed to set NTN band lock, error: %d", err);
+
+		return;
+	}
+	#endif
+	#if defined(CONFIG_NRF_MODEM_LIB_NET_IF_NTN_CHANNEL_SELECT_ENABLE)
+	err = nrf_modem_at_printf("AT%%CHSELECT=1,14,%i",
+			CONFIG_NRF_MODEM_LIB_NET_IF_NTN_CHANNEL_SELECT);
+	if (err) {
+		LOG_ERR("Failed to set NTN channel lock, error: %d", err);
+
+		return;
+	}
+	#endif
+}
+
+static int set_ntn_offline_mode(void)
+{
+	int err;
+
+	LOG_DBG("Going offline while keeping NTN registration context");
 
 	/* Set modem to offline mode without losing registration */
 	err = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG);
@@ -453,25 +622,23 @@ static int set_tn_offline_keep_reg_mode(void)
 
 	return 0;
 }
-#endif
 
-
-static void lte_net_if_init(struct conn_mgr_conn_binding *if_conn)
+static void lte_net_if_init_ntn(struct conn_mgr_conn_binding *if_conn)
 {
 	int err;
-	int timeout = CONFIG_NRF_MODEM_LIB_NET_IF_CONNECT_TIMEOUT_SECONDS;
+	int timeout = CONFIG_NRF_MODEM_LIB_NET_IF_NTN_CONNECT_TIMEOUT_SECONDS;
 
 	net_if_dormant_on(if_conn->iface);
 
-	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_CONNECT)) {
+	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_NTN_AUTO_CONNECT)) {
 		conn_mgr_binding_set_flag(if_conn, CONN_MGR_IF_NO_AUTO_CONNECT, true);
 	}
 
-	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_AUTO_DOWN)) {
+	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_NTN_AUTO_DOWN)) {
 		conn_mgr_binding_set_flag(if_conn, CONN_MGR_IF_NO_AUTO_DOWN, true);
 	}
 
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_CONNECTION_PERSISTENCE)) {
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_NTN_CONNECTION_PERSISTENCE)) {
 		conn_mgr_binding_set_flag(if_conn, CONN_MGR_IF_PERSISTENT, true);
 	}
 
@@ -498,10 +665,12 @@ static void lte_net_if_init(struct conn_mgr_conn_binding *if_conn)
 	/* Keep local reference to the network interface that the connectivity layer is bound to. */
 	iface_bound = if_conn->iface;
 
-	LOG_DBG("Modem network interface ready");
+	k_work_init(&gnss_location_work, gnss_location_work_handler);
+
+	LOG_DBG("NTN Modem network interface ready");
 }
 
-int lte_net_if_enable(void)
+int lte_net_if_enable_ntn(void)
 {
 	int err;
 
@@ -514,36 +683,51 @@ int lte_net_if_enable(void)
 		}
 	}
 
-#if defined(CONFIG_NRF_MODEM_LIB_NET_IF_KEEP_REG_CONTEXT)
+	nrf_modem_gnss_event_handler_set(gnss_event_handler);
+
 	cell_prfl_set_profiles();
-#endif
 
 	return 0;
 }
 
-int lte_net_if_disable(void)
+int lte_net_if_disable_ntn(void)
 {
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT)) {
-		return lte_net_if_disconnect(NULL);
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF_NTN_DOWN_DEFAULT_LTE_DISCONNECT)) {
+		return lte_net_if_disconnect_ntn(NULL);
 	} else {
 		return nrf_modem_lib_shutdown();
 	}
+
+	return 0;
+
 }
 
-static int lte_net_if_connect(struct conn_mgr_conn_binding *const if_conn)
+static int lte_net_if_connect_ntn(struct conn_mgr_conn_binding *const if_conn)
 {
 	int err;
 
 	ARG_UNUSED(if_conn);
 
-	LOG_DBG("Connecting to LTE");
+	LOG_DBG("Looking for GNSS fix");
+
+	set_gnss_active_mode();
+
+	/* Wait for valid GNSS fix with 3-minute timeout */
+	if (k_sem_take(&gnss_fix_sem, K_FOREVER)) {
+		LOG_ERR("GNSS timeout");
+		set_gnss_inactive_mode();
+		lte_net_if_disconnect_ntn(NULL);
+		return 0;
+	}
+
+	set_gnss_inactive_mode();
+
+	LOG_DBG("Connecting to NTN");
 
 	/* Register handler for registration status notifications */
 	lte_lc_register_handler(lte_evt_handler);
 
-#if defined(CONFIG_NRF_MODEM_LIB_NET_IF_KEEP_REG_CONTEXT)
-	set_tn_active();
-#endif
+	set_ntn_active_mode();
 
 	err = lte_lc_modem_events_enable();
 	if (err) {
@@ -568,25 +752,15 @@ static void deregister_handlers_work_fn(struct k_work *work)
 	lte_lc_deregister_handler(lte_evt_handler);
 }
 
-static int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn)
+static int lte_net_if_disconnect_ntn(struct conn_mgr_conn_binding *const if_conn)
 {
 	ARG_UNUSED(if_conn);
 
-	int ret = 0;
-
-	LOG_DBG("Disconnecting from LTE");
+	LOG_DBG("Disconnecting from NTN");
 
 	k_work_cancel_delayable(&connection_timeout_work);
 
-#if defined(CONFIG_NRF_MODEM_LIB_NET_IF_KEEP_REG_CONTEXT)
-	set_tn_offline_keep_reg_mode();
-#else
-	ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_DEACTIVATE_LTE);
-	if (ret) {
-		LOG_ERR("lte_lc_func_mode_set, error: %d", ret);
-		return ret;
-	}
-#endif
+	set_ntn_offline_mode();
 
 	/* Sleep shortly to allow events to propagate to handlers*/
 	k_sleep(K_SECONDS(2));
@@ -594,14 +768,14 @@ static int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn)
 	/* Submit work to deregister handlers */
 	k_work_submit(&deregister_handlers_work);
 
-	return ret;
+	return 0;
 }
 
-/* Bind connectity APIs.
+/* Bind connectivity APIs for NTN.
  * extern in nrf9x_sockets.c
  */
-struct conn_mgr_conn_api lte_net_if_conn_mgr_api = {
-	.init = lte_net_if_init,
-	.connect = lte_net_if_connect,
-	.disconnect = lte_net_if_disconnect,
+struct conn_mgr_conn_api lte_net_if_conn_mgr_api_ntn = {
+	.init = lte_net_if_init_ntn,
+	.connect = lte_net_if_connect_ntn,
+	.disconnect = lte_net_if_disconnect_ntn,
 };
