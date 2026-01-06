@@ -1052,7 +1052,7 @@ Use the following command to perform the operation:
 Alternatively, you can perform the provisioning operation manually with the ``west ncs-provision upload`` command and then flash the device with the ``west flash`` command.
 
 You only need to provision one public key to an nRF Desktop device.
-For details, see :ref:`provisioning KMU for nRF54L devices <ug_nrf54l_developing_provision_kmu>`.
+For details, see :ref:`ug_kmu_provisioning_overview`.
 
 .. note::
    You must provision the device again after erasing it.
