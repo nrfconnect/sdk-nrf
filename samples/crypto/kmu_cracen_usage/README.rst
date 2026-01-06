@@ -207,21 +207,18 @@ Before you program the sample to your development kit, complete the following st
 
 1. |connect_kit|
 #. |connect_terminal|
-#. Provision the example keys to the board using nRF Util.
-   Complete the following steps:
+#. Perform a full erase of the device.
+   You can use nRF Util's `device command <Erasing the device_>`_ for this purpose:
 
-   a. Run the following command to perform a full erase of the device:
+   .. code-block:: console
 
-      .. code-block:: console
+      nrfutil device erase --all
 
-         nrfutil device erase --all
+#. Run the following nRF Util command to provision the example keys to the board:
 
-   b. Run the following command to provision the example keys to the board:
+   .. code-block:: console
 
-      .. code-block:: console
-
-         nrfutil device x-provision-keys --key-file keys\keys.json
-
+      nrfutil device x-provision-keys --key-file keys\keys.json
 
    For more information, see :ref:`ug_nrf54l_developing_provision_kmu_provisioning`.
 
