@@ -27,7 +27,7 @@ Added the following features as supported:
   * For members signed up for both Apple MFi program and Apple Find My.
   * All standard SoC peripherals.
   * Device Firmware Update (DFU) provided by single-stage immutable bootloader MCUboot.
-  * :ref:`PSA Crypto APIs (HW accelerated) <ug_nrf54l_cryptography>` for cryptographic operations and key storage.
+  * :ref:`PSA Crypto APIs (HW accelerated) <ug_crypto_kmu_psa_key_programming_model>` for cryptographic operations and key storage.
   * :ref:`Wi-Fi® Scan <wifi_scan_sample>`, :ref:`wifi_shell_sample`, and :ref:`wifi_station_sample` in combination with nRF7002 EB.
   * :ref:`nPM1300 PMIC <ug_pmic>`.
 
@@ -321,11 +321,11 @@ Developing with nRF54L Series
 
   * nRF54l_snippets to emulate these targets on an nRF54L15 DK.
     These are used only for development purposes.
-  * The :ref:`ug_nrf54l_cryptography` page that provides more information about the cryptographic peripherals of the nRF54L Series devices, programming model for referencing keys, and configuration.
+  * The :ref:`ug_kmu_guides` page that provides more information about the cryptographic peripherals of the nRF54L Series devices, programming model for referencing keys, and configuration.
   * A page on :ref:`zms_memory_storage` system.
   * The :ref:`vpr_flpr_nrf54l` and :ref:`building_nrf54l` pages.
   * The :ref:`ug_nrf54l_developing_ble_fota` page, describing FOTA update process and testing steps.
-  * The :ref:`ug_nrf54l_developing_provision_kmu` page, including instructions on generating keys and provisioning them to the board.
+  * The :ref:`ug_kmu_provisioning_overview` page, including instructions on generating keys and provisioning them to the board.
 
 * Updated the name and the structure of the section, with :ref:`ug_nrf54l` as the landing page.
 * Removed the Getting started with the nRF54L15 PDK page, and instead included the information about the `Quick Start app`_ support.
@@ -1534,7 +1534,7 @@ Documentation
     Additionally, created a new bootloader :ref:`bootloader_quick_start`.
   * Separated the instructions about building from :ref:`configure_application` and moved it to a standalone :ref:`building` page.
   * Restructured the :ref:`ug_bt_mesh` documentation for clearer distinction between concepts or overview topics and how-to topics, thus moved some information from the Bluetooth Mesh library sections.
-  * The :ref:`nrf_security_drivers_cracen` section with a reference to the :ref:`ug_nrf54l_cryptography` page.
+  * The :ref:`nrf_security_drivers_cracen` section with a reference to the :ref:`ug_kmu_guides` page.
   * The :ref:`ug_tfm` page with the correct list of samples demonstrating TF-M.
   * The :ref:`app_approtect_ncs` section on the :ref:`app_approtect` page with details on setting the Kconfig options and register values to enable AP-Protect.
   * The :ref:`companion_components` page with Secure Domain Firmware and System Controller Firmware components.

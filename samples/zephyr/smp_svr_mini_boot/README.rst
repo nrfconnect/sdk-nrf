@@ -13,7 +13,7 @@ Overview
 ********
 
 This sample shows how to configure MCUboot for secure boot and Device Firmware Update (DFU) capabilities using the Zephyr RTOS.
-The MCUboot is configured to utilize hardware cryptography with the :ref:`ED25519 signature <ug_nrf54l_cryptography>`. Additionally, for nRF54L15 DK  :ref:`Key Management Unit (KMU) <ug_nrf54l_developing_basics_kmu>` for secure key storage is used.
+The MCUboot is configured to utilize hardware cryptography with the :ref:`ED25519 signature <ug_crypto_kmu_psa_key_programming_model>`. Additionally, for nRF54L15 DK  :ref:`Key Management Unit (KMU) <ug_kmu_guides_cracen_overview>` for secure key storage is used.
 The setup uses LTO and disables non-essential functionalities to downsize the MCUboot non-volatile memory footprint.
 
 The SMP server sample is configured to support Bluetooth® LE and shell for the MCUmgr protocol, which facilitates image management and OS commands.
