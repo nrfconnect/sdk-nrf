@@ -15,8 +15,8 @@
 	model = "Nordic nRF54LV10 DK nRF54LV10A Application MCU";
 
 	chosen {
-		zephyr,code-partition = &slot0_partition;
-		zephyr,sram = &cpuapp_sram;
+		zephyr,code-partition = &slot0_ns_partition;
+		zephyr,sram = &sram0_ns;
 		zephyr,bt-hci = &bt_hci_sdc;
 		zephyr,entropy = &psa_rng;
 	};
