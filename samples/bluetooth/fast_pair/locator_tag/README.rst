@@ -667,7 +667,7 @@ Use the following command to perform the operation:
    west flash --recover
 
 Alternatively, you can perform the provisioning operation manually with the ``west ncs-provision upload`` command and then flash the device with the ``west flash`` command.
-See :ref:`ug_nrf54l_developing_provision_kmu` for further details regarding the KMU provisioning process.
+See :ref:`ug_kmu_provisioning_overview` for further details regarding the KMU provisioning process.
 
 .. _fast_pair_locator_tag_motion_detector_test_build:
 

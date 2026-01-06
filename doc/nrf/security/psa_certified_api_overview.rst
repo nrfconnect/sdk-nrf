@@ -62,7 +62,7 @@ The following table provides an overview of the PSA Certified APIs support statu
    * - `PSA Certified Crypto API`_
      - Supported
      - | `PSA Certified Crypto API 1.3.1`_ for IronSide Secure Element firmware for nRF54H20
-       | `PSA Certified Crypto API 1.4.0`_ for :ref:`nRF54L cryptography <ug_nrf54l_cryptography>` and PSA Crypto API builds with and without TF-M
+       | `PSA Certified Crypto API 1.4.0`_ for :ref:`nRF54L cryptography <ug_crypto_kmu_psa_key_programming_model>` and PSA Crypto API builds with and without TF-M
    * - `PSA Certified Attestation API`_
      - Supported
      - `PSA Certified Attestation API 1.0`_ (not supported for IronSide Secure Element firmware for nRF54H20)

@@ -220,6 +220,9 @@ NRF = (
     ("app_dev/device_guides/working_with_nrf/nrf54l/testing_dfu", "app_dev/device_guides/nrf54l/fota_update"),
     ("app_dev/device_guides/nrf54l/testing_dfu", "app_dev/device_guides/nrf54l/fota_update"),
     ("app_dev/device_guides/nrf54l/snippets", "app_dev/device_guides/nrf54l/index"), # Snippets for nRF54L05 and nRF54L10 (removed after 2.8.0)
+    ("app_dev/device_guides/nrf54l/cryptography", "app_dev/device_guides/kmu_guides/kmu_cracen_overview"), # Cryptography (replaced after 3.2.0 with KMU guides)
+    ("app_dev/device_guides/nrf54l/kmu_basics", "app_dev/device_guides/kmu_guides/kmu_cracen_overview"), # KMU basics (replaced after 3.2.0 with KMU guides)
+    ("app_dev/device_guides/nrf54l/kmu_provision", "app_dev/device_guides/kmu_guides/kmu_provisioning_overview"), # KMU provisioning (replaced after 3.2.0 with KMU guides)
     ("ug_nrf53", "app_dev/device_guides/nrf53/index"), # Developing with nRF53 Series (landing)
     ("nrf53", "app_dev/device_guides/nrf53/index"),
     ("device_guides/nrf53", "app_dev/device_guides/nrf53/index"),

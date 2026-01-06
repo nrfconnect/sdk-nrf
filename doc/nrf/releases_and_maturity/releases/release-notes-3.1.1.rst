@@ -32,7 +32,7 @@ See the `nRF54LM20A System-on-Chip`_ page to learn more.
 
   * All nRF54LM20A SoC peripherals, including the new USB-HS interface.
   * DFU with MCUboot enabling dual-bank DFU with optional external flash.
-  * Hardware crypto provided by :ref:`PSA Crypto APIs (hardware accelerated) <ug_nrf54l_cryptography>` for cryptographic operations.
+  * Hardware crypto provided by :ref:`PSA Crypto APIs (hardware accelerated) <ug_crypto_kmu_psa_key_programming_model>` for cryptographic operations.
   * Google Find My Device and Apple Find My for members of the Apple and Google programs.
   * Out-of-the-box support across many standard SDK samples.
 

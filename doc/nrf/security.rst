@@ -131,7 +131,7 @@ Some of them are documented in detail in other parts of this documentation, whil
     - | - :ref:`nrf_security` library
       | - :ref:`nrfxlib:crypto`
       | - :ref:`crypto_samples`
-      | - :ref:`ug_nrf54l_cryptography`
+      | - :ref:`ug_kmu_guides`
   * - Trusted Firmware-M (TF-M)
     - TF-M is the reference implementation of `Platform Security Architecture (PSA)`_.
       On :ref:`boards with the /ns variant <app_boards_names>`, TF-M is used to configure and boot an application with :ref:`security by separation <app_boards_spe_nspe_cpuapp_ns>`.

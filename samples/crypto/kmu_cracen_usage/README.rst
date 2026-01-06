@@ -25,7 +25,7 @@ Overview
 ********
 
 The KMU usage with CRACEN sample enables the :ref:`PSA Crypto API <psa_crypto_support_enable>` to generate various persistent keys.
-These keys are stored in the :ref:`Key Management Unit (KMU) <ug_nrf54l_developing_basics_kmu>` of the device and retain their value between device resets.
+These keys are stored in the :ref:`Key Management Unit (KMU) <ug_kmu_guides_cracen_overview>` of the device and retain their value between device resets.
 The KMU is one of the :ref:`key storage <key_storage>` options in the |NCS|.
 
 The sample uses the :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>` and the :ref:`crypto_drivers_cracen`.
@@ -186,7 +186,7 @@ The following commands were used to generate the :file:`keys.json` file availabl
    In case you need to provision the key with ``--cracen-usage ENCRYPTED`` option, make sure the seed value is provisioned.
    See the `Testing with KMU encryption`_ section for more information.
 
-   For more information about the seed value, see :ref:`ug_nrf54l_crypto_cracen_ikg`.
+   For more information about the seed value, see :ref:`ug_kmu_guides_cracen_ikg`.
 
 Building and running
 ********************
@@ -220,7 +220,7 @@ Before you program the sample to your development kit, complete the following st
 
       nrfutil device x-provision-keys --key-file keys\keys.json
 
-   For more information, see :ref:`ug_nrf54l_developing_provision_kmu_provisioning`.
+   For more information, see :ref:`ug_kmu_provisioning_provisioning_keys`.
 
 #. :ref:`Build <building>` the sample if you have not built it yet.
 #. :ref:`Program <programming>` the sample to your device.
@@ -389,7 +389,7 @@ Before you program the sample to your development kit, complete the following st
 Testing with KMU encryption
 ===========================
 
-In case you need to provision the key with ``--cracen-usage ENCRYPTED`` option, make sure the :ref:`seed value <ug_nrf54l_crypto_cracen_ikg>` is properly provisioned.
+In case you need to provision the key with ``--cracen-usage ENCRYPTED`` option, make sure the :ref:`seed value <ug_kmu_guides_cracen_ikg>` is properly provisioned.
 Complete the following steps instead of the ones listed in the `Testing`_ section:
 
 1. |connect_kit|

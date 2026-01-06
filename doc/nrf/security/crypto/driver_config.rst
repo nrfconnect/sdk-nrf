@@ -26,7 +26,7 @@ Enabling PSA Crypto API
 To use the PSA Crypto API in your application, enable the following Kconfig options depending on your chosen implementation:
 
 * For the :ref:`Oberon PSA Crypto implementation <ug_crypto_architecture_implementation_standards_oberon>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option.
-* For the :ref:`TF-M Crypto Service implementation <ug_crypto_architecture_implementation_standards_tfm>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option together with the :kconfig:option:`CONFIG_BUILD_WITH_TFM` Kconfig option.
+* For the :ref:`TF-M Crypto Service implementation <ug_crypto_architecture_implementation_standards_tfm>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` and the :kconfig:option:`CONFIG_BUILD_WITH_TFM` Kconfig options.
   For more information, see :ref:`ug_tfm_building_secure_services`.
 * For the :ref:`IronSide Secure Element implementation <ug_crypto_architecture_implementation_standards_ironside>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option on the nRF54H20's :ref:`ug_nrf54h20_architecture_cpu_appcore`.
 
@@ -120,6 +120,34 @@ Configuring cryptographic features
 
 You can enable a cryptographic feature or algorithm using `CONFIG_PSA_WANT_*`_ and `CONFIG_PSA_USE_*`_ Kconfig options, which are specific to the :ref:`feature selection mechanism <crypto_drivers_feature_selection>` of the PSA Crypto API.
 For a list of supported cryptographic features and algorithms and the Kconfig options to enable them, see :ref:`ug_crypto_supported_features`.
+
+For example, to enable support for the Encrypted key usage scheme (``CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED``), set the following Kconfig options:
+
+* :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
+* :kconfig:option:`CONFIG_PSA_WANT_AES_KEY_SIZE_256`
+* :kconfig:option:`CONFIG_PSA_WANT_ALG_ECB_NO_PADDING`
+* :kconfig:option:`CONFIG_PSA_WANT_ALG_CMAC`
+* :kconfig:option:`CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_CMAC`
+* :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`
+
+  .. toggle::
+
+     .. code-block:: console
+
+        CONFIG_PSA_WANT_KEY_TYPE_AES=y
+        CONFIG_PSA_WANT_AES_KEY_SIZE_256=y
+        CONFIG_PSA_WANT_ALG_ECB_NO_PADDING=y
+        CONFIG_PSA_WANT_ALG_CMAC=y
+        CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_CMAC=y
+        CONFIG_PSA_WANT_ALG_GCM=y
+
+This configuration enables the key type (AES) and the key size (256 bits) supported by the Encrypted usage scheme, as explained in the :ref:`ug_kmu_guides_supported_key_types` section.
+In addition, it enables the following :ref:`cryptographic features <ug_crypto_supported_features>` supported by the CRACEN driver:
+
+* Cipher mode: AES ECB (Electronic CodeBook) mode, no padding
+* Message Authentication Code (MAC) cipher: Cipher-based MAC (CMAC) cipher
+* Key derivation function (KDF) support: SP800-108 CMAC in counter mode
+* Authenticated Encryption with Associated Data (AEAD) cipher: Galois Counter Mode (GCM) cipher
 
 Building PSA Crypto API
 ***********************

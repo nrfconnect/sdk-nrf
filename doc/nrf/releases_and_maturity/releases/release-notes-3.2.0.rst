@@ -78,7 +78,7 @@ Added the following features as experimental:
 
   * All standard SoC peripherals are supported.
   * Device Firmware Update (DFU) and bootloader support.
-  * :ref:`PSA Crypto APIs (HW accelerated) <ug_nrf54l_cryptography>` for cryptographic operations and key storage.
+  * :ref:`PSA Crypto APIs (HW accelerated) <ug_crypto_kmu_psa_key_programming_model>` for cryptographic operations and key storage.
   * Trusted Firmware-M providing secure processing environment.
   * Out-of-the-box support across many standard SDK samples.
 
@@ -270,9 +270,9 @@ Security
   * The :ref:`security_index` page with a table that lists the versions of security components implemented in the |NCS|.
   * The Trusted storage in the |NCS| page is now renamed to :ref:`secure_storage_in_ncs` and has been updated with new information about the secure storage configuration in the |NCS|.
   * The :ref:`ug_crypto_supported_features` page with the missing entries for the HMAC key type (:kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`).
-  * The :ref:`ug_nrf54l_crypto_kmu_supported_key_types` section specific for the nRF54L Series devices to list the supported algorithms for each key type.
-  * The :ref:`ug_nrf54l_developing_provision_kmu` page with more detailed information about requirements for KMU provisioning and steps for provisioning KMU for development and production.
-    This also led to some updates to the :ref:`ug_nrf54l_crypto_kmu_storing_keys` section on the :ref:`ug_nrf54l_cryptography` page.
+  * The :ref:`ug_kmu_guides_supported_key_types` section specific for the nRF54L Series devices to list the supported algorithms for each key type.
+  * The :ref:`ug_kmu_guides` page with more detailed information about requirements for KMU provisioning and steps for provisioning KMU for development and production.
+    This also led to some updates to the :ref:`ug_kmu_guides_kmu_storing_keys` section on the :ref:`ug_crypto_kmu_psa_key_programming_model` page.
 
 * Removed:
 
