@@ -1,0 +1,28 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Hardware Unique Key partition for nRF52840.
+ * Required when using HW_UNIQUE_KEY without Partition Manager.
+ *
+ * The default storage_partition overlaps with this location, so we
+ * delete it and recreate it at a different address.
+ */
+
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		storage_partition: partition@fd000 {
+			label = "storage";
+			reg = <0x000fd000 0x00002000>;
+		};
+
+		hw_unique_key_partition: partition@ff000 {
+			reg = <0x000ff000 0x00001000>;
+		};
+	};
+};
