@@ -120,6 +120,8 @@ Security
     The algorithm implementation is conformant to the NIST SP 800-108 Rev. 1 recommendation.
   * Support for the secp384r1 key storage in the :ref:`Key Management Unit (KMU) <ug_nrf54l_crypto_kmu_supported_key_types>`.
 
+* Updated the :ref:`API documentation section for the cryptographic drivers <crypto_drivers_api_documentation>` with links to the added API documentation for the CRACEN driver.
+
 Trusted Firmware-M (TF-M)
 -------------------------
 
@@ -458,7 +460,9 @@ Gazell libraries
 Security libraries
 ------------------
 
-|no_changes_yet_note|
+* :ref:`nrf_security` library:
+
+  * Updated the header files at :file:`subsys/nrf_security/src/drivers/cracen/cracenpsa/include/` with Doxygen documentation.
 
 Modem libraries
 ---------------
