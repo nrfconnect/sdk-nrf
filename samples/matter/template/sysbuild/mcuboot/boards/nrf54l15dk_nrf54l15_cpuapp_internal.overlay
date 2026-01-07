@@ -4,20 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* restore full RRAM and SRAM space - by default some parts are dedicated to FLRP */
-&cpuapp_rram {
-	reg = <0x0 DT_SIZE_K(1524)>;
-};
+#include <samples/matter/nrf54l15dk_nrf54l15_cpuapp_internal_partitions.dtsi>
 
-&cpuapp_sram {
-	reg = <0x20000000 DT_SIZE_K(256)>;
-	ranges = <0x0 0x20000000 0x40000>;
-};
-
- /* Disable the external flash, as it's not needed
-  * for the configuration with secondary slot residing
-  * in the internal RRAM.
-  */
-&mx25r64 {
-	status = "disabled";
+/ {
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
 };

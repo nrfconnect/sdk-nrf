@@ -16,7 +16,7 @@ config MATTER_FACTORY_DATA_GENERATE
 
 config MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE
 	bool "Merge generated factory data with merged.hex output"
-	depends on MATTER_FACTORY_DATA_GENERATE
+	depends on MATTER_FACTORY_DATA_GENERATE && PARTITION_MANAGER
 	default y
 	help
 	  Enables merging the generated factory data with the merged.hex output build file. As a
