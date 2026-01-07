@@ -21,7 +21,6 @@
 	gpios = <&gpio9 0 GPIO_ACTIVE_LOW>;
 };
 
-
 &gpiote130 {
 	status = "okay";
 	owned-channels = <0>;

@@ -14,5 +14,5 @@
  */
 
 &wlan0 {
-	local-mac-address = [F6 CE 36 00 00 01];
+	local-mac-address = [f6 ce 36 00 00 01];
 };
