@@ -18,7 +18,7 @@ To get a position fix, a :term:`Global Navigation Satellite System (GNSS)` modul
 
 Predicted GPS (P-GPS) is a form of assistance that reduces the :term:`Time to First Fix (TTFF)`, the time needed by a GNSS module to estimate its position.
 It is provided through :term:`nRF Cloud` services.
-In P-GPS, nRF Cloud provides data containing information about the estimated orbits (`Ephemerides <Ephemeris_>`_) of the 32 GPS satellites for up to two weeks.
+In P-GPS, nRF Cloud provides data containing information about the estimated orbits (`Ephemerides <Ephemeris_>`_) of the 32 GPS satellites for multiple days into the future.
 Each set of ephemerides predictions is valid for a specific four-hour period within the set of all provided predictions.
 A device using P-GPS downloads the ephemeris predictions from the cloud, stores them in its flash memory, and later injects them into the GNSS module when needed.
 
@@ -26,10 +26,7 @@ P-GPS is designed for devices that are frequently disconnected from the cloud bu
 This is possible because a device does not need to download ephemerides from the satellite broadcast.
 However, P-GPS should not be used for general use cases that already work with :term:`Assisted GNSS (A-GNSS)` only.
 
-.. note::
-   When using two-week ephemeris prediction sets, the TTFF towards the end of the second week increases due to the accumulated errors in the predictions and the decreases in the number of satellite ephemerides in the later prediction periods.
-
-P-GPS requires a cloud connection approximately once a week to download new predictions, depending on the configuration settings.
+P-GPS requires a cloud connection to download new predictions.
 With A-GNSS, new ephemerides are needed on average every two hours, or if the fix interval is longer, whenever GNSS is started.
 
 .. note::
@@ -52,7 +49,6 @@ Configure one of the following options to control the network transport for down
 
 Configure these additional options to refine the behavior of P-GPS:
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_PREDICTION_PERIOD`
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS`
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD`
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE`

@@ -315,12 +315,12 @@ See :ref:`nrfxlib:gnss_int_agps_data` for more information about the retrieval o
 Predicted GPS (P-GPS)
 ---------------------
 
-P-GPS is a form of assistance, where the device can download up to two weeks of predicted satellite ephemerides data.
+P-GPS is a form of assistance, where the device can download predicted satellite ephemerides data for several days into the future.
 Normally, devices connect to the cellular network approximately every two hours for up-to-date satellite ephemeris information or they download the ephemeris data from the acquired satellites.
 P-GPS enables devices to determine the exact orbital location of the satellite without connecting to the network every two hours with a trade-off of reduced accuracy of the calculated position over time.
 Note that P-GPS requires more memory compared to regular A-GNSS.
 
-Also, note that due to satellite clock inaccuracies, not all functional satellites will have ephemerides data valid for two weeks in the downloaded P-GPS package.
+Also, note that due to satellite clock inaccuracies, not all functional satellites will have ephemerides data valid when nearing the end of the prediction period in the downloaded P-GPS package.
 This means that the number of satellites having valid predicted ephemerides reduces in number roughly after ten days.
 Hence, the GNSS module needs to download the ephemeris data from the satellite broadcast if no predicted ephemeris is found for that satellite to be able to use the satellite.
 
