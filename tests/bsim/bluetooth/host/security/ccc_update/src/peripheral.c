@@ -19,7 +19,6 @@
 #include "babblekit/testcase.h"
 #include "babblekit/flags.h"
 #include "common.h"
-#include "settings.h"
 
 #include "argparse.h"
 #include "bs_pc_backchannel.h"

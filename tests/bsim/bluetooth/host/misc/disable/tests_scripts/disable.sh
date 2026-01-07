@@ -2,7 +2,8 @@
 # Copyright (c) 2022 Nordic Semiconductor
 # SPDX-License-Identifier: Apache-2.0
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 # Disable test: bt_enable and bt_disable are called in a loop.
 simulation_id="disable_test"

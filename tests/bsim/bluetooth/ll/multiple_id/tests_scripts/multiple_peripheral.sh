@@ -2,7 +2,7 @@
 # Copyright 2018 Oticon A/S
 # SPDX-License-Identifier: Apache-2.0
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 # Multiple connection between two devices with multiple peripheral identity
 simulation_id="central_multiple_peripheral_single"

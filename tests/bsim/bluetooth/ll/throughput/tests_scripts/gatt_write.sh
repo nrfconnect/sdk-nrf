@@ -3,7 +3,7 @@
 # Copyright 2018 Oticon A/S
 # SPDX-License-Identifier: Apache-2.0
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 simulation_id="ll-throughput"
 verbosity_level=2

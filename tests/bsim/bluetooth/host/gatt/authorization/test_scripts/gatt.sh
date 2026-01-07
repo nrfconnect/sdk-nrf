@@ -2,7 +2,8 @@
 # Copyright 2024 Nordic Semiconductor ASA
 # SPDX-License-Identifier: Apache-2.0
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 simulation_id="gatt_authorization"
 verbosity_level=2

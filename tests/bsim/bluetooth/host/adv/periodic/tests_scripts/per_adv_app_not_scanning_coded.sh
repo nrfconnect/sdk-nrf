@@ -6,7 +6,8 @@
 # automatically because the application didn't start it.
 # The advertiser is using Coded PHY as primary PHY.
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 simulation_id="per_adv_app_not_scanning_coded"
 verbosity_level=2

@@ -9,11 +9,11 @@ project(hfc_multilink)
 # This contains a variety of helper functions that abstract away common tasks,
 # like scanning, setting up a connection, querying the peer for a given
 # characteristic, etc..
-add_subdirectory(${ZEPHYR_BASE}/tests/bluetooth/common/testlib testlib)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/common/testlib testlib)
 target_link_libraries(app PRIVATE testlib)
 
 # This contains babblesim-specific helpers, e.g. device synchronization.
-add_subdirectory(${ZEPHYR_BASE}/tests/bsim/babblekit babblekit)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bsim/babblekit babblekit)
 target_link_libraries(app PRIVATE babblekit)
 
 zephyr_include_directories(

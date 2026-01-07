@@ -5,7 +5,8 @@
 # Periodic advertising sync test where the host starts scanning
 # automatically because the application didn't start it.
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 simulation_id="per_adv_not_scanning"
 verbosity_level=2

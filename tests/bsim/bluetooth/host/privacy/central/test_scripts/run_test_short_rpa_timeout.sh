@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 set -eu
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 EXECUTE_TIMEOUT=100
 verbosity_level=2

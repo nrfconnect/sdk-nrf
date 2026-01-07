@@ -19,7 +19,6 @@
 #include <zephyr/settings/settings.h>
 
 #include "common.h"
-#include "settings.h"
 
 #include "argparse.h"
 

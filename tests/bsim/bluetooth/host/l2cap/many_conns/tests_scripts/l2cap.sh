@@ -2,7 +2,8 @@
 # Copyright (c) 2024 Nordic Semiconductor
 # SPDX-License-Identifier: Apache-2.0
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 simulation_id="l2cap_many_conns"
 

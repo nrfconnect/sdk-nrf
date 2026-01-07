@@ -2,7 +2,8 @@
 # Copyright 2023 Nordic Semiconductor ASA
 # SPDX-License-Identifier: Apache-2.0
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 test_exe="bs_${BOARD_TS}_tests_bsim_bluetooth_host_scan_start_stop_prj_conf"
 simulation_id="start_stop"

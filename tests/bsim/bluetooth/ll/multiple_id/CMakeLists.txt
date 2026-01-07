@@ -7,8 +7,8 @@ project(bsim_test_multiple)
 
 target_sources(app PRIVATE
   src/main.c
-  ${ZEPHYR_BASE}/samples/bluetooth/central_multilink/src/central_multilink.c
-  ${ZEPHYR_BASE}/samples/bluetooth/peripheral_identity/src/peripheral_identity.c
+  src/central_multilink.c
+  src/peripheral_identity.c
 )
 
 zephyr_include_directories(

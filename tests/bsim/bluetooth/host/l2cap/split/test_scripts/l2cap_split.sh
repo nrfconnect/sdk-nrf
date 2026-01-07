@@ -2,7 +2,8 @@
 # Copyright 2023 Nordic Semiconductor ASA
 # SPDX-License-Identifier: Apache-2.0
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 dut_exe="bs_${BOARD_TS}_$(guess_test_long_name)_dut_prj_conf"
 tester_exe="bs_${BOARD_TS}_$(guess_test_long_name)_tester_prj_conf"

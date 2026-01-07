@@ -9,7 +9,7 @@ FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE ${app_sources} )
 
 # This contains babblesim-specific helpers, e.g. device synchronization.
-add_subdirectory(${ZEPHYR_BASE}/tests/bsim/babblekit babblekit)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bsim/babblekit babblekit)
 target_link_libraries(app PRIVATE babblekit)
 
 zephyr_include_directories(
@@ -17,7 +17,7 @@ zephyr_include_directories(
   ${BSIM_COMPONENTS_PATH}/libPhyComv1/src/
   )
 
-add_subdirectory(${ZEPHYR_BASE}/tests/bluetooth/common/testlib testlib)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/common/testlib testlib)
 target_link_libraries(app PRIVATE
   testlib
 )

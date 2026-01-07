@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 set -eu
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 simulation_id="mtu_update"
 verbosity_level=2

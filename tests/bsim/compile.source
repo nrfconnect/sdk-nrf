@@ -1,11 +1,12 @@
 # Copyright 2018 Oticon A/S
 # SPDX-License-Identifier: Apache-2.0
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 : "${BSIM_COMPONENTS_PATH:?BSIM_COMPONENTS_PATH must be defined}"
 
-WORK_DIR="${WORK_DIR:-${ZEPHYR_BASE}/bsim_out}"
+WORK_DIR="${WORK_DIR:-${NRF_BASE}/bsim_out}"
 
 function print_error_info(){
   echo -e "\033[0;31mFailure building ${app} ${conf_file} for ${BOARD}\033[0m\n\
@@ -16,7 +17,7 @@ function print_error_info(){
 function _compile(){
   : "${app:?app must be defined}"
 
-  local app_root="${app_root:-${ZEPHYR_BASE}}"
+  local app_root="${app_root:-${NRF_BASE}}"
   local BOARD_ROOT="${BOARD_ROOT:-${ZEPHYR_BASE}}"
   local conf_file="${conf_file:-prj.conf}"
   local extra_conf_file="${extra_conf_file:-""}"

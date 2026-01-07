@@ -2,7 +2,8 @@
 # Copyright 2025 Nordic Semiconductor ASA
 # SPDX-License-Identifier: Apache-2.0
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 test_exe="bs_${BOARD_TS}_$(guess_test_long_name)_overlay-no_long_wq_conf"
 simulation_id="ccc_store_no_long_wq"

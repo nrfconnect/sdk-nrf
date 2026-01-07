@@ -5,7 +5,8 @@
 # Basic periodic advertising sync test: an advertiser advertises with periodic
 # advertising, and a scanner scans for and syncs to the periodic advertising.
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 simulation_id="per_adv_conn_privacy"
 verbosity_level=2

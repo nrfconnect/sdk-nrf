@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Copyright 2018 Oticon A/S
 # SPDX-License-Identifier: Apache-2.0
-set -eo pipefail
+set -o pipefail
 
 start=$SECONDS
 

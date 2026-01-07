@@ -9,7 +9,8 @@
 #   for the packets and establishes the connection, to then disconnect
 #   shortly-after.
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 simulation_id="ext_adv_conn"
 verbosity_level=2

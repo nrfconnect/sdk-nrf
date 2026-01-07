@@ -4,7 +4,8 @@
 
 set -eu
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 verbosity_level=2
 simulation_id="read_fill_buf"
