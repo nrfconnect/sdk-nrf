@@ -1,0 +1,24 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Hardware Unique Key partition for nRF52840.
+ * This partition is used to store the HUK in flash since nRF52840
+ * does not have a KMU. The partition is placed at the end of flash
+ * and its size matches FPROTECT_BLOCK_SIZE (4KB).
+ */
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* Place at end of 1MB flash, size = FPROTECT_BLOCK_SIZE */
+		hw_unique_key_partition: partition@ff000 {
+			reg = <0xff000 0x1000>;
+		};
+	};
+};
