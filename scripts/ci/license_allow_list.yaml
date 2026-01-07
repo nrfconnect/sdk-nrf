@@ -45,6 +45,7 @@ Apache-2.0: |
   ^nrf/tests/bluetooth/tester/src/main.c$
   ^nrf/tests/bluetooth/tester/src/bttester.c$
   ^nrf/subsys/nrf_security/src/legacy
+  ^nrf/subsys/nrf_security/src/drivers/cracen/cracen_sw/ext/
   ^nrf/modules/trusted-firmware-m/fault.c
   ^nrf/modules/openthread/
   ^nrf/samples/net/http_server/src/main.c
@@ -64,3 +65,5 @@ BSD-2-CLAUSE-NETBSD: "^nrf/ext/"
 GPL-2.0: |
   /matter_weather_station/.clang-format
   /matter_bridge/.clang-format
+Apache-2.0 OR GPL-2.0-or-later: |
+  ^nrf/subsys/nrf_security/src/drivers/cracen/cracen_sw/ext/

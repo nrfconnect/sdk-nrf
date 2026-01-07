@@ -967,13 +967,6 @@ void cracen_xorbytes(uint8_t *a, const uint8_t *b, size_t sz)
 	}
 }
 
-void cracen_xorbuffers(uint8_t *r, const uint8_t *a, const uint8_t *b, size_t sz)
-{
-	for (size_t i = 0; i < sz; i++) {
-		r[i] = a[i] ^ b[i];
-	}
-}
-
 static int cracen_asn1_get_len(const uint8_t **p, const uint8_t *end, size_t *len)
 {
 	if ((end - *p) < 1) {
