@@ -31,11 +31,9 @@
 #define NS_IMAGE_PRIMARY_PARTITION_OFFSET (PM_TFM_NONSECURE_ADDRESS)
 #else
 /* DTS-based partition offsets.
- * Note: NRF_NS_SECONDARY is only supported with Partition Manager.
+ * NRF_NS_SECONDARY (MCUboot secondary slot) is handled in CMake - it's disabled
+ * when PM is disabled because secondary partition addresses aren't available via DTS.
  */
-#ifdef NRF_NS_SECONDARY
-#error "NRF_NS_SECONDARY requires Partition Manager to be enabled"
-#endif
 #define S_IMAGE_PRIMARY_PARTITION_OFFSET  TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_partition))
 #define NS_IMAGE_PRIMARY_PARTITION_OFFSET TFM_DT_REG_ADDR(TFM_DT_NODELABEL(slot0_ns_partition))
 #endif /* CONFIG_PARTITION_MANAGER_ENABLED */
