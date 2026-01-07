@@ -11,7 +11,8 @@
 # GDB can be run on the two devices at the same time without issues, just append
 # `debug` when running the script.
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 simulation_id="notify_multiple"
 verbosity_level=2

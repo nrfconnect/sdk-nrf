@@ -5,7 +5,6 @@ add_library(testlib)
 
 target_link_libraries(testlib PUBLIC
   kernel
-  subsys__bluetooth__host
   zephyr_interface
 )
 

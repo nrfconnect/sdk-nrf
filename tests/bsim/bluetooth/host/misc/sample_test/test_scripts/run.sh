@@ -6,7 +6,8 @@ set -eu
 
 # Provides common functions for bsim tests.
 # Mainly `Execute`, and `wait_for_background_jobs`.
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 # Helper variable. Expands to "tests_bsim_bluetooth_host_misc_sample_test".
 test_name="$(guess_test_long_name)"

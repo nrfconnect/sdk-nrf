@@ -26,7 +26,8 @@
 #    delaying the response. Detecting an extra request proves a
 #    protocol violation.
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 dut_exe="bs_${BOARD_TS}_tests_bsim_bluetooth_host_att_pipeline_dut_prj_conf"
 dut_exe+="_rx_tx_prio_invert_extra_conf"

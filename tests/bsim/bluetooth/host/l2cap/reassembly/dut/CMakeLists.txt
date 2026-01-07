@@ -6,10 +6,10 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(reassembly)
 
-add_subdirectory(${ZEPHYR_BASE}/tests/bluetooth/common/testlib testlib)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/common/testlib testlib)
 target_link_libraries(app PRIVATE testlib)
 
-add_subdirectory(${ZEPHYR_BASE}/tests/bsim/babblekit babblekit)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bsim/babblekit babblekit)
 target_link_libraries(app PRIVATE babblekit)
 
 zephyr_include_directories(

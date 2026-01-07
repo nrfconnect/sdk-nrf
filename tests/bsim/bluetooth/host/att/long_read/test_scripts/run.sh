@@ -4,7 +4,8 @@
 
 set -eu
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 simulation_id="long_read"
 dev_exe=bs_${BOARD_TS}_$(guess_test_long_name)_prj_conf

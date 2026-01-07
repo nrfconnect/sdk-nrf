@@ -2,7 +2,8 @@
 # Copyright 2022 Nordic Semiconductor ASA
 # SPDX-License-Identifier: Apache-2.0
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 # Disable with GATT test: A central acting as a GATT client scans for and connects
 # to a peripheral acting as a GATT server. The GATT client will then attempt

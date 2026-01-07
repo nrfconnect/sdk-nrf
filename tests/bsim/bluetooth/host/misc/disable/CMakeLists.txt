@@ -13,8 +13,8 @@ zephyr_include_directories(
   ${BSIM_COMPONENTS_PATH}/libPhyComv1/src/
   )
 
-add_subdirectory(${ZEPHYR_BASE}/tests/bluetooth/common/testlib testlib)
-add_subdirectory(${ZEPHYR_BASE}/tests/bsim/babblekit babblekit)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/common/testlib testlib)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bsim/babblekit babblekit)
 target_link_libraries(app PRIVATE
   testlib
   babblekit

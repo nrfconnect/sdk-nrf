@@ -6,7 +6,8 @@
 # to a peripheral acting as a GATT server. The GATT client will then attempt
 # to write and read to and from a few GATT characteristics.
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 simulation_id="gatt"
 verbosity_level=2

@@ -2,7 +2,8 @@
 # Copyright (c) 2025 Google LLC
 # SPDX-License-Identifier: Apache-2.0
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 # Tests cleanup within the ble stack for ISO connections when
 # peripheral disconnects early while the central still has

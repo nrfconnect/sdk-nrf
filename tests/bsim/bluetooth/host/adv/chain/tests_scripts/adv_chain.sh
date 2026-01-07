@@ -4,7 +4,8 @@
 
 # Validate Extended Advertising AD Data fragment operation, PDU chaining and
 # Extended Scanning of chain PDUs
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 simulation_id="adv_chain"
 verbosity_level=2

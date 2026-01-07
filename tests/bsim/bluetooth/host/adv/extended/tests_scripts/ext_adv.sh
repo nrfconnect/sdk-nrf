@@ -7,7 +7,8 @@
 # - Broadcasting Only: a Bluetooth LE broadcaster advertises with extended
 #   advertising, and a scanner scans the extended advertisement packets.
 
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+: "${NRF_BASE:?NRF_BASE must be defined}"
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 simulation_id="ext_adv"
 verbosity_level=2

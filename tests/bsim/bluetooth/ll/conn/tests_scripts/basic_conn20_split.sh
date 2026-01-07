@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Copyright 2018 Oticon A/S
 # SPDX-License-Identifier: Apache-2.0
-source ${ZEPHYR_BASE}/tests/bsim/sh_common.source
+source ${NRF_BASE}/tests/bsim/sh_common.source
 
 # Basic connection test: a central connects to a peripheral
 # using the split controller (ULL LLL) - central disconnects and reconnects 20 times

@@ -7,9 +7,9 @@ project(bsim_test_gatt_write)
 
 target_sources(app PRIVATE
   src/main.c
-  ${ZEPHYR_BASE}/samples/bluetooth/central_gatt_write/src/gatt_write_common.c
-  ${ZEPHYR_BASE}/samples/bluetooth/central_gatt_write/src/central_gatt_write.c
-  ${ZEPHYR_BASE}/samples/bluetooth/peripheral_gatt_write/src/peripheral_gatt_write.c
+  src/gatt_write_common.c
+  src/central_gatt_write.c
+  src/peripheral_gatt_write.c
 )
 
 zephyr_include_directories(

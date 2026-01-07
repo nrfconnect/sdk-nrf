@@ -1,0 +1,65 @@
+common:
+  build_only: true
+  tags:
+    - bluetooth
+  harness: bsim
+  sysbuild: true
+
+tests:
+  bluetooth.ll.conn.split:
+    platform_allow:
+      - nrf52_bsim/native
+      - nrf5340bsim/nrf5340/cpunet
+      - nrf5340bsim/nrf5340/cpuapp
+      - nrf54l15bsim/nrf54l15/cpuapp
+    harness_config:
+      bsim_exe_name: tests_bsim_bluetooth_ll_conn_prj_split_conf
+    extra_args:
+      CONF_FILE=prj_split.conf
+
+  bluetooth.ll.conn.split.1ms:
+    platform_allow:
+      - nrf52_bsim/native
+      - nrf5340bsim/nrf5340/cpunet
+    harness_config:
+      bsim_exe_name: tests_bsim_bluetooth_ll_conn_prj_split_1ms_conf
+    extra_args:
+      CONF_FILE=prj_split_1ms.conf
+
+  bluetooth.ll.conn.split.tx_defer:
+    platform_allow:
+      - nrf52_bsim/native
+      - nrf5340bsim/nrf5340/cpunet
+    harness_config:
+      bsim_exe_name: tests_bsim_bluetooth_ll_conn_prj_split_tx_defer_conf
+    extra_args:
+      CONF_FILE=prj_split_tx_defer.conf
+
+  bluetooth.ll.conn.split.privacy:
+    platform_allow:
+      - nrf52_bsim/native
+      - nrf5340bsim/nrf5340/cpunet
+      - nrf5340bsim/nrf5340/cpuapp
+      - nrf54l15bsim/nrf54l15/cpuapp
+    harness_config:
+      bsim_exe_name: tests_bsim_bluetooth_ll_conn_prj_split_privacy_conf
+    extra_args:
+      CONF_FILE=prj_split_privacy.conf
+
+  bluetooth.ll.conn.split.low_lat:
+    platform_allow:
+      - nrf52_bsim/native
+      - nrf5340bsim/nrf5340/cpunet
+    harness_config:
+      bsim_exe_name: tests_bsim_bluetooth_ll_conn_prj_split_low_lat_conf
+    extra_args:
+      CONF_FILE=prj_split_low_lat.conf
+
+  bluetooth.ll.conn.split.single_timer:
+    platform_allow:
+      - nrf52_bsim/native
+      - nrf5340bsim/nrf5340/cpunet
+    harness_config:
+      bsim_exe_name: tests_bsim_bluetooth_ll_conn_prj_split_single_timer_conf
+    extra_args:
+      CONF_FILE=prj_split_single_timer.conf

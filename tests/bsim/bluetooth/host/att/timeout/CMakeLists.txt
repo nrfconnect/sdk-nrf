@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr HINTS $ENV{ZEPHYR_BASE})
 project(app)
 
-add_subdirectory(${ZEPHYR_BASE}/tests/bluetooth/common/testlib testlib)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/common/testlib testlib)
 
 target_sources(app PRIVATE
   ../long_read/bs_main.c

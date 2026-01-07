@@ -10,7 +10,7 @@ target_sources(app PRIVATE
 )
 
 # This contains babblesim-specific helpers, e.g. device synchronization.
-add_subdirectory(${ZEPHYR_BASE}/tests/bsim/babblekit babblekit)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bsim/babblekit babblekit)
 target_link_libraries(app PRIVATE babblekit)
 
 zephyr_include_directories(
