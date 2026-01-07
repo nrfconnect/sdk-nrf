@@ -4250,7 +4250,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental (with exceptions, see note)
+                 - Experimental
                  - Experimental
                * - XChaCha20-Poly1305
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
@@ -4267,10 +4267,6 @@ The options are grouped by Series and drivers available for the device Series, a
 
                   * 192-bit keys are not supported.
                     See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
-
-                  * ChaCha20-Poly1305 cipher mode:
-
-                    * Multi-part encrypt and decrypt APIs are not supported.
 
          .. tab:: nrf_oberon
 
