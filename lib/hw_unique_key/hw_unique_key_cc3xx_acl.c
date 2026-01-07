@@ -9,7 +9,10 @@
 #include <hw_unique_key.h>
 #include "hw_unique_key_internal.h"
 #include <nrfx_nvmc.h>
+#include <zephyr/devicetree.h>
+#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 #include <pm_config.h>
+#endif
 #include <fprotect.h>
 #include <hal/nrf_acl.h>
 #include <zephyr/logging/log.h>
@@ -21,7 +24,11 @@ static const uint32_t huk_magic[4] = {
 	0xAD6DB556, 0xB56A5BAB, 0xDA5AAB55, 0x5AAD55AB
 };
 
+#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 static uint32_t huk_addr = PM_HW_UNIQUE_KEY_PARTITION_ADDRESS;
+#else
+static uint32_t huk_addr = DT_REG_ADDR(DT_NODELABEL(hw_unique_key_partition));
+#endif
 
 int hw_unique_key_write(enum hw_unique_key_slot key_slot, const uint8_t *key)
 {
