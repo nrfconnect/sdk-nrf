@@ -494,6 +494,7 @@ int nrf_cloud_pgps_notify_prediction(void)
 	err = nrf_cloud_pgps_find_prediction(&prediction);
 	if (err == -ELOADING) {
 		loading_in_progress = true;
+		notified = false;
 		err = 0;
 	} else if (err < 0) {
 		if (!loading_in_progress) {
