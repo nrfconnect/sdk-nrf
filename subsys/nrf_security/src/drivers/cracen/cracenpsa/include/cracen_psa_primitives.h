@@ -211,7 +211,7 @@ typedef struct cracen_sw_ccm_context_s cracen_sw_ccm_context_t;
 
 struct cracen_sw_gcm_context_s {
 	/* Precalculated HTable */
-	uint8_t h_table[CRACEN_AES_GCM_HTABLE_SIZE][SX_BLKCIPHER_AES_BLK_SZ];
+	uint64_t h_table[CRACEN_AES_GCM_HTABLE_SIZE][SX_BLKCIPHER_AES_BLK_SZ / sizeof(uint64_t)];
 	uint8_t ghash_block[SX_BLKCIPHER_AES_BLK_SZ]; /* GHASH calculation result */
 	uint8_t ctr_block[SX_BLKCIPHER_AES_BLK_SZ]; /* Counter block for CTR mode */
 	uint8_t keystream[SX_BLKCIPHER_AES_BLK_SZ]; /* Generated keystream */

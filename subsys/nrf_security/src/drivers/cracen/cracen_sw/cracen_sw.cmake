@@ -6,6 +6,9 @@
 
 # This directory contains C sources for the CRACEN software workarounds
 
+# Add external sources
+include(${CMAKE_CURRENT_LIST_DIR}/ext/ext.cmake)
+
 list(APPEND cracen_driver_include_dirs
   ${CMAKE_CURRENT_LIST_DIR}/include
 )
