@@ -8,10 +8,10 @@ add_library(mocks STATIC
 
 target_include_directories(mocks PUBLIC
   ..
-  ${ZEPHYR_BASE}/subsys/bluetooth
-  ${ZEPHYR_BASE}/subsys/bluetooth/host
-  ${ZEPHYR_BASE}/tests/bluetooth/host
-  ${ZEPHYR_BASE}/tests/bluetooth/host/cs/mocks
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/host
+  ${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host
+  ${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host/cs/mocks
 )
 
 target_link_libraries(mocks PRIVATE test_interface)

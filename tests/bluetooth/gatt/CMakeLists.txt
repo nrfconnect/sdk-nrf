@@ -4,5 +4,9 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(bluetooth_gatt)
 
+include_directories(BEFORE
+    ${ZEPHYR_NRF_MODULE_DIR}/include
+)
+
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE ${app_sources})

@@ -6,8 +6,12 @@ find_package(Zephyr COMPONENTS unittest HINTS $ENV{ZEPHYR_BASE})
 
 project(bt_encrypt_be)
 
-add_subdirectory(${ZEPHYR_BASE}/tests/bluetooth/host host_mocks)
-add_subdirectory(${ZEPHYR_BASE}/tests/bluetooth/host/crypto mocks)
+include_directories(BEFORE
+    ${ZEPHYR_NRF_MODULE_DIR}/include
+)
+
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host host_mocks)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host/crypto mocks)
 
 target_sources(testbinary PRIVATE
   src/main.c
