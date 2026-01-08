@@ -453,11 +453,6 @@ static int lte_net_if_connect(struct conn_mgr_conn_binding *const if_conn)
 		return ret;
 	}
 
-	ret = lte_lc_modem_events_enable();
-	if (ret) {
-		LOG_WRN("lte_lc_modem_events_enable, error: %d", ret);
-	}
-
 	connection_timeout_schedule();
 
 	return 0;

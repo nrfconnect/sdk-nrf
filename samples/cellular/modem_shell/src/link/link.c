@@ -243,7 +243,6 @@ void link_init(void)
 	link_shell_pdn_init();
 
 	lte_lc_register_handler(link_ind_handler);
-	(void)lte_lc_modem_events_enable();
 
 	if (link_sett_is_dnsaddr_enabled()) {
 		(void)link_setdnsaddr(link_sett_dnsaddr_ip_get());

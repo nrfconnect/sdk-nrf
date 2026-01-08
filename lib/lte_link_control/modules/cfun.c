@@ -58,15 +58,9 @@ static int enable_notifications(void)
 #endif
 
 #if defined(CONFIG_LTE_LC_MODEM_EVENTS_MODULE)
-	if (mdmev_enabled) {
-		/* Modem events have been enabled by the application, so the notifications need
-		 * to be subscribed to again. This is done using the same function which is used
-		 * to enable modem events through the library API.
-		 */
-		err = mdmev_enable();
-		if (err) {
-			return err;
-		}
+	err = mdmev_notifications_enable();
+	if (err) {
+		return err;
 	}
 #endif /* CONFIG_LTE_LC_MODEM_EVENTS_MODULE */
 

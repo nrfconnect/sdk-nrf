@@ -22,7 +22,6 @@
 #include "modules/coneval.h"
 #include "modules/cscon.h"
 #include "modules/edrx.h"
-#include "modules/mdmev.h"
 #include "modules/ncellmeas.h"
 #include "modules/periodicsearchconf.h"
 #include "modules/pdn.h"
@@ -194,16 +193,6 @@ int lte_lc_env_eval(struct lte_lc_env_eval_params *params)
 int lte_lc_env_eval_cancel(void)
 {
 	return env_eval_cancel();
-}
-
-int lte_lc_modem_events_enable(void)
-{
-	return mdmev_enable();
-}
-
-int lte_lc_modem_events_disable(void)
-{
-	return mdmev_disable();
 }
 
 int lte_lc_periodic_search_set(const struct lte_lc_periodic_search_cfg *const cfg)

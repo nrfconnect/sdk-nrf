@@ -254,7 +254,6 @@ void test_connect_should_set_functional_mode(void)
 	bring_network_interface_up();
 
 	__cmock_lte_lc_func_mode_set_ExpectAndReturn(LTE_LC_FUNC_MODE_ACTIVATE_LTE, 0);
-	__cmock_lte_lc_modem_events_enable_ExpectAndReturn(0);
 
 	TEST_ASSERT_EQUAL(0, conn_mgr_if_connect(net_if_get_default()));
 }
