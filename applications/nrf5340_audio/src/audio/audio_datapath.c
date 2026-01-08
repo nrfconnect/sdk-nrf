@@ -206,6 +206,12 @@ static bool tone_active;
 static uint16_t test_tone_buf[CONFIG_AUDIO_SAMPLE_RATE_HZ / 100];
 static size_t test_tone_size;
 
+/* Upon first received audio frame, the delta will be invalid (as there is no
+ * previous value to compare it to). Hence, this function only prints LOG_ERR
+ * if there are repeated consecutive errors.
+ */
+static uint32_t consec_invalid_ts_deltas;
+
 /**
  * @brief	Calculate error between sdu_ref and frame_start_ts_us.
  *
@@ -916,11 +922,6 @@ void audio_datapath_pres_delay_us_get(uint32_t *delay_us)
 
 void audio_datapath_stream_out(struct net_buf *audio_frame_in)
 {
-	/* Upon first received audio frame, the delta will be invalid (as there is no
-	 * previous value to compare it to). Hence, this function only prints LOG_ERR
-	 * if there are consecutive errors.
-	 */
-	static uint32_t consec_invalid_ts_deltas;
 	bool sdu_ref_not_consecutive = false;
 
 	if (!ctrl_blk.stream_started) {
@@ -1110,6 +1111,7 @@ int audio_datapath_stop(void)
 		ctrl_blk.prev_pres_sdu_ref_us = 0;
 		ctrl_blk.prev_drift_sdu_ref_us = 0;
 
+		consec_invalid_ts_deltas = 0;
 		pres_comp_state_set(PRES_STATE_INIT);
 
 		return 0;
