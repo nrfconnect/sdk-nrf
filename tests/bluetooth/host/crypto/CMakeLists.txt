@@ -11,18 +11,18 @@ add_library(mocks STATIC
             mocks/prng.c
             mocks/prng_expects.c
 
-            ${ZEPHYR_BASE}/subsys/bluetooth/host/crypto_psa.c
+            ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/host/common/bt_str.c
+            ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/host/host/crypto_psa.c
+            ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/host/host/uuid.c
             ${ZEPHYR_BASE}/subsys/logging/log_minimal.c
-            ${ZEPHYR_BASE}/subsys/bluetooth/common/bt_str.c
-            ${ZEPHYR_BASE}/subsys/bluetooth/host/uuid.c
 )
 
 target_include_directories(mocks PUBLIC
   .
-  ${ZEPHYR_BASE}/subsys/bluetooth
-  ${ZEPHYR_BASE}/subsys/bluetooth/host
-  ${ZEPHYR_BASE}/tests/bluetooth/host
-  ${ZEPHYR_BASE}/tests/bluetooth/host/crypto/mocks
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/host
+  ${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host
+  ${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host/crypto/mocks
   ${ZEPHYR_MBEDTLS_MODULE_DIR}/include
 )
 

@@ -6,6 +6,10 @@ find_package(Zephyr COMPONENTS unittest REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(bt_gap)
 
+include_directories(BEFORE
+    ${ZEPHYR_NRF_MODULE_DIR}/include
+)
+
 target_sources(testbinary
   PRIVATE
     src/main.c

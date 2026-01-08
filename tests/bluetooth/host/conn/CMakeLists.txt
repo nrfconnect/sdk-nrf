@@ -7,24 +7,26 @@ find_package(Zephyr COMPONENTS unittest REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(conn)
 
 include_directories(BEFORE
-    ${ZEPHYR_BASE}/tests/bluetooth/host/conn
-    ${ZEPHYR_BASE}/tests/bluetooth/host/conn/mocks/zephyr/include
+    ${ZEPHYR_NRF_MODULE_DIR}/include
+    ${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host
+    ${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host/conn
+    ${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host/conn/mocks/zephyr/include
 )
 
-add_subdirectory(${ZEPHYR_BASE}/tests/bluetooth/host host_mocks)
-add_subdirectory(${ZEPHYR_BASE}/tests/bluetooth/host/conn/mocks mocks)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host host_mocks)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host/conn/mocks mocks)
 
 target_link_libraries(testbinary PRIVATE mocks host_mocks)
 
 target_include_directories(mocks PUBLIC
-  ${ZEPHYR_BASE}/subsys/bluetooth/host
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/host
 )
 
 target_sources(testbinary
     PRIVATE
     src/main.c
 
-    ${ZEPHYR_BASE}/subsys/bluetooth/host/conn.c
+    ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/host/host/conn.c
     ${ZEPHYR_BASE}/subsys/logging/log_minimal.c
     ${ZEPHYR_BASE}/lib/net_buf/buf.c
     ${ZEPHYR_BASE}/lib/net_buf/buf_simple.c

@@ -6,8 +6,8 @@ find_package(Zephyr COMPONENTS unittest REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(bt_keys_add_type)
 
-add_subdirectory(${ZEPHYR_BASE}/tests/bluetooth/host host_mocks)
-add_subdirectory(${ZEPHYR_BASE}/tests/bluetooth/host/keys/mocks mocks)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host host_mocks)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host/keys/mocks mocks)
 
 target_link_libraries(testbinary PRIVATE mocks host_mocks)
 
@@ -17,6 +17,6 @@ target_sources(testbinary
     src/test_suite_add_type_invalid_inputs.c
 
     # Unit under test
-    ${ZEPHYR_BASE}/subsys/bluetooth/host/keys.c
-    ${ZEPHYR_BASE}/subsys/bluetooth/common/addr.c
+    ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/host/host/keys.c
+    ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/host/common/addr.c
 )

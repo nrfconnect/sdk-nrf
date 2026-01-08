@@ -12,11 +12,11 @@ endif()
 find_package(Zephyr COMPONENTS unittest REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 include_directories(BEFORE
-    ${ZEPHYR_BASE}/tests/bluetooth/host/id/mocks
+    ${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host/id/mocks
 )
 
-add_subdirectory(${ZEPHYR_BASE}/tests/bluetooth/host host_mocks)
-add_subdirectory(${ZEPHYR_BASE}/tests/bluetooth/host/id/mocks mocks)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host host_mocks)
+add_subdirectory(${ZEPHYR_NRF_MODULE_DIR}/tests/bluetooth/host/id/mocks mocks)
 
 target_link_libraries(testbinary PRIVATE mocks host_mocks)
 
@@ -25,9 +25,9 @@ target_sources(testbinary
     src/main.c
     src/test_suite_invalid_cases.c
 
-    ${ZEPHYR_BASE}/subsys/bluetooth/host/id.c
-    ${ZEPHYR_BASE}/subsys/bluetooth/common/addr.c
+    ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/host/host/id.c
+    ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/host/common/addr.c
     ${ZEPHYR_BASE}/subsys/logging/log_minimal.c
-    ${ZEPHYR_BASE}/subsys/bluetooth/common/bt_str.c
-    ${ZEPHYR_BASE}/subsys/bluetooth/host/uuid.c
+    ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/host/common/bt_str.c
+    ${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/host/host/uuid.c
 )
