@@ -174,7 +174,7 @@ nRF IEEE 802.15.4 radio driver
 Thread
 ------
 
-|no_changes_yet_note|
+* Added a warning when using precompiled OpenThread libraries with modified Kconfig options related to the OpenThread stack.
 
 Wi-Fi®
 ------
