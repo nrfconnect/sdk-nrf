@@ -114,16 +114,28 @@ config LTE_SHELL
 config LTE_LOCK_BANDS
 	bool "LTE band lock"
 	help
-	  Enable LTE band lock. Bands not enabled in LTE_LOCK_BAND_MASK
-	  are not used when this setting is enabled.
+	  Enable LTE band lock. Only configured bands are used when this setting is enabled.
+	  The allowed bands can be configured using the CONFIG_LTE_LOCK_BAND_MASK and
+	  CONFIG_LTE_LOCK_BAND_LIST options. If both are configured, the bands are combined
+	  from both options.
 
 if LTE_LOCK_BANDS
+
 config LTE_LOCK_BAND_MASK
 	string "LTE band lock mask bit string"
-	default "10000001000000001100"
 	help
-	  Bit string of enabled bands. LSB is band 1. Leading zeroes
-	  can be omitted. The maximum length is 88 characters.
+	  Bit string of enabled bands. LSB is band 1. Leading zeroes can be omitted.
+	  The maximum length is 88 characters, meaning this can be used with band numbers up to 88.
+
+config LTE_LOCK_BAND_LIST
+	string "LTE band list"
+	help
+	  List of enabled bands. Comma-separated list of band numbers.
+	  Can be used with all valid band numbers, including bands over 88.
+	  This is only supported by the following modem firmware:
+	  - mfw_nrf91x1 v2.0.3 or later
+	  - mfw_nrf9151-ntn
+
 endif # LTE_LOCK_BANDS
 
 config LTE_PLMN_SELECTION_OPTIMIZATION
