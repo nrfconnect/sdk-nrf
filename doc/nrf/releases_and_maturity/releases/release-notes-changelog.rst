@@ -206,11 +206,12 @@ nRF5340 Audio
   The callback uses a :c:func:`printk` function, as the logging subsystem is scheduled out if higher priority threads take all CPU time.
   This makes debugging high CPU load situations easier in the application.
   The threshold for high CPU load is set in :file:`peripherals.c` using :c:macro:`CPU_LOAD_HIGH_THRESHOLD_PERCENT`.
-* Updated the buildprog/programming script.
+* Updated the programming script.
   Devices are now halted before programming.
-  Furthermore, the devices are kept halted until they are all programmed, and then started together
-  with the headsets starting first.
+  Furthermore, the devices are kept halted until they are all programmed, and then started together with the headsets starting first.
   This eases sniffing of advertisement packets.
+* With the latest release of |nRFVSC|, you can build and program the nRF5340 Audio application using the |nRFVSC| GUI.
+  Updated the :ref:`nrf53_audio_app_building` accordingly: the note about missing support in |nRFVSC| has been removed and the section about programming using standard methods now lists the steps for |nRFVSC| and the command line.
 
 nRF Desktop
 -----------
