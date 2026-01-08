@@ -275,7 +275,7 @@ manifest:
     - name: nrfx
       remote: ncs
       path: nrfx
-      revision: master
+      revision: pull/1080/head
 
   # West-related configuration for the nrf repository.
   self:
