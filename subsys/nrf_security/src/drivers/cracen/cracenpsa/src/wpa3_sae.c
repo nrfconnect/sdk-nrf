@@ -853,7 +853,7 @@ psa_status_t cracen_wpa3_sae_setup(cracen_wpa3_sae_operation_t *operation,
 	operation->pmk_length = CRACEN_WPA3_SAE_PMK_LEN;
 	operation->keys_set = 0;
 	operation->salt_set = 0;
-	operation->use_h2e = PSA_KEY_TYPE_IS_WPA3_SAE_ECC_PT(type);
+	operation->use_h2e = PSA_KEY_TYPE_IS_WPA3_SAE_ECC(type);
 	return PSA_SUCCESS;
 }
 
@@ -932,7 +932,7 @@ psa_status_t cracen_wpa3_sae_output(cracen_wpa3_sae_operation_t *operation,
 		}
 		*output_length = CRACEN_WPA3_SAE_CONFIRM_SIZE;
 		break;
-	case PSA_PAKE_STEP_KEYID:
+	case PSA_PAKE_STEP_KEY_ID:
 		if (output_size < CRACEN_WPA3_SAE_PMKID_SIZE) {
 			return PSA_ERROR_BUFFER_TOO_SMALL;
 		}
@@ -1001,7 +1001,7 @@ psa_status_t cracen_wpa3_sae_input(cracen_wpa3_sae_operation_t *operation,
 			return PSA_ERROR_INVALID_SIGNATURE;
 		}
 		break;
-	case PSA_PAKE_STEP_SEND_CONFIRM:
+	case PSA_PAKE_STEP_CONFIRM_COUNT:
 		if (input_length != CRACEN_WPA3_SAE_SEND_CONFIRM_SIZE) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}

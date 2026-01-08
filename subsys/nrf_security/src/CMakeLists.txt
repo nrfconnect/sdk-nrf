@@ -80,16 +80,13 @@ if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM AND NOT BUILD_INSIDE_TFM)
     cipher.c
     cipher_wrap.c
     md.c
+    pk.c
     pk_ecc.c
     pk_wrap.c
     pkwrite.c
     psa_util.c
   )
 
-  # Oberon copied this file to avoid double definition of PSA_EXPORT_KEY_PAIR_OR_PUBLIC_MAX_SIZE
-  append_with_prefix(src_crypto ${OBERON_PSA_CORE_PATH}/programs/ssl/library
-    pk.c
-  )
 endif()
 
 # Library for mbed TLS crypto toolbox functionality
