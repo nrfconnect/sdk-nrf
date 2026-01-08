@@ -36,7 +36,12 @@ Libraries
 
 This section describes the changes related to libraries.
 
-|no_changes_yet_note|
+.. toggle::
+
+   * :ref:`lte_lc_readme` library:
+
+     * The functions ``lte_lc_modem_events_enable()`` and ``lte_lc_modem_events_disable()`` have been removed.
+       Instead, use the :kconfig:option:`CONFIG_LTE_LC_MODEM_EVENTS_MODULE` Kconfig option to enable modem events.
 
 .. _migration_3.3_recommended:
 

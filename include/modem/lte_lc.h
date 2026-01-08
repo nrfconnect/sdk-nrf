@@ -2317,25 +2317,6 @@ int lte_lc_env_eval(struct lte_lc_env_eval_params *params);
 int lte_lc_env_eval_cancel(void);
 
 /**
- * Enable modem domain events.
- *
- * See @ref lte_lc_modem_evt for more information on which events may be received.
- * An event handler must be registered to receive events.
- *
- * @retval 0 if successful.
- * @retval -EFAULT if AT command failed.
- */
-int lte_lc_modem_events_enable(void);
-
-/**
- * Disable modem domain events.
- *
- * @retval 0 if successful.
- * @retval -EFAULT if AT command failed.
- */
-int lte_lc_modem_events_disable(void);
-
-/**
  * Configure periodic searches.
  *
  * This configuration affects the periodic searches that the modem performs in limited service state

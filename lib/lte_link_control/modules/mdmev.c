@@ -23,7 +23,6 @@ LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 /* %MDMEV commands */
 #define AT_MDMEV_ENABLE_1	"AT%%MDMEV=1"
 #define AT_MDMEV_ENABLE_2	"AT%%MDMEV=2"
-#define AT_MDMEV_DISABLE	"AT%%MDMEV=0"
 #define AT_MDMEV_NOTIF_PREFIX	"%MDMEV: "
 
 /* Fixed events */
@@ -41,8 +40,6 @@ LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 #define AT_MDMEV_DETECTED_COUNTRY	"DETECTED COUNTRY %u\r\n"
 
 AT_MONITOR(ltelc_atmon_mdmev, "%MDMEV", at_handler_mdmev);
-
-bool mdmev_enabled;
 
 static int mdmev_fixed_parse(const char *notif, struct lte_lc_modem_evt *modem_evt)
 {
@@ -171,7 +168,7 @@ static void at_handler_mdmev(const char *notif)
 	event_handler_list_dispatch(&evt);
 }
 
-int mdmev_enable(void)
+int mdmev_notifications_enable(void)
 {
 	/* First try to enable both warning and informational type events, which is only supported
 	 * by modem firmware versions >= 2.0.0.
@@ -183,14 +180,5 @@ int mdmev_enable(void)
 		}
 	}
 
-	mdmev_enabled = true;
-
 	return 0;
-}
-
-int mdmev_disable(void)
-{
-	mdmev_enabled = false;
-
-	return nrf_modem_at_printf(AT_MDMEV_DISABLE) ? -EFAULT : 0;
 }

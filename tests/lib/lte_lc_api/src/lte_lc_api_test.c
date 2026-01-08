@@ -383,6 +383,9 @@ void enable_notifications(void)
 		__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XT3412=1,5000,1200000",
 							   EXIT_SUCCESS);
 	}
+	if (IS_ENABLED(CONFIG_LTE_LC_MODEM_EVENTS_MODULE)) {
+		__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=2", EXIT_SUCCESS);
+	}
 }
 
 /* Helper function to initialize LTE LC with the given firmware version. */
@@ -875,6 +878,7 @@ void test_lte_lc_power_off_fail(void)
 void test_lte_lc_rx_only(void)
 {
 	int ret;
+	int index = 0;
 
 	enable_notifications();
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=2", 0);
@@ -884,46 +888,57 @@ void test_lte_lc_rx_only(void)
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=4", 0);
 
-	lte_lc_callback_count_expected = 9;
-
 	/* Events caused by PLMN search in RX only mode, registration status is not sent
 	 * because it has not changed.
 	 */
 
-	test_event_data[0].type = LTE_LC_EVT_CELL_UPDATE;
-	test_event_data[0].cell.id = 0x001b8b1e;
-	test_event_data[0].cell.tac = 0x0138;
+	test_event_data[index].type = LTE_LC_EVT_CELL_UPDATE;
+	test_event_data[index].cell.id = 0x001b8b1e;
+	test_event_data[index].cell.tac = 0x0138;
+	index++;
 
-	test_event_data[1].type = LTE_LC_EVT_LTE_MODE_UPDATE;
-	test_event_data[1].lte_mode = LTE_LC_LTE_MODE_LTEM;
+	test_event_data[index].type = LTE_LC_EVT_LTE_MODE_UPDATE;
+	test_event_data[index].lte_mode = LTE_LC_LTE_MODE_LTEM;
+	index++;
 
-	test_event_data[2].type = LTE_LC_EVT_MODEM_EVENT;
-	test_event_data[2].modem_evt.type = LTE_LC_MODEM_EVT_SEARCH_DONE;
+	if (IS_ENABLED(CONFIG_LTE_LC_MODEM_EVENTS_MODULE)) {
+		test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
+		test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_SEARCH_DONE;
+		index++;
+	}
 
 	/* Events caused by normal mode */
 
-	test_event_data[3].type = LTE_LC_EVT_NW_REG_STATUS;
-	test_event_data[3].nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
+	test_event_data[index].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[index].nw_reg_status = LTE_LC_NW_REG_REGISTERED_HOME;
+	index++;
 
-	test_event_data[4].type = LTE_LC_EVT_PSM_UPDATE;
-	test_event_data[4].psm_cfg.tau = 11400;
-	test_event_data[4].psm_cfg.active_time = -1;
+	test_event_data[index].type = LTE_LC_EVT_PSM_UPDATE;
+	test_event_data[index].psm_cfg.tau = 11400;
+	test_event_data[index].psm_cfg.active_time = -1;
+	index++;
 
 	/* Events caused by offline mode */
 
-	test_event_data[5].type = LTE_LC_EVT_NW_REG_STATUS;
-	test_event_data[5].nw_reg_status = LTE_LC_NW_REG_NOT_REGISTERED;
+	test_event_data[index].type = LTE_LC_EVT_NW_REG_STATUS;
+	test_event_data[index].nw_reg_status = LTE_LC_NW_REG_NOT_REGISTERED;
+	index++;
 
-	test_event_data[6].type = LTE_LC_EVT_CELL_UPDATE;
-	test_event_data[6].cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
-	test_event_data[6].cell.tac = LTE_LC_CELL_TAC_INVALID;
+	test_event_data[index].type = LTE_LC_EVT_CELL_UPDATE;
+	test_event_data[index].cell.id = LTE_LC_CELL_EUTRAN_ID_INVALID;
+	test_event_data[index].cell.tac = LTE_LC_CELL_TAC_INVALID;
+	index++;
 
-	test_event_data[7].type = LTE_LC_EVT_LTE_MODE_UPDATE;
-	test_event_data[7].lte_mode = LTE_LC_LTE_MODE_NONE;
+	test_event_data[index].type = LTE_LC_EVT_LTE_MODE_UPDATE;
+	test_event_data[index].lte_mode = LTE_LC_LTE_MODE_NONE;
+	index++;
 
-	test_event_data[8].type = LTE_LC_EVT_PSM_UPDATE;
-	test_event_data[8].psm_cfg.tau = -1;
-	test_event_data[8].psm_cfg.active_time = -1;
+	test_event_data[index].type = LTE_LC_EVT_PSM_UPDATE;
+	test_event_data[index].psm_cfg.tau = -1;
+	test_event_data[index].psm_cfg.active_time = -1;
+	index++;
+
+	lte_lc_callback_count_expected = index;
 
 	/* RX only mode with PLMN search */
 
@@ -4445,21 +4460,44 @@ void test_lte_lc_modem_sleep_event_ignore(void)
 	at_monitor_dispatch(at_notif);
 }
 
-void test_lte_lc_modem_events(void)
+void test_lte_lc_modem_events_enable_fallback(void)
 {
 	int ret;
-	int index = 0;
 
-	lte_lc_callback_count_expected = 11;
+	if (!IS_ENABLED(CONFIG_LTE_LC_MODEM_EVENTS_MODULE)) {
+		TEST_IGNORE();
+	}
 
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=2", EXIT_SUCCESS);
-	ret = lte_lc_modem_events_enable();
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-
+	/* Enable modem notifications */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", EXIT_SUCCESS);
+	if (IS_ENABLED(CONFIG_LTE_LC_MODEM_SLEEP_NOTIFICATIONS)) {
+		__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XMODEMSLEEP=1,5000,1200000",
+							   EXIT_SUCCESS);
+	}
+	if (IS_ENABLED(CONFIG_LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS)) {
+		__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XT3412=1,5000,1200000",
+							   EXIT_SUCCESS);
+	}
+	/* Return failure to trigger fallback to legacy events */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=2", EXIT_FAILURE);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=1", EXIT_SUCCESS);
-	ret = lte_lc_modem_events_enable();
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", 0);
+
+	ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_modem_events(void)
+{
+	int index = 0;
+
+	if (!IS_ENABLED(CONFIG_LTE_LC_MODEM_EVENTS_MODULE)) {
+		TEST_IGNORE();
+	}
+
+	lte_lc_callback_count_expected = 11;
 
 	strcpy(at_notif, "%MDMEV: ME OVERHEATED\r\n");
 	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
@@ -4540,25 +4578,10 @@ void test_lte_lc_modem_events(void)
 	test_event_data[index].modem_evt.detected_country = 123;
 	at_monitor_dispatch(at_notif);
 	index++;
-
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=0", EXIT_SUCCESS);
-	ret = lte_lc_modem_events_disable();
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
 
-void test_lte_lc_modem_events_fail(void)
+void test_lte_lc_modem_events_unknown(void)
 {
-	int ret;
-
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=2", EXIT_FAILURE);
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=1", -NRF_ENOMEM);
-	ret = lte_lc_modem_events_enable();
-	TEST_ASSERT_EQUAL(-EFAULT, ret);
-
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=0", -NRF_ENOMEM);
-	ret = lte_lc_modem_events_disable();
-	TEST_ASSERT_EQUAL(-EFAULT, ret);
-
 	/* No lte_lc event generated for these notifications */
 
 	strcpy(at_notif, "%MDMEV: SEARCH STATUS 3\r\n");
