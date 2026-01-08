@@ -23,6 +23,7 @@
 #include <nfc/ndef/le_oob_rec_parser.h>
 
 #include <nfc/tnep/tag.h>
+#include <nfc/tnep/tag_signalling_zephyr.h>
 #include <nfc/tnep/ch.h>
 
 #include <zephyr/settings/settings.h>
@@ -656,8 +657,13 @@ static void nfc_init(void)
 		return;
 	}
 
-	err = nfc_tnep_tag_init(events, NFC_TNEP_EVENTS_NUMBER,
-				nfc_t4t_ndef_rwpayload_set);
+	err = nfc_tnep_tag_signalling_init(events, NFC_TNEP_EVENTS_NUMBER);
+	if (err) {
+		printk("Cannot initialize tnep signalling, err: %d\n", err);
+		return;
+	}
+
+	err = nfc_tnep_tag_init(nfc_t4t_ndef_rwpayload_set);
 	if (err) {
 		printk("Cannot initialize TNEP protocol, err: %d\n", err);
 		return;
