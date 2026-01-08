@@ -103,7 +103,7 @@ Thread and Wi-Fi switching
    The device activates either Thread or Wi-Fi transport protocol on boot, based on a flag stored in the non-volatile memory on the device.
    By default, Matter over Wi-Fi is activated.
 
-   You can trigger the switch from one transport protocol to the other using the **Button 3** on the nRF54LM20 DK.
+   You can trigger the switch from one transport protocol to the other using the **Button 2** on the nRF54LM20 DK.
    This toggles the flag stored in the non-volatile memory, and then the device is factory reset and rebooted.
    Because the flag is toggled, the factory reset does not switch the device back to the default transport protocol (Wi-Fi).
    Instead, the factory reset and recommissioning to a Matter fabric allows the device to be provisioned with network credentials for the transport protocol that it was switched to, and to start operating in the selected network.
