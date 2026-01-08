@@ -138,7 +138,10 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
+      - light_bulb_SHIELD=nrf7002eb2
+      - SB_CONFIG_WIFI_NRF70=y
       - EXTRA_CONF_FILE="overlay-aws-iot-integration.conf"
-    platform_allow: nrf7002dk/nrf5340/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
-      - nrf7002dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
