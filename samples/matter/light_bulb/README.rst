@@ -67,6 +67,8 @@ The light bulb sample implements the following features:
 
 Use the ``click to show`` toggle to expand the content.
 
+.. _matter_light_bulb_aws_iot_integration:
+
 AWS IoT integration
 -------------------
 
@@ -90,6 +92,10 @@ AWS IoT integration
       :alt: Interaction with the AWS IoT shadow service
 
       AWS IoT Shadow and Matter interaction diagram
+
+   .. note::
+
+      The AWS IoT integration is available only for the nRF54LM20 DK with the nRF7002-EB II shield attached.
 
 .. _matter_light_bulb_aws_iot:
 
@@ -131,7 +137,7 @@ AWS IoT setup and configuration
 
       .. code-block:: console
 
-         west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DEXTRA_CONF_FILE="overlay-aws-iot-integration.conf"
+         west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DSB_CONFIG_WIFI_NRF70=y -Dlight_bulb_SHIELD=nrf7002eb2 -DEXTRA_CONF_FILE="overlay-aws-iot-integration.conf"
 
    #. Flash the firmware and boot the sample.
    #. |connect_kit|
