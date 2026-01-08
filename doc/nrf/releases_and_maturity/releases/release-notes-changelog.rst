@@ -328,6 +328,11 @@ Matter samples
 
   * Added support for the Closure Control cluster test event triggers.
 
+* :ref:`matter_lock_sample`:
+
+  * Added support for the :ref:`matter_lock_sample_wifi_thread_switching` in nRF54LM20 DK with the nRF7002-EB II shield attached.
+  * Deprecated the :ref:`matter_lock_sample_wifi_thread_switching` for nRF5340 DK with the nRF7002 EK shield attached.
+
 Networking samples
 ------------------
 

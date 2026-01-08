@@ -87,11 +87,12 @@ config STATE_LEDS
 
 config THREAD_WIFI_SWITCHING
 	bool "Switching between Thread and Wi-Fi"
-	depends on SOC_SERIES_NRF53X
-	depends on NET_L2_OPENTHREAD
+	depends on SOC_SERIES_NRF53X || SOC_SERIES_NRF54LX
+	depends on OPENTHREAD
 	depends on CHIP_WIFI
 	depends on !CHIP_FACTORY_RESET_ERASE_SETTINGS
 	select EXPERIMENTAL
+	select DEPRECATED if SOC_SERIES_NRF53X
 	help
 	  Build the application with both Thread and Wi-Fi support and initialize
 	  either transport based on the current configuration. A user can switch
