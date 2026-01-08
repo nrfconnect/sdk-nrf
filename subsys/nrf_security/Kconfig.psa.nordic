@@ -315,6 +315,14 @@ config PSA_WANT_ALG_WPA3_SAE
 	bool "WPA3-SAE support [EXPERIMENTAL]" if !MBEDTLS_PROMPTLESS
 	select EXPERIMENTAL
 
+config PSA_WANT_ALG_WPA3_SAE_FIXED
+	bool "WPA3-SAE-FIXED support [EXPERIMENTAL]" if !PSA_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_WPA3_SAE_GDH
+	bool "WPA3-SAE-GDH support [EXPERIMENTAL]" if !PSA_PROMPTLESS
+	select EXPERIMENTAL
+
 config PSA_WANT_ALG_SHAKE128
 	bool "SHAKE128 support [EXPERIMENTAL]" if !PSA_PROMPTLESS
 	select EXPERIMENTAL
@@ -597,3 +605,8 @@ config PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY
 	bool "ML_KEM public key support" if !PSA_PROMPTLESS
 	help
 	  ML_KEM public key support.
+
+config PSA_WANT_KEY_TYPE_ASCON
+	bool "ASCON key support" if !PSA_PROMPTLESS
+	help
+	  ASCON key support.
