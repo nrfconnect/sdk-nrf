@@ -3,3 +3,4 @@ py:
   - GHSA-wj6h-64fc-37mp
   - GHSA-4xh5-x5gv-qwph
   - GHSA-f83h-ghpp-7wcc
+  - CVE-2025-69277
