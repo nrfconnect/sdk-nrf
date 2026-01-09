@@ -352,7 +352,8 @@ static int sock_set_tls_options(
 	bool session_cache,
 	int peer_verify,
 	char *peer_hostname,
-	int dtls_cid)
+	int dtls_cid,
+	int dtls_frag_ext)
 {
 	int err;
 	uint32_t sec_tag_list[] = { sec_tag };
@@ -409,10 +410,21 @@ static int sock_set_tls_options(
 	}
 
 	/* DTLS CID */
-	if (dtls_cid != NRF_SO_SEC_DTLS_CID_DISABLED) {
+	if (dtls_cid != TLS_DTLS_CID_STATUS_DISABLED) {
 		err = setsockopt(fd, SOL_TLS, TLS_DTLS_CID, &dtls_cid, sizeof(dtls_cid));
 		if (err) {
 			mosh_error("Unable to set DTLS CID option, errno %d", errno);
+			return errno;
+		}
+	}
+
+	/* DTLS fragmentation extension */
+	if (dtls_frag_ext != DTLS_FRAG_EXT_DISABLED) {
+		err = setsockopt(fd, SOL_TLS, TLS_DTLS_FRAG_EXT, &dtls_frag_ext,
+				 sizeof(dtls_frag_ext));
+		if (err) {
+			mosh_error("Unable to set DTLS fragmentation extension option, errno %d",
+				   errno);
 			return errno;
 		}
 	}
@@ -538,7 +550,8 @@ int sock_open_and_connect(
 	bool keep_open,
 	int peer_verify,
 	char *peer_hostname,
-	int dtls_cid)
+	int dtls_cid,
+	int dtls_frag_ext)
 {
 	int err = -EINVAL;
 	int proto = 0;
@@ -549,8 +562,9 @@ int sock_open_and_connect(
 		   family, type, port, bind_port, pdn_cid, address);
 	if (secure) {
 		mosh_print("                        secure=%d, sec_tag=%u, session_cache=%d, "
-			   "peer_verify=%d, peer_hostname=%s, dtls_cid=%d",
-			   secure, sec_tag, session_cache, peer_verify, peer_hostname, dtls_cid);
+			   "peer_verify=%d, peer_hostname=%s, dtls_cid=%d, dtls_frag_ext=%d",
+			   secure, sec_tag, session_cache, peer_verify, peer_hostname, dtls_cid,
+			   dtls_frag_ext);
 	}
 
 	/* Reserve socket ID and structure for a new connection */
@@ -642,7 +656,7 @@ int sock_open_and_connect(
 	/* Set (D)TLS options */
 	if (secure) {
 		err = sock_set_tls_options(fd, sec_tag, session_cache, peer_verify,
-					   peer_hostname, dtls_cid);
+					   peer_hostname, dtls_cid, dtls_frag_ext);
 		if (err) {
 			goto connect_error;
 		}

@@ -27,7 +27,7 @@ int sock_open_and_connect(
 	int family, int type, char *address, int port,
 	int bind_port, int pdn_cid, bool secure, uint32_t sec_tag,
 	bool session_cache, bool keep_open, int peer_verify,
-	char *peer_hostname, int dtls_cid);
+	char *peer_hostname, int dtls_cid, int dtls_frag_ext);
 
 int sock_send_data(
 	int socket_id, char *data, int data_length, int interval, bool packet_number_prefix,
