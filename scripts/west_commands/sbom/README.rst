@@ -123,7 +123,7 @@ You can also mix them, for example, to generate a report for the application and
 
   The :ref:`west_sbom Extracting from build` section describes in detail how to extract a list of files from a build directory.
 
-  You can use ``-d`` option multiple times.
+  You can use the ``-d`` option multiple times.
   For example, to include both the ``mcuboot`` child image and the main application, use the following command:
 
   .. parsed-literal::
@@ -425,6 +425,6 @@ There are two additional methods for improving the correctness of the above algo
 Integration with the GN meta-build system
 =========================================
 
-The ``ncs-sbom`` script reads a list of all commands needed to build provided targets.
+The :file:`ncs-sbom` script reads a list of all commands needed to build provided targets.
 If there is a ``gn gen`` command, the script enters the command's build directory and tries to extract files from it using the same method as described earlier.
 The results are integrated with the main build directory results.

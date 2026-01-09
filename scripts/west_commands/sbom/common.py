@@ -18,9 +18,7 @@ from time import time
 
 from west import log
 
-
-class SbomException(Exception):
-    '''Exception class used by west ncs-sbom to show expected user friendly errors.'''
+from sbom_exceptions import SbomException
 
 
 def command_execute(*cmd_args: 'tuple[str|Path]', cwd: 'str|Path|None' = None,
