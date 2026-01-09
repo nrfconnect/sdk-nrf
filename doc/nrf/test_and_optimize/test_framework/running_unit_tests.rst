@@ -25,28 +25,14 @@ To generate the test project and run the unit tests, locate the directory with t
 
 .. tabs::
 
-   .. group-tab:: Twister (Windows)
+   .. group-tab:: twister
 
       .. code-block:: console
 
          <Zephyr_path>/scripts/twister -T .
 
-      This command will generate the test project and run it for :zephyr:board:`native_sim` and ``qemu_cortex_m3`` boards.
-      If you want to specify a board target, use the ``-p`` parameter and specify the *board_target*.
-      For example, to run the unit test on ``qemu_cortex_m3``, use the following command:
-
-      .. code-block:: console
-
-         <Zephyr_path>/scripts/twister -T . -p qemu_cortex_m3
-
-   .. group-tab:: Twister (Linux)
-
-      .. code-block:: console
-
-         <Zephyr_path>/scripts/twister -T .
-
-      This command will generate the test project and run it for :zephyr:board:`native_sim` and ``qemu_cortex_m3`` boards.
-      If you want to specify a board target, use the ``-p`` parameter and specify the *board_target*.
+      This command will generate the test project and run it for the board targets defined in :file:`testcase.yaml` file.
+      If you want to specify a board target, use the ``-p`` parameter.
       For example, to run the unit test on ``qemu_cortex_m3``, use the following command:
 
       .. code-block:: console
@@ -58,11 +44,13 @@ To generate the test project and run the unit tests, locate the directory with t
       .. parsed-literal::
          :class: highlight
 
-         west build -b *board_target* -t run
+         west build -b *board_target*
+         west flash
 
-      The ``-t run`` parameter tells west to run the default test target.
+      The ``west flash`` command tells west to run the tests.
       For example, to run the unit test on :zephyr:board:`native_sim` board, use the following command:
 
       .. code-block:: console
 
-         west build -b native_sim -t run
+         west build -b native_sim
+         west flash
