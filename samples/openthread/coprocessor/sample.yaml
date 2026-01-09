@@ -88,3 +88,17 @@ tests:
       - nrf21540dk/nrf52840
     integration_platforms:
       - nrf52840dk/nrf52840
+  sample.openthread.coprocessor.l2:
+    sysbuild: true
+    build_only: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_openthread
+    extra_args:
+      - CONFIG_NET_L2_OPENTHREAD=y
+      - CONFIG_NETWORKING=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
