@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2025 Nordic Semiconductor
+# Copyright (c) 2026 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -23,7 +23,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 # General configuration --------------------------------------------------------
 
 project = "Trusted Firmware-M"
-copyright = "2017-2021, ARM CE-OSS"
+copyright = "2017-2026, ARM CE-OSS"
 author = "ARM CE-OSS"
 version = os.environ.get("DOCSET_VERSION")
 
