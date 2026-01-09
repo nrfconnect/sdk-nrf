@@ -7,18 +7,26 @@
 Get input files from an application build directory.
 '''
 
+from __future__ import annotations
+
 import os
 import pickle
 import platform
 import re
+import shlex
 import shutil
-import yaml
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+import yaml
 from west import log, util
+
 from args import args
-from data_structure import Data, FileInfo, DataBaseClass
 from common import SbomException, command_execute
-from ninja_build_extractor import BuildArchive, NinjaBuildExtractor, BuildObject
+from data_structure import Data, FileInfo, DataBaseClass
+
+if TYPE_CHECKING:
+    from ninja_build_extractor import BuildArchive, BuildObject
 
 
 DEFAULT_BUILD_DIR = 'build'
@@ -27,7 +35,7 @@ DEFAULT_GN_TARGET = 'default'
 SOURCE_CODE_SUFFIXES = ['.c', '.cpp', '.cxx', '.cc', '.c++', '.s']
 
 
-def get_sysbuild_default_domain(build_dir: Path) -> 'Path | None':
+def get_sysbuild_default_domain(build_dir: Path) -> Path | None:
     '''
     Returns build directory of the default sysbuild domain if domains.yaml is present.
     '''
@@ -37,7 +45,7 @@ def get_sysbuild_default_domain(build_dir: Path) -> 'Path | None':
     try:
         with open(domains_yaml, 'r') as fd:
             domains = yaml.safe_load(fd)
-    except Exception as ex: # pylint: disable=broad-exception-caught
+    except yaml.YAMLError as ex:
         raise SbomException(f'Cannot parse "{domains_yaml}".') from ex
     if not isinstance(domains, dict) or 'default' not in domains or 'domains' not in domains:
         raise SbomException(f'Invalid format of "{domains_yaml}".')
@@ -56,7 +64,7 @@ def get_sysbuild_default_domain(build_dir: Path) -> 'Path | None':
                         f'"{domains_yaml}".')
 
 
-def get_ninja_default_targets(build_dir: Path) -> 'list[str]':
+def get_ninja_default_targets(build_dir: Path) -> list[str]:
     '''
     Returns default targets listed in build.ninja.
     '''
@@ -90,7 +98,7 @@ class MapFileItem(DataBaseClass):
     '''
     path: Path = Path()
     optional: bool = False
-    content: 'dict[str, bool]' = {}
+    content: dict[str, bool] = {}
     extracted: bool = False
 
 
@@ -137,7 +145,7 @@ def check_external_tools(build_dir: Path):
     args.ninja = test_tool('ninja', 'CMAKE_MAKE_PROGRAM')
 
 
-def get_default_build_dir() -> 'str|None':
+def get_default_build_dir() -> str | None:
     '''
     Returns default build directory if exists.
     '''
@@ -157,9 +165,8 @@ class ExternalToolDetector:
     '''
 
     GN_MATCHER_RE = re.compile(r'(^|\/|\\)gn(\.exe|\.bat|\.cmd|\.py)?"?$')
-    ARGS_MATCHER = re.compile(r'(?:[\'"](?:\\.|.)*?[\'"]|[^\s])+')
 
-    gn_build_directories: 'set[str]'
+    gn_build_directories: set[str]
 
 
     def __init__(self):
@@ -171,14 +178,13 @@ class ExternalToolDetector:
 
     def parse_gn_command(self, command: str, current_dir: str):
         '''
-        Minimalists GN command parser that extracts directory for the "gn gen" command.
+        Minimalist GN command parser that extracts directory for the "gn gen" command.
         '''
-        gn_args :'list[str]' = []
-        for arg in self.ARGS_MATCHER.finditer(command):
-            arg = arg.group(0).strip('"\'')
-            if arg.startswith('-'):
-                continue
-            gn_args.append(arg)
+        try:
+            gn_args = shlex.split(command, posix=False)
+        except ValueError:
+            gn_args = command.split()
+        gn_args = [arg.strip('"\'') for arg in gn_args if not arg.strip().startswith('-')]
         if len(gn_args) > 1 and gn_args[1].lower() == 'gen':
             gn_build_dir = '.'
             if len(gn_args) > 2:
@@ -232,11 +238,11 @@ class InputBuild:
     Class for extracting list of input files for a specific build directory.
     '''
 
-    data: 'Data | None'
+    data: Data | None
     build_dir: Path
 
 
-    def __init__(self, data: 'Data | None', build_dir: Path):
+    def __init__(self, data: Data | None, build_dir: Path):
         '''
         Initialize build directory input object that will fill "data" object and get
         information from "build_dir".
@@ -246,8 +252,8 @@ class InputBuild:
 
 
     def read_file_list_from_map(self, map_file: Path,
-                                items: 'dict[str, MapFileItem]|None' = None
-                                ) -> 'dict[str, MapFileItem]':
+                                items: dict[str, MapFileItem] | None = None
+                                ) -> dict[str, MapFileItem]:
         '''
         Parse map file for list of all linked files. The returned dict has absolute resolved path
         as key and value is a MapFileItem.
@@ -288,7 +294,7 @@ class InputBuild:
         '''
         Mark entries in "map_item.content" that are in the "archive".
         '''
-        file_names: 'set[str]' = set()
+        file_names: set[str] = set()
         if visited is None:
             visited = set()
         for source in archive.sources.values():
@@ -297,7 +303,7 @@ class InputBuild:
             file_names.add(obj.path.name.lower())
             for source in obj.sources.values():
                 file_names.add(source.name.lower())
-        for archive_entry in map_item.content.keys():
+        for archive_entry in map_item.content:
             entry_name = Path(archive_entry).name.lower()
             if entry_name in file_names:
                 map_item.content[archive_entry] = True
@@ -308,7 +314,7 @@ class InputBuild:
 
 
     @staticmethod
-    def mark_map_sources(map_items: 'dict[str, MapFileItem]', sources: 'dict[str, Path]'):
+    def mark_map_sources(map_items: dict[str, MapFileItem], sources: dict[str, Path]):
         '''
         Mark map items that are in the sources dictionary.
         '''
@@ -318,7 +324,7 @@ class InputBuild:
                 map_items[path_str].extracted = True
 
 
-    def mark_map_objects(self, map_items: 'dict[str, MapFileItem]', objects: 'dict[str, BuildObject]'):
+    def mark_map_objects(self, map_items: dict[str, MapFileItem], objects: dict[str, BuildObject]):
         '''
         Mark map items that are in the objects dictionary and its sources.
         '''
@@ -329,12 +335,14 @@ class InputBuild:
                 map_items[path_str].extracted = True
 
 
-    def validate_with_map_files(self, inputs: 'list[BuildArchive]', maps: 'list[str]'):
+    def validate_with_map_files(self, inputs: list[BuildArchive], maps: list[str]):
         '''
         Read linked files from a map files and validate if all needed files are
         correctly detected in the "inputs" parameter.
         '''
-        map_items: 'dict[str, MapFileItem]' = dict()
+        from ninja_build_extractor import BuildArchive
+
+        map_items: dict[str, MapFileItem] = dict()
 
         for map_file in maps:
             self.read_file_list_from_map(map_file, map_items)
@@ -350,7 +358,7 @@ class InputBuild:
             self.mark_map_objects(map_items, input.objects)
 
         for map_item in map_items.values():
-            content_extacted = (len(map_item.content) > 0)
+            content_extacted = len(map_item.content) > 0
             for extracted in map_item.content.values():
                 if not extracted:
                     content_extacted = False
@@ -371,13 +379,13 @@ class InputBuild:
                             archive.is_leaf = True
 
 
-    def all_deps_of_archive(self, archive: BuildArchive, visited: set = None) -> 'set[Path]':
+    def all_deps_of_archive(self, archive: BuildArchive, visited: set = None) -> set[Path]:
         '''
         Recursively scans the archive and returns a list of all dependencies.
         '''
         if visited is None:
             visited = set()
-        all_deps: 'set[Path]' = set(archive.sources.values())
+        all_deps: set[Path] = set(archive.sources.values())
         for obj in archive.objects.values():
             all_deps.add(obj.path)
             all_deps.update(obj.sources.values())
@@ -405,7 +413,7 @@ class InputBuild:
         return True
 
 
-    def validate_with_ar(self, inputs: 'list[BuildArchive]'):
+    def validate_with_ar(self, inputs: list[BuildArchive]):
         '''
         Read list of object files from each archive from "inputs" parameter and compare
         the list with files detected in the build system. If list does not match
@@ -443,7 +451,7 @@ class InputBuild:
 
 
     @staticmethod
-    def merge_inputs(inputs: 'list[BuildArchive]'):
+    def merge_inputs(inputs: list[BuildArchive]):
         '''
         Merges all archives from "inputs" parameter that are referring the same file.
         '''
@@ -473,11 +481,13 @@ class InputBuild:
             update_dict(input, visited)
 
 
-    def generate(self, targets_with_maps: 'list[str]'):
+    def generate(self, targets_with_maps: list[str]):
         '''
         Generate a list of files from specified targets. Targets can optionally have a map
         file name after the ':' sign.
         '''
+        from ninja_build_extractor import NinjaBuildExtractor
+
         # Prepare list of targets and associated map files.
         targets = []
         maps = []
@@ -505,7 +515,7 @@ class InputBuild:
         for target in targets:
             ext_detector.detect(target, self.build_dir)
 
-        inputs: 'list[BuildArchive]' = []
+        inputs: list[BuildArchive] = []
 
         # Load list of files from a cache file (debug purposes only)
         if args.debug_build_input_cache is not None:

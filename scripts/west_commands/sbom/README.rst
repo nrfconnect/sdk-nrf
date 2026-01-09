@@ -123,7 +123,7 @@ You can also mix them, for example, to generate a report for the application and
 
   The :ref:`west_sbom Extracting from build` section describes in detail how to extract a list of files from a build directory.
 
-  You can use ``-d`` option multiple times.
+  You can use the ``-d`` option multiple times.
   For example, to include both the ``mcuboot`` child image and the main application, use the following command:
 
   .. parsed-literal::

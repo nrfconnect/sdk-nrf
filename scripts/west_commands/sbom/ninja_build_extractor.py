@@ -7,18 +7,20 @@
 Get input files from an application build directory.
 '''
 
+from __future__ import annotations
+
 import re
 import time
 from enum import Enum
 from pathlib import Path
 from threading import Lock
-from west import log
+
 from args import args
-from data_structure import DataBaseClass
 from common import SbomException, command_execute, concurrent_pool_iter, get_executor_workers
+from data_structure import DataBaseClass
+from west import log
 
-
-COMMAND_LINE_MAX_SIZE = 7000 # Size of command line parameters in Windows is limited.
+COMMAND_LINE_MAX_SIZE = 7000  # Size of command line parameters in Windows is limited.
 
 
 class BuildObject(DataBaseClass):
@@ -27,9 +29,10 @@ class BuildObject(DataBaseClass):
     (internal) Special instance of this class with `path` set to `None` is a placeholder
     for all source files that are not inside any particular object file.
     '''
-    path: 'Path | None' = None
-    parent: 'BuildArchive'
-    sources: 'dict[str, Path]' = {}
+
+    path: Path | None = None
+    parent: BuildArchive
+    sources: dict[str, Path] = {}
 
 
 class BuildArchive(DataBaseClass):
@@ -41,14 +44,16 @@ class BuildArchive(DataBaseClass):
     (internal) The `objects` dictionary item with key "" (empty string) is a placeholder
     for all source files that are not inside any particular object file.
     '''
-    path: 'Path | None' = None
-    archives: 'dict[str, BuildArchive]' = {}
-    objects: 'dict[str, BuildObject]' = {}
-    sources: 'dict[str, Path]' = {}
+
+    path: Path | None = None
+    archives: dict[str, BuildArchive] = {}
+    objects: dict[str, BuildObject] = {}
+    sources: dict[str, Path] = {}
 
 
 class FileType(Enum):
     '''Defines type of files that are significant for this module.'''
+
     ARCHIVE = 'archive'
     OBJ = 'obj'
     STAMP = 'stamp'
@@ -58,23 +63,21 @@ class FileType(Enum):
 
 class NinjaBuildExtractor:
     '''
-    Class for extracting list of input files for a specific ninja build direcory.
+    Class for extracting list of input files for a specific ninja build directory.
     '''
 
     build_dir: Path
     include_order_only: bool
-    deps: 'dict[set[str]]'
+    deps: dict[str, set[str]]
 
-    archives: 'list[BuildArchive]'
-    process_target_queue: 'list[tuple[str, BuildObject, BuildArchive]]'
-    cache: 'dict[str, set[str]]'
-    query_cache: 'dict[str, tuple[set[str], set[str], set[str], bool]]'
-    file_type_cache: 'dict[str, FileType]'
+    process_target_queue: list[tuple[str, BuildObject, BuildArchive]]
+    cache: dict[str, set[str]]
+    query_cache: dict[str, tuple[set[str], set[str], set[str], bool]]
+    file_type_cache: dict[str, FileType]
     lock: Lock
-    target_details: 'dict[str, tuple[Path, FileType]]'
+    target_details: dict[str, tuple[Path, FileType]]
     root: BuildArchive
-    archives: 'list[BuildArchive]'
-
+    archives: dict[str, BuildArchive]
 
     def __init__(self, build_dir: Path, include_order_only=False):
         '''
@@ -95,10 +98,10 @@ class NinjaBuildExtractor:
         dummy_object.parent = self.root
         self.root.objects[''] = dummy_object
         self.archives = []
-        deps_file_name = command_execute(args.ninja, '-t', 'deps', cwd=self.build_dir,
-                                         return_path=True)
+        deps_file_name = command_execute(
+            args.ninja, '-t', 'deps', cwd=self.build_dir, return_path=True
+        )
         self.parse_deps_file(deps_file_name)
-
 
     def detect_file_type(self, file: Path) -> FileType:
         '''
@@ -107,15 +110,15 @@ class NinjaBuildExtractor:
         str_file_name = str(file)
         if str_file_name in self.file_type_cache:
             return self.file_type_cache[str_file_name]
-        if not file.exists():
+        if (not file.exists()) or file.is_dir():
             self.file_type_cache[str_file_name] = FileType.MISSING
             return FileType.MISSING
-        with open(file, 'r', encoding='8859') as fd:
+        with open(file, encoding='8859') as fd:
             header = fd.read(16)
         if header.startswith('!<arch>\n'):
             self.file_type_cache[str_file_name] = FileType.ARCHIVE
             return FileType.ARCHIVE
-        elif header.startswith('\x7FELF'):
+        elif header.startswith('\x7fELF'):
             self.file_type_cache[str_file_name] = FileType.OBJ
             return FileType.OBJ
         elif file.suffix.lower() == '.stamp':
@@ -125,16 +128,15 @@ class NinjaBuildExtractor:
             self.file_type_cache[str_file_name] = FileType.OTHER
             return FileType.OTHER
 
-
     def parse_deps_file(self, deps_file_name: str):
         '''
-        Reads all dependencies stored in the .ninja_deps file and sores it in self.deps dictionary.
+        Read dependencies from the .ninja_deps file and store them in the self.deps dictionary.
         '''
         self.deps = dict()
         target_line_re = re.compile(r'([^\s]+)\s*:\s*(#.*)?')
         dep_line_re = re.compile(r'\s+(.*?)\s*(#.*)?')
         empty_line_re = re.compile(r'\s*(#.*)?')
-        with open(deps_file_name, 'r') as fd:
+        with open(deps_file_name) as fd:
             line_no = 0
             while True:
                 line = fd.readline()
@@ -153,18 +155,19 @@ class NinjaBuildExtractor:
                     continue
                 m = empty_line_re.fullmatch(line)
                 if m is None:
-                    raise SbomException(f'Cannot parse ninja dependencies output '
-                                        f'"{deps_file_name}" on line {line_no}!')
+                    raise SbomException(
+                        f'Cannot parse ninja dependencies output '
+                        f'"{deps_file_name}" on line {line_no}!'
+                    )
 
-
-    def prefetch_query_inputs(self, targets: 'list[str]'):
+    def prefetch_query_inputs(self, targets: list[str]):
         '''
         Execute "ninja -t query <targets...>" and cache multiple targets to speed up
         future queries. Querying for multiple targets at once is much faster than one at a time.
         '''
         query_args = [args.ninja, '-t', 'query']
         query_len = len(' '.join(query_args))
-        for i in range(len(targets)): # pylint: disable=consider-using-enumerate
+        for i in range(len(targets)):  # pylint: disable=consider-using-enumerate
             query_args.append(targets[i])
             query_len += len(targets[i]) + 1
             if (i == len(targets) - 1) or (query_len >= COMMAND_LINE_MAX_SIZE):
@@ -177,8 +180,7 @@ class NinjaBuildExtractor:
                 query_args = [args.ninja, '-t', 'query']
                 query_len = len(' '.join(query_args))
 
-
-    def query_inputs(self, target: str) -> 'tuple[set[str], set[str], set[str], bool]':
+    def query_inputs(self, target: str) -> tuple[set[str], set[str], set[str], bool]:
         '''
         Parse output of "ninja -t query <target>" command to find out all input targets.
         The result is a tuple containing:
@@ -199,8 +201,7 @@ class NinjaBuildExtractor:
             raise SbomException(f'Invalid output of "{args.ninja} -t query"')
         return self.query_cache[target]
 
-
-    def parse_query_output(self, lines: 'list[str]'):
+    def parse_query_output(self, lines: list[str]):
         ex_begin = f'Cannot parse output of "{args.ninja} -t query" on line'
         lines = lines.split('\n')
         lines = tuple(filter(lambda line: len(line.strip()) > 0, lines))
@@ -229,8 +230,9 @@ class NinjaBuildExtractor:
                     inputs = True
                 else:
                     if dir != 'outputs':
-                        raise SbomException(f'{ex_begin} {line_no + 1}. Expecting "input:" '
-                                            f'or "outputs:".')
+                        raise SbomException(
+                            f'{ex_begin} {line_no + 1}. Expecting "input:" or "outputs:".'
+                        )
                     inputs = False
                 while line_no < len(lines):
                     m = re.fullmatch(r'(\s*)(\|?\|?)\s*(.*)', lines[line_no])
@@ -249,9 +251,12 @@ class NinjaBuildExtractor:
                             order_only.add(input_target)
             self.query_cache[target] = (explicit, implicit, order_only, phony)
 
-
-    def query_inputs_recursive(self, target: str, done: 'set|None' = None,
-                               inputs_tuple=None) -> 'set[str]':
+    def query_inputs_recursive(
+        self,
+        target: str,
+        done: set | None = None,
+        inputs_tuple: tuple[set[str], set[str], set[str], bool] | None = None,
+    ) -> set[str]:
         '''
         Reads recursively set of all input targets for specified "target".
         Optional set "done" contains all targets that are already scanned. It will be updated.
@@ -278,7 +283,10 @@ class NinjaBuildExtractor:
         if target in self.deps:
             result.update(self.deps[target])
         for input in inputs:
-            file_path = (self.build_dir / input).resolve()
+            input_path = Path(input)
+            file_path = (
+                input_path if input_path.is_absolute() else (self.build_dir / input).resolve()
+            )
             if input in done:
                 continue
             done.add(input)
@@ -298,8 +306,9 @@ class NinjaBuildExtractor:
         self.cache[target] = result
         return result
 
-
-    def process_target_delayed(self, target: str, obj: BuildObject, direct_parent_archive: 'BuildArchive | None'):
+    def process_target_delayed(
+        self, target: str, obj: BuildObject, direct_parent_archive: BuildArchive | None
+    ):
         '''
         Calls self.process_target(), but if it potentially requires execution of external process,
         postpone it by putting it into the queue.
@@ -309,8 +318,9 @@ class NinjaBuildExtractor:
             return
         self.process_target_queue.append((target, obj, direct_parent_archive))
 
-
-    def process_target_inputs(self, target: str, obj: BuildObject, direct_parent_archive: 'BuildArchive | None'):
+    def process_target_inputs(
+        self, target: str, obj: BuildObject, direct_parent_archive: BuildArchive | None
+    ):
         '''
         Calls self.process_target_delayed() for each detected target input.
         '''
@@ -318,8 +328,7 @@ class NinjaBuildExtractor:
         for input in inputs:
             self.process_target_delayed(input, obj, direct_parent_archive)
 
-
-    def get_target_details(self, target: str) -> 'tuple[Path, FileType]':
+    def get_target_details(self, target: str) -> tuple[Path, FileType]:
         '''
         Returns details of specific target - tuple containing:
             - a full resolved target Path
@@ -327,16 +336,19 @@ class NinjaBuildExtractor:
         The results are cached in 'self.target_details'.
         '''
         if target not in self.target_details:
-            target_path = (self.build_dir / target).resolve()
+            target_path = Path(target)
+            if not target_path.is_absolute():
+                target_path = (self.build_dir / target).resolve()
             target_type = self.detect_file_type(target_path)
             self.target_details[target] = (target_path, target_type)
         return self.target_details[target]
 
-
-    def process_target(self, target: str, obj: BuildObject, direct_parent_archive: 'BuildArchive | None'):
+    def process_target(
+        self, target: str, obj: BuildObject, direct_parent_archive: BuildArchive | None
+    ):
         '''
-        Process a single target which means adding the target to appropriate place in the results and
-        processing all dependent targets.
+        Process a single target, add it to the appropriate place in the results and
+        process all dependent targets.
         Parameters:
             target:                a target name
             obj:                   a build object file which is a parent of this target
@@ -371,12 +383,15 @@ class NinjaBuildExtractor:
                 return
             obj.sources[target] = target_path
             self.process_target_inputs(target, obj, None)
+        elif target_type == FileType.STAMP:
+            self.process_target_inputs(target, obj, direct_parent_archive)
+        elif target_type == FileType.MISSING:
+            return
         else:
             raise ValueError('Invalid input_type.')
 
-
     @staticmethod
-    def remove_dummy_objects(archives: 'dict[str, BuildArchive]'):
+    def remove_dummy_objects(archives: dict[str, BuildArchive]):
         '''
         Internally all files that does not depend on any object file are
         placed in dummy object with path None and empty string as a key.
@@ -387,22 +402,23 @@ class NinjaBuildExtractor:
                 archive.sources.update(archive.objects[''].sources)
                 del archive.objects['']
 
-
-    def prefetch_targets(self, targets: 'list[str]'):
+    def prefetch_targets(self, targets: list[str]):
         '''
         Calls "prefetch_query_inputs" function on provided list of targets using multiple
         threads.
         '''
+
         def prefetch_chunk(exec_args):
             with self.lock:
                 self.prefetch_query_inputs(exec_args)
+
         executor_workers = get_executor_workers()
         targets = list(filter(lambda target: target not in self.query_cache, set(targets)))
         if len(targets) <= 4 * executor_workers:
             self.prefetch_query_inputs(targets)
         else:
             chunk_size = (len(targets) + executor_workers - 1) // executor_workers
-            chunks = [targets[i:i + chunk_size] for i in range(0, len(targets), chunk_size)]
+            chunks = [targets[i : i + chunk_size] for i in range(0, len(targets), chunk_size)]
             self.lock.release()
             try:
                 for _ in concurrent_pool_iter(prefetch_chunk, chunks):
@@ -410,12 +426,12 @@ class NinjaBuildExtractor:
             finally:
                 self.lock.acquire()
 
-
-    def extract(self, targets: 'list[str]') -> BuildArchive:
+    def extract(self, targets: list[str]) -> BuildArchive:
         '''
         Returns a build archive that contains all the input files extracted from
         the specified targets. The returned value is in a BuildArchive object.
         '''
+
         def process_target_execute(exec_args):
             with self.lock:
                 self.process_target(*exec_args)
@@ -438,7 +454,7 @@ class NinjaBuildExtractor:
                 finally:
                     self.lock.acquire()
             self.remove_dummy_objects(self.archives)
-            self.remove_dummy_objects({ '': self.root })
+            self.remove_dummy_objects({'': self.root})
             self.root.archives.update(self.archives)
 
         return self.root

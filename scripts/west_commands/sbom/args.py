@@ -119,7 +119,7 @@ def add_arguments(parser: argparse.ArgumentParser):
     parser.add_argument('--allowed-in-map-file-only',
                         default='libgcc.a,'
                                 'libc_nano.a,libc++_nano.a,libm_nano.a,libstdc++_nano.a,'
-                                'libc.a,libc++.a,libm.a',
+                                'libc.a,libc++.a,libstdc++.a,libm.a',
                         help='Comma separated list of file names which can be detected in a map '
                              'file, but not visible in the build system. Usually, automatically '
                              'linked toolchain libraries or libraries linked by specifying custom '
