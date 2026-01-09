@@ -105,8 +105,6 @@ Complete the following steps to program the sample:
 
       west flash
 
-.. include:: /includes/nRF54H20_erase_UICR.txt
-
 Testing
 =======
 

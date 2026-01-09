@@ -211,8 +211,6 @@ When running the benchmark, an extra build flag (:kconfig:option:`CONFIG_COMPILE
 
 After flashing, messages describing the benchmark state will appear in the console.
 
-.. include:: /includes/nRF54H20_erase_UICR.txt
-
 Alternative build configurations
 ================================
 

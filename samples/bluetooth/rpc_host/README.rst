@@ -38,8 +38,6 @@ You must program this sample to the nRF5340 network core.
 
 .. include:: /includes/build_and_run.txt
 
-.. include:: /includes/nRF54H20_erase_UICR.txt
-
 .. _rpc_host_debug:
 
 Debug build

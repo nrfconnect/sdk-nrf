@@ -265,8 +265,6 @@ If you have multiple Nordic Semiconductor devices, ensure that only the nRF54H20
 
 This command builds and programs the sample automatically on both the application core and the Peripheral Processor (PPR) of the nRF54H20 SoC.
 
-.. include:: /includes/nRF54H20_erase_UICR.txt
-
 .. _ug_nrf54h20_sample_reading_logs:
 
 .. rst-class:: numbered-step
