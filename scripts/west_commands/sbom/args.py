@@ -10,7 +10,7 @@ Parsing and utility functions for west ncs-sbom command arguments.
 import argparse
 from pathlib import Path
 
-from common import SbomException
+from sbom_exceptions import SbomException
 
 DEFAULT_REPORT_NAME = 'sbom_report.html'
 
@@ -122,7 +122,7 @@ def add_arguments(parser: argparse.ArgumentParser):
     parser.add_argument('--allowed-in-map-file-only',
                         default='libgcc.a,'
                                 'libc_nano.a,libc++_nano.a,libm_nano.a,libstdc++_nano.a,'
-                                'libc.a,libc++.a,libm.a',
+                                'libc.a,libc++.a,libstdc++.a,libm.a',
                         help='Comma separated list of file names which can be detected in a map '
                              'file, but not visible in the build system. Usually, automatically '
                              'linked toolchain libraries or libraries linked by specifying custom '

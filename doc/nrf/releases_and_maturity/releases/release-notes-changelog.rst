@@ -655,6 +655,10 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
 * Added the :ref:`matter_sample_checker` script to check the consistency of Matter samples in the |NCS|.
 
+* :ref:`west_sbom` script:
+
+  * Updated to support Matter builds by detecting GN external projects and collecting their source files for SBOM generation.
+
 Integrations
 ============
 
