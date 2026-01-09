@@ -61,7 +61,7 @@
 	CRACEN_PSA_GET_KMU_SLOT(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id))
 
 /* Largest exportable size for KMU key (either buffer or kmu_opaque_key_buffer) */
-#define KMU_MAX_EXPORTED_SIZE	(65)
+#define KMU_MAX_EXPORTED_SIZE	(97)
 
 /* Test material for Ed25519 (RFC8032, 7.1 Ed25519 TEST 3)*/
 #define ED25519_PUBKEY_SIZE	(32)
