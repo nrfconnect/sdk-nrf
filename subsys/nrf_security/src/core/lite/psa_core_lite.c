@@ -26,6 +26,9 @@ psa_status_t silex_statuscodes_to_psa(int ret);
 	defined(PSA_WANT_ALG_PURE_EDDSA)
 
 #if (defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA)) && \
+	defined(PSA_WANT_ECC_SECP_R1_384)
+	const size_t pub_key_max_size = 97;
+#elif (defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA)) && \
 	defined(PSA_WANT_ECC_SECP_R1_256)
 	const size_t pub_key_max_size = 65;
 #elif (defined(PSA_WANT_ALG_ED25519PH) || defined(PSA_WANT_ALG_PURE_EDDSA)) && \
@@ -88,7 +91,9 @@ psa_status_t psa_verify_hash(
 	if (!UTIL_CONCAT_OR(
 		VERIFY_ALG_ED25519PH(alg),
 		VERIFY_ALG_ECDSA_SECP_R1_256(alg),
-		VERIFY_ALG_DETERMINISTIC_ECDSA_SECP_R1_256(alg))) {
+		VERIFY_ALG_ECDSA_SECP_R1_384(alg),
+		VERIFY_ALG_DETERMINISTIC_ECDSA_SECP_R1_256(alg),
+		VERIFY_ALG_DETERMINISTIC_ECDSA_SECP_R1_384(alg))) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
@@ -130,7 +135,9 @@ psa_status_t psa_verify_message(
 	if (!UTIL_CONCAT_OR(
 		VERIFY_ALG_ED25519(alg),
 		VERIFY_ALG_ECDSA_SECP_R1_256(alg),
-		VERIFY_ALG_DETERMINISTIC_ECDSA_SECP_R1_256(alg))) {
+		VERIFY_ALG_ECDSA_SECP_R1_384(alg),
+		VERIFY_ALG_DETERMINISTIC_ECDSA_SECP_R1_256(alg),
+		VERIFY_ALG_DETERMINISTIC_ECDSA_SECP_R1_384(alg))) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
@@ -153,7 +160,7 @@ psa_status_t psa_verify_message(
 
 /* Hash algorithms */
 
-#if defined(PSA_WANT_ALG_SHA_256) || defined(PSA_WANT_ALG_SHA_512)
+#if defined(PSA_WANT_ALG_SHA_256) || defined(PSA_WANT_ALG_SHA_384) || defined(PSA_WANT_ALG_SHA_512)
 
 psa_status_t psa_hash_setup(psa_hash_operation_t *operation, psa_algorithm_t alg)
 {
@@ -162,6 +169,7 @@ psa_status_t psa_hash_setup(psa_hash_operation_t *operation, psa_algorithm_t alg
 	}
 
 	if (!UTIL_CONCAT_OR(VERIFY_ALG_SHA_256(alg),
+			    VERIFY_ALG_SHA_384(alg),
 			    VERIFY_ALG_SHA_512(alg))) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
@@ -207,6 +215,7 @@ psa_status_t psa_hash_compute(
 	}
 
 	if (!UTIL_CONCAT_OR(VERIFY_ALG_SHA_256(alg),
+			    VERIFY_ALG_SHA_384(alg),
 			    VERIFY_ALG_SHA_512(alg))) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
@@ -215,7 +224,7 @@ psa_status_t psa_hash_compute(
 					       hash, hash_size, hash_length);
 }
 
-#endif /* PSA_WANT_ALG_SHA_256 || PSA_WANT_ALG_SHA_512 */
+#endif /* PSA_WANT_ALG_SHA_256 || PSA_WANT_ALG_SHA_384 || PSA_WANT_ALG_SHA_512 */
 
 /* Encryption algorithms */
 
