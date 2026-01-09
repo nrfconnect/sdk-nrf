@@ -53,6 +53,7 @@ bluetooth:
     - nrf/cmake/
     - nrf/drivers/mpsl/
     - nrf/include/bluetooth/
+    - nrf/modules/memfault-firmware-sdk/
     - nrf/samples/bluetooth/
     - nrf/subsys/bluetooth/
     - nrf/subsys/mpsl/
