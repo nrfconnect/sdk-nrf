@@ -56,6 +56,8 @@ The following UICR fields are supported:
 Performing an :ref:`ERASEALL <ug_nrf54h20_ironside_se_eraseall_command>` operation will erase all UICR contents and remove all protection mechanisms enforced through UICR.
 See :ref:`ug_nrf54h20_ironside_se_protecting` for more information on protecting UICR contents in the field.
 
+.. _ug_nrf54h20_ironside_se_uicr_image:
+
 Generating the UICR image
 *************************
 
