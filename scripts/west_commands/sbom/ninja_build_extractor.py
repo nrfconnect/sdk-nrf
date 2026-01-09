@@ -107,7 +107,7 @@ class NinjaBuildExtractor:
         str_file_name = str(file)
         if str_file_name in self.file_type_cache:
             return self.file_type_cache[str_file_name]
-        if not file.exists():
+        if (not file.exists()) or file.is_dir():
             self.file_type_cache[str_file_name] = FileType.MISSING
             return FileType.MISSING
         with open(file, 'r', encoding='8859') as fd:
@@ -278,7 +278,8 @@ class NinjaBuildExtractor:
         if target in self.deps:
             result.update(self.deps[target])
         for input in inputs:
-            file_path = (self.build_dir / input).resolve()
+            input_path = Path(input)
+            file_path = input_path if input_path.is_absolute() else (self.build_dir / input).resolve()
             if input in done:
                 continue
             done.add(input)
@@ -327,7 +328,9 @@ class NinjaBuildExtractor:
         The results are cached in 'self.target_details'.
         '''
         if target not in self.target_details:
-            target_path = (self.build_dir / target).resolve()
+            target_path = Path(target)
+            if not target_path.is_absolute():
+                target_path = (self.build_dir / target).resolve()
             target_type = self.detect_file_type(target_path)
             self.target_details[target] = (target_path, target_type)
         return self.target_details[target]
@@ -371,6 +374,10 @@ class NinjaBuildExtractor:
                 return
             obj.sources[target] = target_path
             self.process_target_inputs(target, obj, None)
+        elif target_type == FileType.STAMP:
+            self.process_target_inputs(target, obj, direct_parent_archive)
+        elif target_type == FileType.MISSING:
+            return
         else:
             raise ValueError('Invalid input_type.')
 
