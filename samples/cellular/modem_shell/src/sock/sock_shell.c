@@ -43,6 +43,7 @@ static const char sock_connect_usage_str[] =
 	"Usage: sock connect -a <address> -p <port>\n"
 	"       [-f <family>] [-t <type>] [-b <port>] [-I <cid>] [-K]\n"
 	"       [-S] [-T <sec_tag>] [-c] [-V <level>] [-H <hostname>]\n"
+	"       [-C <dtls_cid>] [-F <dtls_frag_ext>]\n"
 	"Options:\n"
 	"  -a, --address, [str]      Address as ip address or hostname\n"
 	"  -p, --port,  [int]        Port\n"
@@ -57,10 +58,14 @@ static const char sock_connect_usage_str[] =
 	"  -S, --secure,             Enable secure connection (TLS 1.2/DTLS 1.2).\n"
 	"  -T, --sec_tag, [int]      Security tag for TLS certificate(s).\n"
 	"  -c, --cache,              Enable TLS session cache.\n"
-	"  -V, --peer_verify, [int]  TLS peer verification level. None (0),\n"
-	"                            optional (1) or required (2). Default value is 2.\n"
+	"  -V, --peer_verify, [int]  TLS peer verification level: 0 (none), 1 (optional) or\n"
+	"                            2 (required, default).\n"
 	"  -H, --hostname, [str]     Hostname for TLS peer verification.\n"
-	"  -C, --dtls_cid, [int]     DTLS CID setting: 0 (disabled), 1 (supported), 2 (enabled).\n"
+	"  -C, --dtls_cid, [int]     DTLS CID setting: 0 (disabled, default), 1 (supported) or\n"
+	"                            2 (enabled).\n"
+	"  -F, --dtls_frag_ext, [int]\n"
+	"                            DTLS fragmentation extension setting:\n"
+	"                            0 (disabled, default), 1 (512 bytes) or 2 (1024 bytes).\n"
 	"  -h, --help,               Shows this help information";
 
 static const char sock_close_usage_str[] =
@@ -259,6 +264,7 @@ static struct option long_options[] = {
 	{ "peer_verify",    required_argument, 0, 'V' },
 	{ "hostname",       required_argument, 0, 'H' },
 	{ "dtls_cid",       required_argument, 0, 'C' },
+	{ "dtls_frag_ext",  required_argument, 0, 'F' },
 	{ "data",           required_argument, 0, 'd' },
 	{ "length",         required_argument, 0, 'l' },
 	{ "period",         required_argument, 0, 'e' },
@@ -282,7 +288,7 @@ static struct option long_options[] = {
 	{ 0,                0,                 0, 0   }
 };
 
-static const char short_options[] = "i:I:a:p:f:t:b:ST:cV:H:C:d:l:e:s:xrB:WKP:o:v:h";
+static const char short_options[] = "i:I:a:p:f:t:b:ST:cV:H:C:F:d:l:e:s:xrB:WKP:o:v:h";
 
 static void sock_print_usage(enum sock_shell_command command)
 {
@@ -438,6 +444,7 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 	int arg_peer_verify = 2;
 	char arg_peer_hostname[SOCK_MAX_ADDR_LEN + 1];
 	int arg_dtls_cid = 0;
+	int arg_dtls_frag_ext = 0;
 
 	memset(arg_address, 0, SOCK_MAX_ADDR_LEN + 1);
 	memset(arg_peer_hostname, 0, SOCK_MAX_ADDR_LEN + 1);
@@ -565,7 +572,15 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 				return -EINVAL;
 			}
 			break;
-
+		case 'F': /* DTLS fragmentation extension */
+			arg_dtls_frag_ext = atoi(optarg);
+			if (arg_dtls_frag_ext < 0 || arg_dtls_frag_ext > 2) {
+				mosh_error(
+					"Valid values for DTLS fragmentation extension (%d) are "
+					"0, 1 and 2.", arg_dtls_frag_ext);
+				return -EINVAL;
+			}
+			break;
 		case 'h':
 			goto show_usage;
 		case '?':
@@ -593,7 +608,8 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 		arg_keep_open,
 		arg_peer_verify,
 		arg_peer_hostname,
-		arg_dtls_cid);
+		arg_dtls_cid,
+		arg_dtls_frag_ext);
 
 	return err;
 
