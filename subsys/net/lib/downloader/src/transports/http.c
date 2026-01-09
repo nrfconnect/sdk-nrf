@@ -508,7 +508,7 @@ static int parse_protocol(struct downloader *dl, const char *url)
 		LOG_DBG("Port not specified, using default: %d", http->sock.port);
 	}
 
-	if (dl->host_cfg.set_native_tls) {
+	if (!IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_DISPATCHER) && dl->host_cfg.set_native_tls) {
 		LOG_DBG("Enabled native TLS");
 		http->sock.type |= SOCK_NATIVE_TLS;
 	}

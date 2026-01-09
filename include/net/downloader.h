@@ -202,6 +202,10 @@ struct downloader_host_cfg {
 	 * Use 0 to set the value of CONFIG_DOWNLOADER_MAX_REDIRECTS.
 	 */
 	uint8_t redirects_max;
+	/** Name of the interface that the downloader instance should be bound to.
+	 *  Leave as NULL if not specified.
+	 */
+	const char *if_name;
 };
 
 /**
