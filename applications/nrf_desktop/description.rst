@@ -969,8 +969,6 @@ The nRF Desktop application is built the same way to any other |NCS| application
 
 .. include:: /includes/build_and_run.txt
 
-.. include:: /includes/nRF54H20_erase_UICR.txt
-
 .. note::
    Information about the known issues in nRF Desktop can be found in |NCS|'s :ref:`release_notes` and on the :ref:`known_issues` page.
 

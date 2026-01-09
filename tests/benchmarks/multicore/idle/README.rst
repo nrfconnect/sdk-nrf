@@ -84,8 +84,6 @@ nRF54H20 DK
 
      west build -p -b nrf54h20dk/nrf54h20/cpuapp -T benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpuppr_xip .
 
-.. include:: /includes/nRF54H20_erase_UICR.txt
-
 Testing
 =======
 
