@@ -29,7 +29,9 @@ const struct nrf_clock_spec fll16m_bypass_mode = {
 };
 
 #else
-const struct device *const hfclock = DEVICE_DT_GET(DT_NODELABEL(clock));
+const struct device *const hfclock = DEVICE_DT_GET_ONE(COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
+								   (nordic_nrf_clock_hfclk),
+								   (nordic_nrf_clock_xo)));
 #endif /* CONFIG_SOC_NRF54H20 */
 
 #if defined(CONFIG_SOC_NRF54H20)
