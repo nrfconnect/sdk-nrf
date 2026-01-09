@@ -16,10 +16,7 @@
 #include <nrfx_rramc.h>
 #elif defined(CONFIG_SOC_SERIES_NRF71X)
 #include <nrfx_mramc.h>
-
-#define REG_MRAMC_CONFIGNVR_PAGE_3    (uint32_t *)((uint32_t)NRF_MRAMC + 0x58C)
-#define MRAM_SICR_ENABLE_WRITE_ERASE  0xFFF00022
-#define MRAM_SICR_DISABLE_WRITE_ERASE 0x0
+#define MRAM_CONFIGNVR_SICR_PAGE 3
 #endif
 
 #include <cracen/lib_kmu.h>
@@ -41,35 +38,6 @@ void lib_kmu_clear_all_events(void)
 	NRF_KMU_S->EVENTS_PUSHBLOCKED = 0;
 #endif
 }
-
-#if defined(CONFIG_SOC_SERIES_NRF71X)
-static void mram_enable_kmu_write_erase_to_sicr(bool permission)
-{
-	/* CONFIGNVR.PAGE[3] contain the SICR info block
-	 * setting info block write and erase permission to
-	 * allow KMU to write to SICR in MRAM.
-	 *
-	 * Register not available on hal_nordic this version, need
-	 * to update this when it is available, WZN-5799.
-	 */
-	static nrf_mramc_readynext_timeout_t prev_readynext_timeout;
-
-	if (permission) {
-		/* Save previous readynext timeout value */
-		nrf_mramc_readynext_timeout_get(NRF_MRAMC, &prev_readynext_timeout);
-		nrf_mramc_readynext_timeout_t readynext_timeout = {
-			.value        = NRF_MRAMC_READYNEXTTIMEOUT_DEFAULT,
-			.direct_write = true,
-		};
-		nrf_mramc_readynext_timeout_set(NRF_MRAMC, &readynext_timeout);
-	} else {
-		nrf_mramc_readynext_timeout_set(NRF_MRAMC, &prev_readynext_timeout);
-	}
-
-	*REG_MRAMC_CONFIGNVR_PAGE_3 = permission ?
-		MRAM_SICR_ENABLE_WRITE_ERASE : MRAM_SICR_DISABLE_WRITE_ERASE;
-}
-#endif
 
 static int trigger_task_and_wait_for_event_or_error(volatile uint32_t *task,
 						    volatile uint32_t *event)
@@ -131,7 +99,7 @@ int lib_kmu_provision_slot(int slot_id, struct kmu_src *kmu_src)
 #endif
 #elif defined(CONFIG_SOC_SERIES_NRF71X)
 	/* Enable write and erase from KMU to SICR in MRAM */
-	mram_enable_kmu_write_erase_to_sicr(true);
+	nrfx_mramc_confignvr_perm_set(true, MRAM_CONFIGNVR_SICR_PAGE);
 #endif
 
 	NRF_KMU_S->KEYSLOT = slot_id;
@@ -149,7 +117,7 @@ int lib_kmu_provision_slot(int slot_id, struct kmu_src *kmu_src)
 #endif
 #elif defined(CONFIG_SOC_SERIES_NRF71X)
 	/* Disable write and erase from KMU to SICR in MRAM */
-	mram_enable_kmu_write_erase_to_sicr(false);
+	nrfx_mramc_confignvr_perm_set(false, MRAM_CONFIGNVR_SICR_PAGE);
 #endif
 
 	return result;
@@ -195,7 +163,7 @@ int lib_kmu_revoke_slot(int slot_id)
 	nrfx_rramc_write_enable_set(true, 0);
 #elif defined(CONFIG_SOC_SERIES_NRF71X)
 	/* Enable write and erase from KMU to SICR in MRAM */
-	mram_enable_kmu_write_erase_to_sicr(true);
+	nrfx_mramc_confignvr_perm_set(true, MRAM_CONFIGNVR_SICR_PAGE);
 #endif
 
 	NRF_KMU_S->KEYSLOT = slot_id;
@@ -207,7 +175,7 @@ int lib_kmu_revoke_slot(int slot_id)
 	nrfx_rramc_write_enable_set(false, 0);
 #elif defined(CONFIG_SOC_SERIES_NRF71X)
 	/* Disable write and erase from KMU to SICR in MRAM */
-	mram_enable_kmu_write_erase_to_sicr(false);
+	nrfx_mramc_confignvr_perm_set(false, MRAM_CONFIGNVR_SICR_PAGE);
 #endif
 
 	return result;
