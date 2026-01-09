@@ -127,7 +127,7 @@ config PSA_HAS_KEY_SUPPORT
 		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_GENERATE	|| \
 		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE	|| \
 		   PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY		|| \
-		   PSA_WANT_KEY_TYPE_WPA3_SAE_PT
+		   PSA_WANT_KEY_TYPE_WPA3_SAE
 	help
 	  Prompt-less configuration that states that key types are supported.
 
@@ -148,7 +148,8 @@ config PSA_HAS_PAKE_SUPPORT
 		   PSA_WANT_ALG_SPAKE2P_MATTER 		|| \
 		   PSA_WANT_ALG_SRP_6 			|| \
 		   PSA_WANT_ALG_SRP_PASSWORD_HASH	|| \
-		   PSA_WANT_ALG_WPA3_SAE
+		   PSA_WANT_ALG_WPA3_SAE_FIXED 		|| \
+		   PSA_WANT_ALG_WPA3_SAE_GDH
 	help
 	  Prompt-less configuration that states that PAKE is supported.
 
@@ -309,10 +310,6 @@ config PSA_WANT_ALG_AES_KWP
 
 config PSA_WANT_ALG_WPA3_SAE_H2E
 	bool "WPA3-SAE-H2E support [EXPERIMENTAL]" if !PSA_PROMPTLESS
-	select EXPERIMENTAL
-
-config PSA_WANT_ALG_WPA3_SAE
-	bool "WPA3-SAE support [EXPERIMENTAL]" if !MBEDTLS_PROMPTLESS
 	select EXPERIMENTAL
 
 config PSA_WANT_ALG_WPA3_SAE_FIXED
@@ -476,7 +473,7 @@ config PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
 	help
 	  SRP public key support.
 
-config PSA_WANT_KEY_TYPE_WPA3_SAE_PT
+config PSA_WANT_KEY_TYPE_WPA3_SAE
 	bool "WPA3-SAE-PT key support" if !PSA_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY
 

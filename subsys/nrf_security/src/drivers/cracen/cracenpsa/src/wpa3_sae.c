@@ -26,42 +26,25 @@
 #define CRACEN_WPA3_SAE_MAX_SEED_SIZE		(PSA_HASH_MAX_SIZE)
 #define CRACEN_WPA3_SAE_MAX_CMT_GEN_ATTEMPTS	(16u) /* this is currently a random value */
 
-/** IANA Group 19
- *  See IEEE802.11-2024, Table 12-2
- */
-static const uint8_t wpa3_sae_iana_group_19[CRACEN_WPA3_SAE_IANA_GROUP_SIZE] = {
-	0x13, 0x00
-};
-
-static uint8_t *cracen_wpa3_sae_get_cmt_iana_group(uint8_t *commit_msg)
-{
-	return commit_msg;
-}
-
-static const uint8_t *cracen_wpa3_sae_get_cmt_iana_group_const(const uint8_t *commit_msg)
-{
-	return commit_msg;
-}
-
 static uint8_t *cracen_wpa3_sae_get_cmt_scalar(uint8_t *commit_msg)
 {
-	return commit_msg + CRACEN_WPA3_SAE_IANA_GROUP_SIZE;
+	return commit_msg;
 }
 
 static const uint8_t *cracen_wpa3_sae_get_cmt_scalar_const(const uint8_t *commit_msg)
 {
-	return commit_msg + CRACEN_WPA3_SAE_IANA_GROUP_SIZE;
+	return commit_msg;
 }
 
 static uint8_t *cracen_wpa3_sae_get_cmt_element(uint8_t *commit_msg)
 {
-	return commit_msg + CRACEN_WPA3_SAE_IANA_GROUP_SIZE +
+	return commit_msg +
 			    CRACEN_P256_KEY_SIZE;
 }
 
 static const uint8_t *cracen_wpa3_sae_get_cmt_element_const(const uint8_t *commit_msg)
 {
-	return commit_msg + CRACEN_WPA3_SAE_IANA_GROUP_SIZE +
+	return commit_msg +
 			    CRACEN_P256_KEY_SIZE;
 }
 
@@ -468,15 +451,11 @@ static psa_status_t cracen_construct_commit_msg(cracen_wpa3_sae_operation_t *op)
 	};
 
 	/**
-	 * Commit message = IANA group (2 octets) | scalar | COMMIT_ELEMENT
+	 * Commit message = scalar | COMMIT_ELEMENT
 	 */
-	uint8_t *iana_group = cracen_wpa3_sae_get_cmt_iana_group(op->commit);
 	uint8_t *scalar = cracen_wpa3_sae_get_cmt_scalar(op->commit);
 	uint8_t *commit_element = cracen_wpa3_sae_get_cmt_element(op->commit);
 	int scalar_g;
-
-	/* Specify supported IANA group */
-	memcpy(iana_group, wpa3_sae_iana_group_19, CRACEN_WPA3_SAE_IANA_GROUP_SIZE);
 
 	do {
 		/**
@@ -552,17 +531,10 @@ static psa_status_t cracen_check_commit_msg(cracen_wpa3_sae_operation_t *op,
 	bool scalar_valid;
 
 	/**
-	 * Peer commit message = IANA group (2 octets) | peer-scalar | peer-COMMIT_ELEMENT
+	 * Peer commit message = peer-scalar | peer-COMMIT_ELEMENT
 	 */
-	const uint8_t *iana_group = cracen_wpa3_sae_get_cmt_iana_group_const(commit_msg);
 	const uint8_t *peer_scalar = cracen_wpa3_sae_get_cmt_element_const(commit_msg);
 	const uint8_t *peer_commit_element = cracen_wpa3_sae_get_cmt_element_const(commit_msg);
-
-	/* Check if IANA group is supported */
-	if (constant_memcmp(iana_group, wpa3_sae_iana_group_19,
-			    CRACEN_WPA3_SAE_IANA_GROUP_SIZE) != 0) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
 
 	/* Verify both the peer-commit-scalar and PEER-COMMIT-ELEMENT */
 	/* 1 < peer-commit-scalar < r */

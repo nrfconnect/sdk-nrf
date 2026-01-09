@@ -8315,8 +8315,11 @@ The options are grouped by Series and drivers available for the device Series, a
                * - SRP password hashing
                  - ``PSA_WANT_ALG_SRP_PASSWORD_HASH``
                  - --
-               * - WPA3-SAE
-                 - ``PSA_WANT_ALG_WPA3_SAE``
+               * - WPA3-SAE Fixed
+                 - ``PSA_WANT_ALG_WPA3_SAE_FIXED``
+                 - --
+               * - WPA3-SAE GDH
+                 - ``PSA_WANT_ALG_WPA3_SAE_GDH``
                  - --
                * - WPA3-SAE hash-to-element
                  - ``PSA_WANT_ALG_WPA3_SAE_H2E``
