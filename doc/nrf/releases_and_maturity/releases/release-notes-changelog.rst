@@ -267,6 +267,10 @@ Cellular samples
   * Added support for JWT authentication by enabling the :kconfig:option:`CONFIG_MODEM_JWT` Kconfig option.
     Enabling this option in the :file:`prj.conf` is necessary for using UUID as the device ID.
 
+* :ref:`location_sample`:
+
+  * Added support for onboarding with `nRF Cloud Utils`_ by using AT commands to set up the modem and device credentials.
+
 Cryptography samples
 --------------------
 
