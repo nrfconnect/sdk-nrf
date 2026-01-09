@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2025 Nordic Semiconductor
+# Copyright (c) 2026 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -25,7 +25,7 @@ MCUBOOT_BASE = utils.get_projdir("mcuboot")
 # General configuration --------------------------------------------------------
 
 project = "nRF Connect SDK"
-copyright = "2019-2025, Nordic Semiconductor"
+copyright = "2019-2026, Nordic Semiconductor"
 author = "Nordic Semiconductor"
 version = release = os.environ.get("DOCSET_VERSION")
 
