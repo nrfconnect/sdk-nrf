@@ -81,7 +81,11 @@ static char device_serial[CONFIG_MEMFAULT_NCS_DEVICE_ID_MAX_LEN + 1];
 /* Hardware version check */
 BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_HW_VERSION) > 1, "Hardware version must be configured");
 
+#if defined(CONFIG_MEMFAULT_NCS_DEVICE_ID_HW_ID) && \
+	defined(CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS)
+/* Forward declaration needed when fetching device info in this configuration */
 static int device_info_init(void);
+#endif
 
 void memfault_platform_get_device_info(sMemfaultDeviceInfo *info)
 {
