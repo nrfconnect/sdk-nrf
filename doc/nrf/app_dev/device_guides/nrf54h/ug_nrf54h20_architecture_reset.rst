@@ -60,7 +60,6 @@ The following is the reset behavior when the LCS of the nRF54H20 SoC is either i
        * To start the radio core: ``nrfutil device go --core network``
 
        This approach is particularly useful for debugging individual domains, starting from their reset handlers.
-
    * - ``RESET_DEFAULT``
      - Selects ``RESET_HARD``.
 
