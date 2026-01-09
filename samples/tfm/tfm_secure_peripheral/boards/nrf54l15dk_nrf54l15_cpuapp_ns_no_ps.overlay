@@ -1,0 +1,16 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Minimal partition layout without PS, ITS, or NS storage.
+ * OTP is kept for NV counters.
+ * Keys are volatile only (no persistent storage).
+ */
+
+/* Delete unused TF-M storage partitions */
+/delete-node/ &tfm_ps_partition;
+/delete-node/ &tfm_its_partition;
+/delete-node/ &storage_partition;

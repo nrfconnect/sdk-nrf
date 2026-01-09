@@ -17,6 +17,8 @@ config HW_UNIQUE_KEY_LOAD
 	depends on HAS_HW_NRF_ACL
 	depends on HAS_HW_NRF_CC310
 	depends on NRF_CC3XX_PLATFORM
+	# Requires either Partition Manager or hw_unique_key_partition in devicetree
+	depends on PARTITION_MANAGER_ENABLED || $(dt_nodelabel_enabled,hw_unique_key_partition)
 	select FPROTECT
 	imply NRFX_NVMC if !CRACEN_KMU_HW_PRESENT
 	help
@@ -39,6 +41,10 @@ config HW_UNIQUE_KEY
 	depends on NRF_SECURITY
 	depends on MPU_ALLOW_FLASH_WRITE || BUILD_WITH_TFM || CRACEN_KMU_HW_PRESENT
 	depends on !BUILD_WITH_TFM || (TFM_CRYPTO_BUILTIN_KEYS || CRACEN_KMU_HW_PRESENT)
+	# For devices with ACL (nRF52840), HUK is stored in flash and requires
+	# either Partition Manager or a hw_unique_key_partition node in devicetree
+	depends on !HAS_HW_NRF_ACL || PARTITION_MANAGER_ENABLED \
+			|| $(dt_nodelabel_enabled,hw_unique_key_partition)
 	select PSA_WANT_ALG_SP800_108_COUNTER_CMAC if CRACEN_KMU_HW_PRESENT
 	select PSA_WANT_ALG_CMAC if CRACEN_KMU_HW_PRESENT
 	select PSA_WANT_KEY_TYPE_AES if CRACEN_KMU_HW_PRESENT
