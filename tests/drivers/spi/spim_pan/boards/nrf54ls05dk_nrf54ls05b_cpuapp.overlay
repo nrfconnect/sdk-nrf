@@ -36,11 +36,12 @@ dut_spi: &spi21 {
 	overrun-character = <0x00>;
 	zephyr,pm-device-runtime-auto;
 	cs-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
+	rx-delay=<1>;
 
 	dut_spi_dt: test-spi-dev@0 {
 		compatible = "vnd,spi-device";
 		reg = <0>;
-		spi-max-frequency = <DT_FREQ_M(4)>;
+		spi-max-frequency = <DT_FREQ_M(1)>;
 	};
 };
 

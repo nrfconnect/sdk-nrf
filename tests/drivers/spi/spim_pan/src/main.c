@@ -78,7 +78,7 @@ static uint32_t configure_test_timer(nrfx_timer_t *timer)
  * Reference: MLTPAN-8
  * Requirements to trigger the PAN workaround
  * CPHA = 0 (configured in SPI_MODE)
- * PRESCALER > 2 (4 for 4MHz)
+ * PRESCALER > 2 (4 for 4MHz, 16 for 1MHz)
  * First transmitted bit is 1 (0x8B, MSB)
  */
 
@@ -145,8 +145,8 @@ ZTEST(spim_pan, test_spim_mltpan_55_workaround)
 	zassert_ok(err, "SPI transceive failed: %d\n", err);
 	timer_cc_after = nrfx_timer_capture(&test_timer, NRF_TIMER_CC_CHANNEL0);
 
-	TC_PRINT("Timer count before: %u, timer count after: %u\n", timer_cc_before,
-		 timer_cc_after);
+	nrfx_gppi_conn_disable(gppi_handle);
+	nrfx_timer_uninit(&test_timer);
 
 	zassert_true((timer_cc_after - timer_cc_before) > 0,
 		     "NRF_SPIM_EVENT_END did not trigger\n");
@@ -166,9 +166,6 @@ ZTEST(spim_pan, test_spim_mltpan_57_workaround)
 #if defined(DUT_SPI_FAST)
 	int err;
 
-	uint8_t ppi_channel;
-
-	uint32_t domain_id;
 	nrfx_gppi_handle_t gppi_handle;
 
 	uint32_t timer_cc_before, timer_cc_after, tx_amount;
@@ -179,10 +176,6 @@ ZTEST(spim_pan, test_spim_mltpan_57_workaround)
 	memset(tx_buffer, 0xFF, TEST_BUFFER_SIZE);
 	tx_buffer[0] = MX25R64_RDID;
 
-	domain_id = nrfx_gppi_domain_id_get((uint32_t)test_timer.p_reg);
-	ppi_channel = nrfx_gppi_channel_alloc(domain_id);
-	zassert_true(ppi_channel > 0, "Failed to allocate GPPI channel");
-
 	timer_task = configure_test_timer(&test_timer);
 	spim_event = nrf_spim_event_address_get(spim_reg, NRF_SPIM_EVENT_END);
 
@@ -190,10 +183,10 @@ ZTEST(spim_pan, test_spim_mltpan_57_workaround)
 		   "Failed to allocate DPPI connection\n");
 	nrfx_gppi_conn_enable(gppi_handle);
 
-	struct spi_buf tx_spi_buf = {.buf = tx_buffer, .len = TEST_BUFFER_SIZE};
+	struct spi_buf tx_spi_buf = {.buf = tx_buffer, .len = TEST_BUFFER_SIZE / 2};
 	struct spi_buf_set tx_spi_buf_set = {.buffers = &tx_spi_buf, .count = 1};
 
-	struct spi_buf rx_spi_buf = {.buf = rx_buffer, .len = TEST_BUFFER_SIZE};
+	struct spi_buf rx_spi_buf = {.buf = rx_buffer, .len = TEST_BUFFER_SIZE / 2 + 1};
 	struct spi_buf_set rx_spi_buf_set = {.buffers = &rx_spi_buf, .count = 1};
 
 	for (int i = 0; i < MAX_READ_REPEATS; i++) {
@@ -206,11 +199,11 @@ ZTEST(spim_pan, test_spim_mltpan_57_workaround)
 		zassert_ok(err, "SPI transceive failed: %d\n", err);
 
 		tx_amount = nrf_spim_tx_amount_get(spim_reg);
-		TC_PRINT("END events count: %u\n", timer_cc_after - timer_cc_before);
+		TC_PRINT("NRF_SPIM_EVENT_END events count: %u\n", timer_cc_after - timer_cc_before);
 		TC_PRINT("TX.AMOUNT: %u\n", tx_amount);
 
-		zassert_equal(timer_cc_after - timer_cc_before, 1,
-			      "END event has not been generated\n");
+		zassert_true((timer_cc_after - timer_cc_before > 0),
+			     "NRF_SPIM_EVENT_END event has not been generated\n");
 		zassert_equal(tx_amount, ARRAY_SIZE(tx_buffer), "TX.AMOUNT != TX Buffer size\n");
 
 		for (int i = 0; i < ARRAY_SIZE(rx_buffer); i++) {
@@ -225,7 +218,64 @@ ZTEST(spim_pan, test_spim_mltpan_57_workaround)
 		zassert_equal(rx_buffer[3], MX25R64_MEM_DENSITY,
 			      "Read MX25R64 memory density is different than expected\n");
 	}
+
+	nrfx_timer_uninit(&test_timer);
+	nrfx_gppi_conn_disable(gppi_handle);
 #endif
+}
+
+/*
+ * Reference: MLTPAN-69
+ * Requirements to trigger the PAN workaround
+ * SPIM is configured using IFTIMING.RXDELAY > 0
+ * STOP task is triggered after
+ * the TX data have been transferred
+ * but before the final RX byte has been received
+ */
+ZTEST(spim_pan, test_spim_mltpan_69_workaround)
+{
+	Z_TEST_SKIP_IFDEF(DUT_SPI_FAST);
+
+	int err;
+
+	nrfx_gppi_handle_t gppi_handle;
+
+	uint32_t timer_cc_before, timer_cc_after;
+
+	uint32_t timer_task;
+	uint32_t spim_event;
+
+	struct spi_buf tx_spi_buf = {.buf = tx_buffer, .len = TEST_BUFFER_SIZE};
+	struct spi_buf_set tx_spi_buf_set = {.buffers = &tx_spi_buf, .count = 1};
+
+	struct spi_buf rx_spi_buf = {.buf = rx_buffer, .len = TEST_BUFFER_SIZE};
+	struct spi_buf_set rx_spi_buf_set = {.buffers = &rx_spi_buf, .count = 1};
+
+	set_buffers();
+
+	timer_task = configure_test_timer(&test_timer);
+	spim_event = nrf_spim_event_address_get(spim_reg, NRF_SPIM_EVENT_STOPPED);
+
+	zassert_ok(nrfx_gppi_conn_alloc(spim_event, timer_task, &gppi_handle),
+		   "Failed to allocate DPPI connection\n");
+	nrfx_gppi_conn_enable(gppi_handle);
+
+	timer_cc_before = nrfx_timer_capture(&test_timer, NRF_TIMER_CC_CHANNEL0);
+	err = spi_transceive_dt(&spim_spec, &tx_spi_buf_set, &rx_spi_buf_set);
+	timer_cc_after = nrfx_timer_capture(&test_timer, NRF_TIMER_CC_CHANNEL0);
+
+	TC_PRINT("SPI IFTIMING.RXDELAY=%u\n", spim_reg->IFTIMING.RXDELAY);
+	zassert_true(spim_reg->IFTIMING.RXDELAY > 0,
+		     "SPIM  IFTIMING.RXDELAY is not greater than 0\n");
+	zassert_ok(err, "SPI transceive failed: %d\n", err);
+
+	nrfx_timer_uninit(&test_timer);
+	nrfx_gppi_conn_disable(gppi_handle);
+
+	TC_PRINT("NRF_SPIM_EVENT_STOPPED events count: %u\n", timer_cc_after - timer_cc_before);
+	zassert_true((timer_cc_after - timer_cc_before) > 0,
+		     "NRF_SPIM_EVENT_STOPPED did not trigger\n");
+	zassert_mem_equal(tx_buffer, rx_buffer, TEST_BUFFER_SIZE, "TX buffer != RX buffer\n");
 }
 
 ZTEST_SUITE(spim_pan, NULL, test_setup, NULL, NULL, NULL);
