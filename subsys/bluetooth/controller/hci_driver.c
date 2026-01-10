@@ -1490,21 +1490,21 @@ void bt_ctlr_set_public_addr(const uint8_t *addr)
 
 static int hci_driver_init(const struct device *dev)
 {
-	int err = 0;
+	int ret = 0;
 
-	err = sdc_init(sdc_assertion_handler);
-	if (err) {
-		return err;
+	ret = sdc_init(sdc_assertion_handler);
+	if (ret) {
+		return ret;
 	}
 
 	configure_supported_features();
 
-	err = configure_memory_usage();
-	if (err) {
-		return err;
+	ret = configure_memory_usage();
+	if (ret) {
+		return ret;
 	}
 
-	return err;
+	return ret;
 }
 
 #if defined(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
