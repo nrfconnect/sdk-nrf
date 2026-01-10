@@ -456,7 +456,12 @@ Modem libraries
 
 * :ref:`lte_lc_readme` library:
 
-  * Added support for new PDN events :c:enumerator:`LTE_LC_EVT_PDN_SUSPENDED` and :c:enumerator:`LTE_LC_EVT_PDN_RESUMED`.
+  * Added:
+
+    * Support for new PDN events :c:enumerator:`LTE_LC_EVT_PDN_SUSPENDED` and :c:enumerator:`LTE_LC_EVT_PDN_RESUMED`.
+    * The :kconfig:option:`CONFIG_LTE_LOCK_BAND_LIST` Kconfig option to set bands for the LTE band lock using a comma-separated list of band numbers.
+
+  * Removed the default value for the :kconfig:option:`CONFIG_LTE_LOCK_BAND_MASK` Kconfig option.
 
 Multiprotocol Service Layer libraries
 -------------------------------------

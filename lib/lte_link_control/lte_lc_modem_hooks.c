@@ -17,6 +17,8 @@
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
 #if defined(CONFIG_LTE_LOCK_BANDS)
+BUILD_ASSERT(sizeof(CONFIG_LTE_LOCK_BAND_MASK) > 1 || sizeof(CONFIG_LTE_LOCK_BAND_LIST) > 1,
+	     "CONFIG_LTE_LOCK_BAND_MASK or CONFIG_LTE_LOCK_BAND_LIST must be set");
 static void band_lock_set(void)
 {
 	int err;
@@ -24,7 +26,13 @@ static void band_lock_set(void)
 	/* Set LTE band lock (volatile setting).
 	 * Has to be done every time before activating the modem.
 	 */
-	err = nrf_modem_at_printf("AT%%XBANDLOCK=2,\""CONFIG_LTE_LOCK_BAND_MASK "\"");
+	if (sizeof(CONFIG_LTE_LOCK_BAND_LIST) > 1) {
+		err = nrf_modem_at_printf("AT%%XBANDLOCK=2,\"" CONFIG_LTE_LOCK_BAND_MASK "\",\""
+					  CONFIG_LTE_LOCK_BAND_LIST "\"");
+	} else {
+		err = nrf_modem_at_printf("AT%%XBANDLOCK=2,\"" CONFIG_LTE_LOCK_BAND_MASK "\"");
+	}
+
 	if (err) {
 		LOG_ERR("Failed to lock LTE bands, err %d", err);
 	}
