@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- #include "../../nrf54h20dk_nrf54h20_ext_flash.dtsi"
+#include "../../nrf54h20dk_nrf54h20_ext_flash.dtsi"
 
 / {
 	chosen {

@@ -19,8 +19,8 @@
 			reg = <0x40000 DT_SIZE_K(580)>;
 		};
 
-		cpuapp_slot1_partition: partition@D1000 {
-			reg = <0xD1000 DT_SIZE_K(580)>;
+		cpuapp_slot1_partition: partition@d1000 {
+			reg = <0xd1000 DT_SIZE_K(580)>;
 		};
 	};
 };

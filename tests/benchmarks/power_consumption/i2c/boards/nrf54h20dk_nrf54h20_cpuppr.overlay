@@ -3,11 +3,11 @@
 		led = &led0;
 	};
 
-
 	leds {
 		compatible = "gpio-leds";
+
 		led0: led_3 {
-			gpios = < &gpio9 0x3 0x0 >;
+			gpios = <&gpio9 0x3 0x0>;
 			label = "Green LED 3";
 		};
 	};

@@ -9,7 +9,7 @@
 		group1 {
 			psels = <NRF_PSEL(UART_TX, 2, 2)>,
 				<NRF_PSEL(UART_RX, 2, 1)>;
-				bias-pull-up;
+			bias-pull-up;
 		};
 	};
 
@@ -27,7 +27,7 @@
 		group1 {
 			psels = <NRF_PSEL(UART_TX, 3, 0)>,
 				<NRF_PSEL(UART_RX, 3, 1)>;
-				bias-pull-up;
+			bias-pull-up;
 		};
 	};
 
@@ -43,7 +43,7 @@
 		group1 {
 			psels = <NRF_PSEL(UART_TX, 3, 2)>,
 				<NRF_PSEL(UART_RX, 3, 3)>;
-				bias-pull-up;
+			bias-pull-up;
 		};
 	};
 
@@ -59,7 +59,7 @@
 		group1 {
 			psels = <NRF_PSEL(UART_TX, 3, 4)>,
 				<NRF_PSEL(UART_RX, 3, 5)>;
-				bias-pull-up;
+			bias-pull-up;
 		};
 	};
 
@@ -75,7 +75,7 @@
 		group1 {
 			psels = <NRF_PSEL(UART_TX, 3, 6)>,
 				<NRF_PSEL(UART_RX, 3, 7)>;
-				bias-pull-up;
+			bias-pull-up;
 		};
 	};
 

@@ -18,9 +18,9 @@
 
 &gpio_fwd {
 	dfe-radio {
-	    gpios = <&gpio0 4 0>,
-		<&gpio0 5 0>,
-		<&gpio0 6 0>,
-		<&gpio0 7 0>;
+		gpios = <&gpio0 4 0>,
+			<&gpio0 5 0>,
+			<&gpio0 6 0>,
+			<&gpio0 7 0>;
 	};
 };

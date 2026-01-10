@@ -6,6 +6,7 @@
 	pinctrl-0 = <&spi1_default_alt>;
 	pinctrl-1 = <&spi1_sleep_alt>;
 	pinctrl-names = "default", "sleep";
+
 	st25r3911b@0 {
 		compatible = "st,st25r3911b";
 		reg = <0>;
@@ -32,5 +33,4 @@
 			low-power-enable;
 		};
 	};
-
 };

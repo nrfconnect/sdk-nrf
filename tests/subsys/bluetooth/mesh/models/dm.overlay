@@ -4,10 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- / {
+/ {
 	/* The timer instance to use. */
 	chosen {
 		ncs,dm-timer = &timer2;
 	};
-
 };

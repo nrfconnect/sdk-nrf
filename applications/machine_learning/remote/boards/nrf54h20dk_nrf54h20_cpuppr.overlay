@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- / {
+/ {
 	agg0: agg0 {
 		compatible = "caf,aggregator";
 		sensor_descr = "accel_xyz";
@@ -14,7 +14,6 @@
 		memory-region = <&ram3x_agg_area0>;
 		status = "okay";
 	};
-
 
 	reserved-memory {
 		cpuppr_code_data: memory@2fc00000 {
