@@ -439,6 +439,15 @@ template <uint16_t N> struct IndexList {
 	 * @return CHIP_NO_ERROR if the index has been added successfully.
 	 */
 	CHIP_ERROR AddIndex(uint16_t index);
+
+	/**
+	 * @brief Remove index from the list
+	 *
+	 * @param index index to be removed.
+	 * @return CHIP_ERROR_NOT_FOUND if the given `index` does not exist in the container.
+	 * @return CHIP_NO_ERROR if the index has been removed successfully.
+	 */
+	CHIP_ERROR RemoveIndex(uint16_t index);
 };
 
 template <uint16_t N> inline size_t IndexList<N>::Serialize(void *buff, size_t buffSize)
@@ -484,6 +493,32 @@ template <uint16_t N> inline CHIP_ERROR IndexList<N>::AddIndex(uint16_t index)
 	}
 	mList.mIndexes[mList.mLength] = index;
 	mList.mLength++;
+
+	return CHIP_NO_ERROR;
+}
+
+template <uint16_t N> inline CHIP_ERROR IndexList<N>::RemoveIndex(uint16_t index)
+{
+	/* Find the index in the list. */
+	uint16_t foundIdx = N;
+	for (uint16_t idx = 0; idx < mList.mLength; ++idx) {
+		if (mList.mIndexes[idx] == index) {
+			foundIdx = idx;
+			break;
+		}
+	}
+
+	if (foundIdx == N) {
+		return CHIP_ERROR_NOT_FOUND;
+	}
+
+	/* Shift remaining elements to fill the gap. */
+	for (uint16_t idx = foundIdx; idx < mList.mLength - 1; ++idx) {
+		mList.mIndexes[idx] = mList.mIndexes[idx + 1];
+	}
+
+	mList.mLength--;
+	mList.mIndexes[mList.mLength] = std::numeric_limits<uint16_t>::max();
 
 	return CHIP_NO_ERROR;
 }
