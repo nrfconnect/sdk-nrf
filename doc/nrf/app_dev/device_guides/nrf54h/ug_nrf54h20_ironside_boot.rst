@@ -435,6 +435,8 @@ In production-ready devices, enabling both access-port protection (:kconfig:opti
 .. note::
    When an ``ERASEALL`` request is blocked by :kconfig:option:`CONFIG_GEN_UICR_ERASEPROTECT`, CTRLAP.BOOTSTATUS.CMDERROR is set to ``0x1``.
 
+.. _ug_nrf54h20_ironside_se_debugwait_command:
+
 ``DEBUGWAIT`` command
 =====================
 
@@ -444,6 +446,9 @@ This prevents the CPU from executing any instructions until the CPUWAIT register
 Use this command to begin debugging at the very first instruction or to program flash memory safely without concurrent CPU access.
 
 The ``DEBUGWAIT`` command does not define any command-specific values for the CTRLAP.BOOTSTATUS.CMDERROR field.
+
+.. note::
+   You can also use the ``cpuconf`` service to set CPUWAIT when booting other cores.
 
 .. _ug_nrf54h20_ironside_se_spu_mramc_feature_configuration:
 
