@@ -11,6 +11,7 @@ For more details see: https://scancode-toolkit.readthedocs.io/en/stable/
 import json
 import os
 import re
+import shutil
 from tempfile import NamedTemporaryFile
 
 from args import args
@@ -23,6 +24,13 @@ from west import log
 def check_scancode():
     '''Checks if "scancode --version" works correctly. If not, raises exception with information
     for user.'''
+    if shutil.which(args.scancode) is None:
+        raise SbomException(f'Cannot find scancode executable "{args.scancode}".\n'
+            'Install the SBOM requirements with:\n'
+            '  pip3 install -r scripts/requirements-west-ncs-sbom.txt\n'
+            'Use --force-reinstall --no-cache-dir options if it still fails\n'
+            'Pass "--scancode=/path/to/scancode" if the scancode executable is'
+            'not available on PATH.')
     try:
         command_execute(args.scancode, '--version', allow_stderr=True)
     except Exception as ex:
