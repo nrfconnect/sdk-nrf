@@ -124,10 +124,12 @@ A subset of the following |NCS| libraries are used for DECT NR+:
 Applications and samples
 ========================
 
-The following samples use DECT NR+ in the |NCS|:
+The following samples use DECT NR+ physical layer modem firmware in the |NCS|:
 
 * :ref:`nrf_modem_dect_phy_hello`
 * :ref:`dect_shell_application`
+
+The :ref:`hello_dect` sample uses the DECT NR+ full stack with IPv6 networking capabilities for nRF91x1 devices where the DECT NR+ MAC layer is running on the modem side.
 
 Power optimization
 ==================

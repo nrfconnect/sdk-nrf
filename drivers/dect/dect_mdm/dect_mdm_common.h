@@ -1,0 +1,45 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#ifndef DECT_MDM_COMMON_H
+#define DECT_MDM_COMMON_H
+
+#include <zephyr/kernel.h>
+#include <nrf_modem_dect.h>
+struct dect_mdm_common_op_event_msgq_item {
+	uint8_t id;
+	void *data;
+};
+
+#define DECT_RSSI_MEAS_SUBSLOT_COUNT 48
+
+/* Supported DECT bands. See ETSI TS 103 636-2 Table 5.4.2-1. (3rd column) */
+
+#define DECT_NRF_SUPPORTED_CHANNEL_BAND1_MIN 1657
+#define DECT_NRF_SUPPORTED_CHANNEL_BAND1_MAX 1677
+
+#define DECT_NRF_SUPPORTED_CHANNEL_BAND2_MIN 1680
+#define DECT_NRF_SUPPORTED_CHANNEL_BAND2_MAX 1700
+
+#define DECT_NRF_SUPPORTED_CHANNEL_BAND4_MIN 524
+#define DECT_NRF_SUPPORTED_CHANNEL_BAND4_MAX 552
+
+#define DECT_NRF_SUPPORTED_CHANNEL_BAND9_MIN 1703
+#define DECT_NRF_SUPPORTED_CHANNEL_BAND9_MAX 1711
+
+#define DECT_NRF_SUPPORTED_CHANNEL_BAND22_MIN 1691
+#define DECT_NRF_SUPPORTED_CHANNEL_BAND22_MAX 1711
+
+#define DECT_NRF_SUPPORTED_BAND_COUNT 5
+
+/* Maximum output power. See ETSI TS 103 636-2 Table 6.2.1-1 */
+
+#define DECT_PWR_CLASS_1_MAX_TX_POWER_DBM 23
+#define DECT_PWR_CLASS_2_MAX_TX_POWER_DBM 21
+#define DECT_PWR_CLASS_3_MAX_TX_POWER_DBM 19
+#define DECT_PWR_CLASS_4_MAX_TX_POWER_DBM 10
+
+#endif /* DECT_MDM_COMMON_H */
