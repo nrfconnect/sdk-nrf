@@ -108,16 +108,3 @@
   platforms:
     - nrf7120dk/nrf7120/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-8621 GPPI changes also by NCS 3.2"
-
-- scenarios:
-    - sample.bluetooth.peripheral_mds
-  platforms:
-    - nrf52840dk/nrf52840
-    - nrf54l15dk/nrf54l05/cpuapp
-    - nrf54l15dk/nrf54l10/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp/ns
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-    - nrf54lm20dk/nrf54lm20a/cpuapp/ns
-    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37052"
