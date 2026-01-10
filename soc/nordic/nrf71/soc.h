@@ -21,4 +21,13 @@ int configure_playout_capture(uint32_t rx_mode, uint32_t tx_mode, uint32_t rx_ho
 			      uint32_t rx_wrap_length, uint32_t back_to_back_mode);
 #endif /* CONFIG_SOC_NRF7120_PREENG */
 
+#ifdef CONFIG_PWR_ANTSWC_FROM_GPIO
+#ifdef NRF_TRUSTZONE_NONSECURE
+#define PWR_ANTSWC_REG			(0x4010F780UL)
+#else
+#define PWR_ANTSWC_REG			(0x5010F780UL)
+#endif
+#define PWR_ANTSWC_ENABLE		(0x3UL)
+#endif
+
 #endif /* _NORDICSEMI_NRF71_SOC_H_ */
