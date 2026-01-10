@@ -128,6 +128,27 @@ In this case, you must send the following files to the device when performing an
 * :file:`build/ipc_radio/zephyr/zephyr.signed.bin` - Contains the slot A of the radio image.
   Upload this file to the primary slot when the device is running from slot B.
 
+Device health check
+===================
+
+This sample implements a device health check mechanism to ensure the firmware works correctly after an update.
+
+The radio image is verified by checking if the Bluetooth stack is initialized successfully using the ``bt_is_ready`` function.
+
+The application image is verified by checking the value of :kconfig:option:``CONFIG_EMULATE_APP_HEALTH_CHECK_FAILURE`` symbol.
+If it is defined, the application image is considered broken and fails the self-test.
+
+If either of these checks fails, the application does not confirm the image.
+
+The image still can be confirmed manually using the SMP command, overwriting the health check result.
+Although the device exposes two images over SMP, only the manifest image (application image) can be confirmed or reverted.
+All flags set for the manifest image are also applied to the other images described by the manifest.
+
+This sample uses bootloader request subsystem to request a successful confirmation of the image instead of modifying the image trailer directly.
+This way, the bootloader may block all write requests to the whole active image partition, increasing the security of the system and reducing the level of fragmentation of permissions in the system.
+
+The implementation of those checks can be found inside :file:`src/ab_utils.c`.
+
 User interface
 **************
 
