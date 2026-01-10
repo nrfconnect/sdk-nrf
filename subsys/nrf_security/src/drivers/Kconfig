@@ -36,6 +36,17 @@ config PSA_CRYPTO_DRIVER_CRACEN
 	help
 	  PSA crypto driver for the CRACEN HW peripheral.
 
+config PSA_CRYPTO_DRIVER_WIFI_KEYS
+	bool "Wi-Fi Keys PSA driver"
+	depends on MBEDTLS_PSA_CRYPTO_C
+	depends on CRACEN_LIB_KMU
+	depends on HAS_HW_NRF_WIFI_KEYS
+	default y if HAS_HW_NRF_WIFI_KEYS
+	help
+	  PSA crypto driver for Wi-Fi security key management.
+	  This driver handles cryptographic keys for Wi-Fi security
+	  using KMU (Key Management Unit) slots on nRF71 series devices.
+
 config PSA_CRYPTO_DRIVER_IRONSIDE
 	bool
 	help
@@ -284,6 +295,8 @@ rsource "Kconfig.psa_accel"
 rsource "nrf_cc3xx/Kconfig"
 
 rsource "cracen/Kconfig"
+
+rsource "wifi_keys/Kconfig"
 
 rsource "nrf_oberon/Kconfig"
 

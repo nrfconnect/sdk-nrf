@@ -1,0 +1,16 @@
+common:
+  depends_on: wifi
+  tags:
+    - ci_build
+    - sysbuild
+    - drivers
+    - ci_tests_drivers_nrf_wifi
+tests:
+  sample.nrf7120.wifi_crypto:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7120pdk/nrf7120/cpuapp
+    platform_allow: nrf7120pdk/nrf7120/cpuapp
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="ipc.overlay"
