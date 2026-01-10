@@ -7,8 +7,10 @@
 Pre-processing of data before it goes to the output.
 '''
 
-from data_structure import Data, License, LicenseExpr
+from data_structure import Data, License, LicenseExpr, Package
 from license_utils import get_license, get_spdx_license_expr_info, is_spdx_license
+
+DEPENDENCY_PLACEHOLDER_ID = 'DEPENDENCY-INFORMATION-UNAVAILABLE'
 
 
 def pre_process(data: Data):
@@ -88,8 +90,6 @@ def pre_process(data: Data):
             else:
                 return 'F' + id
     data.licenses_sorted = sorted(data.licenses.keys(), key=lic_reorder)
-    # Sort packages
-    data.packages_sorted = sorted(data.packages.keys())
     # Give more user friendly information of each package
     package_name_map = dict()
     for package in data.packages.values():
@@ -113,3 +113,68 @@ def pre_process(data: Data):
         package_name_map[package.name] = package
         if (package.browser_url is None) and (package.url.startswith('http')):
             package.browser_url = package.url
+    files_by_package = group_files_by_package(data)
+    assign_application_dependencies(data, files_by_package)
+    add_dependency_placeholder_if_needed(data)
+    data.packages_sorted = sorted(data.packages.keys())
+
+
+def group_files_by_package(data: Data) -> 'dict[str,list]':
+    files_by_package = dict()
+    for file in data.files:
+        files_by_package.setdefault(file.package, []).append(file)
+    return files_by_package
+
+
+def assign_application_dependencies(data: Data, files_by_package: dict):
+    '''Populate dependencies: each application package depends on all other packages detected.'''
+    if not data.application_roots:
+        return
+    application_packages = packages_for_roots(data.application_roots, files_by_package)
+    if not application_packages:
+        return
+    for package_id in application_packages:
+        if package_id not in data.packages:
+            continue
+        deps = sorted(pkg for pkg in data.packages if pkg not in ('', package_id))
+        data.packages[package_id].dependencies = deps
+
+
+def packages_for_roots(roots: 'set[str]', files_by_package: dict) -> 'set[str]':
+    if not roots:
+        return set()
+    packages = set()
+    for pkg_id, files in files_by_package.items():
+        for file in files:
+            rel_path = file.file_rel_path.as_posix()
+            for root in roots:
+                if (root == '' and rel_path) or rel_path == root or rel_path.startswith(root + '/'):
+                    packages.add(pkg_id)
+                    break
+            if pkg_id in packages:
+                break
+    return packages
+
+
+def add_dependency_placeholder_if_needed(data: Data):
+    '''If no dependencies were collected, add a placeholder package and link others to it.'''
+    if data.application_roots:
+        return
+    placeholder_id = ensure_dependency_placeholder(data)
+    for package in data.packages.values():
+        if package.id == placeholder_id:
+            continue
+        if len(package.dependencies) == 0:
+            package.dependencies = [placeholder_id]
+
+
+def ensure_dependency_placeholder(data: Data) -> str:
+    if DEPENDENCY_PLACEHOLDER_ID in data.packages:
+        return DEPENDENCY_PLACEHOLDER_ID
+    package = Package()
+    package.id = DEPENDENCY_PLACEHOLDER_ID
+    package.name = 'Dependency information unavailable'
+    package.version = 'N/A'
+    package.url = 'NOASSERTION'
+    data.packages[package.id] = package
+    return package.id

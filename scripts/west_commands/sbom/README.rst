@@ -189,6 +189,28 @@ You can specify the format of the report output using the ``output`` argument.
   The :file:`sbom_report.html` file is generated in your build directory
   (the first one if you specify more than one build directory).
 
+* To generate an SPDX 2.2 format report (for CRA/EO 14028/FDA compliance):
+
+  .. parsed-literal::
+     :class: highlight
+
+     --output-spdx *file-name.spdx*
+
+  The SPDX report includes:
+
+  * Package supplier information (auto-detected from git URLs or specified via ``--package-supplier``)
+  * Component name, version, and download location
+  * Package URLs (PURLs) for unique package identification
+  * Common Platform Enumeration (CPE) identifiers when specified via ``--package-cpe``
+  * Dependency relationships showing supply chain connections
+  * File checksums and license information
+
+  This format meets requirements from:
+
+  * Cyber Resilience Act (CRA)
+  * U.S. Executive Order 14028
+  * FDA cybersecurity guidelines
+
 * To generate a cache database:
 
   .. parsed-literal::
@@ -283,6 +305,29 @@ Detectors are executed from left to right using a list provided by the ``--licen
 
 Some detectors may run in parallel on all available CPU cores, which speeds up the detection time.
 Use the ``-n`` option to limit the number of parallel threads or processes.
+
+Compliance Options
+==================
+
+The following options enhance SBOM compliance with CRA, EO 14028, and FDA requirements:
+
+* ``--package-supplier`` - Set the supplier/vendor name for packages:
+
+  .. code-block:: bash
+
+     --package-supplier "Nordic Semiconductor ASA"
+
+  If not specified, the supplier is auto-detected from git repository owner/organization names.
+
+* ``--package-cpe`` - Set the Common Platform Enumeration (CPE) identifier:
+
+  .. code-block:: bash
+
+     --package-cpe "cpe:2.3:a:nordicsemi:nrf_connect_sdk:2.0.0:*:*:*:*:*:*:*"
+
+  CPE identifiers follow the CPE 2.3 specification and help identify software packages in vulnerability databases.
+
+These options ensure that generated SBOMs include all required fields for regulatory compliance.
 
 .. _west_sbom HTML report overview:
 

@@ -33,6 +33,7 @@ class FileInfo(DataBaseClass):
         local_modifications The file was modified and does not match version of this package
         sha1                SHA-1 of the file
         detectors           Set of detectors that contributed to the list of licenses
+                             for the file
     '''
     file_path: Path
     file_rel_path: Path
@@ -74,12 +75,20 @@ class Package(DataBaseClass):
         url            URL pointing to the source of this package
         version        Version string of this package
         browser_url    URL that can be opened in a web browser
+        supplier       Supplier name
+        purl           Package URL (PURL) identifier
+        cpe            Common Platform Enumeration (CPE) identifier
+        dependencies   List of package IDs this package depends on
     '''
     id: str = ''
     name: 'str|None' = None
     url: 'str|None' = None
     version: 'str|None' = None
     browser_url: 'str|None' = None
+    supplier: 'str|None' = None
+    purl: 'str|None' = None
+    cpe: 'str|None' = None
+    dependencies: 'list[str]' = list()
 
 
 class LicenseExpr(DataBaseClass):
@@ -121,6 +130,9 @@ class Data(DataBaseClass):
         inputs           List of user friendly input description.
         detectors        Set containing all detectors that were involved in license detection.
         report_uuid      Random UUID that can be used in the output.
+        application_roots Set of application source roots detected from build directories.
+        module_roots     Set of module source roots detected from build directories.
+        toolchain_paths  Mapping of detected toolchain root paths (resolved) to package IDs.
     '''
     files: 'list[FileInfo]' = list()
     licenses: 'dict[License|LicenseExpr]' = dict()
@@ -130,3 +142,6 @@ class Data(DataBaseClass):
     inputs: 'list[str]' = list()
     detectors: 'set[str]' = set()
     report_uuid: 'str' = uuid4()
+    application_roots: 'set[str]' = set()
+    module_roots: 'set[str]' = set()
+    toolchain_paths: 'dict[str,str]' = dict()

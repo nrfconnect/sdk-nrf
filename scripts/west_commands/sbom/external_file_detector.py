@@ -14,6 +14,8 @@ relative directory where the external file is located. The value ends at the end
 so don't use any comment closing characters or whitespaces at the end of the line.
 '''
 
+import fnmatch
+import os
 import re
 import traceback
 from pathlib import Path
@@ -48,32 +50,48 @@ def parse_license_file(file: Path):
         # must be accessible.
         log.dbg(f'Exception reading file "{file}": {traceback.format_exc()}',
                 level=log.VERBOSE_VERY)
-        return
+        return None
     licenses = set()
     for m in SPDX_TAG_RE.finditer(content):
         id = m.group(1).strip()
         if id != '':
             licenses.add(id.upper())
     if len(licenses) == 0:
-        return
-    log.dbg(f'External file {file} with {licenses}')
+        return None
+    globs = list()
     for m in APPLY_TO_FILES_TAG_RE.finditer(content):
         if m.group(1) is not None:
             glob = re.sub(r'\\(.)', r'\1', m.group(1).strip())
         else:
             glob = m.group(2).strip()
-        log.dbg(f'  describes {glob}:', level=log.VERBOSE_EXTREME)
-        try:
-            matched_files = tuple(file.parent.glob(glob))
-        except ValueError as ex:
-            log.wrn(f'Invalid glob "{glob}": {ex}')
-            continue
-        for matched in matched_files:
-            matched_str = str(matched)
-            log.dbg(f'    {matched_str}', level=log.VERBOSE_EXTREME)
-            if matched_str not in detected_files:
-                detected_files[matched_str] = set()
-            detected_files[matched_str].update(licenses)
+        globs.append(glob)
+    return (licenses, globs)
+
+
+def load_external_globs() -> 'list[tuple[str,set[str]]]':
+    external_globs = list()
+    external_globs_dir = Path(__file__).parent / 'data' / 'external-licenses'
+    if not external_globs_dir.exists():
+        return external_globs
+    try:
+        listdir = list(external_globs_dir.iterdir())
+    except: # pylint: disable=bare-except
+        log.dbg(f'Exception reading directory "{external_globs_dir}": {traceback.format_exc()}',
+                level=log.VERBOSE_VERY)
+        return external_globs
+    for file in listdir:
+        if (file.is_file() and EXTERNAL_FILE_RE.search(file.name) is not None):
+            parsed = parse_license_file(file)
+            if parsed is None:
+                continue
+            licenses, globs = parsed
+            log.dbg(f'External file {file} with {licenses}')
+            for glob in globs:
+                pattern = glob.replace('\\', '/')
+                if os.name == 'nt':
+                    pattern = pattern.lower()
+                external_globs.append((pattern, licenses))
+    return external_globs
 
 
 def search_dir(directory: Path):
@@ -90,7 +108,24 @@ def search_dir(directory: Path):
         listdir = list()
     for file in listdir:
         if (file.is_file() and EXTERNAL_FILE_RE.search(file.name) is not None):
-            parse_license_file(file)
+            parsed = parse_license_file(file)
+            if parsed is None:
+                continue
+            licenses, globs = parsed
+            log.dbg(f'External file {file} with {licenses}')
+            for glob in globs:
+                log.dbg(f'  describes {glob}:', level=log.VERBOSE_EXTREME)
+                try:
+                    matched_files = tuple(file.parent.glob(glob))
+                except ValueError as ex:
+                    log.wrn(f'Invalid glob "{glob}": {ex}')
+                    continue
+                for matched in matched_files:
+                    matched_str = str(matched)
+                    log.dbg(f'    {matched_str}', level=log.VERBOSE_EXTREME)
+                    if matched_str not in detected_files:
+                        detected_files[matched_str] = set()
+                    detected_files[matched_str].update(licenses)
     dir_search_done.add(str(directory))
     if directory.parent != directory:
         search_dir(directory.parent)
@@ -98,6 +133,8 @@ def search_dir(directory: Path):
 
 def detect(data: Data, optional: bool):
     '''External file detector.'''
+
+    external_globs = load_external_globs()
 
     if optional:
         filtered = filter(lambda file: len(file.licenses) == 0, data.files)
@@ -109,3 +146,11 @@ def detect(data: Data, optional: bool):
         if str(file.file_path) in detected_files:
             file.licenses.update(detected_files[str(file.file_path)])
             file.detectors.add('external-file')
+        if external_globs:
+            path_str = file.file_path.as_posix()
+            if os.name == 'nt':
+                path_str = path_str.lower()
+            for pattern, licenses in external_globs:
+                if fnmatch.fnmatchcase(path_str, pattern):
+                    file.licenses.update(licenses)
+                    file.detectors.add('external-file')
