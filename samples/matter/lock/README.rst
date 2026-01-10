@@ -96,14 +96,14 @@ Thread and Wi-Fi switching
 
 .. toggle::
 
-   When built using the :ref:`switched Thread and Wi-Fi configuration <matter_lock_sample_custom_configs>` and programmed to the nRF5340 DK with the nRF7002 EK shield attached, the door lock sample supports a feature that allows you to :ref:`switch between Matter over Thread and Matter over Wi-Fi <ug_matter_overview_architecture_integration_designs_switchable>` at runtime.
+   When built using the :ref:`switched Thread and Wi-Fi configuration <matter_lock_sample_custom_configs>` and programmed to the nRF54LM20 DK with the nRF7002-EB II shield attached, the sample supports a feature that allows you to :ref:`switch between Matter over Thread and Matter over Wi-Fi <ug_matter_overview_architecture_integration_designs_switchable>` at runtime.
    Due to Matter protocol limitations, a single Matter node can only use one transport protocol at a time.
 
    The application is built with support for both Matter over Thread and Matter over Wi-Fi.
    The device activates either Thread or Wi-Fi transport protocol on boot, based on a flag stored in the non-volatile memory on the device.
    By default, Matter over Wi-Fi is activated.
 
-   You can trigger the switch from one transport protocol to the other using the **Button 3** on the nRF5340 DK.
+   You can trigger the switch from one transport protocol to the other using the **Button 3** on the nRF54LM20 DK.
    This toggles the flag stored in the non-volatile memory, and then the device is factory reset and rebooted.
    Because the flag is toggled, the factory reset does not switch the device back to the default transport protocol (Wi-Fi).
    Instead, the factory reset and recommissioning to a Matter fabric allows the device to be provisioned with network credentials for the transport protocol that it was switched to, and to start operating in the selected network.
@@ -129,7 +129,7 @@ Matter Bluetooth LE with Nordic UART Service
 
    If the device is already connected to the Matter network, the notification about changing the lock state will be sent to the Bluetooth controller.
 
-   Currently, the door lock's Bluetooth LE service extension with NUS is only available for the nRF52840 and the nRF5340 DKs in the :ref:`Matter over Thread <ug_matter_gs_testing>` network variant.
+   Currently, the door lock's Bluetooth LE service extension with NUS is only available for the sample in the :ref:`Matter over Thread <ug_matter_gs_testing>` network variant.
    However, you can use the Bluetooth LE service extension regardless of whether the device is connected to a Matter over Thread network or not.
 
    See `Enabling Matter Bluetooth LE with Nordic UART Service`_ and `Testing Bluetooth LE with Nordic UART Service`_ for more information about how to configure and test this feature with this sample.
@@ -208,7 +208,7 @@ The |matter_type| supports the following build configurations:
    * - Switched Thread and Wi-Fi
      - :file:`prj_thread_wifi_switched.conf`
      - ``thread_wifi_switched``
-     - nRF5340 DK with the nRF7002 EK shield attached
+     - nRF54LM20 DK with the nRF7002-EB II shield attached
      - Debug version of the application with the ability to :ref:`switch between Thread and Wi-Fi network support <matter_lock_sample_wifi_thread_switching>` in the field.
 
 Advanced configuration options
@@ -292,7 +292,7 @@ Second Button:
    * Changes the lock state to the opposite one.
 
 Third Button:
-   * On the nRF5340 DK when using the :ref:`switched Thread and Wi-Fi configuration <matter_lock_sample_custom_configs>`: If pressed for more than ten seconds, it switches the Matter transport protocol from Thread or Wi-Fi to the other and factory resets the device.
+   * On the nRF54LM20 DK with the nRF7002-EB II shield attached when using the :ref:`switched Thread and Wi-Fi configuration <matter_lock_sample_custom_configs>`: If pressed for more than ten seconds, it switches the Matter transport protocol from Thread or Wi-Fi to the other and factory resets the device.
    * On other platform or configuration: Not available.
 
 .. include:: /includes/matter/interface/segger_usb.txt
@@ -554,7 +554,7 @@ Testing switching between Thread and Wi-Fi
    .. matter_door_lock_sample_thread_wifi_switch_desc_start
 
    .. note::
-      You can only test :ref:`matter_lock_sample_wifi_thread_switching` on the nRF5340 DK with the nRF7002 EK shield attached, using the :ref:`switched Thread and Wi-Fi configuration <matter_lock_sample_custom_configs>`.
+      You can only test :ref:`matter_lock_sample_wifi_thread_switching` on the nRF54LM20 DK with the nRF7002-EB II shield attached, using the :ref:`switched Thread and Wi-Fi configuration <matter_lock_sample_custom_configs>`.
 
    To test this feature, complete the following steps:
 
@@ -562,7 +562,7 @@ Testing switching between Thread and Wi-Fi
 
       .. code-block:: console
 
-         west build -b nrf5340dk/nrf5340/cpuapp -- -DFILE_SUFFIX=thread_wifi_switched -Dlock_SHIELD=nrf7002ek  -DSB_CONFIG_WIFI_NRF70=y
+         west build -b nrf54lm20dk/nrf54lm20a/cpuapp -- -DFILE_SUFFIX=thread_wifi_switched -Dlock_SHIELD=nrf7002eb2  -DSB_CONFIG_WIFI_NRF70=y
 
    #. Prepare the development kit for testing.
       Refer to the :ref:`matter_lock_sample_testing_start` section for more information.

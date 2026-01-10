@@ -109,16 +109,14 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - lock_SHIELD=nrf7002ek
+      - lock_SHIELD=nrf7002eb2
       - FILE_SUFFIX=thread_wifi_switched
-      - SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y
-      - SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES=3
-      - CONFIG_CHIP_DFU_OVER_BT_SMP=y
       - SB_CONFIG_WIFI_NRF70=y
-      - SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y
+      - CONFIG_CHIP_DFU_OVER_BT_SMP=y
     integration_platforms:
-      - nrf5340dk/nrf5340/cpuapp
-    platform_allow: nrf5340dk/nrf5340/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.lock.nus:
     sysbuild: true
     build_only: true
@@ -129,10 +127,12 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   sample.matter.lock.schedules:
     sysbuild: true
     build_only: true
