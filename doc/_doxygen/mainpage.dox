@@ -1,0 +1,54 @@
+/**
+@mainpage nRF Connect SDK API
+
+@brief
+A set of APIs provided by Nordic Semiconductor for developing applications on their
+nRF Series of wireless connectivity chips. These APIs facilitate robust and efficient
+development for various applications, ranging from simple device interactions to
+complex wireless system configurations.
+
+@section key_api_categories Main API categories
+
+@subsection ble Bluetooth Low Energy (BLE)
+Manage BLE operations, configure roles, and handle communication protocols.
+
+@subsection zigbee Zigbee
+Implement Zigbee networking for smart home and IoT solutions.
+
+@subsection thread Thread
+Utilize the Thread protocol for reliable, low-power mesh networking.
+
+@subsection lte LTE and Cellular IoT
+Develop applications for LTE networks and cellular-based IoT deployments.
+
+@subsection nfc NFC
+Integrate Near Field Communication (NFC) functionalities for contactless interactions.
+
+@subsection gpio GPIO
+Control general-purpose input/output pins for device management and setups.
+
+@subsection pwm PWM
+Configure Pulse Width Modulation signals for controlling electronics.
+
+@subsection adc ADC
+Utilize the Analog-to-Digital Converter for sensor data and signal processing.
+
+@subsection i2c I2C
+Implement Inter-Integrated Circuit communication for peripherals.
+
+@subsection spi SPI
+Manage Serial Peripheral Interface communications for high-speed data transfers.
+
+@subsection uart UART
+Handle Universal Asynchronous Receiver-Transmitter settings for serial communication.
+
+@subsection crypto Crypto
+Secure your applications with cryptographic operations and security protocols.
+
+@subsection storage Storage
+Manage data storage and retrieval operations efficiently.
+
+@subsection power Power Management
+Optimize power usage and manage device power states effectively.
+
+*/
