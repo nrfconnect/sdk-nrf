@@ -86,6 +86,52 @@ namespace app
 
 		} // namespace OtaSoftwareUpdateRequestor
 
+		namespace ThreadNetworkDiagnostics
+		{
+
+			Protocols::InteractionModel::Status
+			DispatchServerCommand(CommandHandler *apCommandObj, const ConcreteCommandPath &aCommandPath,
+					      TLV::TLVReader &aDataTlv)
+			{
+				CHIP_ERROR TLVError = CHIP_NO_ERROR;
+				bool wasHandled = false;
+				{
+					switch (aCommandPath.mCommandId) {
+					case Commands::ResetCounts::Id: {
+						Commands::ResetCounts::DecodableType commandData;
+						TLVError = DataModel::Decode(aDataTlv, commandData);
+						if (TLVError == CHIP_NO_ERROR) {
+							wasHandled =
+								emberAfThreadNetworkDiagnosticsClusterResetCountsCallback(
+									apCommandObj, aCommandPath, commandData);
+						}
+						break;
+					}
+					default: {
+						// Unrecognized command ID, error status will apply.
+						ChipLogError(Zcl,
+							     "Unknown command " ChipLogFormatMEI
+							     " for cluster " ChipLogFormatMEI,
+							     ChipLogValueMEI(aCommandPath.mCommandId),
+							     ChipLogValueMEI(aCommandPath.mClusterId));
+						return Protocols::InteractionModel::Status::UnsupportedCommand;
+					}
+					}
+				}
+
+				if (CHIP_NO_ERROR != TLVError || !wasHandled) {
+					ChipLogProgress(Zcl, "Failed to dispatch command, TLVError=%" CHIP_ERROR_FORMAT,
+							TLVError.Format());
+					return Protocols::InteractionModel::Status::InvalidCommand;
+				}
+
+				// We use success as a marker that no special handling is required
+				// This is to avoid having a std::optional which uses slightly more code.
+				return Protocols::InteractionModel::Status::Success;
+			}
+
+		} // namespace ThreadNetworkDiagnostics
+
 	} // namespace Clusters
 
 	void DispatchSingleClusterCommand(const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aReader,
@@ -97,6 +143,10 @@ namespace app
 		case Clusters::OtaSoftwareUpdateRequestor::Id:
 			errorStatus = Clusters::OtaSoftwareUpdateRequestor::DispatchServerCommand(
 				apCommandObj, aCommandPath, aReader);
+			break;
+		case Clusters::ThreadNetworkDiagnostics::Id:
+			errorStatus = Clusters::ThreadNetworkDiagnostics::DispatchServerCommand(apCommandObj,
+												aCommandPath, aReader);
 			break;
 		default:
 			ChipLogError(Zcl, "Unknown cluster " ChipLogFormatMEI,
