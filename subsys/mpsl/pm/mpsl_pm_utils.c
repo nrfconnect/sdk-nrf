@@ -11,9 +11,10 @@
 #include <zephyr/pm/policy.h>
 #include <zephyr/logging/log.h>
 
-#if defined(CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE)
+#if defined(CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE) || \
+	defined(CONFIG_MPSL_PM_USE_MRAM_LATENCY_INTERNAL_SWITCH)
 #include <mram_latency.h>
-#endif /* CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE */
+#endif
 
 #include <mpsl/mpsl_work.h>
 #include "mpsl_pm_utils.h"
@@ -225,6 +226,13 @@ int32_t mpsl_pm_utils_init(void)
 	pm_policy_latency_request_add(&m_latency_req, NO_RADIO_EVENT_PERIOD_LATENCY_US);
 	m_prev_lat_value_us = NO_RADIO_EVENT_PERIOD_LATENCY_US;
 
+#if defined(CONFIG_MPSL_PM_USE_MRAM_LATENCY_INTERNAL_SWITCH)
+	int err;
+
+	err = mram_no_latency_internal_switch_enable();
+	__ASSERT(0 == err, "MRAM internal switch enable failed: %d.", err);
+#endif /* CONFIG_MPSL_PM_USE_MRAM_LATENCY_INTERNAL_SWITCH */
+
 	mpsl_pm_init();
 	/* On init there should be no update from high-prio, returned value can be ignored */
 	(void)mpsl_pm_params_get(&params);
@@ -243,6 +251,13 @@ int32_t mpsl_pm_utils_uninit(void)
 	}
 
 	mpsl_pm_uninit();
+
+#if defined(CONFIG_MPSL_PM_USE_MRAM_LATENCY_INTERNAL_SWITCH)
+	int err;
+
+	err = mram_no_latency_internal_switch_disable();
+	__ASSERT(0 == err, "MRAM internal switch disable failed: %d.", err);
+#endif /* CONFIG_MPSL_PM_USE_MRAM_LATENCY_INTERNAL_SWITCH */
 
 	/* The mpsl_pm_utils_uninit() must be called with MULTITHREADING_LOCK_ACQUIRE to make sure
 	 * there is no mpsl_low_prio_work running. That could lead to a race condition.
