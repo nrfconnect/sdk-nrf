@@ -19,6 +19,10 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
+The sample requires an `nRF Cloud`_ account.
+Your device must be onboarded to nRF Cloud.
+If it is not, follow the instructions in `Device on-boarding <location_onboarding>`_.
+
 See also the requirements in :ref:`lib_location` library document.
 
 .. note::
@@ -30,6 +34,15 @@ Overview
 The Location sample retrieves the location multiple times to illustrate the different ways of retrieving the location of a device.
 Each individual location request has been implemented in a separate function within the sample.
 In addition to the :ref:`lib_location` library, this sample uses :ref:`lte_lc_readme` to control the LTE connection.
+
+.. _location_onboarding:
+
+Setup
+=====
+
+You must onboard your device to nRF Cloud for this sample to function.
+You only need to do this once for each device.
+To onboard your device, install `nRF Cloud Utils`_ and follow the instructions in the README.
 
 Configuration
 *************
