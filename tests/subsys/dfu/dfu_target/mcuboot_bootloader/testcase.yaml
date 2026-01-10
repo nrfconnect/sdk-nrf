@@ -9,7 +9,6 @@ tests:
       - qemu_cortex_m3
     integration_platforms:
       - nrf52840dk/nrf52840
-      - nrf52dk/nrf52832
       - nrf9160dk/nrf9160
       - native_sim
       - qemu_cortex_m3

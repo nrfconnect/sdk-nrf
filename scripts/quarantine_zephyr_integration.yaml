@@ -266,3 +266,11 @@
   platforms:
     - nrf52dk/nrf52832
   comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.bluetooth.audio_unicast_server.bt_ll_sw_split
+    - sample.bluetooth.audio_unicast_client.bt_ll_sw_split
+  platforms:
+    - nrf52840dk/nrf52840
+    - nrf52dk/nrf52832
+  comment: "Configurations excluded to limit resources usage in integration builds"

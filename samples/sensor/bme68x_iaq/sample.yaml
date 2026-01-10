@@ -6,10 +6,8 @@ tests:
     depends_on: i2c
     harness: sensor
     integration_platforms:
-      - thingy91/nrf9160
       - thingy91/nrf9160/ns
       - thingy53/nrf5340/cpuapp
-      - thingy53/nrf5340/cpuapp/ns
     platform_allow:
       - thingy91/nrf9160
       - thingy91/nrf9160/ns
@@ -23,10 +21,8 @@ tests:
     sysbuild: true
     depends_on: i2c
     integration_platforms:
-      - thingy91/nrf9160
       - thingy91/nrf9160/ns
       - thingy53/nrf5340/cpuapp
-      - thingy53/nrf5340/cpuapp/ns
     extra_args: CONFIG_APP_TRIGGER=n
     platform_allow:
       - thingy91/nrf9160
