@@ -10,7 +10,5 @@ tests:
     sysbuild: true
     build_only: true
     integration_platforms:
-      - nrf7120pdk/nrf7120/cpuapp
-    platform_allow: nrf7120pdk/nrf7120/cpuapp
-    extra_args:
-      - EXTRA_DTC_OVERLAY_FILE="ipc.overlay"
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow: nrf7120dk/nrf7120/cpuapp
