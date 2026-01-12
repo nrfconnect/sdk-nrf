@@ -1,5 +1,6 @@
 board:
   name: nrf52840gmouse
+  full_name: nRF52840 Gaming Mouse
   vendor: nordic
   socs:
     - name: nrf52840
