@@ -92,7 +92,7 @@ chip::Crypto::PSAOperationalKeystore Nrf::Matter::InitData::sOperationalKeystore
 chip::DeviceLayer::KMUSessionKeystore Nrf::Matter::InitData::sKMUSessionKeystoreDefault{};
 #endif
 
-#ifdef CONFIG_CHIP_FACTORY_DATA
+#ifdef CONFIG_CHIP_FACTORY_DATA_NRFCONNECT_BACKEND
 FactoryDataProvider<InternalFlashFactoryData> Nrf::Matter::InitData::sFactoryDataProviderDefault{};
 #endif
 
@@ -282,6 +282,9 @@ void DoInitChipServer(intptr_t /* unused */)
 	if (sLocalInitData.mFactoryDataProvider) {
 		sInitResult = sLocalInitData.mFactoryDataProvider->Init();
 		VerifyInitResultOrReturn(sInitResult, "FactoryDataProvider::Init() failed");
+	} else {
+		sInitResult = CHIP_ERROR_INTERNAL;
+		VerifyInitResultOrReturn(sInitResult, "No factory data provider configured");
 	}
 
 	SetDeviceInstanceInfoProvider(sLocalInitData.mFactoryDataProvider);
@@ -447,7 +450,7 @@ FactoryDataProviderBase *GetFactoryDataProvider()
 {
 	return sLocalInitData.mFactoryDataProvider;
 }
-#endif
+#endif /* CONFIG_CHIP_FACTORY_DATA */
 
 PersistentStorageDelegate *GetPersistentStorageDelegate()
 {
