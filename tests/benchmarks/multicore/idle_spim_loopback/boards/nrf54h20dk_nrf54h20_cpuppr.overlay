@@ -61,7 +61,7 @@
 
 &gpiote130 {
 	status = "okay";
-	owned-channels = <7>;
+	owned-channels = <6>;
 };
 
 &pinctrl {
