@@ -167,6 +167,9 @@ class PsaAlgorithm(IntEnum):
     # PSA_ALG_ECDSA(PSA_ALG_SHA_256)
     ECDSA_SHA256 = 0x06000609
 
+    # PSA_ALG_ECDSA(PSA_ALG_SHA_384)
+    ECDSA_SHA384 = 0x0600060A
+
     # PSA_ALG_ECDH
     ECDH = 0x09020000
 
@@ -305,24 +308,32 @@ class PlatformKeyAttributes:
                     f"Algorithm {self.alg0.name} can only be used with the SIGN, SIGN_VERIFY, or VERIFY key usage"
                 )
 
-        # ECDSA algorithm
-        elif self.alg0 == PsaAlgorithm.ECDSA_SHA256:
+        # ECDSA algorithm with curves secp256r1 or secp384r1
+        elif self.alg0 in (PsaAlgorithm.ECDSA_SHA256, PsaAlgorithm.ECDSA_SHA384):
             if self.key_type not in (
                 PsaKeyType.ECC_PUBLIC_KEY_SECP_R1,
                 PsaKeyType.ECC_KEY_PAIR_SECP_R1,
             ):
                 raise ValueError(
-                    f"Algorithm {self.alg0.name} can only be used with the secp256r1 key type"
+                    f"Algorithm {self.alg0.name} can only be used with the ECC_*_SECP_R1 key types"
                 )
-            if self.key_bits != 256:
-                raise ValueError(f"Algorithm {self.alg0.name} only supports 256-bit keys")
-            if self.usage not in (
-                PsaKeyUsage.SIGN,
-                PsaKeyUsage.SIGN_VERIFY,
+            if self.key_bits not in (256, 384):
+                raise ValueError(
+                    f"Algorithm {self.alg0.name} only supports 256-bit and 384-bit keys"
+                )
+            if self.key_type == PsaKeyType.ECC_PUBLIC_KEY_SECP_R1 and self.usage not in (
                 PsaKeyUsage.VERIFY,
             ):
                 raise ValueError(
-                    f"Algorithm {self.alg0.name} can only be used with the SIGN, SIGN_VERIFY, or VERIFY key usage"
+                    f"Key type {self.key_type.name} can only be used with the VERIFY key usage"
+                )
+            elif self.key_type == PsaKeyType.ECC_KEY_PAIR_SECP_R1 and self.usage not in (
+                PsaKeyUsage.SIGN,
+                PsaKeyUsage.VERIFY,
+                PsaKeyUsage.SIGN_VERIFY,
+            ):
+                raise ValueError(
+                    f"Key type {self.key_type.name} can only be used with the SIGN, VERIFY or SIGN_VERIFY key usage"
                 )
 
         # EdDSA algorithm
@@ -336,13 +347,19 @@ class PlatformKeyAttributes:
                 )
             if self.key_bits != 255:
                 raise ValueError(f"Algorithm {self.alg0.name} only supports 255-bit keys")
-            if self.usage not in (
-                PsaKeyUsage.SIGN,
-                PsaKeyUsage.SIGN_VERIFY,
+            if self.key_type == PsaKeyType.ECC_PUBLIC_KEY_TWISTED_EDWARDS and self.usage not in (
                 PsaKeyUsage.VERIFY,
             ):
                 raise ValueError(
-                    f"Algorithm {self.alg0.name} can only be used with the SIGN, SIGN_VERIFY, or VERIFY key usage"
+                    f"Key type {self.key_type.name} can only be used with the VERIFY key usage"
+                )
+            elif self.key_type == PsaKeyType.ECC_KEY_PAIR_TWISTED_EDWARDS and self.usage not in (
+                PsaKeyUsage.SIGN,
+                PsaKeyUsage.VERIFY,
+                PsaKeyUsage.SIGN_VERIFY,
+            ):
+                raise ValueError(
+                    f"Key type {self.key_type.name} can only be used with the SIGN, VERIFY or SIGN_VERIFY key usage"
                 )
 
         # ECDH algorithm
@@ -482,7 +499,9 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--key-bits",
-        help="Key size in bits. Note that ECC secp256r1 public keys must be set to 256 bits, even though the uncompressed secp256r1 public key size is 65 bytes",
+        help="Key size in bits. Note that ECC secp256r1 public keys must be set to 256 bits and "
+        "ECC secp384r1 public keys must be set to 384 bits, even though the uncompressed key "
+        "sizes are 65 bytes and 97 bytes respectively.",
         type=lambda number_string: int(number_string, 0),
         required=True,
     )
