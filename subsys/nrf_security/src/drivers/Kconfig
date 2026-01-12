@@ -296,8 +296,6 @@ rsource "nrf_cc3xx/Kconfig"
 
 rsource "cracen/Kconfig"
 
-rsource "wifi_keys/Kconfig"
-
 rsource "nrf_oberon/Kconfig"
 
 rsource "zephyr/Kconfig"
