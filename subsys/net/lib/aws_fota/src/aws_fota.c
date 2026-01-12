@@ -382,6 +382,8 @@ static int job_update_accepted(struct mqtt_client *const client, uint32_t payloa
 			sec_tag = CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG;
 		}
 
+		fota_download_if_name_set(client->transport.if_name);
+
 		err = fota_download_start(hostname, file_path, sec_tag, 0, 0);
 		if (err) {
 			LOG_ERR("Error (%d) when trying to start firmware download", err);
