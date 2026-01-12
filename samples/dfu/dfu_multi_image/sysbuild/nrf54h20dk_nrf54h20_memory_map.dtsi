@@ -26,19 +26,19 @@
 		};
 
 		cpuapp_slot0_partition: partition@42000 {
-			reg = <0x42000 DT_SIZE_K(212)>;
+			reg = <0x42000 DT_SIZE_K(216)>;
 		};
 
-		cpurad_slot0_partition: partition@77000 {
-			reg = <0x77000 DT_SIZE_K(216)>;
+		cpurad_slot0_partition: partition@78000 {
+			reg = <0x78000 DT_SIZE_K(212)>;
 		};
 
 		cpuapp_slot1_partition: partition@ad000 {
-			reg = <0xad000 DT_SIZE_K(212)>;
+			reg = <0xad000 DT_SIZE_K(216)>;
 		};
 
-		cpurad_slot1_partition: partition@e2000 {
-			reg = <0xe2000 DT_SIZE_K(216)>;
+		cpurad_slot1_partition: partition@e3000 {
+			reg = <0xe3000 DT_SIZE_K(212)>;
 		};
 
 		cpuppr_code_partition: partition@118000 {
