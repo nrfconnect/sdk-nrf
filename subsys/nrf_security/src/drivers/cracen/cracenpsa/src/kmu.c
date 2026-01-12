@@ -28,6 +28,7 @@
 #define CRACEN_KMU_128_BIT_KEY_SIZE	     16u
 #define CRACEN_KMU_192_BIT_KEY_SIZE	     24u
 #define CRACEN_KMU_256_BIT_KEY_SIZE	     32u
+#define CRACEN_KMU_384_BIT_KEY_SIZE	     48u
 
 /* Reserved slot, used to record whether provisioning is in progress for a set of slots.
  * We only use the metadata field, formatted as follows:
@@ -1072,7 +1073,8 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 			key_buffer_size--;
 		} else if (key_buffer_size != CRACEN_KMU_128_BIT_KEY_SIZE &&
 			   key_buffer_size != CRACEN_KMU_192_BIT_KEY_SIZE &&
-			   key_buffer_size != CRACEN_KMU_256_BIT_KEY_SIZE) {
+			   key_buffer_size != CRACEN_KMU_256_BIT_KEY_SIZE &&
+			   key_buffer_size != CRACEN_KMU_384_BIT_KEY_SIZE) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		} else {
 			/* Nothing to do. Added for compliance */
