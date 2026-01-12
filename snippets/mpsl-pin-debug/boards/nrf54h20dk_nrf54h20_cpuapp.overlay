@@ -1,0 +1,12 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* CPUAPP by default owns all gpiote130 channels.
+ * Release 0, 1, 2, and 3 so the CPURAD can use them.
+ */
+&gpiote130 {
+	owned-channels = <4 5 6 7>;
+};
