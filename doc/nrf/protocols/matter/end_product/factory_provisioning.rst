@@ -977,10 +977,10 @@ To override the inherited classes, complete the following steps:
 #. Disable building both the default and the nRF Connect implementations of factory data providers to start using your own implementation of factory data parser and provider.
    This can be done in one of the following ways:
 
-   * Set the :option:`CONFIG_CHIP_FACTORY_DATA_CUSTOM_BACKEND` Kconfig option to ``y`` in the :file:`prj.conf` file.
+   * Set the :option:`CONFIG_CHIP_FACTORY_DATA_CUSTOM_BACKEND` Kconfig option to ``y`` in the :file:`prj.conf` file and the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option to ``n``.
    * Build an example with the following option (replace ``<build_target>`` with your board name, for example ``nrf52840dk_nrf52840``):
 
      .. parsed-literal::
         :class: highlight
 
-        $ west build -b <build_target> -- -DCONFIG_CHIP_FACTORY_DATA_CUSTOM_BACKEND=y
+        $ west build -b <build_target> -- -DCONFIG_CHIP_FACTORY_DATA_CUSTOM_BACKEND=y -DSB_CONFIG_MATTER_FACTORY_DATA_GENERATE=n
