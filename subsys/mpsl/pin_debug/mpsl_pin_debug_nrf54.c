@@ -15,10 +15,120 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
 
-#define GPIOTE_NODE DT_NODELABEL(gpiote20)
+#if defined(CONFIG_SOC_NRF54H20_CPURAD)
+#include <hal/nrf_gpiote.h>
+#include <hal/nrf_ipct.h>
+#include <hal/nrf_dppi.h>
+#endif /* CONFIG_SOC_NRF54H20_CPURAD */
+
+#define GPIOTE_NODE DT_NODELABEL(gpiote130)
 
 LOG_MODULE_REGISTER(mpsl_radio_pin_debug, CONFIG_MPSL_LOG_LEVEL);
 
+#if defined(CONFIG_SOC_NRF54H20_CPURAD)
+/* Below values must match to the nrf54h20dk_nrf54h20_cpurad.overlay content.*/
+#define MPSL_LOCAL_DPPI_RADIO_READY_DPPI_CHANNEL    1
+#define MPSL_LOCAL_DPPI_RADIO_DISABLED_DPPI_CHANNEL 2
+#define MPSL_LOCAL_DPPI_RADIO_ADDRESS_DPPI_CHANNEL  3
+#define MPSL_LOCAL_DPPI_RADIO_END_DPPI_CHANNEL	    4
+
+#define MPSL_LOCAL_IPCT_RADIO_READY_DPPI_CHANNEL    1
+#define MPSL_LOCAL_IPCT_RADIO_DISABLED_DPPI_CHANNEL 2
+#define MPSL_LOCAL_IPCT_RADIO_ADDRESS_DPPI_CHANNEL  3
+#define MPSL_LOCAL_IPCT_RADIO_END_DPPI_CHANNEL	    4
+
+#define MPSL_GLOBAL_DPPI_RADIO_READY_DPPI_CHANNEL    1
+#define MPSL_GLOBAL_DPPI_RADIO_DISABLED_DPPI_CHANNEL 2
+#define MPSL_GLOBAL_DPPI_RADIO_ADDRESS_DPPI_CHANNEL  3
+#define MPSL_GLOBAL_DPPI_RADIO_END_DPPI_CHANNEL	     4
+
+#define MPSL_GLOBAL_IPCT_RADIO_READY_DPPI_CHANNEL    1
+#define MPSL_GLOBAL_IPCT_RADIO_DISABLED_DPPI_CHANNEL 2
+#define MPSL_GLOBAL_IPCT_RADIO_ADDRESS_DPPI_CHANNEL  3
+#define MPSL_GLOBAL_IPCT_RADIO_END_DPPI_CHANNEL	     4
+
+static int m_ppi_config(void)
+{
+	/* Local struct to store required HW events configuration to enable forwarding from RADIO
+	 * PERIPHERAL to GPIOTE130. The full path is:
+	 *   RADIO -> DPPI020 -> (RADIO CORE)IPCT -> IPCT130D -> DPPI130-> GPIOTE130.
+	 */
+	struct dppi_path_config {
+		/* Value must match to source in one of cpurad_ipct->source-channel-links defined
+		 * in DTS.
+		 */
+		uint32_t radio_core_ipct_channel;
+		uint32_t radio_core_dppi_channel;
+		/* Value must match to sink in one of ipct130->sink-channel-links defined in DTS */
+		uint32_t global_domain_ipct_channel;
+		/* Value must match to one of dppic130->owned-channels defined in DTS */
+		uint32_t global_domain_dppi_channel;
+		uint32_t gpiote_task_ep;
+	};
+
+	nrfx_gpiote_t *gpiote = &GPIOTE_NRFX_INST_BY_NODE(GPIOTE_NODE);
+
+	struct dppi_path_config dppi_path_config[] = {
+		{
+			.radio_core_ipct_channel = MPSL_LOCAL_DPPI_RADIO_READY_DPPI_CHANNEL,
+			.radio_core_dppi_channel = MPSL_DPPI_RADIO_PUBLISH_READY_CHANNEL_IDX,
+			.global_domain_ipct_channel = MPSL_GLOBAL_IPCT_RADIO_READY_DPPI_CHANNEL,
+			.global_domain_dppi_channel = MPSL_GLOBAL_DPPI_RADIO_READY_DPPI_CHANNEL,
+			.gpiote_task_ep = nrfx_gpiote_set_task_address_get(
+				gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN),
+		},
+		{
+			.radio_core_ipct_channel = MPSL_LOCAL_IPCT_RADIO_DISABLED_DPPI_CHANNEL,
+			.radio_core_dppi_channel = MPSL_DPPI_RADIO_PUBLISH_DISABLED_CH_IDX,
+			.global_domain_ipct_channel = MPSL_GLOBAL_IPCT_RADIO_DISABLED_DPPI_CHANNEL,
+			.global_domain_dppi_channel = MPSL_GLOBAL_DPPI_RADIO_DISABLED_DPPI_CHANNEL,
+			.gpiote_task_ep = nrfx_gpiote_clr_task_address_get(
+				gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_READY_AND_DISABLED_PIN),
+		},
+		{
+			.radio_core_ipct_channel = MPSL_LOCAL_IPCT_RADIO_ADDRESS_DPPI_CHANNEL,
+			.radio_core_dppi_channel = MPSL_DPPI_RADIO_PUBLISH_ADDRESS_CHANNEL_IDX,
+			.global_domain_ipct_channel = MPSL_GLOBAL_IPCT_RADIO_ADDRESS_DPPI_CHANNEL,
+			.global_domain_dppi_channel = MPSL_GLOBAL_DPPI_RADIO_ADDRESS_DPPI_CHANNEL,
+			.gpiote_task_ep = nrfx_gpiote_set_task_address_get(
+				gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN),
+		},
+		{
+			.radio_core_ipct_channel = MPSL_LOCAL_IPCT_RADIO_END_DPPI_CHANNEL,
+			.radio_core_dppi_channel = MPSL_DPPI_RADIO_PUBLISH_END_CHANNEL_IDX,
+			.global_domain_ipct_channel = MPSL_GLOBAL_IPCT_RADIO_END_DPPI_CHANNEL,
+			.global_domain_dppi_channel = MPSL_GLOBAL_DPPI_RADIO_END_DPPI_CHANNEL,
+			.gpiote_task_ep = nrfx_gpiote_clr_task_address_get(
+				gpiote, CONFIG_MPSL_PIN_DEBUG_RADIO_ADDRESS_AND_END_PIN),
+		}};
+
+	for (size_t idx = 0; idx < ARRAY_SIZE(dppi_path_config); idx++) {
+		nrf_ipct_task_t ipct_task =
+			nrf_ipct_send_task_get(dppi_path_config[idx].radio_core_ipct_channel);
+		nrf_ipct_subscribe_set(NRF_RADIOCORE_IPCT, ipct_task,
+				       dppi_path_config[idx].radio_core_dppi_channel);
+		nrf_ipct_shorts_enable(NRF_RADIOCORE_IPCT,
+				       1UL << dppi_path_config[idx].radio_core_dppi_channel);
+
+		nrf_ipct_event_t ipct_event = nrf_ipct_receive_event_get(
+			dppi_path_config[idx].global_domain_ipct_channel);
+		nrf_ipct_publish_set(NRF_IPCT130, ipct_event,
+				     dppi_path_config[idx].global_domain_ipct_channel);
+		nrf_ipct_shorts_enable(NRF_IPCT130,
+				       1UL << dppi_path_config[idx].global_domain_ipct_channel);
+
+		nrf_dppi_channels_enable(NRF_DPPIC020,
+					 1UL << dppi_path_config[idx].radio_core_dppi_channel);
+		nrf_dppi_channels_enable(NRF_DPPIC130,
+					 1UL << dppi_path_config[idx].global_domain_dppi_channel);
+
+		nrf_gpiote_subscribe_set(NRF_GPIOTE130, dppi_path_config[idx].gpiote_task_ep,
+					 dppi_path_config[idx].global_domain_dppi_channel);
+	}
+
+	return 0;
+}
+#else
 static int m_ppi_config(void)
 {
 	nrfx_gpiote_t *gpiote = &GPIOTE_NRFX_INST_BY_NODE(GPIOTE_NODE);
@@ -58,6 +168,7 @@ static int m_ppi_config(void)
 
 	return 0;
 }
+#endif /* CONFIG_SOC_NRF54H20_CPURAD */
 
 static int mpsl_radio_pin_debug_init(void)
 {
