@@ -30,8 +30,10 @@ tests:
     timeout: 130
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
   tfm.psa_test_storage_lvl2:
     tags: tfm_lvl2
     extra_args:
@@ -39,8 +41,10 @@ tests:
     timeout: 130
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
   tfm.psa_test_crypto_lvl1:
     tags: tfm_lvl1
     extra_args:
@@ -49,8 +53,10 @@ tests:
     timeout: 120
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
   tfm.psa_test_crypto_lvl2:
     tags: tfm_lvl2
     extra_args:
@@ -58,8 +64,10 @@ tests:
     timeout: 120
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
   tfm.psa_test_initial_attestation_lvl1:
     tags: tfm_lvl1
     extra_args:
