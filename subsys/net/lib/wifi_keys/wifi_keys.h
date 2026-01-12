@@ -28,6 +28,8 @@ psa_status_t wifi_keys_import_key(const psa_key_attributes_t *attr, const uint8_
 				  size_t data_length, uint8_t *key_buffer, size_t key_buffer_size,
 				  size_t *key_buffer_length, size_t *key_bits);
 
+psa_status_t wifi_keys_destroy_key(const psa_key_attributes_t *attr);
+
 uint32_t wifi_keys_get_key_size_in_bytes(wifi_keys_key_type_t type);
 
 uint32_t wifi_keys_get_key_size_in_bits(wifi_keys_key_type_t type);

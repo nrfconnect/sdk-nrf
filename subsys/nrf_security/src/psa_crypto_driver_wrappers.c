@@ -3123,6 +3123,10 @@ psa_status_t psa_driver_wrapper_destroy_builtin_key(const psa_key_attributes_t *
 	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
+#if defined(PSA_CRYPTO_DRIVER_WIFI_KEYS)
+	case PSA_KEY_LOCATION_WIFI_KEYS:
+		return wifi_keys_destroy_key(attributes);
+#endif
 #if defined(PSA_CRYPTO_DRIVER_IRONSIDE)
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
 		return ironside_psa_destroy_builtin_key(attributes);

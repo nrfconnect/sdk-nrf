@@ -43,8 +43,8 @@ static int wifi_keys_set_key_id(psa_key_attributes_t *attr, uint32_t db_id, uint
 		return 1;
 	}
 
-	/* Arbitrary key ID scheme - non-builtin key. */
-	psa_key_id_t id = 0x3F000000 | ('W' << 16) | ('C' << 8) | (db_id << 2) | (key_index);
+	/* Arbitrary key ID scheme - builtin key. */
+	psa_key_id_t id = 0x7F000000 | ('W' << 16) | ('C' << 8) | (db_id << 2) | (key_index);
 
 	psa_set_key_id(attr, id);
 	return 0;
@@ -185,14 +185,12 @@ psa_status_t wifi_keys_import_key(const psa_key_attributes_t *attr, const uint8_
 	psa_key_lifetime_t lifetime = psa_get_key_lifetime(attr);
 	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(lifetime);
 	psa_key_persistence_t persistence = PSA_KEY_LIFETIME_GET_PERSISTENCE(lifetime);
-	mbedtls_svc_key_id_t key = psa_get_key_id(attr);
+	psa_key_id_t id = psa_get_key_id(attr);
 
-	LOG_INF("Importing key to PSA, location: %d, persistence: %d, lifetime: %d key: 0x%08X",
-		location, persistence, lifetime, key);
+	LOG_INF("Importing key to PSA, location: %d, persistence: %d, lifetime: %d, id: 0x%08X",
+		location, persistence, lifetime, id);
 	if (location == PSA_KEY_LOCATION_WIFI_KEYS) {
 		wifi_keys_key_type_t type = (wifi_keys_key_type_t)psa_get_key_type(attr);
-		psa_key_id_t id = psa_get_key_id(attr);
-
 		uint32_t db_id = (id >> 2) & 0x7;
 		uint32_t key_index = id & 0x3;
 
@@ -215,6 +213,33 @@ psa_status_t wifi_keys_import_key(const psa_key_attributes_t *attr, const uint8_
 								   db_id, key_index, key_slot);
 			if (ret) {
 				LOG_ERR("Failed to provision and push key: %d", ret);
+			}
+			return ret;
+		}
+		LOG_ERR("Invalid persistence: %d", persistence);
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+	return PSA_ERROR_NOT_SUPPORTED;
+}
+
+psa_status_t wifi_keys_destroy_key(const psa_key_attributes_t *attr)
+{
+	psa_key_lifetime_t lifetime = psa_get_key_lifetime(attr);
+	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(lifetime);
+	psa_key_persistence_t persistence = PSA_KEY_LIFETIME_GET_PERSISTENCE(lifetime);
+	psa_key_id_t id = psa_get_key_id(attr);
+
+	if (location == PSA_KEY_LOCATION_WIFI_KEYS) {
+		wifi_keys_key_type_t type = (wifi_keys_key_type_t)psa_get_key_type(attr);
+		uint32_t db_id = (id >> 2) & 0x7;
+		uint32_t key_index = id & 0x3;
+
+		if (persistence == PSA_KEY_PERSISTENCE_DEFAULT) {
+			uint32_t key_slot = wifi_keys_kmu_slot_id(type, db_id, key_index);
+			int ret = lib_kmu_revoke_slot(key_slot);
+
+			if (ret) {
+				LOG_ERR("Failed to revoke key: %d", ret);
 			}
 			return ret;
 		}
