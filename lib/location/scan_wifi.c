@@ -12,6 +12,7 @@
 #include <zephyr/net/net_event.h>
 #include <zephyr/net/wifi_mgmt.h>
 #include <modem/location.h>
+#include <net/wifi_ready.h>
 
 #include "location_core.h"
 #include "location_utils.h"
@@ -27,6 +28,28 @@ static struct wifi_scan_info scan_wifi_info = {
 	.ap_info = scan_results,
 };
 static struct k_sem *scan_wifi_ready;
+
+#if defined(CONFIG_LOCATION_METHOD_WIFI_NET_IF_UPDOWN)
+/* Timeout for waiting for Wi-Fi to be ready, max 10s in nRF70 + buffer */
+#define WIFI_READY_TIMEOUT_SEC 15
+
+static K_SEM_DEFINE(wifi_ready_sem, 0, 1);
+
+static void scan_wifi_ready_cb(bool ready)
+{
+	if (ready) {
+		LOG_DBG("Wi-Fi is ready");
+		k_sem_give(&wifi_ready_sem);
+	} else {
+		LOG_DBG("Wi-Fi is not ready");
+		k_sem_reset(&wifi_ready_sem);
+	}
+}
+
+static wifi_ready_callback_t scan_wifi_ready_cb_data = {
+	.wifi_ready_cb = scan_wifi_ready_cb,
+};
+#endif /* defined(CONFIG_LOCATION_METHOD_WIFI_NET_IF_UPDOWN) */
 
 /** Handler for timeout. */
 static void scan_wifi_timeout_work_fn(struct k_work *work);
@@ -62,8 +85,9 @@ void scan_wifi_details_get(struct location_data_details *details)
 #if defined(CONFIG_LOCATION_METHOD_WIFI_NET_IF_UPDOWN)
 static int scan_wifi_interface_shutdown(struct net_if *iface)
 {
-	LOG_DBG("Shutting down Wi-Fi interface");
 	int ret;
+
+	LOG_DBG("Shutting down Wi-Fi interface");
 
 	if (!net_if_is_admin_up(iface)) {
 		return 0;
@@ -82,8 +106,9 @@ static int scan_wifi_interface_shutdown(struct net_if *iface)
 
 static int scan_wifi_startup_interface(struct net_if *iface)
 {
-	LOG_DBG("Starting up Wi-Fi interface");
 	int ret;
+
+	LOG_DBG("Starting up Wi-Fi interface");
 
 	if (!net_if_is_admin_up(iface)) {
 		ret = net_if_up(iface);
@@ -93,6 +118,17 @@ static int scan_wifi_startup_interface(struct net_if *iface)
 		}
 		LOG_DBG("Interface up");
 	}
+
+	/* Wait for Wi-Fi to be ready before scanning */
+	LOG_DBG("Waiting for Wi-Fi to be ready (timeout: %d sec)",
+		WIFI_READY_TIMEOUT_SEC);
+	ret = k_sem_take(&wifi_ready_sem, K_SECONDS(WIFI_READY_TIMEOUT_SEC));
+	if (ret) {
+		LOG_ERR("Timeout waiting for Wi-Fi to be ready (%d)", ret);
+		return -ETIMEDOUT;
+	}
+
+	LOG_DBG("Wi-Fi interface is ready");
 	return 0;
 }
 #endif /* defined(CONFIG_LOCATION_METHOD_WIFI_NET_IF_UPDOWN) */
@@ -112,6 +148,7 @@ void scan_wifi_execute(int32_t timeout, struct k_sem *wifi_scan_ready)
 #if defined(CONFIG_LOCATION_METHOD_WIFI_NET_IF_UPDOWN)
 	ret = scan_wifi_startup_interface(wifi_iface);
 	if (ret) {
+		LOG_ERR("Wi-Fi interface startup failed, cannot scan");
 		k_sem_give(scan_wifi_ready);
 		scan_wifi_ready = NULL;
 		return;
@@ -214,6 +251,9 @@ int scan_wifi_cancel(void)
 int scan_wifi_init(void)
 {
 	const struct device *wifi_dev;
+#if defined(CONFIG_LOCATION_METHOD_WIFI_NET_IF_UPDOWN)
+	int ret;
+#endif
 
 	wifi_iface = NULL;
 #if defined(CONFIG_WIFI_NRF70)
@@ -243,6 +283,13 @@ int scan_wifi_init(void)
 	net_mgmt_add_event_callback(&scan_wifi_net_mgmt_cb);
 
 #if defined(CONFIG_LOCATION_METHOD_WIFI_NET_IF_UPDOWN)
+	scan_wifi_ready_cb_data.iface = wifi_iface;
+	ret = register_wifi_ready_callback(scan_wifi_ready_cb_data, wifi_iface);
+	if (ret) {
+		LOG_ERR("Failed to register Wi-Fi ready callback (%d)", ret);
+		return ret;
+	}
+
 	return scan_wifi_interface_shutdown(wifi_iface);
 #else
 	return 0;
