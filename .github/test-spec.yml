@@ -272,7 +272,6 @@
 
 "CI-apps-test":
   - "applications/machine_learning/**/*"
-  - "samples/bluetooth/direction_finding_*/**/*"
   - "include/caf/**/*"
   - "include/event_manager.h"
   - "include/nrf_profiler.h"
