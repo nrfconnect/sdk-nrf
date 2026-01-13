@@ -1,6 +1,6 @@
 .. _migration_3.0:
 
-Migration guide for |NCS| v3.0.0
+Migration notes for |NCS| v3.0.0
 ################################
 
 .. contents::

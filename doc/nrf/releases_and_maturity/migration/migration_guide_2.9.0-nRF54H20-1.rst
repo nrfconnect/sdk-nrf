@@ -1,6 +1,6 @@
 .. _migration_2.9.0-nRF54H20-1:
 
-Migration guide for |NCS| v2.9.0-nRF54H20-1
+Migration notes for |NCS| v2.9.0-nRF54H20-1
 ###########################################
 
 .. contents::
