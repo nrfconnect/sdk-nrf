@@ -150,13 +150,13 @@
     - markaj-nordic
 
 - scenarios:
-    - applications.nrf_desktop.z.*
+    - applications.nrf_desktop.zrelease.*
   platforms:
     - all
   rom_increase: 512
   ram_increase: 256
   codeowners:
-    - nrfconnect/ncs-si-bluebagel
+    - nrfconnect/ncs-si-xcake
 
 - scenarios:
     - applications.hpf.gpio.mbox
