@@ -23,22 +23,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
-      - nrf52dk/nrf52832
-      - nrf52833dk/nrf52833
-      - nrf52840dk/nrf52840
-      - nrf5340dk/nrf5340/cpuapp
-      - nrf5340dk/nrf5340/cpuapp/ns
-      - thingy53/nrf5340/cpuapp
-      - nrf21540dk/nrf52840
-      - nrf54l15dk/nrf54l05/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54h20dk/nrf54h20/cpurad
     tags:
       - bluetooth
       - ci_build
@@ -58,7 +43,6 @@ tests:
       - DTC_OVERLAY_FILE="usb.overlay"
     integration_platforms:
       - nrf52840dk/nrf52840
-      - nrf52833dk/nrf52833
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
@@ -85,7 +69,6 @@ tests:
       - SNIPPET=nordic-bt-rpc
       - FILE_SUFFIX=bt_rpc
     integration_platforms:
-      - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
