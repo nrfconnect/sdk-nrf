@@ -26,7 +26,7 @@ bool self_suspend_req(void)
 void thread_definition(void)
 {
 	int ret;
-	struct spi_dt_spec spispec = SPI_DT_SPEC_GET(DT_ALIAS(accel0), SPIOP, 0);
+	struct spi_dt_spec spispec = SPI_DT_SPEC_GET(DT_ALIAS(accel0), SPIOP);
 
 	uint8_t tx_buffer[5] = {READ_COMMAND, DEVID_AD_ADDRESS, 0xFF, 0xFF, 0xFF};
 	uint8_t rx_buffer[5] = {0, 0, 0, 0, 0};
