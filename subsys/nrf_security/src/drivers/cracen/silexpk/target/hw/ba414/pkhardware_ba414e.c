@@ -240,14 +240,12 @@ int sx_pk_list_gfp_inslots(sx_pk_req *req, const int *opsizes, struct sx_pk_slot
 	uint32_t flags = 0;
 
 	if (sx_pk_ik_mode(req)) {
-		sx_pk_release_req(req);
 		return SX_ERR_IK_MODE;
 	}
 
 	req->op_size = sx_pk_gfcmd_opsize(req->cmd, opsizes);
 	caps = sx_pk_fetch_capabilities();
 	if (req->op_size > caps->max_gfp_opsz) {
-		sx_pk_release_req(req);
 		return SX_ERR_OPERAND_TOO_LARGE;
 	}
 
@@ -263,7 +261,6 @@ int sx_pk_list_gfp_inslots(sx_pk_req *req, const int *opsizes, struct sx_pk_slot
 		for (; slots; slots >>= 1, cryptoram += slot_size) {
 			if (slots & 1) {
 				if (opsizes[i] > req->op_size) {
-					sx_pk_release_req(req);
 					return SX_ERR_OPERAND_TOO_LARGE;
 				}
 				sx_clrpkmem(cryptoram, req->op_size - opsizes[i]);
@@ -275,7 +272,6 @@ int sx_pk_list_gfp_inslots(sx_pk_req *req, const int *opsizes, struct sx_pk_slot
 	for (; slots; slots >>= 1, cryptoram += slot_size) {
 		if (slots & 1) {
 			if (opsizes[i] > req->op_size) {
-				sx_pk_release_req(req);
 				return SX_ERR_OPERAND_TOO_LARGE;
 			}
 			inputs[i].addr = cryptoram;

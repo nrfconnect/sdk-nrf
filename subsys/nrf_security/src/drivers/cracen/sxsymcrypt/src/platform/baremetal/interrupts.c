@@ -85,7 +85,7 @@ static uint32_t cracen_wait_for_interrupt(nrf_security_event_t event)
 {
 	uint32_t ret = nrf_security_event_wait(event, 0xFFFFFFFF);
 
-	/* sx_hw_reserve, sx_cmdma_release_hw, and sx_pk_acquire_req has
+	/* sx_hw_reserve, sx_cmdma_release_hw, and sx_pk_acquire_hw has
 	 * assured single usage of CRACEN so there should be no race
 	 * condition between reading this event and clearing it.
 	 */
