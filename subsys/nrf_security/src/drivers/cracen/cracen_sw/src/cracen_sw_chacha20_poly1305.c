@@ -99,6 +99,7 @@ static psa_status_t setup(cracen_aead_operation_t *operation, enum cipher_operat
 	size_t tag_size;
 
 	safe_memzero(&operation->sw_chacha_poly_ctx, sizeof(operation->sw_chacha_poly_ctx));
+	operation->ad_finished = false;
 
 	if (key_buffer_size > sizeof(operation->key_buffer)) {
 		return PSA_ERROR_INVALID_ARGUMENT;

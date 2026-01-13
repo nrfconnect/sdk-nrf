@@ -33,6 +33,7 @@
 #include <sxsymcrypt/aead.h>
 #include <sxsymcrypt/aes.h>
 #include <sxsymcrypt/chachapoly.h>
+#include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/keyref.h>
 #include <cracen/statuscodes.h>
 #endif
@@ -341,10 +342,21 @@ static bool is_nonce_length_supported(psa_algorithm_t alg, size_t nonce_length)
 static psa_status_t hw_initialize_ctx(cracen_aead_operation_t *operation)
 {
 	int sx_status = SX_ERR_INCOMPATIBLE_HW;
+	sx_hw_reserve_flags_t hw_flags = SX_HW_RESERVE_DEFAULT;
 
 	/* If the nonce_length is wrong then we must be in a bad state */
 	if (!is_nonce_length_supported(operation->alg, operation->nonce_length)) {
 		return PSA_ERROR_BAD_STATE;
+	}
+
+	/* GCM uses AES which needs countermeasures, ChaCha20 doesn't */
+	if (operation->alg == PSA_ALG_GCM) {
+		hw_flags |= SX_HW_RESERVE_CM_ENABLED;
+	}
+
+	sx_status = sx_hw_reserve(&operation->ctx.dma, hw_flags);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	switch (operation->alg) {
@@ -375,6 +387,10 @@ static psa_status_t hw_initialize_ctx(cracen_aead_operation_t *operation)
 		break;
 	}
 
+	if (sx_status != SX_OK) {
+		sx_hw_release(&operation->ctx.dma);
+	}
+
 	return silex_statuscodes_to_psa(sx_status);
 }
 
@@ -395,45 +411,49 @@ static psa_status_t hw_feed_data_to_hw(cracen_aead_operation_t *operation, const
 static psa_status_t hw_finalize_aead_encryption(cracen_aead_operation_t *operation, uint8_t *tag,
 						size_t tag_size, size_t *tag_length)
 {
-	int sx_status;
+	int sx_status = SX_OK;
+	psa_status_t psa_status = PSA_ERROR_CORRUPTION_DETECTED;
 
 	if (tag_size < operation->tag_size) {
+		sx_hw_release(&operation->ctx.dma);
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
 	sx_status = sx_aead_produce_tag(&operation->ctx, tag);
 	if (sx_status) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	sx_status = sx_aead_wait(&operation->ctx);
-	if (sx_status) {
-		return silex_statuscodes_to_psa(sx_status);
+	if (sx_status == SX_OK) {
+		*tag_length = operation->tag_size;
 	}
 
-	*tag_length = operation->tag_size;
-
+exit:
+	psa_status = silex_statuscodes_to_psa(sx_status);
+	sx_hw_release(&operation->ctx.dma);
 	safe_memzero((void *)operation, sizeof(cracen_aead_operation_t));
-	return PSA_SUCCESS;
+	return psa_status;
 }
 
 static psa_status_t hw_finalize_aead_decryption(cracen_aead_operation_t *operation,
 						const uint8_t *tag)
 {
-	int sx_status;
+	int sx_status = SX_OK;
+	psa_status_t psa_status = PSA_ERROR_CORRUPTION_DETECTED;
 
 	sx_status = sx_aead_verify_tag(&operation->ctx, tag);
 	if (sx_status) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	sx_status = sx_aead_wait(&operation->ctx);
-	if (sx_status) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
 
+exit:
+	psa_status = silex_statuscodes_to_psa(sx_status);
+	sx_hw_release(&operation->ctx.dma);
 	safe_memzero((void *)operation, sizeof(cracen_aead_operation_t));
-	return PSA_SUCCESS;
+	return psa_status;
 }
 
 static psa_status_t hw_setup(cracen_aead_operation_t *operation, enum cipher_operation dir,
@@ -550,14 +570,17 @@ psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const u
 		status = hw_finalize_aead_encryption(&operation, &ciphertext[plaintext_length],
 						     ciphertext_size - plaintext_length,
 						     &tag_length);
+		sx_hw_release(&operation.ctx.dma);
 		if (status != PSA_SUCCESS) {
-			goto error_exit;
+			*ciphertext_length = 0;
+		} else {
+			*ciphertext_length = plaintext_length + tag_length;
 		}
-
-		*ciphertext_length = plaintext_length + tag_length;
-		return PSA_SUCCESS;
+		safe_memzero((void *)&operation, sizeof(cracen_aead_operation_t));
+		return status;
 
 error_exit:
+		sx_hw_release(&operation.ctx.dma);
 		*ciphertext_length = 0;
 		safe_memzero((void *)&operation, sizeof(cracen_aead_operation_t));
 		return status;
@@ -631,13 +654,15 @@ psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const u
 		}
 
 		status = hw_finalize_aead_decryption(&operation, &ciphertext[*plaintext_length]);
+		sx_hw_release(&operation.ctx.dma);
 		if (status != PSA_SUCCESS) {
-			goto error_exit;
+			*plaintext_length = 0;
 		}
-
-		return PSA_SUCCESS;
+		safe_memzero((void *)&operation, sizeof(cracen_aead_operation_t));
+		return status;
 
 error_exit:
+		sx_hw_release(&operation.ctx.dma);
 		*plaintext_length = 0;
 		safe_memzero((void *)&operation, sizeof(cracen_aead_operation_t));
 		return status;
