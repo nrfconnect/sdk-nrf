@@ -424,21 +424,6 @@ int cracen_hash_all_inputs_with_context(struct sxhash *hashopctx, const uint8_t 
 	return status;
 }
 
-int cracen_hash_all_inputs(const uint8_t *inputs[], const size_t input_lengths[],
-			   size_t input_count, const struct sxhashalg *hashalg, uint8_t *digest)
-{
-	struct sxhash hashopctx;
-
-	return cracen_hash_all_inputs_with_context(&hashopctx, inputs, input_lengths, input_count,
-						   hashalg, digest);
-}
-
-int cracen_hash_input(const uint8_t *input, const size_t input_length,
-		      const struct sxhashalg *hashalg, uint8_t *digest)
-{
-	return cracen_hash_all_inputs(&input, &input_length, 1, hashalg, digest);
-}
-
 int cracen_hash_input_with_context(struct sxhash *hashopctx, const uint8_t *input,
 				   const size_t input_length, const struct sxhashalg *hashalg,
 				   uint8_t *digest)

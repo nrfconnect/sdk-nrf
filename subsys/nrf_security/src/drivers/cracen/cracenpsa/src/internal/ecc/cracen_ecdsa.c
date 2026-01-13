@@ -35,6 +35,7 @@
 #include <cracen_psa_primitives.h>
 #include <sxsymcrypt/hashdefs.h>
 #include <cracen/common.h>
+#include <sxsymcrypt/internal.h>
 #include <cracen/cracen_hmac.h>
 
 #define DETERMINISTIC_HMAC_STEPS 6
@@ -178,7 +179,6 @@ static int ecdsa_run_generate_sign(sx_pk_req *req,
 				    struct sx_pk_inops_ecdsa_generate *inputs)
 {
 	int status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)inputs);
-
 	if (status) {
 		return status;
 	}
@@ -199,9 +199,19 @@ int cracen_ecdsa_sign_message(const struct cracen_ecc_priv_key *privkey,
 	const size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	uint8_t digest[digestsz];
 
-	status = cracen_hash_input(message, message_length, hashalg, digest);
-	if (status != SX_OK) {
-		return status;
+	{
+		struct sxhash ctx;
+
+		status = sx_hw_reserve(&ctx.dma, SX_HW_RESERVE_DEFAULT);
+		if (status != SX_OK) {
+			return status;
+		}
+		status = cracen_hash_input_with_context(&ctx, message, message_length, hashalg,
+							digest);
+		sx_hw_release(&ctx.dma);
+		if (status != SX_OK) {
+			return status;
+		}
 	}
 
 	return cracen_ecdsa_sign_digest(privkey, hashalg, curve, digest, digestsz, signature);
@@ -294,14 +304,19 @@ static int deterministic_ecdsa_hmac(const struct sxhashalg *hashalg, const uint8
 		sx_hash_get_alg_digestsz(hashalg) + sx_hash_get_alg_blocksz(hashalg);
 	uint8_t workmem[workmem_requirement];
 
-	status = mac_create_hmac(hashalg, &hashopctx, key, hash_len, workmem, workmem_requirement);
+	status = sx_hw_reserve(&hashopctx.dma, SX_HW_RESERVE_DEFAULT);
 	if (status != SX_OK) {
 		return status;
 	}
-	/* The hash context is initialized in mac_create_hmac */
+
+	status = mac_create_hmac(hashalg, &hashopctx, key, hash_len, workmem, workmem_requirement);
+	if (status != SX_OK) {
+		goto exit;
+	}
+
 	status = sx_hash_feed(&hashopctx, v, hash_len);
 	if (status != SX_OK) {
-		return status;
+		goto exit;
 	}
 
 	if (internal_octet != INTERNAL_OCTET_NOT_USED) {
@@ -312,23 +327,27 @@ static int deterministic_ecdsa_hmac(const struct sxhashalg *hashalg, const uint8
 		status = sx_hash_feed(&hashopctx, &internal_octet_values[internal_octet],
 				      sizeof(*internal_octet_values));
 		if (status != SX_OK) {
-			return status;
+			goto exit;
 		}
 	}
 	if (sk) {
 		status = sx_hash_feed(&hashopctx, sk, key_len);
 		if (status != SX_OK) {
-			return status;
+			goto exit;
 		}
 	}
 	if (hash) {
 		status = sx_hash_feed(&hashopctx, hash, key_len);
 		if (status != SX_OK) {
-			return status;
+			goto exit;
 		}
 	}
 
-	return hmac_produce(&hashopctx, hashalg, hmac, hash_len, workmem);
+	status = hmac_produce(&hashopctx, hashalg, hmac, hash_len, workmem);
+
+exit:
+	sx_hw_release(&hashopctx.dma);
+	return status;
 }
 
 static int run_deterministic_ecdsa_hmac_step(const struct sxhashalg *hashalg, size_t opsz,
@@ -505,9 +524,19 @@ int cracen_ecdsa_sign_message_deterministic(const struct cracen_ecc_priv_key *pr
 	const size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	uint8_t digest[digestsz];
 
-	status = cracen_hash_input(message, message_length, hashalg, digest);
-	if (status != SX_OK) {
-		return status;
+	{
+		struct sxhash ctx;
+
+		status = sx_hw_reserve(&ctx.dma, SX_HW_RESERVE_DEFAULT);
+		if (status != SX_OK) {
+			return status;
+		}
+		status = cracen_hash_input_with_context(&ctx, message, message_length, hashalg,
+							digest);
+		sx_hw_release(&ctx.dma);
+		if (status != SX_OK) {
+			return status;
+		}
 	}
 
 	return cracen_ecdsa_sign_digest_deterministic(privkey, hashalg, curve, digest, digestsz,
@@ -522,9 +551,19 @@ int cracen_ecdsa_verify_message(const uint8_t *pubkey, const struct sxhashalg *h
 	const size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	uint8_t digest[digestsz];
 
-	status = cracen_hash_input(message, message_length, hashalg, digest);
-	if (status != SX_OK) {
-		return status;
+	{
+		struct sxhash ctx;
+
+		status = sx_hw_reserve(&ctx.dma, SX_HW_RESERVE_DEFAULT);
+		if (status != SX_OK) {
+			return status;
+		}
+		status = cracen_hash_input_with_context(&ctx, message, message_length, hashalg,
+							digest);
+		sx_hw_release(&ctx.dma);
+		if (status != SX_OK) {
+			return status;
+		}
 	}
 
 	return cracen_ecdsa_verify_digest(pubkey, digest, digestsz, curve, signature);

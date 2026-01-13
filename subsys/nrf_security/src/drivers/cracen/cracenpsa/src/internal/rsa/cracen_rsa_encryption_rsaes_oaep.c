@@ -92,7 +92,6 @@ int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 
 	sx_status = cracen_rsa_modexp(&pkreq, inputs, rsa_key, text->addr, modulussz, input_sizes);
 	if (sx_status != SX_OK) {
-		sx_pk_release_req(pkreq.req);
 		return sx_status;
 	}
 
@@ -118,14 +117,26 @@ int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 	}
 
 	/* hash the label, even when label is empty, with result overwriting the seed */
-	if (label) {
-		sx_status = cracen_hash_input(label->bytes, label->sz, hashalg, workmem.wmem + 1);
-	} else {
-		sx_status = cracen_hash_input(0, 0, hashalg, workmem.wmem + 1);
-	}
-	if (sx_status != SX_OK) {
-		safe_memzero(workmem.workmem, sizeof(workmem.workmem));
-		return sx_status;
+	{
+		struct sxhash ctx;
+
+		sx_status = sx_hw_reserve(&ctx.dma, SX_HW_RESERVE_DEFAULT);
+		if (sx_status != SX_OK) {
+			safe_memzero(workmem.workmem, sizeof(workmem.workmem));
+			return sx_status;
+		}
+		if (label) {
+			sx_status = cracen_hash_input_with_context(&ctx, label->bytes, label->sz,
+								hashalg, workmem.wmem + 1);
+		} else {
+			sx_status = cracen_hash_input_with_context(&ctx, NULL, 0, hashalg,
+								workmem.wmem + 1);
+		}
+		sx_hw_release(&ctx.dma);
+		if (sx_status != SX_OK) {
+			safe_memzero(workmem.workmem, sizeof(workmem.workmem));
+			return sx_status;
+		}
 	}
 	int r = 0;
 
@@ -199,14 +210,26 @@ int cracen_rsa_oaep_encrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 		return SX_ERR_TOO_BIG;
 	}
 	/* hash the label, even when the label is empty */
-	if (label) {
-		sx_status = cracen_hash_input(label->bytes, label->sz, hashalg, workmem.datablock);
-	} else {
-		sx_status = cracen_hash_input(0, 0, hashalg, workmem.datablock);
-	}
-	if (sx_status != SX_OK) {
-		safe_memzero(workmem.workmem, sizeof(workmem.workmem));
-		return sx_status;
+	{
+		struct sxhash ctx;
+
+		sx_status = sx_hw_reserve(&ctx.dma, SX_HW_RESERVE_DEFAULT);
+		if (sx_status != SX_OK) {
+			safe_memzero(workmem.workmem, sizeof(workmem.workmem));
+			return sx_status;
+		}
+		if (label) {
+			sx_status = cracen_hash_input_with_context(&ctx, label->bytes, label->sz,
+								hashalg, workmem.datablock);
+		} else {
+			sx_status = cracen_hash_input_with_context(&ctx, NULL, 0, hashalg,
+								workmem.datablock);
+		}
+		sx_hw_release(&ctx.dma);
+		if (sx_status != SX_OK) {
+			safe_memzero(workmem.workmem, sizeof(workmem.workmem));
+			return sx_status;
+		}
 	}
 	/* start encoding and request generation of the random seed */
 
@@ -258,12 +281,10 @@ int cracen_rsa_oaep_encrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_slot inputs[NUMBER_OF_SLOTS];
 
-	/* modular exponentiation m^d mod n (RSASP1 sign primitive) */
 	sx_status =
 		cracen_rsa_modexp(&pkreq, inputs, rsa_key, workmem.wmem, modulussz, input_sizes);
 	if (sx_status != SX_OK) {
 		safe_memzero(workmem.workmem, sizeof(workmem.workmem));
-		sx_pk_release_req(pkreq.req);
 		return sx_status;
 	}
 

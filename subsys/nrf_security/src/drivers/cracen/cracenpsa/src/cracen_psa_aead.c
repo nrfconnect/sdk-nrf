@@ -108,10 +108,12 @@ static psa_status_t process_on_hw(cracen_aead_operation_t *operation)
 	int sx_status = sx_aead_save_state(&operation->ctx);
 
 	if (sx_status) {
+		sx_hw_release(&operation->ctx.dma);
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_aead_wait(&operation->ctx);
+	sx_hw_release(&operation->ctx.dma);
 	if (sx_status) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
@@ -119,13 +121,29 @@ static psa_status_t process_on_hw(cracen_aead_operation_t *operation)
 	return silex_statuscodes_to_psa(sx_status);
 }
 
+static sx_hw_reserve_flags_t aead_hw_reserve_flags(psa_algorithm_t alg)
+{
+	/* GCM and CCM use AES which needs countermeasures.
+	 * ChaCha20Poly1305 does not use AES.
+	 */
+	return ((alg == PSA_ALG_GCM) || (alg == PSA_ALG_CCM)) ? SX_HW_RESERVE_CM_ENABLED
+							       : SX_HW_RESERVE_DEFAULT;
+}
+
 static psa_status_t initialize_ctx(cracen_aead_operation_t *operation)
 {
 	int sx_status = SX_ERR_INCOMPATIBLE_HW;
+	sx_hw_reserve_flags_t flags;
 
 	/* If the nonce_length is wrong then we must be in a bad state */
 	if (!is_nonce_length_supported(operation->alg, operation->nonce_length)) {
 		return PSA_ERROR_BAD_STATE;
+	}
+
+	flags = aead_hw_reserve_flags(operation->alg);
+	sx_status = sx_hw_reserve(&operation->ctx.dma, flags);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	switch (operation->alg) {
@@ -171,29 +189,47 @@ static psa_status_t initialize_ctx(cracen_aead_operation_t *operation)
 		break;
 	}
 
+	if (sx_status != SX_OK) {
+		sx_hw_release(&operation->ctx.dma);
+	}
+
 	return silex_statuscodes_to_psa(sx_status);
 }
 
 static psa_status_t initialize_or_resume_context(cracen_aead_operation_t *operation)
 {
-	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	psa_status_t psa_status = PSA_ERROR_CORRUPTION_DETECTED;
+	int sx_status;
 
 	switch (operation->context_state) {
 	case CRACEN_NOT_INITIALIZED:
-		status = initialize_ctx(operation);
-
-		operation->context_state = CRACEN_HW_RESERVED;
+		psa_status = initialize_ctx(operation);
+		if (psa_status == PSA_SUCCESS) {
+			operation->context_state = CRACEN_HW_RESERVED;
+		}
 		break;
-	case CRACEN_CONTEXT_INITIALIZED:
-		status = silex_statuscodes_to_psa(sx_aead_resume_state(&operation->ctx));
+	case CRACEN_CONTEXT_INITIALIZED: {
+		sx_hw_reserve_flags_t flags = aead_hw_reserve_flags(operation->alg);
 
-		operation->context_state = CRACEN_HW_RESERVED;
+		sx_status = sx_hw_reserve(&operation->ctx.dma, flags);
+		if (sx_status != SX_OK) {
+			psa_status = silex_statuscodes_to_psa(sx_status);
+			break;
+		}
+		sx_status = sx_aead_resume_state(&operation->ctx);
+		if (sx_status != SX_OK) {
+			sx_hw_release(&operation->ctx.dma);
+		} else {
+			operation->context_state = CRACEN_HW_RESERVED;
+		}
+		psa_status = silex_statuscodes_to_psa(sx_status);
 		break;
+	}
 	case CRACEN_HW_RESERVED:
-		status = PSA_SUCCESS;
+		psa_status = PSA_SUCCESS;
 	}
 
-	return status;
+	return psa_status;
 }
 
 static void cracen_writebe(uint8_t *out, uint64_t data, uint16_t targetsz)
@@ -331,6 +367,11 @@ static psa_status_t cracen_feed_data_to_hw(cracen_aead_operation_t *operation, c
 		sx_status = sx_aead_feed_aad(&operation->ctx, input, input_length);
 	} else {
 		sx_status = sx_aead_crypt(&operation->ctx, input, input_length, output);
+	}
+
+	if (sx_status != SX_OK) {
+		sx_hw_release(&operation->ctx.dma);
+		operation->context_state = CRACEN_NOT_INITIALIZED;
 	}
 
 	return silex_statuscodes_to_psa(sx_status);
@@ -609,12 +650,11 @@ static psa_status_t finalize_aead_encryption(cracen_aead_operation_t *operation,
 	}
 
 	sx_status = sx_aead_produce_tag(&operation->ctx, tag);
-	if (sx_status) {
-		return silex_statuscodes_to_psa(sx_status);
+	if (sx_status == SX_OK) {
+		sx_status = sx_aead_wait(&operation->ctx);
 	}
-
-	sx_status = sx_aead_wait(&operation->ctx);
-	if (sx_status) {
+	sx_hw_release(&operation->ctx.dma);
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
@@ -666,12 +706,11 @@ static psa_status_t finalize_aead_decryption(cracen_aead_operation_t *operation,
 	int sx_status;
 
 	sx_status = sx_aead_verify_tag(&operation->ctx, tag);
-	if (sx_status) {
-		return silex_statuscodes_to_psa(sx_status);
+	if (sx_status == SX_OK) {
+		sx_status = sx_aead_wait(&operation->ctx);
 	}
-
-	sx_status = sx_aead_wait(&operation->ctx);
-	if (sx_status) {
+	sx_hw_release(&operation->ctx.dma);
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
@@ -724,6 +763,10 @@ psa_status_t cracen_aead_abort(cracen_aead_operation_t *operation)
 		return cracen_sw_aes_ccm_abort(operation);
 	}
 #endif
+
+	if (operation->context_state == CRACEN_HW_RESERVED) {
+		sx_hw_release(&operation->ctx.dma);
+	}
 
 	safe_memzero((void *)operation, sizeof(cracen_aead_operation_t));
 	return PSA_SUCCESS;

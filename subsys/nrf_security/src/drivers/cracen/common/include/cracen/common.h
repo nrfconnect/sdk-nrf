@@ -123,20 +123,6 @@ void cracen_be_rshift(const uint8_t *a, int n, uint8_t *r, size_t sz);
 int cracen_be_cmp(const uint8_t *a, const uint8_t *b, size_t sz, int carry);
 
 /**
- * @brief Hash several elements at different locations in memory
- *
- * @param inputs[in]		Array of pointers to elements that will be hashed.
- * @param input_lengths[in]	Array of lengths of elements to be hashed.
- * @param input_count[in]	Number of elements to be hashed.
- * @param hashalg[in]		Hash algorithm to be used in sxhashalg format.
- * @param digest[out]		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
- *
- * @return sxsymcrypt status code.
- */
-int cracen_hash_all_inputs(const uint8_t *inputs[], const size_t input_lengths[],
-			   size_t input_count, const struct sxhashalg *hashalg, uint8_t *digest);
-
-/**
  * @brief Hash several elements at different locations in memory with a previously created hash
  * context(sxhash)
  *
@@ -152,19 +138,6 @@ int cracen_hash_all_inputs(const uint8_t *inputs[], const size_t input_lengths[]
 int cracen_hash_all_inputs_with_context(struct sxhash *sxhashopctx, const uint8_t *inputs[],
 					const size_t input_lengths[], size_t input_count,
 					const struct sxhashalg *hashalg, uint8_t *digest);
-
-/**
- * @brief Hash a single element
- *
- * @param input[in]		Pointer to the element that will be hashed.
- * @param input_length[in]	Length of the element to be hashed.
- * @param hashalg[in]		Hash algorithm to be used in sxhashalg format.
- * @param digest[out]		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
- *
- * @return sxsymcrypt status code.
- */
-int cracen_hash_input(const uint8_t *input, const size_t input_length,
-		      const struct sxhashalg *hashalg, uint8_t *digest);
 
 /**
  * @brief Hash a single element with a previously created hash context(sxhash)
