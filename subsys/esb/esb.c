@@ -332,6 +332,8 @@ static mpsl_fem_event_t disable_event = {
 
 static enum {
 	TS_NEXT_ACTION_IDLE,
+	TS_NEXT_ACTION_TX,
+	TS_NEXT_ACTION_TX_RETX,
 	TS_NEXT_ACTION_RX,
 	TS_NEXT_ACTION_RX_NO_EXTEND,
 	TS_NEXT_ACTION_RX_LAST,
@@ -341,6 +343,9 @@ static enum {
 static mpsl_timeslot_session_id_t ts_session_id = 0xFF;
 static mpsl_timeslot_signal_return_param_t ts_return_action;
 
+/* Time of completing @ref ts_start_action, in hardware cycles. */
+static uint32_t ts_start_action_time;
+
 static mpsl_timeslot_request_t ts_request_earliest = {
 	.request_type = MPSL_TIMESLOT_REQ_TYPE_EARLIEST,
 	.params.earliest = {
@@ -348,6 +353,13 @@ static mpsl_timeslot_request_t ts_request_earliest = {
 		.priority = MPSL_TIMESLOT_PRIORITY_NORMAL,
 		.length_us = 0,
 		.timeout_us = MPSL_TIMESLOT_EARLIEST_TIMEOUT_MAX_US,
+	}};
+
+static mpsl_timeslot_request_t ts_request_normal = {
+	.request_type = MPSL_TIMESLOT_REQ_TYPE_NORMAL,
+	.params.normal = {
+		.hfclk = MPSL_TIMESLOT_HFCLK_CFG_XTAL_GUARANTEED,
+		.priority = MPSL_TIMESLOT_PRIORITY_NORMAL,
 	}};
 
 static mpsl_timeslot_signal_return_param_t *ts_callback(mpsl_timeslot_session_id_t session_id,
@@ -445,6 +457,10 @@ static struct {
 	/* in us */
 	uint16_t max_frame_duration;
 	/* in us */
+	uint16_t tx_frame_duration;
+	/* in us */
+	uint16_t tx_rx_sequence;
+	/* in us */
 	uint16_t rx_tx_sequence;
 	/* number of extend request in Timeslot */
 	uint16_t extend_count;
@@ -502,6 +518,19 @@ static void update_ts_duration_params(void)
 		2 * (ramp_up + ts_duration_params.max_frame_duration) + margin;
 }
 
+static void update_ts_duration_params_for_tx(uint8_t payload_length)
+{
+	const uint16_t margin = 100;
+	const uint16_t ramp_up =
+		esb_cfg.use_fast_ramp_up ? TX_FAST_RAMP_UP_TIME_US : TX_RAMP_UP_TIME_US;
+
+	ts_duration_params.tx_frame_duration = (ts_duration_params.frame_overhead + payload_length)
+					       << ts_duration_params.bitrate_shift;
+	ts_duration_params.tx_rx_sequence = ramp_up + ts_duration_params.tx_frame_duration +
+					    wait_for_ack_timeout_us +
+					    ts_duration_params.max_frame_duration + margin;
+}
+
 static void esb_fem_for_tx_set(bool ack)
 {
 	uint32_t timer_shorts;
@@ -528,7 +557,10 @@ static void esb_fem_for_tx_set(bool ack)
 		 */
 		uint16_t ramp_up = esb_cfg.use_fast_ramp_up ? TX_FAST_RAMP_UP_TIME_US :
 							      TX_RAMP_UP_TIME_US;
-		nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL2, ramp_up, true);
+
+		nrf_timer_cc_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_CC_CHANNEL2, ramp_up);
+		nrf_timer_event_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_EVENT_COMPARE2);
+		nrf_timer_int_enable(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_INT_COMPARE2_MASK);
 	}
 
 	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
@@ -715,14 +747,16 @@ static void radio_start(void)
 			nrf_timer_int_enable(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_INT_COMPARE3_MASK);
 
 		} else {
-			nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL3,
-					   ERRATA_216_RADIO_ENABLE_DELAY_US, true);
+			nrf_timer_cc_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_CC_CHANNEL3,
+					 ERRATA_216_RADIO_ENABLE_DELAY_US);
+			nrf_timer_event_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_EVENT_COMPARE3);
+			nrf_timer_int_enable(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_INT_COMPARE3_MASK);
 
 			errata_216_timer_shorts = esb_timer.p_reg->SHORTS;
 			nrf_timer_shorts_set(esb_timer.p_reg,
 					     (NRF_TIMER_SHORT_COMPARE3_STOP_MASK |
 					      NRF_TIMER_SHORT_COMPARE3_CLEAR_MASK));
-			nrfx_timer_clear(&esb_timer);
+			nrf_timer_task_trigger(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_CLEAR);
 			nrf_timer_task_trigger(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_START);
 		}
 	} else {
@@ -1533,13 +1567,33 @@ static void on_radio_disabled_tx_noack(void)
 	atomic_set_bit(&interrupt_flags, ESB_EVENT_TX_SUCCESS);
 	tx_fifo_remove_first();
 
-	if (atomic_get(&tx_fifo.count) == 0) {
-		esb_state = ESB_STATE_IDLE;
-		errata_216_off();
+	if (!IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT)) {
+		if (atomic_get(&tx_fifo.count) == 0) {
+			esb_state = ESB_STATE_IDLE;
+			errata_216_off();
+			set_evt_interrupt();
+		} else {
+			set_evt_interrupt();
+			start_tx_transaction();
+		}
+
+	} else { /* IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT) */
+		clear_ts_peripherals();
 		set_evt_interrupt();
-	} else {
-		set_evt_interrupt();
-		start_tx_transaction();
+
+		if (atomic_get(&tx_fifo.count) == 0) {
+			esb_state = ESB_STATE_IDLE;
+			ts_next_action = TS_NEXT_ACTION_IDLE;
+		} else {
+			update_ts_duration_params_for_tx(tx_fifo.payload[tx_fifo.front]->length);
+			ts_request_earliest.params.earliest.length_us =
+				ts_duration_params.tx_rx_sequence;
+
+			esb_state = ESB_STATE_WAIT_MPSL;
+			ts_next_action = TS_NEXT_ACTION_TX;
+		}
+
+		ts_return_action.callback_action = MPSL_TIMESLOT_SIGNAL_ACTION_END;
 	}
 }
 
@@ -1560,12 +1614,12 @@ static void on_radio_disabled_tx(void)
 	 * received by the time defined in wait_for_ack_timeout_us
 	 */
 
-	nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL0,
-			   (wait_for_ack_timeout_us + ADDR_EVENT_LATENCY_US), false);
+	nrf_timer_cc_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_CC_CHANNEL0,
+			 (wait_for_ack_timeout_us + ADDR_EVENT_LATENCY_US));
 
 	uint16_t ramp_up = esb_cfg.use_fast_ramp_up ? TX_FAST_RAMP_UP_TIME_US : TX_RAMP_UP_TIME_US;
-	nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL1,
-			   (esb_cfg.retransmit_delay - ramp_up), false);
+	nrf_timer_cc_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_CC_CHANNEL1,
+			 (esb_cfg.retransmit_delay - ramp_up));
 
 	if (NRF_ERRATA_DYNAMIC_CHECK(54H, 216)) {
 		int32_t min_time = esb_cfg.retransmit_delay - wait_for_ack_timeout_us -
@@ -1573,7 +1627,9 @@ static void on_radio_disabled_tx(void)
 		if (min_time > ERRATA_216_MIN_TIME_TO_DISABLE_US) {
 			uint32_t cc_value = esb_cfg.retransmit_delay - ramp_up -
 								 ERRATA_216_RADIO_ENABLE_DELAY_US;
-			nrfx_timer_compare(&esb_timer, NRF_TIMER_CC_CHANNEL3, cc_value, true);
+			nrf_timer_cc_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_CC_CHANNEL3, cc_value);
+			nrf_timer_event_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_EVENT_COMPARE3);
+			nrf_timer_int_enable(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_INT_COMPARE3_MASK);
 		}
 	}
 
@@ -1599,6 +1655,129 @@ static void on_radio_disabled_tx(void)
 	}
 	on_radio_disabled = on_radio_disabled_tx_wait_for_ack;
 	esb_state = ESB_STATE_PTX_RX_ACK;
+}
+
+static void continue_retx(void)
+{
+	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_READY);
+
+	if (fast_switching) {
+		nrf_radio_shorts_set(NRF_RADIO,
+				     (RADIO_RSSI_SHORTS | NRF_RADIO_SHORT_TXREADY_START_MASK));
+		nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
+		nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
+	} else {
+		nrf_radio_shorts_set(NRF_RADIO,
+				     (RADIO_NORMAL_SW_SHORTS | NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
+	}
+
+	if (esb_cfg.protocol == ESB_PROTOCOL_ESB) {
+		update_rf_payload_format_esb(esb_cfg.payload_length);
+	}
+
+	nrf_radio_packetptr_set(NRF_RADIO, tx_payload_buffer);
+
+	on_radio_disabled = on_radio_disabled_tx;
+	esb_state = ESB_STATE_PTX_TX_ACK;
+
+	update_radio_tx_power();
+
+	/* Transmission is armed on TIMER's CC1. */
+	esb_fem_for_tx_retry();
+	esb_ppi_for_retransmission_set();
+
+	/* Check if PPI worked. If not we are to late with retransmission but it is
+	 * ok to start retransmission here.
+	 */
+	bool radio_started = true;
+
+	if (nrf_timer_event_check(esb_timer.p_reg, NRF_TIMER_EVENT_COMPARE1)) {
+		radio_started = (nrf_radio_state_get(NRF_RADIO) == NRF_RADIO_STATE_TXRU) ||
+				(nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_READY));
+	} else {
+		/* Resume timer in case of CRC errors. */
+		nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_START);
+	}
+
+	if (!radio_started) {
+		/* Clear retransmission configuration. */
+		esb_fem_for_tx_retry_clear();
+		esb_ppi_for_retransmission_clear();
+
+		/* Start radio here. */
+		esb_ppi_for_txrx_set(false, true);
+		esb_fem_for_tx_set(true);
+
+		radio_start();
+		return;
+	}
+
+	if (NRF_ERRATA_DYNAMIC_CHECK(54H, 216)) {
+		const uint16_t ramp_up =
+			esb_cfg.use_fast_ramp_up ? TX_FAST_RAMP_UP_TIME_US : TX_RAMP_UP_TIME_US;
+		const int32_t min_time = esb_cfg.retransmit_delay - ramp_up -
+					 wait_for_ack_timeout_us - ADDR_EVENT_LATENCY_US;
+
+		if (min_time > ERRATA_216_MIN_TIME_TO_DISABLE_US) {
+			errata_216_off();
+		}
+	}
+}
+
+static void schedule_retx_in_timeslot(void)
+{
+	__ASSERT(esb_state == ESB_STATE_PTX_RX_ACK, "Unexpected state %d for retx", esb_state);
+
+	const uint32_t now = k_cycle_get_32();
+
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_CAPTURE2);
+	const uint32_t timer = nrf_timer_cc_get(esb_timer.p_reg, NRF_TIMER_CC_CHANNEL2);
+
+	const int32_t retransmit_delay_left = esb_cfg.retransmit_delay - timer;
+	const uint16_t ramp_up =
+		esb_cfg.use_fast_ramp_up ? TX_FAST_RAMP_UP_TIME_US : TX_RAMP_UP_TIME_US;
+	const uint32_t distance =
+		k_cyc_to_us_ceil32(now - ts_start_action_time) + retransmit_delay_left - ramp_up;
+
+	/* Thresholds for extending current vs requesting new timeslot.
+	 * Arbitrary value to allow other protocols operation during retransmission delay.
+	 */
+	const uint32_t no_timeslot_time = 1000;
+	/* MPSL and ESB timers are in different domain which results in drift.
+	 * Limit number of timeslot extensions to limit drift accumulation.
+	 * Tracking timeslot length is less precise than in PRX, so limit is more strict.
+	 */
+	const uint16_t max_extends = 200;
+
+	const bool bad_crc = (nrf_radio_event_check(NRF_RADIO, ESB_RADIO_EVENT_END) &&
+			      !nrf_radio_crc_status_check(NRF_RADIO));
+
+	if (retransmit_delay_left >= no_timeslot_time || bad_crc) {
+		clear_ts_peripherals();
+
+		ts_request_normal.params.normal.distance_us = distance;
+		ts_request_normal.params.normal.length_us = ts_duration_params.tx_rx_sequence;
+		ts_return_action.params.request.p_next = &ts_request_normal;
+
+		esb_state = ESB_STATE_WAIT_MPSL;
+		ts_next_action = TS_NEXT_ACTION_TX_RETX;
+		ts_return_action.callback_action = MPSL_TIMESLOT_SIGNAL_ACTION_REQUEST;
+
+	} else if (ts_duration_params.extend_count++ >= max_extends) {
+		/* New earliest timeslot will be requested from IDLE signal handler. */
+		clear_ts_peripherals();
+
+		esb_state = ESB_STATE_WAIT_MPSL;
+		ts_next_action = TS_NEXT_ACTION_TX_RETX;
+		ts_return_action.callback_action = MPSL_TIMESLOT_SIGNAL_ACTION_END;
+
+	} else {
+		ts_return_action.params.extend.length_us =
+			ts_duration_params.tx_frame_duration + esb_cfg.retransmit_delay;
+
+		ts_next_action = TS_NEXT_ACTION_TX_RETX;
+		ts_return_action.callback_action = MPSL_TIMESLOT_SIGNAL_ACTION_EXTEND;
+	}
 }
 
 static void on_radio_disabled_tx_wait_for_ack(void)
@@ -1630,14 +1809,39 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 			}
 		}
 
-		if ((atomic_get(&tx_fifo.count) == 0) || (esb_cfg.tx_mode == ESB_TXMODE_MANUAL)) {
-			esb_state = ESB_STATE_IDLE;
-			errata_216_off();
+		const bool start_next_tx =
+			atomic_get(&tx_fifo.count) > 0 && esb_cfg.tx_mode != ESB_TXMODE_MANUAL;
+
+		if (!IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT)) {
+			if (start_next_tx) {
+				set_evt_interrupt();
+				start_tx_transaction();
+			} else {
+				esb_state = ESB_STATE_IDLE;
+				errata_216_off();
+				set_evt_interrupt();
+			}
+
+		} else { /* IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT) */
+			clear_ts_peripherals();
 			set_evt_interrupt();
-		} else {
-			set_evt_interrupt();
-			start_tx_transaction();
+
+			if (start_next_tx) {
+				update_ts_duration_params_for_tx(
+					tx_fifo.payload[tx_fifo.front]->length);
+				ts_request_earliest.params.earliest.length_us =
+					ts_duration_params.tx_rx_sequence;
+
+				esb_state = ESB_STATE_WAIT_MPSL;
+				ts_next_action = TS_NEXT_ACTION_TX;
+			} else {
+				esb_state = ESB_STATE_IDLE;
+				ts_next_action = TS_NEXT_ACTION_IDLE;
+			}
+
+			ts_return_action.callback_action = MPSL_TIMESLOT_SIGNAL_ACTION_END;
 		}
+
 	} else if (retransmits_remaining-- == 0) {
 		/* All retransmits are expended, and the TX operation is suspended */
 #if NRF_TIMER_HAS_SHUTDOWN
@@ -1653,72 +1857,67 @@ static void on_radio_disabled_tx_wait_for_ack(void)
 		esb_state = ESB_STATE_IDLE;
 		errata_216_off();
 		set_evt_interrupt();
+
+		if (IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT)) {
+			clear_ts_peripherals();
+			ts_next_action = TS_NEXT_ACTION_IDLE;
+			ts_return_action.callback_action = MPSL_TIMESLOT_SIGNAL_ACTION_END;
+		}
+
 	} else {
 		/* There are still more retransmits left, TX mode should
 		 * be entered again as soon as the system timer reaches
 		 * CC[1].
 		 */
 
-		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_READY);
-
-		if (fast_switching) {
-			nrf_radio_shorts_set(NRF_RADIO, (RADIO_RSSI_SHORTS |
-							 NRF_RADIO_SHORT_TXREADY_START_MASK));
-			nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
-			nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
+		if (!IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT)) {
+			continue_retx();
 		} else {
-			nrf_radio_shorts_set(NRF_RADIO, (RADIO_NORMAL_SW_SHORTS |
-							 NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
-		}
-
-		if (esb_cfg.protocol == ESB_PROTOCOL_ESB) {
-			update_rf_payload_format_esb(esb_cfg.payload_length);
-		}
-
-		nrf_radio_packetptr_set(NRF_RADIO, tx_payload_buffer);
-
-		on_radio_disabled = on_radio_disabled_tx;
-		esb_state = ESB_STATE_PTX_TX_ACK;
-
-		update_radio_tx_power();
-
-		/* Transmission is armed on TIMER's CC1. */
-		esb_fem_for_tx_retry();
-		esb_ppi_for_retransmission_set();
-
-		/* Check if PPI worked. If not we are to late with retransmission but it is
-		 * ok to start retransmission here.
-		 */
-		bool radio_started = true;
-
-		if (nrf_timer_event_check(esb_timer.p_reg, NRF_TIMER_EVENT_COMPARE1)) {
-			radio_started = (nrf_radio_state_get(NRF_RADIO) == NRF_RADIO_STATE_TXRU) ||
-					(nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_READY));
-		} else {
-			/* Resume timer in case of CRC errors. */
-			nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_START);
-		}
-
-		if (!radio_started) {
-			/* Clear retransmission configuration. */
-			esb_fem_for_tx_retry_clear();
-			esb_ppi_for_retransmission_clear();
-
-			/* Start radio here. */
-			esb_ppi_for_txrx_set(false, true);
-			esb_fem_for_tx_set(true);
-
-			radio_start();
-		} else if (NRF_ERRATA_DYNAMIC_CHECK(54H, 216)) {
-			uint16_t ramp_up = esb_cfg.use_fast_ramp_up ? TX_FAST_RAMP_UP_TIME_US
-								    : TX_RAMP_UP_TIME_US;
-			int32_t min_time = esb_cfg.retransmit_delay - ramp_up -
-					   wait_for_ack_timeout_us - ADDR_EVENT_LATENCY_US;
-			if (min_time > ERRATA_216_MIN_TIME_TO_DISABLE_US) {
-				errata_216_off();
-			}
+			schedule_retx_in_timeslot();
 		}
 	}
+}
+
+static void start_retx_in_new_timeslot(void)
+{
+#if NRF_TIMER_HAS_SHUTDOWN
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_SHUTDOWN);
+#else
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_STOP);
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_CLEAR);
+#endif
+
+	if (fast_switching) {
+		nrf_radio_shorts_set(NRF_RADIO,
+				     (RADIO_RSSI_SHORTS | NRF_RADIO_SHORT_TXREADY_START_MASK));
+		nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
+		nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
+	} else {
+		nrf_radio_shorts_set(NRF_RADIO,
+				     (RADIO_NORMAL_SW_SHORTS | NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
+	}
+
+	on_radio_disabled = on_radio_disabled_tx;
+	esb_state = ESB_STATE_PTX_TX_ACK;
+	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
+	nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
+
+	nrf_radio_txaddress_set(NRF_RADIO, current_payload->pipe);
+	nrf_radio_rxaddresses_set(NRF_RADIO, BIT(current_payload->pipe));
+	nrf_radio_frequency_set(NRF_RADIO, (RADIO_BASE_FREQUENCY + esb_addr.rf_channel));
+	atomic_clear_bit(&esb_addr.rf_channel_flags, RF_CHANNEL_UPDATE_FLAG);
+
+	update_radio_tx_power();
+
+	nrf_radio_packetptr_set(NRF_RADIO, tx_payload_buffer);
+
+	NVIC_ClearPendingIRQ(ESB_RADIO_IRQ_NUMBER);
+	irq_enable(ESB_RADIO_IRQ_NUMBER);
+
+	esb_ppi_for_txrx_set(false, true);
+	esb_fem_for_tx_set(true);
+
+	radio_start();
 }
 
 static void start_rx_listening(void)
@@ -2130,10 +2329,6 @@ int esb_init(const struct esb_config *config)
 		return -EINVAL;
 	}
 
-	if (IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT) && config->mode == ESB_MODE_PTX) {
-		return -ENOENT;
-	}
-
 	if (esb_state != ESB_STATE_UNINITIALIZED) {
 		esb_disable();
 	}
@@ -2292,10 +2487,6 @@ int esb_suspend(void)
 		esb_state = ESB_STATE_IDLE;
 
 	} else { /* IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT) */
-		if (esb_cfg.mode == ESB_MODE_PTX) {
-			return -ENOENT;
-		}
-
 		ts_next_action = TS_NEXT_ACTION_CLOSE;
 		on_radio_disabled = on_radio_disabled_suspend;
 
@@ -2328,10 +2519,6 @@ void esb_disable(void)
 		esb_state = ESB_STATE_UNINITIALIZED;
 
 	} else { /* IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT) */
-		if (esb_cfg.mode == ESB_MODE_PTX) {
-			return; /* NOENT */
-		}
-
 		/* need to be assigned before checks */
 		ts_next_action = TS_NEXT_ACTION_CLOSE;
 		on_radio_disabled = on_radio_disabled_suspend;
@@ -2371,6 +2558,33 @@ static struct payload_wrap *find_free_payload_cont(void)
 		if (!ack_pl_wrap[i].in_use) {
 			return &ack_pl_wrap[i];
 		}
+	}
+
+	return 0;
+}
+
+static int schedule_tx_transaction(void)
+{
+	if (!IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT)) {
+		start_tx_transaction();
+	} else {
+		int err;
+
+		update_ts_duration_params_for_tx(tx_fifo.payload[tx_fifo.front]->length);
+
+		ts_next_action = TS_NEXT_ACTION_TX;
+		ts_request_earliest.params.earliest.length_us = ts_duration_params.tx_rx_sequence;
+
+		multithreading_lock_acquire(K_FOREVER);
+		err = mpsl_timeslot_request(ts_session_id, &ts_request_earliest);
+		multithreading_lock_release();
+		if (err) {
+			LOG_ERR("Failed to request MPSL Timeslot (%d)", err);
+			ts_next_action = TS_NEXT_ACTION_IDLE;
+			return -ENOENT;
+		}
+
+		esb_state = ESB_STATE_WAIT_MPSL;
 	}
 
 	return 0;
@@ -2467,7 +2681,7 @@ int esb_write_payload(const struct esb_payload *payload)
 	if (esb_cfg.mode == ESB_MODE_PTX && esb_cfg.tx_mode == ESB_TXMODE_AUTO &&
 	    (esb_state == ESB_STATE_IDLE ||
 	     (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX) && esb_state == ESB_STATE_PTX_TXIDLE))) {
-		start_tx_transaction();
+		schedule_tx_transaction();
 	}
 
 	return 0;
@@ -2504,9 +2718,6 @@ int esb_read_rx_payload(struct esb_payload *payload)
 
 int esb_start_tx(void)
 {
-	if (IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT)) {
-		return -ENOENT;
-	}
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
 	}
@@ -2517,9 +2728,7 @@ int esb_start_tx(void)
 		return -ENODATA;
 	}
 
-	start_tx_transaction();
-
-	return 0;
+	return schedule_tx_transaction();
 }
 
 int esb_start_rx(void)
@@ -2885,7 +3094,24 @@ static mpsl_timeslot_signal_return_param_t *ts_start_action(void)
 
 	disable_event.event.generic.event = esb_ppi_radio_disabled_get();
 
+	ts_duration_params.extend_count = 0;
+
 	switch (ts_next_action) {
+	case TS_NEXT_ACTION_TX:
+#if NRF_TIMER_HAS_SHUTDOWN
+		nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_SHUTDOWN);
+#else
+		nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_STOP);
+		nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_CLEAR);
+#endif
+
+		start_tx_transaction();
+		break;
+
+	case TS_NEXT_ACTION_TX_RETX:
+		start_retx_in_new_timeslot();
+		break;
+
 	case TS_NEXT_ACTION_RX:
 		nrf_timer_shorts_set(esb_timer.p_reg, NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK);
 		nrf_timer_cc_set(esb_timer.p_reg, NRF_TIMER_CC_CHANNEL0,
@@ -2894,7 +3120,6 @@ static mpsl_timeslot_signal_return_param_t *ts_start_action(void)
 		nrf_timer_int_enable(esb_timer.p_reg, NRF_TIMER_INT_COMPARE0_MASK);
 
 		start_rx_listening();
-		ts_duration_params.extend_count = 0;
 		break;
 
 	case TS_NEXT_ACTION_CLOSE:
@@ -2909,6 +3134,8 @@ static mpsl_timeslot_signal_return_param_t *ts_start_action(void)
 		__ASSERT(false, "Unexpected ts_next_action: %d", ts_next_action);
 		break;
 	}
+
+	ts_start_action_time = k_cycle_get_32();
 
 	return &ts_return_action;
 }
@@ -2943,6 +3170,14 @@ static mpsl_timeslot_signal_return_param_t *ts_radio_action(void)
 static mpsl_timeslot_signal_return_param_t *ts_extend_failed_action(void)
 {
 	switch (ts_next_action) {
+	case TS_NEXT_ACTION_TX_RETX:
+		/* New earliest timeslot will be requested from IDLE signal handler. */
+		clear_ts_peripherals();
+
+		esb_state = ESB_STATE_WAIT_MPSL;
+		ts_return_action.callback_action = MPSL_TIMESLOT_SIGNAL_ACTION_END;
+		break;
+
 	case TS_NEXT_ACTION_RX: {
 		/* margin for disabling radio and drift between clocks */
 		const uint8_t margin = 50 + ts_duration_params.max_frame_duration / 8;
@@ -2963,6 +3198,10 @@ static mpsl_timeslot_signal_return_param_t *ts_extend_failed_action(void)
 static mpsl_timeslot_signal_return_param_t *ts_extend_succeeded_action(void)
 {
 	switch (ts_next_action) {
+	case TS_NEXT_ACTION_TX_RETX:
+		continue_retx();
+		break;
+
 	case TS_NEXT_ACTION_RX: {
 		/* MPSL and ESB timers are in different domain which results in drift.
 		 * Limit number of Timeslot extensions to limit drift accumulation.
@@ -2998,14 +3237,36 @@ static mpsl_timeslot_signal_return_param_t *ts_blocked_action(mpsl_timeslot_sess
 	int err;
 
 	switch (ts_next_action) {
+	case TS_NEXT_ACTION_TX:
 	case TS_NEXT_ACTION_RX:
-		/* multithreading_lock is acquired by MPSL subsys low_prio_work */
+		/* @ref multithreading_lock is acquired by MPSL subsys low_prio_work. */
 		err = mpsl_timeslot_request(ts_session_id, &ts_request_earliest);
 		if (err) {
 			process_ts_request_error(err);
 		}
 		break;
 
+	case TS_NEXT_ACTION_TX_RETX: {
+		/* Defer requested normal timeslot by arbitrary value or request new earliest
+		 * timeslot if retransmit_delay has already elapsed. MPSL scheduler will send
+		 * MPSL_TIMESLOT_SIGNAL_BLOCKED and MPSL_TIMESLOT_SIGNAL_CANCELLED signals
+		 * immediately after the specified timeslot start time.
+		 */
+		const uint32_t now = k_cycle_get_32();
+		const bool use_earliest =
+			k_cyc_to_us_ceil32(now - ts_start_action_time) > esb_cfg.retransmit_delay;
+
+		ts_request_normal.params.normal.distance_us += 500;
+
+		/* @ref multithreading_lock is acquired by MPSL subsys low_prio_work. */
+		err = mpsl_timeslot_request(ts_session_id, use_earliest ? &ts_request_earliest
+									: &ts_request_normal);
+		if (err) {
+			process_ts_request_error(err);
+		}
+
+		break;
+	}
 	case TS_NEXT_ACTION_CLOSE:
 		/* nothing to do */
 		break;
@@ -3027,11 +3288,16 @@ static mpsl_timeslot_signal_return_param_t *ts_idle_action(mpsl_timeslot_session
 		/* nothing to do */
 		break;
 
+	case TS_NEXT_ACTION_TX:
+	case TS_NEXT_ACTION_TX_RETX:
 	case TS_NEXT_ACTION_RX_LAST:
 		__ASSERT((esb_state == ESB_STATE_WAIT_MPSL),
 			 "ESB should be in ESB_STATE_WAIT_MPSL state");
 
-		ts_next_action = TS_NEXT_ACTION_RX;
+		/* Update @ref ts_next_action to trigger RX in next timeslot start. */
+		if (ts_next_action == TS_NEXT_ACTION_RX_LAST) {
+			ts_next_action = TS_NEXT_ACTION_RX;
+		}
 
 		/* @ref multithreading_lock is acquired by MPSL subsys low_prio_work */
 		err = mpsl_timeslot_request(ts_session_id, &ts_request_earliest);
