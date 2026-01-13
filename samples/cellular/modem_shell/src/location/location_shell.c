@@ -12,7 +12,7 @@
 #ifdef CONFIG_POSIX_C_LIB_EXT
 #include <zephyr/posix/unistd.h>
 #endif
-#include <getopt.h>
+#include <zephyr/sys/sys_getopt.h>
 #include <net/nrf_cloud.h>
 #if defined(CONFIG_NRF_CLOUD_REST)
 #include <net/nrf_cloud_rest.h>
@@ -136,24 +136,24 @@ enum {
 };
 
 /* Specifying the expected options */
-static struct option long_options[] = {
-	{ "method", required_argument, 0, 'm' },
-	{ "mode", required_argument, 0, LOCATION_SHELL_OPT_MODE },
-	{ "interval", required_argument, 0, LOCATION_SHELL_OPT_INTERVAL },
-	{ "timeout", required_argument, 0, 't' },
-	{ "gnss_accuracy", required_argument, 0, LOCATION_SHELL_OPT_GNSS_ACCURACY },
-	{ "gnss_timeout", required_argument, 0, LOCATION_SHELL_OPT_GNSS_TIMEOUT },
-	{ "gnss_num_fixes", required_argument, 0, LOCATION_SHELL_OPT_GNSS_NUM_FIXES },
-	{ "gnss_visibility", no_argument, 0, LOCATION_SHELL_OPT_GNSS_VISIBILITY },
-	{ "gnss_priority", no_argument, 0, LOCATION_SHELL_OPT_GNSS_PRIORITY_MODE },
-	{ "gnss_cloud_nmea", no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_NMEA },
-	{ "gnss_cloud_pvt", no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT },
-	{ "cloud_details", no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_DETAILS },
-	{ "cellular_timeout", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_TIMEOUT },
-	{ "cellular_cell_count", required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_CELL_COUNT },
-	{ "cloud_resp_disabled", no_argument, 0, LOCATION_SHELL_OPT_CLOUD_RESP_DISABLED },
-	{ "wifi_timeout", required_argument, 0, LOCATION_SHELL_OPT_WIFI_TIMEOUT },
-	{ "help", no_argument, 0, 'h' },
+static struct sys_getopt_option long_options[] = {
+	{ "method", sys_getopt_required_argument, 0, 'm' },
+	{ "mode", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_MODE },
+	{ "interval", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_INTERVAL },
+	{ "timeout", sys_getopt_required_argument, 0, 't' },
+	{ "gnss_accuracy", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_GNSS_ACCURACY },
+	{ "gnss_timeout", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_GNSS_TIMEOUT },
+	{ "gnss_num_fixes", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_GNSS_NUM_FIXES },
+	{ "gnss_visibility", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_GNSS_VISIBILITY },
+	{ "gnss_priority", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_GNSS_PRIORITY_MODE },
+	{ "gnss_cloud_nmea", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_NMEA },
+	{ "gnss_cloud_pvt", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT },
+	{ "cloud_details", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_DETAILS },
+	{ "cellular_timeout", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_TIMEOUT },
+	{ "cellular_cell_count", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_CELL_COUNT },
+	{ "cloud_resp_disabled", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_CLOUD_RESP_DISABLED },
+	{ "wifi_timeout", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_WIFI_TIMEOUT },
+	{ "help", sys_getopt_no_argument, 0, 'h' },
 	{ 0, 0, 0, 0 }
 };
 
@@ -532,19 +532,19 @@ static int cmd_location_get(const struct shell *shell, size_t argc, char **argv)
 	arg_cloud_details = false;
 	arg_cloud_resp_enabled = true;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, "m:t:h", long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, "m:t:h", long_options, NULL)) != -1) {
 		switch (opt) {
 		case LOCATION_SHELL_OPT_GNSS_TIMEOUT:
-			gnss_timeout = atof(optarg);
+			gnss_timeout = atof(sys_getopt_optarg);
 			gnss_timeout_set = true;
 			break;
 
 		case LOCATION_SHELL_OPT_GNSS_NUM_FIXES:
-			gnss_num_fixes = atoi(optarg);
+			gnss_num_fixes = atoi(sys_getopt_optarg);
 			gnss_num_fixes_set = true;
 			break;
 		case LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_NMEA:
@@ -565,11 +565,11 @@ static int cmd_location_get(const struct shell *shell, size_t argc, char **argv)
 			break;
 
 		case LOCATION_SHELL_OPT_CELLULAR_TIMEOUT:
-			cellular_timeout = atof(optarg);
+			cellular_timeout = atof(sys_getopt_optarg);
 			cellular_timeout_set = true;
 			break;
 		case LOCATION_SHELL_OPT_CELLULAR_CELL_COUNT:
-			cellular_cell_count = atoi(optarg);
+			cellular_cell_count = atoi(sys_getopt_optarg);
 			cellular_cell_count_set = true;
 			break;
 		case LOCATION_SHELL_OPT_CLOUD_RESP_DISABLED:
@@ -584,25 +584,25 @@ static int cmd_location_get(const struct shell *shell, size_t argc, char **argv)
 			break;
 
 		case LOCATION_SHELL_OPT_WIFI_TIMEOUT:
-			wifi_timeout = atof(optarg);
+			wifi_timeout = atof(sys_getopt_optarg);
 			wifi_timeout_set = true;
 			break;
 
 		case LOCATION_SHELL_OPT_INTERVAL:
-			interval = atoi(optarg);
+			interval = atoi(sys_getopt_optarg);
 			interval_set = true;
 			break;
 		case 't':
-			timeout = atof(optarg);
+			timeout = atof(sys_getopt_optarg);
 			timeout_set = true;
 			break;
 
 		case LOCATION_SHELL_OPT_GNSS_ACCURACY:
-			if (strcmp(optarg, "low") == 0) {
+			if (strcmp(sys_getopt_optarg, "low") == 0) {
 				gnss_accuracy = LOCATION_ACCURACY_LOW;
-			} else if (strcmp(optarg, "normal") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "normal") == 0) {
 				gnss_accuracy = LOCATION_ACCURACY_NORMAL;
-			} else if (strcmp(optarg, "high") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "high") == 0) {
 				gnss_accuracy = LOCATION_ACCURACY_HIGH;
 			} else {
 				mosh_error("Unknown GNSS accuracy. See usage:");
@@ -620,14 +620,14 @@ static int cmd_location_get(const struct shell *shell, size_t argc, char **argv)
 			break;
 
 		case LOCATION_SHELL_OPT_MODE:
-			if (strcmp(optarg, "fallback") == 0) {
+			if (strcmp(sys_getopt_optarg, "fallback") == 0) {
 				req_mode = LOCATION_REQ_MODE_FALLBACK;
-			} else if (strcmp(optarg, "all") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "all") == 0) {
 				req_mode = LOCATION_REQ_MODE_ALL;
 			} else {
 				mosh_error(
 					"Unknown location request mode (%s) was given. See usage:",
-						optarg);
+						sys_getopt_optarg);
 				goto show_usage;
 			}
 			break;
@@ -637,18 +637,18 @@ static int cmd_location_get(const struct shell *shell, size_t argc, char **argv)
 				mosh_error(
 					"Maximum number of location methods (%d) exceeded. "
 					"Location method (%s) still given.",
-					CONFIG_LOCATION_METHODS_LIST_SIZE, optarg);
+					CONFIG_LOCATION_METHODS_LIST_SIZE, sys_getopt_optarg);
 				return -EINVAL;
 			}
 
-			if (strcmp(optarg, "cellular") == 0) {
+			if (strcmp(sys_getopt_optarg, "cellular") == 0) {
 				method_list[method_count] = LOCATION_METHOD_CELLULAR;
-			} else if (strcmp(optarg, "gnss") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "gnss") == 0) {
 				method_list[method_count] = LOCATION_METHOD_GNSS;
-			} else if (strcmp(optarg, "wifi") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "wifi") == 0) {
 				method_list[method_count] = LOCATION_METHOD_WIFI;
 			} else {
-				mosh_error("Unknown method (%s) given. See usage:", optarg);
+				mosh_error("Unknown method (%s) given. See usage:", sys_getopt_optarg);
 				goto show_usage;
 			}
 			method_count++;
@@ -658,12 +658,12 @@ static int cmd_location_get(const struct shell *shell, size_t argc, char **argv)
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}

@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <zephyr/shell/shell.h>
 #include <unistd.h>
-#include <getopt.h>
+#include <zephyr/sys/sys_getopt.h>
 
 #include <zephyr/net/promiscuous.h>
 #include <zephyr/drivers/uart.h>
@@ -31,14 +31,16 @@ static const char ppp_uartconf_usage_str[] =
 	"  -h, --help,            Shows this help information";
 
 /* Specifying the expected options (both long and short) */
-static struct option long_options[] = { { "baudrate", required_argument, 0, 'b' },
-					{ "databits", required_argument, 0, 'd' },
-					{ "stopbits", required_argument, 0, 's' },
-					{ "parity", required_argument, 0, 'p' },
-					{ "flowctrl", required_argument, 0, 'f' },
-					{ "read", no_argument, 0, 'r' },
-					{ "help", no_argument, 0, 'h' },
-					{ 0, 0, 0, 0 } };
+static struct sys_getopt_option long_options[] = {
+	{ "baudrate", sys_getopt_required_argument, 0, 'b' },
+	{ "databits", sys_getopt_required_argument, 0, 'd' },
+	{ "stopbits", sys_getopt_required_argument, 0, 's' },
+	{ "parity", sys_getopt_required_argument, 0, 'p' },
+	{ "flowctrl", sys_getopt_required_argument, 0, 'f' },
+	{ "read", sys_getopt_no_argument, 0, 'r' },
+	{ "help", sys_getopt_no_argument, 0, 'h' },
+	{ 0, 0, 0, 0 }
+};
 
 static void ppp_shell_uart_conf_print(struct uart_config *ppp_uart_config)
 {
@@ -144,14 +146,14 @@ static int cmd_ppp_uartconf(const struct shell *shell, size_t argc, char **argv)
 		goto show_usage;
 	}
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, "b:d:s:p:f:rh", long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, "b:d:s:p:f:rh", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'b':
-			ret = atoi(optarg);
+			ret = atoi(sys_getopt_optarg);
 			switch (ret) {
 			case 1200:
 			case 2400:
@@ -175,7 +177,7 @@ static int cmd_ppp_uartconf(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case 'd':
-			ret = atoi(optarg);
+			ret = atoi(sys_getopt_optarg);
 			data_bits_set = true;
 			uartconf_option_given = true;
 			switch (ret) {
@@ -192,7 +194,7 @@ static int cmd_ppp_uartconf(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case 's':
-			ret = atoi(optarg);
+			ret = atoi(sys_getopt_optarg);
 			stop_bits_set = true;
 			uartconf_option_given = true;
 			switch (ret) {
@@ -211,14 +213,14 @@ static int cmd_ppp_uartconf(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case 'p':
-			ret = atoi(optarg);
+			ret = atoi(sys_getopt_optarg);
 			parity_set = true;
 			uartconf_option_given = true;
-			if (strcmp(optarg, "none") == 0) {
+			if (strcmp(sys_getopt_optarg, "none") == 0) {
 				parity = UART_CFG_PARITY_NONE;
-			} else if (strcmp(optarg, "odd") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "odd") == 0) {
 				parity = UART_CFG_PARITY_ODD;
-			} else if (strcmp(optarg, "even") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "even") == 0) {
 				parity = UART_CFG_PARITY_EVEN;
 			} else {
 				mosh_error("Unsupported parity config");
@@ -227,13 +229,13 @@ static int cmd_ppp_uartconf(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case 'f':
-			ret = atoi(optarg);
+			ret = atoi(sys_getopt_optarg);
 			flow_ctrl_set = true;
 			uartconf_option_given = true;
-			if (strcmp(optarg, "none") == 0) {
+			if (strcmp(sys_getopt_optarg, "none") == 0) {
 				flow_ctrl = UART_CFG_FLOW_CTRL_NONE;
-			} else if (strcmp(optarg, "rts_cts") == 0 ||
-				   strcmp(optarg, "RTS_CTS") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "rts_cts") == 0 ||
+				   strcmp(sys_getopt_optarg, "RTS_CTS") == 0) {
 				flow_ctrl = UART_CFG_FLOW_CTRL_RTS_CTS;
 			} else {
 				mosh_error("Unsupported flow ctrl config");
@@ -249,12 +251,12 @@ static int cmd_ppp_uartconf(const struct shell *shell, size_t argc, char **argv)
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}

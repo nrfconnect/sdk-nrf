@@ -13,7 +13,7 @@
 #include <sys/socket.h>
 #include <zephyr/net/tls_credentials.h>
 #include <fcntl.h>
-#include <getopt.h>
+#include <zephyr/sys/sys_getopt.h>
 
 #include "sock.h"
 #include "mosh_defines.h"
@@ -250,42 +250,42 @@ static const char sock_level_list_str[] =
 #define SOCK_SHELL_OPT_SOCKET_OPTION_LEVEL 206
 
 /* Specifying the expected options (both long and short) */
-static struct option long_options[] = {
-	{ "id",             required_argument, 0, 'i' },
-	{ "cid",            required_argument, 0, 'I' },
-	{ "address",        required_argument, 0, 'a' },
-	{ "port",           required_argument, 0, 'p' },
-	{ "family",         required_argument, 0, 'f' },
-	{ "type",           required_argument, 0, 't' },
-	{ "bind_port",      required_argument, 0, 'b' },
-	{ "secure",         no_argument,       0, 'S' },
-	{ "sec_tag",        required_argument, 0, 'T' },
-	{ "cache",          no_argument,       0, 'c' },
-	{ "peer_verify",    required_argument, 0, 'V' },
-	{ "hostname",       required_argument, 0, 'H' },
-	{ "dtls_cid",       required_argument, 0, 'C' },
-	{ "dtls_frag_ext",  required_argument, 0, 'F' },
-	{ "data",           required_argument, 0, 'd' },
-	{ "length",         required_argument, 0, 'l' },
-	{ "period",         required_argument, 0, 'e' },
-	{ "buffer_size",    required_argument, 0, 's' },
-	{ "hex",            no_argument,       0, 'x' },
-	{ "start",          no_argument,       0, 'r' },
-	{ "blocking",       required_argument, 0, 'B' },
-	{ "wait_ack",       no_argument,       0, 'W' },
-	{ "keep_open",      no_argument,       0, 'K' },
-	{ "print_format",   required_argument, 0, 'P' },
-	{ "option",         required_argument, 0, 'o' },
-	{ "value",          required_argument, 0, 'v' },
-	{ "level",          required_argument, 0, SOCK_SHELL_OPT_SOCKET_OPTION_LEVEL },
-	{ "packet_number_prefix", no_argument, 0, SOCK_SHELL_OPT_PACKET_NUMBER_PREFIX },
-	{ "rai_last",       no_argument,       0, SOCK_SHELL_OPT_RAI_LAST },
-	{ "rai_no_data",    no_argument,       0, SOCK_SHELL_OPT_RAI_NO_DATA },
-	{ "rai_one_resp",   no_argument,       0, SOCK_SHELL_OPT_RAI_ONE_RESP },
-	{ "rai_ongoing",    no_argument,       0, SOCK_SHELL_OPT_RAI_ONGOING },
-	{ "rai_wait_more",  no_argument,       0, SOCK_SHELL_OPT_RAI_WAIT_MORE },
-	{ "help",           no_argument,       0, 'h' },
-	{ 0,                0,                 0, 0   }
+static struct sys_getopt_option long_options[] = {
+	{ "id",             sys_getopt_required_argument, 0, 'i' },
+	{ "cid",            sys_getopt_required_argument, 0, 'I' },
+	{ "address",        sys_getopt_required_argument, 0, 'a' },
+	{ "port",           sys_getopt_required_argument, 0, 'p' },
+	{ "family",         sys_getopt_required_argument, 0, 'f' },
+	{ "type",           sys_getopt_required_argument, 0, 't' },
+	{ "bind_port",      sys_getopt_required_argument, 0, 'b' },
+	{ "secure",         sys_getopt_no_argument,       0, 'S' },
+	{ "sec_tag",        sys_getopt_required_argument, 0, 'T' },
+	{ "cache",          sys_getopt_no_argument,       0, 'c' },
+	{ "peer_verify",    sys_getopt_required_argument, 0, 'V' },
+	{ "hostname",       sys_getopt_required_argument, 0, 'H' },
+	{ "dtls_cid",       sys_getopt_required_argument, 0, 'C' },
+	{ "dtls_frag_ext",  sys_getopt_required_argument, 0, 'F' },
+	{ "data",           sys_getopt_required_argument, 0, 'd' },
+	{ "length",         sys_getopt_required_argument, 0, 'l' },
+	{ "period",         sys_getopt_required_argument, 0, 'e' },
+	{ "buffer_size",    sys_getopt_required_argument, 0, 's' },
+	{ "hex",            sys_getopt_no_argument,       0, 'x' },
+	{ "start",          sys_getopt_no_argument,       0, 'r' },
+	{ "blocking",       sys_getopt_required_argument, 0, 'B' },
+	{ "wait_ack",       sys_getopt_no_argument,       0, 'W' },
+	{ "keep_open",      sys_getopt_no_argument,       0, 'K' },
+	{ "print_format",   sys_getopt_required_argument, 0, 'P' },
+	{ "option",         sys_getopt_required_argument, 0, 'o' },
+	{ "value",          sys_getopt_required_argument, 0, 'v' },
+	{ "level",          sys_getopt_required_argument, 0, SOCK_SHELL_OPT_SOCKET_OPTION_LEVEL },
+	{ "packet_number_prefix", sys_getopt_no_argument, 0, SOCK_SHELL_OPT_PACKET_NUMBER_PREFIX },
+	{ "rai_last",       sys_getopt_no_argument,       0, SOCK_SHELL_OPT_RAI_LAST },
+	{ "rai_no_data",    sys_getopt_no_argument,       0, SOCK_SHELL_OPT_RAI_NO_DATA },
+	{ "rai_one_resp",   sys_getopt_no_argument,       0, SOCK_SHELL_OPT_RAI_ONE_RESP },
+	{ "rai_ongoing",    sys_getopt_no_argument,       0, SOCK_SHELL_OPT_RAI_ONGOING },
+	{ "rai_wait_more",  sys_getopt_no_argument,       0, SOCK_SHELL_OPT_RAI_WAIT_MORE },
+	{ "help",           sys_getopt_no_argument,       0, 'h' },
+	{ 0,                0,                            0, 0   }
 };
 
 static const char short_options[] = "i:I:a:p:f:t:b:ST:cV:H:C:F:d:l:e:s:xrB:WKP:o:v:h";
@@ -342,56 +342,56 @@ static int cmd_sock_getaddrinfo(const struct shell *shell, size_t argc, char **a
 
 	memset(arg_hostname, 0, SOCK_MAX_ADDR_LEN + 1);
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		int addr_len = 0;
 
 		switch (opt) {
 		case 'H': /* Hostname */
-			addr_len = strlen(optarg);
+			addr_len = strlen(sys_getopt_optarg);
 			if (addr_len > SOCK_MAX_ADDR_LEN) {
 				mosh_error(
 					"Hostname length %d exceeded. Maximum is %d.",
 					addr_len, SOCK_MAX_ADDR_LEN);
 				return -EINVAL;
 			}
-			memcpy(arg_hostname, optarg, addr_len);
+			memcpy(arg_hostname, sys_getopt_optarg, addr_len);
 			break;
 		case 'f': /* Address family */
-			if (strcmp(optarg, "unspec") == 0) {
+			if (strcmp(sys_getopt_optarg, "unspec") == 0) {
 				arg_family = AF_UNSPEC;
-			} else if (strcmp(optarg, "inet") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "inet") == 0) {
 				arg_family = AF_INET;
-			} else if (!strcmp(optarg, "inet6")) {
+			} else if (!strcmp(sys_getopt_optarg, "inet6")) {
 				arg_family = AF_INET6;
 			} else {
 				mosh_error(
 					"Unsupported address family=%s. Supported values are: "
 					"'unspec', 'inet' (ipv4) or 'inet6' (ipv6)",
-					optarg);
+					sys_getopt_optarg);
 				return -EINVAL;
 			}
 			break;
 		case 't': /* Socket type */
-			if (strcmp(optarg, "any") == 0) {
+			if (strcmp(sys_getopt_optarg, "any") == 0) {
 				arg_type = 0;
-			} else if (strcmp(optarg, "stream") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "stream") == 0) {
 				arg_type = SOCK_STREAM;
-			} else if (strcmp(optarg, "dgram") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "dgram") == 0) {
 				arg_type = SOCK_DGRAM;
 			} else {
 				mosh_error(
 					"Unsupported address type=%s. Supported values are: "
 					"'any', 'stream' (tcp) or 'dgram' (udp)",
-					optarg);
+					sys_getopt_optarg);
 				return -EINVAL;
 			}
 			break;
 		case 'I': /* PDN CID */
-			arg_pdn_cid = atoi(optarg);
+			arg_pdn_cid = atoi(sys_getopt_optarg);
 			if (arg_pdn_cid < 0) {
 				mosh_error(
 					"PDN CID (%d) must be non-negative integer.",
@@ -403,12 +403,12 @@ static int cmd_sock_getaddrinfo(const struct shell *shell, size_t argc, char **a
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -449,16 +449,16 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 	memset(arg_address, 0, SOCK_MAX_ADDR_LEN + 1);
 	memset(arg_peer_hostname, 0, SOCK_MAX_ADDR_LEN + 1);
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		int addr_len = 0;
 
 		switch (opt) {
 		case 'I': /* PDN CID */
-			arg_pdn_cid = atoi(optarg);
+			arg_pdn_cid = atoi(sys_getopt_optarg);
 			if (arg_pdn_cid < 0) {
 				mosh_error(
 					"PDN CID (%d) must be non-negative integer.",
@@ -467,17 +467,17 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case 'a': /* IP address, or hostname */
-			addr_len = strlen(optarg);
+			addr_len = strlen(sys_getopt_optarg);
 			if (addr_len > SOCK_MAX_ADDR_LEN) {
 				mosh_error(
 					"Address length %d exceeded. Maximum is %d.",
 					addr_len, SOCK_MAX_ADDR_LEN);
 				return -EINVAL;
 			}
-			memcpy(arg_address, optarg, addr_len);
+			memcpy(arg_address, sys_getopt_optarg, addr_len);
 			break;
 		case 'p': /* Port */
-			arg_port = atoi(optarg);
+			arg_port = atoi(sys_getopt_optarg);
 			if (arg_port <= 0 || arg_port > 65535) {
 				mosh_error(
 					"Port (%d) must be bigger than 0 and smaller than 65536.",
@@ -486,37 +486,37 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case 'f': /* Address family */
-			if (!strcmp(optarg, "inet")) {
+			if (!strcmp(sys_getopt_optarg, "inet")) {
 				arg_family = AF_INET;
-			} else if (!strcmp(optarg, "inet6")) {
+			} else if (!strcmp(sys_getopt_optarg, "inet6")) {
 				arg_family = AF_INET6;
-			} else if (!strcmp(optarg, "packet")) {
+			} else if (!strcmp(sys_getopt_optarg, "packet")) {
 				arg_family = AF_PACKET;
 			} else {
 				mosh_error(
 					"Unsupported address family=%s. Supported values are: "
 					"'inet' (ipv4, default), 'inet6' (ipv6) or 'packet'",
-					optarg);
+					sys_getopt_optarg);
 				return -EINVAL;
 			}
 			break;
 		case 't': /* Socket type */
-			if (!strcmp(optarg, "stream")) {
+			if (!strcmp(sys_getopt_optarg, "stream")) {
 				arg_type = SOCK_STREAM;
-			} else if (!strcmp(optarg, "dgram")) {
+			} else if (!strcmp(sys_getopt_optarg, "dgram")) {
 				arg_type = SOCK_DGRAM;
-			} else if (!strcmp(optarg, "raw")) {
+			} else if (!strcmp(sys_getopt_optarg, "raw")) {
 				arg_type = SOCK_RAW;
 			} else {
 				mosh_error(
 					"Unsupported address type=%s. Supported values are: "
 					"'stream' (tcp, default), 'dgram' (udp) or 'raw'",
-					optarg);
+					sys_getopt_optarg);
 				return -EINVAL;
 			}
 			break;
 		case 'b': /* Bind port */
-			arg_bind_port = atoi(optarg);
+			arg_bind_port = atoi(sys_getopt_optarg);
 			if (arg_bind_port <= 0 || arg_bind_port > 65535) {
 				mosh_error(
 					"Bind port (%d) must be bigger than 0 and "
@@ -533,11 +533,11 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 			break;
 		case 'T': /* Security tag */
 			err = 0;
-			arg_sec_tag = shell_strtoul(optarg, 10, &err);
+			arg_sec_tag = shell_strtoul(sys_getopt_optarg, 10, &err);
 			if (err) {
 				mosh_error(
 					"Valid range for security tag (%s) is 0 .. %u.",
-					optarg, UINT32_MAX);
+					sys_getopt_optarg, UINT32_MAX);
 				return -EINVAL;
 			}
 			break;
@@ -545,7 +545,7 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 			arg_session_cache = true;
 			break;
 		case 'V': /* TLS peer verify */
-			arg_peer_verify = atoi(optarg);
+			arg_peer_verify = atoi(sys_getopt_optarg);
 			if (arg_peer_verify < 0 || arg_peer_verify > 2) {
 				mosh_error(
 					"Valid values for peer verify (%d) are 0, 1 and 2.",
@@ -554,17 +554,17 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case 'H': /* TLS peer hostname */
-			addr_len = strlen(optarg);
+			addr_len = strlen(sys_getopt_optarg);
 			if (addr_len > SOCK_MAX_ADDR_LEN) {
 				mosh_error(
 					"Peer hostname length %d exceeded. Maximum is %d.",
 					addr_len, SOCK_MAX_ADDR_LEN);
 				return -EINVAL;
 			}
-			strcpy(arg_peer_hostname, optarg);
+			strcpy(arg_peer_hostname, sys_getopt_optarg);
 			break;
 		case 'C': /* DTLS CID setting */
-			arg_dtls_cid = atoi(optarg);
+			arg_dtls_cid = atoi(sys_getopt_optarg);
 			if (arg_dtls_cid < 0 || arg_dtls_cid > 2) {
 				mosh_error(
 					"Valid values for DTLS CID setting (%d) are 0, 1 and 2.",
@@ -573,7 +573,7 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case 'F': /* DTLS fragmentation extension */
-			arg_dtls_frag_ext = atoi(optarg);
+			arg_dtls_frag_ext = atoi(sys_getopt_optarg);
 			if (arg_dtls_frag_ext < 0 || arg_dtls_frag_ext > 2) {
 				mosh_error(
 					"Valid values for DTLS fragmentation extension (%d) are "
@@ -585,12 +585,12 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -629,27 +629,27 @@ static int cmd_sock_close(const struct shell *shell, size_t argc, char **argv)
 	/* Variables for command line arguments */
 	int arg_socket_id = SOCK_ID_NONE;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, "i:h", long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, "i:h", long_options, NULL)) != -1) {
 
 		switch (opt) {
 		case 'i': /* Socket ID */
-			arg_socket_id = atoi(optarg);
+			arg_socket_id = atoi(sys_getopt_optarg);
 			break;
 
 		case 'h':
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -685,39 +685,39 @@ static int cmd_sock_send(const struct shell *shell, size_t argc, char **argv)
 
 	memset(arg_send_data, 0, SOCK_MAX_SEND_DATA_LEN + 1);
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		int send_data_len = 0;
 
 		switch (opt) {
 		case 'i': /* Socket ID */
-			arg_socket_id = atoi(optarg);
+			arg_socket_id = atoi(sys_getopt_optarg);
 			break;
 		case 'd': /* Data to be sent is available in send buffer */
-			send_data_len = strlen(optarg);
+			send_data_len = strlen(sys_getopt_optarg);
 			if (send_data_len > SOCK_MAX_SEND_DATA_LEN) {
 				mosh_error(
 					"Data length %d exceeded. Maximum is %d. Given data: %s",
 					send_data_len, SOCK_MAX_SEND_DATA_LEN,
-					optarg);
+					sys_getopt_optarg);
 				return -EINVAL;
 			}
-			strcpy(arg_send_data, optarg);
+			strcpy(arg_send_data, sys_getopt_optarg);
 			break;
 		case 'x': /* Send data string is defined in hex format */
 			arg_data_format_hex = true;
 			break;
 		case 'l': /* Length of data */
-			arg_data_length = atoi(optarg);
+			arg_data_length = atoi(sys_getopt_optarg);
 			break;
 		case 'e': /* Interval in which data will be sent */
-			arg_data_interval = atoi(optarg);
+			arg_data_interval = atoi(sys_getopt_optarg);
 			break;
 		case 's': /* Buffer size */
-			arg_buffer_size = atoi(optarg);
+			arg_buffer_size = atoi(sys_getopt_optarg);
 			if (arg_buffer_size <= 0) {
 				mosh_error(
 					"Buffer size %d must be a positive number",
@@ -727,12 +727,12 @@ static int cmd_sock_send(const struct shell *shell, size_t argc, char **argv)
 			break;
 		case 'B': /* Blocking/non-blocking send or receive */
 		{
-			int blocking = atoi(optarg);
+			int blocking = atoi(sys_getopt_optarg);
 
 			if (blocking != 0 && blocking != 1) {
 				mosh_error(
 					"Blocking (%s) must be either '0' (false) or '1' (true)",
-					optarg);
+					sys_getopt_optarg);
 				return -EINVAL;
 			}
 			arg_blocking_recv = blocking;
@@ -750,12 +750,12 @@ static int cmd_sock_send(const struct shell *shell, size_t argc, char **argv)
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -794,30 +794,30 @@ static int cmd_sock_recv(const struct shell *shell, size_t argc, char **argv)
 	bool arg_blocking_recv = false;
 	enum sock_recv_print_format arg_recv_print_format = SOCK_RECV_PRINT_FORMAT_NONE;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 
 		switch (opt) {
 		case 'i': /* Socket ID */
-			arg_socket_id = atoi(optarg);
+			arg_socket_id = atoi(sys_getopt_optarg);
 			break;
 		case 'l': /* Length of data */
-			arg_data_length = atoi(optarg);
+			arg_data_length = atoi(sys_getopt_optarg);
 			break;
 		case 'r': /* Start monitoring received data */
 			arg_receive_start = true;
 			break;
 		case 'B': /* Blocking/non-blocking send or receive */
 		{
-			int blocking = atoi(optarg);
+			int blocking = atoi(sys_getopt_optarg);
 
 			if (blocking != 0 && blocking != 1) {
 				mosh_error(
 					"Blocking (%s) must be either '0' (false) or '1' (true)",
-					optarg);
+					sys_getopt_optarg);
 				return -EINVAL;
 			}
 			arg_blocking_recv = blocking;
@@ -825,16 +825,16 @@ static int cmd_sock_recv(const struct shell *shell, size_t argc, char **argv)
 			break;
 		}
 		case 'P': /* Receive data print format: "str" or "hex" */
-			if (!strcmp(optarg, "str")) {
+			if (!strcmp(sys_getopt_optarg, "str")) {
 				arg_recv_print_format =
 					SOCK_RECV_PRINT_FORMAT_STR;
-			} else if (!strcmp(optarg, "hex")) {
+			} else if (!strcmp(sys_getopt_optarg, "hex")) {
 				arg_recv_print_format =
 					SOCK_RECV_PRINT_FORMAT_HEX;
 			} else {
 				mosh_error(
 					"Receive data print format (%s) must be 'str' or 'hex'",
-					optarg);
+					sys_getopt_optarg);
 				return -EINVAL;
 			}
 			break;
@@ -843,12 +843,12 @@ static int cmd_sock_recv(const struct shell *shell, size_t argc, char **argv)
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -884,15 +884,15 @@ static int cmd_sock_rai(const struct shell *shell, size_t argc, char **argv)
 	bool arg_rai_wait_more = false;
 	int rai_option_count = 0;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 
 		switch (opt) {
 		case 'i': /* Socket ID */
-			arg_socket_id = atoi(optarg);
+			arg_socket_id = atoi(sys_getopt_optarg);
 			break;
 
 		case SOCK_SHELL_OPT_RAI_LAST:
@@ -920,12 +920,12 @@ static int cmd_sock_rai(const struct shell *shell, size_t argc, char **argv)
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -1064,23 +1064,23 @@ static int cmd_sock_setgetopt(const struct shell *shell, size_t argc, char **arg
 	struct sock_opt_entry *sock_opt;
 	struct sock_level_entry *sock_level;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 
 		switch (opt) {
 		case 'i': /* Socket ID */
-			arg_socket_id = atoi(optarg);
+			arg_socket_id = atoi(sys_getopt_optarg);
 			break;
 
 		case SOCK_SHELL_OPT_SOCKET_OPTION_LEVEL: /* Level */
-			arg_sock_opt_level = atoi(optarg);
-			if (arg_sock_opt_level == 0 && strcmp(optarg, "0") != 0) {
-				sock_level = sock_level_map(optarg);
+			arg_sock_opt_level = atoi(sys_getopt_optarg);
+			if (arg_sock_opt_level == 0 && strcmp(sys_getopt_optarg, "0") != 0) {
+				sock_level = sock_level_map(sys_getopt_optarg);
 				if (sock_level == NULL) {
-					mosh_error("Unknown socket level: %s", optarg);
+					mosh_error("Unknown socket level: %s", sys_getopt_optarg);
 					goto show_usage;
 				}
 				arg_sock_opt_level = sock_level->level;
@@ -1088,11 +1088,11 @@ static int cmd_sock_setgetopt(const struct shell *shell, size_t argc, char **arg
 			break;
 
 		case 'o': /* Option */
-			arg_sock_opt_id = atoi(optarg);
+			arg_sock_opt_id = atoi(sys_getopt_optarg);
 			if (arg_sock_opt_id == 0) {
-				sock_opt = sock_opt_map(optarg);
+				sock_opt = sock_opt_map(sys_getopt_optarg);
 				if (sock_opt == NULL) {
-					mosh_error("Unknown socket option: %s", optarg);
+					mosh_error("Unknown socket option: %s", sys_getopt_optarg);
 					goto show_usage;
 				}
 				arg_sock_opt_id = sock_opt->opt;
@@ -1104,22 +1104,22 @@ static int cmd_sock_setgetopt(const struct shell *shell, size_t argc, char **arg
 
 		case 'v': /* Value */
 			if (cmd == SOCKOPT_CMD_TYPE_GET) {
-				mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+				mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 				goto show_usage;
 			}
-			arg_sock_opt_value = optarg;
+			arg_sock_opt_value = sys_getopt_optarg;
 			break;
 
 		case 'h':
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
