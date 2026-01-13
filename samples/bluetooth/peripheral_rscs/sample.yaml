@@ -5,18 +5,7 @@ tests:
   sample.bluetooth.peripheral_rscs:
     sysbuild: true
     integration_platforms:
-      - nrf52dk/nrf52832
-      - nrf52840dk/nrf52840
-      - nrf52833dk/nrf52833
-      - nrf5340dk/nrf5340/cpuapp
-      - nrf5340dk/nrf5340/cpuapp/ns
-      - nrf54l15dk/nrf54l05/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
-      - nrf54lv10dk/nrf54lv10a/cpuapp
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
