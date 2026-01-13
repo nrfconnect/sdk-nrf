@@ -21,7 +21,7 @@ LOG_MODULE_REGISTER(spim_mosi_toggles, LOG_LEVEL_INF);
 
 #define SPI_MODE (SPI_OP_MODE_MASTER | SPI_WORD_SET(8) | SPI_LINES_SINGLE | SPI_TRANSFER_MSB)
 
-static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), SPI_MODE, 0);
+static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), SPI_MODE);
 
 #define MEMORY_SECTION(node)                                                                       \
 	COND_CODE_1(DT_NODE_HAS_PROP(node, memory_regions),                                        \

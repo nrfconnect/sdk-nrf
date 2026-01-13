@@ -31,7 +31,7 @@
 #define TEST_BUFFER_SIZE 64
 #endif
 
-static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), SPI_MODE, 0);
+static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), SPI_MODE);
 NRF_SPIM_Type *spim_reg = (NRF_SPIM_Type *)DT_REG_ADDR(DUT_SPI_NODE);
 
 static nrfx_timer_t test_timer = NRFX_TIMER_INSTANCE(DT_REG_ADDR(DT_NODELABEL(tst_timer)));
