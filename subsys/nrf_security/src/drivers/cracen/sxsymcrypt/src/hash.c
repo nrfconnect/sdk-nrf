@@ -51,7 +51,7 @@ const struct sxhashalg sxhashalg_sm3 = {
 
 void sx_hash_free(struct sxhash *hash_ctx)
 {
-	sx_cmdma_release_hw(&hash_ctx->dma);
+	(void)hash_ctx;
 }
 
 static void sx_hash_pad(struct sxhash *hash_ctx)
@@ -123,8 +123,6 @@ static int sx_hash_create_ba413(struct sxhash *hash_ctx, size_t csz)
 		return SX_ERR_INCOMPATIBLE_HW;
 	}
 
-	sx_hw_reserve(&hash_ctx->dma);
-
 	hash_ctx->dmatags = &ba413tags;
 	sx_cmdma_newcmd(&hash_ctx->dma, hash_ctx->descs, hash_ctx->algo->cfgword,
 			hash_ctx->dmatags->cfg);
@@ -146,7 +144,7 @@ int sx_hash_create(struct sxhash *hash_ctx, const struct sxhashalg *alg, size_t 
 
 int sx_hash_resume_state(struct sxhash *hash_ctx)
 {
-	if (!hash_ctx->algo || hash_ctx->dma.hw_acquired) {
+	if (!hash_ctx->algo || !hash_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	size_t totalfeedsz = hash_ctx->totalfeedsz;

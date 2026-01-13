@@ -13,6 +13,7 @@
 
 #include <string.h>
 #include <sxsymcrypt/hash.h>
+#include <sxsymcrypt/internal.h>
 #include <cracen/statuscodes.h>
 #include <cracen/mem_helpers.h>
 #include "cracen_psa_primitives.h"
@@ -37,8 +38,8 @@ int hmac_produce(struct sxhash *hashctx, const struct sxhashalg *hashalg, uint8_
 
 	digestsz = sx_hash_get_alg_digestsz(hashalg);
 	if (output_buffer_size < digestsz) {
-		sx_hash_free(hashctx);
-		return SX_ERR_OUTPUT_BUFFER_TOO_SMALL;
+		status = SX_ERR_OUTPUT_BUFFER_TOO_SMALL;
+		goto exit;
 	}
 
 	blocksz = sx_hash_get_alg_blocksz(hashalg);
@@ -46,10 +47,13 @@ int hmac_produce(struct sxhash *hashctx, const struct sxhashalg *hashalg, uint8_
 	/* run hash (1st hash of HMAC algorithm), result inside workmem */
 	status = sx_hash_digest(hashctx, workmem + blocksz);
 	if (status != SX_OK) {
-		return status;
+		goto exit;
 	}
 
 	status = sx_hash_wait(hashctx);
+
+exit:
+	sx_cmdma_release_hw(&hashctx->dma);
 	if (status != SX_OK) {
 		return status;
 	}
@@ -57,6 +61,7 @@ int hmac_produce(struct sxhash *hashctx, const struct sxhashalg *hashalg, uint8_
 	/* compute K0 xor opad (0x36 ^ 0x5C = 0x6A) */
 	xorbuf(workmem, 0x6A, blocksz);
 
+	/* cracen_hash_input_with_context handles HW management internally */
 	return cracen_hash_input_with_context(hashctx, workmem, blocksz + digestsz, hashalg,
 					      digest);
 }
@@ -67,10 +72,13 @@ static int internal_start_hmac_computation(struct sxhash *hashopctx,
 	int status;
 	size_t blocksz;
 
+	/* Acquire HW before creating hash context */
+	sx_hw_reserve(&hashopctx->dma, SX_HW_RESERVE_DEFAULT);
+
 	/* Create hash context for computing the 1st hash in the HMAC algorithm */
 	status = sx_hash_create(hashopctx, hashalg, sizeof(*hashopctx));
 	if (status != SX_OK) {
-		return status;
+		goto exit;
 	}
 
 	blocksz = sx_hash_get_alg_blocksz(hashalg);
@@ -82,7 +90,20 @@ static int internal_start_hmac_computation(struct sxhash *hashopctx,
 
 	/* start feeding the hash operation */
 	status = sx_hash_feed(hashopctx, workmem, blocksz);
+	if (status != SX_OK) {
+		goto exit;
+	}
 
+	/* Save state and release HW so the context can be resumed later */
+	status = sx_hash_save_state(hashopctx);
+	if (status != SX_OK) {
+		goto exit;
+	}
+
+	status = sx_hash_wait(hashopctx);
+
+exit:
+	sx_cmdma_release_hw(&hashopctx->dma);
 	return status;
 }
 
