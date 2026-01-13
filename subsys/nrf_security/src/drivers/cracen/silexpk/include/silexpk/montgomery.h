@@ -74,15 +74,19 @@ int sx_x25519_ptmult(const struct sx_x25519_op *k, const struct sx_x25519_op *pt
  * @remark When the operation finishes on the accelerator,
  * call sx_async_x25519_ptmult_end()
  *
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] k Scalar
  * @param[in] pt Point on the X25519 curve
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  *
  * @see sx_async_x25519_ptmult_end() and sx_x25519_ptmult()
  */
-struct sx_pk_acq_req sx_async_x25519_ptmult_go(const struct sx_x25519_op *k,
-					       const struct sx_x25519_op *pt);
+int sx_async_x25519_ptmult_go(sx_pk_req *req, const struct sx_x25519_op *k,
+			      const struct sx_x25519_op *pt);
 
 /** Collect the result of asynchronous Montgomery point multiplication (X25519)
  *
@@ -134,15 +138,19 @@ int sx_x448_ptmult(const struct sx_x448_op *k, const struct sx_x448_op *pt, stru
  * @remark When the operation finishes on the accelerator,
  * call sx_async_x448_ptmult_end()
  *
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] k Scalar
  * @param[in] pt Point on the X448 curve
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  *
  * @see sx_async_x448_ptmult_end() and sx_x448_ptmult()
  */
-struct sx_pk_acq_req sx_async_x448_ptmult_go(const struct sx_x448_op *k,
-					     const struct sx_x448_op *pt);
+int sx_async_x448_ptmult_go(sx_pk_req *req, const struct sx_x448_op *k,
+			    const struct sx_x448_op *pt);
 
 /** Collect the result of asynchronous Montgomery point multiplication (X448)
  *

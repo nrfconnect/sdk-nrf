@@ -25,6 +25,7 @@ extern "C" {
 
 #include "adapter.h"
 #include "impl.h"
+#include <cracen/statuscodes.h>
 #include <silexpk/cmddefs/srp.h>
 #include <silexpk/version.h>
 
@@ -47,6 +48,7 @@ struct sx_pk_cmd_def;
  * @remark When the operation finishes on the accelerator,
  * call sx_async_srp_user_keygen_end()
  *
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
  startup
  * @param[in] n Safe prime number (N=2*q+1 with q prime)
@@ -57,29 +59,32 @@ struct sx_pk_cmd_def;
  * @param[in] k Hash value derived by both sides (for example k = H(n, g))
  * @param[in] u Hash of (g^a, b)
 
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  *
  */
-static inline struct sx_pk_acq_req
-sx_async_srp_user_keygen_go(struct sx_pk_cnx *cnx, const sx_const_op *n, const sx_const_op *g,
-			    const sx_const_op *a, const sx_const_op *b, const sx_const_op *x,
-			    const sx_const_op *k, const sx_const_op *u)
+static inline int sx_async_srp_user_keygen_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
+					      const sx_const_op *n, const sx_const_op *g,
+					      const sx_const_op *a, const sx_const_op *b,
+					      const sx_const_op *x, const sx_const_op *k,
+					      const sx_const_op *u)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_srp_user_keyparams inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_SRP_USER_KEY_GEN);
-	if (pkreq.status) {
-		return pkreq;
-	}
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, SX_PK_CMD_SRP_USER_KEY_GEN);
 
 	/* convert and transfer operands */
 	int sizes[] = {sx_const_op_size(n), sx_const_op_size(g), sx_const_op_size(a),
 		       sx_const_op_size(b), sx_const_op_size(x), sx_const_op_size(k),
 		       sx_const_op_size(u)};
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 	sx_pk_op2vmem(n, inputs.n.addr);
 	sx_pk_op2vmem(g, inputs.g.addr);
@@ -89,9 +94,9 @@ sx_async_srp_user_keygen_go(struct sx_pk_cnx *cnx, const sx_const_op *n, const s
 	sx_pk_op2vmem(k, inputs.k.addr);
 	sx_pk_op2vmem(u, inputs.u.addr);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** Finish asynchronous (non-blocking) SRP user key generation.
@@ -152,17 +157,17 @@ static inline int sx_srp_user_keygen(struct sx_pk_cnx *cnx, const sx_op *n, cons
 				     const sx_op *a, const sx_op *b, const sx_op *x, const sx_op *k,
 				     const sx_op *u, sx_op *s)
 {
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	int status;
 
-	pkreq = sx_async_srp_user_keygen_go(cnx, n, g, a, b, x, k, u);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_async_srp_user_keygen_go(&req, cnx, n, g, a, b, x, k, u);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
+	status = sx_pk_wait(&req);
 
-	sx_async_srp_user_keygen_end(pkreq.req, s);
+	sx_async_srp_user_keygen_end(&req, s);
 
 	return status;
 }
@@ -175,6 +180,7 @@ static inline int sx_srp_user_keygen(struct sx_pk_cnx *cnx, const sx_op *n, cons
  * @remark When the operation finishes on the accelerator,
  * call sx_srp_server_public_key_gen_end()
  *
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
  * @param[in] n Safe prime number (N=2*q+1 with q prime)
  * @param[in] g Generator
@@ -184,27 +190,29 @@ static inline int sx_srp_user_keygen(struct sx_pk_cnx *cnx, const sx_op *n, cons
  *
  * Truncation or padding should be done by user application
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  */
-static inline struct sx_pk_acq_req
-sx_async_srp_server_public_key_gen_go(struct sx_pk_cnx *cnx, const sx_const_op *n,
-				      const sx_const_op *g, const sx_const_op *k,
-				      const sx_const_op *v, const sx_const_op *b)
+static inline int sx_async_srp_server_public_key_gen_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
+							const sx_const_op *n, const sx_const_op *g,
+							const sx_const_op *k, const sx_const_op *v,
+							const sx_const_op *b)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_srp_server_public_key_gen inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_SRP_SERVER_PUBLIC_KEY_GEN);
-	if (pkreq.status) {
-		return pkreq;
-	}
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, SX_PK_CMD_SRP_SERVER_PUBLIC_KEY_GEN);
 
 	int sizes[] = {sx_const_op_size(n), sx_const_op_size(g), sx_const_op_size(k),
 		       sx_const_op_size(v), sx_const_op_size(b)};
 
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 
 	sx_pk_op2vmem(n, inputs.n.addr);
@@ -213,9 +221,9 @@ sx_async_srp_server_public_key_gen_go(struct sx_pk_cnx *cnx, const sx_const_op *
 	sx_pk_op2vmem(v, inputs.v.addr);
 	sx_pk_op2vmem(b, inputs.b.addr);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** Finish asynchronous (non-blocking) SRP server public key generation.
@@ -267,17 +275,17 @@ static inline int sx_srp_server_public_key_gen(struct sx_pk_cnx *cnx, const sx_o
 					       const sx_op *g, const sx_op *k, const sx_op *v,
 					       const sx_op *b, sx_op *rb)
 {
-	uint32_t status;
-	struct sx_pk_acq_req pkreq;
+	int status;
+	sx_pk_req req;
 
-	pkreq = sx_async_srp_server_public_key_gen_go(cnx, n, g, k, v, b);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_async_srp_server_public_key_gen_go(&req, cnx, n, g, k, v, b);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
+	status = sx_pk_wait(&req);
 
-	sx_async_srp_server_public_key_gen_end(pkreq.req, rb);
+	sx_async_srp_server_public_key_gen_end(&req, rb);
 
 	return status;
 }
@@ -290,6 +298,7 @@ static inline int sx_srp_server_public_key_gen(struct sx_pk_cnx *cnx, const sx_o
  * @remark When the operation finishes on the accelerator,
  * call sx_srp_server_public_key_gen_end()
  *
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] cnx Connection structure obtained through sx_pk_open() at startup
  * @param[in] n Safe prime number (N=2*q+1 with q prime)
  * @param[in] a Random
@@ -299,27 +308,29 @@ static inline int sx_srp_server_public_key_gen(struct sx_pk_cnx *cnx, const sx_o
  *
  * Truncation or padding should be done by user application
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  */
-static inline struct sx_pk_acq_req
-sx_async_srp_server_session_key_gen_go(struct sx_pk_cnx *cnx, const sx_const_op *n,
-				       const sx_const_op *a, const sx_const_op *u,
-				       const sx_const_op *v, const sx_const_op *b)
+static inline int sx_async_srp_server_session_key_gen_go(sx_pk_req *req, struct sx_pk_cnx *cnx,
+							 const sx_const_op *n, const sx_const_op *a,
+							 const sx_const_op *u, const sx_const_op *v,
+							 const sx_const_op *b)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_srp_server_session_key_gen inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_SRP_SERVER_SESSION_KEY_GEN);
-	if (pkreq.status) {
-		return pkreq;
-	}
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, SX_PK_CMD_SRP_SERVER_SESSION_KEY_GEN);
 
 	int sizes[] = {sx_const_op_size(n), sx_const_op_size(a), sx_const_op_size(u),
 		       sx_const_op_size(v), sx_const_op_size(b)};
 
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
+	status = sx_pk_list_gfp_inslots(req, sizes, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 
 	sx_pk_op2vmem(n, inputs.n.addr);
@@ -328,9 +339,9 @@ sx_async_srp_server_session_key_gen_go(struct sx_pk_cnx *cnx, const sx_const_op 
 	sx_pk_op2vmem(v, inputs.v.addr);
 	sx_pk_op2vmem(b, inputs.b.addr);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** Finish asynchronous (non-blocking) SRP server session key generation.
@@ -382,17 +393,17 @@ static inline int sx_srp_server_session_key_gen(struct sx_pk_cnx *cnx, const sx_
 						const sx_op *a, const sx_op *u, const sx_op *v,
 						const sx_op *b, sx_op *rs)
 {
-	uint32_t status;
-	struct sx_pk_acq_req pkreq;
+	int status;
+	sx_pk_req req;
 
-	pkreq = sx_async_srp_server_session_key_gen_go(cnx, n, a, u, v, b);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_async_srp_server_session_key_gen_go(&req, cnx, n, a, u, v, b);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
+	status = sx_pk_wait(&req);
 
-	sx_async_srp_server_session_key_gen_end(pkreq.req, rs);
+	sx_async_srp_server_session_key_gen_end(&req, rs);
 
 	return status;
 }

@@ -523,7 +523,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 		} else {
 			if (operation->initialized) {
 				sx_status = sx_blkcipher_resume_state(&operation->cipher);
-				if (sx_status) {
+				if (sx_status != SX_OK) {
 					return silex_statuscodes_to_psa(sx_status);
 				}
 			} else {
@@ -540,7 +540,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 				sx_status = sx_blkcipher_crypt(
 					&operation->cipher, operation->unprocessed_input,
 					operation->unprocessed_input_bytes, output);
-				if (sx_status) {
+				if (sx_status != SX_OK) {
 					return silex_statuscodes_to_psa(sx_status);
 				}
 
@@ -552,18 +552,18 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 			if (block_bytes) {
 				sx_status = sx_blkcipher_crypt(&operation->cipher, input,
 							       block_bytes, output);
-				if (sx_status) {
+				if (sx_status != SX_OK) {
 					return silex_statuscodes_to_psa(sx_status);
 				}
 			}
 
 			sx_status = sx_blkcipher_save_state(&operation->cipher);
-			if (sx_status) {
+			if (sx_status != SX_OK) {
 				return silex_statuscodes_to_psa(sx_status);
 			}
 
 			sx_status = sx_blkcipher_wait(&operation->cipher);
-			if (sx_status) {
+			if (sx_status != SX_OK) {
 				return silex_statuscodes_to_psa(sx_status);
 			}
 
@@ -624,7 +624,7 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 
 	if (operation->initialized) {
 		sx_status = sx_blkcipher_resume_state(&operation->cipher);
-		if (sx_status) {
+		if (sx_status != SX_OK) {
 			return silex_statuscodes_to_psa(sx_status);
 		}
 	} else {
@@ -715,17 +715,17 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 
 	sx_status = sx_blkcipher_crypt(&operation->cipher, operation->unprocessed_input,
 				       operation->unprocessed_input_bytes, output);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_blkcipher_run(&operation->cipher);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_blkcipher_wait(&operation->cipher);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 

@@ -24,6 +24,7 @@
 extern "C" {
 #endif
 
+#include <cracen/statuscodes.h>
 #include <silexpk/cmddefs/ecjpake.h>
 #include <silexpk/iomem.h>
 #include "../ec_curves.h"
@@ -57,6 +58,7 @@ struct sx_pk_ecurve;
  * @remark When the operation finishes on the accelerator,
  * call sx_async_generate_zkp_end()
  *
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] curve Elliptic curve on which to perform the operation.
  * @param[in] v Random input (< n)
  * @param[in] x Exponent
@@ -64,35 +66,36 @@ struct sx_pk_ecurve;
  *
  * Truncation or padding should be done by user application
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  */
-static inline struct sx_pk_acq_req sx_ecjpake_generate_zkp_go(const struct sx_pk_ecurve *curve,
-							      const sx_const_ecop *v,
-							      const sx_const_ecop *x,
-							      const sx_const_ecop *h)
+static inline int sx_ecjpake_generate_zkp_go(sx_pk_req *req, const struct sx_pk_ecurve *curve,
+					     const sx_const_ecop *v, const sx_const_ecop *x,
+					     const sx_const_ecop *h)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecjpake_generate_zkp inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECJPAKE_GENERATE_ZKP);
-	if (pkreq.status) {
-		return pkreq;
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECJPAKE_GENERATE_ZKP);
+
+	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 
-	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
-	}
-
-	int opsz = sx_pk_get_opsize(pkreq.req);
+	int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_ecop2mem(v, inputs.v.addr, opsz);
 	sx_pk_ecop2mem(x, inputs.x.addr, opsz);
 	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** Finish asynchronous (non-blocking) EC J-PAKE proof generation.
@@ -144,17 +147,17 @@ static inline int sx_ecjpake_generate_zkp(const struct sx_pk_ecurve *curve, cons
 					  const sx_const_ecop *x, const sx_const_ecop *h,
 					  sx_ecop *r)
 {
-	uint32_t status;
-	struct sx_pk_acq_req pkreq;
+	int status;
+	sx_pk_req req;
 
-	pkreq = sx_ecjpake_generate_zkp_go(curve, v, x, h);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_ecjpake_generate_zkp_go(&req, curve, v, x, h);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
+	status = sx_pk_wait(&req);
 
-	sx_ecjpake_generate_zkp_end(pkreq.req, r);
+	sx_ecjpake_generate_zkp_end(&req, r);
 
 	return status;
 }
@@ -187,7 +190,7 @@ static inline int sx_ecjpake_generate_zkp(const struct sx_pk_ecurve *curve, cons
  * @see sx_async_ecjpake_generate_zkp_go(), sx_async_ecjpake_generate_zkp_end()
  * for an asynchronous version
  */
-static inline int sx_sync_ecjpake_generate_zkp(struct sx_pk_acq_req *pkreq,
+static inline int sx_sync_ecjpake_generate_zkp(sx_pk_req *req,
 					  const struct sx_pk_ecurve *curve, const sx_const_ecop *v,
 					  const sx_const_ecop *x, const sx_const_ecop *h,
 					  sx_ecop *r)
@@ -195,28 +198,28 @@ static inline int sx_sync_ecjpake_generate_zkp(struct sx_pk_acq_req *pkreq,
 	uint32_t status;
 	struct sx_pk_inops_ecjpake_generate_zkp inputs;
 
-	sx_pk_set_cmd(pkreq->req, SX_PK_CMD_ECJPAKE_GENERATE_ZKP);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECJPAKE_GENERATE_ZKP);
 
-	status = sx_pk_list_ecc_inslots(pkreq->req, curve, 0, (struct sx_pk_slot *)&inputs);
+	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
 		return status;
 	}
 
-	const int opsz = sx_pk_get_opsize(pkreq->req);
+	const int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_ecop2mem(v, inputs.v.addr, opsz);
 	sx_pk_ecop2mem(x, inputs.x.addr, opsz);
 	sx_pk_ecop2mem(h, inputs.h.addr, opsz);
 
-	sx_pk_run(pkreq->req);
+	sx_pk_run(req);
 
-	status = sx_pk_wait(pkreq->req);
+	status = sx_pk_wait(req);
 
 	if (status != SX_OK) {
 		return status;
 	}
 
-	const uint8_t **outputs = sx_pk_get_output_ops(pkreq->req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
 
 	sx_pk_mem2ecop(outputs[0], opsz, r);
 
@@ -231,6 +234,7 @@ static inline int sx_sync_ecjpake_generate_zkp(struct sx_pk_acq_req *pkreq,
  * @remark When the operation finishes on the accelerator,
  * call sx_ecjpake_verify_zkp_end()
  *
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] curve Elliptic curve on which to perform the operation.
  * @param[in] v Point on the curve
  * @param[in] x Point on the curve
@@ -241,27 +245,31 @@ static inline int sx_sync_ecjpake_generate_zkp(struct sx_pk_acq_req *pkreq,
  *
  * Truncation or padding should be done by user application
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  */
-static inline struct sx_pk_acq_req
-sx_ecjpake_verify_zkp_go(const struct sx_pk_ecurve *curve, const sx_pk_const_affine_point *v,
-			 const sx_pk_const_affine_point *x, const sx_const_ecop *r,
-			 const sx_const_ecop *h, const sx_pk_const_affine_point *g)
+static inline int sx_ecjpake_verify_zkp_go(sx_pk_req *req,
+					   const struct sx_pk_ecurve *curve,
+					   const sx_pk_const_affine_point *v,
+					   const sx_pk_const_affine_point *x,
+					   const sx_const_ecop *r, const sx_const_ecop *h,
+					   const sx_pk_const_affine_point *g)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecjpake_verify_zkp inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECJPAKE_VERIFY_ZKP);
-	if (pkreq.status) {
-		return pkreq;
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECJPAKE_VERIFY_ZKP);
+
+	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 
-	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
-	}
-
-	int opsz = sx_pk_get_opsize(pkreq.req);
+	int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_affpt2mem(v, inputs.xv.addr, inputs.yv.addr, opsz);
 	sx_pk_affpt2mem(x, inputs.xx.addr, inputs.yx.addr, opsz);
@@ -271,12 +279,12 @@ sx_ecjpake_verify_zkp_go(const struct sx_pk_ecurve *curve, const sx_pk_const_aff
 	if (g != SX_PT_CURVE_GENERATOR) {
 		sx_pk_affpt2mem(g, inputs.xg2.addr, inputs.yg2.addr, opsz);
 	} else {
-		sx_pk_write_curve_gen(pkreq.req, curve, inputs.xg2, inputs.yg2);
+		sx_pk_write_curve_gen(req, curve, inputs.xg2, inputs.yg2);
 	}
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** Finish asynchronous (non-blocking) EC J-PAKE proof verification.
@@ -340,17 +348,17 @@ static inline int sx_ecjpake_verify_zkp(const struct sx_pk_ecurve *curve,
 					const sx_pk_const_affine_point *x, const sx_const_ecop *r,
 					const sx_const_ecop *h, const sx_pk_const_affine_point *g)
 {
-	uint32_t status;
-	struct sx_pk_acq_req pkreq;
+	int status;
+	sx_pk_req req;
 
-	pkreq = sx_ecjpake_verify_zkp_go(curve, v, x, r, h, g);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_ecjpake_verify_zkp_go(&req, curve, v, x, r, h, g);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
+	status = sx_pk_wait(&req);
 
-	sx_ecjpake_verify_zkp_end(pkreq.req);
+	sx_ecjpake_verify_zkp_end(&req);
 
 	return status;
 }
@@ -395,7 +403,7 @@ static inline int sx_ecjpake_verify_zkp(const struct sx_pk_ecurve *curve,
  * @see sx_async_ecjpake_verify_zkp_go(), sx_async_ecjpake_verify_zkp_end() for
  * an asynchronous version
  */
-static inline int sx_sync_ecjpake_verify_zkp(struct sx_pk_acq_req *pkreq,
+static inline int sx_sync_ecjpake_verify_zkp(sx_pk_req *req,
 					const struct sx_pk_ecurve *curve,
 					const sx_pk_const_affine_point *v,
 					const sx_pk_const_affine_point *x, const sx_const_ecop *r,
@@ -404,14 +412,14 @@ static inline int sx_sync_ecjpake_verify_zkp(struct sx_pk_acq_req *pkreq,
 	uint32_t status;
 	struct sx_pk_inops_ecjpake_verify_zkp inputs;
 
-	sx_pk_set_cmd(pkreq->req, SX_PK_CMD_ECJPAKE_VERIFY_ZKP);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECJPAKE_VERIFY_ZKP);
 
-	status = sx_pk_list_ecc_inslots(pkreq->req, curve, 0, (struct sx_pk_slot *)&inputs);
+	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
 		return status;
 	}
 
-	int opsz = sx_pk_get_opsize(pkreq->req);
+	int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_affpt2mem(v, inputs.xv.addr, inputs.yv.addr, opsz);
 	sx_pk_affpt2mem(x, inputs.xx.addr, inputs.yx.addr, opsz);
@@ -421,12 +429,12 @@ static inline int sx_sync_ecjpake_verify_zkp(struct sx_pk_acq_req *pkreq,
 	if (g != SX_PT_CURVE_GENERATOR) {
 		sx_pk_affpt2mem(g, inputs.xg2.addr, inputs.yg2.addr, opsz);
 	} else {
-		sx_pk_write_curve_gen(pkreq->req, curve, inputs.xg2, inputs.yg2);
+		sx_pk_write_curve_gen(req, curve, inputs.xg2, inputs.yg2);
 	}
 
-	sx_pk_run(pkreq->req);
+	sx_pk_run(req);
 
-	status = sx_pk_wait(pkreq->req);
+	status = sx_pk_wait(req);
 
 	return status;
 }
@@ -439,6 +447,7 @@ static inline int sx_sync_ecjpake_verify_zkp(struct sx_pk_acq_req *pkreq,
  * @remark When the operation finishes on the accelerator,
  * call sx_ecjpake_3pt_add_end()
  *
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] curve Elliptic curve on which to perform the operation.
  * @param[in] a Point on the curve
  * @param[in] b Point on the curve
@@ -446,36 +455,37 @@ static inline int sx_sync_ecjpake_verify_zkp(struct sx_pk_acq_req *pkreq,
  *
  * Truncation or padding should be done by user application
  *
- * @return Acquired acceleration request for this operation
- *
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  */
-static inline struct sx_pk_acq_req sx_ecjpake_3pt_add_go(const struct sx_pk_ecurve *curve,
-							 const sx_pk_const_affine_point *a,
-							 const sx_pk_const_affine_point *b,
-							 const sx_pk_const_affine_point *c)
+static inline int sx_ecjpake_3pt_add_go(sx_pk_req *req, const struct sx_pk_ecurve *curve,
+					const sx_pk_const_affine_point *a,
+					const sx_pk_const_affine_point *b,
+					const sx_pk_const_affine_point *c)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecjpake_3pt_add inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECJPAKE_3PT_ADD);
-	if (pkreq.status) {
-		return pkreq;
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECJPAKE_3PT_ADD);
+
+	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 
-	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
-	}
-
-	int opsz = sx_pk_get_opsize(pkreq.req);
+	int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_affpt2mem(b, inputs.x2_1.addr, inputs.x2_2.addr, opsz);
 	sx_pk_affpt2mem(c, inputs.x3_1.addr, inputs.x3_2.addr, opsz);
 	sx_pk_affpt2mem(a, inputs.x1_1.addr, inputs.x1_2.addr, opsz);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** Finish asynchronous (non-blocking) EC J-PAKE 3 point addition.
@@ -535,17 +545,17 @@ static inline int sx_ecjpake_3pt_add(const struct sx_pk_ecurve *curve,
 				     const sx_pk_const_affine_point *b,
 				     const sx_pk_const_affine_point *c, sx_pk_affine_point *gb)
 {
-	uint32_t status;
-	struct sx_pk_acq_req pkreq;
+	int status;
+	sx_pk_req req;
 
-	pkreq = sx_ecjpake_3pt_add_go(curve, a, b, c);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_ecjpake_3pt_add_go(&req, curve, a, b, c);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
+	status = sx_pk_wait(&req);
 
-	sx_ecjpake_3pt_add_end(pkreq.req, gb);
+	sx_ecjpake_3pt_add_end(&req, gb);
 
 	return status;
 }
@@ -585,7 +595,7 @@ static inline int sx_ecjpake_3pt_add(const struct sx_pk_ecurve *curve,
  * @see sx_async_ecjpake_verify_zkp_go(), sx_async_ecjpake_verify_zkp_end() for
  * an asynchronous version
  */
-static inline int sx_sync_ecjpake_3pt_add(struct sx_pk_acq_req *pkreq,
+static inline int sx_sync_ecjpake_3pt_add(sx_pk_req *req,
 					 const struct sx_pk_ecurve *curve,
 					 const sx_pk_const_affine_point *a,
 					 const sx_pk_const_affine_point *b,
@@ -594,26 +604,26 @@ static inline int sx_sync_ecjpake_3pt_add(struct sx_pk_acq_req *pkreq,
 	uint32_t status;
 	struct sx_pk_inops_ecjpake_3pt_add inputs;
 
-	sx_pk_set_cmd(pkreq->req, SX_PK_CMD_ECJPAKE_3PT_ADD);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECJPAKE_3PT_ADD);
 
-	status = sx_pk_list_ecc_inslots(pkreq->req, curve, 0, (struct sx_pk_slot *)&inputs);
+	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
 		return status;
 	}
-	const int opsz = sx_pk_get_opsize(pkreq->req);
+	const int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_affpt2mem(b, inputs.x2_1.addr, inputs.x2_2.addr, opsz);
 	sx_pk_affpt2mem(c, inputs.x3_1.addr, inputs.x3_2.addr, opsz);
 	sx_pk_affpt2mem(a, inputs.x1_1.addr, inputs.x1_2.addr, opsz);
 
-	sx_pk_run(pkreq->req);
-	status = sx_pk_wait(pkreq->req);
+	sx_pk_run(req);
+	status = sx_pk_wait(req);
 
 	if (status != SX_OK) {
 		return status;
 	}
 
-	const uint8_t **outputs = sx_pk_get_output_ops(pkreq->req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
 
 	sx_pk_mem2affpt(outputs[0], outputs[1], opsz, gb);
 
@@ -628,6 +638,7 @@ static inline int sx_sync_ecjpake_3pt_add(struct sx_pk_acq_req *pkreq,
  * @remark When the operation finishes on the accelerator,
  * call sx_ecjpake_gen_sess_key_end()
  *
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] curve Elliptic curve on which to perform the operation.
  * @param[in] x4 Point on the curve
  * @param[in] b Point on the curve
@@ -636,37 +647,38 @@ static inline int sx_sync_ecjpake_3pt_add(struct sx_pk_acq_req *pkreq,
  *
  * Truncation or padding should be done by user application
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  */
-static inline struct sx_pk_acq_req sx_ecjpake_gen_sess_key_go(const struct sx_pk_ecurve *curve,
-							      const sx_pk_const_affine_point *x4,
-							      const sx_pk_const_affine_point *b,
-							      const sx_const_ecop *x2,
-							      const sx_const_ecop *x2s)
+static inline int sx_ecjpake_gen_sess_key_go(sx_pk_req *req, const struct sx_pk_ecurve *curve,
+					     const sx_pk_const_affine_point *x4,
+					     const sx_pk_const_affine_point *b,
+					     const sx_const_ecop *x2, const sx_const_ecop *x2s)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecjpake_gen_sess_key inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECJPAKE_GEN_SESS_KEY);
-	if (pkreq.status) {
-		return pkreq;
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECJPAKE_GEN_SESS_KEY);
+
+	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 
-	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
-	}
-
-	int opsz = sx_pk_get_opsize(pkreq.req);
+	int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_affpt2mem(x4, inputs.x4_1.addr, inputs.x4_2.addr, opsz);
 	sx_pk_affpt2mem(b, inputs.b_1.addr, inputs.b_2.addr, opsz);
 	sx_pk_ecop2mem(x2, inputs.x2.addr, opsz);
 	sx_pk_ecop2mem(x2s, inputs.x2s.addr, opsz);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** Finish asynchronous (non-blocking) EC J-PAKE session key generation
@@ -728,17 +740,17 @@ static inline int sx_ecjpake_gen_sess_key(const struct sx_pk_ecurve *curve,
 					  const sx_const_ecop *x2, const sx_const_ecop *x2s,
 					  sx_pk_affine_point *t)
 {
-	uint32_t status;
-	struct sx_pk_acq_req pkreq;
+	int status;
+	sx_pk_req req;
 
-	pkreq = sx_ecjpake_gen_sess_key_go(curve, x4, b, x2, x2s);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_ecjpake_gen_sess_key_go(&req, curve, x4, b, x2, x2s);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
+	status = sx_pk_wait(&req);
 
-	sx_ecjpake_gen_sess_key_end(pkreq.req, t);
+	sx_ecjpake_gen_sess_key_end(&req, t);
 
 	return status;
 }
@@ -779,7 +791,7 @@ static inline int sx_ecjpake_gen_sess_key(const struct sx_pk_ecurve *curve,
  * @see sx_async_ecjpake_gen_sess_key_go(), sx_async_ecjpake_gen_sess_key_end()
  * for an asynchronous version
  */
-static inline int sx_sync_ecjpake_gen_sess_key(struct sx_pk_acq_req *pkreq,
+static inline int sx_sync_ecjpake_gen_sess_key(sx_pk_req *req,
 					  const struct sx_pk_ecurve *curve,
 					  const sx_pk_const_affine_point *x4,
 					  const sx_pk_const_affine_point *b,
@@ -789,28 +801,28 @@ static inline int sx_sync_ecjpake_gen_sess_key(struct sx_pk_acq_req *pkreq,
 	uint32_t status;
 	struct sx_pk_inops_ecjpake_gen_sess_key inputs;
 
-	sx_pk_set_cmd(pkreq->req, SX_PK_CMD_ECJPAKE_GEN_SESS_KEY);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECJPAKE_GEN_SESS_KEY);
 
-	status = sx_pk_list_ecc_inslots(pkreq->req, curve, 0, (struct sx_pk_slot *)&inputs);
+	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
 		return status;
 	}
 
-	const int opsz = sx_pk_get_opsize(pkreq->req);
+	const int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_affpt2mem(x4, inputs.x4_1.addr, inputs.x4_2.addr, opsz);
 	sx_pk_affpt2mem(b, inputs.b_1.addr, inputs.b_2.addr, opsz);
 	sx_pk_ecop2mem(x2, inputs.x2.addr, opsz);
 	sx_pk_ecop2mem(x2s, inputs.x2s.addr, opsz);
 
-	sx_pk_run(pkreq->req);
-	status = sx_pk_wait(pkreq->req);
+	sx_pk_run(req);
+	status = sx_pk_wait(req);
 
 	if (status != SX_OK) {
 		return status;
 	}
 
-	const uint8_t **outputs = sx_pk_get_output_ops(pkreq->req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
 
 	sx_pk_mem2affpt(outputs[0], outputs[1], opsz, t);
 
@@ -825,6 +837,7 @@ static inline int sx_sync_ecjpake_gen_sess_key(struct sx_pk_acq_req *pkreq,
  * @remark When the operation finishes on the accelerator,
  * call sx_ecjpake_gen_step_2_end()
  *
+ * @param[out] req The acquired acceleration request for this operation
  * @param[in] curve Elliptic curve on which to perform the operation.
  * @param[in] x4 Point on the curve
  * @param[in] x3 Point on the curve
@@ -834,27 +847,30 @@ static inline int sx_sync_ecjpake_gen_sess_key(struct sx_pk_acq_req *pkreq,
  *
  * Truncation or padding should be done by user application
  *
- * @return Acquired acceleration request for this operation
+ * @return ::SX_OK
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PK_RETRY
+ * @return ::SX_ERR_BUSY
  */
-static inline struct sx_pk_acq_req
-sx_ecjpake_gen_step_2_go(const struct sx_pk_ecurve *curve, const sx_pk_const_affine_point *x4,
-			 const sx_pk_const_affine_point *x3, const sx_pk_const_affine_point *x1,
-			 const sx_const_ecop *x2, const sx_const_ecop *s)
+static inline int sx_ecjpake_gen_step_2_go(sx_pk_req *req, const struct sx_pk_ecurve *curve,
+					   const sx_pk_const_affine_point *x4,
+					   const sx_pk_const_affine_point *x3,
+					   const sx_pk_const_affine_point *x1,
+					   const sx_const_ecop *x2, const sx_const_ecop *s)
 {
-	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecjpake_gen_step_2 inputs;
+	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECJPAKE_GEN_STEP_2);
-	if (pkreq.status) {
-		return pkreq;
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECJPAKE_GEN_STEP_2);
+
+	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
+	if (status != SX_OK) {
+		sx_pk_release_req(req);
+		return status;
 	}
 
-	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, curve, 0, (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
-		return pkreq;
-	}
-
-	int opsz = sx_pk_get_opsize(pkreq.req);
+	int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_affpt2mem(x4, inputs.x4_1.addr, inputs.x4_2.addr, opsz);
 	sx_pk_affpt2mem(x3, inputs.x3_1.addr, inputs.x3_2.addr, opsz);
@@ -862,9 +878,9 @@ sx_ecjpake_gen_step_2_go(const struct sx_pk_ecurve *curve, const sx_pk_const_aff
 	sx_pk_ecop2mem(x2, inputs.x2s.addr, opsz);
 	sx_pk_ecop2mem(s, inputs.s.addr, opsz);
 
-	sx_pk_run(pkreq.req);
+	sx_pk_run(req);
 
-	return pkreq;
+	return SX_OK;
 }
 
 /** Finish an asynchronous (non-blocking) EC J-PAKE step 2 calculation
@@ -938,17 +954,17 @@ static inline int sx_ecjpake_gen_step_2(const struct sx_pk_ecurve *curve,
 					const sx_const_ecop *s, sx_pk_affine_point *a, sx_ecop *x2s,
 					sx_pk_affine_point *ga)
 {
-	uint32_t status;
-	struct sx_pk_acq_req pkreq;
+	int status;
+	sx_pk_req req;
 
-	pkreq = sx_ecjpake_gen_step_2_go(curve, x4, x3, x1, x2, s);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_ecjpake_gen_step_2_go(&req, curve, x4, x3, x1, x2, s);
+	if (status != SX_OK) {
+		return status;
 	}
 
-	status = sx_pk_wait(pkreq.req);
+	status = sx_pk_wait(&req);
 
-	sx_ecjpake_gen_step_2_end(pkreq.req, a, x2s, ga);
+	sx_ecjpake_gen_step_2_end(&req, a, x2s, ga);
 
 	return status;
 }
@@ -988,7 +1004,7 @@ static inline int sx_ecjpake_gen_step_2(const struct sx_pk_ecurve *curve,
  * @return ::SX_ERR_EXPIRED
  * @return ::SX_ERR_PK_RETRY
  */
-static inline int sx_sync_ecjpake_gen_step_2(struct sx_pk_acq_req *pkreq,
+static inline int sx_sync_ecjpake_gen_step_2(sx_pk_req *req,
 					const struct sx_pk_ecurve *curve,
 					const sx_pk_const_affine_point *x4,
 					const sx_pk_const_affine_point *x3,
@@ -999,14 +1015,14 @@ static inline int sx_sync_ecjpake_gen_step_2(struct sx_pk_acq_req *pkreq,
 	uint32_t status;
 	struct sx_pk_inops_ecjpake_gen_step_2 inputs;
 
-	sx_pk_set_cmd(pkreq->req, SX_PK_CMD_ECJPAKE_GEN_STEP_2);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECJPAKE_GEN_STEP_2);
 
-	status = sx_pk_list_ecc_inslots(pkreq->req, curve, 0, (struct sx_pk_slot *)&inputs);
+	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
 		return status;
 	}
 
-	const int opsz = sx_pk_get_opsize(pkreq->req);
+	const int opsz = sx_pk_get_opsize(req);
 
 	sx_pk_affpt2mem(x4, inputs.x4_1.addr, inputs.x4_2.addr, opsz);
 	sx_pk_affpt2mem(x3, inputs.x3_1.addr, inputs.x3_2.addr, opsz);
@@ -1014,14 +1030,14 @@ static inline int sx_sync_ecjpake_gen_step_2(struct sx_pk_acq_req *pkreq,
 	sx_pk_ecop2mem(x2, inputs.x2s.addr, opsz);
 	sx_pk_ecop2mem(s, inputs.s.addr, opsz);
 
-	sx_pk_run(pkreq->req);
+	sx_pk_run(req);
 
-	status = sx_pk_wait(pkreq->req);
-	if (status) {
+	status = sx_pk_wait(req);
+	if (status != SX_OK) {
 		return status;
 	}
 
-	const uint8_t **outputs = sx_pk_get_output_ops(pkreq->req);
+	const uint8_t **outputs = sx_pk_get_output_ops(req);
 
 	sx_pk_mem2affpt(outputs[0], outputs[1], opsz, a);
 	sx_pk_mem2op(outputs[2], opsz, x2s);

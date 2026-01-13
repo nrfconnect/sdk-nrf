@@ -402,12 +402,12 @@ static psa_status_t hw_finalize_aead_encryption(cracen_aead_operation_t *operati
 	}
 
 	sx_status = sx_aead_produce_tag(&operation->ctx, tag);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_aead_wait(&operation->ctx);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
@@ -423,12 +423,12 @@ static psa_status_t hw_finalize_aead_decryption(cracen_aead_operation_t *operati
 	int sx_status;
 
 	sx_status = sx_aead_verify_tag(&operation->ctx, tag);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_aead_wait(&operation->ctx);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 

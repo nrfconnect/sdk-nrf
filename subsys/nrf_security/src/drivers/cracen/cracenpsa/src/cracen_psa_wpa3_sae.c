@@ -572,7 +572,7 @@ static psa_status_t cracen_wpa3_sae_calc_k(cracen_wpa3_sae_operation_t *op, uint
 	MAKE_SX_POINT(ps_pwe, pnt_buf_1, CRACEN_P256_POINT_SIZE);
 
 	sx_status = sx_ecp_ptmult(op->curve, &peer_scalar, &pwe_point, &ps_pwe);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
@@ -584,7 +584,7 @@ static psa_status_t cracen_wpa3_sae_calc_k(cracen_wpa3_sae_operation_t *op, uint
 	MAKE_SX_POINT(ps_pwe_lmnt, pnt_buf_2, CRACEN_P256_POINT_SIZE);
 	sx_get_const_affine_point(&ps_pwe, &ps_pwe_const);
 	sx_status = sx_ecp_ptadd(op->curve, &ps_pwe_const, &pce, &ps_pwe_lmnt);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
@@ -595,7 +595,7 @@ static psa_status_t cracen_wpa3_sae_calc_k(cracen_wpa3_sae_operation_t *op, uint
 	MAKE_SX_POINT(K, pnt_buf_1, CRACEN_P256_POINT_SIZE);
 	sx_get_const_affine_point(&ps_pwe_lmnt, &ps_pwe_lmnt_const);
 	sx_status = sx_ecp_ptmult(op->curve, &rand_scalar, &ps_pwe_lmnt_const, &K);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
