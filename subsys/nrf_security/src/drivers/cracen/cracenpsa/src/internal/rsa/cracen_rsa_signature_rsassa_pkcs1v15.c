@@ -93,6 +93,7 @@ int cracen_rsa_pkcs1v15_sign_message(struct cracen_rsa_key *rsa_key,
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	uint8_t digest[digestsz];
 
+	/* cracen_hash_input handles hardware acquire and release. */
 	status = cracen_hash_input(message, message_length, hashalg, digest);
 	if (status != SX_OK) {
 		return status;
@@ -106,7 +107,7 @@ int cracen_rsa_pkcs1v15_sign_digest(struct cracen_rsa_key *rsa_key,
 				    const struct sxhashalg *hashalg, const uint8_t *digest,
 				    size_t digest_length)
 {
-	int sx_status;
+	int status;
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	size_t modulussz = CRACEN_RSA_KEY_OPSZ(rsa_key);
 	uint8_t workmem[WORKMEM_SIZE];
@@ -141,16 +142,18 @@ int cracen_rsa_pkcs1v15_sign_digest(struct cracen_rsa_key *rsa_key,
 	}
 
 	pkreq = sx_pk_acquire_req(rsa_key->cmd);
-	if (pkreq.status) {
+	if (pkreq.status != SX_OK) {
 		return pkreq.status;
 	}
+	sx_pk_set_cmd(pkreq.req, rsa_key->cmd);
 
 	cracen_ffkey_write_sz(rsa_key, input_sizes);
 	CRACEN_FFKEY_REFER_INPUT(rsa_key, input_sizes) = modulussz;
 
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, input_sizes, inputs);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_pk_list_gfp_inslots(pkreq.req, input_sizes, inputs);
+	if (status) {
+		sx_pk_release_req(pkreq.req);
+		return status;
 	}
 
 	cracen_ffkey_write(rsa_key, inputs);
@@ -180,9 +183,10 @@ int cracen_rsa_pkcs1v15_sign_digest(struct cracen_rsa_key *rsa_key,
 
 	/* start the modular exponentiation m^d mod n (RSASP1 sign primitive) */
 	sx_pk_run(pkreq.req);
-	sx_status = sx_pk_wait(pkreq.req);
-	if (sx_status != SX_OK) {
-		return sx_status;
+	status = sx_pk_wait(pkreq.req);
+	if (status != SX_OK) {
+		sx_pk_release_req(pkreq.req);
+		return status;
 	}
 
 	uint8_t **outputs = (uint8_t **)sx_pk_get_output_ops(pkreq.req);
@@ -206,6 +210,7 @@ int cracen_rsa_pkcs1v15_verify_message(struct cracen_rsa_key *rsa_key,
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	uint8_t digest[digestsz];
 
+	/* cracen_hash_input handles hardware acquire and release. */
 	status = cracen_hash_input(message, message_length, hashalg, digest);
 	if (status != SX_OK) {
 		return status;
@@ -219,7 +224,7 @@ int cracen_rsa_pkcs1v15_verify_digest(struct cracen_rsa_key *rsa_key,
 				      const struct sxhashalg *hashalg, const uint8_t *digest,
 				      size_t digest_length)
 {
-	int sx_status;
+	int status;
 	int r;
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	size_t modulussz = CRACEN_RSA_KEY_OPSZ(rsa_key);
@@ -249,14 +254,17 @@ int cracen_rsa_pkcs1v15_verify_digest(struct cracen_rsa_key *rsa_key,
 	int input_sizes[INPUT_SLOTS] = {0};
 
 	pkreq = sx_pk_acquire_req(rsa_key->cmd);
-	if (pkreq.status) {
+	if (pkreq.status != SX_OK) {
 		return pkreq.status;
 	}
+	sx_pk_set_cmd(pkreq.req, rsa_key->cmd);
+
 	cracen_ffkey_write_sz(rsa_key, input_sizes);
 	CRACEN_FFKEY_REFER_INPUT(rsa_key, input_sizes) = signature->sz;
-	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, input_sizes, inputs);
-	if (pkreq.status) {
-		return pkreq.status;
+	status = sx_pk_list_gfp_inslots(pkreq.req, input_sizes, inputs);
+	if (status) {
+		sx_pk_release_req(pkreq.req);
+		return status;
 	}
 
 	cracen_ffkey_write(rsa_key, inputs);
@@ -265,9 +273,10 @@ int cracen_rsa_pkcs1v15_verify_digest(struct cracen_rsa_key *rsa_key,
 	/* start the modular exponentiation s^e mod n (RSAVP1 verify primitive)
 	 */
 	sx_pk_run(pkreq.req);
-	sx_status = sx_pk_wait(pkreq.req);
-	if (sx_status != SX_OK) {
-		return sx_status;
+	status = sx_pk_wait(pkreq.req);
+	if (status != SX_OK) {
+		sx_pk_release_req(pkreq.req);
+		return status;
 	}
 
 	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(pkreq.req);

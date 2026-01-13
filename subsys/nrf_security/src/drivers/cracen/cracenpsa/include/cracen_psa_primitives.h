@@ -267,8 +267,8 @@ struct cracen_hash_operation_s {
 	/* Buffer for input data to fill up the next block. */
 	uint8_t input_buffer[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
 
-	/* Flag to know if the hashing has already started. */
-	bool is_first_block;
+	/* Flag indicating saved state exists that needs to be resumed */
+	bool has_saved_state;
 };
 typedef struct cracen_hash_operation_s cracen_hash_operation_t;
 
@@ -390,7 +390,8 @@ struct cracen_mac_operation_s {
 	/* Buffer for input data to fill up the next block. */
 	uint8_t input_buffer[SX_MAX(SX_HASH_MAX_ENABLED_BLOCK_SIZE, SX_BLKCIPHER_PRIV_SZ)];
 
-	bool is_first_block;
+	/* Flag indicating saved state exists that needs to be resumed */
+	bool has_saved_state;
 	union {
 #if defined(PSA_NEED_CRACEN_HMAC)
 		struct {

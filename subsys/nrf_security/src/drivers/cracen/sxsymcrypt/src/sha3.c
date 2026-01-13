@@ -99,8 +99,6 @@ static int sx_hash_create_ba418(struct sxhash *hash_ctx, size_t csz)
 		return SX_ERR_ALLOCATION_TOO_SMALL;
 	}
 
-	sx_hw_reserve(&hash_ctx->dma);
-
 	hash_ctx->dmatags = &ba418tags;
 	sx_cmdma_newcmd(&hash_ctx->dma, hash_ctx->descs, hash_ctx->algo->cfgword,
 			hash_ctx->dmatags->cfg);

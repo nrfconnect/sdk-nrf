@@ -16,7 +16,6 @@
 #include "hw.h"
 #include "cmdma.h"
 #include "cmaes.h"
-#include <cracen/prng_pool.h>
 
 /** Mode Register value for context loading */
 #define AES_AEAD_MODEID_CTX_LOAD (1u << 4)
@@ -102,38 +101,18 @@ int sx_aead_free(struct sxaead *aead_ctx)
 	if (aead_ctx->key->clean_key) {
 		sx_err = aead_ctx->key->clean_key(aead_ctx->key->user_data);
 	}
-	sx_cmdma_release_hw(&aead_ctx->dma);
 	return sx_err;
 }
 
-int sx_aead_hw_reserve(struct sxaead *aead_ctx)
+static int sx_aead_prepare_key(struct sxaead *aead_ctx)
 {
 	int err = SX_OK;
-	uint32_t prng_value;
-
-	if (aead_ctx->has_countermeasures) {
-		err = cracen_prng_value_from_pool(&prng_value);
-		if (err != SX_OK) {
-			return err;
-		}
-	}
-
-	sx_hw_reserve(&aead_ctx->dma);
-
-	if (aead_ctx->has_countermeasures) {
-		err = sx_cm_load_mask(prng_value);
-		if (err != SX_OK) {
-			goto exit;
-		}
-	}
 
 	if (aead_ctx->key->prepare_key) {
 		err = aead_ctx->key->prepare_key(aead_ctx->key->user_data);
-	}
-
-exit:
-	if (err != SX_OK) {
-		return sx_handle_nested_error(sx_aead_free(aead_ctx), err);
+		if (err != SX_OK) {
+			return sx_handle_nested_error(sx_aead_free(aead_ctx), err);
+		}
 	}
 
 	return err;
@@ -156,10 +135,10 @@ static int sx_aead_create_aesgcm(struct sxaead *aead_ctx, const struct sxkeyref 
 		}
 	}
 
-	/* has countermeasures and the key need to be set before callling sx_aead_hw_reserve */
+	/* has countermeasures and the key need to be set before calling sx_aead_prepare_key */
 	aead_ctx->has_countermeasures = true;
 	aead_ctx->key = key;
-	err = sx_aead_hw_reserve(aead_ctx);
+	err = sx_aead_prepare_key(aead_ctx);
 	if (err != SX_OK) {
 		return err;
 	}
@@ -244,10 +223,10 @@ static int sx_aead_create_aesccm(struct sxaead *aead_ctx, const struct sxkeyref 
 		return SX_ERR_TOO_BIG;
 	}
 
-	/* has countermeasures and the key need to be set before callling sx_aead_hw_reserve */
+	/* has countermeasures and the key need to be set before calling sx_aead_prepare_key */
 	aead_ctx->has_countermeasures = true;
 	aead_ctx->key = key;
-	err = sx_aead_hw_reserve(aead_ctx);
+	err = sx_aead_prepare_key(aead_ctx);
 	if (err != SX_OK) {
 		return err;
 	}
@@ -422,11 +401,11 @@ int sx_aead_resume_state(struct sxaead *aead_ctx)
 {
 	int err;
 
-	if (aead_ctx->dma.hw_acquired) {
+	if (!aead_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
-	err = sx_aead_hw_reserve(aead_ctx);
+	err = sx_aead_prepare_key(aead_ctx);
 	if (err != SX_OK) {
 		return err;
 	}

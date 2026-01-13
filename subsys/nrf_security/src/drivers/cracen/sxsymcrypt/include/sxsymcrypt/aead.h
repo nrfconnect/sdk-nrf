@@ -327,25 +327,6 @@ int sx_aead_status(struct sxaead *c);
  */
 int sx_aead_truncate_tag(struct sxaead *c, const size_t tagsz);
 
-/** Reserve the hardware for an AEAD operation.
- *
- * This function initializes and reserves the hardware for an AEAD
- * (Authenticated Encryption with Associated Data) operation. In case
- * of a multithreading application this reservation also includes locking
- * a mutex.
- *
- * @param[in,out] c AEAD operation context
- *
- * Return:
- * @return ::SX_OK
- * @return ::SX_ERR_UNKNOWN_ERROR
- * @return ::SX_ERR_DMA_FAILED
- * @return ::SX_ERR_HW_PROCESSING
- * @return ::SX_ERR_INVALID_KEYREF
- * @return ::SX_ERR_PLATFORM_ERROR
- */
-int sx_aead_hw_reserve(struct sxaead *c);
-
 #ifdef __cplusplus
 }
 #endif
