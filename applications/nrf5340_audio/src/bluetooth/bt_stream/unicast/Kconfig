@@ -89,7 +89,7 @@ config BT_AUDIO_PAC_REC_PRINT
 
 config CODEC_CAP_COUNT_MAX
 	int "Max storage of codec capabilities"
-	default 20
+	default 10
 	help
 	  Max number of codec capabilities to store per stream.
 

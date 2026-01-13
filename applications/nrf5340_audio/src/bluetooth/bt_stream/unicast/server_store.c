@@ -47,6 +47,11 @@ static void valid_entry_check(char const *const str)
 
 static struct server_store servers[MAX_SERVERS];
 
+/* NOTE: This is set to static as one instance of server_store is very large, we do not
+ * want to pull this from whatever stack has called this function. Used when adding new servers
+ */
+static struct server_store add_server;
+
 struct pd {
 	uint32_t min;
 	uint32_t pref_min;
@@ -1271,19 +1276,18 @@ int srv_store_add_by_conn(struct bt_conn *conn)
 		return -EALREADY;
 	}
 
-	struct server_store server = {0};
+	/* Clear the temporary add_server before populating it */
+	add_server.conn = NULL;
 
-	server.conn = NULL;
-
-	ret = server_remove(&server, false);
+	ret = server_remove(&add_server, false);
 	if (ret) {
 		return ret;
 	}
 
-	server.conn = conn;
-	bt_addr_le_copy(&server.addr, peer_addr);
+	add_server.conn = conn;
+	bt_addr_le_copy(&add_server.addr, peer_addr);
 
-	return server_add(&server);
+	return server_add(&add_server);
 }
 
 int srv_store_add_by_addr(const bt_addr_le_t *addr)
@@ -1306,21 +1310,20 @@ int srv_store_add_by_addr(const bt_addr_le_t *addr)
 		return -EALREADY;
 	}
 
-	struct server_store server;
+	/* Clear the temporary add_server before populating it */
+	add_server.conn = NULL;
 
-	server.conn = NULL;
-
-	ret = server_remove(&server, false);
+	ret = server_remove(&add_server, false);
 	if (ret) {
 		return ret;
 	}
 
-	bt_addr_le_copy(&server.addr, addr);
+	bt_addr_le_copy(&add_server.addr, addr);
 
 	bt_addr_le_to_str(addr, peer_str, BT_ADDR_LE_STR_LEN);
 	LOG_DBG("Adding server for addr: %s", peer_str);
 
-	return server_add(&server);
+	return server_add(&add_server);
 }
 
 int srv_store_conn_update(struct bt_conn *conn, bt_addr_le_t const *const addr)
