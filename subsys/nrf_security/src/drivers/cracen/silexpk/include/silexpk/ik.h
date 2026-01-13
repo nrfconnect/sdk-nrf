@@ -32,7 +32,7 @@ extern "C" {
  * ::SX_PK_CMD_IK_PTMULT, ::SX_PK_CMD_IK_EXIT
  *
  * @param[in,out] req The acceleration request obtained
- * through sx_pk_acquire_req()
+ * through sx_pk_acquire_hw()
  * @param[in] key Index of key to be used for IK operation
  * @param[out] inputs List of input slots that will be filled in.
  * See inputslots.h for predefined lists of input slots per operation.
