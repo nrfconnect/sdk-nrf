@@ -36,6 +36,11 @@ static psa_status_t cracen_aes_ecb_crypt(struct sxblkcipher *blkciph, const stru
 
 	*output_length = 0;
 
+	sx_status = sx_hw_reserve(&blkciph->dma, SX_HW_RESERVE_CM_ENABLED);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
 	if (encrypt) {
 		sx_status = sx_blkcipher_create_aesecb_enc(blkciph, key);
 	} else {
@@ -43,20 +48,24 @@ static psa_status_t cracen_aes_ecb_crypt(struct sxblkcipher *blkciph, const stru
 	}
 
 	if (sx_status != SX_OK) {
+		sx_hw_release(&blkciph->dma);
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_blkcipher_crypt(blkciph, input, input_length, output);
 	if (sx_status != SX_OK) {
+		sx_hw_release(&blkciph->dma);
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_blkcipher_run(blkciph);
 	if (sx_status != SX_OK) {
+		sx_hw_release(&blkciph->dma);
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_blkcipher_wait(blkciph);
+	sx_hw_release(&blkciph->dma);
 	if (sx_status == SX_OK) {
 		*output_length = input_length;
 	}

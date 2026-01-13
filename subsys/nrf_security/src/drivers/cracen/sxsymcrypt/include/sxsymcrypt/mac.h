@@ -169,18 +169,6 @@ int sx_mac_status(struct sxmac *c);
  */
 int sx_mac_free(struct sxmac *c);
 
-/** Find an available MAC engine for the operation.
- *
- * @param[in,out] c MAC operation context
- * @param[in]     mode_compatible Compatible hardware for the operation
- *
- * @return ::SX_OK
- * @return ::SX_ERR_DMA_FAILED
- * @return ::SX_ERR_UNKNOWN_ERROR
- *
- */
-int sx_mac_hw_reserve(struct sxmac *c);
-
 #ifdef __cplusplus
 }
 #endif

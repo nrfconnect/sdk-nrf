@@ -8,6 +8,7 @@
 #include <psa/crypto.h>
 #include <cracen/statuscodes.h>
 #include <sxsymcrypt/blkcipher.h>
+#include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/keyref.h>
 #include <sxsymcrypt/aes.h>
 #include <cracen/common.h>
@@ -49,7 +50,7 @@ psa_status_t cracen_sw_cmac_setup(cracen_mac_operation_t *operation,
 	}
 
 	operation->bytes_left_for_next_block = SX_BLKCIPHER_AES_BLK_SZ;
-	operation->is_first_block = true;
+	operation->has_saved_state = false;
 
 	return PSA_SUCCESS;
 }
@@ -176,25 +177,29 @@ psa_status_t cracen_cmac_compute(cracen_mac_operation_t *operation, const uint8_
 {
 	int sx_status;
 
-	sx_status = sx_mac_create_aescmac(&operation->cmac.ctx, &operation->cmac.keyref);
+	sx_status = sx_hw_reserve(&operation->cmac.ctx.dma, SX_HW_RESERVE_CM_ENABLED);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
+	}
+
+	sx_status = sx_mac_create_aescmac(&operation->cmac.ctx, &operation->cmac.keyref);
+	if (sx_status != SX_OK) {
+		goto exit;
 	}
 
 	sx_status = sx_mac_feed(&operation->cmac.ctx, input, input_length);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	sx_status = sx_mac_generate(&operation->cmac.ctx, mac);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	sx_status = sx_mac_wait(&operation->cmac.ctx);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
 
-	return PSA_SUCCESS;
+exit:
+	sx_hw_release(&operation->cmac.ctx.dma);
+	return silex_statuscodes_to_psa(sx_status);
 }

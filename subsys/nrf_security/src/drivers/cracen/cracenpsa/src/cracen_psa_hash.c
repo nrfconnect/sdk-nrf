@@ -43,8 +43,13 @@ psa_status_t cracen_hash_compute(psa_algorithm_t alg, const uint8_t *input, size
 
 	*hash_length = sx_hash_get_alg_digestsz(sx_hash_algo);
 
-	sx_status = sx_hash_create(&c, sx_hash_algo, sizeof(c));
+	sx_status = sx_hw_reserve(&c.dma, SX_HW_RESERVE_DEFAULT);
 	if (sx_status != SX_OK) {
+		goto exit;
+	}
+
+	sx_status = sx_hash_create(&c, sx_hash_algo, sizeof(c));
+	if (sx_status) {
 		goto exit;
 	}
 
@@ -72,7 +77,7 @@ psa_status_t cracen_hash_setup(cracen_hash_operation_t *operation, psa_algorithm
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-	operation->is_first_block = true;
+	operation->has_saved_state = false;
 
 	operation->bytes_left_for_next_block = sx_hash_get_alg_blocksz(operation->sx_hash_algo);
 
@@ -88,23 +93,19 @@ static int init_or_resume_context(cracen_hash_operation_t *operation)
 	 * therefore the create call is done here, then feed data and then safe
 	 * the context.
 	 */
-	if (operation->is_first_block == true) {
+	if (!operation->has_saved_state) {
 		sx_status = sx_hash_create(&operation->sx_ctx, operation->sx_hash_algo,
 					   sizeof(operation->sx_ctx));
 		if (sx_status != SX_OK) {
 			return sx_status;
 		}
-		operation->is_first_block = false;
+		operation->has_saved_state = true;
 
 	} else {
 		/* Get back the old state if previous operation had been done */
 		sx_status = sx_hash_resume_state(&operation->sx_ctx);
-		if (sx_status != SX_OK) {
-			return sx_status;
-		}
-	}
 
-	return SX_OK;
+	return sx_status;
 }
 
 psa_status_t cracen_hash_update(cracen_hash_operation_t *operation, const uint8_t *input,
@@ -137,6 +138,11 @@ psa_status_t cracen_hash_update(cracen_hash_operation_t *operation, const uint8_
 		return PSA_SUCCESS;
 	}
 
+	sx_status = sx_hw_reserve(&operation->sx_ctx.dma, SX_HW_RESERVE_DEFAULT);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
 	/* Initialize or resume an already initialized context. */
 	sx_status = init_or_resume_context(operation);
 	if (sx_status != SX_OK) {
@@ -164,6 +170,7 @@ psa_status_t cracen_hash_update(cracen_hash_operation_t *operation, const uint8_
 	if (sx_status != SX_OK) {
 		goto exit;
 	}
+
 	sx_status = sx_hash_save_state(&operation->sx_ctx);
 	if (sx_status != SX_OK) {
 		goto exit;
@@ -174,7 +181,6 @@ psa_status_t cracen_hash_update(cracen_hash_operation_t *operation, const uint8_
 	if (sx_status != SX_OK) {
 		goto exit;
 	}
-
 	/* As we just passed the last block reset the remaining size and clean
 	 * input buffer
 	 */
@@ -188,6 +194,7 @@ psa_status_t cracen_hash_update(cracen_hash_operation_t *operation, const uint8_
 	}
 
 exit:
+	sx_hw_release(&operation->sx_ctx.dma);
 	return silex_statuscodes_to_psa(sx_status);
 }
 
@@ -200,6 +207,11 @@ psa_status_t cracen_hash_finish(cracen_hash_operation_t *operation, uint8_t *has
 
 	if (sx_hash_get_alg_digestsz(operation->sx_hash_algo) > hash_size) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	sx_status = sx_hw_reserve(&operation->sx_ctx.dma, SX_HW_RESERVE_DEFAULT);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = init_or_resume_context(operation);
@@ -227,5 +239,6 @@ psa_status_t cracen_hash_finish(cracen_hash_operation_t *operation, uint8_t *has
 	*hash_length = sx_hash_get_alg_digestsz(operation->sx_hash_algo);
 
 exit:
+	sx_hw_release(&operation->sx_ctx.dma);
 	return silex_statuscodes_to_psa(sx_status);
 }
