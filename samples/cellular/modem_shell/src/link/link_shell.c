@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <getopt.h>
 
 #include <zephyr/shell/shell.h>
 #include <zephyr/shell/shell_uart.h>
+#include <zephyr/sys/sys_getopt.h>
 #include <zephyr/sys/poweroff.h>
 
 #include <nrf_modem_at.h>
@@ -465,87 +466,87 @@ enum {
 };
 
 /* Specifying the expected options (both long and short) */
-static struct option long_options[] = {
-	{ "help", no_argument, 0, 'h' },
-	{ "apn", required_argument, 0, 'a' },
-	{ "cid", required_argument, 0, 'I' },
-	{ "family", required_argument, 0, 'f' },
-	{ "ipaddr", required_argument, 0, 'i' },
-	{ "subscribe", no_argument, 0, 's' },
-	{ "unsubscribe", no_argument, 0, 'u' },
-	{ "read", no_argument, 0, 'r' },
-	{ "write", no_argument, 0, LINK_SHELL_OPT_WRITE },
-	{ "pwroff", no_argument, 0, '0' },
-	{ "normal", no_argument, 0, '1' },
-	{ "rxonly", no_argument, 0, '2' },
-	{ "flightmode", no_argument, 0, '4' },
-	{ "lteoff", no_argument, 0, LINK_SHELL_OPT_FUNMODE_LTEOFF },
-	{ "lteon", no_argument, 0, LINK_SHELL_OPT_FUNMODE_LTEON },
-	{ "gnssoff", no_argument, 0, LINK_SHELL_OPT_FUNMODE_GNSSOFF },
-	{ "gnsson", no_argument, 0, LINK_SHELL_OPT_FUNMODE_GNSSON },
-	{ "uiccoff", no_argument, 0, LINK_SHELL_OPT_FUNMODE_UICCOFF },
-	{ "uiccon", no_argument, 0, LINK_SHELL_OPT_FUNMODE_UICCON },
-	{ "flightmode_uiccon", no_argument, 0, LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_UICCON },
-	{ "flightmode_keepreg", no_argument, 0, LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG },
-	{ "flightmode_keepreg_uiccon", no_argument, 0,
+static struct sys_getopt_option long_options[] = {
+	{ "help", sys_getopt_no_argument, 0, 'h' },
+	{ "apn", sys_getopt_required_argument, 0, 'a' },
+	{ "cid", sys_getopt_required_argument, 0, 'I' },
+	{ "family", sys_getopt_required_argument, 0, 'f' },
+	{ "ipaddr", sys_getopt_required_argument, 0, 'i' },
+	{ "subscribe", sys_getopt_no_argument, 0, 's' },
+	{ "unsubscribe", sys_getopt_no_argument, 0, 'u' },
+	{ "read", sys_getopt_no_argument, 0, 'r' },
+	{ "write", sys_getopt_no_argument, 0, LINK_SHELL_OPT_WRITE },
+	{ "pwroff", sys_getopt_no_argument, 0, '0' },
+	{ "normal", sys_getopt_no_argument, 0, '1' },
+	{ "rxonly", sys_getopt_no_argument, 0, '2' },
+	{ "flightmode", sys_getopt_no_argument, 0, '4' },
+	{ "lteoff", sys_getopt_no_argument, 0, LINK_SHELL_OPT_FUNMODE_LTEOFF },
+	{ "lteon", sys_getopt_no_argument, 0, LINK_SHELL_OPT_FUNMODE_LTEON },
+	{ "gnssoff", sys_getopt_no_argument, 0, LINK_SHELL_OPT_FUNMODE_GNSSOFF },
+	{ "gnsson", sys_getopt_no_argument, 0, LINK_SHELL_OPT_FUNMODE_GNSSON },
+	{ "uiccoff", sys_getopt_no_argument, 0, LINK_SHELL_OPT_FUNMODE_UICCOFF },
+	{ "uiccon", sys_getopt_no_argument, 0, LINK_SHELL_OPT_FUNMODE_UICCON },
+	{ "flightmode_uiccon", sys_getopt_no_argument, 0, LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_UICCON },
+	{ "flightmode_keepreg", sys_getopt_no_argument, 0, LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG },
+	{ "flightmode_keepreg_uiccon", sys_getopt_no_argument, 0,
 	  LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG_UICCON },
-	{ "ltem", no_argument, 0, 'm' },
-	{ "nbiot", no_argument, 0, 'n' },
-	{ "gnss", no_argument, 0, 'g' },
-	{ "ltem_gnss", no_argument, 0, 'M' },
-	{ "nbiot_gnss", no_argument, 0, 'N' },
-	{ "enable", no_argument, 0, 'e' },
-	{ "enable_no_rel14", no_argument, 0, LINK_SHELL_OPT_NMODE_NO_REL14 },
-	{ "disable", no_argument, 0, 'd' },
-	{ "ltem_edrx", required_argument, 0, LINK_SHELL_OPT_LTEM_EDRX },
-	{ "ltem_ptw", required_argument, 0, LINK_SHELL_OPT_LTEM_PTW },
-	{ "nbiot_edrx", required_argument, 0, LINK_SHELL_OPT_NBIOT_EDRX },
-	{ "nbiot_ptw", required_argument, 0, LINK_SHELL_OPT_NBIOT_PTW },
-	{ "ntn_nbiot_edrx", required_argument, 0, LINK_SHELL_OPT_NTN_NBIOT_EDRX },
-	{ "ntn_nbiot_ptw", required_argument, 0, LINK_SHELL_OPT_NTN_NBIOT_PTW },
-	{ "prot", required_argument, 0, 'A' },
-	{ "pword", required_argument, 0, 'P' },
-	{ "uname", required_argument, 0, 'U' },
-	{ "rptau", required_argument, 0, 'p' },
-	{ "rat", required_argument, 0, 't' },
-	{ "srptau", required_argument, 0, 'P' },
-	{ "srat", required_argument, 0, 'T' },
-	{ "mem1", required_argument, 0, LINK_SHELL_OPT_MEM_SLOT_1 },
-	{ "mem2", required_argument, 0, LINK_SHELL_OPT_MEM_SLOT_2 },
-	{ "mem3", required_argument, 0, LINK_SHELL_OPT_MEM_SLOT_3 },
-	{ "reset", no_argument, 0, LINK_SHELL_OPT_RESET },
-	{ "clear", no_argument, 0, LINK_SHELL_OPT_RESET },
-	{ "mreset_all", no_argument, 0, LINK_SHELL_OPT_MRESET_ALL },
-	{ "mreset_user", no_argument, 0, LINK_SHELL_OPT_MRESET_USER },
-	{ "ltem_nbiot", no_argument, 0, LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT },
-	{ "ltem_nbiot_gnss", no_argument, 0, LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS },
-	{ "ntn", no_argument, 0, LINK_SHELL_OPT_SYSMODE_NTN },
-	{ "pref_auto", no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_AUTO },
-	{ "pref_ltem", no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_LTEM },
-	{ "pref_nbiot", no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_NBIOT },
-	{ "pref_ltem_plmn_prio", no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_LTEM_PLMN_PRIO },
-	{ "pref_nbiot_plmn_prio", no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_NBIOT_PLMN_PRIO },
-	{ "start", no_argument, 0, LINK_SHELL_OPT_START },
-	{ "stop", no_argument, 0, LINK_SHELL_OPT_STOP },
-	{ "cancel", no_argument, 0, LINK_SHELL_OPT_STOP },
-	{ "single", no_argument, 0, LINK_SHELL_OPT_SINGLE },
-	{ "continuous", no_argument, 0, LINK_SHELL_OPT_CONTINUOUS },
-	{ "threshold", required_argument, 0, LINK_SHELL_OPT_THRESHOLD_TIME },
-	{ "interval", required_argument, 0, LINK_SHELL_OPT_NCELLMEAS_CONTINUOUS_INTERVAL_TIME },
-	{ "gci_count", required_argument, 0, LINK_SHELL_OPT_NCELLMEAS_GCI_COUNT },
-	{ "search_type", required_argument, 0, LINK_SHELL_OPT_NCELLMEAS_SEARCH_TYPE },
-	{ "search_cfg", required_argument, 0, LINK_SHELL_OPT_SEARCH_CFG },
-	{ "search_pattern_range", required_argument, 0, LINK_SHELL_OPT_SEARCH_PATTERN_RANGE },
-	{ "search_pattern_table", required_argument, 0, LINK_SHELL_OPT_SEARCH_PATTERN_TABLE },
-	{ "normal_no_rel14", no_argument, 0, LINK_SHELL_OPT_NMODE_NO_REL14 },
-	{ "default", no_argument, 0, LINK_SHELL_OPT_REDMOB_DEFAULT },
-	{ "nordic", no_argument, 0, LINK_SHELL_OPT_REDMOB_NORDIC },
-	{ "init", no_argument, 0, LINK_SHELL_OPT_MODEM_INIT },
-	{ "shutdown", no_argument, 0, LINK_SHELL_OPT_MODEM_SHUTDOWN },
-	{ "shutdown_cfun0", no_argument, 0, LINK_SHELL_OPT_MODEM_SHUTDOWN_CFUN0 },
-	{ "systemoff", no_argument, 0, LINK_SHELL_OPT_MODEM_SYSTEMOFF },
-	{ "eval_type", required_argument, 0, LINK_SHELL_OPT_ENVEVAL_EVAL_TYPE },
-	{ "plmns", required_argument, 0, LINK_SHELL_OPT_ENVEVAL_PLMNS },
+	{ "ltem", sys_getopt_no_argument, 0, 'm' },
+	{ "nbiot", sys_getopt_no_argument, 0, 'n' },
+	{ "gnss", sys_getopt_no_argument, 0, 'g' },
+	{ "ltem_gnss", sys_getopt_no_argument, 0, 'M' },
+	{ "nbiot_gnss", sys_getopt_no_argument, 0, 'N' },
+	{ "enable", sys_getopt_no_argument, 0, 'e' },
+	{ "enable_no_rel14", sys_getopt_no_argument, 0, LINK_SHELL_OPT_NMODE_NO_REL14 },
+	{ "disable", sys_getopt_no_argument, 0, 'd' },
+	{ "ltem_edrx", sys_getopt_required_argument, 0, LINK_SHELL_OPT_LTEM_EDRX },
+	{ "ltem_ptw", sys_getopt_required_argument, 0, LINK_SHELL_OPT_LTEM_PTW },
+	{ "nbiot_edrx", sys_getopt_required_argument, 0, LINK_SHELL_OPT_NBIOT_EDRX },
+	{ "nbiot_ptw", sys_getopt_required_argument, 0, LINK_SHELL_OPT_NBIOT_PTW },
+	{ "ntn_nbiot_edrx", sys_getopt_required_argument, 0, LINK_SHELL_OPT_NTN_NBIOT_EDRX },
+	{ "ntn_nbiot_ptw", sys_getopt_required_argument, 0, LINK_SHELL_OPT_NTN_NBIOT_PTW },
+	{ "prot", sys_getopt_required_argument, 0, 'A' },
+	{ "pword", sys_getopt_required_argument, 0, 'P' },
+	{ "uname", sys_getopt_required_argument, 0, 'U' },
+	{ "rptau", sys_getopt_required_argument, 0, 'p' },
+	{ "rat", sys_getopt_required_argument, 0, 't' },
+	{ "srptau", sys_getopt_required_argument, 0, 'P' },
+	{ "srat", sys_getopt_required_argument, 0, 'T' },
+	{ "mem1", sys_getopt_required_argument, 0, LINK_SHELL_OPT_MEM_SLOT_1 },
+	{ "mem2", sys_getopt_required_argument, 0, LINK_SHELL_OPT_MEM_SLOT_2 },
+	{ "mem3", sys_getopt_required_argument, 0, LINK_SHELL_OPT_MEM_SLOT_3 },
+	{ "reset", sys_getopt_no_argument, 0, LINK_SHELL_OPT_RESET },
+	{ "clear", sys_getopt_no_argument, 0, LINK_SHELL_OPT_RESET },
+	{ "mreset_all", sys_getopt_no_argument, 0, LINK_SHELL_OPT_MRESET_ALL },
+	{ "mreset_user", sys_getopt_no_argument, 0, LINK_SHELL_OPT_MRESET_USER },
+	{ "ltem_nbiot", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT },
+	{ "ltem_nbiot_gnss", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS },
+	{ "ntn", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_NTN },
+	{ "pref_auto", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_AUTO },
+	{ "pref_ltem", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_LTEM },
+	{ "pref_nbiot", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_NBIOT },
+	{ "pref_ltem_plmn_prio", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_LTEM_PLMN_PRIO },
+	{ "pref_nbiot_plmn_prio", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_NBIOT_PLMN_PRIO },
+	{ "start", sys_getopt_no_argument, 0, LINK_SHELL_OPT_START },
+	{ "stop", sys_getopt_no_argument, 0, LINK_SHELL_OPT_STOP },
+	{ "cancel", sys_getopt_no_argument, 0, LINK_SHELL_OPT_STOP },
+	{ "single", sys_getopt_no_argument, 0, LINK_SHELL_OPT_SINGLE },
+	{ "continuous", sys_getopt_no_argument, 0, LINK_SHELL_OPT_CONTINUOUS },
+	{ "threshold", sys_getopt_required_argument, 0, LINK_SHELL_OPT_THRESHOLD_TIME },
+	{ "interval", sys_getopt_required_argument, 0, LINK_SHELL_OPT_NCELLMEAS_CONTINUOUS_INTERVAL_TIME },
+	{ "gci_count", sys_getopt_required_argument, 0, LINK_SHELL_OPT_NCELLMEAS_GCI_COUNT },
+	{ "search_type", sys_getopt_required_argument, 0, LINK_SHELL_OPT_NCELLMEAS_SEARCH_TYPE },
+	{ "search_cfg", sys_getopt_required_argument, 0, LINK_SHELL_OPT_SEARCH_CFG },
+	{ "search_pattern_range", sys_getopt_required_argument, 0, LINK_SHELL_OPT_SEARCH_PATTERN_RANGE },
+	{ "search_pattern_table", sys_getopt_required_argument, 0, LINK_SHELL_OPT_SEARCH_PATTERN_TABLE },
+	{ "normal_no_rel14", sys_getopt_no_argument, 0, LINK_SHELL_OPT_NMODE_NO_REL14 },
+	{ "default", sys_getopt_no_argument, 0, LINK_SHELL_OPT_REDMOB_DEFAULT },
+	{ "nordic", sys_getopt_no_argument, 0, LINK_SHELL_OPT_REDMOB_NORDIC },
+	{ "init", sys_getopt_no_argument, 0, LINK_SHELL_OPT_MODEM_INIT },
+	{ "shutdown", sys_getopt_no_argument, 0, LINK_SHELL_OPT_MODEM_SHUTDOWN },
+	{ "shutdown_cfun0", sys_getopt_no_argument, 0, LINK_SHELL_OPT_MODEM_SHUTDOWN_CFUN0 },
+	{ "systemoff", sys_getopt_no_argument, 0, LINK_SHELL_OPT_MODEM_SYSTEMOFF },
+	{ "eval_type", sys_getopt_required_argument, 0, LINK_SHELL_OPT_ENVEVAL_EVAL_TYPE },
+	{ "plmns", sys_getopt_required_argument, 0, LINK_SHELL_OPT_ENVEVAL_PLMNS },
 	{ 0, 0, 0, 0 }
 };
 
@@ -799,49 +800,49 @@ static int link_shell_connect(const struct shell *shell, size_t argc, char **arg
 		goto show_usage;
 	}
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'a': /* APN */
-			apn_len = strlen(optarg);
+			apn_len = strlen(sys_getopt_optarg);
 			if (apn_len > LINK_APN_STR_MAX_LENGTH) {
 				mosh_error(
 					"APN string length %d exceeded. Maximum is %d.",
 					apn_len, LINK_APN_STR_MAX_LENGTH);
 				return -EINVAL;
 			}
-			apn = optarg;
+			apn = sys_getopt_optarg;
 			break;
 		case 'f': /* Address family */
-			family = optarg;
+			family = sys_getopt_optarg;
 			break;
 		case 'i': /* IP address */
-			ip_address = optarg;
+			ip_address = sys_getopt_optarg;
 			break;
 		case 'A': /* auth protocol */
-			protocol = atoi(optarg);
+			protocol = atoi(sys_getopt_optarg);
 			protocol_given = true;
 			break;
 		case 'U': /* auth username */
-			username = optarg;
+			username = sys_getopt_optarg;
 			break;
 		case 'P': /* auth password */
-			password = optarg;
+			password = sys_getopt_optarg;
 			break;
 
 		case 'h':
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -988,14 +989,14 @@ static int link_shell_enveval(const struct shell *shell, size_t argc, char **arg
 		goto show_usage;
 	}
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case LINK_SHELL_OPT_ENVEVAL_EVAL_TYPE:
-			params.eval_type = link_shell_string_to_env_eval_type(optarg);
+			params.eval_type = link_shell_string_to_env_eval_type(sys_getopt_optarg);
 			if (params.eval_type == MOSH_ENVEVAL_EVAL_TYPE_NONE) {
 				mosh_error("Unknown evaluation type. See usage:");
 				goto show_usage;
@@ -1003,7 +1004,7 @@ static int link_shell_enveval(const struct shell *shell, size_t argc, char **arg
 			break;
 		case LINK_SHELL_OPT_ENVEVAL_PLMNS:
 			ret = link_shell_string_to_env_eval_plmn_list(
-				optarg, params.plmn_list, &params.plmn_count);
+				sys_getopt_optarg, params.plmn_list, &params.plmn_count);
 			if (ret) {
 				mosh_error("Invalid PLMN list. See usage:");
 				goto show_usage;
@@ -1017,7 +1018,7 @@ static int link_shell_enveval(const struct shell *shell, size_t argc, char **arg
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
@@ -1067,11 +1068,11 @@ static int link_shell_defcont(const struct shell *shell, size_t argc, char **arg
 	char *apn = NULL;
 	char *family = NULL;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 		case 'e':
@@ -1084,29 +1085,29 @@ static int link_shell_defcont(const struct shell *shell, size_t argc, char **arg
 			break;
 
 		case 'a': /* APN */
-			apn_len = strlen(optarg);
+			apn_len = strlen(sys_getopt_optarg);
 			if (apn_len > LINK_APN_STR_MAX_LENGTH) {
 				mosh_error(
 					"APN string length %d exceeded. Maximum is %d.",
 					apn_len, LINK_APN_STR_MAX_LENGTH);
 				return -EINVAL;
 			}
-			apn = optarg;
+			apn = sys_getopt_optarg;
 			break;
 		case 'f': /* Address family */
-			family = optarg;
+			family = sys_getopt_optarg;
 			break;
 
 		case 'h':
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -1157,11 +1158,11 @@ static int link_shell_defcontauth(const struct shell *shell, size_t argc, char *
 	char *username = NULL;
 	char *password = NULL;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 		case 'e':
@@ -1174,26 +1175,26 @@ static int link_shell_defcontauth(const struct shell *shell, size_t argc, char *
 			break;
 
 		case 'A': /* auth protocol */
-			protocol = atoi(optarg);
+			protocol = atoi(sys_getopt_optarg);
 			protocol_given = true;
 			break;
 		case 'U': /* auth username */
-			username = optarg;
+			username = sys_getopt_optarg;
 			break;
 		case 'P': /* auth password */
-			password = optarg;
+			password = sys_getopt_optarg;
 			break;
 
 		case 'h':
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -1236,14 +1237,14 @@ static int link_shell_disconnect(const struct shell *shell, size_t argc, char **
 	int ret = 0;
 	int pdn_cid = 0;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'I': /* PDN CID */
-			pdn_cid = atoi(optarg);
+			pdn_cid = atoi(sys_getopt_optarg);
 			if (pdn_cid <= 0) {
 				mosh_error(
 					"PDN CID (%d) must be positive integer. "
@@ -1257,12 +1258,12 @@ static int link_shell_disconnect(const struct shell *shell, size_t argc, char **
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -1286,11 +1287,11 @@ static int link_shell_dnsaddr(const struct shell *shell, size_t argc, char **arg
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	char *ip_address = NULL;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 		case 'e':
@@ -1303,19 +1304,19 @@ static int link_shell_dnsaddr(const struct shell *shell, size_t argc, char **arg
 			break;
 
 		case 'i':
-			ip_address = optarg;
+			ip_address = sys_getopt_optarg;
 			break;
 
 		case 'h':
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -1375,11 +1376,11 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 	char ntn_nbiot_ptw_str[LINK_SHELL_EDRX_PTW_STR_LENGTH + 1];
 	bool ntn_nbiot_ptw_set = false;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 		case 'e':
@@ -1392,8 +1393,8 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			break;
 
 		case LINK_SHELL_OPT_LTEM_EDRX:
-			if (strlen(optarg) == LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
-				strcpy(ltem_edrx_str, optarg);
+			if (strlen(sys_getopt_optarg) == LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
+				strcpy(ltem_edrx_str, sys_getopt_optarg);
 				ltem_edrx_set = true;
 			} else {
 				mosh_error(
@@ -1403,8 +1404,8 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case LINK_SHELL_OPT_LTEM_PTW:
-			if (strlen(optarg) == LINK_SHELL_EDRX_PTW_STR_LENGTH) {
-				strcpy(ltem_ptw_str, optarg);
+			if (strlen(sys_getopt_optarg) == LINK_SHELL_EDRX_PTW_STR_LENGTH) {
+				strcpy(ltem_ptw_str, sys_getopt_optarg);
 				ltem_ptw_set = true;
 			} else {
 				mosh_error(
@@ -1414,8 +1415,8 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case LINK_SHELL_OPT_NBIOT_EDRX:
-			if (strlen(optarg) == LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
-				strcpy(nbiot_edrx_str, optarg);
+			if (strlen(sys_getopt_optarg) == LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
+				strcpy(nbiot_edrx_str, sys_getopt_optarg);
 				nbiot_edrx_set = true;
 			} else {
 				mosh_error(
@@ -1425,8 +1426,8 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case LINK_SHELL_OPT_NBIOT_PTW:
-			if (strlen(optarg) == LINK_SHELL_EDRX_PTW_STR_LENGTH) {
-				strcpy(nbiot_ptw_str, optarg);
+			if (strlen(sys_getopt_optarg) == LINK_SHELL_EDRX_PTW_STR_LENGTH) {
+				strcpy(nbiot_ptw_str, sys_getopt_optarg);
 				nbiot_ptw_set = true;
 			} else {
 				mosh_error(
@@ -1436,8 +1437,8 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case LINK_SHELL_OPT_NTN_NBIOT_EDRX:
-			if (strlen(optarg) == LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
-				strcpy(ntn_nbiot_edrx_str, optarg);
+			if (strlen(sys_getopt_optarg) == LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
+				strcpy(ntn_nbiot_edrx_str, sys_getopt_optarg);
 				ntn_nbiot_edrx_set = true;
 			} else {
 				mosh_error(
@@ -1447,8 +1448,8 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case LINK_SHELL_OPT_NTN_NBIOT_PTW:
-			if (strlen(optarg) == LINK_SHELL_EDRX_PTW_STR_LENGTH) {
-				strcpy(ntn_nbiot_ptw_str, optarg);
+			if (strlen(sys_getopt_optarg) == LINK_SHELL_EDRX_PTW_STR_LENGTH) {
+				strcpy(ntn_nbiot_ptw_str, sys_getopt_optarg);
 				ntn_nbiot_ptw_set = true;
 			} else {
 				mosh_error(
@@ -1462,12 +1463,12 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -1608,11 +1609,11 @@ static int link_shell_funmode(const struct shell *shell, size_t argc, char **arg
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	char snum[64];
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		/* This condition prevents accidentally using two functional modes */
 		if (funmode_option != LINK_FUNMODE_NONE) {
 			mosh_error("Use only one option when setting functional mode");
@@ -1675,12 +1676,12 @@ static int link_shell_funmode(const struct shell *shell, size_t argc, char **arg
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -1718,11 +1719,11 @@ static int link_shell_modem(const struct shell *shell, size_t argc, char **argv)
 {
 	bool operation_selected = false;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case LINK_SHELL_OPT_MODEM_INIT:
 			operation_selected = true;
@@ -1754,12 +1755,12 @@ static int link_shell_modem(const struct shell *shell, size_t argc, char **argv)
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -1780,11 +1781,11 @@ static int link_shell_msleep(const struct shell *shell, size_t argc, char **argv
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	int threshold_time = 0;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 's':
 		case 'u':
@@ -1796,7 +1797,7 @@ static int link_shell_msleep(const struct shell *shell, size_t argc, char **argv
 			break;
 
 		case LINK_SHELL_OPT_THRESHOLD_TIME:
-			threshold_time = atoi(optarg);
+			threshold_time = atoi(sys_getopt_optarg);
 			if (threshold_time <= 0) {
 				mosh_error(
 					"Not a valid number for --threshold_time (milliseconds).");
@@ -1808,12 +1809,12 @@ static int link_shell_msleep(const struct shell *shell, size_t argc, char **argv
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -1851,11 +1852,11 @@ static int link_shell_ncellmeas(const struct shell *shell, size_t argc, char **a
 	bool periodic_time_given = false;
 	int gci_count;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case LINK_SHELL_OPT_STOP:
 			operation = LINK_OPERATION_STOP;
@@ -1868,14 +1869,14 @@ static int link_shell_ncellmeas(const struct shell *shell, size_t argc, char **a
 			ncellmeasmode = LINK_NCELLMEAS_MODE_CONTINUOUS;
 			break;
 		case LINK_SHELL_OPT_NCELLMEAS_SEARCH_TYPE:
-			ncellmeas_search_type = link_shell_string_to_ncellmeas_search_type(optarg);
+			ncellmeas_search_type = link_shell_string_to_ncellmeas_search_type(sys_getopt_optarg);
 			if (ncellmeas_search_type == MOSH_NCELLMEAS_SEARCH_TYPE_NONE) {
 				mosh_error("Unknown search_type. See usage:");
 				goto show_usage;
 			}
 			break;
 		case LINK_SHELL_OPT_NCELLMEAS_GCI_COUNT:
-			gci_count = atoi(optarg);
+			gci_count = atoi(sys_getopt_optarg);
 			if (gci_count <= 0) {
 				mosh_error("Not a valid number for --gci_count.");
 				return -EINVAL;
@@ -1885,8 +1886,8 @@ static int link_shell_ncellmeas(const struct shell *shell, size_t argc, char **a
 		case LINK_SHELL_OPT_NCELLMEAS_CONTINUOUS_INTERVAL_TIME: {
 			char *end_ptr;
 
-			periodic_time = strtol(optarg, &end_ptr, 10);
-			if (end_ptr == optarg || periodic_time < 0) {
+			periodic_time = strtol(sys_getopt_optarg, &end_ptr, 10);
+			if (end_ptr == sys_getopt_optarg || periodic_time < 0) {
 				mosh_error("Not a valid number for --interval (seconds).");
 				return -EINVAL;
 			}
@@ -1898,12 +1899,12 @@ static int link_shell_ncellmeas(const struct shell *shell, size_t argc, char **a
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -1933,25 +1934,25 @@ static int link_shell_nmodeat(const struct shell *shell, size_t argc, char **arg
 	char *normal_mode_at_str = NULL;
 	uint8_t normal_mode_at_mem_slot = 0;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 			operation = LINK_OPERATION_READ;
 			break;
 		case LINK_SHELL_OPT_MEM_SLOT_1:
-			normal_mode_at_str = optarg;
+			normal_mode_at_str = sys_getopt_optarg;
 			normal_mode_at_mem_slot = 1;
 			break;
 		case LINK_SHELL_OPT_MEM_SLOT_2:
-			normal_mode_at_str = optarg;
+			normal_mode_at_str = sys_getopt_optarg;
 			normal_mode_at_mem_slot = 2;
 			break;
 		case LINK_SHELL_OPT_MEM_SLOT_3:
-			normal_mode_at_str = optarg;
+			normal_mode_at_str = sys_getopt_optarg;
 			normal_mode_at_mem_slot = 3;
 			break;
 
@@ -1959,12 +1960,12 @@ static int link_shell_nmodeat(const struct shell *shell, size_t argc, char **arg
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -2000,11 +2001,11 @@ static int link_shell_nmodeauto(const struct shell *shell, size_t argc, char **a
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	bool nmode_use_rel14 = true;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 		case 'e':
@@ -2025,12 +2026,12 @@ static int link_shell_nmodeauto(const struct shell *shell, size_t argc, char **a
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -2057,11 +2058,11 @@ static int link_shell_propripsm(const struct shell *shell, size_t argc, char **a
 	int err;
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 		case 'e':
@@ -2073,12 +2074,12 @@ static int link_shell_propripsm(const struct shell *shell, size_t argc, char **a
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -2123,11 +2124,11 @@ static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 	int psm_rat_seconds = 0;
 	bool psm_rat_seconds_set = false;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 		case 'e':
@@ -2140,9 +2141,9 @@ static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 			break;
 
 		case 'p': /* rptau */
-			if (strlen(optarg) ==
+			if (strlen(sys_getopt_optarg) ==
 			    LINK_SHELL_PSM_PARAM_STR_LENGTH) {
-				strcpy(psm_rptau_bit_str, optarg);
+				strcpy(psm_rptau_bit_str, sys_getopt_optarg);
 				psm_rptau_bit_str_set = true;
 			} else {
 				mosh_error(
@@ -2152,9 +2153,9 @@ static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case 't': /* rat */
-			if (strlen(optarg) ==
+			if (strlen(sys_getopt_optarg) ==
 			    LINK_SHELL_PSM_PARAM_STR_LENGTH) {
-				strcpy(psm_rat_bit_str, optarg);
+				strcpy(psm_rat_bit_str, sys_getopt_optarg);
 				psm_rat_bit_str_set = true;
 			} else {
 				mosh_error(
@@ -2165,11 +2166,11 @@ static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 			break;
 
 		case 'P': /* rptau in seconds */
-			psm_rptau_seconds = atoi(optarg);
+			psm_rptau_seconds = atoi(sys_getopt_optarg);
 			psm_rptau_seconds_set = true;
 			break;
 		case 'T': /* rat in seconds */
-			psm_rat_seconds = atoi(optarg);
+			psm_rat_seconds = atoi(sys_getopt_optarg);
 			psm_rat_seconds_set = true;
 			break;
 
@@ -2177,12 +2178,12 @@ static int link_shell_psm(const struct shell *shell, size_t argc, char **argv)
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -2272,11 +2273,11 @@ static int link_shell_rai(const struct shell *shell, size_t argc, char **argv)
 {
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 		case 'e':
@@ -2292,12 +2293,12 @@ static int link_shell_rai(const struct shell *shell, size_t argc, char **argv)
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -2326,11 +2327,11 @@ static int link_shell_redmob(const struct shell *shell, size_t argc, char **argv
 	enum link_reduced_mobility_mode redmob_mode = LINK_REDUCED_MOBILITY_NONE;
 	char snum[10];
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 		case 'd':
@@ -2352,12 +2353,12 @@ static int link_shell_redmob(const struct shell *shell, size_t argc, char **argv
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -2402,11 +2403,11 @@ static int link_shell_rsrp(const struct shell *shell, size_t argc, char **argv)
 {
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 's':
 		case 'u':
@@ -2421,12 +2422,12 @@ static int link_shell_rsrp(const struct shell *shell, size_t argc, char **argv)
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -2453,11 +2454,11 @@ static int link_shell_search(const struct shell *shell, size_t argc, char **argv
 	struct lte_lc_periodic_search_cfg search_cfg = { 0 };
 	bool search_cfg_given = false;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 		case LINK_SHELL_OPT_START:
@@ -2476,7 +2477,7 @@ static int link_shell_search(const struct shell *shell, size_t argc, char **argv
 			int loop_integer = 0;
 
 			ret = sscanf(
-				optarg,
+				sys_getopt_optarg,
 				"%d,%hd,%hd",
 				&loop_integer,
 				&search_cfg.return_to_pattern,
@@ -2507,7 +2508,7 @@ static int link_shell_search(const struct shell *shell, size_t argc, char **argv
 			int index = search_cfg.pattern_count;
 
 			ret = sscanf(
-				optarg,
+				sys_getopt_optarg,
 				"%hd,%hd,%hd,%hd",
 				&search_cfg.patterns[index].range.initial_sleep,
 				&search_cfg.patterns[index].range.final_sleep,
@@ -2536,7 +2537,7 @@ static int link_shell_search(const struct shell *shell, size_t argc, char **argv
 			search_cfg.patterns[index].table.val_5 = -1;
 
 			ret = sscanf(
-				optarg,
+				sys_getopt_optarg,
 				"%d,%d,%d,%d,%d",
 				&search_cfg.patterns[index].table.val_1,
 				&search_cfg.patterns[index].table.val_2,
@@ -2562,12 +2563,12 @@ static int link_shell_search(const struct shell *shell, size_t argc, char **argv
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -2683,11 +2684,11 @@ static int link_shell_settings(const struct shell *shell, size_t argc, char **ar
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	enum link_factory_reset_type mreset_type = LINK_FACTORY_RESET_INVALID;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 		case LINK_SHELL_OPT_RESET:
@@ -2709,12 +2710,12 @@ static int link_shell_settings(const struct shell *shell, size_t argc, char **ar
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -2784,11 +2785,11 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 	enum lte_lc_system_mode_preference sysmode_lte_pref_option = LTE_LC_SYSTEM_MODE_PREFER_AUTO;
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 		case LINK_SHELL_OPT_RESET:
@@ -2843,12 +2844,12 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -2910,11 +2911,11 @@ static int link_shell_tau(const struct shell *shell, size_t argc, char **argv)
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
 	int threshold_time = 0;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
 		switch (opt) {
 		case 's':
 		case 'u':
@@ -2922,7 +2923,7 @@ static int link_shell_tau(const struct shell *shell, size_t argc, char **argv)
 			break;
 
 		case LINK_SHELL_OPT_THRESHOLD_TIME:
-			threshold_time = atoi(optarg);
+			threshold_time = atoi(sys_getopt_optarg);
 			if (threshold_time <= 0) {
 				mosh_error(
 					"Not a valid number for --threshold_time (milliseconds).");
@@ -2934,12 +2935,12 @@ static int link_shell_tau(const struct shell *shell, size_t argc, char **argv)
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}

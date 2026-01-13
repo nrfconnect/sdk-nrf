@@ -12,7 +12,7 @@
 #ifdef CONFIG_POSIX_C_LIB_EXT
 #include <zephyr/posix/unistd.h>
 #endif
-#include <getopt.h>
+#include <zephyr/sys/sys_getopt.h>
 
 #include <zephyr/net/http/parser.h>
 #include <net/rest_client.h>
@@ -54,21 +54,21 @@ enum {
 };
 
 /* Specifying the expected options (both long and short) */
-static struct option long_options[] = {
-	{ "host", required_argument, 0, 'd' },
-	{ "port", required_argument, 0, 'p' },
-	{ "url", required_argument, 0, 'u' },
-	{ "body", required_argument, 0, 'b' },
-	{ "resp_len", required_argument, 0, 'l' },
-	{ "header", required_argument, 0, 'H' },
-	{ "method", required_argument, 0, 'm' },
-	{ "sec_tag", required_argument, 0, 's' },
-	{ "peer_verify", required_argument, 0, 'v' },
-	{ "timeout", required_argument, 0, 't' },
-	{ "keepalive", no_argument, 0, 'k' },
-	{ "sckt_id", required_argument, 0, 'i' },
-	{ "help", no_argument, 0, 'h' },
-	{ "print_headers", no_argument, 0, REST_SHELL_OPT_PRINT_RESP_HEADERS },
+static struct sys_getopt_option long_options[] = {
+	{ "host", sys_getopt_required_argument, 0, 'd' },
+	{ "port", sys_getopt_required_argument, 0, 'p' },
+	{ "url", sys_getopt_required_argument, 0, 'u' },
+	{ "body", sys_getopt_required_argument, 0, 'b' },
+	{ "resp_len", sys_getopt_required_argument, 0, 'l' },
+	{ "header", sys_getopt_required_argument, 0, 'H' },
+	{ "method", sys_getopt_required_argument, 0, 'm' },
+	{ "sec_tag", sys_getopt_required_argument, 0, 's' },
+	{ "peer_verify", sys_getopt_required_argument, 0, 'v' },
+	{ "timeout", sys_getopt_required_argument, 0, 't' },
+	{ "keepalive", sys_getopt_no_argument, 0, 'k' },
+	{ "sckt_id", sys_getopt_required_argument, 0, 'i' },
+	{ "help", sys_getopt_no_argument, 0, 'h' },
+	{ "print_headers", sys_getopt_no_argument, 0, REST_SHELL_OPT_PRINT_RESP_HEADERS },
 	{ 0, 0, 0, 0 }
 };
 
@@ -108,25 +108,25 @@ static int rest_shell(const struct shell *shell, size_t argc, char **argv)
 	req_ctx.body = NULL;
 	memset(req_headers, 0, (REST_REQUEST_MAX_HEADERS + 1) * sizeof(char *));
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, "d:p:b:H:m:s:u:v:t:l:i:kh", long_options,
+	while ((opt = sys_getopt_long(argc, argv, "d:p:b:H:m:s:u:v:t:l:i:kh", long_options,
 				  NULL)) != -1) {
 		switch (opt) {
 		case 'm':
-			if (strcmp(optarg, "get") == 0) {
+			if (strcmp(sys_getopt_optarg, "get") == 0) {
 				req_ctx.http_method = HTTP_GET;
-			} else if (strcmp(optarg, "head") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "head") == 0) {
 				req_ctx.http_method = HTTP_HEAD;
-			} else if (strcmp(optarg, "post") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "post") == 0) {
 				req_ctx.http_method = HTTP_POST;
-			} else if (strcmp(optarg, "put") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "put") == 0) {
 				req_ctx.http_method = HTTP_PUT;
-			} else if (strcmp(optarg, "delete") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "delete") == 0) {
 				req_ctx.http_method = HTTP_DELETE;
-			} else if (strcmp(optarg, "patch") == 0) {
+			} else if (strcmp(sys_getopt_optarg, "patch") == 0) {
 				req_ctx.http_method = HTTP_PATCH;
 			} else {
 				mosh_error("Unsupported HTTP request method");
@@ -139,17 +139,17 @@ static int rest_shell(const struct shell *shell, size_t argc, char **argv)
 			req_ctx.keep_alive = true;
 			break;
 		case 'd':
-			req_ctx.host = optarg;
+			req_ctx.host = sys_getopt_optarg;
 			host_set = true;
 			break;
 		case 'u':
-			req_ctx.url = optarg;
+			req_ctx.url = sys_getopt_optarg;
 			break;
 		case 'i':
-			req_ctx.connect_socket = atoi(optarg);
+			req_ctx.connect_socket = atoi(sys_getopt_optarg);
 			break;
 		case 's':
-			req_ctx.sec_tag = atoi(optarg);
+			req_ctx.sec_tag = atoi(sys_getopt_optarg);
 			if (req_ctx.sec_tag == 0) {
 				mosh_warn("sec_tag not an integer (!= 0)");
 				ret = -EINVAL;
@@ -157,7 +157,7 @@ static int rest_shell(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case 'l':
-			response_buf_len = atoi(optarg);
+			response_buf_len = atoi(sys_getopt_optarg);
 			if (response_buf_len == 0) {
 				mosh_warn("response buffer length not an integer (> 0)");
 				ret = -EINVAL;
@@ -165,13 +165,13 @@ static int rest_shell(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case 't':
-			req_ctx.timeout_ms = atoi(optarg);
+			req_ctx.timeout_ms = atoi(sys_getopt_optarg);
 			if (req_ctx.timeout_ms == 0) {
 				req_ctx.timeout_ms = SYS_FOREVER_MS;
 			}
 			break;
 		case 'p':
-			req_ctx.port = atoi(optarg);
+			req_ctx.port = atoi(sys_getopt_optarg);
 			if (req_ctx.port == 0) {
 				mosh_warn("port not an integer (> 0)");
 				ret = -EINVAL;
@@ -179,7 +179,7 @@ static int rest_shell(const struct shell *shell, size_t argc, char **argv)
 			}
 			break;
 		case 'b':
-			len = strlen(optarg);
+			len = strlen(sys_getopt_optarg);
 			if (len > 0) {
 				req_ctx.body = k_malloc(len + 1);
 				if (req_ctx.body == NULL) {
@@ -187,13 +187,13 @@ static int rest_shell(const struct shell *shell, size_t argc, char **argv)
 					ret = -ENOMEM;
 					goto end;
 				}
-				strcpy((char *)req_ctx.body, optarg);
+				strcpy((char *)req_ctx.body, sys_getopt_optarg);
 			}
 			break;
 		case 'H': {
 			bool room_available = false;
 
-			len = strlen(optarg);
+			len = strlen(sys_getopt_optarg);
 			if (len <= 0) {
 				mosh_error("No header given");
 				ret = -EINVAL;
@@ -215,18 +215,18 @@ static int rest_shell(const struct shell *shell, size_t argc, char **argv)
 				goto end;
 			}
 
-			req_headers[i] = k_malloc(strlen(optarg) + 1);
+			req_headers[i] = k_malloc(strlen(sys_getopt_optarg) + 1);
 			if (req_headers[i] == NULL) {
-				mosh_error("Cannot allocate memory for header %s", optarg);
+				mosh_error("Cannot allocate memory for header %s", sys_getopt_optarg);
 				ret = -ENOMEM;
 				goto end;
 			}
 			headers_set = true;
-			strcpy(req_headers[i], optarg);
+			strcpy(req_headers[i], sys_getopt_optarg);
 			break;
 		}
 		case 'v':
-			req_ctx.tls_peer_verify = atoi(optarg);
+			req_ctx.tls_peer_verify = atoi(sys_getopt_optarg);
 			if (req_ctx.tls_peer_verify < 0 || req_ctx.tls_peer_verify > 2) {
 				mosh_error(
 					"Valid values for peer verify (%d) are 0, 1 and 2.",
@@ -244,13 +244,13 @@ static int rest_shell(const struct shell *shell, size_t argc, char **argv)
 			goto end;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			show_usage = true;
 			goto end;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		show_usage = true;
 		goto end;

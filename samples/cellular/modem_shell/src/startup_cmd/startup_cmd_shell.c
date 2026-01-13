@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include <zephyr/shell/shell.h>
 #include <zephyr/shell/shell_uart.h>
-#include <unistd.h>
-#include <getopt.h>
+#include <zephyr/sys/sys_getopt.h>
 
 #include "mosh_print.h"
 #include "startup_cmd_settings.h"
@@ -40,12 +41,12 @@ enum {
 };
 
 /* Specifying the expected options (both long and short) */
-static struct option long_options[] = {
-	{ "read", no_argument, 0, 'r' },
-	{ "time", required_argument, 0, 't' },
-	{ "mem1", required_argument, 0, SETT_CMD_SHELL_OPT_MEM_SLOT_1 },
-	{ "mem2", required_argument, 0, SETT_CMD_SHELL_OPT_MEM_SLOT_2 },
-	{ "mem3", required_argument, 0, SETT_CMD_SHELL_OPT_MEM_SLOT_3 },
+static struct sys_getopt_option long_options[] = {
+	{ "read", sys_getopt_no_argument, 0, 'r' },
+	{ "time", sys_getopt_required_argument, 0, 't' },
+	{ "mem1", sys_getopt_required_argument, 0, SETT_CMD_SHELL_OPT_MEM_SLOT_1 },
+	{ "mem2", sys_getopt_required_argument, 0, SETT_CMD_SHELL_OPT_MEM_SLOT_2 },
+	{ "mem3", sys_getopt_required_argument, 0, SETT_CMD_SHELL_OPT_MEM_SLOT_3 },
 	{ 0, 0, 0, 0 }
 };
 
@@ -67,29 +68,29 @@ static int startup_cmd_shell(const struct shell *shell, size_t argc, char **argv
 		goto show_usage;
 	}
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, "t:rh", long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, "t:rh", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 			common_option = SETT_CMD_COMMON_READ;
 			break;
 		case 't':
-			starttime = atoi(optarg);
+			starttime = atoi(sys_getopt_optarg);
 			starttime_given = true;
 			break;
 		case SETT_CMD_SHELL_OPT_MEM_SLOT_1:
-			startup_cmd_str = optarg;
+			startup_cmd_str = sys_getopt_optarg;
 			startup_cmd_mem_slot = 1;
 			break;
 		case SETT_CMD_SHELL_OPT_MEM_SLOT_2:
-			startup_cmd_str = optarg;
+			startup_cmd_str = sys_getopt_optarg;
 			startup_cmd_mem_slot = 2;
 			break;
 		case SETT_CMD_SHELL_OPT_MEM_SLOT_3:
-			startup_cmd_str = optarg;
+			startup_cmd_str = sys_getopt_optarg;
 			startup_cmd_mem_slot = 3;
 			break;
 
@@ -97,12 +98,12 @@ static int startup_cmd_shell(const struct shell *shell, size_t argc, char **argv
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
