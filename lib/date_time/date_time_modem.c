@@ -5,8 +5,8 @@
  */
 
 #include <date_time.h>
+#include <time.h>
 #include <zephyr/kernel.h>
-#include <zephyr/posix/time.h>
 #include <zephyr/sys/timeutil.h>
 #include <zephyr/logging/log.h>
 #include <nrf_modem_at.h>
