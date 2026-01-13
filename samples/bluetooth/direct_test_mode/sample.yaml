@@ -6,15 +6,11 @@ tests:
     sysbuild: true
     build_only: true
     integration_platforms:
-      - nrf5340dk/nrf5340/cpunet
       - nrf21540dk/nrf52840
       - nrf52840dk/nrf52840
-      - nrf54l15dk/nrf54l05/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf5340dk/nrf5340/cpunet
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
       - nrf5340dk/nrf5340/cpunet
       - nrf21540dk/nrf52840
@@ -34,11 +30,11 @@ tests:
     build_only: true
     extra_args: FILE_SUFFIX=hci
     integration_platforms:
-      - nrf5340dk/nrf5340/cpunet
       - nrf21540dk/nrf52840
       - nrf52840dk/nrf52840
-      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf5340dk/nrf5340/cpunet
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
       - nrf5340dk/nrf5340/cpunet
       - nrf21540dk/nrf52840
