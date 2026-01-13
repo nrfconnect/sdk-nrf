@@ -16,7 +16,7 @@ common:
     - ci_samples_zephyr_subsys_mgmt_mcumgr_smp_svr
 
 tests:
-  sample.mcumgr.smp_svr.bt:
+  nrf.extended.sample.mcumgr.smp_svr.bt:
     harness: bluetooth
     tags: bluetooth
     extra_args: EXTRA_CONF_FILE="overlay-bt.conf"
@@ -49,7 +49,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
-  sample.mcumgr.smp_svr.serial:
+  nrf.extended.sample.mcumgr.smp_svr.serial:
     extra_args: EXTRA_CONF_FILE="overlay-serial.conf"
     platform_allow:
       - nrf52840dk/nrf52840
@@ -67,7 +67,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-  sample.mcumgr.smp_svr.mcuboot_flags.direct_xip_withrevert:
+  nrf.extended.sample.mcumgr.smp_svr.mcuboot_flags.direct_xip_withrevert:
     extra_args:
       - EXTRA_CONF_FILE="overlay-serial.conf"
       - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
