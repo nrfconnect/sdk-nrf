@@ -226,27 +226,29 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 	(workmem.wmem)[modulussz - 1] = PSS_TRAILER_BYTE;
 
 	int input_sizes[NUMBER_OF_SLOTS];
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	struct sx_pk_slot inputs[NUMBER_OF_SLOTS];
 
+	sx_pk_acquire_hw(&req);
 	/* modular exponentiation m^d mod n (RSASP1 sign primitive) */
 	sx_status =
-		cracen_rsa_modexp(&pkreq, inputs, rsa_key, workmem.wmem, modulussz, input_sizes);
+		cracen_rsa_modexp(&req, inputs, rsa_key, workmem.wmem, modulussz, input_sizes);
 	if (sx_status != SX_OK) {
+		sx_pk_release_req(&req);
 		return sx_status;
 	}
 	/* Get result of modular exponentiation, placing it in user's output buffer. the output of
 	 * the exponentiation is the signature
 	 */
-	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(pkreq.req);
-	const int opsz = sx_pk_get_opsize(pkreq.req);
+	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(&req);
+	const int opsz = sx_pk_get_opsize(&req);
 
 	sx_rdpkmem(signature->r, outputs[0], opsz);
 	signature->sz = opsz;
 	/* releases the HW resource so it has to be
 	 * called even if an error occurred
 	 */
-	sx_pk_release_req(pkreq.req);
+	sx_pk_release_req(&req);
 	safe_memzero(workmem.workmem, WORKMEM_SIZE);
 
 	return sx_status;
@@ -329,22 +331,24 @@ int cracen_rsa_pss_verify_digest(struct cracen_rsa_key *rsa_key,
 	memcpy(workmem.mHash, digest, digestsz);
 
 	int input_sizes[NUMBER_OF_SLOTS];
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	struct sx_pk_slot inputs[NUMBER_OF_SLOTS];
 
+	sx_pk_acquire_hw(&req);
 	/* modular exponentiation m^d mod n (RSASP1 sign primitive) */
-	sx_status = cracen_rsa_modexp(&pkreq, inputs, rsa_key, signature->r, signature->sz,
+	sx_status = cracen_rsa_modexp(&req, inputs, rsa_key, signature->r, signature->sz,
 				      input_sizes);
 	if (sx_status != SX_OK) {
+		sx_pk_release_req(&req);
 		return sx_status;
 	}
 
 	/* the output of the exponentiation is the encoded message EM. */
-	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(pkreq.req);
-	const int opsz = sx_pk_get_opsize(pkreq.req);
+	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(&req);
+	const int opsz = sx_pk_get_opsize(&req);
 
 	sx_rdpkmem(workmem.wmem, outputs[0], opsz);
-	sx_pk_release_req(pkreq.req);
+	sx_pk_release_req(&req);
 
 	/* invalid signature if rightmost byte of EM is not 0xBC (step 4 of
 	 * EMSA-PSS-VERIFY in RFC 8017)

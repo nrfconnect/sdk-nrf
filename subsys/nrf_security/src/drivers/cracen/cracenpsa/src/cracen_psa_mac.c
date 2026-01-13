@@ -171,7 +171,7 @@ psa_status_t cracen_mac_verify_finish(cracen_mac_operation_t *operation, const u
 
 	/* Do a constant time mem compare. */
 	status = constant_memcmp(operation->input_buffer, mac, operation->mac_size);
-	if (status) {
+	if (status != SX_OK) {
 		return PSA_ERROR_INVALID_SIGNATURE;
 	}
 

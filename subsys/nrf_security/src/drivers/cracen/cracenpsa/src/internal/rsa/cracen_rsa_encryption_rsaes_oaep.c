@@ -87,21 +87,22 @@ int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 	}
 	/* modular exponentiation m^e mod n (RSAEP encryption primitive) */
 	int input_sizes[NUMBER_OF_SLOTS];
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	struct sx_pk_slot inputs[NUMBER_OF_SLOTS];
 
-	sx_status = cracen_rsa_modexp(&pkreq, inputs, rsa_key, text->addr, modulussz, input_sizes);
+	sx_pk_acquire_hw(&req);
+	sx_status = cracen_rsa_modexp(&req, inputs, rsa_key, text->addr, modulussz, input_sizes);
 	if (sx_status != SX_OK) {
-		sx_pk_release_req(pkreq.req);
+		sx_pk_release_req(&req);
 		return sx_status;
 	}
 
 	/* copy output of exponentiation to workmem */
-	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(pkreq.req);
-	const int opsz = sx_pk_get_opsize(pkreq.req);
+	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(&req);
+	const int opsz = sx_pk_get_opsize(&req);
 
 	sx_rdpkmem(workmem.wmem, outputs[0], opsz);
-	sx_pk_release_req(pkreq.req);
+	sx_pk_release_req(&req);
 	uint8_t *xorinout = workmem.wmem + 1 + digestsz;
 
 	sx_status = cracen_run_mgf1xor(workmem.workmem, sizeof(workmem.workmem), hashalg, xorinout,
@@ -255,24 +256,25 @@ int cracen_rsa_oaep_encrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 
 	/* modular exponentiation m^e mod n (RSAEP encryption primitive) */
 	int input_sizes[NUMBER_OF_SLOTS];
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	struct sx_pk_slot inputs[NUMBER_OF_SLOTS];
 
+	sx_pk_acquire_hw(&req);
 	/* modular exponentiation m^d mod n (RSASP1 sign primitive) */
 	sx_status =
-		cracen_rsa_modexp(&pkreq, inputs, rsa_key, workmem.wmem, modulussz, input_sizes);
+		cracen_rsa_modexp(&req, inputs, rsa_key, workmem.wmem, modulussz, input_sizes);
 	if (sx_status != SX_OK) {
 		safe_memzero(workmem.workmem, sizeof(workmem.workmem));
-		sx_pk_release_req(pkreq.req);
+		sx_pk_release_req(&req);
 		return sx_status;
 	}
 
 	/* copy output of exponentiation (the ciphertext) to workmem */
-	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(pkreq.req);
-	const int opsz = sx_pk_get_opsize(pkreq.req);
+	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(&req);
+	const int opsz = sx_pk_get_opsize(&req);
 
 	sx_rdpkmem(workmem.wmem, outputs[0], opsz);
-	sx_pk_release_req(pkreq.req);
+	sx_pk_release_req(&req);
 
 	memcpy(output, workmem.wmem, opsz);
 	*output_length = opsz;

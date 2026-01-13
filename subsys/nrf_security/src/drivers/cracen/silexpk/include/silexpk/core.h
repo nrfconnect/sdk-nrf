@@ -26,11 +26,27 @@ struct sx_pk_cmd_def;
  * @{
  */
 
+struct sx_regs {
+	uint8_t *base;
+};
+
 /** Acceleration request
  *
  * A public key operation for offload on a hardware accelerator
  *
  */
+struct sx_pk_req {
+	struct sx_regs regs;
+	uint8_t *cryptoram;
+	int slot_sz;
+	int op_size;
+	const struct sx_pk_cmd_def *cmd;
+	struct sx_pk_cnx *cnx;
+	const uint8_t *outputops[12];
+	void *userctxt;
+	int ik_mode;
+};
+
 typedef struct sx_pk_req sx_pk_req;
 
 /** SilexPK and hardware constraints */
@@ -86,28 +102,15 @@ int sx_pk_init(void);
 
 /** Encapsulated acquired acceleration request
  *
- * This structure is used by sx_pk_acquire_req()
- * and *_go() functions as a return value
+ * This structure is used by *_go() functions and by callers that use
+ * sx_pk_acquire_hw() with the sync functions (e.g. sx_sync_ecp_ptmult).
  */
 struct sx_pk_acq_req {
 	/** The acquired acceleration request **/
 	sx_pk_req *req;
-	/** The status of sx_pk_acquire_req() **/
+	/** Status field for use by sync functions **/
 	int status;
 };
-
-/** Get a SilexPK request instance locked to perform the given operation
- *
- * The returned sx_pk_acq_req structure contains a status and a pointer to
- * a reserved hardware accelerator instance. The pointer is valid and
- * usable only if status is ::SX_OK. Otherwise it's NULL.
- *
- * @param[in] cmd The command definition (for example ::SX_PK_CMD_MOD_EXP)
- * @return The acquired acceleration request for this operation
- *
- * @see sx_pk_release_req()
- */
-struct sx_pk_acq_req sx_pk_acquire_req(const struct sx_pk_cmd_def *cmd);
 
 struct sx_pk_ecurve;
 
@@ -175,7 +178,7 @@ struct sx_pk_dblslot {
  * That applies to all ECC operations.
  *
  * @param[in,out] req The acceleration request obtained
- * through sx_pk_acquire_req()
+ * through sx_pk_acquire_hw()
  * @param[in] curve The curve used for that ECC operation
  * @param[in] flags Operation specific flags
  * @param[out] inputs List of input slots that will be filled in.
@@ -198,7 +201,7 @@ int sx_pk_list_ecc_inslots(sx_pk_req *req, const struct sx_pk_ecurve *curve, int
  * That applies to all operations except ECC.
  *
  * @param[in,out] req The acceleration request obtained
- * through sx_pk_acquire_req()
+ * through sx_pk_acquire_hw()
  * @param[in] opsizes List of operand sizes in bytes
  * @param[out] inputs List of input slots that will be filled in.
  * See inputslots.h for predefined lists of input slots per operation.
@@ -220,7 +223,7 @@ int sx_pk_list_gfp_inslots(sx_pk_req *req, const int *opsizes, struct sx_pk_slot
  * sx_pk_wait() or do polling by using sx_pk_has_finished().
  *
  * @param[in] req The acceleration request obtained
- * through sx_pk_acquire_req()
+ * through sx_pk_acquire_hw()
  */
 void sx_pk_run(sx_pk_req *req);
 
@@ -233,7 +236,7 @@ void sx_pk_run(sx_pk_req *req);
  * like sx_pk_wait() reported that the operation finished.
  *
  * @param[in] req The acceleration request obtained
- * through sx_pk_acquire_req()
+ * through sx_pk_acquire_hw()
  * @return Any \ref SX_PK_STATUS "status code"
  */
 int sx_pk_get_status(sx_pk_req *req);
@@ -246,7 +249,7 @@ int sx_pk_get_status(sx_pk_req *req);
  * After the operation finishes, return the operation status code.
  *
  * @param[in] req The acceleration request obtained
- * through sx_pk_acquire_req()
+ * through sx_pk_acquire_hw()
  * @return Any \ref SX_PK_STATUS "status code"
  */
 int sx_pk_wait(sx_pk_req *req);
@@ -254,7 +257,7 @@ int sx_pk_wait(sx_pk_req *req);
 /** Fetch array of addresses to output operands
  *
  * @param[in,out] req The acceleration request obtained
- * through sx_pk_acquire_req()
+ * through sx_pk_acquire_hw()
  * @return Array of addresses to output operands
  */
 const uint8_t **sx_pk_get_output_ops(sx_pk_req *req);
@@ -263,12 +266,12 @@ const uint8_t **sx_pk_get_output_ops(sx_pk_req *req);
  *
  * Release the reserved resources
  *
- * @pre sx_pk_acquire_req() should have been called
+ * @pre sx_pk_acquire_hw() should have been called
  * before this function is called and not
  * being in use by the hardware
  *
  * @param[in,out] req The acceleration request obtained
- * through sx_pk_acquire_req()
+ * through sx_pk_acquire_hw()
  * operation has finished
  */
 void sx_pk_release_req(sx_pk_req *req);
@@ -277,10 +280,10 @@ void sx_pk_release_req(sx_pk_req *req);
  *
  * Use this to run multiple operations without releasing CRACEN between them.
  *
- * @pre sx_pk_acquire_req() must have been called to acquire the request.
+ * @pre sx_pk_acquire_hw() must have been called to acquire the request.
  * @pre Any previous operation on this request must have completed (via sx_pk_wait()).
  *
- * @param[in,out] req The acceleration request obtained through sx_pk_acquire_req()
+ * @param[in,out] req The acceleration request obtained through sx_pk_acquire_hw()
  * @param[in] cmd The new command definition
  */
 void sx_pk_set_cmd(sx_pk_req *req, const struct sx_pk_cmd_def *cmd);
@@ -289,12 +292,21 @@ void sx_pk_set_cmd(sx_pk_req *req, const struct sx_pk_cmd_def *cmd);
  *
  * Clear the memory before releasing CRACEN.
  *
- * @pre sx_pk_acquire_req() must have been called to acquire the request.
+ * @pre sx_pk_acquire_hw() must have been called to acquire the request.
  *
- * @param[in,out] req The acceleration request obtained through sx_pk_acquire_req()
+ * @param[in,out] req The acceleration request obtained through sx_pk_acquire_hw()
  * @return Any \ref SX_PK_STATUS "status code"
  */
 int sx_pk_clear_memory(sx_pk_req *req);
+
+/** Acquire the hardware accelerator for an operation.
+ *
+ * This function acquires the cryptographic hardware accelerator and
+ * initializes the request structure for use.
+ *
+ * @param[out] req The acceleration request to initialize
+ */
+void sx_pk_acquire_hw(sx_pk_req *req);
 
 /**
  * @brief Clear interrupt for Cracen PK Engine.

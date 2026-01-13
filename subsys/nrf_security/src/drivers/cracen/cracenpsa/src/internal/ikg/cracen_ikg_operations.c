@@ -95,7 +95,7 @@ int cracen_ikg_sign_digest(int identity_key_index, const struct sxhashalg *hasha
 {
 	int status = SX_ERR_RETRY;
 	size_t opsz = sx_pk_curve_opsize(curve);
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	struct sx_pk_inops_ik_ecdsa_sign inputs;
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	uint8_t workmem[digestsz];
@@ -106,41 +106,38 @@ int cracen_ikg_sign_digest(int identity_key_index, const struct sxhashalg *hasha
 	internal_signature.r = signature;
 	internal_signature.s = signature + opsz;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_IK_ECDSA_SIGN);
-	if (pkreq.status) {
-		sx_pk_release_req(pkreq.req);
-		return pkreq.status;
-	}
+	sx_pk_acquire_hw(&req);
+	sx_pk_set_cmd(&req, SX_PK_CMD_IK_ECDSA_SIGN);
 
 	for (int i = 0; status != SX_OK && i <= MAX_ATTEMPTS; i++) {
 		if (i > 0) {
-			sx_pk_set_cmd(pkreq.req, SX_PK_CMD_IK_ECDSA_SIGN);
+			sx_pk_set_cmd(&req, SX_PK_CMD_IK_ECDSA_SIGN);
 		}
 
-		pkreq.status = sx_pk_list_ik_inslots(pkreq.req, identity_key_index,
-						     (struct sx_pk_slot *)&inputs);
-		if (pkreq.status) {
-			sx_pk_release_req(pkreq.req);
-			return pkreq.status;
+		status = sx_pk_list_ik_inslots(&req, identity_key_index,
+					       (struct sx_pk_slot *)&inputs);
+		if (status != SX_OK) {
+			sx_pk_release_req(&req);
+			return status;
 		}
 
 		digest2op(workmem, digestsz, inputs.h.addr, opsz);
-		sx_pk_run(pkreq.req);
-		status = sx_pk_wait(pkreq.req);
+		sx_pk_run(&req);
+		status = sx_pk_wait(&req);
 
 		/* SX_ERR_NOT_INVERTIBLE may be due to silexpk countermeasures. */
 		if (status == SX_ERR_RETRY ||
 		    status == SX_ERR_INVALID_SIGNATURE ||
 		    status == SX_ERR_NOT_INVERTIBLE) {
-			int exit_status = exit_ikg(pkreq.req);
+			int exit_status = exit_ikg(&req);
 
 			if (exit_status != SX_OK) {
-				sx_pk_release_req(pkreq.req);
+				sx_pk_release_req(&req);
 				return exit_status;
 			}
 
 			if (i == MAX_ATTEMPTS) {
-				sx_pk_release_req(pkreq.req);
+				sx_pk_release_req(&req);
 				return SX_ERR_TOO_MANY_ATTEMPTS;
 			}
 			status = SX_ERR_RETRY;
@@ -148,72 +145,69 @@ int cracen_ikg_sign_digest(int identity_key_index, const struct sxhashalg *hasha
 	}
 
 	if (status != SX_OK) {
-		sx_pk_release_req(pkreq.req);
+		sx_pk_release_req(&req);
 		return status;
 	}
 
-	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(pkreq.req);
+	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(&req);
 
 	ecdsa_read_sig(&internal_signature, outputs[0], outputs[1], opsz);
 	safe_memzero(workmem, digestsz);
 
-	status = exit_ikg(pkreq.req);
-	sx_pk_release_req(pkreq.req);
+	status = exit_ikg(&req);
+	sx_pk_release_req(&req);
 	return status;
 }
 
 int cracen_ikg_create_pub_key(int identity_key_index, uint8_t *pub_key)
 {
 	int status = SX_ERR_RETRY;
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_IK_PUBKEY_GEN);
-	if (pkreq.status) {
-		sx_pk_release_req(pkreq.req);
-		return pkreq.status;
-	}
+	sx_pk_acquire_hw(&req);
+	sx_pk_set_cmd(&req, SX_PK_CMD_IK_PUBKEY_GEN);
 
 	for (int i = 0; status != SX_OK && i <= MAX_ATTEMPTS; i++) {
 		if (i > 0) {
-			sx_pk_set_cmd(pkreq.req, SX_PK_CMD_IK_PUBKEY_GEN);
+			sx_pk_set_cmd(&req, SX_PK_CMD_IK_PUBKEY_GEN);
 		}
 
-		pkreq.status = sx_pk_list_ik_inslots(pkreq.req, identity_key_index, NULL);
-		if (pkreq.status) {
-			sx_pk_release_req(pkreq.req);
-			return pkreq.status;
+		status = sx_pk_list_ik_inslots(&req, identity_key_index, NULL);
+		if (status != SX_OK) {
+			sx_pk_release_req(&req);
+			return status;
 		}
 
-		sx_pk_run(pkreq.req);
-		status = sx_pk_wait(pkreq.req);
+		sx_pk_run(&req);
+		status = sx_pk_wait(&req);
 
 		if (status == SX_ERR_RETRY) {
-			int exit_status = exit_ikg(pkreq.req);
+			int exit_status = exit_ikg(&req);
 
 			if (exit_status != SX_OK) {
-				sx_pk_release_req(pkreq.req);
+				sx_pk_release_req(&req);
 				return exit_status;
 			}
 
 			if (i == MAX_ATTEMPTS) {
-				sx_pk_release_req(pkreq.req);
+				sx_pk_release_req(&req);
 				return SX_ERR_TOO_MANY_ATTEMPTS;
 			}
 		}
 	}
 
 	if (status != SX_OK) {
-		sx_pk_release_req(pkreq.req);
+		sx_pk_release_req(&req);
 		return status;
 	}
 
-	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(pkreq.req);
-	const int opsz = sx_pk_get_opsize(pkreq.req);
+	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(&req);
+	const int opsz = sx_pk_get_opsize(&req);
 
 	sx_rdpkmem(pub_key, outputs[0], opsz);
 	sx_rdpkmem(pub_key + opsz, outputs[1], opsz);
 
-	status = exit_ikg(pkreq.req);
-	sx_pk_release_req(pkreq.req);
+	status = exit_ikg(&req);
+	sx_pk_release_req(&req);
 	return status;
 }
