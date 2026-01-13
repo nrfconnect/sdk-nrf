@@ -2,7 +2,7 @@ FROM ubuntu:24.04
 
 ARG VERSION
 ENV HOME=/opt
-RUN apt-get update && apt-get install -y wget ca-certificates qemu-system-arm git \
+RUN apt-get update && apt-get install -y gcc gcc-multilib wget ca-certificates qemu-system-arm git \
     libxcb-render-util0 libxcb-shape0 libxcb-icccm4  libxcb-keysyms1 libxcb-image0 libxkbcommon-x11-0 libsm6 libice6 udev \
     && rm -rf /var/lib/apt/lists/*
 RUN wget https://files.nordicsemi.com/artifactory/swtools/external/nrfutil/executables/x86_64-unknown-linux-gnu/nrfutil -q -O /usr/local/bin/nrfutil  \
