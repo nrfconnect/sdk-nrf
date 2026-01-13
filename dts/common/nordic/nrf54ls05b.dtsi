@@ -175,7 +175,7 @@
 				status = "disabled";
 				dfe-supported;
 				ble-2mbps-supported;
-				cs-supported;
+				ble-cs-supported;
 
 				ieee802154: ieee802154 {
 					compatible = "nordic,nrf-ieee802154";
