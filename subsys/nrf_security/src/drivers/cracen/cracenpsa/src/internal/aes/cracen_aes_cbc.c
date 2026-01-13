@@ -11,6 +11,7 @@
 #include <silexpk/core.h>
 #include <sxsymcrypt/aes.h>
 #include <sxsymcrypt/blkcipher.h>
+#include <sxsymcrypt/internal.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <cracen/common.h>
@@ -32,15 +33,20 @@ psa_status_t cracen_aes_cbc_encrypt(const struct sxkeyref *key, const uint8_t *i
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	sx_status = sx_blkcipher_create_aescbc_enc(&cipher_ctx, key, iv);
+	sx_status = sx_hw_reserve(&cipher_ctx.dma, SX_HW_RESERVE_CM_ENABLED);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
+	}
+
+	sx_status = sx_blkcipher_create_aescbc_enc(&cipher_ctx, key, iv);
+	if (sx_status != SX_OK) {
+		goto exit;
 	}
 
 	if (full_blocks_length > 0) {
 		sx_status = sx_blkcipher_crypt(&cipher_ctx, input, full_blocks_length, output);
 		if (sx_status != SX_OK) {
-			return silex_statuscodes_to_psa(sx_status);
+			goto exit;
 		}
 	}
 
@@ -50,12 +56,12 @@ psa_status_t cracen_aes_cbc_encrypt(const struct sxkeyref *key, const uint8_t *i
 	sx_status = sx_blkcipher_crypt(&cipher_ctx, padded_input_block, sizeof(padded_input_block),
 				       output + full_blocks_length);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	sx_status = sx_blkcipher_run(&cipher_ctx);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	sx_status = sx_blkcipher_wait(&cipher_ctx);
@@ -63,6 +69,8 @@ psa_status_t cracen_aes_cbc_encrypt(const struct sxkeyref *key, const uint8_t *i
 		*output_length = padded_input_length;
 	}
 
+exit:
+	sx_hw_release(&cipher_ctx.dma);
 	return silex_statuscodes_to_psa(sx_status);
 }
 
@@ -72,6 +80,7 @@ psa_status_t cracen_aes_cbc_decrypt(const struct sxkeyref *key, const uint8_t *i
 {
 	int sx_status;
 	struct sxblkcipher cipher_ctx;
+	uint32_t failure = 0;
 
 	if (input_length % SX_BLKCIPHER_AES_BLK_SZ != 0) {
 		return PSA_ERROR_INVALID_ARGUMENT;
@@ -81,29 +90,33 @@ psa_status_t cracen_aes_cbc_decrypt(const struct sxkeyref *key, const uint8_t *i
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	sx_status = sx_blkcipher_create_aescbc_dec(&cipher_ctx, key, iv);
+	sx_status = sx_hw_reserve(&cipher_ctx.dma, SX_HW_RESERVE_CM_ENABLED);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
+	}
+
+	sx_status = sx_blkcipher_create_aescbc_dec(&cipher_ctx, key, iv);
+	if (sx_status != SX_OK) {
+		goto exit;
 	}
 
 	sx_status = sx_blkcipher_crypt(&cipher_ctx, input, input_length, output);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	sx_status = sx_blkcipher_run(&cipher_ctx);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	sx_status = sx_blkcipher_wait(&cipher_ctx);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	size_t padding_length = output[input_length - 1];
 	size_t padding_index = input_length - padding_length;
-	uint32_t failure = 0;
 
 	failure |= (padding_length > SX_BLKCIPHER_AES_BLK_SZ);
 	failure |= (padding_length == 0);
@@ -113,6 +126,12 @@ psa_status_t cracen_aes_cbc_decrypt(const struct sxkeyref *key, const uint8_t *i
 	}
 
 	*output_length = padding_index;
+	goto exit;
 
+exit:
+	sx_hw_release(&cipher_ctx.dma);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
 	return (failure == 0) ? PSA_SUCCESS : PSA_ERROR_INVALID_PADDING;
 }

@@ -35,8 +35,8 @@
  */
 static uint8_t dom4[] = {0x53, 0x69, 0x67, 0x45, 0x64, 0x34, 0x34, 0x38, 0x01, 0x00};
 
-static int ed448_calculate_r(uint8_t *workmem, const uint8_t *message, size_t message_length,
-			       bool prehash)
+static int ed448_calculate_r(struct sxhash *ctx, uint8_t *workmem, const uint8_t *message,
+			     size_t message_length, bool prehash)
 {
 	/* update the PHflag in dom4*/
 	dom4[PHFLAG_BYTE] = prehash ? 0x01 : 0x00;
@@ -44,12 +44,13 @@ static int ed448_calculate_r(uint8_t *workmem, const uint8_t *message, size_t me
 	size_t hash_array_lengths[] = {sizeof(dom4), SX_ED448_SZ, message_length};
 	size_t input_count = 3;
 
-	return cracen_hash_all_inputs(hash_array, hash_array_lengths, input_count,
-				      &sxhashalg_shake256_114, workmem + SX_ED448_DGST_SZ);
+	return cracen_hash_all_inputs_with_context(ctx, hash_array, hash_array_lengths, input_count,
+						  &sxhashalg_shake256_114,
+						  workmem + SX_ED448_DGST_SZ);
 }
 
-static int ed448_calculate_k(uint8_t *workmem, uint8_t *point_r, const uint8_t *message,
-			       size_t message_length, bool prehash)
+static int ed448_calculate_k(struct sxhash *ctx, uint8_t *workmem, uint8_t *point_r,
+			     const uint8_t *message, size_t message_length, bool prehash)
 {
 	/* update the PHflag in dom4*/
 	dom4[PHFLAG_BYTE] = prehash ? 0x01 : 0x00;
@@ -57,8 +58,8 @@ static int ed448_calculate_k(uint8_t *workmem, uint8_t *point_r, const uint8_t *
 	size_t hash_array_lengths[] = {sizeof(dom4), SX_ED448_SZ, SX_ED448_SZ, message_length};
 	size_t input_count = 4;
 
-	return cracen_hash_all_inputs(hash_array, hash_array_lengths, input_count,
-				      &sxhashalg_shake256_114, workmem);
+	return cracen_hash_all_inputs_with_context(ctx, hash_array, hash_array_lengths, input_count,
+						   &sxhashalg_shake256_114, workmem);
 }
 
 static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
@@ -71,19 +72,26 @@ static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 	uint8_t *area_2 = workmem + AREA2_MEM_OFFSET;
 	uint8_t *area_4 = workmem + AREA4_MEM_OFFSET;
 	sx_pk_req req;
+	struct sxhash ctx;
 
-	/* Hash the private key, the digest is stored in the first 114 bytes of workmem*/
-	status = cracen_hash_input(priv_key, SX_ED448_SZ, &sxhashalg_shake256_114, area_1);
+	status = sx_hw_reserve(&ctx.dma, SX_HW_RESERVE_DEFAULT);
 	if (status != SX_OK) {
 		return status;
+	}
+
+	/* Hash the private key, the digest is stored in the first 114 bytes of workmem*/
+	status = cracen_hash_input_with_context(&ctx, priv_key, SX_ED448_SZ,
+						&sxhashalg_shake256_114, area_1);
+	if (status != SX_OK) {
+		goto exit;
 	}
 
 	/* Obtain r by hashing (prefix || message), where prefix is the second
 	 * half of the private key digest.
 	 */
-	status = ed448_calculate_r(area_2, message, message_length, prehash);
+	status = ed448_calculate_r(&ctx, area_2, message, message_length, prehash);
 	if (status != SX_OK) {
-		return status;
+		goto exit;
 	}
 
 	sx_pk_acquire_hw(&req);
@@ -96,7 +104,7 @@ static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 				 (struct sx_ed448_pt *)pnt_r);
 	if (status != SX_OK) {
 		sx_pk_release_req(&req);
-		return status;
+		goto exit;
 	}
 
 	/* The secret scalar s is computed in place from the first half of the
@@ -116,13 +124,13 @@ static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 				 (struct sx_ed448_pt *)area_2);
 	if (status != SX_OK) {
 		sx_pk_release_req(&req);
-		return status;
+		goto exit;
 	}
 
-	status = ed448_calculate_k(area_2, pnt_r, message, message_length, prehash);
+	status = ed448_calculate_k(&ctx, area_2, pnt_r, message, message_length, prehash);
 	if (status != SX_OK) {
 		sx_pk_release_req(&req);
-		return status;
+		goto exit;
 	}
 
 	/* Compute (r + k * s) mod L. This gives the second part of the
@@ -136,12 +144,14 @@ static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 	sx_pk_release_req(&req);
 
 	if (status != SX_OK) {
-		return status;
+		goto exit;
 	}
 
 	memcpy(signature, pnt_r, SX_ED448_DGST_SZ);
 	safe_memzero(workmem, sizeof(workmem));
 
+exit:
+	sx_hw_release(&ctx.dma);
 	return status;
 }
 
@@ -158,6 +168,7 @@ int cracen_ed448ph_sign(const uint8_t *priv_key, uint8_t *signature, const uint8
 	int status;
 
 	if (is_message) {
+		/* cracen_hash_input handles hardware acquire and release. */
 		status = cracen_hash_input(message, message_length, &sxhashalg_shake256_64,
 					   hashedmessage);
 		if (status != SX_OK) {
@@ -165,7 +176,7 @@ int cracen_ed448ph_sign(const uint8_t *priv_key, uint8_t *signature, const uint8
 		}
 
 		return ed448_sign_internal(priv_key, signature, hashedmessage, SHAKE256_64_DGST,
-					     true);
+					   true);
 	} else {
 		return ed448_sign_internal(priv_key, signature, message, message_length, true);
 	}
@@ -185,8 +196,9 @@ static int ed448_verify_internal(const uint8_t *pub_key, const uint8_t *message,
 	uint8_t const *hash_array[] = {dom4, signature, pub_key, message};
 	size_t hash_array_lengths[] = {sizeof(dom4), ed448_sz, ed448_sz, message_length};
 
-	status = cracen_hash_all_inputs(hash_array, hash_array_lengths,
-					input_count, &sxhashalg_shake256_114, digest);
+	/* cracen_hash_all_inputs handles hardware acquire and release. */
+	status = cracen_hash_all_inputs(hash_array, hash_array_lengths, input_count,
+					&sxhashalg_shake256_114, digest);
 	if (status != SX_OK) {
 		return status;
 	}
@@ -217,6 +229,7 @@ int cracen_ed448ph_verify(const uint8_t *pub_key, const uint8_t *message, size_t
 	uint8_t message_digest[SX_ED448_DGST_SZ];
 
 	if (is_message) {
+		/* cracen_hash_input handles hardware acquire and release. */
 		status = cracen_hash_input(message, message_length, &sxhashalg_shake256_64,
 					   message_digest);
 		if (status != SX_OK) {
@@ -224,7 +237,7 @@ int cracen_ed448ph_verify(const uint8_t *pub_key, const uint8_t *message, size_t
 		}
 
 		return ed448_verify_internal(pub_key, message_digest, SHAKE256_64_DGST,
-					       signature, true);
+					     signature, true);
 	}
 	return ed448_verify_internal(pub_key, message, message_length, signature, true);
 }
@@ -236,10 +249,12 @@ int cracen_ed448_create_pubkey(const uint8_t *priv_key, uint8_t *pub_key)
 	uint8_t *pub_key_A = digest + SX_ED448_SZ;
 	sx_pk_req req;
 
+	/* cracen_hash_input handles hardware acquire and release. */
 	status = cracen_hash_input(priv_key, SX_ED448_SZ, &sxhashalg_shake256_114, digest);
 	if (status != SX_OK) {
 		return status;
 	}
+
 	/* The secret scalar s is computed in place from the first half of the
 	 * private key digest.
 	 */

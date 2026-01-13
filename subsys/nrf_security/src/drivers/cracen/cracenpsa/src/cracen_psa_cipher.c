@@ -72,6 +72,12 @@ static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *at
 	return is_supported;
 }
 
+/** AES ciphers need countermeasures; ChaCha20 does not. */
+static sx_hw_reserve_flags_t cipher_hw_reserve_flags(psa_algorithm_t alg)
+{
+	return (alg == PSA_ALG_STREAM_CIPHER) ? SX_HW_RESERVE_DEFAULT : SX_HW_RESERVE_CM_ENABLED;
+}
+
 static psa_status_t setup(enum cipher_operation dir, cracen_cipher_operation_t *operation,
 			  const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 			  size_t key_buffer_size, psa_algorithm_t alg)
@@ -136,7 +142,14 @@ static psa_status_t crypt_ecb(struct sxblkcipher *blkciph, const struct sxkeyref
 			      const uint8_t *input, size_t input_length, uint8_t *output,
 			      size_t output_size, size_t *output_length, enum cipher_operation dir)
 {
+	int sx_status;
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+
+	/* Acquire HW before calling the SX layer create functions */
+	sx_status = sx_hw_reserve(&blkciph->dma, SX_HW_RESERVE_CM_ENABLED);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
 
 	if (dir == CRACEN_ENCRYPT) {
 		status = cracen_aes_ecb_encrypt(blkciph, key, input, input_length,
@@ -146,6 +159,7 @@ static psa_status_t crypt_ecb(struct sxblkcipher *blkciph, const struct sxkeyref
 						output, output_size, output_length);
 	}
 
+	sx_hw_release(&blkciph->dma);
 	return status;
 }
 
@@ -299,6 +313,12 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 {
 	int sx_status = SX_ERR_UNINITIALIZED_OBJ;
 
+	/* Acquire HW before calling the SX layer create functions */
+	sx_status = sx_hw_reserve(&operation->cipher.dma, cipher_hw_reserve_flags(operation->alg));
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
 	switch (operation->alg) {
 	case PSA_ALG_CBC_NO_PADDING:
 		if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES)) {
@@ -348,9 +368,13 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 		sx_status = SX_ERR_INCOMPATIBLE_HW;
 	}
 
+	if (sx_status != SX_OK) {
+		sx_hw_release(&operation->cipher.dma);
+		return silex_statuscodes_to_psa(sx_status);
+	}
 	operation->initialized = true;
 
-	return silex_statuscodes_to_psa(sx_status);
+	return PSA_SUCCESS;
 }
 
 psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
@@ -521,8 +545,15 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 
 		} else {
 			if (operation->initialized) {
+				/* Acquire HW before resuming state */
+				sx_status = sx_hw_reserve(&operation->cipher.dma,
+							  cipher_hw_reserve_flags(operation->alg));
+				if (sx_status != SX_OK) {
+					return silex_statuscodes_to_psa(sx_status);
+				}
 				sx_status = sx_blkcipher_resume_state(&operation->cipher);
 				if (sx_status != SX_OK) {
+					sx_hw_release(&operation->cipher.dma);
 					return silex_statuscodes_to_psa(sx_status);
 				}
 			} else {
@@ -540,6 +571,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 					&operation->cipher, operation->unprocessed_input,
 					operation->unprocessed_input_bytes, output);
 				if (sx_status != SX_OK) {
+					sx_hw_release(&operation->cipher.dma);
 					return silex_statuscodes_to_psa(sx_status);
 				}
 
@@ -552,16 +584,19 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 				sx_status = sx_blkcipher_crypt(&operation->cipher, input,
 							       block_bytes, output);
 				if (sx_status != SX_OK) {
+					sx_hw_release(&operation->cipher.dma);
 					return silex_statuscodes_to_psa(sx_status);
 				}
 			}
 
 			sx_status = sx_blkcipher_save_state(&operation->cipher);
 			if (sx_status != SX_OK) {
+				sx_hw_release(&operation->cipher.dma);
 				return silex_statuscodes_to_psa(sx_status);
 			}
 
 			sx_status = sx_blkcipher_wait(&operation->cipher);
+			sx_hw_release(&operation->cipher.dma);
 			if (sx_status != SX_OK) {
 				return silex_statuscodes_to_psa(sx_status);
 			}
@@ -622,9 +657,14 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 	}
 
 	if (operation->initialized) {
-		sx_status = sx_blkcipher_resume_state(&operation->cipher);
+		/* Acquire HW before resuming state */
+		sx_status = sx_hw_reserve(&operation->cipher.dma, SX_HW_RESERVE_CM_ENABLED);
 		if (sx_status != SX_OK) {
 			return silex_statuscodes_to_psa(sx_status);
+		}
+		sx_status = sx_blkcipher_resume_state(&operation->cipher);
+		if (sx_status != SX_OK) {
+			goto exit;
 		}
 	} else {
 		psa_status_t result = initialize_cipher(operation);
@@ -651,6 +691,7 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 			__ASSERT_NO_MSG(operation->blk_size == SX_BLKCIPHER_AES_BLK_SZ);
 
 			if (operation->unprocessed_input_bytes != SX_BLKCIPHER_AES_BLK_SZ) {
+				sx_hw_release(&operation->cipher.dma);
 				return PSA_ERROR_INVALID_ARGUMENT;
 			}
 
@@ -659,17 +700,18 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 			sx_status = sx_blkcipher_crypt(
 				&operation->cipher, operation->unprocessed_input,
 				operation->unprocessed_input_bytes, out_with_padding);
-			if (sx_status) {
-				return silex_statuscodes_to_psa(sx_status);
+			if (sx_status != SX_OK) {
+				goto exit;
 			}
 
 			sx_status = sx_blkcipher_run(&operation->cipher);
-			if (sx_status) {
-				return silex_statuscodes_to_psa(sx_status);
+			if (sx_status != SX_OK) {
+				goto exit;
 			}
 
 			sx_status = sx_blkcipher_wait(&operation->cipher);
-			if (sx_status) {
+			sx_hw_release(&operation->cipher.dma);
+			if (sx_status != SX_OK) {
 				return silex_statuscodes_to_psa(sx_status);
 			}
 
@@ -703,6 +745,7 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 
 	*output_length = operation->unprocessed_input_bytes;
 	if (*output_length > output_size) {
+		sx_hw_release(&operation->cipher.dma);
 		*output_length = 0;
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
@@ -710,26 +753,26 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES) &&
 	    operation->alg == PSA_ALG_CBC_NO_PADDING &&
 	    (operation->unprocessed_input_bytes % SX_BLKCIPHER_AES_BLK_SZ) != 0) {
+		sx_hw_release(&operation->cipher.dma);
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	sx_status = sx_blkcipher_crypt(&operation->cipher, operation->unprocessed_input,
 				       operation->unprocessed_input_bytes, output);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	sx_status = sx_blkcipher_run(&operation->cipher);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	sx_status = sx_blkcipher_wait(&operation->cipher);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
 
-	return PSA_SUCCESS;
+exit:
+	sx_hw_release(&operation->cipher.dma);
+	return silex_statuscodes_to_psa(sx_status);
 }
 
 psa_status_t cracen_cipher_abort(cracen_cipher_operation_t *operation)

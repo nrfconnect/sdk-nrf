@@ -14,7 +14,6 @@
 #include "hw.h"
 #include "cmdma.h"
 #include "cmaes.h"
-#include <cracen/prng_pool.h>
 
 int sx_mac_free(struct sxmac *mac_ctx)
 {
@@ -22,38 +21,21 @@ int sx_mac_free(struct sxmac *mac_ctx)
 	if (mac_ctx->key->clean_key) {
 		sx_err = mac_ctx->key->clean_key(mac_ctx->key->user_data);
 	}
-	sx_cmdma_release_hw(&mac_ctx->dma);
 	return sx_err;
 }
 
-int sx_mac_hw_reserve(struct sxmac *mac_ctx)
+static int sx_mac_prepare_key(struct sxmac *mac_ctx)
 {
 	int err = SX_OK;
 
-	uint32_t prng_value;
-
-	err = cracen_prng_value_from_pool(&prng_value);
-	if (err != SX_OK) {
-		return err;
-	}
-
-	sx_hw_reserve(&mac_ctx->dma);
-
-	err = sx_cm_load_mask(prng_value);
-	if (err != SX_OK) {
-		goto exit;
-	}
-
 	if (mac_ctx->key->prepare_key) {
 		err = mac_ctx->key->prepare_key(mac_ctx->key->user_data);
+		if (err != SX_OK) {
+			return sx_handle_nested_error(sx_mac_free(mac_ctx), err);
+		}
 	}
 
-exit:
-	if (err != SX_OK) {
-		return sx_handle_nested_error(sx_mac_free(mac_ctx), err);
-	}
-
-	return SX_OK;
+	return err;
 }
 
 int sx_mac_feed(struct sxmac *mac_ctx, const uint8_t *datain, size_t sz)
@@ -110,7 +92,7 @@ int sx_mac_resume_state(struct sxmac *mac_ctx)
 {
 	int err;
 
-	if (mac_ctx->dma.hw_acquired) {
+	if (!mac_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
@@ -118,10 +100,8 @@ int sx_mac_resume_state(struct sxmac *mac_ctx)
 		return SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED;
 	}
 
-	/* Note that the sx_mac APIs are used only with CMAC at the moment so we always need to
-	 * enable the AES countermeasures.
-	 */
-	err = sx_mac_hw_reserve(mac_ctx);
+	/* Key preparation - CM setup is handled by CRACENPSA layer via sx_hw_reserve() */
+	err = sx_mac_prepare_key(mac_ctx);
 	if (err != SX_OK) {
 		return err;
 	}

@@ -111,10 +111,9 @@ static int sx_aead_create_chacha20poly1305(struct sxaead *aead_ctx, const struct
 		return SX_ERR_INVALID_KEY_SZ;
 	}
 
-	/* has countermeasures and the key need to be set before callling sx_aead_hw_reserve */
+	/* ChaCha20Poly1305 doesn't use countermeasures */
 	aead_ctx->has_countermeasures = false;
 	aead_ctx->key = key;
-	sx_aead_hw_reserve(aead_ctx);
 
 	aead_ctx->cfg = &ba417chachapolycfg;
 
@@ -154,8 +153,6 @@ static int sx_blkcipher_create_chacha20(struct sxblkcipher *cipher_ctx, struct s
 	}
 
 	cipher_ctx->key = key;
-	sx_blkcipher_hw_reserve(cipher_ctx);
-
 	cipher_ctx->cfg = &ba417chacha20cfg;
 
 	sx_cmdma_newcmd(&cipher_ctx->dma, cipher_ctx->descs, BA417_MODE_CHACHA20 | dir,

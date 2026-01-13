@@ -96,6 +96,7 @@ static psa_status_t setup(cracen_aead_operation_t *operation, enum cipher_operat
 	size_t tag_size;
 
 	safe_memzero(&operation->sw_chacha_poly_ctx, sizeof(operation->sw_chacha_poly_ctx));
+	operation->ad_finished = false;
 
 	if (key_buffer_size > sizeof(operation->key_buffer)) {
 		return PSA_ERROR_INVALID_ARGUMENT;
@@ -261,19 +262,27 @@ psa_status_t cracen_sw_chacha20_poly1305_update_ad(cracen_aead_operation_t *oper
 	cracen_sw_chacha20_poly1305_context_t *chacha_poly_ctx = &operation->sw_chacha_poly_ctx;
 	struct sxblkcipher cipher;
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	int sx_status;
 
 	if (operation->ad_finished) {
 		return PSA_ERROR_BAD_STATE;
 	}
 
+	sx_status = sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_DEFAULT);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
 	status = initialize_poly_key(operation, &cipher);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
 	calc_poly1305_mac(operation, input, input_length);
 	chacha_poly_ctx->total_ad_fed += input_length;
 
+exit:
+	sx_hw_release(&cipher.dma);
 	return status;
 }
 
@@ -333,19 +342,28 @@ psa_status_t cracen_sw_chacha20_poly1305_update(cracen_aead_operation_t *operati
 	struct sxblkcipher cipher;
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	size_t processed = 0;
+	int sx_status;
 
 	if (output_size < input_length) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
+	sx_status = sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_DEFAULT);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
 	status = initialize_poly_key(operation, &cipher);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
+
 	initialize_ctr(operation);
 
 	finalize_ad_padding(operation);
 	operation->ad_finished = true;
+
+	safe_memzero(output, output_size);
 
 	/* Process data with CTR mode encryption/decryption */
 	if (operation->dir == CRACEN_ENCRYPT) {
@@ -358,7 +376,7 @@ psa_status_t cracen_sw_chacha20_poly1305_update(cracen_aead_operation_t *operati
 			status = calc_chacha20(operation, &cipher, &input[processed],
 					       &output[processed], chunk_size);
 			if (status != PSA_SUCCESS) {
-				return status;
+				goto exit;
 			}
 
 			calc_poly1305_mac(operation, &output[processed], chunk_size);
@@ -378,13 +396,16 @@ psa_status_t cracen_sw_chacha20_poly1305_update(cracen_aead_operation_t *operati
 			status = calc_chacha20(operation, &cipher, &input[processed],
 					       &output[processed], chunk_size);
 			if (status != PSA_SUCCESS) {
-				return status;
+				goto exit;
 			}
 			processed += chunk_size;
 		}
 	}
 	*output_length = processed;
 	chacha_poly_ctx->total_data_enc += processed;
+
+exit:
+	sx_hw_release(&cipher.dma);
 	return status;
 }
 
@@ -396,15 +417,22 @@ psa_status_t cracen_sw_chacha20_poly1305_finish(cracen_aead_operation_t *operati
 	struct sxblkcipher cipher;
 	cracen_sw_chacha20_poly1305_context_t *chacha_poly_ctx = &operation->sw_chacha_poly_ctx;
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	int sx_status;
 
 	if (tag_size < operation->tag_size) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
+	sx_status = sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_DEFAULT);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
 	status = initialize_poly_key(operation, &cipher);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
+
 	initialize_ctr(operation);
 
 	finalize_ad_padding(operation);
@@ -412,6 +440,9 @@ psa_status_t cracen_sw_chacha20_poly1305_finish(cracen_aead_operation_t *operati
 
 	poly1305_ext_compute_mac(&chacha_poly_ctx->poly_ctx, tag);
 	*tag_length = operation->tag_size;
+
+exit:
+	sx_hw_release(&cipher.dma);
 	return status;
 }
 
@@ -425,11 +456,18 @@ psa_status_t cracen_sw_chacha20_poly1305_verify(cracen_aead_operation_t *operati
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	uint8_t computed_tag[CRACEN_POLY1305_TAG_SIZE] = {0};
 	uint32_t tag_mismatch = 0;
+	int sx_status;
+
+	sx_status = sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_DEFAULT);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
 
 	status = initialize_poly_key(operation, &cipher);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
+
 	initialize_ctr(operation);
 
 	finalize_ad_padding(operation);
@@ -444,6 +482,9 @@ psa_status_t cracen_sw_chacha20_poly1305_verify(cracen_aead_operation_t *operati
 	}
 
 	safe_memzero(computed_tag, sizeof(computed_tag));
+
+exit:
+	sx_hw_release(&cipher.dma);
 	return status;
 }
 

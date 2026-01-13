@@ -105,6 +105,7 @@ int cracen_rsa_pss_sign_message(struct cracen_rsa_key *rsa_key, struct cracen_si
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	uint8_t digest[digestsz];
 
+	/* cracen_hash_input handles hardware acquire and release. */
 	status = cracen_hash_input(message, message_length, hashalg, digest);
 	if (status != SX_OK) {
 		return status;
@@ -199,6 +200,7 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 	size_t hash_array_lengths[] = {ZERO_PADDING_BYTES + digestsz, saltsz};
 	size_t input_count = 2;
 
+	/* cracen_hash_all_inputs handles hardware acquire and release. */
 	sx_status = cracen_hash_all_inputs(hash_array, hash_array_lengths, input_count, hashalg,
 					   workmem.H);
 	if (sx_status != SX_OK) {
@@ -229,8 +231,8 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 	sx_pk_req req;
 	struct sx_pk_slot inputs[NUMBER_OF_SLOTS];
 
-	sx_pk_acquire_hw(&req);
 	/* modular exponentiation m^d mod n (RSASP1 sign primitive) */
+	sx_pk_acquire_hw(&req);
 	sx_status =
 		cracen_rsa_modexp(&req, inputs, rsa_key, workmem.wmem, modulussz, input_sizes);
 	if (sx_status != SX_OK) {
@@ -274,6 +276,7 @@ int cracen_rsa_pss_verify_message(struct cracen_rsa_key *rsa_key,
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	uint8_t digest[digestsz];
 
+	/* cracen_hash_input handles hardware acquire and release. */
 	status = cracen_hash_input(message, message_length, hashalg, digest);
 	if (status != SX_OK) {
 		return status;
@@ -334,8 +337,8 @@ int cracen_rsa_pss_verify_digest(struct cracen_rsa_key *rsa_key,
 	sx_pk_req req;
 	struct sx_pk_slot inputs[NUMBER_OF_SLOTS];
 
+	/* modular exponentiation s^e mod n (RSAVP1 verify primitive) */
 	sx_pk_acquire_hw(&req);
-	/* modular exponentiation m^d mod n (RSASP1 sign primitive) */
 	sx_status = cracen_rsa_modexp(&req, inputs, rsa_key, signature->r, signature->sz,
 				      input_sizes);
 	if (sx_status != SX_OK) {
@@ -399,8 +402,10 @@ int cracen_rsa_pss_verify_digest(struct cracen_rsa_key *rsa_key,
 	size_t input_count = 3;
 
 	safe_memset(zeros, WORKMEM_SIZE, 0, ZERO_PADDING_BYTES);
+
+	/* cracen_hash_all_inputs handles hardware acquire and release. H' overwrites mHash. */
 	sx_status = cracen_hash_all_inputs(hash_array, hash_array_lengths, input_count, hashalg,
-					   workmem.mHash); /* H' overwrites mHash */
+					   workmem.mHash);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}

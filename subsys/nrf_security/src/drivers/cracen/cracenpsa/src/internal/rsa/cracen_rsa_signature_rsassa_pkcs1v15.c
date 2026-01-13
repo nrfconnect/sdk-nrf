@@ -93,6 +93,7 @@ int cracen_rsa_pkcs1v15_sign_message(struct cracen_rsa_key *rsa_key,
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	uint8_t digest[digestsz];
 
+	/* cracen_hash_input handles hardware acquire and release. */
 	status = cracen_hash_input(message, message_length, hashalg, digest);
 	if (status != SX_OK) {
 		return status;
@@ -206,6 +207,7 @@ int cracen_rsa_pkcs1v15_verify_message(struct cracen_rsa_key *rsa_key,
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	uint8_t digest[digestsz];
 
+	/* cracen_hash_input handles hardware acquire and release. */
 	status = cracen_hash_input(message, message_length, hashalg, digest);
 	if (status != SX_OK) {
 		return status;

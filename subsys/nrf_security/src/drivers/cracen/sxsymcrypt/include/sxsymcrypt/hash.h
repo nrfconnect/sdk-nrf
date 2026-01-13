@@ -250,23 +250,6 @@ size_t sx_hash_get_digestsz(struct sxhash *c);
  */
 size_t sx_hash_get_blocksz(struct sxhash *c);
 
-/** Free a created hash operation context.
- *
- * A created hash operation context can have reserved hardware and
- * software resources. Those are free-ed automatically on error
- * or when the operation finishes as reported by sx_hash_status() or
- * sx_hash_wait(). If for some reason, the hash operation will not
- * be started, it can be abandoned which will release all reserved
- * resources.
- *
- * Can only be called after a call to one of the sx_hash_create_*() or
- * after sx_hash_resume(). It must be called *BEFORE* starting to run
- * the operation with sx_hash_digest() or sx_hash_save_state().
- *
- * @param[in,out] c hash operation context
- */
-void sx_hash_free(struct sxhash *c);
-
 #ifdef __cplusplus
 }
 #endif

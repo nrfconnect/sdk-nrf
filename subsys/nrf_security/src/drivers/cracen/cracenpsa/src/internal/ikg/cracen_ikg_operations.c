@@ -80,6 +80,7 @@ int cracen_ikg_sign_message(int identity_key_index, const struct sxhashalg *hash
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	uint8_t digest[digestsz];
 
+	/* cracen_hash_input handles hardware acquire and release. */
 	status = cracen_hash_input(message, message_length, hashalg, digest);
 	if (status != SX_OK) {
 		return status;

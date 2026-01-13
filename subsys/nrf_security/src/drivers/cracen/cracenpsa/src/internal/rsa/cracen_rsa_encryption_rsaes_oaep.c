@@ -118,16 +118,16 @@ int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 		return sx_status;
 	}
 
-	/* hash the label, even when label is empty, with result overwriting the seed */
-	if (label) {
-		sx_status = cracen_hash_input(label->bytes, label->sz, hashalg, workmem.wmem + 1);
-	} else {
-		sx_status = cracen_hash_input(0, 0, hashalg, workmem.wmem + 1);
-	}
+	/* Hash the label, even when label is empty, with result overwriting the seed.
+	 * cracen_hash_input handles hardware acquire and release.
+	 */
+	sx_status = cracen_hash_input(label ? label->bytes : NULL, label ? label->sz : 0, hashalg,
+				      workmem.wmem + 1);
 	if (sx_status != SX_OK) {
 		safe_memzero(workmem.workmem, sizeof(workmem.workmem));
 		return sx_status;
 	}
+
 	int r = 0;
 
 	/* pointer used to walk through the data block DB */
@@ -199,16 +199,17 @@ int cracen_rsa_oaep_encrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 	if (text->sz > modulussz - 2 * digestsz - 2) {
 		return SX_ERR_TOO_BIG;
 	}
-	/* hash the label, even when the label is empty */
-	if (label) {
-		sx_status = cracen_hash_input(label->bytes, label->sz, hashalg, workmem.datablock);
-	} else {
-		sx_status = cracen_hash_input(0, 0, hashalg, workmem.datablock);
-	}
+
+	/* Hash the label, even when the label is empty.
+	 * cracen_hash_input handles hardware acquire and release.
+	 */
+	sx_status = cracen_hash_input(label ? label->bytes : NULL, label ? label->sz : 0, hashalg,
+				      workmem.datablock);
 	if (sx_status != SX_OK) {
 		safe_memzero(workmem.workmem, sizeof(workmem.workmem));
 		return sx_status;
 	}
+
 	/* start encoding and request generation of the random seed */
 
 	/* pointer used to walk through the data block DB */
@@ -260,12 +261,11 @@ int cracen_rsa_oaep_encrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 	struct sx_pk_slot inputs[NUMBER_OF_SLOTS];
 
 	sx_pk_acquire_hw(&req);
-	/* modular exponentiation m^d mod n (RSASP1 sign primitive) */
 	sx_status =
 		cracen_rsa_modexp(&req, inputs, rsa_key, workmem.wmem, modulussz, input_sizes);
 	if (sx_status != SX_OK) {
-		safe_memzero(workmem.workmem, sizeof(workmem.workmem));
 		sx_pk_release_req(&req);
+		safe_memzero(workmem.workmem, sizeof(workmem.workmem));
 		return sx_status;
 	}
 

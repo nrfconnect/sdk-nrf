@@ -15,7 +15,6 @@
 #include "hw.h"
 #include "cmdma.h"
 #include "cmaes.h"
-#include <cracen/prng_pool.h>
 
 #define CMDMA_BA411_BUS_MSK (0x0F)
 #define CMAC_MODEID_AES	    8
@@ -59,9 +58,13 @@ static int sx_cmac_create_aes_ba411(struct sxmac *mac_ctx, const struct sxkeyref
 	}
 
 	mac_ctx->key = key;
-	err = sx_mac_hw_reserve(mac_ctx);
-	if (err != SX_OK) {
-		return err;
+
+	/* Key preparation - CM setup is handled by CRACENPSA layer via sx_hw_reserve() */
+	if (key->prepare_key) {
+		err = key->prepare_key(key->user_data);
+		if (err != SX_OK) {
+			return err;
+		}
 	}
 
 	mac_ctx->cfg = &ba411cfg;

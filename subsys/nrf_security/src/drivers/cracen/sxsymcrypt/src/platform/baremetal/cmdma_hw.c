@@ -13,6 +13,10 @@
 #include "../../cmdma.h"
 #include <cracen/hardware.h>
 #include <cracen/statuscodes.h>
+#if defined(CONFIG_PSA_WANT_KEY_TYPE_AES)
+#include <cracen/prng_pool.h>
+#include <sxsymcrypt/cmmask.h>
+#endif
 
 #include <nrf_security_mutexes.h>
 
@@ -37,7 +41,7 @@ static void sx_hw_enable_interrupts(void)
 	nrf_cracen_int_enable(NRF_CRACEN, CRACEN_ENABLE_CRYPTOMASTER_Msk);
 }
 
-void sx_hw_reserve(struct sx_dmactl *dma)
+int sx_hw_reserve(struct sx_dmactl *dma, sx_hw_reserve_flags_t flags)
 {
 	cracen_acquire();
 	nrf_security_mutex_lock(cracen_mutex_symmetric);
@@ -48,9 +52,27 @@ void sx_hw_reserve(struct sx_dmactl *dma)
 	if (IS_ENABLED(CONFIG_CRACEN_USE_INTERRUPTS)) {
 		sx_hw_enable_interrupts();
 	}
+
+#if defined(CONFIG_PSA_WANT_KEY_TYPE_AES)
+	if (flags & SX_HW_RESERVE_CM_ENABLED) {
+		int err;
+		uint32_t prng_value;
+
+		err = cracen_prng_value_from_pool(&prng_value);
+		if (err == SX_OK) {
+			err = sx_cm_load_mask(prng_value);
+		}
+		if (err != SX_OK) {
+			sx_hw_release(dma);
+			return err;
+		}
+	}
+#endif
+
+	return SX_OK;
 }
 
-void sx_cmdma_release_hw(struct sx_dmactl *dma)
+void sx_hw_release(struct sx_dmactl *dma)
 {
 	if (dma == NULL || dma->hw_acquired) {
 		cracen_release();

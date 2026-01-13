@@ -122,25 +122,34 @@ static int trng_get_entropy(uint8_t *dst, int num_trng_bytes)
  */
 static psa_status_t ctr_drbg_update(uint8_t *data)
 {
-	psa_status_t status = SX_OK;
+	int sx_status;
 
 	ALIGN_ON_STACK(uint8_t, temp, CRACEN_ENTROPY_AND_NONCE_SIZE, CONFIG_DCACHE_LINE_SIZE);
 
 	size_t temp_length = 0;
 	_Static_assert(CRACEN_ENTROPY_AND_NONCE_SIZE % SX_BLKCIPHER_AES_BLK_SZ == 0, "");
 
+	sx_status = sx_hw_reserve(NULL, SX_HW_RESERVE_DEFAULT);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
 	while (temp_length < CRACEN_ENTROPY_AND_NONCE_SIZE) {
 		cracen_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
 
-		status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V, sizeof(prng.V),
-						 temp + temp_length, SX_BLKCIPHER_AES_BLK_SZ);
+		sx_status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V,
+						    sizeof(prng.V), temp + temp_length,
+						    SX_BLKCIPHER_AES_BLK_SZ);
 
-		if (status != PSA_SUCCESS) {
-			return status;
+		if (sx_status != SX_OK) {
+			sx_hw_release(NULL);
+			return silex_statuscodes_to_psa(sx_status);
 		}
 		temp_length += SX_BLKCIPHER_AES_BLK_SZ;
 		prng.reseed_counter++;
 	}
+
+	sx_hw_release(NULL);
 
 	if (data) {
 		cracen_xorbytes(temp, data, CRACEN_ENTROPY_AND_NONCE_SIZE);
@@ -149,7 +158,7 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 	memcpy(prng.key, temp, sizeof(prng.key));
 	memcpy(prng.V, temp + sizeof(prng.key), sizeof(prng.V));
 
-	return status;
+	return PSA_SUCCESS;
 }
 
 /* Instantiation of CTR_DRBG without derivation function. */
@@ -218,8 +227,8 @@ static psa_status_t cracen_reseed(void)
 psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, size_t output_size)
 {
 	(void)context;
-
-	psa_status_t status = PSA_SUCCESS;
+	int sx_status;
+	psa_status_t psa_status = PSA_SUCCESS;
 	size_t len_left = output_size;
 	size_t number_of_blocks = DIV_ROUND_UP(output_size, SX_BLKCIPHER_AES_BLK_SZ);
 
@@ -238,19 +247,25 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 		 * mutex multiple times. So we can call cracen_init_random
 		 * here even though we hold the mutex.
 		 */
-		status = cracen_init_random(context);
-		if (status != PSA_SUCCESS) {
+		psa_status = cracen_init_random(context);
+		if (psa_status != PSA_SUCCESS) {
 			nrf_security_mutex_unlock(cracen_prng_trng_mutex);
-			return status;
+			return psa_status;
 		}
 	}
 
 	if (prng.reseed_counter + number_of_blocks >= RESEED_INTERVAL) {
-		status = cracen_reseed();
-		if (status != PSA_SUCCESS) {
+		psa_status = cracen_reseed();
+		if (psa_status != PSA_SUCCESS) {
 			nrf_security_mutex_unlock(cracen_prng_trng_mutex);
-			return status;
+			return psa_status;
 		}
+	}
+
+	sx_status = sx_hw_reserve(NULL, SX_HW_RESERVE_DEFAULT);
+	if (sx_status != SX_OK) {
+		nrf_security_mutex_unlock(cracen_prng_trng_mutex);
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	while (len_left > 0) {
@@ -258,12 +273,13 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 		ALIGN_ON_STACK(uint8_t, temp, SX_BLKCIPHER_AES_BLK_SZ, CONFIG_DCACHE_LINE_SIZE);
 
 		cracen_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
-		status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V, sizeof(prng.V),
-						 temp, SX_BLKCIPHER_AES_BLK_SZ);
+		sx_status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V,
+						    sizeof(prng.V), temp, SX_BLKCIPHER_AES_BLK_SZ);
 
-		if (status != PSA_SUCCESS) {
+		if (sx_status != SX_OK) {
+			sx_hw_release(NULL);
 			nrf_security_mutex_unlock(cracen_prng_trng_mutex);
-			return status;
+			return silex_statuscodes_to_psa(sx_status);
 		}
 
 		for (int i = 0; i < cur_len; i++) {
@@ -275,9 +291,11 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 		prng.reseed_counter++;
 	}
 
-	status = ctr_drbg_update(NULL);
+	sx_hw_release(NULL);
+
+	psa_status = ctr_drbg_update(NULL);
 	nrf_security_mutex_unlock(cracen_prng_trng_mutex);
-	return status;
+	return psa_status;
 }
 
 psa_status_t cracen_free_random(cracen_prng_context_t *context)
