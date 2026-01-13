@@ -694,7 +694,7 @@ static const struct sensor_driver_api bme68x_driver_api = {
 /* there can be only one device supported here because of BSECs internal state */
 static struct bme68x_iaq_config config_0 = {
 #if BME68x_BUS_SPI
-	.spi = SPI_DT_SPEC_INST_GET(0, BME68x_SPI_OPERATION, 0),
+	.spi = SPI_DT_SPEC_INST_GET(0, BME68x_SPI_OPERATION),
 #elif BME68x_BUS_I2C
 	.i2c = I2C_DT_SPEC_INST_GET(0),
 #endif

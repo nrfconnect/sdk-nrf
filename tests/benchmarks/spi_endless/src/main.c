@@ -31,7 +31,7 @@ LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 #define	DELTA			(1)
 
 #if CONFIG_ROLE_HOST == 1
-static struct spi_dt_spec spim = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), SPIM_OP, 0);
+static struct spi_dt_spec spim = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), SPIM_OP);
 #else
 static const struct device *spis_dev = DEVICE_DT_GET(DT_NODELABEL(dut_spis));
 static const struct spi_config spis_config = {

@@ -34,7 +34,7 @@ static const struct gpio_dt_spec hw_codec_reset = GPIO_DT_SPEC_INST_GET(0, reset
 const static struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 
 static const struct spi_dt_spec spi = SPI_DT_SPEC_INST_GET(
-	0, SPI_OP_MODE_MASTER | SPI_TRANSFER_MSB | SPI_WORD_SET(8) | SPI_LINES_SINGLE, 0);
+	0, SPI_OP_MODE_MASTER | SPI_TRANSFER_MSB | SPI_WORD_SET(8) | SPI_LINES_SINGLE);
 static bsp_callback_t bsp_callback;
 static void *bsp_callback_arg;
 
