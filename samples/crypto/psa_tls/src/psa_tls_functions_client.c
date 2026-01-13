@@ -7,11 +7,10 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(psa_tls_client);
 
-#include <nrfx.h>
+#include <arpa/inet.h>
 #include <errno.h>
-#include <zephyr/kernel.h>
-#include <zephyr/net/socket.h>
-#include <zephyr/net/net_core.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #include <zephyr/net/tls_credentials.h>
 #include <zephyr/linker/sections.h>
 
