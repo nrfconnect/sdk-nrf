@@ -169,6 +169,14 @@ struct sxcmmask {
 	struct sxchannel channel;
 };
 
+/** Flags for sx_hw_reserve() */
+typedef enum {
+	/** Default hardware reservation with no special features */
+	SX_HW_RESERVE_DEFAULT = 0,
+	/** Enable AES countermeasures (loads random mask) */
+	SX_HW_RESERVE_CM_ENABLED = 1,
+} sx_hw_reserve_flags_t;
+
 /**
  * @brief Function to handle CRACEN nested errors in the sxsymcrypt
  *
@@ -182,6 +190,27 @@ static inline int sx_handle_nested_error(int nested_err, int err)
 {
 	return nested_err != SX_OK ? nested_err : err;
 }
+
+/** Reserve the cryptomaster hardware instance.
+ *
+ * Acquires the symmetric mutex and powers on CRACEN if needed.
+ * Must be paired with sx_hw_release() when done.
+ *
+ * @param[in,out] dma DMA controller context, or NULL for standalone operations
+ * @param[in] flags Flags controlling hardware reservation behavior
+ *
+ * @retval SX_OK on success
+ * @retval SX_ERR_DMA_FAILED if countermeasures setup failed
+ */
+int sx_hw_reserve(struct sx_dmactl *dma, sx_hw_reserve_flags_t flags);
+
+/** Release the cryptomaster hardware instance.
+ *
+ * Releases the symmetric mutex and powers off CRACEN if no other users.
+ *
+ * @param[in,out] dma DMA controller context, or NULL for standalone operations
+ */
+void sx_hw_release(struct sx_dmactl *dma);
 
 #ifdef __cplusplus
 }

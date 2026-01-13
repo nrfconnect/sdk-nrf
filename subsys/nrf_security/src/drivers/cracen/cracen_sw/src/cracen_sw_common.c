@@ -7,6 +7,7 @@
 #include <sxsymcrypt/blkcipher.h>
 #include <sxsymcrypt/keyref.h>
 #include <sxsymcrypt/aes.h>
+#include <sxsymcrypt/internal.h>
 #include <cracen/statuscodes.h>
 #include <zephyr/logging/log.h>
 #include <cracen/common.h>
@@ -14,23 +15,27 @@
 
 LOG_MODULE_DECLARE(cracen, CONFIG_CRACEN_LOG_LEVEL);
 
-psa_status_t cracen_sw_aes_ecb_crypt(struct sxblkcipher *blkciph,
-				     const uint8_t *input, size_t input_length, uint8_t *output,
-				     size_t output_size, size_t *output_length)
+static psa_status_t cracen_sw_aes_ecb_crypt(struct sxblkcipher *blkciph,
+					    const uint8_t *input, size_t input_length,
+					    uint8_t *output, size_t output_size,
+					    size_t *output_length)
 {
 	int sx_status;
 
 	sx_status = sx_blkcipher_crypt(blkciph, input, input_length, output);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	sx_status = sx_blkcipher_run(blkciph);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	sx_status = sx_blkcipher_wait(blkciph);
+
+exit:
+	sx_hw_release(&blkciph->dma);
 	if (sx_status == SX_OK) {
 		*output_length = input_length;
 	}
@@ -51,8 +56,14 @@ psa_status_t cracen_sw_aes_ecb_encrypt(struct sxblkcipher *blkciph, const struct
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
+	sx_status = sx_hw_reserve(&blkciph->dma, SX_HW_RESERVE_CM_ENABLED);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
 	sx_status = sx_blkcipher_create_aesecb_enc(blkciph, key);
 	if (sx_status != SX_OK) {
+		sx_hw_release(&blkciph->dma);
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
@@ -74,8 +85,14 @@ psa_status_t cracen_sw_aes_ecb_decrypt(struct sxblkcipher *blkciph, const struct
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
+	sx_status = sx_hw_reserve(&blkciph->dma, SX_HW_RESERVE_CM_ENABLED);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
 	sx_status = sx_blkcipher_create_aesecb_dec(blkciph, key);
 	if (sx_status != SX_OK) {
+		sx_hw_release(&blkciph->dma);
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
@@ -89,8 +106,14 @@ psa_status_t cracen_sw_aes_primitive(struct sxblkcipher *blkciph, const struct s
 	int sx_status;
 	size_t output_size;
 
+	sx_status = sx_hw_reserve(&blkciph->dma, SX_HW_RESERVE_CM_ENABLED);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
 	sx_status = sx_blkcipher_create_aesecb_enc(blkciph, key);
 	if (sx_status != SX_OK) {
+		sx_hw_release(&blkciph->dma);
 		return silex_statuscodes_to_psa(sx_status);
 	}
 

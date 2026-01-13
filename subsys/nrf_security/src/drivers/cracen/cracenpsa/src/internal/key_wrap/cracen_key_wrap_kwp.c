@@ -10,8 +10,10 @@
 
 #include <stddef.h>
 #include <cracen/statuscodes.h>
+#include <cracen/common.h>
 #include <cracen/mem_helpers.h>
 #include <silexpk/core.h>
+#include <sxsymcrypt/internal.h>
 
 /* RFC5649 */
 #define CRACEN_KWP_MIN_KEY_SIZE			1u
@@ -51,6 +53,7 @@ psa_status_t cracen_key_wrap_kwp_wrap(const psa_key_attributes_t *wrapping_key_a
 	size_t pad_size;
 	struct sxkeyref keyref;
 	struct sxblkcipher cipher;
+	int sx_status;
 	size_t length;
 	size_t pad_data_size;
 	psa_key_type_t key_type = psa_get_key_type(wrapping_key_attributes);
@@ -86,10 +89,16 @@ psa_status_t cracen_key_wrap_kwp_wrap(const psa_key_attributes_t *wrapping_key_a
 
 	/* NIST.SP.800-38F 6.3 */
 	if (key_size <= CRACEN_KEY_WRAP_BLOCK_SIZE) {
+		sx_status = sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_CM_ENABLED);
+		if (sx_status != SX_OK) {
+			status = silex_statuscodes_to_psa(sx_status);
+			goto exit;
+		}
 		status = cracen_aes_ecb_encrypt(&cipher, &keyref,
 					      data, pad_data_size,
 					      data, pad_data_size,
 					      &length);
+		sx_hw_release(&cipher.dma);
 		if (status != PSA_SUCCESS) {
 			goto exit;
 		}
@@ -119,6 +128,7 @@ psa_status_t cracen_key_wrap_kwp_unwrap(const psa_key_attributes_t *wrapping_key
 	size_t blocks_count;
 	struct sxkeyref keyref;
 	struct sxblkcipher cipher;
+	int sx_status;
 	size_t length;
 	size_t pad_size;
 	bool sig_check_fail;
@@ -148,10 +158,16 @@ psa_status_t cracen_key_wrap_kwp_unwrap(const psa_key_attributes_t *wrapping_key
 		(data_size - CRACEN_KEY_WRAP_INTEGRITY_CHECK_REG_SIZE) / CRACEN_KEY_WRAP_BLOCK_SIZE;
 
 	if (blocks_count == 1) {
+		sx_status = sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_CM_ENABLED);
+		if (sx_status != SX_OK) {
+			status = silex_statuscodes_to_psa(sx_status);
+			goto exit;
+		}
 		status = cracen_aes_ecb_decrypt(&cipher, &keyref,
 					      data, data_size,
 					      cipher_output_block, SX_BLKCIPHER_AES_BLK_SZ,
 					      &length);
+		sx_hw_release(&cipher.dma);
 		if (status != PSA_SUCCESS) {
 			goto exit;
 		}
