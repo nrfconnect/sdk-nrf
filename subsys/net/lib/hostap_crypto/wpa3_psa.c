@@ -1207,7 +1207,7 @@ static int wpa3_psa_process_commit(struct wpa3_psa_operation *op, const u8 *comm
 	wpa_printf(MSG_DEBUG, "WPA3-PSA: Operation state updated to SAE_COMMITTED");
 
 	/* Set send-confirm counter (required before generating confirms) - as per working test */
-	status = psa_pake_input(&op->pake_op, PSA_PAKE_STEP_SEND_CONFIRM, send_confirm_counter, 2);
+	status = psa_pake_input(&op->pake_op, PSA_PAKE_STEP_CONFIRM_COUNT, send_confirm_counter, 2);
 	if (status != PSA_SUCCESS) {
 		wpa_printf(MSG_ERROR, "WPA3-PSA: Failed to set send_confirm counter: %d", status);
 		return -1;
