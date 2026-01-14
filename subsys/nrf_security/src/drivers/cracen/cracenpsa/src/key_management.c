@@ -632,10 +632,10 @@ static psa_status_t import_wpa3_sae_pt_key(const psa_key_attributes_t *attribute
 	 */
 	size_t key_bits_attr = psa_get_key_bits(attributes);
 	psa_key_type_t type = psa_get_key_type(attributes);
-	psa_ecc_family_t psa_curve = PSA_KEY_TYPE_WPA3_SAE_PT_GET_FAMILY(type);
+	psa_ecc_family_t psa_curve = PSA_KEY_TYPE_WPA3_SAE_ECC_GET_FAMILY(type);
 
 	switch (type) {
-	case PSA_KEY_TYPE_WPA3_SAE_ECC_PT(PSA_ECC_FAMILY_SECP_R1):
+	case PSA_KEY_TYPE_WPA3_SAE_ECC(PSA_ECC_FAMILY_SECP_R1):
 
 		if (data_length != CRACEN_P256_POINT_SIZE) {
 			return PSA_ERROR_NOT_SUPPORTED;
@@ -685,7 +685,7 @@ static psa_status_t cracen_derive_wpa3_sae_pt_key(const psa_key_attributes_t *at
 	 */
 	size_t key_bits_attr = psa_get_key_bits(attributes);
 	psa_key_type_t type = psa_get_key_type(attributes);
-	psa_ecc_family_t psa_curve = PSA_KEY_TYPE_WPA3_SAE_PT_GET_FAMILY(type);
+	psa_ecc_family_t psa_curve = PSA_KEY_TYPE_WPA3_SAE_ECC_GET_FAMILY(type);
 	uint8_t pwd_value[CRACEN_P256_POINT_SIZE];
 	/* IEEE802.11-24 12.4.4.2.3 */
 	const size_t req_pwd_value_len = CRACEN_P256_KEY_SIZE + CRACEN_P256_KEY_SIZE / 2;
@@ -700,7 +700,7 @@ static psa_status_t cracen_derive_wpa3_sae_pt_key(const psa_key_attributes_t *at
 	sx_op p2 = {.sz = CRACEN_P256_POINT_SIZE, .bytes = p2_buf};
 
 	switch (type) {
-	case PSA_KEY_TYPE_WPA3_SAE_ECC_PT(PSA_ECC_FAMILY_SECP_R1):
+	case PSA_KEY_TYPE_WPA3_SAE_ECC(PSA_ECC_FAMILY_SECP_R1):
 
 		if (key_bits_attr != 256) {
 			return PSA_ERROR_NOT_SUPPORTED;
@@ -1301,7 +1301,7 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 				      key_buffer_length, key_bits);
 	}
 
-	if (PSA_KEY_TYPE_IS_WPA3_SAE_ECC_PT(key_type) && IS_ENABLED(PSA_NEED_CRACEN_WPA3_SAE)) {
+	if (PSA_KEY_TYPE_IS_WPA3_SAE_ECC(key_type) && IS_ENABLED(PSA_NEED_CRACEN_WPA3_SAE)) {
 		return import_wpa3_sae_pt_key(attributes, data, data_length, key_buffer,
 					  key_buffer_size, key_buffer_length, key_bits);
 	}
@@ -1827,7 +1827,7 @@ psa_status_t cracen_derive_key(const psa_key_attributes_t *attributes, const uin
 						 key_length);
 	}
 
-	if (PSA_KEY_TYPE_IS_WPA3_SAE_ECC_PT(key_type) && IS_ENABLED(PSA_NEED_CRACEN_WPA3_SAE)) {
+	if (PSA_KEY_TYPE_IS_WPA3_SAE_ECC(key_type) && IS_ENABLED(PSA_NEED_CRACEN_WPA3_SAE)) {
 		return cracen_derive_wpa3_sae_pt_key(attributes, input, input_length, key, key_size,
 						     key_length);
 	}
