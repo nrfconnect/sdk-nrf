@@ -69,33 +69,33 @@ static struct tm date_time_global = {
 static int64_t date_time_global_unix = 1596813090000;
 
 #if defined(CONFIG_DATE_TIME_NTP)
-static struct sockaddr ai_addr_uio_ntp = {
-	.sa_family = AF_INET,
+static struct net_sockaddr ai_addr_uio_ntp = {
+	.sa_family = NET_AF_INET,
 	.data = "100.101.102.103"
 };
 
 static struct zsock_addrinfo res_data_uio_ntp = {
 	.ai_addr = &ai_addr_uio_ntp,
-	.ai_addrlen = sizeof(struct sockaddr),
+	.ai_addrlen = sizeof(struct net_sockaddr),
 };
 
 static struct zsock_addrinfo *res_uio_ntp = &res_data_uio_ntp;
 
-static struct sockaddr ai_addr_google_ntp = {
-	.sa_family = AF_INET,
+static struct net_sockaddr ai_addr_google_ntp = {
+	.sa_family = NET_AF_INET,
 	.data = "1.2.3.4"
 };
 
 static struct zsock_addrinfo res_data_google_ntp = {
 	.ai_addr = &ai_addr_google_ntp,
-	.ai_addrlen = sizeof(struct sockaddr),
+	.ai_addrlen = sizeof(struct net_sockaddr),
 };
 
 static struct zsock_addrinfo *res_google_ntp = &res_data_google_ntp;
 
 static struct zsock_addrinfo hints = {
-	.ai_flags = AI_NUMERICSERV,
-	.ai_family = AF_UNSPEC /* Allow both IPv4 and IPv6 addresses */
+	.ai_flags = ZSOCK_AI_NUMERICSERV,
+	.ai_family = NET_AF_UNSPEC /* Allow both IPv4 and IPv6 addresses */
 };
 
 static struct sntp_time sntp_time_value = {
@@ -478,7 +478,7 @@ void test_date_time_initial_auto_update_at_1s_from_boot(void)
 	__cmock_zsock_getaddrinfo_IgnoreArg_res();
 	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&res_uio_ntp);
 
-	__cmock_sntp_init_ExpectAndReturn(NULL, &ai_addr_uio_ntp, sizeof(struct sockaddr), 0);
+	__cmock_sntp_init_ExpectAndReturn(NULL, &ai_addr_uio_ntp, sizeof(struct net_sockaddr), 0);
 	__cmock_sntp_init_IgnoreArg_ctx();
 
 	__cmock_sntp_query_ExpectAndReturn(NULL, 5000, NULL, 0);
