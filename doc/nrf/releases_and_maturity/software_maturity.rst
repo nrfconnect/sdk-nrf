@@ -331,13 +331,13 @@ The following table indicates the software maturity levels of the support for ea
            - Supported
            - Supported
            - Supported
-           - Experimental
+           - Supported
            - Experimental
          * - **Bluetooth Mesh**
            - Supported
            - Supported
            - Supported
-           - Experimental
+           - Supported
            - --
          * - **DECT NR+ PHY**
            - --
@@ -714,49 +714,49 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **Coded PHY (Long Range)**
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **Concurrent Roles**\ :sup:`1`
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **Data Length Extensions**
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **Advertising Extensions**
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **Periodic Advertising with Responses**
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **Periodic Advertising Sync Transfer**
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **Isochronous Channels**
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **Direction Finding**\ :sup:`3`
              - Experimental
@@ -768,55 +768,55 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **Connection Subrating**
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **Channel Sounding**
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **GATT Database Hash**
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **Enhanced ATT**
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **L2CAP Connection Oriented Channels**
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **Shorter Connection Intervals**
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **Frame Space Update**
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
            * - **Extended Feature Set**
              - Supported
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - Experimental
 
   | [1]: Subject to RAM availability
@@ -933,19 +933,19 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
-              - Experimental
+              - Supported
               - Experimental
             * - **Multi-protocol Support**
               - Supported
               - Supported
               - Supported
-              - Experimental
+              - Supported
               - Experimental
             * - **QoS Conn Event Reports**
               - Supported
               - Supported
               - Supported
-              - Experimental
+              - Supported
               - Experimental
             * - **QoS Channel Survey**
               - Experimental
@@ -957,7 +957,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
-              - Experimental
+              - Supported
               - Experimental
 
 Thread features support
