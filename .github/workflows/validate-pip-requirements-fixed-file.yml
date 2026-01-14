@@ -61,15 +61,15 @@ jobs:
             source ~/.local/bin/virtualenvwrapper.sh
             [[ $? != 0 ]] && echo "error sourcing virtualenvwrapper" && exit 1
 
-            rmvirtualenv pip-fixed-venv > /dev/null 2>&1
+            rmvirtualenv pip-fixed-venv
             # We need to force the result of the following command.
             # For no aparent reason it returns 1 with the same output as local.
-            mkvirtualenv pip-fixed-venv  > /dev/null 2>&1 || true
-            workon pip-fixed-venv  > /dev/null 2>&1
+            mkvirtualenv pip-fixed-venv  || true
+            workon pip-fixed-venv
 
             pip3 install \
               --index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple \
-              pip-compile-cross-platform==1.4.2+nordic.3 --upgrade > /dev/null 2>&1
+              pip-compile-cross-platform==1.4.2+nordic.3 --upgrade
             pip-compile-cross-platform \
               bootloader/mcuboot/scripts/requirements.txt \
               zephyr/scripts/requirements.txt \
