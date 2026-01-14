@@ -11,7 +11,9 @@ config PSA_HAS_AEAD_SUPPORT
 	default y
 	depends on PSA_WANT_ALG_CCM || \
 		   PSA_WANT_ALG_GCM || \
-		   PSA_WANT_ALG_CHACHA20_POLY1305
+		   PSA_WANT_ALG_CHACHA20_POLY1305 || \
+		   PSA_WANT_ALG_XCHACHA20_POLY1305 || \
+		   PSA_WANT_ALG_ASCON_AEAD128
 	help
 	  Prompt-less configuration that states that AEAD is supported.
 
@@ -36,7 +38,12 @@ config PSA_HAS_ASYM_SIGN_SUPPORT
 		   PSA_WANT_ALG_RSA_PKCS1V15_SIGN	|| \
 		   PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW   || \
 		   PSA_WANT_ALG_RSA_PSS                 || \
-		   PSA_WANT_ALG_RSA_PSS_ANY_SALT
+		   PSA_WANT_ALG_RSA_PSS_ANY_SALT        || \
+		   PSA_WANT_ALG_HSS                     || \
+		   PSA_WANT_ALG_LMS                     || \
+		   PSA_WANT_ALG_XMSS                    || \
+		   PSA_WANT_ALG_XMSS_MT                 || \
+		   PSA_WANT_ALG_ML_DSA
 	help
 	  Prompt-less configuration that states that asymmetric signing
 	  is supported.
@@ -68,7 +75,12 @@ config PSA_HAS_HASH_SUPPORT
 		   PSA_WANT_ALG_SHA3_224	|| \
 		   PSA_WANT_ALG_SHA3_256	|| \
 		   PSA_WANT_ALG_SHA3_384	|| \
-		   PSA_WANT_ALG_SHA3_512
+		   PSA_WANT_ALG_SHA3_512    || \
+		   PSA_WANT_ALG_ASCON_HASH256 || \
+		   PSA_WANT_ALG_SHAKE128_256  || \
+		   PSA_WANT_ALG_SHAKE256_192  || \
+		   PSA_WANT_ALG_SHAKE256_256  || \
+		   PSA_WANT_ALG_SHAKE256_512
 	help
 	  Prompt-less configuration that states that hash is supported.
 
@@ -91,7 +103,9 @@ config PSA_HAS_KEY_DERIVATION
 		   PSA_WANT_ALG_TLS12_PSK_TO_MS		|| \
 		   PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS	|| \
 		   PSA_WANT_ALG_SP800_108_COUNTER_CMAC 	|| \
-		   PSA_WANT_ALG_SP800_108_COUNTER_HMAC
+		   PSA_WANT_ALG_SP800_108_COUNTER_HMAC  || \
+		   PSA_WANT_ALG_SRP_PASSWORD_HASH       || \
+		   PSA_WANT_ALG_WPA3_SAE_H2E
 	help
 	  Prompt-less configuration that states that key derivation is supported.
 
@@ -127,7 +141,26 @@ config PSA_HAS_KEY_SUPPORT
 		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_GENERATE	|| \
 		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE	|| \
 		   PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY		|| \
-		   PSA_WANT_KEY_TYPE_WPA3_SAE
+		   PSA_WANT_KEY_TYPE_WPA3_SAE                 || \
+		   PSA_WANT_KEY_TYPE_XCHACHA20                || \
+		   PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY           || \
+		   PSA_WANT_KEY_TYPE_LMS_PUBLIC_KEY           || \
+		   PSA_WANT_KEY_TYPE_XMSS_PUBLIC_KEY          || \
+		   PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY       || \
+		   PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_BASIC    || \
+		   PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT   || \
+		   PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT   || \
+		   PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_GENERATE || \
+		   PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_DERIVE   || \
+		   PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY        || \
+		   PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_BASIC    || \
+		   PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT   || \
+		   PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT   || \
+		   PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE || \
+		   PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE   || \
+		   PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY        || \
+		   PSA_WANT_KEY_TYPE_ASCON
+
 	help
 	  Prompt-less configuration that states that key types are supported.
 
