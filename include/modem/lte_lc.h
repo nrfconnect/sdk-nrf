@@ -1698,13 +1698,13 @@ struct lte_lc_pdn_dynamic_info {
 	/** IPv6 Maximum Transmission Unit. */
 	uint32_t ipv6_mtu;
 	/** Primary IPv4 DNS address. */
-	struct in_addr dns_addr4_primary;
+	struct net_in_addr dns_addr4_primary;
 	/** Secondary IPv4 DNS address. */
-	struct in_addr dns_addr4_secondary;
+	struct net_in_addr dns_addr4_secondary;
 	/** Primary IPv6 DNS address. */
-	struct in6_addr dns_addr6_primary;
+	struct net_in6_addr dns_addr6_primary;
 	/** Secondary IPv6 DNS address. */
-	struct in6_addr dns_addr6_secondary;
+	struct net_in6_addr dns_addr6_secondary;
 };
 
 /** Authentication method. */
