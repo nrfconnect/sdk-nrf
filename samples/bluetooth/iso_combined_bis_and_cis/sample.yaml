@@ -25,3 +25,4 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
+      - ci_samples_bluetooth

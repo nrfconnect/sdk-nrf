@@ -1,6 +1,12 @@
 sample:
   description: Bluetooth Mesh and Peripheral Coexistence sample
   name: Bluetooth Mesh and Peripheral Coexistence
+common:
+  tags:
+    - bluetooth
+    - ci_build
+    - sysbuild
+    - ci_samples_bluetooth
 tests:
   sample.bluetooth.mesh.ble_and_mesh:
     sysbuild: true
@@ -17,10 +23,6 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.mesh.ble_and_mesh.settings_ext_flash:
     sysbuild: true
     build_only: true
@@ -33,7 +35,3 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
