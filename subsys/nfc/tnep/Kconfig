@@ -28,6 +28,15 @@ config NFC_TNEP_RX_MAX_RECORD_SIZE
 	help
 	  Set the maximum size of received NDEF Record
 
+choice NFC_TNEP_TAG_SIGNALLING
+	prompt "NFC TNEP Tag signalling method"
+
+config NFC_TNEP_TAG_SIGNALLING_ZEPHYR
+	bool "NFC TNEP Tag signalling using Zephyr primitives"
+	select POLL
+
+endchoice
+
 module = NFC_TNEP_TAG
 module-str = TNEP_TAG
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
