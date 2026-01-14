@@ -35,8 +35,8 @@ static int sntp_time_request(const char *server, uint32_t timeout, struct sntp_t
 	struct sntp_ctx sntp_ctx;
 
 	struct zsock_addrinfo hints = {
-		.ai_flags = AI_NUMERICSERV,
-		.ai_family = AF_UNSPEC /* Allow both IPv4 and IPv6 addresses */
+		.ai_flags = ZSOCK_AI_NUMERICSERV,
+		.ai_family = NET_AF_UNSPEC /* Allow both IPv4 and IPv6 addresses */
 	};
 
 	err = zsock_getaddrinfo(server, STRINGIFY(NTP_PORT), &hints, &addrinfo);
