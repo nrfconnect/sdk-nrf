@@ -4,22 +4,21 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(psa_tls_client);
-
 #include <arpa/inet.h>
 #include <errno.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include <zephyr/net/tls_credentials.h>
-#include <zephyr/linker/sections.h>
 
-#include "certificate.h"
-#include "psa_tls_functions.h"
-#include "psa_tls_credentials.h"
+#include <zephyr/logging/log.h>
+#include <zephyr/net/tls_credentials.h>
+
+#include <certificate.h>
+#include <psa_tls_functions.h>
+#include <psa_tls_credentials.h>
+
+LOG_MODULE_REGISTER(psa_tls_client);
 
 static char recv_buffer[RECV_BUFFER_SIZE]; /* Buffer for storing payload */
-
 
 /** @brief Function for setting up the client socket to use for TLS handshake.
  *
