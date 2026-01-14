@@ -77,6 +77,12 @@ The following figure shows the time diagram of an SSED device working.
 
    SSED time diagram
 
+.. note::
+    The reliability and power consumption of an SSED strongly depend on support from the parent side, in particular the quality of CSL accuracy and CSL uncertainty configuration.
+    If parent support is limited or inaccurate, communication can become unreliable, leading to additional message exchanges that increase network traffic and power consumption.
+    In deployed networks, the parent can be any Thread Router in range (from any vendor) or a commercial smart hub acting as a Thread Border Router.
+    Because the SSED’s environment and selected parent cannot be predicted, the system cannot guarantee fully optimized behavior in every deployment.
+
 The ``CSL uncertainty`` represents the maximum deviation between the actual arrival time of a transmission and the expected transmission time, as calculated by the local radio clock, regardless of the time elapsed.
 The value of ``CSL uncertainty`` is specified in units of 10 microseconds.
 A smaller value of ``CSL uncertainty`` reduces the device's power consumption, but it also increases the risk of missing transmissions from the parent router.
@@ -144,6 +150,7 @@ Based on the SED and SSED characteristics, use SSED for cases that meet one or m
 * You want to reduce over-the-air radio traffic in an environment with many SEDs.
 
 In short, SSEDs are viable only when the additional application code and complexity to handle the more frequent polling are justified by the lower power usage or less intensive radio channel usage (or both).
+Additionally, the SSEDs are dependent on the parent's CSL configuration, what makes SEDs a more predictable option.
 
 For example, one specific market application of SSEDs could be window coverings.
 For this use case to work as an SSED, the blinds must be very responsive (for example, with a latency within 500 ms), while the data must be very rarely exchanged between the controller device and the window covering device.
