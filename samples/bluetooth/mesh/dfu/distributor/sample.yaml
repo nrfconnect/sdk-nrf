@@ -1,5 +1,11 @@
 sample:
   name: Bluetooth Mesh DFU Distributor
+common:
+  tags:
+    - bluetooth
+    - ci_build
+    - sysbuild
+    - ci_samples_bluetooth
 tests:
   sample.bluetooth.mesh_dfu_distributor:
     sysbuild: true
@@ -12,10 +18,6 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.mesh_dfu_distributor.smp_bt_auth:
     sysbuild: true
     build_only: true
@@ -28,10 +30,6 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args: OVERLAY_CONFIG=overlay-smp-bt-auth.conf
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.mesh_dfu_distributor.dfu_ext_flash:
     sysbuild: true
     build_only: true
@@ -42,10 +40,6 @@ tests:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args: FILE_SUFFIX=dfu_ext_flash
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.mesh_dfu_distributor.settings_ext_flash:
     sysbuild: true
     build_only: true
@@ -57,7 +51,3 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
     extra_args: FILE_SUFFIX=settings_ext_flash
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild

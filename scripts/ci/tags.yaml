@@ -44,7 +44,7 @@
 #    from sdk-mcuboot: bootloader/mcuboot etc.
 #    Paths should match location after checking out sdk-nrf (+ west update)
 
-bluetooth:
+ci_samples_bluetooth:
   files:
     - modules/crypto/mbedtls/
     - modules/crypto/oberon-psa-crypto/
@@ -60,8 +60,6 @@ bluetooth:
     - nrf/subsys/nrf_rpc/
     - nrf/subsys/nrf_security/
     - nrf/sysbuild/
-    - nrf/tests/bluetooth/
-    - nrf/tests/subsys/bluetooth/
     - nrfxlib/crypto/
     - nrfxlib/mpsl/fem/include/
     - nrfxlib/mpsl/include/
