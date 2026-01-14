@@ -107,9 +107,9 @@ psa_status_t psa_verify_hash(
 
 	return silex_statuscodes_to_psa(cracen_status);
 #else
-	return psa_driver_wrapper_verify_hash(&attr, pub_key, pub_key_length,
-					      alg, hash, hash_length,
-					      signature, signature_length);
+	return psa_driver_wrapper_verify_hash_with_context(&attr, pub_key, pub_key_length, alg,
+							   hash, hash_length, NULL, 0, signature,
+							   signature_length);
 #endif
 }
 
@@ -150,9 +150,9 @@ psa_status_t psa_verify_message(
 
 	return silex_statuscodes_to_psa(cracen_status);
 #else
-	return psa_driver_wrapper_verify_message(&attr, pub_key, pub_key_size,
-						 alg, input, input_length,
-						 signature, signature_length);
+	return psa_driver_wrapper_verify_message_with_context(&attr, pub_key, pub_key_size, alg,
+							      input, input_length, NULL, 0,
+							      signature, signature_length);
 #endif
 }
 

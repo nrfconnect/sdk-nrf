@@ -103,6 +103,10 @@
 #include "oberon_pake.h"
 #endif
 
+#ifdef PSA_NEED_OBERON_XOF_DRIVER
+#include "oberon_xof.h"
+#endif
+
 #if defined(PSA_CRYPTO_DRIVER_CRACEN)
 #ifndef PSA_CRYPTO_DRIVER_PRESENT
 #define PSA_CRYPTO_DRIVER_PRESENT
@@ -196,11 +200,10 @@ void psa_driver_wrapper_free(void)
 }
 
 /* Start delegation functions */
-psa_status_t psa_driver_wrapper_sign_message(const psa_key_attributes_t *attributes,
-					     const uint8_t *key_buffer, size_t key_buffer_size,
-					     psa_algorithm_t alg, const uint8_t *input,
-					     size_t input_length, uint8_t *signature,
-					     size_t signature_size, size_t *signature_length)
+psa_status_t psa_driver_wrapper_sign_message_with_context(
+	const psa_key_attributes_t *attributes, const uint8_t *key_buffer, size_t key_buffer_size,
+	psa_algorithm_t alg, const uint8_t *input, size_t input_length, const uint8_t *context,
+	size_t context_length, uint8_t *signature, size_t signature_size, size_t *signature_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
@@ -236,9 +239,9 @@ psa_status_t psa_driver_wrapper_sign_message(const psa_key_attributes_t *attribu
 		}
 #endif /* PSA_NEED_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER */
 #if defined(PSA_NEED_OBERON_ASYMMETRIC_SIGNATURE_DRIVER)
-		status = oberon_sign_message(attributes, key_buffer, key_buffer_size, alg, input,
-					     input_length, signature, signature_size,
-					     signature_length);
+		status = oberon_sign_message_with_context(
+			attributes, key_buffer, key_buffer_size, alg, input, input_length, context,
+			context_length, signature, signature_size, signature_length);
 		/* Declared with fallback == true */
 		if (status != PSA_ERROR_NOT_SUPPORTED) {
 			return status;
@@ -254,15 +257,15 @@ psa_status_t psa_driver_wrapper_sign_message(const psa_key_attributes_t *attribu
 	/* Call back to the core with psa_sign_message_builtin.
 	 * This will in turn forward this to use psa_crypto_driver_wrapper_sign_hash
 	 */
-	return psa_sign_message_builtin(attributes, key_buffer, key_buffer_size, alg, input,
-					input_length, signature, signature_size, signature_length);
+	return psa_sign_message_with_context_builtin(attributes, key_buffer, key_buffer_size, alg,
+						     input, input_length, context, context_length,
+						     signature, signature_size, signature_length);
 }
 
-psa_status_t psa_driver_wrapper_verify_message(const psa_key_attributes_t *attributes,
-					       const uint8_t *key_buffer, size_t key_buffer_size,
-					       psa_algorithm_t alg, const uint8_t *input,
-					       size_t input_length, const uint8_t *signature,
-					       size_t signature_length)
+psa_status_t psa_driver_wrapper_verify_message_with_context(
+	const psa_key_attributes_t *attributes, const uint8_t *key_buffer, size_t key_buffer_size,
+	psa_algorithm_t alg, const uint8_t *input, size_t input_length, const uint8_t *context,
+	size_t context_length, const uint8_t *signature, size_t signature_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
@@ -296,8 +299,9 @@ psa_status_t psa_driver_wrapper_verify_message(const psa_key_attributes_t *attri
 		}
 #endif /* PSA_NEED_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER */
 #if defined(PSA_NEED_OBERON_ASYMMETRIC_SIGNATURE_DRIVER)
-		status = oberon_verify_message(attributes, key_buffer, key_buffer_size, alg, input,
-					       input_length, signature, signature_length);
+		status = oberon_verify_message_with_context(
+			attributes, key_buffer, key_buffer_size, alg, input, input_length, context,
+			context_length, signature, signature_length);
 		/* Declared with fallback == true */
 		if (status != PSA_ERROR_NOT_SUPPORTED) {
 			return status;
@@ -316,16 +320,16 @@ psa_status_t psa_driver_wrapper_verify_message(const psa_key_attributes_t *attri
 	/* Call back to the core with psa_verify_message_builtin.
 	 * This will in turn forward this to use psa_crypto_driver_wrapper_verify_hash
 	 */
-	return psa_verify_message_builtin(attributes, key_buffer, key_buffer_size, alg, input,
-					  input_length, signature, signature_length);
+	return psa_verify_message_with_context_builtin(attributes, key_buffer, key_buffer_size, alg,
+						       input, input_length, context, context_length,
+						       signature, signature_length);
 #endif
 }
 
-psa_status_t psa_driver_wrapper_sign_hash(const psa_key_attributes_t *attributes,
-					  const uint8_t *key_buffer, size_t key_buffer_size,
-					  psa_algorithm_t alg, const uint8_t *hash,
-					  size_t hash_length, uint8_t *signature,
-					  size_t signature_size, size_t *signature_length)
+psa_status_t psa_driver_wrapper_sign_hash_with_context(
+	const psa_key_attributes_t *attributes, const uint8_t *key_buffer, size_t key_buffer_size,
+	psa_algorithm_t alg, const uint8_t *hash, size_t hash_length, const uint8_t *context,
+	size_t context_length, uint8_t *signature, size_t signature_size, size_t *signature_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
@@ -360,8 +364,9 @@ psa_status_t psa_driver_wrapper_sign_hash(const psa_key_attributes_t *attributes
 		}
 #endif /* PSA_NEED_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER */
 #if defined(PSA_NEED_OBERON_ASYMMETRIC_SIGNATURE_DRIVER)
-		return oberon_sign_hash(attributes, key_buffer, key_buffer_size, alg, hash,
-					  hash_length, signature, signature_size, signature_length);
+		return oberon_sign_hash_with_context(attributes, key_buffer, key_buffer_size, alg,
+						     hash, hash_length, context, context_length,
+						     signature, signature_size, signature_length);
 #endif /* PSA_NEED_OBERON_ASYMMETRIC_SIGNATURE_DRIVER */
 		/* Fell through, meaning nothing supports this operation */
 		(void)attributes;
@@ -370,6 +375,8 @@ psa_status_t psa_driver_wrapper_sign_hash(const psa_key_attributes_t *attributes
 		(void)alg;
 		(void)hash;
 		(void)hash_length;
+		(void)context;
+		(void)context_length;
 		(void)signature;
 		(void)signature_size;
 		(void)signature_length;
@@ -382,11 +389,10 @@ psa_status_t psa_driver_wrapper_sign_hash(const psa_key_attributes_t *attributes
 	}
 }
 
-psa_status_t psa_driver_wrapper_verify_hash(const psa_key_attributes_t *attributes,
-					    const uint8_t *key_buffer, size_t key_buffer_size,
-					    psa_algorithm_t alg, const uint8_t *hash,
-					    size_t hash_length, const uint8_t *signature,
-					    size_t signature_length)
+psa_status_t psa_driver_wrapper_verify_hash_with_context(
+	const psa_key_attributes_t *attributes, const uint8_t *key_buffer, size_t key_buffer_size,
+	psa_algorithm_t alg, const uint8_t *hash, size_t hash_length, const uint8_t *context,
+	size_t context_length, const uint8_t *signature, size_t signature_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
@@ -424,8 +430,9 @@ psa_status_t psa_driver_wrapper_verify_hash(const psa_key_attributes_t *attribut
 		}
 #endif /* PSA_NEED_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER */
 #if defined(PSA_NEED_OBERON_ASYMMETRIC_SIGNATURE_DRIVER)
-		return oberon_verify_hash(attributes, key_buffer, key_buffer_size, alg, hash,
-					    hash_length, signature, signature_length);
+		return oberon_verify_hash_with_context(attributes, key_buffer, key_buffer_size, alg,
+						       hash, hash_length, context, context_length,
+						       signature, signature_length);
 #endif /* PSA_NEED_OBERON_ASYMMETRIC_SIGNATURE_DRIVER */
 		/* Fell through, meaning nothing supports this operation */
 		(void)attributes;
@@ -434,6 +441,8 @@ psa_status_t psa_driver_wrapper_verify_hash(const psa_key_attributes_t *attribut
 		(void)alg;
 		(void)hash;
 		(void)hash_length;
+		(void)context;
+		(void)context_length;
 		(void)signature;
 		(void)signature_length;
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -1430,6 +1439,93 @@ psa_status_t psa_driver_wrapper_hash_abort(psa_hash_operation_t *operation)
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
 		return oberon_hash_abort(&operation->ctx.oberon_driver_ctx);
 #endif /* PSA_NEED_OBERON_HASH_DRIVER */
+	default:
+		return PSA_SUCCESS;
+	}
+}
+
+/*
+ * XOF functions
+ */
+psa_status_t psa_driver_wrapper_xof_setup(psa_xof_operation_t *operation, psa_algorithm_t alg)
+{
+	psa_status_t status;
+
+#if defined(PSA_NEED_OBERON_XOF_DRIVER)
+	status = oberon_xof_setup(&operation->ctx.oberon_xof_ctx, alg);
+	if (status == PSA_SUCCESS) {
+		operation->id = OBERON_DRIVER_ID;
+	}
+	return status;
+#endif /* PSA_NEED_OBERON_XOF_DRIVER */
+
+	(void)status;
+	(void)operation;
+	(void)alg;
+	return PSA_ERROR_NOT_SUPPORTED;
+}
+
+psa_status_t psa_driver_wrapper_xof_set_context(psa_xof_operation_t *operation,
+						const uint8_t *context, size_t context_length)
+{
+	switch (operation->id) {
+
+#if defined(PSA_NEED_OBERON_XOF_DRIVER)
+	case OBERON_DRIVER_ID:
+		return oberon_xof_set_context(&operation->ctx.oberon_xof_ctx, context,
+					      context_length);
+#endif /* PSA_NEED_OBERON_XOF_DRIVER */
+
+	default:
+		(void)context;
+		(void)context_length;
+		return PSA_ERROR_BAD_STATE;
+	}
+}
+
+psa_status_t psa_driver_wrapper_xof_update(psa_xof_operation_t *operation, const uint8_t *input,
+					   size_t input_length)
+{
+	switch (operation->id) {
+
+#if defined(PSA_NEED_OBERON_XOF_DRIVER)
+	case OBERON_DRIVER_ID:
+		return oberon_xof_update(&operation->ctx.oberon_xof_ctx, input, input_length);
+#endif /* PSA_NEED_OBERON_XOF_DRIVER */
+
+	default:
+		(void)input;
+		(void)input_length;
+		return PSA_ERROR_BAD_STATE;
+	}
+}
+
+psa_status_t psa_driver_wrapper_xof_output(psa_xof_operation_t *operation, uint8_t *output,
+					   size_t output_length)
+{
+	switch (operation->id) {
+
+#if defined(PSA_NEED_OBERON_XOF_DRIVER)
+	case OBERON_DRIVER_ID:
+		return oberon_xof_output(&operation->ctx.oberon_xof_ctx, output, output_length);
+#endif /* PSA_NEED_OBERON_XOF_DRIVER */
+
+	default:
+		(void)output;
+		(void)output_length;
+		return PSA_ERROR_BAD_STATE;
+	}
+}
+
+psa_status_t psa_driver_wrapper_xof_abort(psa_xof_operation_t *operation)
+{
+	switch (operation->id) {
+
+#if defined(PSA_NEED_OBERON_XOF_DRIVER)
+	case OBERON_DRIVER_ID:
+		return oberon_xof_abort(&operation->ctx.oberon_xof_ctx);
+#endif /* PSA_NEED_OBERON_XOF_DRIVER */
+
 	default:
 		return PSA_SUCCESS;
 	}
@@ -2450,13 +2546,13 @@ psa_status_t psa_driver_wrapper_key_agreement(const psa_key_attributes_t *attrib
 /*
  * Key encapsulation functions.
  */
-psa_status_t psa_driver_wrapper_key_encapsulate(const psa_key_attributes_t *attributes,
-						const uint8_t *key, size_t key_length,
-						psa_algorithm_t alg,
-						const psa_key_attributes_t *output_attributes,
-						uint8_t *output_key, size_t output_key_size,
-						size_t *output_key_length, uint8_t *ciphertext,
-						size_t ciphertext_size, size_t *ciphertext_length)
+psa_status_t psa_driver_wrapper_encapsulate(const psa_key_attributes_t *attributes,
+					    const uint8_t *key, size_t key_length,
+					    psa_algorithm_t alg,
+					    const psa_key_attributes_t *output_attributes,
+					    uint8_t *output_key, size_t output_key_size,
+					    size_t *output_key_length, uint8_t *ciphertext,
+					    size_t ciphertext_size, size_t *ciphertext_length)
 {
 	psa_status_t status;
 	(void)status;
@@ -2497,13 +2593,13 @@ psa_status_t psa_driver_wrapper_key_encapsulate(const psa_key_attributes_t *attr
 	}
 }
 
-psa_status_t psa_driver_wrapper_key_decapsulate(const psa_key_attributes_t *attributes,
-						const uint8_t *key, size_t key_length,
-						psa_algorithm_t alg, const uint8_t *ciphertext,
-						size_t ciphertext_length,
-						const psa_key_attributes_t *output_attributes,
-						uint8_t *output_key, size_t output_key_size,
-						size_t *output_key_length)
+psa_status_t psa_driver_wrapper_decapsulate(const psa_key_attributes_t *attributes,
+					    const uint8_t *key, size_t key_length,
+					    psa_algorithm_t alg, const uint8_t *ciphertext,
+					    size_t ciphertext_length,
+					    const psa_key_attributes_t *output_attributes,
+					    uint8_t *output_key, size_t output_key_size,
+					    size_t *output_key_length)
 {
 	psa_status_t status;
 	(void)status;

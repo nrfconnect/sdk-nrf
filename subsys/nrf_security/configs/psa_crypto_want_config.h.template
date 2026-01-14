@@ -63,7 +63,6 @@
 #cmakedefine PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS                  @PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS@
 #cmakedefine PSA_WANT_ALG_TLS12_PRF                             @PSA_WANT_ALG_TLS12_PRF@
 #cmakedefine PSA_WANT_ALG_TLS12_PSK_TO_MS                       @PSA_WANT_ALG_TLS12_PSK_TO_MS@
-#cmakedefine PSA_WANT_ALG_WPA3_SAE                              @PSA_WANT_ALG_WPA3_SAE@
 #cmakedefine PSA_WANT_ALG_WPA3_SAE_H2E                          @PSA_WANT_ALG_WPA3_SAE_H2E@
 #cmakedefine PSA_WANT_ALG_XTS                                   @PSA_WANT_ALG_XTS@
 #cmakedefine PSA_WANT_ECC_BRAINPOOL_P_R1_224                    @PSA_WANT_ECC_BRAINPOOL_P_R1_224@
@@ -117,7 +116,7 @@
 #cmakedefine PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_EXPORT              @PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_EXPORT@
 #cmakedefine PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_IMPORT              @PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_IMPORT@
 #cmakedefine PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY                   @PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY@
-#cmakedefine PSA_WANT_KEY_TYPE_WPA3_SAE_PT                      @PSA_WANT_KEY_TYPE_WPA3_SAE_PT@
+#cmakedefine PSA_WANT_KEY_TYPE_WPA3_SAE                         @PSA_WANT_KEY_TYPE_WPA3_SAE@
 #cmakedefine PSA_WANT_RSA_KEY_SIZE_1024                         @PSA_WANT_RSA_KEY_SIZE_1024@
 #cmakedefine PSA_WANT_RSA_KEY_SIZE_1536                         @PSA_WANT_RSA_KEY_SIZE_1536@
 #cmakedefine PSA_WANT_RSA_KEY_SIZE_2048                         @PSA_WANT_RSA_KEY_SIZE_2048@
@@ -135,7 +134,6 @@
 #cmakedefine PSA_WANT_ALG_SHAKE256_192                          @PSA_WANT_ALG_SHAKE256_192@
 #cmakedefine PSA_WANT_ALG_SHAKE256_256                          @PSA_WANT_ALG_SHAKE256_256@
 #cmakedefine PSA_WANT_ALG_SHA_256_192                           @PSA_WANT_ALG_SHA_256_192@
-#cmakedefine PSA_WANT_ALG_WPA3_SAE                              @PSA_WANT_ALG_WPA3_SAE@
 #cmakedefine PSA_WANT_ALG_WPA3_SAE_H2E                          @PSA_WANT_ALG_WPA3_SAE_H2E@
 #cmakedefine PSA_WANT_ALG_XCHACHA20_POLY1305                    @PSA_WANT_ALG_XCHACHA20_POLY1305@
 #cmakedefine PSA_WANT_ALG_XMSS                                  @PSA_WANT_ALG_XMSS@
@@ -163,6 +161,13 @@
 #cmakedefine PSA_WANT_ML_KEM_KEY_SIZE_1024                      @PSA_WANT_ML_KEM_KEY_SIZE_1024@
 #cmakedefine PSA_WANT_ML_KEM_KEY_SIZE_512                       @PSA_WANT_ML_KEM_KEY_SIZE_512@
 #cmakedefine PSA_WANT_ML_KEM_KEY_SIZE_768                       @PSA_WANT_ML_KEM_KEY_SIZE_768@
+#cmakedefine PSA_WANT_ALG_WPA3_SAE_FIXED                        @PSA_WANT_ALG_WPA3_SAE_FIXED@
+#cmakedefine PSA_WANT_ALG_WPA3_SAE_GDH                          @PSA_WANT_ALG_WPA3_SAE_GDH@
+#cmakedefine PSA_WANT_ALG_ASCON_AEAD128                         @PSA_WANT_ALG_ASCON_AEAD128@
+#cmakedefine PSA_WANT_KEY_TYPE_ASCON                            @PSA_WANT_KEY_TYPE_ASCON@
+#cmakedefine PSA_WANT_ALG_DETERMINISTIC_ML_DSA                  @PSA_WANT_ALG_DETERMINISTIC_ML_DSA@
+#cmakedefine PSA_WANT_ALG_DETERMINISTIC_HASH_ML_DSA             @PSA_WANT_ALG_DETERMINISTIC_HASH_ML_DSA@
+#cmakedefine PSA_WANT_ALG_HASH_ML_DSA                           @PSA_WANT_ALG_HASH_ML_DSA@
 
 
 /* The Adjusting is done in this file */
