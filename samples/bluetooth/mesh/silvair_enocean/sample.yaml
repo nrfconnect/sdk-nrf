@@ -1,6 +1,12 @@
 sample:
   description: Bluetooth Mesh Silvair EnOcean sample
   name: Bluetooth Mesh Silvair EnOcean
+common:
+  tags:
+    - bluetooth
+    - ci_build
+    - sysbuild
+    - ci_samples_bluetooth
 tests:
   sample.bluetooth.mesh.silvair_enocean:
     sysbuild: true
@@ -19,10 +25,6 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.mesh.silvair_enocean.settings_ext_flash:
     sysbuild: true
     build_only: true
@@ -35,7 +37,3 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
     extra_args: FILE_SUFFIX=settings_ext_flash
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild

@@ -12,6 +12,7 @@ common:
     - ci_build
     - sysbuild
     - bluetooth
+    - ci_samples_bluetooth
 tests:
   sample.bluetooth.nrf_auraconfig.build:
     extra_args: []

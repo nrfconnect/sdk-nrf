@@ -2,6 +2,11 @@ sample:
   name: Direction Finding Central
   description: Sample application showing central role of Direction Finding in connected
     mode
+common:
+  tags:
+    - bluetooth
+    - sysbuild
+    - ci_samples_bluetooth
 tests:
   sample.bluetooth.direction_finding_central_nrf:
     sysbuild: true
@@ -10,9 +15,6 @@ tests:
       - nrf52833dk/nrf52833
       - nrf52833dk/nrf52820
       - nrf5340dk/nrf5340/cpuapp
-    tags:
-      - bluetooth
-      - sysbuild
     integration_platforms:
       - nrf52833dk/nrf52833
       - nrf52833dk/nrf52820
@@ -25,9 +27,6 @@ tests:
       - nrf52833dk/nrf52833
       - nrf52833dk/nrf52820
       - nrf5340dk/nrf5340/cpuapp
-    tags:
-      - bluetooth
-      - sysbuild
     integration_platforms:
       - nrf52833dk/nrf52833
       - nrf52833dk/nrf52820
