@@ -156,10 +156,9 @@
 
 /** WPA3 SAE commit message size.
  *
- * Size includes IANA group size, P-256 key size, and P-256 point size.
+ * Size includes P-256 key size, and P-256 point size.
  */
-#define CRACEN_WPA3_SAE_COMMIT_SIZE	(CRACEN_WPA3_SAE_IANA_GROUP_SIZE + \
-					 CRACEN_P256_KEY_SIZE		 + \
+#define CRACEN_WPA3_SAE_COMMIT_SIZE	(CRACEN_P256_KEY_SIZE		 + \
 					 CRACEN_P256_POINT_SIZE)
 
 #define CRACEN_WPA3_SAE_SEND_CONFIRM_SIZE	(2u)
