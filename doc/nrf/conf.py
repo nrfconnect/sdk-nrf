@@ -47,6 +47,7 @@ extensions = [
     "zephyr.link-roles",
     "zephyr.dtcompatible-role",
     "zephyr.domain",
+    "zephyr.application",
     "zephyr.gh_utils",
     "sphinx_tabs.tabs",
     "software_maturity_table",

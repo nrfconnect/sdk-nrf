@@ -135,9 +135,12 @@ The following are examples of the CLI commands:
 
 * Build with coexistence disabled:
 
-  .. code-block:: console
-
-     west build -p -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_MPSL_CX=n -Dipc_radio_CONFIG_MPSL_CX=n
+  .. zephyr-app-commands::
+     :zephyr-app: .
+     :tool: west
+     :goals: build
+     :board: nrf7002dk/nrf5340/cpuapp
+     :west-args: -p -- -DCONFIG_MPSL_CX=n -Dipc_radio_CONFIG_MPSL_CX=n
 
 Use this command for Wi-Fi throughput only, Bluetooth LE throughput only, or concurrent Wi-Fi and Bluetooth LE throughput with coexistence disabled tests.
 
