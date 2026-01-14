@@ -53,14 +53,16 @@ static int get_lifetime_and_tau_match(const struct lwm2m_obj_path *path, uint32_
 	return 0;
 }
 
-static int setsockopt_save(int sock, int level, int optname, const void *optval, socklen_t optlen)
+static int setsockopt_save(int sock, int level, int optname, const void *optval,
+			   net_socklen_t optlen)
 {
 	zassert_equal(optname, TLS_DTLS_CONN_SAVE, "Incorrect socket option");
 
 	return 0;
 }
 
-static int setsockopt_load(int sock, int level, int optname, const void *optval, socklen_t optlen)
+static int setsockopt_load(int sock, int level, int optname, const void *optval,
+			   net_socklen_t optlen)
 {
 	zassert_equal(optname, TLS_DTLS_CONN_LOAD, "Incorrect socket option");
 
