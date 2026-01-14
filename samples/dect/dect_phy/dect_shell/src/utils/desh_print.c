@@ -49,7 +49,7 @@ bool create_timestamp_string(char *timestamp_buf, int timestamp_buf_len)
 	struct timespec tp;
 	struct tm ltm = { 0 };
 
-	clock_gettime(CLOCK_REALTIME, &tp);
+	sys_clock_gettime(SYS_CLOCK_REALTIME, &tp);
 	gmtime_r(&tp.tv_sec, &ltm);
 
 	msec = tp.tv_nsec / 1000000;
