@@ -11,16 +11,15 @@
 #define SERVER_CERTIFICATE_TAG 2
 #define PSK_TAG 3
 
-
 static const unsigned char ca_certificate[] = {
-#include "root-cert.der.inc"
+#include <root-cert.der.inc>
 };
 static const unsigned char server_certificate[] = {
-#include "server-cert.der.inc"
+#include <server-cert.der.inc>
 };
 /* This is the private key in pkcs#8 format. */
 static const unsigned char private_key[] = {
-#include "server-cert-key.der.inc"
+#include <server-cert-key.der.inc>
 };
 
 #endif /* __CERTIFICATE_H__ */
