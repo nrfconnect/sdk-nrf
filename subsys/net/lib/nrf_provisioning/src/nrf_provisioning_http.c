@@ -219,7 +219,7 @@ static void init_rest_client_request(struct nrf_provisioning_http_context const 
 
 	req->host = CONFIG_NRF_PROVISIONING_HTTP_HOSTNAME;
 	req->port = CONFIG_NRF_PROVISIONING_HTTP_PORT;
-	req->tls_peer_verify = TLS_PEER_VERIFY_REQUIRED;
+	req->tls_peer_verify = ZSOCK_TLS_PEER_VERIFY_REQUIRED;
 	req->sec_tag = CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG;
 	req->timeout_ms = CONFIG_NRF_PROVISIONING_HTTP_TIMEOUT_MS;
 
