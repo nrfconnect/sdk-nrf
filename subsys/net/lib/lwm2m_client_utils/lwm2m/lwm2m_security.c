@@ -724,7 +724,7 @@ static int set_socketoptions(struct lwm2m_ctx *ctx)
 	if (purge_sessions) {
 		int purge = 1;
 
-		ret = zsock_setsockopt(ctx->sock_fd, SOL_TLS, NRF_SO_SEC_SESSION_CACHE_PURGE,
+		ret = zsock_setsockopt(ctx->sock_fd, ZSOCK_SOL_TLS, NRF_SO_SEC_SESSION_CACHE_PURGE,
 				       &purge, sizeof(purge));
 		if (ret) {
 			/* This is non-fatal, so just log it and continue */
@@ -737,7 +737,7 @@ static int set_socketoptions(struct lwm2m_ctx *ctx)
 		/* Modem FW 2.0.1 allows keeping the socket open while PDN is down, or modem
 		 * is in flight mode.
 		 */
-		ret = zsock_setsockopt(ctx->sock_fd, SOL_SOCKET, SO_KEEPOPEN, &(int){1},
+		ret = zsock_setsockopt(ctx->sock_fd, ZSOCK_SOL_SOCKET, SO_KEEPOPEN, &(int){1},
 				       sizeof(int));
 		if (ret) {
 			LOG_ERR("Failed to set SO_KEEPOPEN: %d", errno);
