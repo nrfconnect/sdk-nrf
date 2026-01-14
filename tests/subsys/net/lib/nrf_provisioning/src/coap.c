@@ -124,7 +124,8 @@ void __wrap_k_free(void *ptr)
 	free(ptr);
 }
 
-int z_impl_zsock_setsockopt(int sock, int level, int optname, const void *optval, socklen_t optlen)
+int z_impl_zsock_setsockopt(int sock, int level, int optname, const void *optval,
+			    net_socklen_t optlen)
 {
 	return 0;
 }
@@ -140,7 +141,7 @@ int z_impl_zsock_close(int sock)
 }
 
 static struct zsock_addrinfo addrinfo;
-static struct sockaddr ai_addr;
+static struct net_sockaddr ai_addr;
 
 int zsock_getaddrinfo(const char *host, const char *service, const struct zsock_addrinfo *hints,
 		      struct zsock_addrinfo **res)
@@ -154,12 +155,12 @@ void zsock_freeaddrinfo(struct zsock_addrinfo *ai)
 {
 }
 
-int z_impl_zsock_connect(int sock, const struct sockaddr *addr, socklen_t addrlen)
+int z_impl_zsock_connect(int sock, const struct net_sockaddr *addr, net_socklen_t addrlen)
 {
 	return 0;
 }
 
-char *z_impl_net_addr_ntop(sa_family_t family, const void *src, char *dst, size_t size)
+char *z_impl_net_addr_ntop(net_sa_family_t family, const void *src, char *dst, size_t size)
 {
 	memcpy(dst, DUMMY_ADDR, sizeof(DUMMY_ADDR));
 	return "";
@@ -197,108 +198,145 @@ static unsigned char cbor_cmds2_valid[] = {
 	0x30, 0x62, 0x2e, 0x65, 0x00, 0x67, 0x25, 0x4b, 0x45, 0x59, 0x47, 0x45, 0x4e, 0x6c, 0x31,
 	0x36, 0x38, 0x34, 0x32, 0x37, 0x35, 0x33, 0x2c, 0x32, 0x2c, 0x31, 0x80};
 
-static int coap_client_auth_cb(struct coap_client *client, int sock, const struct sockaddr *addr,
+static int coap_client_auth_cb(struct coap_client *client, int sock,
+			       const struct net_sockaddr *addr,
 			       struct coap_client_request *req,
 			       struct coap_transmission_parameters *params, int cmock_num_calls)
 {
 	char path[] = "p/auth-jwt?mver=" MFW "&cver=" NCS_VERSION_STRING;
+	struct coap_client_response_data data = {0};
 
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
 		TEST_ASSERT_EQUAL_STRING(path, req->path);
 		TEST_ASSERT_EQUAL_STRING(JWT_DUMMY, req->payload);
-		req->cb(COAP_RESPONSE_CODE_CREATED, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CREATED;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else {
-		req->cb(COAP_RESPONSE_CODE_OK, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_OK;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	}
 
 	return 0;
 }
 
 static int coap_client_auth_failed_cb(struct coap_client *client, int sock,
-				      const struct sockaddr *addr, struct coap_client_request *req,
+				      const struct net_sockaddr *addr,
+				      struct coap_client_request *req,
 				      struct coap_transmission_parameters *params,
 				      int cmock_num_calls)
 {
+	struct coap_client_response_data data = {0};
+
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_FORBIDDEN, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_FORBIDDEN;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	}
 
 	return 0;
 }
 
 static int coap_client_auth_server_error_cb(struct coap_client *client, int sock,
-					    const struct sockaddr *addr,
+					    const struct net_sockaddr *addr,
 					    struct coap_client_request *req,
 					    struct coap_transmission_parameters *params,
 					    int cmock_num_calls)
 {
+	struct coap_client_response_data data = {0};
+
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_INTERNAL_ERROR, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_INTERNAL_ERROR;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	}
 
 	return 0;
 }
 
 static int coap_client_auth_unsupported_code_cb(struct coap_client *client, int sock,
-						const struct sockaddr *addr,
+						const struct net_sockaddr *addr,
 						struct coap_client_request *req,
 						struct coap_transmission_parameters *params,
 						int cmock_num_calls)
 {
+	struct coap_client_response_data data = {0};
+
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
-		req->cb(RESP_CODE, 0, NULL, 0, true, req->user_data);
+		data.result_code = RESP_CODE;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	}
 
 	return 0;
 }
 
 static int coap_client_cmds_bad_request_cb(struct coap_client *client, int sock,
-					   const struct sockaddr *addr,
+					   const struct net_sockaddr *addr,
 					   struct coap_client_request *req,
 					   struct coap_transmission_parameters *params,
 					   int cmock_num_calls)
 {
+	struct coap_client_response_data data = {0};
+
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_CREATED, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CREATED;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else {
-		req->cb(COAP_RESPONSE_CODE_BAD_REQUEST, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_BAD_REQUEST;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	}
 
 	return 0;
 }
 
 static int coap_client_cmds_server_error_cb(struct coap_client *client, int sock,
-					    const struct sockaddr *addr,
+					    const struct net_sockaddr *addr,
 					    struct coap_client_request *req,
 					    struct coap_transmission_parameters *params,
 					    int cmock_num_calls)
 {
+	struct coap_client_response_data data = {0};
+
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_CREATED, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CREATED;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else {
-		req->cb(COAP_RESPONSE_CODE_INTERNAL_ERROR, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_INTERNAL_ERROR;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	}
 
 	return 0;
 }
 
 static int coap_client_cmds_unsupported_code_cb(struct coap_client *client, int sock,
-						const struct sockaddr *addr,
+						const struct net_sockaddr *addr,
 						struct coap_client_request *req,
 						struct coap_transmission_parameters *params,
 						int cmock_num_calls)
 {
+	struct coap_client_response_data data = {0};
+
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_CREATED, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CREATED;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else {
-		req->cb(RESP_CODE, 0, NULL, 0, true, req->user_data);
+		data.result_code = RESP_CODE;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	}
 
 	return 0;
 }
 
 static int coap_client_cmds_valid_path_cb(struct coap_client *client, int sock,
-					  const struct sockaddr *addr,
+					  const struct net_sockaddr *addr,
 					  struct coap_client_request *req,
 					  struct coap_transmission_parameters *params,
 					  int cmock_num_calls)
@@ -306,44 +344,65 @@ static int coap_client_cmds_valid_path_cb(struct coap_client *client, int sock,
 	char path[] = "p/cmd?after=&rxMaxSize=" STRINGIFY(CONFIG_NRF_PROVISIONING_RX_BUF_SZ)
 		"&txMaxSize=" STRINGIFY(CONFIG_NRF_PROVISIONING_TX_BUF_SZ)
 		"&limit=" STRINGIFY(CONFIG_NRF_PROVISIONING_CBOR_RECORDS);
+	struct coap_client_response_data data = {0};
 
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_CREATED, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CREATED;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else {
 		TEST_ASSERT_EQUAL_STRING(path, req->path);
-		req->cb(COAP_RESPONSE_CODE_CONTENT, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CONTENT;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	}
 
 	return 0;
 }
 
 static int coap_client_no_commands_cb(struct coap_client *client, int sock,
-				      const struct sockaddr *addr, struct coap_client_request *req,
+				      const struct net_sockaddr *addr,
+				      struct coap_client_request *req,
 				      struct coap_transmission_parameters *params,
 				      int cmock_num_calls)
 {
+	struct coap_client_response_data data = {0};
+
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_CREATED, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CREATED;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else {
-		req->cb(COAP_RESPONSE_CODE_CONTENT, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CONTENT;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	}
 
 	return 0;
 }
 
 static int coap_client_rsp_bad_request_cb(struct coap_client *client, int sock,
-					  const struct sockaddr *addr,
+					  const struct net_sockaddr *addr,
 					  struct coap_client_request *req,
 					  struct coap_transmission_parameters *params,
 					  int cmock_num_calls)
 {
+	struct coap_client_response_data data = {0};
+
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_CREATED, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CREATED;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else if (strncmp(req->path, cmd_path, strlen(cmd_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_CONTENT, 0, cbor_cmds1_valid, sizeof(cbor_cmds1_valid),
-			true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CONTENT;
+		data.payload = cbor_cmds1_valid;
+		data.payload_len = sizeof(cbor_cmds1_valid);
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else if (strncmp(req->path, resp_path, strlen(resp_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_BAD_REQUEST, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_BAD_REQUEST;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else {
 		TEST_ASSERT(false);
 	}
@@ -352,18 +411,27 @@ static int coap_client_rsp_bad_request_cb(struct coap_client *client, int sock,
 }
 
 static int coap_client_rsp_server_error_cb(struct coap_client *client, int sock,
-					   const struct sockaddr *addr,
+					   const struct net_sockaddr *addr,
 					   struct coap_client_request *req,
 					   struct coap_transmission_parameters *params,
 					   int cmock_num_calls)
 {
+	struct coap_client_response_data data = {0};
+
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_CREATED, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CREATED;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else if (strncmp(req->path, cmd_path, strlen(cmd_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_CONTENT, 0, cbor_cmds1_valid, sizeof(cbor_cmds1_valid),
-			true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CONTENT;
+		data.payload = cbor_cmds1_valid;
+		data.payload_len = sizeof(cbor_cmds1_valid);
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else if (strncmp(req->path, resp_path, strlen(resp_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_INTERNAL_ERROR, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_INTERNAL_ERROR;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else {
 		TEST_ASSERT(false);
 	}
@@ -372,18 +440,27 @@ static int coap_client_rsp_server_error_cb(struct coap_client *client, int sock,
 }
 
 static int coap_client_rsp_unsupported_code_cb(struct coap_client *client, int sock,
-					       const struct sockaddr *addr,
+						       const struct net_sockaddr *addr,
 					       struct coap_client_request *req,
 					       struct coap_transmission_parameters *params,
 					       int cmock_num_calls)
 {
+	struct coap_client_response_data data = {0};
+
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_CREATED, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CREATED;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else if (strncmp(req->path, cmd_path, strlen(cmd_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_CONTENT, 0, cbor_cmds1_valid, sizeof(cbor_cmds1_valid),
-			true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CONTENT;
+		data.payload = cbor_cmds1_valid;
+		data.payload_len = sizeof(cbor_cmds1_valid);
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else if (strncmp(req->path, resp_path, strlen(resp_path)) == 0) {
-		req->cb(RESP_CODE, 0, NULL, 0, true, req->user_data);
+		data.result_code = RESP_CODE;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else {
 		TEST_ASSERT(false);
 	}
@@ -391,17 +468,27 @@ static int coap_client_rsp_unsupported_code_cb(struct coap_client *client, int s
 	return 0;
 }
 
-static int coap_client_ok_cb(struct coap_client *client, int sock, const struct sockaddr *addr,
+static int coap_client_ok_cb(struct coap_client *client, int sock,
+			     const struct net_sockaddr *addr,
 			     struct coap_client_request *req,
 			     struct coap_transmission_parameters *params, int cmock_num_calls)
 {
+	struct coap_client_response_data data = {0};
+
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_CREATED, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CREATED;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else if (strncmp(req->path, cmd_path, strlen(cmd_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_CONTENT, 0, cbor_cmds1_valid, sizeof(cbor_cmds1_valid),
-			true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CONTENT;
+		data.payload = cbor_cmds1_valid;
+		data.payload_len = sizeof(cbor_cmds1_valid);
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else if (strncmp(req->path, resp_path, strlen(resp_path)) == 0) {
-		req->cb(COAP_RESPONSE_CODE_CHANGED, 0, NULL, 0, true, req->user_data);
+		data.result_code = COAP_RESPONSE_CODE_CHANGED;
+		data.last_block = true;
+		req->cb(&data, req->user_data);
 	} else {
 		TEST_ASSERT(false);
 	}
@@ -410,25 +497,39 @@ static int coap_client_ok_cb(struct coap_client *client, int sock, const struct 
 }
 
 static int coap_client_commands_cb(struct coap_client *client, int sock,
-				   const struct sockaddr *addr, struct coap_client_request *req,
+				   const struct net_sockaddr *addr,
+				   struct coap_client_request *req,
 				   struct coap_transmission_parameters *params, int cmock_num_calls)
 {
+	struct coap_client_response_data data = {0};
+
 	if (cmock_num_calls < 4) {
 		if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
-			req->cb(COAP_RESPONSE_CODE_CREATED, 0, NULL, 0, true, req->user_data);
+			data.result_code = COAP_RESPONSE_CODE_CREATED;
+			data.last_block = true;
+			req->cb(&data, req->user_data);
 		} else if (strncmp(req->path, cmd_path, strlen(cmd_path)) == 0) {
-			req->cb(COAP_RESPONSE_CODE_CONTENT, 0, cbor_cmds2_valid,
-				sizeof(cbor_cmds2_valid), true, req->user_data);
+			data.result_code = COAP_RESPONSE_CODE_CONTENT;
+			data.payload = cbor_cmds2_valid;
+			data.payload_len = sizeof(cbor_cmds2_valid);
+			data.last_block = true;
+			req->cb(&data, req->user_data);
 		} else if (strncmp(req->path, resp_path, strlen(resp_path)) == 0) {
-			req->cb(COAP_RESPONSE_CODE_CHANGED, 0, NULL, 0, true, req->user_data);
+			data.result_code = COAP_RESPONSE_CODE_CHANGED;
+			data.last_block = true;
+			req->cb(&data, req->user_data);
 		} else {
 			TEST_ASSERT(false);
 		}
 	} else {
 		if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
-			req->cb(COAP_RESPONSE_CODE_CREATED, 0, NULL, 0, true, req->user_data);
+			data.result_code = COAP_RESPONSE_CODE_CREATED;
+			data.last_block = true;
+			req->cb(&data, req->user_data);
 		} else {
-			req->cb(COAP_RESPONSE_CODE_CONTENT, 0, NULL, 0, true, req->user_data);
+			data.result_code = COAP_RESPONSE_CODE_CONTENT;
+			data.last_block = true;
+			req->cb(&data, req->user_data);
 		}
 	}
 
