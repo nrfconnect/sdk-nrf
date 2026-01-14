@@ -10,7 +10,7 @@
 #include <zephyr/shell/shell.h>
 #include <zephyr/shell/shell_uart.h>
 #include <unistd.h>
-#include <getopt.h>
+#include <zephyr/sys/sys_getopt.h>
 
 #include "desh_print.h"
 #include "startup_cmd_settings.h"
@@ -43,12 +43,12 @@ enum {
 };
 
 /* Specifying the expected options (both long and short) */
-static struct option long_options[] = {
-	{ "read", no_argument, 0, 'r' },
-	{ "time", required_argument, 0, 't' },
-	{ "delay", required_argument, 0, 'd' },
-	{ "mem_slot", required_argument, 0, SETT_CMD_SHELL_OPT_MEM_SLOT_NBR },
-	{ "cmd_str", required_argument, 0, SETT_CMD_SHELL_OPT_CMD_STR },
+static struct sys_getopt_option long_options[] = {
+	{ "read", sys_getopt_no_argument, 0, 'r' },
+	{ "time", sys_getopt_required_argument, 0, 't' },
+	{ "delay", sys_getopt_required_argument, 0, 'd' },
+	{ "mem_slot", sys_getopt_required_argument, 0, SETT_CMD_SHELL_OPT_MEM_SLOT_NBR },
+	{ "cmd_str", sys_getopt_required_argument, 0, SETT_CMD_SHELL_OPT_CMD_STR },
 	{ 0, 0, 0, 0 }
 };
 
@@ -66,20 +66,20 @@ static int startup_cmd_shell(const struct shell *shell, size_t argc, char **argv
 	struct startup_cmd_data current_settings;
 	struct startup_cmd_data newsettings;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt, tmp_value;
 
 	startup_cmd_settings_data_read(&current_settings);
 	newsettings = current_settings;
 
-	while ((opt = getopt_long(argc, argv, "d:t:rh", long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, "d:t:rh", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'r':
 			startup_cmd_settings_data_print();
 			return 0;
 		case 't':
-			tmp_value = atoi(optarg);
+			tmp_value = atoi(sys_getopt_optarg);
 			if (tmp_value < 0) {
 				desh_error("Give decent value (value >= 0)");
 				return -EINVAL;
@@ -88,7 +88,7 @@ static int startup_cmd_shell(const struct shell *shell, size_t argc, char **argv
 			newsettings.starttime = tmp_value;
 			break;
 		case 'd':
-			delay = atoi(optarg);
+			delay = atoi(sys_getopt_optarg);
 			if (tmp_value < 0) {
 				desh_error("Give decent value (value >= 0)");
 				return -EINVAL;
@@ -96,7 +96,7 @@ static int startup_cmd_shell(const struct shell *shell, size_t argc, char **argv
 			delay_set = true;
 			break;
 		case SETT_CMD_SHELL_OPT_MEM_SLOT_NBR:
-			tmp_value = atoi(optarg);
+			tmp_value = atoi(sys_getopt_optarg);
 			if (tmp_value < 1 || tmp_value > STARTUP_CMD_MAX_COUNT) {
 				desh_error("Give decent value for the memory slot (1-3)");
 				return -EINVAL;
@@ -104,12 +104,12 @@ static int startup_cmd_shell(const struct shell *shell, size_t argc, char **argv
 			memslot = tmp_value;
 			break;
 		case SETT_CMD_SHELL_OPT_CMD_STR: {
-			if (strlen(optarg) > STARTUP_CMD_MAX_LEN) {
+			if (strlen(sys_getopt_optarg) > STARTUP_CMD_MAX_LEN) {
 				desh_error("Command string too long. Max length is %d.",
 					   STARTUP_CMD_MAX_LEN);
 				goto show_usage;
 			}
-			startup_cmd_str = optarg;
+			startup_cmd_str = sys_getopt_optarg;
 			break;
 		}
 
@@ -117,12 +117,12 @@ static int startup_cmd_shell(const struct shell *shell, size_t argc, char **argv
 			goto show_usage;
 		case '?':
 		default:
-			desh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			desh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		desh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
