@@ -204,9 +204,9 @@
 #cmakedefine PSA_NEED_OBERON_TLS12_PSK_TO_MS                                        @PSA_NEED_OBERON_TLS12_PSK_TO_MS@
 #cmakedefine PSA_NEED_OBERON_AES_KW                                                 @PSA_NEED_OBERON_AES_KW@
 #cmakedefine PSA_NEED_OBERON_AES_KWP                                                @PSA_NEED_OBERON_AES_KWP@
-#cmakedefine PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT                                   @PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT@
-#cmakedefine PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT_SECP                              @PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT_SECP@
-#cmakedefine PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT_SECP_R1_256                       @PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT_SECP_R1_256@
+#cmakedefine PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE                                      @PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE@
+#cmakedefine PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_SECP                                 @PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_SECP@
+#cmakedefine PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_SECP_R1_256                          @PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_SECP_R1_256@
 #cmakedefine PSA_NEED_OBERON_WPA3_SAE                                               @PSA_NEED_OBERON_WPA3_SAE@
 #cmakedefine PSA_NEED_OBERON_WPA3_SAE_SECP_R1_256                                   @PSA_NEED_OBERON_WPA3_SAE_SECP_R1_256@
 #cmakedefine PSA_NEED_OBERON_SP800_108_COUNTER_CMAC                                 @PSA_NEED_OBERON_SP800_108_COUNTER_CMAC@
@@ -250,6 +250,17 @@
 #cmakedefine PSA_NEED_OBERON_XCHACHA20_POLY1305                                     @PSA_NEED_OBERON_XCHACHA20_POLY1305@
 #cmakedefine PSA_NEED_OBERON_XMSS_MT_VERIFY                                         @PSA_NEED_OBERON_XMSS_MT_VERIFY@
 #cmakedefine PSA_NEED_OBERON_XMSS_VERIFY                                            @PSA_NEED_OBERON_XMSS_VERIFY@
+#cmakedefine PSA_NEED_OBERON_SHAKE128                                               @PSA_NEED_OBERON_SHAKE128@
+#cmakedefine PSA_NEED_OBERON_SHAKE256                                               @PSA_NEED_OBERON_SHAKE256@
+#cmakedefine PSA_NEED_OBERON_ASCON_XOF128                                           @PSA_NEED_OBERON_ASCON_XOF128@
+#cmakedefine PSA_NEED_OBERON_ASCON_CXOF128                                          @PSA_NEED_OBERON_ASCON_CXOF128@
+#cmakedefine PSA_NEED_OBERON_XOF_DRIVER                                             @PSA_NEED_OBERON_XOF_DRIVER@
+#cmakedefine PSA_NEED_OBERON_ASCON_AEAD128                                          @PSA_NEED_OBERON_ASCON_AEAD128@
+#cmakedefine PSA_NEED_OBERON_ASCON_HASH256                                          @PSA_NEED_OBERON_ASCON_HASH256@
+#cmakedefine PSA_NEED_OBERON_HASH_ML_DSA                                            @PSA_NEED_OBERON_HASH_ML_DSA@
+#cmakedefine PSA_NEED_OBERON_MESSAGE_ML_DSA                                         @PSA_NEED_OBERON_MESSAGE_ML_DSA@
+#cmakedefine PSA_NEED_OBERON_EDDSA_SIGN                                             @PSA_NEED_OBERON_EDDSA_SIGN@
+#cmakedefine PSA_NEED_OBERON_EDDSA_VERIFY                                           @PSA_NEED_OBERON_EDDSA_VERIFY@
 
 #cmakedefine PSA_NEED_NRF_RNG_ENTROPY_DRIVER                    @PSA_NEED_NRF_RNG_ENTROPY_DRIVER@
 #cmakedefine PSA_NEED_CRACEN_TRNG_DRIVER                        @PSA_NEED_CRACEN_TRNG_DRIVER@

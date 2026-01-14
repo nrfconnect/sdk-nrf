@@ -1679,4 +1679,22 @@ config PSA_ACCEL_XMSS
 config PSA_ACCEL_XMSS_MT
 	bool
 
+config PSA_ACCEL_SHAKE128
+	bool
+
+config PSA_ACCEL_SHAKE256
+	bool
+
+config PSA_ACCEL_ASCON_XOF128
+	bool
+
+config PSA_ACCEL_ASCON_CXOF128
+	bool
+
+config PSA_ACCEL_ASCON_AEAD128
+	bool
+
+config PSA_ACCEL_ASCON_HASH256
+	bool
+
 endmenu
