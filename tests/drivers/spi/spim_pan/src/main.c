@@ -162,6 +162,7 @@ ZTEST(spim_pan, test_spim_mltpan_55_workaround)
 
 ZTEST(spim_pan, test_spim_mltpan_57_workaround)
 {
+	Z_TEST_SKIP_IFDEF(CONFIG_COVERAGE);
 	Z_TEST_SKIP_IFNDEF(DUT_SPI_FAST);
 #if defined(DUT_SPI_FAST)
 	int err;
