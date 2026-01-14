@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+source "samples/subsys/usb/common/Kconfig.sample_usbd"
 source "Kconfig.zephyr"
 
 menu "Nordic WFA QT sample"
@@ -22,5 +23,11 @@ config NET_CONFIG_SLIP_IPV4_MASK
 	string "SLIP IPv4 subnet mask"
 	help
 	  Static IPv4 subnet mask for SLIP (Serial Line Internet Protocol) interface.
+
+config WFA_QT_SAMPLE_DHCPV4_POOL_START
+	string "Start address of DHCPv4 pool"
+	default "192.168.65.2"
+	help
+	  Set the start IP address of DHCPv4 pool.
 
 endmenu
