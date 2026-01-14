@@ -5,25 +5,16 @@
  */
 
 #include <zephyr/logging/log.h>
+#include <zephyr/net/tls_credentials.h>
+
+#include <psa/protected_storage.h>
+
+#include <certificate.h>
+#include <psa_tls_credentials.h>
+
 LOG_MODULE_REGISTER(psa_tls_credentials_client_non_secure);
 
-#include <nrfx.h>
-#include <errno.h>
-#include <zephyr/kernel.h>
-#include <zephyr/net/socket.h>
-#include <zephyr/net/net_core.h>
-#include <zephyr/net/tls_credentials.h>
-#include <zephyr/linker/sections.h>
-
-#include "certificate.h"
-#include "psa_tls_credentials.h"
-
-#include <tfm_ns_interface.h>
-#include <psa/storage_common.h>
-#include "psa/protected_storage.h"
-
 static unsigned char ca_cert_buf[sizeof(ca_certificate)];
-
 
 /** @brief Function for storing the CA certificate in Protected Storage.
  */

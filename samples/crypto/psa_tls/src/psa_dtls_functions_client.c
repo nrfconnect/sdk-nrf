@@ -4,20 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(psa_dtls_client);
-
-#include <nrfx.h>
+#include <arpa/inet.h>
 #include <errno.h>
-#include <zephyr/kernel.h>
-#include <zephyr/net/socket.h>
-#include <zephyr/net/net_core.h>
-#include <zephyr/net/tls_credentials.h>
-#include <zephyr/linker/sections.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
-#include "certificate.h"
-#include "psa_tls_functions.h"
-#include "psa_tls_credentials.h"
+#include <zephyr/logging/log.h>
+#include <zephyr/net/tls_credentials.h>
+
+#include <certificate.h>
+#include <psa_tls_functions.h>
+#include <psa_tls_credentials.h>
+
+LOG_MODULE_REGISTER(psa_dtls_client);
 
 static char recv_buffer[RECV_BUFFER_SIZE]; /* Buffer for storing payload */
 
