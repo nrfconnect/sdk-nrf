@@ -107,9 +107,9 @@ static int dtls_setup(int fd)
 	LOG_INF("DTLS setup");
 
 	/* Set up TLS peer verification */
-	verify = TLS_PEER_VERIFY_REQUIRED;
+	verify = ZSOCK_TLS_PEER_VERIFY_REQUIRED;
 
-	err = zsock_setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
+	err = zsock_setsockopt(fd, ZSOCK_SOL_TLS, ZSOCK_TLS_PEER_VERIFY, &verify, sizeof(verify));
 	if (err) {
 		LOG_ERR("Failed to setup peer verification, err %d", errno);
 		return -errno;
@@ -118,35 +118,36 @@ static int dtls_setup(int fd)
 	/* Associate the socket with the security tag
 	 * we have provisioned the certificate with.
 	 */
-	err = zsock_setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, tls_sec_tag, sizeof(tls_sec_tag));
+	err = zsock_setsockopt(fd, ZSOCK_SOL_TLS, ZSOCK_TLS_SEC_TAG_LIST, tls_sec_tag,
+			       sizeof(tls_sec_tag));
 	if (err) {
 		LOG_ERR("Failed to setup TLS sec tag, err %d", errno);
 		return -errno;
 	}
 
 	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_COAP_DTLS_SESSION_CACHE)) {
-		session_cache = TLS_SESSION_CACHE_ENABLED;
+		session_cache = ZSOCK_TLS_SESSION_CACHE_ENABLED;
 	} else {
-		session_cache = TLS_SESSION_CACHE_DISABLED;
+		session_cache = ZSOCK_TLS_SESSION_CACHE_DISABLED;
 	}
 
-	err = zsock_setsockopt(fd, SOL_TLS, TLS_SESSION_CACHE,
-					&session_cache, sizeof(session_cache));
+	err = zsock_setsockopt(fd, ZSOCK_SOL_TLS, ZSOCK_TLS_SESSION_CACHE, &session_cache,
+			       sizeof(session_cache));
 	if (err) {
 		LOG_ERR("Failed to set TLS_SESSION_CACHE option: %d", errno);
 		return -errno;
 	}
 
-	err = zsock_setsockopt(fd, SOL_TLS, TLS_HOSTNAME, COAP_HOST, strlen(COAP_HOST));
+	err = zsock_setsockopt(fd, ZSOCK_SOL_TLS, ZSOCK_TLS_HOSTNAME, COAP_HOST, strlen(COAP_HOST));
 	if (err) {
 		LOG_ERR("Failed to setup TLS hostname, err %d", errno);
 		return -errno;
 	}
 
 	/* Enable connection ID */
-	uint32_t dtls_cid = TLS_DTLS_CID_SUPPORTED;
+	uint32_t dtls_cid = ZSOCK_TLS_DTLS_CID_SUPPORTED;
 
-	err = zsock_setsockopt(fd, SOL_TLS, TLS_DTLS_CID, &dtls_cid, sizeof(dtls_cid));
+	err = zsock_setsockopt(fd, ZSOCK_SOL_TLS, ZSOCK_TLS_DTLS_CID, &dtls_cid, sizeof(dtls_cid));
 	if (err) {
 		LOG_ERR("Failed to enable connection ID, err %d", errno);
 		return -errno;
@@ -155,7 +156,7 @@ static int dtls_setup(int fd)
 	if (IS_ENABLED(CONFIG_SOC_NRF9120)) {
 		uint32_t val = 1;
 
-		err = zsock_setsockopt(fd, SOL_SOCKET, SO_KEEPOPEN, &val, sizeof(val));
+		err = zsock_setsockopt(fd, ZSOCK_SOL_SOCKET, SO_KEEPOPEN, &val, sizeof(val));
 		if (err) {
 			LOG_ERR("Failed to set socket option SO_KEEPOPEN, err %d", errno);
 			socket_keep_open = false;
@@ -173,21 +174,21 @@ static int socket_connect(int *const fd)
 	struct zsock_addrinfo *address = NULL;
 	int st;
 	int ret = 0;
-	struct sockaddr *sa;
-	char peer_addr[INET6_ADDRSTRLEN];
+	struct net_sockaddr *sa;
+	char peer_addr[NET_INET6_ADDRSTRLEN];
 
 #if defined(CONFIG_NET_IPV6) && defined(CONFIG_NET_IPV4)
-	hints.ai_family = AF_UNSPEC;
+	hints.ai_family = NET_AF_UNSPEC;
 #elif defined(CONFIG_NET_IPV6)
-	hints.ai_family = AF_INET6;
+	hints.ai_family = NET_AF_INET6;
 #elif defined(CONFIG_NET_IPV4)
-	hints.ai_family = AF_INET;
+	hints.ai_family = NET_AF_INET;
 #else
-	hints.ai_family = AF_UNSPEC;
+	hints.ai_family = NET_AF_UNSPEC;
 #endif /* defined(CONFIG_NET_IPV6) && defined(CONFIG_NET_IPV4) */
 
 	LOG_DBG("CoAP host: %s", COAP_HOST);
-	hints.ai_socktype = SOCK_DGRAM;
+	hints.ai_socktype = NET_SOCK_DGRAM;
 	st = zsock_getaddrinfo(COAP_HOST, PEER_PORT, &hints, &address);
 	LOG_DBG("getaddrinfo status: %d", st);
 	LOG_DBG("fd: %d", *fd);
@@ -200,12 +201,12 @@ static int socket_connect(int *const fd)
 
 	sa = address->ai_addr;
 	zsock_inet_ntop(sa->sa_family,
-		  (void *)&((struct sockaddr_in *)sa)->sin_addr,
+		  (void *)&((struct net_sockaddr_in *)sa)->sin_addr,
 		  peer_addr,
-		  INET6_ADDRSTRLEN);
+		  NET_INET6_ADDRSTRLEN);
 	LOG_DBG("getaddrinfo() %s", peer_addr);
 
-	*fd = zsock_socket(address->ai_family, address->ai_socktype, IPPROTO_DTLS_1_2);
+	*fd = zsock_socket(address->ai_family, address->ai_socktype, NET_IPPROTO_DTLS_1_2);
 	if (*fd < 0) {
 		LOG_ERR("Failed to create UDP socket %d", errno);
 		ret = -errno;
@@ -258,48 +259,59 @@ static int socket_close(int *const fd)
 	return 0;
 }
 
-static void coap_callback(int16_t code, size_t offset, const uint8_t *payload, size_t len,
-			  bool last_block, void *user_data)
+static void coap_callback(const struct coap_client_response_data *data, void *user_data)
 {
 	struct nrf_provisioning_coap_context *coap_ctx = NULL;
 
 	if (user_data) {
 		coap_ctx = (struct nrf_provisioning_coap_context *)user_data;
 	}
-	LOG_DBG("Callback code %d", code);
+
+	if (!data) {
+		LOG_WRN("CoAP response data is NULL");
+		if (coap_ctx) {
+			coap_ctx->code = -EINVAL;
+		}
+		k_sem_give(&coap_response);
+		return;
+	}
+
+	LOG_DBG("Callback code %d", data->result_code);
 	if (!coap_ctx) {
 		LOG_WRN("CoAP context not provided");
 		k_sem_give(&coap_response);
 		return;
 	}
 
-	coap_ctx->code = code;
+	coap_ctx->code = data->result_code;
 
-	if (code == COAP_RESPONSE_CODE_CONTENT || code == COAP_RESPONSE_CODE_CHANGED ||
-	    code == COAP_RESPONSE_CODE_CREATED) {
-		if (len) {
-			LOG_DBG("Response received, offset %d len %d", offset, len);
-			if (offset == 0) {
+	if (data->result_code == COAP_RESPONSE_CODE_CONTENT ||
+	    data->result_code == COAP_RESPONSE_CODE_CHANGED ||
+	    data->result_code == COAP_RESPONSE_CODE_CREATED) {
+		if (data->payload_len) {
+			LOG_DBG("Response received, offset %d len %d",
+				data->offset, data->payload_len);
+			if (data->offset == 0) {
 				coap_ctx->response_len = 0;
 			}
 
-			if (coap_ctx->response_len + len > coap_ctx->rx_buf_len) {
+			if (coap_ctx->response_len + data->payload_len > coap_ctx->rx_buf_len) {
 				LOG_ERR("RX buffer too small");
 				coap_ctx->code = -ENOMEM;
 				k_sem_give(&coap_response);
 				return;
 			}
 
-			memcpy(coap_ctx->rx_buf + offset, payload, len);
+			memcpy(coap_ctx->rx_buf + data->offset, data->payload, data->payload_len);
 			coap_ctx->response = coap_ctx->rx_buf;
-			coap_ctx->response_len += len;
+			coap_ctx->response_len += data->payload_len;
 		} else {
 			LOG_DBG("Operation successful");
 			coap_ctx->response_len = 0;
 		}
 	}
 
-	if (last_block) {
+	if (data->last_block) {
 		LOG_DBG("Last packet received");
 		k_sem_give(&coap_response);
 	}
@@ -317,13 +329,18 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 	struct coap_client_request client_request = {
 		.method = method,
 		.confirmable = confirmable,
-		.path = path,
+		.path = "",
 		.fmt = COAP_CONTENT_FORMAT_APP_CBOR,
 		.payload = NULL,
 		.len = 0,
 		.cb = coap_callback,
-		.user_data = coap_ctx
+		.user_data = coap_ctx,
+		.num_options = 0
 	};
+
+	/* Copy path into the request structure */
+	strncpy(client_request.path, path, sizeof(client_request.path) - 1);
+	client_request.path[sizeof(client_request.path) - 1] = '\0';
 
 	if (payload != NULL) {
 		client_request.payload = (uint8_t *)payload;
@@ -333,7 +350,7 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 	/* Suggest the maximum block size CONFIG_COAP_CLIENT_BLOCK_SIZE to the server */
 	if (method == COAP_METHOD_GET) {
 		block2_option = coap_client_option_initial_block2();
-		client_request.options = &block2_option;
+		client_request.options[0] = block2_option;
 		client_request.num_options = 1;
 	}
 
