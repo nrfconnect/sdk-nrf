@@ -687,12 +687,12 @@ int pdn_id_get(uint8_t cid)
 
 static int pdn_sa_family_from_ip_string(const char *src)
 {
-	char buf[INET6_ADDRSTRLEN];
+	char buf[NET_INET6_ADDRSTRLEN];
 
-	if (zsock_inet_pton(AF_INET, src, buf)) {
-		return AF_INET;
-	} else if (zsock_inet_pton(AF_INET6, src, buf)) {
-		return AF_INET6;
+	if (zsock_inet_pton(NET_AF_INET, src, buf)) {
+		return NET_AF_INET;
+	} else if (zsock_inet_pton(NET_AF_INET6, src, buf)) {
+		return NET_AF_INET6;
 	}
 	return -1;
 }
@@ -704,17 +704,17 @@ static void pdn_dynamic_info_dns_addr_fill(struct lte_lc_pdn_dynamic_info *pdn_i
 {
 	const int family = pdn_sa_family_from_ip_string(dns_addr_str_primary);
 
-	if (family == AF_INET) {
-		(void)zsock_inet_pton(AF_INET, dns_addr_str_primary,
+	if (family == NET_AF_INET) {
+		(void)zsock_inet_pton(NET_AF_INET, dns_addr_str_primary,
 				      &(pdn_info->dns_addr4_primary));
-		(void)zsock_inet_pton(AF_INET, dns_addr_str_secondary,
+		(void)zsock_inet_pton(NET_AF_INET, dns_addr_str_secondary,
 				      &(pdn_info->dns_addr4_secondary));
 
 		pdn_info->ipv4_mtu = mtu;
-	} else if (family == AF_INET6) {
-		(void)zsock_inet_pton(AF_INET6, dns_addr_str_primary,
+	} else if (family == NET_AF_INET6) {
+		(void)zsock_inet_pton(NET_AF_INET6, dns_addr_str_primary,
 				      &(pdn_info->dns_addr6_primary));
-		(void)zsock_inet_pton(AF_INET6, dns_addr_str_secondary,
+		(void)zsock_inet_pton(NET_AF_INET6, dns_addr_str_secondary,
 				      &(pdn_info->dns_addr6_secondary));
 		pdn_info->ipv6_mtu = mtu;
 	}
@@ -724,8 +724,8 @@ int pdn_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *pdn_info)
 {
 	int ret;
 	char at_cmd_buf[sizeof("AT+CGCONTRDP=###")];
-	char dns_addr_str_primary[INET6_ADDRSTRLEN];
-	char dns_addr_str_secondary[INET6_ADDRSTRLEN];
+	char dns_addr_str_primary[NET_INET6_ADDRSTRLEN];
+	char dns_addr_str_secondary[NET_INET6_ADDRSTRLEN];
 	uint32_t mtu = 0;
 
 	if (!pdn_info) {
