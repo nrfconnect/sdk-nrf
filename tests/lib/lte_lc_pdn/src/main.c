@@ -72,7 +72,7 @@ FAKE_VOID_FUNC(k_free, void *);
 FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_scanf, const char *, const char *, ...);
 FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_printf, const char *, ...);
 FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_cmd, void *, size_t, const char *, ...);
-FAKE_VALUE_FUNC(int, z_impl_zsock_inet_pton, sa_family_t, const char *, void *);
+FAKE_VALUE_FUNC(int, z_impl_zsock_inet_pton, net_sa_family_t, const char *, void *);
 
 /* Defined in modules/pdn.c, we redefine it here. */
 struct pdn {
@@ -166,10 +166,10 @@ static void k_free_PDN2(void *data)
 	TEST_ASSERT_EQUAL_PTR(&pdn2, data);
 }
 
-static int z_impl_zsock_inet_pton_custom(sa_family_t family, const char *src, void *dst)
+static int z_impl_zsock_inet_pton_custom(net_sa_family_t family, const char *src, void *dst)
 {
 	switch (family) {
-	case AF_INET:
+	case NET_AF_INET:
 		if (memcmp(src, IPv4_DNS_PRIMARY_STR, strlen(IPv4_DNS_PRIMARY_STR)) == 0) {
 			memcpy(dst, ipv4_dns_primary, sizeof(ipv4_dns_primary));
 			return 1;
@@ -179,7 +179,7 @@ static int z_impl_zsock_inet_pton_custom(sa_family_t family, const char *src, vo
 			return 1;
 		}
 		break;
-	case AF_INET6:
+	case NET_AF_INET6:
 		if (memcmp(src, IPv6_DNS_PRIMARY_STR, strlen(IPv6_DNS_PRIMARY_STR)) == 0) {
 			memcpy(dst, ipv6_dns_primary, sizeof(ipv6_dns_primary));
 			return 1;
