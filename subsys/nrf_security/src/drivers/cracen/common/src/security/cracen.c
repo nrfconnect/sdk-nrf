@@ -8,15 +8,14 @@
 #include <zephyr/logging/log.h>
 
 #include <security/cracen.h>
-#include <cracen_psa.h>
 #include <cracen/interrupts.h>
-#include <cracen/lib_kmu.h>
 #include <cracen/statuscodes.h>
 
-#include "common.h"
+#include "../../../cracenpsa/src/common.h"
 #include "microcode_binary.h"
 #include <nrf_security_mutexes.h>
 #include <sxsymcrypt/trng.h>
+#include <silexpk/core.h>
 
 #if !defined(CONFIG_BUILD_WITH_TFM)
 #define LOG_ERR_MSG(msg) LOG_ERR(msg)
