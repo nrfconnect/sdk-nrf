@@ -27,7 +27,7 @@
 #include <hal/nrf_clock.h>
 #endif /* NRF_ERRATA_STATIC_CHECK(54L, 39) */
 
-LOG_MODULE_REGISTER(esb_prx_ble, CONFIG_ESB_PRX_BLE_LOG_LEVEL);
+LOG_MODULE_REGISTER(esb_ptx_ble, CONFIG_ESB_PTX_BLE_APP_LOG_LEVEL);
 
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
@@ -41,9 +41,10 @@ LOG_MODULE_REGISTER(esb_prx_ble, CONFIG_ESB_PRX_BLE_LOG_LEVEL);
 static bool app_button_state;
 static struct k_work adv_work;
 
+static bool ready = true;
 static struct esb_payload rx_payload;
 static struct esb_payload tx_payload = ESB_CREATE_PAYLOAD(0,
-	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17);
+	0x01, 0x00, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08);
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -213,12 +214,12 @@ int clocks_start(void)
 
 #else
 BUILD_ASSERT(false, "No Clock Control driver");
-#endif /* defined(CONFIG_CLOCK_CONTROL_NRF2) */
+#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
 
 static void leds_update(uint8_t value)
 {
-	bool led1_state = !(value % 8 > 2 && value % 8 <= 6);
-	bool led2_state = !(value % 8 > 3);
+	const bool led1_state = !(value % 8 > 2 && value % 8 <= 6);
+	const bool led2_state = !(value % 8 > 3);
 
 	dk_set_led(ESB_LED_1, led1_state);
 	dk_set_led(ESB_LED_2, led2_state);
@@ -226,11 +227,13 @@ static void leds_update(uint8_t value)
 
 void event_handler(struct esb_evt const *event)
 {
+	ready = true;
+
 	int err;
 
 	switch (event->evt_id) {
 	case ESB_EVENT_TX_SUCCESS:
-		LOG_DBG("TX SUCCESS EVENT");
+		LOG_DBG("TX SUCCESS EVENT %u attempts", event->tx_attempts);
 		break;
 	case ESB_EVENT_TX_FAILED:
 		LOG_DBG("TX FAILED EVENT");
@@ -245,8 +248,6 @@ void event_handler(struct esb_evt const *event)
 				rx_payload.data[3], rx_payload.data[4],
 				rx_payload.data[5], rx_payload.data[6],
 				rx_payload.data[7]);
-
-			leds_update(rx_payload.data[1]);
 		}
 		if (err && err != -ENODATA) {
 			LOG_ERR("Error while reading rx packet");
@@ -264,15 +265,15 @@ int esb_initialize(void)
 	/* These are arbitrary default addresses. In end user products
 	 * different addresses should be used for each set of devices.
 	 */
-	uint8_t base_addr_0[4] = {0xE7, 0xE7, 0xE7, 0xE7};
-	uint8_t base_addr_1[4] = {0xC2, 0xC2, 0xC2, 0xC2};
-	uint8_t addr_prefix[8] = {0xE7, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8};
+	const uint8_t base_addr_0[4] = {0xE7, 0xE7, 0xE7, 0xE7};
+	const uint8_t base_addr_1[4] = {0xC2, 0xC2, 0xC2, 0xC2};
+	const uint8_t addr_prefix[8] = {0xE7, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8};
 
 	struct esb_config config = ESB_DEFAULT_CONFIG;
 
 	config.protocol = ESB_PROTOCOL_ESB_DPL;
 	config.bitrate = ESB_BITRATE_2MBPS;
-	config.mode = ESB_MODE_PRX;
+	config.mode = ESB_MODE_PTX;
 	config.event_handler = event_handler;
 	config.selective_auto_ack = true;
 	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
@@ -306,7 +307,7 @@ int main(void)
 {
 	int err;
 
-	LOG_INF("Starting Enhanced ShockBurst prx with Peripheral LBS sample");
+	LOG_INF("Starting Enhanced ShockBurst PTX with Peripheral LBS sample");
 
 	err = dk_leds_init();
 	if (err) {
@@ -348,23 +349,24 @@ int main(void)
 		return 0;
 	}
 
-	LOG_INF("ESB initialized");
-
-	err = esb_write_payload(&tx_payload);
-	if (err) {
-		LOG_ERR("Write payload, err %d", err);
-		return 0;
-	}
-
-	LOG_INF("Setting up for packet reception");
-
-	err = esb_start_rx();
-	if (err) {
-		LOG_ERR("RX setup failed, err %d", err);
-		return 0;
-	}
-
 	LOG_INF("Initialization complete");
+	LOG_INF("Sending test packet");
+
+	tx_payload.noack = false;
+	while (1) {
+		if (ready) {
+			ready = false;
+			esb_flush_tx();
+			leds_update(tx_payload.data[1]);
+
+			err = esb_write_payload(&tx_payload);
+			if (err) {
+				LOG_ERR("Payload write failed, err %d", err);
+			}
+			tx_payload.data[1]++;
+		}
+		k_sleep(K_MSEC(100));
+	}
 
 	return 0;
 }

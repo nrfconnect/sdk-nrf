@@ -361,6 +361,7 @@ Examples
 The |NCS| provides the following three samples that show how to use the ESB protocol:
 
 * :ref:`esb_ptx`
+* :ref:`esb_ptx_ble`
 * :ref:`esb_prx`
 * :ref:`esb_monitor`
 

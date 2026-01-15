@@ -1,14 +1,14 @@
-.. _esb_prx_ble:
+.. _esb_ptx_ble:
 
-Enhanced ShockBurst: Receiver with Bluetooth LE
-###############################################
+Enhanced ShockBurst: Transmitter with Bluetooth LE
+##################################################
 
 .. contents::
    :local:
    :depth: 2
 
-The sample shows how to use the :ref:`ug_esb` protocol in receiver mode concurrently with Bluetooth® LE protocol.
-It demonstrates how to configure the Enhanced ShockBurst protocol to receive packets while simultaneously running Bluetooth LE services.
+The sample shows how to use the :ref:`ug_esb` protocol in transmitter mode concurrently with Bluetooth® LE protocol.
+It demonstrates how to configure the Enhanced ShockBurst protocol to transmit packets while simultaneously running Bluetooth LE services.
 
 Requirements
 ************
@@ -17,22 +17,24 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-Additionally, if you want to test the Enhanced ShockBurst Transmitter functionality, you need to build and run the :ref:`esb_ptx` sample.
+Additionally, if you want to fully test the Enhanced ShockBurst Transmitter functionality, you need to build and run the :ref:`esb_prx` sample.
 You can use any two of the listed development kits and mix different development kits.
 
 Overview
 ********
 
-The sample consists of one Receiver that uses the :ref:`esb_README` library in combination with Bluetooth LE functionality.
+The sample consists of one Transmitter that uses the :ref:`esb_README` library in combination with Bluetooth LE functionality.
 After building and programming the sample on a development kit, you can test that packets that are sent by the Transmitter sample are picked up by the Receiver sample.
 Successful communication is indicated by LED changes.
 
-The Receiver sample listens for packets and sends an ACK when a packet is received.
-If packets are successfully received from the Transmitter, the LED pattern changes every time a packet is received.
+The Transmitter sends a packet, waits for a configurable time (100 milliseconds by default), and then sends another packet.
+The LEDs indicate that packets were sent and acknowledged.
+Therefore, if packets are successfully received and acknowledged by the Receiver, the LED pattern changes every 100 milliseconds (with the default delay).
 
 The sample demonstrates cooperative operation between ESB and Bluetooth LE protocols using the MPSL (Multiprotocol Service Layer) time slot mechanism.
 This mechanism allows both protocols to share radio time without interference.
-The sample runs the :ref:`lbs_readme` alongside the ESB receiver functionality, enabling simultaneous wireless communication using both protocols.
+The sample runs the :ref:`lbs_readme` alongside the ESB transmitter functionality, enabling simultaneous wireless communication using both protocols.
+This LBS functionality is used to transmit the button state to connected BLE device and remotely control the LED on your development kit from connected BLE device.
 
 User interface
 ***************
@@ -42,13 +44,13 @@ User interface
    .. group-tab:: nRF52 and nRF53 DKs
 
       LED 1:
-         Lit when the development kit is connected.
+         Lit when the development kit is connected to BLE device.
 
       LED 2:
-         Lit when the development kit is controlled remotely from the connected device.
+         Lit when the development kit is controlled remotely from the connected BLE device.
 
       LED 3 and LED 4:
-         Indicate that packets are received.
+         Indicate that packets are sent.
          The first two packets turn on the LEDs sequentially.
          The next two packets turn them off again in the same order.
 
@@ -64,7 +66,7 @@ User interface
          Lit when the development kit is controlled remotely from the connected device.
 
       LED 2 and LED 3:
-         Indicate that packets are received.
+         Indicate that packets are sent.
          The first two packets turn on the LEDs sequentially.
          The next two packets turn them off again in the same order.
 
@@ -79,7 +81,7 @@ Configuration
 Building and running
 ********************
 
-The Receiver sample can is located under :file:`samples/esb/esb_prx_ble` in the |NCS| folder structure.
+The Transmitter sample is located under :file:`samples/esb/esb_ptx_ble` in the |NCS| folder structure.
 
 See :ref:`building` and :ref:`programming` for information about how to build and program the application, respectively.
 
@@ -93,13 +95,13 @@ FEM support
 Testing
 =======
 
-This sample combines ESB receiver functionality with Bluetooth LE LBS service, and both protocols can be tested independently.
+This sample combines ESB transmitter functionality with Bluetooth LE LBS service, and both protocols can be tested independently.
 
 Testing ESB functionality
 -------------------------
 
-To test the ESB receiver functionality, follow the procedure described in the :ref:`esb_prx_testing` section.
-In brief, you need to program the :ref:`esb_ptx` sample on another development kit and observe that the LEDs change synchronously on both kits as packets are transmitted and received.
+To test the ESB transmitter functionality, follow the procedure described in the :ref:`esb_ptx_testing` section.
+In brief, you need to program the :ref:`esb_prx` sample on another development kit and observe that the LEDs change synchronously on both kits as packets are transmitted and received.
 
 Testing LBS service
 -------------------
