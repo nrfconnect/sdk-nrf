@@ -123,8 +123,8 @@ tests:
     tags:
       - sysbuild
       - ci_samples_openthread
-    platform_allow: >
-      nrf52840dk/nrf52840
+    platform_allow:
+      - nrf52840dk/nrf52840
     extra_args:
       - cli_SNIPPET=ci
       - CONFIG_NRF_SECURITY=y
