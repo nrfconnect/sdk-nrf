@@ -230,7 +230,6 @@ tests:
       - ipc_service_SNIPPET=nordic-flpr
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     timeout: 20
@@ -243,7 +242,6 @@ tests:
       - remote_DTC_OVERLAY_FILE="boards/nrf54lv10dk_nrf54lv10a_cpuflpr_icbmsg.overlay"
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     timeout: 20
