@@ -298,7 +298,7 @@ ZTEST(pdm_loopback, test_pdm_clk_frequency)
 	/* Assert that captured frequency is within 3% margin of expected one. */
 	zassert_within(pulses, PDM_EXPECTED_FREQ * SAMPLING_RATIO,
 		       PDM_EXPECTED_FREQ * SAMPLING_RATIO / 30,
-		       "Captured incorrect frequency Hz. Captured pulses = %lu, expected = %lu",
+		       "Captured incorrect frequency Hz. Captured pulses = %u, expected = %d",
 		       pulses, PDM_EXPECTED_FREQ * SAMPLING_RATIO);
 
 	/* Remove GPPI configuration. */
