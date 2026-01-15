@@ -126,6 +126,22 @@ Security
 
 * Updated the :ref:`API documentation section for the cryptographic drivers <crypto_drivers_api_documentation>` with links to the added API documentation for the CRACEN driver.
 
+* Updated:
+
+  * The Oberon PSA Crypto to version 1.5.4 that introduces support for the following new features with the Oberon PSA driver:
+
+    * Support for PSA Certified Crypto API v1.4, PSA Crypto API v1.4 PQC Extension and PSA Crypto Driver Interface v1.0 alpha 1.
+    * Experimental support for Extendable-Output Function (XOF) algorithms SHAKE128, SHAKE256, ASCON XOF128 and ASCON CXOF128.
+    * Experimental support for hash ML-DSA and deterministic ML-DSA asymmetric signature algorithms.
+    * Experimental support for ASCON HASH256 hash algorithm.
+    * Experimental support for ASCON AEAD128 AEAD algorithm.
+    * Updated implementations of WPA3-SAE, ML-DSA and ML-KEM to support the PSA Crypto API v1.4.
+
+   The :ref:`ug_crypto_supported_features` page has been updated accordingly.
+
+* Removed the ``CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`` Kconfig option and replaced it with :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`.
+* Removed the ``CONFIG_PSA_WANT_ALG_WPA3_SAE`` Kconfig option and replaced it by options :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_FIXED` and :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`.
+
 Trusted Firmware-M (TF-M)
 -------------------------
 
