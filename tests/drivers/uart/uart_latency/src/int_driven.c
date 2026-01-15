@@ -89,7 +89,7 @@ static void test_uart_latency(size_t buffer_size, uint32_t baudrate)
 	rx_byte_offset = 0;
 
 	zassert_true(buffer_size <= MAX_BUFFER_SIZE,
-		     "Given buffer size is to big, allowed max %u bytes and baudrate: %u\n",
+		     "Given buffer size is to big, allowed max %u bytes\n",
 		     MAX_BUFFER_SIZE);
 
 	TC_PRINT("UART TX latency in INTERRUPT mode test with buffer size: %u bytes and baudrate: "
