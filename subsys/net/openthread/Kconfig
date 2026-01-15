@@ -145,3 +145,4 @@ endif # OPENTHREAD
 
 rsource "rpc/Kconfig"
 rsource "report/Kconfig"
+rsource "otperf/Kconfig"
