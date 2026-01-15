@@ -44,8 +44,8 @@ tests:
       - oberon
       - sysbuild
       - ci_samples_crypto
-    platform_allow: >
-      nrf5340dk/nrf5340/cpunet
+    platform_allow:
+      - nrf5340dk/nrf5340/cpunet
     harness: console
     harness_config:
       type: multi_line
