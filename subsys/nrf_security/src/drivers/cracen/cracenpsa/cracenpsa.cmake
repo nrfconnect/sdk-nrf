@@ -11,16 +11,9 @@ list(APPEND cracen_driver_include_dirs
 )
 
 list(APPEND cracen_driver_sources
-  ${CMAKE_CURRENT_LIST_DIR}/src/cracen.c
   ${CMAKE_CURRENT_LIST_DIR}/src/common.c
-  ${CMAKE_CURRENT_LIST_DIR}/src/mem_helpers.c
-  ${CMAKE_CURRENT_LIST_DIR}/src/ec_helpers.c
   ${CMAKE_CURRENT_LIST_DIR}/src/ecc.c
   ${CMAKE_CURRENT_LIST_DIR}/src/rndinrange.c
-
-  # Note: We always need to have a version of cipher.c as it
-  # is used directly by many Cracen drivers.
-  ${CMAKE_CURRENT_LIST_DIR}/src/prng_pool.c
 )
 
 if(BUILD_INSIDE_TFM)
@@ -46,12 +39,6 @@ endif()
 if(CONFIG_CRACEN_IKG)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/ikg_signature.c
-  )
-endif()
-
-if(CONFIG_CRACEN_LIB_KMU)
-  list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/lib_kmu.c
   )
 endif()
 

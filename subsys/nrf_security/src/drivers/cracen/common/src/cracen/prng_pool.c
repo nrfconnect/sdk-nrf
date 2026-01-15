@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "common.h"
 #include <stddef.h>
 #include <stdint.h>
+#include <cracen_psa.h>
 #include <cracen/statuscodes.h>
 #include <security/cracen.h>
 #include <zephyr/kernel.h>
