@@ -5,8 +5,9 @@
  */
 
 #include <string.h>
-#include <zephyr/kernel.h>
-#include <zephyr/net/socket.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netdb.h>
 #include <zephyr/net/tls_credentials.h>
 #include <modem/lte_lc.h>
 #include <modem/nrf_modem_lib.h>
