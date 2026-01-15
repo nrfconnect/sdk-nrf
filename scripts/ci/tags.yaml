@@ -678,7 +678,10 @@ ci_applications_nrf_desktop:
     - modules/lib/zcbor/
     - nrf/applications/ipc_radio/
     - nrf/applications/nrf_desktop/
-    - nrf/boards/
+    - nrf/boards/nordic/common/
+    - nrf/boards/nordic/nrf52*
+    - nrf/boards/nordic/nrf54*
+    - nrf/boards/shields/nrf21540ek/
     - nrf/cmake/
     - nrf/drivers/mpsl/
     - nrf/drivers/sensor/paw3212/
@@ -688,6 +691,8 @@ ci_applications_nrf_desktop:
     - nrf/include/caf/
     - nrf/include/sensor/
     - nrf/scripts/hid_configurator/
+    - nrf/soc/nordic/common/
+    - nrf/soc/nordic/nrf54*
     - nrf/subsys/app_event_manager/
     - nrf/subsys/bluetooth/
     - nrf/subsys/bootloader/
@@ -701,7 +706,9 @@ ci_applications_nrf_desktop:
     - nrfxlib/crypto/
     - nrfxlib/mpsl/
     - nrfxlib/softdevice_controller/
-    - zephyr/boards/nordic/
+    - zephyr/boards/nordic/nrf52*
+    - zephyr/boards/nordic/nrf53*
+    - zephyr/boards/nordic/nrf54*
     - zephyr/cmake/
     - zephyr/drivers/bluetooth/
     - zephyr/drivers/entropy/
@@ -709,7 +716,10 @@ ci_applications_nrf_desktop:
     - zephyr/drivers/usb/
     - zephyr/include/zephyr/bluetooth/
     - zephyr/share/
-    - zephyr/soc/nordic/
+    - zephyr/soc/nordic/common/
+    - zephyr/soc/nordic/nrf52*
+    - zephyr/soc/nordic/nrf53*
+    - zephyr/soc/nordic/nrf54*
     - zephyr/subsys/bluetooth/
     - zephyr/subsys/dfu/
     - zephyr/subsys/fs/
