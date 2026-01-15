@@ -44,7 +44,7 @@ static void enable_uart_rx(uart_test_data *test_data)
 		err = uart_rx_enable(uart_dev, test_data->rx_buffer, test_data->buffer_size,
 				     UART_TIMEOUT_US);
 	} while (err == -EBUSY);
-	zassert_equal(err, 0, "Unexpected error when enabling UART RX: %d");
+	zassert_equal(err, 0, "Unexpected error when enabling UART RX: %d", err);
 }
 
 static void test_uart_latency(size_t buffer_size, uint32_t baudrate)
