@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Enhanced ShockBurst: Transmitter with BLE"
+
+module = ESB_PTX_BLE
+module-str = "ESB_PTX_BLE"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+endmenu
+
+source "Kconfig.zephyr"
