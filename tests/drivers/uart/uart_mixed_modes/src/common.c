@@ -54,7 +54,7 @@ void enable_uart_rx(const struct device *const uart_dev, uart_test_data *test_da
 		err = uart_rx_enable(uart_dev, test_data->rx_buffer, test_data->buffer_size,
 				     UART_TIMEOUT_US);
 	} while (err == -EBUSY);
-	zassert_equal(err, 0, "Unexpected error when enabling UART RX: %d");
+	zassert_equal(err, 0, "Unexpected error when enabling UART RX: %d", err);
 }
 
 void uart_tx_interrupt_service(const struct device *dev, uint8_t *test_pattern, size_t buffer_size,
