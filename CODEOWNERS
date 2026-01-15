@@ -838,6 +838,7 @@
 /subsys/net/lib/zzhc/                     @junqingzou
 /subsys/net/lib/softap_wifi_provision/    @nrfconnect/ncs-cia
 /subsys/net/openthread/                   @nrfconnect/ncs-co-networking @nrfconnect/ncs-thread
+/subsys/net/openthread/otperf/            @nrfconnect/ncs-co-networking @nrfconnect/ncs-thread
 /subsys/net/openthread/rpc/               @nrfconnect/ncs-protocols-serialization
 /subsys/net_core_monitor/                 @nrfconnect/ncs-si-muffin
 /subsys/nfc/                              @nrfconnect/ncs-radio-sw
