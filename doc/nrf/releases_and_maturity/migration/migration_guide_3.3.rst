@@ -36,7 +36,12 @@ Libraries
 
 This section describes the changes related to libraries.
 
-|no_changes_yet_note|
+.. toggle::
+
+   * :ref:`nrf_security_readme` library:
+
+      * Removed the ``CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`` Kconfig option and replaced it with :kconfig:option:`PSA_WANT_KEY_TYPE_WPA3_SAE`.
+      * Removed the ``CONFIG_PSA_WANT_ALG_WPA3_SAE`` Kconfig option and replaced it by options :kconfig:option:`PSA_WANT_ALG_WPA3_SAE_FIXED` and :kconfig:option:`PSA_WANT_ALG_WPA3_SAE_GDH`.
 
 .. _migration_3.3_recommended:
 
