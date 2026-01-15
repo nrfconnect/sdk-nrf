@@ -62,7 +62,6 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_configs:
@@ -116,7 +115,6 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
     tags: ppk_power_measure
     harness: pytest
     harness_config:
@@ -160,7 +158,6 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
     harness: console
     harness_config:
       fixture: gpio_loopback
