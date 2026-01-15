@@ -402,7 +402,8 @@ ci_samples_cellular:
     - modules/lib/hostap/
     - modules/lib/nrf_wifi/
     - modules/lib/zcbor/
-    - nrf/boards/nordic/
+    - nrf/boards/nordic/thingy91/
+    - nrf/boards/nordic/thingy91x/
     - nrf/cmake/
     - nrf/drivers/hw_cc3xx/
     - nrf/ext/curl/
@@ -452,7 +453,9 @@ ci_samples_cellular:
     - nrfxlib/crypto/
     - nrfxlib/nrf_modem/
     - nrfxlib/nrf_wifi/
-    - zephyr/boards/nordic/
+    - zephyr/boards/nordic/nrf9151dk/
+    - zephyr/boards/nordic/nrf9160dk/
+    - zephyr/boards/nordic/nrf9161dk/
     - zephyr/cmake/
     - zephyr/drivers/bluetooth/
     - zephyr/drivers/console/
@@ -466,7 +469,7 @@ ci_samples_cellular:
     - zephyr/modules/hostap/
     - zephyr/modules/nrf_wifi/
     - zephyr/share/
-    - zephyr/soc/nordic/
+    - zephyr/soc/nordic/nrf91/
     - zephyr/subsys/bluetooth/
     - zephyr/subsys/dfu/
     - zephyr/subsys/fs/
