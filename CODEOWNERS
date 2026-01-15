@@ -119,6 +119,8 @@
 /doc/nrf/libraries/bluetooth/mesh/        @nrfconnect/ncs-paladin-doc
 /doc/nrf/libraries/bluetooth/adv_prov.rst @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/libraries/bluetooth/mesh.rst     @nrfconnect/ncs-paladin-doc
+/doc/nrf/libraries/bluetooth/services/ams_client.rst @nrfconnect/ncs-blenders-doc
+/doc/nrf/libraries/bluetooth/services/ancs_client.rst @nrfconnect/ncs-blenders-doc
 /doc/nrf/libraries/bluetooth/services/fast_pair/ @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/libraries/bluetooth/services/wifi_prov_ble.rst @nrfconnect/ncs-wifi-doc
 /doc/nrf/libraries/caf/                   @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
@@ -312,6 +314,8 @@
 /include/bluetooth/gatt_pool.h            @nrfconnect/ncs-si-muffin
 /include/bluetooth/mesh/                  @nrfconnect/ncs-paladin
 /include/bluetooth/scan.h                 @nrfconnect/ncs-blenders @nrfconnect/ncs-si-muffin
+/include/bluetooth/services/ams_client.h  @nrfconnect/ncs-blenders
+/include/bluetooth/services/ancs_client.h @nrfconnect/ncs-blenders
 /include/bluetooth/services/bas_client.h  @nrfconnect/ncs-blenders
 /include/bluetooth/services/bms.h         @nrfconnect/ncs-blenders
 /include/bluetooth/services/cgms.h        @nrfconnect/ncs-blenders
@@ -450,8 +454,8 @@
 /samples/bluetooth/multiple_adv_sets/     @nrfconnect/ncs-blenders
 /samples/bluetooth/nrf_dm/                @nrfconnect/ncs-blenders
 /samples/bluetooth/rssi_power_control/    @nrfconnect/ncs-dragoon
-/samples/bluetooth/peripheral_ams_client/ @leewkb4567
-/samples/bluetooth/peripheral_ancs_client/ @leewkb4567
+/samples/bluetooth/peripheral_ams_client/ @nrfconnect/ncs-blenders
+/samples/bluetooth/peripheral_ancs_client/ @nrfconnect/ncs-blenders
 /samples/bluetooth/peripheral_bms/        @nrfconnect/ncs-blenders
 /samples/bluetooth/peripheral_cgms/       @nrfconnect/ncs-blenders
 /samples/bluetooth/peripheral_cts_client/ @nrfconnect/ncs-blenders
@@ -591,8 +595,8 @@
 /samples/bluetooth/nrf_dm/*.rst           @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/path_loss_monitoring/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/rssi_power_control/*.rst @nrfconnect/ncs-dragoon-doc
-/samples/bluetooth/peripheral_ams_client/*.rst @nrfconnect/ncs-si-muffin-doc
-/samples/bluetooth/peripheral_ancs_client/*.rst @nrfconnect/ncs-si-muffin-doc
+/samples/bluetooth/peripheral_ams_client/*.rst @nrfconnect/ncs-blenders-doc
+/samples/bluetooth/peripheral_ancs_client/*.rst @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/peripheral_bms/*.rst   @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/peripheral_cgms/*.rst  @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/peripheral_cts_client/*.rst @nrfconnect/ncs-blenders-doc
@@ -789,6 +793,8 @@
 /subsys/bluetooth/host_extensions/        @nrfconnect/ncs-dragoon
 /subsys/bluetooth/mesh/                   @nrfconnect/ncs-paladin
 /subsys/bluetooth/rpc/                    @nrfconnect/ncs-blenders @nrfconnect/ncs-protocols-serialization
+/subsys/bluetooth/services/ams_client.c   @nrfconnect/ncs-blenders
+/subsys/bluetooth/services/ancs_client.c  @nrfconnect/ncs-blenders
 /subsys/bluetooth/services/fast_pair/     @nrfconnect/ncs-si-bluebagel
 /subsys/bluetooth/services/ras/           @nrfconnect/ncs-dragoon
 /subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
