@@ -5040,6 +5040,21 @@ Modem library
 
 The issues in this section are related to :ref:`nrfxlib:nrf_modem`.
 
+.. rst-class:: v3-2-1 v3-2-0
+
+NCSDK-37068: The :c:func:`nrf_send` and :c:func:`nrf_sendto` function with :c:macro:`NRF_MSG_WAITACK` flag can set the ``errno`` to ``0xBAAD001B`` in some cases where the send operation fails.
+  This will trigger an assert in :c:func:`nrf_modem_os_errno_set` if asserts are enabled.
+
+  If the :c:func:`nrf_send` and :c:func:`nrf_sendto` functions are used with the :c:macro:`NRF_SO_SENDCB` socket option, the callback (:c:member:`nrf_modem_sendcb::callback`) can return status (:c:member:`nrf_modem_sendcb_params::status`) ``0xBAAD001B`` in some cases where the send operation fails.
+  (In this case the assert in :c:func:`nrf_modem_os_errno_set is not triggered.)
+
+  The affected modem firmware version is mfw_nrf9151-ntn 1.0.0 and later.
+
+  **Affected platforms:**  nRF9151
+
+  **Workaround:** If the :c:macro:`NRF_MSG_WAITACK` flag is used, disable asserts, or remove the assert in :c:func:`nrf_modem_os_errno_set`.
+  The error can be treated as a generic failure and the send operation can be retried.
+
 .. rst-class:: v2-8-0
 
 NCSDK-29993: The :c:func:`nrf_send` function with ``NRF_MSG_WAITACK`` flag will incorrectly set the ``errno`` to ``0xBAADBAAD`` if the socket is closed before the send operation finishes
