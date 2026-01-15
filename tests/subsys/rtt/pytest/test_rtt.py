@@ -59,7 +59,13 @@ def test_rtt_logging(dut: DeviceAdapter):
         'nrf54lm20dk/nrf54lm20a/cpuapp': {
             'device': 'NRF54LM20A_M33',
         },
+        'nrf54ls05dk/nrf54ls05b/cpuapp': {
+            'device': 'NRF54LS05B_M33',
+        },
         'nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp': {
+            'device': 'NRF54LS05B_M33',
+        },
+        'nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp': {
             'device': 'NRF54LS05B_M33',
         },
         'nrf54lv10dk/nrf54lv10a/cpuapp': {
