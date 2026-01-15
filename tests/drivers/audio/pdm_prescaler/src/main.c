@@ -189,7 +189,7 @@ ZTEST(pdm_prescaler, test_prescaler_not_affected_by_stop_start)
 		/* Assert that captured frequency is within 3% margin of expected one. */
 		TC_PRINT("NRFX Timer counted to %u\n", pulses);
 		zassert_within(pulses, PDM_EXPECTED_FREQ, PDM_EXPECTED_FREQ / 30,
-			"Captured incorrect frequency Hz. Captured pulses = %lu, expected = %lu",
+			"Captured incorrect frequency Hz. Captured pulses = %u, expected = %u",
 			pulses, PDM_EXPECTED_FREQ);
 
 		/* Check PRESCALER value */
