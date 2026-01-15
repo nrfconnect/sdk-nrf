@@ -398,7 +398,7 @@ The application supports the following build types:
 
    * - Build type
      - File suffix
-     - Supported board target
+     - Example of supported board target
      - Description
    * - Debug (default)
      - none
