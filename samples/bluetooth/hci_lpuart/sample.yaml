@@ -11,3 +11,4 @@ tests:
       - uart
       - bluetooth
       - sysbuild
+      - ci_samples_bluetooth

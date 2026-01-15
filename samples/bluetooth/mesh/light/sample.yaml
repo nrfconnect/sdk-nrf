@@ -1,6 +1,12 @@
 sample:
   description: Bluetooth Mesh light sample
   name: Bluetooth Mesh light
+common:
+  tags:
+    - bluetooth
+    - ci_build
+    - sysbuild
+    - ci_samples_bluetooth
 tests:
   sample.bluetooth.mesh.light:
     sysbuild: true
@@ -20,10 +26,6 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.mesh.light.dfu:
     sysbuild: true
     build_only: true
@@ -41,10 +43,6 @@ tests:
     extra_args:
       - EXTRA_CONF_FILE=overlay-dfu.conf
       - SB_CONF_FILE=sysbuild-dfu.conf
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.mesh.light.settings_ext_flash:
     sysbuild: true
     build_only: true
@@ -57,7 +55,3 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
     extra_args: FILE_SUFFIX=settings_ext_flash
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild

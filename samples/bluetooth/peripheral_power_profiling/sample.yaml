@@ -8,6 +8,7 @@ common:
     - ci_build
     - sysbuild
     - ppk_power_measure
+    - ci_samples_bluetooth
   harness: pytest
   harness_config:
     fixture: ppk_power_measure

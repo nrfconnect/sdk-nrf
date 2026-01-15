@@ -31,6 +31,7 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
+      - ci_samples_bluetooth
     harness: console
     harness_config:
       type: multi_line

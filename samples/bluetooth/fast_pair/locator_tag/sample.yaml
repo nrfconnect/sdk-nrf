@@ -1,6 +1,12 @@
 sample:
   name: Fast Pair locator tag
   description: Bluetooth Fast Pair Provider sample setup for the locator tag use case
+common:
+  tags:
+    - bluetooth
+    - ci_build
+    - sysbuild
+    - ci_samples_bluetooth
 tests:
   sample.bluetooth.fast_pair.locator_tag:
     sysbuild: true
@@ -31,10 +37,6 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
       - thingy53/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp/ns
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.fast_pair.locator_tag.release:
     sysbuild: true
     build_only: true
@@ -64,8 +66,4 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
       - thingy53/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp/ns
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
     extra_args: FILE_SUFFIX=release
