@@ -29,7 +29,6 @@ target_compile_options(app
   -DCONFIG_BT_MESH_MODEL_GROUP_COUNT=5
   -DCONFIG_BT_LOG_LEVEL=0
   -DCONFIG_BT_MESH_SCHEDULER_SRV=1
-  -DCONFIG_BT_MESH_USES_MBEDTLS_PSA=1
   )
 
 zephyr_ld_options(
