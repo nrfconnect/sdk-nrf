@@ -103,12 +103,12 @@ ZTEST(flash_driver, test_read_unaligned_address)
 				zassert_equal(rc, 0, "Cannot read flash");
 				zassert_equal(memcmp(buf + buf_o, expected + addr_o,
 					      TEST_AREA_WRITE_SIZE), 0,
-					      "Flash read failed addr_o=%d, buf_o=%d", addr_o,
+					      "Flash read failed addr_o=%ld, buf_o=%ld", addr_o,
 					      buf_o);
 				zassert_equal(buf[buf_o - 1], CANARY,
-					"Buffer underflow addr_o=%d, buf_o=%d", addr_o, buf_o);
+					"Buffer underflow addr_o=%ld, buf_o=%ld", addr_o, buf_o);
 				zassert_equal(buf[buf_o + TEST_AREA_WRITE_SIZE], CANARY,
-					"Buffer overflow addr_o=%d, buf_o=%d", addr_o, buf_o);
+					"Buffer overflow addr_o=%ld, buf_o=%ld", addr_o, buf_o);
 			}
 
 			rc = flash_erase(flash_dev, TEST_AREA_START_ADDR, TEST_AREA_ERASE_SIZE);
