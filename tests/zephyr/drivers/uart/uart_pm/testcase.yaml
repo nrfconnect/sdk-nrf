@@ -22,16 +22,21 @@ tests:
     extra_configs:
       - CONFIG_UART_INTERRUPT_DRIVEN=n
       - CONFIG_UART_ASYNC_API=n
-      - CONFIG_UART_NRFX_UARTE_LEGACY_SHIM=y
+      - CONFIG_UART_0_ENHANCED_POLL_OUT=n
 
   nrf.extended.drivers.uart.pm.int_driven:
     extra_configs:
       - CONFIG_UART_INTERRUPT_DRIVEN=y
+      - CONFIG_UART_0_INTERRUPT_DRIVEN=y
       - CONFIG_UART_ASYNC_API=n
-      - CONFIG_UART_NRFX_UARTE_LEGACY_SHIM=y
+      - CONFIG_UART_0_ENHANCED_POLL_OUT=n
 
   nrf.extended.drivers.uart.pm.async:
     extra_configs:
       - CONFIG_UART_INTERRUPT_DRIVEN=n
       - CONFIG_UART_ASYNC_API=y
-      - CONFIG_UART_NRFX_UARTE_LEGACY_SHIM=y
+      - CONFIG_UART_0_ASYNC=y
+      - CONFIG_UART_0_NRF_HW_ASYNC=y
+      - CONFIG_UART_0_NRF_HW_ASYNC_TIMER=2
+      - CONFIG_NRFX_TIMER=y
+      - CONFIG_UART_0_ENHANCED_POLL_OUT=n
