@@ -299,6 +299,10 @@
 
 | nRF54LS05 DK |   | nrf54ls05dk | ``nrf54ls05dk/nrf54ls05b/cpuapp`` |
 
+.. nrf54ls05dk_nrf54ls05b_cpuapp@0.2.0
+
+| nRF54LS05 DK |   | nrf54ls05dk | ``nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp`` |
+
 .. nrf7120dk_nrf7120_cpuapp
 
 | nRF7120 PDK |   | nrf7120dk | ``nrf7120dk/nrf7120/cpuapp`` |
