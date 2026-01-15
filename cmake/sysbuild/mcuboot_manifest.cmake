@@ -25,16 +25,18 @@ function(find_image_index image_name out_var)
   message(FATAL_ERROR "Unable to find image ${image_name} code partition inside mcuboot devicetree")
 endfunction()
 
+set(manifest_dir "${CMAKE_BINARY_DIR}")
+
 yaml_create(NAME mcuboot_manifest)
 yaml_set(NAME mcuboot_manifest KEY format VALUE "1")
 yaml_set(NAME mcuboot_manifest KEY images LIST)
-set(manifest_path "manifest.yaml")
+cmake_path(APPEND manifest_dir "manifest.yaml" OUTPUT_VARIABLE manifest_path)
 set(manifest_img_slot_0 "${DEFAULT_IMAGE}")
 
 yaml_create(NAME mcuboot_secondary_manifest)
 yaml_set(NAME mcuboot_secondary_manifest KEY format VALUE "1")
 yaml_set(NAME mcuboot_secondary_manifest KEY images LIST)
-set(manifest_secondary_path "manifest_secondary.yaml")
+cmake_path(APPEND manifest_dir "manifest_secondary.yaml" OUTPUT_VARIABLE manifest_secondary_path)
 set(manifest_img_slot_1 "mcuboot_secondary_app")
 
 # There is no need to generate a manifest if there is only a single (merged) image.
@@ -49,18 +51,21 @@ if(NOT SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY)
 
     if("${image_index}" EQUAL "${manifest_img}")
       yaml_set(NAME mcuboot_manifest KEY manifest_index VALUE "${manifest_img}")
-      cmake_path(APPEND BINARY_DIR "zephyr" "manifest.yaml" OUTPUT_VARIABLE manifest_path)
       set(manifest_img_slot_0 "${image}")
       continue()
     endif()
 
     if(NOT "${SB_CONFIG_SIGNATURE_TYPE}" STREQUAL "NONE")
-      cmake_path(APPEND BINARY_DIR "zephyr" "${BINARY_BIN_FILE}.signed.bin" OUTPUT_VARIABLE image_path)
+      cmake_path(APPEND BINARY_DIR "zephyr" "${BINARY_BIN_FILE}.signed.bin" OUTPUT_VARIABLE
+        image_path
+      )
     else()
       cmake_path(APPEND BINARY_DIR "zephyr" "${BINARY_BIN_FILE}.bin" OUTPUT_VARIABLE image_path)
     endif()
 
-    yaml_set(NAME mcuboot_manifest KEY images APPEND LIST MAP "path: ${image_path}, name: ${image}, index: ${image_index}")
+    yaml_set(NAME mcuboot_manifest KEY images APPEND LIST MAP
+      "path: ${image_path}, name: ${image}, index: ${image_index}"
+    )
   endforeach()
 
   foreach(image ${images})
@@ -78,18 +83,21 @@ if(NOT SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY)
 
     if("${image_index}" EQUAL "${manifest_img}")
       yaml_set(NAME mcuboot_secondary_manifest KEY manifest_index VALUE "${manifest_img}")
-      cmake_path(APPEND BINARY_DIR "zephyr" "manifest.yaml" OUTPUT_VARIABLE manifest_secondary_path)
       set(manifest_img_slot_1 "${image}")
       continue()
     endif()
 
     if(NOT "${SB_CONFIG_SIGNATURE_TYPE}" STREQUAL "NONE")
-      cmake_path(APPEND BINARY_DIR "zephyr" "${BINARY_BIN_FILE}.signed.bin" OUTPUT_VARIABLE image_path)
+      cmake_path(APPEND BINARY_DIR "zephyr" "${BINARY_BIN_FILE}.signed.bin" OUTPUT_VARIABLE
+        image_path
+      )
     else()
       cmake_path(APPEND BINARY_DIR "zephyr" "${BINARY_BIN_FILE}.bin" OUTPUT_VARIABLE image_path)
     endif()
 
-    yaml_set(NAME mcuboot_secondary_manifest KEY images APPEND LIST MAP "path: ${image_path}, name: ${image}, index: ${image_index}")
+    yaml_set(NAME mcuboot_secondary_manifest KEY images APPEND LIST MAP
+      "path: ${image_path}, name: ${image}, index: ${image_index}"
+    )
   endforeach()
 
   foreach(image ${variants})
@@ -100,5 +108,8 @@ if(NOT SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY)
   endforeach()
 endif()
 
-yaml_save(NAME mcuboot_manifest FILE "${manifest_path}")
-yaml_save(NAME mcuboot_secondary_manifest FILE "${manifest_secondary_path}")
+# If a custom manifest is used, do not automatically generate manifests.
+if("${SB_CONFIG_MCUBOOT_MANIFEST_DIR}" STREQUAL "")
+  yaml_save(NAME mcuboot_manifest FILE "${manifest_path}")
+  yaml_save(NAME mcuboot_secondary_manifest FILE "${manifest_secondary_path}")
+endif()

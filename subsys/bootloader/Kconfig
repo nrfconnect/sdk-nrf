@@ -187,6 +187,13 @@ config NCS_MCUBOOT_MANIFEST_IMAGE_INDEX
 	  Specifies the index of the image that must include the manifest.
 	  This is a Kconfig which is informative only, the value should not be changed.
 
+config NCS_MCUBOOT_MANIFEST_DIR
+	string "Path to the directory containing manifest(s) (informative only, do not change)"
+	help
+	  Specifies the path to the directory containing custom manifest file(s).
+	  Autogeneration of the manifest file(s) is used if the path is empty.
+	  This is a Kconfig which is informative only, the value should not be changed.
+
 endif # NCS_MCUBOOT_MANIFEST_UPDATES
 
 endmenu
