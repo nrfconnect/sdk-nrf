@@ -8,8 +8,13 @@
 #include <hw_unique_key.h>
 #include "../../../../lib/hw_unique_key/hw_unique_key_internal.h"
 #include <nrf_cc3xx_platform_kmu.h>
-#include <pm_config.h>
 #include <nrfx.h>
+
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
+#include <pm_config.h>
+#else
+#include <zephyr/storage/flash_map.h>
+#endif
 
 #define STATE_TEST_WRITE 0x54834352
 #define STATE_TEST_LOAD 0x17029357
@@ -131,11 +136,17 @@ static void do_key_test(void)
 			zassert_equal(0, err, "unexpected error: %d\n", err);
 			zassert_mem_equal(expected_key, out_key, sizeof(expected_key), NULL);
 
-#ifdef PM_HW_UNIQUE_KEY_PARTITION_ADDRESS
+#if defined(PM_HW_UNIQUE_KEY_PARTITION_ADDRESS) || FIXED_PARTITION_EXISTS(hw_unique_key_partition)
 			state = STATE_TEST_INVALID;
 			expected_fatal++;
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
 			/* The following causes an exception */
 			zassert_equal(0, *(uint32_t *)PM_HW_UNIQUE_KEY_PARTITION_ADDRESS, NULL);
+#else
+			/* The following causes an exception */
+			zassert_equal(0, *(uint32_t *)FIXED_PARTITION_ADDRESS(
+								hw_unique_key_partition), NULL);
+#endif
 #else
 			NRF_KMU->SELECTKEYSLOT = KMU_SELECT_SLOT(huk_slots[i]);
 			zassert_equal(0xDEADDEAD,

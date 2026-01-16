@@ -1,4 +1,5 @@
-/* Copyright (c) 2025 Nordic Semiconductor ASA
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -22,6 +23,23 @@
 /delete-node/ &button1;
 /delete-node/ &button2;
 /delete-node/ &button3;
+/delete-node/ &storage_partition;
+
+&cpuapp_rram {
+	reg = <0x0 DT_SIZE_K(2036)>;
+
+	partitions {
+		storage_partition: partition@1f8000 {
+			label = "storage";
+			reg = <0x001f8000 0x00002000>;
+		};
+
+		coredump_partition: partition@1fa000 {
+			label = "";
+			reg = <0x001fa000 0x00003000>;
+		};
+	};
+};
 
 &pinctrl {
 	uart21_default: uart21_default {
