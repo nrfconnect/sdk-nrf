@@ -21,6 +21,8 @@
 #define CLK_VIO		    0
 #define D0_VIO		    1
 #define D1_VIO		    2
+#define D2_VIO		    3
+#define D3_VIO		    4
 #define VIO_SINGLE_BUS_MASK 0x0004
 #define VIO_QUAD_BUS_MASK   0x001E
 
@@ -128,12 +130,23 @@ NRF_STATIC_INLINE void rx_end_procedure_mode_3(volatile hrt_xfer_t *hrt_xfer_par
 	hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word = BSWAP_32(last_word);
 }
 
-static void hrt_tx(volatile hrt_xfer_data_t *xfer_data, uint8_t frame_width, bool *counter_running,
-		   uint16_t counter_value)
+static void hrt_tx(volatile hrt_xfer_data_t *xfer_data, uint8_t frame_width, uint16_t tx_pin_mask,
+		   bool *counter_running, uint16_t counter_value)
 {
 	if (xfer_data->word_count == 0) {
 		return;
 	}
+
+	/* Set all unused data pins as inputs */
+	if (frame_width <= 2) {
+		WRITE_BIT(tx_pin_mask, D2_VIO, VPRCSR_NORDIC_DIR_INPUT);
+		WRITE_BIT(tx_pin_mask, D3_VIO, VPRCSR_NORDIC_DIR_INPUT);
+
+		if (frame_width == 1) {
+			WRITE_BIT(tx_pin_mask, D1_VIO, VPRCSR_NORDIC_DIR_INPUT);
+		}
+	}
+	nrf_vpr_csr_vio_dir_set(nrf_vpr_csr_vio_dir_get() | tx_pin_mask);
 
 	nrf_vpr_csr_vio_mode_out_t out_mode = {
 		.mode = NRF_VPR_CSR_VIO_SHIFT_OUTB_TOGGLE,
@@ -211,9 +224,6 @@ void hrt_write(volatile hrt_xfer_t *hrt_xfer_params)
 	nrf_vpr_csr_vio_mode_out_t out_mode = {.mode = NRF_VPR_CSR_VIO_SHIFT_OUTB_TOGGLE};
 	uint16_t prev_out = 0;
 
-	/* Configure clock and pins */
-	nrf_vpr_csr_vio_dir_set(hrt_xfer_params->tx_direction_mask);
-
 	for (uint8_t i = 0; i < HRT_FE_MAX; i++) {
 
 		if (hrt_xfer_params->xfer_data[i].word_count != 0) {
@@ -267,17 +277,17 @@ void hrt_write(volatile hrt_xfer_t *hrt_xfer_params)
 
 	/* Transfer command */
 	hrt_tx(&hrt_xfer_params->xfer_data[HRT_FE_COMMAND], hrt_xfer_params->bus_widths.command,
-	       &counter_running, hrt_xfer_params->counter_value);
+	       hrt_xfer_params->used_pins_mask, &counter_running, hrt_xfer_params->counter_value);
 	/* Transfer address */
 	hrt_tx(&hrt_xfer_params->xfer_data[HRT_FE_ADDRESS], hrt_xfer_params->bus_widths.address,
-	       &counter_running, hrt_xfer_params->counter_value);
+	       hrt_xfer_params->used_pins_mask, &counter_running, hrt_xfer_params->counter_value);
 	/* Transfer dummy cycles */
 	hrt_tx(&hrt_xfer_params->xfer_data[HRT_FE_DUMMY_CYCLES],
-	       hrt_xfer_params->bus_widths.dummy_cycles, &counter_running,
-	       hrt_xfer_params->counter_value);
+	       hrt_xfer_params->bus_widths.dummy_cycles, hrt_xfer_params->used_pins_mask,
+	       &counter_running, hrt_xfer_params->counter_value);
 	/* Transfer data */
 	hrt_tx(&hrt_xfer_params->xfer_data[HRT_FE_DATA], hrt_xfer_params->bus_widths.data,
-	       &counter_running, hrt_xfer_params->counter_value);
+	       hrt_xfer_params->used_pins_mask, &counter_running, hrt_xfer_params->counter_value);
 
 	/* Hardware issue workaround,
 	 * additional clock edge when transmitting in modes other than MSPI_CPP_MODE_0.
@@ -339,6 +349,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 	uint32_t *data = (uint32_t *)hrt_xfer_params->xfer_data[HRT_FE_DATA].data;
 	uint32_t last_word;
 	uint16_t prev_out;
+	uint16_t rx_pin_mask = 0;
 
 	/* Workaround for hw issue: in modes 1-3 clock does 1 extra edge after being stopped.
 	 * To fix it, rx transfer is set up to do 1 clock cycle less and last clock edge is done,
@@ -361,7 +372,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 	if ((hrt_xfer_params->xfer_data[HRT_FE_COMMAND].word_count != 0) ||
 	    (hrt_xfer_params->xfer_data[HRT_FE_ADDRESS].word_count != 0) ||
 	    (hrt_xfer_params->xfer_data[HRT_FE_DUMMY_CYCLES].word_count != 0)) {
-		/* Write only command, address and dummy cycles and keep CS active. */
+		/* Write command, address or dummy cycles and keep CS active. */
 		hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count = 0;
 		hrt_xfer_params->ce_hold = true;
 		hrt_write(hrt_xfer_params);
@@ -371,15 +382,16 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 	hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count = word_count;
 	hrt_xfer_params->ce_hold = hold;
 
-	/* Configure clock and pins */
-	if (hrt_xfer_params->bus_widths.data == 1) {
-		/* Set DQ1 as input */
-		WRITE_BIT(hrt_xfer_params->tx_direction_mask, SPI_INPUT_PIN_NUM,
-			  VPRCSR_NORDIC_DIR_INPUT);
-		nrf_vpr_csr_vio_dir_set(hrt_xfer_params->tx_direction_mask);
-	} else {
-		nrf_vpr_csr_vio_dir_set(hrt_xfer_params->rx_direction_mask);
+	/* Set all needed data pins as inputs */
+	WRITE_BIT(rx_pin_mask, D1_VIO, VPRCSR_NORDIC_PIN_USED);
+	if (hrt_xfer_params->bus_widths.data >= 2) {
+		WRITE_BIT(rx_pin_mask, D0_VIO, VPRCSR_NORDIC_PIN_USED);
+		if (hrt_xfer_params->bus_widths.data == 4) {
+			WRITE_BIT(rx_pin_mask, D2_VIO, VPRCSR_NORDIC_PIN_USED);
+			WRITE_BIT(rx_pin_mask, D3_VIO, VPRCSR_NORDIC_PIN_USED);
+		}
 	}
+	nrf_vpr_csr_vio_dir_set(nrf_vpr_csr_vio_dir_get() & ~rx_pin_mask);
 
 	/* Initial configuration */
 	nrf_vpr_csr_vio_mode_in_set(NRF_VPR_CSR_VIO_MODE_IN_SHIFT);
@@ -517,6 +529,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 		 * done, by writing directly to out register and reading in register.
 		 */
 		if (hrt_xfer_params->cpp_mode == MSPI_CPP_MODE_3) {
+			nrf_barrier_rw();
 			rx_end_procedure_mode_3(hrt_xfer_params);
 		} else {
 			hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word =
@@ -544,12 +557,5 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 		} else {
 			nrf_vpr_csr_vio_out_clear_set(BIT(hrt_xfer_params->ce_vio));
 		}
-	}
-
-	/* Set DQ1 back as output. */
-	if (hrt_xfer_params->bus_widths.data == 1) {
-		WRITE_BIT(hrt_xfer_params->tx_direction_mask, SPI_INPUT_PIN_NUM,
-			  VPRCSR_NORDIC_DIR_OUTPUT);
-		nrf_vpr_csr_vio_dir_set(hrt_xfer_params->tx_direction_mask);
 	}
 }

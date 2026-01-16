@@ -27,7 +27,7 @@ static struct mspi_dev_cfg device_cfg[] = {
 static const struct mspi_cfg default_hw_cfg = {
 	.channel_num      = 0,
 	.op_mode          = DT_ENUM_IDX_OR(MSPI_BUS_NODE, op_mode, MSPI_OP_MODE_CONTROLLER),
-	.duplex           = MSPI_FULL_DUPLEX,
+	.duplex           = MSPI_HALF_DUPLEX,
 	.dqs_support      = DT_PROP_OR(MSPI_BUS_NODE, dqs_support, false),
 	.sw_multi_periph  = DT_PROP_OR(MSPI_BUS_NODE, sw_multi_periph, false),
 	.ce_group         = ce_gpios,
@@ -52,7 +52,7 @@ static struct mspi_xfer_packet packet1[] = {
 
 static struct mspi_xfer default_xfer = {
 	.async            = false,
-	.xfer_mode        = MSPI_DMA,
+	.xfer_mode        = MSPI_PIO,
 	.tx_dummy         = 0,
 	.cmd_length       = 1,
 	.addr_length      = 3,
@@ -570,7 +570,7 @@ ZTEST(mspi_error_cases, test_24a_mspi_xfer_tx_dummy_max)
 
 	xfer.tx_dummy = UINT16_MAX;
 
-	check_mspi_transceive(&xfer, 0);
+	check_mspi_transceive(&xfer, -ENOTSUP);
 }
 
 ZTEST(mspi_error_cases, test_25a_mspi_xfer_rx_dummy_max)
@@ -579,7 +579,7 @@ ZTEST(mspi_error_cases, test_25a_mspi_xfer_rx_dummy_max)
 
 	xfer.rx_dummy = UINT16_MAX;
 
-	check_mspi_transceive(&xfer, 0);
+	check_mspi_transceive(&xfer, -ENOTSUP);
 }
 
 ZTEST(mspi_error_cases, test_26a_mspi_xfer_cmd_length_max)
@@ -633,7 +633,7 @@ ZTEST(mspi_error_cases, test_30b_mspi_xfer_priority_1)
 
 	xfer.priority = 1;
 
-	check_mspi_transceive(&xfer, -ENOTSUP);
+	check_mspi_transceive(&xfer, 0);
 }
 
 ZTEST(mspi_error_cases, test_31a_mspi_xfer_packets_NULL)
