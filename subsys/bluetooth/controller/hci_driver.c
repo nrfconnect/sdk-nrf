@@ -952,6 +952,10 @@ static void configure_supported_features(void)
 	if (IS_ENABLED(CONFIG_BT_CTLR_PRIVACY)) {
 		sdc_support_le_privacy();
 	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_DTM)) {
+		sdc_support_direct_test_mode();
+	}
 }
 
 static int configure_memory_usage(void)
