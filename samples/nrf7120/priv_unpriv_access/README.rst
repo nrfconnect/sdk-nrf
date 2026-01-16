@@ -9,10 +9,10 @@ A simple user application that demonstrates access to privileged and unprivilege
 memory and peripherals from both privileged and unprivileged mode.
 
 This application can be built into cases of:
-1. Only privileged mode access privileged memory and peripherals. (No error)
-2. Only privileged mode access unprivileged memory and peripherals. (No error)
-3. Only unprivileged mode access unprivileged memory and peripherals. (No error)
-4. Only unprivileged mode access privileged memory and peripherals. (Expected error)
+1. Privileged mode access privileged memory and peripherals. (No error)
+2. Privileged mode access unprivileged memory and peripherals. (No error)
+3. Unprivileged mode access unprivileged memory and peripherals. (No error)
+4. Unprivileged mode access privileged memory and peripherals. (Expected error)
 
 Sample Output
 =============

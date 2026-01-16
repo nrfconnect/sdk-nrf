@@ -15,7 +15,7 @@ tests:
     arch_exclude:
       - posix
     integration_platforms:
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     platform_allow:
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     tags: introduction
