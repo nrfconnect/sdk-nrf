@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../../../cracenpsa/src/common.h"
+#include "../../../cracenpsa/src/internal/common.h"
 #include <cracen/mem_helpers.h>
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>

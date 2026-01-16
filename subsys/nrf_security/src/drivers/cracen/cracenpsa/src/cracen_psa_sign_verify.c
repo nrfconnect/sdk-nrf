@@ -20,14 +20,14 @@
 #include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/trng.h>
 
-#include "common.h"
+#include "internal/common.h"
 #include "cracen_psa.h"
-#include "cracen_psa_ecdsa.h"
-#include "cracen_psa_eddsa.h"
-#include <cracen_psa_ikg.h>
-#include "cracen_psa_rsa_signature_pss.h"
-#include "cracen_psa_rsa_signature_pkcs1v15.h"
-#include "ecc.h"
+#include "internal/cracen_ecdsa.h"
+#include "internal/cracen_eddsa.h"
+#include "internal/cracen_ikg.h"
+#include "internal/cracen_rsa_signature_pss.h"
+#include "internal/cracen_rsa_signature_pkcs1v15.h"
+#include "internal/ecc.h"
 #define CRACEN_IS_MESSAGE      (1)
 #define CRACEN_IS_HASH	       (0)
 #define CRACEN_EXTRACT_PUBKEY  (1)

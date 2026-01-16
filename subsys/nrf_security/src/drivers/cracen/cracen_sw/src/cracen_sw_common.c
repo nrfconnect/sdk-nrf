@@ -9,7 +9,7 @@
 #include <sxsymcrypt/aes.h>
 #include <cracen/statuscodes.h>
 #include <zephyr/logging/log.h>
-#include "../../../cracenpsa/src/common.h"
+#include "../../../cracenpsa/src/internal/common.h"
 #include <cracen_sw_common.h>
 
 LOG_MODULE_DECLARE(cracen, CONFIG_CRACEN_LOG_LEVEL);

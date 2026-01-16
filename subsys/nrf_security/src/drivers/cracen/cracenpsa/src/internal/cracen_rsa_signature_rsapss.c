@@ -53,7 +53,7 @@
 #include "rsamgf1xor.h"
 #include "rsa_key.h"
 #include "cracen_psa_primitives.h"
-#include "cracen_psa_rsa_signature_pss.h"
+#include "cracen_rsa_signature_pss.h"
 #include "rsamgf1xor.h"
 #include "common.h"
 

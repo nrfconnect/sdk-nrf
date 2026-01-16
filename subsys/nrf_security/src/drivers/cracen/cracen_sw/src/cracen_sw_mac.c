@@ -12,7 +12,7 @@
 #include <cracen/mem_helpers.h>
 #include <cracen_psa_primitives.h>
 #include <cracen_sw_mac_cmac.h>
-#include "../../cracenpsa/src/cracen_mac_hmac.h"
+#include "../../cracenpsa/src/internal/cracen_mac_hmac.h"
 #include <cracen_psa.h>
 
 static psa_status_t setup(cracen_mac_operation_t *operation, const psa_key_attributes_t *attributes,

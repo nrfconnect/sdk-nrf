@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "common.h"
+#include "internal/common.h"
 #include "cracen_psa_primitives.h"
 
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
 #include <cracen/statuscodes.h>
 #include <silexpk/blinding.h>
-#include <cracen_psa_rsa_encryption.h>
+#include "internal/cracen_rsa_encryption.h"
 
 static bool is_alg_supported(psa_algorithm_t alg)
 {

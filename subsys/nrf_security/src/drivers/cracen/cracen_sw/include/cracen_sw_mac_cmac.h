@@ -9,7 +9,7 @@
 #include <psa/crypto.h>
 #include <stdint.h>
 #include <cracen_psa_primitives.h>
-#include "../../../cracenpsa/src/common.h"
+#include "../../../cracenpsa/src/internal/common.h"
 #include <cracen_sw_common.h>
 
 /**
