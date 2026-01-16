@@ -145,7 +145,11 @@ function(zephyr_mcuboot_tasks)
   endif()
 
   if(CONFIG_NCS_MCUBOOT_IMGTOOL_APPEND_MANIFEST)
-    set(imgtool_extra ${imgtool_extra} --manifest "manifest.yaml")
+    if(CONFIG_NCS_IS_VARIANT_IMAGE)
+      set(imgtool_extra ${imgtool_extra} --manifest "${CONFIG_NCS_MCUBOOT_MANIFEST_DIR}/manifest_secondary.yaml")
+    else()
+      set(imgtool_extra ${imgtool_extra} --manifest "${CONFIG_NCS_MCUBOOT_MANIFEST_DIR}/manifest.yaml")
+    endif()
   endif()
 
   set(imgtool_args ${imgtool_extra})
