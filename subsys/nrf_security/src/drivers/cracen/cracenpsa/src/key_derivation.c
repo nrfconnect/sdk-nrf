@@ -10,6 +10,7 @@
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
+#include <cracen_psa_builtin_key_policy.h>
 #include <psa/crypto.h>
 #include <psa/crypto_types.h>
 #include <psa/crypto_values.h>
@@ -927,6 +928,11 @@ psa_status_t cracen_key_derivation_input_key(cracen_key_derivation_operation_t *
 					     const psa_key_attributes_t *attributes,
 					     const uint8_t *key_buffer, size_t key_buffer_size)
 {
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_DERIVE |
+							 PSA_KEY_USAGE_VERIFY_DERIVATION)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	if (operation->alg != PSA_ALG_SP800_108_COUNTER_CMAC &&
 	    !PSA_ALG_IS_SP800_108_COUNTER_HMAC(operation->alg)) {
 		return cracen_key_derivation_input_bytes(operation, step, key_buffer,
@@ -1317,23 +1323,27 @@ psa_status_t cracen_key_agreement(const psa_key_attributes_t *attributes, const 
 {
 	psa_ecc_family_t curve_family = PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(attributes));
 	size_t curve_bits = psa_get_key_bits(attributes);
-	psa_status_t psa_status;
+	psa_status_t status;
 	const struct sx_pk_ecurve *curve;
 
 	*output_length = 0;
 
-	psa_status = ecc_key_agreement_check_alg(alg);
-	if (psa_status != PSA_SUCCESS) {
-		return psa_status;
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_DERIVE)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
+	status = ecc_key_agreement_check_alg(alg);
+	if (status != PSA_SUCCESS) {
+		return status;
 	}
 
 	if (!PSA_KEY_TYPE_IS_ECC_KEY_PAIR(psa_get_key_type(attributes))) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	psa_status = cracen_ecc_get_ecurve_from_psa(curve_family, curve_bits, &curve);
-	if (psa_status != PSA_SUCCESS) {
-		return PSA_SUCCESS;
+	status = cracen_ecc_get_ecurve_from_psa(curve_family, curve_bits, &curve);
+	if (status != PSA_SUCCESS) {
+		return status;
 	}
 
 	if (sx_pk_curve_opsize(curve) != priv_key_size) {

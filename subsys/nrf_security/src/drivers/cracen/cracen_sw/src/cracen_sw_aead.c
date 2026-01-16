@@ -12,6 +12,7 @@
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/__assert.h>
 
+#include <cracen_psa_builtin_key_policy.h>
 #include <cracen_psa_primitives.h>
 #include "../../../cracenpsa/src/common.h"
 #include <cracen_sw_common.h>
@@ -38,6 +39,10 @@ psa_status_t cracen_aead_encrypt_setup(cracen_aead_operation_t *operation,
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_ENCRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 #if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
 	if (PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg) == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_encrypt_setup(operation, attributes, key_buffer,
@@ -54,6 +59,10 @@ psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
 {
 	if (key_buffer_size > sizeof(operation->key_buffer)) {
 		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_DECRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
 	}
 
 #if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
@@ -365,6 +374,10 @@ psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const u
 {
 	psa_algorithm_t base_alg = PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg);
 
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_ENCRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 #if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
 	if (base_alg == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_encrypt(
@@ -449,6 +462,10 @@ psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const u
 				 size_t plaintext_size, size_t *plaintext_length)
 {
 	psa_algorithm_t base_alg = PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg);
+
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_DECRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
 
 #if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
 	if (base_alg == PSA_ALG_CCM) {

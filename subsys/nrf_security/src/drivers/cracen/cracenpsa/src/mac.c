@@ -10,7 +10,8 @@
 #include <zephyr/sys/__assert.h>
 #include "common.h"
 #include <cracen/mem_helpers.h>
-#include "cracen_psa_primitives.h"
+#include <cracen_psa_builtin_key_policy.h>
+#include <cracen_psa_primitives.h>
 #include "cracen_mac_cmac.h"
 #include "cracen_mac_hmac.h"
 
@@ -185,6 +186,10 @@ psa_status_t cracen_mac_compute(const psa_key_attributes_t *attributes, const ui
 {
 	psa_status_t status;
 	cracen_mac_operation_t operation = {0};
+
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_SIGN_MESSAGE)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
 
 	status = setup(&operation, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {

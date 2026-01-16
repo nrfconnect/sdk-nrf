@@ -10,13 +10,15 @@
 #include <zephyr/sys/__assert.h>
 #include "common.h"
 #include <cracen/mem_helpers.h>
+#include <cracen_psa.h>
+#include <cracen_psa_builtin_key_policy.h>
 #include <cracen_psa_primitives.h>
 #include <cracen_sw_mac_cmac.h>
 #include "../../cracenpsa/src/cracen_mac_hmac.h"
-#include <cracen_psa.h>
 
 static psa_status_t setup(cracen_mac_operation_t *operation, const psa_key_attributes_t *attributes,
-			  const uint8_t *key_buffer, size_t key_buffer_size, psa_algorithm_t alg)
+			  const uint8_t *key_buffer, size_t key_buffer_size, psa_algorithm_t alg,
+			  psa_key_usage_t usage)
 {
 	/* Assuming that psa_core checks that key has PSA_KEY_USAGE_SIGN_MESSAGE
 	 * set
@@ -27,6 +29,10 @@ static psa_status_t setup(cracen_mac_operation_t *operation, const psa_key_attri
 	/* Operation must be empty */
 	if (operation->alg != 0) {
 		return PSA_ERROR_BAD_STATE;
+	}
+
+	if (!cracen_builtin_key_user_allowed(attributes, usage)) {
+		return PSA_ERROR_NOT_PERMITTED;
 	}
 
 	operation->alg = alg;
@@ -54,7 +60,8 @@ psa_status_t cracen_mac_sign_setup(cracen_mac_operation_t *operation,
 				   const uint8_t *key_buffer, size_t key_buffer_size,
 				   psa_algorithm_t alg)
 {
-	return setup(operation, attributes, key_buffer, key_buffer_size, alg);
+	return setup(operation, attributes, key_buffer, key_buffer_size, alg,
+		     PSA_KEY_USAGE_SIGN_MESSAGE);
 }
 
 psa_status_t cracen_mac_verify_setup(cracen_mac_operation_t *operation,
@@ -62,7 +69,8 @@ psa_status_t cracen_mac_verify_setup(cracen_mac_operation_t *operation,
 				     const uint8_t *key_buffer, size_t key_buffer_size,
 				     psa_algorithm_t alg)
 {
-	return setup(operation, attributes, key_buffer, key_buffer_size, alg);
+	return setup(operation, attributes, key_buffer, key_buffer_size, alg,
+		     PSA_KEY_USAGE_VERIFY_MESSAGE);
 }
 
 psa_status_t cracen_mac_update(cracen_mac_operation_t *operation, const uint8_t *input,
@@ -186,7 +194,11 @@ psa_status_t cracen_mac_compute(const psa_key_attributes_t *attributes, const ui
 	psa_status_t status;
 	cracen_mac_operation_t operation = {0};
 
-	status = setup(&operation, attributes, key_buffer, key_buffer_size, alg);
+	/* This function gets called from both psa_mac_compute() and psa_mac_verify()
+	 * and there is no way to tell from which here, thus the two usage flags.
+	 */
+	status = setup(&operation, attributes, key_buffer, key_buffer_size, alg,
+		       PSA_KEY_USAGE_SIGN_MESSAGE | PSA_KEY_USAGE_VERIFY_MESSAGE);
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}
