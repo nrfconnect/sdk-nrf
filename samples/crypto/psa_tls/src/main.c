@@ -4,18 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <nrfx.h>
-#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/net/tls_credentials.h>
-#include "psa_tls_functions.h"
-#include "psa_tls_credentials.h"
-#include "certificate.h"
-#include "dummy_psk.h"
-#include "psa/crypto.h"
+
+#include <psa/crypto.h>
+
+#include <psa_tls_functions.h>
+#include <psa_tls_credentials.h>
+#include <certificate.h>
+#include <dummy_psk.h>
 
 LOG_MODULE_REGISTER(psa_tls_sample);
-
 
 static int tls_set_preshared_key(void)
 {
@@ -36,7 +35,6 @@ static int tls_set_preshared_key(void)
 
 	return APP_SUCCESS;
 }
-
 
 int main(void)
 {

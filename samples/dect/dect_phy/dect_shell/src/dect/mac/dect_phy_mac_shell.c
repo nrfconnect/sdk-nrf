@@ -12,7 +12,7 @@
 #include <zephyr/kernel.h>
 
 #include <zephyr/shell/shell.h>
-#include <getopt.h>
+#include <zephyr/sys/sys_getopt.h>
 
 #include "desh_print.h"
 
@@ -89,14 +89,17 @@ enum {
 };
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_beacon_scan[] = {
-	{"scan_time", required_argument, 0, 't'},
-	{"rx_exp_rssi_level", required_argument, 0, 'e'},
-	{"clear_nbr_cache", no_argument, 0, 'D'},
-	{"force", no_argument, 0, 'f'},
-	{"free_th", required_argument, 0, DECT_PHY_MAC_SHELL_BEACON_SCAN_RSSI_SCAN_FREE_TH},
-	{"busy_th", required_argument, 0, DECT_PHY_MAC_SHELL_BEACON_SCAN_RSSI_SCAN_BUSY_TH},
-	{0, 0, 0, 0}};
+static struct sys_getopt_option long_options_beacon_scan[] = {
+	{"scan_time", sys_getopt_required_argument, 0, 't'},
+	{"rx_exp_rssi_level", sys_getopt_required_argument, 0, 'e'},
+	{"clear_nbr_cache", sys_getopt_no_argument, 0, 'D'},
+	{"force", sys_getopt_no_argument, 0, 'f'},
+	{"free_th", sys_getopt_required_argument, 0,
+	 DECT_PHY_MAC_SHELL_BEACON_SCAN_RSSI_SCAN_FREE_TH},
+	{"busy_th", sys_getopt_required_argument, 0,
+	 DECT_PHY_MAC_SHELL_BEACON_SCAN_RSSI_SCAN_BUSY_TH},
+	{0, 0, 0, 0}
+};
 
 static void dect_phy_mac_beacon_scan_cmd(const struct shell *shell, size_t argc, char **argv)
 {
@@ -112,26 +115,25 @@ static void dect_phy_mac_beacon_scan_cmd(const struct shell *shell, size_t argc,
 	int long_index = 0;
 	int opt;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
 	params.busy_rssi_limit = current_settings->rssi_scan.busy_threshold;
 	params.free_rssi_limit = current_settings->rssi_scan.free_threshold;
 	params.rssi_interval_secs = 1;
 
-	while ((opt = getopt_long(argc, argv, "c:t:e:i:Dfh", long_options_beacon_scan,
+	while ((opt = sys_getopt_long(argc, argv, "c:t:e:i:Dfh", long_options_beacon_scan,
 				  &long_index)) != -1) {
 		switch (opt) {
 		case 'c': {
-			params.channel = atoi(optarg);
+			params.channel = atoi(sys_getopt_optarg);
 			break;
 		}
 		case 't': {
-			params.duration_secs = atoi(optarg);
+			params.duration_secs = atoi(sys_getopt_optarg);
 			break;
 		}
 		case 'e': {
-			params.expected_rssi_level = atoi(optarg);
+			params.expected_rssi_level = atoi(sys_getopt_optarg);
 			break;
 		}
 		case 'D': {
@@ -143,26 +145,26 @@ static void dect_phy_mac_beacon_scan_cmd(const struct shell *shell, size_t argc,
 			break;
 		}
 		case DECT_PHY_MAC_SHELL_BEACON_SCAN_RSSI_SCAN_FREE_TH: {
-			params.free_rssi_limit = atoi(optarg);
+			params.free_rssi_limit = atoi(sys_getopt_optarg);
 			break;
 		}
 		case DECT_PHY_MAC_SHELL_BEACON_SCAN_RSSI_SCAN_BUSY_TH: {
-			params.busy_rssi_limit = atoi(optarg);
+			params.busy_rssi_limit = atoi(sys_getopt_optarg);
 			break;
 		}
 		case 'i': {
-			params.rssi_interval_secs = atoi(optarg);
+			params.rssi_interval_secs = atoi(sys_getopt_optarg);
 			break;
 		}
 		case 'h':
 			goto show_usage;
 		case '?':
 		default:
-			desh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			desh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		desh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -196,8 +198,10 @@ static const char dect_phy_mac_beacon_start_cmd_usage_str[] =
 	"                              [-40,-30,-20,-16,-12,-8,-4,0,4,7,10,13,16,19,21,23]\n";
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_beacon_start[] = {{"tx_pwr", required_argument, 0, 'p'},
-						    {0, 0, 0, 0}};
+static struct sys_getopt_option long_options_beacon_start[] = {
+	{"tx_pwr", sys_getopt_required_argument, 0, 'p'},
+	{0, 0, 0, 0}
+};
 
 static void dect_phy_mac_beacon_start_cmd(const struct shell *shell, size_t argc, char **argv)
 {
@@ -210,29 +214,28 @@ static void dect_phy_mac_beacon_start_cmd(const struct shell *shell, size_t argc
 	int long_index = 0;
 	int opt;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
-	while ((opt = getopt_long(argc, argv, "p:c:h", long_options_beacon_start,
+	while ((opt = sys_getopt_long(argc, argv, "p:c:h", long_options_beacon_start,
 				  &long_index)) != -1) {
 		switch (opt) {
 		case 'c': {
-			params.beacon_channel = atoi(optarg);
+			params.beacon_channel = atoi(sys_getopt_optarg);
 			break;
 		}
 		case 'p': {
-			params.tx_power_dbm = atoi(optarg);
+			params.tx_power_dbm = atoi(sys_getopt_optarg);
 			break;
 		}
 		case 'h':
 			goto show_usage;
 		case '?':
 		default:
-			desh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			desh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		desh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -279,10 +282,12 @@ static const char dect_phy_mac_associate_cmd_usage_str[] =
 	"      (dect sett --rssi_scan_busy_th <dbm>).\n";
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_associate[] = {{"tx_pwr", required_argument, 0, 'p'},
-						 {"tx_mcs", required_argument, 0, 'm'},
-						 {"long_rd_id", required_argument, 0, 't'},
-						 {0, 0, 0, 0}};
+static struct sys_getopt_option long_options_associate[] = {
+	{"tx_pwr", sys_getopt_required_argument, 0, 'p'},
+	{"tx_mcs", sys_getopt_required_argument, 0, 'm'},
+	{"long_rd_id", sys_getopt_required_argument, 0, 't'},
+	{0, 0, 0, 0}
+};
 
 static int dect_phy_mac_associate_cmd(const struct shell *shell, size_t argc, char **argv)
 {
@@ -291,18 +296,17 @@ static int dect_phy_mac_associate_cmd(const struct shell *shell, size_t argc, ch
 	int long_index = 0;
 	int opt;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
 	params.tx_power_dbm = 0;
 	params.mcs = 0;
 	params.target_long_rd_id = 38;
 
-	while ((opt = getopt_long(argc, argv, "p:m:t:h", long_options_associate,
+	while ((opt = sys_getopt_long(argc, argv, "p:m:t:h", long_options_associate,
 				  &long_index)) != -1) {
 		switch (opt) {
 		case 't': {
-			params.target_long_rd_id = shell_strtoul(optarg, 10, &ret);
+			params.target_long_rd_id = shell_strtoul(sys_getopt_optarg, 10, &ret);
 			if (ret) {
 				desh_error("Give decent tx id (> 0)");
 				return -EINVAL;
@@ -310,22 +314,22 @@ static int dect_phy_mac_associate_cmd(const struct shell *shell, size_t argc, ch
 			break;
 		}
 		case 'p': {
-			params.tx_power_dbm = atoi(optarg);
+			params.tx_power_dbm = atoi(sys_getopt_optarg);
 			break;
 		}
 		case 'm': {
-			params.mcs = atoi(optarg);
+			params.mcs = atoi(sys_getopt_optarg);
 			break;
 		}
 		case 'h':
 			goto show_usage;
 		case '?':
 		default:
-			desh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			desh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		desh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -362,11 +366,12 @@ static const char dect_phy_mac_dissociate_cmd_usage_str[] =
 	"      (dect sett --rssi_scan_busy_th <dbm>).\n";
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_dissociate[] = {
-	{"tx_pwr", required_argument, 0, 'p'},
-	{"tx_mcs", required_argument, 0, 'm'},
-	{"long_rd_id", required_argument, 0, 't'},
-	{0, 0, 0, 0}};
+static struct sys_getopt_option long_options_dissociate[] = {
+	{"tx_pwr", sys_getopt_required_argument, 0, 'p'},
+	{"tx_mcs", sys_getopt_required_argument, 0, 'm'},
+	{"long_rd_id", sys_getopt_required_argument, 0, 't'},
+	{0, 0, 0, 0}
+};
 
 static int dect_phy_mac_dissociate_cmd(const struct shell *shell, size_t argc, char **argv)
 {
@@ -375,18 +380,17 @@ static int dect_phy_mac_dissociate_cmd(const struct shell *shell, size_t argc, c
 	int long_index = 0;
 	int opt;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
 	params.tx_power_dbm = 0;
 	params.mcs = 0;
 	params.target_long_rd_id = 38;
 
-	while ((opt = getopt_long(argc, argv, "p:m:t:h", long_options_dissociate,
+	while ((opt = sys_getopt_long(argc, argv, "p:m:t:h", long_options_dissociate,
 				  &long_index)) != -1) {
 		switch (opt) {
 		case 't': {
-			params.target_long_rd_id = shell_strtoul(optarg, 10, &ret);
+			params.target_long_rd_id = shell_strtoul(sys_getopt_optarg, 10, &ret);
 			if (ret) {
 				desh_error("Give decent tx id (> 0)");
 				return -EINVAL;
@@ -394,22 +398,22 @@ static int dect_phy_mac_dissociate_cmd(const struct shell *shell, size_t argc, c
 			break;
 		}
 		case 'p': {
-			params.tx_power_dbm = atoi(optarg);
+			params.tx_power_dbm = atoi(sys_getopt_optarg);
 			break;
 		}
 		case 'm': {
-			params.mcs = atoi(optarg);
+			params.mcs = atoi(sys_getopt_optarg);
 			break;
 		}
 		case 'h':
 			goto show_usage;
 		case '?':
 		default:
-			desh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			desh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		desh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -452,13 +456,15 @@ static const char dect_phy_mac_rach_tx_cmd_usage_str[] =
 #define DECT_PHY_MAC_RACH_TX_DATA_JSON_OVERHEAD 30
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_rach_tx[] = { {"data", required_argument, 0, 'd'},
-						{"tx_pwr", required_argument, 0, 'p'},
-						{"tx_mcs", required_argument, 0, 'm'},
-						{"long_rd_id", required_argument, 0, 't'},
-						{"interval", required_argument, 0, 'i'},
-						{"get_mdm_temp", no_argument, 0, 'j'},
-						{0, 0, 0, 0}};
+static struct sys_getopt_option long_options_rach_tx[] = {
+	{"data", sys_getopt_required_argument, 0, 'd'},
+	{"tx_pwr", sys_getopt_required_argument, 0, 'p'},
+	{"tx_mcs", sys_getopt_required_argument, 0, 'm'},
+	{"long_rd_id", sys_getopt_required_argument, 0, 't'},
+	{"interval", sys_getopt_required_argument, 0, 'i'},
+	{"get_mdm_temp", sys_getopt_no_argument, 0, 'j'},
+	{0, 0, 0, 0}
+};
 
 static int dect_phy_mac_rach_tx_cmd(const struct shell *shell, size_t argc, char **argv)
 {
@@ -476,8 +482,7 @@ static int dect_phy_mac_rach_tx_cmd(const struct shell *shell, size_t argc, char
 		return 0;
 	}
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
 	params.tx_power_dbm = 0;
 	params.mcs = 0;
@@ -485,11 +490,11 @@ static int dect_phy_mac_rach_tx_cmd(const struct shell *shell, size_t argc, char
 	params.interval_secs = 0;
 	params.get_mdm_temp = false;
 
-	while ((opt = getopt_long(argc, argv, "d:p:m:t:i:jh", long_options_rach_tx,
+	while ((opt = sys_getopt_long(argc, argv, "d:p:m:t:i:jh", long_options_rach_tx,
 				  &long_index)) != -1) {
 		switch (opt) {
 		case 't': {
-			params.target_long_rd_id = shell_strtoul(optarg, 10, &ret);
+			params.target_long_rd_id = shell_strtoul(sys_getopt_optarg, 10, &ret);
 			if (ret) {
 				desh_error("Give decent tx id (> 0)");
 				return -EINVAL;
@@ -497,23 +502,23 @@ static int dect_phy_mac_rach_tx_cmd(const struct shell *shell, size_t argc, char
 			break;
 		}
 		case 'd': {
-			if (strlen(optarg) >= (DECT_DATA_MAX_LEN - 1)) {
-				desh_error("RACH TX data (%s) too long.", optarg);
+			if (strlen(sys_getopt_optarg) >= (DECT_DATA_MAX_LEN - 1)) {
+				desh_error("RACH TX data (%s) too long.", sys_getopt_optarg);
 				return -EINVAL;
 			}
-			strcpy(params.tx_data_str, optarg);
+			strcpy(params.tx_data_str, sys_getopt_optarg);
 			break;
 		}
 		case 'p': {
-			params.tx_power_dbm = atoi(optarg);
+			params.tx_power_dbm = atoi(sys_getopt_optarg);
 			break;
 		}
 		case 'm': {
-			params.mcs = atoi(optarg);
+			params.mcs = atoi(sys_getopt_optarg);
 			break;
 		}
 		case 'i': {
-			params.interval_secs = atoi(optarg);
+			params.interval_secs = atoi(sys_getopt_optarg);
 			if (params.interval_secs < 0) {
 				desh_error("The interval must be positive.");
 				return -EINVAL;
@@ -529,11 +534,11 @@ static int dect_phy_mac_rach_tx_cmd(const struct shell *shell, size_t argc, char
 			goto show_usage;
 		case '?':
 		default:
-			desh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			desh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		desh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}

@@ -29,7 +29,7 @@ To use the Simple GPIO implementation of FEM with SKY66112-11, complete the foll
 
       / {
          nrf_radio_fem: name_of_fem_node {
-            compatible = "skyworks,sky66112-11", "generic-fem-two-ctrl-pins";
+            compatible = "skyworks,sky66112-11", "radio-fem-two-ctrl-pins";
             ctx-gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
             crx-gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
          };

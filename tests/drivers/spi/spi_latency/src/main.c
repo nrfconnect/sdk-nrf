@@ -22,7 +22,7 @@
 
 #define MAX_TEST_BUFFER_SIZE 2000
 
-static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi), SPI_MODE, 0);
+static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi), SPI_MODE);
 const struct device *const tst_timer_dev = DEVICE_DT_GET(DT_ALIAS(tst_timer));
 
 #define MEMORY_SECTION(node)                                                                       \

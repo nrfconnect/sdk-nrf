@@ -22,14 +22,7 @@ config BT_MESH_ADV_STACK_SIZE
 
 endif # SOC_SERIES_NRF54LX
 
-if BT_MESH_USES_MBEDTLS_PSA
-
-config BT_MESH_MBEDTLS_BACKEND_ENABLE
-	bool
-	default y
-	imply NRF_SECURITY
-	imply MBEDTLS_ENABLE_HEAP
-	imply PSA_WANT_GENERATE_RANDOM
+if !BUILD_WITH_TFM
 
 # NLC profile or DFU distributor role support requires more netkeys and appkeys
 # thus more HEAP is needed by MEBEDTLS to accommodate minimum number of keys.
@@ -58,7 +51,7 @@ config BT_MESH_CRYPTO_KEY_INITIALIZER
 
 endif # BT_SETTINGS
 
-endif # BT_MESH_USES_MBEDTLS_PSA
+endif # !BUILD_WITH_TFM
 
 if BT_MESH_ADV_EXT
 
@@ -180,19 +173,6 @@ config BT_MESH_SUBNET_COUNT
 config BT_MESH_PROXY_FILTER_SIZE
 	default 8 if BT_MESH_NLC_PERF_BASELINE
 	range 8 32767 if BT_MESH_NLC_PERF_BASELINE
-
-config BT_MESH_USES_TFM_PSA
-	bool
-	select PSA_WANT_GENERATE_RANDOM
-	select PSA_WANT_ALG_CCM
-	select PSA_WANT_ALG_ECB_NO_PADDING
-	select PSA_WANT_ALG_CMAC
-	select PSA_WANT_ALG_HMAC
-	select PSA_WANT_ALG_ECDH
-	select PSA_WANT_ECC_SECP_R1_256
-	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE
-	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
-	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT
 
 config BT_MESH_KEY_IMPORTER
 	bool "Use key importer"

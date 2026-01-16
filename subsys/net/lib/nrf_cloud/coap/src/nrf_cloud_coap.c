@@ -66,9 +66,7 @@ static int64_t get_ts(void)
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 static int agnss_err;
 
-static void get_agnss_callback(int16_t result_code,
-			      size_t offset, const uint8_t *payload, size_t len,
-			      bool last_block, void *user_data)
+static void get_agnss_callback(const struct coap_client_response_data *data, void *user_data)
 {
 	struct nrf_cloud_rest_agnss_result *result = user_data;
 
@@ -77,16 +75,16 @@ static void get_agnss_callback(int16_t result_code,
 		agnss_err = -EINVAL;
 		return;
 	}
-	if (result_code != COAP_RESPONSE_CODE_CONTENT) {
-		agnss_err = result_code;
-		if (len) {
-			LOG_ERR("Unexpected response: %.*s", len, payload);
+	if (data->result_code != COAP_RESPONSE_CODE_CONTENT) {
+		agnss_err = data->result_code;
+		if (data->payload_len) {
+			LOG_ERR("Unexpected response: %.*s", data->payload_len, data->payload);
 		}
 		return;
 	}
-	if (((offset + len) <= result->buf_sz) && result->buf && payload) {
-		memcpy(&result->buf[offset], payload, len);
-		result->agnss_sz += len;
+	if ((data->offset + data->payload_len) <= result->buf_sz && result->buf && data->payload) {
+		memcpy(&result->buf[data->offset], data->payload, data->payload_len);
+		result->agnss_sz += data->payload_len;
 		agnss_err = 0;
 	} else if (agnss_err != -ENOBUFS) {
 		LOG_ERR("Received A-GNSS data cannot fit in result buffer");
@@ -157,17 +155,15 @@ give_and_return:
 #if defined(CONFIG_NRF_CLOUD_PGPS)
 static int pgps_err;
 
-static void get_pgps_callback(int16_t result_code,
-			      size_t offset, const uint8_t *payload, size_t len,
-			      bool last_block, void *user)
+static void get_pgps_callback(const struct coap_client_response_data *data, void *user)
 {
-	if (result_code != COAP_RESPONSE_CODE_CONTENT) {
-		pgps_err = result_code;
-		if (len) {
-			LOG_ERR("Unexpected response: %.*s", len, payload);
+	if (data->result_code != COAP_RESPONSE_CODE_CONTENT) {
+		pgps_err = data->result_code;
+		if (data->payload_len) {
+			LOG_ERR("Unexpected response: %.*s", data->payload_len, data->payload);
 		}
 	} else {
-		pgps_err = coap_codec_pgps_resp_decode(user, payload, len,
+		pgps_err = coap_codec_pgps_resp_decode(user, data->payload, data->payload_len,
 						       COAP_CONTENT_FORMAT_APP_CBOR);
 	}
 }
@@ -438,17 +434,15 @@ int nrf_cloud_coap_location_send(const struct nrf_cloud_gnss_data *gnss, bool co
 
 static int loc_err;
 
-static void get_location_callback(int16_t result_code,
-				  size_t offset, const uint8_t *payload, size_t len,
-				  bool last_block, void *user)
+static void get_location_callback(const struct coap_client_response_data *data, void *user)
 {
-	if (result_code != COAP_RESPONSE_CODE_CONTENT) {
-		loc_err = result_code;
-		if (len) {
-			LOG_ERR("Unexpected response: %.*s", len, payload);
+	if (data->result_code != COAP_RESPONSE_CODE_CONTENT) {
+		loc_err = data->result_code;
+		if (data->payload_len) {
+			LOG_ERR("Unexpected response: %.*s", data->payload_len, data->payload);
 		}
-	} else if (len) {
-		loc_err = coap_codec_ground_fix_resp_decode(user, payload, len,
+	} else if (data->payload_len) {
+		loc_err = coap_codec_ground_fix_resp_decode(user, data->payload, data->payload_len,
 							    COAP_CONTENT_FORMAT_APP_CBOR);
 	} else {
 		struct nrf_cloud_location_result *result = user;
@@ -533,18 +527,16 @@ give_and_return:
 
 static int fota_err;
 
-static void get_fota_callback(int16_t result_code,
-			      size_t offset, const uint8_t *payload, size_t len,
-			      bool last_block, void *user)
+static void get_fota_callback(const struct coap_client_response_data *data, void *user)
 {
-	if (result_code != COAP_RESPONSE_CODE_CONTENT) {
-		fota_err = result_code;
-		if (len) {
-			LOG_ERR("Unexpected response: %.*s", len, payload);
+	if (data->result_code != COAP_RESPONSE_CODE_CONTENT) {
+		fota_err = data->result_code;
+		if (data->payload_len) {
+			LOG_ERR("Unexpected response: %.*s", data->payload_len, data->payload);
 		}
-	} else if (payload && len) {
-		LOG_DBG("Got FOTA response: %.*s", len, (const char *)payload);
-		fota_err = coap_codec_fota_resp_decode(user, payload, len,
+	} else if (data->payload && data->payload_len) {
+		LOG_DBG("Got FOTA response: %.*s", data->payload_len, (const char *)data->payload);
+		fota_err = coap_codec_fota_resp_decode(user, data->payload, data->payload_len,
 						       COAP_CONTENT_FORMAT_APP_JSON);
 	} else {
 		fota_err = -ENOMSG;
@@ -639,14 +631,12 @@ static struct get_shadow_data  {
 	int err;
 } shadow_data;
 
-static void get_shadow_callback(int16_t result_code,
-				size_t offset, const uint8_t *payload, size_t len,
-				bool last_block, void *user)
+static void get_shadow_callback(const struct coap_client_response_data *data, void *user)
 {
-	if (result_code != COAP_RESPONSE_CODE_CONTENT) {
-		shadow_data.err = result_code;
-		if (len) {
-			LOG_ERR("Unexpected response: %.*s", len, payload);
+	if (data->result_code != COAP_RESPONSE_CODE_CONTENT) {
+		shadow_data.err = data->result_code;
+		if (data->payload_len) {
+			LOG_ERR("Unexpected response: %.*s", data->payload_len, data->payload);
 		}
 		return;
 	}
@@ -655,16 +645,16 @@ static void get_shadow_callback(int16_t result_code,
 	size_t cpy_len = (shadow_data.format == COAP_CONTENT_FORMAT_APP_JSON) ?
 			 (shadow_data.buf_len - 1) : shadow_data.buf_len;
 
-	if (len > cpy_len) {
-		LOG_WRN("Shadow data truncated from %zd to %zd bytes.", len, cpy_len);
+	if (data->payload_len > cpy_len) {
+		LOG_WRN("Shadow data truncated from %zd to %zd bytes.", data->payload_len, cpy_len);
 		shadow_data.err = -E2BIG;
 	} else {
 		/* Copy the entire received buffer */
-		cpy_len = len;
+		cpy_len = data->payload_len;
 	}
 
 	if (cpy_len) {
-		memcpy(shadow_data.buf, payload, cpy_len);
+		memcpy(shadow_data.buf, data->payload, cpy_len);
 	}
 
 	if (shadow_data.format == COAP_CONTENT_FORMAT_APP_JSON) {

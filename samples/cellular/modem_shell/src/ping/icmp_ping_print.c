@@ -7,10 +7,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <assert.h>
 
 #include <zephyr/kernel.h>
-#include <zephyr/posix/time.h>
 #include <zephyr/sys/cbprintf.h>
 #include <zephyr/shell/shell.h>
 #include <zephyr/shell/shell_uart.h>

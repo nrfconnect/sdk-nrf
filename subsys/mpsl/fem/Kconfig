@@ -5,7 +5,7 @@
 #
 
 DT_COMPAT_NORDIC_NRF21540_GPIO := nordic,nrf21540-fem
-DT_COMPAT_GENERIC_FEM_2_CTRL_PIN := generic-fem-two-ctrl-pins
+DT_COMPAT_GENERIC_FEM_2_CTRL_PIN := radio-fem-two-ctrl-pins
 DT_COMPAT_NORDIC_NRF2220 := nordic,nrf2220-fem
 DT_COMPAT_NORDIC_NRF2240 := nordic,nrf2240-fem
 

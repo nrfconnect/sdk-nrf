@@ -254,8 +254,10 @@ send:
 /* ctrl + q */
 #define CHAR_DC1 0x11
 
-static void at_cmd_mode_bypass_cb(const struct shell *sh, uint8_t *recv, size_t len)
+static void at_cmd_mode_bypass_cb(const struct shell *sh, uint8_t *recv, size_t len,
+				  void *user_data)
 {
+	ARG_UNUSED(user_data);
 	static uint8_t tail;
 	bool escape = false;
 
@@ -276,7 +278,7 @@ static void at_cmd_mode_bypass_cb(const struct shell *sh, uint8_t *recv, size_t 
 		printk("===========================================================\n");
 		printk("MoSh AT command mode exited\n");
 
-		shell_set_bypass(sh, NULL);
+		shell_set_bypass(sh, NULL, NULL);
 		at_cmd_mode_dont_print = false;
 		at_monitor_pause(&mosh_at_cmd_mode_handler);
 		at_cmd_mode_active = false;
@@ -326,7 +328,7 @@ int at_cmd_mode_start(const struct shell *sh)
 	at_cmd_mode_active = true;
 
 	at_monitor_resume(&mosh_at_cmd_mode_handler);
-	shell_set_bypass(sh, at_cmd_mode_bypass_cb);
+	shell_set_bypass(sh, at_cmd_mode_bypass_cb, NULL);
 
 	return 0;
 }

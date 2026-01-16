@@ -11,7 +11,7 @@
 #ifdef CONFIG_POSIX_C_LIB_EXT
 #include <zephyr/posix/unistd.h>
 #endif
-#include <getopt.h>
+#include <zephyr/sys/sys_getopt.h>
 #include <modem/sms.h>
 
 #include "sms.h"
@@ -56,13 +56,13 @@ static const char sms_recv_usage_str[] =
 	"  -h, --help,          Shows this help information";
 
 /* Specifying the expected options (both long and short) */
-static struct option long_options[] = {
-	{ "message",    required_argument, 0, 'm' },
-	{ "number",     required_argument, 0, 'n' },
-	{ "start",      no_argument,       0, 'r' },
-	{ "type",       no_argument,       0, 't' },
-	{ "help",       no_argument,       0, 'h' },
-	{ 0,            0,                 0, 0   }
+static struct sys_getopt_option long_options[] = {
+	{ "message",    sys_getopt_required_argument, 0, 'm' },
+	{ "number",     sys_getopt_required_argument, 0, 'n' },
+	{ "start",      sys_getopt_no_argument,       0, 'r' },
+	{ "type",       sys_getopt_required_argument, 0, 't' },
+	{ "help",       sys_getopt_no_argument,       0, 'h' },
+	{ 0,            0,                            0, 0   }
 };
 
 static void sms_print_usage(enum sms_shell_command command)
@@ -95,39 +95,39 @@ static int cmd_sms_send(const struct shell *shell, size_t argc, char **argv)
 	memset(arg_number, 0, SMS_MAX_MESSAGE_LEN + 1);
 	memset(arg_message, 0, SMS_MAX_MESSAGE_LEN + 1);
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, "m:n:t:h", long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, "m:n:t:h", long_options, NULL)) != -1) {
 		int send_data_len = 0;
 
 		switch (opt) {
 		case 'n': /* Phone number */
-			strcpy(arg_number, optarg);
+			strcpy(arg_number, sys_getopt_optarg);
 			break;
 		case 'm': /* Message text */
-			send_data_len = strlen(optarg);
+			send_data_len = strlen(sys_getopt_optarg);
 			if (send_data_len > SMS_MAX_MESSAGE_LEN) {
 				mosh_error(
 					"Data length %d exceeded. Maximum is %d. Given data: %s",
 					send_data_len,
 					SMS_MAX_MESSAGE_LEN,
-					optarg);
+					sys_getopt_optarg);
 				return -EINVAL;
 			}
-			strcpy(arg_message, optarg);
+			strcpy(arg_message, sys_getopt_optarg);
 			break;
 		case 't': /* Message data type */
-			if (!strcmp(optarg, "ascii")) {
+			if (!strcmp(sys_getopt_optarg, "ascii")) {
 				arg_message_type = SMS_DATA_TYPE_ASCII;
-			} else if (!strcmp(optarg, "gsm7bit")) {
+			} else if (!strcmp(sys_getopt_optarg, "gsm7bit")) {
 				arg_message_type = SMS_DATA_TYPE_GSM7BIT;
 			} else {
 				mosh_error(
 					"Unsupported message type=%s. Supported values are: "
 					"'ascii' or 'gsm7bit'",
-					optarg);
+					sys_getopt_optarg);
 				return -EINVAL;
 			}
 			break;
@@ -136,12 +136,12 @@ static int cmd_sms_send(const struct shell *shell, size_t argc, char **argv)
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}
@@ -162,11 +162,11 @@ static int cmd_sms_recv(const struct shell *shell, size_t argc, char **argv)
 	/* Variables for command line arguments */
 	bool arg_receive_start = false;
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
+
 	int opt;
 
-	while ((opt = getopt_long(argc, argv, "rh", long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, "rh", long_options, NULL)) != -1) {
 
 		switch (opt) {
 		case 'r': /* Start monitoring received messages */
@@ -176,12 +176,12 @@ static int cmd_sms_recv(const struct shell *shell, size_t argc, char **argv)
 			goto show_usage;
 		case '?':
 		default:
-			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
 		goto show_usage;
 	}

@@ -26,7 +26,7 @@ static void lwm2m_utils_dtls_save(struct lwm2m_ctx *ctx)
 		return;
 	}
 
-	ret = zsock_setsockopt(ctx->sock_fd, SOL_TLS, TLS_DTLS_CONN_SAVE, &store_dtls,
+	ret = zsock_setsockopt(ctx->sock_fd, ZSOCK_SOL_TLS, TLS_DTLS_CONN_SAVE, &store_dtls,
 			       sizeof(store_dtls));
 	if (ret) {
 		ret = -errno;
@@ -46,7 +46,7 @@ static void lwm2m_utils_dtls_load(struct lwm2m_ctx *ctx)
 		return;
 	}
 
-	ret = zsock_setsockopt(ctx->sock_fd, SOL_TLS, TLS_DTLS_CONN_LOAD, &load_dtls,
+	ret = zsock_setsockopt(ctx->sock_fd, ZSOCK_SOL_TLS, TLS_DTLS_CONN_LOAD, &load_dtls,
 			       sizeof(load_dtls));
 	if (ret) {
 		ret = -errno;

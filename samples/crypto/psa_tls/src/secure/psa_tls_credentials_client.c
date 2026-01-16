@@ -5,15 +5,12 @@
  */
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(psa_tls_credentials_client_secure);
-
-#include <nrfx.h>
-#include <zephyr/kernel.h>
-#include <zephyr/linker/sections.h>
 #include <zephyr/net/tls_credentials.h>
-#include "psa_tls_credentials.h"
-#include "certificate.h"
 
+#include <psa_tls_credentials.h>
+#include <certificate.h>
+
+LOG_MODULE_REGISTER(psa_tls_credentials_client_secure);
 
 /** @brief Function for registering the CA certificate for the TLS handshake.
  */
