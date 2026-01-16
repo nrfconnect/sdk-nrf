@@ -72,18 +72,26 @@ tests:
     extra_args: DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20a_cpuapp_uart22.overlay"
   drivers.uart.baudrate_test.ls05_uart21:
     platform_allow:
-      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
-    extra_args: DTC_OVERLAY_FILE="boards/nrf54ls05dk_nrf54ls05b_cpuapp_uart21.overlay"
+    extra_args:
+      - platform:nrf54ls05dk/nrf54ls05b/cpuapp:"DTC_OVERLAY_FILE=boards/nrf54ls05dk_nrf54ls05b_cpuapp_uart21.overlay"
+      - platform:nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp:"DTC_OVERLAY_FILE=boards/nrf54ls05dk_nrf54ls05b_cpuapp_uart21_0_0_0.overlay"
+      - platform:nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp:"DTC_OVERLAY_FILE=boards/nrf54ls05dk_nrf54ls05b_cpuapp_uart21.overlay"
   drivers.uart.baudrate_test.ls05_uart22:
     platform_allow:
-      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
-    extra_args: DTC_OVERLAY_FILE="boards/nrf54ls05dk_nrf54ls05b_cpuapp_uart22.overlay"
+    extra_args:
+      - platform:nrf54ls05dk/nrf54ls05b/cpuapp:"DTC_OVERLAY_FILE=boards/nrf54ls05dk_nrf54ls05b_cpuapp_uart22.overlay"
+      - platform:nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp:"DTC_OVERLAY_FILE=boards/nrf54ls05dk_nrf54ls05b_cpuapp_uart22_0_0_0.overlay"
+      - platform:nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp:"DTC_OVERLAY_FILE=boards/nrf54ls05dk_nrf54ls05b_cpuapp_uart22.overlay"
   drivers.uart.baudrate_test.lv10_uart21:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
