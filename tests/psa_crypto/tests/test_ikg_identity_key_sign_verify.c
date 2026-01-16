@@ -107,9 +107,12 @@ int sign_message(void)
 		sizeof(m_signature),
 		&output_len);
 
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
+#ifdef CONFIG_BUILD_WITH_TFM
+	/* Signing with the IAK from NS is not allowed. */
+	TEST_VECTOR_ASSERT_EQUAL(status, PSA_ERROR_NOT_PERMITTED);
+#else
+	TEST_VECTOR_ASSERT_EQUAL(status, PSA_SUCCESS);
+#endif
 
 	return APP_SUCCESS;
 }
@@ -118,16 +121,19 @@ int verify_message(void)
 {
 	psa_status_t status;
 
-	status = psa_verify_message(key_id,
+	status = psa_verify_message(identity_key_id,
 		PSA_ALG_ECDSA(PSA_ALG_SHA_256),
 		m_plain_text,
 		sizeof(m_plain_text),
 		m_signature,
 		NRF_CRYPTO_TEST_IKG_SIGNATURE_SIZE);
 
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
+#ifdef CONFIG_BUILD_WITH_TFM
+	/* NS can use the IAK to verify but as signing failed the signature will be invalid. */
+	TEST_VECTOR_ASSERT_EQUAL(status, PSA_ERROR_INVALID_SIGNATURE);
+#else
+	TEST_VECTOR_ASSERT_EQUAL(status, PSA_SUCCESS);
+#endif
 
 	return APP_SUCCESS;
 }
