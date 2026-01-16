@@ -77,6 +77,18 @@ config NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT
 config NET_CONNECTION_MANAGER_MONITOR_STACK_SIZE
 	default 1024
 
+config NRF_MODEM_LIB_NET_IF_KEEP_REG_CONTEXT
+	bool "Retain LTE registration context"
+	help
+	 If this option is set, the LTE iface will disconnect LTE while keeping registration
+	 context via +CFUN=45.
+
+config NRF_MODEM_LIB_NET_IF_TN_SOFTSIM_SUPPORT
+	bool "SoftSIM support for Terrestrial Network profile"
+	depends on NRF_MODEM_LIB_NET_IF_KEEP_REG_CONTEXT
+	help
+	  Enable support for SoftSIM in the Terrestrial Network (TN) profile.
+
 module = NRF_MODEM_LIB_NET_IF
 module-str = Modem network interface
 source "subsys/logging/Kconfig.template.log_config"
