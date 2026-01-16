@@ -45,6 +45,12 @@ config BT_LONG_WQ_STACK_SIZE
 	default 1800 if (BT_ECC || BT_GATT_CACHING)
 	default 1024
 
+# Note that some nRF boards have very limited RAM. For these we give the prompt-option to disable
+# the BT TX processor thread.
+# Disabling the BT TX processor thread may cause deadlocks.
+config BT_TX_PROCESSOR_THREAD
+	prompt "Bluetooth TX processor thread"
+
 rsource "controller/Kconfig"
 rsource "host_extensions/Kconfig"
 rsource "cs_de/Kconfig"
