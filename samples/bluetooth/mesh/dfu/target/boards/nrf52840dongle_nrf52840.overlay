@@ -1,0 +1,28 @@
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		boot_partition: partition@1000 {
+			label = "mcuboot";
+			reg = <0x00001000 0x00010000>;
+		};
+
+		slot0_partition: partition@11000 {
+			label = "image-0";
+			reg = <0x00011000 0x00066000>;
+		};
+
+		slot1_partition: partition@77000 {
+			label = "image-1";
+			reg = <0x00077000 0x00066000>;
+		};
+
+		storage_partition: partition@dd000 {
+			label = "storage";
+			reg = <0x000dd000 0x00003000>;
+		};
+	};
+};
