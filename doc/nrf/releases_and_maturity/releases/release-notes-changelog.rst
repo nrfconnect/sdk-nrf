@@ -236,6 +236,7 @@ nRF Desktop
 * Updated the :option:`CONFIG_DESKTOP_BT` Kconfig option to no longer select the deprecated :kconfig:option:`CONFIG_BT_SIGNING` Kconfig option.
   Application relies on Bluetooth LE security mode 1 and security level of at least 2 to ensure data confidentiality through encryption.
 * Updated memory map for RAM load configurations of nRF54LM20 target to increase KMU RAM section size to allow for secp384r1 key.
+* Added workaround for the USB next stack race issue where the application could try to submit HID reports while the USB is being disabled after USB cable has been unplugged.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

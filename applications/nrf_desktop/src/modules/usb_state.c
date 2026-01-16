@@ -1212,6 +1212,15 @@ static int handle_usbd_state_on_status_change(enum usbd_msg_type type)
 
 	case USBD_MSG_VBUS_REMOVED:
 		if (usb_enabled) {
+			/* Call iface_ready callback handler to workaround the race issue where the
+			 * callback informing that HID device interface is not ready is called too
+			 * late, which results in application trying to submit reports while the
+			 * interface is not ready and the usbd_disable operation is in progress.
+			 */
+			for (size_t i = 0; i < ARRAY_SIZE(usb_hid_device); i++) {
+				iface_ready_next(usb_hid_device[i].dev, false);
+			}
+
 			err = usbd_disable(usbd_ctx);
 			if (err) {
 				LOG_ERR("usbd_disable failed (err: %d)", err);
