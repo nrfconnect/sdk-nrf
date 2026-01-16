@@ -1,0 +1,21 @@
+sample:
+  description: Hello World sample, the simplest userspace
+    Zephyr application
+  name: hello world user
+common:
+  tags: introduction
+  harness: console
+  harness_config:
+    type: one_line
+    regex:
+      - "TEST PASS!!!"
+tests:
+  sample.nrf7120.peripherals_userspace:
+    filter: CONFIG_ARCH_HAS_USERSPACE
+    arch_exclude:
+      - posix
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+    tags: introduction
