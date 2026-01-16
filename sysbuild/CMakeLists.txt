@@ -900,11 +900,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/fast_pair/hex.cmake)
   endif()
 
-  if(SB_CONFIG_MATTER_FACTORY_DATA_GENERATE)
-    include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/generate_factory_data_sysbuild.cmake)
-    nrfconnect_generate_factory_data()
-  endif()
-
   # Sign extra DFU images added via dfu_extra_add_binary()
   if(SB_CONFIG_MCUBOOT_EXTRA_IMAGES)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_extra.cmake)
@@ -924,13 +919,20 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   endif()
 
   if(SB_CONFIG_MATTER_OTA)
-    include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/zephyr/ota-image_sysbuild.cmake)
+    include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/zephyr/ota-image.cmake)
     if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
       chip_ota_image(chip-ota-image
         INPUT_FILES ${CMAKE_BINARY_DIR}/dfu_multi_image.bin
         OUTPUT_FILE ${CMAKE_BINARY_DIR}/${SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME}
       )
     endif()
+  endif()
+
+  if(SB_CONFIG_ZEPHYR_CONNECTEDHOMEIP_MODULE AND SB_CONFIG_MATTER AND
+    SB_CONFIG_MATTER_FACTORY_DATA_GENERATE AND NOT SB_CONFIG_PARTITION_MANAGER
+  )
+    include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/generate_factory_data.cmake)
+    nrfconnect_generate_factory_data()
   endif()
 
   if(SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE)
@@ -1063,5 +1065,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/radio_loader.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/secureboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/mcuboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/firmware_loader_radio.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/matter_factory_data.cmake)
 
 store_ncs_vars()

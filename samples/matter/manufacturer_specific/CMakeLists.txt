@@ -13,9 +13,6 @@ project(matter-manufacturer_specific)
 include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/zap_helpers.cmake)
 ncs_get_zap_parent_dir(ZAP_PARENT_DIR)
 
-# Override zap-generated directory.
-get_filename_component(CHIP_APP_ZAP_DIR ${ZAP_PARENT_DIR}/zap-generated REALPATH CACHE)
-
 # Enable GNU STD support.
 include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/app/enable-gnu-std.cmake)
 
