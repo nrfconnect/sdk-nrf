@@ -6,7 +6,7 @@
 
 #include <silexpk/sxbuf/sxbufop.h>
 #include <psa/crypto.h>
-#include "common.h"
+#include "internal/common.h"
 #include <cracen/mem_helpers.h>
 #include "cracen_psa_primitives.h"
 #include <cracen/statuscodes.h>

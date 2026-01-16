@@ -30,7 +30,7 @@
 #include "silexpk/ec_curves.h"
 #include <cracen/statuscodes.h>
 #include <sxsymcrypt/hash.h>
-#include <cracen_psa_ecdsa.h>
+#include "cracen_ecdsa.h"
 #include <cracen_psa_primitives.h>
 #include <sxsymcrypt/hashdefs.h>
 #include "common.h"

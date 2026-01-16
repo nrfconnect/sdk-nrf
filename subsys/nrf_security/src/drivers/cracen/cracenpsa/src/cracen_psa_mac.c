@@ -8,11 +8,11 @@
 #include <psa/crypto_values.h>
 #include <string.h>
 #include <zephyr/sys/__assert.h>
-#include "common.h"
+#include "internal/common.h"
 #include <cracen/mem_helpers.h>
 #include "cracen_psa_primitives.h"
-#include "cracen_mac_cmac.h"
-#include "cracen_mac_hmac.h"
+#include "internal/cracen_mac_cmac.h"
+#include "internal/cracen_mac_hmac.h"
 
 static psa_status_t setup(cracen_mac_operation_t *operation, const psa_key_attributes_t *attributes,
 			  const uint8_t *key_buffer, size_t key_buffer_size, psa_algorithm_t alg)

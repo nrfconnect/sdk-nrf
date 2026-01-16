@@ -15,8 +15,8 @@
  *          directly.
  */
 
-#ifndef CRACEN_PSA_RSA_ENCRYPTION_H
-#define CRACEN_PSA_RSA_ENCRYPTION_H
+#ifndef CRACEN_RSA_ENCRYPTION_H
+#define CRACEN_RSA_ENCRYPTION_H
 
 #include "cracen_psa_primitives.h"
 
@@ -107,4 +107,4 @@ int cracen_rsa_pkcs1v15_encrypt(struct cracen_rsa_key *rsa_key, struct cracen_cr
 
 /** @} */
 
-#endif /* CRACEN_PSA_RSA_ENCRYPTION_H */
+#endif /* CRACEN_RSA_ENCRYPTION_H */

@@ -17,7 +17,7 @@
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <zephyr/sys/__assert.h>
-#include "common.h"
+#include "internal/common.h"
 
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
 #include <cracen_sw_aes_ccm.h>

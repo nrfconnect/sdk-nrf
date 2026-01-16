@@ -35,8 +35,8 @@
  * - Output buffer sizes are not validated, so undersized buffers cause an overflow.
  */
 
-#ifndef CRACEN_PSA_ECDSA_H
-#define CRACEN_PSA_ECDSA_H
+#ifndef CRACEN_ECDSA_H
+#define CRACEN_ECDSA_H
 
 #include <psa/crypto.h>
 #include <stdint.h>
@@ -170,4 +170,4 @@ int cracen_ecdsa_sign_digest_deterministic(const struct cracen_ecc_priv_key *pri
 
 /** @} */
 
-#endif /* CRACEN_PSA_ECDSA_H */
+#endif /* CRACEN_ECDSA_H */

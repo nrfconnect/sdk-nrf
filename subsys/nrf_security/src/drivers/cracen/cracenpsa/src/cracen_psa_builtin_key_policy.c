@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "common.h"
+#include "internal/common.h"
 
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>

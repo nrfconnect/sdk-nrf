@@ -22,7 +22,7 @@
 #include <silexpk/ec_curves.h>
 #include <silexpk/ik.h>
 #include <cracen/statuscodes.h>
-#include <cracen_psa_ikg.h>
+#include "cracen_ikg.h"
 #include <cracen_psa_primitives.h>
 #include "common.h"
 

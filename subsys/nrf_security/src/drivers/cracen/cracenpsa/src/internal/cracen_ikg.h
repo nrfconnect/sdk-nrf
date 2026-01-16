@@ -18,8 +18,8 @@
  * the CRACEN hardware's Internal Key Generation (IKG) feature.
  */
 
-#ifndef CRACEN_PSA_IKG_H
-#define CRACEN_PSA_IKG_H
+#ifndef CRACEN_IKG_H
+#define CRACEN_IKG_H
 
 #include <stddef.h>
 #include <stdbool.h>
@@ -77,4 +77,4 @@ int cracen_ikg_create_pub_key(int identity_key_index, uint8_t *pub_key);
 
 /** @} */
 
-#endif /* CRACEN_PSA_IKG_H */
+#endif /* CRACEN_IKG_H */

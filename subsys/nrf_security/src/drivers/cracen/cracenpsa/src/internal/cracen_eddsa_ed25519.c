@@ -36,7 +36,7 @@
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include "common.h"
-#include "cracen_psa_eddsa.h"
+#include "cracen_eddsa.h"
 
 #define AREA2_MEM_OFFSET 32
 #define AREA4_MEM_OFFSET 96

@@ -18,7 +18,7 @@
 #include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
-#include <cracen_psa_rsa_signature_pkcs1v15.h>
+#include "cracen_rsa_signature_pkcs1v15.h"
 #include <cracen_psa_primitives.h>
 #include "common.h"
 #include "rsa_key.h"

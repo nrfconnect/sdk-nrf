@@ -15,8 +15,8 @@
  *          directly.
  */
 
-#ifndef CRACEN_PSA_RSA_SIGNATURE_PKCS1V15_H
-#define CRACEN_PSA_RSA_SIGNATURE_PKCS1V15_H
+#ifndef CRACEN_RSA_SIGNATURE_PKCS1V15_H
+#define CRACEN_RSA_SIGNATURE_PKCS1V15_H
 
 #include <cracen_psa_primitives.h>
 
@@ -121,4 +121,4 @@ int cracen_rsa_pkcs1v15_verify_digest(struct cracen_rsa_key *rsa_key,
 
 /** @} */
 
-#endif /* CRACEN_PSA_RSA_SIGNATURE_PKCS1V15_H */
+#endif /* CRACEN_RSA_SIGNATURE_PKCS1V15_H */

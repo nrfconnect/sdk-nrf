@@ -22,7 +22,7 @@
 #include <cracen/statuscodes.h>
 #include "rsa_key.h"
 #include "cracen_psa_primitives.h"
-#include <cracen_psa_rsa_signature_pkcs1v15.h>
+#include "cracen_rsa_signature_pkcs1v15.h"
 #include "common.h"
 
 #define WORKMEM_SIZE (PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) + 2 * PSA_HASH_MAX_SIZE + 4)

@@ -6,7 +6,7 @@
 
 #include <silexpk/core.h>
 #include <silexpk/montgomery.h>
-#include <cracen_psa_montgomery.h>
+#include "cracen_montgomery.h"
 
 /* U-coordinate of the base point, from RFC 7748. */
 static const struct sx_x448_op x448_base = {.bytes = {5}};

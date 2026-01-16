@@ -18,8 +18,8 @@
  *		The generation can be time-consuming.
  */
 
-#ifndef CRACEN_PSA_RSA_KEYGEN_H
-#define CRACEN_PSA_RSA_KEYGEN_H
+#ifndef CRACEN_RSA_KEYGEN_H
+#define CRACEN_RSA_KEYGEN_H
 
 #include <cracen_psa_primitives.h>
 #include <stdint.h>
@@ -70,4 +70,4 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 
 /** @} */
 
-#endif /* CRACEN_PSA_RSA_KEYGEN_H */
+#endif /* CRACEN_RSA_KEYGEN_H */

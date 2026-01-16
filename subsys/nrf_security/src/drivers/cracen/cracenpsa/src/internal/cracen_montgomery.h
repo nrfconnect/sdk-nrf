@@ -15,8 +15,8 @@
  *          directly.
  */
 
-#ifndef CRACEN_PSA_MONTGOMERY_H
-#define CRACEN_PSA_MONTGOMERY_H
+#ifndef CRACEN_MONTGOMERY_H
+#define CRACEN_MONTGOMERY_H
 
 #include <stdint.h>
 
@@ -42,4 +42,4 @@ int cracen_x25519_genpubkey(const uint8_t *priv_key, uint8_t *pub_key);
 
 /** @} */
 
-#endif /* CRACEN_PSA_MONTGOMERY_H */
+#endif /* CRACEN_MONTGOMERY_H */

@@ -5,7 +5,7 @@
  */
 
 #include "cracen_psa_primitives.h"
-#include "common.h"
+#include "internal/common.h"
 #include <cracen_psa.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>

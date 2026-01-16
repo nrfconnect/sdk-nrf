@@ -16,8 +16,8 @@
 #include <sxsymcrypt/internal.h>
 #include <hw_unique_key.h>
 #include <cracen_psa.h>
-#include "common.h"
-#include "kmu.h"
+#include "internal/common.h"
+#include "internal/kmu.h"
 
 /* The size of the key CBR (Compact Binary Respresentation), bytes */
 #define CRACEN_KMU_CBR_SIZE		     1u
