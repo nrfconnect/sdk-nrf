@@ -8,7 +8,8 @@
 #define CRACEN_STATUSCODES_HEADER_FILE
 
 /**
- * @addtogroup
+ * @defgroup cracen_status_codes CRACEN SX Status Codes
+ * @brief SX status code definitions for the CRACEN driver.
  *
  * @{
  */
