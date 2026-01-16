@@ -1,7 +1,7 @@
 /*
  * Two loopbacks are required:
- * P1.04 - P1.20
- * P1.05 - P1.21
+ * P1.08 - P1.09
+ * P1.10 - P1.11
  */
 
 / {
@@ -15,11 +15,11 @@
 		compatible = "gpio-leds";
 
 		phase_a: phase_a {
-			gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
+			gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>;
 		};
 
 		phase_b: phase_b {
-			gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+			gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
 		};
 	};
 };
@@ -27,8 +27,8 @@
 &pinctrl {
 	qdec_pinctrl: qdec_pinctrl {
 		group1 {
-			psels = <NRF_PSEL(QDEC_A, 1, 20)>,
-				<NRF_PSEL(QDEC_B, 1, 21)>;
+			psels = <NRF_PSEL(QDEC_A, 1, 9)>,
+				<NRF_PSEL(QDEC_B, 1, 11)>;
 		};
 	};
 };
