@@ -136,9 +136,25 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 			    bool *group_reconfig_needed,
 			    struct bt_cap_unicast_group *unicast_group);
 
-int srv_store_max_trans_lat_find(struct bt_bap_stream *stream, uint16_t *new_max_trans_lat_ms,
+/**
+ * @brief Find the lowest max_transport_latency for all streams in a given isochronous group (CIG)
+ * @p unicast_group for the given direction.
+ *
+ * @note srv_store_lock() must be called before accessing this function.
+ *
+ * @param[in]	stream			Pointer to stream
+ * @param[in]	server_qos_pref		Pointer to the preferred QoS configuration.
+ * @param[out]	new_max_trans_lat_ms	The new calculated max transport latency for the given dir
+ * @param[out]	existing_max_trans_lat_ms Existing max transport latency for the given direction.
+ * This value will be set to UINT16_MAX if there was no existing value.
+ * @param[out]	group_reconfig_needed	True if a group reconfiguration is needed.
+ * @param[in]	unicast_group		Pointer to the unicast group to search within.
+ *
+ */
+int srv_store_max_trans_lat_find(struct bt_bap_stream const *const stream,
+				 struct bt_bap_qos_cfg_pref const *const server_qos_pref,
+				 uint16_t *new_max_trans_lat_ms,
 				 uint16_t *existing_max_trans_lat_ms, bool *group_reconfig_needed,
-				 const struct bt_bap_qos_cfg_pref *server_qos_pref,
 				 struct bt_cap_unicast_group *unicast_group);
 
 int srv_store_max_trans_lat_set(struct bt_cap_unicast_group *unicast_group, enum bt_audio_dir dir,

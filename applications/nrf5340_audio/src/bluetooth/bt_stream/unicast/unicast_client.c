@@ -1016,11 +1016,11 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 	 * See 7.2.1 BAP. The entire MTL is on group level, so all existing streams shall
 	 * have the same max transport latency within the group (CIG).
 	 */
-	uint16_t existing_max_trans_lat_ms = UINT16_MAX;
+	uint16_t existing_max_trans_lat_ms = 0;
 	uint16_t new_max_trans_lat_ms = 0;
 
 	bool group_reconfig_needed_lat = false;
-	LOG_WRN("max trans lat find. Server pref lat: %d", server_pref->latency);
+	LOG_INF("max trans lat find. Server pref lat: %d", server_pref->latency);
 	ret = srv_store_max_trans_lat_find(stream, &new_max_trans_lat_ms,
 					   &existing_max_trans_lat_ms, &group_reconfig_needed_lat,
 					   server_pref, unicast_group);
@@ -1035,7 +1035,7 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 		if (existing_max_trans_lat_ms != UINT16_MAX) {
 			LOG_INF("Existing max trans lat: %d, new max transport latency %d",
 				existing_max_trans_lat_ms, new_max_trans_lat_ms);
-			group_reconfig_needed_lat = true;
+			/* group_reconfig_needed_lat = true; */
 		} else {
 			LOG_INF("Existing max trans lat: <none>, new max transport latency %d",
 				new_max_trans_lat_ms);
