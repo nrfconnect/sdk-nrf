@@ -54,7 +54,7 @@ The following is the reset behavior when the LCS of the nRF54H20 SoC is either i
    * - ``RESET_PIN``
      - J-Link toggles the **RESET** pin using OBD.
    * - ``RESET_VIA_SECDOM``
-     - Uses the :ref`|ISE| DEBUGWAIT command <ug_nrf54h20_ironside_se_debugwait_command>` to reset the entire system and start the application core in a halted state.
+     - Uses the :ref:`IronSide SE DEBUGWAIT command <ug_nrf54h20_ironside_se_debugwait_command>` to reset the entire system and start the application core in a halted state.
 
        You can start the application core manually using the following command:
 

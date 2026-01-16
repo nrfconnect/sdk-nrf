@@ -13,10 +13,10 @@ This page describes the following:
 * The :ref:`boot flow of local domains <ug_nrf54h20_ironside_se_local_domain_boot>`
 * The :ref:`reset handling of local domains <ug_nrf54h20_ironside_se_local_domain_reset>`
 * The :ref:`secondary firmware boot path <ug_nrf54h20_ironside_se_secondary_firmware>`
-* The :ref:`|ISE| boot report <ug_nrf54h20_ironside_se_boot_report>`
+* The :ref:`IronSide SE boot report <ug_nrf54h20_ironside_se_boot_report>`
 * :ref:`Register formats <ug_nrf54h20_ironside_se_boot_register_formats>`
 * :ref:`Boot commands <ug_nrf54h20_ironside_se_boot_commands>`
-* :ref:`How to configure |ISE| SPU MRAMC feature <ug_nrf54h20_ironside_se_spu_mramc_feature_configuration>`
+* :ref:`How to configure IronSide SE SPU MRAMC feature <ug_nrf54h20_ironside_se_spu_mramc_feature_configuration>`
 
 .. _ug_nrf54h20_ironside_se_local_domain_boot:
 
