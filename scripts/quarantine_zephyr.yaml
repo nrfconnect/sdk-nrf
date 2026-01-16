@@ -445,11 +445,13 @@
   comment: "region RAM/FLASH overflowed"
 
 - scenarios:
+    - .*secure_storage.*
     - cpp.libcxx.glibcxx.picolibc
     - crypto.mbedtls
     - drivers.can.shell
     - kernel.common
     - kernel.common.lto
+    - kernel.common.lto.singlethreaded
     - kernel.common.minimallibc
     - kernel.common.misra
     - kernel.common.nano32
@@ -492,7 +494,6 @@
     - sample.shell.shell_module
     - sample.shell.shell_module.getopt
     - sample.shell.shell_module.login
-    - .*secure_storage.*
   platforms:
     - nrf54l15dk/nrf54l15/cpuflpr
   comment: "region RAM/FLASH overflowed"
