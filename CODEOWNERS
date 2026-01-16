@@ -534,6 +534,7 @@
 /samples/nrf54h20/empty_app_core/         @nrfconnect/ncs-aurora
 /samples/nrf54h20/idle_relocated_tcm/     @nrfconnect/ncs-si-muffin
 /samples/nrf54h20/radio_loader/           @nrfconnect/ncs-si-muffin
+/samples/nrf7120/priv_unpriv_access/      @nrfconnect/ncs-malago
 /samples/ironside_se/                     @nrfconnect/ncs-aurora
 /samples/nrf_compress/                    @nordicjm
 /samples/nrf_profiler/                    @nrfconnect/ncs-si-xcake
