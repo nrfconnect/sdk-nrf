@@ -276,6 +276,7 @@
 
 # Drivers
 /drivers/bluetooth/                       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
+/drivers/dect/                            @nrfconnect/ncs-dect-nr-plus
 /drivers/entropy/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
 /drivers/flash/                           @nrfconnect/ncs-co-drivers
 /drivers/gpio/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
@@ -344,6 +345,7 @@
 /include/mpsl/                            @nrfconnect/ncs-dragoon
 /include/net/                             @nrfconnect/ncs-co-networking
 /include/net/azure_*                      @nrfconnect/ncs-cia
+/include/net/dect/                        @nrfconnect/ncs-dect-nr-plus
 /include/net/downloader*                  @nrfconnect/ncs-modem
 /include/net/nrf_cloud_*                  @nrfconnect/ncs-nrf-cloud
 /include/nfc/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-radio-sw
@@ -496,8 +498,9 @@
 /samples/crypto/                          @nrfconnect/ncs-aegir
 /samples/debug/memfault/                  @nrfconnect/ncs-cia @nrfconnect/ncs-memfault
 /samples/debug/ppi_trace/                 @nordic-krch
-/samples/dect/dect_phy/dect_shell/        @nrfconnect/ncs-modem-tre
+/samples/dect/dect_phy/dect_shell/        @nrfconnect/ncs-dect-nr-plus
 /samples/dect/dect_phy/hello_dect/        @nrfconnect/ncs-modem
+/samples/dect/hello_dect/                 @nrfconnect/ncs-dect-nr-plus
 /samples/dfu/ab/                          @nrfconnect/ncs-eris
 /samples/dfu/ab_split/                    @nrfconnect/ncs-eris
 /samples/dfu/dfu_target/                  @nrfconnect/ncs-eris
@@ -631,6 +634,7 @@
 /samples/crypto/**/*.rst                  @nrfconnect/ncs-aegir-doc
 /samples/debug/memfault/*.rst             @nrfconnect/ncs-cia-doc
 /samples/debug/ppi_trace/*.rst            @nrfconnect/ncs-doc-leads
+/samples/dect/hello_dect/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/dect/dect_phy/dect_shell/*.rst   @nrfconnect/ncs-iot-positioning-doc
 /samples/dect/dect_phy/hello_dect/*.rst   @nrfconnect/ncs-modem-doc
 /samples/dfu/ab/*.rst                     @nrfconnect/ncs-eris-doc
@@ -814,9 +818,11 @@
 /subsys/mpsl/cx/                          @nrfconnect/ncs-radio-sw
 /subsys/mpsl/fem/                         @nrfconnect/ncs-radio-sw
 /subsys/net/                              @nrfconnect/ncs-co-networking
+/subsys/net/l2_dect/                      @nrfconnect/ncs-dect-nr-plus
 /subsys/net/lib/mqtt_helper/              @nrfconnect/ncs-cia
 /subsys/net/lib/azure_*                   @nrfconnect/ncs-cia
 /subsys/net/lib/aws_*                     @nrfconnect/ncs-cia
+/subsys/net/lib/dect/                     @nrfconnect/ncs-dect-nr-plus
 /subsys/net/lib/downloader/               @nrfconnect/ncs-modem
 /subsys/net/lib/ftp_client/               @nrfconnect/ncs-iot-oulu
 /subsys/net/lib/hostap_crypto/            @krish2718 @jukkar

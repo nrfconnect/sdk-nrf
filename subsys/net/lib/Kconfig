@@ -26,6 +26,7 @@ choice CLOUD_SERVICE
 	optional
 endchoice
 
+rsource "dect/Kconfig"
 rsource "nrf_cloud/Kconfig"
 rsource "rest_client/Kconfig"
 rsource "downloader/Kconfig"
