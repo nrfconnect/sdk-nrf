@@ -8,10 +8,10 @@
 	cs_antenna_switch: cs-antenna-config {
 		status = "okay";
 		compatible = "nordic,bt-cs-antenna-switch";
-		ant-gpios = <&gpio1 17 (GPIO_ACTIVE_HIGH)>,
-			    <&gpio1 18 (GPIO_ACTIVE_HIGH)>,
-			    <&gpio1 19 (GPIO_ACTIVE_HIGH)>,
-			    <&gpio1 20 (GPIO_ACTIVE_HIGH)>;
+		ant-gpios = <&gpio1 17 GPIO_ACTIVE_HIGH>,
+			    <&gpio1 18 GPIO_ACTIVE_HIGH>,
+			    <&gpio1 19 GPIO_ACTIVE_HIGH>,
+			    <&gpio1 20 GPIO_ACTIVE_HIGH>;
 		multiplexing-mode = <0>;
 	};
 };

@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- #include "nrf5340dk_nrf5340_cpuapp_common.dtsi"
+#include "nrf5340dk_nrf5340_cpuapp_common.dtsi"

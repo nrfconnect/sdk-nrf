@@ -11,4 +11,5 @@
 
 /* Mock the node labels to satisfy the build */
 cpurad_slot2_partition: &cpuapp_slot0_partition {};
+
 cpurad_slot3_partition: &cpuapp_slot0_partition {};

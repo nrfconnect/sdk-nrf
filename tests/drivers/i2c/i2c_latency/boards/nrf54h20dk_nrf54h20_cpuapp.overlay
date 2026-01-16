@@ -46,6 +46,7 @@ dut_twim: &i2c130 {
 	pinctrl-names = "default", "sleep";
 	memory-regions = <&cpuapp_dma_region>;
 	zephyr,concat-buf-size = <512>;
+
 	sensor: sensor@54 {
 		reg = <0x54>;
 	};

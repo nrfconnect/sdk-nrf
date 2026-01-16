@@ -15,6 +15,7 @@
 
 &mx25uw63 {
 	status = "okay";
+
 	partitions {
 		compatible = "fixed-partitions";
 		#address-cells = <1>;

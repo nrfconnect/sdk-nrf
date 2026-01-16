@@ -48,7 +48,7 @@
 					 */
 					slot2_partition: partition@0 {
 						label = "image-2";
-						reg = <0x00000000 0x00000A000>;
+						reg = <0x00000000 0x00000a000>;
 					};
 				};
 			};

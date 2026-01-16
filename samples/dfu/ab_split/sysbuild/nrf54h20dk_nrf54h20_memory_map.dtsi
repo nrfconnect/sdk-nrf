@@ -25,9 +25,9 @@
 };
 
 / {
-	sram@22007FC0 {
+	sram@22007fc0 {
 		compatible = "zephyr,memory-region", "mmio-sram";
-		reg = <0x22007FC0 0x40>;
+		reg = <0x22007fc0 0x40>;
 		zephyr,memory-region = "RetainedMem";
 		status = "okay";
 
@@ -47,5 +47,5 @@
 };
 
 &cpuapp_ram0 {
-	reg = <0x22000000 0x7FC0>;
+	reg = <0x22000000 0x7fc0>;
 };
