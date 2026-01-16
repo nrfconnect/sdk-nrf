@@ -124,8 +124,8 @@ ZTEST(b0_ram_cleanup, test_ram_cleanup)
 		     (ram_cleanup_result == RAM_CLEANUP_FAILURE_MAGIC),
 		     "RAM cleanup result should be either success or failure");
 	zassert_equal(ram_cleanup_result, RAM_CLEANUP_SUCCESS_MAGIC,
-		      "Uncleared word detected at address %p, value 0x%x", uncleared_address,
-		      uncleared_value);
+		      "Uncleared word detected at address %p, value 0x%x",
+		      (void *) uncleared_address, uncleared_value);
 
 #if DT_HAS_COMPAT_STATUS_OKAY(zephyr_retained_ram)
 	const struct device *retained_mem_dev =
