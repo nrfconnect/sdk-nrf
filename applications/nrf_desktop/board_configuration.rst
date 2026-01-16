@@ -190,6 +190,20 @@ Sample mouse (``nrf54lm20dk/nrf54lm20a/cpuapp``)
         The application code is executed from the RAM in this mode to improve the HID report rate over USB.
         For more details on the RAM load mode, see the MCUboot :ref:`nrf_desktop_configuring_mcuboot_bootloader_ram_load` documentation section.
 
+Sample mouse (``nrf54lv10dk/nrf54lv10a/cpuapp``)
+      * The configuration uses the nRF54LV10 DK.
+      * The build types allow to build the application as a mouse.
+      * Inputs are simulated based on the hardware button presses.
+      * Only Bluetooth LE transport is enabled.
+        Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
+      * In ``debug`` configurations, logs are provided through the UART.
+        For detailed information on working with the nRF54LV10 DK, see the :ref:`ug_nrf54l15_gs` documentation.
+      * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+        All of the configurations enable hardware cryptography for the MCUboot bootloader.
+        The application image is verified using a pure ED25519 signature.
+        The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
+        For more details on nRF54L Series cryptography, see :ref:`ug_nrf54l_cryptography`.
+
 Sample mouse or dongle (``nrf54h20dk/nrf54h20/cpuapp``)
       * The configuration uses the nRF54H20 DK.
       * The build types allow to build the application as a mouse or dongle.

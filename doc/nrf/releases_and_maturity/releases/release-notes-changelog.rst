@@ -261,8 +261,11 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
-* Added a workaround for the USB next stack race issue where the application could try to submit HID reports while the USB is being disabled after USB cable has been unplugged, which results in an error.
-  The workaround is applied when the :option:`CONFIG_DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL` Kconfig option is enabled.
+* Added:
+
+  * A workaround for the USB next stack race issue where the application could try to submit HID reports while the USB is being disabled after USB cable has been unplugged, which results in an error.
+    The workaround is applied when the :option:`CONFIG_DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL` Kconfig option is enabled.
+  * Support for the ``nrf54lv10dk/nrf54lv10a/cpuapp`` board target.
 
 * Updated:
 
