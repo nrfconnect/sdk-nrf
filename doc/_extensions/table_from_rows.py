@@ -169,7 +169,7 @@ class TableFromSampleYaml(TableFromRows):
 
     @staticmethod
     def _find_shields(shields: dict[str, set[str]], sample_data: dict):
-        """Associate all integration platforms for a sample with any shield used.
+        """Associate all allowed platforms for a sample with any shield used.
         """
 
         extra_args_raw = sample_data.get('extra_args')
@@ -185,7 +185,13 @@ class TableFromSampleYaml(TableFromRows):
         if not shield_args:
             return
 
-        for platform in sample_data['integration_platforms']:
+        platform_name_list = sample_data['platform_allow']
+        if isinstance(platform_name_list, str):
+            # there maybe single platform, stored as string
+            # not a list of str, transform
+            platform_name_list = [platform_name_list]
+
+        for platform in platform_name_list:
             if platform in shields:
                 shields[platform].update(shield_args)
             else:
@@ -194,7 +200,7 @@ class TableFromSampleYaml(TableFromRows):
     def _rows_from_sample_yaml(self, path):
         """Search for a sample.yaml file and return a union of all relevant boards.
 
-        Boards are retrieved from the integration_platforms sections in the file.
+        Boards are retrieved from the platform_allow sections in the file.
         If the file is not found and the document folder is named "doc", the
         parent folder is searched. Should a sample.yaml still not be found, all
         subfolders are searched and every found sample.yaml is used.
@@ -233,18 +239,28 @@ class TableFromSampleYaml(TableFromRows):
             with open(sample_yaml_path) as sample_yaml:
                 data = yaml.safe_load(sample_yaml)
 
-            if 'common' in data and 'integration_platforms' in data['common']:
+            if 'common' in data and 'platform_allow' in data['common']:
+                platform_name_list = data['common']['platform_allow']
+                if isinstance(platform_name_list, str):
+                    # there maybe single platform, stored as string
+                    # not a list of str, transform
+                    platform_name_list = [platform_name_list]
                 boards.update(
                    TableFromSampleYaml._normalize_boards(
-                       data['common']['integration_platforms']
+                       platform_name_list
                     )
                 )
                 self._find_shields(shields, data['common'])
             for test in data['tests'].values():
-                if 'integration_platforms' in test:
+                if 'platform_allow' in test:
+                    platform_name_list = test['platform_allow']
+                    if isinstance(platform_name_list, str):
+                        # there maybe single platform, stored as string
+                        # not a list of str, transform
+                        platform_name_list = [platform_name_list]
                     boards.update(
                         TableFromSampleYaml._normalize_boards(
-                            test['integration_platforms']
+                            platform_name_list
                         )
                     )
                     self._find_shields(shields, test)
@@ -256,7 +272,7 @@ class TableFromSampleYaml(TableFromRows):
         boards.sort(reverse=True)
 
         if not boards:
-            raise self.severe(f'{path} has no relevant integration_platforms')
+            raise self.severe(f'{path} has no relevant platform_allow')
 
         return boards, shields
 
