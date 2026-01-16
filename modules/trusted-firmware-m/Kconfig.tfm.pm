@@ -20,7 +20,7 @@ config PM_PARTITION_SIZE_TFM_SRAM
 	# has less RAM. The number was selected based on the observed memory
 	# usage of TFM in crypto samples and it can be changed later if needed.
 	default 0x10000 if SOC_NRF54L10_CPUAPP || SOC_NRF54LV10A_ENGA_CPUAPP || \
-			   SOC_NRF54LM20A_ENGA_CPUAPP
+			   SOC_NRF54LM20A_CPUAPP
 	default 0x16000 if SOC_SERIES_NRF91X
 	default 0x30000
 	help
