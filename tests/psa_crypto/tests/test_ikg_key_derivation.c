@@ -56,14 +56,7 @@ psa_status_t derive_key(psa_key_attributes_t *attributes, uint8_t *key_label,
 	*key_id_out = PSA_KEY_ID_NULL;
 
 #if defined(CONFIG_BUILD_WITH_TFM)
-	psa_key_attributes_t mkek_attr = PSA_KEY_ATTRIBUTES_INIT;
 	psa_key_derivation_operation_t op = PSA_KEY_DERIVATION_OPERATION_INIT;
-
-	psa_set_key_id(&mkek_attr, mbedtls_svc_key_id_make(0, huk_key_id));
-	psa_set_key_type(&mkek_attr, PSA_KEY_TYPE_AES);
-	psa_set_key_lifetime(&mkek_attr,
-			     PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
-				     PSA_KEY_PERSISTENCE_READ_ONLY, PSA_KEY_LOCATION_CRACEN));
 
 	status = psa_key_derivation_setup(&op, PSA_ALG_SP800_108_COUNTER_CMAC);
 	if (status != PSA_SUCCESS) {
@@ -88,7 +81,7 @@ psa_status_t derive_key(psa_key_attributes_t *attributes, uint8_t *key_label,
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-		status = psa_import_key(attributes, key_out, sizeof(key_out), &key_id);
+	status = psa_import_key(attributes, key_out, sizeof(key_out), &key_id);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}

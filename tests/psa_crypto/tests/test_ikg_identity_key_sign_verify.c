@@ -14,12 +14,12 @@
 #include <psa/crypto_values.h>
 #include <psa/crypto_extra.h>
 #include <zephyr/sys/printk.h>
-#include "psa_tests_common.h"
+#include <psa_tests_common.h>
 
 #ifdef CONFIG_BUILD_WITH_TFM
 #include <tfm_ns_interface.h>
 #include <tfm_builtin_key_ids.h>
-#include "cracen_psa_kmu.h"
+#include <cracen_psa_kmu.h>
 static psa_key_id_t identity_key_id = TFM_BUILTIN_KEY_ID_IAK;
 #else
 #include <cracen_psa.h>
@@ -51,16 +51,9 @@ LOG_MODULE_DECLARE(app, LOG_LEVEL_DBG);
 int get_identity_key(void)
 {
 	psa_status_t status;
-	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
 	size_t data_length;
 
 	key_handle = mbedtls_svc_key_id_make(0, identity_key_id);
-	psa_key_attributes_t attr = key_attributes;
-
-	status = psa_get_key_attributes(key_handle, &attr);
-	if (status != APP_SUCCESS) {
-		return status;
-	}
 
 	status = psa_export_public_key(key_handle,
 		m_pub_key,
