@@ -99,6 +99,11 @@
 #define CRACEN_WPA3_SAE_CONFIRM_SIZE		(CRACEN_WPA3_SAE_SEND_CONFIRM_SIZE + \
 						 PSA_HASH_LENGTH(PSA_ALG_SHA_256))
 
+/** 4-bit Shoup's table.
+ *  The size is defined as 2^4.
+ */
+#define CRACEN_AES_GCM_HTABLE_SIZE 16
+
 enum cipher_operation {
 	CRACEN_DECRYPT,
 	CRACEN_ENCRYPT
@@ -204,6 +209,20 @@ struct cracen_sw_ccm_context_s {
 };
 typedef struct cracen_sw_ccm_context_s cracen_sw_ccm_context_t;
 
+struct cracen_sw_gcm_context_s {
+	/* Precalculated HTable */
+	uint64_t h_table[CRACEN_AES_GCM_HTABLE_SIZE][SX_BLKCIPHER_AES_BLK_SZ / sizeof(uint64_t)];
+	uint8_t ghash_block[SX_BLKCIPHER_AES_BLK_SZ]; /* GHASH calculation result */
+	uint8_t ctr_block[SX_BLKCIPHER_AES_BLK_SZ]; /* Counter block for CTR mode */
+	uint8_t keystream[SX_BLKCIPHER_AES_BLK_SZ]; /* Generated keystream */
+	size_t keystream_offset; /* Position in keystream buffer */
+	size_t total_ad_fed; /* Total AD bytes processed */
+	size_t total_data_enc; /* Total size of the ciphertext */
+	bool ctr_initialized; /* CTR initialization flag */
+	bool ghash_initialized; /* GHASH initialization flag */
+};
+typedef struct cracen_sw_gcm_context_s cracen_sw_gcm_context_t;
+
 struct cracen_aead_operation {
 	psa_algorithm_t alg;
 	struct sxkeyref keyref;
@@ -219,9 +238,17 @@ struct cracen_aead_operation {
 	enum cracen_context_state context_state;
 	bool ad_finished;
 	struct sxaead ctx;
-#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS)
+#if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS)
+#if defined(PSA_NEED_CRACEN_CCM_AES)
 	cracen_sw_ccm_context_t sw_ccm_ctx;
-#endif
+#endif /* PSA_NEED_CRACEN_CCM_AES */
+#endif /* PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS */
+
+#if defined(PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
+#if defined(PSA_NEED_CRACEN_GCM_AES)
+	cracen_sw_gcm_context_t sw_gcm_ctx;
+#endif /* PSA_NEED_CRACEN_GCM_AES */
+#endif /* PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS */
 };
 typedef struct cracen_aead_operation cracen_aead_operation_t;
 

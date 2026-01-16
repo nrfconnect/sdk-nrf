@@ -17,8 +17,12 @@
 #include <cracen_sw_common.h>
 #include <cracen_sw_aead.h>
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
+#if defined(PSA_NEED_CRACEN_CCM_AES)
 #include <cracen_sw_aes_ccm.h>
+#endif
+
+#if defined(PSA_NEED_CRACEN_GCM_AES)
+#include <cracen_sw_aes_gcm.h>
 #endif
 
 #if defined(PSA_NEED_CRACEN_GCM_AES) || defined(PSA_NEED_CRACEN_CHACHA20_POLY1305)
@@ -38,9 +42,16 @@ psa_status_t cracen_aead_encrypt_setup(cracen_aead_operation_t *operation,
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
+#if defined(PSA_NEED_CRACEN_CCM_AES)
 	if (PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg) == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_encrypt_setup(operation, attributes, key_buffer,
+						       key_buffer_size, alg);
+	}
+#endif
+
+#if defined(PSA_NEED_CRACEN_GCM_AES)
+	if (PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg) == PSA_ALG_GCM) {
+		return cracen_sw_aes_gcm_encrypt_setup(operation, attributes, key_buffer,
 						       key_buffer_size, alg);
 	}
 #endif
@@ -56,9 +67,16 @@ psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
+#if defined(PSA_NEED_CRACEN_CCM_AES)
 	if (PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg) == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_decrypt_setup(operation, attributes, key_buffer,
+						       key_buffer_size, alg);
+	}
+#endif
+
+#if defined(PSA_NEED_CRACEN_GCM_AES)
+	if (PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg) == PSA_ALG_GCM) {
+		return cracen_sw_aes_gcm_decrypt_setup(operation, attributes, key_buffer,
 						       key_buffer_size, alg);
 	}
 #endif
@@ -68,9 +86,15 @@ psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
 psa_status_t cracen_aead_set_nonce(cracen_aead_operation_t *operation, const uint8_t *nonce,
 				   size_t nonce_length)
 {
-#if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
+#if defined(PSA_NEED_CRACEN_CCM_AES)
 	if (operation->alg == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_set_nonce(operation, nonce, nonce_length);
+	}
+#endif
+
+#if defined(PSA_NEED_CRACEN_GCM_AES)
+	if (operation->alg == PSA_ALG_GCM) {
+		return cracen_sw_aes_gcm_set_nonce(operation, nonce, nonce_length);
 	}
 #endif
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -79,9 +103,15 @@ psa_status_t cracen_aead_set_nonce(cracen_aead_operation_t *operation, const uin
 psa_status_t cracen_aead_set_lengths(cracen_aead_operation_t *operation, size_t ad_length,
 				     size_t plaintext_length)
 {
-#if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
+#if defined(PSA_NEED_CRACEN_CCM_AES)
 	if (operation->alg == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_set_lengths(operation, ad_length, plaintext_length);
+	}
+#endif
+
+#if defined(PSA_NEED_CRACEN_GCM_AES)
+	if (operation->alg == PSA_ALG_GCM) {
+		return cracen_sw_aes_gcm_set_lengths(operation, ad_length, plaintext_length);
 	}
 #endif
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -97,9 +127,15 @@ psa_status_t cracen_aead_update_ad(cracen_aead_operation_t *operation, const uin
 		return PSA_SUCCESS;
 	}
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
+#if defined(PSA_NEED_CRACEN_CCM_AES)
 	if (operation->alg == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_update_ad(operation, input, input_length);
+	}
+#endif
+
+#if defined(PSA_NEED_CRACEN_GCM_AES)
+	if (operation->alg == PSA_ALG_GCM) {
+		return cracen_sw_aes_gcm_update_ad(operation, input, input_length);
 	}
 #endif
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -117,9 +153,16 @@ psa_status_t cracen_aead_update(cracen_aead_operation_t *operation, const uint8_
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
+#if defined(PSA_NEED_CRACEN_CCM_AES)
 	if (operation->alg == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_update(operation, input, input_length, output, output_size,
+						output_length);
+	}
+#endif
+
+#if defined(PSA_NEED_CRACEN_GCM_AES)
+	if (operation->alg == PSA_ALG_GCM) {
+		return cracen_sw_aes_gcm_update(operation, input, input_length, output, output_size,
 						output_length);
 	}
 #endif
@@ -136,9 +179,16 @@ psa_status_t cracen_aead_finish(cracen_aead_operation_t *operation, uint8_t *cip
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
+#if defined(PSA_NEED_CRACEN_CCM_AES)
 	if (operation->alg == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_finish(operation, ciphertext, ciphertext_size,
+						ciphertext_length, tag, tag_size, tag_length);
+	}
+#endif
+
+#if defined(PSA_NEED_CRACEN_GCM_AES)
+	if (operation->alg == PSA_ALG_GCM) {
+		return cracen_sw_aes_gcm_finish(operation, ciphertext, ciphertext_size,
 						ciphertext_length, tag, tag_size, tag_length);
 	}
 #endif
@@ -154,9 +204,16 @@ psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *pla
 		return PSA_ERROR_INVALID_SIGNATURE;
 	}
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
+#if defined(PSA_NEED_CRACEN_CCM_AES)
 	if (operation->alg == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_verify(operation, plaintext, plaintext_size,
+						plaintext_length, tag, tag_length);
+	}
+#endif
+
+#if defined(PSA_NEED_CRACEN_GCM_AES)
+	if (operation->alg == PSA_ALG_GCM) {
+		return cracen_sw_aes_gcm_verify(operation, plaintext, plaintext_size,
 						plaintext_length, tag, tag_length);
 	}
 #endif
@@ -166,9 +223,14 @@ psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *pla
 psa_status_t cracen_aead_abort(cracen_aead_operation_t *operation)
 {
 	switch (operation->alg) {
-#if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
+#if defined(PSA_NEED_CRACEN_CCM_AES)
 	case PSA_ALG_CCM:
 		return cracen_sw_aes_ccm_abort(operation);
+#endif
+
+#if defined(PSA_NEED_CRACEN_GCM_AES)
+	case PSA_ALG_GCM:
+		return cracen_sw_aes_gcm_abort(operation);
 #endif
 	default:
 		safe_memzero(operation, sizeof(*operation));
@@ -365,7 +427,7 @@ psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const u
 {
 	psa_algorithm_t base_alg = PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg);
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
+#if defined(PSA_NEED_CRACEN_CCM_AES)
 	if (base_alg == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_encrypt(
 			attributes, key_buffer, key_buffer_size, alg, nonce, nonce_length,
@@ -450,7 +512,7 @@ psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const u
 {
 	psa_algorithm_t base_alg = PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg);
 
-#if defined(CONFIG_PSA_NEED_CRACEN_CCM_AES)
+#if defined(PSA_NEED_CRACEN_CCM_AES)
 	if (base_alg == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_decrypt(
 			attributes, key_buffer, key_buffer_size, alg, nonce, nonce_length,
