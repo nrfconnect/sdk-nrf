@@ -3,7 +3,7 @@
 # Copyright (c) 2024 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-config SOC_NRF54LV10A_ENGA_CPUAPP
+config SOC_NRF54LV10A_CPUAPP
 	select SOC_NRF54L_CPUAPP_COMMON
 	select ARMV8_M_DSP
 	select CPU_HAS_ARM_MPU
@@ -11,7 +11,7 @@ config SOC_NRF54LV10A_ENGA_CPUAPP
 	select CPU_HAS_FPU
 	select HAS_SWO
 
-config SOC_NRF54LV10A_ENGA_CPUFLPR
+config SOC_NRF54LV10A_CPUFLPR
 	select RISCV_CORE_NORDIC_VPR
 
 config SOC_NRF54LS05B_ENGA_CPUAPP
