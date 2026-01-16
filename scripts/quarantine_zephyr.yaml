@@ -335,39 +335,59 @@
   comment: "Not compatible with nRF Security"
 
 - scenarios:
-    - kernel.common.picolibc
-    - kernel.common.misra
-    - kernel.common.tls
+    - .*secure_storage.*
+    - benchmark.kernel.core
+    - cpp.libcxx.glibcxx.newlib
+    - cpp.libcxx.glibcxx.newlib_nano
+    - cpp.libcxx.glibcxx.picolibc
+    - crypto.mbedtls_psa.without_entropy_driver
+    - drivers.can.shell
+    - drivers.eeprom.shell
+    - drivers.gpio.build
+    - filesystem.lib_link
+    - kernel.common
     - kernel.common.minimallibc
+    - kernel.common.misra
     - kernel.common.nano32
     - kernel.common.nano64
-    - kernel.threads.apis
-    - kernel.threads.dynamic_thread.stack.pool.alloc.user
-    - kernel.threads.dynamic_thread.stack.pool.alloc.no_user
-    - kernel.threads.dynamic_thread.stack.pool.no_alloc.user
-    - kernel.threads.dynamic_thread.stack.no_pool.no_alloc.no_user
-    - kernel.threads.dynamic_thread.stack.no_pool.alloc.user
-    - kernel.threads.dynamic_thread.stack.no_pool.alloc.no_user
-    - kernel.threads.dynamic_thread.stack.pool.no_alloc.no_user
-    - kernel.threads.dynamic_thread.stack.no_pool.no_alloc.user
+    - kernel.common.picolibc
+    - kernel.common.tls
+    - kernel.context
+    - kernel.context.minimallibc
+    - kernel.lifo.usage
     - kernel.poll.minimallibc
-    - kernel.scheduler.no_timeslicing
+    - kernel.scheduler
     - kernel.scheduler.dumb_no_timeslicing
     - kernel.scheduler.dumb_timeslicing
-    - kernel.scheduler.multiq_no_timeslicing
     - kernel.scheduler.multiq
-    - message_bus.zbus.hlp_priority_boost
-    - message_bus.zbus.general_unittests_without_priority_boost
-    - message_bus.zbus.general_unittests
-    - logging.thread
-    - logging.immediate.*
+    - kernel.scheduler.multiq_no_timeslicing
+    - kernel.scheduler.no_timeslicing
+    - kernel.scheduler.simple_no_timeslicing
+    - kernel.scheduler.simple_timeslicing
+    - kernel.scheduler.slice_perthread
+    - kernel.semaphore
+    - kernel.threads.apis
+    - kernel.threads.dynamic_thread.stack.no_pool.alloc.no_user
+    - kernel.threads.dynamic_thread.stack.no_pool.alloc.user
+    - kernel.threads.dynamic_thread.stack.no_pool.no_alloc.no_user
+    - kernel.threads.dynamic_thread.stack.no_pool.no_alloc.user
+    - kernel.threads.dynamic_thread.stack.pool.alloc.no_user
+    - kernel.threads.dynamic_thread.stack.pool.alloc.user
+    - kernel.threads.dynamic_thread.stack.pool.no_alloc.no_user
+    - kernel.threads.dynamic_thread.stack.pool.no_alloc.user
+    - kernel.timer.timer
+    - kernel.workqueue
+    - kernel.workqueue.api
+    - kernel.workqueue.work_timeout
+    - libraries.encoding.json
+    - libraries.hash_map.cxx.djb2
     - libraries.heap
     - libraries.libc.c11_threads.minimal
-    - libraries.libc.c11_threads.picolibc.notls
+    - libraries.libc.c11_threads.newlib
+    - libraries.libc.c11_threads.newlib_nano
     - libraries.libc.c11_threads.picolibc
     - libraries.libc.c11_threads.picolibc.module
-    - libraries.libc.c11_threads.newlib_nano
-    - libraries.libc.c11_threads.newlib
+    - libraries.libc.c11_threads.picolibc.notls
     - libraries.libc.common
     - libraries.libc.common.minimal
     - libraries.libc.common.newlib
@@ -375,65 +395,51 @@
     - libraries.libc.common.picolibc
     - libraries.libc.common.picolibc.module
     - libraries.libc.common.picolibc.notls
-    - libraries.encoding.json
     - libraries.net_buf.buf
     - libraries.ring_buffer
-    - libraries.hash_map.cxx.djb2
-    - cpp.libcxx.glibcxx.picolibc
-    - cpp.libcxx.glibcxx.newlib
-    - cpp.libcxx.glibcxx.newlib_nano
+    - logging.immediate.*
+    - logging.thread
+    - message_bus.zbus.general_unittests
+    - message_bus.zbus.general_unittests_without_priority_boost
+    - message_bus.zbus.hlp_priority_boost
+    - mgmt.mcumgr.fs.mgmt.hash.supported.all
+    - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
+    - mgmt.mcumgr.os.info
+    - mgmt.mcumgr.os.info.no_hooks
+    - net.coap.server.common
+    - net.http.server.common
+    - net.http.server.crime
+    - net.mqtt_sn.packet
+    - portability.cmsis_rtos_v1
+    - portability.cmsis_rtos_v2
     - portability.posix.eventfd
-    - portability.posix.headers.newlib.without_posix_api
     - portability.posix.headers.newlib.with_posix_api
+    - portability.posix.headers.newlib.without_posix_api
     - portability.posix.headers.picolibc.with_posix_api
     - portability.posix.headers.picolibc.without_posix_api
     - portability.posix.headers.with_posix_api
     - portability.posix.headers.without_posix_api
-    - portability.cmsis_rtos_v2
-    - portability.cmsis_rtos_v1
-    - mgmt.mcumgr.os.info
-    - mgmt.mcumgr.os.info.no_hooks
-    - drivers.eeprom.shell
-    - drivers.can.shell
-    - shell.shell_custom_header
-    - net.mqtt_sn.packet
-    - net.http.server.common
-    - net.coap.server.common
-    - sample.zbus.msg_subscriber.*
-    - sample.sensor.shell.pytest
-    - sample.sensor.shell
-    - benchmark.kernel.core
+    - sample.drivers.crypto.mbedtls
+    - sample.drivers.flash.shell
+    - sample.harness.shell
+    - sample.harness.shell.vt100_colors_off
+    - sample.input.input_dump_shell
+    - sample.net.sockets.socketpair
+    - sample.perf
+    - sample.posix.env
     - sample.posix.eventfd
+    - sample.posix.uname
     - sample.pytest.shell
-    - kernel.lifo.usage
+    - sample.pytest.shell.vt100_colors_off
+    - sample.sensor.shell
+    - sample.sensor.shell.pytest
+    - sample.shell.shell_module
     - sample.shell.shell_module.getopt
     - sample.shell.shell_module.login
-    - kernel.scheduler.slice_perthread
-    - kernel.workqueue
-    - kernel.semaphore
-    - sample.posix.uname
-    - kernel.scheduler
-    - sample.drivers.flash.shell
-    - kernel.timer.timer
     - sample.smf.hsm_psicc2
-    - sample.net.sockets.socketpair
-    - sample.drivers.crypto.mbedtls
-    - kernel.workqueue.api
-    - kernel.workqueue.work_timeout
-    - sample.posix.env
-    - sample.shell.shell_module
-    - kernel.common
-    - net.http.server.crime
-    - drivers.gpio.build
-    - sample.perf
-    - .*secure_storage.*
-    - kernel.scheduler.simple_timeslicing
-    - kernel.scheduler.simple_no_timeslicing
-    - sample.input.input_dump_shell
-    - sample.harness.shell.vt100_colors_off
-    - sample.harness.shell
-    - filesystem.lib_link
-    - sample.pytest.shell.vt100_colors_off
+    - sample.zbus.msg_subscriber.*
+    - shell.shell_custom_header
+    - subsys.crc
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuppr
   comment: "region RAM/FLASH overflowed"
