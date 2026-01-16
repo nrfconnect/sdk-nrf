@@ -18,12 +18,20 @@
 #include <sxsymcrypt/trng.h>
 #include <sxsymcrypt/hashdefs.h>
 
+#if defined(PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
+#if defined(PSA_NEED_CRACEN_CHACHA20_POLY1305)
+#include "poly1305_ext.h"
+#endif /* PSA_NEED_CRACEN_CHACHA20_POLY1305 */
+#endif /* PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS */
+
 #define SX_BLKCIPHER_IV_SZ	(16U)
 #define SX_BLKCIPHER_AES_BLK_SZ (16U)
 
+#define SX_BLKCIPHER_CHACHA20_BLK_SZ (64U)
+
 #if defined(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)
 /* ChaCha20 has a 512 bit block size */
-#define SX_BLKCIPHER_MAX_BLK_SZ (64U)
+#define SX_BLKCIPHER_MAX_BLK_SZ SX_BLKCIPHER_CHACHA20_BLK_SZ
 #else
 #define SX_BLKCIPHER_MAX_BLK_SZ SX_BLKCIPHER_AES_BLK_SZ
 #endif
@@ -42,6 +50,14 @@
  * CHACHA20 (and for CHACHAPOLY for that sake).
  */
 #define CRACEN_MAX_CHACHA20_KEY_SIZE (32u)
+
+#define CRACEN_CHACHA20_COUNTER_SIZE (4u)
+
+/* Defined by RFC8439 */
+#define CRACEN_POLY1305_TAG_SIZE (16u)
+#define CRACEN_POLY1305_KEY_SIZE (32u)
+/* BA417 uses 131 bit */
+#define CRACEN_POLY1305_ACC_SIZE (17u)
 
 /*
  * There are two key types supported for ciphers, CHACHA20 and AES,
@@ -98,6 +114,11 @@
 #define CRACEN_WPA3_SAE_SEND_CONFIRM_SIZE	(2u)
 #define CRACEN_WPA3_SAE_CONFIRM_SIZE		(CRACEN_WPA3_SAE_SEND_CONFIRM_SIZE + \
 						 PSA_HASH_LENGTH(PSA_ALG_SHA_256))
+
+/** 4-bit Shoup's table.
+ *  The size is defined as 2^4.
+ */
+#define CRACEN_AES_GCM_HTABLE_SIZE 16
 
 enum cipher_operation {
 	CRACEN_DECRYPT,
@@ -204,6 +225,34 @@ struct cracen_sw_ccm_context_s {
 };
 typedef struct cracen_sw_ccm_context_s cracen_sw_ccm_context_t;
 
+struct cracen_sw_gcm_context_s {
+	/* Precalculated HTable */
+	uint64_t h_table[CRACEN_AES_GCM_HTABLE_SIZE][SX_BLKCIPHER_AES_BLK_SZ / sizeof(uint64_t)];
+	uint8_t ghash_block[SX_BLKCIPHER_AES_BLK_SZ]; /* GHASH calculation result */
+	uint8_t ctr_block[SX_BLKCIPHER_AES_BLK_SZ]; /* Counter block for CTR mode */
+	uint8_t keystream[SX_BLKCIPHER_AES_BLK_SZ]; /* Generated keystream */
+	size_t keystream_offset; /* Position in keystream buffer */
+	size_t total_ad_fed; /* Total AD bytes processed */
+	size_t total_data_enc; /* Total size of the ciphertext */
+	bool ctr_initialized; /* CTR initialization flag */
+	bool ghash_initialized; /* GHASH initialization flag */
+};
+typedef struct cracen_sw_gcm_context_s cracen_sw_gcm_context_t;
+
+#if defined(PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
+#if defined(PSA_NEED_CRACEN_CHACHA20_POLY1305)
+struct cracen_sw_chacha20_poly1305_context_s {
+	uint8_t ctr[CRACEN_CHACHA20_COUNTER_SIZE]; /* Counter */
+	poly1305_ext_context poly_ctx;
+	size_t total_ad_fed; /* Total AD bytes processed */
+	size_t total_data_enc; /* Total size of the ciphertext */
+	bool ctr_initialized; /* CTR initialization flag */
+	bool poly_initialized; /* Poly1305 initialization flag */
+};
+typedef struct cracen_sw_chacha20_poly1305_context_s cracen_sw_chacha20_poly1305_context_t;
+#endif /* PSA_NEED_CRACEN_CHACHA20_POLY1305 */
+#endif /* PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS */
+
 struct cracen_aead_operation {
 	psa_algorithm_t alg;
 	struct sxkeyref keyref;
@@ -219,9 +268,21 @@ struct cracen_aead_operation {
 	enum cracen_context_state context_state;
 	bool ad_finished;
 	struct sxaead ctx;
-#if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS)
+#if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS)
+#if defined(PSA_NEED_CRACEN_CCM_AES)
 	cracen_sw_ccm_context_t sw_ccm_ctx;
-#endif
+#endif /* PSA_NEED_CRACEN_CCM_AES */
+#endif /* PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS */
+
+#if defined(PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
+#if defined(PSA_NEED_CRACEN_GCM_AES)
+	cracen_sw_gcm_context_t sw_gcm_ctx;
+#endif /* PSA_NEED_CRACEN_GCM_AES */
+
+#if defined(PSA_NEED_CRACEN_CHACHA20_POLY1305)
+	cracen_sw_chacha20_poly1305_context_t sw_chacha_poly_ctx;
+#endif /* PSA_NEED_CRACEN_CHACHA20_POLY1305 */
+#endif /* PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS */
 };
 typedef struct cracen_aead_operation cracen_aead_operation_t;
 
