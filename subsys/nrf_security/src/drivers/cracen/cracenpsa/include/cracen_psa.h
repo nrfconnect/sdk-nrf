@@ -35,6 +35,51 @@
 #include "cracen_psa_key_ids.h"
 #include "sxsymcrypt/keyref.h"
 
+/** @brief Get the size of an opaque key.
+ *
+ * @param[in] attributes Key attributes.
+ * @param[out] key_size  Size of the key representation in bytes.
+ *
+ * @retval PSA_SUCCESS              The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_HANDLE The key handle is invalid.
+ */
+psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size_t *key_size);
+
+/** @brief Initialize a random number generator context.
+ *
+ * @param[in,out] context PRNG context.
+ *
+ * @retval PSA_SUCCESS The operation completed successfully.
+ */
+psa_status_t cracen_init_random(cracen_prng_context_t *context);
+
+/** @brief Get random bytes from a PRNG context.
+ *
+ * @param[in,out] context    PRNG context.
+ * @param[out] output        Buffer to store the random bytes.
+ * @param[in] output_size    Number of random bytes to generate.
+ *
+ * @retval PSA_SUCCESS The operation completed successfully.
+ */
+psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, size_t output_size);
+
+/** @brief Free a random number generator context.
+ *
+ * @param[in,out] context PRNG context.
+ *
+ * @retval PSA_SUCCESS The operation completed successfully.
+ */
+psa_status_t cracen_free_random(cracen_prng_context_t *context);
+
+/** @brief Get random bytes from the True Random Number Generator.
+ *
+ * @param[out] output      Buffer to store the random bytes.
+ * @param[in] output_size  Number of random bytes to generate.
+ *
+ * @retval PSA_SUCCESS The operation completed successfully.
+ */
+psa_status_t cracen_get_trng(uint8_t *output, size_t output_size);
+
 /** @brief Sign a message.
  *
  * @param[in] attributes      Key attributes.
@@ -204,63 +249,6 @@ static inline psa_status_t cracen_hash_abort(cracen_hash_operation_t *operation)
 	return PSA_SUCCESS;
 }
 
-/** @brief Encrypt and authenticate a message using AEAD.
- *
- * @param[in] attributes             Key attributes.
- * @param[in] key_buffer             Key material buffer.
- * @param[in] key_buffer_size        Size of the key buffer in bytes.
- * @param[in] alg                    AEAD algorithm.
- * @param[in] nonce                  Nonce or IV.
- * @param[in] nonce_length           Length of the nonce in bytes.
- * @param[in] additional_data        Additional Authenticated Data (AAD).
- * @param[in] additional_data_length Length of Additional Authenticated Data (AAD) in bytes.
- * @param[in] plaintext              Plaintext to encrypt.
- * @param[in] plaintext_length       Length of the plaintext in bytes.
- * @param[out] ciphertext            Buffer to store the ciphertext and tag.
- * @param[in] ciphertext_size        Size of the ciphertext buffer in bytes.
- * @param[out] ciphertext_length     Length of the generated ciphertext in bytes.
- *
- * @retval PSA_SUCCESS                The operation completed successfully.
- * @retval PSA_ERROR_INVALID_HANDLE   The key handle is invalid.
- * @retval PSA_ERROR_NOT_SUPPORTED    The algorithm is not supported.
- * @retval PSA_ERROR_BUFFER_TOO_SMALL The ciphertext buffer is too small.
- */
-psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
-				 size_t key_buffer_size, psa_algorithm_t alg, const uint8_t *nonce,
-				 size_t nonce_length, const uint8_t *additional_data,
-				 size_t additional_data_length, const uint8_t *plaintext,
-				 size_t plaintext_length, uint8_t *ciphertext,
-				 size_t ciphertext_size, size_t *ciphertext_length);
-
-/** @brief Authenticate and decrypt a message using AEAD.
- *
- * @param[in] attributes             Key attributes.
- * @param[in] key_buffer             Key material buffer.
- * @param[in] key_buffer_size        Size of the key buffer in bytes.
- * @param[in] alg                    AEAD algorithm.
- * @param[in] nonce                  Nonce or IV.
- * @param[in] nonce_length           Length of the nonce in bytes.
- * @param[in] additional_data        Additional Authenticated Data (AAD).
- * @param[in] additional_data_length Length of Additional Authenticated Data (AAD) in bytes.
- * @param[in] ciphertext             Ciphertext and tag to decrypt.
- * @param[in] ciphertext_length      Length of the ciphertext in bytes.
- * @param[out] plaintext             Buffer to store the plaintext.
- * @param[in] plaintext_size         Size of the plaintext buffer in bytes.
- * @param[out] plaintext_length      Length of the decrypted plaintext in bytes.
- *
- * @retval PSA_SUCCESS                 The operation completed successfully.
- * @retval PSA_ERROR_INVALID_HANDLE    The key handle is invalid.
- * @retval PSA_ERROR_INVALID_SIGNATURE The authentication tag is invalid.
- * @retval PSA_ERROR_NOT_SUPPORTED     The algorithm is not supported.
- * @retval PSA_ERROR_BUFFER_TOO_SMALL  The plaintext buffer is too small.
- */
-psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
-				 size_t key_buffer_size, psa_algorithm_t alg, const uint8_t *nonce,
-				 size_t nonce_length, const uint8_t *additional_data,
-				 size_t additional_data_length, const uint8_t *ciphertext,
-				 size_t ciphertext_length, uint8_t *plaintext,
-				 size_t plaintext_size, size_t *plaintext_length);
-
 /** @brief Encrypt a message using a symmetric cipher.
  *
  * @param[in] attributes      Key attributes.
@@ -390,6 +378,63 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
  * @retval PSA_SUCCESS The operation completed successfully.
  */
 psa_status_t cracen_cipher_abort(cracen_cipher_operation_t *operation);
+
+/** @brief Encrypt and authenticate a message using AEAD.
+ *
+ * @param[in] attributes             Key attributes.
+ * @param[in] key_buffer             Key material buffer.
+ * @param[in] key_buffer_size        Size of the key buffer in bytes.
+ * @param[in] alg                    AEAD algorithm.
+ * @param[in] nonce                  Nonce or IV.
+ * @param[in] nonce_length           Length of the nonce in bytes.
+ * @param[in] additional_data        Additional Authenticated Data (AAD).
+ * @param[in] additional_data_length Length of Additional Authenticated Data (AAD) in bytes.
+ * @param[in] plaintext              Plaintext to encrypt.
+ * @param[in] plaintext_length       Length of the plaintext in bytes.
+ * @param[out] ciphertext            Buffer to store the ciphertext and tag.
+ * @param[in] ciphertext_size        Size of the ciphertext buffer in bytes.
+ * @param[out] ciphertext_length     Length of the generated ciphertext in bytes.
+ *
+ * @retval PSA_SUCCESS                The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_HANDLE   The key handle is invalid.
+ * @retval PSA_ERROR_NOT_SUPPORTED    The algorithm is not supported.
+ * @retval PSA_ERROR_BUFFER_TOO_SMALL The ciphertext buffer is too small.
+ */
+psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
+				 size_t key_buffer_size, psa_algorithm_t alg, const uint8_t *nonce,
+				 size_t nonce_length, const uint8_t *additional_data,
+				 size_t additional_data_length, const uint8_t *plaintext,
+				 size_t plaintext_length, uint8_t *ciphertext,
+				 size_t ciphertext_size, size_t *ciphertext_length);
+
+/** @brief Authenticate and decrypt a message using AEAD.
+ *
+ * @param[in] attributes             Key attributes.
+ * @param[in] key_buffer             Key material buffer.
+ * @param[in] key_buffer_size        Size of the key buffer in bytes.
+ * @param[in] alg                    AEAD algorithm.
+ * @param[in] nonce                  Nonce or IV.
+ * @param[in] nonce_length           Length of the nonce in bytes.
+ * @param[in] additional_data        Additional Authenticated Data (AAD).
+ * @param[in] additional_data_length Length of Additional Authenticated Data (AAD) in bytes.
+ * @param[in] ciphertext             Ciphertext and tag to decrypt.
+ * @param[in] ciphertext_length      Length of the ciphertext in bytes.
+ * @param[out] plaintext             Buffer to store the plaintext.
+ * @param[in] plaintext_size         Size of the plaintext buffer in bytes.
+ * @param[out] plaintext_length      Length of the decrypted plaintext in bytes.
+ *
+ * @retval PSA_SUCCESS                 The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_HANDLE    The key handle is invalid.
+ * @retval PSA_ERROR_INVALID_SIGNATURE The authentication tag is invalid.
+ * @retval PSA_ERROR_NOT_SUPPORTED     The algorithm is not supported.
+ * @retval PSA_ERROR_BUFFER_TOO_SMALL  The plaintext buffer is too small.
+ */
+psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
+				 size_t key_buffer_size, psa_algorithm_t alg, const uint8_t *nonce,
+				 size_t nonce_length, const uint8_t *additional_data,
+				 size_t additional_data_length, const uint8_t *ciphertext,
+				 size_t ciphertext_length, uint8_t *plaintext,
+				 size_t plaintext_size, size_t *plaintext_length);
 
 /** @brief Set up an AEAD encryption operation.
  *
@@ -727,55 +772,6 @@ psa_status_t cracen_key_derivation_output_bytes(cracen_key_derivation_operation_
  */
 psa_status_t cracen_key_derivation_abort(cracen_key_derivation_operation_t *operation);
 
-/** @brief Export a public key.
- *
- * @param[in] attributes      Key attributes.
- * @param[in] key_buffer      Key material buffer.
- * @param[in] key_buffer_size Size of the key buffer in bytes.
- * @param[out] data           Buffer to store the public key.
- * @param[in] data_size       Size of the data buffer in bytes.
- * @param[out] data_length    Length of the exported public key in bytes.
- *
- * @retval PSA_SUCCESS              The operation completed successfully.
- * @retval PSA_ERROR_INVALID_HANDLE The key handle is invalid.
- * @retval PSA_ERROR_BUFFER_TOO_SMALL The data buffer is too small.
- */
-psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
-				      const uint8_t *key_buffer, size_t key_buffer_size,
-				      uint8_t *data, size_t data_size, size_t *data_length);
-
-/** @brief Import a key.
- *
- * @param[in] attributes          Key attributes.
- * @param[in] data                Key data to import.
- * @param[in] data_length         Length of the key data in bytes.
- * @param[out] key_buffer         Buffer to represent the stored key.
- * @param[in] key_buffer_size     Size of the key buffer in bytes.
- * @param[out] key_buffer_length  Length of key buffer for the imported key in bytes.
- * @param[out] key_bits           Size of the key in bits.
- *
- * @retval PSA_SUCCESS              The operation completed successfully.
- * @retval PSA_ERROR_INVALID_ARGUMENT The key data is invalid.
- * @retval PSA_ERROR_BUFFER_TOO_SMALL The key buffer is too small.
- */
-psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uint8_t *data,
-			       size_t data_length, uint8_t *key_buffer, size_t key_buffer_size,
-			       size_t *key_buffer_length, size_t *key_bits);
-
-/** @brief Generate a key.
- *
- * @param[in] attributes          Key attributes.
- * @param[out] key_buffer         Buffer to represent the generated key.
- * @param[in] key_buffer_size     Size of the key buffer in bytes.
- * @param[out] key_buffer_length  Length of key buffer for the generated key in bytes.
- *
- * @retval PSA_SUCCESS              The operation completed successfully.
- * @retval PSA_ERROR_NOT_SUPPORTED  The key type or size is not supported.
- * @retval PSA_ERROR_BUFFER_TOO_SMALL The key buffer is too small.
- */
-psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t *key_buffer,
-				 size_t key_buffer_size, size_t *key_buffer_length);
-
 /** @brief Encrypt a message using an asymmetric key.
  *
  * @param[in] attributes      Key attributes.
@@ -825,6 +821,55 @@ psa_status_t cracen_asymmetric_decrypt(const psa_key_attributes_t *attributes,
 				       psa_algorithm_t alg, const uint8_t *input,
 				       size_t input_length, const uint8_t *salt, size_t salt_length,
 				       uint8_t *output, size_t output_size, size_t *output_length);
+
+/** @brief Export a public key.
+ *
+ * @param[in] attributes      Key attributes.
+ * @param[in] key_buffer      Key material buffer.
+ * @param[in] key_buffer_size Size of the key buffer in bytes.
+ * @param[out] data           Buffer to store the public key.
+ * @param[in] data_size       Size of the data buffer in bytes.
+ * @param[out] data_length    Length of the exported public key in bytes.
+ *
+ * @retval PSA_SUCCESS              The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_HANDLE The key handle is invalid.
+ * @retval PSA_ERROR_BUFFER_TOO_SMALL The data buffer is too small.
+ */
+psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
+				      const uint8_t *key_buffer, size_t key_buffer_size,
+				      uint8_t *data, size_t data_size, size_t *data_length);
+
+/** @brief Import a key.
+ *
+ * @param[in] attributes          Key attributes.
+ * @param[in] data                Key data to import.
+ * @param[in] data_length         Length of the key data in bytes.
+ * @param[out] key_buffer         Buffer to represent the stored key.
+ * @param[in] key_buffer_size     Size of the key buffer in bytes.
+ * @param[out] key_buffer_length  Length of key buffer for the imported key in bytes.
+ * @param[out] key_bits           Size of the key in bits.
+ *
+ * @retval PSA_SUCCESS              The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The key data is invalid.
+ * @retval PSA_ERROR_BUFFER_TOO_SMALL The key buffer is too small.
+ */
+psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uint8_t *data,
+			       size_t data_length, uint8_t *key_buffer, size_t key_buffer_size,
+			       size_t *key_buffer_length, size_t *key_bits);
+
+/** @brief Generate a key.
+ *
+ * @param[in] attributes          Key attributes.
+ * @param[out] key_buffer         Buffer to represent the generated key.
+ * @param[in] key_buffer_size     Size of the key buffer in bytes.
+ * @param[out] key_buffer_length  Length of key buffer for the generated key in bytes.
+ *
+ * @retval PSA_SUCCESS              The operation completed successfully.
+ * @retval PSA_ERROR_NOT_SUPPORTED  The key type or size is not supported.
+ * @retval PSA_ERROR_BUFFER_TOO_SMALL The key buffer is too small.
+ */
+psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t *key_buffer,
+				 size_t key_buffer_size, size_t *key_buffer_length);
 
 /** @brief Get a built-in key.
  *
@@ -885,15 +930,35 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
  */
 psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes);
 
-/** @brief Get the size of an opaque key.
+/** @brief Derive a key from input material.
  *
- * @param[in] attributes Key attributes.
- * @param[out] key_size  Size of the key representation in bytes.
+ * @param[in] attributes      Key attributes for the derived key.
+ * @param[in] input           Input material.
+ * @param[in] input_length    Length of the input material in bytes.
+ * @param[out] key            Buffer to store the derived key.
+ * @param[in] key_size        Size of the key buffer in bytes.
+ * @param[out] key_length     Length of the derived key in bytes.
+ *
+ * @retval PSA_SUCCESS              The operation completed successfully.
+ * @retval PSA_ERROR_NOT_SUPPORTED  The key derivation is not supported.
+ * @retval PSA_ERROR_BUFFER_TOO_SMALL The key buffer is too small.
+ */
+psa_status_t cracen_derive_key(const psa_key_attributes_t *attributes, const uint8_t *input,
+			       size_t input_length, uint8_t *key, size_t key_size,
+			       size_t *key_length);
+
+/** @brief Get the key slot for a given key ID.
+ *
+ * @param[in] key_id       Key ID.
+ * @param[out] lifetime    Key lifetime.
+ * @param[out] slot_number Key slot number.
  *
  * @retval PSA_SUCCESS              The operation completed successfully.
  * @retval PSA_ERROR_INVALID_HANDLE The key handle is invalid.
+ * @retval PSA_ERROR_DOES_NOT_EXIST The key does not exist.
  */
-psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size_t *key_size);
+psa_status_t cracen_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
+				 psa_drv_slot_number_t *slot_number);
 
 /** @brief Set up a JPAKE operation.
  *
@@ -1006,32 +1071,6 @@ psa_status_t cracen_jpake_get_shared_key(cracen_jpake_operation_t *operation,
  * @retval PSA_SUCCESS The operation completed successfully.
  */
 psa_status_t cracen_jpake_abort(cracen_jpake_operation_t *operation);
-
-/** @brief Initialize a random number generator context.
- *
- * @param[in,out] context PRNG context.
- *
- * @retval PSA_SUCCESS The operation completed successfully.
- */
-psa_status_t cracen_init_random(cracen_prng_context_t *context);
-
-/** @brief Get random bytes from a PRNG context.
- *
- * @param[in,out] context    PRNG context.
- * @param[out] output        Buffer to store the random bytes.
- * @param[in] output_size    Number of random bytes to generate.
- *
- * @retval PSA_SUCCESS The operation completed successfully.
- */
-psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, size_t output_size);
-
-/** @brief Free a random number generator context.
- *
- * @param[in,out] context PRNG context.
- *
- * @retval PSA_SUCCESS The operation completed successfully.
- */
-psa_status_t cracen_free_random(cracen_prng_context_t *context);
 
 /** @brief Set up an SRP operation.
  *
@@ -1364,45 +1403,6 @@ psa_status_t cracen_spake2p_get_shared_key(cracen_spake2p_operation_t *operation
  * @retval PSA_SUCCESS The operation completed successfully.
  */
 psa_status_t cracen_spake2p_abort(cracen_spake2p_operation_t *operation);
-
-/** @brief Derive a key from input material.
- *
- * @param[in] attributes      Key attributes for the derived key.
- * @param[in] input           Input material.
- * @param[in] input_length    Length of the input material in bytes.
- * @param[out] key            Buffer to store the derived key.
- * @param[in] key_size        Size of the key buffer in bytes.
- * @param[out] key_length     Length of the derived key in bytes.
- *
- * @retval PSA_SUCCESS              The operation completed successfully.
- * @retval PSA_ERROR_NOT_SUPPORTED  The key derivation is not supported.
- * @retval PSA_ERROR_BUFFER_TOO_SMALL The key buffer is too small.
- */
-psa_status_t cracen_derive_key(const psa_key_attributes_t *attributes, const uint8_t *input,
-			       size_t input_length, uint8_t *key, size_t key_size,
-			       size_t *key_length);
-
-/** @brief Get random bytes from the True Random Number Generator.
- *
- * @param[out] output      Buffer to store the random bytes.
- * @param[in] output_size  Number of random bytes to generate.
- *
- * @retval PSA_SUCCESS The operation completed successfully.
- */
-psa_status_t cracen_get_trng(uint8_t *output, size_t output_size);
-
-/** @brief Get the key slot for a given key ID.
- *
- * @param[in] key_id       Key ID.
- * @param[out] lifetime    Key lifetime.
- * @param[out] slot_number Key slot number.
- *
- * @retval PSA_SUCCESS              The operation completed successfully.
- * @retval PSA_ERROR_INVALID_HANDLE The key handle is invalid.
- * @retval PSA_ERROR_DOES_NOT_EXIST The key does not exist.
- */
-psa_status_t cracen_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
-				 psa_drv_slot_number_t *slot_number);
 
 /** @} */
 

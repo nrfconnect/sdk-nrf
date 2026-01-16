@@ -243,9 +243,9 @@ See the following section for more information.
 Setting up KMU metadata and destination addresses for production
 ================================================================
 
-The :c:struct:`kmu_metadata` structure is a 32-bit bitfield defined in the CRACEN driver source code (:file:`nrf/subsys/nrf_security/src/drivers/cracen/cracenpsa/src/kmu.c`):
+The :c:struct:`kmu_metadata` structure is a 32-bit bitfield defined in the CRACEN driver source code (:file:`nrf/subsys/nrf_security/src/drivers/cracen/cracenpsa/src/cracen_psa_kmu.c`):
 
-.. literalinclude:: ../../../../../subsys/nrf_security/src/drivers/cracen/cracenpsa/src/kmu.c
+.. literalinclude:: ../../../../../subsys/nrf_security/src/drivers/cracen/cracenpsa/src/cracen_psa_kmu.c
    :start-after: #endif
    :end-before: _Static_assert(sizeof(kmu_metadata)
    :language: c
