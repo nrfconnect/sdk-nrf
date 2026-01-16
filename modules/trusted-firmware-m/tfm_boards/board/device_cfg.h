@@ -14,7 +14,7 @@
 #include <zephyr/devicetree.h>
 
 #if defined(NRF54L15_XXAA) || defined(NRF54L10_XXAA) || \
-	defined(NRF54LV10A_ENGA_XXAA) || defined(NRF54LM20A_ENGA_XXAA) || \
+	defined(NRF54LV10A_ENGA_XXAA) || defined(NRF54LM20A_XXAA) || \
 	defined(NRF7120_ENGA_XXAA)
 #if defined(CONFIG_TFM_SECURE_UART00) && DOMAIN_NS != 1U
 #define TFM_UART uart00
