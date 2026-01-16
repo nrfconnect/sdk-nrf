@@ -18,9 +18,9 @@
 #if NRF54L_ERRATA_20_PRESENT
 #include <hal/nrf_power.h>
 #endif /* NRF54L_ERRATA_20_PRESENT */
-#if defined(NRF54LM20A_ENGA_XXAA)
+#if defined(NRF54LM20A_XXAA)
 #include <hal/nrf_clock.h>
-#endif /* defined(NRF54LM20A_ENGA_XXAA) */
+#endif /* defined(NRF54LM20A_XXAA) */
 
 /* Empty trim value */
 #define TRIM_VALUE_EMPTY 0xFFFFFFFF
@@ -61,10 +61,10 @@ static void clock_init(void)
 	}
 #endif /* NRF54L_ERRATA_20_PRESENT */
 
-#if defined(NRF54LM20A_ENGA_XXAA)
+#if defined(NRF54LM20A_XXAA)
 	/* MLTPAN-39 */
 	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
-#endif /* defined(NRF54LM20A_ENGA_XXAA) */
+#endif /* defined(NRF54LM20A_XXAA) */
 
 	printk("Clock has started\n");
 }
