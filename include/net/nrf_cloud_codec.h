@@ -184,13 +184,13 @@ struct nrf_cloud_obj_shadow_data {
 #define NRF_CLOUD_OBJ_JSON_DEFINE(_name) \
 	struct nrf_cloud_obj _name = { .type = NRF_CLOUD_OBJ_TYPE_JSON, .json = NULL, \
 				       .enc_src = NRF_CLOUD_ENC_SRC_NONE, \
-				       .encoded_data = { .ptr = NULL, .len = 0 } }
+				       .encoded_data = {  .len = 0, .ptr = NULL } }
 
 #define NRF_CLOUD_OBJ_COAP_CBOR_DEFINE(_name) \
 	struct nrf_cloud_obj _name = { .type = NRF_CLOUD_OBJ_TYPE_COAP_CBOR, \
 				       .coap_cbor = NULL, \
 				       .enc_src = NRF_CLOUD_ENC_SRC_NONE, \
-				       .encoded_data = { .ptr = NULL, .len = 0 } }
+				       .encoded_data = { .len = 0, .ptr = NULL } }
 
 /** @brief Define an nRF Cloud codec object of the specified type.
  *
@@ -198,7 +198,7 @@ struct nrf_cloud_obj_shadow_data {
  * @param _type	Type of the object.
  */
 #define NRF_CLOUD_OBJ_DEFINE(_name, _type) \
-	struct nrf_cloud_obj _name = { 0 }; \
+	struct nrf_cloud_obj _name = { NRF_CLOUD_OBJ_TYPE__UNDEFINED }; \
 	_name.type = _type; \
 	_name.enc_src = NRF_CLOUD_ENC_SRC_NONE;
 
@@ -214,7 +214,7 @@ struct nrf_cloud_obj_shadow_data {
 #define NRF_CLOUD_OBJ_PRE_ENC_DEFINE(_name, _data, _len) \
 	struct nrf_cloud_obj _name = { .type = NRF_CLOUD_OBJ_TYPE__UNDEFINED, \
 				       .enc_src = NRF_CLOUD_ENC_SRC_PRE_ENCODED, \
-				       .encoded_data = { .ptr = _data, .len = _len } }
+				       .encoded_data = { .len = _len, .ptr = _data } }
 
 /** @brief Check if the provided object is a valid nRF Cloud codec object type.
  *
