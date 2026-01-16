@@ -9,6 +9,7 @@
 #include <string.h>
 #include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/hashdefs.h>
+#include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/keyref.h>
 #include "common.h"
 #include <cracen/mem_helpers.h>
@@ -38,7 +39,8 @@ psa_status_t cracen_hmac_setup(cracen_mac_operation_t *operation,
 	}
 
 	operation->bytes_left_for_next_block = sx_hash_get_alg_blocksz(sx_hash_algo);
-	operation->is_first_block = true;
+	/* State is saved and HW released after mac_create_hmac */
+	operation->has_saved_state = true;
 
 	return PSA_SUCCESS;
 }
@@ -73,20 +75,21 @@ psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const uint8_t
 		return PSA_SUCCESS;
 	}
 
-	if (!operation->is_first_block) {
+	if (operation->has_saved_state) {
+		sx_hw_reserve(&operation->hmac.hashctx.dma, SX_HW_RESERVE_DEFAULT);
 		sx_status = sx_hash_resume_state(&operation->hmac.hashctx);
 		if (sx_status != SX_OK) {
-			return silex_statuscodes_to_psa(sx_status);
+			goto exit;
 		}
 	}
 
-	operation->is_first_block = false;
+	operation->has_saved_state = true;
 
 	/* Feed the data that are currently in the input buffer to the driver */
 	sx_status = sx_hash_feed(&operation->hmac.hashctx, operation->input_buffer,
 			(block_size - operation->bytes_left_for_next_block));
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	/* Add fill up the next block and add as many full blocks as possible by
@@ -99,15 +102,18 @@ psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const uint8_t
 	/* forward the data to the driver */
 	sx_status = sx_hash_feed(&operation->hmac.hashctx, input, input_chunk_length);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	sx_status = sx_hash_save_state(&operation->hmac.hashctx);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
 	sx_status = sx_hash_wait(&operation->hmac.hashctx);
+
+exit:
+	sx_cmdma_release_hw(&operation->hmac.hashctx.dma);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
@@ -141,10 +147,11 @@ psa_status_t cracen_hmac_finish(cracen_mac_operation_t *operation)
 	digestsz = sx_hash_get_alg_digestsz(sx_hash_algo);
 	block_size = sx_hash_get_alg_blocksz(sx_hash_algo);
 
-	if (!operation->is_first_block) {
+	if (operation->has_saved_state) {
+		sx_hw_reserve(&operation->hmac.hashctx.dma, SX_HW_RESERVE_DEFAULT);
 		sx_status = sx_hash_resume_state(&operation->hmac.hashctx);
 		if (sx_status != SX_OK) {
-			return silex_statuscodes_to_psa(sx_status);
+			goto exit;
 		}
 	}
 
@@ -152,12 +159,15 @@ psa_status_t cracen_hmac_finish(cracen_mac_operation_t *operation)
 	sx_status = sx_hash_feed(&operation->hmac.hashctx, operation->input_buffer,
 			block_size - operation->bytes_left_for_next_block);
 	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+		goto exit;
 	}
 
-	/* Generate the MAC. */
-	sx_status = hmac_produce(&operation->hmac.hashctx, sx_hash_algo, operation->input_buffer,
-			      sizeof(operation->input_buffer), operation->hmac.workmem);
+	/* Generate the MAC. hmac_produce handles HW release internally. */
+	return silex_statuscodes_to_psa(
+		hmac_produce(&operation->hmac.hashctx, sx_hash_algo, operation->input_buffer,
+			     sizeof(operation->input_buffer), operation->hmac.workmem));
 
+exit:
+	sx_cmdma_release_hw(&operation->hmac.hashctx.dma);
 	return silex_statuscodes_to_psa(sx_status);
 }
