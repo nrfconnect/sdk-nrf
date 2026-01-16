@@ -14,7 +14,7 @@
 #include <zephyr/devicetree.h>
 
 #if defined(NRF54L15_XXAA) || defined(NRF54L10_XXAA) || \
-	defined(NRF54LV10A_ENGA_XXAA) || defined(NRF54LM20A_XXAA) || \
+	defined(NRF54LV10A_XXAA) || defined(NRF54LM20A_XXAA) || \
 	defined(NRF7120_ENGA_XXAA)
 #if defined(CONFIG_TFM_SECURE_UART00) && DOMAIN_NS != 1U
 #define TFM_UART uart00
@@ -46,7 +46,7 @@
 #define TFM_UART uart1
 #endif /* defined(CONFIG_TFM_SECURE_UART1) */
 
-#endif /* NRF54L15_XXAA || NRF54L10_XXAA || NRF54LV10A_ENGA_XXAA || NRF7120_ENGA_XXAA */
+#endif /* NRF54L15_XXAA || NRF54L10_XXAA || NRF54LV10A_XXAA || NRF7120_ENGA_XXAA */
 
 #define DEFAULT_UART_BAUDRATE DT_PROP_OR(DT_NODELABEL(TFM_UART), current_speed, 115200)
 

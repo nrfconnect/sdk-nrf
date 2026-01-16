@@ -5,7 +5,7 @@
  */
 
 /dts-v1/;
-#include <nordic/nrf54lv10a_enga_cpuflpr.dtsi>
+#include <nordic/nrf54lv10a_cpuflpr.dtsi>
 #include "nrf54lv10dk_nrf54lv10a-common.dtsi"
 
 / {
