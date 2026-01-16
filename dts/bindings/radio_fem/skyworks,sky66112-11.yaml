@@ -8,7 +8,7 @@ description: |
 
 compatible: "skyworks,sky66112-11"
 
-include: generic-fem-two-ctrl-pins.yaml
+include: radio-fem-two-ctrl-pins.yaml
 
 properties:
     ctx-settle-time-us:
