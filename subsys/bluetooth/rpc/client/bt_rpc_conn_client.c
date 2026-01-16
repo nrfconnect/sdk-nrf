@@ -770,6 +770,38 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_disconnected_call,
 			 BT_CONN_CB_DISCONNECTED_CALL_RPC_CMD,
 			 bt_conn_cb_disconnected_call_rpc_handler, NULL);
 
+static void bt_conn_cb_recycled_call(void)
+{
+	struct bt_conn_cb *cb;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&conn_cbs, cb, _node) {
+		if (cb->recycled) {
+			cb->recycled();
+		}
+	}
+
+	STRUCT_SECTION_FOREACH(bt_conn_cb, cb) {
+		if (cb->recycled) {
+			cb->recycled();
+		}
+	}
+}
+
+static void bt_conn_cb_recycled_call_rpc_handler(const struct nrf_rpc_group *group,
+						 struct nrf_rpc_cbor_ctx *ctx,
+						 void *handler_data)
+{
+	nrf_rpc_cbor_decoding_done(group, ctx);
+
+	bt_conn_cb_recycled_call();
+
+	nrf_rpc_rsp_send_void(group);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_conn_cb_recycled_call,
+			 BT_CONN_CB_RECYCLED_CALL_RPC_CMD,
+			 bt_conn_cb_recycled_call_rpc_handler, NULL);
+
 static bool bt_conn_cb_le_param_req_call(struct bt_conn *conn, struct bt_le_conn_param *param)
 {
 	struct bt_conn_cb *cb;

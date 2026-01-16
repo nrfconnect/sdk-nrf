@@ -751,6 +751,16 @@ static void bt_conn_cb_disconnected_call(struct bt_conn *conn, uint8_t reason)
 				&ctx, nrf_rpc_rsp_decode_void, NULL);
 }
 
+static void bt_conn_cb_recycled_call(void)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+
+	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, 0);
+
+	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_CONN_CB_RECYCLED_CALL_RPC_CMD,
+				&ctx, nrf_rpc_rsp_decode_void, NULL);
+}
+
 static bool bt_conn_cb_le_param_req_call(struct bt_conn *conn, struct bt_le_conn_param *param)
 {
 	struct nrf_rpc_cbor_ctx ctx;
@@ -879,6 +889,7 @@ static struct bt_conn_cb bt_conn_cb_register_data = {
 
 	.connected = bt_conn_cb_connected_call,
 	.disconnected = bt_conn_cb_disconnected_call,
+	.recycled = bt_conn_cb_recycled_call,
 	.le_param_req = bt_conn_cb_le_param_req_call,
 	.le_param_updated = bt_conn_cb_le_param_updated_call,
 #if defined(CONFIG_BT_SMP)
