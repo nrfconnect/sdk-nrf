@@ -573,7 +573,7 @@ struct foreach_stream_data {
 	struct bt_bap_ep_info *incoming_ep_info;
 	struct bt_bap_qos_cfg_pref *common_qos;
 	struct bt_bap_qos_cfg_pref const *incoming_qos;
-	struct bt_bap_stream *incoming_stream;
+	struct bt_bap_stream const *const incoming_stream;
 	uint8_t *streams_checked;
 	uint32_t *existing_pres_dly_us;
 	uint32_t *computed_pres_dly_us;
@@ -822,11 +822,11 @@ static bool stream_check_max_trans_lat(struct bt_cap_stream *existing_stream, vo
 	}
 
 	(*ctx->streams_checked)++;
-	LOG_WRN("Stream checked %d", *ctx->streams_checked);
+	LOG_INF("Stream checked %d", *ctx->streams_checked);
 
 	if (*ctx->existing_trans_lat_ms == UINT16_MAX) {
 		*ctx->existing_trans_lat_ms = ctx->incoming_qos->latency;
-		LOG_WRN("First trans lat set: %u ms", ctx->incoming_qos->latency);
+		LOG_INF("First trans lat set: %u ms", ctx->incoming_qos->latency);
 	} else if (*ctx->existing_trans_lat_ms != existing_stream->bap_stream.qos->latency) {
 		LOG_ERR("Illegal value. Max transport latencies do not match: %u != %u",
 			*ctx->existing_trans_lat_ms, existing_stream->bap_stream.qos->latency);
@@ -836,22 +836,27 @@ static bool stream_check_max_trans_lat(struct bt_cap_stream *existing_stream, vo
 	return false;
 }
 
-int srv_store_max_trans_lat_find(struct bt_bap_stream *stream, uint16_t *new_max_trans_lat_ms,
+int srv_store_max_trans_lat_find(struct bt_bap_stream const *const stream,
+				 struct bt_bap_qos_cfg_pref const *const server_qos_pref,
+				 uint16_t *new_max_trans_lat_ms,
 				 uint16_t *existing_max_trans_lat_ms, bool *group_reconfig_needed,
-				 const struct bt_bap_qos_cfg_pref *server_qos_pref,
 				 struct bt_cap_unicast_group *unicast_group)
 {
 	int ret;
 
+	valid_entry_check(__func__);
+
 	if (stream == NULL || new_max_trans_lat_ms == NULL || server_qos_pref == NULL ||
-	    group_reconfig_needed == NULL) {
+	    group_reconfig_needed == NULL || existing_max_trans_lat_ms == NULL) {
 		LOG_ERR("NULL parameter!");
 
 		return -EINVAL;
 	}
 
+	*existing_max_trans_lat_ms = UINT16_MAX;
+
 	/* All streams of a given direction within the CIG must have the same
-	 * transport latency. See BAP spec (BAP_v1.0.1 section 7.2.1)
+	 * transport latency. See BAP spec (BAP_v1.0.2 section 7.2.1)
 	 */
 
 	uint8_t existing_streams_checked = 0;
@@ -884,22 +889,25 @@ int srv_store_max_trans_lat_find(struct bt_bap_stream *stream, uint16_t *new_max
 		*new_max_trans_lat_ms = server_qos_pref->latency;
 		*group_reconfig_needed = false;
 	} else if (*existing_max_trans_lat_ms < server_qos_pref->latency) {
-		/* Existing latency is less than the new one, need to configure the new
-		 * stream */
+		/* Existing max transport latency is less than the new one, need to configure the
+		 * new/incoming stream
+		 */
 		LOG_INF("Existing max transport latency %u ms, new: %u ms",
 			*existing_max_trans_lat_ms, server_qos_pref->latency);
 		*new_max_trans_lat_ms = *existing_max_trans_lat_ms;
 		*group_reconfig_needed = false;
 	} else if (*existing_max_trans_lat_ms > server_qos_pref->latency) {
 		/* Existing latency is larger than the new one, need to re-configure
-		 * existing streams */
+		 * existing streams
+		 */
 		LOG_INF("Existing max transport latency %u ms, new: %u ms",
 			*existing_max_trans_lat_ms, server_qos_pref->latency);
-		*new_max_trans_lat_ms = *existing_max_trans_lat_ms;
 		*new_max_trans_lat_ms = server_qos_pref->latency;
 		*group_reconfig_needed = true;
 	} else if (*existing_max_trans_lat_ms == server_qos_pref->latency) {
-		/* Existing latency is equal to the pref of the new stream, no re-config */
+		/* Existing max transport latency is equal to the pref of the new stream, no
+		 * re-config
+		 */
 		LOG_INF("Max transport latency unchanged at %d ms", *existing_max_trans_lat_ms);
 		*new_max_trans_lat_ms = *existing_max_trans_lat_ms;
 		*group_reconfig_needed = false;
