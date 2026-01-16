@@ -7,20 +7,20 @@
 / {
 	zephyr,user {
 		pwms = <&pwm20 0 160000 PWM_POLARITY_NORMAL>;
-		gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>;
+		gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
 	};
 };
 
 &pinctrl {
 	pwm20_alt: pwm20_alt {
 		group1 {
-			psels = <NRF_PSEL(PWM_OUT0, 1, 5)>;
+			psels = <NRF_PSEL(PWM_OUT0, 1, 10)>;
 		};
 	};
 
 	pwm20_alt_sleep: pwm20_alt_sleep {
 		group1 {
-			psels = <NRF_PSEL(PWM_OUT0, 1, 5)>;
+			psels = <NRF_PSEL(PWM_OUT0, 1, 10)>;
 			low-power-enable;
 		};
 	};
