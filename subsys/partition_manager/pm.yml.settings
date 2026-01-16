@@ -4,7 +4,7 @@
 # TF-M non-secure application to avoid splitting the secure/non-secure
 # partitions more than necessary.
 #if defined(CONFIG_SOC_NRF54L15_CPUAPP) || defined(CONFIG_SOC_NRF54LV10A_ENGA_CPUAPP) || \
-    defined(CONFIG_SOC_NRF54LM20A_ENGA_CPUAPP)
+    defined(CONFIG_SOC_NRF54LM20A_CPUAPP)
 settings_storage:
   placement:
     after: [app]
