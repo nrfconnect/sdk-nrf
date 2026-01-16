@@ -47,6 +47,12 @@ config MCUBOOT_MANIFEST_IMAGE_INDEX
 	help
 	  Specifies the index of the image that must include the manifest.
 
+config MCUBOOT_MANIFEST_DIR
+	string "Path to the directory containing manifest(s)"
+	help
+	  Specifies the path to the directory containing custom manifest file(s).
+	  Autogeneration of the manifest file(s) is used if the path is empty.
+
 endif # MCUBOOT_MANIFEST_UPDATES
 
 config MCUBOOT_BUILD_DIRECT_XIP_VARIANT
