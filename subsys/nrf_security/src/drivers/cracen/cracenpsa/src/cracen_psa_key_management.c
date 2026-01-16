@@ -4,19 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "common.h"
+#include "internal/common.h"
 #include <cracen/ec_helpers.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
-#include <cracen_psa_eddsa.h>
-#include <cracen_psa_ecdsa.h>
-#include <cracen_psa_montgomery.h>
-#include <cracen_psa_ikg.h>
-#include <cracen_psa_rsa_keygen.h>
+#include "internal/cracen_eddsa.h"
+#include "internal/cracen_ecdsa.h"
+#include "internal/cracen_montgomery.h"
+#include "internal/cracen_ikg.h"
+#include "internal/cracen_rsa_keygen.h"
 #include <cracen_psa_builtin_key_policy.h>
 #include <nrf_security_mutexes.h>
-#include "ecc.h"
+#include "internal/ecc.h"
 #include <silexpk/sxops/eccweierstrass.h>
 #include <silexpk/sxops/rsa.h>
 #include <silexpk/ik.h>

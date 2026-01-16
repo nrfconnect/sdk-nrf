@@ -46,8 +46,8 @@
  * - Output buffer sizes are not validated so undersized buffers cause overflow.
  */
 
-#ifndef CRACEN_PSA_EDDSA_H
-#define CRACEN_PSA_EDDSA_H
+#ifndef CRACEN_EDDSA_H
+#define CRACEN_EDDSA_H
 
 #include <stddef.h>
 #include <stdbool.h>
@@ -227,4 +227,4 @@ int cracen_ed448_create_pubkey(const uint8_t *priv_key, uint8_t *pub_key);
 
 /** @} */
 
-#endif /* CRACEN_PSA_EDDSA_H */
+#endif /* CRACEN_EDDSA_H */
