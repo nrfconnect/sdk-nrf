@@ -67,10 +67,14 @@ void sx_wrpkmem_byte(void *dst, uint8_t input_byte);
  * @param[in] src Source of read operation
  * @param[in] sz The number of bytes to read from src to dst
  */
+#ifndef CONFIG_SOC_NRF54LM20A
 static inline void sx_rdpkmem(void *dst, const void *src, size_t sz)
 {
 	memcpy(dst, src, sz);
 }
+#else
+void sx_rdpkmem(void *dst, const void *src, size_t sz);
+#endif
 
 /** Read a byte from device memory at src.
  *
