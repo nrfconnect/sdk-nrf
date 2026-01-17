@@ -6,20 +6,25 @@
 
 #include <psa/crypto.h>
 #include "common.h"
-#include "cracen_psa_primitives.h"
+#include <cracen_psa_builtin_key_policy.h>
+#include <cracen_psa_primitives.h>
+#include <cracen_psa_wpa3_sae.h>
 #include "psa/crypto_sizes.h"
 #include "psa/crypto_types.h"
 #include "psa/crypto_values.h"
 #include <psa_crypto_driver_wrappers.h>
-#include "cracen_psa_wpa3_sae.h"
 
 psa_status_t cracen_pake_setup(cracen_pake_operation_t *operation,
 			       const psa_key_attributes_t *attributes, const uint8_t *password,
 			       size_t password_length, const psa_pake_cipher_suite_t *cipher_suite)
 {
-	operation->alg = psa_pake_cs_get_algorithm(cipher_suite);
+	psa_status_t status;
 
-	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_DERIVE)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
+	operation->alg = psa_pake_cs_get_algorithm(cipher_suite);
 
 	if (PSA_ALG_IS_JPAKE(operation->alg)) {
 #ifdef PSA_NEED_CRACEN_ECJPAKE

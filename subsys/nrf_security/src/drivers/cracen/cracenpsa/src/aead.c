@@ -16,6 +16,7 @@
 #include <sxsymcrypt/keyref.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
+#include <cracen_psa_builtin_key_policy.h>
 #include <zephyr/sys/__assert.h>
 #include "common.h"
 
@@ -339,6 +340,10 @@ psa_status_t cracen_aead_encrypt_setup(cracen_aead_operation_t *operation,
 				       const uint8_t *key_buffer, size_t key_buffer_size,
 				       psa_algorithm_t alg)
 {
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_ENCRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 #if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
 	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
 	if (alg == PSA_ALG_CCM) {
@@ -355,6 +360,10 @@ psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
 				       const uint8_t *key_buffer, size_t key_buffer_size,
 				       psa_algorithm_t alg)
 {
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_DECRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 #if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
 	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
 	if (alg == PSA_ALG_CCM) {
@@ -780,6 +789,10 @@ psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const u
 				 size_t plaintext_length, uint8_t *ciphertext,
 				 size_t ciphertext_size, size_t *ciphertext_length)
 {
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_ENCRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 #if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
 	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
 	if (alg == PSA_ALG_CCM) {
@@ -856,6 +869,10 @@ psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const u
 				 size_t ciphertext_length, uint8_t *plaintext,
 				 size_t plaintext_size, size_t *plaintext_length)
 {
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_DECRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 #if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
 	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
 	if (alg == PSA_ALG_CCM) {

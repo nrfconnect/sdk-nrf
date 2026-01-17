@@ -21,12 +21,13 @@
 #include <sxsymcrypt/trng.h>
 
 #include "common.h"
-#include "cracen_psa.h"
-#include "cracen_psa_ecdsa.h"
-#include "cracen_psa_eddsa.h"
+#include <cracen_psa.h>
+#include <cracen_psa_builtin_key_policy.h>
+#include <cracen_psa_ecdsa.h>
+#include <cracen_psa_eddsa.h>
 #include <cracen_psa_ikg.h>
-#include "cracen_psa_rsa_signature_pss.h"
-#include "cracen_psa_rsa_signature_pkcs1v15.h"
+#include <cracen_psa_rsa_signature_pss.h>
+#include <cracen_psa_rsa_signature_pkcs1v15.h>
 #include "ecc.h"
 #define CRACEN_IS_MESSAGE      (1)
 #define CRACEN_IS_HASH	       (0)
@@ -639,6 +640,10 @@ psa_status_t cracen_sign_message(const psa_key_attributes_t *attributes, const u
 				 size_t input_length, uint8_t *signature, size_t signature_size,
 				 size_t *signature_length)
 {
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_SIGN_MESSAGE)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC)) {
 		if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
 			return cracen_signature_ecc_sign(
@@ -663,6 +668,10 @@ psa_status_t cracen_sign_hash(const psa_key_attributes_t *attributes, const uint
 			      size_t hash_length, uint8_t *signature, size_t signature_size,
 			      size_t *signature_length)
 {
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_SIGN_HASH)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC)) {
 		if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
 			return cracen_signature_ecc_sign(
@@ -687,6 +696,10 @@ psa_status_t cracen_verify_message(const psa_key_attributes_t *attributes,
 				   psa_algorithm_t alg, const uint8_t *input, size_t input_length,
 				   const uint8_t *signature, size_t signature_length)
 {
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_VERIFY_MESSAGE)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC)) {
 		if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
 			return cracen_signature_ecc_verify(
@@ -711,6 +724,10 @@ psa_status_t cracen_verify_hash(const psa_key_attributes_t *attributes, const ui
 				size_t hash_length, const uint8_t *signature,
 				size_t signature_length)
 {
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_VERIFY_HASH)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC)) {
 		if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
 			return cracen_signature_ecc_verify(CRACEN_IS_HASH, attributes, key_buffer,

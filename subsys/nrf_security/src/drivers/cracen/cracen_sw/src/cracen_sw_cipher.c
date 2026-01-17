@@ -24,7 +24,7 @@
 #include <cracen_sw_aes_ctr.h>
 #include <cracen_sw_aes_cbc.h>
 #include <cracen_sw_common.h>
-
+#include <cracen_psa_builtin_key_policy.h>
 #include <cracen_psa_primitives.h>
 
 static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *attributes)
@@ -139,6 +139,10 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 	*output_length = 0;
 	cracen_cipher_operation_t operation = {0};
 
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_ENCRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
 		if (alg == PSA_ALG_CTR) {
 			if (output_size < input_length) {
@@ -249,6 +253,10 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 		return PSA_SUCCESS;
 	}
 
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_DECRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
 		if (alg == PSA_ALG_CTR) {
 			return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size,
@@ -341,6 +349,10 @@ psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_ENCRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
 		if (alg == PSA_ALG_CTR) {
 			return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer,
@@ -372,6 +384,10 @@ psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
 {
 	if (!is_alg_supported(alg, attributes)) {
 		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_DECRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {

@@ -1161,14 +1161,10 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	/* The public key of the IAK needs to be allowed to get exported because there is no
-	 * way to provide the public key through the attestation service at the moment.
-	 * The check for IKG keys is skipped since the only IKG key that can use this operation
-	 * is the IAK.
+	/* Public key export doesn't have a usage flag. Here we just need to check
+	 * that we have some sort of right to the key we are trying to export.
 	 */
-	if (!cracen_builtin_key_user_allowed(attributes) &&
-	    PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) !=
-		    PSA_KEY_LOCATION_CRACEN) {
+	if (!cracen_builtin_key_user_allowed(attributes, 0)) {
 		return PSA_ERROR_NOT_PERMITTED;
 	}
 
@@ -1223,7 +1219,7 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (!cracen_builtin_key_user_allowed(attributes)) {
+	if (!cracen_builtin_key_user_allowed(attributes, 0)) {
 		return PSA_ERROR_NOT_PERMITTED;
 	}
 
@@ -1494,7 +1490,7 @@ psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
-	if (!cracen_builtin_key_user_allowed(attributes)) {
+	if (!cracen_builtin_key_user_allowed(attributes, 0)) {
 		return PSA_ERROR_NOT_PERMITTED;
 	}
 
@@ -1631,10 +1627,6 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 	 * attributes, and update the `lifetime` field to be more specific.
 	 */
 
-	if (!cracen_builtin_key_user_allowed(attributes)) {
-		return PSA_ERROR_NOT_PERMITTED;
-	}
-
 	switch (slot_number) {
 	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
 	case CRACEN_BUILTIN_MKEK_ID:
@@ -1692,7 +1684,7 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
-	if (!cracen_builtin_key_user_allowed(attributes)) {
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_EXPORT)) {
 		return PSA_ERROR_NOT_PERMITTED;
 	}
 
@@ -1744,10 +1736,6 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 			     size_t target_key_buffer_size, size_t *target_key_buffer_length)
 {
 #ifdef PSA_NEED_CRACEN_KMU_DRIVER
-	if (!cracen_builtin_key_user_allowed(attributes)) {
-		return PSA_ERROR_NOT_PERMITTED;
-	}
-
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
@@ -1756,6 +1744,11 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 	 */
 	if (location != PSA_KEY_LOCATION_CRACEN_KMU) {
 		return PSA_ERROR_DOES_NOT_EXIST;
+	}
+
+	/* No need for PSA_KEY_USAGE_EXPORT as source location is identical to target location. */
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_COPY)) {
+		return PSA_ERROR_NOT_PERMITTED;
 	}
 
 	if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes)) ||
@@ -1802,7 +1795,7 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes)
 {
 #ifdef PSA_NEED_CRACEN_KMU_DRIVER
-	if (!cracen_builtin_key_user_allowed(attributes)) {
+	if (!cracen_builtin_key_user_allowed(attributes, 0)) {
 		return PSA_ERROR_NOT_PERMITTED;
 	}
 
@@ -1818,7 +1811,10 @@ psa_status_t cracen_derive_key(const psa_key_attributes_t *attributes, const uin
 {
 	psa_key_type_t key_type = psa_get_key_type(attributes);
 
-	if (!cracen_builtin_key_user_allowed(attributes)) {
+	/* This is called from psa_key_derivation_output_key(), the arguments we
+	 * receive here are for the newly-created key, thus usage is zero.
+	 */
+	if (!cracen_builtin_key_user_allowed(attributes, 0)) {
 		return PSA_ERROR_NOT_PERMITTED;
 	}
 

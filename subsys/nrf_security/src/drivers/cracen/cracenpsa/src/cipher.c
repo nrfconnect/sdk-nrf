@@ -19,9 +19,10 @@
 #include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/keyref.h>
 #include <cracen/statuscodes.h>
+#include <cracen_psa_builtin_key_policy.h>
+#include <cracen_psa_primitives.h>
 #include <zephyr/sys/__assert.h>
 
-#include "cracen_psa_primitives.h"
 
 #if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 #include <cracen_sw_aes_ctr.h>
@@ -288,6 +289,10 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 	cracen_cipher_operation_t operation = {0};
 	*output_length = 0;
 
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_ENCRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 #if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
@@ -364,6 +369,14 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 	const size_t iv_size = (alg == PSA_ALG_STREAM_CIPHER) ? 12 : SX_BLKCIPHER_IV_SZ;
 	*output_length = 0;
 
+	if (input_length == 0) {
+		return PSA_SUCCESS;
+	}
+
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_DECRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 #if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
@@ -372,10 +385,6 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 					       output, output_size, output_length);
 	}
 #endif
-
-	if (input_length == 0) {
-		return PSA_SUCCESS;
-	}
 
 	/* If ECB is not enabled in the configuration the decrypt setup will return an not supported
 	 * error and thus we don't need to write an else here.
@@ -480,6 +489,10 @@ psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
 					 const uint8_t *key_buffer, size_t key_buffer_size,
 					 psa_algorithm_t alg)
 {
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_ENCRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 #if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
@@ -495,6 +508,9 @@ psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
 					 const uint8_t *key_buffer, size_t key_buffer_size,
 					 psa_algorithm_t alg)
 {
+	if (!cracen_builtin_key_user_allowed(attributes, PSA_KEY_USAGE_DECRYPT)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
 
 #if defined(CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
