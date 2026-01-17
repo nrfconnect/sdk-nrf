@@ -4,11 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
-	default y if BOARD_NRF54L15DK
-
-config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
-	default y
+config PARTITION_MANAGER
+	default n
 
 config BOOT_IMG_HASH_ALG_SHA512
 	default n
