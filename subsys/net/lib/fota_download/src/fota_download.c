@@ -206,6 +206,14 @@ static int downloader_callback(const struct downloader_evt *event)
 
 			/* Is there a DFU already running? */
 			if (offset != 0) {
+				/* Check if the cached offset is valid for this file. */
+				if (offset >= file_size) {
+					LOG_ERR("Cached offset %u exceeds file size %u, "
+						"resetting download", offset, file_size);
+					set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_UPDATE);
+					goto error_and_close;
+				}
+
 				if (atomic_test_bit(&flags, FLAG_NEW_URI)) {
 					atomic_clear_bit(&flags, FLAG_RESUME);
 					/* Image is different, reset DFU target */
