@@ -6,9 +6,9 @@ python:
 git:
   version: 2.52.0
 cmake:
-  version: 3.21.0
+  version: 4.2.1
 ninja:
-  version: 1.10.2
+  version: 1.13.2
 gperf:
   version: 3.1
 dtc:
