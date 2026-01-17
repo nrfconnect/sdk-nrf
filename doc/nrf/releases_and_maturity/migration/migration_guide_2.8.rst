@@ -1,6 +1,6 @@
 .. _migration_2.8:
 
-Migration guide for |NCS| v2.8.0
+Migration notes for |NCS| v2.8.0
 ################################
 
 .. contents::
