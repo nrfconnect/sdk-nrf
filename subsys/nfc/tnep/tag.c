@@ -7,21 +7,13 @@
 #include <stdbool.h>
 #include <zephyr/kernel.h>
 #include <nfc/tnep/tag.h>
+#include <nfc/tnep/tag_signalling.h>
 #include <nfc/ndef/msg.h>
 #include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/msg_parser.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(nfc_tnep_tag, CONFIG_NFC_TNEP_TAG_LOG_LEVEL);
-
-#define TNEP_EVENT_RX_IDX 0
-#define TNEP_EVENT_TX_IDX 1
-
-enum tnep_event {
-	TNEP_EVENT_DUMMY,
-	TNEP_EVENT_MSG_RX_NEW,
-	TNEP_EVENT_TAG_SELECTED,
-};
 
 enum tnep_state_name {
 	TNEP_STATE_DISABLED,
@@ -53,12 +45,6 @@ struct tnep_rx_buffer {
 	size_t len;
 };
 
-struct tnep_control {
-	struct k_poll_event *events;
-	struct k_poll_signal msg_rx;
-	struct k_poll_signal msg_tx;
-};
-
 struct tnep_tag {
 	struct nfc_ndef_msg_desc *msg;
 	struct tnep_buffer tx;
@@ -72,7 +58,6 @@ struct tnep_tag {
 	uint8_t *current_buff;
 };
 
-static struct tnep_control tnep_ctrl;
 static struct tnep_tag tnep;
 
 struct tnep_state {
@@ -501,11 +486,10 @@ void nfc_tnep_tag_rx_msg_indicate(const uint8_t *rx_buffer, size_t len)
 	tnep.rx.len = len;
 	tnep.rx.data = rx_buffer;
 
-	k_poll_signal_raise(&tnep_ctrl.msg_rx, TNEP_EVENT_MSG_RX_NEW);
+	nfc_tnep_tag_signalling_rx_event_raise(TNEP_EVENT_MSG_RX_NEW);
 }
 
-int nfc_tnep_tag_init(struct k_poll_event *events, uint8_t event_cnt,
-		      nfc_payload_set_t payload_set)
+int nfc_tnep_tag_internal_init(nfc_payload_set_t payload_set)
 {
 	extern struct nfc_tnep_tag_service
 			_nfc_tnep_tag_service_list_start[];
@@ -514,18 +498,8 @@ int nfc_tnep_tag_init(struct k_poll_event *events, uint8_t event_cnt,
 
 	LOG_DBG("TNEP initialization");
 
-	if (!events) {
-		return -EINVAL;
-	}
-
 	if (!payload_set) {
 		LOG_ERR("No function for NFC payload set provided");
-		return -EINVAL;
-	}
-
-	if (event_cnt != NFC_TNEP_EVENTS_NUMBER) {
-		LOG_ERR("Invalid k_pool events count. Got %d events, required %d",
-			event_cnt, NFC_TNEP_EVENTS_NUMBER);
 		return -EINVAL;
 	}
 
@@ -541,27 +515,29 @@ int nfc_tnep_tag_init(struct k_poll_event *events, uint8_t event_cnt,
 		return -EIO;
 	}
 
-	tnep_ctrl.events = events;
 	tnep.current_buff = tnep.tx.data;
 	tnep.data_set = payload_set;
 	tnep.svc_cnt = _nfc_tnep_tag_service_list_end -
 		       _nfc_tnep_tag_service_list_start;
 
-	LOG_DBG("k_pool signals initialization");
-
-	k_poll_signal_init(&tnep_ctrl.msg_rx);
-	k_poll_signal_init(&tnep_ctrl.msg_tx);
-
-	k_poll_event_init(&tnep_ctrl.events[TNEP_EVENT_RX_IDX],
-			  K_POLL_TYPE_SIGNAL, K_POLL_MODE_NOTIFY_ONLY,
-			  &tnep_ctrl.msg_rx);
-
-	k_poll_event_init(&tnep_ctrl.events[TNEP_EVENT_TX_IDX],
-			  K_POLL_TYPE_SIGNAL, K_POLL_MODE_NOTIFY_ONLY,
-			  &tnep_ctrl.msg_tx);
-
 	return 0;
 }
+
+#if defined(CONFIG_NFC_TNEP_TAG_SIGNALLING_ZEPHYR)
+
+int nfc_tnep_tag_init(struct k_poll_event *events, uint8_t event_cnt,
+		      nfc_payload_set_t payload_set)
+{
+	int err = nfc_tnep_tag_signalling_init(events, event_cnt);
+
+	if (err) {
+		return err;
+	}
+
+	return nfc_tnep_tag_internal_init(payload_set);
+}
+
+#endif /* CONFIG_NFC_TNEP_TAG_SIGNALLING_ZEPHYR */
 
 int nfc_tnep_tag_initial_msg_create(size_t max_record_cnt,
 				    initial_msg_encode_t msg_encode_cb)
@@ -635,19 +611,16 @@ int nfc_tnep_initial_msg_encode(struct nfc_ndef_msg_desc *msg,
 
 void nfc_tnep_tag_process(void)
 {
-	/* Check for signals */
-	for (size_t i = 0; i < NFC_TNEP_EVENTS_NUMBER; i++) {
-		if (tnep_ctrl.events[i].state == K_POLL_STATE_SIGNALED) {
-			enum tnep_event event;
+	enum tnep_event event = TNEP_EVENT_DUMMY;
 
-			event = tnep_ctrl.events[i].signal->result;
+	if (nfc_tnep_tag_signalling_rx_event_check_and_clear(&event)) {
+		/* Run TNEP State Machine - prepare response */
+		tnep_state_machine[atomic_get(&current_state)].process(event);
+	}
 
-			k_poll_signal_reset(tnep_ctrl.events[i].signal);
-			tnep_ctrl.events[i].state = K_POLL_STATE_NOT_READY;
-
-			/* Run TNEP State Machine - prepare response */
-			tnep_state_machine[atomic_get(&current_state)].process(event);
-		}
+	if (nfc_tnep_tag_signalling_tx_event_check_and_clear(&event)) {
+		/* Run TNEP State Machine - prepare response */
+		tnep_state_machine[atomic_get(&current_state)].process(event);
 	}
 }
 
@@ -707,7 +680,7 @@ int nfc_tnep_tag_tx_msg_no_app_data(void)
 
 void nfc_tnep_tag_on_selected(void)
 {
-	k_poll_signal_raise(&tnep_ctrl.msg_tx, TNEP_EVENT_TAG_SELECTED);
+	nfc_tnep_tag_signalling_tx_event_raise(TNEP_EVENT_TAG_SELECTED);
 }
 
 size_t nfc_tnep_tag_svc_count_get(void)

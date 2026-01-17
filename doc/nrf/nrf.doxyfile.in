@@ -2458,6 +2458,7 @@ PREDEFINED             = __DOXYGEN__ \
                          "CONFIG_NRF_MODEM=y" \
                          "CONFIG_NRF_CLOUD_GATEWAY=y" \
                          "CONFIG_BT_CENTRAL" \
+                         "CONFIG_NFC_TNEP_TAG_SIGNALLING_ZEPHYR=y" \
                          "CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE=y" \
                          "CONFIG_LTE_LC_NETWORK_REGISTRATION_MODULE=y" \
                          "CONFIG_LTE_LC_CONNECTION_STATUS_MODULE=y" \
