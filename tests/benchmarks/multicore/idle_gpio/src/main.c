@@ -9,7 +9,6 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/pm/pm.h>
 
-
 LOG_MODULE_REGISTER(idle_gpio);
 
 #if IS_ENABLED(CONFIG_SOC_NRF54H20_CPUAPP)
@@ -22,6 +21,12 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led1), gpios);
 static const struct gpio_dt_spec sw = GPIO_DT_SPEC_GET(DT_ALIAS(sw1), gpios);
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led3), gpios);
 
+#include <uicr/uicr.h>
+#define SPU131_ADDR 0x5f920000UL
+
+/* The input pin must be configured as NS to be allowed to trigger PPR's GPIOTE IRQ. */
+UICR_SPU_FEATURE_GPIO_PIN_SET(SPU131_ADDR, DT_PROP(DT_GPIO_CTLR(DT_ALIAS(sw1), gpios), port),
+			      DT_GPIO_PIN(DT_ALIAS(sw1), gpios), false, NRF_OWNER_APPLICATION);
 #else
 #error "Invalid core selected. "
 #endif
