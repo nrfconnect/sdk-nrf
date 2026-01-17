@@ -11,10 +11,6 @@
  * @brief Module to provide nRF Cloud CoAP API
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <net/nrf_cloud_rest.h>
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
 #include <net/nrf_cloud_agnss.h>
@@ -34,6 +30,10 @@ enum coap_content_format {
 };
 struct coap_client {};
 struct coap_client_option {};
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 /**
