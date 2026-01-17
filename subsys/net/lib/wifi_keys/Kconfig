@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config HAS_HW_NRF_WIFI_KEYS
+	def_bool SOC_SERIES_NRF71X
+
+config WIFI_KEYS_KMU_HW_PRESENT
+	def_bool SOC_SERIES_NRF71X
+
+# Configure WIFI_KEYS_LOG_LEVEL
+module = WIFI_KEYS
+module-dep = LOG
+module-str = Log level for Wi-Fi Keys PSA driver
+module-help = Sets log level for Wi-Fi Keys PSA driver
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+config WIFI_KEYS_LOG_LEVEL
+	default 4 # DEBUG
