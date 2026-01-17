@@ -29,11 +29,11 @@ extern "C" {
  * @param  _ctx_sz	Context size in bytes for a single connection.
  */
 #define BT_CONN_CTX_DEF(_name, _max_clients, _ctx_sz)                          \
-	K_MEM_SLAB_DEFINE(_name##_mem_slab,                                    \
+	K_MEM_SLAB_DEFINE_STATIC(_name##_mem_slab,                             \
 			  ROUND_UP(_ctx_sz, CONFIG_BT_CONN_CTX_MEM_BUF_ALIGN), \
 			  (_max_clients),                                      \
 			  CONFIG_BT_CONN_CTX_MEM_BUF_ALIGN);                   \
-	K_MUTEX_DEFINE(_name##_mutex);                                         \
+	static K_MUTEX_DEFINE(_name##_mutex);                                  \
 	static struct bt_conn_ctx_lib _CONCAT(_name, _ctx_lib) =                \
 	{                                                                      \
 		.mem_slab = &_CONCAT(_name, _mem_slab),                         \
