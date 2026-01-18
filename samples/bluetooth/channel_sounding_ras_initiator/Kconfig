@@ -1,0 +1,107 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "Nordic Channel Sounding RAS Initiator sample"
+
+choice CS_TONE_ANTENNA_CONFIGURATION
+	prompt "Tone antenna configuration selection"
+	default CS_TONE_ANTENNA_CONFIGURATION_A1_B1
+	help
+	  Select the tone antenna configuration for channel sounding procedures.
+	  The configuration determines how many antenna paths are used on each side
+	  (initiator and reflector). The format is A<initiator_antennas>_B<reflector_antennas>.
+
+config CS_TONE_ANTENNA_CONFIGURATION_A1_B1
+	bool "A1_B1 (1 antenna path per side)"
+	help
+	  Use A1_B1 configuration with 1 antenna path on each side.
+	  This requires BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS >= 1.
+
+config CS_TONE_ANTENNA_CONFIGURATION_A2_B1
+	bool "A2_B1 (2 initiator, 1 reflector antenna paths)"
+	help
+	  Use A2_B1 configuration with 2 antenna paths on initiator side and
+	  1 antenna path on reflector side.
+	  This requires BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS >= 2.
+
+config CS_TONE_ANTENNA_CONFIGURATION_A3_B1
+	bool "A3_B1 (3 initiator, 1 reflector antenna paths)"
+	help
+	  Use A3_B1 configuration with 3 antenna paths on initiator side and
+	  1 antenna path on reflector side.
+	  This requires BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS >= 3.
+
+config CS_TONE_ANTENNA_CONFIGURATION_A4_B1
+	bool "A4_B1 (4 initiator, 1 reflector antenna paths)"
+	help
+	  Use A4_B1 configuration with 4 antenna paths on initiator side and
+	  1 antenna path on reflector side.
+	  This requires BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS >= 4.
+
+config CS_TONE_ANTENNA_CONFIGURATION_A1_B2
+	bool "A1_B2 (1 initiator, 2 reflector antenna paths)"
+	help
+	  Use A1_B2 configuration with 1 antenna path on initiator side and
+	  2 antenna paths on reflector side.
+	  This requires BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS >= 2.
+
+config CS_TONE_ANTENNA_CONFIGURATION_A1_B3
+	bool "A1_B3 (1 initiator, 3 reflector antenna paths)"
+	help
+	  Use A1_B3 configuration with 1 antenna path on initiator side and
+	  3 antenna paths on reflector side.
+	  This requires BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS >= 3.
+
+config CS_TONE_ANTENNA_CONFIGURATION_A1_B4
+	bool "A1_B4 (1 initiator, 4 reflector antenna paths)"
+	help
+	  Use A1_B4 configuration with 1 antenna path on initiator side and
+	  4 antenna paths on reflector side.
+	  This requires BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS >= 4.
+
+config CS_TONE_ANTENNA_CONFIGURATION_A2_B2
+	bool "A2_B2 (2 antenna paths per side)"
+	help
+	  Use A2_B2 configuration with 2 antenna paths on each side (4 total).
+	  This requires BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS >= 4.
+
+endchoice
+
+config CS_TONE_ANTENNA_CONFIGURATION_VALUE
+	int
+	default 0 if CS_TONE_ANTENNA_CONFIGURATION_A1_B1
+	default 1 if CS_TONE_ANTENNA_CONFIGURATION_A2_B1
+	default 2 if CS_TONE_ANTENNA_CONFIGURATION_A3_B1
+	default 3 if CS_TONE_ANTENNA_CONFIGURATION_A4_B1
+	default 4 if CS_TONE_ANTENNA_CONFIGURATION_A1_B2
+	default 5 if CS_TONE_ANTENNA_CONFIGURATION_A1_B3
+	default 6 if CS_TONE_ANTENNA_CONFIGURATION_A1_B4
+	default 7 if CS_TONE_ANTENNA_CONFIGURATION_A2_B2
+	help
+	  Internal config value mapping to BT_LE_CS_TONE_ANTENNA_CONFIGURATION enum.
+	  Not intended for direct use.
+
+# Intermediate config: number of antenna paths required for the selected configuration
+# This is the maximum number of antenna paths needed on either the initiator or reflector side
+config CS_TONE_ANTENNA_CONFIGURATION_NUM_ANTENNA_PATHS
+	int
+	default 1 if CS_TONE_ANTENNA_CONFIGURATION_A1_B1
+	default 2 if CS_TONE_ANTENNA_CONFIGURATION_A2_B1 || CS_TONE_ANTENNA_CONFIGURATION_A1_B2
+	default 3 if CS_TONE_ANTENNA_CONFIGURATION_A3_B1 || CS_TONE_ANTENNA_CONFIGURATION_A1_B3
+	default 4 if CS_TONE_ANTENNA_CONFIGURATION_A4_B1 || CS_TONE_ANTENNA_CONFIGURATION_A1_B4 || CS_TONE_ANTENNA_CONFIGURATION_A2_B2
+	help
+	  Number of antenna paths required for the selected tone antenna configuration.
+	  This is calculated as the maximum number of antenna paths needed on either
+	  the initiator or reflector side.
+
+# Set default value for BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS based on the required number of antenna paths
+# This ensures the controller is configured with sufficient antenna paths for the selected configuration
+if BT_CTLR_CHANNEL_SOUNDING
+config BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
+	default CS_TONE_ANTENNA_CONFIGURATION_NUM_ANTENNA_PATHS
+endif
+
+source "Kconfig.zephyr"

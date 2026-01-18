@@ -585,6 +585,26 @@ BT_CONN_CB_DEFINE(conn_cb) = {
 	.le_cs_subevent_data_available = subevent_result_cb,
 };
 
+static int preferred_peer_antenna_get(enum bt_conn_le_cs_tone_antenna_config_selection tone_antenna_config_selection)
+{
+	int preferred_peer_antenna = BT_LE_CS_PROCEDURE_PREFERRED_PEER_ANTENNA_1;
+
+	switch (tone_antenna_config_selection) {
+		case BT_LE_CS_TONE_ANTENNA_CONFIGURATION_A1_B4:
+			preferred_peer_antenna |= BT_LE_CS_PROCEDURE_PREFERRED_PEER_ANTENNA_4;
+		case BT_LE_CS_TONE_ANTENNA_CONFIGURATION_A1_B3:
+			preferred_peer_antenna |= BT_LE_CS_PROCEDURE_PREFERRED_PEER_ANTENNA_3;
+		case BT_LE_CS_TONE_ANTENNA_CONFIGURATION_A1_B2:
+		case BT_LE_CS_TONE_ANTENNA_CONFIGURATION_A2_B2:
+			preferred_peer_antenna |= BT_LE_CS_PROCEDURE_PREFERRED_PEER_ANTENNA_2;
+			break;
+		default:
+			break;
+	}
+
+	return preferred_peer_antenna;
+}
+
 int main(void)
 {
 	int err;
@@ -743,10 +763,10 @@ int main(void)
 		.max_procedure_count = 0,
 		.min_subevent_len = 16000,
 		.max_subevent_len = 16000,
-		.tone_antenna_config_selection = BT_LE_CS_TONE_ANTENNA_CONFIGURATION_A1_B1,
+		.tone_antenna_config_selection = CONFIG_CS_TONE_ANTENNA_CONFIGURATION_VALUE,
 		.phy = BT_LE_CS_PROCEDURE_PHY_2M,
 		.tx_power_delta = 0x80,
-		.preferred_peer_antenna = BT_LE_CS_PROCEDURE_PREFERRED_PEER_ANTENNA_1,
+		.preferred_peer_antenna = preferred_peer_antenna_get(CONFIG_CS_TONE_ANTENNA_CONFIGURATION_VALUE),
 		.snr_control_initiator = BT_LE_CS_SNR_CONTROL_NOT_USED,
 		.snr_control_reflector = BT_LE_CS_SNR_CONTROL_NOT_USED,
 	};
