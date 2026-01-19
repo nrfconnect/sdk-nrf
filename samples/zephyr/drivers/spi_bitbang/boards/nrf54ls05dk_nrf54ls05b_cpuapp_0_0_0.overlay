@@ -5,7 +5,7 @@
  */
 
 /*
- * Test requires loopback between P1.05 and P1.21
+ * Test requires loopback between P1.10 and P1.11
  * No other driver on SPI_CLK and SPI_CS.
  */
 
@@ -15,9 +15,9 @@
 		status = "okay";
 		#address-cells = <1>;
 		#size-cells = <0>;
-		clk-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
-		mosi-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
-		miso-gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>;
-		cs-gpios = <&gpio1 6 GPIO_ACTIVE_LOW>;
+		clk-gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>;
+		mosi-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
+		miso-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+		cs-gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;
 	};
 };
