@@ -57,7 +57,7 @@ struct transport_params_coap {
 		/** Port */
 		uint16_t port;
 		/** Destination address storage */
-		struct sockaddr remote_addr;
+		struct net_sockaddr remote_addr;
 	} sock;
 
 	/** Request new data */
@@ -397,12 +397,12 @@ static int dl_coap_init(struct downloader *dl, struct downloader_host_cfg *dl_ho
 		coap->cfg.max_retransmission = 4;
 	}
 
-	coap->sock.proto = IPPROTO_UDP;
-	coap->sock.type = SOCK_DGRAM;
+	coap->sock.proto = NET_IPPROTO_UDP;
+	coap->sock.type = NET_SOCK_DGRAM;
 
 	if (strncmp(url, COAPS, (sizeof(COAPS) - 1)) == 0) {
-		coap->sock.proto = IPPROTO_DTLS_1_2;
-		coap->sock.type = SOCK_DGRAM;
+		coap->sock.proto = NET_IPPROTO_DTLS_1_2;
+		coap->sock.type = NET_SOCK_DGRAM;
 
 		if (dl_host_cfg->sec_tag_list == NULL || dl_host_cfg->sec_tag_count == 0) {
 			LOG_WRN("No security tag provided for TLS/DTLS");
@@ -413,10 +413,10 @@ static int dl_coap_init(struct downloader *dl, struct downloader_host_cfg *dl_ho
 	err = dl_parse_url_port(url, &coap->sock.port);
 	if (err) {
 		switch (coap->sock.proto) {
-		case IPPROTO_DTLS_1_2:
+		case NET_IPPROTO_DTLS_1_2:
 			coap->sock.port = DEFAULT_PORT_DTLS;
 			break;
-		case IPPROTO_UDP:
+		case NET_IPPROTO_UDP:
 			coap->sock.port = DEFAULT_PORT_UDP;
 			break;
 		}

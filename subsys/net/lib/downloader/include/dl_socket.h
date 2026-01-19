@@ -11,7 +11,7 @@
 #include <sys/types.h>
 
 int dl_socket_configure_and_connect(
-	int *fd, int proto, int type, uint16_t port, struct sockaddr *remote_addr,
+	int *fd, int proto, int type, uint16_t port, struct net_sockaddr *remote_addr,
 	const char *hostname, struct downloader_host_cfg *dl_host_cfg);
 int dl_socket_close(int *fd);
 int dl_socket_send(int fd, void *buf, size_t len);
