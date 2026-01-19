@@ -468,7 +468,7 @@ static int parse_ip_addresses(char *out_buf, size_t out_buf_size, char *in_buf)
 	/* Return value indicating length of the string written to IP buffer */
 	size_t len = 0;
 	size_t line_start_idx = 0;
-	char ip_buf[INET_ADDRSTRLEN + sizeof(" ") + INET6_ADDRSTRLEN];
+	char ip_buf[NET_INET_ADDRSTRLEN + sizeof(" ") + NET_INET6_ADDRSTRLEN];
 	char *ip_v6_str;
 	bool first_address;
 	struct at_parser parser;
