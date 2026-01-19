@@ -26,6 +26,8 @@ int main(void)
 
 	k_msleep(10);
 	gpio_pin_set_dt(&led, 0);
+	k_msleep(10);
+	gpio_pin_set_dt(&led, 1);
 #endif
 	return 0;
 }
