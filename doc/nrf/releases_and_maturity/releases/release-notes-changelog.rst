@@ -316,7 +316,16 @@ Bluetooth samples
 Bluetooth Mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* :ref:`ble_mesh_dfu_distributor` sample:
+
+  * Added a force disconnect of the mesh after provisioning to ensure the apps reconnect through the proxy service.
+    This is a workaround for apps that do not properly close the PB-GATT connection after provisioning, especially after DFU.
+
+
+* :ref:`bluetooth_mesh_light_lc` sample with overlay-dfu.conf enabled:
+
+  * Added a force disconnect of the mesh after provisioning to ensure the apps reconnect through the proxy service.
+    This is a workaround for apps that do not properly close the PB-GATT connection after provisioning, especially after DFU.
 
 Bluetooth Fast Pair samples
 ---------------------------
