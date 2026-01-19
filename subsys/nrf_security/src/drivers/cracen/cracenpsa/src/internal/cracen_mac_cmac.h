@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#ifndef CRACEN_MAC_CMAC_H
+#define CRACEN_MAC_CMAC_H
+
 #include <psa/crypto.h>
 #include "common.h"
 #include "cracen_psa_primitives.h"
@@ -53,3 +56,5 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
  * @return PSA_SUCCESS on success or a valid PSA status code.
  */
 psa_status_t cracen_cmac_finish(cracen_mac_operation_t *operation);
+
+#endif /* CRACEN_MAC_CMAC_H */

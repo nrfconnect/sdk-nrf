@@ -34,7 +34,7 @@
 #include <cracen_psa_primitives.h>
 #include <sxsymcrypt/hashdefs.h>
 #include "common.h"
-#include "hmac.h"
+#include "cracen_hmac.h"
 
 #define DETERMINISTIC_HMAC_STEPS 6
 #define MAX_ECDSA_ATTEMPTS	 255

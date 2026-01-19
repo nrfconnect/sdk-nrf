@@ -15,7 +15,7 @@
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <cracen_psa_primitives.h>
-#include "coprime_check.h"
+#include "cracen_coprime_check.h"
 #include "common.h"
 #include <stdio.h>
 
