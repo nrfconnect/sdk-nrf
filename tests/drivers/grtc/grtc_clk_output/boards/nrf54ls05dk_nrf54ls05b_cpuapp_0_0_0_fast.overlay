@@ -5,12 +5,12 @@
  */
 
 /* Required loopback between:
- * GPIO P1.17 and P0.4 (GRTC 32k; defined @board; no other option)
+ * GPIO P1.9 and P1.8 (GRTC fast; defined @board; no other option)
  */
 
 / {
 	zephyr,user {
-		gpios = <&gpio1 17 GPIO_ACTIVE_HIGH>;  /* Connect to dedicated GRTC output */
+		gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;  /* Connect to dedicated GRTC output */
 	};
 };
 
@@ -18,9 +18,13 @@
 	status = "okay";
 };
 
+&gpiote20 {
+	status = "okay";
+};
+
 &grtc {
 	pinctrl-0 = <&grtc_default>;
 	pinctrl-1 = <&grtc_sleep>;
 	pinctrl-names = "default", "sleep";
-	clkout-32k;
+	clkout-fast-frequency-hz = <32000>;  /* 16 MHz / (250 * 2) */
 };
