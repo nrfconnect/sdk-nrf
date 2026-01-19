@@ -10,7 +10,6 @@
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_ip.h>
 #include <zephyr/net/socket.h>
-#include <zephyr/posix/arpa/inet.h>
 #include <zephyr/logging/log.h>
 #include <nrf_modem_at.h>
 
@@ -25,11 +24,11 @@ LOG_MODULE_REGISTER(ip_addr_helper, CONFIG_NRF_MODEM_LIB_NET_IF_LOG_LEVEL);
 /* Structure that keeps track of the current IP addresses in use. */
 static struct ip_addr_helper_data {
 #if CONFIG_NET_IPV4
-	struct in_addr ipv4_addr_current;
+	struct net_in_addr ipv4_addr_current;
 	bool ipv4_added;
 #endif
 #if CONFIG_NET_IPV6
-	struct in6_addr ipv6_addr_current;
+	struct net_in6_addr ipv6_addr_current;
 	bool ipv6_added;
 #endif
 } ctx;
@@ -51,7 +50,7 @@ static struct ip_addr_helper_data {
 static int ip_addr_get(char *addr4, char *addr6)
 {
 	int ret;
-	char tmp[sizeof(struct in6_addr)];
+	char tmp[sizeof(struct net_in6_addr)];
 	char addr1[NET_IPV6_ADDR_LEN] = { 0 };
 #if CONFIG_NET_IPV6
 	char addr2[NET_IPV6_ADDR_LEN] = { 0 };
@@ -94,20 +93,20 @@ static int ip_addr_get(char *addr4, char *addr6)
 
 #if CONFIG_NET_IPV4
 	/* inet_pton() is used to check the type of returned address(es). */
-	if ((addr4 != NULL) && (zsock_inet_pton(AF_INET, addr1, tmp) == 1)) {
+	if ((addr4 != NULL) && (zsock_inet_pton(NET_AF_INET, addr1, tmp) == 1)) {
 		strcpy(addr4, addr1);
 		return strlen(addr4);
 	}
 #endif
 
 #if CONFIG_NET_IPV6
-	if ((addr6 != NULL) && (zsock_inet_pton(AF_INET6, addr1, tmp) == 1)) {
+	if ((addr6 != NULL) && (zsock_inet_pton(NET_AF_INET6, addr1, tmp) == 1)) {
 		strcpy(addr6, addr1);
 		return strlen(addr6);
 	}
 
 	/* If two addresses are provided, the IPv6 address is in the second address argument. */
-	if ((addr6 != NULL) && (ret > 1) && (zsock_inet_pton(AF_INET6, addr2, tmp) == 1)) {
+	if ((addr6 != NULL) && (ret > 1) && (zsock_inet_pton(NET_AF_INET6, addr2, tmp) == 1)) {
 		strcpy(addr6, addr2);
 		return strlen(addr6);
 	}
@@ -121,7 +120,7 @@ int lte_ipv4_addr_add(const struct net_if *iface)
 {
 	int len;
 	char ipv4_addr[NET_IPV4_ADDR_LEN] = { 0 };
-	struct sockaddr addr = { 0 };
+	struct net_sockaddr addr = { 0 };
 	struct net_if_addr *ifaddr = NULL;
 
 	if (iface == NULL) {
@@ -177,7 +176,7 @@ int lte_ipv6_addr_add(const struct net_if *iface)
 {
 	int len;
 	char ipv6_addr[NET_IPV6_ADDR_LEN] = { 0 };
-	struct sockaddr addr = { 0 };
+	struct net_sockaddr addr = { 0 };
 	struct net_if_addr *ifaddr = NULL;
 
 	if (iface == NULL) {
