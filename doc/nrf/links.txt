@@ -1563,7 +1563,6 @@
 .. _`nRF Cloud Auto-onboarding`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Onboarding.html#auto-onboarding
 .. _`nRF Cloud device claiming`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/ProvisioningService/ClaimingDevices/ClaimingDeviceOwnershipPortal.html
 .. _`nRF Cloud Preconnect Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Onboarding.html#preconnect-onboarding
-.. _`nRF Cloud Just-In-Time-Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/Associations/Onboarding.html#jitp
 .. _`nRF Cloud Onboarding`:
 .. _`nRF Cloud Provisioning`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/ProvisioningService/ProvisioningOverview.html
 .. _`nRF Cloud FOTA`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/Devices/FirmwareUpdate/FOTAOverview.html

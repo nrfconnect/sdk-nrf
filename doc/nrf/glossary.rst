@@ -453,6 +453,10 @@ Glossary
       A device is provisioned when it first tries to connect to the IoT broker and presents its device certificate.
       Before the first communication, the device is not known to the broker and is not stored in the fleet registry.
 
+      .. note::
+           JITP is deprecated.
+           Refer to `nRF Cloud Utils`_ for onboarding.
+
    Kconfig file
       A configuration file for a module or a sample, written in the :term:`Kconfig language` syntax.
       It defines build-time configuration options, also called symbols, namely application-specific values for one or more kernel configuration options.

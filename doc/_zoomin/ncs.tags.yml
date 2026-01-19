@@ -176,8 +176,6 @@ mapping_topics:
   - nrf/app_dev/device_guides/nrf91/nrf91_cloud_connecting.html: ["nrf91-series", "nrf9160",
                                                                   "nrf-cloud", "development-kits",
                                                                   "lte"]
-  - nrf/app_dev/device_guides/nrf91/nrf91_cloud_certificate.html: ["nrf9160", "nrf9161", "nrf9151",
-                                                                   "development-kits", "nrf-cloud"]
   - nrf/app_dev/device_guides/nrf91/nrf91_dk_updating_fw_programmer.html: ["nrf9160", "nrf9161",
                                                                            "nrf9151",
                                                                            "development-kits"]

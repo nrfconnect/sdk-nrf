@@ -320,6 +320,12 @@ Cellular samples
 
   * Added support for onboarding with `nRF Cloud Utils`_ by using AT commands to set up the modem and device credentials.
 
+* :ref:`modem_shell_application` sample:
+
+  * Added support for JWT authentication by enabling the :kconfig:option:`CONFIG_MODEM_JWT` Kconfig option.
+    Enabling this option is necessary for using nRF Cloud Utils as an onboarding method.
+  * Removed JITP from the shell commands and references from the sample documentation.
+
 Cryptography samples
 --------------------
 
@@ -683,4 +689,4 @@ cJSON
 Documentation
 =============
 
-|no_changes_yet_note|
+* Removed references to JITP in different areas of the documentation.

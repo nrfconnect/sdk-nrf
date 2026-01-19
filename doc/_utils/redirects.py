@@ -165,7 +165,6 @@ NRF = (
     ("device_guides/working_with_nrf/nrf91/nrf91_features", "app_dev/device_guides/nrf91/nrf91_features"),
     ("device_guides/nrf91/nrf91_features", "app_dev/device_guides/nrf91/nrf91_features"),
     ("device_guides/nrf91/nrf91_board_controllers", "app_dev/device_guides/nrf91/nrf91_board_controllers"), # Configuring board controller
-    ("device_guides/nrf91/nrf91_cloud_certificate", "app_dev/device_guides/nrf91/nrf91_cloud_certificate"), # Updating the nRF Cloud certificate
     ("device_guides/nrf91/nrf91_dk_updating_fw_programmer", "app_dev/device_guides/nrf91/nrf91_dk_updating_fw_programmer"), # Updating the firmware for nRF91 Series devices (landing)
     ("device_guides/nrf91/nrf91_updating_fw_programmer", "app_dev/device_guides/nrf91/nrf91_dk_updating_fw_programmer"), # Updating the DK firmware using Programmer
     ("device_guides/nrf91/nrf91_building", "app_dev/device_guides/nrf91/nrf91_building"), # Configuring and building with nRF91 Series

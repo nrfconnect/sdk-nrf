@@ -1,6 +1,3 @@
-.. _connect_nRF_cloud:
-.. _thingy91_connect_to_cloud:
-
 Connecting the |DK| to nRF Cloud
 ################################
 
@@ -8,7 +5,7 @@ Connecting the |DK| to nRF Cloud
    :local:
    :depth: 2
 
-.. |DK| replace:: Thingy:91
+.. |DK| replace:: Thingy:91x
 
 .. include:: ../nrf91/nrf91_cloud_connecting.rst
    :start-after: dk_nrf_cloud_start
@@ -28,8 +25,8 @@ Activating the SIM card
    :start-after: nrf_cloud_activate_sim_start
    :end-before: nrf_cloud_activate_sim_end
 
-Adding the Thingy:91 to nRF Cloud
-*********************************
+Adding the Thingy:91x to nRF Cloud
+**********************************
 
 .. include:: ../nrf91/nrf91_cloud_connecting.rst
    :start-after: nrf_cloud_add_device_start

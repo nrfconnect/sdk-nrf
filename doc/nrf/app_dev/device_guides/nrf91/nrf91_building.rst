@@ -85,7 +85,7 @@ Currently, delta modem firmware FOTA files are available in nRF Cloud under :gui
 If you intend to obtain FOTA files from nRF Cloud, see the additional requirements in :ref:`lib_nrf_cloud_fota`.
 
 You can upload custom application binaries to nRF Cloud for application FOTA updates.
-After :ref:`connecting the DK to nRF Cloud <nrf9160_gs_connecting_dk_to_cloud>`, you can upload the files to your nRF Cloud account as a bundle after navigating to :guilabel:`Device Management` on the left and clicking :guilabel:`Firmware Updates`.
+After :ref:`connecting the DK to nRF Cloud <nrf91_gs_connecting_dk_to_cloud>`, you can upload the files to your nRF Cloud account as a bundle after navigating to :guilabel:`Device Management` on the left and clicking :guilabel:`Firmware Updates`.
 
 FOTA updates using other cloud services
 ========================================

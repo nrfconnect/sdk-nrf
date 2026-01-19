@@ -1039,62 +1039,25 @@ To program the certificates and connect to nRF Cloud, complete the following ste
 
 1. `Download nRF Connect for Desktop`_.
 #. Update the modem firmware on the on-board modem of the nRF91 Series DK to the latest version as instructed in `Programming nRF91 Series DK firmware`_.
-#. Build and program the MoSh to the nRF91 Series DK using the default MoSh configuration (with REST as the transport):
+#. Build and program the MoSh to the nRF91 Series DK with CoAP as the transport:
 
-.. parsed-literal::
-   :class: highlight
+   .. parsed-literal::
+      :class: highlight
 
-   west build -p -b *board_target*
-   west flash
+      west build -p -b *board_target* -- -DEXTRA_CONF_FILE="overlay-cloud_coap.conf"
+      west flash
 
-|board_target|
+   |board_target|
 
-#. Get certificates from nRF Cloud as explained in the documentation for the :ref:`nRF91x1 DK <downloading_cloud_certificate_nRF91x1>` or the :ref:`nRF9160 DK <downloading_cloud_certificate_nRF9160>`, depending on the DK you are using.
-#. In the MoSH terminal, power off the modem and start the AT command mode:
-
-   .. code-block:: console
-
-      mosh:~$ link funmode -0
-      mosh:~$ at at_cmd_mode start
-
-#. Disconnect the MoSh terminal.
-#. Connect and use the `Cellular Monitor app`_ to store the certificates to the modem (default nRF Cloud security tag).
-
-   See `Managing credentials`_ in the Cellular Monitor app documentation for instructions.
-#. Reconnect the MoSh terminal and press ``ctrl-x`` and ``ctrl-q`` to exit the AT command mode.
-#. Set the modem to normal mode to activate LTE:
+#. To onboard your device, install `nRF Cloud Utils`_ and follow the instructions in the README.
+#. At this point you should visualize your device in the **Devices** view of the nRF Cloud portal.
+#. Connect the MoSh application to nRF Cloud using the command:
 
    .. code-block:: console
 
-      mosh:~$ link funmode -1
+      mosh:~$ cloud connect
 
-   Observe that LTE is getting connected.
-#. Perform just-in-time provisioning (JITP) with nRF Cloud through REST:
-
-   .. code-block:: console
-
-      mosh:~$ cloud_rest jitp
-
-   You only need to do this once for each device.
-
-#. Follow the instructions for JITP printed in the MoSh terminal.
-#. Complete the user association:
-
-   1. Open the `nRF Cloud`_ portal.
-   #. Click the large plus sign in the upper left corner.
-   #. Enter the device ID from MoSh in the **Device ID** field.
-
-   When the device has been added, the message **Device added to account. Waiting for it to connect...** appears.
-   When the message disappears, click :guilabel:`Devices` on the left side menu.
-   Your MoSh device is now visible in the list.
-#. Send MoSh device information to nRF Cloud:
-
-   .. code-block:: console
-
-      mosh:~$ cloud_rest shadow_update
-
-   It might take a while for the data to appear in the nRF Cloud UI.
-#. Use the ``location`` command to verify that the REST transport to nRF Cloud is working.
+#. Use the ``location`` command to verify that the CoAP transport to nRF Cloud is working.
 
    .. code-block:: console
 

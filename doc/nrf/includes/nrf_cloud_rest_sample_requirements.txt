@@ -20,20 +20,5 @@ For instructions on updating your device's modem firmware, see the following doc
 
 To obtain and register a valid signing key, you can do one of the following:
 
-* Provision your device on nRF Cloud using Just-In-Time Provisioning (JITP) (detailed below).
 * Provision your device on nRF Cloud with preconnect provisioning (detailed in `nRF Cloud Provisioning`_).
 * Install or generate a private key on your device and register its public key with nRF Cloud (detailed in `Securely generating credentials`_).
-
-To provision your device on nRF Cloud using JITP, complete the following steps:
-
-1. :ref:`Ensure valid nRF Cloud credentials are installed <nrf9160_ug_updating_cloud_certificate>`.
-   nRF91 Series DK and Thingy:91 have credentials pre-installed, but some may be shipped with RSA256 credentials; JWT signing requires ES256 credentials.
-   These devices need new credentials to be installed before they can perform REST requests.
-
-#. Install a sample or application that supports JITP.
-   You can use the :ref:`nRF Cloud multi-service <nrf_cloud_multi_service>` sample for this purpose.
-
-#. Allow your device to connect to nRF Cloud and add it to the nRF Cloud portal.
-   When successfully provisioned, the device appears in the devices list of the nRF Cloud portal.
-
-#. Once your device is provisioned, you may reinstall this sample and the provisioning persists.

@@ -71,13 +71,6 @@ nRF Cloud supports a variety of device ID formats:
 
   A device ID generated from one of a selection of hardware IDs.
 
-Nordic development kits such as the nRF9160 DK have a sticker on the back indicating the device's IMEI and PIN.
-They are preprovisioned with just-in-time provisioning (JITP) certificates so they can be added easily to nRF Cloud using the device ID ``nrf-IMEI`` and PIN.
-Device IDs that start with ``nrf-`` are checked against a database of genuine Nordic development kits, Thingy:91, and Thingy:91 X.
-If the device ID (and the accompanying PIN or Hardware ID) is not found in the database, the device cannot connect.
-This means that customers using custom hardware cannot use the ``nrf-`` prefix for their device IDs.
-Choose your own PIN when creating JITP credentials for a custom device.
-
 The `device_credentials_installer.py`_ script uses the device UUID format by default.
 See these command line options to use other device ID formats:
 
@@ -181,23 +174,6 @@ A device can successfully connect to `nRF Cloud`_ using MQTT if the following re
   * `nRF Cloud device claiming`_
   * :ref:`nrf_cloud_multi_service_provisioning_service`
   * :ref:`lib_nrf_provisioning`
-
-* Just-in-time provisioning (JITP)
-
-  .. note::
-     This option is not supported by CoAP connections.
-
-  Nordic development kits and evaluation platforms are preprovisioned with JITP certificates.
-  To use JITP for custom devices, or to replace the JITP credentials in a device, do the following:
-
-  1. In your nRF Cloud account, enter the device ID in a web form, then download a JSON file containing the CA certificate, device certificate, and private key.
-
-     Alternatively, use the nRF Cloud REST API to do this.
-
-  #. Program the credentials in the JSON file into the device using the `Cellular Monitor app`_.
-
-  The private key is exposed during these steps, and therefore, this is the less secure option.
-  See :ref:`nrf9160_ug_updating_cloud_certificate` for details.
 
 * Preconnect provisioning
 
