@@ -22,6 +22,7 @@
 
 #include "internal/common.h"
 #include "cracen_psa.h"
+#include "internal/cracen_ecc_helpers.h"
 #include "internal/cracen_ecdsa.h"
 #include "internal/cracen_eddsa.h"
 #include "internal/cracen_ikg.h"

@@ -11,7 +11,9 @@ list(APPEND cracen_driver_include_dirs
 )
 
 list(APPEND cracen_driver_sources
+  ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa.c
   ${CMAKE_CURRENT_LIST_DIR}/src/internal/common.c
+  ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_ecc_helpers.c
   ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_ecc_keygen.c
   ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rndinrange.c
 )
