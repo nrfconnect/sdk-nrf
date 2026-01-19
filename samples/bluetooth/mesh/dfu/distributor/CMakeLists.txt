@@ -14,6 +14,7 @@ include_directories(
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE ${app_sources}
   ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common/smp_bt.c
+  ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common/mgmt_dfu_hooks.c
   ${dfu_common_dir}/dfu_target.c
 )
 
