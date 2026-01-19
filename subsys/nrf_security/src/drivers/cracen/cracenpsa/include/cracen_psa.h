@@ -33,6 +33,7 @@
 #include "cracen_psa_primitives.h"
 #include "cracen_psa_kmu.h"
 #include "cracen_psa_key_ids.h"
+#include "cracen_psa_ctr_drbg.h"
 #include "sxsymcrypt/keyref.h"
 
 /** @brief Get the size of an opaque key.
@@ -44,41 +45,6 @@
  * @retval PSA_ERROR_INVALID_HANDLE The key handle is invalid.
  */
 psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size_t *key_size);
-
-/** @brief Initialize a random number generator context.
- *
- * @param[in,out] context PRNG context.
- *
- * @retval PSA_SUCCESS The operation completed successfully.
- */
-psa_status_t cracen_init_random(cracen_prng_context_t *context);
-
-/** @brief Get random bytes from a PRNG context.
- *
- * @param[in,out] context    PRNG context.
- * @param[out] output        Buffer to store the random bytes.
- * @param[in] output_size    Number of random bytes to generate.
- *
- * @retval PSA_SUCCESS The operation completed successfully.
- */
-psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, size_t output_size);
-
-/** @brief Free a random number generator context.
- *
- * @param[in,out] context PRNG context.
- *
- * @retval PSA_SUCCESS The operation completed successfully.
- */
-psa_status_t cracen_free_random(cracen_prng_context_t *context);
-
-/** @brief Get random bytes from the True Random Number Generator.
- *
- * @param[out] output      Buffer to store the random bytes.
- * @param[in] output_size  Number of random bytes to generate.
- *
- * @retval PSA_SUCCESS The operation completed successfully.
- */
-psa_status_t cracen_get_trng(uint8_t *output, size_t output_size);
 
 /** @brief Sign a message.
  *

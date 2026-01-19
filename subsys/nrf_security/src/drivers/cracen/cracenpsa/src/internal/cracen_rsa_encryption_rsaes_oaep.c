@@ -28,6 +28,7 @@
 #include <cracen/statuscodes.h>
 #include <cracen/mem_helpers.h>
 #include <cracen_psa.h>
+#include <cracen_psa_ctr_drbg.h>
 #include <cracen_psa_primitives.h>
 #include "common.h"
 #include "cracen_rsa_mgf1xor.h"

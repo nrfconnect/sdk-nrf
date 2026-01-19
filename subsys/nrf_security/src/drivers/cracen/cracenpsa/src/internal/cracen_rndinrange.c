@@ -10,6 +10,7 @@
 #include <cracen/statuscodes.h>
 #include <cracen/mem_helpers.h>
 #include <cracen_psa.h>
+#include <cracen_psa_ctr_drbg.h>
 #include "common.h"
 
 /* Return 1 if the given byte string contains only zeros, 0 otherwise. */

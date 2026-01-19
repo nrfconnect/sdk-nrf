@@ -6,6 +6,7 @@
 
 #include "common.h"
 
+#include <cracen_psa_ctr_drbg.h>
 #include <hal/nrf_cracen.h>
 #include <cracen/lib_kmu.h>
 #include <cracen/mem_helpers.h>
