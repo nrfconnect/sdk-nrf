@@ -10,6 +10,7 @@
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
+#include <cracen_psa_ctr_drbg.h>
 #include "internal/cracen_eddsa.h"
 #include "internal/cracen_ecdsa.h"
 #include "internal/cracen_montgomery.h"

@@ -7,6 +7,7 @@
 #include "cracen_psa_primitives.h"
 #include "internal/common.h"
 #include <cracen_psa.h>
+#include <cracen_psa_ctr_drbg.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <psa/crypto.h>

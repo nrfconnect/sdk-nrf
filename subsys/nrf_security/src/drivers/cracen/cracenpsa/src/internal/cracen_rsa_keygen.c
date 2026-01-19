@@ -14,6 +14,7 @@
 #include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
+#include <cracen_psa_ctr_drbg.h>
 #include <cracen_psa_primitives.h>
 #include "cracen_coprime_check.h"
 #include "common.h"
