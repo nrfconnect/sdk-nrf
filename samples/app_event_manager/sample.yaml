@@ -69,7 +69,7 @@ tests:
     build_only: false
     extra_configs:
       - CONFIG_SHELL=y
-      - CONFIG_NATIVE_UART_0_ON_STDINOUT=y
+      - CONFIG_UART_NATIVE_PTY_0_ON_STDINOUT=y
     platform_allow: native_sim
     integration_platforms:
       - native_sim
