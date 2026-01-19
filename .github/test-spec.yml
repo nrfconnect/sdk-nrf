@@ -344,9 +344,6 @@
   - "include/nfc/**/*"
   - "lib/st25r3911b/**/*"
   - "samples/nfc/**/*"
-  - "samples/bluetooth/peripheral_nfc_pairing/**/*"
-  - "samples/bluetooth/central_nfc_pairing/**/*"
-  - "samples/bluetooth/peripheral_hids_keyboard/**/*"
 
 "CI-matter-test":
   - "drivers/mpsl/**/*"
