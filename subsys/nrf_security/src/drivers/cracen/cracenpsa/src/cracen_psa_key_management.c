@@ -5,6 +5,7 @@
  */
 
 #include "internal/common.h"
+#include "internal/cracen_ecc_helpers.h"
 #include <cracen/ec_helpers.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
