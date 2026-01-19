@@ -66,6 +66,8 @@ void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault)
 #elif CONFIG_NRF_MODEM_LIB_ON_FAULT_LTE_NET_IF
 	extern void lte_net_if_modem_fault_handler(void);
 	lte_net_if_modem_fault_handler();
+	extern void lte_net_if_ntn_modem_fault_handler(void);
+	lte_net_if_ntn_modem_fault_handler();
 #endif
 }
 #endif /* not CONFIG_NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC */
