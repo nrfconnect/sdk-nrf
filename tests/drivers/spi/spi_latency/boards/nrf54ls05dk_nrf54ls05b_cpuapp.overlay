@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* Test requires wire connection:
- *  - SPIM_MOSI with test-gpios -> P1.06 - P1.22.
+/* Required loopbacks:
+ * P1.05 <-> P1.21
  */
 
 / {
-	zephyr,user {
-		test-gpios = <&gpio1 22 GPIO_ACTIVE_LOW>;
+	aliases {
+		tst-timer = &timer20;
 	};
 };
 
@@ -19,7 +19,7 @@
 		group1 {
 			psels = <NRF_PSEL(SPIM_SCK, 1, 4)>,
 				<NRF_PSEL(SPIM_MISO, 1, 5)>,
-				<NRF_PSEL(SPIM_MOSI, 1, 6)>;
+				<NRF_PSEL(SPIM_MOSI, 1, 21)>;
 		};
 	};
 
@@ -27,18 +27,10 @@
 		group1 {
 			psels = <NRF_PSEL(SPIM_SCK, 1, 4)>,
 				<NRF_PSEL(SPIM_MISO, 1, 5)>,
-				<NRF_PSEL(SPIM_MOSI, 1, 6)>;
+				<NRF_PSEL(SPIM_MOSI, 1, 21)>;
 			low-power-enable;
 		};
 	};
-};
-
-&gpio1 {
-	status = "okay";
-};
-
-&timer00 {
-	status = "okay";
 };
 
 &spi21 {
@@ -47,12 +39,19 @@
 	pinctrl-1 = <&spi21_sleep>;
 	pinctrl-names = "default", "sleep";
 	overrun-character = <0x00>;
-	cs-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
 	zephyr,pm-device-runtime-auto;
-
-	dut_spi_dt: test-spi-dev@0 {
+	cs-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
+	dut_spi: test-spi-dev@0 {
 		compatible = "vnd,spi-device";
 		reg = <0>;
-		spi-max-frequency = <DT_FREQ_M(1)>;
+		spi-max-frequency = <DT_FREQ_M(8)>;
 	};
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&timer20 {
+	status = "okay";
 };
