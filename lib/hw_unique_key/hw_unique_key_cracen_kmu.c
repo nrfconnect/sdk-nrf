@@ -5,6 +5,7 @@
  */
 
 #include <cracen_psa.h>
+#include <cracen_psa_ctr_drbg.h>
 #include <cracen_psa_kmu.h>
 #include <hw_unique_key.h>
 #include "hw_unique_key_internal.h"

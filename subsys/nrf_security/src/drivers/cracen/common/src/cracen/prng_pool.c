@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <cracen_psa.h>
+#include <cracen_psa_ctr_drbg.h>
 #include <cracen/statuscodes.h>
 #include <security/cracen.h>
 #include <zephyr/kernel.h>

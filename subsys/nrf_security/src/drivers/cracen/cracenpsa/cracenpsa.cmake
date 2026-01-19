@@ -34,7 +34,7 @@ endif()
 
 if(NOT CONFIG_PSA_CRYPTO_DRIVER_ALG_PRNG_TEST)
   list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/ctr_drbg.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_ctr_drbg.c
   )
 endif()
 
