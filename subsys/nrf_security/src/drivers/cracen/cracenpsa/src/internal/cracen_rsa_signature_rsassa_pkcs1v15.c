@@ -20,7 +20,7 @@
 #include <sxsymcrypt/hashdefs.h>
 #include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
-#include "rsa_key.h"
+#include "cracen_rsa_key.h"
 #include "cracen_psa_primitives.h"
 #include "cracen_rsa_signature_pkcs1v15.h"
 #include "common.h"

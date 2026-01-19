@@ -14,7 +14,7 @@
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include "cracen_psa_primitives.h"
-#include "hmac.h"
+#include "cracen_hmac.h"
 
 psa_status_t cracen_hmac_setup(cracen_mac_operation_t *operation,
 				      const psa_key_attributes_t *attributes,

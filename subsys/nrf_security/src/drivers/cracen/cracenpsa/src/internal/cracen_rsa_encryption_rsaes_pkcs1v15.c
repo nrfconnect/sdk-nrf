@@ -21,7 +21,7 @@
 #include "cracen_rsa_signature_pkcs1v15.h"
 #include <cracen_psa_primitives.h>
 #include "common.h"
-#include "rsa_key.h"
+#include "cracen_rsa_key.h"
 
 #define WORKMEM_SIZE	PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS)
 #define HEADER_BYTES	2

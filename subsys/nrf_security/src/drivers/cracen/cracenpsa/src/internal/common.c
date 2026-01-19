@@ -24,7 +24,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
 #include <psa/nrf_platform_key_ids.h>
-#include "rsa_key.h"
+#include "cracen_rsa_key.h"
 
 LOG_MODULE_DECLARE(cracen, CONFIG_CRACEN_LOG_LEVEL);
 
