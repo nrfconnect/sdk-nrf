@@ -218,9 +218,9 @@ struct downloader_transport_http_cfg dl_http_cfg = {
 
 DEFINE_FFF_GLOBALS;
 
-FAKE_VALUE_FUNC(int, z_impl_zsock_setsockopt, int, int, int, const void *, socklen_t);
+FAKE_VALUE_FUNC(int, z_impl_zsock_setsockopt, int, int, int, const void *, net_socklen_t);
 FAKE_VALUE_FUNC(int, z_impl_zsock_socket, int, int, int);
-FAKE_VALUE_FUNC(int, z_impl_zsock_connect, int, const struct sockaddr *, socklen_t);
+FAKE_VALUE_FUNC(int, z_impl_zsock_connect, int, const struct net_sockaddr *, net_socklen_t);
 FAKE_VALUE_FUNC(int, z_impl_zsock_close, int)
 FAKE_VALUE_FUNC(ssize_t, z_impl_zsock_send, int, const void *, size_t, int)
 FAKE_VALUE_FUNC(ssize_t, z_impl_zsock_recv, int, void *, size_t, int)
@@ -228,12 +228,12 @@ FAKE_VALUE_FUNC(int, zsock_getaddrinfo, const char *, const char *, const struct
 		struct zsock_addrinfo **)
 FAKE_VOID_FUNC(zsock_freeaddrinfo, struct zsock_addrinfo *);
 
-FAKE_VALUE_FUNC(int, z_impl_zsock_inet_pton, sa_family_t, const char *, void *)
-FAKE_VALUE_FUNC(char *, z_impl_net_addr_ntop, sa_family_t, const void *, char *, size_t)
+FAKE_VALUE_FUNC(int, z_impl_zsock_inet_pton, net_sa_family_t, const char *, void *)
+FAKE_VALUE_FUNC(char *, z_impl_net_addr_ntop, net_sa_family_t, const void *, char *, size_t)
 FAKE_VALUE_FUNC(ssize_t, z_impl_zsock_sendto, int, const void *, size_t, int,
-		const struct sockaddr *, socklen_t);
-FAKE_VALUE_FUNC(ssize_t, z_impl_zsock_recvfrom, int, void *, size_t, int, struct sockaddr *,
-		socklen_t *);
+		const struct net_sockaddr *, net_socklen_t);
+FAKE_VALUE_FUNC(ssize_t, z_impl_zsock_recvfrom, int, void *, size_t, int, struct net_sockaddr *,
+		net_socklen_t *);
 
 FAKE_VALUE_FUNC(int, coap_get_option_int, const struct coap_packet *, uint16_t);
 FAKE_VALUE_FUNC(int, coap_block_transfer_init, struct coap_block_context *, enum coap_block_size,
@@ -258,7 +258,7 @@ FAKE_VALUE_FUNC(int, coap_append_block2_option, struct coap_packet *, struct coa
 FAKE_VALUE_FUNC(int, coap_append_size2_option, struct coap_packet *, struct coap_block_context *);
 FAKE_VALUE_FUNC(struct coap_transmission_parameters, coap_get_transmission_parameters);
 FAKE_VALUE_FUNC(int, coap_pending_init, struct coap_pending *, const struct coap_packet *,
-		const struct sockaddr *, const struct coap_transmission_parameters *);
+		const struct net_sockaddr *, const struct coap_transmission_parameters *);
 
 uint16_t message_id;
 uint16_t coap_next_id(void)
@@ -266,22 +266,22 @@ uint16_t coap_next_id(void)
 	return message_id++;
 }
 
-static struct sockaddr server_sockaddr = {
-	.sa_family = AF_INET,
+static struct net_sockaddr server_sockaddr = {
+	.sa_family = NET_AF_INET,
 };
 
 static struct zsock_addrinfo server_addrinfo = {
 	.ai_addr = &server_sockaddr,
-	.ai_addrlen = sizeof(struct sockaddr),
+	.ai_addrlen = sizeof(struct net_sockaddr),
 };
 
-static struct sockaddr server_sockaddr6 = {
-	.sa_family = AF_INET6,
+static struct net_sockaddr server_sockaddr6 = {
+	.sa_family = NET_AF_INET6,
 };
 
 static struct zsock_addrinfo server_addrinfo6 = {
 	.ai_addr = &server_sockaddr6,
-	.ai_addrlen = sizeof(struct sockaddr),
+	.ai_addrlen = sizeof(struct net_sockaddr),
 };
 
 int zsock_getaddrinfo_server_ok(const char *host, const char *service,
@@ -290,10 +290,10 @@ int zsock_getaddrinfo_server_ok(const char *host, const char *service,
 {
 	TEST_ASSERT_EQUAL_STRING(HOSTNAME, host);
 
-	if (hints->ai_family == AF_INET) {
+	if (hints->ai_family == NET_AF_INET) {
 		*res = &server_addrinfo;
 		return 0;
-	} else if (hints->ai_family == AF_INET6) {
+	} else if (hints->ai_family == NET_AF_INET6) {
 		*res = &server_addrinfo6;
 		return 0;
 	}
@@ -308,10 +308,10 @@ int zsock_getaddrinfo_server2_ok(const char *host, const char *service,
 {
 	TEST_ASSERT_EQUAL_STRING(HOSTNAME2, host);
 
-	if (hints->ai_family == AF_INET) {
+	if (hints->ai_family == NET_AF_INET) {
 		*res = &server_addrinfo;
 		return 0;
-	} else if (hints->ai_family == AF_INET6) {
+	} else if (hints->ai_family == NET_AF_INET6) {
 		*res = &server_addrinfo6;
 		return 0;
 	}
@@ -325,14 +325,14 @@ int zsock_getaddrinfo_server_ipv6_fail_ipv4_ok(const char *host, const char *ser
 				     const struct zsock_addrinfo *hints,
 				     struct zsock_addrinfo **res)
 {
-	if (hints->ai_family == AF_INET6) {
+	if (hints->ai_family == NET_AF_INET6) {
 		/* Fail on IPv6 to retry IPv4 */
 		errno = ENOPROTOOPT;
 		return DNS_EAI_SYSTEM;
 	}
 
 	TEST_ASSERT_EQUAL_STRING(HOSTNAME, host);
-	TEST_ASSERT_EQUAL(AF_INET, hints->ai_family);
+	TEST_ASSERT_EQUAL(NET_AF_INET, hints->ai_family);
 	*res = &server_addrinfo;
 
 	return 0;
@@ -372,18 +372,18 @@ void zsock_freeaddrinfo_server_ipv6_then_ipv4(struct zsock_addrinfo *addr)
 
 int z_impl_zsock_socket_http_ipv4_ok(int family, int type, int proto)
 {
-	TEST_ASSERT_EQUAL(AF_INET, family);
-	TEST_ASSERT_EQUAL(SOCK_STREAM, type);
-	TEST_ASSERT_EQUAL(IPPROTO_TCP, proto);
+	TEST_ASSERT_EQUAL(NET_AF_INET, family);
+	TEST_ASSERT_EQUAL(NET_SOCK_STREAM, type);
+	TEST_ASSERT_EQUAL(NET_IPPROTO_TCP, proto);
 
 	return FD;
 }
 
 int z_impl_zsock_socket_http_ipv6_ok(int family, int type, int proto)
 {
-	TEST_ASSERT_EQUAL(AF_INET6, family);
-	TEST_ASSERT_EQUAL(SOCK_STREAM, type);
-	TEST_ASSERT_EQUAL(IPPROTO_TCP, proto);
+	TEST_ASSERT_EQUAL(NET_AF_INET6, family);
+	TEST_ASSERT_EQUAL(NET_SOCK_STREAM, type);
+	TEST_ASSERT_EQUAL(NET_IPPROTO_TCP, proto);
 
 	return FD;
 }
@@ -392,60 +392,60 @@ int z_impl_zsock_socket_http_ipv6_then_ipv4(int family, int type, int proto)
 {
 	switch (z_impl_zsock_socket_fake.call_count) {
 	case 1:
-		TEST_ASSERT_EQUAL(AF_INET6, family);
+		TEST_ASSERT_EQUAL(NET_AF_INET6, family);
 		break;
 	case 2:
 	default:
-		TEST_ASSERT_EQUAL(AF_INET, family);
+		TEST_ASSERT_EQUAL(NET_AF_INET, family);
 	}
 
-	TEST_ASSERT_EQUAL(SOCK_STREAM, type);
-	TEST_ASSERT_EQUAL(IPPROTO_TCP, proto);
+	TEST_ASSERT_EQUAL(NET_SOCK_STREAM, type);
+	TEST_ASSERT_EQUAL(NET_IPPROTO_TCP, proto);
 
 	return FD;
 }
 
 int z_impl_zsock_socket_https_ipv6_ok(int family, int type, int proto)
 {
-	TEST_ASSERT_EQUAL(AF_INET6, family);
-	TEST_ASSERT_EQUAL(SOCK_STREAM, type);
-	TEST_ASSERT_EQUAL(IPPROTO_TLS_1_2, proto);
+	TEST_ASSERT_EQUAL(NET_AF_INET6, family);
+	TEST_ASSERT_EQUAL(NET_SOCK_STREAM, type);
+	TEST_ASSERT_EQUAL(NET_IPPROTO_TLS_1_2, proto);
 
 	return FD;
 }
 
 int z_impl_zsock_socket_coap_ipv4_ok(int family, int type, int proto)
 {
-	TEST_ASSERT_EQUAL(AF_INET, family);
-	TEST_ASSERT_EQUAL(SOCK_DGRAM, type);
-	TEST_ASSERT_EQUAL(IPPROTO_UDP, proto);
+	TEST_ASSERT_EQUAL(NET_AF_INET, family);
+	TEST_ASSERT_EQUAL(NET_SOCK_DGRAM, type);
+	TEST_ASSERT_EQUAL(NET_IPPROTO_UDP, proto);
 
 	return FD;
 }
 
 int z_impl_zsock_socket_coap_ipv6_ok(int family, int type, int proto)
 {
-	TEST_ASSERT_EQUAL(AF_INET6, family);
-	TEST_ASSERT_EQUAL(SOCK_DGRAM, type);
-	TEST_ASSERT_EQUAL(IPPROTO_UDP, proto);
+	TEST_ASSERT_EQUAL(NET_AF_INET6, family);
+	TEST_ASSERT_EQUAL(NET_SOCK_DGRAM, type);
+	TEST_ASSERT_EQUAL(NET_IPPROTO_UDP, proto);
 
 	return FD;
 }
 
 int z_impl_zsock_socket_coaps_ipv4_ok(int family, int type, int proto)
 {
-	TEST_ASSERT_EQUAL(AF_INET, family);
-	TEST_ASSERT_EQUAL(SOCK_DGRAM, type);
-	TEST_ASSERT_EQUAL(IPPROTO_DTLS_1_2, proto);
+	TEST_ASSERT_EQUAL(NET_AF_INET, family);
+	TEST_ASSERT_EQUAL(NET_SOCK_DGRAM, type);
+	TEST_ASSERT_EQUAL(NET_IPPROTO_DTLS_1_2, proto);
 
 	return FD;
 }
 
 int z_impl_zsock_socket_coaps_ipv6_ok(int family, int type, int proto)
 {
-	TEST_ASSERT_EQUAL(AF_INET6, family);
-	TEST_ASSERT_EQUAL(SOCK_DGRAM, type);
-	TEST_ASSERT_EQUAL(IPPROTO_DTLS_1_2, proto);
+	TEST_ASSERT_EQUAL(NET_AF_INET6, family);
+	TEST_ASSERT_EQUAL(NET_SOCK_DGRAM, type);
+	TEST_ASSERT_EQUAL(NET_IPPROTO_DTLS_1_2, proto);
 
 	return FD;
 }
@@ -454,33 +454,33 @@ int z_impl_zsock_socket_coaps_ipv6_then_ipv4_ok(int family, int type, int proto)
 {
 	switch (z_impl_zsock_socket_fake.call_count) {
 	case 1:
-		TEST_ASSERT_EQUAL(AF_INET6, family);
-		TEST_ASSERT_EQUAL(SOCK_DGRAM, type);
-		TEST_ASSERT_EQUAL(IPPROTO_DTLS_1_2, proto);
+		TEST_ASSERT_EQUAL(NET_AF_INET6, family);
+		TEST_ASSERT_EQUAL(NET_SOCK_DGRAM, type);
+		TEST_ASSERT_EQUAL(NET_IPPROTO_DTLS_1_2, proto);
 		break;
 	case 2:
-		TEST_ASSERT_EQUAL(AF_INET, family);
-		TEST_ASSERT_EQUAL(SOCK_DGRAM, type);
-		TEST_ASSERT_EQUAL(IPPROTO_DTLS_1_2, proto);
+		TEST_ASSERT_EQUAL(NET_AF_INET, family);
+		TEST_ASSERT_EQUAL(NET_SOCK_DGRAM, type);
+		TEST_ASSERT_EQUAL(NET_IPPROTO_DTLS_1_2, proto);
 		break;
 	}
 
 	return FD;
 }
 
-int z_impl_zsock_connect_ipv4_ok(int sock, const struct sockaddr *addr,
-			socklen_t addrlen)
+int z_impl_zsock_connect_ipv4_ok(int sock, const struct net_sockaddr *addr,
+			net_socklen_t addrlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
-	TEST_ASSERT_EQUAL(AF_INET, addr->sa_family);
+	TEST_ASSERT_EQUAL(NET_AF_INET, addr->sa_family);
 	return 0;
 }
 
-int z_impl_zsock_connect_ipv4_ok_then_enetunreach(int sock, const struct sockaddr *addr,
-			socklen_t addrlen)
+int z_impl_zsock_connect_ipv4_ok_then_enetunreach(int sock, const struct net_sockaddr *addr,
+			net_socklen_t addrlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
-	TEST_ASSERT_EQUAL(AF_INET, addr->sa_family);
+	TEST_ASSERT_EQUAL(NET_AF_INET, addr->sa_family);
 
 	switch (z_impl_zsock_connect_fake.call_count) {
 	case 1:
@@ -491,37 +491,37 @@ int z_impl_zsock_connect_ipv4_ok_then_enetunreach(int sock, const struct sockadd
 	return -1;
 }
 
-int z_impl_zsock_connect_ipv6_ok(int sock, const struct sockaddr *addr,
-			socklen_t addrlen)
+int z_impl_zsock_connect_ipv6_ok(int sock, const struct net_sockaddr *addr,
+			net_socklen_t addrlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
-	TEST_ASSERT_EQUAL(AF_INET6, addr->sa_family);
+	TEST_ASSERT_EQUAL(NET_AF_INET6, addr->sa_family);
 	return 0;
 }
 
-int z_impl_zsock_connect_ipv6_then_ipv4_ok(int sock, const struct sockaddr *addr,
-			socklen_t addrlen)
+int z_impl_zsock_connect_ipv6_then_ipv4_ok(int sock, const struct net_sockaddr *addr,
+			net_socklen_t addrlen)
 {
 	switch (z_impl_zsock_socket_fake.call_count) {
 	case 1:
 		TEST_ASSERT_EQUAL(FD, sock);
-		TEST_ASSERT_EQUAL(AF_INET6, addr->sa_family);
+		TEST_ASSERT_EQUAL(NET_AF_INET6, addr->sa_family);
 		break;
 	case 2:
 		TEST_ASSERT_EQUAL(FD, sock);
-		TEST_ASSERT_EQUAL(AF_INET, addr->sa_family);
+		TEST_ASSERT_EQUAL(NET_AF_INET, addr->sa_family);
 		break;
 	}
 
 	return 0;
 }
 
-int z_impl_zsock_connect_ipv6_fails_ipv4_ok(int sock, const struct sockaddr *addr,
-			socklen_t addrlen)
+int z_impl_zsock_connect_ipv6_fails_ipv4_ok(int sock, const struct net_sockaddr *addr,
+			net_socklen_t addrlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 
-	if (addr->sa_family == AF_INET6) {
+	if (addr->sa_family == NET_AF_INET6) {
 		return -EHOSTUNREACH;
 	}
 
@@ -529,8 +529,8 @@ int z_impl_zsock_connect_ipv6_fails_ipv4_ok(int sock, const struct sockaddr *add
 }
 
 
-int z_impl_zsock_connect_enetunreach(int sock, const struct sockaddr *addr,
-			socklen_t addrlen)
+int z_impl_zsock_connect_enetunreach(int sock, const struct net_sockaddr *addr,
+			net_socklen_t addrlen)
 {
 	errno = ENETUNREACH;
 	return -1;
@@ -538,17 +538,17 @@ int z_impl_zsock_connect_enetunreach(int sock, const struct sockaddr *addr,
 
 
 int z_impl_zsock_setsockopt_http_ok(int sock, int level, int optname, const void *optval,
-			       socklen_t optlen)
+			       net_socklen_t optlen)
 {
 	switch (z_impl_zsock_setsockopt_fake.call_count) {
 	case 1:
-		TEST_ASSERT_EQUAL(SOL_SOCKET, level);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
 		TEST_ASSERT_EQUAL(SO_BINDTOPDN, optname);
 		TEST_ASSERT_EQUAL(sizeof(int), optlen);
 		break;
 	case 2:
-		TEST_ASSERT_EQUAL(SOL_SOCKET, level);
-		TEST_ASSERT_EQUAL(SO_RCVTIMEO, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
+		TEST_ASSERT_EQUAL(ZSOCK_SO_RCVTIMEO, optname);
 		TEST_ASSERT_EQUAL(sizeof(struct timeval), optlen);
 		/* Ignore value */
 		break;
@@ -558,23 +558,23 @@ int z_impl_zsock_setsockopt_http_ok(int sock, int level, int optname, const void
 }
 
 int z_impl_zsock_setsockopt_coap_ok(int sock, int level, int optname, const void *optval,
-			       socklen_t optlen)
+			       net_socklen_t optlen)
 {
 	switch (z_impl_zsock_setsockopt_fake.call_count) {
 	case 1:
-		TEST_ASSERT_EQUAL(SOL_SOCKET, level);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
 		TEST_ASSERT_EQUAL(SO_BINDTOPDN, optname);
 		TEST_ASSERT_EQUAL(sizeof(int), optlen);
 		break;
 	case 2:
-		TEST_ASSERT_EQUAL(SOL_SOCKET, level);
-		TEST_ASSERT_EQUAL(SO_SNDTIMEO, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
+		TEST_ASSERT_EQUAL(ZSOCK_SO_SNDTIMEO, optname);
 		TEST_ASSERT_EQUAL(sizeof(struct timeval), optlen);
 		/* Ignore value */
 		break;
 	case 3:
-		TEST_ASSERT_EQUAL(SOL_SOCKET, level);
-		TEST_ASSERT_EQUAL(SO_RCVTIMEO, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
+		TEST_ASSERT_EQUAL(ZSOCK_SO_RCVTIMEO, optname);
 		TEST_ASSERT_EQUAL(sizeof(struct timeval), optlen);
 		/* Ignore value */
 		break;
@@ -584,37 +584,37 @@ int z_impl_zsock_setsockopt_coap_ok(int sock, int level, int optname, const void
 }
 
 int z_impl_zsock_setsockopt_https_ok(int sock, int level, int optname, const void *optval,
-			       socklen_t optlen)
+			       net_socklen_t optlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 
 	switch (z_impl_zsock_setsockopt_fake.call_count) {
 	case 1:
-		TEST_ASSERT_EQUAL(SOL_SOCKET, level);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
 		TEST_ASSERT_EQUAL(SO_BINDTOPDN, optname);
 		TEST_ASSERT_EQUAL(sizeof(int), optlen);
 		break;
 	case 2:
-		TEST_ASSERT_EQUAL(SOL_TLS, level);
-		TEST_ASSERT_EQUAL(TLS_PEER_VERIFY, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_TLS, level);
+		TEST_ASSERT_EQUAL(ZSOCK_TLS_PEER_VERIFY, optname);
 		TEST_ASSERT_EQUAL(4, optlen);
 		TEST_ASSERT_EQUAL(2, *(int *)optval);
 		break;
 	case 3:
-		TEST_ASSERT_EQUAL(SOL_TLS, level);
-		TEST_ASSERT_EQUAL(TLS_SEC_TAG_LIST, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_TLS, level);
+		TEST_ASSERT_EQUAL(ZSOCK_TLS_SEC_TAG_LIST, optname);
 		TEST_ASSERT_EQUAL(sizeof(sec_tags), optlen);
 		TEST_ASSERT_EQUAL_MEMORY(sec_tags, optval, sizeof(sec_tags));
 		break;
 	case 4:
-		TEST_ASSERT_EQUAL(SOL_TLS, level);
-		TEST_ASSERT_EQUAL(TLS_HOSTNAME, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_TLS, level);
+		TEST_ASSERT_EQUAL(ZSOCK_TLS_HOSTNAME, optname);
 		TEST_ASSERT_EQUAL(strlen(HOSTNAME), optlen);
 		TEST_ASSERT_EQUAL_MEMORY(HOSTNAME, optval, strlen(HOSTNAME));
 		break;
 	case 5:
-		TEST_ASSERT_EQUAL(SOL_SOCKET, level);
-		TEST_ASSERT_EQUAL(SO_RCVTIMEO, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
+		TEST_ASSERT_EQUAL(ZSOCK_SO_RCVTIMEO, optname);
 		TEST_ASSERT_EQUAL(sizeof(struct timeval), optlen);
 		/* Ignore value */
 		break;
@@ -624,37 +624,37 @@ int z_impl_zsock_setsockopt_https_ok(int sock, int level, int optname, const voi
 }
 
 int z_impl_zsock_setsockopt_coaps_ok(int sock, int level, int optname, const void *optval,
-			       socklen_t optlen)
+			       net_socklen_t optlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 
 	switch (z_impl_zsock_setsockopt_fake.call_count) {
 	case 1:
-		TEST_ASSERT_EQUAL(SOL_SOCKET, level);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
 		TEST_ASSERT_EQUAL(SO_BINDTOPDN, optname);
 		TEST_ASSERT_EQUAL(sizeof(int), optlen);
 		break;
 	case 2:
-		TEST_ASSERT_EQUAL(SOL_TLS, level);
-		TEST_ASSERT_EQUAL(TLS_PEER_VERIFY, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_TLS, level);
+		TEST_ASSERT_EQUAL(ZSOCK_TLS_PEER_VERIFY, optname);
 		TEST_ASSERT_EQUAL(4, optlen);
 		TEST_ASSERT_EQUAL(2, *(int *)optval);
 		break;
 	case 3:
-		TEST_ASSERT_EQUAL(SOL_TLS, level);
-		TEST_ASSERT_EQUAL(TLS_SEC_TAG_LIST, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_TLS, level);
+		TEST_ASSERT_EQUAL(ZSOCK_TLS_SEC_TAG_LIST, optname);
 		TEST_ASSERT_EQUAL(sizeof(sec_tags), optlen);
 		TEST_ASSERT_EQUAL_MEMORY(sec_tags, optval, sizeof(sec_tags));
 		break;
 	case 4:
-		TEST_ASSERT_EQUAL(SOL_SOCKET, level);
-		TEST_ASSERT_EQUAL(SO_SNDTIMEO, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
+		TEST_ASSERT_EQUAL(ZSOCK_SO_SNDTIMEO, optname);
 		TEST_ASSERT_EQUAL(sizeof(struct timeval), optlen);
 		/* Ignore value */
 		break;
 	case 5:
-		TEST_ASSERT_EQUAL(SOL_SOCKET, level);
-		TEST_ASSERT_EQUAL(SO_RCVTIMEO, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
+		TEST_ASSERT_EQUAL(ZSOCK_SO_RCVTIMEO, optname);
 		TEST_ASSERT_EQUAL(sizeof(struct timeval), optlen);
 		/* Ignore value */
 		break;
@@ -665,7 +665,7 @@ int z_impl_zsock_setsockopt_coaps_ok(int sock, int level, int optname, const voi
 
 
 int z_impl_zsock_setsockopt_coaps_fail_on_pdn(int sock, int level, int optname, const void *optval,
-			       socklen_t optlen)
+			       net_socklen_t optlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 
@@ -677,12 +677,12 @@ int z_impl_zsock_setsockopt_coaps_fail_on_pdn(int sock, int level, int optname, 
 	return 0;
 }
 
-int z_impl_zsock_setsockopt_coaps_fail_on_tls_peer_verify(int sock, int level, int optname,
-	const void *optval, socklen_t optlen)
+int z_impl_zsock_setsockopt_coaps_fail_on_ZSOCK_TLS_PEER_VERIFY(int sock, int level, int optname,
+	const void *optval, net_socklen_t optlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 
-	if (optname == TLS_PEER_VERIFY) {
+	if (optname == ZSOCK_TLS_PEER_VERIFY) {
 		errno = ENOMEM;
 		return -1;
 	}
@@ -691,11 +691,11 @@ int z_impl_zsock_setsockopt_coaps_fail_on_tls_peer_verify(int sock, int level, i
 }
 
 int z_impl_zsock_setsockopt_coaps_fail_on_sec_tag_list(int sock, int level, int optname,
-	const void *optval, socklen_t optlen)
+	const void *optval, net_socklen_t optlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 
-	if (optname == TLS_SEC_TAG_LIST) {
+	if (optname == ZSOCK_TLS_SEC_TAG_LIST) {
 		errno = ENOMEM;
 		return -1;
 	}
@@ -704,11 +704,11 @@ int z_impl_zsock_setsockopt_coaps_fail_on_sec_tag_list(int sock, int level, int 
 }
 
 int z_impl_zsock_setsockopt_coaps_fail_on_sndtimeo(int sock, int level, int optname,
-	const void *optval, socklen_t optlen)
+	const void *optval, net_socklen_t optlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 
-	if (optname == SO_SNDTIMEO) {
+	if (optname == ZSOCK_SO_SNDTIMEO) {
 		errno = ENOMEM;
 		return -1;
 	}
@@ -717,12 +717,12 @@ int z_impl_zsock_setsockopt_coaps_fail_on_sndtimeo(int sock, int level, int optn
 }
 
 int z_impl_zsock_setsockopt_coaps_fail_on_rcvtimeo(int sock, int level, int optname,
-	const void *optval, socklen_t optlen)
+	const void *optval, net_socklen_t optlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 
 
-	if (optname == SO_RCVTIMEO) {
+	if (optname == ZSOCK_SO_RCVTIMEO) {
 		errno = ENOMEM;
 		return -1;
 	}
@@ -731,12 +731,12 @@ int z_impl_zsock_setsockopt_coaps_fail_on_rcvtimeo(int sock, int level, int optn
 }
 
 int z_impl_zsock_setsockopt_coaps_fail_on_cid(int sock, int level, int optname,
-	const void *optval, socklen_t optlen)
+	const void *optval, net_socklen_t optlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 
 
-	if (optname == TLS_DTLS_CID) {
+	if (optname == ZSOCK_TLS_DTLS_CID) {
 		errno = ENOMEM;
 		return -1;
 	}
@@ -745,42 +745,42 @@ int z_impl_zsock_setsockopt_coaps_fail_on_cid(int sock, int level, int optname,
 }
 
 int z_impl_zsock_setsockopt_coaps_cid_ok(int sock, int level, int optname, const void *optval,
-			       socklen_t optlen)
+			       net_socklen_t optlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 
 	switch (z_impl_zsock_setsockopt_fake.call_count) {
 	case 1:
-		TEST_ASSERT_EQUAL(SOL_SOCKET, level);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
 		TEST_ASSERT_EQUAL(SO_BINDTOPDN, optname);
 		TEST_ASSERT_EQUAL(sizeof(int), optlen);
 		break;
 	case 2:
-		TEST_ASSERT_EQUAL(SOL_TLS, level);
-		TEST_ASSERT_EQUAL(TLS_PEER_VERIFY, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_TLS, level);
+		TEST_ASSERT_EQUAL(ZSOCK_TLS_PEER_VERIFY, optname);
 		TEST_ASSERT_EQUAL(4, optlen);
 		TEST_ASSERT_EQUAL(2, *(int *)optval);
 		break;
 	case 3:
-		TEST_ASSERT_EQUAL(SOL_TLS, level);
-		TEST_ASSERT_EQUAL(TLS_SEC_TAG_LIST, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_TLS, level);
+		TEST_ASSERT_EQUAL(ZSOCK_TLS_SEC_TAG_LIST, optname);
 		TEST_ASSERT_EQUAL(sizeof(sec_tags), optlen);
 		TEST_ASSERT_EQUAL_MEMORY(sec_tags, optval, sizeof(sec_tags));
 		break;
 	case 4:
-		TEST_ASSERT_EQUAL(SOL_TLS, level);
-		TEST_ASSERT_EQUAL(TLS_DTLS_CID, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_TLS, level);
+		TEST_ASSERT_EQUAL(ZSOCK_TLS_DTLS_CID, optname);
 		TEST_ASSERT_EQUAL(sizeof(uint32_t), optlen);
 		break;
 	case 5:
-		TEST_ASSERT_EQUAL(SOL_SOCKET, level);
-		TEST_ASSERT_EQUAL(SO_SNDTIMEO, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
+		TEST_ASSERT_EQUAL(ZSOCK_SO_SNDTIMEO, optname);
 		TEST_ASSERT_EQUAL(sizeof(struct timeval), optlen);
 		/* Ignore value */
 		break;
 	case 6:
-		TEST_ASSERT_EQUAL(SOL_SOCKET, level);
-		TEST_ASSERT_EQUAL(SO_RCVTIMEO, optname);
+		TEST_ASSERT_EQUAL(ZSOCK_SOL_SOCKET, level);
+		TEST_ASSERT_EQUAL(ZSOCK_SO_RCVTIMEO, optname);
 		TEST_ASSERT_EQUAL(sizeof(struct timeval), optlen);
 		/* Ignore value */
 		break;
@@ -790,15 +790,15 @@ int z_impl_zsock_setsockopt_coaps_cid_ok(int sock, int level, int optname, const
 }
 
 ssize_t z_impl_zsock_sendto_ok(int sock, const void *buf, size_t len, int flags,
-			   const struct sockaddr *dest_addr, socklen_t addrlen)
+			   const struct net_sockaddr *dest_addr, net_socklen_t addrlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 	return len;
 }
 
 static ssize_t z_impl_zsock_recvfrom_http_header_then_data(
-	int sock, void *buf, size_t max_len, int flags, struct sockaddr *src_addr,
-	socklen_t *addrlen)
+	int sock, void *buf, size_t max_len, int flags, struct net_sockaddr *src_addr,
+	net_socklen_t *addrlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 	TEST_ASSERT(sizeof(dl_buf) >= max_len);
@@ -816,8 +816,8 @@ static ssize_t z_impl_zsock_recvfrom_http_header_then_data(
 }
 
 static ssize_t z_impl_zsock_recvfrom_http_partial_header_then_header_with_data(
-	int sock, void *buf, size_t max_len, int flags, struct sockaddr *src_addr,
-	socklen_t *addrlen)
+	int sock, void *buf, size_t max_len, int flags, struct net_sockaddr *src_addr,
+	net_socklen_t *addrlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 	TEST_ASSERT(sizeof(dl_buf) >= max_len);
@@ -836,8 +836,8 @@ static ssize_t z_impl_zsock_recvfrom_http_partial_header_then_header_with_data(
 }
 
 static ssize_t z_impl_zsock_recvfrom_https_partial_content(
-	int sock, void *buf, size_t max_len, int flags, struct sockaddr *src_addr,
-	socklen_t *addrlen)
+	int sock, void *buf, size_t max_len, int flags, struct net_sockaddr *src_addr,
+	net_socklen_t *addrlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 	TEST_ASSERT(sizeof(dl_buf) >= max_len);
@@ -861,8 +861,8 @@ static ssize_t z_impl_zsock_recvfrom_https_partial_content(
 }
 
 static ssize_t z_impl_zsock_recvfrom_https_partial_content_partial_2nd_header(
-	int sock, void *buf, size_t max_len, int flags, struct sockaddr *src_addr,
-	socklen_t *addrlen)
+	int sock, void *buf, size_t max_len, int flags, struct net_sockaddr *src_addr,
+	net_socklen_t *addrlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 	TEST_ASSERT(sizeof(dl_buf) >= max_len);
@@ -891,8 +891,8 @@ static ssize_t z_impl_zsock_recvfrom_https_partial_content_partial_2nd_header(
 }
 
 static ssize_t z_impl_zsock_recvfrom_http_header_and_payload(
-	int sock, void *buf, size_t max_len, int flags, struct sockaddr *src_addr,
-	socklen_t *addrlen)
+	int sock, void *buf, size_t max_len, int flags, struct net_sockaddr *src_addr,
+	net_socklen_t *addrlen)
 {
 	switch (z_impl_zsock_recvfrom_fake.call_count) {
 	case 1:
@@ -904,8 +904,8 @@ static ssize_t z_impl_zsock_recvfrom_http_header_and_payload(
 }
 
 static ssize_t z_impl_zsock_recvfrom_http_header_and_frag_data_w_err(
-	int sock, void *buf, size_t max_len, int flags, struct sockaddr *src_addr,
-	socklen_t *addrlen)
+	int sock, void *buf, size_t max_len, int flags, struct net_sockaddr *src_addr,
+	net_socklen_t *addrlen)
 {
 	switch (z_impl_zsock_recvfrom_fake.call_count) {
 	case 1:
@@ -927,8 +927,8 @@ static ssize_t z_impl_zsock_recvfrom_http_header_and_frag_data_w_err(
 }
 
 static ssize_t z_impl_zsock_recvfrom_http_header_and_frag_data_peer_close(
-	int sock, void *buf, size_t max_len, int flags, struct sockaddr *src_addr,
-	socklen_t *addrlen)
+	int sock, void *buf, size_t max_len, int flags, struct net_sockaddr *src_addr,
+	net_socklen_t *addrlen)
 {
 	switch (z_impl_zsock_recvfrom_fake.call_count) {
 	case 1:
@@ -949,8 +949,8 @@ static ssize_t z_impl_zsock_recvfrom_http_header_and_frag_data_peer_close(
 }
 
 static ssize_t z_impl_zsock_recvfrom_partial_then_econnreset(
-	int sock, void *buf, size_t max_len, int flags, struct sockaddr *src_addr,
-	socklen_t *addrlen)
+	int sock, void *buf, size_t max_len, int flags, struct net_sockaddr *src_addr,
+	net_socklen_t *addrlen)
 {
 	TEST_ASSERT_EQUAL(FD, sock);
 	TEST_ASSERT(sizeof(dl_buf) >= max_len);
@@ -968,8 +968,8 @@ static ssize_t z_impl_zsock_recvfrom_partial_then_econnreset(
 }
 
 static ssize_t z_impl_zsock_recvfrom_http_redirect_and_close(
-	int sock, void *buf, size_t max_len, int flags, struct sockaddr *src_addr,
-	socklen_t *addrlen)
+	int sock, void *buf, size_t max_len, int flags, struct net_sockaddr *src_addr,
+	net_socklen_t *addrlen)
 {
 	switch (z_impl_zsock_recvfrom_fake.call_count) {
 	case 1:
@@ -988,13 +988,13 @@ int z_impl_zsock_socket_http_then_https(int family, int type, int proto)
 {
 	switch (z_impl_zsock_socket_fake.call_count) {
 	case 1:
-		TEST_ASSERT_EQUAL(SOCK_STREAM, type);
-		TEST_ASSERT_EQUAL(IPPROTO_TCP, proto);
+		TEST_ASSERT_EQUAL(NET_SOCK_STREAM, type);
+		TEST_ASSERT_EQUAL(NET_IPPROTO_TCP, proto);
 		break;
 	case 2:
 	default:
-		TEST_ASSERT_EQUAL(SOCK_STREAM, type);
-		TEST_ASSERT_EQUAL(IPPROTO_TLS_1_2, proto);
+		TEST_ASSERT_EQUAL(NET_SOCK_STREAM, type);
+		TEST_ASSERT_EQUAL(NET_IPPROTO_TLS_1_2, proto);
 		RESET_FAKE(z_impl_zsock_setsockopt);
 		RESET_FAKE(z_impl_zsock_recvfrom);
 		z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_https_ok;
@@ -1006,15 +1006,16 @@ int z_impl_zsock_socket_http_then_https(int family, int type, int proto)
 }
 
 static ssize_t z_impl_zsock_recvfrom_coap(
-	int sock, void *buf, size_t max_len, int flags, struct sockaddr *src_addr,
-	socklen_t *addrlen)
+	int sock, void *buf, size_t max_len, int flags, struct net_sockaddr *src_addr,
+	net_socklen_t *addrlen)
 {
 	memset(buf, 23, 32);
 	return 32;
 }
 
 static ssize_t z_impl_zsock_recvfrom_coap_timeout(int sock, void *buf, size_t max_len, int flags,
-						  struct sockaddr *src_addr, socklen_t *addrlen)
+						  struct net_sockaddr *src_addr,
+						  net_socklen_t *addrlen)
 {
 	errno = EAGAIN;
 	return -1;
@@ -1023,8 +1024,9 @@ static ssize_t z_impl_zsock_recvfrom_coap_timeout(int sock, void *buf, size_t ma
 static int recovery_call_count;
 
 static ssize_t z_impl_zsock_recvfrom_coap_timeout_then_data(int sock, void *buf, size_t max_len,
-							    int flags, struct sockaddr *src_addr,
-							    socklen_t *addrlen)
+							    int flags,
+							    struct net_sockaddr *src_addr,
+							    net_socklen_t *addrlen)
 {
 	if (recovery_call_count == 0) {
 		recovery_call_count++;
@@ -2271,7 +2273,7 @@ void test_downloader_get_ipv4_specific_ok(void)
 	struct downloader_evt evt;
 	static struct downloader_host_cfg dl_host_conf_ipv4 = {
 		.pdn_id = 1,
-		.family = AF_INET,
+		.family = NET_AF_INET,
 	};
 
 	err = downloader_init(&dl, &dl_cfg);
@@ -2300,7 +2302,7 @@ void test_downloader_get_econnreset_reconnect_fails(void)
 	struct downloader_evt evt;
 	static struct downloader_host_cfg dl_host_conf_ipv4 = {
 		.pdn_id = 1,
-		.family = AF_INET,
+		.family = NET_AF_INET,
 	};
 
 	err = downloader_init(&dl, &dl_cfg);
@@ -2348,7 +2350,7 @@ void test_downloader_cancel(void)
 	struct downloader_evt evt;
 	static struct downloader_host_cfg dl_host_conf_ipv4 = {
 		.pdn_id = 1,
-		.family = AF_INET,
+		.family = NET_AF_INET,
 	};
 
 	err = downloader_init(&dl, &dl_cfg);
