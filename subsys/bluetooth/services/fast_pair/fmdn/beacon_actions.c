@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -20,6 +20,7 @@ LOG_MODULE_REGISTER(fp_fmdn_beacon_actions, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #include "fp_fmdn_auth.h"
 #include "fp_fmdn_callbacks.h"
 #include "fp_fmdn_clock.h"
+#include "fp_fmdn_pf.h"
 #include "fp_fmdn_read_mode.h"
 #include "fp_fmdn_ring.h"
 #include "fp_fmdn_state.h"
@@ -29,6 +30,7 @@ LOG_MODULE_REGISTER(fp_fmdn_beacon_actions, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #include "beacon_actions_defs.h"
 
 enum beacon_actions_data_id {
+	/* Core operation identifiers. */
 	BEACON_ACTIONS_BEACON_PARAMETERS_READ       = 0x00,
 	BEACON_ACTIONS_PROVISIONING_STATE_READ      = 0x01,
 	BEACON_ACTIONS_EPHEMERAL_IDENTITY_KEY_SET   = 0x02,
@@ -38,6 +40,11 @@ enum beacon_actions_data_id {
 	BEACON_ACTIONS_RINGING_STATE_READ           = 0x06,
 	BEACON_ACTIONS_ACTIVATE_UTP_MODE            = 0x07,
 	BEACON_ACTIONS_DEACTIVATE_UTP_MODE          = 0x08,
+
+	/* Precision Finding (PF) operation identifiers. */
+	BEACON_ACTIONS_PF_RANGING_CAPABILITY_REQ = 0x0A,
+	BEACON_ACTIONS_PF_RANGING_CONFIG_REQ     = 0x0B,
+	BEACON_ACTIONS_PF_STOP_RANGING_REQ       = 0x0D,
 };
 
 enum beacon_actions_att_err {
@@ -1224,6 +1231,246 @@ int bt_fast_pair_fmdn_ring_state_update(
 	return 0;
 }
 
+static ssize_t pf_ranging_operation_handle(enum beacon_actions_data_id pf_data_id,
+					   struct bt_conn *conn,
+					   const struct bt_gatt_attr *attr,
+					   struct net_buf_simple *req_data_buf)
+{
+	int err;
+	bool ret;
+	uint8_t *auth_seg;
+	struct fp_fmdn_auth_data auth_data;
+	struct fp_account_key account_key;
+	uint8_t req_data_len;
+
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_FMDN_PF)) {
+		LOG_WRN("Beacon Actions: unhandled request for Precision Finding "
+			"(CONFIG_BT_FAST_PAIR_FMDN_PF=n): data_id=%d", pf_data_id);
+		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
+	}
+
+	__ASSERT((pf_data_id == BEACON_ACTIONS_PF_RANGING_CAPABILITY_REQ) ||
+		 (pf_data_id == BEACON_ACTIONS_PF_RANGING_CONFIG_REQ) ||
+		 (pf_data_id == BEACON_ACTIONS_PF_STOP_RANGING_REQ),
+		 "Non-PF identifiers should be handled by the previous function "
+		 "in the call stack");
+
+	req_data_len = net_buf_simple_max_len(req_data_buf);
+	if (req_data_len <= BEACON_ACTIONS_ONE_TIME_AUTH_KEY_LEN) {
+		LOG_WRN("Beacon Actions: Precision Finding request (0x%02X):"
+			"Incorrect length: %d < %d",
+			pf_data_id, req_data_len, BEACON_ACTIONS_ONE_TIME_AUTH_KEY_LEN);
+
+		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
+	}
+
+	/* Perform authentication of the incoming packet. */
+	auth_seg = net_buf_simple_pull_mem(req_data_buf, BEACON_ACTIONS_ONE_TIME_AUTH_KEY_LEN);
+
+	memset(&auth_data, 0, sizeof(auth_data));
+	auth_data.random_nonce = conn_contexts[bt_conn_index(conn)].random_nonce;
+	auth_data.data_id = pf_data_id;
+	auth_data.data_len = req_data_len;
+	auth_data.add_data = req_data_buf->data;
+
+	err = fp_fmdn_auth_account_key_find(&auth_data, auth_seg, &account_key);
+	if (err) {
+		LOG_WRN("Beacon Actions: Precision Finding request (0x%02X):"
+			" Authentication failed: %d", pf_data_id, err);
+
+		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_UNAUTHENTICATED);
+	}
+	fp_fmdn_pf_account_key_set(conn, &account_key);
+
+	switch (pf_data_id) {
+	case BEACON_ACTIONS_PF_RANGING_CAPABILITY_REQ:
+		ret = fp_fmdn_pf_ranging_capability_req_handle(conn, req_data_buf);
+		break;
+	case BEACON_ACTIONS_PF_RANGING_CONFIG_REQ:
+		ret = fp_fmdn_pf_ranging_config_req_handle(conn, req_data_buf);
+		break;
+	case BEACON_ACTIONS_PF_STOP_RANGING_REQ:
+		ret = fp_fmdn_pf_stop_ranging_req_handle(conn, req_data_buf);
+		break;
+	default:
+		__ASSERT(1, "Non-PF identifiers should be handled by the previous function "
+			"in the call stack");
+		ret = false;
+	}
+
+	if (!ret) {
+		LOG_WRN("Beacon Actions: Precision Finding request (0x%02X):"
+			" Invalid message", pf_data_id);
+
+		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
+	}
+
+	return 0;
+}
+
+static int pf_ranging_response_send(struct bt_conn *conn,
+				    enum beacon_actions_data_id data_id,
+				    uint16_t ranging_tech_bm,
+				    struct net_buf_simple *rsp_buf,
+				    struct net_buf_simple *ranging_oob_msg_buf)
+{
+	int err;
+	struct fp_account_key *account_key;
+	uint8_t *auth_seg;
+	struct fp_fmdn_auth_data auth_data;
+	uint8_t rsp_data_len;
+
+	__ASSERT_NO_MSG(rsp_buf);
+	__ASSERT_NO_MSG(ranging_oob_msg_buf);
+	__ASSERT_NO_MSG((data_id >= BEACON_ACTIONS_PF_RANGING_CAPABILITY_REQ) &&
+			(data_id <= BEACON_ACTIONS_PF_STOP_RANGING_REQ));
+
+	/* Prepare a response. */
+	rsp_data_len = ranging_oob_msg_buf->len + BEACON_ACTIONS_RSP_AUTH_SEG_LEN;
+
+	net_buf_simple_add_u8(rsp_buf, data_id);
+	net_buf_simple_add_u8(rsp_buf, rsp_data_len);
+
+	account_key = fp_fmdn_pf_account_key_get(conn);
+	if (!account_key) {
+		LOG_ERR("Beacon Actions: Ranging Response message (0x%02X):"
+			" fp_fmdn_pf_account_key_get failed: %d", data_id, err);
+
+		return err;
+	}
+
+	auth_seg = net_buf_simple_add(rsp_buf, BEACON_ACTIONS_RSP_AUTH_SEG_LEN);
+
+	memset(&auth_data, 0, sizeof(auth_data));
+	auth_data.random_nonce = conn_contexts[bt_conn_index(conn)].random_nonce;
+	auth_data.data_id = data_id;
+	auth_data.data_len = rsp_data_len;
+	auth_data.add_data = ranging_oob_msg_buf->data;
+
+	err = fp_fmdn_auth_seg_generate(account_key->key,
+					sizeof(account_key->key),
+					&auth_data,
+					auth_seg);
+	if (err) {
+		LOG_ERR("Beacon Actions: Ranging Response message (0x%02X):"
+			" fp_fmdn_auth_seg_generate failed: %d", data_id, err);
+
+		return err;
+	}
+
+	net_buf_simple_add_mem(rsp_buf, ranging_oob_msg_buf->data, ranging_oob_msg_buf->len);
+
+	/* Send a response notification. */
+	err = beacon_response_send(conn, NULL, rsp_buf->data, rsp_buf->len);
+	if (err) {
+		LOG_ERR("Beacon Actions: Ranging Response message (0x%02X):"
+			" GATT response notify failed: %d", data_id, err);
+
+		return err;
+	}
+
+	fp_fmdn_pf_ranging_rsp_sent_notify(conn, ranging_tech_bm);
+
+	return 0;
+}
+
+int bt_fast_pair_fhn_pf_ranging_capability_response_send(
+	struct bt_conn *conn,
+	uint16_t ranging_tech_bm,
+	struct bt_fast_pair_fhn_pf_ranging_tech_payload *capability_payloads,
+	uint8_t capability_payload_num)
+{
+	int err;
+
+	NET_BUF_SIMPLE_DEFINE(ranging_oob_msg_buf, FP_FMDN_PF_RANGING_CAPABILITY_RSP_MAX_LEN);
+	NET_BUF_SIMPLE_DEFINE(rsp_buf,
+			      (BEACON_ACTIONS_HEADER_LEN + BEACON_ACTIONS_RSP_AUTH_SEG_LEN +
+			       FP_FMDN_PF_RANGING_CAPABILITY_RSP_MAX_LEN));
+
+	err = fp_fmdn_pf_ranging_capability_rsp_prepare(conn,
+							ranging_tech_bm,
+							capability_payloads,
+							capability_payload_num,
+							&ranging_oob_msg_buf);
+	if (err) {
+		LOG_ERR("Beacon Actions: Ranging Capability Response message:"
+			" fp_fmdn_pf_ranging_capability_rsp_prepare failed: %d", err);
+
+		return err;
+	}
+
+	err = pf_ranging_response_send(conn,
+				       BEACON_ACTIONS_PF_RANGING_CAPABILITY_REQ,
+				       ranging_tech_bm,
+				       &rsp_buf,
+				       &ranging_oob_msg_buf);
+	if (err) {
+		return err;
+	}
+
+	return 0;
+}
+
+int bt_fast_pair_fhn_pf_ranging_config_response_send(struct bt_conn *conn,
+						     uint16_t ranging_tech_bm)
+{
+	int err;
+
+	NET_BUF_SIMPLE_DEFINE(ranging_oob_msg_buf, FP_FMDN_PF_RANGING_CONFIG_RSP_LEN);
+	NET_BUF_SIMPLE_DEFINE(rsp_buf,
+			      (BEACON_ACTIONS_HEADER_LEN + BEACON_ACTIONS_RSP_AUTH_SEG_LEN +
+			       FP_FMDN_PF_RANGING_CONFIG_RSP_LEN));
+
+	err = fp_fmdn_pf_ranging_config_rsp_prepare(conn, ranging_tech_bm, &ranging_oob_msg_buf);
+	if (err) {
+		LOG_ERR("Beacon Actions: Ranging Configuration Response message:"
+			" fp_fmdn_pf_ranging_config_rsp_prepare failed: %d", err);
+
+		return err;
+	}
+
+	err = pf_ranging_response_send(conn,
+				       BEACON_ACTIONS_PF_RANGING_CONFIG_REQ,
+				       ranging_tech_bm,
+				       &rsp_buf,
+				       &ranging_oob_msg_buf);
+	if (err) {
+		return err;
+	}
+
+	return 0;
+}
+
+int bt_fast_pair_fhn_pf_stop_ranging_response_send(struct bt_conn *conn,
+						   uint16_t ranging_tech_bm)
+{
+	int err;
+
+	NET_BUF_SIMPLE_DEFINE(ranging_oob_msg_buf, FP_FMDN_PF_STOP_RANGING_RSP_LEN);
+	NET_BUF_SIMPLE_DEFINE(rsp_buf,
+			      (BEACON_ACTIONS_HEADER_LEN + BEACON_ACTIONS_RSP_AUTH_SEG_LEN +
+			       FP_FMDN_PF_STOP_RANGING_RSP_LEN));
+
+	err = fp_fmdn_pf_stop_ranging_rsp_prepare(conn, ranging_tech_bm, &ranging_oob_msg_buf);
+	if (err) {
+		LOG_ERR("Beacon Actions: Stop Ranging Response message:"
+			" fp_fmdn_pf_stop_ranging_rsp_prepare failed: %d", err);
+
+		return err;
+	}
+
+	err = pf_ranging_response_send(conn,
+				       BEACON_ACTIONS_PF_STOP_RANGING_REQ,
+				       ranging_tech_bm,
+				       &rsp_buf,
+				       &ranging_oob_msg_buf);
+	if (err) {
+		return err;
+	}
+
+	return 0;
+}
+
 ssize_t fp_fmdn_beacon_actions_read(struct bt_conn *conn,
 				    const struct bt_gatt_attr *attr,
 				    void *buf,
@@ -1361,8 +1608,13 @@ ssize_t fp_fmdn_beacon_actions_write(struct bt_conn *conn,
 	case BEACON_ACTIONS_DEACTIVATE_UTP_MODE:
 		res = deactivate_utp_mode_handle(conn, attr, &fmdn_beacon_actions_buf);
 		break;
+	case BEACON_ACTIONS_PF_RANGING_CAPABILITY_REQ:
+	case BEACON_ACTIONS_PF_RANGING_CONFIG_REQ:
+	case BEACON_ACTIONS_PF_STOP_RANGING_REQ:
+		res = pf_ranging_operation_handle(data_id, conn, attr, &fmdn_beacon_actions_buf);
+		break;
 	default:
-		LOG_ERR("Beacon Actions: unrecognized request: data_id=%d", data_id);
+		LOG_WRN("Beacon Actions: unrecognized request: data_id=%d", data_id);
 		res = BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 		goto finish;
 	}

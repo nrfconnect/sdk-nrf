@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2024 Nordic Semiconductor
+# Copyright (c) 2024-2026 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
@@ -51,3 +51,5 @@ target_include_directories(fmdn PRIVATE include_priv)
 target_include_directories(fmdn PRIVATE ../include/common)
 target_link_libraries(fmdn PRIVATE fp_crypto)
 target_link_libraries(fmdn PRIVATE fp_storage)
+
+add_subdirectory(pf)
