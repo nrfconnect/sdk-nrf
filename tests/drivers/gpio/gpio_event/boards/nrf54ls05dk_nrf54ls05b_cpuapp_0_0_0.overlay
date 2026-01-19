@@ -9,7 +9,7 @@
 	 * No other driver on out-gpios[n]
 	 */
 	zephyr,user {
-		out-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>, <&gpio1 5 GPIO_ACTIVE_HIGH>;
+		out-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>, <&gpio1 10 GPIO_ACTIVE_HIGH>;
 	};
 };
 
