@@ -125,6 +125,7 @@ Security
   * Support for the WPA3-SAE and WPA3-SAE-PT in the :ref:`CRACEN driver <crypto_drivers_cracen>`.
   * Support for the HMAC KDF algorithm in the CRACEN driver.
     The algorithm implementation is conformant to the NIST SP 800-108 Rev. 1 recommendation.
+<<<<<<< HEAD
   * Support for the secp384r1 key storage in the :ref:`Key Management Unit (KMU) <ug_nrf54l_crypto_kmu_supported_key_types>`.
   * Support for AES-GCM AEAD using CRACEN for the :ref:`nrf54lm20dk <app_boards>`.
 
@@ -145,6 +146,9 @@ Security
 
 * Removed the ``CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`` Kconfig option and replaced it with :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`.
 * Removed the ``CONFIG_PSA_WANT_ALG_WPA3_SAE`` Kconfig option and replaced it by options :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_FIXED` and :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`.
+=======
+  * Support for the secp384r1 key storage in the :ref:`Key Management Unit (KMU) <ug_kmu_guides_supported_key_types>`.
+>>>>>>> 4b34e81f4c (doc: nrf54l: rework crypto and kmu pages)
 
 Trusted Firmware-M (TF-M)
 -------------------------

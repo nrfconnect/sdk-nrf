@@ -14,7 +14,7 @@ The nRF Security subsystem provides:
 * A PSA driver abstraction layer enabling simultaneous use of hardware and software implementations
 * Compatibility with the specific Mbed TLS version included in the |NCS| through `sdk-mbedtls`_
 * Integration logic for the Oberon PSA Crypto core (`sdk-oberon-psa-crypto`_)
-* Source code for the CRACEN driver used for the :ref:`ug_nrf54l_cryptography`
+* Source code for the CRACEN driver
 * Integration with the |NCS| build system
 
 The nRF Security subsystem can interface with the :ref:`nrf_cc3xx_mbedcrypto_readme`.
