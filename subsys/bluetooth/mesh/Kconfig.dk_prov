@@ -36,6 +36,27 @@ config BT_MESH_DK_LEGACY_UUID_GEN
 	  Use legacy generation of UUID. For most platforms this will generate UUIDs
 	  with trailing zeros.
 
+config BT_MESH_DK_PROV_PB_GATT_DISCONNECT
+	bool "Force disconnect after PB-GATT provisioning"
+	depends on BT_MESH_PB_GATT
+	help
+	  Force disconnect mesh connections after provisioning to ensure
+	  the apps reconnects via Proxy service. This is a workaround for
+	  apps that do not properly close PB-GATT connection after provisioning,
+	  especially after DFU. Enable this option if the app has trouble
+	  transitioning from PB-GATT to Proxy after provisioning.
+
+config BT_MESH_DK_PROV_PB_GATT_DISCONNECT_DELAY_MS
+	int "Delay before forcing PB-GATT disconnect (ms)"
+	depends on BT_MESH_DK_PROV_PB_GATT_DISCONNECT
+	default 500
+	range 100 5000
+	help
+	  Time in milliseconds to wait after provisioning completion before
+	  forcing the PB-GATT disconnect. This delay allows the provisioning
+	  completion message to be sent before disconnecting. A typical
+	  value is 500ms.
+
 module = BT_MESH_DK_PROV
 module-str = DK BT mesh provisioning library
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
