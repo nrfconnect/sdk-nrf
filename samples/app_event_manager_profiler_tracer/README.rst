@@ -9,6 +9,8 @@ Application Event Manager profiling tracer
 
 The Application Event Manager profiling tracer sample demonstrates the functionality of profiling :ref:`app_event_manager` events using the :ref:`nrf_profiler` and the :ref:`app_event_manager_profiler_tracer` modules.
 
+Just testing.
+
 Requirements
 ************
 
