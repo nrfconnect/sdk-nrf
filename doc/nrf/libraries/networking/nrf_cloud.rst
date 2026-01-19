@@ -57,68 +57,24 @@ This procedure involves a TLS handshake that might take up to three seconds.
 The API blocks for the duration of the handshake.
 
 The cloud uses the certificates of the device for authentication.
-See :ref:`nrf9160_ug_updating_cloud_certificate` and the :ref:`modem_key_mgmt` library for more information on modem credentials.
+See :ref:`modem_key_mgmt` library for more information on modem credentials.
 The device ID is also the MQTT client ID.
 There are multiple configuration options for the device or client ID.
 See :ref:`configuration_device_id` for more information.
 
 As the next step, the API subscribes to an MQTT topic to start receiving requests from the cloud.
 
-Associating
-***********
-This section applies to devices onboarding using JITP.
-
-Every time nRF Cloud starts a communication session with a device, it verifies whether the device is uniquely associated with a user.
-If not, the user association procedure is triggered.
-
-The following message sequence chart shows the flow of events and the expected application responses to each event during the user association procedure:
-
-.. msc::
-   hscale = "1.3";
-   Module,Application;
-   Module<<Application      [label="nrf_cloud_connect() returns successfully"];
-   Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_CONNECTED"];
-   Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST"];
-    ---                     [label="Add the device to nRF Cloud account"];
-   Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATED"];
-   Module<<Application      [label="nrf_cloud_disconnect() returns successfully"];
-   Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_DISCONNECTED"];
-   Module<<Application      [label="nrf_cloud_connect() returns successfully"];
-   Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_CONNECTED"];
-   Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATED"];
-   Module>>Application      [label="NRF_CLOUD_EVT_READY"];
-
-The chart shows the sequence of successful user association of an unassociated device.
-
-.. note::
-
-   Currently, nRF Cloud requires that communication is re-established to update the device's permission to send user data.
-   The application must disconnect using the :c:func:`nrf_cloud_disconnect` function and then reconnect using :c:func:`nrf_cloud_connect`.
-
-When the device is successfully associated with a user on the cloud, subsequent connections to the cloud (also across power cycles) occur in the following sequence:
-
-.. msc::
-   hscale = "1.3";
-   Module,Application;
-   Module<<Application      [label="nrf_cloud_connect() returns successfully"];
-   Module>>Application      [label="NRF_CLOUD_EVT_TRANSPORT_CONNECTED"];
-   Module>>Application      [label="NRF_CLOUD_EVT_USER_ASSOCIATED"];
-   Module>>Application      [label="NRF_CLOUD_EVT_READY"];
-
-After receiving the :c:enumerator:`NRF_CLOUD_EVT_READY` event, the application can start sending sensor data to the cloud.
-
 .. _nrf_cloud_onboarding:
 
 nRF Cloud onboarding options
 ============================
 
-You can add a device to an nRF Cloud account in the following three ways:
+You can add a device to an nRF Cloud account in the following ways:
 
-* Using the :ref:`lib_nrf_provisioning` service and `nRF Cloud Auto-onboarding`_: once the process completes, the device will be listed in your account.
-* Using JITP with factory-installed certificates for Nordic development kits and Thingys: provide the device ID and PIN to nRF Cloud as indicated on the sticker.
-* Using scripted provisioning and onboarding: upload the :file:`onboard.csv` file to nRF Cloud's **Bulk Onboard** screen or use the REST API.
+* Using `nRF Cloud Utils`_ for provisioning and onboarding - Follow the instructions in the README section for single or bulk onboarding.
+* Using the :ref:`lib_nrf_provisioning` service and `nRF Cloud Auto-onboarding`_ - Once the process completes, the device will be listed in your account.
 
-See: the `nRF Cloud Provisioning`_ documentation and the :ref:`nrf_cloud_multi_service_provisioning_onboarding` section of the :ref:`nrf_cloud_multi_service` sample documentation for more information.
+Refer to the `Adding a device to your account`_ section of the nRF Cloud documentation for more information.
 
 .. _configuration_device_id:
 

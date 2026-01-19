@@ -306,12 +306,6 @@ The application can write (provision) certificates to slots in the modem and cho
 Certificates are provisioned to the modem before the main application runs.
 Once written, they cannot be read back by the application, which provides a level of protection similar to hardware-backed key storage such as the KMU.
 
-Configuration
--------------
-
-For more information on provisioning certificates to the nRF91 Series modem, see the :ref:`nrf9160_ug_updating_cloud_certificate` page.
-You can also see the `Cellular IoT Fundamentals course`_ on DevAcademy.
-
 .. _key_storage_flash_protection:
 
 Hardware flash write protection
