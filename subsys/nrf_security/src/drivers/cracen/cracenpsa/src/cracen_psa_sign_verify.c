@@ -27,7 +27,8 @@
 #include "internal/cracen_ikg.h"
 #include "internal/cracen_rsa_signature_pss.h"
 #include "internal/cracen_rsa_signature_pkcs1v15.h"
-#include "internal/ecc.h"
+#include "internal/cracen_ecc_keygen.h"
+
 #define CRACEN_IS_MESSAGE      (1)
 #define CRACEN_IS_HASH	       (0)
 #define CRACEN_EXTRACT_PUBKEY  (1)

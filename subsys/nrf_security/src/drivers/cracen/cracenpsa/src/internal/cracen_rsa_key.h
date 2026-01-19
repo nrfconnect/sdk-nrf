@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef RSA_KEY_H
-#define RSA_KEY_H
+#ifndef CRACEN_RSA_KEY_H
+#define CRACEN_RSA_KEY_H
 
 #include <silexpk/iomem.h>
 #include <cracen_psa_primitives.h>
@@ -85,4 +85,4 @@ static inline unsigned int cracen_ffkey_bitsz(const struct cracen_rsa_key *key)
 #define CRACEN_RSA_KEY_OPSZ(key)                                                                   \
 	((key)->elements[0]->sz + (((key)->slotmask >> 3) ? (key)->elements[1]->sz : 0))
 
-#endif /* RSA_KEY_H */
+#endif /* CRACEN_RSA_KEY_H */

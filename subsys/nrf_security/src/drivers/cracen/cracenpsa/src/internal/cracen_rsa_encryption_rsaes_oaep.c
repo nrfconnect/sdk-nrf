@@ -30,8 +30,8 @@
 #include <cracen_psa.h>
 #include <cracen_psa_primitives.h>
 #include "common.h"
-#include "rsamgf1xor.h"
-#include "rsa_key.h"
+#include "cracen_rsa_mgf1xor.h"
+#include "cracen_rsa_key.h"
 
 #define WORKMEM_SIZE (PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) + PSA_HASH_MAX_SIZE + 4)
 #define NUMBER_OF_SLOTS 6

@@ -16,7 +16,7 @@
 #include "internal/cracen_rsa_keygen.h"
 #include <cracen_psa_builtin_key_policy.h>
 #include <nrf_security_mutexes.h>
-#include "internal/ecc.h"
+#include "internal/cracen_ecc_keygen.h"
 #include <silexpk/sxops/eccweierstrass.h>
 #include <silexpk/sxops/rsa.h>
 #include <silexpk/ik.h>

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef HMAC_H
-#define HMAC_H
+#ifndef CRACEN_HMAC_H
+#define CRACEN_HMAC_H
 
 #include <psa/crypto.h>
 #include <stdint.h>
@@ -16,4 +16,4 @@ int mac_create_hmac(const struct sxhashalg *hashalg, struct sxhash *hashopctx, c
 int hmac_produce(struct sxhash *hashctx, const struct sxhashalg *hashalg, uint8_t *out, size_t sz,
 		 uint8_t *workmem);
 
-#endif /* HMAC_H */
+#endif /* CRACEN_HMAC_H */

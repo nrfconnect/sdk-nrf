@@ -12,7 +12,7 @@ list(APPEND cracen_driver_include_dirs
 
 list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/internal/common.c
-  ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc.c
+  ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_ecc_keygen.c
   ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rndinrange.c
 )
 
@@ -53,7 +53,7 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER)
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_asymmetric.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rsa_encryption_rsaes_pkcs1v15.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rsa_encryption_rsaes_oaep.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/internal/rsamgf1xor.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rsa_mgf1xor.c
   )
 endif()
 
@@ -61,10 +61,10 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_sign_verify.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_ecdsa.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_ecc_keygen.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_eddsa_ed25519.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_eddsa_ed448.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/internal/hmac.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_hmac.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rndinrange.c
   )
 endif()
@@ -73,7 +73,7 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_RSA)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rsa_signature_rsapss.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rsa_signature_rsassa_pkcs1v15.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/internal/rsamgf1xor.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rsa_mgf1xor.c
   )
 endif()
 
@@ -98,7 +98,7 @@ endif()
 if(CONFIG_PSA_NEED_CRACEN_HMAC)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_mac_hmac.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/internal/hmac.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_hmac.c
   )
 endif()
 
@@ -106,7 +106,7 @@ if(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KMU_DR
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_management.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_ecdsa.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_ecc_keygen.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rndinrange.c
   )
 endif()
@@ -114,7 +114,7 @@ endif()
 if(CONFIG_PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_GENERATE)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rsa_keygen.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/internal/coprime_check.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_coprime_check.c
   )
 endif()
 

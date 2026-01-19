@@ -14,7 +14,7 @@
 #include <silexpk/ec_curves.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
-#include "ecc.h"
+#include "cracen_ecc_keygen.h"
 #include "common.h"
 
 #define MAX_ECC_ATTEMPTS 10

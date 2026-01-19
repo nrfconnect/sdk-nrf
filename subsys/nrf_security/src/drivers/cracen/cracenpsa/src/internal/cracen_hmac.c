@@ -11,6 +11,7 @@
  *         Size: hash algorithm digest size.
  */
 
+#include "cracen_hmac.h"
 #include <string.h>
 #include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
