@@ -6,7 +6,7 @@
 
 #include "cracen_ecc_helpers.h"
 
-#include "common.h"
+#include <cracen/common.h>
 #include <hal/nrf_cracen.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>

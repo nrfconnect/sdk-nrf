@@ -8,7 +8,7 @@
 #define CRACEN_MAC_HMAC_H
 
 #include <psa/crypto.h>
-#include "common.h"
+#include <cracen/common.h>
 #include "cracen_psa_primitives.h"
 
 /**

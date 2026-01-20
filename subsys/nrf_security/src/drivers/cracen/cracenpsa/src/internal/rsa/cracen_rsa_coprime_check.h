@@ -4,8 +4,8 @@
  *  SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef CRACEN_COPRIME_CHECK_H
-#define CRACEN_COPRIME_CHECK_H
+#ifndef CRACEN_RSA_COPRIME_CHECK_H
+#define CRACEN_RSA_COPRIME_CHECK_H
 
 #include <stdint.h>
 #include <silexpk/core.h>
@@ -38,4 +38,4 @@ int cracen_coprime_check(uint8_t *workmem, size_t workmemsz, const uint8_t *a, s
 int coprime_check_run(sx_pk_req *req, uint8_t *workmem, size_t workmemsz, const uint8_t *a,
 		      size_t asz, const uint8_t *b, size_t bsz);
 
-#endif /* CRACEN_COPRIME_CHECK_H */
+#endif /* CRACEN_RSA_COPRIME_CHECK_H */

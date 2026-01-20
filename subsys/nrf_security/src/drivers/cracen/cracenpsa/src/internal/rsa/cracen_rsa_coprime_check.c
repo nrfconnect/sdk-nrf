@@ -37,7 +37,7 @@
 #include <silexpk/cmddefs/modmath.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa_primitives.h>
-#include "cracen_coprime_check.h"
+#include "cracen_rsa_coprime_check.h"
 
 /* Perform modular inversion of a, using b as the modulo. */
 static int modular_inversion_run(sx_pk_req *req, struct cracen_coprimecheck *coprimecheck)

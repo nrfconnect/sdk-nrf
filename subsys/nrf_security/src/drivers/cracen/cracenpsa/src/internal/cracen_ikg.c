@@ -24,7 +24,7 @@
 #include <cracen/statuscodes.h>
 #include "cracen_ikg.h"
 #include <cracen_psa_primitives.h>
-#include "common.h"
+#include <cracen/common.h>
 
 #define MAX_ATTEMPTS 255
 

@@ -11,7 +11,7 @@
 #include <cracen/mem_helpers.h>
 #include <cracen_psa.h>
 #include <cracen_psa_ctr_drbg.h>
-#include "common.h"
+#include <cracen/common.h>
 
 /* Return 1 if the given byte string contains only zeros, 0 otherwise. */
 static int is_zero_bytestring(const uint8_t *a, size_t sz)

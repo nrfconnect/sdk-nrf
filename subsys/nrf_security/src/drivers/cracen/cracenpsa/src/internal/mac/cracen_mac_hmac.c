@@ -10,11 +10,11 @@
 #include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/hashdefs.h>
 #include <sxsymcrypt/keyref.h>
-#include "common.h"
+#include <cracen/common.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include "cracen_psa_primitives.h"
-#include "cracen_hmac.h"
+#include <cracen/cracen_hmac.h>
 
 psa_status_t cracen_hmac_setup(cracen_mac_operation_t *operation,
 				      const psa_key_attributes_t *attributes,

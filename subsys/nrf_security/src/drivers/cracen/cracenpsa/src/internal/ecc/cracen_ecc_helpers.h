@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "cracen_kmu.h"
+#include <cracen/cracen_kmu.h>
 #include "cracen_psa.h"
 #include "sxsymcrypt/internal.h"
 

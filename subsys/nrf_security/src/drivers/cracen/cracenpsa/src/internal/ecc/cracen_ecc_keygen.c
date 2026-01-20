@@ -15,7 +15,7 @@
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include "cracen_ecc_keygen.h"
-#include "common.h"
+#include <cracen/common.h>
 
 #define MAX_ECC_ATTEMPTS 10
 

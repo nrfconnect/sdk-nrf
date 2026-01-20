@@ -13,7 +13,7 @@
 #include <sxsymcrypt/hash.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
-#include "common.h"
+#include <cracen/common.h>
 #include "cracen_eddsa.h"
 
 /* Define SHAKE 256, 64 bit Digest size*/
