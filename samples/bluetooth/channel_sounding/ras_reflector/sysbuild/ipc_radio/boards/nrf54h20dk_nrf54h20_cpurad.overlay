@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	cs_antenna_switch: cs-antenna-config {
+		status = "okay";
+		compatible = "nordic,bt-cs-antenna-switch";
+		ant-gpios = <&gpio2 0 (GPIO_ACTIVE_HIGH)>,
+			    <&gpio2 1 (GPIO_ACTIVE_HIGH)>,
+			    <&gpio2 2 (GPIO_ACTIVE_HIGH)>,
+			    <&gpio2 3 (GPIO_ACTIVE_HIGH)>;
+		multiplexing-mode = <0>;
+	};
+};

@@ -585,6 +585,23 @@ BT_CONN_CB_DEFINE(conn_cb) = {
 	.le_cs_subevent_data_available = subevent_result_cb,
 };
 
+static int procedure_interval_get(bool realtime_rd)
+{
+	/* TODO: This needs to be tested with different configurations and realtime_rd values.*/
+	int procedure_interval = 4 + 2 * CONFIG_CS_TONE_ANTENNA_CONFIGURATION_NUM_ANTENNA_PATHS;
+	if (!realtime_rd) {
+		procedure_interval *= 2;
+	}
+
+	return procedure_interval;
+}
+
+static int subevent_len_get(void)
+{
+	/* TODO: This needs to be tested with different configurations. */
+	return 10000 + 6000 * CONFIG_CS_TONE_ANTENNA_CONFIGURATION_NUM_ANTENNA_PATHS;
+}
+
 static int preferred_peer_antenna_get(enum bt_conn_le_cs_tone_antenna_config_selection tone_antenna_config_selection)
 {
 	int preferred_peer_antenna = BT_LE_CS_PROCEDURE_PREFERRED_PEER_ANTENNA_1;
@@ -758,11 +775,11 @@ int main(void)
 	const struct bt_le_cs_set_procedure_parameters_param procedure_params = {
 		.config_id = CS_CONFIG_ID,
 		.max_procedure_len = 1000,
-		.min_procedure_interval = realtime_rd ? 5 : 10,
-		.max_procedure_interval = realtime_rd ? 5 : 10,
+		.min_procedure_interval = procedure_interval_get(realtime_rd),
+		.max_procedure_interval = procedure_interval_get(realtime_rd),
 		.max_procedure_count = 0,
-		.min_subevent_len = 16000,
-		.max_subevent_len = 16000,
+		.min_subevent_len = subevent_len_get(),
+		.max_subevent_len = subevent_len_get(),
 		.tone_antenna_config_selection = CONFIG_CS_TONE_ANTENNA_CONFIGURATION_VALUE,
 		.phy = BT_LE_CS_PROCEDURE_PHY_2M,
 		.tx_power_delta = 0x80,

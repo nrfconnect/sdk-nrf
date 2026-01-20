@@ -3,9 +3,6 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-
-mainmenu "Nordic Channel Sounding RAS Initiator sample"
-
 choice CS_TONE_ANTENNA_CONFIGURATION
 	prompt "Tone antenna configuration selection"
 	default CS_TONE_ANTENNA_CONFIGURATION_A1_B1
@@ -101,6 +98,14 @@ config CS_TONE_ANTENNA_CONFIGURATION_NUM_ANTENNA_PATHS
 # This ensures the controller is configured with sufficient antenna paths for the selected configuration
 if BT_CTLR_CHANNEL_SOUNDING
 config BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
+	default CS_TONE_ANTENNA_CONFIGURATION_NUM_ANTENNA_PATHS
+# TODO: Fix this to depend on role.
+config BT_CTLR_SDC_CS_NUM_ANTENNAS
+	default CS_TONE_ANTENNA_CONFIGURATION_NUM_ANTENNA_PATHS
+endif
+
+if BT_RAS
+config BT_RAS_MAX_ANTENNA_PATHS
 	default CS_TONE_ANTENNA_CONFIGURATION_NUM_ANTENNA_PATHS
 endif
 

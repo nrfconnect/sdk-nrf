@@ -1,0 +1,5 @@
+mainmenu "Nordic Channel Sounding RAS Reflector sample"
+
+rsource "../ras_initiator/Kconfig.antenna_conf"
+
+# source "Kconfig.zephyr"

@@ -1,0 +1,9 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+mainmenu "Nordic Channel Sounding RAS Initiator sample"
+
+rsource "Kconfig.antenna_conf"
+
