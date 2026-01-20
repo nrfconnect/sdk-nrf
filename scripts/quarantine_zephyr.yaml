@@ -600,3 +600,10 @@
     - llext.writable_relocatable_slid_linking
     - llext.writable_relocatable
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-8497"
+
+- scenarios:
+    - kernel.threads.dynamic_thread.stack.pool.alloc.user
+    - kernel.threads.dynamic_thread.stack.pool.no_alloc.user
+  platforms:
+    - nrf52dk/nrf52832
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37196"
