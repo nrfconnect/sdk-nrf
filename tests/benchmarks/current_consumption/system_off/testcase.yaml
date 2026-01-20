@@ -23,6 +23,8 @@ tests:
       - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54lv10dk/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_gpio_wakeup.overlay"
       - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_gpio_wakeup.overlay"
+      - platform:nrf54lv10dk/nrf54lv10a/cpuapp/ns:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_gpio_wakeup.overlay"
+      - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp/ns:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_gpio_wakeup.overlay"
     harness: pytest
     harness_config:
       fixture: ppk_power_measure
