@@ -70,7 +70,12 @@ Developing with nRF54L Series
 Developing with nRF54H Series
 =============================
 
-|no_changes_yet_note|
+* Added:
+
+  * A document describing the merged slot update strategy for nRF54H20 devices, allowing simultaneous updates of both application cores (APP and RAD) in a single update operation.
+    For more information, see :ref:`ug_nrf54h20_partitioning_merged`.
+  * A document describing the manifest based update strategy for nRF54H20 devices.
+    For more information, see :ref:`ug_nrf54h20_mcuboot_manifest`.
 
 Developing with nRF53 Series
 ============================
