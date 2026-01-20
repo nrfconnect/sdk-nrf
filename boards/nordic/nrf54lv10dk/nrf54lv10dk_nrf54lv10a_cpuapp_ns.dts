@@ -64,7 +64,7 @@
 		#size-cells = <1>;
 
 		/* nRF54LV10 has 1012 kB of non volatile memory (RRAM) but the
-		 * last 62kB are reserved for the FLPR MCU.
+		 * last 64kB are reserved for the FLPR MCU.
 		 *
 		 * This static layout needs to be the same with the upstream TF-M layout in the
 		 * header flash_layout.h of the relevant platform. Any updates in the layout
@@ -97,7 +97,7 @@
 
 		storage_partition: partition@e8000 {
 			label = "storage";
-			reg = <0x000e8000 DT_SIZE_K(32)>;
+			reg = <0x000e8000 DT_SIZE_K(20)>;
 		};
 	};
 };
