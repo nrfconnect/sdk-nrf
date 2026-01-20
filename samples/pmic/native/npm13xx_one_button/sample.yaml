@@ -23,18 +23,15 @@ common:
   tags:
     - pmic
     - ci_samples_pmic
-    - shield
     - sysbuild
 tests:
   sample.npm1300_one_button_compile:
     sysbuild: true
     build_only: true
     extra_args:
-      - npm13xx_one_button_SHIELD=npm1300_ek
       - EXTRA_DTC_OVERLAY_FILE=npm1300.overlay
   sample.npm1304_one_button_compile:
     sysbuild: true
     build_only: true
     extra_args:
-      - npm13xx_one_button_SHIELD=npm1304_ek
       - EXTRA_DTC_OVERLAY_FILE=npm1304.overlay
