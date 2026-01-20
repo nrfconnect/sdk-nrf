@@ -195,7 +195,9 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33580"
 
 - scenarios:
+    - boards.nrf.rram_throttling
     - drivers.flash.common.disable_spi_nor
+    - drivers.flash.common.test_storage_partition
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54l15dk/nrf54l10/cpuapp
