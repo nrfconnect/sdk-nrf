@@ -22,6 +22,7 @@ These peripherals have IRQs routed to FLPR:
 * SPIM120/UARTE120
 * SPIM121
 
+See :ref:`ug_nrf54h20_assigning_peripherals` for information on how to assign peripherals to the FLPR core.
 All other peripherals available to the application core can also be used with FLPR.
 However, they require the use of *polling mode*.
 

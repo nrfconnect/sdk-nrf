@@ -75,3 +75,4 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    :caption: Optimize the power management of your application
 
    ug_nrf54h20_pm_optimization
+   ug_nrf54h20_assigning_peripherals
