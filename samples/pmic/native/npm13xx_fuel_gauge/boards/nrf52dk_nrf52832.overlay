@@ -9,3 +9,5 @@
 		bias-pull-up;
 	};
 };
+
+i2c_npm13xx: &arduino_i2c {};

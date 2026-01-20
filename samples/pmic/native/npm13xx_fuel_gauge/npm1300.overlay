@@ -4,7 +4,34 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-&npm1300_ek_pmic {
-	host-int-gpios = <&gpio0 4 0>;
-	pmic-int-pin = <3>;
+#include <zephyr/dt-bindings/regulator/npm13xx.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+
+&i2c_npm13xx {
+	npm1300_ek_pmic: pmic@6b {
+		compatible = "nordic,npm1300";
+		reg = <0x6b>;
+
+		host-int-gpios = <&gpio0 4 0>;
+		pmic-int-pin = <3>;
+
+		npm1300_ek_charger: charger {
+			compatible = "nordic,npm1300-charger";
+			term-microvolt = <4150000>;
+			term-warm-microvolt = <4000000>;
+			current-microamp = <150000>;
+			dischg-limit-microamp = <1000000>;
+			vbus-limit-microamp = <500000>;
+			thermistor-ohms = <10000>;
+			thermistor-beta = <3380>;
+			charging-enable;
+		};
+
+		npm1300_ek_leds: leds {
+			compatible = "nordic,npm1300-led";
+			nordic,led0-mode = "error";
+			nordic,led1-mode = "charging";
+			nordic,led2-mode = "host";
+		};
+	};
 };

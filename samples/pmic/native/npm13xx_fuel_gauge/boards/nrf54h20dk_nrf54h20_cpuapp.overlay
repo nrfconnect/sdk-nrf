@@ -4,16 +4,34 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-&i2c130_default {
-	group1 {
-		bias-pull-up;
+&gpio0 {
+	status = "okay";
+};
+
+&pinctrl {
+	i2c130_default: i2c130_default {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 5)>,
+				<NRF_PSEL(TWIM_SCL, 0, 0)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c130_sleep: i2c130_sleep {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 5)>,
+				<NRF_PSEL(TWIM_SCL, 0, 0)>;
+			low-power-enable;
+		};
 	};
 };
 
-&i2c130 {
+i2c_npm13xx: &i2c130 {
 	status = "okay";
-};
-
-&gpio0 {
-	status = "okay";
+	pinctrl-0 = <&i2c130_default>;
+	pinctrl-1 = <&i2c130_sleep>;
+	pinctrl-names = "default", "sleep";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	zephyr,concat-buf-size = <255>;
+	memory-regions = <&cpuapp_dma_region>;
 };
