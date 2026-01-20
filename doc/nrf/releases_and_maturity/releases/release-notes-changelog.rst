@@ -242,6 +242,9 @@ nRF Desktop
   * The :option:`CONFIG_DESKTOP_BT` Kconfig option to no longer select the deprecated :kconfig:option:`CONFIG_BT_SIGNING` Kconfig option.
     The application relies on Bluetooth LE security mode 1 and security level of at least 2 to ensure data confidentiality through encryption.
   * The memory map for RAM load configurations of nRF54LM20 target to increase KMU RAM section size to allow for secp384r1 key.
+  * The default log levels used by the legacy USB stack (:option:`CONFIG_DESKTOP_USB_STACK_LEGACY`) to enable error logs (:kconfig:option:`CONFIG_USB_DEVICE_LOG_LEVEL_ERR`, :kconfig:option:`CONFIG_USB_DRIVER_LOG_LEVEL_ERR`).
+    Previously, the legacy USB stack logs were turned off.
+    This change ensures visibility of runtime issues.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
