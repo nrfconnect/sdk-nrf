@@ -9,7 +9,7 @@
 
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
-#include "internal/common.h"
+#include <cracen/common.h>
 #include "cracen_psa_ctr_drbg.h"
 #include "cracen_psa_primitives.h"
 #include <sxsymcrypt/blkcipher.h>

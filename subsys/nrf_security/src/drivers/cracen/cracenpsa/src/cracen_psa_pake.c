@@ -5,7 +5,7 @@
  */
 
 #include <psa/crypto.h>
-#include "internal/common.h"
+#include <cracen/common.h>
 #include "cracen_psa_primitives.h"
 #include "psa/crypto_sizes.h"
 #include "psa/crypto_types.h"

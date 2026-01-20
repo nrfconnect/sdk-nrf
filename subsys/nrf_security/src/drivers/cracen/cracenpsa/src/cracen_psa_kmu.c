@@ -17,9 +17,9 @@
 #include <hw_unique_key.h>
 #include <cracen_psa.h>
 #include <cracen_psa_ctr_drbg.h>
-#include "internal/common.h"
-#include "internal/cracen_ecc_helpers.h"
-#include "internal/cracen_kmu.h"
+#include <cracen/common.h>
+#include "internal/ecc/cracen_ecc_helpers.h"
+#include <cracen/cracen_kmu.h>
 
 /* The size of the key CBR (Compact Binary Respresentation), bytes */
 #define CRACEN_KMU_CBR_SIZE		     1u
