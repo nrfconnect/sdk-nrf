@@ -10,8 +10,8 @@
 #include <security/cracen.h>
 #include <cracen/interrupts.h>
 #include <cracen/statuscodes.h>
-
-#include "../../../cracenpsa/src/internal/common.h"
+#include <cracen/common.h>
+#include <cracen/cracen_kmu.h>
 #include "microcode_binary.h"
 #include <nrf_security_mutexes.h>
 #include <sxsymcrypt/trng.h>

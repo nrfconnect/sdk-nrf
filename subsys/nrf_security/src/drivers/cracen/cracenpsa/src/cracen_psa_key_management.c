@@ -4,21 +4,25 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "internal/common.h"
-#include "internal/cracen_ecc_helpers.h"
+#include <cracen/common.h>
 #include <cracen/ec_helpers.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <cracen_psa_ctr_drbg.h>
-#include "internal/cracen_eddsa.h"
-#include "internal/cracen_ecdsa.h"
-#include "internal/cracen_montgomery.h"
+#include "internal/ecc/cracen_ecc_helpers.h"
+#include "internal/ecc/cracen_eddsa.h"
+#include "internal/ecc/cracen_ecdsa.h"
+#include "internal/ecc/cracen_montgomery.h"
+#include "internal/ecc/cracen_ecc_keygen.h"
 #include "internal/cracen_ikg.h"
-#include "internal/cracen_rsa_keygen.h"
+
+/* TODO: remove the following header when static functions moved */
+#include "internal/rsa/cracen_rsa_common.h"
+#include "internal/rsa/cracen_rsa_keygen.h"
+
 #include <cracen_psa_builtin_key_policy.h>
 #include <nrf_security_mutexes.h>
-#include "internal/cracen_ecc_keygen.h"
 #include <silexpk/sxops/eccweierstrass.h>
 #include <silexpk/sxops/rsa.h>
 #include <silexpk/ik.h>

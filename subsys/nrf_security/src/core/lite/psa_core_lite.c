@@ -14,7 +14,7 @@
 
 #ifdef CONFIG_PSA_CRYPTO_DRIVER_CRACEN
 #include <cracen/mem_helpers.h>
-#include <internal/cracen_eddsa.h>
+#include <internal/ecc/cracen_eddsa.h>
 #endif
 
 #if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)

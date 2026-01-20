@@ -10,7 +10,7 @@
 #include <sxsymcrypt/blkcipher.h>
 #include <sxsymcrypt/keyref.h>
 #include <sxsymcrypt/aes.h>
-#include "../../../cracenpsa/src/internal/common.h"
+#include <cracen/common.h>
 #include <cracen_sw_common.h>
 #include <cracen_sw_mac_cmac.h>
 

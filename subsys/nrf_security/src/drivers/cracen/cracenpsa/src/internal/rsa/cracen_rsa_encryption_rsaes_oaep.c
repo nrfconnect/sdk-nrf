@@ -26,11 +26,12 @@
 #include <silexpk/sxbuf/sxbufop.h>
 #include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
+#include <cracen/common.h>
 #include <cracen/mem_helpers.h>
 #include <cracen_psa.h>
 #include <cracen_psa_ctr_drbg.h>
 #include <cracen_psa_primitives.h>
-#include "common.h"
+#include "cracen_rsa_common.h"
 #include "cracen_rsa_mgf1xor.h"
 #include "cracen_rsa_key.h"
 

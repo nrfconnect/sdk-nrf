@@ -15,16 +15,13 @@
 #include <sxsymcrypt/blkcipher.h>
 #include <sxsymcrypt/aead.h>
 #include <sxsymcrypt/chachapoly.h>
-#include "../../../sxsymcrypt/src/blkcipherdefs.h"
-#include "../../../sxsymcrypt/src/aeaddefs.h"
-#include "../../../sxsymcrypt/src/cmdma.h"
 
 #include <cracen/statuscodes.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/__assert.h>
 
 #include <cracen_psa_primitives.h>
-#include "../../../cracenpsa/src/common.h"
+#include <cracen/common.h>
 #include "poly1305_ext.h"
 #include <cracen_sw_common.h>
 #include <cracen_sw_aead.h>

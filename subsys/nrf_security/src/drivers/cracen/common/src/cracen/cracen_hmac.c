@@ -11,14 +11,14 @@
  *         Size: hash algorithm digest size.
  */
 
-#include "cracen_hmac.h"
+#include <cracen/cracen_hmac.h>
 #include <string.h>
 #include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
 #include <cracen/mem_helpers.h>
 #include "cracen_psa_primitives.h"
 #include "cracen_psa.h"
-#include "common.h"
+#include <cracen/common.h>
 
 /* xor bytes in 'buf' with a constant 'v', in place */
 static void xorbuf(uint8_t *buf, uint8_t v, size_t sz)

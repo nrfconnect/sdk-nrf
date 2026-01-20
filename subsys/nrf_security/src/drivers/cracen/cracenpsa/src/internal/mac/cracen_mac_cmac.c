@@ -9,7 +9,7 @@
 #include <string.h>
 #include <sxsymcrypt/cmac.h>
 #include <sxsymcrypt/keyref.h>
-#include "common.h"
+#include <cracen/common.h>
 #include <cracen/mem_helpers.h>
 #include "cracen_mac_cmac.h"
 #include <cracen/statuscodes.h>
