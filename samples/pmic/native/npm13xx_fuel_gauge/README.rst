@@ -108,31 +108,23 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-To build this sample for either nPM1300 or nPM1304, you need to apply an appropriate build configuration.
-The build configuration consist of choosing a Zephyr shield (``npm1300_ek`` or ``npm1304_ek``) and
-applying an extra devicetree overlay file (``npm1300.overlay`` or ``npm1304.overlay``)
+To build this sample for either nPM1300 or nPM1304, you need to apply the respective extra DTC overlay.
 You can use either the nRF Connect for VS Code extension or the command line.
 
 .. tabs::
 
    .. group-tab:: nRF Connect for VS Code
 
-      To choose a shield, add an **Extra CMake argument** in your build configuration, for example:
-
-      .. code-block:: bash
-
-         -Dnpm13xx_fuel_gauge_SHIELD=npm1300_ek
-
       To apply an extra overlay, choose the respective file from the **Extra Devicetree overlays** drop-down menu
 
    .. group-tab:: Command line
 
-      To apply the appropriate configuration, use the ``-T`` argument of the ``west build`` command.
+      To apply the appropriate configuration, use the ``-DEXTRA_DTC_OVERLAY`` CMake argument.
       For example, to build for an nRF54L15 DK and an nPM1300 EK use the following command:
 
       .. code-block:: bash
 
-         west build -b nrf54l15dk/nrf54l15/cpuapp samples/pmic/native/npm13xx_fuel_gauge -T sample.npm1300_fuel_gauge_compile
+         west build -b nrf54l15dk/nrf54l15/cpuapp samples/pmic/native/npm13xx_fuel_gauge -- -DEXTRA_DTC_OVERLAY=npm1300.overlay
 
 Testing
 *******
