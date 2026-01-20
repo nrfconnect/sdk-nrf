@@ -45,6 +45,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    ../nrf54l/zms.rst
    ug_nrf54h20_mcuboot_dfu
    ug_nrf54h20_partitioning_merged
+   ug_nrf54h20_mcuboot_manifest
    ug_nrf54h_ecies_x25519
    ug_nrf54h20_pm_optimization
    ug_nrf54h20_architecture_pinmap
