@@ -39,3 +39,8 @@ For information on how to configure these UICR settings, see :ref:`ug_nrf54h20_i
   It defines a trailing region of application-owned MRAM whose contents are integrity-checked at each boot, extending the root of trust to your immutable bootloader or critical data.
 * :kconfig:option:`CONFIG_GEN_UICR_ERASEPROTECT` - Prevents bulk erasure of protected memory.
   It blocks all ``ERASEALL`` operations on NVR0, preserving UICR settings even if an attacker attempts a full-chip erase.
+
+.. note::
+   It is not possible to enable all of these options simultaneously through Kconfig.
+   This is to avoid accidentally locking devices.
+   See the help-text of :kconfig:option:`CONFIG_GEN_UICR_ERASEPROTECT` for instructions on how to generate a ``UICR`` hex where all these options are set.
