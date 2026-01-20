@@ -546,16 +546,11 @@ static void scan_connecting(struct bt_scan_device_info *device_info, struct bt_c
 
 BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, scan_connecting_error, scan_connecting);
 
-static int scan_init(void)
+static int scan_init(struct bt_scan_init_param *p_param)
 {
 	int err;
 
-	struct bt_scan_init_param param = {
-		.scan_param = NULL,
-		.conn_param = BT_LE_CONN_PARAM(0x10, 0x10, 0, BT_GAP_MS_TO_CONN_TIMEOUT(4000)),
-		.connect_if_match = 1};
-
-	bt_scan_init(&param);
+	bt_scan_init(p_param);
 	bt_scan_cb_register(&scan_cb);
 
 	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_RANGING_SERVICE);
@@ -599,7 +594,13 @@ int main(void)
 		return 0;
 	}
 
-	err = scan_init();
+	struct bt_scan_init_param scan_params = {
+		.scan_param = NULL,
+		.conn_param = BT_LE_CONN_PARAM(0x10, 0x10, 0, BT_GAP_MS_TO_CONN_TIMEOUT(4000)),
+		.connect_if_match = 1
+	};
+
+	err = scan_init(&scan_params);
 	if (err) {
 		LOG_ERR("Scan init failed (err %d)", err);
 		return 0;
@@ -735,11 +736,18 @@ int main(void)
 
 	k_sem_take(&sem_cs_security_enabled, K_FOREVER);
 
+	/* scale factor of conn_interval units to proc_interval units is 1.25/0.625 = 2 */
+	const uint16_t acl_interval_in_proc_interval_units =
+		scan_params.conn_param->interval_max * 2;
+	uint16_t desired_procedure_interval = realtime_rd ? 5 : 10;
+	uint16_t desired_max_procedure_length =
+		acl_interval_in_proc_interval_units * (desired_procedure_interval - 1);
+
 	const struct bt_le_cs_set_procedure_parameters_param procedure_params = {
 		.config_id = CS_CONFIG_ID,
-		.max_procedure_len = 1000,
-		.min_procedure_interval = realtime_rd ? 5 : 10,
-		.max_procedure_interval = realtime_rd ? 5 : 10,
+		.max_procedure_len = desired_max_procedure_length,
+		.min_procedure_interval = desired_procedure_interval,
+		.max_procedure_interval = desired_procedure_interval,
 		.max_procedure_count = 0,
 		.min_subevent_len = 16000,
 		.max_subevent_len = 16000,
