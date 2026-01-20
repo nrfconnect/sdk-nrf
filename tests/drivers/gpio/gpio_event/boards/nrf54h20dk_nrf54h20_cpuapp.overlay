@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -12,8 +12,10 @@
 	 * Output-input GPIO pair must have identical active level flag.
 	 */
 	zephyr,user {
-		out-gpios = <&gpio1 16 GPIO_ACTIVE_HIGH>, <&gpio1 10 GPIO_ACTIVE_HIGH>;
-		in-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>, <&gpio1 11 GPIO_ACTIVE_HIGH>;
+		out-gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>, <&gpio1 2 GPIO_ACTIVE_HIGH>,
+			<&gpio2 10 GPIO_ACTIVE_HIGH>;
+		in-gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>, <&gpio1 3 GPIO_ACTIVE_HIGH>,
+			<&gpio2 11 GPIO_ACTIVE_HIGH>;
 	};
 };
 
@@ -25,12 +27,11 @@
 	status = "okay";
 };
 
-/* Enable interrupt from GPIO P1 events. */
-&gpiote20 {
+&gpio2 {
 	status = "okay";
 };
 
-/* Enable interrupt from GPIO P0 events. */
-&gpiote30 {
+/* Enable interrupt from GPIO P0, P1, P2, P9 events. */
+&gpiote130 {
 	status = "okay";
 };

@@ -1,0 +1,70 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requirements:
+ * out-gpios[0] wire connected with in-gpios[0],
+ * out-gpios[1] wire connected with in-gpios[1],
+ * etc.
+ * Output-input GPIO pair must have identical active level flag.
+ *
+ * Different GPIOTE channels used by loopbacks.
+ * P1.04 - GPIOTE channel 0
+ * P1.05 - GPIOTE channel 1
+ * P1.06 - GPIOTE channel 2
+ * P1.07 - GPIOTE channel 3
+ * P1.08 - GPIOTE channel 4
+ * P1.09 - GPIOTE channel 5
+ * P1.10 - GPIOTE channel 6
+ * P1.11 - GPIOTE channel 7
+ * P2.00 - GPIOTE channel 0
+ * P2.01 - GPIOTE channel 1
+ * P2.02 - GPIOTE channel 2
+ * P2.03 - GPIOTE channel 3
+ * P2.04 - GPIOTE channel 4
+ * P2.05 - GPIOTE channel 5
+ * P2.06 - GPIOTE channel 6
+ * P2.07 - GPIOTE channel 7
+ * P2.08 - GPIOTE channel 0
+ * P2.09 - GPIOTE channel 1
+ * P2.10 - GPIOTE channel 2
+ * P2.11 - GPIOTE channel 3
+ */
+
+/ {
+	zephyr,user {
+		out-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>, <&gpio1 6 GPIO_ACTIVE_HIGH>;
+		in-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>, <&gpio2 8 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+/* Workaround, FUNC value is not important.
+ * UICR/priphconf generator must parse pincontrol.
+ * Otherwise, CTRLSEL is not set for input pin.
+ */
+&pinctrl {
+	gpiote0_default_alt: gpiote0_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 5)>, <NRF_PSEL(SPIM_MISO, 2, 8)>;
+		};
+	};
+};
+
+&gpio1 {
+	status = "okay";
+	gpiote-instance = < &gpiote0 >;
+};
+
+&gpio2 {
+	status = "okay";
+	gpiote-instance = < &gpiote0 >;
+};
+
+/* Enable interrupt from GPIO P1 (pins 4-11) and P2 (pins 0-11) events. */
+&gpiote0 {
+	status = "okay";
+	pinctrl-0 = <&gpiote0_default_alt>;
+	pinctrl-names = "default";
+};
