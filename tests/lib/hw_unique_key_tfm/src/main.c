@@ -59,7 +59,7 @@ ZTEST(test_hw_unique_key_tfm, test_hw_unique_key_tfm1)
 	psa_set_key_bits(&attributes, sizeof(out_key) * 8);
 
 	status = psa_key_derivation_setup(&op, PSA_ALG_HKDF(PSA_ALG_SHA_256));
-	zassert_equal(PSA_SUCCESS, status, "status %ld != PSA_SUCCESS\r\n");
+	zassert_equal(PSA_SUCCESS, status, "status %d != PSA_SUCCESS\r\n", status);
 
 	/* Set up a key derivation operation with HUK  */
 	status = psa_key_derivation_input_key(&op, PSA_KEY_DERIVATION_INPUT_SECRET,
