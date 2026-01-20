@@ -4624,42 +4624,6 @@ Problems with RTT Viewer/Logger
 NFC
 ===
 
-.. rst-class:: v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-2 v2-9-1 v2-9-0-nRF54H20-1 v2-9-0 v2-8-0
-
-KRKNWK-21227: An NFC application may fail to properly handle incoming frames with parity errors
-  Under specific and rare conditions, the NFC application might cause the device to hang or respond with an incorrect frame when receiving a frame containing a parity error.
-  Only Type 4 Tag (T4T) is affected.
-
-  Due to a hardware bug, the ``RXERROR`` event is unreliable.
-  It is only reported for parity errors on the last byte of RATS and is never reported for I-Block frames.
-  To reliably detect parity errors, always read RXSTATUS on the ``RXFRAMEEND`` event, regardless of whether ``RXERROR`` is triggered.
-
-  **Affected platforms:** nRF54L05, nRF54L10, nRF54L15, nRF54H20, nRF54LM20A
-
-  **Workaround:** Skip the condition check (``if (NRFX_NFCT_EVT_ACTIVE(RXERROR, evt_mask)))`` in the :file:`nrfx_nfct.c` file to enable this workaround.
-  This ensures that the RXSTATUS register is checked on every ``RXFRAMEEND`` event, providing reliable parity error detection even when the ``RXERROR`` event is not triggered.
-
-  Implement the workaround in the :file:`nrfx/drivers/src/nrfx_nfct.c` as follows:
-
-  .. code-block:: c
-
-     /* Take into account only the number of whole bytes. */
-     nfct_evt.params.rx_frameend.rx_status         = 0;
-     nfct_evt.params.rx_frameend.rx_data.p_data    = nrfy_nfct_rxtx_buffer_get(NRF_NFCT);
-     nfct_evt.params.rx_frameend.rx_data.data_size =
-         NRFX_NFCT_BITS_TO_BYTES(nrfy_nfct_rx_bits_get(NRF_NFCT, true));
-
-     // if (NRFX_NFCT_EVT_ACTIVE(RXERROR, evt_mask)) /* Skip this condition check. */
-     {
-         nfct_evt.params.rx_frameend.rx_status =
-             (nrfy_nfct_rx_frame_status_get(NRF_NFCT) & NRFX_NFCT_FRAME_STATUS_RX_ALL_MASK);
-
-         NRFX_LOG_DEBUG("Rx error (0x%x)", (unsigned int) nfct_evt.params.rx_frameend.rx_status);
-
-         /* Clear rx frame status */
-         nrfy_nfct_rx_frame_status_clear(NRF_NFCT, NRFX_NFCT_FRAME_STATUS_RX_ALL_MASK);
-     }
-
 .. rst-class:: v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0
 
 NCSDK-22799: Assert when requesting clock from the NFC interrupt context
@@ -6270,6 +6234,20 @@ nrfx_uart driver
 
 tx_buffer_length set incorrectly
   The nrfx_uart driver might incorrectly set the internal tx_buffer_length variable when high optimization level is set during compilation.
+
+nrfx_nfct driver
+================
+
+.. rst-class:: v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-2 v2-9-1 v2-9-0-nRF54H20-1 v2-9-0 v2-8-0
+
+KRKNWK-21227: RXERROR event not detected during NFC frame reception
+  The ``RXERROR`` event is not properly detected when a parity error occurs during frame reception.
+  This can happen when the error occurs on any byte in the payload, including the last byte (for example, for I-Block frames).
+  Previously, ``RXERROR`` was handled as a separate interrupt.
+  When an error occurred, the ``RXERROR`` interrupt fired and the event was cleared by ``nrfy_nfct_events_process()``.
+  By the time ``RXFRAMEEND`` was processed, the ``RXERROR`` flag was already cleared, causing the error status not to be propagated to the NFC stack.
+
+  Fix for the issue is provided in the nrfx 4.1.0.
 
 Integrations
 ************
