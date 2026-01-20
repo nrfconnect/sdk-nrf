@@ -593,7 +593,7 @@
 			interrupts = <75 NRF_DEFAULT_IRQ_PRIORITY>;
 
 			cpuapp_rram: rram@0 {
-				reg = <0x0 DT_SIZE_K(1012)>;
+				reg = <0x0 DT_SIZE_K(948)>;
 				compatible = "soc-nv-flash";
 				erase-block-size = <4096>;
 				write-block-size = <16>;
