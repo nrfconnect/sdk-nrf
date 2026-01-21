@@ -8,91 +8,106 @@ menu "Debug configuration"
 
 config DESKTOP_LOG
 	bool "nRF Desktop logging"
+	select LOG
 	help
-	  The option enables support for the nRF Desktop Logging.
-	  By default, the nRF Desktop Logging uses the RTT backend and
-	  slightly modifies the default configuration of the Logging
-	  subsystem to tailor it to the application needs.
+	  The option slightly modifies the default configuration of the logging
+	  subsystem to tailor it to the application needs. The nRF Desktop
+	  logging is based on RTT by default, but it can be configured to use
+	  UART backend.
 
 if DESKTOP_LOG
 
-config LOG
-	default y
+config DESKTOP_LOG_RTT
+	bool "RTT logging backend"
+	default y if !DESKTOP_SHELL
+	select LOG_BACKEND_RTT
+	select USE_SEGGER_RTT
 	help
-	  nRF Desktop Logging configuration enables the Logging subsystem that
-	  is required for this functionality.
+	  Emit debug logs over RTT.
+
+	  The nRF Desktop application by default uses RTT for logging. The RTT
+	  log backend is disabled when shell subsystem is enabled as the shell
+	  is used to emit logs in that case.
+
+configdefault LOG_BACKEND_RTT
+	default n
+	help
+	  If nRF Desktop logging is enabled, an application-specific Kconfig
+	  option is used to control enabling of the RTT logging backend
+	  together with dependencies of the backend.
+
+config DESKTOP_LOG_UART
+	bool "UART logging backend"
+	select LOG_BACKEND_UART
+	select SERIAL
+	select CONSOLE
+	select UART_CONSOLE
+	help
+	  Emit debug logs over UART.
+
+configdefault LOG_BACKEND_UART
+	default n
+	help
+	  If nRF Desktop logging is enabled, an application-specific Kconfig
+	  option is used to control enabling of the UART logging backend
+	  together with dependencies of the backend.
 
 choice LOG_MODE
 	default LOG_MODE_DEFERRED
 	help
-	  nRF Desktop Logging uses the deferred logging mode to minimize the
+	  nRF Desktop logging uses the deferred logging mode to minimize the
 	  impact of the debug tools on the application.
 
 endchoice
 
-config LOG_MODE_OVERFLOW
+configdefault LOG_MODE_OVERFLOW
 	default y
 	help
-	  nRF Desktop Logging configuration drops the oldest logs if there is
+	  nRF Desktop logging configuration drops the oldest logs if there is
 	  no more space left in the buffers.
 
-config LOG_PRINTK
-	default y
-	help
-	  nRF Desktop Logging configuration enables the processing of printk
-	  messages by the Logging subsystem.
-
-config LOG_BUFFER_SIZE
+configdefault LOG_BUFFER_SIZE
 	default 4096
 	help
-	  nRF Desktop Logging configuration increases the default buffer
-	  size in the Logging subsystem to prevent logs from dropping.
+	  nRF Desktop logging configuration increases the default buffer
+	  size in the logging subsystem to prevent logs from dropping.
 
-config LOG_PROCESS_THREAD_STACK_SIZE
+configdefault LOG_PROCESS_THREAD_STACK_SIZE
 	default 1024
 	help
-	  nRF Desktop Logging configuration increases the default stack size
+	  nRF Desktop logging configuration increases the default stack size
 	  for the log processing thread to prevent stack overflows.
 
-config LOG_BACKEND_RTT
-	default y if !SHELL_LOG_BACKEND
-	help
-	  nRF Desktop Logging configuration uses the RTT Logging backend
-	  as nRF Desktop targets use RTT for debug information. This option
-	  needs to be disabled when both the Logging and the Shell subsystems
-	  are active as the Shell backend is responsible for collecting logs
-	  in that case.
-
-if LOG_BACKEND_RTT
-
-config LOG_BACKEND_SHOW_COLOR
+configdefault LOG_BACKEND_SHOW_COLOR
+	default y if SHELL_LOG_BACKEND
 	default n
 	help
-	  nRF Desktop Logging configuration disables colors in the Logging
-	  subsystem backends.
+	  nRF Desktop logging configuration disables colors in the logging
+	  subsystem backends unless shell is used to emit logs.
 
-config LOG_BACKEND_FORMAT_TIMESTAMP
+configdefault LOG_BACKEND_FORMAT_TIMESTAMP
 	default n
 	help
-	  nRF Desktop Logging configuration disables formatting of timestamps
-	  in the Logging subsystem backends.
+	  nRF Desktop logging configuration disables formatting of timestamps
+	  in the logging subsystem backends.
+
+if DESKTOP_LOG_RTT
 
 choice LOG_BACKEND_RTT_MODE
-	default LOG_BACKEND_RTT_MODE_DROP
+	default LOG_BACKEND_RTT_MODE_BLOCK if LOG_MODE_DEFERRED
 	help
-	  nRF Desktop Logging configuration drops the oldest logs in the RTT
-	  backend libraries if there is no more space left in the buffers.
+	  nRF Desktop logging configuration blocks the logger thread if data
+	  cannot be passed to the RTT buffer.
 
 endchoice
 
-config LOG_BACKEND_RTT_MESSAGE_SIZE
-	default 256
+configdefault LOG_BACKEND_RTT_OUTPUT_BUFFER_SIZE
+	default 128
 	help
-	  nRF Desktop Logging configuration increases the default maximum
-	  message size for the RTT backend in the Logging subsystem to enhance
-	  its capacity.
+	  nRF Desktop increases size of the buffer to improve performance of
+	  the RTT log output.
 
-endif # LOG_BACKEND_RTT
+endif # DESKTOP_LOG_RTT
 
 endif # DESKTOP_LOG
 
@@ -124,6 +139,11 @@ config SHELL_BACKEND_RTT
 	help
 	  nRF Desktop Shell configuration enables the Shell RTT backend
 	  as nRF Desktop targets use RTT for debug information.
+
+config USE_SEGGER_RTT
+	default y
+	help
+	  nRF Desktop Shell uses RTT as a default backend.
 
 if SHELL_BACKEND_RTT
 
@@ -164,25 +184,10 @@ config THREAD_NAME
 
 endif # DESKTOP_SHELL
 
-config DESKTOP_RTT
-	bool "Enable RTT backend for logs or shell"
-	default y
-	select USE_SEGGER_RTT
-	depends on DESKTOP_LOG || DESKTOP_SHELL
-	help
-	  The option enables support for SEGGER J-Link RTT in the nRF Desktop.
-
-	  Disable the option only if you would like to use other backend for
-	  nRF Desktop logs or shell.
-
-if DESKTOP_RTT
-
-config SEGGER_RTT_BUFFER_SIZE_UP
-	default 4096
+configdefault SEGGER_RTT_BUFFER_SIZE_UP
+	default 4096 if ((DESKTOP_SHELL && SHELL_BACKEND_RTT) || DESKTOP_LOG_RTT)
 	help
 	  nRF Desktop RTT configuration increases the default buffer size
 	  in the SEGGER J-Link RTT libraries to enhance logging capacity.
-
-endif # DESKTOP_RTT
 
 endmenu
