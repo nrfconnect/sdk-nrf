@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Hello DECT sample configuration"
+
+config HELLO_DECT_MAC_DEMO_INTERVAL
+	int "Demo message interval in seconds"
+	default 30
+	help
+	  Interval in seconds for sending demo messages when connected.
+
+module = HELLO_DECT_MAC
+module-str = Log level for Hello DECT sample application
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu

@@ -150,7 +150,13 @@ Bluetooth Mesh
 DECT NR+
 --------
 
-|no_changes_yet_note|
+* Added DECT NR+ full stack support, including the following features:
+
+  * Connection Manager integration for enabling easy connect for the applications.
+  * Network management API for controlling DECT NR+ operations.
+  * L2 API implementation enabling IPv6 connectivity, including HAL definition.
+  * Enabling Internet connectivity through sink and BR (Border Router) support together with, for example, Serial Modem on a gateway nRF91 LTE device.
+  * nRF91x1 DECT modem driver implementing HAL API and interfacing with DECT NR+ modem firmware where the DECT NR+ MAC layer is running.
 
 Enhanced ShockBurst (ESB)
 -------------------------
@@ -307,6 +313,8 @@ Debug samples
 
 DECT NR+ samples
 ----------------
+
+* Added the :ref:`hello_dect` sample for demonstrating the use of the DECT NR+ stack with connection manager and IPv6 connectivity.
 
 * :ref:`dect_shell_application` sample:
 
