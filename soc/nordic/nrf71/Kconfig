@@ -50,4 +50,9 @@ config NRF_TRUSTZONE_RAM_REGION_SIZE
 	  This abstraction allows us to configure TRUSTZONE without depending
 	  on peripheral specific symbols.
 
+config NRF_WIFI_DAP
+	bool "Wi-Fi DAP for debugging"
+	help
+	  This control the Wi-Fi AHB Debug AP for debugging Wi-Fi cores.
+
 endif # SOC_SERIES_NRF71X
