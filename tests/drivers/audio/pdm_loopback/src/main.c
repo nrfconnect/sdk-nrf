@@ -43,6 +43,28 @@ K_MEM_SLAB_DEFINE_STATIC(mem_slab, MAX_BLOCK_SIZE, BLOCK_COUNT, 4);
 
 #define CLOCK_INPUT_PIN	NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(pulse_counter), gpios)
 
+#define NODE_AUDIOPLL DT_NODELABEL(audiopll)
+
+#if DT_NODE_HAS_STATUS_OKAY(NODE_AUDIOPLL)
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
+
+const struct device *audiopll_dev = DEVICE_DT_GET(NODE_AUDIOPLL);
+static K_SEM_DEFINE(audiopll_sem, 0, 1);
+
+static void audiopll_notify_cb(struct onoff_manager *mgr,
+			       struct onoff_client *cli,
+			       uint32_t state,
+			       int res)
+{
+	ARG_UNUSED(mgr);
+	ARG_UNUSED(cli);
+	ARG_UNUSED(state);
+	ARG_UNUSED(res);
+
+	k_sem_give(&audiopll_sem);
+}
+#endif
+
 static const struct device *const pdm_dev = DEVICE_DT_GET(DT_NODELABEL(pdm_dev));
 static struct pcm_stream_cfg stream_config, stream_config_dummy;
 static struct dmic_cfg pdm_cfg, pdm_cfg_dummy;
@@ -248,6 +270,18 @@ ZTEST(pdm_loopback, test_start_trigger)
 ZTEST(pdm_loopback, test_pdm_clk_frequency)
 {
 	int ret;
+
+#if DT_NODE_HAS_STATUS_OKAY(NODE_AUDIOPLL)
+	struct onoff_client cli;
+
+	sys_notify_init_callback(&cli.notify, audiopll_notify_cb);
+
+	ret = nrf_clock_control_request(audiopll_dev, NULL, &cli);
+	zassert_true(ret >= 0, "Audiopll request failed, return code = %d", ret);
+
+	ret = k_sem_take(&audiopll_sem, K_MSEC(100));
+#endif
+
 	uint8_t gpiote_channel;
 	nrfx_gpiote_t gpiote_instance =
 		GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(DT_NODELABEL(pulse_counter), gpios));
@@ -315,6 +349,11 @@ ZTEST(pdm_loopback, test_pdm_clk_frequency)
 	/* Remove NRFX Timer configuration. */
 	nrfx_timer_disable(&timer_instance);
 	nrfx_timer_uninit(&timer_instance);
+
+#if DT_NODE_HAS_STATUS_OKAY(NODE_AUDIOPLL)
+	ret = nrf_clock_control_release(audiopll_dev, NULL);
+	zassert_true(ret >= 0, "Audiopll release failed, return code = %d", ret);
+#endif
 }
 
 ZTEST_SUITE(pdm_loopback, NULL, device_setup, setup, teardown, NULL);
