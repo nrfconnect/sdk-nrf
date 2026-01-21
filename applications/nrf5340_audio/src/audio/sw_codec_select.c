@@ -91,12 +91,12 @@ bool sw_codec_is_initialized(void)
 
 int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_out)
 {
-	if (!m_config.encoder.enabled) {
+	if (unlikely(!m_config.encoder.enabled)) {
 		LOG_ERR("Encoder has not been initialized");
 		return -ENXIO;
 	}
 
-	if (audio_frame_in == NULL || audio_frame_out == NULL) {
+	if (unlikely(audio_frame_in == NULL || audio_frame_out == NULL)) {
 		LOG_ERR("LC3 encoder input parameter error");
 		return -EINVAL;
 	}
@@ -122,7 +122,7 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 
 		LOG_DBG("LC3 encoder module");
 
-		if ((meta_in->data_coding != PCM) || (meta_out->data_coding != LC3)) {
+		if (unlikely((meta_in->data_coding != PCM) || (meta_out->data_coding != LC3))) {
 			LOG_ERR("LC3 encoder module has incorrect input or output data type: in = "
 				"%d  out = %d",
 				meta_in->data_coding, meta_out->data_coding);
@@ -130,14 +130,15 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 		}
 
 		chan_in_num = audio_metadata_num_loc_get(meta_in);
-		if (audio_frame_in->len < (meta_in->bytes_per_location * chan_in_num)) {
+		if (unlikely(audio_frame_in->len < (meta_in->bytes_per_location * chan_in_num))) {
 			LOG_ERR("Encoder input buffer too small: %d (>=%d)", audio_frame_in->len,
 				meta_in->bytes_per_location * chan_in_num);
 			return -EINVAL;
 		}
 
 		chan_out_num = audio_metadata_num_loc_get(meta_out);
-		if (audio_frame_out->size < (meta_out->bytes_per_location * chan_out_num)) {
+		if (unlikely(audio_frame_out->size <
+			     (meta_out->bytes_per_location * chan_out_num))) {
 			LOG_ERR("Encoder output buffer too small: %d (>=%d)", audio_frame_out->size,
 				meta_out->bytes_per_location * chan_out_num);
 			return -EINVAL;
@@ -159,7 +160,7 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 			loc_out = meta_out->locations;
 		}
 
-		if (loc_out == 0 || loc_in == 0) {
+		if (unlikely(loc_out == 0 || loc_in == 0)) {
 			LOG_ERR("No common output location with input");
 			LOG_ERR("Input locations:  0x%08x", meta_in->locations);
 			LOG_ERR("Output locations: 0x%08x", meta_out->locations);

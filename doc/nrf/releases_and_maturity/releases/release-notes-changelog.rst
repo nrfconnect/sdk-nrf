@@ -215,6 +215,8 @@ nRF5340 Audio
     This makes debugging high CPU load situations easier in the application.
     The threshold for high CPU load is set in :file:`peripherals.c` using :c:macro:`CPU_LOAD_HIGH_THRESHOLD_PERCENT`.
 
+  * :kconfig:option:`CONFIG_SPEED_OPTIMIZATIONS` to enable compiler speed optimizations for the application.
+
 * Updated:
 
   * Switched to the new USB stack introduced in Zephyr 3.4.0.
@@ -229,6 +231,17 @@ nRF5340 Audio
 
   * With the latest release of |nRFVSC|, you can build and program the nRF5340 Audio application using the |nRFVSC| GUI.
     Updated the :ref:`nrf53_audio_app_building` accordingly: the note about missing support in |nRFVSC| has been removed and the section about programming using standard methods now lists the steps for |nRFVSC| and the command line.
+
+  * Improved handling of I2S RX buffer overruns.
+    When an overrun occurs, the most recent block in the current frame is removed to make space for new incoming data.
+
+  * Optimized USB-to-encoder audio processing pipeline to reduce CPU usage.
+    Note that LC3-encoding of sinusoidal input demands more of the CPU than real-world audio input.
+
+  * The audio data path now accumulates 10 ms frames instead of processing 1 ms blocks individually, reducing message queue operations by 90% and improving overall system performance.
+    This optimization affects both USB audio input processing and the I2S audio datapath, resulting in more efficient encoder thread operation.
+
+  * Improved error handling with ``unlikely()`` macros for better branch prediction in performance-critical paths.
 
 nRF Desktop
 -----------

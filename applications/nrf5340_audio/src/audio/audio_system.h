@@ -105,16 +105,6 @@ void audio_system_start(void);
 void audio_system_stop(void);
 
 /**
- * @brief	Drop oldest block from the fifo_rx buffer.
- *
- * @note	This can be used to reduce latency by adjusting the timing of the completed frame
- *		that was sampled in relation to the connection interval in Bluetooth LE.
- *
- * @return	0 on success, -ECANCELED otherwise.
- */
-int audio_system_fifo_rx_block_drop(void);
-
-/**
  * @brief	Get number of decoder channels.
  *
  * @return	Number of decoder channels.
