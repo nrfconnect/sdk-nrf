@@ -71,9 +71,9 @@ out:
 
 static inline bool is_anycast_locator(const otNetifAddress *addr)
 {
-	return addr->mMeshLocal && addr->mAddress.mFields.m16[4] == htons(0x0000) &&
-	       addr->mAddress.mFields.m16[5] == htons(0x00ff) &&
-	       addr->mAddress.mFields.m16[6] == htons(0xfe00) &&
+	return addr->mMeshLocal && addr->mAddress.mFields.m16[4] == net_htons(0x0000) &&
+	       addr->mAddress.mFields.m16[5] == net_htons(0x00ff) &&
+	       addr->mAddress.mFields.m16[6] == net_htons(0xfe00) &&
 	       addr->mAddress.mFields.m8[14] == 0xfc;
 }
 
@@ -103,7 +103,7 @@ static void add_ipv6_addr_to_zephyr(struct net_if *iface, const otNetifAddress *
 			continue;
 		}
 
-		if_addr = net_if_ipv6_addr_add(iface, (struct in6_addr *)(&addr->mAddress),
+		if_addr = net_if_ipv6_addr_add(iface, (struct net_in6_addr *)(&addr->mAddress),
 					       addr_type, 0);
 
 		if (if_addr == NULL) {
@@ -133,7 +133,7 @@ static void rm_ipv6_addr_from_zephyr(struct net_if *iface, const otNetifAddress 
 		}
 
 		for (const otNetifAddress *addr = ot_addr; addr; addr = addr->mNext) {
-			if (net_ipv6_addr_cmp((struct in6_addr *)(&addr->mAddress),
+			if (net_ipv6_addr_cmp((struct net_in6_addr *)(&addr->mAddress),
 					      &if_addr->address.in6_addr)) {
 				used = true;
 				break;
@@ -228,7 +228,7 @@ static void ot_rpc_cmd_if_receive(const struct nrf_rpc_group *group, struct nrf_
 	if (pkt_data && pkt_data_len) {
 		iface = net_if_get_first_by_type(&NET_L2_GET_NAME(OPENTHREAD));
 		if (iface) {
-			pkt = net_pkt_rx_alloc_with_buffer(iface, pkt_data_len, AF_UNSPEC, 0,
+			pkt = net_pkt_rx_alloc_with_buffer(iface, pkt_data_len, NET_AF_UNSPEC, 0,
 							   K_NO_WAIT);
 		} else {
 			NET_ERR("There is no net interface for OpenThread");
