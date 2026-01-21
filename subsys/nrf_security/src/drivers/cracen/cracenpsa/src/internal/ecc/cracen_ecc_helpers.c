@@ -208,6 +208,51 @@ bool cracen_ecc_curve_is_weierstrass(psa_ecc_family_t curve)
 	}
 }
 
+static psa_status_t check_wstr_publ_key_for_ecdh(psa_ecc_family_t curve_family, size_t curve_bits,
+						 const uint8_t *data, size_t data_length)
+{
+	size_t priv_key_size = PSA_BITS_TO_BYTES(curve_bits);
+	psa_status_t psa_status;
+	const struct sx_pk_ecurve *curve = NULL;
+
+	sx_pk_const_affine_point publ_key_pnt = {};
+
+	publ_key_pnt.x.bytes = &data[1];
+	publ_key_pnt.x.sz = priv_key_size;
+
+	publ_key_pnt.y.bytes = &data[1 + priv_key_size];
+	publ_key_pnt.y.sz = priv_key_size;
+
+	psa_status = cracen_ecc_get_ecurve_from_psa(curve_family, curve_bits, &curve);
+	if (psa_status != PSA_SUCCESS) {
+		return psa_status;
+	}
+
+	return cracen_ecc_check_public_key(curve, &publ_key_pnt);
+}
+
+psa_status_t check_wstr_pub_key_data(psa_algorithm_t key_alg, psa_ecc_family_t curve,
+				     size_t key_bits, const uint8_t *data,
+				     size_t data_length)
+{
+	size_t expected_pub_key_size =
+		cracen_ecc_wstr_expected_pub_key_bytes(PSA_BITS_TO_BYTES(key_bits));
+
+	if (data[0] != CRACEN_ECC_PUBKEY_UNCOMPRESSED) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (data_length != expected_pub_key_size) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (PSA_ALG_IS_ECDH(key_alg)) {
+		return check_wstr_publ_key_for_ecdh(curve, key_bits, data, data_length);
+	}
+
+	return PSA_SUCCESS;
+}
+
 psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
 					 const sx_pk_const_affine_point *in_pnt)
 {
