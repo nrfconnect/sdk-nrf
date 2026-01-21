@@ -21,7 +21,7 @@ Implied features
 The :kconfig:option:`CONFIG_CAF_POWER_MANAGER` option implies the following features that can be used to reduce power consumption:
 
 * System power off support (:kconfig:option:`CONFIG_POWEROFF`).
-  The option is not implied for an nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54HX`), because the :c:func:`sys_poweroff` API is not yet fully supported on the nRF54H Series SoC.
+  The option is not implied for an nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54H`), because the :c:func:`sys_poweroff` API is not yet fully supported on the nRF54H Series SoC.
 * Device Power Management (:kconfig:option:`CONFIG_PM_DEVICE`).
   The option allows to reduce the power consumption of device drivers while they are inactive.
   It is recommended to disable the feature if your application does not use device drivers that integrate device power management.
@@ -30,10 +30,10 @@ The :kconfig:option:`CONFIG_CAF_POWER_MANAGER` option implies the following feat
 nRF54H Series SoC
 -----------------
 
-For the nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54HX`), the module also implies the following features:
+For the nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54H`), the module also implies the following features:
 
 * Zephyr's :ref:`zephyr:pm-system` (:kconfig:option:`CONFIG_PM`).
-  The nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54HX`) integrates the system power management to reduce power consumption when inactive.
+  The nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54H`) integrates the system power management to reduce power consumption when inactive.
 * Zephyr's :ref:`zephyr:pm-device-runtime` (:kconfig:option:`CONFIG_PM_DEVICE_RUNTIME`).
   The option extends device power management and depends on the :kconfig:option:`CONFIG_PM_DEVICE` Kconfig option.
   Enabling the device runtime power management also prevents using system-managed device power management (:kconfig:option:`CONFIG_PM_DEVICE_SYSTEM_MANAGED`) by default.
@@ -66,7 +66,7 @@ Clearing reset reason
 The module by default clears the reset reason register (``RESETREAS``) right before entering the system off state (right before calling :c:func:`sys_poweroff`).
 This is done to avoid starting MCUboot serial recovery if nobody has cleared it already.
 Disable the :kconfig:option:`CONFIG_CAF_POWER_MANAGER_CLEAR_RESET_REASON` Kconfig option to prevent this behavior.
-Clearing reset reason functionality is not used for the nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54HX`) as it uses SUIT DFU.
+Clearing reset reason functionality is not used for the nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54H`) as it uses SUIT DFU.
 
 .. note::
   The reset reason register is not cleared in case system is turned off after a fatal error.

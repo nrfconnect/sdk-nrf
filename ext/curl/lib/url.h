@@ -43,7 +43,7 @@
 #if defined(CONFIG_NRF_CURL_INTEGRATION)
 /* In embedded this needs to be a lot of smaller */
 #define UPLOADBUFFER_DEFAULT (708)
-#if defined(CONFIG_SOC_SERIES_NRF92X)
+#if defined(CONFIG_SOC_SERIES_NRF92)
 #define UPLOADBUFFER_MAX (DT_REG_SIZE(DT_NODELABEL(cpuapp_cpucell_ipc_shm_heap)))
 #else
 #define UPLOADBUFFER_MAX (CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE)

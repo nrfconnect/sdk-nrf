@@ -107,7 +107,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   string(REPLACE "/" ";" split_board_qualifiers "${BOARD_QUALIFIERS}")
   list(GET split_board_qualifiers 1 target_soc)
 
-  if(SB_CONFIG_SOC_SERIES_NRF53X OR SB_CONFIG_SOC_SERIES_NRF54LX)
+  if(SB_CONFIG_SOC_SERIES_NRF53 OR SB_CONFIG_SOC_SERIES_NRF54L)
     list(LENGTH split_board_qualifiers target_length)
 
     if("${target_length}" GREATER "3")
@@ -118,7 +118,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         set(board_qualifiers_secure "${target_soc}/cpuapp")
       endif()
     endif()
-  elseif(SB_CONFIG_SOC_SERIES_NRF91X)
+  elseif(SB_CONFIG_SOC_SERIES_NRF91)
     list(LENGTH split_board_qualifiers target_length)
 
     if("${target_length}" GREATER "2")
@@ -129,7 +129,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endif()
   endif()
 
-# TODO: SB_CONFIG_SOC_SERIES_NRF54HX
+# TODO: SB_CONFIG_SOC_SERIES_NRF54H
 
   if(DEFINED board_qualifiers_secure)
     if(DEFINED BOARD_REVISION)
@@ -363,7 +363,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endif()
 
     # The NRF54LX goes with PSA crypto by default
-    if(SB_CONFIG_SOC_SERIES_NRF54LX)
+    if(SB_CONFIG_SOC_SERIES_NRF54L)
       if(SB_CONFIG_BOOT_SIGNATURE_TYPE_NONE)
         set_config_bool(mcuboot CONFIG_NRF_SECURITY y)
       elseif(SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519)
@@ -405,7 +405,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       endif()
     endif()
 
-    if(SB_CONFIG_SOC_SERIES_NRF54HX)
+    if(SB_CONFIG_SOC_SERIES_NRF54H)
       if(SB_CONFIG_MCUBOOT_SIGNATURE_USING_ITS)
         set_config_bool(mcuboot CONFIG_NCS_BOOT_SIGNATURE_USING_ITS y)
       else()
@@ -432,7 +432,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     if(SB_CONFIG_PARTITION_MANAGER OR SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP
        OR SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT
        OR SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT
-       OR (SB_CONFIG_SOC_SERIES_NRF54LX AND SB_CONFIG_BOOT_ENCRYPTION)
+       OR (SB_CONFIG_SOC_SERIES_NRF54L AND SB_CONFIG_BOOT_ENCRYPTION)
        OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
        OR SB_CONFIG_MCUBOOT_MANIFEST_UPDATES)
       # Use NCS signing script with support for PM or direct XIP (NCS specific features)
@@ -525,7 +525,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
       # nRF54H20 uses SDFW-based counters.
       # There is no need for a dedicated secure boot storage implementation.
-      if(NOT SB_CONFIG_SOC_SERIES_NRF54HX)
+      if(NOT SB_CONFIG_SOC_SERIES_NRF54H)
         set_config_bool(mcuboot CONFIG_SECURE_BOOT_STORAGE y)
         set_config_bool(mcuboot CONFIG_SECURE_BOOT_CRYPTO y)
       endif()
@@ -915,7 +915,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   # nRF54H20 uses SDFW-based counters.
   # There is no need to generate a provisioning hex file.
   if(SB_CONFIG_SECURE_BOOT OR (SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION AND NOT
-     SB_CONFIG_SOC_SERIES_NRF54HX))
+     SB_CONFIG_SOC_SERIES_NRF54H))
     include_provision_hex()
   endif()
 

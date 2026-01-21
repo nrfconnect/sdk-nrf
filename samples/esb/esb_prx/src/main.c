@@ -209,7 +209,7 @@ int main(void)
 
 	LOG_INF("Enhanced ShockBurst prx sample");
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_SOC_SERIES_NRF54H)
 	const struct device *dtm_uart = DEVICE_DT_GET_OR_NULL(DT_CHOSEN(zephyr_console));
 
 	if (dtm_uart != NULL) {
@@ -219,7 +219,7 @@ int main(void)
 			printk("Failed to get DTM UART runtime PM: %d\n", ret);
 		}
 	}
-#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
+#endif /* defined(CONFIG_SOC_SERIES_NRF54H) */
 
 	err = clocks_start();
 	if (err) {

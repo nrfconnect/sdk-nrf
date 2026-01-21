@@ -12,7 +12,7 @@ endchoice
 
 choice HOSTAP_CRYPTO_BACKEND
 	prompt "WPA supplicant crypto implementation"
-	default HOSTAP_CRYPTO_ALT_PSA if SOC_SERIES_NRF54HX
+	default HOSTAP_CRYPTO_ALT_PSA if SOC_SERIES_NRF54H
 	default HOSTAP_CRYPTO_ALT_LEGACY_PSA
 	help
 	  Select the crypto implementation to use for WPA supplicant.

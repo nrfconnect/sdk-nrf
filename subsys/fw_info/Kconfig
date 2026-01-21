@@ -7,7 +7,7 @@
 menuconfig FW_INFO
 	bool
 	prompt "Firmware Metadata"
-	imply NRFX_NVMC if !SOC_SERIES_NRF54LX
+	imply NRFX_NVMC if !SOC_SERIES_NRF54L
 
 if FW_INFO
 
@@ -18,7 +18,7 @@ config FW_INFO_API
 
 config FW_INFO_OFFSET
 	hex "The location of firmware info inside this firmware"
-	default 0x600 if SOC_SERIES_NRF54LX
+	default 0x600 if SOC_SERIES_NRF54L
 	default 0x200
 	help
 	  The location of firmware information inside the current firmware
@@ -73,11 +73,11 @@ config FW_INFO_MAGIC_EXT_API
 config FW_INFO_HARDWARE_ID
 	int "The SoC a firmware is built to run on (8 bits)"
 	range 0 255
-	default 51 if SOC_SERIES_NRF51X
-	default 52 if SOC_SERIES_NRF52X
-	default 53 if SOC_SERIES_NRF53X
-	default 54 if SOC_SERIES_NRF54LX
-	default 91 if SOC_SERIES_NRF91X
+	default 51 if SOC_SERIES_NRF51
+	default 52 if SOC_SERIES_NRF52
+	default 53 if SOC_SERIES_NRF53
+	default 54 if SOC_SERIES_NRF54L
+	default 91 if SOC_SERIES_NRF91
 	default 0 if BOARD_NATIVE_SIM
 	help
 	  Used to ensure binary compatibility.
@@ -125,9 +125,9 @@ config FW_INFO_PROVIDE_ENABLE
 
 config EXT_API_SUPPORTED
 	bool
-	default y if SOC_SERIES_NRF52X
+	default y if SOC_SERIES_NRF52
 	default y if SOC_NRF5340_CPUAPP
-	default y if SOC_SERIES_NRF91X
+	default y if SOC_SERIES_NRF91
 	help
 	  External APIs are supported on the current platform.
 

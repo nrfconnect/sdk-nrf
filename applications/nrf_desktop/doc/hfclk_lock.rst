@@ -36,7 +36,7 @@ Make sure that you have enabled the Bluetooth LE Low Latency Packet Mode (LLPM) 
 Using LLPM connection parameters reduces HID data latency more than enabling the module.
 
 .. note::
-   The module is not supported for nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54HX`).
+   The module is not supported for nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54H`).
 
 Implementation details
 **********************

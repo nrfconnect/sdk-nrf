@@ -19,12 +19,12 @@ if NET_BUF_VARIABLE_DATA_SIZE
 # nRF52 and nRF54 Series targets have less memory
 # so smaller pool sizes are recommended for these targets.
 config NET_PKT_BUF_TX_DATA_POOL_SIZE
-	default 40000 if SOC_SERIES_NRF54HX
-	default 35000 if !SOC_SERIES_NRF52X && !SOC_SERIES_NRF54LX && BUILD_WITH_TFM
-	default 50000 if !SOC_SERIES_NRF52X && !SOC_SERIES_NRF54LX
+	default 40000 if SOC_SERIES_NRF54H
+	default 35000 if !SOC_SERIES_NRF52 && !SOC_SERIES_NRF54L && BUILD_WITH_TFM
+	default 50000 if !SOC_SERIES_NRF52 && !SOC_SERIES_NRF54L
 
 config NET_PKT_BUF_RX_DATA_POOL_SIZE
-	default 20000 if !SOC_SERIES_NRF52X && !SOC_SERIES_NRF54LX
+	default 20000 if !SOC_SERIES_NRF52 && !SOC_SERIES_NRF54L
 
 endif
 

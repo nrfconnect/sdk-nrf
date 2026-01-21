@@ -30,7 +30,7 @@
 
 #define BUTTON_PIN	NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(button0), gpios)
 
-#if defined(CONFIG_SOC_SERIES_NRF53X)
+#if defined(CONFIG_SOC_SERIES_NRF53)
 #define SCK_PIN			NRF_PIN_PORT_TO_PIN_NUMBER(15, 1) /* P1.15 */
 #define MOSI_PIN		NRF_PIN_PORT_TO_PIN_NUMBER(13, 1) /* P1.13 */
 #define NRF_SPIM_N		NRF_SPIM3
@@ -41,7 +41,7 @@
 #define TFM_TIMER_N_IRQ_SIGNAL	TFM_TIMER1_IRQ_SIGNAL
 #define TFM_GPIOTE_N_IRQ_SIGNAL	TFM_GPIOTE0_IRQ_SIGNAL
 
-#elif defined(CONFIG_SOC_SERIES_NRF91X)
+#elif defined(CONFIG_SOC_SERIES_NRF91)
 #define SCK_PIN			NRF_PIN_PORT_TO_PIN_NUMBER(13, 0) /* P0.13 */
 #define MOSI_PIN		NRF_PIN_PORT_TO_PIN_NUMBER(11, 0) /* P0.11 */
 #define NRF_SPIM_N		NRF_SPIM3
@@ -52,7 +52,7 @@
 #define TFM_TIMER_N_IRQ_SIGNAL	TFM_TIMER1_IRQ_SIGNAL
 #define TFM_GPIOTE_N_IRQ_SIGNAL	TFM_GPIOTE0_IRQ_SIGNAL
 
-#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#elif defined(CONFIG_SOC_SERIES_NRF54L)
 #define SCK_PIN			NRF_PIN_PORT_TO_PIN_NUMBER(12, 1) /* P1.12 */
 #define MOSI_PIN		NRF_PIN_PORT_TO_PIN_NUMBER(11, 1) /* P1.11 */
 #define NRF_SPIM_N		NRF_SPIM21
@@ -105,7 +105,7 @@ static void timer_event_clear(NRF_TIMER_Type *timer)
 }
 
 
-#if defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54L)
 psa_flih_result_t tfm_timer10_irq_flih(void)
 #else
 psa_flih_result_t tfm_timer1_irq_flih(void)
@@ -132,7 +132,7 @@ static void gpio_init(uint32_t pin)
 
 	nrf_gpiote_event_enable(NRF_GPIOTE_N, NRF_GPIOTE_CHANNEL);
 
-#if defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54L)
 	nrf_gpiote_int_group_enable(NRF_GPIOTE_N, 0x1,
 				    GPIOTE_INTENSET1_PORT0SECURE_Msk | (1 << NRF_GPIOTE_CHANNEL));
 #else
@@ -140,7 +140,7 @@ static void gpio_init(uint32_t pin)
 #endif
 }
 
-#if defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54L)
 psa_flih_result_t tfm_gpiote20_1_irq_flih(void)
 #else
 psa_flih_result_t tfm_gpiote0_irq_flih(void)

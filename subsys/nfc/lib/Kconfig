@@ -87,7 +87,7 @@ config NFC_LOW_LATENCY_IRQ
 	# NFC low latency interrupt requires software interrupt being supported.
 	default y if $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_EGU)) || \
 		     $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_SWI))
-	depends on !SOC_SERIES_NRF54HX
+	depends on !SOC_SERIES_NRF54H
 	select ZERO_LATENCY_IRQS
 	help
 	  Using this option ensures fast NFC interrupt
@@ -112,25 +112,25 @@ choice NFC_SWI
 
 config NFC_SWI0
 	bool "SWI0"
-	depends on HAS_HW_NRF_EGU0 || HAS_HW_NRF_SWI0 || SOC_SERIES_NRF54LX || SOC_SERIES_NRF71X
+	depends on HAS_HW_NRF_EGU0 || HAS_HW_NRF_SWI0 || SOC_SERIES_NRF54L || SOC_SERIES_NRF71X
 	help
 	  Use SWI0 for NFC.
 
 config NFC_SWI1
 	bool "SWI1"
-	depends on HAS_HW_NRF_EGU1 || HAS_HW_NRF_SWI1 || SOC_SERIES_NRF54LX || SOC_SERIES_NRF71X
+	depends on HAS_HW_NRF_EGU1 || HAS_HW_NRF_SWI1 || SOC_SERIES_NRF54L || SOC_SERIES_NRF71X
 	help
 	  Use SWI1 for NFC.
 
 config NFC_SWI2
 	bool "SWI2"
-	depends on HAS_HW_NRF_EGU2 || HAS_HW_NRF_SWI2 || SOC_SERIES_NRF54LX || SOC_SERIES_NRF71X
+	depends on HAS_HW_NRF_EGU2 || HAS_HW_NRF_SWI2 || SOC_SERIES_NRF54L || SOC_SERIES_NRF71X
 	help
 	  Use SWI2 for NFC.
 
 config NFC_SWI3
 	bool "SWI3"
-	depends on HAS_HW_NRF_EGU3 || HAS_HW_NRF_SWI3 || SOC_SERIES_NRF54LX || SOC_SERIES_NRF71X
+	depends on HAS_HW_NRF_EGU3 || HAS_HW_NRF_SWI3 || SOC_SERIES_NRF54L || SOC_SERIES_NRF71X
 	help
 	  Use SWI3 for NFC.
 

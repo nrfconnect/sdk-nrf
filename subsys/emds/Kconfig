@@ -39,8 +39,8 @@ config EMDS_FLASH_TIME_WRITE_ONE_WORD_US
 	int
 	default 41 if SOC_NRF52840
 	default 43 if SOC_NRF52833
-	default 43 if SOC_SERIES_NRF53X
-	default 28 if SOC_SERIES_NRF54LX
+	default 43 if SOC_SERIES_NRF53
+	default 28 if SOC_SERIES_NRF54L
 	help
 	  Max time to write one word into non-volatile storage (in microseconds).
 	  The word size is 4 bytes. The value is dependent on the
@@ -56,8 +56,8 @@ config EMDS_CHUNK_PREPARATION_TIME_US
 	int
 	default 31 if SOC_NRF52840
 	default 31 if SOC_NRF52833
-	default 31 if SOC_SERIES_NRF53X
-	default 8 if SOC_SERIES_NRF54LX
+	default 31 if SOC_SERIES_NRF53
+	default 8 if SOC_SERIES_NRF54L
 	help
 	  Time that is required to prepare a chunk for storing.
 	  It includes creation chunk from entries, crc calculation and

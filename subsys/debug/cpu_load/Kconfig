@@ -7,8 +7,8 @@
 menuconfig NRF_CPU_LOAD
 	bool "CPU load measurement"
 	select NRFX_GPPI
-	depends on !SOC_SERIES_NRF51X # Lack of required HW events
-	depends on !SOC_SERIES_NRF54HX # Lack of required HW events
+	depends on !SOC_SERIES_NRF51 # Lack of required HW events
+	depends on !SOC_SERIES_NRF54H # Lack of required HW events
 	depends on !RISCV # Lack of required HW events
 	help
 	  Enable the CPU load measurement instrumentation. This tool is using
@@ -42,7 +42,7 @@ endif # LOG
 
 config NRF_CPU_LOAD_ALIGNED_CLOCKS
 	bool "Aligned clock sources"
-	depends on !SOC_SERIES_NRF54LX
+	depends on !SOC_SERIES_NRF54L
 	help
 	  After enabling this option, the sleep period measurement
 	  is done using the same clock source as the active period,
@@ -56,7 +56,7 @@ config NRF_CPU_LOAD_ALIGNED_CLOCKS
 config NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS
 	bool "Use shared DPPI channels"
 	depends on HAS_HW_NRF_DPPIC
-	depends on !SOC_SERIES_NRF54LX
+	depends on !SOC_SERIES_NRF54L
 	help
 	  DPPIC tasks and events can be assigned only to a single channel. When
 	  enabled, module will use channels to which events are already
@@ -68,7 +68,7 @@ config NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS
 
 choice
 	prompt "Timer instance"
-	default NRF_CPU_LOAD_TIMER_20 if SOC_SERIES_NRF54LX
+	default NRF_CPU_LOAD_TIMER_20 if SOC_SERIES_NRF54L
 	default NRF_CPU_LOAD_TIMER_2
 
 config NRF_CPU_LOAD_TIMER_0

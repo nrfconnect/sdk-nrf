@@ -158,7 +158,7 @@ static int http_get_request_send(struct downloader *dl)
 
 	/* nRF91 series has a limitation of decoding ~2k of data at once when using TLS */
 	tls_force_range = (http->sock.proto == NET_IPPROTO_TLS_1_2 &&
-			   !dl->host_cfg.set_native_tls && IS_ENABLED(CONFIG_SOC_SERIES_NRF91X));
+			   !dl->host_cfg.set_native_tls && IS_ENABLED(CONFIG_SOC_SERIES_NRF91));
 	if (tls_force_range) {
 		if (dl->host_cfg.range_override > TLS_RANGE_MAX) {
 			LOG_WRN("Range override > TLS max range, setting to TLS max range");

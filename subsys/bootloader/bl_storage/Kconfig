@@ -6,4 +6,4 @@
 
 config SECURE_BOOT_STORAGE
 	bool "Library for accessing the bootloader storage"
-	select NRFX_RRAMC if SOC_SERIES_NRF54LX && !TRUSTED_EXECUTION_NONSECURE
+	select NRFX_RRAMC if SOC_SERIES_NRF54L && !TRUSTED_EXECUTION_NONSECURE

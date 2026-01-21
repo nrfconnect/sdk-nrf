@@ -23,7 +23,7 @@
 #if IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX)
 #include <nrfx_power.h>
 #endif
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_SOC_SERIES_NRF54H)
 #include <hal/nrf_dppi.h>
 #endif
 #if defined(CONFIG_MPSL_TRIGGER_IPC_TASK_ON_RTC_START)
@@ -60,10 +60,10 @@ BUILD_ASSERT(!DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(rtc0)),
 	     "MPSL reserves RTC0 on this SoC.");
 BUILD_ASSERT(!DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(timer0)),
 	     "MPSL reserves TIMER0 on this SoC.");
-#elif IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX) || IS_ENABLED(CONFIG_SOC_SERIES_NRF71X)
+#elif IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX) || IS_ENABLED(CONFIG_SOC_SERIES_NRF71)
 BUILD_ASSERT(!DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(timer10)),
 	     "MPSL reserves TIMER10 on this SoC.");
-#elif IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX)
+#elif IS_ENABLED(CONFIG_SOC_SERIES_NRF54H)
 BUILD_ASSERT(!DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(timer020)),
 	     "MPSL reserves TIMER020 on this SoC.");
 #else
@@ -75,26 +75,26 @@ BUILD_ASSERT(!DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(timer020)),
 #define MPSL_TIMER_IRQn TIMER0_IRQn
 #define MPSL_RTC_IRQn RTC0_IRQn
 #define MPSL_RADIO_IRQn RADIO_IRQn
-#elif defined(CONFIG_SOC_COMPATIBLE_NRF54LX) || defined(CONFIG_SOC_SERIES_NRF71X)
+#elif defined(CONFIG_SOC_COMPATIBLE_NRF54LX) || defined(CONFIG_SOC_SERIES_NRF71)
 #define MPSL_TIMER_IRQn TIMER10_IRQn
 #define MPSL_RTC_IRQn GRTC_3_IRQn
 #define MPSL_RADIO_IRQn RADIO_0_IRQn
-#elif defined(CONFIG_SOC_SERIES_NRF54HX)
+#elif defined(CONFIG_SOC_SERIES_NRF54H)
 #define MPSL_TIMER_IRQn TIMER020_IRQn
 #define MPSL_RTC_IRQn GRTC_2_IRQn
 #define MPSL_RADIO_IRQn RADIO_0_IRQn
 #endif
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_SOC_SERIES_NRF54H)
 /* Basic build time sanity checking */
 #define MPSL_RESERVED_GRTC_CHANNELS ((1U << 8) | (1U << 9) | (1U << 10) | (1U << 11) | (1U << 12))
-#elif defined(CONFIG_SOC_COMPATIBLE_NRF54LX) || defined(CONFIG_SOC_SERIES_NRF71X)
+#elif defined(CONFIG_SOC_COMPATIBLE_NRF54LX) || defined(CONFIG_SOC_SERIES_NRF71)
 #define MPSL_RESERVED_GRTC_CHANNELS ((1U << 7) | (1U << 8) | (1U << 9) | (1U << 10) | (1U << 11))
 #endif
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX) || \
+#if defined(CONFIG_SOC_SERIES_NRF54H) || \
 	defined(CONFIG_SOC_COMPATIBLE_NRF54LX) || \
-	defined(CONFIG_SOC_SERIES_NRF71X)
+	defined(CONFIG_SOC_SERIES_NRF71)
 
 BUILD_ASSERT(MPSL_RTC_IRQn != DT_IRQN(DT_NODELABEL(grtc)), "MPSL requires a dedicated GRTC IRQ");
 
@@ -112,7 +112,7 @@ BUILD_ASSERT((NRFX_CONFIG_MASK_DT(DT_NODELABEL(grtc), child_owned_channels) &
 	     "The GRTC channels used by MPSL must not be used by zephyr");
 #endif
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_SOC_SERIES_NRF54H)
 #define MPSL_RESERVED_IPCT_SOURCE_CHANNELS (1U << 0)
 #define MPSL_RESERVED_DPPI_SOURCE_CHANNELS (1U << 0)
 #define MPSL_RESERVED_DPPI_SINK_CHANNELS (1U << 0)
@@ -169,11 +169,11 @@ BUILD_ASSERT((IPCT_SOURCE_CHANNELS & MPSL_RESERVED_IPCT_SOURCE_CHANNELS) ==
 
 #endif
 
-#if defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54L)
 BUILD_ASSERT(NRF_CONFIG_CPU_FREQ_MHZ == 128, "Currently mpsl only works when frequency is 128MHz");
 #endif
 
-#if IS_ENABLED(CONFIG_NRF_GRTC_TIMER) && !defined(CONFIG_SOC_SERIES_NRF54HX)
+#if IS_ENABLED(CONFIG_NRF_GRTC_TIMER) && !defined(CONFIG_SOC_SERIES_NRF54H)
 BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_GRTC_TIMER_AUTO_KEEP_ALIVE),
 	     "MPSL requires NRF_GRTC_TIMER_AUTO_KEEP_ALIVE to be enabled when using GRTC timer");
 #endif
@@ -424,7 +424,7 @@ static int32_t mpsl_lib_init_internal(void)
 	}
 #endif /* CONFIG_MPSL_USE_ZEPHYR_PM */
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_SOC_SERIES_NRF54H)
 	/* Secure domain no longer enables DPPI channels for local domains,
 	 * MPSL now has to enable the ones it uses.
 	 */

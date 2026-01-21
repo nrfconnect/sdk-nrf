@@ -33,7 +33,7 @@ if(CONFIG_SOC_NRF7120_ENGA_CPUAPP)
   zephyr_compile_definitions("NRF_CONFIG_CPU_FREQ_MHZ=${clock_frequency_mhz}")
 endif()
 
-if(CONFIG_NRFX_GPPI AND NOT CONFIG_NRFX_GPPI_V1 AND CONFIG_SOC_SERIES_NRF71X)
+if(CONFIG_NRFX_GPPI AND NOT CONFIG_NRFX_GPPI_V1 AND CONFIG_SOC_SERIES_NRF71)
   zephyr_library_sources_ifdef(CONFIG_HAS_HW_NRF_PPI ${helpers_dir}/nrfx_gppi_ppi.c)
   zephyr_library_sources(${BSP_DIR}/stable/soc/interconnect/nrfx_gppi_lumos.c)
   if(CONFIG_HAS_HW_NRF_DPPIC)

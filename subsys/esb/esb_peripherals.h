@@ -17,7 +17,7 @@ extern "C" {
 #include <hal/nrf_egu.h>
 
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_SOC_SERIES_NRF54H)
 
 	/** The ESB EVT IRQ is using EGU on nRF54 devices. */
 	#define ESB_EVT_IRQ_NUMBER EGU020_IRQn
@@ -38,7 +38,7 @@ extern "C" {
 
 	#define ESB_RADIO_INT_END_MASK NRF_RADIO_INT_PHYEND_MASK
 
-#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#elif defined(CONFIG_SOC_SERIES_NRF54L)
 
 	/** The ESB EVT IRQ is using EGU on nRF54 devices. */
 	#define ESB_EVT_IRQ_NUMBER EGU10_IRQn

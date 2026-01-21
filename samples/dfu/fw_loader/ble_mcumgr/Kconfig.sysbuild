@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if SOC_SERIES_NRF54HX
+if SOC_SERIES_NRF54H
 
 config NRF_DEFAULT_IPC_RADIO
 	default y
@@ -12,6 +12,6 @@ config NRF_DEFAULT_IPC_RADIO
 config NETCORE_IPC_RADIO_BT_HCI_IPC
 	default y
 
-endif # SOC_SERIES_NRF54HX
+endif # SOC_SERIES_NRF54H
 
 source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"

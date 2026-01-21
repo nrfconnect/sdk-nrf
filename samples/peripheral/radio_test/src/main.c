@@ -97,7 +97,7 @@ static void clock_init(void)
 	printk("Clock has started\n");
 }
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_SOC_SERIES_NRF54H)
 static void nrf54hx_radio_trim(void)
 {
 	/* Apply HMPAN-102 workaround for nRF54H series */
@@ -156,7 +156,7 @@ static void nrf54hx_radio_trim(void)
 	*(volatile uint32_t *) 0x5302C7B0 = 0x7E768672;
 	*(volatile uint32_t *) 0x5302C7B4 = 0x0406007E;
 }
-#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
+#endif /* defined(CONFIG_SOC_SERIES_NRF54H) */
 
 #else
 BUILD_ASSERT(false, "No Clock Control driver");
@@ -166,7 +166,7 @@ int main(void)
 {
 	printk("Starting Radio Test sample\n");
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_SOC_SERIES_NRF54H)
 	const struct device *console_uart = DEVICE_DT_GET_OR_NULL(DT_CHOSEN(zephyr_console));
 	const struct device *shell_uart = DEVICE_DT_GET_OR_NULL(DT_CHOSEN(zephyr_shell_uart));
 
@@ -185,11 +185,11 @@ int main(void)
 			printk("Failed to get shell UART runtime PM: %d\n", ret);
 		}
 	}
-#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
+#endif /* defined(CONFIG_SOC_SERIES_NRF54H) */
 
 	clock_init();
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_SOC_SERIES_NRF54H)
 	nrf54hx_radio_trim();
 #endif
 

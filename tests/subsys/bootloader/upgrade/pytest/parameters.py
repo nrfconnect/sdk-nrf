@@ -174,5 +174,5 @@ class BuildParameters:
             self.imgtool_params.sha = 512
         if find_in_config(
             sysbuild_config, "SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519"
-        ) and find_in_config(sysbuild_config, "SB_CONFIG_SOC_SERIES_NRF54LX"):
+        ) and find_in_config(sysbuild_config, "SB_CONFIG_SOC_SERIES_NRF54L"):
             self.imgtool_params.hmac_sha = 512

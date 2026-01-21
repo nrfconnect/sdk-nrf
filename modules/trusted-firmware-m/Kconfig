@@ -347,7 +347,7 @@ config TFM_CPU_FREQ_MHZ
 config TFM_NFCT_PINS_AS_GPIOS
 	bool
 	default y if !DT_HAS_NORDIC_NRF_NFCT_ENABLED
-	depends on SOC_NRF5340_CPUAPP || SOC_SERIES_NRF54LX
+	depends on SOC_NRF5340_CPUAPP || SOC_SERIES_NRF54L
 	help
 	  Two pins are usually reserved for NFC in SoCs that implement the
 	  NFCT peripheral. This option switches them to normal GPIO mode.
@@ -509,11 +509,11 @@ config TFM_ALLOW_NON_SECURE_FAULT_HANDLING
 
 config TFM_S_CODE_VECTOR_TABLE_SIZE
 	hex
-	default 0x144 if SOC_SERIES_NRF91X
+	default 0x144 if SOC_SERIES_NRF91
 	default 0x154 if SOC_NRF5340_CPUAPP
 	default 0x4cc if SOC_NRF54LM20A_ENGA_CPUAPP
-	default 0x47c if SOC_SERIES_NRF54LX
-	default 0x504 if SOC_SERIES_NRF71X
+	default 0x47c if SOC_SERIES_NRF54L
+	default 0x504 if SOC_SERIES_NRF71
 	default 0xffffffff # Invalid value to discover missing SOC support.
 	help
 	  The TF-M interrupt vector table size.
@@ -542,7 +542,7 @@ config TFM_NRF_SYSTEM_OFF_SERVICE
 	bool "TF-M System OFF service [EXPERIMENTAL]"
 	depends on TFM_ISOLATION_LEVEL = 1
 	depends on TFM_SFN
-	depends on SOC_SERIES_NRF54LX
+	depends on SOC_SERIES_NRF54L
 	depends on !RETAINED_MEM_NRF_RAM_CTRL
 	select EXPERIMENTAL
 	help

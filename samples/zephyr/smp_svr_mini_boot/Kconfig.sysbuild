@@ -5,16 +5,16 @@
 #
 
 config MCUBOOT_SIGNATURE_USING_KMU
-	default y if SOC_SERIES_NRF54LX
+	default y if SOC_SERIES_NRF54L
 
 config MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE
-	default y if SOC_SERIES_NRF54LX
+	default y if SOC_SERIES_NRF54L
 
 config NRF_DEFAULT_IPC_RADIO
-	default y if SOC_SERIES_NRF54HX
+	default y if SOC_SERIES_NRF54H
 
 config NETCORE_IPC_RADIO_BT_HCI_IPC
-	default y if SOC_SERIES_NRF54HX
+	default y if SOC_SERIES_NRF54H
 
 config MCUBOOT_IMAGES_ROM_END_OFFSET_AUTO
 	default "ipc_radio;ipc_radio_secondary_app" if MCUBOOT_SIGN_MERGED_BINARY

@@ -10,7 +10,7 @@ config PM_PARTITION_SIZE_TFM_SRAM
 	hex
 	prompt "Memory reserved for TFM_RAM" if !TFM_PROFILE_TYPE_MINIMAL
 	default 0x8000 if TFM_PROFILE_TYPE_MINIMAL
-	default 0x18000 if SOC_SERIES_NRF91X && TFM_REGRESSION_S
+	default 0x18000 if SOC_SERIES_NRF91 && TFM_REGRESSION_S
 	# It has been observed for 54L that when Matter is enabled, then
 	# assigning 0x16000 of RAM to TFM will not leave enough RAM for
 	# Matter. So we use 0x13000 of RAM on 54L.
@@ -21,7 +21,7 @@ config PM_PARTITION_SIZE_TFM_SRAM
 	# usage of TFM in crypto samples and it can be changed later if needed.
 	default 0x10000 if SOC_NRF54L10_CPUAPP || SOC_NRF54LV10A_ENGA_CPUAPP || \
 			   SOC_NRF54LM20A_ENGA_CPUAPP
-	default 0x16000 if SOC_SERIES_NRF91X
+	default 0x16000 if SOC_SERIES_NRF91
 	default 0x30000
 	help
 	  Memory set aside for the TFM_SRAM partition.

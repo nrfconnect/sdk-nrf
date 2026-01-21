@@ -18,7 +18,7 @@ function(provision application prefix_name)
   set(PROVISION_HEX_NAME     ${prefix_name}provision.hex)
   set(PROVISION_HEX          ${CMAKE_BINARY_DIR}/${PROVISION_HEX_NAME})
 
-  if(CONFIG_SOC_SERIES_NRF54LX)
+  if(CONFIG_SOC_SERIES_NRF54L)
     set(otp_write_width 4) # OTP writes are in words (4 bytes)
   else()
     set(otp_write_width 2) # OTP writes are in half-words (2 bytes)

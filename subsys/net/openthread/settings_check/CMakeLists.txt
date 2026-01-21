@@ -7,7 +7,7 @@
 # This script checks if NVS settings backend is used with nRF54L SoC target and prints
 # the warning that the recommended backend is ZMS due to the RRAM design.
 
-if((CONFIG_SOC_SERIES_NRF54LX OR CONFIG_SOC_SERIES_NRF54HX) AND CONFIG_SETTINGS_NVS)
+if((CONFIG_SOC_SERIES_NRF54L OR CONFIG_SOC_SERIES_NRF54H) AND CONFIG_SETTINGS_NVS)
     message(WARNING " ###################################################################################\n"
                     " #                                                                                 #\n"
                     " # Your application uses NVS backend for the settings storage that is not          #\n"

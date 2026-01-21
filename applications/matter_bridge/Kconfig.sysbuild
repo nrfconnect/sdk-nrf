@@ -24,7 +24,7 @@ endchoice
 # Enable IEEE802.15.4 serialization to network core
 # This config automatically pulls in the `overlay-802154.conf` in the ipc_radio image
 config NETCORE_IPC_RADIO_IEEE802154
-	default y if SOC_SERIES_NRF53X && !WIFI_NRF70
+	default y if SOC_SERIES_NRF53 && !WIFI_NRF70
 
 if BOOTLOADER_MCUBOOT
 
@@ -39,7 +39,7 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	default y
 
 #### DFU network core configuration
-if SOC_SERIES_NRF53X
+if SOC_SERIES_NRF53
 
 choice MCUBOOT_MODE
 	default MCUBOOT_MODE_OVERWRITE_ONLY
@@ -58,7 +58,7 @@ config NETCORE_APP_UPDATE
 config DFU_MULTI_IMAGE_PACKAGE_NET
 	default y
 
-endif # SOC_SERIES_NRF53X
+endif # SOC_SERIES_NRF53
 
 if BOARD_NRF54LM20DK
 

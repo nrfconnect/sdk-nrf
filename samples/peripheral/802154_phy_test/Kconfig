@@ -51,7 +51,7 @@ config PTT_HW_VERSION
 	range 0 255
 
 config PTT_ANTENNA_DIVERSITY
-	depends on !SOC_SERIES_NRF53X
+	depends on !SOC_SERIES_NRF53
 	depends on NRFX_GPIOTE
 	bool "Enable Antenna Diversity [EXPERIMENTAL]"
 	select EXPERIMENTAL

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if SOC_SERIES_NRF54HX
+if SOC_SERIES_NRF54H
 
 # Enable radiocore
 config NRF_DEFAULT_IPC_RADIO
@@ -16,6 +16,6 @@ config NETCORE_IPC_RADIO_BT_HCI_IPC
 config MCUBOOT_IMAGES_ROM_END_OFFSET_AUTO
 	default "ipc_radio;ipc_radio_secondary_app"
 
-endif # SOC_SERIES_NRF54HX
+endif # SOC_SERIES_NRF54H
 
 source "share/sysbuild/Kconfig"

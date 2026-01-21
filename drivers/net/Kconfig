@@ -41,7 +41,7 @@ config ETH_RTT_CHANNEL
 
 config ETH_RTT_UP_BUFFER_SIZE
 	int "RTT up buffer size"
-	default 256 if SOC_NRF52810 || SOC_SERIES_NRF51X
+	default 256 if SOC_NRF52810 || SOC_SERIES_NRF51
 	default 1024 if SOC_NRF52832
 	default 3072
 	range 16 1048576
@@ -51,7 +51,7 @@ config ETH_RTT_UP_BUFFER_SIZE
 
 config ETH_RTT_DOWN_BUFFER_SIZE
 	int "RTT down buffer size"
-	default 128 if SOC_NRF52810 || SOC_SERIES_NRF51X
+	default 128 if SOC_NRF52810 || SOC_SERIES_NRF51
 	default 512 if SOC_NRF52832
 	default 3072
 	range 16 1048576

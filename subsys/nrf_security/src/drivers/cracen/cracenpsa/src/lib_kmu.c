@@ -12,7 +12,7 @@
 
 #include <nrfx.h>
 
-#if defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54L)
 #include <nrfx_rramc.h>
 #elif defined(CONFIG_SOC_SERIES_NRF71X)
 #include <nrfx_mramc.h>
@@ -85,7 +85,7 @@ int lib_kmu_provision_slot(int slot_id, struct kmu_src *kmu_src)
 	__ASSERT(IS_PTR_ALIGNED_BYTES(kmu_src->dest, 16), "DEST misaligned");
 
 	int result = 1;
-#if defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54L)
 #if defined(__NRF_TFM__)
 	nrf_rramc_config_t rramc_config;
 
@@ -108,7 +108,7 @@ int lib_kmu_provision_slot(int slot_id, struct kmu_src *kmu_src)
 	result = trigger_task_and_wait_for_event_or_error(&(NRF_KMU_S->TASKS_PROVISION),
 							  &(NRF_KMU_S->EVENTS_PROVISIONED));
 
-#if defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54L)
 #if defined(__NRF_TFM__)
 	rramc_config.write_buff_size = orig_write_buf_size;
 	nrf_rramc_config_set(NRF_RRAMC_S, &rramc_config);
@@ -159,7 +159,7 @@ int lib_kmu_block_slot_range(int slot_id, unsigned int slot_count)
 
 int lib_kmu_revoke_slot(int slot_id)
 {
-#if !defined(__NRF_TFM__) && defined(CONFIG_SOC_SERIES_NRF54LX)
+#if !defined(__NRF_TFM__) && defined(CONFIG_SOC_SERIES_NRF54L)
 	nrfx_rramc_write_enable_set(true, 0);
 #elif defined(CONFIG_SOC_SERIES_NRF71X)
 	/* Enable write and erase from KMU to SICR in MRAM */
@@ -171,7 +171,7 @@ int lib_kmu_revoke_slot(int slot_id)
 	int result = trigger_task_and_wait_for_event_or_error(&(NRF_KMU_S->TASKS_REVOKE),
 							      &(NRF_KMU_S->EVENTS_REVOKED));
 
-#if !defined(__NRF_TFM__) && defined(CONFIG_SOC_SERIES_NRF54LX)
+#if !defined(__NRF_TFM__) && defined(CONFIG_SOC_SERIES_NRF54L)
 	nrfx_rramc_write_enable_set(false, 0);
 #elif defined(CONFIG_SOC_SERIES_NRF71X)
 	/* Disable write and erase from KMU to SICR in MRAM */

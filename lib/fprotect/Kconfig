@@ -43,19 +43,19 @@ config FPROTECT_BLOCK_SIZE
 	default NRF_MPU_FLASH_REGION_SIZE if HAS_HW_NRF_MPU
 	default NRF_BPROT_FLASH_REGION_SIZE if HAS_HW_NRF_BPROT
 	default NRF_ACL_FLASH_REGION_SIZE if HAS_HW_NRF_ACL
-	default NRF_RRAM_REGION_SIZE_UNIT if SOC_SERIES_NRF54LX && FLASH
+	default NRF_RRAM_REGION_SIZE_UNIT if SOC_SERIES_NRF54L && FLASH
 	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
 
 menuconfig FPROTECT
 	bool "FPROTECT"
 	depends on SOC_FAMILY_NORDIC_NRF
-	depends on !(SOC_SERIES_NRF54LX && IS_SECURE_BOOTLOADER)
-	depends on !SOC_SERIES_NRF54HX
-	default y if MCUBOOT && (!SOC_SERIES_NRF54LX || (SOC_SERIES_NRF54LX && MCUBOOT_MCUBOOT_IMAGE_NUMBER = -1))
+	depends on !(SOC_SERIES_NRF54L && IS_SECURE_BOOTLOADER)
+	depends on !SOC_SERIES_NRF54H
+	default y if MCUBOOT && (!SOC_SERIES_NRF54L || (SOC_SERIES_NRF54L && MCUBOOT_MCUBOOT_IMAGE_NUMBER = -1))
 	#enabled for nRF54L SoC's when MCUboot is the only one bootloader
-	select NRFX_RRAMC if SOC_SERIES_NRF54LX
+	select NRFX_RRAMC if SOC_SERIES_NRF54L
 	#allow utilization of both nRF54L SoC's RRAMC regions.
-	imply FPROTECT_ALLOW_COMBINED_REGIONS if MCUBOOT && SOC_SERIES_NRF54LX && MCUBOOT_MCUBOOT_IMAGE_NUMBER = -1
+	imply FPROTECT_ALLOW_COMBINED_REGIONS if MCUBOOT && SOC_SERIES_NRF54L && MCUBOOT_MCUBOOT_IMAGE_NUMBER = -1
 	help
 	  Enable the software library FPROTECT that may or may not be used
 	  by other systems to protect flash from writes and possibly also
@@ -84,7 +84,7 @@ config FPROTECT_APP
 
 config FPROTECT_ALLOW_COMBINED_REGIONS
 	bool "Use both RRAMC_regions"
-	depends on SOC_SERIES_NRF54LX && MCUBOOT
+	depends on SOC_SERIES_NRF54L && MCUBOOT
 	help
 	  Intended for use with NRF54L series devices. Gives total of 62kB
 	  lockable memory.
