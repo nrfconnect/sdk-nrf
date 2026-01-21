@@ -226,7 +226,7 @@ static void unicast_group_create(void)
 	}
 
 	/* Populate the stream params arrays */
-	struct group_streams_populate_data data;
+	struct group_streams_populate_data data = {0};
 
 	ret = srv_store_foreach_server(unicast_group_populate, &data);
 	if (ret < 0) {
