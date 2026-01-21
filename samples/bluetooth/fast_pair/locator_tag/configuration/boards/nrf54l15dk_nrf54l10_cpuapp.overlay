@@ -1,8 +1,23 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor ASA
+ * Copyright (c) 2025-2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+
+/ {
+	/* Use antenna configuration for the Bluetooth Channel Sounding that is
+	 * compatible with Android devices.
+	 */
+	cs_antenna_switch: cs-antenna-config {
+		status = "okay";
+		compatible = "nordic,bt-cs-antenna-switch";
+		ant-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>,
+			    <&gpio1 12 GPIO_ACTIVE_HIGH>,
+			    <&gpio1 13 GPIO_ACTIVE_HIGH>,
+			    <&gpio1 14 GPIO_ACTIVE_HIGH>;
+		multiplexing-mode = <0>;
+	};
+};
 
 /* Application does not use cpuflpr core. Assign whole RRAM to cpuapp. */
 &cpuapp_rram {

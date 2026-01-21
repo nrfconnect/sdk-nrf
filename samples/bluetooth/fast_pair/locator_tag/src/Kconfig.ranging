@@ -1,0 +1,57 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config APP_RANGING
+	bool "Enable the application ranging module"
+	default y
+	select BT_CHANNEL_SOUNDING
+	select BT_FAST_PAIR_FMDN_PF
+	select BT_RAS
+	select BT_RAS_RRSP
+	depends on HAS_HW_NRF_RADIO_CS
+	help
+	  Enable the application ranging using the Precision Finding feature
+	  for the Find My Device Network (FMDN) extension.
+
+	  The module is only available for targets that support the Bluetooth
+	  Low Energy (BLE) Channel Sounding (CS) as the ranging technology.
+
+if APP_RANGING
+
+# Override the default Bluetooth configuration that is required by this ranging module.
+config BT_TRANSMIT_POWER_CONTROL
+	default y
+	help
+	  Enable the transmit power control to allow CS and ACL to use different PHYs.
+
+config BT_CTLR_CHANNEL_SOUNDING_TEST
+	default n
+	help
+	  Disable the Channel Sounding test command to optimize memory usage.
+
+choice BT_CTLR_SDC_CS_ROLE
+	default BT_CTLR_SDC_CS_ROLE_REFLECTOR_ONLY
+	help
+	Enable the Reflector role only to optimize memory usage.
+
+endchoice
+
+config BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
+	default 2
+	help
+	  Support the ranging with 2 antennas in the case the Initiator has 2 antennas.
+
+config BT_RAS_MAX_ANTENNA_PATHS
+	default 2
+	help
+	  Support the ranging with 2 antennas in the case the Initiator has 2 antennas.
+
+config BT_RAS_MODE_3_SUPPORTED
+	default n
+	help
+	  Disable unnecessary features to optimize memor usage.
+
+endif # APP_RANGING
