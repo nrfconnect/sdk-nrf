@@ -237,21 +237,22 @@ static int parse_raw_tx_configure_args(const struct shell *sh,
 				       char *argv[],
 				       int *flags, int *rate, int *queue)
 {
-	struct getopt_state *state;
+	struct sys_getopt_state *state;
 	int opt;
-	static struct option long_options[] = {{"rate-flags", required_argument, 0, 'f'},
-					       {"data-rate", required_argument, 0, 'd'},
-					       {"queue-number", required_argument, 0, 'q'},
-					       {"help", no_argument, 0, 'h'},
-					       {0, 0, 0, 0}};
+	static struct sys_getopt_option long_options[] = {
+		{"rate-flags", sys_getopt_required_argument, 0, 'f'},
+		{"data-rate", sys_getopt_required_argument, 0, 'd'},
+		{"queue-number", sys_getopt_required_argument, 0, 'q'},
+		{"help", sys_getopt_no_argument, 0, 'h'},
+		{0, 0, 0, 0}};
 	int opt_index = 0;
 	int opt_num = 0;
 
-	while ((opt = getopt_long(argc, argv, "f:d:q:h", long_options, &opt_index)) != -1) {
-		state = getopt_state_get();
+	while ((opt = sys_getopt_long(argc, argv, "f:d:q:h", long_options, &opt_index)) != -1) {
+		state = sys_getopt_state_get();
 		switch (opt) {
 		case 'f':
-			*flags = atoi(optarg);
+			*flags = atoi(state->optarg);
 			if (!validate(*flags, NRF_WIFI_FMAC_RAWTX_MODE_LEGACY,
 				      NRF_WIFI_FMAC_RAWTX_MODE_HE_ER_SU, "Rate Flags")) {
 				return -ENOEXEC;
@@ -259,14 +260,14 @@ static int parse_raw_tx_configure_args(const struct shell *sh,
 			opt_num++;
 			break;
 		case 'd':
-			*rate = atoi(optarg);
+			*rate = atoi(state->optarg);
 			if (!validate_rate(*rate, *flags)) {
 				return -ENOEXEC;
 			}
 			opt_num++;
 			break;
 		case 'q':
-			*queue = atoi(optarg);
+			*queue = atoi(state->optarg);
 			if (!validate(*queue, 0, 4, "Queue Number")) {
 				return -ENOEXEC;
 			}
@@ -314,44 +315,45 @@ static int cmd_configure_raw_tx_pkt(
 	return 0;
 }
 
-static int parse_raw_tx_send_args(const struct shell *sh,
-				  size_t argc, char *argv[],
-				  char **tx_mode, int *pkt_num, int *time_delay)
+static int parse_raw_tx_send_args(const struct shell *sh, size_t argc, char *argv[], char **tx_mode,
+				  int *pkt_num, int *time_delay)
 {
-	struct getopt_state *state;
+	struct sys_getopt_state *state;
 	int opt;
-	static struct option long_options[] = {{"mode", required_argument, 0, 'm'},
-					       {"num-pkts", required_argument, 0, 'n'},
-					       {"inter-frame-delay", required_argument, 0, 't'},
-					       {"help", no_argument, 0, 'h'},
-					       {0, 0, 0, 0}};
+	static struct sys_getopt_option long_options[] = {
+		{"mode", sys_getopt_required_argument, 0, 'm'},
+		{"num-pkts", sys_getopt_required_argument, 0, 'n'},
+		{"inter-frame-delay", sys_getopt_required_argument, 0, 't'},
+		{"help", sys_getopt_no_argument, 0, 'h'},
+		{0, 0, 0, 0}};
 	int opt_index = 0;
 	int opt_num = 0;
 
-	while ((opt = getopt_long(argc, argv, "m:n:t:h", long_options, &opt_index)) != -1) {
-		state = getopt_state_get();
+	while ((opt = sys_getopt_long(argc, argv, "m:n:t:h", long_options, &opt_index)) != -1) {
+		state = sys_getopt_state_get();
 		switch (opt) {
 		case 'm':
-			if (!((strcmp(optarg, "fixed") == 0) ||
-			    (strcmp(optarg, "continuous") == 0))) {
-				LOG_ERR("Invalid mode %s", optarg);
+			if (!((strcmp(state->optarg, "fixed") == 0) ||
+			    (strcmp(state->optarg, "continuous") == 0))) {
+				LOG_ERR("Invalid mode %s", state->optarg);
 				return -ENOEXEC;
 			}
-			*tx_mode = optarg;
+			*tx_mode = state->optarg;
 			opt_num++;
 			break;
 		case 't':
-			*time_delay = atoi(optarg);
+			*time_delay = atoi(state->optarg);
 			if (*time_delay < 0) {
-				LOG_ERR("Invalid delay %d", atoi(optarg));
+				LOG_ERR("Invalid delay %d", atoi(state->optarg));
 				return -ENOEXEC;
 			}
 			opt_num++;
 			break;
 		case 'n':
-			*pkt_num = (strcmp(*tx_mode, "continuous") == 0) ? INT_MAX : atoi(optarg);
+			*pkt_num = (strcmp(*tx_mode, "continuous") == 0) ? INT_MAX
+									 : atoi(state->optarg);
 			if (*pkt_num <= 0) {
-				LOG_ERR("Invalid num of packets %d", atoi(optarg));
+				LOG_ERR("Invalid num of packets %d", atoi(state->optarg));
 				return -ENOEXEC;
 			}
 			opt_num++;
