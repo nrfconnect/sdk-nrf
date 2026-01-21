@@ -55,7 +55,7 @@ config HEAP_MEM_POOL_SIZE
 config NRF_RPC_IPC_SERVICE_BIND_TIMEOUT_MS
 	int "Timeout while waiting for the endpoint to bind in ms"
 	range 1 1000
-	default 500 if SOC_SERIES_NRF54HX
+	default 500 if SOC_SERIES_NRF54H
 	default 100
 	help
 	  Time in miliseconds to wait for endpoint binding.

@@ -10,7 +10,7 @@ config SECURE_BOOT
 	bool "Use Secure Bootloader"
 	depends on !IS_SECURE_BOOTLOADER
 	select FW_INFO
-	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
+	select SW_VECTOR_RELAY if SOC_SERIES_NRF51
 	help
 	  Set this option to enable the first stage bootloader which
 	  verifies the signature of the app.
@@ -27,7 +27,7 @@ endif # SECURE_BOOT
 
 config PM_PARTITION_SIZE_PROVISION
 	hex
-	default 0x280 if SOC_SERIES_NRF91X || SOC_NRF5340_CPUAPP # Stored in OTP region
+	default 0x280 if SOC_SERIES_NRF91 || SOC_NRF5340_CPUAPP # Stored in OTP region
 	# Monotonic counter slot takes 4 bytes on nRF54L Series
 	default 0x460 if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP || \
 			 SOC_NRF54LV10A_ENGA_CPUAPP || SOC_NRF54LM20A_ENGA_CPUAPP
@@ -45,9 +45,9 @@ config B0_MIN_PARTITION_SIZE
 
 config PM_PARTITION_SIZE_B0_IMAGE
 	hex "Flash space reserved for B0_IMAGE"
-	default 0x8000 if !B0_MIN_PARTITION_SIZE && (SOC_SERIES_NRF91X || SOC_NRF5340_CPUAPP || SOC_NRF52840)
+	default 0x8000 if !B0_MIN_PARTITION_SIZE && (SOC_SERIES_NRF91 || SOC_NRF5340_CPUAPP || SOC_NRF52840)
 	default 0x7800 if !B0_MIN_PARTITION_SIZE && (SOC_NRF5340_CPUNET)
-	default FPROTECT_BLOCK_SIZE if SOC_SERIES_NRF91X || SOC_NRF5340_CPUAPP
+	default FPROTECT_BLOCK_SIZE if SOC_SERIES_NRF91 || SOC_NRF5340_CPUAPP
 	default 0x3800 if SOC_NRF5340_CPUNET
 	default 0x7800 if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP || \
 			  SOC_NRF54LV10A_ENGA_CPUAPP || SOC_NRF54LM20A_ENGA_CPUAPP
@@ -60,8 +60,8 @@ menuconfig IS_SECURE_BOOTLOADER
 	bool "Current app is bootloader"
 	select SECURE_BOOT_VALIDATION
 	select SECURE_BOOT_STORAGE
-	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
-	imply NRFX_NVMC if !SOC_SERIES_NRF54LX
+	select SW_VECTOR_RELAY if SOC_SERIES_NRF51
+	imply NRFX_NVMC if !SOC_SERIES_NRF54L
 	help
 	  This option is set by the first stage bootloader app to include all
 	  files and set all the options required.

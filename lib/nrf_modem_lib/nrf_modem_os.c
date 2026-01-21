@@ -16,11 +16,11 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 
-#if CONFIG_SOC_SERIES_NRF91X
+#if CONFIG_SOC_SERIES_NRF91
 #include <pm_config.h>
 #define SHMEM_TX_HEAP_ADDR (PM_NRF_MODEM_LIB_TX_ADDRESS)
 #define SHMEM_TX_HEAP_SIZE (CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE)
-#elif CONFIG_SOC_SERIES_NRF92X
+#elif CONFIG_SOC_SERIES_NRF92
 #define SHMEM_TX_HEAP_ADDR (DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm_heap)))
 #define SHMEM_TX_HEAP_SIZE (DT_REG_SIZE(DT_NODELABEL(cpuapp_cpucell_ipc_shm_heap)))
 #endif
@@ -385,7 +385,7 @@ void *nrf_modem_os_shm_tx_alloc(size_t bytes)
 {
 	extern uint32_t nrf_modem_lib_shmem_failed_allocs;
 
-#if (CONFIG_SOC_SERIES_NRF92X && CONFIG_DCACHE)
+#if (CONFIG_SOC_SERIES_NRF92 && CONFIG_DCACHE)
 	/* Allocate cache line aligned memory. */
 	void * const addr = k_heap_aligned_alloc(&nrf_modem_lib_shmem_heap, CONFIG_DCACHE_LINE_SIZE,
 				    ROUND_UP(bytes, CONFIG_DCACHE_LINE_SIZE), K_NO_WAIT);

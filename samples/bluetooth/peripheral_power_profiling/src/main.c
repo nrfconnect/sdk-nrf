@@ -653,7 +653,7 @@ static void reset_reason_print(void)
 
 static void system_off(void)
 {
-#if !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX)
+#if !IS_ENABLED(CONFIG_SOC_SERIES_NRF54H)
 	printk("Powering off\n");
 
 	/* Clear the reset reason if it didn't do previously. */
@@ -674,7 +674,7 @@ static void system_off(void)
 	}
 
 	sys_poweroff();
-#endif /* !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) */
+#endif /* !IS_ENABLED(CONFIG_SOC_SERIES_NRF54H) */
 }
 
 static void system_off_work_handler(struct k_work *work)
@@ -686,11 +686,11 @@ static void advertising_terminated(struct bt_le_ext_adv *adv, struct bt_le_ext_a
 {
 	if (!device_conn) {
 		printk("Adverting set %p, terminated.\n", (void *)adv);
-#if !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX)
+#if !IS_ENABLED(CONFIG_SOC_SERIES_NRF54H)
 		printk("Scheduling system off\n");
 
 		k_work_schedule(&system_off_work, K_SECONDS(1));
-#endif /* !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) */
+#endif /* !IS_ENABLED(CONFIG_SOC_SERIES_NRF54H) */
 	}
 }
 

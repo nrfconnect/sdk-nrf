@@ -5,7 +5,7 @@
 
 config SOC_NRF54LS05B
 	bool
-	select SOC_SERIES_NRF54LX
+	select SOC_SERIES_NRF54L
 	help
 	  NRF54LS05B
 
@@ -23,7 +23,7 @@ config SOC_NRF54LS05B_ENGA_CPUAPP
 
 config SOC_NRF54LV10A
 	bool
-	select SOC_SERIES_NRF54LX
+	select SOC_SERIES_NRF54L
 	help
 	  NRF54LV10A
 

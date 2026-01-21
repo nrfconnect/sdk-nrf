@@ -22,11 +22,11 @@
 #include <mpsl/mpsl_lib.h>
 #endif
 
-#if defined(CONFIG_SOC_SERIES_NRF52X)
+#if defined(CONFIG_SOC_SERIES_NRF52)
 	#define EMDS_DEV_IRQ SWI1_EGU1_IRQn
-#elif defined(CONFIG_SOC_SERIES_NRF53X)
+#elif defined(CONFIG_SOC_SERIES_NRF53)
 	#define EMDS_DEV_IRQ EGU1_IRQn
-#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#elif defined(CONFIG_SOC_SERIES_NRF54L)
 	#define EMDS_DEV_IRQ SWI01_IRQn
 #endif
 

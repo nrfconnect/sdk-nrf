@@ -17,7 +17,7 @@ int main(void)
 
 	printk("Starting Direct Test Mode sample\n");
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_SOC_SERIES_NRF54H)
 	const struct device *dtm_uart = DEVICE_DT_GET_OR_NULL(DT_CHOSEN(ncs_dtm_uart));
 
 	if (dtm_uart != NULL) {
@@ -27,7 +27,7 @@ int main(void)
 			printk("Failed to get DTM UART runtime PM: %d\n", ret);
 		}
 	}
-#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
+#endif /* defined(CONFIG_SOC_SERIES_NRF54H) */
 
 	err = dtm_tr_init();
 	if (err) {

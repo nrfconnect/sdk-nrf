@@ -92,7 +92,7 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 #define RADIO_NORMAL_SW_SHORTS                                                                     \
 	(RADIO_RSSI_SHORTS | NRF_RADIO_SHORT_READY_START_MASK | ESB_RADIO_SHORT_END_DISABLE)
 
-#if defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54L)
 #define RADIO_SHORTS_MONITOR \
 		(NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK | NRF_RADIO_SHORT_PHYEND_START_MASK | \
 		NRF_RADIO_SHORT_READY_START_MASK)
@@ -100,7 +100,7 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 #define RADIO_SHORTS_MONITOR \
 		(NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK | NRF_RADIO_SHORT_END_START_MASK | \
 		NRF_RADIO_SHORT_READY_START_MASK)
-#endif /* !defined(CONFIG_SOC_SERIES_NRF54LX) */
+#endif /* !defined(CONFIG_SOC_SERIES_NRF54L) */
 
 /* Define empty shorts for nRF52 devices. These shorts are used only for fast switching. */
 #if !defined(RADIO_SHORTS_TXREADY_START_Msk)
@@ -672,7 +672,7 @@ static void update_radio_addresses(uint8_t update_mask)
 	}
 }
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF54L)
 static nrf_radio_txpower_t dbm_to_nrf_radio_txpower(int8_t tx_power)
 {
 	switch (tx_power) {
@@ -832,9 +832,9 @@ static nrf_radio_txpower_t dbm_to_nrf_radio_txpower(int8_t tx_power)
 		return RADIO_TXPOWER_TXPOWER_0dBm;
 	}
 }
-#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX) */
+#endif /* defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF54L) */
 
-#if !(defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX))
+#if !(defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF54L))
 static mpsl_phy_t convert_bitrate_to_mpsl_phy(enum esb_bitrate bitrate)
 {
 	switch (bitrate) {
@@ -853,11 +853,11 @@ static mpsl_phy_t convert_bitrate_to_mpsl_phy(enum esb_bitrate bitrate)
 	default: return MPSL_PHY_NRF_1Mbit;
 	}
 }
-#endif /* !(defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX)) */
+#endif /* !(defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF54L)) */
 
 static void update_radio_tx_power(void)
 {
-#if !(defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX))
+#if !(defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF54L))
 	int32_t err;
 	mpsl_tx_power_split_t tx_power;
 
@@ -885,7 +885,7 @@ static void update_radio_tx_power(void)
 	nrf_radio_txpower_set(NRF_RADIO, tx_power.radio_tx_power);
 #else
 	nrf_radio_txpower_set(NRF_RADIO, dbm_to_nrf_radio_txpower(esb_cfg.tx_output_power));
-#endif /* !(defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX)) */
+#endif /* !(defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF54L)) */
 }
 
 static bool update_radio_bitrate(enum esb_bitrate bitrate)

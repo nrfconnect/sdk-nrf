@@ -6,7 +6,7 @@
 
 config MPSL_USE_ZEPHYR_PM
 	bool "Use Zephyr's Power Management API"
-	depends on SOC_SERIES_NRF54HX
+	depends on SOC_SERIES_NRF54H
 	depends on MPSL
 	depends on PM
 	default y

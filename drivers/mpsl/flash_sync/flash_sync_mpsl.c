@@ -73,7 +73,7 @@ static uint32_t get_timeslot_time_us(void)
 #else
 	nrf_timer_task_trigger(NRF_TIMER0, NRF_TIMER_TASK_CAPTURE0);
 	return nrf_timer_cc_get(NRF_TIMER0, NRF_TIMER_CC_CHANNEL0);
-#endif /* SOC_SERIES_NRF54LX */
+#endif /* CONFIG_SOC_COMPATIBLE_NRF54LX */
 }
 
 static void reschedule_next_timeslot(void)
@@ -260,5 +260,5 @@ bool nrf_flash_sync_check_time_limit(uint32_t iteration)
 	uint32_t now_us = get_timeslot_time_us();
 	uint32_t time_per_iteration_us = now_us / iteration;
 	return now_us + time_per_iteration_us >= _context.request_length_us;
-#endif /* SOC_SERIES_NRF54LX */
+#endif /* CONFIG_SOC_COMPATIBLE_NRF54LX || CONFIG_SOC_NRF54H20 */
 }

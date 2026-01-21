@@ -23,7 +23,7 @@ config DFU_ZIP_NET
 	bool "Network core update"
 	depends on SUPPORT_NETCORE
 	depends on !NETCORE_NONE
-	depends on (SECURE_BOOT_NETCORE && NETCORE_APP_UPDATE) || SOC_SERIES_NRF54HX
+	depends on (SECURE_BOOT_NETCORE && NETCORE_APP_UPDATE) || SOC_SERIES_NRF54H
 	default y
 	help
 	  Include network-core update in DFU zip.

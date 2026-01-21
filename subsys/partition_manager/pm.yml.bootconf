@@ -1,6 +1,6 @@
-#if defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54L)
 bootconf:
   address: 0xffd080
   region: bootconf
   size: 0x4
-#endif /* CONFIG_SOC_SERIES_NRF54LX */
+#endif /* CONFIG_SOC_SERIES_NRF54L */

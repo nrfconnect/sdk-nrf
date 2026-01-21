@@ -40,7 +40,7 @@ config USE_BLUETOOTH_RADIO_EVENTS
 	bool
 	default y
 	select BT
-	depends on SOC_SERIES_NRF52X
+	depends on SOC_SERIES_NRF52
 
 if USE_BLUETOOTH_RADIO_EVENTS
 

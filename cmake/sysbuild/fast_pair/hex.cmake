@@ -79,7 +79,7 @@ endfunction()
 function(fast_pair_hex_dts)
   include(${CMAKE_CURRENT_LIST_DIR}/../suit_utilities.cmake)
 
-  if(NOT SB_CONFIG_SOC_SERIES_NRF54HX)
+  if(NOT SB_CONFIG_SOC_SERIES_NRF54H)
     message(FATAL_ERROR "Fast Pair data provisioning using DTS partitions is only supported"
                         "for nRF54H series.")
   endif()

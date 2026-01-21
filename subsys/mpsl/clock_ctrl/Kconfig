@@ -8,8 +8,8 @@ config MPSL_USE_EXTERNAL_CLOCK_CONTROL
 	bool "Use external clock control [EXPERIMENTAL]"
 	depends on MPSL
 	select CLOCK_CONTROL
-	default y if SOC_SERIES_NRF54HX
-	select EXPERIMENTAL if SOC_SERIES_NRF52X || SOC_SERIES_NRF53X
+	default y if SOC_SERIES_NRF54H
+	select EXPERIMENTAL if SOC_SERIES_NRF52 || SOC_SERIES_NRF53
 	help
 	  This option configures MPSL to use an external clock driver, and
 	  not the clock driver provided as part of the MPSL library.
@@ -29,7 +29,7 @@ config MPSL_EXT_CLK_CTRL_CLOCK_REQUEST_WAIT_TIMEOUT_MS
 config MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST
 	bool "Request for a non-volatile memory clock"
 	depends on CLOCK_CONTROL_NRF_HSFLL_GLOBAL
-	depends on SOC_SERIES_NRF54HX
+	depends on SOC_SERIES_NRF54H
 	default y
 	help
 	  This option enables MPSL to request a clock for non-volatile memory,
@@ -38,7 +38,7 @@ config MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST
 
 config MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW
 	bool "Workaround for LFCLK request timeout"
-	depends on SOC_SERIES_NRF54HX
+	depends on SOC_SERIES_NRF54H
 	default y
 	help
 	  This option enables a workaround in MPSL external clock control

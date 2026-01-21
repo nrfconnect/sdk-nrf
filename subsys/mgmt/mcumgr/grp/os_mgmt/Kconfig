@@ -24,7 +24,7 @@ config MCUMGR_GRP_OS_REBOOT_BT
 	default y
 	depends on MCUMGR_GRP_OS
 	depends on (BT || MPSL)
-	depends on SOC_SERIES_NRF54LX
+	depends on SOC_SERIES_NRF54L
 	select MCUMGR_MGMT_NOTIFICATION_HOOKS
 	select MCUMGR_GRP_OS_RESET_HOOK
 

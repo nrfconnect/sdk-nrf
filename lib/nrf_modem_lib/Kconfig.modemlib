@@ -40,7 +40,7 @@ config NRF_MODEM_LIB_SHMEM_CTRL_SIZE
 	  This is a constant for a given library build, and is exported
 	  by the library via NRF_MODEM_SHMEM_CTRL_SIZE.
 
-if SOC_SERIES_NRF91X || UNITY
+if SOC_SERIES_NRF91 || UNITY
 
 config NRF_MODEM_LIB_SHMEM_TX_SIZE
 	int "TX region size"
@@ -75,9 +75,9 @@ config NRF_MODEM_LIB_SHMEM_TRACE_SIZE
 	help
 	  Size of the shared memory region used to receive modem traces.
 
-endif # SOC_SERIES_NRF91X || UNITY
+endif # SOC_SERIES_NRF91 || UNITY
 
-if SOC_SERIES_NRF92X
+if SOC_SERIES_NRF92
 
 config NRF_MODEM_LIB_TRANSPORT_MBOX
 	bool
@@ -87,7 +87,7 @@ config NRF_MODEM_LIB_TRANSPORT_MBOX
 	select IPC_SERVICE_ICMSG
 	select IPC_SERVICE_ICMSG_SHMEM_ACCESS_SYNC
 
-endif # SOC_SERIES_NRF92X
+endif # SOC_SERIES_NRF92
 
 config NRF_MODEM_LIB_SENDMSG_BUF_SIZE
 	int "Size of the sendmsg intermediate buffer"
@@ -130,7 +130,7 @@ endmenu # Memory config
 
 menuconfig NRF_MODEM_LIB_TRACE
 	bool "Tracing"
-	depends on SOC_SERIES_NRF91X || SOC_SERIES_NRF92X || UNITY
+	depends on SOC_SERIES_NRF91 || SOC_SERIES_NRF92 || UNITY
 	help
 	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
 	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.

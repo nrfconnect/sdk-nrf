@@ -159,7 +159,7 @@ choice TRUSTED_STORAGE_STORAGE_BACKEND
 
 config TRUSTED_STORAGE_STORAGE_BACKEND_SETTINGS
 	bool "Settings storage backend"
-	depends on SETTINGS_ZMS || SETTINGS_ZMS_LEGACY || (SETTINGS_NVS && !SOC_SERIES_NRF54LX)
+	depends on SETTINGS_ZMS || SETTINGS_ZMS_LEGACY || (SETTINGS_NVS && !SOC_SERIES_NRF54L)
 	help
 	  Use the Settings subsystem to store the assets
 

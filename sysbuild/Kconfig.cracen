@@ -4,7 +4,7 @@
 
 config SUPPORT_CRACEN
 	bool
-	default y if SOC_SERIES_NRF54LX
+	default y if SOC_SERIES_NRF54L
 	help
 	  Hidden symbol indicating if CRACEN is supported on the device.
 

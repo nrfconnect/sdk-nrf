@@ -58,7 +58,7 @@ config MCUBOOT_BUILD_DIRECT_XIP_VARIANT
 
 menuconfig MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 	bool "Downgrade prevention using hardware security counters"
-	depends on (SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X || SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX)
+	depends on (SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91 || SOC_SERIES_NRF54L || SOC_SERIES_NRF54H)
 	depends on !SECURE_BOOT_APPCORE
 	depends on !QSPI_XIP_SPLIT_IMAGE
 	help
@@ -74,9 +74,9 @@ if MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
 	int "Number of available hardware counter slots"
 	default 240
-	range 2 288 if SOC_SERIES_NRF54LX
+	range 2 288 if SOC_SERIES_NRF54L
 	range 2 300
-	depends on !SOC_SERIES_NRF54HX
+	depends on !SOC_SERIES_NRF54H
 	help
 	  When MCUBOOT_HW_DOWNGRADE_PREVENTION is enabled, MCUboot will use one hardware counter
 	  for each updatable image (UPDATEABLE_IMAGE_NUMBER). This configuration specifies how many
@@ -88,8 +88,8 @@ config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
 config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE
 	int "Security counter value"
 	default 1
-	range 1 65535 if !SOC_SERIES_NRF54HX
-	range 1 4294967295 if SOC_SERIES_NRF54HX
+	range 1 65535 if !SOC_SERIES_NRF54H
+	range 1 4294967295 if SOC_SERIES_NRF54H
 	help
 	  The security counter value for this image.
 	  This is the value that will be passed to the --security-counter parameter of imgtool.py
@@ -176,8 +176,8 @@ if BOOTLOADER_MCUBOOT
 
 choice BOOT_SIGNATURE_TYPE
 	default BOOT_SIGNATURE_TYPE_RSA if THINGY91_STATIC_PARTITIONS_FACTORY
-	default BOOT_SIGNATURE_TYPE_ED25519 if SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX
-	default BOOT_SIGNATURE_TYPE_ECDSA_P256 if ((SOC_NRF52840 || SOC_SERIES_NRF91X) && !BOARD_THINGY91_NRF9160 && !BOARD_THINGY91_NRF52840)
+	default BOOT_SIGNATURE_TYPE_ED25519 if SOC_SERIES_NRF54L || SOC_SERIES_NRF54H
+	default BOOT_SIGNATURE_TYPE_ECDSA_P256 if ((SOC_NRF52840 || SOC_SERIES_NRF91) && !BOARD_THINGY91_NRF9160 && !BOARD_THINGY91_NRF52840)
 	default BOOT_SIGNATURE_TYPE_ECDSA_P256 if SECURE_BOOT_APPCORE
 
 endchoice
@@ -189,7 +189,7 @@ endchoice
 
 config BOOT_SIGNATURE_TYPE_PURE
 	bool "Verify signature directly over image"
-	depends on SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX
+	depends on SOC_SERIES_NRF54L || SOC_SERIES_NRF54H
 	depends on BOOT_SIGNATURE_TYPE_ED25519
 	help
 	  The image signature will be verified over image rather than
@@ -200,13 +200,13 @@ config BOOT_SIGNATURE_TYPE_PURE
 config BOOT_IMG_HASH_ALG_SHA512
 	bool "Use SHA512 for image hash calculation"
 	depends on BOOT_SIGNATURE_TYPE_ED25519
-	default y if SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX
+	default y if SOC_SERIES_NRF54L || SOC_SERIES_NRF54H
 	help
 	  The image hash will be calculated using SHA512 algorithm.
 
 config MCUBOOT_SIGNATURE_USING_KMU
 	bool "Use KMU stored keys for signature verification"
-	depends on SOC_SERIES_NRF54LX
+	depends on SOC_SERIES_NRF54L
 	depends on BOOT_SIGNATURE_TYPE_ED25519
 	help
 	  The device needs to be provisioned with proper set of keys.
@@ -214,7 +214,7 @@ config MCUBOOT_SIGNATURE_USING_KMU
 config MCUBOOT_SIGNATURE_KMU_UROT_MAPPING
 	bool "Use original UROT KMU key mapping [DEPRECATED]"
 	depends on MCUBOOT_SIGNATURE_USING_KMU
-	depends on SOC_SERIES_NRF54LX
+	depends on SOC_SERIES_NRF54L
 	depends on !SECURE_BOOT_APPCORE
 	select DEPRECATED
 	help
@@ -225,7 +225,7 @@ config MCUBOOT_SIGNATURE_KMU_UROT_MAPPING
 
 config MCUBOOT_SIGNATURE_USING_ITS
 	bool "Use ITS stored keys for signature verification [EXPERIMENTAL]"
-	depends on SOC_SERIES_NRF54HX
+	depends on SOC_SERIES_NRF54H
 	select EXPERIMENTAL
 	help
 	  The device needs to be provisioned with proper set of keys.
@@ -233,12 +233,12 @@ config MCUBOOT_SIGNATURE_USING_ITS
 config BOOT_SHARED_CRYPTO_ECDSA_P256
 	bool "Use external crypto from NSIB for ECDSA P256 signature"
 	depends on SECURE_BOOT_APPCORE && SECURE_BOOT_SIGNATURE_TYPE_ECDSA
-	depends on BOOT_SIGNATURE_TYPE_ECDSA_P256 && !SOC_SERIES_NRF54LX
+	depends on BOOT_SIGNATURE_TYPE_ECDSA_P256 && !SOC_SERIES_NRF54L
 	default y
 
 config MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE
 	bool "Generate default keyfile for provisioning during build"
-	depends on SOC_SERIES_NRF54LX
+	depends on SOC_SERIES_NRF54L
 	depends on MCUBOOT_SIGNATURE_USING_KMU
 	help
 	  If enabled, the build system will generate keyfile.json file in the build directory.

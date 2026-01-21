@@ -19,9 +19,9 @@
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #include <zephyr/sys/__assert.h>
-#if !(defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX))
+#if !(defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF54L))
 #include <hal/nrf_nvmc.h>
-#endif /* !defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX) */
+#endif /* !defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF54L) */
 
 #include <hal/nrf_egu.h>
 #include <hal/nrf_radio.h>
@@ -45,13 +45,13 @@
 #include <zephyr/drivers/mbox.h>
 #endif /* NRF54H_ERRATA_216_PRESENT */
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_SOC_SERIES_NRF54H)
 	#define DEFAULT_TIMER_INSTANCE            020
 	#define RADIO_IRQn                        RADIO_0_IRQn
 	#define DTM_EGU                           NRF_EGU020
 	#define DTM_RADIO_SHORT_READY_START_MASK  NRF_RADIO_SHORT_READY_START_MASK
 	#define DTM_RADIO_SHORT_END_DISABLE_MASK  NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
-#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#elif defined(CONFIG_SOC_SERIES_NRF54L)
 	#define DEFAULT_TIMER_INSTANCE            10
 	#define RADIO_IRQn                        RADIO_0_IRQn
 	#define DTM_EGU                           NRF_EGU10
@@ -63,7 +63,7 @@
 	#define DTM_EGU                           NRF_EGU0
 	#define DTM_RADIO_SHORT_READY_START_MASK  NRF_RADIO_SHORT_READY_START_MASK
 	#define DTM_RADIO_SHORT_END_DISABLE_MASK  NRF_RADIO_SHORT_END_DISABLE_MASK
-#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
+#endif /* defined(CONFIG_SOC_SERIES_NRF54H) */
 
 /* Default timer used for timing. */
 #define DEFAULT_TIMER_IRQ          NRFX_CONCAT_3(TIMER,			 \
@@ -1232,7 +1232,7 @@ int dtm_init(dtm_iq_report_callback_t callback)
 		return err;
 	}
 
-#if defined(CONFIG_SOC_SERIES_NRF54HX)
+#if defined(CONFIG_SOC_SERIES_NRF54H)
 	/* Apply HMPAN-102 workaround for nRF54H series */
 	*(volatile uint32_t *)0x5302C7E4 =
 				(((*((volatile uint32_t *)0x5302C7E4)) & 0xFF000FFF) | 0x0012C000);
@@ -1288,7 +1288,7 @@ int dtm_init(dtm_iq_report_callback_t callback)
 	*(volatile uint32_t *) 0x5302C7AC = 0x8672827A;
 	*(volatile uint32_t *) 0x5302C7B0 = 0x7E768672;
 	*(volatile uint32_t *) 0x5302C7B4 = 0x0406007E;
-#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
+#endif /* defined(CONFIG_SOC_SERIES_NRF54H) */
 
 	err = timer_init();
 	if (err) {

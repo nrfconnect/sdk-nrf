@@ -3,10 +3,10 @@
 # Copyright (c) 2025 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-if SOC_SERIES_NRF91X
+if SOC_SERIES_NRF91
 
 rsource "Kconfig.defconfig.tpm530m"
 
 source "soc/nordic/nrf91/Kconfig.defconfig"
 
-endif # SOC_SERIES_NRF91X
+endif # SOC_SERIES_NRF91

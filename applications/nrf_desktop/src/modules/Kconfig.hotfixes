@@ -9,7 +9,7 @@ menu "Hotfix set"
 config DESKTOP_HFCLK_LOCK_ENABLE
 	bool "Keep HF clock enabled [DEPRECATED]"
 	depends on CAF_BLE_USE_LLPM
-	depends on !SOC_SERIES_NRF54HX
+	depends on !SOC_SERIES_NRF54H
 	select DEPRECATED
 	help
 	  The HF clock needs to be enabled during data transmission over BLE.
@@ -37,8 +37,8 @@ config DESKTOP_HFCLK_LOCK_ENABLE
 
 config DESKTOP_CONSTLAT_ENABLE
 	bool "Constant latency interrupts"
-	depends on !SOC_SERIES_NRF54LX
-	depends on !SOC_SERIES_NRF54HX
+	depends on !SOC_SERIES_NRF54L
+	depends on !SOC_SERIES_NRF54H
 	select NRFX_POWER
 	help
 	  When enabled, the SoC uses configuration for constant latency

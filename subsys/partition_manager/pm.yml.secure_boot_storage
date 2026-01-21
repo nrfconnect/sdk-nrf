@@ -2,7 +2,7 @@
 
 provision:
   size: CONFIG_PM_PARTITION_SIZE_PROVISION
-#if defined(CONFIG_SOC_SERIES_NRF91X) || defined(CONFIG_SOC_NRF5340_CPUAPP) || defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF91) || defined(CONFIG_SOC_NRF5340_CPUAPP) || defined(CONFIG_SOC_SERIES_NRF54L)
   region: otp
 #elif defined(CONFIG_SOC_NRF5340_CPUNET)
   placement:

@@ -4,7 +4,7 @@
 
 choice APPROTECT_HANDLING
 	prompt "APPROTECT handling"
-	depends on SOC_SERIES_NRF52X || SOC_SERIES_NRF53X || SOC_SERIES_NRF54LX || SOC_SERIES_NRF91X
+	depends on SOC_SERIES_NRF52 || SOC_SERIES_NRF53 || SOC_SERIES_NRF54L || SOC_SERIES_NRF91
 	default APPROTECT_NO_SYSBUILD
 	help
 	  Specifies how the SystemInit() function of all the images should
@@ -12,13 +12,13 @@ choice APPROTECT_HANDLING
 
 config APPROTECT_DISABLE
 	bool "Disable"
-	depends on SOC_SERIES_NRF54LX
+	depends on SOC_SERIES_NRF54L
 	help
 	  Enable CONFIG_NRF_APPROTECT_DISABLE in all images.
 
 config APPROTECT_USE_UICR
 	bool "Use UICR"
-	depends on SOC_SERIES_NRF52X || SOC_SERIES_NRF53X || SOC_SERIES_NRF91X
+	depends on SOC_SERIES_NRF52 || SOC_SERIES_NRF53 || SOC_SERIES_NRF91
 	help
 	  Enable CONFIG_NRF_APPROTECT_USE_UICR in all images.
 
@@ -29,7 +29,7 @@ config APPROTECT_LOCK
 
 config APPROTECT_USER_HANDLING
 	bool "Allow user handling"
-	depends on !SOC_SERIES_NRF52X
+	depends on !SOC_SERIES_NRF52
 	help
 	  Enable CONFIG_NRF_APPROTECT_USER_HANDLING in all images.
 
@@ -42,7 +42,7 @@ endchoice
 
 choice SECURE_APPROTECT_HANDLING
 	prompt "Secure APPROTECT handling"
-	depends on SOC_NRF5340_CPUAPP || SOC_SERIES_NRF54LX || SOC_SERIES_NRF91X
+	depends on SOC_NRF5340_CPUAPP || SOC_SERIES_NRF54L || SOC_SERIES_NRF91
 	default SECURE_APPROTECT_NO_SYSBUILD
 	help
 	  Specifies how the SystemInit() function of all the images should
@@ -50,13 +50,13 @@ choice SECURE_APPROTECT_HANDLING
 
 config SECURE_APPROTECT_DISABLE
 	bool "Disable"
-	depends on SOC_SERIES_NRF54LX
+	depends on SOC_SERIES_NRF54L
 	help
 	  Enable CONFIG_NRF_SECURE_APPROTECT_DISABLE in all images.
 
 config SECURE_APPROTECT_USE_UICR
 	bool "Use UICR"
-	depends on SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X
+	depends on SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91
 	help
 	  Enable CONFIG_NRF_SECURE_APPROTECT_USE_UICR in all images.
 

@@ -62,7 +62,7 @@ void InitBasicOTARequestor()
 void OtaConfirmNewImage()
 {
 #if CONFIG_BOOTLOADER_MCUBOOT
-#ifndef CONFIG_SOC_SERIES_NRF53X
+#ifndef CONFIG_SOC_SERIES_NRF53
 	/* Check if the image is run in the REVERT mode and eventually
 	confirm it to prevent reverting on the next boot.
 	On nRF53 target there is not way to verify current swap type

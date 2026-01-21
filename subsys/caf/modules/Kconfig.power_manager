@@ -10,10 +10,10 @@ config CAF_POWER_MANAGER
 	bool "Power management"
 	select CAF_PM_EVENTS
 	select CAF_POWER_MANAGER_EVENTS
-	imply POWEROFF if !SOC_SERIES_NRF54HX
-	imply PM if SOC_SERIES_NRF54HX
+	imply POWEROFF if !SOC_SERIES_NRF54H
+	imply PM if SOC_SERIES_NRF54H
 	imply PM_DEVICE
-	imply PM_DEVICE_RUNTIME if SOC_SERIES_NRF54HX
+	imply PM_DEVICE_RUNTIME if SOC_SERIES_NRF54H
 	help
 	  Enable power management, which will put the device to low-power mode
 	  if it is idle.
@@ -47,7 +47,7 @@ config CAF_POWER_MANAGER_ERROR_TIMEOUT
 config CAF_POWER_MANAGER_CLEAR_RESET_REASON
 	bool "Clear RESETREAS on system_off"
 	default y
-	depends on !SOC_SERIES_NRF54HX
+	depends on !SOC_SERIES_NRF54H
 	help
 	  Clear RESETREAS on system_off to avoid starting serial recovery if nobody
 	  has cleared it already.
