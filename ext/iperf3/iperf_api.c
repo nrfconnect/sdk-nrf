@@ -42,7 +42,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+#include <zephyr/sys/sys_getopt.h>
+#else
 #include <getopt.h>
+#endif
 #include <errno.h>
 #include <signal.h>
 #include <unistd.h>
@@ -912,6 +916,99 @@ void iperf_on_test_finish(struct iperf_test *test)
 
 int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 {
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+	static struct sys_getopt_option longopts[] = {
+		{ "port", sys_getopt_required_argument, NULL, 'p' },
+		{ "format", sys_getopt_required_argument, NULL, 'f' },
+		{ "interval", sys_getopt_required_argument, NULL, 'i' },
+		{ "daemon", sys_getopt_no_argument, NULL, 'D' },
+		{ "one-off", sys_getopt_no_argument, NULL, '1' },
+		{ "verbose", sys_getopt_no_argument, NULL, 'V' },
+		{ "json", sys_getopt_no_argument, NULL, 'J' },
+		{ "version", sys_getopt_no_argument, NULL, 'v' },
+		{ "server", sys_getopt_no_argument, NULL, 's' },
+		{ "client", sys_getopt_required_argument, NULL, 'c' },
+		{ "udp", sys_getopt_no_argument, NULL, 'u' },
+		{ "bitrate", sys_getopt_required_argument, NULL, 'b' },
+		{ "bandwidth", sys_getopt_required_argument, NULL, 'b' },
+		{ "server-bitrate-limit", sys_getopt_required_argument, NULL,
+		  OPT_SERVER_BITRATE_LIMIT },
+		{ "time", sys_getopt_required_argument, NULL, 't' },
+		{ "bytes", sys_getopt_required_argument, NULL, 'n' },
+		{ "blockcount", sys_getopt_required_argument, NULL, 'k' },
+		{ "length", sys_getopt_required_argument, NULL, 'l' },
+		{ "parallel", sys_getopt_required_argument, NULL, 'P' },
+		{ "reverse", sys_getopt_no_argument, NULL, 'R' },
+		{ "bidir", sys_getopt_no_argument, NULL, '2' }, /* short option -2 */
+		{ "window", sys_getopt_required_argument, NULL, 'w' },
+		{ "bind", sys_getopt_required_argument, NULL, 'B' },
+		{ "cport", sys_getopt_required_argument, NULL, OPT_CLIENT_PORT },
+		{ "set-mss", sys_getopt_required_argument, NULL, 'M' },
+		{ "no-delay", sys_getopt_no_argument, NULL, 'N' },
+		{ "version4", sys_getopt_no_argument, NULL, '4' },
+		{ "version6", sys_getopt_no_argument, NULL, '6' },
+		{ "tos", sys_getopt_required_argument, NULL, 'S' },
+		{ "dscp", sys_getopt_required_argument, NULL, OPT_DSCP },
+		{ "extra-data", sys_getopt_required_argument, NULL, OPT_EXTRA_DATA },
+#if defined(HAVE_FLOWLABEL)
+		{ "flowlabel", sys_getopt_required_argument, NULL, 'L' },
+#endif /* HAVE_FLOWLABEL */
+		{ "zerocopy", sys_getopt_no_argument, NULL, 'Z' },
+		{ "omit", sys_getopt_required_argument, NULL, 'O' },
+		{ "file", sys_getopt_required_argument, NULL, 'F' },
+		{ "repeating-payload", sys_getopt_no_argument, NULL,
+		  OPT_REPEATING_PAYLOAD },
+		{ "timestamps", sys_getopt_optional_argument, NULL, OPT_TIMESTAMPS },
+#if defined(HAVE_CPU_AFFINITY)
+		{ "affinity", sys_getopt_required_argument, NULL, 'A' },
+#endif /* HAVE_CPU_AFFINITY */
+		{ "title", sys_getopt_required_argument, NULL, 'T' },
+#if defined(HAVE_TCP_CONGESTION)
+		{ "congestion", sys_getopt_required_argument, NULL, 'C' },
+		{ "linux-congestion", sys_getopt_required_argument, NULL, 'C' },
+#endif /* HAVE_TCP_CONGESTION */
+#if defined(HAVE_SCTP_H)
+		{ "sctp", sys_getopt_no_argument, NULL, OPT_SCTP },
+		{ "nstreams", sys_getopt_required_argument, NULL, OPT_NUMSTREAMS },
+		{ "xbind", sys_getopt_required_argument, NULL, 'X' },
+#endif
+#if defined (CONFIG_NRF_IPERF3_MULTICONTEXT_SUPPORT)
+		{ "interface", sys_getopt_required_argument, NULL, 'I' },
+		{ "pdn_id", sys_getopt_required_argument, NULL, NRF_OPT_PDN_ID },
+#else
+		{ "pidfile", sys_getopt_required_argument, NULL, 'I' },
+#endif
+		{ "logfile", sys_getopt_required_argument, NULL, OPT_LOGFILE },
+		{ "forceflush", sys_getopt_no_argument, NULL, OPT_FORCEFLUSH },
+		{ "get-server-output", sys_getopt_no_argument, NULL,
+		  OPT_GET_SERVER_OUTPUT },
+		{ "udp-counters-64bit", sys_getopt_no_argument, NULL,
+		  OPT_UDP_COUNTERS_64BIT },
+		{ "no-fq-socket-pacing", sys_getopt_no_argument, NULL,
+		  OPT_NO_FQ_SOCKET_PACING },
+#if defined(HAVE_SSL)
+		{ "username", sys_getopt_required_argument, NULL, OPT_CLIENT_USERNAME },
+		{ "rsa-public-key-path", sys_getopt_required_argument, NULL,
+		  OPT_CLIENT_RSA_PUBLIC_KEY },
+		{ "rsa-private-key-path", sys_getopt_required_argument, NULL,
+		  OPT_SERVER_RSA_PRIVATE_KEY },
+		{ "authorized-users-path", sys_getopt_required_argument, NULL,
+		  OPT_SERVER_AUTHORIZED_USERS },
+#endif /* HAVE_SSL */
+		{ "fq-rate", sys_getopt_required_argument, NULL, OPT_FQ_RATE },
+		{ "pacing-timer", sys_getopt_required_argument, NULL, OPT_PACING_TIMER },
+		{ "connect-timeout", sys_getopt_required_argument, NULL,
+		  OPT_CONNECT_TIMEOUT },
+		{ "debug", sys_getopt_no_argument, NULL, 'd' },
+		/* -m or --manual instead of help, because shell is stoling -h and --help */
+		{ "manual", sys_getopt_no_argument, NULL, 'm' },
+#if defined (CONFIG_NRF_MODEM_LIB_TRACE)
+		/* added */
+		{ "curr-mdm-traces", sys_getopt_no_argument, NULL, NRF_OPT_CURRENT_MDM_TRACES },
+#endif
+		{ NULL, 0, NULL, 0 }
+	};
+#else
 	static struct option longopts[] = {
 		{ "port", required_argument, NULL, 'p' },
 		{ "format", required_argument, NULL, 'f' },
@@ -934,9 +1031,6 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 		{ "length", required_argument, NULL, 'l' },
 		{ "parallel", required_argument, NULL, 'P' },
 		{ "reverse", no_argument, NULL, 'R' },
-#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-		{ "bidir", no_argument, NULL, '2' }, /* short option -2 */
-#endif
 		{ "window", required_argument, NULL, 'w' },
 		{ "bind", required_argument, NULL, 'B' },
 		{ "cport", required_argument, NULL, OPT_CLIENT_PORT },
@@ -969,12 +1063,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 		{ "nstreams", required_argument, NULL, OPT_NUMSTREAMS },
 		{ "xbind", required_argument, NULL, 'X' },
 #endif
-#if defined (CONFIG_NRF_IPERF3_MULTICONTEXT_SUPPORT)
-		{ "interface", required_argument, NULL, 'I' },
-		{ "pdn_id", required_argument, NULL, NRF_OPT_PDN_ID },
-#else
 		{ "pidfile", required_argument, NULL, 'I' },
-#endif
 		{ "logfile", required_argument, NULL, OPT_LOGFILE },
 		{ "forceflush", no_argument, NULL, OPT_FORCEFLUSH },
 		{ "get-server-output", no_argument, NULL,
@@ -997,15 +1086,9 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 		{ "connect-timeout", required_argument, NULL,
 		  OPT_CONNECT_TIMEOUT },
 		{ "debug", no_argument, NULL, 'd' },
-#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-		{ "manual", no_argument, NULL, 'm' }, /* -m or --manual instead of help, because shell is stoling -h and --help */
-#if defined (CONFIG_NRF_MODEM_LIB_TRACE)
-		/* added */
-		{ "curr-mdm-traces", no_argument, NULL, NRF_OPT_CURRENT_MDM_TRACES },
-#endif
-#endif
 		{ NULL, 0, NULL, 0 }
 	};
+#endif /* CONFIG_NRF_IPERF3_INTEGRATION */
 	int flag;
 	int portno;
 	int blksize;
@@ -1019,7 +1102,7 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 	double farg;
 
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
-	optind = 1; /* skip the iperf3 command */
+	sys_getopt_init();
 #endif
 
 	blksize = 0;
@@ -1031,7 +1114,8 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)
 		/* Different supported options */
-	    while ((flag = getopt_long(argc, argv, "p:f:i:2RD1VJvsc:ub:t:n:k:l:B:N46O:T:I:dm", longopts, NULL)) != -1) {
+	    while ((flag = sys_getopt_long(argc, argv, "p:f:i:2RD1VJvsc:ub:t:n:k:l:B:N46O:T:I:dm",
+		    longopts, NULL)) != -1) {
 #else
 	while ((flag = getopt(
 			argc, argv,
@@ -1040,7 +1124,11 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 #endif
 		switch (flag) {
 		case 'p':
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			portno = atoi(sys_getopt_optarg);
+#else
 			portno = atoi(optarg);
+#endif
 			if (portno < 1 || portno > 65535) {
 				test->i_errno = IEBADPORT;
 				return -1;
@@ -1048,11 +1136,19 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			test->server_port = portno;
 			break;
 		case 'f':
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			if (!sys_getopt_optarg) {
+#else
 			if (!optarg) {
+#endif
 				test->i_errno = IEBADFORMAT;
 				return -1;
 			}
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->settings->unit_format = *sys_getopt_optarg;
+#else
 			test->settings->unit_format = *optarg;
+#endif
 			if (test->settings->unit_format == 'k' ||
 			    test->settings->unit_format == 'K' ||
 			    test->settings->unit_format == 'm' ||
@@ -1071,7 +1167,11 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			/* XXX: could potentially want separate stat collection and reporting intervals,
                    but just set them to be the same for now */
 			test->stats_interval = test->reporter_interval =
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+				atof(sys_getopt_optarg);
+#else
 				atof(optarg);
+#endif
 			if ((test->stats_interval < MIN_INTERVAL ||
 			     test->stats_interval > MAX_INTERVAL) &&
 			    test->stats_interval != 0) {
@@ -1116,7 +1216,11 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 				return -1;
 			}
 			iperf_set_test_role(test, 'c');
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			iperf_set_test_server_hostname(test, sys_getopt_optarg);
+#else
 			iperf_set_test_server_hostname(test, optarg);
+#endif
 			break;
 		case 'u':
 			set_protocol(test, Pudp);
@@ -1134,14 +1238,22 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 
 		case OPT_NUMSTREAMS:
 #if defined(linux) || defined(__FreeBSD__)
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->settings->num_ostreams = unit_atoi(sys_getopt_optarg);
+#else
 			test->settings->num_ostreams = unit_atoi(optarg);
+#endif
 			client_flag = 1;
 #else /* linux */
 			test->i_errno = IEUNIMP;
 			return -1;
 #endif /* linux */
 		case 'b':
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			slash = strchr(sys_getopt_optarg, '/');
+#else
 			slash = strchr(optarg, '/');
+#endif
 			if (slash) {
 				*slash = '\0';
 				++slash;
@@ -1152,12 +1264,20 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 					return -1;
 				}
 			}
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->settings->rate = unit_atof_rate(sys_getopt_optarg);
+#else
 			test->settings->rate = unit_atof_rate(optarg);
+#endif
 			rate_flag = 1;
 			client_flag = 1;
 			break;
 		case OPT_SERVER_BITRATE_LIMIT:
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			slash = strchr(sys_getopt_optarg, '/');
+#else
 			slash = strchr(optarg, '/');
+#endif
 			if (slash) {
 				*slash = '\0';
 				++slash;
@@ -1173,11 +1293,19 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 					return -1;
 				}
 			}
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->settings->bitrate_limit = unit_atof_rate(sys_getopt_optarg);
+#else
 			test->settings->bitrate_limit = unit_atof_rate(optarg);
+#endif
 			server_flag = 1;
 			break;
 		case 't':
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->duration = atoi(sys_getopt_optarg);
+#else
 			test->duration = atoi(optarg);
+#endif
 			if (test->duration > MAX_TIME) {
 				test->i_errno = IEDURATION;
 				return -1;
@@ -1186,19 +1314,35 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			client_flag = 1;
 			break;
 		case 'n':
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->settings->bytes = unit_atoi(sys_getopt_optarg);
+#else
 			test->settings->bytes = unit_atoi(optarg);
+#endif
 			client_flag = 1;
 			break;
 		case 'k':
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->settings->blocks = unit_atoi(sys_getopt_optarg);
+#else
 			test->settings->blocks = unit_atoi(optarg);
+#endif
 			client_flag = 1;
 			break;
 		case 'l':
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			blksize = unit_atoi(sys_getopt_optarg);
+#else
 			blksize = unit_atoi(optarg);
+#endif
 			client_flag = 1;
 			break;
 		case 'P':
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->num_streams = atoi(sys_getopt_optarg);
+#else
 			test->num_streams = atoi(optarg);
+#endif
 			if (test->num_streams > MAX_STREAMS) {
 				test->i_errno = IENUMSTREAMS;
 				return -1;
@@ -1229,7 +1373,11 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			// XXX: This is a socket buffer, not specific to TCP
 			// Do sanity checks as double-precision floating point
 			// to avoid possible integer overflows.
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			farg = unit_atof(sys_getopt_optarg);
+#else
 			farg = unit_atof(optarg);
+#endif
 			if (farg > (double)MAX_TCP_BUFFER) {
 				test->i_errno = IEBUFSIZE;
 				return -1;
@@ -1238,10 +1386,18 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			client_flag = 1;
 			break;
 		case 'B':
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->bind_address = strdup(sys_getopt_optarg);
+#else
 			test->bind_address = strdup(optarg);
+#endif
 			break;
 		case OPT_CLIENT_PORT:
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			portno = atoi(sys_getopt_optarg);
+#else
 			portno = atoi(optarg);
+#endif
 			if (portno < 1 || portno > 65535) {
 				test->i_errno = IEBADPORT;
 				return -1;
@@ -1249,7 +1405,11 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			test->bind_port = portno;
 			break;
 		case 'M':
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->settings->mss = atoi(sys_getopt_optarg);
+#else
 			test->settings->mss = atoi(optarg);
+#endif
 			if (test->settings->mss > MAX_MSS) {
 				test->i_errno = IEMSS;
 				return -1;
@@ -1267,8 +1427,13 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			test->settings->domain = AF_INET6;
 			break;
 		case 'S':
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->settings->tos = strtol(sys_getopt_optarg, &endptr, 0);
+			if (endptr == sys_getopt_optarg || test->settings->tos < 0 ||
+#else
 			test->settings->tos = strtol(optarg, &endptr, 0);
 			if (endptr == optarg || test->settings->tos < 0 ||
+#endif
 			    test->settings->tos > 255) {
 				test->i_errno = IEBADTOS;
 				return -1;
@@ -1276,7 +1441,11 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			client_flag = 1;
 			break;
 		case OPT_DSCP:
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->settings->tos = parse_qos(sys_getopt_optarg);
+#else
 			test->settings->tos = parse_qos(optarg);
+#endif
 			if (test->settings->tos < 0) {
 				test->i_errno = IEBADTOS;
 				return -1;
@@ -1284,13 +1453,22 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			client_flag = 1;
 			break;
 		case OPT_EXTRA_DATA:
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->extra_data = strdup(sys_getopt_optarg);
+#else
 			test->extra_data = strdup(optarg);
+#endif
 			client_flag = 1;
 			break;
 		case 'L':
 #if defined(HAVE_FLOWLABEL)
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->settings->flowlabel = strtol(sys_getopt_optarg, &endptr, 0);
+			if (endptr == sys_getopt_optarg || test->settings->flowlabel < 1 ||
+#else
 			test->settings->flowlabel = strtol(optarg, &endptr, 0);
 			if (endptr == optarg || test->settings->flowlabel < 1 ||
+#endif
 			    test->settings->flowlabel > 0xfffff) {
 				test->i_errno = IESETFLOW;
 				return -1;
@@ -1309,7 +1487,11 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 				return -1;
 			}
 			memset(xbe, 0, sizeof(*xbe));
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			xbe->name = strdup(sys_getopt_optarg);
+#else
 			xbe->name = strdup(optarg);
+#endif
 			if (!xbe->name) {
 				test->i_errno = IESETSCTPBINDX;
 				return -1;
@@ -1330,15 +1512,24 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			break;
 		case OPT_TIMESTAMPS:
 			iperf_set_test_timestamps(test, 1);
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			if (sys_getopt_optarg) {
+				iperf_set_test_timestamp_format(test, sys_getopt_optarg);
+#else
 			if (optarg) {
 				iperf_set_test_timestamp_format(test, optarg);
+#endif
 			} else {
 				iperf_set_test_timestamp_format(
 					test, TIMESTAMP_FORMAT);
 			}
 			break;
 		case 'O':
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->omit = atoi(sys_getopt_optarg);
+#else
 			test->omit = atoi(optarg);
+#endif
 			if (test->omit < 0 || test->omit > 60) {
 				test->i_errno = IEOMIT;
 				return -1;
@@ -1346,17 +1537,30 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			client_flag = 1;
 			break;
 		case 'F':
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->diskfile_name = sys_getopt_optarg;
+#else
 			test->diskfile_name = optarg;
+#endif
 			break;
 		case 'A':
 #if defined(HAVE_CPU_AFFINITY)
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->affinity = strtol(sys_getopt_optarg, &endptr, 0);
+			if (endptr == sys_getopt_optarg || test->affinity < 0 ||
+#else
 			test->affinity = strtol(optarg, &endptr, 0);
 			if (endptr == optarg || test->affinity < 0 ||
+#endif
 			    test->affinity > 1024) {
 				test->i_errno = IEAFFINITY;
 				return -1;
 			}
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			comma = strchr(sys_getopt_optarg, ',');
+#else
 			comma = strchr(optarg, ',');
+#endif
 			if (comma != NULL) {
 				test->server_affinity = atoi(comma + 1);
 				if (test->server_affinity < 0 ||
@@ -1372,12 +1576,20 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 #endif /* HAVE_CPU_AFFINITY */
 			break;
 		case 'T':
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->title = strdup(sys_getopt_optarg);
+#else
 			test->title = strdup(optarg);
+#endif
 			client_flag = 1;
 			break;
 		case 'C':
 #if defined(HAVE_TCP_CONGESTION)
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->congestion = strdup(sys_getopt_optarg);
+#else
 			test->congestion = strdup(optarg);
+#endif
 			client_flag = 1;
 #else /* HAVE_TCP_CONGESTION */
 			test->i_errno = IEUNIMP;
@@ -1389,15 +1601,30 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			break;
 #if defined (CONFIG_NRF_IPERF3_MULTICONTEXT_SUPPORT)
 		case NRF_OPT_PDN_ID: {
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+				int tmp = strtol(sys_getopt_optarg, &endptr, 0);
+				if (endptr == sys_getopt_optarg || tmp < 0) {
+					printk("not valid PDN ID %s\n", sys_getopt_optarg);
+#else
 				int tmp = strtol(optarg, &endptr, 0);
 				if (endptr == optarg || tmp < 0) {
 					printk("not valid PDN ID %s\n", optarg);
+#endif
 					return -1;
 				}
 
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+				test->pdn_id_str = strdup(sys_getopt_optarg);
+#else
 				test->pdn_id_str = strdup(optarg);
+#endif
 				if (test->pdn_id_str == NULL) {
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+					printk("strdup failed for setting the PDN ID %s\n",
+						sys_getopt_optarg);
+#else
 					printk("strdup failed for setting the PDN ID %s\n", optarg);
+#endif
 					test->i_errno = IENOMEMORY;
 					return -1;
 				}
@@ -1405,12 +1632,20 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			break;
 #else
 		case 'I':
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->pidfile = strdup(sys_getopt_optarg);
+#else
 			test->pidfile = strdup(optarg);
+#endif
 			server_flag = 1;
 			break;
 #endif
 		case OPT_LOGFILE:
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->logfile = strdup(sys_getopt_optarg);
+#else
 			test->logfile = strdup(optarg);
+#endif
 			break;
 		case OPT_FORCEFLUSH:
 			test->forceflush = 1;
@@ -1434,7 +1669,11 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			break;
 		case OPT_FQ_RATE:
 #if defined(HAVE_SO_MAX_PACING_RATE)
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->settings->fqrate = unit_atof_rate(sys_getopt_optarg);
+#else
 			test->settings->fqrate = unit_atof_rate(optarg);
+#endif
 			client_flag = 1;
 #else /* HAVE_SO_MAX_PACING_RATE */
 			test->i_errno = IEUNIMP;
@@ -1443,24 +1682,48 @@ int iperf_parse_arguments(struct iperf_test *test, int argc, char **argv)
 			break;
 #if defined(HAVE_SSL)
 		case OPT_CLIENT_USERNAME:
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			client_username = strdup(sys_getopt_optarg);
+#else
 			client_username = strdup(optarg);
+#endif
 			break;
 		case OPT_CLIENT_RSA_PUBLIC_KEY:
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			client_rsa_public_key = strdup(sys_getopt_optarg);
+#else
 			client_rsa_public_key = strdup(optarg);
+#endif
 			break;
 		case OPT_SERVER_RSA_PRIVATE_KEY:
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			server_rsa_private_key = strdup(sys_getopt_optarg);
+#else
 			server_rsa_private_key = strdup(optarg);
+#endif
 			break;
 		case OPT_SERVER_AUTHORIZED_USERS:
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->server_authorized_users = strdup(sys_getopt_optarg);
+#else
 			test->server_authorized_users = strdup(optarg);
+#endif
 			break;
 #endif /* HAVE_SSL */
 		case OPT_PACING_TIMER:
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->settings->pacing_timer = unit_atoi(sys_getopt_optarg);
+#else
 			test->settings->pacing_timer = unit_atoi(optarg);
+#endif
 			client_flag = 1;
 			break;
 		case OPT_CONNECT_TIMEOUT:
+#if defined(CONFIG_NRF_IPERF3_INTEGRATION)
+			test->settings->connect_timeout = unit_atoi(sys_getopt_optarg);
+#else
 			test->settings->connect_timeout = unit_atoi(optarg);
+#endif
 			client_flag = 1;
 			break;
 #if defined(CONFIG_NRF_IPERF3_INTEGRATION)

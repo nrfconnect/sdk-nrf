@@ -12,7 +12,7 @@ config NRF_IPERF3_PROMPTLESS
 
 config  NRF_IPERF3
 	bool "Iperf3 NRF integration" if !NRF_IPERF3_PROMPTLESS
-	depends on POSIX_API && CJSON_LIB
+	depends on POSIX_API && CJSON_LIB && GETOPT_LONG
 	help
 	  Enable Iperf3 NRF integration
 
