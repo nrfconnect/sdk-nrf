@@ -1019,25 +1019,25 @@ ZTEST(suite_server_store, test_ep_count)
 	zassert_equal(ret, 0);
 
 	struct bt_bap_iso iso_chan_0A;
-	struct bt_bap_ep ep_0A;
+	struct bt_bap_ep ep_0A = {0};
 
 	ep_0A.state = BT_BAP_EP_STATE_IDLE;
 	ep_0A.iso = &iso_chan_0A;
 
 	struct bt_bap_iso iso_chan_0B;
-	struct bt_bap_ep ep_0B;
+	struct bt_bap_ep ep_0B = {0};
 
 	ep_0B.state = BT_BAP_EP_STATE_IDLE;
 	ep_0B.iso = &iso_chan_0B;
 
 	struct bt_bap_iso iso_chan_1A;
-	struct bt_bap_ep ep_1A;
+	struct bt_bap_ep ep_1A = {0};
 
 	ep_1A.state = BT_BAP_EP_STATE_IDLE;
 	ep_1A.iso = &iso_chan_1A;
 
 	struct bt_bap_iso iso_chan_1B;
-	struct bt_bap_ep ep_1B;
+	struct bt_bap_ep ep_1B = {0};
 
 	ep_1B.state = BT_BAP_EP_STATE_IDLE;
 	ep_1B.iso = &iso_chan_1B;
