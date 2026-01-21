@@ -4,14 +4,18 @@ common:
     - clock_control
     - ci_tests_zephyr_drivers_clock_control
   platform_allow:
+    - nrf54ls05dk/nrf54ls05b/cpuapp
+    - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+    - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
     - nrf54lv10dk/nrf54lv10a/cpuapp
-    - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
+    - nrf7120dk/nrf7120/cpuapp
   integration_platforms:
-    - nrf54lv10dk/nrf54lv10a/cpuapp
+    - nrf54ls05dk/nrf54ls05b/cpuapp
   timeout: 30
 
 tests:
   nrf.extended.drivers.clock.clock_control_nrf5: {}
   nrf.extended.drivers.clock.clock_control_nrf5_lfclk_rc:
-    extra_args: CONF_FILE="nrf_lfclk_rc.conf"
+    extra_args: EXTRA_CONF_FILE="nrf_lfclk_rc.conf"

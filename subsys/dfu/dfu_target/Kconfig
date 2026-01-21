@@ -60,11 +60,21 @@ config DFU_TARGET_STREAM_SAVE_PROGRESS
 	depends on DFU_TARGET_STREAM || ZTEST # ZTEST for testing purposes
 	depends on SETTINGS
 	depends on !SETTINGS_NONE
-	depends on !DFU_MULTI_IMAGE
 	help
 	  Enable this option to cause dfu_target_stream to store the current
 	  write progress to flash. In case of power failure or device reset,
 	  the operation can then resume from the latest state.
+
+config DFU_TARGET_STREAM_SYNCHRONOUS
+	bool "Synchronous flash writes"
+	default y if DFU_TARGET_STREAM_SAVE_PROGRESS
+	depends on DFU_TARGET_STREAM
+	help
+	  Enable this option to cause dfu_target_stream to flush the flash driver
+	  on every write. This means that the dfu_target_stream_write write function
+	  will make sure that the data is physically written to flash before returning.
+	  Note this option can only be used if the chunks passed to dfu_target_stream_write
+	  have always the size aligned to the flash write block size.
 
 config DFU_TARGET_MODEM_DELTA
 	bool "Modem delta update support"
@@ -120,6 +130,6 @@ config DFU_TARGET_CUSTOM
 module=DFU_TARGET
 module-dep=LOG
 module-str=Device Firmware Upgrade
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # DFU_TARGET

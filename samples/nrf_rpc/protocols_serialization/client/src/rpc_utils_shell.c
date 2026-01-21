@@ -9,6 +9,7 @@
 #include <nrf_rpc/rpc_utils/dev_info.h>
 #include <nrf_rpc/rpc_utils/remote_shell.h>
 #include <nrf_rpc/rpc_utils/system_health.h>
+#include <nrf_rpc.h>
 
 #if defined(CONFIG_NRF_RPC_UTILS_DEV_INFO)
 static int remote_version_cmd(const struct shell *sh, size_t argc, char *argv[])
@@ -118,6 +119,30 @@ static int cmd_system_health(const struct shell *sh, size_t argc, char *argv[])
 }
 #endif /* CONFIG_NRF_RPC_UTILS_SYSTEM_HEALTH */
 
+static int cmd_rpc(const struct shell *sh, size_t argc, char *argv[])
+{
+	static bool enabled = true;
+	int err = 0;
+
+	if (argc > 1) {
+		bool enable = shell_strtobool(argv[1], 10, &err);
+
+		if (err == 0) {
+			if (enable) {
+				nrf_rpc_resume();
+			} else {
+				nrf_rpc_stop(true);
+			}
+
+			enabled = enable;
+		}
+	}
+
+	shell_print(sh, "RPC is: %s", enabled ? "Enabled" : "Disabled");
+
+	return err;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	util_cmds,
 #if defined(CONFIG_NRF_RPC_UTILS_DEV_INFO)
@@ -134,6 +159,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 #if defined(CONFIG_NRF_RPC_UTILS_SYSTEM_HEALTH)
 	SHELL_CMD_ARG(system_health, NULL, "Get system health", cmd_system_health, 0, 0),
 #endif
+	SHELL_CMD_ARG(control, NULL, "Control RPC subsystem ", cmd_rpc, 2, 0),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_ARG_REGISTER(rpc, &util_cmds, "nRF RPC utility commands", NULL, 1, 0);

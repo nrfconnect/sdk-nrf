@@ -8,6 +8,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_lock.h>
+#include <ot_rpc_macros.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 
 #include <openthread/mesh_diag.h>
@@ -79,10 +80,10 @@ otError otMeshDiagDiscoverTopology(otInstance *aInstance, const otMeshDiagDiscov
 				   otMeshDiagDiscoverCallback aCallback, void *aContext)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 	uint8_t config = 0;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	mesh_diag_discover_cb = aCallback;
 	mesh_diag_discover_cb_context = aContext;
@@ -103,7 +104,7 @@ void otMeshDiagCancel(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 

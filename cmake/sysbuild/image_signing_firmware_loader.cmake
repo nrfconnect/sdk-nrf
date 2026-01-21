@@ -95,6 +95,14 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_extra -k "${keyfile}" ${imgtool_extra})
   endif()
 
+  if(CONFIG_MCUBOOT_IMGTOOL_UUID_VID)
+    set(imgtool_extra ${imgtool_extra} --vid "${CONFIG_MCUBOOT_IMGTOOL_UUID_VID_NAME}")
+  endif()
+
+  if(CONFIG_MCUBOOT_IMGTOOL_UUID_CID)
+    set(imgtool_extra ${imgtool_extra} --cid "${CONFIG_MCUBOOT_IMGTOOL_UUID_CID_NAME}")
+  endif()
+
   set(imgtool_args ${imgtool_extra})
 
   # Extensionless prefix of any output file.
@@ -109,6 +117,12 @@ function(zephyr_mcuboot_tasks)
   set(unconfirmed_args)
   set(confirmed_args)
   set(encrypted_args)
+
+  if(NOT "${keyfile_enc}" STREQUAL "")
+    if(CONFIG_MCUBOOT_ENCRYPTION_ALG_AES_256)
+      set(imgtool_args ${imgtool_args} --encrypt-keylen 256)
+    endif()
+  endif()
 
   # Set up .bin outputs.
   if(CONFIG_BUILD_OUTPUT_BIN)

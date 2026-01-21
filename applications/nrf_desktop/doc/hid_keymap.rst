@@ -12,8 +12,8 @@ The HID keymap utility can be used by an application module to map an applicatio
 Configuration
 *************
 
-Use the :ref:`CONFIG_DESKTOP_HID_KEYMAP <config_desktop_app_options>` Kconfig option to enable the utility.
-You can use the utility only on HID peripherals (:ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>`).
+Use the :option:`CONFIG_DESKTOP_HID_KEYMAP` Kconfig option to enable the utility.
+You can use the utility only on HID peripherals (:option:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL`).
 
 HID keymap
 ==========
@@ -21,7 +21,7 @@ HID keymap
 You must define mapping between application-specific key IDs and HID report ID and HID usage ID pairs in utility's configuration.
 For that purpose, you must create a configuration file with a ``hid_keymap`` array.
 Every element of the array contains mapping from a single application-specific key ID to HID report ID and HID usage ID pair.
-The location of the file is specified using the :ref:`CONFIG_DESKTOP_HID_KEYMAP_DEF_PATH <config_desktop_app_options>` Kconfig option.
+The location of the file is specified using the :option:`CONFIG_DESKTOP_HID_KEYMAP_DEF_PATH` Kconfig option.
 
 Make sure that :c:struct:`hid_keymap` entries defined in the ``hid_keymap`` array are sorted ascending by the key ID (:c:member:`hid_keymap.key_id`).
 This is required, because the utility uses binary search (:c:func:`bsearch`) to speed up searching through the array.
@@ -57,7 +57,7 @@ Caching
 
 By default, the utility caches the last returned key mapping to improve performance if mapping for the same key ID is requested multiple times in a row.
 This happens, for example, if a button that was recently pressed is released.
-You can disable the :ref:`CONFIG_DESKTOP_HID_KEYMAP_CACHE <config_desktop_app_options>` Kconfig option to turn off caching.
+You can disable the :option:`CONFIG_DESKTOP_HID_KEYMAP_CACHE` Kconfig option to turn off caching.
 
 Using HID keymap
 ****************

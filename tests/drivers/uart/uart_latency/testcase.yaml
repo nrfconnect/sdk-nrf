@@ -12,25 +12,25 @@ common:
     - nrf52840dk/nrf52840
     - nrf5340dk/nrf5340/cpuapp
     - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk/nrf54h20/cpuflpr/xip
     - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54ls05dk/nrf54ls05b/cpuapp
+    - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+    - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
     - nrf54lv10dk/nrf54lv10a/cpuapp
     - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
   integration_platforms:
-    - nrf52840dk/nrf52840
-    - nrf5340dk/nrf5340/cpuapp
     - nrf54h20dk/nrf54h20/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
-    - nrf54lv10dk/nrf54lv10a/cpuapp
   timeout: 60
 
 tests:
-  tests.drivers.uart_latency.async:
+  drivers.uart.uart_latency.async:
     extra_configs:
       - CONFIG_UART_ASYNC_API=y
-  tests.drivers.uart_latency.int_driven:
+  drivers.uart.uart_latency.int_driven:
     extra_configs:
       - CONFIG_UART_INTERRUPT_DRIVEN=y
-  tests.drivers.uart_latency.poll:
+  drivers.uart.uart_latency.poll:
     extra_configs:
       - CONFIG_UART_ASYNC_API=n
       - CONFIG_UART_INTERRUPT_DRIVEN=n

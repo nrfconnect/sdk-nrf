@@ -1,6 +1,6 @@
 cbor2>=5.4.2.post1
 clang-format
-click==8.1.3
+click>=8.2.0
 ecdsa
 grpcio-tools
 construct>=2.10.70
@@ -14,3 +14,4 @@ nrf-regtool==9.2.1
 windows-curses; sys_platform == 'win32'
 unidiff
 pycryptodome==3.21.0
+python-dotenv

@@ -1,7 +1,7 @@
 sample:
   description: |
-    This app provides an example of signing/verifying using EdDSA signatures
-  name: EdDSA example
+    This sample demonstrates EdDSA signing and verification using the EdDSA signature algorithm.
+  name: EdDSA sample
 tests:
   sample.eddsa.cc3xx:
     sysbuild: true
@@ -44,8 +44,8 @@ tests:
       - oberon
       - sysbuild
       - ci_samples_crypto
-    platform_allow: >
-      nrf5340dk/nrf5340/cpunet
+    platform_allow:
+      - nrf5340dk/nrf5340/cpunet
     harness: console
     harness_config:
       type: multi_line
@@ -67,10 +67,12 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
     harness: console
     harness_config:
       type: multi_line
@@ -82,9 +84,12 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
   sample.eddsa.cracen.crypto_service:
     sysbuild: true
     tags:
@@ -94,8 +99,8 @@ tests:
       - sysbuild
       - crypto
       - ci_samples_crypto
-    platform_allow: >
-      nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
     harness: console
     harness_config:
       type: multi_line

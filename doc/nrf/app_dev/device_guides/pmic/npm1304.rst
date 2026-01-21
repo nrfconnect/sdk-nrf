@@ -1,0 +1,122 @@
+.. _ug_npm1304_developing:
+.. _ug_npm1304_gs:
+
+Developing with the nPM1304 PMIC
+################################
+
+.. contents::
+   :local:
+   :depth: 2
+
+The |NCS| provides support for development with the `nPM1304 Power Management IC (PMIC) <nPM1304 product website_>`_, using the `nPM1304 Evaluation Kit (PCA10195) <nPM1304 EK product page_>`_.
+
+.. _ug_npm1304_features:
+
+nPM1304 features
+****************
+
+nPM1304 is a PMIC with a linear-mode lithium-ion, lithium-polymer, and lithium ferro-phosphate battery charger.
+It has two dual-mode buck regulators, two dual purpose LDO/load switches, three LED drivers, and five GPIOs.
+
+nPM1304 is the perfect companion for nRF52, nRF53, and the nRF54 Series SoCs.
+It is ideal for compact and advanced IoT products, such as wearables and portable medical applications.
+
+For additional information on the nPM1304 PMIC and associated kits, see the `nPM1304`_ technical documentation, especially the `nPM1304 EK User Guide`_.
+
+.. _ug_npm1304_compatible_boards:
+
+Boards compatible with nPM1304
+******************************
+
+The following boards in the `Zephyr`_ open source project and in the |NCS| are compatible with nPM1304 PMIC through the nPM1304 EK:
+
+.. list-table::
+   :header-rows: 1
+
+   * - DK or Prototype platform
+     - Companion module
+     - PCA number
+     - Board target
+     - Documentation
+   * - :zephyr:board:`nrf54l15dk`
+     - nPM1304 EK
+     - PCA10156
+     - | ``nrf54l15dk/nrf54l15/cpuapp``
+     - | `Datasheet <nRF54L15 Datasheet_>`_
+       | `Quick Start app`_
+       | `User Guide <nRF54L15 DK User Guide_>`_
+   * - :zephyr:board:`nrf54lm20dk`
+     - nPM1304 EK
+     - PCA10184
+     - | ``nrf54lm20dk/nrf54lm20a/cpuapp``
+     - --
+   * - :zephyr:board:`nrf5340dk`
+     - nPM1304 EK
+     - PCA10095
+     - ``nrf5340dk/nrf5340/cpuapp``
+     - | `Product Specification <nRF5340 Product Specification_>`_
+       | `Quick Start app`_
+       | `User Guide <nRF5340 DK User Guide_>`_
+   * - :zephyr:board:`nrf52840dk`
+     - nPM1304 EK
+     - PCA10056
+     - ``nrf52840dk/nrf52840``
+     - | `Product Specification <nRF52840 Product Specification_>`_
+       | `Quick Start app`_
+       | `User Guide <nRF52840 DK User Guide_>`_
+   * - :zephyr:board:`nrf52dk`
+     - nPM1304 EK
+     - PCA10040
+     - ``nrf52dk/nrf52832``
+     - | `Product Specification <nRF52832 Product Specification_>`_
+       | `Quick Start app`_
+       | `User Guide <nRF52 DK User Guide_>`_
+
+PMIC samples and libraries
+**************************
+
+The |NCS| provides several :ref:`pmic_samples` that demonstrate the features and capabilities of nPM1304 using the nPM1304 EK.
+The :ref:`nrfxlib:nrf_fuel_gauge` processes battery measurements made by PMICs and provides a state-of-charge (SOC) prediction, along with other metrics.
+
+PMIC tools
+**********
+
+The :ref:`nrfxlib:nrf_fuel_gauge` is supported by the `nPM PowerUP app`_ in `nRF Connect for Desktop`_.
+You can use this application together with the library to derive a battery model for your product.
+For this purpose, you can use the nPM1304 EK that characterizes the battery using an active load circuit.
+See `Evaluate nPM1304 using nPM PowerUP`_ in the `nPM1304 EK User Guide`_ for more information.
+
+.. _ug_npm1304_developing_overlay_import:
+
+Importing an overlay from the nPM PowerUP app
+=============================================
+
+The `nPM PowerUP app`_ from `nRF Connect for Desktop`_  supports exporting a full configuration of the nPM1304 in devicetree overlay format.
+You can use this exported overlay file to quickly configure the nPM1304 in your application.
+
+If there is no overlay file for your project, include the file directly in your :file:`app.overlay` in the application folder.
+If an overlay already exists, append the contents of the generated overlay to the existing file.
+
+For more information about devicetree overlays, see :ref:`zephyr:use-dt-overlays`.
+
+.. _npm1304_building:
+
+Building and programming for nPM1304
+************************************
+
+There is no firmware for nPM1304 that can be built and programmed onto the PMIC.
+
+Instead, you need to connect the compatible development kit to nPM1304 and program that kit with the firmware.
+
+Connecting the development kit to nPM1304
+=========================================
+
+If you are using the nRF54L15 DK, follow the steps in `Use the nPM1304 EK with an nRF54L15 DK`_ in the `nPM1304 EK User Guide`_.
+For other Nordic Semiconductor kits, use the wiring steps in the documentation for :ref:`pmic_samples` as reference (:ref:`wiring for the Fuel gauge sample <npm13xx_fuel_gauge_wiring>` and :ref:`wiring for the One button sample <npm13xx_one_button_wiring>`, respectively).
+
+If you are using custom hardware, the wiring process is similar to the `one for the nRF54L15 DK <Use the nPM1304 EK with an nRF54L15 DK_>`_, but board-specific steps are different.
+
+Programming the development kit with nPM1304-compatible firmware
+================================================================
+
+Follow the detailed instructions in the building and programming sections of the :ref:`pmic_samples` documentation to build the sample and flash it to the compatible DK.

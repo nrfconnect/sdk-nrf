@@ -51,7 +51,7 @@ To enable support for FOTA updates, do the following:
 
 .. fota_upgrades_over_ble_mandatory_mcuboot_start
 
-* Use MCUboot as the upgradable bootloader (``SB_CONFIG_BOOTLOADER_MCUBOOT`` must be enabled).
+* Use MCUboot as the upgradable bootloader (:kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` must be enabled).
   For more information, see the :ref:`ug_bootloader_adding_sysbuild` page.
 
 .. fota_upgrades_over_ble_mandatory_mcuboot_end
@@ -87,7 +87,7 @@ For more information about the direct-xip mode and the revert mechanism support,
 
 To use MCUboot in the direct-xip mode together with FOTA updates, do the following:
 
-* Enable the ``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP`` Kconfig option in sysbuild.
+* Enable the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP` Kconfig option in sysbuild.
 
 See how to build the :ref:`peripheral_lbs` sample with MCUboot in the direct-xip mode when the revert mechanism support is disabled:
 
@@ -98,7 +98,7 @@ See how to build the :ref:`peripheral_lbs` sample with MCUboot in the direct-xip
 
 Optionally, if you want to enable the revert mechanism support, complete the following:
 
-* Enable the ``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT`` Kconfig option in sysbuild instead of ``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP``.
+* Enable the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT` Kconfig option in sysbuild instead of :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP`.
 
 See how to build the :ref:`peripheral_lbs` sample with MCUboot in direct-xip mode when the revert mechanism support is enabled:
 
@@ -109,10 +109,8 @@ See how to build the :ref:`peripheral_lbs` sample with MCUboot in direct-xip mod
 
 .. note::
    When building the application with MCUboot in direct-XIP mode with revert mechanism support, the signed image intended for flashing is automatically marked as confirmed.
-   Without this configuration, the application will fail to boot.
-   It must, however, be disabled when building update images.
 
-Both the ``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP`` and ``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT`` Kconfig options automatically build application update images for both slots.
+Both the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP` and :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT` Kconfig options automatically build application update images for both slots.
 To read about the files that are built when the option is enabled, refer to the :ref:`app_build_mcuboot_output` page.
 
 .. fota_upgrades_over_ble_mcuboot_direct_xip_nrfcdm_note_start

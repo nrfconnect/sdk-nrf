@@ -18,22 +18,13 @@ choice BT_FAST_PAIR_CRYPTO_BACKEND
 	help
 	  Select the Fast Pair cryptographic backend.
 
-config BT_FAST_PAIR_CRYPTO_TINYCRYPT
-	bool "Fast Pair with Tinycrypt cryptographic backend"
-	select TINYCRYPT
-	select TINYCRYPT_SHA256
-	select TINYCRYPT_SHA256_HMAC
-	select TINYCRYPT_AES
-	select TINYCRYPT_ECC_DH
-	help
-	  Select Tinycrypt cryptographic backend for Fast Pair.
-
 config BT_FAST_PAIR_CRYPTO_OBERON
 	bool "Fast Pair with Oberon cryptographic backend"
 	select NRF_OBERON
 	select BT_FAST_PAIR_CRYPTO_AES256_ECB_SUPPORT
 	select BT_FAST_PAIR_CRYPTO_SECP160R1_SUPPORT
 	select BT_FAST_PAIR_CRYPTO_SECP256R1_SUPPORT
+	depends on !DT_HAS_NORDIC_IRONSIDE_CALL_ENABLED
 	help
 	  Select Oberon cryptographic backend for Fast Pair.
 
@@ -41,8 +32,8 @@ config BT_FAST_PAIR_CRYPTO_PSA
 	bool "Fast Pair with PSA cryptographic backend [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	select NRF_SECURITY
-	select MBEDTLS_PSA_CRYPTO_C
-	select MBEDTLS_ENABLE_HEAP
+	select MBEDTLS_PSA_CRYPTO_C if !DT_HAS_NORDIC_IRONSIDE_CALL_ENABLED
+	select MBEDTLS_ENABLE_HEAP if !DT_HAS_NORDIC_IRONSIDE_CALL_ENABLED
 	select PSA_WANT_ALG_SHA_256
 	select PSA_WANT_ALG_HMAC
 	select PSA_WANT_ALG_ECDH
@@ -72,6 +63,6 @@ config BT_FAST_PAIR_CRYPTO_SECP256R1_SUPPORT
 
 module = FP_CRYPTO
 module-str = Fast Pair crypto library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_FAST_PAIR_CRYPTO

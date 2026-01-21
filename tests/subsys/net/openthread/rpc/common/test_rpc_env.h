@@ -20,9 +20,17 @@
 /* for value bigger than 0x17 */
 #define CBOR_UINT8(value)  0x18, (value)
 
-#define CBOR_LIST(...) 0x9F, __VA_ARGS__, 0xFF
-#define CBOR_EMPTY_BYTES 0x40
-#define CBOR_EMPTY_STRING 0x60
+#define CBOR_INT64(value) 0x3B, BT_BYTES_LIST_LE64(BSWAP_64(-1 - value))
+#define CBOR_INT32(value) 0x3A, BT_BYTES_LIST_LE32(BSWAP_32(-1 - value))
+#define CBOR_INT16(value) 0x39, BT_BYTES_LIST_LE16(BSWAP_16(-1 - value))
+/* for value smaller than -0x17 */
+#define CBOR_INT8(value)  0x38, (-1 - value)
+
+#define CBOR_LIST(...)	      0x9F __VA_OPT__(,) __VA_ARGS__, 0xFF
+#define CBOR_BSTR16(len, ...) (0x40 | 25), BT_BYTES_LIST_BE16(len) __VA_OPT__(,) __VA_ARGS__
+#define CBOR_BSTR8(len, ...)  (0x40 | 24), len __VA_OPT__(,) __VA_ARGS__
+#define CBOR_BSTR(len, ...)   (0x40 | len) __VA_OPT__(,) __VA_ARGS__
+#define CBOR_EMPTY_STRING     0x60
 
 /* Macros for constructing nRF RPC packets for the OpenThread command group. */
 

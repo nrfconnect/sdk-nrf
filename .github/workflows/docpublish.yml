@@ -6,6 +6,10 @@ on:
     types:
       - completed
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   publish:
     runs-on: ubuntu-24.04
@@ -27,7 +31,10 @@ jobs:
       - name: Obtain PR number
         working-directory: docs
         run: |
-          echo "PR=$(cat pr.txt)" >> "$GITHUB_ENV"
+          if [ -f pr.txt ]; then
+            PR=$(head -n 1 pr.txt | tr -cd '0-9')
+          fi
+          printf 'PR=%s\n' "$PR" >> "$GITHUB_ENV"
 
       - name: Upload to Azure storage
         working-directory: docs

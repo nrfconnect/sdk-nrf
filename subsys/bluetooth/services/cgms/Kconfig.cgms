@@ -5,7 +5,7 @@
 #
 
 menuconfig BT_CGMS
-	bool "Enable GATT continuous glucose service"
+	bool "GATT continuous glucose service"
 	select EXPERIMENTAL
 	select BT_NRF_SERVICES
 
@@ -21,6 +21,6 @@ config BT_CGMS_MAX_MEASUREMENT_RECORD
 
 module = BT_CGMS
 module-str = CGMS
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_CGMS

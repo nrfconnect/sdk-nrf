@@ -10,8 +10,8 @@ endmenu
 
 module = COAP_SERVER
 module-str = CoAP server
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 module = OT_COAP_UTILS
 module-str = OpenThread CoAP utils
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"

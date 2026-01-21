@@ -1,5 +1,6 @@
 board:
   name: nrf52kbd
+  full_name: nRF52 Keyboard
   vendor: nordic
   socs:
     - name: nrf52832

@@ -68,43 +68,43 @@ menuconfig NRF_CLOUD_SEND_SERVICE_INFO_UI
 if NRF_CLOUD_SEND_SERVICE_INFO_UI
 
 config NRF_CLOUD_ENABLE_SVC_INF_UI_MAP
-	bool "Enable map card on nRF Cloud [DEPRECATED]"
+	bool "Map card on nRF Cloud [DEPRECATED]"
 	select DEPRECATED
 	default y
 
 config NRF_CLOUD_ENABLE_SVC_INF_UI_RSRP
-	bool "Enable RSRP card on nRF Cloud [DEPRECATED]"
+	bool "RSRP card on nRF Cloud [DEPRECATED]"
 	select DEPRECATED
 	default y if NRF_MODEM_LIB
 
 config NRF_CLOUD_ENABLE_SVC_INF_UI_LOGS
-	bool "Enable log card on nRF Cloud [DEPRECATED]"
+	bool "Log card on nRF Cloud [DEPRECATED]"
 	select DEPRECATED
 	default y if NRF_CLOUD_LOG_TEXT_LOGGING_ENABLED
 
 config NRF_CLOUD_ENABLE_SVC_INF_UI_BIN_LOGS
-	bool "Enable binary (dictionary-based) log card on nRF Cloud [DEPRECATED]"
+	bool "Binary (dictionary-based) log card on nRF Cloud [DEPRECATED]"
 	select DEPRECATED
 	default y if NRF_CLOUD_LOG_DICTIONARY_LOGGING_ENABLED
 
 config NRF_CLOUD_ENABLE_SVC_INF_UI_TEMP
-	bool "Enable temperature card on nRF Cloud [DEPRECATED]"
+	bool "Temperature card on nRF Cloud [DEPRECATED]"
 	select DEPRECATED
 
 config NRF_CLOUD_ENABLE_SVC_INF_UI_HUMID
-	bool "Enable humidity card on nRF Cloud [DEPRECATED]"
+	bool "Humidity card on nRF Cloud [DEPRECATED]"
 	select DEPRECATED
 
 config NRF_CLOUD_ENABLE_SVC_INF_UI_AIR_PRESSURE
-	bool "Enable air pressure card on nRF Cloud [DEPRECATED]"
+	bool "Air pressure card on nRF Cloud [DEPRECATED]"
 	select DEPRECATED
 
 config NRF_CLOUD_ENABLE_SVC_INF_UI_AIR_QUALITY
-	bool "Enable air quality card on nRF Cloud [DEPRECATED]"
+	bool "Air quality card on nRF Cloud [DEPRECATED]"
 	select DEPRECATED
 
 config NRF_CLOUD_ENABLE_SVC_INF_UI_ORIENTATION
-	bool "Enable orientation (flip) card on nRF Cloud [DEPRECATED]"
+	bool "Orientation (flip) card on nRF Cloud [DEPRECATED]"
 	select DEPRECATED
 
 endif # NRF_CLOUD_SEND_SERVICE_INFO_UI

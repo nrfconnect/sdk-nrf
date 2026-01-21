@@ -97,7 +97,7 @@ namespace app
 
 						using ResponseType = DataModel::NullObjectType;
 
-						static constexpr bool MustUseTimedInvoke() { return false; }
+						static constexpr bool MustUseTimedInvoke() { return true; }
 					};
 
 					struct DecodableType {
@@ -145,7 +145,7 @@ namespace app
 
 						using ResponseType = DataModel::NullObjectType;
 
-						static constexpr bool MustUseTimedInvoke() { return false; }
+						static constexpr bool MustUseTimedInvoke() { return true; }
 					};
 
 					struct DecodableType {

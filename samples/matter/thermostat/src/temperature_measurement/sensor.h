@@ -25,7 +25,7 @@ public:
 	void InternalMeasurement();
 
 private:
-	static void ExternalTemperatureMeasurementReadHandler(const EmberBindingTableEntry &binding,
+	static void ExternalTemperatureMeasurementReadHandler(const chip::app::Clusters::Binding::TableEntry &binding,
 							      chip::OperationalDeviceProxy *deviceProxy,
 							      BindingHandler::BindingData &bindingData);
 

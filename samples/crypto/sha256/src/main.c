@@ -66,9 +66,9 @@ int hash_singlepart_sha256(void)
 	uint32_t olen;
 	psa_status_t status;
 
-	LOG_INF("Hashing using SHA256...");
+	LOG_INF("Hashing using SHA-256...");
 
-	/* Calculate the SHA256 hash */
+	/* Calculate the SHA-256 hash */
 	status = psa_hash_compute(
 		PSA_ALG_SHA_256, m_plain_text, sizeof(m_plain_text), m_hash, sizeof(m_hash), &olen);
 	if (status != PSA_SUCCESS) {
@@ -76,8 +76,8 @@ int hash_singlepart_sha256(void)
 		return APP_ERROR;
 	}
 
-	LOG_INF("Hashing successful!");
-	PRINT_HEX("SHA256 hash", m_hash, sizeof(m_hash));
+	LOG_INF("Hash computation successful!");
+	PRINT_HEX("SHA-256 hash", m_hash, sizeof(m_hash));
 
 	return APP_SUCCESS;
 }
@@ -89,7 +89,7 @@ int hash_multipart_sha256(void)
 	uint8_t *input_ptr = m_plain_text;
 	psa_hash_operation_t hash_operation = {0};
 
-	LOG_INF("Hashing using multi-part SHA256...");
+	LOG_INF("Hashing using multi-part SHA-256...");
 
 	/* Setup a multipart hash operation */
 	status = psa_hash_setup(&hash_operation, PSA_ALG_SHA_256);
@@ -133,8 +133,8 @@ int hash_multipart_sha256(void)
 		return APP_ERROR;
 	}
 
-	LOG_INF("Hashing successful!");
-	PRINT_HEX("SHA256 hash", m_hash, sizeof(m_hash));
+	LOG_INF("Hash computation successful!");
+	PRINT_HEX("SHA-256 hash", m_hash, sizeof(m_hash));
 
 	return APP_SUCCESS;
 }
@@ -143,7 +143,7 @@ int verify_sha256(void)
 {
 	psa_status_t status;
 
-	LOG_INF("Verifying the SHA256 hash...");
+	LOG_INF("Verifying the SHA-256 hash...");
 
 	/* Verify the hash */
 	status = psa_hash_compare(
@@ -153,7 +153,7 @@ int verify_sha256(void)
 		return APP_ERROR;
 	}
 
-	LOG_INF("SHA256 verification successful!");
+	LOG_INF("SHA-256 verification successful!");
 
 	return APP_SUCCESS;
 }
@@ -162,7 +162,7 @@ int main(void)
 {
 	int status;
 
-	LOG_INF("Starting SHA256 example...");
+	LOG_INF("Starting SHA-256 example...");
 
 	status = crypto_init();
 	if (status != APP_SUCCESS) {

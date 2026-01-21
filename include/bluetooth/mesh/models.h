@@ -79,6 +79,8 @@
 #define BT_MESH_NLC_PROFILE_ID_ENERGY_MONITOR 0x1604
 /** Occupancy Sensor NLC Profile 1.0 */
 #define BT_MESH_NLC_PROFILE_ID_OCCUPANCY_SENSOR 0x1605
+/** HVAC Integration NLC Profile 1.0 */
+#define BT_MESH_NLC_PROFILE_ID_HVAC_INTEGRATION 0x1606
 /**
  * @}
  */

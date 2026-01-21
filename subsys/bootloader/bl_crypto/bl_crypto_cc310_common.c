@@ -8,7 +8,7 @@
 #include <zephyr/types.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/toolchain.h>
-#include <nrf.h>
+#include <nrfx.h>
 #include <nrf_cc310_bl_init.h>
 #include <pm_config.h>
 

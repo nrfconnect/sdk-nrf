@@ -1,0 +1,17 @@
+/ {
+	aliases {
+		/delete-property/ sw3;
+	};
+};
+
+/delete-node/ &button3;
+
+&uart20 {
+	zephyr,pm-device-runtime-auto;
+	disable-rx;
+};
+
+&led0 {
+	gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+	label = "Green LED 0";
+};

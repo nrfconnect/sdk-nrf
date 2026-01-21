@@ -17,15 +17,15 @@ zephyr_library_include_directories(src/events)
 target_sources(app PRIVATE src/main.c)
 
 target_sources(app PRIVATE
-		src/events/ack_event.c
-		src/events/config_event.c
-		src/events/control_event.c
-		src/events/measurement_event.c
+  src/events/ack_event.c
+  src/events/config_event.c
+  src/events/control_event.c
+  src/events/measurement_event.c
 )
 
 target_sources(app PRIVATE
-		src/modules/controller.c
-		src/modules/sensor_simulated.c
-		src/modules/stats.c
+  src/modules/controller.c
+  src/modules/sensor_simulated.c
+  src/modules/stats.c
 )
 # NORDIC SDK APP END

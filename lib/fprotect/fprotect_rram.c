@@ -8,7 +8,7 @@
 #include <string.h>
 #include <errno.h>
 #include <soc.h>
-#include <nrf_erratas.h>
+#include <nrfx.h>
 #include <hal/nrf_rramc.h>
 
 #define RRAMC_REGION_FOR_FPROTECT_DEFAULT_VALUE 0x0000000f

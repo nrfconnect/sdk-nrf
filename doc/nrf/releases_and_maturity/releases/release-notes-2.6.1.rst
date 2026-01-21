@@ -44,7 +44,7 @@ Supported modem firmware
 See `Modem firmware compatibility matrix`_ for an overview of which modem firmware versions have been tested with this version of the |NCS|.
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -122,8 +122,8 @@ Matter Bridge
 
 * Added:
 
-  * The :ref:`CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES <CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES>` Kconfig option to set the maximum number of scanned Bluetooth LE devices.
-  * The :ref:`CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS <CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS>` Kconfig option to set the scan timeout.
+  * The :option:`CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES` Kconfig option to set the maximum number of scanned Bluetooth LE devices.
+  * The :option:`CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS` Kconfig option to set the scan timeout.
 
 * Fixed an issue where the recovery mechanism for Bluetooth LE connections might not work correctly.
 

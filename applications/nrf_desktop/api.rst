@@ -17,6 +17,14 @@ HID reports
 
 .. doxygengroup:: nrf_desktop_hid_reports
 
+HID report provider events
+**************************
+
+| Header file: :file:`applications/nrf_desktop/src/events/hid_report_provider_event.h`
+| Source file: :file:`applications/nrf_desktop/src/events/hid_report_provider_event.c`
+
+.. doxygengroup:: nrf_desktop_hid_report_provider_event
+
 LED states
 **********
 
@@ -25,10 +33,18 @@ LED states
 
 .. doxygengroup:: nrf_desktop_led_state
 
+Motion events
+*************
+
+| Header file: :file:`applications/nrf_desktop/src/events/motion_event.h`
+| Source file: :file:`applications/nrf_desktop/src/events/motion_event.c`
+
+.. doxygengroup:: nrf_desktop_motion_event
+
 USB events
 **********
 
 | Header file: :file:`applications/nrf_desktop/src/events/usb_event.h`
-| Source file: :file:`applications/nrf_desktop/src/modules/usb_state.c`
+| Source file: :file:`applications/nrf_desktop/src/events/usb_event.c`
 
 .. doxygengroup:: nrf_desktop_usb_event

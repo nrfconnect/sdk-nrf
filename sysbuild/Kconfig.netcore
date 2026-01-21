@@ -13,11 +13,11 @@ config EXTERNAL_CONFIGURED_NETCORE
 
 config SUPPORT_NETCORE
 	bool
-	default y if (SOC_NRF5340_CPUAPP || SOC_NRF54H20_CPUAPP)
+	default y if (SOC_NRF5340_CPUAPP || SOC_NRF54H20_CPUAPP || BOARD_NRF5340BSIM_NRF5340_CPUAPP)
 
 config NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER
 	string
-	default "cpunet" if SOC_NRF5340_CPUAPP
+	default "cpunet" if (SOC_NRF5340_CPUAPP || BOARD_NRF5340BSIM_NRF5340_CPUAPP)
 	default "cpurad" if SOC_NRF54H20_CPUAPP
 
 config NETCORE_REMOTE_DOMAIN
@@ -69,6 +69,7 @@ choice NETCORE
 	default NETCORE_802154_RPMSG if NRF_DEFAULT_802154 && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
 	default NETCORE_IPC_RADIO if NRF_DEFAULT_IPC_RADIO && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
 	default NETCORE_EMPTY if NRF_DEFAULT_EMPTY && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
+	default NETCORE_NONE
 	depends on SUPPORT_NETCORE && !EXTERNAL_CONFIGURED_NETCORE
 
 config NETCORE_NONE
@@ -142,11 +143,11 @@ config NETCORE_IMAGE_NAME
 
 config NETCORE_IMAGE_PATH
 	string
-	default "${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/empty_net_core" if NETCORE_EMPTY
-	default "${ZEPHYR_BASE}/samples/bluetooth/hci_ipc" if NETCORE_HCI_IPC
-	default "${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/rpc_host" if NETCORE_RPC_HOST
-	default "${ZEPHYR_BASE}/samples/boards/nordic/ieee802154/802154_rpmsg" if NETCORE_802154_RPMSG
-	default "${ZEPHYR_NRF_MODULE_DIR}/applications/ipc_radio" if NETCORE_IPC_RADIO
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/basic/empty" if NETCORE_EMPTY
+	default "$(ZEPHYR_BASE)/samples/bluetooth/hci_ipc" if NETCORE_HCI_IPC
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/bluetooth/rpc_host" if NETCORE_RPC_HOST
+	default "$(ZEPHYR_BASE)/samples/boards/nordic/ieee802154/802154_rpmsg" if NETCORE_802154_RPMSG
+	default "$(ZEPHYR_NRF_MODULE_DIR)/applications/ipc_radio" if NETCORE_IPC_RADIO
 	help
 	  Source directory of netcore image.
 

@@ -33,7 +33,7 @@ constexpr uint16_t kSimulatedReadingFrequency = (60000 / kSensorTimerPeriodMs); 
 constexpr int16_t sMockTemp[] = { 2000, 2731, 1600, 2100, 1937, 3011, 1500, 1899 };
 #endif
 
-} // namespace
+} /* namespace */
 
 TemperatureSensor::TemperatureSensor()
 {
@@ -94,9 +94,9 @@ void TemperatureSensor::ExternalMeasurement()
 	}
 }
 
-void TemperatureSensor::ExternalTemperatureMeasurementReadHandler(const EmberBindingTableEntry &binding,
-								  OperationalDeviceProxy *deviceProxy,
-								  Nrf::Matter::BindingHandler::BindingData &bindingData)
+void TemperatureSensor::ExternalTemperatureMeasurementReadHandler(
+	const chip::app::Clusters::Binding::TableEntry &binding, OperationalDeviceProxy *deviceProxy,
+	Nrf::Matter::BindingHandler::BindingData &bindingData)
 {
 	auto onSuccess = [dataPointer = Platform::New<Nrf::Matter::BindingHandler::BindingData>(bindingData)](
 				 const ConcreteDataAttributePath &attributePath, const auto &dataResponse) {

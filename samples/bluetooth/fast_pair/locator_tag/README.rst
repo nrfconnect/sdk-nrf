@@ -170,7 +170,7 @@ The following DFU solutions are supported in this sample:
 * The :ref:`MCUboot <mcuboot:mcuboot_ncs>` bootloader solution.
   See the :ref:`app_dfu` user guide for more information.
 
-To enable the DFU functionality use the ``SB_CONFIG_APP_DFU`` sysbuild Kconfig option.
+To enable the DFU functionality use the :kconfig:option:`SB_CONFIG_APP_DFU` sysbuild Kconfig option.
 This option is enabled by default if a supported DFU solution is configured (see the following table to learn about supported configurations).
 
 To select a specific version of the application, change the :file:`VERSION` file in the sample root directory.
@@ -194,6 +194,7 @@ The configuration of the DFU solution varies depending on the board target:
 |              |                                | * ``nrf54l15dk/nrf54l05/cpuapp`` (only ``release`` configuration) |
 |              |                                | * ``nrf54l15dk/nrf54l10/cpuapp``                                  |
 |              |                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                  |
+|              |                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                               |
 +--------------+--------------------------------+-------------------------------------------------------------------+
 | MCUboot      | overwrite only mode            | * ``nrf5340dk/nrf5340/cpuapp``                                    |
 |              |                                | * ``nrf5340dk/nrf5340/cpuapp/ns``                                 |
@@ -231,13 +232,14 @@ The configuration of the signature algorithm and the public key storage solution
 | ED25519                        | * ``nrf54l15dk/nrf54l05/cpuapp`` (only ``release`` configuration) | Key Management Unit (KMU) | HW-accelerated (CRACEN),  |
 |                                | * ``nrf54l15dk/nrf54l10/cpuapp``                                  |                           | Signature derived from    |
 |                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                  |                           | image (pure)              |
+|                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                               |                           |                           |
 +--------------------------------+-------------------------------------------------------------------+---------------------------+---------------------------+
 
 .. note::
    The SUIT DFU integration in this sample does not support the secure boot feature and its requirement for the signature verification.
    The affected board targets are not listed in the table above.
 
-Each supported board target has the signature key file (the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` Kconfig option) defined in the :file:`sysbuild/configuration` directory that is part of the sample directory.
+Each supported board target has the signature key file (the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` Kconfig option) defined in the :file:`sysbuild/configuration` directory that is part of the sample directory.
 The signature key file is unique for each board target and is located in the :file:`<board_target>` subdirectory.
 For example, the signature key file for the ``nrf54l15dk/nrf54l15/cpuapp`` board target is located in the :file:`sysbuild/configuration/nrf54l15dk_nrf54l15_cpuapp` subdirectory.
 
@@ -568,7 +570,7 @@ SB_CONFIG_APP_DFU
    The sample sysbuild configuration option enables the Device Firmware Update (DFU) functionality.
    The value of this option is propagated to the application configuration option :ref:`CONFIG_APP_DFU <CONFIG_APP_DFU>`.
    On multi-core devices, it adds the Kconfig fragment to the network core image configuration which speeds up the DFU process.
-   This option is enabled by default if the MCUboot bootloader image is used (``SB_CONFIG_BOOTLOADER_MCUBOOT``) or if the chosen board target is based on an nRF54H Series SoC  (``SB_CONFIG_SOC_SERIES_NRF54HX``).
+   This option is enabled by default if the MCUboot bootloader image is used (:kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT`) or if the chosen board target is based on an nRF54H Series SoC  (:kconfig:option:`SB_CONFIG_SOC_SERIES_NRF54HX`).
 
 .. _CONFIG_APP_DFU:
 
@@ -616,7 +618,7 @@ Building and running
 
 .. include:: /includes/ipc_radio_conf.txt
 
-When building the sample, you can provide the Fast Pair Model ID (``SB_CONFIG_BT_FAST_PAIR_MODEL_ID``) and the Fast Pair Anti-Spoofing Key (``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY``) as sysbuild Kconfig options.
+When building the sample, you can provide the Fast Pair Model ID (:kconfig:option:`SB_CONFIG_BT_FAST_PAIR_MODEL_ID`) and the Fast Pair Anti-Spoofing Key (:kconfig:option:`SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`) as sysbuild Kconfig options.
 If the data is not provided, the sample uses the default provisioning data obtained for the *NCS locator tag* (the locator tag debug Fast Pair Provider).
 See :ref:`ug_bt_fast_pair_provisioning` for details.
 
@@ -644,7 +646,7 @@ For example, when building from the command line, you can add it as follows:
 DFU build with the key storage in KMU
 =====================================
 
-The MCUboot-based targets that enable the ``SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU`` Kconfig option use the Key Management Unit (KMU) hardware peripheral to store the public key that is used by the bootloader to verify the application image.
+The MCUboot-based targets that enable the :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU` Kconfig option use the Key Management Unit (KMU) hardware peripheral to store the public key that is used by the bootloader to verify the application image.
 
 .. note::
    The board targets based on the nRF54L SoC Series are currently the only targets that support the KMU-based key storage.
@@ -652,8 +654,8 @@ The MCUboot-based targets that enable the ``SB_CONFIG_MCUBOOT_SIGNATURE_USING_KM
 
 To use KMU, the public key must first be provisioned.
 This provisioning step can be performed automatically by the west runner, provided that a :file:`keyfile.json` file is present in the build directory.
-In this sample, the :file:`keyfile.json` file is automatically generated using the ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option.
-This option uses the input key specified by the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` Kconfig option to generate the required file during the build process.
+In this sample, the :file:`keyfile.json` file is automatically generated using the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` Kconfig option.
+This option uses the input key specified by the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` Kconfig option to generate the required file during the build process.
 
 To trigger KMU provisioning during flashing, use the ``west flash`` command with either the ``--erase`` or ``--recover`` flag.
 This ensures that both the firmware and the MCUboot public key are correctly programmed onto the target device using KMU-based key storage.
@@ -1340,7 +1342,7 @@ Fast Pair GATT Service
 This sample uses the :ref:`bt_fast_pair_readme` and its dependencies and is configured to meet the requirements of the Fast Pair standard together with its FMDN extension.
 For details about integrating Fast Pair in the |NCS|, see :ref:`ug_bt_fast_pair`.
 
-By default, this sample sets the ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig options to use the Nordic device model that is intended for demonstration purposes.
+By default, this sample sets the :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_MODEL_ID` and :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY` Kconfig options to use the Nordic device model that is intended for demonstration purposes.
 With these options set, the build system calls the :ref:`bt_fast_pair_provision_script` that automatically generates a hexadecimal file containing Fast Pair Model ID and the Anti-Spoofing Private Key.
 For more details about enabling Fast Pair for your application, see the :ref:`ug_bt_fast_pair_prerequisite_ops_kconfig` section in the Fast Pair integration guide.
 

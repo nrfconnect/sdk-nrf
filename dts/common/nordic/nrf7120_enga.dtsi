@@ -6,6 +6,7 @@
 
 #include <mem.h>
 #include <nordic/nrf_common.dtsi>
+#include <zephyr/dt-bindings/clock/nrf-auxpll.h>
 
 /delete-node/ &sw_pwm;
 
@@ -49,8 +50,14 @@
 			clock-frequency = <DT_FREQ_M(16)>;
 		};
 
-		lfxo: lfxo {
+		pclk32m: pclk32m {
 			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <DT_FREQ_M(32)>;
+		};
+
+		lfxo: lfxo {
+			compatible = "nordic,nrf71-lfxo";
 			#clock-cells = <0>;
 			clock-frequency = <32768>;
 		};
@@ -59,12 +66,6 @@
 			compatible = "fixed-clock";
 			#clock-cells = <0>;
 			clock-frequency = <DT_FREQ_M(64)>;
-		};
-
-		hfxo32m: hfxo32m {
-			compatible = "fixed-clock";
-			#clock-cells = <0>;
-			clock-frequency = <DT_FREQ_M(32)>;
 		};
 
 		hfpll: hfpll {
@@ -79,20 +80,20 @@
 		#size-cells = <1>;
 		ranges;
 
-		nordic_reserved: memory@200ff000{
+		nordic_reserved: memory@200fe000{
 			#address-cells = <1>;
 			#size-cells = <1>;
 			compatible = "mmio-sram";
-			reg = <0x200ff000 0xf00>;
-			ranges = <0x0 0x200ff000 0xf00>;
+			reg = <0x200fe000 0x1000>;
+			ranges = <0x0 0x200fe000 0x1000>;
 		};
 
-		nrf_kmu_reserved_push_area: memory@200fff00{
+		nrf_kmu_cracen_exchange_area: memory@200ff000{
 			#address-cells = <1>;
 			#size-cells = <1>;
-			reg = <0x200fff00 0x0100>;
+			reg = <0x200ff000 0x1000>;
 			compatible = "zephyr,memory-region", "mmio-sram";
-			zephyr,memory-region = "NRF_KMU_RESERVED_PUSH";
+			zephyr,memory-region = "NRF_KMU_CRACEN_EXCHANGE";
 		};
 
 		nrf_mpc_region: memory@50041000 {
@@ -112,7 +113,7 @@
 		ficr: ficr@ffc000 {
 			compatible = "nordic,nrf-ficr";
 			reg = <0xffc000 0x1000>;
-			status = "disabled";
+			#nordic,ficr-cells = <1>;
 		};
 
 #ifdef USE_NON_SECURE_ADDRESS_MAP
@@ -211,6 +212,8 @@
 				#address-cells = <1>;
 				#size-cells = <1>;
 				status = "disabled";
+				enable-secure;
+				enable-dma-secure;
 
 				cpuflpr_clic: interrupt-controller@f0000000 {
 					compatible = "nordic,nrf-clic";
@@ -279,6 +282,36 @@
 				status = "disabled";
 			};
 
+			qspi00: qspi@5b000 {
+				compatible = "nordic,nrf-qspi-v2", "snps,designware-ssi";
+				interrupts = <91 NRF_DEFAULT_IRQ_PRIORITY>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+				reg = <0x5b000 0x900 0x5b900 0x700>;
+				reg-names = "wrapper", "core";
+				clock-frequency = <DT_FREQ_M(256)>;
+				fifo-depth = <16>;
+				packet-data-limit = <65536>;
+				dma-transmit-data-level = <8>;
+				dma-receive-data-level = <8>;
+				status = "disabled";
+			};
+
+			qspi01: qspi@5c000 {
+				compatible = "nordic,nrf-qspi-v2", "snps,designware-ssi";
+				interrupts = <92 NRF_DEFAULT_IRQ_PRIORITY>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+				reg = <0x5c000 0x900 0x5c900 0x700>;
+				reg-names = "wrapper", "core";
+				clock-frequency = <DT_FREQ_M(256)>;
+				fifo-depth = <16>;
+				packet-data-limit = <65536>;
+				dma-transmit-data-level = <8>;
+				dma-receive-data-level = <8>;
+				status = "disabled";
+			};
+
 			spi01: spi@5d000 {
 				compatible = "nordic,nrf-spim";
 				reg = <0x5d000 0x1000>;
@@ -314,7 +347,7 @@
 				compatible = "nordic,nrf-timer";
 				reg = <0x85000 0x1000>;
 				interrupts = <133 NRF_DEFAULT_IRQ_PRIORITY>;
-				clocks = <&hfxo32m>;
+				clocks = <&pclk32m>;
 				cc-num = <8>;
 				max-bit-width = <32>;
 				prescaler = <0>;
@@ -610,7 +643,7 @@
 				gpio-controller;
 				#gpio-cells = <2>;
 				port = <1>;
-				ngpios = <20>;
+				ngpios = <16>;
 				gpiote-instance = <&gpiote20>;
 				status = "disabled";
 			};
@@ -621,7 +654,7 @@
 				gpio-controller;
 				#gpio-cells = <2>;
 				port = <3>;
-				ngpios = <13>;
+				ngpios = <12>;
 				gpiote-instance = <&gpiote20>;
 				status = "disabled";
 			};
@@ -664,6 +697,17 @@
 				clocks = <&lfxo>, <&pclk>;
 				clock-names = "lfclock", "hfclock";
 				status = "disabled";
+			};
+
+			tdm: tdm@e8000 {
+				compatible = "nordic,nrf-tdm";
+				easydma-maxcnt-bits = <15>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+				reg = <0xe8000 0x1000>;
+				interrupts = <232 NRF_DEFAULT_IRQ_PRIORITY>;
+				status = "disabled";
+				clocks = <&pclk32m>;
 			};
 
 			spi23: spi@ed000 {
@@ -798,7 +842,7 @@
 				gpio-controller;
 				#gpio-cells = <2>;
 				port = <0>;
-				ngpios = <10>;
+				ngpios = <13>;
 				gpiote-instance = <&gpiote30>;
 				status = "disabled";
 			};
@@ -814,6 +858,25 @@
 				compatible = "nordic,nrf-clock";
 				reg = <0x10e000 0x1000>;
 				interrupts = <270 NRF_DEFAULT_IRQ_PRIORITY>;
+				status = "disabled";
+			};
+
+			audio_auxpll: auxpll@130000 {
+				compatible = "nordic,nrf-auxpll";
+				reg = <0x130000 0x1000>;
+				interrupts = <304 NRF_DEFAULT_IRQ_PRIORITY>;
+				clocks = <&pclk32m>;
+				#clock-cells = <0>;
+				/*
+				 * Temporarily reading FICR addr 0 as FICR offsets
+				 * not defined yet
+				 */
+				nordic,ficrs = <&ficr 0>;
+				nordic,out-div = <12>;
+				nordic,out-drive = <0>;
+				nordic,current-tune = <9>;
+				nordic,sdm-disable;
+				nordic,range = "mid";
 				status = "disabled";
 			};
 
@@ -848,6 +911,28 @@
 			reg = <0x40078000 0x1000>;
 			status = "disabled";
 			#mbox-cells = <1>;
+		};
+
+		mram_controller: mram-controller@5004e000 {
+			compatible = "nordic,nrf-mramc";
+			reg = <0x5004e000 0x1000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			interrupts = <78 NRF_DEFAULT_IRQ_PRIORITY>;
+
+			cpuapp_mram: mram@0 {
+				compatible = "soc-nv-flash";
+				reg = <0 DT_SIZE_K(3972)>;
+				erase-block-size = <4096>;
+				write-block-size = <4>;
+			};
+
+			cpuflpr_mram: mram@3e1000 {
+				compatible = "soc-nv-flash";
+				reg = <0x3e1000 DT_SIZE_K(116)>;
+				erase-block-size = <4096>;
+				write-block-size = <4>;
+			};
 		};
 	};
 

@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/kernel.h>
+#include <zephyr/sys/atomic.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,6 +21,7 @@
 #include "dect_phy_common_rx.h"
 #include "dect_common_utils.h"
 #include "dect_phy_api_scheduler.h"
+#include "dect_phy_shell.h"
 
 #include "dect_common_settings.h"
 #include "dect_phy_ctrl.h"
@@ -32,23 +34,26 @@ struct dect_phy_rf_tool_tx_metrics {
 	uint32_t tx_total_data_amount;
 	uint32_t tx_total_pkt_count;
 	uint32_t tx_op_to_mdm_failure_count;
+	uint32_t tx_op_scheduler_failure_count;
 	uint32_t tx_op_in_mdm_failure_count;
+	uint32_t tx_op_in_mdm_lbt_failure_count;
 	uint32_t tx_total_mdm_operations;
 	int64_t tx_last_tx_scheduled_frame_time_mdm_ticks;
 };
 struct dect_phy_rf_tool_rx_metrics {
 	uint64_t last_pcc_stf_time;
-	uint64_t last_synch_mdm_time;
+	uint64_t last_synch_pcc_stf_time;
 
-	bool rx_wait_for_synch;
+	atomic_t rx_wait_for_synch; /* Atomic: accessed from ISR and thread */
 
 	uint64_t first_rx_mdm_op_frame_time;
 
 	uint32_t rx_total_data_amount;
-	uint32_t rx_total_pkt_count;
+	atomic_t rx_total_pkt_count; /* Atomic: accessed from ISR and thread */
 
 	uint32_t rx_op_to_mdm_ok_count;
 	uint32_t rx_op_to_mdm_failure_count;
+	uint32_t rx_op_scheduler_failure_count;
 	uint32_t rx_op_in_mdm_failure_count;
 	uint32_t rx_total_mdm_ok_operations;
 
@@ -57,12 +62,16 @@ struct dect_phy_rf_tool_rx_metrics {
 
 	uint32_t rx_pdc_crc_error_count;
 
+	int32_t rx_rssi_avg_q3; /* Q3 fixed-point RSSI average (value * 8) */
+	bool rx_rssi_avg_initialized;
 	int8_t rx_rssi_high_level;
 	int8_t rx_rssi_low_level;
 	uint8_t rx_phy_transmit_pwr_low;
 	uint8_t rx_phy_transmit_pwr_high;
 	int16_t rx_snr_low;
 	int16_t rx_snr_high;
+	int32_t rx_snr_avg_q3; /* Q3 fixed-point SNR average (value * 8), in 1/4 dB units */
+	bool rx_snr_avg_initialized;
 	uint8_t rx_latest_mcs;
 };
 
@@ -72,8 +81,9 @@ struct dect_phy_rf_tool_scheduler_rx_data {
 
 struct dect_phy_rf_tool_scheduler_tx_data {
 	uint16_t tx_data_len;
+#if !defined(CONFIG_XOSHIRO_RANDOM_GENERATOR)
 	uint8_t tx_data[DECT_DATA_MAX_LEN]; /* max data size in bytes when MCS4 + 4 slots */
-
+#endif
 	union nrf_modem_dect_phy_hdr tx_phy_header;
 	struct nrf_modem_dect_phy_tx_params tx_op;
 };
@@ -81,11 +91,11 @@ struct dect_phy_rf_tool_scheduler_tx_data {
 static struct dect_phy_rf_tool_tool_data {
 
 	uint32_t frame_repeat_count_interval_current_count;
-	uint32_t frame_count_for_synch;
+	uint32_t frame_count_for_synch_rx_restart;
 	uint16_t frame_len_subslots;
 	uint64_t frame_len_mdmticks;
 
-	bool on_going;
+	atomic_t on_going; /* Atomic: accessed from ISR and thread */
 
 	struct dect_phy_rf_tool_params cmd_params;
 
@@ -100,8 +110,52 @@ static struct dect_phy_rf_tool_tool_data {
 
 #define DECT_PHY_RF_TOOL_RESTART_SCHEDULING_DELAY_SECS 2
 
+/* IIR low-pass filter for RSSI and SNR averaging.
+ *
+ * Raw RSSI/SNR measurements fluctuate due to multipath fading, interference,
+ * and measurement noise. The low-pass filter smooths these variations to show
+ * the overall signal trend while rejecting sudden spikes.
+ * Larger shift means more smoothing (less sensitivity to short-term fluctuations).
+ * Smaller shift means more sensitivity to short-term fluctuations.
+ *
+ * The shift value determines both the filter alpha (alpha = 1 / (1 << shift)) and the
+ * Q fixed-point precision (value * (1 << shift)). Using the same shift for both is
+ * intentional: it allows the alpha scaling and Q scaling to cancel out in the update
+ * formula, simplifying "alpha * input * Q_scale" to just "input". This avoids extra
+ * shift operations and keeps the code efficient for ISR context.
+ *
+ * shift = 3 means alpha = 0.125, so An = 0.875 * An-1 + 0.125 * input
+ */
+#define DECT_PHY_RF_TOOL_IIR_SHIFT 3
+
+/**
+ * @brief 1-tap IIR low-pass filter (exponential moving average) using fixed-point.
+ *
+ * Implements: An = (1 - alpha) * An-1 + alpha * input
+ * where alpha = 1 / (1 << DECT_PHY_RF_TOOL_IIR_SHIFT).
+ */
+static inline void dect_phy_rf_tool_iir_lpf_update(int32_t *avg_q, bool *initialized,
+						   int16_t input)
+{
+	if (!*initialized) {
+		*avg_q = (int32_t)input << DECT_PHY_RF_TOOL_IIR_SHIFT;
+		*initialized = true;
+	} else {
+		/* An = An-1 - alpha*An-1 + alpha*input (alpha terms cancel with Q scaling) */
+		*avg_q = *avg_q - (*avg_q >> DECT_PHY_RF_TOOL_IIR_SHIFT) + input;
+	}
+}
+
+/**
+ * @brief Get the filtered value from Q fixed-point average.
+ */
+static inline int16_t dect_phy_rf_tool_iir_lpf_value_get(int32_t avg_q)
+{
+	return (int16_t)(avg_q >> DECT_PHY_RF_TOOL_IIR_SHIFT);
+}
+
 /**************************************************************************************************/
-static int dect_phy_rf_tool_msgq_data_op_add(uint16_t event_id, void *data, size_t data_size);
+static int dect_phy_rf_tool_msgq_data_op_add(uint16_t event_id, const void *data, size_t data_size);
 static int dect_phy_rf_tool_msgq_non_data_op_add(uint16_t event_id);
 
 static int dect_phy_rf_tool_frame_active_subslots_get(enum dect_phy_rf_tool_mode mode);
@@ -120,12 +174,10 @@ static bool dect_phy_rf_tool_rx_mode(enum dect_phy_rf_tool_mode mode);
 /**************************************************************************************************/
 
 #define DECT_PHY_RF_TOOL_EVT_CMD_DONE			    1
-#define DECT_PHY_RF_TOOL_EVT_MDM_OP_COMPLETED		    2
-#define DECT_PHY_RF_TOOL_EVT_RX_PCC_CRC_ERROR		    3
-#define DECT_PHY_RF_TOOL_EVT_RX_PDC_CRC_ERROR		    4
-#define DECT_PHY_RF_TOOL_EVT_RX_PCC			    5
-#define DECT_PHY_RF_TOOL_EVT_RX_PDC_DATA		    6
-#define DECT_PHY_RF_TOOL_EVT_SCHEDULER_ALL_REPETITIONS_DONE 7
+#define DECT_PHY_RF_TOOL_EVT_SYNCH_FAILED		    2
+#define DECT_PHY_RF_TOOL_EVT_RX_CONT_COMPLETED		    3
+#define DECT_PHY_RF_TOOL_EVT_RX_PCC			    4
+#define DECT_PHY_RF_TOOL_EVT_SCHEDULER_ALL_REPETITIONS_DONE 5
 
 /**************************************************************************************************/
 
@@ -141,82 +193,184 @@ static void dect_phy_rf_tool_mdm_op_complete_cb(
 	};
 
 	dect_phy_api_scheduler_mdm_op_completed(&rf_tool_op_completed_params);
-	dect_phy_rf_tool_msgq_data_op_add(DECT_PHY_RF_TOOL_EVT_MDM_OP_COMPLETED,
-					  (void *)&rf_tool_op_completed_params,
-					  sizeof(struct dect_phy_common_op_completed_params));
+
+	/* Update metrics immediately in ISR context (no need to queue for this) */
+	if (atomic_get(&rf_tool_data.on_going)) {
+		if (DECT_PHY_RF_TOOL_TX_HANDLE_IN_RANGE(evt->handle)) {
+			if (evt->err == NRF_MODEM_DECT_PHY_SUCCESS) {
+				rf_tool_data.tx_metrics.tx_total_pkt_count++;
+				rf_tool_data.tx_metrics.tx_total_data_amount +=
+					rf_tool_data.scheduler_tx_data.tx_data_len;
+				rf_tool_data.tx_metrics.tx_total_mdm_operations++;
+			} else {
+				rf_tool_data.tx_metrics.tx_op_in_mdm_failure_count++;
+			}
+			if (evt->err == NRF_MODEM_DECT_PHY_ERR_LBT_CHANNEL_BUSY) {
+				rf_tool_data.tx_metrics.tx_op_in_mdm_lbt_failure_count++;
+			}
+		} else if (evt->handle == DECT_PHY_RF_TOOL_RX_CONT_HANDLE ||
+			   evt->handle == DECT_PHY_RF_TOOL_SYNCH_WAIT_RX_HANDLE ||
+			   DECT_PHY_RF_TOOL_RX_HANDLE_IN_RANGE(evt->handle)) {
+			if (evt->err == NRF_MODEM_DECT_PHY_SUCCESS) {
+				rf_tool_data.rx_metrics.rx_total_mdm_ok_operations++;
+			} else {
+				rf_tool_data.rx_metrics.rx_op_in_mdm_failure_count++;
+			}
+		}
+
+		/* Queue events only for operations that need thread processing */
+		if (atomic_get(&rf_tool_data.rx_metrics.rx_wait_for_synch) &&
+		    evt->handle == DECT_PHY_RF_TOOL_SYNCH_WAIT_RX_HANDLE) {
+			/* We didn't get synch - need to stop (queue event for thread) */
+			dect_phy_rf_tool_msgq_non_data_op_add(DECT_PHY_RF_TOOL_EVT_SYNCH_FAILED);
+		} else if (evt->handle == DECT_PHY_RF_TOOL_RX_CONT_HANDLE) {
+			/* RX_CONT completed - queue event for thread */
+			dect_phy_rf_tool_msgq_data_op_add(
+				DECT_PHY_RF_TOOL_EVT_RX_CONT_COMPLETED,
+				&evt->handle, sizeof(uint32_t));
+		}
+	}
 }
 
 static void dect_phy_rf_tool_mdm_pcc_cb(const struct nrf_modem_dect_phy_pcc_event *evt,
 	uint64_t *time)
 {
-	struct dect_phy_common_op_pcc_rcv_params ctrl_pcc_op_params;
-	struct dect_phy_header_type2_format0_t *header = (void *)&evt->hdr;
+	struct dect_phy_ctrl_field_common *phy_h = (void *)&(evt->hdr);
+	int16_t rssi_level = evt->rssi_2 / 2;
+	bool need_thread_processing = false;
 
-	ctrl_pcc_op_params.pcc_status = *evt;
-	ctrl_pcc_op_params.phy_header = evt->hdr;
-	ctrl_pcc_op_params.time = *time;
-	ctrl_pcc_op_params.stf_start_time = evt->stf_start_time;
-	ctrl_pcc_op_params.phy_len = header->packet_length;
-	ctrl_pcc_op_params.phy_len_type = header->packet_length_type;
+	/* Store metrics immediately in ISR context (no need to queue for this) */
+	if (atomic_get(&rf_tool_data.on_going)) {
+		/* Update RSSI min/max */
+		if (rssi_level > rf_tool_data.rx_metrics.rx_rssi_high_level) {
+			rf_tool_data.rx_metrics.rx_rssi_high_level = rssi_level;
+		}
+		if (rssi_level < rf_tool_data.rx_metrics.rx_rssi_low_level) {
+			rf_tool_data.rx_metrics.rx_rssi_low_level = rssi_level;
+		}
 
-	dect_phy_rf_tool_msgq_data_op_add(DECT_PHY_RF_TOOL_EVT_RX_PCC,
-					  (void *)&ctrl_pcc_op_params,
-					  sizeof(struct dect_phy_common_op_pcc_rcv_params));
+		/* Update RSSI exponential moving average (1-tap IIR low-pass filter) */
+		dect_phy_rf_tool_iir_lpf_update(
+			&rf_tool_data.rx_metrics.rx_rssi_avg_q3,
+			&rf_tool_data.rx_metrics.rx_rssi_avg_initialized,
+			rssi_level);
+
+		/* Update transmit power min/max */
+		if (phy_h->transmit_power > rf_tool_data.rx_metrics.rx_phy_transmit_pwr_high) {
+			rf_tool_data.rx_metrics.rx_phy_transmit_pwr_high = phy_h->transmit_power;
+		}
+		if (phy_h->transmit_power < rf_tool_data.rx_metrics.rx_phy_transmit_pwr_low) {
+			rf_tool_data.rx_metrics.rx_phy_transmit_pwr_low = phy_h->transmit_power;
+		}
+
+		/* Update SNR min/max/avg (convert to dB by dividing by 4) */
+		int16_t snr_db = evt->snr / 4;
+
+		if (snr_db > rf_tool_data.rx_metrics.rx_snr_high) {
+			rf_tool_data.rx_metrics.rx_snr_high = snr_db;
+		}
+		if (snr_db < rf_tool_data.rx_metrics.rx_snr_low) {
+			rf_tool_data.rx_metrics.rx_snr_low = snr_db;
+		}
+
+		/* Update SNR exponential moving average (1-tap IIR low-pass filter) */
+		dect_phy_rf_tool_iir_lpf_update(
+			&rf_tool_data.rx_metrics.rx_snr_avg_q3,
+			&rf_tool_data.rx_metrics.rx_snr_avg_initialized,
+			snr_db);
+
+		/* Update MCS and STF time */
+		rf_tool_data.rx_metrics.rx_latest_mcs = phy_h->df_mcs;
+		rf_tool_data.rx_metrics.last_pcc_stf_time = evt->stf_start_time;
+
+		/* Check header validity */
+		if (evt->header_status != NRF_MODEM_DECT_PHY_HDR_STATUS_VALID) {
+			rf_tool_data.rx_metrics.rx_pcc_header_not_valid_count++;
+		} else {
+			/* Handle RX synch logic directly in ISR context */
+			uint32_t pkt_count = atomic_get(
+				&rf_tool_data.rx_metrics.rx_total_pkt_count);
+			struct dect_phy_rf_tool_params *cmd_params = &(rf_tool_data.cmd_params);
+
+			if (cmd_params->find_rx_sync) {
+				if (pkt_count == 0) {
+					/* 1st pkt, we got synch */
+					rf_tool_data.rx_metrics.last_synch_pcc_stf_time =
+						evt->stf_start_time;
+
+					if (atomic_get(
+						&rf_tool_data.rx_metrics.rx_wait_for_synch)) {
+						atomic_set(
+							&rf_tool_data.rx_metrics.rx_wait_for_synch,
+							0);
+						/* Queue event only for scheduling operations
+						 * (needs thread context)
+						 */
+						need_thread_processing = true;
+					}
+				} else if (pkt_count == 1) {
+					/* 2nd pkt: calculate frame count for synch rx restart */
+					int frame_count_for_synch_rx_restart =
+						((evt->stf_start_time -
+						  rf_tool_data.rx_metrics.last_synch_pcc_stf_time) /
+						 rf_tool_data.frame_len_mdmticks) - 1;
+
+					if (frame_count_for_synch_rx_restart < 0) {
+						frame_count_for_synch_rx_restart = 0;
+					}
+					rf_tool_data.frame_count_for_synch_rx_restart =
+						frame_count_for_synch_rx_restart;
+				}
+			} else if (cmd_params->mode == DECT_PHY_RF_TOOL_MODE_RX_TX) {
+				if (pkt_count == 0) {
+					/* Synch is from our 1st RX frame time sent to modem */
+					int frame_count_for_synch_rx_restart =
+						((evt->stf_start_time -
+							rf_tool_data.rx_metrics
+								.first_rx_mdm_op_frame_time) /
+							rf_tool_data.frame_len_mdmticks);
+
+					if (frame_count_for_synch_rx_restart < 0) {
+						frame_count_for_synch_rx_restart = 0;
+					}
+					rf_tool_data.frame_count_for_synch_rx_restart =
+						frame_count_for_synch_rx_restart;
+				}
+			}
+		}
+	}
+
+	/* Queue to thread only if we need to schedule operations (find_rx_sync case) */
+	if (need_thread_processing) {
+		dect_phy_rf_tool_msgq_non_data_op_add(DECT_PHY_RF_TOOL_EVT_RX_PCC);
+	}
 }
 
 static void dect_phy_rf_tool_mdm_pcc_crc_failure_cb(
 	const struct nrf_modem_dect_phy_pcc_crc_failure_event *evt,
 	uint64_t *time)
 {
-	struct dect_phy_common_op_pcc_crc_fail_params pdc_crc_fail_params = {
-		.time = *time,
-		.crc_failure = *evt,
-	};
-
-	dect_phy_rf_tool_msgq_data_op_add(DECT_PHY_RF_TOOL_EVT_RX_PCC_CRC_ERROR,
-					  (void *)&pdc_crc_fail_params,
-					  sizeof(struct dect_phy_common_op_pcc_crc_fail_params));
+	/* Update metrics immediately in ISR context (no need to queue for this) */
+	if (atomic_get(&rf_tool_data.on_going)) {
+		rf_tool_data.rx_metrics.rx_pcc_crc_error_count++;
+	}
 }
 
 static void dect_phy_rf_tool_mdm_pdc_cb(const struct nrf_modem_dect_phy_pdc_event *evt,
 	uint64_t *time)
 {
-	int16_t rssi_level = evt->rssi_2 / 2;
-	struct dect_phy_commmon_op_pdc_rcv_params rf_tool_pdc_op_params;
-
-	rf_tool_pdc_op_params.rx_status = *evt;
-
-	rf_tool_pdc_op_params.data_length = evt->len;
-	rf_tool_pdc_op_params.time = *time;
-
-	rf_tool_pdc_op_params.rx_pwr_dbm = 0;		      /* Taken from PCC */
-	rf_tool_pdc_op_params.rx_rssi_level_dbm = rssi_level; /* Used from PCC */
-	rf_tool_pdc_op_params.rx_channel = rf_tool_data.cmd_params.channel;
-
-	if (evt->len <= sizeof(rf_tool_pdc_op_params.data)) {
-		memcpy(rf_tool_pdc_op_params.data, evt->data, evt->len);
-		dect_phy_rf_tool_msgq_data_op_add(
-			DECT_PHY_RF_TOOL_EVT_RX_PDC_DATA, (void *)&rf_tool_pdc_op_params,
-			sizeof(struct dect_phy_commmon_op_pdc_rcv_params));
-	} else {
-		printk("Received data is too long to be received by PERF TH - discarded (len %d, "
-		       "buf size %d)\n",
-		       evt->len, sizeof(rf_tool_pdc_op_params.data));
-	}
+	rf_tool_data.rx_metrics.rx_total_data_amount += evt->len;
+	atomic_inc(&rf_tool_data.rx_metrics.rx_total_pkt_count);
 }
 
 static void dect_phy_rf_tool_mdm_pdc_crc_failure_cb(
 	const struct nrf_modem_dect_phy_pdc_crc_failure_event *evt,
 	uint64_t *time)
 {
-	struct dect_phy_common_op_pdc_crc_fail_params pdc_crc_fail_params = {
-		.time = *time,
-		.crc_failure = *evt,
-	};
-
-	dect_phy_rf_tool_msgq_data_op_add(DECT_PHY_RF_TOOL_EVT_RX_PDC_CRC_ERROR,
-					  (void *)&pdc_crc_fail_params,
-					  sizeof(struct dect_phy_common_op_pdc_crc_fail_params));
+	/* Update metrics immediately in ISR context (no need to queue for this) */
+	if (atomic_get(&rf_tool_data.on_going)) {
+		rf_tool_data.rx_metrics.rx_pdc_crc_error_count++;
+	}
 }
 
 /**************************************************************************************************/
@@ -224,14 +378,6 @@ static bool dect_phy_rf_tool_rx_mode(enum dect_phy_rf_tool_mode mode)
 {
 	return (mode == DECT_PHY_RF_TOOL_MODE_RX || mode == DECT_PHY_RF_TOOL_MODE_RX_TX ||
 		mode == DECT_PHY_RF_TOOL_MODE_RX_CONTINUOUS);
-}
-
-static int dect_phy_rf_tool_rx_pdc_data_handle(struct dect_phy_data_rcv_common_params *params)
-{
-	rf_tool_data.rx_metrics.rx_total_data_amount += params->data_length;
-	rf_tool_data.rx_metrics.rx_total_pkt_count++;
-
-	return 0;
 }
 
 static double dect_phy_rf_tool_rx_n_tx_duty_cycle_percent_calculate(void)
@@ -251,6 +397,13 @@ static double dect_phy_rf_tool_rx_n_tx_duty_cycle_percent_calculate(void)
 		    cmd_params->frame_repeat_count) *
 		active_rx_subslot_count_on_frame;
 	int frame_len_subslots = dect_phy_rf_tool_frame_len_subslots_get(cmd_params->mode);
+	/* Check for overflow: frame_repeat_count * frame_len_subslots must fit in int32_t */
+	if (frame_len_subslots > 0 &&
+	    cmd_params->frame_repeat_count > (INT32_MAX / frame_len_subslots)) {
+		desh_error("(%s): frame_repeat_count (%u) * frame_len_subslots (%d) would overflow",
+			   (__func__), cmd_params->frame_repeat_count, frame_len_subslots);
+		return 0.0;
+	}
 	int interval_frames_subslots_count = cmd_params->frame_repeat_count * frame_len_subslots;
 	double duty_cycle_percent = 0;
 
@@ -304,37 +457,78 @@ void dect_phy_rf_tool_print_results(void)
 			   rf_tool_data.tx_metrics.tx_total_data_amount);
 		desh_print("  - TX: successfully completed modem operations: %d",
 			   rf_tool_data.tx_metrics.tx_total_mdm_operations);
-		desh_print("  - TX: failed operation count sent to modem:    %d",
-			   rf_tool_data.tx_metrics.tx_op_to_mdm_failure_count);
-		desh_print("  - TX: operation count failed in modem:         %d",
-			   rf_tool_data.tx_metrics.tx_op_in_mdm_failure_count);
+		if (rf_tool_data.tx_metrics.tx_op_to_mdm_failure_count) {
+			desh_error("  - TX: failed operation count sent to modem:    %d",
+				rf_tool_data.tx_metrics.tx_op_to_mdm_failure_count);
+		} else {
+			desh_print("  - TX: failed operation count sent to modem:    %d",
+				rf_tool_data.tx_metrics.tx_op_to_mdm_failure_count);
+		}
+		if (rf_tool_data.tx_metrics.tx_op_scheduler_failure_count) {
+			desh_error("  - TX: failed operation count in scheduler:     %d",
+				rf_tool_data.tx_metrics.tx_op_scheduler_failure_count);
+		}
+		if (rf_tool_data.tx_metrics.tx_op_in_mdm_failure_count) {
+			desh_error("  - TX: operation count failed in modem:         %d",
+				rf_tool_data.tx_metrics.tx_op_in_mdm_failure_count);
+		} else {
+			desh_print("  - TX: operation count failed in modem:         %d",
+				rf_tool_data.tx_metrics.tx_op_in_mdm_failure_count);
+		}
+		if (rf_tool_data.tx_metrics.tx_op_in_mdm_lbt_failure_count) {
+			desh_error("  - TX: operation count failed due to LBT BUSY:  %d",
+				rf_tool_data.tx_metrics.tx_op_in_mdm_lbt_failure_count);
+		} else {
+			desh_print("  - TX: operation count failed due to LBT BUSY:  %d",
+				rf_tool_data.tx_metrics.tx_op_in_mdm_lbt_failure_count);
+		}
 	}
 
 	if (dect_phy_rf_tool_rx_mode(cmd_params->mode)) {
 
+		uint32_t pkt_count = atomic_get(&rf_tool_data.rx_metrics.rx_total_pkt_count);
 		uint32_t pkts_total =
-			cmd_params->frame_repeat_count - rf_tool_data.frame_count_for_synch;
+			cmd_params->frame_repeat_count -
+				rf_tool_data.frame_count_for_synch_rx_restart;
 		int32_t pkts_missing = cmd_params->frame_repeat_count -
-				       rf_tool_data.rx_metrics.rx_total_pkt_count -
-				       rf_tool_data.frame_count_for_synch;
+				       pkt_count -
+				       rf_tool_data.frame_count_for_synch_rx_restart;
 
+		if (cmd_params->frame_repeat_count == pkt_count) {
+			pkts_missing = 0;
+		}
 		if (cmd_params->mode == DECT_PHY_RF_TOOL_MODE_RX_CONTINUOUS &&
 		    cmd_params->peer_mode == DECT_PHY_RF_TOOL_MODE_NONE) {
 			pkts_missing = 0;
 		}
 
 		desh_print("  - RX: packet count:                            %d",
-			   rf_tool_data.rx_metrics.rx_total_pkt_count);
+			   atomic_get(&rf_tool_data.rx_metrics.rx_total_pkt_count));
 		desh_print("  - RX: data amount:                             %d",
 			   rf_tool_data.rx_metrics.rx_total_data_amount);
-		desh_print("  - RX: frame count used for synch:              %d",
-			   rf_tool_data.frame_count_for_synch);
+		desh_print("  - RX: frame count missed in synch RX restart:  %d",
+			   rf_tool_data.frame_count_for_synch_rx_restart);
 		desh_print("  - RX: successfully completed modem operations: %d",
 			   rf_tool_data.rx_metrics.rx_total_mdm_ok_operations);
-		desh_print("  - RX: failed operation count sent to modem:    %d",
-			   rf_tool_data.rx_metrics.rx_op_to_mdm_failure_count);
-		desh_print("  - RX: operation count failed in modem:         %d",
-			   rf_tool_data.rx_metrics.rx_op_in_mdm_failure_count);
+		if (rf_tool_data.rx_metrics.rx_op_to_mdm_failure_count) {
+			desh_error("  - RX: failed operation count sent to modem:    %d",
+				rf_tool_data.rx_metrics.rx_op_to_mdm_failure_count);
+		} else {
+			desh_print("  - RX: failed operation count sent to modem:    %d",
+				rf_tool_data.rx_metrics.rx_op_to_mdm_failure_count);
+		}
+		if (rf_tool_data.rx_metrics.rx_op_scheduler_failure_count) {
+			desh_error("  - RX: failed operation count in scheduler:     %d",
+				rf_tool_data.rx_metrics.rx_op_scheduler_failure_count);
+		}
+		if (rf_tool_data.rx_metrics.rx_op_in_mdm_failure_count) {
+			desh_error("  - RX: operation count failed in modem:         %d",
+				rf_tool_data.rx_metrics.rx_op_in_mdm_failure_count);
+
+		} else {
+			desh_print("  - RX: operation count failed in modem:         %d",
+				rf_tool_data.rx_metrics.rx_op_in_mdm_failure_count);
+		}
 
 		if (pkts_missing > 0) {
 			double packet_error_rate = (double)pkts_missing / pkts_total * 100;
@@ -370,10 +564,19 @@ void dect_phy_rf_tool_print_results(void)
 				   rf_tool_data.rx_metrics.rx_pdc_crc_error_count);
 		}
 
-		desh_print("  - RX: RSSI high level:                         %d",
-			   rf_tool_data.rx_metrics.rx_rssi_high_level);
-		desh_print("  - RX: RSSI low level:                          %d",
-			   rf_tool_data.rx_metrics.rx_rssi_low_level);
+		if (cmd_params->rx_show_min_max_values) {
+			desh_print("  - RX: RSSI high level:                         %d",
+				   rf_tool_data.rx_metrics.rx_rssi_high_level);
+			desh_print("  - RX: RSSI low level:                          %d",
+				   rf_tool_data.rx_metrics.rx_rssi_low_level);
+		}
+		if (rf_tool_data.rx_metrics.rx_rssi_avg_initialized) {
+			desh_print("  - RX: RSSI average:                            %d",
+				   dect_phy_rf_tool_iir_lpf_value_get(
+					   rf_tool_data.rx_metrics.rx_rssi_avg_q3));
+		} else {
+			desh_print("  - RX: RSSI average:                            N/A");
+		}
 
 		desh_print("  - RX: transmit power high:                     %d dbm",
 			   dect_common_utils_phy_tx_power_to_dbm(
@@ -382,10 +585,19 @@ void dect_phy_rf_tool_print_results(void)
 			   dect_common_utils_phy_tx_power_to_dbm(
 				   rf_tool_data.rx_metrics.rx_phy_transmit_pwr_low));
 
-		desh_print("  - RX SNR high:                                 %d",
-			   rf_tool_data.rx_metrics.rx_snr_high);
-		desh_print("  - RX SNR low:                                  %d",
-			   rf_tool_data.rx_metrics.rx_snr_low);
+		if (cmd_params->rx_show_min_max_values) {
+			desh_print("  - RX SNR high:                                 %d",
+				   rf_tool_data.rx_metrics.rx_snr_high);
+			desh_print("  - RX SNR low:                                  %d",
+				   rf_tool_data.rx_metrics.rx_snr_low);
+		}
+		if (rf_tool_data.rx_metrics.rx_snr_avg_initialized) {
+			desh_print("  - RX SNR average:                              %d",
+				   dect_phy_rf_tool_iir_lpf_value_get(
+					   rf_tool_data.rx_metrics.rx_snr_avg_q3));
+		} else {
+			desh_print("  - RX SNR average:                              N/A");
+		}
 		desh_print("  - RX latest MCS:                               %d",
 			   rf_tool_data.rx_metrics.rx_latest_mcs);
 	}
@@ -395,10 +607,14 @@ static void dect_phy_rf_tool_cmd_done(void)
 {
 	dect_phy_rf_tool_print_results();
 
+	/* Reset scheduler delay to default (immediate trigger) */
+	dect_phy_api_scheduler_set_empty_list_trigger_delay(0);
+	dect_phy_api_scheduler_list_delete_all_items();
+
 	/* Mdm phy api deinit is done by dect_phy_ctrl */
 	dect_phy_ctrl_msgq_non_data_op_add(DECT_PHY_CTRL_OP_RF_TOOL_CMD_DONE);
 
-	rf_tool_data.on_going = false;
+	atomic_set(&rf_tool_data.on_going, 0);
 }
 
 /**************************************************************************************************/
@@ -426,168 +642,47 @@ static void dect_phy_rf_tool_thread_fn(void)
 			dect_phy_rf_tool_cmd_done();
 			break;
 		}
-		case DECT_PHY_RF_TOOL_EVT_MDM_OP_COMPLETED: {
-			struct dect_phy_common_op_completed_params *params =
-				(struct dect_phy_common_op_completed_params *)event.data;
-
-			if (rf_tool_data.on_going) {
-				if (DECT_PHY_RF_TOOL_TX_HANDLE_IN_RANGE(params->handle)) {
-					if (params->status == NRF_MODEM_DECT_PHY_SUCCESS) {
-						rf_tool_data.tx_metrics.tx_total_pkt_count++;
-						rf_tool_data.tx_metrics.tx_total_data_amount +=
-							rf_tool_data.scheduler_tx_data.tx_data_len;
-						rf_tool_data.tx_metrics.tx_total_mdm_operations++;
-					} else {
-						rf_tool_data.tx_metrics
-							.tx_op_in_mdm_failure_count++;
-					}
-				} else if (params->handle == DECT_PHY_RF_TOOL_RX_CONT_HANDLE ||
-					   params->handle ==
-						   DECT_PHY_RF_TOOL_SYNCH_WAIT_RX_HANDLE ||
-					   DECT_PHY_RF_TOOL_RX_HANDLE_IN_RANGE(params->handle)) {
-					if (params->status == NRF_MODEM_DECT_PHY_SUCCESS) {
-						rf_tool_data.rx_metrics
-							.rx_total_mdm_ok_operations++;
-					} else {
-						rf_tool_data.rx_metrics
-							.rx_op_in_mdm_failure_count++;
-					}
-				}
-				if (rf_tool_data.rx_metrics.rx_wait_for_synch &&
-				    params->handle == DECT_PHY_RF_TOOL_SYNCH_WAIT_RX_HANDLE) {
-					/* We didn't got synch - stop */
-					desh_print("No RX synch - exiting.");
-					dect_phy_rf_tool_msgq_non_data_op_add(
-						DECT_PHY_RF_TOOL_EVT_CMD_DONE);
-				} else if (params->handle == DECT_PHY_RF_TOOL_RX_CONT_HANDLE) {
-					dect_phy_rf_tool_msgq_data_op_add(
-						DECT_PHY_RF_TOOL_EVT_SCHEDULER_ALL_REPETITIONS_DONE,
-						&params->handle, sizeof(uint32_t));
-				}
+		case DECT_PHY_RF_TOOL_EVT_SYNCH_FAILED: {
+			if (rf_tool_data.cmd_params.continuous) {
+				/* Continuous mode: schedule next iteration ASAP and
+				 * continue waiting on synch
+				 */
+				desh_print("No RX synch - continue.");
+				dect_phy_rf_tool_print_results();
+				dect_phy_rf_tool_start(&rf_tool_data.cmd_params,
+								       true);
+			} else {
+				desh_print("No RX synch - exiting.");
+				dect_phy_rf_tool_msgq_non_data_op_add(
+					DECT_PHY_RF_TOOL_EVT_CMD_DONE);
 			}
 			break;
 		}
-		case DECT_PHY_RF_TOOL_EVT_RX_PCC_CRC_ERROR: {
-			if (rf_tool_data.on_going) {
-				rf_tool_data.rx_metrics.rx_pcc_crc_error_count++;
-			}
+		case DECT_PHY_RF_TOOL_EVT_RX_CONT_COMPLETED: {
+			/* Metrics already updated in callback - just handle the completion event */
+			uint32_t handle = *((uint32_t *)event.data);
 
-			break;
-		}
-		case DECT_PHY_RF_TOOL_EVT_RX_PDC_CRC_ERROR: {
-			if (rf_tool_data.on_going) {
-				rf_tool_data.rx_metrics.rx_pdc_crc_error_count++;
-			}
+			dect_phy_rf_tool_msgq_data_op_add(
+				DECT_PHY_RF_TOOL_EVT_SCHEDULER_ALL_REPETITIONS_DONE,
+				&handle, sizeof(uint32_t));
 			break;
 		}
 		case DECT_PHY_RF_TOOL_EVT_RX_PCC: {
-			struct dect_phy_common_op_pcc_rcv_params *params =
-				(struct dect_phy_common_op_pcc_rcv_params *)event.data;
-			int16_t rssi_level = params->pcc_status.rssi_2 / 2;
-			struct dect_phy_ctrl_field_common *phy_h = (void *)&(params->phy_header);
-			struct dect_phy_rf_tool_params *cmd_params = &(rf_tool_data.cmd_params);
-
-			/* Store min/max RSSI/SNR/tx pwr as seen on PCC RX */
-			if (rssi_level > rf_tool_data.rx_metrics.rx_rssi_high_level) {
-				rf_tool_data.rx_metrics.rx_rssi_high_level = rssi_level;
-			}
-			if (rssi_level < rf_tool_data.rx_metrics.rx_rssi_low_level) {
-				rf_tool_data.rx_metrics.rx_rssi_low_level = rssi_level;
-			}
-			if (phy_h->transmit_power >
-			    rf_tool_data.rx_metrics.rx_phy_transmit_pwr_high) {
-				rf_tool_data.rx_metrics.rx_phy_transmit_pwr_high =
-					phy_h->transmit_power;
-			}
-			if (phy_h->transmit_power <
-			    rf_tool_data.rx_metrics.rx_phy_transmit_pwr_low) {
-				rf_tool_data.rx_metrics.rx_phy_transmit_pwr_low =
-					phy_h->transmit_power;
-			}
-
-			if (params->pcc_status.snr > rf_tool_data.rx_metrics.rx_snr_high) {
-				rf_tool_data.rx_metrics.rx_snr_high = params->pcc_status.snr;
-			}
-			if (params->pcc_status.snr < rf_tool_data.rx_metrics.rx_snr_low) {
-				rf_tool_data.rx_metrics.rx_snr_low = params->pcc_status.snr;
-			}
-
-			rf_tool_data.rx_metrics.rx_latest_mcs = phy_h->df_mcs;
-			rf_tool_data.rx_metrics.last_pcc_stf_time = params->stf_start_time;
-
-			if (params->pcc_status.header_status !=
-			    NRF_MODEM_DECT_PHY_HDR_STATUS_VALID) {
-				rf_tool_data.rx_metrics.rx_pcc_header_not_valid_count++;
-				break;
-			}
-			if (!rf_tool_data.on_going) {
+			/* Only handle scheduling operations here (needs thread context).
+			 * All other sync logic is already handled in the callback.
+			 */
+			if (!atomic_get(&rf_tool_data.on_going)) {
 				desh_error("Unexpected RX PCC - no RF tool running");
 				break;
 			}
 
-			if (cmd_params->find_rx_sync) {
-				if (rf_tool_data.rx_metrics.rx_total_pkt_count == 0) {
-					/* 1st pkt, we got synch, now schedule operations ASAP  */
-					rf_tool_data.rx_metrics.last_synch_mdm_time =
-						params->stf_start_time;
+			/* This event is only queued for find_rx_sync case
+			 * when we need to schedule
+			 */
+			uint64_t next_possible_frame_time =
+				dect_phy_rf_tool_next_frame_time_get(false);
 
-					if (rf_tool_data.rx_metrics.rx_wait_for_synch) {
-						rf_tool_data.rx_metrics.rx_wait_for_synch = false;
-
-						uint64_t next_possible_frame_time = 0;
-
-						next_possible_frame_time =
-							dect_phy_rf_tool_next_frame_time_get(false);
-						dect_phy_rf_tool_operations_schedule(
-							next_possible_frame_time);
-					}
-				} else if (rf_tool_data.rx_metrics.rx_total_pkt_count == 1) {
-					/* 1st pkt was for rx sync and now we need to calculate how
-					 * many frames there were between this one and the 1st
-					 * packet.
-					 */
-					rf_tool_data.frame_count_for_synch =
-						((params->stf_start_time -
-						  rf_tool_data.rx_metrics.last_synch_mdm_time) /
-						 rf_tool_data.frame_len_mdmticks) -
-						1;
-				}
-			} else {
-				if (cmd_params->mode == DECT_PHY_RF_TOOL_MODE_RX_TX &&
-				    rf_tool_data.rx_metrics.rx_total_pkt_count == 0) {
-					/* Synch is from our 1st RX frame time sent to modem */
-					rf_tool_data.frame_count_for_synch =
-						(params->stf_start_time -
-						 rf_tool_data.rx_metrics
-							 .first_rx_mdm_op_frame_time) /
-						rf_tool_data.frame_len_mdmticks;
-				}
-			}
-			break;
-		}
-		case DECT_PHY_RF_TOOL_EVT_RX_PDC_DATA: {
-			struct dect_phy_commmon_op_pdc_rcv_params *params =
-				(struct dect_phy_commmon_op_pdc_rcv_params *)event.data;
-			struct dect_phy_data_rcv_common_params rcv_params = {
-				.time = params->time,
-				.snr = params->rx_status.snr,
-				.rssi = params->rx_status.rssi_2 / 2,
-				.rx_rssi_dbm = params->rx_rssi_level_dbm,
-				.rx_pwr_dbm = params->rx_pwr_dbm,
-				.data_length = params->data_length,
-				.data = params->data,
-			};
-
-			if (params->data_length) {
-				if (rf_tool_data.on_going) {
-					dect_phy_rf_tool_rx_pdc_data_handle(&rcv_params);
-				} else {
-					desh_print("RF tool command TX data received: ignored "
-						   "- no command running.");
-				}
-			} else {
-				desh_error("RX PDC data with 0 length received - ignored.");
-			}
+			dect_phy_rf_tool_operations_schedule(next_possible_frame_time);
 			break;
 		}
 		case DECT_PHY_RF_TOOL_EVT_SCHEDULER_ALL_REPETITIONS_DONE: {
@@ -595,7 +690,7 @@ static void dect_phy_rf_tool_thread_fn(void)
 			bool last_interval_done_event = false;
 			struct dect_phy_rf_tool_params *cmd_params = &(rf_tool_data.cmd_params);
 
-			if (rf_tool_data.on_going) {
+			if (atomic_get(&rf_tool_data.on_going)) {
 				desh_print("All repetitions done for handle %d", handle);
 				if (DECT_PHY_RF_TOOL_TX_HANDLE_IN_RANGE(handle)) {
 					last_interval_done_event = true;
@@ -724,7 +819,7 @@ static uint64_t dect_phy_rf_tool_next_frame_time_get(bool restart)
 	return next_possible_frame_time;
 }
 
-static int dect_phy_rf_tool_msgq_data_op_add(uint16_t event_id, void *data, size_t data_size)
+static int dect_phy_rf_tool_msgq_data_op_add(uint16_t event_id, const void *data, size_t data_size)
 {
 	int ret = 0;
 	struct dect_phy_common_op_event_msgq_item event;
@@ -824,7 +919,11 @@ static void dect_phy_rf_tool_rx_to_mdm_cb(
 		}
 		rf_tool_data.rx_metrics.rx_op_to_mdm_ok_count++;
 	} else {
-		rf_tool_data.rx_metrics.rx_op_to_mdm_failure_count++;
+		if (params->status == DECT_SCHEDULER_DELAYED_ERROR) {
+			rf_tool_data.rx_metrics.rx_op_scheduler_failure_count++;
+		} else {
+			rf_tool_data.rx_metrics.rx_op_to_mdm_failure_count++;
+		}
 	}
 }
 
@@ -833,9 +932,12 @@ static void dect_phy_rf_tool_tx_to_mdm_cb(
 {
 	if (params->status == NRF_MODEM_DECT_PHY_SUCCESS) {
 		rf_tool_data.tx_metrics.tx_last_tx_scheduled_frame_time_mdm_ticks = frame_time;
-		rf_tool_data.tx_metrics.tx_last_tx_scheduled_frame_time_mdm_ticks = frame_time;
 	} else {
-		rf_tool_data.tx_metrics.tx_op_to_mdm_failure_count++;
+		if (params->status == DECT_SCHEDULER_DELAYED_ERROR) {
+			rf_tool_data.tx_metrics.tx_op_scheduler_failure_count++;
+		} else {
+			rf_tool_data.tx_metrics.tx_op_to_mdm_failure_count++;
+		}
 	}
 }
 
@@ -845,6 +947,55 @@ static void dect_phy_rf_tool_all_intervals_done(uint32_t handle)
 			DECT_PHY_RF_TOOL_RX_HANDLE_IN_RANGE(handle));
 	dect_phy_rf_tool_msgq_data_op_add(DECT_PHY_RF_TOOL_EVT_SCHEDULER_ALL_REPETITIONS_DONE,
 					  &handle, sizeof(uint32_t));
+}
+
+static int dect_phy_rf_tool_synch_wait_rx_op_schedule(uint64_t frame_time)
+{
+	struct dect_phy_api_scheduler_list_item_config *list_item_conf;
+	struct dect_phy_api_scheduler_list_item *list_item =
+		dect_phy_api_scheduler_list_item_alloc_rx_element(&list_item_conf);
+	int ret = 0;
+
+	if (!list_item) {
+		desh_error("Failed to allocate list item for RX operation");
+		return -ENOMEM;
+	}
+	struct dect_phy_rf_tool_params *cmd_params = &(rf_tool_data.cmd_params);
+	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
+
+	/* Just NRF_MODEM_DECT_PHY_RX_MODE_SINGLE_SHOT */
+	list_item->priority = DECT_PRIORITY1_RX;
+	list_item->phy_op_handle = DECT_PHY_RF_TOOL_SYNCH_WAIT_RX_HANDLE;
+
+	list_item_conf->cb_op_to_mdm = dect_phy_rf_tool_rx_to_mdm_cb;
+	list_item_conf->cb_op_completed = NULL;
+	list_item_conf->cb_op_completed_with_count = NULL;
+	list_item_conf->interval_count_left = 0;
+	list_item_conf->interval_mdm_ticks = 0;
+	list_item_conf->channel = cmd_params->channel;
+	list_item_conf->frame_time = frame_time;
+	list_item_conf->frame_length_mdm_ticks = 0; /* Use default frame length */
+	list_item_conf->start_slot = 0;
+	list_item_conf->length_slots = 0;
+	list_item_conf->start_subslot = 0;
+	list_item_conf->length_subslots = 0;
+	list_item_conf->rx.duration = UINT32_MAX;
+	list_item_conf->rx.mode = NRF_MODEM_DECT_PHY_RX_MODE_SINGLE_SHOT;
+	list_item_conf->rx.expected_rssi_level = cmd_params->expected_rx_rssi_level;
+
+	list_item_conf->rx.network_id = current_settings->common.network_id;
+
+	/* No filters */
+	list_item_conf->rx.filter.is_short_network_id_used = false;
+	list_item_conf->rx.filter.short_network_id = 0;
+	list_item_conf->rx.filter.receiver_identity = 0;
+
+	if (!dect_phy_api_scheduler_list_item_add(list_item)) {
+		desh_error("(%s): dect_phy_api_scheduler_list_item_add for RX failed", (__func__));
+		ret = -EBUSY;
+		dect_phy_api_scheduler_list_item_dealloc(list_item);
+	}
+	return ret;
 }
 
 static int dect_phy_rf_tool_rx_op_schedule(uint64_t frame_time, uint32_t interval_mdm_ticks)
@@ -869,11 +1020,12 @@ static int dect_phy_rf_tool_rx_op_schedule(uint64_t frame_time, uint32_t interva
 	list_item_conf->interval_mdm_ticks = interval_mdm_ticks;
 	list_item_conf->channel = cmd_params->channel;
 	list_item_conf->frame_time = frame_time;
+	list_item_conf->frame_length_mdm_ticks = interval_mdm_ticks;
+	list_item_conf->length_slots = 0;
 	list_item_conf->start_slot = 0;
-	list_item_conf->start_subslot = cmd_params->rx_frame_start_offset;
 
 	list_item_conf->subslot_used = true;
-	list_item_conf->length_slots = 0;
+	list_item_conf->start_subslot = cmd_params->rx_frame_start_offset;
 	list_item_conf->length_subslots = cmd_params->rx_subslot_count;
 	list_item_conf->rx.duration = 0;
 
@@ -891,10 +1043,20 @@ static int dect_phy_rf_tool_rx_op_schedule(uint64_t frame_time, uint32_t interva
 
 		/* Set peer parameters defines reporting interval for rx_cont mode */
 		if (cmd_params->peer_mode != DECT_PHY_RF_TOOL_MODE_NONE) {
-			list_item_conf->rx.duration =
+			uint64_t calculated_duration =
 				(rf_tool_data.frame_len_mdmticks * cmd_params->frame_repeat_count) +
 				(SECONDS_TO_MODEM_TICKS(
 					DECT_PHY_RF_TOOL_RESTART_SCHEDULING_DELAY_SECS / 3));
+
+			/* Cap rx.duration at UINT32_MAX to prevent overflow */
+			if (calculated_duration > UINT32_MAX) {
+				desh_warn("(%s): calculated rx.duration (%llu) exceeds UINT32_MAX, "
+					  "capping to UINT32_MAX (%u)",
+					  (__func__), calculated_duration, UINT32_MAX);
+				list_item_conf->rx.duration = UINT32_MAX;
+			} else {
+				list_item_conf->rx.duration = (uint32_t)calculated_duration;
+			}
 		}
 
 		list_item_conf->interval_count_left = 0;
@@ -921,7 +1083,7 @@ static int dect_phy_rf_tool_rx_op_schedule(uint64_t frame_time, uint32_t interva
 	return ret;
 }
 
-static int dect_phy_rf_tool_tx_op_schedule(uint64_t start_time, uint32_t interval_mdm_ticks)
+static int dect_phy_rf_tool_tx_op_schedule(uint64_t frame_time, uint32_t interval_mdm_ticks)
 {
 	struct dect_phy_api_scheduler_list_item_config *list_item_conf;
 	struct dect_phy_api_scheduler_list_item *list_item =
@@ -947,22 +1109,28 @@ static int dect_phy_rf_tool_tx_op_schedule(uint64_t start_time, uint32_t interva
 	list_item_conf->interval_mdm_ticks = interval_mdm_ticks;
 
 	list_item_conf->channel = cmd_params->channel;
-	list_item_conf->frame_time = start_time;
-	list_item_conf->subslot_used = true;
+	list_item_conf->frame_time = frame_time;
+	list_item_conf->frame_length_mdm_ticks = interval_mdm_ticks;
 	list_item_conf->start_slot = 0;
-	list_item_conf->start_subslot = cmd_params->tx_frame_start_offset;
-
 	list_item_conf->length_slots = 0;
+
+	list_item_conf->subslot_used = true;
+	list_item_conf->start_subslot = cmd_params->tx_frame_start_offset;
 	list_item_conf->length_subslots = cmd_params->tx_subslot_count;
 
-	list_item_conf->tx.phy_lbt_period = 0;
+	list_item_conf->tx.phy_lbt_period = cmd_params->tx_lbt_period_symbols *
+		NRF_MODEM_DECT_SYMBOL_DURATION;
+	list_item_conf->tx.phy_lbt_rssi_threshold_max = cmd_params->tx_lbt_rssi_busy_threshold_dbm;
 
 	list_item->priority = DECT_PRIORITY1_TX;
 
 	list_item_conf->tx.encoded_payload_pdu_size = rf_tool_data.scheduler_tx_data.tx_data_len;
+#if defined(CONFIG_XOSHIRO_RANDOM_GENERATOR)
+	list_item_conf->tx.random_data_payload = true;
+#else
 	memcpy(list_item_conf->tx.encoded_payload_pdu, rf_tool_data.scheduler_tx_data.tx_data,
 	       list_item_conf->tx.encoded_payload_pdu_size);
-
+#endif
 	list_item_conf->tx.header_type = DECT_PHY_HEADER_TYPE2;
 	memcpy(&list_item_conf->tx.phy_header.type_2, &rf_tool_data.scheduler_tx_data.tx_phy_header,
 	       sizeof(phy_header.type_2));
@@ -1072,22 +1240,35 @@ static int dect_phy_rf_tool_start(struct dect_phy_rf_tool_params *params, bool r
 	if (!restart) {
 		memset(&rf_tool_data, 0, sizeof(struct dect_phy_rf_tool_tool_data));
 	}
-	rf_tool_data.frame_count_for_synch = 0;
+	rf_tool_data.frame_count_for_synch_rx_restart = 0;
 	memset(&rf_tool_data.tx_metrics, 0, sizeof(rf_tool_data.tx_metrics));
 	memset(&rf_tool_data.rx_metrics, 0, sizeof(rf_tool_data.rx_metrics));
+	atomic_set(&rf_tool_data.rx_metrics.rx_total_pkt_count, 0);
+	atomic_set(&rf_tool_data.rx_metrics.rx_wait_for_synch, 0);
+	rf_tool_data.rx_metrics.rx_rssi_avg_q3 = 0;
+	rf_tool_data.rx_metrics.rx_rssi_avg_initialized = false;
 	rf_tool_data.rx_metrics.rx_rssi_high_level = -127;
 	rf_tool_data.rx_metrics.rx_rssi_low_level = 1;
 	rf_tool_data.rx_metrics.rx_phy_transmit_pwr_high = 0;
 	rf_tool_data.rx_metrics.rx_phy_transmit_pwr_low = 15;
 	rf_tool_data.rx_metrics.rx_snr_low = 9999;
 	rf_tool_data.rx_metrics.rx_snr_high = -9999;
+	rf_tool_data.rx_metrics.rx_snr_avg_q3 = 0;
+	rf_tool_data.rx_metrics.rx_snr_avg_initialized = false;
 
-	rf_tool_data.on_going = true;
+	atomic_set(&rf_tool_data.on_going, 1);
 	rf_tool_data.cmd_params = *params;
 
 	/* Calculate frame len: */
 	rf_tool_data.frame_len_subslots = dect_phy_rf_tool_frame_len_subslots_get(params->mode);
 	rf_tool_data.frame_len_mdmticks = dect_phy_rf_tool_frame_len_mdmticks_get(params->mode);
+
+	/* Configure scheduler delay for RX_TX mode to allow proper chronological interleaving */
+	if (params->mode == DECT_PHY_RF_TOOL_MODE_RX_TX) {
+		dect_phy_api_scheduler_set_empty_list_trigger_delay(10);
+	} else {
+		dect_phy_api_scheduler_set_empty_list_trigger_delay(0);
+	}
 
 	/* Fill TX data already in place now */
 	if (!restart && (params->mode == DECT_PHY_RF_TOOL_MODE_TX ||
@@ -1109,9 +1290,12 @@ static int dect_phy_rf_tool_start(struct dect_phy_rf_tool_params *params, bool r
 			desh_error("%s: Too long TX data: %d bytes", __func__, len_bytes);
 			return -1;
 		}
-
+#if !defined(CONFIG_XOSHIRO_RANDOM_GENERATOR)
+		desh_warn("Note: Fast enough random generator not enabled - "
+			  "using repeating pattern");
 		dect_common_utils_fill_with_repeating_pattern(scheduler_tx_data->tx_data,
 							      len_bytes);
+#endif
 		scheduler_tx_data->tx_data_len = len_bytes;
 
 		memset(tx_header, 0, sizeof(struct dect_phy_header_type2_format1_t));
@@ -1133,30 +1317,18 @@ static int dect_phy_rf_tool_start(struct dect_phy_rf_tool_params *params, bool r
 	}
 
 	if (params->find_rx_sync && dect_phy_rf_tool_rx_mode(params->mode)) {
-		/* RX until frame sync found: we get the synch from the 1st received decent PCC */
-		struct nrf_modem_dect_phy_rx_params rx_op = {
-			.handle = DECT_PHY_RF_TOOL_SYNCH_WAIT_RX_HANDLE,
-			.start_time = 0,
-			.mode = NRF_MODEM_DECT_PHY_RX_MODE_SINGLE_SHOT,
-			.link_id = NRF_MODEM_DECT_PHY_LINK_UNSPECIFIED,
-			.carrier = params->channel,
-			.network_id = current_settings->common.network_id,
-			.rssi_level = params->expected_rx_rssi_level,
-			.rssi_interval = NRF_MODEM_DECT_PHY_RSSI_INTERVAL_OFF,
-		};
+		uint64_t time_now = dect_app_modem_time_now();
+		int ret = 0;
+		uint64_t frame_start_time = time_now + MS_TO_MODEM_TICKS(200);
 
-		rx_op.filter.is_short_network_id_used = true;
-		rx_op.filter.short_network_id = current_settings->common.network_id;
-		rx_op.filter.receiver_identity = current_settings->common.transmitter_id;
-		rx_op.duration = UINT32_MAX;
-
-		ret = dect_phy_common_rx_op(&rx_op);
+		ret = dect_phy_rf_tool_synch_wait_rx_op_schedule(frame_start_time);
 		if (ret) {
-			desh_error("(%s): nrf_modem_dect_phy_rx failed: ret %d, handle", (__func__),
-				   ret, rx_op.handle);
+			desh_error("(%s): dect_phy_rf_tool_synch_wait_rx_op_schedule failed: "
+					"ret %d", (__func__),
+						ret);
 			rf_tool_data.rx_metrics.rx_op_to_mdm_failure_count++;
 		} else {
-			rf_tool_data.rx_metrics.rx_wait_for_synch = true;
+			atomic_set(&rf_tool_data.rx_metrics.rx_wait_for_synch, 1);
 			rf_tool_data.rx_metrics.rx_op_to_mdm_ok_count++;
 		}
 	} else {
@@ -1298,7 +1470,7 @@ static void dect_phy_rf_tool_start_print(void)
 			desh_print("  Peer mode:                   %s",
 				   dect_phy_rf_tool_test_mode_string_get(params->peer_mode));
 			desh_print("  Frame Repeat Count:          %d", params->frame_repeat_count);
-			desh_print("  Frame length (in subslots):  %" PRIu64 "",
+			desh_print("  Frame length (in subslots):  %d",
 				   rf_tool_data.frame_len_subslots);
 			desh_print("  Frame length (in mdm ticks): %" PRIu64 "",
 				   rf_tool_data.frame_len_mdmticks);
@@ -1311,7 +1483,7 @@ static void dect_phy_rf_tool_start_print(void)
 	} else {
 		desh_print("  Destination Transmitter ID:  %d", params->destination_transmitter_id);
 		desh_print("  Frame Repeat Count:          %d", params->frame_repeat_count);
-		desh_print("  Frame length (in subslots):  %" PRIu64 "",
+		desh_print("  Frame length (in subslots):  %d",
 			   rf_tool_data.frame_len_subslots);
 		desh_print("  Frame length (in mdm ticks): %" PRIu64 "",
 			   rf_tool_data.frame_len_mdmticks);
@@ -1329,6 +1501,20 @@ static void dect_phy_rf_tool_start_print(void)
 		}
 		if (params->mode == DECT_PHY_RF_TOOL_MODE_TX ||
 		    params->mode == DECT_PHY_RF_TOOL_MODE_RX_TX) {
+			if (params->tx_lbt_period_symbols > 0) {
+				desh_print("  TX LBT Period (in symbols):  %d",
+					   params->tx_lbt_period_symbols);
+				desh_print("  TX LBT Period (in ticks):    %d",
+					   params->tx_lbt_period_symbols *
+					   NRF_MODEM_DECT_SYMBOL_DURATION);
+				desh_print("  TX LBT Period (in subslots): %.04f",
+					   (double)(params->tx_lbt_period_symbols *
+						NRF_MODEM_DECT_SYMBOL_DURATION) /
+						DECT_RADIO_SUBSLOT_DURATION_IN_MODEM_TICKS);
+
+			} else {
+				desh_print("  TX LBT Period:               Disabled");
+			}
 			desh_print("  TX Power (dBm):              %d", params->tx_power_dbm);
 			desh_print("  TX data length (in bytes):   %d",
 				   rf_tool_data.scheduler_tx_data.tx_data_len);
@@ -1345,7 +1531,7 @@ int dect_phy_rf_tool_cmd_handle(struct dect_phy_rf_tool_params *params)
 {
 	int ret;
 
-	if (rf_tool_data.on_going) {
+	if (atomic_get(&rf_tool_data.on_going)) {
 		desh_error("rf_tool command already running");
 		return -1;
 	}
@@ -1354,7 +1540,7 @@ int dect_phy_rf_tool_cmd_handle(struct dect_phy_rf_tool_params *params)
 
 	ret = dect_phy_rf_tool_start(params, false);
 	if (ret) {
-		rf_tool_data.on_going = false;
+		atomic_set(&rf_tool_data.on_going, 0);
 	} else {
 		dect_phy_rf_tool_start_print();
 	}
@@ -1363,7 +1549,7 @@ int dect_phy_rf_tool_cmd_handle(struct dect_phy_rf_tool_params *params)
 
 void dect_phy_rf_tool_cmd_stop(void)
 {
-	if (!rf_tool_data.on_going) {
+	if (!atomic_get(&rf_tool_data.on_going)) {
 		desh_print("No rf_tool command running - nothing to stop.");
 		return;
 	}

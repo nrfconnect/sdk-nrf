@@ -6,7 +6,7 @@
 
 source "share/sysbuild/Kconfig"
 
-config NRF_DEFAULT_BLUETOOTH
+config NRF_DEFAULT_IPC_RADIO
 	default y
 
 config NETCORE_IPC_RADIO_BT_HCI_IPC

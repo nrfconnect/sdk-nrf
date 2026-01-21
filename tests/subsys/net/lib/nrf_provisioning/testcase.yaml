@@ -28,3 +28,13 @@ tests:
       - unittest
       - sysbuild
       - ci_tests_subsys_net
+  nrf_provisioning.unittest_scheduled:
+    sysbuild: true
+    extra_args: FILE_SUFFIX=scheduled
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - unittest
+      - sysbuild
+      - ci_tests_subsys_net

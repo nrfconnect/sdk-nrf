@@ -48,7 +48,7 @@ Since bridged devices can be added to the bridge or removed from it at runtime, 
 Implementation in the |NCS|
 ***************************
 
-The |NCS| includes a reference implementation of the Matter bridge core, located in the :file:`samples/matter/common/bridge` directory.
+The |NCS| includes a reference implementation of the Matter bridge core, located in the :file:`applications/matter_bridge/src/bridge` directory.
 The core implementation is not dependent on any specific connectivity technology, and provides basic bridge functionalities and a generic API.
 In addition to the core part, the |NCS| also includes an example :ref:`matter_bridge_app` application that you can use as a reference for creating your own application.
 

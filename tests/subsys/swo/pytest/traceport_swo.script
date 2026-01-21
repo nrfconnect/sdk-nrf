@@ -1,0 +1,35 @@
+// SWO configuration supporting Nordic SoCs with TAD.TRACEPORTSPEED register
+
+// Secure address for TAD.TRACEPORTSPEED
+__constant U32 _TAD_TRACEPORTSPEED = 0x50053518;
+
+// These chips have an additional divider for the SWO frequency, which
+// is configured in TAD.TRACEPORTSPEED. The J-Link needs to be aware of this.
+U32 SWO_GetSWOBaseClock(U32 CPUClock) {
+    U32 divider;
+
+	divider = JLINK_MEM_ReadU32(_TAD_TRACEPORTSPEED);
+
+	if (divider == 0) {
+		return CPUClock;
+	}
+
+	if (divider == 1) {
+		// Divide by 2
+		return CPUClock >> 1;
+	}
+
+	if (divider == 2) {
+		// Divide by 4
+		return CPUClock >> 2;
+	}
+
+	if (divider == 3) {
+	    // Divide by 32
+		return CPUClock >> 5;
+	}
+
+	// We should never get here, the checks cover all valid divider values
+
+	return CPUClock;
+}

@@ -95,11 +95,4 @@ int hci_internal_msg_get(uint8_t *msg_out, sdc_hci_msg_type_t *msg_type_out);
 void hci_internal_supported_commands(
 	sdc_hci_ip_supported_commands_t *cmds);
 
-/** @brief Retrieve the list of supported LE features configured for this build
- *
- * @param[out] features The list of supported features
- */
-void hci_internal_le_supported_features(
-	sdc_hci_cmd_le_read_local_supported_features_return_t *features);
-
 #endif

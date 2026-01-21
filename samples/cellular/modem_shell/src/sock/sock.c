@@ -7,19 +7,15 @@
 #include <zephyr/shell/shell.h>
 #include <assert.h>
 #include <stdio.h>
-#if defined(CONFIG_POSIX_API)
 #include <unistd.h>
 #include <netdb.h>
 #include <poll.h>
 #include <sys/socket.h>
 #include <zephyr/sys/fdtable.h>
-#else
-#include <zephyr/net/socket.h>
-#endif
 #include <zephyr/net/tls_credentials.h>
 #include <fcntl.h>
 #include <nrf_socket.h>
-#include <modem/pdn.h>
+#include <modem/lte_lc.h>
 
 #include "sock.h"
 #include "mosh_defines.h"
@@ -332,7 +328,7 @@ static int sock_getaddrinfo_req(
 		char *service = NULL;
 
 		if (pdn_cid > 0) {
-			snprintf(pdn_serv, sizeof(pdn_serv), "%d", pdn_id_get(pdn_cid));
+			snprintf(pdn_serv, sizeof(pdn_serv), "%d", lte_lc_pdn_id_get(pdn_cid));
 			service = pdn_serv;
 			hints.ai_flags = AI_PDNSERV;
 		}
@@ -355,7 +351,9 @@ static int sock_set_tls_options(
 	uint32_t sec_tag,
 	bool session_cache,
 	int peer_verify,
-	char *peer_hostname)
+	char *peer_hostname,
+	int dtls_cid,
+	int dtls_frag_ext)
 {
 	int err;
 	uint32_t sec_tag_list[] = { sec_tag };
@@ -410,6 +408,27 @@ static int sock_set_tls_options(
 			return errno;
 		}
 	}
+
+	/* DTLS CID */
+	if (dtls_cid != TLS_DTLS_CID_STATUS_DISABLED) {
+		err = setsockopt(fd, SOL_TLS, TLS_DTLS_CID, &dtls_cid, sizeof(dtls_cid));
+		if (err) {
+			mosh_error("Unable to set DTLS CID option, errno %d", errno);
+			return errno;
+		}
+	}
+
+	/* DTLS fragmentation extension */
+	if (dtls_frag_ext != DTLS_FRAG_EXT_DISABLED) {
+		err = setsockopt(fd, SOL_TLS, TLS_DTLS_FRAG_EXT, &dtls_frag_ext,
+				 sizeof(dtls_frag_ext));
+		if (err) {
+			mosh_error("Unable to set DTLS fragmentation extension option, errno %d",
+				   errno);
+			return errno;
+		}
+	}
+
 	return 0;
 }
 
@@ -530,7 +549,9 @@ int sock_open_and_connect(
 	bool session_cache,
 	bool keep_open,
 	int peer_verify,
-	char *peer_hostname)
+	char *peer_hostname,
+	int dtls_cid,
+	int dtls_frag_ext)
 {
 	int err = -EINVAL;
 	int proto = 0;
@@ -541,8 +562,9 @@ int sock_open_and_connect(
 		   family, type, port, bind_port, pdn_cid, address);
 	if (secure) {
 		mosh_print("                        secure=%d, sec_tag=%u, session_cache=%d, "
-			   "peer_verify=%d, peer_hostname=%s",
-			   secure, sec_tag, session_cache, peer_verify, peer_hostname);
+			   "peer_verify=%d, peer_hostname=%s, dtls_cid=%d, dtls_frag_ext=%d",
+			   secure, sec_tag, session_cache, peer_verify, peer_hostname, dtls_cid,
+			   dtls_frag_ext);
 	}
 
 	/* Reserve socket ID and structure for a new connection */
@@ -633,7 +655,8 @@ int sock_open_and_connect(
 
 	/* Set (D)TLS options */
 	if (secure) {
-		err = sock_set_tls_options(fd, sec_tag, session_cache, peer_verify, peer_hostname);
+		err = sock_set_tls_options(fd, sec_tag, session_cache, peer_verify,
+					   peer_hostname, dtls_cid, dtls_frag_ext);
 		if (err) {
 			goto connect_error;
 		}
@@ -1323,9 +1346,7 @@ int sock_setopt(int socket_id, int sock_level, int sock_opt_id, char *sock_opt_v
 
 	if (sock_opt_value == NULL &&
 	    !(sock_level == SOL_TLS && sock_opt_id == TLS_HOSTNAME) &&
-	    !(sock_level == SOL_TLS && sock_opt_id == TLS_SESSION_CACHE_PURGE) &&
-	    !(sock_level == SOL_TLS && sock_opt_id == TLS_DTLS_CONN_SAVE) &&
-	    !(sock_level == SOL_TLS && sock_opt_id == TLS_DTLS_CONN_LOAD)) {
+	    !(sock_level == SOL_TLS && sock_opt_id == TLS_SESSION_CACHE_PURGE)) {
 		mosh_error("Socket option value is mandatory.");
 		return -EINVAL;
 	}
@@ -1375,9 +1396,7 @@ int sock_setopt(int socket_id, int sock_level, int sock_opt_id, char *sock_opt_v
 			goto exit;
 
 		case TLS_SESSION_CACHE_PURGE:
-		case TLS_DTLS_CONN_SAVE:
-		case TLS_DTLS_CONN_LOAD:
-			/* No value used for these options. */
+			/* No value used for this option. */
 			err = setsockopt(socket_info->fd, sock_level, sock_opt_id, NULL, 0);
 			goto exit;
 

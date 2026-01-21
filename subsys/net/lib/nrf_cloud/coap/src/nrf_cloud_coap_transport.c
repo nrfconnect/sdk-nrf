@@ -773,7 +773,7 @@ int nrf_cloud_coap_transport_connect(struct nrf_cloud_coap_client *const client)
 	client->authenticated = false;
 
 	const char *const host_name = CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME;
-	uint16_t port = htons(CONFIG_NRF_CLOUD_COAP_SERVER_PORT);
+	uint16_t port = CONFIG_NRF_CLOUD_COAP_SERVER_PORT;
 
 	struct zsock_addrinfo hints = {
 		.ai_socktype = SOCK_DGRAM

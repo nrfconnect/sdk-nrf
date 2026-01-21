@@ -145,7 +145,7 @@ See the following documentation for an overview of which modem firmware versions
 * `Modem firmware compatibility matrix for the nRF9160 SoC`_
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -212,26 +212,26 @@ Build and configuration system
 
 * Added:
 
-  * The ``SB_CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM`` sysbuild Kconfig option to system that allows utilizing all available RAM when using TF-M on an nRF5340 device.
+  * The :kconfig:option:`SB_CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM` sysbuild Kconfig option to system that allows utilizing all available RAM when using TF-M on an nRF5340 device.
 
     .. note::
        This has security implications and might allow secrets to be leaked to the non-secure application in RAM.
 
-  * The ``SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE`` sysbuild Kconfig option that enables updating the network core on the nRF5340 SoC from external flash.
+  * The :kconfig:option:`SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE` sysbuild Kconfig option that enables updating the network core on the nRF5340 SoC from external flash.
   * The AP-Protect sysbuild Kconfig options to enable the corresponding AP-Protect Kconfig options for all images in the build:
 
-    * ``SB_CONFIG_APPROTECT_LOCK`` for the :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` Kconfig option.
-    * ``SB_CONFIG_APPROTECT_USER_HANDLING`` for the :kconfig:option:`CONFIG_NRF_APPROTECT_USER_HANDLING` Kconfig option.
-    * ``SB_CONFIG_APPROTECT_USE_UICR`` for the :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR` Kconfig option.
-    * ``SB_CONFIG_SECURE_APPROTECT_LOCK`` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` Kconfig option.
-    * ``SB_CONFIG_SECURE_APPROTECT_USER_HANDLING`` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` Kconfig option.
-    * ``SB_CONFIG_SECURE_APPROTECT_USE_UICR`` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_APPROTECT_LOCK` for the :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_APPROTECT_USER_HANDLING` for the :kconfig:option:`CONFIG_NRF_APPROTECT_USER_HANDLING` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_APPROTECT_USE_UICR` for the :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_SECURE_APPROTECT_LOCK` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_SECURE_APPROTECT_USER_HANDLING` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_SECURE_APPROTECT_USE_UICR` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` Kconfig option.
 
   * CMake warning when the static :ref:`partition_manager` file has been changed but changes will not be read until a pristine build is performed.
   * Encrypted firmware update to :file:`dfu_application.zip` instead of the unencrypted firmware update when encrypted image support is enabled in sysbuild.
     See :ref:`app_build_mcuboot_output` for details.
   * Sysbuild-assigned MCUboot image IDs feature, which deals with MCUboot image IDs for different components in a project.
-  * The ``SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU`` sysbuild Kconfig option that enables the generation of proprietary application update files required for the LwM2M carrier divided FOTA procedure.
+  * The :kconfig:option:`SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU` sysbuild Kconfig option that enables the generation of proprietary application update files required for the LwM2M carrier divided FOTA procedure.
 
 * Fixed:
 
@@ -252,7 +252,7 @@ Build and configuration system
   It is recommended to replace them with the new devicetree property: ``nordic,access``.
   See the :ref:`migration guide <migration_2.8_recommended>` for more information.
 
-* Removed documentation related to non-working support for configuring the NSIB signing key through the environmental or command line variable (``SB_SIGNING_KEY_FILE``) along with child image.
+* Removed documentation related to non-working support for configuring the NSIB signing key through the environmental or command line variable (:kconfig:option:`SB_SIGNING_KEY_FILE`) along with child image.
 
 Bootloaders and DFU
 ===================
@@ -260,7 +260,7 @@ Bootloaders and DFU
 * Added:
 
   * Support for handling SHA512 by MCUmgr server protocol implementation.
-  * ``SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE`` sysbuild Kconfig to allow supporting network core application in MCUboot.
+  * :kconfig:option:`SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE` sysbuild Kconfig to allow supporting network core application in MCUboot.
   * :ref:`QSPI XIP split image <qspi_xip_split_image>` support for the nRF52840 SoC and MCUboot's direct-xip mode.
   * Documentation for :ref:`mcuboot_image_compression`.
   * Documentation for :ref:`sysbuild_assigned_images_ids`.
@@ -530,11 +530,11 @@ nRF5340 Audio
 
   * The functions ``bt_hci_err_to_str()`` and ``bt_security_err_to_str()`` that are used to allow printing error codes as strings.
     Each function returns string representations of the error codes when the corresponding Kconfig option, :kconfig:option:`CONFIG_BT_HCI_ERR_TO_STR` or :kconfig:option:`CONFIG_BT_SECURITY_ERR_TO_STR`, is enabled.
-  * CSIS to the BIS sink if the scan delegator feature, ``CONFIG_BT_AUDIO_SCAN_DELEGATOR``, is enabled.
+  * CSIS to the BIS sink if the scan delegator feature, :ref:`CONFIG_BT_AUDIO_SCAN_DELEGATOR <nrf53_audio_app_config_audio_app_options>`, is enabled.
     Once a phone is connected to a BIS sink, the phone will find and connect to the second headset.
     Also, the phone can control the BIS headset in a group and deliver the PAST to both headsets at the same time.
   * Create CIG after reading the PACS from the first connected unicast server.
-  * A minimal scan delegator to the unicast server if the feature, ``CONFIG_BT_AUDIO_SCAN_DELEGATOR``, is enabled.
+  * A minimal scan delegator to the unicast server if the feature, :ref:`CONFIG_BT_AUDIO_SCAN_DELEGATOR <nrf53_audio_app_config_audio_app_options>`, is enabled.
   * Available or support context type to PACS in broadcast sink and unicast client if the feature, :kconfig:option:`CONFIG_BT_PAC_SRC_NOTIFIABLE` is enabled.
   * The :ref:`nrf_auraconfig` sample.
 
@@ -619,16 +619,16 @@ Serial LTE modem
 * Added:
 
   * DTLS support for the ``#XUDPSVR`` and ``#XSSOCKET`` (UDP server sockets) AT commands when the :file:`overlay-native_tls.conf` configuration file is used.
-  * The :kconfig:option:`CONFIG_SLM_PPP_FALLBACK_MTU` Kconfig option that is used to control the MTU used by PPP when the cellular link MTU is not returned by the modem in response to the ``AT+CGCONTRDP=0`` AT command.
+  * The ``CONFIG_SLM_PPP_FALLBACK_MTU`` Kconfig option that is used to control the MTU used by PPP when the cellular link MTU is not returned by the modem in response to the ``AT+CGCONTRDP=0`` AT command.
   * Handler for new nRF Cloud event type :c:enumerator:`NRF_CLOUD_EVT_RX_DATA_DISCON`.
   * Support for socket option ``AT_SO_IPV6_DELAYED_ADDR_REFRESH``.
 
 * Updated:
 
-  * AT string parsing to utilize the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+  * AT string parsing to utilize the :ref:`at_parser_readme` library instead of the AT command parser library.
   * The ``#XUDPCLI`` and ``#XSSOCKET`` (UDP client sockets) AT commands to use Zephyr's Mbed TLS with DTLS when the :file:`overlay-native_tls.conf` configuration file is used.
 
-* Fixed reading network registration status with ``AT+CEREG`` when the :ref:`CONFIG_SLM_AUTO_CONNECT <CONFIG_SLM_AUTO_CONNECT>` option is enabled.
+* Fixed reading network registration status with ``AT+CEREG`` when the ``CONFIG_SLM_AUTO_CONNECT`` option is enabled.
 
 * Removed:
 
@@ -724,7 +724,7 @@ Bluetooth Fast Pair samples
 
     * LED indication on development kits for the Fast Pair advertising state.
     * An application versioning using the :file:`VERSION` file.
-    * The DFU support, which can be enabled using the ``SB_CONFIG_APP_DFU`` sysbuild Kconfig option.
+    * The DFU support, which can be enabled using the :kconfig:option:`SB_CONFIG_APP_DFU` sysbuild Kconfig option.
       DFU is available for all supported targets except the ``debug`` configurations of :zephyr:board:`nrf52dk` and :zephyr:board:`nrf52833dk` due to size constraints.
     * An application module for the DULT motion detector feature and the new UI for supported board targets to interact with this feature.
       The development kit board targets simulate the motion with the button presses.
@@ -757,12 +757,12 @@ Cellular samples
 
 * :ref:`fmfu_smp_svr_sample` sample:
 
-  * Removed the unused :ref:`at_cmd_parser_readme` library.
+  * Removed the unused AT command parser library.
 
 * :ref:`modem_shell_application` sample:
 
   * Added ``link modem`` command for initializing and shutting down the modem.
-  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+  * Updated to use the :ref:`at_parser_readme` library instead of the AT command parser library.
 
 * :ref:`nrf_cloud_rest_fota` sample:
 
@@ -777,12 +777,12 @@ Cellular samples
 
   * Added:
 
-    * The :kconfig:option:`CONFIG_TEST_COUNTER_MULTIPLIER` Kconfig option to multiply the number of test counter messages sent, for testing purposes.
+    * The :ref:`CONFIG_TEST_COUNTER_MULTIPLIER <CONFIG_TEST_COUNTER_MULTIPLIER>` Kconfig option to multiply the number of test counter messages sent, for testing purposes.
     * A handler for new nRF Cloud event type :c:enumerator:`NRF_CLOUD_EVT_RX_DATA_DISCON` to stop sensors and location services.
     * Board support files to enable Wi-Fi scanning for the Thingy:91 X.
-    * The :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
+    * The :ref:`CONFIG_SEND_ONLINE_ALERT <CONFIG_SEND_ONLINE_ALERT>` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
     * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
-    * The :kconfig:option:`CONFIG_POST_PROVISIONING_INTERVAL_M` Kconfig option to reduce the provisioning connection interval once the device successfully connects.
+    * The :ref:`CONFIG_POST_PROVISIONING_INTERVAL_M <CONFIG_POST_PROVISIONING_INTERVAL_M>` Kconfig option to reduce the provisioning connection interval once the device successfully connects.
 
   * Updated:
 
@@ -802,7 +802,7 @@ Cellular samples
   * Added:
 
     * Support for dictionary logs using REST.
-    * The :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
+    * The :ref:`CONFIG_SEND_ONLINE_ALERT <CONFIG_SEND_ONLINE_ALERT>` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
     * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
 
   * Updated:
@@ -933,7 +933,7 @@ PMIC samples
 
 * Added support for the :zephyr:board:`nrf54l15dk` and :zephyr:board:`nrf54h20dk` to the PMIC samples.
 
-* :ref:`npm1300_fuel_gauge` sample:
+* :ref:`nPM1300: Fuel gauge <npm13xx_fuel_gauge>` sample:
 
   * Updated to accommodate API changes in nRF Fuel Gauge library v0.11.1.
 
@@ -1111,19 +1111,19 @@ Modem libraries
 * Added:
 
   * The :ref:`at_parser_readme` library that parses AT command responses, notifications, and events.
-    Compared to the deprecated :ref:`at_cmd_parser_readme` library, it does not allocate memory dynamically and has a smaller footprint.
-    For more information on how to transition from the :ref:`at_cmd_parser_readme` library to the :ref:`at_parser_readme` library, see the :ref:`migration guide <migration_2.8_recommended>`.
+    Compared to the deprecated AT command parser library, it does not allocate memory dynamically and has a smaller footprint.
+    For more information on how to transition from the AT command parser library to the :ref:`at_parser_readme` library, see the :ref:`migration guide <migration_2.8_recommended>`.
   * The :ref:`lib_uicc_lwm2m` library that reads the LwM2M bootstrap configuration from SIM.
 
-* :ref:`at_cmd_parser_readme` library:
+* AT command parser library:
 
   * Updated to use the :c:func:`at_parser_cmd_type_get` function instead of :c:func:`at_parser_at_cmd_type_get` to prevent a name collision.
   * Deprecated:
 
-    * The :ref:`at_cmd_parser_readme` library in favor of the :ref:`at_parser_readme` library.
-      The :ref:`at_cmd_parser_readme` library will be removed in a future version.
-      For more information on how to transition from the :ref:`at_cmd_parser_readme` library to the :ref:`at_parser_readme` library, see the :ref:`migration guide <migration_2.8_recommended>`.
-    * The Kconfig option :kconfig:option:`CONFIG_AT_CMD_PARSER`, which will be removed in a future release.
+    * The AT command parser library in favor of the :ref:`at_parser_readme` library.
+      The AT command parser library will be removed in a future version.
+      For more information on how to transition from the AT command parser library to the :ref:`at_parser_readme` library, see the :ref:`migration guide <migration_2.8_recommended>`.
+    * The Kconfig option ``CONFIG_AT_CMD_PARSER``, which will be removed in a future release.
 
 * :ref:`lte_lc_readme` library:
 
@@ -1142,7 +1142,7 @@ Modem libraries
 
   * Updated:
 
-    * To use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+    * To use the :ref:`at_parser_readme` library instead of the AT command parser library.
     * The :c:func:`lte_lc_neighbor_cell_measurement` function to return an error for an invalid GCI count.
     * The library was reorganized into modules that are enabled through their respective Kconfig options.
       By default, the library now enables only the core features related to the network connectivity.
@@ -1191,17 +1191,17 @@ Modem libraries
     * A bug causing the GNSS obstructed visibility detection to sometimes count only part of the tracked satellites.
     * A bug causing the GNSS obstructed visibility detection to be sometimes performed twice.
 
-  * Removed the unused :ref:`at_cmd_parser_readme` library.
+  * Removed the unused AT command parser library.
 
 * :ref:`lib_zzhc`:
 
-  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+  * Updated to use the :ref:`at_parser_readme` library instead of the AT command parser library.
 
 * :ref:`modem_info_readme` library:
 
   * Updated:
 
-    * To use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+    * To use the :ref:`at_parser_readme` library instead of the AT command parser library.
     * The formulas of RSRP and RSRQ values in :c:macro:`RSRP_IDX_TO_DBM` and :c:macro:`RSRQ_IDX_TO_DB` based on AT command reference guide updates.
       The formulas are now aligned with the modem implementation that has not changed.
 
@@ -1271,7 +1271,7 @@ Libraries for networking
 
 * :ref:`lib_lwm2m_client_utils` library:
 
-  * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
+  * Updated to use the :ref:`at_parser_readme` library instead of the AT command parser library.
   * Fixed an issue where a failed delta update for the modem would not clear the state and blocks future delta updates.
     This only occurred when an LwM2M Firmware object was used in push mode.
 
@@ -1462,9 +1462,9 @@ The following list summarizes both the main changes inherited from upstream MCUb
     This is supported either for the ED25519 'PURE' signature or the ED25519 signature.
   * Support for storing signature verification keys in hardware KMU on the nRF54L15 SoC.
     See Kconfig option :kconfig:option:`CONFIG_BOOT_SIGNATURE_USING_KMU` in MCUboot for details.
-  * Integration of nRF54L15 SoC's HW cryptography (``SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519``), KMU sysbuild configuration (``SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU``), and signing script (``SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE``) for building and signing the application in a project.
+  * Integration of nRF54L15 SoC's HW cryptography (:kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519`), KMU sysbuild configuration (:kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU`), and signing script (:kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE`) for building and signing the application in a project.
 
-* Updated the immutable bootloader to now be protected using the :ref:`fprotect_readme` library on the nRF54L15 SoC (``SB_CONFIG_MCUBOOT_FPROTECT_ALLOW_COMBINED_REGIONS`` and the :kconfig:option:`CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS` Kconfig option).
+* Updated the immutable bootloader to now be protected using the :ref:`fprotect_readme` library on the nRF54L15 SoC (:kconfig:option:`SB_CONFIG_MCUBOOT_FPROTECT_ALLOW_COMBINED_REGIONS` and the :kconfig:option:`CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS` Kconfig option).
 
 * Fixed:
 

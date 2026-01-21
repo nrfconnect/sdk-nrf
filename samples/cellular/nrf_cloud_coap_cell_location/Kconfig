@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "nRF Cloud CoAP Cellular Location Sample"
+
+config COAP_CELL_DEFAULT_DOREPLY_VAL
+	bool "Default value for the do_reply configuration flag"
+	default y
+
+config COAP_CELL_DEFAULT_FALLBACK_VAL
+	bool "Default value for the fallback configuration flag"
+	default y
+
+config COAP_CELL_DEFAULT_HICONF_VAL
+	bool "Default value for the hi_conf configuration flag"
+
+module = NRF_CLOUD_COAP_CELL_LOCATION_SAMPLE
+module-str = nRF Cloud CoAP Cellular Location Sample
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu

@@ -3,14 +3,16 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-from rtt_nordic_config import RttNordicConfig
-import sys
 import logging
+import sys
 import time
-from pynrfjprog.LowLevel import API
-from pynrfjprog.APIError import APIError
 from enum import Enum
+
+from pynrfjprog.APIError import APIError
+from pynrfjprog.LowLevel import API
+from rtt_nordic_config import RttNordicConfig
 from stream import StreamError
+
 
 class Command(Enum):
     START = 1
@@ -119,7 +121,7 @@ class Rtt2Stream:
             try:
                 self.out_stream.send_ev(buf)
             except StreamError as err:
-                self.logger.error("Error: {}. Unable to send remaining data".format(err))
+                self.logger.error(f"Error: {err}. Unable to send remaining data")
                 break
             buf = self._read_bytes()
 
@@ -177,7 +179,7 @@ class Rtt2Stream:
         try:
             self.out_stream.send_desc(desc_buf)
         except StreamError as err:
-            self.logger.error("Error: {}. Unable to send data".format(err))
+            self.logger.error(f"Error: {err}. Unable to send data")
             self._disconnect_rtt()
             sys.exit()
 
@@ -192,7 +194,7 @@ class Rtt2Stream:
                 try:
                     self.out_stream.send_ev(buf)
                 except StreamError as err:
-                    self.logger.error("Error: {}. Unable to send data".format(err))
+                    self.logger.error(f"Error: {err}. Unable to send data")
                     self._disconnect_rtt()
                     sys.exit()
 

@@ -44,7 +44,7 @@ enum nrf_provisioning_http_status {
 #define NRF_PROVISIONING_TIMEOUT_MINIMUM (5000)
 #define NRF_PROVISIONING_TIMEOUT_NONE (SYS_FOREVER_MS)
 
-int nrf_provisioning_http_init(struct nrf_provisioning_mm_change *mmode);
+int nrf_provisioning_http_init(nrf_provisioning_event_cb_t callback);
 
 /** @brief Parameters and data for using the nRF Cloud REST API */
 struct nrf_provisioning_http_context {

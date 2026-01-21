@@ -35,7 +35,7 @@ extern "C" {
 #endif
 
 /** Length of the Boot Mouse Input Report. */
-#define BT_HIDS_BOOT_MOUSE_REP_LEN     8
+#define BT_HIDS_BOOT_MOUSE_REP_LEN     3
 /** Length of the Boot Keyboard Input Report. */
 #define BT_HIDS_BOOT_KB_INPUT_REP_LEN  8
 /** Length of the Boot Keyboard Output Report. */

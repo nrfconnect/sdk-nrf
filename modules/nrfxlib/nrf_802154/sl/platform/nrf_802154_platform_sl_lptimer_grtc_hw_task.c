@@ -226,96 +226,73 @@ void nrf_802154_platform_sl_lptimer_hw_task_local_domain_connections_clear(void)
 
 #elif defined(NRF54L_SERIES)
 
-#include <nrfx_ppib.h>
-#include <nrfx_dppi.h>
+#include <helpers/nrfx_gppi.h>
+#include <soc/interconnect/nrfx_gppi_lumos.h>
 
-/* To trigger GRTC.TASKS_CAPTURE[#cc] with RADIO.EVENT_{?}, the following connection chain must be
+/* To trigger RADIO.TASKS_x with GRTC.EVENT_CAPTURE{?}, the following connection chain must be
  * created:
- *    - starting from RADIO domain (_R_):
- *        {a} RADIO.EVENT_{?}  <-- DPPIC_10
- *        {b} DPPIC_10         <-- PPIB_11
+ *    - starting with the PERI domain (_P_):
+ *        {a} DPPIC_20         <-- GRTC.CC
+ *        {b} PPIB_21          <-- DPPIC_20
  *    - crossing domain boundaries
  *        {c} PPIB_11          <-- PPIB_21
- *    - ending in the PERI domain (_P_):
- *        {d} PPIB_21          <-- DPPIC_20
- *        {e} DPPIC_20         <-- GRTC.CC
+ *    - ending with RADIO domain (_R_):
+ *        {d} DPPIC_10         <-- PPIB_11
+ *        {e} RADIO.TASK_{?}   <-- DPPIC_10
  */
 
 #define INVALID_CHANNEL UINT8_MAX
 
-static nrfx_dppi_t dppi20 = NRFX_DPPI_INSTANCE(20);
-static nrfx_ppib_interconnect_t ppib11_21 = NRFX_PPIB_INTERCONNECT_INSTANCE(11, 21);
-static uint8_t peri_dppi_ch = INVALID_CHANNEL;
-static uint8_t peri_ppib_ch = INVALID_CHANNEL;
+static nrfx_gppi_handle_t peri_rad_handle;
+static uint32_t ppib_chan;
 
 void nrf_802154_platform_sl_lptimer_hw_task_cross_domain_connections_setup(uint32_t cc_channel)
 {
-	nrfx_err_t err;
+	nrfx_gppi_resource_t resource = {
+		.domain_id = NRFX_GPPI_DOMAIN_RAD,
+		.channel = 0
+	};
+	uint32_t eep = z_nrf_grtc_timer_compare_evt_address_get(cc_channel);
+	int err;
 
-	err = nrfx_dppi_channel_alloc(&dppi20, &peri_dppi_ch);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	err = nrfx_gppi_ext_conn_alloc(NRFX_GPPI_DOMAIN_PERI, NRFX_GPPI_DOMAIN_RAD,
+				       &peri_rad_handle, &resource);
+	__ASSERT_NO_MSG(err == 0);
 
-	err = nrfx_ppib_channel_alloc(&ppib11_21, &peri_ppib_ch);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	/* Add event endpoint (GRTC compare) to the previously configured connection. */
+	err = nrfx_gppi_ep_attach(eep, peri_rad_handle);
+	__ASSERT_NO_MSG(err == 0);
 
-	/* {c} PPIB_11 <-- PPIB_21
-	 * One of HW-fixed connections, so nothing to do.
-	 */
+	/* Get PPIB channel used in the connection. */
+	ppib_chan = nrfx_gppi_domain_channel_get(peri_rad_handle, NRFX_GPPI_NODE_PPIB11_21);
+	__ASSERT_NO_MSG(ppib_chan >= 0);
 
-	/* {d} PPIB_21 <-- DPPIC_20 */
-	NRF_DPPI_ENDPOINT_SETUP(
-		nrfx_ppib_send_task_address_get(&ppib11_21.right, peri_ppib_ch), peri_dppi_ch);
+	/* Disable PPIB for now until exact channel from RADIO domain is known. */
+	nrf_ppib_publish_clear(NRF_PPIB11, nrf_ppib_receive_event_get(ppib_chan));
 
-	/* {e} DPPIC_20 <-- GRTC.CC */
-	NRF_DPPI_ENDPOINT_SETUP(
-		z_nrf_grtc_timer_compare_evt_address_get(cc_channel), peri_dppi_ch);
+	nrfx_gppi_conn_enable(peri_rad_handle);
 }
 
 void nrf_802154_platform_sl_lptimer_hw_task_cross_domain_connections_clear(void)
 {
-	nrfx_err_t err;
-
-	err = nrfx_ppib_channel_free(&ppib11_21, peri_ppib_ch);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
-
-	err = nrfx_dppi_channel_free(&dppi20, peri_dppi_ch);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
-
-	peri_dppi_ch = INVALID_CHANNEL;
-	peri_ppib_ch = INVALID_CHANNEL;
+	nrfx_gppi_conn_disable(peri_rad_handle);
+	nrfx_gppi_domain_conn_free(peri_rad_handle);
 }
 
 void nrf_802154_platform_sl_lptimer_hw_task_local_domain_connections_setup(uint32_t dppi_ch,
 									   uint32_t cc_channel)
 {
-	nrfx_err_t err;
-
 	if (dppi_ch == NRF_802154_SL_HW_TASK_PPI_INVALID) {
 		return;
 	}
 
-	/* {a} RADIO.TASKS_{?} <-- DPPIC_10[dppi_ch]
-	 * It is the responsibility of the user of this platform to make the {a} connection
-	 * and pass the DPPI channel number as a parameter here.
-	 */
-
-	/* {b} DPPIC_10 <-- PPIB_11 */
-	NRF_DPPI_ENDPOINT_SETUP(
-		nrfx_ppib_receive_event_address_get(&ppib11_21.left, peri_ppib_ch), dppi_ch);
-
-	err = nrfx_dppi_channel_enable(&dppi20, peri_dppi_ch);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	/* Configure PPIB to forward GRTC event to the DPPI channel from the Radio domain. */
+	nrf_ppib_publish_set(NRF_PPIB11, nrf_ppib_receive_event_get(ppib_chan), dppi_ch);
 }
 
 void nrf_802154_platform_sl_lptimer_hw_task_local_domain_connections_clear(void)
 {
-	nrfx_err_t err;
-
-	NRF_DPPI_ENDPOINT_CLEAR(
-		nrfx_ppib_receive_event_address_get(&ppib11_21.left, peri_ppib_ch));
-
-	err = nrfx_dppi_channel_disable(&dppi20, peri_dppi_ch);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	nrf_ppib_publish_clear(NRF_PPIB11, nrf_ppib_receive_event_get(ppib_chan));
 }
 
 #endif

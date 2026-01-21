@@ -22,13 +22,17 @@ psa_status_t cracen_cmac_setup(cracen_mac_operation_t *operation,
 {
 	int sx_status;
 	psa_status_t status = PSA_SUCCESS;
+	psa_key_location_t location =
+		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
 	/* Only AES-CMAC is supported */
 	if (psa_get_key_type(attributes) != PSA_KEY_TYPE_AES) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	if (key_buffer_size < AES_BLOCK_SIZE) {
+	if (key_buffer_size < AES_BLOCK_SIZE &&
+	    location != PSA_KEY_LOCATION_CRACEN_KMU &&
+	    location != PSA_KEY_LOCATION_CRACEN) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 

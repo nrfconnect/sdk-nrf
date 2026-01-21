@@ -54,9 +54,12 @@
     - sample.mgmt.osdp.peripheral_device_sc
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
     - nrf54l15dk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24928"
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24928 and NCSDK-35494"
 
 - scenarios:
     - examples.nrfx_uarte.tx_rx_non_blocking
@@ -149,17 +152,23 @@
 - scenarios:
     - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
   platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
     - nrf54l15dk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34575"
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34575 and NCSDK-35492"
 
 - scenarios:
     - libraries.encoding.jwt.rsa.psa
     - libraries.encoding.jwt.rsa.legacy
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
     - nrf54l15dk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31783"
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31783 and sNCSDK-35543"
 
 - scenarios:
     - bluetooth.shell.shell_br
@@ -186,7 +195,9 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33580"
 
 - scenarios:
+    - boards.nrf.rram_throttling
     - drivers.flash.common.disable_spi_nor
+    - drivers.flash.common.test_storage_partition
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54l15dk/nrf54l10/cpuapp
@@ -208,6 +219,51 @@
   platforms:
     - nrf9160dk@0.14.0/nrf9160
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-8152"
+
+- scenarios:
+    - testing.ctest.base
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35402"
+
+- scenarios:
+    - kernel.common.misra
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54l15dk/nrf54l10/cpuapp
+    - nrf54l15dk/nrf54l05/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35491"
+
+- scenarios:
+    - drivers.i2c.target_api.single_role
+  platforms:
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35490"
+
+- scenarios:
+    - libraries.encoding.jwt.rsa.psa
+  platforms:
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35542"
+
+- scenarios:
+    - net.http.server.tls.toolchain
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35519"
+
+- scenarios:
+    - drivers.mspi.flash.mspi_nor_no_multithreading
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35925"
+
+- scenarios:
+    - sample.bluetooth.ccp_call_control_server
+    - sample.bluetooth.ccp_call_control_client
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36532"
 
 # ---------------------------------   Won't fix section -----------------------------------
 
@@ -243,10 +299,13 @@
 - scenarios:
     - sample.drivers.crypto.mbedtls
   platforms:
-    - nrf9160dk@0.14.0/nrf9160/ns
     - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
     - nrf54l15dk/nrf54l15/cpuapp
-  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15306"
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15306 and NCSDK-35493"
 
 - scenarios:
     - sample.net.sockets.websocket_client
@@ -278,38 +337,59 @@
   comment: "Not compatible with nRF Security"
 
 - scenarios:
-    - kernel.common.picolibc
-    - kernel.common.misra
-    - kernel.common.tls
+    - .*secure_storage.*
+    - benchmark.kernel.core
+    - cpp.libcxx.glibcxx.newlib
+    - cpp.libcxx.glibcxx.newlib_nano
+    - cpp.libcxx.glibcxx.picolibc
+    - crypto.mbedtls_psa.without_entropy_driver
+    - drivers.can.shell
+    - drivers.eeprom.shell
+    - drivers.gpio.build
+    - filesystem.lib_link
+    - kernel.common
     - kernel.common.minimallibc
+    - kernel.common.misra
     - kernel.common.nano32
     - kernel.common.nano64
-    - kernel.threads.apis
-    - kernel.threads.dynamic_thread.stack.pool.alloc.user
-    - kernel.threads.dynamic_thread.stack.pool.alloc.no_user
-    - kernel.threads.dynamic_thread.stack.pool.no_alloc.user
-    - kernel.threads.dynamic_thread.stack.no_pool.no_alloc.no_user
-    - kernel.threads.dynamic_thread.stack.no_pool.alloc.user
-    - kernel.threads.dynamic_thread.stack.no_pool.alloc.no_user
-    - kernel.threads.dynamic_thread.stack.pool.no_alloc.no_user
-    - kernel.threads.dynamic_thread.stack.no_pool.no_alloc.user
-    - kernel.scheduler.no_timeslicing
+    - kernel.common.picolibc
+    - kernel.common.tls
+    - kernel.context
+    - kernel.context.minimallibc
+    - kernel.lifo.usage
+    - kernel.poll.minimallibc
+    - kernel.scheduler
     - kernel.scheduler.dumb_no_timeslicing
     - kernel.scheduler.dumb_timeslicing
-    - kernel.scheduler.multiq_no_timeslicing
     - kernel.scheduler.multiq
-    - message_bus.zbus.hlp_priority_boost
-    - message_bus.zbus.general_unittests_without_priority_boost
-    - message_bus.zbus.general_unittests
-    - logging.thread
-    - logging.immediate.*
+    - kernel.scheduler.multiq_no_timeslicing
+    - kernel.scheduler.no_timeslicing
+    - kernel.scheduler.simple_no_timeslicing
+    - kernel.scheduler.simple_timeslicing
+    - kernel.scheduler.slice_perthread
+    - kernel.semaphore
+    - kernel.threads.apis
+    - kernel.threads.dynamic_thread.stack.no_pool.alloc.no_user
+    - kernel.threads.dynamic_thread.stack.no_pool.alloc.user
+    - kernel.threads.dynamic_thread.stack.no_pool.no_alloc.no_user
+    - kernel.threads.dynamic_thread.stack.no_pool.no_alloc.user
+    - kernel.threads.dynamic_thread.stack.pool.alloc.no_user
+    - kernel.threads.dynamic_thread.stack.pool.alloc.user
+    - kernel.threads.dynamic_thread.stack.pool.no_alloc.no_user
+    - kernel.threads.dynamic_thread.stack.pool.no_alloc.user
+    - kernel.timer.timer
+    - kernel.workqueue
+    - kernel.workqueue.api
+    - kernel.workqueue.work_timeout
+    - libraries.encoding.json
+    - libraries.hash_map.cxx.djb2
     - libraries.heap
     - libraries.libc.c11_threads.minimal
-    - libraries.libc.c11_threads.picolibc.notls
+    - libraries.libc.c11_threads.newlib
+    - libraries.libc.c11_threads.newlib_nano
     - libraries.libc.c11_threads.picolibc
     - libraries.libc.c11_threads.picolibc.module
-    - libraries.libc.c11_threads.newlib_nano
-    - libraries.libc.c11_threads.newlib
+    - libraries.libc.c11_threads.picolibc.notls
     - libraries.libc.common
     - libraries.libc.common.minimal
     - libraries.libc.common.newlib
@@ -317,75 +397,63 @@
     - libraries.libc.common.picolibc
     - libraries.libc.common.picolibc.module
     - libraries.libc.common.picolibc.notls
-    - libraries.encoding.json
     - libraries.net_buf.buf
     - libraries.ring_buffer
-    - libraries.hash_map.cxx.djb2
-    - cpp.libcxx.glibcxx.picolibc
+    - logging.immediate.*
+    - logging.thread
+    - message_bus.zbus.general_unittests
+    - message_bus.zbus.general_unittests_without_priority_boost
+    - message_bus.zbus.hlp_priority_boost
+    - mgmt.mcumgr.fs.mgmt.hash.supported.all
+    - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
+    - mgmt.mcumgr.os.info
+    - mgmt.mcumgr.os.info.no_hooks
+    - net.coap.server.common
+    - net.http.server.common
+    - net.http.server.crime
+    - net.mqtt_sn.packet
+    - portability.cmsis_rtos_v1
+    - portability.cmsis_rtos_v2
     - portability.posix.eventfd
-    - portability.posix.headers.newlib.without_posix_api
     - portability.posix.headers.newlib.with_posix_api
+    - portability.posix.headers.newlib.without_posix_api
     - portability.posix.headers.picolibc.with_posix_api
     - portability.posix.headers.picolibc.without_posix_api
     - portability.posix.headers.with_posix_api
     - portability.posix.headers.without_posix_api
-    - portability.cmsis_rtos_v2
-    - portability.cmsis_rtos_v1
-    - mgmt.mcumgr.os.info
-    - mgmt.mcumgr.os.info.no_hooks
-    - drivers.eeprom.shell
-    - drivers.can.shell
-    - shell.shell_custom_header
-    - crypto.tinycrypt
-    - crypto.tinycrypt.hmac_prng
-    - net.mqtt_sn.packet
-    - net.http.server.common
-    - net.coap.server.common
-    - sample.zbus.msg_subscriber.*
-    - sample.sensor.shell.pytest
-    - sample.sensor.shell
-    - benchmark.kernel.core
+    - sample.drivers.crypto.mbedtls
+    - sample.drivers.flash.shell
+    - sample.harness.shell
+    - sample.harness.shell.vt100_colors_off
+    - sample.input.input_dump_shell
+    - sample.net.sockets.socketpair
+    - sample.perf
+    - sample.posix.env
     - sample.posix.eventfd
+    - sample.posix.uname
     - sample.pytest.shell
-    - kernel.lifo.usage
+    - sample.pytest.shell.vt100_colors_off
+    - sample.sensor.shell
+    - sample.sensor.shell.pytest
+    - sample.shell.shell_module
     - sample.shell.shell_module.getopt
     - sample.shell.shell_module.login
-    - kernel.scheduler.slice_perthread
-    - kernel.workqueue
-    - kernel.semaphore
-    - sample.posix.uname
-    - kernel.scheduler
-    - sample.drivers.flash.shell
-    - kernel.timer.timer
     - sample.smf.hsm_psicc2
-    - sample.net.sockets.socketpair
-    - sample.drivers.crypto.mbedtls
-    - kernel.workqueue.api
-    - sample.posix.env
-    - sample.shell.shell_module
-    - kernel.common
-    - net.http.server.crime
-    - drivers.gpio.build
-    - sample.perf
-    - .*secure_storage.*
-    - kernel.scheduler.simple_timeslicing
-    - kernel.scheduler.simple_no_timeslicing
-    - sample.input.input_dump_shell
-    - sample.harness.shell.vt100_colors_off
-    - sample.harness.shell
-    - filesystem.lib_link
-    - sample.pytest.shell.vt100_colors_off
+    - sample.zbus.msg_subscriber.*
+    - shell.shell_custom_header
+    - subsys.crc
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuppr
   comment: "region RAM/FLASH overflowed"
 
 - scenarios:
+    - .*secure_storage.*
     - cpp.libcxx.glibcxx.picolibc
     - crypto.mbedtls
-    - crypto.tinycrypt
-    - crypto.tinycrypt.hmac_prng
     - drivers.can.shell
     - kernel.common
+    - kernel.common.lto
+    - kernel.common.lto.singlethreaded
     - kernel.common.minimallibc
     - kernel.common.misra
     - kernel.common.nano32
@@ -428,7 +496,6 @@
     - sample.shell.shell_module
     - sample.shell.shell_module.getopt
     - sample.shell.shell_module.login
-    - .*secure_storage.*
   platforms:
     - nrf54l15dk/nrf54l15/cpuflpr
   comment: "region RAM/FLASH overflowed"
@@ -516,3 +583,29 @@
   platforms:
     - nrf52840dk/nrf52840
   comment: "Not compatible with NCS. https://nordicsemi.atlassian.net/browse/KRKNWK-20183"
+
+- scenarios:
+    - buildsystem.sbom.spdx
+  comment: "Missing toolchain python package. https://nordicsemi.atlassian.net/browse/NCSDK-35387"
+
+- scenarios:
+    - sample.psa.its.secure_storage.entropy_driver
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
+  comment: "Not compatible"
+
+- scenarios:
+    - arch.arm.*.no_optimizations
+    - llext.writable
+    - llext.writable_slid_linking
+    - llext.writable_relocatable_slid_linking
+    - llext.writable_relocatable
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8497"
+
+- scenarios:
+    - kernel.threads.dynamic_thread.stack.pool.alloc.user
+    - kernel.threads.dynamic_thread.stack.pool.no_alloc.user
+  platforms:
+    - nrf52dk/nrf52832
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37196"

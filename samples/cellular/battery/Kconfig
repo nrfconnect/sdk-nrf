@@ -19,6 +19,6 @@ source "Kconfig.zephyr"
 
 module = BATTERY_SAMPLE
 module-str = Battery sample
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endmenu

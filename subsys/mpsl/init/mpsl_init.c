@@ -56,12 +56,16 @@ extern void rtc_pretick_rtc0_isr_hook(void);
 
 #if IS_ENABLED(CONFIG_COUNTER)
 #if IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF52X) || IS_ENABLED(CONFIG_SOC_NRF5340_CPUNET)
-BUILD_ASSERT(!IS_ENABLED(CONFIG_NRFX_RTC0), "MPSL reserves RTC0 on this SoC.");
-BUILD_ASSERT(!IS_ENABLED(CONFIG_NRFX_TIMER0), "MPSL reserves TIMER0 on this SoC.");
+BUILD_ASSERT(!DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(rtc0)),
+	     "MPSL reserves RTC0 on this SoC.");
+BUILD_ASSERT(!DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(timer0)),
+	     "MPSL reserves TIMER0 on this SoC.");
 #elif IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX) || IS_ENABLED(CONFIG_SOC_SERIES_NRF71X)
-BUILD_ASSERT(!IS_ENABLED(CONFIG_NRFX_TIMER10), "MPSL reserves TIMER10 on this SoC");
+BUILD_ASSERT(!DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(timer10)),
+	     "MPSL reserves TIMER10 on this SoC.");
 #elif IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX)
-BUILD_ASSERT(!IS_ENABLED(CONFIG_NRFX_TIMER020), "MPSL reserves TIMER020 on this SoC");
+BUILD_ASSERT(!DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(timer020)),
+	     "MPSL reserves TIMER020 on this SoC.");
 #else
 #error
 #endif
@@ -167,6 +171,11 @@ BUILD_ASSERT((IPCT_SOURCE_CHANNELS & MPSL_RESERVED_IPCT_SOURCE_CHANNELS) ==
 
 #if defined(CONFIG_SOC_SERIES_NRF54LX)
 BUILD_ASSERT(NRF_CONFIG_CPU_FREQ_MHZ == 128, "Currently mpsl only works when frequency is 128MHz");
+#endif
+
+#if IS_ENABLED(CONFIG_NRF_GRTC_TIMER) && !defined(CONFIG_SOC_SERIES_NRF54HX)
+BUILD_ASSERT(IS_ENABLED(CONFIG_NRF_GRTC_TIMER_AUTO_KEEP_ALIVE),
+	     "MPSL requires NRF_GRTC_TIMER_AUTO_KEEP_ALIVE to be enabled when using GRTC timer");
 #endif
 
 #define MPSL_LOW_PRIO (4)
@@ -303,16 +312,22 @@ void m_assert_handler(const char *const file, const uint32_t line)
 #else /* !IS_ENABLED(CONFIG_MPSL_ASSERT_HANDLER) */
 static void m_assert_handler(const char *const file, const uint32_t line)
 {
+	volatile char assert_file_id[11] = { 0 };
+	volatile uint32_t assert_line = line;
+
+	strncpy((char *)assert_file_id, file, sizeof(assert_file_id) - 1);
+
 #if defined(CONFIG_ASSERT) && defined(CONFIG_ASSERT_VERBOSE) && !defined(CONFIG_ASSERT_NO_MSG_INFO)
-	__ASSERT(false, "MPSL ASSERT: %s, %d\n", file, line);
+	__ASSERT(false, "MPSL ASSERT: %s, %d\n", (char *)assert_file_id, assert_line);
 #elif defined(CONFIG_LOG)
-	LOG_ERR("MPSL ASSERT: %s, %d", file, line);
+	LOG_ERR("MPSL ASSERT: %s, %d", (char *)assert_file_id, assert_line);
 	k_oops();
 #elif defined(CONFIG_PRINTK)
-	printk("MPSL ASSERT: %s, %d\n", file, line);
+	printk("MPSL ASSERT: %s, %d\n", (char *)assert_file_id, assert_line);
 	printk("\n");
 	k_oops();
 #else
+	(void)assert_line;
 	k_oops();
 #endif
 }
@@ -432,10 +447,6 @@ static int32_t mpsl_lib_init_internal(void)
 	mpsl_clock_hfclk_latency_set(CONFIG_MPSL_HFCLK_LATENCY);
 #endif /* CONFIG_CLOCK_CONTROL_NRF && DT_NODE_EXISTS(DT_NODELABEL(hfxo)) */
 #endif /* !CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL */
-	if (IS_ENABLED(CONFIG_SOC_NRF_FORCE_CONSTLAT) &&
-		!IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX)) {
-		mpsl_pan_rfu();
-	}
 
 #if MPSL_TIMESLOT_SESSION_COUNT > 0
 	err = mpsl_timeslot_session_count_set((void *) timeslot_context,
@@ -444,10 +455,8 @@ static int32_t mpsl_lib_init_internal(void)
 		return err;
 	}
 #endif /* MPSL_TIMESLOT_SESSION_COUNT > 0 */
-#if defined(NRF_TRUSTZONE_NONSECURE)
-	/* Temporary fix in order to get mpsl to work well when
-	 *  compiling for nrf54l15dk/nrf54l15/cpuapp/ns
-	 */
+#if defined(NRF_TRUSTZONE_NONSECURE) && \
+	defined(CONFIG_MPSL_FORCE_RRAM_ON_ALL_THE_TIME)
 	uint32_t result_out;
 	uint32_t result = tfm_platform_mem_write32((uint32_t)&NRF_RRAMC_S->POWER.LOWPOWERCONFIG,
 		RRAMC_POWER_LOWPOWERCONFIG_MODE_Standby << RRAMC_POWER_LOWPOWERCONFIG_MODE_Pos,

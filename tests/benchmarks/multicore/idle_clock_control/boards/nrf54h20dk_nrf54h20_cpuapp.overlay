@@ -12,3 +12,15 @@
 };
 
 /delete-node/ &led1;
+
+&fll16m {
+	status = "okay";
+};
+
+&hsfll120 {
+	status = "okay";
+};
+
+&lfclk {
+	status = "okay";
+};

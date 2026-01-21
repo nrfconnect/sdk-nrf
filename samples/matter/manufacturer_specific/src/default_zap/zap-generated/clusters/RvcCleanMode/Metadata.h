@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -20,10 +21,11 @@ namespace app
 		namespace RvcCleanMode
 		{
 
-			inline constexpr uint32_t kRevision = 3;
+			inline constexpr uint32_t kRevision = 5;
 
 			namespace Attributes
 			{
+
 				namespace SupportedModes
 				{
 					inline constexpr DataModel::AttributeEntry kMetadataEntry(
@@ -39,11 +41,17 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace CurrentMode
+				constexpr std::array<DataModel::AttributeEntry, 2> kMandatoryMetadata = {
+					SupportedModes::kMetadataEntry,
+					CurrentMode::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace ChangeToMode
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -53,6 +61,11 @@ namespace app
 				} // namespace ChangeToMode
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace RvcCleanMode
 	} // namespace Clusters
 } // namespace app

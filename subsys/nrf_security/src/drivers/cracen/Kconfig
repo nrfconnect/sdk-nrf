@@ -4,47 +4,74 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config CRACEN_HW_PRESENT
-	def_bool SOC_SERIES_NRF54LX || SOC_SERIES_NRF92X
+config HAS_HW_NRF_CRACEN
+	def_bool (SOC_SERIES_NRF54LX && !SOC_NRF54LS05B) || SOC_SERIES_NRF71X
 
 config CRACEN_HW_VERSION_BASE
 	def_bool SOC_SERIES_NRF54HX || SOC_NRF54L15 || SOC_NRF54L10 || SOC_NRF54L05
 
 config CRACEN_HW_VERSION_LITE
-	def_bool SOC_NRF54LM20A || SOC_NRF54LV10A
+	def_bool SOC_NRF54LM20A || SOC_NRF54LV10A || SOC_NRF7120_ENGA
 
-config CRACEN_NEED_MULTIPART_WORKAROUNDS
+config CRACEN_KMU_HW_PRESENT
+	def_bool SOC_SERIES_NRF54LX || SOC_SERIES_NRF71X
+
+config PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS
 	def_bool SOC_NRF54LM20A
 
-config CRACEN_NEED_IKG_INTERRUPT_WORKAROUND
-	def_bool SOC_NRF54LM20A || SOC_NRF54LV10A
+config PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS
+	def_bool PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS || SOC_NRF54LV10A
+
+config PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND
+	def_bool SOC_NRF54LM20A || SOC_NRF54LV10A || SOC_NRF7120_ENGA
+
+config PSA_NEED_CRACEN_RNG_NO_ENTROPY_WORKAROUND
+	def_bool BOARD_NRF7120DK_NRF7120_CPUAPP_EMU
 
 # Configure CRACEN_LOG_LEVEL
 module = CRACEN
 module-str = CRACEN
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 if PSA_CRYPTO_DRIVER_CRACEN
+
+config PSA_NEED_CRACEN_ECC_KEY_GEN_PKE
+	bool
+	default y if PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECP_R1 || \
+		     PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECP_K1 || \
+		     PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_GENERATE_BRAINPOOL_P_R1
+	help
+	  ECC key generation operations that require PK engine.
+	  This excludes Montgomery and Twisted Edwards curves which use
+	  random generation with bit manipulation instead of PKE operations.
 
 config CRACEN_LOAD_MICROCODE
 	bool "Load CRACEN microcode"
 	depends on CRACEN_HW_VERSION_BASE
-	default y
+	default y if CRACEN_IKG || \
+		     PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER || \
+		     PSA_NEED_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER || \
+		     PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER || \
+		     PSA_NEED_CRACEN_PAKE_DRIVER || \
+		     PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_GENERATE || \
+		     PSA_NEED_CRACEN_ECC_KEY_GEN_PKE
 	help
 	  Whether to load the CRACEN microcode on startup.
-	  This is required to use the PKE/IKG engine. Note that this is not
-	  required when a bootloader has already loaded the microcode.
+	  This is required to use the PKE/IKG on nRF54L15,
+	  nRF54L10, and nRF54L05. (This is not required
+	  when a bootloader has already loaded the microcode.)
 
 config CRACEN_LIB_KMU
 	bool "CRACEN KMU library"
-	depends on SOC_SERIES_NRF54LX
-	select NRFX_RRAMC if !BUILD_WITH_TFM
+	depends on CRACEN_KMU_HW_PRESENT
+	select NRFX_RRAMC if !BUILD_WITH_TFM && SOC_SERIES_NRF54LX
+	select NRFX_MRAMC if !BUILD_WITH_TFM && SOC_SERIES_NRF71X
 	default y
 	help
 	  The CRACEN KMU library.
 
-config CRACEN_PROVISION_PROT_RAM_INV_DATA
-	bool "Provision protected RAM invalidation data"
+config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT
+	bool "Provision protected RAM invalidation slots on boot"
 	depends on CRACEN_LIB_KMU
 	default y
 	help
@@ -54,9 +81,19 @@ config CRACEN_PROVISION_PROT_RAM_INV_DATA
 	  When disabled the application is expected to provision the reserved KMU slots 248 and 249
 	  manually, otherwise the protected RAM keys will not be usable.
 
+config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT
+	bool "Provision protected RAM invalidation slots using psa_import_key"
+	depends on CRACEN_LIB_KMU
+	help
+	  Provision the protected RAM invalidation KMU slots (248,249) in the KMU using a
+	  psa_import_key call. The application is required to call psa_import_key with the
+	  KMU slot 248. The key material provided is ignored and random data is generated to
+	  populate the slots.
+	  This is meant to be used by a provisioning image that runs once before the application
+	  image is flashed. This is not meant to be used by user applications.
+
 config CRACEN_IKG
-	bool "Enable CRACEN IKG"
-	default y
+	bool "CRACEN IKG"
 	help
 	  Enable the Cracen Isolated Key Generator.
 
@@ -79,6 +116,13 @@ config CRACEN_IKG_SEED_KMU_SLOT
 	  the one defined here and the two subsequent ones.
 	  This defines the KMU slot (along with the two following it) to which
 	  the IKG seed is provisioned and that is pushed when loading the IKG seed.
+
+config CRACEN_IKG_PERSONALIZED_KEYS
+	bool "CRACEN IKG personalized keys"
+	help
+	  Personalize each IKG-generated key for the associated key owner.
+	  If an owner ID is encoded into the mbedtls_svc_key_id_t type,
+	  it will be passed to the IKG as a personalization string.
 
 config CRACEN_USE_INTERRUPTS
 	bool "Use cracen with interrupts"

@@ -67,7 +67,7 @@ namespace app
 
 			// Bitmap for Feature
 			enum class Feature : uint32_t {
-				kDirectModeChange = 0x10000,
+				kDirectModeChange = 0x100000,
 			};
 		} // namespace RvcCleanMode
 	} // namespace Clusters

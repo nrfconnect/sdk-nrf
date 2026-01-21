@@ -35,8 +35,8 @@ config ANOMALY_172_TIMER_IRQ_PRIORITY
 	  Levels are from 0 (highest priority) to 6 (lowest priority)
 
 config DTM_USB
-	bool "DTM over USB CDC ACM class"
-	depends on SOC_NRF5340_CPUNET && !DTM_TRANSPORT_HCI
+	bool "DTM over USB CDC ACM class [EXPERIMENTAL]"
+	depends on (SOC_NRF5340_CPUNET || SOC_NRF54H20_CPURAD) && !DTM_TRANSPORT_HCI
 	select EXPERIMENTAL
 	help
 	  Use USB instead of UART as the DTM interface. For nRF5340 the USB from application core
@@ -98,6 +98,6 @@ config DTM_FAST_RAMP_UP
 
 module = DTM_TRANSPORT
 module-str = "DTM_transport"
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 source "Kconfig.zephyr"

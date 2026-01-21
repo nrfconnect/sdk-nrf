@@ -74,10 +74,14 @@ ZTEST(dfu_target_stream_test, test_dfu_target_stream)
 	err = dfu_target_stream_offset_get(&offset);
 	zassert_equal(err, 0, "Unexpected failure: %d", err);
 
+#ifdef CONFIG_DFU_TARGET_STREAM_SYNCHRONOUS
+	zassert_equal(offset, sizeof(write_buf), "Invalid offset");
+#else
 	/* Since 'write_buf' is not page aligned, the 'offset' should not
 	 * correspond to the sice written.
 	 */
 	zassert_not_equal(offset, sizeof(write_buf), "Invalid offset");
+#endif
 
 	/* Complete transfer */
 	err = dfu_target_stream_done(true);

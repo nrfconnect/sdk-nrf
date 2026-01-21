@@ -60,35 +60,48 @@ Configuration
 
 |config|
 
-Application
-===========
+Configuration options
+=====================
 
 You can set the supported radio configurations using the following Kconfig options:
 
-* :kconfig:option:`CONFIG_IPC_RADIO_BT` - For the Bluetooth Low Energy serialization.
-* :kconfig:option:`CONFIG_IPC_RADIO_802154` - For the IEEE 802.15.4 serialization.
+.. _CONFIG_IPC_RADIO_BT:
 
+CONFIG_IPC_RADIO_BT
+   This option enables the IPC Bluetooth Low Energy radio serialization.
 
-You can select the Bluetooth Low Energy serialization using the ``CONFIG_IPC_RADIO_BT_SER`` Kconfig choice:
+.. _CONFIG_IPC_RADIO_802154:
 
-* :kconfig:option:`CONFIG_IPC_RADIO_BT_HCI_IPC` - For the Bluetooth HCI serialization.
-* :kconfig:option:`CONFIG_IPC_RADIO_BT_RPC` - For the Bluetooth host API serialization.
+CONFIG_IPC_RADIO_802154
+   This option enables the IPC IEEE 802.15.4 radio serialization.
+
+You can select the Bluetooth Low Energy serialization using the following Kconfig options:
+
+.. _CONFIG_IPC_RADIO_BT_HCI_IPC:
+
+CONFIG_IPC_RADIO_BT_HCI_IPC
+   This option enables the Bluetooth HCI serialization.
+
+.. _CONFIG_IPC_RADIO_BT_RPC:
+
+CONFIG_IPC_RADIO_BT_RPC
+   This option enables the Bluetooth host API serialization over RPC.
 
 The Bluetooth Low Energy and IEEE 802.15.4 functionalities can operate simultaneously and are only limited by available memory.
 
 Sysbuild Kconfig options
 ========================
 
-To enable the firmware, use the sysbuild configuration ``SB_CONFIG_NETCORE_IPC_RADIO``.
+To enable the firmware, use the sysbuild configuration :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO`.
 
 You can set the supported radio configurations using the following sysbuild Kconfig options:
 
-* ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC``
-* ``SB_CONFIG_NETCORE_IPC_RADIO_BT_RPC``
-* ``SB_CONFIG_NETCORE_IPC_RADIO_IEEE802154``
+* :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC`
+* :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_BT_RPC`
+* :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_IEEE802154`
 
 .. note::
-   For |NCS| samples and applications, use the ``SB_CONFIG_NRF_DEFAULT_IPC_RADIO`` sysbuild configuration to enable the firmware instead of ``SB_CONFIG_NETCORE_IPC_RADIO`` (which should only be used for production).
+   For |NCS| samples and applications, use the :kconfig:option:`SB_CONFIG_NRF_DEFAULT_IPC_RADIO` sysbuild configuration to enable the firmware instead of :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO` (which must only be used for production).
 
 Configuration files
 ===================
@@ -106,7 +119,7 @@ The following files are available:
    When you use sysbuild to build an application which uses the IPC radio firmware as the network or radio core image, the preceding configuration files are added automatically to the IPC radio firmware.
    The selection of specific configuration files is determined by the sysbuild Kconfig.
 
-   For instance, the ``SB_CONFIG_NETCORE_IPC_RADIO_IEEE802154`` Kconfig option enables the :file:`overlay-802154.conf` configuration file to be used with the IPC radio firmware.
+   For instance, the :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_IEEE802154` sysbuild Kconfig option enables the :file:`overlay-802154.conf` configuration file to be used with the IPC radio firmware.
 
 .. _ipc_radio_build_run:
 

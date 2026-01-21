@@ -170,6 +170,8 @@ int main(void)
 {
 	psa_status_t status = psa_crypto_init();
 
+	LOG_INF("Starting EC J-PAKE example...");
+
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_crypto_init failed. (Error: %d)", status);
 	}
@@ -187,11 +189,13 @@ int main(void)
 
 	psa_key_id_t key;
 
+	LOG_INF("Importing password key...");
 	status = psa_import_key(&key_attributes, "password", 8, &key);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("psa_import_key failed. (Error: %d)", status);
 		goto error;
 	}
+	LOG_INF("Password key imported successfully!");
 
 	/* Initialize PAKE operation object for the client.*/
 	psa_pake_operation_t client = PSA_PAKE_OPERATION_INIT;
@@ -210,13 +214,16 @@ int main(void)
 	}
 
 	/* Perform the data exchange rounds */
+	LOG_INF("Performing EC J-PAKE key exchange rounds...");
 	status = do_rounds(&server, &client);
 	if (status != PSA_SUCCESS) {
 		LOG_INF("EC J-PAKE rounds failed. (Error: %d)", status);
 		goto error;
 	}
+	LOG_INF("EC J-PAKE key exchange completed successfully!");
 
 	/* Retrieve keys from J-PAKE results. */
+	LOG_INF("Deriving shared secrets...");
 	uint8_t server_secret[32];
 	uint8_t client_secret[32];
 
@@ -229,6 +236,7 @@ int main(void)
 	if (status != PSA_SUCCESS) {
 		goto error;
 	}
+	LOG_INF("Shared secrets derived successfully!");
 
 	PRINT_HEX("server_secret", server_secret, sizeof(server_secret));
 	PRINT_HEX("client_secret", client_secret, sizeof(client_secret));
@@ -246,6 +254,7 @@ int main(void)
 		goto error;
 	}
 
+	LOG_INF("Shared secrets match!");
 	LOG_INF(APP_SUCCESS_MESSAGE);
 	return APP_SUCCESS;
 

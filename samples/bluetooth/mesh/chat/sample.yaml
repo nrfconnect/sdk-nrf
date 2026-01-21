@@ -6,12 +6,8 @@ tests:
     sysbuild: true
     build_only: true
     integration_platforms:
-      - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
-      - nrf21540dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
-      - nrf54l15dk/nrf54l05/cpuapp
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -19,6 +15,23 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
+  sample.bluetooth.mesh.chat.settings_ext_flash:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+    extra_args: FILE_SUFFIX=settings_ext_flash
     tags:
       - bluetooth
       - ci_build

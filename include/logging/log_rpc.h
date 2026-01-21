@@ -34,6 +34,20 @@ enum log_rpc_level {
 };
 
 /**
+ * @brief nRF RPC crash info.
+ */
+struct nrf_rpc_crash_info {
+	uint32_t uuid;
+	uint16_t reason;
+	uint32_t pc;
+	uint32_t lr;
+	uint32_t sp;
+	uint32_t xpsr;
+	uint32_t assert_line;
+	char assert_filename[CONFIG_LOG_BACKED_RPC_CRASH_INFO_FILENAME_SIZE];
+};
+
+/**
  * @brief Log history handler.
  *
  * The type of a callback function that is invoked for each received log message
@@ -192,6 +206,12 @@ int log_rpc_get_crash_dump(size_t offset, uint8_t *buffer, size_t buffer_length)
  * @returns -errno      Indicates failure.
  */
 int log_rpc_invalidate_crash_dump(void);
+
+/** @brief Get crash dump summary.
+ *
+ * @param[out] info A pointer to a structure for storing the information.
+ */
+int log_rpc_get_crash_info(struct nrf_rpc_crash_info *info);
 
 /**
  * @brief Generates a log message on the remote device.

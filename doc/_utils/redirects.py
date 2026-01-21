@@ -21,7 +21,7 @@ Examples:
     ("even/newer/index", "absolutely/newer/index"),
 """
 
-NRF = [
+NRF = (
     ("introduction", "index"), # Introduction
     ("ug_nrf9160_gs", "gsg_guides"), # Getting started with nRF9160 DK (removed in v3.0.0)
     ("working_with_nrf/nrf91/nrf9160_gs", "gsg_guides"),
@@ -170,7 +170,8 @@ NRF = [
     ("device_guides/nrf91/nrf91_updating_fw_programmer", "app_dev/device_guides/nrf91/nrf91_dk_updating_fw_programmer"), # Updating the DK firmware using Programmer
     ("device_guides/nrf91/nrf91_building", "app_dev/device_guides/nrf91/nrf91_building"), # Configuring and building with nRF91 Series
     ("device_guides/nrf91/nrf91_programming", "app_dev/device_guides/nrf91/nrf91_programming"), # Programming onto nRF91 Series devices
-    ("device_guides/nrf91/nrf91_testing_at_client", "app_dev/device_guides/nrf91/nrf91_testing_at_client"), # Testing the cellular connection on nRF91 Series DK
+    ("device_guides/nrf91/nrf91_testing_at_client", "app_dev/device_guides/nrf91/nrf91_testing"), # Testing the cellular connection on nRF91 Series DK
+    ("app_dev/device_guides/nrf91/nrf91_testing_at_client", "app_dev/device_guides/nrf91/nrf91_testing"),
     ("device_guides/working_with_nrf/nrf91/nrf91_snippet", "app_dev/device_guides/nrf91/nrf91_snippet"), # Snippets for an nRF91 Series device
     ("device_guides/nrf91/nrf91_snippet", "app_dev/device_guides/nrf91/nrf91_snippet"),
     ("device_guides/nrf91/nrf9160_external_flash", "app_dev/device_guides/nrf91/nrf9160_external_flash"), # Configuring external flash memory on the nRF9160 DK
@@ -179,8 +180,9 @@ NRF = [
     ("device_guides/working_with_nrf/nrf91/thingy91", "app_dev/device_guides/thingy91/index"),
     ("device_guides/nrf91/thingy91_connecting", "app_dev/device_guides/thingy91/thingy91_connecting"), # Connecting to Thingy:91
     ("app_dev/device_guides/nrf91/thingy91_connecting", "app_dev/device_guides/thingy91/thingy91_connecting"),
-    ("device_guides/nrf91/thingy91_updating_fw_programmer", "app_dev/device_guides/thingy91/thingy91_updating_fw_programmer"), # Updating the Thingy:91 firmware using Programmer
-    ("app_dev/device_guides/nrf91/thingy91_updating_fw_programmer", "app_dev/device_guides/thingy91/thingy91_updating_fw_programmer"),
+    ("device_guides/nrf91/thingy91_updating_fw_programmer", "app_dev/device_guides/thingy91/thingy91_updating_fw_celmon"), # Updating the Thingy:91 firmware using Programmer (removed in v3.2.0)
+    ("app_dev/device_guides/nrf91/thingy91_updating_fw_programmer", "app_dev/device_guides/thingy91/thingy91_updating_fw_celmon"),
+    ("app_dev/device_guides/thingy91/thingy91_updating_fw_programmer", "app_dev/device_guides/thingy91/thingy91_updating_fw_celmon"),
     ("device_guides/nrf91/thingy91x_updating_fw_programmer", "app_dev/device_guides/thingy91x/thingy91x_updating_fw_programmer"), # Updating the Thingy:91 X firmware using nRF Util
     ("ug_nrf70", "app_dev/device_guides/nrf70/index"), ## Developing with nRF70 Series (post-2.7.0 landing)
     ("device_guides/nrf70", "app_dev/device_guides/nrf70/index"),
@@ -210,8 +212,9 @@ NRF = [
     ("device_guides/nrf70/nrf7002eb_dev_guide", "app_dev/device_guides/nrf70/nrf7002eb_dev_guide"),
     ("device_guides/nrf54l", "app_dev/device_guides/nrf54l/index"), # Developing with nRF54L Series
     ("app_dev/device_guides/nrf54l", "app_dev/device_guides/nrf54l/index"),
-    ("device_guides/working_with_nrf/nrf54l/features", "app_dev/device_guides/nrf54l/features"), # Features of the nRF54L15 PDK
-    ("app_dev/device_guides/working_with_nrf/nrf54l/features", "app_dev/device_guides/nrf54l/features"),
+    ("device_guides/working_with_nrf/nrf54l/features", "app_dev/device_guides/nrf54l/index"), # Features of the nRF54L15 DK
+    ("app_dev/device_guides/working_with_nrf/nrf54l/features", "app_dev/device_guides/nrf54l/index"),
+    ("app_dev/device_guides/nrf54l/features", "app_dev/device_guides/nrf54l/index"),
     ("device_guides/working_with_nrf/nrf54l/nrf54l15_gs", "gsg_guides"), # Getting started with nRF54L15 PDK (removed after 2.8.0)
     ("app_dev/device_guides/working_with_nrf/nrf54l/nrf54l15_gs", "gsg_guides"),
     ("device_guides/working_with_nrf/nrf54l/testing_dfu", "app_dev/device_guides/nrf54l/fota_update"), # Testing the DFU solution (removed after 2.8.0)
@@ -301,6 +304,7 @@ NRF = [
     ("security/tfm", "security/tfm/index"),
     ("security/tfm/tfm", "security/tfm/index"),
     ("app_dev/ap_protect/index", "security/ap_protect"), # Enabling access port protection mechanism
+    ("security/trusted_storage", "security/secure_storage"), # Secure storage in the |NCS| (renamed from Trusted storage)
     ("ug_ble_controller", "protocols/bt/index"), # Bluetooth LE Controller
     ("protocols/ble/index", "protocols/bt/index"),
     ("protocols/bt/ble/index", "protocols/bt/bt_stack_arch"),
@@ -339,6 +343,7 @@ NRF = [
     ("ug_gz", "protocols/gazell/index"), # Gazell (landing)
     ("ug_gzll", "protocols/gazell/gzll"), # Gazell Link Layer
     ("ug_gzp", "protocols/gazell/gzp"), # Gazell Pairing
+    ("test_and_optimize/optimizing/power_nrf91", "protocols/lte/power_nrf91"), # Power profiling cellular applications (moved from Test and optimizing general section)
     ("ug_matter", "protocols/matter/index"), # Matter (landing)
     ("ug_matter_intro_overview", "protocols/matter/overview/index"), # Matter overview (landing)
     ("ug_matter_overview_architecture", "protocols/matter/overview/architecture"), # Matter architecture
@@ -428,6 +433,9 @@ NRF = [
     ("samples/samples_bl", "samples/bl"), # Bluetooth samples (landing)
     ("samples/bluetooth/connection_event_trigger/README", "samples/bluetooth/event_trigger/README"),
     ("samples/bluetooth/broadcast_config_tool/README", "samples/bluetooth/nrf_auraconfig/README"),
+    ("samples/bluetooth/central_and_peripheral_hr/README", "samples/bluetooth/central_and_peripheral_hrs/README"), # Renamed the folders to better match the sample names
+    ("samples/cellular/ciphersuites/README","samples/cellular/tls_ciphersuites/README"),
+    ("samples/cellular/nrf_provisioning/README", "samples/cellular/nrf_device_provisioning/README"),
     ("samples/samples_nrf9160", "samples/cellular"), # Cellular samples (landing)
     ("samples/samples_crypto", "samples/crypto"), # Cryptography samples (landing)
     ("samples/samples_edge", "samples/edge"), # Edge Impulse samples (landing)
@@ -441,6 +449,9 @@ NRF = [
     ("samples/wifi/sr_coex/README", "samples/wifi/ble_coex/README"), # Wi-Fi: Bluetooth LE coexistence
     ("samples/samples_zigbee", "samples/zigbee"), # Zigbee samples (landing)
     ("samples/samples_other", "samples/other"), # Other samples (landing)
+    ("samples/pmic/native/npm1300_fuel_gauge/README", "samples/pmic/native/npm13xx_fuel_gauge/README"),
+    ("samples/pmic/native/npm1300_one_button/README", "samples/pmic/native/npm13xx_one_button/README"),
+    ("samples/nrf5340/empty_network_core/README", "samples/basic/empty/README"),
     ("libraries/bluetooth_services/index", "libraries/bluetooth/index"), # Changed the folder name libraries/bluetooth_services to libraries/bluetooth to better match the include folder structure
     ("libraries/bluetooth_services/adv_prov", "libraries/bluetooth/adv_prov"),
     ("libraries/bluetooth_services/conn_ctx", "libraries/bluetooth/conn_ctx"),
@@ -605,7 +616,8 @@ NRF = [
     # 54H new links
     ("device_guides/nrf54h", "app_dev/device_guides/nrf54h/index"), # Developing with nRF54H Series
     ("app_dev/device_guides/nrf54h", "app_dev/device_guides/nrf54h/index"),  # Developing with nRF54H Series
-    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_app_samples", "app_dev/device_guides/nrf54h/ug_nrf54h20_app_samples"), # nRF54H20 applications and samples (orphaned as of 2.7.0)
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_app_samples", "samples"), # nRF54H20 applications and samples (orphaned as of 2.7.0)
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_app_samples", "samples"), # nRF54H20 applications and samples (orphaned as of 2.7.0)
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture", "app_dev/device_guides/nrf54h/ug_nrf54h20_architecture"), # Architecture of nRF54H20 (landing)
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_boot", "app_dev/device_guides/nrf54h/ug_nrf54h20_architecture_boot"), # nRF54H20 Boot Sequence
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_clockman", "app_dev/device_guides/nrf54h/ug_nrf54h20_architecture_clockman"), # nRF54H20 clock management
@@ -622,28 +634,27 @@ NRF = [
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_gs", "app_dev/device_guides/nrf54h/ug_nrf54h20_gs"), # Getting started with the nRF54H20 DK
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_logging", "app_dev/device_guides/nrf54h/ug_nrf54h20_logging"), # nRF54H20 logging (orphaned as of 2.7.0)
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_nrf7002ek", "app_dev/device_guides/nrf54h/ug_nrf54h20_nrf7002ek"), # Working with the nRF54H20 DK and the nRF7002 EK (orphaned as of 2.7.0)
-    # TODO: Commenting out suit docs for now, they should be properly redirected, if possible
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_components", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_components"), # SUIT components
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_dfu", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_customize_dfu"), # How to customize the SUIT DFU process
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_qsg", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_customize_qsg"), # Customize SUIT DFU quick start guide
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_device_config", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_device_config"), # SUIT device configuration
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_dfu", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_dfu"), # Device Firmware Update using SUIT (landing)
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_external_memory", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_external_memory"), # Firmware upgrade with external memory
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_fetch", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_fetch"), # How to fetch payloads
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_hierarchical_manifests", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_hierarchical_manifests"), # Hierarchical manifests
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_intro", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_intro"), # Introduction to SUIT
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_manifest_overview", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_manifest_overview"), # SUIT manifest overview
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_push", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_push"), # SUIT push
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_recovery", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_recovery"), # SUIT recovery
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_sdfw_sdrfw_update", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_sdfw_sdrfw_update"), # SUIT SoC binaries update
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_smp", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_smp"), # SUIT SMP protocol
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_soc_binaries", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_soc_binaries"), # SUIT SoC binaries
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_compare_other_dfu", "app_dev/bootloaders_dfu/index"), # DFU and bootloader comparison (removed after 2.7.0) > Bootloaders and DFU (landing)
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_components", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT components
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_dfu", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # How to customize the SUIT DFU process
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_qsg", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Customize SUIT DFU quick start guide
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_device_config", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT device configuration
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_dfu", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Device Firmware Update using SUIT (landing)
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_external_memory", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Firmware upgrade with external memory
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_fetch", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # How to fetch payloads
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_hierarchical_manifests", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Hierarchical manifests
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_intro", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Introduction to SUIT
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_manifest_overview", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT manifest overview
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_push", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT push
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_recovery", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT recovery
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_sdfw_sdrfw_update", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT SoC binaries update
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_smp", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT SMP protocol
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_soc_binaries", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT SoC binaries
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_compare_other_dfu", "app_dev/bootloaders_dfu/index"), # DFU and bootloader comparison (removed after 2.7.0) > Bootloaders and DFU (landing)
     ("app_dev/device_guides/working_with_nrf/nrf54h", "app_dev/device_guides/nrf54h/index"), # nRF54H index
     # 54H legacy links
     ("device_guides/nrf54h", "app_dev/device_guides/nrf54h"), # Developing with nRF54H Series
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_gs",  "app_dev/device_guides/nrf54h/ug_nrf54h20_gs"), # Getting started with the nRF54H20 DK
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_app_samples", "app_dev/device_guides/nrf54h/ug_nrf54h20_app_samples"), # nRF54H20 applications and samples (orphaned as of 2.7.0)
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_app_samples", "samples"), # nRF54H20 applications and samples (orphaned as of 2.7.0)
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture", "app_dev/device_guides/nrf54h/ug_nrf54h20_architecture"), # Architecture of nRF54H20 (landing)
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_cpu", "app_dev/device_guides/nrf54h/ug_nrf54h20_architecture_cpu"), # nRF54H20 Domains
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_memory", "app_dev/device_guides/nrf54h/ug_nrf54h20_architecture_memory"), # nRF54H20 Memory Layout
@@ -653,18 +664,31 @@ NRF = [
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_configuration", "app_dev/device_guides/nrf54h/ug_nrf54h20_configuration"), # Configuring the nRF54H20 DK
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_logging", "app_dev/device_guides/nrf54h/ug_nrf54h20_logging"), # nRF54H20 logging (orphaned as of 2.7.0)
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_nrf7002ek", "app_dev/device_guides/nrf54h/ug_nrf54h20_nrf7002ek"), # Working with the nRF54H20 DK and the nRF7002 EK (orphaned as of 2.7.0)
-    # TODO: Commenting out suit docs for now, they should be properly redirected, if possible
-    # ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_dfu", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_dfu"), # Device Firmware Update using SUIT (landing)
-    # ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_intro", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_intro"), # Introduction to SUIT
-    # ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_manifest_overview", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_manifest_overview"), # SUIT manifest overview
-    # ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_qsg", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_customize_qsg"), # Customize SUIT DFU quick start guide
-    # ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_dfu", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_customize_dfu"), # How to customize the SUIT DFU process
-    # ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_fetch", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_fetch"), # How to fetch payloads
-    # ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_external_memory", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_external_memory"), # Firmware upgrade with external memory
-    # ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_components", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_components"), # SUIT components
-    # ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_hierarchical_manifests", "app_dev/device_guides/nrf54h/ug_nrf54h20_suit_hierarchical_manifests"), # Hierarchical manifests
-    # ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_compare_other_dfu", "app_dev/bootloaders_dfu/index"), # DFU and bootloader comparison (removed after 2.7.0) > Bootloaders and DFU (landing)
-    # ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_compare_other_dfu", "app_dev/bootloaders_dfu/index"),
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_dfu", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Device Firmware Update using SUIT (landing)
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_intro", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Introduction to SUIT
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_manifest_overview", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT manifest overview
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_qsg", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Customize SUIT DFU quick start guide
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_customize_dfu", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # How to customize the SUIT DFU process
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_fetch", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # How to fetch payloads
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_external_memory", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Firmware upgrade with external memory
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_components", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT components
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_hierarchical_manifests", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Hierarchical manifests
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_suit_compare_other_dfu", "app_dev/bootloaders_dfu/index"), # DFU and bootloader comparison (removed after 2.7.0) > Bootloaders and DFU (landing)
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_debugging", "app_dev/device_guides/nrf54h/ug_nrf54h20_debugging"), # nRF54H20 debugging
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_custom_pcb", "app_dev/device_guides/nrf54h/ug_nrf54h20_custom_pcb"), # Configuring your application for a custom PCB
-]
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_suit_components", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT components
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_suit_customize_dfu", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # How to customize the SUIT DFU process
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_suit_customize_qsg", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Customize SUIT DFU quick start guide
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_suit_device_config", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT device configuration
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_suit_dfu", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Device Firmware Update using SUIT (landing)
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_suit_external_memory", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Firmware upgrade with external memory
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_suit_fetch", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # How to fetch payloads
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_suit_hierarchical_manifests", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Hierarchical manifests
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_suit_intro", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # Introduction to SUIT
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_suit_manifest_overview", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT manifest overview
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_suit_push", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT push
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_suit_recovery", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT recovery
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_suit_sdfw_sdrfw_update", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT SoC binaries update
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_suit_smp", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT SMP protocol
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_suit_soc_binaries", "app_dev/device_guides/nrf54h/ug_nrf54h20_ironside"), # SUIT SoC binaries
+)

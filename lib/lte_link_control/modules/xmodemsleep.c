@@ -27,11 +27,7 @@ LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
 AT_MONITOR(ltelc_atmon_xmodemsleep, "%XMODEMSLEEP", at_handler_xmodemsleep);
 
-#if defined(CONFIG_UNITY)
-int parse_xmodemsleep(const char *at_response, struct lte_lc_modem_sleep *modem_sleep)
-#else
 static int parse_xmodemsleep(const char *at_response, struct lte_lc_modem_sleep *modem_sleep)
-#endif /* CONFIG_UNITY */
 {
 	int err;
 	struct at_parser parser;

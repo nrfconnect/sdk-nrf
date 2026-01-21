@@ -21,7 +21,7 @@ struct lightness_ctx {
 	uint32_t rem_time;
 };
 
-#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_BASELINE)
 static const uint8_t cmp2_elem_offset1[2] = { 0, 1 };
 static const uint8_t cmp2_elem_offset2[1] = { 0 };
 
@@ -272,7 +272,7 @@ void model_handler_start(void)
 {
 	int err;
 
-#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_BASELINE)
 	if (bt_mesh_comp2_register(&comp_p2)) {
 		printk("Failed to register comp2\n");
 	}

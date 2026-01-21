@@ -1,7 +1,7 @@
 .. _migration_3.1_54h_suit_ironside:
 
-Migration from SUIT to IronSide SE for the nRF54H20 SoC
-#######################################################
+Migrating applications from |NCS| v3.0.0 (SUIT) to |NCS| v3.1.0 (IronSide SE) on the nRF54H20 SoC
+#################################################################################################
 
 .. contents::
    :local:
@@ -15,9 +15,15 @@ To follow this guide, you must meet the following prerequisites:
 * You have installed the |NCS| v3.1.0 and its toolchain.
   For more information, see :ref:`install_ncs`.
 
-.. note::
-   To program IronSide SE on your nRF54H20 SoC-based device, your device must be in lifecycle state (LCS) ``EMPTY``.
-   Devices using SUIT in LCS RoT cannot be transitioned back to LCS EMPTY.
+Moreover, to program your modified application on the nRF54H20 SoC, your nRF54H20-based device must be provisioned with the relevant nRF54H20 IronSide SE binaries version.
+For more information, see :ref:`abi_compatibility`.
+
+.. caution::
+   To program the new nRF54H20 IronSide SE binaries on your nRF54H20 SoC-based device, your device must be in lifecycle state (LCS) ``EMPTY``.
+   Devices already provisioned using SUIT-based SoC binaries and in LCS ``RoT`` cannot be transitioned back to LCS ``EMPTY``.
+
+   For more information on provisioning devices, see :ref:`ug_nrf54h20_gs_bringup`.
+   For more information on the new nRF54H20 IronSide SE binaries, see :ref:`abi_compatibility`.
 
 Breaking changes
 ****************
@@ -72,7 +78,7 @@ To update your devicetree files, complete the following steps:
    In your board's DTS overlay, remove any node that defined the ``uicr`` partition.
 
 #. Add the PERIPHCONF array.
-   In your devicetree, under the ``mram1x`` partitions node, define a partition node labeled ``peripconf_partition`` with a size of at least 8 KB to embed the generated address-value blob.
+   In your devicetree, under the ``mram1x`` partitions node, define a partition node labeled ``periphconf_partition`` with a size of at least 8 KB to embed the generated address-value blob.
 
 #. Remove IPC-shared-memory reservation.
    As IronSide relocates the IPC buffer to a fixed RAM20 address, you can delete any manual reservation in RAM0.
@@ -130,7 +136,7 @@ When the following Kconfig options are set:
 
 the script does the following:
 
-  1. It reads the ``peripconf_partition`` node in the devicetree to discover the partition's address and size.
+  1. It reads the ``periphconf_partition`` node in the devicetree to discover the partition's address and size.
   #. It extracts the address/value pairs from the ``PERIPHCONF`` section of the Zephyr ELF image.
   #. It generates two Intel HEX files:
 
@@ -168,7 +174,7 @@ With IronSide SE, the memory map changed as follows:
   Remove memory access groups, such as ``cpuapp_rx_partitions``, ``cpurad_rx_partitions``, ``cpuapp_rw_partitions`` and define partitions under the ``partitions`` node under the ``mram1x`` node.
   Refer to the `nRF54H20 DK memory map`_ for details.
 
-To enable ``UICR/PERIPHCONF`` generation, ensure a DTS partition labeled ``peripconf_partition`` exists with sufficient size (for example, 8 KBs) to embed the generated address-value blob.
+To enable ``UICR/PERIPHCONF`` generation, ensure a DTS partition labeled ``periphconf_partition`` exists with sufficient size (for example, 8 KBs) to embed the generated address-value blob.
 
 DFU support with MCUboot
 ========================

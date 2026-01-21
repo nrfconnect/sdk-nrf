@@ -1,5 +1,6 @@
 board:
   name: nrf52dmouse
+  full_name: nRF52 Desktop Mouse
   vendor: nordic
   socs:
     - name: nrf52832

@@ -22,6 +22,9 @@
 #include <zephyr/kernel.h>
 #include <audio_defines.h>
 
+/** @brief Specifies the maximum number of bits used to carry a sample. */
+#define PSCM_MAX_CARRIER_BIT_DEPTH (32)
+
 /** @brief  Adds a 0 after every sample from *input
  *	   and writes it to *output.
  * @note Use to create stereo stream from a mono source where one
@@ -104,6 +107,43 @@ int pscm_one_channel_split(void const *const input, size_t input_size, enum audi
  */
 int pscm_two_channel_split(void const *const input, size_t input_size, uint8_t pcm_bit_depth,
 			   void *output_left, void *output_right, size_t *output_size);
+
+/**
+ * @brief  Interleave a channel into a buffer of N channels of PCM
+ * @note: The interleaver can not be executed inplace (i.e. input != output)
+ *
+ * @param[in]	input				Pointer to the channel input buffer.
+ * @param[in]	input_size			Number of bytes in input.
+ * @param[in]	channel				Channel to interleave into.
+ * @param[in]	pcm_bit_depth		Bit depth of PCM samples (8, 16, 24, or 32).
+ * @param[out]	output				Pointer to the multi-channel output buffer.
+ * @param[in]	output_size			Number of bytes in output. Must be at least
+ *					(input_size * output_channels).
+ * @param[in]	output_channels		Number of channels in the output buffer.
+ *
+ * @return	0 if successful, error value
+ */
+int pscm_interleave(void const *const input, size_t input_size, uint8_t channel,
+		    uint8_t pcm_bit_depth, void *output, size_t output_size,
+		    uint8_t output_channels);
+
+/**
+ * @brief  De-interleave a channel from a buffer of N channels of PCM
+ * @note: The de-interleaver can not be executed inplace (i.e. input != output)
+ *
+ * @param[in]	input				Pointer to the multi channel input buffer.
+ * @param[in]	input_size			Number of bytes in input.
+ * @param[in]	input_channels		Number of channels in the input buffer.
+ * @param[in]	channel				Channel to de-interleave.
+ * @param[in]	pcm_bit_depth		Bit depth of PCM samples (8, 16, 24, or 32).
+ * @param[out]	output				Pointer to the channel output.
+ * @param[in]	output_size			Number of bytes in output. Must be at least
+ *					(input_size / output_channels).
+ *
+ * @return	0 if successful, error value
+ */
+int pscm_deinterleave(void const *const input, size_t input_size, uint8_t input_channels,
+		      uint8_t channel, uint8_t pcm_bit_depth, void *output, size_t output_size);
 
 /**
  * @}

@@ -6,3 +6,4 @@
 
 zephyr_sources(host_extensions.c)
 zephyr_sources_ifdef(CONFIG_BT_RADIO_NOTIFICATION_CONN_CB radio_notification_conn_cb.c)
+zephyr_sources_ifdef(CONFIG_BT_NRF_CONN_SET_LTK custom_ltk.c)

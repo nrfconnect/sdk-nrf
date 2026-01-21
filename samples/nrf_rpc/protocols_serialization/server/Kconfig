@@ -26,7 +26,7 @@ config NRF_PS_SERVER_RPC_ALIVE_LED
 
 module = NRF_PS_SERVER
 module-str = nrf_ps_server
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endmenu # "Protocols serialization server"
 

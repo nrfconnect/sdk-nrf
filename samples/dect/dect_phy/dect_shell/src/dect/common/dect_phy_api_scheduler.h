@@ -15,8 +15,9 @@
 #define DECT_PHY_API_SCHEDULER_OP_TIME_WINDOW_MS 500
 #define DECT_PHY_API_SCHEDULER_OP_MAX_COUNT	 30
 
-#define DECT_SCHEDULER_DELAYED_ERROR		       6666
-#define DECT_SCHEDULER_SCHEDULER_FATAL_MEM_ALLOC_ERROR 6667
+#define DECT_SCHEDULER_DELAYED_ERROR			6666
+#define DECT_SCHEDULER_FATAL_MEM_ALLOC_ERROR		6667
+#define DECT_SCHEDULER_OP_TO_MODEM_ERROR		6668
 
 /**************************************************************************************************/
 
@@ -39,7 +40,6 @@ struct dect_harq_tx_payload_data {
 /**************************************************************************************************/
 
 /* Callback definitions from DECT PHY API scheduler */
-
 typedef void (*dect_phy_api_scheduler_op_interval_count_callback_t)(uint32_t handle);
 
 typedef void (*dect_phy_api_scheduler_op_completed_callback_t)(
@@ -83,6 +83,7 @@ struct dect_phy_api_scheduler_list_item_config_tx {
 
 	uint16_t encoded_payload_pdu_size;
 	uint8_t *encoded_payload_pdu;
+	bool random_data_payload; /* If true, payload is filled of random data by scheduler */
 
 	/* HARQ */
 	bool harq_feedback_requested;
@@ -91,6 +92,14 @@ struct dect_phy_api_scheduler_list_item_config_tx {
 
 	/* Combined TX & RX req  */
 	bool combined_tx_rx_use;
+
+	/* Can be used only with interval_mdm_ticks is used.
+	 * Replaces handle in combined_rx_op if
+	 * combined_rx_op_handle_range_used is set
+	 */
+	bool combined_rx_op_handle_range_used;
+	uint32_t combined_rx_op_handle_range_start;
+	uint32_t combined_rx_op_handle_range_end;
 
 	/* RX operation data structure must be fully filled.
 	 * Note that RX start time is relative to TX end.
@@ -137,6 +146,12 @@ struct dect_phy_api_scheduler_list_item_config {
 
 	/** @brief scheduled frame in modem time (ticks) */
 	uint64_t frame_time;
+
+	/** @brief frame length in modem time (ticks)
+	 * If 0, defaults to DECT_RADIO_FRAME_DURATION_IN_MODEM_TICKS
+	 * Used for calculating next frame time and frame boundaries
+	 */
+	uint32_t frame_length_mdm_ticks;
 
 	/** @brief scheduled slot within a frame in modem time */
 	bool subslot_used;     /* Default: false, slots used.*/
@@ -206,10 +221,14 @@ void dect_phy_api_scheduler_list_item_sched_config_frame_time_update_by_phy_op_h
 	uint32_t handle, int64_t frame_time_diff);
 
 void dect_phy_api_scheduler_list_item_beacon_rx_sched_config_update_by_phy_op_handle_range(
-	uint16_t range_start, uint16_t range_end,
+	uint32_t range_start, uint32_t range_end,
 	struct dect_phy_api_scheduler_list_item_config *rx_conf);
 void dect_phy_api_scheduler_list_item_tx_phy_header_update_by_phy_handle(
 	uint32_t handle, union nrf_modem_dect_phy_hdr *phy_header,
+	dect_phy_header_type_t header_type);
+void dect_phy_api_scheduler_list_item_tx_phy_header_update_by_phy_handle_range(
+	uint32_t range_start, uint32_t range_end,
+	union nrf_modem_dect_phy_hdr *phy_header,
 	dect_phy_header_type_t header_type);
 
 void dect_phy_api_scheduler_list_status_print(void);
@@ -252,6 +271,21 @@ int dect_phy_api_scheduler_suspend(void);
 int dect_phy_api_scheduler_resume(void);
 
 int dect_phy_api_scheduler_next_frame(void);
+
+/**
+ * @brief Set delay before triggering scheduler when list becomes non-empty.
+ *
+ * When the scheduler list transitions from empty to non-empty, this delay
+ * allows multiple operations (for example, RX and TX) with the same frame_time to be
+ * added together before the scheduler processes them. This ensures proper
+ * chronological interleaving.
+ *
+ * @param delay_ms Delay in milliseconds. 0 = immediate trigger (default).
+ *                 Non-zero = delay before triggering scheduler.
+ *
+ * @return 0 on success
+ */
+int dect_phy_api_scheduler_set_empty_list_trigger_delay(uint32_t delay_ms);
 
 /**************************************************************************************************/
 

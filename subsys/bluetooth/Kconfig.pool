@@ -41,13 +41,12 @@ config BT_GATT_CHRC_POOL_SIZE
 
 config BT_GATT_POOL_STATS
 	bool
-	prompt "Enable functions for printing module statistics"
-	default n
+	prompt "Functions for printing module statistics"
 	help
 	  Enable functions for printing module statistics
 
 module = BT_GATT_POOL
 module-str = GATT_POOL
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_GATT_POOL

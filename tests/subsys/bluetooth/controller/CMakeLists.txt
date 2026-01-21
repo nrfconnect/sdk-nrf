@@ -22,5 +22,5 @@ target_sources(app PRIVATE src/hci_cmd_cb_host_buffer_size_test.c)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/softdevice_controller/include/sdc_hci_cmd_controller_baseband.h)
 
 # Include paths
-include_directories(${ZEPHYR_HAL_NORDIC_MODULE_DIR}/nrfx)
 include_directories(${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/controller)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})

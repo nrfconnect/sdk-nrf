@@ -32,8 +32,6 @@ public:
 	CHIP_ERROR StartApp();
 
 	void UpdateClusterState(const BoltLockManager::StateData &stateData);
-	static void IdentifyStartHandler(Identify *);
-	static void IdentifyStopHandler(Identify *);
 
 private:
 	CHIP_ERROR Init();
@@ -56,7 +54,7 @@ private:
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
 	constexpr static Nrf::Matter::TestEventTrigger::EventTriggerId kDoorLockJammedEventTriggerId =
-		0xFFFF'FFFF'3277'4000;
+		0xFFFF'FFF3'2774'0000;
 	static CHIP_ERROR DoorLockJammedEventCallback(Nrf::Matter::TestEventTrigger::TriggerValue);
 #endif
 };

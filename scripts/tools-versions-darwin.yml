@@ -4,7 +4,7 @@
 python:
   version: 3.12.4
 git:
-  version: 2.37.3
+  version: 2.52.0
 cmake:
   version: 3.21.0
 ninja:
@@ -27,6 +27,6 @@ doxygen:
 pip:
   version: 24.2
 nrfutil:
-  version: 8.1.0
+  version: 8.1.1
   subcommands:
-    device: 2.12.6
+    device: 2.15.7

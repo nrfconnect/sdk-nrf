@@ -4,29 +4,33 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-target_sources_ifdef(CONFIG_DESKTOP_HID_EVENTQ
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_eventq.c)
+target_sources_ifdef(CONFIG_DESKTOP_HID_EVENTQ app PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/hid_eventq.c
+)
 
-target_sources_ifdef(CONFIG_DESKTOP_HID_REPORTQ
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_reportq.c)
+target_sources_ifdef(CONFIG_DESKTOP_HID_REPORTQ app PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/hid_reportq.c
+)
 
-target_sources_ifdef(CONFIG_DESKTOP_HID_KEYMAP
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_keymap.c)
+target_sources_ifdef(CONFIG_DESKTOP_HID_KEYMAP app PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/hid_keymap.c
+)
 
-target_sources_ifdef(CONFIG_DESKTOP_HWID
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hwid.c)
+target_sources_ifdef(CONFIG_DESKTOP_HWID app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hwid.c)
 
-target_sources_ifdef(CONFIG_DESKTOP_KEYS_STATE
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/keys_state.c)
+target_sources_ifdef(CONFIG_DESKTOP_KEYS_STATE app PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/keys_state.c
+)
 
-target_sources_ifdef(CONFIG_DESKTOP_ADV_PROV_UUID16_ALL
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/bt_le_adv_prov_uuid16.c)
+target_sources_ifdef(CONFIG_DESKTOP_ADV_PROV_UUID16_ALL app PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/bt_le_adv_prov_uuid16.c
+)
 
-target_sources_ifdef(CONFIG_DESKTOP_DFU_LOCK
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dfu_lock.c)
+target_sources_ifdef(CONFIG_DESKTOP_DFU_LOCK app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dfu_lock.c)
 
-target_sources_ifdef(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
-		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/config_channel_transport.c)
+target_sources_ifdef(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE app PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/config_channel_transport.c
+)
 
 if(CONFIG_DESKTOP_BLE_QOS_ENABLE)
   if(CONFIG_FPU)
@@ -35,7 +39,7 @@ if(CONFIG_DESKTOP_BLE_QOS_ENABLE)
     elseif(CONFIG_FP_SOFTABI)
       set(float_dir softfp-float)
     else()
-      assert(0 "Unreachable code")
+      message(FATAL_ERROR "Unreachable code")
     endif()
   else()
     set(float_dir soft-float)

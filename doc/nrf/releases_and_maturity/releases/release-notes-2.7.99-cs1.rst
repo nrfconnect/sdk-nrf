@@ -36,7 +36,7 @@ Check the :file:`west.yml` file for the corresponding tags in the project reposi
 To use this release, check out the tag in the manifest repository and run ``west update``.
 See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
 
-For information on the included repositories and revisions, see `Repositories and revisions for v2.7.99-cs1`_.
+For information on the included repositories and revisions, see Repositories and revisions for v2.7.99-cs1.
 
 IDE and tool support
 ********************

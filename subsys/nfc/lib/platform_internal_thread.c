@@ -15,7 +15,7 @@ LOG_MODULE_DECLARE(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 #define SWI_NAME(number)	SWI_NAME2(number)
 #if defined(CONFIG_SOC_SERIES_NRF53X)
 #define SWI_NAME2(number)	EGU ## number ## _IRQn
-#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#elif defined(CONFIG_SOC_SERIES_NRF54LX) || defined(CONFIG_SOC_SERIES_NRF71X)
 #define SWI_NAME2(number)	SWI0 ## number ## _IRQn
 #else
 #define SWI_NAME2(number)	SWI ## number ## _IRQn

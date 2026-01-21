@@ -13,10 +13,14 @@ tests:
     extra_args:
       - SHIELD=pca63565
       - SB_CONFIG_VPR_LAUNCHER=y
-      - vpr_launcher_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"
+      - vpr_launcher_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/boards/shields/pca63565/boards/nrf54l_vpr_launcher.overlay"
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuflpr
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuflpr
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54l_fast_speed:
     filter: not CONFIG_COVERAGE
@@ -25,19 +29,27 @@ tests:
     extra_args:
       - SHIELD=pca63565
       - SB_CONFIG_VPR_LAUNCHER=y
-      - vpr_launcher_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"
+      - vpr_launcher_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/boards/shields/pca63565/boards/nrf54l_vpr_launcher.overlay"
       - CONFIG_TEST_I2C_SPEED=2
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuflpr
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuflpr
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54l_coverage:
     filter: CONFIG_COVERAGE
     harness_config:
       fixture: pca63565
     extra_args:
-      - SHIELD=pca63565;coverage_support
+      - SHIELD=pca63565
+      - SNIPPET=coverage_support
     platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54l_coverage_fast_speed:
@@ -45,9 +57,13 @@ tests:
     harness_config:
       fixture: pca63565
     extra_args:
-      - SHIELD=pca63565;coverage_support
+      - SHIELD=pca63565
+      - SNIPPET=coverage_support
       - CONFIG_TEST_I2C_SPEED=2
     platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54h:
@@ -61,6 +77,8 @@ tests:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpuppr
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54h_fast_speed:
     filter: not CONFIG_COVERAGE
@@ -74,6 +92,8 @@ tests:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpuppr
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54h_fast_plus_speed:
     filter: not CONFIG_COVERAGE
@@ -87,13 +107,16 @@ tests:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpuppr
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54h_coverage:
     filter: CONFIG_COVERAGE
     harness_config:
       fixture: pca63566
     extra_args:
-      - SHIELD=pca63566;coverage_support
+      - SHIELD=pca63566
+      - SNIPPET=coverage_support
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
 
@@ -102,7 +125,8 @@ tests:
     harness_config:
       fixture: pca63566
     extra_args:
-      - SHIELD=pca63566;coverage_support
+      - SHIELD=pca63566
+      - SNIPPET=coverage_support
       - CONFIG_TEST_I2C_SPEED=2
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
@@ -112,7 +136,8 @@ tests:
     harness_config:
       fixture: pca63566
     extra_args:
-      - SHIELD=pca63566;coverage_support
+      - SHIELD=pca63566
+      - SNIPPET=coverage_support
       - CONFIG_TEST_I2C_SPEED=3
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp

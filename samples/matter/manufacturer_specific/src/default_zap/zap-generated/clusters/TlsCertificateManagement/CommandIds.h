@@ -16,6 +16,14 @@ namespace app
 		{
 			namespace Commands
 			{
+
+				// Total number of client to server commands supported by the cluster
+				inline constexpr uint32_t kAcceptedCommandsCount = 9;
+
+				// Total number of server to client commands supported by the cluster (response
+				// commands)
+				inline constexpr uint32_t kGeneratedCommandsCount = 6;
+
 				namespace ProvisionRootCertificate
 				{
 					inline constexpr CommandId Id = 0x00000000;
@@ -36,10 +44,10 @@ namespace app
 					inline constexpr CommandId Id = 0x00000006;
 				} // namespace RemoveRootCertificate
 
-				namespace TLSClientCSR
+				namespace ClientCSR
 				{
 					inline constexpr CommandId Id = 0x00000007;
-				} // namespace TLSClientCSR
+				} // namespace ClientCSR
 
 				namespace ProvisionClientCertificate
 				{
@@ -76,10 +84,10 @@ namespace app
 					inline constexpr CommandId Id = 0x00000005;
 				} // namespace LookupRootCertificateResponse
 
-				namespace TLSClientCSRResponse
+				namespace ClientCSRResponse
 				{
 					inline constexpr CommandId Id = 0x00000008;
-				} // namespace TLSClientCSRResponse
+				} // namespace ClientCSRResponse
 
 				namespace FindClientCertificateResponse
 				{

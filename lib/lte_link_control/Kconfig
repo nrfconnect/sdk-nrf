@@ -4,9 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-# Note: the naming of the Kconfig options is inconsistent in this file as a result of gradual
-# development. It will be fixed in a future version.
-
 menuconfig LTE_LINK_CONTROL
 	bool "LTE link control library"
 	select AT_PARSER
@@ -14,13 +11,42 @@ menuconfig LTE_LINK_CONTROL
 
 if LTE_LINK_CONTROL
 
+config HEAP_MEM_POOL_ADD_SIZE_LTE_LINK_CONTROL
+	int "Heap required for event handlers"
+	default 32
+	default 96 if LTE_LC_PDN_MODULE
+	help
+	  Extra heap size required for allocating event handlers.
+	  Default is enough for 4 handlers.
+
 # Modules: these Kconfig options enable specific features of the library.
+
+config LTE_LC_FUNCTIONAL_MODE_MODULE
+	bool "Functional mode module"
+	default y
+
+config LTE_LC_NETWORK_REGISTRATION_MODULE
+	bool "Network registration module"
+	depends on LTE_LC_FUNCTIONAL_MODE_MODULE
+	default y
+
+config LTE_LC_CONNECTION_STATUS_MODULE
+	bool "Connection status module"
+	default y
+
+config LTE_LC_MODEM_EVENTS_MODULE
+	bool "Modem events module"
+
+config LTE_LC_SYSTEM_MODE_MODULE
+	bool "System mode module"
+	default y
 
 config LTE_LC_CONN_EVAL_MODULE
 	bool "Connection Parameters Evaluation module"
+	depends on LTE_LC_FUNCTIONAL_MODE_MODULE
 
 config LTE_LC_EDRX_MODULE
-	bool "Extended Discountinuous Reception (eDRX) module"
+	bool "Extended Discontinuous Reception (eDRX) module"
 
 config LTE_LC_NEIGHBOR_CELL_MEAS_MODULE
 	bool "Neighboring Cell Measurements module"
@@ -40,8 +66,18 @@ config LTE_LC_MODEM_SLEEP_MODULE
 config LTE_LC_TAU_PRE_WARNING_MODULE
 	bool "Tracking Area Update (TAU) module"
 
+config LTE_LC_ENV_EVAL_MODULE
+	bool "Environment Evaluation module"
+	depends on LTE_LC_FUNCTIONAL_MODE_MODULE
+
+config LTE_LC_PDN_MODULE
+	bool "Packet Data Network (PDN) module"
+
+config LTE_LC_CELLULAR_PROFILE_MODULE
+	bool "Cellular profile module"
+
 menuconfig LTE_LC_DNS_FALLBACK_MODULE
-	bool "Fallback DNS module"
+	bool "DNS Fallback module"
 	default y
 	help
 	  The device might or might not receive a DNS server address by the network during a PDN connection.
@@ -67,23 +103,35 @@ endif # LTE_LC_DNS_FALLBACK_MODULE
 # End of modules Kconfig options
 
 config LTE_SHELL
-	bool "Enable LTE shell commands"
+	bool "LTE shell commands"
 	default y
 	depends on SHELL
 
 config LTE_LOCK_BANDS
-	bool "Enable LTE band lock"
+	bool "LTE band lock"
 	help
-	  Enable LTE band lock. Bands not enabled in LTE_LOCK_BAND_MASK
-	  are not used when this setting is enabled.
+	  Enable LTE band lock. Only configured bands are used when this setting is enabled.
+	  The allowed bands can be configured using the CONFIG_LTE_LOCK_BAND_MASK and
+	  CONFIG_LTE_LOCK_BAND_LIST options. If both are configured, the bands are combined
+	  from both options.
 
 if LTE_LOCK_BANDS
+
 config LTE_LOCK_BAND_MASK
 	string "LTE band lock mask bit string"
-	default "10000001000000001100"
 	help
-	  Bit string of enabled bands. LSB is band 1. Leading zeroes
-	  can be omitted. The maximum length is 88 characters.
+	  Bit string of enabled bands. LSB is band 1. Leading zeroes can be omitted.
+	  The maximum length is 88 characters, meaning this can be used with band numbers up to 88.
+
+config LTE_LOCK_BAND_LIST
+	string "LTE band list"
+	help
+	  List of enabled bands. Comma-separated list of band numbers.
+	  Can be used with all valid band numbers, including bands over 88.
+	  This is only supported by the following modem firmware:
+	  - mfw_nrf91x1 v2.0.3 or later
+	  - mfw_nrf9151-ntn
+
 endif # LTE_LOCK_BANDS
 
 config LTE_PLMN_SELECTION_OPTIMIZATION
@@ -95,7 +143,7 @@ config LTE_PLMN_SELECTION_OPTIMIZATION
 	  Refer to the AT%FEACONF command in the AT command manual for more details.
 
 config LTE_LOCK_PLMN
-	bool "Enable LTE PLMN lock"
+	bool "LTE PLMN lock"
 	help
 	  Enable PLMN lock for network selection.
 
@@ -117,7 +165,7 @@ config LTE_UNLOCK_PLMN
 if LTE_LC_PSM_MODULE
 
 config LTE_PSM_REQ
-	bool "Enable PSM request"
+	bool "PSM request"
 	help
 	  Enable request for use of PSM using AT+CPSMS.
 	  If this option is set the library will automatically request PSM when
@@ -175,7 +223,7 @@ config LTE_PSM_REQ_RAT_SECONDS
 	  non-negative value can be given.
 
 config LTE_PROPRIETARY_PSM_REQ
-	bool "Enable use of proprietary PSM"
+	bool "Proprietary PSM"
 	help
 	  Enable use of proprietary PSM using AT%FEACONF. To use this feature, also PSM request
 	  must be enabled using CONFIG_LTE_PSM_REQ or lte_lc_psm_req().
@@ -186,7 +234,7 @@ endif # LTE_LC_PSM_MODULE
 if LTE_LC_EDRX_MODULE
 
 config LTE_EDRX_REQ
-	bool "Enable eDRX request"
+	bool "eDRX request"
 	help
 	  Enable request for use of eDRX using AT+CEDRXS.
 	  For reference, see 3GPP 27.007 Ch. 7.40.
@@ -213,6 +261,17 @@ config LTE_EDRX_REQ_VALUE_NBIOT
 	  See 3GPP TS 24.008, subclause 10.5.5.32.
 	  The value 1001 corresponds to 163.84 seconds.
 
+config LTE_EDRX_REQ_VALUE_NTN_NBIOT
+	string "Requested eDRX value for NTN NB-IoT"
+	default "1001"
+	help
+	  Sets the eDRX value to be requested when NTN NB-IoT is used.
+	  The format is half a byte in a four-bit format.
+	  The eDRX value refers to bit 4 to 1 of octet 3 of the
+	  Extended DRX parameters information element.
+	  See 3GPP TS 24.008, subclause 10.5.5.32.
+	  The value 1001 corresponds to 163.84 seconds.
+
 config LTE_PTW_VALUE_LTE_M
 	string "Requested PTW value for LTE-M"
 	help
@@ -223,7 +282,7 @@ config LTE_PTW_VALUE_LTE_M
 	  element according to 10.5.5.32 of 3GPP TS 24.008.
 	  Requesting a specific PTW configuration should be done with
 	  caution. The requested value must be compliant with the eDRX
-	  value that is configured, and it's usually best to let the modem
+	  value that is configured, and it is usually best to let the modem
 	  use default PTW values.
 
 config LTE_PTW_VALUE_NBIOT
@@ -236,7 +295,20 @@ config LTE_PTW_VALUE_NBIOT
 	  element according to 10.5.5.32 of 3GPP TS 24.008.
 	  Requesting a specific PTW configuration should be done with
 	  caution. The requested value must be compliant with the eDRX
-	  value that is configured, and it's usually best to let the modem
+	  value that is configured, and it is usually best to let the modem
+	  use default PTW values.
+
+config LTE_PTW_VALUE_NTN_NBIOT
+	string "Requested PTW value for NTN NB-IoT"
+	help
+	  Sets the Paging Time Window value to be requested when enabling
+	  eDRX. The value applies to NTN NB-IoT.
+	  The format is a string with half a byte in 4-bit format,
+	  corresponding to bits 8 to 5 in octet 3 of eDRX information
+	  element according to 10.5.5.32 of 3GPP TS 24.008.
+	  Requesting a specific PTW configuration should be done with
+	  caution. The requested value must be compliant with the eDRX
+	  value that is configured, and it is usually best to let the modem
 	  use default PTW values.
 
 endif # LTE_LC_EDRX_MODULE
@@ -269,6 +341,9 @@ config LTE_NETWORK_MODE_LTE_M_NBIOT
 
 config LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
 	bool "LTE-M, NB-IoT and GPS"
+
+config LTE_NETWORK_MODE_NTN_NBIOT
+	bool "NTN NB-IoT"
 
 endchoice
 
@@ -415,6 +490,12 @@ config LTE_LC_MODEM_SLEEP_NOTIFICATIONS_THRESHOLD_MS
 
 endif # LTE_LC_MODEM_SLEEP_MODULE
 
+config LTE_LC_ENV_EVAL_MAX_PLMN_COUNT
+	int "Maximum number of PLMNs to evaluate"
+	default 3
+	help
+	  Maximum number of PLMNs that can be evaluated with lte_lc_env_eval().
+
 config LTE_LC_TRACE
 	bool "LTE link control tracing"
 	help
@@ -428,9 +509,110 @@ config LTE_LC_WORKQUEUE_STACK_SIZE
 	default 1280 if LOG_MODE_IMMEDIATE
 	default 1024
 
+# PDN (Packet Data Network) Configuration
+if LTE_LC_PDN_MODULE
+
+config LTE_LC_PDN_LEGACY_PCO
+	bool "Use legacy PCO mode"
+	help
+	  If selected, PCO will be used instead of ePCO during PDN connection establishment.
+
+config LTE_LC_PDN_ESM_TIMEOUT
+	int "ESM timeout (ms)"
+	default 1000
+	help
+	  Timeout for waiting for an ESM notification when activating a PDN, in milliseconds.
+
+config LTE_LC_PDN_DEFAULTS_OVERRIDE
+	bool "Override defaults for PDP context 0"
+	help
+	  The defaults are overridden automatically as soon as the modem has been initialized.
+
+if LTE_LC_PDN_DEFAULTS_OVERRIDE
+
+config LTE_LC_PDN_DEFAULT_APN
+	string "Access point name (APN)"
+	help
+	  The access point name to use for the default PDP context for the first cellular
+	  profile (CID 0).
+
+choice
+	prompt "Address family"
+	default LTE_LC_PDN_DEFAULT_FAM_IPV4V6
+
+config LTE_LC_PDN_DEFAULT_FAM_IPV4
+	bool "IPv4"
+
+config LTE_LC_PDN_DEFAULT_FAM_IPV6
+	bool "IPv6"
+
+config LTE_LC_PDN_DEFAULT_FAM_IPV4V6
+	bool "IPv4v6"
+
+config LTE_LC_PDN_DEFAULT_FAM_NONIP
+	bool "Non-IP"
+
+endchoice
+
+config LTE_LC_PDN_DEFAULT_FAM
+	int
+	default 0 if LTE_LC_PDN_DEFAULT_FAM_IPV4
+	default 1 if LTE_LC_PDN_DEFAULT_FAM_IPV6
+	default 2 if LTE_LC_PDN_DEFAULT_FAM_IPV4V6
+	default 3 if LTE_LC_PDN_DEFAULT_FAM_NONIP
+
+choice
+	prompt "Authentication method"
+	default LTE_LC_PDN_DEFAULT_AUTH_NONE
+	help
+	  The authentication method to use for the default PDP context for the first cellular
+	  profile (CID 0).
+
+config LTE_LC_PDN_DEFAULT_AUTH_NONE
+	bool "None"
+
+config LTE_LC_PDN_DEFAULT_AUTH_PAP
+	bool "PAP"
+
+config LTE_LC_PDN_DEFAULT_AUTH_CHAP
+	bool "CHAP"
+
+endchoice
+
+config LTE_LC_PDN_DEFAULT_AUTH
+	int
+	default 0 if LTE_LC_PDN_DEFAULT_AUTH_NONE
+	default 1 if LTE_LC_PDN_DEFAULT_AUTH_PAP
+	default 2 if LTE_LC_PDN_DEFAULT_AUTH_CHAP
+
+config LTE_LC_PDN_DEFAULT_USERNAME
+	string "Username"
+	depends on !LTE_LC_PDN_DEFAULT_AUTH_NONE
+	help
+	  The username to use for authentication for the default PDP context for the first
+	  cellular profile (CID 0).
+
+config LTE_LC_PDN_DEFAULT_PASSWORD
+	string "Password"
+	depends on !LTE_LC_PDN_DEFAULT_AUTH_NONE
+	help
+	  The password to use for authentication for the default PDP context for the first
+	  cellular profile (CID 0).
+
+endif # LTE_LC_PDN_DEFAULTS_OVERRIDE
+
+config LTE_LC_PDN_ESM_STRERROR
+	bool "Compile ESM error table"
+	help
+	  Compile a table with a textual description of ESM error reasons.
+	  The description can be retrieved with lte_lc_pdn_esm_strerror().
+	  The table and function take about 2 kB of FLASH.
+
+endif # LTE_LC_PDN_MODULE
+
 module = LTE_LINK_CONTROL
 module-dep = LOG
 module-str = LTE link control library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # LTE_LINK_CONTROL

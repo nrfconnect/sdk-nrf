@@ -200,6 +200,11 @@ When the reply is received, you will see the following:
 
 Note that private messages are only seen by those the messages are addressed to.
 
+External flash for settings partition
+=====================================
+
+.. include:: /includes/mesh_ext_flash_settings.txt
+
 Dependencies
 ************
 

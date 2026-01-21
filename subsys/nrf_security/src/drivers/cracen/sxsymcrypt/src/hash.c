@@ -56,7 +56,7 @@ void sx_hash_free(struct sxhash *hash_ctx)
 
 static void sx_hash_pad(struct sxhash *hash_ctx)
 {
-	unsigned char *padding = (unsigned char *)hash_ctx->extramem;
+	uint8_t *padding = hash_ctx->extramem;
 	size_t padsz;
 	size_t total_feed_size = hash_ctx->totalfeedsz;
 
@@ -88,7 +88,7 @@ static void sx_hash_pad(struct sxhash *hash_ctx)
 	 */
 }
 
-void sx_ba413_digest(struct sxhash *hash_ctx, char *digest)
+void sx_ba413_digest(struct sxhash *hash_ctx, uint8_t *digest)
 {
 	if (hash_ctx->totalfeedsz == 0) {
 		/* If we get here it means an empty message hash will be
@@ -165,7 +165,7 @@ int sx_hash_resume_state(struct sxhash *hash_ctx)
 	return SX_OK;
 }
 
-int sx_hash_feed(struct sxhash *hash_ctx, const char *msg, size_t sz)
+int sx_hash_feed(struct sxhash *hash_ctx, const uint8_t *msg, size_t sz)
 {
 	if (!hash_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
@@ -226,7 +226,7 @@ int sx_hash_save_state(struct sxhash *hash_ctx)
 	return start_hash_hw(hash_ctx);
 }
 
-int sx_hash_digest(struct sxhash *hash_ctx, char *digest)
+int sx_hash_digest(struct sxhash *hash_ctx, uint8_t *digest)
 {
 	if (!hash_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;

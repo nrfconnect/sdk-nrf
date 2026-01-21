@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "share/sysbuild/Kconfig"
-
 if BOARD_NRF5340DK_NRF5340_CPUAPP_NS
 
 choice NETCORE
@@ -28,3 +26,5 @@ config MCUBOOT_USE_ALL_AVAILABLE_RAM
 	default y
 
 endif
+
+source "share/sysbuild/Kconfig"

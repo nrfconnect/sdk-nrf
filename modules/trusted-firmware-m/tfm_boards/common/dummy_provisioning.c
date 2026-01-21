@@ -5,6 +5,7 @@
  */
 
 #include "tfm_plat_provisioning.h"
+#include <stddef.h>
 
 enum tfm_plat_err_t tfm_plat_provisioning_is_required(bool *provisioning_required)
 {

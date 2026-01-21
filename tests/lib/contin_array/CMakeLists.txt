@@ -11,3 +11,11 @@ project(contin_array)
 
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE ${app_sources})
+
+target_include_directories(app PRIVATE ./src)
+
+target_compile_options(app
+  PRIVATE
+  -DCONFIG_BT_BUF_EVT_RX_COUNT=10
+  -DCONFIG_BT_BUF_ACL_TX_COUNT=8
+  )

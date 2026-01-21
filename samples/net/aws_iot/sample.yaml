@@ -55,3 +55,17 @@ tests:
     extra_args:
       - aws_iot_SHIELD="nrf7002eb2"
       - aws_iot_SNIPPET=nrf70-wifi
+  sample.net.aws_iot.nrf54lm20_nrf7002eb2.wifi:
+    sysbuild: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    build_only: true
+    build_on_all: true
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args:
+      - aws_iot_SHIELD="nrf7002eb2"

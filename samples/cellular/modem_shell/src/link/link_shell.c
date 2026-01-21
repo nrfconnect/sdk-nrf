@@ -5,11 +5,12 @@
  */
 
 #include <stdio.h>
+#include <unistd.h>
+#include <getopt.h>
 
 #include <zephyr/shell/shell.h>
 #include <zephyr/shell/shell_uart.h>
-#include <unistd.h>
-#include <getopt.h>
+#include <zephyr/sys/poweroff.h>
 
 #include <nrf_modem_at.h>
 #include <modem/nrf_modem_lib.h>
@@ -22,6 +23,7 @@
 #include "link_shell_pdn.h"
 #include "link_settings.h"
 #include "net_utils.h"
+#include "str_utils.h"
 
 #define LINK_SHELL_EDRX_VALUE_STR_LENGTH 4
 #define LINK_SHELL_EDRX_PTW_STR_LENGTH 4
@@ -31,6 +33,7 @@ enum link_shell_command {
 	LINK_CMD_STATUS = 0,
 	LINK_CMD_SETTINGS,
 	LINK_CMD_CONEVAL,
+	LINK_CMD_ENVEVAL,
 	LINK_CMD_DEFCONT,
 	LINK_CMD_DEFCONTAUTH,
 	LINK_CMD_RSRP,
@@ -126,6 +129,7 @@ static const char link_sysmode_usage_str[] =
 	"  -M, --ltem_gnss,        Set LTE-M + GNSS system mode\n"
 	"  -N, --nbiot_gnss,       Set NB-IoT + GNSS system mode\n"
 	"      --ltem_nbiot_gnss,  Set LTE-M + NB-IoT + GNSS system mode\n"
+	"      --ntn,              Set NTN NB-IoT system mode\n"
 	"  -h, --help,             Shows this help information\n"
 	"\n"
 	"Additional LTE mode preference that can be optionally given\n"
@@ -143,20 +147,27 @@ static const char link_sysmode_usage_str[] =
 static const char link_funmode_usage_str[] =
 	"Usage: link funmode [option] | --read\n"
 	"Options:\n"
-	"  -r, --read,              Read modem functional mode\n"
-	"  -0, --pwroff,            Set modem to minimum functionality mode\n"
-	"  -1, --normal,            Set modem to normal mode\n"
-	"      --normal_no_rel14,   Set modem to normal mode without enabling Release 14 features\n"
-	"  -2, --rxonly,            Set modem to RX only mode\n"
-	"  -4, --flightmode,        Set modem to flight mode\n"
-	"      --lteoff,            Deactivate LTE\n"
-	"      --lteon,             Activate LTE\n"
-	"      --gnssoff,           Deactivate GNSS\n"
-	"      --gnsson,            Activate GNSS\n"
-	"      --uiccoff,           Deactivate UICC\n"
-	"      --uiccon,            Activate UICC\n"
-	"      --flightmode_uiccon, Set modem to flight mode without shutting down UICC\n"
-	"  -h, --help,              Shows this help information";
+	"  -r, --read,            Read modem functional mode\n"
+	"  -0, --pwroff,          Set modem to minimum functionality mode\n"
+	"  -1, --normal,          Set modem to normal mode\n"
+	"      --normal_no_rel14, Set modem to normal mode without enabling Release 14 features\n"
+	"  -2, --rxonly,          Set modem to RX only mode\n"
+	"  -4, --flightmode,      Set modem to flight mode\n"
+	"      --lteoff,          Deactivate LTE\n"
+	"      --lteon,           Activate LTE\n"
+	"      --gnssoff,         Deactivate GNSS\n"
+	"      --gnsson,          Activate GNSS\n"
+	"      --uiccoff,         Deactivate UICC\n"
+	"      --uiccon,          Activate UICC\n"
+	"      --flightmode_uiccon,\n"
+	"                         Set modem to flight mode without shutting down UICC\n"
+	"      --flightmode_keepreg,\n"
+	"                         Set modem to flight mode while preserving the LTE registration\n"
+	"                         context\n"
+	"      --flightmode_keepreg_uiccon,\n"
+	"                         Set modem to flight mode while preserving the LTE\n"
+	"                         registration context and without shutting down UICC\n"
+	"  -h, --help,            Shows this help information";
 
 static const char link_normal_mode_at_usage_str[] =
 	"Usage: link nmodeat --read | --mem<1-3>\n"
@@ -190,6 +201,12 @@ static const char link_edrx_usage_str[] =
 	"      --nbiot_edrx, [str] Sets custom eDRX value for NB-IoT to be requested when\n"
 	"                          enabling eDRX with -e option.\n"
 	"      --nbiot_ptw, [str]  Sets custom Paging Time Window value for NB-IoT to be\n"
+	"                          requested when enabling eDRX with -e option.\n"
+	"      --ntn_nbiot_edrx, [str]\n"
+	"                          Sets custom eDRX value for NTN NB-IoT to be requested when\n"
+	"                          enabling eDRX with -e option.\n"
+	"      --ntn_nbiot_ptw, [str]\n"
+	"                          Sets custom Paging Time Window value for NTN NB-IoT to be\n"
 	"                          requested when enabling eDRX with -e option.\n"
 	"  -h, --help,             Shows this help information";
 
@@ -366,9 +383,32 @@ static const char link_modem_usage_str[] =
 	"      --init,           Initialize modem using nrf_modem_lib_init()\n"
 	"      --shutdown,       Shutdown modem\n"
 	"      --shutdown_cfun0, Send AT+CFUN=0 AT command and shutdown modem\n"
+	"      --systemoff,      Send AT+CFUN=0 AT command, shutdown modem and trigger SYSTEMOFF\n"
 	"  -h, --help,           Shows this help information\n"
 	"\n"
 	"Several options can be given and they are run in the given order.";
+
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+static const char link_enveval_usage_str[] =
+	"Usage: link enveval --eval_type <type> --plmns <plmn1>[,<plmn2>,...] | --cancel\n"
+	"Options:\n"
+	"  --eval_type, [str]  Evaluation type:\n"
+	"                      'dynamic', 'light' or 'full'\n"
+	"  --plmns, [str]      Mobile Country Code and Mobile Network Code pairs\n"
+	"  --cancel,           Cancel ongoing environment evaluation\n"
+	"  -h, --help,         Shows this help information\n"
+	"\n"
+	"Evaluation types explained:\n"
+	"                      Dynamic: PLMN search is stopped after light search if any of the\n"
+	"                      PLMNs to evaluate were found. Search is continued over all\n"
+	"                      frequency bands if light search did not find any results.\n"
+	"\n"
+	"                      Light: PLMN search is stopped after light search even if no PLMNs\n"
+	"                      to evaluate were found.\n"
+	"\n"
+	"                      Full: PLMN search covers all channels in all supported frequency\n"
+	"                      bands.\n";
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 
 /* The following do not have short options */
 enum {
@@ -380,6 +420,7 @@ enum {
 	LINK_SHELL_OPT_MRESET_USER,
 	LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT,
 	LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS,
+	LINK_SHELL_OPT_SYSMODE_NTN,
 	LINK_SHELL_OPT_SYSMODE_PREF_AUTO,
 	LINK_SHELL_OPT_SYSMODE_PREF_LTEM,
 	LINK_SHELL_OPT_SYSMODE_PREF_NBIOT,
@@ -392,6 +433,8 @@ enum {
 	LINK_SHELL_OPT_FUNMODE_UICCOFF,
 	LINK_SHELL_OPT_FUNMODE_UICCON,
 	LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_UICCON,
+	LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG,
+	LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG_UICCON,
 	LINK_SHELL_OPT_THRESHOLD_TIME,
 	LINK_SHELL_OPT_START,
 	LINK_SHELL_OPT_STOP,
@@ -411,9 +454,14 @@ enum {
 	LINK_SHELL_OPT_LTEM_PTW,
 	LINK_SHELL_OPT_NBIOT_EDRX,
 	LINK_SHELL_OPT_NBIOT_PTW,
+	LINK_SHELL_OPT_NTN_NBIOT_EDRX,
+	LINK_SHELL_OPT_NTN_NBIOT_PTW,
 	LINK_SHELL_OPT_MODEM_INIT,
 	LINK_SHELL_OPT_MODEM_SHUTDOWN,
 	LINK_SHELL_OPT_MODEM_SHUTDOWN_CFUN0,
+	LINK_SHELL_OPT_MODEM_SYSTEMOFF,
+	LINK_SHELL_OPT_ENVEVAL_EVAL_TYPE,
+	LINK_SHELL_OPT_ENVEVAL_PLMNS,
 };
 
 /* Specifying the expected options (both long and short) */
@@ -438,6 +486,9 @@ static struct option long_options[] = {
 	{ "uiccoff", no_argument, 0, LINK_SHELL_OPT_FUNMODE_UICCOFF },
 	{ "uiccon", no_argument, 0, LINK_SHELL_OPT_FUNMODE_UICCON },
 	{ "flightmode_uiccon", no_argument, 0, LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_UICCON },
+	{ "flightmode_keepreg", no_argument, 0, LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG },
+	{ "flightmode_keepreg_uiccon", no_argument, 0,
+	  LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG_UICCON },
 	{ "ltem", no_argument, 0, 'm' },
 	{ "nbiot", no_argument, 0, 'n' },
 	{ "gnss", no_argument, 0, 'g' },
@@ -450,6 +501,8 @@ static struct option long_options[] = {
 	{ "ltem_ptw", required_argument, 0, LINK_SHELL_OPT_LTEM_PTW },
 	{ "nbiot_edrx", required_argument, 0, LINK_SHELL_OPT_NBIOT_EDRX },
 	{ "nbiot_ptw", required_argument, 0, LINK_SHELL_OPT_NBIOT_PTW },
+	{ "ntn_nbiot_edrx", required_argument, 0, LINK_SHELL_OPT_NTN_NBIOT_EDRX },
+	{ "ntn_nbiot_ptw", required_argument, 0, LINK_SHELL_OPT_NTN_NBIOT_PTW },
 	{ "prot", required_argument, 0, 'A' },
 	{ "pword", required_argument, 0, 'P' },
 	{ "uname", required_argument, 0, 'U' },
@@ -466,6 +519,7 @@ static struct option long_options[] = {
 	{ "mreset_user", no_argument, 0, LINK_SHELL_OPT_MRESET_USER },
 	{ "ltem_nbiot", no_argument, 0, LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT },
 	{ "ltem_nbiot_gnss", no_argument, 0, LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS },
+	{ "ntn", no_argument, 0, LINK_SHELL_OPT_SYSMODE_NTN },
 	{ "pref_auto", no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_AUTO },
 	{ "pref_ltem", no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_LTEM },
 	{ "pref_nbiot", no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_NBIOT },
@@ -489,6 +543,9 @@ static struct option long_options[] = {
 	{ "init", no_argument, 0, LINK_SHELL_OPT_MODEM_INIT },
 	{ "shutdown", no_argument, 0, LINK_SHELL_OPT_MODEM_SHUTDOWN },
 	{ "shutdown_cfun0", no_argument, 0, LINK_SHELL_OPT_MODEM_SHUTDOWN_CFUN0 },
+	{ "systemoff", no_argument, 0, LINK_SHELL_OPT_MODEM_SYSTEMOFF },
+	{ "eval_type", required_argument, 0, LINK_SHELL_OPT_ENVEVAL_EVAL_TYPE },
+	{ "plmns", required_argument, 0, LINK_SHELL_OPT_ENVEVAL_PLMNS },
 	{ 0, 0, 0, 0 }
 };
 
@@ -508,6 +565,11 @@ static void link_shell_print_usage(enum link_shell_command command)
 	case LINK_CMD_DEFCONTAUTH:
 		mosh_print_no_format(link_defcontauth_usage_str);
 		break;
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+	case LINK_CMD_ENVEVAL:
+		mosh_print_no_format(link_enveval_usage_str);
+		break;
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 	case LINK_CMD_CONNECT:
 		mosh_print_no_format(link_connect_usage_str);
 		break;
@@ -581,9 +643,11 @@ static void link_shell_print_usage(enum link_shell_command command)
 	 LTE_LC_SYSTEM_MODE_LTEM_NBIOT                   :	   \
 	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS)     ? \
 	 LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS               :	   \
+	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NTN_NBIOT)           ? \
+	 LTE_LC_SYSTEM_MODE_NTN_NBIOT                    :	   \
 	 LINK_SYSMODE_NONE)
 
-static void link_shell_sysmode_set(int sysmode, int lte_pref)
+static int link_shell_sysmode_set(int sysmode, int lte_pref)
 {
 	enum lte_lc_func_mode functional_mode;
 	char snum[64];
@@ -599,11 +663,15 @@ static void link_shell_sysmode_set(int sysmode, int lte_pref)
 				"Requested mode couldn't set to modem. "
 				"Not in flighmode nor in pwroff?");
 		}
+
+		return -EFAULT;
 	} else {
 		mosh_print(
 			"System mode set successfully to modem: %s",
 			link_shell_sysmode_to_string(sysmode, snum));
 	}
+
+	return 0;
 }
 
 #define MOSH_NCELLMEAS_SEARCH_TYPE_NONE 0xFF
@@ -629,6 +697,25 @@ static enum lte_lc_neighbor_search_type
 
 	return search_type;
 }
+
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+#define MOSH_ENVEVAL_EVAL_TYPE_NONE 0xFF
+
+static enum lte_lc_env_eval_type link_shell_string_to_env_eval_type(const char *eval_type_str)
+{
+	enum lte_lc_env_eval_type eval_type = MOSH_ENVEVAL_EVAL_TYPE_NONE;
+
+	if (strcmp(eval_type_str, "dynamic") == 0) {
+		eval_type = LTE_LC_ENV_EVAL_TYPE_DYNAMIC;
+	} else if (strcmp(eval_type_str, "light") == 0) {
+		eval_type = LTE_LC_ENV_EVAL_TYPE_LIGHT;
+	} else if (strcmp(eval_type_str, "full") == 0) {
+		eval_type = LTE_LC_ENV_EVAL_TYPE_FULL;
+	}
+
+	return eval_type;
+}
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 
 int link_shell_get_and_print_current_system_modes(
 	enum lte_lc_system_mode *sys_mode_current,
@@ -775,7 +862,7 @@ static int link_shell_connect(const struct shell *shell, size_t argc, char **arg
 		mosh_error("When setting authentication, all auth options must be given");
 		goto show_usage;
 	} else {
-		enum pdn_auth method;
+		enum lte_lc_pdn_auth method;
 
 		ret = link_shell_pdn_auth_prot_to_pdn_lib_method_map(
 			protocol, &method);
@@ -807,6 +894,170 @@ static int link_shell_coneval(const struct shell *shell, size_t argc, char **arg
 
 	return 0;
 }
+
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+static int link_shell_string_to_env_eval_plmn_list(
+	char *plmn_str,
+	struct lte_lc_env_eval_plmn *plmn_list,
+	uint8_t *plmn_count)
+{
+	int ret = 0;
+	size_t plmn_str_len;
+	char *plmn_ptr;
+	uint8_t count = 0;
+
+	__ASSERT_NO_MSG(plmn_str != NULL);
+	__ASSERT_NO_MSG(plmn_list != NULL);
+	__ASSERT_NO_MSG(plmn_count != NULL);
+
+	*plmn_count = 0;
+
+	plmn_str_len = strlen(plmn_str);
+	plmn_ptr = plmn_str;
+
+	/* Replace commas with nul-terminators. */
+	for (int i = 0; i < plmn_str_len; i++) {
+		if (plmn_ptr[i] == ',') {
+			plmn_ptr[i] = '\0';
+		}
+	}
+
+	while (plmn_ptr < (plmn_str + plmn_str_len)) {
+		if (count >= CONFIG_LTE_LC_ENV_EVAL_MAX_PLMN_COUNT) {
+			mosh_error("Number of PLMNs exceeds CONFIG_LTE_LC_ENV_EVAL_MAX_PLMN_COUNT"
+				   " (%d)",
+				   CONFIG_LTE_LC_ENV_EVAL_MAX_PLMN_COUNT);
+			return -EINVAL;
+		}
+
+		if (strlen(plmn_ptr) < 5) {
+			mosh_error("Invalid PLMN: %s", plmn_ptr);
+			return -EBADMSG;
+		}
+
+		/* Read MNC and store as integer. The MNC starts as the fourth character
+		 * in the string, following three characters long MCC.
+		 */
+		ret = mosh_string_to_int(&plmn_ptr[3], 10, &plmn_list[count].mnc);
+		if (ret) {
+			return -EBADMSG;
+		}
+
+		/* Nul-terminate MCC, read and store it. */
+		plmn_ptr[3] = '\0';
+		ret = mosh_string_to_int(&plmn_ptr[0], 10, &plmn_list[count].mcc);
+		if (ret) {
+			return -EBADMSG;
+		}
+
+		if (plmn_list[count].mcc == 0 || plmn_list[count].mnc == 0) {
+			mosh_error("Invalid PLMN: MCC: %03d, MNC: %02d",
+				   plmn_list[count].mcc, plmn_list[count].mnc);
+			return -EBADMSG;
+		}
+
+		count++;
+
+		/* Skip parsed PLMN, which is at least 5 digits. */
+		plmn_ptr += 5;
+
+		if (*plmn_ptr != '\0') {
+			/* Skip 6th digit.*/
+			plmn_ptr++;
+		}
+		/* Skip nul-terminator. */
+		plmn_ptr++;
+	}
+
+	*plmn_count = count;
+
+	return ret;
+}
+
+static int link_shell_enveval(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+	struct lte_lc_env_eval_plmn plmn_list[CONFIG_LTE_LC_ENV_EVAL_MAX_PLMN_COUNT] = {0};
+	struct lte_lc_env_eval_params params = {
+		.eval_type = MOSH_ENVEVAL_EVAL_TYPE_NONE,
+		.plmn_list = plmn_list
+	};
+	bool cancel = false;
+
+	if (argc < 2) {
+		goto show_usage;
+	}
+
+	optreset = 1;
+	optind = 1;
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+		switch (opt) {
+		case LINK_SHELL_OPT_ENVEVAL_EVAL_TYPE:
+			params.eval_type = link_shell_string_to_env_eval_type(optarg);
+			if (params.eval_type == MOSH_ENVEVAL_EVAL_TYPE_NONE) {
+				mosh_error("Unknown evaluation type. See usage:");
+				goto show_usage;
+			}
+			break;
+		case LINK_SHELL_OPT_ENVEVAL_PLMNS:
+			ret = link_shell_string_to_env_eval_plmn_list(
+				optarg, params.plmn_list, &params.plmn_count);
+			if (ret) {
+				mosh_error("Invalid PLMN list. See usage:");
+				goto show_usage;
+			}
+			break;
+		case LINK_SHELL_OPT_STOP:
+			cancel = true;
+			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
+		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
+		}
+	}
+
+	if (cancel) {
+		mosh_print("Cancelling environment evaluation...");
+		ret = lte_lc_env_eval_cancel();
+		if (ret) {
+			mosh_error("lte_lc_env_eval_cancel() returned %d", ret);
+			return -ENOEXEC;
+		}
+		return 0;
+	}
+
+	/* Validate that both eval_type and plmns were provided */
+	if (params.eval_type == MOSH_ENVEVAL_EVAL_TYPE_NONE) {
+		mosh_error("Evaluation type must be specified. See usage:");
+		goto show_usage;
+	}
+
+	if (params.plmn_count == 0) {
+		mosh_error("At least one PLMN must be specified. See usage:");
+		goto show_usage;
+	}
+
+	mosh_print("Starting environment evaluation for %zu PLMN(s)...", params.plmn_count);
+
+	ret = lte_lc_env_eval(&params);
+	if (ret) {
+		mosh_error("lte_lc_env_eval() returned %d", ret);
+		return -ENOEXEC;
+	}
+
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_ENVEVAL);
+	return -EINVAL;
+}
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 
 static int link_shell_defcont(const struct shell *shell, size_t argc, char **argv)
 {
@@ -880,7 +1131,7 @@ static int link_shell_defcont(const struct shell *shell, size_t argc, char **arg
 		(void)link_sett_save_defcont_apn(apn);
 	}
 	if (family != NULL) {
-		enum pdn_fam pdn_lib_fam;
+		enum lte_lc_pdn_family pdn_lib_fam;
 
 		ret = link_family_str_to_pdn_lib_family(&pdn_lib_fam, family);
 		if (ret) {
@@ -1119,6 +1370,10 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 	bool nbiot_edrx_set = false;
 	char nbiot_ptw_str[LINK_SHELL_EDRX_PTW_STR_LENGTH + 1];
 	bool nbiot_ptw_set = false;
+	char ntn_nbiot_edrx_str[LINK_SHELL_EDRX_VALUE_STR_LENGTH + 1];
+	bool ntn_nbiot_edrx_set = false;
+	char ntn_nbiot_ptw_str[LINK_SHELL_EDRX_PTW_STR_LENGTH + 1];
+	bool ntn_nbiot_ptw_set = false;
 
 	optreset = 1;
 	optind = 1;
@@ -1173,6 +1428,28 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			if (strlen(optarg) == LINK_SHELL_EDRX_PTW_STR_LENGTH) {
 				strcpy(nbiot_ptw_str, optarg);
 				nbiot_ptw_set = true;
+			} else {
+				mosh_error(
+					"PTW string length must be %d.",
+					LINK_SHELL_EDRX_PTW_STR_LENGTH);
+				return -EINVAL;
+			}
+			break;
+		case LINK_SHELL_OPT_NTN_NBIOT_EDRX:
+			if (strlen(optarg) == LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
+				strcpy(ntn_nbiot_edrx_str, optarg);
+				ntn_nbiot_edrx_set = true;
+			} else {
+				mosh_error(
+					"eDRX value string length must be %d.",
+					LINK_SHELL_EDRX_VALUE_STR_LENGTH);
+				return -EINVAL;
+			}
+			break;
+		case LINK_SHELL_OPT_NTN_NBIOT_PTW:
+			if (strlen(optarg) == LINK_SHELL_EDRX_PTW_STR_LENGTH) {
+				strcpy(ntn_nbiot_ptw_str, optarg);
+				ntn_nbiot_ptw_set = true;
 			} else {
 				mosh_error(
 					"PTW string length must be %d.",
@@ -1253,6 +1530,34 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			return -EINVAL;
 		}
 
+		value = NULL; /* Set with the defaults if not given */
+		if (ntn_nbiot_edrx_set) {
+			value = ntn_nbiot_edrx_str;
+		}
+
+		ret = lte_lc_edrx_param_set(LTE_LC_LTE_MODE_NTN_NBIOT, value);
+		if (ret < 0) {
+			mosh_error(
+				"Cannot set NTN NB-IoT eDRX value %s, error: %d",
+				((value == NULL) ? "NULL" : value),
+				ret);
+			return -EINVAL;
+		}
+
+		value = NULL; /* Set with the defaults if not given */
+		if (ntn_nbiot_ptw_set) {
+			value = ntn_nbiot_ptw_str;
+		}
+
+		ret = lte_lc_ptw_set(LTE_LC_LTE_MODE_NTN_NBIOT, value);
+		if (ret < 0) {
+			mosh_error(
+				"Cannot set NTN NB-IoT PTW value %s, error: %d",
+				((value == NULL) ? "NULL" : value),
+				ret);
+			return -EINVAL;
+		}
+
 		ret = lte_lc_edrx_req(true);
 		if (ret < 0) {
 			mosh_error("Cannot enable eDRX: %d", ret);
@@ -1277,8 +1582,9 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 				mosh_print("eDRX not in use");
 			} else {
 				mosh_print("eDRX LTE mode: %s, eDRX interval: %.2f s, PTW: %.2f s",
-					   edrx_cfg.mode == LTE_LC_LTE_MODE_LTEM ?
-						"LTE-M" : "NB-IoT",
+					   (edrx_cfg.mode == LTE_LC_LTE_MODE_LTEM)  ? "LTE-M" :
+					   (edrx_cfg.mode == LTE_LC_LTE_MODE_NBIOT) ? "NB-IoT" :
+										      "NTN NB-IoT",
 					   (double)edrx_cfg.edrx, (double)edrx_cfg.ptw);
 			}
 		}
@@ -1354,6 +1660,12 @@ static int link_shell_funmode(const struct shell *shell, size_t argc, char **arg
 		case LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_UICCON:
 			funmode_option = LTE_LC_FUNC_MODE_OFFLINE_UICC_ON;
 			break;
+		case LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG:
+			funmode_option = LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG;
+			break;
+		case LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG_UICCON:
+			funmode_option = LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG_UICC_ON;
+			break;
 		case LINK_SHELL_OPT_NMODE_NO_REL14:
 			funmode_option = LTE_LC_FUNC_MODE_NORMAL;
 			nmode_use_rel14 = false;
@@ -1428,6 +1740,14 @@ static int link_shell_modem(const struct shell *shell, size_t argc, char **argv)
 			 */
 			nrf_modem_at_printf("AT+CFUN=0");
 			nrf_modem_lib_shutdown();
+			break;
+		case LINK_SHELL_OPT_MODEM_SYSTEMOFF:
+			operation_selected = true;
+			nrf_modem_at_printf("AT+CFUN=0");
+			nrf_modem_lib_shutdown();
+			printk("Entering SYSTEMOFF in 1 second, wakeup only with reset\n");
+			k_sleep(K_SECONDS(1));
+			sys_poweroff();
 			break;
 
 		case 'h':
@@ -2406,8 +2726,8 @@ static int link_shell_settings(const struct shell *shell, size_t argc, char **ar
 		if (operation == LINK_OPERATION_RESET) {
 			link_sett_defaults_set();
 			if (SYS_MODE_PREFERRED != LINK_SYSMODE_NONE) {
-				link_shell_sysmode_set(SYS_MODE_PREFERRED,
-						       CONFIG_LTE_MODE_PREFERENCE_VALUE);
+				(void)link_shell_sysmode_set(SYS_MODE_PREFERRED,
+							     CONFIG_LTE_MODE_PREFERENCE_VALUE);
 			}
 		}
 		if (mreset_type == LINK_FACTORY_RESET_ALL) {
@@ -2500,6 +2820,9 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 		case LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS:
 			sysmode_option = LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS;
 			break;
+		case LINK_SHELL_OPT_SYSMODE_NTN:
+			sysmode_option = LTE_LC_SYSTEM_MODE_NTN_NBIOT;
+			break;
 		case LINK_SHELL_OPT_SYSMODE_PREF_AUTO:
 			sysmode_lte_pref_option = LTE_LC_SYSTEM_MODE_PREFER_AUTO;
 			break;
@@ -2559,15 +2882,15 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 			}
 		}
 	} else if (sysmode_option != LINK_SYSMODE_NONE) {
-		link_shell_sysmode_set(sysmode_option, sysmode_lte_pref_option);
-
-		/* Save system modem to link settings */
-		(void)link_sett_sysmode_save(sysmode_option, sysmode_lte_pref_option);
-
+		ret = link_shell_sysmode_set(sysmode_option, sysmode_lte_pref_option);
+		if (ret == 0) {
+			/* Save system modem to link settings */
+			(void)link_sett_sysmode_save(sysmode_option, sysmode_lte_pref_option);
+		}
 	} else if (operation == LINK_OPERATION_RESET) {
 		if (SYS_MODE_PREFERRED != LINK_SYSMODE_NONE) {
-			link_shell_sysmode_set(SYS_MODE_PREFERRED,
-					       CONFIG_LTE_MODE_PREFERENCE_VALUE);
+			(void)link_shell_sysmode_set(SYS_MODE_PREFERRED,
+						     CONFIG_LTE_MODE_PREFERENCE_VALUE);
 		}
 
 		(void)link_sett_sysmode_default_set();
@@ -2679,6 +3002,12 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		edrx, NULL,
 		"Enable/disable eDRX with default or with custom parameters.",
 		link_shell_edrx, 0, 10),
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+	SHELL_CMD_ARG(
+		enveval, NULL,
+		"Perform environment evaluation for specified PLMNs.",
+		link_shell_enveval, 0, 20),
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 	SHELL_CMD_ARG(
 		funmode, NULL,
 		"Set/read functional modes of the modem.",

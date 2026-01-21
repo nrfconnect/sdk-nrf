@@ -35,7 +35,7 @@ config BT_MESH_MBEDTLS_BACKEND_ENABLE
 # thus more HEAP is needed by MEBEDTLS to accommodate minimum number of keys.
 config MBEDTLS_HEAP_SIZE
 	default 2048 if BT_MESH_DFD_SRV
-	default 1152 if BT_MESH_NLC_PERF_CONF
+	default 1152 if BT_MESH_NLC_PERF_BASELINE
 	default 1024
 
 if BT_SETTINGS
@@ -93,68 +93,93 @@ endif # BT_MESH_RELAY
 
 endif
 
-config BT_MESH_NLC_PERF_CONF
-	bool "Enable NLC performance configurations"
+# Provides baseline performance requirements for NLC profiles.
+# Automatically enabled when any NLC profile is selected.
+config BT_MESH_NLC_PERF_BASELINE
+	bool
 	select BT_MESH_COMP_PAGE_2
 	select BT_MESH_COMP_PAGE_1
-	help
-	  Enables performance configurations required for NLC profiles.
-	  When implementing the NLC Basic Lightness Controller profile
-	  individually or in conjunction with other NLC profiles, also
-	  enable CONFIG_BT_MESH_NLC_PERF_LIGHTNESS_CTRL.
 
-choice BT_MESH_NLC_PERF_OPTIONS
-	prompt "NLC configuration options"
-	depends on BT_MESH_NLC_PERF_CONF
+# Provides strict performance requirements needed for some NLC profiles.
+# Automatically enabled when relevant NLC profiles are selected.
+# Includes all baseline requirements plus additional strict requirements.
+config BT_MESH_NLC_PERF_STRICT
+	bool
+	select BT_MESH_NLC_PERF_BASELINE
 
-config BT_MESH_NLC_PERF_DEFAULT
-	bool "Default"
-	help
-	  Enables performance configurations required for the NLC Basic Scene Selector,
-	  Dimming Control, Energy Monitor, Occupancy Sensor and Ambient Light Sensor profiles.
-	  When implementing the NLC Basic Lightness Controller profile individually or in
-	  conjunction with other NLC profiles, use CONFIG_BT_MESH_NLC_PERF_LIGHTNESS_CTRL instead.
+menu "NLC Profile performance configuration"
+
+config BT_MESH_NLC_PERF_SCENE_SELECTOR
+	bool "Basic Scene Selector NLC profile performance configuration"
+	select BT_MESH_NLC_PERF_BASELINE
+
+config BT_MESH_NLC_PERF_DIMMING_CONTROL
+	bool "Dimming Control NLC profile performance configuration"
+	select BT_MESH_NLC_PERF_BASELINE
+
+config BT_MESH_NLC_PERF_ENERGY_MONITOR
+	bool "Energy Monitor NLC profile performance configuration"
+	select BT_MESH_NLC_PERF_BASELINE
+
+config BT_MESH_NLC_PERF_OCCUPANCY_SENSOR
+	bool "Occupancy Sensor NLC profile performance configuration"
+	select BT_MESH_NLC_PERF_BASELINE
+
+config BT_MESH_NLC_PERF_AMBIENT_LIGHT_SENSOR
+	bool "Ambient Light Sensor NLC profile performance configuration"
+	select BT_MESH_NLC_PERF_BASELINE
 
 config BT_MESH_NLC_PERF_LIGHTNESS_CTRL
-	bool "Enable strict performance configurations required for the Basic Lightness Controller"
+	bool "Basic Lightness Controller NLC profile performance configuration"
+	select BT_MESH_NLC_PERF_STRICT
+
+config BT_MESH_NLC_PERF_HVAC_INTEGRATION
+	bool "HVAC Integration NLC profile performance configuration"
+	select BT_MESH_NLC_PERF_STRICT
+
+endmenu
+
+config BT_MESH_NLC_PERF_DEFAULT
+	bool "Default NLC profile performance configuration [DEPRECATED]"
+	select DEPRECATED
+	select BT_MESH_NLC_PERF_BASELINE
 	help
-	  Enables required performance configurations for the
-	  NLC Basic Lightness Controller. The NLC Basic Lightness Controller
-	  share most performance configurations with the common NLC profiles
-	  (CONFIG_BT_MESH_NLC_PERF_DEFAULT) but with more strict requirements for a
-	  subset of the configurations.
+	  This option is deprecated. Use individual profile options instead.
+	  Enables performance configurations required for the Basic Scene Selector,
+	  Dimming Control, Energy Monitor, Occupancy Sensor, and Ambient Light
+	  Sensor NLC profiles.
 
-endchoice
+config BT_MESH_NLC_PERF_CONF
+	bool "NLC performance configurations [DEPRECATED]"
+	select DEPRECATED
+	select BT_MESH_NLC_PERF_BASELINE
 
+# Note: _STRICT configs must have precedence over _BASELINE.
 config BT_MESH_CRPL
-	default 32 if BT_MESH_NLC_PERF_DEFAULT
-	default 255 if BT_MESH_NLC_PERF_LIGHTNESS_CTRL
-	range 32 65535 if BT_MESH_NLC_PERF_DEFAULT
-	range 255 65535 if BT_MESH_NLC_PERF_LIGHTNESS_CTRL
+	default 255 if BT_MESH_NLC_PERF_STRICT
+	default 32 if BT_MESH_NLC_PERF_BASELINE
+	range 255 65535 if BT_MESH_NLC_PERF_STRICT
+	range 32 65535 if BT_MESH_NLC_PERF_BASELINE
 
 config BT_MESH_MODEL_GROUP_COUNT
-	default 32 if BT_MESH_NLC_PERF_LIGHTNESS_CTRL
-	range 32 4096 if BT_MESH_NLC_PERF_LIGHTNESS_CTRL
-
-if BT_MESH_NLC_PERF_CONF
+	default 32 if BT_MESH_NLC_PERF_STRICT
+	range 32 4096 if BT_MESH_NLC_PERF_STRICT
 
 config BT_MESH_MSG_CACHE_SIZE
-	default 64
-	range 64 65535
+	default 64 if BT_MESH_NLC_PERF_BASELINE
+	range 64 65535 if BT_MESH_NLC_PERF_BASELINE
 
 config BT_MESH_APP_KEY_COUNT
-	default 3
-	range 3 4096
+	default 3 if BT_MESH_NLC_PERF_BASELINE
+	range 3 4096 if BT_MESH_NLC_PERF_BASELINE
 
 config BT_MESH_SUBNET_COUNT
-	default 2
-	range 2 4096
+	default 2 if BT_MESH_NLC_PERF_BASELINE
+	range 2 4096 if BT_MESH_NLC_PERF_BASELINE
 
 config BT_MESH_PROXY_FILTER_SIZE
-	default 8
-	range 8 32767
-
-endif
+	default 8 if BT_MESH_NLC_PERF_BASELINE
+	range 8 32767 if BT_MESH_NLC_PERF_BASELINE
 
 config BT_MESH_USES_TFM_PSA
 	bool
@@ -184,11 +209,6 @@ config BT_MESH_KEY_IMPORTER_PRIO
 	help
 	  The key importer is initialized before the main application. It is initialized
 	  using system initialization macro with application level.
-
-choice TFM_PROFILE_TYPE
-	depends on BT_MESH_USES_TFM_PSA
-	default TFM_PROFILE_TYPE_NOT_SET
-endchoice
 
 rsource "Kconfig.models"
 rsource "Kconfig.dk_prov"

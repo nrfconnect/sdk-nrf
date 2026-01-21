@@ -36,6 +36,7 @@ LOG_MODULE_REGISTER(cloud_connection, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 #define CLOUD_READY			BIT(2)
 #define CLOUD_DISCONNECTED		BIT(3)
 #define DATE_TIME_KNOWN			BIT(4)
+#define L4_EVENT_MASK		(NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
 static K_EVENT_DEFINE(cloud_events);
 
 /* Atomic status flag tracking whether an initial association is in progress. */
@@ -149,7 +150,13 @@ static void cloud_ready(void)
 	if (IS_ENABLED(CONFIG_NRF_PROVISIONING)) {
 		LOG_INF("Reducing provisioning check interval to %d minutes",
 			CONFIG_POST_PROVISIONING_INTERVAL_M);
-		nrf_provisioning_set_interval(CONFIG_POST_PROVISIONING_INTERVAL_M * SEC_PER_MIN);
+
+		int err = nrf_provisioning_set_interval(
+			CONFIG_POST_PROVISIONING_INTERVAL_M * SEC_PER_MIN);
+
+		if (err) {
+			LOG_ERR("Failed to set provisioning interval, err %d", err);
+		}
 	}
 }
 
@@ -544,7 +551,7 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 #endif /* CONFIG_NRF_CLOUD_MQTT */
 
 /**
- * @brief Set up for the nRF Cloud connection (without connecting)
+ * @brief Set up for the nRF Cloud connection
  *
  * Sets up required event hooks and initializes the nrf_cloud library.
  *
@@ -553,24 +560,6 @@ static void cloud_event_handler(const struct nrf_cloud_evt *nrf_cloud_evt)
 static int setup_cloud(void)
 {
 	int err;
-
-	/* Register to be notified of network availability changes.
-	 *
-	 * If the chosen connectivity layer becomes ready instantaneously, it is possible that
-	 * L4_CONNECTED will be fired before reaching this function, in which case we will miss
-	 * the notification.
-	 *
-	 * If that is a serious concern, use SYS_INIT with priority 0 (less than
-	 * CONFIG_NET_CONNECTION_MANAGER_PRIORITY) to register this hook before conn_mgr
-	 * initializes.
-	 *
-	 * In reality, connectivity layers such as LTE take some time to go online, so registering
-	 * the hook here is fine.
-	 */
-	net_mgmt_init_event_callback(
-		&l4_callback, l4_event_handler, NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED
-	);
-	net_mgmt_add_event_callback(&l4_callback);
 
 	/* Register to be notified when the modem has figured out the current time. */
 	date_time_register_handler(date_time_event_handler);
@@ -641,6 +630,13 @@ static void check_credentials(void)
 void cloud_connection_thread_fn(void)
 {
 	long_led_pattern(LED_WAITING);
+
+	/* Setup handler for Zephyr NET Connection Manager events. */
+	net_mgmt_init_event_callback(&l4_callback, l4_event_handler, L4_EVENT_MASK);
+	net_mgmt_add_event_callback(&l4_callback);
+
+	/* Enable the connection manager for all interfaces and allow them to connect. */
+	conn_mgr_all_if_up(true);
 
 	LOG_INF("Enabling connectivity...");
 	conn_mgr_all_if_connect(true);

@@ -26,19 +26,19 @@ Configuration
 
 Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
 
-Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` Kconfig options are enabled.
-The HID Service application module is enabled by the :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option, which is implied by :ref:`CONFIG_DESKTOP_BT_PERIPHERAL <config_desktop_app_options>` together with other GATT Services that are required for a HID device.
+Make sure that both :option:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL` and :option:`CONFIG_DESKTOP_BT_PERIPHERAL` Kconfig options are enabled.
+The HID Service application module is enabled by the :option:`CONFIG_DESKTOP_HIDS_ENABLE` option, which is implied by :option:`CONFIG_DESKTOP_BT_PERIPHERAL` together with other GATT Services that are required for a HID device.
 
 GATT Service configuration
 ==========================
 
-The :ref:`CONFIG_DESKTOP_HIDS_ENABLE <config_desktop_app_options>` option selects the following Kconfig options:
+The :option:`CONFIG_DESKTOP_HIDS_ENABLE` option selects the following Kconfig options:
 
 * The :kconfig:option:`CONFIG_BT_HIDS` option that automatically enables the :ref:`hids_readme`.
 * The :kconfig:option:`CONFIG_BT_CONN_CTX` option that automatically enables the :ref:`bt_conn_ctx_readme`, which is required by the |GATT_HID|.
 
 The nRF Desktop application modifies the default Kconfig option values, defined by the :ref:`hids_readme`, to tailor the default configuration to application needs.
-The configuration is tailored for either nRF Desktop mouse (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_MOUSE <config_desktop_app_options>`) or nRF Desktop keyboard (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`).
+The configuration is tailored for either nRF Desktop mouse (:option:`CONFIG_DESKTOP_PERIPHERAL_TYPE_MOUSE`) or nRF Desktop keyboard (:option:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD`).
 For more details, see the :file:`src/modules/Kconfig.hids` file.
 
 .. tip::
@@ -57,8 +57,8 @@ The HID Service application module sends the report over Bluetooth LE and submit
 
 You can use the following Kconfig options to modify HID subscription parameters used in the :c:struct:`hid_report_subscriber_event`:
 
-* :ref:`CONFIG_DESKTOP_HIDS_SUBSCRIBER_PRIORITY <config_desktop_app_options>` (:c:member:`hid_report_subscriber_event.priority`).
-* :ref:`CONFIG_DESKTOP_HIDS_SUBSCRIBER_REPORT_MAX <config_desktop_app_options>` (:c:member:`hid_report_subscriber_event.report_max`).
+* :option:`CONFIG_DESKTOP_HIDS_SUBSCRIBER_PRIORITY` (:c:member:`hid_report_subscriber_event.priority`).
+* :option:`CONFIG_DESKTOP_HIDS_SUBSCRIBER_REPORT_MAX` (:c:member:`hid_report_subscriber_event.report_max`).
 
 For more details, see the Kconfig help.
 
@@ -70,13 +70,13 @@ HID subscription delay
 ----------------------
 
 By default, the ``hids`` application module starts forwarding the subscriptions right after the Bluetooth connection is secured.
-You can define additional delay for forwarding the notifications on connection (:ref:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY <config_desktop_app_options>`).
+You can define additional delay for forwarding the notifications on connection (:option:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY`).
 Sending the first HID report to the connected Bluetooth peer is delayed by this period of time.
 
 .. note::
    The nRF Desktop centrals perform the GATT service discovery and reenable the HID notifications on every reconnection.
    A HID report that is received before the subscription is reenabled will be dropped before it reaches the application.
-   The :ref:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY <config_desktop_app_options>` option is set to 1000 ms for nRF Desktop keyboards (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`) to make sure that the input is not lost on reconnection with the nRF Desktop dongle.
+   The :option:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY` option is set to 1000 ms for nRF Desktop keyboards (:option:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD`) to make sure that the input is not lost on reconnection with the nRF Desktop dongle.
 
 Implementation details
 **********************

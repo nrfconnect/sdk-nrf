@@ -202,3 +202,76 @@ int pscm_two_channel_split(void const *const input, size_t input_size, uint8_t p
 	*output_size = input_size / 2;
 	return 0;
 }
+
+int pscm_interleave(void const *const input, size_t input_size, uint8_t channel,
+		    uint8_t pcm_bit_depth, void *output, size_t output_size,
+		    uint8_t output_channels)
+{
+	uint8_t bytes_per_sample;
+	size_t step;
+	uint8_t *pointer_input;
+	uint8_t *pointer_output;
+
+	if (input == NULL || output == NULL || input == output || input_size == 0 ||
+	    channel >= output_channels || pcm_bit_depth == 0 ||
+	    pcm_bit_depth > PSCM_MAX_CARRIER_BIT_DEPTH || pcm_bit_depth % 8 || output_size == 0 ||
+	    output_channels == 0) {
+		LOG_WRN("Invalid parameter(s) passed to interleaver");
+		return -EINVAL;
+	}
+
+	if (output_size < (input_size * output_channels)) {
+		LOG_WRN("Output buffer too small to interleave input into");
+		return -EINVAL;
+	}
+
+	bytes_per_sample = pcm_bit_depth / 8;
+	step = bytes_per_sample * (output_channels - 1);
+	pointer_input = (uint8_t *)input;
+	pointer_output = (uint8_t *)output + (bytes_per_sample * channel);
+
+	for (size_t i = 0; i < input_size; i += bytes_per_sample) {
+		for (size_t j = 0; j < bytes_per_sample; j++) {
+			*pointer_output++ = *pointer_input++;
+		}
+
+		pointer_output += step;
+	}
+
+	return 0;
+}
+
+int pscm_deinterleave(void const *const input, size_t input_size, uint8_t input_channels,
+		      uint8_t channel, uint8_t pcm_bit_depth, void *output, size_t output_size)
+{
+	uint8_t bytes_per_sample;
+	size_t step;
+	uint8_t *pointer_input;
+	uint8_t *pointer_output;
+
+	if (input == NULL || output == NULL || input_size == 0 || channel >= input_channels ||
+	    pcm_bit_depth == 0 || pcm_bit_depth % 8 || output_size == 0 ||
+	    pcm_bit_depth > PSCM_MAX_CARRIER_BIT_DEPTH || input_channels == 0) {
+		return -EINVAL;
+	}
+
+	if (output_size < (input_size / input_channels)) {
+		LOG_DBG("Output buffer too small to uninterleave input into");
+		return -EINVAL;
+	}
+
+	bytes_per_sample = pcm_bit_depth / 8;
+	step = bytes_per_sample * (input_channels - 1);
+	pointer_input = (uint8_t *)input + (bytes_per_sample * channel);
+	pointer_output = (uint8_t *)output;
+
+	for (size_t i = 0; i < input_size; i += (step + bytes_per_sample)) {
+		for (size_t j = 0; j < bytes_per_sample; j++) {
+			*pointer_output++ = *pointer_input++;
+		}
+
+		pointer_input += step;
+	}
+
+	return 0;
+}

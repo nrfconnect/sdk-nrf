@@ -8,8 +8,6 @@ from pprint import pformat
 
 import pytest
 import yaml
-
-
 from partition_manager import (
     COMPLEX,
     END_TO_START,
@@ -45,7 +43,7 @@ def expect_addr_size(td, name, expected_address, expected_size):
 def expect_list(expected, actual):
     expected_list = list(sorted(expected))
     actual_list = list(sorted(actual))
-    assert sorted(expected_list) == sorted(actual_list), 'Expected list {}, was {}'.format(expected_list, actual_list)
+    assert sorted(expected_list) == sorted(actual_list), f'Expected list {expected_list}, was {actual_list}'
 
 
 def test_remove_item_not_in_list():
@@ -430,8 +428,8 @@ def test_that_offset_and_end_of_first_partition_are_correct_when_aligning_partit
     assert offset == 600
 
     for l in [
-            lambda: get_required_offset(align={'end': ['CONFIG_VAR']}, start=0, size=1000, move_up=False),
-            lambda: get_required_offset(align={'start': ['CONFIG_VAR']}, start=0, size=1000, move_up=False),
+            lambda: get_required_offset(align={'end': ['CONFIG_FOO']}, start=0, size=1000, move_up=False),
+            lambda: get_required_offset(align={'start': ['CONFIG_FOO']}, start=0, size=1000, move_up=False),
             lambda: get_required_offset(align={'start': [[2]]}, start=0, size=1000, move_up=False)
     ]:
         with pytest.raises(TypeError):

@@ -36,6 +36,31 @@ See :ref:`lib_tfm_ioctl_api` for more information about APIs available for the n
 
 For more information about the general features of the TF-M Platform partition, see `TF-M Platform`_.
 
+.. _ug_tfm_services_system_reset:
+
+System Reset service
+--------------------
+
+The System Reset service is one of the default TF-M platform services that has a specific implementation for the |NCS|.
+It allows to perform a system reset through the TF-M platform service using the :c:func:`tfm_hal_system_reset` function.
+
+This service is enabled when you enable the :kconfig:option:`CONFIG_TFM_PARTITION_PLATFORM` Kconfig option.
+
+.. _ug_tfm_services_system_off:
+
+System OFF service
+------------------
+
+The System OFF service is one of the TF-M platform services specific to the |NCS|.
+It allows the non-secure application to request the system to enter the System OFF mode using a secure service call.
+
+The System OFF mode is part of the power and clock management system and is available on selected Nordic Semiconductor devices, including the nRF54L Series.
+For more details about the System OFF mode, see the device datasheet, for example the `nRF54L15 Power and clock management`_ page.
+
+To enable the System OFF service in the |NCS|, enable the :kconfig:option:`CONFIG_TFM_NRF_SYSTEM_OFF_SERVICE` Kconfig option.
+
+Zephyr's :zephyr:code-sample:`nrf_system_off` sample demonstrates how to use the System OFF service.
+
 .. _ug_tfm_services_its:
 
 Internal Trusted Storage service
@@ -50,6 +75,9 @@ ITS is meant to be used by other TF-M partitions.
 It must not be accessed directly by a user application :ref:`placed in the Non-Secure Processing Environment <app_boards_spe_nspe_cpuapp_ns>`.
 If you want the user application to access the contents of the partition, use the :ref:`tfm_partition_ps`.
 
+This service is enabled as the default storage mechanism when you enable the :ref:`tfm_partition_crypto` service.
+If you are using a device with the :ref:`key_storage_kmu`, you can disable the :ref:`ug_tfm_services_its` and start using KMU instead to save memory.
+
 For more information about the general features of the TF-M ITS service, see `TF-M ITS`_.
 
 .. _tfm_encrypted_its:
@@ -57,7 +85,11 @@ For more information about the general features of the TF-M ITS service, see `TF
 Encrypted ITS
 -------------
 
-TF-M ITS encryption is a data protection mechanism in Internal Trusted Storage. It provides transparent encryption using a Master Key Encryption Key (MKEK) stored in hardware, with unique encryption keys derived for each file.
+TF-M ITS encryption is a data protection mechanism in Internal Trusted Storage.
+It provides transparent encryption using a Master Key Encryption Key (MKEK) stored in hardware, with unique encryption keys derived for each file.
+
+.. note::
+   |encrypted_its_not_supported_on_nrf54lm20|
 
 To enable TF-M ITS encryption, set the :kconfig:option:`CONFIG_TFM_ITS_ENCRYPTED` Kconfig option.
 
@@ -136,6 +168,9 @@ However, it is recommended to use the ``CONFIG_PSA_WANT_*`` Kconfig options to e
 These will enable the required ``CONFIG_TFM_CRYPTO_*`` Kconfig options.
 
 TF-M uses :ref:`hardware unique keys <lib_hw_unique_key>` when the PSA Crypto key derivation APIs are used, and ``psa_key_derivation_setup`` is called with the algorithm ``TFM_CRYPTO_ALG_HUK_DERIVATION``.
+
+When enabled, the Crypto service by default uses the :ref:`ug_tfm_services_its` to store the keys and other sensitive data.
+If you are using a device with the :ref:`key_storage_kmu`, you can disable the :ref:`ug_tfm_services_its` and start using KMU instead to save memory.
 
 For more information about the general features of the Crypto partition, see `TF-M Crypto`_.
 

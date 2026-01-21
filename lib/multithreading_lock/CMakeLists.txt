@@ -5,8 +5,6 @@
 #
 
 zephyr_library()
-zephyr_library_sources(
-	multithreading_lock.c
-)
+zephyr_library_sources(multithreading_lock.c)
 
 zephyr_include_directories(.)

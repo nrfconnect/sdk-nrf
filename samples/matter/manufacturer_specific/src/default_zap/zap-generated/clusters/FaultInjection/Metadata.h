@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -25,10 +26,15 @@ namespace app
 			namespace Attributes
 			{
 
+				constexpr std::array<DataModel::AttributeEntry, 0> kMandatoryMetadata = {
+
+				};
+
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace FailAtFault
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -45,6 +51,11 @@ namespace app
 				} // namespace FailRandomlyAtFault
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace FaultInjection
 	} // namespace Clusters
 } // namespace app

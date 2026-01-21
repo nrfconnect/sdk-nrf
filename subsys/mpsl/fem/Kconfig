@@ -46,7 +46,6 @@ config MPSL_FEM_NRF2240_TWI_SUPPORT
 
 config MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool
-	default n
 
 config MPSL_FEM_API_AVAILABLE
 	bool
@@ -81,13 +80,7 @@ config MPSL_FEM_NRF21540_GPIO
 	select NRFX_GPIOTE
 	select GPIO if ($(dt_nodelabel_has_prop,nrf_radio_fem,mode-gpios) || \
 		$(dt_nodelabel_has_prop,nrf_radio_fem,ant-sel-gpios))
-	select NRFX_PPI if HAS_HW_NRF_PPI
-	select NRFX_DPPI if HAS_HW_NRF_DPPIC
-	select NRFX_GPPI if SOC_SERIES_NRF54LX
-	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
-	select NRFX_DPPI20 if SOC_SERIES_NRF54LX
-	select NRFX_PPIB11 if SOC_SERIES_NRF54LX
-	select NRFX_PPIB21 if SOC_SERIES_NRF54LX
+	select NRFX_GPPI
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool "nRF21540 front-end module in GPIO mode"
 	help
@@ -98,8 +91,7 @@ config MPSL_FEM_NRF21540_GPIO_SPI
 	select NRFX_GPIOTE
 	select GPIO if ($(dt_nodelabel_has_prop,nrf_radio_fem,mode-gpios) || \
 		$(dt_nodelabel_has_prop,nrf_radio_fem,ant-sel-gpios))
-	select NRFX_PPI if HAS_HW_NRF_PPI
-	select NRFX_DPPI if HAS_HW_NRF_DPPIC
+	select NRFX_GPPI
 	select PINCTRL
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	imply MPSL_FEM_POWER_MODEL if MPSL_FEM   # Don't force the model, but make it a default
@@ -110,8 +102,7 @@ config MPSL_FEM_NRF21540_GPIO_SPI
 config MPSL_FEM_SIMPLE_GPIO
 	depends on MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT
 	select NRFX_GPIOTE
-	select NRFX_PPI if HAS_HW_NRF_PPI
-	select NRFX_DPPI if HAS_HW_NRF_DPPIC
+	select NRFX_GPPI
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool "Generic front-end module with two-pin control"
 	help
@@ -123,13 +114,7 @@ config MPSL_FEM_SIMPLE_GPIO
 config MPSL_FEM_NRF2220
 	depends on MPSL_FEM_NRF2220_SUPPORT
 	select NRFX_GPIOTE
-	select NRFX_PPI if SOC_SERIES_NRF52X
-	select NRFX_DPPI0 if SOC_SERIES_NRF53X
-	select NRFX_GPPI if SOC_SERIES_NRF54LX
-	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
-	select NRFX_DPPI20 if SOC_SERIES_NRF54LX
-	select NRFX_PPIB11 if SOC_SERIES_NRF54LX
-	select NRFX_PPIB21 if SOC_SERIES_NRF54LX
+	select NRFX_GPPI
 	select PINCTRL
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool "nRF2220 front-end module"
@@ -140,20 +125,14 @@ config MPSL_FEM_NRF2240
 	depends on MPSL_FEM_NRF2240_SUPPORT
 	select EXPERIMENTAL
 	select NRFX_GPIOTE
-	select NRFX_PPI if SOC_SERIES_NRF52X
-	select NRFX_DPPI0 if SOC_SERIES_NRF53X
-	select NRFX_GPPI if SOC_SERIES_NRF54LX
-	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
-	select NRFX_DPPI20 if SOC_SERIES_NRF54LX
-	select NRFX_PPIB11 if SOC_SERIES_NRF54LX
-	select NRFX_PPIB21 if SOC_SERIES_NRF54LX
+	select NRFX_GPPI
 	select PINCTRL
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool "nRF2240 front-end module"
 	help
 	  FEM device is nRF2240.
 
-endchoice	# MPSL_FEM_CHOICE
+endchoice # MPSL_FEM_CHOICE
 
 if (MPSL_FEM_NRF21540_GPIO || MPSL_FEM_NRF21540_GPIO_SPI) && MPSL_FEM
 
@@ -209,14 +188,13 @@ config MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL
 	  If this option is disabled the PA gain is constant and equal MPSL_FEM_NRF21540_TX_GAIN_DB.
 
 
-endif   # (MPSL_FEM_NRF21540_GPIO || MPSL_FEM_NRF21540_GPIO_SPI) && MPSL_FEM
+endif # (MPSL_FEM_NRF21540_GPIO || MPSL_FEM_NRF21540_GPIO_SPI) && MPSL_FEM
 
-endif	# MPSL_FEM || MPSL_FEM_PIN_FORWARDER
+endif # MPSL_FEM || MPSL_FEM_PIN_FORWARDER
 
 config MPSL_FEM_POWER_MODEL
 	bool "Use a model to split the requested TX power into values used to control the internal state of the FEM"
 	depends on MPSL_FEM
-	default n
 	help
 	  Use a model to split the requested TX power into values used to control
 	  the internal state of the FEM. This model can be used for compensating for external
@@ -258,7 +236,7 @@ config MPSL_FEM_POWER_MODEL_NRF21540_USE_BUILTIN
 	  for the low granularity of the SoC output power. Compensation for other factors such
 	  as temperature, frequency and operating voltage is also done.
 
-endchoice	# MPSL_FEM_POWER_MODEL_CHOICE
+endchoice # MPSL_FEM_POWER_MODEL_CHOICE
 
 config MPSL_FEM_BUILTIN_POWER_MODEL_UPDATE_PERIOD
 	int "Builtin model update period in ms"
@@ -269,7 +247,7 @@ config MPSL_FEM_BUILTIN_POWER_MODEL_UPDATE_PERIOD
 	  accurate power output. This setting specifies how frequently the model will be updated
 	  to account for changing external conditions.
 
-endif   # MPSL_FEM_POWER_MODEL
+endif # MPSL_FEM_POWER_MODEL
 
 config MPSL_FEM_DEVICE_CONFIG_254
 	bool "Apply device configuration 254"
@@ -347,4 +325,4 @@ config MPSL_FEM_INIT_PRIORITY
 
 module=MPSL_FEM
 module-str=MPSL_FEM
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"

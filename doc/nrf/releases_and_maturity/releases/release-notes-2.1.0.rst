@@ -66,7 +66,7 @@ Supported modem firmware
 See `Modem firmware compatibility matrix`_ for an overview of which modem firmware versions have been tested with this version of the |NCS|.
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -314,7 +314,7 @@ nRF9160: Serial LTE modem
     Both are *High* when the SLM application starts.
 
 * Fixed an issue where the features of the Mbed TLS v3.1 were not enabled by default, which caused the native TLS to not work.
-  The documentation of the :ref:`SLM_AT_SOCKET`' socket option numbers was updated accordingly.
+  The documentation of the Socket AT commands’ socket option numbers was updated accordingly.
 * Removed the software toggle of ``INDICATE_PIN`` in case of reset.
 
 nRF5340 Audio
@@ -713,7 +713,7 @@ Modem libraries
 
   * Fixed an issue that would cause the library to assert on an unhandled CME error when the AT command failed to be sent.
 
-* :ref:`at_cmd_parser_readme` library:
+* AT command parser library:
 
   * Fixed an issue that would cause AT command responses like ``+CNCEC_EMM`` with underscore to be filtered out.
 
@@ -872,7 +872,7 @@ Libraries for networking
     * The APIs are modified for both IoT Hub and DPS interaction.
       The applications and samples that use the library have been updated accordingly.
 
-* :ref:`lib_download_client` library:
+* Download client library:
 
   * Fixed:
 
@@ -1085,7 +1085,7 @@ Documentation
   * :ref:`ug_nrf91` with the following changes:
 
     * In the :ref:`ug_nrf91_features` page, added a section about :ref:`modem_trace`.
-    * In the :ref:`ug_nrf9160_gs` guide, :ref:`nrf9160_gs_updating_fw_modem` section is now moved before :ref:`nrf9160_gs_updating_fw_application` because updating modem firmware erases application firmware.
+    * In the :ref:`ug_nrf9160_gs` guide, Updating the modem firmware section is now moved before Updating the application firmware because updating modem firmware erases application firmware.
     * In the :ref:`ug_nrf9160` guide, the :ref:`build_pgm_nrf9160` section now mentions |VSC| and command-line instructions.
     * In the :ref:`ug_thingy91_gsg` guide, Programming firmware and :ref:`connect_nRF_cloud` sections now have different structure.
     * The instructions and images in the :ref:`ug_thingy91_gsg` and :ref:`ug_nrf9160_gs` guides now also mention accepting :term:`eUICC Identifier (EID)` when activating your iBasis SIM card from the `nRF Cloud`_ website.

@@ -18,7 +18,7 @@ To get a position fix, a :term:`Global Navigation Satellite System (GNSS)` modul
 
 Predicted GPS (P-GPS) is a form of assistance that reduces the :term:`Time to First Fix (TTFF)`, the time needed by a GNSS module to estimate its position.
 It is provided through :term:`nRF Cloud` services.
-In P-GPS, nRF Cloud provides data containing information about the estimated orbits (`Ephemerides <Ephemeris_>`_) of the 32 GPS satellites for up to two weeks.
+In P-GPS, nRF Cloud provides data containing information about the estimated orbits (`Ephemerides <Ephemeris_>`_) of the 32 GPS satellites for multiple days into the future.
 Each set of ephemerides predictions is valid for a specific four-hour period within the set of all provided predictions.
 A device using P-GPS downloads the ephemeris predictions from the cloud, stores them in its flash memory, and later injects them into the GNSS module when needed.
 
@@ -26,10 +26,7 @@ P-GPS is designed for devices that are frequently disconnected from the cloud bu
 This is possible because a device does not need to download ephemerides from the satellite broadcast.
 However, P-GPS should not be used for general use cases that already work with :term:`Assisted GNSS (A-GNSS)` only.
 
-.. note::
-   When using two-week ephemeris prediction sets, the TTFF towards the end of the second week increases due to the accumulated errors in the predictions and the decreases in the number of satellite ephemerides in the later prediction periods.
-
-P-GPS requires a cloud connection approximately once a week to download new predictions, depending on the configuration settings.
+P-GPS requires a cloud connection to download new predictions.
 With A-GNSS, new ephemerides are needed on average every two hours, or if the fix interval is longer, whenever GNSS is started.
 
 .. note::
@@ -52,7 +49,6 @@ Configure one of the following options to control the network transport for down
 
 Configure these additional options to refine the behavior of P-GPS:
 
-* :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_PREDICTION_PERIOD`
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS`
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD`
 * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE`
@@ -113,7 +109,7 @@ There are three ways to define this storage location:
 
   Use this option if the flash memory for your application is too full to use a dedicated partition, and the application uses MCUboot for FOTA updates but not for MCUboot itself.
 
-  Do not use this option if you are using MCUboot as a second-stage upgradable bootloader and also have FOTA updates enabled for MCUboot itself, not just the application (using :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BUILD_S1_VARIANT`).
+  Do not use this option if you are using MCUboot as a second-stage upgradable bootloader and also have FOTA updates enabled for MCUboot itself, not just the application (using the :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` Kconfig option).
   Otherwise, the P-GPS library prevents the full completion of MCUboot update, and the first-stage immutable bootloader reverts MCUboot to its previous image.
 
 * To use an application-specific storage, enable the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_CUSTOM` option.
@@ -233,8 +229,7 @@ The library offers two different ways to control the timing of P-GPS cloud reque
    * Call :c:func:`nrf_cloud_pgps_preemptive_updates`.
    * Call :c:func:`nrf_cloud_pgps_notify_prediction`.
 
-The indirect methods are used in the :ref:`serial_lte_modem` application.
-They are simpler to use than the direct methods.
+The indirect methods are simpler to use than the direct methods.
 The direct method is used in the :ref:`gnss_sample` sample.
 
 When nRF Cloud responds with the requested P-GPS data, the library sends the :c:enum:`CLOUD_EVT_DATA_RECEIVED` event.
@@ -249,7 +244,7 @@ A P-GPS prediction for the current date and time can be retrieved using one of t
 * Directly, by calling the function :c:func:`nrf_cloud_pgps_find_prediction`
 * Indirectly, by calling the function :c:func:`nrf_cloud_pgps_notify_prediction`
 
-The indirect method is used in the :ref:`gnss_sample` sample and in the :ref:`serial_lte_modem` application.
+The indirect method is used in the :ref:`gnss_sample` sample.
 
 The application can inject the data contained in the prediction to the GNSS module in the modem by calling the :c:func:`nrf_cloud_pgps_inject` function.
 This must be done when event :c:enumerator:`NRF_MODEM_GNSS_EVT_AGNSS_REQ` is received from the GNSS interface.

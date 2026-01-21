@@ -6,9 +6,12 @@
 
 #include "app_task.h"
 
+#include "basic_information_extension.h"
+
 #include "app/matter_init.h"
 #include "app/task_executor.h"
 #include "board/board.h"
+#include "clusters/cluster_init.h"
 #include "lib/core/CHIPError.h"
 #include "lib/support/CodeUtils.h"
 
@@ -31,7 +34,6 @@ using namespace ::chip::DeviceLayer;
 namespace
 {
 #define BUTTON2_MASK DK_BTN2_MSK
-constexpr EndpointId kBasicInformationEndpointId = 0;
 constexpr EndpointId kNordicDevKitEndpointId = 1;
 } /* namespace */
 
@@ -81,23 +83,10 @@ void AppTask::UpdateNordicDevkitClusterState()
 void AppTask::UpdateBasicInformationClusterState()
 {
 	SystemLayer().ScheduleLambda([] {
-		Protocols::InteractionModel::Status status;
+		DataModel::ActionReturnStatus status = GetBasicInformationExtension().SetRandomNumber(sys_rand16_get());
 
-		status = Clusters::BasicInformation::Attributes::RandomNumber::Set(kBasicInformationEndpointId,
-										   sys_rand16_get());
-
-		if (status != Protocols::InteractionModel::Status::Success) {
-			LOG_ERR("Updating Basic information cluster failed: %x", to_underlying(status));
-		}
-
-		for (auto endpoint : EnabledEndpointsWithServerCluster(Clusters::BasicInformation::Id)) {
-			/* If Basic cluster is implemented on this endpoint */
-			Clusters::BasicInformation::Events::RandomNumberChanged::Type event;
-			EventNumber eventNumber;
-
-			if (CHIP_NO_ERROR != LogEvent(event, endpoint, eventNumber)) {
-				ChipLogError(Zcl, "Failed to emit RandomNumberChanged event");
-			}
+		if (status != CHIP_NO_ERROR) {
+			ChipLogError(Zcl, "Updating Basic information cluster failed");
 		}
 	});
 }

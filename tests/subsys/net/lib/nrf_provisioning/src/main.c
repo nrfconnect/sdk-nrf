@@ -31,6 +31,7 @@
 #include "cmock_rest_client.h"
 #include "cmock_settings.h"
 #include "cmock_nrf_provisioning_jwt.h"
+#include "cmock_nrf_provisioning_internal.h"
 
 #include "nrf_provisioning_codec.h"
 #include "nrf_provisioning_http.h"
@@ -43,6 +44,7 @@
 #define CRLF "\r\n"
 
 #define QUERY_ITEMS_MAX 6
+#define EXPECT_NO_EVENTS_TIMEOUT_SECONDS 10000
 
 char tok_jwt_plain[] = AUTH_HDR_BEARER_JWT_DUMMY;
 char http_auth_hdr[] = AUTH_HDR_BEARER AUTH_HDR_BEARER_JWT_DUMMY CRLF;
@@ -50,52 +52,77 @@ char http_auth_hdr_invalid1[] = AUTH_HDR_BEARER_JWT_DUMMY CRLF;
 char http_auth_hdr_invalid2[] = "att." AUTH_HDR_BEARER_JWT_DUMMY CRLF;
 char MFW_VER[] = "mfw_nrf9161_99.99.99-DUMMY";
 
-static void dummy_nrf_provisioning_device_mode_cb(enum nrf_provisioning_event event,
-						  void *user_data)
+K_SEM_DEFINE(event_received_sem, 0, 1);
+
+static struct nrf_provisioning_callback_data event_data = { 0 };
+
+static void nrf_provisioning_event_cb(const struct nrf_provisioning_callback_data *event)
 {
-	(void)user_data;
-	(void)event;
-}
-
-static int dummy_nrf_provisioning_modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
-{
-	(void)user_data;
-	(void)new_mode;
-
-	return 0;
-}
-
-K_SEM_DEFINE(stopped_sem, 0, 1);
-
-static void device_mode_cb(enum nrf_provisioning_event event,
-						  void *user_data)
-{
-	(void)user_data;
-	switch (event) {
+	switch (event->type) {
 	case NRF_PROVISIONING_EVENT_START:
 		printk("Provisioning started\n");
 		break;
 	case NRF_PROVISIONING_EVENT_STOP:
 		printk("Provisioning stopped\n");
-		k_sem_give(&stopped_sem);
 		break;
 	case NRF_PROVISIONING_EVENT_DONE:
 		printk("Provisioning done\n");
 		break;
+	case NRF_PROVISIONING_EVENT_FAILED:
+		printk("Provisioning failed\n");
+		break;
+	case NRF_PROVISIONING_EVENT_NO_COMMANDS:
+		printk("No commands from server\n");
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED_TOO_MANY_COMMANDS:
+		printk("Too many commands\n");
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED:
+		printk("Device not claimed\n");
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED_WRONG_ROOT_CA:
+		printk("Wrong root CA\n");
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED_NO_VALID_DATETIME:
+		printk("No valid datetime\n");
+		break;
+	case NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED:
+		printk("Need LTE deactivated\n");
+		break;
+	case NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED:
+		printk("Need LTE activated\n");
+		break;
+	case NRF_PROVISIONING_EVENT_SCHEDULED_PROVISIONING:
+		printk("Scheduled provisioning\n");
+		break;
+	case NRF_PROVISIONING_EVENT_FATAL_ERROR:
+		printk("Fatal error\n");
+		break;
+	}
+
+	event_data.type = event->type;
+
+	k_sem_give(&event_received_sem);
+}
+
+static void wait_for_provisioning_event(enum nrf_provisioning_event event)
+{
+	k_sem_take(&event_received_sem, K_FOREVER);
+
+	if (event_data.type != event) {
+		printk("Expected event: %d, received event: %d\n", event, event_data.type);
+		TEST_FAIL_MESSAGE("Unexpected provisioning event received");
 	}
 }
-static struct nrf_provisioning_dm_change test_dm = {
-	.cb = device_mode_cb,
-	.user_data = NULL
-};
 
-static void wait_for_stopped(void)
+static void wait_for_no_provisioning_event(int timeout_seconds)
 {
 	int ret;
 
-	ret = k_sem_take(&stopped_sem, K_SECONDS(CONFIG_NRF_PROVISIONING_INTERVAL_S * 2));
-	if (ret) {
-		TEST_FAIL_MESSAGE("Provisioning did not stop in time");
+	ret = k_sem_take(&event_received_sem, K_SECONDS(timeout_seconds));
+	if (ret == 0) {
+		printk("Unexpected provisioning event received, event: %d\n", event_data.type);
+		TEST_FAIL_MESSAGE("Unexpected provisioning event received");
 	}
 }
 
@@ -116,14 +143,6 @@ void setUp(void)
 
 void tearDown(void)
 {
-}
-
-static int nrf_provisioning_mm_cb_dummy(enum lte_lc_func_mode new_mode, void *user_data)
-{
-	(void)new_mode;
-	int ret = *(int *)user_data;
-
-	return ret;
 }
 
 /* [["9685ef84-8cac-4257-b5cc-94bc416a1c1d.d", 2]] */
@@ -221,15 +240,6 @@ static const unsigned char cbor_rsps4_valid[] = {
 	0x63, 0x30, 0x37, 0x61, 0x66, 0x66, 0x65, 0x63, 0x35, 0x64, 0x2E, 0x31, 0x34, 0x18, 0x65
 };
 
-static int modem_key_mgmt_exists_true(nrf_sec_tag_t sec_tag,
-					enum modem_key_mgmt_cred_type cred_type,
-					bool *exists,
-					int cmock_num_calls)
-{
-	*exists = true;
-
-	return 0;
-}
 
 
 static int rest_client_request_resp_no_content(struct rest_client_req_context *req_ctx,
@@ -560,15 +570,15 @@ void test_http_commands_no_content_valid(void)
 
 	int ret = nrf_provisioning_http_req(&rest_ctx);
 
-	TEST_ASSERT_EQUAL_INT(0, ret);
+	TEST_ASSERT_EQUAL_INT(-ENODATA, ret);
 
 	__cmock_rest_client_request_defaults_set_StopIgnore();
 }
 
 /*
- * - Check if there is no commands from server
- * - If there is no commands from server side no new requests should be triggered
- * - Response status must indicate there is no content
+ * - Check if server responds with internal server error
+ * - If server is experiencing issues, provisioning should return -EBUSY for retry
+ * - Response status must indicate internal server error (500)
  */
 void test_http_commands_internal_server_error_invalid(void)
 {
@@ -645,16 +655,11 @@ void test_http_responses_valid(void)
 	struct nrf_provisioning_http_context rest_ctx = {
 		.connect_socket = REST_CLIENT_SCKT_CONNECT,
 	};
-	int mm_cb_ret = 0;
-
-	struct nrf_provisioning_mm_change dummy_cb = {
-		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
-	};
 
 	__cmock_modem_info_init_ExpectAndReturn(0);
-	__cmock_nrf_modem_lib_init_IgnoreAndReturn(0);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
-	nrf_provisioning_http_init(&dummy_cb);
+	nrf_provisioning_http_init(nrf_provisioning_event_cb);
 
 	/* Command request */
 	__cmock_rest_client_request_defaults_set_Ignore();
@@ -668,7 +673,6 @@ void test_http_responses_valid(void)
 	__cmock_rest_client_request_AddCallback(rest_client_request_finished);
 
 	/* Responses request */
-	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
 
@@ -694,17 +698,12 @@ void test_codec_finished_valid(void)
 	struct cdc_context cdc_ctx;
 	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
 	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
-	int mm_cb_ret = 0;
 
-	struct nrf_provisioning_mm_change dummy_cb = {
-		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
-	};
-
-	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
-	nrf_provisioning_codec_init(&dummy_cb);
+	nrf_provisioning_codec_init(nrf_provisioning_event_cb);
 
 	/* One response to 'FINISHED' */
 	cdc_ctx.ipkt = cbor_cmds1_valid;
@@ -733,13 +732,8 @@ void test_codec_priv_keygen_valid(void)
 	struct cdc_context cdc_ctx;
 	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
 	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
-	int mm_cb_ret = 0;
 
-	struct nrf_provisioning_mm_change dummy_cb = {
-		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
-	};
-
-	nrf_provisioning_codec_init(&dummy_cb);
+	nrf_provisioning_codec_init(nrf_provisioning_event_cb);
 
 	/* Two responses to 'KEYGEN'
 	 * 1. Delete the existing
@@ -750,9 +744,10 @@ void test_codec_priv_keygen_valid(void)
 	cdc_ctx.opkt = tx_buff;
 	cdc_ctx.opkt_sz = sizeof(tx_buff);
 
-	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
+	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	__cmock_nrf_provisioning_at_cmd_ExpectAnyArgsAndReturn(513);
 	__cmock_nrf_modem_at_err_ExpectAnyArgsAndReturn(513);
@@ -786,13 +781,8 @@ void test_codec_priv_keygen_rejected_invalid(void)
 	struct cdc_context cdc_ctx;
 	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
 	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
-	int mm_cb_ret = 0;
 
-	struct nrf_provisioning_mm_change dummy_cb = {
-		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
-	};
-
-	nrf_provisioning_codec_init(&dummy_cb);
+	nrf_provisioning_codec_init(nrf_provisioning_event_cb);
 
 	cdc_ctx.ipkt = cbor_cmds2_valid;
 	cdc_ctx.ipkt_sz = sizeof(cbor_cmds2_valid);
@@ -802,6 +792,7 @@ void test_codec_priv_keygen_rejected_invalid(void)
 	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	char at_resp[] = "";
 
@@ -832,13 +823,8 @@ void test_codec_endorsement_keygen_valid(void)
 	struct cdc_context cdc_ctx;
 	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
 	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
-	int mm_cb_ret = 0;
 
-	struct nrf_provisioning_mm_change dummy_cb = {
-		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
-	};
-
-	nrf_provisioning_codec_init(&dummy_cb);
+	nrf_provisioning_codec_init(nrf_provisioning_event_cb);
 
 	cdc_ctx.ipkt = cbor_cmds3_valid;
 	cdc_ctx.ipkt_sz = sizeof(cbor_cmds3_valid);
@@ -848,6 +834,7 @@ void test_codec_endorsement_keygen_valid(void)
 	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	char at_resp[] = "";
 
@@ -875,13 +862,8 @@ void test_codec_endorsement_keygen_invalid(void)
 	struct cdc_context cdc_ctx;
 	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
 	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
-	int mm_cb_ret = 0;
 
-	struct nrf_provisioning_mm_change dummy_cb = {
-		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
-	};
-
-	nrf_provisioning_codec_init(&dummy_cb);
+	nrf_provisioning_codec_init(nrf_provisioning_event_cb);
 
 	cdc_ctx.ipkt = cbor_cmds3_valid;
 	cdc_ctx.ipkt_sz = sizeof(cbor_cmds3_valid);
@@ -891,6 +873,7 @@ void test_codec_endorsement_keygen_invalid(void)
 	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	char at_resp[] = "ERROR";
 
@@ -910,8 +893,9 @@ void test_codec_endorsement_keygen_invalid(void)
 }
 
 /*
- * - Writing a configuration to flash
- * - To see that a configuration is decoded, written and responded to successfully
+ * - Writing a configuration to flash storage
+ * - To see that a configuration command is decoded, written to settings and responded to
+ *   successfully
  * - Encoded output corresponds to the encoded input
  */
 
@@ -920,27 +904,24 @@ void test_codec_config_store1_valid(void)
 	struct cdc_context cdc_ctx;
 	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
 	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
-	int mm_cb_ret = 0;
 
-	struct nrf_provisioning_mm_change dummy_cb = {
-		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
-	};
-
-	nrf_provisioning_codec_init(&dummy_cb);
+	nrf_provisioning_codec_init(nrf_provisioning_event_cb);
 
 	cdc_ctx.ipkt = cbor_cmds4_valid;
 	cdc_ctx.ipkt_sz = sizeof(cbor_cmds4_valid);
 	cdc_ctx.opkt = tx_buff;
 	cdc_ctx.opkt_sz = sizeof(tx_buff);
 
-	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
+	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	nrf_provisioning_codec_setup(&cdc_ctx, at_buff, sizeof(at_buff));
 
 	/* CBOR data is not null terminated */
 	char interval[] = {'9', '9'};
+
 	__cmock_settings_save_one_ExpectAndReturn(
 		"provisioning/interval-sec", interval, sizeof(interval), 0);
 
@@ -953,11 +934,11 @@ void test_codec_config_store1_valid(void)
 	nrf_provisioning_codec_teardown();
 }
 /*
- * - Detect invalid CBOR payload
- * - To see that an invalid encoding is detected
- * - Receives invalid input which results to an error code
+ * - Detect invalid CBOR payload formats
+ * - To see that invalid encoding is detected and handled gracefully
+ * - Receives invalid input which results to an error code:
  *    1. an empty CBOR array
- *    2. no payload
+ *    2. no payload at all
  */
 void test_codec_empty_array_invalid(void)
 {
@@ -992,30 +973,27 @@ void test_codec_empty_array_invalid(void)
 }
 
 /*
- * - Modem is unresponsive
- * - No sense to generate a payload if the modem isn't able to send it
- * - Get an error from modem and return an error code
+ * - Modem is unresponsive during provisioning
+ * - No sense to generate a response payload if the modem isn't able to send it
+ * - Get an error from modem and return an appropriate error code
  */
 void test_codec_modem_unresponsive_invalid(void)
 {
 	struct cdc_context cdc_ctx;
 	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
-	int mm_cb_ret = -EFAULT;
 
-	struct nrf_provisioning_mm_change dummy_cb = {
-		nrf_provisioning_mm_cb_dummy, &mm_cb_ret
-	};
-
-	nrf_provisioning_codec_init(&dummy_cb);
+	nrf_provisioning_codec_init(nrf_provisioning_event_cb);
 
 	cdc_ctx.ipkt = cbor_cmds3_valid;
 	cdc_ctx.ipkt_sz = sizeof(cbor_cmds3_valid);
 	cdc_ctx.opkt = NULL;
 	cdc_ctx.opkt_sz = 0;
 
-	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
+	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
+	__cmock_nrf_provisioning_at_cmd_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	nrf_provisioning_codec_setup(&cdc_ctx, at_buff, sizeof(at_buff));
 
@@ -1028,7 +1006,7 @@ void test_codec_modem_unresponsive_invalid(void)
 
 /*
  * - Trigger provisioning manually before initialization
- * - Provisioning isn't allowed if the module is unitialized
+ * - Provisioning isn't allowed if the module is uninitialized
  * - Call the function and check that the return code is a negative error code
  */
 void test_provisioning_manual_uninitialized_invalid(void)
@@ -1039,30 +1017,20 @@ void test_provisioning_manual_uninitialized_invalid(void)
 }
 
 /*
- * - Run the init without provisioning a new certificate
- * - To see that the init goes through properly
- * - Call the init function directly. Unfortunately we need to make an assumption that the init
- *   hasn't been called in any of the previous tests. Check that the correct key-label is used.
+ * - Run the initialization without provisioning a new certificate
+ * - To see that the init goes through properly when certificate already exists
+ * - Call the init function directly. Check that the correct key-label is used and no new
+ *   certificate is written.
  */
 void test_provisioning_init_wo_cert_change_valid(void)
 {
-	bool exists;
-
-	__cmock_modem_key_mgmt_exists_AddCallback(modem_key_mgmt_exists_true);
-	__cmock_modem_key_mgmt_exists_ExpectAndReturn(CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG,
-		MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN, &exists, 0);
-	__cmock_modem_key_mgmt_exists_IgnoreArg_exists();
-
-	/* No way to check that the correct handler is passed as an argument */
-	__cmock_lte_lc_register_handler_ExpectAnyArgs();
 	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_nrf_modem_lib_init_IgnoreAndReturn(0);
-	__cmock_lte_lc_connect_IgnoreAndReturn(0);
+	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	__cmock_settings_subsys_init_ExpectAndReturn(0);
 	__cmock_settings_register_ExpectAnyArgsAndReturn(0);
 	__cmock_settings_load_subtree_ExpectAndReturn("provisioning", 0);
-	__cmock_settings_load_subtree_ExpectAndReturn("provisioning", 0);
 
 	__cmock_rest_client_request_defaults_set_Ignore();
 	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
@@ -1076,96 +1044,18 @@ void test_provisioning_init_wo_cert_change_valid(void)
 	__cmock_rest_client_request_ExpectAnyArgsAndReturn(0);
 	__cmock_rest_client_request_AddCallback(rest_client_request_auth_hdr_valid);
 
-	int ret = nrf_provisioning_init(NULL, &test_dm);
-	TEST_ASSERT_EQUAL_INT(0, ret);
-	wait_for_stopped();
-
-	__cmock_modem_info_init_StopIgnore();
-	__cmock_nrf_modem_lib_init_StopIgnore();
-	__cmock_lte_lc_connect_StopIgnore();
-}
-
-/*
- * - Trigger provisioning manually after initialization
- * - Should succeed if the module has been initialized
- * - Call the function and check that the return code indicates success
- */
-void test_provisioning_manual_initialized_valid(void)
-{
-	__cmock_modem_key_mgmt_exists_AddCallback(modem_key_mgmt_exists_true);
-	__cmock_modem_key_mgmt_exists_IgnoreAndReturn(0);
-	__cmock_lte_lc_register_handler_Ignore();
-	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_nrf_modem_lib_init_IgnoreAndReturn(0);
-	__cmock_settings_subsys_init_IgnoreAndReturn(0);
-	__cmock_settings_register_IgnoreAndReturn(0);
-	__cmock_settings_load_subtree_IgnoreAndReturn(0);
-
-	__cmock_rest_client_request_defaults_set_Ignore();
-	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
-	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
-
-	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
-	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
-		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
-		strlen(tok_jwt_plain) + 1);
-
-	__cmock_rest_client_request_ExpectAnyArgsAndReturn(0);
-	__cmock_rest_client_request_AddCallback(rest_client_request_auth_hdr_valid);
-	__cmock_date_time_now_IgnoreAndReturn(0);
-
-	/* To make certain init has been called at least once beforehand */
-	int ret = nrf_provisioning_init(NULL, &test_dm);
+	int ret = nrf_provisioning_init(nrf_provisioning_event_cb);
 
 	TEST_ASSERT_EQUAL_INT(0, ret);
 
 	ret = nrf_provisioning_trigger_manually();
-	TEST_ASSERT_EQUAL_INT(0, ret);
-	wait_for_stopped();
-}
-
-/*
- * - Call init twice to switch the callback functions
- * - Switching the callbacks on the fly should be possible
- * - Call the init function twice but with different arguments each time. It shouldn't matter if
- *   init has been called in any previous tests.
- */
-void test_provisioning_init_change_cbs_valid(void)
-{
-	static struct nrf_provisioning_dm_change dm = {
-		.cb = dummy_nrf_provisioning_device_mode_cb,
-		.user_data = NULL
-	};
-	static struct nrf_provisioning_mm_change mm = {
-		.cb = dummy_nrf_provisioning_modem_mode_cb,
-		.user_data = NULL
-	};
-
-	__cmock_modem_key_mgmt_exists_AddCallback(modem_key_mgmt_exists_true);
-	__cmock_modem_key_mgmt_exists_IgnoreAndReturn(0);
-	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_nrf_modem_lib_init_IgnoreAndReturn(0);
-	__cmock_settings_subsys_init_IgnoreAndReturn(0);
-	__cmock_settings_register_IgnoreAndReturn(0);
-	__cmock_settings_load_subtree_IgnoreAndReturn(0);
-
-	/* No way to check that the correct handler is passed as an argument */
-	__cmock_lte_lc_register_handler_Ignore();
-
-	/* To make certain init has been called at least once beforehand */
-	int ret = nrf_provisioning_init(NULL, NULL);
 
 	TEST_ASSERT_EQUAL_INT(0, ret);
 
-	__cmock_settings_load_subtree_StopIgnore();
-	__cmock_settings_register_StopIgnore();
-	__cmock_settings_subsys_init_StopIgnore();
-	__cmock_modem_info_init_StopIgnore();
-	__cmock_nrf_modem_lib_init_StopIgnore();
-	__cmock_modem_key_mgmt_exists_StopIgnore();
-
-	ret = nrf_provisioning_init(&mm, &dm);
-	TEST_ASSERT_EQUAL_INT(0, ret);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_START);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_NO_COMMANDS);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_STOP);
+	wait_for_no_provisioning_event(EXPECT_NO_EVENTS_TIMEOUT_SECONDS);
 }
 
 /*
@@ -1175,22 +1065,15 @@ void test_provisioning_init_change_cbs_valid(void)
  */
 void test_provisioning_task_valid(void)
 {
-	__cmock_modem_key_mgmt_exists_AddCallback(modem_key_mgmt_exists_true);
-	__cmock_modem_key_mgmt_exists_IgnoreAndReturn(0);
-	__cmock_modem_key_mgmt_write_IgnoreAndReturn(0);
 	__cmock_settings_subsys_init_IgnoreAndReturn(0);
 	__cmock_settings_register_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_nrf_modem_lib_init_IgnoreAndReturn(0);
-	__cmock_lte_lc_register_handler_Ignore();
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
 	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_date_time_now_IgnoreAndReturn(0);
-
-	/* To make certain init has been called at least once beforehand */
-	int ret = nrf_provisioning_init(NULL, &test_dm);
-	TEST_ASSERT_EQUAL_INT(0, ret);
+	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	__cmock_rest_client_request_defaults_set_Ignore();
 	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
@@ -1204,35 +1087,32 @@ void test_provisioning_task_valid(void)
 	__cmock_rest_client_request_ExpectAnyArgsAndReturn(0);
 	__cmock_rest_client_request_AddCallback(rest_client_request_auth_hdr_valid);
 
-	ret = nrf_provisioning_trigger_manually();
+	int ret = nrf_provisioning_trigger_manually();
+
 	TEST_ASSERT_EQUAL_INT(0, ret);
 
-	wait_for_stopped();
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_START);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_NO_COMMANDS);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_STOP);
+	wait_for_no_provisioning_event(EXPECT_NO_EVENTS_TIMEOUT_SECONDS);
 }
 
 /*
- * - Server responds with busy but then responds with ok.
- * - To handle the error case
- * - Request gets send twice
+ * - Server responds with busy status but then responds with ok on retry
+ * - To handle the error case and verify retry mechanism works correctly
+ * - Request gets sent twice, first fails with busy, second succeeds
  */
 void test_provisioning_task_server_busy_invalid(void)
 {
-	__cmock_modem_key_mgmt_exists_AddCallback(modem_key_mgmt_exists_true);
-	__cmock_modem_key_mgmt_exists_IgnoreAndReturn(0);
-	__cmock_modem_key_mgmt_write_IgnoreAndReturn(0);
 	__cmock_settings_subsys_init_IgnoreAndReturn(0);
 	__cmock_settings_register_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_nrf_modem_lib_init_IgnoreAndReturn(0);
-	__cmock_lte_lc_register_handler_Ignore();
 	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
 	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_date_time_now_IgnoreAndReturn(0);
-
-	/* To make certain init has been called at least once beforehand */
-	int ret = nrf_provisioning_init(NULL, &test_dm);
-	TEST_ASSERT_EQUAL_INT(0, ret);
+	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	__cmock_rest_client_request_defaults_set_Ignore();
 	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
@@ -1253,73 +1133,387 @@ void test_provisioning_task_server_busy_invalid(void)
 	__cmock_rest_client_request_ExpectAnyArgsAndReturn(-EBUSY);
 	__cmock_rest_client_request_ExpectAnyArgsAndReturn(0);
 
+	int ret = nrf_provisioning_trigger_manually();
+
+	TEST_ASSERT_EQUAL_INT(0, ret);
+
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_START);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_FAILED);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_STOP);
+	wait_for_no_provisioning_event(EXPECT_NO_EVENTS_TIMEOUT_SECONDS);
+
 	ret = nrf_provisioning_trigger_manually();
 	TEST_ASSERT_EQUAL_INT(0, ret);
-	wait_for_stopped();
-	wait_for_stopped();
+
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_START);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_NO_COMMANDS);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_STOP);
+	wait_for_no_provisioning_event(EXPECT_NO_EVENTS_TIMEOUT_SECONDS);
 }
 
-static int time_now(int64_t *unix_time_ms, int cmock_num_calls)
+static int rest_client_request_device_not_claimed(struct rest_client_req_context *req_ctx,
+						  struct rest_client_resp_context *resp_ctx,
+						  int cmock_num_calls)
 {
-	*unix_time_ms = (int64_t)time(NULL);
-	return 0;
+	resp_ctx->http_status_code = 403; /* Unauthorized - device not claimed */
+	return -EACCES;
+}
+
+static int rest_client_request_too_many_commands(struct rest_client_req_context *req_ctx,
+						 struct rest_client_resp_context *resp_ctx,
+						 int cmock_num_calls)
+{
+	return -ENOMEM;
+}
+
+static int rest_client_request_wrong_root_ca(struct rest_client_req_context *req_ctx,
+					     struct rest_client_resp_context *resp_ctx,
+					     int cmock_num_calls)
+{
+	return -ECONNREFUSED;
+}
+
+static int rest_client_request_timeout(struct rest_client_req_context *req_ctx,
+				       struct rest_client_resp_context *resp_ctx,
+				       int cmock_num_calls)
+{
+	return -ETIMEDOUT;
+}
+
+static int rest_client_request_with_commands(struct rest_client_req_context *req_ctx,
+					     struct rest_client_resp_context *resp_ctx,
+					     int cmock_num_calls)
+{
+	if (cmock_num_calls == 0) {
+		/* First call - return commands */
+		resp_ctx->response = req_ctx->resp_buff;
+		memcpy(resp_ctx->response, cbor_cmds1_valid, sizeof(cbor_cmds1_valid));
+		resp_ctx->response_len = sizeof(cbor_cmds1_valid);
+		resp_ctx->http_status_code = NRF_PROVISIONING_HTTP_STATUS_OK;
+		return 1; /* Positive return indicates commands processed */
+	}
+
+	/* Second call - responses request */
+	resp_ctx->http_status_code = NRF_PROVISIONING_HTTP_STATUS_OK;
+	return 0; /* Success */
 }
 
 /*
- * - Get when next provisioning should be executed
- * - The client should follow the interval configured
- * - Call the function and check that the returned interval is the assumed one. The compile time
- *   configuration is to be used as we are not reading the value from flash
+ * - Test NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED
+ * - Verify that device not claimed error triggers the correct event
+ * - Mock REST client to return 403 Unauthorized to trigger device not claimed event
  */
-void test_provisioning_schedule_valid(void)
+void test_provisioning_event_failed_device_not_claimed(void)
 {
-	/* To avoid being entangled to other tests let's assume that the function has
-	 * never been called earlier. If that's not the case let's just ignore the first invocation.
-	 */
-	__cmock_date_time_now_IgnoreAndReturn(0);
-	(void)nrf_provisioning_schedule();
+	__cmock_settings_subsys_init_IgnoreAndReturn(0);
+	__cmock_settings_register_IgnoreAndReturn(0);
+	__cmock_settings_load_subtree_IgnoreAndReturn(0);
+	__cmock_modem_info_init_IgnoreAndReturn(0);
+	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
+	__cmock_modem_attest_token_get_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_attest_token_free_ExpectAnyArgs();
 
-	__cmock_date_time_now_StopIgnore();
+	__cmock_rest_client_request_defaults_set_Ignore();
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
-	__cmock_date_time_now_AddCallback(time_now);
-	__cmock_date_time_now_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
+		strlen(tok_jwt_plain) + 1);
 
-	int ret = nrf_provisioning_schedule();
+	__cmock_rest_client_request_ExpectAnyArgsAndReturn(-EACCES);
+	__cmock_rest_client_request_AddCallback(rest_client_request_device_not_claimed);
 
-	/* Can't have exact match due to the spread factor */
-	TEST_ASSERT_GREATER_OR_EQUAL(0, ret);
-	TEST_ASSERT_LESS_OR_EQUAL_INT(
-		CONFIG_NRF_PROVISIONING_INTERVAL_S + CONFIG_NRF_PROVISIONING_SPREAD_S, ret);
+	int ret = nrf_provisioning_trigger_manually();
+
+	TEST_ASSERT_EQUAL_INT(0, ret);
+
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_START);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_STOP);
+	wait_for_no_provisioning_event(EXPECT_NO_EVENTS_TIMEOUT_SECONDS);
 }
 
 /*
- * - Get when next provisioning should be executed when network time is not available
- * - It's not quaranteed that network provides the time information
- * - Call the function and check that the returned interval is the assumed one. The compile time
- *   configuration is to be used as we are not reading the value from flash. Internals are
- *   configured in a way that it looks like the time information is not available.
+ * - Test NRF_PROVISIONING_EVENT_FAILED_TOO_MANY_COMMANDS
+ * - Verify that too many commands error triggers the correct event
+ * - Mock REST client to return -ENOMEM to trigger too many commands event
  */
-void test_provisioning_schedule_no_nw_time_valid(void)
+void test_provisioning_event_failed_too_many_commands(void)
 {
-	/* To avoid being entangled to other tests let's assume that the function has
-	 * never been called earlier. If that's not the case let's just ignore the first invocation.
-	 */
-	__cmock_date_time_now_AddCallback(time_now);
-	__cmock_date_time_now_IgnoreAndReturn(0);
-	(void)nrf_provisioning_schedule();
+	__cmock_settings_subsys_init_IgnoreAndReturn(0);
+	__cmock_settings_register_IgnoreAndReturn(0);
+	__cmock_settings_load_subtree_IgnoreAndReturn(0);
+	__cmock_modem_info_init_IgnoreAndReturn(0);
+	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
-	__cmock_date_time_now_StopIgnore();
+	__cmock_rest_client_request_defaults_set_Ignore();
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
-	__cmock_date_time_now_ExpectAnyArgsAndReturn(-1);
+	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
+		strlen(tok_jwt_plain) + 1);
 
-	int ret = nrf_provisioning_schedule();
+	__cmock_rest_client_request_ExpectAnyArgsAndReturn(-ENOMEM);
+	__cmock_rest_client_request_AddCallback(rest_client_request_too_many_commands);
 
-	/* Can't have exact match due to the spread factor */
-	TEST_ASSERT_GREATER_THAN_INT(0, ret);
-	TEST_ASSERT_LESS_OR_EQUAL_INT(
-		CONFIG_NRF_PROVISIONING_INTERVAL_S + CONFIG_NRF_PROVISIONING_SPREAD_S, ret);
+	int ret = nrf_provisioning_trigger_manually();
+
+	TEST_ASSERT_EQUAL_INT(0, ret);
+
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_START);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_FAILED_TOO_MANY_COMMANDS);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_STOP);
+	wait_for_no_provisioning_event(EXPECT_NO_EVENTS_TIMEOUT_SECONDS);
 }
 
+/*
+ * - Test NRF_PROVISIONING_EVENT_FAILED_WRONG_ROOT_CA
+ * - Verify that wrong root CA error triggers the correct event
+ * - Mock REST client to return -ECONNREFUSED to trigger wrong root CA event
+ */
+void test_provisioning_event_failed_wrong_root_ca(void)
+{
+	__cmock_settings_subsys_init_IgnoreAndReturn(0);
+	__cmock_settings_register_IgnoreAndReturn(0);
+	__cmock_settings_load_subtree_IgnoreAndReturn(0);
+	__cmock_modem_info_init_IgnoreAndReturn(0);
+	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
+
+	__cmock_rest_client_request_defaults_set_Ignore();
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
+
+	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
+		strlen(tok_jwt_plain) + 1);
+
+	__cmock_rest_client_request_ExpectAnyArgsAndReturn(-ECONNREFUSED);
+	__cmock_rest_client_request_AddCallback(rest_client_request_wrong_root_ca);
+
+	int ret = nrf_provisioning_trigger_manually();
+
+	TEST_ASSERT_EQUAL_INT(0, ret);
+
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_START);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_FAILED_WRONG_ROOT_CA);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_STOP);
+	wait_for_no_provisioning_event(EXPECT_NO_EVENTS_TIMEOUT_SECONDS);
+}
+
+/*
+ * - Test NRF_PROVISIONING_EVENT_FAILED_NO_VALID_DATETIME
+ * - Verify that no valid datetime error triggers the correct event
+ * - Mock date_time_is_valid to return false to trigger no valid datetime event
+ */
+void test_provisioning_event_failed_no_valid_datetime(void)
+{
+	__cmock_settings_subsys_init_IgnoreAndReturn(0);
+	__cmock_settings_register_IgnoreAndReturn(0);
+	__cmock_settings_load_subtree_IgnoreAndReturn(0);
+	__cmock_modem_info_init_IgnoreAndReturn(0);
+	__cmock_date_time_is_valid_IgnoreAndReturn(0); /* Return false - no valid datetime */
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
+
+	int ret = nrf_provisioning_trigger_manually();
+
+	TEST_ASSERT_EQUAL_INT(0, ret);
+
+
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_START);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_FAILED_NO_VALID_DATETIME);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_STOP);
+	wait_for_no_provisioning_event(EXPECT_NO_EVENTS_TIMEOUT_SECONDS);
+}
+
+/*
+ * - Test NRF_PROVISIONING_EVENT_FAILED with timeout
+ * - Verify that timeout error triggers the correct failed event
+ * - Mock REST client to return -ETIMEDOUT to trigger timeout failure event
+ */
+void test_provisioning_event_failed_timeout(void)
+{
+	__cmock_settings_subsys_init_IgnoreAndReturn(0);
+	__cmock_settings_register_IgnoreAndReturn(0);
+	__cmock_settings_load_subtree_IgnoreAndReturn(0);
+	__cmock_modem_info_init_IgnoreAndReturn(0);
+	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
+
+	__cmock_rest_client_request_defaults_set_Ignore();
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
+
+	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
+		strlen(tok_jwt_plain) + 1);
+
+	__cmock_rest_client_request_ExpectAnyArgsAndReturn(-ETIMEDOUT);
+	__cmock_rest_client_request_AddCallback(rest_client_request_timeout);
+
+	int ret = nrf_provisioning_trigger_manually();
+
+	TEST_ASSERT_EQUAL_INT(0, ret);
+
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_START);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_FAILED);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_STOP);
+	wait_for_no_provisioning_event(EXPECT_NO_EVENTS_TIMEOUT_SECONDS);
+}
+
+/*
+ * - Test NRF_PROVISIONING_EVENT_DONE
+ * - Verify that successful provisioning with commands triggers the done event
+ * - Mock REST client to return positive value indicating commands were processed
+ */
+void test_provisioning_event_done(void)
+{
+	__cmock_settings_subsys_init_IgnoreAndReturn(0);
+	__cmock_settings_register_IgnoreAndReturn(0);
+	__cmock_settings_load_subtree_IgnoreAndReturn(0);
+	__cmock_modem_info_init_IgnoreAndReturn(0);
+	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
+
+	__cmock_rest_client_request_defaults_set_Ignore();
+	__cmock_modem_info_get_fw_version_IgnoreAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
+
+	/* Allow multiple JWT generations - one for command request, one for response */
+	__cmock_nrf_provisioning_jwt_generate_IgnoreAndReturn(0);
+	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
+		strlen(tok_jwt_plain) + 1);
+
+	/* Mock the codec functions for processing commands */
+	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
+	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
+
+	/* Set up REST client request expectations - will be called twice (commands + responses) */
+	__cmock_rest_client_request_ExpectAnyArgsAndReturn(1);
+	__cmock_rest_client_request_ExpectAnyArgsAndReturn(0);
+	__cmock_rest_client_request_AddCallback(rest_client_request_with_commands);
+
+	int ret = nrf_provisioning_trigger_manually();
+
+	TEST_ASSERT_EQUAL_INT(0, ret);
+
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_START);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_DONE);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_STOP);
+	wait_for_no_provisioning_event(EXPECT_NO_EVENTS_TIMEOUT_SECONDS);
+}
+
+/*
+ * - Test NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED and NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED
+ * - Verify that LTE deactivation/activation events are triggered during AT command processing
+ * - Process commands that require LTE mode changes
+ */
+void test_provisioning_event_lte_deactivation_activation(void)
+{
+	struct cdc_context cdc_ctx;
+	char at_buff[CONFIG_NRF_PROVISIONING_CODEC_AT_CMD_LEN];
+	char tx_buff[CONFIG_NRF_PROVISIONING_RX_BUF_SZ];
+
+	nrf_provisioning_codec_init(nrf_provisioning_event_cb);
+
+	/* Use AT command that requires LTE state change */
+	cdc_ctx.ipkt = cbor_cmds3_valid;  /* KEYGEN command */
+	cdc_ctx.ipkt_sz = sizeof(cbor_cmds3_valid);
+	cdc_ctx.opkt = tx_buff;
+	cdc_ctx.opkt_sz = sizeof(tx_buff);
+
+	/* Mock LTE function mode to return NORMAL (online) to trigger deactivation */
+	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
+	enum lte_lc_func_mode online_mode = LTE_LC_FUNC_MODE_NORMAL;
+
+	__cmock_lte_lc_func_mode_get_ReturnThruPtr_mode(&online_mode);
+
+	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(true);
+	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
+
+	/* Mock the LTE deactivation event notification */
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_ExpectAndReturn(
+		CONFIG_NRF_PROVISIONING_MODEM_STATE_WAIT_TIMEOUT_SECONDS,
+		NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED,
+		nrf_provisioning_event_cb, 0);
+
+	/* Mock the AT command execution */
+	char at_resp[] = "";
+
+	__cmock_nrf_provisioning_at_cmd_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_at_cmd_ReturnArrayThruPtr_resp(at_resp, sizeof(at_resp));
+
+	/* Mock the LTE activation event notification */
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_ExpectAndReturn(
+		CONFIG_NRF_PROVISIONING_MODEM_STATE_WAIT_TIMEOUT_SECONDS,
+		NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED,
+		nrf_provisioning_event_cb, 0);
+
+	nrf_provisioning_codec_setup(&cdc_ctx, at_buff, sizeof(at_buff));
+
+	int ret = nrf_provisioning_codec_process_commands();
+
+	TEST_ASSERT_EQUAL_INT(0, ret);
+
+	nrf_provisioning_codec_teardown();
+}
+
+/*
+ * - Test NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED with attestation token
+ * - Verify that device not claimed error with token provides the token data
+ * - Mock REST client to return 403 and modem_attest_token_get to provide token
+ */
+void test_provisioning_event_failed_device_not_claimed_with_token(void)
+{
+	struct nrf_attestation_token test_token = {
+		.attest = "test_attest_string",
+		.attest_sz = 18,
+		.cose = "test_cose_string",
+		.cose_sz = 16
+	};
+
+	__cmock_settings_subsys_init_IgnoreAndReturn(0);
+	__cmock_settings_register_IgnoreAndReturn(0);
+	__cmock_settings_load_subtree_IgnoreAndReturn(0);
+	__cmock_modem_info_init_IgnoreAndReturn(0);
+	__cmock_date_time_is_valid_IgnoreAndReturn(1);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
+
+	__cmock_rest_client_request_defaults_set_Ignore();
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
+
+	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
+		strlen(tok_jwt_plain) + 1);
+
+	/* Mock attestation token retrieval */
+	__cmock_modem_attest_token_get_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_attest_token_get_ReturnMemThruPtr_token(&test_token, sizeof(test_token));
+	__cmock_modem_attest_token_free_ExpectAnyArgs();
+
+	__cmock_rest_client_request_ExpectAnyArgsAndReturn(-EACCES);
+	__cmock_rest_client_request_AddCallback(rest_client_request_device_not_claimed);
+
+	int ret = nrf_provisioning_trigger_manually();
+
+	TEST_ASSERT_EQUAL_INT(0, ret);
+
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_START);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_STOP);
+	wait_for_no_provisioning_event(EXPECT_NO_EVENTS_TIMEOUT_SECONDS);
+}
 
 extern int unity_main(void);
 

@@ -9,17 +9,16 @@ common:
     - ci_tests_benchmarks_current_consumption
 tests:
   benchmarks.power_consumption.counter:
-    extra_args:
-      - idle_counter_CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING=y
     harness: pytest
     harness_config:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_fast_counter_and_s2ram_with_clock_control"
 
-  benchmarks.power_consumption.counter.remote_gd_freq_switching:
+  benchmarks.power_consumption.counter.mcuboot:
     extra_args:
-      - remote_CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING=y
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_counter/boards/nrf54h20dk_nrf54h20_cpuapp.overlay"
     harness: pytest
     harness_config:
       fixture: ppk_power_measure

@@ -452,8 +452,6 @@ static int modem_init(void)
 #if defined(CONFIG_GNSS_SAMPLE_LTE_ON_DEMAND)
 	lte_lc_register_handler(lte_lc_event_handler);
 #elif !defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE)
-	lte_lc_psm_req(true);
-
 	LOG_INF("Connecting to LTE network");
 
 	if (lte_lc_connect() != 0) {

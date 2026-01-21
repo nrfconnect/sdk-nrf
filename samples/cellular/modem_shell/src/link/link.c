@@ -15,7 +15,6 @@
 
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
-#include <modem/pdn.h>
 
 #include <dk_buttons_and_leds.h>
 
@@ -116,7 +115,7 @@ static void link_api_activate_mosh_contexts(
 	for (i = 0; i < size; i++) {
 		if (pdn_act_status_arr[i].activated == false &&
 		    link_shell_pdn_info_is_in_list(pdn_act_status_arr[i].cid)) {
-			ret = pdn_activate(pdn_act_status_arr[i].cid, &esm, NULL);
+			ret = lte_lc_pdn_activate(pdn_act_status_arr[i].cid, &esm, NULL);
 			if (ret) {
 				mosh_warn(
 					"Cannot reactivate ctx with CID #%d, err: %d, removing from the list",
@@ -244,7 +243,6 @@ void link_init(void)
 	link_shell_pdn_init();
 
 	lte_lc_register_handler(link_ind_handler);
-	(void)lte_lc_modem_events_enable();
 
 	if (link_sett_is_dnsaddr_enabled()) {
 		(void)link_setdnsaddr(link_sett_dnsaddr_ip_get());
@@ -270,6 +268,60 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		 */
 		mosh_print("TAU pre warning: time %lld", evt->time);
 		break;
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+	case LTE_LC_EVT_ENV_EVAL_RESULT: {
+		struct mapping_tbl_item const enveval_status_strs[] = {
+			{ 0, "successful" },
+			{ 5, "failed, aborted because of higher priority operation" },
+			{ 7, "failed, unspecified" },
+			{ -1, NULL }
+		};
+		struct mapping_tbl_item const enveval_energy_est_strs[] = {
+			{ LTE_LC_ENERGY_CONSUMPTION_EXCESSIVE,
+			"bad conditions, excessive energy consumption" },
+			{ LTE_LC_ENERGY_CONSUMPTION_INCREASED,
+			"poor conditions, slightly increased energy consumption" },
+			{ LTE_LC_ENERGY_CONSUMPTION_NORMAL,
+			"normal conditions" },
+			{ LTE_LC_ENERGY_CONSUMPTION_REDUCED,
+			"good conditions, slightly reduced energy consumption" },
+			{ LTE_LC_ENERGY_CONSUMPTION_EFFICIENT,
+			"excellent conditions, energy efficient transmission" },
+			{ -1, NULL }
+		};
+		const struct lte_lc_env_eval_result *result = &evt->env_eval_result;
+
+		mosh_print("Environment evaluation completed with status: %d (%s)",
+			   result->status,
+			   link_shell_map_to_string(enveval_status_strs, result->status, snum));
+		mosh_print("Number of PLMN results: %u", result->result_count);
+
+		for (int i = 0; i < result->result_count; i++) {
+			const struct lte_lc_conn_eval_params *plmn = &result->results[i];
+
+			mosh_print("PLMN %u:", i + 1);
+			mosh_print("  MCC: %03d, MNC: %02d", plmn->mcc, plmn->mnc);
+			mosh_print("  Energy estimate: %d (%s)",
+				   plmn->energy_estimate,
+				   link_shell_map_to_string(enveval_energy_est_strs,
+							    plmn->energy_estimate, snum));
+			mosh_print("  Cell ID: %d", plmn->cell_id);
+			/* rrc_state is ignored because it's always 0 */
+			mosh_print("  RSRP: %d dBm, RSRQ: %.1f dB, SNR: %d dB",
+				   RSRP_IDX_TO_DBM(plmn->rsrp), (double)RSRQ_IDX_TO_DB(plmn->rsrq),
+				   SNR_IDX_TO_DB(plmn->snr));
+			mosh_print("  EARFCN: %d, Band: %d",
+				   plmn->earfcn, plmn->band);
+			mosh_print("  CE level: %d, TX power: %d dBm",
+				   plmn->ce_level, plmn->tx_power);
+			/* tau_trig is ignored because it's always 1 */
+			mosh_print("  TX rep: %d, RX rep: %d", plmn->tx_rep, plmn->rx_rep);
+			mosh_print("  DL pathloss: %d, Phy cell ID: %d",
+				   plmn->dl_pathloss, plmn->phy_cid);
+		}
+		break;
+	}
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 	case LTE_LC_EVT_NEIGHBOR_CELL_MEAS: {
 		int i;
 		struct lte_lc_cells_info cells = evt->cells_info;
@@ -432,7 +484,7 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 
 		len = snprintf(
 			log_buf, sizeof(log_buf),
-			"eDRX parameter update: eDRX: %f, PTW: %f",
+			"eDRX parameter update: eDRX: %.2f, PTW: %.2f",
 			(double)evt->edrx_cfg.edrx, (double)evt->edrx_cfg.ptw);
 		if (len > 0) {
 			mosh_print("%s", log_buf);
@@ -462,11 +514,11 @@ static int link_default_pdp_context_set(void)
 	int ret;
 
 	if (link_sett_is_defcont_enabled() == true) {
-		ret = pdn_ctx_configure(0, link_sett_defcont_apn_get(),
-					link_sett_defcont_pdn_family_get(),
-					NULL);
+		ret = lte_lc_pdn_ctx_configure(0, link_sett_defcont_apn_get(),
+					       link_sett_defcont_pdn_family_get(),
+					       NULL);
 		if (ret) {
-			mosh_error("pdn_ctx_configure returned err %d", ret);
+			mosh_error("lte_lc_pdn_ctx_configure returned err %d", ret);
 			return ret;
 		}
 	}
@@ -478,12 +530,12 @@ static int link_default_pdp_context_auth_set(void)
 	int ret;
 
 	if (link_sett_is_defcontauth_enabled() == true) {
-		ret = pdn_ctx_auth_set(0, link_sett_defcontauth_prot_get(),
-				       link_sett_defcontauth_username_get(),
-				       link_sett_defcontauth_password_get());
+		ret = lte_lc_pdn_ctx_auth_set(0, link_sett_defcontauth_prot_get(),
+					      link_sett_defcontauth_username_get(),
+					      link_sett_defcontauth_password_get());
 
 		if (ret) {
-			mosh_error("pdn_ctx_auth_set returned err  %d", ret);
+			mosh_error("lte_lc_pdn_ctx_auth_set returned err  %d", ret);
 			return ret;
 		}
 	}

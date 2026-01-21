@@ -165,15 +165,15 @@ config USB_DEVICE_PID
 	  and passes them as defaults to the USB subsystem configuration.
 
 choice USB_DEVICE_LOG_LEVEL_CHOICE
-	default USB_DEVICE_LOG_LEVEL_OFF
+	default USB_DEVICE_LOG_LEVEL_ERR
 	help
-	  Disable USB device logs to avoid flooding logs.
+	  Use USB device error log level to avoid flooding logs.
 endchoice
 
 choice USB_DRIVER_LOG_LEVEL_CHOICE
-	default USB_DRIVER_LOG_LEVEL_OFF
+	default USB_DRIVER_LOG_LEVEL_ERR
 	help
-	  Disable USB driver logs to avoid flooding logs.
+	  Use USB driver error log level to avoid flooding logs.
 endchoice
 
 choice USB_HID_LOG_LEVEL_CHOICE

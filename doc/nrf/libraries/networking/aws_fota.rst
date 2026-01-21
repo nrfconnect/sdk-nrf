@@ -57,14 +57,14 @@ Creating a FOTA job
 
 #. Click :guilabel:`Objects` to go back to the bucket.
 #. Click :guilabel:`Upload` and :guilabel:`Add files`.
-#. Select the file :file:`app_update.bin` (located in the :file:`zephyr` subfolder of your build directory).
+#. Select the file :file:`build/<app_name>/zephyr/zephyr.signed.bin` (located in the :file:`zephyr` subfolder of your build directory).
 #. Click :guilabel:`Upload` and then :guilabel:`Close`.
-#. Click the uploaded image file :file:`app_update.bin` and copy the *Object URL* without the *https://* prefix and folder path.
+#. Click the uploaded image file :file:`build/<app_name>/zephyr/zephyr.signed.bin` and copy the *Object URL* without the *https://* prefix and folder path.
 #. Create a text file (job document) with content as in the snippet, replacing the following data:
 
      * *protocol* with either ``http`` or ``https``.
      * *host_url* with the *Object URL* copied in the previous step (for example, ``examplebucket.s3.eu-central-1.amazonaws.com``).
-     * *file_path* with the path and file name (for example, ``app_update.bin``).
+     * *file_path* with the path and file name (for example, :file:`build/<app_name>/zephyr/zephyr.signed.bin`).
 
    .. parsed-literal::
       :class: highlight

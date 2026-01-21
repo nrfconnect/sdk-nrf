@@ -66,6 +66,6 @@ config EMDS_CHUNK_PREPARATION_TIME_US
 
 module = EMDS
 module-str = emergency data storage
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # EMDS

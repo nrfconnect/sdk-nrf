@@ -11,6 +11,7 @@ menuconfig MODEM_ANTENNA
 	default y if BOARD_NRF9161DK_NRF9161_NS
 	default y if BOARD_NRF9151DK_NRF9151_NS
 	default y if BOARD_THINGY91_NRF9160_NS
+	default y if BOARD_TPM530MEVK_TPM530M_NS
 
 if MODEM_ANTENNA
 
@@ -36,6 +37,10 @@ config MODEM_ANTENNA_AT_MAGPIO
 
 config MODEM_ANTENNA_AT_COEX0
 	string "AT%XCOEX0 command"
+	# TPM530M EVK does not have an onboard antenna and LNA needs to be always enabled.
+	# The next line is needed for correct configuration when CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL
+	# is enabled.
+	default "AT\%XCOEX0=1,1,1565,1586" if BOARD_TPM530MEVK_TPM530M_NS
 	default "AT\%XCOEX0=1,1,1565,1586" if MODEM_ANTENNA_GNSS_ONBOARD
 	default "AT\%XCOEX0" if MODEM_ANTENNA_GNSS_EXTERNAL
 	help
@@ -75,6 +80,6 @@ config MODEM_ANTENNA_AT_MIPIRFFECTRL_PWROFF
 module=MODEM_ANTENNA
 module-dep=LOG
 module-str=Modem antenna
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # MODEM_ANTENNA

@@ -16,18 +16,18 @@ Sources
 
 The following files contain the DTS and JSON format definitions for configuring BICR:
 
-* `DTS format definition`_: ``nordic,nrf-bicr.yaml``.
-* `JSON format definition`_: ``bicr-schema.json`` (from the |NCS| v3.0.0).
+* `DTS format definition`_: :file:`nordic,nrf-bicr.yaml`.
+* `JSON format definition`_: :file:`bicr-schema.json` (from the |NCS| v3.0.0).
 
 For examples of BICR configurations using both formats, see the following nRF54H20 DK board files:
 
-* `BICR configuration example in DTS format`_, ``nrf54h20dk_bicr.dtsi`` (v2.9.0).
-* `BICR configuration example in JSON format`_, ``bicr.json`` (v3.0.0).
+* `BICR configuration example in DTS format`_, :file:`nrf54h20dk_bicr.dtsi` (v2.9.0).
+* `BICR configuration example in JSON format`_, :file:`bicr.json` (v3.0.0).
 
 Matching DTS configs to JSON
 ****************************
 
-This chapter dissects the ``nrf54h20dk_bicr.dtsi`` DTS BICR configuration for the nRF54H20 DK and explains how to port the different parts to JSON.
+This chapter dissects the :file:`nrf54h20dk_bicr.dtsi` DTS BICR configuration for the nRF54H20 DK and explains how to port the different parts to JSON.
 
 compatible and reg
 ==================

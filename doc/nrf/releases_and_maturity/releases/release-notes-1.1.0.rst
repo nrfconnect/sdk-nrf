@@ -43,7 +43,7 @@ Supported modem firmware
 * mfw_nrf9160_1.1.0
 
 Use the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 
 Supported boards
@@ -195,7 +195,7 @@ Updated libraries
   * Updated to use a dedicated workqueue instead of the system workqueue.
   * Miscellaneous fixes and improvements.
 
-* :ref:`at_cmd_parser_readme`:
+* AT command parser:
 
   * Refactored the library.
 
@@ -280,7 +280,7 @@ Updated libraries
 
   * Added support for boards with LED or button pins on different GPIO ports.
 
-* :ref:`lib_download_client`:
+* Download client:
 
   * Added support for specifying an access point name for the packet data network.
   * Moved the header file to ``include/net``.

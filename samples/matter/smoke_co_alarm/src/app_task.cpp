@@ -11,9 +11,9 @@
 #include "board/board.h"
 #include "lib/core/CHIPError.h"
 #include "lib/support/CodeUtils.h"
+#include "clusters/identify.h"
 
 #include <app-common/zap-generated/attributes/Accessors.h>
-#include <app/clusters/identify-server/identify-server.h>
 #include <app/clusters/smoke-co-alarm-server/SmokeCOTestEventTriggerHandler.h>
 #include <app/clusters/smoke-co-alarm-server/smoke-co-alarm-server.h>
 #include <setup_payload/OnboardingCodesUtil.h>
@@ -45,24 +45,15 @@ static std::array<Clusters::SmokeCoAlarm::ExpressedStateEnum, SmokeCoAlarmServer
 			   Clusters::SmokeCoAlarm::ExpressedStateEnum::kInterconnectSmoke,
 			   Clusters::SmokeCoAlarm::ExpressedStateEnum::kInterconnectCO };
 
-Identify sIdentify = { AppTask::Instance().kSmokeCoAlarmEndpointId, AppTask::IdentifyStartHandler,
-		       AppTask::IdentifyStopHandler, Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator };
+constexpr chip::EndpointId kWiredPowerSourceEndpointId = 0;
+constexpr chip::EndpointId kBatteryPowerSourceEndpointId = 1;
+
+Nrf::Matter::IdentifyCluster sIdentifyCluster(AppTask::kSmokeCoAlarmEndpointId);
 
 #ifdef CONFIG_CHIP_ICD_UAT_SUPPORT
 #define UAT_BUTTON_MASK DK_BTN3_MSK
 #endif
 } /* namespace */
-
-void AppTask::IdentifyStartHandler(Identify *)
-{
-	Nrf::PostTask(
-		[] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms); });
-}
-
-void AppTask::IdentifyStopHandler(Identify *)
-{
-	Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false); });
-}
 
 void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
 {
@@ -77,7 +68,7 @@ void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChan
 void AppTask::UpdatedExpressedLedState()
 {
 	Clusters::SmokeCoAlarm::ExpressedStateEnum state;
-	SmokeCoAlarmServer::Instance().GetExpressedState(kSmokeCoAlarmEndpointId, state);
+	SmokeCoAlarmServer::Instance().GetExpressedState(AppTask::kSmokeCoAlarmEndpointId, state);
 
 	if (mCurrentState == state) {
 		return;
@@ -161,91 +152,72 @@ bool HandleSmokeCOTestEventTrigger(uint64_t eventTrigger)
 	switch (trigger) {
 	case SmokeCOTrigger::kForceSmokeCritical:
 		LOG_INF("Triggered smoke alarm with critical severity");
-		VerifyOrReturnValue(
-			SmokeCoAlarmServer::Instance().SetSmokeState(AppTask::Instance().kSmokeCoAlarmEndpointId,
-								     Clusters::SmokeCoAlarm::AlarmStateEnum::kCritical),
-			false);
-		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::Instance().kSmokeCoAlarmEndpointId,
-									   sPriorityOrder);
+		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetSmokeState(
+					    AppTask::kSmokeCoAlarmEndpointId, Clusters::SmokeCoAlarm::AlarmStateEnum::kCritical),
+				    false);
+		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kForceCOCritical:
 		LOG_INF("Triggered CO alarm with critical severity");
-		VerifyOrReturnValue(
-			SmokeCoAlarmServer::Instance().SetCOState(AppTask::Instance().kSmokeCoAlarmEndpointId,
-								  Clusters::SmokeCoAlarm::AlarmStateEnum::kCritical),
-			false);
-		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::Instance().kSmokeCoAlarmEndpointId,
-									   sPriorityOrder);
+		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetCOState(
+					    AppTask::kSmokeCoAlarmEndpointId, Clusters::SmokeCoAlarm::AlarmStateEnum::kCritical),
+				    false);
+		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kForceMalfunction:
 		LOG_INF("Triggered hardware fault alert");
-		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetHardwareFaultAlert(
-					    AppTask::Instance().kSmokeCoAlarmEndpointId, true),
+		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetHardwareFaultAlert(AppTask::kSmokeCoAlarmEndpointId, true),
 				    false);
-		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::Instance().kSmokeCoAlarmEndpointId,
-									   sPriorityOrder);
+		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kForceLowBatteryCritical:
 		LOG_INF("Triggered low battery alert with critical severity");
 		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetBatteryAlert(
-					    AppTask::Instance().kSmokeCoAlarmEndpointId,
-					    Clusters::SmokeCoAlarm::AlarmStateEnum::kCritical),
+					    AppTask::kSmokeCoAlarmEndpointId, Clusters::SmokeCoAlarm::AlarmStateEnum::kCritical),
 				    false);
-		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::Instance().kSmokeCoAlarmEndpointId,
-									   sPriorityOrder);
+		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kForceEndOfLife:
 		LOG_INF("Triggered end of service alert");
 		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetEndOfServiceAlert(
-					    AppTask::Instance().kSmokeCoAlarmEndpointId,
+					    AppTask::kSmokeCoAlarmEndpointId,
 					    Clusters::SmokeCoAlarm::EndOfServiceEnum::kExpired),
 				    false);
-		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::Instance().kSmokeCoAlarmEndpointId,
-									   sPriorityOrder);
+		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kClearSmoke:
 		LOG_INF("Triggered end of smoke alarm action");
-		VerifyOrReturnValue(
-			SmokeCoAlarmServer::Instance().SetSmokeState(AppTask::Instance().kSmokeCoAlarmEndpointId,
-								     Clusters::SmokeCoAlarm::AlarmStateEnum::kNormal),
-			false);
-		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::Instance().kSmokeCoAlarmEndpointId,
-									   sPriorityOrder);
+		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetSmokeState(
+					    AppTask::kSmokeCoAlarmEndpointId, Clusters::SmokeCoAlarm::AlarmStateEnum::kNormal),
+				    false);
+		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kClearCO:
 		LOG_INF("Triggered end of CO alarm action");
-		VerifyOrReturnValue(
-			SmokeCoAlarmServer::Instance().SetCOState(AppTask::Instance().kSmokeCoAlarmEndpointId,
-								  Clusters::SmokeCoAlarm::AlarmStateEnum::kNormal),
-			false);
-		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::Instance().kSmokeCoAlarmEndpointId,
-									   sPriorityOrder);
+		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetCOState(
+					    AppTask::kSmokeCoAlarmEndpointId, Clusters::SmokeCoAlarm::AlarmStateEnum::kNormal),
+				    false);
+		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kClearMalfunction:
 		LOG_INF("Triggered end of hardware fault alert action");
-		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetHardwareFaultAlert(
-					    AppTask::Instance().kSmokeCoAlarmEndpointId, false),
-				    false);
-		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::Instance().kSmokeCoAlarmEndpointId,
-									   sPriorityOrder);
+		VerifyOrReturnValue(
+			SmokeCoAlarmServer::Instance().SetHardwareFaultAlert(AppTask::kSmokeCoAlarmEndpointId, false), false);
+		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kClearEndOfLife:
 		LOG_INF("Triggered end of end of service alert action");
 		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetEndOfServiceAlert(
-					    AppTask::Instance().kSmokeCoAlarmEndpointId,
-					    Clusters::SmokeCoAlarm::EndOfServiceEnum::kNormal),
+					    AppTask::kSmokeCoAlarmEndpointId, Clusters::SmokeCoAlarm::EndOfServiceEnum::kNormal),
 				    false);
-		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::Instance().kSmokeCoAlarmEndpointId,
-									   sPriorityOrder);
+		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kClearBatteryLevelLow:
 		LOG_INF("Triggered end of low battery level alert action");
-		VerifyOrReturnValue(
-			SmokeCoAlarmServer::Instance().SetBatteryAlert(AppTask::Instance().kSmokeCoAlarmEndpointId,
-								       Clusters::SmokeCoAlarm::AlarmStateEnum::kNormal),
-			false);
-		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::Instance().kSmokeCoAlarmEndpointId,
-									   sPriorityOrder);
+		VerifyOrReturnValue(SmokeCoAlarmServer::Instance().SetBatteryAlert(
+					    AppTask::kSmokeCoAlarmEndpointId, Clusters::SmokeCoAlarm::AlarmStateEnum::kNormal),
+				    false);
+		SmokeCoAlarmServer::Instance().SetExpressedStateByPriority(AppTask::kSmokeCoAlarmEndpointId, sPriorityOrder);
 		break;
 	case SmokeCOTrigger::kForceSmokeWarning:
 		LOG_WRN("Triggered unsupported smoke alarm with warning severity");
@@ -438,6 +410,8 @@ CHIP_ERROR AppTask::Init()
 		kPowerSourceOffEventTriggerId,
 		Nrf::Matter::TestEventTrigger::EventTrigger{ 0xFFFF, PowerSourceOffEventCallback }));
 #endif
+
+	ReturnErrorOnFailure(sIdentifyCluster.Init());
 
 	return Nrf::Matter::StartServer();
 }

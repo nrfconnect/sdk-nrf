@@ -53,17 +53,6 @@ To configure the :zephyr:code-sample:`hello_world` sample for using MCUboot, fol
 See the :zephyr:code-sample:`smp-svr` sample for a reference of how you can further configure your application with MCUboot.
 It demonstrates how to enable :ref:`dfu_tools_mcumgr_cli` commands in the application, allowing you to read information about images managed by MCUboot.
 
-RAM cleanup
-***********
-
-
-To prevent data leakage, enable MCUboot's RAM cleanup by setting the :kconfig:option:`SB_CLEANUP_RAM` Kconfig option as follows:
-
-* When building with CMake, add ``-Dmcuboot_CONFIG_SB_CLEANUP_RAM``.
-* When using sysbuild, add ``CONFIG_SB_CLEANUP_RAM=y`` to :file:`sysbuild/mcuboot.conf`.
-
-This feature is controlled by the :kconfig:option:`CONFIG_SB_CLEANUP_RAM` Kconfig option.
-
 Supported signatures
 ********************
 
@@ -86,6 +75,14 @@ For detailed information on ECIES-X25519 support, refer to the :ref:`ug_nrf54h_e
    On the nRF54H20 SoC, private and public keys are currently stored in the image.
    Embedding keys directly within the firmware image could pose a potential security risk.
 
+Suspend to RAM (S2RAM) support
+******************************
+
+MCUboot on the nRF54H20 SoC supports Suspend to RAM (S2RAM) functionality in the application.
+It can detect a wake-up from S2RAM and redirect execution to the application's resume routine.
+
+For more information, see :ref:`S2RAM operation with MCUboot as the bootloader instruction<ug_nrf54h20_pm_optimizations_bootloader>`.
+
 DFU configuration example
 *************************
 
@@ -96,13 +93,21 @@ For more information, see the :file:`samples/zephyr/subsys/mgmt/mcumgr/smp_svr` 
 This sample demonstrates how to configure DFU feature in both MCUboot and user application in your project.
 It uses Simple Management Protocol for DFU and querying device information from the application.
 
-The following build flavours are available:
+The following nRF54H20-specific build flavors are available:
 
 * ``sample.mcumgr.smp_svr.bt.nrf54h20dk`` - DFU over BLE using the default :ref:`ipc_radio` image and *Swap using move* MCUboot mode.
 * ``sample.mcumgr.smp_svr.bt.nrf54h20dk.direct_xip_withrevert`` - DFU over BLE using *Direct-XIP with revert* MCUboot mode.
 * ``sample.mcumgr.smp_svr.serial.nrf54h20dk.ecdsa`` - DFU over serial port with ECDSA P256 signature verification.
+* ``sample.mcumgr.smp_svr.bt.nrf54h20dk.direct_xip_withrequests`` - DFU over BLE using *Direct-XIP with revert* MCUboot mode and bootloader requests support.
+* ``sample.mcumgr.smp_svr.bt.nrf54h20dk.ext_flash`` - DFU over BLE from external flash using *Swap using move* MCUboot mode.
 
-To build and run the sample, use the following commands:
+The following additional build flavors are also available:
+
+* ``sample.mcumgr.smp_svr.encryption.ecdsa_p256`` - DFU using *Dual-bank swap with move* MCUboot mode with encryption support and ECDSA P256 signature verification.
+* ``sample.mcumgr.smp_svr.nrf_compress.basic`` - DFU using *Dual-bank overwrite* MCUboot mode with compression support.
+* ``sample.mcumgr.smp_svr.nrf_compress.encryption_ecdsa_p256`` - DFU using *Dual-bank overwrite* MCUboot mode with both compression and encryption support, and ECDSA P256 signature verification.
+
+You can build and flash the selected flavor of the :zephyr:code-sample:`smp-svr` sample with the following commands:
 
 .. code-block:: console
 
@@ -155,12 +160,12 @@ You can test BLE-based FOTA samples with the `nRF Connect Device Manager`_.
 For DFU over a serial connection, use the :ref:`dfu_tools_mcumgr_cli`.
 
 .. note::
-   On the nRF54H20 SoC, Direct XIP mode uses a merged image slot that combines both application and radio core images.
+   On the nRF54H20 SoC, Direct-xip mode uses a merged image slot that combines both application and radio core images.
    Refer to the sample's DTS overlay files to understand the partition layout.
    In contrast, Swap modes place application and radio images in separate MCUboot slots, enabling multi-image updates.
 
-   Direct XIP (merged) build artifacts are generated in ``build/zephyr``.
-   Swap-mode artifacts reside in subdirectories under ``build`` (for example, ``build/smp_svr/zephyr`` or ``build/ipc_radio/zephyr``).
+   Direct-xip (merged) build artifacts are generated in the :file:`build` directory.
+   Swap-mode artifacts reside in subdirectories of the applications build folders under the :file:`build/<application>/zephyr` directory path (for example, :file:`build/smp_svr/zephyr` or :file:`build/ipc_radio/zephyr`).
 
 .. note::
    DFU from external flash is currently not supported on the nRF54H20 SoC.

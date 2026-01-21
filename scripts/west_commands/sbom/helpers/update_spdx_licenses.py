@@ -9,11 +9,11 @@ Use this script to update ../data/spdx-licenses.yaml file with newest SPDX licen
 '''
 
 import json
-import yaml
 import urllib.request
 from pathlib import Path
 from types import SimpleNamespace
 
+import yaml
 
 LATEST_URL = 'https://api.github.com/repos/spdx/license-list-data/releases/latest'
 DOWNLOAD_URL_TMPL = 'https://raw.githubusercontent.com/spdx/license-list-data/$$$/json/licenses.json'
@@ -41,7 +41,7 @@ print(f'License list version: {data.licenseListVersion}')
 output = Path(__file__).parent / '../data/spdx-licenses.yaml'
 
 try:
-    with open(output, 'r') as fd:
+    with open(output) as fd:
         old = yaml.safe_load(fd)
     update = old['_version'] != data.licenseListVersion
     print(f'Old version: {old["_version"]}')

@@ -55,9 +55,6 @@ static char response[64];
 #define RES_CMGW_E_1 "+CMGW: 1"
 #define RES_CMGW_E_2 "+CMGW: 2"
 
-#define CMD_CMSS_E_1 "AT+CMSS=1"
-#define RES_CMSS_E "+CMSS: "
-
 #define CMD_CONCAT_1 "AT+CMGD=1;+CMGD=2"
 #define RES_CONCAT_1 "OK\r\nOK\r\n"
 
@@ -166,17 +163,6 @@ ZTEST(gcf_sms, test_gcf_sms_cmgw)
 	err = nrf_modem_at_cmd(response, sizeof(response), CMD_CMGW_E);
 	zassert_equal(0, err, "nrf_modem_at_cmd failed, error: %d", err);
 	zassert_mem_equal(response, RES_CMGW_E_1, strlen(RES_CMGW_E_1), NULL);
-}
-
-ZTEST(gcf_sms, test_gcf_sms_cmss)
-{
-	int err;
-
-	/* This test require a SIM supporting SMS and mfw 1.3.2(?) or newer. */
-	Z_TEST_SKIP_IFNDEF(CONFIG_SIM_HAS_SMS_SUPPORT);
-
-	err = nrf_modem_at_cmd(response, sizeof(response), CMD_CMSS_E_1);
-	zassert_mem_equal(response, RES_CMSS_E, strlen(RES_CMSS_E), NULL);
 }
 
 ZTEST(gcf_sms, test_gcf_sms_cmgw_cmgd)

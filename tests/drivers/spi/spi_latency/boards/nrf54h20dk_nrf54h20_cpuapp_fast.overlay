@@ -1,0 +1,78 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Required loopbacks:
+ * P7.06 <-> P7.07
+ */
+
+/ {
+	aliases {
+		tst-timer = &timer130;
+	};
+};
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <0>;
+};
+
+&pinctrl {
+	spi120_default: spi120_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 7, 3)>,
+				<NRF_PSEL(SPIM_MISO, 7, 6)>,
+				<NRF_PSEL(SPIM_MOSI, 7, 7)>;
+		};
+	};
+
+	spi120_sleep: spi120_sleep {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 7, 3)>,
+				<NRF_PSEL(SPIM_MISO, 7, 6)>,
+				<NRF_PSEL(SPIM_MOSI, 7, 7)>;
+			low-power-enable;
+		};
+	};
+};
+
+&spi130 {
+	status = "disabled";
+	/delete-property/ dut_spi_dt;
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&spi120 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+	pinctrl-0 = <&spi120_default>;
+	pinctrl-1 = <&spi120_sleep>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	memory-regions = <&dma_fast_region>;
+	cs-gpios = <&gpio0 10 GPIO_ACTIVE_HIGH>;
+	zephyr,pm-device-runtime-auto;
+
+	dut_spi: test-spi-dev@0 {
+		compatible = "vnd,spi-device";
+		reg = <0>;
+		spi-max-frequency = <DT_FREQ_M(16)>;
+	};
+};
+
+&dma_fast_region {
+	status = "okay";
+};
+
+&exmif {
+	status = "disabled";
+};
+
+&timer130 {
+	status = "okay";
+};

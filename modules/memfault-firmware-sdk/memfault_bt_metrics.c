@@ -22,12 +22,12 @@ static atomic_t connection_count = ATOMIC_INIT(0);
 #if CONFIG_MEMFAULT_NCS_STACK_METRICS
 static struct memfault_ncs_metrics_thread metrics_threads[] = {
 	{
-		.thread_name = "BT RX",
+		.thread_name = "BT RX WQ",
 		.key = MEMFAULT_METRICS_KEY(ncs_bt_rx_unused_stack)
 	},
 	{
-		.thread_name = "BT TX",
-		.key = MEMFAULT_METRICS_KEY(ncs_bt_tx_unused_stack)
+		.thread_name = "BT LW WQ",
+		.key = MEMFAULT_METRICS_KEY(ncs_bt_lw_wq_unused_stack)
 	}
 };
 #endif /* CONFIG_MEMFAULT_NCS_STACK_METRICS */

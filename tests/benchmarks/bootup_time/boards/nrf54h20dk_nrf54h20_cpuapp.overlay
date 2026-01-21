@@ -1,0 +1,28 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		led = &led0;
+		/delete-property/ led1;
+	};
+};
+
+/delete-node/ &led1;
+
+&led0 {
+	/*
+	 * Lilium pulls GPIOs up during bootup, to adapt
+	 * to measurement methods, logic is inverted
+	 */
+	gpios = <&gpio9 0 GPIO_ACTIVE_LOW>;
+};
+
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <0>;
+};

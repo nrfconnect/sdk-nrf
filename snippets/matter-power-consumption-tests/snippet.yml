@@ -1,8 +1,0 @@
-name: power-consumption-tests
-append:
-  EXTRA_CONF_FILE: power_consumption_tests.conf
-
-boards:
-  /nrf54l15dk.*/:
-    append:
-      EXTRA_CONF_FILE: boards/nrf54l15dk.conf

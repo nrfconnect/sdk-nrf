@@ -39,9 +39,9 @@ Serial LTE Modem (SLM)
     The setting controls whether the SLM connects automatically to the network on startup.
     You can read and write it using the ``AT#XCARRIER="auto_connect"`` command.
 
-  * The ``AT#XCMNG`` AT command, which is activated with the :file:`overlay-native_tls.conf` overlay file, has been changed from using modem certificate storage to Zephyr settings storage.
+  * The ``AT#XCMNG`` AT command, which is activated with the ``overlay-native_tls.conf`` overlay file, has been changed from using modem certificate storage to Zephyr settings storage.
     You need to use the ``AT#XCMNG`` command to store previously stored credentials again.
-  * The ``CONFIG_SLM_WAKEUP_PIN`` Kconfig option was renamed to :ref:`CONFIG_SLM_POWER_PIN <CONFIG_SLM_POWER_PIN>`.
+  * The ``CONFIG_SLM_WAKEUP_PIN`` Kconfig option was renamed to ``CONFIG_SLM_POWER_PIN``.
     If you have defined it separately from the default configurations, you need to update its name accordingly.
 
 Matter
@@ -71,10 +71,10 @@ Matter
        To :ref:`inherit Thread certification <ug_matter_device_certification_reqs_dependent>` from Nordic Semiconductor, you must use the PSA Crypto API backend.
      * The device can automatically migrate all operational keys from the Matter's generic persistent storage to the PSA ITS secure storage.
        This means that all keys needed to establish the secure connection between Matter nodes will be moved to the PSA ITS secure storage.
-       To enable operational keys migration, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS<CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS>` Kconfig option to ``y``.
+       To enable operational keys migration, set the :option:`CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS` Kconfig option to ``y``.
 
        The default reaction to migration failure in |NCS| Matter samples is a factory reset of the device.
-       To change the default reaction, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE<CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE>` Kconfig option to ``n`` and implement the reaction in your Matter event handler.
+       To change the default reaction, set the :option:`CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE` Kconfig option to ``n`` and implement the reaction in your Matter event handler.
      * When the Device Attestation Certificate (DAC) private key exists in the factory data set, it can migrate to the PSA ITS secure storage.
 
        You can also have the DAC private key replaced by zeros in the factory data partition by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_MIGRATE_DAC_PRIV_KEY` Kconfig option to ``y``.

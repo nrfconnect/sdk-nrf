@@ -26,7 +26,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
        | ``nrf54h20dk/nrf54h20/cpuppr``
 
 .. note::
-   For details on the compatibility between nRF54H20 SoC binaries and |NCS| versions, see :ref:`abi_compatibility`.
+   For details on the compatibility between nRF54H20 IronSide SE binaries and |NCS| versions, see :ref:`abi_compatibility`.
 
 .. toctree::
    :maxdepth: 2
@@ -44,5 +44,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    ug_nrf54h20_ppr
    ../nrf54l/zms.rst
    ug_nrf54h20_mcuboot_dfu
+   ug_nrf54h20_partitioning_merged
    ug_nrf54h_ecies_x25519
    ug_nrf54h20_pm_optimization
+   ug_nrf54h20_architecture_pinmap

@@ -1,9 +1,9 @@
 # Copyright (c) 2024 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
-import pytest
 import logging
 
+import pytest
 from twister_harness.device.device_adapter import DeviceAdapter
 from twister_harness.fixtures import determine_scope
 
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 @pytest.fixture(scope='function', autouse=True)
 def test_log(request: pytest.FixtureRequest):
-    logging.info("========= Test '{}' STARTED".format(request.node.nodeid))
+    logging.info(f"========= Test '{request.node.nodeid}' STARTED")
 
 
 @pytest.fixture(scope=determine_scope)

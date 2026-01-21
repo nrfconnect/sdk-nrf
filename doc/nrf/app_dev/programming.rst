@@ -18,7 +18,7 @@ To program the :ref:`output build files <app_build_output_files>` to your device
 
 .. include:: ../includes/vsc_build_and_run_series.txt
 
-The flash command programs all cores by default, both in the |nRFVSC| and on the command line.
+The flash command programs all cores by default, both in |nRFVSC| and on the command line.
 If you want to program only one selected core, use ``west flash`` on the command line and :ref:`specify the domain <zephyr:west-multi-domain-flashing>`.
 
 .. _programming_selecting_runner:

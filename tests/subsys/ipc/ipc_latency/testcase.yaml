@@ -23,3 +23,21 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - FILE_SUFFIX=icmsg
+  subsys.ipc.ipc_latency.app_rad.nrf54h.mram_always_on:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_configs:
+      - CONFIG_MRAM_LATENCY=y
+      - CONFIG_MRAM_LATENCY_AUTO_REQ=y
+  subsys.ipc.ipc_latency.app_rad.nrf54h.s2ram:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_configs:
+      - CONFIG_PM=y
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME=y
+      - CONFIG_POWEROFF=y

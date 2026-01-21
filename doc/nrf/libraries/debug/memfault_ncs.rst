@@ -68,6 +68,11 @@ The library has built-in connection awareness and tries to post the coredump to 
 If unsuccessful within the number of attempts, the library gives up.
 If at any point the network is lost during the retry process, the library waits for the device to reconnect before restarting the retry process.
 
+When a coredump is found after boot, the library automatically triggers a heartbeat and sends the heartbeat data along with the coredump to Memfault.
+
+To also send an initial heartbeat when no coredump is available, set the :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_INITIAL_HEARTBEAT_ON_NETWORK_CONNECTED` Kconfig option to ``y``.
+This is useful for sending initial metrics to Memfault after boot without having to wait for the first automatic upload set by :kconfig:option:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_INTERVAL_SECS`.
+
 This feature is useful when you want to post the coredump as soon as possible after a crash and it is not desirable to wait for the next periodic upload set by :kconfig:option:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_INTERVAL_SECS`.
 Alternatively, you can manually trigger the coredump upload by calling the :c:func:`memfault_zephyr_port_post_data` function.
 You can use the :c:func:`memfault_coredump_has_valid_coredump` function to check whether a coredump is available.
@@ -122,6 +127,7 @@ Configuration options in |NCS|
 The Kconfig options for Memfault that are defined in |NCS| provide some additional features compared to the options that are already implemented in Memfault SDK:
 
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED`
+* :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_INITIAL_HEARTBEAT_ON_NETWORK_CONNECTED`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_MODEM_TRACE_ON_COREDUMP`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_PROVISION_CERTIFICATES`

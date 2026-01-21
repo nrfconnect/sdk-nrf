@@ -114,7 +114,7 @@ To complete the build, do the following:
 
    .. group-tab:: Using an application that supports multi-image builds
 
-      If your application involves creating custom images for both the application core and the FLPR core, disable the VPR bootstrapping sample by setting the ``SB_CONFIG_VPR_LAUNCHER`` option to ``n`` when building for the FLPR target.
+      If your application involves creating custom images for both the application core and the FLPR core, disable the VPR bootstrapping sample by setting the :kconfig:option:`SB_CONFIG_VPR_LAUNCHER` option to ``n`` when building for the FLPR target.
       For more details, see :ref:`how to configure Kconfig <configuring_kconfig>`.
 
       To build and flash both images, run the following command to perform a :ref:`pristine build <zephyr:west-building>`:
@@ -127,7 +127,7 @@ To complete the build, do the following:
 Separate images
 ---------------
 
-You can build and program the application sample and the FLPR sample as separate images using either the |nRFVSC| or the command line.
+You can build and program the application sample and the FLPR sample as separate images using either |nRFVSC| or the command line.
 To use nRF Util, see `nRF Util`_.
 Depending on the method you select, complete the following steps:
 

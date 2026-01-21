@@ -79,6 +79,6 @@ config NFC_TNEP_CH_PARSER_BUFFER_SIZE
 
 module = NFC_TNEP_CH
 module-str = TNEP_CH
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # NFC_TNEP_CH

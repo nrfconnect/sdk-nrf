@@ -25,8 +25,8 @@ Configuration
 The module implemented in :file:`battery_charger.c` uses Zephyr's :ref:`zephyr:gpio_api` driver to control and monitor battery charging.
 For this reason, you should set :kconfig:option:`CONFIG_GPIO` option.
 
-By default, the module is disabled and the :ref:`CONFIG_DESKTOP_BATTERY_CHARGER_NONE <config_desktop_app_options>` option is selected.
-Set the option :ref:`CONFIG_DESKTOP_BATTERY_CHARGER_DISCRETE <config_desktop_app_options>` to enable the module.
+By default, the module is disabled and the :option:`CONFIG_DESKTOP_BATTERY_CHARGER_NONE` option is selected.
+Set the option :option:`CONFIG_DESKTOP_BATTERY_CHARGER_DISCRETE` to enable the module.
 
 The module requires a node labeled ``battery_charger`` with a ``battery-charger`` compatible set in devicetree.
 The charge status output (CSO) GPIO spec, the Enable GPIO spec, and the CSO switching frequency properties are also required.

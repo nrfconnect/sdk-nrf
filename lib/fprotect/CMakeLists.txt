@@ -5,13 +5,13 @@
 #
 
 # Find out which flash protection should be used
-if (CONFIG_HAS_HW_NRF_SPU)
+if(CONFIG_HAS_HW_NRF_SPU)
   set(FPROTECT_SRC fprotect_spu.c)
-elseif (CONFIG_HAS_HW_NRF_ACL)
+elseif(CONFIG_HAS_HW_NRF_ACL)
   set(FPROTECT_SRC fprotect_acl.c)
-elseif (CONFIG_HAS_HW_NRF_BPROT OR CONFIG_HAS_HW_NRF_MPU)
+elseif(CONFIG_HAS_HW_NRF_BPROT OR CONFIG_HAS_HW_NRF_MPU)
   set(FPROTECT_SRC fprotect_bprot.c)
-elseif (CONFIG_SOC_SERIES_NRF54LX)
+elseif(CONFIG_SOC_SERIES_NRF54LX)
   set(FPROTECT_SRC fprotect_rram.c)
 else()
   message(FATAL_ERROR "No fprotect backend selected.")

@@ -17,13 +17,13 @@ zephyr_include_directories(src)
 
 # Include application events and configuration headers
 zephyr_library_include_directories(
-	src/lwm2m
-	src/ui
-	src/ipso
-	src/events
-	src/sensors
-	src/modules
-	)
+  src/lwm2m
+  src/ui
+  src/ipso
+  src/events
+  src/sensors
+  src/modules
+)
 
 # Application sources
 add_subdirectory(src/lwm2m)

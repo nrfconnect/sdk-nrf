@@ -23,7 +23,26 @@ See the :file:`src/common/channel.c` and :file:`src/common/channel.h` files for 
 
 .. note::
    The sample does not include a :file:`main.c` file.
+   Instead, the application uses a modular architecture where each module defines its own thread using the :c:macro:`K_THREAD_DEFINE` macro.
+   This approach eliminates the need for a traditional ``main()`` function and allows each module to initialize and run independently.
+   The modules communicate with each other through the :ref:`zbus` message passing system.
+   This creates a loosely coupled, event-driven architecture.
    To follow the typical flow of the application, see the :ref:`mqtt_sample_sequence_diagram` section.
+
+Application Entry Points
+************************
+
+Instead of a single ``main()`` function, the MQTT sample uses multiple entry points:
+
+* Trigger Module - Creates a thread that periodically sends trigger messages and handles button presses.
+* Sampler Module - Creates a thread that responds to trigger messages by sampling data.
+* Transport Module - Creates a thread that manages MQTT connections and handles message publishing/subscribing.
+* Network Module - Creates a thread that manages network connectivity (LTE or Wi-Fi®).
+* LED Module - Uses a listener callback (no dedicated thread) to control LEDs based on network status.
+* Error Module - Uses a listener callback (no dedicated thread) to handle fatal errors.
+
+Each module's thread is defined using :c:macro:`K_THREAD_DEFINE` and starts automatically during system initialization.
+This distributed approach provides better modularity, easier testing, and clearer separation of concerns compared to a monolithic ``main()`` function.
 
 Modules
 *******
@@ -60,10 +79,10 @@ The following code snippet shows how a module thread polls for incoming messages
    Especially if the module thread can block for some time.
    To increase the message queue associated with a subscriber, increase the value of the corresponding Kconfig option, ``CONFIG_MQTT_SAMPLE_SAMPLER_MESSAGE_QUEUE_SIZE`` or ``CONFIG_MQTT_SAMPLE_TRANSPORT_MESSAGE_QUEUE_SIZE``.
 
-Modules that are setup as listeners have dedicated callbacks that are invoked every time there is a change to an observing channel.
+Modules that are set up as listeners have dedicated callbacks that are invoked every time there is a change to an observing channel.
 The difference between a listener and a subscriber is that listeners do not require a dedicated thread to process incoming messages.
 The callbacks are called in the context of the thread that published the message.
-The following code snippet shows how a listener is setup in order to listen to changes to the ``NETWORK`` channel:
+The following code snippet shows how a listener is set up in order to listen to changes to the ``NETWORK`` channel:
 
 .. code-block:: c
 

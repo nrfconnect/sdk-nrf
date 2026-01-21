@@ -89,7 +89,7 @@ static uint32_t prev_pres_detect;
 
 static uint32_t prev_mot_sensed;
 
-#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_BASELINE)
 static const uint8_t cmp2_elem_offset_ambient_light[1] = { 0 };
 static const uint8_t cmp2_elem_offset_presence[1] = { 1 };
 static const uint8_t cmp2_elem_offset_motion[1] = { 2 };
@@ -1085,7 +1085,7 @@ static const struct bt_mesh_comp comp = {
 
 const struct bt_mesh_comp *model_handler_init(void)
 {
-#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_BASELINE)
 	if (bt_mesh_comp2_register(&comp_p2)) {
 		printf("Failed to register comp2\n");
 	}

@@ -1,0 +1,65 @@
+common:
+  tags:
+    - drivers
+    - ci_tests_drivers_audio
+  harness: ztest
+  harness_config:
+    fixture: gpio_loopback
+  timeout: 20
+  platform_exclude:
+    - nrf54h20dk/nrf54h20/cpuapp
+    # On nrf54H20 there is no PRESCALER register
+
+tests:
+  drivers.audio.pdm_prescaler.nrf54l.1000khz:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  drivers.audio.pdm_prescaler.nrf54lm20.1000khz:
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args:
+      - CONFIG_TEST_PDM_SAMPLING_RATE=20000
+  drivers.audio.pdm_prescaler.nrf54l.1280khz:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args:
+      - CONFIG_TEST_PDM_SAMPLING_RATE=16000
+      - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1280000
+  drivers.audio.pdm_prescaler.nrf54l.1600khz:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args:
+      - CONFIG_TEST_PDM_SAMPLING_RATE=32000
+      - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1600000
+  drivers.audio.pdm_prescaler.nrf54lm20.aclk.1000khz:
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args:
+      - CONFIG_TEST_PDM_SAMPLING_RATE=20000
+      - EXTRA_DTC_OVERLAY_FILE="nrf54l_aclk.overlay"
+  drivers.audio.pdm_prescaler.nrf54lm20.aclk.1280khz:
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args:
+      - CONFIG_TEST_PDM_SAMPLING_RATE=16000
+      - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1280000
+      - EXTRA_DTC_OVERLAY_FILE="nrf54l_aclk.overlay"
+  drivers.audio.pdm_prescaler.nrf54lm20.aclk.1600khz:
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args:
+      - CONFIG_TEST_PDM_SAMPLING_RATE=32000
+      - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1600000
+      - EXTRA_DTC_OVERLAY_FILE="nrf54l_aclk.overlay"

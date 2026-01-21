@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config PSA_NEED_CRACEN_TRNG_DRIVER
+	bool
+	depends on !PSA_CRYPTO_DRIVER_CRACEN
+	default y if SOC_NRF54LS05B
+	select PSA_ACCEL_GET_ENTROPY
+	select NRFX_CRACEN
+	help
+	  PSA crypto driver for CRACEN True Random Number Generator.
+	  This driver provides entropy functionality for nRF54LS05B devices
+	  using direct access to the CRACEN TRNG hardware via nrfx.

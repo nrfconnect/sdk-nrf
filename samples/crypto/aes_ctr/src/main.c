@@ -114,7 +114,7 @@ int encrypt_ctr_aes(void)
 	psa_status_t status;
 	psa_cipher_operation_t operation = PSA_CIPHER_OPERATION_INIT;
 
-	LOG_INF("Encrypting using AES CTR MODE...");
+	LOG_INF("Encrypting using the AES CTR mode...");
 
 	/* Setup the encryption operation */
 	status = psa_cipher_encrypt_setup(&operation, key_id, PSA_ALG_CTR);
@@ -174,7 +174,7 @@ int decrypt_ctr_aes(void)
 	psa_status_t status;
 	psa_cipher_operation_t operation = PSA_CIPHER_OPERATION_INIT;
 
-	LOG_INF("Decrypting using AES CTR MODE...");
+	LOG_INF("Decrypting using the AES CTR mode...");
 
 	/* Setup the decryption operation */
 	status = psa_cipher_decrypt_setup(&operation, key_id, PSA_ALG_CTR);

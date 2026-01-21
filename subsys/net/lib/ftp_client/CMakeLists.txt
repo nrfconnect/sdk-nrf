@@ -4,6 +4,4 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 zephyr_library()
-zephyr_library_sources(
-	src/ftp_client.c
-)
+zephyr_library_sources(src/ftp_client.c)

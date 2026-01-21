@@ -44,7 +44,7 @@ Added the following features as supported:
 
 * Power Management (nPM1300):
 
-  * New :ref:`npm1300_one_button` sample that demonstrates how to support wake-up, shutdown, and user interactions through a single button connected to the nPM1300.
+  * New :ref:`nPM1300: One button <npm13xx_one_button>` sample that demonstrates how to support wake-up, shutdown, and user interactions through a single button connected to the nPM1300.
   * LDO and load-switches soft start configuration to limit voltage fluctuations, and PFM mode configuration for added user flexibility.
 
 * Amazon Sidewalk:
@@ -55,7 +55,7 @@ Added the following features as supported:
 * Cellular IoT:
 
   * Support for nRF9151 DK on the majority of :ref:`cellular IoT samples <cellular_samples>`.
-  * The :ref:`serial_lte_modem` application can now be used to turn an nRF91 Series SiP into a standalone modem that can be used through Zephyr's cellular modem driver.
+  * The Serial LTE modem application can now be used to turn an nRF91 Series SiP into a standalone modem that can be used through Zephyr's cellular modem driver.
 
 * Security:
 
@@ -142,7 +142,7 @@ Supported modem firmware
 See `Modem firmware compatibility matrix`_ for an overview of which modem firmware versions have been tested with this version of the |NCS|.
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -308,10 +308,10 @@ Matter
   * Migration of the Node Operational Key Pair (NOK) from the generic Matter persistent storage to the PSA ITS secure storage.
     All existing NOKs for all Matter fabrics will be migrated to the PSA ITS secure storage at boot.
     After the migration, generic Matter persistent storage entries in the settings storage will be removed and are no longer available.
-    To enable operational keys migration, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS<CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS>` Kconfig option to ``y``.
+    To enable operational keys migration, set the :option:`CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS` Kconfig option to ``y``.
 
     In |NCS| Matter samples, the default reaction to migration failure is a factory reset of the device.
-    To change the default reaction, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE<CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE>` Kconfig option to ``n``.
+    To change the default reaction, set the :option:`CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE` Kconfig option to ``n``.
   * Experimental support for building Matter samples and applications with Link Time Optimization (LTO).
     To enable it, set the :kconfig:option:`CONFIG_LTO` and :kconfig:option:`CONFIG_ISR_TABLES_LOCAL_DECLARATION` Kconfig options to ``y``.
   * Documentation page about :ref:`ug_matter_gs_matter_api`.
@@ -478,19 +478,19 @@ Serial LTE modem
     It can be used in conjunction with CMUX to use a single UART for both AT data and PPP.
     The ``#XPPP`` AT command is added to manage the PPP link.
   * ``#XMQTTCFG`` AT command to configure the MQTT client before connecting to the broker.
-  * The :ref:`CONFIG_SLM_AUTO_CONNECT <CONFIG_SLM_AUTO_CONNECT>` Kconfig option to support automatic LTE connection at start-up or reset.
-  * The :ref:`CONFIG_SLM_CUSTOMER_VERSION <CONFIG_SLM_CUSTOMER_VERSION>` Kconfig option for customers to define their own version string after customization.
+  * The ``CONFIG_SLM_AUTO_CONNECT`` Kconfig option to support automatic LTE connection at start-up or reset.
+  * The ``CONFIG_SLM_CUSTOMER_VERSION`` Kconfig option for customers to define their own version string after customization.
   * The optional ``path`` parameter to the ``#XCARRIEREVT`` AT notification.
   * ``#XCARRIERCFG`` AT command to configure the LwM2M carrier library using the LwM2M carrier settings (see the :kconfig:option:`CONFIG_LWM2M_CARRIER_SETTINGS` Kconfig option).
   * Support for Zephyr's cellular modem driver, which allows a Zephyr application running on an external MCU to seamlessly use Zephyr's IP stack instead of AT commands for connectivity.
-    See :ref:`slm_as_zephyr_modem` for more information.
+    See nRF91 Series as a Zephyr-compatible modem for more information.
 
 * Updated:
 
-  * The ``CONFIG_SLM_WAKEUP_PIN`` Kconfig option has been renamed to :ref:`CONFIG_SLM_POWER_PIN <CONFIG_SLM_POWER_PIN>`.
+  * The ``CONFIG_SLM_WAKEUP_PIN`` Kconfig option has been renamed to ``CONFIG_SLM_POWER_PIN``.
     In addition to its already existing functionality, it can now be used to power off the SiP.
   * ``#XMQTTCON`` AT command to exclude MQTT client ID from the parameter list.
-  * ``#XSLMVER`` AT command to report :ref:`CONFIG_SLM_CUSTOMER_VERSION <CONFIG_SLM_CUSTOMER_VERSION>` if it is defined.
+  * ``#XSLMVER`` AT command to report ``CONFIG_SLM_CUSTOMER_VERSION`` if it is defined.
   * The ``#XTCPCLI``, ``#XUDPCLI``, and ``#XHTTPCCON`` AT commands with options for the following purposes:
 
     * Set the ``PEER_VERIFY`` socket option.
@@ -674,9 +674,9 @@ Cellular samples
 
 * Added support for the nRF9151 DK in all cellular samples except for the following samples:
 
-  * :ref:`lte_sensor_gateway`
+  * LTE Sensor Gateway
   * :ref:`smp_svr`
-  * :ref:`slm_shell_sample`
+  * SLM Shell
 
 * :ref:`ciphersuites` sample:
 
@@ -926,9 +926,9 @@ Peripheral samples
 PMIC samples
 ------------
 
-* Added :ref:`npm1300_one_button` sample that demonstrates how to support wake-up, shutdown, and user interactions through a single button connected to the nPM1300.
+* Added the :ref:`nPM1300: One button <npm13xx_one_button>` sample that demonstrates how to support wake-up, shutdown, and user interactions through a single button connected to the nPM1300.
 
-* :ref:`npm1300_fuel_gauge` sample:
+* :ref:`nPM1300: Fuel gauge <npm13xx_fuel_gauge>` sample:
 
   * Updated to accommodate API changes in the :ref:`nrfxlib:nrf_fuel_gauge`.
 
@@ -1153,7 +1153,7 @@ Modem libraries
     * The deprecated Kconfig option ``CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO_OVERRIDE``.
     * The ``NRF_MODEM_LIB_NET_IF_DOWN`` flag support in the ``lte_net_if`` network interface driver.
 
-* :ref:`lib_modem_slm`:
+* Modem SLM:
 
     * Updated the library by making the used GPIO to be configurable using devicetree.
 
@@ -1199,7 +1199,7 @@ Libraries for networking
     It now contains more details on how to use the Azure CLI to set up an IoT Hub.
     The documentation on credential provisioning has also been updated, both for nRF91 Series devices and nRF70 Series devices.
 
-* :ref:`lib_download_client` library:
+* Download client library:
 
   * Added the ``family`` parameter to the :c:struct:`download_client_cfg` structure.
     This is used to optimize the download sequence when the device only supports IPv4 or IPv6.

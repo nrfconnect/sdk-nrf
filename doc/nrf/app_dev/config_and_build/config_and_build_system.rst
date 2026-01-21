@@ -33,12 +33,12 @@ The build and configuration system in Zephyr and the |NCS| uses the following bu
      - :file:`.dts`, :file:`.dtsi`, :file:`.overlay`
      - Hardware description language.
      - `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_
-     - Devicetree Visual Editor is part of the |nRFVSC|. You still need to be familiar with the devicetree language to use it.
+     - Devicetree Visual Editor is part of |nRFVSC|. You still need to be familiar with the devicetree language to use it.
    * - :ref:`Kconfig <zephyr:application-kconfig>`
      - :file:`Kconfig`, :file:`prj.conf`, :file:`.config`
      - Software configuration system also used in the Linux kernel.
      - `Kconfig GUI <Configuring with nRF Kconfig_>`_, :ref:`menuconfig and guiconfig <zephyr:menuconfig>`
-     - | Kconfig GUI is part of the |nRFVSC|.
+     - | Kconfig GUI is part of |nRFVSC|.
        | The :ref:`Kconfig Reference <configuration_options>` provides the documentation for each configuration option.
    * - :ref:`partition_manager`
      - :file:`pm.yml`, :file:`pm_static.yml`
@@ -103,7 +103,7 @@ The header file contains the same kind of information, but with defines usable b
 For more information, see :ref:`configuring_devicetree` and Zephyr's :ref:`zephyr:dt-guide`.
 In particular, :ref:`zephyr:set-devicetree-overlays` explains how the base devicetree files are selected.
 
-In the |NCS|, you can use the |nRFVSC| to `create the devicetree files <How to create devicetree files_>`_ and work with them using the dedicated `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_.
+In the |NCS|, you can use |nRFVSC| to `create the devicetree files <How to create devicetree files_>`_ and work with them using the dedicated `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_.
 You can also select the devicetree files when :ref:`cmake_options`.
 
 .. _configure_application_sw:

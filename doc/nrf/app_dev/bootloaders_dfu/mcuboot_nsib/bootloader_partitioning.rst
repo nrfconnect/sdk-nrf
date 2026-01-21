@@ -36,7 +36,7 @@ Depending on your development environment, you can use one of the following opti
    .. group-tab:: nRF Connect for VS Code
 
       Use the extension's `Memory report`_ feature, which shows the size and percentage of memory that each symbol uses on your device for RAM, ROM, and partitions.
-      Click the :guilabel:`Memory report` button in the :guilabel:`Actions View` to generate the report.
+      Click the :guilabel:`Memory report` button in the `Actions View`_ to generate the report.
       The partition map is available in the :guilabel:`Partitions` tab.
 
       Alternatively, you can also use the `Memory Explorer <How to work with the Memory Explorer_>`_ feature of the extension's nRF Debug to check memory sections for the partitions.
@@ -128,11 +128,11 @@ To enable external flash with MCUboot, complete the following steps:
 
 1. Follow the instructions in :ref:`pm_external_flash`, which enables external flash use in the nRF5340 DK's DTS file.
 
-#. Enable the ``SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY`` sysbuild Kconfig option.
+#. Enable the :kconfig:option:`SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY` sysbuild Kconfig option.
 
-#. Update the ``CONFIG_BOOT_MAX_IMG_SECTORS`` `MCUboot Kconfig option`_ accordingly.
+#. Update the :kconfig:option:`CONFIG_BOOT_MAX_IMG_SECTORS` `MCUboot Kconfig option`_ accordingly.
    This option defines the maximum number of image sectors MCUboot can handle, as MCUboot typically increases slot sizes when external flash is enabled.
-   Otherwise the ``CONFIG_BOOT_MAX_IMG_SECTORS`` Kconfig option defaults to the value used for internal flash, and the application may not boot if the value is set too low.
+   Otherwise the :kconfig:option:`CONFIG_BOOT_MAX_IMG_SECTORS` Kconfig option defaults to the value used for internal flash, and the application may not boot if the value is set too low.
 
    (The image sector size is the same as the flash erase-block-size across all |NCS| integrated memory.)
 
@@ -189,7 +189,7 @@ The compilation could fail, reporting a linker error similar to following:
 
 This error could be caused by the following issues:
 
-  * ``SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK`` sysbuild Kconfig has been used to override the driver check for the external flash driver, but no driver is actually compiled for the region.
+  * :kconfig:option:`SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` sysbuild Kconfig has been used to override the driver check for the external flash driver, but no driver is actually compiled for the region.
     Disabling the option removes partitions without device drivers from the flash map, which may cause runtime failures.
     See :ref:`pm_external_flash` for details.
 

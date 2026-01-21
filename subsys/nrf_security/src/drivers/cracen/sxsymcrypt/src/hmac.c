@@ -58,6 +58,7 @@ static int sx_hash_create_hmac_ba413(struct sxmac *mac_ctx, const struct sxhasha
 		return SX_ERR_INCOMPATIBLE_HW;
 	}
 
+	mac_ctx->key = keyref;
 	sx_hw_reserve(&mac_ctx->dma);
 
 	mac_ctx->cfg = &ba413cfg;
@@ -119,6 +120,7 @@ static int sx_hash_create_hmac_ba418(struct sxmac *mac_ctx, const struct sxhasha
 		return SX_ERR_INVALID_KEYREF;
 	}
 
+	mac_ctx->key = keyref;
 	sx_hw_reserve(&mac_ctx->dma);
 
 	mac_ctx->cfg = &ba418cfg;

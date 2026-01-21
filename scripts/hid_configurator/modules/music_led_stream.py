@@ -3,21 +3,25 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-import time
-import pyaudio
-import numpy as np
 import colorsys
-import wave
-import threading
 import queue
+import threading
+import time
+import wave
 
-from modules.led_stream import MS_PER_SEC
-from modules.led_stream import Step
-from modules.led_stream import validate_params
-from modules.led_stream import fetch_free_steps_buffer_info, led_send_single_step
+import numpy as np
+import pyaudio
+
+from modules.led_stream import (
+    MS_PER_SEC,
+    Step,
+    fetch_free_steps_buffer_info,
+    led_send_single_step,
+    validate_params,
+)
 
 
-class MusicLedStream():
+class MusicLedStream:
     def __init__(self, dev, led_id, freq, filename):
         if not validate_params(freq, led_id):
             raise ValueError("Invalid music LED stream parameters")
@@ -73,7 +77,7 @@ class MusicLedStream():
         B = 240
         HUE_MAX = 360
 
-        hue = (B - peak * (B - G))
+        hue = B - peak * (B - G)
         hue /= HUE_MAX
 
         return hue

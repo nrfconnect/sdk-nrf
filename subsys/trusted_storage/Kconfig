@@ -9,6 +9,7 @@
 menuconfig TRUSTED_STORAGE
 	bool "Trusted Storage"
 	depends on !BUILD_WITH_TFM
+	depends on !DT_HAS_NORDIC_IRONSIDE_CALL_ENABLED
 	help
 	  The secure storage subsystem allows its users to store data in a
 	  secure way, ensuring data integrity and confidentiality by using AEAD

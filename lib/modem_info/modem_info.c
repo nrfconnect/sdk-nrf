@@ -393,24 +393,6 @@ static int map_nrf_modem_at_scanf_error(int err)
 	}
 }
 
-/* Deprecated in favor of `modem_info_data_type_get`. */
-enum at_param_type modem_info_type_get(enum modem_info info_type)
-{
-	if (info_type >= MODEM_INFO_COUNT) {
-		return -EINVAL;
-	}
-
-	switch (modem_data[info_type]->data_type) {
-	case MODEM_INFO_DATA_TYPE_NUM_INT:
-		return AT_PARAM_TYPE_NUM_INT;
-	case MODEM_INFO_DATA_TYPE_STRING:
-		return AT_PARAM_TYPE_STRING;
-	default:
-		/* Unreachable. */
-		return AT_PARAM_TYPE_INVALID;
-	}
-}
-
 enum modem_info_data_type modem_info_data_type_get(enum modem_info info_type)
 {
 	if (info_type >= MODEM_INFO_COUNT) {

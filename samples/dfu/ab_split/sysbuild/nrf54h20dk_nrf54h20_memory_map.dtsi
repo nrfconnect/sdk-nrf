@@ -1,0 +1,51 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		nrf,bootloader-request = &boot_request;
+		nrf,bootloader-request-backup = &boot_request_backup;
+		zephyr,bootloader-info = &boot_info0;
+	};
+};
+
+&mram1x {
+	partitions {
+		boot_request: partition@1ad000 {
+			reg = <0x1ad000 16>;
+		};
+
+		boot_request_backup: partition@1ad010 {
+			reg = <0x1ad010 16>;
+		};
+	};
+};
+
+/ {
+	sram@22007FC0 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x22007FC0 0x40>;
+		zephyr,memory-region = "RetainedMem";
+		status = "okay";
+
+		retainedmem {
+			compatible = "zephyr,retained-ram";
+			status = "okay";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			boot_info0: boot_info@0 {
+				compatible = "zephyr,retention";
+				status = "okay";
+				reg = <0x0 0x40>;
+			};
+		};
+	};
+};
+
+&cpuapp_ram0 {
+	reg = <0x22000000 0x7FC0>;
+};

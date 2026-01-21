@@ -10,7 +10,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/irq.h>
 #include <zephyr/logging/log.h>
-#include <nrf.h>
+#include <nrfx.h>
 #include <esb.h>
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
@@ -18,19 +18,27 @@
 #if defined(CONFIG_CLOCK_CONTROL_NRF2)
 #include <hal/nrf_lrcconf.h>
 #endif
-#include <nrf_erratas.h>
 #if NRF54L_ERRATA_20_PRESENT
 #include <hal/nrf_power.h>
 #endif /* NRF54L_ERRATA_20_PRESENT */
 #if defined(NRF54LM20A_ENGA_XXAA)
 #include <hal/nrf_clock.h>
 #endif /* defined(NRF54LM20A_ENGA_XXAA) */
+#if defined(CONFIG_ESB_SNIFFER)
+#include <zephyr/sys/byteorder.h>
+#include <SEGGER_RTT.h>
+#include "sniffer.h"
+#endif /* defined(CONFIG_ESB_SNIFFER) */
 
 LOG_MODULE_REGISTER(esb_monitor, CONFIG_ESB_MONITOR_APP_LOG_LEVEL);
 
+#if defined(CONFIG_ESB_SNIFFER)
+static struct rtt_frame packet;
+#else
 static struct esb_payload rx_payload;
+#endif /* defined(CONFIG_ESB_SNIFFER) */
 
-#if defined(CONFIG_LED_ENABLE)
+#if defined(CONFIG_LED_ENABLE) && !defined(CONFIG_ESB_SNIFFER)
 static void leds_update(uint8_t value)
 {
 	uint32_t leds_mask =
@@ -41,28 +49,61 @@ static void leds_update(uint8_t value)
 
 	dk_set_leds(leds_mask);
 }
-#endif /* defined(CONFIG_LED_ENABLE) */
+#endif /* defined(CONFIG_LED_ENABLE) && !defined(CONFIG_ESB_SNIFFER) */
 
-static void log_packet(uint32_t timestamp)
+#if defined(CONFIG_ESB_SNIFFER)
+static void log_packet(void)
+{
+	uint32_t cycles, ms, len;
+
+	cycles = k_cycle_get_32();
+	ms = k_cyc_to_ms_floor32(cycles);
+	/* Calculate remaing cycles */
+	cycles = cycles - (ms * (CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC / 1000));
+
+	/* htonl */
+	packet.us = sys_cpu_to_be32(k_cyc_to_us_floor32(cycles));
+	packet.ms = sys_cpu_to_be32(ms);
+
+	SEGGER_RTT_LOCK();
+	len = SEGGER_RTT_WriteNoLock(CONFIG_ESB_SNIFFER_RTT_DATA_CHANNEL,
+					&packet, sizeof(struct rtt_frame));
+	SEGGER_RTT_UNLOCK();
+	if (len < sizeof(struct rtt_frame)) {
+		LOG_ERR("RTT failed to write, rtt buffer too small");
+	}
+}
+#else
+static void log_packet(void)
 {
 	LOG_INF("%u: length = %d, pipe = %d, rssi = %d, noack = %d, pid = %d",
-				timestamp, rx_payload.length, rx_payload.pipe,
-				rx_payload.rssi, rx_payload.noack, rx_payload.pid);
+				k_cyc_to_ms_floor32(k_cycle_get_32()), rx_payload.length,
+				rx_payload.pipe, rx_payload.rssi, rx_payload.noack, rx_payload.pid);
 
 	LOG_HEXDUMP_INF(rx_payload.data, rx_payload.length, "data:");
 	LOG_INF("--------------------------------------------------------------");
 }
+#endif /* !defined(CONFIG_ESB_SNIFFER) */
 
 void event_handler(struct esb_evt const *event)
 {
 	switch (event->evt_id) {
 	case ESB_EVENT_RX_RECEIVED:
-		if (esb_read_rx_payload(&rx_payload) == 0) {
-			log_packet(k_cyc_to_ms_floor32(k_cycle_get_32()));
-#if defined(CONFIG_LED_ENABLE)
+#if defined(CONFIG_ESB_SNIFFER)
+		struct esb_payload *payload = &packet.payload;
+#else
+		struct esb_payload *payload = &rx_payload;
+#endif /* !defined(CONFIG_ESB_SNIFFER) */
+		int err;
+
+		while ((err = esb_read_rx_payload(payload)) == 0) {
+			log_packet();
+
+#if defined(CONFIG_LED_ENABLE) && !defined(CONFIG_ESB_SNIFFER)
 			leds_update(rx_payload.data[1]);
-#endif /* defined(CONFIG_LED_ENABLE) */
-		} else {
+#endif /* defined(CONFIG_LED_ENABLE) && !defined(CONFIG_ESB_SNIFFER) */
+		}
+		if (err && err != -ENODATA) {
 			LOG_ERR("Error while reading rx packet");
 		}
 		break;
@@ -142,8 +183,11 @@ int clocks_start(void)
 		}
 	} while (err == -EAGAIN);
 
-	nrf_lrcconf_clock_always_run_force_set(NRF_LRCCONF000, 0, true);
-	nrf_lrcconf_task_trigger(NRF_LRCCONF000, NRF_LRCCONF_TASK_CLKSTART_0);
+	/* HMPAN-84 */
+	if (nrf54h_errata_84()) {
+		nrf_lrcconf_clock_always_run_force_set(NRF_LRCCONF000, 0, true);
+		nrf_lrcconf_task_trigger(NRF_LRCCONF000, NRF_LRCCONF_TASK_CLKSTART_0);
+	}
 
 	LOG_DBG("HF clock started");
 
@@ -170,6 +214,7 @@ int esb_initialize(void)
 	config.bitrate = ESB_BITRATE_2MBPS;
 	config.mode = ESB_MODE_MONITOR;
 	config.event_handler = event_handler;
+	config.use_fast_ramp_up = true;
 
 	err = esb_init(&config);
 	if (err) {
@@ -219,6 +264,13 @@ int main(void)
 
 	LOG_INF("Initialization complete");
 
+#if defined(CONFIG_ESB_SNIFFER)
+	err = sniffer_init();
+	if (err) {
+		LOG_ERR("Sniffer initialization failed, err %d", err);
+		return 0;
+	}
+#else
 	err = esb_start_rx();
 	if (err) {
 		LOG_ERR("ESB start monitor failed, err %d", err);
@@ -226,6 +278,7 @@ int main(void)
 	}
 
 	LOG_INF("Start receiving packets");
+#endif /* !defined(CONFIG_ESB_SNIFFER) */
 
 	/* return to idle thread */
 	return 0;

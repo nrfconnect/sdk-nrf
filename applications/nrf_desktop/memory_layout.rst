@@ -81,9 +81,9 @@ The Partition Manager supports partitions in external flash.
 Enabling external flash can be useful especially for memory-limited devices.
 For example, the MCUboot can use it as a secondary image partition for the :ref:`background firmware upgrade <nrf_desktop_bootloader_background_dfu>`.
 The MCUboot moves the image data from the secondary image partition to the primary image partition before booting the new firmware.
-To use external flash for the secondary image partition, in addition to defining the proper static Partition Manager configuration, you must enable the ``SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY`` Kconfig option in the sysbuild configuration.
+To use external flash for the secondary image partition, in addition to defining the proper static Partition Manager configuration, you must enable the :kconfig:option:`SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY` Kconfig option in the sysbuild configuration.
 
-For an example of the nRF Desktop application configuration that uses an external flash, see the ``mcuboot_qspi`` configuration of the nRF52840 Development Kit (DK).
+For an example of the nRF Desktop application configuration that uses an external flash, see the ``mcuboot_qspi`` configuration of the nRF52840 DK.
 This configuration uses the ``MX25R64`` external flash that is part of the development kit.
 
 For detailed information, see the :ref:`partition_manager` documentation.

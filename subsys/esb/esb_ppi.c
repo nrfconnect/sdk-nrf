@@ -7,8 +7,8 @@
 #include <hal/nrf_egu.h>
 #include <hal/nrf_radio.h>
 #include <hal/nrf_timer.h>
-
-#include <nrfx_ppi.h>
+#include <hal/nrf_ppi.h>
+#include <helpers/nrfx_gppi.h>
 
 #include <zephyr/logging/log.h>
 
@@ -185,55 +185,63 @@ void esb_ppi_for_wait_for_rx_clear(void)
 
 int esb_ppi_init(void)
 {
-	nrfx_err_t err;
+	int ch;
 
-	err = nrfx_ppi_channel_alloc(&egu_ramp_up);
-	if (err != NRFX_SUCCESS) {
+	ch = nrfx_gppi_channel_alloc(0);
+	if (ch < 0) {
 		goto error;
 	}
+	egu_ramp_up = (nrf_ppi_channel_t)ch;
 
-	err = nrfx_ppi_channel_alloc(&disabled_egu);
-	if (err != NRFX_SUCCESS) {
+	ch = nrfx_gppi_channel_alloc(0);
+	if (ch < 0) {
 		goto error;
 	}
+	disabled_egu = (nrf_ppi_channel_t)ch;
 
-	err = nrfx_ppi_channel_alloc(&egu_timer_start);
-	if (err != NRFX_SUCCESS) {
+	ch = nrfx_gppi_channel_alloc(0);
+	if (ch < 0) {
 		goto error;
 	}
+	egu_timer_start = (nrf_ppi_channel_t)ch;
 
-	err = nrfx_ppi_channel_alloc(&radio_address_timer_stop);
-	if (err != NRFX_SUCCESS) {
+	ch = nrfx_gppi_channel_alloc(0);
+	if (ch < 0) {
 		goto error;
 	}
+	radio_address_timer_stop = (nrf_ppi_channel_t)ch;
 
-	err = nrfx_ppi_channel_alloc(&timer_compare0_radio_disable);
-	if (err != NRFX_SUCCESS) {
+	ch = nrfx_gppi_channel_alloc(0);
+	if (ch < 0) {
 		goto error;
 	}
+	timer_compare0_radio_disable = (nrf_ppi_channel_t)ch;
 
-	err = nrfx_ppi_channel_alloc(&timer_compare1_radio_txen);
-	if (err != NRFX_SUCCESS) {
+	ch = nrfx_gppi_channel_alloc(0);
+	if (ch < 0) {
 		goto error;
 	}
+	timer_compare1_radio_txen = (nrf_ppi_channel_t)ch;
 
 	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
-		err = nrfx_ppi_channel_alloc(&radio_end_timer_start);
-		if (err != NRFX_SUCCESS) {
+		ch = nrfx_gppi_channel_alloc(0);
+		if (ch < 0) {
 			goto error;
 		}
+		radio_end_timer_start = (nrf_ppi_channel_t)ch;
 	}
 
-	err = nrfx_ppi_group_alloc(&ramp_up_ppi_group);
-	if (err != NRFX_SUCCESS) {
-		LOG_ERR("gppi_group_alloc failed with: %d\n", err);
-		return -ENODEV;
+	ch = nrfx_gppi_group_channel_alloc(0);
+	if (ch < 0) {
+		LOG_ERR("gppi_group_alloc failed with: %d\n", ch);
+		return ch;
 	}
+	ramp_up_ppi_group = (nrf_ppi_channel_group_t)ch;
 
 	return 0;
 
 error:
-	LOG_ERR("gppi_channel_alloc failed with: %d\n", err);
+	LOG_ERR("gppi_channel_alloc failed with: %d\n", ch);
 	return -ENODEV;
 }
 
@@ -249,62 +257,39 @@ void esb_ppi_disable_all(void)
 				  BIT(egu_timer_start) |
 				  BIT(radio_address_timer_stop) |
 				  BIT(timer_compare0_radio_disable) |
-				  BIT(radio_end_timer_start) |
+				  BIT(timer_compare1_radio_txen) |
 				  (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX) ?
-					BIT(timer_compare1_radio_txen) : 0));
+					BIT(radio_end_timer_start) : 0));
 
 	nrf_ppi_channels_disable(NRF_PPI, channels_mask);
+
+	/* Clear all PPI endpoints to fully disconnect peripherals */
+	nrf_ppi_channel_and_fork_endpoint_setup(NRF_PPI, egu_ramp_up, 0, 0, 0);
+	nrf_ppi_channel_endpoint_setup(NRF_PPI, disabled_egu, 0, 0);
+	nrf_ppi_channel_endpoint_setup(NRF_PPI, egu_timer_start, 0, 0);
+	nrf_ppi_channel_endpoint_setup(NRF_PPI, radio_address_timer_stop, 0, 0);
+	nrf_ppi_channel_endpoint_setup(NRF_PPI, timer_compare0_radio_disable, 0, 0);
+	nrf_ppi_channel_endpoint_setup(NRF_PPI, radio_end_timer_start, 0, 0);
+
+	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
+		nrf_ppi_channel_endpoint_setup(NRF_PPI, timer_compare1_radio_txen, 0, 0);
+	}
+
+	/* Remove channel from group */
+	nrf_ppi_channel_remove_from_group(NRF_PPI, egu_ramp_up, ramp_up_ppi_group);
 }
 
 void esb_ppi_deinit(void)
 {
-	nrfx_err_t err;
-
-	err = nrfx_ppi_channel_free(egu_ramp_up);
-	if (err != NRFX_SUCCESS) {
-		goto error;
-	}
-
-	err = nrfx_ppi_channel_free(disabled_egu);
-	if (err != NRFX_SUCCESS) {
-		goto error;
-	}
-
-	err = nrfx_ppi_channel_free(egu_timer_start);
-	if (err != NRFX_SUCCESS) {
-		goto error;
-	}
-
-	err = nrfx_ppi_channel_free(radio_address_timer_stop);
-	if (err != NRFX_SUCCESS) {
-		goto error;
-	}
-
-	err = nrfx_ppi_channel_free(timer_compare0_radio_disable);
-	if (err != NRFX_SUCCESS) {
-		goto error;
-	}
-
-	err = nrfx_ppi_channel_free(timer_compare1_radio_txen);
-	if (err != NRFX_SUCCESS) {
-		goto error;
-	}
-
+	nrfx_gppi_channel_free(0, (uint8_t)egu_ramp_up);
+	nrfx_gppi_channel_free(0, (uint8_t)disabled_egu);
+	nrfx_gppi_channel_free(0, (uint8_t)egu_timer_start);
+	nrfx_gppi_channel_free(0, (uint8_t)radio_address_timer_stop);
+	nrfx_gppi_channel_free(0, (uint8_t)timer_compare0_radio_disable);
+	nrfx_gppi_channel_free(0, (uint8_t)timer_compare1_radio_txen);
 	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
-		err = nrfx_ppi_channel_free(radio_end_timer_start);
-		if (err != NRFX_SUCCESS) {
-			goto error;
-		}
+		nrfx_gppi_channel_free(0, (uint8_t)radio_end_timer_start);
 	}
 
-	err = nrfx_ppi_group_free(ramp_up_ppi_group);
-	if (err != NRFX_SUCCESS) {
-		goto error;
-	}
-
-	return;
-
-/* Should not happen. */
-error:
-	__ASSERT(false, "Failed to free PPI resources");
+	nrfx_gppi_group_channel_free(0, (uint8_t)ramp_up_ppi_group);
 }

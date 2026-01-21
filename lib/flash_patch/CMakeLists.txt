@@ -13,6 +13,6 @@ if(CONFIG_FLASH_PATCH_WARN)
   )
 endif()
 
-if (CONFIG_DISABLE_FLASH_PATCH)
+if(CONFIG_DISABLE_FLASH_PATCH)
   zephyr_sources(flash_patch.c)
 endif()

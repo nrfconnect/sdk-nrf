@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TEST_B0_LOCK_READS
+	bool "Test read prevention"
+	help
+	  Reads are disabled after writes has been disabled, therefore testing against reads
+	  implies portion of the memory cannot be accessed at all.
+	  In case this symbol isn't selected, tests against writes are performed.
+
+config TEST_B0_LOCK_REGION
+	int "Region number"
+	range 3 4
+	default 3
+	help
+	  Region 3 is used for NSIB protection. Other one for MCUBoot.
+
+config TEST_B0_LOCK_USE_S1
+	bool "MCUBoot is running from S1 image for the test"
+
+menu "Zephyr"
+source "Kconfig.zephyr"
+endmenu

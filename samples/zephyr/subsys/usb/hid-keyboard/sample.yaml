@@ -3,7 +3,6 @@ sample:
 common:
   filter: dt_alias_exists("sw0") and dt_alias_exists("led0")
   depends_on:
-    # - usbd
     - gpio
   tags:
     - usb
@@ -20,42 +19,19 @@ common:
       - "USBD message: VBUS ready"
       - "Actual device speed 2"
       - "s-in-status finished"
+  integration_platforms:
+    - nrf54h20dk/nrf54h20/cpuapp
+  platform_allow:
+    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
 tests:
-  nrf.extended.sample.usbd.hid-keyboard:
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+  nrf.extended.sample.usbd.hid-keyboard: {}
   nrf.extended.sample.usbd.hid-keyboard.out-report:
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="out_report.overlay"
   nrf.extended.sample.usbd.hid-keyboard.large-report:
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="large_in_report.overlay"
   nrf.extended.sample.usbd.hid-keyboard.large-out-report:
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="large_out_report.overlay"

@@ -22,10 +22,10 @@ Module events
 Configuration
 *************
 
-To enable this module, use the :ref:`CONFIG_DESKTOP_CPU_MEAS_ENABLE <config_desktop_app_options>` Kconfig option.
+To enable this module, use the :option:`CONFIG_DESKTOP_CPU_MEAS_ENABLE` Kconfig option.
 This option selects the :kconfig:option:`CONFIG_NRF_CPU_LOAD` Kconfig option, which enables the :ref:`cpu_load` library that is used to perform the measurements.
 
-Set the time between subsequent CPU load measurements, in milliseconds, using the :ref:`CONFIG_DESKTOP_CPU_MEAS_PERIOD <config_desktop_app_options>` option.
+Set the time between subsequent CPU load measurements, in milliseconds, using the :option:`CONFIG_DESKTOP_CPU_MEAS_PERIOD` option.
 
 Implementation details
 **********************

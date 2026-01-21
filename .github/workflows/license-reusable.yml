@@ -31,6 +31,10 @@ on:
         type: string
         default: nrf/scripts/ci/license_allow_list.yaml
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   license_job:
     runs-on: ubuntu-24.04
@@ -44,7 +48,7 @@ jobs:
         west-update-args: '-n zephyr bsim'
 
     - name: cache-pip
-      uses: actions/cache@2f8e54208210a422b2efd51efaa6bd6d7ca8920f # v3
+      uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-doc-pip

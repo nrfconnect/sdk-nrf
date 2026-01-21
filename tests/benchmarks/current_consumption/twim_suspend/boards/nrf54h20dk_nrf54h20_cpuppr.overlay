@@ -1,0 +1,32 @@
+/*
+ * Copyright (C) 2025 Nordic Semiconductor ASA
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	cpus {
+		power-states {
+			wait: wait {
+				compatible = "zephyr,power-state";
+				power-state-name = "standby";
+				substate-id = <0>;
+				min-residency-us = <20000>;
+			};
+
+			hibernate: hibernate {
+				compatible = "zephyr,power-state";
+				power-state-name = "suspend-to-ram";
+				substate-id = <0>;
+				min-residency-us = <400000>;
+			};
+		};
+	};
+};
+
+&cpu {
+	cpu-power-states = <&wait &hibernate>;
+};
+
+&i2c130 {
+	/delete-property/ zephyr,pm-device-runtime-auto;
+};

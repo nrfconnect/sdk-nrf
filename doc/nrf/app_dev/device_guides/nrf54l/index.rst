@@ -1,5 +1,7 @@
 .. _ug_nrf54l:
 .. _ug_nrf54L15_gs:
+.. _nrf54l_features:
+.. _ug_nrf54L15_revision:
 
 Developing with nRF54L Series
 #############################
@@ -8,7 +10,8 @@ Developing with nRF54L Series
 
 .. include:: /includes/guides_complementary_to_app_dev.txt
 
-Zephyr and the |NCS| provide support and contain board definitions for developing on the nRF54L Series devices:
+Zephyr and the |NCS| provide support and contain board definitions for developing on the nRF54L Series devices.
+Refer to the following information for the list of supported development kits (DKs) and their related hardware and software documentation:
 
 .. list-table::
    :header-rows: 1
@@ -20,69 +23,63 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - Product pages
    * - :zephyr:board:`nrf54l15dk`
      - PCA10156
-     - ``nrf54l15dk/nrf54l15/cpuapp``
+     - | ``nrf54l15dk/nrf54l15/cpuapp``
+       | ``nrf54l15dk/nrf54l15/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
+       | ``nrf54l15dk/nrf54l15/cpuflpr``
+       | ``nrf54l15dk/nrf54l15/cpuflpr/xip``
      - | `Datasheet <nRF54L15 Datasheet_>`_
        | `Quick Start app`_
        | `User Guide <nRF54L15 DK User Guide_>`_
+       | `nRF54L15 Compatibility Matrix`_
      - | `nRF54L15 DK product page <nRF54L15 DK_>`_
        | `nRF54L15 System-on-Chip (SoC) <nRF54L15 System-on-Chip_>`_
    * - :ref:`nRF54L10 emulation on the nRF54L15 DK <zephyr:nrf54l15dk_nrf54l10>`
      - PCA10156
-     - ``nrf54l15dk/nrf54l10/cpuapp``
+     - | ``nrf54l15dk/nrf54l10/cpuapp``
+       | ``nrf54l15dk/nrf54l10/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
      - | `Datasheet <nRF54L15 Datasheet_>`_
+       | `nRF54L10 Compatibility Matrix`_
      - | `nRF54L10 System-on-Chip (SoC) <nRF54L10_>`_
    * - :ref:`nRF54L05 emulation on the nRF54L15 DK <zephyr:nrf54l15dk_nrf54l05>`
      - PCA10156
      - ``nrf54l15dk/nrf54l05/cpuapp``
      - | `Datasheet <nRF54L15 Datasheet_>`_
+       | `nRF54L05 Compatibility Matrix`_
      - | `nRF54L05 System-on-Chip (SoC) <nRF54L05_>`_
+   * - :zephyr:board:`nrf54lm20dk`
+     - PCA10184
+     - | ``nrf54lm20dk/nrf54lm20a/cpuapp``
+       | ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
+       | ``nrf54lm20dk/nrf54lm20a/cpuflpr``
+       | ``nrf54lm20dk/nrf54lm20a/cpuflpr/xip``
+     - | `Datasheet <nRF54LM20A Datasheet_>`_
+       | `Quick Start app`_
+       | `User Guide <nRF54LM20 DK User Guide_>`_
+       | `nRF54LM20A Compatibility Matrix`_
+     - | `nRF54LM20 DK product page <nRF54LM20 DK_>`_
+       | `nRF54LM20A System-on-Chip (SoC) <nRF54LM20A System-on-Chip_>`_
+   * - nRF54LV10 DK
+     - PCA10188
+     - | ``nrf54lv10dk/nrf54lv10a/cpuapp``
+       | ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
+       | ``nrf54lv10dk/nrf54lv10a/cpuflpr``
+       | ``nrf54lv10dk/nrf54lv10a/cpuflpr/xip``
+     - | `Datasheet <nRF54LV10A Datasheet_>`_
+       | `Quick Start app`_
+       | `User Guide <nRF54LV10 DK User Guide_>`_
+       | `nRF54LV10 Compatibility Matrix`_
+     - | `nRF54LV10 DK product page <nRF54LV10 DK_>`_
+       | `nRF54LV10 System-on-Chip (SoC) <nRF54LV10A System-on-Chip_>`_
 
-.. note::
+For the full list of supported protocols, see the :ref:`software maturity documentation<software_maturity>`.
 
-   * The nRF54L15 SoC is not supported for production in the |NCS| v2.9.0.
-     Use v2.9.1 or later instead.
-   * The nRF54L05 and L10 SoCs are not supported for production in the |NCS| versions 2.9.0 or 2.9.1.
-     Use v3.0.0 or later instead.
-
-.. note::
-   The RRAM size has decreased from 1024 KB to 1012 KB for the nRF54L10 SoC.
-   You must update the memory maps accordingly.
-
-.. _ug_nrf54L15_revision:
-
-Make sure to check the revision of your nRF54L15 development kit to see if it is supported:
-
-.. list-table::
-   :header-rows: 1
-
-   * - DK revision
-     - Status
-   * - nRF54L15 DK v0.9.3
-     - Supported
-   * - nRF54L15 DK v0.9.2
-     - Supported
-   * - nRF54L15 DK v0.9.1
-     - Supported
-   * - nRF54L15 PDK v0.8.1
-     - Supported
-   * - nRF54L15 PDK v0.7.0 or earlier
-     - Deprecated after |NCS| v2.7.0
-
-.. note::
-
-  The supported nRF54L15 DK revisions are functionally equal and use the same board target (``nrf54l15dk/nrf54l15/cpuapp``).
-
-Refer to the compatibility matrices for the nRF54L Series devices to check the compatibility of various SoC revisions with different versions of the |NCS|:
-
-* `nRF54L05 Compatibility Matrix`_
-* `nRF54L10 Compatibility Matrix`_
-* `nRF54L15 Compatibility Matrix`_
+Learn the essentials of the nRF54L Series with the `nRF54L Series Express course`_ in the Nordic Developer Academy.
+This self-paced course introduces the hardware architecture, functionality, capabilities, and performance of the nRF54L Series.
 
 .. toctree::
    :maxdepth: 2
    :caption: Subpages:
 
-   features
    zms
    cryptography
    vpr_flpr
@@ -93,3 +90,5 @@ Refer to the compatibility matrices for the nRF54L Series devices to check the c
    kmu_provision
    dfu_config
    ecies_x25519.rst
+   otp_map_nrf54l
+   pinmap

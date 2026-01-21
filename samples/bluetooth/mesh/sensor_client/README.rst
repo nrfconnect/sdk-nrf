@@ -1,15 +1,17 @@
 .. _bluetooth_mesh_sensor_client:
 
-Bluetooth Mesh: Sensor observer
-###############################
+Bluetooth Mesh NLC: HVAC Integration (Sensor observer)
+######################################################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth® Mesh sensor observer sample demonstrates how to set up a basic Bluetooth Mesh :ref:`bt_mesh_sensor_cli_readme` model application that gets sensor data from one :ref:`bt_mesh_sensor_srv_readme` model.
+The Bluetooth® Mesh NLC HVAC Integration sample demonstrates how to set up a basic Bluetooth Mesh :ref:`bt_mesh_sensor_cli_readme` model application that gets sensor data from one :ref:`bt_mesh_sensor_srv_readme` model.
 Eight different sensor types are used to showcase different ways for the server to publish data.
 In addition, the samples demonstrate usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`, as well as how to add and write to a sensor setting.
+
+This sample also demonstrates how to implement the HVAC Integration NLC Profile (see :ref:`ug_bt_mesh_nlc`).
 
 .. note::
    This sample must be paired with :ref:`bluetooth_mesh_sensor_server` to show any functionality.
@@ -84,7 +86,7 @@ The models are used for the following purposes:
 * Sensor Client gets sensor data from one or more :ref:`Sensor Servers <bt_mesh_sensor_srv_readme>`.
 
 The model handling is implemented in :file:`src/model_handler.c`.
-A :c:struct:`k_work_delayable` item is submitted recursively to periodically request sensor data.
+Sensor data can be periodically requested using a :c:struct:`k_work_delayable` loop, which can be started and stopped with a button press.
 
 User interface
 **************
@@ -100,13 +102,13 @@ Once the provisioning procedure has completed, the buttons will have the followi
    .. group-tab:: nRF21 and nRF52 DKs
 
       Button 1:
-         Sends a get message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
+         Toggles the periodic Sensor Get data loop on/off.
 
       Button 2:
-         Sends a set message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, switching between the ranges specified in the :c:var:`temp_ranges` variable.
+         Sends a get message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
 
       Button 3:
-         Sends a get message for a descriptor, requesting information about the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
+         Sends a set message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, switching between the ranges specified in the :c:var:`temp_ranges` variable.
 
       Button 4:
          Sends a set message for the :c:var:`bt_mesh_sensor_motion_threshold` setting of the :c:var:`bt_mesh_sensor_presence_detected` sensor, switching between the ranges specified in the :c:var:`presence_motion_threshold` variable.
@@ -114,13 +116,13 @@ Once the provisioning procedure has completed, the buttons will have the followi
    .. group-tab:: nRF54 DKs
 
       Button 0:
-         Sends a get message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
+         Toggles the periodic Sensor Get loop (start/stop).
 
       Button 1:
-         Sends a set message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, switching between the ranges specified in the :c:var:`temp_ranges` variable.
+         Sends a get message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
 
       Button 2:
-         Sends a get message for a descriptor, requesting information about the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor.
+         Sends a set message for the :c:var:`bt_mesh_sensor_dev_op_temp_range_spec` setting of the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, switching between the ranges specified in the :c:var:`temp_ranges` variable.
 
       Button 3:
          Sends a set message for the :c:var:`bt_mesh_sensor_motion_threshold` setting of the :c:var:`bt_mesh_sensor_presence_detected` sensor, switching between the ranges specified in the :c:var:`presence_motion_threshold` variable.
@@ -224,6 +226,11 @@ For example, to set the sensor gain for present ambient light level to 1.1, writ
 
    mesh models sensor setting-set 0x004E 0x0074 1.1
 
+External flash for settings partition
+=====================================
+
+.. include:: /includes/mesh_ext_flash_settings.txt
+
 Dependencies
 ************
 
@@ -238,14 +245,14 @@ In addition, it uses the following Zephyr libraries:
 * :file:`include/drivers/hwinfo.h`
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
+   * :file:`include/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
+   * :file:`include/bluetooth/bluetooth.h`
 
 * :ref:`zephyr:bluetooth_mesh`:
 
-  * :file:`include/bluetooth/mesh.h`
+   * :file:`include/bluetooth/mesh.h`
 
 * :ref:`bluetooth_mesh_shell`

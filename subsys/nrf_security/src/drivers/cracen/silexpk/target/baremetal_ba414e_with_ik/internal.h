@@ -12,17 +12,17 @@
 struct sx_pk_cmd_def;
 
 struct sx_regs {
-	char *base;
+	uint8_t *base;
 };
 
 struct sx_pk_req {
 	struct sx_regs regs;
-	char *cryptoram;
+	uint8_t *cryptoram;
 	int slot_sz;
 	int op_size;
 	const struct sx_pk_cmd_def *cmd;
 	struct sx_pk_cnx *cnx;
-	const char *outputops[12];
+	const uint8_t *outputops[12];
 	void *userctxt;
 	int ik_mode;
 };

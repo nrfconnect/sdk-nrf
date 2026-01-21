@@ -14,8 +14,53 @@ config LED_ENABLE
 	help
 	  Turns on led updates when receiving packets from PTX sample.
 
+config ESB_SNIFFER
+	bool "Turn sample into a functional ESB sniffer"
+	select USE_SEGGER_RTT
+	select SHELL
+	help
+	  Enable sniffer functionality with RTT backend and runtime configuration updates through UART shell.
+	  Disable logging received packets through UART.
+
+if ESB_SNIFFER
+config ESB_SNIFFER_RTT_DATA_CHANNEL
+	int "RTT up channel number for data transfer"
+	range 0 3
+	default 1
+
+config ESB_SNIFFER_RTT_CMD_RET_CHANNEL
+	int "RTT up channel number for sniffer command returns"
+	range 0 3
+	default 2
+
+config ESB_SNIFFER_RTT_CMD_CHANNEL
+	int "RTT down channel number for sniffer commands"
+	range 0 3
+	default 1
+
+config ESB_SNIFFER_RTT_DATA_BUF_SZ
+	int "RTT data buffer size"
+	default 45000
+
+config ESB_SNIFFER_RTT_CMD_RET_BUF_SZ
+	int "RTT commands return buffer size"
+	default 128
+
+config ESB_SNIFFER_RTT_CMD_BUF_SZ
+	int "RTT commands buffer size"
+	default 128
+
+config ESB_SNIFFER_THREAD_PRIORITY
+	int "ESB sniffer thread priority"
+	default 10
+
+config ESB_SNIFFER_THREAD_STACK_SZ
+	int "ESB sniffer thread stack size"
+	default 1024
+endif
+
 module = ESB_MONITOR_APP
 module-str = "ESB Monitor app"
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endmenu

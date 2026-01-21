@@ -16,4 +16,7 @@ config NRF_DEFAULT_IPC_RADIO
 config NETCORE_IPC_RADIO_BT_HCI_IPC
 	default y if SOC_SERIES_NRF54HX
 
+config MCUBOOT_IMAGES_ROM_END_OFFSET_AUTO
+	default "ipc_radio;ipc_radio_secondary_app" if MCUBOOT_SIGN_MERGED_BINARY
+
 source "share/sysbuild/Kconfig"

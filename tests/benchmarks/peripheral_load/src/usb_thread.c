@@ -205,10 +205,11 @@ static void usb_thread(void *arg1, void *arg2, void *arg3)
 
 	/* Enable RX interrupts */
 	uart_irq_rx_enable(uart_dev);
-
 }
 
 K_THREAD_DEFINE(thread_usb_id, USB_THREAD_STACKSIZE, usb_thread, NULL, NULL, NULL,
 	K_PRIO_PREEMPT(USB_THREAD_PRIORITY), 0, 0);
 
+#else
+#pragma message("USB thread skipped - feature is not supported on this platform")
 #endif /* CONFIG_DT_HAS_SNPS_DWC2_ENABLED */

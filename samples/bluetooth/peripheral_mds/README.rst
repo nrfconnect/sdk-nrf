@@ -250,6 +250,15 @@ You can also use them for your custom applications using the Memfault Diagnostic
 #. Wait for the application to establish connection with your development kit.
 
    In the mobile application, observe that Memfault chunks are forwarded from your device to the Memfault Cloud.
+#. Upload the symbol file generated from your build to your Memfault account so that the information from your application can be parsed.
+   The symbol file is located in the build folder: :file:`peripheral_mds/build/peripheral_mds/zephyr/zephyr.elf`:
+
+   a. Open `Memfault`_ in a web browser.
+   #. Log in to your account and select the project you created earlier.
+   #. Navigate to :guilabel:`Fleet` > :guilabel:`Devices` in the left side menu.
+      You can see your newly connected device and the software version in the list.
+   #. Select the software version number for your device and click :guilabel:`Upload` to upload the symbol file.
+
 #. Return to the terminal and press Tab to confirm that the Memfault shell is working.
    The shell commands available are displayed.
 
@@ -296,7 +305,7 @@ Testing with MDS BLE gateway script
             Forwarded 2 Memfault Chunks
 
       #. Upload the symbol file generated from your build to your Memfault account so that the information from your application can be parsed.
-         The symbol file is located in the build folder: :file:`peripheral_memfault/build/zephyr/zephyr.elf`:
+         The symbol file is located in the build folder: :file:`peripheral_mds/build/peripheral_mds/zephyr/zephyr.elf`:
 
          a. Open `Memfault`_ in a web browser.
          #. Log in to your account and select the project you created earlier.
@@ -342,7 +351,7 @@ Testing with MDS BLE gateway script
             Forwarded 2 Memfault Chunks
 
       #. Upload the symbol file generated from your build to your Memfault account so that the information from your application can be parsed.
-         The symbol file is located in the build folder: :file:`peripheral_memfault/build/zephyr/zephyr.elf`:
+         The symbol file is located in the build folder: :file:`peripheral_mds/build/peripheral_mds/zephyr/zephyr.elf`:
 
          a. Open `Memfault`_ in a web browser.
          #. Log in to your account and select the project you created earlier.
@@ -381,7 +390,7 @@ Testing with Memfault WebBluetooth Client
       #. Upon connection, data already collected by the `Memfault SDK`_ is forwarded to the cloud for further the analysis.
          When connected, the new data is periodically flushed to the cloud with the interval configured by the Kconfig option :kconfig:option:`CONFIG_BT_MDS_DATA_POLL_INTERVAL`.
       #. Upload the symbol file generated from your build to your Memfault account so that the information from your application can be parsed.
-         The :file:`zephyr.elf` symbol file is located in the build folder :file:`peripheral_memfault/build/zephyr`.
+         The :file:`zephyr.elf` symbol file is located in the build folder :file:`peripheral_mds/build/peripheral_mds/zephyr`.
 
          a. In a web browser, navigate to `Memfault`_.
          #. Log in to your account and select the project you created earlier.
@@ -414,7 +423,7 @@ Testing with Memfault WebBluetooth Client
       #. Upon connection, data already collected by the `Memfault SDK`_ is forwarded to the cloud for further the analysis.
          When connected, the new data is periodically flushed to the cloud with the interval configured by the Kconfig option :kconfig:option:`CONFIG_BT_MDS_DATA_POLL_INTERVAL`.
       #. Upload the symbol file generated from your build to your Memfault account so that the information from your application can be parsed.
-         The :file:`zephyr.elf` symbol file is located in the build folder :file:`peripheral_memfault/build/zephyr`.
+         The :file:`zephyr.elf` symbol file is located in the build folder :file:`peripheral_mds/build/peripheral_mds/zephyr`.
 
          a. In a web browser, navigate to `Memfault`_.
          #. Log in to your account and select the project you created earlier.

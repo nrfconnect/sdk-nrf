@@ -30,4 +30,4 @@ endmenu
 
 module = BT_MESH_CHAT_CLI
 module-str = BT Mesh Chat Client model
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"

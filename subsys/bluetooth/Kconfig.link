@@ -23,6 +23,6 @@ config BT_CONN_CTX_MEM_BUF_ALIGN
 
 module = BT_CONN_CTX
 module-str = connection context library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_CONN_CTX

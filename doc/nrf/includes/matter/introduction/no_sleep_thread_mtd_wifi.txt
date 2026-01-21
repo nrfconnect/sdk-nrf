@@ -1,0 +1,6 @@
+This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.11ax (Wi-Fi® 6) or 802.15.4 (Thread) protocol.
+Support for both Thread and Wi-Fi is mutually exclusive and depends on the hardware platform, so only one protocol is supported for a specific |matter_name| device.
+In case of Thread, this device works as a :ref:`Minimal End Device <thread_ot_device_types>`.
+
+You can use this |matter_type| as a reference for creating your own application.
+See the :ref:`ug_matter_creating_accessory` page for an overview of the process you need to follow.

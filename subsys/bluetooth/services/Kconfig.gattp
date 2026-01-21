@@ -15,6 +15,6 @@ if BT_GATTP
 
 module = BT_GATTP
 module-str = GATT Profile
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_GATTP

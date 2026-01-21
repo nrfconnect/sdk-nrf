@@ -8,7 +8,7 @@
 #include <zephyr/autoconf.h>
 #include <string.h>
 #include <errno.h>
-#include <nrf.h>
+#include <nrfx.h>
 #include <assert.h>
 #if !defined(CONFIG_BUILD_WITH_TFM)
 #include <zephyr/kernel.h>
@@ -20,11 +20,6 @@
 
 #define STATE_ENTERED 0x0000
 #define STATE_NOT_ENTERED 0xFFFF
-
-#ifdef CONFIG_SB_NUM_VER_COUNTER_SLOTS
-BUILD_ASSERT(CONFIG_SB_NUM_VER_COUNTER_SLOTS % 2 == 0,
-			 "CONFIG_SB_NUM_VER_COUNTER_SLOTS must be an even number");
-#endif
 
 #ifdef CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
 BUILD_ASSERT(CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS % 2 == 0,
@@ -388,6 +383,27 @@ int set_monotonic_counter(uint16_t counter_desc, counter_t new_counter)
 
 	bl_storage_counter_set((uint32_t)next_counter_addr, new_counter);
 	return 0;
+}
+
+int is_monotonic_counter_update_possible(uint16_t counter_desc)
+{
+	int err;
+
+	const counter_t *next_counter_addr;
+	counter_t current_cnt_value;
+
+	err = get_counter(counter_desc, &current_cnt_value, &next_counter_addr);
+	(void) current_cnt_value;
+
+	if (err != 0) {
+		return err;
+	}
+
+	if (next_counter_addr == NULL) {
+		err = -ENOMEM;
+	}
+
+	return err;
 }
 
 static lcs_data_t bl_storage_lcs_get(uint32_t address)

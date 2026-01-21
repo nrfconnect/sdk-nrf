@@ -53,13 +53,13 @@ namespace app
 					struct TypeInfo {
 						using Type = chip::app::DataModel::Nullable<
 							chip::app::Clusters::ClosureDimension::Structs::
-								CurrentStateStruct::Type>;
+								DimensionStateStruct::Type>;
 						using DecodableType = chip::app::DataModel::Nullable<
 							chip::app::Clusters::ClosureDimension::Structs::
-								CurrentStateStruct::DecodableType>;
+								DimensionStateStruct::DecodableType>;
 						using DecodableArgType = const chip::app::DataModel::Nullable<
 							chip::app::Clusters::ClosureDimension::Structs::
-								CurrentStateStruct::DecodableType> &;
+								DimensionStateStruct::DecodableType> &;
 
 						static constexpr ClusterId GetClusterId()
 						{
@@ -72,18 +72,18 @@ namespace app
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
 				} // namespace CurrentState
-				namespace Target
+				namespace TargetState
 				{
 					struct TypeInfo {
 						using Type = chip::app::DataModel::Nullable<
-							chip::app::Clusters::ClosureDimension::Structs::TargetStruct::
-								Type>;
+							chip::app::Clusters::ClosureDimension::Structs::
+								DimensionStateStruct::Type>;
 						using DecodableType = chip::app::DataModel::Nullable<
-							chip::app::Clusters::ClosureDimension::Structs::TargetStruct::
-								DecodableType>;
+							chip::app::Clusters::ClosureDimension::Structs::
+								DimensionStateStruct::DecodableType>;
 						using DecodableArgType = const chip::app::DataModel::Nullable<
-							chip::app::Clusters::ClosureDimension::Structs::TargetStruct::
-								DecodableType> &;
+							chip::app::Clusters::ClosureDimension::Structs::
+								DimensionStateStruct::DecodableType> &;
 
 						static constexpr ClusterId GetClusterId()
 						{
@@ -91,11 +91,11 @@ namespace app
 						}
 						static constexpr AttributeId GetAttributeId()
 						{
-							return Attributes::Target::Id;
+							return Attributes::TargetState::Id;
 						}
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
-				} // namespace Target
+				} // namespace TargetState
 				namespace Resolution
 				{
 					struct TypeInfo {
@@ -278,6 +278,27 @@ namespace app
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
 				} // namespace ModulationType
+				namespace LatchControlModes
+				{
+					struct TypeInfo {
+						using Type = chip::BitMask<
+							chip::app::Clusters::ClosureDimension::LatchControlModesBitmap>;
+						using DecodableType = chip::BitMask<
+							chip::app::Clusters::ClosureDimension::LatchControlModesBitmap>;
+						using DecodableArgType = chip::BitMask<
+							chip::app::Clusters::ClosureDimension::LatchControlModesBitmap>;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::ClosureDimension::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::LatchControlModes::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace LatchControlModes
 				namespace GeneratedCommandList
 				{
 					struct TypeInfo
@@ -339,7 +360,7 @@ namespace app
 								  const ConcreteAttributePath &path);
 
 						Attributes::CurrentState::TypeInfo::DecodableType currentState;
-						Attributes::Target::TypeInfo::DecodableType target;
+						Attributes::TargetState::TypeInfo::DecodableType targetState;
 						Attributes::Resolution::TypeInfo::DecodableType resolution =
 							static_cast<chip::Percent100ths>(0);
 						Attributes::StepValue::TypeInfo::DecodableType stepValue =
@@ -362,6 +383,9 @@ namespace app
 						Attributes::ModulationType::TypeInfo::DecodableType modulationType =
 							static_cast<chip::app::Clusters::ClosureDimension::
 									    ModulationTypeEnum>(0);
+						Attributes::LatchControlModes::TypeInfo::DecodableType latchControlModes =
+							static_cast<chip::BitMask<chip::app::Clusters::ClosureDimension::
+											  LatchControlModesBitmap>>(0);
 						Attributes::GeneratedCommandList::TypeInfo::DecodableType
 							generatedCommandList;
 						Attributes::AcceptedCommandList::TypeInfo::DecodableType

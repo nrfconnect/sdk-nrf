@@ -1,0 +1,65 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/{
+	chosen {
+		zephyr,console = &uart135;
+		zephyr,shell-uart = &uart135;
+	};
+};
+
+/* Redo the partitions, copied from nrf54h20_wifi_memory_map.overlay */
+&mram1x {
+	/delete-node/ partitions;
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		cpuapp_boot_partition: partition@30000 {
+			reg = <0x30000 DT_SIZE_K(64)>;
+		};
+
+		slot0_partition: cpuapp_slot0_partition: partition@40000 {
+			reg = <0x40000 DT_SIZE_K(1076)>;
+		};
+
+		cpurad_slot0_partition: partition@14d000 {
+			reg = <0x14d000 DT_SIZE_K(328)>;
+		};
+
+		cpuppr_code_partition: partition@19f000 {
+			reg = <0x19f000 DT_SIZE_K(64)>;
+		};
+
+		cpuflpr_code_partition: partition@1af000 {
+			reg = <0x1af000 DT_SIZE_K(48)>;
+		};
+
+		storage_partition: partition@1bb000 {
+			reg = <0x1bb000 DT_SIZE_K(40)>;
+		};
+
+		periphconf_partition: partition@1c5000 {
+			reg = <0x1c5000 DT_SIZE_K(8)>;
+		};
+	};
+};
+
+/* Used by UARTE135 */
+&cpurad_dma_region {
+	status = "okay";
+};
+
+&uart135 {
+	status = "okay";
+};
+
+/* Used by CPUAPP */
+&uart136 {
+	status = "disabled";
+};

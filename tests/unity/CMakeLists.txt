@@ -55,14 +55,14 @@ if(NOT RUBY_EXECUTABLE)
 endif()
 
 zephyr_include_directories(
-	${CMOCK_DIR}/vendor/unity/src
-	${CMOCK_DIR}/src
-	${CMAKE_CURRENT_LIST_DIR}
+  ${CMOCK_DIR}/vendor/unity/src
+  ${CMOCK_DIR}/src
+  ${CMAKE_CURRENT_LIST_DIR}
 )
 
 zephyr_library_sources(
-	${CMOCK_DIR}/vendor/unity/src/unity.c
-	${CMOCK_DIR}/src/cmock.c
+  ${CMOCK_DIR}/vendor/unity/src/unity.c
+  ${CMOCK_DIR}/src/cmock.c
 )
 
 zephyr_library_sources(src/generic_teardown.c)
@@ -134,7 +134,7 @@ endfunction()
 # Add --wrap linker option for each function listed in the input file.
 function(cmock_linker_trick func_name_path)
   file(STRINGS ${func_name_path} contents)
-  if (contents)
+  if(contents)
     set(linker_str "-Wl")
   endif()
   foreach(src ${contents})
@@ -170,7 +170,7 @@ function(cmock_linker_wrap_trick header_file_path)
     OUTPUT_VARIABLE output_result
   )
 
-  if (NOT ${op_result} EQUAL 0)
+  if(NOT ${op_result} EQUAL 0)
     message(SEND_ERROR "${output_result}")
     message(FATAL_ERROR "Failed to parse header ${header_file_path}")
   endif()
@@ -195,15 +195,15 @@ function(cmock_headers_prepare in_header out_header wrap_header)
     OUTPUT_VARIABLE output_result
   )
 
-  if (NOT ${op_result} EQUAL 0)
+  if(NOT ${op_result} EQUAL 0)
     message(SEND_ERROR "${output_result}")
     message(FATAL_ERROR "Failed to parse header ${in_header}")
   endif()
 endfunction()
 
-#function for handling usage of mock
-#optional second argument can contain offset that include should be placed in
-#for example if file under test is include mocked header as <foo/header.h> then
+# function for handling usage of mock
+# optional second argument can contain offset that include should be placed in
+# for example if file under test is include mocked header as <foo/header.h> then
 # mock and replaced header should be placed in <mock_path>/foo with <mock_path>
 # added as include path.
 # EXCLUDE <pattern>: Exclude functions matching pattern. Deprecated, use FUNC_EXCLUDE instead.
@@ -214,7 +214,7 @@ function(cmock_handle header_file)
   get_property(CMOCK_DIR GLOBAL PROPERTY CMOCK_DIR)
   set(CMOCK_PRODUCTS_DIR ${APPLICATION_BINARY_DIR}/mocks)
 
-  if (DEFINED CMOCK_EXCLUDE)
+  if(DEFINED CMOCK_EXCLUDE)
     message(DEPRECATION " cmock_handle(EXCLUDE) is deprecated, use FUNC_EXCLUDE instead")
     list(APPEND CMOCK_FUNC_EXCLUDE ${CMOCK_EXCLUDE})
   endif()
@@ -222,7 +222,7 @@ function(cmock_handle header_file)
   #get optional offset macro
   set (extra_macro_args ${CMOCK_UNPARSED_ARGUMENTS})
   list(LENGTH extra_macro_args num_extra_args)
-  if (NOT ${num_extra_args} EQUAL 0)
+  if(NOT ${num_extra_args} EQUAL 0)
     list(GET extra_macro_args 0 optional_offset)
     set(dst_path "${CMOCK_PRODUCTS_DIR}/${optional_offset}")
   else()

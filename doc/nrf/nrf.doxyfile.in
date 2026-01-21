@@ -962,7 +962,8 @@ INPUT                  = @DOCSET_SOURCE_BASE@/applications \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/psa/crypto_driver_contexts_composites.h \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/psa/crypto_driver_contexts_key_derivation.h \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/psa/crypto_driver_contexts_primitives.h \
-                         @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/nrf_security_api_structure.h
+                         @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/nrf_security_api_structure.h \
+                         @DOCSET_SOURCE_BASE@/subsys/trusted_storage/include/psa \
 
 # This tag can be used to specify the character encoding of the source files
 # that Doxygen parses. Internally Doxygen uses the UTF-8 encoding. Doxygen uses
@@ -2457,6 +2458,11 @@ PREDEFINED             = __DOXYGEN__ \
                          "CONFIG_NRF_MODEM=y" \
                          "CONFIG_NRF_CLOUD_GATEWAY=y" \
                          "CONFIG_BT_CENTRAL" \
+                         "CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE=y" \
+                         "CONFIG_LTE_LC_NETWORK_REGISTRATION_MODULE=y" \
+                         "CONFIG_LTE_LC_CONNECTION_STATUS_MODULE=y" \
+                         "CONFIG_LTE_LC_MODEM_EVENTS_MODULE=y" \
+                         "CONFIG_LTE_LC_SYSTEM_MODE_MODULE=y" \
                          "CONFIG_LTE_LC_CONN_EVAL_MODULE=y" \
                          "CONFIG_LTE_LC_EDRX_MODULE=y" \
                          "CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE=y" \
@@ -2464,7 +2470,12 @@ PREDEFINED             = __DOXYGEN__ \
                          "CONFIG_LTE_LC_PSM_MODULE=y" \
                          "CONFIG_LTE_LC_RAI_MODULE=y" \
                          "CONFIG_LTE_LC_MODEM_SLEEP_MODULE=y" \
-                         "CONFIG_LTE_LC_TAU_PRE_WARNING_MODULE=y"
+                         "CONFIG_LTE_LC_TAU_PRE_WARNING_MODULE=y" \
+                         "CONFIG_LTE_LC_ENV_EVAL_MODULE=y" \
+                         "CONFIG_LTE_LC_PDN_MODULE=y" \
+                         "CONFIG_LTE_LC_DNS_FALLBACK_MODULE=y" \
+                         "CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE=y"
+
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

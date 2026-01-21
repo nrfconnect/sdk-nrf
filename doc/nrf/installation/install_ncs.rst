@@ -11,14 +11,14 @@ Installing the |NCS|
 
 There are different ways to install the |NCS|, depending on your preferred development environment:
 
-* Using |VSC| and the :ref:`requirements_nrfvsc` (recommended)
+* Using |VSC| and :ref:`requirements_nrfvsc` (recommended)
 * Using command line and :ref:`requirements_nrf_util`
 
 Regardless of which way you choose, the following steps install the |NCS| source code and the |NCS| :term:`toolchain`.
 This includes everything that is required by Zephyr's :ref:`zephyr:getting_started` together with additional tools and Python dependencies that the |NCS| uses.
 
 .. note::
-    Using |VSC| and the |nRFVSC| is also covered in the `Installing nRF Connect SDK and VS Code`_ exercise of the `nRF Connect SDK Fundamentals course`_ on Nordic Developer Academy.
+    Using |VSC| and |nRFVSC| is also covered in the `Installing nRF Connect SDK and VS Code`_ exercise of the `nRF Connect SDK Fundamentals course`_ on Nordic Developer Academy.
 
 .. rst-class:: numbered-step
 
@@ -44,7 +44,7 @@ Depending on your preferred development environment, install the following softw
 
 .. tabs::
 
-   .. group-tab:: nRF Connect for Visual Studio Code
+   .. group-tab:: nRF Connect for VS Code
 
       .. include:: /includes/install_sdk_common_prerequisites.txt
 
@@ -52,7 +52,12 @@ Depending on your preferred development environment, install the following softw
 
       * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_ or `using this direct link <start VS Code walkthrough_>`_.
       * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
-        The |nRFVSC| comes with its own bundled version of some of the nRF Util commands.
+        |nRFVSC| comes with its own bundled version of some of the nRF Util commands.
+
+      .. note::
+         You can also use a different IDE compatible with the VSIX format and install the extensions that are part of the nRF Connect for VS Code Extension Pack from the `Open VSX Registry`_.
+         However, Nordic Semiconductor does not test editors other than |VSC| for compatibility with |nRFVSC|.
+         While you are encouraged to report any issues you encounter on `DevZone`_, issues discovered in editors other than |VSC| and not reproducible in |VSC| will not be prioritized.
 
    .. group-tab:: Command line
 
@@ -70,47 +75,84 @@ Depending on your preferred development environment, install the following softw
 
 .. _gs_installing_toolchain:
 .. _gs_installing_tools:
+.. _cloning_the_repositories_win:
+.. _cloning_the_repositories:
 
 .. rst-class:: numbered-step
 
-Install the |NCS| toolchain
-***************************
+Install the |NCS| code and toolchain
+************************************
 
-.. installncstoolchain-include-start
+Every |NCS| release consists of a combination of :ref:`ncs_git_intro` repositories at different versions and revisions, managed together by :ref:`ncs_west_intro`.
+The revision of each of those repositories is determined by the current revision of the main (or :ref:`manifest <zephyr:west-manifests>`) repository, `sdk-nrf`_.
+Simply put, you can work with the following versions of the |NCS|:
 
+.. list-table::
+   :header-rows: 1
+
+   * - |NCS| version
+     - Required identifier of the revision
+     - Where to find the identifier
+   * - Specific release (recommended)
+     - Release tag (for example, |release_tt|)
+     - :ref:`Release_notes` of the release
+   * - :ref:`Git tag <dm_revisions_git_tags>`
+     - Development tag (for example, ``v2.8.0-rc1``)
+     - :ref:`Changelog <release_notes>` of the tag
+   * - Branch
+     - Branch name (for example, ``main``)
+     - `sdk-nrf`_ repository
+
+For each version of the |NCS|, Nordic Semiconductor provides a dedicated toolchain.
 The |NCS| :term:`toolchain` includes the Zephyr SDK and then adds tools and modules required to build |NCS| samples and applications on top of it.
 These include the :ref:`required SDK tools <requirements_toolchain_tools>`, the :ref:`Python dependencies <requirements_toolchain_python_deps>`, and the :ref:`GN tool <ug_matter_gs_tools_gn>` for creating :ref:`ug_matter` applications.
+You can check the versions of the required tools and Python dependencies on the :ref:`Requirements reference page <requirements_toolchain>`.
 
 .. note::
-    When you first install the |NCS|, it is recommended to install the latest released, stable versions of the SDK and the toolchain.
+   Unless you are familiar with the :ref:`development process <dev-model>`, you should always work with a specific, stable release of the |NCS|.
 
+For more information about the repository and development model, see the :ref:`dm_code_base` page.
+
+When you install |NCS| for the first time, you have neither the SDK code nor the toolchain installed.
 Depending on your preferred development environment, complete the following steps:
 
 .. tabs::
 
-   .. group-tab:: nRF Connect for Visual Studio Code
+   .. group-tab:: nRF Connect for VS Code
 
       .. note::
          If you prefer, you can now `start VS Code walkthrough`_ and install the toolchain and the SDK from there.
 
       1. Open the nRF Connect extension in |VSC| by clicking its icon in the :guilabel:`Activity Bar`.
-      #. In the extension's :guilabel:`Welcome View`, click on :guilabel:`Manage toolchains`.
-         The list of actions appears in the |VSC|'s quick pick.
-      #. Click :guilabel:`Install Toolchain`.
-         The list of available stable toolchain versions appears in the |VSC|'s quick pick.
-      #. Select the toolchain version to install.
-         The toolchain version should match the |NCS| version you are going to work with.
+         The extension loads and the `Welcome View`_ appears with two buttons: :guilabel:`Install SDK` and :guilabel:`Install Toolchain`.
+      #. Click on :guilabel:`Install SDK`.
+      #. Select the region for download.
+
+         You only need to select the region for downloads once.
+         The selected region applies to all future SDK and toolchain downloads.
+         You can later change it in the |VSC| settings.
+
+         The list of available SDK types appears.
+
+      #. Select :guilabel:`nRF Connect SDK`.
+         The list of available stable versions for the |NCS| appears in the |VSC|'s quick pick, grouped into two categories:
+
+         * :guilabel:`Pre-packaged SDKs & Toolchains` - Available on the Nordic Semiconductor server.
+           The package downloads both the SDK and toolchain, but skips the toolchain if you have it already installed.
+           Available mostly for stable releases and some Git tags.
+           Recommended for faster and more reliable download and installation.
+         * :guilabel:`GitHub` - Taken from the `nRF Connect by Nordic Semiconductor GitHub organization <nrfconnect GitHub organization_>`_.
+           Available for stable releases, but also Git tags and branches.
+
+      #. Select an |NCS| version to install from the :guilabel:`Pre-packaged SDKs & Toolchains` category.
          |install_latest_version|
 
-         .. note::
-              If you have received a custom URL for installing the toolchain, you can provide it using the :guilabel:`Change Toolchain Index` button in the quick pick's header (wrench icon).
-              If you are working with a development tag, disable the filter in the quick pick's header to list all available toolchains.
+      The SDK and toolchain installation starts and it can take several minutes.
+      You can follow the progress in the notification that appears.
 
-         The toolchain installation starts in the background, as can be seen in the notification that appears.
-
-      When you install the toolchain for the first time, the installed version is automatically selected for your project.
-
-      After installing the toolchain, you can access the :guilabel:`Install Toolchain` option by clicking on :guilabel:`Manage toolchains`.
+      After the installation is complete, the extension's :guilabel:`Welcome View` is updated to feature :guilabel:`Manage toolchains` and :guilabel:`Manage SDKs` menus.
+      You can use these menus to install other versions of the |NCS| and toolchain, either together or separately.
+      See the `extension documentation <How to set up SDK and toolchain_>`_ for more information.
 
    .. group-tab:: Command line
 
@@ -130,125 +172,56 @@ Depending on your preferred development environment, complete the following step
             nrfutil sdk-manager search
 
          The versions from this list correspond to the |NCS| versions and will be *version* in the following step.
-      #. Run the following command to install the toolchain version for the SDK version of your choice:
+      #. Run the following command to install the SDK and the toolchain for the SDK version of your choice:
 
          .. parsed-literal::
             :class: highlight
 
-            nrfutil sdk-manager toolchain install --ncs-version *version*
+            nrfutil sdk-manager install *version*
 
          For example:
 
          .. parsed-literal::
             :class: highlight
 
-            nrfutil sdk-manager toolchain install --ncs-version |release|
+            nrfutil sdk-manager install |release|
 
-         This example command installs the toolchain required for the |NCS| |release|.
+         This example command installs both the SDK code and the toolchain for the |NCS| |release|.
          |install_latest_version|
 
-      The ``sdk-manager`` command installs the toolchain by default at :file:`C:/ncs/toolchains` on Windows and at :file:`~/ncs/toolchains` on Linux.
-      These can be modified, as explained in the `command documentation <sdk-manager Configuration settings_>`_.
-      On macOS, :file:`/opt/nordic/ncs/toolchains` is used and no other location is allowed.
+         .. note::
+            If you plan to work with a specific branch, use the command for installing the latest |NCS| release (|release|) to install the latest toolchain.
+            Then, you must use the ``west init`` command several steps below to get the code of the desired branch.
+            This is because the ``sdk-manager`` command only supports installing specific release versions.
 
-      If you have received a custom URL for installing the toolchain, you can use the following commands to set it as default, replacing the respective parameters:
+         The ``sdk-manager`` command installs the SDK by default at :file:`C:/ncs/` on Windows and at :file:`~/ncs/` on Linux, and the toolchain in the :file:`toolchains` subdirectory.
+         The SDK installation location can be modified, as explained in the `command documentation <sdk-manager Configuration settings_>`_.
+         On macOS, :file:`/opt/nordic/ncs/` and :file:`/opt/nordic/ncs/toolchains` are used and no other locations are allowed.
+         The :file:`ncs` directory holds all |NCS| repositories.
 
-      .. parsed-literal::
-         :class: highlight
+         If you have received a custom URL or a toolchain bundle ID for installing the toolchain, you can use dedicated commands to provide it.
+         Expand the section below to see the commands.
 
-         nrfutil sdk-manager config toolchain-index add *index-name* *custom_toolchain_URL*
-         nrfutil sdk-manager config toolchain-index set *index-name*
+         .. toggle::
 
-      If you have received a custom bundle ID for installing a specific toolchain version, you can use the following commands to provide it, replacing the respective parameter:
+            If you have received a custom URL for installing the toolchain, you can use the following commands to set it as default, replacing the respective parameters:
 
-      .. parsed-literal::
-         :class: highlight
+            .. parsed-literal::
+               :class: highlight
 
-         nrfutil sdk-manager toolchain install --toolchain-bundle-id *custom_bundle_ID*
+               nrfutil sdk-manager config toolchain-index add *index-name* *custom_toolchain_URL*
+               nrfutil sdk-manager config toolchain-index set *index-name*
 
-      To read more about ``sdk-manager`` commands, use the ``nrfutil sdk-manager --help`` command, or see the `command documentation <sdk-manager command_>`_.
+            If you have received a custom bundle ID for installing a specific toolchain version, you can use the following commands to provide it, replacing the respective parameter:
 
-With the default location to install the toolchain (:file:`C:/ncs/toolchains` on Windows, :file:`~/ncs/toolchains/` on Linux, and the non-modifiable :file:`/opt/nordic/ncs/toolchains/` on macOS), your directory structure now looks similar to this:
+            .. parsed-literal::
+               :class: highlight
 
-.. code-block:: none
+               nrfutil sdk-manager toolchain install --toolchain-bundle-id *custom_bundle_ID*
 
-   ncs
-   └─── toolchains
-      └─── <toolchain-installation>
+            To learn more about ``sdk-manager`` commands, use the ``nrfutil sdk-manager --help`` command, or see the `command documentation <sdk-manager command_>`_.
 
-In this simplified structure preview, *<toolchain-installation>* corresponds to the version name you installed (most commonly, a SHA).
-
-You can check the versions of the required tools and Python dependencies on the :ref:`Requirements reference page <requirements_toolchain>`.
-
-.. installncstoolchain-include-end
-
-.. _cloning_the_repositories_win:
-.. _cloning_the_repositories:
-
-.. rst-class:: numbered-step
-
-Get the |NCS| code
-******************
-
-.. getncscode-include-start
-
-Every |NCS| release consists of a combination of :ref:`ncs_git_intro` repositories at different versions and revisions, managed together by :ref:`ncs_west_intro`.
-The revision of each of those repositories is determined by the current revision of the main (or :ref:`manifest <zephyr:west-manifests>`) repository, `sdk-nrf`_.
-Simply put, you can work with the following versions of the |NCS|:
-
-.. list-table::
-   :header-rows: 1
-
-   * - |NCS| version
-     - Required identifier of the revision
-     - Where to find the identifier
-   * - Specific release (recommended)
-     - Release tag (for example, |release_tt|)
-     - :ref:`Release_notes` of the release
-   * - :ref:`Preview tag <dm-revisions>`
-     - Development tag (for example, ``v2.8.0-preview1``)
-     - :ref:`Changelog <release_notes>` of the tag
-   * - Branch
-     - Branch name (for example, ``main``)
-     - `sdk-nrf`_ repository
-
-.. note::
-   Unless you are familiar with the :ref:`development process <dev-model>`, you should always work with a specific, stable release of the |NCS|.
-
-For more information about the repository and development model, see the :ref:`dm_code_base` page.
-
-.. tabs::
-
-   .. group-tab:: nRF Connect for Visual Studio Code
-
-      To clone the |NCS| code, complete the following steps:
-
-      1. Open the nRF Connect extension in |VSC| by clicking its icon in the :guilabel:`Activity Bar`.
-      #. In the extension's :guilabel:`Welcome View`, click on :guilabel:`Manage SDKs`.
-         The list of actions appears in the |VSC|'s quick pick.
-      #. Click :guilabel:`Install SDK`.
-         The list of available stable SDK versions appears in the |VSC|'s quick pick, grouped into two categories:
-
-         * Pre-packaged SDKs - Bundled by Nordic Semiconductor.
-           Available mostly for stable releases and some preview tags.
-           Recommended for faster and more reliable download and installation.
-         * GitHub - Taken from the `nRF Connect by Nordic Semiconductor GitHub organization <nrfconnect GitHub organization_>`_.
-           Available for stable releases, but also preview tags and branches (after disabling the filter in the quick pick).
-
-      #. Select the SDK version to install.
-         |install_latest_version|
-
-      The SDK installation starts and it can take several minutes.
-
-   .. group-tab:: Command line
-
-      To clone the repositories, complete the following steps:
-
-      1. On the command line, open the directory :file:`ncs`.
-         By default, this is one level up from the location where you installed the toolchain.
-         This directory will hold all |NCS| repositories.
-
-      #. Start the toolchain environment for your operating system using the following command pattern, with ``--ncs-version`` corresponding to the toolchain version you have installed in the :ref:`previous step <gs_installing_tools>`:
+      #. Start the toolchain environment for your operating system using the following command pattern, with ``--ncs-version`` corresponding to the |NCS| version you have installed:
 
          .. tabs::
 
@@ -311,17 +284,18 @@ For more information about the repository and development model, see the :ref:`d
          See the table above for more information.
          |install_latest_version|
 
-      #. Initialize west with the revision of the |NCS| that you want to check out, replacing *nRFConnectSDK_revision* with the identifier:
+      #. Initialize west with the revision of the |NCS| that you want to check out, replacing the required parameters:
 
          .. parsed-literal::
             :class: highlight
 
-            west init -m https\://github.com/nrfconnect/sdk-nrf --mr *nRFConnectSDK_revision* *nRFConnectSDK_revision*
+            west init -m https\://github.com/nrfconnect/sdk-nrf --mr *nRFConnectSDK_revision* *nRFConnectSDK_revision_workspace_dir*
 
          In this command:
 
          - The first *nRFConnectSDK_revision* identifies the revision of the |NCS|.
-         - The second *nRFConnectSDK_revision* is the name of the workspace directory that will be created by west.
+         - The second *nRFConnectSDK_revision_workspace_dir* is the name of the workspace directory that will be created by west.
+           For this installation method, it should be the same as the *nRFConnectSDK_revision*.
 
          The command creates the *nRFConnectSDK_revision* subdirectory and checks out the given revision of the |NCS| inside it.
          For example:
@@ -333,11 +307,11 @@ For more information about the repository and development model, see the :ref:`d
 
               west init -m https\://github.com/nrfconnect/sdk-nrf --mr |release| |release|
 
-         * **Preview tag:** To check out the ``v2.8.0-preview1`` tag, enter the following command:
+         * **Git tag:** To check out the ``v2.8.0-rc1`` tag, enter the following command:
 
            .. code-block:: console
 
-              west init -m https://github.com/nrfconnect/sdk-nrf --mr v2.8.0-preview1
+              west init -m https://github.com/nrfconnect/sdk-nrf --mr v2.8.0-rc1 v2.8.0-rc1
 
          * **Branch**: To check out the ``main`` branch that includes the latest state of development, enter the following command:
 
@@ -373,9 +347,7 @@ For more information about the repository and development model, see the :ref:`d
 
             west zephyr-export
 
-..
-
-With the default location to install the toolchain (see the previous step) and the default location to install the SDK (:file:`C:/ncs` on Windows, :file:`~/ncs/` on Linux, and :file:`/opt/nordic/ncs/` on macOS), your directory structure now looks similar to this:
+With the default locations to install the SDK code (:file:`C:/ncs` on Windows, :file:`~/ncs/` on Linux, and :file:`/opt/nordic/ncs/` on macOS) and its toolchain (:file:`C:/ncs/toolchains` on Windows, :file:`~/ncs/toolchains/` on Linux, and the non-modifiable :file:`/opt/nordic/ncs/toolchains/` on macOS), your directory structure now looks similar to this:
 
 .. code-block:: none
 
@@ -391,11 +363,9 @@ With the default location to install the toolchain (see the previous step) and t
       ├─── zephyr
       └─── ...
 
-In this simplified structure preview, *<toolchain-installation>* corresponds to the toolchain version and *<west-workspace>* corresponds to the SDK version name.
+In this simplified structure preview, *<toolchain-installation>* corresponds to the toolchain version (most commonly, a SHA) and *<west-workspace>* corresponds to the SDK version name.
 There are also additional directories, and the structure might change over time, for example if you later :ref:`change the state of development to a different revision <updating_repos>`.
 The full set of repositories and directories is defined in the :ref:`manifest file <zephyr:west-manifest-files>` (`see the file in the repository <west manifest file_>`_).
-
-.. getncscode-include-end
 
 .. _build_environment_cli:
 
@@ -466,7 +436,7 @@ Define the required environment variables as follows, depending on your operatin
 Alternative method: System-wide installation
 ********************************************
 
-System-wide installation is an alternative to the recommended installation methods using the |nRFVSC| or nRF Util.
+System-wide installation is an alternative to the recommended installation methods using |nRFVSC| or nRF Util.
 It gives you more control over each of the required tools, but requires more familiarity with Zephyr and with each of the tools.
 
 To install the |NCS| system-wide, complete the following steps:
@@ -535,12 +505,6 @@ To install the |NCS| system-wide, complete the following steps:
             .. tabs::
 
                .. group-tab:: Install within virtual environment
-
-                  #. Use ``apt`` to install Python ``venv`` package:
-
-                     .. code-block:: bash
-
-                        sudo apt install python3-venv
 
                   #. Create a new virtual environment:
 
@@ -622,9 +586,66 @@ To install the |NCS| system-wide, complete the following steps:
 
    ..
 
-#. Get the |NCS| code as described in :ref:`cloning_the_repositories` for the command line.
-   (You can skip step 2.)
+#. Enter the :file:`ncs` directory you created when setting up the virtual environment:
+
+   .. tabs::
+
+      .. group-tab:: Windows
+
+         .. code-block:: console
+
+            cd %HOMEPATH%/ncs
+
+      .. group-tab:: Linux
+
+         .. code-block:: console
+
+            cd ~/ncs
+
+      .. group-tab:: macOS
+
+         .. code-block:: console
+
+            cd ~/ncs
+
+#. Get the |NCS| code.
    When you first install the |NCS|, it is recommended to install the latest released version of the SDK.
+   Run the following command, where *nRFConnectSDK_revision* is the revision of the |NCS| you want to get the code of:
+
+   .. code-block:: console
+
+      west init -m https://github.com/nrfconnect/sdk-nrf --mr *nRFConnectSDK_revision*
+
+   The command initializes a west workspace in the :file:`ncs` directory and checks out the given revision of the |NCS| `sdk-nrf`_ in the :file:`nrf` subdirectory.
+   For example:
+
+   * **Specific release:** To check out the |release| release, enter the following command:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west init -m https\://github.com/nrfconnect/sdk-nrf --mr |release|
+
+   * **Git tag:** To check out the ``v2.8.0-rc1`` tag, enter the following command:
+
+      .. code-block:: console
+
+         west init -m https://github.com/nrfconnect/sdk-nrf --mr v2.8.0-rc1
+
+   * **Branch**: To check out the ``main`` branch that includes the latest state of development, enter the following command:
+
+      .. code-block:: console
+
+         west init -m https://github.com/nrfconnect/sdk-nrf --mr main
+
+     Alternatively, you can omit the ``--mr`` parameter, in which case west uses ``main`` as the default *nRFConnectSDK_revision*.
+
+#. In the :file:`ncs` directory, run the following command to clone the project repositories:
+
+   .. code-block:: console
+
+      west update
+
 #. Install the Python dependencies.
    Expand the section below to see the commands.
 
@@ -639,7 +660,7 @@ To install the |NCS| system-wide, complete the following steps:
 
          .. group-tab:: Windows
 
-            #. Enter the following commands in a ``cmd.exe`` terminal window in the :file:`ncs` folder:
+            #. In the :file:`ncs` directory, enter the following commands in a ``cmd.exe`` terminal window:
 
                .. code-block:: bash
 
@@ -649,7 +670,7 @@ To install the |NCS| system-wide, complete the following steps:
 
          .. group-tab:: Linux
 
-            #. Enter the following commands in a terminal window in the :file:`ncs` folder:
+            #. In the :file:`ncs` directory, enter the following commands in a terminal window:
 
                .. code-block:: bash
 
@@ -659,7 +680,7 @@ To install the |NCS| system-wide, complete the following steps:
 
          .. group-tab:: macOS
 
-            #. Enter the following commands in a terminal window in the :file:`ncs` folder:
+            #. In the :file:`ncs` directory, enter the following commands in a terminal window:
 
                .. code-block:: bash
 
@@ -674,7 +695,7 @@ To install the |NCS| system-wide, complete the following steps:
 #. Follow the steps in the "Install the Zephyr SDK" section in Zephyr's :ref:`zephyr:getting_started` to install the Zephyr SDK.
 #. Depending on your preferred development environment:
 
-   * If you want to work with |VSC|, install the |nRFVSC| (the default IDE for the |NCS|).
+   * If you want to work with |VSC|, install |nRFVSC| (the default IDE for the |NCS|).
    * If you want to work from command line, :ref:`build_environment_cli`.
 
 #. If you want to build `Matter`_ applications, additionally install the `GN`_ meta-build system.

@@ -15,7 +15,6 @@
 
 #include <modem/lte_lc.h>
 #include <modem/nrf_modem_lib.h>
-#include <modem/pdn.h>
 #include <nrf_modem_at.h>
 
 #include "memfault_lte_coredump_modem_trace.h"
@@ -33,8 +32,8 @@ enum library_state {
 	STATE_WAITING_FOR_NRF_MODEM_LIB_INIT,
 	STATE_WAITING_FOR_NETWORK_CONNECTION,
 	STATE_NETWORK_CONNECTED,
-	STATE_COREDUMP_SEND_ATTEMPT,
-	STATE_COREDUMP_SEND_BACKOFF,
+	STATE_SEND_ATTEMPT,
+	STATE_SEND_BACKOFF,
 	STATE_FINISHED,
 	STATE_ERROR
 };
@@ -46,11 +45,10 @@ enum library_event {
 	EVENT_LTE_DEREGISTERED,
 	EVENT_PDN_ACTIVATED,
 	EVENT_PDN_DEACTIVATED,
-	EVENT_NETWORK_CONNECTED,
-	EVENT_NETWORK_DISCONNECTED,
 	EVENT_BACKOFF_TIMER_EXPIRED,
-	EVENT_COREDUMP_SEND_FAIL,
-	EVENT_COREDUMP_SEND_SUCCESS,
+	EVENT_SEND_FAIL,
+	EVENT_SEND_SUCCESS,
+	EVENT_SEND_RETRY_COUNT_EXCEEDED,
 	EVENT_ERROR
 };
 
@@ -63,18 +61,29 @@ struct fsm_state_object {
 	/* This must be first */
 	struct smf_ctx ctx;
 
+	/* Current event being processed by the state machine */
 	enum library_event event;
 
+	/* Number of retry attempts for sending data to Memfault */
 	uint8_t retry_count;
 
+	/* Delayed work for retry backoff timing */
 	struct k_work_delayable backoff_work;
 
+	/* Flag that represents if the device is registered to LTE network */
 	bool lte_registered;
+
+	/* Flag that represents if PDN (Packet Data Network) connection is active */
 	bool pdn_active;
+
+	/* Heartbeat has been triggered (ensures single trigger per session) */
+	bool heartbeat_triggered;
+
+	/* Valid coredump is available to send */
+	bool has_coredump;
 };
 
 /* Forward declarations: Local functions */
-static void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason);
 static void lte_handler(const struct lte_lc_evt *const evt);
 static void on_modem_lib_init(int ret, void *ctx);
 static void on_modem_lib_shutdown(void *ctx);
@@ -83,17 +92,17 @@ static void schedule_send_backoff(struct fsm_state_object *state_object);
 
 /* Forward declarations: State Machine Functions */
 static void state_running_entry(void *o);
-static void state_running_run(void *o);
+static enum smf_state_result state_running_run(void *o);
 static void state_running_exit(void *o);
 static void state_waiting_for_nrf_modem_lib_init_entry(void *o);
-static void state_waiting_for_nrf_modem_lib_init_run(void *o);
-static void state_waiting_for_network_connection_run(void *o);
+static enum smf_state_result state_waiting_for_nrf_modem_lib_init_run(void *o);
+static enum smf_state_result state_waiting_for_network_connection_run(void *o);
 static void state_network_connected_entry(void *o);
-static void state_network_connected_run(void *o);
-static void state_coredump_send_attempt_entry(void *o);
-static void state_coredump_send_attempt_run(void *o);
-static void state_coredump_send_backoff_entry(void *o);
-static void state_coredump_send_backoff_run(void *o);
+static enum smf_state_result state_network_connected_run(void *o);
+static void state_send_attempt_entry(void *o);
+static enum smf_state_result state_send_attempt_run(void *o);
+static void state_send_backoff_entry(void *o);
+static enum smf_state_result state_send_backoff_run(void *o);
 static void state_finished_entry(void *o);
 static void state_error_entry(void *o);
 
@@ -122,19 +131,19 @@ static const struct smf_state states[] = {
 				 NULL,
 				 &states[STATE_RUNNING],
 #if defined(CONFIG_MEMFAULT_NCS_POST_COREDUMP_AFTER_INITIAL_DELAY)
-				 &states[STATE_COREDUMP_SEND_BACKOFF]),
+				 &states[STATE_SEND_BACKOFF]),
 #else
-				 &states[STATE_COREDUMP_SEND_ATTEMPT]),
+				 &states[STATE_SEND_ATTEMPT]),
 #endif /* CONFIG_MEMFAULT_NCS_POST_COREDUMP_AFTER_INITIAL_DELAY */
-	[STATE_COREDUMP_SEND_ATTEMPT] =
-		SMF_CREATE_STATE(state_coredump_send_attempt_entry,
-				 state_coredump_send_attempt_run,
+	[STATE_SEND_ATTEMPT] =
+		SMF_CREATE_STATE(state_send_attempt_entry,
+				 state_send_attempt_run,
 				 NULL,
 				 &states[STATE_NETWORK_CONNECTED],
 				 NULL),
-	[STATE_COREDUMP_SEND_BACKOFF] =
-		SMF_CREATE_STATE(state_coredump_send_backoff_entry,
-				 state_coredump_send_backoff_run,
+	[STATE_SEND_BACKOFF] =
+		SMF_CREATE_STATE(state_send_backoff_entry,
+				 state_send_backoff_run,
 				 NULL,
 				 &states[STATE_NETWORK_CONNECTED],
 				 NULL),
@@ -154,10 +163,10 @@ static const struct smf_state states[] = {
 
 static void timer_work_fn(struct k_work *work)
 {
+	ARG_UNUSED(work);
+
 	event_send(EVENT_BACKOFF_TIMER_EXPIRED);
 }
-
-static struct fsm_state_object state_object = { 0 };
 
 /* nRF Modem Library Handlers */
 
@@ -180,76 +189,139 @@ static void on_modem_lib_shutdown(void *ctx)
 
 static void lte_handler(const struct lte_lc_evt *const evt)
 {
-	if (evt->type == LTE_LC_EVT_NW_REG_STATUS) {
+	switch (evt->type) {
+	case LTE_LC_EVT_NW_REG_STATUS:
 		switch (evt->nw_reg_status) {
 		case LTE_LC_NW_REG_REGISTERED_HOME:
 			__fallthrough;
 		case LTE_LC_NW_REG_REGISTERED_ROAMING:
 			event_send(EVENT_LTE_REGISTERED);
+
 			break;
 		case LTE_LC_NW_REG_UNKNOWN:
 			__fallthrough;
 		case LTE_LC_NW_REG_UICC_FAIL:
 			__fallthrough;
 		case LTE_LC_NW_REG_NOT_REGISTERED:
-			 __fallthrough;
+			__fallthrough;
 		case LTE_LC_NW_REG_REGISTRATION_DENIED:
 			event_send(EVENT_LTE_DEREGISTERED);
+
+			break;
 		default:
-			/* Don't care */
 			break;
 		}
+
+		break;
+	case LTE_LC_EVT_PDN:
+		switch (evt->pdn.type) {
+		case LTE_LC_EVT_PDN_ACTIVATED:
+			if (evt->pdn.cid == 0) {
+				event_send(EVENT_PDN_ACTIVATED);
+			}
+
+			break;
+		case LTE_LC_EVT_PDN_DEACTIVATED:
+			if (evt->pdn.cid == 0) {
+				event_send(EVENT_PDN_DEACTIVATED);
+			}
+
+			break;
+		case LTE_LC_EVT_PDN_NETWORK_DETACH:
+			event_send(EVENT_PDN_DEACTIVATED);
+
+			break;
+		default:
+			break;
+		}
+
+		break;
+	default:
+		break;
 	}
 }
 
-static void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
+static void init_state_variables(struct fsm_state_object *state_object)
+{
+	state_object->lte_registered = false;
+	state_object->pdn_active = false;
+	state_object->retry_count = 0;
+	state_object->heartbeat_triggered = false;
+}
+
+/* Update registration and PDN state. Returns true if the state changed. */
+static bool update_connectivity(struct fsm_state_object *state_object,
+					 enum library_event event)
 {
 	switch (event) {
-	case PDN_EVENT_ACTIVATED:
-		event_send(EVENT_PDN_ACTIVATED);
-		break;
-	case PDN_EVENT_NETWORK_DETACH:
-		__fallthrough;
-	case PDN_EVENT_DEACTIVATED:
-		event_send(EVENT_PDN_DEACTIVATED);
-		break;
+	case EVENT_LTE_REGISTERED:
+		state_object->lte_registered = true;
+
+		return true;
+	case EVENT_LTE_DEREGISTERED:
+		state_object->lte_registered = false;
+
+		return true;
+	case EVENT_PDN_ACTIVATED:
+		state_object->pdn_active = true;
+
+		return true;
+	case EVENT_PDN_DEACTIVATED:
+		state_object->pdn_active = false;
+
+		return true;
 	default:
-		/* Don't care */
-		break;
+		return false;
 	}
+}
+
+/* Returns true if the modem is registered and a PDN bearer is active. */
+static bool is_registered_and_pdn_active(struct fsm_state_object *state_object,
+					 enum library_event event)
+{
+	return state_object->lte_registered && state_object->pdn_active;
 }
 
 /* SMF State Handlers */
 
 static void state_waiting_for_nrf_modem_lib_init_entry(void *o)
 {
-	struct fsm_state_object *state_object = o;
+	ARG_UNUSED(o);
 
 	LOG_DBG("state_waiting_for_nrf_modem_lib_init_entry");
-
-	state_object->lte_registered = false;
-	state_object->pdn_active = false;
-	state_object->retry_count = 0;
 }
 
-static void state_waiting_for_nrf_modem_lib_init_run(void *o)
+static enum smf_state_result state_waiting_for_nrf_modem_lib_init_run(void *o)
 {
 	struct fsm_state_object *state_object = o;
 
 	LOG_DBG("state_waiting_for_nrf_modem_lib_init_run");
 
-	if (state_object->event == EVENT_NRF_MODEM_LIB_INITED) {
+	switch (state_object->event) {
+	case EVENT_NRF_MODEM_LIB_INITED:
 		smf_set_state(SMF_CTX(state_object), &states[STATE_RUNNING]);
+
+		return SMF_EVENT_HANDLED;
+
+	case EVENT_NRF_MODEM_LIB_SHUTDOWN:
+		return SMF_EVENT_HANDLED;
+
+	default:
+		break;
 	}
+
+	return SMF_EVENT_PROPAGATE;
 }
 
 static void state_running_entry(void *o)
 {
 	int err;
 
-	ARG_UNUSED(o);
+	struct fsm_state_object *state_object = o;
 
 	LOG_DBG("state_running_entry");
+
+	init_state_variables(state_object);
 
 	/* Subscribe to +CEREG notifications, level 5 */
 	err = nrf_modem_at_printf("AT+CEREG=5");
@@ -260,26 +332,38 @@ static void state_running_entry(void *o)
 	}
 
 	lte_lc_register_handler(lte_handler);
-
-	err = pdn_default_ctx_cb_reg(pdn_event_handler);
-	if (err) {
-		LOG_ERR("pdn_default_ctx_cb_reg, error: %d", err);
-		event_send(EVENT_ERROR);
-		return;
-	}
 }
 
-static void state_running_run(void *o)
+static enum smf_state_result state_running_run(void *o)
 {
 	struct fsm_state_object *state_object = o;
 
 	LOG_DBG("state_running_run");
 
-	if (state_object->event == EVENT_NRF_MODEM_LIB_SHUTDOWN) {
+	switch (state_object->event) {
+	case EVENT_NRF_MODEM_LIB_SHUTDOWN:
 		smf_set_state(SMF_CTX(state_object), &states[STATE_WAITING_FOR_NRF_MODEM_LIB_INIT]);
-	} else if (state_object->event == EVENT_ERROR) {
+
+		return SMF_EVENT_HANDLED;
+
+	case EVENT_ERROR:
 		smf_set_state(SMF_CTX(state_object), &states[STATE_ERROR]);
+
+		return SMF_EVENT_HANDLED;
+
+	case EVENT_SEND_RETRY_COUNT_EXCEEDED:
+		__fallthrough;
+
+	case EVENT_SEND_SUCCESS:
+		smf_set_state(SMF_CTX(state_object), &states[STATE_FINISHED]);
+
+		return SMF_EVENT_HANDLED;
+
+	default:
+		break;
 	}
+
+	return SMF_EVENT_PROPAGATE;
 }
 
 static void state_running_exit(void *o)
@@ -297,84 +381,66 @@ static void state_running_exit(void *o)
 		return;
 	}
 
-	err = pdn_default_ctx_cb_dereg(pdn_event_handler);
-	if (err) {
-		LOG_ERR("pdn_default_ctx_cb_dereg, error: %d", err);
-		event_send(EVENT_ERROR);
-		return;
-	}
-
 	(void)k_work_cancel_delayable(&state_object->backoff_work);
 }
 
-static void state_waiting_for_network_connection_run(void *o)
+static enum smf_state_result state_waiting_for_network_connection_run(void *o)
 {
 	struct fsm_state_object *state_object = o;
 
 	LOG_DBG("state_waiting_for_network_connection_run");
 
-	switch (state_object->event) {
-	case EVENT_LTE_REGISTERED:
-		state_object->lte_registered = true;
-		break;
-	case EVENT_LTE_DEREGISTERED:
-		state_object->lte_registered = false;
-		break;
-	case EVENT_PDN_ACTIVATED:
-		state_object->pdn_active = true;
-		break;
-	case EVENT_PDN_DEACTIVATED:
-		state_object->pdn_active = false;
-		break;
-	default:
-		/* Don't care */
-		break;
+	if (update_connectivity(state_object, state_object->event) &&
+	    is_registered_and_pdn_active(state_object, state_object->event)) {
+		smf_set_state(SMF_CTX(state_object), &states[STATE_NETWORK_CONNECTED]);
+
+		return SMF_EVENT_HANDLED;
 	}
 
-	if (state_object->lte_registered && state_object->pdn_active) {
-		smf_set_state(SMF_CTX(state_object), &states[STATE_NETWORK_CONNECTED]);
-	}
+	return SMF_EVENT_PROPAGATE;
 }
 
 static void state_network_connected_entry(void *o)
 {
-	struct fsm_state_object *state_object = o;
+	ARG_UNUSED(o);
 
 	LOG_DBG("state_network_connected_entry");
-
-	state_object->retry_count = 0;
 }
 
-static void state_network_connected_run(void *o)
+static enum smf_state_result state_network_connected_run(void *o)
 {
 	struct fsm_state_object *state_object = o;
 
 	LOG_DBG("state_network_connected_run");
 
-	if (state_object->event == EVENT_LTE_DEREGISTERED) {
-		state_object->lte_registered = false;
-
+	if (update_connectivity(state_object, state_object->event) &&
+	    !is_registered_and_pdn_active(state_object, state_object->event)) {
 		smf_set_state(SMF_CTX(state_object), &states[STATE_WAITING_FOR_NETWORK_CONNECTION]);
-	} else if (state_object->event == EVENT_PDN_DEACTIVATED) {
-		state_object->pdn_active = false;
 
-		smf_set_state(SMF_CTX(state_object), &states[STATE_WAITING_FOR_NETWORK_CONNECTION]);
+		return SMF_EVENT_HANDLED;
 	}
+
+	return SMF_EVENT_PROPAGATE;
 }
 
-static void state_coredump_send_attempt_entry(void *o)
+static void state_send_attempt_entry(void *o)
 {
 	int err;
 
-	ARG_UNUSED(o);
+	struct fsm_state_object *state_object = o;
 
-	LOG_DBG("state_coredump_send_attempt_entry");
-	LOG_DBG("Triggering heartbeat");
-	LOG_DBG("Attempting to send coredump");
+	LOG_DBG("state_send_attempt_entry");
 
-	memfault_metrics_heartbeat_debug_trigger();
+	if (!state_object->heartbeat_triggered) {
+		LOG_DBG("Triggering Memfault metrics heartbeat");
+		memfault_metrics_heartbeat_debug_trigger();
 
-	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_POST_MODEM_TRACE_ON_COREDUMP)) {
+		state_object->heartbeat_triggered = true;
+		LOG_DBG("Memfault metrics heartbeat triggered successfully");
+	}
+
+	if (state_object->has_coredump &&
+	    IS_ENABLED(CONFIG_MEMFAULT_NCS_POST_MODEM_TRACE_ON_COREDUMP)) {
 		err = memfault_lte_coredump_modem_trace_init();
 		if (err == -EIO) {
 			LOG_ERR("memfault_lte_coredump_modem_trace_init, error: %d", err);
@@ -389,47 +455,54 @@ static void state_coredump_send_attempt_entry(void *o)
 		}
 	}
 
+	LOG_DBG("Attempting to send Memfault data (coredump and/or heartbeat)");
+
 	err = memfault_zephyr_port_post_data();
 	if (err) {
-		LOG_DBG("Failed to post data to Memfault");
-		event_send(EVENT_COREDUMP_SEND_FAIL);
+		LOG_WRN("Failed to post data to Memfault, error: %d", err);
+		event_send(EVENT_SEND_FAIL);
 	} else {
-		LOG_DBG("Succeeded posting data to Memfault");
-		event_send(EVENT_COREDUMP_SEND_SUCCESS);
+		LOG_DBG("Successfully posted data to Memfault");
+		event_send(EVENT_SEND_SUCCESS);
 	}
 }
 
-static void state_coredump_send_attempt_run(void *o)
+static enum smf_state_result state_send_attempt_run(void *o)
 {
 	struct fsm_state_object *state_object = o;
 
-	LOG_DBG("state_coredump_send_attempt_run");
+	LOG_DBG("state_send_attempt_run");
 
-	if (state_object->event == EVENT_COREDUMP_SEND_FAIL) {
-		smf_set_state(SMF_CTX(state_object), &states[STATE_COREDUMP_SEND_BACKOFF]);
-	} else if (state_object->event == EVENT_COREDUMP_SEND_SUCCESS) {
-		smf_set_state(SMF_CTX(state_object), &states[STATE_FINISHED]);
+	if (state_object->event == EVENT_SEND_FAIL) {
+		smf_set_state(SMF_CTX(state_object), &states[STATE_SEND_BACKOFF]);
+
+		return SMF_EVENT_HANDLED;
 	}
+
+	return SMF_EVENT_PROPAGATE;
 }
 
-static void state_coredump_send_backoff_entry(void *o)
+static void state_send_backoff_entry(void *o)
 {
 	struct fsm_state_object *state_object = o;
 
-	LOG_DBG("state_coredump_send_backoff_entry");
+	LOG_DBG("state_send_backoff_entry");
 
 	schedule_send_backoff(state_object);
 }
 
-static void state_coredump_send_backoff_run(void *o)
+static enum smf_state_result state_send_backoff_run(void *o)
 {
 	struct fsm_state_object *state_object = o;
 
-	LOG_DBG("state_coredump_send_backoff_run");
+	LOG_DBG("state_send_backoff_run");
 
 	if (state_object->event == EVENT_BACKOFF_TIMER_EXPIRED) {
-		smf_set_state(SMF_CTX(state_object), &states[STATE_COREDUMP_SEND_ATTEMPT]);
+		smf_set_state(SMF_CTX(state_object), &states[STATE_SEND_ATTEMPT]);
+		return SMF_EVENT_HANDLED;
 	}
+
+	return SMF_EVENT_PROPAGATE;
 }
 
 static void state_finished_entry(void *o)
@@ -468,7 +541,10 @@ static void schedule_send_backoff(struct fsm_state_object *state_object)
 	state_object->retry_count++;
 
 	if (state_object->retry_count >= CONFIG_MEMFAULT_NCS_POST_COREDUMP_RETRIES_MAX) {
-		event_send(STATE_FINISHED);
+		event_send(EVENT_SEND_RETRY_COUNT_EXCEEDED);
+
+		LOG_DBG("Retry count exceeded");
+
 		return;
 	}
 
@@ -485,21 +561,29 @@ static void schedule_send_backoff(struct fsm_state_object *state_object)
 static void mflt_lte_coredump_fn(void)
 {
 	int err;
+	struct fsm_state_object state_object = { 0 };
 
 	k_work_init_delayable(&state_object.backoff_work, timer_work_fn);
 
-	bool has_coredump = memfault_coredump_has_valid_coredump(NULL);
+	state_object.has_coredump = memfault_coredump_has_valid_coredump(NULL);
 
-	if (has_coredump) {
-		LOG_DBG("Coredump found");
+	if (state_object.has_coredump) {
+		LOG_DBG("Coredump found, sending coredump with heartbeat data");
 		smf_set_initial(SMF_CTX(&state_object),
 				&states[STATE_WAITING_FOR_NRF_MODEM_LIB_INIT]);
 	} else {
 		LOG_DBG("No coredump found");
+
+#if defined(CONFIG_MEMFAULT_NCS_POST_INITIAL_HEARTBEAT_ON_NETWORK_CONNECTED)
+		LOG_DBG("Posting initial heartbeat data to Memfault");
+		smf_set_initial(SMF_CTX(&state_object),
+				&states[STATE_WAITING_FOR_NRF_MODEM_LIB_INIT]);
+#else
 		smf_set_initial(SMF_CTX(&state_object),
 				&states[STATE_FINISHED]);
 
 		return;
+#endif /* CONFIG_MEMFAULT_NCS_POST_INITIAL_HEARTBEAT_ON_NETWORK_CONNECTED */
 	}
 
 	while (1) {

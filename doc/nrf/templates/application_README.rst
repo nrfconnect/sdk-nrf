@@ -109,26 +109,28 @@ Some title*
 Configuration options*
 ======================
 
-.. note::
-   * List only important configuration options of the application in this section.
-     Make sure all other configuration options are listed in the section at the bottom of the page.
-   * The syntax below allows application configuration options to link to the option descriptions in the same way as the library configuration options link to the corresponding Kconfig descriptions (``:kconfig:option:`CONFIG_APPLICATION```, which results in :kconfig:option:`CONFIG_APPLICATION`).
-   * For each configuration option, list the symbol name and the string describing it.
-   * For the |nRFVSC| instructions, list the configuration options as they are stated on the **Generate Configuration** screen.
-
 Check and configure the following Kconfig options:
 
-.. _CONFIG_APPLICATION:
+.. note::
+   * Use the following syntax to list all the sample-specific configuration options in the :file:`Kconfig` file.
 
-CONFIG_APPLICATION
-   The application configuration specifies ...
+     .. code-block::
+
+        .. options-from-kconfig::
+           :show-type:
+
+     Make sure all other configuration options are listed in the section at the bottom of the page.
+   * The syntax allows application configuration options to link to the option descriptions in the same way as the library configuration options link to the corresponding Kconfig descriptions (``:kconfig:option:`CONFIG_APPLICATION```, which results in :kconfig:option:`CONFIG_APPLICATION`).
+   * For the |nRFVSC| instructions, list the configuration options as they are stated on the **Generate Configuration** screen.
+   * Use ``:option:`SAMPLE_CONFIG``` to link to sample specific option.
+   * The tech writer team needs to review the :file:`Kconfig` file, where the sample-specific Kconfig options are defined.
 
 Additional configuration*
 =========================
 
 .. note::
    * Add this section to describe and link to any library configuration options that might be important to run this application.
-     You can link to options with ``:kconfig:option:`CONFIG_XXX```.
+     You can link to options with ``:kconfig:option:`CONFIG_FOO```.
    * You need not list all possible configuration options, but only the ones that are relevant.
 
 Check and configure the following library options that are used by the application:

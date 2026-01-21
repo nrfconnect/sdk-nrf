@@ -653,8 +653,8 @@ int broadcast_source_send(struct net_buf const *const audio_frame, uint8_t big_i
 		/* TODO: Use the function below once
 		 * https://github.com/zephyrproject-rtos/zephyr/pull/72908 is merged
 		 */
-		/* tx[num_active_streams].audio_channel = audio_map_location_get(stream);*/
-		tx[num_active_streams].audio_channel = i;
+		/* tx[num_active_streams].audio_location = audio_map_location_get(stream);*/
+		tx[num_active_streams].audio_location = i;
 
 		num_active_streams++;
 	}

@@ -17,6 +17,41 @@ config AUDIO_SYNC_TIMER_USES_RTC
 	default y
 	select NRFX_RTC0
 
+config USBD_PID
+	hex
+	default 0x530A
+
+config USBD_VID
+	hex
+	default 0x1915
+
+config USBD_PRODUCT
+	string
+	default "nRF5340 USB Audio"
+
+config USBD_MANUFACTURER
+	string
+	default "Nordic Semiconductor AS"
+
+config USBD_SELF_POWERED
+	bool "USB device Self-powered attribute"
+	default y
+	help
+	  Set the Self-powered attribute in the configuration.
+
+config USBD_MAX_POWER
+	int
+	default 50 if USBD_SELF_POWERED
+	default 250 # if !USBD_SELF_POWERED
+	help
+	  The maximum power consumption of the USB device in units of 2 mA
+	  (i.e., the value 50 represents 100 mA, the value 250 represents 500 mA).
+
+config USBD_REMOTE_WAKEUP
+	bool "USB device Remote Wakeup attribute"
+	help
+	  Set the Remote Wakeup attribute in the configuration.
+
 #----------------------------------------------------------------------------#
 menuconfig NRF5340_AUDIO_POWER_MEASUREMENT
 	bool "Power measurement"

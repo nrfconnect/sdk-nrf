@@ -9,6 +9,7 @@ config BT_RPC
 	default y if BT_RPC_STACK
 	select NRF_RPC
 	select NRF_RPC_CBOR
+	imply NRF_RPC_INIT
 	select EXPERIMENTAL
 	depends on BT
 	depends on !BT_ISO_UNICAST
@@ -41,18 +42,12 @@ config BT_RPC_CLIENT
 
 config BT_RPC_HOST
 	bool "Bluetooth over RPC Host"
+	select BT_CONN_DYNAMIC_CALLBACKS
 	help
 	  Bluetooth Low Energy API will use nRF RPC library to provide API for
 	  client on the remote core.
 
 endchoice
-
-config BT_RPC_INITIALIZE_NRF_RPC
-	bool "Automatically initialize nRF RPC library"
-	default y
-	help
-	  Initialize nRF RPC library during the system startup. Disabling this
-	  option allow user to initialize it in a different way.
 
 config BT_RPC_GATT_SRV_MAX
 	int "Maximum number of GATT services"
@@ -65,7 +60,7 @@ config BT_RPC_GATT_SRV_MAX
 
 module = BT_RPC
 module-str = BLE over nRF RPC
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 if BT_RPC_CLIENT
 
@@ -95,9 +90,12 @@ endif # BT_RPC_HOST
 
 config BT_RPC_INTERNAL_FUNCTIONS
 	bool "Internal functions"
-	default n
 	help
 	  Enable functionality required for internal purposes e.g. testing.
+
+config BT_CONN_DYNAMIC_CALLBACKS
+	bool
+	default y
 
 endif # BT_RPC
 

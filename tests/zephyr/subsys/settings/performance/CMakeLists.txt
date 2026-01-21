@@ -5,9 +5,8 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(test_settings_perf)
 
 zephyr_include_directories(
-	${ZEPHYR_BASE}/subsys/settings/include
-	${ZEPHYR_BASE}/subsys/settings/src
-	)
+  ${ZEPHYR_BASE}/subsys/settings/include
+  ${ZEPHYR_BASE}/subsys/settings/src
+)
 
-target_sources(app PRIVATE
-	${ZEPHYR_BASE}/tests/subsys/settings/performance/settings_test_perf.c)
+target_sources(app PRIVATE ${ZEPHYR_BASE}/tests/subsys/settings/performance/settings_test_perf.c)

@@ -20,6 +20,37 @@ config SCAN_MODE_ACTIVE
 
 endchoice
 
+choice BT_MGMT_CONNECT_BY
+	prompt "Scan Filter"
+	default BT_MGMT_CONNECT_BY_NAME
+
+config BT_MGMT_CONNECT_BY_NAME
+	bool "Name"
+	help
+	  If enabled, the scanner will look for a specific name instead of just connecting
+	  to the first device it finds. The name to look for is CONFIG_BT_DEVICE_NAME.
+	  This is useful for testing with a known device.
+	  Note: This is only used if no CSIP Set Identity Resolving Key (SIRK) is available
+	  in the bond information.
+
+config BT_MGMT_CONNECT_BY_ADDR
+	bool "Address"
+	help
+	  If enabled, the scanner will look for a specific address instead of a name.
+	  The address to look for is set in bt_mgmt_scan_for_conn.c in the addr_check()
+	  function. This is useful for testing with a known device.
+	  Note: This is only used if no CSIP Set Identity Resolving Key (SIRK) is available
+	  in the bond information.
+
+endchoice
+
+config CONNECT_TO_BT_ADDR_LE_STR
+	string "Bluetooth LE Address to connect to"
+	default "00:00:00:00:00:00"
+	help
+	  The Bluetooth LE address to connect to. This is useful for testing with a
+	  specific device.
+
 #----------------------------------------------------------------------------#
 menu "Connection"
 

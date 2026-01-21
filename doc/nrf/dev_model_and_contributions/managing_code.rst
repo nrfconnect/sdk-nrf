@@ -37,7 +37,7 @@ This can be ``main`` if you want the latest state, or any released version (for 
 If you omit the ``--mr`` parameter, west defaults to ``main``.
 
 This is the procedure used for :ref:`getting the nRF Connect SDK code <cloning_the_repositories>` when :ref:`install_ncs` using the command line.
-When you install the |NCS| using the |nRFVSC|, this is handled by the extension.
+When you install the |NCS| using |nRFVSC|, this is handled by the extension.
 
 .. _dm-wf-update-ncs:
 

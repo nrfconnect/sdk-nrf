@@ -102,6 +102,6 @@ config SOFTAP_WIFI_PROVISION_MESSAGE_QUEUE_ENTRIES
 
 module = SOFTAP_WIFI_PROVISION
 module-str = SoftAP Wi-Fi provision
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # SOFTAP_WIFI_PROVISION

@@ -4,7 +4,6 @@ sample:
 tests:
   sample.bluetooth.conn_time_sync:
     sysbuild: true
-    build_only: true
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
@@ -14,6 +13,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf52833dk/nrf52833
@@ -23,7 +23,16 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     tags:
       - bluetooth
       - ci_build
       - sysbuild
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "Starting connection time sync sample."
+    timeout: 15

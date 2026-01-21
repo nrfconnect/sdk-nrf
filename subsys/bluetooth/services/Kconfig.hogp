@@ -14,7 +14,7 @@ if BT_HOGP
 
 module = BT_HOGP
 module-str = HIDS Client
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 config BT_HOGP_REPORTS_MAX
 	int "Maximum number of reports supported"

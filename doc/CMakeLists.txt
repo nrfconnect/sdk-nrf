@@ -33,7 +33,7 @@ separate_arguments(SPHINXOPTS_EXTRA)
 
 find_package(Python 3.8)
 set(DOXYGEN_SKIP_DOT True)
-find_package(Doxygen 1.8.18 REQUIRED)
+find_package(Doxygen 1.12.0 REQUIRED)
 
 find_program(SPHINXBUILD sphinx-build)
 if(NOT SPHINXBUILD)
@@ -333,12 +333,12 @@ add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "" STANDALONE)
 #-------------------------------------------------------------------------------
 # docset: tfm
 
-add_docset(tfm "2.1.2")
+add_docset(tfm "2.2.0")
 
 #-------------------------------------------------------------------------------
 # docset: matter
 
-add_docset(matter "1.4.1")
+add_docset(matter "1.5.0")
 
 #-------------------------------------------------------------------------------
 # docset: nrfxlib
@@ -354,7 +354,7 @@ add_doxygen_docset(wifi ${ZEPHYR_NRF_WIFI_MODULE_DIR} "" STANDALONE)
 #-------------------------------------------------------------------------------
 # docset: internal
 
-if (EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
+if(EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
   message(STATUS "Internal documentation included")
   add_docset(internal "")
 endif()
@@ -391,7 +391,7 @@ add_dependencies(merge-search-indexes
     tfm-all
     kconfig-all
 )
-if (EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
+if(EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
   add_dependencies(merge-search-indexes internal-all)
 endif()
 
@@ -423,7 +423,7 @@ add_dependencies(build-all
     kconfig-all
     wifi
 )
-if (EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
+if(EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
   add_dependencies(build-all internal-all)
 endif()
 

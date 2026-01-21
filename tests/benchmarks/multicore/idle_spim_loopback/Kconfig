@@ -45,32 +45,10 @@ config TEST_SPI_RELEASE_BEFORE_SLEEP
 	  first test iteration will see SPI CS signal activation. Next test iterations
 	  will NOT observe changes on SPI CS signal.
 
-choice GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION
-	prompt "Global domain clock frequency"
-	default GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_320MHZ
-
-config GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_320MHZ
-	bool "320MHz"
-
-config GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_256MHZ
-	bool "256MHz"
-
-config GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_128MHZ
-	bool "128MHz"
-
-config GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_64MHZ
-	bool "64MHz"
-
-endchoice
-
-config GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ
-	int
-	default 320 if GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_320MHZ
-	default 256 if GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_256MHZ
-	default 128 if GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_128MHZ
-	default 64 if GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_64MHZ
-
-config GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING
-	bool "Enable global domain frequency changing when driver is active"
+config APP_PROVIDE_PM_HOOKS
+	bool "Application provides PM hooks"
+	default y if SOC_NRF54H20_CPUPPR
+	select HAS_PM
+	select HAS_POWEROFF
 
 source "Kconfig.zephyr"

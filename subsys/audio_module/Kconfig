@@ -6,11 +6,11 @@
 menu "Audio Modules"
 
 config AUDIO_MODULE
-	tristate "Enable the audio module"
+	tristate "Audio module"
 	depends on DATA_FIFO || AUDIO_MODULE_TEST
 
 config AUDIO_MODULE_TEST
-	bool "Enable test mode"
+	bool "Test mode"
 	help
 	  Enable the test mode for the audio module.
 

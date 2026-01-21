@@ -1,0 +1,14 @@
+&timer00 {
+	prescaler = <6>;
+	status = "okay";
+};
+
+&timer10 {
+	prescaler = <4>;
+	status = "okay";
+};
+
+&timer20 {
+	prescaler = <4>;
+	status = "okay";
+};

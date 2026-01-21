@@ -1,22 +1,26 @@
 .. _ug_nrf54h20_architecture_lifecycle:
 
-nRF54H20 lifecycle states
-#########################
+nRF54H20 SoC lifecycle states
+#############################
 
 .. contents::
    :local:
    :depth: 2
 
-The Secure Domain ROM firmware defines the lifecycle states (LCS) for the nRF54H20 SoC.
-The states are based on the Arm PSA Security Model and allow for programming and safely erasing the device assets.
+:term:`Lifecycle states (LCS)` control device security features and debug access.
+Each state specifies when and how the device allows the following operations:
 
-.. note::
-    During the customer sampling, the LCS of the nRF54H20 SoC must be set to Root of Trust (RoT).
-    If the LCS is set to ``EMPTY``, it must be transitioned to ``RoT``.
-    For more information, see :ref:`ug_nrf54h20_gs_bringup`.
+* Provision or replace security assets, for example, root keys, certificates, and configuration
+* Enable or disable debug access (open, authenticated, or permanently disabled)
+* Enforce secure boot and prevent rollback
+* Perform failure analysis (RMA) handling
+* Sanitize the device before disposal
 
-    However, the forward transition to LCS ``RoT`` is permanent.
-    After the transition, it is not possible to transition backward to LCS ``EMPTY``.
+Available LCS
+*************
+
+The Secure Domain ROM implements lifecycle states for the nRF54H20 SoC.
+The states are based on the Arm PSA Security Model and enable safe programming and erasure of device assets.
 
 The LCS available are the following:
 
@@ -49,15 +53,29 @@ See the following diagram:
 .. figure:: images/nRF54H20_lifecycle_states.svg
    :alt: nRF54H20 lifecycle states and transitions
 
-   nRF54H20 lifecycle states and transitions available on the final silicon.
+   nRF54H20 lifecycle states and transitions available on the nRF54H20 SoC.
 
-This figure shows the states and transitions (both forward and backward ones) that will be available on the final silicon.
+Transitioning LCS
+*****************
 
-Changing the lifecycle state will be useful during development.
-Test devices in their final configuration would require the device to be in the deployed state, however, updating the Secure Domain firmware and the System Controller firmware will be easier with the device in RoT state.
+You can change the SoC lifecycle state to streamline development and testing:
+
+* During application development, set the SoC to the ``Root of Trust`` (RoT) state.
+* To validate behavior in a production environment, use the ``DEPLOYED`` state.
+
+If the device is in LCS ``EMPTY``, transition it to LCS ``RoT`` by following the :ref:`nRF54H20 DK bring-up <ug_nrf54h20_gs_bringup>` procedure.
+
+.. caution::
+   You can only progress forward through lifecycle states.
+   This means that the transition from ``EMPTY`` to ``RoT`` is permanent and cannot be reversed.
+   Each forward transition increases protection and reduces invasive debug options.
+
+Additional information
+**********************
 
 For more information, see the following pages:
 
-* :ref:`ug_nrf54h20_gs`
-* :ref:`ug_nrf54h20_custom_pcb`
-* :ref:`ug_nrf54h20_keys`
+* :ref:`ug_nrf54h20_gs` - nRF54H20 DK bring-up and initial setup guide
+* :ref:`ug_nrf54h20_custom_pcb` - Guidelines for designing a custom PCB
+* :ref:`ug_nrf54h20_keys` - Provisioning and managing security keys
+* :ref:`ug_nrf54h20_ironside` - |ISE| how-to guide, specifically the :ref:`ug_nrf54h20_ironside_se_update` section containing instructions for updating the |ISE| firmware

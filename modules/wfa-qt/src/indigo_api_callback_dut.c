@@ -77,8 +77,10 @@ void register_apis(void)
 #ifdef CONFIG_WNM
 	register_api(API_AP_SEND_BTM_REQ, NULL, send_ap_btm_handler);
 #endif /* End Of CONFIG_WNM */
+#ifdef CONFIG_WPS
 	register_api(API_AP_START_WPS, NULL, start_wps_ap_handler);
 	register_api(API_AP_CONFIGURE_WSC, NULL, configure_ap_wsc_handler);
+#endif /* End Of CONFIG_WPS */
 #endif /* End Of CONFIG_AP */
 	/* STA */
 	register_api(API_STA_ASSOCIATE, NULL, associate_sta_handler);
@@ -141,6 +143,7 @@ err:
 
 static int run_qt_command(const char *cmd)
 {
+	struct wpa_supplicant *wpa_s;
 	char buffer[64] = { 0 }, response[16] = { 0 };
 	size_t resp_len = sizeof(response);
 	int ret = 0;
@@ -152,8 +155,9 @@ static int run_qt_command(const char *cmd)
 		goto done;
 	}
 
-	if (ctrl_conn) {
-		ret = wpa_ctrl_request(ctrl_conn, buffer, sizeof(buffer),
+	wpa_s = zephyr_get_handle_by_ifname(CONFIG_WFA_QT_DEFAULT_INTERFACE);
+	if (wpa_s && wpa_s->ctrl_conn) {
+		ret = wpa_ctrl_request(wpa_s->ctrl_conn, buffer, sizeof(buffer),
 					response, &resp_len, NULL);
 		if (ret) {
 			indigo_logger(LOG_LEVEL_ERROR,
@@ -169,7 +173,13 @@ static int run_qt_command(const char *cmd)
 		if (ret < 0) {
 			goto done;
 		}
+	} else {
+		indigo_logger(LOG_LEVEL_ERROR,
+			      "WPA Supplicant ready event received, but no handle found for %s",
+			      CONFIG_WFA_QT_DEFAULT_INTERFACE);
+		return -1;
 	}
+
 	indigo_logger(LOG_LEVEL_DEBUG, "Response: %s", response);
 	return 0;
 done:
@@ -991,6 +1001,7 @@ done:
 	return 0;
 }
 
+#ifdef CONFIG_WPS
 /* RESP: {<ResponseTLV.STATUS: 40961>: '0', */
 /*<ResponseTLV.MESSAGE: 40960>: 'Configure and start wsc ap successfully. (Configure and start)'}*/
 static int configure_ap_wsc_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -1132,6 +1143,7 @@ done:
 
 	return 0;
 }
+#endif /* End Of CONFIG_WPS */
 
 #ifdef CONFIG_WNM
 static int send_ap_btm_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
@@ -1413,7 +1425,7 @@ static int get_mac_addr_handler(struct packet_wrapper *req, struct packet_wrappe
 	} else if (atoi(role) == DUT_TYPE_P2PUT) {
 #ifdef CONFIG_P2P
 		/* Get P2P GO/Client or Device MAC */
-		if (get_p2p_mac_addr(mac_addr, sizeof(mac_addr))) {
+		if (!get_p2p_mac_addr(mac_addr, sizeof(mac_addr))) {
 			indigo_logger(LOG_LEVEL_INFO,
 				      "Can't find P2P Device MAC. Use wireless IF MAC");
 			get_mac_address(mac_addr, sizeof(mac_addr), get_wireless_interface());
@@ -1629,7 +1641,7 @@ static int set_ap_parameter_handler(struct packet_wrapper *req, struct packet_wr
 	}
 	if (tlv && find_tlv_config_name(tlv->id) != NULL) {
 		if (strncpy(param_name, find_tlv_config_name(tlv->id),
-			    sizeof(param_value)) == NULL) {
+			    sizeof(param_name)) == NULL) {
 			goto done;
 		}
 		memcpy(param_value, tlv->value, sizeof(param_value));
@@ -1756,6 +1768,8 @@ static int get_ip_addr_handler(struct packet_wrapper *req, struct packet_wrapper
 		message = TLV_VALUE_NOT_OK;
 	}
 
+	k_sleep(K_SECONDS(13));
+
 	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
 	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
 	fill_wrapper_tlv_bytes(resp, TLV_MESSAGE, strlen(message), message);
@@ -1864,8 +1878,16 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 				       "SET_NETWORK 0 psk \"%s\"", psk);
 			ret = run_qt_command(buffer);
 			CHECK_RET();
-			ret = run_qt_command("SET_NETWORK 0 ieee80211w 1");
-			CHECK_RET();
+			tlv = find_wrapper_tlv_by_id(req, TLV_STA_IEEE80211_W);
+			if (tlv) {
+				CHECK_SNPRINTF(buffer, sizeof(buffer), ret,
+					       "SET_NETWORK 0 ieee80211w %s", tlv->value);
+				ret = run_qt_command(buffer);
+				CHECK_RET();
+			} else {
+				ret = run_qt_command("SET_NETWORK 0 ieee80211w 1");
+				CHECK_RET();
+			}
 		} else if (strstr(tlv->value, "SAE")) {
 			CHECK_SNPRINTF(buffer, sizeof(buffer), ret,
 				       "SET_NETWORK 0 sae_password \"%s\"", psk);
@@ -1880,6 +1902,11 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 			 */
 
 			process_certificates();
+
+			if (strstr(tlv->value, "WPA-EAP-SHA256")) {
+				ret = run_qt_command("SET_NETWORK 0 ieee80211w 2");
+				CHECK_RET();
+			}
 
 			struct {
 				int tlv_id;
@@ -1902,6 +1929,24 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 				{ TLV_PRIVATE_KEY,
 				  "SET_NETWORK 0 private_key \"%s\"",
 				  "blob://private_key", false },
+				{ TLV_PHASE1,
+				  "SET_NETWORK 0 phase1 \"%s\"",
+				  NULL, true },
+				{ TLV_PHASE2,
+				  "SET_NETWORK 0 phase2 \"%s\"",
+				  NULL, true },
+				{ TLV_PASSWORD,
+				  "SET_NETWORK 0 password \"%s\"",
+				  NULL, true },
+				{ TLV_STA_IEEE80211_W,
+				  "SET_NETWORK 0 ieee80211w %s",
+				  NULL, true },
+				{ TLV_DOMAIN_MATCH,
+				  "SET_NETWORK 0 domain_match \"%s\"",
+				  NULL, true },
+				{ TLV_DOMAIN_SUFFIX_MATCH,
+				  "SET_NETWORK 0 domain_suffix_match \"%s\"",
+				  NULL, true },
 			};
 
 			for (size_t i = 0; i < ARRAY_SIZE(config_cmds); i++) {
@@ -1921,12 +1966,6 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 				}
 			}
 
-			CHECK_SNPRINTF(buffer, sizeof(buffer),
-					ret, "SET_NETWORK 0 private_key_passwd \"whatever\"");
-			ret = run_qt_command(buffer);
-			CHECK_RET();
-			ret = run_qt_command("SET_NETWORK 0 ieee80211w 1");
-			CHECK_RET();
 		}
 #else
 		}
@@ -1965,6 +2004,9 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 		ret = run_qt_command(buffer);
 		CHECK_RET();
 	}
+
+	ret = run_qt_command("SET_NETWORK 0 scan_ssid 1");
+	CHECK_RET();
 done:
 	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
 	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
@@ -2116,31 +2158,14 @@ done:
 #ifdef CONFIG_P2P
 static int start_up_p2p_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
 {
-	char *message = TLV_VALUE_WPA_S_START_UP_NOT_OK;
-	char buffer[S_BUFFER_LEN];
-	int len, status = TLV_VALUE_STATUS_NOT_OK, ret;
+	char *message = TLV_VALUE_WPA_S_START_UP_OK;
+	int status = TLV_VALUE_STATUS_OK, ret;
 
-	/* TODO: Add functionality to stop Supplicant */
+	ret = run_qt_command("SET device_type 6-0050F204-1");
+	CHECK_RET();
+	ret = run_qt_command("SET device_name 7002DK");
+	CHECK_RET();
 
-	/* Generate P2P config file */
-	CHECK_SNPRINTF(buffer, sizeof(buffer), ret,
-		       "ctrl_interface=%s\n", WPAS_CTRL_PATH_DEFAULT);
-	/* Add Device name and Device type */
-	strcat(buffer, "device_name=WFA P2P Device\n");
-	strcat(buffer, "device_type=1-0050F204-1\n");
-	/* Add config methods */
-	strcat(buffer, "config_methods=keypad display push_button\n");
-	len = strlen(buffer);
-
-	if (len) {
-		write_file(get_wpas_conf_file(), buffer, len);
-	}
-
-	/* Start WPA supplicant */
-	/* TODO: Add functionality to start Supplicant */
-
-	status = TLV_VALUE_STATUS_OK;
-	message = TLV_VALUE_WPA_S_START_UP_OK;
 done:
 	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
 	fill_wrapper_tlv_byte(resp, TLV_STATUS, status);
@@ -2459,8 +2484,8 @@ static int p2p_connect_handler(struct packet_wrapper *req, struct packet_wrapper
 			indigo_logger(LOG_LEVEL_ERROR, "Missed TLV PIN_METHOD???");
 		}
 		CHECK_SNPRINTF(buffer, sizeof(buffer), ret,
-			       "P2P_CONNECT %s %s %s%s%s%s%s", mac, pin_code,
-			       method, type, go_intent, he, persist);
+			       "P2P_CONNECT %s %s %s %s %s", mac, pin_code,
+			       method, type, go_intent);
 	} else {
 		tlv = find_wrapper_tlv_by_id(req, TLV_WSC_METHOD);
 		if (tlv) {
@@ -2469,8 +2494,7 @@ static int p2p_connect_handler(struct packet_wrapper *req, struct packet_wrapper
 			indigo_logger(LOG_LEVEL_ERROR, "Missed TLV WSC_METHOD");
 		}
 		CHECK_SNPRINTF(buffer, sizeof(buffer), ret,
-			       "P2P_CONNECT %s %s%s%s%s%s", mac, method,
-			       type, go_intent, he, persist);
+			       "P2P_CONNECT %s %s %s %s", mac, method, type, go_intent);
 	}
 	indigo_logger(LOG_LEVEL_DEBUG, "Command: %s", buffer);
 
@@ -2736,8 +2760,9 @@ static int start_dhcp_handler(struct packet_wrapper *req, struct packet_wrapper 
 		if (!strcmp("0.0.0.0", ip_addr)) {
 			CHECK_SNPRINTF(ip_addr, sizeof(ip_addr), ret, DHCP_SERVER_IP);
 		}
-		CHECK_SNPRINTF(buffer, sizeof(buffer), ret, "%s/24", ip_addr);
+		CHECK_SNPRINTF(buffer, sizeof(buffer), ret, "%s", ip_addr);
 		set_interface_ip(if_name, buffer);
+		set_netmask(if_name);
 		start_dhcp_server(if_name, ip_addr);
 	} else { /* DHCP Client */
 		start_dhcp_client(if_name);
@@ -2864,30 +2889,6 @@ static int start_wps_ap_handler(struct packet_wrapper *req, struct packet_wrappe
 		memset(pin_code, 0, sizeof(pin_code));
 		memcpy(pin_code, tlv->value, sizeof(pin_code));
 
-		/* Please implement the wsc pin validation function to
-		 * identify the invalid PIN code and DONOT start wps.
-		 */
-		#define WPS_PIN_VALIDATION_FILE "/tmp/pin_checksum.sh"
-		int len = 0;
-		char pipebuf[S_BUFFER_LEN];
-		static const char * const parameter[] = {"sh",
-							 WPS_PIN_VALIDATION_FILE,
-							 pin_code, NULL};
-
-		memset(pipebuf, 0, sizeof(pipebuf));
-		if (access(WPS_PIN_VALIDATION_FILE, F_OK) == 0) {
-			len = pipe_command(pipebuf, sizeof(pipebuf), "/bin/sh", parameter);
-			if (len && atoi(pipebuf)) {
-				indigo_logger(LOG_LEVEL_INFO, "Valid PIN Code: %s", pin_code);
-			} else {
-				indigo_logger(LOG_LEVEL_INFO, "Invalid PIN Code: %s", pin_code);
-				message = TLV_VALUE_AP_WSC_PIN_CODE_NOT_OK;
-				goto done;
-			}
-		}
-		/*
-		 * End of wsc pin validation function
-		 */
 		CHECK_SNPRINTF(buffer, sizeof(buffer), ret, "WPS_PIN any %s", pin_code);
 	} else {
 		CHECK_SNPRINTF(buffer, sizeof(buffer), ret, "WPS_PBC");
@@ -3072,70 +3073,12 @@ done:
 
 static int enable_wsc_sta_handler(struct packet_wrapper *req, struct packet_wrapper *resp)
 {
-	char *message = TLV_VALUE_WPA_S_START_UP_NOT_OK;
-	char buffer[L_BUFFER_LEN];
-	char value[S_BUFFER_LEN], cfg_item[2*S_BUFFER_LEN];
-	int i, len = 0, status = TLV_VALUE_STATUS_NOT_OK, ret;
-	struct tlv_hdr *tlv = NULL;
-	struct tlv_to_config_name *cfg = NULL;
+	char *message = TLV_VALUE_WPA_S_START_UP_OK;
+	int status = TLV_VALUE_STATUS_OK, ret;
+	char buffer[BUFFER_LEN];
 
-	/* TODO: Add functionality to stop Supplicant */
-
-	/* Generate configuration */
-	memset(buffer, 0, sizeof(buffer));
-	CHECK_SNPRINTF(buffer, sizeof(buffer), ret,
-		       "ctrl_interface=%s\nap_scan=1\npmf=1\n", WPAS_CTRL_PATH_DEFAULT);
-
-	for (i = 0; i < req->tlv_num; i++) {
-		cfg = find_wpas_global_config_name(req->tlv[i]->id);
-		if (cfg) {
-			memset(value, 0, sizeof(value));
-			memcpy(value, req->tlv[i]->value, req->tlv[i]->len);
-			CHECK_SNPRINTF(cfg_item, sizeof(cfg_item), ret,
-				       "%s=%s\n", cfg->config_name, value);
-			strcat(buffer, cfg_item);
-		}
-	}
-
-	/* wps settings */
-	tlv = find_wrapper_tlv_by_id(req, TLV_WPS_ENABLE);
-	if (tlv) {
-		memset(value, 0, sizeof(value));
-		memcpy(value, tlv->value, sizeof(value));
-		/* To get STA wps vendor info */
-		wps_setting *s = get_vendor_wps_settings(WPS_STA);
-
-		if (!s) {
-			indigo_logger(LOG_LEVEL_WARNING, "Failed to get STAUT WPS settings");
-		} else if (atoi(value) == WPS_ENABLE_NORMAL) {
-			for (i = 0; i < STA_SETTING_NUM; i++) {
-				memset(cfg_item, 0, sizeof(cfg_item));
-				CHECK_SNPRINTF(cfg_item, sizeof(cfg_item), ret,
-					       "%s=%s\n", s[i].wkey, s[i].value);
-				strcat(buffer, cfg_item);
-			}
-			indigo_logger(LOG_LEVEL_INFO, "STAUT Configure WPS");
-		} else {
-			indigo_logger(LOG_LEVEL_ERROR,
-				      "Invalid WPS TLV value: %d (TLV ID 0x%04x)",
-				      atoi(value), tlv->id);
-		}
-	} else {
-		indigo_logger(LOG_LEVEL_WARNING,
-			      "No WSC TLV found. Failed to append STA WSC data");
-	}
-
-	len = strlen(buffer);
-
-	if (len) {
-		write_file(get_wpas_conf_file(), buffer, len);
-	}
-
-	/* Start wpa supplicant */
-	/* TODO: Add fucntionality to start Supplicant */
-
-	status = TLV_VALUE_STATUS_OK;
-	message = TLV_VALUE_WPA_S_START_UP_OK;
+	CHECK_SNPRINTF(buffer, sizeof(buffer), ret, "SET config_methods label,push_button");
+	ret = run_qt_command(buffer);
 
 done:
 	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);

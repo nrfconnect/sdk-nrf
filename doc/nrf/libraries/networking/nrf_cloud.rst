@@ -163,7 +163,6 @@ nRF Cloud FOTA enables the following additional features and libraries:
 * :kconfig:option:`CONFIG_DFU_TARGET` enables :ref:`lib_dfu_target`
 * :kconfig:option:`CONFIG_DOWNLOADER` enables :ref:`lib_downloader`
 * :kconfig:option:`CONFIG_FOTA_DOWNLOAD_PROGRESS_EVT`
-* :kconfig:option:`CONFIG_FOTA_PROGRESS_EVT_INCREMENT`
 * :kconfig:option:`CONFIG_REBOOT`
 * :kconfig:option:`CONFIG_CJSON_LIB`
 * :kconfig:option:`CONFIG_SETTINGS`

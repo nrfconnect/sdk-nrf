@@ -49,9 +49,9 @@ config NRF_WIFI_FW_FLASH_CHUNK_SIZE
 	  RAM usage (heap) of the application.
 
 config NRF_WIFI_FW_PATCH_INTEGRITY_CHECK
-	bool "Enable integrity check of nRF70 FW patches"
+	bool "Integrity check of nRF70 FW patches"
 	select FLASH_AREA_CHECK_INTEGRITY
-	# TODO: Fix MbedTLS dependency issues to enable this option
+	default y
 	help
 	  Select this option to enable integrity check of nRF70 FW patches using
 	  SHA-256 verification algorithm.This option impacts the loading time of the
@@ -80,15 +80,15 @@ config NRF_WIFI_FW_PATCH_DFU
 	  before enabling this option. Refer to the documentation for detailed
 	  instructions on partition configuration and the DFU process.
 
-# TC is the default but Wi-Fi uses MbedTLS, so, to avoid loading another library.
+# To work with nRF security always use PSA (even for non-TFM builds)
 if NRF_WIFI_FW_PATCH_INTEGRITY_CHECK
 choice FLASH_AREA_CHECK_INTEGRITY_BACKEND
-	default FLASH_AREA_CHECK_INTEGRITY_MBEDTLS
+	default FLASH_AREA_CHECK_INTEGRITY_PSA
 endchoice
 endif
 endif
 
 config CUSTOM_LINKER_SCRIPT
 	string "Custom linker script for nRF70 FW patches in external flash"
-	default "${ZEPHYR_BASE}/../nrf/subsys/net/lib/nrf70_fw_ext/rpu_fw_patches.ld"
+	default "$(ZEPHYR_BASE)/../nrf/subsys/net/lib/nrf70_fw_ext/rpu_fw_patches.ld"
 endif

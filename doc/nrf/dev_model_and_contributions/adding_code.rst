@@ -40,7 +40,7 @@ In such case, you must obtain a copy of the |NCS| on your file system and then m
 
 To obtain a copy of the |NCS|, you can use one of the following methods:
 
-* :ref:`Install the nRF Connect SDK <install_ncs>` using the |nRFVSC| and download the desired |NCS| version.
+* :ref:`Install the nRF Connect SDK <install_ncs>` using |nRFVSC| and download the desired |NCS| version.
   This corresponds to steps 2 and 3 on the linked page.
 * Follow the instructions in the :ref:`dm-wf-get-ncs` section of the documentation.
   This requires you to install Git and west, but you can then ignore them from that point onwards.
@@ -59,7 +59,7 @@ Workflow 2: Freestanding application repository
 Another approach to maintaining your application is to completely decouple it from the |NCS| repositories and instead host it wherever you prefer - in Git, another version control system, or simply on your hard drive.
 This is typically also known as a :ref:`freestanding <zephyr:zephyr-app-types>` or "out-of-tree" application, meaning that the application, board definitions, and any other libraries are actually outside any of the repositories provided by the |NCS| and can be placed anywhere at all.
 
-As long as you do not need to make changes to any of the repositories of the |NCS|, you can use either the |nRFVSC| or command line to get the source code and update it later, as described in :ref:`install_ncs`.
+As long as you do not need to make changes to any of the repositories of the |NCS|, you can use either |nRFVSC| or command line to get the source code and update it later, as described in :ref:`install_ncs`.
 This allows you to manage your application separately, whether it is inside or outside the top folder of the |NCS|.
 If you choose to have your application outside of the folder hierarchy of the |NCS|, the build system will find the location of the SDK through the :makevar:`ZEPHYR_BASE` environment variable, which is set either through a script or manually in an IDE.
 More information about application development and the |NCS| build and configuration system can be found in the :ref:`app_build_system` documentation section.
@@ -162,7 +162,7 @@ This is demonstrated by the following code, that would be placed somewhere in yo
        - name: nrf
          repo-path: sdk-nrf
          remote: ncs
-         revision: v3.1.0
+         revision: v3.2.0
          import: true
      self:
        path: application
@@ -190,7 +190,7 @@ For example:
        - name: nrf
          repo-path: sdk-nrf
          remote: ncs
-         revision: v3.1.0
+         revision: v3.2.0
          import: true
        # Example for how to override a repository in the nRF Connect SDK with your own:
        - name: mcuboot

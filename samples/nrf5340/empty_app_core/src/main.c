@@ -7,7 +7,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/init.h>
-#include <nrf.h>
 #include <nrfx.h>
 
 #define LFXO_NODE DT_NODELABEL(lfxo)
@@ -61,7 +60,7 @@ static int network_gpio_allow(void)
 	 * and P0.01 (XL2), as they need to stay configured with the value
 	 * Peripheral.
 	 */
-#if DT_NODE_HAS_PROP(LFXO_NODE, load_capacitors) || defined(CONFIG_SOC_ENABLE_LFXO)
+#if DT_NODE_HAS_PROP(LFXO_NODE, load_capacitors)
 	uint32_t start_pin = 2;
 #else
 	uint32_t start_pin = 0;

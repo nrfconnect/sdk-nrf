@@ -19,6 +19,7 @@
 #include <nrf_provisioning_cbor_encode.h>
 #include "nrf_provisioning_cbor_decode_types.h"
 #include "nrf_provisioning_cbor_encode_types.h"
+#include "nrf_provisioning_internal.h"
 
 #include <modem/lte_lc.h>
 #include <modem/modem_key_mgmt.h>
@@ -41,7 +42,7 @@ LOG_MODULE_REGISTER(nrf_provisioning_codec, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 #define AT_RESP_MAX_SIZE 4096
 #define KEYGEN_BUFFER_SIZE 1024
 
-static struct nrf_provisioning_mm_change mm;
+static nrf_provisioning_event_cb_t callback_local;
 
 static struct cdc_out_fmt_data {
 	/* Data */
@@ -69,10 +70,9 @@ char * const nrf_provisioning_codec_get_latest_cmd_id(void)
 	return nrf_provisioning_latest_corr_id;
 }
 
-int nrf_provisioning_codec_init(struct nrf_provisioning_mm_change *mmode)
+int nrf_provisioning_codec_init(nrf_provisioning_event_cb_t callback)
 {
-	mm.cb = mmode->cb;
-	mm.user_data = mmode->user_data;
+	callback_local = callback;
 
 	return 0;
 }
@@ -300,6 +300,8 @@ static int exec_at_cmd(struct command *cmd_req, struct cdc_out_fmt_data *out)
 		resp = k_malloc(resp_sz);
 		if (!resp) {
 			LOG_ERR("Unable to write response msg field");
+			LOG_ERR("Not enough memory for AT response, size %d", resp_sz);
+			__ASSERT_NO_MSG(false);
 			return -ENOMEM;
 		}
 		memset(resp, 0, resp_sz);
@@ -454,35 +456,30 @@ static void decode_fail_info(int err, void *payload, int len)
 
 	LOG_ERR("Decoding commands response failed, reason %d", err);
 	LOG_HEXDUMP_ERR(payload, len, "Payload: ");
-
-	switch (err) {
-	case ZCBOR_ERR_HIGH_ELEM_COUNT:
-		LOG_ERR("CONFIG_NRF_PROVISIONING_CBOR_RECORDS is too small");
-	}
 }
 
 int nrf_provisioning_codec_process_commands(void)
 {
-	int mret, ret;
+	int ret;
 	struct cdc_in_fmt_data *ifd = CDC_IFMT_DATA_PTR(cctx);
 	struct cdc_out_fmt_data *ofd = CDC_OFMT_DATA_PTR(cctx);
-	enum lte_lc_func_mode orig;
+
 	int fpos = -1;
 	bool cmee_orig;
 
 	ret = cbor_decode_commands(cctx->ipkt, cctx->ipkt_sz,
-					cctx->i_data, &cctx->i_data_sz);
+				   cctx->i_data, &cctx->i_data_sz);
 	if (ret != ZCBOR_SUCCESS) {
 		decode_fail_info(ret, cctx->ipkt, cctx->ipkt_sz);
-		ret = -EINVAL;
-		return ret;
+
+		if (ret == ZCBOR_ERR_HIGH_ELEM_COUNT) {
+			LOG_ERR("CONFIG_NRF_PROVISIONING_CBOR_RECORDS is too small");
+			return -ENOMEM;
+		}
+
+		return -EINVAL;
 	}
 	LOG_HEXDUMP_DBG(cctx->ipkt, cctx->ipkt_sz, "received commands: ");
-
-	mret = lte_lc_func_mode_get(&orig);
-	if (mret < 0) {
-		return mret;
-	}
 
 	cmee_orig = nrf_provisioning_at_cmee_enable();
 
@@ -501,9 +498,23 @@ int nrf_provisioning_codec_process_commands(void)
 			fpos = i; /* Defer writing FINISHED until we know if we have errors */
 			break;
 		case command_union_at_command_m_c:
-			mret = mm.cb(LTE_LC_FUNC_MODE_OFFLINE, mm.user_data);
-			if (mret < 0) {
+
+			enum lte_lc_func_mode func_mode;
+
+			ret = lte_lc_func_mode_get(&func_mode);
+			if (ret < 0) {
 				goto stop_provisioning;
+			}
+
+			if (func_mode != LTE_LC_FUNC_MODE_OFFLINE) {
+				ret = nrf_provisioning_notify_event_and_wait_for_modem_state(
+					CONFIG_NRF_PROVISIONING_MODEM_STATE_WAIT_TIMEOUT_SECONDS,
+					NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED,
+					callback_local);
+				if (ret) {
+					LOG_ERR("Failed to set modem offline, err %d", ret);
+					return ret;
+				}
 			}
 
 			ret = exec_at_cmd(CDC_IFMT_CMD_I_GET(cctx, i), cctx->o_data);
@@ -538,12 +549,12 @@ stop_provisioning:
 		NRF_PROVISIONING_AT_CMEE_STATE_ENABLE :
 		NRF_PROVISIONING_AT_CMEE_STATE_DISABLE);
 
-	mret = mm.cb(orig, mm.user_data);
-
-	/* Can't send anything if modem connection is not restored */
-	if (mret < 0) {
-		LOG_ERR("Failed to restore functional mode, error: %d", mret);
-		return mret;
+	ret = nrf_provisioning_notify_event_and_wait_for_modem_state(
+		CONFIG_NRF_PROVISIONING_MODEM_STATE_WAIT_TIMEOUT_SECONDS,
+		NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED, callback_local);
+	if (ret) {
+		LOG_ERR("Failed to set modem online, err %d", ret);
+		return ret;
 	}
 
 	/* Respond to FINISHED only if there are no errors */

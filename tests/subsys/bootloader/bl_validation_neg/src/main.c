@@ -53,9 +53,9 @@ ZTEST(test_bl_validation_neg, test_validation_neg1)
 			s1_info_copied->valid, "Failed to invalidate S1.\r\n");
 		zassert_equal((uint32_t)s1_info_copied, PM_S1_ADDRESS,
 			"S1 info found at wrong address.\r\n");
-		uint32_t ret = nrfx_nvmc_page_erase(PM_S1_ADDRESS);
+		int ret = nrfx_nvmc_page_erase(PM_S1_ADDRESS);
 
-		zassert_equal(NRFX_SUCCESS, ret, "Erase failed.\r\n");
+		zassert_equal(0, ret, "Erase failed.\r\n");
 	} else {
 		/* First boot */
 
@@ -64,9 +64,9 @@ ZTEST(test_bl_validation_neg, test_validation_neg1)
 			erase_addr < (new_addr + copy_len);
 			erase_addr += DT_PROP(DT_CHOSEN(zephyr_flash),
 							erase_block_size)) {
-			uint32_t ret = nrfx_nvmc_page_erase(new_addr);
+			int ret = nrfx_nvmc_page_erase(new_addr);
 
-			zassert_equal(NRFX_SUCCESS, ret, "Erase failed.\r\n");
+			zassert_equal(0, ret, "Erase failed.\r\n");
 		}
 		nrfx_nvmc_words_write(new_addr, (const uint32_t *)PM_ADDRESS,
 			copy_len / 4);

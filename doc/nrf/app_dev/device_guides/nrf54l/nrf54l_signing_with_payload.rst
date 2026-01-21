@@ -118,7 +118,7 @@ See an example of memory partition configuration:
    .. note::
 
       When using the Partition Manager, ensure this partition is reserved for FLPR.
-      The Partition Manager will ignore this setting while allocating space for the application running on CPUAPP, but the :ref:`FLPR minimal sample <vpr_flpr_nrf54l15_initiating>` will still utilize it.
+      The Partition Manager ignores this setting while allocating space for the application running on CPUAPP, but the :ref:`FLPR minimal sample <vpr_flpr_nrf54l_initiating>` will still use it.
 
    * ``cpuflpr_sram_code_data`` - This configuration defines the RAM space reserved only for the FLPR.
      It is not available for the application core and should be excluded from its memory allocation.

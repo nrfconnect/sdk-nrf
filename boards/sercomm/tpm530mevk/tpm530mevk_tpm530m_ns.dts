@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/dts-v1/;
+#include <sercomm/tpm530mns.dtsi>
+#include "tpm530mevk_tpm530m_common.dtsi"
+
+/ {
+	chosen {
+		zephyr,flash = &flash0;
+		zephyr,sram = &sram0_ns;
+		zephyr,code-partition = &slot0_ns_partition;
+	};
+};
+
+/* Disable UART1, because it is used by default by TF-M */
+&uart1 {
+	status = "disabled";
+};

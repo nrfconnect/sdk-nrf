@@ -12,8 +12,6 @@ LOG_MODULE_REGISTER(idle_spim_loopback, LOG_LEVEL_INF);
 #include <zephyr/drivers/spi.h>
 #include <zephyr/linker/devicetree_regions.h>
 #include <zephyr/pm/device_runtime.h>
-#include <zephyr/devicetree/clocks.h>
-#include <zephyr/drivers/clock_control/nrf_clock_control.h>
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
@@ -73,33 +71,6 @@ static volatile uint32_t high, low;
 static struct k_timer my_timer;
 static volatile bool timer_expired;
 
-#if defined(CONFIG_CLOCK_CONTROL)
-const uint32_t freq[] = {320, 256, 128, 64};
-
-/*
- * Set Global Domain frequency (HSFLL120)
- */
-void set_global_domain_frequency(uint32_t freq)
-{
-	int err;
-	int res;
-	struct onoff_client cli;
-	const struct device *hsfll_dev = DEVICE_DT_GET(DT_NODELABEL(hsfll120));
-	const struct nrf_clock_spec clk_spec_global_hsfll = {.frequency = MHZ(freq)};
-
-	printk("Requested frequency [Hz]: %d\n", clk_spec_global_hsfll.frequency);
-	sys_notify_init_spinwait(&cli.notify);
-	err = nrf_clock_control_request(hsfll_dev, &clk_spec_global_hsfll, &cli);
-	__ASSERT((err >= 0 && err < 3), "Wrong nrf_clock_control_request return code");
-	do {
-		err = sys_notify_fetch_result(&cli.notify, &res);
-		k_yield();
-	} while (err == -EAGAIN);
-	__ASSERT(err == 0, "Wrong clock control request return code");
-	__ASSERT(res == 0, "Wrong clock control request response");
-}
-#endif /* CONFIG_CLOCK_CONTROL */
-
 void my_timer_handler(struct k_timer *dummy)
 {
 	timer_expired = true;
@@ -145,10 +116,6 @@ int main(void)
 	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
 	__ASSERT(ret == 0, "Could not configure led GPIO");
 
-#if defined(CONFIG_CLOCK_CONTROL)
-	set_global_domain_frequency(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ);
-#endif
-
 	LOG_INF("Multicore idle_spi_loopback test on %s", CONFIG_BOARD_TARGET);
 	LOG_INF("Core will sleep for %u ms", CONFIG_TEST_SLEEP_DURATION_MS);
 	LOG_INF("Testing SPIM device %s", spim_spec.bus->name);
@@ -165,6 +132,9 @@ int main(void)
 	LOG_INF("SPI is never released");
 #endif
 	LOG_INF("===================================================================");
+
+	/* Arbitrary sleep to fix CI synchronization. */
+	k_msleep(100);
 
 	ret = spi_is_ready_dt(&spim_spec);
 	if (!ret) {
@@ -237,12 +207,7 @@ int main(void)
 			} else {
 				LOG_ERR("spi_transceive_dt, err: %d", ret);
 			}
-#if defined(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING)
-			if (switch_flag) {
-				set_global_domain_frequency(freq[loop_counter % ARRAY_SIZE(freq)]);
-				switch_flag = 0;
-			}
-#endif
+
 			__ASSERT(ret == 0, "Error: spi_transceive_dt, err: %d\n", ret);
 
 			/* Check if the received data is consistent with the data sent. */
@@ -350,8 +315,13 @@ int main(void)
 		/* SPI was active for ~1 second with separate SPI CS activations
 		 * for each spi_transceive_dt() call.
 		 */
+#if !defined(CONFIG_SOC_NRF54H20_CPUPPR)
+		/* Workaround for GPIOTE interrupts not routed to PPR (NCSDK-35979).
+		 * Skip checking number of SPI CS edges on nrf54H20 cpuppr.
+		 */
 		__ASSERT_NO_MSG(high >= 100);
 		__ASSERT_NO_MSG(low >= 100);
+#endif /* !defined(CONFIG_SOC_NRF54H20_CPUPPR) */
 		__ASSERT_NO_MSG(low == high);
 #endif
 		loop_counter++;

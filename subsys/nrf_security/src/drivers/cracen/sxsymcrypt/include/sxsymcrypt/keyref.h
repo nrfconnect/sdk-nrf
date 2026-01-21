@@ -14,6 +14,7 @@ extern "C" {
 #endif
 
 #include "internal.h"
+#include <stdint.h>
 
 #define CRACEN_INTERNAL_HW_KEY1_ID (1)
 #define CRACEN_INTERNAL_HW_KEY2_ID (2)
@@ -33,7 +34,7 @@ extern "C" {
  * @remark - \p keymaterial buffer should not be changed until the operation
  *           is completed.
  */
-struct sxkeyref sx_keyref_load_material(size_t keysz, const char *keymaterial);
+struct sxkeyref sx_keyref_load_material(size_t keysz, const uint8_t *keymaterial);
 
 #ifdef __cplusplus
 }

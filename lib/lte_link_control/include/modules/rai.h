@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 /* Configure RAI. */
-int rai_set(void);
+void rai_set(void);
 
 #ifdef __cplusplus
 }

@@ -1,0 +1,30 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Required loopback between:
+ * GPIO P1.9 and P1.8 (GRTC fast; defined @board; no other option)
+ */
+
+/ {
+	zephyr,user {
+		gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;  /* Connect to dedicated GRTC output */
+	};
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpiote20 {
+	status = "okay";
+};
+
+&grtc {
+	pinctrl-0 = <&grtc_default>;
+	pinctrl-1 = <&grtc_sleep>;
+	pinctrl-names = "default", "sleep";
+	clkout-fast-frequency-hz = <32000>;  /* 16 MHz / (250 * 2) */
+};

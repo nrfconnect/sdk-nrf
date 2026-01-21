@@ -13,13 +13,10 @@
 
 #if IS_ENABLED(CONFIG_PTT_ANTENNA_DIVERSITY)
 #include <nrfx_gpiote.h>
+#include <gpiote_nrfx.h>
 #endif /* IS_ENABLED(CONFIG_PTT_ANTENNA_DIVERSITY) */
 
-#if defined(DPPI_PRESENT)
-#include <nrfx_dppi.h>
-#else
-#include <nrfx_ppi.h>
-#endif
+#include <helpers/nrfx_gppi.h>
 
 #include "nrf_802154.h"
 #include "nrf_802154_sl_ant_div.h"
@@ -37,10 +34,6 @@ LOG_MODULE_REGISTER(rf_proc);
 static struct rf_rx_pkt_s rf_rx_pool[RF_RX_POOL_N];
 static struct rf_rx_pkt_s ack_packet;
 static uint8_t temp_tx_pkt[RF_PSDU_MAX_SIZE];
-
-#ifdef CONFIG_PTT_ANTENNA_DIVERSITY
-static const nrfx_gpiote_t gpiote = NRFX_GPIOTE_INSTANCE(0);
-#endif
 
 static inline void rf_rx_pool_init(void);
 static void rf_rx_pool_clear(void);
@@ -145,9 +138,9 @@ void rf_uninit(void)
 #if CONFIG_PTT_ANTENNA_DIVERSITY
 static void configure_antenna_diversity(void)
 {
-	nrf_ppi_channel_t ppi_channel;
-	uint8_t gpiote_channel;
+	nrfx_gpiote_t *gpiote = &GPIOTE_NRFX_INST_BY_NODE(DT_NODELABEL(gpiote0));
 	NRF_TIMER_Type *ad_timer = NRF_TIMER3;
+	int rv;
 
 	nrf_802154_sl_ant_div_cfg_t cfg = {
 		.ant_sel_pin = CONFIG_PTT_ANT_PIN,
@@ -155,10 +148,11 @@ static void configure_antenna_diversity(void)
 		.p_timer = ad_timer
 	};
 
-	nrfx_ppi_channel_alloc(&ppi_channel);
-	cfg.ppi_ch = (uint8_t)ppi_channel;
-	nrfx_gpiote_channel_alloc(&gpiote, &gpiote_channel);
-	cfg.gpiote_ch = gpiote_channel;
+	rv = nrfx_gppi_channel_alloc(0);
+	__ASSERT_NO_MSG(rv >= 0);
+	cfg.ppi_ch = (uint8_t)rv;
+
+	(void)nrfx_gpiote_channel_alloc(gpiote, &cfg.gpiote_ch);
 	nrf_802154_sl_ant_div_mode_t ant_div_auto = 0x02;
 
 	nrf_802154_antenna_diversity_config_set(&cfg);
@@ -480,7 +474,7 @@ bool ptt_rf_send_packet_ext(const uint8_t *pkt, ptt_pkt_len_t len, bool cca)
 			.frame_props = NRF_802154_TRANSMITTED_FRAME_PROPS_DEFAULT_INIT,
 			.cca = cca
 		};
-		ret = nrf_802154_transmit_raw(temp_tx_pkt, &metadata);
+		ret = nrf_802154_transmit_raw(temp_tx_pkt, &metadata) == NRF_802154_TX_ERROR_NONE;
 	}
 
 	return ret;

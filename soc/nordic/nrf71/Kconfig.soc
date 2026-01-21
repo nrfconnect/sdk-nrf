@@ -15,6 +15,12 @@ config SOC_NRF7120_ENGA
 	help
 	  NRF7120 ENGA
 
+config SOC_NRF7120_PREENG
+	bool
+	select SOC_NRF7120
+	help
+	  NRF7120 PRE-ENG
+
 config SOC_NRF7120_ENGA_CPUAPP
 	bool
 	select SOC_NRF7120_ENGA

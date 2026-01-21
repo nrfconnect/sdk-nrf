@@ -8,7 +8,7 @@ zephyr_library()
 
 zephyr_library_sources(identity_key.c)
 
-if (CONFIG_IDENTITY_KEY_DUMMY)
+if(CONFIG_IDENTITY_KEY_DUMMY)
   message(WARNING "
       ----------------------------------------------------------
       --- WARNING: A dummy identity key will be written to   ---

@@ -19,7 +19,7 @@ Build instructions
 
 For information on the build instructions, see :ref:`Wi-Fi Station sample building and running <wifi_station_sample_building_and_running>`.
 
-Set the :kconfig:option:`CONFIG_NRF70_UTIL` Kconfig option to ``y`` in the :file:`<ncs_repo>/nrf/samples/wifi/shell/prj.conf` file to enable ``nrf70 util`` commands.
+Set the :kconfig:option:`CONFIG_NRF70_UTIL` Kconfig option to ``y`` in the :file:`<ncs_repo>/nrf/samples/wifi/sta/prj.conf` file to enable the ``nrf70 util`` commands.
 
 Wi-Fi Station sample
 ********************

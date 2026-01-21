@@ -50,7 +50,7 @@ namespace app
 						kPort = 2,
 						kCaid = 3,
 						kCcdid = 4,
-						kStatus = 5,
+						kReferenceCount = 5,
 						kFabricIndex = 254,
 					};
 
@@ -61,7 +61,7 @@ namespace app
 						uint16_t port = static_cast<uint16_t>(0);
 						uint16_t caid = static_cast<uint16_t>(0);
 						DataModel::Nullable<uint16_t> ccdid;
-						TLSEndpointStatusEnum status = static_cast<TLSEndpointStatusEnum>(0);
+						uint8_t referenceCount = static_cast<uint8_t>(0);
 						chip::FabricIndex fabricIndex = static_cast<chip::FabricIndex>(0);
 
 						CHIP_ERROR Decode(TLV::TLVReader &reader);

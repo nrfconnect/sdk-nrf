@@ -54,6 +54,8 @@ static const struct ram_bank banks[] = {
 	{ .start = 0x20000000UL, .section_count = 6, .section_size = 0x8000 },
 #elif defined(CONFIG_SOC_NRF54L05_CPUAPP)
 	{ .start = 0x20000000UL, .section_count = 3, .section_size = 0x8000 },
+#elif defined(CONFIG_SOC_NRF54LM20A_ENGA_CPUAPP)
+	{ .start = 0x20000000UL, .section_count = 16, .section_size = 0x8000 },
 #elif defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52833)
 	{ .start = 0x20000000UL, .section_count = 2, .section_size = 0x1000 },
 	{ .start = 0x20002000UL, .section_count = 2, .section_size = 0x1000 },
@@ -86,8 +88,8 @@ static const struct ram_bank banks[] = {
 static void ram_bank_power_down(uint8_t bank_id, uint8_t first_section_id, uint8_t last_section_id)
 {
 #if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52833)
-	uint32_t mask = GENMASK(NRF_POWER_RAMPOWER_S0POWER + last_section_id,
-				NRF_POWER_RAMPOWER_S0POWER + first_section_id);
+	uint32_t mask = GENMASK(NRF_POWER_RAMPOWER_S0POWER_POS + last_section_id,
+				NRF_POWER_RAMPOWER_S0POWER_POS + first_section_id);
 	nrf_power_rampower_mask_off(NRF_POWER, bank_id, mask);
 #elif defined(CONFIG_SOC_NRF5340_CPUAPP)
 	uint32_t mask = GENMASK(VMC_RAM_POWER_S0POWER_Pos + last_section_id,
@@ -106,8 +108,8 @@ static void ram_bank_power_down(uint8_t bank_id, uint8_t first_section_id, uint8
 static void ram_bank_power_up(uint8_t bank_id, uint8_t first_section_id, uint8_t last_section_id)
 {
 #if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52833)
-	uint32_t mask = GENMASK(NRF_POWER_RAMPOWER_S0POWER + last_section_id,
-				NRF_POWER_RAMPOWER_S0POWER + first_section_id);
+	uint32_t mask = GENMASK(NRF_POWER_RAMPOWER_S0POWER_POS + last_section_id,
+				NRF_POWER_RAMPOWER_S0POWER_POS + first_section_id);
 	nrf_power_rampower_mask_on(NRF_POWER, bank_id, mask);
 #elif defined(CONFIG_SOC_NRF5340_CPUAPP)
 	uint32_t mask = GENMASK(VMC_RAM_POWER_S0POWER_Pos + last_section_id,

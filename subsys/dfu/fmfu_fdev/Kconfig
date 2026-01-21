@@ -38,6 +38,6 @@ endif
 module=FMFU_FDEV
 module-dep=LOG
 module-str=FMFU FDEV
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # FMFU_FDEV

@@ -7,7 +7,9 @@
 #include <zephyr/shell/shell.h>
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
+#ifdef RTC_PRESENT
 #include <hal/nrf_rtc.h>
+#endif
 #include <hal/nrf_power.h>
 #include <debug/ppi_trace.h>
 #include <zephyr/logging/log.h>
@@ -27,74 +29,22 @@ LOG_MODULE_REGISTER(cpu_load, CONFIG_NRF_CPU_LOAD_LOG_LEVEL);
 #define CPU_LOAD_LOG_INTERVAL 0
 #endif
 
-static nrfx_timer_t timer = NRFX_TIMER_INSTANCE(CONFIG_NRF_CPU_LOAD_TIMER_INSTANCE);
+static nrfx_timer_t timer =
+	NRFX_TIMER_INSTANCE(NRF_TIMER_INST_GET(CONFIG_NRF_CPU_LOAD_TIMER_INSTANCE));
 static bool ready;
 static struct k_work_delayable cpu_load_log;
 static uint32_t cycle_ref;
-static uint32_t shared_ch_mask;
-
-#define IS_CH_SHARED(ch) \
-	(IS_ENABLED(CONFIG_NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS) && \
-	(BIT(ch) & shared_ch_mask))
-
-
-/** @brief Allocate (D)PPI channel. */
-static nrfx_err_t ppi_alloc(uint8_t *ch, uint32_t evt)
-{
-#ifdef DPPI_PRESENT
-	if (*PUBLISH_ADDR(evt) != 0) {
-		if (!IS_ENABLED(CONFIG_NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS)) {
-			return NRFX_ERROR_BUSY;
-		}
-		/* Use mask of one of subscribe registers in the system,
-		 * assuming that all subscribe registers has the same mask for
-		 * channel id.
-		 */
-		*ch = *PUBLISH_ADDR(evt) & DPPIC_SUBSCRIBE_CHG_EN_CHIDX_Msk;
-		shared_ch_mask |= BIT(*ch);
-		return NRFX_SUCCESS;
-	}
-#endif
-	return nrfx_gppi_channel_alloc(ch);
-}
-
-static nrfx_err_t ppi_free(uint8_t ch)
-{
-#ifdef DPPI_PRESENT
-	if (IS_CH_SHARED(ch)) {
-		shared_ch_mask &= ~BIT(ch);
-		return NRFX_SUCCESS;
-	}
-#endif
-	return nrfx_gppi_channel_free(ch);
-}
-
-static void ppi_cleanup(uint8_t ch_tick, uint8_t ch_sleep, uint8_t ch_wakeup)
-{
-	nrfx_err_t err = NRFX_SUCCESS;
-
-	if (IS_ENABLED(CONFIG_NRF_CPU_LOAD_ALIGNED_CLOCKS)) {
-		err = ppi_free(ch_tick);
-	}
-
-	if ((err == NRFX_SUCCESS) && (ch_sleep != CH_INVALID)) {
-		err = ppi_free(ch_sleep);
-	}
-
-	if ((err == NRFX_SUCCESS) && (ch_wakeup != CH_INVALID)) {
-		err = ppi_free(ch_wakeup);
-	}
-
-	if (err != NRFX_SUCCESS) {
-		LOG_ERR("PPI channel freeing failed (err:%d)", err);
-	}
-}
 
 static void cpu_load_log_fn(struct k_work *item)
 {
-	uint32_t load = cpu_load_get();
+	int load = cpu_load_get();
 	uint32_t percent = load / 1000;
 	uint32_t fraction = load % 1000;
+
+	if (load < 0) {
+		LOG_ERR("Module failed to initialize.");
+		return;
+	}
 
 	cpu_load_reset();
 	LOG_INF("Load:%d,%03d%%", percent, fraction);
@@ -112,13 +62,44 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 	/*empty*/
 }
 
-
-int cpu_load_init(void)
+static int ppi_handle_get(uint32_t evt)
 {
-	uint8_t ch_sleep;
-	uint8_t ch_wakeup;
-	uint8_t ch_tick = 0;
-	nrfx_err_t err;
+#ifdef DPPI_PRESENT
+	if (*PUBLISH_ADDR(evt) != 0) {
+		if (!IS_ENABLED(CONFIG_NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS)) {
+			return -ENOTSUP;
+		}
+		return *PUBLISH_ADDR(evt) & DPPIC_SUBSCRIBE_CHG_EN_CHIDX_Msk;
+	}
+#endif
+	return -ENOTSUP;
+}
+static int ppi_setup(uint32_t eep, uint32_t tep)
+{
+	nrfx_gppi_handle_t handle;
+	int err;
+
+	err = ppi_handle_get(eep);
+	if (err >= 0) {
+		/* It works only on single domain DPPI. */
+		handle = (nrfx_gppi_handle_t)err;
+		nrfx_gppi_ep_attach(tep, handle);
+		return 0;
+	}
+
+	err = nrfx_gppi_conn_alloc(eep, tep, &handle);
+	if (err < 0) {
+		LOG_ERR("Failed to allocate PPI resources");
+		return err;
+	}
+
+	nrfx_gppi_conn_enable(handle);
+	return 0;
+}
+
+int cpu_load_init_internal(void)
+{
+	int err;
 	uint32_t base_frequency = NRF_TIMER_BASE_FREQUENCY_GET(timer.p_reg);
 	nrfx_timer_config_t config = NRFX_TIMER_DEFAULT_CONFIG(base_frequency);
 	int ret = 0;
@@ -130,59 +111,33 @@ int cpu_load_init(void)
 	config.frequency = NRFX_MHZ_TO_HZ(1);
 	config.bit_width = NRF_TIMER_BIT_WIDTH_32;
 
-	if (IS_ENABLED(CONFIG_NRF_CPU_LOAD_ALIGNED_CLOCKS)) {
-		/* It's assumed that RTC1 is driving system clock. */
-		config.mode = NRF_TIMER_MODE_COUNTER;
-		err = ppi_alloc(&ch_tick,
-		       nrf_rtc_event_address_get(NRF_RTC1, NRF_RTC_EVENT_TICK));
-		if (err != NRFX_SUCCESS) {
-			return -ENODEV;
-		}
-		nrfx_gppi_channel_endpoints_setup(ch_tick,
-		     nrf_rtc_event_address_get(NRF_RTC1, NRF_RTC_EVENT_TICK),
-		     nrfx_timer_task_address_get(&timer, NRF_TIMER_TASK_COUNT));
-		nrf_rtc_event_enable(NRF_RTC1, NRF_RTC_INT_TICK_MASK);
+#ifdef CONFIG_NRF_CPU_LOAD_ALIGNED_CLOCKS
+	/* It's assumed that RTC1 is driving system clock. */
+	config.mode = NRF_TIMER_MODE_COUNTER;
+	ret = ppi_setup(nrf_rtc_event_address_get(NRF_RTC1, NRF_RTC_EVENT_TICK),
+			nrfx_timer_task_address_get(&timer, NRF_TIMER_TASK_COUNT));
+	if (ret < 0) {
+		return ret;
+	}
+	nrf_rtc_event_enable(NRF_RTC1, NRF_RTC_INT_TICK_MASK);
+#endif
+
+	ret = ppi_setup(nrf_power_event_address_get(NRF_POWER, NRF_POWER_EVENT_SLEEPENTER),
+			nrfx_timer_task_address_get(&timer, NRF_TIMER_TASK_START));
+	if (ret < 0) {
+		return ret;
 	}
 
-	err = ppi_alloc(&ch_sleep,
-		       nrf_power_event_address_get(NRF_POWER,
-						   NRF_POWER_EVENT_SLEEPENTER));
-	if (err != NRFX_SUCCESS) {
-		ppi_cleanup(ch_tick, CH_INVALID, CH_INVALID);
-		return -ENODEV;
-	}
-
-	err = ppi_alloc(&ch_wakeup,
-		       nrf_power_event_address_get(NRF_POWER,
-						   NRF_POWER_EVENT_SLEEPEXIT));
-	if (err != NRFX_SUCCESS) {
-		ppi_cleanup(ch_tick, ch_sleep, CH_INVALID);
-		return -ENODEV;
+	ret = ppi_setup(nrf_power_event_address_get(NRF_POWER, NRF_POWER_EVENT_SLEEPEXIT),
+			nrfx_timer_task_address_get(&timer, NRF_TIMER_TASK_STOP));
+	if (ret < 0) {
+		return ret;
 	}
 
 	err = nrfx_timer_init(&timer, &config, timer_handler);
-	if (err != NRFX_SUCCESS) {
-		ppi_cleanup(ch_tick, ch_sleep, ch_wakeup);
+	if (err != 0) {
 		return -EBUSY;
 	}
-
-	nrfx_gppi_channel_endpoints_setup(ch_sleep,
-		  nrf_power_event_address_get(NRF_POWER,
-					      NRF_POWER_EVENT_SLEEPENTER),
-		  nrfx_timer_task_address_get(&timer, NRF_TIMER_TASK_START));
-	nrfx_gppi_channel_endpoints_setup(ch_wakeup,
-		  nrf_power_event_address_get(NRF_POWER,
-					      NRF_POWER_EVENT_SLEEPEXIT),
-		  nrfx_timer_task_address_get(&timer, NRF_TIMER_TASK_STOP));
-
-	/* In case of DPPI event can only be assigned to a single channel. In
-	 * that case, cpu load can still subscribe to the channel but should
-	 * not control it. It may result in cpu load not working. User must
-	 * take care of that.
-	 */
-	nrfx_gppi_channels_enable((IS_CH_SHARED(ch_sleep) ? 0 : BIT(ch_sleep)) |
-				(IS_CH_SHARED(ch_wakeup) ? 0 : BIT(ch_wakeup)) |
-				(IS_CH_SHARED(ch_tick) ? 0 : BIT(ch_tick)));
 
 	cpu_load_reset();
 
@@ -198,6 +153,11 @@ int cpu_load_init(void)
 	return ret;
 }
 
+int cpu_load_init(void)
+{
+	return cpu_load_init_internal();
+}
+
 void cpu_load_reset(void)
 {
 	nrfx_timer_clear(&timer);
@@ -211,12 +171,16 @@ static uint32_t sleep_ticks_to_us(uint32_t ticks)
 	   ticks;
 }
 
-uint32_t cpu_load_get(void)
+int cpu_load_get(void)
 {
 	uint32_t sleep_us;
 	uint32_t total_cyc;
 	uint64_t total_us;
 	uint64_t load;
+
+	if (!ready) {
+		return -ENODEV;
+	}
 
 	sleep_us = sleep_ticks_to_us(nrfx_timer_capture(&timer, 0));
 	total_cyc = k_cycle_get_32() - cycle_ref;
@@ -234,21 +198,20 @@ uint32_t cpu_load_get(void)
 	load = (total_us > (uint64_t)sleep_us) ?
 			(100000 * (total_us - (uint64_t)sleep_us)) / total_us : 0;
 
-	return (uint32_t)load;
+	return (int)load;
 }
 
 static int cmd_cpu_load_get(const struct shell *shell, size_t argc, char **argv)
 {
-	uint32_t load;
+	int load;
 	uint32_t percent;
 	uint32_t fraction;
 
-	if (!ready) {
+	load = cpu_load_get();
+	if (load < 0) {
 		shell_error(shell, "Not initialized.");
 		return 0;
 	}
-
-	load = cpu_load_get();
 	percent = load / 1000;
 	fraction = load % 1000;
 
@@ -260,18 +223,12 @@ static int cmd_cpu_load_get(const struct shell *shell, size_t argc, char **argv)
 static int cmd_cpu_load_reset(const struct shell *shell,
 				size_t argc, char **argv)
 {
-	int err;
-
-	err = cpu_load_init();
-	if (err != 0) {
-		shell_error(shell, "Init failed (err:%d)", err);
-		return 0;
-	}
-
 	cpu_load_reset();
 
 	return 0;
 }
+
+SYS_INIT(cpu_load_init_internal, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_cmd_cpu_load,
 	SHELL_CMD_ARG(get, NULL, "Get load", cmd_cpu_load_get, 1, 0),

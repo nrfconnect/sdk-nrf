@@ -7,11 +7,11 @@
 macro(generate_mbedcrypto_interface_configs)
   # This must be set TODO:FILLME
   if(NOT PSA_CRYPTO_CONFIG_INTERFACE_PATH)
-      message(FATAL_ERROR "generate_mbedcrypto_interface_configs expects PSA_CRYPTO_CONFIG_INTERFACE_PATH to be set")
+      nrf_security_debug(FATAL_ERROR "generate_mbedcrypto_interface_configs expects PSA_CRYPTO_CONFIG_INTERFACE_PATH to be set")
   endif()
 
   if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
-    message("=========== Generating psa_crypto_config ===============")
+    nrf_security_debug("=========== Generating psa_crypto_config ===============")
 
     # Make a copy of the configurations changed for the PSA interface
     kconfig_backup_current_config(CONFIG_MBEDTLS_PSA_CRYPTO_SPM)
@@ -21,7 +21,7 @@ macro(generate_mbedcrypto_interface_configs)
     kconfig_backup_current_config(CONFIG_MBEDTLS_THREADING_C)
     kconfig_backup_current_config(CONFIG_MBEDTLS_THREADING_ALT)
 
-    message("=========== Checkpoint: backup ===============")
+    nrf_security_debug("=========== Checkpoint: backup ===============")
 
     # Set generated_include_path which is used by the config-generation
     set(generated_include_path ${PSA_CRYPTO_CONFIG_INTERFACE_PATH})
@@ -64,7 +64,7 @@ macro(generate_mbedcrypto_interface_configs)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_THREADING_C)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_THREADING_ALT)
 
-    message("=========== End psa_crypto_config ===============")
+    nrf_security_debug("=========== End psa_crypto_config ===============")
   endif()
 endmacro()
 
@@ -74,12 +74,12 @@ endmacro()
 # - Secure-only builds
 macro(generate_mbedcrypto_library_configs)
   if(NOT PSA_CRYPTO_CONFIG_LIBRARY_PATH)
-      message(FATAL_ERROR "generate_mbedcrypto_library_configs expects PSA_CRYPTO_CONFIG_LIBRARY_PATH to be set")
+      nrf_security_debug(FATAL_ERROR "generate_mbedcrypto_library_configs expects PSA_CRYPTO_CONFIG_LIBRARY_PATH to be set")
   endif()
 
   if(NOT (CONFIG_MBEDTLS_PSA_CRYPTO_SPM OR CONFIG_PSA_SSF_CRYPTO_CLIENT))
 
-    message("=========== Generating psa_crypto_library_config ===============")
+    nrf_security_debug("=========== Generating psa_crypto_library_config ===============")
 
     # Make a backup of the configurations changed for the PSA library
     kconfig_backup_current_config(CONFIG_MBEDTLS_PSA_CRYPTO_C)
@@ -91,7 +91,7 @@ macro(generate_mbedcrypto_library_configs)
     kconfig_backup_current_config(CONFIG_MBEDTLS_THREADING_ALT)
 
 
-    message("=========== Checkpoint: backup ===============")
+    nrf_security_debug("=========== Checkpoint: backup ===============")
 
     # Set generated_include_path which is used by the config-generation files
     set(generated_include_path ${PSA_CRYPTO_CONFIG_LIBRARY_PATH})
@@ -138,6 +138,6 @@ macro(generate_mbedcrypto_library_configs)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_THREADING_C)
     kconfig_restore_backup_config(CONFIG_MBEDTLS_THREADING_ALT)
 
-    message("=========== End psa_crypto_library_config ===============")
+    nrf_security_debug("=========== End psa_crypto_library_config ===============")
   endif()
 endmacro()

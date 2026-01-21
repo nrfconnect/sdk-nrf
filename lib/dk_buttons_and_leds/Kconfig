@@ -15,12 +15,12 @@ config DK_LIBRARY_BUTTON_SCAN_INTERVAL
 	default 10
 
 config DK_LIBRARY_DYNAMIC_BUTTON_HANDLERS
-	bool "Enable the runtime assignable button handler API"
+	bool "Runtime assignable button handler API"
 	default y
 
 module = DK_LIBRARY
 module-str = DK library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 config DK_LIBRARY_SHELL
 	bool "DK_LIBRARY SHELL"

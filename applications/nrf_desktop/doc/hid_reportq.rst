@@ -18,13 +18,13 @@ Make sure that heap size (:kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE`) is large 
 Data structures used to enqueue HID reports are dynamically allocated using the :c:func:`k_malloc` function.
 When no longer needed, the structures are freed using the :c:func:`k_free` function.
 
-Use the :ref:`CONFIG_DESKTOP_HID_REPORTQ <config_desktop_app_options>` Kconfig option to enable the utility.
-You can use the utility only on HID dongles (:ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>`).
+Use the :option:`CONFIG_DESKTOP_HID_REPORTQ` Kconfig option to enable the utility.
+You can use the utility only on HID dongles (:option:`CONFIG_DESKTOP_ROLE_HID_DONGLE`).
 
 You can configure the following properties:
 
-* Maximum number of enqueued HID reports (:ref:`CONFIG_DESKTOP_HID_REPORTQ_MAX_ENQUEUED_REPORTS <config_desktop_app_options>`)
-* Number of supported HID report queues (:ref:`CONFIG_DESKTOP_HID_REPORTQ_QUEUE_COUNT <config_desktop_app_options>`)
+* Maximum number of enqueued HID reports (:option:`CONFIG_DESKTOP_HID_REPORTQ_MAX_ENQUEUED_REPORTS`)
+* Number of supported HID report queues (:option:`CONFIG_DESKTOP_HID_REPORTQ_QUEUE_COUNT`)
 
 See Kconfig help for more details.
 

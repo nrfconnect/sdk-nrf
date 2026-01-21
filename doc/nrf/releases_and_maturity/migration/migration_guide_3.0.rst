@@ -105,6 +105,37 @@ ZMS settings backend
    To migrate from the legacy backend to the new backend remove the Kconfig options :kconfig:option:`CONFIG_SETTINGS_ZMS_NAME_CACHE`
    and :kconfig:option:`CONFIG_SETTINGS_ZMS_NAME_CACHE_SIZE` from your conf files.
 
+Bluetooth® LE legacy pairing
+----------------------------
+
+.. toggle::
+
+   Support for Bluetooth LE legacy pairing is no longer enabled by default because it is not secure.
+   The :kconfig:option:`CONFIG_BT_SMP_SC_PAIR_ONLY` Kconfig option is enabled by default in Zephyr.
+   If you still need to support the Bluetooth LE legacy pairing and you accept the security risks, disable the option in the configuration.
+
+   .. caution::
+      Using Bluetooth LE legacy pairing introduces, among others, a risk of passive eavesdropping.
+      Supporting Bluetooth LE legacy pairing makes devices vulnerable to downgrade attacks.
+
+CRACEN initialization
+---------------------
+
+.. toggle::
+
+   In the |NCS| versions 2.8.0 and 2.9.0, you must explicitly configure the CRACEN initialization.
+   It is done by adding the :kconfig:option:`CONFIG_CRACEN_LOAD_MICROCODE` Kconfig option to the image configuration.
+   This option allows to select the given image to initialize CRACEN.
+
+   However, from |NCS| 3.0.0, CRACEN is automatically initialized.
+   The new build configuration option (:kconfig:option:`SB_CONFIG_CRACEN_MICROCODE_LOAD_ONCE`) now controls this process at the sysbuild level.
+   When enabled, the build system automatically determines which image must handle the initialization of CRACEN.
+
+   Unlike in the |NCS| versions 2.8.0 and 2.9.0, where CRACEN initialization is disabled by default in the MCUboot configuration, CRACEN is initialized by the earliest bootloader by default in the |NCS| 3.0.0.
+   This change can lead to scenarios where CRACEN might be initialized twice or not initialized at all.
+   When migrating from the |NCS| v2.9.0 to v3.0.0, you must analyze which image is responsible for initializing CRACEN before and after the firmware update to ensure correct operation.
+   Make sure to adjust your bootloader or application upgrade path accordingly to avoid any issues related to CRACEN initialization.
+
 nRF54H20
 ========
 
@@ -390,7 +421,7 @@ Google Fast Pair
    For applications and samples using the :ref:`bt_fast_pair_readme` library:
 
    * If you use sysbuild for generating a hex file with the Fast Pair provisioning data, you must align your application with the new approach for passing the provisioning parameters (the Model ID and the Anti-Spoofing Private Key).
-     The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig options that are defined at the sysbuild level.
+     The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_MODEL_ID` and :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY` Kconfig options that are defined at the sysbuild level.
      The following additional build parameters for Fast Pair are no longer valid:
 
      ``-DFP_MODEL_ID=0xFFFFFF -DFP_ANTI_SPOOFING_KEY=AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=``
@@ -425,11 +456,11 @@ Google Fast Pair
 
               Replace the standard ``"`` character with the ``\"`` characters.
 
-        The special character sequence is only required when you pass the ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig option as an additional build parameter.
+        The special character sequence is only required when you pass the :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY` Kconfig option as an additional build parameter.
 
-   * You must remove the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option from the sysbuild configuration in your project.
-     The ``SB_CONFIG_BT_FAST_PAIR`` option no longer exists in this |NCS| release.
-     Additionally, if you rely on the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option to set the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option in the main image configuration of your application, you must align your main image configuration and set the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option explicitly.
+   * You must remove the :kconfig:option:`SB_CONFIG_BT_FAST_PAIR` Kconfig option from the sysbuild configuration in your project.
+     The :kconfig:option:`SB_CONFIG_BT_FAST_PAIR` option no longer exists in this |NCS| release.
+     Additionally, if you rely on the :kconfig:option:`SB_CONFIG_BT_FAST_PAIR` Kconfig option to set the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option in the main image configuration of your application, you must align your main image configuration and set the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option explicitly.
 
    * If your Fast Pair application uses the Find My Device (FMD) extension, you must update your application code to correctly track the FMDN provisioning state.
      From this |NCS| release, you must not rely on the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback to report the initial provisioning state right after the Fast Pair module is enabled with the :c:func:`bt_fast_pair_enable` function call.
@@ -496,20 +527,20 @@ Serial LTE Modem
 
 .. toggle::
 
-   The error event ``LWM2M_CARRIER_ERROR_RUN`` has been removed from the :ref:`SLM_AT_CARRIER`.
+   The error event ``LWM2M_CARRIER_ERROR_RUN`` has been removed from the LwM2M carrier library AT commands.
 
    * Errors that were previously notified to the application with the ``LWM2M_CARRIER_ERROR_RUN`` event type have instead been added to :c:macro:`LWM2M_CARRIER_ERROR_CONFIGURATION`.
 
-Bluetooth® Fast Pair Locator tag
---------------------------------
+Bluetooth Fast Pair Locator tag
+-------------------------------
 
 .. toggle::
 
-   * If you want to align your application project with the newest version of the :ref:`fast_pair_locator_tag` sample and still maintain the DFU backwards compatibility for your already deployed products that are based on the ``nrf52840dk/nrf52840``  and the ``nrf54l15dk/nrf54l15/cpuapp`` board targets, use the RSA signature algorithm (the ``SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA`` Kconfig option) that is supported as part of the previous |NCS| releases.
+   * If you want to align your application project with the newest version of the :ref:`fast_pair_locator_tag` sample and still maintain the DFU backwards compatibility for your already deployed products that are based on the ``nrf52840dk/nrf52840``  and the ``nrf54l15dk/nrf54l15/cpuapp`` board targets, use the RSA signature algorithm (the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA` Kconfig option) that is supported as part of the previous |NCS| releases.
      In the current |NCS| release, the MCUboot DFU signature type has been changed:
 
-     * To the Elliptic curve digital signatures with curve P-256 (ECDSA P256 - the ``SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256`` Kconfig option) in case of the ``nrf52840dk/nrf52840`` board target.
-     * To the Edwards-curve digital signature with curve Curve25519 (ED25519 - the ``SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519`` Kconfig option) in case of the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
+     * To the Elliptic curve digital signatures with curve P-256 (ECDSA P256 - the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256` Kconfig option) in case of the ``nrf52840dk/nrf52840`` board target.
+     * To the Edwards-curve digital signature with curve Curve25519 (ED25519 - the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519` Kconfig option) in case of the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
 
      As a result, you will not be able to perform DFU from an old version to a new one.
 
@@ -537,32 +568,32 @@ Download client
 
 .. toggle::
 
-   * The :ref:`lib_download_client` library has been deprecated in favor of the :ref:`lib_downloader` library and will be removed in a future |NCS| release.
+   * The Download client library has been deprecated in favor of the :ref:`lib_downloader` library and will be removed in a future |NCS| release.
 
      You can follow this guide to migrate your application to use the :ref:`lib_downloader` library.
      This will reduce the footprint of the application and will decrease memory requirements on the heap.
 
-     To replace :ref:`lib_download_client` with the :ref:`lib_downloader`, complete the following steps.
+     To replace Download client with the :ref:`lib_downloader`, complete the following steps.
 
      1. Kconfig options:
 
          * Replace:
 
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_MAX_HOSTNAME_SIZE` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_MAX_FILENAME_SIZE` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_STACK_SIZE` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_STACK_SIZE` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_SHELL` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_SHELL` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_HTTP_TIMEO_MS` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_COAP_MAX_RETRANSMIT_REQUEST_COUNT` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_COAP_MAX_RETRANSMIT_REQUEST_COUNT` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_COAP_BLOCK_SIZE_512` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_MAX_HOSTNAME_SIZE` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_MAX_FILENAME_SIZE` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_STACK_SIZE`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_STACK_SIZE` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_SHELL`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_SHELL` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_TCP_SOCK_TIMEO_MS`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_HTTP_TIMEO_MS` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_COAP_MAX_RETRANSMIT_REQUEST_COUNT`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_COAP_MAX_RETRANSMIT_REQUEST_COUNT` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE`` Kconfig option with the :kconfig:option:`CONFIG_DOWNLOADER_COAP_BLOCK_SIZE_512` Kconfig option.
 
          * Remove:
 
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_BUF_SIZE` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS` Kconfig option.
-            * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_CID` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_BUF_SIZE`` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE`` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_RANGE_REQUESTS`` Kconfig option.
+            * The ``CONFIG_DOWNLOAD_CLIENT_CID`` Kconfig option.
 
          * Add:
 
@@ -692,11 +723,11 @@ Modem SLM
 
 .. toggle::
 
-   For applications and samples using the :ref:`lib_modem_slm` library:
+   For applications and samples using the Modem SLM library:
 
-    * Replace the ``CONFIG_MODEM_SLM_WAKEUP_PIN`` Kconfig option with :kconfig:option:`CONFIG_MODEM_SLM_POWER_PIN`.
-    * Replace the ``CONFIG_MODEM_SLM_WAKEUP_TIME`` Kconfig option with :kconfig:option:`CONFIG_MODEM_SLM_POWER_PIN_TIME`.
-    * Replace the :c:func:`modem_slm_wake_up` function with :c:func:`modem_slm_power_pin_toggle`.
+    * Replace the ``CONFIG_MODEM_SLM_WAKEUP_PIN`` Kconfig option with ``CONFIG_MODEM_SLM_POWER_PIN``.
+    * Replace the ``CONFIG_MODEM_SLM_WAKEUP_TIME`` Kconfig option with ``CONFIG_MODEM_SLM_POWER_PIN_TIME``.
+    * Replace the ``modem_slm_wake_up()`` function with ``modem_slm_power_pin_toggle()``.
 
 Protocols
 =========
@@ -708,7 +739,7 @@ Bluetooth Mesh
 
 .. toggle::
 
-   * Support for Tinycrypt-based security toolbox (:kconfig:option:`CONFIG_BT_MESH_USES_TINYCRYPT`) has started the deprecation procedure and is not recommended for future designs.
+   * Support for TinyCrypt-based security toolbox (:kconfig:option:`CONFIG_BT_MESH_USES_TINYCRYPT`) has started the deprecation procedure and is not recommended for future designs.
    * For platforms that do not support the TF-M: The default security toolbox is based on the Mbed TLS PSA API (:kconfig:option:`CONFIG_BT_MESH_USES_MBEDTLS_PSA`).
    * For platforms that support the TF-M: The default security toolbox is based on the TF-M PSA API (:kconfig:option:`CONFIG_BT_MESH_USES_TFM_PSA`).
 

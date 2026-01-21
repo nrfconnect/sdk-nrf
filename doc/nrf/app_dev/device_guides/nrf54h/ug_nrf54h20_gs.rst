@@ -7,143 +7,115 @@ Getting started with the nRF54H20 DK
    :local:
    :depth: 2
 
-This document gets you started with your nRF54H20 Development Kit (DK) using the |NCS| for the first time.
-It tells you how to install the :zephyr:code-sample:`sysbuild_hello_world` sample and perform a quick test of your DK.
+.. note::
+   If you are migrating from an earlier version of the |NCS|, see :ref:`migration_guides`.
 
-If you are migrating from an earlier version of the |NCS|, see :ref:`migration_guides`.
+This document will get you started with your new nRF54H20 Development Kit (DK) using the |NCS| for the first time.
+It will guide you through the following:
+
+1. Installing the |NCS| and other required software and tools.
+#. Preparing the nRF54H20 DK for first use:
+
+   a. Programming the nRF54H20 DK's Board Information Configuration Registers (BICR) using the provided binary file.
+   #. Programming the Secure Domain and System Controller of the nRF54H20 SoC using the provided IronSide SE binaries.
+   #. Transitioning the SoC's lifecycle state (LCS) to Root of Trust (RoT).
+
+#. Programming the :zephyr:code-sample:`sysbuild_hello_world` sample on the DK.
+#. Testing the sample by capturing and reviewing the UART console output.
 
 .. _ug_nrf54h20_gs_requirements:
 
-Minimum requirements
-********************
+Hardware requirements
+*********************
 
-Make sure you have all the required hardware and that your computer has one of the supported operating systems.
+To follow this guide, make sure you have all the required hardware:
 
-Hardware
-========
-
-* nRF54H20 DK version PCA10175 Engineering C - v0.9.0 and later revisions.
+* nRF54H20 DK version PCA10175 Engineering C - v0.9.0 and later DK revisions in lifecycle state (LCS) ``EMPTY`` (new DKs will always be in LCS ``EMPTY``).
   Check the version number on your DK's sticker to verify its compatibility with the |NCS|.
 * USB-C cable.
 
-Software
-========
+.. rst-class:: numbered-step
 
-On your computer, one of the following operating systems:
+Installing the |NCS|
+********************
 
-.. include:: ../../../installation/recommended_versions.rst
-    :start-after: os_table_start
-    :end-before: os_table_end
+Install the |NCS| following the instructions for both |nRFVSC| and the command line in the :ref:`install_ncs` documentation page.
 
-See :ref:`supported_OS` for more information.
+.. rst-class:: numbered-step
 
-|supported OS|
+Installing additional nRF Util commands
+***************************************
 
-You also need the following:
+After installing the |NCS| and its toolchain, you get the :ncs-tool-version:`NRFUTIL_VERSION_WIN10` version of nRF Util core module (``nrfutil``).
+Using the nRF54H20 DK with the |NCS| version |release| also requires the following nRF Util components:
 
-* `Git`_ or `Git for Windows`_ (on Linux and Mac, or Windows, respectively)
-* `curl`_
-* SEGGER J-Link |jlink_ver| and, on Windows, also the SEGGER USB Driver for J-Link from `SEGGER J-Link`_ |jlink_ver|.
-  For information on how to install the USB Driver, see the `nRF Util prerequisites`_ documentation.
-* The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_
-* In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_
-* On Linux, the `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware
+.. _ug_nrf54h20_nrfutil_comm_ver:
 
-.. _ug_nrf54h20_gs_installing_software:
++----------------------------------------------+-------------------------------------+
+| nRF Util component                           | Required version                    |
++==============================================+=====================================+
+| nRF Util (``nrfutil``)                       | Latest                              |
++----------------------------------------------+-------------------------------------+
+| nRF Util ``device`` command                  | version |54H_nrfutil_device_ver|    |
++----------------------------------------------+-------------------------------------+
+| nRF Util ``trace`` command                   | version |54H_nrfutil_trace_ver|     |
++----------------------------------------------+-------------------------------------+
 
-Installing the required software
-********************************
+To install the required versions of the nRF Util commands, complete the following steps:
 
-To work with the nRF54H20 DK, follow the instructions in the next sections to install the required tools.
+1. Update your existing nRF Util installation:
 
-Install prerequisites
-=====================
+   a. Make sure you have removed the lock on the nRF Util installation to be able to install other nRF Util commands.
+      See `Locking nRF Util home directory`_ in the tool documentation for more information.
+   #. Run the following command to update the core module to the latest version:
 
-.. include:: ../../../installation/install_ncs.rst
-   :start-after: .. prerequisites-include-start
-   :end-before: .. prerequisites-include-end
+      .. code-block::
 
-.. _ug_nrf54h20_install_toolchain:
+         nrfutil self-upgrade
 
-Installing the |NCS| toolchain
-==============================
+      For more information, consult the `Upgrading nRF Util core module`_ documentation.
 
-.. include:: ../../../installation/install_ncs.rst
-   :start-after: .. installncstoolchain-include-start
-   :end-before: .. installncstoolchain-include-end
+#. Install the required versions of the nRF Util commands:
 
-Installing nRF Util and its commands
-====================================
+   .. parsed-literal::
+      :class: highlight
 
-When you install the |NCS| toolchain as listed above, you get the :ncs-tool-version:`NRFUTIL_VERSION_WIN10` version of nRF Util core module (``nrfutil``).
-Using the nRF54H20 DK with the |NCS| version |release| requires the following:
+      nrfutil install device=\ |54H_nrfutil_device_ver|\  --force
+      nrfutil install trace=\ |54H_nrfutil_trace_ver|\  --force
 
-* The latest version of nRF Util core module (``nrfutil``), which might or might not be the same as the version installed with the |NCS| toolchain
-* nRF Util ``device`` command version |54H_nrfutil_device_ver|
-* nRF Util ``trace`` command v4.0.1
+   For more information, see the `Installing specific versions of nRF Util commands`_ documentation.
 
-To update your nRF Util installation, complete the following steps:
-
-1. Make sure you have removed the lock on the nRF Util installation to be able to install other nRF Util commands.
-   See `Locking nRF Util home directory`_ in the tool documentation for more information.
-#. Run the following command to update the core module to the latest version:
+#. Verify the installation of the nRF Util commands:
 
    .. code-block::
 
-      nrfutil self-upgrade
+      nrfutil device --version
+      nrfutil trace --version
 
-   For more information, consult the `Upgrading nRF Util core module`_ documentation.
+   The output will show the installed versions.
+   Ensure they match the required versions.
 
-#. Install the required versions of nRF Util commands, as listed above, using the command from `Installing specific versions of nRF Util commands`_.
-   For example, the following command installs the nRF Util ``device`` command:
-
-   .. code-block::
-
-      nrfutil install device=<version_number> --force
-
-   .. note::
-      Substitute ``<version_number>`` with |54H_nrfutil_device_ver|.
-
-#. To verify the installation of the nRF Util commands, run the following command:
-
-   .. code-block::
-
-      nrfutil <command> --version
-
-   .. note::
-      Substitute ``<command>`` with  either ``device``, or ``trace``.
-
-   The output will show the installed version of that command.
-
-Getting the |NCS| code
-======================
-
-.. include:: ../../../installation/install_ncs.rst
-   :start-after: .. getncscode-include-start
-   :end-before: .. getncscode-include-end
+.. rst-class:: numbered-step
 
 Installing a terminal application
-=================================
+*********************************
 
 Install a terminal emulator, such as the `Serial Terminal app`_ (from the nRF Connect for Desktop application) or the nRF Terminal (part of the `nRF Connect for Visual Studio Code`_ extension).
 Both of these terminal emulators start the required :ref:`toolchain environment <using_toolchain_environment>`.
 
 .. _ug_nrf54h20_gs_bringup:
-
-nRF54H20 DK bring-up
-********************
-
-The following sections describe the steps required for the nRF54H20 bring-up.
+.. _ug_nrf54h20_gs_bringup_bicr:
+.. _ug_nrf54h20_gs_bicr:
 
 .. rst-class:: numbered-step
 
-Programming the BICR
-====================
+Bring-up step: Programming the BICR
+***********************************
 
 The Board Information Configuration Registers (BICR) are non-volatile memory (NVM) registers that contain information on how the nRF54H20 SoC must interact with other board elements, including information about power and clock delivery to the SoC.
-To prepare the nRF54H20 DK for first use, you must manually program the values of the BICR using a precompiled BICR binary file (:file:`bicr.hex`).
+To prepare the nRF54H20 DK for its first use, you must manually program the required values into the BICR using a precompiled BICR binary file (:file:`bicr.hex`).
 
-1. Download the `BICR new binary file`_.
+1. Download the `nRF54H20 DK BICR binary file`_.
 #. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
 
    .. note::
@@ -157,18 +129,31 @@ To prepare the nRF54H20 DK for first use, you must manually program the values o
 
       nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware bicr.hex --core Application --serial-number <serial_number>
 
-.. rst-class:: numbered-step
+.. note::
+   After you program the BICR, the LFCLK calibrates on first boot.
+   Do not expect accurate LFCLK timing for about 3.5–4 seconds.
+   If calibration does not complete, the system controller (sysctrl) starts calibration on the next boot.
 
 .. _ug_nrf54h20_SoC_binaries:
+.. _ug_nrf54h20_gs_bringup_soc_bin:
 
-Programming the nRF54H20 SoC binaries
-=====================================
+.. rst-class:: numbered-step
 
-After programming the BICR, program the nRF54H20 SoC with the :ref:`nRF54H20 SoC binaries <abi_compatibility>`.
+Bring-up step: Programming the nRF54H20 IronSide SE binaries
+************************************************************
+
+.. note::
+   To program the nRF54H20 IronSide SE binaries on your nRF54H20 SoC-based device, your device must be in lifecycle state (LCS) ``EMPTY``.
+   This means that this is likely the first use of your nRF54H20 DK.
+
+   Devices already provisioned using SUIT-based binaries and in LCS ``RoT`` cannot be transitioned back to LCS ``EMPTY``.
+   For more information, see :ref:`abi_compatibility`.
+
+After programming the BICR, program the :ref:`nRF54H20 IronSide SE binaries <abi_compatibility>`.
 This bundle contains the precompiled firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` and :ref:`System Controller <ug_nrf54h20_sys_ctrl>`.
-To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
+To program the nRF54H20 IronSide SE binaries to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 SoC binaries v22.2.0+14`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
+1. Download the `latest nRF54H20 IronSide SE binaries`_.
 
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
@@ -177,10 +162,12 @@ To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
 
       nrfutil device x-provision-nrf54h --firmware <path-to_bundle_zip_file> --serial-number <serial_number>
 
+.. _ug_nrf54h20_gs_bringup_trasition:
+
 .. rst-class:: numbered-step
 
-Transitioning the nRF54H20 SoC to RoT
-=====================================
+Bring-up step: Transitioning the nRF54H20 SoC to RoT
+****************************************************
 
 The current nRF54H20 DK comes with its lifecycle state (LCS) set to ``EMPTY``.
 To operate correctly, you must transition its lifecycle state to Root of Trust (``RoT``).
@@ -201,8 +188,10 @@ To transition the LCS to ``RoT``, do the following:
 
 .. _ug_nrf54h20_gs_sample:
 
-Building and programming the sample
-***********************************
+.. rst-class:: numbered-step
+
+Building and programming your first sample to the nRF54H20 DK
+*************************************************************
 
 The :zephyr:code-sample:`sysbuild_hello_world` sample is a multicore sample running on both the application core (``cpuapp``) and the Peripheral Processor (PPR, ``cpuppr``).
 It uses the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
@@ -210,7 +199,58 @@ It uses the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
 To build and program the sample to the nRF54H20 DK, complete the following steps:
 
 1. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
-#. Open nRF Connect for Desktop, navigate to the Toolchain Manager, select the version |release| toolchain, and click the :guilabel:`Open terminal` button.
+#. Start the toolchain environment for your operating system using the following command pattern, with ``--ncs-version`` corresponding to the |NCS| version you have installed:
+
+   .. tabs::
+
+      .. tab:: Windows
+
+         .. parsed-literal::
+            :class: highlight
+
+            nrfutil sdk-manager toolchain launch --ncs-version *version* --terminal
+
+         For example:
+
+         .. parsed-literal::
+            :class: highlight
+
+            nrfutil sdk-manager toolchain launch --ncs-version |release| --terminal
+
+         This example command starts the toolchain environment for the |NCS| |release|.
+
+      .. tab:: Linux
+
+         .. parsed-literal::
+            :class: highlight
+
+            nrfutil sdk-manager toolchain launch --ncs-version *version* --shell
+
+         For example:
+
+         .. parsed-literal::
+            :class: highlight
+
+            nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
+
+         This example command starts the toolchain environment for the |NCS| |release|.
+
+      .. tab:: macOS
+
+         .. parsed-literal::
+            :class: highlight
+
+            nrfutil sdk-manager toolchain launch --ncs-version *version* --shell
+
+         For example:
+
+         .. parsed-literal::
+            :class: highlight
+
+            nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
+
+         This example command starts the toolchain environment for the |NCS| |release|.
+
 #. In the terminal window, navigate to the :file:`zephyr/samples/sysbuild/hello_world` folder containing the sample.
 #. Run the following command to build the sample for application and radio cores::
 
@@ -223,20 +263,18 @@ If you have multiple Nordic Semiconductor devices, ensure that only the nRF54H20
 
    west flash
 
-Make sure you have the :ref:`nrfutil device <ug_nrf54h20_install_toolchain>` command installed for ``west flash`` to work with the nRF54H20 DK.
 This command builds and programs the sample automatically on both the application core and the Peripheral Processor (PPR) of the nRF54H20 SoC.
 
 .. include:: /includes/nRF54H20_erase_UICR.txt
 
 .. _ug_nrf54h20_sample_reading_logs:
 
-Reading the logs
-****************
+.. rst-class:: numbered-step
 
-With the :zephyr:code-sample:`sysbuild_hello_world` sample programmed, the nRF54H20 DK outputs logs for the application core and the configured remote processor.
-The logs are output over UART.
+Testing your first sample on the nRF54H20 DK
+********************************************
 
-To read the logs from the :zephyr:code-sample:`sysbuild_hello_world` sample programmed to the nRF54H20 DK, complete the following steps:
+Now that the :zephyr:code-sample:`sysbuild_hello_world` sample is programmed, verify its operation by capturing the UART logs from both the application core and the peripheral processor:
 
 1. Connect to the DK with a terminal emulator (for example, the `Serial Terminal app`_) using the :ref:`default serial port connection settings <test_and_optimize>`.
 #. Press the **Reset** button on the PCB to reset the DK.

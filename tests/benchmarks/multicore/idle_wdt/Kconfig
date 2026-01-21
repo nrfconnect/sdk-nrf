@@ -12,4 +12,9 @@ config TEST_SLEEP_DURATION_MS
 	  Based on the value of 'min-residency-us' specified for each power state defined in the DTS,
 	  core enters the lowest possible power state.
 
+config TEST_SYNCHRONIZE_CORES
+	bool "Synchronization with other core"
+	help
+	  When set to 'y' core will synchronize code execution with the other core.
+
 source "Kconfig.zephyr"

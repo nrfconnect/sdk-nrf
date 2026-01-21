@@ -8,9 +8,10 @@
 import os
 import sys
 
+
 def remove_comments_from_assembly_file(input_file):
     """Cleans an assembly file by removing lines starting with # and saves the changes in the same file."""
-    with open(input_file, 'r') as infile:
+    with open(input_file) as infile:
         lines = infile.readlines()
 
     # Filter out lines starting with #

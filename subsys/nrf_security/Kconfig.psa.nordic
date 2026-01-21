@@ -126,7 +126,8 @@ config PSA_HAS_KEY_SUPPORT
 		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_EXPORT	|| \
 		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_GENERATE	|| \
 		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE	|| \
-		   PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
+		   PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY		|| \
+		   PSA_WANT_KEY_TYPE_WPA3_SAE_PT
 	help
 	  Prompt-less configuration that states that key types are supported.
 
@@ -146,7 +147,8 @@ config PSA_HAS_PAKE_SUPPORT
 		   PSA_WANT_ALG_SPAKE2P_CMAC		|| \
 		   PSA_WANT_ALG_SPAKE2P_MATTER 		|| \
 		   PSA_WANT_ALG_SRP_6 			|| \
-		   PSA_WANT_ALG_SRP_PASSWORD_HASH
+		   PSA_WANT_ALG_SRP_PASSWORD_HASH	|| \
+		   PSA_WANT_ALG_WPA3_SAE
 	help
 	  Prompt-less configuration that states that PAKE is supported.
 
@@ -303,15 +305,6 @@ config PSA_WANT_ALG_WPA3_SAE
 
 comment "Nordic added ECC curve types"
 
-config PSA_WANT_ECC_BRAINPOOL_P_R1_160
-	bool "PSA ECC BrainpoolP160r1 support (weak)"  if !PSA_PROMPTLESS
-	help
-	  Warning: The 160-bit curve brainpoolP160r1 is weak and deprecated and
-	  is only recommended for use in legacy protocols.
-
-config PSA_WANT_ECC_BRAINPOOL_P_R1_192
-	bool "PSA ECC BrainpoolP192r1 support" if !PSA_PROMPTLESS
-
 config PSA_WANT_ECC_BRAINPOOL_P_R1_224
 	bool "PSA ECC BrainpoolP224r1 support" if !PSA_PROMPTLESS
 
@@ -327,37 +320,6 @@ config PSA_WANT_ECC_TWISTED_EDWARDS_448
 config PSA_WANT_ECC_SECP_K1_224
 	bool "PSA ECC secp224k1 support" if !PSA_PROMPTLESS
 
-config PSA_WANT_ECC_SECP_R2_160
-	bool "PSA ECC secp160r2 support (weak)" if !PSA_PROMPTLESS
-	help
-	  Warning: his family of curves is weak and deprecated.
-
-config PSA_WANT_ECC_SECT_K1_163
-	bool "PSA ECC sect163k1 support (weak)" if !PSA_PROMPTLESS
-	help
-	  Warning: The 163-bit curve sect163k1 is weak and deprecated and is
-	  only recommended for use in legacy protocols.
-
-config PSA_WANT_ECC_SECT_K1_233
-	bool "PSA ECC sect233k1 support" if !PSA_PROMPTLESS
-
-config PSA_WANT_ECC_SECT_K1_239
-	bool "PSA ECC sect239k1 support" if !PSA_PROMPTLESS
-
-config PSA_WANT_ECC_SECT_K1_283
-	bool "PSA ECC sect283k1 support" if !PSA_PROMPTLESS
-
-config PSA_WANT_ECC_SECT_K1_409
-	bool "PSA ECC sect409k1 support" if !PSA_PROMPTLESS
-
-config PSA_WANT_ECC_SECT_K1_571
-	bool "PSA ECC sect571k1 support" if !PSA_PROMPTLESS
-
-config PSA_WANT_ECC_SECT_R1_163
-	bool "PSA ECC sect163r1 support (weak)" if !PSA_PROMPTLESS
-	help
-	  Warning: The 163-bit curve sect163r1 is weak and deprecated and is
-	  only recommended for use in legacy protocols.
 
 config PSA_WANT_ECC_SECT_R1_233
 	bool "PSA ECC sect233r1 support" if !PSA_PROMPTLESS
@@ -370,15 +332,6 @@ config PSA_WANT_ECC_SECT_R1_409
 
 config PSA_WANT_ECC_SECT_R1_571
 	bool "PSA ECC sect571r1 support" if !PSA_PROMPTLESS
-
-config PSA_WANT_ECC_SECT_R2_163
-	bool "PSA ECC sect163r2 support (weak)" if !PSA_PROMPTLESS
-	help
-	  Warning: The 163-bit curve sect163r2 is weak and deprecated and is
-	  only recommended for use in legacy protocols.
-
-config PSA_WANT_ECC_FRP_V1_256
-	bool "PSA ECC FRP256v1 support" if !PSA_PROMPTLESS
 
 comment "Nordic addded RNG configuration"
 
@@ -485,6 +438,7 @@ config PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
 
 config PSA_WANT_KEY_TYPE_WPA3_SAE_PT
 	bool "WPA3-SAE-PT key support" if !PSA_PROMPTLESS
+	select PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY
 
 config PSA_WANT_KEY_TYPE_XCHACHA20
 	bool "PSA XCHACHA20 key type support" if !PSA_PROMPTLESS

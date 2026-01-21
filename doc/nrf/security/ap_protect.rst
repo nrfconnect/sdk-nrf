@@ -32,7 +32,7 @@ For detailed information, refer to the hardware documentation.
      - Default factory state
      - How to enable
      - How to disable
-   * - Hardware
+   * - Hardware and IronSide SE
      - Disabled
      - Writing ``Enabled`` to ``UICR.APPROTECT`` and performing a reset.
      - Issuing an ``ERASEALL`` command using CTRL-AP.
@@ -49,7 +49,7 @@ For detailed information, refer to the hardware documentation.
 
        - For nRF52, nRF53, and nRF91 devices, firmware must write ``SwDisable`` to ``APPROTECT.DISABLE``.
 
-       - For nRF54L devices, firmware must open the `debugger signals in Tamper Controller <nRF54L15 Debugger signals>`_.
+       - For nRF54L devices, firmware must open the `debugger signals in Tamper Controller <nRF54L15 Debugger signals_>`_.
 
 The following table lists related SoCs or SiPs with information about the AP-Protect mechanism they support.
 For some SoCs or SiPs, the AP-Protect implementation is different depending on the build code of the device.
@@ -86,10 +86,20 @@ See the related hardware documentation for more information about which implemen
      - `Debugger access protection for nRF9160`_
      - Also :ref:`supports Secure AP-Protect <secure_approtect_support>`
    * - nRF54H20
+     - ✔
      - n/a
      - n/a
+     - See :ref:`UICR.APPROTECT <ug_nrf54h20_ironside_se_uicr_approtect>`.
+   * - nRF54LV10A
      - n/a
-     - Uses the :ref:`lifecycle state management <ug_nrf54h20_architecture_lifecycle>` mechanism exclusively
+     - ✔
+     - `AP-Protect for nRF54LV10A`_
+     - Also :ref:`supports Secure AP-Protect <secure_approtect_support>`
+   * - nRF54LM20A
+     - n/a
+     - ✔
+     - `AP-Protect for nRF54LM20A`_
+     - Also :ref:`supports Secure AP-Protect <secure_approtect_support>`
    * - nRF54L15
      - n/a
      - ✔
@@ -167,7 +177,7 @@ Based on the available implementation types, you can configure the access port p
      - Description of the AP-Protect state
      - AP-Protect implementation type
    * - Locked
-     - All Series and devices
+     - All Series and devices except nRF54H20
      - :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` (:kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` for Secure AP-Protect)
      - In this state, CPU uses the MDK system start-up file to enable and lock AP-Protect. UICR is not modified.
      - Hardware and software

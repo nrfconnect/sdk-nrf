@@ -8,8 +8,46 @@ menu "MCUboot configuration"
 config MCUBOOT_SIGN_MERGED_BINARY
 	bool "Sign single, merged update package [EXPERIMENTAL]"
 	default y if (MCUBOOT_MODE_DIRECT_XIP || MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT)
+	default y if MCUBOOT_MODE_FIRMWARE_UPDATER
 	depends on SOC_NRF54H20
 	select EXPERIMENTAL
+
+config MCUBOOT_IMAGES_ROM_END_OFFSET_AUTO
+	string "Images that should have automatically calculated ROM end offset"
+	default ""
+	depends on SOC_NRF54H20
+	help
+	  Enable automatic calculation of the ROM end offset based on the
+	  bootloader configuration as well as the image size.
+	  This setting should be a semicolon-separated list of image names
+	  (e.g. "smp_svr;ipc_radio", "mcuboot_secondary_app").
+	  If empty the default set of updateable images will be affected.
+
+config MCUBOOT_MANIFEST_UPDATES
+	bool "Manifest-based updates"
+	depends on SOC_NRF54H20
+	depends on (MCUBOOT_UPDATEABLE_IMAGES > 1) && (MCUBOOT_MODE_DIRECT_XIP || MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT)
+	help
+	  When enabled, supports transactional updates using manifests.
+	  This allows multiple images to be updated atomically. The manifest
+	  is a separate TLV which contains a list of images to update and
+	  their expected hash values. The manifest TLV is a part of an image
+	  that is signed to prevent tampering.
+	  The manifest must be transferred as part of the image with index 0.
+	  It can be a dedicated image, or part of an existing image.
+	  If the second option is selected, all updates must contain an update
+	  for image 0.
+
+if MCUBOOT_MANIFEST_UPDATES
+
+config MCUBOOT_MANIFEST_IMAGE_INDEX
+	int "Index of the image that must include manifest"
+	default 0
+	range 0 MCUBOOT_UPDATEABLE_IMAGES
+	help
+	  Specifies the index of the image that must include the manifest.
+
+endif # MCUBOOT_MANIFEST_UPDATES
 
 config MCUBOOT_BUILD_DIRECT_XIP_VARIANT
 	bool "Build DirectXIP variant image"
@@ -20,7 +58,7 @@ config MCUBOOT_BUILD_DIRECT_XIP_VARIANT
 
 menuconfig MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 	bool "Downgrade prevention using hardware security counters"
-	depends on (SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X || SOC_SERIES_NRF54LX)
+	depends on (SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X || SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX)
 	depends on !SECURE_BOOT_APPCORE
 	depends on !QSPI_XIP_SPLIT_IMAGE
 	help
@@ -36,7 +74,9 @@ if MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
 	int "Number of available hardware counter slots"
 	default 240
+	range 2 288 if SOC_SERIES_NRF54LX
 	range 2 300
+	depends on !SOC_SERIES_NRF54HX
 	help
 	  When MCUBOOT_HW_DOWNGRADE_PREVENTION is enabled, MCUboot will use one hardware counter
 	  for each updatable image (UPDATEABLE_IMAGE_NUMBER). This configuration specifies how many
@@ -48,7 +88,8 @@ config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
 config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE
 	int "Security counter value"
 	default 1
-	range 1 65535
+	range 1 65535 if !SOC_SERIES_NRF54HX
+	range 1 4294967295 if SOC_SERIES_NRF54HX
 	help
 	  The security counter value for this image.
 	  This is the value that will be passed to the --security-counter parameter of imgtool.py
@@ -62,52 +103,39 @@ config MCUBOOT_COMPRESSED_IMAGE_SUPPORT
 	  When enabled, supports loading compressed images using LZMA2 to the secondary slot which
 	  will then be decompressed and loaded to the primary slot.
 
+config MCUBOOT_EXTRA_IMAGES
+	int "Extra images"
+	default 0
+	range 0 2
+	depends on !MCUBOOT_MODE_SINGLE_APP
+
 config MCUBOOT_MAX_UPDATEABLE_IMAGES
 	int
 	default 1 if MCUBOOT_MODE_SINGLE_APP
+	default 6 if MCUBOOT_EXTRA_IMAGES > 1
+	default 5 if MCUBOOT_EXTRA_IMAGES > 0
 	default 4
 
-config MCUBOOT_APPLICATION_IMAGE_NUMBER
-	int
-	default 0
+config MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT
+	bool
+	default y if NETCORE_APP_UPDATE && !MCUBOOT_MODE_SINGLE_APP
+	default y if !NETCORE_NONE && (SOC_NRF54H20 && !MCUBOOT_SIGN_MERGED_BINARY)
 
-config MCUBOOT_NETWORK_CORE_IMAGE_NUMBER
-	int
-	default 1 if NETCORE_APP_UPDATE && !MCUBOOT_MODE_SINGLE_APP
-	default 1 if BOOTLOADER_MCUBOOT && !NETCORE_NONE && (SOC_NRF54H20 && !MCUBOOT_SIGN_MERGED_BINARY)
-	default -1
-
-config MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER
-	int
-	default 2 if (WIFI_PATCHES_EXT_FLASH_XIP || WIFI_PATCHES_EXT_FLASH_STORE) && MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1
-	default 1 if (WIFI_PATCHES_EXT_FLASH_XIP || WIFI_PATCHES_EXT_FLASH_STORE)
-	default -1
-
-config MCUBOOT_QSPI_XIP_IMAGE_NUMBER
-	int
-	default 3 if QSPI_XIP_SPLIT_IMAGE && MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 && MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1
-	default 2 if QSPI_XIP_SPLIT_IMAGE && MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1
-	default 1 if QSPI_XIP_SPLIT_IMAGE
-	default -1
-
-config MCUBOOT_MCUBOOT_IMAGE_NUMBER
-	int
-	default 4 if SECURE_BOOT_APPCORE && MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 && MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1 && MCUBOOT_QSPI_XIP_IMAGE_NUMBER != 1
-	default 3 if SECURE_BOOT_APPCORE && ((MCUBOOT_QSPI_XIP_IMAGE_NUMBER != -1 && (MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 || MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1)) || (MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 && MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1))
-	default 2 if SECURE_BOOT_APPCORE && (MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 || MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1 || MCUBOOT_QSPI_XIP_IMAGE_NUMBER != -1)
-	default 1 if SECURE_BOOT_APPCORE
-	default -1
+config MCUBOOT_WIFI_PATCHES_HAS_UPDATE_SLOT
+	bool
+	default y if WIFI_PATCHES_EXT_FLASH_XIP || WIFI_PATCHES_EXT_FLASH_STORE
 
 config MCUBOOT_MIN_UPDATEABLE_IMAGES
 	int
-	default 4 if MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 && MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1 && MCUBOOT_QSPI_XIP_IMAGE_NUMBER != -1
-	default 3 if (MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 && MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1) || (MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 && MCUBOOT_QSPI_XIP_IMAGE_NUMBER != -1) || (MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1 && MCUBOOT_QSPI_XIP_IMAGE_NUMBER != -1)
-	default 2 if MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 || MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1 || MCUBOOT_QSPI_XIP_IMAGE_NUMBER != -1
+	default 4 if MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT && MCUBOOT_WIFI_PATCHES_HAS_UPDATE_SLOT && QSPI_XIP_SPLIT_IMAGE
+	default 3 if (MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT && MCUBOOT_WIFI_PATCHES_HAS_UPDATE_SLOT && !QSPI_XIP_SPLIT_IMAGE) || (MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT && !MCUBOOT_WIFI_PATCHES_HAS_UPDATE_SLOT && QSPI_XIP_SPLIT_IMAGE) || (!MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT && MCUBOOT_WIFI_PATCHES_HAS_UPDATE_SLOT && QSPI_XIP_SPLIT_IMAGE)
+	default 2 if (MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT && !MCUBOOT_WIFI_PATCHES_HAS_UPDATE_SLOT && !QSPI_XIP_SPLIT_IMAGE) || (!MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT && MCUBOOT_WIFI_PATCHES_HAS_UPDATE_SLOT && !QSPI_XIP_SPLIT_IMAGE) || (!MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT && !MCUBOOT_WIFI_PATCHES_HAS_UPDATE_SLOT && QSPI_XIP_SPLIT_IMAGE)
 	default 1
 
 config MCUBOOT_MIN_ADDITIONAL_UPDATEABLE_IMAGES
 	int
-	default 1 if MCUBOOT_MCUBOOT_IMAGE_NUMBER != -1
+	default 1 if SECURE_BOOT_APPCORE
+	default 1 if NRF_RADIO_LOADER && !MCUBOOT_SIGN_MERGED_BINARY
 	default 0
 
 config MCUBOOT_UPDATEABLE_IMAGES
@@ -154,9 +182,14 @@ choice BOOT_SIGNATURE_TYPE
 
 endchoice
 
+choice MCUBOOT_MODE
+	default MCUBOOT_MODE_SWAP_USING_MOVE
+
+endchoice
+
 config BOOT_SIGNATURE_TYPE_PURE
 	bool "Verify signature directly over image"
-	depends on SOC_SERIES_NRF54LX
+	depends on SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX
 	depends on BOOT_SIGNATURE_TYPE_ED25519
 	help
 	  The image signature will be verified over image rather than
@@ -177,6 +210,18 @@ config MCUBOOT_SIGNATURE_USING_KMU
 	depends on BOOT_SIGNATURE_TYPE_ED25519
 	help
 	  The device needs to be provisioned with proper set of keys.
+
+config MCUBOOT_SIGNATURE_KMU_UROT_MAPPING
+	bool "Use original UROT KMU key mapping [DEPRECATED]"
+	depends on MCUBOOT_SIGNATURE_USING_KMU
+	depends on SOC_SERIES_NRF54LX
+	depends on !SECURE_BOOT_APPCORE
+	select DEPRECATED
+	help
+	  When this option is enabled, it will use the previous UROT_PUBKEY key slot IDs for the
+	  MCUboot image which are assigned for the non-immutable bootloader IDs, otherwise it
+	  will use the key set for the mode that MCUboot is used in (non-immutable slots when b0
+	  is enabled, or immutable slots when b0 is not enabled).
 
 config MCUBOOT_SIGNATURE_USING_ITS
 	bool "Use ITS stored keys for signature verification [EXPERIMENTAL]"

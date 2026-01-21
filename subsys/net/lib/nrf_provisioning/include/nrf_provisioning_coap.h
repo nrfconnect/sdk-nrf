@@ -42,7 +42,7 @@ struct nrf_provisioning_coap_context {
 	size_t response_len;
 };
 
-int nrf_provisioning_coap_init(struct nrf_provisioning_mm_change *mmode);
+int nrf_provisioning_coap_init(nrf_provisioning_event_cb_t callback);
 int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_ctx);
 
 #ifdef __cplusplus

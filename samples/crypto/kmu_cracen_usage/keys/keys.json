@@ -1,0 +1,13 @@
+{
+    "version": 0,
+    "keyslots": [
+        {
+            "metadata": "0x00248000014B4E80000300000010C004000000000100FF7F00000000",
+            "value": "0x44daa497a188ad60c7962cba7c5c7d8f"
+        },
+        {
+            "metadata": "0x4271FF00014B4E800014000000080006000000000230FF7F00000000",
+            "value": "0xf6abfa713fa892bc4e8f4f457745b0a8751eb3c7119db32c13e72a02ed8433ff"
+        }
+    ]
+}

@@ -21,6 +21,6 @@ endmenu
 
 module = SOFTAP_WIFI_PROVISION_SAMPLE
 module-str = SoftAP Wi-Fi provision sample
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endmenu

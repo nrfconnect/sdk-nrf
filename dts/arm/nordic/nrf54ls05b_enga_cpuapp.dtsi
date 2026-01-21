@@ -1,0 +1,105 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <nordic/nrf54ls05b.dtsi>
+
+cpu: &cpuapp {};
+
+systick: &cpuapp_systick {};
+
+nvic: &cpuapp_nvic {};
+
+/ {
+	chosen {
+		zephyr,entropy = &psa_rng;
+	};
+
+	soc {
+		compatible = "simple-bus";
+		interrupt-parent = <&cpuapp_nvic>;
+		ranges;
+	};
+
+	psa_rng: psa-rng {
+		compatible = "zephyr,psa-crypto-rng";
+		status = "okay";
+	};
+
+	prng: prng {
+		compatible = "nordic,entropy-prng";
+		status = "disabled";
+	};
+
+	rng: rng {
+		compatible = "nordic,nrf-cracen-ctrdrbg";
+		status = "disabled";
+	};
+};
+
+&cpuapp_ppb {
+	compatible = "simple-bus";
+	ranges;
+};
+
+&grtc {
+	interrupts = <226 NRF_DEFAULT_IRQ_PRIORITY>, <229 NRF_DEFAULT_IRQ_PRIORITY>;
+};
+
+&gpiote20 {
+	interrupts = <218 NRF_DEFAULT_IRQ_PRIORITY>;
+};
+
+&gpiote30 {
+	interrupts = <268 NRF_DEFAULT_IRQ_PRIORITY>;
+};
+
+&dppic00 {
+	status = "okay";
+};
+
+&dppic10 {
+	status = "okay";
+};
+
+&dppic20 {
+	status = "okay";
+};
+
+&dppic30 {
+	status = "okay";
+};
+
+&ppib00 {
+	status = "okay";
+};
+
+&ppib01 {
+	status = "okay";
+};
+
+&ppib10 {
+	status = "okay";
+};
+
+&ppib11 {
+	status = "okay";
+};
+
+&ppib20 {
+	status = "okay";
+};
+
+&ppib21 {
+	status = "okay";
+};
+
+&ppib22 {
+	status = "okay";
+};
+
+&ppib30 {
+	status = "okay";
+};

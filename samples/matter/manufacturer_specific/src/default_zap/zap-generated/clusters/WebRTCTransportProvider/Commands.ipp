@@ -50,6 +50,7 @@ namespace app
 							       ICETransportPolicy);
 						encoder.Encode(to_underlying(Fields::kMetadataEnabled),
 							       metadataEnabled);
+						encoder.Encode(to_underlying(Fields::kSFrameConfig), SFrameConfig);
 						return encoder.Finalize();
 					}
 
@@ -84,6 +85,9 @@ namespace app
 							} else if (__context_tag ==
 								   to_underlying(Fields::kMetadataEnabled)) {
 								err = DataModel::Decode(reader, metadataEnabled);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kSFrameConfig)) {
+								err = DataModel::Decode(reader, SFrameConfig);
 							}
 
 							ReturnErrorOnFailure(err);
@@ -151,6 +155,7 @@ namespace app
 							       ICETransportPolicy);
 						encoder.Encode(to_underlying(Fields::kMetadataEnabled),
 							       metadataEnabled);
+						encoder.Encode(to_underlying(Fields::kSFrameConfig), SFrameConfig);
 						return encoder.Finalize();
 					}
 
@@ -190,6 +195,9 @@ namespace app
 							} else if (__context_tag ==
 								   to_underlying(Fields::kMetadataEnabled)) {
 								err = DataModel::Decode(reader, metadataEnabled);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kSFrameConfig)) {
+								err = DataModel::Decode(reader, SFrameConfig);
 							}
 
 							ReturnErrorOnFailure(err);

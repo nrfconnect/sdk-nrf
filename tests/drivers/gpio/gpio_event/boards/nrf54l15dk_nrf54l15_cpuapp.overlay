@@ -1,0 +1,34 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	/* Test requirements:
+	 * No other driver on out-gpios[n]
+	 */
+	zephyr,user {
+		out-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>, <&gpio1 8 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+/* Enable interrupt from GPIO P1 events. */
+&gpiote20 {
+	status = "okay";
+};
+
+/* Enable interrupt from GPIO P0 events. */
+&gpiote30 {
+	status = "okay";
+};
+
+/* No support for port events on GPIO P2. */

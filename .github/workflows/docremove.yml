@@ -7,6 +7,9 @@ on:
       - main
       - 'v*-branch'
 
+permissions:
+  contents: read
+
 jobs:
   remove:
     runs-on: ubuntu-24.04

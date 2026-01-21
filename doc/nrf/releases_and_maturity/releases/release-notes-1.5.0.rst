@@ -49,7 +49,7 @@ This version of the |NCS| has been tested with the following modem firmware for 
 
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Changelog
 *********
@@ -70,7 +70,7 @@ nRF9160
 * Updated:
 
   * nRF9160: Asset Tracker application - Updated to use the new FOTA (fota_v2) based on nRF Connect for Cloud.
-  * :ref:`serial_lte_modem` application:
+  * Serial LTE modem application:
 
     * Fixed an issue where FOTA downloads were interrupted if an AT command was issued.
     * Fixed an issue with overflowing HTTP request buffers.
@@ -88,7 +88,7 @@ nRF9160
   * nRF9160: Simple MQTT sample - Updated the default server URL to ``mqtt.eclipseprojects.io``.
   * Extracted the certificate, button, and LED handling functionality from :ref:`http_application_update_sample` sample to :file:`samples/nrf9160/http_update/common`, to share them with :ref:`http_modem_delta_update_sample` sample.
   * Moved the :ref:`http_application_update_sample` sample from ``samples/nrf9160/http_application_update/`` to ``samples/nrf9160/http_update/application_update``.
-  * :ref:`lib_download_client` library:
+  * Download client library:
 
     * Reintroduced the optional TCP timeout (enabled by default) on the TCP socket that is used for the download.
       Upon timeout on a TCP socket, the HTTP download will fail and the ``ETIMEDOUT`` error will be returned via the callback handler.
@@ -107,7 +107,7 @@ nRF9160
     * Removed :kconfig:option:`CONFIG_CLOUD_API` dependency from :kconfig:option:`CONFIG_NRF_CLOUD_CONNECTION_POLL_THREAD`.
     * Added a new API :c:func:`nrf_cloud_send` that can be used for sending pre-encoded data to specified endpoint topics in nRF Connect for Cloud.
 
-  * :ref:`at_cmd_parser_readme` library - The library can now parse AT command strings with negative numbers in the range supported by the int32_t type.
+  * AT command parser library - The library can now parse AT command strings with negative numbers in the range supported by the int32_t type.
   * :ref:`lib_azure_iot_hub` library - Improved the internal connection state handling.
   * :ref:`lte_lc_readme` library - Added support for manufacturer-specific default eDRX/PSM values.
   * :ref:`liblwm2m_carrier_readme` library - Updated to v0.10.2. See :ref:`liblwm2m_carrier_changelog` for details.
@@ -990,7 +990,7 @@ Applications and samples
 
 * nRF9160:
 
-  * :ref:`serial_lte_modem` - Added documentation for new commands.
+  * Serial LTE modem - Added documentation for new commands.
     Fixed the syntax and examples of some existing commands.
   * Added a note about :kconfig:option:`CONFIG_MQTT_KEEPALIVE` option to the :ref:`aws_iot`, :ref:`azure_iot_hub`, and cloud client samples.
 * Bluetooth:

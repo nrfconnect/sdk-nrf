@@ -9,6 +9,12 @@
 #include <bluetooth/enocean.h>
 #include "model_utils.h"
 
+#define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
+#include "zephyr/logging/log.h"
+LOG_MODULE_REGISTER(silvair_enocean_srv);
+
+#include "common/bt_str.h"
+
 #define BT_MESH_SILVAIR_ENOCEAN_PROXY_SUB_OP_GET    0x00
 #define BT_MESH_SILVAIR_ENOCEAN_PROXY_SUB_OP_SET    0x01
 #define BT_MESH_SILVAIR_ENOCEAN_PROXY_SUB_OP_DELETE 0x02
@@ -256,6 +262,8 @@ static void commissioned_cb(struct bt_enocean_device *device)
 		return;
 	}
 
+	LOG_INF("Device commissioned: %s", bt_addr_le_str(&device->addr));
+
 	bt_addr_le_copy(&srv->addr, &device->addr);
 #if CONFIG_BT_ENOCEAN_STORE
 	(void)bt_mesh_model_data_store(srv->mod, true, NULL, &srv->addr,
@@ -272,6 +280,9 @@ static void decommissioned_cb(struct bt_enocean_device *device)
 	if (!srv) {
 		return;
 	}
+
+	LOG_INF("Device decommissioned: %s", bt_addr_le_str(&device->addr));
+
 	bt_addr_le_copy(&srv->addr, BT_ADDR_LE_NONE);
 #if CONFIG_BT_ENOCEAN_STORE
 	(void)bt_mesh_model_data_store(srv->mod, true, NULL, NULL, 0);

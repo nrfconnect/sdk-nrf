@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "common_fakes.h"
+
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_resource.h>
@@ -14,11 +16,9 @@
 #include <zephyr/ztest.h>
 
 #include <openthread/message.h>
-#include "common_fakes.h"
-#include "zephyr/ztest_assert.h"
-#include <assert.h>
-#include <stddef.h>
-#include <stdint.h>
+
+/* Message address used when testing serialization of a function that takes otMessage* */
+#define MSG_ADDR UINT32_MAX
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {
@@ -42,6 +42,12 @@ static void tc_setup(void *f)
 
 	FOREACH_FAKE(RESET_FAKE);
 	FFF_RESET_HISTORY();
+}
+
+static void tc_cleanup(void *f)
+{
+	/* This suite uses one message at most. */
+	ot_res_tab_msg_free(1);
 }
 
 static otMessage *udp_new_message_failed_fake(otInstance *instance,
@@ -116,66 +122,61 @@ ZTEST(ot_rpc_message, test_otUdpNewMessage_free_working)
 	zassert_equal(otMessageFree_fake.call_count, 2);
 }
 
-ZTEST(ot_rpc_message, test_ot_res_tab_msg_alloc_free)
+/*
+ * Test ot_res_tab_msg functions.
+ */
+ZTEST(ot_rpc_message, test_ot_res_tab_msg)
 {
-
-	for (size_t i = 1; i < CONFIG_OPENTHREAD_RPC_MESSAGE_POOL + 1; i++) {
-		zassert_equal(ot_res_tab_msg_alloc((otMessage *)i), i);
+	/* Verify that the configured number of messages can be allocated. */
+	for (size_t i = 0; i < CONFIG_OPENTHREAD_RPC_MESSAGE_POOL; i++) {
+		zassert_equal(ot_res_tab_msg_alloc((otMessage *)(MSG_ADDR - i)), i + 1);
 	}
 
-	zassert_equal(ot_res_tab_msg_alloc((otMessage *)UINT32_MAX), 0);
+	/* Verify that no more messages can be allocated. */
+	zassert_equal(
+		ot_res_tab_msg_alloc((otMessage *)(MSG_ADDR - CONFIG_OPENTHREAD_RPC_MESSAGE_POOL)),
+		0);
 
-	for (size_t i = 1; i < CONFIG_OPENTHREAD_RPC_MESSAGE_POOL + 1; i++) {
-		ot_res_tab_msg_free(i);
+	/* Verify that all allocated messages can be retrieved. */
+	for (size_t i = 0; i < CONFIG_OPENTHREAD_RPC_MESSAGE_POOL; i++) {
+		zassert_equal(ot_res_tab_msg_get(i + 1), (otMessage *)(MSG_ADDR - i));
+	}
+
+	/* Verify that out-of-range keys return NULL. */
+	zassert_is_null(ot_res_tab_msg_get(0));
+	zassert_is_null(ot_res_tab_msg_get(CONFIG_OPENTHREAD_RPC_MESSAGE_POOL + 1));
+
+	/* Free all messages and verify they can no longer be retrieved. */
+	for (size_t i = 0; i < CONFIG_OPENTHREAD_RPC_MESSAGE_POOL; i++) {
+		ot_res_tab_msg_free(i + 1);
+		zassert_is_null(ot_res_tab_msg_get(i + 1));
 	}
 }
 
-ZTEST(ot_rpc_message, test_ot_res_tab_msg_get)
+/*
+ * Test reception of otMessageGetOffset().
+ * Test serialization of the result: 0 and 0xffff
+ */
+ZTEST(ot_rpc_message, test_otMessageGetOffset)
 {
+	otMessage *msg = (otMessage *)MSG_ADDR;
+	ot_rpc_res_tab_key msg_key = ot_res_tab_msg_alloc(msg);
 
-	zassert_equal(ot_res_tab_msg_alloc((otMessage *)1), 1);
-
-	zassert_equal(ot_res_tab_msg_get(1), (otMessage *)1);
-
-	zassert_equal(ot_res_tab_msg_get(CONFIG_OPENTHREAD_RPC_MESSAGE_POOL), NULL);
-
-	ot_res_tab_msg_free(1);
-}
-
-ZTEST(ot_rpc_message, test_get_length_offset)
-{
-	otUdpNewMessage_fake.return_val = (otMessage *)1;
-	otMessageGetLength_fake.return_val = 1;
-	otMessageGetOffset_fake.return_val = 1;
-
-	mock_nrf_rpc_tr_expect_add(RPC_RSP(1), NO_RSP);
-	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_UDP_NEW_MESSAGE, CBOR_NULL));
-
-	zassert_equal(otUdpNewMessage_fake.call_count, 1);
-	zassert_is_null(otUdpNewMessage_fake.arg1_val);
-
-	mock_nrf_rpc_tr_expect_add(RPC_RSP(1), NO_RSP);
-	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_MESSAGE_GET_LENGTH, 1));
-
-	zassert_equal(otMessageGetLength_fake.arg0_val, (otMessage *)1);
-
-	mock_nrf_rpc_tr_expect_add(RPC_RSP(1), NO_RSP);
-	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_MESSAGE_GET_OFFSET, 1));
-
-	zassert_equal(otMessageGetOffset_fake.arg0_val, (otMessage *)1);
+	otMessageGetOffset_fake.return_val = 0;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(0), NO_RSP);
-	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_MESSAGE_GET_LENGTH, 0));
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_MESSAGE_GET_OFFSET, msg_key));
 
-	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
-	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_MESSAGE_FREE, 1));
+	zassert_equal(otMessageGetOffset_fake.call_count, 1);
+	zassert_equal(otMessageGetOffset_fake.arg0_val, msg);
 
-	zassert_equal(otMessageFree_fake.arg0_val, (otMessage *)1);
+	otMessageGetOffset_fake.return_val = UINT16_MAX;
 
-	mock_nrf_rpc_tr_expect_done();
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_UINT16(UINT16_MAX)), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_MESSAGE_GET_OFFSET, msg_key));
 
-	zassert_equal(otMessageGetLength_fake.call_count, 1);
-	zassert_equal(otMessageFree_fake.call_count, 1);
+	zassert_equal(otMessageGetOffset_fake.call_count, 2);
+	zassert_equal(otMessageGetOffset_fake.arg0_val, msg);
 }
 
-ZTEST_SUITE(ot_rpc_message, NULL, NULL, tc_setup, NULL, NULL);
+ZTEST_SUITE(ot_rpc_message, NULL, NULL, tc_setup, tc_cleanup, NULL);

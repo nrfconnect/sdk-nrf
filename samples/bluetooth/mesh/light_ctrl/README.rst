@@ -1,13 +1,13 @@
 .. _bluetooth_mesh_light_lc:
 
-Bluetooth Mesh: Light fixture
-#############################
+Bluetooth Mesh NLC: Lightness Controller/Energy Monitor
+#######################################################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth® Mesh light fixture sample demonstrates how to set up a light control mesh server model application, and control a dimmable LED with Bluetooth Mesh using the :ref:`bt_mesh_onoff_readme`.
+The Bluetooth® Mesh NLC Lightness Controller/Energy Monitor sample demonstrates how to set up a light control mesh server model application, and control a dimmable LED with Bluetooth Mesh using the :ref:`bt_mesh_onoff_readme`.
 
 This sample demonstrates how to implement the following :ref:`ug_bt_mesh_nlc`:
 
@@ -323,6 +323,11 @@ Do this in the following way:
 * Go to the Light LC Server configuration that is located on the Element 2.
 * Scroll down to the **OCCUPANCY MODE** and tap :guilabel:`ON` to enable the Occupancy mode in the **Standby** state.
 * When the Light LC Server is in the **Standby** state, press ``Button 2`` on the **Mesh Sensor** node.
+
+External flash for settings partition
+=====================================
+
+.. include:: /includes/mesh_ext_flash_settings.txt
 
 Dependencies
 ************

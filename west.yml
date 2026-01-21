@@ -50,6 +50,7 @@ manifest:
     - -bsec
     - -doc-internal
     - +optional
+    - +testing
 
   # "projects" is a list of git repositories which make up the NCS
   # source code.
@@ -57,7 +58,6 @@ manifest:
   # For 'userdata' fields in the projects area, please refer to:
   # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/dm_code_base.html
   projects:
-
     # The Zephyr RTOS fork in the NCS, along with the subset of its
     # modules which NCS imports directly.
     #
@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 8f6f73e398f415c08bfa9ae7e3b02e03eb66c46e
+      revision: 144ea2e0c027392a3b3fb32a596268f521099850
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -108,7 +108,6 @@ manifest:
           - picolibc
           - segger
           - tf-m-tests
-          - tinycrypt
           - uoscore-uedhoc
           - zcbor
           - zscilib
@@ -128,7 +127,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: c72ed153fb924203975c38dfea2853ae612e0a9a
+      revision: 73497f4919ed207d86fd284aef3a46e1cbba9c69
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -137,27 +136,27 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: c5115abac477249fab42e61368b8f87c3c9265e1
+      revision: d77330677bef8221fff58c88fd0cd9ab4fd33cd8
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: 975ee6386efeec257e6af206706ecd27860a07cb
+      revision: ee0cdb000b9ce3c699193a15312058c62e5afa57
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 390e818f6ddf400b78862efc2205ecc59191055d
+      revision: 4c3c32f383c9d050f58cd78d92243f1dd4596a5a
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 44bbc980ed6bcc7583d5bf532991f804d8ef0ea6
+      revision: 5880bf3411c9f58b098ca25e1ad6bfd3f51ccd77
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
-      revision: 3da9313e64806d352c519e3205e81cf959067588
+      revision: 6e966dfeca5886ef576bf3f8613722169014e789
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 391a4ba35a9455ba2c3caa7fa4b2ceff2c3f9b78
+      revision: a1f66bf38a70efc1c44257969fcfc1726dd9b6ce
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -176,14 +175,14 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 3a74e8b8e6399903215ef4ee1e8de8950d4e31e9
+      revision: 54ee3c9bd5b1179c03345e41fd069602bc980eae
       groups:
         - nrf-802154
     - name: dragoon
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: 90bc0f22a29e35bca5b8563ba94bceea7586a7b4
+      revision: ab0acb05dfed8677a35f4e44db231ba4ba5307fd
       groups:
         - dragoon
     - name: cjson
@@ -197,7 +196,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: 36d62644f4f6c465910f872739b0ac0493888eea
+      revision: 64be52b5b3f68dc77936c5d2d4d1fa15f59c336a
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -212,14 +211,14 @@ manifest:
     - name: cirrus
       repo-path: sdk-mcu-drivers
       path: modules/hal/cirrus-logic
-      revision: 3873a08377d93a479105a75ac390d3bbcd31d690
+      revision: 1c837bcc27de9ccc06b020b9500e1547e559a1df
       userdata:
         ncs:
           upstream-url: https://github.com/CirrusLogic/mcu-drivers
           upstream-sha: 1be6ca7253133a21a1e9fe0fbb4656e17d63a936
           compare-by-default: false
     - name: libmodem
-      revision: 5dc5bc768dda0ddf9974920c618b70da5d67c6c3
+      revision: 47715f47d3739a9e3a11f9635d4c2f9fc63126f7
       groups:
         - libmodem
     - name: openthread
@@ -246,7 +245,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 1.28.0
+      revision: 1.32.0
       remote: memfault
     - name: bsim
       repo-path: bsim_west

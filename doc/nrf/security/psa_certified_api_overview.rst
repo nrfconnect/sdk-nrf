@@ -62,11 +62,10 @@ The following table provides an overview of the PSA Certified APIs support statu
    * - `PSA Certified Crypto API`_
      - Supported
      - | `PSA Certified Crypto API 1.3.1`_ for IronSide Secure Element firmware for nRF54H20
-       | `PSA Certified Crypto API 1.3.1`_ for :ref:`nRF54L cryptography <ug_nrf54l_cryptography>` and PSA Crypto API builds without TF-M
-       | `PSA Certified Crypto API 1.0.0`_ for builds with TF-M
+       | `PSA Certified Crypto API 1.3.1`_ for :ref:`nRF54L cryptography <ug_nrf54l_cryptography>` and PSA Crypto API builds with and without TF-M
    * - `PSA Certified Attestation API`_
      - Supported
-     - `PSA Certified Attestation API 1.0`_
+     - `PSA Certified Attestation API 1.0`_ (not supported for IronSide Secure Element firmware for nRF54H20)
    * - `PSA Certified Secure Storage API`_
      - Supported
      - `PSA Certified Secure Storage API 1.0`_
@@ -116,7 +115,7 @@ The PSA Crypto API has the following implementations in the |NCS|:
 * :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`- which provides PSA Crypto API access through TF-M for applications that require enhanced security.
 * :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>` - which provides PSA Crypto API interface for the :ref:`Secure Domain of nRF54H20 <ug_nrf54h20_secure_domain>`.
 
-Depending on the implementation you are using, the |NCS| build system uses different versions of the PSA Crypto API.
+Depending on the implementation you are using, the |NCS| build system can use different versions of the PSA Crypto API.
 
 .. psa_crypto_support_tfm_build_start
 
@@ -129,7 +128,7 @@ Depending on the implementation you are using, the |NCS| build system uses diffe
    * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
      - `v1.3.1 <PSA Certified Crypto API 1.3.1_>`_
    * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
-     - `v1.0.0 <PSA Certified Crypto API 1.0.0_>`_
+     - `v1.3.1 <PSA Certified Crypto API 1.3.1_>`_
    * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
      - `v1.3.1 <PSA Certified Crypto API 1.3.1_>`_
 
@@ -186,55 +185,48 @@ See PSA's `protected_storage.h`_ file for versioning.
 
 The Secure Storage API consists of the following components:
 
-* Internal Trusted Storage - The Internal Trusted Storage API is used internally by the SPE to store data persistently in secure flash.
+* Internal Trusted Storage (ITS) - The Internal Trusted Storage API is used internally by the SPE to store data persistently in secure flash.
+  The Internal Trusted Storage API is one of the :ref:`ug_tfm_architecture_rot_services_platform` and is not available by default in the Non-Secure Callable interface.
   It is possible to expose the Internal Trusted Storage API to the NSPE, but it is not recommended.
 
-* Protected Storage - The Protected Storage API is for storing data persistently in secure flash and provides integrity checks to the stored data.
+* Protected Storage (PS) - The Protected Storage API is used for securely storing data in non-volatile memory.
+  It provides authenticity and integrity checks to the stored data.
   The Protected Storage API is one of :ref:`ug_tfm_architecture_rot_services_application` and is available in the Non-Secure Callable interface, making the Protected Storage API callable from either the SPE or the NSPE.
   Data in Protected Storage has ownership, so data stored from the SPE is only available to the SPE.
 
 The following table provides an overview over features in Internal Trusted Storage and Protected Storage:
 
-+-----------------------+----------------------------------+-------------------+
-|                       |     Internal Trusted Storage     | Protected Storage |
-+=======================+==================================+===================+
-| Persistent Storage    | Yes                              | Yes               |
-+-----------------------+----------------------------------+-------------------+
-| Root of Trust (RoT)   | Platform RoT Service             | Application RoT   |
-|                       |                                  | Service           |
-+-----------------------+----------------------------------+-------------------+
-| Available in the SPE  | Yes                              | Yes               |
-+-----------------------+----------------------------------+-------------------+
-| Available in the NSPE | No (by default - see note below) | Yes               |
-+-----------------------+----------------------------------+-------------------+
-| Encryption            | No (see note below)              | Yes               |
-+-----------------------+----------------------------------+-------------------+
-| Integrity Check       | No (see note below)              | Yes               |
-+-----------------------+----------------------------------+-------------------+
++-----------------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------------+
+|                       |                        Internal Trusted Storage (ITS)                   |                               Protected Storage (PS)                          |
++=======================+=========================================================================+===============================================================================+
+| Persistent Storage    | Yes                                                                     | Yes                                                                           |
++-----------------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------------+
+| Root of Trust (RoT)   | :ref:`Platform RoT Service <ug_tfm_architecture_rot_services_platform>` | :ref:`Application RoT Service <ug_tfm_architecture_rot_services_application>` |
++-----------------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------------+
+| Available in the SPE  | Yes                                                                     | Yes                                                                           |
++-----------------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------------+
+| Available in the NSPE | No (by default - see note below)                                        | Yes                                                                           |
++-----------------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------------+
+| Encryption            | No (see note below)                                                     | Yes                                                                           |
++-----------------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------------+
+| Integrity Check       | No (see note below)                                                     | Yes                                                                           |
++-----------------------+-------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 
 .. note::
 
-   * The PSA Crypto API is invoked by other APIs that are available from the NSPE.
-     For example the PSA Protected Storage API or the PSA Crypto API ``import()`` and ``generate()``.
+   * The PSA ITS API is invoked by other APIs that are available from the NSPE.
+     For example, the PSA Protected Storage API or the PSA Crypto API's ``psa_import_key`` and ``psa_generate_key`` functions.
 
-   * Internal Trusted Storage has experimental support for encryption with the :kconfig:option:`CONFIG_PSA_ITS_ENCRYPTED` Kconfig option set.
+   * Internal Trusted Storage has experimental support for encryption with the :kconfig:option:`CONFIG_TFM_ITS_ENCRYPTED` Kconfig option.
 
-PSA Secure Storage API in Nordic hardware and the |NCS|
-=======================================================
+PSA Secure Storage API in the |NCS|
+===================================
 
-SoCs from Nordic Semiconductor that come with dedicated hardware components for security (such as `nRF9160's System Protection Unit <nRF9160 System Protection Unit_>`_ or `nRF54L Series' security components <nRF54L15 Security_>`_) have the functionality for `flash <nRF9160 flash access control_>`_ (nRF9160) or `feature <nRF54L15 feature access control_>`_ (nRF54L15) access control, making it possible to configure different features as secure.
-Internal Trusted Storage and Protected Storage saves data to the sections of secure flash.
-This way, the NSPE cannot directly access data saved by the Internal Trusted Storage API or the Protected Storage API.
+.. ncs-include:: secure_storage.rst
+   :start-after: secure_storage_options_table_start
+   :end-before: secure_storage_options_table_end
 
-Internal Trusted Storage is by default only available from the SPE.
-
-.. note::
-
-   For Nordic SoCs without TF-M's Platform Root of Trust (such as the nRF52832), the :ref:`trusted_storage_readme` library is used for the PSA Certified Secure Storage APIs.
-
-The PSA Protected Storage API implementation is optional for use in the |NCS|.
-It does not support storing data to external flash.
-Instead, you can configure your application to encrypt data stored to the external flash, for example using the :ref:`ug_psa_certified_api_overview_crypto`.
+For more information, see :ref:`secure_storage_in_ncs`.
 
 .. _ug_psa_certified_api_overview_fw_update:
 

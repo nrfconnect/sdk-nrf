@@ -36,11 +36,7 @@ AT_MONITOR(ltelc_atmon_cscon, "+CSCON", at_handler_cscon);
  *
  * @return Zero on success or (negative) error code otherwise.
  */
-#if defined(CONFIG_UNITY)
-int parse_rrc_mode(const char *at_response, enum lte_lc_rrc_mode *mode, size_t mode_index)
-#else
 static int parse_rrc_mode(const char *at_response, enum lte_lc_rrc_mode *mode, size_t mode_index)
-#endif /* CONFIG_UNITY */
 {
 	int err, temp_mode;
 	struct at_parser parser;

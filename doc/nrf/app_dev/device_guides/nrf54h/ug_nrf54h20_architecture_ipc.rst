@@ -1,6 +1,6 @@
 .. _ug_nrf54h20_architecture_ipc:
 
-Interprocessor Communication in nRF54H20
+Interprocessor communication in nRF54H20
 ########################################
 
 .. contents::
@@ -11,7 +11,7 @@ Interprocessor communication (IPC) is the communication between different CPUs (
 The nRF54H20 includes several types of CPUs that are optimized for different types of workloads.
 This provides an asymmetric multiprocessing environment where you can freely select the CPU that is best suited to the workloads that compose your application.
 
-Interprocessor Communication is required in asymmetric multiprocessing environments to share services' requests, responses, and data between processors.
+Interprocessor communication is required in asymmetric multiprocessing environments to share services' requests, responses, and data between processors.
 
 The following sections describe the communication protocol used for IPC in |NCS| for the nRF54H20 SoC.
 They also include an overview of the connection scheme between the cores available in the system.
@@ -99,10 +99,10 @@ The following tables show signals received only by specified cores.
 
 Some of the channels in BELLBOARDs and VEVIFs are reserved for functions different from IPC.
 
-MAC, Network, Transport
+MAC, network, transport
 =======================
 
-The layers responsible for maintaining a stable full-duplex stream of data between two cores (MAC, Network, Transport) are implemented in an IPC transport library.
+The layers responsible for maintaining a stable full-duplex stream of data between two cores (MAC, network, transport) are implemented in an IPC transport library.
 The default IPC transport library for nRF54H20 is :ref:`ICMsg <zephyr:ipc_service_backend_icmsg>`.
 This lightweight library maintains the connection between a pair of cores for each IPC instance with minimal memory overhead.
 Each IPC instance between the application core and the PPR core requires an instance of the ICMsg library.
@@ -140,7 +140,7 @@ It is recommended to use the ipc_service API to perform inter-processor communic
 
 For more information, consult the :ref:`IPC service <zephyr:ipc_service>` library documentation.
 
-Presentation and Application layers
+Presentation and application layers
 ===================================
 
 The presentation and application layers are connection specific.
@@ -182,10 +182,10 @@ These services are hidden behind Zephyr APIs available in the application core, 
 All services can be enabled simultaneously using separated endpoints in a shared IPC instance.
 You can implement other services running in the radio core and expose them to the application core using more endpoints from the shared IPC instance.
 
-Secure Domain core
-==================
+Secure Domain
+=============
 
-The Secure Domain core exposes security-related services to the other local cores in the system (Application, Radio).
+The Secure Domain exposes security-related services to the other local cores in the system (application, radio).
 The list of services also includes:
 
    * Key management

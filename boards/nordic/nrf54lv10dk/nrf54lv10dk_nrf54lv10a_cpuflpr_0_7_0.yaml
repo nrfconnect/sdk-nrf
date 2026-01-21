@@ -1,0 +1,15 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+identifier: nrf54lv10dk@0.7.0/nrf54lv10a/cpuflpr
+name: nRF54LV10-DK-nRF54LV10a-Fast-Lightweight-Peripheral-Processor (rev. 0.7.0)
+type: mcu
+arch: riscv
+toolchain:
+  - zephyr
+sysbuild: true
+ram: 64
+flash: 64
+supported:
+  - counter
+  - gpio

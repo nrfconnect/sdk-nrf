@@ -4,6 +4,16 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup audio_app_sd_card SD Card
+ * @{
+ * @brief SD card interface API for Audio applications.
+ *
+ * This module provides SD card file system operations and management functionality.
+ * It handles SD card initialization and file system mounting, and provides file I/O
+ * operations for audio file storage and retrieval.
+ */
+
 #ifndef _SD_CARD_H_
 #define _SD_CARD_H_
 
@@ -11,7 +21,7 @@
 #include <zephyr/fs/fs.h>
 
 /**
- * @brief Finds all files on SD card that match the given pattern.
+ * @brief Find all files on SD card that match the given pattern.
  *
  * @note The function uses a recursive approach with internal buffers. Memory intensive.
  *
@@ -152,5 +162,9 @@ int sd_card_close(struct fs_file_t *f_seg_read_entry);
  * @retval	Otherwise, error from underlying drivers.
  */
 int sd_card_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _SD_CARD_H_ */

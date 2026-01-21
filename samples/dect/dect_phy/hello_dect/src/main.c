@@ -183,6 +183,11 @@ static void on_stf_cover_seq_control(const struct nrf_modem_dect_phy_stf_control
 	LOG_WRN("Unexpectedly in %s\n", (__func__));
 }
 
+static void on_test_rf_tx_cw_ctrl(const struct nrf_modem_dect_phy_test_rf_tx_cw_control_event *evt)
+{
+	LOG_WRN("Unexpectedly in %s\n", (__func__));
+}
+
 static void dect_phy_event_handler(const struct nrf_modem_dect_phy_event *evt)
 {
 	modem_time = evt->time;
@@ -244,6 +249,9 @@ static void dect_phy_event_handler(const struct nrf_modem_dect_phy_event *evt)
 		break;
 	case NRF_MODEM_DECT_PHY_EVT_STF_CONFIG:
 		on_stf_cover_seq_control(&evt->stf_cover_seq_control);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_TEST_RF_TX_CW_CONTROL_CONFIG:
+		on_test_rf_tx_cw_ctrl(&evt->test_rf_tx_cw_control);
 		break;
 	}
 }

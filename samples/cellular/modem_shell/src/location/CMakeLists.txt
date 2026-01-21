@@ -11,8 +11,10 @@ target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/location_cmd_utils.c)
 target_sources_ifdef(CONFIG_LOCATION_DATA_DETAILS app PRIVATE location_details.c)
 
 if(CONFIG_LOCATION_SERVICE_EXTERNAL)
-	target_sources_ifdef(CONFIG_MOSH_CLOUD_MQTT app PRIVATE
-			     ${CMAKE_CURRENT_SOURCE_DIR}/location_srv_ext_nrf_cloud.c)
-	target_sources_ifdef(CONFIG_MOSH_CLOUD_LWM2M app PRIVATE
-			     ${CMAKE_CURRENT_SOURCE_DIR}/location_srv_ext_lwm2m.c)
+  target_sources_ifdef(CONFIG_MOSH_CLOUD_MQTT app PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/location_srv_ext_nrf_cloud.c
+  )
+  target_sources_ifdef(CONFIG_MOSH_CLOUD_LWM2M app PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/location_srv_ext_lwm2m.c
+  )
 endif()

@@ -5,17 +5,18 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 import argparse
+import contextlib
 import json
 import re
-import sys
 import shlex
 import subprocess
+import sys
 import tempfile
 import textwrap
 from pathlib import Path
-import yaml
-import junit_xml
 
+import junit_xml
+import yaml
 
 # Messages shown in the output
 LICENSE_ALLOWED = '"*" license is allowed for this file.'
@@ -30,6 +31,8 @@ LICENSE_ERROR = '"*" license is not allowed for this file.'
 NONE_LICENSE_ERROR = 'Missing license information is not allowed for this file.'
 SKIP_MISSING_FILE_TEXT = 'The file does not exist anymore.'
 SKIP_DIRECTORY_TEXT = 'This is a directory.'
+SKIP_EXTERNAL_LICENSE_TEXT = 'External license metadata is not checked.'
+EXTERNAL_LICENSE_DIR = Path('nrf/scripts/west_commands/sbom/data/external-licenses')
 RECOMMENDATIONS_TEXT = textwrap.dedent('''\
     ===============================================================================
     You have some license problems. Check the following:
@@ -62,10 +65,15 @@ def parse_args():
 
 def unlink_quietly(path: Path) -> None:
     '''Delete a file if it exists.'''
-    try:
+    with contextlib.suppress(FileNotFoundError):
         path.unlink()
-    except FileNotFoundError:
-        pass
+
+
+def is_external_license_file(file_path: Path) -> bool:
+    '''Return True for external license metadata files that are not project files.'''
+    file_str = Path(file_path).as_posix()
+    prefix = EXTERNAL_LICENSE_DIR.as_posix().rstrip('/') + '/'
+    return file_str.startswith(prefix)
 
 
 class FileLicenseChecker:
@@ -74,7 +82,7 @@ class FileLicenseChecker:
     allow_list: 'dict[str, list[tuple[re.Pattern, bool]]]'
 
     def __init__(self, allow_list_file: Path):
-        with open(allow_list_file, 'r') as fd:
+        with open(allow_list_file) as fd:
             data = yaml.safe_load(fd)
         self.allow_list = {}
         for key in data:
@@ -216,6 +224,8 @@ class PatchLicenseChecker:
                 self.report('skip', SKIP_MISSING_FILE_TEXT, file_name)
             if not (self.west_workspace / file_name).is_file():
                 self.report('skip', SKIP_DIRECTORY_TEXT, file_name)
+            elif is_external_license_file(file_name):
+                self.report('skip', SKIP_EXTERNAL_LICENSE_TEXT, file_name)
             elif self.license_checker.check('ANY', file_name):
                 self.report('skip', ANY_LICENSE_ALLOWED, file_name)
             else:
@@ -233,7 +243,7 @@ class PatchLicenseChecker:
         try:
             self.run('west', 'ncs-sbom', '--input-list-file', tmp_list, '--license-detectors',
                      'spdx-tag,full-text,external-file', '--output-cache-database', tmp_json)
-            with open(tmp_json, 'r', encoding='utf-8') as fd:
+            with open(tmp_json, encoding='utf-8') as fd:
                 output = json.load(fd)
                 return output['files']
         finally:

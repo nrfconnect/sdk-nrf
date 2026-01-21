@@ -1,0 +1,28 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+#pragma once
+#include "closure_manager.h"
+#include "garage_door_impl.h"
+#include <persistent_storage/persistent_storage_common.h>
+
+class AppTask {
+public:
+	AppTask();
+	static AppTask &Instance()
+	{
+		static AppTask sAppTask;
+		return sAppTask;
+	}
+
+	CHIP_ERROR Init();
+	CHIP_ERROR StartApp();
+
+private:
+	constexpr static auto kAccessPrefix = "cs";
+	Nrf::PersistentStorageNode mRootNode{ kAccessPrefix, strlen(kAccessPrefix) };
+	GarageDoorImpl mPhysicalDevice;
+	ClosureManager mClosureManager;
+};

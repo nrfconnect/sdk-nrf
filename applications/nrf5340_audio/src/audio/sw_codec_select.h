@@ -4,6 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup audio_app_sw_codec_select Audio Software Codec Selection
+ * @{
+ * @brief Software codec selection and configuration API for Audio applications.
+ *
+ * This module provides the software codec interface for audio encoding and decoding operations.
+ * It supports the LC3 (Low Complexity Communication Codec) as specified in the
+ * Bluetooth LE Audio standard. The module handles codec initialization and codec configuration.
+ * It provides encoding/decoding functions with support for different sample rates,
+ * bitrates, and channel modes (mono/stereo). It integrates with @ref audio_app_system to
+ * process audio data for both unicast (CIS) and broadcast (BIS) streaming modes.
+ */
+
 #ifndef _SW_CODEC_SELECT_H_
 #define _SW_CODEC_SELECT_H_
 
@@ -14,7 +27,6 @@
 #if (CONFIG_SW_CODEC_LC3)
 #define LC3_MAX_FRAME_SIZE_MS	10
 #define LC3_ENC_MONO_FRAME_SIZE (CONFIG_LC3_BITRATE_MAX * LC3_MAX_FRAME_SIZE_MS / (8 * 1000))
-
 #define LC3_PCM_NUM_BYTES_MONO                                                                     \
 	(CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS * LC3_MAX_FRAME_SIZE_MS / 1000)
 #define LC3_ENC_TIME_US 3000
@@ -27,47 +39,69 @@
 #endif /* CONFIG_SW_CODEC_LC3 */
 
 /* Max will be used when multiple codecs are supported */
-#define ENC_MAX_FRAME_SIZE   MAX(LC3_ENC_MONO_FRAME_SIZE, 0)
-#define ENC_TIME_US	     MAX(LC3_ENC_TIME_US, 0)
-#define DEC_TIME_US	     MAX(LC3_DEC_TIME_US, 0)
-#define PCM_NUM_BYTES_MONO   MAX(LC3_PCM_NUM_BYTES_MONO, 0)
-#define PCM_NUM_BYTES_STEREO (PCM_NUM_BYTES_MONO * 2)
+#define ENC_MAX_FRAME_SIZE	      MAX(LC3_ENC_MONO_FRAME_SIZE, 0)
+#define ENC_MULTI_CHAN_MAX_FRAME_SIZE (LC3_ENC_MONO_FRAME_SIZE * CONFIG_AUDIO_ENCODE_CHANNELS_MAX)
+#define ENC_TIME_US		      MAX(LC3_ENC_TIME_US, 0)
+#define DEC_TIME_US		      MAX(LC3_DEC_TIME_US, 0)
+#define PCM_NUM_BYTES_MONO	      MAX(LC3_PCM_NUM_BYTES_MONO, 0)
+#define PCM_NUM_BYTES_MULTI_CHAN                                                                   \
+	(PCM_NUM_BYTES_MONO * MAX(CONFIG_AUDIO_DECODE_CHANNELS_MAX, CONFIG_AUDIO_OUTPUT_CHANNELS))
 
+/**
+ * @brief Software codec selection enumeration.
+ */
 enum sw_codec_select {
-	SW_CODEC_NONE,
-	SW_CODEC_LC3, /* Low Complexity Communication Codec */
+	SW_CODEC_NONE, /**< No codec selected */
+	SW_CODEC_LC3,  /**< Low Complexity Communication Codec */
 };
 
-enum sw_codec_channel_mode {
-	SW_CODEC_MONO = 1,
-	SW_CODEC_STEREO,
+/**
+ * @brief  Private encoder context.
+ */
+struct lc3_encoder_context {
+	/* Array of encoder channel handles. */
+	struct lc3_encoder_handle *lc3_enc_channel[CONFIG_AUDIO_ENCODE_CHANNELS_MAX];
 };
 
+/**
+ * @brief  Private decoder context.
+ */
+struct lc3_decoder_context {
+	/* Array of decoder channel handles. */
+	struct lc3_decoder_handle *lc3_dec_channel[CONFIG_AUDIO_DECODE_CHANNELS_MAX];
+};
+
+/**
+ * @brief Software codec encoder configuration structure.
+ */
 struct sw_codec_encoder {
 	bool enabled;
 	int bitrate;
-	enum sw_codec_channel_mode channel_mode;
 	uint8_t num_ch;
-	enum audio_channel audio_ch;
+	enum bt_audio_location audio_loc;
 	uint32_t sample_rate_hz;
+	struct lc3_encoder_context lc3_ctx;
 };
 
+/**
+ * @brief Software codec decoder configuration structure.
+ */
 struct sw_codec_decoder {
 	bool enabled;
-	enum sw_codec_channel_mode channel_mode; /* Mono or stereo. */
-	uint8_t num_ch;				 /* Number of decoder channels. */
-	enum audio_channel audio_ch;		 /* Used to choose which channel to use. */
+	uint8_t num_ch;
+	enum bt_audio_location audio_loc;
 	uint32_t sample_rate_hz;
+	struct lc3_decoder_context lc3_ctx;
 };
 
 /**
  * @brief  Sw_codec configuration structure.
  */
 struct sw_codec_config {
-	enum sw_codec_select sw_codec;	 /* sw_codec to be used, e.g. LC3, etc. */
-	struct sw_codec_decoder decoder; /* Struct containing settings for decoder. */
-	struct sw_codec_encoder encoder; /* Struct containing settings for encoder. */
-	bool initialized;		 /* Status of codec. */
+	enum sw_codec_select sw_codec;
+	struct sw_codec_decoder decoder;
+	struct sw_codec_encoder encoder;
+	bool initialized;
 };
 
 /**
@@ -81,25 +115,29 @@ bool sw_codec_is_initialized(void);
 /**
  * @brief	Encode PCM data and output encoded data.
  *
- * @note	Takes in stereo PCM stream, will encode either one or two
- *		channels, based on channel_mode set during init.
+ * @note	Takes in a PCM stream, will encode either one or multiple
+ *		channels, based on num_ch set during init.
  *
- * @param[in]	audio_frame	Pointer to the audio buffer.
+ * @param[in]	audio_frame_in	Pointer to the audio PCM buffer.
+ * @param[out]	audio_frame_out	Pointer to the audio encoded buffer.
  *
  * @return	0 if success, error codes depends on sw_codec selected.
  */
-int sw_codec_encode(struct net_buf *audio_frame);
+int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_out);
 
 /**
  * @brief	Decode encoded data and output PCM data.
  *
- * @param[in]	audio_frame	Pointer to the audio buffer.
- * @param[out]	pcm_data	Pointer to the buffer to store the decoded PCM data.
- * @param[out]	pcm_size	Size of decoded data.
+ * @note	Takes in a coded bitstream, will decode either one or multiple
+ *		channels, based on num_ch set during init.
+ *
+ * @param[in]	audio_frame_in	Pointer to the audio input buffer.
+ * @param[out]	audio_frame_out	Pointer to the audio output buffer.
  *
  * @return	0 if success, error codes depends on sw_codec selected.
  */
-int sw_codec_decode(struct net_buf const *const audio_frame, void **pcm_data, size_t *pcm_size);
+int sw_codec_decode(struct net_buf const *const audio_frame_in,
+		    struct net_buf *const audio_frame_out);
 
 /**
  * @brief	Uninitialize the software codec and free the allocated space.
@@ -122,5 +160,9 @@ int sw_codec_uninit(struct sw_codec_config sw_codec_cfg);
  * @return	0 if success, error codes depends on sw_codec selected.
  */
 int sw_codec_init(struct sw_codec_config sw_codec_cfg);
+
+/**
+ * @}
+ */
 
 #endif /* _SW_CODEC_SELECT_H_ */

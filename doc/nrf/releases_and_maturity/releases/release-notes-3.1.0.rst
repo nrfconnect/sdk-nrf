@@ -122,7 +122,7 @@ See the following documentation for an overview of which modem firmware versions
 * `Modem firmware compatibility matrix for the nRF9160 SoC`_
 
 Use the latest version of the `Programmer app`_ of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -243,7 +243,6 @@ Developing with Front-End Modules
 
 * Added:
 
-  * The temperature compensation feature for the nRF2220 Front-End Module.
   * Support for the nRF21540 Front-End Module in GPIO/SPI mode for nRF54L Series devices.
   * Support for the Simple GPIO Front-End Module for nRF54L Series devices.
 
@@ -631,7 +630,7 @@ Bluetooth Fast Pair samples
 
       This change in the nRF54L10 partition map is a breaking change and cannot be performed using DFU.
       As a result, the DFU procedure will fail if you attempt to upgrade the sample firmware based on one of the |NCS| v3.0 releases.
-    * The configurations for nRF54L-based board targets that store the MCUboot verification key in the KMU peripheral to automatically generate the :file:`keyfile.json` file in the build directory (the ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option) based on the input file provided by the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` Kconfig option.
+    * The configurations for nRF54L-based board targets that store the MCUboot verification key in the KMU peripheral to automatically generate the :file:`keyfile.json` file in the build directory (the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` Kconfig option) based on the input file provided by the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` Kconfig option.
       This KMU provisioning step can now be performed automatically by the west runner, provided that a :file:`keyfile.json` file is present in the build directory.
       The provisioning is only performed if the ``west flash`` command is executed with the ``--erase``  or ``--recover`` flag.
     * Link Time Optimization (:kconfig:option:`CONFIG_LTO`) to be enabled in MCUboot configurations of the nRF5340 DK and Thingy:53.
@@ -646,7 +645,7 @@ Cellular samples
   * :ref:`nrf_cloud_rest_cell_location`
   * :ref:`nrf_cloud_rest_fota`
 
-* Deprecated the :ref:`lte_sensor_gateway` sample.
+* Deprecated the LTE Sensor Gateway sample.
   It is no longer maintained.
 
 * :ref:`modem_shell_application` sample:
@@ -707,8 +706,8 @@ Matter samples
 
   * The Bluetooth Low Energy variant of the Soft Device Controller (SDC) to use the Peripheral-only role in all Matter samples.
   * The API of the ``ncs_configure_data_model()`` CMake method.
-    It does not use ``ZAP_FILE`` argument anymore, but creates path to ZAP file based on :ref:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH <CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH>` Kconfig option.
-  * By renaming the ``CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH`` Kconfig option to :ref:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH <CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH>` and changed its purpose to configure the absolute path under which the ZAP file is located.
+    It does not use ``ZAP_FILE`` argument anymore, but creates path to ZAP file based on :option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
+  * By renaming the ``CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH`` Kconfig option to :option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` and changed its purpose to configure the absolute path under which the ZAP file is located.
   * By enabling Matter persistent subscriptions by default for all Matter samples.
   * By changing the default values of the following ICD parameters:
 
@@ -769,7 +768,7 @@ Peripheral samples
 PMIC samples
 ------------
 
-* :ref:`npm1300_fuel_gauge` sample:
+* :ref:`nPM1300: Fuel gauge <npm13xx_fuel_gauge>` sample:
 
   * Updated current sign when calling the ``nrf_fuel_gauge`` lib functions.
     In the Zephyr sensor API the convention for the gauge current is ``negative=discharging``, while the :ref:`nrfxlib:nrf_fuel_gauge` lib uses the opposite.
@@ -946,24 +945,24 @@ Modem libraries
     * The deprecated functions ``lte_lc_reduced_mobility_get()``, ``lte_lc_reduced_mobility_set()``, and ``lte_lc_factory_reset()``.
     * The deprecated macro ``LTE_LC_ON_CFUN()``.
 
-* :ref:`lib_modem_slm` library:
+* Modem SLM library:
 
   * Added the following Kconfig options:
 
-    * :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_COUNT` for configuring RX buffer count.
-    * :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_SIZE` for configuring RX buffer size.
-    * :kconfig:option:`CONFIG_MODEM_SLM_UART_TX_BUF_SIZE` for configuring TX buffer size.
-    * :kconfig:option:`CONFIG_MODEM_SLM_AT_CMD_RESP_MAX_SIZE` for buffering AT command responses.
+    * ``CONFIG_MODEM_SLM_UART_RX_BUF_COUNT`` for configuring RX buffer count.
+    * ``CONFIG_MODEM_SLM_UART_RX_BUF_SIZE`` for configuring RX buffer size.
+    * ``CONFIG_MODEM_SLM_UART_TX_BUF_SIZE`` for configuring TX buffer size.
+    * ``CONFIG_MODEM_SLM_AT_CMD_RESP_MAX_SIZE`` for buffering AT command responses.
 
   * Updated:
 
       * The software maturity of the library to supported instead of experimental.
-      * The UART implementation between the host device, using the :ref:`lib_modem_slm` library, and the device running the :ref:`Serial LTE Modem <slm_description>` application.
+      * The UART implementation between the host device, using the Modem SLM library, and the device running the Serial LTE modem application.
 
   * Removed:
 
     * The ``CONFIG_MODEM_SLM_DMA_MAXLEN`` Kconfig option.
-      Use :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_SIZE` instead.
+      Use ``CONFIG_MODEM_SLM_UART_RX_BUF_SIZE`` instead.
     * The ``modem_slm_reset_uart()`` function, as there is no longer a need to reset the UART.
 
 * :ref:`modem_info_readme` library:

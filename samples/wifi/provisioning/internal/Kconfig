@@ -87,7 +87,6 @@ config WIFI_PROV_PASSWORD
 
 config WIFI_PROV_VOLATILE_MEMORY
 	bool "Use volatile memory"
-	default n
 	help
 	  Store WiFi configuration in volatile memory.
 	  If disabled, configuration is stored persistently.
@@ -102,7 +101,6 @@ config WIFI_PROV_SCAN_BAND
 
 config WIFI_PROV_SCAN_PASSIVE
 	bool "Passive scan mode"
-	default n
 	help
 	  Enable passive scanning mode.
 	  If disabled, active scanning is used.
@@ -140,6 +138,6 @@ config WIFI_PROV_MAX_BASE64_SIZE
 module = WIFI_PROV_INTERNAL
 module-dep = LOG
 module-str = Log level for sample
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 source "Kconfig.zephyr"

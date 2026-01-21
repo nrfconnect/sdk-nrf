@@ -56,7 +56,7 @@ The following list includes the summary of the most relevant changes introduced 
   * PMIC: nPM1300 PMIC and nPM1300 EK:
 
     * Charger, BUCKs, LDOs, Load Switches, and GPIOs.
-    * :ref:`Sample showing fuel gauge functionality <npm1300_fuel_gauge>`.
+    * :ref:`Sample showing fuel gauge functionality <npm13xx_fuel_gauge>`.
       The sample calculates battery state of charge, time to empty, time to full and provides updates of these over the terminal once every second.
     * The nPM1300 EK sample that supports PMIC features: regulators (BUCKs, LDO) and GPIOs.
 
@@ -118,7 +118,7 @@ Supported modem firmware
 See `Modem firmware compatibility matrix`_ for an overview of which modem firmware versions have been tested with this version of the |NCS|.
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -568,7 +568,7 @@ nRF9160 samples
 
   * Added IPv6 support and wait time for PDN to fully activate (including IPv6, if available) before looking up the address.
 
-* :ref:`slm_shell_sample` sample:
+* SLM Shell sample:
 
   * Added support for the nRF7002 DK (PCA10143).
 
@@ -622,7 +622,7 @@ nRF9160 samples
 PMIC samples
 ------------
 
-* Added :ref:`npm1300_fuel_gauge` sample that demonstrates how to calculate the battery state of charge using the :ref:`nrfxlib:nrf_fuel_gauge`.
+* Added the :ref:`nPM1300: Fuel gauge <npm13xx_fuel_gauge>` sample that demonstrates how to calculate the battery state of charge using the :ref:`nrfxlib:nrf_fuel_gauge`.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
@@ -812,7 +812,7 @@ Libraries for networking
   * Updated the file :file:`lwm2m_client_utils.h`, which includes new API for FOTA to register application callback to receive state changes and requests for the update process.
   * Removed the old API ``lwm2m_firmware_get_update_state_cb()``.
 
-* :ref:`lib_download_client` library:
+* Download client library:
 
   * Added the :c:func:`download_client_get` function that combines the functionality of functions :c:func:`download_client_set_host`, :c:func:`download_client_start`, and :c:func:`download_client_disconnect`.
 

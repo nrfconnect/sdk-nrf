@@ -3,11 +3,11 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-from processed_events import ProcessedEvents
-from events import Event, EventType, TrackedEvent
 import argparse
-import numpy as np
 
+import numpy as np
+from events import Event, EventType, TrackedEvent
+from processed_events import ProcessedEvents
 
 INTERP_OUT_OF_RANGE_VAL = -1
 

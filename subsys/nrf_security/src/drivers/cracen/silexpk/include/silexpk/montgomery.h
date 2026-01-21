@@ -9,6 +9,8 @@
 #ifndef MONTGOMERY_HEADER_FILE
 #define MONTGOMERY_HEADER_FILE
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -28,13 +30,13 @@ extern "C" {
 /** An X25519 point */
 struct sx_x25519_op {
 	/** Bytes array representation of a X25519 point **/
-	char bytes[SX_X25519_OP_SZ];
+	uint8_t bytes[SX_X25519_OP_SZ];
 };
 
 /** An X448 point */
 struct sx_x448_op {
 	/** Bytes array representation of a X448 point  **/
-	char bytes[SX_X448_OP_SZ];
+	uint8_t bytes[SX_X448_OP_SZ];
 };
 
 /** Montgomery point multiplication (X25519)

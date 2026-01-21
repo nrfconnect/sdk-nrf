@@ -334,9 +334,11 @@ static int register_peripheral(struct bt_gatt_dm *dm, const uint8_t *hwid,
 	__ASSERT_NO_MSG(hwid_len == HWID_LEN);
 	memcpy(per->hwid, hwid, hwid_len);
 
-	peripheral_cache[per_id]++;
-	/* An odd number is assigned to a connected peripheral. */
-	__ASSERT_NO_MSG(peripheral_cache[per_id] & 0x01);
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+		peripheral_cache[per_id]++;
+		/* An odd number is assigned to a connected peripheral. */
+		__ASSERT_NO_MSG(peripheral_cache[per_id] & 0x01);
+	}
 
 	LOG_INF("Peripheral %p registered and linked to %p", (void *)per,
 		(void *)get_subscriber(per));
@@ -774,20 +776,23 @@ static void disconnect_peripheral(struct hids_peripheral *per)
 
 	bt_hogp_release(&per->hogp);
 
-	/* Cancel cannot fail if executed from another work's context. */
-	(void)k_work_cancel_delayable(&per->read_rsp);
 	memset(per->hwid, 0, sizeof(per->hwid));
-	per->cur_poll_cnt = 0;
-	per->cfg_chan_id = CFG_CHAN_UNUSED_PEER_ID;
-	if (per->cfg_chan_rsp) {
-		submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_FAIL);
+
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+		/* Cancel cannot fail if executed from another work's context. */
+		(void)k_work_cancel_delayable(&per->read_rsp);
+		per->cur_poll_cnt = 0;
+		per->cfg_chan_id = CFG_CHAN_UNUSED_PEER_ID;
+		if (per->cfg_chan_rsp) {
+			submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_FAIL);
+		}
+
+		size_t per_id = per - &peripherals[0];
+
+		peripheral_cache[per_id]++;
+		/* An even number is assigned to a disconnected peripheral. */
+		__ASSERT_NO_MSG(!(peripheral_cache[per_id] & 0x01));
 	}
-
-	size_t per_id = per - &peripherals[0];
-
-	peripheral_cache[per_id]++;
-	/* An even number is assigned to a disconnected peripheral. */
-	__ASSERT_NO_MSG(!(peripheral_cache[per_id] & 0x01));
 }
 
 static void hogp_ready(struct bt_hogp *hids_c)
@@ -882,10 +887,13 @@ static void init(void)
 		struct hids_peripheral *per = &peripherals[i];
 
 		bt_hogp_init(&per->hogp, &params);
-		k_work_init_delayable(&per->read_rsp, read_rsp_fn);
-		per->cfg_chan_id = CFG_CHAN_UNUSED_PEER_ID;
 
 		per->enqueued_out_reports_bm = 0;
+
+		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
+			k_work_init_delayable(&per->read_rsp, read_rsp_fn);
+			per->cfg_chan_id = CFG_CHAN_UNUSED_PEER_ID;
+		}
 	}
 
 	reset_peripheral_address();
@@ -1242,10 +1250,9 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
-		if (is_config_event(aeh)) {
-			return handle_config_event(cast_config_event(aeh));
-		}
+	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)
+	    && is_config_event(aeh)) {
+		return handle_config_event(cast_config_event(aeh));
 	}
 
 	/* If event is unhandled, unsubscribe. */

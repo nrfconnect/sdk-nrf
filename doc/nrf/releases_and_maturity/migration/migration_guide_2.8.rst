@@ -36,7 +36,7 @@ Build and configuration system
    * Sysbuild now handles the following MCUboot image ID assignments:
 
      * MCUboot updates (using b0) are automatically assigned to MCUboot.
-       The ``SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES`` Kconfig option must not be incremented to include this image.
+       The :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option must not be incremented to include this image.
      * Applications and MCUboot must now use the MCUboot assigned image ID Kconfig values to refer to image IDs instead of hardcoding them.
      * Applications interacting with the device using MCUboot serial recovery MCUmgr must use the image IDs assigned to them, as well as MCUboot or MCUmgr hooks.
      * Depending upon enabled images, some image IDs might differ in |NCS| 2.8 and higher than from previous releases.
@@ -126,7 +126,7 @@ nRF54H20 BICR
 
     To update the BICR of your development kit while in Root of Trust, do the following:
 
-    1. Download the `BICR new binary file`_.
+    1. Download the `nRF54H20 DK BICR binary file`_.
     #. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
 
        .. note::
@@ -547,14 +547,14 @@ AT command parser
 
 .. toggle::
 
-   * The :ref:`at_cmd_parser_readme` library has been deprecated in favor of the :ref:`at_parser_readme` library and will be removed in a future version.
+   * The AT command parser library has been deprecated in favor of the :ref:`at_parser_readme` library and will be removed in a future version.
 
      You can follow this guide to migrate your application to use the :ref:`at_parser_readme` library.
      This will reduce the footprint of the application and will decrease memory requirements on the heap.
 
-     To replace :ref:`at_cmd_parser_readme` with the :ref:`at_parser_readme`, complete the following steps:
+     To replace AT command parser with the :ref:`at_parser_readme`, complete the following steps:
 
-     1. Replace the :kconfig:option:`CONFIG_AT_CMD_PARSER` Kconfig option with the :kconfig:option:`CONFIG_AT_PARSER` Kconfig option.
+     1. Replace the ``CONFIG_AT_CMD_PARSER`` Kconfig option with the :kconfig:option:`CONFIG_AT_PARSER` Kconfig option.
 
      #. Replace header files:
 

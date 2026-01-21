@@ -1,6 +1,6 @@
 .. _ug_nrf54h20_architecture_cpu:
 
-nRF54H20 Domains
+nRF54H20 domains
 ################
 
 .. contents::
@@ -93,14 +93,14 @@ You can also leave the core running Nordic's default protocol stack software and
 
 While the Radio CPU or any peripheral in Radio's local APB2 bus (including the radio) is active, the 32 MHz crystal oscillator is enabled, and the radio itself is clocked from this clock source.
 
-Global Domain
+Global domain
 *************
 
-The Global Domain contains most of the memory and peripherals of the nRF54H20.
+The global domain contains most of the memory and peripherals of the nRF54H20.
 This offers flexibility to assign memory regions and peripherals to different cores.
 If this flexibility is not needed, it is possible to use the |NCS| defaults, where most of the memory and peripherals are assigned to the application core.
 
-The Global Domain includes two sets of power domains:
+The global domain includes two sets of power domains:
 
 * The low-leakage power domains runs at a clock speed of 16 MHz and contains the peripherals that do not need a higher clock speed than this.
 * The high-speed power domains contains the main memories (MRAM and RAM) and high-speed peripherals that have clock speeds higher than 16 MHz.
@@ -121,14 +121,15 @@ This processor is suitable for the following use cases:
 It has been optimized for using very few clock cycles to service interrupts and can start and stop quickly.
 Since the PPR is running from the same clock as the low-leakage peripherals, it does not need to implement any wait cycles to access peripheral registers.
 
+For information on how to use the PPR, see :ref:`ug_nrf54h20_ppr`.
+
 Fast Lightweight Processor (FLPR)
 =================================
 
 The Fast Lightweight Processor (FLPR, pronounced Flipper) is a VPR core running at up to 320 MHz, located in the high-speed area of the Global Domain.
 This CPU is intended to implement software-defined peripherals.
 
-.. note::
-   FLPR firmware support is not available during the customer sampling.
+For information on how to use the FLPR, see :ref:`ug_nrf54h20_flpr`.
 
 .. _ug_nrf54h20_secure_domain:
 
@@ -142,7 +143,10 @@ The Secure Domain has its own CPU, local RAM, and local peripherals to provide b
 The Secure Domain provides the initial root of trust (RoT), handles all the global resource allocation, acts as a trusted third party (TTP) between other MCU domains, and is used to secure cryptographic operations.
 Since the nRF54H platform supports global resource sharing, where memory partitions and peripherals in the global domain can be assigned to different local domains, the Secure Domain Firmware controls this partitioning while also acting as the boot master for the entire system.
 
-The Secure Domain Firmware (SDFW) exposes security-related services to the Cores in the system located in local domains (like Application and Radio).
+IronSide Secure Element (IronSide SE) is part of the nRF54H20 IronSide SE binaries.
+It runs on the Secure Domain and exposes security-related services to the Cores in the system located in local domains (like Application and Radio).
+
+For more information on IronSide SE and the nRF54H20 IronSide SE binaries, see :ref:`abi_compatibility` and :ref:`ug_nrf54h20_ironside`.
 
 .. _ug_nrf54h20_secure_domain_cracen:
 
@@ -168,6 +172,10 @@ System Controller
 *****************
 
 System Controller is a VPR that implements system startup and power management functionalities that in the past would have been implemented in hardware.
+The System Controller Firmware (SCFW) is a component of the IronSide Secure Element (IronSide SE), and it is included in the nRF54H20 IronSide SE binaries.
+
+For more information on the nRF54H20 IronSide SE binaries, see :ref:`abi_compatibility`.
+
 
 Cores management
 ****************

@@ -114,9 +114,17 @@ static void link_close(bt_mesh_prov_bearer_t bearer)
 		    CONTROLLER_INDEX, (uint8_t *) &ev, sizeof(ev));
 }
 
-static int output_number(bt_mesh_output_action_t action, uint32_t number)
+static int output_numeric(bt_mesh_output_action_t action, uint8_t *numeric, size_t size)
 {
 	struct mesh_out_number_action_ev ev;
+	uint32_t number;
+
+	if (size > sizeof(number)) {
+		LOG_ERR("Unsupported size %zu", size);
+		return -EINVAL;
+	}
+
+	number = sys_get_le32(numeric);
 
 	LOG_DBG("action 0x%04x number 0x%08x", action, number);
 
@@ -196,7 +204,7 @@ static struct bt_mesh_prov prov = {
 	.uuid = dev_uuid,
 	.static_val = static_auth,
 	.static_val_len = sizeof(static_auth),
-	.output_number = output_number,
+	.output_numeric = output_numeric,
 	.output_string = output_string,
 	.input = input,
 	.link_open = link_open,

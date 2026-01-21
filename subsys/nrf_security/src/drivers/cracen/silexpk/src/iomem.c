@@ -22,7 +22,7 @@
 void sx_clrpkmem(void *dst, size_t sz)
 {
 	typedef int64_t clrblk_t;
-	volatile char *dst_ptr = (volatile char *)dst;
+	volatile uint8_t *dst_ptr = (volatile uint8_t *)dst;
 
 	if (sz == 0) {
 		return;
@@ -35,7 +35,7 @@ void sx_clrpkmem(void *dst, size_t sz)
 	}
 
 #if !defined(__aarch64__)
-	memset((char *)dst_ptr, 0, MASK_TO_NATURAL_SIZE(sz, clrblk_t));
+	memset((uint8_t *)dst_ptr, 0, MASK_TO_NATURAL_SIZE(sz, clrblk_t));
 	dst_ptr += MASK_TO_NATURAL_SIZE(sz, clrblk_t);
 	sz -= MASK_TO_NATURAL_SIZE(sz, clrblk_t);
 
@@ -56,8 +56,8 @@ typedef struct uchunk tfrblk;
 
 void sx_wrpkmem(void *dst, const void *src, size_t sz)
 {
-	volatile char *dst_ptr = (volatile char *)dst;
-	volatile const char *src_ptr = (volatile const char *)src;
+	volatile uint8_t *dst_ptr = (volatile uint8_t *)dst;
+	volatile const uint8_t *src_ptr = (volatile const uint8_t *)src;
 
 	while (sz && (!IS_NATURAL_ALIGNED(dst_ptr, tfrblk) || !IS_NATURAL_SIZE(sz, tfrblk))) {
 		*dst_ptr = *src_ptr;
@@ -65,7 +65,7 @@ void sx_wrpkmem(void *dst, const void *src, size_t sz)
 		src_ptr++;
 		sz--;
 	}
-	memcpy((char *)dst_ptr, (char *)src_ptr, sz);
+	memcpy((uint8_t *)dst_ptr, (uint8_t *)src_ptr, sz);
 }
 
 #else /* 54LM20A requires word-aligned, word-sized memory accesses */
@@ -133,13 +133,19 @@ void sx_wrpkmem(void *dst, const void *src, size_t sz)
 		const size_t byte_count = 4 - first_byte_pos;
 
 		write_incomplete_word((uint32_t *)(dst_addr & ~3), src, first_byte_pos, byte_count);
-		*(uint8_t **)&dst += byte_count;
-		*(const uint8_t **)&src += byte_count;
+		dst = (uint8_t *)dst + byte_count;
+		src = (const uint8_t *)src + byte_count;
 		sz -= byte_count;
 	}
 
+	/* Use memcpy to read from src since it may be unaligned.
+	 * dst is guaranteed to be 4-byte aligned at this point.
+	 */
 	for (size_t i = 0; i != sz / 4; ++i) {
-		((uint32_t *)dst)[i] = ((const uint32_t *)src)[i];
+		uint32_t word;
+
+		memcpy(&word, (const uint8_t *)src + i * 4, sizeof(word));
+		((uint32_t *)dst)[i] = word;
 	}
 
 	if (sz % 4) {
@@ -148,7 +154,7 @@ void sx_wrpkmem(void *dst, const void *src, size_t sz)
 	}
 }
 
-void sx_wrpkmem_byte(void *dst, char input_byte)
+void sx_wrpkmem_byte(void *dst, uint8_t input_byte)
 {
 	uintptr_t dst_addr = (uintptr_t)dst;
 	uint32_t *word_dst = (uint32_t *)(dst_addr & ~3);

@@ -23,7 +23,7 @@ Configuration
 *************
 
 nRF Desktop uses the |ble_adv| from :ref:`lib_caf` (CAF).
-The :ref:`CONFIG_DESKTOP_BLE_ADV <config_desktop_app_options>` Kconfig option selects :kconfig:option:`CONFIG_CAF_BLE_ADV` and aligns the default module configuration to the application requirements.
+The :option:`CONFIG_DESKTOP_BLE_ADV` Kconfig option selects :kconfig:option:`CONFIG_CAF_BLE_ADV` and aligns the default module configuration to the application requirements.
 For details on the default configuration alignment, see the following sections.
 
 For more information about Bluetooth configuration in nRF Desktop, see :ref:`nrf_desktop_bluetooth_guide`.

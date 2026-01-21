@@ -100,7 +100,7 @@ static void at_handler_rai(const char *response)
 	event_handler_list_dispatch(&evt);
 }
 
-int rai_set(void)
+void rai_set(void)
 {
 	int err;
 
@@ -119,9 +119,6 @@ int rai_set(void)
 		}
 		if (err) {
 			LOG_ERR("Failed to configure RAI, err %d", err);
-			return -EFAULT;
 		}
 	}
-
-	return err;
 }

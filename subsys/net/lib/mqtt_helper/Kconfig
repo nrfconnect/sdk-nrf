@@ -125,6 +125,6 @@ endif
 
 module = MQTT_HELPER
 module-str = MQTT helper library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # MQTT_HELPER

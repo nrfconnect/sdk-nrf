@@ -20,6 +20,9 @@ The following table lists variants and extensions available out of the box for e
       - Window covering
       - Thermostat
       - Smoke CO alarm
+      - Temperature sensor
+      - Contact sensor
+      - Closure
     * - FEM support
       - ✔
       - ✔
@@ -28,7 +31,13 @@ The following table lists variants and extensions available out of the box for e
       - ✔
       -
       -
+      -
+      -
+      -
     * - DFU support
+      - ✔
+      - ✔
+      - ✔
       - ✔
       - ✔
       - ✔
@@ -44,6 +53,9 @@ The following table lists variants and extensions available out of the box for e
       - ✔
       - ✔
       - ✔
+      - ✔
+      - ✔
+      - ✔
     * - :ref:`Thread role <thread_ot_device_types>`
       - Router
       - SED
@@ -52,6 +64,9 @@ The following table lists variants and extensions available out of the box for e
       - SSED
       - MED
       - SED
+      - SED
+      - SED
+      - FTD
     * - :ref:`ICD mode <ug_matter_device_low_power_icd>`
       - Not supported
       - SIT
@@ -60,6 +75,9 @@ The following table lists variants and extensions available out of the box for e
       - SIT
       - Not supported
       - LIT
+      - LIT
+      - LIT
+      - Not supported
     * - Wi-Fi® support
       - ✔
       - ✔
@@ -68,10 +86,16 @@ The following table lists variants and extensions available out of the box for e
       -
       - ✔
       -
+      -
+      -
+      - ✔
     * - Thread and Wi-Fi switching
       -
       -
       - ✔
+      -
+      -
+      -
       -
       -
       -
@@ -84,6 +108,9 @@ The following table lists variants and extensions available out of the box for e
       - ✔
       -
       - ✔
+      - ✔
+      - ✔
+      -
 
 See the sample documentation pages for instructions about how to enable these variants and extensions.
 
@@ -105,3 +132,4 @@ In addition to these samples, check also the following Matter applications:
 
    ../../../samples/matter/*/README
    ../../../samples/matter/common/config
+   ../../../scripts/matter/matter_sample_checker/README

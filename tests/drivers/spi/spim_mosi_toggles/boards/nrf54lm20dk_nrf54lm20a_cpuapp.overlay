@@ -1,0 +1,70 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires wire connection:
+ *  - SPIM_MOSI with test-gpios -> P2.2 - P1.8.
+ *  - Disable External Memory in NRF Connect for Desktop -> Board Configurator
+ */
+
+/ {
+	zephyr,user {
+		test-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&pinctrl {
+	spi00_default_alt: spi00_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_MISO, 2, 4)>;
+		};
+
+		group2 {
+			psels = <NRF_PSEL(SPIM_SCK, 2, 1)>,
+				<NRF_PSEL(SPIM_MOSI, 2, 2)>;
+			nordic,drive-mode = <NRF_DRIVE_E0E1>;
+		};
+
+	};
+
+	spi00_sleep_alt: spi00_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 2, 1)>,
+				<NRF_PSEL(SPIM_MISO, 2, 4)>,
+				<NRF_PSEL(SPIM_MOSI, 2, 2)>;
+			low-power-enable;
+		};
+	};
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&timer00 {
+	status = "okay";
+};
+
+/delete-node/ &mx25r64;
+
+&spi00 {
+	status = "okay";
+	pinctrl-0 = <&spi00_default_alt>;
+	pinctrl-1 = <&spi00_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	cs-gpios = <&gpio2 6 GPIO_ACTIVE_LOW>;
+	zephyr,pm-device-runtime-auto;
+
+	dut_spi_dt: test-spi-dev@0 {
+		compatible = "vnd,spi-device";
+		reg = <0>;
+		spi-max-frequency = <1280000>;
+	};
+};

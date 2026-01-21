@@ -8,6 +8,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_lock.h>
+#include <ot_rpc_macros.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 
 #include <nrf_rpc_cbor.h>
@@ -104,10 +105,10 @@ const char *otSrpClientItemStateToString(otSrpClientItemState state)
 
 otError otSrpClientStart(otInstance *aInstance, const otSockAddr *aServerSockAddr)
 {
-	otError error;
+	otError error = OT_ERROR_FAILED;
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, OT_IP6_ADDRESS_SIZE + sizeof(uint16_t) + 2);
 
@@ -123,7 +124,7 @@ void otSrpClientStop(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
@@ -134,9 +135,9 @@ void otSrpClientStop(otInstance *aInstance)
 bool otSrpClientIsRunning(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	bool running;
+	bool running = false;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
@@ -150,7 +151,7 @@ const otSockAddr *otSrpClientGetServerAddress(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
@@ -172,9 +173,9 @@ otError otSrpClientAddService(otInstance *aInstance, otSrpClientService *aServic
 	size_t cbor_buffer_size;
 	size_t name_len = strlen(aService->mName);
 	size_t instance_len = strlen(aService->mInstanceName);
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 	calc_subtypes_space(aService->mSubTypeLabels, &num_subtypes, &subtypes_size);
 	calc_txt_space(aService->mTxtEntries, aService->mNumTxtEntries, &txt_size);
 
@@ -246,7 +247,7 @@ void otSrpClientClearHostAndServices(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_SRP_CLIENT_CLEAR_HOST_AND_SERVICES, &ctx,
@@ -260,7 +261,7 @@ void otSrpClientClearHostAndServices(otInstance *aInstance)
 otError otSrpClientClearService(otInstance *aInstance, otSrpClientService *aService)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 	otSrpClientService **service_prev_next = find_service_prev_next(aService);
 
 	if (!service_prev_next) {
@@ -268,7 +269,7 @@ otError otSrpClientClearService(otInstance *aInstance, otSrpClientService *aServ
 		return OT_ERROR_NOT_FOUND;
 	}
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(uintptr_t));
 	nrf_rpc_encode_uint(&ctx, (uintptr_t)aService);
 
@@ -288,7 +289,7 @@ void otSrpClientDisableAutoStartMode(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_SRP_CLIENT_DISABLE_AUTO_START_MODE, &ctx,
@@ -298,9 +299,9 @@ void otSrpClientDisableAutoStartMode(otInstance *aInstance)
 otError otSrpClientEnableAutoHostAddress(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_SRP_CLIENT_ENABLE_AUTO_HOST_ADDR, &ctx,
@@ -317,9 +318,9 @@ otError otSrpClientSetHostAddresses(otInstance *aInstance, const otIp6Address *a
 				    uint8_t aNumAddresses)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 5 + aNumAddresses * (OT_IP6_ADDRESS_SIZE + 1));
 
 	nrf_rpc_encode_uint(&ctx, aNumAddresses);
@@ -348,7 +349,7 @@ void otSrpClientEnableAutoStartMode(otInstance *aInstance, otSrpClientAutoStartC
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1);
 	nrf_rpc_encode_bool(&ctx, aCallback != NULL);
 
@@ -363,9 +364,9 @@ otError otSrpClientRemoveHostAndServices(otInstance *aInstance, bool aRemoveKeyL
 					 bool aSendUnregToServer)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 2);
 	nrf_rpc_encode_bool(&ctx, aRemoveKeyLease);
 	nrf_rpc_encode_bool(&ctx, aSendUnregToServer);
@@ -379,9 +380,9 @@ otError otSrpClientRemoveHostAndServices(otInstance *aInstance, bool aRemoveKeyL
 otError otSrpClientRemoveService(otInstance *aInstance, otSrpClientService *aService)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(uintptr_t));
 	nrf_rpc_encode_uint(&ctx, (uintptr_t)aService);
 
@@ -395,7 +396,7 @@ void otSrpClientSetCallback(otInstance *aInstance, otSrpClientCallback aCallback
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1);
 	nrf_rpc_encode_bool(&ctx, aCallback != NULL);
 
@@ -409,13 +410,13 @@ void otSrpClientSetCallback(otInstance *aInstance, otSrpClientCallback aCallback
 otError otSrpClientSetHostName(otInstance *aInstance, const char *aName)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	if (aName == NULL) {
 		return OT_ERROR_INVALID_ARGS;
 	}
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 2 + strlen(aName));
 	nrf_rpc_encode_str(&ctx, aName, -1);
 
@@ -431,14 +432,14 @@ otError otSrpClientSetHostName(otInstance *aInstance, const char *aName)
 
 const otSrpClientService *otSrpClientGetServices(otInstance *aInstance)
 {
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	return services;
 }
 
 const otSrpClientHostInfo *otSrpClientGetHostInfo(otInstance *aInstance)
 {
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	return &host_info;
 }
@@ -446,9 +447,9 @@ const otSrpClientHostInfo *otSrpClientGetHostInfo(otInstance *aInstance)
 bool otSrpClientIsAutoStartModeEnabled(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	bool enabled;
+	bool enabled = false;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
@@ -461,9 +462,9 @@ bool otSrpClientIsAutoStartModeEnabled(otInstance *aInstance)
 uint32_t otSrpClientGetKeyLeaseInterval(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	uint32_t key_lease_int;
+	uint32_t key_lease_int = 0;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
@@ -477,7 +478,7 @@ void otSrpClientSetKeyLeaseInterval(otInstance *aInstance, uint32_t aInterval)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(aInterval));
 	nrf_rpc_encode_uint(&ctx, aInterval);
 
@@ -488,9 +489,9 @@ void otSrpClientSetKeyLeaseInterval(otInstance *aInstance, uint32_t aInterval)
 uint32_t otSrpClientGetLeaseInterval(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	uint32_t lease_int;
+	uint32_t lease_int = 0;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
@@ -504,7 +505,7 @@ void otSrpClientSetLeaseInterval(otInstance *aInstance, uint32_t aInterval)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(aInterval));
 	nrf_rpc_encode_uint(&ctx, aInterval);
 
@@ -516,7 +517,7 @@ void otSrpClientSetTtl(otInstance *aInstance, uint32_t aTtl)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(aTtl));
 	nrf_rpc_encode_uint(&ctx, aTtl);
 
@@ -527,9 +528,9 @@ void otSrpClientSetTtl(otInstance *aInstance, uint32_t aTtl)
 uint32_t otSrpClientGetTtl(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	uint32_t ttl;
+	uint32_t ttl = 0;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 

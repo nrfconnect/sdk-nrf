@@ -227,7 +227,6 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`modem_key_mgmt`
 * :ref:`lte_lc_readme`
-* :ref:`pdn_readme`
 
 It uses the following `sdk-nrfxlib`_ library:
 

@@ -85,6 +85,7 @@ static int application_obj_id;
 static int modem_obj_id;
 static int smp_obj_id;
 static int target_image_type[FOTA_INSTANCE_COUNT];
+static bool loading_settings;
 
 
 static void dfu_target_cb(enum dfu_target_evt_id evt);
@@ -251,6 +252,7 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 	}
 
 	LOG_DBG("Loading \"%s\"", key);
+	loading_settings = true;
 
 	ret = lwm2m_string_to_path(key, &path, '/');
 	if (ret) {
@@ -285,9 +287,16 @@ static int set(const char *key, size_t len_rd, settings_read_cb read_cb, void *c
 	return 0;
 }
 
+static int commit(void)
+{
+	loading_settings = false;
+	return 0;
+}
+
 static struct settings_handler lwm2m_firm_settings = {
 	.name = LWM2M_FIRM_PREFIX,
 	.h_set = set,
+	.h_commit = commit,
 };
 
 static int write_resource_to_settings(uint16_t inst, uint16_t res, uint8_t *data, uint16_t data_len)
@@ -296,6 +305,10 @@ static int write_resource_to_settings(uint16_t inst, uint16_t res, uint8_t *data
 
 	if ((inst < 0 || inst > 9) || (res < 0 || res > 99)) {
 		return -EINVAL;
+	}
+
+	if (loading_settings) {
+		return 0;
 	}
 
 	snprintk(path, sizeof(path), SETTINGS_FIRM_PATH_FMT,
@@ -310,6 +323,10 @@ static int write_resource_to_settings(uint16_t inst, uint16_t res, uint8_t *data
 static int write_image_type_to_settings(uint16_t inst, int img_type)
 {
 	char path[SETTINGS_FIRM_PATH_LEN];
+
+	if (loading_settings) {
+		return 0;
+	}
 
 	snprintk(path, sizeof(path), SETTINGS_FIRM_INSTANCE_PATH_FMT,
 		 (uint16_t)ENABLED_LWM2M_FIRMWARE_OBJECT, inst);

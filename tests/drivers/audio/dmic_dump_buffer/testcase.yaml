@@ -16,6 +16,8 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
   drivers.audio.dmic_dump_buffer.stereo:
     filter: dt_nodelabel_enabled("dmic_dev")
     extra_args:
@@ -25,6 +27,8 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
   drivers.audio.dmic_dump_buffer.dmm:
     filter: dt_nodelabel_enabled("dmic_dev")
     platform_allow:

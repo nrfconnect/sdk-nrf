@@ -1,0 +1,16 @@
+identifier: tpm530mevk/tpm530m/ns
+name: TPM530M-EVK-TPM530M-Non-Secure
+type: mcu
+arch: arm
+toolchain:
+  - gnuarmemb
+  - zephyr
+ram: 128
+flash: 192
+supported:
+  - i2c
+  - pwm
+  - watchdog
+  - netif:modem
+vendor: sercomm
+sysbuild: true

@@ -37,7 +37,7 @@ This version of the |NCS| has been tested with the following modem firmware for 
 * mfw_nrf9160_1.2.3
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Changelog
 *********
@@ -52,7 +52,7 @@ nRF9160
   * Updated to v0.10.2.
     See the :ref:`liblwm2m_carrier_changelog` for detailed information.
 
-* Fixed the NCSDK-5666 known issue where the :ref:`lte_sensor_gateway` sample could assert when the Thingy:52 was flipped.
+* Fixed the NCSDK-5666 known issue where the LTE Sensor Gateway sample could assert when the Thingy:52 was flipped.
 
 Known issues
 ************

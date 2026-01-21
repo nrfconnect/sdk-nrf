@@ -55,7 +55,7 @@ nRF52832 Desktop Mouse (``nrf52dmouse``)
       * The preconfigured build types do not use a bootloader.
 
 Sample mouse, keyboard or dongle (``nrf52840dk/nrf52840``)
-      * The configuration uses the nRF52840 Development Kit.
+      * The configuration uses the nRF52840 DK.
       * The build types allow to build the application as mouse, keyboard or dongle.
       * Inputs are simulated based on the hardware button presses.
       * The configuration with the B0 bootloader is set as default.
@@ -63,7 +63,7 @@ Sample mouse, keyboard or dongle (``nrf52840dk/nrf52840``)
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and the :ref:`nrf_desktop_dfu_mcumgr`.
 
 Sample dongle (``nrf52833dk/nrf52833``)
-      * The configuration uses the nRF52833 Development Kit.
+      * The configuration uses the nRF52833 DK.
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
         The dongle acts as a Bluetooth central.
         Input data comes from Bluetooth and is retransmitted to USB.
@@ -73,7 +73,7 @@ Sample dongle (``nrf52833dk/nrf52833``)
       * The configuration with the MCUboot bootloader is set as default.
 
 Sample dongle (``nrf52833dk/nrf52820``)
-      * The configuration uses the nRF52820 emulation on the nRF52833 Development Kit.
+      * The configuration uses the nRF52820 emulation on the nRF52833 DK.
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
       * Bluetooth uses Zephyr's software link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
@@ -93,6 +93,9 @@ nRF52840 USB Dongle (``nrf52840dongle/nrf52840``) and nRF52833 USB Dongle (``nrf
       * Bluetooth uses Nordic Semiconductor's SoftDevice link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
       * The configuration with the B0 bootloader is set as default for the ``nrf52840dongle/nrf52840`` board and with the MCUboot bootloader is set as default for the ``nrf52833dongle`` board.
+      * The nRF5 MBR partition (``nrf5_mbr``) added by the ``nrf52840dongle/nrf52840`` board is not used.
+        It is statically defined with address and size both set to zero to prevent Partition Manager from trying to place it dynamically.
+        The application did not switch to the ``bare`` board variant to keep backwards compatibility.
 
 nRF52820 USB Dongle (``nrf52820dongle``)
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
@@ -107,11 +110,11 @@ Sample dongle (``nrf5340dk/nrf5340``)
       * The configuration with the B0 bootloader is set as default.
 
 Sample mouse or keyboard (``nrf54l15dk/nrf54l05/cpuapp``)
-      * The configuration :ref:`emulates the nRF54L05 SoC <zephyr:nrf54l15dk_nrf54l05>` on the nRF54L15 Development Kit.
+      * The configuration :ref:`emulates the nRF54L05 SoC <zephyr:nrf54l15dk_nrf54l05>` on the nRF54L15 DK.
       * The build types allow to build the application as a mouse or a keyboard.
       * Inputs are simulated based on the hardware button presses.
       * On the nRF54L05 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
-        Because of that, on the DK PCA10156 revision v0.8.1, **LED 0** and **LED 2** cannot be used for PWM output.
+        Because of that, on the DK PCA10156 revision v0.9.3, **LED 0** and **LED 2** cannot be used for PWM output.
         You can still use these LEDs with the PWM LED driver, but you must set the LED color to ``LED_COLOR(255, 255, 255)`` or ``LED_COLOR(0, 0, 0)``.
         This ensures the PWM peripheral is not used for the mentioned LEDs.
       * Only Bluetooth LE transport is enabled.
@@ -127,11 +130,11 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l05/cpuapp``)
       * The board supports the ``release`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse  (``release_fast_pair`` file suffix).
 
 Sample mouse or keyboard (``nrf54l15dk/nrf54l10/cpuapp``)
-      * The configuration :ref:`emulates the nRF54L10 SoC <zephyr:nrf54l15dk_nrf54l10>` on the nRF54L15 Development Kit.
+      * The configuration :ref:`emulates the nRF54L10 SoC <zephyr:nrf54l15dk_nrf54l10>` on the nRF54L15 DK.
       * The build types allow to build the application as a mouse or a keyboard.
       * Inputs are simulated based on the hardware button presses.
       * On the nRF54L10 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
-        Because of that, on the DK PCA10156 revision v0.8.1, **LED 0** and **LED 2** cannot be used for PWM output.
+        Because of that, on the DK PCA10156 revision v0.9.3, **LED 0** and **LED 2** cannot be used for PWM output.
         You can still use these LEDs with the PWM LED driver, but you must set the LED color to ``LED_COLOR(255, 255, 255)`` or ``LED_COLOR(0, 0, 0)``.
         This ensures the PWM peripheral is not used for the mentioned LEDs.
       * Only Bluetooth LE transport is enabled.
@@ -147,11 +150,11 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l10/cpuapp``)
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr`.
 
 Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
-      * The configuration uses the nRF54L15 Development Kit.
+      * The configuration uses the nRF54L15 DK.
       * The build types allow to build the application as a mouse or a keyboard.
       * Inputs are simulated based on the hardware button presses.
       * On the nRF54L15 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
-        Because of that, on the DK PCA10156 revision v0.8.1, **LED 0** and **LED 2** cannot be used for PWM output.
+        Because of that, on the DK PCA10156 revision v0.9.3, **LED 0** and **LED 2** cannot be used for PWM output.
         You can still use these LEDs with the PWM LED driver, but you must set the LED color to ``LED_COLOR(255, 255, 255)`` or ``LED_COLOR(0, 0, 0)``.
         This ensures the PWM peripheral is not used for the mentioned LEDs.
       * Only Bluetooth LE transport is enabled.
@@ -166,21 +169,43 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
       * The board supports the ``debug`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (``fast_pair`` file suffix).
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr`.
 
+Sample mouse (``nrf54lm20dk/nrf54lm20a/cpuapp``)
+      * The configuration uses the nRF54LM20 DK.
+      * The build types allow to build the application as a mouse.
+      * Inputs are simulated based on the hardware button presses.
+      * Bluetooth LE and USB High-Speed transports are enabled.
+        Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
+        USB High-Speed is configured to use the USB next stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT`).
+        The :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE` and :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB` Kconfig options are enabled in mouse configurations to improve the HID report rate over USB.
+      * In ``debug``, ``ram_load``, and ``llvm`` configurations, logs are provided through the UART.
+        For detailed information on working with the nRF54LM20 DK, see the :ref:`ug_nrf54l15_gs` documentation.
+      * In ``llvm`` configurations, the partition layout is different to accommodate for the higher memory footprint of the ``llvm``  toolchain.
+      * The ``debug``, ``release``, and ``llvm`` configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+        All of the configurations enable hardware cryptography for the MCUboot bootloader.
+        The application image is verified using a pure ED25519 signature.
+        The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
+        For more details on nRF54L Series cryptography, see :ref:`ug_nrf54l_cryptography`.
+      * The ``ram_load`` and ``release_ram_load`` configurations use the MCUboot bootloader built in the RAM load mode (``MCUBOOT``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+        Configurations in this bootloader mode use the same security features as direct-xip mode (``MCUBOOT+XIP``), including hardware cryptography, signature type, and public key storage.
+        The application code is executed from the RAM in this mode to improve the HID report rate over USB.
+        For more details on the RAM load mode, see the MCUboot :ref:`nrf_desktop_configuring_mcuboot_bootloader_ram_load` documentation section.
+
 Sample mouse or dongle (``nrf54h20dk/nrf54h20/cpuapp``)
-      * The configuration uses the nRF54H20 Development Kit.
+      * The configuration uses the nRF54H20 DK.
       * The build types allow to build the application as a mouse or dongle.
       * Inputs are simulated based on the hardware button presses.
       * Bluetooth LE and USB High-Speed transports are enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
         USB High-Speed is configured to use the USB next stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT`).
-        The :kconfig:option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE` and :kconfig:option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB` Kconfig options are enabled in mouse configurations to improve the USB High-Speed report rate.
+        The :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE` and :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB` Kconfig options are enabled in mouse configurations to improve the HID report rate over USB.
       * In ``debug`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54H20 DK, see the :ref:`ug_nrf54h20_gs` documentation.
-      * The configurations use the Software Updates for Internet of Things (SUIT) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+      * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
         Configurations acting as HID peripherals also support firmware updates using the :ref:`nrf_desktop_dfu_mcumgr`.
+        For more details on MCUboot, see :ref:`nrf_desktop_bootloader`.
 
-      .. note::
-         The nRF Desktop application does not build or run for the ``nrf54h20dk/nrf54h20/cpuapp`` board target due to the IronSide SE migration.
-         See the ``NCSDK-34299`` in the :ref:`known_issues` page for more information.
-         The :ref:`nrf_desktop` documentation may still refer to concepts that were valid before the IronSide SE migration (for example, to the SUIT solution).
-         The codebase and documentation will be updated in the future releases to address this issue.
+        All configurations enable hardware cryptography for the MCUboot bootloader.
+        The MCUboot bootloader uses the :ref:`ug_crypto_architecture_implementation_standards_ironside` for hardware cryptography.
+        The application image is verified using a pure ED25519 signature.
+        In all configurations, the MCUboot bootloader uses a merged image slot that combines both application and radio core images.
+        For more details on nRF54H Series DFU, see :ref:`ug_nrf54h20_mcuboot_dfu`.

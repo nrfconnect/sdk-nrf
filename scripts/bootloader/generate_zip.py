@@ -4,14 +4,15 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-import errno
 import argparse
+import errno
 import json
 import time
-import yaml
+from os import path
 from pathlib import Path, PurePath
 from zipfile import ZipFile
-from os import path
+
+import yaml
 
 
 def parse_args():
@@ -101,7 +102,7 @@ if __name__ == '__main__':
             val = int(val, base=16)
 
         # When multiple bin files are given, the non-shared configurations are prepended with the name of the bin file
-        for p in name_to_path.keys():
+        for p in name_to_path:
             if p not in special_info:
                 special_info[p] = dict()
             if key.startswith(p):

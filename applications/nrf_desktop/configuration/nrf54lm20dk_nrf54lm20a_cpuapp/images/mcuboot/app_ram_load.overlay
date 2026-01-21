@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../../memory_map_ram_load.dtsi"
+
+/ {
+	chosen {
+		/* We need to point where we want to place MCUboot code. */
+		zephyr,code-partition = &boot_partition;
+		/* We need to point where we want to place MCUboot RAM region. */
+		zephyr,sram = &cpuapp_sram_mcuboot_ram_region;
+		/* We need to point where we want to place the retained memory region that
+		 * is shared with the application image and contains the image metadata.
+		 */
+		zephyr,bootloader-info = &boot_info0;
+	};
+};

@@ -88,7 +88,7 @@ Serial LTE Modem (SLM)
 
    The AT command parsing has been updated to utilize the :ref:`at_cmd_custom_readme` library.
    If you have introduced custom AT commands to the SLM, you need to update the command parsing to use the new library.
-   See the :ref:`slm_extending` page for more information.
+   See the Serial LTE modem's Extending the application page for more information.
 
 Peripheral samples
 ------------------
@@ -107,12 +107,12 @@ Matter
 
    With the inheritance of Zephyr's :ref:`zephyr:sysbuild` in the |NCS| :ref:`configuration_system_overview_sysbuild`, some changes are provided to the Matter samples and applications:
 
-     * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD` Kconfig option is deprecated and you need to use the ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE`` Kconfig option instead to enable or disable creating the factory data set during building a Matter sample.
+     * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD` Kconfig option is deprecated and you need to use the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option instead to enable or disable creating the factory data set during building a Matter sample.
        To enable factory data support on your device, you still need to set the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` to ``y``.
      * Factory data output files are now located in the ``<application_name>/zephyr/`` directory within the build directory.
-     * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_MERGE_WITH_FIRMWARE` Kconfig option is deprecated in sysbuild and you need to use the ``SB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE`` Kconfig option instead to enable or disable merging the factory data HEX file with the final firmware HEX file.
-     * ``SB_CONFIG_MATTER_OTA`` Kconfig option has been added to enable or disable generating Matter OTA package during the building process.
-     * :kconfig:option:`CONFIG_CHIP_OTA_IMAGE_FILE_NAME` Kconfig option is deprecated and you need to use the ``SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME`` Kconfig option instead to define Matter OTA output filename.
+     * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_MERGE_WITH_FIRMWARE` Kconfig option is deprecated in sysbuild and you need to use the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE` Kconfig option instead to enable or disable merging the factory data HEX file with the final firmware HEX file.
+     * :kconfig:option:`SB_CONFIG_MATTER_OTA` Kconfig option has been added to enable or disable generating Matter OTA package during the building process.
+     * :kconfig:option:`CONFIG_CHIP_OTA_IMAGE_FILE_NAME` Kconfig option is deprecated and you need to use the :kconfig:option:`SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME` Kconfig option instead to define Matter OTA output filename.
 
    .. note::
 
@@ -156,7 +156,7 @@ Modem library
 
    For applications using :ref:`nrf_modem_lib_readme`:
 
-     * The option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR` is now deprecated.
+     * The option ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR`` is now deprecated.
        To enable the UART trace backend, use the ``nrf91-modem-trace-uart`` snippet instead, or add a similar configuration in application overlays.
        The snippet is located in :file:`snippets/nrf91-modem-trace-uart/`.
 
@@ -230,4 +230,4 @@ LwM2M carrier library
 
    * Many event defines have received new values.
      If you are using the values directly in your application, you need to check the events listed in :file:`lwm2m_carrier.h`.
-     The most likely place these changes are needed is :ref:`serial_lte_modem` application, where :ref:`SLM_AT_CARRIER` are relying on the value of the defines instead of the names.
+     The most likely place these changes are needed is Serial LTE modem application, where LwM2M carrier library AT commands are relying on the value of the defines instead of the names.

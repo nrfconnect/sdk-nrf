@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <zephyr/kernel.h>
+#include <zephyr/net/net_ip.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,28 +33,88 @@ extern "C" {
  */
 enum lte_lc_nw_reg_status {
 	/** Not registered. UE is not currently searching for an operator to register to. */
-	LTE_LC_NW_REG_NOT_REGISTERED		= 0,
+	LTE_LC_NW_REG_NOT_REGISTERED			= 0,
 
 	/** Registered, home network. */
-	LTE_LC_NW_REG_REGISTERED_HOME		= 1,
+	LTE_LC_NW_REG_REGISTERED_HOME			= 1,
 
 	/**
 	 * Not registered, but UE is currently trying to attach or searching for an operator to
 	 * register to.
 	 */
-	LTE_LC_NW_REG_SEARCHING			= 2,
+	LTE_LC_NW_REG_SEARCHING				= 2,
 
 	/** Registration denied. */
-	LTE_LC_NW_REG_REGISTRATION_DENIED	= 3,
+	LTE_LC_NW_REG_REGISTRATION_DENIED		= 3,
 
 	/** Unknown, for example out of LTE coverage. */
-	LTE_LC_NW_REG_UNKNOWN			= 4,
+	LTE_LC_NW_REG_UNKNOWN				= 4,
 
 	/** Registered, roaming. */
-	LTE_LC_NW_REG_REGISTERED_ROAMING	= 5,
+	LTE_LC_NW_REG_REGISTERED_ROAMING		= 5,
+
+	/**
+	 * Not registered. UE is not currently searching for an operator to register to.
+	 * Device in receive only mode.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_NW_REG_RX_ONLY_NOT_REGISTERED		= 50,
+
+	/**
+	 * Registered in stored cellular profile, home network. Device in receive only mode.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_NW_REG_RX_ONLY_REGISTERED_HOME		= 51,
+
+	/**
+	 * Not registered, but UE is currently trying to attach or searching for an operator to
+	 * register to. Device in receive only mode.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_NW_REG_RX_ONLY_SEARCHING			= 52,
+
+	/**
+	 * Registration denied. Device in receive only mode.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_NW_REG_RX_ONLY_REGISTRATION_DENIED	= 53,
+
+	/**
+	 * Unknown, for example, out of LTE coverage. Device in receive only mode.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_NW_REG_RX_ONLY_UNKNOWN			= 54,
+
+	/**
+	 * Registered in stored cellular profile, roaming. Device in receive only mode.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_NW_REG_RX_ONLY_REGISTERED_ROAMING	= 55,
 
 	/** Not registered due to UICC failure. */
-	LTE_LC_NW_REG_UICC_FAIL			= 90
+	LTE_LC_NW_REG_UICC_FAIL				= 90,
+
+	/**
+	 * The modem has completed searches, but no suitable cell for normal service was found.
+	 *
+	 * This may be used as a trigger for changing the configured system mode.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_NW_REG_NO_SUITABLE_CELL			= 91
 };
 
 /** System mode. */
@@ -78,23 +139,39 @@ enum lte_lc_system_mode {
 
 	/** LTE-M + NB-IoT + GNSS. */
 	LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS,
+
+	/**
+	 * NTN NB-IoT only.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_SYSTEM_MODE_NTN_NBIOT
 };
 
 /**
  * LTE mode.
  *
  * The values for LTE-M and NB-IoT correspond to the values for the access technology field in AT
- * responses.
+ * commands.
  */
 enum lte_lc_lte_mode {
 	/** None. */
-	LTE_LC_LTE_MODE_NONE	= 0,
+	LTE_LC_LTE_MODE_NONE		= 0,
 
 	/** LTE-M. */
-	LTE_LC_LTE_MODE_LTEM	= 7,
+	LTE_LC_LTE_MODE_LTEM		= 7,
 
 	/** NB-IoT. */
-	LTE_LC_LTE_MODE_NBIOT	= 9,
+	LTE_LC_LTE_MODE_NBIOT		= 9,
+
+	/**
+	 * NTN NB-IoT.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_LTE_MODE_NTN_NBIOT	= 14
 };
 
 /**
@@ -156,56 +233,95 @@ enum lte_lc_func_mode {
 	 *
 	 * Disables both transmit and receive RF circuits and deactivates LTE and GNSS.
 	 */
-	LTE_LC_FUNC_MODE_POWER_OFF		= 0,
+	LTE_LC_FUNC_MODE_POWER_OFF			= 0,
 
 	/**
 	 * Sets the device to full functionality.
 	 *
 	 * Both LTE and GNSS will become active if the respective system modes are enabled.
 	 */
-	LTE_LC_FUNC_MODE_NORMAL			= 1,
+	LTE_LC_FUNC_MODE_NORMAL				= 1,
 
 	/**
 	 * Sets the device to receive only functionality.
 	 *
-	 * Can be used, for example, to evaluate connections with
-	 * lte_lc_conn_eval_params_get().
+	 * Features supported by mfw_nrf9160 in receive only mode:
+	 * - lte_lc_conn_eval_params_get()
 	 *
-	 * @note This mode is only supported by modem firmware versions >= 1.3.0.
+	 * Features supported by mfw_nrf91x1 and mfw_nrf9151-ntn in receive only mode:
+	 * - Network selection
+	 * - lte_lc_conn_eval_params_get()
+	 * - lte_lc_neighbor_cell_measurement()
+	 * - lte_lc_env_eval()
+	 *
+	 * mfw_nrf91x1 and mfw_nrf9151-ntn perform network selection in receive only mode.
+	 * When the search has been completed, an @ref LTE_LC_EVT_MODEM_EVENT is sent with modem
+	 * event @ref LTE_LC_MODEM_EVT_SEARCH_DONE. The application can check the last received
+	 * @ref LTE_LC_EVT_CELL_UPDATE to see if a suitable cell was found or not.
+	 *
+	 * After network selection, device remains camped on the found cell, but will not try to
+	 * register unless the functional mode is changed. LTE registration can be triggered on
+	 * the cell by setting the functional mode to @ref LTE_LC_FUNC_MODE_NORMAL or
+	 * @ref LTE_LC_FUNC_MODE_ACTIVATE_LTE. Device should not be left in receive only mode for
+	 * longer than necessary, because current consumption will be elevated.
 	 */
-	LTE_LC_FUNC_MODE_RX_ONLY		= 2,
+	LTE_LC_FUNC_MODE_RX_ONLY			= 2,
 
 	/**
 	 * Sets the device to flight mode.
 	 *
 	 * Disables both transmit and receive RF circuits and deactivates LTE and GNSS services.
 	 */
-	LTE_LC_FUNC_MODE_OFFLINE		= 4,
+	LTE_LC_FUNC_MODE_OFFLINE			= 4,
 
 	/** Deactivates LTE without shutting down GNSS services. */
-	LTE_LC_FUNC_MODE_DEACTIVATE_LTE		= 20,
+	LTE_LC_FUNC_MODE_DEACTIVATE_LTE			= 20,
 
 	/** Activates LTE without changing GNSS. */
-	LTE_LC_FUNC_MODE_ACTIVATE_LTE		= 21,
+	LTE_LC_FUNC_MODE_ACTIVATE_LTE			= 21,
 
 	/** Deactivates GNSS without shutting down LTE services. */
-	LTE_LC_FUNC_MODE_DEACTIVATE_GNSS	= 30,
+	LTE_LC_FUNC_MODE_DEACTIVATE_GNSS		= 30,
 
 	/** Activates GNSS without changing LTE. */
-	LTE_LC_FUNC_MODE_ACTIVATE_GNSS		= 31,
+	LTE_LC_FUNC_MODE_ACTIVATE_GNSS			= 31,
 
 	/** Deactivates UICC. */
-	LTE_LC_FUNC_MODE_DEACTIVATE_UICC	= 40,
+	LTE_LC_FUNC_MODE_DEACTIVATE_UICC		= 40,
 
 	/** Activates UICC. */
-	LTE_LC_FUNC_MODE_ACTIVATE_UICC		= 41,
+	LTE_LC_FUNC_MODE_ACTIVATE_UICC			= 41,
 
 	/** Sets the device to flight mode without shutting down UICC. */
-	LTE_LC_FUNC_MODE_OFFLINE_UICC_ON	= 44,
+	LTE_LC_FUNC_MODE_OFFLINE_UICC_ON		= 44,
+
+	/**
+	 * Sets the device to flight mode while preserving the LTE registration context.
+	 *
+	 * Used to change the active cellular profile when using a dual UICC solution where one
+	 * of the UICCs is a SoftSIM. Allowed only when two cellular profiles have been configured.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG		= 45,
+
+	/**
+	 * Sets the device to flight mode while preserving the LTE registration context and
+	 * without shutting down the UICC.
+	 *
+	 * Used to change the active cellular profile when using an eUICC solution with dual
+	 * profiles. Allowed only when two cellular profiles have been configured.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG_UICC_ON	= 46
 };
 
 /** Event type. */
 enum lte_lc_evt_type {
+#if defined(CONFIG_LTE_LC_NETWORK_REGISTRATION_MODULE)
 	/**
 	 * Network registration status.
 	 *
@@ -213,6 +329,7 @@ enum lte_lc_evt_type {
 	 * @ref lte_lc_nw_reg_status in the event.
 	 */
 	LTE_LC_EVT_NW_REG_STATUS		= 0,
+#endif /* CONFIG_LTE_LC_NETWORK_REGISTRATION_MODULE */
 
 #if defined(CONFIG_LTE_LC_PSM_MODULE)
 	/**
@@ -337,10 +454,46 @@ enum lte_lc_evt_type {
 	 * The associated payload is the @c lte_lc_evt.rai_cfg member of type
 	 * @ref lte_lc_rai_cfg in the event.
 	 *
-	 * @note This event is only supported by modem firmware versions >= 2.0.2.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf91x1 >= v2.0.2
+	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_EVT_RAI_UPDATE			= 12,
 #endif /* CONFIG_LTE_LC_RAI_MODULE */
+
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+	/**
+	 * Environment evaluation result.
+	 *
+	 * The associated payload is the @c lte_lc_evt.env_eval_result member of type
+	 * @ref lte_lc_env_eval_result in the event.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf91x1 >= v2.0.3
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_EVT_ENV_EVAL_RESULT		= 13,
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
+
+#if defined(CONFIG_LTE_LC_PDN_MODULE)
+	/**
+	 * PDN event
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN				= 14,
+#endif /* CONFIG_LTE_LC_PDN_MODULE */
+
+#if defined(CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE)
+	/**
+	 * A cellular profile is activated for the current access technology.
+	 *
+	 * The associated payload is the @c lte_lc_evt.cellular_profile member of type
+	 * @ref lte_lc_cellular_profile_evt in the event.
+	 */
+	LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE	= 15,
+#endif /* CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE */
 };
 
 /** RRC connection state. */
@@ -461,12 +614,6 @@ struct lte_lc_cell {
 	 * Timing advance measurement time in milliseconds, calculated from modem boot time.
 	 *
 	 * Range 0 - 18 446 744 073 709 551 614 ms.
-	 *
-	 * @note For modem firmware versions >= 1.3.1, timing advance measurement time may be
-	 *       reported from the modem. This means that timing advance data may now also be
-	 *       available in neighbor cell measurements done in RRC idle, even though the timing
-	 *       advance data was captured in RRC connected. If the value is not reported by the
-	 *       modem, it is set to 0.
 	 */
 	uint64_t timing_advance_meas_time;
 
@@ -575,7 +722,9 @@ enum lte_lc_modem_sleep_type {
 	/**
 	 * Proprietary PSM.
 	 *
-	 * @note This type is only supported by modem firmware versions >= 2.0.0.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf91x1
+	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_MODEM_SLEEP_PROPRIETARY_PSM	= 7,
 };
@@ -669,8 +818,8 @@ enum lte_lc_ce_level {
 	LTE_LC_CE_LEVEL_UNKNOWN	= UINT8_MAX,
 };
 
-/** Modem domain events. */
-enum lte_lc_modem_evt {
+/** Modem domain event type. */
+enum lte_lc_modem_evt_type {
 	/**
 	 * Indicates that a light search has been performed.
 	 *
@@ -715,32 +864,97 @@ enum lte_lc_modem_evt {
 	LTE_LC_MODEM_EVT_NO_IMEI,
 
 	/**
-	 * Selected CE level in RACH procedure is 0, see 3GPP TS 36.331 for details.
+	 * Selected CE level in RACH procedure. See 3GPP TS 36.331 for details.
 	 *
-	 * @note This event is only supported by modem firmware versions >= 2.0.0.
+	 * The associated payload is the @c lte_lc_modem_evt.ce_level member of type
+	 * @ref lte_lc_ce_level in the event.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf91x1
+	 *       - mfw_nrf9151-ntn
 	 */
-	LTE_LC_MODEM_EVT_CE_LEVEL_0,
+	LTE_LC_MODEM_EVT_CE_LEVEL,
 
 	/**
-	 * Selected CE level in RACH procedure is 1, see 3GPP TS 36.331 for details.
+	 * RF calibration or power class selection not done.
 	 *
-	 * @note This event is only supported by modem firmware versions >= 2.0.0.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf91x1
+	 *       - mfw_nrf9151-ntn
 	 */
-	LTE_LC_MODEM_EVT_CE_LEVEL_1,
+	LTE_LC_MODEM_EVT_RF_CAL_NOT_DONE,
 
 	/**
-	 * Selected CE level in RACH procedure is 2, see 3GPP TS 36.331 for details.
+	 * Invalid band configuration.
 	 *
-	 * @note This event is only supported by modem firmware versions >= 2.0.0.
+	 * The associated payload is the @c lte_lc_modem_evt.invalid_band_conf member of type
+	 * @ref lte_lc_invalid_band_conf in the event.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf91x1
+	 *       - mfw_nrf9151-ntn
 	 */
-	LTE_LC_MODEM_EVT_CE_LEVEL_2,
+	LTE_LC_MODEM_EVT_INVALID_BAND_CONF,
 
 	/**
-	 * Selected CE level in RACH procedure is 3, see 3GPP TS 36.331 for details.
+	 * Current country the device is operating in.
 	 *
-	 * @note This event is only supported by modem firmware versions >= 2.0.0.
+	 * The associated payload is the @c lte_lc_modem_evt.detected_country member of type
+	 * `uint32_t` in the event. The country is reported as a Mobile Country Code (MCC).
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
 	 */
-	LTE_LC_MODEM_EVT_CE_LEVEL_3,
+	LTE_LC_MODEM_EVT_DETECTED_COUNTRY
+};
+
+/** Band configuration status. */
+enum lte_lc_band_conf_status {
+	/** Usable bands available in system. */
+	LTE_LC_BAND_CONF_STATUS_OK = 0,
+
+	/** No usable bands available in system. */
+	LTE_LC_BAND_CONF_STATUS_INVALID = 1,
+
+	/** System support not configured. */
+	LTE_LC_BAND_CONF_STATUS_SYSTEM_NOT_SUPPORTED = 2
+};
+
+/** Detected conflicting band lock or operator restrictions. */
+struct lte_lc_invalid_band_conf {
+	/** LTE-M band configuration status. */
+	enum lte_lc_band_conf_status status_ltem;
+
+	/** NB-IoT band configuration status. */
+	enum lte_lc_band_conf_status status_nbiot;
+
+	/** NTN NB-IoT band configuration status. */
+	enum lte_lc_band_conf_status status_ntn_nbiot;
+};
+
+/** Modem domain event.
+ *
+ * This structure is used as the payload for event @ref LTE_LC_EVT_MODEM_EVENT.
+ */
+struct lte_lc_modem_evt {
+	/** Event type. */
+	enum lte_lc_modem_evt_type type;
+
+	/** Payload for the event (optional). */
+	union {
+		/** Payload for event @ref LTE_LC_MODEM_EVT_CE_LEVEL. */
+		enum lte_lc_ce_level ce_level;
+
+		/** Payload for event @ref LTE_LC_MODEM_EVT_INVALID_BAND_CONF. */
+		struct lte_lc_invalid_band_conf invalid_band_conf;
+
+		/**
+		 * Payload for event @ref LTE_LC_MODEM_EVT_DETECTED_COUNTRY.
+		 *
+		 * Mobile Country Code (MCC) for the detected country.
+		 */
+		uint32_t detected_country;
+	};
 };
 
 /** RAI configuration. */
@@ -947,8 +1161,6 @@ enum lte_lc_neighbor_search_type {
 	 * networks might be deployed, in other words, a light search. The search is limited to
 	 * bands that are valid for the area of the current ITU-T region. If RPLMN is not found
 	 * based on previous cell history, the modem accepts any found PLMN.
-	 *
-	 * @note This search type is only supported by modem firmware versions >= 1.3.1.
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT = 2,
 
@@ -956,15 +1168,11 @@ enum lte_lc_neighbor_search_type {
 	 * The modem follows the same procedure as for
 	 * @ref LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT, but will continue to perform a complete
 	 * search instead of a light search, and the search is performed for all supported bands.
-	 *
-	 * @note This search type is only supported by modem firmware versions >= 1.3.1.
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE = 3,
 
 	/**
 	 * GCI search, option 1. Modem searches EARFCNs based on previous cell history.
-	 *
-	 * @note This search type is only supported by modem firmware versions >= 1.3.4.
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT = 4,
 
@@ -973,8 +1181,6 @@ enum lte_lc_neighbor_search_type {
 	 * @ref LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT. If less than gci_count cells were found,
 	 * the modem performs a light search on bands that are valid for the area of the current
 	 * ITU-T region.
-	 *
-	 * @note This search type is only supported by modem firmware versions >= 1.3.4.
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT = 5,
 
@@ -982,8 +1188,6 @@ enum lte_lc_neighbor_search_type {
 	 * GCI search, option 3. Modem starts with the same search method as in
 	 * @ref LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT. If less than gci_count cells were found,
 	 * the modem performs a complete search on all supported bands.
-	 *
-	 * @note This search type is only supported by modem firmware versions >= 1.3.4.
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE = 6,
 };
@@ -998,12 +1202,53 @@ struct lte_lc_ncellmeas_params {
 	 *
 	 * Current cell is counted as one cell. Mandatory with the GCI search types, ignored with
 	 * other search types.
-	 *
-	 * @note GCI search types are only supported by modem firmware versions >= 1.3.4.
 	 */
 	uint8_t gci_count;
 };
 
+/** Environment evaluation type. */
+enum lte_lc_env_eval_type {
+	/**
+	 * PLMN search is stopped after light search if any of the PLMNs to evaluate were found.
+	 * Search is continued over all frequency bands if light search did not find any results.
+	 */
+	LTE_LC_ENV_EVAL_TYPE_DYNAMIC = 0,
+
+	/** PLMN search is stopped after light search even if no PLMNs to evaluate were found. */
+	LTE_LC_ENV_EVAL_TYPE_LIGHT = 1,
+
+	/** PLMN search covers all channels in all supported frequency bands. */
+	LTE_LC_ENV_EVAL_TYPE_FULL = 2
+};
+
+/** PLMN to evaluate. */
+struct lte_lc_env_eval_plmn {
+	/** Mobile Country Code (MCC). */
+	int mcc;
+
+	/** Mobile Network Code (MNC). */
+	int mnc;
+};
+
+/** Environment evaluation parameters. */
+struct lte_lc_env_eval_params {
+	/**
+	 * Environment evaluation type.
+	 */
+	enum lte_lc_env_eval_type eval_type;
+
+	/**
+	 * Number of PLMNs to evaluate.
+	 *
+	 * Must be less than or equal to @c CONFIG_LTE_LC_ENV_EVAL_MAX_PLMN_COUNT.
+	 */
+	uint8_t plmn_count;
+
+	/**
+	 * Pointer to an array of PLMNs to evaluate.
+	 */
+	struct lte_lc_env_eval_plmn *plmn_list;
+};
 
 /** Search pattern type. */
 enum lte_lc_periodic_search_pattern_type {
@@ -1166,10 +1411,169 @@ struct lte_lc_periodic_search_cfg {
 	struct lte_lc_periodic_search_pattern patterns[4];
 };
 
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+/**
+ * @brief Environment evaluation results.
+ *
+ * This structure is used as the payload for event @ref LTE_LC_EVT_ENV_EVAL_RESULT.
+ */
+struct lte_lc_env_eval_result {
+	/**
+	 * Status for the environment evaluation.
+	 *
+	 * 0 indicates successful completion of the evaluation.
+	 * 5 indicates that evaluation failed, aborted due to higher priority operation.
+	 * 7 indicates that evaluation failed, unspecified.
+	 */
+	uint8_t status;
+
+	/**
+	 * Number of PLMN results available in the results array.
+	 *
+	 * Range: 0 to CONFIG_LTE_LC_ENV_EVAL_MAX_PLMN_COUNT
+	 */
+	uint8_t result_count;
+
+	/**
+	 * Pointer to an array of environment evaluation results for different PLMNs.
+	 *
+	 * Each entry contains the evaluation result for a specific PLMN.
+	 */
+	struct lte_lc_conn_eval_params *results;
+};
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
+
 /** Callback for modem functional mode changes. */
 struct lte_lc_cfun_cb {
 	void (*callback)(enum lte_lc_func_mode, void *ctx);
 	void *context;
+};
+
+enum lte_lc_pdn_evt_type {
+	/** PDN connection activated.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_ACTIVATED,
+
+	/**
+	 * PDN connection deactivated.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_DEACTIVATED,
+
+	/**
+	 * PDN has IPv6 connectivity.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_IPV6_UP,
+
+	/**
+	 * PDN has lost IPv6 connectivity.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_IPV6_DOWN,
+
+	/**
+	 * PDN is suspended.
+	 *
+	 * PDNs can be suspended when cellular profiles are used. While suspended, the PDNs remain
+	 * active, but can not be used for data transmission. PDNs associated with a cellular
+	 * profile are suspended when the device is switched to flight mode using
+	 * @ref LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG or @ref LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG_UICC_ON.
+	 * The PDNs remain suspended when switching to a different access technology. When the
+	 * device is switched back to the original access technology and LTE is activated, the
+	 * associated PDNs are resumed.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_EVT_PDN_SUSPENDED,
+
+	/**
+	 * PDN is resumed.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_EVT_PDN_RESUMED,
+
+	/**
+	 * Network detached.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_NETWORK_DETACH,
+
+	/**
+	 * APN rate control is ON for the given PDN.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_APN_RATE_CONTROL_ON,
+
+	/**
+	 * APN rate control is OFF for the given PDN.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_APN_RATE_CONTROL_OFF,
+
+	/**
+	 * PDP context is destroyed for the given PDN.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event.
+	 */
+	LTE_LC_EVT_PDN_CTX_DESTROYED,
+
+	/**
+	 * ESM error notification for PDN.
+	 *
+	 * The associated payload is the @c lte_lc_evt.pdn member of type
+	 * @ref lte_lc_pdn_evt in the event. The @c lte_lc_pdn_evt.esm_err member contains
+	 * the ESM error code.
+	 */
+	LTE_LC_EVT_PDN_ESM_ERROR,
+};
+
+/** PDN event payload. */
+struct lte_lc_pdn_evt {
+	/** Event type. */
+	enum lte_lc_pdn_evt_type type;
+	/** PDP context ID. */
+	uint8_t cid;
+	/** ESM error code. Only valid for @ref LTE_LC_EVT_PDN_ESM_ERROR event. */
+	int esm_err;
+	/**
+	 * Cellular profile ID.
+	 *
+	 * Only valid for @ref LTE_LC_EVT_PDN_NETWORK_DETACH event when a
+	 * cellular profile ID is present in the notification from the modem.
+	 * The value is set to @c -1 when no cellular profile ID was provided.
+	 */
+	int8_t cellular_profile_id;
+};
+
+struct lte_lc_cellular_profile_evt {
+	/** Cellular profile ID. */
+	int8_t profile_id;
 };
 
 /** LTE event. */
@@ -1209,7 +1613,7 @@ struct lte_lc_evt {
 #endif /* CONFIG_LTE_LC_MODEM_SLEEP_MODULE */
 
 		/** Payload for event @ref LTE_LC_EVT_MODEM_EVENT. */
-		enum lte_lc_modem_evt modem_evt;
+		struct lte_lc_modem_evt modem_evt;
 
 		/**
 		 * Payload for event @ref LTE_LC_EVT_TAU_PRE_WARNING.
@@ -1227,8 +1631,146 @@ struct lte_lc_evt {
 		/** Payload for event @ref LTE_LC_EVT_RAI_UPDATE. */
 		struct lte_lc_rai_cfg rai_cfg;
 #endif /* CONFIG_LTE_LC_RAI_MODULE */
+
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+		/** Payload for event @ref LTE_LC_EVT_ENV_EVAL_RESULT. */
+		struct lte_lc_env_eval_result env_eval_result;
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
+
+#if defined(CONFIG_LTE_LC_PDN_MODULE)
+		/** Payload for event @ref LTE_LC_EVT_PDN. */
+		struct lte_lc_pdn_evt pdn;
+#endif /* CONFIG_LTE_LC_PDN_MODULE */
+
+#if defined(CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE)
+		/** Payload for event @ref LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE. */
+		struct lte_lc_cellular_profile_evt cellular_profile;
+#endif /* CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE */
 	};
 };
+
+/** PDN address family. */
+enum lte_lc_pdn_family {
+	/** IPv4 */
+	LTE_LC_PDN_FAM_IPV4   = 0,
+	/** IPv6 */
+	LTE_LC_PDN_FAM_IPV6   = 1,
+	/** IPv4 and IPv6 */
+	LTE_LC_PDN_FAM_IPV4V6 = 2,
+	/** Non-IP */
+	LTE_LC_PDN_FAM_NONIP  = 3,
+};
+
+/** Additional Packet Data Protocol (PDP) context configuration options. */
+struct lte_lc_pdn_pdp_context_opts {
+	/**
+	 * IPv4 address allocation.
+	 *
+	 * - 0: IPv4 address through Non-access Stratum (NAS) signaling (default)
+	 * - 1: IPv4 address through Dynamic Host Configuration Protocol (DHCP)
+	 */
+	uint8_t ip4_addr_alloc;
+	/**
+	 * NAS Signalling Low Priority Indication.
+	 *
+	 * - 0: Use Non-access Stratum (NAS) Signalling Low Priority Indication (NSLPI) value
+	 *      from configuration (default)
+	 * - 1: Use value "Not configured" for NAS Signalling Low Priority Indication
+	 */
+	uint8_t nslpi;
+	/**
+	 * Protected transmission of Protocol Configuration Options (PCO).
+	 *
+	 * - 0: Protected transmission of PCO is not requested (default)
+	 * - 1: Protected transmission of PCO is requested
+	 */
+	uint8_t secure_pco;
+};
+
+/**
+ * PDN connection dynamic information structure.
+ *
+ * This structure holds dynamic information about the PDN connection.
+ */
+struct lte_lc_pdn_dynamic_info {
+	/** IPv4 Maximum Transmission Unit. */
+	uint32_t ipv4_mtu;
+	/** IPv6 Maximum Transmission Unit. */
+	uint32_t ipv6_mtu;
+	/** Primary IPv4 DNS address. */
+	struct in_addr dns_addr4_primary;
+	/** Secondary IPv4 DNS address. */
+	struct in_addr dns_addr4_secondary;
+	/** Primary IPv6 DNS address. */
+	struct in6_addr dns_addr6_primary;
+	/** Secondary IPv6 DNS address. */
+	struct in6_addr dns_addr6_secondary;
+};
+
+/** Authentication method. */
+enum lte_lc_pdn_auth {
+	/** No authentication. */
+	LTE_LC_PDN_AUTH_NONE = 0,
+	/** Password Authentication Protocol (PAP). */
+	LTE_LC_PDN_AUTH_PAP  = 1,
+	/** Challenge-Handshake Authentication Protocol (CHAP). */
+	LTE_LC_PDN_AUTH_CHAP = 2,
+};
+
+/** @brief UICC configuration type, used for cellular profile selection */
+enum lte_lc_uicc {
+	/** Physical SIM or eSIM */
+	LTE_LC_UICC_PHYSICAL	= 0,
+	/** SoftSIM */
+	LTE_LC_UICC_SOFTSIM	= 2,
+};
+
+/**
+ * @brief LTE access technology (AcT) bitmap.
+ *
+ * This bitmap selects which access technologies are enabled for an operation.
+ * It maps directly to the AcT bitmask in AT commands such as `AT%CELLULARPRFL`
+ * and `AT%PALL`.
+ */
+enum lte_lc_act {
+	/** LTE-M (Cat-M1). */
+	LTE_LC_ACT_LTEM		= BIT(0),
+	/** NB-IoT. */
+	LTE_LC_ACT_NBIOT	= BIT(1),
+	/** NTN NB-IoT. */
+	LTE_LC_ACT_NTN		= BIT(2),
+};
+
+/**
+ * @brief Cellular profile.
+ *
+ * Cellular profiles are used when there is a need for simultaneous terrestrial and
+ * non-terrestrial LTE registrations and PDN connections. There can be only one physical
+ * access at a time, but a second access is logically stored by the modem. Typically,
+ * this means that there are more than one USIM card or profile, so that certain USIM
+ * card or profile is used in certain access technology. A cellular profile combines
+ * the information that is needed for LTE registration and is identified by the
+ * cellular profile ID.
+ *
+ * @note The profile ID 0 is associated with PDP contexts in the range 0-9, while profile ID 1
+ *	 is associated with PDP contexts in the range 10-19. The default context for each profile
+ *	 is the first context in the range.
+ */
+struct lte_lc_cellular_profile {
+	/** Cellular profile ID. Valid values are 0 and 1. */
+	uint8_t id;
+
+	/**
+	 * Access technology bitmap for the profile.
+	 *
+	 * This is a combination of @ref lte_lc_act values.
+	 */
+	uint8_t act;
+
+	/** UICC configuration */
+	enum lte_lc_uicc uicc;
+};
+
 
 /**
  * Handler for LTE events.
@@ -1294,6 +1836,8 @@ int lte_lc_connect_async(lte_lc_evt_handler_t handler);
 /**
  * Set the modem to offline mode.
  *
+ * @note Requires `CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE` to be enabled.
+ *
  * @retval 0 if successful.
  * @retval -EFAULT if the functional mode could not be configured.
  */
@@ -1302,6 +1846,8 @@ int lte_lc_offline(void);
 /**
  * Set the modem to power off mode.
  *
+ * @note Requires `CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE` to be enabled.
+ *
  * @retval 0 if successful.
  * @retval -EFAULT if the functional mode could not be configured.
  */
@@ -1309,6 +1855,8 @@ int lte_lc_power_off(void);
 
 /**
  * Set the modem to normal mode.
+ *
+ * @note Requires `CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE` to be enabled.
  *
  * @retval 0 if successful.
  * @retval -EFAULT if the functional mode could not be configured.
@@ -1477,7 +2025,9 @@ int lte_lc_psm_get(int *tau, int *active_time);
  *       noted that conflicts may arise with the value set by
  *       `CONFIG_LTE_PROPRIETARY_PSM_REQ` if it is called during modem initialization.
  *
- * @note This feature is only supported by modem firmware versions >= v2.0.0.
+ * @note This is only supported by the following modem firmware:
+ *       - mfw_nrf91x1
+ *       - mfw_nrf9151-ntn
  *
  * @note Requires `CONFIG_LTE_LC_PSM_MODULE` to be enabled.
  *
@@ -1489,7 +2039,8 @@ int lte_lc_proprietary_psm_req(bool enable);
 /**
  * Set the Paging Time Window (PTW) value to be used with eDRX.
  *
- * eDRX can be requested using lte_lc_edrx_req(). PTW is set individually for LTE-M and NB-IoT.
+ * eDRX can be requested using lte_lc_edrx_req(). PTW is set individually for LTE-M, NB-IoT and
+ * NTN NB-IoT.
  *
  * Requesting a specific PTW configuration should be done with caution. The requested value must be
  * compliant with the eDRX value that is configured, and it is usually best to let the modem
@@ -1511,8 +2062,8 @@ int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw);
 /**
  * Set the requested eDRX value.
  *
- * eDRX can be requested using lte_lc_edrx_req(). eDRX value is set individually for LTE-M and
- * NB-IoT.
+ * eDRX can be requested using lte_lc_edrx_req(). eDRX value is set individually for LTE-M,
+ * NB-IoT and NTN NB-IoT.
  *
  * For reference see 3GPP 27.007 Ch. 7.40.
  *
@@ -1583,6 +2134,8 @@ int lte_lc_nw_reg_status_get(enum lte_lc_nw_reg_status *status);
  * @param[in] mode System mode.
  * @param[in] preference System mode preference.
  *
+ * @note Requires `CONFIG_LTE_LC_SYSTEM_MODE_MODULE` to be enabled.
+ *
  * @retval 0 if successful.
  * @retval -EINVAL if input argument was invalid.
  * @retval -EFAULT if the network registration could not be retrieved from the modem.
@@ -1596,6 +2149,8 @@ int lte_lc_system_mode_set(enum lte_lc_system_mode mode,
  * @param[out] mode System mode.
  * @param[out] preference System mode preference. Can be @c NULL.
  *
+ * @note Requires `CONFIG_LTE_LC_SYSTEM_MODE_MODULE` to be enabled.
+ *
  * @retval 0 if successful.
  * @retval -EINVAL if input argument was invalid.
  * @retval -EFAULT if the system mode could not be retrieved from the modem.
@@ -1608,6 +2163,8 @@ int lte_lc_system_mode_get(enum lte_lc_system_mode *mode,
  *
  * @param[in] mode Functional mode.
  *
+ * @note Requires `CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE` to be enabled.
+ *
  * @retval 0 if successful.
  * @retval -EINVAL if input argument was invalid.
  * @retval -EFAULT if the functional mode could not be retrieved from the modem.
@@ -1619,6 +2176,8 @@ int lte_lc_func_mode_set(enum lte_lc_func_mode mode);
  *
  * @param[out] mode Functional mode.
  *
+ * @note Requires `CONFIG_LTE_LC_FUNCTIONAL_MODE_MODULE` to be enabled.
+ *
  * @retval 0 if successful.
  * @retval -EINVAL if input argument was invalid.
  * @retval -EFAULT if the functional mode could not be retrieved from the modem.
@@ -1629,6 +2188,8 @@ int lte_lc_func_mode_get(enum lte_lc_func_mode *mode);
  * Get the currently active LTE mode.
  *
  * @param[out] mode LTE mode.
+ *
+ * @note Requires `CONFIG_LTE_LC_CONNECTION_STATUS_MODULE` to be enabled.
  *
  * @retval 0 if successful.
  * @retval -EINVAL if input argument was invalid.
@@ -1647,7 +2208,14 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
  * event is received, the neighbor cell measurements are automatically stopped. If the
  * function returns successfully, the @ref LTE_LC_EVT_NEIGHBOR_CELL_MEAS event is always reported.
  *
- * @note This feature is only supported by modem firmware versions >= 1.3.0.
+ * In receive only functional mode, it is recommended to wait for the modem to complete the network
+ * selection before calling this function. This can be determined from the
+ * @ref LTE_LC_EVT_MODEM_EVENT event with modem event @ref LTE_LC_MODEM_EVT_SEARCH_DONE.
+ *
+ * @note In @ref LTE_LC_FUNC_MODE_RX_ONLY functional mode, this is only supported by the following
+ *       modem firmware:
+ *       - mfw_nrf91x1 >= v2.0.3
+ *       - mfw_nrf9151-ntn
  *
  * @note Requires `CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE` to be enabled.
  *
@@ -1675,7 +2243,13 @@ int lte_lc_neighbor_cell_measurement_cancel(void);
  * Get connection evaluation parameters.
  *
  * Connection evaluation parameters can be used to determine the energy efficiency of data
- * transmission before the actual data transmission.
+ * transmission before the actual data transmission. Connection evaluation is based on collected
+ * cell history.
+ *
+ * In receive only functional mode with modem firmware mfw_nrf91x1 v2.0.3 and higher, and
+ * mfw_nrf9151-ntn, it is recommended to wait for the modem to complete the network selection
+ * before calling this function. This can be determined from the @ref LTE_LC_EVT_MODEM_EVENT event
+ * with modem event @ref LTE_LC_MODEM_EVT_SEARCH_DONE.
  *
  * @note Requires `CONFIG_LTE_LC_CONN_EVAL_MODULE` to be enabled.
  *
@@ -1701,25 +2275,46 @@ int lte_lc_neighbor_cell_measurement_cancel(void);
 int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params);
 
 /**
- * Enable modem domain events.
+ * Start environment evaluation.
  *
- * See @ref lte_lc_modem_evt for more information on which events may be received.
- * An event handler must be registered to receive events.
+ * Perform evaluation for PLMN selection. Evaluates available PLMNs and provides information
+ * of their estimated signalling conditions. Based on the evaluation results, the application
+ * can then select the best PLMN to use. This is useful especially in cases where the device
+ * has multiple SIMs or SIM profiles to select from.
  *
- * @note This feature is only supported by modem firmware versions >= 1.3.0.
+ * PLMNs (MCC/MNC pairs) to be evaluated are listed in the @ref lte_lc_env_eval_params
+ * structure. For each PLMN, evaluation results for the best found cell are returned. The results
+ * are returned with the @ref LTE_LC_EVT_ENV_EVAL_RESULT event.
  *
- * @retval 0 if successful.
- * @retval -EFAULT if AT command failed.
+ * Environment evaluation can only be performed in receive only functional mode. The device does
+ * not transmit anything during the evaluation.
+ *
+ * @note This is only supported by the following modem firmware:
+ *       - mfw_nrf91x1 >= v2.0.3
+ *       - mfw_nrf9151-ntn
+ *
+ * @note Requires `CONFIG_LTE_LC_ENV_EVAL_MODULE` to be enabled.
+ *
+ * @param[in] params Environment evaluation parameters.
+ *
+ * @retval 0 if environment evaluation was successfully initiated.
+ * @retval -EFAULT if AT command failed or feature is not supported by the modem firmware.
+ * @retval -EINVAL if parameters are invalid.
+ * @retval -EOPNOTSUPP if environment evaluation is not available in the current functional mode.
  */
-int lte_lc_modem_events_enable(void);
+int lte_lc_env_eval(struct lte_lc_env_eval_params *params);
 
 /**
- * Disable modem domain events.
+ * Cancel an ongoing environment evaluation.
  *
- * @retval 0 if successful.
+ * If environment evaluation was in progress, an @ref LTE_LC_EVT_ENV_EVAL_RESULT event is received.
+ *
+ * @note Requires `CONFIG_LTE_LC_ENV_EVAL_MODULE` to be enabled.
+ *
+ * @retval 0 if environment evaluation was cancelled.
  * @retval -EFAULT if AT command failed.
  */
-int lte_lc_modem_events_disable(void);
+int lte_lc_env_eval_cancel(void);
 
 /**
  * Configure periodic searches.
@@ -1779,6 +2374,216 @@ int lte_lc_periodic_search_clear(void);
  * @retval -EFAULT if an AT command could not be sent to the modem.
  */
 int lte_lc_periodic_search_request(void);
+
+/**
+ * Create a PDP context.
+ *
+ * In LTE terminology, this creates a PDP context (configuration) that can be activated
+ * into a PDN connection. The context contains settings like APN, address family,
+ * and authentication parameters.
+ *
+ * PDN events will be sent to all registered lte_lc event handlers.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[out] cid The context ID.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_ctx_create(uint8_t *cid);
+
+/**
+ * Configure a PDP context.
+ *
+ * The PDN connection must be inactive when the PDP context is configured.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[in] cid The context ID.
+ * @param[in] apn The Access Point Name.
+ * @param[in] family The IP address family for the PDN connection.
+ * @param[in] opts Additional configuration options. Optional, can be NULL.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_ctx_configure(uint8_t cid, const char *apn, enum lte_lc_pdn_family family,
+			     struct lte_lc_pdn_pdp_context_opts *opts);
+
+/**
+ * Set PDP context authentication parameters.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[in] cid The context ID.
+ * @param[in] method The desired authentication method.
+ * @param[in] user The username to use for authentication.
+ * @param[in] password The password to use for authentication.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_ctx_auth_set(uint8_t cid, enum lte_lc_pdn_auth method,
+				const char *user, const char *password);
+
+/**
+ * Destroy a PDP context.
+ *
+ * The PDN connection must be inactive when the PDP context is destroyed.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[in] cid The context ID.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_ctx_destroy(uint8_t cid);
+
+/**
+ * Activate a PDN connection.
+ *
+ * Activates the PDP context with the given CID, establishing a PDN connection.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[in] cid The context ID.
+ * @param[out] esm If provided, the function will block to return the ESM error reason.
+ * @param[out] family If provided, the function will block to return
+ *		      @c LTE_LC_PDN_FAM_IPV4 if only IPv4 is supported, or
+ *		      @c LTE_LC_PDN_FAM_IPV6 if only IPv6 is supported.
+ *		      Otherwise, this value will remain unchanged.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_activate(uint8_t cid, int *esm, enum lte_lc_pdn_family *family);
+
+/**
+ * Deactivate a PDN connection.
+ *
+ * Deactivates the PDN connection associated with the given context ID.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[in] cid The context ID.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_deactivate(uint8_t cid);
+
+/**
+ * Retrieve the PDN ID for a given PDP context.
+ *
+ * The PDN ID can be used to route traffic through a PDN connection.
+ * Multiple contexts (CIDs) may share the same PDN ID if they route through
+ * the same network connection.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[in] cid The context ID.
+ *
+ * @return A non-negative PDN ID on success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_id_get(uint8_t cid);
+
+/**
+ * Retrieve dynamic parameters of a given PDN connection.
+ *
+ * @param[in] cid The context ID.
+ * @param[out] info PDN dynamic info.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *info);
+
+/**
+ * @brief Enable events for default PDP context, CID 0.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @retval 0 on success, otherwise negative error code.
+ */
+int lte_lc_pdn_default_ctx_events_enable(void);
+
+/**
+ * @brief Disable events for default PDP context, CID 0.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @retval 0 on success, otherwise negative error code.
+ */
+int lte_lc_pdn_default_ctx_events_disable(void);
+
+/**
+ * Retrieve the default Access Point Name (APN).
+ *
+ * The default APN is the APN of the default PDP context (zero).
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
+ * @param[out] buf The buffer to copy the APN into. The string is null-terminated.
+ * @param[in] len The size of the output buffer.
+ *
+ * @retval 0 On success.
+ * @return A negative errno otherwise.
+ */
+int lte_lc_pdn_default_ctx_apn_get(char *buf, size_t len);
+
+#if defined(CONFIG_LTE_LC_PDN_ESM_STRERROR)
+
+/**
+ * Retrieve a statically allocated textual description for a given ESM error reason.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_ESM_STRERROR` to be enabled.
+ *
+ * @param[in] reason ESM error reason.
+ *
+ * @return ESM error reason description.
+ *         If no textual description for the given error is found,
+ *         a placeholder string is returned instead.
+ */
+const char *lte_lc_pdn_esm_strerror(int reason);
+
+#endif /* CONFIG_LTE_LC_PDN_ESM_STRERROR */
+
+/**
+ * Configure a cellular profile.
+ *
+ * The cellular profile to be used for a specific access technology is decided by the modem.
+ * The active cellular profile is reported in the @ref LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE
+ * event if an event handler is registered.
+ *
+ * @note Requires `CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE` to be enabled.
+ *
+ * @note A cellular profile can only be configured when the modem is in functional mode
+ *	 @ref LTE_LC_FUNC_MODE_POWER_OFF or @ref LTE_LC_FUNC_MODE_OFFLINE.
+ *
+ * @param[in] profile The cellular profile to set.
+ *
+ * @retval 0 on success, otherwise negative error code.
+ */
+int lte_lc_cellular_profile_configure(struct lte_lc_cellular_profile *profile);
+
+/**
+ * Remove a cellular profile.
+ *
+ * This clears the configuration for the given cellular profile ID.
+ *
+ * @note Requires `CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE` to be enabled.
+ *
+ * @note A cellular profile can only be removed when the modem is in functional mode
+ *	 @ref LTE_LC_FUNC_MODE_POWER_OFF or @ref LTE_LC_FUNC_MODE_OFFLINE.
+ *
+ * @param[in] id Cellular profile ID to remove.
+ *
+ * @retval 0 on success, otherwise negative error code.
+ */
+int lte_lc_cellular_profile_remove(uint8_t id);
 
 /** @} */
 

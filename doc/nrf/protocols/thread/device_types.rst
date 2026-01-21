@@ -151,6 +151,12 @@ The SSED allows the transmission to finish if radio activity is detected during 
 Conversely, if there is no radio activity during the specified duration of transmission window, this indicates that the parent has no messages for the SSED and the SSED returns to sleep.
 The SSED synchronization results in lower power consumption compared to an SED in some scenarios, primarily because the SSED does not need to poll for messages, keeping transmission windows short.
 
+.. note::
+    The reliability and power consumption of an SSED strongly depend on support from the parent side, in particular the quality of CSL accuracy and CSL uncertainty configuration.
+    If parent support is limited or inaccurate, communication can become unreliable, leading to additional message exchanges that increase network traffic and power consumption.
+    In deployed networks, the parent can be any Thread Router in range (from any vendor) or a commercial smart hub acting as a Thread Border Router.
+    Because the SSED’s environment and selected parent cannot be predicted, the system cannot guarantee fully optimized behavior in every deployment.
+
 For more information about SSED activity, see the :ref:`thread_sed_ssed` page.
 
 .. _thread_types_configuring:

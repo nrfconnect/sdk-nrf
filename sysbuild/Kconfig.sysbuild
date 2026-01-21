@@ -8,9 +8,12 @@
 
 menuconfig PARTITION_MANAGER
 	bool "Partition Manager"
-	default y if SOC_FAMILY_NORDIC_NRF
-	depends on !(SOC_SERIES_NRF54HX || SOC_SERIES_NRF92X)
+	default y
+	depends on SOC_SERIES_NRF52X || SOC_SERIES_NRF53X || SOC_SERIES_NRF91X || \
+		SOC_NRF54L05 || SOC_NRF54L10 || SOC_NRF54L15 || SOC_NRF54LM20A || \
+		SOC_NRF54LV10A_ENGA || SOC_NRF54LS05B_ENGA
 	depends on !EXTERNAL_CONFIGURED_NETCORE
+	select DEPRECATED if SOC_NRF54LS05B_ENGA
 
 if PARTITION_MANAGER
 
@@ -40,6 +43,16 @@ config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
 	  When enabled, will include all external flash stroage areas without
 	  being gated on the NORDIC_QSPI_NOR Kconfig, can be enabled to use
 	  non-QSPI external flash chips from partition manager.
+
+config PM_EXTERNAL_FLASH_LOGICAL_ADDR
+	hex "Logical address of external flash memory"
+	default 0x12000000 if SOC_SERIES_NRF52X
+	default 0x10000000 if SOC_FAMILY_NORDIC_NRF
+	depends on PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+	help
+	  Defines the logical address used by flashing tools and image merging
+	  utilities (for example, nrfutil, nrfjprog, or mergehex) to place data
+	  into external flash memory.
 
 endif # PARTITION_MANAGER
 
@@ -71,6 +84,7 @@ rsource "Kconfig.appcore"
 rsource "Kconfig.flprcore"
 rsource "Kconfig.netcore"
 rsource "Kconfig.pprcore"
+rsource "Kconfig.radio_loader"
 rsource "Kconfig.secureboot"
 rsource "Kconfig.mcuboot"
 rsource "Kconfig.dfu"
@@ -79,10 +93,9 @@ rsource "Kconfig.bt_fast_pair"
 rsource "Kconfig.zip"
 rsource "Kconfig.matter"
 rsource "Kconfig.wifi"
-rsource "Kconfig.hpf"
 rsource "Kconfig.approtect"
 rsource "Kconfig.lwm2m_carrier"
 rsource "Kconfig.cracen"
 rsource "Kconfig.tfm"
-rsource "Kconfig.periphconf"
 rsource "Kconfig.firmware_loader"
+rsource "Kconfig.firmware_loader_radio"

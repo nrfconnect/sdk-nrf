@@ -1,9 +1,0 @@
-/ {
-	aliases {
-		led = &button3;
-	};
-};
-
-&uart20 {
-	zephyr,pm-device-runtime-auto;
-};

@@ -1,0 +1,3 @@
+name: wifi-p2p
+append:
+  EXTRA_CONF_FILE: wifi-p2p.conf

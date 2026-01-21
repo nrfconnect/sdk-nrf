@@ -2,13 +2,15 @@
 
 .. ### Versions
 
-.. |release| replace:: v3.1.0
-.. |release_tt| replace:: ``v3.1.0``
-.. |release_number_tt| replace:: ``3.1.0``
+.. |release| replace:: v3.2.0
+.. |release_tt| replace:: ``v3.2.0``
+.. |release_number_tt| replace:: ``3.2.0``
 
-.. |jlink_ver| replace:: v8.42
+.. |jlink_ver| replace:: v8.76
 
-.. |54H_nrfutil_device_ver| replace:: 2.12.6
+.. |54H_nrfutil_device_ver| replace:: 2.15.2
+.. |54H_nrfutil_trace_ver| replace:: 4.4.0
+.. |ironside_se_ver| replace:: v23.1.2+21
 
 .. ### Config shortcuts
 
@@ -83,14 +85,12 @@
 .. |fota_upgrades_def| replace:: You can update the firmware of the device over the air, thus without a wired connection.
    Such an update is called a FOTA (firmware over-the-air) update.
 
-.. |fota_upgrades_building| replace:: To create a binary file for an application update, build the application with the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` option enabled.
-
 .. ### VSC shortcuts
 
-.. |vsc_extension_description| replace:: The |nRFVSC| is a complete IDE for developing applications compatible with the |NCS|.
-   The extension includes an interface for managing SDK and toolchain installations, an interface to the compiler and linker, an RTOS-aware debugger, a seamless interface to the |NCS|, and a serial terminal.
+.. |vsc_extension_description| replace:: |nRFVSC| is a set of VSIX extensions that turns |VSC| into a complete IDE for developing applications compatible with the |NCS|.
+   The extensions that are part of |nRFVSC| provide an interface for managing SDK and toolchain installations, an interface to the compiler and linker, an RTOS-aware debugger, a seamless interface to the |NCS|, and a serial terminal.
 .. |VSC| replace:: Visual Studio Code
-.. |nRFVSC| replace:: nRF Connect for VS Code extension
+.. |nRFVSC| replace:: nRF Connect for VS Code
 
 .. ### Deprecation shortcuts
 
@@ -144,7 +144,7 @@
 .. |led_stream| replace:: LED stream module
 .. |net_state| replace:: network state module
 .. |nrf_desktop_module_event_note| replace:: See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
-.. |nrf_desktop_command_note_with_dfu_lock| replace:: With the :ref:`CONFIG_DESKTOP_DFU_LOCK <config_desktop_app_options>` option enabled, the device only executes this command when it holds the DFU owner status.
+.. |nrf_desktop_command_note_with_dfu_lock| replace:: With the :option:`CONFIG_DESKTOP_DFU_LOCK` option enabled, the device only executes this command when it holds the DFU owner status.
 .. |nRF_Desktop_confirmation_effect| replace:: After the confirmation, Bluetooth advertising using a new local identity is started.
    When a new Bluetooth Central device successfully connects and bonds, the old bond is removed and the new bond is used instead.
    If the new peer does not connect in the predefined period of time, the advertising ends and the application switches back to the old peer.
@@ -178,11 +178,16 @@
 .. |matter_cd_definition| replace:: a cryptographic document created by the CSA for each device type, used to confirm that a given type of device was certified
 .. |matter_cd_info_note_for_samples| replace:: This data payload also includes test Device Attestation, with test Certification Declaration, Product ID, and Vendor ID.
    These are used for :ref:`ug_matter_device_attestation_commissioning_info`, and you can generate your own test Certification Declaration when you :ref:`work on Matter end product <ug_matter_device_attestation_testing_da>`.
+.. |matter_unique_discriminator_note| replace:: If you are working with multiple devices, set a unique discriminator for each one, or commission them one at a time.
+   See :ref:`ug_matter_configuring_device_identification` for more information.
+.. |Bluetoothsc| replace:: Bluetooth®
+.. |WiFi| replace:: Wi-Fi
 
 .. ### Other shortcuts
 
 .. |ncs_oot_sample_note| replace:: Some samples in the |NCS| are currently not designed to work out-of-tree.
-   You may need to manually configure your sample to work correctly in the |nRFVSC|.
+   You may need to manually configure your sample to work correctly in |nRFVSC|.
+
 .. |ncs_repo| replace:: https://github.com/nrfconnect/sdk-nrf
 
 .. |ncs_nrfxlib_repo| replace:: https://github.com/nrfconnect/sdk-nrfxlib
@@ -213,12 +218,14 @@
    The suggested approach is to test with Nordic Semiconductor devices on both sides first to verify basic functionalities and get familiar with the solution before using custom devices.
    Contact `Technical Support team <DevZone_>`_ if you need assistance.
 
-.. |usb_known_issues| replace:: Make sure to check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>` related to serial connection with the USB.
+.. |usb_known_issues| replace:: Make sure to check the :ref:`nRF5340 Audio application known issue OCT-2154 <known_issues_nrf5340audio>` related to intermittent audio stream on the headset when using USB audio interface on macOS.
 
 .. |trusted_execution| replace:: nRF5340 and nRF9160
 
 .. |samples_tfm_info| replace:: Starting from the |NCS| v2.0.0, TF-M is the only way to use :ref:`security by separation <ug_tfm_security_by_separation>` with ARM TrustZone.
    In addition, the TF-M implementation is enabled by default for all samples and applications in the |NCS| when you build for the ``*/ns`` :ref:`variant <app_boards_names>` of the boards.
+
+.. |encrypted_its_not_supported_on_nrf54lm20| replace:: The encrypted ITS service is not supported on nRF54LM20 as it :ref:`does not support the full set of AEAD algorithm features <ug_crypto_supported_features_aead_algorithms>`.
 
 .. |plusminus| unicode:: U+000B1 .. PLUS-MINUS SIGN
    :rtrim:
@@ -276,3 +283,5 @@
 .. |matter_cluster_editor_preview| replace:: The Matter Cluster Editor app is currently in the preview stage.
 
 .. |ISE| replace:: IronSide SE
+
+.. |ESB| replace:: Enhanced ShockBurst

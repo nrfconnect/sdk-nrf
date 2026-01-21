@@ -22,6 +22,6 @@ config BT_LBS_POLL_BUTTON
 
 module = BT_LBS
 module-str = LBS
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_LBS

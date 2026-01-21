@@ -1,0 +1,24 @@
+sample:
+  name: Hello World for multiple board targets using Sysbuild
+  description: |
+    Hello World application that builds for multiple targets. Both images print
+    the board target they were run on.
+
+common:
+  sysbuild: true
+  harness: pytest
+  harness_config:
+    pytest_dut_scope: session
+  timeout: 20
+  tags:
+    - ci_samples_zephyr_sysbuild_hello_world
+
+tests:
+  nrf.extended.sample.sysbuild.hello_world:
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_args:
+      - hello_world_SNIPPET=nordic-flpr

@@ -94,7 +94,7 @@ Perform the following steps to add nRF Desktop application configuration for a b
    a. Ensure that the Bluetooth role is properly configured.
       For mouse, it should be configured as peripheral.
    #. Update the configuration related to peer control.
-      You can also disable the peer control using the :ref:`CONFIG_DESKTOP_BLE_PEER_CONTROL <config_desktop_app_options>` option.
+      You can also disable the peer control using the :option:`CONFIG_DESKTOP_BLE_PEER_CONTROL` option.
       Peer control details are described in the :ref:`nrf_desktop_ble_bond` documentation.
 
 #. Edit Kconfig to disable options that you do not use.

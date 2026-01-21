@@ -53,11 +53,6 @@ FAKE_VALUE_FUNC(otError, otCoapSendResponseWithParameters, otInstance *, otMessa
 		const otMessageInfo *, const otCoapTxParameters *);
 
 #define FOREACH_FAKE(f)                                                                            \
-	f(otMessageGetLength);                                                                     \
-	f(otMessageGetOffset);                                                                     \
-	f(otMessageRead);                                                                          \
-	f(otMessageFree);                                                                          \
-	f(otMessageAppend);                                                                        \
 	f(otCoapNewMessage);                                                                       \
 	f(otCoapMessageInit);                                                                      \
 	f(otCoapMessageInitResponse);                                                              \
@@ -89,8 +84,11 @@ static void tc_setup(void *f)
 
 	FOREACH_FAKE(RESET_FAKE);
 	FFF_RESET_HISTORY();
+}
 
-	/* Unit tests take up to two message slots. */
+static void tc_cleanup(void *f)
+{
+	/* This suite uses two messages at most. */
 	ot_res_tab_msg_free(1);
 	ot_res_tab_msg_free(2);
 }
@@ -576,4 +574,4 @@ ZTEST(ot_rpc_coap, test_otCoapSendResponse_failed)
 	zassert_not_null(ot_res_tab_msg_get(message_rep));
 }
 
-ZTEST_SUITE(ot_rpc_coap, NULL, NULL, tc_setup, NULL, NULL);
+ZTEST_SUITE(ot_rpc_coap, NULL, NULL, tc_setup, tc_cleanup, NULL);

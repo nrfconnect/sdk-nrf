@@ -41,6 +41,12 @@ Glossary
    Application Programming Interface (API)
       A language and message format used by a program to communicate with an operating system, application, or other services.
 
+   Application RoT
+      A concept related to `Platform Security Architecture (PSA)`_ and :term:`Root of Trust (RoT)`.
+      It is the security domain in which additional security services are implemented.
+      In the |NCS|, Trusted Firmware-M (TF-M) implements a set of Application RoT Services.
+      For more information, see :ref:`ug_tfm_architecture_rot_services_application`.
+
    Assisted GNSS (A-GNSS)
       A form of assistance provided to devices trying to obtain a :term:`Global Navigation Satellite System (GNSS)` fix.
       It improves the :term:`Time to First Fix (TTFF)` by utilizing a connection (for example, over cellular) to the internet to retrieve the :term:`almanac data` and :term:`ephemeris data`.
@@ -182,7 +188,7 @@ Glossary
       Most memory and peripherals can be flexibly allocated to cores at compile time.
 
    Cortex Microcontroller Software Interface Standard (CMSIS)
-      A vendor-independent hardware abstraction layer for the Cortex-M processor series that defines generic tool interfaces.
+      A vendor-independent :term:`Hardware Abstraction Layer (HAL)` for the Cortex-M processor series that defines generic tool interfaces.
 
    Cortex-M Security Extensions (CMSE)
       A group term for different security extensions for the Arm Cortex-M33 processor.
@@ -377,6 +383,9 @@ Glossary
    Global Positioning System (GPS)
       A satellite-based radio navigation system that provides its users with accurate location and time information over the globe.
 
+   Hardware Abstraction Layer (HAL)
+      An interface to abstract hardware-oriented operations and provide a set of APIs to the upper layers.
+
    Hardware Flow Control (HWFC)
       A handshaking mechanism used to prevent an overflow of bytes in modems.
       It uses two dedicated pins on the RS-232 connector, :term:`Request to Send (RTS)` and :term:`Clear to Send (CTS)`.
@@ -436,6 +445,10 @@ Glossary
    Isochronous channels (ISO)
       A feature of the :term:`LE Audio` standard that allows for relaying audio data to multiple devices at the same time (isochronously) without having to split the stereo stream.
 
+   Internal Trusted Storage (ITS)
+      One of :term:`Platform RoT` services, which provides trusted storage of key material in internal flash.
+      For more information, see :ref:`ug_tfm_services_its`.
+
    Just In Time Provisioning (JITP)
       A device is provisioned when it first tries to connect to the IoT broker and presents its device certificate.
       Before the first communication, the device is not known to the broker and is not stored in the fleet registry.
@@ -474,6 +487,10 @@ Glossary
       It is independent from Bluetooth® 5.0 and Bluetooth® 5.1.
       Audio LE reduces power consumption for audio transmission, allows for isochronous audio streams between a source and multiple sink devices, and enables broadcasting to an unlimited number of audio devices.
       The standard uses the new :term:`LC3 codec`.
+
+   Lifecycle states (LCS)
+      Device states that control security-related features, such as access to debug and programming interfaces.
+      For more information, see :ref:`ug_nrf54h20_architecture_lifecycle`.
 
    Link Layer (LL)
       "A control protocol for the link and physical layers that is carried over logical links in addition to user data."
@@ -537,6 +554,7 @@ Glossary
    Memory Privilege Controller (MPC)
       Performs security configuration, enforcement, and bus decoding.
       It implements security filtering, checking bus accesses against the configured access properties and blocking any unauthorized accesses.
+      Do not confuse this with Memory Protection Controller from the Arm architecture, which is not used in the |NCS|.
 
    Memory-to-memory Vector Direct Memory Access (MVDMA)
       A peripheral capable of copying data from one memory address to another memory address.
@@ -602,6 +620,11 @@ Glossary
    Noise Factor (NF)
       The relation of the :term:`Signal-to-Noise Ratio (SNR)` in the device input to the SNR in the device output.
 
+   Non-secure image
+      A concept related to :ref:`ug_tfm_security_by_separation`.
+      In the context of the |NCS| and `ARM TrustZone`_, this is a firmware image that is executed in the :term:`Non-Secure Processing Environment (NSPE)`.
+      It is typically built using the ``*/ns`` :ref:`board target variant <app_boards_names>`.
+
    Non-Secure Processing Environment (NSPE)
       One of the two processing environments when using Cortex-M Security Extensions.
       When firmware is separated between NSPE and :term:`Secure Processing Environment (SPE)`, NSPE is used to store the application core firmware.
@@ -620,7 +643,7 @@ Glossary
 
    nRF Connect SDK Add-ons
       An index of publicly available supplementary components that extend the |NCS|'s functionality.
-      The index can be accessed from the |nRFVSC|, and can also be browsed on `add-on webpage <nRF Connect SDK Add-ons_>`_.
+      The index can be accessed from |nRFVSC|, and can also be browsed on `add-on webpage <nRF Connect SDK Add-ons_>`_.
       Add-ons in the index follow specific contribution guidelines and are maintained by their respective owners.
       The workspace applications listed there can be used to create out-of-tree :ref:`workspace applications <creating_add_on_index>`.
       For more information, including how to contribute your own add-on to the index, read :file:`README.md` and :file:`CONTRIBUTING.md` in the `ncs-app-index repository <ncs-app-index_>`_.
@@ -701,6 +724,12 @@ Glossary
    Physically Unclonable Function (PUF)
       A function device that exploits inherent randomness introduced during manufacturing to give a physical entity a unique "fingerprint" or a trust anchor.
 
+   Platform RoT
+      A concept related to `Platform Security Architecture (PSA)`_ and :term:`Root of Trust (RoT)`.
+      It is the security domain in which platform-specific services are implemented.
+      In the |NCS|, Trusted Firmware-M (TF-M) implements a set of Platform RoT Services.
+      For more information, see :ref:`ug_tfm_architecture_rot_services_platform`.
+
    Platform Security Architecture Certified (PSA Certified)
       A security certification scheme for Internet of Things (IoT) hardware, software and devices.
 
@@ -722,7 +751,7 @@ Glossary
       The process of securely generating and storing credentials in a device, then uploading a device ID and device certificate to a cloud account so that the device is ready to connect to the cloud.
 
    Predicted GPS (P-GPS)
-      A form of assistance provided to devices trying to obtain a :term:`Global Navigation Satellite System (GNSS)` fix, where the device can download up to two weeks of predicted satellite Ephemerides data.
+      A form of assistance provided to devices trying to obtain a :term:`Global Navigation Satellite System (GNSS)` fix, where the device can download predicted satellite Ephemerides data for several days into the future.
       It enables devices to determine the exact orbital location of the satellite without connecting to the network every two hours with a trade-off of reduced accuracy of the calculated position over time.
       It is available through :term:`nRF Cloud`.
 
@@ -735,6 +764,10 @@ Glossary
 
    Programmable Peripheral Interconnect (PPI)
       It enables peripherals to interact autonomously with each other using tasks and events independently of the CPU.
+
+   Protected Storage (PS)
+      One of :term:`Application RoT` services, which provides secure storage with encryption, integrity protection, and rollback protection for non-secure applications.
+      For more information, see :ref:`tfm_partition_ps`.
 
    Protocol Data Unit (PDU)
       Information transferred as a single unit between peer entities of a computer network and containing control and address information or data.
@@ -829,6 +862,14 @@ Glossary
    Secure domain (SecDom)
       A dedicated :term:`Domain` which executes a pre-compiled firmware component that is signed by Nordic Semiconductor.
       It exposes security services to the other domains through an Interprocess Communication interface.
+
+   Secure image
+      A concept related to :ref:`ug_tfm_security_by_separation`.
+      In the context of the |NCS| and `ARM TrustZone`_, this is a firmware image that is provided by Trusted Firmware-M and executed in the :term:`Secure Processing Environment (SPE)`.
+      It is typically built using the ``*/ns`` :ref:`board target variant <app_boards_names>`.
+
+   Secure partition
+      A memory partition used to store the data of the :term:`Secure Processing Environment (SPE)`.
 
    Serial Peripheral Interface (SPI)
       An interface bus commonly used to send data between microcontrollers and small peripherals such as shift registers, sensors, and SD cards.
@@ -1035,7 +1076,7 @@ Glossary
 
    Wi-Fi Protected Access® (WPA)
       A security protocol developed by Wi-Fi Alliance.
-      It comes in three flavours WPA, WPA2 and WPA3 respectively, with each offering higher security compared to its predecessor.
+      It comes in three flavors WPA, WPA2 and WPA3 respectively, with each offering higher security compared to its predecessor.
 
    Wireshark
       A free software tool that captures wireless traffic and reproduces it in a readable format.

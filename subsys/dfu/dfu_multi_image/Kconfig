@@ -17,4 +17,34 @@ config DFU_MULTI_IMAGE_MAX_IMAGE_COUNT
 	  The maximum number of images that can be included in a DFU package
 	  and correctly processed by the DFU Multi Image library.
 
+config DFU_MULTI_IMAGE_SAVE_PROGRESS
+	bool "Store dfu multi image write progress to flash stream"
+	depends on DFU_TARGET_STREAM_SAVE_PROGRESS || ZTEST
+	depends on SETTINGS
+	help
+	  Enable this option to cause dfu_multi_image to store the current
+	  write progress to flash. In case of power failure or device reset,
+	  the operation can then resume from the latest state.
+
+if DFU_MULTI_IMAGE_SAVE_PROGRESS
+
+config DFU_MULTI_IMAGE_ALIGN
+	int "DFU Multi Image start of images alignment"
+	default $(dt_node_int_prop_int,$(DT_CHOSEN_ZEPHYR_FLASH),write-block-size)
+	help
+	  Set the alignment of the start of every image inside the DFU Multi Image package.
+	  Setting this to a value greater than 1 will add 0xFF padding at the end of the header
+	  and between images as needed to ensure that each image starts at an offset with the given alignment.
+	  This is needed when the DFU package is stored in a medium that requires specific alignment,
+	  e.g., flash memory with minimum write size of 4.
+	  Note - the additional 0xFF will be passed as part of the image to the underlying DFU target
+	  and possibly will be written to the NVM.
+
+endif # DFU_MULTI_IMAGE_SAVE_PROGRESS
+
+module=DFU_MULTI_IMAGE
+module-dep=LOG
+module-str=DFU Multi Image
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
 endif # DFU_MULTI_IMAGE

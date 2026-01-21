@@ -48,6 +48,7 @@ General information about samples in the |NCS|
    samples/bl
    samples/cellular
    samples/crypto
+   samples/ironside_se
    samples/debug
    samples/dect
    samples/dfu

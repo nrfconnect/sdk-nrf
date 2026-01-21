@@ -30,7 +30,7 @@ extern "C" {
 #endif
 #include <zephyr/devicetree.h>
 
-#if DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf_kmu) || defined(CONFIG_CRACEN_HW_PRESENT)
+#if DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf_kmu) || defined(CONFIG_HAS_HW_NRF_CRACEN)
 #define HUK_HAS_KMU
 #endif
 #if defined(CONFIG_HAS_HW_NRF_CC310)
@@ -44,7 +44,7 @@ extern "C" {
 #define HUK_SIZE_WORDS 4
 #elif defined(HUK_HAS_CC312)
 #define HUK_SIZE_WORDS 8
-#elif defined(CONFIG_CRACEN_HW_PRESENT)
+#elif defined(CONFIG_HAS_HW_NRF_CRACEN)
 #define HUK_SIZE_WORDS 12
 #else
 #error "This library requires CryptoCell or Cracen to be available."

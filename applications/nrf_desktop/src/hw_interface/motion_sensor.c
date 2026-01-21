@@ -223,7 +223,7 @@ static void data_ready_handler(const struct device *dev, const struct sensor_tri
 	k_spin_unlock(&state.lock, key);
 }
 
-static int motion_read(bool send_event)
+static int motion_read(int16_t *dx, int16_t *dy)
 {
 	struct sensor_value value_x;
 	struct sensor_value value_y;
@@ -239,28 +239,10 @@ static int motion_read(bool send_event)
 					 &value_y);
 	}
 
-	if (err || !send_event) {
-		return err;
+	if (!err) {
+		*dx = value_x.val1;
+		*dy = value_y.val1;
 	}
-
-	static unsigned int nodata;
-	if (!value_x.val1 && !value_y.val1) {
-		if (nodata < NODATA_LIMIT) {
-			nodata++;
-		} else {
-			nodata = 0;
-
-			return -ENODATA;
-		}
-	} else {
-		nodata = 0;
-	}
-
-	struct motion_event *event = new_motion_event();
-
-	event->dx = value_x.val1;
-	event->dy = value_y.val1;
-	APP_EVENT_SUBMIT(event);
 
 	return err;
 }
@@ -472,15 +454,24 @@ static void write_config(void)
 
 static void motion_thread_fn(void)
 {
+	unsigned int nodata = 0;
+	struct motion_event *event = NULL;
 	int err = init();
 
 	if (!err) {
 		module_set_state(MODULE_STATE_READY);
+	} else {
+		/* This thread is supposed to run forever. */
+		module_set_state(MODULE_STATE_ERROR);
+		return;
 	}
 
-	while (!err) {
+	while (true) {
 		bool send_event;
 		uint32_t option_bm;
+		int16_t dx;
+		int16_t dy;
+		bool no_motion = false;
 
 		k_sem_take(&sem, K_FOREVER);
 
@@ -490,23 +481,50 @@ static void motion_thread_fn(void)
 		option_bm = state.option_mask;
 		k_spin_unlock(&state.lock, key);
 
-		err = motion_read(send_event);
-
-		bool no_motion = (err == -ENODATA);
-		if (unlikely(no_motion)) {
-			err = 0;
+		err = motion_read(&dx, &dy);
+		if (err) {
+			break;
 		}
 
-		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) &&
-		    !err && unlikely(option_bm)) {
+		if (send_event) {
+			if ((dx == 0) && (dy == 0)) {
+				if (nodata < NODATA_LIMIT) {
+					nodata++;
+				} else {
+					nodata = 0;
+					no_motion = true;
+				}
+			} else {
+				nodata = 0;
+			}
+
+			if (!event) {
+				event = new_motion_event();
+			}
+			event->dx = dx;
+			event->dy = dy;
+			event->active = !no_motion;
+		}
+
+		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE) && unlikely(option_bm)) {
 			write_config();
 		}
 
 		key = k_spin_lock(&state.lock);
-		if ((state.state == STATE_FETCHING) && no_motion) {
-			state.state = STATE_IDLE;
+		if (state.state == STATE_FETCHING) {
+			if (send_event) {
+				__ASSERT_NO_MSG(event);
+				APP_EVENT_SUBMIT(event);
+				event = NULL;
+
+				if (no_motion) {
+					state.state = STATE_IDLE;
+				}
+			}
 		}
+
 		if (state.state != STATE_FETCHING) {
+			nodata = 0;
 			enable_trigger();
 		}
 		k_spin_unlock(&state.lock, key);
@@ -532,6 +550,17 @@ static bool handle_usb_state_event(const struct usb_state_event *event)
 	}
 
 	return false;
+}
+
+static void send_empty_motion_event(void)
+{
+	struct motion_event *event = new_motion_event();
+
+	event->dx = 0;
+	event->dy = 0;
+	event->active = false;
+
+	APP_EVENT_SUBMIT(event);
 }
 
 static bool app_event_handler(const struct app_event_header *aeh)
@@ -661,6 +690,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 		switch (state.state) {
 		case STATE_FETCHING:
+			/* Send a motion_event to inform about leaving fetching state. */
+			send_empty_motion_event();
+			/* Fall-through */
+
 		case STATE_IDLE:
 		case STATE_DISCONNECTED:
 			enable_trigger();

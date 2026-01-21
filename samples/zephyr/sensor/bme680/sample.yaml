@@ -45,7 +45,8 @@ tests:
         - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\\
         .]*$"
     extra_args:
-      - SHIELD=pca63566;coverage_support
+      - SHIELD=pca63566
+      - SNIPPET=coverage_support
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
 
   nrf.extended.sample.sensor.bme680.nrf54l:
@@ -58,7 +59,9 @@ tests:
         .]*$"
     extra_args:
       - SHIELD=pca63565
-    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
 
   nrf.extended.sample.sensor.bme680.nrf54l_coverage:
     filter: CONFIG_COVERAGE
@@ -69,8 +72,11 @@ tests:
         - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\\
         .]*$"
     extra_args:
-      - SHIELD=pca63565;coverage_support
-    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+      - SHIELD=pca63565
+      - SNIPPET=coverage_support
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
 
   nrf.extended.sample.sensor.bme680.nrf54l_cpuflpr:
     filter: not CONFIG_COVERAGE
@@ -83,16 +89,7 @@ tests:
         .]*$"
     extra_args:
       - SHIELD=pca63565
-      - vpr_launcher_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"
-    platform_allow: nrf54l15dk/nrf54l15/cpuflpr
-
-  nrf.extended.sample.sensor.bme680.nrf54lm20:
-    harness_config:
-      fixture: pca63565
-      type: one_line
-      regex:
-        - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\\
-        .]*$"
+      - vpr_launcher_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/boards/shields/pca63565/boards/nrf54l_vpr_launcher.overlay"
     platform_allow:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp

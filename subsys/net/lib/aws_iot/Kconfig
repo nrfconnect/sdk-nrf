@@ -59,6 +59,6 @@ config AWS_IOT_TOPIC_DELETE_REJECTED_SUBSCRIBE
 module = AWS_IOT
 module-dep = LOG
 module-str = AWS IoT
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # AWS_IOT

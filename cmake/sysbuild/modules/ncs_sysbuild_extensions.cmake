@@ -126,3 +126,25 @@ function(ExternalNcsVariantProject_Add)
   # Configure variant image after application so that the configuration is present
   sysbuild_add_dependencies(CONFIGURE ${VBUILD_VARIANT} ${VBUILD_APPLICATION})
 endfunction()
+
+# Usage:
+#   FirmwareUpdaterImage_Get(<outvar>)
+#
+# This function returns a list of images, configured as firmware loader images.
+#
+# <outvar>:       Name of variable to set.
+function(FirmwareUpdaterImage_Get outvar)
+  set(fw_loader_images)
+  get_property(images GLOBAL PROPERTY sysbuild_images)
+
+  foreach(image ${images})
+    set(app_type)
+    get_property(app_type TARGET ${image} PROPERTY APP_TYPE)
+
+    if("${app_type}" STREQUAL "FIRMWARE_LOADER")
+      list(APPEND fw_loader_images ${image})
+    endif()
+  endforeach()
+
+  set(${outvar} "${fw_loader_images}" PARENT_SCOPE)
+endfunction()

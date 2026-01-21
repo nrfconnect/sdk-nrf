@@ -51,7 +51,7 @@ struct scene_btn_ctx {
 	int64_t press_start_time;
 };
 
-#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_BASELINE)
 static const uint8_t cmp2_elem_offset[1] = { 0 };
 
 static const struct bt_mesh_comp2_record comp_rec[2] = {
@@ -306,7 +306,7 @@ static const struct bt_mesh_comp comp = {
 
 const struct bt_mesh_comp *model_handler_init(void)
 {
-#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_BASELINE)
 	if (bt_mesh_comp2_register(&comp_p2)) {
 		printf("Failed to register comp2\n");
 	}

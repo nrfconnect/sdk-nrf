@@ -3,14 +3,16 @@ common:
     - drivers
     - ci_tests_zephyr_drivers_timer
   platform_allow:
+    - nrf54ls05dk/nrf54ls05b/cpuapp
+    - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+    - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
     - nrf54lv10dk/nrf54lv10a/cpuapp
-    - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
-    - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
     - nrf54lv10dk/nrf54lv10a/cpuflpr
-    - nrf54lv10dk@0.0.0/nrf54lv10a/cpuflpr
+    - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
     - nrf54lv10dk@0.2.0/nrf54lv10a/cpuflpr
+    - nrf7120dk/nrf7120/cpuapp
   integration_platforms:
-    - nrf54lv10dk/nrf54lv10a/cpuapp
+    - nrf54ls05dk/nrf54ls05b/cpuapp
   timeout: 45
 tests:
   nrf.extended.drivers.timer.nrf_grtc_timer: {}

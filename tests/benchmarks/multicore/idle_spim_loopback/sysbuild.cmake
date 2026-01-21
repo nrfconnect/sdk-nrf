@@ -5,11 +5,7 @@
 #
 
 if(SB_CONFIG_SOC_NRF54H20)
-  if(SB_CONFIG_REMOTE_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING)
-    set(REMOTE_SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/remote_gdf_switching)
-  else()
-    set(REMOTE_SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever)
-  endif()
+  set(REMOTE_SOURCE_DIR ${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever)
 
   # Add remote project
   ExternalZephyrProject_Add(

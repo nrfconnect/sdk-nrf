@@ -29,10 +29,10 @@ Software-based downgrade protection
 The |NCS| supports MCUboot's software-based downgrade prevention for application images, using semantic versioning.
 This feature offers protection against any outdated firmware that is uploaded to a device.
 
-To enable this feature, set the configuration option :kconfig:option:`CONFIG_MCUBOOT_DOWNGRADE_PREVENTION` for the MCUboot image and ``SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY`` for sysbuild.
+To enable this feature, set the configuration option :kconfig:option:`CONFIG_MCUBOOT_DOWNGRADE_PREVENTION` for the MCUboot image and :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY` for sysbuild.
 
 .. caution::
-   Enabling ``SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY`` prevents the fallback recovery of application images.
+   Enabling :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY` prevents the fallback recovery of application images.
    Consult its Kconfig description and the :doc:`MCUboot Design documentation <mcuboot:design>` for more information on how to use it.
 
    For nRF53 Series devices, this mode is generally the most appropriate for MCUboot.
@@ -89,7 +89,7 @@ Downgrade protection using |NSIB|
 
 .. bootloader_monotonic_counter_nsib_start
 
-To enable anti-rollback protection with monotonic counter for |NSIB|, set the following configurations in the ``b0`` image: :kconfig:option:`CONFIG_SB_MONOTONIC_COUNTER` and :kconfig:option:`CONFIG_SB_NUM_VER_COUNTER_SLOTS`
+To enable anti-rollback protection with monotonic counter for |NSIB|, set the following sysbuild configuration options: :kconfig:option:`SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER` and :kconfig:option:`SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS`
 
 Special handling is needed when updating the S1 variant of an image when :ref:`ug_bootloader_adding_sysbuild_upgradable`.
 See :ref:`ug_bootloader_adding_sysbuild_presigned_variants` for details.
@@ -106,9 +106,9 @@ Downgrade protection using MCUboot
 
 To enable anti-rollback protection with monotonic counter for MCUboot, set the following configurations using sysbuild:
 
-* ``SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION``
-* ``SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS``
-* ``SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE``
+* :kconfig:option:`SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION`
+* :kconfig:option:`SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS`
+* :kconfig:option:`SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE`
 
 Downgrade protection using |NSIB| with MCUboot
 ==============================================

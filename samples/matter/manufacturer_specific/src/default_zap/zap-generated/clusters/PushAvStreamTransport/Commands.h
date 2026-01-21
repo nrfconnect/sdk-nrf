@@ -349,6 +349,7 @@ namespace app
 						kConnectionID = 0,
 						kActivationReason = 1,
 						kTimeControl = 2,
+						kUserDefined = 3,
 					};
 
 					struct Type {
@@ -369,6 +370,7 @@ namespace app
 							static_cast<TriggerActivationReasonEnum>(0);
 						Optional<Structs::TransportMotionTriggerTimeControlStruct::Type>
 							timeControl;
+						Optional<chip::ByteSpan> userDefined;
 
 						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
 
@@ -394,6 +396,7 @@ namespace app
 							static_cast<TriggerActivationReasonEnum>(0);
 						Optional<Structs::TransportMotionTriggerTimeControlStruct::DecodableType>
 							timeControl;
+						Optional<chip::ByteSpan> userDefined;
 
 						CHIP_ERROR Decode(TLV::TLVReader &reader,
 								  FabricIndex aAccessingFabricIndex);
@@ -418,7 +421,7 @@ namespace app
 							return Clusters::PushAvStreamTransport::Id;
 						}
 
-						Optional<DataModel::Nullable<uint16_t>> connectionID;
+						DataModel::Nullable<uint16_t> connectionID;
 
 						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
 
@@ -440,7 +443,7 @@ namespace app
 						}
 						static constexpr bool kIsFabricScoped = true;
 
-						Optional<DataModel::Nullable<uint16_t>> connectionID;
+						DataModel::Nullable<uint16_t> connectionID;
 
 						CHIP_ERROR Decode(TLV::TLVReader &reader,
 								  FabricIndex aAccessingFabricIndex);

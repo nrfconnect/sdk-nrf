@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "app_common.dtsi"
+#include "memory_map_ram_load.dtsi"
+
+/ {
+	chosen {
+		/* We need to point where we want to place the retained memory region that
+		 * is shared with the MCUboot bootloader image and contains the image metadata.
+		 */
+		zephyr,bootloader-info = &boot_info0;
+	};
+
+	hid_dev_0: hid_dev_0 {
+		compatible = "zephyr,hid-device";
+		label = "HID0";
+		protocol-code = "mouse";
+		in-polling-period-us = <125>;
+		in-report-size = <64>;
+	};
+};

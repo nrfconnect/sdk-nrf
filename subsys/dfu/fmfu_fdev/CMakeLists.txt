@@ -8,7 +8,7 @@ zephyr_library()
 
 zephyr_library_sources(src/fmfu_fdev.c)
 
-if (CONFIG_FMFU_CDDL_DECODER_GENERATE)
+if(CONFIG_FMFU_CDDL_DECODER_GENERATE)
   add_subdirectory(cddl)
 else()
   zephyr_library_sources(src/modem_update_decode.c)

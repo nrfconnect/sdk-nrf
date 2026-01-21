@@ -106,6 +106,41 @@ config SECURE_BOOT_APPCORE_SIGNATURE_TYPE_UNUSED
 
 endchoice
 
+config SECURE_BOOT_MONOTONIC_COUNTER
+	bool "HW monotonic version counter"
+	default y
+	help
+	  The counter stores the current firmware version in a way that ensures that the value
+	  can only increase. This is used to prevent malicious rollback of the firmware.
+	  An array of slots is used for the counter. One slot is used per
+	  counter update, and each new slot must have a larger value than the
+	  previous. Application versions are checked against the largest
+	  counter value before being booted.
+
+config SECURE_BOOT_NUM_VER_COUNTER_SLOTS
+	int "Number of monotonic counter slots used for the firmware version"
+	default 20 if BOOTLOADER_MCUBOOT
+	default 240
+	range 2 300 if SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X || SOC_SERIES_NRF54LX
+	range 2 1800 if SOC_SERIES_NRF52X
+	range 2 288 if SOC_SERIES_NRF51X
+	depends on SECURE_BOOT_MONOTONIC_COUNTER
+	help
+	  The number of monotonic counter slots available for the counter,
+	  i.e., the number of times the counter can be updated.
+	  The slots are 16 bits each.
+	  Rationale for the default number (240): Assume one update a month for
+	  10 years, then double that value just in case. This default fits
+	  comfortably within the OTP region of UICR.
+	  When a second stage bootloader is enabled, such as MCUboot, this counter is used
+	  for the updates of the second stage bootloader and not of the application image. Thus
+	  the default when MCUboot is enabled is 20, to allow two updates a year for 10 years.
+	  Regarding ranges: The actual maximum depends on the number of
+	  provisioned public keys, since they share the space. The same is true if
+	  other data is stored in the "OTP" region (on for example nRF91 and nRF53).
+	  This configuration should not be used in code. Instead, the header before the
+	  slots should be read at run-time.
+
 endif # SECURE_BOOT_APPCORE
 
 menuconfig SECURE_BOOT_NETCORE
@@ -279,9 +314,6 @@ choice SECURE_BOOT_SIGNING
 config SECURE_BOOT_SIGNING_PYTHON
 	bool "Sign with Python ecdsa library"
 
-config SECURE_BOOT_SIGNING_OPENSSL
-	bool "Sign with openssl command line tool"
-
 config SECURE_BOOT_SIGNING_CUSTOM
 	bool "Sign with custom command"
 
@@ -339,9 +371,15 @@ config SECURE_BOOT_PUBLIC_KEY_FILES
 	  empty string then only the public key hash corresponding to the private signing key used
 	  to sign the image is included in provision.hex.
 
+config SECURE_BOOT_BOOTCONF_LOCK_WRITES_SUPPORTED
+	bool
+	default y if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP
+	default y if SOC_NRF54LV10A_ENGA_CPUAPP
+	default y if SOC_NRF54LM20A_ENGA_CPUAPP
+
 config SECURE_BOOT_BOOTCONF_LOCK_WRITES
 	bool "Protect bootloader's NVM from writes"
-	depends on SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP
+	depends on SECURE_BOOT_BOOTCONF_LOCK_WRITES_SUPPORTED
 	default y
 	help
 	  Sets RRAMC's BOOTCONF region protection to disable writes.

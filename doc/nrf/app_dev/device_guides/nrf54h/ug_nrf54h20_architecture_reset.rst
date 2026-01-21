@@ -54,7 +54,7 @@ The following is the reset behavior when the LCS of the nRF54H20 SoC is either i
    * - ``RESET_PIN``
      - J-Link toggles the **RESET** pin using OBD.
    * - ``RESET_VIA_SECDOM``
-     - Uses the CTRL-AP mailbox to send a local domain reset request to the Secure Domain Firmware (SDFW).
+     - Uses the CTRL-AP mailbox to send a local domain reset request to the IronSide Secure Element (IronSide SE).
 
        This command resets the entire system while keeping both the application core and the radio core in a halted state.
 
@@ -73,7 +73,7 @@ Reset your device using nRF Util
 
 To trigger a specific reset type on your nRF54H20 SoC-based device, use the ``nrfutil device reset`` command::
 
-   nrfutil device reset --serial-number <blah> --reset-kind <reset-kind>
+   nrfutil device reset --serial-number <serial_number> --reset-kind <reset_kind>
 
 For a detailed list of commands for each reset type, run the following::
 

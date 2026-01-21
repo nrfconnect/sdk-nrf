@@ -15,6 +15,6 @@ if BT_DDFS
 
 module = BT_DDFS
 module-str = DDFS
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_DDFS

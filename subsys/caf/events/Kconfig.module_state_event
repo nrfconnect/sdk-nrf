@@ -5,7 +5,7 @@
 #
 
 config CAF_MODULE_STATE_EVENTS
-	bool "Enable module state events"
+	bool "Module state events"
 	help
 	  Enable support for module state events.
 

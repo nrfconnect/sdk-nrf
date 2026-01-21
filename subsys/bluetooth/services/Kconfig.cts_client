@@ -14,6 +14,6 @@ if BT_CTS_CLIENT
 
 module = BT_CTS_CLIENT
 module-str = CTS Client
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_CTS_CLIENT

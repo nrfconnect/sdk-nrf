@@ -2,6 +2,9 @@ name: Compliance
 
 on: pull_request
 
+permissions:
+  contents: read
+
 jobs:
   compliance_job:
     runs-on: ubuntu-24.04
@@ -19,7 +22,7 @@ jobs:
         rebase: true
 
     - name: cache-pip
-      uses: actions/cache@2f8e54208210a422b2efd51efaa6bd6d7ca8920f # v3
+      uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-doc-pip
@@ -30,7 +33,7 @@ jobs:
         pip3 install -U pip
         pip3 install -U wheel
         grep -E "^setuptools" scripts/requirements-fixed.txt | cut -d ' ' -f '1' | xargs pip3 install -U
-        grep -E "^python-magic=|^junitparser|^lxml|^gitlint|^pylint|^pykwalify|^yamllint|^unidiff" scripts/requirements-fixed.txt | cut -d ' ' -f '1' | xargs pip3 install -U
+        grep -E "^python-magic=|^junitparser|^lxml|^gitlint|^pylint|^pykwalify|^yamllint|^unidiff|^vermin|^python-dotenv|^tabulate|^ruff" scripts/requirements-fixed.txt | cut -d ' ' -f '1' | xargs pip3 install -U
         grep -E "^west" scripts/requirements-fixed.txt | cut -d ' ' -f '1' | xargs pip3 install -U
         pip3 show -f west
 
@@ -64,10 +67,8 @@ jobs:
         # debug
         ls -la
         git log --pretty=oneline | head -n 10
-        # For now we run KconfigBasic, but we should transition to Kconfig
-        $ZEPHYR_BASE/scripts/ci/check_compliance.py --annotate -e Kconfig \
-        -e KconfigBasicNoModules -e ClangFormat -e Ruff \
-        -e SysbuildKconfig -e SysbuildKconfigBasic -e SysbuildKconfigBasicNoModules \
+        $ZEPHYR_BASE/scripts/ci/check_compliance.py --annotate \
+        -e KconfigBasicNoModules -e ClangFormat -e SysbuildKconfigBasicNoModules \
         -c origin/${BASE_REF}..
 
     - name: upload-results

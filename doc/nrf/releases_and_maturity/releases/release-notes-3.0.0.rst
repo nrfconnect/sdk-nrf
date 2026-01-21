@@ -143,7 +143,7 @@ See the following documentation for an overview of which modem firmware versions
 * `Modem firmware compatibility matrix for the nRF9160 SoC`_
 
 Use the latest version of the `Programmer app`_ of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -273,8 +273,6 @@ Developing with Front-End Modules
 
 * Added support for the following:
 
-  * :ref:`nRF2220 Front-End Module <ug_radio_fem_nrf2220>`.
-  * :ref:`nRF2220 EK shield <ug_radio_fem_nrf2220ek>`.
   * :ref:`nRF21540 Front-End Module in GPIO mode <ug_radio_fem_nrf21540_gpio>` for the nRF54L Series devices.
 
 * Fixed an issue for the nRF21540 Front-End Module (for GPIO and GPIO+SPI modes) when spurious emission occurred due to late activation of the ``TX_EN`` pin.
@@ -384,7 +382,7 @@ Matter
 
   * By disabling the :ref:`mpsl` before performing a factory reset to speed up the process.
   * The :ref:`ug_matter_device_low_power_configuration` page to mention the `nWP049 - Matter over Thread: Power consumption and battery life`_ and `Online Power Profiler for Matter over Thread`_ as useful resources in optimizing the power consumption of a Matter device.
-  * The general documentation on trusted storage by moving it to the :ref:`trusted_storage_in_ncs` page and :ref:`trusted_storage_readme` library documentation.
+  * The general documentation on secure storage by moving it to the :ref:`secure_storage_in_ncs` page and :ref:`trusted_storage_readme` library documentation.
 
 Matter fork
 +++++++++++
@@ -571,11 +569,11 @@ Serial LTE modem
 
 * Added:
 
-  * A new page :ref:`slm_as_linux_modem`.
+  * A new page nRF91 Series SiP as a modem for Linux device.
   * An overlay file :file:`overlay-memfault.conf` to enable Memfault.
     See :ref:`mod_memfault` for more information about Memfault features in |NCS|.
 
-* Updated the application to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
+* Updated the application to use the :ref:`lib_downloader` library instead of the deprecated Download client library.
 
 Thingy:53: Matter weather station
 ---------------------------------
@@ -649,7 +647,6 @@ Bluetooth samples
   * Added:
 
     * Loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
-    * Support for the :ref:`nRF2220 front-end module <ug_radio_fem_nrf2220ek>`.
     * Workaround for the hardware errata HMPAN-216 for the nRF54H20 SoC.
 
 * :ref:`central_uart` sample:
@@ -756,18 +753,18 @@ Bluetooth Fast Pair samples
       The change modifies the memory partition layout for the ``nrf54l15dk/nrf54l15/cpuapp`` board target and changes the MCUboot image signing algorithm.
       Because of that, the application images built for the ``nrf54l15dk/nrf54l15/cpuapp`` board target from this |NCS| release are not compatible with the MCUboot bootloader built from previous releases.
       It is highly recommended to use hardware cryptography for the nRF54L Series SoC for improved security.
-    * The configurations for board targets with the MCUboot bootloader support to use a non-default signature key file (the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` Kconfig option).
+    * The configurations for board targets with the MCUboot bootloader support to use a non-default signature key file (the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` Kconfig option).
       The application uses a unique signature key file for each board target, which is defined at the same directory level as the target sysbuild configuration file.
       This modification changes the key set that is used by the MCUboot DFU solution.
       Because of that, the application images from this |NCS| release are not compatible with the MCUboot bootloader built from previous releases.
-    * The MCUboot DFU signature type to the Elliptic curve digital signatures with curve P-256 (ECDSA P256 - the ``SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256`` Kconfig option) for the ``nrf52840dk/nrf52840`` board target.
+    * The MCUboot DFU signature type to the Elliptic curve digital signatures with curve P-256 (ECDSA P256 - the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256` Kconfig option) for the ``nrf52840dk/nrf52840`` board target.
       This is done to use Cryptocell 310 for image signature verification.
       This change breaks the backwards compatibility, as performing DFU from an old signature type to a new one is impossible.
 
 Cellular samples
 ----------------
 
-* Updated the following samples to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
+* Updated the following samples to use the :ref:`lib_downloader` library instead of the Download client library:
 
   * :ref:`http_application_update_sample`
   * :ref:`http_modem_delta_update_sample`
@@ -796,7 +793,7 @@ Cellular samples
     * The size of TLS credentials buffer for Wi-Fi connectivity to allow installing both AWS and CoAP CA certificates.
     * Build issues with Wi-Fi configuration using CoAP.
 
-* :ref:`lte_sensor_gateway` sample:
+* LTE Sensor Gateway sample:
 
   * Fixed an issue with devicetree configuration after HCI updates in `sdk-zephyr`_.
 
@@ -857,7 +854,7 @@ Networking samples
 
   * The :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` Kconfig option value to ``1280`` for all networking samples that had it set to a lower value.
     This is a requirement from Zephyr and removes a build warning.
-  * The following samples to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
+  * The following samples to use the :ref:`lib_downloader` library instead of the Download client library:
 
     * :ref:`aws_iot`
     * :ref:`azure_iot_hub`
@@ -892,7 +889,6 @@ Peripheral samples
   * Added:
 
     * Loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
-    * Support for the :ref:`nRF2220 front-end module <ug_radio_fem_nrf2220ek>`.
     * Workaround for the hardware errata HMPAN-216 for the nRF54H20 SoC.
 
 PMIC samples
@@ -903,7 +899,7 @@ PMIC samples
   * The :ref:`npm2100_one_button` sample that demonstrates how to support wake-up, shutdown, and user interactions through a single button connected to the nPM2100 PMIC.
   * The :ref:`npm2100_fuel_gauge` sample that demonstrates how to calculate the battery state of charge of primary cell batteries using the :ref:`nrfxlib:nrf_fuel_gauge`.
 
-* :ref:`npm1300_fuel_gauge` sample:
+* :ref:`nPM1300: Fuel gauge <npm13xx_fuel_gauge>` sample:
 
   * Updated to accommodate API changes in nRF Fuel Gauge library v1.0.0.
 
@@ -937,7 +933,7 @@ Trusted Firmware-M (TF-M) samples
   * Added support for the following attestation token fields:
 
     * Profile definition
-    * PSA certificate reference (optional), configured using the ``SB_CONFIG_TFM_OTP_PSA_CERTIFICATE_REFERENCE`` sysbuild Kconfig option
+    * PSA certificate reference (optional), configured using the :kconfig:option:`SB_CONFIG_TFM_OTP_PSA_CERTIFICATE_REFERENCE` sysbuild Kconfig option
     * Verification service URL (optional), configured using the :kconfig:option:`CONFIG_TFM_ATTEST_VERIFICATION_SERVICE_URL` Kconfig option
 
 * :ref:`tfm_secure_peripheral_partition` sample:
@@ -1053,7 +1049,7 @@ Binary libraries
 
     * The library to v3.7.0.
       See the :ref:`liblwm2m_carrier_changelog` for detailed information.
-    * The glue to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
+    * The glue to use the :ref:`lib_downloader` library instead of the deprecated Download client library.
 
 Bluetooth libraries and services
 --------------------------------
@@ -1079,9 +1075,9 @@ Bluetooth libraries and services
 
     * The :c:func:`bt_fast_pair_info_cb_register` API to allow registration of multiple callbacks.
     * The Fast Pair sysbuild Kconfig options.
-      The ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option is replaced with the ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY``.
+      The :kconfig:option:`SB_CONFIG_BT_FAST_PAIR` Kconfig option is replaced with the :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_MODEL_ID` and :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`.
     * The method of supplying the Fast Pair Model ID and Anti-Spoofing Private Key to generate the Fast Pair provisioning data HEX file.
-      The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig options.
+      The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_MODEL_ID` and :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY` Kconfig options.
     * The automatically generated ``bt_fast_pair`` partition definition (in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair` file) to work correctly when building with TF-M.
     * The behavior of the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback.
       The callback no longer reports the initial provisioning state after the Fast Pair subsystem is enabled with the :c:func:`bt_fast_pair_enable` function call.
@@ -1166,7 +1162,7 @@ DFU libraries
 Modem libraries
 ---------------
 
-* Deprecated the :ref:`at_params_readme` library.
+* Deprecated the AT parameters library.
 
 * :ref:`pdn_readme` library:
 
@@ -1214,12 +1210,12 @@ Modem libraries
 
   * Deprecated the :c:func:`modem_info_type_get` function in favor of the :c:func:`modem_info_data_type_get` function.
 
-* :ref:`lib_modem_slm` library:
+* Modem SLM library:
 
   * Updated:
 
-    * By renaming the ``CONFIG_MODEM_SLM_WAKEUP_PIN`` and ``CONFIG_MODEM_SLM_WAKEUP_TIME`` Kconfig options to :kconfig:option:`CONFIG_MODEM_SLM_POWER_PIN` and :kconfig:option:`CONFIG_MODEM_SLM_POWER_PIN_TIME`, respectively.
-    * By renaming the ``modem_slm_wake_up`` function to :c:func:`modem_slm_power_pin_toggle`.
+    * By renaming the ``CONFIG_MODEM_SLM_WAKEUP_PIN`` and ``CONFIG_MODEM_SLM_WAKEUP_TIME`` Kconfig options to ``CONFIG_MODEM_SLM_POWER_PIN`` and ``CONFIG_MODEM_SLM_POWER_PIN_TIME``, respectively.
+    * By renaming the ``modem_slm_wake_up`` function to ``modem_slm_power_pin_toggle``.
 
 Multiprotocol Service Layer libraries
 -------------------------------------
@@ -1242,10 +1238,10 @@ Libraries for networking
   * The :ref:`lib_downloader` library.
   * A backend for the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` that stores the credentials in the modem, see :kconfig:option:`CONFIG_TLS_CREDENTIALS_BACKEND_NRF_MODEM`.
 
-* Deprecated the :ref:`lib_download_client` library.
+* Deprecated the Download client library.
   See the :ref:`migration guide <migration_3.0_recommended>` for recommended changes.
 
-* Updated the following libraries to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
+* Updated the following libraries to use the :ref:`lib_downloader` library instead of the Download client library:
 
   * :ref:`lib_nrf_cloud`
   * :ref:`lib_aws_fota`

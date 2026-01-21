@@ -38,9 +38,6 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 #### DFU network core configuration
 if SOC_SERIES_NRF53X
 
-config MCUBOOT_UPDATEABLE_IMAGES
-	default 2
-
 choice MCUBOOT_MODE
 	default MCUBOOT_MODE_OVERWRITE_ONLY
 endchoice
@@ -60,13 +57,13 @@ config DFU_MULTI_IMAGE_PACKAGE_NET
 
 endif # SOC_SERIES_NRF53X
 
-if BOARD_NRF54L15DK
+if BOARD_NRF54L15DK || BOARD_NRF54LM20DK
 
-# Disable checking the external drivers for nRF54L15 DKs.
+# Disable checking the external drivers for nRF54L15 and nRF54LM20 DKs.
 config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
 	default y
 
-endif # BOARD_NRF54L15DK
+endif # BOARD_NRF54L15DK || BOARD_NRF54LM20DK
 
 # Mcuboot padding size is modified to 0x1000 in pm_static file.
 if SOC_NRF54L10

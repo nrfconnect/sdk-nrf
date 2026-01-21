@@ -1,0 +1,11 @@
+tests:
+  lte_lc_pdn.unit_test:
+    sysbuild: true
+    tags:
+      - lte_lc
+      - pdn
+      - sysbuild
+      - ci_tests_lib_lte_lc
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim

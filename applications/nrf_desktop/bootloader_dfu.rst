@@ -35,7 +35,7 @@ The nRF Desktop application can use one of the following bootloaders:
 
   * nRF52 Series
   * nRF53 Series
-  * nRF54L Series
+  * nRF54 Series
 
   The MCUboot bootloader can be used in the following scenarios:
 
@@ -73,14 +73,14 @@ See :ref:`nrf_desktop_memory_layout` for details.
 Configuring the B0 bootloader
 =============================
 
-To enable the B0 bootloader, select the ``SB_CONFIG_SECURE_BOOT_APPCORE`` Kconfig option in the sysbuild configuration.
-This setting automatically enables the ``SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE`` Kconfig option, which generates application binaries for both slots in non-volatile memory.
+To enable the B0 bootloader, select the :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` Kconfig option in the sysbuild configuration.
+This setting automatically enables the :kconfig:option:`SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE` Kconfig option, which generates application binaries for both slots in non-volatile memory.
 
 The B0 bootloader additionally requires enabling the following options:
 
 * In the sysbuild configuration:
 
-  * ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`` - Required for providing the signature key file used by the build system (to sign the application update images) and by the bootloader (to verify the application signature).
+  * :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE` - Required for providing the signature key file used by the build system (to sign the application update images) and by the bootloader (to verify the application signature).
     If this Kconfig option does not specify the signature key file, debug signature key files will be used by default.
 
 * In the application configuration:
@@ -100,9 +100,9 @@ The B0 bootloader additionally requires enabling the following options:
 Configuring the MCUboot bootloader
 ==================================
 
-To enable the MCUboot bootloader, select the ``SB_CONFIG_BOOTLOADER_MCUBOOT`` Kconfig option in the sysbuild configuration.
+To enable the MCUboot bootloader, select the :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` Kconfig option in the sysbuild configuration.
 
-You must also set the MCUboot private key path (``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE``) in the sysbuild configuration.
+You must also set the MCUboot private key path (:kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`) in the sysbuild configuration.
 The key is used both by the build system (to sign the application update images) and by the bootloader (to verify the application signature using public key derived from the selected private key).
 If this Kconfig option is not overwritten in the sysbuild configuration, debug signature key files located in the MCUboot bootloader repository will be used by default.
 
@@ -136,17 +136,17 @@ Direct-xip mode
 
 The direct-xip mode is used for the :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`.
 In this mode, the MCUboot bootloader boots an image directly from a given slot, so the swap operation is not needed.
-To set the MCUboot mode of operations to the direct-xip mode, enable the ``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP`` Kconfig option in the sysbuild configuration.
-This option automatically enables the ``SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT`` Kconfig option, which builds the application update images for both slots.
-The nRF Desktop application configurations do not use the direct-xip mode with the revert mechanism (``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT``).
+To set the MCUboot mode of operations to the direct-xip mode, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP` Kconfig option in the sysbuild configuration.
+This option automatically enables the :kconfig:option:`SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT` Kconfig option, which builds the application update images for both slots.
+The nRF Desktop application configurations do not use the direct-xip mode with the revert mechanism (:kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT`).
 
-The ``CONFIG_BOOT_DIRECT_XIP`` Kconfig option enables MCUboot to run the image directly from both image slots, and it is automatically applied to the bootloader configuration based on the sysbuild configuration.
+The :kconfig:option:`CONFIG_BOOT_DIRECT_XIP` Kconfig option enables MCUboot to run the image directly from both image slots, and it is automatically applied to the bootloader configuration based on the sysbuild configuration.
 Similarly, the :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` Kconfig option, that informs the application about the MCUboot bootloader's mode, is also applied automatically based on the sysbuild configuration.
 When the direct-xip mode is enabled, the application modules that control the DFU transport do not request firmware upgrades or confirm the running image.
 In that scenario, the MCUboot bootloader simply boots the image with the higher image version.
 
 By default, the MCUboot bootloader ignores the build number while comparing image versions.
-Enable the ``CONFIG_BOOT_VERSION_CMP_USE_BUILD_NUMBER`` Kconfig option in the bootloader configuration to use the build number while comparing image versions.
+Enable the :kconfig:option:`CONFIG_BOOT_VERSION_CMP_USE_BUILD_NUMBER` Kconfig option in the bootloader configuration to use the build number while comparing image versions.
 To apply the same option for the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr`, enable the :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_VERSION_CMP_USE_BUILD_NUMBER` Kconfig option in the application configuration.
 
 It is recommended to also enable the :kconfig:option:`CONFIG_MCUMGR_GRP_IMG_REJECT_DIRECT_XIP_MISMATCHED_SLOT` Kconfig option in the application configuration to make sure that MCUmgr rejects application image updates with invalid start address.
@@ -163,7 +163,7 @@ Serial recovery mode
 In the :ref:`USB serial recovery <nrf_desktop_bootloader_serial_dfu>` mode, the MCUboot bootloader uses a built-in foreground DFU transport over serial interface through USB.
 The application is not involved in the foreground DFU transport, therefore it can be directly overwritten by the bootloader.
 Because of that, the configuration with the serial recovery mode requires only a single application slot.
-To set the MCUboot mode of operations to single application slot, enable the ``SB_CONFIG_MCUBOOT_MODE_SINGLE_APP`` Kconfig option in the sysbuild configuration.
+To set the MCUboot mode of operations to single application slot, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_SINGLE_APP` Kconfig option in the sysbuild configuration.
 
 Enable the USB serial recovery DFU using the following configuration options:
 
@@ -189,24 +189,120 @@ For an example of a bootloader Kconfig configuration file defined by the applica
   Both mentioned firmware upgrade methods are not used simultaneously by any of the configurations.
   For example, the ``nrf52840dk/nrf52840`` board in ``mcuboot_smp`` file suffix uses only the background DFU and does not enable the serial recovery feature.
 
-MCUboot bootloader on nRF54L
-----------------------------
+.. _nrf_desktop_configuring_mcuboot_bootloader_ram_load:
 
-The nRF54L SoC Series enhances security and reduces boot times by using hardware cryptography in the MCUboot immutable bootloader.
-The |NCS| allows using hardware cryptography for ED25519 signature (``SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519``) on the nRF54L SoC Series.
+RAM load mode
+~~~~~~~~~~~~~
 
-You can enhance security further by enabling the following sysbuild Kconfig options:
+The RAM load mode is used for the :ref:`background DFU <nrf_desktop_bootloader_background_dfu>`.
+In this mode, the MCUboot bootloader uses the same NVM partitioning as the direct-xip mode (the dual-bank DFU solution).
+Similarly to the direct-xip mode, the RAM load mode also relies on the image version to select the application image slot to be booted.
+However, instead of booting the image from the NVM slot, the bootloader in the RAM load mode copies the image from the non-volatile memory (NVM) to the RAM and boots it from there.
+The application image is always built for the RAM address space in only one variant.
 
-* ``SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE`` - This option enables using a pure signature of the image, verifying signature directly on image, rather than on its hash.
-  However, you cannot use this option if the secondary image slot uses external memory.
-* ``SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU`` - This option enables using Key Management Unit (KMU) to store keys for signature verification instead of compiling key data into the MCUboot bootloader image.
-  To use KMU, the public key must first be provisioned.
-  See the :ref:`ug_nrf54l_developing_provision_kmu` documentation for details.
+.. caution::
+   The RAM load mode of the MCUboot bootloader is not officially supported in |NCS|.
+   However, the mode is available in the |NCS| as the support for this feature has been developed as part of the Zephyr RTOS project.
+   This feature is only used in a limited context for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target configuration to improve performance.
 
-  .. note::
-     To use automatic provisioning, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` sysbuild Kconfig option.
-     This option enables generating a default :file:`keyfile.json` file during the build process based on the input file provided by the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` sysbuild Kconfig option.
-     The automatic provisioning is only performed if the west flash command is executed with the ``--erase`` or ``--recover`` flag.
+You can use the RAM load mode of the MCUboot bootloader to speed up the code execution for the application image, as code execution from the RAM is generally faster than from the NVM.
+This can improve the device performance during the activities that require high CPU usage.
+As an example, the nRF Desktop application uses the RAM load mode for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to improve the HID report rate over USB.
+
+To set the MCUboot mode of operations to the RAM load mode, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_RAM_LOAD` Kconfig option in the sysbuild configuration.
+
+To support the RAM load mode, you must use DTS as the partitioning method, as the Partition Manager (PM) is not supported in this mode.
+To satisfy this requirement, disable explicitly the :kconfig:option:`SB_CONFIG_PARTITION_MANAGER` Kconfig option in your sysbuild configuration.
+Additionally, you must define the custom memory layout for the RAM in your target board configuration.
+Your RAM layout must define the following DTS child nodes as part of the ``cpuapp_sram`` DTS node in the address order listed below:
+
+* ``cpuapp_sram_app_rxm_region`` - This DTS node defines the hard limits for the executable ROM section (with the application image) and must be aligned with the :kconfig:option:`CONFIG_BOOT_IMAGE_EXECUTABLE_RAM_START` and the :kconfig:option:`CONFIG_BOOT_IMAGE_EXECUTABLE_RAM_SIZE` Kconfig options that are set in the MCUboot image configuration.
+  This DTS node describes the region in which the build system places the executable ROM section (code) and RAM section (data) of the application image.
+  The RAM section is located right after the ROM section - the RAM section may overflow the ``cpuapp_sram_app_rxm_region`` region and spill into the subsequent ``cpuapp_sram_mcuboot_ram_region`` region or even be entirely contained in this subsequent region.
+  The ``cpuapp_sram_mcuboot_ram_region`` region can be filled with the RAM section of the application image, as the application and bootloader code cannot run simultaneously.
+* ``cpuapp_sram_mcuboot_ram_region`` - This DTS node defines the RAM region for the MCUboot image and must be assigned to the MCUboot image as its chosen SRAM DTS node.
+
+For an example of the custom RAM layout that satisfies these requirements, see the :file:`nrf/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi` file.
+For an example of the RAM layout usage in the MCUboot bootloader image, see the :file:`nrf/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/images/mcuboot/app_ram_load.overlay` file.
+
+.. note::
+   The application image and the MCUboot image configuration must use the same memory layout.
+
+The RAM load mode requires using the Zephyr retention subsystem with the bootloader information sharing system.
+This subsystem is used by the MCUboot bootloader to provide image metadata to the application image.
+To enable the Zephyr retention subsystem, enable the following Kconfig options in your application image configuration and the MCUboot image configuration:
+
+* :kconfig:option:`CONFIG_RETENTION`
+* :kconfig:option:`CONFIG_RETAINED_MEM`
+* :kconfig:option:`CONFIG_RETAINED_MEM_ZEPHYR_RAM`
+
+In the application image configuration, enable the following Kconfig options:
+
+* :kconfig:option:`CONFIG_RETENTION_BOOTLOADER_INFO`
+* :kconfig:option:`CONFIG_RETENTION_BOOTLOADER_INFO_TYPE_MCUBOOT`
+* :kconfig:option:`CONFIG_RETENTION_BOOTLOADER_INFO_OUTPUT_FUNCTION`
+
+In the MCUboot image configuration, enable the following Kconfig options:
+
+* :kconfig:option:`CONFIG_BOOT_SHARE_DATA`
+* :kconfig:option:`CONFIG_BOOT_SHARE_DATA_BOOTINFO`
+* :kconfig:option:`CONFIG_BOOT_SHARE_BACKEND_RETENTION`
+
+The Zephyr retention subsystem requires the retention partition to be defined in the devicetree.
+For an example of the retention partition definition, see the :file:`nrf/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi` file.
+You must also assign the retention partition to the chosen DTS node ``zephyr,bootloader-info`` in both the application image configuration and the MCUboot image configuration.
+
+.. note::
+   If your board target uses the Key Management Unit (KMU) feature (:kconfig:option:`CONFIG_CRACEN_LIB_KMU`), you must additionally define the ``nrf_kmu_reserved_push_area`` DTS node in your custom memory layout.
+   Place this RAM section at the very beginning of the physical RAM due to the dependency on the ``nrfutil device`` tool and its KMU provisioning functionality.
+   For an example of the ``nrf_kmu_reserved_push_area`` DTS node definition, see the :file:`nrf/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi` file.
+
+   The KMU feature (:kconfig:option:`CONFIG_CRACEN_LIB_KMU`) is enabled by default for the nRF54L series.
+
+.. note::
+   The RAM load mode of the MCUboot bootloader is not yet integrated in the :ref:`nrf_desktop_dfu_mcumgr`.
+
+MCUboot bootloader on nRF54
+---------------------------
+
+The nRF54 SoC Series enhances security and reduces boot times by using hardware cryptography in the MCUboot immutable bootloader.
+The |NCS| allows using hardware cryptography for ED25519 signature (:kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519`) on the nRF54 SoC Series.
+
+You can enhance security further by enabling the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE` sysbuild Kconfig option.
+This option enables using a pure signature of the image, verifying the signature directly on the image, rather than on its hash.
+However, you cannot use this option if the secondary image slot uses external memory.
+
+Bootloader features that are specific to the nRF54L and the nRF54H series are listed in their respective subsections below.
+
+MCUboot bootloader features specific to nRF54L series
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The nRF54L devices support the use of the Key Management Unit (KMU) to store keys for signature verification instead of compiling key data into the MCUboot bootloader image.
+To use KMU in the MCUboot bootloader, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU` sysbuild Kconfig option.
+You must also make sure to provision the public key to your target device before running the firmware.
+See the :ref:`ug_nrf54l_developing_provision_kmu` documentation for details.
+
+.. note::
+    To use automatic provisioning, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` sysbuild Kconfig option.
+    This option enables generating a default :file:`keyfile.json` file during the build process based on the input file provided by the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` sysbuild Kconfig option.
+    The automatic provisioning is only performed if the west flash command is executed with the ``--erase`` or ``--recover`` flag.
+
+MCUboot bootloader features specific to nRF54H series
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+On the nRF54H devices, the MCUboot direct-xip mode uses by default a merged image slot that combines both application and radio core images.
+The merged binary size is the sum of the application image, the radio core image, and the padding between them.
+The merged image slot configuration is indicated by the :kconfig:option:`SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY` sysbuild Kconfig option.
+
+.. note::
+   Because padding is added between the application and radio core images, the merged binary ends up including the unused NVM from the application image partition.
+   To limit the impact of this unused NVM on the merged binary size, you can tailor the partition size of the application image to the image size.
+   If more space is needed for the application image in the future, you can increase the partition size of the application image using DFU.
+
+The MCUboot bootloader on the nRF54H devices requires additional configuration to properly support Suspend to RAM (S2RAM) feature.
+For further details, see the :ref:`ug_nrf54h20_pm_optimizations_bootloader` documentation.
+
+For more general information regarding the MCUboot bootloader on the nRF54H devices, see the :ref:`ug_nrf54h20_mcuboot_dfu` documentation.
 
 .. _nrf_desktop_bootloader_background_dfu:
 

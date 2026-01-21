@@ -10,10 +10,6 @@
  * "<NCS folder>/modules/lib/memfault-firmware-sdk/components/include/memfault/default_config.h"
  */
 
-#ifdef CONFIG_MEMFAULT_CDR_ENABLE
-#define MEMFAULT_CDR_ENABLE 1
-#endif
-
 #ifdef CONFIG_MEMFAULT_NCS_ETB_CAPTURE
 #define MEMFAULT_PLATFORM_FAULT_HANDLER_CUSTOM 1
 #endif

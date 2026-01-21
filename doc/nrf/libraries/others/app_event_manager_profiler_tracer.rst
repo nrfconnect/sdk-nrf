@@ -39,7 +39,7 @@ Implementing profiling for Application Event Manager events
 ***********************************************************
 
 .. note::
-	Before you complete the following steps, make sure to :ref:`implement Application Event Manager events and modules <app_event_manager_implementing_events>`.
+   Before you complete the following steps, make sure to :ref:`implement the Application Event Manager events and modules <app_event_manager_implementing_events>`.
 
 To profile an Application Event Manager event, you must complete the following steps:
 
@@ -95,8 +95,8 @@ To profile an Application Event Manager event, you must complete the following s
          * By default, all Application Event Manager events that are defined with an :c:struct:`event_info` argument are profiled.
          * :c:struct:`sample_event_info` is defined within the :c:macro:`APP_EVENT_INFO_DEFINE` macro.
 
-#. Use the Profiler Python scripts to profile the application.
-   See :ref:`nrf_profiler_backends` in the Profiler documentation for details.
+#. Use the nRF Profiler host tools to profile the application.
+   See :ref:`nrf_profiler_script` documentation page for details.
 
 Implementation details
 **********************
@@ -110,22 +110,18 @@ Initialization hook usage
    :start-after: em_initialization_hook_start
    :end-before: em_initialization_hook_end
 
-The Application Event Manager profiled tracer uses the hook to append itself to the initialization procedure.
+The Application Event Manager profiler tracer uses the hook to append itself to the initialization procedure.
+The profiler tracer initializes the :ref:`nrf_profiler` library (:c:func:`nrf_profiler_init`) and registers the nRF Profiler events used to indicate Application Event Manager event submissions, processing starts, and ends.
 
 Tracing hook usage
 ==================
 
 .. include:: app_event_manager.rst
-   :start-after: em_initialization_hook_start
-   :end-before: em_initialization_hook_end
-
-The Application Event Manager profiled tracer uses the hook to append itself to the initialization procedure.
-
-.. include:: app_event_manager.rst
    :start-after: em_tracing_hooks_start
    :end-before: em_tracing_hooks_end
 
-The Application Event Manager profiler tracer uses the tracing hooks to register nRF Profiler events and log their occurrence when application is running.
+The Application Event Manager profiler tracer uses the tracing hooks to log :ref:`nrf_profiler` events while application is running.
+The logged nRF Profiler events are related to Application Event Manager event submissions, processing starts, and ends.
 
 API documentation
 *****************

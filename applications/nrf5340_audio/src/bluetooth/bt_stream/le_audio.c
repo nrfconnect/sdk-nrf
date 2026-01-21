@@ -38,7 +38,7 @@ int le_audio_metadata_populate(struct audio_metadata *meta, const struct bt_bap_
 		return ret;
 	}
 
-	meta->bytes_per_location = octets_per_frame / metadata_num_ch_get(meta);
+	meta->bytes_per_location = octets_per_frame / audio_metadata_num_loc_get(meta);
 	if (meta->bytes_per_location == 0) {
 		LOG_ERR("Failed to get bytes per location");
 		return -EINVAL;
@@ -203,7 +203,7 @@ int le_audio_bitrate_get(const struct bt_audio_codec_cfg *const codec, uint32_t 
 	}
 
 	int frames_per_sec = 1000000 / dur_us;
-	int octets_per_sdu;
+	uint32_t octets_per_sdu;
 
 	ret = le_audio_octets_per_frame_get(codec, &octets_per_sdu);
 	if (ret) {
@@ -234,6 +234,7 @@ bool le_audio_bitrate_check(const struct bt_audio_codec_cfg *codec)
 {
 	int ret;
 	uint32_t octets_per_sdu;
+	int dur_us;
 
 	ret = le_audio_octets_per_frame_get(codec, &octets_per_sdu);
 	if (ret) {
@@ -241,10 +242,16 @@ bool le_audio_bitrate_check(const struct bt_audio_codec_cfg *codec)
 		return false;
 	}
 
-	if (octets_per_sdu < LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN)) {
+	ret = le_audio_duration_us_get(codec, &dur_us);
+	if (ret) {
+		LOG_ERR("Error retrieving frame duration: %d", ret);
+		return false;
+	}
+
+	if (octets_per_sdu < LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, dur_us)) {
 		LOG_WRN("Bitrate too low");
 		return false;
-	} else if (octets_per_sdu > LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX)) {
+	} else if (octets_per_sdu > LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, dur_us)) {
 		LOG_WRN("Bitrate too high");
 		return false;
 	}

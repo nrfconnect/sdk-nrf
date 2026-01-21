@@ -95,17 +95,10 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_openthread
-    platform_allow:
-      - nrf52840dk/nrf52840
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
     extra_args:
-      - cli_SNIPPET="ci;l2"
-    integration_platforms:
-      - nrf52840dk/nrf52840
+      - CONFIG_NET_L2_OPENTHREAD=y
+      - CONFIG_NETWORKING=y
+    platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp

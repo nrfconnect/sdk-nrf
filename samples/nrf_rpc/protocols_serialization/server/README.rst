@@ -63,7 +63,7 @@ User interface
            This is used for testing the core dump feature.
          * Otherwise: not available.
 
-   .. group-tab:: nRF54L15 DK
+   .. group-tab:: nRF54L15 and nRF54LM20 DKs
 
       Button 0:
 
@@ -86,7 +86,7 @@ Testing
 After building the Protocols serialization server sample and programming it to your development kit, connect it to a second device running the :ref:`Protocol serialization client <nrf_rpc_protocols_serialization_client>` sample to test either the Bluetooth LE, OpenThread or NFC functionality.
 
 .. note::
-   When using the nRF54L15 DK, do not press **Button 1** or **Button 2**.
+   When using the nRF54L15 DK or nRF54LM20 DK, do not press **Button 1** or **Button 2**.
    The GPIO pins connected to these buttons are used by the UART peripheral for communication with the client device.
 
 .. _protocols_serialization_server_app_connection:
@@ -166,6 +166,36 @@ One peripheral is used for shell and logging purposes, similarly to other applic
 
         .. figure:: /images/ps_nrf54l_connections.webp
             :alt: nRF54L15 DK server and client pin connections
+
+    .. group-tab:: nRF54LM20 DK
+
+        By default, the nRF54LM20 DK uses the ``uart20`` peripheral for shell and logging purposes, and the ``uart21`` peripheral for sending and receiving remote procedure calls (RPCs).
+
+        The ``uart21`` peripheral is configured to use the following pins:
+
+        .. list-table::
+           :header-rows: 1
+
+           * - Server
+             - Client
+             - Function on server
+           * - **P1.9**
+             - **P1.8**
+             - RX
+           * - **P1.8**
+             - **P1.9**
+             - TX
+           * - **P1.11**
+             - **P1.12**
+             - RTS (hardware flow control)
+           * - **P1.12**
+             - **P1.11**
+             - CTS (hardware flow control)
+           * - **GND**
+             - **GND**
+             - Ground
+
+        To enable the communication between the client and the server devices, connect the pins on the two nRF54LM20 DKs using jumper wires.
 
 Testing Bluetooth LE API serialization
 ======================================

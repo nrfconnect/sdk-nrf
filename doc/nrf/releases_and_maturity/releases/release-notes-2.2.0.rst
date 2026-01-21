@@ -79,7 +79,7 @@ Supported modem firmware
 See `Modem firmware compatibility matrix`_ for an overview of which modem firmware versions have been tested with this version of the |NCS|.
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -262,7 +262,7 @@ nRF9160: Serial LTE modem
 
 * Added:
 
-  * Optional data modem flow control Kconfig option :ref:`CONFIG_SLM_DATAMODE_URC <CONFIG_SLM_DATAMODE_URC>`.
+  * Optional data modem flow control Kconfig option ``CONFIG_SLM_DATAMODE_URC``.
   * Handling for the new data receive events in the :ref:`lib_nrf_cloud` library.
 
 * Updated the service info JSON payload to use ``GNSS`` instead of ``GPS``.
@@ -454,7 +454,7 @@ nRF9160 samples
 
   * Added overlay files for nRF9160 DK with nRF7002 EK to obtain the current location by using Wi-Fi scanning results.
 
-* :ref:`lte_sensor_gateway` sample:
+* LTE Sensor Gateway sample:
 
   * Added handling for the new data receive events in the :ref:`lib_nrf_cloud` library.
   * Removed A-GPS and P-GPS processing.
@@ -740,7 +740,7 @@ Libraries for networking
   * Removed the Kconfig option :kconfig:option:`CONFIG_MULTICELL_LOCATION_MAX_NEIGHBORS`.
     The maximum number of supported neighbor cell measurements for HERE location services depends on the :kconfig:option:`CONFIG_LTE_NEIGHBOR_CELLS_MAX` Kconfig option.
 
-* :ref:`lib_download_client` library:
+* Download client library:
 
   * Updated the library so that it does not retry download on disconnect.
   * Fixed a race condition when starting the download.

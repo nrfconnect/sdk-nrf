@@ -8,9 +8,13 @@ tests:
       - gpio
       - ci_samples_zephyr_drivers_spi_bitbang
     platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     harness: console
     harness_config:
       fixture: gpio_loopback

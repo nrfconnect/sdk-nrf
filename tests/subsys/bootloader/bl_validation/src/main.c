@@ -42,9 +42,9 @@ ZTEST(bl_validation_test, test_validation)
 
 	for (uint32_t erase_addr = new_addr; erase_addr < (new_addr + copy_len);
 	     erase_addr += DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size)) {
-		uint32_t ret = nrfx_nvmc_page_erase(erase_addr);
+		int ret = nrfx_nvmc_page_erase(erase_addr);
 
-		zassert_equal(NRFX_SUCCESS, ret, "Erase failed.\r\n");
+		zassert_equal(0, ret, "Erase failed.\r\n");
 	}
 	nrfx_nvmc_words_write(new_addr, (const uint32_t *)PM_ADDRESS,
 		(copy_len + 3) / 4);
@@ -82,9 +82,9 @@ ZTEST(bl_validation_test, test_s1)
 
 	for (uint32_t erase_addr = new_addr; erase_addr < (new_addr + move_len);
 	     erase_addr += DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size)) {
-		uint32_t ret = nrfx_nvmc_page_erase(erase_addr);
+		int ret = nrfx_nvmc_page_erase(erase_addr);
 
-		zassert_equal(NRFX_SUCCESS, ret, "Erase failed.\r\n");
+		zassert_equal(0, ret, "Erase failed.\r\n");
 	}
 
 	nrfx_nvmc_words_write(new_addr, (const uint32_t *)PM_S1_ADDRESS,
@@ -92,9 +92,9 @@ ZTEST(bl_validation_test, test_s1)
 
 	for (uint32_t erase_addr = PM_S1_ADDRESS; erase_addr < new_addr;
 	     erase_addr += DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size)) {
-		uint32_t ret = nrfx_nvmc_page_erase(erase_addr);
+		int ret = nrfx_nvmc_page_erase(erase_addr);
 
-		zassert_equal(NRFX_SUCCESS, ret, "Erase failed.\r\n");
+		zassert_equal(0, ret, "Erase failed.\r\n");
 	}
 
 	zassert_true(bl_validate_firmware(PM_S1_ADDRESS, new_addr), NULL);

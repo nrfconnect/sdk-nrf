@@ -20,14 +20,12 @@ function(asm_install)
 
     file(RENAME ${asm_filename}-${soc}-temp.s ${src_dir}/${asm_filename}-${soc}.s RESULT rename_result)
 
-    if (rename_result EQUAL 0)
+    if(rename_result EQUAL 0)
         message("Updated ${asm_filename}-${soc}.s ASM file.")
     else()
         message(WARNING "${asm_filename}-${soc}.s cannot be updated, new ASM does not exist. Please run ninja asm_gen to create one.")
     endif()
-
   endforeach()
-
 endfunction(asm_install)
 
 asm_install()

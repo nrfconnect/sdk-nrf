@@ -1,7 +1,7 @@
 // DO NOT EDIT MANUALLY - Generated file
 //
 // Identifier constant values for cluster OtaSoftwareUpdateRequestor (cluster code: 42/0x2A)
-// based on /home/arbl/ncs/nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
+// based on nrf/samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.matter
 #pragma once
 
 #include <clusters/shared/GlobalIds.h>
@@ -17,6 +17,10 @@ namespace app
 		{
 			namespace Attributes
 			{
+
+				// Total number of attributes supported by the cluster, including global attributes
+				inline constexpr uint32_t kAttributesCount = 9;
+
 				namespace DefaultOTAProviders
 				{
 					inline constexpr AttributeId Id = 0x00000000;

@@ -18,6 +18,10 @@ LOG_MODULE_REGISTER(net_test, NET_LOG_LEVEL);
 
 #include <zephyr/ztest.h>
 
+#ifdef CONFIG_SOC_NRF7120_PREENG
+#include <soc.h>
+#endif /* CONFIG_SOC_NRF7120_PREENG */
+
 #define BEACON_PAYLOAD_LENGTH	     256
 #define CONTINUOUS_MODE_TRANSMISSION 0
 #define FIXED_MODE_TRANSMISSION	     1
@@ -44,6 +48,13 @@ static void rx_thread_oneshot(void);
 
 K_THREAD_DEFINE(receiver_thread_id, STACK_SIZE, rx_thread_oneshot, NULL, NULL, NULL,
 		THREAD_PRIORITY, 0, -1);
+
+#define NRF_WIFICORE_RPURFBUS_BASE		     0x48020000UL
+#define NRF_WIFICORE_RPURFBUS_RFCTRL		     ((NRF_WIFICORE_RPURFBUS_BASE) + 0x00010000UL)
+#define NRF_WIFICORE_RPURFBUS_RFCTRL_AXIMASTERACCESS ((NRF_WIFICORE_RPURFBUS_RFCTRL) + 0x00000000UL)
+
+#define RDW(addr)	(*(volatile unsigned int *)(addr))
+#define WRW(addr, data) (*(volatile unsigned int *)(addr) = (data))
 
 struct beacon {
 	uint16_t frame_control;
@@ -300,13 +311,37 @@ static void rx_thread_oneshot(void)
 
 ZTEST(nrf_wifi, test_single_raw_tx_rx)
 {
+	struct net_if *iface;
+	struct wifi_filter_info filter_info = {0};
+	int ret;
 	/* MONITOR mode */
 	int mode = BIT(1);
 
 	wifi_set_mode(mode);
 	zassert_false(wifi_set_tx_injection_mode(), "Failed to set TX injection mode");
 	zassert_equal(wifi_set_channel(), 0, "Failed to set channel");
+	/* Configure packet filter with buffer size 1550 */
+	iface = net_if_get_first_wifi();
+	if (iface == NULL) {
+		LOG_ERR("Failed to get Wi-Fi iface for packet filter");
+		return;
+	}
+
+	filter_info.oper = WIFI_MGMT_SET;
+	filter_info.if_index = net_if_get_by_iface(iface);
+	filter_info.filter = WIFI_PACKET_FILTER_ALL;
+	filter_info.buffer_size = 1550;
+
+	ret = net_mgmt(NET_REQUEST_WIFI_PACKET_FILTER, iface, &filter_info, sizeof(filter_info));
+	if (ret) {
+		LOG_ERR("Packet filter setting failed %d", ret);
+	} else {
+		LOG_INF("Packet filter set with buffer size %d", filter_info.buffer_size);
+	}
 	zassert_false(setup_raw_pkt_socket(&sa), "Setting socket for raw pkt transmission failed");
+#ifdef CONFIG_SOC_NRF7120_PREENG
+	configure_playout_capture(0, 1, 0x7F, 0xCA60, 0);
+#endif /* CONFIG_SOC_NRF7120_PREENG */
 	k_thread_start(receiver_thread_id);
 	/* TODO: Wait for interface to be operationally UP */
 	k_sleep(K_MSEC(50));

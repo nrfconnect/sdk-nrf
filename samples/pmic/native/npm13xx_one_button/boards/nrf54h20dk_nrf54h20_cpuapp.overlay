@@ -1,0 +1,19 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&i2c130_default {
+	group1 {
+		bias-pull-up;
+	};
+};
+
+&i2c130 {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};

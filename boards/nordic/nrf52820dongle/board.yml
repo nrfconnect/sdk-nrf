@@ -1,5 +1,6 @@
 board:
   name: nrf52820dongle
+  full_name: nRF52820 Dongle
   vendor: nordic
   socs:
     - name: nrf52820

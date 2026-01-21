@@ -10,15 +10,6 @@ common:
 
 tests:
   nrf.extended.sample.usb_device_next.hid-mouse:
-    # depends_on:
-    #   - usbd
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
     timeout: 15
     harness: console
     harness_config:
@@ -28,3 +19,8 @@ tests:
         - "FS bNumConfigurations 1"
         - "Actual device speed 2"
         - "s-in-status finished"
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp

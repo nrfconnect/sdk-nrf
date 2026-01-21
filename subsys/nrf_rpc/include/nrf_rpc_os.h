@@ -105,6 +105,11 @@ static inline void nrf_rpc_os_tls_set(void *data)
 	k_thread_custom_data_set(data);
 }
 
+static inline uint64_t nrf_rpc_os_timestamp_get_now(void)
+{
+	return (uint64_t)k_uptime_get();
+}
+
 uint32_t nrf_rpc_os_ctx_pool_reserve(void);
 void nrf_rpc_os_ctx_pool_release(uint32_t number);
 

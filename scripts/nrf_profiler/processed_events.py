@@ -3,16 +3,17 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-from events import TrackedEvent, EventType
-import logging
 import csv
-import json
 import hashlib
+import json
+import logging
 import sys
+
+from events import EventType, TrackedEvent
 
 EM_MEM_ADDRESS_DATA_DESC = "_em_mem_address_"
 
-class ProcessedEvents():
+class ProcessedEvents:
     def __init__(self):
         self.registered_events_types = {}
         self.tracked_events = []
@@ -33,15 +34,10 @@ class ProcessedEvents():
 
     def is_event_tracked(self, event_type_id):
         event_data_descriptions = self.registered_events_types[event_type_id].data_descriptions
-        if len(event_data_descriptions) == 0 or event_data_descriptions[0] != EM_MEM_ADDRESS_DATA_DESC:
-            return False
-        return True
+        return not (len(event_data_descriptions) == 0 or event_data_descriptions[0] != EM_MEM_ADDRESS_DATA_DESC)
 
     def verify(self):
-        for ev in self.tracked_events:
-            if ev.submit.type_id not in self.registered_events_types:
-                return False
-        return True
+        return all(ev.submit.type_id in self.registered_events_types for ev in self.tracked_events)
 
     def init_writing_data_to_files(self, filename_events, filename_event_types):
         csvfile = self._init_writing_events_csv(filename_events)
@@ -76,7 +72,7 @@ class ProcessedEvents():
                                 fieldnames=TrackedEvent.TRACKED_EVENT_FIELDNAMES)
             wr.writeheader()
             return csvfile
-        except IOError:
+        except OSError:
             self.logger.error("Problem with accessing file: " + filename)
             sys.exit()
 
@@ -86,20 +82,20 @@ class ProcessedEvents():
             for ev in self.tracked_events:
                 csvfile.write(ev.serialize() + '\r\n')
             csvfile.close()
-        except IOError:
+        except OSError:
             self.logger.error("Problem with accessing file: " + filename)
             sys.exit()
 
     def _read_events_csv(self, filename):
         try:
-            with open(filename, 'r', newline='') as csvfile:
+            with open(filename, newline='') as csvfile:
                 header = csvfile.readline()
                 header = header.rstrip('\r\n')
                 fieldnames = header.split(',')
                 assert fieldnames == TrackedEvent.TRACKED_EVENT_FIELDNAMES
                 for line in csvfile:
                     self.tracked_events.append(TrackedEvent.deserialize(line))
-        except IOError:
+        except OSError:
             self.logger.error("Problem with accessing file: " + filename)
             sys.exit()
 
@@ -109,7 +105,7 @@ class ProcessedEvents():
         try:
             with open(filename, "w") as wr:
                 json.dump(d, wr, indent=4)
-        except IOError:
+        except OSError:
             self.logger.error("Problem with accessing file: " + filename)
             sys.exit()
 
@@ -120,15 +116,15 @@ class ProcessedEvents():
         try:
             with open(filename, "w") as wr:
                 json.dump(d, wr, indent=4)
-        except IOError:
+        except OSError:
             self.logger.error("Problem with accessing file: " + filename)
             sys.exit()
 
     def _read_events_types_json(self, filename):
         try:
-            with open(filename, "r") as rd:
+            with open(filename) as rd:
                 data = json.load(rd)
-        except IOError:
+        except OSError:
             self.logger.error("Problem with accessing file: " + filename)
             sys.exit()
         csv_hash = data['csv_hash']

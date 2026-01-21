@@ -20,8 +20,13 @@
 
 #define SX_BLKCIPHER_IV_SZ	(16U)
 #define SX_BLKCIPHER_AES_BLK_SZ (16U)
+
+#if defined(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)
 /* ChaCha20 has a 512 bit block size */
 #define SX_BLKCIPHER_MAX_BLK_SZ (64U)
+#else
+#define SX_BLKCIPHER_MAX_BLK_SZ SX_BLKCIPHER_AES_BLK_SZ
+#endif
 
 #define CRACEN_MAX_AES_KEY_SIZE (32u)
 
@@ -54,9 +59,9 @@
  */
 #define CRACEN_HKDF_MAX_INFO_SIZE 128
 
-#define CRACEN_CMAC_MAX_LABEL_SIZE 127
+#define CRACEN_MAC_MAX_LABEL_SIZE 127
 
-#define CRACEN_CMAC_MAX_CONTEXT_SIZE 64
+#define CRACEN_MAC_MAX_CONTEXT_SIZE 64
 
 #define CRACEN_JPAKE_USER_ID_MAX_SIZE 16
 
@@ -74,6 +79,30 @@
 #define CRACEN_PRNG_MAX_REQUEST_SIZE	     (1u << 16) /* Max request. See NIST specification */
 
 #define CRACEN_SPAKE2P_HASH_LEN PSA_HASH_LENGTH(PSA_ALG_SHA_256)
+
+#define CRACEN_WPA3_SAE_MAX_SSID_LEN	(32u)
+#define CRACEN_WPA3_SAE_MAX_PWD_LEN	(256u)
+#define CRACEN_WPA3_SAE_MAX_PWID_LEN	(256u)
+#define CRACEN_WPA3_SAE_PMK_LEN		(32u) /* According to IEEE802.11-2024, 12.7.1.3 */
+#define CRACEN_WPA3_SAE_PMKID_SIZE	(16u)
+#define CRACEN_WPA3_SAE_STA_ID_LEN	(6u)
+/** IANA group to identify the elliptic curve.
+ *  See IEEE802.11-2024, Table 12-2
+ */
+#define CRACEN_WPA3_SAE_IANA_GROUP_SIZE	(2u)
+#define CRACEN_WPA3_SAE_COMMIT_SIZE	(CRACEN_WPA3_SAE_IANA_GROUP_SIZE + \
+					 CRACEN_P256_KEY_SIZE		 + \
+					 CRACEN_P256_POINT_SIZE)
+
+/* Send-confirm counter size */
+#define CRACEN_WPA3_SAE_SEND_CONFIRM_SIZE	(2u)
+#define CRACEN_WPA3_SAE_CONFIRM_SIZE		(CRACEN_WPA3_SAE_SEND_CONFIRM_SIZE + \
+						 PSA_HASH_LENGTH(PSA_ALG_SHA_256))
+
+/** 4-bit Shoup's table.
+ *  The size is defined as 2^4.
+ */
+#define CRACEN_AES_GCM_HTABLE_SIZE 16
 
 enum cipher_operation {
 	CRACEN_DECRYPT,
@@ -95,12 +124,12 @@ enum cracen_kd_state {
 	CRACEN_KD_STATE_PBKDF2_PASSWORD,
 	CRACEN_KD_STATE_PBKDF2_OUTPUT,
 
-	/* CMAC CTR states: */
-	CRACEN_KD_STATE_CMAC_CTR_INIT = 0x40,
-	CRACEN_KD_STATE_CMAC_CTR_KEY_LOADED,
-	CRACEN_KD_STATE_CMAC_CTR_INPUT_LABEL,
-	CRACEN_KD_STATE_CMAC_CTR_INPUT_CONTEXT,
-	CRACEN_KD_STATE_CMAC_CTR_OUTPUT,
+	/* CMAC/HMAC CTR states: */
+	CRACEN_KD_STATE_MAC_CTR_INIT = 0x40,
+	CRACEN_KD_STATE_MAC_CTR_KEY_LOADED,
+	CRACEN_KD_STATE_MAC_CTR_INPUT_LABEL,
+	CRACEN_KD_STATE_MAC_CTR_INPUT_CONTEXT,
+	CRACEN_KD_STATE_MAC_CTR_OUTPUT,
 
 	/* TLS12 PRF states: */
 	CRACEN_KD_STATE_TLS12_PRF_INIT = 0x80,
@@ -112,7 +141,14 @@ enum cracen_kd_state {
 
 	/* TLS12 EC J-PAKE to PMS state: */
 	CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_INIT = 0x200,
-	CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_OUTPUT
+	CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_OUTPUT,
+
+	/* WPA3-SAE H2E states: */
+	CRACEN_KD_STATE_WPA3_SAE_H2E_INIT = 0x400,
+	CRACEN_KD_STATE_WPA3_SAE_H2E_SALT,
+	CRACEN_KD_STATE_WPA3_SAE_H2E_PASSWORD,
+	CRACEN_KD_STATE_WPA3_SAE_H2E_INFO,
+	CRACEN_KD_STATE_WPA3_SAE_H2E_OUTPUT,
 };
 
 /* States to keep track of when the AEAD sxsymcrypt context has been initialized with xxx_create and
@@ -159,6 +195,34 @@ struct cracen_cipher_operation {
 };
 typedef struct cracen_cipher_operation cracen_cipher_operation_t;
 
+struct cracen_sw_ccm_context_s {
+	uint8_t cbc_mac[SX_BLKCIPHER_AES_BLK_SZ]; /* CBC-MAC state */
+	uint8_t ctr_block[SX_BLKCIPHER_AES_BLK_SZ]; /* Counter block for CTR mode */
+	uint8_t keystream[SX_BLKCIPHER_AES_BLK_SZ]; /* Generated keystream */
+	uint8_t partial_block[SX_BLKCIPHER_AES_BLK_SZ]; /* Buffer for partial blocks */
+	size_t keystream_offset; /* Position in keystream buffer */
+	size_t total_ad_fed; /* Total AD bytes processed */
+	size_t data_partial_len; /* Partial data block length */
+	bool cbc_mac_initialized; /* CBC-MAC initialization flag */
+	bool ctr_initialized; /* CTR initialization flag */
+	bool has_partial_ad_block; /* Partial AD block flag */
+};
+typedef struct cracen_sw_ccm_context_s cracen_sw_ccm_context_t;
+
+struct cracen_sw_gcm_context_s {
+	/* Precalculated HTable */
+	uint64_t h_table[CRACEN_AES_GCM_HTABLE_SIZE][SX_BLKCIPHER_AES_BLK_SZ / sizeof(uint64_t)];
+	uint8_t ghash_block[SX_BLKCIPHER_AES_BLK_SZ]; /* GHASH calculation result */
+	uint8_t ctr_block[SX_BLKCIPHER_AES_BLK_SZ]; /* Counter block for CTR mode */
+	uint8_t keystream[SX_BLKCIPHER_AES_BLK_SZ]; /* Generated keystream */
+	size_t keystream_offset; /* Position in keystream buffer */
+	size_t total_ad_fed; /* Total AD bytes processed */
+	size_t total_data_enc; /* Total size of the ciphertext */
+	bool ctr_initialized; /* CTR initialization flag */
+	bool ghash_initialized; /* GHASH initialization flag */
+};
+typedef struct cracen_sw_gcm_context_s cracen_sw_gcm_context_t;
+
 struct cracen_aead_operation {
 	psa_algorithm_t alg;
 	struct sxkeyref keyref;
@@ -174,6 +238,17 @@ struct cracen_aead_operation {
 	enum cracen_context_state context_state;
 	bool ad_finished;
 	struct sxaead ctx;
+#if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS)
+#if defined(PSA_NEED_CRACEN_CCM_AES)
+	cracen_sw_ccm_context_t sw_ccm_ctx;
+#endif /* PSA_NEED_CRACEN_CCM_AES */
+#endif /* PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS */
+
+#if defined(PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
+#if defined(PSA_NEED_CRACEN_GCM_AES)
+	cracen_sw_gcm_context_t sw_gcm_ctx;
+#endif /* PSA_NEED_CRACEN_GCM_AES */
+#endif /* PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS */
 };
 typedef struct cracen_aead_operation cracen_aead_operation_t;
 
@@ -213,9 +288,10 @@ struct cracen_mac_operation_s {
 			struct sxmac ctx;
 			struct sxkeyref keyref;
 			uint8_t key_buffer[CRACEN_MAX_AES_KEY_SIZE];
-#if defined(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)
+#if defined(PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
 			cracen_cmac_context_t sw_ctx;
-#endif /* CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS */
+			struct sxblkcipher cipher;
+#endif /* PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS */
 		} cmac;
 #endif /* PSA_NEED_CRACEN_CMAC */
 		uint8_t _unused;
@@ -234,46 +310,55 @@ struct cracen_key_derivation_operation {
 		cracen_hash_operation_t hash_op;
 	};
 	union {
+#if defined(PSA_NEED_CRACEN_HKDF)
 		struct {
 			uint8_t blk_counter;
 			uint8_t prk[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
 			uint8_t t[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
-			char info[CRACEN_HKDF_MAX_INFO_SIZE];
+			uint8_t info[CRACEN_HKDF_MAX_INFO_SIZE];
 			size_t info_length;
 			bool info_set;
 		} hkdf;
-
+#endif /* PSA_NEED_CRACEN_HKDF */
+#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
 		struct {
 			uint64_t input_cost;
-			char password[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
+			uint8_t password[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
 			size_t password_length;
-			char salt[CRACEN_PBKDF_MAX_SALT_SIZE];
+			uint8_t salt[CRACEN_PBKDF_MAX_SALT_SIZE];
 			size_t salt_length;
 			uint32_t blk_counter;
 			uint8_t uj[PSA_MAC_MAX_SIZE];
 			uint8_t tj[PSA_MAC_MAX_SIZE];
 		} pbkdf2;
-
+#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
+#if	defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC) || \
+	defined(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
 		struct {
+#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
+			psa_key_lifetime_t key_lifetime;
+			mbedtls_svc_key_id_t key_id;
 			uint8_t key_buffer[CRACEN_MAX_AES_KEY_SIZE];
-			struct sxkeyref keyref;
-			struct sx_pk_cnx *pk_cnx;
+			size_t key_size;
+			uint8_t K_0[SX_BLKCIPHER_AES_BLK_SZ];
+#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
 			uint32_t counter;
 			/* The +1 here is meant to store an algorithm specific byte needed after the
 			 * label
 			 */
-			uint8_t label[CRACEN_CMAC_MAX_LABEL_SIZE + 1];
+			uint8_t label[CRACEN_MAC_MAX_LABEL_SIZE + 1];
 			size_t label_length;
-			uint8_t context[CRACEN_CMAC_MAX_CONTEXT_SIZE];
+			uint8_t context[CRACEN_MAC_MAX_CONTEXT_SIZE];
 			size_t context_length;
 			uint32_t L;
-			uint8_t K_0[SX_BLKCIPHER_AES_BLK_SZ];
-		} cmac_ctr;
-
+		} mac_ctr;
+#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC || PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC */
+#if defined(PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS)
 		struct {
 			uint8_t key[32];
 		} ecjpake_to_pms;
-
+#endif /* PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS */
+#if defined(PSA_NEED_CRACEN_TLS12_PRF) || defined(PSA_NEED_CRACEN_TLS12_PSK_TO_MS)
 		struct {
 			/* May contain secret, length of secret as uint16be, other secret
 			 * and other secret length as uint16be.
@@ -287,6 +372,7 @@ struct cracen_key_derivation_operation {
 			size_t counter;
 			uint8_t a[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
 		} tls12;
+#endif /* PSA_NEED_CRACEN_TLS12_PRF || PSA_NEED_CRACEN_TLS12_PSK_TO_MS */
 	};
 };
 typedef struct cracen_key_derivation_operation cracen_key_derivation_operation_t;
@@ -367,18 +453,50 @@ struct cracen_spake2p_operation {
 };
 typedef struct cracen_spake2p_operation cracen_spake2p_operation_t;
 
+struct cracen_wpa3_sae_operation {
+	cracen_mac_operation_t mac_op;
+	psa_algorithm_t hash_alg;
+	uint8_t password[CRACEN_WPA3_SAE_MAX_PWD_LEN];
+	uint16_t pw_length;
+	uint8_t pwe[CRACEN_P256_POINT_SIZE];
+	union {
+		struct {
+			uint8_t max_id[CRACEN_WPA3_SAE_STA_ID_LEN];
+			uint8_t min_id[CRACEN_WPA3_SAE_STA_ID_LEN];
+		};
+		uint8_t max_id_min_id[2 * CRACEN_WPA3_SAE_STA_ID_LEN];
+	};
+	uint8_t rand[CRACEN_P256_KEY_SIZE];
+	uint8_t kck[CRACEN_P256_KEY_SIZE];
+	uint8_t pmk[CRACEN_WPA3_SAE_PMK_LEN];
+	uint8_t pmkid[CRACEN_WPA3_SAE_PMKID_SIZE];
+	uint8_t commit[CRACEN_WPA3_SAE_COMMIT_SIZE];
+	uint8_t peer_commit[CRACEN_WPA3_SAE_COMMIT_SIZE];
+	uint8_t hash_length;
+	uint8_t pmk_length;
+	uint8_t use_h2e:1;
+	uint8_t keys_set:1;
+	uint8_t salt_set:1;
+	uint16_t send_confirm;
+	const struct sx_pk_ecurve *curve;
+};
+typedef struct cracen_wpa3_sae_operation cracen_wpa3_sae_operation_t;
+
 struct cracen_pake_operation {
 	psa_algorithm_t alg;
 	union {
-#ifdef CONFIG_PSA_NEED_CRACEN_SRP_6
+#ifdef PSA_NEED_CRACEN_SRP_6
 		cracen_srp_operation_t cracen_srp_ctx;
-#endif /* CONFIG_PSA_NEED_CRACEN_SRP_6 */
-#ifdef CONFIG_PSA_NEED_CRACEN_ECJPAKE
+#endif /* PSA_NEED_CRACEN_SRP_6 */
+#ifdef PSA_NEED_CRACEN_ECJPAKE
 		cracen_jpake_operation_t cracen_jpake_ctx;
-#endif /* CONFIG_PSA_NEED_CRACEN_ECJPAKE */
-#ifdef CONFIG_PSA_NEED_CRACEN_SPAKE2P
+#endif /* PSA_NEED_CRACEN_ECJPAKE */
+#ifdef PSA_NEED_CRACEN_SPAKE2P
 		cracen_spake2p_operation_t cracen_spake2p_ctx;
-#endif /* CONFIG_PSA_NEED_CRACEN_SPAKE2P */
+#endif /* PSA_NEED_CRACEN_SPAKE2P */
+#ifdef PSA_NEED_CRACEN_WPA3_SAE
+		cracen_wpa3_sae_operation_t cracen_wpa3_sae_ctx;
+#endif /* PSA_NEED_CRACEN_WPA3_SAE */
 		uint8_t _unused;
 	};
 };
@@ -388,6 +506,12 @@ struct cracen_signature {
 	size_t sz;  /** Total signature size, in bytes. */
 	uint8_t *r; /** Signature element "r". */
 	uint8_t *s; /** Signature element "s". */
+};
+
+struct cracen_const_signature {
+	size_t sz;	  /** Total signature size, in bytes. */
+	const uint8_t *r; /** Signature element "r". */
+	const uint8_t *s; /** Signature element "s". */
 };
 
 struct cracen_ecc_priv_key {

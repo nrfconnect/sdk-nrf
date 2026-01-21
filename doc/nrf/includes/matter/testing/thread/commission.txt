@@ -1,0 +1,35 @@
+1. Obtain a Thread active dataset from OTBR:
+
+   .. tabs::
+
+      .. group-tab:: OTBR on Raspberry Pi
+
+         a. Connect to the Raspberry Pi through USB or SSH.
+         b. Run the following commands:
+
+         .. code-block:: console
+
+            sudo ot-ctl
+            > dataset active -x
+
+      .. group-tab:: OTBR on PC using Docker
+
+         a. Run the following command:
+
+         .. code-block:: console
+
+            sudo docker exec -it otbr sh -c "ot-ctl dataset active -x"
+
+   The output should look like:
+
+   .. code-block:: console
+
+      080000000000000000000300001735060004001fffe00208deadbeefcafe12340708fd123456789abc00000510112233445566778899aabbccddeeff00030a54657374576f726b3031010211220410aabbccddeeff00112233445566778899aa0c0402a0f7f8
+      Done
+
+#. Run the following command and fill the *<thread dataset>* argument obtain in the previous step:
+
+   .. parsed-literal::
+      :class: highlight
+
+      chip-tool pairing ble-thread |node_id| hex:*<thread dataset>* 20202021 3840

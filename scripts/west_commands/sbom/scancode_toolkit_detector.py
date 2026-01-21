@@ -11,17 +11,26 @@ For more details see: https://scancode-toolkit.readthedocs.io/en/stable/
 import json
 import os
 import re
+import shutil
 from tempfile import NamedTemporaryFile
-from west import log
-from data_structure import Data, FileInfo, License
+
 from args import args
 from common import SbomException, command_execute
+from data_structure import Data, FileInfo, License
 from license_utils import is_spdx_license
+from west import log
 
 
 def check_scancode():
     '''Checks if "scancode --version" works correctly. If not, raises exception with information
     for user.'''
+    if shutil.which(args.scancode) is None:
+        raise SbomException(f'Cannot find scancode executable "{args.scancode}".\n'
+            'Install the SBOM requirements with:\n'
+            '  pip3 install -r scripts/requirements-west-ncs-sbom.txt\n'
+            'Use --force-reinstall --no-cache-dir options if it still fails\n'
+            'Pass "--scancode=/path/to/scancode" if the scancode executable is'
+            'not available on PATH.')
     try:
         command_execute(args.scancode, '--version', allow_stderr=True)
     except Exception as ex:
@@ -63,13 +72,13 @@ def detect(data: Data, optional: bool):
 
     decoded = map(run_scancode, filtered)
 
-    for result, file in zip(decoded, filtered):
+    for result, file in zip(decoded, filtered, strict=False):
 
         current = result['files'][0]
         if 'licenses' in current:
-            licenses = result['files'][0]['licenses']
+            licenses = current['licenses']
         elif 'license_detections' in current:
-            licenses = result['files'][0]['license_detections']
+            licenses = current['license_detections']
         else:
             print('No license information for {}'.format(current['path']))
             continue
@@ -81,11 +90,25 @@ def detect(data: Data, optional: bool):
                 friendly_id = i['spdx_license_key']
             elif 'key' in i and i['key'] != '':
                 friendly_id = i['key']
+            elif 'license_expression_spdx' in i and i['license_expression_spdx'] != '':
+                friendly_id = i['license_expression_spdx']
+            elif 'license_expression' in i and i['license_expression'] != '':
+                friendly_id = i['license_expression']
             id = friendly_id.upper()
-            if id in ('UNKNOWN-SPDX', 'LICENSEREF-SCANCODE-UNKNOWN-SPDX'):
-                friendly_id = re.sub(r'SPDX-License-Identifier:', '', i['matched_text'],
-                                     flags=re.I).strip()
-                id = friendly_id.upper()
+            if id in ('UNKNOWN-SPDX', 'LICENSEREF-SCANCODE-UNKNOWN-SPDX') or id == '':
+                matched_text = None
+                if 'matched_text' in i:
+                    matched_text = i['matched_text']
+                elif 'matches' in i and isinstance(i['matches'], list):
+                    matched_text = next((match.get('matched_text')
+                                         for match in i['matches']
+                                         if match.get('matched_text') is not None), None)
+                if matched_text:
+                    friendly_id = re.sub(r'SPDX-License-Identifier:', '', matched_text,
+                                         flags=re.I).strip()
+                    friendly_id = friendly_id.rstrip('*/').strip()
+                    friendly_id = friendly_id.lstrip('/*').strip()
+                    id = friendly_id.upper()
             if id == '':
                 log.wrn(f'Invalid response from scancode-toolkit, file: {file.file_path}')
                 continue

@@ -12,8 +12,8 @@
 # Sphinx has difficulties parsing multiple comments in a file.
 
 import argparse
-import glob
 import fileinput
+import glob
 import sys
 
 

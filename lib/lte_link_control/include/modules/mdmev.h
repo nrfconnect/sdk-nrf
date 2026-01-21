@@ -11,13 +11,8 @@
 extern "C" {
 #endif
 
-extern bool mdmev_enabled;
-
-/* Enable modem domain events. */
-int mdmev_enable(void);
-
-/* Disable modem domain events. */
-int mdmev_disable(void);
+/* Subscribe to modem domain events. */
+int mdmev_notifications_enable(void);
 
 #ifdef __cplusplus
 }

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace Bssid
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -113,11 +115,18 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace OverrunCount
+				constexpr std::array<DataModel::AttributeEntry, 5> kMandatoryMetadata = {
+					Bssid::kMetadataEntry,	     SecurityType::kMetadataEntry,
+					WiFiVersion::kMetadataEntry, ChannelNumber::kMetadataEntry,
+					Rssi::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace ResetCounts
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -127,6 +136,29 @@ namespace app
 				} // namespace ResetCounts
 
 			} // namespace Commands
+
+			namespace Events
+			{
+				namespace Disconnection
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace Disconnection
+				namespace AssociationFailure
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace AssociationFailure
+				namespace ConnectionStatus
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace ConnectionStatus
+
+			} // namespace Events
 		} // namespace WiFiNetworkDiagnostics
 	} // namespace Clusters
 } // namespace app

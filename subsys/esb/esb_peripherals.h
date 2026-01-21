@@ -34,7 +34,7 @@ extern "C" {
 
 	/** Use end of packet send/received over the air for nRF54 devices. */
 	#define ESB_RADIO_EVENT_END NRF_RADIO_EVENT_PHYEND
-	#define ESB_SHORT_DISABLE_MASK NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
+	#define ESB_RADIO_SHORT_END_DISABLE NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
 
 	#define ESB_RADIO_INT_END_MASK NRF_RADIO_INT_PHYEND_MASK
 
@@ -55,7 +55,7 @@ extern "C" {
 
 	/** Use end of packet send/received over the air for nRF54 devices. */
 	#define ESB_RADIO_EVENT_END NRF_RADIO_EVENT_PHYEND
-	#define ESB_SHORT_DISABLE_MASK NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
+	#define ESB_RADIO_SHORT_END_DISABLE NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
 
 	#define ESB_RADIO_INT_END_MASK NRF_RADIO_INT_PHYEND_MASK
 #else
@@ -66,15 +66,12 @@ extern "C" {
 	/** The ESB Radio interrupt number. */
 	#define ESB_RADIO_IRQ_NUMBER RADIO_IRQn
 
-	/** DPPIC instance number used by ESB. */
-	#define ESB_DPPIC_INSTANCE_NO 0
-
 	/** ESB EGU instance configuration. */
 	#define ESB_EGU NRF_EGU0
 
 	/** nRF52 and nRF53 device has just one kind of end event. */
 	#define ESB_RADIO_EVENT_END NRF_RADIO_EVENT_END
-	#define ESB_SHORT_DISABLE_MASK NRF_RADIO_SHORT_END_DISABLE_MASK
+	#define ESB_RADIO_SHORT_END_DISABLE NRF_RADIO_SHORT_END_DISABLE_MASK
 
 	#define ESB_RADIO_INT_END_MASK NRF_RADIO_INT_END_MASK
 
@@ -104,16 +101,7 @@ extern "C" {
 	NRFX_CONCAT_2(NRF_TIMER, ESB_TIMER_INSTANCE_NO)
 
 /** ESB nrfx timer instance. */
-#define ESB_NRFX_TIMER_INSTANCE NRFX_TIMER_INSTANCE(ESB_TIMER_INSTANCE_NO)
-
-#if !defined(CONFIG_NRFX_DPPI)
-/** Use fixed DPPI channels and groups if nrfx_dppi is not available. */
-#define ESB_DPPI_FIXED
-/** First fixed DPPI channel, total used channels: 7. */
-#define ESB_DPPI_FIRST_FIXED_CHANNEL 0
-/** First fixed DPPI group, total used groups: 1. */
-#define ESB_DPPI_FIRST_FIXED_GROUP 0
-#endif
+#define ESB_NRFX_TIMER_INSTANCE_REG NRF_TIMER_INST_GET(ESB_TIMER_INSTANCE_NO)
 
 /** ESB EGU events and tasks configuration. */
 #define ESB_EGU_EVENT NRF_EGU_EVENT_TRIGGERED6

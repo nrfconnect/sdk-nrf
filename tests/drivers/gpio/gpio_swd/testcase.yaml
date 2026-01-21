@@ -1,0 +1,21 @@
+common:
+  tags:
+    - drivers
+    - gpio
+    - ci_tests_drivers_gpio
+  depends_on: gpio
+  harness: pytest
+  harness_config:
+    pytest_root:
+      - "pytest/test_swd.py"
+    fixture: gpio_loopback
+
+tests:
+  drivers.gpio.gpio_swd:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp

@@ -40,7 +40,8 @@ function(asm_check)
                 If you want to include the new ASM in build, \
                 please run `ninja asm_install` in FLPR build directory and build again. \
                 If you want to disable this error and include new ASM in build every time,\
-                enable SB_CONFIG_HPF_DEVELOPER_MODE option.")
+                enable SB_CONFIG_HPF_DEVELOPER_MODE option (when building for cpuapp) \
+                or CONFIG_HPF_DEVELOPER_MODE option (when building for cpuflpr).")
       endif()
     else()
       message("Something went wrong when comparing ${asm_filename}-${soc}.s and ${asm_filename}-${soc}-temp.s")

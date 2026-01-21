@@ -1,5 +1,5 @@
 tests:
-  unity.lte_lc_api_test:
+  lte_lc_api.unit_test:
     sysbuild: true
     tags:
       - lte_lc_api

@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
-if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${NORMALIZED_BOARD_TARGET}")
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/configuration/${NORMALIZED_BOARD_TARGET}")
   message(FATAL_ERROR
           "Board ${BOARD} is not supported.\n"
           "Please make sure board specific configuration files are added to "
@@ -28,7 +28,8 @@ target_sources(app PRIVATE src/main.c)
 zephyr_include_directories(
   ../configuration/common
   /configuration
-  ${REMOTE_INC_DIR})
+  ${REMOTE_INC_DIR}
+)
 
 # Add subdirectory from common part.
 add_subdirectory(../common/src/modules ${CMAKE_CURRENT_BINARY_DIR}/common/src/module)

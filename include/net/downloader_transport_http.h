@@ -22,7 +22,7 @@
  * @brief HTTP transport configuration params.
  */
 struct downloader_transport_http_cfg {
-	/** Socket receive timeout in milliseconds */
+	/** Socket receive timeout in milliseconds. The default timeout is 30000 ms. */
 	uint32_t sock_recv_timeo_ms;
 };
 

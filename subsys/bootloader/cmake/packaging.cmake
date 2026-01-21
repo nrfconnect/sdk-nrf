@@ -7,29 +7,58 @@
 if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
   include(${ZEPHYR_BASE}/../nrf/cmake/fw_zip.cmake)
   include(${ZEPHYR_BASE}/../nrf/cmake/dfu_multi_image.cmake)
+  include(${ZEPHYR_BASE}/../nrf/cmake/dfu_extra.cmake)
 
   set(dfu_multi_image_ids)
   set(dfu_multi_image_paths)
   set(dfu_multi_image_targets)
+
+  sysbuild_get(dfu_multi_image_align IMAGE ${DEFAULT_IMAGE} VAR CONFIG_DFU_MULTI_IMAGE_ALIGN KCONFIG)
+  if(NOT dfu_multi_image_align)
+    set(dfu_multi_image_align 1)
+  endif()
 
   if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_APP)
     sysbuild_get(${DEFAULT_IMAGE}_image_dir IMAGE ${DEFAULT_IMAGE} VAR APPLICATION_BINARY_DIR CACHE)
     sysbuild_get(${DEFAULT_IMAGE}_kernel_name IMAGE ${DEFAULT_IMAGE} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
 
     list(APPEND dfu_multi_image_ids 0)
-    list(APPEND dfu_multi_image_paths "${${DEFAULT_IMAGE}_image_dir}/zephyr/${${DEFAULT_IMAGE}_kernel_name}.signed.bin")
+
+    if(SB_CONFIG_BOOT_ENCRYPTION)
+      list(APPEND dfu_multi_image_paths "${${DEFAULT_IMAGE}_image_dir}/zephyr/${${DEFAULT_IMAGE}_kernel_name}.signed.encrypted.bin")
+    else()
+      list(APPEND dfu_multi_image_paths "${${DEFAULT_IMAGE}_image_dir}/zephyr/${${DEFAULT_IMAGE}_kernel_name}.signed.bin")
+    endif()
+
     list(APPEND dfu_multi_image_targets ${DEFAULT_IMAGE}_extra_byproducts ${dfu_multi_image_paths})
   endif()
 
   if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_NET)
     get_property(image_name GLOBAL PROPERTY DOMAIN_APP_CPUNET)
     list(APPEND dfu_multi_image_ids 1)
-    if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-      list(APPEND dfu_multi_image_paths "${CMAKE_BINARY_DIR}/signed_by_mcuboot_and_b0_${image_name}.bin")
-      list(APPEND dfu_multi_image_targets ${image_name}_extra_byproducts ${image_name}_signed_kernel_hex_target ${image_name}_signed_packaged_target)
+    if(SB_CONFIG_SECURE_BOOT_NETCORE)
+      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+        list(APPEND dfu_multi_image_paths "${CMAKE_BINARY_DIR}/signed_by_mcuboot_and_b0_${image_name}.bin")
+        list(APPEND dfu_multi_image_targets ${image_name}_extra_byproducts ${image_name}_signed_kernel_hex_target ${image_name}_signed_packaged_target)
+      else()
+        list(APPEND dfu_multi_image_paths "${CMAKE_BINARY_DIR}/signed_by_b0_${image_name}.bin")
+        list(APPEND dfu_multi_image_targets ${image_name}_extra_byproducts ${image_name}_signed_kernel_hex_target)
+      endif()
     else()
-      list(APPEND dfu_multi_image_paths "${CMAKE_BINARY_DIR}/signed_by_b0_${image_name}.bin")
-      list(APPEND dfu_multi_image_targets ${image_name}_extra_byproducts ${image_name}_signed_kernel_hex_target)
+      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+        sysbuild_get(net_image_dir IMAGE ${image_name} VAR APPLICATION_BINARY_DIR CACHE)
+        sysbuild_get(net_kernel_name IMAGE ${image_name} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+
+        if(SB_CONFIG_BOOT_ENCRYPTION)
+          list(APPEND dfu_multi_image_paths "${net_image_dir}/zephyr/${net_kernel_name}.signed.encrypted.bin")
+        else()
+          list(APPEND dfu_multi_image_paths "${net_image_dir}/zephyr/${net_kernel_name}.signed.bin")
+        endif()
+
+        list(APPEND dfu_multi_image_targets ${image_name}_extra_byproducts ${dfu_multi_image_paths})
+      else()
+        message(WARNING "DFU multi image package: Network core image update without MCUboot or NSIB not supported yet.")
+      endif()
     endif()
   endif()
 
@@ -50,10 +79,31 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
     list(APPEND dfu_multi_image_targets nrf70_wifi_fw_patch_target)
   endif()
 
+  if(SB_CONFIG_MCUBOOT_EXTRA_IMAGES)
+    dfu_extra_get_binaries(
+      IDS extra_image_ids
+      PATHS extra_paths
+      TARGETS extra_targets
+      FILTER_PACKAGES multi
+    )
+    if(extra_image_ids)
+      foreach(id IN LISTS extra_image_ids)
+        if(id IN_LIST dfu_multi_image_ids)
+          message(FATAL_ERROR "IMAGE_ID ${id} already exists")
+        endif()
+      endforeach()
+
+      list(APPEND dfu_multi_image_ids ${extra_image_ids})
+      list(APPEND dfu_multi_image_paths ${extra_paths})
+      list(APPEND dfu_multi_image_targets ${extra_targets})
+    endif()
+  endif()
+
   if(DEFINED dfu_multi_image_targets)
     dfu_multi_image_package(dfu_multi_image_pkg
       IMAGE_IDS ${dfu_multi_image_ids}
       IMAGE_PATHS ${dfu_multi_image_paths}
+      ALIGN ${dfu_multi_image_align}
       OUTPUT ${CMAKE_BINARY_DIR}/dfu_multi_image.bin
       DEPENDS ${dfu_multi_image_targets}
       )

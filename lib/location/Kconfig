@@ -43,11 +43,12 @@ config LOCATION_METHOD_WIFI_NET_MGMT
 	  Network Management APIs in tests for mocking purposes.
 
 config LOCATION_METHOD_WIFI_NET_IF_UPDOWN
-	bool
+	bool "Use netif up/down for Wi-Fi"
 	default y if (BOARD_THINGY91X_NRF9151 || BOARD_THINGY91X_NRF9151_NS || BOARD_THINGY91X_NRF5340_CPUAPP || BOARD_THINGY91X_NRF5340_CPUAPP_NS)
 	depends on LOCATION_METHOD_WIFI_NET_MGMT
+	select WIFI_READY_LIB
 	help
-	  Use the Network Interface Up/Down APIs for Wi-Fi functionality.
+	  Use the Network Interface Up/Down APIs for Wi-Fi functionality to save power.
 
 
 config LOCATION_METHODS_LIST_SIZE
@@ -151,12 +152,14 @@ choice LOCATION_REQUEST_DEFAULT_METHOD_FIRST
 	  Default first priority method used in location_config_defaults_set() function
 	  within location_config structure if method_types member is NULL.
 
-	config LOCATION_REQUEST_DEFAULT_METHOD_FIRST_GNSS
-		bool "GNSS positioning"
-	config LOCATION_REQUEST_DEFAULT_METHOD_FIRST_WIFI
-		bool "Wi-Fi positioning"
-	config LOCATION_REQUEST_DEFAULT_METHOD_FIRST_CELLULAR
-		bool "Cellular positioning"
+config LOCATION_REQUEST_DEFAULT_METHOD_FIRST_GNSS
+	bool "GNSS positioning"
+
+config LOCATION_REQUEST_DEFAULT_METHOD_FIRST_WIFI
+	bool "Wi-Fi positioning"
+
+config LOCATION_REQUEST_DEFAULT_METHOD_FIRST_CELLULAR
+	bool "Cellular positioning"
 
 endchoice
 
@@ -169,14 +172,17 @@ choice LOCATION_REQUEST_DEFAULT_METHOD_SECOND
 	  Default second priority method used in location_config_defaults_set() function
 	  within location_config structure if method_types member is NULL.
 
-	config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_GNSS
-		bool "GNSS positioning"
-	config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_WIFI
-		bool "Wi-Fi positioning"
-	config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_CELLULAR
-		bool "Cellular positioning"
-	config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_NONE
-		bool "No second priority method"
+config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_GNSS
+	bool "GNSS positioning"
+
+config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_WIFI
+	bool "Wi-Fi positioning"
+
+config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_CELLULAR
+	bool "Cellular positioning"
+
+config LOCATION_REQUEST_DEFAULT_METHOD_SECOND_NONE
+	bool "No second priority method"
 
 endchoice
 
@@ -188,14 +194,18 @@ choice LOCATION_REQUEST_DEFAULT_METHOD_THIRD
 	  Default third priority method used in location_config_defaults_set() function
 	  within location_config structure if method_types member is NULL.
 
-	config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_GNSS
-		bool "GNSS positioning"
-	config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_WIFI
-		bool "Wi-Fi positioning"
-	config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_CELLULAR
-		bool "Cellular positioning"
-	config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_NONE
-		bool "No third priority method"
+config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_GNSS
+	bool "GNSS positioning"
+
+config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_WIFI
+	bool "Wi-Fi positioning"
+
+config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_CELLULAR
+	bool "Cellular positioning"
+
+config LOCATION_REQUEST_DEFAULT_METHOD_THIRD_NONE
+	bool "No third priority method"
+
 endchoice
 
 config LOCATION_REQUEST_DEFAULT_INTERVAL
@@ -228,12 +238,14 @@ choice LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY
 	  Default value used in location_config_defaults_set() function for accuracy
 	  member within location_gnss_config structure.
 
-	config LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_LOW
-		bool "GNSS low accuracy"
-	config LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_NORMAL
-		bool "GNSS normal accuracy"
-	config LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_HIGH
-		bool "GNSS high accuracy"
+config LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_LOW
+	bool "GNSS low accuracy"
+
+config LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_NORMAL
+	bool "GNSS normal accuracy"
+
+config LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY_HIGH
+	bool "GNSS high accuracy"
 
 endchoice
 
@@ -291,6 +303,6 @@ endif # LOCATION_METHOD_WIFI
 
 module = LOCATION
 module-str = Location
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # LOCATION

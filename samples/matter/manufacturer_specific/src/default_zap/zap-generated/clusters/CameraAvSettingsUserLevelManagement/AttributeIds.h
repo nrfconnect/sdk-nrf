@@ -17,6 +17,10 @@ namespace app
 		{
 			namespace Attributes
 			{
+
+				// Total number of attributes supported by the cluster, including global attributes
+				inline constexpr uint32_t kAttributesCount = 15;
+
 				namespace MPTZPosition
 				{
 					inline constexpr AttributeId Id = 0x00000000;
@@ -61,6 +65,11 @@ namespace app
 				{
 					inline constexpr AttributeId Id = 0x00000008;
 				} // namespace PanMax
+
+				namespace MovementState
+				{
+					inline constexpr AttributeId Id = 0x00000009;
+				} // namespace MovementState
 
 				namespace GeneratedCommandList
 				{

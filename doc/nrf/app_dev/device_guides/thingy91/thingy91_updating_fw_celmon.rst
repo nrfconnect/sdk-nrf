@@ -1,7 +1,8 @@
 .. _thingy91_update_firmware:
+.. _programming_thingy:
 
-Updating the Thingy:91 firmware using the Cellular Monitor app
-##############################################################
+Updating the Thingy:91 firmware using nRF Connect for Desktop apps
+##################################################################
 
 .. contents::
    :local:
@@ -20,7 +21,7 @@ The board enters MCUboot mode if you press one of the following buttons while th
 
 * **SW3** - The main button used to flash the nRF9160 SiP.
   You use this button when getting started with the Thingy:91.
-* **SW4** - The button used to :ref:`update the nRF52840 SoC <updating_the conn_bridge_52840>`.
+* **SW4** - The button used to update the nRF52840 SoC.
 
 Before you start, make sure the Thingy:91 is connected to the computer with a micro-USB cable and powered on.
 
@@ -28,93 +29,41 @@ Before you start, make sure the Thingy:91 is connected to the computer with a mi
 
    Do not unplug the Nordic Thingy:91 during this process.
 
-To update the firmware on the Thingy:91, complete the following steps:
+You can update the firmware on the Thingy:91 using the following nRF Connect for Desktop apps:
 
-1. Install the `Cellular Monitor app`_ on the computer:
+* Programmer app
+* Cellular Monitor app
 
-   a. Go to `nRF Connect for Desktop Downloads <Download nRF Connect for Desktop_>`_.
-   #. Download and install nRF Connect for Desktop.
-   #. Open `nRF Connect for Desktop`_.
-   #. Find **Cellular Monitor** in the list of apps and click :guilabel:`Install`.
+Updating the Thingy:91 firmware using the Programmer app
+========================================================
 
-#. Open the `Cellular Monitor app`_.
-#. Click :guilabel:`SELECT DEVICE` and select the Thingy:91 from the drop-down list.
+To update the firmware on the Thingy:91 using the `Programmer app`_ in nRF Connect for Desktop, complete the steps listed on the `Programming Nordic Thingy prototyping platforms`_ page in the tool documentation.
 
-   .. figure:: images/cellularmonitor_selectdevice_thingy91.png
-      :alt: Cellular Monitor app - Select device
+Updating the Thingy:91 firmware using the Cellular Monitor app
+==============================================================
 
-      Cellular Monitor app - Select device
+To update the firmware on the Thingy:91 using the `Cellular Monitor app`_ in nRF Connect for Desktop, complete the steps listed on the `Programming Nordic Thingy:91 firmware`_ page in the tool documentation.
 
-   The drop-down text changes to the type of the selected device, with its SEGGER ID below the name.
+.. _thingy91_partition_layout:
 
-#. Click :guilabel:`Program device` in the **ADVANCED OPTIONS** section.
+Partition layout
+================
 
-   .. figure:: images/cellularmonitor_programdevice_thingy91.png
-      :alt: Cellular Monitor app - Program device
+When building firmware on Nordic Thingy:91, a static partition layout matching the factory layout is used.
+This setup ensures that when you program the firmware through USB, it works correctly without updating the MCUboot bootloader.
+You must keep the image partitions in their original place to avoid compatibility issues.
+When you use an external debug probe to program the Thingy:91, you can update all the memory sections, including the MCUboot bootloader.
+This allows you to use a newer version of the bootloader or define an application-specific partition layout.
 
-      Cellular Monitor app - Program device
+Configure the partition layout using one of the following configuration options:
 
-   The **Program sample app** window appears, displaying applications you can program to the Thingy:91.
-
-#. Click :guilabel:`Select` in the **Asset Tracker V2** section.
-
-   .. figure:: images/cellularmonitor_selectassettracker.png
-      :alt: Cellular Monitor app - Select Asset Tracker V2
-
-      Cellular Monitor app - Select Asset Tracker V2
-
-   The **Program Modem Firmware (Optional)** window appears.
-
-#. Click :guilabel:`Select` in the section for the latest modem firmware.
-
-   The **Program Mode Firmware (Optional)** window expands to display additional information.
-
-   .. figure:: images/cellularmonitor_enablemcuboot.png
-      :alt: Cellular Monitor app - Enable MCUboot
-
-      Cellular Monitor app - Enable MCUboot
-
-#. Switch off the Thingy:91.
-#. Press **SW3** while switching **SW1** to the **ON** position to enable MCUboot mode.
-#. Click :guilabel:`Program` to program the modem firmware to the Thingy:91.
-   Do not unplug or turn off the device during this process.
-
-   When the process is complete, you see a success message.
-
-   If you see an error message, switch off the Thingy:91, enable MCUboot mode again, and click :guilabel:`Program`.
-
-#. Click :guilabel:`Continue` to move to the next step.
-
-   The **Program Mode Firmware (Optional)** window changes to the **Program Asset Tracker V2** window.
-
-#. Switch off the Thingy:91.
-#. Press **SW3** while switching **SW1** to the **ON** position to enable MCUboot mode.
-#. Click :guilabel:`Program` to program the application to the Thingy:91.
-   Do not unplug or turn off the device during this process.
-
-   When the process is complete, you see a success message.
-   Click :guilabel:`Close` to close the **Program Asset Tracker V2** window.
-
-   If you see an error message, switch off the Thingy:91, enable MCUboot mode again, and click :guilabel:`Program`.
-
-#. Copy the :term:`Integrated Circuit Card Identifier (ICCID)` of the inserted micro-SIM.
-   This is required for activating the iBasis SIM when :ref:`thingy91_connect_to_cloud`.
-
-   If you have activated your iBasis SIM card before or are using a SIM card from a different provider, you can skip this step.
-
-   a. Click :guilabel:`Start` to begin the modem trace.
-      The button changes to :guilabel:`Stop` and is greyed out.
-   #. Click :guilabel:`Refresh dashboard` to refresh the information.
-
-      If the information does not load, switch the Thingy:91 off and on, select the device from the :guilabel:`SELECT DEVICE` drop-down, and click :guilabel:`Start` to begin the modem trace again.
-
-   #. Copy the ICCID by clicking on the **ICCID** label or the displayed ICCID number in the **Sim** section.
-
-      .. figure:: images/cellularmonitor_iccid.png
-         :alt: Cellular Monitor app - ICCID
-
-         Cellular Monitor app - ICCID
-
-      .. note::
-         The ICCID copied here has 20 digits.
-         When activating the SIM, you need to remove the last two digits so that it is 18 digits.
+* :kconfig:option:`CONFIG_THINGY91_STATIC_PARTITIONS_FACTORY` - This option is the default Thingy:91 partition layout used in the factory firmware.
+  This ensures firmware updates are compatible with Thingy:91 when programming firmware through USB.
+* :kconfig:option:`CONFIG_THINGY91_STATIC_PARTITIONS_SECURE_BOOT` - This option is similar to the factory partition layout, but also has space for the immutable bootloader and two MCUboot slots.
+  You need a debugger to program Thingy:91 for the first time.
+  This is an :ref:`experimental <software_maturity>` feature.
+* :kconfig:option:`CONFIG_THINGY91_STATIC_PARTITIONS_LWM2M_CARRIER` - This option uses a partition layout, including a storage partition needed for the :ref:`liblwm2m_carrier_readme` library.
+* :kconfig:option:`CONFIG_THINGY91_NO_PREDEFINED_LAYOUT` - Enabling this option disables Thingy:91 pre-defined static partitions.
+  This allows the application to use a dynamic layout or define a custom static partition layout for the application.
+  You need a debugger to program Thingy:91 for the first time.
+  This is an :ref:`experimental <software_maturity>` feature.

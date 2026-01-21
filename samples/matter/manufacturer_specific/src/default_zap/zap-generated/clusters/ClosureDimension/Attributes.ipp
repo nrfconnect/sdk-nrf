@@ -39,8 +39,8 @@ namespace app
 					switch (path.mAttributeId) {
 					case Attributes::CurrentState::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, currentState);
-					case Attributes::Target::TypeInfo::GetAttributeId():
-						return DataModel::Decode(reader, target);
+					case Attributes::TargetState::TypeInfo::GetAttributeId():
+						return DataModel::Decode(reader, targetState);
 					case Attributes::Resolution::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, resolution);
 					case Attributes::StepValue::TypeInfo::GetAttributeId():
@@ -59,6 +59,8 @@ namespace app
 						return DataModel::Decode(reader, overflow);
 					case Attributes::ModulationType::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, modulationType);
+					case Attributes::LatchControlModes::TypeInfo::GetAttributeId():
+						return DataModel::Decode(reader, latchControlModes);
 					case Attributes::GeneratedCommandList::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, generatedCommandList);
 					case Attributes::AcceptedCommandList::TypeInfo::GetAttributeId():

@@ -8,7 +8,7 @@ set(NRF_BOARD_SELECTED True)
 
 add_subdirectory(${Trusted\ Firmware\ M_SOURCE_DIR}/platform/ext/target/nordic_nrf/common/nrf54l15 nrf54l15)
 
-add_subdirectory(.. tfm_board)
+add_subdirectory(${TFM_BOARDS_NRF_DIR} tfm_board)
 
 target_include_directories(platform_s
   PUBLIC
@@ -27,13 +27,6 @@ target_include_directories(platform_s
   ${ZEPHYR_BASE}/soc/nordic/common
   )
 
-# nrf54l15_application.h should be defining __ICACHE_PRESENT, but
-# it is not, until this is fixed we define it here.
-target_compile_definitions(platform_s
-  PRIVATE
-  __ICACHE_PRESENT=1
-  )
-
 install(FILES       ${CMAKE_CURRENT_LIST_DIR}/ns/cpuarch_ns.cmake
         DESTINATION ${INSTALL_PLATFORM_NS_DIR}
         RENAME      cpuarch.cmake)
@@ -41,7 +34,7 @@ install(FILES       ${CMAKE_CURRENT_LIST_DIR}/ns/cpuarch_ns.cmake
 install(FILES       config.cmake
         DESTINATION ${INSTALL_PLATFORM_NS_DIR})
 
-install(FILES       ../common/config.cmake
+install(FILES       ${TFM_BOARDS_NRF_DIR}/common/config.cmake
         DESTINATION ${INSTALL_PLATFORM_NS_DIR}/../common/)
 
 install(DIRECTORY   ${Trusted\ Firmware\ M_SOURCE_DIR}/platform/ext/target/nordic_nrf/nrf54l15dk_nrf54l15_cpuapp/tests

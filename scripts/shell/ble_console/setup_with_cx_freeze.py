@@ -1,7 +1,7 @@
 # Copyright (c) 2019 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-from cx_Freeze import setup, Executable
+from cx_Freeze import Executable, setup
 
 setup(name="Bluetooth NUS Shell for nRF Connect SDK",
       description="BLE Console is a host-side application providing access to Shell over Bluetooth Low Energy in Nordic devices.",

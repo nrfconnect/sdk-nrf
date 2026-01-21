@@ -1,0 +1,163 @@
+common:
+  sysbuild: true
+  timeout: 600
+  slow: true
+  harness: pytest
+  tags:
+    - pytest
+    - mcuboot
+    - mcumgr
+    - external_flash
+    - ci_tests_subsys_bootloader
+
+tests:
+  mcuboot.external_flash.upgrade.basic:
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf9160dk/nrf9160
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    harness_config:
+      pytest_root:
+        - "../pytest/test_upgrade.py"
+        - "../pytest/test_invalid_image.py::test_invalid_signature"
+    extra_args:
+      - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+
+  tfm.mcuboot.external_flash.upgrade.basic:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf9160dk/nrf9160/ns
+    harness_config:
+      pytest_root:
+        - "../pytest/test_upgrade.py"
+    extra_args:
+      - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0xfe00
+
+  mcuboot.external_flash.upgrade.hw_downgrade_prevention:
+    tags:
+      - hw_downgrade_prevention
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf9160dk/nrf9160
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness_config:
+      pytest_root:
+        - "../pytest/test_downgrade_prevention.py::test_hw_downgrade_prevention_with_sign_version"
+    extra_args:
+      - SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION=y
+
+  mcuboot.external_flash.upgrade.netcore:
+    timeout: 800
+    tags:
+      - netcore
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    harness_config:
+      pytest_root:
+        - "../pytest/test_upgrade_netcore.py"
+    extra_args:
+      - FILE_SUFFIX=network_core
+      - SB_CONFIG_NETCORE_EMPTY=y
+      - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      - b0n_CONFIG_PCD_READ_NETCORE_APP_VERSION=y
+      - b0n_CONFIG_FW_INFO_FIRMWARE_VERSION=2
+
+  nsib.mcuboot.external_flash.upgrade.netcore_and_mcuboot:
+    timeout: 800
+    tags:
+      - netcore
+      - nsib
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    harness_config:
+      pytest_root:
+        - "../pytest/test_upgrade_netcore.py"
+        - "../pytest/test_upgrade_mcuboot_nsib.py"
+    extra_args:
+      - FILE_SUFFIX=network_core
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - SB_CONFIG_NETCORE_EMPTY=y
+      - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      - b0n_CONFIG_PCD_READ_NETCORE_APP_VERSION=y
+
+  nsib.mcuboot.external_flash.upgrade.basic:
+    tags:
+      - nsib
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    harness_config:
+      pytest_root:
+        - "../pytest/test_upgrade.py::test_upgrade_with_revert"
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+
+  mcuboot.external_flash.nrf_compress.basic:
+    tags:
+      - nrf_compress
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness_config:
+      pytest_root:
+        - "../pytest/test_nrf_compress.py"
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y
+      - SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT=y
+      - FILE_SUFFIX=larger_mcuboot
+
+  mcuboot.external_flash.nrf_compress.encryption_rsa:
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+    tags:
+      - encryption
+      - nrf_compress
+    harness_config:
+      pytest_root:
+        - "../pytest/test_nrf_compress.py"
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y
+      - SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT=y
+      - SB_CONFIG_BOOT_ENCRYPTION=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA=y
+
+  mcuboot.external_flash.nrf_compress.encryption_ed25519:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - encryption
+      - nrf_compress
+    harness_config:
+      pytest_root:
+        - "../pytest/test_nrf_compress.py"
+        - "../pytest/test_invalid_image.py::test_invalid_encryption"
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY=y
+      - SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT=y
+      - SB_CONFIG_BOOT_ENCRYPTION=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+      - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0x16000

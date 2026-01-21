@@ -28,6 +28,32 @@ static psa_key_id_t kmu_key_ids[] =  {
 BUILD_ASSERT(INT8_MAX >= ARRAY_SIZE(kmu_key_ids),
 		"Number of KMU keys too big");
 
+void bl_ed25519_keys_housekeeping(void)
+{
+	psa_status_t status;
+
+	/* We will continue through all keys, even if we have error while
+	 * processing any of it. Only doing BOOT_LOG_DBG, as we do not
+	 * really want to inform on failures to lock.
+	 */
+	for (int i = 0; i < ARRAY_SIZE(kmu_key_ids); ++i) {
+		psa_key_attributes_t attr;
+
+		status = psa_get_key_attributes(kmu_key_ids[i], &attr);
+		LOG_DBG("KMU key 0x%x(%d) attr query status == %d",
+			kmu_key_ids[i], i, status);
+
+		if (status == PSA_SUCCESS) {
+			status = cracen_kmu_block(&attr);
+			LOG_DBG("KMU key lock status == %d", status);
+		}
+
+		status = psa_purge_key(kmu_key_ids[i]);
+		LOG_DBG("KMU key 0x%x(%d) purge status == %d",
+			kmu_key_ids[i], i, status);
+	}
+}
+
 int bl_ed25519_validate(const uint8_t *data, uint32_t data_len, const uint8_t *signature)
 {
 	psa_status_t status = PSA_ERROR_BAD_STATE;

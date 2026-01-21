@@ -11,8 +11,8 @@ project("Fast Pair storage factory reset unit test")
 
 # Add test sources
 target_sources(app PRIVATE
-	       src/main.c
-	       ../common/src/common_utils.c
+  src/main.c
+  ../common/src/common_utils.c
 )
 target_include_directories(app PRIVATE ../common/include)
 

@@ -197,6 +197,11 @@ Smart Plugs/Outlets device types
 | Load Control      | to another device that is plugged into it, and is capable of being           |                     |                                       |
 |                   | switched on or off and have its level adjusted.                              |                     |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Irrigation System | An irrigation system is used to control a group of irrigation zones to water | Certifiable         |                                       |
+|                   | the landscape. A physical irrigation system typically has a set of electrical|                     |                                       |
+|                   | terminals to which in-ground water valves are connected so that the system   |                     |                                       |
+|                   | can actuate them.                                                            |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_switches_controls:
 
@@ -241,64 +246,67 @@ Switches and Controls device types
 Sensor device types
 ===================
 
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Device type       | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
-+===================+==============================================================================+=====================+=======================================+
-| Contact Sensor    | A Contact Sensor device reports boolean state (open/close                    | Certifiable         |                                       |
-|                   | or contact/no-contact).                                                      |                     |                                       |
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Light Sensor      | A Light Sensor device is a measurement and sensing device that is capable    | Certifiable         |                                       |
-|                   | of measuring and reporting the intensity of light being emitted              |                     |                                       |
-|                   | by a light source.                                                           |                     |                                       |
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Occupancy Sensor  | An Occupancy Sensor is a measurement and sensing device that is capable      | Certifiable         |                                       |
-|                   | of measuring and reporting the occupancy state in a designated area.         |                     |                                       |
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Temperature       | A Temperature Sensor device reports measurements of temperature.             | Certifiable         | :ref:`matter_weather_station_app`     |
-| Sensor            |                                                                              |                     |                                       |
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Pressure Sensor   | A Pressure Sensor device measures and periodically reports the pressure      | Certifiable         | :ref:`matter_weather_station_app`     |
-|                   | of a fluid.                                                                  |                     |                                       |
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Flow Sensor       | A Flow Sensor device measures and periodically reports the flow rate         | Certifiable         |                                       |
-|                   | of a fluid.                                                                  |                     |                                       |
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Humidity Sensor   | A Humidity Sensor (in most cases a Relative Humidity Sensor) reports         | Certifiable         | :ref:`matter_weather_station_app`     |
-|                   | humidity measurements.                                                       |                     |                                       |
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| On/Off Sensor     | An On/Off Sensor is a measurement and sensing device that, when bound        | Certifiable         |                                       |
-|                   | to a lighting device such as a color light, is capable of being used         |                     |                                       |
-|                   | to switch the device on or off.                                              |                     |                                       |
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Smoke/CO Alarm    | A Smoke/CO Alarm device is capable of sensing smoke, carbon monoxide,        | Certifiable         |                                       |
-|                   | or both. It is capable of issuing a visual and audible alert to indicate     |                     |                                       |
-|                   | elevated concentration of smoke or carbon monoxide. Smoke/CO Alarms          |                     |                                       |
-|                   | are capable of monitoring themselves and issuing visual and audible alerts   |                     |                                       |
-|                   | for hardware faults, critical low battery conditions, and end of service.    |                     |                                       |
-|                   | Optionally, some of the audible alerts can be temporarily silenced.          |                     |                                       |
-|                   | Smoke/CO Alarms are capable of performing a self-test which performs         |                     |                                       |
-|                   | a diagnostic of the primary sensor and issuing a cycle of the audible        |                     |                                       |
-|                   | and visual life safety alarm indications.                                    |                     |                                       |
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Air Quality       | An Air Quality Sensor is a device designed to monitor and measure various    | Certifiable         |                                       |
-| Sensor            | parameters related to the quality of ambient air in indoor or outdoor        |                     |                                       |
-|                   | environments.                                                                |                     |                                       |
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Water Freeze      | A Water Freeze Detector is capable of rating and reporting the risk of water | Certifiable         |                                       |
-| Detector          | freeze based on the external factors such as temperature, humidity or        |                     |                                       |
-|                   | pressure.                                                                    |                     |                                       |
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Water Leak        | A Water Leak Detector is capable of sensing and reporting if a water leak    | Certifiable         |                                       |
-| Detector          | was detected or not.                                                         |                     |                                       |
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
-| Rain Sensor       | A Rain Sensor is capable of sensing and reporting if rain fall was           | Certifiable         |                                       |
-|                   | detected not.                                                                |                     |                                       |
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
++-------------------+------------------------------------------------------------------------------+---------------------+------------------------------------------+
+| Device type       | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|            |
++===================+==============================================================================+=====================+==========================================+
+| Contact Sensor    | A Contact Sensor device reports boolean state (open/close                    | Certifiable         | :ref:`matter_contact_sensor_sample`      |
+|                   | or contact/no-contact).                                                      |                     |                                          |
++-------------------+------------------------------------------------------------------------------+---------------------+------------------------------------------+
+| Light Sensor      | A Light Sensor device is a measurement and sensing device that is capable    | Certifiable         |                                          |
+|                   | of measuring and reporting the intensity of light being emitted              |                     |                                          |
+|                   | by a light source.                                                           |                     |                                          |
++-------------------+------------------------------------------------------------------------------+---------------------+------------------------------------------+
+| Occupancy Sensor  | An Occupancy Sensor is a measurement and sensing device that is capable      | Certifiable         |                                          |
+|                   | of measuring and reporting the occupancy state in a designated area.         |                     |                                          |
++-------------------+------------------------------------------------------------------------------+---------------------+------------------------------------------+
+| Temperature       | A Temperature Sensor device reports measurements of temperature.             | Certifiable         | :ref:`matter_temperature_sensor_sample`, |
+| Sensor            |                                                                              |                     | :ref:`matter_weather_station_app`        |
++-------------------+------------------------------------------------------------------------------+---------------------+------------------------------------------+
+| Pressure Sensor   | A Pressure Sensor device measures and periodically reports the pressure      | Certifiable         | :ref:`matter_weather_station_app`        |
+|                   | of a fluid.                                                                  |                     |                                          |
++-------------------+------------------------------------------------------------------------------+---------------------+------------------------------------------+
+| Flow Sensor       | A Flow Sensor device measures and periodically reports the flow rate         | Certifiable         |                                          |
+|                   | of a fluid.                                                                  |                     |                                          |
++-------------------+------------------------------------------------------------------------------+---------------------+------------------------------------------+
+| Humidity Sensor   | A Humidity Sensor (in most cases a Relative Humidity Sensor) reports         | Certifiable         | :ref:`matter_weather_station_app`        |
+|                   | humidity measurements.                                                       |                     |                                          |
++-------------------+------------------------------------------------------------------------------+---------------------+------------------------------------------+
+| On/Off Sensor     | An On/Off Sensor is a measurement and sensing device that, when bound        | Certifiable         |                                          |
+|                   | to a lighting device such as a color light, is capable of being used         |                     |                                          |
+|                   | to switch the device on or off.                                              |                     |                                          |
++-------------------+------------------------------------------------------------------------------+---------------------+------------------------------------------+
+| Smoke/CO Alarm    | A Smoke/CO Alarm device is capable of sensing smoke, carbon monoxide,        | Certifiable         |                                          |
+|                   | or both. It is capable of issuing a visual and audible alert to indicate     |                     |                                          |
+|                   | elevated concentration of smoke or carbon monoxide. Smoke/CO Alarms          |                     |                                          |
+|                   | are capable of monitoring themselves and issuing visual and audible alerts   |                     |                                          |
+|                   | for hardware faults, critical low battery conditions, and end of service.    |                     |                                          |
+|                   | Optionally, some of the audible alerts can be temporarily silenced.          |                     |                                          |
+|                   | Smoke/CO Alarms are capable of performing a self-test which performs         |                     |                                          |
+|                   | a diagnostic of the primary sensor and issuing a cycle of the audible        |                     |                                          |
+|                   | and visual life safety alarm indications.                                    |                     |                                          |
++-------------------+------------------------------------------------------------------------------+---------------------+------------------------------------------+
+| Air Quality       | An Air Quality Sensor is a device designed to monitor and measure various    | Certifiable         |                                          |
+| Sensor            | parameters related to the quality of ambient air in indoor or outdoor        |                     |                                          |
+|                   | environments.                                                                |                     |                                          |
++-------------------+------------------------------------------------------------------------------+---------------------+------------------------------------------+
+| Water Freeze      | A Water Freeze Detector is capable of rating and reporting the risk of water | Certifiable         |                                          |
+| Detector          | freeze based on the external factors such as temperature, humidity or        |                     |                                          |
+|                   | pressure.                                                                    |                     |                                          |
++-------------------+------------------------------------------------------------------------------+---------------------+------------------------------------------+
+| Water Leak        | A Water Leak Detector is capable of sensing and reporting if a water leak    | Certifiable         |                                          |
+| Detector          | was detected or not.                                                         |                     |                                          |
++-------------------+------------------------------------------------------------------------------+---------------------+------------------------------------------+
+| Rain Sensor       | A Rain Sensor is capable of sensing and reporting if rain fall was           | Certifiable         |                                          |
+|                   | detected or not.                                                             |                     |                                          |
++-------------------+------------------------------------------------------------------------------+---------------------+------------------------------------------+
+| Soil Sensor       | A Soil Sensor is capable of sensing and reporting the soil measurements,     | Certifiable         |                                          |
+|                   | such as moisture and optionally the temperature.                             |                     |                                          |
++-------------------+------------------------------------------------------------------------------+---------------------+------------------------------------------+
 
 .. _ug_matter_device_types_closures:
 
-Closure device types
-====================
+Entry Control device types
+==========================
 
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 | Device type       | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
@@ -315,6 +323,17 @@ Closure device types
 | Window Covering   | A Window Covering Controller is a device that controls an automatic window   | Certifiable         |                                       |
 | Controller        | covering.                                                                    |                     |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Closure           | A Closure is an element that seals an opening, such as a window, door,       | Certifiable         |                                       |
+|                   | cabinet, wall, facade, ceiling, or roof. It may contain one or more          |                     |                                       |
+|                   | instances of a Closure Panel device type on separate child endpoints of the  |                     |                                       |
+|                   | Closure parent.                                                              |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Closure Panel     | A Closure Panel is a device that represents a single panel aspect            | Certifiable         |                                       |
+|                   | of a Closure device type. This panel can be used to express the translation, |                     |                                       |
+|                   | rotation or modulation.                                                      |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Closure Controller| A Closure Controller is a device that controls a Closure device type.        | Certifiable         |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_hvac:
 
@@ -324,11 +343,6 @@ HVAC device types
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 | Device type       | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
 +===================+==============================================================================+=====================+=======================================+
-| Heating/Cooling   | A Heating/Cooling Unit is a device capable of heating or cooling a space     | Provisional         |                                       |
-| Unit              | in a house. It is not mandatory to provide both functionalities              |                     |                                       |
-|                   | (for example, the device may just heat but not cool). It may be an indoor    |                     |                                       |
-|                   | air handler.                                                                 |                     |                                       |
-+-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 | Thermostat        | A Thermostat device is capable of having either built-in or separate sensors | Certifiable         | :ref:`matter_thermostat_sample`       |
 |                   | for temperature, humidity or occupancy. It allows the desired temperature to |                     |                                       |
 |                   | be set either remotely or locally. The thermostat is capable of sending      |                     |                                       |
@@ -341,6 +355,9 @@ HVAC device types
 | Air Purifier      | An Air Purifier is a standalone device that is designed to clean the air in  | Certifiable         |                                       |
 |                   | a room. It has a fan to control the air speed while it is operating.         |                     |                                       |
 |                   | Optionally, it can report on the condition of its filters.                   |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Thermostat        | A Thermostat Controller is a device capable of controlling a Thermostat.     | Certifiable         |                                       |
+| Controller        |                                                                              |                     |                                       |
 +-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_appliance:
@@ -434,6 +451,106 @@ Energy device types
 | Heat Pump          | A Heat Pump device is a device that uses electrical energy to heat either    | Certifiable         |                                       |
 |                    | spaces or water tanks using ground, water or air as the heat source.         |                     |                                       |
 +--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Meter Reference    | A Meter Reference Point device provides details about tariffs and metering.  | Certifiable         |                                       |
+| Point              |                                                                              |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Electrical Energy  | An Electrical Energy Tariff is a device that defines a tariff                | Certifiable         |                                       |
+| Tariff             | for the consumption or production of electrical energy.                      |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Electrical Meter   | An Electrical Meter device meters the electrical energy being imported       | Certifiable         |                                       |
+|                    | and/or exported for billing purposes.                                        |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Electrical Utility | An Electrical Utility Meter device provides utility account information,     | Certifiable         |                                       |
+| Meter              | as well as optional details about tariffs and metering.                      |                     |                                       |
++--------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+
+.. _ug_matter_device_types_media:
+
+Media device types
+==================
+
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Device type       | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
++===================+==============================================================================+=====================+=======================================+
+| Speaker           | A Speaker is a device that is capable of turning on and off the speaker and  | Certifiable         |                                       |
+|                   | adjusting the volume.                                                        |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Basic Video Player| A Basic Video Player represents a device that is able to play media          | Certifiable         |                                       |
+|                   | to a physical output or to a display screen which is part of the device.     |                     |                                       |
+|                   | A device has playback controls (play, pause, etc.) and keypad remote controls|                     |                                       |
+|                   | (up, down, number input), but is not able to launch content and is not       |                     |                                       |
+|                   | a content app platform.                                                      |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Casting Video     | A Casting Video Player represents a device that is able to play media        | Certifiable         |                                       |
+| Player            | to a physical output or to a display screen which is part of the device.     |                     |                                       |
+|                   | A device has basic controls for playback (play, pause, etc.) and keypad      |                     |                                       |
+|                   | input (up, down, number input), and is able to launch content.               |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Content App       | A Content App is usually an application built by a Content Provider.         | Certifiable         |                                       |
+|                   | A Casting Video Player with a Content App Platform is able to launch Content |                     |                                       |
+|                   | Apps and represent these apps as separate endpoints.                         |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Casting Video     | A Casting Video Client is a client that can launch content on a Casting      | Certifiable         |                                       |
+| Client            | Video Player, for example a Smart Speaker or a Content Provider phone app.   |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Video Remote      | A Video Remote Control is a client that can control a Video Player,          | Certifiable         |                                       |
+| Control           | for example, a traditional universal remote control.                         |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+
+.. _ug_matter_device_types_network_infrastructure:
+
+Network Infrastructure device types
+===================================
+
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Device type       | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
++===================+==============================================================================+=====================+=======================================+
+| Network           | A Network Infrastructure Manager provides interfaces that allow              | Certifiable         |                                       |
+| Infrastructure    | for the management of the Wi-Fi, Thread, and Ethernet networks underlying    |                     |                                       |
+| Manager           | a Matter deployment.                                                         |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Thread Border     | A Thread Border Router device type provides interfaces for querying          | Certifiable         |                                       |
+| Router            | and configuring the associated Thread network.                               |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+
+.. _ug_matter_device_types_camera:
+
+Camera device types
+===================
+
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Device type       | Description (from Device Library Specification)                              | State of the device | Dedicated sample in the |NCS|         |
++===================+==============================================================================+=====================+=======================================+
+| Camera            | A Camera device is a camera that provides interfaces for controlling         | Certifiable         |                                       |
+|                   | and transporting captured media, such as Audio, Video or Snapshots.          |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Camera Controller | A Camera controller device is a device that provides interfaces              | Certifiable         |                                       |
+|                   | for controlling and managing camera devices.                                 |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Floodlight Camera | A Floodlight Camera device is a composite device which combines a camera     | Certifiable         |                                       |
+|                   | and a light, primarily used in security use cases.                           |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Video Doorbell    | A Video Doorbell device is a composite device which combines a camera        | Certifiable         |                                       |
+|                   | and a switch to provide a doorbell with Video and Audio streaming.           |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Intercom          | An Intercom is a device which provides two-way on demand communication       | Certifiable         |                                       |
+|                   | facilities between devices. For example it includes room to room systems     |                     |                                       |
+|                   | in house, or the entry door to individual units in multi-tenant buildings.   |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Audio Doorbell    | An Audio Doorbell device is composed in all cases with a generic switch      | Certifiable         |                                       |
+|                   | to provide a doorbell with Audio only streaming.                             |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Snapshot Camera   | A Snapshot Camera device is a camera which can only support retrieving still | Certifiable         |                                       |
+|                   | images on-demand via the Capture Snapshot command in the Camera AV Stream    |                     |                                       |
+|                   | Management cluster.                                                          |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Chime             | A Chime device is a device which can play from a range of pre-installed      | Certifiable         |                                       |
+|                   | sounds and is typically used with a Doorbell, Audio Doorbell, or Video       |                     |                                       |
+|                   | Doorbell.                                                                    |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
+| Doorbell          | A Doorbell device is a switch which when pressed usually causes a Chime      | Certifiable         |                                       |
+|                   | device to activate.                                                          |                     |                                       |
++-------------------+------------------------------------------------------------------------------+---------------------+---------------------------------------+
 
 .. _ug_matter_device_types_utility:
 

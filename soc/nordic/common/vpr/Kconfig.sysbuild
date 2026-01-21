@@ -4,7 +4,7 @@
 config VPR_LAUNCHER
 	bool "VPR launcher"
 	default y
-	depends on (SOC_NRF54LM20A_ENGA_CPUFLPR || SOC_NRF54LV10A_ENGA_CPUFLPR)
+	depends on SOC_NRF54LV10A_ENGA_CPUFLPR
 	help
 	  Include VPR launcher in build.
 	  VPR launcher is a minimal sample built for an ARM core that starts given VPR core.

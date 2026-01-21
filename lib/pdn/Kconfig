@@ -5,12 +5,17 @@
 #
 
 menuconfig PDN
-	bool "Packet Domain Network library"
+	bool "Packet Domain Network library [DEPRECATED]"
 	depends on NRF_MODEM_LIB && AT_MONITOR
-	# library uses heap
-	depends on HEAP_MEM_POOL_SIZE > 0
+	select DEPRECATED
 
 if PDN
+
+config HEAP_MEM_POOL_ADD_SIZE_PDN
+	int
+	default 64
+	help
+	  Extra heap size required for PDN library.
 
 config PDN_LEGACY_PCO
 	bool "Use legacy PCO mode"
@@ -97,6 +102,6 @@ config PDN_ESM_STRERROR
 module=PDN
 module-dep=LOG
 module-str=PDN library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # PDN

@@ -27,7 +27,6 @@ config BT_SCAN_SHORT_NAME_MAX_LEN
 
 config BT_SCAN_FILTER_ENABLE
 	bool "Enabling filters for the Scan library"
-	default n
 	help
 	  Enabling filters for the Scan library.
 
@@ -157,6 +156,6 @@ endif # BT_SCAN_BLOCKLIST
 
 module = BT_SCAN
 module-str = scan library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_SCAN

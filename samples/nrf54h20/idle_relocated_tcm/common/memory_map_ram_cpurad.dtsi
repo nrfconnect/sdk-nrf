@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Use the whole TCM region for the remote firmware. */
+&cpurad_ram0 {
+	compatible = "mmio-sram";
+	/delete-property/ reg;
+	reg = <0x23000000 0x30000>;
+	ranges = <0x0 0x23000000 0x30000>;
+};

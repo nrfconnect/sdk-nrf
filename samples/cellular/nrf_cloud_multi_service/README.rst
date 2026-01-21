@@ -11,6 +11,12 @@ This sample is a minimal, error tolerant, integrated demonstration of the :ref:`
 It demonstrates how you can integrate Firmware-Over-The-Air (FOTA), Location Services, Alert and Log Services, periodic sensor sampling, and more in your `nRF Cloud`_-enabled application.
 It also demonstrates how to build connected, error-tolerant applications without worrying about physical-level specifics using Zephyr's ``conn_mgr``.
 
+.. note::
+
+   This sample is deprecated.
+   Refer to the other nRF Cloud samples to explore nRF Cloud features.
+   It is recommended to base your application on the :ref:`asset_tracker_template_redirect`.
+
 .. _nrf_cloud_multi_service_requirements:
 
 Requirements
@@ -124,7 +130,7 @@ Application thread and main application loop
 The application thread is implemented in the :file:`src/application.c` file, and is responsible for the high-level behavior of this sample.
 
 When it starts, it logs the `reset reason code <nRF9160 RESETREAS_>`_.
-If the :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option is enabled, it sends an alert to nRF Cloud containing the reset reason as the value field.
+If the :ref:`CONFIG_SEND_ONLINE_ALERT <CONFIG_SEND_ONLINE_ALERT>` Kconfig option is enabled, it sends an alert to nRF Cloud containing the reset reason as the value field.
 
 It performs the following major tasks:
 
@@ -426,7 +432,7 @@ Configuring LED status indication for third-party boards
 
 This sample assumes that the target board either has a single RGB LED with PWM support, or four discrete LEDs available.
 
-For third-party boards, you can select the RGB LED option by enabling both the :ref:`CONFIG_LED_INDICATION_PWM <CONFIG_LED_INDICATION_PWM>` and :ref:`CONFIG_LED_INDICATION_RGB <CONFIG_LED_INDICATOR_RGB>` options.
+For third-party boards, you can select the RGB LED option by enabling both the :ref:`CONFIG_LED_INDICATION_PWM <CONFIG_LED_INDICATION_PWM>` and :ref:`CONFIG_LED_INDICATOR_RGB <CONFIG_LED_INDICATOR_RGB>` options.
 In this case, the board must have a devicetree entry marked as compatible with the `Zephyr pwm-leds`_ driver.
 
 Otherwise, the four-LED option (:ref:`CONFIG_LED_INDICATION_GPIO <CONFIG_LED_INDICATION_GPIO>` and :ref:`CONFIG_LED_INDICATOR_4LED <CONFIG_LED_INDICATOR_4LED>`) is selected by default as long as there is a devicetree entry compatible with the `Zephyr gpio-leds`_ driver.
@@ -634,6 +640,14 @@ CONFIG_TEST_COUNTER - Enable test counter
    Enable the test counter.
    When enabled, the test counter configuration setting in the shadow is ignored.
 
+.. _CONFIG_TEST_COUNTER_MULTIPLIER:
+
+CONFIG_TEST_COUNTER_MULTIPLIER - Set the number of test counter messages sent on each update
+   Sets the number of test counter messages sent on each update.
+   This is a way to increase the number of device messages sent by the sample.
+   It is useful for load testing.
+   The value ranges from ``1`` to ``1000`` and the default value is ``1``.
+
 .. _CONFIG_AT_CMD_REQUESTS:
 
 CONFIG_AT_CMD_REQUESTS - Enable AT command requests
@@ -674,25 +688,25 @@ CONFIG_COAP_FOTA - Enable FOTA with CoAP
 
 If :ref:`CONFIG_COAP_FOTA <CONFIG_COAP_FOTA>` is enabled, these options additional are available:
 
-.. _CONFIG_COAP_FOTA_DL_TIMEOUT_MIN:
+.. _CONFIG_FOTA_DL_TIMEOUT_MIN:
 
-CONFIG_COAP_FOTA_DL_TIMEOUT_MIN - CoAP FOTA download timeout
+CONFIG_FOTA_DL_TIMEOUT_MIN - FOTA download timeout
     The time in minutes allotted for a FOTA download to complete.
 
-.. _CONFIG_COAP_FOTA_USE_NRF_CLOUD_SETTINGS_AREA:
+.. _CONFIG_FOTA_USE_NRF_CLOUD_SETTINGS_AREA:
 
-CONFIG_COAP_FOTA_USE_NRF_CLOUD_SETTINGS_AREA - Make FOTA compatible with other samples
+CONFIG_FOTA_USE_NRF_CLOUD_SETTINGS_AREA - Make FOTA compatible with other samples
    Use the same settings area as the nRF Cloud FOTA library.
 
-.. _CONFIG_COAP_FOTA_SETTINGS_NAME:
+.. _CONFIG_FOTA_SETTINGS_NAME:
 
-CONFIG_COAP_FOTA_SETTINGS_NAME - Settings identifier
-   Set the identifier for the CoAP FOTA storage if :kconfig:option:`CONFIG_COAP_FOTA_USE_NRF_CLOUD_SETTINGS_AREA` is not enabled.
+CONFIG_FOTA_SETTINGS_NAME - Settings identifier
+   Set the identifier for the CoAP FOTA storage if :kconfig:option:`CONFIG_FOTA_USE_NRF_CLOUD_SETTINGS_AREA` is not enabled.
 
-.. _CONFIG_COAP_FOTA_SETTINGS_KEY_PENDING_JOB:
+.. _CONFIG_FOTA_SETTINGS_KEY_PENDING_JOB:
 
-CONFIG_COAP_FOTA_SETTINGS_KEY_PENDING_JOB - Settings item key
-   Set the settings item key for pending FOTA job info if :kconfig:option:`CONFIG_COAP_FOTA_USE_NRF_CLOUD_SETTINGS_AREA` is not enabled.
+CONFIG_FOTA_SETTINGS_KEY_PENDING_JOB - Settings item key
+   Set the settings item key for pending FOTA job info if :kconfig:option:`CONFIG_FOTA_USE_NRF_CLOUD_SETTINGS_AREA` is not enabled.
 
 .. _CONFIG_COAP_FOTA_JOB_CHECK_RATE_MINUTES:
 
@@ -703,6 +717,19 @@ CONFIG_COAP_FOTA_JOB_CHECK_RATE_MINUTES - FOTA job check interval (minutes)
 
 CONFIG_COAP_FOTA_THREAD_STACK_SIZE - CoAP FOTA Thread Stack Size (bytes)
    Sets the stack size (in bytes) for the FOTA job checking thread of the sample.
+
+.. _CONFIG_SEND_ONLINE_ALERT:
+
+CONFIG_SEND_ONLINE_ALERT - Send a routine ``ALERT_TYPE_DEVICE_NOW_ONLINE`` on startup
+   This option, on enabling, demonstrates the alert feature of nRF Cloud.
+   Reception of this alert indicates that the device has rebooted.
+
+.. _CONFIG_POST_PROVISIONING_INTERVAL_M:
+
+CONFIG_POST_PROVISIONING_INTERVAL_M - Sets a delay (in minutes) between provisioning checks once connected
+   This option uses a slower rate to check for provisioning after you have successfully connected.
+   Until then you can use :kconfig:option:`CONFIG_NRF_PROVISIONING_INTERVAL_S`.
+   The default value is 30 minutes.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
@@ -1047,7 +1074,7 @@ These overlays show all the Kconfig settings changes needed to properly disable 
 Building with native simulator
 ==============================
 
-You can run this sample on the :ref:`zephyr:native_sim` target.
+You can run this sample on the :zephyr:board:`native simulator <native_sim>` target.
 This enables you to try out connectivity without the need for embedded hardware.
 A Linux host or docker container is required to run the ``native_sim`` target.
 Some setup is needed to connect the application to the network.
@@ -1149,7 +1176,7 @@ You can provision and onboard your device in one of the following ways:
       .. parsed-literal::
          :class: highlight
 
-         claim_and_provision_device --api_key *your_api_key* --provisioning-tags "nrf-cloud-onboarding" --cmd-type at_shell --unclaim
+         claim_and_provision_device --api-key *your_api_key* --provisioning-tags "nrf-cloud-onboarding" --cmd-type at_shell --unclaim
 
       Where *your_api_key* is the API key you obtained in **Step 2**.
 

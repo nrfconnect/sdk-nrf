@@ -1,0 +1,15 @@
+/ {
+	resources {
+		compatible = "test-gpio-basic-api";
+		out-gpios = <&gpio1 5 0>;
+		in-gpios = <&gpio1 21 0>;
+	};
+};
+
+&gpiote20 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};

@@ -1,14 +1,12 @@
 # Copyright (c) 2019 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-import os
-import sys
-import warnings
 import re
 
 import gi
+
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GObject, Gdk, GLib
+from gi.repository import Gdk, Gtk
 
 gi.require_version('Vte', '2.91')
 from gi.repository import Vte
@@ -17,18 +15,11 @@ COLOR_TERMINAL_ACTIVE = Gdk.RGBA(0.0/256, 0.0/256, 0.0/256, 0.8)
 COLOR_TERMINAL_INACTIVE = Gdk.RGBA(200.0/256, 200.0/256, 200.0/256, 0.8)
 MARKUP_REMOVE = re.compile(r'<[^>]+>')
 
-class TerminalNotebook(object):
+class TerminalNotebook:
 
     def __init__(self, write_device, widget, unconnect, message):
 
         # Save images used in terminals
-
-        if getattr(sys, 'frozen', False):
-            # frozen (released)
-            dir_name = os.path.dirname(sys.executable)
-        else:
-            # unfrozen
-            dir_name = os.path.dirname(os.path.realpath(__file__))
 
         self.device_terminal_dict = {}
         self.device_string_dict   = {}
@@ -91,7 +82,7 @@ class TerminalNotebook(object):
             if self.device_terminal_dict[device] == terminal:
                 label_text = self.labels[device].get_text()
 
-                if state == False :
+                if state is False :
                     terminal.set_color_background(COLOR_TERMINAL_INACTIVE)
                     self.display_message("Lost connection with " + device)
                     # Strikethrough name of inactive device

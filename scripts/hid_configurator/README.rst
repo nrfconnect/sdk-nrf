@@ -284,7 +284,7 @@ If the process is to be continued, the script uploads the image data to the devi
 When the upload is completed, the script reboots the device.
 
 Customize the command with path to the DFU update file (``UPDATE_IMAGE_PATH``).
-nRF52, nRF53 and nRF54L Series use the :file:`dfu_application.zip` file.
+The script uses the :file:`dfu_application.zip` file.
 
 For details about update image generation in the nRF Desktop application, see :ref:`nrf_desktop_bootloader_background_dfu`.
 

@@ -6,6 +6,6 @@
 
 zephyr_library()
 zephyr_library_sources(
-	sample_rate_converter.c
-	sample_rate_converter_filter.c
+  sample_rate_converter.c
+  sample_rate_converter_filter.c
 )

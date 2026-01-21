@@ -16,6 +16,14 @@ namespace app
 		{
 			namespace Commands
 			{
+
+				// Total number of client to server commands supported by the cluster
+				inline constexpr uint32_t kAcceptedCommandsCount = 9;
+
+				// Total number of server to client commands supported by the cluster (response
+				// commands)
+				inline constexpr uint32_t kGeneratedCommandsCount = 3;
+
 				namespace SetpointRaiseLower
 				{
 					inline constexpr CommandId Id = 0x00000000;
@@ -46,6 +54,16 @@ namespace app
 					inline constexpr CommandId Id = 0x00000006;
 				} // namespace SetActivePresetRequest
 
+				namespace AddThermostatSuggestion
+				{
+					inline constexpr CommandId Id = 0x00000007;
+				} // namespace AddThermostatSuggestion
+
+				namespace RemoveThermostatSuggestion
+				{
+					inline constexpr CommandId Id = 0x00000008;
+				} // namespace RemoveThermostatSuggestion
+
 				namespace AtomicRequest
 				{
 					inline constexpr CommandId Id = 0x000000FE;
@@ -55,6 +73,11 @@ namespace app
 				{
 					inline constexpr CommandId Id = 0x00000000;
 				} // namespace GetWeeklyScheduleResponse
+
+				namespace AddThermostatSuggestionResponse
+				{
+					inline constexpr CommandId Id = 0x00000002;
+				} // namespace AddThermostatSuggestionResponse
 
 				namespace AtomicResponse
 				{

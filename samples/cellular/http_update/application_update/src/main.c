@@ -10,6 +10,7 @@
 #include <zephyr/drivers/flash.h>
 #include <zephyr/toolchain.h>
 #include <zephyr/net/socket.h>
+#include <zephyr/net/tls_credentials.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/shell/shell.h>
 
@@ -35,7 +36,7 @@
 #ifdef CONFIG_USE_HTTPS
 #define SEC_TAG (TLS_SEC_TAG)
 #else
-#define SEC_TAG (-1)
+#define SEC_TAG (SEC_TAG_TLS_INVALID)
 #endif
 
 enum fota_state { IDLE, CONNECTED, UPDATE_DOWNLOAD, UPDATE_PENDING, UPDATE_APPLY };

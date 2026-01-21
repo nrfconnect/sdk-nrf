@@ -12,91 +12,105 @@ common:
 tests:
   nrf.extended.drivers.spi.spi_mode0:
     platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=0
-    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/250khz.overlay"
+    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/250khz.overlay"
 
   nrf.extended.drivers.spi.spi_mode1:
     platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=1
-    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/500khz.overlay"
+    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/500khz.overlay"
 
   nrf.extended.drivers.spi.spi_mode2:
     platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=2
-    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/1mhz.overlay"
+    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/1mhz.overlay"
 
   nrf.extended.drivers.spi.spi_mode3:
     platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=3
-    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/2mhz.overlay"
+    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/2mhz.overlay"
 
   nrf.extended.drivers.spi.spi_4MHz:
     platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=2
-    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/4mhz.overlay"
+    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/4mhz.overlay"
 
   nrf.extended.drivers.spi.spi_8MHz:
     platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=1
-    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/8mhz.overlay"
+    extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/8mhz.overlay"
 
   nrf.extended.drivers.spi.pm_runtime:
     platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_configs:
       - CONFIG_PM_DEVICE=y
       - CONFIG_PM_DEVICE_RUNTIME=y

@@ -8,14 +8,36 @@ menuconfig NRF_PROVISIONING
 	bool "nRF Provisioning"
 	depends on NRF_MODEM_LIB
 	depends on SETTINGS
+	depends on MODEM_ATTEST_TOKEN
 	imply FCB
 
 if NRF_PROVISIONING
 
-config NRF_PROVISIONING_AUTO_INIT
-	bool "Initialize the client automatically"
+config NRF_PROVISIONING_AUTO_START_ON_INIT
+	bool "Start provisioning automatically on initialization"
 	help
-	  Initialize the client automatically after the modem library is initialized.
+	  Start the client automatically after the client is initialized in the
+	  nrf_provisioning_init() function.
+
+config NRF_PROVISIONING_SCHEDULED
+	bool "Scheduled provisioning"
+	depends on NRF_PROVISIONING_AUTO_START_ON_INIT
+	help
+	  Activate scheduled provisioning. The client will try to perform provisioning
+	  at a given interval set by CONFIG_NRF_PROVISIONING_INTERVAL_S.
+
+config NRF_PROVISIONING_VALID_DATE_TIME_TIMEOUT_SECONDS
+	int "Time to wait for valid date-time in seconds"
+	default 60
+	help
+	  Time to wait for valid date-time before starting provisioning. The provisioning library
+	  depends on JWT generation, which requires a valid date-time.
+
+config NRF_PROVISIONING_MODEM_STATE_WAIT_TIMEOUT_SECONDS
+	int "Modem state wait timeout in seconds"
+	default 120
+	help
+	  Timeout for waiting for the modem to enter the desired connectivity state.
 
 config NRF_PROVISIONING_INTERVAL_S
 	int "Maximum provisioning interval in seconds"
@@ -39,6 +61,7 @@ config NRF_PROVISIONING_WITH_CERT
 
 config NRF_PROVISIONING_ROOT_CA_SEC_TAG
 	int "Root CA for nRF Cloud Identity Service - security tag"
+	default 189298
 
 config NRF_PROVISIONING_SAVE_CMD_ID
 	bool "Save the latest command id to storage"
@@ -72,13 +95,12 @@ config NRF_PROVISIONING_JWT_MAX_VALID_TIME_S
 	range 0 360
 	default 300
 
-config NRF_PROVISIONING_PRINT_ATTESTATION_TOKEN
-	bool "Display attestation token when unauthorized"
-	default y if !NRF_PROVISIONING_SHELL
+config NRF_PROVISIONING_PROVIDE_ATTESTATION_TOKEN
+	bool "Provide attestation token when unauthorized"
+	default y
 	help
 	  Unauthorized errors occur when the device is not yet claimed on
-	  nRF Cloud. Display the attestation token
-	  needed for claiming the device.
+	  nRF Cloud. Provide attestation in the library callback token when unauthorized.
 
 config NRF_PROVISIONING_STACK_SIZE
 	int "nRF Provisioning Stack size"

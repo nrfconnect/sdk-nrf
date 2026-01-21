@@ -14,9 +14,10 @@
 #include <cracen_psa_montgomery.h>
 #include <cracen_psa_ikg.h>
 #include <cracen_psa_rsa_keygen.h>
-#include "platform_keys/platform_keys.h"
+#include <cracen_psa_builtin_key_policy.h>
 #include <nrf_security_mutexes.h>
 #include "ecc.h"
+#include <silexpk/sxops/eccweierstrass.h>
 #include <silexpk/sxops/rsa.h>
 #include <silexpk/ik.h>
 #include <stddef.h>
@@ -82,7 +83,8 @@ static struct {
 	/* Twisted Edwards */
 	{PSA_ECC_FAMILY_TWISTED_EDWARDS, 255, 32, 32,
 	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS)},
-	{PSA_ECC_FAMILY_TWISTED_EDWARDS, 448, 57, 57, false},
+	{PSA_ECC_FAMILY_TWISTED_EDWARDS, 448, 57, 57,
+	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS)},
 };
 
 static psa_status_t check_ecc_key_attributes(const psa_key_attributes_t *attributes,
@@ -120,10 +122,9 @@ static psa_status_t check_ecc_key_attributes(const psa_key_attributes_t *attribu
 	}
 
 	if (status == PSA_SUCCESS) {
-		if (curve == PSA_ECC_FAMILY_TWISTED_EDWARDS) {
-			if (key_alg != PSA_ALG_PURE_EDDSA && key_alg != PSA_ALG_ED25519PH) {
-				return PSA_ERROR_INVALID_ARGUMENT;
-			}
+		if ((curve == PSA_ECC_FAMILY_TWISTED_EDWARDS) && (key_alg != PSA_ALG_PURE_EDDSA &&
+			key_alg != PSA_ALG_ED25519PH && key_alg != PSA_ALG_ED448PH)) {
+			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 	}
 
@@ -226,12 +227,12 @@ static psa_status_t check_wstr_publ_key_for_ecdh(psa_ecc_family_t curve_family, 
 	psa_status_t psa_status;
 	const struct sx_pk_ecurve *curve;
 
-	sx_pk_affine_point publ_key_pnt = {};
+	sx_pk_const_affine_point publ_key_pnt = {};
 
-	publ_key_pnt.x.bytes = (uint8_t *)&data[1];
+	publ_key_pnt.x.bytes = &data[1];
 	publ_key_pnt.x.sz = priv_key_size;
 
-	publ_key_pnt.y.bytes = (uint8_t *)&data[1 + priv_key_size];
+	publ_key_pnt.y.bytes = &data[1 + priv_key_size];
 	publ_key_pnt.y.sz = priv_key_size;
 
 	psa_status = cracen_ecc_get_ecurve_from_psa(curve_family, curve_bits, &curve);
@@ -497,13 +498,13 @@ static psa_status_t export_spake2p_public_key_from_keypair(const psa_key_attribu
 	size_t key_bits_attr = psa_get_key_bits(attributes);
 	psa_ecc_family_t psa_curve = PSA_KEY_TYPE_SPAKE2P_GET_FAMILY(psa_get_key_type(attributes));
 	const struct sx_pk_ecurve *sx_curve;
-	uint8_t *w0;
-	uint8_t *w1;
+	const uint8_t *w0;
+	const uint8_t *w1;
 
 	switch (type) {
 	case PSA_KEY_TYPE_SPAKE2P_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1):
-		w0 = (uint8_t *)priv_key;
-		w1 = (uint8_t *)priv_key + CRACEN_P256_KEY_SIZE;
+		w0 = priv_key;
+		w1 = priv_key + CRACEN_P256_KEY_SIZE;
 		status = cracen_ecc_get_ecurve_from_psa(psa_curve, key_bits_attr, &sx_curve);
 		if (status != PSA_SUCCESS) {
 			return status;
@@ -527,6 +528,271 @@ static psa_status_t export_spake2p_public_key_from_keypair(const psa_key_attribu
 		}
 		memcpy(pub_key, w0, CRACEN_P256_KEY_SIZE);
 		*pub_key_length = CRACEN_P256_KEY_SIZE + CRACEN_P256_POINT_SIZE + 1;
+		return PSA_SUCCESS;
+	default:
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+}
+
+static psa_status_t cracen_hkdf_sha256_hmac(const uint8_t *seed,
+					    const uint8_t *label,
+					    size_t label_len,
+					    uint8_t index,
+					    const uint8_t *opt_input,
+					    size_t opt_input_sz,
+					    uint8_t *out)
+{
+	cracen_mac_operation_t mac_op = {};
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	size_t length;
+	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
+
+	psa_set_key_type(&attr, PSA_KEY_TYPE_HMAC);
+	psa_set_key_bits(&attr, PSA_BYTES_TO_BITS(CRACEN_P256_KEY_SIZE));
+	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_SIGN_MESSAGE);
+
+	status = cracen_mac_sign_setup(&mac_op, &attr, seed, CRACEN_P256_KEY_SIZE,
+				       PSA_ALG_HMAC(PSA_ALG_SHA_256));
+	if (status != PSA_SUCCESS) {
+		goto exit;
+	}
+
+	if (opt_input != NULL) {
+		status = cracen_mac_update(&mac_op, opt_input, opt_input_sz);
+		if (status != PSA_SUCCESS) {
+			goto exit;
+		}
+	}
+
+	status = cracen_mac_update(&mac_op, label, label_len);
+	if (status != PSA_SUCCESS) {
+		goto exit;
+	}
+
+	status = cracen_mac_update(&mac_op, &index, 1);
+	if (status != PSA_SUCCESS) {
+		goto exit;
+	}
+	status = cracen_mac_sign_finish(&mac_op, out, CRACEN_P256_KEY_SIZE, &length);
+	if (status != PSA_SUCCESS) {
+		goto exit;
+	}
+
+	return status;
+exit:
+	cracen_mac_abort(&mac_op);
+	return status;
+}
+
+static psa_status_t cracen_hkdf_sha256_expand(const uint8_t *seed,
+					      const uint8_t *label,
+					      size_t label_len,
+					      uint8_t *out)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+
+	status = cracen_hkdf_sha256_hmac(seed, label, label_len, 1, NULL, 0, out);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	status = cracen_hkdf_sha256_hmac(seed, label, label_len, 2, out, CRACEN_P256_KEY_SIZE,
+					 out + CRACEN_P256_KEY_SIZE);
+
+	return status;
+}
+
+static psa_status_t cracen_wpa3_sae_reduce_p256(const uint8_t *input,
+						size_t input_size,
+						uint8_t *output,
+						size_t output_size)
+{
+	const uint8_t *prime = sx_pk_curve_prime(&sx_curve_nistp256);
+
+	sx_const_op modulo = {.sz = sx_pk_curve_opsize(&sx_curve_nistp256),
+			      .bytes = prime};
+	sx_const_op operand = {.sz = input_size, .bytes = input};
+	sx_op result = {.sz = output_size, .bytes = output};
+
+	const struct sx_pk_cmd_def *cmd = SX_PK_CMD_ODD_MOD_REDUCE;
+	int sx_status = sx_mod_single_op_cmd(cmd, &modulo, &operand, &result);
+
+	return silex_statuscodes_to_psa(sx_status);
+}
+
+static psa_status_t import_wpa3_sae_pt_key(const psa_key_attributes_t *attributes,
+					   const uint8_t *data, size_t data_length,
+					   uint8_t *key_buffer, size_t key_buffer_size,
+					   size_t *key_buffer_length, size_t *key_bits)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	int sx_status;
+	/** Note: input for this function is expected to be a pwd-seed value obtained
+	 *	  as a result of HKDF extraction
+	 */
+	size_t key_bits_attr = psa_get_key_bits(attributes);
+	psa_key_type_t type = psa_get_key_type(attributes);
+	psa_ecc_family_t psa_curve = PSA_KEY_TYPE_WPA3_SAE_PT_GET_FAMILY(type);
+
+	switch (type) {
+	case PSA_KEY_TYPE_WPA3_SAE_ECC_PT(PSA_ECC_FAMILY_SECP_R1):
+
+		if (data_length != CRACEN_P256_POINT_SIZE) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+
+		if (key_bits_attr != 0u && key_bits_attr != 256u) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		/* check point on curve */
+		const struct sx_pk_ecurve *sx_curve;
+
+		status = cracen_ecc_get_ecurve_from_psa(psa_curve, key_bits_attr,
+							&sx_curve);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		MAKE_SX_CONST_POINT(key_pt, data, CRACEN_P256_POINT_SIZE);
+		sx_status = sx_ec_ptoncurve(sx_curve, &key_pt);
+		if (sx_status) {
+			return silex_statuscodes_to_psa(sx_status);
+		}
+
+		if (!memcpy_check_non_zero(key_buffer, key_buffer_size,
+						data, data_length)) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		*key_buffer_length = data_length;
+		*key_bits = key_bits_attr;
+
+		return PSA_SUCCESS;
+	default:
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+}
+
+static psa_status_t cracen_derive_wpa3_sae_pt_key(const psa_key_attributes_t *attributes,
+						  const uint8_t *input, size_t input_length,
+						  uint8_t *key, size_t key_size, size_t *key_length)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	int sx_status;
+	/** Note: input for this function is expected to be a pwd-seed value obtained
+	 *	  as a result of HKDF extraction
+	 */
+	size_t key_bits_attr = psa_get_key_bits(attributes);
+	psa_key_type_t type = psa_get_key_type(attributes);
+	psa_ecc_family_t psa_curve = PSA_KEY_TYPE_WPA3_SAE_PT_GET_FAMILY(type);
+	uint8_t pwd_value[CRACEN_P256_POINT_SIZE];
+	/* IEEE802.11-24 12.4.4.2.3 */
+	const size_t req_pwd_value_len = CRACEN_P256_KEY_SIZE + CRACEN_P256_KEY_SIZE / 2;
+	uint8_t u1_buf[CRACEN_P256_KEY_SIZE];
+	uint8_t u2_buf[CRACEN_P256_KEY_SIZE];
+	uint8_t p1_buf[CRACEN_P256_POINT_SIZE];
+	uint8_t p2_buf[CRACEN_P256_POINT_SIZE];
+
+	sx_op u1 = {.sz = CRACEN_P256_KEY_SIZE, .bytes = u1_buf};
+	sx_op u2 = {.sz = CRACEN_P256_KEY_SIZE, .bytes = u2_buf};
+	sx_op p1 = {.sz = CRACEN_P256_POINT_SIZE, .bytes = p1_buf};
+	sx_op p2 = {.sz = CRACEN_P256_POINT_SIZE, .bytes = p2_buf};
+
+	switch (type) {
+	case PSA_KEY_TYPE_WPA3_SAE_ECC_PT(PSA_ECC_FAMILY_SECP_R1):
+
+		if (key_bits_attr != 256) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+
+		if (input_length != CRACEN_P256_KEY_SIZE) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		if (key_size < CRACEN_P256_POINT_SIZE) {
+			return PSA_ERROR_BUFFER_TOO_SMALL;
+		}
+
+		/**
+		 *  Expand u1:
+		 *  pwd-value = HKDF-Expand(pwd-seed, “SAE Hash to Element u1 P1”, len)
+		 */
+		const char *label_u1 = "SAE Hash to Element u1 P1";
+
+		status = cracen_hkdf_sha256_expand(input, (const uint8_t *)label_u1,
+							strlen(label_u1), pwd_value);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		/* u1 = pwd-value modulo p */
+		status = cracen_wpa3_sae_reduce_p256(pwd_value,
+							req_pwd_value_len,
+							u1.bytes, u1.sz);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		/* P1 = SSWU(u1) */
+		sx_const_op u1_const;
+
+		sx_get_const_op(&u1, &u1_const);
+		status = cracen_ecc_h2e_sswu(psa_curve, key_bits_attr, &u1_const, &p1);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		/**
+		 *  Expand u2:
+		 *  pwd-value = HKDF-Expand(pwd-seed, “SAE Hash to Element u2 P2”, len)
+		 */
+		const char *label_u2 = "SAE Hash to Element u2 P2";
+
+		status = cracen_hkdf_sha256_expand(input, (const uint8_t *)label_u2,
+							strlen(label_u2), pwd_value);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		/* u2 = pwd-value modulo p */
+		status = cracen_wpa3_sae_reduce_p256(pwd_value,
+							req_pwd_value_len,
+							u2.bytes, u2.sz);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		/* P2 = SSWU(u2) */
+		sx_const_op u2_const;
+
+		sx_get_const_op(&u2, &u2_const);
+		status = cracen_ecc_h2e_sswu(psa_curve, key_bits_attr, &u2_const, &p2);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		const struct sx_pk_ecurve *sx_curve;
+
+		status = cracen_ecc_get_ecurve_from_psa(psa_curve,
+							key_bits_attr,
+							&sx_curve);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		/* PT = elem-op(P1, P2) = P1 + P2 operation here */
+		MAKE_SX_CONST_POINT(p1_pt, p1.bytes, CRACEN_P256_POINT_SIZE);
+		MAKE_SX_CONST_POINT(p2_pt, p2.bytes, CRACEN_P256_POINT_SIZE);
+		MAKE_SX_POINT(p_pt, key, key_size);
+		sx_status = sx_ecp_ptadd(sx_curve, &p1_pt, &p2_pt, &p_pt);
+		if (sx_status) {
+			return silex_statuscodes_to_psa(sx_status);
+		}
+
+		*key_length = CRACEN_P256_POINT_SIZE;
+		return PSA_SUCCESS;
+
 		return PSA_SUCCESS;
 	default:
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -672,7 +938,8 @@ static psa_status_t handle_identity_key(const uint8_t *key_buffer, size_t key_bu
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1_256)) {
 		data[0] = CRACEN_ECC_PUBKEY_UNCOMPRESSED;
-		return silex_statuscodes_to_psa(cracen_ikg_create_pub_key(key_buffer[0], data + 1));
+		return silex_statuscodes_to_psa(cracen_ikg_create_pub_key(
+			((const ikg_opaque_key *)key_buffer)->owner_id, data + 1));
 	}
 	return PSA_ERROR_NOT_SUPPORTED;
 }
@@ -716,9 +983,8 @@ static psa_status_t handle_curve_family(psa_ecc_family_t psa_curve, size_t key_b
 				cracen_ed25519_create_pubkey(key_buffer, data));
 		} else if (key_bits_attr == 448 &&
 			   IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_448)) {
-			/* This if-statement is kept to make it easier to add ed448 in the future
-			 * even though it does nothing.
-			 */
+			return silex_statuscodes_to_psa(
+				cracen_ed448_create_pubkey(key_buffer, data));
 			return PSA_ERROR_NOT_SUPPORTED;
 		} else {
 			return PSA_ERROR_NOT_SUPPORTED;
@@ -895,6 +1161,17 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
+	/* The public key of the IAK needs to be allowed to get exported because there is no
+	 * way to provide the public key through the attestation service at the moment.
+	 * The check for IKG keys is skipped since the only IKG key that can use this operation
+	 * is the IAK.
+	 */
+	if (!cracen_builtin_key_user_allowed(attributes) &&
+	    PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) !=
+		    PSA_KEY_LOCATION_CRACEN) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_EXPORT)) {
 		if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
 			return export_ecc_public_key_from_keypair(attributes, key_buffer,
@@ -946,13 +1223,25 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
+	if (!cracen_builtin_key_user_allowed(attributes)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
-#ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
 		int slot_id = CRACEN_PSA_GET_KMU_SLOT(
 			MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
 		psa_key_attributes_t stored_attributes;
+
+#ifdef CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT
+		if (slot_id == PROTECTED_RAM_INVALIDATION_DATA_SLOT1) {
+			/* The key bits are required for the psa_import_key to succeed */
+			*key_bits = 256;
+			return cracen_provision_prot_ram_inv_slots();
+		}
+#endif
 
 		size_t opaque_key_size;
 		psa_status_t status = cracen_get_opaque_size(attributes, &opaque_key_size);
@@ -972,35 +1261,6 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 
 		status = cracen_kmu_get_builtin_key(slot_id, &stored_attributes, key_buffer,
 						    key_buffer_size, key_buffer_length);
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-
-		*key_bits = psa_get_key_bits(&stored_attributes);
-
-		return status;
-	}
-#endif
-#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
-	if (location == PSA_KEY_LOCATION_CRACEN) {
-		psa_key_lifetime_t lifetime;
-		psa_drv_slot_number_t slot_id;
-		psa_key_attributes_t stored_attributes;
-		psa_status_t status = cracen_platform_keys_provision(attributes, data, data_length);
-
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-		status = cracen_platform_get_key_slot(psa_get_key_id(attributes), &lifetime,
-						      &slot_id);
-
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-
-		status = cracen_platform_get_builtin_key(slot_id, &stored_attributes, key_buffer,
-							 key_buffer_size, key_buffer_length);
-
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
@@ -1039,6 +1299,11 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 	if (PSA_KEY_TYPE_IS_SRP(key_type) && IS_ENABLED(PSA_NEED_CRACEN_SRP_6)) {
 		return import_srp_key(attributes, data, data_length, key_buffer, key_buffer_size,
 				      key_buffer_length, key_bits);
+	}
+
+	if (PSA_KEY_TYPE_IS_WPA3_SAE_ECC_PT(key_type) && IS_ENABLED(PSA_NEED_CRACEN_WPA3_SAE)) {
+		return import_wpa3_sae_pt_key(attributes, data, data_length, key_buffer,
+					  key_buffer_size, key_buffer_length, key_bits);
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -1114,7 +1379,14 @@ static psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attribu
 	}
 
 	/* Generate n and d */
-	status = silex_statuscodes_to_psa(sx_rsa_keygen(&p, &q, &e, &n, NULL, &d));
+	sx_const_op c_p;
+	sx_const_op c_q;
+	sx_const_op c_e;
+
+	sx_get_const_op(&p, &c_p);
+	sx_get_const_op(&q, &c_q);
+	sx_get_const_op(&e, &c_e);
+	status = silex_statuscodes_to_psa(sx_rsa_keygen(&c_p, &c_q, &c_e, &n, NULL, &d));
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}
@@ -1191,13 +1463,16 @@ psa_status_t generate_key_for_kmu(const psa_key_attributes_t *attributes, uint8_
 
 	if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type) &&
 	    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_GENERATE)) {
-		status = generate_ecc_private_key(attributes, key, sizeof(key), key_buffer_length);
+		status = generate_ecc_private_key(attributes, key,
+						  PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)),
+						  key_buffer_length);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
 	} else if (key_type == PSA_KEY_TYPE_AES || key_type == PSA_KEY_TYPE_HMAC ||
 		   key_type == PSA_KEY_TYPE_CHACHA20) {
-		status = psa_generate_random(key, PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)));
+		status = cracen_get_random(NULL, key,
+					   PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)));
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
@@ -1219,7 +1494,11 @@ psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
-#if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+	if (!cracen_builtin_key_user_allowed(attributes)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
 		return generate_key_for_kmu(attributes, key_buffer, key_buffer_size,
 					    key_buffer_length);
@@ -1351,6 +1630,11 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 	 * and the `lifetime` field of the attribute struct. We will fill all the other
 	 * attributes, and update the `lifetime` field to be more specific.
 	 */
+
+	if (!cracen_builtin_key_user_allowed(attributes)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	switch (slot_number) {
 	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
 	case CRACEN_BUILTIN_MKEK_ID:
@@ -1362,33 +1646,18 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 	default:
-#if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
 		return cracen_kmu_get_builtin_key(slot_number, attributes, key_buffer,
 						  key_buffer_size, key_buffer_length);
-#elif CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
-		return cracen_platform_get_builtin_key(slot_number, attributes, key_buffer,
-						       key_buffer_size, key_buffer_length);
 #else
 		return PSA_ERROR_DOES_NOT_EXIST;
 #endif
 	}
 }
 
-psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
-						  psa_key_lifetime_t *lifetime,
-						  psa_drv_slot_number_t *slot_number)
+psa_status_t cracen_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
+				 psa_drv_slot_number_t *slot_number)
 {
-/* For nRF54H20 devices all the builtin keys are considered platform keys,
- * these include the IKG keys. The IKG keys in these devices don't directly
- * use the CRACEN_BUILTIN_ ids, they use the IDs defined in  the file
- * nrf_platform_key_ids.h.
- * The function cracen_platform_get_key_slot will do the matching between the
- * platform key ids and the Cracen bulitin ids.
- */
-#if CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
-	return cracen_platform_get_key_slot(key_id, lifetime, slot_number);
-#else
-
 	switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id)) {
 	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
 		*slot_number = CRACEN_BUILTIN_IDENTITY_KEY_ID;
@@ -1400,7 +1669,7 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
 		*slot_number = CRACEN_BUILTIN_MEXT_ID;
 		break;
 	default:
-#if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
 		return cracen_kmu_get_key_slot(key_id, lifetime, slot_number);
 #else
 		return PSA_ERROR_DOES_NOT_EXIST;
@@ -1411,18 +1680,21 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
 								   PSA_KEY_LOCATION_CRACEN);
 
 	return PSA_SUCCESS;
-#endif /* CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS */
 }
 
 psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 			       size_t key_buffer_size, uint8_t *data, size_t data_size,
 			       size_t *data_length)
 {
-#ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
 	int status;
 	int nested_err;
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
+
+	if (!cracen_builtin_key_user_allowed(attributes)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
 
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
 		/* The keys will already be in the key buffer as they got loaded their by a previous
@@ -1471,7 +1743,11 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 			     size_t source_key_length, uint8_t *target_key_buffer,
 			     size_t target_key_buffer_size, size_t *target_key_buffer_length)
 {
-#ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
+	if (!cracen_builtin_key_user_allowed(attributes)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
@@ -1525,11 +1801,12 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 
 psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes)
 {
-#ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
+	if (!cracen_builtin_key_user_allowed(attributes)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	return cracen_kmu_destroy_key(attributes);
-#endif
-#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
-	return cracen_platform_destroy_key(attributes);
 #endif
 
 	return PSA_ERROR_DOES_NOT_EXIST;
@@ -1541,9 +1818,18 @@ psa_status_t cracen_derive_key(const psa_key_attributes_t *attributes, const uin
 {
 	psa_key_type_t key_type = psa_get_key_type(attributes);
 
+	if (!cracen_builtin_key_user_allowed(attributes)) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	if (PSA_KEY_TYPE_IS_SPAKE2P_KEY_PAIR(key_type) && IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
 		return cracen_derive_spake2p_key(attributes, input, input_length, key, key_size,
 						 key_length);
+	}
+
+	if (PSA_KEY_TYPE_IS_WPA3_SAE_ECC_PT(key_type) && IS_ENABLED(PSA_NEED_CRACEN_WPA3_SAE)) {
+		return cracen_derive_wpa3_sae_pt_key(attributes, input, input_length, key, key_size,
+						     key_length);
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;

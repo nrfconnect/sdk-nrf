@@ -1,13 +1,1 @@
-/ {
-	aliases {
-		test-comp = &comp;
-	};
-
-	zephyr,user {
-		test-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
-	};
-};
-
-&gpio1 {
-	status = "okay";
-};
+#include "nrf54lv10dk_nrf54lv10a_common.dtsi"

@@ -7,6 +7,11 @@ Cellular: nRF Cloud REST Device Message
    :local:
    :depth: 2
 
+.. note::
+
+   The :ref:`lib_nrf_cloud_rest` library has been deprecated and it will be removed in one of the future releases.
+   Use the :ref:`nrf_cloud_coap_device_message` sample instead.
+
 The REST Device Message sample demonstrates how to use the `nRF Cloud REST API`_ to send `Device Messages <nRF Cloud Device Messages_>`_ using the ``SendDeviceMessage`` REST endpoint.
 Every button press sends a message to nRF Cloud.
 

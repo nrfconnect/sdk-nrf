@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../../../boards/nrf54l15dk_nrf54l15_cpuapp.overlay"
+
+/* Need to add this here as the app.overlay is not picked
+ * with board overlay.
+ */
+
+/{
+	chosen {
+		zephyr,code-partition = &boot_partition;
+	};
+};

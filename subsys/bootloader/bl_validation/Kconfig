@@ -7,7 +7,7 @@
 menu "Secure Boot firmware validation"
 
 config SECURE_BOOT_VALIDATION
-	bool "Enable Secure Boot validation code"
+	bool "Secure Boot validation"
 	select FW_INFO
 	depends on SECURE_BOOT_CRYPTO
 	depends on SECURE_BOOT_STORAGE
@@ -69,7 +69,7 @@ EXT_API = BL_VALIDATE_FW
 id = 0x1101
 flags = 3
 ver = 1
-source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
+source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
 endif # SECURE_BOOT_VALIDATION
 

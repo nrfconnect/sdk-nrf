@@ -46,6 +46,24 @@ static char client_id[CONFIG_MQTT_SAMPLE_TRANSPORT_CLIENT_ID_BUFFER_SIZE];
 static uint8_t pub_topic[sizeof(client_id) + sizeof(CONFIG_MQTT_SAMPLE_TRANSPORT_PUBLISH_TOPIC)];
 static uint8_t sub_topic[sizeof(client_id) + sizeof(CONFIG_MQTT_SAMPLE_TRANSPORT_SUBSCRIBE_TOPIC)];
 
+enum transport_event_type {
+	CONNECTED,
+	DISCONNECTED,
+};
+
+struct transport_event {
+	enum transport_event_type type;
+};
+
+/* Private channel for internal events */
+ZBUS_CHAN_DEFINE(TRANSPORT_PRIVATE_CHANNEL,
+		 struct transport_event,
+		 NULL,
+		 NULL,
+		 ZBUS_OBSERVERS(transport),
+		 ZBUS_MSG_INIT(0)
+);
+
 /* User defined state object.
  * Used to transfer data between state changes.
  */
@@ -70,15 +88,37 @@ static struct s_object {
 static void on_mqtt_connack(enum mqtt_conn_return_code return_code, bool session_present)
 {
 	ARG_UNUSED(return_code);
+	ARG_UNUSED(session_present);
 
-	smf_set_state(SMF_CTX(&s_obj), &state[MQTT_CONNECTED]);
+	int err;
+	struct transport_event event = {
+		.type = CONNECTED,
+	};
+
+	if (return_code != MQTT_CONNECTION_ACCEPTED) {
+		LOG_ERR("MQTT broker rejected connection, return code: %d", return_code);
+		return;
+	}
+
+	err = zbus_chan_pub(&TRANSPORT_PRIVATE_CHANNEL, &event, K_SECONDS(1));
+	if (err) {
+		LOG_ERR("zbus_chan_pub, error: %d", err);
+		SEND_FATAL_ERROR();
+	}
 }
 
 static void on_mqtt_disconnect(int result)
 {
-	ARG_UNUSED(result);
+	int err;
+	struct transport_event event = {
+		.type = DISCONNECTED,
+	};
 
-	smf_set_state(SMF_CTX(&s_obj), &state[MQTT_DISCONNECTED]);
+	err = zbus_chan_pub(&TRANSPORT_PRIVATE_CHANNEL, &event, K_SECONDS(1));
+	if (err) {
+		LOG_ERR("zbus_chan_pub, error: %d", err);
+		SEND_FATAL_ERROR();
+	}
 }
 
 static void on_mqtt_publish(struct mqtt_helper_buf topic, struct mqtt_helper_buf payload)
@@ -230,7 +270,7 @@ static void disconnected_entry(void *o)
 }
 
 /* Function executed when the module is in the disconnected state. */
-static void disconnected_run(void *o)
+static enum smf_state_result disconnected_run(void *o)
 {
 	struct s_object *user_object = o;
 
@@ -249,6 +289,8 @@ static void disconnected_run(void *o)
 		 */
 		k_work_reschedule_for_queue(&transport_queue, &connect_work, K_SECONDS(5));
 	}
+
+	return SMF_EVENT_HANDLED;
 }
 
 /* Function executed when the module enters the connected state. */
@@ -269,7 +311,7 @@ static void connected_entry(void *o)
 }
 
 /* Function executed when the module is in the connected state. */
-static void connected_run(void *o)
+static enum smf_state_result connected_run(void *o)
 {
 	struct s_object *user_object = o;
 
@@ -279,14 +321,16 @@ static void connected_run(void *o)
 		 * The call to this function will cause on_mqtt_disconnect() to be called.
 		 */
 		(void)mqtt_helper_disconnect();
-		return;
+		return SMF_EVENT_HANDLED;
 	}
 
 	if (user_object->chan != &PAYLOAD_CHAN) {
-		return;
+		return SMF_EVENT_HANDLED;
 	}
 
 	publish(&user_object->payload);
+
+	return SMF_EVENT_HANDLED;
 }
 
 /* Function executed when the module exits the connected state. */
@@ -379,6 +423,31 @@ static void transport_task(void)
 				LOG_ERR("smf_run_state, error: %d", err);
 				SEND_FATAL_ERROR();
 				return;
+			}
+		}
+
+		if (&TRANSPORT_PRIVATE_CHANNEL == chan) {
+
+			struct transport_event event;
+
+			err = zbus_chan_read(&TRANSPORT_PRIVATE_CHANNEL, &event, K_SECONDS(1));
+			if (err) {
+				LOG_ERR("zbus_chan_read, error: %d", err);
+				SEND_FATAL_ERROR();
+				return;
+			}
+
+			/* Process MQTT events and change state in the correct thread context */
+			switch (event.type) {
+			case CONNECTED:
+				smf_set_state(SMF_CTX(&s_obj), &state[MQTT_CONNECTED]);
+				break;
+			case DISCONNECTED:
+				smf_set_state(SMF_CTX(&s_obj), &state[MQTT_DISCONNECTED]);
+				break;
+			default:
+				LOG_WRN("Unknown MQTT event type: %d", event.type);
+				break;
 			}
 		}
 	}

@@ -1,0 +1,8 @@
+This device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power 802.11ax (Wi-Fi® 6) or 802.15.4 (Thread) protocol.
+
+* In case of Thread, this device works as a Thread :ref:`Sleepy End Device <thread_ot_device_types>`.
+* In case of Wi-Fi, this device works in the :ref:`Legacy Power Save mode <ug_nrf70_developing_powersave_dtim_unicast>`.
+  This means that the device sleeps most of the time and wakes up on each Delivery Traffic Indication Message (DTIM) interval to poll for pending messages.
+
+You can use this |matter_type| as a reference for creating your own application.
+See the :ref:`ug_matter_creating_accessory` page for an overview of the process you need to follow.

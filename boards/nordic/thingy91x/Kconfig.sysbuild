@@ -18,7 +18,6 @@ config THINGY91X_STATIC_PARTITIONS_FACTORY
 
 config THINGY91X_STATIC_PARTITIONS_NRF53_EXTERNAL_FLASH
 	bool "External flash Thingy:91 X partition layout"
-	depends on SOC_SERIES_NRF53X
 	help
 	   The Thingy:91 X partition layout used when the nRF53 owns the external flash.
 
@@ -70,6 +69,9 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 
 config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
 	default y if BOOTLOADER_MCUBOOT
+
+config MCUBOOT_USE_ALL_AVAILABLE_RAM
+	default y if BOARD_THINGY91X_NRF9151_NS && BOOTLOADER_MCUBOOT
 
 config SECURE_BOOT_SIGNING_KEY_FILE
 	default "$(ZEPHYR_NRF_MODULE_DIR)/boards/nordic/thingy91x/nsib_signing_key.pem"

@@ -25,6 +25,8 @@ namespace Nrf
 
 	namespace LedConsts
 	{
+		constexpr uint32_t kTriggerEffectStart_ms = 5000;
+		constexpr uint32_t kTriggerEffectFinish_ms = 1000;
 		constexpr uint32_t kBlinkRate_ms{ 500 };
 		constexpr uint32_t kIdentifyBlinkRate_ms{ 500 };
 		namespace StatusLed

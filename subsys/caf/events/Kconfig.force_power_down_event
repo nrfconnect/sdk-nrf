@@ -5,7 +5,7 @@
 #
 
 config CAF_FORCE_POWER_DOWN_EVENTS
-	bool "Enable force Power down event"
+	bool "Force Power down event"
 	help
 	  Enable power manager event to put the device into power down mode when processed.
 	  It means the power down would be processed without the delay that is

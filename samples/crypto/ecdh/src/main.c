@@ -105,7 +105,7 @@ int create_ecdh_keypair(psa_key_id_t *key_id)
 
 	psa_reset_key_attributes(&key_attributes);
 
-	LOG_INF("ECDH keypair created successfully!");
+	LOG_INF("ECDH key pair generated successfully!");
 
 	return APP_SUCCESS;
 }

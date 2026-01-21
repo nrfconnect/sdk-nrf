@@ -74,6 +74,8 @@ Change the board target as given below for the nRF7002 EK.
 
    west build -p -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek
 
+.. include:: /includes/wifi_refer_sample_yaml_file.txt
+
 Testing
 =======
 

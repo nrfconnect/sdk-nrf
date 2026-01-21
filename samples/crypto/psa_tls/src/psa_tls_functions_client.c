@@ -7,7 +7,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(psa_tls_client);
 
-#include <nrf.h>
+#include <nrfx.h>
 #include <errno.h>
 #include <zephyr/kernel.h>
 #include <zephyr/net/socket.h>
@@ -68,6 +68,15 @@ static int setup_tls_client_socket(void)
 			 TLS_PEER_HOSTNAME, sizeof(TLS_PEER_HOSTNAME));
 	if (err < 0) {
 		LOG_ERR("Failed to set TLS_HOSTNAME option. Err: %d", errno);
+		(void)close(sock);
+		return -errno;
+	}
+
+	int cache = TLS_SESSION_CACHE_ENABLED;
+
+	err = setsockopt(sock, SOL_TLS, TLS_SESSION_CACHE, &cache, sizeof(cache));
+	if (err < 0) {
+		LOG_ERR("Failed to set TLS Session cache. Err: %d", errno);
 		(void)close(sock);
 		return -errno;
 	}

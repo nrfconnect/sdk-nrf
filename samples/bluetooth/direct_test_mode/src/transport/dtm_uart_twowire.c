@@ -10,7 +10,6 @@
 #include <zephyr/kernel.h>
 #include <dtm.h>
 
-#include "dtm_uart_wait.h"
 #include "dtm_transport.h"
 
 LOG_MODULE_REGISTER(dtm_tw_tr, CONFIG_DTM_TRANSPORT_LOG_LEVEL);
@@ -69,6 +68,22 @@ LOG_MODULE_REGISTER(dtm_tw_tr, CONFIG_DTM_TRANSPORT_LOG_LEVEL);
 
 /* The DTM maximum wait time in milliseconds for the UART command second byte. */
 #define DTM_UART_SECOND_BYTE_MAX_DELAY 5
+
+#define DTM_UART DT_CHOSEN(ncs_dtm_uart)
+
+#if DT_NODE_HAS_PROP(DTM_UART, current_speed)
+/* UART Baudrate used to communicate with the DTM library. */
+#define DTM_UART_BAUDRATE DT_PROP(DTM_UART, current_speed)
+
+/* The UART poll cycle in micro seconds.
+ * A baud rate of e.g. 19200 bits / second, and 8 data bits, 1 start/stop bit,
+ * no flow control, give the time to transmit a byte:
+ * 10 bits * 1/19200 = approx: 520 us.
+ */
+#define DTM_UART_POLL_CYCLE_US ((uint32_t) (10 * 1e6 / DTM_UART_BAUDRATE))
+#else
+#error "DTM UART node not found"
+#endif /* DT_NODE_HAS_PROP(DTM_UART, currrent_speed) */
 
 static const struct device *dtm_uart = DEVICE_DT_GET(DTM_UART);
 
@@ -744,14 +759,17 @@ int dtm_tr_init(void)
 		return -EIO;
 	}
 
+#if defined(CONFIG_DTM_USB) && defined(CONFIG_SOC_NRF54H20_CPURAD)
+	/* Enable RX path for the USB CDC ACM.
+	 * uart_irq_rx_enable() -> cdc_acm_irq_rx_enable() -> cdc_acm_work_submit(rx_fifo_work)
+	 * It is not needed for non CDC ACM UARTs.
+	 */
+	uart_irq_rx_enable(dtm_uart);
+#endif /* defined(CONFIG_DTM_USB) && defined(CONFIG_SOC_NRF54H20_CPURAD) */
+
 	err = dtm_init(NULL);
 	if (err) {
 		LOG_ERR("Error during DTM initialization: %d", err);
-		return err;
-	}
-
-	err = dtm_uart_wait_init();
-	if (err) {
 		return err;
 	}
 
@@ -768,7 +786,7 @@ union dtm_tr_packet dtm_tr_get(void)
 	int err;
 
 	for (;;) {
-		dtm_uart_wait();
+		k_sleep(K_USEC(DTM_UART_POLL_CYCLE_US));
 
 		err = uart_poll_in(dtm_uart, &rx_byte);
 		if (err) {

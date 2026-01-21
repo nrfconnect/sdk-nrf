@@ -4,9 +4,13 @@ board:
   vendor: nordic
   socs:
   - name: nrf54lv10a
+    variants:
+    - name: ns
+      cpucluster: cpuapp
   revision:
     format: major.minor.patch
-    default: "0.2.0"
+    default: "0.7.0"
     revisions:
     - name: "0.0.0"
     - name: "0.2.0"
+    - name: "0.7.0"

@@ -7,7 +7,7 @@ Reducing power consumption in Matter
    :local:
    :depth: 2
 
-The Matter protocol can be used in various device types that are designed to be battery supplied, where a low power consumption is of critical importance.
+The Matter protocol can be used in various device types that are designed to be battery supplied, where low power consumption is of critical importance.
 
 There are many ways to reduce the power consumption in your application, including methods related to the adopted network technology, disabling specific modules, or configuring features meant for optimizing power consumption.
 See the following sections for more information.
@@ -19,6 +19,8 @@ The following Matter samples and applications use the low power configuration by
 * :ref:`Matter smoke CO alarm <matter_smoke_co_alarm_sample>`
 * :ref:`Matter window covering sample <matter_window_covering_sample>`
 * :ref:`Matter weather station application <matter_weather_station_app>`
+* :ref:`Matter temperature sensor sample <matter_temperature_sensor_sample>`
+* :ref:`Matter contact sensor sample <matter_contact_sensor_sample>`
 
 The following additional materials and tools might help you to optimize, estimate, and measure the power consumption of your device are:
 
@@ -202,7 +204,7 @@ Configure Bluetooth LE advertising duration
 
 A Matter device uses Bluetooth® Low Energy (LE) to advertise its service for device commissioning purposes.
 The duration of this advertising is configurable and can last up to 15 minutes in the standard mode and up to 48 hours in the Extended Announcement mode.
-An extended advertising duration may improve the user experience, as it gives more time for the user to setup the device, but it also increases the energy consumption.
+An extended advertising duration may improve the user experience, as it gives more time for the user to set up the device, but it also increases the energy consumption.
 
 Selecting the optimal advertising duration is a compromise and depends on the specific application use case.
 Use the following Kconfig options to configure the advertising and reduce the consumed energy:
@@ -242,11 +244,11 @@ Disable LEDs module
 When performing the power measurements on various development kits, the LEDs can either be included in the measurement circuit or not:
 
 * For the nRF52840 DK and nRF5340 DK, the LEDs are excluded from the measurement circuit, so they can be enabled for the low power configuration and it is not going to impact the measurement results.
-* For the nRF54L15 DK, the MOSFET transistors controlling the LEDs are included in the measurement circuit.
+* For the nRF54L15 DK and nRF54LM20 DK, the MOSFET transistors controlling the LEDs are included in the measurement circuit.
   This results in measurement results being increased by an additional, small leakage current that appears if an LED is turned on.
-  To measure the current consumption of the nRF54L15 SoC without including development kit components, such as LEDs, it is recommended to disable them.
+  To measure the current consumption of the nRF54L15 or nRF54LM20 SoC without including development kit components, such as LEDs, it is recommended to disable them.
 
-To disable LEDs in the Matter samples and applications, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_LEDS <CONFIG_NCS_SAMPLE_MATTER_LEDS>` Kconfig option to ``n``.
+To disable LEDs in the Matter samples and applications, set the :option:`CONFIG_NCS_SAMPLE_MATTER_LEDS` Kconfig option to ``n``.
 
 .. _ug_matter_enable_pm_module:
 

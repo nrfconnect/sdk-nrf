@@ -13,8 +13,8 @@ project(nrf_fuel_gauge_test)
 test_runner_generate(src/nrf_fuel_gauge_test.c)
 
 target_include_directories(app PRIVATE
-	src
-	data
+  src
+  data
 )
 
 # add test file

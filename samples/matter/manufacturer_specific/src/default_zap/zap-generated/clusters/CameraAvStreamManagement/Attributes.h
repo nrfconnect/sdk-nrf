@@ -124,7 +124,7 @@ namespace app
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
 				} // namespace NightVisionUsesInfrared
-				namespace MinViewport
+				namespace MinViewportResolution
 				{
 					struct TypeInfo {
 						using Type = chip::app::Clusters::CameraAvStreamManagement::Structs::
@@ -141,11 +141,11 @@ namespace app
 						}
 						static constexpr AttributeId GetAttributeId()
 						{
-							return Attributes::MinViewport::Id;
+							return Attributes::MinViewportResolution::Id;
 						}
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
-				} // namespace MinViewport
+				} // namespace MinViewportResolution
 				namespace RateDistortionTradeOffPoints
 				{
 					struct TypeInfo {
@@ -918,7 +918,8 @@ namespace app
 						Attributes::VideoSensorParams::TypeInfo::DecodableType videoSensorParams;
 						Attributes::NightVisionUsesInfrared::TypeInfo::DecodableType
 							nightVisionUsesInfrared = static_cast<bool>(0);
-						Attributes::MinViewport::TypeInfo::DecodableType minViewport;
+						Attributes::MinViewportResolution::TypeInfo::DecodableType
+							minViewportResolution;
 						Attributes::RateDistortionTradeOffPoints::TypeInfo::DecodableType
 							rateDistortionTradeOffPoints;
 						Attributes::MaxContentBufferSize::TypeInfo::DecodableType

@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+sample:
+  description: DFU multi image sample application
+  name: dfu_multi_image sample
+common:
+  platform_allow:
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf54h20dk/nrf54h20/cpuapp
+  build_only: true
+  sysbuild: true
+tests:
+  sample.dfu.dfu_multi_image:
+    tags:
+      - dfu_multi_image
+      - ci_samples_dfu
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+  sample.dfu.dfu_multi_image.save_progress:
+    extra_configs:
+      - CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS=y
+      - CONFIG_DFU_MULTI_IMAGE_SAVE_PROGRESS=y
+      - CONFIG_SETTINGS=y
+      - CONFIG_NVS=y
+    tags:
+      - dfu_multi_image
+      - ci_samples_dfu
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+  sample.dfu.dfu_multi_image.encryption:
+    extra_args:
+      - SB_CONFIG_BOOT_ENCRYPTION=y
+    tags:
+      - dfu_multi_image
+      - ci_samples_dfu
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp

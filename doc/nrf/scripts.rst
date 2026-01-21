@@ -12,10 +12,13 @@ Here you can find documentation for these scripts.
    :glob:
    :caption: Subpages:
 
-   ../../scripts/shell/*/*
-   ../../scripts/nrf_provision/*/*
-   ../../scripts/hid_configurator/*
    ../../scripts/docker/*
-   ../../scripts/partition_manager/*
-   ../../scripts/west_commands/sbom/*
+   ../../scripts/esb_sniffer/*
+   ../../scripts/generate_psa_key_attributes/*
+   ../../scripts/hid_configurator/*
    ../../scripts/memfault/*
+   ../../scripts/nrf_profiler/*
+   ../../scripts/nrf_provision/*/*
+   ../../scripts/partition_manager/*
+   ../../scripts/shell/*/*
+   ../../scripts/west_commands/sbom/*

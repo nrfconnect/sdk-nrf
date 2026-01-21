@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace CookTime
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -88,11 +90,17 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace WattRating
+				constexpr std::array<DataModel::AttributeEntry, 2> kMandatoryMetadata = {
+					CookTime::kMetadataEntry,
+					MaxCookTime::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace SetCookingParameters
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -109,6 +117,11 @@ namespace app
 				} // namespace AddMoreTime
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace MicrowaveOvenControl
 	} // namespace Clusters
 } // namespace app

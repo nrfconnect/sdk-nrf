@@ -48,9 +48,9 @@ static void init(void)
 	initialized = true;
 
 	k_work_init_delayable(&cpu_load_read, cpu_load_read_fn);
-	int err = cpu_load_init();
+	int err = cpu_load_get();
 
-	if (err) {
+	if (err < 0) {
 		LOG_ERR("CPU load init failed, err: %d", err);
 		module_set_state(MODULE_STATE_ERROR);
 	} else {

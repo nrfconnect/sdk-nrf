@@ -28,8 +28,10 @@
 #include <platform/nrfconnect/KMUSessionKeystore.h>
 #endif
 
-#ifdef CONFIG_CHIP_FACTORY_DATA
+#if defined(CONFIG_CHIP_FACTORY_DATA_NRFCONNECT_BACKEND)
 #include <platform/nrfconnect/FactoryDataProvider.h>
+#elif defined(CONFIG_CHIP_FACTORY_DATA_CUSTOM_BACKEND)
+#include <platform/nrfconnect/FactoryDataProviderBase.h>
 #else
 #include <platform/nrfconnect/DeviceInstanceInfoProviderImpl.h>
 #endif
@@ -58,8 +60,14 @@ struct InitData {
 	chip::DeviceLayer::DeviceInfoProviderImpl *mDeviceInfoProvider{ &sDeviceInfoProviderDefault };
 #ifdef CONFIG_CHIP_FACTORY_DATA
 	/** @brief Pointer to the user provided FactoryDataProvider implementation. */
-	chip::DeviceLayer::FactoryDataProviderBase *mFactoryDataProvider{ &sFactoryDataProviderDefault };
+	chip::DeviceLayer::FactoryDataProviderBase *mFactoryDataProvider{
+#if defined(CONFIG_CHIP_FACTORY_DATA_CUSTOM_BACKEND)
+		nullptr
+#elif defined(CONFIG_CHIP_FACTORY_DATA_NRFCONNECT_BACKEND)
+		&sFactoryDataProviderDefault
 #endif
+	};
+#endif /* CONFIG_CHIP_FACTORY_DATA */
 #ifdef CONFIG_CHIP_CRYPTO_PSA
 	/** @brief Pointer to the user provided OperationalKeystore implementation. */
 	chip::Crypto::OperationalKeystore *mOperationalKeyStore{ &sOperationalKeystoreDefault };
@@ -79,7 +87,7 @@ struct InitData {
 	static chip::app::Clusters::NetworkCommissioning::Instance sWiFiCommissioningInstance;
 #endif
 	static chip::CommonCaseDeviceServerInitParams sServerInitParamsDefault;
-#ifdef CONFIG_CHIP_FACTORY_DATA
+#ifdef CONFIG_CHIP_FACTORY_DATA_NRFCONNECT_BACKEND
 	static chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData>
 		sFactoryDataProviderDefault;
 #endif
@@ -128,8 +136,16 @@ CHIP_ERROR StartServer();
  * @return pointer to the stored FactoryDataProviderBase
  */
 chip::DeviceLayer::FactoryDataProviderBase *GetFactoryDataProvider();
-#endif
+#endif /* CONFIG_CHIP_FACTORY_DATA */
 
+/**
+ * @brief Get the currently set PersistentStorageDelegate.
+ *
+ * Returns generic pointer to the PersistentStorageDelegate object that was
+ * either set externally by the user or internally by default initialization.
+ *
+ * @return pointer to the stored PersistentStorageDelegate
+ */
 chip::PersistentStorageDelegate *GetPersistentStorageDelegate();
 
 } /* namespace Nrf::Matter */

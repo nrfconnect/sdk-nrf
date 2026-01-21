@@ -2,7 +2,7 @@ sample:
   name: nRF5340 Audio application
   description: LE Audio and Auracast implementation example
 tests:
-  applications.nrf5340_audio.headset_unicast:
+  applications.nrf5340_audio.headset_unicast_release_unidir_usb:
     integration_platforms:
       - nrf5340_audio_dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
@@ -17,9 +17,8 @@ tests:
       - ci_applications_nrf5340_audio
     extra_args:
       - FILE_SUFFIX=release
-      - CONFIG_AUDIO_DEV=1
       - EXTRA_CONF_FILE=unicast_server/overlay-unicast_server.conf
-  applications.nrf5340_audio.gateway_unicast:
+  applications.nrf5340_audio.gateway_unicast_release_bidir_usb:
     integration_platforms:
       - nrf5340_audio_dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
@@ -34,9 +33,9 @@ tests:
       - ci_applications_nrf5340_audio
     extra_args:
       - FILE_SUFFIX=release
-      - CONFIG_AUDIO_DEV=2
+      - CONFIG_STREAM_BIDIRECTIONAL=y
       - EXTRA_CONF_FILE=unicast_client/overlay-unicast_client.conf
-  applications.nrf5340_audio.headset_broadcast:
+  applications.nrf5340_audio.headset_broadcast_sink_release_usb:
     integration_platforms:
       - nrf5340_audio_dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
@@ -51,10 +50,8 @@ tests:
       - ci_applications_nrf5340_audio
     extra_args:
       - FILE_SUFFIX=release
-      - CONFIG_AUDIO_DEV=1
-      - CONFIG_TRANSPORT_BIS=y
       - EXTRA_CONF_FILE=broadcast_sink/overlay-broadcast_sink.conf
-  applications.nrf5340_audio.gateway_broadcast:
+  applications.nrf5340_audio.gateway_broadcast_source_release_i2s:
     integration_platforms:
       - nrf5340_audio_dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
@@ -69,10 +66,9 @@ tests:
       - ci_applications_nrf5340_audio
     extra_args:
       - FILE_SUFFIX=release
-      - CONFIG_AUDIO_DEV=2
-      - CONFIG_TRANSPORT_BIS=y
+      - CONFIG_AUDIO_SOURCE_I2S=y
       - EXTRA_CONF_FILE=broadcast_source/overlay-broadcast_source.conf
-  applications.nrf5340_audio.headset_unicast_sd_card:
+  applications.nrf5340_audio.headset_unicast_sd_card_release:
     integration_platforms:
       - nrf5340_audio_dk/nrf5340/cpuapp
     platform_allow:
@@ -85,10 +81,9 @@ tests:
       - ci_applications_nrf5340_audio
     extra_args:
       - FILE_SUFFIX=release
-      - CONFIG_AUDIO_DEV=1
       - CONFIG_SD_CARD_PLAYBACK=y
       - EXTRA_CONF_FILE=unicast_server/overlay-unicast_server.conf
-  applications.nrf5340_audio.headset_dfu:
+  applications.nrf5340_audio.headset_dfu_release_unidir_usb:
     integration_platforms:
       - nrf5340_audio_dk/nrf5340/cpuapp
     platform_allow:
@@ -102,5 +97,20 @@ tests:
     extra_args:
       - FILE_SUFFIX=fota
       - ipc_radio_FILE_SUFFIX=release
-      - CONFIG_AUDIO_DEV=1
+      - EXTRA_CONF_FILE=unicast_server/overlay-unicast_server.conf
+  applications.nrf5340_audio.headset_unicast_debug_bidir_usb:
+    integration_platforms:
+      - nrf5340_audio_dk/nrf5340/cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow:
+      - nrf5340_audio_dk/nrf5340/cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    sysbuild: true
+    build_only: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_applications_nrf5340_audio
+    extra_args:
+      - CONFIG_STREAM_BIDIRECTIONAL=y
       - EXTRA_CONF_FILE=unicast_server/overlay-unicast_server.conf

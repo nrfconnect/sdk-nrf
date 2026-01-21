@@ -18,7 +18,6 @@
 #include <zephyr/sys_clock.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/ztest.h>
-#include <pm_config.h>
 #include "psa_tests_common.h"
 #include <hw_unique_key.h>
 

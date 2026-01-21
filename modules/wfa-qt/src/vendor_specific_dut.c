@@ -12,6 +12,7 @@
 
 #include "vendor_specific.h"
 #include "utils.h"
+#include <zephyr/net/dhcpv4_server.h>
 
 void interfaces_init(void)
 {
@@ -65,14 +66,13 @@ int get_p2p_mac_addr(char *mac_addr, size_t size)
 /* Get the name of P2P Group(GO or Client) interface */
 int get_p2p_group_if(char *if_name, size_t size)
 {
-	/*TODO: Implement this for zephyr */
-
+	snprintf(if_name, size, "%s", get_wireless_interface());
 	return 0;
 }
 
 int get_p2p_dev_if(char *if_name, size_t size)
 {
-	/*TODO: Implement this for zephyr */
+	snprintf(if_name, size, "%s", get_wireless_interface());
 
 	return 0;
 }
@@ -81,7 +81,35 @@ int get_p2p_dev_if(char *if_name, size_t size)
 /* Append IP range config and start dhcpd */
 void start_dhcp_server(char *if_name, char *ip_addr)
 {
-	/*TODO: Implement this for zephyr */
+	struct net_if *iface;
+	struct in_addr pool_start;
+	int ret = -1;
+
+	iface = net_if_get_first_wifi();
+	if (!iface) {
+		indigo_logger(LOG_LEVEL_ERROR, "Failed to get Wi-Fi interface");
+		return;
+	}
+
+	if (net_addr_pton(AF_INET, CONFIG_WFA_QT_SAMPLE_DHCPV4_POOL_START, &pool_start.s_addr)) {
+		indigo_logger(LOG_LEVEL_ERROR, "Invalid address: %s",
+			      CONFIG_WFA_QT_SAMPLE_DHCPV4_POOL_START);
+		return;
+	}
+
+	ret = net_dhcpv4_server_start(iface, &pool_start);
+	if (ret == -EALREADY) {
+		indigo_logger(LOG_LEVEL_ERROR, "DHCPv4 server already running on interface");
+	} else if (ret < 0) {
+		indigo_logger(LOG_LEVEL_ERROR,
+			      "DHCPv4 server failed to start and returned %d error", ret);
+	} else {
+		indigo_logger(LOG_LEVEL_ERROR,
+			      "DHCPv4 server started and pool address starts from %s",
+			      CONFIG_WFA_QT_SAMPLE_DHCPV4_POOL_START);
+	}
+
+	return;
 }
 
 void stop_dhcp_server(void)

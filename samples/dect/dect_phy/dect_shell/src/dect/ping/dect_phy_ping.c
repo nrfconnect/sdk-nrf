@@ -158,6 +158,11 @@ static struct dect_phy_ping_data {
 static struct dect_phy_ping_harq_tx_process_info
 	harq_processes[DECT_PHY_PING_HARQ_TX_PROCESS_COUNT];
 
+struct  dect_phy_ping_harq_tx_payload_data_evt {
+	enum dect_harq_user harq_user;
+	uint32_t phy_handle;
+};
+
 /**************************************************************************************************/
 
 static void dect_phy_ping_rx_on_pcc_crc_failure(void);
@@ -288,10 +293,11 @@ static bool dect_phy_ping_harq_process_init(enum dect_phy_common_role role,
 void dect_phy_ping_harq_process_round_start(enum dect_harq_user harq_user)
 {
 	if (harq_processes[harq_user].process_in_use) {
-		desh_warn("Previous HARQ still on going and starting new round "
+		desh_warn("Previous HARQ retx still ongoing and starting new round "
 			  "- no response to prev data?");
 	}
 	harq_processes[harq_user].process_in_use = true;
+	harq_processes[harq_user].rtx_ongoing = false;
 	harq_processes[harq_user].last_redundancy_version = 0;
 }
 
@@ -309,6 +315,7 @@ void dect_phy_ping_harq_store_tx_payload_data_scheduler_cb(
 	struct dect_phy_api_scheduler_list_item *ctrl_sche_list_item =
 		&(harq_processes[harq_data->harq_user].sche_list_item);
 	enum dect_harq_user harq_user = harq_data->harq_user;
+	struct dect_phy_ping_harq_tx_payload_data_evt ping_harq_evt_data;
 
 	__ASSERT_NO_MSG(harq_user == DECT_HARQ_CLIENT); /* Only DECT_HARQ_CLIENT supported */
 	__ASSERT_NO_MSG(in_sche_list_item->sched_config.tx.encoded_payload_pdu_size <=
@@ -317,8 +324,25 @@ void dect_phy_ping_harq_store_tx_payload_data_scheduler_cb(
 	dect_phy_api_scheduler_list_item_mem_copy(ctrl_sche_list_item, in_sche_list_item);
 	dect_phy_api_scheduler_list_item_dealloc(in_sche_list_item);
 
-	dect_phy_ping_msgq_data_op_add(DECT_PHY_PING_EVENT_HARQ_PAYLOAD_STORED, (void *)&harq_user,
-				       sizeof(enum dect_harq_user));
+	ping_harq_evt_data.phy_handle = ctrl_sche_list_item->phy_op_handle;
+	ping_harq_evt_data.harq_user = harq_user;
+
+	dect_phy_ping_msgq_data_op_add(DECT_PHY_PING_EVENT_HARQ_PAYLOAD_STORED,
+				       (void *)&ping_harq_evt_data,
+				       sizeof(struct dect_phy_ping_harq_tx_payload_data_evt));
+}
+
+static void dect_phy_ping_client_retx_complete_cb(
+	struct dect_phy_common_op_completed_params *params, uint64_t tx_frame_time)
+{
+	if (params->status == DECT_SCHEDULER_DELAYED_ERROR ||
+		params->status == DECT_SCHEDULER_FATAL_MEM_ALLOC_ERROR ||
+		params->status == DECT_SCHEDULER_OP_TO_MODEM_ERROR) {
+		desh_error("DECT_HARQ_CLIENT: retransmit failed - scheduler error: %d\n",
+			params->status);
+	} else if (params->status != NRF_MODEM_DECT_PHY_SUCCESS) {
+		desh_error("DECT_HARQ_CLIENT: retransmit failed - error %d\n", params->status);
+	}
 }
 
 void dect_phy_ping_harq_client_nak_handle(void)
@@ -360,12 +384,14 @@ void dect_phy_ping_harq_client_nak_handle(void)
 	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
 
 	first_possible_tx =
-		time_now + US_TO_MODEM_TICKS(current_settings->scheduler.scheduling_delay_us);
+		time_now + (2 * US_TO_MODEM_TICKS(current_settings->scheduler.scheduling_delay_us));
 
-	/* Overwrite handle, complete_cb, tx/rx timing and redundancy version to header */
+	/* For scheduled list copy:
+	 * overwrite tx handle, complete_cb, tx/rx timing and redundancy version to header
+	 */
 	new_sched_list_item->phy_op_handle = DECT_PHY_PING_CLIENT_RE_TX_HANDLE;
-	new_sched_list_item_conf->cb_op_completed = NULL;
 	new_sched_list_item_conf->frame_time = first_possible_tx;
+	new_sched_list_item_conf->tx.combined_tx_rx_use = true;
 	new_sched_list_item_conf->tx.combined_rx_op.duration =
 		MAX(remaining_time, MS_TO_MODEM_TICKS(100));
 
@@ -373,7 +399,9 @@ void dect_phy_ping_harq_client_nak_handle(void)
 	new_sched_list_item_conf->interval_mdm_ticks = 0;
 	new_sched_list_item_conf->interval_count_left = 0;
 	new_sched_list_item_conf->cb_op_to_mdm_with_interval_count_completed = NULL;
-	new_sched_list_item_conf->cb_op_completed = NULL;
+
+	/* ... except for completion failures that happens already in a scheduler */
+	new_sched_list_item_conf->cb_op_completed = dect_phy_ping_client_retx_complete_cb;
 
 	struct dect_phy_header_type2_format0_t *header =
 		(void *)&(new_sched_list_item_conf->tx.phy_header);
@@ -388,6 +416,10 @@ void dect_phy_ping_harq_client_nak_handle(void)
 		dect_phy_api_scheduler_list_item_dealloc(new_sched_list_item);
 	} else {
 		harq_processes[DECT_HARQ_CLIENT].rtx_ongoing = true;
+		harq_processes[DECT_HARQ_CLIENT].last_redundancy_version =
+			redundancy_version;
+		desh_print("PCC: DECT_HARQ_CLIENT: retransmit scheduled, redundancy version %d",
+			    redundancy_version);
 	}
 }
 
@@ -402,9 +434,9 @@ static void dect_phy_ping_server_data_on_going_rx_count_decrease(void)
 
 static bool dect_phy_ping_handle_is(uint32_t phy_op_handle)
 {
-	if (phy_op_handle == DECT_PHY_PING_CLIENT_TX_HANDLE ||
+	if (DECT_PHY_PING_CLIENT_TX_HANDLE_IN_RANGE(phy_op_handle) ||
+	    DECT_PHY_PING_CLIENT_RX_HANDLE_IN_RANGE(phy_op_handle) ||
 	    phy_op_handle == DECT_PHY_PING_CLIENT_RE_TX_HANDLE ||
-	    phy_op_handle == DECT_PHY_PING_CLIENT_RX_HANDLE ||
 	    phy_op_handle == DECT_PHY_PING_SERVER_RX_HANDLE ||
 	    phy_op_handle == DECT_PHY_PING_SERVER_TX_HANDLE ||
 	    phy_op_handle == DECT_PHY_PING_RESULTS_REQ_TX_HANDLE ||
@@ -747,7 +779,7 @@ static void dect_phy_ping_mdm_rssi_cb(const struct nrf_modem_dect_phy_rssi_event
 
 static void dect_phy_ping_client_tx_all_intervals_done(uint32_t handle)
 {
-	__ASSERT_NO_MSG(handle == DECT_PHY_PING_CLIENT_TX_HANDLE);
+	__ASSERT_NO_MSG(DECT_PHY_PING_CLIENT_TX_HANDLE_IN_RANGE(handle));
 
 	/* Pinging done in a scheduler. Request results from server. */
 	dect_phy_ping_msgq_non_data_op_add(DECT_PHY_PING_EVENT_CLIENT_SCHEDULER_PINGING_DONE);
@@ -827,7 +859,18 @@ static void dect_phy_ping_client_tx_schedule(uint64_t first_possible_tx)
 	       &ping_data.client_data.tx_phy_header.type_2,
 	       sizeof(ping_data.client_data.tx_phy_header.type_2));
 
+	sched_list_item_conf->phy_op_handle_range_used = true;
+	sched_list_item_conf->phy_op_handle_range_start =
+		DECT_PHY_PING_CLIENT_TX_HANDLE_START;
+	sched_list_item_conf->phy_op_handle_range_end =
+		DECT_PHY_PING_CLIENT_TX_HANDLE_END;
 	sched_list_item->phy_op_handle = ping_data.client_data.tx_op.handle;
+
+	sched_list_item_conf->tx.combined_rx_op_handle_range_used = true;
+	sched_list_item_conf->tx.combined_rx_op_handle_range_start =
+		DECT_PHY_PING_CLIENT_RX_HANDLE_START;
+	sched_list_item_conf->tx.combined_rx_op_handle_range_end =
+		DECT_PHY_PING_CLIENT_RX_HANDLE_END;
 
 	/* Add beacon tx operation to scheduler list */
 	if (!dect_phy_api_scheduler_list_item_add(sched_list_item)) {
@@ -955,7 +998,7 @@ static int dect_phy_ping_client_start(void)
 	ping_data.client_data.tx_next_seq_nbr = ping_pdu.message.tx_data.seq_nbr;
 	ping_data.client_data.tx_data_len = ping_pdu_byte_count;
 
-	ping_data.client_data.tx_op.handle = DECT_PHY_PING_CLIENT_TX_HANDLE;
+	ping_data.client_data.tx_op.handle = DECT_PHY_PING_CLIENT_TX_HANDLE_START;
 	ping_data.client_data.tx_op.bs_cqi = NRF_MODEM_DECT_PHY_BS_CQI_NOT_USED;
 	ping_data.client_data.tx_op.carrier = params->channel;
 	ping_data.client_data.tx_op.data_size = ping_pdu_byte_count;
@@ -970,7 +1013,7 @@ static int dect_phy_ping_client_start(void)
 	ping_data.client_data.tx_op.phy_type = DECT_PHY_HEADER_TYPE2;
 
 	/* For ping response: */
-	ping_data.client_data.rx_op.handle = DECT_PHY_PING_CLIENT_RX_HANDLE;
+	ping_data.client_data.rx_op.handle = DECT_PHY_PING_CLIENT_RX_HANDLE_START;
 
 	/* RX time is relative from TX end. We use HARQ setting here even if no HARQ */
 	ping_data.client_data.rx_op.start_time =
@@ -1164,10 +1207,11 @@ dect_phy_ping_client_report_local_results_and_req_server_results(int64_t *elapse
 	double elapsed_time_secs = elapsed_time_ms / 1000;
 
 	/* Stop client ping tx and rx for ping_resp in a scheduler */
-	dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(
-		DECT_PHY_PING_CLIENT_TX_HANDLE);
-	dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle(
-		DECT_PHY_PING_CLIENT_RX_HANDLE);
+	dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle_range(
+		DECT_PHY_PING_CLIENT_TX_HANDLE_START, DECT_PHY_PING_CLIENT_TX_HANDLE_END);
+	dect_phy_api_scheduler_list_item_remove_dealloc_by_phy_op_handle_range(
+		DECT_PHY_PING_CLIENT_RX_HANDLE_START, DECT_PHY_PING_CLIENT_RX_HANDLE_END);
+	(void)dect_phy_ctrl_mdm_op_cancel_all();
 
 	desh_print("ping client operation completed:");
 	desh_print("  elapsed time:                            %.2f seconds", elapsed_time_secs);
@@ -1464,7 +1508,7 @@ void dect_phy_ping_mdm_op_completed(
 	struct dect_phy_common_op_completed_params *mdm_completed_params)
 {
 	if (ping_data.on_going) {
-		if (mdm_completed_params->handle == DECT_PHY_PING_CLIENT_TX_HANDLE) {
+		if (DECT_PHY_PING_CLIENT_TX_HANDLE_IN_RANGE(mdm_completed_params->handle)) {
 			if (mdm_completed_params->status != NRF_MODEM_DECT_PHY_SUCCESS) {
 				/* TX was not done */
 				dect_phy_ping_client_data_tx_total_data_amount_decrease();
@@ -1472,6 +1516,12 @@ void dect_phy_ping_mdm_op_completed(
 			} else {
 				desh_print("ping sent (seq_nbr %d).",
 					   ping_data.client_data.tx_next_seq_nbr);
+			}
+			uint32_t next_handle = mdm_completed_params->handle;
+
+			next_handle++;
+			if (next_handle > DECT_PHY_PING_CLIENT_TX_HANDLE_END) {
+				next_handle = DECT_PHY_PING_CLIENT_TX_HANDLE_START;
 			}
 			/* We count both success and failures here */
 			ping_data.tx_metrics.tx_total_ping_req_count++;
@@ -1489,7 +1539,7 @@ void dect_phy_ping_mdm_op_completed(
 
 				/* Update header to scheduler for a next round */
 				dect_phy_api_scheduler_list_item_tx_phy_header_update_by_phy_handle(
-					DECT_PHY_PING_CLIENT_TX_HANDLE,
+					next_handle,
 					&(ping_data.client_data.tx_phy_header),
 					DECT_PHY_HEADER_TYPE2);
 			}
@@ -1505,7 +1555,7 @@ void dect_phy_ping_mdm_op_completed(
 			if (!ping_data.client_data.tx_scheduler_intervals_done) {
 				/* Modify seq nbr for the next round */
 				dect_phy_api_scheduler_list_item_pdu_payload_update_by_phy_handle(
-					DECT_PHY_PING_CLIENT_TX_HANDLE, encoded_data_to_send,
+					next_handle, encoded_data_to_send,
 					ping_data.client_data.tx_data_len);
 			}
 		} else if (mdm_completed_params->handle == DECT_PHY_PING_SERVER_TX_HANDLE) {
@@ -1517,17 +1567,18 @@ void dect_phy_ping_mdm_op_completed(
 					   ping_data.server_data.rx_last_seq_nbr);
 				ping_data.tx_metrics.tx_total_ping_resp_count++;
 			}
-		} else if (mdm_completed_params->handle == DECT_PHY_PING_CLIENT_RX_HANDLE) {
+		} else if (DECT_PHY_PING_CLIENT_RX_HANDLE_IN_RANGE(mdm_completed_params->handle)) {
 			dect_phy_ping_rssi_done_evt_send();
 			if (!ping_data.client_data.tx_ping_resp_received &&
 			    !harq_processes[DECT_HARQ_CLIENT].rtx_ongoing) {
 				desh_warn("ping timeout for seq_nbr %d",
 					  ping_data.client_data.tx_next_seq_nbr - 1);
+				dect_phy_ping_harq_process_round_end(DECT_HARQ_CLIENT);
 			}
 			if (ping_data.client_data.tx_scheduler_intervals_done &&
 			    !harq_processes[DECT_HARQ_CLIENT].rtx_ongoing &&
-			    ping_data.cmd_params.ping_count ==
-				    ping_data.tx_metrics.tx_total_ping_req_count) {
+			    ping_data.tx_metrics.tx_total_ping_req_count >=
+				ping_data.cmd_params.ping_count) {
 				dect_phy_ping_client_report_local_results_and_req_server_results(
 					NULL);
 			}
@@ -1553,11 +1604,16 @@ void dect_phy_ping_mdm_op_completed(
 			}
 		} else if (mdm_completed_params->handle == DECT_PHY_PING_RESULTS_RESP_RX_HANDLE) {
 			/* Client */
+			if (ping_data.client_data.tx_results_from_server_requested) {
+				desh_warn("No results from ping server. "
+					  "Make sure that server is running and reachable.");
+			}
 			if (mdm_completed_params->status == NRF_MODEM_DECT_PHY_SUCCESS) {
 				desh_print("RX for ping results done.");
 			} else {
 				desh_print("RX for ping results failed.");
 			}
+			ping_data.client_data.tx_results_from_server_requested = false;
 			dect_phy_ping_cmd_done();
 		} else if (mdm_completed_params->handle == DECT_PHY_PING_SERVER_RX_HANDLE) {
 			int64_t z_ticks_rx_scheduled = ping_data.server_data.rx_enabled_z_ticks;
@@ -1568,7 +1624,8 @@ void dect_phy_ping_mdm_op_completed(
 
 			first_possible_start =
 				time_now +
-				US_TO_MODEM_TICKS(current_settings->scheduler.scheduling_delay_us);
+				(2 * US_TO_MODEM_TICKS(
+					current_settings->scheduler.scheduling_delay_us));
 
 			dect_phy_ping_server_data_on_going_rx_count_decrease();
 
@@ -1629,8 +1686,8 @@ static void dect_phy_ping_thread_fn(void)
 			break;
 		}
 		case DECT_PHY_PING_EVENT_CLIENT_SCHEDULER_PINGING_DONE: {
-			desh_print("pinging done by scheduler");
 			ping_data.client_data.tx_scheduler_intervals_done = true;
+			desh_print("pinging done by scheduler");
 			break;
 		}
 		case DECT_PHY_PING_EVENT_CMD_DONE: {
@@ -1646,6 +1703,8 @@ static void dect_phy_ping_thread_fn(void)
 					dect_phy_ping_mdm_op_completed(params);
 				} else if (params->handle == DECT_HARQ_FEEDBACK_TX_HANDLE) {
 					desh_print("HARQ feedback sent.");
+				} else if (params->handle == DECT_HARQ_FEEDBACK_RX_HANDLE) {
+					desh_print("HARQ feedback RX completed.");
 				}
 			} else if (params->status != NRF_MODEM_DECT_PHY_ERR_OP_CANCELED) {
 				char tmp_str[128] = {0};
@@ -1736,6 +1795,7 @@ static void dect_phy_ping_thread_fn(void)
 				dect_common_utils_phy_tx_power_to_dbm(phy_h->transmit_power);
 			uint16_t transmitter_id, receiver_id;
 			int16_t rssi_level = params->pcc_status.rssi_2 / 2;
+			double snr = (double)params->pcc_status.snr / 4.0;
 
 			dect_common_utils_modem_phy_header_status_to_string(
 				params->pcc_status.header_status, tmp_str);
@@ -1775,11 +1835,10 @@ static void dect_phy_ping_thread_fn(void)
 
 			if (cmd_params->debugs) {
 				desh_print("PCC received (time %llu, handle %d): "
-					   "status: \"%s\", snr %d, "
-					   "RSSI-2 %d (RSSI %d), stf_start_time %llu",
+					   "status: \"%s\", snr %.2f dB, "
+					   "RSSI-2 %d dBm, stf_start_time %llu",
 					   params->time, params->pcc_status.handle,
-					   tmp_str, params->pcc_status.snr,
-					   params->pcc_status.rssi_2, rssi_level,
+					   tmp_str, snr, rssi_level,
 					   params->pcc_status.stf_start_time);
 				desh_print("  phy header:");
 				desh_print("    short nw id %d, transmitter id %d", short_nw_id,
@@ -1833,13 +1892,16 @@ static void dect_phy_ping_thread_fn(void)
 						dect_phy_ping_harq_process_round_end(
 							DECT_HARQ_CLIENT);
 					} else {
-						/* NACK: stop current RX, TX a retransmit,
-						 * restart RX for a remaining duration.
+						/* NACK: stop all scheduled items from modem,
+						 * TX a retransmit, restart RX for a remaining
+						 * duration.
 						 */
-						(void)nrf_modem_dect_phy_cancel(
-							DECT_PHY_PING_CLIENT_RX_HANDLE);
+						(void)dect_phy_ctrl_mdm_op_cancel_all();
 						dect_phy_ping_harq_client_nak_handle();
 					}
+				} else {
+					desh_warn("PCC: DECT_HARQ_CLIENT: HARQ resp received "
+						  "but no HARQ process in use.");
 				}
 			} else {
 				desh_warn("Unsupported process nbr %d received in HARQ feedback",
@@ -1864,11 +1926,12 @@ static void dect_phy_ping_thread_fn(void)
 			};
 			struct nrf_modem_dect_phy_pdc_event *p_rx_status = &(params->rx_status);
 			int16_t rssi_level = p_rx_status->rssi_2 / 2;
+			double snr = (double)p_rx_status->snr / 4.0;
 
-			desh_print("PDC received (time %llu, handle %d): snr %d, RSSI-2 %d "
-				   "(RSSI %d), len %d",
+			desh_print("PDC received (time %llu, handle %d): snr %.2f dB, "
+				   "RSSI-2 %d dBm, len %d",
 				   params->time, p_rx_status->handle,
-				   p_rx_status->snr, p_rx_status->rssi_2, rssi_level,
+				   snr, rssi_level,
 				   params->data_length);
 
 			if (params->data_length) {
@@ -1905,9 +1968,12 @@ static void dect_phy_ping_thread_fn(void)
 			break;
 		}
 		case DECT_PHY_PING_EVENT_HARQ_PAYLOAD_STORED: {
-			enum dect_harq_user *harq_user = (enum dect_harq_user *)event.data;
+			struct dect_phy_ping_harq_tx_payload_data_evt *evt_data =
+				(struct dect_phy_ping_harq_tx_payload_data_evt *)event.data;
 
-			dect_phy_ping_harq_process_round_start(*harq_user);
+			if (evt_data->phy_handle != DECT_PHY_PING_CLIENT_RE_TX_HANDLE) {
+				dect_phy_ping_harq_process_round_start(evt_data->harq_user);
+			}
 			break;
 		}
 
@@ -2138,9 +2204,10 @@ static int dect_phy_ping_rx_pdc_data_handle(struct dect_phy_data_rcv_common_para
 			phy_h->transmit_power = dect_common_utils_dbm_to_phy_tx_power(
 				dect_phy_ping_auto_pwr_ctrl_target_pwr_calculate());
 
-			/* Update header to scheduler */
-			dect_phy_api_scheduler_list_item_tx_phy_header_update_by_phy_handle(
-				DECT_PHY_PING_CLIENT_TX_HANDLE,
+			/* Update header to all items in scheduler */
+			dect_phy_api_scheduler_list_item_tx_phy_header_update_by_phy_handle_range(
+				DECT_PHY_PING_CLIENT_TX_HANDLE_START,
+				DECT_PHY_PING_CLIENT_TX_HANDLE_END,
 				&(ping_data.client_data.tx_phy_header), DECT_PHY_HEADER_TYPE2);
 		}
 
@@ -2198,7 +2265,7 @@ static int dect_phy_ping_rx_pdc_data_handle(struct dect_phy_data_rcv_common_para
 		desh_print("Server results received.");
 		dect_phy_ping_cmd_done();
 	} else if (pdu.header.message_type == DECT_MAC_MESSAGE_TYPE_PING_HARQ_FEEDBACK) {
-		desh_print("HARQ feedback received.");
+		desh_print("PDU for HARQ feedback received.");
 	} else {
 		desh_warn("type %d", pdu.header.message_type);
 	}

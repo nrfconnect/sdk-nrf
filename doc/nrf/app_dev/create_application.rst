@@ -45,7 +45,6 @@ In the following example, the :ref:`Bluetooth Peripheral UART <peripheral_uart>`
    <home>/
    ├─── .west/
    ├─── bootloader/
-   ├─── mbedtls/
    ├─── modules/
    ├─── nrf/
    │    ├─── applications/
@@ -101,6 +100,7 @@ This application type is suitable for the following development cases:
 * You want to develop a project that involves more than one board target, for example using a mesh networking protocol like :ref:`ug_matter` or :ref:`ug_bt_mesh`.
 * You want to run a big project that lets you develop most features without having to patch the |NCS| tree, for example with out-of-tree boards, drivers, or SoCs.
 * You want to use out-of-tree applications from the `nRF Connect SDK Add-ons`_ index.
+* You want to set up Continuous Integration (CI) for your application and explicitly define all dependencies (such as the |NCS| version) in the application's west manifest file.
 
 For more information about applications placed in workspace in the |NCS|, see the :ref:`workflow 4 on the development model page <dm_workflow_4>`.
 
@@ -138,7 +138,7 @@ Creating an |NCS| application
 *****************************
 
 The process for creating an |NCS| application depends on the development environment.
-Using the |nRFVSC| is the recommended method.
+Using |nRFVSC| is the recommended method.
 
 .. note::
      No steps are provided for the creation of :ref:`repository applications <create_application_types_repository>`.
@@ -146,8 +146,8 @@ Using the |nRFVSC| is the recommended method.
 
 .. _creating_vsc:
 
-Creating application in the |nRFVSC|
-====================================
+Creating application in |nRFVSC|
+================================
 
 .. note::
    If you prefer, you can `start VS Code walkthrough`_ and create applications and build configurations from there.
@@ -158,11 +158,11 @@ Use the following steps depending on the application placement:
 
    .. group-tab:: Workspace application (recommended)
 
-      To create a workspace application in the |nRFVSC|:
+      To create a workspace application in |nRFVSC|:
 
       1. Open |VSC|.
-      #. Open the |nRFVSC|.
-      #. In the :guilabel:`Welcome View`, click the :guilabel:`Create a new application` action.
+      #. Open |nRFVSC|.
+      #. In the `Welcome View`_, click the :guilabel:`Create a new application` action.
          A quick pick menu appears.
       #. Choose one of the following options:
 
@@ -175,7 +175,7 @@ Use the following steps depending on the application placement:
          The application creation process starts after you enter the name.
          When the application is created, a VS Code prompt appears asking you what to do with the application.
       #. Click :guilabel:`Open`.
-         This will open the new application and add it to the :guilabel:`Applications View` in the extension.
+         This will open the new application and add it to the `Applications View`_ in the extension.
          At this point, you have created a freestanding application.
       #. Add the :file:`west.yml` to create a west workspace around the application:
 
@@ -194,11 +194,11 @@ Use the following steps depending on the application placement:
 
    .. group-tab:: Freestanding application
 
-      To create a freestanding application in the |nRFVSC|:
+      To create a freestanding application in |nRFVSC|:
 
       1. Open |VSC|.
-      #. Open the |nRFVSC|.
-      #. In the :guilabel:`Welcome View`, click the :guilabel:`Create a new application` action.
+      #. Open |nRFVSC|.
+      #. In the `Welcome View`_, click the :guilabel:`Create a new application` action.
          A quick pick menu appears.
       #. Choose one of the following options:
 
@@ -209,7 +209,7 @@ Use the following steps depending on the application placement:
          The application creation process starts after you enter the name.
          When the application is created, a VS Code prompt appears.
       #. Click :guilabel:`Open`.
-         This opens the new application and adds it to the :guilabel:`Applications View` in the extension.
+         This opens the new application and adds it to the `Applications View`_ in the extension.
 
       You can now start :ref:`configuring and building <configuration_and_build>` the application.
 
@@ -311,9 +311,9 @@ To create an application from the add-on index, complete the following steps:
 
    .. tab:: nRF Connect for VS Code (recommended)
 
-      Complete the following steps in the |nRFVSC|:
+      Complete the following steps in |nRFVSC|:
 
-      1. In the :guilabel:`Welcome View`, click :guilabel:`Create a new application`.
+      1. In the `Welcome View`_, click :guilabel:`Create a new application`.
       #. Select :guilabel:`Browse nRF Connect SDK Add-on Index`.
       #. Browse through the available add-ons and select one that matches your needs.
       #. Follow the creation wizard to set up your workspace application.

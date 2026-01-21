@@ -27,14 +27,14 @@ Configuration
 
 You can use this module for the following devices:
 
-* nRF52, nRF53, and nRF54L Series - To perform the firmware upgrade, you must enable the bootloader.
+* nRF52, nRF53, and nRF54 Series - To perform the firmware upgrade, you must enable the bootloader.
   You can use the DFU module with either MCUboot or B0 bootloader.
   For more information on how to enable and configure a bootloader, see the :ref:`nrf_desktop_bootloader` section.
 
-To enable the DFU module, use the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE <config_desktop_app_options>` Kconfig option.
-It requires the transport option :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE <config_desktop_app_options>` to be selected, as it uses :ref:`nrf_desktop_config_channel` for the transmission of the update image.
+To enable the DFU module, use the :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE` Kconfig option.
+It requires the transport option :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE` to be selected, as it uses :ref:`nrf_desktop_config_channel` for the transmission of the update image.
 
-Set the value of :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE <config_desktop_app_options>` to specify the size of the sync buffer (in words).
+Set the value of :option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE` to specify the size of the sync buffer (in words).
 During the DFU process, the data is initially stored in the buffer and then moved to non-volatile memory.
 The buffer is located in the RAM, so increasing the buffer size increases the RAM usage.
 If the buffer is small, the host must perform the DFU progress synchronization more often.
@@ -47,35 +47,68 @@ If the buffer is small, the host must perform the DFU progress synchronization m
 MCUboot bootloader mode
 =======================
 
-The MCUboot bootloader can either move the image to the primary slot before booting it (``swap mode``) or boot the image directly from the secondary slot (``direct-xip mode``).
+This module supports the following modes of the MCUboot bootloader and reports the corresponding bootloader name:
 
-If the MCUboot bootloader in the swap mode is selected, the DFU module does the following:
+* ``swap`` (:kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_SWAP_USING_MOVE`) - ``MCUBOOT``
+* ``direct-xip`` (:kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP`) - ``MCUBOOT+XIP``
+* ``RAM load`` (:kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD`) - ``MCUBOOT``
+
+The DFU module relies on the listed Kconfig options that indicate the MCUboot bootloader mode to determine the correct behavior.
+
+.. caution::
+   Other bootloader modes might be compatible with this module, but they are not actively tested as part of the nRF Desktop configurations.
+
+See the :ref:`nrf_desktop_bootloader` section for more information on the MCUboot bootloader modes.
+
+Swap mode
+---------
+
+If this bootloader mode is selected, the DFU module does the following:
 
  * Requests the image upgrade after the whole image is transferred over the :ref:`nrf_desktop_config_channel`.
  * Confirms the running image after the device is rebooted.
 
-If the MCUboot bootloader's direct-xip mode is used, the module does not mark the newly uploaded image as pending and does not confirm it after a successful boot.
-In that case, the DFU module assumes that the MCUboot direct-xip bootloader simply boots an image with the higher version, so there is no need to mark the image as pending and confirm it.
+Direct-xip mode
+---------------
 
-The :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP <config_desktop_app_options>` Kconfig option is used to inform the DFU module that the device uses the MCUboot bootloader in the direct-xip mode.
-If the option is enabled, the DFU module reports the ``MCUBOOT+XIP`` bootloader name instead of ``MCUBOOT`` to indicate that the bootloader working in the direct-xip mode is used.
-The option depends on enabling the MCUboot bootloader (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`) and is enabled by default if the MCUboot direct-xip mode of operations is set (:kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP`).
-See the :ref:`nrf_desktop_bootloader` section for more information on the MCUboot bootloader configuration.
+If this bootloader mode is selected, the DFU module does not mark the newly uploaded image as pending and does not confirm it after a successful boot.
+
+RAM load mode
+-------------
+
+If this bootloader mode is selected, the DFU module does not mark the newly uploaded image as pending and does not confirm it after a successful boot.
+
+.. note::
+   Support for the RAM load mode in this module is experimental.
+   For more details about the support of the MCUboot RAM load mode in the nRF Desktop application, see the MCUboot :ref:`nrf_desktop_configuring_mcuboot_bootloader_ram_load` section in the nRF Desktop documentation.
+
+.. note::
+   DTS is the only supported partitioning method when you use the MCUboot bootloader in the RAM load mode.
+
+Partitioning methods
+====================
+
+The DFU module stores the update image received over the configuration channel to a dedicated memory partition.
+Due to this responsibility, it uses one of the supported partitioning methods to get the information about this partition location.
+
+The DFU module is compatible with the memory layout defined using the Partition Manager (PM).
+It is also compatible with the memory layout defined using the Devicetree Source (DTS) when you use it with the MCUboot bootloader.
+For more details about the memory layout methods, see the :ref:`nrf_desktop_memory_layout` documentation.
 
 Device identification information
 =================================
 
 The DFU module provides the following information about the device through the :ref:`nrf_desktop_config_channel`:
 
-* Vendor ID (:ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_VID <config_desktop_app_options>`)
-* Product ID (:ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_PID <config_desktop_app_options>`)
-* Generation (:ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_GENERATION <config_desktop_app_options>`)
+* Vendor ID (:option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_VID`)
+* Product ID (:option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_PID`)
+* Generation (:option:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_GENERATION`)
 
 These values are fetched using the :ref:`devinfo <dfu_devinfo>` configuration channel option.
 
 .. note::
    By default, the reported Vendor ID, Product ID, and generation are aligned with the values defined globally for the nRF Desktop application.
-   The default values of Kconfig options used by the DFU module are based on respectively :ref:`CONFIG_DESKTOP_DEVICE_VID <config_desktop_app_options>`, :ref:`CONFIG_DESKTOP_DEVICE_PID <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_DEVICE_GENERATION <config_desktop_app_options>`.
+   The default values of Kconfig options used by the DFU module are based on respectively :option:`CONFIG_DESKTOP_DEVICE_VID`, :option:`CONFIG_DESKTOP_DEVICE_PID` and :option:`CONFIG_DESKTOP_DEVICE_GENERATION`.
 
 Non-volatile memory access synchronization with other DFU methods
 =================================================================
@@ -83,7 +116,7 @@ Non-volatile memory access synchronization with other DFU methods
 The DFU module leverages the :ref:`nrf_desktop_dfu_lock` to synchronize non-volatile memory access with other DFU methods (for example, SMP DFU).
 If multiple DFU transports are enabled in your application configuration, make sure that the following conditions are met:
 
-* The :ref:`CONFIG_DESKTOP_DFU_LOCK <config_desktop_app_options>` Kconfig option is enabled
+* The :option:`CONFIG_DESKTOP_DFU_LOCK` Kconfig option is enabled
 * All of the used DFU transports use the :ref:`nrf_desktop_dfu_lock`.
 
 On each DFU attempt, the module attempts to claim ownership over the DFU non-volatile memory using the DFU Lock API.
@@ -134,16 +167,6 @@ fwinfo
 
    * Version and length of the image.
    * Partition ID of the currently booted image, used to specify the image placement.
-
-   Additionally, for the nRF54H Series, the following applies:
-
-   * The reported image size is set to zero.
-   * The booted image version is indicated by:
-
-     * Root manifest sequence number that is encoded in the build number field.
-     * Manifest semantic version, if supported by the SDFW (requires v0.6.2 or higher).
-       The semantic version is encoded in the major, minor and patch fields.
-       If semantic versioning is not supported, these fields are set to zero.
 
 .. _dfu_devinfo:
 

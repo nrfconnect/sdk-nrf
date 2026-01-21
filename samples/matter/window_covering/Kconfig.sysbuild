@@ -4,9 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config WIFI_NRF70
-	default y if BOARD_NRF7002DK
-
 #### Radio core selection
 config NRF_DEFAULT_IPC_RADIO
 	default y
@@ -14,7 +11,7 @@ config NRF_DEFAULT_IPC_RADIO
 # Enable IEEE802.15.4 serialization to network core
 # This config automatically pulls in the `overlay-802154.conf` in the ipc_radio image
 config NETCORE_IPC_RADIO_IEEE802154
-	default y if SOC_SERIES_NRF53X && !WIFI_NRF70
+	default y if SOC_SERIES_NRF53X
 
 # Enable Bluetooth serialization to network core
 # This config automatically pulls in the `overlay-bt_hci_ipc.conf` in the ipc_radio image
@@ -41,9 +38,6 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 #### DFU network core configuration
 if SOC_SERIES_NRF53X
 
-config MCUBOOT_UPDATEABLE_IMAGES
-	default 2
-
 choice MCUBOOT_MODE
 	default MCUBOOT_MODE_OVERWRITE_ONLY
 endchoice
@@ -63,12 +57,13 @@ config DFU_MULTI_IMAGE_PACKAGE_NET
 
 endif # SOC_SERIES_NRF53X
 
-if BOARD_NRF54L15DK
+if BOARD_NRF54L15DK || BOARD_NRF54LM20DK
 
+# Disable checking the external drivers for nRF54L15 and nRF54LM20 DKs.
 config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
 	default y
 
-endif # BOARD_NRF54L15DK
+endif # BOARD_NRF54L15DK || BOARD_NRF54LM20DK
 
 endif # BOOTLOADER_MCUBOOT
 

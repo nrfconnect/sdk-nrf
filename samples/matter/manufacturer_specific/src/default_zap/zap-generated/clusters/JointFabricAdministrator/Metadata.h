@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace AdministratorFabricIndex
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -31,11 +33,16 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kAdminister, std::nullopt);
 				} // namespace AdministratorFabricIndex
+				constexpr std::array<DataModel::AttributeEntry, 1> kMandatoryMetadata = {
+					AdministratorFabricIndex::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace ICACCSRRequest
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -79,6 +86,11 @@ namespace app
 				} // namespace AnnounceJointFabricAdministrator
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace JointFabricAdministrator
 	} // namespace Clusters
 } // namespace app

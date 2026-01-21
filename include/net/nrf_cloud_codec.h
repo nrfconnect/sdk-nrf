@@ -184,13 +184,13 @@ struct nrf_cloud_obj_shadow_data {
 #define NRF_CLOUD_OBJ_JSON_DEFINE(_name) \
 	struct nrf_cloud_obj _name = { .type = NRF_CLOUD_OBJ_TYPE_JSON, .json = NULL, \
 				       .enc_src = NRF_CLOUD_ENC_SRC_NONE, \
-				       .encoded_data = { .ptr = NULL, .len = 0 } }
+				       .encoded_data = {  .len = 0, .ptr = NULL } }
 
 #define NRF_CLOUD_OBJ_COAP_CBOR_DEFINE(_name) \
 	struct nrf_cloud_obj _name = { .type = NRF_CLOUD_OBJ_TYPE_COAP_CBOR, \
 				       .coap_cbor = NULL, \
 				       .enc_src = NRF_CLOUD_ENC_SRC_NONE, \
-				       .encoded_data = { .ptr = NULL, .len = 0 } }
+				       .encoded_data = { .len = 0, .ptr = NULL } }
 
 /** @brief Define an nRF Cloud codec object of the specified type.
  *
@@ -198,7 +198,7 @@ struct nrf_cloud_obj_shadow_data {
  * @param _type	Type of the object.
  */
 #define NRF_CLOUD_OBJ_DEFINE(_name, _type) \
-	struct nrf_cloud_obj _name = { 0 }; \
+	struct nrf_cloud_obj _name = { NRF_CLOUD_OBJ_TYPE__UNDEFINED }; \
 	_name.type = _type; \
 	_name.enc_src = NRF_CLOUD_ENC_SRC_NONE;
 
@@ -214,7 +214,7 @@ struct nrf_cloud_obj_shadow_data {
 #define NRF_CLOUD_OBJ_PRE_ENC_DEFINE(_name, _data, _len) \
 	struct nrf_cloud_obj _name = { .type = NRF_CLOUD_OBJ_TYPE__UNDEFINED, \
 				       .enc_src = NRF_CLOUD_ENC_SRC_PRE_ENCODED, \
-				       .encoded_data = { .ptr = _data, .len = _len } }
+				       .encoded_data = { .len = _len, .ptr = _data } }
 
 /** @brief Check if the provided object is a valid nRF Cloud codec object type.
  *
@@ -635,6 +635,33 @@ int nrf_cloud_obj_cloud_encoded_free(struct nrf_cloud_obj *const obj);
  */
 int nrf_cloud_obj_gnss_msg_create(struct nrf_cloud_obj *const obj,
 				  const struct nrf_cloud_gnss_data * const gnss);
+
+/**
+ * @brief Create an nRF Cloud Location request message object with a timestamp.
+ *
+ * @details If successful, memory is allocated for the provided object.
+ *          The @ref nrf_cloud_obj_free function should be called when finished with the object.
+ *
+ * @param[out] obj Uninitialzed object to contain the Location message.
+ * @param[in] cells_inf Cellular network data, can be NULL if wifi_inf is provided.
+ * @param[in] wifi_inf Wi-Fi network data, can be NULL if cells_inf is provided.
+ * @param[in] config Optional configuration of request. If NULL, use cloud defaults.
+ * @param[in] timestamp Optional UTC timestamp (milliseconds) of request, or 0 to omit.
+ *
+ * @retval -EINVAL Invalid parameter.
+ * @retval -EDOM Too few Wi-Fi networks, see NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN.
+ * @retval -EBADF Invalid object type.
+ * @retval -ENOTEMPTY Object already initialized.
+ * @retval -ENOMEM Out of memory.
+ * @retval 0 Success; GNSS message created.
+ */
+int nrf_cloud_obj_location_request_create_timestamped(
+	struct nrf_cloud_obj *const obj,
+	const struct lte_lc_cells_info *const cells_inf,
+	const struct wifi_scan_info *const wifi_inf,
+	const struct nrf_cloud_location_config *const config,
+	int64_t timestamp
+);
 
 /**
  * @brief Create an nRF Cloud Location request message object.

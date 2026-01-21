@@ -18,7 +18,7 @@ config HW_UNIQUE_KEY_LOAD
 	depends on HAS_HW_NRF_CC310
 	depends on NRF_CC3XX_PLATFORM
 	select FPROTECT
-	imply NRFX_NVMC if !SOC_SERIES_NRF54LX
+	imply NRFX_NVMC if !CRACEN_KMU_HW_PRESENT
 	help
 	  Use this on devices with no KMU. Enable this in the immutable
 	  bootloader to load the HUK from the allocated flash area
@@ -30,23 +30,24 @@ config HW_UNIQUE_KEY_LOAD
 
 config HW_UNIQUE_KEY_SUPPORTED
 	bool
-	default y if HAS_HW_NRF_CC3XX || (CRACEN_HW_PRESENT && !TFM_PROFILE_TYPE_MINIMAL)
+	default y if HAS_HW_NRF_CC3XX || (CRACEN_KMU_HW_PRESENT && !TFM_PROFILE_TYPE_MINIMAL)
 
 config HW_UNIQUE_KEY
 	bool "Hardware Unique Keys (HUK)"
 	depends on HW_UNIQUE_KEY_SUPPORTED
-	depends on NRF_CC3XX_PLATFORM || BUILD_WITH_TFM || CRACEN_HW_PRESENT
+	depends on NRF_CC3XX_PLATFORM || BUILD_WITH_TFM || CRACEN_KMU_HW_PRESENT
 	depends on NRF_SECURITY
-	depends on MPU_ALLOW_FLASH_WRITE || BUILD_WITH_TFM || CRACEN_HW_PRESENT
-	depends on !BUILD_WITH_TFM || (TFM_CRYPTO_BUILTIN_KEYS || CRACEN_HW_PRESENT)
-	select PSA_WANT_ALG_SP800_108_COUNTER_CMAC if CRACEN_HW_PRESENT
-	select PSA_WANT_ALG_CMAC if CRACEN_HW_PRESENT
-	select PSA_WANT_KEY_TYPE_AES if CRACEN_HW_PRESENT
-	select PSA_WANT_ALG_ECB_NO_PADDING if CRACEN_HW_PRESENT
-	select PSA_WANT_ALG_GCM if CRACEN_HW_PRESENT
-	select PSA_NEED_CRACEN_KMU_DRIVER if CRACEN_HW_PRESENT
+	depends on MPU_ALLOW_FLASH_WRITE || BUILD_WITH_TFM || CRACEN_KMU_HW_PRESENT
+	depends on !BUILD_WITH_TFM || (TFM_CRYPTO_BUILTIN_KEYS || CRACEN_KMU_HW_PRESENT)
+	select PSA_WANT_ALG_SP800_108_COUNTER_CMAC if CRACEN_KMU_HW_PRESENT
+	select PSA_WANT_ALG_CMAC if CRACEN_KMU_HW_PRESENT
+	select PSA_WANT_KEY_TYPE_AES if CRACEN_KMU_HW_PRESENT
+	select PSA_WANT_ALG_ECB_NO_PADDING if CRACEN_KMU_HW_PRESENT
+	select PSA_WANT_ALG_GCM if CRACEN_KMU_HW_PRESENT
+	select PSA_NEED_CRACEN_KMU_DRIVER if CRACEN_KMU_HW_PRESENT
+	select CRACEN_IKG if CRACEN_KMU_HW_PRESENT
 	select FPROTECT if HAS_HW_NRF_ACL
-	imply NRFX_NVMC if !SOC_SERIES_NRF54LX
+	imply NRFX_NVMC if !CRACEN_KMU_HW_PRESENT
 	default y if BUILD_WITH_TFM
 	help
 	  This option will load the Hardware Unique Key (HUK) in the KDR
@@ -64,7 +65,7 @@ config HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT
 	  still requires the device to reboot and the bootloader to load the HUK
 
 config HW_UNIQUE_KEY_RANDOM
-	bool "Enable writing random HW Unique Keys"
+	bool "Support writing random HW Unique Keys"
 	depends on MAIN_STACK_SIZE >= 2048 || BUILD_WITH_TFM
 	default y if BUILD_WITH_TFM
 	help

@@ -9,11 +9,7 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/types.h>
 
-#if defined(CONFIG_USB_DEVICE_STACK)
-#include <zephyr/usb/usb_device.h>
 #include <zephyr/drivers/uart.h>
-#endif
-
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/gatt.h>
@@ -205,7 +201,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 	printk("Connected as %s\n",
 	       conn_info.role == BT_CONN_ROLE_CENTRAL ? "central" : "peripheral");
-	__ASSERT_NO_MSG(conn_info.le.interval == INTERVAL_LLPM);
+	__ASSERT_NO_MSG(conn_info.le.interval_us == INTERVAL_LLPM * BT_HCI_LE_INTERVAL_UNIT_US);
 	printk("Conn. interval is 1 ms\n");
 }
 
@@ -426,13 +422,9 @@ int main(void)
 {
 	int err;
 
-#if defined(CONFIG_USB_DEVICE_STACK)
+#if DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_console), zephyr_cdc_acm_uart)
 	const struct device *uart_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 	uint32_t dtr = 0;
-
-	if (usb_enable(NULL)) {
-		return 0;
-	}
 
 	/* Poll if the DTR flag was set, optional */
 	while (!dtr) {

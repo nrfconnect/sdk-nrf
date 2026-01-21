@@ -1,0 +1,11 @@
+# Sercomm modules with Nordic Semiconductor nRF91 SoC
+
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config SOC_TPM530M
+	bool
+	select SOC_NRF9120
+
+config SOC
+	default "tpm530m" if SOC_TPM530M

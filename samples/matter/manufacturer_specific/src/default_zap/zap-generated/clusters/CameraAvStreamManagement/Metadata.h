@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace MaxConcurrentEncoders
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -52,13 +54,13 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace NightVisionUsesInfrared
-				namespace MinViewport
+				namespace MinViewportResolution
 				{
 					inline constexpr DataModel::AttributeEntry
-						kMetadataEntry(MinViewport::Id,
+						kMetadataEntry(MinViewportResolution::Id,
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
-				} // namespace MinViewport
+				} // namespace MinViewportResolution
 				namespace RateDistortionTradeOffPoints
 				{
 					inline constexpr DataModel::AttributeEntry kMetadataEntry(
@@ -318,11 +320,19 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kManage, Access::Privilege::kManage);
 				} // namespace StatusLightBrightness
+				constexpr std::array<DataModel::AttributeEntry, 4> kMandatoryMetadata = {
+					MaxContentBufferSize::kMetadataEntry,
+					MaxNetworkBandwidth::kMetadataEntry,
+					SupportedStreamUsages::kMetadataEntry,
+					StreamUsagePriorities::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace AudioStreamAllocate
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -395,6 +405,11 @@ namespace app
 				} // namespace CaptureSnapshot
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace CameraAvStreamManagement
 	} // namespace Clusters
 } // namespace app

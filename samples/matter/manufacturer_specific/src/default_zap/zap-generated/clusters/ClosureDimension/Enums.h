@@ -122,15 +122,11 @@ namespace app
 				kBackward = 0x09,
 				kDepthMask = 0x0A,
 				kDepthSymmetry = 0x0B,
-				kCeilingSimple = 0x0C,
-				kCeilingMask = 0x0D,
-				kCeilingSidedSymmetry = 0x0E,
-				kCeilingCenteredSymmetry = 0x0F,
 				// All received enum values that are not listed above will be mapped
 				// to kUnknownEnumValue. This is a helper enum value that should only
 				// be used by code to process how it handles receiving and unknown
 				// enum value. This specific should never be transmitted.
-				kUnknownEnumValue = 16,
+				kUnknownEnumValue = 12,
 			};
 
 			// Bitmap for Feature
@@ -143,6 +139,12 @@ namespace app
 				kTranslation = 0x20,
 				kRotation = 0x40,
 				kModulation = 0x80,
+			};
+
+			// Bitmap for LatchControlModesBitmap
+			enum class LatchControlModesBitmap : uint8_t {
+				kRemoteLatching = 0x1,
+				kRemoteUnlatching = 0x2,
 			};
 		} // namespace ClosureDimension
 	} // namespace Clusters

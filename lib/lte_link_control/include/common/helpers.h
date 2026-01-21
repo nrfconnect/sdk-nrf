@@ -17,6 +17,19 @@
 extern "C" {
 #endif
 
+enum mfw_type {
+	MFW_TYPE_UNKNOWN,
+	MFW_TYPE_NRF9160,
+	MFW_TYPE_NRF91X1,
+	MFW_TYPE_NRF9151_NTN
+};
+
+/* Initialize the modem firmware type (read it from the modem). */
+void mfw_type_init(void);
+
+/* Get the modem firmware type. */
+enum mfw_type mfw_type_get(void);
+
 /* Converts integer as string to integer type. */
 int string_to_int(const char *str_buf, int base, int *output);
 

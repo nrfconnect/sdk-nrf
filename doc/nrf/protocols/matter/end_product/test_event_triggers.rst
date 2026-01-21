@@ -37,7 +37,7 @@ Default test event triggers
 ***************************
 
 You can use the pre-defined common test event triggers in your application.
-To disable them, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_REGISTER_DEFAULTS<CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_REGISTER_DEFAULTS>` Kconfig option to ``n``.
+To disable them, set the :option:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_REGISTER_DEFAULTS` Kconfig option to ``n``.
 
 The following table lists the available triggers and their activation codes:
 
@@ -65,7 +65,7 @@ The following table lists the available triggers and their activation codes:
       The maximum time delay is UINT16_MAX ms.
       The value is provided in HEX format.
   * - Block the Matter thread
-    - :ref:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG<CONFIG_NCS_SAMPLE_MATTER_WATCHDOG>` = ``y``, and :ref:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT<CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT>` = ``y``
+    - :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG` = ``y``, and :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT` = ``y``
     - Block the Matter thread for specific amount of time.
       You can use this event trigger to check the :ref:`Matter Watchdog <ug_matter_device_watchdog>` functionality.
     - ``0xFFFFFFFF20000000`` - ``0xFFFFFFFF2000FFFF``
@@ -73,7 +73,7 @@ The following table lists the available triggers and their activation codes:
       The maximum time is UINT16_MAX s.
       The value is provided in HEX format.
   * - Block the Main thread
-    - :ref:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG<CONFIG_NCS_SAMPLE_MATTER_WATCHDOG>` = ``y``, and :ref:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT<CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT>` = ``y``
+    - :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG` = ``y``, and :option:`CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_DEFAULT` = ``y``
     - Block the Main thread for specific amount of time.
       You can use this event trigger to check the :ref:`Matter Watchdog <ug_matter_device_watchdog>` functionality.
     - ``0xFFFFFFFF30000000`` - ``0xFFFFFFFF3000FFFF``
@@ -81,26 +81,26 @@ The following table lists the available triggers and their activation codes:
       The maximum time is UINT16_MAX s.
       The value is provided in HEX format.
   * - Diagnostic Logs User Data
-    - Enabled ``Diagnostic Logs`` cluster, and either the snippet ``diagnostic-logs`` attached (``-D<application_name>_SNIPPET=diagnostic-logs``) or both :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS>` = ``y`` and :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS>` = ``y``.
+    - Enabled ``Diagnostic Logs`` cluster, and either the snippet ``diagnostic-logs`` attached (``-D<application_name>_SNIPPET=diagnostic-logs``) or both :option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` = ``y`` and :option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS` = ``y``.
     - Trigger writing a specific number of ``u`` characters to the user diagnostics logs.
       The number of characters is determined by the value at the end of the event trigger value.
       The current supported maximum is 1023 bytes for single trigger call, and 4096 bytes of total data written.
     - ``0xFFFFFFFF40000000`` - ``0xFFFFFFFF40000400``
     - The range of ``0x0000`` - ``0x0400`` (from 1 Bytes to 1024 Bytes), ``0x0000`` to clear logs.
   * - Diagnostic Logs Network Data
-    - Enabled ``Diagnostic Logs`` cluster, and either the snippet ``diagnostic-logs`` attached (``-D<application_name>_SNIPPET=diagnostic-logs``) or both :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS>` = ``y`` and :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS>` = ``y``.
+    - Enabled ``Diagnostic Logs`` cluster, and either the snippet ``diagnostic-logs`` attached (``-D<application_name>_SNIPPET=diagnostic-logs``) or both :option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` = ``y`` and :option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS` = ``y``.
     - Trigger writing a specific number of ``n`` characters to the network diagnostics logs.
       The number of characters is determined by the value at the end of the event trigger value.
       The current supported maximum is 1023 bytes for single trigger call, and 4096 bytes of total data written.
     - ``0xFFFFFFFF50000000`` - ``0xFFFFFFFF50000400``
     - The range of ``0x0000`` - ``0x0400`` (from 1 Bytes to 1024 Bytes), ``0x0000`` to clear logs.
   * - Diagnostic Crash Logs
-    - Either the snippet ``diagnostic-logs`` attached (``-D<application_name>_SNIPPET=diagnostic-logs``) or both :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS>` = ``y`` and :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS>` = ``y``, and enabled ``Diagnostic Logs`` cluster.
+    - Either the snippet ``diagnostic-logs`` attached (``-D<application_name>_SNIPPET=diagnostic-logs``) or both :option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS` = ``y`` and :option:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS` = ``y``, and enabled ``Diagnostic Logs`` cluster.
     - Trigger a simple crash that relies on execution of the undefined instruction attempt.
     - ``0xFFFFFFFF60000000``
     - No additional value supported.
   * - OTA query
-    - :kconfig:option:`CONFIG_CHIP_OTA_REQUESTOR` = ``y``, and ``SB_CONFIG_MATTER_OTA`` = ``y``.
+    - :kconfig:option:`CONFIG_CHIP_OTA_REQUESTOR` = ``y``, and :kconfig:option:`SB_CONFIG_MATTER_OTA` = ``y``.
     - Trigger an OTA firmware update.
     - ``0x002a000000000100`` - ``0x01000000000001FF``
     - The range of ``0x00`` - ``0xFF`` is the fabric index value.
@@ -168,10 +168,35 @@ The following table lists the available triggers and their activation codes:
     - The range of ``0x0`` - ``0x1`` is the endpoint ID that has power source cluster instance enabled.
       An endpoint with ID ``0x0`` uses a wired power source and endpoint with ID ``0x1`` uses a battery power source.
   * - Door lock jammed
-    - :kconfig:option:`CONFIG_CHIP_DEVICE_PRODUCT_ID` = ``32774``
+    - Only for :ref:`Matter Lock <matter_lock_sample>`
     - Simulate the jammed lock state.
-    - ``0xFFFFFFFF32774000``
+    - ``0xFFFFFFF327740000``
     - This activation code does not contain any value.
+  * - Closure control - Main state is error
+    - Only for :ref:`Matter Closure <matter_closure_sample>`
+    - Trigger a main state error.
+    - ``0x0104000000000000``
+    - No additional value supported.
+  * - Closure control - Main state is protected
+    - Only for :ref:`Matter Closure <matter_closure_sample>`
+    - Trigger a main state protected.
+    - ``0x0104000000000001``
+    - No additional value supported.
+  * - Closure control - Main state is disengaged
+    - Only for :ref:`Matter Closure <matter_closure_sample>`
+    - Trigger a main state disengaged.
+    - ``0x0104000000000002``
+    - No additional value supported.
+  * - Closure control - Main state is setup required
+    - Only for :ref:`Matter Closure <matter_closure_sample>`
+    - Trigger a main state setup required.
+    - ``0x0104000000000003``
+    - No additional value supported.
+  * - Closure control - Main state test clear
+    - Only for :ref:`Matter Closure <matter_closure_sample>`
+    - Trigger a main state test clear.
+    - ``0x0104000000000004``
+    - No additional value supported.
 
 .. _matter_test_event_triggers_setting_enable_key:
 
@@ -187,10 +212,10 @@ You cannot set the enable key to a specific value using factory data unless the 
 If it is not set, the default value ``00112233445566778899AABBCCDDEEFF`` will be used.
 For secure operation, you need to ensure that the enable key is unique for all of your devices.
 
-To specify the enable key through the build system, enable the ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE`` Kconfig option by setting it to ``y``.
+To specify the enable key through the build system, enable the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option by setting it to ``y``.
 Then, set the :kconfig:option:`CONFIG_CHIP_DEVICE_ENABLE_KEY` Kconfig option to a 32-byte hexadecimal string value.
 
-If ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE`` is set to ``n``, you can follow the :doc:`matter:nrfconnect_factory_data_configuration` guide in the Matter documentation to generate the factory data set with the specific enable key value.
+If :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` is set to ``n``, follow the :ref:`ug_matter_device_factory_provisioning` guide in the Matter documentation to generate the factory data set with the specific key value.
 
 If you do not use the |NCS| Matter common module, you need to read the enable key value manually from the factory data set and provide it to the ``TestEventTrigger`` class.
 
@@ -273,7 +298,7 @@ A new event trigger consists of two fields: ``Mask``, and ``Callback``.
 * The ``Callback`` field is a callback function that will be invoked when the device receives a corresponding activation code.
 
 The maximum number of event triggers that can be registered is configurable.
-To adjust this limit, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX<CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX>` Kconfig option to the desired value.
+To adjust this limit, set the :option:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX` Kconfig option to the desired value.
 
 To register a new test event trigger, follow these steps:
 
@@ -322,7 +347,7 @@ To register a new test event trigger, follow these steps:
 
      /* Remember to check the CHIP_ERROR return code */
 
-   If the returning `CHIP_ERROR` code is equal to `CHIP_ERROR_NO_MEMORY`, you need to increase the :kconfig:option:`NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX` Kconfig option to the higher value.
+   If the returning ``CHIP_ERROR`` code is equal to ``CHIP_ERROR_NO_MEMORY``, you need to increase the value of the :option:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX_TRIGGERS_DELEGATES` Kconfig option.
 
    Here's an example to handle the ``0xFFFFFFFF00011234`` activation code, where 1234 is the event trigger value field:
 
@@ -353,7 +378,7 @@ Use the following example as a guide to register an existing event trigger handl
 
   /* Remember to check the CHIP_ERROR return code */
 
-If the returning ``CHIP_ERROR`` code is equal to ``CHIP_ERROR_NO_MEMORY``, you need to increase the :ref:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX_TRIGGERS_DELEGATES<CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX_TRIGGERS_DELEGATES>` Kconfig option to the higher value.
+If the returning ``CHIP_ERROR`` code is equal to ``CHIP_ERROR_NO_MEMORY``, you need to increase the value of the :option:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX_TRIGGERS_DELEGATES` Kconfig option.
 
 For example, you can register and use the ``OTATestEventTriggerHandler`` handler and trigger pre-defined Matter OTA DFU behaviors using the following code:
 
@@ -363,11 +388,13 @@ For example, you can register and use the ``OTATestEventTriggerHandler`` handler
   static chip::OTATestEventTriggerHandler otaTestEventTrigger;
   ReturnErrorOnFailure(Nrf::Matter::TestEventTrigger::Instance().RegisterTestEventTriggerHandler(&otaTestEventTrigger));
 
+.. _matter_test_event_triggers_usage:
+
 Usage
 *****
 
 The Matter test event triggers feature is enabled by default for all Matter samples.
-To disable it, set the :ref:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS<CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS>` Kconfig option to ``n``.
+To disable it, set the :option:`CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS` Kconfig option to ``n``.
 
 To trigger a specific event on the device, run the following command:
 

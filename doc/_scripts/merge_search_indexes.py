@@ -18,18 +18,16 @@ Copyright (c) 2021 Nordic Semiconductor ASA
 import argparse
 import copy
 import json
-from pathlib import Path
 import re
 import shutil
 import sys
-from typing import Dict
-
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).absolute().parents[1] / "_utils"))
 import utils
 
 
-def load_search_index(file: Path, prefix: str) -> Dict:
+def load_search_index(file: Path, prefix: str) -> dict:
     """Load search index from a file
 
     Args:
@@ -53,7 +51,7 @@ def load_search_index(file: Path, prefix: str) -> Dict:
     return index
 
 
-def dump_search_index(index: Dict, dst: Path) -> None:
+def dump_search_index(index: dict, dst: Path) -> None:
     """Dump a search index to a file.
 
     Args:
@@ -63,11 +61,11 @@ def dump_search_index(index: Dict, dst: Path) -> None:
 
     with open(dst, "w") as f:
         f.write("Search.setIndex(")
-        f.write(json.dumps(index))
-        f.write(");")
+        f.write(json.dumps(index, separators=(",", ":"), sort_keys=True))
+        f.write(")")
 
 
-def merge_doc_file_names(src: Dict, dst: Dict, src_docset: str) -> None:
+def merge_doc_file_names(src: dict, dst: dict, src_docset: str) -> None:
     """Merge docnames and filenames entries.
 
     Args:
@@ -84,7 +82,7 @@ def merge_doc_file_names(src: Dict, dst: Dict, src_docset: str) -> None:
     dst["titles"] += src["titles"]
 
 
-def merge_terms(src: Dict, dst: Dict, offset: int) -> None:
+def merge_terms(src: dict, dst: dict, offset: int) -> None:
     """Merge terms entries.
 
     This function merges the terms or titleterms fields of a source index into
@@ -116,7 +114,7 @@ def merge_terms(src: Dict, dst: Dict, offset: int) -> None:
             dst_entry[term] = existing + [value + offset for value in values]
 
 
-def merge_objects(src: Dict, dst: Dict, offset: int) -> None:
+def merge_objects(src: dict, dst: dict, offset: int) -> None:
     """Merge objects entries
 
     Args:

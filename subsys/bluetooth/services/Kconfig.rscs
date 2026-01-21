@@ -14,6 +14,6 @@ if BT_RSCS
 
 module = BT_RSCS
 module-str = RSCS
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_RSCS

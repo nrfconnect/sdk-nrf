@@ -47,11 +47,11 @@ class BluetoothConnection(object):
         (self.bluez_maj, self.bluez_min) = self.get_bluez_version()
 
     def get_bluez_version(self):
-	bashCommand = 'bluetoothd -v'
+        bashCommand = 'bluetoothd -v'
         process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-        output, error = process.communicate()
-	output = output.split('.')
-	return (int(output[0],10), int(output[1],10))
+        output, _error = process.communicate()
+        output = output.split('.')
+        return (int(output[0],10), int(output[1],10))
 
     def get_device_name(self, device):
         for dev in self.device_list:
@@ -145,9 +145,9 @@ class BluetoothConnection(object):
                         self.list_objects(service, new_path)
             except dbus.DBusException as e:
                 if "Not connected" in e.args:
-                    self.display_message("Not connected to " + device)
+                    self.display_message("Not connected to")
                 elif "Did not receive a reply" in e.args:
-                    self.display_message("Timeout exceeded " + device)
+                    self.display_message("Timeout exceeded")
                 elif "The name" in e.args[0]:
                     pass
                 else:
@@ -163,8 +163,8 @@ class BluetoothConnection(object):
             if device in dev.path:
                 try:
                     if (self.bluez_maj > 5 or (self.bluez_maj == 5
-			and self.bluez_min > 39)):
-			dev.rx_interface.WriteValue(message, {})
+                        and self.bluez_min > 39)):
+                        dev.rx_interface.WriteValue(message, {})
                     else:
                         dev.rx_interface.WriteValue(message)
                 except dbus.DBusException as e:
@@ -173,7 +173,7 @@ class BluetoothConnection(object):
                     elif "Did not receive a reply" in e.args[0]:
                         self.display_message("Timeout exceeded :" + device)
                     else:
-                        print e.args
+                        print(e.args)
 
     def enable_notification(self, device):
         try:

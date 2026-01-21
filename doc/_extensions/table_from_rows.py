@@ -2,16 +2,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from pathlib import Path
-from docutils import io, statemachine
-from docutils.utils.error_reporting import ErrorString
-from docutils.parsers.rst import directives
-from sphinx.util.docutils import SphinxDirective
-from typing import Dict, Set, List
 import os
-import yaml
 import re
+from pathlib import Path
 
+import yaml
+from docutils import io, statemachine
+from docutils.parsers.rst import directives
+from docutils.utils.error_reporting import ErrorString
+from sphinx.util.docutils import SphinxDirective
 
 __version__ = '0.0.2'
 
@@ -40,20 +39,19 @@ class TableFromRows(SphinxDirective):
             if found_section and line != '':
                 section_lines.append(line)
         if len(section_lines) == 0:
-            raise self.severe('Problems building table; "%s" section not found.' %
-                              section)
+            raise self.severe(f'Problems building table; "{section}" section not found.')
         return section_lines
 
     def _column_sizes(self, row):
         cols = row.split('|')
         if len(cols) < 2 or cols[0] != '' or cols[-1] != '':
-            raise self.severe('Row does not look like a table: "%s"' % row)
+            raise self.severe(f'Row does not look like a table: "{row}"')
         return [len(el.strip()) for el in cols[1:-1]]
 
     @staticmethod
     def _adjust_column_sizes(sizes, line):
         columns = []
-        for size, column in zip(sizes, line.split('|')[1:-1]):
+        for size, column in zip(sizes, line.split('|')[1:-1], strict=False):
             column = column.strip()
             columns.append(column + ' ' * (size - len(column)))
         return '|' + '|'.join(columns) + '|'
@@ -76,13 +74,13 @@ class TableFromRows(SphinxDirective):
         for row in header_lines[1:]:
             row_sizes = self._column_sizes(row)
             if len(sizes) != len(row_sizes):
-                raise self.severe('Incompatible number of columns: "%s"' % row)
+                raise self.severe(f'Incompatible number of columns: "{row}"')
             sizes = [max(sizes[i], row_sizes[i]) for i, _ in enumerate(sizes)]
         for row_set in rows:
             for row in row_set:
                 row_sizes = self._column_sizes(row)
                 if len(sizes) != len(row_sizes):
-                    raise self.severe('Incompatible number of columns: "%s"' % row)
+                    raise self.severe(f'Incompatible number of columns: "{row}"')
                 sizes = [max(sizes[i], row_sizes[i]) for i, _ in enumerate(sizes)]
         return sizes
 
@@ -97,9 +95,8 @@ class TableFromRows(SphinxDirective):
         try:
             self.state.document.settings.record_dependencies.add(source_path)
             include_file = io.FileInput(source_path=source_path)
-        except IOError as error:
-            raise self.severe('Problems with "%s" directive path:\n%s.' %
-                              (self.name, ErrorString(error)))
+        except OSError as error:
+            raise self.severe(f'Problems with "{self.name}" directive path:\n{ErrorString(error)}.')
         lines = include_file.readlines()
         header_lines = self._load_section(lines, header_section)
         rows = [self._load_section(lines, section) for section in rows_sections]
@@ -123,14 +120,13 @@ class TableFromRows(SphinxDirective):
         if header is not None:
             header = header.strip()
         else:
-            raise self.severe('Problem with "header" option of "%s" '
-                              'directive:\nEmpty content.' % self.name)
+            raise self.severe(f'Problem with "header" option of "{self.name}" '
+                              'directive:\nEmpty content.')
         rows = self.options.get('rows', None)
         if rows is not None:
             rows = [r.strip() for r in rows.split(',') if r.strip() != '']
         else:
-            raise self.severe('No "rows" content provided for "%s" '
-                              % self.name)
+            raise self.severe(f'No "rows" content provided for "{self.name}" ')
 
         # join all rows for uniqueness, using the order given in
         # the :rows: option.
@@ -168,12 +164,12 @@ class TableFromSampleYaml(TableFromRows):
             rows.remove(row)
 
     @staticmethod
-    def _normalize_boards(boards: List[str]) -> List[str]:
+    def _normalize_boards(boards: list[str]) -> list[str]:
         return [board.replace("/", "_") for board in boards]
 
     @staticmethod
-    def _find_shields(shields: Dict[str, Set[str]], sample_data: dict):
-        """Associate all integration platforms for a sample with any shield used.
+    def _find_shields(shields: dict[str, set[str]], sample_data: dict):
+        """Associate all allowed platforms for a sample with any shield used.
         """
 
         extra_args_raw = sample_data.get('extra_args')
@@ -189,7 +185,13 @@ class TableFromSampleYaml(TableFromRows):
         if not shield_args:
             return
 
-        for platform in sample_data['integration_platforms']:
+        platform_name_list = sample_data['platform_allow']
+        if isinstance(platform_name_list, str):
+            # there maybe single platform, stored as string
+            # not a list of str, transform
+            platform_name_list = [platform_name_list]
+
+        for platform in platform_name_list:
             if platform in shields:
                 shields[platform].update(shield_args)
             else:
@@ -198,7 +200,7 @@ class TableFromSampleYaml(TableFromRows):
     def _rows_from_sample_yaml(self, path):
         """Search for a sample.yaml file and return a union of all relevant boards.
 
-        Boards are retrieved from the integration_platforms sections in the file.
+        Boards are retrieved from the platform_allow sections in the file.
         If the file is not found and the document folder is named "doc", the
         parent folder is searched. Should a sample.yaml still not be found, all
         subfolders are searched and every found sample.yaml is used.
@@ -237,18 +239,28 @@ class TableFromSampleYaml(TableFromRows):
             with open(sample_yaml_path) as sample_yaml:
                 data = yaml.safe_load(sample_yaml)
 
-            if 'common' in data and 'integration_platforms' in data['common']:
+            if 'common' in data and 'platform_allow' in data['common']:
+                platform_name_list = data['common']['platform_allow']
+                if isinstance(platform_name_list, str):
+                    # there maybe single platform, stored as string
+                    # not a list of str, transform
+                    platform_name_list = [platform_name_list]
                 boards.update(
                    TableFromSampleYaml._normalize_boards(
-                       data['common']['integration_platforms']
+                       platform_name_list
                     )
                 )
                 self._find_shields(shields, data['common'])
             for test in data['tests'].values():
-                if 'integration_platforms' in test:
+                if 'platform_allow' in test:
+                    platform_name_list = test['platform_allow']
+                    if isinstance(platform_name_list, str):
+                        # there maybe single platform, stored as string
+                        # not a list of str, transform
+                        platform_name_list = [platform_name_list]
                     boards.update(
                         TableFromSampleYaml._normalize_boards(
-                            test['integration_platforms']
+                            platform_name_list
                         )
                     )
                     self._find_shields(shields, test)
@@ -260,7 +272,7 @@ class TableFromSampleYaml(TableFromRows):
         boards.sort(reverse=True)
 
         if not boards:
-            raise self.severe(f'{path} has no relevant integration_platforms')
+            raise self.severe(f'{path} has no relevant platform_allow')
 
         return boards, shields
 

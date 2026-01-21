@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&uart30 {
+	hw-flow-control;
+};
+
+/ {
+	chosen {
+		zephyr,entropy = &prng;
+	};
+};
+
+&prng {
+	status = "okay";
+};
+
+&psa_rng {
+	status = "disabled";
+};

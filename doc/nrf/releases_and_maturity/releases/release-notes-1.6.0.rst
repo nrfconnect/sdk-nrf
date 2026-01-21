@@ -45,7 +45,7 @@ Supported modem firmware
 See `Modem firmware compatibility matrix`_ for an overview of which modem firmware versions have been tested with this version of |NCS|.
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Known issues
 ************
@@ -158,7 +158,7 @@ nRF9160
     * Added polling "226 Transfer complete" after data channel TX/RX, with a configurable timeout of 60 seconds.
     * Ignored the reply code of "UTF8 ON" command as some FTP servers return abnormal replies.
 
-  * :ref:`at_params_readme` library:
+  * AT parameters library:
 
     * Added function :c:func:`at_params_int64_get` that allows for getting AT param list entries containing signed 64-bit integers.
 
@@ -169,7 +169,7 @@ nRF9160
     * Added support for %XMODEMSLEEP AT command notifications, which allows the application to get notifications related to modem sleep.
     * Added support for %CONEVAL AT command that can be used to evaluate the LTE radio signal state in a cell prior to data transmission.
 
-  * :ref:`serial_lte_modem` application:
+  * Serial LTE modem application:
 
     * Fixed TCP/UDP port range issue (0~65535).
     * Added AT#XSLEEP=2 to power off UART interface.
@@ -180,7 +180,7 @@ nRF9160
     * Added data mode to the MQTT Publish service to support JSON-type payload.
     * Added SMS support, to send/receive SMS in plain text.
 
-  * :ref:`at_cmd_parser_readme` library:
+  * AT command parser library:
 
     * Added support for parsing parameters of type unsigned int or unsigned short.
 
@@ -608,7 +608,7 @@ Applications and samples
       * Added a table showing cloud services and the corresponding cloud-side instances.
       * Extended the documentation to include Azure IoT Hub and nRF Cloud support.
 
-   * :ref:`serial_lte_modem` - Added links to AT command reference guides.
+   * Serial LTE modem - Added links to AT command reference guides.
    * :ref:`agps_sample` - Added a section on using nRF Cloud A-GPS or P-GPS.
    * nRF9160: AWS FOTA sample - Changes in the sample configuration section.
    * :ref:`fmfu_smp_svr_sample` - Updated the Building and running section.

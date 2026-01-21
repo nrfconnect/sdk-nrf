@@ -113,7 +113,7 @@ For example, if you build for Thingy:53 on the command line, you can use the fol
 
    west build -b thingy53/nrf5340/cpuapp -- -DSHIELD=nrf7002eb
 
-If you use the |nRFVSC|, specify ``-DSHIELD=nrf7002eb`` in the **Extra Cmake arguments** field when `setting up a build configuration <How to work with build configurations_>`_.
+If you use |nRFVSC|, specify ``-DSHIELD=nrf7002eb`` in the **Extra Cmake arguments** field when `setting up a build configuration <How to work with build configurations_>`_.
 
 Alternatively, add the shield in the project's :file:`CMakeLists.txt` file by using the following command:
 

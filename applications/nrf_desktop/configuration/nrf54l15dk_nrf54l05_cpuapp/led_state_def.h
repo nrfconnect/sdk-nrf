@@ -24,12 +24,13 @@ static const uint8_t led_map[LED_ID_COUNT] = {
 };
 
 /* On the nRF54L05 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
- * Because of that, on the DK PCA10156 revision v0.8.1 **LED 0** and **LED 2** cannot be used
+ * Because of that, on the DK PCA10156 revision v0.9.3 **LED 0** and **LED 2** cannot be used
  * for PWM output.
  *
  * You can still use these LEDs with the PWM LED driver, but you must set the LED color to
- * `LED_COLOR(255, 255, 255)` or `LED_COLOR(0, 0, 0)`. This ensures the PWM peripheral is not
- * used for the mentioned LEDs.
+ * `LED_COLOR(255, 255, 255)` or `LED_COLOR(0, 0, 0)`. You must also disable the
+ * `CONFIG_PWM_NRFX_NO_GLITCH_DUTY_100` Kconfig option. This ensures the PWM peripheral is not used
+ * for the mentioned LEDs.
  */
 
 static const struct led_effect led_system_state_effect[LED_SYSTEM_STATE_COUNT] = {

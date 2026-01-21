@@ -29,7 +29,7 @@ config NETCORE_IMAGE_NAME
 	default "peripheral_radio_test" if NETCORE_PERIPHERAL_RADIO_TEST
 
 config NETCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/samples/peripheral/radio_test/" if NETCORE_PERIPHERAL_RADIO_TEST
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/peripheral/radio_test/" if NETCORE_PERIPHERAL_RADIO_TEST
 
 endif # !NETCORE_NONE
 

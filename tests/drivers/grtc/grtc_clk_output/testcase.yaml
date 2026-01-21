@@ -2,7 +2,7 @@ common:
   tags:
     - drivers
     - grtc
-    - ci_tests_zephyr_drivers_i2s
+    - ci_tests_drivers_grtc
   depends_on:
     - gpio
   harness: ztest
@@ -15,10 +15,12 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
 
   drivers.grtc.grtc_clk_out.fast:
     harness_config:
@@ -27,9 +29,11 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
       - FILE_SUFFIX=fast

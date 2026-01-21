@@ -16,4 +16,9 @@
 #define FLASH_PAGE_ERASE_MAX_TIME_US 42000UL
 #define FLASH_PAGE_MAX_CNT	     381UL
 
+#ifdef CONFIG_SOC_NRF7120_PREENG
+int configure_playout_capture(uint32_t rx_mode, uint32_t tx_mode, uint32_t rx_holdoff_length,
+			      uint32_t rx_wrap_length, uint32_t back_to_back_mode);
+#endif /* CONFIG_SOC_NRF7120_PREENG */
+
 #endif /* _NORDICSEMI_NRF71_SOC_H_ */

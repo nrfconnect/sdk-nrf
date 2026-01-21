@@ -4,6 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup audio_app_bt_rendering_and_capture Bluetooth Audio Rendering and Capture
+ * @{
+ * @brief Bluetooth audio rendering and capture API for Audio applications.
+ *
+ * This module provides volume control and audio rendering functionality for LE Audio
+ * streams.
+ */
+
 #ifndef _BT_REND_H_
 #define _BT_REND_H_
 
@@ -77,5 +86,9 @@ int bt_r_and_c_uuid_populate(struct net_buf_simple *uuid_buf);
  * @return	0 if success, error otherwise.
  */
 int bt_r_and_c_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _BT_REND_H_ */

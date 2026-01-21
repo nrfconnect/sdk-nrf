@@ -245,6 +245,7 @@ const char *dect_common_utils_modem_phy_err_to_string(enum nrf_modem_dect_phy_er
 		{NRF_MODEM_DECT_PHY_ERR_OP_CANCELED, "PHY_ERR_OP_CANCELED"},
 		{NRF_MODEM_DECT_PHY_ERR_COMBINED_OP_FAILED, "ERR_COMBINED_OP_FAILED"},
 		{NRF_MODEM_DECT_PHY_ERR_RADIO_MODE_CONFLICT, "ERR_RADIO_MODE_CONFLICT"},
+		{NRF_MODEM_DECT_PHY_ERR_HANDLE_IN_USE, "ERR_HANDLE_IN_USE"},
 		{NRF_MODEM_DECT_PHY_ERR_UNSUPPORTED_CARRIER, "ERR_UNSUPPORTED_CARRIER"},
 		{NRF_MODEM_DECT_PHY_ERR_UNSUPPORTED_DATA_SIZE, "ERR_UNSUPPORTED_DATA_SIZE"},
 		{NRF_MODEM_DECT_PHY_ERR_INVALID_NETWORK_ID, "ERR_INVALID_NETWORK_ID"},
@@ -258,8 +259,9 @@ const char *dect_common_utils_modem_phy_err_to_string(enum nrf_modem_dect_phy_er
 		{NRF_MODEM_DECT_PHY_ERR_PROD_LOCK, "ERR_PROD_LOCK"},
 		/* Specific internal errors: */
 		{DECT_SCHEDULER_DELAYED_ERROR, "DECT_SCHEDULER_DELAYED_ERROR"},
-		{DECT_SCHEDULER_SCHEDULER_FATAL_MEM_ALLOC_ERROR,
-		 "DECT_SCHEDULER_SCHEDULER_FATAL_MEM_ALLOC_ERROR"},
+		{DECT_SCHEDULER_FATAL_MEM_ALLOC_ERROR,
+		 "DECT_SCHEDULER_FATAL_MEM_ALLOC_ERROR"},
+		{DECT_SCHEDULER_OP_TO_MODEM_ERROR, "DECT_SCHEDULER_OP_TO_MODEM_ERROR"},
 		{-1, NULL}};
 
 	char temp_str[32];
@@ -440,8 +442,8 @@ dect_common_utils_modem_phy_header_status_to_string(enum nrf_modem_dect_phy_hdr_
 						    char *out_str_buff)
 {
 	struct mapping_tbl_item const mapping_table[] = {
-		{NRF_MODEM_DECT_PHY_HDR_STATUS_VALID, "valid - PDC can be received"},
-		{NRF_MODEM_DECT_PHY_HDR_STATUS_INVALID, "invalid - PDC can't be received"},
+		{NRF_MODEM_DECT_PHY_HDR_STATUS_VALID, "valid"},
+		{NRF_MODEM_DECT_PHY_HDR_STATUS_INVALID, "invalid"},
 		{NRF_MODEM_DECT_PHY_HDR_STATUS_VALID_RX_END,
 		 "valid - but RX op ends before PDC reception"},
 		{-1, NULL}};

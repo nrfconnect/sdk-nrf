@@ -1,8 +1,7 @@
 sample:
-  description: >
-    This app provides an example of performing authenticated
-    AES encryption and decryption using AES GCM mode
-  name: AES GCM example
+  description: |
+    This sample demonstrates AES encryption and decryption using the AES GCM mode.
+  name: AES GCM sample
 tests:
   sample.aes_gcm.cc312:
     sysbuild: true
@@ -71,10 +70,12 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
     harness: console
     harness_config:
       type: multi_line
@@ -86,9 +87,12 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
   sample.aes_gcm.cracen.crypto_service:
     sysbuild: true
     tags:

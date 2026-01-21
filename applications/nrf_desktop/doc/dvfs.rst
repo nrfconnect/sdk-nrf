@@ -52,7 +52,7 @@ Configuration
 *************
 
 The nRF Desktop DVFS module is enabled by default on supported board targets.
-To disable it, set the :ref:`CONFIG_DESKTOP_DVFS <config_desktop_app_options>` Kconfig option to ``n``.
+To disable it, set the :option:`CONFIG_DESKTOP_DVFS` Kconfig option to ``n``.
 
 Tracked application states
 ==========================
@@ -88,15 +88,15 @@ Each frequency change request is retried if it fails due to a known reason.
 Failing frequency change requests can be caused by:
 
 * Another frequency change request being in progress on sysctrl - error ``-EBUSY``.
-  In that case, the module will retry the request after a timeout specified by the :ref:`CONFIG_DESKTOP_DVFS_RETRY_BUSY_TIMEOUT_MS <config_desktop_app_options>` Kconfig option.
+  In that case, the module will retry the request after a timeout specified by the :option:`CONFIG_DESKTOP_DVFS_RETRY_BUSY_TIMEOUT_MS` Kconfig option.
   The default timeout value is 1 ms.
 * The nrfs DVFS service being not yet initialized - error ``-EAGAIN``.
-  In that case, the nRF Desktop DVFS module will retry the request after a timeout specified by the :ref:`CONFIG_DESKTOP_DVFS_RETRY_INIT_TIMEOUT_MS <config_desktop_app_options>` Kconfig option.
+  In that case, the nRF Desktop DVFS module will retry the request after a timeout specified by the :option:`CONFIG_DESKTOP_DVFS_RETRY_INIT_TIMEOUT_MS` Kconfig option.
   The default timeout value is 500 ms.
 * Other errors are not retried.
   If the DVFS frequency request returns an error different from ``-EBUSY`` or ``-EAGAIN``, the module will report a :c:enum:`MODULE_STATE_ERROR` and set the ``module_state`` to ``STATE_ERROR``.
 
-The module will retry the request up to the number of times specified by the :ref:`CONFIG_DESKTOP_DVFS_RETRY_COUNT <config_desktop_app_options>` Kconfig option.
+The module will retry the request up to the number of times specified by the :option:`CONFIG_DESKTOP_DVFS_RETRY_COUNT` Kconfig option.
 The default value of retries is ``5``.
 The error counter is only set to zero when the DVFS change request is correct.
 nRF Desktop DVFS module will also report a :c:enum:`MODULE_STATE_ERROR` and set ``module_state`` to ``STATE_ERROR`` if the number of retries is exceeded.
@@ -117,4 +117,4 @@ The nRF Desktop DVFS module has the following two state tracing entities:
   If the bit is set, the state is active.
   The module listens for Event Manager events related to a given state and updates the state accordingly.
   The module then checks which states are active and sets the highest frequency that is required by at least one state.
-  If no state is active, the module sets the lowest frequency :ref:`CONFIG_DESKTOP_DVFS_FREQ_LOW <config_desktop_app_options>`.
+  If no state is active, the module sets the lowest frequency :option:`CONFIG_DESKTOP_DVFS_FREQ_LOW`.

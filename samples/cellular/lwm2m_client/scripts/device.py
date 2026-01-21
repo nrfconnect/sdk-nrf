@@ -6,15 +6,15 @@
 
 """Device requests"""
 
-import sys
 import argparse
 import logging
 import os
-import subprocess
-import serial
-import time
 import re
+import subprocess
+import sys
+import time
 
+import serial
 from serial.tools.list_ports import comports
 
 NRF91_VID = 4966
@@ -124,7 +124,7 @@ class Device:
 
         # Multiple connected devices, make the user choose
         for i, x in enumerate(sids):
-            print("{}) {}".format(i + 1, x))
+            print(f"{i + 1}) {x}")
 
         while True:
             index = input("Select device (number): ")
@@ -151,8 +151,10 @@ class Device:
         com_ports = []
         for item in comports():
             manufacturer_match = item.manufacturer in ('SEGGER', 'Nordic Semiconductor')
+            if not manufacturer_match:
+                continue
             serial_match = item.serial_number.lstrip("0") == sid
-            if manufacturer_match and serial_match:
+            if serial_match:
                 com_ports.append(item.device)
         # Sort com ports on their integer identifiers, which takes care of corner case
         # where we have a cross-over from N digit to N + 1 digit identifiers

@@ -1,0 +1,89 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* On nRF54H20 the FW loader mode is supported in the merged slot configuration
+ * Extend slot0_partition and slot1_partition to cover both application and
+ * radio images, as well as MCUboot image metadata (header and trailer).
+ * Those partitions will be used by MCUboot to verify the merged image to boot.
+ * Apart from that, they will be used by the MCUmgr subsystem to correctly
+ * handle flags, stored inside the MCUboot image trailer.
+ * Use cpu<app|rad>_slot<0|1>_partition as zephyr,code-partition, so the
+ * application and radio sizes are correctly reported.
+ */
+/delete-node/&cpuapp_slot0_partition;
+/delete-node/&cpuapp_slot1_partition;
+/delete-node/&cpurad_slot0_partition;
+/delete-node/&cpurad_slot1_partition;
+
+/delete-node/ &cpuppr_code_partition;
+/delete-node/ &cpuflpr_code_partition;
+
+/*
+ * Secondary boot is not used by this sample, as it has a somewhat
+ * similar functionality as firmware loader.
+ * Hence, we remove the secondary boot partitions and push the
+ * storage_partition and periphconf_partition further back to the freed
+ * space.
+ */
+/delete-node/ &secondary_partition;
+/delete-node/ &secondary_periphconf_partition;
+/delete-node/ &storage_partition;
+/delete-node/ &periphconf_partition;
+
+/* Remove the undefined property value from the disabled VPR cores to prevent build errors. */
+&cpuflpr_vpr {
+	/delete-property/ source-memory;
+};
+
+&cpuppr_vpr {
+	/delete-property/ source-memory;
+};
+
+&mram1x {
+	partitions {
+		boot_partition: partition@30000 {
+			label = "mcuboot";
+			reg = <0x30000 DT_SIZE_K(24)>;
+		};
+
+		/* Main application with the MCUboot header. */
+		slot0_partition: partition@36000 {
+			reg = <0x36000 DT_SIZE_K(1628)>;
+		};
+
+		/* Main application without the MCUboot metadata.
+		 * Offset by the MCUboot header size (2048 bytes).
+		 */
+		cpuapp_slot0_partition: partition@36800 {
+			reg = <0x36800 DT_SIZE_K(1626)>;
+		};
+
+		/* Merged partition used by the FW loader. */
+		slot1_partition: partition@1cd000 {
+			reg = <0x1cd000 DT_SIZE_K(144)>;
+		};
+
+		/* Application code partition (part of the FW loader).
+		 * Offset by the MCUboot header size (2048 bytes).
+		 */
+		fw_loader_partition: cpuapp_slot1_partition: partition@1cd800 {
+			reg = <0x1cd800 DT_SIZE_K(60)>;
+		};
+
+		/* Radio code partition (part of the FW loader). */
+		cpurad_slot0_partition: partition@1dc800 {
+			reg = <0x1dc800 DT_SIZE_K(82)>;
+		};
+
+		storage_partition: partition@1f1000 {
+			reg = <0x1f1000 DT_SIZE_K(40)>;
+		};
+
+		periphconf_partition: partition@1fb000 {
+			reg = <0x1fb000 DT_SIZE_K(8)>;
+		};
+	};
+};

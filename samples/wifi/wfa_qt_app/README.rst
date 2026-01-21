@@ -54,6 +54,8 @@ To specify IP addresses, you can edit the following Kconfig options:
 * Use the :kconfig:option:`CONFIG_NET_CONFIG_USB_IPV4_ADDR` Kconfig option in the :file:`overlay-netusb.conf` file to set the IPv4 address for USB communication.
 * Use the :kconfig:option:`CONFIG_NET_CONFIG_SLIP_IPV4_ADDR` Kconfig option in the :file:`overlay-slip.conf` file to set the IPv4 address for UART communication.
 
+Set the :kconfig:option:`CONFIG_WIFI_NM_WPA_SUPPLICANT_HEAP` Kconfig option according to the size of the certificates used.
+
 Building and running
 ********************
 
@@ -95,6 +97,8 @@ The following is an example of the CLI command:
    west build -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-slip.conf -DEXTRA_DTC_OVERLAY_FILE=nrf7002_uart_pipe.overlay
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
+
+.. include:: /includes/wifi_refer_sample_yaml_file.txt
 
 Testing
 =======

@@ -15,6 +15,6 @@ if RESET_ON_FATAL_ERROR
 
 module = FATAL_ERROR
 module-str = Fatal error
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # RESET_ON_FATAL_ERROR

@@ -5,8 +5,6 @@
 #
 
 zephyr_library()
-zephyr_library_sources(
-	contin_array.c
-)
+zephyr_library_sources(contin_array.c)
 
 zephyr_include_directories(.)

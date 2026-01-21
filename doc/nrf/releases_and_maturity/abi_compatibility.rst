@@ -1,7 +1,7 @@
 .. _abi_compatibility:
 
-ABI compatibility
-#################
+|ISE| ABI compatibility
+#######################
 
 .. contents::
    :local:
@@ -19,48 +19,217 @@ When ABI compatibility is maintained, binaries of one component can interface co
 For example, adding a new function to a library is typically an ABI-compatible change, as existing binaries remain functional.
 However, changes that affect data structure layouts, such as altering field order or size, break ABI compatibility because they change the memory layout expected by existing binaries.
 
-ABI compatibility matrix for the nRF54H20 SoC binaries
-******************************************************
+This page describes the ABI compatibility between the |NCS| and the |ISE| binaries.
 
-The following table illustrates ABI compatibility between different versions of the nRF54H20 SoC binaries and the |NCS|:
+ABI compatibility for the nRF54H20 IronSide SE binaries
+*******************************************************
 
-.. list-table::
-   :header-rows: 1
+To use the most recent version of the |NCS|, *always* download and provision your nRF54H20 SoC-based device with the `latest nRF54H20 IronSide SE binaries`_ available.
 
-   * - |NCS| versions
-     - Compatible nRF54H20 SoC binaries version
-   * - |NCS| v3.1.0
-     - `nRF54H20 SoC binaries v22.2.0+14`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
-       It includes IronSide Secure Element (IronSide SE).
-   * - |NCS| v3.0.0
-     - `nRF54H20 SoC binaries v0.9.6`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
-   * - |NCS| v2.9.0-nRF54H20-1
-     - `nRF54H20 SoC binaries v0.9.2`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
-   * - |NCS| v2.9.0
-     - `nRF54H20 SoC binaries v0.7.0 for EngC DKs`_, compatible with the nRF54H20 DK v0.8.3 and later revisions.
-   * - |NCS| v2.8.0
-     - `nRF54H20 SoC binaries v0.7.0 for EngC DKs`_, compatible with the nRF54H20 DK v0.8.3 and later revisions.
-       `nRF54H20 SoC binaries v0.7.0 for EngB DKs`_, compatible with the nRF54H20 DKs ranging from v0.8.0 to v0.8.2.
-   * - |NCS| v2.7.99-cs2
-     - `nRF54H20 SoC binaries v0.6.5`_
-   * - |NCS| v2.7.99-cs1
-     - `nRF54H20 SoC binaries v0.6.2`_
-   * - |NCS| v2.7.0
-     - `nRF54H20 SoC binaries v0.5.0`_
-   * - |NCS| v2.6.99-cs2
-     - `nRF54H20 SoC binaries v0.3.3`_
+For information on legacy versions of the nRF54H20 SoC binaries based on SUIT, see :ref:`abi_compatibility_legacy`.
 
-Maintaining ABI compatibility ensures that the Secure Domain and System Controller firmware binaries do not need to be recompiled each time the application, radio binaries, or both are recompiled, as long as they are based on a compatible |NCS| version.
-Additionally, maintaining ABI compatibility allows the nRF54H20 SoC binary components to work together without recompilation when updating to newer |NCS| versions.
+.. caution::
+   The nRF54H20 IronSide SE binaries do not support rollbacks to previous versions.
 
-.. note::
-    The nRF54H20 SoC binaries only support specific versions of the |NCS| and do not support rollbacks to previous versions.
-    Upgrading the nRF54H20 SoC binaries on your development kit might break the DK's compatibility with applications developed for earlier versions of the |NCS|.
+Provisioning the nRF54H20 SoC
+*****************************
 
-nRF54H20 SoC binaries v22.2.0+14 changelog
-******************************************
+To provision the nRF54H20 SoC using the nRF54H20 IronSide SE binaries, see :ref:`ug_nrf54h20_gs_bringup`.
+
+Updating the nRF54H20 SoC
+*************************
+
+To update the nRF54H20 IronSide SE binaries to the latest version, see :ref:`ug_nrf54h20_ironside_se_update`.
+
+nRF54H20 IronSide SE binaries changelog
+***************************************
 
 The following sections provide detailed lists of changes by component.
+
+IronSide Secure Element (IronSide SE) v23.1.2+21
+================================================
+
+Fixed
+-----
+
+* An issue in the temperature service that could delay sending temperature responses. (NCSDK-36336)
+
+Updated
+-------
+
+* Reduced MRAM latency when requesting ``no latency`` while MRAM was powered off by powering MRAM on immediately. (NRFX-8740)
+
+IronSide Secure Element (IronSide SE) v23.1.1+20
+================================================
+
+Fixed
+-----
+
+* L2CACHE now prefetches several cache lines when an L2 cache miss occurs. (HM-26346)
+  This improves L2 cache performance in some situations and reduces it in others.
+* Fixed an unintentional behavior of ``psa_copy_key()`` when used to create a revocable key. (NCSDK-36369)
+
+IronSide Secure Element (IronSide SE) v23.1.0+19
+================================================
+
+Added
+-----
+
+* LFXO external square support in SysCtrl.
+* Counter service for monotonic counters with PSA ITS storage backend.
+
+  .. note::
+     This service can only be used on devices that have booted at least once with an unlocked UICR with this version.
+
+* The IronSide boot reports now contain a 16-byte UUID extracted from the OTP. (NRFX-8171)
+* Defined a new category of platform keys, called revocable keys. (NCSDK-35397)
+
+  These are general-purpose, persistent keys which can be provisioned using the PSA Crypto API, but only when the UICR is unlocked.
+  When the UICR is locked, destroying a revocable key will prevent it from being created again.
+  Using these keys does not depend on the ``UICR.SECURESTORAGE`` configuration.
+
+Updated
+-------
+
+* The MRAMC.READY/READYNEXT registers are now readable by local domains. (NCSDK-35534)
+
+  This allows local domains to check if MRAM is ready for a write operation before triggering it.
+* The IronSide SE update now fails if it is placed outside the valid memory range (0x0e100000 - 0x0e200000). (NCSDK-35750)
+* The IronSide SE PSA crypto service now supports 3 concurrent crypto operations. (NCSDK-35671)
+
+  This enables support for TLS.
+* An invalid enumeration for the processor in UICR.SECONDARY.PROCESSOR is now reported with a uicr_regid equal to the offset of that register.
+* The NRFS (SysCtrl) IPC buffers for the Application core and Radio core can now only be accessed when the secure attribute is set.
+* SysCtrl updated to v6.0.1.
+* SysCtrl has updated calibration thresholds for LFRC.
+
+IronSide Secure Element (IronSide SE) v23.0.2+17
+================================================
+
+Added
+-----
+
+* SHA1 support. (NCSDK-35321)
+  This feature corresponds to the ``PSA_WANT_ALG_SHA_1`` CRACEN PSA cryptographic primitive.
+
+  For more information, see :ref:`ug_crypto_supported_features`.
+
+
+IronSide Secure Element (IronSide SE) v23.0.1+16
+================================================
+
+Changed
+-------
+
+* The domain-specific built-in keys identified by ``CRACEN_BUILTIN_*_ID``. (NCSDK-35202)
+* The way IronSide SE treats the ``UICR.VERSION`` field. (NCSDK-35253)
+
+  The erase value is now interpreted as the highest supported UICR format version.
+  Other values must match a supported version or cause a boot error.
+  Currently, only version 2.0 (``0x00020000``) is supported.
+* IronSide SE no longer disables RETAIN for every GPIO pin at boot. (NCSDK-35080)
+
+  Pins are now retained when the application boots, and the application must disable retention before using them.
+* ``UICR.LOCK`` can now be set in ``LCS_EMPTY`` without hindering LFCLK calibration. (NCSDK-34458)
+
+Fixed
+-----
+
+* EXMIF XIP region is now accessible. (NCSDK-35256)
+
+IronSide Secure Element (IronSide SE) v23.0.0+15
+================================================
+
+Added
+-----
+
+* IronSide SE now supports the following CRACEN PSA cryptographic primitives:
+
+  * ``PSA_WANT_GENERATE_RANDOM``
+  * ``PSA_WANT_ALG_CTR_DRBG``
+  * ``PSA_WANT_ALG_CBC_PKCS7``
+  * ``PSA_WANT_ALG_CBC_NO_PADDING``
+  * ``PSA_WANT_ALG_CCM``
+  * ``PSA_WANT_ALG_CHACHA20_POLY1305``
+  * ``PSA_WANT_ALG_CMAC``
+  * ``PSA_WANT_ALG_CTR``
+  * ``PSA_WANT_ALG_DETERMINISTIC_ECDSA``
+  * ``PSA_WANT_ALG_ECB_NO_PADDING``
+  * ``PSA_WANT_ALG_ECDH``
+  * ``PSA_WANT_ALG_ECDSA``
+  * ``PSA_WANT_ALG_ECDSA_ANY``
+  * ``PSA_WANT_ALG_GCM``
+  * ``PSA_WANT_ALG_HKDF``
+  * ``PSA_WANT_ALG_HMAC``
+  * ``PSA_WANT_ALG_JPAKE``
+  * ``PSA_WANT_ALG_PBKDF2_HMAC``
+  * ``PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128``
+  * ``PSA_WANT_ALG_PURE_EDDSA``
+  * ``PSA_WANT_ALG_SHA_256``
+  * ``PSA_WANT_ALG_SHA_384``
+  * ``PSA_WANT_ALG_SHA_512``
+  * ``PSA_WANT_ALG_SHA3_256``
+  * ``PSA_WANT_ALG_SHA3_384``
+  * ``PSA_WANT_ALG_SHA3_512``
+  * ``PSA_WANT_ALG_SHAKE256_512``
+  * ``PSA_WANT_ALG_SP800_108_COUNTER_CMAC``
+  * ``PSA_WANT_ALG_SPAKE2P_HMAC``
+  * ``PSA_WANT_ALG_SPAKE2P_CMAC``
+  * ``PSA_WANT_ALG_SPAKE2P_MATTER``
+  * ``PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS``
+  * ``PSA_WANT_ALG_TLS12_PRF``
+  * ``PSA_WANT_ALG_TLS12_PSK_TO_MS``
+  * ``PSA_WANT_ALG_HKDF_EXTRACT``
+  * ``PSA_WANT_ALG_HKDF_EXPAND``
+  * ``PSA_WANT_ALG_ED25519PH``
+  * ``PSA_WANT_ECC_MONTGOMERY_255``
+  * ``PSA_WANT_ECC_SECP_R1_256``
+  * ``PSA_WANT_ECC_SECP_R1_384``
+  * ``PSA_WANT_ECC_SECP_R1_521``
+  * ``PSA_WANT_ECC_TWISTED_EDWARDS_255``
+  * ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE``
+  * ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT``
+  * ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT``
+  * ``PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE``
+  * ``PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY``
+  * ``PSA_WANT_KEY_TYPE_AES``
+  * ``PSA_WANT_AES_KEY_SIZE_128``
+  * ``PSA_WANT_AES_KEY_SIZE_256``
+  * ``PSA_WANT_KEY_TYPE_CHACHA20``
+  * ``PSA_WANT_KEY_TYPE_PASSWORD``
+  * ``PSA_WANT_KEY_TYPE_PASSWORD_HASH``
+  * ``PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE``
+  * ``PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT``
+  * ``PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT``
+  * ``PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE``
+  * ``PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY``
+
+  For more information, see :ref:`ug_crypto_supported_features`.
+
+* Support for a secondary boot mode. (NCSDK-32171)
+
+  The secondary mode lets you define a separate application firmware that is started on boot error or when requested over IPC.
+  This is configured through the ``UICR.SECONDARY`` registers and can be used for recovery or updates.
+* Support for ``UICR.WDTSTART``, which can be used to automatically start a local domain watchdog ahead of the application boot. (NCSDK-35046)
+* Support for PSA Internal Trusted Storage (ITS). (NCSDK-18548)
+
+  It is configured through the following ``UICR.SECURESTORAGE`` registers:
+
+  * ``UICR.SECURESTORAGE.CRYPTO`` - Enables persistent key storage for the PSA Crypto API.
+  * ``UICR.SECURESTORAGE.ITS`` - Enables the PSA ITS API for managing other sensitive assets.
+  * ``UICR.SECURESTORAGE.ENABLE`` and ``UICR.SECURESTORAGE.ADDRESS`` - Required to enable one or both features.
+
+* Support for the IronSide SE DVFS service, replacing the NRFS DVFS service. (NRFX-7321)
+
+Updated
+-------
+
+* Renamed the release artifact from :file:`sysctrl.hex` to :file:`ironside_se.hex` to correctly reflect its content.
+
+Removed
+-------
+
+* NRFS DVFS service support.
 
 IronSide Secure Element (IronSide SE) v22.2.0+14
 ================================================
@@ -85,7 +254,7 @@ Removed
 IronSide Secure Element (IronSide SE) v22.1.0+13
 ================================================
 
-* Added support for configuring TDD (CoreSight++) from local domains (NCSDK-33486).
+* Added support for configuring TDD (CoreSight++) from local domains. (NCSDK-33486)
 
 IronSide Secure Element (IronSide SE) v22.0.4+12
 ================================================
@@ -93,9 +262,9 @@ IronSide Secure Element (IronSide SE) v22.0.4+12
 Fixed
 -----
 
-* An issue where the device became stuck in recovery mode after performing a recovery upgrade (NCSDK-34258).
-* An issue where the eraseall operation, on a device in LCS ROT, was permitted regardless of the contents of UICR (NCSDK-34232).
-* An issue where the recovery firmware would incorrectly determine that UICR was corrupted (NCSDK-32241).
+* An issue where the device became stuck in recovery mode after performing a recovery upgrade. (NCSDK-34258)
+* An issue where the eraseall operation, on a device in LCS ROT, was permitted regardless of the contents of UICR. (NCSDK-34232)
+* An issue where the recovery firmware would incorrectly determine that UICR was corrupted. (NCSDK-32241)
 
 Updated
 -------
@@ -110,11 +279,11 @@ Fixed
 
 * psa_crypto:
 
-   * Bytes written are now correctly returned (in place of buffer size) (NCSDK-34172).
-   * Added missing ECC_MONTGOMERY_255 configuration (NCSDK-34200).
-   * Passing 0-sized buffers are now allowed for optional arguments (NCSDK-34171).
+   * Bytes written are now correctly returned (in place of buffer size). (NCSDK-34172)
+   * Added missing ECC_MONTGOMERY_255 configuration. (NCSDK-34200)
+   * Passing 0-sized buffers are now allowed for optional arguments. (NCSDK-34171).
 
-* The default owner ID of some peripherals, where previously it was set to SECURE or SYSCTRL instead of APPLICATION (NCSDK-34187).
+* The default owner ID of some peripherals, where previously it was set to SECURE or SYSCTRL instead of APPLICATION. (NCSDK-34187)
 
 IronSide Secure Element (IronSide SE) v22.0.2+10
 ================================================
@@ -199,7 +368,7 @@ IronSide Secure Element (IronSide SE) v21.0.1
 Added
 -----
 
-* Boot report to be written to radio core (NCSDK-33583).
+* Boot report to be written to radio core. (NCSDK-33583)
 
 Updated
 -------
@@ -222,17 +391,17 @@ Added
 * Support for the IronSide SE update service. (NCSDK-32173)
   This service allows updating IronSide SE firmware using the ``west ncs-ironside-se-update`` command.
   The update is performed over SWD, and the device must be in a debug mode.
-* Experimental support for a new UICR format (NCSDK-32444).
+* Experimental support for a new UICR format. (NCSDK-32444)
   At this stage, the functionality is mainly for internal testing and development, and user tools for interacting with UICR will be added at a later stage.
-* Boot report support (NCSDK-32393).
-* CPUCONF service for booting the radio core (NCSDK-32925).
+* Boot report support. (NCSDK-32393)
+* CPUCONF service for booting the radio core. (NCSDK-32925)
   Currently, only ``hello world`` is supported.
-* IronSide calls, the successor to SSF (NCSDK-32441).
+* IronSide calls, the successor to SSF. (NCSDK-32441).
 
 Updated
 -------
 
-* The limited PSA Crypto API is now implemented as an IronSide call (NCSDK-32912).
+* The limited PSA Crypto API is now implemented as an IronSide call. (NCSDK-32912)
   This replaces the temporary IPC mechanism from the last release.
 
 Fixed
@@ -318,10 +487,10 @@ Updated
 Removed (from legacy SUIT-based SDFW)
 -------------------------------------
 
-* SSF and all SSF services have been disabled (NCSDK-32000).
-* Resource configuration based on UICR has been disabled (NCSDK-31999).
-* The SDFW ADAC interface has been disabled (NCSDK-31994).
-* SUIT is no longer supported (NCSDK-31996).
+* SSF and all SSF services have been disabled. (NCSDK-32000)
+* Resource configuration based on UICR has been disabled. (NCSDK-31999)
+* The SDFW ADAC interface has been disabled. (NCSDK-31994)
+* SUIT is no longer supported. (NCSDK-31996)
 
 nRF54H20 SoC binaries v0.9.6 changelog
 **************************************
@@ -462,3 +631,37 @@ Updated
     This allows proper selection of low power modes when supplying nRF54H20 with an external 1.8V, even if the ``VDDIO_x`` are configured as SHORTED.
 
 * Temperature sensor coefficients.
+
+.. _abi_compatibility_legacy:
+
+Legacy ABI compatibility matrix for the nRF54H20 SoC binaries
+=============================================================
+
+The following table illustrates the legacy ABI compatibility between SUIT-based (pre-IronSide SE) nRF54H20 SoC binaries and older versions of the |NCS|:
+
+.. caution::
+   * Devices already provisioned using SUIT-based SoC binaries and in LCS ``RoT`` cannot be upgraded to IronSide SE.
+
+.. list-table::
+   :header-rows: 1
+
+   * - |NCS| versions
+     - Compatible nRF54H20 SoC binaries version based on SUIT
+       (no longer usable with the newest |NCS| versions)
+   * - |NCS| v3.0.0
+     - nRF54H20 SoC binaries v0.9.6, compatible with the nRF54H20 DK v0.9.0 and later DK revisions.
+   * - |NCS| v2.9.0-nRF54H20-1
+     - nRF54H20 SoC binaries v0.9.2, compatible with the nRF54H20 DK v0.9.0 and later DK revisions.
+   * - |NCS| v2.9.0
+     - nRF54H20 SoC binaries v0.7.0 for EngC DKs, compatible with the nRF54H20 DK v0.8.3 and later DK revisions.
+   * - |NCS| v2.8.0
+     - nRF54H20 SoC binaries v0.7.0 for EngC DKs, compatible with the nRF54H20 DK v0.8.3 and later DK revisions.
+       nRF54H20 SoC binaries v0.7.0 for EngB DKs, compatible with the nRF54H20 DKs ranging from v0.8.0 to v0.8.2.
+   * - |NCS| v2.7.99-cs2
+     - nRF54H20 SoC binaries v0.6.5
+   * - |NCS| v2.7.99-cs1
+     - nRF54H20 SoC binaries v0.6.2
+   * - |NCS| v2.7.0
+     - nRF54H20 SoC binaries v0.5.0
+   * - |NCS| v2.6.99-cs2
+     - nRF54H20 SoC binaries v0.3.3

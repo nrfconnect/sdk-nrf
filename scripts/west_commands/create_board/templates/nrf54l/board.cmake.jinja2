@@ -4,5 +4,13 @@ elseif (CONFIG_SOC_{{ soc | upper }}_CPUFLPR)
   board_runner_args(jlink "--device={{ soc | replace("nrf", "nRF") | replace("l", "L") }}_RV32" "--speed=4000")
 endif()
 
+if(CONFIG_BOARD_{{ board | upper }}_{{ soc | upper }}_NS)
+  set(TFM_PUBLIC_KEY_FORMAT "full")
+endif()
+
+if(CONFIG_TFM_FLASH_MERGED_BINARY)
+  set_property(TARGET runners_yaml_props_target PROPERTY hex_file "${CMAKE_BINARY_DIR}/tfm_merged.hex")
+endif()
+
 include(${ZEPHYR_BASE}/boards/common/nrfutil.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)

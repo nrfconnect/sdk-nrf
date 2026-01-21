@@ -8,12 +8,12 @@
 config CONTIN_ARRAY
 	bool "Continuous array library"
 	help
-		Enable continuous array library
+	  Enable continuous array library
 
 if CONTIN_ARRAY
 
 module = CONTIN_ARRAY
 module-str = Continuous array
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif #CONTIN_ARRAY

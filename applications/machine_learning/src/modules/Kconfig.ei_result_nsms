@@ -19,11 +19,10 @@ choice
 	depends on ML_APP_EI_RESULT_NSMS
 	help
 	  Sets security level used by NSMS instance:
-		NONE		- access without any restrictions,
-		ENCRYPTION	- enables encryption,
-		AUTHENTICATION	- enables encryption and authentication. This will fail
-				  if devices are lacking capabilities to display/enter
-				  passkey.
+	    NONE           - access without any restrictions,
+	    ENCRYPTION     - enables encryption,
+	    AUTHENTICATION - enables encryption and authentication. This will fail if devices are
+	                     lacking capabilities to display/enter passkey.
 
 config ML_APP_EI_RESULT_SECURITY_LEVEL_NONE
 	bool "None"

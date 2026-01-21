@@ -1,0 +1,147 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	soc {
+		/* Small piece of Global RAM for the radio loader to use during FW relocation. */
+		cpurad_loader_ram: sram@2f039000 {
+			compatible = "mmio-sram";
+			reg = <0x2f039000 0x1000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x2f039000 0x1000>;
+		};
+	};
+};
+
+&mram1x {
+	/delete-node/ partitions;
+
+	/* Redefine the "partitions" DTS node. */
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		cpuapp_boot_partition: boot_partition: partition@30000 {
+			reg = <0x30000 0x10000>;
+			label = "mcuboot";
+		};
+
+		/* Image 0, slot 0 (primary slot): merged application and radio core images. */
+		slot0_partition: partition@40000 {
+			reg = <0x40000 DT_SIZE_K(656)>;
+		};
+
+		/* Application code for cpuapp core. */
+		cpuapp_slot0_partition: partition@40800 {
+			label = "image-0";
+			reg = <0x40800 DT_SIZE_K(326)>;
+		};
+
+		/* Radio core firmware loader code for cpurad core. */
+		cpurad_slot0_partition: cpurad_loader_partition: partition@92000 {
+			label = "cpurad_loader_partition";
+			reg = <0x92000 DT_SIZE_K(8)>;  /* 8 KB allocated (~4 KB actual) */
+		};
+
+		/* Radio core application code initially stored in MRAM that will be loaded to TCM
+		 * by radio loader for cpurad core.
+		 */
+		cpurad_slot2_partition: cpurad_loaded_fw: partition@94000 {
+			label = "cpurad_loaded_fw";
+			reg = <0x94000 DT_SIZE_K(192)>;
+		};
+
+		/* Remaining space in the slot 0. */
+		cpurad_slot0_partition_container: partition@c4000 {
+			reg = <0xc4000 DT_SIZE_K(128)>;
+		};
+
+		cpuppr_code_partition: partition@e4000 {
+			reg = <0xe4000 DT_SIZE_K(64)>;
+		};
+
+		cpuflpr_code_partition: partition@f4000 {
+			reg = <0xf4000 DT_SIZE_K(48)>;
+		};
+
+		/* Image 0, slot 1 (secondary slot): merged application and radio core images. */
+		slot1_partition: partition@100000 {
+			reg = <0x100000 DT_SIZE_K(656)>;
+		};
+
+		/* Application code for cpuapp core. */
+		cpuapp_slot1_partition: partition@100800 {
+			reg = <0x100800 DT_SIZE_K(326)>;
+		};
+
+		/* Radio core firmware loader code for cpurad core. */
+		cpurad_slot1_partition: cpurad_loader_partition_slot1: partition@152000 {
+			label = "cpurad_loader_partition_slot1";
+			reg = <0x152000 DT_SIZE_K(8)>;  /* 8 KB allocated (~4 KB actual) */
+		};
+
+
+		/* Radio core application code initially stored in MRAM that will be loaded to TCM
+		 * by radio loader for cpurad core.
+		 */
+		cpurad_slot3_partition: cpurad_loaded_fw_slot1: partition@154000 {
+			label = "cpurad_loaded_fw_slot1";
+			reg = <0x154000 DT_SIZE_K(192)>;
+		};
+
+		/* Remaining space in the slot 1. */
+		cpurad_slot1_partition_container: partition@184000 {
+			reg = <0x184000 DT_SIZE_K(128)>;
+		};
+
+		storage_partition: partition@1a4000 {
+			reg = <0x1a4000 DT_SIZE_K(40)>;
+		};
+
+		periphconf_partition: partition@1ae000 {
+			reg = <0x1ae000 DT_SIZE_K(8)>;
+		};
+
+		secondary_partition: partition@1b0000 {
+			reg = <0x1b0000 DT_SIZE_K(64)>;
+		};
+
+		secondary_periphconf_partition: partition@1c0000 {
+			reg = <0x1c0000 DT_SIZE_K(8)>;
+		};
+
+		/* NB: A gap has been left here for future partitions */
+
+		/* 0x1fd000 was chosen for secure_storage_partition such that
+		 * there is no more space after secure_storage_partition.
+		 */
+		secure_storage_partition: partition@1fd000 {
+			compatible = "fixed-subpartitions";
+			reg = <0x1fd000 DT_SIZE_K(12)>;
+			ranges = <0x0 0x1fd000 0x3000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			cpuapp_crypto_partition: partition@0 {
+				reg = <0x0 DT_SIZE_K(4)>;
+			};
+
+			cpurad_crypto_partition: partition@1000 {
+				reg = <0x1000 DT_SIZE_K(4)>;
+			};
+
+			cpuapp_its_partition: partition@2000 {
+				reg = <0x2000 DT_SIZE_K(2)>;
+			};
+
+			cpurad_its_partition: partition@2800 {
+				reg = <0x2800 DT_SIZE_K(2)>;
+			};
+		};
+	};
+};

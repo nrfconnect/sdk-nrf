@@ -8,8 +8,9 @@ from __future__ import annotations
 import argparse
 import contextlib
 import sys
+from collections.abc import Generator
 from pathlib import Path
-from typing import BinaryIO, Generator
+from typing import BinaryIO
 
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec

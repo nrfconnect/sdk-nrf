@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+choice TEST_VARIANT
+	prompt "Select reset type"
+	default TEST_SOFTWARE_RESET
+
+config TEST_SOFTWARE_RESET
+	bool "Test watchdog behavior after software reset"
+
+config TEST_CPU_LOCKUP_RESET
+	bool "Test watchdog behavior after cpu lockup reset"
+
+endchoice

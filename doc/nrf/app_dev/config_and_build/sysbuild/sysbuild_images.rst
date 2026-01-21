@@ -25,40 +25,40 @@ The following sysbuild Kconfig options can be used to enable images in a build:
 +-------------------------------------------------+-----------------------------------------------------------------------------------------+
 | Sysbuild Kconfig option                         | Description                                                                             |
 +=================================================+=========================================================================================+
-|               ``SB_CONFIG_SECURE_BOOT_APPCORE`` | Enable secure boot for application core (or main core if device only has a single core).|
+| :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` | Enable secure boot for application core (or main core if device only has a single core).|
 +-------------------------------------------------+-----------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_BOOTLOADER_MCUBOOT``  | Build MCUboot image.                                                                    |
+| :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT`  | Build MCUboot image.                                                                    |
 +-------------------------------------------------+-----------------------------------------------------------------------------------------+
 
 The following sysbuild Kconfig options are also available for nRF53-based devices.
 These options determine whether the secure boot image is included on the network core and specify the image for the network core:
 
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| Sysbuild Kconfig option                                 | Description                                                                                               |
-+=========================================================+===========================================================================================================+
-|               ``SB_CONFIG_SECURE_BOOT_NETCORE``         | Enable secure boot for network core.                                                                      |
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_NETCORE_EMPTY``               | |NCS| empty network core image :ref:`nrf5340_empty_net_core`.                                             |
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_NETCORE_HCI_IPC``             | Zephyr hci_ipc Bluetooth image :zephyr:code-sample:`bluetooth_hci_ipc`.                                   |
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_NETCORE_RPC_HOST``            | |NCS| rpc_host Bluetooth image :ref:`ble_rpc_host`.                                                       |
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_NETCORE_802154_RPMSG``        | Zephyr 802.15.4 image :zephyr:code-sample:`nrf_ieee802154_rpmsg`.                                         |
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_NETCORE_IPC_RADIO``           | |NCS| ipc_radio image :ref:`ipc_radio`.                                                                   |
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_NETCORE_NONE``                | No network core image.                                                                                    |
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| Sysbuild Kconfig option                          | Description                                                                                               |
++==================================================+===========================================================================================================+
+| :kconfig:option:`SB_CONFIG_SECURE_BOOT_NETCORE`  | Enable secure boot for network core.                                                                      |
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_NETCORE_EMPTY`        | |NCS| empty network core image :ref:`nrf5340_empty_net_core`.                                             |
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_NETCORE_HCI_IPC`      | Zephyr hci_ipc Bluetooth image :zephyr:code-sample:`bluetooth_hci_ipc`.                                   |
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_NETCORE_RPC_HOST`     | |NCS| rpc_host Bluetooth image :ref:`ble_rpc_host`.                                                       |
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_NETCORE_802154_RPMSG` | Zephyr 802.15.4 image :zephyr:code-sample:`nrf_ieee802154_rpmsg`.                                         |
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO`    | |NCS| ipc_radio image :ref:`ipc_radio`.                                                                   |
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_NETCORE_NONE`         | No network core image.                                                                                    |
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
 
 The following sysbuild Kconfig options are available when MCUboot is configured in :ref:`firmware loader mode <ug_bootloader_using_firmware_loader_mode>`:
 These options specify the image for the firmware loader:
 
-+---------------------------------------------+-----------------------------------------------+
-| Sysbuild Kconfig option                     | Description                                   |
-+=============================================+===============================================+
-| ``SB_CONFIG_FIRMWARE_LOADER_IMAGE_SMP_SVR`` | Include ``smp_svr`` as firmware loader image. |
-+---------------------------------------------+-----------------------------------------------+
++-----------------------------------------------------------+-----------------------------------------------------------------+
+| Sysbuild Kconfig option                                   | Description                                                     |
++===========================================================+=================================================================+
+| :kconfig:option:`SB_CONFIG_FIRMWARE_LOADER_IMAGE_SMP_SVR` | Include :zephyr:code-sample:`smp-svr` as firmware loader image. |
++-----------------------------------------------------------+-----------------------------------------------------------------+
 
 .. _sysbuild_images_adding_custom_images:
 
@@ -88,7 +88,7 @@ If the image selection is mandatory, the :file:`Kconfig.sysbuild` file can be om
             help
               Will include the ABC image in the build, which will...
 
-        source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+        source "$(ZEPHYR_BASE)/share/sysbuild/Kconfig"
 
 * :file:`sysbuild.cmake` file
 
@@ -140,13 +140,13 @@ This can be handled using the following approach:
             default "abc" if NETCORE_ABC
 
         config NETCORE_IMAGE_PATH
-            default "${ZEPHYR_MY_MODULE_MODULE_DIR}/<image_path>" if NETCORE_ABC
+            default "$(ZEPHYR_MY_MODULE_MODULE_DIR)/<image_path>" if NETCORE_ABC
 
         endif # !NETCORE_NONE
 
         endmenu
 
-        source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+        source "$(ZEPHYR_BASE)/share/sysbuild/Kconfig"
 
 * :file:`sysbuild.cmake` file - This file is optional and should be used only if specific custom configurations are required for the application.
 
@@ -162,7 +162,7 @@ This can be handled using the following approach:
           # This will set a bool Kconfig option in the image (note: sysbuild forces this setting, it cannot be overwritten by changing the application configuration)
           set_config_bool(${SB_CONFIG_NETCORE_IMAGE_NAME} CONFIG_MY_CUSTOM_CONFIG y)
           # This will set a string (or numeric) Kconfig option in the image (note: sysbuild forces this setting, it cannot be overwritten by changing the application configuration)
-          set_property(TARGET ${SB_CONFIG_NETCORE_IMAGE_NAME} APPEND_STRING PROPERTY CONFIG "CONFIG_CUSTOM_STRING=my_custom_value\n")
+          set_property(TARGET ${SB_CONFIG_NETCORE_IMAGE_NAME} APPEND_STRING PROPERTY CONFIG "CONFIG_FOO=my_custom_value\n")
         endif()
 
 .. _sysbuild_images_adding_custom_firmware_loader_images:
@@ -201,13 +201,13 @@ This can be handled using the following approach:
             default "abc" if FIRMWARE_LOADER_IMAGE_ABC
 
         config FIRMWARE_LOADER_IMAGE_PATH
-            default "${ZEPHYR_MY_MODULE_MODULE_DIR}/<image_path>" if FIRMWARE_LOADER_IMAGE_ABC
+            default "$(ZEPHYR_MY_MODULE_MODULE_DIR)/<image_path>" if FIRMWARE_LOADER_IMAGE_ABC
 
         endif # !FIRMWARE_LOADER_IMAGE_NONE
 
         endmenu
 
-        source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+        source "$(ZEPHYR_BASE)/share/sysbuild/Kconfig"
 
 * :file:`sysbuild.cmake` file - This file is optional and should be used only if specific custom configurations are required for the application.
 
@@ -223,7 +223,7 @@ This can be handled using the following approach:
           # This will set a bool Kconfig option in the image (note: sysbuild forces this setting, it cannot be overwritten by changing the application configuration)
           set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MY_CUSTOM_CONFIG y)
           # This will set a string (or numeric) Kconfig option in the image (note: sysbuild forces this setting, it cannot be overwritten by changing the application configuration)
-          set_property(TARGET ${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} APPEND_STRING PROPERTY CONFIG "CONFIG_CUSTOM_STRING=my_custom_value\n")
+          set_property(TARGET ${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} APPEND_STRING PROPERTY CONFIG "CONFIG_FOO=my_custom_value\n")
         endif()
 
 .. _sysbuild_images_adding_to_a_single_board:
@@ -303,7 +303,7 @@ Kconfig.sysbuild:
         default "abc" if NETCORE_ABC
 
     config NETCORE_IMAGE_PATH
-        default "${ZEPHYR_MY_MODULE_MODULE_DIR}/<image_path>" if NETCORE_ABC
+        default "$(ZEPHYR_MY_MODULE_MODULE_DIR)/<image_path>" if NETCORE_ABC
 
     endif # !NETCORE_NONE
 
@@ -311,8 +311,8 @@ Kconfig.sysbuild:
 
 .. _sysbuild_images_editing_in_nrfvsc:
 
-Editing sysbuild images and domains in the |nRFVSC|
-***************************************************
+Editing sysbuild images and domains in |nRFVSC|
+***********************************************
 
-The |nRFVSC| provides a GUI for editing sysbuild images and domains.
+|nRFVSC| provides a GUI for editing sysbuild images and domains.
 See the `How to work with sysbuild domains`_ page in the extension documentation for more information.

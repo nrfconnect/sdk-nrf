@@ -8,6 +8,7 @@
 
 #include "app/fabric_table_delegate.h"
 #include "app/group_data_provider.h"
+#include "clusters/cluster_init.h"
 #include "migration/migration_manager.h"
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL
@@ -91,7 +92,7 @@ chip::Crypto::PSAOperationalKeystore Nrf::Matter::InitData::sOperationalKeystore
 chip::DeviceLayer::KMUSessionKeystore Nrf::Matter::InitData::sKMUSessionKeystoreDefault{};
 #endif
 
-#ifdef CONFIG_CHIP_FACTORY_DATA
+#ifdef CONFIG_CHIP_FACTORY_DATA_NRFCONNECT_BACKEND
 FactoryDataProvider<InternalFlashFactoryData> Nrf::Matter::InitData::sFactoryDataProviderDefault{};
 #endif
 
@@ -281,6 +282,9 @@ void DoInitChipServer(intptr_t /* unused */)
 	if (sLocalInitData.mFactoryDataProvider) {
 		sInitResult = sLocalInitData.mFactoryDataProvider->Init();
 		VerifyInitResultOrReturn(sInitResult, "FactoryDataProvider::Init() failed");
+	} else {
+		sInitResult = CHIP_ERROR_INTERNAL;
+		VerifyInitResultOrReturn(sInitResult, "No factory data provider configured");
 	}
 
 	SetDeviceInstanceInfoProvider(sLocalInitData.mFactoryDataProvider);
@@ -429,7 +433,16 @@ CHIP_ERROR StartServer()
 	CHIP_ERROR err = PlatformMgr().StartEventLoopTask();
 	VerifyInitResultOrReturnError(err, "PlatformMgr().StartEventLoopTask() failed");
 
-	return WaitForReadiness();
+	/* Wait for the CHIP server to be initialized. */
+	err = WaitForReadiness();
+	VerifyInitResultOrReturnError(err, "CHIP server initialization failed");
+
+	/* Run all code-driven registered cluster initialization callbacks. */
+	if (!nrf_matter_cluster_init_run_all()) {
+		return CHIP_ERROR_INTERNAL;
+	}
+
+	return CHIP_NO_ERROR;
 }
 
 #ifdef CONFIG_CHIP_FACTORY_DATA
@@ -437,7 +450,7 @@ FactoryDataProviderBase *GetFactoryDataProvider()
 {
 	return sLocalInitData.mFactoryDataProvider;
 }
-#endif
+#endif /* CONFIG_CHIP_FACTORY_DATA */
 
 PersistentStorageDelegate *GetPersistentStorageDelegate()
 {

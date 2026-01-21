@@ -17,41 +17,11 @@ config SECURE_BOOT
 
 if SECURE_BOOT
 
-config SB_MONOTONIC_COUNTER
-	bool "Enable HW monotonic version counter"
-	default y
+config SB_MONOTONIC_COUNTER_IS_ENABLED
+	bool "HW monotonic version counter is enabled in the build (informative only, do not change)"
 	help
-	  The counter stores the current firmware version in a way that ensures that the value
-	  can only increase. This is used to prevent malicious rollback of the firmware.
-	  An array of slots is used for the counter. One slot is used per
-	  counter update, and each new slot must have a larger value than the
-	  previous. Application versions are checked against the largest
-	  counter value before being booted.
-
-config SB_NUM_VER_COUNTER_SLOTS
-	int "Number of monotonic counter slots used for the firmware version"
-	default 20 if BOOTLOADER_MCUBOOT || MCUBOOT
-	default 240
-	range 2 300 if SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X || SOC_SERIES_NRF54LX
-	range 2 1800 if SOC_SERIES_NRF52X
-	range 2 400 if SOC_SERIES_NRF51X
-	depends on SB_MONOTONIC_COUNTER
-	help
-	  The number of monotonic counter slots available for the counter,
-	  i.e., the number of times the counter can be updated.
-	  The slots are 16 bits each. The number of slots must be an even
-	  number to ensure that the total size of header and slots is aligned on a 32-bit word.
-	  Rationale for the default number (240): Assume one update a month for
-	  10 years, then double that value just in case. This default fits
-	  comfortably within the OTP region of UICR.
-	  When a second stage bootloader is enabled, such as MCUboot, this counter is used
-	  for the updates of the second stage bootloader and not of the application image. Thus
-	  the default when MCUboot is enabled is 20, to allow two updates a year for 10 years.
-	  Regarding ranges: The actual maximum depends on the number of
-	  provisioned public keys, since they share the space. The same is true if
-	  other data is stored in the "OTP" region (on for example nRF91 and nRF53).
-	  This configuration should not be used in code. Instead, the header before the
-	  slots should be read at run-time.
+	  This option is set by sysbuild if SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER is set.
+	  Do not edit this option manually.
 
 endif # SECURE_BOOT
 
@@ -59,11 +29,15 @@ config PM_PARTITION_SIZE_PROVISION
 	hex
 	default 0x280 if SOC_SERIES_NRF91X || SOC_NRF5340_CPUAPP # Stored in OTP region
 	# Monotonic counter slot takes 4 bytes on nRF54L Series
-	default 0x460 if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP
+	default 0x460 if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP || \
+			 SOC_NRF54LV10A_ENGA_CPUAPP || SOC_NRF54LM20A_ENGA_CPUAPP
 	default 0x280 if SOC_NRF5340_CPUNET # Second instance stored in internal flash of NET
 	default FPROTECT_BLOCK_SIZE
-	prompt "Flash space reserved for PROVISION" if !(SOC_NRF9160 || SOC_NRF5340_CPUAPP || SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP)
-	help
+	prompt "Flash space reserved for PROVISION" if !(SOC_NRF9160 || SOC_NRF5340_CPUAPP || \
+							 SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || \
+							 SOC_NRF54L10_CPUAPP || SOC_NRF54LV10A_ENGA_CPUAPP || \
+							 SOC_NRF54LM20A_ENGA_CPUAPP)
+help
 	  Flash space set aside for the PROVISION partition.
 
 config B0_MIN_PARTITION_SIZE
@@ -75,7 +49,8 @@ config PM_PARTITION_SIZE_B0_IMAGE
 	default 0x7800 if !B0_MIN_PARTITION_SIZE && (SOC_NRF5340_CPUNET)
 	default FPROTECT_BLOCK_SIZE if SOC_SERIES_NRF91X || SOC_NRF5340_CPUAPP
 	default 0x3800 if SOC_NRF5340_CPUNET
-	default 0x7800 if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP
+	default 0x7800 if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP || \
+			  SOC_NRF54LV10A_ENGA_CPUAPP || SOC_NRF54LM20A_ENGA_CPUAPP
 	default 0x7000 if !B0_MIN_PARTITION_SIZE
 	default 0x4000
 	help
@@ -94,23 +69,54 @@ menuconfig IS_SECURE_BOOTLOADER
 if IS_SECURE_BOOTLOADER
 
 config SB_BPROT_IN_DEBUG
-	bool "Enable block protect in debug"
+	bool "Block protect in debug"
 	default y
 	depends on (HAS_HW_NRF_BPROT || HAS_HW_NRF_MPU)
 
 config SB_CLEANUP_RAM
 	bool "Perform RAM cleanup"
 	depends on !FW_INFO_PROVIDE_ENABLE
+	depends on !MPU_STACK_GUARD
 	depends on CPU_CORTEX_M4 || CPU_CORTEX_M33
 	help
 	  Sets contents of memory to 0 before jumping to application.
 
+config SB_INFINITE_LOOP_AFTER_RAM_CLEANUP
+	bool "Infinite loop after RAM cleanup"
+	depends on SB_CLEANUP_RAM
+	help
+	  Verification option that keeps execution in infinite loop after
+	  RAM cleanup has been performed.
+
+config SB_DISABLE_SELF_RWX_SUPPORTED
+	bool
+	default y if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP
+	default y if SOC_NRF54LV10A_ENGA_CPUAPP
+	default y if SOC_NRF54LM20A_ENGA_CPUAPP
+
 config SB_DISABLE_SELF_RWX
 	bool "Disable read and execution on self NVM"
-	depends on (SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP) && !FPROTECT_ALLOW_COMBINED_REGIONS
+	depends on SB_DISABLE_SELF_RWX_SUPPORTED && !FPROTECT_ALLOW_COMBINED_REGIONS
 	help
 	  Sets RRAMC's BOOTCONF region protection before jumping to application.
 	  It disables reads writes and execution memory area which holds NSIB.
+
+config SB_DISABLE_NEXT_W
+	bool "Disable writes for next stage"
+	depends on SB_DISABLE_SELF_RWX_SUPPORTED && !FPROTECT
+	help
+	  NSIB disables writes on next stage in bootloading chain.
+	  It uses RRAMC's region 4 and is limited to 31KB for nRF54L15, nRF54L10 and nRF54L05
+	  and to 127KB for nRF54LV10a and nRF54LM20a.
+
+config SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION
+	bool "HW monotonic version counter rollback protection (informative only, do not change)"
+	help
+	  This option is set by sysbuild if SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER is set.
+	  Do not edit this option manually.
+	  If it is enabled, the secure bootloader prevents FW_INFO_FIRMWARE_VERSION
+	  from being decremented for an image.
+	  Images that do not meet this requirement will be rejected and not booted.
 
 endif # IS_SECURE_BOOTLOADER
 
@@ -155,5 +161,32 @@ config MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE
 	bool "Signature is verified over an image rather than sha of an image"
 	help
 	  This is a Kconfig which is informative only, the value should not be changed.
+
+config NCS_MCUBOOT_BOOTLOADER_SIGN_MERGED_BINARY
+	bool "Sign merged binary instead of individual images (informative only, do not change)"
+	help
+	  This is a Kconfig which is informative only, the value should not be changed.
+
+config NCS_MCUBOOT_MANIFEST_UPDATES
+	bool "Manifest-based updates (informative only, do not change)"
+	help
+	  When enabled, supports transactional updates using manifests.
+	  This is a Kconfig which is informative only, the value should not be changed.
+
+if NCS_MCUBOOT_MANIFEST_UPDATES
+
+config NCS_MCUBOOT_IMGTOOL_APPEND_MANIFEST
+	bool "MCUboot append manifest (informative only, do not change)"
+	help
+	  Append common manifest while signing the image.
+	  This is a Kconfig which is informative only, the value should not be changed.
+
+config NCS_MCUBOOT_MANIFEST_IMAGE_INDEX
+	int "Index of the image that must include manifest (informative only, do not change)"
+	help
+	  Specifies the index of the image that must include the manifest.
+	  This is a Kconfig which is informative only, the value should not be changed.
+
+endif # NCS_MCUBOOT_MANIFEST_UPDATES
 
 endmenu

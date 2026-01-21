@@ -1,10 +1,20 @@
 sample:
   name: ESB prx Sample
+common:
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+      - "Enhanced ShockBurst prx sample"
+      - "Initialization complete"
+      - "Setting up for packet reception"
+  timeout: 15
+
 tests:
   sample.esb.prx:
     sysbuild: true
     filter: CONFIG_UART_CONSOLE and CONFIG_SERIAL_SUPPORT_INTERRUPT
-    harness: keyboard
     integration_platforms:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -21,31 +31,34 @@ tests:
       - ci_samples_esb
   sample.esb.prx.build:
     sysbuild: true
-    build_only: true
     integration_platforms:
-      - nrf52dk/nrf52832
+      - nrf21540dk/nrf52840
       - nrf52833dk/nrf52833
       - nrf52840dk/nrf52840
       - nrf52dk/nrf52810
+      - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpunet
-      - nrf21540dk/nrf52840
       - nrf54h20dk/nrf54h20/cpurad
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     platform_allow:
-      - nrf52dk/nrf52832
+      - nrf21540dk/nrf52840
       - nrf52833dk/nrf52833
       - nrf52840dk/nrf52840
       - nrf52dk/nrf52810
+      - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpunet
-      - nrf21540dk/nrf52840
       - nrf54h20dk/nrf54h20/cpurad
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     tags:
       - esb
       - ci_build
@@ -53,7 +66,6 @@ tests:
       - ci_samples_esb
   sample.esb.prx.dynamic_irq:
     sysbuild: true
-    build_only: true
     extra_configs:
       - CONFIG_ESB_DYNAMIC_INTERRUPTS=y
       - CONFIG_DYNAMIC_INTERRUPTS=y
@@ -76,11 +88,11 @@ tests:
       - ci_samples_esb
   sample.esb.prx.nrf5340_nrf21540:
     sysbuild: true
-    build_only: true
     extra_args: SHIELD=nrf21540ek
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
-    platform_allow: nrf5340dk/nrf5340/cpunet
+    platform_allow:
+      - nrf5340dk/nrf5340/cpunet
     tags:
       - esb
       - ci_build
@@ -88,14 +100,13 @@ tests:
       - ci_samples_esb
   sample.esb.prx.fast_switching:
     sysbuild: true
-    build_only: true
     extra_configs:
       - CONFIG_ESB_FAST_SWITCHING=y
       - CONFIG_ESB_FAST_CHANNEL_SWITCHING=y
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpurad
-    platform_allow: >
-      nrf54h20dk/nrf54h20/cpurad
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpurad
     tags:
       - esb
       - ci_build

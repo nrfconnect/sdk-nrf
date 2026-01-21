@@ -47,6 +47,6 @@ config ICAL_PARSER_SUMMARY_SIZE
 module=ICAL_PARSER
 module-dep=LOG
 module-str=iCalendar parser
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif

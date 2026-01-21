@@ -382,13 +382,13 @@ bool dect_phy_mac_handle(struct dect_phy_commmon_op_pdc_rcv_params *rcv_params)
 	struct nrf_modem_dect_phy_pdc_event *p_rx_status = &(rcv_params->rx_status);
 	dect_phy_mac_common_header_t common_header;
 	int16_t rssi_level = p_rx_status->rssi_2 / 2;
+	double snr = (double)p_rx_status->snr / 4.0;
 
 	if (print) {
-		desh_print("PDC received (stf start time %llu, handle %d): snr %d, "
-			"RSSI-2 %d (RSSI %d), len %d",
+		desh_print("PDC received (stf start time %llu, handle %d): snr %.2f dB, "
+			"RSSI-2 %d dBm, len %d",
 			rcv_params->time, p_rx_status->handle,
-			p_rx_status->snr, p_rx_status->rssi_2, rssi_level,
-			rcv_params->data_length);
+			snr, rssi_level, rcv_params->data_length);
 
 		dect_phy_mac_type_header_print(&type_header);
 	}
@@ -399,10 +399,10 @@ bool dect_phy_mac_handle(struct dect_phy_commmon_op_pdc_rcv_params *rcv_params)
 	if (!handled) {
 		/* In failure, we want to print what we got */
 		if (!print) {
-			desh_print("PDC received (stf start time %llu, handle %d): snr %d, "
-				"RSSI-2 %d (RSSI %d), len %d",
+			desh_print("PDC received (stf start time %llu, handle %d): snr %.2f dB, "
+				"RSSI-2 %d dBm, len %d",
 				rcv_params->time, p_rx_status->handle,
-				p_rx_status->snr, p_rx_status->rssi_2, rssi_level,
+				snr, rssi_level,
 				rcv_params->data_length);
 		}
 		desh_error("Failed to decode MAC Common header");

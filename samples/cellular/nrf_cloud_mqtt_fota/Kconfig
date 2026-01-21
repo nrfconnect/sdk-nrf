@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "nRF Cloud MQTT FOTA Sample"
+
+config CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS
+	int "Cloud connection retry timeout (seconds)"
+	default 30
+	help
+	  If connecting to nRF Cloud takes longer than this timeout, it will be
+	  reattempted.
+
+config CLOUD_READY_TIMEOUT_SECONDS
+	int "Cloud readiness timeout (seconds)"
+	default 600
+	help
+	  If the connection to nRF Cloud does not become ready within this
+	  timeout, the sample will reset its connection and try again.
+
+module = NRF_CLOUD_MQTT_FOTA_SAMPLE
+module-str = nRF Cloud MQTT FOTA Sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu

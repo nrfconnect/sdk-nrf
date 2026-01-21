@@ -1,6 +1,8 @@
+import argparse
+
 import common_pb2
 import requests
-import argparse
+
 
 def get_available_networks(verify_ssl=False):
     url = 'https://wifiprov.local/prov/networks'

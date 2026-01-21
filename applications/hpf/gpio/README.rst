@@ -10,7 +10,7 @@ High-Performance Framework GPIO
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 device.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF54LM20A devices.
 
 This application demonstrates how to write a :ref:`High-Performance Framework (HPF) <hpf_index>` application implementing a simple peripheral.
 The application implements a subset of the Zephyr GPIO API.
@@ -31,7 +31,7 @@ The GPIO HPF application is structured into the following main components:
 Requirements
 ************
 
-The firmware supports the following development kit:
+The firmware supports the following development kits:
 
 .. table-from-sample-yaml::
 
@@ -40,9 +40,9 @@ Configuration
 
 You can enable the following IPC backends:
 
-* mbox (``SB_CONFIG_HPF_GPIO_BACKEND_MBOX``)
-* icmsg (``SB_CONFIG_HPF_GPIO_BACKEND_ICMSG``)
-* icbmsg (``SB_CONFIG_HPF_GPIO_BACKEND_ICBMSG``)
+* mbox (:kconfig:option:`SB_CONFIG_HPF_GPIO_BACKEND_MBOX`)
+* icmsg (:kconfig:option:`SB_CONFIG_HPF_GPIO_BACKEND_ICMSG`)
+* icbmsg (:kconfig:option:`SB_CONFIG_HPF_GPIO_BACKEND_ICBMSG`)
 
 Building and running
 ********************
@@ -56,10 +56,10 @@ The process involves building the :zephyr:code-sample:`blinky` sample with the a
 
 For example, to build with icmsg backend, run the following commands:
 
-  .. code-block:: console
+.. code-block:: console
 
-     west build -b nrf54l15dk/nrf54l15/cpuapp -- -DSB_CONFIG_PARTITION_MANAGER=n -DSB_CONFIG_HPF=y -DSB_CONFIG_HPF_GPIO=y -DSB_CONFIG_HPF_GPIO_BACKEND_ICMSG=y -DEXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15dk_nrf54l15_cpuapp_hpf_gpio.overlay"
-     west flash
+   west build -b <build_target> -- -DSB_CONFIG_PARTITION_MANAGER=n -DSB_CONFIG_HPF=y -DSB_CONFIG_HPF_GPIO=y -DSB_CONFIG_HPF_GPIO_BACKEND_ICMSG=y -DEXTRA_DTC_OVERLAY_FILE="./boards/<build_target> _hpf_gpio.overlay"
+   west flash
 
 Upon successful execution, **LED0** will start flashing.
 
@@ -96,4 +96,7 @@ FLPR application HRT
 
  * Header file: :file:`applications/hpf/gpio/src/hrt/hrt.h`
  * Source file: :file:`applications/hpf/gpio/src/hrt/hrt.c`
- * Assembly: :file:`applications/hpf/gpio/src/hrt/hrt-nrf54l15.s`
+ * Assembly:
+
+   * :file:`applications/hpf/gpio/src/hrt/hrt-nrf54l15.s`
+   * :file:`applications/hpf/gpio/src/hrt/hrt-nrf54lm20a.s`

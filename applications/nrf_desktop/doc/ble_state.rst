@@ -27,7 +27,7 @@ Configuration
 *************
 
 nRF Desktop uses the Bluetooth LE state module from :ref:`lib_caf` (CAF).
-The :ref:`CONFIG_DESKTOP_BLE_STATE <config_desktop_app_options>` Kconfig option selects the :kconfig:option:`CONFIG_CAF_BLE_STATE` option.
+The :option:`CONFIG_DESKTOP_BLE_STATE` Kconfig option selects the :kconfig:option:`CONFIG_CAF_BLE_STATE` option.
 
 For more information about Bluetooth configuration in nRF Desktop, see :ref:`nrf_desktop_bluetooth_guide`.
 

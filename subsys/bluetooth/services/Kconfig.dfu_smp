@@ -14,6 +14,6 @@ if BT_DFU_SMP
 
 module = BT_DFU_SMP
 module-str = DFU SMP Client
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_DFU_SMP

@@ -9,10 +9,9 @@ family:
               - name: cpuflpr
       - name: nrf54l
         socs:
-          - name: nrf54lm20a
+          - name: nrf54ls05b
             cpuclusters:
               - name: cpuapp
-              - name: cpuflpr
           - name: nrf54lv10a
             cpuclusters:
               - name: cpuapp
@@ -28,8 +27,7 @@ runners:
               - nrf54lv10a/cpuapp
               - nrf54lv10a/cpuflpr
           - qualifiers:
-              - nrf54lm20a/cpuapp
-              - nrf54lm20a/cpuflpr
+              - nrf54ls05b/cpuapp
     '--erase':
       - runners:
           - jlink
@@ -40,9 +38,15 @@ runners:
               - nrf54lv10a/cpuapp
               - nrf54lv10a/cpuflpr
           - qualifiers:
-              - nrf54lm20a/cpuapp
-              - nrf54lm20a/cpuflpr
+              - nrf54ls05b/cpuapp
     '--reset':
+      - runners:
+          - nrfutil_next
+        run: last
+        groups:
+          - qualifiers:
+              - nrf7120/cpuapp
+              - nrf7120/cpuflpr
       - runners:
           - nrfutil
         run: last
@@ -51,5 +55,4 @@ runners:
               - nrf54lv10a/cpuapp
               - nrf54lv10a/cpuflpr
           - qualifiers:
-              - nrf54lm20a/cpuapp
-              - nrf54lm20a/cpuflpr
+              - nrf54ls05b/cpuapp

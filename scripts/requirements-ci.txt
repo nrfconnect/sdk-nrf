@@ -1,7 +1,7 @@
 aenum
 bitarray
 chardet
-gitlint==0.19.1
+gitlint-core==0.19.1
 GitPython
 jsonschema
 milksnake
@@ -14,3 +14,4 @@ qrcode
 stringcase==1.2.0
 toml
 wget
+python-dotenv

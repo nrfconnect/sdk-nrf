@@ -74,3 +74,19 @@ int32_t boot_nv_security_counter_update(uint32_t image_id, uint32_t img_security
 
 	return err == 0 ? 0 : -BOOT_EBADSTATUS;
 }
+
+fih_int boot_nv_security_counter_is_update_possible(uint32_t image_id,
+						    uint32_t img_security_cnt)
+{
+	int err;
+	(void) image_id;
+	(void) img_security_cnt;
+
+	err = is_monotonic_counter_update_possible(BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0);
+
+	if (err != 0) {
+		FIH_RET(FIH_FAILURE);
+	}
+
+	FIH_RET(FIH_SUCCESS);
+}

@@ -19,6 +19,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(bt_mgmt_scan);
 
+#define BT_ADDR_LE_STR CONFIG_CONNECT_TO_BT_ADDR_LE_STR /* Replace with desired address */
 #define CONNECTION_PARAMETERS                                                                      \
 	BT_LE_CONN_PARAM(CONFIG_BLE_ACL_CONN_INTERVAL, CONFIG_BLE_ACL_CONN_INTERVAL,               \
 			 CONFIG_BLE_ACL_SLAVE_LATENCY, CONFIG_BLE_ACL_SUP_TIMEOUT)
@@ -185,6 +186,73 @@ static bool device_name_check(struct bt_data *data, void *user_data)
 }
 
 /**
+ * @brief	Check the advertising data for the matching address.
+ *
+ * @param[in]	data		The advertising data to be checked.
+ * @param[in]	user_data	Pointer to the address.
+ *
+ * @retval	false	Stop going through adv data.
+ * @retval	true	Continue checking the data.
+ */
+static bool addr_check(struct bt_data *data, void *user_data)
+{
+	int ret;
+	char addr_string[BT_ADDR_LE_STR_LEN];
+	bt_addr_le_t *addr = user_data;
+	struct bt_conn *conn = NULL;
+
+	bt_addr_le_to_str(addr, addr_string, BT_ADDR_LE_STR_LEN);
+
+	bt_addr_le_t cmp_addr;
+	/* BT_ADDR_LE_STR defined at the start of this file */
+
+	ret = bt_addr_le_from_str(BT_ADDR_LE_STR, "public", &cmp_addr);
+	if (ret) {
+		LOG_ERR("Failed to create bt_addr_le from string: %d", ret);
+		return true;
+	}
+
+	bt_addr_le_to_str(&cmp_addr, addr_string, BT_ADDR_LE_STR_LEN);
+
+	if (!bt_addr_le_cmp(addr, &cmp_addr)) {
+		/* Check if the device is still connected due to waiting for ACL timeout */
+		if (conn_exist_check(addr)) {
+			/* Device is already connected, stop parsing the adv data */
+			return false;
+		}
+
+		LOG_INF("Device found: %s", srch_name);
+
+		bt_le_scan_cb_unregister(&scan_callback);
+		cb_registered = false;
+
+		ret = bt_le_scan_stop();
+		if (ret) {
+			LOG_ERR("Stop scan failed: %d", ret);
+		}
+
+		bt_addr_le_to_str(addr, addr_string, BT_ADDR_LE_STR_LEN);
+
+		LOG_INF("Creating connection to device: %s", addr_string);
+
+		ret = bt_conn_le_create(addr, BT_CONN_LE_CREATE_CONN, CONNECTION_PARAMETERS, &conn);
+		if (ret) {
+			LOG_ERR("Could not init connection: %d", ret);
+
+			ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_CONN, NULL,
+						 BRDCAST_ID_NOT_USED);
+			if (ret) {
+				LOG_ERR("Failed to restart scanning: %d", ret);
+			}
+		}
+
+		return false;
+	}
+
+	return true;
+}
+
+/**
  * @brief	Check the advertising data for the matching 'Set Identity Resolving Key' (SIRK).
  *
  * @param[in]	data		The advertising data to be checked.
@@ -267,7 +335,11 @@ static void scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf
 		/* Note: May lead to connection creation */
 		if (bonded_num < CONFIG_BT_MAX_PAIRED) {
 			if (server_sirk == NULL) {
-				bt_data_parse(ad, device_name_check, (void *)info->addr);
+				if (IS_ENABLED(CONFIG_BT_MGMT_CONNECT_BY_ADDR)) {
+					bt_data_parse(ad, addr_check, (void *)info->addr);
+				} else {
+					bt_data_parse(ad, device_name_check, (void *)info->addr);
+				}
 			} else {
 				bt_data_parse(ad, csip_found, (void *)info->addr);
 			}

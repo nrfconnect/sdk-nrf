@@ -15,7 +15,7 @@ target_link_libraries(zephyr_interface
     psa_interface
 )
 
-if (CONFIG_MBEDTLS_DEBUG)
+if(CONFIG_MBEDTLS_DEBUG)
   zephyr_library_sources(${ZEPHYR_BASE}/modules/mbedtls/debug.c)
   zephyr_library_sources(debug_init.c)
   zephyr_include_directories(${ZEPHYR_BASE}/modules/mbedtls/include)

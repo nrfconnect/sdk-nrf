@@ -152,7 +152,7 @@ int sx_pk_get_opsize(sx_pk_req *req);
 /** Operand slot structure */
 struct sx_pk_slot {
 	/** Memory address of the operand slot **/
-	char *addr;
+	uint8_t *addr;
 };
 
 /** Pair of slots
@@ -257,7 +257,7 @@ int sx_pk_wait(sx_pk_req *req);
  * through sx_pk_acquire_req()
  * @return Array of addresses to output operands
  */
-const char **sx_pk_get_output_ops(sx_pk_req *req);
+const uint8_t **sx_pk_get_output_ops(sx_pk_req *req);
 
 /** Give back the public key acceleration request.
  *
@@ -272,6 +272,18 @@ const char **sx_pk_get_output_ops(sx_pk_req *req);
  * operation has finished
  */
 void sx_pk_release_req(sx_pk_req *req);
+
+/** Set the command for an already-acquired request.
+ *
+ * Use this to run multiple operations without releasing CRACEN between them.
+ *
+ * @pre sx_pk_acquire_req() must have been called to acquire the request.
+ * @pre Any previous operation on this request must have completed (via sx_pk_wait()).
+ *
+ * @param[in,out] req The acceleration request obtained through sx_pk_acquire_req()
+ * @param[in] cmd The new command definition
+ */
+void sx_pk_set_cmd(sx_pk_req *req, const struct sx_pk_cmd_def *cmd);
 
 /**
  * @brief Clear interrupt for Cracen PK Engine.
@@ -295,7 +307,7 @@ sx_pk_req *sx_get_current_req(void);
 struct sx_pk_ecurve {
 	uint32_t curveflags;
 	int sz;
-	const char *params;
+	const uint8_t *params;
 };
 
 /** @} */

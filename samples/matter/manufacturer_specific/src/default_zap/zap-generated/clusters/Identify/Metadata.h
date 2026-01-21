@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -20,10 +21,11 @@ namespace app
 		namespace Identify
 		{
 
-			inline constexpr uint32_t kRevision = 5;
+			inline constexpr uint32_t kRevision = 6;
 
 			namespace Attributes
 			{
+
 				namespace IdentifyTime
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -38,11 +40,17 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace IdentifyType
+				constexpr std::array<DataModel::AttributeEntry, 2> kMandatoryMetadata = {
+					IdentifyTime::kMetadataEntry,
+					IdentifyType::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace Identify
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -58,6 +66,11 @@ namespace app
 				} // namespace TriggerEffect
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace Identify
 	} // namespace Clusters
 } // namespace app

@@ -8,11 +8,11 @@ Input files from command line and/or a text file.
 '''
 
 import re
-from west import log
-from data_structure import Data, FileInfo
-from common import SbomException, concurrent_pool_iter
-from license_utils import get_license_texts
 
+from common import SbomException, concurrent_pool_iter
+from data_structure import Data, FileInfo
+from license_utils import get_license_texts
+from west import log
 
 COMMENTS_STRIP_RE = re.compile(r'^\s*(?:\/?\*|\/\/|#)?\s*(.*?)\s*(?:\*\/?|\/\/|#)?\s*$')
 WHITESPACE_COLLAPSE_RE = re.compile(r'\s+')
@@ -76,7 +76,7 @@ def detect_file(file: FileInfo) -> 'set(str)':
     '''Detect license text in the file.'''
     init()
     try:
-        with open(file.file_path, 'r', encoding='8859') as fd:
+        with open(file.file_path, encoding='8859') as fd:
             content = fd.read()
     except Exception as e:
         raise SbomException(f'Error reading file "{file.file_path}"') from e

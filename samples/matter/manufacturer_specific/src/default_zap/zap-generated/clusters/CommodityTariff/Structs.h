@@ -135,7 +135,7 @@ namespace app
 						Optional<Structs::AuxiliaryLoadSwitchSettingsStruct::Type> auxiliaryLoad;
 						Optional<Structs::PeakPeriodStruct::Type> peakPeriod;
 						Optional<Globals::Structs::PowerThresholdStruct::Type> powerThreshold;
-						DataModel::Nullable<uint32_t> threshold;
+						DataModel::Nullable<int64_t> threshold;
 						Optional<DataModel::Nullable<chip::CharSpan>> label;
 						Optional<bool> predicted;
 

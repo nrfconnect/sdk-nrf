@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace MeteredQuantity
 				{
 					inline constexpr DataModel::AttributeEntry kMetadataEntry(
@@ -39,13 +41,27 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace MeteredQuantityTimestamp
-				namespace MeasurementType
+				namespace TariffUnit
 				{
 					inline constexpr DataModel::AttributeEntry
-						kMetadataEntry(MeasurementType::Id,
+						kMetadataEntry(TariffUnit::Id,
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
-				} // namespace MeasurementType
+				} // namespace TariffUnit
+				namespace MaximumMeteredQuantities
+				{
+					inline constexpr DataModel::AttributeEntry
+						kMetadataEntry(MaximumMeteredQuantities::Id,
+							       BitFlags<DataModel::AttributeQualityFlags>(),
+							       Access::Privilege::kView, std::nullopt);
+				} // namespace MaximumMeteredQuantities
+				constexpr std::array<DataModel::AttributeEntry, 4> kMandatoryMetadata = {
+					MeteredQuantity::kMetadataEntry,
+					MeteredQuantityTimestamp::kMetadataEntry,
+					TariffUnit::kMetadataEntry,
+					MaximumMeteredQuantities::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
@@ -53,6 +69,11 @@ namespace app
 			{
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace CommodityMetering
 	} // namespace Clusters
 } // namespace app

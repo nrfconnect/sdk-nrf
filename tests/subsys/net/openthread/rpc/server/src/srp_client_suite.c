@@ -32,8 +32,7 @@
 #define CBOR_IPV6_ADDR_3 _CBOR_IPV6_START, 0x03
 
 #define CBOR_EMPTY_LIST 0x80
-#define CBOR_EMPTY_MAP  0xa0
-#define CBOR_LIST(...) 0x9F, __VA_ARGS__, 0xFF
+#define CBOR_EMPTY_MAP	0xa0
 #define CBOR_MAP(...) 0xBF, __VA_ARGS__, 0xFF
 
 #define TEST_SERVICE_NAME "_test._udp.local"

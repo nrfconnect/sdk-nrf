@@ -1,13 +1,13 @@
 .. _bluetooth_mesh_light_dim:
 
-Bluetooth Mesh: Light dimmer and scene selector
-###############################################
+Bluetooth Mesh NLC: Dimming Control/Scene Selector
+##################################################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth® Mesh light dimmer and scene selector sample demonstrates how to set up a light dimmer and scene selector application, and control dimmable LEDs with Bluetooth Mesh using the :ref:`bt_mesh_lvl_readme`, the :ref:`bt_mesh_onoff_readme`, and the :ref:`bt_mesh_scene_readme`.
+The Bluetooth® Mesh NLC Dimming Control/Scene Selector sample demonstrates how to set up a light dimmer and scene selector application, and control dimmable LEDs with Bluetooth Mesh using the :ref:`bt_mesh_lvl_readme`, the :ref:`bt_mesh_onoff_readme`, and the :ref:`bt_mesh_scene_readme`.
 The sample provides the following functionality:
 
   * On/off and dim up/down using one button
@@ -253,6 +253,11 @@ You should now be able to perform the following actions:
 .. note::
   When controlling a Mesh Light Fixture device using the Mesh Light Dimmer device, the Light LC Server control will be temporarily disabled for the Mesh Light Fixture device.
   The control will be re-enabled after a certain time which can be configured using the :kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL` option.
+
+External flash for settings partition
+=====================================
+
+.. include:: /includes/mesh_ext_flash_settings.txt
 
 Dependencies
 ************

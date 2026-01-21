@@ -35,11 +35,6 @@ public:
 	void InitPWMDDevice();
 	Nrf::PWMDevice &GetPWMDevice() { return mPWMDevice; }
 
-	static void IdentifyStartHandler(Identify *);
-	static void IdentifyStopHandler(Identify *);
-	static void TriggerIdentifyEffectHandler(Identify *);
-	static void TriggerEffectTimerTimeoutCallback(k_timer *timer);
-
 private:
 	CHIP_ERROR Init();
 

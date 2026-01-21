@@ -12,64 +12,53 @@
 #include <nrfx_timer.h>
 #include <hal/nrf_power.h>
 
-#ifdef DPPI_PRESENT
-#include <nrfx_dppi.h>
+#ifdef CONFIG_NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS
 
 static void timer_handler(nrf_timer_event_t event_type, void *context)
 {
 	/*empty*/
 }
-#endif
+
+static int dppi_shared_resources_init(void)
+{
+	int err;
+	static nrfx_timer_t timer = NRFX_TIMER_INSTANCE(NRF_TIMER1);
+	uint32_t base_frequency = NRF_TIMER_BASE_FREQUENCY_GET(timer.p_reg);
+	nrfx_timer_config_t config = NRFX_TIMER_DEFAULT_CONFIG(base_frequency);
+	nrfx_gppi_handle_t handle;
+	uint32_t evt = nrf_power_event_address_get(NRF_POWER,
+						NRF_POWER_EVENT_SLEEPENTER);
+	uint32_t tsk = nrfx_timer_task_address_get(&timer, NRF_TIMER_TASK_COUNT);
+	int rv;
+
+	config.frequency = NRFX_MHZ_TO_HZ(1);
+	config.bit_width = NRF_TIMER_BIT_WIDTH_32;
+
+	err = nrfx_timer_init(&timer, &config, timer_handler);
+	zassert_equal(err, 0, "Unexpected error:%d", err);
+
+	rv = nrfx_gppi_conn_alloc(evt, tsk, &handle);
+	zassert_equal(rv, 0);
+
+	nrfx_gppi_conn_enable(handle);
+
+	return 0;
+}
+
+SYS_INIT(dppi_shared_resources_init, PRE_KERNEL_1, 0);
+#endif /* CONFIG_NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS */
 
 #define FULL_LOAD 100000
 #define SMALL_LOAD 3000
 
 ZTEST(cpu_load, test_cpu_load)
 {
-	int err;
-	uint32_t load;
+	int load;
 
 	if (IS_ENABLED(CONFIG_SOC_NRF9160)) {
 		/* Wait for LF clock stabilization. */
 		k_busy_wait(500000);
 	}
-
-#ifdef DPPI_PRESENT
-	static nrfx_timer_t timer = NRFX_TIMER_INSTANCE(1);
-	uint32_t base_frequency = NRF_TIMER_BASE_FREQUENCY_GET(timer.p_reg);
-	nrfx_timer_config_t config = NRFX_TIMER_DEFAULT_CONFIG(base_frequency);
-	uint8_t ch;
-	uint32_t evt = nrf_power_event_address_get(NRF_POWER,
-						NRF_POWER_EVENT_SLEEPENTER);
-	uint32_t tsk = nrfx_timer_task_address_get(&timer, NRF_TIMER_TASK_COUNT);
-
-	config.frequency = NRFX_MHZ_TO_HZ(1);
-	config.bit_width = NRF_TIMER_BIT_WIDTH_32;
-
-	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
-
-	err = nrfx_timer_init(&timer, &config, timer_handler);
-	zassert_equal(err, NRFX_SUCCESS, "Unexpected error:%d", err);
-
-	err = nrfx_dppi_channel_alloc(&dppi, &ch);
-	zassert_equal(err, NRFX_SUCCESS, "Unexpected error:%d", err);
-
-	nrfx_gppi_channel_endpoints_setup(ch, evt, tsk);
-	nrfx_gppi_channels_enable(BIT(ch));
-
-	if (!IS_ENABLED(CONFIG_NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS)) {
-		err = cpu_load_init();
-		zassert_equal(err, -ENODEV, "Unexpected err:%d", err);
-
-		nrfx_gppi_channels_disable(BIT(ch));
-		nrfx_gppi_event_endpoint_clear(ch, evt);
-		nrfx_gppi_task_endpoint_clear(ch, tsk);
-		err = nrfx_dppi_channel_free(&dppi, ch);
-	}
-#endif
-
-	err = cpu_load_init();
-	zassert_equal(err, 0, "Unexpected err:%d", err);
 
 	/* Busy wait for 10 ms */
 	k_busy_wait(10000);

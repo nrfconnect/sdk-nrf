@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	/* Test requirements:
+	 * P0.00 shorted with P0.03;
+	 * P0.12 shorted with P0.04.
+	 * (NFC pins are P0.03 and P0.04)
+	 */
+	test_gpios {
+		compatible = "gpio-leds";
+		out_gpios: out_gpios {
+			gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>, <&gpio0 12 GPIO_ACTIVE_HIGH>;
+		};
+
+		in_gpios: in_gpios {
+			gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>, <&gpio0 4 GPIO_ACTIVE_HIGH>;
+		};
+	};
+};
+
+&uicr {
+	nfct-pins-as-gpios;
+};
+
+&gpiote20 {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};

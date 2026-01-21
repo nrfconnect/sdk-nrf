@@ -30,25 +30,49 @@ Showing DFU Multi Image package header:
 """
 
 import argparse
-import cbor2
-import struct
 import os
+import struct
 
+import cbor2
 
 # Buffer size used for file reads to ensure large files are not loaded into memory at once
 READ_BUFFER_SIZE = 16 * 1024
 
+def get_aligned_size_and_padding(non_aligned_size: int, align: int, last_image: bool) -> int:
+    # Alignment on last image is not necessary
+    if last_image or align <= 1:
+        return non_aligned_size, 0
 
-def generate_header(image: list) -> bytes:
+    residual = non_aligned_size % align
+    needed_padding = (align - residual) % align
+    return non_aligned_size + needed_padding, needed_padding
+
+
+def generate_header(image: list, align: int) -> bytes:
     """
     Generate DFU Multi Image package header
     """
 
-    image_data = [{'id': int(id), 'size': os.path.getsize(path)} for id, path in image]
+    image_data = []
+    for id, path in image:
+        image_size = os.path.getsize(path)
+        aligned_size, _ = get_aligned_size_and_padding(image_size, align, id == image[-1][0])
+        image_data.append({'id': int(id), 'size': aligned_size})
+
     header_data = {'img': image_data}
     header_cbor = cbor2.dumps(header_data)
+    fixed_header_length = struct.calcsize('<H') # Will resolve to 2
+    header_length_no_padding = fixed_header_length + len(header_cbor)
 
-    return struct.pack('<H', len(header_cbor)) + header_cbor
+    _, padding_length = get_aligned_size_and_padding(header_length_no_padding, align, False)
+    # As the format of the dfu_multi_image is fixed, the CBOR parser inside the dfu_multi_image
+    # library will simply parse the part of the header that matches the expected format and
+    # ignore any additional data.
+    # The header length encoded in the 2 bytes before the CBOR data will account for the padding.
+    # It can be done, as the CBOR parser treats this length as an upper limit, not the exact length.
+    padding_data = bytes([0xff] * padding_length)
+
+    return struct.pack('<H', len(header_cbor) + padding_length) +  header_cbor + padding_data
 
 
 def parse_header(file: object) -> object:
@@ -63,22 +87,24 @@ def parse_header(file: object) -> object:
     return cbor2.loads(header_cbor)
 
 
-def generate_image(images: list, output_file: str) -> None:
+def generate_image(images: list, align: int, output_file: str) -> None:
     """
     Generate DFU Multi Image package
     """
 
     with open(output_file, 'wb') as out_file:
-        out_file.write(generate_header(images))
+        out_file.write(generate_header(images, align))
 
-        for _, path in images:
+        for id, path in images:
+            image_size = os.path.getsize(path)
             with open(path, 'rb') as file:
                 while True:
                     chunk = file.read(READ_BUFFER_SIZE)
                     if not chunk:
                         break
                     out_file.write(chunk)
-
+                _, padding_length = get_aligned_size_and_padding(image_size, align, id == images[-1][0])
+                out_file.write(bytes([0xff] * padding_length))
 
 def show_header(input_file: str) -> None:
     """
@@ -107,6 +133,9 @@ def main():
         required=True, action='append', nargs=2, metavar=('id', 'path'),
         help='Image to be included in package')
     create_parser.add_argument(
+        '--align', type=int, default=1,
+        help='Alignment of the start of every image. Gaps will be filled with 0xFF bytes.')
+    create_parser.add_argument(
         'output_file', help='Path to output package file')
 
     show_parser = subcommands.add_parser(
@@ -117,7 +146,7 @@ def main():
     args = parser.parse_args()
 
     if args.subcommand == 'create':
-        generate_image(args.image, args.output_file)
+        generate_image(args.image, args.align, args.output_file)
     elif args.subcommand == 'show':
         show_header(args.input_file)
     else:

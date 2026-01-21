@@ -76,32 +76,42 @@ After programming the sample to your development kit, test it by performing the 
 1. Run the script :file:`real_time_plot.py` located in the :file:`scripts/nrf_profiler` folder, with the name that is to be used to store the data as argument.
    For example, run the following command to generate a :file:`test_name.csv` and a :file:`test_name.json` file using the *test_name* argument:
 
-   .. parsed-literal::
-      :class: highlight
+   .. code-block:: console
 
-      real_time_plot.py *test_name*
+      python3 real_time_plot.py *test_name*
 
    The script opens a GUI window that displays events as points on timelines, similar to the following:
 
-   .. include:: ../../doc/nrf/libraries/others/nrf_profiler.rst
-      :start-after: nrf_profiler_GUI_start
-      :end-before: nrf_profiler_GUI_end
+   .. figure:: ../../doc/nrf/images/app_event_manager_profiling_sample.png
+      :scale: 50 %
+      :alt: nRF Profiler host tools GUI window
 
-#. Use scroll wheel to zoom into interesting parts on a GUI.
-   See the :ref:`nrf_profiler_backends_custom_visualization` in the Profiler documentation for more information about how to work with the diagram.
+      nRF Profiler host tools GUI window
+
+#. Use the scroll wheel to zoom into interesting parts on a plot.
+   See the :ref:`nrf_profiler_script_visualization_GUI` section in the nRF Profiler host tools documentation for more information about how to navigate in the GUI window.
 #. Click the middle mouse button to highlight an event submission or processing for tracking, and to display the event data as on a figure:
 
    .. figure:: ../../doc/nrf/images/app_event_manager_profiling_sample_zoom.png
       :scale: 50 %
-      :alt: Diagram of GUI output zoomed in
+      :alt: nRF Profiler host tools GUI window zoomed in
 
-      Sample diagram of zoomed-in GUI output
+      nRF Profiler host tools GUI window zoomed in
 
    On this image, the zoom focuses on actions triggered by the fifth one-second event.
    The five-second event triggers 50 burst events.
    One event submission and corresponding processing time is highlighted in green.
 #. Check the results for the generated :file:`test_name.csv` and :file:`test_name.json` files.
-#. See how events are logged with data transmitted by the event.
+   See how events are logged with data transmitted by the event.
+#. Calculate the nRF Profiler event propagation statistics (statistics for time intervals between nRF Profiler events) from the previously collected dataset using the following command:
+
+   .. code-block:: console
+
+      python3 calc_stats.py *test_name* stats_nordic_presets/app_event_manager_profiler_tracer.json
+
+   The :file:`stats_nordic_presets/app_event_manager_profiler_tracer.json` file specifies the nRF Profiler events used for the calculations.
+   The file refers to the events used by the sample.
+   See the :ref:`nrf_profiler_script_calculating_statistics` section in the nRF Profiler host tools documentation for more information.
 
 Dependencies
 ************

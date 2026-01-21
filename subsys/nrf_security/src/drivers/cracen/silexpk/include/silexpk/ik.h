@@ -102,7 +102,7 @@ struct sx_pk_inops_ik_ptmult {
 
 struct sx_pk_config_ik {
 	/** Key Bundle name */
-	uint32_t *key_bundle;
+	const uint32_t *key_bundle;
 
 	/** Key Bundle size in 32 bit words
 	 *
@@ -112,7 +112,7 @@ struct sx_pk_config_ik {
 	int key_bundle_sz;
 
 	/** Device Secret */
-	uint32_t *device_secret;
+	const uint32_t *device_secret;
 
 	/** Device Secret size in 32 bit words
 	 *

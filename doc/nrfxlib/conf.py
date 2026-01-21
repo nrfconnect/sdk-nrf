@@ -7,9 +7,8 @@
 # nrfxlib documentation build configuration file
 
 import os
-from pathlib import Path
 import sys
-
+from pathlib import Path
 
 # Paths ------------------------------------------------------------------------
 
@@ -113,7 +112,7 @@ external_content_contents = [(NRFXLIB_BASE, "**/*.rst"), (NRFXLIB_BASE, "**/doc/
 # -- Options for zephyr.gh_utils -----------------------------------------------
 
 gh_link_version = "main" if version.endswith("99") else f"v{version}"
-gh_link_base_url = f"https://github.com/nrfconnect/sdk-nrfxlib"
+gh_link_base_url = "https://github.com/nrfconnect/sdk-nrfxlib"
 
 
 def setup(app):

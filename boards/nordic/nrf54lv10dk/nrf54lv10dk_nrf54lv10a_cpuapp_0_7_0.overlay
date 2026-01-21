@@ -1,0 +1,7 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "nrf54lv10dk_nrf54lv10a_common_0_7_0.overlay"

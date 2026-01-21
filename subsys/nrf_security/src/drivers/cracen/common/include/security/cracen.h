@@ -16,7 +16,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <nrf.h>
+#include <nrfx.h>
 
 #include <hal/nrf_cracen.h>
 

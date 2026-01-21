@@ -17,11 +17,13 @@
 #include "pwm/pwm_device.h"
 #endif
 
+#include "clusters/identify.h"
+
 #include <app-common/zap-generated/attributes/Accessors.h>
-#include <app/clusters/identify-server/identify-server.h>
+#include <app/persistence/AttributePersistenceProviderInstance.h>
+#include <app/persistence/DefaultAttributePersistenceProvider.h>
+#include <app/persistence/DeferredAttributePersistenceProvider.h>
 #include <app/server/Server.h>
-#include <app/util/persistence/DefaultAttributePersistenceProvider.h>
-#include <app/util/persistence/DeferredAttributePersistenceProvider.h>
 #include <setup_payload/OnboardingCodesUtil.h>
 
 #include <zephyr/logging/log.h>
@@ -37,29 +39,28 @@ namespace
 constexpr EndpointId kLightEndpointId = 1;
 constexpr uint8_t kDefaultMinLevel = 0;
 constexpr uint8_t kDefaultMaxLevel = 254;
-constexpr uint16_t kTriggerEffectTimeout = 5000;
-constexpr uint16_t kTriggerEffectFinishTimeout = 1000;
 
-k_timer sTriggerEffectTimer;
-
-Identify sIdentify = { kLightEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
-		       Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator, AppTask::TriggerIdentifyEffectHandler };
-
-bool sIsTriggerEffectActive = false;
+Nrf::Matter::IdentifyCluster sIdentifyCluster(kLightEndpointId, true, []() {
+	Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false); });
+#if defined(CONFIG_PWM)
+	Nrf::PostTask([] { AppTask::Instance().GetPWMDevice().ApplyLevel(); });
+#endif
+});
 
 #if defined(CONFIG_PWM)
 const struct pwm_dt_spec sLightPwmDevice = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
 #endif
 
-// Define a custom attribute persister which makes actual write of the CurrentLevel attribute value
-// to the non-volatile storage only when it has remained constant for 5 seconds. This is to reduce
-// the flash wearout when the attribute changes frequently as a result of MoveToLevel command.
-// DeferredAttribute object describes a deferred attribute, but also holds a buffer with a value to
-// be written, so it must live so long as the DeferredAttributePersistenceProvider object.
+/* Define a custom attribute persister which makes actual write of the CurrentLevel attribute value
+ * to the non-volatile storage only when it has remained constant for 5 seconds. This is to reduce
+ * the flash wearout when the attribute changes frequently as a result of MoveToLevel command.
+ * DeferredAttribute object describes a deferred attribute, but also holds a buffer with a value to
+ * be written, so it must live so long as the DeferredAttributePersistenceProvider object.
+ */
 DeferredAttribute gCurrentLevelPersister(ConcreteAttributePath(kLightEndpointId, Clusters::LevelControl::Id,
 							       Clusters::LevelControl::Attributes::CurrentLevel::Id));
 
-// Deferred persistence will be auto-initialized as soon as the default persistence is initialized
+/* Deferred persistence will be auto-initialized as soon as the default persistence is initialized */
 DefaultAttributePersistenceProvider gSimpleAttributePersistence;
 DeferredAttributePersistenceProvider gDeferredAttributePersister(gSimpleAttributePersistence,
 								 Span<DeferredAttribute>(&gCurrentLevelPersister, 1),
@@ -67,82 +68,6 @@ DeferredAttributePersistenceProvider gDeferredAttributePersister(gSimpleAttribut
 
 #define APPLICATION_BUTTON_MASK DK_BTN2_MSK
 } /* namespace */
-
-void AppTask::IdentifyStartHandler(Identify *)
-{
-	Nrf::PostTask(
-		[] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms); });
-}
-
-void AppTask::IdentifyStopHandler(Identify *)
-{
-	Nrf::PostTask([] {
-		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
-
-#if defined(CONFIG_PWM)
-		Instance().mPWMDevice.ApplyLevel();
-#endif
-	});
-}
-
-void AppTask::TriggerEffectTimerTimeoutCallback(k_timer *timer)
-{
-	LOG_INF("Identify effect completed");
-
-	sIsTriggerEffectActive = false;
-
-	Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
-
-#if defined(CONFIG_PWM)
-	Instance().mPWMDevice.ApplyLevel();
-#endif
-}
-
-void AppTask::TriggerIdentifyEffectHandler(Identify *identify)
-{
-	switch (identify->mCurrentEffectIdentifier) {
-	/* Just handle all effects in the same way. */
-	case Clusters::Identify::EffectIdentifierEnum::kBlink:
-	case Clusters::Identify::EffectIdentifierEnum::kBreathe:
-	case Clusters::Identify::EffectIdentifierEnum::kOkay:
-	case Clusters::Identify::EffectIdentifierEnum::kChannelChange:
-		LOG_INF("Identify effect identifier changed to %d",
-			static_cast<uint8_t>(identify->mCurrentEffectIdentifier));
-
-		sIsTriggerEffectActive = false;
-
-		k_timer_stop(&sTriggerEffectTimer);
-		k_timer_start(&sTriggerEffectTimer, K_MSEC(kTriggerEffectTimeout), K_NO_WAIT);
-
-#if defined(CONFIG_PWM)
-		Instance().mPWMDevice.SuppressOutput();
-#endif
-		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms);
-
-		break;
-	case Clusters::Identify::EffectIdentifierEnum::kFinishEffect:
-		LOG_INF("Identify effect finish triggered");
-		k_timer_stop(&sTriggerEffectTimer);
-		k_timer_start(&sTriggerEffectTimer, K_MSEC(kTriggerEffectFinishTimeout), K_NO_WAIT);
-		break;
-	case Clusters::Identify::EffectIdentifierEnum::kStopEffect:
-		if (sIsTriggerEffectActive) {
-			sIsTriggerEffectActive = false;
-
-			k_timer_stop(&sTriggerEffectTimer);
-
-			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
-
-#if defined(CONFIG_PWM)
-			Instance().mPWMDevice.ApplyLevel();
-#endif
-		}
-		break;
-	default:
-		LOG_ERR("Received invalid effect identifier.");
-		break;
-	}
-}
 
 void AppTask::LightingActionEventHandler(const LightingEvent &event)
 {
@@ -313,8 +238,7 @@ CHIP_ERROR AppTask::Init()
 	}
 #endif
 
-	/* Initialize trigger effect timer */
-	k_timer_init(&sTriggerEffectTimer, &AppTask::TriggerEffectTimerTimeoutCallback, nullptr);
+	ReturnErrorOnFailure(sIdentifyCluster.Init());
 
 	return Nrf::Matter::StartServer();
 }

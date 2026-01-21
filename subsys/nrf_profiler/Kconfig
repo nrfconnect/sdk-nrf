@@ -5,7 +5,6 @@
 
 menuconfig NRF_PROFILER
 	bool "System nrf_profiler"
-	default n
 
 if NRF_PROFILER
 
@@ -26,7 +25,7 @@ config NRF_PROFILER_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS
 	default 128
 
 config NRF_PROFILER_SHELL
-	bool "Enable shell integration"
+	bool "Shell integration"
 	depends on SHELL
 	default y
 	help
@@ -57,7 +56,6 @@ menu "Nordic nrf_profiler advanced"
 config NRF_PROFILER_NORDIC_START_LOGGING_ON_SYSTEM_START
 	bool "Start logging on system start"
 	depends on NRF_PROFILER_NORDIC
-	default n
 
 config NRF_PROFILER_NORDIC_COMMAND_BUFFER_SIZE
 	int "Command buffer size"

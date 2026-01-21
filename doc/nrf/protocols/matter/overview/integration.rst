@@ -56,12 +56,12 @@ This platform design is suitable for the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns
+   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns, nrf54lm20dk_nrf54lm20a_cpuapp
 
 The design differences between the supported SoCs are the following:
 
 * On the nRF5340, SoC the network core runs both the Bluetooth LE Controller and the 802.15.4 IEEE Radio Driver.
-* On the nRF52840 and nRF54L15 SoCs, all components are located on the application core.
+* On the nRF52840, nRF54L15 and nRF54LM20 SoCs, all components are located on the application core.
 
 .. figure:: ../../thread/overview/images/thread_platform_design_multi.svg
    :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF52, nRF54L)
@@ -84,22 +84,30 @@ This platform design is suitable for the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf7002dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuapp
+   :rows: nrf7002dk_nrf5340_cpuapp, nrf5340dk_nrf5340_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp
 
 For this design, the Wi-Fi driver on the application core communicates with the external nRF7002 Wi-Fi 6 Companion IC over QSPI or SPI:
 
 * For the ``nrf5340dk/nrf5340/cpuapp``, nRF7002 support is added using ``nrf7002ek`` shield connected through SPI.
 * For the ``nrf7002dk/nrf5340/cpuapp``, nRF7002 is connected with the nRF5340 SoC through QSPI.
+* For the ``nrf54lm20dk/nrf54lm20a/cpuapp``, nRF7002 support is added using the ``nrf7002eb2`` shield connected through SPI.
 
 .. figure:: images/matter_platform_design_nRF53_wifi.svg
    :alt: Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF53 with the nRF7002 Wi-Fi 6 Companion IC)
 
    Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF53 with the nRF7002 Wi-Fi 6 Companion IC)
 
+.. figure:: images/matter_platform_design_nRF54lm20_wifi.svg
+   :alt: Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF54LM20 with the nRF7002)
+
+   Multiprotocol Wi-Fi and Bluetooth LE architecture (nRF54LM20 with the nRF7002)
+
 .. _ug_matter_overview_architecture_integration_designs_switchable:
 
 Switchable Matter over Wi-Fi and Matter over Thread
 ===================================================
+
+.. |Third Button| replace:: **Button 3** on the nRF5340 DK or **Button 2** on the nRF54LM20 DK
 
 In this design, the Matter stack, the OpenThread stack, the Wi-Fi stack, and the Bluetooth LE stack run on a single SoC.
 

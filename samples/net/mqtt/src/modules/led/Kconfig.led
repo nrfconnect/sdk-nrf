@@ -4,10 +4,18 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# Hidden symbol to group conditions
+config NRF7002EB2_NRF54L15DK_LED1_CONFLICT
+	bool
+	default y if (SHIELD_NRF7002EB2 || SHIELD_NRF7002EB2_NRF7001 || \
+		SHIELD_NRF7002EB2_NRF7000) && BOARD_NRF54L15DK
+
+
 menuconfig MQTT_SAMPLE_LED
 	bool "LED"
+	depends on !NRF7002EB2_NRF54L15DK_LED1_CONFLICT
 	select LED
-	default y if !BOARD_NATIVE_SIM
+	default y if !BOARD_NATIVE_SIM && !NRF7002EB2_NRF54L15DK_LED1_CONFLICT
 
 if MQTT_SAMPLE_LED
 

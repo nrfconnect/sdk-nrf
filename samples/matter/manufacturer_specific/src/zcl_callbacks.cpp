@@ -80,15 +80,6 @@ void emberAfNordicDevKitClusterInitCallback(EndpointId endpoint)
 	}
 }
 
-bool emberAfBasicInformationClusterGenerateRandomCallback(CommandHandler *commandObj,
-							  const ConcreteCommandPath &commandPath,
-							  const GenerateRandom::DecodableType & /* unused */)
-{
-	AppTask::Instance().UpdateBasicInformationClusterState();
-	commandObj->AddStatus(commandPath, Protocols::InteractionModel::Status::Success);
-	return true;
-}
-
 /** @brief Basic Information Cluster Init
  *
  * This function is called when a specific cluster is initialized. It gives the

@@ -4,6 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup audio_app_bt_stream
+ * @{
+ * @defgroup unicast_client Functions for unicast client functionality.
+ * @{
+ * @brief Helper functions to manage unicast client (gateway side) functionality.
+ */
+
 #ifndef _UNICAST_CLIENT_H_
 #define _UNICAST_CLIENT_H_
 
@@ -12,6 +20,9 @@
 #include <zephyr/bluetooth/audio/audio.h>
 #include <audio_defines.h>
 
+/**
+ * @brief Unicast discovery direction enumeration.
+ */
 enum unicast_discover_dir {
 	UNICAST_SERVER_SINK = BT_AUDIO_DIR_SINK,
 	UNICAST_SERVER_SOURCE = BT_AUDIO_DIR_SOURCE,
@@ -59,15 +70,24 @@ enum unicast_discover_dir {
 /**
  * @brief	Get configuration for the audio stream.
  *
- * @param[in]	conn			Pointer to the connection to get the configuration for.
- * @param[in]	dir			Direction to get the configuration from.
+ * @param[in]	stream			Pointer to the stream to get the configuration for.
  * @param[out]	bitrate			Pointer to the bit rate used; can be NULL.
  * @param[out]	sampling_rate_hz	Pointer to the sampling rate used; can be NULL.
  *
  * @return	0 for success, error otherwise.
  */
-int unicast_client_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint32_t *bitrate,
+int unicast_client_config_get(struct bt_bap_stream *stream, uint32_t *bitrate,
 			      uint32_t *sampling_rate_hz);
+
+/**
+ * @brief	Get the current audio locations used by the unicast client.
+ *
+ * @param[out]	locations	Pointer to store the audio locations bitmask.
+ * @param[in]	dir		Direction of the streams in question.
+ *
+ * @return	0 for success, error otherwise.
+ */
+int unicast_client_locations_get(uint32_t *locations, enum bt_audio_dir dir);
 
 /**
  * @brief	Start service discovery for a Bluetooth LE Audio unicast (CIS) server.
@@ -138,5 +158,10 @@ int unicast_client_disable(uint8_t cig_index);
  * @return	0 for success, error otherwise.
  */
 int unicast_client_enable(uint8_t cig_index, le_audio_receive_cb recv_cb);
+
+/**
+ * @}
+ * @}
+ */
 
 #endif /* _UNICAST_CLIENT_H_ */

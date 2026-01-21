@@ -1,0 +1,8 @@
+tests:
+  nrf.extended.drivers.clock.nrf_clock_control:
+    tags:
+      - drivers
+      - clock_control
+      - ci_tests_zephyr_drivers_clock_control
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp

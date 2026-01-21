@@ -8,6 +8,10 @@ on:
       - main
       - 'v*-branch'
 
+permissions:
+  contents: read
+  packages: write
+
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository }}-toolchain
 
@@ -26,8 +30,8 @@ jobs:
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
         with:
           registry: ghcr.io
-          username: NordicBuilder
-          password: ${{ secrets.NCS_GITHUB_PKG_WRITE_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check if Docker image exists
         id: check-image

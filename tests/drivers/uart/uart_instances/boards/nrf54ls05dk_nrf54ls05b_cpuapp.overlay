@@ -1,0 +1,61 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&pinctrl {
+	/* Use default configuration for uart20 */
+
+	uart21_default_test: uart21_default_test {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 1, 5)>,
+				<NRF_PSEL(UART_RX, 1, 21)>;
+				bias-pull-up;
+		};
+	};
+
+	uart21_sleep_test: uart21_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 1, 5)>,
+				<NRF_PSEL(UART_RX, 1, 21)>;
+			low-power-enable;
+		};
+	};
+
+	uart22_default_test: uart22_default_test {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 1, 4)>,
+				<NRF_PSEL(UART_RX, 1, 20)>;
+				bias-pull-up;
+		};
+	};
+
+	uart22_sleep_test: uart22_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 1, 4)>,
+				<NRF_PSEL(UART_RX, 1, 20)>;
+			low-power-enable;
+		};
+	};
+};
+
+&uart20 {
+	status = "okay";
+};
+
+&uart21 {
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart21_default_test>;
+	pinctrl-1 = <&uart21_sleep_test>;
+	pinctrl-names = "default", "sleep";
+};
+
+&uart22 {
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart22_default_test>;
+	pinctrl-1 = <&uart22_sleep_test>;
+	pinctrl-names = "default", "sleep";
+};

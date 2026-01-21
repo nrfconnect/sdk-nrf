@@ -75,6 +75,8 @@ enum {
 	DECT_SHELL_PERF_SUBSLOT_GAP_COUNT,
 	DECT_SHELL_PERF_TX_PWR,
 	DECT_SHELL_PERF_TX_MCS,
+	DECT_SHELL_PERF_TX_LBT_PERIOD,
+	DECT_SHELL_PERF_TX_LBT_RSSI_BUSY_THRESHOLD,
 	DECT_SHELL_PERF_DEST_SERVER_TX_ID,
 	DECT_SHELL_PERF_HARQ_MDM_PROCESS_COUNT,
 	DECT_SHELL_PERF_HARQ_MDM_EXPIRY_TIME,
@@ -107,6 +109,11 @@ static const char dect_phy_perf_cmd_usage_str[] =
 	"                                 \"dect status\" -command output.\n"
 	"                                 Default: from common tx settings.\n"
 	"      --c_tx_mcs <int>,          Set client TX MCS. Default: from common tx settings.\n"
+	"      --c_tx_lbt_period <cnt>,   Listen Before Talk (LBT) period (symbol count).\n"
+	"                                 Zero value disables LBT (default).\n"
+	"                                 Valid range for symbol count: 2-110.\n"
+	"      --c_tx_lbt_busy_th <dbm>,  LBT busy RSSI threshold (dBm). Valid only when LBT\n"
+	"                                 is enabled. Default from RSSI busy threshold setting.\n"
 	"  -d, --debug,                   Print CRC errors. Note: might impact on actual\n"
 	"                                 perf & timings.\n"
 	"For HARQ only:\n"
@@ -177,6 +184,8 @@ static struct option long_options_perf[] = {
 	 DECT_SHELL_PERF_HARQ_MDM_EXPIRY_TIME},
 	{"c_tx_pwr", required_argument, 0, DECT_SHELL_PERF_TX_PWR},
 	{"c_tx_mcs", required_argument, 0, DECT_SHELL_PERF_TX_MCS},
+	{"c_tx_lbt_period", required_argument, 0, DECT_SHELL_PERF_TX_LBT_PERIOD },
+	{"c_tx_lbt_busy_th", required_argument, 0, DECT_SHELL_PERF_TX_LBT_RSSI_BUSY_THRESHOLD },
 	{0, 0, 0, 0}};
 
 static int dect_phy_perf_cmd(const struct shell *shell, size_t argc, char **argv)
@@ -205,6 +214,8 @@ static int dect_phy_perf_cmd(const struct shell *shell, size_t argc, char **argv
 	params.duration_secs = 5;
 	params.tx_power_dbm = current_settings->tx.power_dbm;
 	params.tx_mcs = current_settings->tx.mcs;
+	params.tx_lbt_period_symbols = 0;
+	params.tx_lbt_rssi_busy_threshold_dbm = current_settings->rssi_scan.busy_threshold;
 	params.role = DECT_PHY_COMMON_ROLE_NONE;
 	params.channel = 1665;
 	params.slot_count = 2;
@@ -257,6 +268,31 @@ static int dect_phy_perf_cmd(const struct shell *shell, size_t argc, char **argv
 		}
 		case DECT_SHELL_PERF_TX_PWR: {
 			params.tx_power_dbm = atoi(optarg);
+			break;
+		}
+		case DECT_SHELL_PERF_TX_LBT_PERIOD: {
+			temp = atoi(optarg);
+			if (temp < DECT_PHY_LBT_PERIOD_MIN_SYM ||
+				temp > DECT_PHY_LBT_PERIOD_MAX_SYM) {
+				desh_error("Invalid LBT period %d (range: [%d,%d])",
+					   temp,
+					   DECT_PHY_LBT_PERIOD_MIN_SYM,
+					   DECT_PHY_LBT_PERIOD_MAX_SYM);
+				goto show_usage;
+			}
+			params.tx_lbt_period_symbols = temp;
+			break;
+		}
+		case DECT_SHELL_PERF_TX_LBT_RSSI_BUSY_THRESHOLD: {
+			temp = atoi(optarg);
+			if (temp >= 0 ||
+			    temp < INT8_MIN) {
+				desh_error("Invalid LBT RSSI busy threshold %d (range: [%d,-1])",
+					   temp,
+					   INT8_MIN);
+				goto show_usage;
+			}
+			params.tx_lbt_rssi_busy_threshold_dbm = temp;
 			break;
 		}
 		case DECT_SHELL_PERF_TX_MCS: {
@@ -352,6 +388,8 @@ static int dect_phy_perf_cmd(const struct shell *shell, size_t argc, char **argv
 		params.slot_gap_count_in_mdm_ticks =
 			DECT_RADIO_SLOT_DURATION_IN_MODEM_TICKS * params.slot_gap_count;
 	}
+	params.slot_gap_count_in_mdm_ticks +=
+		(params.tx_lbt_period_symbols * NRF_MODEM_DECT_SYMBOL_DURATION);
 
 	ret = dect_phy_ctrl_perf_cmd(&params);
 	if (ret) {
@@ -375,12 +413,15 @@ enum {
 	DECT_SHELL_CERT_TEST_MODE_CONTINUOUS,
 	DECT_SHELL_CERT_RF_MODE_PEER,
 	DECT_SHELL_CERT_TX_MCS,
+	DECT_SHELL_CERT_TX_LBT_PERIOD,
+	DECT_SHELL_CERT_TX_LBT_RSSI_BUSY_THRESHOLD,
 	DECT_SHELL_CERT_RX_FRAME_START_OFFSET_SUBSLOTS,
 	DECT_SHELL_CERT_RX_SUBSLOT_COUNT,
 	DECT_SHELL_CERT_RX_POST_IDLE_SUBSLOT_COUNT,
 	DECT_SHELL_CERT_TX_FRAME_START_OFFSET_SUBSLOTS,
 	DECT_SHELL_CERT_TX_SUBSLOT_COUNT,
 	DECT_SHELL_CERT_TX_POST_IDLE_SUBSLOT_COUNT,
+	DECT_SHELL_CERT_RX_SHOW_MIN_MAX_VALUES,
 };
 
 static const char dect_phy_rf_tool_cmd_usage_str[] =
@@ -393,7 +434,11 @@ static const char dect_phy_rf_tool_cmd_usage_str[] =
 	"                                     Default: \"rx_cont\".\n"
 	"                                     Note: As a default, RF mode \"rx_cont\" is\n"
 	"                                     reporting the results only when\n"
-	"                                     \"dect rf_tool stop\" is given.\n"
+	"                                     \"dect rf_tool stop\" is given, and when max RX\n"
+	"                                     duration is reached and RX is restarted.\n"
+	"                                     Note: use --continuous option to enable continuous\n"
+	"                                     mode, i.e. to continue over default\n"
+	"                                     frame_repeat_count_intervals.\n"
 	"      --rf_mode_peer,                RF operation mode of the TX side peer,\n"
 	"                                     can be one of the following: \"tx\", \"rx_tx\".\n"
 	"                                     Only meaningful if rf_mode is set to \"rx_cont\".\n"
@@ -411,12 +456,19 @@ static const char dect_phy_rf_tool_cmd_usage_str[] =
 	"                                     band #9 1703-1711, band #22 1691-1711.\n"
 	"  -e  --rx_exp_rssi_level <int>,     Set expected RSSI level on RX (dBm).\n"
 	"                                     Default: from common rx settings.\n"
+	"      --rx_show_min_max_values,      Show min/max RX RSSI/SNR values in results.\n"
+	"                                     Default: disabled (only average shown).\n"
 	"  -p  --tx_pwr <int>,                TX power (dBm),\n"
 	"                                     [-40,-30,-20,-16,-12,-8,-4,0,4,7,10,13,16,19,21,23]\n"
 	"                                     See supported max for the used band by using\n"
 	"                                     \"dect status\" -command output.\n"
 	"                                     Default: from common tx settings.\n"
 	"      --tx_mcs <int>,                Set TX MCS. Default: from common tx settings.\n"
+	"      --tx_lbt_period <cnt>,         Listen Before Talk (LBT) period (symbol count).\n"
+	"                                     Zero value disables LBT (default).\n"
+	"                                     Valid range for symbol count: 2-110.\n"
+	"      --tx_lbt_busy_th <dbm>,        LBT busy RSSI threshold (dBm). Valid only when LBT\n"
+	"                                     is enabled. Default from RSSI busy threshold setting.\n"
 	"Frame structure:\n"
 	"rx_frame_start_offset + rx_subslot_count + rx_idle_subslot_count +\n"
 	"tx_frame_start_offset + tx_subslot_count + tx_idle_subslot_count\n"
@@ -439,7 +491,6 @@ static const char dect_phy_rf_tool_cmd_usage_str[] =
 	"      --continuous,                  Enable continuous mode, can be stopped by using:\n"
 	"                                     \"dect rf_tool stop\".\n"
 	"                                     Default: disabled.\n"
-	"                                     i.e. only configured frame_repeat_count/interval.\n"
 	"      --rx_frame_start_offset <int>, Subslot count before RX operation\n"
 	"                                     calculated from a start of a frame.\n"
 	"                                     Default: 0 (=starting from the start of a frame).\n"
@@ -474,6 +525,8 @@ static struct option long_options_cert[] = {
 	{"rx_find_sync", no_argument, 0, 's'},
 	{"tx_pwr", required_argument, 0, 'p'},
 	{"tx_mcs", required_argument, 0, DECT_SHELL_CERT_TX_MCS},
+	{"tx_lbt_period", required_argument, 0, DECT_SHELL_CERT_TX_LBT_PERIOD },
+	{"tx_lbt_busy_th", required_argument, 0, DECT_SHELL_CERT_TX_LBT_RSSI_BUSY_THRESHOLD },
 	{"frame_repeat_count", required_argument, 0, DECT_SHELL_CERT_FRAME_REPEAT_COUNT},
 	{"frame_repeat_count_intervals", required_argument, 0,
 	 DECT_SHELL_CERT_FRAME_REPEAT_COUNT_INTERVALS},
@@ -486,6 +539,7 @@ static struct option long_options_cert[] = {
 	 DECT_SHELL_CERT_TX_FRAME_START_OFFSET_SUBSLOTS},
 	{"tx_subslot_count", required_argument, 0, DECT_SHELL_CERT_TX_SUBSLOT_COUNT},
 	{"tx_idle_subslot_count", required_argument, 0, DECT_SHELL_CERT_TX_POST_IDLE_SUBSLOT_COUNT},
+	{"rx_show_min_max_values", no_argument, 0, DECT_SHELL_CERT_RX_SHOW_MIN_MAX_VALUES},
 	{0, 0, 0, 0}};
 
 static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **argv)
@@ -496,6 +550,7 @@ static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **a
 	int opt;
 	bool tx_starttime_set = false;
 	bool peer_mode_set = false;
+	int tmp_value;
 
 	if (argc == 0) {
 		goto show_usage;
@@ -518,6 +573,9 @@ static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **a
 	params.channel = 1665;
 	params.tx_power_dbm = current_settings->tx.power_dbm;
 	params.tx_mcs = current_settings->tx.mcs;
+	params.tx_lbt_period_symbols = 0;
+	params.tx_lbt_rssi_busy_threshold_dbm = current_settings->rssi_scan.busy_threshold;
+
 	params.expected_rx_rssi_level = current_settings->rx.expected_rssi_level;
 	params.find_rx_sync = false;
 	params.continuous = false;
@@ -532,6 +590,7 @@ static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **a
 				       params.rx_post_idle_subslot_count;
 	params.tx_subslot_count = 4;
 	params.tx_post_idle_subslot_count = 6;
+	params.rx_show_min_max_values = false;
 
 	while ((opt = getopt_long(argc, argv, "m:t:c:e:p:sh", long_options_cert, &long_index)) !=
 	       -1) {
@@ -593,13 +652,40 @@ static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **a
 			params.tx_mcs = atoi(optarg);
 			break;
 		}
+		case DECT_SHELL_CERT_TX_LBT_PERIOD: {
+			tmp_value = atoi(optarg);
+			if (tmp_value < DECT_PHY_LBT_PERIOD_MIN_SYM ||
+				tmp_value > DECT_PHY_LBT_PERIOD_MAX_SYM) {
+				desh_error("Invalid LBT period %d (range: [%d,%d])",
+					   tmp_value,
+					   DECT_PHY_LBT_PERIOD_MIN_SYM,
+					   DECT_PHY_LBT_PERIOD_MAX_SYM);
+				goto show_usage;
+			}
+			params.tx_lbt_period_symbols = tmp_value;
+			break;
+		}
+		case DECT_SHELL_CERT_TX_LBT_RSSI_BUSY_THRESHOLD: {
+			tmp_value = atoi(optarg);
+			if (tmp_value >= 0 ||
+			    tmp_value < INT8_MIN) {
+				desh_error("Invalid LBT RSSI busy threshold %d (range: [%d,-1])",
+					   tmp_value,
+					   INT8_MIN);
+				goto show_usage;
+			}
+			params.tx_lbt_rssi_busy_threshold_dbm = tmp_value;
+			break;
+		}
 		case DECT_SHELL_CERT_FRAME_REPEAT_COUNT: {
 			ret = atoi(optarg);
 			if (ret <= 0) {
 				desh_error("Give decent value (> 0)");
 				goto show_usage;
-			} else if (ret > 50) {
-				desh_warn("Too high frame_repeat_count might cause issues.");
+			} else if (ret > DECT_PHY_RF_TOOL_FRAME_REPEAT_COUNT_MAX) {
+				desh_error("frame_repeat_count (%d) exceeds maximum (%d)",
+					   ret, DECT_PHY_RF_TOOL_FRAME_REPEAT_COUNT_MAX);
+				goto show_usage;
 			}
 			params.frame_repeat_count = ret;
 			break;
@@ -666,6 +752,10 @@ static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **a
 				goto show_usage;
 			}
 			params.tx_post_idle_subslot_count = ret;
+			break;
+		}
+		case DECT_SHELL_CERT_RX_SHOW_MIN_MAX_VALUES: {
+			params.rx_show_min_max_values = true;
 			break;
 		}
 		case 'h':
@@ -1510,6 +1600,16 @@ enum {
 	DECT_SHELL_SETT_COMMON_RX_EXP_RSSI_LEVEL,
 	DECT_SHELL_SETT_COMMON_TX_PWR,
 	DECT_SHELL_SETT_COMMON_TX_MCS,
+	DECT_SHELL_SETT_CERT_TX_CW_CTRL_ON,
+	DECT_SHELL_SETT_CERT_TX_CW_CTRL_OFF,
+	DECT_SHELL_SETT_CERT_TX_CW_CTRL_CHANNEL,
+	DECT_SHELL_SETT_CERT_TX_CW_CTRL_PWR_DBM,
+	DECT_SHELL_SETT_CERT_TX_STF_COVER_SEQ_ON,
+	DECT_SHELL_SETT_CERT_TX_STF_COVER_SEQ_OFF,
+	DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_ON,
+	DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_OFF,
+	DECT_SHELL_SETT_CERT_NW_ID_VALIDATION_ON,
+	DECT_SHELL_SETT_CERT_NW_ID_VALIDATION_OFF,
 	DECT_SHELL_SETT_RESET_ALL,
 };
 
@@ -1579,7 +1679,23 @@ static const char dect_phy_sett_cmd_usage_str[] =
 	"                                                    starting a TX for providing\n"
 	"                                                    HARQ feedback if requested by\n"
 	"                                                    client.\n"
-	"                                                    Default: 4 (subslots).\n";
+	"                                                    Default: 4 (subslots).\n"
+	"Following only for certification purposes - set to modem after a bootup:\n"
+	"      Note: changing all of these requires a reboot.\n"
+	"      --tx_cw_ctrl_on                Enable Continuous Wave (CW) TX.\n"
+	"      --tx_cw_ctrl_off               Disable Continuous Wave (CW) TX. Default.\n"
+	"      --tx_cw_ctrl_channel <int>,    Channel/carrier for the CW TX.\n"
+	"                                     Default: 1665.\n"
+	"      --tx_cw_ctrl_pwr_dbm <int>,    TX power for CW TX.\n"
+	"                                     Default: as with --tx_pwr.\n"
+	"       --tx_stf_cover_seq_on,        Enable STF cover sequence on TX. Default.\n"
+	"       --tx_stf_cover_seq_off,       Disable STF cover sequence on TX.\n"
+	"       --rx_stf_cover_seq_on,        Enable STF cover sequence on RX. Default.\n"
+	"       --rx_stf_cover_seq_off,       Disable STF cover sequence on RX.\n"
+	"       --nw_id_valid_on,             Default. Network id validation enabled.\n"
+	"       --nw_id_valid_off,            Allow network id without validation.\n"
+	"                                     Might be needed for RX op to match tester vectors.\n";
+
 
 /* Specifying the expected options (both long and short): */
 static struct option long_options_settings[] = {
@@ -1608,6 +1724,17 @@ static struct option long_options_settings[] = {
 	 DECT_SHELL_SETT_COMMON_RSSI_SCAN_BUSY_THRESHOLD},
 	{"rssi_scan_suitable_percent", required_argument, 0,
 	 DECT_SHELL_SETT_COMMON_RSSI_SCAN_SUITABLE_PERCENT},
+	{"tx_cw_ctrl_on", no_argument, 0, DECT_SHELL_SETT_CERT_TX_CW_CTRL_ON},
+	{"tx_cw_ctrl_off", no_argument, 0, DECT_SHELL_SETT_CERT_TX_CW_CTRL_OFF},
+	{"tx_cw_ctrl_channel", required_argument, 0, DECT_SHELL_SETT_CERT_TX_CW_CTRL_CHANNEL},
+	{"tx_cw_ctrl_pwr_dbm", required_argument, 0, DECT_SHELL_SETT_CERT_TX_CW_CTRL_PWR_DBM},
+	{"tx_stf_cover_seq_on", no_argument, 0, DECT_SHELL_SETT_CERT_TX_STF_COVER_SEQ_ON},
+	{"tx_stf_cover_seq_off", no_argument, 0, DECT_SHELL_SETT_CERT_TX_STF_COVER_SEQ_OFF},
+	{"rx_stf_cover_seq_on", no_argument, 0, DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_ON},
+	{"rx_stf_cover_seq_off", no_argument, 0, DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_OFF},
+	{"nw_id_valid_on", no_argument, 0, DECT_SHELL_SETT_CERT_NW_ID_VALIDATION_ON},
+	{"nw_id_valid_off", no_argument, 0, DECT_SHELL_SETT_CERT_NW_ID_VALIDATION_OFF},
+	{"help", no_argument, 0, 'h'},
 	{"reset", no_argument, 0, DECT_SHELL_SETT_RESET_ALL},
 	{"read", no_argument, 0, 'r'},
 	{0, 0, 0, 0}};
@@ -1664,6 +1791,22 @@ static void dect_phy_sett_cmd_print(struct dect_phy_settings *dect_sett)
 		   dect_sett->harq.harq_feedback_rx_subslot_count);
 	desh_print("  HARQ feedback TX delay (subslots)........................%d",
 		   dect_sett->harq.harq_feedback_tx_delay_subslot_count);
+	desh_print("Certification settings:");
+	if (dect_sett->cert.tx_cw_ctrl_on) {
+		desh_print("  Continuous Wave (CW) TX..................................Enabled");
+		desh_print("  CW TX channel/carrier....................................%d",
+			   dect_sett->cert.tx_cw_ctrl_channel);
+		desh_print("  CW TX power (dBm)........................................%d",
+			   dect_sett->cert.tx_cw_ctrl_pwr_dbm);
+	} else {
+		desh_print("  Continuous Wave (CW) TX..................................Disabled");
+	}
+	desh_print("  STF cover sequence on TX.................................%s",
+		   dect_sett->cert.tx_stf_cover_seq_on ? "Enabled" : "Disabled");
+	desh_print("  STF cover sequence on RX.................................%s",
+		   dect_sett->cert.rx_stf_cover_seq_on ? "Enabled" : "Disabled");
+	desh_print("  Network id validation....................................%s",
+		   dect_sett->cert.network_id_validation_on ? "Enabled" : "Disabled");
 }
 
 static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv)
@@ -1695,7 +1838,8 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 		}
 		case 'n': {
 			tmp_value = shell_strtoul(optarg, 10, &ret);
-			if (ret || !dect_common_utils_32bit_network_id_validate(tmp_value)) {
+			if (ret || (current_settings.cert.network_id_validation_on &&
+				    !dect_common_utils_32bit_network_id_validate(tmp_value))) {
 				desh_error("%u (0x%08x) is not a valid network id.\n"
 					   "The network ID shall be set to a value where neither\n"
 					   "the 8 LSB bits are 0x00 nor the 24 MSB bits "
@@ -1830,6 +1974,70 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 			}
 			newsettings.rssi_scan.type_subslots_params.scan_suitable_percent =
 				tmp_value;
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_TX_CW_CTRL_ON: {
+			newsettings.cert.tx_cw_ctrl_on = true;
+			desh_warn("Continuous Wave (CW) TX enabled. "
+				   "This is for certification purposes only, "
+				   "not for normal operation and no other operations can be done."
+				   "Requires a reboot to have an impact.");
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_TX_CW_CTRL_OFF: {
+			newsettings.cert.tx_cw_ctrl_on = false;
+			desh_warn("Continuous Wave (CW) TX disabled. "
+				  "Requires a reboot to have an impact.");
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_TX_CW_CTRL_CHANNEL: {
+			newsettings.cert.tx_cw_ctrl_channel = atoi(optarg);
+			if (!dect_common_utils_channel_is_supported(
+				    newsettings.common.band_nbr,
+				    newsettings.cert.tx_cw_ctrl_channel, false)) {
+				desh_error("Channel %d is not supported on set band #%d.\n",
+					   newsettings.cert.tx_cw_ctrl_channel,
+					   newsettings.common.band_nbr);
+				return -1;
+			}
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_TX_CW_CTRL_PWR_DBM: {
+			newsettings.cert.tx_cw_ctrl_pwr_dbm = atoi(optarg);
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_TX_STF_COVER_SEQ_ON: {
+			newsettings.cert.tx_stf_cover_seq_on = true;
+			desh_warn("STF cover sequence on TX enabled. "
+				  "Requires a reboot to have an impact.");
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_TX_STF_COVER_SEQ_OFF: {
+			newsettings.cert.tx_stf_cover_seq_on = false;
+			desh_warn("STF cover sequence on TX disabled. "
+				  "Requires a reboot to have an impact.");
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_ON: {
+			newsettings.cert.rx_stf_cover_seq_on = true;
+			desh_warn("STF cover sequence on RX enabled. "
+				  "Requires a reboot to have an impact.");
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_OFF: {
+			newsettings.cert.rx_stf_cover_seq_on = false;
+			desh_warn("STF cover sequence on RX disabled. "
+				  "Requires a reboot to have an impact.");
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_NW_ID_VALIDATION_ON: {
+			newsettings.cert.network_id_validation_on = true;
+			desh_print("Network id validation enabled.");
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_NW_ID_VALIDATION_OFF: {
+			newsettings.cert.network_id_validation_on = false;
+			desh_warn("Network id validation disabled.");
 			break;
 		}
 		case DECT_SHELL_SETT_RESET_ALL: {

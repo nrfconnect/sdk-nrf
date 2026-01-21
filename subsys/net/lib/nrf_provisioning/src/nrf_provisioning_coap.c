@@ -61,12 +61,12 @@ static bool socket_keep_open;
 
 static K_SEM_DEFINE(coap_response, 0, 1);
 
-int nrf_provisioning_coap_init(struct nrf_provisioning_mm_change *mmode)
+int nrf_provisioning_coap_init(nrf_provisioning_event_cb_t callback)
 {
 	static bool initialized;
 	int ret;
 
-	nrf_provisioning_codec_init(mmode);
+	nrf_provisioning_codec_init(callback);
 
 	if (initialized) {
 		return 0;
@@ -348,7 +348,8 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 	}
 
 	if (ret == 0) {
-		return k_sem_take(&coap_response, K_SECONDS(240));
+		return k_sem_take(&coap_response,
+				  K_SECONDS(CONFIG_NRF_PROVISIONING_COAP_TIMEOUT_SECONDS));
 	}
 
 	return ret;
@@ -435,16 +436,16 @@ static int response_code_to_error(int code)
 {
 	switch (code) {
 	case COAP_RESPONSE_CODE_UNAUTHORIZED:
-		LOG_ERR("Device didn't send auth credentials");
+		LOG_ERR("Device not authorized");
 		return -EACCES;
 	case COAP_RESPONSE_CODE_FORBIDDEN:
 		LOG_ERR("Device provided wrong auth credentials");
-		return -EACCES;
+		return -EPERM;
 	case COAP_RESPONSE_CODE_BAD_REQUEST:
 		LOG_ERR("Bad request");
 		return -EINVAL;
 	case COAP_RESPONSE_CODE_NOT_ACCEPTABLE:
-		LOG_ERR("Not acceptable");
+		LOG_ERR("Invalid Accept Headers");
 		return -EINVAL;
 	case COAP_RESPONSE_CODE_NOT_FOUND:
 		LOG_ERR("Resource not found");
@@ -622,8 +623,8 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 
 		if (coap_ctx->code == COAP_RESPONSE_CODE_CONTENT) {
 			if (!coap_ctx->response_len) {
-				LOG_INF("No more commands to process on server side");
-				ret = 0;
+				LOG_INF("No commands to process on server side");
+				ret = -ENODATA;
 				break;
 			}
 			nrf_provisioning_codec_setup(&cdc_ctx, tx_buf.at, sizeof(tx_buf));
@@ -672,7 +673,6 @@ retry_response:
 					goto retry_response;
 				}
 				LOG_ERR("Failed to send response, ret %d", ret);
-
 				break;
 			}
 			/* Provisioning finished */

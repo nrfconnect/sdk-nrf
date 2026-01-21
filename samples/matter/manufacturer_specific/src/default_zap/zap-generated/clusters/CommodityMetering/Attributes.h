@@ -93,15 +93,15 @@ namespace app
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
 				} // namespace MeteredQuantityTimestamp
-				namespace MeasurementType
+				namespace TariffUnit
 				{
 					struct TypeInfo {
 						using Type = chip::app::DataModel::Nullable<
-							chip::app::Clusters::CommodityMetering::MeasurementTypeEnum>;
+							chip::app::Clusters::Globals::TariffUnitEnum>;
 						using DecodableType = chip::app::DataModel::Nullable<
-							chip::app::Clusters::CommodityMetering::MeasurementTypeEnum>;
+							chip::app::Clusters::Globals::TariffUnitEnum>;
 						using DecodableArgType = const chip::app::DataModel::Nullable<
-							chip::app::Clusters::CommodityMetering::MeasurementTypeEnum> &;
+							chip::app::Clusters::Globals::TariffUnitEnum> &;
 
 						static constexpr ClusterId GetClusterId()
 						{
@@ -109,11 +109,30 @@ namespace app
 						}
 						static constexpr AttributeId GetAttributeId()
 						{
-							return Attributes::MeasurementType::Id;
+							return Attributes::TariffUnit::Id;
 						}
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
-				} // namespace MeasurementType
+				} // namespace TariffUnit
+				namespace MaximumMeteredQuantities
+				{
+					struct TypeInfo {
+						using Type = chip::app::DataModel::Nullable<uint16_t>;
+						using DecodableType = chip::app::DataModel::Nullable<uint16_t>;
+						using DecodableArgType =
+							const chip::app::DataModel::Nullable<uint16_t> &;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::CommodityMetering::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::MaximumMeteredQuantities::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace MaximumMeteredQuantities
 				namespace GeneratedCommandList
 				{
 					struct TypeInfo
@@ -177,7 +196,9 @@ namespace app
 						Attributes::MeteredQuantity::TypeInfo::DecodableType meteredQuantity;
 						Attributes::MeteredQuantityTimestamp::TypeInfo::DecodableType
 							meteredQuantityTimestamp;
-						Attributes::MeasurementType::TypeInfo::DecodableType measurementType;
+						Attributes::TariffUnit::TypeInfo::DecodableType tariffUnit;
+						Attributes::MaximumMeteredQuantities::TypeInfo::DecodableType
+							maximumMeteredQuantities;
 						Attributes::GeneratedCommandList::TypeInfo::DecodableType
 							generatedCommandList;
 						Attributes::AcceptedCommandList::TypeInfo::DecodableType

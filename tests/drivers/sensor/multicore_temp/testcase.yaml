@@ -5,6 +5,7 @@ common:
     - sensors
     - ci_tests_drivers_sensor
   filter: dt_nodelabel_enabled("temp_sensor")
+  timeout: 20
 
 tests:
   drivers.sensor.multicore_temp.nrf54h20dk_cpuapp_cpurad:

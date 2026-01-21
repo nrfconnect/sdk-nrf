@@ -10,12 +10,12 @@ endif()
 
 zephyr_library_named(cjson)
 zephyr_include_directories(
-	${ZEPHYR_CJSON_MODULE_DIR}
-	include
+  ${ZEPHYR_CJSON_MODULE_DIR}
+  include
 )
 
 zephyr_library_sources(
-	${ZEPHYR_CJSON_MODULE_DIR}/cJSON.c
-	${ZEPHYR_CJSON_MODULE_DIR}/cJSON_Utils.c
-	os/cJSON_os.c
+  ${ZEPHYR_CJSON_MODULE_DIR}/cJSON.c
+  ${ZEPHYR_CJSON_MODULE_DIR}/cJSON_Utils.c
+  os/cJSON_os.c
 )

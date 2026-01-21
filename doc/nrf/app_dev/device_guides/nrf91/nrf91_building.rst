@@ -52,8 +52,8 @@ To perform a FOTA update, complete the following steps:
    In its default configuration, the DFU target library is set to support all the types of FOTA updates except full modem firmware updates, but you can freely enable or disable the support for specific targets.
    In addition, the following requirements apply:
 
-   * To upgrade the application, you must use :doc:`mcuboot:index-ncs` as the upgradable bootloader (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` must be enabled).
-   * If you want to upgrade the upgradable bootloader, you must use the :ref:`bootloader` (:kconfig:option:`CONFIG_SECURE_BOOT` must be enabled).
+   * To upgrade the application, use :doc:`mcuboot:index-ncs` as the upgradable bootloader (:kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` must be enabled).
+   * If you want to upgrade the upgradable bootloader, use the :ref:`bootloader` (:kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` must be enabled).
    * If you want to update the modem firmware through modem delta updates, you do not need to use MCUboot or the immutable bootloader, because the modem firmware update is handled by the modem itself.
    * If you want to perform a full modem firmware update, an |external_flash_size| is required.
 
@@ -63,10 +63,10 @@ To perform a FOTA update, complete the following steps:
       This step does not apply for updates of the modem firmware.
       You can download delta patches and full binaries of the modem firmware from the `nRF9151 product website (compatible downloads)`_, `nRF9161 product website (compatible downloads)`_, or `nRF9160 product website (compatible downloads)`_, depending on the SiP you are using.
 
-   |fota_upgrades_building|
-   The :file:`app_update.bin` file must be uploaded to the server.
+   To create a binary file for an application update, build the application with the :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` option enabled.
+   The :file:`build/<app_name>/zephyr/zephyr.signed.bin` file must be uploaded to the server.
 
-   To create binary files for a bootloader upgrade, make sure that the Kconfig options :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BUILD_S1_VARIANT` are enabled and build MCUboot as usual.
+   To create binary files for a bootloader upgrade, select the :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` Kconfig option in the sysbuild configuration and build MCUboot as usual.
    The build will create a binary file for each variant of the upgradable bootloader, one for each bootloader slot.
    See :ref:`upgradable_bootloader` for more information.
 

@@ -6,6 +6,7 @@
 config NFC_PLATFORM
 	bool "Common NFC configuration"
 	default y if NFC_T2T_NRFXLIB || NFC_T4T_NRFXLIB
+	depends on HAS_HW_NRF_NFCT
 	select NRFX_NFCT
 	select CLOCK_CONTROL
 	help
@@ -59,7 +60,6 @@ config NFC_LIB_CTX_MAX_SIZE
 
 config NFC_OWN_THREAD
 	bool "Call NFC callback from its own thread"
-	default n
 	help
 	  Use dedicated a thread to call NFC callback.
 	  Otherwise use the system workqueue thread.
@@ -80,7 +80,7 @@ config NFC_THREAD_PRIORITY
 	  Cooperative thread priority is preferred,
 	  because it might decrease latency and fifo usage
 
-endif# NFC_OWN_THREAD
+endif # NFC_OWN_THREAD
 
 config NFC_LOW_LATENCY_IRQ
 	bool "Use low latency IRQ for NFC"
@@ -112,25 +112,25 @@ choice NFC_SWI
 
 config NFC_SWI0
 	bool "SWI0"
-	depends on HAS_HW_NRF_EGU0 || HAS_HW_NRF_SWI0 || SOC_SERIES_NRF54LX
+	depends on HAS_HW_NRF_EGU0 || HAS_HW_NRF_SWI0 || SOC_SERIES_NRF54LX || SOC_SERIES_NRF71X
 	help
 	  Use SWI0 for NFC.
 
 config NFC_SWI1
 	bool "SWI1"
-	depends on HAS_HW_NRF_EGU1 || HAS_HW_NRF_SWI1 || SOC_SERIES_NRF54LX
+	depends on HAS_HW_NRF_EGU1 || HAS_HW_NRF_SWI1 || SOC_SERIES_NRF54LX || SOC_SERIES_NRF71X
 	help
 	  Use SWI1 for NFC.
 
 config NFC_SWI2
 	bool "SWI2"
-	depends on HAS_HW_NRF_EGU2 || HAS_HW_NRF_SWI2 || SOC_SERIES_NRF54LX
+	depends on HAS_HW_NRF_EGU2 || HAS_HW_NRF_SWI2 || SOC_SERIES_NRF54LX || SOC_SERIES_NRF71X
 	help
 	  Use SWI2 for NFC.
 
 config NFC_SWI3
 	bool "SWI3"
-	depends on HAS_HW_NRF_EGU3 || HAS_HW_NRF_SWI3 || SOC_SERIES_NRF54LX
+	depends on HAS_HW_NRF_EGU3 || HAS_HW_NRF_SWI3 || SOC_SERIES_NRF54LX || SOC_SERIES_NRF71X
 	help
 	  Use SWI3 for NFC.
 
@@ -154,6 +154,6 @@ endif # NFC_THREAD_CALLBACK
 
 module = NFC_PLATFORM
 module-str = nfc_platform
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # NFC_PLATFORM

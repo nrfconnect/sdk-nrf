@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace Condition
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -67,11 +69,16 @@ namespace app
 							DataModel::AttributeQualityFlags::kListAttribute),
 						Access::Privilege::kView, std::nullopt);
 				} // namespace ReplacementProductList
+				constexpr std::array<DataModel::AttributeEntry, 1> kMandatoryMetadata = {
+					ChangeIndication::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace ResetCondition
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -81,6 +88,11 @@ namespace app
 				} // namespace ResetCondition
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace ActivatedCarbonFilterMonitoring
 	} // namespace Clusters
 } // namespace app

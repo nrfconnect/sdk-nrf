@@ -4,11 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* Application does not use cpuflpr core. Assign whole RRAM to cpuapp. */
-&cpuapp_rram {
-	reg = < 0x0 DT_SIZE_K(2036) >;
-};
-
 / {
 	/* Disable pwmleds and redefine them to align configuration with CAF LEDs requirements. */
 	/delete-node/ pwmleds;

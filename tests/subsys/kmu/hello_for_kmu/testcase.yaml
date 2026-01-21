@@ -10,7 +10,7 @@ tests:
   mcuboot.kmu.west.provision.basic:
     timeout: 180
     platform_allow:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     tags:
       - pytest
@@ -19,6 +19,9 @@ tests:
       pytest_root:
         - "../pytest/test_kmu_provision.py"
   mcuboot.kmu.west_flash_default_provision:
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     harness: console
     harness_config:
       type: one_line

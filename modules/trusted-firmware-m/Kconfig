@@ -54,7 +54,6 @@ menu "Crypto component configs"
 
 config TFM_CRYPTO_SINGLE_PART_FUNCS_DISABLED
 	bool "Only enable multi-part operations"
-	default n
 	help
 	  Only enable multi-part operations in Hash, MAC, AEAD and symmetric
 	  ciphers, to optimize memory footprint in resource-constrained devices
@@ -65,7 +64,7 @@ config TFM_CRYPTO_BUILTIN_KEYS
 	prompt "TF-M crypto builtin keys"
 	default y
 	depends on !TFM_PROFILE_TYPE_MINIMAL
-	depends on !CRACEN_HW_PRESENT
+	depends on !HAS_HW_NRF_CRACEN
 	select PSA_WANT_ALG_HKDF
 	select PSA_WANT_ALG_HMAC
 	select PSA_WANT_ALG_SHA_256
@@ -141,7 +140,6 @@ config TFM_ATTEST_VERIFICATION_SERVICE_URL
 
 config TFM_ATTEST_INCLUDE_COSE_KEY_ID
 	bool "Include COSE key-id in initial attestation token"
-	default n
 
 # Only the PSA_IOT_1 profile is supported
 choice TFM_ATTEST_TOKEN_PROFILE
@@ -176,7 +174,6 @@ config TFM_ITS_CREATE_FLASH_LAYOUT
 
 config TFM_ITS_RAM_FS
 	bool "Emulated RAM FS"
-	default n
 	help
 	  Enable emulated RAM FS for platforms that don't have flash for
 	  Internal Trusted Storage partition
@@ -217,15 +214,16 @@ config TFM_ITS_BUF_SIZE
 
 config TFM_ITS_STACK_SIZE
 	hex "Stack size"
-	default 0x1000 if SOC_SERIES_NRF54LX
-	default 0x720 if !SOC_SERIES_NRF54LX
+	default 0x1000 if NRF_PLATFORM_LUMOS
+	default 0x720 if !NRF_PLATFORM_LUMOS
 
 # Nordic additions to ITS Kconfig
 config TFM_ITS_ENCRYPTED
 	bool
 	prompt "PSA Internal Trusted Storage with encryption"
-	default y if SOC_SERIES_NRF54LX
-	select PSA_ITS_ENCRYPTED
+	depends on !PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS
+	default y if NRF_PLATFORM_LUMOS
+	select PSA_WANT_ALG_CHACHA20_POLY1305 if NRF_PLATFORM_LUMOS
 	select PSA_WANT_GENERATE_RANDOM
 	help
 	  Enables authenticated encryption for PSA Internal Trusted Storage files
@@ -244,7 +242,6 @@ config TFM_PS_CREATE_FLASH_LAYOUT
 
 config TFM_PS_RAM_FS
 	bool "Emulated RAM FS"
-	default n
 	help
 	  Enable emulated RAM FS for platforms that don't have flash for
 	  Protected Storage partition
@@ -286,6 +283,16 @@ config TFM_PS_STACK_SIZE
 	default 0x1200 if TFM_PS_NUM_ASSETS > 70
 	default 0xC00 if TFM_PS_NUM_ASSETS > 30
 	default 0x700
+
+config TFM_PS_SUPPORT_FORMAT_TRANSITION
+	bool "Allow reading Protected Storage data from TF-M versions prior to 2.2"
+	help
+	  TF-M version 2.2 introduced a new storage format for the Protected Storage
+	  data. To avoid breaking firmware upgrades to version 2.2 TF-M allows reading
+	  the Protected Storage data stored with earlier versions using this configuration.
+	  This is relevant for TF-M enabled applications built with NCS version 3.1 and prior
+	  that want to perform a firmware upgrade to NCS version 3.2 onwards.
+
 endmenu
 
 # Copied from secure_fw/spm/Kconfig, removed CONFIG prefix
@@ -302,7 +309,7 @@ config TFM_CONN_HANDLE_MAX_NUM
 config TFM_DOORBELL_API
 	bool "Doorbell APIs"
 	depends on TFM_IPC
-	default n
+
 endmenu
 
 rsource "Kconfig.tfm.pm"
@@ -327,7 +334,7 @@ endchoice
 config TFM_CPU_FREQ_MHZ
 	int
 	default $(div, $(dt_node_int_prop_int,/clocks/hfpll,clock-frequency), 1000000) \
-		if SOC_SERIES_NRF54LX
+		if NRF_PLATFORM_LUMOS
 	default $(div, $(dt_node_int_prop_int,/cpus/cpu@0,clock-frequency), 1000000) \
 		if $(dt_node_has_prop,/cpus/cpu@0,clock-frequency)
 	default $(div, $(dt_node_int_prop_int,/cpus/cpu@1,clock-frequency), 1000000) \
@@ -340,7 +347,7 @@ config TFM_CPU_FREQ_MHZ
 config TFM_NFCT_PINS_AS_GPIOS
 	bool
 	default y if !DT_HAS_NORDIC_NRF_NFCT_ENABLED
-	depends on SOC_NRF5340_CPUAPP
+	depends on SOC_NRF5340_CPUAPP || SOC_SERIES_NRF54LX
 	help
 	  Two pins are usually reserved for NFC in SoCs that implement the
 	  NFCT peripheral. This option switches them to normal GPIO mode.
@@ -350,6 +357,8 @@ config TFM_NFCT_PINS_AS_GPIOS
 	  flashing device using the image which has this option disabled.
 
 	  NFC pins in nRF5340: P0.02 and P0.03
+	  NFC pins in nRF54L15/10/05: P1.02 and P1.03
+	  NFC pins in nRF54LM20A: P1.01 and P1.02
 
 	  TF-M configures these pins as GPIOS when the NFCT peripheral is not
 	  enabled in the device-tree of the target.
@@ -377,50 +386,51 @@ config TFM_SECURE_UART_SHARE_INSTANCE
 
 choice TFM_SECURE_UART_INSTANCE
 	prompt "TF-M logging UART instance"
-	default TFM_SECURE_UART30 if SOC_SERIES_NRF54LX
+	default TFM_SECURE_UART20 if SOC_NRF54LV10A_ENGA_CPUAPP
+	default TFM_SECURE_UART30 if NRF_PLATFORM_LUMOS
 	default TFM_SECURE_UART1
 
 config TFM_SECURE_UART0
 	bool "TF-M logging will use UART0 instance"
 	depends on $(dt_nodelabel_has_prop,uart0,pinctrl-names)
 	select NRF_UARTE0_SECURE
-	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE0 || HAS_HW_NRF_UARTE0
+	select TFM_SECURE_UART_SHARE_INSTANCE if HAS_HW_NRF_UARTE0
 
 config TFM_SECURE_UART1
 	bool "TF-M logging will use UART1 instance"
 	depends on $(dt_nodelabel_has_prop,uart1,pinctrl-names)
 	select NRF_UARTE1_SECURE
-	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE1 || HAS_HW_NRF_UARTE1
+	select TFM_SECURE_UART_SHARE_INSTANCE if HAS_HW_NRF_UARTE1
 
 config TFM_SECURE_UART00
 	bool "TF-M logging will use UART00 instance"
 	depends on $(dt_nodelabel_has_prop,uart00,pinctrl-names)
 	select NRF_UARTE00_SECURE
-	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE00 || HAS_HW_NRF_UARTE00
+	select TFM_SECURE_UART_SHARE_INSTANCE if HAS_HW_NRF_UARTE00
 
 config TFM_SECURE_UART20
 	bool "TF-M logging will use UART20 instance"
 	depends on $(dt_nodelabel_has_prop,uart20,pinctrl-names)
 	select NRF_UARTE20_SECURE
-	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE20 || HAS_HW_NRF_UARTE20
+	select TFM_SECURE_UART_SHARE_INSTANCE if HAS_HW_NRF_UARTE20
 
 config TFM_SECURE_UART21
 	bool "TF-M logging will use UART21 instance"
 	depends on $(dt_nodelabel_has_prop,uart21,pinctrl-names)
 	select NRF_UARTE21_SECURE
-	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE21 || HAS_HW_NRF_UARTE21
+	select TFM_SECURE_UART_SHARE_INSTANCE if HAS_HW_NRF_UARTE21
 
 config TFM_SECURE_UART22
 	bool "TF-M logging will use UART22 instance"
 	depends on $(dt_nodelabel_has_prop,uart22,pinctrl-names)
 	select NRF_UARTE22_SECURE
-	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE22 || HAS_HW_NRF_UARTE22
+	select TFM_SECURE_UART_SHARE_INSTANCE if HAS_HW_NRF_UARTE22
 
 config TFM_SECURE_UART30
 	bool "TF-M logging will use UART30 instance"
 	depends on $(dt_nodelabel_has_prop,uart30,pinctrl-names)
 	select NRF_UARTE30_SECURE
-	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE30 || HAS_HW_NRF_UARTE30
+	select TFM_SECURE_UART_SHARE_INSTANCE if HAS_HW_NRF_UARTE30
 
 endchoice
 
@@ -501,7 +511,9 @@ config TFM_S_CODE_VECTOR_TABLE_SIZE
 	hex
 	default 0x144 if SOC_SERIES_NRF91X
 	default 0x154 if SOC_NRF5340_CPUAPP
+	default 0x4cc if SOC_NRF54LM20A_ENGA_CPUAPP
 	default 0x47c if SOC_SERIES_NRF54LX
+	default 0x504 if SOC_SERIES_NRF71X
 	default 0xffffffff # Invalid value to discover missing SOC support.
 	help
 	  The TF-M interrupt vector table size.
@@ -525,5 +537,19 @@ config TFM_PSA_FRAMEWORK_HAS_MM_IOVEC
 	help
 	  Memory-mapped iovecs provide direct mapping of client input and output vectors into
 	  the Secure Partition.
+
+config TFM_NRF_SYSTEM_OFF_SERVICE
+	bool "TF-M System OFF service [EXPERIMENTAL]"
+	depends on TFM_ISOLATION_LEVEL = 1
+	depends on TFM_SFN
+	depends on SOC_SERIES_NRF54LX
+	depends on !RETAINED_MEM_NRF_RAM_CTRL
+	select EXPERIMENTAL
+	help
+	  Provide a System OFF service for the nRF54L Series SoCs.
+	  This service allows the non-secure application to request
+	  the system to enter the System OFF mode using a secure service call.
+	  This service disables RAM retention for all RAM blocks
+	  before entering the System OFF mode.
 
 endif # BUILD_WITH_TFM

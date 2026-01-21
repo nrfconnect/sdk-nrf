@@ -7,7 +7,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(psa_dtls_server);
 
-#include <nrf.h>
+#include <nrfx.h>
 #include <errno.h>
 #include <zephyr/kernel.h>
 #include <zephyr/net/socket.h>
@@ -59,6 +59,15 @@ static int setup_dtls_server_socket(void)
 	err = setsockopt(sock, SOL_TLS, TLS_DTLS_ROLE, &role, sizeof(role));
 	if (err < 0) {
 		LOG_ERR("Failed to set DTLS role secure option: %d", errno);
+		(void)close(sock);
+		return -errno;
+	}
+
+	int cache = TLS_SESSION_CACHE_ENABLED;
+
+	err = setsockopt(sock, SOL_TLS, TLS_SESSION_CACHE, &cache, sizeof(cache));
+	if (err < 0) {
+		LOG_ERR("Failed to set TLS Session cache. Err: %d", errno);
 		(void)close(sock);
 		return -errno;
 	}

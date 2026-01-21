@@ -30,7 +30,7 @@ static uint32_t conn_interval_us_get(const struct bt_conn *conn)
 		return 0;
 	}
 
-	return BT_CONN_INTERVAL_TO_US(info.le.interval);
+	return info.le.interval_us;
 }
 
 static ssize_t time_sync_data_received(struct bt_conn *conn,

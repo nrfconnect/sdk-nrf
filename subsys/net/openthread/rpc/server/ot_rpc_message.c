@@ -23,25 +23,25 @@ OT_RPC_RESOURCE_TABLE_REGISTER(msg, otMessage, CONFIG_OPENTHREAD_RPC_MESSAGE_POO
 static void ot_rpc_msg_free(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			    void *handler_data)
 {
-	ot_rpc_res_tab_key key = 0;
+	ot_rpc_res_tab_key key;
 	otMessage *message;
 
 	key = nrf_rpc_decode_uint(ctx);
+
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_FREE);
 		return;
 	}
 
+	ot_rpc_mutex_lock();
 	message = ot_res_tab_msg_get(key);
 
 	if (message != NULL) {
-		ot_rpc_mutex_lock();
 		otMessageFree(message);
-		ot_rpc_mutex_unlock();
+		ot_res_tab_msg_free(key);
 	}
 
-	ot_res_tab_msg_free(key);
-
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 
@@ -49,7 +49,6 @@ static void ot_rpc_msg_append(const struct nrf_rpc_group *group, struct nrf_rpc_
 			      void *handler_data)
 {
 	otError error = OT_ERROR_INVALID_ARGS;
-	struct nrf_rpc_cbor_ctx rsp_ctx;
 	uint32_t key;
 	const void *data;
 	size_t size = 0;
@@ -58,14 +57,15 @@ static void ot_rpc_msg_append(const struct nrf_rpc_group *group, struct nrf_rpc_
 	key = nrf_rpc_decode_uint(ctx);
 	data = nrf_rpc_decode_buffer_ptr_and_size(ctx, &size);
 
-	if (data && size && nrf_rpc_decode_valid(ctx)) {
+	if (data) {
+		ot_rpc_mutex_lock();
 		message = ot_res_tab_msg_get(key);
 
 		if (message != NULL) {
-			ot_rpc_mutex_lock();
 			error = otMessageAppend(message, data, size);
-			ot_rpc_mutex_unlock();
 		}
+
+		ot_rpc_mutex_unlock();
 	}
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
@@ -73,16 +73,13 @@ static void ot_rpc_msg_append(const struct nrf_rpc_group *group, struct nrf_rpc_
 		return;
 	}
 
-	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(otError) + 1);
-	nrf_rpc_encode_uint(&rsp_ctx, error);
-	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+	nrf_rpc_rsp_send_uint(group, error);
 }
 
 static void ot_rpc_msg_udp_new(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			       void *handler_data)
 {
 	ot_rpc_res_tab_key key;
-	struct nrf_rpc_cbor_ctx rsp_ctx;
 	otMessageSettings settings;
 	otMessageSettings *p_settings = &settings;
 
@@ -95,122 +92,114 @@ static void ot_rpc_msg_udp_new(const struct nrf_rpc_group *group, struct nrf_rpc
 
 	ot_rpc_mutex_lock();
 	key = ot_res_tab_msg_alloc(otUdpNewMessage(openthread_get_default_instance(), p_settings));
-	ot_rpc_mutex_unlock();
 
 	if (ot_res_tab_msg_get(key) == NULL) {
 		key = 0;
 	}
 
-	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(key) + 1);
-	nrf_rpc_encode_uint(&rsp_ctx, key);
-	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+	ot_rpc_mutex_unlock();
+	nrf_rpc_rsp_send_uint(group, key);
 }
 
 static void ot_rpc_msg_length(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			      void *handler_data)
 {
 	ot_rpc_res_tab_key key;
-	struct nrf_rpc_cbor_ctx rsp_ctx;
 	uint16_t length = 0;
 	otMessage *message;
 
 	key = nrf_rpc_decode_uint(ctx);
+
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_GET_LENGTH);
 		return;
 	}
 
+	ot_rpc_mutex_lock();
 	message = ot_res_tab_msg_get(key);
 
 	if (message != NULL) {
-		ot_rpc_mutex_lock();
 		length = otMessageGetLength(message);
-		ot_rpc_mutex_unlock();
 	}
 
-	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(length) + 1);
-	nrf_rpc_encode_uint(&rsp_ctx, length);
-	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+	ot_rpc_mutex_unlock();
+	nrf_rpc_rsp_send_uint(group, length);
 }
 
 static void ot_rpc_get_offset(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			      void *handler_data)
 {
 	ot_rpc_res_tab_key key;
-	struct nrf_rpc_cbor_ctx rsp_ctx;
 	uint16_t offset = 0;
 	otMessage *message;
 
 	key = nrf_rpc_decode_uint(ctx);
+
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_GET_OFFSET);
 		return;
 	}
 
+	ot_rpc_mutex_lock();
 	message = ot_res_tab_msg_get(key);
 
 	if (message != NULL) {
-		ot_rpc_mutex_lock();
 		offset = otMessageGetOffset(message);
-		ot_rpc_mutex_unlock();
 	}
 
-	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(offset) + 1);
-	nrf_rpc_encode_uint(&rsp_ctx, offset);
-	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+	ot_rpc_mutex_unlock();
+	nrf_rpc_rsp_send_uint(group, offset);
 }
 
 static void ot_rpc_msg_read(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			    void *handler_data)
 {
+	ot_rpc_res_tab_key key;
 	uint16_t offset;
 	uint16_t length;
-	ot_rpc_res_tab_key key;
-	struct nrf_rpc_cbor_ctx rsp_ctx;
-	const uint16_t chunk_size = 64;
-	uint8_t buf[chunk_size];
-	uint16_t read = 0;
 	otMessage *message;
+	struct nrf_rpc_cbor_ctx rsp_ctx;
+	uint16_t message_length;
+	uint16_t read = 0;
 
 	key = nrf_rpc_decode_uint(ctx);
 	offset = nrf_rpc_decode_uint(ctx);
 	length = nrf_rpc_decode_uint(ctx);
+
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_READ);
 		return;
 	}
 
-	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, length + 2);
-
+	ot_rpc_mutex_lock();
 	message = ot_res_tab_msg_get(key);
 
 	if (message == NULL) {
+		NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 1);
 		nrf_rpc_encode_null(&rsp_ctx);
 		goto exit;
 	}
+
+	/* Get the actual message size before reading to allocate as small buffer as necessary. */
+	message_length = otMessageGetLength(message);
+	offset = MIN(offset, message_length);
+	length = MIN(length, message_length - offset);
+
+	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, length + 3);
 
 	if (!zcbor_bstr_start_encode(rsp_ctx.zs)) {
 		goto exit;
 	}
 
-	ot_rpc_mutex_lock();
-
-	do {
-		read = otMessageRead(message, offset, buf,
-				     (chunk_size < length) ? chunk_size : length);
-		memcpy(rsp_ctx.zs[0].payload_mut, buf, read);
-		rsp_ctx.zs->payload_mut += read;
-		length -= read;
-		offset += read;
-	} while (read > 0 && length > 0);
-
-	ot_rpc_mutex_unlock();
+	read = otMessageRead(message, offset, rsp_ctx.zs->payload_mut, length);
+	rsp_ctx.zs->payload_mut += read;
 
 	if (!zcbor_bstr_end_encode(rsp_ctx.zs, NULL)) {
 		goto exit;
 	}
 
 exit:
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
@@ -231,14 +220,15 @@ static void ot_rpc_msg_get_thread_link_info(const struct nrf_rpc_group *group,
 		return;
 	}
 
+	ot_rpc_mutex_lock();
 	message = ot_res_tab_msg_get(key);
 
 	if (!message) {
+		ot_rpc_mutex_unlock();
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_GET_THREAD_LINK_INFO);
 		return;
 	}
 
-	ot_rpc_mutex_lock();
 	error = otMessageGetThreadLinkInfo(message, &link_info);
 	ot_rpc_mutex_unlock();
 

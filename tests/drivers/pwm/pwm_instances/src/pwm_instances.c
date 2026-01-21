@@ -70,7 +70,7 @@ static void test_pwm_set_cycles_instance(const struct device *dev)
 
 	for (int i = 1; i < 21; i++) {
 		ret = pwm_set_cycles(dev, 0, 32000, i * 500, 0);
-		zassert_equal(0, ret, "%s: pwm_set_cycles() has failed");
+		zassert_equal(0, ret, "%s: pwm_set_cycles() has failed: %d\n", dev->name, ret);
 		k_msleep(50);
 	}
 }

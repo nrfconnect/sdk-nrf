@@ -1,0 +1,29 @@
+/ {
+	aliases {
+		led = &led0;
+		out0 = &output0;
+		in0 = &input0;
+	};
+	outputs {
+		compatible = "gpio-leds";
+
+		output0: output_0 {
+			gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
+			label = "GPIO output 0";
+		};
+	};
+
+	inputs {
+		compatible = "gpio-keys";
+
+		input0: input_0 {
+			gpios = <&gpio1 13 (GPIO_ACTIVE_HIGH)>;
+			label = "GPIO input 0";
+		};
+	};
+};
+
+&gpiote1 {
+	status = "okay";
+	owned-channels = <0>;
+};

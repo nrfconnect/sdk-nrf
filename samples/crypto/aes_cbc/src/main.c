@@ -112,7 +112,7 @@ int encrypt_cbc_aes(void)
 	psa_status_t status;
 	psa_cipher_operation_t operation = PSA_CIPHER_OPERATION_INIT;
 
-	LOG_INF("Encrypting using AES CBC MODE...");
+	LOG_INF("Encrypting using the AES CBC mode...");
 
 	/* Setup the encryption operation */
 	status = psa_cipher_encrypt_setup(&operation, key_id, PSA_ALG_CBC_NO_PADDING);
@@ -163,7 +163,7 @@ int decrypt_cbc_aes(void)
 	psa_status_t status;
 	psa_cipher_operation_t operation = PSA_CIPHER_OPERATION_INIT;
 
-	LOG_INF("Decrypting using AES CBC MODE...");
+	LOG_INF("Decrypting using the AES CBC mode...");
 
 	/* Setup the decryption operation */
 	status = psa_cipher_decrypt_setup(&operation, key_id, PSA_ALG_CBC_NO_PADDING);

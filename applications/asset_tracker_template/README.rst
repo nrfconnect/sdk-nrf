@@ -1,7 +1,7 @@
 .. _asset_tracker_template_redirect:
 
-Asset Tracker Template Add-on
-#############################
+Asset Tracker Template
+######################
 
 For asset tracking applications, it is recommended to use the `Asset Tracker Template <Asset Tracker Template_>`_.
 

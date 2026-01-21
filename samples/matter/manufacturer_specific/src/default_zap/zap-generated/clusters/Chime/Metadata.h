@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace InstalledChimeSounds
 				{
 					inline constexpr DataModel::AttributeEntry kMetadataEntry(
@@ -46,11 +48,18 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, Access::Privilege::kOperate);
 				} // namespace Enabled
+				constexpr std::array<DataModel::AttributeEntry, 3> kMandatoryMetadata = {
+					InstalledChimeSounds::kMetadataEntry,
+					SelectedChime::kMetadataEntry,
+					Enabled::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace PlayChimeSound
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -60,6 +69,11 @@ namespace app
 				} // namespace PlayChimeSound
 
 			} // namespace Commands
+
+			namespace Events
+			{
+
+			} // namespace Events
 		} // namespace Chime
 	} // namespace Clusters
 } // namespace app

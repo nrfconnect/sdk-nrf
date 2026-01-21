@@ -21,6 +21,11 @@ namespace app
 					inline constexpr EventId Id = 0x00000000;
 				} // namespace RemainingScreenTimeExpired
 
+				namespace EnteringBlockContentTimeWindow
+				{
+					inline constexpr EventId Id = 0x00000001;
+				} // namespace EnteringBlockContentTimeWindow
+
 			} // namespace Events
 		} // namespace ContentControl
 	} // namespace Clusters

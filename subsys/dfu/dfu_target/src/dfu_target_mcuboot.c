@@ -17,7 +17,11 @@
 #include <string.h>
 
 #include <zephyr/kernel.h>
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
 #include <pm_config.h>
+#else
+#include <zephyr/storage/flash_map.h>
+#endif
 #include <zephyr/logging/log.h>
 #include <zephyr/dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
@@ -31,6 +35,8 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 
 #define IS_ALIGNED_32(POINTER) (((uintptr_t)(const void *)(POINTER)) % 4 == 0)
 
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
+
 #define _MB_SEC_PAT(i, x) PM_MCUBOOT_SECONDARY_ ## i ## _ ## x
 
 #define _MB_SEC_PAT_STRING(i, x) STRINGIFY(PM_MCUBOOT_SECONDARY_ ## i ## _ ## x)
@@ -43,8 +49,6 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 			 PM_MCUBOOT_SECONDARY_## i ##_SIZE - 1)
 
 #define _MB_SEC_LA(i, _) _H_MB_SEC_LA(i)
-
-#define _STR_TARGET_NAME(i, _) STRINGIFY(MCUBOOT##i)
 
 #ifdef PM_MCUBOOT_SECONDARY_2_ID
 	#define TARGET_IMAGE_COUNT 3
@@ -61,6 +65,36 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 #define PM_MCUBOOT_SECONDARY_0_ADDRESS	PM_MCUBOOT_SECONDARY_ADDRESS
 #define PM_MCUBOOT_SECONDARY_0_NAME	STRINGIFY(PM_MCUBOOT_SECONDARY_NAME)
 #define PM_MCUBOOT_SECONDARY_0_DEV	PM_MCUBOOT_SECONDARY_DEV
+
+#else /* CONFIG_PARTITION_MANAGER_ENABLED */
+
+/**
+ * These definitions are named to align with those used when Partition Manager
+ * is enabled, ensuring compatibility for use in the array definitions below.
+ */
+
+/**
+ * The labels are defined: slot1_partition for image 0, slot3_partition for image 1, etc.
+ */
+#define SEC_PAT_NODELABEL(i) UTIL_CAT(slot, UTIL_CAT(UTIL_INC(UTIL_X2(i)), _partition))
+
+#define SEC_PAT_ADDRESS(i) FIXED_PARTITION_OFFSET(SEC_PAT_NODELABEL(i))
+
+#define SEC_PAT_SIZE(i) FIXED_PARTITION_SIZE(SEC_PAT_NODELABEL(i))
+
+#define _MB_SEC_PAT(i, x) UTIL_CAT(SEC_PAT_, x)(i)
+
+/* Ignore the 'x' parameter, it is needed for compatibility with Partition Manager scenarios. */
+#define _MB_SEC_PAT_DEV(i, x) FIXED_PARTITION_DEVICE(SEC_PAT_NODELABEL(i))
+
+/* Ignore the 'x' parameter, it is needed for compatibility with Partition Manager scenarios. */
+#define _MB_SEC_PAT_STRING(i, x) STRINGIFY(SEC_PAT_NODELABEL(i))
+
+#define TARGET_IMAGE_COUNT CONFIG_UPDATEABLE_IMAGE_NUMBER
+
+#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
+
+#define _STR_TARGET_NAME(i, _) STRINGIFY(MCUBOOT##i)
 
 static const size_t secondary_size[] = {
 	LIST_DROP_EMPTY(LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT, (,), SIZE))
@@ -157,16 +191,25 @@ int dfu_target_mcuboot_offset_get(size_t *out)
 	int err = 0;
 
 	err = dfu_target_stream_offset_get(out);
+#ifndef CONFIG_DFU_TARGET_STREAM_SYNCHRONOUS
 	if (err == 0) {
 		*out += stream_buf_bytes;
 	}
+#endif
 
 	return err;
 }
 
 int dfu_target_mcuboot_write(const void *const buf, size_t len)
 {
+	/**
+	 * If saving progress the bytes written to flash are flushed
+	 * immediately, no need to add additional bytes to compensate
+	 * for buffering.
+	 */
+#ifndef CONFIG_DFU_TARGET_STREAM_SYNCHRONOUS
 	stream_buf_bytes = (stream_buf_bytes + len) % stream_buf_len;
+#endif
 
 	return dfu_target_stream_write(buf, len);
 }

@@ -75,7 +75,7 @@ static int temp_nrf5_mpsl_channel_get(const struct device *dev,
 	return 0;
 }
 
-static const struct sensor_driver_api temp_nrf5_mpsl_driver_api = {
+static DEVICE_API(sensor, temp_nrf5_mpsl_driver_api) = {
 	.sample_fetch = temp_nrf5_mpsl_sample_fetch,
 	.channel_get = temp_nrf5_mpsl_channel_get,
 };
@@ -89,8 +89,11 @@ static int temp_nrf5_mpsl_init(const struct device *dev)
 	return 0;
 }
 
-static struct temp_nrf5_mpsl_data temp_nrf5_mpsl_driver;
+#define NRF_TEMP_DEFINE(inst)							\
+	static struct temp_nrf5_mpsl_data temp_nrf5_mpsl_##inst;		\
+										\
+	SENSOR_DEVICE_DT_INST_DEFINE(inst, temp_nrf5_mpsl_init, NULL,		\
+		      &temp_nrf5_mpsl_##inst, NULL, POST_KERNEL,		\
+		      CONFIG_SENSOR_INIT_PRIORITY, &temp_nrf5_mpsl_driver_api);	\
 
-DEVICE_DT_INST_DEFINE(0, temp_nrf5_mpsl_init, NULL,
-		      &temp_nrf5_mpsl_driver, NULL, POST_KERNEL,
-		      CONFIG_SENSOR_INIT_PRIORITY, &temp_nrf5_mpsl_driver_api);
+DT_INST_FOREACH_STATUS_OKAY(NRF_TEMP_DEFINE)

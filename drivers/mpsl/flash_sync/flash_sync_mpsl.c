@@ -35,7 +35,8 @@ LOG_MODULE_REGISTER(flash_sync_mpsl);
 #define FLASH_OP_ONGOING_NONBLOCKING 0x266641F
 
 /* After this many us's, start using higher priority when requesting. */
-#define TIMESLOT_TIMEOUT_PRIORITY_NORMAL_US 30000
+#define TIMESLOT_TIMEOUT_PRIORITY_NORMAL_US \
+	CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL_NORMAL_PRIORITY_TIMEOUT_US
 
 struct mpsl_context {
 	/* This semaphore is taken with a timeout when the flash operation starts. */

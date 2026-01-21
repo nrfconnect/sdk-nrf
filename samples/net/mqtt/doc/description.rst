@@ -20,7 +20,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-Additionally, the sample supports emulation using the :ref:`native simulator <zephyr:native_sim>`.
+Additionally, the sample supports emulation using the :zephyr:board:`native simulator <native_sim>`.
 
 Overview
 *********
@@ -110,6 +110,7 @@ The sample provides predefined configuration files for the following development
 * :file:`thingy91x_nrf9151_ns.conf` - Configuration file for the Thingy:91 X.
 * :file:`boards/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the nRF7002 DK.
 * :file:`nrf54l15dk_nrf54l15_cpuapp.conf` - Configuration file for the nRF54L15 DK.
+* :file:`nrf54lm20dk_nrf54lm20a_cpuapp.conf` - Configuration file for the nRF54LM20 DK.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator board.
 
 Files that are located under the :file:`/boards` folder is automatically merged with the :file:`prj.conf` file when you build for corresponding target.
@@ -117,8 +118,8 @@ Files that are located under the :file:`/boards` folder is automatically merged 
 In addition, the sample provides the following overlay configuration files, which are used to enable additional features in the sample:
 
 * :file:`overlay-tls-nrf91.conf` - TLS overlay configuration file for nRF91 Series devices.
-* :file:`overlay-tls-nrf70.conf` - TLS overlay configuration file for nRF70 Series devices.
-* :file:`overlay-tls-nrf54l15-nrf70.conf` - TLS overlay configuration file for nRF54L15 DK.
+* :file:`overlay-tls-nrf7002.conf` - TLS overlay configuration file for nRF70 Series devices.
+* :file:`overlay-tls-nrf54l-nrf70.conf` - TLS overlay configuration file for nRF54L Series devices.
 * :file:`overlay-tls-native_sim.conf` - TLS overlay configuration file for the native simulator board.
 
 They are located in :file:`samples/net/mqtt` folder.
@@ -270,7 +271,7 @@ If this occurs, the sample's transport module has built-in reconnection logic th
 Emulation
 =========
 
-The sample can be run in :ref:`native simulator <zephyr:native_sim>` that simplifies development and testing and removes the need for hardware.
+The sample can be run in :zephyr:board:`native simulator <native_sim>` that simplifies development and testing and removes the need for hardware.
 Before you can build and the run native simulator, you need to perform the steps included in this link: :ref:`networking_with_native_sim`.
 
 When the aforementioned steps are completed, you can build and run the sample by using the following commands:

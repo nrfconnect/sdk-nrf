@@ -1,5 +1,25 @@
+/* Can not use led_0 nor led_3 because pca63565
+ * uses those GPIOs for other purposes.
+ *
+ * PPK takes cpuapp active/sleep state from P0.04
+ * which is Button3 in the board definition.
+ * Moreover, Buttons have (GPIO_PULL_UP | GPIO_ACTIVE_LOW).
+ */
+
 / {
 	aliases {
-		led = &button3;
+		led = &led_sw3;
+		/delete-property/ sw3;
+	};
+};
+
+/delete-node/ &button3;
+
+/ {
+	leds {
+		led_sw3: led_sw3 {
+			gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+			label = "Change GPIO from Button3 to custom LED";
+		};
 	};
 };

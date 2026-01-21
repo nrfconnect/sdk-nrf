@@ -12,7 +12,7 @@ project(random_hw_unique_key)
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c)
-if (DEFINED CONFIG_BUILD_WITH_TFM)
+if(CONFIG_BUILD_WITH_TFM)
   target_sources(app PRIVATE src/derive_key_tfm.c)
 else ()
   target_sources(app PRIVATE src/derive_key.c)

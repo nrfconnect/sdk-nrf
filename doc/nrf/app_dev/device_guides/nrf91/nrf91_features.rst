@@ -11,9 +11,11 @@ The nRF91 Series SiPs integrate an application MCU, a full LTE modem, an RF fron
 These SiPs are designed to support a wide range of cellular IoT applications and DECT NR+ applications.
 
 Development Kits and Evaluation Kits
+  * nRF9151 DK - A development kit for designing and developing application firmware on the nRF9151 SiP, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 14 support and DECT NR+.
+  * nRF9151 SMA DK - A specialized version of nRF9151 DK with an SMA connector for high-performance external antenna connection or lab equipment for precise characterization and field testing.
+    It is recommended for any Non-Terrestrial Network (NTN) development.
   * nRF9160 DK - A development kit for designing and developing application firmware on the nRF9160 :term:`System in Package (SiP)`, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 13 support.
   * nRF9161 DK - A development kit for designing and developing application firmware on the nRF9161 SiP, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 14 support and DECT NR+.
-  * nRF9151 DK - A development kit for designing and developing application firmware on the nRF9151 SiP, supporting LTE Cat-M1 and Cat-NB1 and GNSS with 3GPP 14 support and DECT NR+.
   * nRF9131 EK - A single-board evaluation kit for the nRF9131 SiP, designed for DECT NR+ applications.
 
 Prototyping Platforms
@@ -77,7 +79,7 @@ Therefore, you must build it for any of the following board targets, depending o
 * ``thingy91x/nrf9151/ns``
 
 The application image might require other images to be present.
-Some samples include the :ref:`bootloader` sample (``SB_CONFIG_SECURE_BOOT_APPCORE``) and :doc:`mcuboot:index-ncs` (``SB_CONFIG_BOOTLOADER_MCUBOOT``).
+Some samples include the :ref:`bootloader` sample (:kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE`) and :doc:`mcuboot:index-ncs` (:kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT`).
 
 .. _lte_modem:
 
@@ -121,7 +123,7 @@ Full update
     Both methods use the :term:`Serial Wire Debug (SWD)` interface to update the firmware.
 
     You can use the Programmer app to perform the update, regardless of the images that are part of the existing firmware of the device.
-    For example, you can update the modem on an nRF9160 DK using the instructions provided in the :ref:`nrf9160_updating_fw_modem` section.
+    For example, you can update the modem on an nRF9160 DK using the instructions provided in the `Programming nRF91 Series DK firmware`_ page.
 
   * When using a wireless connection, the update is applied over-the-air (OTA).
     See :ref:`nrf91_fota` for more information.
@@ -199,7 +201,7 @@ For more information on how to do this, see the `Cellular Monitor app`_ document
 To enable the modem traces in the modem and to forward them to the :ref:`modem_trace_module` over UART, include the ``nrf91-modem-trace-uart`` snippet while building your application as described in :ref:`nrf91_modem_trace_uart_snippet`.
 
 .. note::
-   For the :ref:`serial_lte_modem` application and the :ref:`at_client_sample` sample, you must also run ``AT%XMODEMTRACE=1,2`` to manually activate the predefined trace set.
+   For the :ref:`at_client_sample` sample, you must also run ``AT%XMODEMTRACE=1,2`` to manually activate the predefined trace set.
 
 You can set the trace level using the AT command ``AT%XMODEMTRACE``.
 For more information, see the `modem trace activation %XMODEMTRACE`_ section in the nRF9160 AT Commands Reference Guide or the `same section <nRF91x1 modem trace activation %XMODEMTRACE_>`_ in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
@@ -313,12 +315,12 @@ See :ref:`nrfxlib:gnss_int_agps_data` for more information about the retrieval o
 Predicted GPS (P-GPS)
 ---------------------
 
-P-GPS is a form of assistance, where the device can download up to two weeks of predicted satellite ephemerides data.
+P-GPS is a form of assistance, where the device can download predicted satellite ephemerides data for several days into the future.
 Normally, devices connect to the cellular network approximately every two hours for up-to-date satellite ephemeris information or they download the ephemeris data from the acquired satellites.
 P-GPS enables devices to determine the exact orbital location of the satellite without connecting to the network every two hours with a trade-off of reduced accuracy of the calculated position over time.
 Note that P-GPS requires more memory compared to regular A-GNSS.
 
-Also, note that due to satellite clock inaccuracies, not all functional satellites will have ephemerides data valid for two weeks in the downloaded P-GPS package.
+Also, note that due to satellite clock inaccuracies, not all functional satellites will have ephemerides data valid when nearing the end of the prediction period in the downloaded P-GPS package.
 This means that the number of satellites having valid predicted ephemerides reduces in number roughly after ten days.
 Hence, the GNSS module needs to download the ephemeris data from the satellite broadcast if no predicted ephemeris is found for that satellite to be able to use the satellite.
 
@@ -348,7 +350,7 @@ Samples using GNSS in |NCS|
 There are many examples in |NCS| that use GNSS.
 Following is a list of the samples and applications with some information about the GNSS usage:
 
-* The :ref:`serial_lte_modem` application uses AT commands to start and stop GNSS and supports nRF Cloud A-GNSS and P-GPS.
-  The application displays tracking and GNSS fix information in the serial console.
 * The :ref:`gnss_sample` sample does not use assistance by default but can be configured to use nRF Cloud A-GNSS, P-GPS, or a combination of both.
   The sample displays tracking and fix information as well as NMEA strings in the serial console.
+* The :ref:`location_sample` sample uses GNSS through the :ref:`lib_location` with nRF Cloud A-GNSS, P-GPS, or a combination of both.
+* The :ref:`modem_shell_application` sample has various usages of GNSS through different APIs with or without nRF Cloud A-GNSS and P-GPS.

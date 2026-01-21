@@ -76,7 +76,7 @@ static int test_thread_handle(struct audio_module_handle const *const test_handl
 {
 	/* Execute thread */
 	while (1) {
-		zassert_not_null(test_handle, NULL, "handle is NULL!");
+		zassert_not_null(test_handle, "handle is NULL!");
 
 		k_sleep(K_MSEC(100));
 	}
@@ -961,7 +961,7 @@ ZTEST(suite_audio_module_functional, test_data_tx_fnct)
 	zassert_equal(ret, 0, "Data TX function did not return successfully: ret %d", ret);
 
 	ret = data_fifo_pointer_last_filled_get(&fifo_rx, (void **)&msg_rx, &size, K_NO_WAIT);
-	zassert_equal(ret, 0, "Data TX function did not return 0: ret %d", 0, ret);
+	zassert_equal(ret, 0, "Data TX function did not return 0: ret %d", ret);
 
 	audio_data.data = test_data;
 	audio_data.data_size = 0;
@@ -978,7 +978,7 @@ ZTEST(suite_audio_module_functional, test_data_tx_fnct)
 	zassert_equal(ret, 0, "Data TX function did not return successfully: ret %d", ret);
 
 	ret = data_fifo_pointer_last_filled_get(&fifo_rx, (void **)&msg_rx, &size, K_NO_WAIT);
-	zassert_equal(ret, 0, "Data TX function did not return 0: ret %d", 0, ret);
+	zassert_equal(ret, 0, "Data TX function did not return 0: ret %d", ret);
 	zassert_mem_equal(msg_rx->audio_data.data, test_data, TEST_MOD_DATA_SIZE,
 			  "Failed Data TX, data differs");
 	zassert_equal(msg_rx->audio_data.data_size, TEST_MOD_DATA_SIZE,

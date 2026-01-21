@@ -10,10 +10,8 @@ config HEAP_MEM_POOL_SIZE
 	int
 	default 512
 
-# Redefine this symbol as Zephyr defines this as y by
-# default, but the offloading layer does not support it.
+# The offloading layer cannot handle truncated block notifications.
 config COAP_CLIENT_TRUNCATE_MSGS
-	bool
 	default n if NRF_MODEM_LIB
 
 menu "Memory configuration"
@@ -25,6 +23,14 @@ config NRF_MODEM_LIB_HEAP_SIZE
 	help
 	  Size of the library heap.
 	  This heap is allocated from the application's RAM region.
+
+config HEAP_MEM_POOL_ADD_SIZE_NRF9X_SOCKETS_GETADDRINFO
+	int "Extra heap size for getaddrinfo"
+	depends on NET_SOCKETS
+	default 192
+	help
+	  Extra heap size required for getaddrinfo k_malloc. Default size
+	  is enough for two zsock_addrinfo objects.
 
 config NRF_MODEM_LIB_SHMEM_CTRL_SIZE
 	hex

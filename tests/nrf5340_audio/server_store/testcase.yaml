@@ -1,0 +1,12 @@
+tests:
+  nrf5340_audio.server_store:
+    sysbuild: true
+    platform_allow:
+      - native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - server_store
+      - sysbuild
+      - ci_tests_nrf5340_audio
+    timeout: 20

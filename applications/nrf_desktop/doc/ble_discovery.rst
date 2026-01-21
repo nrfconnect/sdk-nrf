@@ -26,11 +26,11 @@ Configuration
 Complete the following steps to configure the module:
 
 1. Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-   Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` options are enabled.
-   The |ble_discovery| is enabled by the :ref:`CONFIG_DESKTOP_BLE_DISCOVERY_ENABLE <config_desktop_app_options>` Kconfig option which is implied by the :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` Kconfig option together with other application modules.
+   Make sure that both :option:`CONFIG_DESKTOP_ROLE_HID_DONGLE` and :option:`CONFIG_DESKTOP_BT_CENTRAL` options are enabled.
+   The |ble_discovery| is enabled by the :option:`CONFIG_DESKTOP_BLE_DISCOVERY_ENABLE` Kconfig option which is implied by the :option:`CONFIG_DESKTOP_BT_CENTRAL` Kconfig option together with other application modules.
    These modules are required for HID dongle that forwards the data from HID peripherals connected over Bluetooth.
 #. Make sure that the :kconfig:option:`CONFIG_BT_GATT_CLIENT` Kconfig option is enabled to support the GATT Client role.
-   The GATT Client role is enabled by default by the :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` Kconfig option.
+   The GATT Client role is enabled by default by the :option:`CONFIG_DESKTOP_BT_CENTRAL` Kconfig option.
 
    The |ble_discovery| module uses the :ref:`gatt_dm_readme` and selects the :kconfig:option:`CONFIG_BT_GATT_DM` Kconfig option to enable the library.
 

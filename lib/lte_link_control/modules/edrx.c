@@ -16,6 +16,7 @@
 #include <nrf_modem_at.h>
 
 #include "common/work_q.h"
+#include "common/helpers.h"
 #include "common/event_handler_list.h"
 #include "modules/edrx.h"
 
@@ -29,8 +30,9 @@ LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
 /* CEDRXS command parameters */
 #define AT_CEDRXS_MODE_INDEX
-#define AT_CEDRXS_ACTT_WB 4
-#define AT_CEDRXS_ACTT_NB 5
+#define AT_CEDRXS_ACTT_WB	4
+#define AT_CEDRXS_ACTT_NB	5
+#define AT_CEDRXS_ACTT_NTN_NB	6
 
 /* Length for eDRX and PTW values */
 #define LTE_LC_EDRX_VALUE_LEN 5
@@ -40,16 +42,21 @@ static bool requested_edrx_enable;
 /* Requested eDRX setting */
 static char requested_edrx_value_ltem[LTE_LC_EDRX_VALUE_LEN] = CONFIG_LTE_EDRX_REQ_VALUE_LTE_M;
 static char requested_edrx_value_nbiot[LTE_LC_EDRX_VALUE_LEN] = CONFIG_LTE_EDRX_REQ_VALUE_NBIOT;
+static char requested_edrx_value_ntn_nbiot[LTE_LC_EDRX_VALUE_LEN] =
+	CONFIG_LTE_EDRX_REQ_VALUE_NTN_NBIOT;
 /* Requested PTW setting */
 static char requested_ptw_value_ltem[LTE_LC_EDRX_VALUE_LEN] = CONFIG_LTE_PTW_VALUE_LTE_M;
 static char requested_ptw_value_nbiot[LTE_LC_EDRX_VALUE_LEN] = CONFIG_LTE_PTW_VALUE_NBIOT;
+static char requested_ptw_value_ntn_nbiot[LTE_LC_EDRX_VALUE_LEN] = CONFIG_LTE_PTW_VALUE_NTN_NBIOT;
 
 /* Currently used eDRX setting as indicated by the modem */
 static char edrx_value_ltem[LTE_LC_EDRX_VALUE_LEN];
 static char edrx_value_nbiot[LTE_LC_EDRX_VALUE_LEN];
+static char edrx_value_ntn_nbiot[LTE_LC_EDRX_VALUE_LEN];
 /* Currently used PTW setting as indicated by the modem */
 static char ptw_value_ltem[LTE_LC_EDRX_VALUE_LEN];
 static char ptw_value_nbiot[LTE_LC_EDRX_VALUE_LEN];
+static char ptw_value_ntn_nbiot[LTE_LC_EDRX_VALUE_LEN];
 
 static void edrx_ptw_send_work_fn(struct k_work *work_item);
 K_WORK_DEFINE(edrx_ptw_send_work, edrx_ptw_send_work_fn);
@@ -62,6 +69,8 @@ static void lte_lc_edrx_current_values_clear(void)
 	memset(ptw_value_ltem, 0, sizeof(ptw_value_ltem));
 	memset(edrx_value_nbiot, 0, sizeof(edrx_value_nbiot));
 	memset(ptw_value_nbiot, 0, sizeof(ptw_value_nbiot));
+	memset(edrx_value_ntn_nbiot, 0, sizeof(edrx_value_ntn_nbiot));
+	memset(ptw_value_ntn_nbiot, 0, sizeof(ptw_value_ntn_nbiot));
 }
 
 static void lte_lc_edrx_values_store(enum lte_lc_lte_mode mode, char *edrx_value, char *ptw_value)
@@ -75,6 +84,10 @@ static void lte_lc_edrx_values_store(enum lte_lc_lte_mode mode, char *edrx_value
 		strcpy(edrx_value_nbiot, edrx_value);
 		strcpy(ptw_value_nbiot, ptw_value);
 		break;
+	case LTE_LC_LTE_MODE_NTN_NBIOT:
+		strcpy(edrx_value_ntn_nbiot, edrx_value);
+		strcpy(ptw_value_ntn_nbiot, ptw_value);
+		break;
 	default:
 		lte_lc_edrx_current_values_clear();
 		break;
@@ -84,14 +97,29 @@ static void lte_lc_edrx_values_store(enum lte_lc_lte_mode mode, char *edrx_value
 static void edrx_ptw_send_work_fn(struct k_work *work_item)
 {
 	int err;
-	int actt[] = {AT_CEDRXS_ACTT_WB, AT_CEDRXS_ACTT_NB};
+	int actt[3];
+	uint8_t actt_count = 0;
+	enum mfw_type mfw_type = mfw_type_get();
 
-	/* Apply the configurations for both LTE-M and NB-IoT. */
-	for (size_t i = 0; i < ARRAY_SIZE(actt); i++) {
-		char *requested_ptw_value = (actt[i] == AT_CEDRXS_ACTT_WB)
-						    ? requested_ptw_value_ltem
-						    : requested_ptw_value_nbiot;
-		char *ptw_value = (actt[i] == AT_CEDRXS_ACTT_WB) ? ptw_value_ltem : ptw_value_nbiot;
+	if (mfw_type == MFW_TYPE_NRF9151_NTN || mfw_type == MFW_TYPE_UNKNOWN) {
+		actt[actt_count] = AT_CEDRXS_ACTT_NTN_NB;
+		actt_count++;
+	}
+	actt[actt_count] = AT_CEDRXS_ACTT_WB;
+	actt_count++;
+	actt[actt_count] = AT_CEDRXS_ACTT_NB;
+	actt_count++;
+
+	/* Apply the configurations. */
+	for (size_t i = 0; i < actt_count; i++) {
+		char *requested_ptw_value =
+			(actt[i] == AT_CEDRXS_ACTT_WB) ? requested_ptw_value_ltem :
+			(actt[i] == AT_CEDRXS_ACTT_NB) ? requested_ptw_value_nbiot :
+							 requested_ptw_value_ntn_nbiot;
+		char *ptw_value =
+			(actt[i] == AT_CEDRXS_ACTT_WB) ? ptw_value_ltem :
+			(actt[i] == AT_CEDRXS_ACTT_NB) ? ptw_value_nbiot :
+							 ptw_value_ntn_nbiot;
 
 		if (strlen(requested_ptw_value) == 4 &&
 		    strcmp(ptw_value, requested_ptw_value) != 0) {
@@ -105,30 +133,6 @@ static void edrx_ptw_send_work_fn(struct k_work *work_item)
 	}
 }
 
-#if defined(CONFIG_UNITY)
-void lte_lc_edrx_on_modem_cfun(int mode, void *ctx)
-#else
-NRF_MODEM_LIB_ON_CFUN(lte_lc_edrx_cfun_hook, lte_lc_edrx_on_modem_cfun, NULL);
-
-static void lte_lc_edrx_on_modem_cfun(int mode, void *ctx)
-#endif /* CONFIG_UNITY */
-{
-	ARG_UNUSED(ctx);
-
-	/* If eDRX is enabled and modem is powered off, subscription of unsolicited eDRX
-	 * notifications must be re-newed because modem forgets that information
-	 * although it stores eDRX value and PTW for both system modes.
-	 */
-	if (mode == LTE_LC_FUNC_MODE_POWER_OFF && requested_edrx_enable) {
-		lte_lc_edrx_current_values_clear();
-		/* We want to avoid sending AT commands in the callback. However,
-		 * when modem is powered off, we are not expecting AT notifications
-		 * that could cause an assertion or missing notification.
-		 */
-		edrx_request(requested_edrx_enable);
-	}
-}
-
 /* Get Paging Time Window multiplier for the LTE mode.
  * Multiplier is 1.28 s for LTE-M, and 2.56 s for NB-IoT, derived from
  * Figure 10.5.5.32/3GPP TS 24.008.
@@ -137,7 +141,7 @@ static void get_ptw_multiplier(enum lte_lc_lte_mode lte_mode, float *ptw_multipl
 {
 	__ASSERT_NO_MSG(ptw_multiplier != NULL);
 
-	if (lte_mode == LTE_LC_LTE_MODE_NBIOT) {
+	if (lte_mode == LTE_LC_LTE_MODE_NBIOT || lte_mode == LTE_LC_LTE_MODE_NTN_NBIOT) {
 		*ptw_multiplier = 2.56;
 	} else {
 		__ASSERT_NO_MSG(lte_mode == LTE_LC_LTE_MODE_LTEM);
@@ -166,21 +170,17 @@ static void get_edrx_value(enum lte_lc_lte_mode lte_mode, uint8_t idx, float *ed
 	if (lte_mode == LTE_LC_LTE_MODE_LTEM) {
 		multiplier = edrx_lookup_ltem[idx];
 	} else {
-		__ASSERT_NO_MSG(lte_mode == LTE_LC_LTE_MODE_NBIOT);
+		__ASSERT_NO_MSG(lte_mode == LTE_LC_LTE_MODE_NBIOT ||
+				lte_mode == LTE_LC_LTE_MODE_NTN_NBIOT);
 		multiplier = edrx_lookup_nbiot[idx];
 	}
 
 	*edrx_value = multiplier == 0 ? 5.12 : multiplier * 10.24;
 }
 
-#if defined(CONFIG_UNITY)
-int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_str,
-		      char *ptw_str)
-#else
 /* Parses eDRX parameters from a +CEDRXS notification or a +CEDRXRDP response. */
 static int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_str,
 		      char *ptw_str)
-#endif /* CONFIG_UNITY */
 {
 	int err, tmp_int;
 	uint8_t idx;
@@ -203,15 +203,17 @@ static int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char
 		goto clean_exit;
 	}
 
-	/* The access technology indicators 4 for LTE-M and 5 for NB-IoT are
+	/* The access technology indicators 4 for LTE-M, 5 for NB-IoT and 6 for NTN NB-IoT are
 	 * specified in 3GPP 27.007 Ch. 7.41.
 	 * 0 indicates that the access technology does not currently use eDRX.
 	 * Any other value is not expected, and we use 0xFFFFFFFF to represent those.
 	 */
-	cfg->mode = tmp_int == 0   ? LTE_LC_LTE_MODE_NONE
-		    : tmp_int == 4 ? LTE_LC_LTE_MODE_LTEM
-		    : tmp_int == 5 ? LTE_LC_LTE_MODE_NBIOT
-				   : 0xFFFFFFFF; /* Intentionally illegal value */
+	cfg->mode =
+		(tmp_int == 0)                     ? LTE_LC_LTE_MODE_NONE :
+		(tmp_int == AT_CEDRXS_ACTT_WB)     ? LTE_LC_LTE_MODE_LTEM :
+		(tmp_int == AT_CEDRXS_ACTT_NB)     ? LTE_LC_LTE_MODE_NBIOT :
+		(tmp_int == AT_CEDRXS_ACTT_NTN_NB) ? LTE_LC_LTE_MODE_NTN_NBIOT :
+						     0xFFFFFFFF; /* Intentionally illegal value */
 
 	/* Check for the case where eDRX is not used. */
 	if (cfg->mode == LTE_LC_LTE_MODE_NONE) {
@@ -290,8 +292,12 @@ static int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char
 	cfg->ptw = idx * ptw_multiplier;
 
 	LOG_DBG("eDRX value for %s: %d.%02d, PTW: %d.%02d",
-		(cfg->mode == LTE_LC_LTE_MODE_LTEM) ? "LTE-M" : "NB-IoT", (int)cfg->edrx,
-		(int)(100 * (cfg->edrx - (int)cfg->edrx)), (int)cfg->ptw,
+		(cfg->mode == LTE_LC_LTE_MODE_LTEM)  ? "LTE-M" :
+		(cfg->mode == LTE_LC_LTE_MODE_NBIOT) ? "NB-IoT" :
+						       "NTN NB-IoT",
+		(int)cfg->edrx,
+		(int)(100 * (cfg->edrx - (int)cfg->edrx)),
+		(int)cfg->ptw,
 		(int)(100 * (cfg->ptw - (int)cfg->ptw)));
 
 clean_exit:
@@ -358,8 +364,9 @@ int edrx_ptw_set(enum lte_lc_lte_mode mode, const char *ptw)
 {
 	char *ptw_value;
 
-	if (mode != LTE_LC_LTE_MODE_LTEM && mode != LTE_LC_LTE_MODE_NBIOT) {
-		LOG_ERR("LTE mode must be LTE-M or NB-IoT");
+	if (mode != LTE_LC_LTE_MODE_LTEM && mode != LTE_LC_LTE_MODE_NBIOT &&
+	    mode != LTE_LC_LTE_MODE_NTN_NBIOT) {
+		LOG_ERR("LTE mode must be LTE-M, NB-IoT or NTN NB-IoT");
 		return -EINVAL;
 	}
 
@@ -367,17 +374,22 @@ int edrx_ptw_set(enum lte_lc_lte_mode mode, const char *ptw)
 		return -EINVAL;
 	}
 
-	ptw_value = (mode == LTE_LC_LTE_MODE_LTEM) ? requested_ptw_value_ltem
-						   : requested_ptw_value_nbiot;
+	ptw_value = (mode == LTE_LC_LTE_MODE_LTEM)  ? requested_ptw_value_ltem :
+		    (mode == LTE_LC_LTE_MODE_NBIOT) ? requested_ptw_value_nbiot :
+						      requested_ptw_value_ntn_nbiot;
 
 	if (ptw != NULL) {
 		strcpy(ptw_value, ptw);
 		LOG_DBG("PTW set to %s for %s", ptw_value,
-			(mode == LTE_LC_LTE_MODE_LTEM) ? "LTE-M" : "NB-IoT");
+			(mode == LTE_LC_LTE_MODE_LTEM)  ? "LTE-M" :
+			(mode == LTE_LC_LTE_MODE_NBIOT) ? "NB-IoT" :
+							  "NTN NB-IoT");
 	} else {
 		*ptw_value = '\0';
 		LOG_DBG("PTW use default for %s",
-			(mode == LTE_LC_LTE_MODE_LTEM) ? "LTE-M" : "NB-IoT");
+			(mode == LTE_LC_LTE_MODE_LTEM)  ? "LTE-M" :
+			(mode == LTE_LC_LTE_MODE_NBIOT) ? "NB-IoT" :
+							  "NTN NB-IoT");
 	}
 
 	return 0;
@@ -386,7 +398,22 @@ int edrx_ptw_set(enum lte_lc_lte_mode mode, const char *ptw)
 int edrx_request(bool enable)
 {
 	int err = 0;
-	int actt[] = {AT_CEDRXS_ACTT_WB, AT_CEDRXS_ACTT_NB};
+	int actt[3];
+	uint8_t actt_count = 0;
+	enum mfw_type mfw_type = mfw_type_get();
+
+	/* Try to configure for NTN NB-IoT first, because a failing +CEDRXS command removes
+	 * the +CEDRXS notification subscription. eDRX is configured for NTN NB-IoT only when
+	 * when modem firmware has NTN support or when firmware type can not be determined.
+	 */
+	if (mfw_type == MFW_TYPE_NRF9151_NTN || mfw_type == MFW_TYPE_UNKNOWN) {
+		actt[actt_count] = AT_CEDRXS_ACTT_NTN_NB;
+		actt_count++;
+	}
+	actt[actt_count] = AT_CEDRXS_ACTT_WB;
+	actt_count++;
+	actt[actt_count] = AT_CEDRXS_ACTT_NB;
+	actt_count++;
 
 	LOG_DBG("enable=%d, "
 		"requested_edrx_value_ltem=%s, edrx_value_ltem=%s, "
@@ -398,6 +425,11 @@ int edrx_request(bool enable)
 		"requested_ptw_value_nbiot=%s, ptw_value_nbiot=%s",
 		enable, requested_edrx_value_nbiot, edrx_value_nbiot, requested_ptw_value_nbiot,
 		ptw_value_nbiot);
+	LOG_DBG("enable=%d, "
+		"requested_edrx_value_ntn_nbiot=%s, edrx_value_ntn_nbiot=%s, "
+		"requested_ptw_value_ntn_nbiot=%s, ptw_value_ntn_nbiot=%s",
+		enable, requested_edrx_value_ntn_nbiot, edrx_value_ntn_nbiot,
+		requested_ptw_value_ntn_nbiot, ptw_value_ntn_nbiot);
 
 	requested_edrx_enable = enable;
 
@@ -412,13 +444,16 @@ int edrx_request(bool enable)
 		return 0;
 	}
 
-	/* Apply the configurations for both LTE-M and NB-IoT. */
-	for (size_t i = 0; i < ARRAY_SIZE(actt); i++) {
-		char *requested_edrx_value = (actt[i] == AT_CEDRXS_ACTT_WB)
-						     ? requested_edrx_value_ltem
-						     : requested_edrx_value_nbiot;
+	/* Apply the configurations. */
+	for (size_t i = 0; i < actt_count; i++) {
+		char *requested_edrx_value =
+			(actt[i] == AT_CEDRXS_ACTT_WB) ? requested_edrx_value_ltem :
+			(actt[i] == AT_CEDRXS_ACTT_NB) ? requested_edrx_value_nbiot :
+							 requested_edrx_value_ntn_nbiot;
 		char *edrx_value =
-			(actt[i] == AT_CEDRXS_ACTT_WB) ? edrx_value_ltem : edrx_value_nbiot;
+			(actt[i] == AT_CEDRXS_ACTT_WB) ? edrx_value_ltem :
+			(actt[i] == AT_CEDRXS_ACTT_NB) ? edrx_value_nbiot :
+							 edrx_value_ntn_nbiot;
 
 		if (strlen(requested_edrx_value) == 4) {
 			if (strcmp(edrx_value, requested_edrx_value) != 0) {
@@ -445,8 +480,9 @@ int edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx)
 {
 	char *edrx_value;
 
-	if (mode != LTE_LC_LTE_MODE_LTEM && mode != LTE_LC_LTE_MODE_NBIOT) {
-		LOG_ERR("LTE mode must be LTE-M or NB-IoT");
+	if (mode != LTE_LC_LTE_MODE_LTEM && mode != LTE_LC_LTE_MODE_NBIOT &&
+	    mode != LTE_LC_LTE_MODE_NTN_NBIOT) {
+		LOG_ERR("LTE mode must be LTE-M, NB-IoT or NTN NB-IoT");
 		return -EINVAL;
 	}
 
@@ -454,18 +490,31 @@ int edrx_param_set(enum lte_lc_lte_mode mode, const char *edrx)
 		return -EINVAL;
 	}
 
-	edrx_value = (mode == LTE_LC_LTE_MODE_LTEM) ? requested_edrx_value_ltem
-						    : requested_edrx_value_nbiot;
+	edrx_value = (mode == LTE_LC_LTE_MODE_LTEM)  ? requested_edrx_value_ltem :
+		     (mode == LTE_LC_LTE_MODE_NBIOT) ? requested_edrx_value_nbiot :
+						       requested_edrx_value_ntn_nbiot;
 
 	if (edrx) {
 		strcpy(edrx_value, edrx);
 		LOG_DBG("eDRX set to %s for %s", edrx_value,
-			(mode == LTE_LC_LTE_MODE_LTEM) ? "LTE-M" : "NB-IoT");
+			(mode == LTE_LC_LTE_MODE_LTEM)  ? "LTE-M" :
+			(mode == LTE_LC_LTE_MODE_NBIOT) ? "NB-IoT" :
+							  "NTN NB-IoT");
 	} else {
 		*edrx_value = '\0';
 		LOG_DBG("eDRX use default for %s",
-			(mode == LTE_LC_LTE_MODE_LTEM) ? "LTE-M" : "NB-IoT");
+			(mode == LTE_LC_LTE_MODE_LTEM)  ? "LTE-M" :
+			(mode == LTE_LC_LTE_MODE_NBIOT) ? "NB-IoT" :
+							  "NTN NB-IoT");
 	}
 
 	return 0;
+}
+
+void edrx_set(void)
+{
+	if (requested_edrx_enable) {
+		lte_lc_edrx_current_values_clear();
+		edrx_request(requested_edrx_enable);
+	}
 }

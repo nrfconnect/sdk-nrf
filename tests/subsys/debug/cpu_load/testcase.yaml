@@ -4,6 +4,7 @@ tests:
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
+      - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
@@ -15,7 +16,8 @@ tests:
       - ci_tests_subsys_debug
   debug.cpu_load.shared_dppi:
     sysbuild: true
-    platform_allow: nrf9160dk/nrf9160
+    platform_allow:
+      - nrf9160dk/nrf9160
     integration_platforms:
       - nrf9160dk/nrf9160
     build_only: true
@@ -26,3 +28,4 @@ tests:
       - ci_tests_subsys_debug
     extra_configs:
       - CONFIG_NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS=y
+      - CONFIG_NRFX_TIMER=y

@@ -11,6 +11,7 @@
 #include "hw.h"
 #include "cmdma.h"
 #include "security/cracen.h"
+#include <nrf_security_core.h>
 
 void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *desc_ptr, uint32_t cmd, uint32_t tag)
 {
@@ -18,7 +19,7 @@ void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *desc_ptr, uint32_t cm
 	dma->dmamem.cfg = cmd;
 	dma->out = dma->dmamem.outdescs;
 
-	dma->mapped = (char *)&dma->dmamem;
+	dma->mapped = (uint8_t *)&dma->dmamem;
 	ADD_INDESC_PRIV(*dma, offsetof(struct sx_dmaslot, cfg), sizeof(dma->dmamem.cfg), tag);
 }
 
@@ -28,7 +29,7 @@ static void sx_cmdma_finalize_descs(struct sxdesc *start, struct sxdesc *end)
 
 	for (desc_ptr = start; desc_ptr < end; desc_ptr++) {
 #ifdef DMA_FIFO_ADDR
-		if (desc_ptr->addr == (char *)DMA_FIFO_ADDR) {
+		if (desc_ptr->addr == (uint8_t *)DMA_FIFO_ADDR) {
 			desc_ptr->sz |= DMA_CONST_ADDR;
 		}
 #endif
@@ -38,7 +39,7 @@ static void sx_cmdma_finalize_descs(struct sxdesc *start, struct sxdesc *end)
 	end->dmatag |= DMATAG_LAST;
 	end->sz |= DMA_REALIGN;
 #ifdef DMA_FIFO_ADDR
-	if (end->addr == (char *)DMA_FIFO_ADDR) {
+	if (end->addr == (uint8_t *)DMA_FIFO_ADDR) {
 		end->sz |= DMA_CONST_ADDR;
 	}
 #endif
@@ -121,7 +122,13 @@ void sx_cmdma_reset(void)
 {
 	uint32_t intrmask = sx_rdreg(REG_INT_EN);
 
+	/** Too short reset pulse may lead to the issues with
+	 *  the active DMA transaction for some MCUs.
+	 *
+	 *  See: NCSDK-35701
+	 */
 	sx_wrreg(REG_CONFIG, REG_SOFT_RESET_ENABLE);
+	nrf_security_core_delay_us(1);
 	sx_wrreg(REG_CONFIG, 0); /* clear SW reset */
 
 	/* Wait for soft-reset to end */

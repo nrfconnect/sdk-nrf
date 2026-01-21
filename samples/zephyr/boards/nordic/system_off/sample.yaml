@@ -7,10 +7,13 @@ common:
 tests:
   nrf.extended.sample.boards.nrf.system_off:
     integration_platforms:
-      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
     harness: console
     harness_config:
@@ -22,10 +25,13 @@ tests:
         - "Entering system off; press sw0 to restart"
   nrf.extended.sample.boards.nrf.system_off.retained_mem:
     integration_platforms:
-      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
     extra_configs:
       - CONFIG_APP_USE_RETAINED_MEM=y
@@ -41,11 +47,16 @@ tests:
         - "Active Ticks:"
         - "Entering system off; press sw0 to restart"
   nrf.extended.sample.boards.nrf.system_off.grtc_wakeup:
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_GRTC_WAKEUP_ENABLE=y
       - CONFIG_GPIO_WAKEUP_ENABLE=n
@@ -65,11 +76,16 @@ tests:
         - "Retained data not supported"
         - "Entering system off; wait 2 seconds to restart"
   nrf.extended.sample.boards.nrf.system_off.retained_mem.grtc_wakeup:
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
-      - nrf7120pdk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_APP_USE_RETAINED_MEM=y
       - CONFIG_GRTC_WAKEUP_ENABLE=y

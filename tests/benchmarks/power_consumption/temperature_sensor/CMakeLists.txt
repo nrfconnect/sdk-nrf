@@ -10,4 +10,5 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(temperature_sensor)
 
+target_sources(app PRIVATE ./../common/main.c)
 target_sources(app PRIVATE src/main.c)

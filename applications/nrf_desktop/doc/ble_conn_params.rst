@@ -27,16 +27,16 @@ Configuration
 *************
 
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` options are enabled.
-The |ble_conn_params| is enabled by the :ref:`CONFIG_DESKTOP_BLE_CONN_PARAMS_ENABLE <config_desktop_app_options>` option.
-The option is implied by :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` together with other features used by a HID dongle that forwards the HID reports received over Bluetooth LE.
+Make sure that both :option:`CONFIG_DESKTOP_ROLE_HID_DONGLE` and :option:`CONFIG_DESKTOP_BT_CENTRAL` options are enabled.
+The |ble_conn_params| is enabled by the :option:`CONFIG_DESKTOP_BLE_CONN_PARAMS_ENABLE` option.
+The option is implied by :option:`CONFIG_DESKTOP_BT_CENTRAL` together with other features used by a HID dongle that forwards the HID reports received over Bluetooth LE.
 
-Enable :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI <config_desktop_app_options>` to manage Bluetooth connections' parameters reacting on the USB state change.
-The connection intervals for all of the Bluetooth connected peripherals are set to the value of :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE <config_desktop_app_options>` Kconfig option (100 ms by default) while USB is suspended.
-The connections' peripheral latencies are set to the value of :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_LATENCY_VALUE <config_desktop_app_options>` Kconfig option (``1`` by default).
+Enable :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` to manage Bluetooth connections' parameters reacting on the USB state change.
+The connection intervals for all of the Bluetooth connected peripherals are set to the value of :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE` Kconfig option (100 ms by default) while USB is suspended.
+The connections' peripheral latencies are set to the value of :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_LATENCY_VALUE` Kconfig option (``1`` by default).
 The non-zero peripheral latency is used to prevent peripheral latency increase requests triggered by the :ref:`nrf_desktop_ble_latency` used on the peripheral's end.
 The connection parameter change is reverted when USB is active or disconnected.
-The :ref:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI <config_desktop_app_options>` is enabled by default.
+The :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` is enabled by default.
 
 Implementation details
 **********************

@@ -575,7 +575,7 @@ Kconfig:
    id = 0xBEEF
    flags = 0
    ver = 1
-   source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
+   source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
 cmake:
 
@@ -627,7 +627,7 @@ To link to doxygen macros, enums or functions use:
 * :c:macro:`BT_HIDS_INFORMATION_LEN`
 * :c:func:`bt_hids_init`
 * :c:struct:`bt_gatt_dm`
-* :c:type:`slm_data_handler_t`
+* :c:type:`lte_lc_evt_handler_t`
 * :c:enum:`at_param_type` (for the whole list)
 * :c:enumerator:`PEER_STATE_CONN_FAILED` (for a list item)
 * :c:member:`ble_peer_event.state`

@@ -12,3 +12,7 @@
 };
 
 /delete-node/ &led1;
+
+&lfclk {
+	status = "okay";
+};

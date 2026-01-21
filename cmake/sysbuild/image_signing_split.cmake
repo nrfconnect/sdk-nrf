@@ -91,17 +91,14 @@ function(zephyr_mcuboot_tasks)
     message(WARNING "slot0_partition write block size devicetree parameter is missing, assuming write block size is 4")
   endif()
 
-  # Fetch QSPI XIP MCUboot image number from sysbuild
-  zephyr_get(qspi_xip_image_number VAR QSPI_XIP_IMAGE_NUMBER SYSBUILD)
-
   if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
     # XIP image, need to use the fixed address for these slots
     if(CONFIG_NCS_IS_VARIANT_IMAGE)
       set(imgtool_internal_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_ADDRESS@)
-      set(imgtool_external_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_${qspi_xip_image_number}_ADDRESS@)
+      set(imgtool_external_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS@)
     else()
       set(imgtool_internal_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_ADDRESS@)
-      set(imgtool_external_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_${qspi_xip_image_number}_ADDRESS@)
+      set(imgtool_external_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_ADDRESS@)
     endif()
   endif()
 
@@ -111,7 +108,7 @@ function(zephyr_mcuboot_tasks)
   # TODO: NCSDK-28461 sysbuild PM fields cannot be updated without a pristine build, will become
   # invalid if a static PM file is updated without pristine build
   set(imgtool_internal_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_internal_rom_command} CACHE STRING "imgtool sign (internal flash) sysbuild replacement")
-  set(imgtool_external_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_${qspi_xip_image_number}_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_external_rom_command} CACHE STRING "imgtool sign (external flash) sysbuild replacement")
+  set(imgtool_external_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_external_rom_command} CACHE STRING "imgtool sign (external flash) sysbuild replacement")
   set(imgtool_internal_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_internal_sign_sysbuild})
   set(imgtool_external_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_external_sign_sysbuild})
 
@@ -135,6 +132,14 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_extra -k "${keyfile}" ${imgtool_extra})
   endif()
 
+  if(CONFIG_MCUBOOT_IMGTOOL_UUID_VID)
+    set(imgtool_extra ${imgtool_extra} --vid "${CONFIG_MCUBOOT_IMGTOOL_UUID_VID_NAME}")
+  endif()
+
+  if(CONFIG_MCUBOOT_IMGTOOL_UUID_CID)
+    set(imgtool_extra ${imgtool_extra} --cid "${CONFIG_MCUBOOT_IMGTOOL_UUID_CID_NAME}")
+  endif()
+
   set(imgtool_args ${imgtool_extra})
 
   # Extensionless prefix of any output file.
@@ -152,10 +157,27 @@ function(zephyr_mcuboot_tasks)
   # List of additional build byproducts.
   set(byproducts)
 
-  # 'west sign' arguments for confirmed, unconfirmed and encrypted images.
-  set(unconfirmed_args)
-  set(confirmed_args)
-  set(encrypted_args)
+  # Input files to sign
+  set(input_internal_arg)
+  set(input_external_arg)
+  # Additional (algorithm-dependent) args for encryption
+  set(imgtool_encrypt_extra_args)
+
+  if(NOT "${keyfile_enc}" STREQUAL "")
+    if(CONFIG_MCUBOOT_ENCRYPTION_ALG_AES_256)
+      set(imgtool_args ${imgtool_args} --encrypt-keylen 256)
+    endif()
+
+    # Signature type determines key exchange scheme; ED25519 here means
+    # ECIES-X25519 is used. Default to HMAC-SHA512 for ECIES-X25519.
+    # Only .encrypted.bin file gets the ENCX25519/ENCX25519_SHA512, the
+    # just signed one does not.
+    # Only NRF54L gets the HMAC-SHA512, other remain with previously used
+    # SHA256.
+    if(CONFIG_SOC_SERIES_NRF54LX AND CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519)
+      set(imgtool_encrypt_extra_args --hmac-sha 512)
+    endif()
+  endif()
 
   # Split files apart
   split(
@@ -170,12 +192,12 @@ function(zephyr_mcuboot_tasks)
     if(CONFIG_BUILD_WITH_TFM)
       # Merge the TFM secure hex file with the internal hex file
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/scripts/build/mergehex.py -o ${input_internal}.tfm.hex ${input_internal}.hex ${input_tfm_s}.hex)
-      set(unconfirmed_internal_args ${input_internal}.tfm.hex ${output_internal}.hex)
+      set(input_internal_arg ${input_internal}.tfm.hex)
     else()
-      set(unconfirmed_internal_args ${input_internal}.hex ${output_internal}.hex)
+      set(input_internal_arg ${input_internal}.hex)
     endif()
 
-    set(unconfirmed_external_args ${input_external}.hex ${output_external}.hex)
+    set(input_external_arg ${input_external}.hex)
     list(APPEND byproducts ${output_internal}.hex ${output_external}.hex)
 
     # Do not run zephyr_runner_file here as PM will provide the merged hex file from
@@ -185,7 +207,7 @@ function(zephyr_mcuboot_tasks)
     endif()
 
     set(BYPRODUCT_KERNEL_SIGNED_HEX_NAME "${output_merged}.hex"
-        CACHE FILEPATH "Signed kernel hex file" FORCE
+      CACHE FILEPATH "Signed kernel hex file" FORCE
     )
 
     # Add the west sign calls and their byproducts to the post-processing
@@ -196,9 +218,9 @@ function(zephyr_mcuboot_tasks)
     # calls to the "extra_post_build_commands" property ensures they run
     # after the commands which generate the unsigned versions.
     set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-      ${imgtool_internal_sign} ${imgtool_args} ${unconfirmed_internal_args})
+      ${imgtool_internal_sign} ${imgtool_args} ${input_internal_arg} ${output_internal}.hex)
     set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-      ${imgtool_external_sign} ${imgtool_args} ${unconfirmed_external_args})
+      ${imgtool_external_sign} ${imgtool_args} ${input_external_arg} ${output_external}.hex)
 
     # Combine the signed hex files into a single output hex file
     set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
@@ -206,25 +228,61 @@ function(zephyr_mcuboot_tasks)
 
     if(NOT "${keyfile_enc}" STREQUAL "")
       if(CONFIG_BUILD_WITH_TFM)
-        set(unconfirmed_internal_args ${input_internal}.tfm.hex ${output_internal}.encrypted.hex)
+        set(input_internal_arg ${input_internal}.tfm.hex)
       else()
-        set(unconfirmed_internal_args ${input_internal}.hex ${output_internal}.encrypted.hex)
+        set(input_internal_arg ${input_internal}.hex)
       endif()
 
-      set(unconfirmed_external_args ${input_external}.hex ${output_external}.encrypted.hex)
+      set(input_external_arg ${input_external}.hex)
       list(APPEND byproducts ${output_internal}.encrypted.hex ${output_external}.encrypted.hex)
       set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_HEX_NAME "${output_merged}.encrypted.hex"
-          CACHE FILEPATH "Signed and encrypted kernel hex file" FORCE
+        CACHE FILEPATH "Signed and encrypted kernel hex file" FORCE
       )
 
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-        ${imgtool_internal_sign} ${imgtool_args} --encrypt "${keyfile_enc}" ${unconfirmed_internal_args})
+        ${imgtool_internal_sign} ${imgtool_args} ${imgtool_encrypt_extra_args} --encrypt
+        "${keyfile_enc}" ${input_internal_arg} ${output_internal}.encrypted.hex)
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-        ${imgtool_external_sign} ${imgtool_args} --encrypt "${keyfile_enc}" ${unconfirmed_external_args})
+        ${imgtool_external_sign} ${imgtool_args} ${imgtool_encrypt_extra_args} --encrypt
+        "${keyfile_enc}" ${input_external_arg} ${output_external}.encrypted.hex)
 
       # Combine the signed hex files into a single output hex file
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-        ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/scripts/build/mergehex.py -o ${output_merged}.encrypted.hex ${output_internal}.hex ${output_external}.hex)
+        ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/scripts/build/mergehex.py -o ${output_merged}.encrypted.hex ${output_internal}.encrypted.hex ${output_external}.encrypted.hex)
+    endif()
+
+    if(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
+      list(APPEND byproducts ${output_merged}.confirmed.hex)
+      if(CONFIG_NCS_IS_VARIANT_IMAGE)
+        zephyr_runner_file(hex ${output_merged}.confirmed.hex)
+      endif()
+      set(BYPRODUCT_KERNEL_SIGNED_CONFIRMED_HEX_NAME "${output_merged}.confirmed.hex"
+        CACHE FILEPATH "Signed and confirmed kernel hex file" FORCE
+      )
+
+      if("${keyfile_enc}" STREQUAL "")
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_internal_sign} ${imgtool_args} --pad --confirm ${input_internal_arg}.hex
+          ${output_internal}.confirmed.hex)
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_external_sign} ${imgtool_args} --pad --confirm ${output_external}.hex
+          ${output_external}.confirmed.hex)
+        # Combine the signed confirmed hex files into a single output hex file
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/scripts/build/mergehex.py -o ${output_merged}.confirmed.hex ${output_internal}.confirmed.hex ${output_external}.confirmed.hex)
+      else()
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_internal_sign} ${imgtool_args} ${imgtool_encrypt_extra_args} --encrypt
+          "${keyfile_enc}" --clear --pad --confirm ${input_internal_arg}
+          ${output_internal}.confirmed.hex)
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${imgtool_external_sign} ${imgtool_args} ${imgtool_encrypt_extra_args} --encrypt
+          "${keyfile_enc}" --clear --pad --confirm ${input_external_arg}
+          ${output_external}.confirmed.hex)
+        # Combine the signed confirmed hex files into a single output hex file
+        set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+          ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/scripts/build/mergehex.py -o ${output_merged}.confirmed.hex ${output_internal}.confirmed.hex ${output_external}.confirmed.hex)
+      endif()
     endif()
   endif()
 
@@ -239,8 +297,21 @@ function(zephyr_mcuboot_tasks)
     list(APPEND byproducts "${output_internal}.bin;${output_external}.bin")
 
     set(BYPRODUCT_KERNEL_SIGNED_BIN_NAME "${output_internal}.bin;${output_external}.bin"
-        CACHE FILEPATH "Signed kernel bin files" FORCE
+      CACHE FILEPATH "Signed kernel bin files" FORCE
     )
+
+    if(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
+      set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+        ${CMAKE_OBJCOPY} --input-target=ihex --output-target=binary ${output_internal}.confirmed.hex ${output_internal}.confirmed.bin)
+      set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+        ${CMAKE_OBJCOPY} --input-target=ihex --output-target=binary ${output_external}.confirmed.hex ${output_external}.confirmed.bin)
+
+      list(APPEND byproducts "${output_internal}.confirmed.bin;${output_external}.confirmed.bin")
+
+      set(BYPRODUCT_KERNEL_SIGNED_CONFIRMED_BIN_NAME "${output_internal}.confirmed.bin;${output_external}.confirmed.bin"
+        CACHE FILEPATH "Signed kernel bin files" FORCE
+      )
+    endif()
 
     if(NOT "${keyfile_enc}" STREQUAL "")
       # Instead of re-signing, convert the encrypted hex files to binary using objcopy
@@ -251,7 +322,7 @@ function(zephyr_mcuboot_tasks)
 
       list(APPEND byproducts "${output_internal}.encrypted.bin;${output_external}.encrypted.bin")
       set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_BIN_NAME "${output_internal}.encrypted.bin;${output_external}.encrypted.bin"
-          CACHE FILEPATH "Signed and encrypted kernel bin files" FORCE
+        CACHE FILEPATH "Signed and encrypted kernel bin files" FORCE
       )
     endif()
   endif()

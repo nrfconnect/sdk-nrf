@@ -120,7 +120,7 @@ Supported modem firmware
 See `Modem firmware compatibility matrix`_ for an overview of which modem firmware versions have been tested with this version of the |NCS|.
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -175,8 +175,8 @@ Working with nRF91 Series
   Snippet is used for nRF91 modem tracing with the UART backend for the following applications and samples:
 
   * Asset Tracker v2
-  * :ref:`serial_lte_modem`
-  * All samples that use nRF91 Series DK except for :ref:`slm_shell_sample`, :ref:`modem_trace_flash`, :ref:`modem_trace_backend_sample`.
+  * Serial LTE modem
+  * All samples that use nRF91 Series DK except for SLM Shell sample, :ref:`modem_trace_flash`, :ref:`modem_trace_backend_sample`.
 
   For samples where the UART trace backend is enabled by default, the configuration is added to the sample overlays and project configuration.
 
@@ -555,7 +555,7 @@ Cellular samples (renamed from nRF9160 samples)
 
 * Added:
 
-  * Support for the nRF9161 DK in all cellular samples except for the :ref:`lte_sensor_gateway` sample.
+  * Support for the nRF9161 DK in all cellular samples except for the LTE Sensor Gateway sample.
   * The :ref:`battery` sample to show how to use the :ref:`modem_battery_readme` library.
   * The :ref:`nrf_provisioning_sample` sample that demonstrates how to use the :ref:`lib_nrf_provisioning` service.
 
@@ -1073,8 +1073,8 @@ Libraries for networking
 
   * Updated:
 
-    * The ``CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN`` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option.
-    * The ``CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN`` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` Kconfig option.
+    * The ``CONFIG_AWS_FOTA_HOSTNAME_MAX_LEN`` Kconfig option has been replaced by the ``CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE`` Kconfig option.
+    * The ``CONFIG_AWS_FOTA_FILE_PATH_MAX_LEN`` Kconfig option has been replaced by the ``CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE`` Kconfig option.
     * AWS FOTA jobs are now marked as failed if the job document for the update is invalid.
     * The protocol (HTTP or HTTPS) is now automatically chosen based on the ``protocol`` or ``url`` fields in the job document for the update.
 
@@ -1082,19 +1082,19 @@ Libraries for networking
 
   * Updated:
 
-    * The ``CONFIG_AZURE_FOTA_HOSTNAME_MAX_LEN`` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option.
-    * The ``CONFIG_AZURE_FOTA_FILE_PATH_MAX_LEN`` Kconfig option has been replaced by the :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` Kconfig option.
+    * The ``CONFIG_AZURE_FOTA_HOSTNAME_MAX_LEN`` Kconfig option has been replaced by the ``CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE`` Kconfig option.
+    * The ``CONFIG_AZURE_FOTA_FILE_PATH_MAX_LEN`` Kconfig option has been replaced by the ``CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE`` Kconfig option.
 
-* :ref:`lib_download_client` library:
+* Download client library:
 
   * Added:
 
-    * Kconfig option :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_CID` that allows use of Connection Identifier on DTLS connection.
+    * Kconfig option ``CONFIG_DOWNLOAD_CLIENT_CID`` that allows use of Connection Identifier on DTLS connection.
 
   * Updated:
 
-    * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE` Kconfig option's default value to ``255``.
-    * The :kconfig:option:`CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE` Kconfig option's default value to ``255``.
+    * The ``CONFIG_DOWNLOAD_CLIENT_MAX_HOSTNAME_SIZE`` Kconfig option's default value to ``255``.
+    * The ``CONFIG_DOWNLOAD_CLIENT_MAX_FILENAME_SIZE`` Kconfig option's default value to ``255``.
     * Changed the event order so that the :c:member:`DOWNLOAD_CLIENT_EVT_ERROR` is always received before the :c:member:`DOWNLOAD_CLIENT_EVT_CLOSED` event.
 
 * :ref:`lib_fota_download` library:

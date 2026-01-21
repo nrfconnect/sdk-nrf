@@ -5,14 +5,10 @@
 #
 
 # The nRF Cloud library folder contains multiple services
-if (DEFINED CONFIG_NRF_CLOUD_MQTT OR
-    DEFINED CONFIG_NRF_CLOUD_AGNSS OR
-    DEFINED CONFIG_NRF_CLOUD_PGPS OR
-    DEFINED CONFIG_NRF_CLOUD_REST OR
-    DEFINED CONFIG_NRF_CLOUD_FOTA OR
-    DEFINED CONFIG_NRF_CLOUD_COAP OR
-    DEFINED CONFIG_NRF_CLOUD_LOCATION)
-        add_subdirectory(nrf_cloud)
+if(CONFIG_NRF_CLOUD_MQTT OR CONFIG_NRF_CLOUD_AGNSS OR CONFIG_NRF_CLOUD_PGPS OR
+   CONFIG_NRF_CLOUD_REST OR CONFIG_NRF_CLOUD_FOTA OR CONFIG_NRF_CLOUD_COAP OR
+   CONFIG_NRF_CLOUD_LOCATION)
+  add_subdirectory(nrf_cloud)
 endif()
 
 add_subdirectory_ifdef(CONFIG_REST_CLIENT rest_client)
@@ -21,7 +17,6 @@ add_subdirectory_ifdef(CONFIG_AWS_FOTA aws_fota)
 add_subdirectory_ifdef(CONFIG_AWS_IOT aws_iot)
 add_subdirectory_ifdef(CONFIG_AZURE_FOTA azure_fota)
 add_subdirectory_ifdef(CONFIG_AZURE_IOT_HUB azure_iot_hub)
-add_subdirectory_ifdef(CONFIG_DOWNLOAD_CLIENT download_client)
 add_subdirectory_ifdef(CONFIG_DOWNLOADER downloader)
 add_subdirectory_ifdef(CONFIG_FOTA_DOWNLOAD fota_download)
 add_subdirectory_ifdef(CONFIG_ZZHC zzhc)

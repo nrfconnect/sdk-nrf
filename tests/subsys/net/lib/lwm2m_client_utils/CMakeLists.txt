@@ -52,6 +52,7 @@ set(options
   -DCONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE=1
   -DCONFIG_LTE_LC_PSM_MODULE=1
   -DCONFIG_LTE_LC_TAU_PRE_WARNING_MODULE=1
+  -DCONFIG_LTE_LC_NETWORK_REGISTRATION_MODULE=1
 )
 
 target_compile_options(app
@@ -67,7 +68,7 @@ set(includes
 "${ZEPHYR_BASE}/subsys/net/lib/lwm2m/"
 "${ZEPHYR_BASE}/../nrfxlib/nrf_modem/include/"
 "${ZEPHYR_BASE}/../modules/lib/cjson/"
-"${ZEPHYR_BASE}/../nrf/subsys/net/lib/nrf_cloud/include/"
+"${ZEPHYR_BASE}/../nrf/subsys/net/lib/nrf_cloud/common/include/"
 "${ZEPHYR_BASE}/../nrf/subsys/net/lib/fota_download/include/"
 "src/"
 )

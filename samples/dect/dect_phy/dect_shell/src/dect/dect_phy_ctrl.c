@@ -43,6 +43,7 @@ struct k_work_q dect_phy_ctrl_work_q;
 /* States of all commands */
 static struct dect_phy_ctrl_data {
 	bool phy_api_initialized;
+	bool tx_cw_started;
 
 	int band_info_count;
 	struct nrf_modem_dect_phy_band band_info[DESH_DECT_PHY_SUPPORTED_BAND_COUNT];
@@ -100,6 +101,8 @@ static struct dect_phy_ctrl_data {
 K_SEM_DEFINE(rssi_scan_sema, 0, 1);
 
 K_SEM_DEFINE(dect_phy_ctrl_mdm_api_init_sema, 0, 1);
+K_SEM_DEFINE(tx_cw_sema, 0, 1);
+K_SEM_DEFINE(stf_cover_seq_sema, 0, 1);
 K_SEM_DEFINE(dect_phy_ctrl_mdm_api_op_cancel_sema, 0, 1);
 K_SEM_DEFINE(dect_phy_ctrl_mdm_api_radio_mode_config_sema, 0, 1);
 K_MUTEX_DEFINE(dect_phy_ctrl_mdm_api_op_cancel_all_mutex);
@@ -454,6 +457,34 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 			}
 			break;
 		}
+		case DECT_PHY_CTRL_OP_TEST_RF_TX_CW_CONFIG_DONE: {
+			struct nrf_modem_dect_phy_test_rf_tx_cw_control_event *evt =
+				(struct nrf_modem_dect_phy_test_rf_tx_cw_control_event *)event.data;
+			struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
+
+			if (evt->err == NRF_MODEM_DECT_PHY_TEST_RF_TX_CW_ERR_NO_ERROR) {
+				desh_warn("CW TX started successfully. Channel %u, "
+					   "power %d dBm. Other operations are not possible.",
+					   current_settings->cert.tx_cw_ctrl_channel,
+					   current_settings->cert.tx_cw_ctrl_pwr_dbm);
+				ctrl_data.tx_cw_started = true;
+			} else {
+				desh_error("CW TX start failed with error %d", evt->err);
+			}
+			k_sem_give(&tx_cw_sema);
+			break;
+		}
+		case DECT_PHY_CTRL_OP_TEST_STF_COVER_SEQ_CONFIG_DONE: {
+			struct nrf_modem_dect_phy_stf_control_event *evt =
+				(struct nrf_modem_dect_phy_stf_control_event *)event.data;
+
+			if (evt->err != NRF_MODEM_DECT_PHY_SUCCESS) {
+				desh_error("STF cover sequence config failed with error %d",
+					evt->err);
+			}
+			k_sem_give(&stf_cover_seq_sema);
+			break;
+		}
 		case DECT_PHY_CTRL_OP_PHY_API_MDM_INITIALIZED: {
 			struct nrf_modem_dect_phy_init_event *params =
 				(struct nrf_modem_dect_phy_init_event *)event.data;
@@ -551,13 +582,12 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 				params->pcc_status.header_status, tmp_str);
 			if (ctrl_data.debug) {
 				int16_t rssi_level = params->pcc_status.rssi_2 / 2;
+				double snr = (double)params->pcc_status.snr / 4;
 
 				desh_print("PCC received (stf start time %llu, handle %d): "
-					   "status: \"%s\", snr %d, "
-					   "RSSI-2 %d (RSSI %d)",
+					   "status: \"%s\", snr %.2f dB, RSSI-2 %d dBm",
 					   params->stf_start_time, params->pcc_status.handle,
-					   tmp_str, params->pcc_status.snr,
-					   params->pcc_status.rssi_2, rssi_level);
+					   tmp_str, snr, rssi_level);
 			}
 			if (params->pcc_status.header_status ==
 			    NRF_MODEM_DECT_PHY_HDR_STATUS_VALID) {
@@ -599,11 +629,11 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 				struct nrf_modem_dect_phy_pdc_event *p_rx_status =
 					&(params->rx_status);
 				int16_t rssi_level = p_rx_status->rssi_2 / 2;
+				double snr = (double)p_rx_status->snr / 4.0;
 
-				desh_print("PDC received (time %llu): snr %d, RSSI-2 %d "
-					   "(RSSI %d), len %d",
-					   params->time, p_rx_status->snr, p_rx_status->rssi_2,
-					   rssi_level, params->data_length);
+				desh_print("PDC received (time %llu): snr %.2f dB, "
+					   "RSSI-2 %d dBm, len %d",
+					   params->time, snr, rssi_level, params->data_length);
 				for (i = 0; i < 128 && i < params->data_length; i++) {
 					sprintf(&hex_data[i], "%02x ", params->data[i]);
 				}
@@ -611,7 +641,6 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 				desh_warn("Received unknown data, len %d, hex data: %s\n",
 					  params->data_length, hex_data);
 			}
-
 			break;
 		}
 
@@ -704,6 +733,23 @@ K_THREAD_DEFINE(dect_phy_ctrl_msgq_th, DECT_PHY_CTRL_STACK_SIZE, dect_phy_ctrl_m
 		NULL, NULL, NULL, DECT_PHY_CTRL_PRIORITY, 0, 0);
 
 /**************************************************************************************************/
+
+static void dect_phy_ctrl_mdm_test_rf_tx_cw_config_cb(
+	const struct nrf_modem_dect_phy_test_rf_tx_cw_control_event *evt)
+{
+	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_TEST_RF_TX_CW_CONFIG_DONE,
+				       (void *)evt,
+				       sizeof(
+					struct nrf_modem_dect_phy_test_rf_tx_cw_control_event));
+}
+
+static void dect_phy_ctrl_mdm_test_stf_cover_seq_config_cb(
+	const struct nrf_modem_dect_phy_stf_control_event *evt)
+{
+	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_TEST_STF_COVER_SEQ_CONFIG_DONE,
+				       (void *)evt,
+				       sizeof(struct nrf_modem_dect_phy_stf_control_event));
+}
 
 static void dect_phy_ctrl_mdm_initialize_cb(const struct nrf_modem_dect_phy_init_event *evt)
 {
@@ -1032,6 +1078,14 @@ void dect_phy_ctrl_mdm_evt_handler(const struct nrf_modem_dect_phy_event *evt)
 	dect_app_modem_time_save(&evt->time);
 
 	switch (evt->id) {
+	case NRF_MODEM_DECT_PHY_EVT_TEST_RF_TX_CW_CONTROL_CONFIG:
+		dect_phy_ctrl_mdm_test_rf_tx_cw_config_cb(
+			&evt->test_rf_tx_cw_control);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_STF_CONFIG:
+		dect_phy_ctrl_mdm_test_stf_cover_seq_config_cb(
+			&evt->stf_cover_seq_control);
+		break;
 	case NRF_MODEM_DECT_PHY_EVT_INIT:
 		dect_phy_ctrl_mdm_initialize_cb(&evt->init);
 		break;
@@ -1089,20 +1143,6 @@ void dect_phy_ctrl_mdm_evt_handler(const struct nrf_modem_dect_phy_event *evt)
 	}
 }
 
-static void dect_phy_ctrl_phy_init(void)
-{
-	int ret = nrf_modem_dect_phy_event_handler_set(dect_phy_ctrl_mdm_evt_handler);
-
-	if (ret) {
-		printk("nrf_modem_dect_phy_event_handler_set returned: %i\n", ret);
-	} else {
-		ret = nrf_modem_dect_phy_init();
-		if (ret) {
-			printk("nrf_modem_dect_phy_init returned: %i\n", ret);
-		}
-	}
-}
-
 void dect_phy_ctrl_mdm_op_cancel_all(void)
 {
 	int err;
@@ -1130,6 +1170,10 @@ void dect_phy_ctrl_mdm_op_cancel_all(void)
 
 int dect_phy_ctrl_time_query(void)
 {
+	if (ctrl_data.tx_cw_started) {
+		desh_error("TX CW started.");
+		return -EACCES;
+	}
 	if (!ctrl_data.phy_api_initialized) {
 		desh_error("Phy api not initialized");
 		return -EACCES;
@@ -1224,6 +1268,10 @@ int dect_phy_ctrl_rx_start(struct dect_phy_rx_cmd_params *params, bool restart)
 {
 	int err;
 
+	if (ctrl_data.tx_cw_started) {
+		desh_error("TX CW started.");
+		return -EACCES;
+	}
 	if (!ctrl_data.phy_api_initialized) {
 		desh_error("Phy api not initialized");
 		return -EACCES;
@@ -1475,6 +1523,10 @@ static int dect_phy_ctrl_phy_handlers_init(void)
 int dect_phy_ctrl_rssi_scan_start(struct dect_phy_rssi_scan_params *params,
 				  dect_phy_ctrl_rssi_scan_completed_callback_t fp_result_callback)
 {
+	if (ctrl_data.tx_cw_started) {
+		desh_error("TX CW started.");
+		return -EACCES;
+	}
 	if (!ctrl_data.phy_api_initialized) {
 		desh_error("Phy api not initialized");
 		return -EACCES;
@@ -1515,6 +1567,10 @@ void dect_phy_ctrl_rssi_scan_stop(void)
 
 static bool dect_phy_ctrl_op_ongoing(void)
 {
+	if (ctrl_data.tx_cw_started) {
+		desh_warn("TX CW ongoing.");
+		return true;
+	}
 	if (ctrl_data.rssi_scan_ongoing) {
 		desh_warn("RSSI scan ongoing.");
 		return true;
@@ -1718,6 +1774,10 @@ bool dect_phy_ctrl_nbr_is_in_channel(uint16_t channel)
 
 int dect_phy_ctrl_activate_cmd(enum nrf_modem_dect_phy_radio_mode radio_mode)
 {
+	if (ctrl_data.tx_cw_started) {
+		desh_error("TX CW started.");
+		return -EACCES;
+	}
 	if (!ctrl_data.phy_api_initialized) {
 		desh_error("Phy api not initialized");
 		return -EACCES;
@@ -1732,6 +1792,10 @@ int dect_phy_ctrl_deactivate_cmd(void)
 {
 	int ret;
 
+	if (ctrl_data.tx_cw_started) {
+		desh_error("TX CW started.");
+		return -EACCES;
+	}
 	if (!ctrl_data.phy_api_initialized) {
 		desh_error("Phy api not initialized");
 		return -EACCES;
@@ -1746,6 +1810,10 @@ int dect_phy_ctrl_deactivate_cmd(void)
 
 int dect_phy_ctrl_radio_mode_cmd(enum nrf_modem_dect_phy_radio_mode radio_mode)
 {
+	if (ctrl_data.tx_cw_started) {
+		desh_error("TX CW started.");
+		return -EACCES;
+	}
 	if (!ctrl_data.phy_api_initialized) {
 		desh_error("Phy api not initialized");
 		return -EACCES;
@@ -1803,7 +1871,6 @@ int dect_phy_ctrl_radio_mode_cmd(enum nrf_modem_dect_phy_radio_mode radio_mode)
 }
 
 /**************************************************************************************************/
-
 static void dect_phy_ctrl_on_modem_lib_init(int ret, void *ctx)
 {
 	ARG_UNUSED(ctx);
@@ -1812,15 +1879,62 @@ static void dect_phy_ctrl_on_modem_lib_init(int ret, void *ctx)
 		printk("Modem library did not initialize: %d\n", ret);
 		return;
 	}
+	struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
+
+	int err = nrf_modem_dect_phy_event_handler_set(dect_phy_ctrl_mdm_evt_handler);
+
+	if (err) {
+		desh_error("nrf_modem_dect_phy_event_handler_set returned: %i", err);
+	}
+
+	/* Set CW if needed */
+	if (current_settings->cert.tx_cw_ctrl_on) {
+		err = nrf_modem_dect_phy_test_rf_tx_cw_control(
+			NRF_MODEM_DECT_PHY_TEST_RF_TX_CW_OPER_ON,
+			current_settings->cert.tx_cw_ctrl_channel,
+			current_settings->cert.tx_cw_ctrl_pwr_dbm);
+
+		if (err) {
+			desh_error("Failed to set CW to modem: %d", err);
+			/* Sema will timeout */
+		}
+		err = k_sem_take(&tx_cw_sema, K_SECONDS(5));
+		if (err) {
+			desh_error("%s: timeout for waiting tx_cw_sema: %d", (__func__), err);
+			desh_error("Failed to set CW certification settings to modem -"
+			" we continue without those");
+		} else {
+			return; /* CW is ongoing, cannot do other operations */
+		}
+	}
+	/* Set STF cover sequence for RX and TX.
+	 * But 1st of all, print warning message if non default is used.
+	 */
+	if (!current_settings->cert.tx_stf_cover_seq_on ||
+	    !current_settings->cert.rx_stf_cover_seq_on) {
+		desh_warn("Note: STF cover sequence not set.");
+	}
+	err = nrf_modem_dect_phy_stf_cover_seq_control(
+		current_settings->cert.rx_stf_cover_seq_on,
+		current_settings->cert.tx_stf_cover_seq_on);
+	if (err) {
+		desh_error("Failed to set STF cover sequence: %d", err);
+	}
+	err = k_sem_take(&stf_cover_seq_sema, K_SECONDS(5));
+	if (err) {
+		desh_error("%s: timeout for waiting stf_cover_seq_sema: %d", (__func__), err);
+	}
 
 	if (!ctrl_data.phy_api_initialized) {
 		k_sem_reset(&dect_phy_ctrl_mdm_api_init_sema);
-
-		dect_phy_ctrl_phy_init();
+		err = nrf_modem_dect_phy_init();
+		if (err) {
+			desh_error("nrf_modem_dect_phy_init returned: %i", err);
+		}
 
 		/* Wait that init is done */
-		ret = k_sem_take(&dect_phy_ctrl_mdm_api_init_sema, K_SECONDS(2));
-		if (ret) {
+		err = k_sem_take(&dect_phy_ctrl_mdm_api_init_sema, K_SECONDS(2));
+		if (err) {
 			desh_error("(%s): nrf_modem_dect_phy_init() timeout.", (__func__));
 		}
 	}

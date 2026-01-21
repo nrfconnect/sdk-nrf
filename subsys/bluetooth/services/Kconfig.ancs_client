@@ -21,6 +21,6 @@ config BT_ANCS_CLIENT_CP_BUFF_SIZE
 
 module = BT_ANCS_CLIENT
 module-str = ANCS Client
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_ANCS_CLIENT

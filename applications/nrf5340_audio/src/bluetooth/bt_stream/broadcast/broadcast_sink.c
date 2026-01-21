@@ -62,8 +62,9 @@ static uint8_t sync_stream_cnt;
 static struct bt_audio_codec_cap codec_cap = BT_AUDIO_CODEC_CAP_LC3(
 	BT_AUDIO_CODEC_CAPABILIY_FREQ,
 	(BT_AUDIO_CODEC_CAP_DURATION_10 | BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),
-	BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1), LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN),
-	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX), 1u, BT_AUDIO_CONTEXT_TYPE_ANY);
+	BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1),
+	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, 10000),
+	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, 10000), 1u, BT_AUDIO_CONTEXT_TYPE_ANY);
 
 static struct bt_pacs_cap capabilities = {
 	.codec_cap = &codec_cap,
@@ -231,18 +232,6 @@ static void le_audio_event_publish(enum le_audio_evt_type event)
 	ERR_CHK(ret);
 }
 
-static void print_codec(const struct audio_codec_info *codec)
-{
-	LOG_INF("Codec config for LC3:");
-	LOG_INF("\tFrequency: %d Hz", codec->frequency);
-	LOG_INF("\tFrame Duration: %d us", codec->frame_duration_us);
-	LOG_INF("\tOctets per frame: %d (%d kbps)", codec->octets_per_sdu, codec->bitrate);
-	LOG_INF("\tFrames per SDU: %d", codec->blocks_per_sdu);
-	if (codec->chan_allocation >= 0) {
-		LOG_INF("\tChannel allocation: 0x%x", codec->chan_allocation);
-	}
-}
-
 static void get_codec_info(const struct bt_audio_codec_cfg *codec,
 			   struct audio_codec_info *codec_info)
 {
@@ -289,7 +278,7 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Stream index %d started", stream_index_get(stream));
-	print_codec(&audio_codec_info[stream_index_get(stream)]);
+	le_audio_print_codec(stream->codec_cfg, BT_AUDIO_DIR_SINK);
 }
 
 static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
@@ -562,7 +551,7 @@ static bool is_any_active_streams(void)
 {
 	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
 		if (audio_streams[i].ep != NULL &&
-		    audio_streams[i].ep->status.state == BT_BAP_EP_STATE_STREAMING) {
+		    audio_streams[i].ep->state == BT_BAP_EP_STATE_STREAMING) {
 			return true;
 		}
 	}
@@ -575,9 +564,23 @@ static struct bt_bap_broadcast_sink_cb broadcast_sink_cbs = {
 	.syncable = syncable_cb,
 };
 
-int le_audio_concurrent_sync_num_get(void)
+int le_audio_concurrent_sync_num_get(uint8_t *num_streams, enum bt_audio_location *locations)
 {
-	return sync_stream_cnt;
+	if (num_streams == NULL || locations == NULL) {
+		LOG_ERR("Invalid input parameters");
+		return -EINVAL;
+	}
+
+	*num_streams = sync_stream_cnt;
+	*locations = 0;
+
+	for (int i = 0; i < ARRAY_SIZE(audio_codec_info); i++) {
+		if (bis_index_bitfield & BIT(i)) {
+			*locations |= audio_codec_info[i].chan_allocation;
+		}
+	}
+
+	return 0;
 }
 
 int broadcast_sink_config_get(uint32_t *bitrate, uint32_t *sampling_rate, uint32_t *pres_delay)

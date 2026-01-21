@@ -16,17 +16,18 @@ The script produces the following output to the build folder:
 This output is also appended to the archive located at build/zephyr/dfu_application.zip.
 '''
 
+import argparse
+import json
+import os
 import string
 import struct
 import sys
-import os
-from elftools.elf.elffile import ELFFile
-import json
+import traceback
+from zipfile import ZipFile
+
 from cryptography.hazmat.primitives import cmac
 from cryptography.hazmat.primitives.ciphers import algorithms
-from zipfile import ZipFile
-import traceback
-import argparse
+from elftools.elf.elffile import ELFFile
 
 FILE_NAME_IN_ZIP = 'ble_mesh_metadata.json'
 FILE_NAME = 'dfu_application.zip_ble_mesh_metadata.json'
@@ -81,7 +82,7 @@ class Comp0:
     ]
 
     def __init__(self, cid, pid, vid, kconfig):
-        if 'CONFIG_BT_MESH_CRPL' not in kconfig.keys():
+        if 'CONFIG_BT_MESH_CRPL' not in kconfig:
             raise Exception("Could not find CONFIG_BT_MESH_CRPL Kconfig option")
         self.elems = []
         self.cid = cid
@@ -149,7 +150,7 @@ class KConfig(dict):
         """
         configs = cls()
         try:
-            with open(filename, 'r') as config:
+            with open(filename) as config:
                 for line in config:
                     if not (line.startswith("CONFIG_") or line.startswith("SB_CONFIG_")):
                         continue
@@ -321,8 +322,8 @@ def read_comp_data(elf_path, addr, kconfigs):
         Parsed Composition data
     """
 
-    label_cnt = int(kconfigs['CONFIG_BT_MESH_LABEL_COUNT']) if 'CONFIG_BT_MESH_LABEL_COUNT' in kconfigs.keys() else 0
-    lcd_srv = (kconfigs['CONFIG_BT_MESH_LARGE_COMP_DATA_SRV'] == 'y') if 'CONFIG_BT_MESH_LARGE_COMP_DATA_SRV' in kconfigs.keys() else False
+    label_cnt = int(kconfigs['CONFIG_BT_MESH_LABEL_COUNT']) if 'CONFIG_BT_MESH_LABEL_COUNT' in kconfigs else 0
+    lcd_srv = (kconfigs['CONFIG_BT_MESH_LARGE_COMP_DATA_SRV'] == 'y') if 'CONFIG_BT_MESH_LARGE_COMP_DATA_SRV' in kconfigs else False
 
     with open(elf_path, 'rb') as elf_file:
         elf = ELFFile(elf_file)
@@ -405,7 +406,7 @@ def input_parse():
 
 def existing_metadata_print(path):
     try:
-        metadata_file = open(path, 'r')
+        metadata_file = open(path)
         print(json.dumps(json.load(metadata_file), indent=4))
     except Exception as err :
         raise Exception("Failed to get existing metadata") from err

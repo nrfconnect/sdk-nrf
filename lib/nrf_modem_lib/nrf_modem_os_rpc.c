@@ -17,10 +17,21 @@
 #include <zephyr/drivers/mbox.h>
 #include <zephyr/ipc/icmsg.h>
 #include <zephyr/ipc/pbuf.h>
+#if defined(CONFIG_IRONSIDE_SE_CALL)
+#include <ironside/se/api.h>
+#endif
 
 #define DCACHE_LINE_SIZE (CONFIG_DCACHE_LINE_SIZE)
 BUILD_ASSERT(DCACHE_LINE_SIZE == 32,
 	     "Unexpected data cache line size " STRINGIFY(DCACHE_LINE_SIZE) ", expected 32");
+
+/** IronSide SE boot report local domain context for cellcore. */
+struct boot_report_cellcore_ldc {
+	uint32_t ipc_buf_addr;
+	uint32_t ipc_buf_size;
+	uint32_t loader_addr;
+	uint32_t rfu;
+};
 
 /** Structure to hold pbuf configuration and data. */
 struct nrf_modem_pbuf {
@@ -104,6 +115,29 @@ uintptr_t nrf_modem_os_rpc_sigdev_modem_get(void)
 	const struct device *modem_bellboard = DEVICE_DT_GET(DT_NODELABEL(cpucell_bellboard));
 
 	return (uintptr_t)modem_bellboard;
+}
+
+int nrf_modem_os_rpc_cellcore_boot(void)
+{
+#if defined(CONFIG_IRONSIDE_SE_CALL)
+	struct boot_report_cellcore_ldc params;
+
+	params.ipc_buf_addr = DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl));
+	params.ipc_buf_size = CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE;
+	params.loader_addr = 0;
+	params.rfu = 0;
+
+	uint8_t *msg = (uint8_t *)&params;
+	size_t msg_size = sizeof(params);
+
+	/* Don't wait as this is not yet supported. */
+	bool cpu_wait = false;
+
+	return ironside_se_cpuconf(NRF_PROCESSOR_CELLCORE, NULL, cpu_wait, msg, msg_size);
+#else
+	/* Without IronSide SE, cellcore is booted by the SDFW. */
+	return 0;
+#endif
 }
 
 static inline void pbuf_configure(struct pbuf_cfg *pb_cfg, uintptr_t mem_addr, size_t size)

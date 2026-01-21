@@ -5,11 +5,12 @@
 
 from multiprocessing import Pipe
 
+
 class StreamError(Exception):
     ERROR_MSG = 'error'
     TIMEOUT_MSG = 'timeout'
 
-class Stream():
+class Stream:
     RECV_BUF_SIZE = 2**13
 
     @staticmethod

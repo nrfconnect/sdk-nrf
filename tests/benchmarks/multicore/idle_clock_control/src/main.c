@@ -138,6 +138,22 @@ static const struct test_clk_ctx lfclk_test_clk_ctx[] = {
 };
 
 #if defined(CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP)
+const struct nrf_clock_spec test_clk_specs_auxpll[] = {
+	{
+		.frequency = MHZ(80),
+		.accuracy = 0,
+		.precision = NRF_CLOCK_CONTROL_PRECISION_DEFAULT,
+	},
+};
+
+static const struct test_clk_ctx auxpll_test_clk_ctx[] = {
+	{
+		.clk_dev = DEVICE_DT_GET(DT_NODELABEL(canpll)),
+		.clk_specs = test_clk_specs_auxpll,
+		.clk_specs_size = ARRAY_SIZE(test_clk_specs_auxpll),
+	},
+};
+
 const struct nrf_clock_spec test_clk_specs_hfxo[] = {
 	{
 		.frequency = MHZ(32),
@@ -209,31 +225,11 @@ static void test_clock_control_request(const struct test_clk_ctx *clk_contexts,
 	k_busy_wait(REQUEST_SERVING_WAIT_TIME_US);
 }
 
-#if defined(CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP)
-static void test_auxpll_control(const struct device *clk_dev)
-{
-	int err;
-	enum clock_control_status clk_status;
-
-	err = clock_control_on(clk_dev, NULL);
-	LOG_INF("Auxpll: %s ON request, status: %d", clk_dev->name, err);
-	k_msleep(10);
-	clk_status = clock_control_get_status(clk_dev, NULL);
-	__ASSERT_NO_MSG(clk_status == CLOCK_CONTROL_STATUS_ON);
-	err = clock_control_off(clk_dev, NULL);
-	LOG_INF("Auxpll: %s OFF request, status: %d", clk_dev->name, err);
-	k_msleep(10);
-	clk_status = clock_control_get_status(clk_dev, NULL);
-	__ASSERT_NO_MSG(clk_status == CLOCK_CONTROL_STATUS_OFF);
-	k_busy_wait(REQUEST_SERVING_WAIT_TIME_US);
-}
-#endif /* CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP */
-
 void run_tests(void)
 {
 	gpio_pin_set_dt(&led, 1);
 #if defined(CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP)
-	test_auxpll_control(DEVICE_DT_GET(DT_NODELABEL(canpll)));
+	test_clock_control_request(auxpll_test_clk_ctx, ARRAY_SIZE(auxpll_test_clk_ctx));
 	test_clock_control_request(hfxo_test_clk_ctx, ARRAY_SIZE(hfxo_test_clk_ctx));
 	test_clock_control_request(hsfll_test_clk_ctx, ARRAY_SIZE(hsfll_test_clk_ctx));
 #endif /* CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP */

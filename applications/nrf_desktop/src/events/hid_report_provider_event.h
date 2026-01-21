@@ -13,11 +13,20 @@
 
 
 /**
- * @brief HID Report Provider Events
- * @defgroup hid_report_provider_event HID Report Provider Events
+ * @brief HID report provider events
+ * @defgroup nrf_desktop_hid_report_provider_event HID report provider events
  *
- * File defines a set of events used to link HID report provider and HID state.
+ * The @ref hid_report_provider_event is used to link the HID report provider and the HID state
+ * during boot.
  *
+ * The HID state module tracks the state of HID report subscribers (HID transports) and notifies the
+ * HID report providers when the HID report subscription state changes. The HID state also
+ * determines the active HID report subscriber (based on HID subscriber priorities) and limits the
+ * number of HID reports that are processed by a HID transport at a given time.
+ *
+ * The HID report providers aggregate data related to user input, form the HID input reports, and
+ * forward the HID input reports to HID transports as a @ref hid_report_event when requested by the
+ * HID state.
  * @{
  */
 
@@ -36,11 +45,13 @@ struct subscriber_conn_state {
 struct hid_report_provider_api {
 	/** @brief Send report to the currently connected subscriber.
 	 *
-	 * The HID provider should send HID report and return true only if HID report data requires
-	 * update (there is user input waiting). Otherwise the HID provider should skip sending HID
-	 * report and return false unless force flag is set. If the force flag is set, HID provider
-	 * needs to always send a HID report (even if the report would contain no new information)
-	 * and return true.
+	 * The HID provider must send the HID report as a @ref hid_report_event only if the HID
+	 * report data requires an update (there is user input waiting). Otherwise, the HID provider
+	 * must skip sending the HID report unless a force flag is set.
+	 *
+	 * If the force flag is set, the HID provider needs to always send a HID report (even if the
+	 * report would contain no new information). The HID state sets the force flag if the
+	 * connected subscriber requires an update (to refresh the state).
 	 *
 	 * @param[in] report_id		Report ID.
 	 * @param[in] force		Force send report to refresh state.
@@ -66,7 +77,8 @@ struct hid_report_provider_api {
 	/** @brief Report subscriber connection state change to the HID provider.
 	 *
 	 * @param[in] report_id		Report ID.
-	 * @param[in] cs		HID subscriber connection state.
+	 * @param[in] cs		HID subscriber connection state. The value under the pointer
+	 *				may not be valid after the function returns.
 	 */
 	void (*connection_state_changed)(uint8_t report_id, const struct subscriber_conn_state *cs);
 
@@ -85,8 +97,9 @@ struct hid_report_provider_api {
 struct hid_state_api {
 	/** @brief Trigger sending HID report to the currently connected subscriber.
 	 *
-	 * The function should be used to notify HID state that new data is available (for example
-	 * on user input).
+	 * The function is used to notify the HID state that new data is available (for example on
+	 * user input). The HID provider needs to wait with submitting a @ref hid_report_event until
+	 * the HID state requests it through the send_report callback.
 	 *
 	 * @param[in] report_id		Report ID.
 	 *
@@ -96,7 +109,16 @@ struct hid_state_api {
 	int (*trigger_report_send)(uint8_t report_id);
 };
 
-/** @brief HID report provider event. */
+/** @brief HID report provider event.
+ *
+ * The HID report provider submits the event to pass a HID report ID and provider API to the HID
+ * state. While processing the event, the HID state remembers the data received from the HID report
+ * provider and fills the HID state API. The HID report provider must process the event after the
+ * HID state to receive the HID state API.
+ *
+ * The exchanged API structures allow for direct function calls between the application modules at
+ * runtime (without using application events). The direct calls are used to ensure high performance.
+ */
 struct hid_report_provider_event {
 	struct app_event_header header; /**< Event header. */
 

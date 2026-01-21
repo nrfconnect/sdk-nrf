@@ -42,7 +42,7 @@ This version of the |NCS| supports the following modem firmware for cellular IoT
 * mfw_nrf9160_1.1.1
 
 Use the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Tested boards
 *************
@@ -110,7 +110,7 @@ nRF9160
 
   * Cloud client - shows how to connect to and communicate with a cloud service using the generic cloud API.
   * :ref:`https_client` - shows how to provision a TLS certificate and connect to an HTTPS server.
-  * :ref:`serial_lte_modem` - demonstrates sending AT commands between a host and a client device.
+  * Serial LTE modem - demonstrates sending AT commands between a host and a client device.
     The sample is an enhancement to the :ref:`at_client_sample` sample.
 
 * Added the following libraries:
@@ -145,7 +145,7 @@ Updated samples and applications
 Updated libraries
 -----------------
 
-* :ref:`lib_download_client`:
+* Download client:
 
   * Added the ``CONFIG_DOWNLOAD_CLIENT_MAX_TLS_FRAGMENT_SIZE`` option that allows to configure fragment sizes for TLS connections and non-TLS connections independently.
   * Added support for using non-default ports.
@@ -440,7 +440,7 @@ Documentation
     * Cloud client - added
     * :ref:`gps_with_supl_support_sample` - added
     * :ref:`https_client` - added
-    * :ref:`serial_lte_modem` - added
+    * Serial LTE modem - added
     * :ref:`nrf_coap_client_sample` - updated
 
   * Bluetooth Low Energy:
@@ -473,8 +473,8 @@ Documentation
     * :ref:`sms_readme` - added
     * :ref:`supl_client` - added
     * ``at_cmd`` library - updated
-    * :ref:`at_cmd_parser_readme` - updated
-    * :ref:`lib_download_client` - updated
+    * AT command parser - updated
+    * Download client - updated
 
   * Bluetooth Low Energy:
 

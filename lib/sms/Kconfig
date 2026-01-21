@@ -28,6 +28,6 @@ config SMS_STATUS_REPORT
 module=SMS
 module-dep=LOG
 module-str= SMS library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # SMS

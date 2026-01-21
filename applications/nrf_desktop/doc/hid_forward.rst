@@ -29,11 +29,11 @@ Configuration
 Complete the following steps to configure the module:
 
 1. Complete the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
-   Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` are enabled.
-   The HID forward application module is enabled by the :ref:`CONFIG_DESKTOP_HID_FORWARD_ENABLE <config_desktop_app_options>` option which is implied by the :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` option together with other application modules.
+   Make sure that both :option:`CONFIG_DESKTOP_ROLE_HID_DONGLE` and :option:`CONFIG_DESKTOP_BT_CENTRAL` are enabled.
+   The HID forward application module is enabled by the :option:`CONFIG_DESKTOP_HID_FORWARD_ENABLE` option which is implied by the :option:`CONFIG_DESKTOP_BT_CENTRAL` option together with other application modules.
    These modules are required for HID dongle that forwards the data from HID peripherals connected over Bluetooth.
 
-   * The :ref:`CONFIG_DESKTOP_HID_FORWARD_ENABLE <config_desktop_app_options>` option selects :kconfig:option:`CONFIG_BT_HOGP` to automatically enable the :ref:`hogp_readme`.
+   * The :option:`CONFIG_DESKTOP_HID_FORWARD_ENABLE` option selects :kconfig:option:`CONFIG_BT_HOGP` to automatically enable the :ref:`hogp_readme`.
      An nRF Desktop dongle does not generate its own HID input reports.
      The dongle uses |hid_forward| to forward the HID reports.
      The reports are received by the HID service client from the peripherals connected over Bluetooth.
@@ -42,22 +42,22 @@ Complete the following steps to configure the module:
        The maximum number of supported HID reports (:kconfig:option:`CONFIG_BT_HOGP_REPORTS_MAX`) is set by default for the nRF Desktop dongle, which supports two peripherals with an average of six HID reports each.
        Make sure to align this configuration value for other use cases, for example, if the dongle supports more peripherals.
 
-   * The :ref:`CONFIG_DESKTOP_HID_FORWARD_ENABLE <config_desktop_app_options>` option selects :ref:`CONFIG_DESKTOP_HID_REPORTQ <config_desktop_app_options>` to automatically enable the HID report queue utility.
+   * The :option:`CONFIG_DESKTOP_HID_FORWARD_ENABLE` option selects :option:`CONFIG_DESKTOP_HID_REPORTQ` to automatically enable the HID report queue utility.
      The HID report queue utility is used to locally enqueue reports at the source to prevent HID report drops.
-     If needed, you can update the maximum number of enqueued HID reports (:ref:`CONFIG_DESKTOP_HID_REPORTQ_MAX_ENQUEUED_REPORTS <config_desktop_app_options>`).
+     If needed, you can update the maximum number of enqueued HID reports (:option:`CONFIG_DESKTOP_HID_REPORTQ_MAX_ENQUEUED_REPORTS`).
      See :ref:`nrf_desktop_hid_reportq` documentation for details.
 
 #. Check the chosen HID boot protocol.
    The nRF Desktop dongle can forward either mouse or keyboard boot reports.
    The forwarded boot report type is specified using the following Kconfig options:
 
-   * :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD <config_desktop_app_options>` - This option enables forwarding keyboard boot reports.
-   * :ref:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE <config_desktop_app_options>` - This option enables forwarding mouse boot reports.
+   * :option:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD` - This option enables forwarding keyboard boot reports.
+   * :option:`CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE` - This option enables forwarding mouse boot reports.
 
    Those options affect :ref:`nrf_desktop_usb_state` that subscribes for HID boot reports.
    The Dongle forwards HID reports from both mouse and keyboard, and so either option works if you want to have the Dongle work as boot mouse or boot keyboard.
    For more information about the configuration of the HID boot protocol, see the "Boot protocol configuration" section in the :ref:`nrf_desktop_usb_state` documentation.
-#. Make sure that the value of :ref:`CONFIG_DESKTOP_HID_FORWARD_SUBSCRIBER_COUNT <config_desktop_app_options>` Kconfig option matches number of USB HID class instances configured in :ref:`nrf_desktop_usb_state`.
+#. Make sure that the value of :option:`CONFIG_DESKTOP_HID_FORWARD_SUBSCRIBER_COUNT` Kconfig option matches number of USB HID class instances configured in :ref:`nrf_desktop_usb_state`.
    nRF Desktop dongle can use one or more instances of the USB HID class.
    By default, the module uses a dedicated HID subscriber (USB HID class instance) for every BLE bonded HID peripheral.
    For more details, see the `Interaction with the USB`_ section.

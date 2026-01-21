@@ -32,13 +32,10 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpurad
     extra_args:
-      - CONFIG_PM_S2RAM=n
-      - CONFIG_PM_S2RAM_CUSTOM_MARKING=n
-      - remote_CONFIG_PM_S2RAM=y
-      - remote_CONFIG_PM_S2RAM_CUSTOM_MARKING=y
       - remote_CONFIG_PM_DEVICE=y
       - remote_CONFIG_PM_DEVICE_RUNTIME=y
       - remote_CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_NCS_BOOT_BANNER=n
       - remote_CONFIG_CLOCK_CONTROL=n
       - remote_CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
     harness_config:
@@ -79,14 +76,11 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpurad
     extra_args:
-      - CONFIG_PM_S2RAM=n
-      - CONFIG_PM_S2RAM_CUSTOM_MARKING=n
       - CONFIG_AT_LFRC=y
-      - remote_CONFIG_PM_S2RAM=y
-      - remote_CONFIG_PM_S2RAM_CUSTOM_MARKING=y
       - remote_CONFIG_PM_DEVICE=y
       - remote_CONFIG_PM_DEVICE_RUNTIME=y
       - remote_CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_NCS_BOOT_BANNER=n
       - remote_CONFIG_CLOCK_CONTROL=n
       - remote_CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
     harness_config:
@@ -108,6 +102,6 @@ tests:
         - ".*Testing done.*"
     extra_args:
       - CONF_FILE=coverage.conf
-      - SHIELD=coverage_support
+      - SNIPPET=coverage_support
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp

@@ -17,9 +17,16 @@ Applications are also available through the `nRF Connect SDK Add-ons`_, a curate
 .. toctree::
    :maxdepth: 1
    :glob:
-   :caption: Subpages:
+   :caption: nRF Connect SDK add-on applications:
 
    ../../applications/asset_tracker_template/README
+   ../../applications/serial_modem/README
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+   :caption: nRF Connect SDK applications:
+
    ../../applications/connectivity_bridge/README
    ../../applications/ipc_radio/README
    ../../applications/matter_bridge/README
@@ -27,5 +34,4 @@ Applications are also available through the `nRF Connect SDK Add-ons`_, a curate
    ../../applications/nrf_desktop/README
    ../../applications/machine_learning/README
    ../../applications/hpf/hpf
-   ../../applications/serial_lte_modem/README
    ../../applications/matter_weather_station/README

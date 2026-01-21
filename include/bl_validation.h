@@ -93,6 +93,20 @@ int get_monotonic_version(counter_t *version_out);
  */
 int get_monotonic_slot(counter_t *slot_out);
 
+/**
+ * @brief Perform validation of trust housekeeping operations.
+ *
+ * This function performs validation-related housekeeping tasks
+ * It ensures that cryptographic keys and validation-related resources
+ * are properly secured and cleaned up after validation operations are completed.
+ *
+ * Call this function only if you are certain that either the currently
+ * validated S0/S1 image will be booted, or that neither image will be booted.
+ * Otherwise, invoking this function could prevent the alternate image
+ * from booting in the event the current validation fails at a later stage.
+ */
+void bl_validate_housekeeping(void);
+
   /** @} */
 
 #ifdef __cplusplus

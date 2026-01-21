@@ -6,10 +6,6 @@
 
 if MEMFAULT
 
-config MEMFAULT_HTTP_USES_MBEDTLS
-	bool
-	default n if NRF_MODEM_LIB
-
 config MEMFAULT_NCS_PROJECT_KEY
 	string "Memfault API key"
 	help
@@ -17,14 +13,14 @@ config MEMFAULT_NCS_PROJECT_KEY
 
 choice
 	prompt "Choose built-in Memfault Device Info or custom implementation"
-	default MEMFAULT_DEVICE_INFO_BUILTIN
+	default MEMFAULT_NCS_DEVICE_INFO_BUILTIN
 
-config MEMFAULT_DEVICE_INFO_BUILTIN
+config MEMFAULT_NCS_DEVICE_INFO_BUILTIN
 	bool "Built-in Memfault Device Info implementation"
 	help
 	  Use built-in Memfault Device Info implementation
 
-config MEMFAULT_DEVICE_INFO_CUSTOM
+config MEMFAULT_NCS_DEVICE_INFO_CUSTOM
 	bool "Custom user-defined Memfault Device Info implementation"
 	help
 	  Use custom user-defined Memfault Device Info implementation.
@@ -33,23 +29,34 @@ config MEMFAULT_DEVICE_INFO_CUSTOM
 
 endchoice
 
+if MEMFAULT_NCS_DEVICE_INFO_BUILTIN
+
 choice
 	prompt "Memfault device ID generation method"
-	default MEMFAULT_NCS_DEVICE_ID_IMEI if (BOARD_NRF9160DK_NRF9160_NS || BOARD_NRF9161DK_NRF9161_NS || BOARD_THINGY91_NRF9160_NS)
-	default MEMFAULT_NCS_DEVICE_ID_NET_MAC if BOARD_NRF7002DK_NRF5340_CPUAPP
-	default MEMFAULT_NCS_DEVICE_ID_STATIC
+	default MEMFAULT_NCS_DEVICE_ID_HW_ID
 
 config MEMFAULT_NCS_DEVICE_ID_IMEI
-	bool "Use IMEI as Memfault device ID"
-	select HW_ID_LIBRARY
+	bool "Use IMEI as Memfault device ID [DEPRECATED]"
+	select DEPRECATED
+	depends on NRF_MODEM_LIB
 	help
-	  Use the device's IMEI as Memfault device ID
+	  Use the device's IMEI as Memfault device ID. Deprecated, use
+	  MEMFAULT_NCS_DEVICE_ID_HW_ID and HW_ID_LIBRARY_SOURCE_IMEI instead.
 
 config MEMFAULT_NCS_DEVICE_ID_NET_MAC
-	bool "Use network interface MAC address as device ID"
+	bool "Use network interface MAC address as device ID [DEPRECATED]"
+	select DEPRECATED
+	depends on NETWORKING
+	help
+	  Use the device's network interface MAC address as Memfault device ID.
+	  Deprecated, use MEMFAULT_NCS_DEVICE_ID_HW_ID and
+	  HW_ID_LIBRARY_SOURCE_NET_MAC instead.
+
+config MEMFAULT_NCS_DEVICE_ID_HW_ID
+	bool "Use hw_id for Memfault Device ID"
 	select HW_ID_LIBRARY
 	help
-	  Use the device's network interface MAC address as Memfault device ID
+	  Helper symbol to use hw_id API for Memfault Device ID if a corresponding option is selected.
 
 config MEMFAULT_NCS_DEVICE_ID_STATIC
 	bool "Set Memfault device ID in Kconfig"
@@ -120,9 +127,12 @@ config MEMFAULT_NCS_FW_VERSION_PREFIX
 config MEMFAULT_NCS_FW_VERSION
 	string "Static firmware version to use"
 	depends on MEMFAULT_NCS_FW_VERSION_STATIC
+	default "$(APP_VERSION_TWEAK_STRING)" if "$(VERSION_MAJOR)" != ""
 	help
 	 When using a statically configured firmware version, this value
 	 will be reported to Memfault
+
+endif  # MEMFAULT_NCS_DEVICE_INFO_BUILTIN
 
 config MEMFAULT_NCS_INIT_PRIORITY
 	int "Memfault initialization priority"
@@ -144,9 +154,7 @@ config MEMFAULT_NCS_STACK_METRICS
 	default y
 	help
 	  Collect metrics for unused stack space for selected stacks.
-	  Currently the following stacks' unused space is monitored:
-		- connection_poll_thread, used by the cloud libraries for
-		  nRF Cloud, AWS IoT and Azure IoT Hub
+	  Currently the connection_poll_thread, BT RX, and BT TX threads are supported.
 
 config MEMFAULT_NCS_LTE_METRICS
 	bool "Collect LTE metrics"
@@ -188,7 +196,7 @@ config MEMFAULT_NCS_IMPLEMENT_METRICS_COLLECTION
 
 menuconfig MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED
 	bool "Post coredump on network connected"
-	depends on PDN
+	depends on LTE_LC_PDN_MODULE
 	depends on LTE_LINK_CONTROL
 	depends on SOC_SERIES_NRF91X
 	select SMF
@@ -234,6 +242,17 @@ config MEMFAULT_NCS_POST_COREDUMP_THREAD_STACK_SIZE
 	int "Post coredump thread size"
 	default 512
 
+config MEMFAULT_NCS_POST_INITIAL_HEARTBEAT_ON_NETWORK_CONNECTED
+	bool "Post initial heartbeat on network connected without coredump"
+	default y
+	help
+	  When enabled, if no coredump is available on network connection, trigger
+	  an initial heartbeat and post data to Memfault. This is useful for sending
+	  initial metrics to Memfault after boot without having to wait for the first automatic upload
+	  set by CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_INTERVAL_SECONDS.
+	  Note that when a coredump is found, heartbeat data is always sent along with
+	  the coredump regardless of this setting.
+
 endif # MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED
 
 config MEMFAULT_NCS_ETB_CAPTURE
@@ -253,19 +272,16 @@ config MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
 	help
 	  Use internal flash to store coredump data
 
-config MEMFAULT_CDR_ENABLE
-	bool "Custom Data Recording"
-	select MEMFAULT_PLATFORM_EXTRA_CONFIG_FILE
-	default n
-
 if MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
+
 config MEMFAULT_NCS_FLASH_REGION_SIZE
 	hex
 	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
 
 partition=MEMFAULT_STORAGE
 partition-size=0x10000
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_config"
+source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/partition_manager/Kconfig.template.partition_config"
+
 endif # MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
 
 # We want to encourage the use of a dedicated workqueue to upload data periodically,
@@ -278,27 +294,9 @@ choice MEMFAULT_HTTP_PERIODIC_UPLOAD_CONTEXT
 	default MEMFAULT_HTTP_PERIODIC_UPLOAD_USE_DEDICATED_WORKQUEUE
 endchoice
 
-# Workaround to select the correct HW ID source
-
-if HW_ID_LIBRARY
-
-choice HW_ID_LIBRARY_SOURCE
-	default HW_ID_LIBRARY_SOURCE_IMEI if MEMFAULT_NCS_DEVICE_ID_IMEI
-	default HW_ID_LIBRARY_SOURCE_NET_MAC if MEMFAULT_NCS_DEVICE_ID_NET_MAC
-
-config HW_ID_LIBRARY_SOURCE_IMEI
-	bool "IMEI"
-
-config HW_ID_LIBRARY_SOURCE_NET_MAC
-	bool "Network interface MAC address"
-
-endchoice # HW_ID_LIBRARY_SOURCE
-
-endif # HW_ID_LIBRARY
-
 module = MEMFAULT_NCS
 module-dep = LOG
 module-str = Memfault NCS module
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # MEMFAULT

@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "common/memory_map.dtsi"
+
+&cpuapp_data {
+	reg = <0x2f000000 0x39000>;
+};
+
+secondary_app_partition: &cpuapp_slot1_partition {};

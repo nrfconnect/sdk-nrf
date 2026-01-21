@@ -354,6 +354,11 @@ static void iso_sent(struct bt_iso_chan *chan)
 		- controller_time_us
 		- HCI_ISO_TX_SDU_ARRIVAL_MARGIN_US;
 
+#ifdef NRF53_SERIES
+	/* Account for some delay to forward the data between the cores. */
+	time_to_next_sdu_us -= 1000;
+#endif
+
 	/** Update the sent SDU counter before starting
 	 * the timer that triggers when the next SDU is sent.
 	 * This is done to ensure that counter is updated in time.

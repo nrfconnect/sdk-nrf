@@ -3,10 +3,6 @@
 Introduction to MCUboot
 #######################
 
-.. contents::
-   :local:
-   :depth: 2
-
 MCUboot is a secure bootloader for 32-bit microcontrollers.
 
 Overview

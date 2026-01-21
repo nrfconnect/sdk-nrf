@@ -243,13 +243,14 @@ namespace app
 						}
 					}
 				} // namespace RemoveRootCertificate.
-				namespace TLSClientCSR
+				namespace ClientCSR
 				{
 
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
 					{
 						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
 						encoder.Encode(to_underlying(Fields::kNonce), nonce);
+						encoder.Encode(to_underlying(Fields::kCcdid), ccdid);
 						return encoder.Finalize();
 					}
 
@@ -266,13 +267,15 @@ namespace app
 
 							if (__context_tag == to_underlying(Fields::kNonce)) {
 								err = DataModel::Decode(reader, nonce);
+							} else if (__context_tag == to_underlying(Fields::kCcdid)) {
+								err = DataModel::Decode(reader, ccdid);
 							}
 
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TLSClientCSR.
-				namespace TLSClientCSRResponse
+				} // namespace ClientCSR.
+				namespace ClientCSRResponse
 				{
 
 					CHIP_ERROR Type::Encode(DataModel::FabricAwareTLVWriter &aWriter,
@@ -281,7 +284,7 @@ namespace app
 						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
 						encoder.Encode(to_underlying(Fields::kCcdid), ccdid);
 						encoder.Encode(to_underlying(Fields::kCsr), csr);
-						encoder.Encode(to_underlying(Fields::kNonce), nonce);
+						encoder.Encode(to_underlying(Fields::kNonceSignature), nonceSignature);
 						return encoder.Finalize();
 					}
 
@@ -299,14 +302,15 @@ namespace app
 								err = DataModel::Decode(reader, ccdid);
 							} else if (__context_tag == to_underlying(Fields::kCsr)) {
 								err = DataModel::Decode(reader, csr);
-							} else if (__context_tag == to_underlying(Fields::kNonce)) {
-								err = DataModel::Decode(reader, nonce);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kNonceSignature)) {
+								err = DataModel::Decode(reader, nonceSignature);
 							}
 
 							ReturnErrorOnFailure(err);
 						}
 					}
-				} // namespace TLSClientCSRResponse.
+				} // namespace ClientCSRResponse.
 				namespace ProvisionClientCertificate
 				{
 
@@ -314,9 +318,10 @@ namespace app
 					{
 						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
 						encoder.Encode(to_underlying(Fields::kCcdid), ccdid);
-						encoder.EncodeRequestCommandFabricScopedStructField(
-							to_underlying(Fields::kClientCertificateDetails),
-							clientCertificateDetails);
+						encoder.Encode(to_underlying(Fields::kClientCertificate),
+							       clientCertificate);
+						encoder.Encode(to_underlying(Fields::kIntermediateCertificates),
+							       intermediateCertificates);
 						return encoder.Finalize();
 					}
 
@@ -334,13 +339,12 @@ namespace app
 							if (__context_tag == to_underlying(Fields::kCcdid)) {
 								err = DataModel::Decode(reader, ccdid);
 							} else if (__context_tag ==
-								   to_underlying(Fields::kClientCertificateDetails)) {
+								   to_underlying(Fields::kClientCertificate)) {
+								err = DataModel::Decode(reader, clientCertificate);
+							} else if (__context_tag ==
+								   to_underlying(Fields::kIntermediateCertificates)) {
 								err = DataModel::Decode(reader,
-											clientCertificateDetails);
-								if (err == CHIP_NO_ERROR) {
-									clientCertificateDetails.SetFabricIndex(
-										aAccessingFabricIndex);
-								}
+											intermediateCertificates);
 							}
 
 							ReturnErrorOnFailure(err);

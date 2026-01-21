@@ -23,9 +23,9 @@
 #define TFM_NS_PARTITION_ID                  MAPPED_TZ_NS_AGENT_DEFAULT_CLIENT_ID
 
 #ifdef CONFIG_HW_UNIQUE_KEY
-static enum tfm_plat_err_t tfm_plat_get_huk(uint8_t *buf, size_t buf_len, size_t *key_len,
-					    psa_key_bits_t *key_bits, psa_algorithm_t *algorithm,
-					    psa_key_type_t *type)
+static enum tfm_plat_err_t tfm_plat_get_huk(const void *ctx, uint8_t *buf, size_t buf_len,
+					    size_t *key_len, psa_key_bits_t *key_bits,
+					    psa_algorithm_t *algorithm, psa_key_type_t *type)
 {
 	if (buf_len < HUK_SIZE_BYTES) {
 		return TFM_PLAT_ERR_SYSTEM_ERR;
@@ -52,9 +52,9 @@ static enum tfm_plat_err_t tfm_plat_get_huk(uint8_t *buf, size_t buf_len, size_t
 #endif /* CONFIG_HW_UNIQUE_KEY */
 
 #ifdef TFM_PARTITION_INITIAL_ATTESTATION
-static enum tfm_plat_err_t tfm_plat_get_iak(uint8_t *buf, size_t buf_len, size_t *key_len,
-					    psa_key_bits_t *key_bits, psa_algorithm_t *algorithm,
-					    psa_key_type_t *type)
+static enum tfm_plat_err_t tfm_plat_get_iak(const void *ctx, uint8_t *buf, size_t buf_len,
+					    size_t *key_len, psa_key_bits_t *key_bits,
+					    psa_algorithm_t *algorithm, psa_key_type_t *type)
 {
 	int err;
 

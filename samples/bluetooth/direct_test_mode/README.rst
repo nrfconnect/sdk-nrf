@@ -188,7 +188,7 @@ Antenna matrix configuration
 To use this sample to test the Bluetooth Direction Finding feature, additional configuration of GPIOs is required to control the antenna array.
 An example of such configuration is provided in a devicetree overlay file :file:`nrf5340dk_nrf5340_cpunet.overlay`.
 
-The overlay file provides the information about of the GPIOs to be used by the Radio peripheral to switch between antenna patches during the Constant Tone Extension (CTE) reception or transmission.
+The overlay file provides the information of the GPIOs to be used by the Radio peripheral to switch between antenna patches during the Constant Tone Extension (CTE) reception or transmission.
 At least one GPIO must be provided to enable antenna switching.
 
 The GPIOs are used by the radio peripheral in the order provided by the ``dfegpio#-gpios`` properties.
@@ -401,19 +401,26 @@ On the |nRF5340DKnoref|, you can build the sample with HCI interface with the ``
 USB CDC ACM transport variant
 =============================
 
-On the nRF5340 development kit, you can build this sample configured to use the USB interface as a communication interface with the tester.
-Use the following command:
+On the nRF5340 and nRF54H20 development kits, you can build this sample configured to use the USB interface as a communication interface with the tester.
+
+Use the following command for nRF54H20:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DFILE_SUFFIX=usb
+   west build samples/bluetooth/direct_test_mode -b nrf54h20dk/nrf54h20/cpurad -- -DFILE_SUFFIX=usb_54h20
+
+Use the following command for nRF5340:
+
+.. code-block:: console
+
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DFILE_SUFFIX=usb_5340
 
 You can also build this sample with support for the front-end module.
 Use the following command:
 
 .. code-block:: console
 
-   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb
+   west build samples/bluetooth/direct_test_mode -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb_5340
 
 .. _dtm_testing:
 

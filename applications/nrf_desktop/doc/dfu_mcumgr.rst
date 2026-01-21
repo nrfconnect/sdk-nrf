@@ -29,7 +29,7 @@ Module events
 Configuration
 *************
 
-To enable the module, set the :ref:`CONFIG_DESKTOP_DFU_MCUMGR_ENABLE <config_desktop_app_options>` Kconfig option.
+To enable the module, set the :option:`CONFIG_DESKTOP_DFU_MCUMGR_ENABLE` Kconfig option.
 
 The module selects the following configurations:
 
@@ -63,19 +63,15 @@ With the :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT` Kconfig option enabled, th
 The event can be used to lower Bluetooth connection latency during the DFU process.
 
 The DFU module leverages the :ref:`nrf_desktop_dfu_lock` to synchronize non-volatile memory access with other DFU methods (for example, the :ref:`nrf_desktop_dfu`).
-Set the :ref:`CONFIG_DESKTOP_DFU_LOCK <config_desktop_app_options>` Kconfig option to enable this feature.
+Set the :option:`CONFIG_DESKTOP_DFU_LOCK` Kconfig option to enable this feature.
 Make sure that the DFU lock utility is enabled if your nRF Desktop application configuration uses multiple DFU transports.
 
 You cannot use this module with the :ref:`caf_ble_smp`.
-In other words, you cannot simultaneously enable the :ref:`CONFIG_DESKTOP_DFU_MCUMGR_ENABLE <config_desktop_app_options>` option and the :kconfig:option:`CONFIG_CAF_BLE_SMP` Kconfig option.
-
-You have to choose the backend for the DFU process by enabling the following option:
-
-  * :kconfig:option:`CONFIG_DESKTOP_DFU_BACKEND_MCUBOOT` - This option depends on the MCUboot bootloader support for the DFU process.
-    For details, see :ref:`mcuboot` in the Zephyr documentation.
+In other words, you cannot simultaneously enable the :option:`CONFIG_DESKTOP_DFU_MCUMGR_ENABLE` option and the :kconfig:option:`CONFIG_CAF_BLE_SMP` Kconfig option.
 
 .. note::
-    B0 bootloader is not integrated with MCUmgr.
+   Currently, this module supports only one bootloader backend, the MCUboot bootloader backend.
+   B0 bootloader is not integrated with MCUmgr.
 
 .. _nrf_desktop_dfu_mcumgr_mcuboot:
 
@@ -91,12 +87,10 @@ The MCUboot backend configuration selects the following options:
 * :kconfig:option:`CONFIG_STREAM_FLASH`
 * :kconfig:option:`CONFIG_MCUBOOT_BOOTUTIL_LIB`
 
-To use the module with this backend, you must also enable the ``SB_CONFIG_BOOTLOADER_MCUBOOT`` Kconfig option.
+To use the module with this backend, you must also enable the :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` Kconfig option.
 
 By default, the MCUmgr DFU module confirms the image using the :c:func:`boot_write_img_confirmed` function during the system boot.
-If the :kconfig:option:`CONFIG_DESKTOP_DFU_MCUMGR_MCUBOOT_DIRECT_XIP` option is enabled, the MCUmgr DFU module assumes that the bootloader simply boots the image with a higher version and does not confirm the newly updated image after a successful boot.
-Make sure that :kconfig:option:`CONFIG_DESKTOP_DFU_MCUMGR_MCUBOOT_DIRECT_XIP` Kconfig option is enabled, if devices use the MCUboot bootloader in direct-xip mode without revert.
-The option is enabled by default if :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` is enabled.
+If the :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` option is enabled, the MCUmgr DFU module does not confirm the newly updated image after a successful boot, as the confirmation is not supported in this bootloader mode.
 
 Implementation details
 **********************

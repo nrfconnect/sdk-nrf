@@ -5,8 +5,7 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(mass)
 
 include(${ZEPHYR_BASE}/samples/subsys/usb/common/common.cmake)
-FILE(GLOB app_sources ${ZEPHYR_BASE}/samples/subsys/usb/mass/src/main.c)
-target_sources(app PRIVATE ${app_sources})
+target_sources(app PRIVATE ${ZEPHYR_BASE}/samples/subsys/usb/mass/src/main.c)
 
 if(CONFIG_BUILD_WITH_TFM)
   target_include_directories(app PRIVATE

@@ -8,17 +8,17 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/irq.h>
 #include <zephyr/logging/log.h>
-#include <nrf.h>
+#include <nrfx.h>
 #include <esb.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
+#include <zephyr/pm/device_runtime.h>
 #include <dk_buttons_and_leds.h>
 #if defined(CONFIG_CLOCK_CONTROL_NRF2)
 #include <hal/nrf_lrcconf.h>
 #endif
-#include <nrf_erratas.h>
 #if NRF54L_ERRATA_20_PRESENT
 #include <hal/nrf_power.h>
 #endif /* NRF54L_ERRATA_20_PRESENT */
@@ -44,7 +44,7 @@ void event_handler(struct esb_evt const *event)
 
 	switch (event->evt_id) {
 	case ESB_EVENT_TX_SUCCESS:
-		LOG_DBG("TX SUCCESS EVENT");
+		LOG_DBG("TX SUCCESS EVENT %u attempts", event->tx_attempts);
 		break;
 	case ESB_EVENT_TX_FAILED:
 		LOG_DBG("TX FAILED EVENT");
@@ -134,8 +134,11 @@ int clocks_start(void)
 		}
 	} while (err == -EAGAIN);
 
-	nrf_lrcconf_clock_always_run_force_set(NRF_LRCCONF000, 0, true);
-	nrf_lrcconf_task_trigger(NRF_LRCCONF000, NRF_LRCCONF_TASK_CLKSTART_0);
+	/* HMPAN-84 */
+	if (nrf54h_errata_84()) {
+		nrf_lrcconf_clock_always_run_force_set(NRF_LRCCONF000, 0, true);
+		nrf_lrcconf_task_trigger(NRF_LRCCONF000, NRF_LRCCONF_TASK_CLKSTART_0);
+	}
 
 	LOG_DBG("HF clock started");
 	return 0;
@@ -207,6 +210,18 @@ int main(void)
 	int err;
 
 	LOG_INF("Enhanced ShockBurst ptx sample");
+
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
+	const struct device *dtm_uart = DEVICE_DT_GET_OR_NULL(DT_CHOSEN(zephyr_console));
+
+	if (dtm_uart != NULL) {
+		int ret = pm_device_runtime_get(dtm_uart);
+
+		if (ret < 0) {
+			printk("Failed to get DTM UART runtime PM: %d\n", ret);
+		}
+	}
+#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
 
 	err = clocks_start();
 	if (err) {

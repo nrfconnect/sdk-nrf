@@ -14,8 +14,21 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_s2ram_outside_of_main"
+    timeout: 120
+
+  benchmarks.multicore.idle_outside_of_main.nrf54h20dk_cpuapp_cpurad.s2ram.mcuboot:
+    harness: pytest
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_outside_of_main/boards/nrf54h20dk_nrf54h20_cpuapp.overlay"
     harness_config:
       fixture: ppk_power_measure
       pytest_root:
@@ -29,7 +42,6 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       - CONFIG_MAIN_THREAD_PRIORITY=-1
       - remote_CONFIG_MAIN_THREAD_PRIORITY=-1
     harness_config:

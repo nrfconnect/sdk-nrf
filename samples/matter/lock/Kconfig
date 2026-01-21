@@ -53,7 +53,7 @@ config LOCK_MAX_HOLIDAY_SCHEDULES
 endif
 
 config LOCK_ENABLE_DEBUG
-	bool "Enable debug features to print users and credentials"
+	bool "Debug features to print users and credentials"
 	depends on SHELL
 	help
 	  Debug features allows to checking and printing current users, their state, and
@@ -87,7 +87,7 @@ config STATE_LEDS
 
 config THREAD_WIFI_SWITCHING
 	bool "Switching between Thread and Wi-Fi"
-	depends on SOC_SERIES_NRF53X
+	depends on SOC_SERIES_NRF53X || SOC_SERIES_NRF54LX
 	depends on NET_L2_OPENTHREAD
 	depends on CHIP_WIFI
 	depends on !CHIP_FACTORY_RESET_ERASE_SETTINGS
@@ -126,17 +126,20 @@ config CHIP_ENABLE_ICD_SUPPORT
 
 # Reduce Thread TX output power to 0 dBm for SED device
 config OPENTHREAD_DEFAULT_TX_POWER
-	int
 	default 0
 
 endif # OPENTHREAD
 
-if CHIP_WIFI
+if BOARD_NRF7002DK_NRF5340_CPUAPP || SHIELD_NRF7002EK || SHIELD_NRF7002EB2
+
+config CHIP_WIFI
+	default y
+	select DEPRECATED if SOC_SERIES_NRF53X
 
 config NRF_WIFI_LOW_POWER
 	default y
 
-endif # CHIP_WIFI
+endif # BOARD_NRF7002DK_NRF5340_CPUAPP || SHIELD_NRF7002EK || SHIELD_NRF7002EB2
 
 config NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
 	default y
@@ -175,7 +178,7 @@ config MAIN_STACK_SIZE
 
 endif
 
-source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
-source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"
-source "${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/Kconfig"
+source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.features"
+source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.defaults"
+source "$(ZEPHYR_NRF_MODULE_DIR)/samples/matter/common/src/Kconfig"
 source "Kconfig.zephyr"

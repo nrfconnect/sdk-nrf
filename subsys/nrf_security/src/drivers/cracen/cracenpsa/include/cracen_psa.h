@@ -9,6 +9,7 @@
 
 #include <psa/crypto.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 #include <zephyr/sys/__assert.h>
 #include <cracen/mem_helpers.h>
@@ -16,10 +17,6 @@
 #include "cracen_psa_kmu.h"
 #include "cracen_psa_key_ids.h"
 #include "sxsymcrypt/keyref.h"
-
-#ifdef __NRF_TFM__
-#include <tfm_builtin_key_loader.h>
-#endif
 
 /**
  * See "PSA Cryptography API" for documentation.
@@ -364,5 +361,10 @@ psa_status_t cracen_spake2p_abort(cracen_spake2p_operation_t *operation);
 psa_status_t cracen_derive_key(const psa_key_attributes_t *attributes, const uint8_t *input,
 			       size_t input_length, uint8_t *key, size_t key_size,
 			       size_t *key_length);
+
+psa_status_t cracen_get_trng(uint8_t *output, size_t output_size);
+
+psa_status_t cracen_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
+				 psa_drv_slot_number_t *slot_number);
 
 #endif /* CRACEN_PSA_H */

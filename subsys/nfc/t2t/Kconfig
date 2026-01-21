@@ -13,6 +13,6 @@ if NFC_T2T_PARSER
 
 module = NFC_T2T_PARSER
 module-str = nfc_t2t_parser
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # NFC_NDEF_PARSER

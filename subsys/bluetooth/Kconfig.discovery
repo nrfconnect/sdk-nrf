@@ -24,11 +24,9 @@ config BT_GATT_DM_WORKQ_OWN
 
 config BT_GATT_DM_WORKQ_SYS
 	bool "Use system workqueue"
-	select EXPERIMENTAL
 	help
 	  Use system workqueue for GATT Discovery Manager. Can be used if creating a new thread
-	  is not viable due to memory constraints, but it is not recommended to have potential
-	  blocking calls in the system workqueue.
+	  is not viable due to memory constraints.
 
 endchoice
 
@@ -62,7 +60,7 @@ config BT_GATT_DM_MAX_ATTRS
 	  Maximum number of attributes that can be present in the discovered service.
 
 config BT_GATT_DM_DATA_PRINT
-	bool "Enable functions for printing discovery related data"
+	bool "Functions for printing discovery related data"
 	help
 	  Enable functions for printing discovery related data
 
@@ -72,6 +70,6 @@ config HEAP_MEM_POOL_ADD_SIZE_BT_GATT_DM
 
 module = BT_GATT_DM
 module-str = GATT database discovery
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_GATT_DM

@@ -22,7 +22,7 @@ Module events
 Configuration
 *************
 
-To enable the module, use the :ref:`CONFIG_DESKTOP_WHEEL_ENABLE <config_desktop_app_options>` Kconfig option.
+To enable the module, use the :option:`CONFIG_DESKTOP_WHEEL_ENABLE` Kconfig option.
 
 For detecting rotation, the wheel module uses Zephyr's QDEC driver.
 You can enable the module only when QDEC is configured in DTS and the Zephyr's QDEC driver is enabled with the :kconfig:option:`CONFIG_QDEC_NRFX` Kconfig option.
@@ -31,10 +31,10 @@ If your board supports only one QDEC instance, the module relies on the ``qdec``
 
 The QDEC DTS configuration specifies how many steps are done during one full angle.
 The sensor reports the rotation data in angle degrees.
-The :ref:`CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER <config_desktop_app_options>` (a wheel configuration option) converts the angle value into a value that is passed with a ``wheel_event`` to the destination module.
+The :option:`CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER` (a wheel configuration option) converts the angle value into a value that is passed with a ``wheel_event`` to the destination module.
 
 For example, configuring QDEC with 24 steps means that for each step the sensor will report a rotation of 15 degrees.
-For HID to see this rotation as increment of one, set the :ref:`CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER <config_desktop_app_options>` Kconfig option to 15.
+For HID to see this rotation as increment of one, set the :option:`CONFIG_DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER` Kconfig option to 15.
 
 Implementation details
 **********************
@@ -49,7 +49,7 @@ The wheel module can be in the following states:
 When in ``STATE_ACTIVE``, the module enables the QDEC driver and waits for callback that indicates rotation.
 The QDEC driver may consume power during its operation.
 
-If no rotation is detected after the time specified in the :ref:`CONFIG_DESKTOP_WHEEL_SENSOR_IDLE_TIMEOUT <config_desktop_app_options>` Kconfig option, the wheel module switches to ``STATE_ACTIVE_IDLE``, in which QDEC is disabled.
+If no rotation is detected after the time specified in the :option:`CONFIG_DESKTOP_WHEEL_SENSOR_IDLE_TIMEOUT` Kconfig option, the wheel module switches to ``STATE_ACTIVE_IDLE``, in which QDEC is disabled.
 In this state, rotation is detected using GPIO interrupts.
 When rotation is detected, the module switches back to ``STATE_ACTIVE``.
 

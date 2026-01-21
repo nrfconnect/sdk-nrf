@@ -33,7 +33,7 @@ config AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID
 
 module = AWS_IOT_SAMPLE
 module-str = AWS IoT sample
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endmenu
 

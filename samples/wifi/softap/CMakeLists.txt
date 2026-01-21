@@ -12,6 +12,4 @@ project(nrf_wifi_softap)
 # Needed for net_private.h
 target_include_directories(app PUBLIC ${ZEPHYR_BASE}/subsys/net/ip)
 
-target_sources(app PRIVATE
-	src/main.c
-)
+target_sources(app PRIVATE src/main.c)

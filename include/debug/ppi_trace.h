@@ -10,10 +10,6 @@
 #include <stdint.h>
 #include <nrfx.h>
 
-#if defined(DPPI_PRESENT)
-#include <nrfx_dppi.h>
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -67,14 +63,13 @@ void *ppi_trace_pair_config(uint32_t pin, uint32_t start_evt, uint32_t stop_evt)
  *
  * @param pin		Pin to use for tracing.
  * @param dppi_ch	DPPI channel number to be traced on the pin.
- * @param dppic		Identifies the instance of DPPIC controller that the @c dppi_ch channel
- *			belongs to.
+ * @param p_dppi	Instance of the DPPIC controller that the @c dppi_ch channel belongs to.
  *
  * @retval 0		The configuration succeeded.
  * @retval -ENOMEM	The configuration failed, due to lack of necessary resources.
  * @retval -ENOTSUP	The function is not supported on current hardware platform.
  */
-int ppi_trace_dppi_ch_trace(uint32_t pin, uint32_t dppi_ch, const nrfx_dppi_t *dppic);
+int ppi_trace_dppi_ch_trace(uint32_t pin, uint32_t dppi_ch, NRF_DPPIC_Type *p_dppi);
 
 #endif /* DPPI_PRESENT */
 

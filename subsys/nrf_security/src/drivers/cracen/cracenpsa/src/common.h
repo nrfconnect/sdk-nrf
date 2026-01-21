@@ -11,6 +11,7 @@
 #include "sxsymcrypt/internal.h"
 
 #include <stddef.h>
+#include <stdint.h>
 #include <zephyr/sys/util.h>
 #include <silexpk/sxbuf/sxbufop.h>
 #include <sxsymcrypt/hashdefs.h>
@@ -116,7 +117,7 @@ static inline size_t cracen_ecc_wstr_expected_pub_key_bytes(size_t priv_key_size
  *
  */
 psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
-					 const sx_pk_affine_point *in_pnt);
+					 const sx_pk_const_affine_point *in_pnt);
 
 /**
  * \brief Tries to extract an RSA key from ASN.1.
@@ -132,7 +133,7 @@ psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
  * \return sxsymcrypt status code.
  */
 int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey, bool is_key_pair,
-				 const unsigned char *key, size_t keylen, struct sx_buf *modulus,
+				 const uint8_t *key, size_t keylen, struct sx_buf *modulus,
 				 struct sx_buf *exponent);
 
 /**
@@ -147,10 +148,10 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
  * \retval SX_OK on success.
  * \retval SX_ERR_INVALID_PARAM if the ASN.1 integer cannot be extracted.
  */
-int cracen_signature_asn1_get_operand(uint8_t **p, const uint8_t *end, struct sx_buf *op);
+int cracen_signature_asn1_get_operand(const uint8_t **p, const uint8_t *end, struct sx_buf *op);
 
 /**
- * @brief Use psa_generate_random up to generate a random number in the range [1, upperlimit).
+ * @brief Use cracen_get_random up to generate a random number in the range [1, upperlimit).
  *
  * @param[out] n           Output number.
  * @param[in]  sz          Size of number in bytes.
@@ -170,7 +171,7 @@ psa_status_t rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit, size
  * @param[in] b Second buffer of size sz
  * @param[in] sz Size of the buffers
  */
-void cracen_xorbytes(char *a, const char *b, size_t sz);
+void cracen_xorbytes(uint8_t *a, const uint8_t *b, size_t sz);
 
 /**
  * @brief Loads key buffer and attributes.
@@ -179,15 +180,6 @@ void cracen_xorbytes(char *a, const char *b, size_t sz);
  */
 psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 				size_t key_buffer_size, struct sxkeyref *k);
-
-/**
- * @brief Do ECB operation.
- *
- * @return PSA status code.
- */
-psa_status_t cracen_cipher_crypt_ecb(const struct sxkeyref *key, const uint8_t *input,
-				     size_t input_length, uint8_t *output, size_t output_size,
-				     size_t *output_length, enum cipher_operation dir);
 
 /**
  * @brief Prepare ik key.
@@ -210,6 +202,30 @@ int cracen_prepare_ik_key(const uint8_t *user_data);
  *
  */
 void cracen_be_add(uint8_t *v, size_t v_size, size_t summand);
+
+/**
+ * @brief Compute c = a - b.
+ *
+ * @param a	Big-endian value a.
+ * @param b	Big-endian value b.
+ * @param c	The substraction result.
+ * @param sz	Size of the buffers.
+ *
+ * @retval 0 Success.
+ * @retval -1 For a < b.
+ */
+int cracen_be_sub(const uint8_t *a, const uint8_t *b, uint8_t *c, size_t sz);
+
+/**
+ * @brief Compute r = a >> n.
+ *
+ * @param a	Big-endian value a.
+ * @param n	Number of bits.
+ * @param c	Bitshift result.
+ * @param sz	Size of the buffers.
+ *
+ */
+void cracen_be_rshift(const uint8_t *a, int n, uint8_t *r, size_t sz);
 
 /**
  * @brief Big-Endian compare with carry.
@@ -315,6 +331,35 @@ int cracen_get_rnd_in_range(const uint8_t *n, size_t nsz, uint8_t *out);
 psa_status_t cracen_ecc_reduce_p256(const uint8_t *input, size_t input_size, uint8_t *output,
 				    size_t output_size);
 
+/**
+ * @brief Check if the value is a quadratic residue modulo p,
+ *	  where p is an EC prime.
+ *
+ * @param[in] curve_prime EC prime.S
+ * @param[in] value       Value to check.
+ * @param[out] is_qr      Result of the check. This outputs true if the value
+ *			  is a quadratic residue; false otherwise.
+ *
+ * @return psa_status_t
+ */
+psa_status_t cracen_ecc_is_quadratic_residue(const sx_const_op *curve_prime,
+					     const sx_const_op *value,
+					     bool *is_qr);
+
+/**
+ * @brief Derive an element of an ECC group (point on the curve) from the given hash.
+ *	  The function implements the SSWU algorithm, as described in the RFC 9380 document.
+ *
+ * @param[in] curve_family PSA curve family.
+ * @param[in] curve_bits   Curve bits.
+ * @param[in] u            Hash to use.
+ * @param[out] result      Result (point on ECC curve).
+ *
+ * @return psa_status_t
+ */
+psa_status_t cracen_ecc_h2e_sswu(psa_ecc_family_t curve_family, size_t curve_bits,
+				 const sx_const_op *u, const sx_op *result);
+
 /** Modular exponentiation (base^key mod n).
  *
  * This function is used by both the sign and the verify functions. Note: if the
@@ -322,7 +367,8 @@ psa_status_t cracen_ecc_reduce_p256(const uint8_t *input, size_t input_size, uin
  * status code.
  */
 int cracen_rsa_modexp(struct sx_pk_acq_req *pkreq, struct sx_pk_slot *inputs,
-		      struct cracen_rsa_key *rsa_key, uint8_t *base, size_t basez, int *sizes);
+		      struct cracen_rsa_key *rsa_key, const uint8_t *base, size_t basez,
+		      int *sizes);
 
 #define CRACEN_KEY_INIT_RSA(mod, expon)                                                            \
 	(struct cracen_rsa_key)                                                                    \

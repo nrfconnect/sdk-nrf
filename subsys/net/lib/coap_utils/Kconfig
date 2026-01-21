@@ -14,6 +14,6 @@ if COAP_UTILS
 
 module = COAP_UTILS
 module-str = CoAP utils
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif

@@ -7,26 +7,13 @@ Developing with Front-End Modules
 
 .. include:: /includes/guides_complementary_to_app_dev.txt
 
-Zephyr and the |NCS| provides support for developing applications with the following :term:`Front-End Module (FEM)` devices:
+Zephyr and the |NCS| provides support for developing applications with the following :term:`Front-End Module (FEM)` devices according to :ref:`software_maturity`:
 
-.. list-table::
-   :header-rows: 1
+.. include:: ../../../releases_and_maturity/software_maturity.rst
+    :start-after: software_maturity_fem_support_table_start
+    :end-before: software_maturity_fem_support_table_end
 
-   * - FEM device
-     - Implementation
-     - Supported SoCs
-   * - nRF2220
-     - nRF2220
-     - nRF52, nRF53, nRF54L
-   * - nRF21540
-     - nRF21540 GPIO
-     - nRF52, nRF53, nRF54L
-   * - nRF21540
-     - nRF21540 GPIO+SPI
-     - nRF52, nRF53, nRF54L
-   * - SKY66112-11
-     - Simple GPIO
-     - nRF52, nRF53, nF54L
+The FEM support on SoCs that are not listed in the table above might still work, but it is not tested and not guaranteed to work.
 
 The following hardware platforms with :term:`Front-End Module (FEM)` are supported by the |NCS|:
 
@@ -61,11 +48,6 @@ The following FEM :term:`Shield` is available and defined in the :file:`nrf/boar
      - | `User Guide <nRF21540 EK User Guide_>`_
        | `Front-End Module Feature <nRF21540 Front-End Module_>`_
      - `nRF21540 DB product page`_
-   * - nRF2220 :term:`Evaluation Kit (EK)`
-     - PCA63558
-     - ``nrf2220ek``
-     -
-     -
 
 .. toctree::
    :maxdepth: 2
@@ -73,5 +55,4 @@ The following FEM :term:`Shield` is available and defined in the :file:`nrf/boar
 
    fem_software_support
    fem_power_models
-   2220ek_dev_guide
    21540ek_dev_guide

@@ -10,15 +10,15 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/irq.h>
 #include <zephyr/logging/log.h>
-#include <nrf.h>
+#include <nrfx.h>
 #include <esb.h>
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
+#include <zephyr/pm/device_runtime.h>
 #include <dk_buttons_and_leds.h>
 #if defined(CONFIG_CLOCK_CONTROL_NRF2)
 #include <hal/nrf_lrcconf.h>
 #endif
-#include <nrf_erratas.h>
 #if NRF54L_ERRATA_20_PRESENT
 #include <hal/nrf_power.h>
 #endif /* NRF54L_ERRATA_20_PRESENT */
@@ -30,7 +30,7 @@ LOG_MODULE_REGISTER(esb_prx, CONFIG_ESB_PRX_APP_LOG_LEVEL);
 
 static struct esb_payload rx_payload;
 static struct esb_payload tx_payload = ESB_CREATE_PAYLOAD(0,
-	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17);
+	0x00, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17);
 
 static void leds_update(uint8_t value)
 {
@@ -45,6 +45,8 @@ static void leds_update(uint8_t value)
 
 void event_handler(struct esb_evt const *event)
 {
+	int err;
+
 	switch (event->evt_id) {
 	case ESB_EVENT_TX_SUCCESS:
 		LOG_DBG("TX SUCCESS EVENT");
@@ -53,7 +55,7 @@ void event_handler(struct esb_evt const *event)
 		LOG_DBG("TX FAILED EVENT");
 		break;
 	case ESB_EVENT_RX_RECEIVED:
-		if (esb_read_rx_payload(&rx_payload) == 0) {
+		while ((err = esb_read_rx_payload(&rx_payload)) == 0) {
 			LOG_DBG("Packet received, len %d : "
 				"0x%02x, 0x%02x, 0x%02x, 0x%02x, "
 				"0x%02x, 0x%02x, 0x%02x, 0x%02x",
@@ -64,7 +66,8 @@ void event_handler(struct esb_evt const *event)
 				rx_payload.data[7]);
 
 			leds_update(rx_payload.data[1]);
-		} else {
+		}
+		if (err && err != -ENODATA) {
 			LOG_ERR("Error while reading rx packet");
 		}
 		break;
@@ -141,8 +144,11 @@ int clocks_start(void)
 		}
 	} while (err == -EAGAIN);
 
-	nrf_lrcconf_clock_always_run_force_set(NRF_LRCCONF000, 0, true);
-	nrf_lrcconf_task_trigger(NRF_LRCCONF000, NRF_LRCCONF_TASK_CLKSTART_0);
+	/* HMPAN-84 */
+	if (nrf54h_errata_84()) {
+		nrf_lrcconf_clock_always_run_force_set(NRF_LRCCONF000, 0, true);
+		nrf_lrcconf_task_trigger(NRF_LRCCONF000, NRF_LRCCONF_TASK_CLKSTART_0);
+	}
 
 	LOG_DBG("HF clock started");
 
@@ -203,6 +209,18 @@ int main(void)
 
 	LOG_INF("Enhanced ShockBurst prx sample");
 
+#if defined(CONFIG_SOC_SERIES_NRF54HX)
+	const struct device *dtm_uart = DEVICE_DT_GET_OR_NULL(DT_CHOSEN(zephyr_console));
+
+	if (dtm_uart != NULL) {
+		int ret = pm_device_runtime_get(dtm_uart);
+
+		if (ret < 0) {
+			printk("Failed to get DTM UART runtime PM: %d\n", ret);
+		}
+	}
+#endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
+
 	err = clocks_start();
 	if (err) {
 		return 0;
@@ -221,14 +239,7 @@ int main(void)
 	}
 
 	LOG_INF("Initialization complete");
-
-	err = esb_write_payload(&tx_payload);
-	if (err) {
-		LOG_ERR("Write payload, err %d", err);
-		return 0;
-	}
-
-	LOG_INF("Setting up for packet receiption");
+	LOG_INF("Setting up for packet reception");
 
 	err = esb_start_rx();
 	if (err) {
@@ -236,6 +247,12 @@ int main(void)
 		return 0;
 	}
 
-	/* return to idle thread */
-	return 0;
+	while (true) {
+		err = esb_write_payload(&tx_payload);
+		if (err) {
+			LOG_WRN("Write payload, err %d", err);
+		}
+		tx_payload.data[0]++;
+		k_msleep(550);
+	}
 }

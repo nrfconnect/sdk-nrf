@@ -8,12 +8,15 @@
  * module and holds information about battery characteristic.
  */
 
+#include <helpers/nrfx_analog_common.h>
+#include <zephyr/drivers/adc.h>
+
 /* This structure enforces the header file is included only once in the build.
  * Violating this requirement triggers a multiple definition error at link time.
  */
 const struct {} battery_def_include_once;
 
-#define BATTERY_MEAS_ADC_INPUT		NRF_SAADC_INPUT_VDD
+#define BATTERY_MEAS_ADC_INPUT		NRFX_ANALOG_INTERNAL_VDD
 #define BATTERY_MEAS_ADC_GAIN		ADC_GAIN_1_6
 #define BATTERY_MEAS_VOLTAGE_GAIN	6
 

@@ -36,6 +36,17 @@
   "endpointTypes": [
     {
       "id": 1,
+      "name": "Anonymous Endpoint Type",
+      "deviceTypes": [],
+      "deviceVersions": [],
+      "deviceIdentifiers": [],
+      "deviceTypeName": "",
+      "deviceTypeCode": "",
+      "deviceTypeProfileId": "",
+      "clusters": []
+    },
+    {
+      "id": 2,
       "name": "MA-rootdevice",
       "deviceTypeRef": {
         "code": 18,
@@ -62,7 +73,7 @@
       ],
       "deviceVersions": [
         1,
-        3
+        4
       ],
       "deviceIdentifiers": [
         18,
@@ -422,7 +433,7 @@
               "type": "int16u",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -438,7 +449,7 @@
               "type": "char_string",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -454,7 +465,7 @@
               "type": "vendor_id",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -470,7 +481,7 @@
               "type": "char_string",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -486,7 +497,7 @@
               "type": "int16u",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -501,10 +512,10 @@
               "side": "server",
               "type": "char_string",
               "included": 1,
-              "storageOption": "NVM",
-              "singleton": 1,
+              "storageOption": "External",
+              "singleton": 0,
               "bounded": 0,
-              "defaultValue": "",
+              "defaultValue": null,
               "reportable": 1,
               "minInterval": 0,
               "maxInterval": 65344,
@@ -518,7 +529,7 @@
               "type": "char_string",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -534,7 +545,7 @@
               "type": "int16u",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -550,7 +561,7 @@
               "type": "char_string",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -566,7 +577,7 @@
               "type": "int32u",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -582,7 +593,7 @@
               "type": "char_string",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -598,7 +609,7 @@
               "type": "char_string",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -614,7 +625,7 @@
               "type": "char_string",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -630,7 +641,7 @@
               "type": "char_string",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -662,7 +673,7 @@
               "type": "int32u",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -678,7 +689,7 @@
               "type": "int16u",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -694,7 +705,7 @@
               "type": "int16u",
               "included": 1,
               "storageOption": "RAM",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": "0",
               "reportable": 1,
@@ -710,7 +721,7 @@
               "type": "array",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -726,7 +737,7 @@
               "type": "array",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -742,7 +753,7 @@
               "type": "array",
               "included": 1,
               "storageOption": "External",
-              "singleton": 1,
+              "singleton": 0,
               "bounded": 0,
               "defaultValue": null,
               "reportable": 1,
@@ -757,10 +768,10 @@
               "side": "server",
               "type": "bitmap32",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0",
+              "defaultValue": null,
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -773,10 +784,10 @@
               "side": "server",
               "type": "int16u",
               "included": 1,
-              "storageOption": "RAM",
-              "singleton": 1,
+              "storageOption": "External",
+              "singleton": 0,
               "bounded": 0,
-              "defaultValue": "4",
+              "defaultValue": null,
               "reportable": 1,
               "minInterval": 0,
               "maxInterval": 65344,
@@ -801,13 +812,6 @@
             {
               "name": "Leave",
               "code": 2,
-              "mfgCode": null,
-              "side": "server",
-              "included": 1
-            },
-            {
-              "name": "RandomNumberChanged",
-              "code": 4,
               "mfgCode": null,
               "side": "server",
               "included": 1
@@ -1116,10 +1120,10 @@
               "side": "server",
               "type": "int64u",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0x0000000000000000",
+              "defaultValue": null,
               "reportable": 1,
               "minInterval": 0,
               "maxInterval": 65344,
@@ -1244,10 +1248,10 @@
               "side": "server",
               "type": "bitmap32",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0",
+              "defaultValue": null,
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -1260,10 +1264,10 @@
               "side": "server",
               "type": "int16u",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "2",
+              "defaultValue": null,
               "reportable": 1,
               "minInterval": 0,
               "maxInterval": 65344,
@@ -2090,6 +2094,30 @@
               "source": "client",
               "isIncoming": 1,
               "isEnabled": 1
+            },
+            {
+              "name": "SetVIDVerificationStatement",
+              "code": 12,
+              "mfgCode": null,
+              "source": "client",
+              "isIncoming": 1,
+              "isEnabled": 1
+            },
+            {
+              "name": "SignVIDVerificationRequest",
+              "code": 13,
+              "mfgCode": null,
+              "source": "client",
+              "isIncoming": 1,
+              "isEnabled": 1
+            },
+            {
+              "name": "SignVIDVerificationResponse",
+              "code": 14,
+              "mfgCode": null,
+              "source": "server",
+              "isIncoming": 0,
+              "isEnabled": 1
             }
           ],
           "attributes": [
@@ -2244,10 +2272,10 @@
               "side": "server",
               "type": "bitmap32",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "0",
+              "defaultValue": null,
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -2260,10 +2288,10 @@
               "side": "server",
               "type": "int16u",
               "included": 1,
-              "storageOption": "RAM",
+              "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "1",
+              "defaultValue": null,
               "reportable": 1,
               "minInterval": 0,
               "maxInterval": 65344,
@@ -2478,19 +2506,19 @@
       ]
     },
     {
-      "id": 2,
+      "id": 3,
       "name": "Anonymous Endpoint Type",
       "deviceTypeRef": {
-        "code": 1,
-        "profileId": 4095,
+        "code": 4293984257,
+        "profileId": 66562,
         "label": "nordic-dev-kit",
         "name": "nordic-dev-kit",
         "deviceTypeOrder": 0
       },
       "deviceTypes": [
         {
-          "code": 1,
-          "profileId": 4095,
+          "code": 4293984257,
+          "profileId": 66562,
           "label": "nordic-dev-kit",
           "name": "nordic-dev-kit",
           "deviceTypeOrder": 0
@@ -2500,30 +2528,12 @@
         1
       ],
       "deviceIdentifiers": [
-        1
+        4293984257
       ],
       "deviceTypeName": "nordic-dev-kit",
-      "deviceTypeCode": 1,
-      "deviceTypeProfileId": 4095,
+      "deviceTypeCode": 4293984257,
+      "deviceTypeProfileId": 66562,
       "clusters": [
-        {
-          "name": "NordicDevKit",
-          "code": 4294048769,
-          "mfgCode": null,
-          "define": "NORDIC_DEV_KIT_CLUSTER",
-          "side": "client",
-          "enabled": 1,
-          "commands": [
-            {
-              "name": "SetLED",
-              "code": 4293984256,
-              "mfgCode": null,
-              "source": "client",
-              "isIncoming": 0,
-              "isEnabled": 1
-            }
-          ]
-        },
         {
           "name": "NordicDevKit",
           "code": 4294048769,
@@ -2670,6 +2680,15 @@
               "maxInterval": 65534,
               "reportableChange": 0
             }
+          ],
+          "events": [
+            {
+              "name": "UserButtonChanged",
+              "code": 4293984256,
+              "mfgCode": null,
+              "side": "server",
+              "included": 1
+            }
           ]
         }
       ]
@@ -2678,7 +2697,7 @@
   "endpoints": [
     {
       "endpointTypeName": "MA-rootdevice",
-      "endpointTypeIndex": 0,
+      "endpointTypeIndex": 1,
       "profileId": 259,
       "endpointId": 0,
       "networkId": 0,
@@ -2686,8 +2705,8 @@
     },
     {
       "endpointTypeName": "Anonymous Endpoint Type",
-      "endpointTypeIndex": 1,
-      "profileId": 4095,
+      "endpointTypeIndex": 2,
+      "profileId": 66562,
       "endpointId": 1,
       "networkId": 0,
       "parentEndpointIdentifier": null

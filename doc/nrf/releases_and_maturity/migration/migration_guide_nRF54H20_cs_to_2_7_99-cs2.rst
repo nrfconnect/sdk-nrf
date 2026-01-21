@@ -43,7 +43,7 @@ nRF54H20 BICR
 
   To update the BICR of your development kit while in Root of Trust, do the following:
 
-  1. Download the `BICR new binary file`_.
+  1. Download the `nRF54H20 DK BICR binary file`_.
   #. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
 
      .. note::

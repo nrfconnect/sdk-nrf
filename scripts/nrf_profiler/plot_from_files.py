@@ -3,9 +3,11 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-from plot_nordic import PlotNordic
 import argparse
 import logging
+
+from plot_nordic import PlotNordic
+
 
 def main():
     parser = argparse.ArgumentParser(

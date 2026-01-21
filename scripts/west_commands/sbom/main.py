@@ -8,22 +8,22 @@ Main entry point for the script.
 '''
 
 from pathlib import Path
-import spdx_tag_detector
-import full_text_detector
-import scancode_toolkit_detector
+
 import cache_database_detector
 import external_file_detector
-import git_info_detector
 import file_input
+import full_text_detector
+import git_info_detector
 import input_build
 import input_post_process
 import output_pre_process
 import output_template
-from west import log
-from common import SbomException, dbg_time
+import scancode_toolkit_detector
+import spdx_tag_detector
 from args import args, init_args
+from common import SbomException, dbg_time
 from data_structure import Data
-
+from west import log
 
 inputs = {
     'input-build': input_build.generate_input,

@@ -16,3 +16,9 @@ config BT_RADIO_NOTIFICATION_CONN_CB
 	  connection event starts.
 	  This feature can be used to synchronize data sampling
 	  with on-air data transmission.
+
+config BT_NRF_CONN_SET_LTK
+	bool "Custom LTK support"
+	depends on BT_SMP
+	help
+	  Enables the bt_nrf_conn_set_ltk() API.

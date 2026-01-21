@@ -81,8 +81,8 @@ static const struct sx_blkcipher_cmdma_cfg ba411xtscfg = {
 int sx_blkcipher_free(struct sxblkcipher *cipher_ctx)
 {
 	int sx_err = SX_OK;
-	if (cipher_ctx->key.clean_key) {
-		sx_err = cipher_ctx->key.clean_key(cipher_ctx->key.user_data);
+	if (cipher_ctx->key && cipher_ctx->key->clean_key) {
+		sx_err = cipher_ctx->key->clean_key(cipher_ctx->key->user_data);
 	}
 	sx_cmdma_release_hw(&cipher_ctx->dma);
 	return sx_err;
@@ -106,8 +106,8 @@ static int sx_blkcipher_hw_reserve(struct sxblkcipher *cipher_ctx)
 		goto exit;
 	}
 
-	if (cipher_ctx->key.prepare_key) {
-		err = cipher_ctx->key.prepare_key(cipher_ctx->key.user_data);
+	if (cipher_ctx->key && cipher_ctx->key->prepare_key) {
+		err = cipher_ctx->key->prepare_key(cipher_ctx->key->user_data);
 	}
 
 exit:
@@ -119,7 +119,7 @@ exit:
 }
 
 static int sx_blkcipher_create_aesxts(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key1,
-				      const struct sxkeyref *key2, const char *iv)
+				      const struct sxkeyref *key2, const uint8_t *iv)
 {
 	uint32_t keyszfld = 0;
 	uint32_t mode = 0;
@@ -140,7 +140,7 @@ static int sx_blkcipher_create_aesxts(struct sxblkcipher *cipher_ctx, const stru
 		}
 	}
 
-	memcpy(&cipher_ctx->key, key1, sizeof(cipher_ctx->key));
+	cipher_ctx->key = key1;
 	err = sx_blkcipher_hw_reserve(cipher_ctx);
 	if (err != SX_OK) {
 		return err;
@@ -163,7 +163,7 @@ static int sx_blkcipher_create_aesxts(struct sxblkcipher *cipher_ctx, const stru
 }
 
 int sx_blkcipher_create_aesxts_enc(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key1,
-				   const struct sxkeyref *key2, const char *iv)
+				   const struct sxkeyref *key2, const uint8_t *iv)
 {
 	int status;
 
@@ -178,7 +178,7 @@ int sx_blkcipher_create_aesxts_enc(struct sxblkcipher *cipher_ctx, const struct 
 }
 
 int sx_blkcipher_create_aesxts_dec(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key1,
-				   const struct sxkeyref *key2, const char *iv)
+				   const struct sxkeyref *key2, const uint8_t *iv)
 {
 	int status;
 
@@ -193,7 +193,8 @@ int sx_blkcipher_create_aesxts_dec(struct sxblkcipher *cipher_ctx, const struct 
 }
 
 static int sx_blkcipher_create_aes_ba411(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key,
-					 const char *iv, const struct sx_blkcipher_cmdma_cfg *cfg,
+					 const uint8_t *iv,
+					 const struct sx_blkcipher_cmdma_cfg *cfg,
 					 const uint32_t dir)
 {
 	int err;
@@ -207,7 +208,7 @@ static int sx_blkcipher_create_aes_ba411(struct sxblkcipher *cipher_ctx, const s
 		}
 	}
 
-	memcpy(&cipher_ctx->key, key, sizeof(cipher_ctx->key));
+	cipher_ctx->key = key;
 	cipher_ctx->cfg = cfg;
 	cipher_ctx->textsz = 0;
 
@@ -230,13 +231,13 @@ static int sx_blkcipher_create_aes_ba411(struct sxblkcipher *cipher_ctx, const s
 }
 
 int sx_blkcipher_create_aesctr_enc(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key,
-				   const char *iv)
+				   const uint8_t *iv)
 {
 	return sx_blkcipher_create_aes_ba411(cipher_ctx, key, iv, &ba411ctrcfg, CM_CFG_ENCRYPT);
 }
 
 int sx_blkcipher_create_aesctr_dec(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key,
-				   const char *iv)
+				   const uint8_t *iv)
 {
 	return sx_blkcipher_create_aes_ba411(cipher_ctx, key, iv, &ba411ctrcfg, ba411ctrcfg.decr);
 }
@@ -252,18 +253,19 @@ int sx_blkcipher_create_aesecb_dec(struct sxblkcipher *cipher_ctx, const struct 
 }
 
 int sx_blkcipher_create_aescbc_enc(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key,
-				   const char *iv)
+				   const uint8_t *iv)
 {
 	return sx_blkcipher_create_aes_ba411(cipher_ctx, key, iv, &ba411cbccfg, CM_CFG_ENCRYPT);
 }
 
 int sx_blkcipher_create_aescbc_dec(struct sxblkcipher *cipher_ctx, const struct sxkeyref *key,
-				   const char *iv)
+				   const uint8_t *iv)
 {
 	return sx_blkcipher_create_aes_ba411(cipher_ctx, key, iv, &ba411cbccfg, ba411cbccfg.decr);
 }
 
-int sx_blkcipher_crypt(struct sxblkcipher *cipher_ctx, const char *datain, size_t sz, char *dataout)
+int sx_blkcipher_crypt(struct sxblkcipher *cipher_ctx, const uint8_t *datain, size_t sz,
+		       uint8_t *dataout)
 {
 	if (!cipher_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
@@ -324,8 +326,9 @@ int sx_blkcipher_resume_state(struct sxblkcipher *cipher_ctx)
 	cipher_ctx->dma.dmamem.cfg &= ~(cipher_ctx->cfg->ctxsave);
 	sx_cmdma_newcmd(&cipher_ctx->dma, cipher_ctx->descs, cipher_ctx->dma.dmamem.cfg,
 			cipher_ctx->cfg->dmatags->cfg);
-	if (KEYREF_IS_USR(&cipher_ctx->key)) {
-		ADD_CFGDESC(cipher_ctx->dma, cipher_ctx->key.key, cipher_ctx->key.sz,
+
+	if (cipher_ctx->key && KEYREF_IS_USR(cipher_ctx->key)) {
+		ADD_CFGDESC(cipher_ctx->dma, cipher_ctx->key->key, cipher_ctx->key->sz,
 			    cipher_ctx->cfg->dmatags->key);
 	}
 	/* Context will be transferred in the same place as the IV. However,
@@ -408,31 +411,34 @@ int sx_blkcipher_ecb_simple(uint8_t *key, size_t key_size, uint8_t *input, size_
 	int status = SX_ERR_HW_PROCESSING;
 
 	uint32_t cmd = CMDMA_BLKCIPHER_MODE_SET(BLKCIPHER_MODEID_ECB);
-	struct sxdesc in_descs[3] = {};
+	/* Both out_desc and in_descs are used after sx_hw_reserve which locks
+	 * the symmetric mutex, so it is safe to have them as static.
+	 */
+	static struct sxdesc out_desc;
+	static struct sxdesc in_descs[3];
 
-	in_descs[0].addr = (char *)&cmd;
+	/* This guards the static variables out_desc and in_descs */
+	sx_hw_reserve(NULL);
+
+	in_descs[0].addr = (uint8_t *)&cmd;
 	in_descs[0].sz = DMA_REALIGN | sizeof(cmd);
 	in_descs[0].dmatag = ba411tags.cfg;
 	in_descs[0].next = &in_descs[1];
 
-	in_descs[1].addr = (char *)key;
+	in_descs[1].addr = key;
 	in_descs[1].sz = DMA_REALIGN | key_size;
 	in_descs[1].dmatag = ba411tags.key;
 	in_descs[1].next = &in_descs[2];
 
-	in_descs[2].addr = (char *)input;
+	in_descs[2].addr = input;
 	in_descs[2].sz = DMA_REALIGN | input_size;
 	in_descs[2].dmatag = DMATAG_LAST | ba411tags.data;
 	in_descs[2].next = (void *)1;
-
-	struct sxdesc out_desc = {};
 
 	out_desc.addr = output;
 	out_desc.sz = DMA_REALIGN | output_size;
 	out_desc.next = (void *)1;
 	out_desc.dmatag = DMATAG_LAST;
-
-	sx_hw_reserve(NULL);
 
 #if CONFIG_DCACHE
 	sys_cache_data_flush_range(in_descs, sizeof(in_descs));

@@ -1,0 +1,11 @@
+# Nordic Semiconductor nRF54LS05B MCU
+
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+if SOC_NRF54LS05B_ENGA_CPUAPP
+
+config NUM_IRQS
+	default 289
+
+endif # SOC_NRF54LS05B_ENGA_CPUAPP

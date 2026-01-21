@@ -69,9 +69,9 @@ Use one of the following methods:
 
       For more information about how to connect using the app, see the `steps in the Serial Terminal documentation <Connecting using the Serial Terminal app_>`_.
 
-   .. group-tab:: nRF Connect for Visual Studio Code
+   .. group-tab:: nRF Connect for VS Code
 
-      The |nRFVSC| includes an integrated serial port and RTT terminal, which you can use to connect to your board.
+      |nRFVSC| includes an integrated serial port and RTT terminal, which you can use to connect to your board.
       For detailed instructions, see `How to connect to the terminal`_ on the `nRF Connect for Visual Studio Code`_ documentation site.
 
       The extension is available for Windows, Linux, and macOS.
@@ -116,7 +116,7 @@ Use one of the following methods:
    .. group-tab:: J-Link RTT Viewer
 
       .. note::
-          You can connect using RTT also from the |nRFVSC|.
+          You can connect using RTT also from |nRFVSC|.
           For detailed instructions, see `How to connect to the terminal`_ on the `nRF Connect for Visual Studio Code`_ documentation site.
 
       SEGGER's J-Link RTT Viewer is available for Windows, Linux, and macOS.

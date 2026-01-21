@@ -5,6 +5,7 @@
 #pragma once
 
 #include <app/data-model-provider/MetadataTypes.h>
+#include <array>
 #include <lib/core/DataModelTypes.h>
 
 #include <cstdint>
@@ -24,6 +25,7 @@ namespace app
 
 			namespace Attributes
 			{
+
 				namespace OpenDuration
 				{
 					inline constexpr DataModel::AttributeEntry
@@ -101,11 +103,18 @@ namespace app
 							       BitFlags<DataModel::AttributeQualityFlags>(),
 							       Access::Privilege::kView, std::nullopt);
 				} // namespace LevelStep
+				constexpr std::array<DataModel::AttributeEntry, 5> kMandatoryMetadata = {
+					OpenDuration::kMetadataEntry,	   DefaultOpenDuration::kMetadataEntry,
+					RemainingDuration::kMetadataEntry, CurrentState::kMetadataEntry,
+					TargetState::kMetadataEntry,
+
+				};
 
 			} // namespace Attributes
 
 			namespace Commands
 			{
+
 				namespace Open
 				{
 					inline constexpr DataModel::AcceptedCommandEntry
@@ -120,6 +129,23 @@ namespace app
 				} // namespace Close
 
 			} // namespace Commands
+
+			namespace Events
+			{
+				namespace ValveStateChanged
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace ValveStateChanged
+				namespace ValveFault
+				{
+					inline constexpr DataModel::EventEntry kMetadataEntry{
+						Access::Privilege::kView
+					};
+				} // namespace ValveFault
+
+			} // namespace Events
 		} // namespace ValveConfigurationAndControl
 	} // namespace Clusters
 } // namespace app

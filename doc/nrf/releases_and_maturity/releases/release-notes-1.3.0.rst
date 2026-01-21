@@ -52,7 +52,7 @@ This version of the |NCS| has been tested with the following modem firmware for 
 * mfw_nrf9160_1.2.0
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Changelog
 *********
@@ -133,7 +133,7 @@ nRF9160
   * Improved stability.
   * Various bugfixes.
 
-* :ref:`serial_lte_modem` application:
+* Serial LTE modem application:
 
   * Moved from samples to applications.
   * Added low-power idle mode.
@@ -455,7 +455,7 @@ nRF9160
 =======
 
 * The nRF9160: Asset Tracker application prints warnings and error messages during successful FOTA. (NCSDK-5574)
-* The :ref:`lte_sensor_gateway` sample crashes when Thingy:52 is flipped. (NCSDK-5666)
+* The LTE Sensor Gateway sample crashes when Thingy:52 is flipped. (NCSDK-5666)
 
 From v1.2.0
 -----------

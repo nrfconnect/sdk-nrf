@@ -45,7 +45,7 @@ This version of the |NCS| supports the following modem firmware for cellular IoT
 * mfw_nrf9160_1.1.2
 
 Use the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Tested boards
 *************
@@ -108,7 +108,7 @@ The following sections provide detailed lists of changes by component.
 nRF9160
 =======
 
-* :ref:`lib_download_client`:
+* Download client:
 
   * Fixed DNS lookup when using non-default PDN.
 

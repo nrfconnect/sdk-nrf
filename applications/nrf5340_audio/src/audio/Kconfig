@@ -61,17 +61,17 @@ choice AUDIO_SYSTEM_SAMPLE_RATE
 config AUDIO_SAMPLE_RATE_16000_HZ
 	bool "16 kHz"
 	help
-	  Sample rate of 16kHz is currently only valid for I2S/line-in.
+	  Sample rate of 16 kHz is currently only valid for I2S/line-in.
 
 config AUDIO_SAMPLE_RATE_24000_HZ
 	bool "24 kHz"
 	help
-	  Sample rate of 24kHz is currently only valid for I2S/line-in.
+	  Sample rate of 24 kHz is currently only valid for I2S/line-in.
 
 config AUDIO_SAMPLE_RATE_48000_HZ
 	bool "48 kHz"
 	help
-	  Sample rate of 48kHz is valid for both I2S/line-in and USB.
+	  Sample rate of 48 kHz is valid for both I2S/line-in and USB.
 endchoice
 
 config AUDIO_SAMPLE_RATE_HZ
@@ -124,16 +124,22 @@ config AUDIO_ENCODE_CHANNELS_MAX
 	  Maximum number of audio channels that can be encoded.
 	  This number may have a large impact on memory and CPU usage.
 
-config AUDIO_INPUT_CHANNELS_MAX
-	int "Maximum number of simoultaneus audio input channels"
-	default 2
+config AUDIO_INPUT_CHANNELS
+	int "Maximum number of simultaneous audio input channels"
+	default 2 if AUDIO_SOURCE_I2S
+	default 2 if AUDIO_SOURCE_USB
+	default 1
+	range 1 2
 	help
 	  Maximum number of audio channels that can be physically input.
 	  This is dependent on the HW itself.
 
-config AUDIO_OUTPUT_CHANNELS_MAX
-	int "Maximum number of simoultaneus audio output channels"
-	default 2
+config AUDIO_OUTPUT_CHANNELS
+	int "Maximum number of simultaneous audio output channels"
+	default 2 if AUDIO_SOURCE_I2S
+	default 2 if AUDIO_SOURCE_USB
+	default 1
+	range 1 2
 	help
 	  Maximum number of audio channels that can be physically output.
 	  This is dependent on the HW itself.
@@ -149,6 +155,8 @@ choice AUDIO_SOURCE_GATEWAY
 
 config AUDIO_SOURCE_USB
 	bool "Use USB as audio source"
+	select USB_DEVICE_STACK_NEXT
+	select USBD_AUDIO2_CLASS
 	help
 	  Set USB as audio source. Note that this forces the
 	  stream to be unidirectional because of CPU load.
@@ -174,7 +182,7 @@ config DEVICE_LOCATION_SET_RUNTIME
 config DEVICE_LOCATION_SET_COMPILE_TIME
 	bool "Set at compile-time"
 	help
-	  Set channel selection at compile-time.
+	  Set location at compile-time.
 endchoice
 
 config DEVICE_LOCATION_AT_COMPILE_TIME

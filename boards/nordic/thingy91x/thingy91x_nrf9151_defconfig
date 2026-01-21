@@ -7,9 +7,6 @@ CONFIG_ARM_MPU=y
 # Enable TrustZone-M
 CONFIG_ARM_TRUSTZONE_M=y
 
-# Enable PINCTRL
-CONFIG_PINCTRL=y
-
 # Enable GPIO
 CONFIG_GPIO=y
 

@@ -48,7 +48,7 @@ config RX_PERIOD_S
 
 module = DECT_PHY_HELLO
 module-str = DECT NR+ PHY Hello
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"

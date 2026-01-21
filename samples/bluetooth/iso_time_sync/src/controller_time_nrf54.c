@@ -18,10 +18,9 @@ int controller_time_init(void)
 	int ret;
 
 	ret = nrfx_grtc_channel_alloc(&grtc_channel);
-	if (ret != NRFX_SUCCESS) {
-		printk("Failed allocating GRTC channel (ret: %d)\n",
-		       ret - NRFX_ERROR_BASE_NUM);
-		return -ENODEV;
+	if (ret < 0) {
+		printk("Failed allocating GRTC channel (ret: %d)\n", ret);
+		return ret;
 	}
 
 	nrf_grtc_sys_counter_compare_event_enable(NRF_GRTC, grtc_channel);
@@ -31,16 +30,7 @@ int controller_time_init(void)
 
 uint64_t controller_time_us_get(void)
 {
-	int ret;
-	uint64_t current_time_us;
-
-	ret = nrfx_grtc_syscounter_get(&current_time_us);
-	if (ret != NRFX_SUCCESS) {
-		printk("Failed obtaining system time (ret: %d)\n", ret - NRFX_ERROR_BASE_NUM);
-		return 0;
-	}
-
-	return current_time_us;
+	return nrfx_grtc_syscounter_get();
 }
 
 void controller_time_trigger_set(uint64_t timestamp_us)
@@ -52,8 +42,8 @@ void controller_time_trigger_set(uint64_t timestamp_us)
 	};
 
 	ret = nrfx_grtc_syscounter_cc_absolute_set(&chan_data, timestamp_us, false);
-	if (ret != NRFX_SUCCESS) {
-		printk("Failed setting CC (ret: %d)\n", ret - NRFX_ERROR_BASE_NUM);
+	if (ret != 0) {
+		printk("Failed setting CC (ret: %d)\n", ret);
 	}
 }
 

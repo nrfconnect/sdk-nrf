@@ -1,0 +1,45 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&uart136 {
+	hw-flow-control;
+};
+
+/* Extend by 160 KB, taken from rad */
+&cpuapp_slot0_partition {
+	reg = <0x40000 DT_SIZE_K(488)>;
+};
+
+/* Shrink by 160 KB */
+/delete-node/ &cpurad_slot0_partition;
+
+&mram1x {
+	partitions {
+		cpurad_slot0_partition: partition@ba000 {
+			reg = <0xba000 DT_SIZE_K(168)>;
+		};
+	};
+};
+
+/* Trim this RAM block for power management related features (256B) */
+/* Trim more (256B) to enable coverage */
+&cpuapp_ram0 {
+	reg = <0x22000000 (DT_SIZE_K(32) - 512)>;
+	ranges = <0x0 0x22000000 (0x8000 - 0x200)>;
+};
+
+/* Extend by 256B */
+/delete-node/ &pm_ramfunc;
+
+/ {
+	soc {
+		pm_ramfunc: cpuapp_s2ram@22007e00 {
+			compatible = "zephyr,memory-region", "mmio-sram";
+			reg = <0x22007e00 448>;
+			zephyr,memory-region = "PMLocalRamfunc";
+		};
+	};
+};

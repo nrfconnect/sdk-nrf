@@ -5,8 +5,8 @@
  */
 
 #include "app_task.h"
-
 #include "bolt_lock_manager.h"
+#include "clusters/identify.h"
 
 #ifdef CONFIG_THREAD_WIFI_SWITCHING
 #include "thread_wifi_switch.h"
@@ -21,7 +21,6 @@
 
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app/clusters/door-lock-server/door-lock-server.h>
-#include <app/clusters/identify-server/identify-server.h>
 #include <platform/CHIPDeviceLayer.h>
 #include <setup_payload/OnboardingCodesUtil.h>
 
@@ -64,21 +63,10 @@ void AppFactoryResetHandler(const ChipDeviceEvent *event, intptr_t /* unused */)
 }
 #endif
 
-} /* namespace */
-
-Identify sIdentify = { kLockEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
-		       Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator };
-
-void AppTask::IdentifyStartHandler(Identify *)
-{
-	Nrf::PostTask(
-		[] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms); });
-}
-
-void AppTask::IdentifyStopHandler(Identify *)
-{
+Nrf::Matter::IdentifyCluster sIdentifyCluster(kLockEndpointId, false, []() {
 	Nrf::PostTask([] { Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(BoltLockMgr().IsLocked()); });
-}
+});
+} /* namespace */
 
 void AppTask::ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged)
 {
@@ -335,6 +323,8 @@ CHIP_ERROR AppTask::Init()
 		kDoorLockJammedEventTriggerId,
 		Nrf::Matter::TestEventTrigger::EventTrigger{ 0, DoorLockJammedEventCallback }));
 #endif
+
+	ReturnErrorOnFailure(sIdentifyCluster.Init());
 
 	return Nrf::Matter::StartServer();
 }

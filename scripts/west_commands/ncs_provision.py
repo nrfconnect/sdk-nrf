@@ -14,7 +14,6 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
 import generate_psa_key_attributes as psa_attr_generator
-
 import yaml
 from west.commands import WestCommand
 
@@ -25,8 +24,8 @@ KEY_SLOTS: dict[str, list[int]] = {
 }
 POLICIES = ["revokable", "lock", "lock-last"]
 NRF54L15_KEY_POLICIES: dict[str, str] = {
-    "revokable": psa_attr_generator.PsaKeyLifetime.PERSISTENCE_REVOKABLE,
-    "lock": psa_attr_generator.PsaKeyLifetime.PERSISTENCE_READ_ONLY,
+    "revokable": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_REVOKABLE,
+    "lock": psa_attr_generator.PsaKeyPersistence.PERSISTENCE_READ_ONLY,
 }
 
 
@@ -34,7 +33,7 @@ NRF54L15_KEY_POLICIES: dict[str, str] = {
 class SlotParams:
     id: int
     keyfile: str
-    lifetime: psa_attr_generator.PsaKeyLifetime
+    lifetime: psa_attr_generator.PsaKeyPersistence
 
 
 class NrfutilWrapper:
@@ -71,14 +70,14 @@ class NrfutilWrapper:
 
         for slot in self.slots:
             attr = psa_attr_generator.PlatformKeyAttributes(
-                key_type=psa_attr_generator.PsaKeyType.ECC_TWISTED_EDWARDS,
+                key_type=psa_attr_generator.PsaKeyType.ECC_PUBLIC_KEY_TWISTED_EDWARDS,
                 identifier=slot.id,
                 location=psa_attr_generator.PsaKeyLocation.LOCATION_CRACEN_KMU,
-                lifetime=slot.lifetime,
-                usage=psa_attr_generator.PsaUsage.VERIFY_MESSAGE_EXPORT,
+                persistence=slot.lifetime,
+                key_usage=psa_attr_generator.PsaKeyUsage.VERIFY,
                 algorithm=psa_attr_generator.PsaAlgorithm.EDDSA_PURE,
-                size=psa_attr_generator.PsaKeyBits.EDDSA,
-                cracen_usage=psa_attr_generator.PsaCracenUsageSceme.RAW,
+                key_bits=255,
+                cracen_usage=psa_attr_generator.PsaCracenUsageScheme.RAW,
             )
 
             with open(slot.keyfile, "rb") as key_file:

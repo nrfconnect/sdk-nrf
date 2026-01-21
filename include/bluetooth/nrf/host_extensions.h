@@ -16,6 +16,8 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/conn.h>
 
 /** @brief Set remote (peer) transmit power.
  *
@@ -115,6 +117,61 @@ int bt_conn_set_power_control_request_params(struct bt_conn_set_pcr_params *para
  *  @retval -ENOBUFS HCI command buffer is not available.
  */
 int bt_nrf_host_extension_reduce_initator_aux_channel_priority(bool reduce);
+
+/** @brief Bluetooth Long Term Key (LTK)
+ *
+ * A Bluetooth LTK in little-endian order. The bytes in this structure
+ * are in the same order as in HCI commands.
+ */
+struct bt_nrf_ltk {
+	uint8_t val[16];
+};
+
+/**
+ * @brief Set the LTK to be used when encryption is triggered.
+ *
+ * This API does not itself enable encryption. Instead, the LTK is set
+ * to be used when encryption is triggered by other means. Peripherals
+ * should wait for the central to trigger encryption, while centrals
+ * should follow up with a call to @c bt_conn_set_security().
+ *
+ * This API may be used in a @c conn_cb.connected callback. It can also
+ * be called later at any time before encryption is triggered. In the
+ * connected callback, encryption is guaranteed not to have been
+ * triggered yet.
+ *
+ * This API is intended only as a mechanism for use between devices that
+ * both implement some particular proprietary method for deriving or
+ * provisioning a safe shared LTK out-of-band. It is not intended to be
+ * used on generic connections without knowledge that the peer device
+ * also implements the same proprietary method.
+ *
+ * The parameter @p authenticated is used to indicate whether the LTK is
+ * considered authenticated by the GAP layer. If true, the connection
+ * will get BT_SECURITY_L4 security level, otherwise it will get
+ * BT_SECURITY_L2 security level. Access to Bluetooth services is
+ * controlled by this security level. The user of this API must consider
+ * the security implications of this.
+ *
+ * It is highly recommended that the LTK is authenticated, and that
+ * unauthenticated LTKs are not trusted.
+ *
+ * Requires @c CONFIG_BT_NRF_CONN_SET_LTK to be enabled.
+ *
+ * @param conn Connection object.
+ * @param ltk LTK to set.
+ * @param authenticated Whether GAP will consider the connection to be
+ * authenticated.
+ *
+ * @retval -EALREADY The LTK has already been set using this API, a bond
+ * exists, a pairing is in progress or has already been completed.
+ * Please unpair first.
+ * @retval -ENOMEM Could not allocate Host memory. Increase
+ * @c CONFIG_BT_MAX_PAIRED.
+ * @retval -EINVAL Null pointer in arguments.
+ * @retval 0 Success.
+ */
+int bt_nrf_conn_set_ltk(struct bt_conn *conn, const struct bt_nrf_ltk *ltk, bool authenticated);
 
 /**
  * @}

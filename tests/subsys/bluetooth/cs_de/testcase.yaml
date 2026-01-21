@@ -1,0 +1,9 @@
+tests:
+  subsys.bluetooth.cs_de:
+    platform_allow:
+      - native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - unittest
+      - ci_tests_subsys_bluetooth_cs_de

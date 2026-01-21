@@ -3,26 +3,19 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-import struct
-import zlib
-import os
-import time
-import logging
-
-import zipfile
-from zipfile import ZipFile
-import tempfile
+import contextlib
 import json
+import logging
+import os
+import struct
+import tempfile
+import time
+import zipfile
+import zlib
+from zipfile import ZipFile
 
-from NrfHidDevice import EVENT_DATA_LEN_MAX
 import imgtool.image
-
-try:
-    from suit_generator.envelope import SuitEnvelope
-except ImportError as e:
-    print('Exception when importing SUIT generator:{}'.format(e))
-    print('The SUIT generator Python package is necassary to handle device with SUIT')
-    print('The SUIT generator can be installed from ncs/modules/lib/suit-generator')
+from NrfHidDevice import EVENT_DATA_LEN_MAX
 
 DFU_SYNC_INTERVAL = 1
 
@@ -76,12 +69,11 @@ class DFUInfo:
 
     def __str__(self):
         return ('DFU synchronization data\n'
-                '  state: {}\n'
-                '  Image length: {}\n'
-                '  Image checksum: {}\n'
-                '  Offset: {}\n'
-                '  Sync buffer size: {}').format(self._DFUSTATE2STR[self.dfu_state], self.img_length,
-                                                 self.img_csum, self.offset, self.sync_buffer_size)
+                f'  state: {self._DFUSTATE2STR[self.dfu_state]}\n'
+                f'  Image length: {self.img_length}\n'
+                f'  Image checksum: {self.img_csum}\n'
+                f'  Offset: {self.offset}\n'
+                f'  Sync buffer size: {self.sync_buffer_size}')
 
 
 class FwInfo:
@@ -106,11 +98,9 @@ class FwInfo:
 
     def __str__(self):
         return ('Firmware info\n'
-                '  FLASH area id: {}\n'
-                '  Image length: {}\n'
-                '  Version: {}.{}.{}.{}').format(self.flash_area_id, self.image_len,
-                                                 self.ver_major, self.ver_minor,
-                                                 self.ver_rev, self.ver_build_nr)
+                f'  FLASH area id: {self.flash_area_id}\n'
+                f'  Image length: {self.image_len}\n'
+                f'  Version: {self.ver_major}.{self.ver_minor}.{self.ver_rev}.{self.ver_build_nr}')
 
 
 class DevInfo:
@@ -125,9 +115,9 @@ class DevInfo:
 
     def __str__(self):
         return ('Device info\n'
-                '  Vendor ID: {}\n'
-                '  Product ID: {}\n'
-                '  Generation: {}').format(hex(self.vid), hex(self.pid), self.generation)
+                f'  Vendor ID: {hex(self.vid)}\n'
+                f'  Product ID: {hex(self.pid)}\n'
+                f'  Generation: {self.generation}')
 
 
 def b0_get_fwinfo_offset(dfu_bin):
@@ -177,7 +167,7 @@ def b0_is_dfu_file_correct(dfu_bin):
 
 
 def b0_get_dfu_image_name(dfu_slot_id):
-    return 'signed_by_b0_s{}_image.bin'.format(dfu_slot_id)
+    return f'signed_by_b0_s{dfu_slot_id}_image.bin'
 
 
 def b0_get_dfu_image_version(dfu_bin):
@@ -304,8 +294,6 @@ class DfuImage:
         if zipfile.is_zipfile(dfu_package):
             self._initialize_from_zip_file(dfu_package, dev_fwinfo, dev_board_name,
                                            dev_bootloader_variant)
-        elif dfu_package.endswith('.suit'):
-            self._initialize_from_suit_file(dfu_package, dev_fwinfo)
         else:
             print('Invalid DFU package format')
             return
@@ -334,56 +322,6 @@ class DfuImage:
         except Exception:
             print("Parsing zip file failed")
 
-    def _initialize_from_suit_file(self, dfu_package, dev_fwinfo):
-        try:
-            envelope = SuitEnvelope()
-            envelope.load(dfu_package)
-            sequence_number = envelope.sequence_number
-        except Exception as e:
-            print("Exception during retrieving manifest sequence number")
-            print(e)
-            return
-
-        if not isinstance(sequence_number, int):
-            print("Invalid sequence number type. \
-                   Is of type: {} and should be: int".format(type(sequence_number)))
-            return
-
-        if not hasattr(envelope, 'current_version'):
-            print("The current_version field is not found in the SuitEnvelope class. \
-                   Upgrade suit-generator package to the newer version")
-            return
-
-        current_version = envelope.current_version
-        if current_version is not None and not isinstance(current_version, list):
-            print("Invalid current_version type. \
-                   Is of type: {} and should be: list or None".format(type(current_version)))
-            return
-
-        booted_fw_version = dev_fwinfo.get_fw_version()
-        assert len(booted_fw_version) == 4
-        if booted_fw_version[:3] == (0, 0, 0):
-            # Semantic versioning is not supported in the booted firmware:
-            # fallback to sequence number versioning
-            image_bin_version = (0, 0, 0, sequence_number)
-        else:
-            if current_version is None:
-                print("The semantic version is not defined in the SUIT envelope. \
-                       Generate the SUIT package with the semantic version")
-                return
-
-            # It is assumed that the version list uses the following order of elements:
-            # (major, minor, patch, type, pre_release_number)
-            # Field names are documented in the suit_version_t structure from:
-            # nrf/subsys/suit/metadata/include/suit_metadata.h
-            assert len(current_version) >= 3
-            major, minor, patch = current_version[:3]
-            image_bin_version = (major, minor, patch, sequence_number)
-
-        self.image_bin_path = dfu_package
-        self.bootloader_variant = "SUIT"
-        self.image_bin_version = image_bin_version
-
     @staticmethod
     def _is_dfu_file_correct(dfu_bin):
         if dfu_bin is None:
@@ -394,10 +332,7 @@ class DfuImage:
 
         img_length = os.stat(dfu_bin).st_size
 
-        if img_length <= 0:
-            return False
-
-        return True
+        return img_length > 0
 
     @staticmethod
     def _zip_get_dfu_file_entry_v0(manifest, dfu_slot_id, bootloader_api):
@@ -476,7 +411,7 @@ class DfuImage:
         try:
             bootloader_api = BOOTLOADER_APIS[dev_bootloader_variant]
         except Exception:
-            print("Device uses an unsupported bootloader {}".format(dev_bootloader_variant))
+            print(f"Device uses an unsupported bootloader {dev_bootloader_variant}")
             return None, None
 
         assert 'get_dfu_image_version' in bootloader_api
@@ -494,7 +429,7 @@ class DfuImage:
                 file_entry = DfuImage._zip_get_dfu_file_entry_v1(manifest, dfu_slot_id)
                 zip_board_name = file_entry['board']
             else:
-                print('Unsupported manifest format-version {}'.format(format_version))
+                print(f'Unsupported manifest format-version {format_version}')
                 return None, None
         except Exception:
             if file_entry is None:
@@ -504,7 +439,7 @@ class DfuImage:
             return None, None
 
         if zip_board_name != dev_board_name:
-            print("Update file is for other board: {}".format(zip_board_name))
+            print(f"Update file is for other board: {zip_board_name}")
             return None, None
 
         VERSION_PREFIX = "version_"
@@ -515,14 +450,14 @@ class DfuImage:
 
         file_entry_bootloader = version_keys[0][len(VERSION_PREFIX):]
         if file_entry_bootloader != dev_bootloader_variant:
-            print("Update file is for other bootloader: {}".format(file_entry_bootloader))
+            print(f"Update file is for other bootloader: {file_entry_bootloader}")
             return None, None
 
         dfu_bin_path = os.path.join(dfu_folder, file_entry['file'])
 
         if not DfuImage._is_dfu_file_correct(dfu_bin_path) or \
            not bootloader_api['is_dfu_file_correct'](dfu_bin_path):
-            print("Invalid DFU binary file: {}".format(dfu_bin_path))
+            print(f"Invalid DFU binary file: {dfu_bin_path}")
             return None, None
 
         dfu_bin_version = bootloader_api['get_dfu_image_version'](dfu_bin_path)
@@ -539,10 +474,8 @@ class DfuImage:
         return self.bootloader_variant
 
     def __del__(self):
-        try:
+        with contextlib.suppress(Exception):
             self.temp_dir.cleanup()
-        except Exception:
-            pass
 
 
 def fwinfo(dev):
@@ -720,7 +653,7 @@ def dfu_transfer(dev, dfu_image, progress_callback):
             if dfu_info.is_busy():
                 print('Device holds DFU active')
             elif dfu_info.get_offset() != offset:
-                print('Offset {} does not match device info {}'.format(offset, dfu_info))
+                print(f'Offset {offset} does not match device info {dfu_info}')
             else:
                 success = True
 
@@ -739,7 +672,7 @@ def send_chunks(dev, img_csum, img_file, img_length, offset, sync_buffer_size, p
                 print('Lost communication with the device')
                 return False
             if (dfu_info.get_img_length() != img_length) or (dfu_info.get_img_csum() != img_csum):
-                print('Invalid sync information {}'.format(dfu_info))
+                print(f'Invalid sync information {dfu_info}')
                 return False
             if (not dfu_info.is_busy()) and (dfu_info.get_offset() != img_length):
                 print('DFU interrupted by device')
@@ -752,7 +685,7 @@ def send_chunks(dev, img_csum, img_file, img_length, offset, sync_buffer_size, p
                 time.sleep(sleep_time)
                 continue
             if (dfu_info.is_busy()) and (dfu_info.get_offset() != offset):
-                print('Mismatching offset after synchronization {} != {}'.format(dfu_info.get_offset(), offset))
+                print(f'Mismatching offset after synchronization {dfu_info.get_offset()} != {offset}')
                 return False
             return True
 
@@ -773,7 +706,7 @@ def send_chunks(dev, img_csum, img_file, img_length, offset, sync_buffer_size, p
             break
 
         # Send data to the device
-        logging.debug('Send DFU request: offset {}, size {}'.format(offset, chunk_len))
+        logging.debug(f'Send DFU request: offset {offset}, size {chunk_len}')
         dfu_module_name = dev.get_complete_module_name('dfu')
         if dfu_module_name:
             success = dev.config_set(dfu_module_name , 'data', chunk_data)
@@ -803,7 +736,7 @@ def get_dfu_operation_offset(dfu_image, dfu_info, img_csum):
         return None
 
     if (dfu_info.get_img_length() == img_length) and (dfu_info.get_img_csum() == img_csum) and (dfu_info.get_offset() <= img_length):
-        print('Resume DFU at {}'.format(dfu_info.get_offset()))
+        print(f'Resume DFU at {dfu_info.get_offset()}')
         offset = dfu_info.get_offset()
     else:
         offset = 0

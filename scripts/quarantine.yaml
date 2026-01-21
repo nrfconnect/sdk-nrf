@@ -3,14 +3,6 @@
 # https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
 
 - scenarios:
-    - net.lib.wifi_credentials_backend_psa
-  comment: "Fix not known at time of upmerge, temporarily excluded to be fixed after upmerge"
-
-- platforms:
-    - native_posix
-  comment: "native_posix will be removed soon - native_sim platform is the default simulator now"
-
-- scenarios:
     - sample.matter.light_bulb.aws
   platforms:
     - nrf7002dk/nrf5340/cpuapp
@@ -20,29 +12,10 @@
     - applications.matter_bridge.br_ble.smp_dfu
     - applications.matter_bridge.br_ble.memory_profiling
     - applications.matter_bridge.memory_profiling
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp
   comment: "Variant does not fit in FLASH area - it should be probably removed in the future"
-
-- scenarios:
-    - nrf.extended.drivers.uart.uart_elementary_dual_l09
-    - nrf.extended.drivers.uart.uart_elementary_dual_setup_mismatch_l09
-  platforms:
-    - nrf54l09pdk/nrf54l09/cpuflpr
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-7265"
-
-- scenarios:
-    - sample.suit.*
-    - suit-platform.integration.*
-    - suit.integration.*
-    - suit-processor.integration.*
-    - suit.unit.*
-    - dfu.dfu_target.suit.*
-    - drivers.flash.flash_ipuc
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
-    - nrf52840dk/nrf52840
-    - unit.*
-    - native_sim.*
-  comment: "SUIT is planned to be removed from NCS soon"
 
 - scenarios:
     - sample.find_my.*
@@ -64,13 +37,74 @@
   comment: "Needs alignment to work with IronSide SE"
 
 - scenarios:
-    - applications.nrf_desktop.*
+    - sample.nrf7002_eb.thingy53.shell
   platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
-  comment: "Needs alignment to work with MCUBoot"
+    - thingy53/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35521"
 
 - scenarios:
-    - drivers.counter.basic_api
+    - benchmarks.multicore.idle_twim.nrf54h20dk_cpuapp_cpurad.s2ram
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+  comment: "Needs newer toolchain or dtc due to RAM overflow error"
+
+- scenarios:
+    - sample.persistent_key_usage.secure_storage
+    - sample.persistent_key_usage.trusted_storage
+    - sample.psa.its.secure_storage.entropy_driver
+    - sample.psa.its.secure_storage.entropy_not_secure
+    - sample.psa.persistent_key.secure_storage.entropy_driver
+    - sample.psa.persistent_key.secure_storage.entropy_not_secure
+    - secure_storage.psa.crypto.secure_storage
+    - secure_storage.psa.its.secure_storage.custom.store
+    - secure_storage.psa.its.secure_storage.store.settings
+    - secure_storage.psa.its.secure_storage.store.settings.64-bit_uids
+  platforms:
+    - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35676"
+
+- scenarios:
+    - sample.benchmark.coremark.heap_memory
+    - sample.benchmark.coremark.multiple_threads
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34187"
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31463"
+
+- scenarios:
+    - mcuboot.upgrade.encryption.ecdsa_p256
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29460"
+
+- scenarios:
+    - bootloader.bl_validation
+  platforms:
+    - nrf9160dk_nrf9160
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36569"
+
+- scenarios:
+    - sample.debug.memfault
+    - sample.debug.memfault.etb
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8480"
+
+- scenarios:
+    - sample.bluetooth.peripheral_mds
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8480"
+
+- scenarios:
+    - sample.peripheral.radio_test
+  platforms:
+    - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-36650"
+
+- scenarios:
+    - drivers.audio.pdm_loopback.nrf7120.auxpll.44k1hz
+    - drivers.audio.pdm_loopback.nrf7120.auxpll.48khz
+    - drivers.audio.pdm_loopback.nrf7120.1280khz
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8621 GPPI changes also by NCS 3.2"

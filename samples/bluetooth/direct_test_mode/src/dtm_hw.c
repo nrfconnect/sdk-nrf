@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "nrf.h"
+#include "nrfx.h"
 
 #include "dtm_hw.h"
 #include "dtm_hw_config.h"

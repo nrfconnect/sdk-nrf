@@ -6,7 +6,6 @@
 
 config FEM_AL_LIB
 	bool "FEM Abstraction Layer library"
-	default n
 
 if FEM_AL_LIB
 
@@ -66,5 +65,7 @@ config SKYWORKS_BYPASS_MODE
 endchoice # SKYWORKS_MODE
 
 endif # MPSL_FEM_SIMPLE_GPIO
+
 endif # FEM
+
 endif # FEM_AL_LIB

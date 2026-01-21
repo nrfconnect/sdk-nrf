@@ -111,8 +111,6 @@ Developing with Front-End Modules
 
 * Added support for the following:
 
-  * :ref:`nRF2220 Front-End Module <ug_radio_fem_nrf2220>`.
-  * :ref:`nRF2220 EK shield <ug_radio_fem_nrf2220ek>`.
   * :ref:`nRF21540 Front-End Module in GPIO mode <ug_radio_fem_nrf21540_gpio>` for the nRF54L Series devices.
 
 Developing with PMICs
@@ -247,7 +245,7 @@ Machine learning
 Asset Tracker v2
 ----------------
 
-* Updated the application to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
+* Updated the application to use the :ref:`lib_downloader` library instead of the deprecated Download client library.
 
 Connectivity Bridge
 -------------------
@@ -356,7 +354,7 @@ Serial LTE modem
 
 * Updated:
 
-  * The application to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
+  * The application to use the :ref:`lib_downloader` library instead of the deprecated Download client library.
   * In Zephyr, the numerical values of various |NCS| specific socket options that are used with the ``#XSOCKETOPT`` command:
 
       * The :c:macro:`TLS_DTLS_HANDSHAKE_TIMEO` has been changed from ``18`` to ``1018``
@@ -428,7 +426,6 @@ Bluetooth samples
   * Added:
 
     * Loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
-    * Support for the :ref:`nRF2220 front-end module <ug_radio_fem_nrf2220ek>`.
 
 * :ref:`central_uart` sample:
 
@@ -517,7 +514,7 @@ Bluetooth Mesh samples
 Cellular samples
 ----------------
 
-* Updated the following samples to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
+* Updated the following samples to use the :ref:`lib_downloader` library instead of the Download client library:
 
   * :ref:`http_application_update_sample`
   * :ref:`http_modem_delta_update_sample`
@@ -544,7 +541,7 @@ Cellular samples
     * Slow Wi-Fi connectivity startup by selecting ``TFM_SFN`` instead of ``TFM_IPC``.
     * The size of TLS credentials buffer for Wi-Fi connectivity to allow installing both AWS and CoAP CA certificates.
 
-* :ref:`lte_sensor_gateway` sample:
+* LTE Sensor Gateway sample:
 
   * Fixed an issue with devicetree configuration after HCI updates in `sdk-zephyr`_.
 
@@ -615,7 +612,7 @@ Networking samples
 
   * The :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` Kconfig option value to ``1280`` for all networking samples that had it set to a lower value.
     This is a requirement from Zephyr and removes a build warning.
-  * The following samples to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
+  * The following samples to use the :ref:`lib_downloader` library instead of the Download client library:
 
     * :ref:`aws_iot`
     * :ref:`azure_iot_hub`
@@ -640,7 +637,6 @@ Peripheral samples
   * Added:
 
     * Loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
-    * Support for the :ref:`nRF2220 front-end module <ug_radio_fem_nrf2220ek>`.
 
 PMIC samples
 ------------
@@ -650,7 +646,7 @@ PMIC samples
   * The :ref:`npm2100_one_button` sample that demonstrates how to support wake-up, shutdown, and user interactions through a single button connected to the nPM2100 PMIC.
   * The :ref:`npm2100_fuel_gauge` sample that demonstrates how to calculate the battery state of charge of primary cell batteries using the :ref:`nrfxlib:nrf_fuel_gauge`.
 
-* :ref:`npm1300_fuel_gauge` sample:
+* :ref:`nPM1300: Fuel gauge <npm13xx_fuel_gauge>` sample:
 
   * Updated to accommodate API changes in nRF Fuel Gauge library v1.0.0.
 
@@ -765,7 +761,7 @@ Binary libraries
 
 * :ref:`liblwm2m_carrier_readme` library:
 
-  * Updated the glue to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
+  * Updated the glue to use the :ref:`lib_downloader` library instead of the deprecated Download client library.
 
 Bluetooth libraries and services
 --------------------------------
@@ -789,9 +785,9 @@ Bluetooth libraries and services
 
     * The :c:func:`bt_fast_pair_info_cb_register` API to allow registration of multiple callbacks.
     * The Fast Pair sysbuild Kconfig options.
-      The ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option is replaced with the ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY``.
+      The :kconfig:option:`SB_CONFIG_BT_FAST_PAIR` Kconfig option is replaced with the :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_MODEL_ID` and :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`.
     * The method of supplying the Fast Pair Model ID and Anti-Spoofing Private Key to generate the Fast Pair provisioning data HEX file.
-      The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig options.
+      The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_MODEL_ID` and :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY` Kconfig options.
     * The automatically generated ``bt_fast_pair`` partition definition (in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair` file) to work correctly when building with TF-M.
     * The behavior of the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback.
       The callback no longer reports the initial provisioning state after the Fast Pair subsystem is enabled with the :c:func:`bt_fast_pair_enable` function call.
@@ -851,7 +847,7 @@ Security libraries
 Modem libraries
 ---------------
 
-* Deprecated the :ref:`at_params_readme` library.
+* Deprecated the AT parameters library.
 
 * :ref:`pdn_readme` library:
 
@@ -921,10 +917,10 @@ Libraries for networking
   * The :ref:`lib_downloader` library.
   * A backend for the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` that stores the credentials in the modem, see :kconfig:option:`CONFIG_TLS_CREDENTIALS_BACKEND_NRF_MODEM`.
 
-* Deprecated the :ref:`lib_download_client` library.
+* Deprecated the Download client library.
   See the :ref:`migration guide <migration_3.0_recommended>` for recommended changes.
 
-* Updated the following libraries to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
+* Updated the following libraries to use the :ref:`lib_downloader` library instead of the Download client library:
 
   * :ref:`lib_nrf_cloud`
   * :ref:`lib_aws_fota`

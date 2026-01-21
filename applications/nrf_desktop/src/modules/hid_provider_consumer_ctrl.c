@@ -196,6 +196,7 @@ static void trigger_report_transmission(void)
 	report_data.update_needed = true;
 
 	if (active_sub) {
+		__ASSERT_NO_MSG(hid_state_api);
 		(void)hid_state_api->trigger_report_send(REPORT_ID_CONSUMER_CTRL);
 	} else {
 		LOG_DBG("Subscription not enabled");
@@ -287,6 +288,7 @@ static bool handle_hid_report_provider_event(const struct hid_report_provider_ev
 				consumer_ctrl_report_connection_state_changed);
 		__ASSERT_NO_MSG(!hid_state_api);
 		__ASSERT_NO_MSG(event->hid_state_api);
+		__ASSERT_NO_MSG(event->hid_state_api->trigger_report_send);
 		hid_state_api = event->hid_state_api;
 	}
 

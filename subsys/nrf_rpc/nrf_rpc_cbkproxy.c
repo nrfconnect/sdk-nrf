@@ -8,7 +8,7 @@
 #include <stdint.h>
 
 #include <zephyr/kernel.h>
-
+#include <nrf_rpc.h>
 #include <nrf_rpc/nrf_rpc_cbkproxy.h>
 
 static K_MUTEX_DEFINE(mutex);
@@ -93,21 +93,16 @@ static void callback_jump_table_start(void)
 #endif
 		".L%=callback_jump_table_end:\n"
 		"mov   r0, lr\n"
-		"ldr   r1, .L%=callback_jump_table_start_addr\n"
+		"ldr   r1, =callback_jump_table_start+8\n"
 		"sub   r0, r1\n"
 		"asrs  r0, r0, #1\n"
-		"ldr   r1, .L%=out_callbacks_addr\n"
+		"ldr   r1, =out_callbacks\n"
 		"ldr   r1, [r1, r0]\n"
 		"asrs  r0, r0, #2\n"
 		"blx   r1\n"
 		"add   sp, #16\n"
 		"mov   lr, r1\n"
-		"bx    lr\n"
-		".align 2\n"
-		".L%=callback_jump_table_start_addr:\n"
-		".word callback_jump_table_start + 8\n"
-		".L%=out_callbacks_addr:\n"
-		".word out_callbacks\n":::
+		"bx    lr\n":::
 	);
 }
 
@@ -146,16 +141,27 @@ static struct
 
 static uint32_t next_free_in_slot;
 
+static void nrf_rpc_cbproxy_clear(void *context)
+{
+	k_mutex_lock(&mutex, K_FOREVER);
+	memset(in_slots, 0, sizeof(in_slots));
+	next_free_in_slot = 0;
+	k_mutex_unlock(&mutex);
+}
+
 int nrf_rpc_cbkproxy_in_set(void *callback)
 {
 	int index = 0;
 	uint16_t *attach_to = NULL;
 	uintptr_t callback_int = (uintptr_t)callback;
+	static struct nrf_rpc_cleanup_handler cleanup_handler;
 
 	k_mutex_lock(&mutex, K_FOREVER);
 
 	if (next_free_in_slot == 0) {
 		attach_to = &in_slots[0].lt;
+		cleanup_handler.handler = nrf_rpc_cbproxy_clear;
+		nrf_rpc_register_cleanup_handler(&cleanup_handler);
 	} else {
 		do {
 			if (callback_int == in_slots[index].callback) {

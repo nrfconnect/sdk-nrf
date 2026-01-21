@@ -29,23 +29,26 @@ config CHIP_ENABLE_ICD_SUPPORT
 
 # Reduce Thread TX output power to 0 dBm for SED device
 config OPENTHREAD_DEFAULT_TX_POWER
-	int
 	default 0
 
 endif # OPENTHREAD
 
-if CHIP_WIFI
+if BOARD_NRF7002DK_NRF5340_CPUAPP || SHIELD_NRF7002EB2
+
+config CHIP_WIFI
+	default y
+	select DEPRECATED if SOC_SERIES_NRF53X
 
 config NRF_WIFI_LOW_POWER
 	default y
 
-endif # CHIP_WIFI
+endif # BOARD_NRF7002DK_NRF5340_CPUAPP || SHIELD_NRF7002EB2
 
 # Enable Read Client functionality for all build configurations.
 config CHIP_ENABLE_READ_CLIENT
 	default y
 
-source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
-source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"
-source "${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/Kconfig"
+source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.features"
+source "$(ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR)/config/nrfconnect/chip-module/Kconfig.defaults"
+source "$(ZEPHYR_NRF_MODULE_DIR)/samples/matter/common/src/Kconfig"
 source "Kconfig.zephyr"

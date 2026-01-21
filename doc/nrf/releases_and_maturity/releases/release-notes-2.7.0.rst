@@ -125,7 +125,7 @@ See the following documentation for an overview of which modem firmware versions
 * `Modem firmware compatibility matrix for the nRF9161 SoC`_
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -408,9 +408,9 @@ Serial LTE modem
 
   * Support for Thingy:91 X.
   * New behavior for when a connection is closed unexpectedly while SLM is in data mode.
-    SLM now sends the :ref:`CONFIG_SLM_DATAMODE_TERMINATOR <CONFIG_SLM_DATAMODE_TERMINATOR>` string when this happens.
+    SLM now sends the ``CONFIG_SLM_DATAMODE_TERMINATOR`` string when this happens.
   * Sending of GNSS data to carrier library when the library is enabled.
-  * New :kconfig:option:`CONFIG_SLM_CARRIER_AUTO_STARTUP` Kconfig option to enable automatic startup of the carrier library on device boot.
+  * New ``CONFIG_SLM_CARRIER_AUTO_STARTUP`` Kconfig option to enable automatic startup of the carrier library on device boot.
   * New custom carrier library commands: ``AT#XCARRIER="app_data_create"``, ``AT#XCARRIER="dereg"``, ``AT#XCARRIER="regup"`` and ``AT#XCARRIERCFG="auto_register"``.
 
 * Updated:
@@ -554,8 +554,8 @@ Matter Bridge
 
 * Added:
 
-  * The :ref:`CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES <CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES>` Kconfig option to set the maximum number of scanned Bluetooth LE devices.
-  * The :ref:`CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS <CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS>` Kconfig option to set the scan timeout.
+  * The :option:`CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES` Kconfig option to set the maximum number of scanned Bluetooth LE devices.
+  * The :option:`CONFIG_BRIDGE_BT_SCAN_TIMEOUT_MS` Kconfig option to set the scan timeout.
 
 * Updated the implementation of the persistent storage to leverage ``NonSecure``-prefixed methods from the common Persistent Storage module.
 * Changed data structure of information stored in the persistent storage to use fewer settings keys.
@@ -709,7 +709,7 @@ Cellular samples
 
 * :ref:`nrf_cloud_rest_cell_location` sample:
 
-  * Added the :ref:`CONFIG_REST_CELL_SEND_DEVICE_STATUS <CONFIG_REST_CELL_SEND_DEVICE_STATUS>` Kconfig option to control sending device status on initial connection.
+  * Added the ``CONFIG_REST_CELL_SEND_DEVICE_STATUS`` Kconfig option to control sending device status on initial connection.
 
   * Removed the button press interface for enabling the device location card on the nRF Cloud website.
     The card is now automatically displayed.
@@ -845,7 +845,7 @@ Networking samples
 ------------------
 
 * Updated the networking samples to support import of certificates in valid PEM formats.
-* Removed QEMU x86 emulation support and added support for the :ref:`native simulator <zephyr:native_sim>` board.
+* Removed QEMU x86 emulation support and added support for the :zephyr:board:`native simulator <native_sim>` board.
 
 * :ref:`mqtt_sample` sample:
 
@@ -1063,7 +1063,7 @@ Modem libraries
 
   * Fixed an issue with the CFUN hooks when the Modem library is initialized during ``SYS_INIT`` at kernel level and makes calls to the :ref:`nrf_modem_at` before the application level initialization is done.
 
-  * Deprecated the Kconfig option :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR`.
+  * Deprecated the Kconfig option ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR``.
 
   * Removed the deprecated Kconfig options ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ASYNC`` and ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_SYNC``.
 
@@ -1184,7 +1184,7 @@ Libraries for networking
 
   * Fixed a NULL pointer issue that could occur when there were some valid predictions in flash but not the one required at the current time.
 
-* :ref:`lib_download_client` library:
+* Download client library:
 
   * Removed the deprecated ``download_client_connect`` function.
 
@@ -1353,7 +1353,7 @@ Documentation
   * The :ref:`ug_wifi_overview` page by separating the information about Wi-Fi certification into its own :ref:`ug_wifi_certification` page under :ref:`ug_wifi`.
   * The :ref:`ug_bt_mesh_configuring` page with an example of possible entries in the Settings NVS name cache.
   * The :ref:`lib_security` page to include all security-related libraries.
-  * The trusted storage support table in the :ref:`trusted_storage_in_ncs` section by adding nRF52833 and replacing nRF9160 with nRF91 Series.
+  * The secure storage support table in the :ref:`secure_storage_in_ncs` page by adding nRF52833 and replacing nRF9160 with nRF91 Series.
   * The :ref:`ug_nrf52_developing` and :ref:`ug_nrf5340` by adding notes about how to perform FOTA updates with samples using random HCI identities, some specifically relevant when using the iOS app.
   * Improved the :ref:`ug_radio_fem` user guide to be up-to-date and more informative.
   * The :ref:`bt_fast_pair_readme` page to document support for the FMDN extension and aligned the page with the sysbuild migration.

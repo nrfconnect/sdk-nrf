@@ -79,7 +79,7 @@ You can change the mechanism of :c:func:`hpf_assembly_check` and :c:func:`hpf_as
 * User mode - The application uses a pre-generated assembly file to construct the HRT component.
 * Developer mode -  The application employs a newly generated assembly file.
   This approach not only facilitates the integration of updates but also allows for a thorough review of changes made by developers and modifications introduced by the toolchain.
-  You can enable it by setting the ``SB_CONFIG_HPF_DEVELOPER_MODE`` Kconfig option.
+  You can enable it by setting the :kconfig:option:`SB_CONFIG_HPF_DEVELOPER_MODE` Kconfig option, when building for the application core, or :kconfig:option:`CONFIG_HPF_DEVELOPER_MODE`, when building for the FLPR core only.
   If this setting is disabled, files are built in the user mode.
 
 Verifiying assembly files and managing updates

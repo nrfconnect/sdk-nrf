@@ -18,7 +18,6 @@ config RAW_TX_PKT_SAMPLE_DHCP_TIMEOUT_S
 
 config RAW_TX_PKT_SAMPLE_STA_ONLY_MODE
 	bool "Set Wi-Fi Station mode"
-	default n
 	help
 	  Set the device operating mode as Station mode.
 

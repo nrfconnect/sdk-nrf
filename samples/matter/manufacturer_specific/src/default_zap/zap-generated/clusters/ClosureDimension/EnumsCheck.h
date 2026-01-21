@@ -120,10 +120,6 @@ namespace app
 			case EnumType::kBackward:
 			case EnumType::kDepthMask:
 			case EnumType::kDepthSymmetry:
-			case EnumType::kCeilingSimple:
-			case EnumType::kCeilingMask:
-			case EnumType::kCeilingSidedSymmetry:
-			case EnumType::kCeilingCenteredSymmetry:
 				return val;
 			default:
 				return EnumType::kUnknownEnumValue;

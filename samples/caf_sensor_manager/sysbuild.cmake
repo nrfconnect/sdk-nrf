@@ -9,7 +9,7 @@ if("${SB_CONFIG_REMOTE_BOARD}" STREQUAL "" OR NOT SB_CONFIG_INCLUDE_REMOTE_IMAGE
 endif()
 
 # This sample always requires PPR snippet for nRF54h20
-if (${NORMALIZED_BOARD_TARGET} STREQUAL "nrf54h20dk_nrf54h20_cpuapp")
+if(${NORMALIZED_BOARD_TARGET} STREQUAL "nrf54h20dk_nrf54h20_cpuapp")
   if(NOT nordic-ppr IN_LIST caf_sensor_manager_SNIPPET)
     set(caf_sensor_manager_SNIPPET nordic-ppr CACHE STRING "" FORCE)
   endif()

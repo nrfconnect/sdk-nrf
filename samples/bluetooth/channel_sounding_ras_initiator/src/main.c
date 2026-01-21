@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
+#include <zephyr/sys/byteorder.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/bluetooth/cs.h>
 #include <zephyr/bluetooth/gatt.h>
@@ -47,6 +48,7 @@ static K_SEM_DEFINE(sem_mtu_exchange_done, 0, 1);
 static K_SEM_DEFINE(sem_security, 0, 1);
 static K_SEM_DEFINE(sem_ras_features, 0, 1);
 static K_SEM_DEFINE(sem_local_steps, 1, 1);
+static K_SEM_DEFINE(sem_distance_estimate_updated, 0, 1);
 
 static K_MUTEX_DEFINE(distance_estimate_buffer_mutex);
 
@@ -60,6 +62,7 @@ static uint32_t ras_feature_bits;
 static uint8_t buffer_index;
 static uint8_t buffer_num_valid;
 static cs_de_dist_estimates_t distance_estimate_buffer[MAX_AP][DE_SLIDING_WINDOW_SIZE];
+static struct bt_conn_le_cs_config cs_config;
 
 static void store_distance_estimates(cs_de_report_t *p_report)
 {
@@ -165,11 +168,22 @@ static void ranging_data_cb(struct bt_conn *conn, uint16_t ranging_counter, int 
 
 	LOG_DBG("Ranging data received for ranging counter %d", ranging_counter);
 
+	if (latest_local_steps.len == 0) {
+		LOG_WRN("All subevents in ranging counter %u were aborted",
+			most_recent_local_ranging_counter);
+		net_buf_simple_reset(&latest_local_steps);
+		k_sem_give(&sem_local_steps);
+
+		if (!(ras_feature_bits & RAS_FEAT_REALTIME_RD)) {
+			net_buf_simple_reset(&latest_peer_steps);
+		}
+		return;
+	}
+
 	/* This struct is static to avoid putting it on the stack (it's very large) */
 	static cs_de_report_t cs_de_report;
 
-	cs_de_populate_report(&latest_local_steps, &latest_peer_steps, BT_CONN_LE_CS_ROLE_INITIATOR,
-			      &cs_de_report);
+	cs_de_populate_report(&latest_local_steps, &latest_peer_steps, &cs_config, &cs_de_report);
 
 	net_buf_simple_reset(&latest_local_steps);
 
@@ -187,6 +201,7 @@ static void ranging_data_cb(struct bt_conn *conn, uint16_t ranging_counter, int 
 				store_distance_estimates(&cs_de_report);
 			}
 		}
+		k_sem_give(&sem_distance_estimate_updated);
 	}
 }
 
@@ -347,13 +362,13 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	if (err) {
 		bt_conn_unref(conn);
 		connection = NULL;
+	} else {
+		connection = bt_conn_ref(conn);
+
+		k_sem_give(&sem_connected);
+
+		dk_set_led_on(CON_STATUS_LED);
 	}
-
-	connection = bt_conn_ref(conn);
-
-	k_sem_give(&sem_connected);
-
-	dk_set_led_on(CON_STATUS_LED);
 }
 
 static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
@@ -382,14 +397,63 @@ static void remote_capabilities_cb(struct bt_conn *conn,
 	}
 }
 
-static void config_create_cb(struct bt_conn *conn,
-			     uint8_t status,
+static void config_create_cb(struct bt_conn *conn, uint8_t status,
 			     struct bt_conn_le_cs_config *config)
 {
 	ARG_UNUSED(conn);
 
 	if (status == BT_HCI_ERR_SUCCESS) {
-		LOG_INF("CS config creation complete. ID: %d", config->id);
+		cs_config = *config;
+
+		const char *mode_str[5] = {"Unused", "1 (RTT)", "2 (PBR)", "3 (RTT + PBR)",
+					   "Invalid"};
+		const char *role_str[3] = {"Initiator", "Reflector", "Invalid"};
+		const char *rtt_type_str[8] = {
+			"AA only",	 "32-bit sounding", "96-bit sounding", "32-bit random",
+			"64-bit random", "96-bit random",   "128-bit random",  "Invalid"};
+		const char *phy_str[4] = {"Invalid", "LE 1M PHY", "LE 2M PHY", "LE 2M 2BT PHY"};
+		const char *chsel_type_str[3] = {"Algorithm #3b", "Algorithm #3c", "Invalid"};
+		const char *ch3c_shape_str[3] = {"Hat shape", "X shape", "Invalid"};
+
+		uint8_t mode_idx = config->mode > 0 && config->mode < 4 ? config->mode : 4;
+		uint8_t role_idx = MIN(config->role, 2);
+		uint8_t rtt_type_idx = MIN(config->rtt_type, 7);
+		uint8_t phy_idx = config->cs_sync_phy > 0 && config->cs_sync_phy < 4
+					  ? config->cs_sync_phy
+					  : 0;
+		uint8_t chsel_type_idx = MIN(config->channel_selection_type, 2);
+		uint8_t ch3c_shape_idx = MIN(config->ch3c_shape, 2);
+
+		LOG_INF("CS config creation complete.\n"
+			" - id: %u\n"
+			" - mode: %s\n"
+			" - min_main_mode_steps: %u\n"
+			" - max_main_mode_steps: %u\n"
+			" - main_mode_repetition: %u\n"
+			" - mode_0_steps: %u\n"
+			" - role: %s\n"
+			" - rtt_type: %s\n"
+			" - cs_sync_phy: %s\n"
+			" - channel_map_repetition: %u\n"
+			" - channel_selection_type: %s\n"
+			" - ch3c_shape: %s\n"
+			" - ch3c_jump: %u\n"
+			" - t_ip1_time_us: %u\n"
+			" - t_ip2_time_us: %u\n"
+			" - t_fcs_time_us: %u\n"
+			" - t_pm_time_us: %u\n"
+			" - channel_map: 0x%08X%08X%04X\n",
+			config->id, mode_str[mode_idx],
+			config->min_main_mode_steps, config->max_main_mode_steps,
+			config->main_mode_repetition, config->mode_0_steps, role_str[role_idx],
+			rtt_type_str[rtt_type_idx], phy_str[phy_idx],
+			config->channel_map_repetition, chsel_type_str[chsel_type_idx],
+			ch3c_shape_str[ch3c_shape_idx], config->ch3c_jump, config->t_ip1_time_us,
+			config->t_ip2_time_us, config->t_fcs_time_us, config->t_pm_time_us,
+			sys_get_le32(&config->channel_map[6]),
+			sys_get_le32(&config->channel_map[2]),
+			sys_get_le16(&config->channel_map[0]));
+
 		k_sem_give(&sem_config_created);
 	} else {
 		LOG_WRN("CS config creation failed. (HCI status 0x%02x)", status);
@@ -487,7 +551,9 @@ static int scan_init(void)
 	int err;
 
 	struct bt_scan_init_param param = {
-		.scan_param = NULL, .conn_param = BT_LE_CONN_PARAM_DEFAULT, .connect_if_match = 1};
+		.scan_param = NULL,
+		.conn_param = BT_LE_CONN_PARAM(0x10, 0x10, 0, BT_GAP_MS_TO_CONN_TIMEOUT(4000)),
+		.connect_if_match = 1};
 
 	bt_scan_init(&param);
 	bt_scan_cb_register(&scan_cb);
@@ -636,8 +702,7 @@ int main(void)
 
 	struct bt_le_cs_create_config_params config_params = {
 		.id = CS_CONFIG_ID,
-		.main_mode_type = BT_CONN_LE_CS_MAIN_MODE_2,
-		.sub_mode_type = BT_CONN_LE_CS_SUB_MODE_1,
+		.mode = BT_CONN_LE_CS_MAIN_MODE_2_SUB_MODE_1,
 		.min_main_mode_steps = 2,
 		.max_main_mode_steps = 5,
 		.main_mode_repetition = 0,
@@ -645,7 +710,7 @@ int main(void)
 		.role = BT_CONN_LE_CS_ROLE_INITIATOR,
 		.rtt_type = BT_CONN_LE_CS_RTT_TYPE_AA_ONLY,
 		.cs_sync_phy = BT_CONN_LE_CS_SYNC_1M_PHY,
-		.channel_map_repetition = 3,
+		.channel_map_repetition = 1,
 		.channel_selection_type = BT_CONN_LE_CS_CHSEL_TYPE_3B,
 		.ch3c_shape = BT_CONN_LE_CS_CH3C_SHAPE_HAT,
 		.ch3c_jump = 2,
@@ -676,8 +741,8 @@ int main(void)
 		.min_procedure_interval = realtime_rd ? 5 : 10,
 		.max_procedure_interval = realtime_rd ? 5 : 10,
 		.max_procedure_count = 0,
-		.min_subevent_len = 60000,
-		.max_subevent_len = 60000,
+		.min_subevent_len = 16000,
+		.max_subevent_len = 16000,
 		.tone_antenna_config_selection = BT_LE_CS_TONE_ANTENNA_CONFIGURATION_A1_B1,
 		.phy = BT_LE_CS_PROCEDURE_PHY_2M,
 		.tx_power_delta = 0x80,
@@ -704,21 +769,18 @@ int main(void)
 	}
 
 	while (true) {
-		k_sleep(K_MSEC(5000));
-
+		k_sem_take(&sem_distance_estimate_updated, K_FOREVER);
 		if (buffer_num_valid != 0) {
 			for (uint8_t ap = 0; ap < MAX_AP; ap++) {
 				cs_de_dist_estimates_t distance_on_ap = get_distance(ap);
 
-				LOG_INF("Distance estimates on antenna path %u: ifft: %f, "
-					"phase_slope: %f, rtt: %f",
+				LOG_INF("Latest distance estimates on antenna path %u: ifft: %.2f, "
+					"phase_slope: %.2f, rtt: %.2f meters",
 					ap, (double)distance_on_ap.ifft,
 					(double)distance_on_ap.phase_slope,
 					(double)distance_on_ap.rtt);
 			}
 		}
-
-		LOG_INF("Sleeping for a few seconds...");
 	}
 
 	return 0;

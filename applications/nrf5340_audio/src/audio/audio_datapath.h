@@ -4,6 +4,15 @@
  *  SPDX-License-Identifier: LicenseRef-PCFT
  */
 
+/** @file
+ * @defgroup audio_app_datapath Audio Datapath
+ * @{
+ * @brief Audio datapath and synchronization API for Audio applications.
+ *
+ * This module implements the audio synchronization functionality required for
+ * True Wireless Stereo (TWS) operation.
+ */
+
 #ifndef _AUDIO_DATAPATH_H_
 #define _AUDIO_DATAPATH_H_
 
@@ -15,10 +24,6 @@
 #include "sw_codec_select.h"
 #include "audio_defines.h"
 
-/* The maximum delta (in microseconds) between received SDUs that are to be presented or played back
- * at the same time. For example, used to correlate left and right channels, while allowing some
- * jitter on the timestamp.
- */
 #define SDU_REF_CH_DELTA_MAX_US (int)(CONFIG_AUDIO_FRAME_DURATION_US * 0.001)
 
 /**
@@ -33,7 +38,7 @@
 int audio_datapath_tone_play(uint16_t freq, uint16_t dur_ms, float amplitude);
 
 /**
- * @brief	Stops tone playback.
+ * @brief	Stop tone playback.
  */
 void audio_datapath_tone_stop(void);
 
@@ -60,9 +65,9 @@ void audio_datapath_pres_delay_us_get(uint32_t *delay_us);
  *		and processed before being outputted over I2S. The audio is synchronized
  *		using sdu_ref_us.
  *
- * @param	audio_frame	Pointer to the audio buffer.
+ * @param	audio_frame_in	Pointer to the coded audio input buffer.
  */
-void audio_datapath_stream_out(struct net_buf *audio_frame);
+void audio_datapath_stream_out(struct net_buf *audio_frame_in);
 
 /**
  * @brief	Start the audio datapath module.
@@ -88,5 +93,9 @@ int audio_datapath_stop(void);
  * @return	0 if successful, error otherwise.
  */
 int audio_datapath_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _AUDIO_DATAPATH_H_ */

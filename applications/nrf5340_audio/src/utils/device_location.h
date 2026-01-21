@@ -8,9 +8,9 @@
 #define _DEVICE_LOCATION_H_
 
 /** @file
- *  @brief Audio channel assignment
+ *  @brief Audio location assignment
  *
- * Audio channel can be assigned at runtime or compile-time, depending on configuration.
+ * Audio location can be assigned at runtime or compile-time, depending on configuration.
  *
  */
 
@@ -28,7 +28,7 @@ static const char HS_LOC_OTHER_TAG[] = "H*";
 static const char GW_TAG[] = "GW";
 
 /**
- * @brief Get assigned audio channel.
+ * @brief Get assigned audio location.
  *
  * @param[out] location Location bitfield
  */
@@ -36,7 +36,7 @@ void device_location_get(enum bt_audio_location *location);
 
 #if CONFIG_DEVICE_LOCATION_SET_RUNTIME
 /**
- * @brief Assign audio channel.
+ * @brief Assign audio location.
  *
  * @param[out] location Location bitfield
  */

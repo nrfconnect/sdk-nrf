@@ -81,7 +81,7 @@ Complete the following steps to program firmware onto Thingy:91:
 
    .. group-tab:: nRF Connect for VS Code
 
-      5. In the |nRFVSC|, click the :guilabel:`Flash` option in the **Actions View**.
+      5. In |nRFVSC|, click the :guilabel:`Flash` option in the `Actions View`_.
 
          If you have multiple boards connected, you are prompted to pick a device at the top of the screen.
 

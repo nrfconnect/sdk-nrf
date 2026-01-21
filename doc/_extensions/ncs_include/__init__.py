@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from sphinx.application import Sphinx
+
 from . import ncs_include
 
 __version__ = '0.0.1'

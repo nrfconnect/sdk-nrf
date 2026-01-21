@@ -8,5 +8,6 @@ endif()
 
 board_runner_args(jlink "--device={{ soc | replace("nrf", "nRF") }}_{{ 'xxAA' if soc == 'nrf9160' else 'xxCA' }}" "--speed=4000")
 
+include(${ZEPHYR_BASE}/boards/common/nrfutil.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/nrfjprog.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)

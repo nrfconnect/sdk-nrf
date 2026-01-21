@@ -4,6 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup audio_app_lc3_streamer LC3 Streamer
+ * @{
+ * @brief LC3 streamer API for Audio applications.
+ *
+ * This module provides LC3 audio file streaming functionality for playback from SD card
+ * storage.
+ *
+ * The streamer integrates with @ref audio_app_lc3_file for file operations,
+ * @ref audio_app_sd_card for storage access, and @ref audio_app_system
+ * for audio playback integration.
+ */
+
 #ifndef LC3_STREAMER_H
 #define LC3_STREAMER_H
 
@@ -12,6 +25,12 @@
 #include <stdbool.h>
 #include <sys/types.h>
 
+/**
+ * @brief LC3 stream configuration structure.
+ *
+ * This structure defines the configuration parameters for LC3 audio streams,
+ * including sample rate, bit rate, and frame duration.
+ */
 struct lc3_stream_cfg {
 	uint32_t sample_rate_hz;
 	uint32_t bit_rate_bps;
@@ -134,5 +153,9 @@ int lc3_streamer_close_all_streams(void);
  * @retval 0		Success, other negative values are errors from lc3_file module.
  */
 int lc3_streamer_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* LC3_STREAMER_H */

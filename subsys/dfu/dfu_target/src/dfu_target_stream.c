@@ -13,7 +13,6 @@
 
 #ifdef CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS
 #define MODULE "dfu"
-#define DFU_STREAM_OFFSET "stream/offset"
 #include <zephyr/settings/settings.h>
 #endif /* CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS */
 
@@ -55,9 +54,6 @@ static int settings_set(const char *key, size_t len_rd,
 			settings_read_cb read_cb, void *cb_arg)
 {
 	if (current_id && !strcmp(key, current_id)) {
-		int err;
-		off_t absolute_offset;
-		struct flash_pages_info page;
 		ssize_t len = read_cb(cb_arg, &stream.bytes_written,
 				      sizeof(stream.bytes_written));
 
@@ -65,6 +61,11 @@ static int settings_set(const char *key, size_t len_rd,
 			LOG_ERR("Can't read stream.bytes_written from storage");
 			return len;
 		}
+
+#ifdef CONFIG_STREAM_FLASH_ERASE
+		int err;
+		off_t absolute_offset;
+		struct flash_pages_info page;
 
 		/* Zero bytes written - set last erased page to its default. */
 		if (stream.bytes_written == 0) {
@@ -86,10 +87,15 @@ static int settings_set(const char *key, size_t len_rd,
 		 * written data.
 		 */
 		stream.erased_up_to = page.start_offset + page.size - stream.offset;
+#endif /* CONFIG_STREAM_FLASH_ERASE */
 	}
 
 	return 0;
 }
+
+SETTINGS_STATIC_HANDLER_DEFINE(dfu_target, MODULE, NULL, settings_set,
+			       NULL, NULL);
+
 #endif /* CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS */
 
 struct stream_flash_ctx *dfu_target_stream_get_stream(void)
@@ -127,11 +133,6 @@ int dfu_target_stream_init(const struct dfu_target_stream_init *init)
 		return -EFAULT;
 	}
 
-	static struct settings_handler sh = {
-		.name = MODULE,
-		.h_set = settings_set,
-	};
-
 	/* settings_subsys_init is idempotent so this is safe to do. */
 	err = settings_subsys_init();
 	if (err) {
@@ -139,13 +140,7 @@ int dfu_target_stream_init(const struct dfu_target_stream_init *init)
 		return err;
 	}
 
-	err = settings_register(&sh);
-	if (err && err != -EEXIST) {
-		LOG_ERR("setting_register failed: (err %d)", err);
-		return err;
-	}
-
-	err = settings_load();
+	err = settings_load_subtree(MODULE);
 	if (err) {
 		LOG_ERR("settings_load failed (err %d)", err);
 		return err;
@@ -157,14 +152,44 @@ int dfu_target_stream_init(const struct dfu_target_stream_init *init)
 
 int dfu_target_stream_offset_get(size_t *out)
 {
+	if (!out) {
+		return -EINVAL;
+	}
+
 	*out = stream_flash_bytes_written(&stream);
+
+	return 0;
+}
+
+int dfu_target_stream_bytes_buffered_get(size_t *out)
+{
+	if (!out) {
+		return -EINVAL;
+	}
+
+	*out = stream_flash_bytes_buffered(&stream);
 
 	return 0;
 }
 
 int dfu_target_stream_write(const uint8_t *buf, size_t len)
 {
+#ifdef CONFIG_DFU_TARGET_STREAM_SYNCHRONOUS
+	/**
+	 * Flush immediately.
+	 * This may be necessary in scenarios where the server
+	 * cannot retransmit data that has already been ack-ed.
+	 * by the device. Without flushing, if an unaligned write
+	 * occurred prior to a reboot, some bytes that were already
+	 * sent to the device would need to be retransmitted.
+	 * This will lead to issues on the server side in the
+	 * described case, as the server would need to retransmit
+	 * already ack-ed data.
+	 */
+	int err = stream_flash_buffered_write(&stream, buf, len, true);
+#else
 	int err = stream_flash_buffered_write(&stream, buf, len, false);
+#endif
 
 	if (err != 0) {
 		LOG_ERR("stream_flash_buffered_write error %d", err);

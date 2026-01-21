@@ -12,7 +12,7 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 # 'set_source_files_properties' to a source file which does not exist.
 set(pcd_dir ${ZEPHYR_NRF_MODULE_DIR}/subsys/pcd)
 set(pcd_source ${pcd_dir}/src/pcd.c)
-if (NOT EXISTS ${pcd_source})
+if(NOT EXISTS ${pcd_source})
   message(FATAL_ERROR "Unable to find source being tested")
 endif()
 

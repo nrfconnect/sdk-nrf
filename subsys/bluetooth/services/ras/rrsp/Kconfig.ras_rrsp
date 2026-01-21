@@ -31,6 +31,6 @@ config BT_RAS_RRSP_RD_BUFFERS_PER_CONN
 
 module = BT_RAS_RRSP
 module-str = RAS_RRSP
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_RAS_RRSP

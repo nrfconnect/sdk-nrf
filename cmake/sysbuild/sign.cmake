@@ -28,19 +28,22 @@ function(b0_gen_keys)
       --in ${SIGNATURE_PRIVATE_KEY_FILE}
       --out ${SIGNATURE_PUBLIC_KEY_FILE}
       )
-  elseif(SB_CONFIG_SECURE_BOOT_SIGNING_OPENSSL)
-    set(PUB_GEN_CMD
-      openssl ec
-      -pubout
-      -in ${SIGNATURE_PRIVATE_KEY_FILE}
-      -out ${SIGNATURE_PUBLIC_KEY_FILE}
-      )
   elseif(SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM)
     string(CONFIGURE "${SB_CONFIG_SECURE_BOOT_SIGNING_PUBLIC_KEY}" SIGNATURE_PUBLIC_KEY_FILE)
     set(SIGNATURE_PUBLIC_KEY_FILE ${SIGNATURE_PUBLIC_KEY_FILE} PARENT_SCOPE)
 
     if(NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE} OR IS_DIRECTORY ${SIGNATURE_PUBLIC_KEY_FILE})
       message(WARNING "Invalid public key file: ${SIGNATURE_PUBLIC_KEY_FILE}")
+    else()
+      execute_process(COMMAND ${PYTHON_EXECUTABLE}
+        ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/keyhash_validate.py ${keygen_algorithm}
+        -in ${SIGNATURE_PUBLIC_KEY_FILE} RESULT_VARIABLE keyhash)
+        if(NOT "${keyhash}" STREQUAL "0")
+          message(WARNING "Key file ${SIGNATURE_PUBLIC_KEY_FILE} yields HASH that contains 0xffff "
+                          "which isn't allowed due to limitations of the internal clockworks. "
+                          "To solve the issue use another key."
+          )
+        endif()
     endif()
   else()
     message(WARNING "Unable to parse signing config.")
@@ -185,36 +188,17 @@ function(b0_sign_image slot cpunet_target)
       --in ${hash_file} ${sign_cmd_signature_type}
       > ${signature_file}
       )
-  elseif(SB_CONFIG_SECURE_BOOT_SIGNING_OPENSSL)
-    if(SB_CONFIG_SECURE_BOOT_SIGNATURE_TYPE_ED25519)
-      set(sign_cmd
-        openssl pkeyutl -sign -inkey ${SIGNATURE_PRIVATE_KEY_FILE} -rawin -in ${hash_file} > ${signature_file} &&
-        openssl pkeyutl -verify -pubin -inkey ${SIGNATURE_PRIVATE_KEY_FILE} -rawin -in ${hash_file} -sigfile ${signature_file}
-        )
-    else()
-      set(sign_cmd
-        openssl dgst
-        -${sign_cmd_hash_type}
-        -sign ${SIGNATURE_PRIVATE_KEY_FILE} ${hash_file} |
-        ${PYTHON_EXECUTABLE}
-        ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/asn1parse.py
-        --alg ecdsa
-        --contents signature
-        > ${signature_file}
-        )
-    endif()
-
   elseif(SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM)
     set(custom_sign_cmd "${SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND}")
     string(CONFIGURE "${custom_sign_cmd}" custom_sign_cmd)
 
-    if (("${custom_sign_cmd}" STREQUAL "") OR (NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE}))
+    if(("${custom_sign_cmd}" STREQUAL "") OR (NOT EXISTS ${SIGNATURE_PUBLIC_KEY_FILE}))
       message(FATAL_ERROR "You must specify a signing command and valid public key file for custom signing.")
     endif()
 
     string(APPEND custom_sign_cmd " ${hash_file} > ${signature_file}")
     string(REPLACE " " ";" sign_cmd ${custom_sign_cmd})
-  else ()
+  else()
     message(WARNING "Unable to parse signing config.")
   endif()
 

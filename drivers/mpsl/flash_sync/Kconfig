@@ -7,7 +7,7 @@
 if SOC_FLASH_NRF || SOC_FLASH_NRF_RRAM || SOC_NRF54H20
 
 config SOC_FLASH_NRF_RADIO_SYNC_RPC
-	bool "Enable flash driver synchronization with radio protocols through RPC"
+	bool "Flash driver synchronization with radio protocols through RPC"
 	help
 	  Enable the flash synchronization between the application core and the radio core.
 	  This Kconfig option is set based on the value of the SB_CONFIG_SOC_FLASH_NRF_RADIO_SYNC_RPC
@@ -37,6 +37,18 @@ config SOC_FLASH_NRF_RADIO_SYNC_RPC_HOST
 endchoice
 
 endif
+
+config SOC_FLASH_NRF_RADIO_SYNC_MPSL_NORMAL_PRIORITY_TIMEOUT_US
+	int "Timeout for normal priority MPSL request [us]"
+	depends on SOC_FLASH_NRF_RADIO_SYNC_MPSL
+	range 0 1000000
+	default 5000 if BT_MESH
+	default 10000
+	help
+	  The flash synchronization mechanism relies on MPSL timeslots.
+	  Initially the MPSL timeslot is requested with normal priority. After
+	  timeout specified by this Kconfig option, a higher timeslot priority
+	  is used to increase priority of the flash operation.
 
 config SOC_FLASH_NRF_RADIO_SYNC_RPC_CONTROLLER
 	bool "Nordic nRFx flash driver RPC synchronization controller"

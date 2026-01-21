@@ -89,9 +89,7 @@
     - crypto.rand32.random_hw_xoshiro
     - crypto.rand32.random_sw_systimer
     - drivers.rand32.random_psa_crypto
-    - crypto.tinycrypt
     - crypto.mbedtls
-    - crypto.tinycrypt.hmac_prng
   platforms:
     - mps2_an521
     - native_sim/native

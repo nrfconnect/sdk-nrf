@@ -38,7 +38,7 @@ The following sections describe how to add either |NSIB| or MCUboot as an immuta
 Adding |NSIB| as an immutable bootloader
 ========================================
 
-To build |NSIB| with a Zephyr or |NCS| sample, enable the ``SB_CONFIG_SECURE_BOOT_APPCORE`` in the application's :file:`sysbuild.conf` file or using the command line:
+To build |NSIB| with a Zephyr or |NCS| sample, enable the :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` in the application's :file:`sysbuild.conf` file or using the command line:
 
 .. code-block:: console
 
@@ -69,7 +69,7 @@ The following sections describe different configuration options available for |N
 Adding a custom signature key file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To specify a signature key file for this bootloader, set the ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`` option in the application's :file:`sysbuild.conf` file or using the command line:
+To specify a signature key file for this bootloader, set the :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE` option in the application's :file:`sysbuild.conf` file or using the command line:
 
 .. tabs::
 
@@ -146,12 +146,10 @@ See :ref:`ug_fw_update_keys` for information on how to generate custom keys for 
 
 For SoCs using KMU for NSIB (nRF54L Series devices), the private key must be provisioned in the KMU before NSIB can be run.
 
-Additionally, the |NSIB| supports the following methods for signing images with private keys:
+Additionally, the |NSIB| supports a custom method for signing images with private keys:
 
-* Uses the ``SB_CONFIG_SECURE_BOOT_SIGNING_OPENSSL`` Kconfig option.
-* :ref:`Using a custom command <ug_bootloader_adding_sysbuild_immutable_b0_custom_signing>` - Uses the ``SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM`` Kconfig option.
+* :ref:`Using a custom command <ug_bootloader_adding_sysbuild_immutable_b0_custom_signing>` - Uses the :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM` Kconfig option.
 
-The OpenSSL method is handled internally by the build system, whereas using custom commands requires more configuration steps.
 
 Checking the public key
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -206,7 +204,7 @@ To use a custom signing command with this bootloader, set the following options 
      When not specified, it is assumed as the default application source directory.
    * Using the absolute path to a file.
 
-See ``SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND`` for specifics about what a usable signing command must do.
+See :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND` for specifics about what a usable signing command must do.
 The command string can include its own arguments like a typical terminal command, including arguments specific to the build system:
 
 .. parsed-literal::
@@ -214,7 +212,7 @@ The command string can include its own arguments like a typical terminal command
 
    my_command *[options]* *<args ...>* *<build_system_args ..>*
 
-See the description of ``SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND`` for which arguments can be sent to the build system in this way.
+See the description of :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND` for which arguments can be sent to the build system in this way.
 
 .. note::
 
@@ -227,7 +225,7 @@ See the description of ``SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND`` for which argum
 Adding MCUboot as an immutable bootloader
 =========================================
 
-To build :doc:`MCUboot <mcuboot:index-ncs>` with a Zephyr or |NCS| sample, enable the ``SB_CONFIG_BOOTLOADER_MCUBOOT`` in the application's :file:`sysbuild.conf` file or using the command line:
+To build :doc:`MCUboot <mcuboot:index-ncs>` with a Zephyr or |NCS| sample, enable the :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` in the application's :file:`sysbuild.conf` file or using the command line:
 
 .. code-block:: console
 
@@ -247,7 +245,7 @@ The following sections describe different configuration options available for MC
 Adding a custom signature key file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can specify the signature key file for this bootloader by setting the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` option to the selected private key file.
+You can specify the signature key file for this bootloader by setting the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` option to the selected private key file.
 You can set the option in :file:`sysbuild.conf` or using the command line:
 
 .. tabs::
@@ -309,7 +307,7 @@ Adding MCUboot as an upgradable bootloader
 To use MCUboot as an upgradable bootloader to your application, complete the following steps:
 
 1. :ref:`Add nRF Secure Immutable Bootloader as the immutable bootloader <ug_bootloader_adding_sysbuild_immutable_b0>`.
-#. Add MCUboot to the boot chain by including the ``SB_CONFIG_BOOTLOADER_MCUBOOT`` Kconfig option with either the build command or in the application's :file:`sysbuild.conf` file:
+#. Add MCUboot to the boot chain by including the :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` Kconfig option with either the build command or in the application's :file:`sysbuild.conf` file:
 
    .. code-block::
 
@@ -319,18 +317,7 @@ To use MCUboot as an upgradable bootloader to your application, complete the fol
 
    |how_to_configure|
 
-#. Optionally, you can configure MCUboot to use the cryptographic functionality exposed by the immutable bootloader and reduce the flash memory usage for MCUboot to less than 16 kB.
-   To enable this configuration, apply both the :file:`prj_minimal.conf` Kconfig project file and the :file:`external_crypto.conf` Kconfig fragment for the MCUboot image:
-
-   .. code-block::
-
-      west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- \
-      -DSB_CONFIG_SECURE_BOOT_APPCORE=y \
-      -DSB_CONFIG_BOOTLOADER_MCUBOOT=y \
-      -Dmcuboot_FILE_SUFFIX=minimal \
-      -Dmcuboot_EXTRA_CONF_FILE=external_crypto.conf
-
-   See :ref:`ug_bootloader_config` for more information about using Kconfig fragments with bootloaders.
+#. In order to reduce the flash memory usage for MCUboot, see :ref:`mcuboot_minimal_configuration`.
 
 The build process generates several :ref:`app_build_output_files`, including :ref:`app_build_mcuboot_output`.
 

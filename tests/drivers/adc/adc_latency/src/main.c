@@ -110,7 +110,7 @@ static void test_adc_latency(uint32_t acquisition_time_us, uint32_t sampling_int
 
 		timer_value_us[repeat_counter] =
 			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
-		average_timer_value_us += timer_value_us[repeat_counter] / MEASUREMENT_REPEATS;
+		average_timer_value_us += timer_value_us[repeat_counter];
 
 #if !defined(CONFIG_SOC_NRF52840)
 		/*
@@ -124,6 +124,8 @@ static void test_adc_latency(uint32_t acquisition_time_us, uint32_t sampling_int
 		}
 #endif
 	}
+
+	average_timer_value_us /= MEASUREMENT_REPEATS;
 
 	TC_PRINT("Calculated ADC sampling time for %uus acquisition time, %uus sampling interval, "
 		 "%u "

@@ -13,7 +13,6 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     platform_allow:
@@ -24,7 +23,6 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     tags:
@@ -65,7 +63,7 @@ tests:
   sample.bluetooth.direct_test_mode.nrf5340_usb:
     sysbuild: true
     build_only: true
-    extra_args: FILE_SUFFIX=usb
+    extra_args: FILE_SUFFIX=usb_5340
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -78,7 +76,7 @@ tests:
     build_only: true
     extra_args:
       - SHIELD=nrf21540ek
-      - FILE_SUFFIX=usb
+      - FILE_SUFFIX=usb_5340
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -129,10 +127,21 @@ tests:
     build_only: true
     extra_args:
       - SHIELD=nrf2220ek
-      - FILE_SUFFIX=usb
+      - FILE_SUFFIX=usb_5340
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
+  sample.bluetooth.direct_test_mode.nrf54h20_usb:
+    sysbuild: true
+    build_only: true
+    extra_args: FILE_SUFFIX=usb_54h20
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpurad
+    platform_allow: nrf54h20dk/nrf54h20/cpurad
     tags:
       - bluetooth
       - ci_build

@@ -21,11 +21,11 @@ config BT_NUS_UART_BUFFER_SIZE
 	  Size of the payload buffer in each RX and TX FIFO element
 
 config BT_NUS_SECURITY_ENABLED
-	bool "Enable security"
+	bool "Security"
 	default y
 	select BT_SMP
 	help
-	  "Enable BLE security for the UART service"
+	  Enable Bluetooth LE security for the UART service
 
 config BT_NUS_UART_RX_WAIT_TIME
 	int "Timeout for UART RX complete event"

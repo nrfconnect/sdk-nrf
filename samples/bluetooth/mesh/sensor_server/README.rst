@@ -1,13 +1,13 @@
 .. _bluetooth_mesh_sensor_server:
 
-Bluetooth Mesh: Sensor
-######################
+Bluetooth Mesh NLC: Ambient Light Sensor/Occupancy Sensor
+#########################################################
 
 .. contents::
    :local:
    :depth: 2
 
-The Bluetooth® Mesh sensor sample demonstrates how to set up a basic mesh Sensor Server model application that provides sensor data to one :ref:`bt_mesh_sensor_cli_readme` model.
+The Bluetooth® Mesh NLC Ambient Light Sensor/Occupancy Sensor sample demonstrates how to set up a basic mesh Sensor Server model application that provides sensor data to one :ref:`bt_mesh_sensor_cli_readme` model.
 Eight different sensor types are used to showcase different ways for the server to publish data.
 In addition, the samples demonstrate usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`, as well as how to add and write to a sensor setting.
 
@@ -262,6 +262,11 @@ The Sensor Setup Server models are now configured and able to receive sensor set
 .. note::
    To enable Sensor Server configuration by a Sensor Client, an application key must be bound to the Sensor Setup Server.
    This functionality must also be programmed in the :ref:`bt_mesh_sensor_cli_readme` device.
+
+External flash for settings partition
+=====================================
+
+.. include:: /includes/mesh_ext_flash_settings.txt
 
 Dependencies
 ************

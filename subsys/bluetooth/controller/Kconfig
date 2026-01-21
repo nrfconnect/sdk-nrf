@@ -9,6 +9,8 @@ config BT_LL_SOFTDEVICE
 	default y
 	select HAS_BT_CTLR
 	select MPSL
+	select ICACHE if CPU_HAS_ICACHE
+	select DCACHE if CPU_HAS_DCACHE
 	select ZERO_LATENCY_IRQS if !SOC_SERIES_BSIM_NRFXX
 	select BT_CTLR_CRYPTO_SUPPORT
 	select BT_CTLR_ENTROPY_SUPPORT
@@ -43,6 +45,7 @@ config BT_LL_SOFTDEVICE
 	select BT_CTLR_SUBRATING_SUPPORT
 	select BT_CTLR_EXTENDED_FEAT_SET_SUPPORT
 	select BT_CTLR_FRAME_SPACE_UPDATE_SUPPORT
+	select BT_CTLR_SHORTER_CONNECTION_INTERVALS_SUPPORT
 	select BT_LL_SOFTDEVICE_HEADERS_INCLUDE
 	select MRAM_LATENCY if (SOC_NRF54H20_CPURAD && !MPSL_PM_USE_MRAM_LATENCY_SERVICE)
 	select MRAM_LATENCY_AUTO_REQ if (SOC_NRF54H20_CPURAD && !MPSL_PM_USE_MRAM_LATENCY_SERVICE)
@@ -67,37 +70,24 @@ config BT_LL_SOFTDEVICE_BUILD_TYPE_LIB
 
 endchoice
 
-# BT_HCI_TX_STACK_SIZE is declared in Zephyr and also here for a second time,
-# for set the valid default size of the HCI Tx stack.
+# BT_HCI_TX_STACK_SIZE is declared in Zephyr
 config BT_HCI_TX_STACK_SIZE
 	# NOTE: This value is derived from other symbols and should only be
 	# changed if required by architecture
-	int
 	default 1536 if BT_LL_SOFTDEVICE
-	help
-	  Stack size needed for executing bt_send with specified driver.
-	  NOTE: This is an advanced setting and should not be changed unless
-	  absolutely necessary
 
 config BT_RX_STACK_SIZE
-	int
 	depends on BT_HCI_HOST
 	default 512 if BT_HCI_RAW
 	default 2600 if BT_MESH
 	default 2200 if BT_SETTINGS
 	default 3200 if BT_SMP && SOC_SERIES_NRF54LX
 	default 1536 if BT_SMP
+	default 2048 if !BT_SMP && (SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX)
 	default 1024
 	range 512 65536 if BT_HCI_RAW
 	range 1100 65536 if BT_MESH
 	range 1024 65536
-	help
-	  Size of the receiving thread stack. This is the context from
-	  which all event callbacks to the application occur. The
-	  default value is sufficient for basic operation, but if the
-	  application needs to do advanced things in its callbacks that
-	  require extra stack space, this value can be increased to
-	  accommodate for that.
 
 # SYSTEM_WORKQUEUE_STACK_SIZE is declared in Zephyr and also here for a second
 # time, because Central side Bluetooth sample needs a different workqueue size
@@ -107,16 +97,16 @@ config SYSTEM_WORKQUEUE_STACK_SIZE
 	default 2048 if BT_LL_SOFTDEVICE
 
 config BT_CTLR_SDC_LLPM
-	bool "Enable Low Latency Packet Mode support"
+	bool "Low Latency Packet Mode support"
 	select BT_CONN_PARAM_ANY if !BT_HCI_RAW
 	depends on (SOC_SERIES_NRF52X || SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX || \
-		    SOC_SERIES_BSIM_NRF52X || SOC_SERIES_BSIM_NRF54LX)
+		    SOC_SERIES_BSIM_NRF52X || SOC_SERIES_BSIM_NRF54LX || SOC_SERIES_NRF71X)
 	help
 	  Low Latency Packet Mode (LLPM) is a Nordic proprietary addition
 	  which lets the application use connection intervals down to 1 ms.
 
 config BT_CTLR_SDC_QOS_CHANNEL_SURVEY
-	bool "Enable channel survey"
+	bool "Channel survey"
 	select EXPERIMENTAL
 	help
 	  Channel survey feature support
@@ -162,7 +152,7 @@ config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	  the number of bytes configured with BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT.
 
 config BT_CTLR_SDC_CONN_EVENT_EXTEND_DEFAULT
-	bool "Enable connection event extension by default"
+	bool "Connection event extension by default"
 	default y if !NRF_802154_RADIO_DRIVER
 	help
 	  When Extended Connection Events are disabled, the maximum connection event length is
@@ -287,7 +277,7 @@ config BT_CTLR_SDC_RX_PRIO
 # CONFIG_BT_CTLR_DF is declared in Zephyr and also here for a second time,
 # to avoid BT_CTLR_DF_SUPPORT dependency.
 config BT_CTLR_DF
-	bool "Enable CTE Transmitter support"
+	bool "CTE Transmitter support"
 	help
 	  Enable support for the Bluetooth v5.1 Connectionless CTE Transmitter
 	  and the Connection CTE transmitter features in the controller.
@@ -323,8 +313,8 @@ choice BT_LL_SOFTDEVICE_VARIANT
 						     BT_CTLR_CHANNEL_SOUNDING || \
 						     BT_CTLR_EXTENDED_FEAT_SET || \
 						     BT_CTLR_FRAME_SPACE_UPDATE || \
+						     BT_CTLR_SHORTER_CONNECTION_INTERVALS || \
 						     SOC_COMPATIBLE_NRF5340_CPUNET || \
-						     SOC_NRF54H20_CPURAD || \
 						     (SOC_COMPATIBLE_NRF54LX && TRUSTED_EXECUTION_NONSECURE) || \
 						     SOC_SERIES_NRF71X)
 	default BT_LL_SOFTDEVICE_CENTRAL if BT_OBSERVER
@@ -548,14 +538,24 @@ config BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
 	  If this parameter is set to zero, the subevent length
 	  is chosen by the controller.
 
-config BT_CTLR_EXTENDED_FEAT_SET
-	select EXPERIMENTAL
+config BT_CTLR_SDC_EXTENDED_FEAT_MAX_REMOTE_PAGE
+	int "Number of supported remote feature pages"
+	depends on BT_CTLR_EXTENDED_FEAT_SET
+	range 1 10
+	default BT_LE_LOCAL_MINIMUM_REQUIRED_FEATURE_PAGE if BT_LE_LOCAL_MINIMUM_REQUIRED_FEATURE_PAGE > 0
+	default 1
+	help
+	  Configures the maximum number of remote Extended Feature Set feature pages
+	  that can be stored inside the controller. This value also sets the maximum
+	  page that will be requested by the HCI_LE_Read_All_Remote_Features command.
+	  Each feature page requires approximately 24 bytes of RAM per link.
 
 config BT_CTLR_FRAME_SPACE_UPDATE
-	select EXPERIMENTAL
+	depends on BT_CTLR_EXTENDED_FEAT_SET
 
 config BT_CTLR_CHANNEL_SOUNDING
-	bool "Channel Sounding support"
+	bool "Channel Sounding support [EXPERIMENTAL for nRF54H20 radio core]"
+	select EXPERIMENTAL if SOC_NRF54H20_CPURAD
 	help
 	  Enable Channel Sounding support.
 
@@ -635,7 +635,7 @@ config BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT
 	  Internal helper config. Not intended for use.
 
 config BT_CTLR_SDC_CS_STEP_MODE3
-	bool "Enable optional step mode-3 support"
+	bool "Optional step mode-3 support"
 	depends on BT_CTLR_CHANNEL_SOUNDING
 	help
 	  Enable optional step mode-3 support. Channel sounding will not automatically start using step mode-3 if this
@@ -648,6 +648,53 @@ config BT_CTLR_SDC_CS_EVENT_LEN_DEFAULT
 	help
 	  The time set aside for channel sounding events in microseconds.
 
+choice BT_CTLR_SDC_CS_T_PM_LEN_DEFAULT_SELECTION
+prompt "Default channel sounding t_pm length"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	default BT_CTLR_SDC_CS_T_PM_LEN_10_US
+	help
+	  Set the preferred tone length (T_PM) of CS tones
+
+	  In Channel Sounding, tones in step mode-2 and -3 have a length of t_pm microseconds.
+	  T_PM can be 10, 20 or 40 microseconds.
+
+	  Since the T_PM can affect the quality of tone measurements, it is important for
+	  certain use-cases to be able to set a preferred T_PM. The controller will then use
+	  this value when the LE CS Create Config command is issued.
+
+	  If the local or peer device does not support the suggested preferred T_PM, it cannot
+	  be used. The controller will then select a T_PM value supported by both local and
+	  peer devices when the LE CS Create Config command is issued.
+
+config BT_CTLR_SDC_CS_T_PM_LEN_10_US
+	bool "10 us"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Set controller default channel sounding tones to 10 microseconds.
+
+config BT_CTLR_SDC_CS_T_PM_LEN_20_US
+	bool "20 us"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Set controller default channel sounding tones to 20 microseconds.
+
+config BT_CTLR_SDC_CS_T_PM_LEN_40_US
+	bool "40 us"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Set controller default channel sounding tones to 40 microseconds.
+endchoice
+
+config BT_CTLR_SDC_CS_T_PM_LEN_DEFAULT
+	int
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	default 10 if BT_CTLR_SDC_CS_T_PM_LEN_10_US
+	default 20 if BT_CTLR_SDC_CS_T_PM_LEN_20_US
+	default 40 if BT_CTLR_SDC_CS_T_PM_LEN_40_US
+
+config BT_CTLR_LE_PATH_LOSS_MONITORING
+	select BT_CTLR_LE_POWER_CONTROL
+
 config BT_CTLR_SDC_LE_POWER_CLASS_1
 	bool "Device supports transmitting at LE Power Class 1 level"
 	default y if BT_CTLR_TX_PWR_ANTENNA >= 10
@@ -655,6 +702,16 @@ config BT_CTLR_SDC_LE_POWER_CLASS_1
 	  This should be set if the device supports transmitting above +10dBm.
 	  See Bluetooth Core Specification, Vol 6, Part A, Section 3
 	  Transmitter Characteristics for more information.
+
+config BT_CTLR_SDC_ENABLE_LOWEST_FRAME_SPACE
+	bool "Support lowest frame space values"
+	depends on BT_CTLR_FRAME_SPACE_UPDATE
+	default y
+	help
+	  Enabling this kconfig allows the controller to achieve the lowest
+	  possible frame spaces for ACLs.
+	  Note: This option forces ACL connections to always use the same
+	  TX and RX PHY.
 
 config BT_LL_SOFTDEVICE_INIT_PRIORITY
 	int

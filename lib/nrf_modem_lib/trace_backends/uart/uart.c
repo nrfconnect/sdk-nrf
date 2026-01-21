@@ -182,7 +182,7 @@ int trace_backend_suspend(void)
 	int err;
 
 	err = pm_device_action_run(uart_dev, PM_DEVICE_ACTION_SUSPEND);
-	if (err) {
+	if (err && err != -EALREADY) {
 		LOG_ERR("Backend failed to enter suspended state, err %d\n", err);
 	}
 

@@ -1,21 +1,21 @@
 .. _ug_memfault:
 
-Memfault integration
-####################
+nRF Cloud powered by Memfault integration
+#########################################
 
 .. contents::
    :local:
    :depth: 2
 
 
-`Memfault`_ is a cloud-based web application with |NCS| compatibility that monitors devices and allows you to debug issues remotely.
-Memfault integration provides the following features to |NCS|:
+`nRF Cloud`_ now integrates Memfault technology to monitor devices and allows you to debug issues remotely.
+This integration provides the following features to |NCS|:
 
-* `Remote debugging <Memfault debugging_>`_ - Memfault issues can be efficiently resolved with automatic detection, alerts, deduplication, and actionable insights sent through the cloud.
+* `Remote debugging <Memfault debugging_>`_ - Issues can be efficiently resolved with automatic detection, alerts, deduplication, and actionable insights sent through the cloud.
 * `Continuous monitoring <Memfault monitoring_>`_ - Monitors device and fleet-level metrics like connectivity and low power state in real-time dashboards and displays prepopulated metrics for your devices.
   You can access device level data to resolve bugs faster.
 
-See the `Memfault sandbox <Memfault Sandbox_>`_ for a self-guided tour of the platform as well as the `Memfault documentation <Memfault introduction_>`_ for more details.
+See the `Memfault documentation <Memfault introduction_>`_ for more details.
 
 .. note::
    Memfault has been integrated in |NCS| since the v1.6.0 release.

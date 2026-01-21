@@ -6,7 +6,6 @@
 
 menuconfig DATE_TIME
 	bool "Date time library"
-	select POSIX_TIMERS
 
 if DATE_TIME
 
@@ -67,6 +66,6 @@ config DATE_TIME_NTP_QUERY_TIME_SECONDS
 module=DATE_TIME
 module-dep=LOG
 module-str=Date time module
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # DATE_TIME

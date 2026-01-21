@@ -64,7 +64,7 @@ Supported modem firmware
 See `Modem firmware compatibility matrix`_ for an overview of which modem firmware versions have been tested with this version of the |NCS|.
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Modem-related libraries and versions
 ====================================
@@ -401,7 +401,7 @@ nRF9160 samples
   * Corrected handling of the bootloader FOTA updates.
   * Enabled the :ref:`lib_at_host` library to make it easier to update certificates.
 
-* :ref:`lte_sensor_gateway` sample:
+* LTE Sensor Gateway sample:
 
   * Added support for Thingy:91.
 
@@ -704,7 +704,7 @@ Libraries for networking
     * For cellular positioning responses, the type is now set based on the ``fulfilledWith`` response from the nRF Cloud.
     * nRF Cloud error codes are now parsed and set in the :c:struct:`nrf_cloud_rest_context` structure.
 
-* :ref:`lib_download_client` library:
+* Download client library:
 
   * Fixed an issue where downloads of COAP URIs would fail when they contained multiple path elements.
   * Added the :c:member:`set_native_tls` parameter in the configuration structure to configure native TLS support at runtime.

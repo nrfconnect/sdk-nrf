@@ -1,6 +1,6 @@
 .. _ug_nrf54h20_architecture_memory:
 
-nRF54H20 Memory Layout
+nRF54H20 memory layout
 ######################
 
 .. contents::
@@ -23,9 +23,6 @@ When classifying memories by CPU association, the nRF54H20 contains the followin
 
 The MRAM is a global memory available to all CPUs in the system.
 Some RAM memories are, instead, tightly coupled to a specific CPU, while others are intended to be shared between multiple CPUs.
-
-.. note::
-   In the nRF54H20 initial limited sampling, TrustZone is disabled on all cores.
 
 RAM
 ***

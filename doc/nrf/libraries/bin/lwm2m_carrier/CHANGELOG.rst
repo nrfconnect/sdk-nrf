@@ -42,7 +42,7 @@ Changes
 =======
 
 * Added the new :ref:`lib_downloader` library to the glue layer (:file:`lwm2m_os.c/h`).
-  Removed the deprecated :ref:`lib_download_client` from the glue layer.
+  Removed the deprecated Download client from the glue layer.
 * Added missing documentation for some glue layer functions.
 * Removed the error type ``LWM2M_CARRIER_ERROR_RUN``.
 
@@ -347,7 +347,7 @@ Changes
   Instead, the :c:member:`LWM2M_CARRIER_ERROR_FOTA_FAIL` error event indicates an error code ``error.value`` in :c:struct:`lwm2m_carrier_event_t` (when :c:member:`LWM2M_CARRIER_ERROR_FOTA_FAIL` is received).
 * Removed the dependency on the :ref:`lte_lc_readme` library.
 
-  * This was primarily done to save space in the :ref:`serial_lte_modem` application.
+  * This was primarily done to save space in the Serial LTE modem application.
   * All other relevant samples and applications use the :ref:`lte_lc_readme` library.
     It is highly recommended that you include it in your applications.
 
@@ -503,6 +503,8 @@ Changes
      * :c:macro:`LWM2M_CARRIER_REQUEST_LINK_DOWN`
 
   * This function allows the LwM2M carrier library to disconnect gracefully and it is mandatory to use when the Subscriber ID is LG U+.
+
+* Updated the name of the ``CONFIG_LWM2M_CARRIER_IS_SERVER_BOOTSTRAP`` Kconfig option to :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER`.
 
 liblwm2m_carrier 0.30.2
 ***********************

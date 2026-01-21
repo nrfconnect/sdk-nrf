@@ -61,10 +61,11 @@ struct sx_pk_cmd_def;
  *
  * @see sx_dsa_sign() for a synchronous version
  */
-static inline struct sx_pk_acq_req sx_async_dsa_sign_go(struct sx_pk_cnx *cnx, const sx_op *p,
-							const sx_op *q, const sx_op *g,
-							const sx_op *k, const sx_op *privkey,
-							const sx_op *h)
+static inline struct sx_pk_acq_req sx_async_dsa_sign_go(struct sx_pk_cnx *cnx, const sx_const_op *p,
+							const sx_const_op *q, const sx_const_op *g,
+							const sx_const_op *k,
+							const sx_const_op *privkey,
+							const sx_const_op *h)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_dsa_sign inputs;
@@ -76,8 +77,8 @@ static inline struct sx_pk_acq_req sx_async_dsa_sign_go(struct sx_pk_cnx *cnx, c
 
 	/* convert and transfer operands */
 	int sizes[] = {
-		sx_op_size(p), sx_op_size(q),	    sx_op_size(g),
-		sx_op_size(k), sx_op_size(privkey), sx_op_size(h),
+		sx_const_op_size(p), sx_const_op_size(q),	    sx_const_op_size(g),
+		sx_const_op_size(k), sx_const_op_size(privkey), sx_const_op_size(h),
 	};
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {
@@ -173,10 +174,11 @@ int sx_dsa_sign(struct sx_pk_cnx *cnx, const sx_op *p, const sx_op *q, const sx_
  *
  * @see sx_dsa_ver() for a synchronous version
  */
-static inline struct sx_pk_acq_req sx_async_dsa_ver_go(struct sx_pk_cnx *cnx, const sx_op *p,
-						       const sx_op *q, const sx_op *g,
-						       const sx_op *pubkey, const sx_op *h,
-						       const sx_op *r, const sx_op *s)
+static inline struct sx_pk_acq_req sx_async_dsa_ver_go(struct sx_pk_cnx *cnx, const sx_const_op *p,
+						       const sx_const_op *q, const sx_const_op *g,
+						       const sx_const_op *pubkey,
+						       const sx_const_op *h, const sx_const_op *r,
+						       const sx_const_op *s)
 {
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_dsa_ver inputs;
@@ -188,8 +190,9 @@ static inline struct sx_pk_acq_req sx_async_dsa_ver_go(struct sx_pk_cnx *cnx, co
 
 	/* convert and transfer operands */
 	int sizes[] = {
-		sx_op_size(p), sx_op_size(q), sx_op_size(g), sx_op_size(pubkey),
-		sx_op_size(h), sx_op_size(r), sx_op_size(s),
+		sx_const_op_size(p),	  sx_const_op_size(q), sx_const_op_size(g),
+		sx_const_op_size(pubkey), sx_const_op_size(h), sx_const_op_size(r),
+		sx_const_op_size(s),
 	};
 	pkreq.status = sx_pk_list_gfp_inslots(pkreq.req, sizes, (struct sx_pk_slot *)&inputs);
 	if (pkreq.status) {

@@ -34,6 +34,6 @@ config APP_JWT_PRINT_EXPORTED_PUBKEY_DER
 
 module=APP_JWT
 module-str=User App JWT
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # APP_JWT

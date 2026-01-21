@@ -21,9 +21,9 @@
 
 #include <nrf_socket.h>
 
-#include <modem/pdn.h>
 #include <nrf_modem_at.h>
 #include <modem/at_parser.h>
+#include <modem/lte_lc.h>
 
 #include "link_shell_pdn.h"
 #include "net_utils.h"
@@ -104,7 +104,7 @@ struct pdn_conn_dyn_params {
 #define AT_CMD_PDP_CONTEXT_READ_DYN_INFO_DNS_ADDR_SECONDARY_INDEX 7
 #define AT_CMD_PDP_CONTEXT_READ_DYN_INFO_MTU_INDEX 12
 
-static int util_get_pdn_conn_dyn_params(int cid, struct pdn_conn_dyn_params *ret_dyn_info)
+static int util_get_pdn_conn_dyn_params(int cid, struct lte_lc_pdn_dynamic_info *ret_dyn_info)
 {
 	struct at_parser parser;
 	size_t param_str_len;
@@ -210,14 +210,14 @@ clean_exit:
 
 /******************************************************************************/
 
-static void nrf91_non_offload_pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
+static void nrf91_non_offload_pdn_event_handler(const struct lte_lc_evt *const evt)
 {
 	/* Only default PDN context is supported */
-	if (cid == 0) {
-		if (event == PDN_EVENT_ACTIVATED) {
+	if ((evt->type == LTE_LC_EVT_PDN) && (evt->pdn.cid == 0)) {
+		if (evt->pdn.type == LTE_LC_EVT_PDN_ACTIVATED) {
 			nrf91_non_offload_iface_data.default_pdp_active = true;
 			k_work_schedule(&mdm_socket_work, K_SECONDS(2));
-		} else if (event == PDN_EVENT_DEACTIVATED) {
+		} else if (evt->pdn.type == LTE_LC_EVT_PDN_DEACTIVATED) {
 			nrf91_non_offload_iface_data.default_pdp_active = false;
 			k_work_schedule(&mdm_socket_work, K_NO_WAIT);
 		}
@@ -265,7 +265,7 @@ static void nrf91_non_offload_mdm_socket_worker(struct k_work *unused)
 			char ipv6_addr[NET_IPV6_ADDR_LEN] = { 0 };
 			struct sockaddr addr;
 			struct net_if_addr *ifaddr;
-			struct pdn_conn_dyn_params pdn_dyn_info;
+			struct lte_lc_pdn_dynamic_info pdn_dyn_info;
 			int len, ret;
 
 			nrf91_non_offload_socket_create();

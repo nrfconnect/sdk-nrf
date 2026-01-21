@@ -46,12 +46,12 @@ psa_status_t cracen_hash_compute(psa_algorithm_t alg, const uint8_t *input, size
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	sx_status = sx_hash_feed(&c, (char *)input, input_length);
+	sx_status = sx_hash_feed(&c, input, input_length);
 	if (sx_status) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	sx_status = sx_hash_digest(&c, (char *)hash);
+	sx_status = sx_hash_digest(&c, hash);
 	if (sx_status) {
 		return silex_statuscodes_to_psa(sx_status);
 	}

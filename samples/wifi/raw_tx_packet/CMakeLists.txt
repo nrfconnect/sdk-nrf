@@ -11,11 +11,6 @@ project(nrf_wifi_raw_tx_packet)
 
 target_include_directories(app PUBLIC ${ZEPHYR_BASE}/subsys/net/ip)
 
-target_sources_ifdef(CONFIG_RAW_TX_PKT_SAMPLE_CONNECTION_MODE
-	app
-	PRIVATE
-	src/wifi_connection.c)
+target_sources_ifdef(CONFIG_RAW_TX_PKT_SAMPLE_CONNECTION_MODE app PRIVATE src/wifi_connection.c)
 
-target_sources(app PRIVATE
-	src/main.c
-)
+target_sources(app PRIVATE src/main.c)

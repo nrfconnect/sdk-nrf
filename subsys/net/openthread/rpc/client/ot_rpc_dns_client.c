@@ -10,8 +10,8 @@
 #include <nrf_rpc_cbor.h>
 #include <ot_rpc_common.h>
 #include <ot_rpc_ids.h>
-#include <ot_rpc_common.h>
 #include <ot_rpc_lock.h>
+#include <ot_rpc_macros.h>
 
 static otDnsQueryConfig default_config;
 
@@ -20,7 +20,7 @@ const otDnsQueryConfig *otDnsClientGetDefaultConfig(otInstance *aInstance)
 	struct nrf_rpc_cbor_ctx ctx;
 	bool config_decoded;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 
@@ -39,7 +39,7 @@ void otDnsClientSetDefaultConfig(otInstance *aInstance, const otDnsQueryConfig *
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, OT_RPC_DNS_QUERY_CONFIG_SIZE);
 
@@ -56,7 +56,7 @@ static otError resolve_or_browse(enum ot_rpc_cmd_server cmd, const char *name, c
 	size_t to_alloc;
 	size_t name_len;
 	size_t service_len;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	if (!name) {
 		return OT_ERROR_INVALID_ARGS;
@@ -95,7 +95,7 @@ static otError fetch_strings_from_dns_response(enum ot_rpc_cmd_server cmd, const
 					       char *secondary, uint16_t secondary_len)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 
 	if (!response || !primary || !primary_len) {
 		return OT_ERROR_INVALID_ARGS;
@@ -143,7 +143,7 @@ static otError fetch_host_address_from_response(enum ot_rpc_cmd_server cmd, cons
 						otIp6Address *address, uint32_t *ttl)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 	size_t name_len;
 	size_t alloc_len = 2 * (sizeof(uint32_t) + 1);
 
@@ -193,7 +193,7 @@ otError fetch_service_info_from_dns_response(enum ot_rpc_cmd_server cmd, const v
 					     const char *instance, otDnsServiceInfo *info)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	otError error;
+	otError error = OT_ERROR_FAILED;
 	size_t alloc_len = 3 * (sizeof(uint32_t) + 1);
 	size_t instance_len;
 	size_t decoded_size;
@@ -262,7 +262,7 @@ otError otDnsClientResolveAddress(otInstance *aInstance, const char *aHostName,
 				  otDnsAddressCallback aCallback, void *aContext,
 				  const otDnsQueryConfig *aConfig)
 {
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	return resolve_or_browse(OT_RPC_CMD_DNS_CLIENT_RESOLVE_ADDRESS, aHostName, NULL, aCallback,
 				 aContext, aConfig);
@@ -272,7 +272,7 @@ otError otDnsClientResolveIp4Address(otInstance *aInstance, const char *aHostNam
 				     otDnsAddressCallback aCallback, void *aContext,
 				     const otDnsQueryConfig *aConfig)
 {
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	return resolve_or_browse(OT_RPC_CMD_DNS_CLIENT_RESOLVE_IP4_ADDRESS, aHostName, NULL,
 				 aCallback, aContext, aConfig);
@@ -298,7 +298,7 @@ otError otDnsClientBrowse(otInstance *aInstance, const char *aServiceName,
 			  otDnsBrowseCallback aCallback, void *aContext,
 			  const otDnsQueryConfig *aConfig)
 {
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	return resolve_or_browse(OT_RPC_CMD_DNS_CLIENT_BROWSE, aServiceName, NULL, aCallback,
 				 aContext, aConfig);
@@ -343,7 +343,7 @@ otError otDnsClientResolveService(otInstance *aInstance, const char *aInstanceLa
 				  const char *aServiceName, otDnsServiceCallback aCallback,
 				  void *aContext, const otDnsQueryConfig *aConfig)
 {
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	return resolve_or_browse(OT_RPC_CMD_DNS_CLIENT_RESOLVE_SERVICE, aInstanceLabel,
 				 aServiceName, aCallback, aContext, aConfig);
@@ -354,7 +354,7 @@ otError otDnsClientResolveServiceAndHostAddress(otInstance *aInstance, const cha
 						otDnsServiceCallback aCallback, void *aContext,
 						const otDnsQueryConfig *aConfig)
 {
-	ARG_UNUSED(aInstance);
+	OT_RPC_UNUSED(aInstance);
 
 	return resolve_or_browse(OT_RPC_CMD_DNS_CLIENT_RESOLVE_SERVICE_AND_HOST_ADDRESS,
 				 aInstanceLabel, aServiceName, aCallback, aContext, aConfig);

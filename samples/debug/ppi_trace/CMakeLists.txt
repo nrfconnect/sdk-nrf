@@ -12,7 +12,4 @@ project("PPI trace sample")
 # NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c)
 # NORDIC SDK APP END
-target_sources_ifdef(
-	CONFIG_USE_BLUETOOTH_RADIO_EVENTS
-	app PRIVATE src/bluetooth.c
-)
+target_sources_ifdef(CONFIG_USE_BLUETOOTH_RADIO_EVENTS app PRIVATE src/bluetooth.c)

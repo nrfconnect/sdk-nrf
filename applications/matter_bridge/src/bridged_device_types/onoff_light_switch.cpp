@@ -16,7 +16,6 @@ namespace
 {
 DESCRIPTOR_CLUSTER_ATTRIBUTES(descriptorAttrs);
 BRIDGED_DEVICE_BASIC_INFORMATION_CLUSTER_ATTRIBUTES(bridgedDeviceBasicAttrs);
-IDENTIFY_CLUSTER_ATTRIBUTES(identifyAttrs);
 }; /* namespace */
 
 using namespace ::chip;
@@ -46,10 +45,6 @@ DECLARE_DYNAMIC_CLUSTER(Clusters::OnOff::Id, onOffClientAttrs, ZAP_CLUSTER_MASK(
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Descriptor::Id, descriptorAttrs, ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs,
 				ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
-	DECLARE_DYNAMIC_CLUSTER(Clusters::Identify::Id, identifyAttrs, ZAP_CLUSTER_MASK(SERVER),
-				sIdentifyIncomingCommands, nullptr),
-	DECLARE_DYNAMIC_CLUSTER(Clusters::Identify::Id, identifyAttrs, ZAP_CLUSTER_MASK(CLIENT),
-				sIdentifyIncomingCommands, nullptr),
 	DECLARE_DYNAMIC_CLUSTER(Clusters::Binding::Id, bindingAttrs, ZAP_CLUSTER_MASK(SERVER), nullptr,
 				nullptr) DECLARE_DYNAMIC_CLUSTER_LIST_END;
 

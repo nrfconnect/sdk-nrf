@@ -7,9 +7,39 @@
 #include <stdlib.h>
 #include <zephyr/logging/log.h>
 
+#include <modem/nrf_modem_lib.h>
+#include <nrf_modem_at.h>
+
 #include <common/helpers.h>
 
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
+
+static enum mfw_type mfw_type = MFW_TYPE_UNKNOWN;
+
+void mfw_type_init(void)
+{
+	int err;
+	char buf[64];
+
+	err = nrf_modem_at_cmd(buf, sizeof(buf), "AT+CGMR");
+	if (err) {
+		LOG_ERR("Failed to get modem firmware type, error: %d", err);
+		return;
+	}
+
+	if (strstr(buf, "nrf9160_") != NULL) {
+		mfw_type = MFW_TYPE_NRF9160;
+	} else if (strstr(buf, "nrf91x1_") != NULL) {
+		mfw_type = MFW_TYPE_NRF91X1;
+	} else if (strstr(buf, "nrf9151-ntn_") != NULL) {
+		mfw_type = MFW_TYPE_NRF9151_NTN;
+	}
+}
+
+enum mfw_type mfw_type_get(void)
+{
+	return mfw_type;
+}
 
 int string_to_int(const char *str_buf, int base, int *output)
 {

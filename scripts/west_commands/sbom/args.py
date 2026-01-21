@@ -9,8 +9,8 @@ Parsing and utility functions for west ncs-sbom command arguments.
 
 import argparse
 from pathlib import Path
-from common import SbomException
 
+from common import SbomException
 
 DEFAULT_REPORT_NAME = 'sbom_report.html'
 
@@ -66,6 +66,9 @@ class ArgsClass:
     ar: 'str|None'
     ninja: 'str|None'
     help_detectors: bool
+    output_spdx: 'str|None'
+    package_supplier: 'str|None'
+    package_cpe: 'str|None'
 
 
 def split_arg_list(text: str) -> 'list[str]':
@@ -137,6 +140,12 @@ def add_arguments(parser: argparse.ArgumentParser):
                              'By default, it will be automatically detected.')
     parser.add_argument('--help-detectors', action='store_true',
                         help='Show help for each available detector and exit.')
+    parser.add_argument('--package-supplier', default=None,
+                        help='Set the supplier name for packages (for CRA/EO/FDA compliance). '
+                             'This will override auto-detected supplier from git URLs.')
+    parser.add_argument('--package-cpe', default=None,
+                        help='Set the Common Platform Enumeration (CPE) identifier for packages '
+                             '(for CRA/EO/FDA compliance). Format: cpe:2.3:...')
 
 
 def copy_arguments(source):
@@ -171,8 +180,10 @@ def init_args(allowed_detectors: dict):
     if (args.build_dir is None
             and (args.input_files is None or len(args.input_files) == 0)
             and (args.input_list_file is None or len(args.input_list_file) == 0)):
-        from input_build import get_default_build_dir # Avoid circular import
-        default_build_dir = get_default_build_dir()
+        # Avoid circular import by importing lazily
+        import importlib
+        input_build = importlib.import_module('input_build')
+        default_build_dir = input_build.get_default_build_dir()
         if default_build_dir is not None:
             args.build_dir = [[default_build_dir]]
 

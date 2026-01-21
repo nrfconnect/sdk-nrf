@@ -1,0 +1,41 @@
+Device firmware upgrade support
+-------------------------------
+
+.. toggle::
+
+   The |matter_type| supports device firmware upgrade (DFU) over-the-air (OTA) using the following protocols:
+
+   * :ref:`ug_matter_overview_dfu` update protocol that uses the Matter operational network for querying and downloading a new firmware image.
+   * Simple Management Protocol (SMP) over |Bluetoothsc| LE.
+     In this case, the DFU can be done either using a smartphone application or a PC command-line tool.
+     This protocol is not part of the Matter specification.
+
+   In both cases, the :ref:`MCUboot <mcuboot:mcuboot_wrapper>` secure bootloader is used to apply the new firmware image.
+
+   The DFU over Matter is enabled by default.
+   Additionally, you can enable the DFU over SMP by using the ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y`` build flag.
+
+   See :ref:`cmake_options` for instructions on how to add these options to your build.
+
+   The following platforms require external flash memory to perform the DFU:
+
+   * nRF52840 DK
+   * nRF5340 DK
+   * nRF7002 DK
+   * nRF54L10 DK
+
+   You can run DFU without external flash memory on the nRF54L15 and nRF54LM20 DKs using the :ref:`mcuboot_image_compression` feature.
+   To see if the |matter_type| supports this feature, check whether the ``internal`` build configuration is available in the build configuration table.
+
+   When building on the command line, run the following command with *board_target* replaced with the board target name of the hardware platform you are using (see `Requirements`_), and *dfu_build_flag* replaced with the desired DFU build flag:
+
+   .. parsed-literal::
+      :class: highlight
+
+      west build -b *board_target* -- *dfu_build_flag*
+
+   For example:
+
+   .. code-block:: console
+
+      west build -b nrf54l15dk/nrf54l15/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y

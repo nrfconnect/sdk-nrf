@@ -33,8 +33,8 @@ Configuration
 Complete the following steps to enable the |ble_scan|:
 
 1. Complete the basic Bluetooth configuration, as described in the :ref:`nrf_desktop_bluetooth_guide` documentation.
-   Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` options are enabled.
-   The |ble_scan| is enabled by the :ref:`CONFIG_DESKTOP_BLE_SCAN_ENABLE <config_desktop_app_options>` Kconfig option which is implied by :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` Kconfig option together with other application modules.
+   Make sure that both :option:`CONFIG_DESKTOP_ROLE_HID_DONGLE` and :option:`CONFIG_DESKTOP_BT_CENTRAL` options are enabled.
+   The |ble_scan| is enabled by the :option:`CONFIG_DESKTOP_BLE_SCAN_ENABLE` Kconfig option which is implied by :option:`CONFIG_DESKTOP_BT_CENTRAL` Kconfig option together with other application modules.
    These modules that are required for HID dongle that forwards the data from HID peripherals connected over Bluetooth.
 #. Make sure that the number of scan filters based on the Bluetooth address (:kconfig:option:`CONFIG_BT_SCAN_ADDRESS_CNT`) is equal to the number of Bluetooth bonds.
    The number of Bluetooth bonds is defined by the :kconfig:option:`CONFIG_BT_MAX_PAIRED` Kconfig option.
@@ -59,7 +59,7 @@ Complete the following steps to enable the |ble_scan|:
    * When you request scan start or peer erase.
 
    If filters are not cleared by the application, the Bluetooth Central will be unable to reconnect to the peripheral after exceeding the maximum connection attempts.
-#. Configure the maximum number of bonded mice (:ref:`CONFIG_DESKTOP_BLE_SCAN_MOUSE_LIMIT <config_desktop_app_options>`) and keyboards (:ref:`CONFIG_DESKTOP_BLE_SCAN_KEYBOARD_LIMIT <config_desktop_app_options>`) for the nRF Desktop central.
+#. Configure the maximum number of bonded mice (:option:`CONFIG_DESKTOP_BLE_SCAN_MOUSE_LIMIT`) and keyboards (:option:`CONFIG_DESKTOP_BLE_SCAN_KEYBOARD_LIMIT`) for the nRF Desktop central.
    By default, the nRF Desktop central connects and bonds with only one mouse and one keyboard.
 #. Define the Bluetooth name filters in the :file:`ble_scan_def.h` file that is located in the board-specific directory in the application configuration directory.
    You must define a Bluetooth name filter for every peripheral type the nRF Desktop central connects to.
@@ -69,21 +69,21 @@ Complete the following steps to enable the |ble_scan|:
       The Bluetooth device name for given peripheral is defined as the :kconfig:option:`CONFIG_BT_DEVICE_NAME` Kconfig option in the peripheral's configuration.
       For more detailed information about the Bluetooth advertising configuration in the nRF Desktop application, see the :ref:`nrf_desktop_ble_adv` documentation.
 
-#. Set the :ref:`CONFIG_DESKTOP_BLE_SCAN_PM_EVENTS <config_desktop_app_options>` to block scanning in the power down mode to decrease the power consumption.
+#. Set the :option:`CONFIG_DESKTOP_BLE_SCAN_PM_EVENTS` to block scanning in the power down mode to decrease the power consumption.
    The Kconfig option is enabled by default.
 
 By default, the nRF Desktop central always looks for both bonded and unbonded peripherals.
-You can set the :ref:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST <config_desktop_app_options>` option to make the device look for unbonded peripherals only on user request.
+You can set the :option:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST` option to make the device look for unbonded peripherals only on user request.
 The request is submitted by :ref:`nrf_desktop_ble_bond` as :c:struct:`ble_peer_operation_event` with :c:member:`ble_peer_operation_event.op` set to :c:enumerator:`PEER_OPERATION_SCAN_REQUEST`.
 
 The central always looks for new bonds also after the bond erase (on :c:struct:`ble_peer_operation_event` with :c:member:`ble_peer_operation_event.op` set to :c:enumerator:`PEER_OPERATION_ERASED`).
-If :ref:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST <config_desktop_app_options>` is enabled, you can also set the :ref:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT <config_desktop_app_options>` option to make the central scan for new peers after every boot.
+If :option:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST` is enabled, you can also set the :option:`CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT` option to make the central scan for new peers after every boot.
 
 The following scanning scenarios are possible:
 
 * If no peripheral is connected, the central scans for the peripheral devices without interruption.
 * If a peripheral is connected, the scanning is triggered periodically.
-  If none of the connected peripherals is in use for at least :ref:`CONFIG_DESKTOP_BLE_SCAN_START_TIMEOUT_S <config_desktop_app_options>`, the scanning is started.
+  If none of the connected peripherals is in use for at least :option:`CONFIG_DESKTOP_BLE_SCAN_START_TIMEOUT_S`, the scanning is started.
 
 Scanning module configuration
 =============================
@@ -108,7 +108,7 @@ The scanning will not start if one of the following conditions occurs:
 * There are no more free Bluetooth connections.
 * The :ref:`nrf_desktop_ble_discovery` is in the process of discovering a peer.
 * The central is going to scan only for bonded peers and all the bonded peers are already connected.
-* The central is in the power down mode and :ref:`CONFIG_DESKTOP_BLE_SCAN_PM_EVENTS <config_desktop_app_options>` is enabled.
+* The central is in the power down mode and :option:`CONFIG_DESKTOP_BLE_SCAN_PM_EVENTS` is enabled.
 
 The number of Bluetooth connections is defined as the :kconfig:option:`CONFIG_BT_MAX_CONN` Kconfig option.
 
@@ -119,17 +119,17 @@ The scanning is interrupted if one of the following conditions occurs:
 
 * A connected peripheral is in use.
   Scanning in this situation will have a negative impact on user experience.
-* The maximum scan duration specified by :ref:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S <config_desktop_app_options>` times out.
+* The maximum scan duration specified by :option:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S` times out.
 
 The scanning is never interrupted if there is no connected Bluetooth peer.
-If :ref:`CONFIG_DESKTOP_BLE_SCAN_PM_EVENTS <config_desktop_app_options>` is enabled, the power down event will also interrupt scanning.
+If :option:`CONFIG_DESKTOP_BLE_SCAN_PM_EVENTS` is enabled, the power down event will also interrupt scanning.
 
 Forced scan
 -----------
 
 The module supports a dedicated forced scan state that prevents interrupting scanning when a connected peripheral is in use.
 The forced scan speeds up establishing new connections with peripherals, but it also negatively impacts the performance of already connected peripherals.
-If the :ref:`CONFIG_DESKTOP_BLE_FORCED_SCAN_DURATION_S <config_desktop_app_options>` Kconfig option is set to a value greater than zero, the module enters the forced scan state after one of the following conditions is met:
+If the :option:`CONFIG_DESKTOP_BLE_FORCED_SCAN_DURATION_S` Kconfig option is set to a value greater than zero, the module enters the forced scan state after one of the following conditions is met:
 
 * Boot or wakeup
 * Successful peripheral discovery
@@ -138,9 +138,9 @@ If the :ref:`CONFIG_DESKTOP_BLE_FORCED_SCAN_DURATION_S <config_desktop_app_optio
 * Bond erase
 * Scan request
 
-After the duration that is specified in the :ref:`CONFIG_DESKTOP_BLE_FORCED_SCAN_DURATION_S <config_desktop_app_options>` Kconfig option, the module switches to regular scanning.
+After the duration that is specified in the :option:`CONFIG_DESKTOP_BLE_FORCED_SCAN_DURATION_S` Kconfig option, the module switches to regular scanning.
 You can interrupt regular scanning by using connected peripherals.
-The scanning times out after the duration specified in the :ref:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S <config_desktop_app_options>` Kconfig option if there are peripherals connected over Bluetooth.
+The scanning times out after the duration specified in the :option:`CONFIG_DESKTOP_BLE_SCAN_DURATION_S` Kconfig option if there are peripherals connected over Bluetooth.
 
 .. note::
   The conditions described under :ref:`nrf_desktop_ble_scan_scanning_not_started` prevent the starting of the forced scan.

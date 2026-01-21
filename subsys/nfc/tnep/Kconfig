@@ -30,7 +30,7 @@ config NFC_TNEP_RX_MAX_RECORD_SIZE
 
 module = NFC_TNEP_TAG
 module-str = TNEP_TAG
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # NFC_TNEP_TAG
 
@@ -54,7 +54,7 @@ config NFC_TNEP_POLLER_RX_MAX_RECORD_CNT
 
 module = NFC_TNEP_POLLER
 module-str = TNEP_POLLER
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # NFC_TNEP_POLLER
 

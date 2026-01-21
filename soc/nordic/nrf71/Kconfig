@@ -9,6 +9,7 @@ config SOC_SERIES_NRF71X
 	select HAS_SEGGER_RTT if ZEPHYR_SEGGER_MODULE
 	select SOC_EARLY_INIT_HOOK
 	select SOC_RESET_HOOK
+	select NRF_PLATFORM_LUMOS
 
 config SOC_NRF7120_ENGA_CPUAPP
 	select ARM
@@ -20,9 +21,12 @@ config SOC_NRF7120_ENGA_CPUAPP
 	select CPU_HAS_FPU
 	select HAS_HW_NRF_RADIO_IEEE802154
 	select HAS_POWEROFF
+	select HAS_SWO
 
 config SOC_NRF7120_ENGA_CPUFLPR
 	select RISCV_CORE_NORDIC_VPR
+
+if SOC_SERIES_NRF71X
 
 DT_MPC_REGION_SIZE := $(dt_nodelabel_path,nrf_mpc_region)
 
@@ -45,3 +49,5 @@ config NRF_TRUSTZONE_RAM_REGION_SIZE
 	  requirements for the partitions.
 	  This abstraction allows us to configure TRUSTZONE without depending
 	  on peripheral specific symbols.
+
+endif # SOC_SERIES_NRF71X

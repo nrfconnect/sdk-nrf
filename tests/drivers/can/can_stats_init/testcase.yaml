@@ -1,0 +1,12 @@
+common:
+  tags:
+    - drivers
+    - can
+    - ci_tests_drivers_can
+  platform_allow:
+    - nrf54h20dk/nrf54h20/cpuapp
+  integration_platforms:
+    - nrf54h20dk/nrf54h20/cpuapp
+
+tests:
+  drivers.can.can_stats_init: {}

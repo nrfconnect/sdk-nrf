@@ -228,6 +228,8 @@ namespace app
 				kLocalTemperatureNotExposed = 0x40,
 				kMatterScheduleConfiguration = 0x80,
 				kPresets = 0x100,
+				kEvents = 0x200,
+				kThermostatSuggestions = 0x400,
 			};
 
 			// Bitmap for HVACSystemTypeBitmap
@@ -298,6 +300,18 @@ namespace app
 				kSupportsSetpoints = 0x2,
 				kSupportsNames = 0x4,
 				kSupportsOff = 0x8,
+			};
+
+			// Bitmap for ThermostatSuggestionNotFollowingReasonBitmap
+			enum class ThermostatSuggestionNotFollowingReasonBitmap : uint16_t {
+				kDemandResponseEvent = 0x1,
+				kOngoingHold = 0x2,
+				kSchedule = 0x4,
+				kOccupancy = 0x8,
+				kVacationMode = 0x10,
+				kTimeOfUseCostSavings = 0x20,
+				kPreCoolingOrPreHeating = 0x40,
+				kConflictingSuggestions = 0x80,
 			};
 		} // namespace Thermostat
 	} // namespace Clusters

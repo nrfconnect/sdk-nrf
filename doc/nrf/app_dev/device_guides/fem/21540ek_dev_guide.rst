@@ -33,7 +33,7 @@ For example, if you build for nRF52840 DK on the command line, you can use the f
 
    west build -b nrf52840dk/nrf52840 -- -DSHIELD=nrf21540ek
 
-If you use the |nRFVSC|, specify ``-DSHIELD=nrf21540ek`` in the **Extra Cmake arguments** field when `setting up a build configuration <How to work with build configurations_>`_.
+If you use |nRFVSC|, specify ``-DSHIELD=nrf21540ek`` in the **Extra Cmake arguments** field when `setting up a build configuration <How to work with build configurations_>`_.
 
 Alternatively, add the shield in the project's :file:`CMakeLists.txt` file:
 
@@ -51,32 +51,32 @@ When building for a board with an additional network core, like the nRF5340, add
    west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf21540ek
 
 In this case, the sysbuild will pass the *SHIELD=nrf21540ek* variable to all images that are built by the command.
-The build system will pick automatically appropriate overlay and configuration files for images for each core.
+The build system will automatically pick appropriate overlay and configuration files for images for each core.
 Please note that the files are different for each of the cores.
-For the application core the overlay containing forwarding the FEM pins to the network core will be used.
-For the network core the overlay enabling nRF21540 FEM on the network core will be used.
-In case the application contains additional images for which the *SHIELD* variable should not be passed, you must pass manually the *SHIELD* variable to each relevant image build separately.
+For the application core, the overlay containing forwarding of the FEM pins to the network core will be used.
+For the network core, the overlay enabling nRF21540 FEM on the network core will be used.
+In case the application contains additional images for which the *SHIELD* variable should not be passed, you must manually pass the *SHIELD* variable to each relevant image build separately.
 
 .. code-block:: console
 
    west build -b nrf5340dk/nrf5340/cpuapp -- -D<app_name_image>_SHIELD=nrf21540ek -Dipc_radio_SHIELD=nrf21540ek
 
-In this case the *SHIELD=nrf21540ek* will be passed to the build of the *app_image_name* image for the application core.
-The build system will pick automatically an overlay file containing forwarding the FEM pins to the network core.
+In this case, the *SHIELD=nrf21540ek* will be passed to the build of the *app_image_name* image for the application core.
+The build system will automatically pick an overlay file containing forwarding of the FEM pins to the network core.
 The *SHIELD=nrf21540ek* variable will be passed to the build of the ``ipc_radio`` image for the network core.
-The build system will pick automatically an overlay file enabling nRF21540 FEM on the network core.
+The build system will automatically pick an overlay file enabling nRF21540 FEM on the network core.
 
-In this command, the ``ipc_radio`` image us used as default and builds the network core image with support for the combination of 802.15.4 and Bluetooth.
+In this command, the ``ipc_radio`` image is used as default and builds the network core image with support for the combination of 802.15.4 and Bluetooth.
 The ``ipc_radio`` has been used since the build system migration to sysbuild.
 See :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` page.
 Setting the correct sysbuild option enables support for 802.15.4 and Bluetooth :ref:`ipc_radio`.
 
 ``ipc_radio`` represents all applications with support for the combination of both 802.15.4 and Bluetooth.
-You can configure your application using the following sysbuild configurations:
+You can configure your application using the following sysbuild Kconfig options:
 
-* ``SB_CONFIG_NETCORE_IPC_RADIO=y`` for applications having support for 802.15.4, but not for Bluetooth.
-* ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for application having support for Bluetooth, but not for 802.15.4.
-* ``SB_CONFIG_NETCORE_IPC_RADIO=y`` and ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
+* :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO` for applications having support for 802.15.4, but not for Bluetooth.
+* :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC` for applications having support for Bluetooth, but not for 802.15.4.
+* :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO` and :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
 
 
 .. note::

@@ -1,0 +1,5 @@
+Selecting a configuration
+=========================
+
+Before you start testing the |matter_type|, you can select one of the Matter |matter_name| custom configurations.
+See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information on how to select a configuration.

@@ -27,8 +27,10 @@ if(CONFIG_NCS_IS_VARIANT_IMAGE)
 
     import_kconfig("CONFIG" ${DOTCONFIG})
   else()
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
+
     dt_chosen(code_partition PROPERTY "zephyr,code-partition")
-    dt_reg_addr(code_partition_offset PATH "${code_partition}" REQUIRED)
+    dt_partition_addr(code_partition_offset PATH "${code_partition}" REQUIRED)
     dt_reg_size(code_partition_size PATH "${code_partition}" REQUIRED)
 
     set(preload_autoconf_h ${PRELOAD_BINARY_DIR}/zephyr/include/generated/zephyr/autoconf.h)
@@ -37,8 +39,19 @@ if(CONFIG_NCS_IS_VARIANT_IMAGE)
     file(STRINGS ${preload_autoconf_h} autoconf_content)
     file(STRINGS ${preload_dotconfig} dotconfig_content)
 
+    # Needed for the correct CONFIG_BUILD_OUTPUT_ADJUST_LMA calculation in the variant image
+    # .config and autoconf.h files for nRF54H20 CPURAD.
+    dt_partition_addr(code_partition_abs_addr PATH "${code_partition}" REQUIRED ABSOLUTE)
+    dt_chosen(sram_property PROPERTY "zephyr,sram")
+    dt_reg_addr(sram_addr PATH "${sram_property}" REQUIRED)
+    set(soc_nrf54h20_cpurad 0)
+    if("${dotconfig_content}" MATCHES "CONFIG_SOC_NRF54H20_CPURAD=y")
+      set(soc_nrf54h20_cpurad 1)
+    endif()
+
     # Modify the CONFIG_FLASH_LOAD_OFFSET and CONFIG_FLASH_LOAD_SIZE for both the .config and autoconf.h files.
     # If partition manager is not used, these values should be taken from the device tree.
+    # Additionally, convert primary slot dependencies to secondary slot dependencies.
     set(dotconfig_variant_content)
     foreach(line IN LISTS dotconfig_content)
       if("${line}" MATCHES "^CONFIG_FLASH_LOAD_OFFSET=.*$")
@@ -47,6 +60,14 @@ if(CONFIG_NCS_IS_VARIANT_IMAGE)
 
       if("${line}" MATCHES "^CONFIG_FLASH_LOAD_SIZE=.*$")
         string(REGEX REPLACE "CONFIG_FLASH_LOAD_SIZE=(.*)" "CONFIG_FLASH_LOAD_SIZE=${code_partition_size}" line ${line})
+      endif()
+
+      if("${line}" MATCHES "(--dependencies|-d).*\([0-9, ]+primary[0-9., ]+\)")
+        string(REGEX REPLACE "primary" "secondary" line ${line})
+      endif()
+
+      if(soc_nrf54h20_cpurad AND "${line}" MATCHES "^CONFIG_BUILD_OUTPUT_ADJUST_LMA=.*$")
+        string(REGEX REPLACE "CONFIG_BUILD_OUTPUT_ADJUST_LMA=(.*)" "CONFIG_BUILD_OUTPUT_ADJUST_LMA=\"${code_partition_abs_addr}-${sram_addr}\"" line ${line})
       endif()
 
       list(APPEND dotconfig_variant_content "${line}\n")
@@ -60,6 +81,14 @@ if(CONFIG_NCS_IS_VARIANT_IMAGE)
 
       if("${line}" MATCHES "^#define CONFIG_FLASH_LOAD_SIZE .*$")
         string(REGEX REPLACE "#define CONFIG_FLASH_LOAD_SIZE (.*)" "#define CONFIG_FLASH_LOAD_SIZE ${code_partition_size}" line ${line})
+      endif()
+
+      if("${line}" MATCHES "(--dependencies|-d).*\([0-9, ]+primary[0-9., ]+\)")
+        string(REGEX REPLACE "primary" "secondary" line ${line})
+      endif()
+
+      if(soc_nrf54h20_cpurad AND "${line}" MATCHES "^#define CONFIG_BUILD_OUTPUT_ADJUST_LMA .*$")
+        string(REGEX REPLACE "#define CONFIG_BUILD_OUTPUT_ADJUST_LMA (.*)" "#define CONFIG_BUILD_OUTPUT_ADJUST_LMA \"${code_partition_abs_addr}-${sram_addr}\"" line ${line})
       endif()
 
       list(APPEND autoconf_variant_content "${line}\n")

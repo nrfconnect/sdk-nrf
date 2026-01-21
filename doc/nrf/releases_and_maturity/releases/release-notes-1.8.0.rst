@@ -45,7 +45,7 @@ Supported modem firmware
 See `Modem firmware compatibility matrix`_ for an overview of which modem firmware versions have been tested with this version of the |NCS|.
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
-See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+See the `Programming nRF91 Series DK firmware` page for instructions.
 
 Known issues
 ************
@@ -605,7 +605,7 @@ Libraries for networking
   * Added the :c:func:`azure_iot_hub_dps_reset` function for resetting the DPS information.
   * Added a note about the credentials and their location.
 
-* :ref:`lib_download_client` library:
+* Download client library:
 
   * Removed the ``apn`` field in the ``download_client_cfg`` configuration structure.
 

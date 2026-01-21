@@ -9,7 +9,7 @@ menuconfig FW_INFO
 	prompt "Firmware Metadata"
 	imply NRFX_NVMC if !SOC_SERIES_NRF54LX
 
-if (FW_INFO)
+if FW_INFO
 
 config FW_INFO_API
 	bool "Only provide APIs to locate metadata"
@@ -29,7 +29,7 @@ config FW_INFO_OFFSET
 
 config FW_INFO_FIRMWARE_VERSION
 	int "Version number of the firmware"
-	range 0 32766 if SB_MONOTONIC_COUNTER
+	range 0 32767 if SB_MONOTONIC_COUNTER_IS_ENABLED
 	default 1
 	help
 	  When SB_MONOTONIC_COUNTER is enabled, the firmware version is limited
@@ -123,11 +123,19 @@ config FW_INFO_PROVIDE_ENABLE
 	help
 	  Hidden option, set if at least one *_EXT_API_ENABLED option is enabled.
 
+config EXT_API_SUPPORTED
+	bool
+	default y if SOC_SERIES_NRF52X
+	default y if SOC_NRF5340_CPUAPP
+	default y if SOC_SERIES_NRF91X
+	help
+	  External APIs are supported on the current platform.
+
 EXT_API = EXT_API_PROVIDE
 id = 0x1200
 flags = 0
 ver = 1
-source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
+source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
 config EXT_API_PROVIDE_EXT_API_ATLEAST_OPTIONAL
 	bool "Set the PROVIDE EXT_API as at least optional"

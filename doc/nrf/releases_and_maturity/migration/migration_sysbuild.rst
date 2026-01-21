@@ -32,8 +32,8 @@ Review how :ref:`sysbuild` works to understand the basic usage and configuration
 Sysbuild configuration files
 ****************************
 
-You can set sysbuild configuration for projects in the ``sysbuild.conf`` file in the project folder.
-You can also add custom Kconfig values in the ``Kconfig.sysbuild`` file in the project folder, or use this file to set Kconfig defaults that depend on a board or other parameters when building a project.
+You can set sysbuild configuration for projects in the :file:`sysbuild.conf` file in the project folder.
+You can also add custom Kconfig values in the :file:`Kconfig.sysbuild` file in the project folder, or use this file to set Kconfig defaults that depend on a board or other parameters when building a project.
 Sysbuild Kconfig values in Kconfig fragment files have the ``SB_CONFIG_`` prefix.
 The following example demonstrates how to use these files to set project configuration:
 
@@ -89,23 +89,23 @@ Network core
 Sysbuild handles the selection of the network core image.
 The following Kconfig options are available to include the desired image in the build or to set network core options:
 
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-| Kconfig option                                          | Description                                                                                               |
-+=========================================================+===========================================================================================================+
-|               ``SB_CONFIG_NETCORE_EMPTY``               | Empty network core image: :ref:`nrf5340_empty_net_core`                                                   |
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_NETCORE_HCI_IPC``             | Zephyr hci_ipc Bluetooth image: :zephyr:code-sample:`bluetooth_hci_ipc`                                   |
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_NETCORE_RPC_HOST``            | |NCS| rpc_host Bluetooth image: :ref:`ble_rpc_host`                                                       |
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_NETCORE_802154_RPMSG``        | Zephyr 802.15.4 image: :zephyr:code-sample:`nrf_ieee802154_rpmsg`                                         |
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_NETCORE_IPC_RADIO``           | |NCS| ipc_radio image: :ref:`ipc_radio`                                                                   |
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_NETCORE_NONE``                | No network core image                                                                                     |
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_NETCORE_APP_UPDATE``          | Will enable network core image update support in MCUboot (PCD)                                            |
-+---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| Kconfig option                                   | Description                                                                                               |
++==================================================+===========================================================================================================+
+| :kconfig:option:`SB_CONFIG_NETCORE_EMPTY`        | Empty network core image: :ref:`nrf5340_empty_net_core`                                                   |
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_NETCORE_HCI_IPC`      | Zephyr hci_ipc Bluetooth image: :zephyr:code-sample:`bluetooth_hci_ipc`                                   |
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_NETCORE_RPC_HOST`     | |NCS| rpc_host Bluetooth image: :ref:`ble_rpc_host`                                                       |
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_NETCORE_802154_RPMSG` | Zephyr 802.15.4 image: :zephyr:code-sample:`nrf_ieee802154_rpmsg`                                         |
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO`    | |NCS| ipc_radio image: :ref:`ipc_radio`                                                                   |
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_NETCORE_NONE`         | No network core image                                                                                     |
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_NETCORE_APP_UPDATE`   | Will enable network core image update support in MCUboot (PCD)                                            |
++--------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
 
 If a project uses network-core functionality (for example, Bluetooth) in the main application but does not enable a network-core image in sysbuild, then no network-core image will be built, resulting in a non-working application.
 Projects must be updated to select the correct network core image.
@@ -121,49 +121,49 @@ The following Kconfig options are available:
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
 | Kconfig option                                                            | Description                                                                                                              |
 +===========================================================================+==========================================================================================================================+
-|               ``SB_CONFIG_BOOTLOADER_MCUBOOT``                            | Build MCUboot image                                                                                                      |
+| :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT`                            | Build MCUboot image                                                                                                      |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_BOOT_SIGNATURE_TYPE_NONE``                      | Set MCUboot signature type to none (SHA256 hash check only)                                                              |
+| :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_NONE`                      | Set MCUboot signature type to none (SHA256 hash check only)                                                              |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA``                       | Set MCUboot signature type to RSA                                                                                        |
+| :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA`                       | Set MCUboot signature type to RSA                                                                                        |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256``                | Set MCUboot signature type to ECDSA-P256                                                                                 |
+| :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256`                | Set MCUboot signature type to ECDSA-P256                                                                                 |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519``                   | Set MCUboot signature type to ED25519                                                                                    |
+| :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519`                   | Set MCUboot signature type to ED25519                                                                                    |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE``                       | Absolute path to MCUboot private signing key file                                                                        |
+| :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`                       | Absolute path to MCUboot private signing key file                                                                        |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_BOOT_ENCRYPTION``                               | Enable MCUboot image encryption                                                                                          |
+| :kconfig:option:`SB_CONFIG_BOOT_ENCRYPTION`                               | Enable MCUboot image encryption                                                                                          |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_BOOT_ENCRYPTION_KEY_FILE``                      | Absolute path to MCUboot private encryption key file                                                                     |
+| :kconfig:option:`SB_CONFIG_BOOT_ENCRYPTION_KEY_FILE`                      | Absolute path to MCUboot private encryption key file                                                                     |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_MCUBOOT_MODE_SINGLE_APP``                       | Build MCUboot in single slot mode (application can only be updated by MCUboot's serial recovery mode)                    |
+| :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_SINGLE_APP`                       | Build MCUboot in single slot mode (application can only be updated by MCUboot's serial recovery mode)                    |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_MCUBOOT_MODE_SWAP_WITHOUT_SCRATCH``             | Build MCUboot and application in swap using move mode (default)                                                          |
+| :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_SWAP_WITHOUT_SCRATCH`             | Build MCUboot and application in swap using move mode (default)                                                          |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_MCUBOOT_MODE_SWAP_SCRATCH``                     | Build MCUboot and application in swap using scratch mode                                                                 |
+| :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_SWAP_SCRATCH`                     | Build MCUboot and application in swap using scratch mode                                                                 |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY``                   | Build MCUboot and application in overwrite only mode                                                                     |
+| :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY`                   | Build MCUboot and application in overwrite only mode                                                                     |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP``                       | Build MCUboot and application in direct-XIP mode                                                                         |
+| :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP`                       | Build MCUboot and application in direct-XIP mode                                                                         |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT``           | Build MCUboot and application in direct-XIP mode, with revert support                                                    |
+| :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT`           | Build MCUboot and application in direct-XIP mode, with revert support                                                    |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT``              | Build secondary image for direct-XIP mode for the alternative execution slot                                             |
+| :kconfig:option:`SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT`              | Build secondary image for direct-XIP mode for the alternative execution slot                                             |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION``         | Enable hardware downgrade protection in MCUboot and application                                                          |
+| :kconfig:option:`SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION`         | Enable hardware downgrade protection in MCUboot and application                                                          |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS`` | Number of available hardware counter slots for downgrade prevention                                                      |
+| :kconfig:option:`SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS` | Number of available hardware counter slots for downgrade prevention                                                      |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE`` | Security counter value of the image for downgrade prevention                                                             |
+| :kconfig:option:`SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE` | Security counter value of the image for downgrade prevention                                                             |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES``                     | Number of updateable images for MCUboot to support                                                                       |
+| :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES`                     | Number of updateable images for MCUboot to support                                                                       |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_MCUBOOT_APP_SYNC_UPDATEABLE_IMAGES``            | Will set the main application number of updateable images as well as MCUboot if enabled, otherwise will only set MCUboot |
+| :kconfig:option:`SB_CONFIG_MCUBOOT_APP_SYNC_UPDATEABLE_IMAGES`            | Will set the main application number of updateable images as well as MCUboot if enabled, otherwise will only set MCUboot |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION``                   | MCUboot version string to use when creating MCUboot update package for application secure boot mode                      |
+| :kconfig:option:`SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION`                   | MCUboot version string to use when creating MCUboot update package for application secure boot mode                      |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM``                 | Use all available RAM when building TF-M for nRF5340 (see Kconfig text for security implication details)                 |
+| :kconfig:option:`SB_CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM`                 | Use all available RAM when building TF-M for nRF5340 (see Kconfig text for security implication details)                 |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
 
 Support for unsigned images and image encryption has been added.
@@ -182,23 +182,23 @@ The following Kconfig options are available:
 +------------------------------------------------------------+-----------------------------------------------------------------------------------------+
 | Kconfig option                                             | Description                                                                             |
 +============================================================+=========================================================================================+
-|               ``SB_CONFIG_SECURE_BOOT_APPCORE``            | Enable secure boot for application core (or main core if device only has a single core) |
+| :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE`            | Enable secure boot for application core (or main core if device only has a single core) |
 +------------------------------------------------------------+-----------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_SECURE_BOOT_NETCORE``            | Enable secure boot for network core                                                     |
+| :kconfig:option:`SB_CONFIG_SECURE_BOOT_NETCORE`            | Enable secure boot for network core                                                     |
 +------------------------------------------------------------+-----------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_SECURE_BOOT_SIGNING_PYTHON``     | Sign b0 images using python (default)                                                   |
+| :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_PYTHON`     | Sign b0 images using python (default)                                                   |
 +------------------------------------------------------------+-----------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_SECURE_BOOT_SIGNING_OPENSSL``    | Sign b0 images using OpenSSL                                                            |
+| :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_OPENSSL`    | Sign b0 images using OpenSSL                                                            |
 +------------------------------------------------------------+-----------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM``     | Sign b0 images with a custom command                                                    |
+| :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM`     | Sign b0 images with a custom command                                                    |
 +------------------------------------------------------------+-----------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE``   | Absolute path to signing private key file                                               |
+| :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`   | Absolute path to signing private key file                                               |
 +------------------------------------------------------------+-----------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND``    | Command called for custom signing, will have file to sign provided as an argument       |
+| :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND`    | Command called for custom signing, will have file to sign provided as an argument       |
 +------------------------------------------------------------+-----------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_SECURE_BOOT_SIGNING_PUBLIC_KEY`` | Absolute path to signing key public file                                                |
+| :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_PUBLIC_KEY` | Absolute path to signing key public file                                                |
 +------------------------------------------------------------+-----------------------------------------------------------------------------------------+
-|               ``SB_CONFIG_SECURE_BOOT_PUBLIC_KEY_FILES``   | Comma-separated value list of absolute paths to signing public key files                |
+| :kconfig:option:`SB_CONFIG_SECURE_BOOT_PUBLIC_KEY_FILES`   | Comma-separated value list of absolute paths to signing public key files                |
 +------------------------------------------------------------+-----------------------------------------------------------------------------------------+
 
 Secure boot can now be enabled centrally from sysbuild for both the application and network cores for nRF53-based boards.
@@ -214,24 +214,24 @@ Sysbuild now handles the HEX generation with Google Fast Pair provisioning data.
 See the :ref:`ug_bt_fast_pair_provisioning_register` section in the Fast Pair integration guide for more details regarding the provisioning process.
 The following Kconfig options are available:
 
-+-------------------------------------------------------+--------------------------------------------------------------------+
-| Kconfig option                                        | Description                                                        |
-+=======================================================+====================================================================+
-|  ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID``                  | Sets the Model ID used for Fast Pair provisioning                  |
-+-------------------------------------------------------+--------------------------------------------------------------------+
-|  ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` | Sets the Anti-Spoofing Private Key used for Fast Pair provisioning |
-+-------------------------------------------------------+--------------------------------------------------------------------+
++--------------------------------------------------------------------+--------------------------------------------------------------------+
+| Kconfig option                                                     | Description                                                        |
++====================================================================+====================================================================+
+| :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_MODEL_ID`                  | Sets the Model ID used for Fast Pair provisioning                  |
++--------------------------------------------------------------------+--------------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY` | Sets the Anti-Spoofing Private Key used for Fast Pair provisioning |
++--------------------------------------------------------------------+--------------------------------------------------------------------+
 
 To generate the Google Fast Pair provisioning data, you must set both Kconfig options at the sysbuild level.
-The promptless (read-only) ``SB_CONFIG_BT_FAST_PAIR_PROV_DATA`` Kconfig option indicates that the provisioning data HEX generation has been triggered for your build.
+The promptless (read-only) :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_PROV_DATA` Kconfig option indicates that the provisioning data HEX generation has been triggered for your build.
 
 .. note::
    The following items have been changed since the |NCS| v3.0.0:
 
    * The Fast Pair sysbuild Kconfig options.
-     The ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option is replaced with the ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY``.
+     The ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option is replaced with the :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_MODEL_ID` and :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`.
    * The method of supplying the Fast Pair Model ID and Anti-Spoofing Private Key.
-     The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig options.
+     The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_MODEL_ID` and :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY` Kconfig options.
    * Sysbuild no longer controls the value of the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option that is defined in the main (default) image.
 
    For more details about the HEX generation with Google Fast Pair provisioning data, see the :ref:`ug_bt_fast_pair_provisioning_register_hex_generation` section in the Fast Pair integration guide.
@@ -247,15 +247,15 @@ The following Kconfig options are available:
 +---------------------------------------------------------------------+---------------------------------------------------+
 | Kconfig option                                                      | Description                                       |
 +=====================================================================+===================================================+
-|               ``SB_CONFIG_MATTER``                                  | Enable matter support                             |
+| :kconfig:option:`SB_CONFIG_MATTER`                                  | Enable matter support                             |
 +---------------------------------------------------------------------+---------------------------------------------------+
-|               ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE``            | Generate factory data                             |
+| :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE`            | Generate factory data                             |
 +---------------------------------------------------------------------+---------------------------------------------------+
-|               ``SB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE`` | Merge factory data with main application firmware |
+| :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE` | Merge factory data with main application firmware |
 +---------------------------------------------------------------------+---------------------------------------------------+
-|               ``SB_CONFIG_MATTER_OTA``                              | Generate over-the-air firmware update image       |
+| :kconfig:option:`SB_CONFIG_MATTER_OTA`                              | Generate over-the-air firmware update image       |
 +---------------------------------------------------------------------+---------------------------------------------------+
-|               ``SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME``              | Filename for over-the-air firmware update image   |
+| :kconfig:option:`SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME`              | Filename for over-the-air firmware update image   |
 +---------------------------------------------------------------------+---------------------------------------------------+
 
 Applications must enable these options if they generate factory data or need an over-the-air firmware update.
@@ -275,21 +275,21 @@ The following Kconfig options are available:
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
 | Kconfig option                                                 | Description                                                                 |
 +================================================================+=============================================================================+
-|               ``SB_CONFIG_WIFI_NRF70``                         | Enable Wi-Fi® support for the nRF70 Series devices                          |
+| :kconfig:option:`SB_CONFIG_WIFI_NRF70`                         | Enable Wi-Fi® support for the nRF70 Series devices                          |
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
-|               ``SB_CONFIG_WIFI_NRF70_SYSTEM_MODE``             | Use system mode firmware patches and set application to this mode           |
+| :kconfig:option:`SB_CONFIG_WIFI_NRF70_SYSTEM_MODE`             | Use system mode firmware patches and set application to this mode           |
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
-|               ``SB_CONFIG_WIFI_NRF70_SCAN_ONLY``               | Use Scan-only mode firmware patches and set application to this mode        |
+| :kconfig:option:`SB_CONFIG_WIFI_NRF70_SCAN_ONLY`               | Use Scan-only mode firmware patches and set application to this mode        |
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
-|               ``SB_CONFIG_WIFI_NRF70_RADIO_TEST``              | Use Radio Test mode firmware patches and set application to this mode       |
+| :kconfig:option:`SB_CONFIG_WIFI_NRF70_RADIO_TEST`              | Use Radio Test mode firmware patches and set application to this mode       |
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
-|               ``SB_CONFIG_WIFI_NRF70_SYSTEM_WITH_RAW_MODES``   | Use system with Raw modes firmware patches and set application to this mode |
+| :kconfig:option:`SB_CONFIG_WIFI_NRF70_SYSTEM_WITH_RAW_MODES`   | Use system with Raw modes firmware patches and set application to this mode |
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
-|               ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_DISABLED``    | Load firmware patches directly from ram (default)                           |
+| :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_DISABLED`    | Load firmware patches directly from ram (default)                           |
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
-|               ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_XIP``         | Load firmware patches from external flash using XIP                         |
+| :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_XIP`         | Load firmware patches from external flash using XIP                         |
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
-|               ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE``       | Load firmware patches from external flash into RAM and load to radio        |
+| :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE`       | Load firmware patches from external flash into RAM and load to radio        |
 +----------------------------------------------------------------+-----------------------------------------------------------------------------+
 
 You must update your applications to select the required Kconfig options at the sysbuild level for applications to work.
@@ -307,15 +307,15 @@ The following Kconfig options are available:
 +-------------------------------------------------------------------+---------------------------------------------------+
 | Kconfig option                                                    | Description                                       |
 +===================================================================+===================================================+
-|               ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD``         | Enables building a DFU multi-image package        |
+| :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD`         | Enables building a DFU multi-image package        |
 +-------------------------------------------------------------------+---------------------------------------------------+
-|               ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_APP``           | Include application update in package             |
+| :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_APP`           | Include application update in package             |
 +-------------------------------------------------------------------+---------------------------------------------------+
-|               ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_NET``           | Include network core image update in package      |
+| :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_NET`           | Include network core image update in package      |
 +-------------------------------------------------------------------+---------------------------------------------------+
-|               ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_MCUBOOT``       | Include MCUboot update in package                 |
+| :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_MCUBOOT`       | Include MCUboot update in package                 |
 +-------------------------------------------------------------------+---------------------------------------------------+
-|               ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH`` | Include nRF70 firmware patch update in package    |
+| :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` | Include nRF70 firmware patch update in package    |
 +-------------------------------------------------------------------+---------------------------------------------------+
 
 You must update your application to select the required Kconfig options at the sysbuild level to have this file generated.
@@ -331,15 +331,15 @@ The following Kconfig options are available:
 +-------------------------------------------------------------+----------------------------------------------------------------------------+
 | Kconfig option                                              | Description                                                                |
 +=============================================================+============================================================================+
-|               ``SB_CONFIG_DFU_ZIP``                         | Will generate a dfu_application.zip archive with manifest file and updates |
+| :kconfig:option:`SB_CONFIG_DFU_ZIP`                         | Will generate a dfu_application.zip archive with manifest file and updates |
 +-------------------------------------------------------------+----------------------------------------------------------------------------+
-|               ``SB_CONFIG_DFU_ZIP_APP``                     | Include application update in zip archive                                  |
+| :kconfig:option:`SB_CONFIG_DFU_ZIP_APP`                     | Include application update in zip archive                                  |
 +-------------------------------------------------------------+----------------------------------------------------------------------------+
-|               ``SB_CONFIG_DFU_ZIP_NET``                     | Include network-core image update in zip archive                           |
+| :kconfig:option:`SB_CONFIG_DFU_ZIP_NET`                     | Include network-core image update in zip archive                           |
 +-------------------------------------------------------------+----------------------------------------------------------------------------+
-|               ``SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH``           | Include nRF700x firmware patch update in zip archive                       |
+| :kconfig:option:`SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH`           | Include nRF700x firmware patch update in zip archive                       |
 +-------------------------------------------------------------+----------------------------------------------------------------------------+
-|               ``SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA`` | Include Bluetooth mesh metadata in zip archive                             |
+| :kconfig:option:`SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA` | Include Bluetooth mesh metadata in zip archive                             |
 +-------------------------------------------------------------+----------------------------------------------------------------------------+
 
 You must update your application to select the required Kconfig options at the sysbuild level to have the correct firmware update images in the zip generated, the firmware zip is generated by default.
@@ -352,17 +352,17 @@ Partition Manager
 Support for using the Partition Manager for an image has been moved to sysbuild.
 The following Kconfig options are available:
 
-+---------------------------------------------------+-----------------------------------------------------------------+
-|                  Kconfig option                   |                           Description                           |
-+===================================================+=================================================================+
-| ``SB_CONFIG_PARTITION_MANAGER``                   | Enables partition manager support                               |
-+---------------------------------------------------+-----------------------------------------------------------------+
-| ``SB_CONFIG_PM_MCUBOOT_PAD``                      | MCUboot image header padding                                    |
-+---------------------------------------------------+-----------------------------------------------------------------+
-| ``SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY`` | Places the secondary MCUboot update partition in external flash |
-+---------------------------------------------------+-----------------------------------------------------------------+
-| ``SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK``   | Will force override the external flash driver check             |
-+---------------------------------------------------+-----------------------------------------------------------------+
++-----------------------------------------------------------------+-----------------------------------------------------------------+
+| Kconfig option                                                  | Description                                                     |
++=================================================================+=================================================================+
+| :kconfig:option:`SB_CONFIG_PARTITION_MANAGER`                   | Enables partition manager support                               |
++-----------------------------------------------------------------+-----------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_PM_MCUBOOT_PAD`                      | MCUboot image header padding                                    |
++-----------------------------------------------------------------+-----------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY` | Places the secondary MCUboot update partition in external flash |
++-----------------------------------------------------------------+-----------------------------------------------------------------+
+| :kconfig:option:`SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK`   | Will force override the external flash driver check             |
++-----------------------------------------------------------------+-----------------------------------------------------------------+
 
 You must update your applications to select the required Kconfig options at the sysbuild level for applications to work.
 If these options are not set, firmware updates may not work or images may fail to boot.
@@ -375,15 +375,15 @@ QSPI XIP flash split code
 Support for using an application image based on the Quad Serial Peripheral Interface (QSPI) with the Execute in place (XIP) flash memory split has been moved to sysbuild.
 The following Kconfig options are available:
 
-+------------------------------------+------------------------------------------------------------------------------------------------------------+
-|           Kconfig option           |                                                Description                                                 |
-+====================================+============================================================================================================+
-| ``SB_CONFIG_QSPI_XIP_SPLIT_IMAGE`` | Enables splitting application into internal flash and external QSPI XIP flash images with MCUboot signing. |
-+------------------------------------+------------------------------------------------------------------------------------------------------------+
++--------------------------------------------------+------------------------------------------------------------------------------------------------------------+
+| Kconfig option                                   | Description                                                                                                |
++==================================================+============================================================================================================+
+| :kconfig:option:`SB_CONFIG_QSPI_XIP_SPLIT_IMAGE` | Enables splitting application into internal flash and external QSPI XIP flash images with MCUboot signing. |
++--------------------------------------------------+------------------------------------------------------------------------------------------------------------+
 
 You must update your applications to select the required Kconfig options at the sysbuild level for applications to work.
 If these options are not set, the QSPI XIP flash code sections will not be generated.
-The MCUboot image number is now dependent upon what images are present in a build, and the Kconfig option ``SB_CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`` gives the image number of this section.
+The MCUboot image number depends on the images present in a build, and the sysbuild CMake variable ``NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`` and application Kconfig option :kconfig:option:`CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER` give the image number of this section.
 
 The format for the Partition Manager static partition file has also changed.
 There must now be a ``pad`` section and an ``app`` section which form the primary section in a span.
@@ -424,67 +424,67 @@ Some output file names have changed from child/parent image configurations or ha
 This is because sysbuild properly namespaces images in a project.
 The changes to final output files (ignoring artifacts and intermediary files) are as follows:
 
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|                  Child/parent file                  |                                                                         Sysbuild file                                                                         |
-+=====================================================+===============================================================================================================================================================+
-| ``zephyr/app_update.bin``                           | ``<app_name>/zephyr/<kernel_name>.signed.bin`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value            |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/app_signed.hex``                           | ``<app_name>/zephyr/<kernel_name>.signed.hex`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value            |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/app_test_update.hex``                      | No equivalent                                                                                                                                                 |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/app_moved_test_update.hex``                | No equivalent                                                                                                                                                 |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/net_core_app_update.bin``                  | ``signed_by_mcuboot_and_b0_<net_core_app_name>.bin`` where ``<net_core_app_name>`` is the name of the network core application                                |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/net_core_app_signed.hex``                  | ``signed_by_b0_<net_core_app_name>.hex`` where ``<net_core_app_name>`` is the name of the network core application                                            |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/net_core_app_test_update.hex``             | No equivalent                                                                                                                                                 |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/net_core_app_moved_test_update.hex``       | No equivalent                                                                                                                                                 |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/mcuboot_secondary_app_update.bin``         | ``mcuboot_secondary_app/zephyr/<kernel_name>.signed.bin`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/mcuboot_secondary_app_signed.hex``         | ``mcuboot_secondary_app/zephyr/<kernel_name>.signed.hex`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/matter.ota``                               | ``<matter_ota_name>.ota`` where ``<matter_ota_name>`` is the value of Kconfig ``SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME``                                        |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/signed_by_b0_s0_image.hex``                | ``signed_by_b0_<app_name>.hex`` where ``<app_name>`` is the name of the application                                                                           |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/signed_by_b0_s1_image.hex``                | ``signed_by_b0_s1_image.hex``                                                                                                                                 |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/signed_by_b0_s0_image.bin``                | ``signed_by_b0_<app_name>.bin`` where ``<app_name>`` is the name of the application                                                                           |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/signed_by_b0_s1_image.bin``                | ``signed_by_b0_s1_image.bin``                                                                                                                                 |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``<net_core_app_name>/zephyr/signed_by_b0_app.hex`` | ``signed_by_b0_<net_core_app_name>.hex`` where ``<net_core_app_name>`` is the name of the network core application                                            |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``<net_core_app_name>/zephyr/signed_by_b0_app.bin`` | ``signed_by_b0_<net_core_app_name>.bin`` where ``<net_core_app_name>`` is the name of the network core application                                            |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/internal_flash.hex``                       | ``<app_name>/zephyr/<kernel_name>.internal.hex`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value          |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/internal_flash_signed.hex``                | ``<app_name>/zephyr/<kernel_name>.internal.signed.hex`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value   |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/internal_flash_update.bin``                | ``<app_name>/zephyr/<kernel_name>.internal.signed.bin`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value   |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/qspi_flash.hex``                           | ``<app_name>/zephyr/<kernel_name>.external.hex`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value          |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/qspi_flash_signed.hex``                    | ``<app_name>/zephyr/<kernel_name>.external.signed.hex`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value   |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/qspi_flash_update.bin``                    | ``<app_name>/zephyr/<kernel_name>.external.signed.bin`` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value   |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/merged.hex``                               | ``merged.hex``                                                                                                                                                |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``<net_core_app_name>/zephyr/merged_CPUNET.hex``    | ``merged_CPUNET.hex``                                                                                                                                         |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/merged_domains.hex``                       | No equivalent, use ``merged.hex`` for application core and ``merged_CPUNET.hex`` for network core                                                             |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/dfu_multi_image.bin``                      | ``dfu_multi_image.bin``                                                                                                                                       |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/dfu_application.zip``                      | ``dfu_application.zip``                                                                                                                                       |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``zephyr/dfu_mcuboot.zip``                          | ``dfu_mcuboot.zip``                                                                                                                                           |
-+-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Child/parent file                                       | Sysbuild file                                                                                                                                                     |
++=========================================================+===================================================================================================================================================================+
+| :file:`zephyr/app_update.bin`                           | :file:`<app_name>/zephyr/<kernel_name>.signed.bin` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value            |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/app_signed.hex`                           | :file:`<app_name>/zephyr/<kernel_name>.signed.hex` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value            |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/app_test_update.hex`                      | No equivalent                                                                                                                                                     |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/app_moved_test_update.hex`                | No equivalent                                                                                                                                                     |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/net_core_app_update.bin`                  | :file:`signed_by_mcuboot_and_b0_<net_core_app_name>.bin` where ``<net_core_app_name>`` is the name of the network core application                                |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/net_core_app_signed.hex`                  | :file:`signed_by_b0_<net_core_app_name>.hex` where ``<net_core_app_name>`` is the name of the network core application                                            |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/net_core_app_test_update.hex`             | No equivalent                                                                                                                                                     |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/net_core_app_moved_test_update.hex`       | No equivalent                                                                                                                                                     |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/mcuboot_secondary_app_update.bin`         | :file:`mcuboot_secondary_app/zephyr/<kernel_name>.signed.bin` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/mcuboot_secondary_app_signed.hex`         | :file:`mcuboot_secondary_app/zephyr/<kernel_name>.signed.hex` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/matter.ota`                               | :file:`<matter_ota_name>.ota` where ``<matter_ota_name>`` is the value of Kconfig :kconfig:option:`SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME`                          |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/signed_by_b0_s0_image.hex`                | :file:`signed_by_b0_<app_name>.hex` where ``<app_name>`` is the name of the application                                                                           |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/signed_by_b0_s1_image.hex`                | :file:`signed_by_b0_s1_image.hex`                                                                                                                                 |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/signed_by_b0_s0_image.bin`                | :file:`signed_by_b0_<app_name>.bin` where ``<app_name>`` is the name of the application                                                                           |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/signed_by_b0_s1_image.bin`                | :file:`signed_by_b0_s1_image.bin`                                                                                                                                 |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`<net_core_app_name>/zephyr/signed_by_b0_app.hex` | :file:`signed_by_b0_<net_core_app_name>.hex` where ``<net_core_app_name>`` is the name of the network core application                                            |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`<net_core_app_name>/zephyr/signed_by_b0_app.bin` | :file:`signed_by_b0_<net_core_app_name>.bin` where ``<net_core_app_name>`` is the name of the network core application                                            |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/internal_flash.hex`                       | :file:`<app_name>/zephyr/<kernel_name>.internal.hex` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value          |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/internal_flash_signed.hex`                | :file:`<app_name>/zephyr/<kernel_name>.internal.signed.hex` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value   |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/internal_flash_update.bin`                | :file:`<app_name>/zephyr/<kernel_name>.internal.signed.bin` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value   |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/qspi_flash.hex`                           | :file:`<app_name>/zephyr/<kernel_name>.external.hex` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value          |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/qspi_flash_signed.hex`                    | :file:`<app_name>/zephyr/<kernel_name>.external.signed.hex` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value   |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/qspi_flash_update.bin`                    | :file:`<app_name>/zephyr/<kernel_name>.external.signed.bin` where ``<kernel_name>`` is the application's Kconfig :kconfig:option:`CONFIG_KERNEL_BIN_NAME` value   |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/merged.hex`                               | :file:`merged.hex`                                                                                                                                                |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`<net_core_app_name>/zephyr/merged_CPUNET.hex`    | :file:`merged_CPUNET.hex`                                                                                                                                         |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/merged_domains.hex`                       | No equivalent, use :file:`merged.hex` for application core and :file:`merged_CPUNET.hex` for network core                                                         |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/dfu_multi_image.bin`                      | :file:`dfu_multi_image.bin`                                                                                                                                       |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/dfu_application.zip`                      | :file:`dfu_application.zip`                                                                                                                                       |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`zephyr/dfu_mcuboot.zip`                          | :file:`dfu_mcuboot.zip`                                                                                                                                           |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Example output files
 ********************
@@ -496,83 +496,83 @@ Provision/container files
 
 The expected output files are the following:
 
-+-----------------------+-------------------------------------------------------+
-| File                  | Description                                           |
-+=======================+=======================================================+
-| ``b0n_container.hex`` | Copy of ``b0n/zephyr/zephyr.hex``                     |
-+-----------------------+-------------------------------------------------------+
-| ``net_provision.hex`` | Provision data for the network core secure boot image |
-+-----------------------+-------------------------------------------------------+
++---------------------------+-------------------------------------------------------+
+| File                      | Description                                           |
++===========================+=======================================================+
+| :file:`b0n_container.hex` | Copy of ``b0n/zephyr/zephyr.hex``                     |
++---------------------------+-------------------------------------------------------+
+| :file:`net_provision.hex` | Provision data for the network core secure boot image |
++---------------------------+-------------------------------------------------------+
 
 Image build files
 =================
 
 The expected output files are the following:
 
-+-----------------------------------------------------+-------------------------------------------------------------------------------------------------------+
-| File                                                | Description                                                                                           |
-+=====================================================+=======================================================================================================+
-| ``matter_weather_station/zephyr/zephyr.hex``        | Unsigned main application HEX file                                                                    |
-+-----------------------------------------------------+-------------------------------------------------------------------------------------------------------+
-| ``matter_weather_station/zephyr/zephyr.bin``        | Unsigned main application binary file                                                                 |
-+-----------------------------------------------------+-------------------------------------------------------------------------------------------------------+
-| ``matter_weather_station/zephyr/zephyr.signed.hex`` | Signed (with MCUboot signing key) main application HEX file                                           |
-+-----------------------------------------------------+-------------------------------------------------------------------------------------------------------+
-| ``mcuboot/zephyr/zephyr.hex``                       | MCUboot HEX file                                                                                      |
-+-----------------------------------------------------+-------------------------------------------------------------------------------------------------------+
-| ``ipc_radio/zephyr/zephyr.hex``                     | Network core IPC radio HEX file                                                                       |
-+-----------------------------------------------------+-------------------------------------------------------------------------------------------------------+
-| ``ipc_radio/zephyr/zephyr.bin``                     | Network core IPC radio binary file                                                                    |
-+-----------------------------------------------------+-------------------------------------------------------------------------------------------------------+
-| ``b0n/zephyr/zephyr.bin``                           | Network core secure bootloader binary file                                                            |
-+-----------------------------------------------------+-------------------------------------------------------------------------------------------------------+
-| ``b0n/zephyr/zephyr.hex``                           | Network core secure bootloader HEX file                                                               |
-+-----------------------------------------------------+-------------------------------------------------------------------------------------------------------+
-| ``signed_by_b0_ipc_radio.hex``                      | Signed (with b0 signing key) network core IPC radio HEX file                                          |
-+-----------------------------------------------------+-------------------------------------------------------------------------------------------------------+
-| ``signed_by_b0_ipc_radio.bin``                      | Signed (with b0 signing key) network core IPC radio binary file                                       |
-+-----------------------------------------------------+-------------------------------------------------------------------------------------------------------+
-| ``signed_by_mcuboot_and_b0_ipc_radio.hex``          | Signed (with b0 and MCUboot signing key) network core IPC radio update from application core HEX file |
-+-----------------------------------------------------+-------------------------------------------------------------------------------------------------------+
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------+
+| File                                                    | Description                                                                                           |
++=========================================================+=======================================================================================================+
+| :file:`matter_weather_station/zephyr/zephyr.hex`        | Unsigned main application HEX file                                                                    |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------+
+| :file:`matter_weather_station/zephyr/zephyr.bin`        | Unsigned main application binary file                                                                 |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------+
+| :file:`matter_weather_station/zephyr/zephyr.signed.hex` | Signed (with MCUboot signing key) main application HEX file                                           |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------+
+| :file:`mcuboot/zephyr/zephyr.hex`                       | MCUboot HEX file                                                                                      |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------+
+| :file:`ipc_radio/zephyr/zephyr.hex`                     | Network core IPC radio HEX file                                                                       |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------+
+| :file:`ipc_radio/zephyr/zephyr.bin`                     | Network core IPC radio binary file                                                                    |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------+
+| :file:`b0n/zephyr/zephyr.bin`                           | Network core secure bootloader binary file                                                            |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------+
+| :file:`b0n/zephyr/zephyr.hex`                           | Network core secure bootloader HEX file                                                               |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------+
+| :file:`signed_by_b0_ipc_radio.hex`                      | Signed (with b0 signing key) network core IPC radio HEX file                                          |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------+
+| :file:`signed_by_b0_ipc_radio.bin`                      | Signed (with b0 signing key) network core IPC radio binary file                                       |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------+
+| :file:`signed_by_mcuboot_and_b0_ipc_radio.hex`          | Signed (with b0 and MCUboot signing key) network core IPC radio update from application core HEX file |
++---------------------------------------------------------+-------------------------------------------------------------------------------------------------------+
 
 Combined files
 ==============
 
 The expected output files are the following:
 
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| File                  | Description                                                                                                                                                           |
-+=======================+=======================================================================================================================================================================+
-| ``merged.hex``        | Merged application core HEX file (contains merged contents of ``mcuboot/zephyr/zephyr.hex`` and ``matter_weather_station/zephyr/zephyr.signed.hex``)                  |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``merged_CPUNET.hex`` | Merged network core HEX file (contains merged contents of ``net_provision.hex``, ``b0n_container.hex``, ``b0n/zephyr/zephyr.hex`` and ``signed_by_b0_ipc_radio.hex``) |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++---------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| File                      | Description                                                                                                                                                                            |
++===========================+========================================================================================================================================================================================+
+| :file:`merged.hex`        | Merged application core HEX file (contains merged contents of :file:`mcuboot/zephyr/zephyr.hex` and :file:`matter_weather_station/zephyr/zephyr.signed.hex`)                           |
++---------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`merged_CPUNET.hex` | Merged network core HEX file (contains merged contents of :file:`net_provision.hex`, :file:`b0n_container.hex`, :file:`b0n/zephyr/zephyr.hex`, and :file:`signed_by_b0_ipc_radio.hex`) |
++---------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Update files
 ============
 
 The expected output files are the following:
 
-+-----------------------------------------------------+----------------------------------------------------------------------------------------------------------+
-| File                                                | Description                                                                                              |
-+=====================================================+==========================================================================================================+
-| ``matter_weather_station/zephyr/zephyr.signed.bin`` | Signed (with MCUboot signing key) main application binary file which can be used directly with MCUmgr    |
-+-----------------------------------------------------+----------------------------------------------------------------------------------------------------------+
-| ``signed_by_mcuboot_and_b0_ipc_radio.bin``          | Signed (with b0 and MCUboot signing key) network core IPC radio update from application core binary file |
-+-----------------------------------------------------+----------------------------------------------------------------------------------------------------------+
-| ``dfu_multi_image.bin``                             | DFU multi image file containing firmware update files and manifest                                       |
-+-----------------------------------------------------+----------------------------------------------------------------------------------------------------------+
-| ``matter.ota``                                      | Matter over-the-air firmware update file                                                                 |
-+-----------------------------------------------------+----------------------------------------------------------------------------------------------------------+
-| ``dfu_application.zip``                             | Zip file containing firmware update files and manifest                                                   |
-+-----------------------------------------------------+----------------------------------------------------------------------------------------------------------+
++---------------------------------------------------------+----------------------------------------------------------------------------------------------------------+
+| File                                                    | Description                                                                                              |
++=========================================================+==========================================================================================================+
+| :file:`matter_weather_station/zephyr/zephyr.signed.bin` | Signed (with MCUboot signing key) main application binary file which can be used directly with MCUmgr    |
++---------------------------------------------------------+----------------------------------------------------------------------------------------------------------+
+| :file:`signed_by_mcuboot_and_b0_ipc_radio.bin`          | Signed (with b0 and MCUboot signing key) network core IPC radio update from application core binary file |
++---------------------------------------------------------+----------------------------------------------------------------------------------------------------------+
+| :file:`dfu_multi_image.bin`                             | DFU multi image file containing firmware update files and manifest                                       |
++---------------------------------------------------------+----------------------------------------------------------------------------------------------------------+
+| :file:`matter.ota`                                      | Matter over-the-air firmware update file                                                                 |
++---------------------------------------------------------+----------------------------------------------------------------------------------------------------------+
+| :file:`dfu_application.zip`                             | Zip file containing firmware update files and manifest                                                   |
++---------------------------------------------------------+----------------------------------------------------------------------------------------------------------+
 
 .. _child_parent_to_sysbuild_migration_image_overlay_changes:
 
 Image overlay configuration
 ***************************
 
-In child/parent image configurations, an application could include additional configuration files in the ``child_image`` folder that would be applied to these images.
+In child/parent image configurations, an application could include additional configuration files in the :file`child_image` folder that would be applied to these images.
 This feature has been adapted in sysbuild; see :ref:`sysbuild_application_configuration` for an overview.
 You must update child/parent image configuration to use it with sysbuild, as the way these files can be used differs:
 
@@ -589,21 +589,21 @@ Example for MCUboot
 The following table shows how to add custom MCUboot configuration for a project.
 The ``sysbuild`` folder must be created in the application's folder:
 
-+--------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
-| File                                                         | Description                                                                                                                               |
-+==============================================================+===========================================================================================================================================+
-| ``sysbuild/mcuboot/prj.conf``                                | Copy of ``boot/zephyr/prj.conf`` from the MCUboot repository, this may have additional changes for this specific application              |
-+--------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
-| ``sysbuild/mcuboot/prj_release.conf``                        | Modification of prj.conf with changes for a release configuration (can be selected using ``-DFILE_SUFFIX=release``)                       |
-+--------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
-| ``sysbuild/mcuboot/app.overlay``                             | Copy of ``boot/zephyr/app.overlay`` from the MCUboot repository                                                                           |
-+--------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
-| ``sysbuild/mcuboot/boards/nrf52840dk_nrf52840.conf``         | Kconfig fragment for the ``nrf52840dk/nrf52840`` board target                                                                             |
-+--------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
-| ``sysbuild/mcuboot/boards/nrf52840dk_nrf52840.overlay``      | DTS overlay for the ``nrf52840dk/nrf52840`` board target, note: used **instead** of app.overlay, not with as child/parent used to do      |
-+--------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
-| ``sysbuild/mcuboot/boards/nrf9160dk_nrf9160_0_14_0.overlay`` | DTS overlay for the ``nrf9160dk@0.14.0/nrf9160`` board target, note: used **instead** of app.overlay, not with as child/parent used to do |
-+--------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
++------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| File                                                             | Description                                                                                                                               |
++==================================================================+===========================================================================================================================================+
+| :file:`sysbuild/mcuboot/prj.conf`                                | Copy of :file:`boot/zephyr/prj.conf` from the MCUboot repository, this may have additional changes for this specific application          |
++------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`sysbuild/mcuboot/prj_release.conf`                        | Modification of prj.conf with changes for a release configuration (can be selected using ``-DFILE_SUFFIX=release``)                       |
++------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`sysbuild/mcuboot/app.overlay`                             | Copy of :file:`boot/zephyr/app.overlay` from the MCUboot repository                                                                       |
++------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`sysbuild/mcuboot/boards/nrf52840dk_nrf52840.conf`         | Kconfig fragment for the ``nrf52840dk/nrf52840`` board target                                                                             |
++------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`sysbuild/mcuboot/boards/nrf52840dk_nrf52840.overlay`      | DTS overlay for the ``nrf52840dk/nrf52840`` board target, note: used **instead** of app.overlay, not with as child/parent used to do      |
++------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| :file:`sysbuild/mcuboot/boards/nrf9160dk_nrf9160_0_14_0.overlay` | DTS overlay for the ``nrf9160dk@0.14.0/nrf9160`` board target, note: used **instead** of app.overlay, not with as child/parent used to do |
++------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
 
 .. _child_parent_to_sysbuild_migration_scope_changes:
 

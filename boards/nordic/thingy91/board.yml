@@ -1,5 +1,6 @@
 board:
   name: thingy91
+  full_name: "Thingy:91"
   vendor: nordic
   socs:
     - name: nrf52840

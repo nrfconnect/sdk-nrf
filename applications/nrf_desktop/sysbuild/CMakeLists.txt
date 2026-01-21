@@ -22,6 +22,10 @@ set(ipc_radio_APPLICATION_CONFIG_DIR
     "${CMAKE_CURRENT_LIST_DIR}/../configuration/\${NORMALIZED_BOARD_TARGET}/images/ipc_radio"
     CACHE INTERNAL "Application configuration dir controlled by sysbuild"
 )
+set(uicr_APPLICATION_CONFIG_DIR
+    "${CMAKE_CURRENT_LIST_DIR}/../configuration/\${NORMALIZED_BOARD_TARGET}/images/uicr"
+    CACHE INTERNAL "Application configuration dir controlled by sysbuild"
+)
 
 find_package(Sysbuild REQUIRED HINTS $ENV{ZEPHYR_BASE})
 

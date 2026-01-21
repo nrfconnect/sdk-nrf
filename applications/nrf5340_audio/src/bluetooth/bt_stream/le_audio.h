@@ -4,6 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup audio_app_bt_stream LE Audio helper functions
+ * @{
+ * @brief LE Audio helper functions for Audio applications.
+ *
+ * This module provides the core LE Audio helper functions for both unicast (CIS)
+ * and broadcast (BIS) modes.
+ */
+
 #ifndef _LE_AUDIO_H_
 #define _LE_AUDIO_H_
 
@@ -12,7 +21,7 @@
 #include <audio_defines.h>
 
 #define LE_AUDIO_ZBUS_EVENT_WAIT_TIME	  K_MSEC(5)
-#define LE_AUDIO_SDU_SIZE_OCTETS(bitrate) (bitrate / (1000000 / CONFIG_AUDIO_FRAME_DURATION_US) / 8)
+#define LE_AUDIO_SDU_SIZE_OCTETS(bitrate, dur_us) (bitrate / (1000000 / dur_us) / 8)
 
 #if CONFIG_SAMPLE_RATE_CONVERTER && CONFIG_AUDIO_SAMPLE_RATE_48000_HZ
 #define BT_AUDIO_CODEC_CAPABILIY_FREQ                                                              \
@@ -32,12 +41,16 @@
 #error No sample rate supported
 #endif /* CONFIG_SAMPLE_RATE_CONVERTER */
 
+/** Configure LC3 codec preset with customizable parameters for LE Audio streams
+ *  using location, stream context, and bitrate parameters.
+ */
 #define BT_BAP_LC3_PRESET_CONFIGURABLE(_loc, _stream_context, _bitrate)                            \
-	BT_BAP_LC3_PRESET(BT_AUDIO_CODEC_LC3_CONFIG(CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE,        \
+	BT_BAP_LC3_PRESET(BT_AUDIO_CODEC_LC3_CONFIG(CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE,   \
 						    BT_AUDIO_CODEC_CFG_DURATION_10, _loc,          \
-						    LE_AUDIO_SDU_SIZE_OCTETS(_bitrate), 1,         \
+						    LE_AUDIO_SDU_SIZE_OCTETS(_bitrate, 10000), 1,  \
 						    _stream_context),                              \
-			  BT_BAP_QOS_CFG_UNFRAMED(10000u, LE_AUDIO_SDU_SIZE_OCTETS(_bitrate),      \
+			  BT_BAP_QOS_CFG_UNFRAMED(10000u,                                          \
+						  LE_AUDIO_SDU_SIZE_OCTETS(_bitrate, 10000),       \
 						  CONFIG_BT_AUDIO_RETRANSMITS,                     \
 						  CONFIG_BT_AUDIO_MAX_TRANSPORT_LATENCY_MS,        \
 						  CONFIG_BT_AUDIO_PRESENTATION_DELAY_US))
@@ -47,27 +60,39 @@
  *
  * @param	audio_frame	Pointer to audio buffer.
  * @param	meta		Pointer to audio metadata.
- * @param	channel_index	Audio channel index.
+ * @param	location_index	Audio location index.
  */
 typedef void (*le_audio_receive_cb)(struct net_buf *audio_frame, struct audio_metadata *meta,
-				    uint8_t channel_index);
+				    uint8_t location_index);
 
+/**
+ * @brief Stream index structure for identifying audio streams.
+ *
+ * This structure provides a hierarchical index for identifying audio streams
+ * in both unicast (CIS) and broadcast (BIS) modes.
+ */
 struct stream_index {
-	uint8_t lvl1; /* BIG / CIG */
-	uint8_t lvl2; /* Subgroups (only applicable to Broadcast) */
-	uint8_t lvl3; /* BIS / CIS */
+	/** Level 1: BIG (Broadcast Isochronous Group) or CIG (Connected Isochronous Group) */
+	uint8_t lvl1;
+	/** Level 2: Subgroups (only applicable to Broadcast) */
+	uint8_t lvl2;
+	/** Level 3: BIS (Broadcast Isochronous Stream) or CIS (Connected Isochronous Stream) */
+	uint8_t lvl3;
 };
 
 /**
  * @brief	Get the number of active streams.
  *
- * @note	This function returns the number of streams that are currently active.
+ * @note	This function returns the number of streams and locations that are currently active.
  *		An active stream is one that has been set up and is ready to receive data.
  *		This function is used by broadcast_sink, unicast_server and unicast_client.
  *
- * @return	Number of active BIS, or negative error code on failure.
+ * @param[out]	num_streams	Pointer to the number of active streams.
+ * @param[out]	locations	Pointer to the bitmask of active locations.
+ *
+ * @return	0 for success, error otherwise.
  */
-int le_audio_concurrent_sync_num_get(void);
+int le_audio_concurrent_sync_num_get(uint8_t *num_streams, enum bt_audio_location *locations);
 
 /**
  * @brief Function to populate the audio metadata.
@@ -208,5 +233,9 @@ bool le_audio_freq_check(const struct bt_audio_codec_cfg *codec);
  * @param[in]	dir	Direction to print the codec configuration for.
  */
 void le_audio_print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_dir dir);
+
+/**
+ * @}
+ */
 
 #endif /* _LE_AUDIO_H_ */
