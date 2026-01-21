@@ -24,6 +24,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <psa/crypto.h>
 
 /** @brief Sign a message using an identity key.
  *
@@ -74,6 +75,11 @@ int cracen_ikg_sign_digest(int identity_key_index, const struct sxhashalg *hasha
  * @retval Other SX status codes from @ref cracen_status_codes on internal errors.
  */
 int cracen_ikg_create_pub_key(int identity_key_index, uint8_t *pub_key);
+
+psa_status_t cracen_ikg_get_builtin_key(psa_drv_slot_number_t slot_number,
+					psa_key_attributes_t *attributes,
+					uint8_t *key_buffer, size_t key_buffer_size,
+					size_t *key_buffer_length);
 
 /** @} */
 
