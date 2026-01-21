@@ -268,6 +268,10 @@ nRF Desktop
   * A workaround for the USB next stack race issue where the application could try to submit HID reports while the USB is being disabled after USB cable has been unplugged, which results in an error.
     The workaround is applied when the :option:`CONFIG_DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL` Kconfig option is enabled.
   * Support for the ``nrf54lv10dk/nrf54lv10a/cpuapp`` board target.
+  * Application-specific Kconfig options that simplify using SEGGER J-Link RTT (:option:`CONFIG_DESKTOP_LOG_RTT`) or UART (:option:`CONFIG_DESKTOP_LOG_UART`) as logging backend used by the application (:option:`CONFIG_DESKTOP_LOG`).
+    The :kconfig:option:`CONFIG_LOG_BACKEND_UART` and :kconfig:option:`CONFIG_LOG_BACKEND_RTT` Kconfig options are no longer enabled by default if nRF Desktop logging (:option:`CONFIG_DESKTOP_LOG`) is enabled.
+    These options are controlled through the newly introduced nRF Desktop application-specific Kconfig options.
+    The application still uses SEGGER J-Link RTT as the default logging backend.
 
 * Updated:
 
@@ -277,6 +281,12 @@ nRF Desktop
   * The default log levels used by the legacy USB stack (:option:`CONFIG_DESKTOP_USB_STACK_LEGACY`) to enable error logs (:kconfig:option:`CONFIG_USB_DEVICE_LOG_LEVEL_ERR`, :kconfig:option:`CONFIG_USB_DRIVER_LOG_LEVEL_ERR`).
     Previously, the legacy USB stack logs were turned off.
     This change ensures visibility of runtime issues.
+
+* Removed the application-specific Kconfig option (``CONFIG_DESKTOP_RTT``) that enabled RTT for nRF Desktop logging (:option:`CONFIG_DESKTOP_LOG`) or nRF Desktop shell (:option:`CONFIG_DESKTOP_SHELL`).
+  nRF Desktop shell automatically enables RTT by default (:kconfig:option:`CONFIG_USE_SEGGER_RTT`).
+  You can use the newly introduced application-specific Kconfig option :option:`CONFIG_DESKTOP_LOG_RTT` for nRF Desktop RTT logging configuration.
+  By default, this option makes the RTT log backend block the message until it is transferred to host (:kconfig:option:`CONFIG_LOG_BACKEND_RTT_MODE_BLOCK`) instead of dropping messages that do not fit in up-buffer (:kconfig:option:`CONFIG_LOG_BACKEND_RTT_MODE_DROP`).
+  This is done to prevent dropping the newest logs.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
