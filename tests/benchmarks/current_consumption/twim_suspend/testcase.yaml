@@ -33,6 +33,7 @@ tests:
       - ppk_power_measure
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
