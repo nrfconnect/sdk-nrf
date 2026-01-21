@@ -14,7 +14,6 @@ list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa.c
   ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_helpers.c
   ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_keygen.c
-  ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rndinrange.c
 )
 
 if(BUILD_INSIDE_TFM)
@@ -66,7 +65,6 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_keygen.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_eddsa_ed25519.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_eddsa_ed448.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rndinrange.c
   )
 endif()
 
@@ -108,7 +106,6 @@ if(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KMU_DR
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_management.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecdsa.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_keygen.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rndinrange.c
   )
 endif()
 
