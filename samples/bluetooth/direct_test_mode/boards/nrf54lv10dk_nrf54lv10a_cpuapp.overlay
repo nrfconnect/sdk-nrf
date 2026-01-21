@@ -6,11 +6,11 @@
 
 / {
 	chosen {
-		ncs,dtm-uart = &uart20;
+		ncs,dtm-uart = &uart30;
 	};
 };
 
-&uart20 {
+&uart30 {
 	status = "okay";
 	current-speed = <19200>;
 };
