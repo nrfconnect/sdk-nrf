@@ -12,6 +12,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <silexpk/core.h>
+#include <silexpk/sxbuf/sxbufop.h>
+#include <silexpk/sxops/rsa.h>
 
 /* Size of the workmem of the MGF1XOR function. */
 #define MGF1XOR_WORKMEM_SZ(digestsz) ((digestsz) + 4)

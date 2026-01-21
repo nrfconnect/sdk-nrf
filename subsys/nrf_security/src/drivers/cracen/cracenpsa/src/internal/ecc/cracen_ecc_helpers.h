@@ -67,6 +67,10 @@ static inline size_t cracen_ecc_wstr_expected_pub_key_bytes(size_t priv_key_size
 	return (1 + (2 * priv_key_size));
 }
 
+psa_status_t check_wstr_pub_key_data(psa_algorithm_t key_alg, psa_ecc_family_t curve,
+					    size_t key_bits, const uint8_t *data,
+					    size_t data_length);
+
 /*!
  * \brief Check ECC public key for validity based on the 800-56A.
  *

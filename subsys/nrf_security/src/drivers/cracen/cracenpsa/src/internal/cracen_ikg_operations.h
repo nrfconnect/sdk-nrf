@@ -18,12 +18,13 @@
  * the CRACEN hardware's Internal Key Generation (IKG) feature.
  */
 
-#ifndef CRACEN_IKG_H
-#define CRACEN_IKG_H
+#ifndef CRACEN_IKG_OPERATIONS_H
+#define CRACEN_IKG_OPERATIONS_H
 
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <psa/crypto.h>
 
 /** @brief Sign a message using an identity key.
  *
@@ -77,4 +78,4 @@ int cracen_ikg_create_pub_key(int identity_key_index, uint8_t *pub_key);
 
 /** @} */
 
-#endif /* CRACEN_IKG_H */
+#endif /* CRACEN_IKG_OPERATIONS_H */

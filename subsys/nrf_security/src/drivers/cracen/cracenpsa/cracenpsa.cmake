@@ -14,6 +14,7 @@ list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa.c
   ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_helpers.c
   ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_keygen.c
+  ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_key_management.c
 )
 
 if(BUILD_INSIDE_TFM)
@@ -38,7 +39,7 @@ endif()
 
 if(CONFIG_CRACEN_IKG)
   list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_ikg.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_ikg_operations.c
   )
 endif()
 
@@ -63,6 +64,7 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_sign_verify.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecdsa.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_keygen.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_key_management.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_eddsa_ed25519.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_eddsa_ed448.c
   )
@@ -103,9 +105,15 @@ endif()
 
 if(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KMU_DRIVER OR CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
   list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_ikg.c
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_management.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/rsa/cracen_rsa_key_management.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/pake/cracen_wpa3_key_management.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/pake/cracen_spake2p_key_management.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/pake/cracen_srp_key_management.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecdsa.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_keygen.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_key_management.c
   )
 endif()
 

@@ -25,7 +25,7 @@
 #include "internal/ecc/cracen_ecc_helpers.h"
 #include "internal/ecc/cracen_ecdsa.h"
 #include "internal/ecc/cracen_eddsa.h"
-#include "internal/cracen_ikg.h"
+#include "internal/cracen_ikg_operations.h"
 #include "internal/rsa/cracen_rsa_common.h"
 #include "internal/rsa/cracen_rsa_signature_pss.h"
 #include "internal/rsa/cracen_rsa_signature_pkcs1v15.h"
