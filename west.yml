@@ -94,6 +94,7 @@ manifest:
           - hostap
           - liblc3
           - libmetal
+          - libsbc
           - littlefs
           - loramac-node
           - lvgl
