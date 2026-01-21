@@ -26,7 +26,7 @@
 #include <hal/nrf_egu.h>
 #include <hal/nrf_radio.h>
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF2)
+#if defined(CONFIG_CLOCK_CONTROL_NRFS)
 #include <hal/nrf_lrcconf.h>
 #endif
 
@@ -718,23 +718,35 @@ static void anomaly_timer_handler(nrf_timer_event_t event_type, void *context);
 static void dtm_timer_handler(nrf_timer_event_t event_type, void *context);
 static void radio_handler(const void *context);
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
+#if defined(CONFIG_CLOCK_CONTROL_NRFX)
 static int clock_init(void)
 {
 	int err;
 	int res;
-	struct onoff_manager *clk_mgr;
 	struct onoff_client clk_cli;
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
+	struct onoff_manager *clk_mgr;
 
 	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
 	if (!clk_mgr) {
+#else
+	const struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
+							(nordic_nrf_clock_hfclk),
+							(nordic_nrf_clock_xo)));
+
+	if (!dev) {
+#endif
 		printk("Unable to get the Clock manager\n");
 		return -ENXIO;
 	}
 
 	sys_notify_init_spinwait(&clk_cli.notify);
 
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	err = onoff_request(clk_mgr, &clk_cli);
+#else
+	err = nrf_clock_control_request(dev, NULL, &clk_cli);
+#endif
 	if (err < 0) {
 		printk("Clock request failed: %d\n", err);
 		return err;
@@ -761,7 +773,7 @@ static int clock_init(void)
 	return err;
 }
 
-#elif defined(CONFIG_CLOCK_CONTROL_NRF2)
+#elif defined(CONFIG_CLOCK_CONTROL_NRFS)
 
 int clock_init(void)
 {
@@ -791,7 +803,7 @@ int clock_init(void)
 
 #else
 BUILD_ASSERT(false, "No Clock Control driver");
-#endif /* defined(CONFIG_CLOCK_CONTROL_NRF2) */
+#endif /* defined(CONFIG_CLOCK_CONTROL_NRFS) */
 
 static int timer_init(void)
 {

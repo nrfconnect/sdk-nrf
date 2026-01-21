@@ -12,7 +12,7 @@
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/kernel.h>
 #include <zephyr/shell/shell.h>
-#include <nrfx_clock.h>
+#include <nrfx_clock_hfclkaudio.h>
 #include <contin_array.h>
 #include <tone.h>
 #include <pcm_mix.h>
