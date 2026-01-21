@@ -300,6 +300,8 @@ nRF Desktop
   * The default log levels used by the legacy USB stack (:option:`CONFIG_DESKTOP_USB_STACK_LEGACY`) to enable error logs (:kconfig:option:`CONFIG_USB_DEVICE_LOG_LEVEL_ERR`, :kconfig:option:`CONFIG_USB_DRIVER_LOG_LEVEL_ERR`).
     Previously, the legacy USB stack logs were turned off.
     This change ensures visibility of runtime issues.
+  * Application configurations that emit debug logs over UART to use the :option:`CONFIG_DESKTOP_LOG_UART` Kconfig option instead of explicitly configuring the logger.
+    This is done to simplify the configurations.
 
 * Removed the application-specific Kconfig option (``CONFIG_DESKTOP_RTT``) that enabled RTT for nRF Desktop logging (:option:`CONFIG_DESKTOP_LOG`) or nRF Desktop shell (:option:`CONFIG_DESKTOP_SHELL`).
   nRF Desktop shell automatically enables RTT by default (:kconfig:option:`CONFIG_USE_SEGGER_RTT`).
