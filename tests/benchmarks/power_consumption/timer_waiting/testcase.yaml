@@ -19,9 +19,10 @@ tests:
   benchmarks.power_consumption.timer_waiting_16M_nrf54l:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    platform_allow:
+    platform_allow: &54l_platforms
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54l_16M.overlay"
@@ -29,10 +30,7 @@ tests:
   benchmarks.power_consumption.timer_waiting_16M_nrf54l.lfrc:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
+    platform_allow: *54l_platforms
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54l_16M.overlay"
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
@@ -49,20 +47,14 @@ tests:
   benchmarks.power_consumption.timer_waiting_32M_nrf54l:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
+    platform_allow: *54l_platforms
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="boards/nrf54l_32M.overlay"
 
   benchmarks.power_consumption.timer_waiting_128M_nrf54l:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
+    platform_allow: *54l_platforms
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="boards/nrf54l_128M.overlay"
 
