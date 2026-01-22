@@ -5,9 +5,9 @@
  */
 
 #include <cracen/common.h>
-#include "internal/ecc/cracen_ecc_helpers.h"
-#include "internal/ecdh/cracen_ecdh_weierstrass.h"
-#include "internal/ecdh/cracen_ecdh_montgomery.h"
+#include <internal/ecc/cracen_ecc_helpers.h>
+#include <internal/ecdh/cracen_ecdh_weierstrass.h>
+#include <internal/ecdh/cracen_ecdh_montgomery.h>
 #include "cracen_psa_mac_kdf.h"
 #include "cracen_psa_primitives.h"
 #include <cracen/ec_helpers.h>

@@ -10,11 +10,11 @@
 #include <cracen_psa.h>
 #include <cracen_psa_ctr_drbg.h>
 #include <cracen_psa_ikg.h>
-#include "internal/ecc/cracen_ecc_key_management.h"
-#include "internal/rsa/cracen_rsa_key_management.h"
-#include "internal/pake/cracen_wpa3_key_management.h"
-#include "internal/pake/cracen_spake2p_key_management.h"
-#include "internal/pake/cracen_srp_key_management.h"
+#include <internal/ecc/cracen_ecc_key_management.h>
+#include <internal/rsa/cracen_rsa_key_management.h>
+#include <internal/pake/cracen_wpa3_key_management.h>
+#include <internal/pake/cracen_spake2p_key_management.h>
+#include <internal/pake/cracen_srp_key_management.h>
 #include <cracen_psa_builtin_key_policy.h>
 #include <nrf_security_mutexes.h>
 #include <stddef.h>

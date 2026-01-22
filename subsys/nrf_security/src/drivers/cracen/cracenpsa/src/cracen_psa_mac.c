@@ -11,8 +11,8 @@
 #include <cracen/common.h>
 #include <cracen/mem_helpers.h>
 #include "cracen_psa_primitives.h"
-#include "internal/mac/cracen_mac_cmac.h"
-#include "internal/mac/cracen_mac_hmac.h"
+#include <internal/mac/cracen_mac_cmac.h>
+#include <internal/mac/cracen_mac_hmac.h>
 
 static psa_status_t setup(cracen_mac_operation_t *operation, const psa_key_attributes_t *attributes,
 			  const uint8_t *key_buffer, size_t key_buffer_size, psa_algorithm_t alg)
