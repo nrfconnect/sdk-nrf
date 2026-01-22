@@ -352,6 +352,7 @@ tests:
       - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
       - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_MULTITHREADING=y
+      - mcuboot_CONFIG_NCS_MCUBOOT_UUID_CID_IMAGE_0_SECONDARY_VALUE="nRF54H20_sample_app_secondary"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
@@ -380,6 +381,7 @@ tests:
       - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
       - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_MULTITHREADING=y
+      - mcuboot_CONFIG_NCS_MCUBOOT_UUID_CID_IMAGE_0_SECONDARY_VALUE="nRF54H20_sample_app_secondary"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:

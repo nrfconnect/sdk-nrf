@@ -141,7 +141,11 @@ function(zephyr_mcuboot_tasks)
   endif()
 
   if(CONFIG_MCUBOOT_IMGTOOL_UUID_CID)
-    set(imgtool_extra ${imgtool_extra} --cid "${CONFIG_MCUBOOT_IMGTOOL_UUID_CID_NAME}")
+    if(CONFIG_MCUBOOT_IMGTOOL_UUID_SLOTTED_CID AND CONFIG_NCS_IS_VARIANT_IMAGE)
+      set(imgtool_extra ${imgtool_extra} --cid "${CONFIG_MCUBOOT_IMGTOOL_UUID_CID_SECONDARY_NAME}")
+    else()
+      set(imgtool_extra ${imgtool_extra} --cid "${CONFIG_MCUBOOT_IMGTOOL_UUID_CID_NAME}")
+    endif()
   endif()
 
   if(CONFIG_NCS_MCUBOOT_IMGTOOL_APPEND_MANIFEST)
