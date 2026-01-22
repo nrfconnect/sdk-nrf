@@ -1,0 +1,32 @@
+/ {
+	aliases {
+		led = &led0;
+		/delete-property/ led1;
+		out0 = &output0;
+		in0 = &input0;
+	};
+	outputs {
+		compatible = "gpio-leds";
+
+		output0: output_0 {
+			gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+			label = "GPIO output 0";
+		};
+	};
+
+	inputs {
+		compatible = "gpio-keys";
+
+		input0: input_0 {
+			gpios = <&gpio1 21 (GPIO_ACTIVE_HIGH)>;
+			label = "GPIO input 0";
+		};
+	};
+};
+
+/delete-node/ &led1;
+
+&gpiote20 {
+	status = "okay";
+	owned-channels = <0>;
+};
