@@ -28,7 +28,7 @@
 	};
 };
 
-/ {
+&cpuapp_sram {
 	/*
 	 * Default SRAM planning when building for nRF54LV10 with ARM TrustZone-M support.
 	 * - Lowest 72 kB SRAM allocated to Secure image (sram0_s).
@@ -40,20 +40,14 @@
 	 * header flash_layout.h of the relevant platform. Any updates in the layout
 	 * needs to happen both in the flash_layout.h and in this file at the same time.
 	 */
-	reserved-memory {
-		#address-cells = <1>;
-		#size-cells = <1>;
-		ranges;
+	sram0_s: sram@0 {
+		/* Secure image memory */
+		reg = <0x0 DT_SIZE_K(72)>;
+	};
 
-		sram0_s: image_s@20000000 {
-			/* Secure image memory */
-			reg = <0x20000000 DT_SIZE_K(72)>;
-		};
-
-		sram0_ns: image_ns@20012000 {
-			/* Non-Secure image memory */
-			reg = <0x20012000 DT_SIZE_K(72)>;
-		};
+	sram0_ns: sram@12000 {
+		/* Non-Secure image memory */
+		reg = <0x12000 DT_SIZE_K(72)>;
 	};
 };
 
@@ -62,6 +56,7 @@
 		compatible = "fixed-partitions";
 		#address-cells = <1>;
 		#size-cells = <1>;
+		ranges;
 
 		/* nRF54LV10 has 1012 kB of non volatile memory (RRAM) but the
 		 * last 64kB are reserved for the FLPR MCU.
