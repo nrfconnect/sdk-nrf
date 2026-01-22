@@ -4,7 +4,7 @@
  */
 
 /dts-v1/;
-#include <nordic/nrf5340_cpuappns_qkaa.dtsi>
+#include <arm/nordic/nrf5340_cpuapp_ns_qkaa.dtsi>
 #include "thingy91x_nrf5340_cpuapp_common.dtsi"
 
 / {
