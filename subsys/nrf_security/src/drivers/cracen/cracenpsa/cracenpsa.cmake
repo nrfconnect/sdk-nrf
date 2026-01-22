@@ -10,6 +10,10 @@ list(APPEND cracen_driver_include_dirs
   ${CMAKE_CURRENT_LIST_DIR}/include
 )
 
+list(APPEND cracen_driver_internal_include_dirs
+  ${CMAKE_CURRENT_LIST_DIR}/src
+)
+
 list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa.c
   ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_helpers.c
@@ -129,25 +133,25 @@ endif()
 if(CONFIG_PSA_NEED_CRACEN_PAKE_DRIVER)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_pake.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_spake2p.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/pake/cracen_psa_spake2p.c
   )
 endif()
 
 if(CONFIG_PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256)
   list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_jpake.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/pake/cracen_psa_jpake.c
   )
 endif()
 
 if(CONFIG_PSA_NEED_CRACEN_SRP_6)
   list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_srp.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/pake/cracen_psa_srp.c
   )
 endif()
 
 if(CONFIG_PSA_NEED_CRACEN_WPA3_SAE)
   list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_wpa3_sae.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/pake/cracen_psa_wpa3_sae.c
   )
 endif()
 
