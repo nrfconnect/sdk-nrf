@@ -70,6 +70,7 @@ tests:
     extra_args:
       - EXTRA_CONF_FILE="overlay-serial.conf"
       - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
+      - FILE_SUFFIX=direct_xip
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
