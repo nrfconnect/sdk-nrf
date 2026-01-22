@@ -28,6 +28,11 @@ add_library(cracen_psa_driver STATIC
   ${cracen_driver_sources}
 )
 
+target_include_directories(cracen_psa_driver
+  PRIVATE
+    ${cracen_driver_internal_include_dirs}
+)
+
 # The CRACEN sources have not been written to comply with this gcc
 # warning
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU")

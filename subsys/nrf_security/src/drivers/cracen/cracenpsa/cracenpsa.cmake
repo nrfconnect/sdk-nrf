@@ -10,6 +10,10 @@ list(APPEND cracen_driver_include_dirs
   ${CMAKE_CURRENT_LIST_DIR}/include
 )
 
+list(APPEND cracen_driver_internal_include_dirs
+  ${CMAKE_CURRENT_LIST_DIR}/src
+)
+
 list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa.c
   ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_helpers.c
