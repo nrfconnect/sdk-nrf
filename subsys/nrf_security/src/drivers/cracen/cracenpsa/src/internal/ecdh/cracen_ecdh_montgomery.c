@@ -12,7 +12,7 @@
 #include <silexpk/sxbuf/sxbufop.h>
 #include <silexpk/montgomery.h>
 #include <silexpk/ec_curves.h>
-#include "../ecc/cracen_ecc_helpers.h"
+#include <internal/ecc/cracen_ecc_helpers.h>
 
 psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *curve,
 					     const uint8_t *priv_key, size_t priv_key_size,

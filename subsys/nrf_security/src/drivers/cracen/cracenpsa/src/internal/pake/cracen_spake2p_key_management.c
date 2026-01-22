@@ -13,8 +13,8 @@
 #include <cracen_psa.h>
 #include <cracen/common.h>
 
-#include "../ecc/cracen_ecc_helpers.h"
-#include "../ecc/cracen_ecc_keygen.h"
+#include <internal/ecc/cracen_ecc_helpers.h>
+#include <internal/ecc/cracen_ecc_keygen.h>
 
 psa_status_t import_spake2p_key(const psa_key_attributes_t *attributes, const uint8_t *data,
 				size_t data_length, uint8_t *key_buffer,

@@ -16,7 +16,7 @@
 #include <cracen_psa.h>
 #include <cracen/common.h>
 
-#include "../ecc/cracen_ecc_helpers.h"
+#include <internal/ecc/cracen_ecc_helpers.h>
 
 static psa_status_t cracen_hkdf_sha256_hmac(const uint8_t *seed,
 					    const uint8_t *label,

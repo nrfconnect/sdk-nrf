@@ -18,7 +18,7 @@
 #include "cracen_montgomery.h"
 #include "cracen_eddsa.h"
 
-#include "../cracen_ikg_operations.h"
+#include <internal/cracen_ikg_operations.h>
 
 #define DEFAULT_KEY_SIZE(bits) (bits), PSA_BITS_TO_BYTES(bits), (1 + 2 * PSA_BITS_TO_BYTES(bits))
 static struct {
