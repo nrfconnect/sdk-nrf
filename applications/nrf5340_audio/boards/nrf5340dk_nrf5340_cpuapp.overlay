@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- #include <dt-bindings/usb/audio.h>
+#include <dt-bindings/usb/audio.h>
 
 / {
 	audioleds: audioleds {
