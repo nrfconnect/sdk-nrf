@@ -16,9 +16,9 @@
 #include <silexpk/blinding.h>
 #include <string.h>
 
-#include "internal/cracen_ikg_operations.h"
-#include "internal/ecc/cracen_ecc_signature.h"
-#include "internal/rsa/cracen_rsa_signature.h"
+#include <internal/cracen_ikg_operations.h>
+#include <internal/ecc/cracen_ecc_signature.h>
+#include <internal/rsa/cracen_rsa_signature.h>
 
 #define CRACEN_IS_MESSAGE      (1)
 #define CRACEN_IS_HASH	       (0)

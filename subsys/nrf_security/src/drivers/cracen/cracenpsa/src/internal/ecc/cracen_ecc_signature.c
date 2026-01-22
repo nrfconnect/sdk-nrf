@@ -19,7 +19,7 @@
 #include "cracen_ecdsa.h"
 #include "cracen_eddsa.h"
 #include "cracen_ecc_keygen.h"
-#include "internal/cracen_ikg_operations.h"
+#include <internal/cracen_ikg_operations.h>
 
 static psa_status_t handle_eddsa_sign(bool is_message, const psa_key_attributes_t *attributes,
 				      const uint8_t *key_buffer, psa_algorithm_t alg,

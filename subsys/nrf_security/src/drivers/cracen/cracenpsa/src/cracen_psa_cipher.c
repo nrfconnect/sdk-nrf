@@ -23,8 +23,8 @@
 
 #include "cracen_psa_primitives.h"
 
-#include "internal/aes/cracen_aes_ecb.h"
-#include "internal/aes/cracen_aes_cbc.h"
+#include <internal/aes/cracen_aes_ecb.h>
+#include <internal/aes/cracen_aes_cbc.h>
 
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 #include <cracen_sw_aes_ctr.h>

@@ -11,8 +11,8 @@
 #include <psa/crypto_values.h>
 #include <cracen/statuscodes.h>
 #include <silexpk/blinding.h>
-#include "internal/rsa/cracen_rsa_common.h"
-#include "internal/rsa/cracen_rsa_encryption.h"
+#include <internal/rsa/cracen_rsa_common.h>
+#include <internal/rsa/cracen_rsa_encryption.h>
 
 static bool is_alg_supported(psa_algorithm_t alg)
 {
