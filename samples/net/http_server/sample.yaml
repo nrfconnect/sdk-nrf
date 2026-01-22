@@ -87,6 +87,35 @@ tests:
     tags:
       - ci_build
       - ci_samples_net
+  sample.net.http_server.nrf54h20.wifi:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    extra_args:
+      - http_server_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+      - http_server_SNIPPET=nrf70-wifi
+  sample.net.http_server.nrf54h20.wifi.tls:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    extra_args:
+      - http_server_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+      - http_server_SNIPPET=nrf70-wifi
+      - http_server_EXTRA_CONF_FILE=overlay-tls-nrf54h-nrf70.conf
   sample.net.http_server.nrf54l15_nrf7002eb2.wifi:
     sysbuild: true
     build_only: true

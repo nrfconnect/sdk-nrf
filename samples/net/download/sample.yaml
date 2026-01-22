@@ -63,6 +63,20 @@ tests:
     extra_args:
       - download_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
       - download_SNIPPET=nrf70-wifi
+  sample.net.downloader.nrf54h20.wifi:
+    sysbuild: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    build_only: true
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - download_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+      - download_SNIPPET=nrf70-wifi
   sample.net.downloader.nrf54l15_nrf7002eb2.wifi:
     sysbuild: true
     tags:
