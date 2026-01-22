@@ -5,6 +5,6 @@
 #
 
 config PARTITION_MANAGER
-	default n if !SOC_SERIES_NRF91X && !SOC_SERIES_NRF53X
+	default n if !SOC_SERIES_NRF91 && !SOC_SERIES_NRF53
 
 source "share/sysbuild/Kconfig"

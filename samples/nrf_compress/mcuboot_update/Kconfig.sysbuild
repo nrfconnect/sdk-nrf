@@ -5,6 +5,6 @@
 #
 
 config PARTITION_MANAGER
-	default n if SOC_SERIES_NRF52X || SOC_NRF54L15 || SOC_NRF54LM20A || SOC_NRF54LV10A
+	default n if SOC_SERIES_NRF52 || SOC_NRF54L15 || SOC_NRF54LM20A || SOC_NRF54LV10A
 
 source "share/sysbuild/Kconfig"
