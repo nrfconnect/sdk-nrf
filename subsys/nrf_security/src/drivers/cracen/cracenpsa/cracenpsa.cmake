@@ -27,6 +27,8 @@ endif()
 # nRF54LM20A uses only cracen_sw
 if(NOT CONFIG_PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
   list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/aes/cracen_aes_ecb.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/aes/cracen_aes_cbc.c
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_cipher.c
   )
 endif()
