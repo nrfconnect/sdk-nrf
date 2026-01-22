@@ -35,3 +35,33 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time_mcuboot"
     extra_args:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+
+  benchmarks.bootup_time.all_cores:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONFIG_NETCORE_TESTAPP=y
+      - SB_CONFIG_PPRCORE_TESTAPP=y
+      - SB_CONFIG_FLPRCORE_TESTAPP=y
+    harness_config:
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time_all_cores"
+
+  benchmarks.bootup_time.lfrc:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    harness_config:
+      fixture: lfclk_at_lfrc
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"
+
+  benchmarks.bootup_time.pm:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - CONFIG_PM=y
+      - CONFIG_POWEROFF=y
+      - SB_CONFIG_NETCORE_TESTAPP=y
+    harness_config:
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"

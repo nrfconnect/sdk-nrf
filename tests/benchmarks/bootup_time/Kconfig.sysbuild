@@ -4,8 +4,18 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config SUPPORT_NETCORE_TESTAPP
+	bool
+	default y if SOC_NRF54H20_CPUAPP
+
+choice NETCORE
+
 config NETCORE_TESTAPP
 	bool "testapp image"
+
+endchoice
+
+if !NETCORE_NONE
 
 config NETCORE_IMAGE_NAME
 	default "testapp_cpunet" if NETCORE_TESTAPP
@@ -13,8 +23,20 @@ config NETCORE_IMAGE_NAME
 config NETCORE_IMAGE_PATH
 	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/bootup_time/testapp" if NETCORE_TESTAPP
 
+endif # !NETCORE_NONE
+
+config SUPPORT_PPRCORE_TESTAPP
+	bool
+	default y if SOC_NRF54H20_CPUAPP
+
+choice PPRCORE
+
 config PPRCORE_TESTAPP
 	bool "testapp image"
+
+endchoice
+
+if !PPRCORE_NONE
 
 config PPRCORE_IMAGE_NAME
 	default "testapp_cpuppr" if PPRCORE_TESTAPP
@@ -22,13 +44,27 @@ config PPRCORE_IMAGE_NAME
 config PPRCORE_IMAGE_PATH
 	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/bootup_time/testapp" if PPRCORE_TESTAPP
 
+endif # !PPRCORE_NONE
+
+config SUPPORT_FLPRCORE_TESTAPP
+	bool
+	default y if SOC_NRF54H20_CPUAPP
+
+choice FLPRCORE
+
 config FLPRCORE_TESTAPP
 	bool "testapp image"
+
+endchoice
+
+if !FLPRCORE_NONE
 
 config FLPRCORE_IMAGE_NAME
 	default "testapp_cpuflpr" if FLPRCORE_TESTAPP
 
 config FLPRCORE_IMAGE_PATH
 	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/bootup_time/testapp" if FLPRCORE_TESTAPP
+
+endif # !FLPRCORE_NONE
 
 source "share/sysbuild/Kconfig"
