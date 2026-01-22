@@ -168,6 +168,9 @@ endif()
 
 if(CONFIG_PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER)
   list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecdh/cracen_ecdh_montgomery.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecdh/cracen_ecdh_weierstrass.c
+
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_derivation.c
   )
 endif()
