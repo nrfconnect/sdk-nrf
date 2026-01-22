@@ -73,6 +73,8 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_key_management.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_eddsa_ed25519.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_eddsa_ed448.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_signature.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/rsa/cracen_rsa_signature.c
   )
 endif()
 
