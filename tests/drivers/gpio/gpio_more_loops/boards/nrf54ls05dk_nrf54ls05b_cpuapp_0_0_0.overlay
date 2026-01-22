@@ -13,9 +13,10 @@
 	 */
 	test_gpios {
 		compatible = "gpio-leds";
+
 		out_gpios: out_gpios {
 			gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>,
-				<&gpio1 8 GPIO_ACTIVE_HIGH>,  <&gpio1 10 GPIO_ACTIVE_HIGH>,
+				<&gpio1 8 GPIO_ACTIVE_HIGH>, <&gpio1 10 GPIO_ACTIVE_HIGH>,
 				<&gpio1 14 GPIO_ACTIVE_HIGH>, <&gpio1 17 GPIO_ACTIVE_HIGH>,
 				<&gpio1 19 GPIO_ACTIVE_HIGH>, <&gpio1 21 GPIO_ACTIVE_HIGH>,
 				<&gpio1 23 GPIO_ACTIVE_HIGH>, <&gpio1 25 GPIO_ACTIVE_HIGH>;
@@ -23,7 +24,7 @@
 
 		in_gpios: in_gpios {
 			gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>,
-				<&gpio1 9 GPIO_ACTIVE_HIGH>,  <&gpio1 11 GPIO_ACTIVE_HIGH>,
+				<&gpio1 9 GPIO_ACTIVE_HIGH>, <&gpio1 11 GPIO_ACTIVE_HIGH>,
 				<&gpio1 15 GPIO_ACTIVE_HIGH>, <&gpio1 18 GPIO_ACTIVE_HIGH>,
 				<&gpio1 20 GPIO_ACTIVE_HIGH>, <&gpio1 22 GPIO_ACTIVE_HIGH>,
 				<&gpio1 24 GPIO_ACTIVE_HIGH>, <&gpio1 26 GPIO_ACTIVE_HIGH>;

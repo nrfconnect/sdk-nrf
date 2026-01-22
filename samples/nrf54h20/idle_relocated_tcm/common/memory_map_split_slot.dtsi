@@ -68,7 +68,8 @@
 		};
 
 		/* Image 2, slot 1 (secondary slot) - radio loader code for cpurad core. */
-		slot5_partition: cpurad_slot1_partition: cpurad_loader_partition_slot1: partition@152000 {
+		slot5_partition: cpurad_slot1_partition: cpurad_loader_partition_slot1:
+		partition@152000 {
 			label = "cpurad_loader_partition_slot1";
 			reg = <0x152000 DT_SIZE_K(16)>;
 			/* size: radio loader + 2KB trailer MCUboot
