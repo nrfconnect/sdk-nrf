@@ -16,6 +16,9 @@
 #include <sxsymcrypt/hashdefs.h>
 #include <silexpk/core.h>
 
+#define CRACEN_PSA_IS_KEY_FLAG(flag, attr) ((flag) == (psa_get_key_usage_flags((attr)) & (flag)))
+#define CRACEN_PSA_IS_KEY_TYPE(flag, attr) ((flag) == (psa_get_key_type((attr)) & (flag)))
+
 typedef struct {
 	uint8_t slot_number;
 	uint8_t owner_id;
