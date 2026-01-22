@@ -36,7 +36,7 @@
 			// TODO: Need shared memory between APP-WIFI
 			rx-region = <&ipc_shm_cpuuma_cpuapp_0>;
 			mboxes = <&wifi_bellboard 2>,
-				<&cpuapp_bellboard  0>;
+				 <&cpuapp_bellboard 0>;
 			mbox-names = "tx", "rx";
 			status = "okay";
 		};
@@ -48,7 +48,7 @@
 			// TODO: Need shared memory between APP-WIFI
 			rx-region = <&ipc_shm_cpuuma_cpuapp_1>;
 			mboxes = <&wifi_bellboard 3>,
-				<&cpuapp_bellboard  1>;
+				 <&cpuapp_bellboard 1>;
 			mbox-names = "tx", "rx";
 			status = "okay";
 		};

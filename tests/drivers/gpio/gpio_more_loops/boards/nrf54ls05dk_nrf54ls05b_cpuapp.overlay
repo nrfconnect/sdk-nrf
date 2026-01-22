@@ -13,6 +13,7 @@
 	 */
 	test_gpios {
 		compatible = "gpio-leds";
+
 		out_gpios: out_gpios {
 			gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>,
 				<&gpio1 8 GPIO_ACTIVE_HIGH>,  <&gpio1 4 GPIO_ACTIVE_HIGH>,

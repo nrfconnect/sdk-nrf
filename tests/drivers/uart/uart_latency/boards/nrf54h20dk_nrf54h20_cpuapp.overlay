@@ -35,7 +35,7 @@
 };
 
 &cpuapp_dma_region {
-	status="okay";
+	status = "okay";
 };
 
 &timer130 {

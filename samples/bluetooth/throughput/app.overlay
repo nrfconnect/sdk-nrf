@@ -5,5 +5,5 @@
  */
 
 &uart0 {
-     /delete-property/ hw-flow-control;
+	/delete-property/ hw-flow-control;
 };

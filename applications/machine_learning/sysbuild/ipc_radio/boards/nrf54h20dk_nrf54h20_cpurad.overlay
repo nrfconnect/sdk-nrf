@@ -6,8 +6,8 @@
 
 / {
 	chosen {
-		 /delete-property/ zephyr,console;
-		 /delete-property/ zephyr,shell-uart;
+		/delete-property/ zephyr,console;
+		/delete-property/ zephyr,shell-uart;
 	};
 };
 

@@ -44,11 +44,11 @@ dut_twim: &i2c0 {
 	pinctrl-0 = <&i2c0_default_alt>;
 	pinctrl-1 = <&i2c0_sleep_alt>;
 	pinctrl-names = "default", "sleep";
+
 	sensor: sensor@54 {
 		reg = <0x54>;
 	};
 };
-
 
 dut_twis: &i2c1 {
 	compatible = "nordic,nrf-twis";

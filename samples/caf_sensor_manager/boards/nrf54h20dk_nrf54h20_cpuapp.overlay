@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- /* Replace default ipc0 instance */
+/* Replace default ipc0 instance */
 /delete-node/ &ipc0;
 
 / {
@@ -45,7 +45,7 @@
 };
 
 &cpuppr_vevif {
-       status = "okay";
+	status = "okay";
 };
 
 ipc0: &cpuapp_cpuppr_ipc {

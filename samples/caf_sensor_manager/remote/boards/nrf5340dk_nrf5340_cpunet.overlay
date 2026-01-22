@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- / {
-
+/ {
 	reserved-memory {
 		#address-cells = <1>;
 		#size-cells = <1>;

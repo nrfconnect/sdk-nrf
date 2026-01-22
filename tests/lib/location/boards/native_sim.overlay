@@ -4,12 +4,12 @@
  */
 
 / {
-    nordic_wlan0: nordic_wlan0 {
-        compatible = "nordic,wlan0";
-        status = "okay";
-    };
+	nordic_wlan0: nordic_wlan0 {
+		compatible = "nordic,wlan0";
+		status = "okay";
+	};
 
-    chosen {
-        zephyr,wifi = &nordic_wlan0;
-    };
+	chosen {
+		zephyr,wifi = &nordic_wlan0;
+	};
 };
