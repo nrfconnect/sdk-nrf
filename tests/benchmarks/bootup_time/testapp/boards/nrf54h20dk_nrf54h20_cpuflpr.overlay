@@ -6,7 +6,7 @@
 
 / {
 	aliases {
-		led = &led2;
+		led = &led3;
 	};
 
 	leds {
@@ -16,9 +16,9 @@
 		 * Lilium pulls GPIOs up during bootup, to adapt
 		 * to measurement methods, logic is inverted
 		 */
-		led2: led_2 {
-			gpios = <&gpio9 2 GPIO_ACTIVE_LOW>;
-			label = "Green LED 2";
+		led3: led_3 {
+			gpios = <&gpio9 3 GPIO_ACTIVE_LOW>;
+			label = "Green LED 3";
 		};
 	};
 };
@@ -30,4 +30,5 @@
 &gpiote130 {
 	status = "okay";
 	owned-channels = <2>;
+	interrupts = <104 NRF_DEFAULT_IRQ_PRIORITY>;
 };
