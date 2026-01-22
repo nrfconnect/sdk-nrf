@@ -512,8 +512,11 @@
 			cpuapp_rram: rram@0 {
 				compatible = "soc-nv-flash";
 				reg = <0x0 DT_SIZE_K(508)>;
+				ranges = <0x0 0x0 DT_SIZE_K(508)>;
 				erase-block-size = <4096>;
 				write-block-size = <16>;
+				#address-cells = <1>;
+				#size-cells = <1>;
 			};
 		};
 

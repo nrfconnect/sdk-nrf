@@ -51,6 +51,9 @@
 		erase-block-size = <4096>;
 		write-block-size = <16>;
 		reg = <0x1f9000 DT_SIZE_K(16)>;
+		ranges = <0x0 0x1f9000 DT_SIZE_K(16)>;
+		#address-cells = <1>;
+		#size-cells = <1>;
 	};
 };
 

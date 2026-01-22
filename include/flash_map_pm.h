@@ -80,6 +80,7 @@
 
 #define FIXED_PARTITION_EXISTS(label) IS_ENABLED(PM_IS_ENABLED(label))
 #define FLASH_AREA_LABEL_EXISTS(label) FIXED_PARTITION_EXISTS(label)
+#define FIXED_PARTITION_ADDRESS(label) FIXED_PARTITION_DATA_FIELD(label, _ADDRESS)
 
 #define FIXED_PARTITION(label)							\
 	((const struct flash_area *)&UTIL_CAT(global_pm_partition_, label))

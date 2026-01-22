@@ -594,16 +594,22 @@
 
 			cpuapp_rram: rram@0 {
 				reg = <0x0 DT_SIZE_K(948)>;
+				ranges = <0x0 0x0 DT_SIZE_K(948)>;
 				compatible = "soc-nv-flash";
 				erase-block-size = <4096>;
 				write-block-size = <16>;
+				#address-cells = <1>;
+				#size-cells = <1>;
 			};
 
 			cpuflpr_rram: rram@ed000 {
 				reg = <0xed000 DT_SIZE_K(64)>;
+				ranges = <0x0 0xed000 DT_SIZE_K(64)>;
 				compatible = "soc-nv-flash";
 				erase-block-size = <4096>;
 				write-block-size = <16>;
+				#address-cells = <1>;
+				#size-cells = <1>;
 			};
 		};
 

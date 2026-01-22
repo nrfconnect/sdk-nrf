@@ -33,6 +33,9 @@
 
 &cpuflpr_rram {
 	reg = <0x1fa000 DT_SIZE_K(12)>;
+	ranges = <0x0 0x1fa000 DT_SIZE_K(12)>;
+	#address-cells = <1>;
+	#size-cells = <1>;
 };
 
 &cpuflpr_code_partition {
