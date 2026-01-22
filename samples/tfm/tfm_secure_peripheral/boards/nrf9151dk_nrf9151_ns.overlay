@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- #include "nrf9160dk_nrf9160_ns.overlay"
+#include "nrf9160dk_nrf9160_ns.overlay"

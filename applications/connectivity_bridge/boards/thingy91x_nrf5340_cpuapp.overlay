@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-
 / {
 	dp0 {
 		compatible = "zephyr,swdp-gpio";
@@ -42,7 +41,6 @@
 &uart1 {
 	status = "okay";
 };
-
 
 &zephyr_udc0 {
 	cdc_acm_uart0: cdc_acm_uart0 {

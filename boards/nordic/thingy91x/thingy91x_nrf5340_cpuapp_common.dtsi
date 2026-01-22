@@ -5,8 +5,8 @@
 
 #include "thingy91x_nrf5340_cpuapp_common-pinctrl.dtsi"
 #include "thingy91x_common.dtsi"
-/ {
 
+/ {
 	chosen {
 		zephyr,console = &uart0;
 		zephyr,shell-uart = &uart0;
@@ -20,14 +20,17 @@
 
 	leds {
 		compatible = "gpio-leds";
+
 		led0: led_0 {
 			gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
 			label = "Red LED";
 		};
+
 		led1: led_1 {
 			gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
 			label = "Green LED";
 		};
+
 		led2: led_2 {
 			gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
 			label = "Blue LED";
@@ -36,6 +39,7 @@
 
 	buttons {
 		compatible = "gpio-keys";
+
 		button0: button_0 {
 			gpios = <&gpio0 24 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
 			label = "Button 2";
@@ -50,6 +54,7 @@
 	gpio_fwd: nrf-gpio-forwarder {
 		compatible = "nordic,nrf-gpio-forwarder";
 		status = "okay";
+
 		uart {
 			gpios = <&gpio0 22 0>, /* nrf7002-coex req-gpios     */
 				<&gpio0 23 0>, /* nrf7002-coex status0-gpios */
@@ -92,9 +97,11 @@
 &accelerometer_hp {
 	irq-gpios = <&gpio0 17 GPIO_ACTIVE_LOW>; //INT2
 };
+
 &magnetometer {
 	drdy-gpios = <&gpio1 13 GPIO_ACTIVE_LOW>; //INT3
 };
+
 &accelerometer_lp {
 	int1-gpios = <&gpio0 28 GPIO_ACTIVE_HIGH>; //INT4
 };

@@ -2,7 +2,6 @@
 	chosen {
 		ncs,ml-app-ei-data-forwarder-uart = &uart20;
 		zephyr,console = &uart30;
-
 	};
 
 	sensor_sim: sensor-sim {

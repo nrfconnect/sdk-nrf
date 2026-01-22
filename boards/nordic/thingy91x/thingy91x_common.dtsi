@@ -33,20 +33,24 @@
 			gpio-controller;
 			#gpio-cells = <2>;
 			ngpios = <5>;
+
 			npm13_button: GPIO0 {
 				gpio-hog;
 				gpios = <0 GPIO_ACTIVE_HIGH>;
 			};
+
 			/* GPIO1 switches power to the short range RF front end */
 			ldsw_rf_fe_sr_en: GPIO1 {
 				gpio-hog;
 				output-low;
 				gpios = <1 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN | GPIO_PULL_UP)>;
 			};
+
 			power_switch: GPIO2 {
 				gpio-hog;
 				gpios = <2 GPIO_ACTIVE_HIGH>;
 			};
+
 			npm6001_ready: GPIO4 {
 				gpio-hog;
 				gpios = <4 GPIO_ACTIVE_HIGH>;
@@ -56,18 +60,21 @@
 		regulators {
 			compatible = "nordic,npm1300-regulator";
 			status = "disabled";
+
 			/* Main 3.3 V regulator, enabled by GPIO2 (power switch) */
 			reg_3v3: BUCK2 {
 				regulator-min-microvolt = <3300000>;
 				regulator-max-microvolt = <3300000>;
 				enable-gpio-config = <2 GPIO_ACTIVE_HIGH>;
 			};
+
 			/* LDO1 is used as a load switch pulling the nPM6001 enable line to VSYS */
 			ldsw_nPM6001_en: LDO1 {
 				regulator-initial-mode = <NPM13XX_LDSW_MODE_LDSW>;
 				regulator-allowed-modes = <NPM13XX_LDSW_MODE_LDSW>;
 				regulator-boot-off;
 			};
+
 			/* LDO2 is used as a load switch for sensor power supply */
 			ldsw_sensors: LDO2 {
 				regulator-initial-mode = <NPM13XX_LDSW_MODE_LDSW>;
@@ -104,15 +111,19 @@
 		regulators {
 			compatible = "nordic,npm6001-regulator";
 			status = "disabled";
+
 			pmic_wifi_buck0: BUCK0 {
 				regulator-boot-off;
 			};
+
 			pmic_wifi_buck1: BUCK1 {
 				regulator-boot-off;
 			};
+
 			pmic_wifi_buck2: BUCK2 {
 				regulator-boot-off;
 			};
+
 			/* Dedicated 3.3 V regulator for nRF70 */
 			reg_wifi: BUCK3 {
 				regulator-min-microvolt = <3300000>;
@@ -154,10 +165,10 @@
 		has-dpd;
 		t-enter-dpd = <3000>;
 		t-exit-dpd = <20000>;
-		sfdp-bfp = [e5 20 f3 ff  ff ff ff 0f  44 eb 08 6b  08 3b 42 bb
-			    fe ff ff ff  ff ff 00 ff  ff ff 42 eb  0c 20 0f 52
-			    10 d8 00 ff  d4 31 a5 fe  84 df 14 4f  ec 62 16 33
-			    7a 75 7a 75  04 b3 d5 5c  19 06 14 00  08 50 00 01];
+		sfdp-bfp = [e5 20 f3 ff ff ff ff 0f 44 eb 08 6b 08 3b 42 bb
+			    fe ff ff ff ff ff 00 ff ff ff 42 eb 0c 20 0f 52
+			    10 d8 00 ff d4 31 a5 fe 84 df 14 4f ec 62 16 33
+			    7a 75 7a 75 04 b3 d5 5c 19 06 14 00 08 50 00 01];
 		jedec-id = [c8 60 19];
 	};
 

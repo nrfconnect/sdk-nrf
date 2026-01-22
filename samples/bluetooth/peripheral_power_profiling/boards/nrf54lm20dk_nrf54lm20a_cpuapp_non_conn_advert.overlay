@@ -12,6 +12,7 @@
 	 */
 	buttons {
 		compatible = "gpio-keys";
+
 		button1: button_1 {
 			gpios = <&gpio0 7 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
 			label = "Input 0";

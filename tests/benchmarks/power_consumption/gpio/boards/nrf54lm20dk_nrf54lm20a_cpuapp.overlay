@@ -5,6 +5,7 @@
 		out0 = &output0;
 		in0 = &input0;
 	};
+
 	outputs {
 		compatible = "gpio-leds";
 
@@ -18,7 +19,7 @@
 		compatible = "gpio-keys";
 
 		input0: input_0 {
-			gpios = <&gpio1 31 (GPIO_ACTIVE_HIGH)>;
+			gpios = <&gpio1 31 GPIO_ACTIVE_HIGH>;
 			label = "GPIO input 0";
 		};
 	};

@@ -72,6 +72,7 @@
 	pinctrl-0 = <&spi0_default>;
 	pinctrl-1 = <&spi0_sleep>;
 	pinctrl-names = "default", "sleep";
+
 	paw3212@0 {
 		compatible = "pixart,paw3212";
 		reg = <0>;
@@ -94,18 +95,22 @@
 			label = "mcuboot";
 			reg = <0x00000000 0x0000C000>;
 		};
+
 		slot0_partition: partition@c000 {
 			label = "image-0";
 			reg = <0x0000C000 0x00036000>;
 		};
+
 		slot1_partition: partition@42000 {
 			label = "image-1";
 			reg = <0x00042000 0x00036000>;
 		};
+
 		scratch_partition: partition@78000 {
 			label = "image-scratch";
 			reg = <0x00078000 0x00004000>;
 		};
+
 		storage_partition: partition@7c000 {
 			label = "storage";
 			reg = <0x0007C000 0x00004000>;

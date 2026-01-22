@@ -16,6 +16,7 @@
 		reg = <0x2003FFF0 0x10>;
 		zephyr,memory-region = "RetainedMem";
 		status = "okay";
+
 		retainedmem {
 			compatible = "zephyr,retained-ram";
 			status = "okay";

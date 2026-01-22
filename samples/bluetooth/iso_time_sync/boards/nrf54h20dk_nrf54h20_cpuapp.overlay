@@ -10,7 +10,7 @@
 	status = "okay";
 
 	// Use channel 4 to connect the GRTC to the PPIB.
-	source-channels = < 4 >;
+	source-channels = <4>;
 	owned-channels = <4>;
 };
 
@@ -18,8 +18,8 @@
 	status = "okay";
 
 	// Change channel 6 to be owned by the application (not child)
-	child-owned-channels = < 0x5>;
+	child-owned-channels = <0x5>;
 	// Change channel 6 to be secure
-	nonsecure-channels = < 0x5>;
-	owned-channels = < 0x4 0x5 0x6>;
+	nonsecure-channels = <0x5>;
+	owned-channels = <0x4 0x5 0x6>;
 };

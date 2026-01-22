@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- #include "app_aliases_common.dtsi"
+#include "app_aliases_common.dtsi"
 
 / {
 	chosen {
