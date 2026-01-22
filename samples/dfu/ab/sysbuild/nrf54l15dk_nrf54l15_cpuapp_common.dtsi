@@ -11,9 +11,9 @@
 };
 
 / {
-	cpuapp_sram@2003FFF0 {
+	cpuapp_sram@2003fff0 {
 		compatible = "zephyr,memory-region", "mmio-sram";
-		reg = <0x2003FFF0 0x10>;
+		reg = <0x2003fff0 0x10>;
 		zephyr,memory-region = "RetainedMem";
 		status = "okay";
 
@@ -27,7 +27,7 @@
 				compatible = "zephyr,retention";
 				status = "okay";
 				reg = <0x0 0x10>;
-				prefix = [0B 01];
+				prefix = [0b 01];
 				checksum = <4>;
 			};
 		};

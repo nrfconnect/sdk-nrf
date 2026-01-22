@@ -55,6 +55,7 @@
 				<NRF_PSEL(UART_RTS, 1, 11)>,
 				<NRF_PSEL(UART_CTS, 1, 12)>;
 		};
+
 		group2 {
 			psels = <NRF_PSEL(UART_RX, 1, 9)>;
 			bias-pull-up;

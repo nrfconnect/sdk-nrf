@@ -37,5 +37,5 @@
 
 /* Enable the trace signal on the application bellboard. */
 &cpuapp_bellboard {
-	nordic,interrupt-mapping = <0xE3042041 0>;
+	nordic,interrupt-mapping = <0xe3042041 0>;
 };

@@ -4,9 +4,9 @@
  */
 
 / {
-	sram@2007DF40 {
+	sram@2007df40 {
 		compatible = "zephyr,memory-region", "mmio-sram";
-		reg = <0x2007DF40 0x20C0>;
+		reg = <0x2007df40 0x20c0>;
 		zephyr,memory-region = "DiagnosticLogMem";
 		status = "okay";
 
@@ -20,7 +20,7 @@
 			crash_retention: retention@0 {
 				compatible = "zephyr,retention";
 				status = "okay";
-				reg = <0x0 0xC0>;
+				reg = <0x0 0xc0>;
 				prefix = [08 04];
 				checksum = <2>;
 			};
@@ -29,7 +29,7 @@
 			network_logs_retention: retention@c0 {
 				compatible = "zephyr,retention";
 				status = "okay";
-				reg = <0xC0 0x1800>;
+				reg = <0xc0 0x1800>;
 				prefix = [06 03];
 				checksum = <2>;
 			};
@@ -38,7 +38,7 @@
 			end_user_logs_retention: retention@18c0 {
 				compatible = "zephyr,retention";
 				status = "okay";
-				reg = <0x18C0 0x800>;
+				reg = <0x18c0 0x800>;
 				prefix = [05 02];
 				checksum = <2>;
 			};
@@ -48,5 +48,5 @@
 
 /* Reduce SRAM0 usage by 8384 B to account for non-init area */
 &sram0 {
-	reg = <0x20000000 0x7DF40>;
+	reg = <0x20000000 0x7df40>;
 };

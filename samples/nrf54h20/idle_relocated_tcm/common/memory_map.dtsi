@@ -85,7 +85,6 @@
 			reg = <0x152000 DT_SIZE_K(8)>;  /* 8 KB allocated (~4 KB actual) */
 		};
 
-
 		/* Radio core application code initially stored in MRAM that will be loaded to TCM
 		 * by radio loader for cpurad core.
 		 */

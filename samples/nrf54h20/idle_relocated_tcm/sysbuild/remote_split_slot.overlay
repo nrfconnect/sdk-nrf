@@ -8,7 +8,7 @@
 #include "../common/memory_map_ram_cpurad.dtsi"
 #include "../common/memory_map_ram_pm_cpurad.dtsi"
 
-/{
+/ {
 	chosen {
 		zephyr,code-partition = &cpurad_loaded_fw;
 		zephyr,sram = &cpurad_ram0;
