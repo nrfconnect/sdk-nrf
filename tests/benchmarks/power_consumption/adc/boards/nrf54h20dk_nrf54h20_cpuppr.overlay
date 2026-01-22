@@ -3,13 +3,15 @@
 		led = &led0;
 		adc0 = &adc;
 	};
+
 	leds {
 		compatible = "gpio-leds";
 
 		led0: led_0 {
-			gpios = < &gpio9 0x0 0x0 >;
+			gpios = <&gpio9 0x0 0x0>;
 		};
 	};
+
 	cpus {
 		power-states {
 			wait: wait {
@@ -29,7 +31,6 @@
 	};
 };
 
-
 &cpu {
 	cpu-power-states = <&wait &hibernate>;
 };
@@ -38,6 +39,7 @@
 	#address-cells = <1>;
 	#size-cells = <0>;
 	status = "okay";
+
 	channel@0 {
 		reg = <0>;
 		zephyr,gain = "ADC_GAIN_1";

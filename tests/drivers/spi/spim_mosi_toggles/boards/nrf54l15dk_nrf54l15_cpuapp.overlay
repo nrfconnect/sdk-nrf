@@ -25,7 +25,6 @@
 				<NRF_PSEL(SPIM_MOSI, 2, 2)>;
 			nordic,drive-mode = <NRF_DRIVE_E0E1>;
 		};
-
 	};
 
 	spi00_sleep_alt: spi00_sleep_alt {
