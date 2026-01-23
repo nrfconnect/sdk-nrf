@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <cracen_psa_jpake.h>
+
 #include <silexpk/sxbuf/sxbufop.h>
 #include <psa/crypto.h>
 #include <cracen/common.h>

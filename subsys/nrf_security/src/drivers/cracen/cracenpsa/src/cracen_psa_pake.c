@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <cracen_psa_pake.h>
+
 #include <psa/crypto.h>
 #include <cracen/common.h>
 #include "cracen_psa_primitives.h"
@@ -11,7 +13,11 @@
 #include "psa/crypto_types.h"
 #include "psa/crypto_values.h"
 #include <psa_crypto_driver_wrappers.h>
-#include "cracen_psa_wpa3_sae.h"
+
+#include <cracen_psa_wpa3_sae.h>
+#include <cracen_psa_jpake.h>
+#include <cracen_psa_spake2p.h>
+#include <cracen_psa_srp.h>
 
 psa_status_t cracen_pake_setup(cracen_pake_operation_t *operation,
 			       const psa_key_attributes_t *attributes, const uint8_t *password,
