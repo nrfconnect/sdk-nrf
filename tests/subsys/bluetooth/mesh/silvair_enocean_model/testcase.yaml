@@ -7,5 +7,6 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
+      - ci_tests_subsys_bluetooth_mesh
     integration_platforms:
       - native_sim
