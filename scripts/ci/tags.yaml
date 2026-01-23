@@ -1407,6 +1407,7 @@ ci_tests_drivers_nrf_wifi:
     - nrf/boards/nordic/nrf7120dk/
     - nrf/soc/nordic/nrf71/
     - nrf/tests/drivers/nrf_wifi/
+    - zephyr/drivers/wifi/
     - zephyr/modules/nrf_wifi/
     - zephyr/subsys/net/
 
