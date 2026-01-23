@@ -95,7 +95,7 @@ jobs:
           echo "west init -l ./base"
           west init -l ./base
           echo "west update"
-          west update
+          west update --narrow
           echo "ls"
           ls
           echo "ls .."
