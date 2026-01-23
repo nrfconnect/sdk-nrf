@@ -56,6 +56,11 @@ config MCUBOOT_BUILD_DIRECT_XIP_VARIANT
 	help
 	  Will build the alternative slot (variant) image of the main application.
 
+# Temporarily disable the zephyr Kconfig for generating the alternative slot (variant) image of
+# the main application until NCS is fixed to use it properly NCSDK-37325
+configdefault MCUBOOT_DIRECT_XIP_GENERATE_VARIANT
+	default n
+
 menuconfig MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 	bool "Downgrade prevention using hardware security counters"
 	depends on (SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91 || SOC_SERIES_NRF54L || SOC_SERIES_NRF54H)
