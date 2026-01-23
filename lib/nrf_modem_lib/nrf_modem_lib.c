@@ -151,7 +151,7 @@ static void log_fw_version_uuid(void)
 		fw_uuid_buf[off + 1] = '\0';
 		LOG_INF("Modem FW UUID: %s", fw_uuid);
 	} else {
-		LOG_ERR("Unable to obtain modem FW UUID (ERR: %d, ERR TYPE: %d)\n",
+		LOG_ERR("Unable to obtain modem FW UUID (ERR: %d, ERR TYPE: %d)!\n",
 			nrf_modem_at_err(err), nrf_modem_at_err_type(err));
 	}
 }
