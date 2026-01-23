@@ -4,6 +4,7 @@ common:
   tags:
     - bluetooth
     - ci_build
+    - ci_tests_subsys_bluetooth_mesh
   integration_platforms:
     - nrf52840dk/nrf52840
 tests:

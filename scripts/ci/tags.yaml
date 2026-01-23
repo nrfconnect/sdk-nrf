@@ -922,6 +922,14 @@ ci_tests_subsys_bluetooth_gatt_dm:
     - nrf/subsys/bluetooth/gatt_dm.c
     - nrf/tests/subsys/bluetooth/gatt_dm/
 
+ci_tests_subsys_bluetooth_mesh:
+  files:
+    - nrf/include/bluetooth/mesh/
+    - nrf/subsys/bluetooth/mesh/
+    - nrf/tests/subsys/bluetooth/mesh/
+    - zephyr/include/zephyr/bluetooth/mesh/
+    - zephyr/subsys/bluetooth/mesh/
+
 ci_tests_subsys_mpsl:
   files:
     - nrf/subsys/mpsl/
