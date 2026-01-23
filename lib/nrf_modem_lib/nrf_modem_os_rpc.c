@@ -19,6 +19,8 @@
 #include <zephyr/ipc/pbuf.h>
 #if defined(CONFIG_IRONSIDE_SE_CALL)
 #include <ironside/se/api.h>
+
+extern const uint8_t *nrf_modem_lib_shmem_ctrl;
 #endif
 
 #define DCACHE_LINE_SIZE (CONFIG_DCACHE_LINE_SIZE)
@@ -122,7 +124,7 @@ int nrf_modem_os_rpc_cellcore_boot(void)
 #if defined(CONFIG_IRONSIDE_SE_CALL)
 	struct boot_report_cellcore_ldc params;
 
-	params.ipc_buf_addr = DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl));
+	params.ipc_buf_addr = (uint32_t)nrf_modem_lib_shmem_ctrl;
 	params.ipc_buf_size = CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE;
 	params.loader_addr = 0;
 	params.rfu = 0;
