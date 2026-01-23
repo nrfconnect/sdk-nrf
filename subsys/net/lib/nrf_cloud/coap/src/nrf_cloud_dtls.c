@@ -39,7 +39,7 @@ static bool keepopen_supported;
 
 static int get_device_ip_address(uint8_t *d4_addr)
 {
-#if defined(CONFIG_MODEM_INFO)
+#if defined(CONFIG_MODEM_INFO) && !defined(CONFIG_DECT)
 	char buf[INET_ADDRSTRLEN + sizeof(" ") + INET6_ADDRSTRLEN + 1];
 	int err;
 
@@ -110,7 +110,7 @@ int nrfc_dtls_setup(int sock)
 		cid_supported = false;
 	}
 
-#if !defined(CONFIG_BOARD_NATIVE_SIM)
+#if !defined(CONFIG_BOARD_NATIVE_SIM) && !defined(CONFIG_DECT)
 	int timeout = TLS_DTLS_HANDSHAKE_TIMEO_123S;
 
 	LOG_DBG("  Set handshake timeout %d", timeout);

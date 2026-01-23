@@ -236,6 +236,7 @@
 #define NRF_CLOUD_JSON_VAL_PROTO_REST		"REST"
 #define NRF_CLOUD_JSON_VAL_METHOD_LTE		"LTE"
 #define NRF_CLOUD_JSON_VAL_METHOD_WIFI		"Wi-Fi"
+#define NRF_CLOUD_JSON_VAL_METHOD_DECT		"DECT NR+"
 
 /** Default maximum response length to a shadow transform request */
 #define NRF_CLOUD_TRANSFORM_MAX_RESPONSE_LEN	1792
