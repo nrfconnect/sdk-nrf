@@ -24,7 +24,7 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/init.h>
 
-#include <getopt.h>
+#include <zephyr/sys/sys_getopt.h>
 
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_event.h>
@@ -76,10 +76,10 @@ static const char dect_shell_rssi_scan_usage_str[] =
 	"                                 scanning whole band).\n";
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_rssi_scan[] = {
-	{"channels", required_argument, 0, 'c'},
-	{"band", required_argument, 0, 'b'},
-	{"frames", required_argument, 0, DECT_SHELL_RSSI_SCAN_CMD_FRAMES},
+static struct sys_getopt_option long_options_rssi_scan[] = {
+	{"channels", sys_getopt_required_argument, 0, 'c'},
+	{"band", sys_getopt_required_argument, 0, 'b'},
+	{"frames", sys_getopt_required_argument, 0, DECT_SHELL_RSSI_SCAN_CMD_FRAMES},
 	{0, 0, 0, 0}};
 
 	static const char dect_shell_scan_usage_str[] =
@@ -95,10 +95,12 @@ static struct option long_options_rssi_scan[] = {
 /* Network scan command */
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_nw_scan[] = {{"scan_time", required_argument, 0, 't'},
-					       {"channels", required_argument, 0, 'c'},
-					       {"band", required_argument, 0, 'b'},
-					       {0, 0, 0, 0}};
+static struct sys_getopt_option long_options_nw_scan[] = {
+	{"scan_time", sys_getopt_required_argument, 0, 't'},
+	{"channels", sys_getopt_required_argument, 0, 'c'},
+	{"band", sys_getopt_required_argument, 0, 'b'},
+	{0, 0, 0, 0}
+};
 
 /* Settings command */
 
@@ -215,39 +217,46 @@ enum {
 };
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_sett_cmd[] = {
-	{"nw_id", required_argument, 0, 'n'},
-	{"tx_id", required_argument, 0, 't'},
-	{"band_nbr", required_argument, 0, 'b'},
-	{"reset", no_argument, 0, DECT_SHELL_SETT_CMD_RESET_ALL},
-	{"region", required_argument, 0, DECT_SHELL_SETT_CMD_REGION},
-	{"auto_activate", required_argument, 0, DECT_SHELL_SETT_CMD_AUTO_ACTIVATE},
-	{"nw_join_target", required_argument, 0, DECT_SHELL_SETT_CMD_NW_JOIN_TARGET},
-	{"dev_type", required_argument, 0, DECT_SHELL_SETT_CMD_DEV_TYPE},
-	{"power_save", required_argument, 0, DECT_SHELL_SETT_CMD_PWR_SAVE},
-	{"max_mcs", required_argument, 0, DECT_SHELL_SETT_CMD_MAX_MCS},
-	{"max_tx_pwr", required_argument, 0, DECT_SHELL_SETT_CMD_MAX_TX_PWR},
-	{"rssi_scan_time", required_argument, 0, DECT_SHELL_SETT_CMD_RSSI_SCAN_TIME_PER_CHANNEL},
-	{"rssi_scan_free_th", required_argument, 0, DECT_SHELL_SETT_CMD_RSSI_SCAN_FREE_THRESHOLD},
-	{"rssi_scan_busy_th", required_argument, 0, DECT_SHELL_SETT_CMD_RSSI_SCAN_BUSY_THRESHOLD},
-	{"rssi_scan_suitable_percent", required_argument, 0,
+static struct sys_getopt_option long_options_sett_cmd[] = {
+	{"nw_id", sys_getopt_required_argument, 0, 'n'},
+	{"tx_id", sys_getopt_required_argument, 0, 't'},
+	{"band_nbr", sys_getopt_required_argument, 0, 'b'},
+	{"reset", sys_getopt_no_argument, 0, DECT_SHELL_SETT_CMD_RESET_ALL},
+	{"region", sys_getopt_required_argument, 0, DECT_SHELL_SETT_CMD_REGION},
+	{"auto_activate", sys_getopt_required_argument, 0, DECT_SHELL_SETT_CMD_AUTO_ACTIVATE},
+	{"nw_join_target", sys_getopt_required_argument, 0, DECT_SHELL_SETT_CMD_NW_JOIN_TARGET},
+	{"dev_type", sys_getopt_required_argument, 0, DECT_SHELL_SETT_CMD_DEV_TYPE},
+	{"power_save", sys_getopt_required_argument, 0, DECT_SHELL_SETT_CMD_PWR_SAVE},
+	{"max_mcs", sys_getopt_required_argument, 0, DECT_SHELL_SETT_CMD_MAX_MCS},
+	{"max_tx_pwr", sys_getopt_required_argument, 0, DECT_SHELL_SETT_CMD_MAX_TX_PWR},
+	{"rssi_scan_time", sys_getopt_required_argument, 0,
+	 DECT_SHELL_SETT_CMD_RSSI_SCAN_TIME_PER_CHANNEL},
+	{"rssi_scan_free_th", sys_getopt_required_argument, 0,
+	 DECT_SHELL_SETT_CMD_RSSI_SCAN_FREE_THRESHOLD},
+	{"rssi_scan_busy_th", sys_getopt_required_argument, 0,
+	 DECT_SHELL_SETT_CMD_RSSI_SCAN_BUSY_THRESHOLD},
+	{"rssi_scan_suitable_percent", sys_getopt_required_argument, 0,
 	 DECT_SHELL_SETT_CMD_RSSI_SCAN_SUITABLE_PERCENT},
-	{"cluster_beacon_period", required_argument, 0, DECT_SHELL_SETT_CMD_CLUSTER_BEACON_PERIOD},
-	{"cluster_max_beacon_tx_pwr", required_argument, 0,
+	{"cluster_beacon_period", sys_getopt_required_argument, 0,
+	 DECT_SHELL_SETT_CMD_CLUSTER_BEACON_PERIOD},
+	{"cluster_max_beacon_tx_pwr", sys_getopt_required_argument, 0,
 	 DECT_SHELL_SETT_CMD_CLUSTER_MAX_BEACON_TX_PWR},
-	{"cluster_ch_reselection_th", required_argument, 0,
+	{"cluster_ch_reselection_th", sys_getopt_required_argument, 0,
 	 DECT_SHELL_SETT_CMD_CLUSTER_CHANNEL_LOADED_PERCENT},
-	{"cluster_max_tx_pwr", required_argument, 0, DECT_SHELL_SETT_CMD_CLUSTER_MAX_TX_PWR},
-	{"cluster_nbr_inactivity_time", required_argument, 0,
+	{"cluster_max_tx_pwr", sys_getopt_required_argument, 0,
+	 DECT_SHELL_SETT_CMD_CLUSTER_MAX_TX_PWR},
+	{"cluster_nbr_inactivity_time", sys_getopt_required_argument, 0,
 	 DECT_SHELL_SETT_CMD_CLUSTER_NBR_INACTIVITY_TIME},
-	{"nw_beacon_period", required_argument, 0, DECT_SHELL_SETT_CMD_NW_BEACON_PERIOD},
-	{"nw_beacon_channel", required_argument, 0, DECT_SHELL_SETT_CMD_NW_BEACON_CHANNEL},
-	{"max_beacon_rx_fails", required_argument, 0,
+	{"nw_beacon_period", sys_getopt_required_argument, 0, DECT_SHELL_SETT_CMD_NW_BEACON_PERIOD},
+	{"nw_beacon_channel", sys_getopt_required_argument, 0,
+	 DECT_SHELL_SETT_CMD_NW_BEACON_CHANNEL},
+	{"max_beacon_rx_fails", sys_getopt_required_argument, 0,
 	 DECT_SHELL_SETT_CMD_ASSOCIATION_MAX_CLUSTER_BEACON_RX_FAILS},
-	{"min_sensitivity", required_argument, 0, DECT_SHELL_SETT_CMD_ASSOCIATION_MIN_SENSITIVITY},
-	{"sec_mode", required_argument, 0, DECT_SHELL_SETT_CMD_SEC_MODE},
-	{"sec_integ_key", required_argument, 0, DECT_SHELL_SETT_CMD_SEC_INTEG_KEY},
-	{"sec_cipher_key", required_argument, 0, DECT_SHELL_SETT_CMD_SEC_CIPHER_KEY},
+	{"min_sensitivity", sys_getopt_required_argument, 0,
+	 DECT_SHELL_SETT_CMD_ASSOCIATION_MIN_SENSITIVITY},
+	{"sec_mode", sys_getopt_required_argument, 0, DECT_SHELL_SETT_CMD_SEC_MODE},
+	{"sec_integ_key", sys_getopt_required_argument, 0, DECT_SHELL_SETT_CMD_SEC_INTEG_KEY},
+	{"sec_cipher_key", sys_getopt_required_argument, 0, DECT_SHELL_SETT_CMD_SEC_CIPHER_KEY},
 	{0, 0, 0, 0}};
 
 	static const char dect_shell_cluster_reconfig_usage_str[] =
@@ -276,12 +285,12 @@ enum {
 };
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_cluster_reconfig_cmd[] = {
-	{"cluster_beacon_period", required_argument, 0,
+static struct sys_getopt_option long_options_cluster_reconfig_cmd[] = {
+	{"cluster_beacon_period", sys_getopt_required_argument, 0,
 	 DECT_SHELL_CLUSTER_RECONFIG_CMD_CLUSTER_BEACON_PERIOD},
-	{"cluster_max_beacon_tx_pwr", required_argument, 0,
+	{"cluster_max_beacon_tx_pwr", sys_getopt_required_argument, 0,
 	 DECT_SHELL_CLUSTER_RECONFIG_CMD_CLUSTER_MAX_BEACON_TX_PWR},
-	{"cluster_max_tx_pwr", required_argument, 0,
+	{"cluster_max_tx_pwr", sys_getopt_required_argument, 0,
 	 DECT_SHELL_CLUSTER_RECONFIG_CMD_CLUSTER_MAX_TX_PWR},
 	{0, 0, 0, 0}};
 
@@ -301,9 +310,10 @@ enum {
 };
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_nw_beacon_start[] = {
-	{"add_channels", required_argument, 0, DECT_SHELL_NW_BEACON_START_CMD_ADD_CHANNELS},
-	{"channel", required_argument, 0, 'c'},
+static struct sys_getopt_option long_options_nw_beacon_start[] = {
+	{"add_channels", sys_getopt_required_argument, 0,
+	 DECT_SHELL_NW_BEACON_START_CMD_ADD_CHANNELS},
+	{"channel", sys_getopt_required_argument, 0, 'c'},
 	{0, 0, 0, 0}};
 
 /* RX command */
@@ -327,9 +337,10 @@ static const char dect_shell_sett_associate_usage_str[] =
 	"  -t  --target <int>          Target long RD ID of the FT device.\n";
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_associate[] = {{"target", required_argument, 0, 't'},
-						 {0, 0, 0, 0}};
-
+static struct sys_getopt_option long_options_associate[] = {
+	{"target", sys_getopt_required_argument, 0, 't'},
+	{0, 0, 0, 0}
+};
 
 /* Dissociate command */
 
@@ -339,8 +350,10 @@ static const char dect_shell_sett_dissociate_usage_str[] =
 	"  -t  --target <int>          Target long RD ID of the FT device.\n";
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_dissociate[] = {{"target", required_argument, 0, 't'},
-						  {0, 0, 0, 0}};
+static struct sys_getopt_option long_options_dissociate[] = {
+	{"target", sys_getopt_required_argument, 0, 't'},
+	{0, 0, 0, 0}
+};
 
 /* Store shell from commands for use as default in print functions */
 static inline void set_shell(const struct shell *shell)
@@ -1245,18 +1258,17 @@ static void dect_shell_rssi_scan_cmd(const struct shell *shell, size_t argc, cha
 	if (argc < 2) {
 		goto show_usage;
 	}
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
 	params.band = 0;
 	params.channel_count = 0;
 	params.frame_count_to_scan = 2010 / 10; /* 2010 ms / 10 ms = 201 frames */
 
-	while ((opt = getopt_long(argc, argv, "c:b:h", long_options_rssi_scan, &long_index)) !=
-	       -1) {
+	while ((opt = sys_getopt_long(argc, argv, "c:b:h", long_options_rssi_scan,
+				      &long_index)) != -1) {
 		switch (opt) {
 		case DECT_SHELL_RSSI_SCAN_CMD_FRAMES: {
-			params.frame_count_to_scan = atoi(optarg);
+			params.frame_count_to_scan = atoi(sys_getopt_optarg);
 			if (params.frame_count_to_scan > UINT8_MAX) {
 				dect_l2_shell_error(
 						    "Invalid number of frames: %d (max %d)",
@@ -1266,14 +1278,14 @@ static void dect_shell_rssi_scan_cmd(const struct shell *shell, size_t argc, cha
 			break;
 		}
 		case 'b': {
-			params.band = atoi(optarg);
+			params.band = atoi(sys_getopt_optarg);
 			break;
 		}
 		case 'c': {
-			char *ch_string = strtok(optarg, ",");
+			char *ch_string = strtok(sys_getopt_optarg, ",");
 
 			if (ch_string == NULL) {
-				params.channel_list[0] = atoi(optarg);
+				params.channel_list[0] = atoi(sys_getopt_optarg);
 				params.channel_count = 1;
 			} else {
 				while (ch_string != NULL && params.channel_count < 20) {
@@ -1288,13 +1300,13 @@ static void dect_shell_rssi_scan_cmd(const struct shell *shell, size_t argc, cha
 			goto show_usage;
 		case '?':
 		default:
-			dect_l2_shell_error(
-					    "Unknown option (%s). See usage:", argv[optind - 1]);
+			dect_l2_shell_error("Unknown option (%s). See usage:",
+					    argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		dect_l2_shell_error("Arguments without '-' not supported: %s",
 				    argv[argc - 1]);
 		goto show_usage;
@@ -1334,18 +1346,17 @@ static void dect_shell_scan_cmd(const struct shell *shell, size_t argc, char **a
 		goto show_usage;
 	}
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
 	params.band = 0;
 	params.channel_count = 0;
 	params.channel_scan_time_ms = 3000;
 
-	while ((opt = getopt_long(argc, argv, "t:c:b:h", long_options_nw_scan, &long_index)) !=
-	       -1) {
+	while ((opt = sys_getopt_long(argc, argv, "t:c:b:h", long_options_nw_scan,
+				      &long_index)) != -1) {
 		switch (opt) {
 		case 't': {
-			tmp_value = atoi(optarg);
+			tmp_value = atoi(sys_getopt_optarg);
 			if (tmp_value < 1 || tmp_value > 60000) {
 				dect_l2_shell_error(
 					"Invalid scan time: %d ms (valid range: [1, 60000])",
@@ -1356,14 +1367,14 @@ static void dect_shell_scan_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case 'b': {
-			params.band = atoi(optarg);
+			params.band = atoi(sys_getopt_optarg);
 			break;
 		}
 		case 'c': {
-			char *ch_string = strtok(optarg, ",");
+			char *ch_string = strtok(sys_getopt_optarg, ",");
 
 			if (ch_string == NULL) {
-				params.channel_list[0] = atoi(optarg);
+				params.channel_list[0] = atoi(sys_getopt_optarg);
 				params.channel_count = 1;
 			} else {
 				while (ch_string != NULL) {
@@ -1383,13 +1394,13 @@ static void dect_shell_scan_cmd(const struct shell *shell, size_t argc, char **a
 			goto show_usage;
 		case '?':
 		default:
-			dect_l2_shell_error(
-					    "Unknown option (%s). See usage:", argv[optind - 1]);
+			dect_l2_shell_error("Unknown option (%s). See usage:",
+					    argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		dect_l2_shell_error("Arguments without '-' not supported: %s",
 				    argv[argc - 1]);
 		goto show_usage;
@@ -1454,8 +1465,11 @@ static const char dect_shell_tx_cmd_usage_str[] =
 	"  -d  --data <string>,        Data string to send.\n";
 
 /* Specifying the expected options (both long and short): */
-static struct option long_options_tx[] = {
-	{"target", required_argument, 0, 't'}, {"data", required_argument, 0, 'd'}, {0, 0, 0, 0}};
+static struct sys_getopt_option long_options_tx[] = {
+	{"target", sys_getopt_required_argument, 0, 't'},
+	{"data", sys_getopt_required_argument, 0, 'd'},
+	{0, 0, 0, 0}
+};
 
 #define DECT_TX_CMD_MAX_SEND_DATA_LEN DECT_MTU
 
@@ -1474,40 +1488,39 @@ static void dect_shell_tx_cmd(const struct shell *shell, size_t argc, char **arg
 		goto show_usage;
 	}
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
 	memset(tx_data_buf, 0, sizeof(tx_data_buf));
 
-	while ((opt = getopt_long(argc, argv, "d:t:h", long_options_tx, &long_index)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, "d:t:h", long_options_tx, &long_index)) != -1) {
 		switch (opt) {
 		case 'd':
-			tx_data_len = strlen(optarg) + 1;
+			tx_data_len = strlen(sys_getopt_optarg) + 1;
 			if (tx_data_len > DECT_TX_CMD_MAX_SEND_DATA_LEN) {
 				dect_l2_shell_error(
 						    "Data length (%d) exceeded the maximum (%d). "
 						    "Given data: %s",
 						    tx_data_len, DECT_TX_CMD_MAX_SEND_DATA_LEN,
-						    optarg);
+						    sys_getopt_optarg);
 				return;
 			}
-			strcpy(tx_data_buf, optarg);
+			strcpy(tx_data_buf, sys_getopt_optarg);
 			break;
 		case 't': {
-			target_long_rd_id = (uint32_t)atoll(optarg);
+			target_long_rd_id = (uint32_t)atoll(sys_getopt_optarg);
 			break;
 		}
 		case 'h':
 			goto show_usage;
 		case '?':
 		default:
-			dect_l2_shell_error(
-					    "Unknown option (%s). See usage:", argv[optind - 1]);
+			dect_l2_shell_error("Unknown option (%s). See usage:",
+					    argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		dect_l2_shell_error("Arguments without '-' not supported: %s",
 				    argv[argc - 1]);
 		goto show_usage;
@@ -1548,7 +1561,7 @@ show_usage:
 static void dect_shell_rx_thread_handler(void)
 {
 	int recv_len, ret;
-	struct pollfd fds[1];
+	struct zsock_pollfd fds[1];
 	struct sockaddr_ll src;
 	socklen_t fromlen;
 
@@ -1561,10 +1574,10 @@ static void dect_shell_rx_thread_handler(void)
 		}
 
 		fds[0].fd = dect_shell_rx_sockfd;
-		fds[0].events = POLLIN;
+		fds[0].events = ZSOCK_POLLIN;
 		fds[0].revents = 0;
 
-		ret = poll(fds, 1, DATA_RX_POLL_TIMEOUT_MS);
+		ret = zsock_poll(fds, 1, DATA_RX_POLL_TIMEOUT_MS);
 		if (ret < 0) {
 			printk("Error: poll failed %d\n", errno);
 			continue;
@@ -1649,28 +1662,28 @@ static int dect_shell_associate_cmd(const struct shell *shell, size_t argc, char
 	if (argc < 2) {
 		goto show_usage;
 	}
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
 	/* Set defaults */
 	params.target_long_rd_id = 0;
-	while ((opt = getopt_long(argc, argv, "t:h", long_options_associate, &long_index)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, "t:h", long_options_associate,
+				      &long_index)) != -1) {
 		switch (opt) {
 		case 't': {
-			params.target_long_rd_id = (uint32_t)atoll(optarg);
+			params.target_long_rd_id = (uint32_t)atoll(sys_getopt_optarg);
 			break;
 		}
 		case 'h':
 			goto show_usage;
 		case '?':
 		default:
-			dect_l2_shell_error(
-					    "Unknown option (%s). See usage:", argv[optind - 1]);
+			dect_l2_shell_error("Unknown option (%s). See usage:",
+					    argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		dect_l2_shell_error("Arguments without '-' not supported: %s",
 				    argv[argc - 1]);
 		goto show_usage;
@@ -1706,28 +1719,28 @@ static int dect_shell_dissociate_cmd(const struct shell *shell, size_t argc, cha
 	if (argc < 2) {
 		goto show_usage;
 	}
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
 	/* Set defaults */
 	params.target_long_rd_id = 0;
-	while ((opt = getopt_long(argc, argv, "t:h", long_options_dissociate, &long_index)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, "t:h", long_options_dissociate,
+				      &long_index)) != -1) {
 		switch (opt) {
 		case 't': {
-			params.target_long_rd_id = (uint32_t)atoll(optarg);
+			params.target_long_rd_id = (uint32_t)atoll(sys_getopt_optarg);
 			break;
 		}
 		case 'h':
 			goto show_usage;
 		case '?':
 		default:
-			dect_l2_shell_error(
-					    "Unknown option (%s). See usage:", argv[optind - 1]);
+			dect_l2_shell_error("Unknown option (%s). See usage:",
+					    argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		dect_l2_shell_error("Arguments without '-' not supported: %s",
 				    argv[argc - 1]);
 		goto show_usage;
@@ -2047,8 +2060,7 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 		goto show_usage;
 	}
 
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
 	/* We need to read current settings first because we do not mandate that user must give
 	 * all of the settings in scope
@@ -2063,8 +2075,8 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 	newsettings.cmd_params.reset_to_driver_defaults = false;
 	newsettings.cmd_params.write_scope_bitmap = 0;
 
-	while ((opt = getopt_long(argc, argv, "n:t:b:rh", long_options_sett_cmd, &long_index)) !=
-	       -1) {
+	while ((opt = sys_getopt_long(argc, argv, "n:t:b:rh", long_options_sett_cmd,
+				      &long_index)) != -1) {
 		switch (opt) {
 		case 'r': {
 			dect_shell_sett_cmd_print(&current_settings);
@@ -2075,7 +2087,7 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case 'n': {
-			tmp_value = shell_strtoull(optarg, 10, &ret);
+			tmp_value = shell_strtoull(sys_getopt_optarg, 10, &ret);
 			if (ret || tmp_value > UINT32_MAX ||
 			    !dect_utils_lib_32bit_network_id_validate((uint32_t)tmp_value)) {
 				dect_l2_shell_error(
@@ -2093,7 +2105,7 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case 't': {
-			tmp_value = shell_strtoull(optarg, 10, &ret);
+			tmp_value = shell_strtoull(sys_getopt_optarg, 10, &ret);
 			if (ret || (tmp_value < 1 || tmp_value > (UINT32_MAX - 2))) {
 				dect_l2_shell_error(
 						    "Give decent tx id (range: 1-%lu)",
@@ -2106,7 +2118,7 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case 'b': {
-			tmp_value = atoi(optarg);
+			tmp_value = atoi(sys_getopt_optarg);
 			if (tmp_value == 1 || tmp_value == 2 || tmp_value == 4 || tmp_value == 9 ||
 			    tmp_value == 22) {
 				newsettings.band_nbr = tmp_value;
@@ -2120,14 +2132,14 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_REGION: {
-			if (!strcmp(optarg, "eu")) {
+			if (!strcmp(sys_getopt_optarg, "eu")) {
 				newsettings.region = DECT_SETTINGS_REGION_EU;
-			} else if (!strcmp(optarg, "us")) {
+			} else if (!strcmp(sys_getopt_optarg, "us")) {
 				newsettings.region = DECT_SETTINGS_REGION_US;
-			} else if (!strcmp(optarg, "global")) {
+			} else if (!strcmp(sys_getopt_optarg, "global")) {
 				newsettings.region = DECT_SETTINGS_REGION_GLOBAL;
 			} else {
-				dect_l2_shell_error("Invalid region: %s", optarg);
+				dect_l2_shell_error("Invalid region: %s", sys_getopt_optarg);
 				return;
 			}
 			newsettings.cmd_params.write_scope_bitmap |=
@@ -2135,13 +2147,13 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_AUTO_ACTIVATE: {
-			if (!strcmp(optarg, "on")) {
+			if (!strcmp(sys_getopt_optarg, "on")) {
 				newsettings.auto_start.activate = true;
-			} else if (!strcmp(optarg, "off")) {
+			} else if (!strcmp(sys_getopt_optarg, "off")) {
 				newsettings.auto_start.activate = false;
 			} else {
-				dect_l2_shell_error(
-						    "Invalid auto_activate value: %s", optarg);
+				dect_l2_shell_error("Invalid auto_activate value: %s",
+						    sys_getopt_optarg);
 				return;
 			}
 			newsettings.cmd_params.write_scope_bitmap |=
@@ -2149,7 +2161,7 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_NW_JOIN_TARGET: {
-			tmp_value = shell_strtoull(optarg, 10, &ret);
+			tmp_value = shell_strtoull(sys_getopt_optarg, 10, &ret);
 			if (ret || tmp_value > (UINT32_MAX - 2)) {
 				dect_l2_shell_error(
 					"Give decent auto start target tx id (range: 0-%lu)",
@@ -2162,13 +2174,13 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_DEV_TYPE: {
-			if (!strcmp(optarg, "FT")) {
+			if (!strcmp(sys_getopt_optarg, "FT")) {
 				newsettings.device_type = DECT_DEVICE_TYPE_FT;
-			} else if (!strcmp(optarg, "PT")) {
+			} else if (!strcmp(sys_getopt_optarg, "PT")) {
 				newsettings.device_type = DECT_DEVICE_TYPE_PT;
 			} else {
 				dect_l2_shell_error("Invalid device type: %s",
-						    optarg);
+						    sys_getopt_optarg);
 				return;
 			}
 			newsettings.cmd_params.write_scope_bitmap |=
@@ -2176,7 +2188,7 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_RSSI_SCAN_TIME_PER_CHANNEL: {
-			tmp_value = shell_strtoul(optarg, 10, &ret);
+			tmp_value = shell_strtoul(sys_getopt_optarg, 10, &ret);
 			if (ret || tmp_value < 10 || (tmp_value > 2550)) {
 				dect_l2_shell_error(
 						    "Give decent value (range: 10-2550)");
@@ -2188,7 +2200,7 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_RSSI_SCAN_FREE_THRESHOLD: {
-			long value = shell_strtol(optarg, 10, &ret);
+			long value = shell_strtol(sys_getopt_optarg, 10, &ret);
 
 			if (ret || value >= 0 || value < INT8_MIN) {
 				dect_l2_shell_error(
@@ -2201,7 +2213,7 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_RSSI_SCAN_BUSY_THRESHOLD: {
-			long value = shell_strtol(optarg, 10, &ret);
+			long value = shell_strtol(sys_getopt_optarg, 10, &ret);
 
 			if (ret || value >= 0 || value < INT8_MIN) {
 				dect_l2_shell_error(
@@ -2214,7 +2226,7 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_RSSI_SCAN_SUITABLE_PERCENT: {
-			tmp_value = shell_strtoul(optarg, 10, &ret);
+			tmp_value = shell_strtoul(sys_getopt_optarg, 10, &ret);
 			if (ret || tmp_value > 100) {
 				dect_l2_shell_error(
 						    "Give decent value (range: 0-100)");
@@ -2227,13 +2239,13 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 		}
 
 		case DECT_SHELL_SETT_CMD_CLUSTER_BEACON_PERIOD: {
-			tmp_value = atoi(optarg);
+			tmp_value = atoi(sys_getopt_optarg);
 			tmp_value =
 				dect_common_utils_settings_ms_to_mac_cluster_beacon_period_in_ms(
 					tmp_value);
 			if (tmp_value < 0) {
-				dect_l2_shell_error(
-						    "Invalid cluster beacon period: %s", optarg);
+				dect_l2_shell_error("Invalid cluster beacon period: %s",
+						    sys_getopt_optarg);
 				return;
 			}
 			newsettings.cluster.beacon_period = tmp_value;
@@ -2242,11 +2254,11 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_CLUSTER_MAX_BEACON_TX_PWR: {
-			long value = shell_strtol(optarg, 10, &ret);
+			long value = shell_strtol(sys_getopt_optarg, 10, &ret);
 
 			if (ret || value < -40 || value > 23) {
-				dect_l2_shell_error(
-						    "Invalid cluster beacon TX power: %s", optarg);
+				dect_l2_shell_error("Invalid cluster beacon TX power: %s",
+						    sys_getopt_optarg);
 				return;
 			}
 
@@ -2256,11 +2268,11 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_CLUSTER_MAX_TX_PWR: {
-			long value = shell_strtol(optarg, 10, &ret);
+			long value = shell_strtol(sys_getopt_optarg, 10, &ret);
 
 			if (ret || value < -12 || value > 23) {
-				dect_l2_shell_error(
-						    "Invalid cluster max TX power: %s", optarg);
+				dect_l2_shell_error("Invalid cluster max TX power: %s",
+						    sys_getopt_optarg);
 				return;
 			}
 			newsettings.cluster.max_cluster_power_dbm = value;
@@ -2269,7 +2281,7 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_CLUSTER_CHANNEL_LOADED_PERCENT: {
-			tmp_value = shell_strtoul(optarg, 10, &ret);
+			tmp_value = shell_strtoul(sys_getopt_optarg, 10, &ret);
 			if (ret || tmp_value > 100) {
 				dect_l2_shell_error(
 						    "Give decent value (range: 0-100)");
@@ -2281,7 +2293,7 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_CLUSTER_NBR_INACTIVITY_TIME: {
-			tmp_value = shell_strtoul(optarg, 10, &ret);
+			tmp_value = shell_strtoul(sys_getopt_optarg, 10, &ret);
 			if (ret || tmp_value >= UINT32_MAX) {
 				dect_l2_shell_error(
 						    "Give decent value (range: 0-%lu)",
@@ -2294,12 +2306,12 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_NW_BEACON_PERIOD: {
-			tmp_value = atoi(optarg);
+			tmp_value = atoi(sys_getopt_optarg);
 			tmp_value = dect_common_utils_settings_ms_to_mac_nw_beacon_period_in_ms(
 				tmp_value);
 			if (tmp_value < 0) {
-				dect_l2_shell_error(
-						    "Invalid network beacon period: %s", optarg);
+				dect_l2_shell_error("Invalid network beacon period: %s",
+						    sys_getopt_optarg);
 				return;
 			}
 			newsettings.nw_beacon.beacon_period = tmp_value;
@@ -2308,12 +2320,13 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_NW_BEACON_CHANNEL: {
-			tmp_value = shell_strtoul(optarg, 10, &ret);
+			tmp_value = shell_strtoul(sys_getopt_optarg, 10, &ret);
 			if (ret || tmp_value > UINT16_MAX) {
 				dect_l2_shell_error(
 					"Invalid network beacon channel: %s, range: 0-%u. "
 					"Set to %u to set as disabled.",
-					optarg, UINT16_MAX, DECT_NW_BEACON_CHANNEL_NOT_USED);
+					sys_getopt_optarg, UINT16_MAX,
+					DECT_NW_BEACON_CHANNEL_NOT_USED);
 				return;
 			}
 			newsettings.nw_beacon.channel = tmp_value;
@@ -2322,7 +2335,7 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_ASSOCIATION_MAX_CLUSTER_BEACON_RX_FAILS: {
-			tmp_value = shell_strtoul(optarg, 10, &ret);
+			tmp_value = shell_strtoul(sys_getopt_optarg, 10, &ret);
 			if (ret || tmp_value > UINT8_MAX) {
 				dect_l2_shell_error(
 						    "Give decent value (range: 0-%d)", UINT8_MAX);
@@ -2334,7 +2347,7 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_ASSOCIATION_MIN_SENSITIVITY: {
-			long value = shell_strtol(optarg, 10, &ret);
+			long value = shell_strtol(sys_getopt_optarg, 10, &ret);
 
 			if (ret || value > INT8_MAX || value < INT8_MIN) {
 				dect_l2_shell_error(
@@ -2348,13 +2361,13 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_PWR_SAVE: {
-			if (!strcmp(optarg, "on")) {
+			if (!strcmp(sys_getopt_optarg, "on")) {
 				newsettings.power_save = true;
-			} else if (!strcmp(optarg, "off")) {
+			} else if (!strcmp(sys_getopt_optarg, "off")) {
 				newsettings.power_save = false;
 			} else {
 				dect_l2_shell_error("Invalid power_save value: %s",
-						    optarg);
+						    sys_getopt_optarg);
 				return;
 			}
 			newsettings.cmd_params.write_scope_bitmap |=
@@ -2362,7 +2375,7 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_MAX_MCS: {
-			tmp_value = shell_strtoul(optarg, 10, &ret);
+			tmp_value = shell_strtoul(sys_getopt_optarg, 10, &ret);
 			if (ret || tmp_value > 4) {
 				dect_l2_shell_error(
 						    "Give decent value (range: 0-4)");
@@ -2373,7 +2386,7 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_MAX_TX_PWR: {
-			long value = shell_strtol(optarg, 10, &ret);
+			long value = shell_strtol(sys_getopt_optarg, 10, &ret);
 
 			if (ret || value < -40 || value > 23) {
 				dect_l2_shell_error(
@@ -2385,13 +2398,13 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_SEC_MODE: {
-			if (!strcmp(optarg, "none")) {
+			if (!strcmp(sys_getopt_optarg, "none")) {
 				newsettings.sec_conf.mode = DECT_SECURITY_MODE_NONE;
-			} else if (!strcmp(optarg, "mode_1")) {
+			} else if (!strcmp(sys_getopt_optarg, "mode_1")) {
 				newsettings.sec_conf.mode = DECT_SECURITY_MODE_1;
 			} else {
 				dect_l2_shell_error("Invalid security mode: %s",
-						    optarg);
+						    sys_getopt_optarg);
 				return;
 			}
 			newsettings.cmd_params.write_scope_bitmap |=
@@ -2399,12 +2412,12 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_SEC_INTEG_KEY: {
-			if (dect_shell_util_atoh(optarg, strlen(optarg),
+			if (dect_shell_util_atoh(sys_getopt_optarg, strlen(sys_getopt_optarg),
 						 newsettings.sec_conf.integrity_key,
 						 sizeof(newsettings.sec_conf.integrity_key)) !=
 			    DECT_INTEGRITY_KEY_LENGTH) {
-				dect_l2_shell_error(
-						    "Invalid security integrity key: %s", optarg);
+				dect_l2_shell_error("Invalid security integrity key: %s",
+						    sys_getopt_optarg);
 				return;
 			}
 			newsettings.cmd_params.write_scope_bitmap |=
@@ -2412,12 +2425,12 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			break;
 		}
 		case DECT_SHELL_SETT_CMD_SEC_CIPHER_KEY: {
-			if (dect_shell_util_atoh(optarg, strlen(optarg),
+			if (dect_shell_util_atoh(sys_getopt_optarg, strlen(sys_getopt_optarg),
 						 newsettings.sec_conf.cipher_key,
 						 sizeof(newsettings.sec_conf.cipher_key)) !=
 			    DECT_CIPHER_KEY_LENGTH) {
-				dect_l2_shell_error(
-						    "Invalid security cipher key: %s", optarg);
+				dect_l2_shell_error("Invalid security cipher key: %s",
+						    sys_getopt_optarg);
 				return;
 			}
 			newsettings.cmd_params.write_scope_bitmap |=
@@ -2429,13 +2442,13 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 			goto show_usage;
 		case '?':
 		default:
-			dect_l2_shell_error(
-					    "Unknown option (%s). See usage:", argv[optind - 1]);
+			dect_l2_shell_error("Unknown option (%s). See usage:",
+					    argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		dect_l2_shell_error("Arguments without '-' not supported: %s",
 				    argv[argc - 1]);
 		goto show_usage;
@@ -2511,8 +2524,7 @@ static void dect_shell_cluster_reconfig_cmd(const struct shell *shell, size_t ar
 	if (argc < 2) {
 		goto show_usage;
 	}
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
 	params.channel = DECT_CLUSTER_CHANNEL_ANY;
 	ret = net_mgmt(NET_REQUEST_DECT_SETTINGS_READ, context.iface, &current_settings,
@@ -2525,14 +2537,14 @@ static void dect_shell_cluster_reconfig_cmd(const struct shell *shell, size_t ar
 	params.max_cluster_power_dbm = current_settings.cluster.max_cluster_power_dbm;
 	params.period = current_settings.cluster.beacon_period;
 
-	while ((opt = getopt_long(argc, argv, "c:h", long_options_cluster_reconfig_cmd,
+	while ((opt = sys_getopt_long(argc, argv, "c:h", long_options_cluster_reconfig_cmd,
 				  &long_index)) != -1) {
 		switch (opt) {
 		case 'c': {
-			int channel = shell_strtoul(optarg, 10, &ret);
+			int channel = shell_strtoul(sys_getopt_optarg, 10, &ret);
 
 			if (ret || channel < 0 || channel > UINT16_MAX) {
-				dect_l2_shell_error("Invalid channel: %s", optarg);
+				dect_l2_shell_error("Invalid channel: %s", sys_getopt_optarg);
 				return;
 			}
 			params.channel = channel;
@@ -2540,23 +2552,23 @@ static void dect_shell_cluster_reconfig_cmd(const struct shell *shell, size_t ar
 		}
 
 		case DECT_SHELL_CLUSTER_RECONFIG_CMD_CLUSTER_BEACON_PERIOD: {
-			tmp_value = atoi(optarg);
+			tmp_value = atoi(sys_getopt_optarg);
 			tmp_value =
 				dect_common_utils_settings_ms_to_mac_cluster_beacon_period_in_ms(
 					tmp_value);
 			if (tmp_value < 0) {
-				dect_l2_shell_error(
-						    "Invalid cluster beacon period: %s", optarg);
+				dect_l2_shell_error("Invalid cluster beacon period: %s",
+						    sys_getopt_optarg);
 				return;
 			}
 			params.period = tmp_value;
 			break;
 		}
 		case DECT_SHELL_CLUSTER_RECONFIG_CMD_CLUSTER_MAX_BEACON_TX_PWR: {
-			tmp_value = atoi(optarg);
+			tmp_value = atoi(sys_getopt_optarg);
 			if (tmp_value < -40 || tmp_value > 23) {
-				dect_l2_shell_error(
-						    "Invalid cluster beacon TX power: %s", optarg);
+				dect_l2_shell_error("Invalid cluster beacon TX power: %s",
+						    sys_getopt_optarg);
 				return;
 			}
 
@@ -2564,10 +2576,10 @@ static void dect_shell_cluster_reconfig_cmd(const struct shell *shell, size_t ar
 			break;
 		}
 		case DECT_SHELL_CLUSTER_RECONFIG_CMD_CLUSTER_MAX_TX_PWR: {
-			tmp_value = atoi(optarg);
+			tmp_value = atoi(sys_getopt_optarg);
 			if (tmp_value < -12 || tmp_value > 23) {
-				dect_l2_shell_error(
-						    "Invalid cluster max TX power: %s", optarg);
+				dect_l2_shell_error("Invalid cluster max TX power: %s",
+						    sys_getopt_optarg);
 				return;
 			}
 
@@ -2578,13 +2590,13 @@ static void dect_shell_cluster_reconfig_cmd(const struct shell *shell, size_t ar
 			goto show_usage;
 		case '?':
 		default:
-			dect_l2_shell_error(
-					    "Unknown option (%s). See usage:", argv[optind - 1]);
+			dect_l2_shell_error("Unknown option (%s). See usage:",
+					    argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		dect_l2_shell_error("Arguments without '-' not supported: %s",
 				    argv[argc - 1]);
 		goto show_usage;
@@ -2628,25 +2640,24 @@ static void dect_shell_nw_beacon_start_cmd(const struct shell *shell, size_t arg
 	if (argc < 2) {
 		goto show_usage;
 	}
-	optreset = 1;
-	optind = 1;
+	sys_getopt_init();
 
 	params.additional_ch_count = 0;
 	params.channel = 0;
 
-	while ((opt = getopt_long(argc, argv, "c:h", long_options_nw_beacon_start, &long_index)) !=
-	       -1) {
+	while ((opt = sys_getopt_long(argc, argv, "c:h", long_options_nw_beacon_start,
+				      &long_index)) != -1) {
 		switch (opt) {
 		case 'c': {
-			params.channel = atoi(optarg);
+			params.channel = atoi(sys_getopt_optarg);
 			break;
 		}
 
 		case DECT_SHELL_NW_BEACON_START_CMD_ADD_CHANNELS: {
-			char *ch_string = strtok(optarg, ",");
+			char *ch_string = strtok(sys_getopt_optarg, ",");
 
 			if (ch_string == NULL) {
-				params.additional_ch_list[0] = atoi(optarg);
+				params.additional_ch_list[0] = atoi(sys_getopt_optarg);
 				params.additional_ch_count = 1;
 			} else {
 				while (ch_string != NULL && params.additional_ch_count < 3) {
@@ -2661,13 +2672,13 @@ static void dect_shell_nw_beacon_start_cmd(const struct shell *shell, size_t arg
 			goto show_usage;
 		case '?':
 		default:
-			dect_l2_shell_error(
-					    "Unknown option (%s). See usage:", argv[optind - 1]);
+			dect_l2_shell_error("Unknown option (%s). See usage:",
+					    argv[sys_getopt_optind - 1]);
 			goto show_usage;
 		}
 	}
 
-	if (optind < argc) {
+	if (sys_getopt_optind < argc) {
 		dect_l2_shell_error("Arguments without '-' not supported: %s",
 				    argv[argc - 1]);
 		goto show_usage;
