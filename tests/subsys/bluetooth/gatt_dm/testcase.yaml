@@ -11,3 +11,4 @@ tests:
       - discovery_manager
       - sysbuild
       - bluetooth
+      - ci_tests_subsys_bluetooth_gatt_dm

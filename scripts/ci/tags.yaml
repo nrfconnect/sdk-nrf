@@ -917,6 +917,11 @@ ci_tests_subsys_bluetooth_rpc_gatt_service:
     - nrf/tests/subsys/bluetooth/rpc_gatt_service/
     - zephyr/subsys/bluetooth/rpc/common/
 
+ci_tests_subsys_bluetooth_gatt_dm:
+  files:
+    - nrf/subsys/bluetooth/gatt_dm.c
+    - nrf/tests/subsys/bluetooth/gatt_dm/
+
 ci_tests_subsys_mpsl:
   files:
     - nrf/subsys/mpsl/
