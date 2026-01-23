@@ -1,39 +1,22 @@
 sample:
   name: Hello DECT Sample
   description: Simple DECT NR+ sample application demonstrating connection manager usage
+common:
+  tags:
+    - ci_build
+    - sysbuild
+    - ci_samples_dect
+  sysbuild: true
+  build_only: true
+  integration_platforms:
+    - nrf9151dk/nrf9151/ns
+  platform_allow:
+    - nrf9151dk/nrf9151/ns
 tests:
-  sample.dect.hello_dect.ft_device_default:
-    sysbuild: true
-    build_only: true
-    integration_platforms:
-      - nrf9151dk/nrf9151/ns
-    platform_allow:
-      - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild ci_samples_dect
+  sample.dect.hello_dect.ft_device_default: {}
   sample.dect.hello_dect.ft_device:
-    sysbuild: true
-    build_only: true
     extra_args: EXTRA_CONF_FILE="ft.conf"
-    integration_platforms:
-      - nrf9151dk/nrf9151/ns
-    platform_allow:
-      - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild ci_samples_dect
   sample.dect.hello_dect.ft_device_shell:
-    sysbuild: true
-    build_only: true
     extra_args: EXTRA_CONF_FILE="ft.conf;shell.conf"
-    integration_platforms:
-      - nrf9151dk/nrf9151/ns
-    platform_allow:
-      - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild ci_samples_dect
   sample.dect.hello_dect.pt_device:
-    sysbuild: true
-    build_only: true
     extra_args: EXTRA_CONF_FILE="pt.conf"
-    integration_platforms:
-      - nrf9151dk/nrf9151/ns
-    platform_allow:
-      - nrf9151dk/nrf9151/ns
-    tags: ci_build sysbuild ci_samples_dect
