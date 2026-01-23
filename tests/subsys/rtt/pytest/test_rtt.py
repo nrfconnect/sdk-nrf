@@ -146,4 +146,4 @@ def test_rtt_logging(dut: DeviceAdapter):
 
     # Check if log file contains expected string
     expected_str = re.search(EXPECTED, log_file_content)
-    assert expected_str is not None, f"Failed to match {EXPECTED} in {log_filename}"
+    assert expected_str is not None, f"Failed to match {EXPECTED} in {log_file_content}"
