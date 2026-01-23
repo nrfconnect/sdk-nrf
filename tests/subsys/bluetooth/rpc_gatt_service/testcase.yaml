@@ -4,6 +4,6 @@ tests:
     tags:
       - ci_build
       - bluetooth
-      - ci_tests_subsys_bluetooth
+      - ci_tests_subsys_bluetooth_rpc_gatt_service
     integration_platforms:
       - native_sim

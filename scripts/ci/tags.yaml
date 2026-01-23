@@ -912,6 +912,11 @@ ci_tests_subsys_bluetooth_enocean:
     - zephyr/subsys/bluetooth/common/addr.c
     - zephyr/subsys/bluetooth/common/bt_str.c
 
+ci_tests_subsys_bluetooth_rpc_gatt_service:
+  files:
+    - nrf/tests/subsys/bluetooth/rpc_gatt_service/
+    - zephyr/subsys/bluetooth/rpc/common/
+
 ci_tests_subsys_mpsl:
   files:
     - nrf/subsys/mpsl/
