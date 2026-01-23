@@ -610,3 +610,9 @@
   platforms:
     - nrf52dk/nrf52832
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37196"
+
+- scenarios:
+    - boards.native_sim.reset_hw_info
+  platforms:
+    - native_sim/native
+  comment: "Expects zephyr boot banner, but there is NCS version printed"
