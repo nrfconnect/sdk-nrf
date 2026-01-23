@@ -15,3 +15,36 @@
 		nordic,modem-trace-uart = &uart1;
 	};
 };
+
+&sram0_ns_modem {
+	/* Modem (shared) memory */
+	reg = <0x0 0x8800>;
+	#address-cells = <1>;
+	#size-cells = <1>;
+	ranges = <0x0 0x0 0x8800>;
+
+	sram0_ns_modem_ctrl: sram0_ns_modem@0 {
+		/* Modem IPC control */
+		reg = <0x0 0x4e8>;
+	};
+
+	sram0_ns_modem_tx: sram0_ns_modem@4e8 {
+		/* Modem IPC transmit */
+		reg = <0x4e8 0x2080>;
+	};
+
+	sram0_ns_modem_rx: sram0_ns_modem@2568 {
+		/* Modem IPC receive */
+		reg = <0x2568 0x2000>;
+	};
+
+	sram0_ns_modem_trace: sram0_ns_modem@4568 {
+		/* Modem IPC receive */
+		reg = <0x4568 0x4000>;
+	};
+};
+
+&sram0_ns_app {
+	/* Non-Secure application memory */
+	reg = <0x8800 0x2f800>;
+};

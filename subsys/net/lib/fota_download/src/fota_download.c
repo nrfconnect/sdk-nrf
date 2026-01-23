@@ -9,7 +9,6 @@
 #include <zephyr/sys/hash_function.h>
 #include <net/fota_download.h>
 #include <net/downloader.h>
-#include <pm_config.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/tls_credentials.h>
 
@@ -17,6 +16,7 @@
 
 #if defined(PM_S1_ADDRESS) || defined(CONFIG_DFU_TARGET_MCUBOOT)
 /* MCUBoot support is required */
+#include <pm_config.h>
 #include <fw_info.h>
 #if CONFIG_TRUSTED_EXECUTION_NONSECURE
 #include <tfm/tfm_ioctl_api.h>
