@@ -99,7 +99,7 @@ static int ExecSwitchTransport(const shell *shell, size_t argc, char **argv)
 {
 	VerifyOrReturnError(argc == 1, -EINVAL);
 
-	shell_print(shell, "Switching to %s", ThreadWifiSwitch::IsThreadActive() ? "Wi-Fi" : "Thread");
+	LOG_INF("Switching to %s", ThreadWifiSwitch::IsThreadActive() ? "Wi-Fi" : "Thread");
 	ThreadWifiSwitch::SwitchTransport();
 
 	return 0;
