@@ -51,10 +51,23 @@
 #define GRANT_PIN_PORT_NO  DT_PROP(DT_GPIO_CTLR(CX_NODE, grant_gpios), port)
 #define GRANT_PIN_PIN_NO   DT_GPIO_PIN(CX_NODE, grant_gpios)
 
+#if defined(CONFIG_SOC_NRF54H20_CPURAD)
+#if (GRANT_PIN_PORT_NO == 6) || (GRANT_PIN_PORT_NO == 7)
+#error "GPIO ports 6 and 7 cannot be used for coexistence pins"
+#endif
+#endif
+
 static nrfx_gpiote_t *gpiote =
 	&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(CX_NODE, grant_gpios));
 
 static const struct gpio_dt_spec gra_spec = GPIO_DT_SPEC_GET(CX_NODE, grant_gpios);
+
+#if !defined(CONFIG_SOC_SERIES_BSIM_NRFXX)
+/* Direct register access pointers for ISR-safe GPIO control from DT */
+static NRF_GPIO_Type *grant_port =
+	((NRF_GPIO_Type *)DT_REG_ADDR(DT_GPIO_CTLR(CX_NODE, grant_gpios)));
+static uint32_t grant_pin_mask = BIT(DT_GPIO_PIN(CX_NODE, grant_gpios));
+#endif
 
 static mpsl_cx_cb_t callback;
 static struct gpio_callback grant_cb;
@@ -62,11 +75,18 @@ static uint32_t grant_abs_pin;
 
 static bool grant_pin_is_asserted(void)
 {
+#if defined(CONFIG_SOC_SERIES_BSIM_NRFXX)
 	int ret = gpio_pin_get_dt(&gra_spec);
 
 	__ASSERT(ret >= 0, "Error while reading GPIO state.");
 
 	return ret;
+#else
+	uint32_t port_in = nrf_gpio_port_in_read(grant_port);
+	bool raw_value = (bool)(port_in & grant_pin_mask);
+
+	return (gra_spec.dt_flags & GPIO_ACTIVE_LOW) ? !raw_value : raw_value;
+#endif
 }
 
 static mpsl_cx_op_map_t granted_ops_map_get(void)
@@ -155,6 +175,12 @@ static int mpsl_cx_init(void)
 	if (ret != 0) {
 		return ret;
 	}
+
+#if !defined(CONFIG_SOC_SERIES_BSIM_NRFXX)
+	if (grant_port == NULL) {
+		return -EINVAL;
+	}
+#endif
 
 	ret = gpio_pin_interrupt_configure_dt(&gra_spec,
 		GPIO_INT_ENABLE | GPIO_INT_EDGE | GPIO_INT_EDGE_BOTH);
