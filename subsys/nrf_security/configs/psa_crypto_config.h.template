@@ -500,7 +500,6 @@
 #cmakedefine MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
 #cmakedefine MBEDTLS_PSA_KEY_SLOT_COUNT                         @MBEDTLS_PSA_KEY_SLOT_COUNT@
 #cmakedefine MBEDTLS_PSA_STATIC_KEY_SLOTS                       @MBEDTLS_PSA_STATIC_KEY_SLOTS@
-#cmakedefine MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE            @MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE@
 
 #include <oberon_check_unsupported.h>
 
