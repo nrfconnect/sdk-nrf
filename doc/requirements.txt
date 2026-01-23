@@ -29,5 +29,6 @@ sphinxcontrib-mscgen            # |  X  |         |        |         |    X    |
 sphinxcontrib-plantuml>=0.27    # |     |         |        |         |         |  X   |        |
 sphinxcontrib-programoutput     # |  X  |         |        |         |         |      |   X    |
 west>=1.0.0                     # |     |         |        |         |         |      |   X    |
+ply                             # |     |         |        |         |         |      |   X    |
 python-dotenv                   # |     |    X    |        |         |         |      |        |
 tabulate                        # |     |         |        |         |         |      |   X    |
