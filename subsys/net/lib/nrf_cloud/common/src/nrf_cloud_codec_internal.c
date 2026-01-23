@@ -384,6 +384,9 @@ int nrf_cloud_shadow_control_get(struct nrf_cloud_obj_shadow_data *const input,
 		return err;
 	} else if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_DELTA) {
 		return detach_item(&input->delta->state, NRF_CLOUD_JSON_KEY_CTRL, ctrl_obj);
+	} else if (input->type == NRF_CLOUD_OBJ_SHADOW_TYPE_TF) {
+		return detach_item(&input->transform->result.obj, NRF_CLOUD_JSON_KEY_CTRL,
+				  ctrl_obj);
 	} else {
 		return -ENODATA;
 	}
@@ -3516,11 +3519,18 @@ int nrf_cloud_obj_shadow_transform_decode(struct nrf_cloud_obj *const shadow_obj
 			return -ENOMSG;
 		}
 
+		LOG_ERR("Transform error %d : %s", tf->error.code, tf->error.msg);
+
 		/* Attach the error object since it contains the string data */
 		tf->error.err_obj = *shadow_obj;
 	} else {
 		/* Attach the result object */
-		tf->result.obj = *shadow_obj;
+		err = nrf_cloud_obj_object_detach(shadow_obj, NRF_CLOUD_TRANSFORM_RSP_TF_KEY,
+					      &tf->result.obj);
+		if (err) {
+			LOG_ERR("Failed to get transform response result object");
+			return -ENODATA;
+		}
 	}
 
 	nrf_cloud_obj_reset(shadow_obj);

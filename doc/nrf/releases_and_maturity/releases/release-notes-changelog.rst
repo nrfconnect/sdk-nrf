@@ -611,7 +611,7 @@ AVSystem integration
 nRF Cloud integration
 ---------------------
 
-|no_changes_yet_note|
+* Updated by enabling a transform request for topic prefix and pairing during connection initialization to nRF Cloud in the MQTT finite state machine (FSM).
 
 CoreMark integration
 --------------------
