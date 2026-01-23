@@ -1,0 +1,26 @@
+common:
+  sysbuild: true
+  tags:
+    - ci_tests_benchmarks_current_consumption
+    - ppk_power_measure
+  harness: pytest
+  harness_config:
+    fixture: ppk_power_measure
+    pytest_root:
+      - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_rram_low_latency"
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf54ls05dk/nrf54ls05b/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+tests:
+  # Set NRF_RRAMC_LP_STANDBY mode
+  # this configuration shall have higher power consumption
+  # due to RRAM being powered on for all the time
+  benchmarks.current_consumption.rram_low_latency.standby_mode: {}
+  # use GRTC and DPPI to wakeup RRAM just before expected event
+  benchmarks.current_consumption.rram_low_latency.pre_wake:
+    extra_configs:
+      - CONFIG_RRAMC_PPI_WAKEUP=y
