@@ -39,3 +39,14 @@
 &cpuapp_bellboard {
 	nordic,interrupt-mapping = <0xe3042041 0>;
 };
+
+/* Increase the shared memory region between app and cell CPU and add trace section. */
+&cpuapp_cpucell_ram0x_region {
+	reg = <0x2f0d0000 DT_SIZE_K(52)>;
+	ranges = <0x0 0x2f0d0000 0xd000>;
+
+	/* trace, user defined */
+	cpucell_cpuapp_ipc_shm_trace: memory@9000 {
+		reg = <0x9000 0x4000>;
+	};
+};

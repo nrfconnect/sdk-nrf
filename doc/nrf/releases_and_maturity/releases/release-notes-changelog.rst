@@ -458,7 +458,11 @@ Security libraries
 Modem libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`nrf_modem_lib_readme` library:
+
+  * Added support for building for the nRF91 board without Partition Manager.
+    This requires ``cpuapp_cpucell_ipc_shm_ctrl``, ``cpuapp_cpucell_ipc_shm_heap``, and ``cpucell_cpuapp_ipc_shm_heap`` partitions to be defined in the devicetree.
+  * Use a separate ``cpucell_cpuapp_ipc_shm_trace`` partition for modem tracing instead of splitting the ``cpucell_cpuapp_ipc_shm_heap`` partition.
 
 Multiprotocol Service Layer libraries
 -------------------------------------
