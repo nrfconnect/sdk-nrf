@@ -1423,7 +1423,7 @@
  * Module:  library/psa_crypto.c
  * Requires: MBEDTLS_PSA_CRYPTO_C
  */
-#cmakedefine MBEDTLS_PSA_KEY_STORE_DYNAMIC
+//#define MBEDTLS_PSA_KEY_STORE_DYNAMIC
 
 /**
  * Uncomment to enable p256-m. This is an alternative implementation of
