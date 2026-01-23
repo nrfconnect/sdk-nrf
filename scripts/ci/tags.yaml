@@ -905,6 +905,13 @@ ci_tests_subsys_bluetooth_cs_de:
     - nrf/subsys/bluetooth/cs_de/
     - nrf/tests/subsys/bluetooth/cs_de/
 
+ci_tests_subsys_bluetooth_enocean:
+  files:
+    - nrf/subsys/bluetooth/enocean.c
+    - nrf/tests/subsys/bluetooth/enocean/
+    - zephyr/subsys/bluetooth/common/addr.c
+    - zephyr/subsys/bluetooth/common/bt_str.c
+
 ci_tests_subsys_mpsl:
   files:
     - nrf/subsys/mpsl/

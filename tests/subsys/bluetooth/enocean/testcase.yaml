@@ -6,6 +6,7 @@ tests:
     tags:
       - bluetooth
       - ci_build
+      - ci_tests_subsys_bluetooth_enocean
     integration_platforms:
       - native_sim
       - qemu_cortex_m3
