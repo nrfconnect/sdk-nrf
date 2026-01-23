@@ -76,17 +76,6 @@ config MBEDTLS_PSA_STATIC_KEY_SLOTS
 	  When this option is enabled the PSA core doesn't use the heap to store keys.
 	  It uses a static buffer to hold the key material.
 
-config MBEDTLS_PSA_KEY_STORE_DYNAMIC
-	bool
-	help
-	  This option is incompatible with nrf_security when builtin keys are being used.
-	  Since the builtin keys are considered an integral part of nrf_security this option
-	  should not be enabled.
-	  This option is not forwarded to the header files of nrf_security and it is kept
-	  here only for visibility. The PSA key store design defines the hydrid key store
-	  implicitely when both this option and the option regarding the static key slots
-	  are disabled so it is valuable in the build to see that this is disabled.
-
 config PSA_CRYPTO_SYS_INIT
 	bool "Invoke psa_crypto_init during system initialization"
 	default y
