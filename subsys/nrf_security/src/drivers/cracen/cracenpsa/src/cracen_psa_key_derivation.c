@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <cracen_psa_key_derivation.h>
+
 #include <cracen/common.h>
 #include <internal/ecc/cracen_ecc_helpers.h>
 #include <internal/ecdh/cracen_ecdh_weierstrass.h>

@@ -7,6 +7,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <cracen_psa_aead.h>
+
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
 #include <sxsymcrypt/aead.h>

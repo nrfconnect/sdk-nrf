@@ -4,11 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <cracen_psa_wpa3_sae.h>
+
 #include <cracen/common.h>
 #include <internal/ecc/cracen_ecc_helpers.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
-#include <cracen_psa_wpa3_sae.h>
 #include <cracen_psa_primitives.h>
 #include <psa/crypto.h>
 #include <psa/crypto_extra.h>
