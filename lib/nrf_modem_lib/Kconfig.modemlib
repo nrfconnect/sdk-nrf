@@ -40,8 +40,6 @@ config NRF_MODEM_LIB_SHMEM_CTRL_SIZE
 	  This is a constant for a given library build, and is exported
 	  by the library via NRF_MODEM_SHMEM_CTRL_SIZE.
 
-if SOC_SERIES_NRF91 || UNITY
-
 config NRF_MODEM_LIB_SHMEM_TX_SIZE
 	int "TX region size"
 	range 1024 32768
@@ -74,8 +72,6 @@ config NRF_MODEM_LIB_SHMEM_TRACE_SIZE
 	default 0
 	help
 	  Size of the shared memory region used to receive modem traces.
-
-endif # SOC_SERIES_NRF91 || UNITY
 
 if SOC_SERIES_NRF92
 

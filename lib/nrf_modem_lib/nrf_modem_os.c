@@ -16,15 +16,16 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(nrf_modem, CONFIG_NRF_MODEM_LIB_LOG_LEVEL);
 
-#if CONFIG_SOC_SERIES_NRF91
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
 #include <pm_config.h>
 #define SHMEM_TX_HEAP_ADDR (PM_NRF_MODEM_LIB_TX_ADDRESS)
 #define SHMEM_TX_HEAP_SIZE (CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE)
-#elif CONFIG_SOC_SERIES_NRF92
-#define SHMEM_TX_HEAP_ADDR (DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm_heap)))
-#define SHMEM_TX_HEAP_SIZE (DT_REG_SIZE(DT_NODELABEL(cpuapp_cpucell_ipc_shm_heap)))
-#endif
+#else /* !CONFIG_PARTITION_MANAGER_ENABLED */
+extern const uint8_t *nrf_modem_lib_shmem_tx;
 
+#define SHMEM_TX_HEAP_ADDR (nrf_modem_lib_shmem_tx)
+#define SHMEM_TX_HEAP_SIZE (CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE)
+#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 
 #define UNUSED_FLAGS 0
 #define THREAD_MONITOR_ENTRIES 10
@@ -504,6 +505,7 @@ void nrf_modem_os_init(void)
 	/* Initialize heaps */
 	k_heap_init(&nrf_modem_lib_heap, library_heap_buf, sizeof(library_heap_buf));
 	k_heap_init(&nrf_modem_lib_shmem_heap, (void *)SHMEM_TX_HEAP_ADDR, SHMEM_TX_HEAP_SIZE);
+
 }
 
 void nrf_modem_os_shutdown(void)

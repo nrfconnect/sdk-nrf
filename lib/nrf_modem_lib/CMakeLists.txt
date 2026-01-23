@@ -24,5 +24,8 @@ endif()
 zephyr_library_sources(fault.c)
 zephyr_library_sources(sanity.c)
 
+# The nRF91 requires the shared region to be in the first half of the RAM.
+# This file creates a section in front of .bss.
+zephyr_linker_sources_ifdef(CONFIG_SOC_SERIES_NRF91 SECTIONS shared_region.ld)
 zephyr_linker_sources(RODATA nrf_modem_lib.ld)
 zephyr_linker_sources_IFDEF(CONFIG_NRF_MODEM_LIB_CFUN_HOOKS RODATA cfun_hooks.ld)
