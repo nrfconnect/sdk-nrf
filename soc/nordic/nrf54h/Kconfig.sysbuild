@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if SOC_SERIES_NRF54H
+
+config MCUBOOT_DIRECT_XIP_GENERATE_VARIANT
+	default n
+
+endif # SOC_SERIES_NRF54H
