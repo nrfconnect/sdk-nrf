@@ -554,7 +554,10 @@ Modem libraries
 Multiprotocol Service Layer libraries
 -------------------------------------
 
-|no_changes_yet_note|
+* Fixed:
+
+  * An issue with toggling of the **REQUEST** and **STATUS0** pins when using the nRF700x coexistence interface on the nRF54H20 device.
+  * An issue where coexistence pin GPIO polarity settings were ignored when using the nRF700x coexistence interface.
 
 Libraries for networking
 ------------------------
