@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <cracen_psa_key_management.h>
+
 #include <cracen/common.h>
 #include <cracen/statuscodes.h>
 #include <cracen/cracen_kmu.h>
@@ -185,6 +187,7 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
+static
 psa_status_t generate_key_for_kmu(const psa_key_attributes_t *attributes, uint8_t *key_buffer,
 				  size_t key_buffer_size, size_t *key_buffer_length)
 {
