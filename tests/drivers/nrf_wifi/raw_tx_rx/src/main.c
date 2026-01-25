@@ -13,8 +13,11 @@ LOG_MODULE_REGISTER(net_test, NET_LOG_LEVEL);
 
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
-#include <zephyr/net/socket.h>
+#include <zephyr/posix/sys/socket.h>
+#include <zephyr/posix/unistd.h>
 #include <zephyr/net/wifi_mgmt.h>
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/ethernet.h>
 
 #include <zephyr/ztest.h>
 
