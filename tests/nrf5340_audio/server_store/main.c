@@ -22,7 +22,7 @@
 #include <../subsys/bluetooth/host/conn_internal.h>
 #include <../subsys/bluetooth/audio/cap_internal.h>
 #include "server_store.h"
-#include "cap/cap_fake.h"
+#include "bt_fakes/bt_fakes.h"
 
 #define TEST_UNICAST_GROUP(name)                                                                   \
 	struct bt_bap_unicast_group bap_group_##name = {0};                                        \

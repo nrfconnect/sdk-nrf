@@ -2,7 +2,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
-/* This file is */
+/* This file contains functions for faking CAP and BAP behaviors as well as Bluetooth host calls
+ *  For simpliclity, faking has been done on this level, i.e. including
+ * /src/bluetooth/bt_stream/le_audio.c as part of the tests.
+ */
 
 typedef bool (*callback_fn_cap_fake)(struct bt_cap_stream *stream, void *user_data);
 
@@ -17,9 +20,6 @@ static bool bap_unicast_group_foreach_stream_cb(struct bt_bap_stream *bap_stream
 {
 	struct cap_unicast_group_foreach_stream_data *data = user_data;
 
-	/* Since we are iterating on a CAP unicast group, we can assume that all streams are CAP
-	 * streams
-	 */
 	return data->func(CONTAINER_OF(bap_stream, struct bt_cap_stream, bap_stream),
 			  data->user_data);
 }
@@ -61,32 +61,16 @@ int bt_cap_unicast_group_foreach_stream_custom_fake(
 	return 0;
 }
 
-// FAKE_VALUE_FUNC(int, le_audio_stream_dir_get,
-//		struct bt_bap_stream const *const); // uses bt_bap_ep_get_info
-// FAKE_VALUE_FUNC(int, le_audio_octets_per_frame_get, const struct bt_audio_codec_cfg *,
-//		uint32_t *); // bt_audio_codec_cfg_get_octets_per_frame
-// FAKE_VALUE_FUNC(int, le_audio_freq_hz_get, const struct bt_audio_codec_cfg *,
-//		int *); // bt_audio_codec_cfg_get_freq
-// FAKE_VALUE_FUNC(int, le_audio_ep_state_get, struct bt_bap_ep const *const,
-//		uint8_t *); // bt_bap_ep_get_info
-// FAKE_VALUE_FUNC(bool, le_audio_ep_state_check, struct bt_bap_ep const *const,
-//		enum bt_bap_ep_state); // bt_bap_ep_get_info
-
-FAKE_VALUE_FUNC(int, bt_bap_ep_get_info, const struct bt_bap_ep *, struct bt_bap_ep_info *);
-
 struct bt_bap_ep *bt_bap_iso_get_paired_ep_fake(const struct bt_bap_ep *ep)
 {
-
-	if (ep == NULL || ep->iso == NULL) {
-		TC_PRINT("NULLLLLLLLLL");
-	}
-
 	if (ep->iso->rx.ep == ep) {
 		return ep->iso->tx.ep;
 	} else {
 		return ep->iso->rx.ep;
 	}
 }
+
+FAKE_VALUE_FUNC(int, bt_bap_ep_get_info, const struct bt_bap_ep *, struct bt_bap_ep_info *);
 
 int bt_bap_ep_get_info_custom_fake(const struct bt_bap_ep *ep, struct bt_bap_ep_info *info)
 {
@@ -95,13 +79,11 @@ int bt_bap_ep_get_info_custom_fake(const struct bt_bap_ep *ep, struct bt_bap_ep_
 
 	if (ep == NULL) {
 		TC_PRINT("ep is NULL\n");
-
 		return -EINVAL;
 	}
 
 	if (info == NULL) {
 		TC_PRINT("info is NULL\n");
-
 		return -EINVAL;
 	}
 
