@@ -4,3 +4,4 @@ py:
   - GHSA-4xh5-x5gv-qwph
   - GHSA-f83h-ghpp-7wcc
   - CVE-2025-69277
+  - CVE-2026-0994
