@@ -1209,3 +1209,16 @@ prometheus:
     - zephyr/samples/net/prometheus/
     - zephyr/subsys/net/lib/prometheus/
     - zephyr/tests/net/lib/prometheus/
+
+net.socket:
+  files:
+    - zephyr/samples/net/sockets/
+    - zephyr/subsys/net/lib/sockets/
+    - zephyr/tests/net/socket/
+
+uuid:
+  files:
+    - zephyr/include/zephyr/sys/uuid.h
+    - zephyr/lib/uuid/
+    - zephyr/samples/subsys/uuid/
+    - zephyr/tests/lib/uuid/
