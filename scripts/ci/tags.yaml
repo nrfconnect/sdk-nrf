@@ -321,9 +321,6 @@ ci_samples_nfc:
   files:
     - nrf/include/nfc/
     - nrf/lib/st25r3911b/
-    - nrf/samples/bluetooth/central_nfc_pairing/
-    - nrf/samples/bluetooth/peripheral_hids_keyboard/
-    - nrf/samples/bluetooth/peripheral_nfc_pairing/
     - nrf/samples/nfc/
     - nrf/subsys/nfc/
     - nrfxlib/nfc/
