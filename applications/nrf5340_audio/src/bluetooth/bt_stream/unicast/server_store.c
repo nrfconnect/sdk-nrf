@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/sys/slist.h>
+// #include <zephyr/sys/slist.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/addr.h>
+#include <zephyr/bluetooth/audio/bap_lc3_preset.h>
 #include <zephyr/bluetooth/audio/cap.h>
 #include <string.h>
 #include <stdio.h>
@@ -587,9 +588,13 @@ static bool stream_check_pd(struct bt_cap_stream *existing_stream, void *user_da
 {
 	struct foreach_stream_data *ctx = (struct foreach_stream_data *)user_data;
 
+	LOG_WRN("STEAM CHECK PD");
+
 	if (existing_stream->bap_stream.group != ctx->incoming_stream->group) {
 		/* The existing stream is not in the same group as the incoming stream */
-		LOG_ERR("Existing stream not in same group as incoming stream");
+		LOG_ERR("Existing stream group (%p) not same as incoming stream group (%p)",
+			(void *)existing_stream->bap_stream.group,
+			(void *)ctx->incoming_stream->group);
 		ctx->ret = -EINVAL;
 		return true;
 	}
@@ -699,7 +704,7 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 
 	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
 	if (ret) {
-		LOG_ERR("Failed to get ep info: %d", ret);
+		LOG_ERR("Failed to get ep! info: %d", ret);
 		*computed_pres_dly_us = UINT32_MAX;
 
 		return ret;
@@ -719,6 +724,7 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 		.existing_pres_dly_already_in_range = false,
 	};
 
+	LOG_WRN("FOREACH STREAM CALL");
 	ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_check_pd,
 						  (void *)&foreach_data);
 	if (foreach_data.ret) {
@@ -802,9 +808,13 @@ static bool stream_check_max_trans_lat(struct bt_cap_stream *existing_stream, vo
 {
 	struct foreach_stream_data *ctx = (struct foreach_stream_data *)user_data;
 
+	LOG_WRN("max trans lat foreach stream");
+
 	if (existing_stream->bap_stream.group != ctx->incoming_stream->group) {
 		/* The existing stream is not in the same group as the incoming stream */
-		LOG_ERR("Existing stream not in same group as incoming stream");
+		LOG_ERR("Existing stream group (%p) not same as incoming stream group (%p)",
+			(void *)existing_stream->bap_stream.group,
+			(void *)ctx->incoming_stream->group);
 		ctx->ret = -EINVAL;
 		return true;
 	}
@@ -812,11 +822,27 @@ static bool stream_check_max_trans_lat(struct bt_cap_stream *existing_stream, vo
 	if (ctx->incoming_stream == &existing_stream->bap_stream) {
 		/* The existing stream is the same as the incoming stream */
 		LOG_WRN("Existing stream is the incoming stream, skipping");
+		// Wrong because one of the streams points to the PCS define and the other to the
+		// real stream.
 		return false;
 	}
 
-	if (le_audio_stream_dir_get(&existing_stream->bap_stream) !=
-	    le_audio_stream_dir_get(ctx->incoming_stream)) {
+	int existing_dir = le_audio_stream_dir_get(&existing_stream->bap_stream);
+	int incoming_dir = le_audio_stream_dir_get(ctx->incoming_stream);
+
+	if (existing_dir) {
+		LOG_ERR("Failed to get existing stream direction");
+		ctx->ret = -EINVAL;
+		return true;
+	}
+
+	if (incoming_dir) {
+		LOG_ERR("Failed to get incoming stream direction");
+		ctx->ret = -EINVAL;
+		return true;
+	}
+
+	if (existing_dir != incoming_dir) {
 		LOG_DBG("Existing stream not in same direction as incoming stream");
 		return false;
 	}
@@ -825,7 +851,7 @@ static bool stream_check_max_trans_lat(struct bt_cap_stream *existing_stream, vo
 	LOG_INF("Stream checked %d", *ctx->streams_checked);
 
 	if (*ctx->existing_trans_lat_ms == UINT16_MAX) {
-		*ctx->existing_trans_lat_ms = ctx->incoming_qos->latency;
+		*ctx->existing_trans_lat_ms = existing_stream->bap_stream.qos->latency;
 		LOG_INF("First trans lat set: %u ms", ctx->incoming_qos->latency);
 	} else if (*ctx->existing_trans_lat_ms != existing_stream->bap_stream.qos->latency) {
 		LOG_ERR("Illegal value. Max transport latencies do not match: %u != %u",
@@ -873,6 +899,7 @@ int srv_store_max_trans_lat_find(struct bt_bap_stream const *const stream,
 	ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_check_max_trans_lat,
 						  (void *)&foreach_data);
 	if (ret != 0 && ret != -ECANCELED) {
+		/* There shall already be at least one server added at this point */
 		LOG_ERR("Failed to iterate streams in group: %d", ret);
 		return ret;
 	}
@@ -922,17 +949,26 @@ int srv_store_max_trans_lat_find(struct bt_bap_stream const *const stream,
 struct foreach_trans_lat_store {
 	enum bt_audio_dir dir;
 	uint16_t max_trans_lat_ms;
+	uint8_t streams_checked;
 };
 
 static bool stream_trans_lat_set(struct bt_cap_stream *existing_stream, void *user_data)
 {
 	struct foreach_trans_lat_store *ctx = (struct foreach_trans_lat_store *)user_data;
 
-	if (le_audio_stream_dir_get(&existing_stream->bap_stream) != ctx->dir) {
-		LOG_DBG("Existing stream not in same direction as incoming stream");
+	int existing_dir = le_audio_stream_dir_get(&existing_stream->bap_stream);
+	if (existing_dir < 0) {
+		LOG_ERR("Failed to get existing stream direction");
 		return false;
 	}
 
+	if (existing_dir != ctx->dir) {
+		LOG_WRN("Existing stream not in same direction as incoming stream");
+		return false;
+	}
+
+	ctx->streams_checked++;
+	LOG_INF("Stream checked %d", ctx->streams_checked);
 	existing_stream->bap_stream.qos->latency = ctx->max_trans_lat_ms;
 	LOG_WRN("trans lat set for stream");
 
@@ -952,15 +988,19 @@ int srv_store_max_trans_lat_set(struct bt_cap_unicast_group *unicast_group, enum
 	int ret;
 
 	struct foreach_trans_lat_store trans_lat_store = {
-		dir = dir,
-		max_trans_lat_ms = max_trans_lat_ms,
-	};
+		.dir = dir, .max_trans_lat_ms = max_trans_lat_ms, .streams_checked = 0};
 
 	ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_trans_lat_set,
 						  (void *)&trans_lat_store);
+
 	if (ret != 0 && ret != -ECANCELED) {
 		LOG_ERR("Failed to iterate streams in group: %d", ret);
 		return ret;
+	}
+
+	if (trans_lat_store.streams_checked == 0) {
+		LOG_ERR("No streams to set");
+		return -ECHILD;
 	}
 
 	return 0;
@@ -1210,6 +1250,7 @@ static int srv_store_ep_state_count(struct bt_conn const *const conn, enum bt_ba
 
 			struct bt_bap_ep_info ep_info;
 
+			LOG_WRN("A");
 			ret = bt_bap_ep_get_info(server->snk.cap_streams[i].bap_stream.ep,
 						 &ep_info);
 			if (ret) {
@@ -1227,6 +1268,7 @@ static int srv_store_ep_state_count(struct bt_conn const *const conn, enum bt_ba
 			if (server->src.cap_streams[i].bap_stream.ep != NULL) {
 				struct bt_bap_ep_info ep_info;
 
+				LOG_WRN("A");
 				ret = bt_bap_ep_get_info(server->src.cap_streams[i].bap_stream.ep,
 							 &ep_info);
 				if (ret) {
