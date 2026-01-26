@@ -914,9 +914,17 @@ ci_samples_mcuboot:
 
 ci_tests_bluetooth_tester:
   files:
+    - nrf/include/bluetooth/mesh/
+    - nrf/subsys/bluetooth/mesh/
+    - nrf/tests/bluetooth/tester/
+    - zephyr/include/zephyr/bluetooth/mesh/
+    - zephyr/subsys/bluetooth/mesh/
+
+ci_tests_bluetooth_iso:
+  files:
     - nrf/include/bluetooth/
     - nrf/subsys/bluetooth/
-    - nrf/tests/bluetooth/tester/
+    - nrf/tests/bluetooth/iso/
     - zephyr/drivers/bluetooth/
     - zephyr/include/zephyr/bluetooth/
     - zephyr/subsys/bluetooth/
