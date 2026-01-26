@@ -396,7 +396,7 @@ After you store the keys in KMU, you need the CRACEN driver to be able to verify
 The driver can then use the key material for different operations, such as a decryption or a signature verification.
 
 For the verification of the key, the CRACEN driver requires information from the METADATA field of the SRC data struct, as explained in the device datasheet (for example, `KMU - Key management unit <nRF54L15 Key management unit_>`_ in the nRF54L15 datasheet).
-The encoding of information in the METADATA field is detailed in the :c:struct:`kmu_metadata` structure, a 32-bit bitfield defined in the CRACEN driver source code (:file:`nrf/subsys/nrf_security/src/drivers/cracen/cracenpsa/src/kmu.c`).
+The encoding of information in the METADATA field is detailed in the :c:struct:`kmu_metadata` structure, a 32-bit bitfield defined in the CRACEN driver source code (:file:`nrf/subsys/nrf_security/src/drivers/cracen/cracenpsa/src/cracen_psa_kmu.c`).
 
 When the application uses ``psa_import_key`` or ``psa_generate_key`` to store a key in KMU slots, the CRACEN driver encodes :c:struct:`kmu_metadata` with the appropriate values based on the :ref:`PSA key attributes given to the functions <ug_nrf54l_crypto_kmu_key_programming_model>` (:c:struct:`psa_key_attributes_t`).
 The CRACEN driver performs the following steps:

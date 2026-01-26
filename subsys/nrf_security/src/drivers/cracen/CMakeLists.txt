@@ -10,6 +10,7 @@ set(cracen_driver_sources)
 # Add more CRACEN sources and include dirs from the ext directory
 include(sxsymcrypt/sxsymcrypt.cmake)
 include(silexpk/silexpk.cmake)
+include(common/common.cmake)
 include(cracenpsa/cracenpsa.cmake)
 if((CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS AND
     (CONFIG_PSA_NEED_CRACEN_CTR_AES OR CONFIG_PSA_NEED_CRACEN_CCM_AES)) OR
@@ -20,7 +21,6 @@ endif()
 # Add include-directories
 target_include_directories(psa_crypto_library_config
   INTERFACE
-    ${CMAKE_CURRENT_LIST_DIR}/common/include/
     ${cracen_driver_include_dirs}
 )
 
