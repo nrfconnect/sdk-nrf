@@ -548,13 +548,16 @@ interrupt:
     - zephyr/tests/drivers/interrupt_controller/
     - zephyr/tests/drivers/build_all/interrupt_controller/
 
-ipc:
+ipc: &tag_ipc
   files:
     - zephyr/drivers/ipm/
-    - zephyr/samples/drivers/ipm/
     - zephyr/dts/bindings/ipm/
-    - zephyr/tests/drivers/ipm/
     - zephyr/include/zephyr/drivers/ipm.h
+    - zephyr/samples/drivers/ipm/
+    - zephyr/samples/subsys/ipc/
+    - zephyr/tests/drivers/ipm/
+
+ipm: *tag_ipc
 
 kscan:
   files:
