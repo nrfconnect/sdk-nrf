@@ -1193,3 +1193,9 @@ arch:
     - zephyr/arch/common/
     - zephyr/include/zephyr/arch/common/
     - zephyr/tests/arch/common/
+
+data_structures:
+  files:
+    - zephyr/include/zephyr/sys/min_heap.h
+    - zephyr/lib/min_heap/
+    - zephyr/samples/data_structures/
