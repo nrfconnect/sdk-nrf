@@ -1,3 +1,8 @@
+common:
+  tags:
+    - sysbuild
+    - bluetooth
+    - ci_tests_subsys_bluetooth_fast_pair
 tests:
   fast_pair.storage.account_key_storage.default:
     sysbuild: true
@@ -23,9 +28,6 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - qemu_cortex_m3
-    tags:
-      - sysbuild
-      - bluetooth
   fast_pair.storage.account_key_storage.6keys:
     sysbuild: true
     platform_allow:
@@ -33,9 +35,6 @@ tests:
     integration_platforms:
       - qemu_cortex_m3
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=6
-    tags:
-      - sysbuild
-      - bluetooth
   fast_pair.storage.account_key_storage.7keys:
     sysbuild: true
     platform_allow:
@@ -43,9 +42,6 @@ tests:
     integration_platforms:
       - qemu_cortex_m3
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=7
-    tags:
-      - sysbuild
-      - bluetooth
   fast_pair.storage.account_key_storage.8keys:
     sysbuild: true
     platform_allow:
@@ -53,9 +49,6 @@ tests:
     integration_platforms:
       - qemu_cortex_m3
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=8
-    tags:
-      - sysbuild
-      - bluetooth
   fast_pair.storage.account_key_storage.9keys:
     sysbuild: true
     platform_allow:
@@ -63,9 +56,6 @@ tests:
     integration_platforms:
       - qemu_cortex_m3
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=9
-    tags:
-      - sysbuild
-      - bluetooth
   fast_pair.storage.account_key_storage.10keys:
     sysbuild: true
     platform_allow:
@@ -73,9 +63,6 @@ tests:
     integration_platforms:
       - qemu_cortex_m3
     extra_args: CONFIG_BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX=10
-    tags:
-      - sysbuild
-      - bluetooth
   fast_pair.storage.account_key_storage.minimal:
     sysbuild: true
     platform_allow:
@@ -101,6 +88,3 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - qemu_cortex_m3
     extra_args: CONFIG_TEST_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY=y
-    tags:
-      - sysbuild
-      - bluetooth

@@ -905,6 +905,12 @@ ci_tests_subsys_audio_module:
     - nrf/tests/subsys/audio/
     - nrf/include/audio_defines.h
 
+ci_tests_subsys_bluetooth_fast_pair:
+  files:
+    - nrf/include/bluetooth/services/fast_pair/
+    - nrf/subsys/bluetooth/services/fast_pair/
+    - nrf/tests/subsys/bluetooth/fast_pair/
+
 ci_tests_subsys_bluetooth_controller:
   files:
     - nrf/subsys/bluetooth/controller/
