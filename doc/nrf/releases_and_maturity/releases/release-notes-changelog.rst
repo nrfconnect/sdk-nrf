@@ -324,12 +324,16 @@ Bluetooth Mesh samples
     This is a workaround for apps that do not properly close the PB-GATT connection after provisioning, especially after DFU.
     Disable :kconfig:option:`CONFIG_BT_MESH_DK_PROV_PB_GATT_DISCONNECT` to restore old behavior.
 
-
 * :ref:`bluetooth_mesh_light_lc` sample with :file:`overlay-dfu.conf` enabled:
 
   * Added a force disconnect of the mesh after provisioning to ensure the apps reconnect through the proxy service.
     This is a workaround for apps that do not properly close the PB-GATT connection after provisioning, especially after DFU.
     Disable :kconfig:option:`CONFIG_BT_MESH_DK_PROV_PB_GATT_DISCONNECT` to restore old behavior.
+
+* :ref:`bluetooth_mesh_light_lc` sample:
+
+  * Fixed an issue where stale RPL data could persist in EMDS after a node reset.
+    The sample now uses the new :c:func:`bt_mesh_dk_prov_node_reset_cb_set` function to clear EMDS data when a node reset occurs, ensuring that stale RPL data is removed.
 
 Bluetooth Fast Pair samples
 ---------------------------
@@ -525,7 +529,10 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-|no_changes_yet_note|
+:ref:`bt_mesh_dk_prov` module:
+
+  * Added support for node reset callback.
+    Applications can now register a callback using the :c:func:`bt_mesh_dk_prov_node_reset_cb_set` function to perform cleanup operations when a node reset occurs.
 
 Common Application Framework
 ----------------------------

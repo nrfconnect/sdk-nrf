@@ -45,6 +45,7 @@ static struct k_work_delayable oob_work;
 
 static uint32_t button_press_count;
 static struct button_handler button_handler;
+static void (*dk_prov_reset_handler)(void);
 
 static enum {
 	OOB_IDLE,
@@ -189,6 +190,11 @@ static void prov_complete(uint16_t net_idx, uint16_t src)
 static void prov_reset(void)
 {
 	oob_stop();
+
+	if (dk_prov_reset_handler != NULL) {
+		dk_prov_reset_handler();
+	}
+
 	bt_mesh_prov_enable(BT_MESH_PROV_ADV | BT_MESH_PROV_GATT);
 }
 
@@ -262,4 +268,9 @@ const struct bt_mesh_prov *bt_mesh_dk_prov_init(void)
 	k_work_init_delayable(&oob_work, oob_timer_handler);
 
 	return &prov;
+}
+
+void bt_mesh_dk_prov_node_reset_cb_set(void (*handler)(void))
+{
+	dk_prov_reset_handler = handler;
 }
