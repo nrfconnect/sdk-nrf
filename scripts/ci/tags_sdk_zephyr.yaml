@@ -1222,3 +1222,21 @@ uuid:
     - zephyr/lib/uuid/
     - zephyr/samples/subsys/uuid/
     - zephyr/tests/lib/uuid/
+
+video:
+  files:
+    - zephyr/drivers/video/
+    - zephyr/dts/bindings/video/
+    - zephyr/include/zephyr/drivers/video-controls.h
+    - zephyr/include/zephyr/drivers/video.h
+    - zephyr/include/zephyr/dt-bindings/video/
+    - zephyr/samples/drivers/video/
+    - zephyr/tests/drivers/*/video/
+    - zephyr/tests/drivers/video/
+
+psa.secure_storage:
+  files:
+    - zephyr/include/zephyr/psa/
+    - zephyr/samples/psa/
+    - zephyr/subsys/secure_storage/
+    - zephyr/tests/subsys/secure_storage/
