@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config ACCEL_TO_ANGLE
+	bool "Acceleration to angle conversion library"
+	help
+	  Enable acceleration to angle conversion library.
+
+if ACCEL_TO_ANGLE
+
+module = ACCEL_TO_ANGLE
+module-str = Acceleration to Angle Conversion Library
+source "subsys/logging/Kconfig.template.log_config"
+
+config ACCEL_TO_ANGLE_LOG_LEVEL_DBG
+	select REQUIRES_FLOAT_PRINTF
+
+endif # ACCEL_TO_ANGLE

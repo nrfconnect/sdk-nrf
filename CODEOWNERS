@@ -175,6 +175,7 @@
 /doc/nrf/libraries/nfc/                   @nrfconnect/ncs-radio-sw
 /doc/nrf/libraries/nrf_rpc/*.rst          @nrfconnect/ncs-blenders-doc
 
+/doc/nrf/libraries/others/accel_to_angle.rst @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/libraries/others/adp536x.rst     @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/others/app_event_manager.rst @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/libraries/others/app_event_manager_profiler_tracer.rst @nrfconnect/ncs-si-xcake-doc
@@ -360,8 +361,10 @@
 /include/util/                            @nrfconnect/ncs-aegir @nordic-krch
 /include/tfm/                             @nrfconnect/ncs-aegir
 /include/dult.h                           @nrfconnect/ncs-si-bluebagel
+/include/accel_to_angle/                  @nrfconnect/ncs-si-bluebagel
 
 # Libraries
+/lib/accel_to_angle/                      @nrfconnect/ncs-si-bluebagel
 /lib/adp536x/                             @nrfconnect/ncs-cia
 /lib/app_jwt/                             @nrfconnect/ncs-modem @ayla-nordicsemi
 /lib/at_cmd_custom/                       @nrfconnect/ncs-modem

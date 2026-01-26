@@ -567,6 +567,8 @@ nRF RPC libraries
 Other libraries
 ---------------
 
+* Added the :ref:`lib_accel_to_angle` library for converting three-dimensional acceleration into pitch and roll angles.
+
 * :ref:`lib_hw_id` library:
 
   * The ``CONFIG_HW_ID_LIBRARY_SOURCE_BLE_MAC`` Kconfig option has been renamed to :kconfig:option:`CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS`.
