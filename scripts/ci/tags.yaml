@@ -887,6 +887,16 @@ ci_samples_event_manager_proxy:
     - nrf/subsys/event_manager_proxy/
     - zephyr/subsys/ipc/ipc_service/
 
+ci_tests_samples_bluetooth:
+  files:
+    - nrf/include/bluetooth/
+    - nrf/subsys/bluetooth/
+    - nrf/tests/samples/bluetooth/
+    - zephyr/drivers/bluetooth/
+    - zephyr/include/zephyr/bluetooth/
+    - zephyr/samples/bluetooth/hci_ipc/
+    - zephyr/subsys/bluetooth/
+
 ci_tests_subsys_audio_module:
   files:
     - nrf/subsys/audio_module/
