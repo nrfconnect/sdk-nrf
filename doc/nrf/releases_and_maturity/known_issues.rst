@@ -199,6 +199,15 @@ Bluetooth LE
 
 .. rst-class:: v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-2 v2-9-1 v2-9-0-nRF54H20-1 v2-9-0 v2-8-0 v2-7-99-cs2 v2-7-99-cs1 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-99-cs2 v2-6-99-cs1 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2-dev1 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
+NCSDK-32763: Upgrading firmware may corrupt Bluetooth bonding keys
+  The Kconfig options :kconfig:option:`CONFIG_BT_SIGNING`, :kconfig:option:`CONFIG_BT_KEYS_OVERWRITE_OLDEST`, and (the absence of) :kconfig:option:`CONFIG_BT_SMP_SC_PAIR_ONLY` modify the size of the :c:struct:`bt_keys` struct.
+  Changing these options when reflashing a device with stored bonds may result in fields being overwritten with corrupted data when it is loaded from settings.
+
+  **Workaround:** Manually cherry-pick and apply the commit to ``sdk-zephyr`` (commit hash: ``f5f7bb44618f315d37e5c43b9061c1a6242f3e65`` from the `Zephyr repository`_).
+  This workaround will detect incompatible configuration changes between firmware upgrades.
+
+.. rst-class:: v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-2 v2-9-1 v2-9-0-nRF54H20-1 v2-9-0 v2-8-0 v2-7-99-cs2 v2-7-99-cs1 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-99-cs2 v2-6-99-cs1 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2-dev1 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
+
 NCSDK-35186: Host might not delete entry from Resolving List when unpairing
   If an application is deleting a bonding information of a peer by calling the :c:func:`bt_unpair` function while the Host is adding a new entry to Resolving List corresponding to the same peer, the entry in Resolving List might not be deleted.
   As a consequence, the Controller will keep resolving the peer address until device is rebooted.
