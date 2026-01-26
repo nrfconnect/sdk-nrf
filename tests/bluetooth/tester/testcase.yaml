@@ -9,6 +9,7 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
+      - ci_tests_bluetooth_tester
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
