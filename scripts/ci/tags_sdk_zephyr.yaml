@@ -1202,3 +1202,10 @@ data_structures:
     - zephyr/include/zephyr/sys/min_heap.h
     - zephyr/lib/min_heap/
     - zephyr/samples/data_structures/
+
+prometheus:
+  files:
+    - zephyr/include/zephyr/net/prometheus/
+    - zephyr/samples/net/prometheus/
+    - zephyr/subsys/net/lib/prometheus/
+    - zephyr/tests/net/lib/prometheus/
