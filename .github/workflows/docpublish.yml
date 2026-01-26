@@ -27,6 +27,7 @@ jobs:
           OUTDIR=$(awk 'NR==1 { if ($3 ~ /^(latest|PR-[0-9]+|[0-9]+\.[0-9a-zA-Z\.\-]+)$/) print $3 }' monitor_*.txt)
           echo "OUTDIR=$OUTDIR" >> "$GITHUB_ENV"
           unzip legacy-ncs*.zip -d $OUTDIR
+          find "$OUTDIR" -type l -delete
 
       - name: Obtain PR number
         working-directory: docs
@@ -44,14 +45,10 @@ jobs:
          azcopy cp $OUTDIR "${{ vars.NCS_DOC_STORAGE_URL }}?${{ secrets.NCS_DOC_SAS}}" --recursive=true
 
       - name: Upload Zoomin documentation
+        if: >
+          github.event.workflow_run.head_branch == 'main' &&
+          github.event.workflow_run.head_repository.full_name == github.repository
         run: |
-          for file in docs/monitor*.txt; do
-            if ! grep -q main ${file}; then
-              echo "Not targeting main, skipping Zoomin upload"
-              exit 0
-            fi
-          done
-
           # trust server
           mkdir -p ~/.ssh
           ssh-keyscan upload-v1.zoominsoftware.io >> ~/.ssh/known_hosts
