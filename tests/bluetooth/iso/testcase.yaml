@@ -12,4 +12,5 @@ tests:
       - bis_and_acl
       - sysbuild
       - bluetooth
+      - ci_tests_bluetooth_iso
     timeout: 20
