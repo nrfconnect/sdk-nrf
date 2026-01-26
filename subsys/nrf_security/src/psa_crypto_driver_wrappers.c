@@ -107,6 +107,10 @@
 #include "oberon_xof.h"
 #endif
 
+#ifdef PSA_NEED_OBERON_KEY_WRAP_DRIVER
+#include "oberon_key_wrap.h"
+#endif
+
 #if defined(PSA_CRYPTO_DRIVER_CRACEN)
 #ifndef PSA_CRYPTO_DRIVER_PRESENT
 #define PSA_CRYPTO_DRIVER_PRESENT
