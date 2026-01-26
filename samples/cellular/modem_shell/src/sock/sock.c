@@ -27,8 +27,8 @@
 extern struct k_poll_signal mosh_signal;
 extern struct k_work_q mosh_common_work_q;
 
-/* Maximum number of sockets takes into account AT command socket */
-#define MAX_SOCKETS (CONFIG_POSIX_OPEN_MAX - 1)
+/* Maximum number of sockets */
+#define MAX_SOCKETS CONFIG_ZVFS_OPEN_ADD_SIZE_NRF_MODEM
 #define SOCK_SEND_BUFFER_SIZE_UDP 1200
 /* This should be multiple of TCP window size (708) to make it more efficient */
 #define SOCK_SEND_BUFFER_SIZE_TCP 3540
@@ -572,7 +572,7 @@ int sock_open_and_connect(
 
 	if (socket_info == NULL) {
 		mosh_error("Socket creation failed. MAX_SOCKETS=%d exceeded", MAX_SOCKETS);
-		goto connect_error;
+		return -ENFILE;
 	}
 
 	/* Validate parameters */
