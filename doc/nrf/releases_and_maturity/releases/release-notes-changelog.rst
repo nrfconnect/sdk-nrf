@@ -567,6 +567,8 @@ nRF RPC libraries
 Other libraries
 ---------------
 
+* Added the :ref:`accel_to_angle` library for converting accelerometer data to rotation data.
+
 * :ref:`lib_hw_id` library:
 
   * The ``CONFIG_HW_ID_LIBRARY_SOURCE_BLE_MAC`` Kconfig option has been renamed to :kconfig:option:`CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS`.
