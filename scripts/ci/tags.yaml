@@ -894,6 +894,13 @@ ci_tests_samples_bluetooth:
     - zephyr/samples/bluetooth/hci_ipc/
     - zephyr/subsys/bluetooth/
 
+ci_samples_zephyr_bluetooth:
+  files:
+    - nrf/samples/zephyr/bluetooth/
+    - zephyr/samples/bluetooth/beacon/
+    - zephyr/samples/bluetooth/hci_uart/
+    - zephyr/samples/bluetooth/peripheral_hr/
+
 ci_tests_subsys_audio_module:
   files:
     - nrf/subsys/audio_module/

@@ -2,7 +2,9 @@ sample:
   name: Bluetooth Beacon
 tests:
   nrf.extended.sample.bluetooth.beacon:
-    tags: bluetooth
+    tags:
+      - bluetooth
+      - ci_samples_zephyr_bluetooth
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
