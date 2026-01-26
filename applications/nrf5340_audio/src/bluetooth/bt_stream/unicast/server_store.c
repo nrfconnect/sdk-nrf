@@ -819,6 +819,9 @@ static bool stream_check_max_trans_lat(struct bt_cap_stream *existing_stream, vo
 		return true;
 	}
 
+	LOG_WRN("incoming stream %p existing stream %p", (void *)ctx->incoming_stream,
+		(void *)&existing_stream->bap_stream);
+
 	if (ctx->incoming_stream == &existing_stream->bap_stream) {
 		/* The existing stream is the same as the incoming stream */
 		LOG_WRN("Existing stream is the incoming stream, skipping");
@@ -830,13 +833,13 @@ static bool stream_check_max_trans_lat(struct bt_cap_stream *existing_stream, vo
 	int existing_dir = le_audio_stream_dir_get(&existing_stream->bap_stream);
 	int incoming_dir = le_audio_stream_dir_get(ctx->incoming_stream);
 
-	if (existing_dir) {
+	if (existing_dir < 0) {
 		LOG_ERR("Failed to get existing stream direction");
 		ctx->ret = -EINVAL;
 		return true;
 	}
 
-	if (incoming_dir) {
+	if (incoming_dir < 0) {
 		LOG_ERR("Failed to get incoming stream direction");
 		ctx->ret = -EINVAL;
 		return true;
@@ -896,6 +899,8 @@ int srv_store_max_trans_lat_find(struct bt_bap_stream const *const stream,
 		.existing_trans_lat_ms = existing_max_trans_lat_ms,
 	};
 
+	LOG_WRN("incoming stream %p", (void *)stream);
+
 	ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_check_max_trans_lat,
 						  (void *)&foreach_data);
 	if (ret != 0 && ret != -ECANCELED) {
@@ -919,7 +924,7 @@ int srv_store_max_trans_lat_find(struct bt_bap_stream const *const stream,
 		/* Existing max transport latency is less than the new one, need to configure the
 		 * new/incoming stream
 		 */
-		LOG_INF("Existing max transport latency %u ms, new: %u ms",
+		LOG_INF("Existing max transport latency %u ms < incoming qos_pref %d ms",
 			*existing_max_trans_lat_ms, server_qos_pref->latency);
 		*new_max_trans_lat_ms = *existing_max_trans_lat_ms;
 		*group_reconfig_needed = false;
@@ -927,7 +932,7 @@ int srv_store_max_trans_lat_find(struct bt_bap_stream const *const stream,
 		/* Existing latency is larger than the new one, need to re-configure
 		 * existing streams
 		 */
-		LOG_INF("Existing max transport latency %u ms, new: %u ms",
+		LOG_INF("Existing max transport latency %u ms > incoming qos_pref %d ms",
 			*existing_max_trans_lat_ms, server_qos_pref->latency);
 		*new_max_trans_lat_ms = server_qos_pref->latency;
 		*group_reconfig_needed = true;

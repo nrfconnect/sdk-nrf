@@ -46,7 +46,7 @@
 // stream->ep is NULL
 
 int test_cap_stream_populate(struct server_store *server, uint8_t idx, enum bt_audio_dir dir,
-			     uint32_t pd, struct bt_cap_unicast_group *group)
+			     uint32_t pd, struct bt_cap_unicast_group *group, struct bt_bap_ep *ep)
 {
 	if (server == NULL || group == NULL) {
 		TC_PRINT("Invalid parameter(s) passed\n");
@@ -63,7 +63,7 @@ int test_cap_stream_populate(struct server_store *server, uint8_t idx, enum bt_a
 			return -EALREADY;
 		}
 		server->snk.cap_streams[idx].bap_stream.group = group;
-		// server->snk.cap_streams[idx].bap_stream.ep = server->snk.eps[idx];
+		server->snk.cap_streams[idx].bap_stream.ep = ep;
 		// server->snk.cap_streams[idx].bap_stream.ep
 
 		server->snk.lc3_preset[idx].qos.pd = pd;
@@ -342,15 +342,15 @@ ZTEST(suite_server_store, test_find_srv_from_stream)
 	srv_store_unlock();
 }
 
-static void mock_add_stream_to_group(struct bt_bap_stream *stream,
+static void mock_add_stream_to_group(struct bt_bap_stream *bap_stream,
 				     struct bt_cap_unicast_group *group)
 {
-	if ((stream == NULL) || (group == NULL) || (group->bap_unicast_group == NULL)) {
+	if ((bap_stream == NULL) || (group == NULL) || (group->bap_unicast_group == NULL)) {
 		ztest_test_fail();
 	}
 
-	TC_PRINT("sys list append stream to group\n");
-	sys_slist_append(&group->bap_unicast_group->streams, &stream->_node);
+	TC_PRINT("sys list append stream %p to group \n", (void *)bap_stream);
+	sys_slist_append(&group->bap_unicast_group->streams, &bap_stream->_node);
 }
 
 ZTEST(suite_server_store, test_pres_dly_simple)
@@ -1070,26 +1070,26 @@ ZTEST(suite_server_store, test_ep_count)
 	ret = srv_store_add_by_conn(&test_1_conn);
 	zassert_equal(ret, 0);
 
-	struct bt_bap_iso iso_chan_0A;
 	struct bt_bap_ep ep_0A = {0};
+	struct bt_bap_iso iso_chan_0A = {0};
 
 	ep_0A.state = BT_BAP_EP_STATE_IDLE;
 	ep_0A.iso = &iso_chan_0A;
 
-	struct bt_bap_iso iso_chan_0B;
 	struct bt_bap_ep ep_0B = {0};
+	struct bt_bap_iso iso_chan_0B = {0};
 
 	ep_0B.state = BT_BAP_EP_STATE_IDLE;
 	ep_0B.iso = &iso_chan_0B;
 
-	struct bt_bap_iso iso_chan_1A;
 	struct bt_bap_ep ep_1A = {0};
+	struct bt_bap_iso iso_chan_1A = {0};
 
 	ep_1A.state = BT_BAP_EP_STATE_IDLE;
 	ep_1A.iso = &iso_chan_1A;
 
-	struct bt_bap_iso iso_chan_1B;
 	struct bt_bap_ep ep_1B = {0};
+	struct bt_bap_iso iso_chan_1B = {0};
 
 	ep_1B.state = BT_BAP_EP_STATE_IDLE;
 	ep_1B.iso = &iso_chan_1B;
@@ -1124,9 +1124,6 @@ ZTEST(suite_server_store, test_ep_count)
 
 ZTEST(suite_server_store, test_srv_store_max_transport_latency_basic)
 {
-	zassert_true(true);
-	return;
-
 	int ret;
 	uint16_t new_max_trans_lat_ms;
 	uint16_t existing_max_trans_lat_ms;
@@ -1146,7 +1143,15 @@ ZTEST(suite_server_store, test_srv_store_max_transport_latency_basic)
 
 	TEST_UNICAST_GROUP(cap_group);
 	TC_PRINT("the cap group is %p\n", &cap_group);
-	TEST_CAP_STREAM(TCS_1, BT_AUDIO_DIR_SINK, 40000, &cap_group);
+
+	/* Need to create endpoints in test as these are owned by the host */
+	struct bt_bap_ep ep_1 = {0};
+	ep_1.state = BT_BAP_EP_STATE_STREAMING;
+	ep_1.dir = BT_AUDIO_DIR_SINK;
+
+	struct bt_bap_ep ep_2 = {0};
+	ep_2.state = BT_BAP_EP_STATE_STREAMING;
+	ep_2.dir = BT_AUDIO_DIR_SINK;
 
 	struct server_store *retr_server = NULL;
 
@@ -1154,20 +1159,19 @@ ZTEST(suite_server_store, test_srv_store_max_transport_latency_basic)
 	zassert_equal(ret, 0);
 
 	/* This is the right way, need to link the server->cap_stream.bap_stream to the group */
-	// retr_server->name = "Test Server 1";
-	// memcpy(&retr_server->snk.cap_streams[0], &TCS_1, sizeof(TCS_1));
-	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group);
+	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_1);
 	zassert_equal(ret, 0);
 
 	mock_add_stream_to_group(&retr_server->snk.cap_streams[0].bap_stream, &cap_group);
 
 	/* Test with no existing streams - should use new stream's latency */
-	ret = srv_store_max_trans_lat_find(&TCS_1.bap_stream, &qos_pref, &new_max_trans_lat_ms,
-					   &existing_max_trans_lat_ms, &group_reconfig_needed,
-					   &cap_group);
+	ret = srv_store_max_trans_lat_find(&retr_server->snk.cap_streams[0].bap_stream, &qos_pref,
+					   &new_max_trans_lat_ms, &existing_max_trans_lat_ms,
+					   &group_reconfig_needed, &cap_group);
 	zassert_equal(ret, 0, "Should succeed finding max transport latency");
 	zassert_equal(new_max_trans_lat_ms, qos_pref.latency,
-		      "New max transport latency should equal QoS preference");
+		      "New max transport latency should equal QoS preference %d %d",
+		      new_max_trans_lat_ms, qos_pref.latency);
 	zassert_equal(new_max_trans_lat_ms, 40,
 		      "New max transport latency should equal test value");
 	zassert_equal(
@@ -1179,21 +1183,21 @@ ZTEST(suite_server_store, test_srv_store_max_transport_latency_basic)
 	ret = srv_store_max_trans_lat_set(&cap_group, BT_AUDIO_DIR_SINK, new_max_trans_lat_ms);
 	zassert_equal(ret, 0, "Should succeed setting max transport latency");
 
-	/* Test 2: New stream incoming with lower max transport latency preference */
-	TEST_CAP_STREAM(TCS_2, BT_AUDIO_DIR_SINK, 40000, &cap_group);
-	mock_add_stream_to_group(&TCS_2.bap_stream, &cap_group);
-	memcpy(&retr_server->snk.cap_streams[1], &TCS_2, sizeof(TCS_2));
+	ret = test_cap_stream_populate(retr_server, 1, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_2);
+	zassert_equal(ret, 0);
 
-	TC_PRINT("----------------------------\n");
+	/* Test 2: New stream incoming with lower max transport latency preference */
+
+	mock_add_stream_to_group(&retr_server->snk.cap_streams[1].bap_stream, &cap_group);
 
 	struct bt_bap_qos_cfg_pref qos_pref_lower = {
 		.latency = 20,
 	};
 
 	/* Simulate that we now have existing streams with 30ms latency */
-	ret = srv_store_max_trans_lat_find(&TCS_2.bap_stream, &qos_pref_lower,
-					   &new_max_trans_lat_ms, &existing_max_trans_lat_ms,
-					   &group_reconfig_needed, &cap_group);
+	ret = srv_store_max_trans_lat_find(
+		&retr_server->snk.cap_streams[1].bap_stream, &qos_pref_lower, &new_max_trans_lat_ms,
+		&existing_max_trans_lat_ms, &group_reconfig_needed, &cap_group);
 	zassert_equal(ret, 0, "Should succeed finding max transport latency with existing streams");
 	zassert_equal(new_max_trans_lat_ms, 20,
 		      "Should use existing lower latency when new preference is higher");
