@@ -74,6 +74,8 @@ Developing with nRF54H Series
     For more information, see :ref:`ug_nrf54h20_partitioning_merged`.
   * A document describing the manifest based update strategy for nRF54H20 devices.
     For more information, see :ref:`ug_nrf54h20_mcuboot_manifest`.
+  * The :ref:`ug_nrf54h20_mcuboot_requests` page describes bootloader requests for the nRF54H20 SoC.
+    It explains how you can pass information from the application to the bootloader.
 
 Developing with nRF53 Series
 ============================
