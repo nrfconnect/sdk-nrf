@@ -1,3 +1,8 @@
+common:
+  tags:
+    - sysbuild
+    - bluetooth
+    - ci_tests_subsys_bluetooth_fast_pair
 tests:
   fast_pair.crypto.oberon:
     sysbuild: true
@@ -19,9 +24,6 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    tags:
-      - sysbuild
-      - bluetooth
   fast_pair.crypto.psa:
     sysbuild: true
     platform_allow:
@@ -47,6 +49,3 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args: FILE_SUFFIX=psa
-    tags:
-      - sysbuild
-      - bluetooth
