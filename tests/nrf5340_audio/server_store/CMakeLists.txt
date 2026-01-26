@@ -12,7 +12,11 @@ project(test_server_store)
 target_sources(app
   PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/bt_stream/unicast/server_store.c
+  #${ZEPHYR_BASE}/subsys/bluetooth/host/conn.c
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/bt_stream/le_audio.c
+  ${ZEPHYR_BASE}/subsys/bluetooth/common/addr.c
+  ${ZEPHYR_BASE}/subsys/bluetooth/audio/codec.c
+  ${ZEPHYR_BASE}/subsys/bluetooth/audio/audio.c
   main.c
 )
 
@@ -20,6 +24,7 @@ target_include_directories(app PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/utils/macros/
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/bt_stream/unicast/
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/bt_stream/
+  ${ZEPHYR_NRF_MODULE_DIR}/tests/nrf5340_audio/fakes/
 )
 
 target_compile_options(app
