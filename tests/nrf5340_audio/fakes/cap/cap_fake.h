@@ -76,6 +76,11 @@ FAKE_VALUE_FUNC(int, bt_bap_ep_get_info, const struct bt_bap_ep *, struct bt_bap
 
 struct bt_bap_ep *bt_bap_iso_get_paired_ep_fake(const struct bt_bap_ep *ep)
 {
+
+	if (ep == NULL || ep->iso == NULL) {
+		TC_PRINT("NULLLLLLLLLL");
+	}
+
 	if (ep->iso->rx.ep == ep) {
 		return ep->iso->tx.ep;
 	} else {
@@ -119,7 +124,7 @@ int bt_bap_ep_get_info_custom_fake(const struct bt_bap_ep *ep, struct bt_bap_ep_
 	info->can_recv = false;
 	if (IS_ENABLED(CONFIG_BT_AUDIO_TX) && ep->stream != NULL) {
 
-		if (IS_ENABLED(CONFIG_BT_BAP_UNICAST_CLIENT) && bt_bap_ep_is_unicast_client(ep)) {
+		if (IS_ENABLED(CONFIG_BT_BAP_UNICAST_CLIENT)) {
 			/* dir is not initialized before the connection is set */
 			if (ep->stream->conn != NULL) {
 				info->can_send = dir == BT_AUDIO_DIR_SINK;
