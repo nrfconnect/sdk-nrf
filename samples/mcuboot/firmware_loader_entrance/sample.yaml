@@ -10,7 +10,9 @@ tests:
       type: multi_line
       regex:
         - "Advertising successfully started"
-    tags: bluetooth
+    tags:
+      - bluetooth
+      - ci_samples_mcuboot
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
