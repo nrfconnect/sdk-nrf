@@ -1007,8 +1007,8 @@
 /tests/benchmarks/multicore/idle_pwm_led/*.rst @nrfconnect/ncs-lowlevel-doc
 /tests/bluetooth/bsim/nrf_auraconfig/*.rst @nrfconnect/ncs-audio-doc
 
-/tests/samples/bluetooth/io_adapter/      @rafpelc @jema-nordic
-/tests/samples/bluetooth/samples_test_app/ @rafpelc
+/tests/samples/bluetooth/io_adapter/      @nrfconnect/ncs-blenders @jema-nordic
+/tests/samples/bluetooth/samples_test_app/ @nrfconnect/ncs-blenders @jema-nordic
 /tests/samples/bluetooth/samples_test_app/README.rst  @nrfconnect/ncs-doc-leads
 
 
