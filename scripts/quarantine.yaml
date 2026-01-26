@@ -112,6 +112,12 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-8621 GPPI changes also by NCS 3.2"
 
 - scenarios:
+    - sample.benchmark.coremark.flash_and_run.nrf7120
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37320"
+
+- scenarios:
     - sample.nrf7120.raw_tx_rx_packet.tlm
   platforms:
     - nrf7120dk/nrf7120/cpuapp
