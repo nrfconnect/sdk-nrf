@@ -901,6 +901,17 @@ ci_samples_zephyr_bluetooth:
     - zephyr/samples/bluetooth/hci_uart/
     - zephyr/samples/bluetooth/peripheral_hr/
 
+ci_samples_mcuboot:
+  files:
+    - nrf/include/bluetooth/
+    - nrf/samples/mcuboot/
+    - nrf/subsys/bluetooth/
+    - zephyr/drivers/bluetooth/
+    - zephyr/include/mgmt/mcumgr/
+    - zephyr/include/zephyr/bluetooth/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/mgmt/mcumgr/
+
 ci_tests_subsys_audio_module:
   files:
     - nrf/subsys/audio_module/
