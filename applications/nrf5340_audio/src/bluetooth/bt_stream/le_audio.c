@@ -223,7 +223,7 @@ int le_audio_stream_dir_get(struct bt_bap_stream const *const stream)
 	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
 
 	if (ret) {
-		LOG_WRN("Failed to get ep_info");
+		LOG_WRN("Failed to get!! ep_info %d", ret);
 		return ret;
 	}
 
