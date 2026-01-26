@@ -185,10 +185,14 @@
     - libraries.libc.time
     - libraries.mpsc_pbuf.*
     - libraries.encoding.*
+    - libraries.timespec_utils.*
     - sample.modules.cmsis_dsp.moving_average
     - math.interpolation
+    - utilities.math.interpolation
     - sample.drivers.misc.timeaware_gpio
     - sample.libraries.hash_map.*
+    - sample.boards.renesas.elc
+    - sample.boards.magic_addr
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
