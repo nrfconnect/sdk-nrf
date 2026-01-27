@@ -1,0 +1,106 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+/* Test requires loopbacks:
+ * - between P0.0 and P0.1.
+ * - between P0.6 and P0.7.
+ * - between P0.8 and P0.9,
+ * - between P0.10 and P0.11,
+ */
+
+&pinctrl {
+	spi130_default_alt: spi130_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 0)>,
+				<NRF_PSEL(SPIM_MISO, 0, 6)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 8)>;
+		};
+	};
+
+	spi130_sleep_alt: spi130_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 0)>,
+				<NRF_PSEL(SPIM_MISO, 0, 6)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 8)>;
+			low-power-enable;
+		};
+	};
+
+	spi131_default_alt: spi131_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 0, 1)>,
+				<NRF_PSEL(SPIS_MISO, 0, 7)>,
+				<NRF_PSEL(SPIS_MOSI, 0, 9)>,
+				<NRF_PSEL(SPIS_CSN, 0, 11)>;
+		};
+	};
+
+	spi131_sleep_alt: spi131_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 0, 1)>,
+				<NRF_PSEL(SPIS_MISO, 0, 7)>,
+				<NRF_PSEL(SPIS_MOSI, 0, 9)>,
+				<NRF_PSEL(SPIS_CSN, 0, 11)>;
+			low-power-enable;
+		};
+	};
+};
+
+&hfxo {
+	status = "okay";
+};
+
+&grtc {
+	/delete-property/ child-owned-channels;
+	/delete-property/ nonsecure-channels;
+	owned-channels = <0 4 5 6>;
+	extended-channels = <0>;
+};
+
+dut_cnt_timer: &timer130 {
+	status = "reserved";
+};
+
+dut_trig_timer: &timer131 {
+	status = "reserved";
+};
+
+test_timer: &timer132 {
+	status = "reserved";
+};
+
+dut_rtc: &rtc130 {
+	status = "reserved";
+};
+
+dut_spi: &spi130 {
+	status = "okay";
+	pinctrl-0 = <&spi130_default_alt>;
+	pinctrl-1 = <&spi130_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	cs-gpios = <&gpio0 10 GPIO_ACTIVE_LOW>;
+	memory-regions = <&cpuapp_dma_region>;
+	zephyr,pm-device-runtime-auto;
+
+	dut_spi_dt: test-spi-dev@0 {
+		compatible = "vnd,spi-device";
+		reg = <0>;
+		spi-max-frequency = <DT_FREQ_M(16)>;
+	};
+};
+
+dut_spis: &spi131 {
+	compatible = "nordic,nrf-spis";
+	status = "okay";
+	def-char = <0x00>;
+	pinctrl-0 = <&spi131_default_alt>;
+	pinctrl-1 = <&spi131_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+	/delete-property/ rx-delay-supported;
+	/delete-property/ rx-delay;
+	zephyr,pm-device-runtime-auto;
+};
