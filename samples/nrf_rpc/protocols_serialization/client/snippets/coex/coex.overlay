@@ -5,8 +5,8 @@
  */
 
 / {
-    nrf_radio_coex: software-coex {
-        status = "okay";
-        compatible = "nordic,software-coex";
-    };
+	nrf_radio_coex: software-coex {
+		status = "okay";
+		compatible = "nordic,software-coex";
+	};
 };

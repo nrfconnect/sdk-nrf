@@ -24,7 +24,6 @@
 	};
 };
 
-
 &pwm20 {
 	status = "okay";
 	pinctrl-0 = <&pwm_default>;

@@ -18,6 +18,7 @@
 /* Enable pmic_wifi */
 &pmic_wifi {
 	status = "okay";
+
 	regulators {
 		status = "okay";
 	};

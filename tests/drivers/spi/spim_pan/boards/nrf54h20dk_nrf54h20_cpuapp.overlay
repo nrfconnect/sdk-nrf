@@ -37,7 +37,7 @@ dut_spi: &spi130 {
 	memory-regions = <&cpuapp_dma_region>;
 	cs-gpios = <&gpio0 10 GPIO_ACTIVE_LOW>;
 	zephyr,pm-device-runtime-auto;
-	rx-delay=<1>;
+	rx-delay = <1>;
 
 	dut_spi_dt: test-spi-dev@0 {
 		compatible = "vnd,spi-device";

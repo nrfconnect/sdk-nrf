@@ -31,7 +31,6 @@
 			low-power-enable;
 		};
 	};
-
 };
 
 &uart1 {
@@ -50,7 +49,7 @@
 
 / {
 	chosen {
-		zephyr,bt-c2h-uart=&lpuart;
+		zephyr,bt-c2h-uart = &lpuart;
 	};
 };
 

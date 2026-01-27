@@ -3,12 +3,12 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
- &arduino_spi {
+&arduino_spi {
 	status = "okay";
 
-        bme680@0 {
-                compatible = "bosch,bme680";
-                reg = <0x0 >;
+	bme680@0 {
+		compatible = "bosch,bme680";
+		reg = <0x0>;
 		spi-max-frequency = <DT_FREQ_M(8)>;
-        };
+	};
 };

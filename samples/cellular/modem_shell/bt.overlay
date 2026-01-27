@@ -23,17 +23,20 @@
 
 	pinctrl-0 = <&uart2_default_alt>;
 	pinctrl-1 = <&uart2_sleep_alt>;
+
 	lpuart: nrf-sw-lpuart {
 		compatible = "nordic,nrf-sw-lpuart";
 		status = "okay";
 		req-pin = <21>; /* <&interface_to_nrf52840 3 0>; */
 		rdy-pin = <19>; /* <&interface_to_nrf52840 2 0>; */
+
 		bt_hci_uart: bt_hci_uart {
 			compatible = "zephyr,bt-hci-uart";
 			status = "okay";
 		};
 	};
 };
+
 &uart1 {
 	status = "disabled";
 };

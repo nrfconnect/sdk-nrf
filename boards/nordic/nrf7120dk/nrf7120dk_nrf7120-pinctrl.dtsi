@@ -63,7 +63,7 @@
 			psels = <NRF_PSEL(SPIM_SCK, 2, 1)>,
 				<NRF_PSEL(SPIM_MOSI, 2, 2)>,
 				<NRF_PSEL(SPIM_MISO, 2, 4)>;
-				low-power-enable;
+			low-power-enable;
 		};
 	};
 
@@ -83,12 +83,12 @@
 	/omit-if-no-ref/ uart00_default: uart00_default {
 		group1 {
 			psels = <NRF_PSEL(UART_TX, 2, 2)>,
-					<NRF_PSEL(UART_RTS, 2, 5)>;
+				<NRF_PSEL(UART_RTS, 2, 5)>;
 		};
 
 		group2 {
 			psels = <NRF_PSEL(UART_RX, 2, 0)>,
-					<NRF_PSEL(UART_CTS, 2, 4)>;
+				<NRF_PSEL(UART_CTS, 2, 4)>;
 			bias-pull-up;
 		};
 	};
@@ -96,9 +96,9 @@
 	/omit-if-no-ref/ uart00_sleep: uart00_sleep {
 		group1 {
 			psels = <NRF_PSEL(UART_TX, 2, 2)>,
-					<NRF_PSEL(UART_RX, 2, 0)>,
-					<NRF_PSEL(UART_RTS, 2, 5)>,
-					<NRF_PSEL(UART_CTS, 2, 4)>;
+				<NRF_PSEL(UART_RX, 2, 0)>,
+				<NRF_PSEL(UART_RTS, 2, 5)>,
+				<NRF_PSEL(UART_CTS, 2, 4)>;
 			low-power-enable;
 		};
 	};
@@ -106,11 +106,11 @@
 	/omit-if-no-ref/ qspi00_default: qspi00_default {
 		group1 {
 			psels = <NRF_PSEL(QSPI_SCK, 2, 1)>,
-					<NRF_PSEL(QSPI_CSN, 2, 5)>,
-					<NRF_PSEL(QSPI_IO0, 2, 0)>,
-					<NRF_PSEL(QSPI_IO1, 2, 2)>,
-					<NRF_PSEL(QSPI_IO2, 2, 3)>,
-					<NRF_PSEL(QSPI_IO3, 2, 4)>;
+				<NRF_PSEL(QSPI_CSN, 2, 5)>,
+				<NRF_PSEL(QSPI_IO0, 2, 0)>,
+				<NRF_PSEL(QSPI_IO1, 2, 2)>,
+				<NRF_PSEL(QSPI_IO2, 2, 3)>,
+				<NRF_PSEL(QSPI_IO3, 2, 4)>;
 			nordic,drive-mode = <NRF_DRIVE_H0H1>;
 		};
 	};
@@ -119,11 +119,11 @@
 		group1 {
 			low-power-enable;
 			psels = <NRF_PSEL(QSPI_SCK, 2, 1)>,
-					<NRF_PSEL(QSPI_CSN, 2, 5)>,
-					<NRF_PSEL(QSPI_IO0, 2, 0)>,
-					<NRF_PSEL(QSPI_IO1, 2, 2)>,
-					<NRF_PSEL(QSPI_IO2, 2, 3)>,
-					<NRF_PSEL(QSPI_IO3, 2, 4)>;
+				<NRF_PSEL(QSPI_CSN, 2, 5)>,
+				<NRF_PSEL(QSPI_IO0, 2, 0)>,
+				<NRF_PSEL(QSPI_IO1, 2, 2)>,
+				<NRF_PSEL(QSPI_IO2, 2, 3)>,
+				<NRF_PSEL(QSPI_IO3, 2, 4)>;
 		};
 	};
 };

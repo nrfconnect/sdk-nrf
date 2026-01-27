@@ -86,6 +86,7 @@
 			nordic,drive-mode = <NRF_DRIVE_S0S1>;
 		};
 	};
+
 	/omit-if-no-ref/ hpf_mspi_sleep: hpf_mspi_sleep {
 		group1 {
 			psels = <NRF_PSEL(HPF_MSPI_SCK, 2, 1)>,

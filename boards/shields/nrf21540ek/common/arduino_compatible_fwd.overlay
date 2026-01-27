@@ -11,6 +11,7 @@
 			<&arduino_header 10 0>,		/* ant-sel-gpios */
 			<&arduino_header 8 0>;		/* mode-gpios */
 	};
+
 	nrf21540-spi-if {
 		gpios = <&arduino_header 16 0>,		/* cs-gpios */
 			<&gpio1 15 0>,			/* SPIM_SCK */

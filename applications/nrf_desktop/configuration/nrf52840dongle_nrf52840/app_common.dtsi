@@ -20,9 +20,11 @@
 		red_pwm_led: pwm_led_0 {
 			pwms = <&pwm0 0 PWM_MSEC(1) PWM_POLARITY_INVERTED>;
 		};
+
 		green_pwm_led: pwm_led_1 {
 			pwms = <&pwm0 1 PWM_MSEC(1) PWM_POLARITY_INVERTED>;
 		};
+
 		blue_pwm_led: pwm_led_2 {
 			pwms = <&pwm0 2 PWM_MSEC(1) PWM_POLARITY_INVERTED>;
 		};
@@ -65,5 +67,4 @@
 			low-power-enable;
 		};
 	};
-
 };

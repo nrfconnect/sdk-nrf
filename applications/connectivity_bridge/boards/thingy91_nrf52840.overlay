@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-
 / {
 	dp0 {
 		compatible = "zephyr,swdp-gpio";
@@ -26,6 +25,7 @@
 		sector-size = <512>;
 		sector-count = <128>;
 	};
+
 	chosen {
 		zephyr,console = &rtt0;
 		zephyr,shell-uart = &rtt0;

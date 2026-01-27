@@ -25,7 +25,6 @@
 			};
 		};
 
-
 		cpuflpr_sram_code_data: memory@2003c800 {
 			compatible = "mmio-sram";
 			reg = <0x2003c800 DT_SIZE_K(14)>;

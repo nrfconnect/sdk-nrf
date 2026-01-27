@@ -28,6 +28,7 @@
 	pinctrl-1 = <&uart21_sleep_alt>;
 	pinctrl-names = "default", "sleep";
 	current-speed = <115200>;
+
 	lpuart: nrf-sw-lpuart {
 		compatible = "nordic,nrf-sw-lpuart";
 		status = "okay";

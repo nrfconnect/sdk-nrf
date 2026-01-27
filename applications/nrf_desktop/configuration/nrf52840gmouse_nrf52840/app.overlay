@@ -9,6 +9,7 @@
 		 */
 		zephyr,entropy = &rng;
 	};
+
 	/* Configure DTS nodes used for USB next HID support. */
 	hid_dev_0: hid_dev_0 {
 		compatible = "zephyr,hid-device";

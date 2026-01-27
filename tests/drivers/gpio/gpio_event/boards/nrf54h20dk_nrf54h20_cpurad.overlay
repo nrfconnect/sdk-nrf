@@ -54,12 +54,12 @@
 
 &gpio1 {
 	status = "okay";
-	gpiote-instance = < &gpiote0 >;
+	gpiote-instance = <&gpiote0>;
 };
 
 &gpio2 {
 	status = "okay";
-	gpiote-instance = < &gpiote0 >;
+	gpiote-instance = <&gpiote0>;
 };
 
 /* Enable interrupt from GPIO P1 (pins 4-11) and P2 (pins 0-11) events. */
