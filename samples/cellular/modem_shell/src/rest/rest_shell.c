@@ -217,7 +217,8 @@ static int rest_shell(const struct shell *shell, size_t argc, char **argv)
 
 			req_headers[i] = k_malloc(strlen(sys_getopt_optarg) + 1);
 			if (req_headers[i] == NULL) {
-				mosh_error("Cannot allocate memory for header %s", sys_getopt_optarg);
+				mosh_error("Cannot allocate memory for header %s",
+					   sys_getopt_optarg);
 				ret = -ENOMEM;
 				goto end;
 			}
