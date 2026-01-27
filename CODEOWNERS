@@ -775,7 +775,6 @@
 
 # SoC
 /soc/nordic/                              @nrfconnect/ncs-code-owners
-/soc/nordic/nrf71/                        @nrfconnect/ncs-code-owners @rob-robinson-14 @Hi-Im-David
 /soc/sercomm/                             @nrfconnect/ncs-code-owners @tokangas
 
 # These snippet entries must be below other snippet entries (excluding doc), do not move
