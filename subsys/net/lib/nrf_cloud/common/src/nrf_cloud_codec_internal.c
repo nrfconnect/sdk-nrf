@@ -399,6 +399,7 @@ int nrf_cloud_shadow_control_decode(struct nrf_cloud_obj *const ctrl_obj,
 
 	cJSON *alert_obj = NULL;
 	cJSON *log_obj = NULL;
+	cJSON *memfault_obj = NULL;
 
 	alert_obj = cJSON_GetObjectItem(ctrl_obj->json, NRF_CLOUD_JSON_KEY_ALERT);
 	if (alert_obj == NULL) {
@@ -424,6 +425,16 @@ int nrf_cloud_shadow_control_decode(struct nrf_cloud_obj *const ctrl_obj,
 		data->log_level = val;
 	} else {
 		LOG_WRN(NRF_CLOUD_JSON_KEY_LOG " is not a number");
+		return -EINVAL;
+	}
+
+	memfault_obj = cJSON_GetObjectItem(ctrl_obj->json, NRF_CLOUD_JSON_KEY_MEMFAULT);
+	if (memfault_obj == NULL) {
+		LOG_DBG(NRF_CLOUD_JSON_KEY_MEMFAULT " not found");
+	} else if (cJSON_IsBool(memfault_obj)) {
+		data->memfault_enabled = cJSON_IsTrue(memfault_obj);
+	} else {
+		LOG_WRN(NRF_CLOUD_JSON_KEY_MEMFAULT " is not a bool");
 		return -EINVAL;
 	}
 
@@ -3365,6 +3376,11 @@ void nrf_cloud_device_control_get(struct nrf_cloud_ctrl_data *const ctrl)
 	ctrl->alerts_enabled = false;
 #endif
 	ctrl->log_level = nrf_cloud_log_control_get();
+#if CONFIG_MEMFAULT
+	ctrl->memfault_enabled = memfault_upload_control_get();
+#else
+	ctrl->memfault_enabled = false;
+#endif
 }
 
 bool nrf_cloud_shadow_app_send_check(struct nrf_cloud_obj_shadow_data *const input)
@@ -3646,6 +3662,13 @@ int nrf_cloud_shadow_control_process(struct nrf_cloud_obj_shadow_data *const inp
 		if (device_ctrl.log_level != cloud_ctrl.log_level) {
 			ctrl_status = NRF_CLOUD_CTRL_REPLY;
 			nrf_cloud_log_control_set(cloud_ctrl.log_level);
+		}
+
+		if (device_ctrl.memfault_enabled != cloud_ctrl.memfault_enabled) {
+			ctrl_status = NRF_CLOUD_CTRL_REPLY;
+#if CONFIG_MEMFAULT
+			memfault_upload_control_set(cloud_ctrl.memfault_enabled);
+#endif /* CONFIG_MEMFAULT */
 		}
 	}
 
