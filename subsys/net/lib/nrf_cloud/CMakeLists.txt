@@ -104,7 +104,3 @@ if(CONFIG_NRF_CLOUD_LOG_DIRECT)
   zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_MQTT mqtt/src/nrf_cloud_log.c)
   zephyr_library_sources_ifdef(CONFIG_NRF_CLOUD_REST rest/src/nrf_cloud_log.c)
 endif()
-
-if(CONFIG_MEMFAULT)
-  
-endif()

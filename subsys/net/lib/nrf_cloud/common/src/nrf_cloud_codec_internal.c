@@ -25,6 +25,9 @@
 #include <ncs_version.h>
 #include <ncs_commit.h>
 #include "cJSON_os.h"
+#if (CONFIG_MEMFAULT)
+#include "memfault/ports/zephyr/http.h"
+#endif /* CONFIG_MEMFAULT */
 
 LOG_MODULE_REGISTER(nrf_cloud_codec_internal, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
@@ -3376,8 +3379,8 @@ void nrf_cloud_device_control_get(struct nrf_cloud_ctrl_data *const ctrl)
 	ctrl->alerts_enabled = false;
 #endif
 	ctrl->log_level = nrf_cloud_log_control_get();
-#if CONFIG_MEMFAULT
-	ctrl->memfault_enabled = memfault_upload_control_get();
+#if (CONFIG_MEMFAULT)
+	ctrl->memfault_enabled = memfault_zephyr_port_http_periodic_upload_enabled();
 #else
 	ctrl->memfault_enabled = false;
 #endif
@@ -3666,8 +3669,8 @@ int nrf_cloud_shadow_control_process(struct nrf_cloud_obj_shadow_data *const inp
 
 		if (device_ctrl.memfault_enabled != cloud_ctrl.memfault_enabled) {
 			ctrl_status = NRF_CLOUD_CTRL_REPLY;
-#if CONFIG_MEMFAULT
-			memfault_upload_control_set(cloud_ctrl.memfault_enabled);
+#if (CONFIG_MEMFAULT)
+			memfault_zephyr_port_http_periodic_upload_enable(cloud_ctrl.memfault_enabled);
 #endif /* CONFIG_MEMFAULT */
 		}
 	}
