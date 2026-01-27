@@ -139,7 +139,7 @@ The following Kconfig options are available:
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
 | :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_SINGLE_APP`                       | Build MCUboot in single slot mode (application can only be updated by MCUboot's serial recovery mode)                    |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
-| :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_SWAP_WITHOUT_SCRATCH`             | Build MCUboot and application in swap using move mode (default)                                                          |
+| :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE`                  | Build MCUboot and application in swap using move mode (default)                                                          |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
 | :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_SWAP_SCRATCH`                     | Build MCUboot and application in swap using scratch mode                                                                 |
 +---------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+

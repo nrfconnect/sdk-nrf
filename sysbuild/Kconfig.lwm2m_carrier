@@ -6,7 +6,7 @@ menuconfig LWM2M_CARRIER_DIVIDED_DFU
 	bool "Proprietary LwM2M Carrier divided DFU file generation"
 	depends on SOC_SERIES_NRF91
 	depends on BOOTLOADER_MCUBOOT
-	depends on MCUBOOT_MODE_SWAP_WITHOUT_SCRATCH || MCUBOOT_MODE_SWAP_USING_MOVE || MCUBOOT_MODE_SWAP_SCRATCH
+	depends on MCUBOOT_MODE_SWAP_USING_MOVE || MCUBOOT_MODE_SWAP_SCRATCH
 	depends on MCUBOOT_UPDATEABLE_IMAGES = "1"
 	help
 	  Generate proprietary application update files required for the LwM2M carrier divided
