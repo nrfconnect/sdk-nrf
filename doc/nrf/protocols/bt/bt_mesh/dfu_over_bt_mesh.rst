@@ -20,14 +20,24 @@ The Bluetooth Mesh subsystem in |NCS| provides a set of samples that can be used
 * :ref:`ble_mesh_dfu_target` sample
 * :ref:`ble_mesh_dfu_distributor` sample
 
-To configure and control DFU on the Firmware Distribution Server, it is required to have the Firmware Distribution Client model.
-The Bluetooth Mesh DFU subsystem in Zephyr provides a set of shell commands that can be used to substitute the need for the client.
-For the complete list of commands, see the :ref:`zephyr:bluetooth_mesh_shell_dfd_server` section of the Bluetooth Mesh shell documentation.
+To configure and control DFU on the Firmware Distribution Server, it is required to have either the Firmware Distribution Client model or the shell commands.
 
-The commands can be executed in two ways:
+Consequently, one can use either iOS nRF Mesh mobile application (which has built-in Client model) or the shell commands to configure and control DFU process.
 
-* Through the shell management subsystem of MCU manager (for example, using the nRF Connect Device Manager mobile application on Android or :ref:`Mcumgr command-line tool <dfu_tools_mcumgr_cli>`).
-* By accessing the :ref:`zephyr:shell_api` module over UART.
+.. tabs::
+   .. group-tab:: iOS nRF Mesh mobile application
+
+      To be added.
+
+   .. group-tab:: Shell
+
+      The Bluetooth Mesh DFU subsystem in Zephyr provides a set of shell commands that can be used to substitute the need for the client.
+      For the complete list of commands, see the :ref:`zephyr:bluetooth_mesh_shell_dfd_server` section of the Bluetooth Mesh shell documentation.
+
+      The commands can be executed in two ways:
+
+      * Through the shell management subsystem of MCU manager (for example, using the nRF Connect Device Manager mobile application on Android or :ref:`Mcumgr command-line tool <dfu_tools_mcumgr_cli>`).
+      * By accessing the :ref:`zephyr:shell_api` module over UART.
 
 Provisioning and configuring the devices
 ****************************************
@@ -43,94 +53,132 @@ The added application key must be bound:
 
 The bound application key will be used in the firmware distribution procedure.
 
+.. note::
+   If you use iOS nRF Mesh app for DFU, binding application key to firmware update models is not necessary to be done manually, as the app will do it automatically for you.
+
 Uploading the firmware
 **********************
 
-After configuring the models, a new image can be uploaded to the Distributor.
-To upload the image, follow the instructions provided in the :ref:`ble_mesh_dfu_distributor_fw_image_upload` section of the :ref:`ble_mesh_dfu_distributor` sample documentation.
+.. tabs::
+   .. group-tab:: iOS nRF Mesh mobile application
 
-The uploaded image needs to be registered in the Bluetooth Mesh DFU subsystem.
-To achieve this, issue the ``mesh models dfu slot add`` shell command specifying size in bytes of the image that was uploaded to the Distributor.
-Optionally, you can provide firmware ID, metadata and Unique Resource Identifier (URI) parameters that come with the image.
+      To be added.
 
-For example, to allocate a slot for the :ref:`ble_mesh_dfu_target` sample with image size of 241236 bytes, with firmware ID set to ``0200000000000000``, and metadata generated as described in :ref:`bluetooth_mesh_dfu_eval_md` section below, type the following command::
+   .. group-tab:: Shell
 
-  mesh models dfu slot add 241236 0200000000000000 020000000000000094cf24017c26f3710100
+      After configuring the models, a new image can be uploaded to the Distributor.
+      To upload the image, follow the instructions provided in the :ref:`ble_mesh_dfu_distributor_fw_image_upload` section of the :ref:`ble_mesh_dfu_distributor` sample documentation.
 
-When the slot is added, the shell will print the slot ID.
-Take note of this ID as it will then be needed to start the DFU transfer::
+      The uploaded image needs to be registered in the Bluetooth Mesh DFU subsystem.
+      To achieve this, issue the ``mesh models dfu slot add`` shell command specifying size in bytes of the image that was uploaded to the Distributor.
+      Optionally, you can provide firmware ID, metadata and Unique Resource Identifier (URI) parameters that come with the image.
 
-  Adding slot (size: 241236)
-  Slot added. ID: 0
+      For example, to allocate a slot for the :ref:`ble_mesh_dfu_target` sample with image size of 241236 bytes, with firmware ID set to ``0200000000000000``, and metadata generated as described in :ref:`bluetooth_mesh_dfu_eval_md` section below, type the following command::
 
-.. note::
-   To update any value in a slot, issue the ``mesh models dfu slot del`` command specifying the ID of the allocated slot, and then add the slot again.
+        mesh models dfu slot add 241236 0200000000000000 020000000000000094cf24017c26f3710100
+
+      When the slot is added, the shell will print the slot ID.
+      Take note of this ID as it will then be needed to start the DFU transfer::
+
+        Adding slot (size: 241236)
+        Slot added. ID: 0
+
+      .. note::
+         To update any value in a slot, issue the ``mesh models dfu slot del`` command specifying the ID of the allocated slot, and then add the slot again.
 
 Populating the Distributor's receivers list
 *******************************************
 
-Add Target nodes to the DFU transfer by issuing the ``mesh models dfd receivers-add`` shell command.
-This shell command is specifying the element address of a Target node with the Firmware Update Server instance and the image index on the Target node that needs to be updated.
-For example, for two Target nodes with addresses ``0x0004`` and ``0x0005`` respectively, and with image index 0, the command will look like this::
+.. tabs::
+   .. group-tab:: iOS nRF Mesh mobile application
 
-  mesh models dfd receivers-add 0x0004,0;0x0005,0
+      To be added.
 
-.. note::
-   To remove all receivers from the list, issue the ``mesh models dfd receivers-delete-all`` command.
+   .. group-tab:: Shell
+
+      Add Target nodes to the DFU transfer by issuing the ``mesh models dfd receivers-add`` shell command.
+      This shell command is specifying the element address of a Target node with the Firmware Update Server instance and the image index on the Target node that needs to be updated.
+      For example, for two Target nodes with addresses ``0x0004`` and ``0x0005`` respectively, and with image index 0, the command will look like this::
+
+        mesh models dfd receivers-add 0x0004,0;0x0005,0
+
+      .. note::
+         To remove all receivers from the list, issue the ``mesh models dfd receivers-delete-all`` command.
+
 
 Initiating the distribution
 ***************************
 
-To start the DFU transfer, issue the ``mesh models dfd start`` shell command.
-This command requires two mandatory arguments: ``app_idx`` and ``slot_idx``:
+.. tabs::
+   .. group-tab:: iOS nRF Mesh mobile application
 
-* As ``app_idx``, use the application key index that is bound to the Firmware Distribution Server and other Firmware Update and BLOB Transfer models on the Distributor and Target nodes.
-* As ``slot_idx``, use the ID of the slot allocated by the ``mesh models dfu slot add`` shell command on the previous step.
+      To be added.
 
-For example, to run the DFU transfer in unicast mode, with AppKey index 0 and slot ID 0, call::
+   .. group-tab:: Shell
+      To start the DFU transfer, issue the ``mesh models dfd start`` shell command.
+      This command requires two mandatory arguments: ``app_idx`` and ``slot_idx``:
 
-  mesh models dfd start 0 0
+      * As ``app_idx``, use the application key index that is bound to the Firmware Distribution Server and other Firmware Update and BLOB Transfer models on the Distributor and Target nodes.
+      * As ``slot_idx``, use the ID of the slot allocated by the ``mesh models dfu slot add`` shell command on the previous step.
 
-By default, the Firmware Distribution Server will request the Firmware Update Servers to apply the image immediately after the DFU transfer.
-To avoid applying the image immediately and only verify it, set the 4th argument to 0::
+      For example, to run the DFU transfer in unicast mode, with AppKey index 0 and slot ID 0, call::
 
-  mesh models dfd start 0 0 0 0
+        mesh models dfd start 0 0
 
-.. note::
-   After a successful firmware distribution, the Firmware Distribution Server has to be set to idle state by issuing the ``mesh models dfd cancel`` shell command, before a new firmware distribution can be initiated.
+      By default, the Firmware Distribution Server will request the Firmware Update Servers to apply the image immediately after the DFU transfer.
+      To avoid applying the image immediately and only verify it, set the 4th argument to 0::
+
+        mesh models dfd start 0 0 0 0
+
+      .. note::
+         After a successful firmware distribution, the Firmware Distribution Server has to be set to idle state by issuing the ``mesh models dfd cancel`` shell command, before a new firmware distribution can be initiated.
 
 Firmware distribution
 =====================
 
-The transfer will take a couple of minutes, depending on the number of Target nodes and the network quality.
-To check the transfer progress, call the ``mesh models dfd receivers-get`` shell command, for example::
+.. tabs::
+   .. group-tab:: iOS nRF Mesh mobile application
 
-  mesh models dfd receivers-get 0 2
+      To be added.
 
-The output may look like this::
+   .. group-tab:: Shell
 
-  {
-          "target_cnt": 1,
-          "targets": {
-                  "0": { "blob_addr": 0x0004, "phase": 2, "status": 0, "blob_status": 0, "progress": 50, "img_idx": 0 }
-                  "1": { "blob_addr": 0x0005, "phase": 2, "status": 0, "blob_status": 0, "progress": 50, "img_idx": 0 }
-          }
-  }
+      The transfer will take a couple of minutes, depending on the number of Target nodes and the network quality.
+      To check the transfer progress, call the ``mesh models dfd receivers-get`` shell command, for example::
 
-To see the distribution status, phase and parameters of the DFU transfer, use the ``mesh models dfd get`` command.
-When the DFU transfer successfully completes, the phase will be set to  :c:enum:`BT_MESH_DFD_PHASE_TRANSFER_SUCCESS`, for example::
+        mesh models dfd receivers-get 0 2
 
-  { "status": 0, "phase": 2, "group": 0x0000, "app_idx": 0, "ttl": 255, "timeout_base": 0, "xfer_mode": 1, "apply": 0, "slot_idx": 0 }
+      The output may look like this::
 
-The :c:enum:`bt_mesh_dfd_phase` enumeration contains the complete list of distribution phases.
+        {
+                "target_cnt": 1,
+                "targets": {
+                        "0": { "blob_addr": 0x0004, "phase": 2, "status": 0, "blob_status": 0, "progress": 50, "img_idx": 0 }
+                        "1": { "blob_addr": 0x0005, "phase": 2, "status": 0, "blob_status": 0, "progress": 50, "img_idx": 0 }
+                }
+        }
+
+      To see the distribution status, phase and parameters of the DFU transfer, use the ``mesh models dfd get`` command.
+      When the DFU transfer successfully completes, the phase will be set to  :c:enum:`BT_MESH_DFD_PHASE_TRANSFER_SUCCESS`, for example::
+
+        { "status": 0, "phase": 2, "group": 0x0000, "app_idx": 0, "ttl": 255, "timeout_base": 0, "xfer_mode": 1, "apply": 0, "slot_idx": 0 }
+
+      The :c:enum:`bt_mesh_dfd_phase` enumeration contains the complete list of distribution phases.
 
 Suspending the distribution
 ===========================
 
-The firmware distribution can be suspended using the ``mesh models dfd suspend`` shell command.
-The distribution phase is switched to :c:enum:`BT_MESH_DFD_PHASE_TRANSFER_SUSPENDED` in this case.
+.. tabs::
+   .. group-tab:: iOS nRF Mesh mobile application
 
-To resume the DFU transfer, issue the ``mesh models dfu cli resume`` shell command.
+      To be added.
+
+   .. group-tab:: Shell
+
+      The firmware distribution can be suspended using the ``mesh models dfd suspend`` shell command.
+      The distribution phase is switched to :c:enum:`BT_MESH_DFD_PHASE_TRANSFER_SUSPENDED` in this case.
+
+      To resume the DFU transfer, issue the ``mesh models dfu cli resume`` shell command.
 
 Applying the firmware image
 ***************************
@@ -138,7 +186,16 @@ Applying the firmware image
 Depending on the update policy set at the start of the DFU transfer, the Firmware Distribution Server will do the following:
 
 * If ``policy_apply`` is set to true or omitted when the DFU transfer starts, the Firmware Distribution Server will immediately apply the new firmware on the Target nodes upon the DFU transfer completion.
-* If ``policy_apply`` is set to false, the image needs to be applied manually using the ``mesh models dfd apply`` command once the DFU transfer is completed.
+* If ``policy_apply`` is set to false, the image needs to be applied manually.
+
+.. tabs::
+   .. group-tab:: iOS nRF Mesh mobile application
+
+      To be added.
+
+   .. group-tab:: Shell
+
+      The image needs to be applied manually using the ``mesh models dfd apply`` command once the DFU transfer is completed.
 
 When the Firmware Distribution Server starts applying the transferred image, the distribution phase is set to :c:enum:`BT_MESH_DFD_PHASE_APPLYING_UPDATE`.
 
@@ -161,32 +218,50 @@ If the DFU does not complete successfully, the distribution phase is set to :c:e
 Cancelling the distribution
 ***************************
 
-To cancel the firmware distribution, use the ``mesh models dfd cancel`` shell command.
-The Firmware Distribution Server will start the cancelling procedure by sending a cancel message to all Targets and will switch phase to :c:enum:`BT_MESH_DFD_PHASE_CANCELING_UPDATE`.
-Once the cancelling procedure is completed, the phase is set to :c:enum:`BT_MESH_DFD_PHASE_IDLE`.
+.. tabs::
+   .. group-tab:: iOS nRF Mesh mobile application
 
-.. note::
-   It is possible to cancel the firmware distribution on a specific Target node at any time by sending Firmware Update Cancel message.
-   To do this, use the ``mesh models dfu cli cancel`` shell command specifying unicast address of the Target node.
+      To be added.
+
+   .. group-tab:: Shell
+
+      To cancel the firmware distribution, use the ``mesh models dfd cancel`` shell command.
+      The Firmware Distribution Server will start the cancelling procedure by sending a cancel message to all Targets and will switch phase to :c:enum:`BT_MESH_DFD_PHASE_CANCELING_UPDATE`.
+      Once the cancelling procedure is completed, the phase is set to :c:enum:`BT_MESH_DFD_PHASE_IDLE`.
+
+      .. note::
+         It is possible to cancel the firmware distribution on a specific Target node at any time by sending Firmware Update Cancel message.
+         To do this, use the ``mesh models dfu cli cancel`` shell command specifying unicast address of the Target node.
 
 Recovering from failed distribution
 ***********************************
 
-If the firmware distribution fails for any reason, the list of Target nodes should be cleared and the distribution phase should be set to :c:enum:`BT_MESH_DFD_PHASE_IDLE` before making a new attempt.
-To do this, run the following shell commands::
+.. tabs::
+   .. group-tab:: iOS nRF Mesh mobile application
 
-  mesh models dfd receivers-delete-all
-  mesh models dfd cancel
+      To be added.
 
-To bring a stalled Target node to idle state, use the ``mesh models dfu cli cancel`` shell command.
+   .. group-tab:: Shell
 
-.. note::
-   This does not affect the allocated image slots.
+      If the firmware distribution fails for any reason, the list of Target nodes should be cleared and the distribution phase should be set to :c:enum:`BT_MESH_DFD_PHASE_IDLE` before making a new attempt.
+      To do this, run the following shell commands::
+
+        mesh models dfd receivers-delete-all
+        mesh models dfd cancel
+
+      To bring a stalled Target node to idle state, use the ``mesh models dfu cli cancel`` shell command.
+
+      .. note::
+         This does not affect the allocated image slots.
 
 .. _bluetooth_mesh_dfu_eval_md:
 
 Generating the firmware metadata
 ********************************
+
+.. note::
+   If you use iOS nRF Mesh app for DFU, metadata generation is not necessary to be done manually, as the app will get all the information it needs from the firmware archive that is generated as a part of the build process.
+
 
 There are two ways to generate the required DFU metadata:
 
@@ -237,9 +312,9 @@ This gives the user easy access to this information, without having to enter the
 
 For this particular example, the following output is generated:
 
-  .. toggle::
+.. toggle::
 
-    .. code-block:: console
+  .. code-block:: console
 
       {
         "sign_version": {

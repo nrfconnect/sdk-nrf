@@ -143,13 +143,27 @@ Performing a Device Firmware Update
 
 The Bluetooth Mesh defines the Firmware update Initiator role to control the firmware distribution.
 This sample supports, but does not require an external Initiator to control the DFU procedure.
-The Bluetooth Mesh DFU subsystem also provides a set of shell commands that can be used instead of the Initiator.
-Follow the description in the :ref:`dfu_over_bt_mesh` guide on how to perform the firmware distribution without the Initiator.
 
-The commands can be executed in two ways:
+There are two ways to perform a Device Firmware Update on a mesh network using Distributor sample:
+* Through the shell management subsystem of MCU manager
+* Through the iOS nRF Mesh mobile application
 
-* Through the shell management subsystem of MCU manager (for example, using the nRF Connect Device Manager mobile application on Android or :ref:`Mcumgr command-line tool <dfu_tools_mcumgr_cli>`).
-* By accessing the :ref:`zephyr:shell_api` module over RTT.
+.. tabs::
+   .. group-tab:: Shell
+
+      The Bluetooth Mesh DFU subsystem also provides a set of shell commands that can be used instead of the Initiator.
+      Follow the description in the :ref:`dfu_over_bt_mesh` guide on how to perform the firmware distribution without the Initiator.
+      The commands can be executed in two ways:
+
+      * Through the shell management subsystem of MCU manager (for example, using the nRF Connect Device Manager mobile application on Android or :ref:`Mcumgr command-line tool <dfu_tools_mcumgr_cli>`).
+      * By accessing the :ref:`zephyr:shell_api` module over RTT.
+
+
+   .. group-tab:: iOS nRF Mesh mobile application
+
+      To be added.
+
+
 
 .. _ble_mesh_dfu_distributor_fw_image_upload:
 
