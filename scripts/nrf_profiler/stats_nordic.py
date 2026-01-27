@@ -183,7 +183,8 @@ class StatsNordic:
         if end_evt_name is None:
             raise ValueError(f"Invalid preset: No end event name ({preset_name})")
 
-        preset_desc = f"{preset_name}: {start_evt_name}({start_evt_state})->{end_evt_name}({end_evt_state})"
+        preset_desc = \
+            f"{preset_name}: {start_evt_name}({start_evt_state})->{end_evt_name}({end_evt_state})"
         self.logger.info(f"Execute test preset {preset_desc}")
 
         # Calculate event propagation times
