@@ -23,12 +23,19 @@
 /delete-node/ &button1;
 /delete-node/ &button2;
 /delete-node/ &button3;
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
 /delete-node/ &storage_partition;
 
 &cpuapp_rram {
 	reg = <0x0 DT_SIZE_K(2036)>;
 
 	partitions {
+		slot0_partition: partition@0  {
+			label = "image-0";
+			reg = <0x00000000 0x001f8000>;
+		};
 		storage_partition: partition@1f8000 {
 			label = "storage";
 			reg = <0x001f8000 0x00002000>;
