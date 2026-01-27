@@ -180,7 +180,7 @@ struct sxcmmask {
  */
 static inline int sx_handle_nested_error(int nested_err, int err)
 {
-	return nested_err ? nested_err != SX_OK : err;
+	return nested_err != SX_OK ? nested_err : err;
 }
 
 #ifdef __cplusplus

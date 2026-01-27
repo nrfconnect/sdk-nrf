@@ -1161,17 +1161,6 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	/* The public key of the IAK needs to be allowed to get exported because there is no
-	 * way to provide the public key through the attestation service at the moment.
-	 * The check for IKG keys is skipped since the only IKG key that can use this operation
-	 * is the IAK.
-	 */
-	if (!cracen_builtin_key_user_allowed(attributes) &&
-	    PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) !=
-		    PSA_KEY_LOCATION_CRACEN) {
-		return PSA_ERROR_NOT_PERMITTED;
-	}
-
 	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_EXPORT)) {
 		if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(key_type)) {
 			return export_ecc_public_key_from_keypair(attributes, key_buffer,
@@ -1223,10 +1212,6 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (!cracen_builtin_key_user_allowed(attributes)) {
-		return PSA_ERROR_NOT_PERMITTED;
-	}
-
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 #ifdef PSA_NEED_CRACEN_KMU_DRIVER
@@ -1242,6 +1227,9 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 			return cracen_provision_prot_ram_inv_slots();
 		}
 #endif
+		if (!cracen_kmu_key_user_allowed(attributes)) {
+			return PSA_ERROR_NOT_PERMITTED;
+		}
 
 		size_t opaque_key_size;
 		psa_status_t status = cracen_get_opaque_size(attributes, &opaque_key_size);
@@ -1449,8 +1437,10 @@ error_exit:
 #endif /* PSA_MAX_RSA_KEY_BITS > 0*/
 }
 
-psa_status_t generate_key_for_kmu(const psa_key_attributes_t *attributes, uint8_t *key_buffer,
-				  size_t key_buffer_size, size_t *key_buffer_length)
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
+static psa_status_t generate_key_for_kmu(const psa_key_attributes_t *attributes,
+					 uint8_t *key_buffer, size_t key_buffer_size,
+					 size_t *key_buffer_length)
 {
 	psa_key_type_t key_type = psa_get_key_type(attributes);
 	uint8_t key[CRACEN_KMU_MAX_KEY_SIZE];
@@ -1483,6 +1473,7 @@ psa_status_t generate_key_for_kmu(const psa_key_attributes_t *attributes, uint8_
 	return cracen_import_key(attributes, key, PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)),
 				 key_buffer, key_buffer_size, key_buffer_length, &key_bits);
 }
+#endif /* PSA_NEED_CRACEN_KMU_DRIVER */
 
 psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t *key_buffer,
 				 size_t key_buffer_size, size_t *key_buffer_length)
@@ -1494,12 +1485,11 @@ psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
-	if (!cracen_builtin_key_user_allowed(attributes)) {
-		return PSA_ERROR_NOT_PERMITTED;
-	}
-
 #ifdef PSA_NEED_CRACEN_KMU_DRIVER
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
+		if (!cracen_kmu_key_user_allowed(attributes)) {
+			return PSA_ERROR_NOT_PERMITTED;
+		}
 		return generate_key_for_kmu(attributes, key_buffer, key_buffer_size,
 					    key_buffer_length);
 	}
@@ -1562,64 +1552,42 @@ static psa_status_t cracen_ikg_get_builtin_key(psa_drv_slot_number_t slot_number
 	 */
 	switch (slot_number) {
 	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
-		psa_set_key_lifetime(attributes, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
-							 CRACEN_KEY_PERSISTENCE_READ_ONLY,
-							 PSA_KEY_LOCATION_CRACEN));
 		psa_set_key_type(attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1));
-		psa_set_key_bits(attributes, 256);
 		psa_set_key_algorithm(attributes, PSA_ALG_ECDSA(PSA_ALG_SHA_256));
-		psa_set_key_usage_flags(attributes, PSA_KEY_USAGE_SIGN_MESSAGE |
-							    PSA_KEY_USAGE_SIGN_HASH |
-							    PSA_KEY_USAGE_VERIFY_HASH |
-							    PSA_KEY_USAGE_VERIFY_MESSAGE);
-
-		status = cracen_get_opaque_size(attributes, &opaque_key_size);
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-
-		/* According to the PSA Crypto Driver interface proposed document the driver
-		 * should fill the attributes even if the buffer of the key is too small. So
-		 * we check the buffer here and not earlier in the function.
-		 */
-		if (key_buffer_size >= opaque_key_size) {
-			*key_buffer_length = opaque_key_size;
-			cracen_set_ikg_key_buffer(attributes, slot_number, key_buffer);
-			return PSA_SUCCESS;
-		} else {
-			return PSA_ERROR_BUFFER_TOO_SMALL;
-		}
 		break;
 
 	case CRACEN_BUILTIN_MKEK_ID:
 	case CRACEN_BUILTIN_MEXT_ID:
-		psa_set_key_lifetime(attributes, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
-							 CRACEN_KEY_PERSISTENCE_READ_ONLY,
-							 PSA_KEY_LOCATION_CRACEN));
 		psa_set_key_type(attributes, PSA_KEY_TYPE_AES);
-		psa_set_key_bits(attributes, 256);
 		psa_set_key_algorithm(attributes, PSA_ALG_SP800_108_COUNTER_CMAC);
-		psa_set_key_usage_flags(attributes,
-					PSA_KEY_USAGE_DERIVE | PSA_KEY_USAGE_VERIFY_DERIVATION);
-
-		status = cracen_get_opaque_size(attributes, &opaque_key_size);
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-		/* See comment about the placement of this check in the previous switch
-		 * case.
-		 */
-		if (key_buffer_size >= opaque_key_size) {
-			*key_buffer_length = opaque_key_size;
-			cracen_set_ikg_key_buffer(attributes, slot_number, key_buffer);
-			return PSA_SUCCESS;
-		} else {
-			return PSA_ERROR_BUFFER_TOO_SMALL;
-		}
+		break;
 
 	default:
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
+
+	psa_set_key_lifetime(attributes, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
+							CRACEN_KEY_PERSISTENCE_READ_ONLY,
+							PSA_KEY_LOCATION_CRACEN));
+	psa_set_key_bits(attributes, 256);
+	psa_set_key_usage_flags(attributes, cracen_ikg_key_user_get_usage(attributes));
+
+	status = cracen_get_opaque_size(attributes, &opaque_key_size);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	/* According to the PSA Crypto Driver interface proposed document the driver
+	 * should fill the attributes even if the buffer of the key is too small. So
+	 * we check the buffer here and not earlier in the function.
+	 */
+	if (key_buffer_size < opaque_key_size) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+	*key_buffer_length = opaque_key_size;
+	cracen_set_ikg_key_buffer(attributes, slot_number, key_buffer);
+
+	return PSA_SUCCESS;
 }
 
 psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
@@ -1630,10 +1598,6 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 	 * and the `lifetime` field of the attribute struct. We will fill all the other
 	 * attributes, and update the `lifetime` field to be more specific.
 	 */
-
-	if (!cracen_builtin_key_user_allowed(attributes)) {
-		return PSA_ERROR_NOT_PERMITTED;
-	}
 
 	switch (slot_number) {
 	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
@@ -1647,6 +1611,9 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 		}
 	default:
 #ifdef PSA_NEED_CRACEN_KMU_DRIVER
+		if (!cracen_kmu_key_user_allowed(attributes)) {
+			return PSA_ERROR_NOT_PERMITTED;
+		}
 		return cracen_kmu_get_builtin_key(slot_number, attributes, key_buffer,
 						  key_buffer_size, key_buffer_length);
 #else
@@ -1692,12 +1659,8 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
-	if (!cracen_builtin_key_user_allowed(attributes)) {
-		return PSA_ERROR_NOT_PERMITTED;
-	}
-
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
-		/* The keys will already be in the key buffer as they got loaded their by a previous
+		/* The keys will already be in the key buffer as they got loaded there by a previous
 		 * call to cracen_get_builtin_key or cached in the memory.
 		 */
 		psa_key_type_t key_type = psa_get_key_type(attributes);
@@ -1744,10 +1707,6 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 			     size_t target_key_buffer_size, size_t *target_key_buffer_length)
 {
 #ifdef PSA_NEED_CRACEN_KMU_DRIVER
-	if (!cracen_builtin_key_user_allowed(attributes)) {
-		return PSA_ERROR_NOT_PERMITTED;
-	}
-
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
@@ -1802,10 +1761,6 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes)
 {
 #ifdef PSA_NEED_CRACEN_KMU_DRIVER
-	if (!cracen_builtin_key_user_allowed(attributes)) {
-		return PSA_ERROR_NOT_PERMITTED;
-	}
-
 	return cracen_kmu_destroy_key(attributes);
 #endif
 
@@ -1818,9 +1773,17 @@ psa_status_t cracen_derive_key(const psa_key_attributes_t *attributes, const uin
 {
 	psa_key_type_t key_type = psa_get_key_type(attributes);
 
-	if (!cracen_builtin_key_user_allowed(attributes)) {
+#ifdef PSA_NEED_CRACEN_KMU_DRIVER
+	/* This is called from psa_key_derivation_output_key(), the arguments we
+	 * receive here are for the newly-created key, so check that we are allowed
+	 * to create that new key.
+	 */
+	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes))
+					  == PSA_KEY_LOCATION_CRACEN_KMU
+	    && !cracen_kmu_key_user_allowed(attributes)) {
 		return PSA_ERROR_NOT_PERMITTED;
 	}
+#endif /* PSA_NEED_CRACEN_KMU_DRIVER */
 
 	if (PSA_KEY_TYPE_IS_SPAKE2P_KEY_PAIR(key_type) && IS_ENABLED(PSA_NEED_CRACEN_SPAKE2P)) {
 		return cracen_derive_spake2p_key(attributes, input, input_length, key, key_size,
