@@ -254,6 +254,7 @@
     - drivers.mspi.flash.mspi_nor_no_multithreading
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-35925"
 
 - scenarios:
