@@ -143,13 +143,32 @@ Performing a Device Firmware Update
 
 The Bluetooth Mesh defines the Firmware update Initiator role to control the firmware distribution.
 This sample supports, but does not require an external Initiator to control the DFU procedure.
-The Bluetooth Mesh DFU subsystem also provides a set of shell commands that can be used instead of the Initiator.
-Follow the description in the :ref:`dfu_over_bt_mesh` guide on how to perform the firmware distribution without the Initiator.
 
-The commands can be executed in two ways:
+To activate the new firmware image on the Target node, the new image to be distributed must have a higher version number.
+Therefore, after the Target node is flashed with the current firmware, update the version number in the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option.
 
-* Through the shell management subsystem of MCU manager (for example, using the nRF Connect Device Manager mobile application on Android or :ref:`Mcumgr command-line tool <dfu_tools_mcumgr_cli>`).
-* By accessing the :ref:`zephyr:shell_api` module over RTT.
+There are two ways to perform a Device Firmware Update on a mesh network using the Distributor sample:
+
+* Through the shell management subsystem of MCU manager
+* Through the nRF Mesh mobile application
+
+.. tabs::
+   .. group-tab:: nRF Mesh app (iOS)
+
+      .. note::
+         If you plan to use the nRF Mesh app, the Mesh DFU feature is currently supported only in the nRF Mesh app for iOS.
+
+      Obtain the firmware image archive for the target node from the build directory and copy it to your mobile device.
+      Then follow the steps in the :ref:`dfu_over_bt_mesh` guide to perform the firmware distribution using the nRF Mesh app.
+
+   .. group-tab:: Shell
+
+      The Bluetooth Mesh DFU subsystem also provides a set of shell commands that can be used instead of the Initiator.
+      Follow the description in the :ref:`dfu_over_bt_mesh` guide on how to perform the firmware distribution without the Initiator.
+      The commands can be executed in two ways:
+
+      * Through the shell management subsystem of MCU manager (for example, using the nRF Connect Device Manager mobile application on Android or :ref:`Mcumgr command-line tool <dfu_tools_mcumgr_cli>`).
+      * By accessing the :ref:`zephyr:shell_api` module over RTT.
 
 .. _ble_mesh_dfu_distributor_fw_image_upload:
 
