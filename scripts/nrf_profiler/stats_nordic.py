@@ -5,7 +5,7 @@
 
 import logging
 import os
-from enum import StrEnum
+from enum import Enum
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,7 +13,7 @@ from processed_events import ProcessedEvents
 
 OUTPUT_DIR_BASE = "data_stats"
 
-class EventState(StrEnum):
+class EventState(str, Enum):
     SUBMIT = "submit"
     PROCESSING_START = "processing_start"
     PROCESSING_END = "processing_end"
