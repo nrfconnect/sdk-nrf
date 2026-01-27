@@ -237,7 +237,9 @@ class RepoAnalyzer:
                 #         rsha = 'd269d6fcc54c9f03bb19419120ce3a57f69a6a88'
 
                 if rsha in downstream_out:
-                    log.dbg(f'** commit {rsha} ("{commit_title(downstream_out[rsha])}") was reverted in {sha}', level=log.VERBOSE_VERY)
+                    log.dbg(
+                        f'** commit {rsha} ("{commit_title(downstream_out[rsha])}")'
+                        f' was reverted in {sha}', level=log.VERBOSE_VERY)
                     del downstream_out[rsha]
                     continue
                 elif rsha is not None:
