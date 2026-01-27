@@ -57,7 +57,7 @@
 	#define RADIO_TEST_SHORT_END_DISABLE_MASK  NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
 	#define RADIO_TEST_INT_END_MASK            NRF_RADIO_INT_PHYEND_MASK
 	#define RADIO_TEST_EVENT_END               NRF_RADIO_EVENT_PHYEND
-#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#elif defined(CONFIG_SOC_SERIES_NRF54LX) || defined(CONFIG_SOC_SERIES_NRF71X)
 	#define RADIO_TEST_EGU                     NRF_EGU10
 	#define RADIO_TEST_TIMER_INSTANCE          10
 	#define RADIO_TEST_TIMER_IRQn              TIMER10_IRQn
@@ -560,7 +560,8 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern)
 	nrf_radio_packet_conf_t packet_conf;
 
 	/* Set fast ramp-up time. */
-#if defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX)
+#if defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX) || \
+	defined(CONFIG_SOC_SERIES_NRF71X)
 	nrf_radio_fast_ramp_up_enable_set(NRF_RADIO, true);
 #else
 	nrf_radio_modecnf0_set(NRF_RADIO, true, RADIO_MODECNF0_DTX_Center);
