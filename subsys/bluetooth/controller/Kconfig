@@ -696,6 +696,21 @@ config BT_CTLR_SDC_CS_T_PM_LEN_DEFAULT
 config BT_CTLR_LE_PATH_LOSS_MONITORING
 	select BT_CTLR_LE_POWER_CONTROL
 
+config BT_CTLR_SDC_CS_BOARD_DISTANCE_OFFSET
+	int "Board distance offset [cm]"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	default 0
+	help
+	  Set the distance offset in cm for the board. This can be used to compensate
+	  for delays on board which are causing an offset in distance estimates.
+	  The distance offset is a signed value in centimeters.
+	  The distance offset is applied as phase rotations to the PCT measurements taken on that board.
+
+	  When applying a distance offset the distance estimates are expected to be affected as follows:
+	  distance_estimate_with_offset = distance_estimate_without_offset - distance_offset
+
+	  Note: Currently the distance offset is not applied to RTT measurements.
+
 config BT_CTLR_SDC_LE_POWER_CLASS_1
 	bool "Device supports transmitting at LE Power Class 1 level"
 	default y if BT_CTLR_TX_PWR_ANTENNA >= 10
