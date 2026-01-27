@@ -14,7 +14,7 @@
 
 #if defined(CONFIG_SOC_SERIES_NRF54L)
 #include <nrfx_rramc.h>
-#elif defined(CONFIG_SOC_SERIES_NRF71X)
+#elif defined(CONFIG_SOC_SERIES_NRF71)
 #include <nrfx_mramc.h>
 #define MRAM_CONFIGNVR_SICR_PAGE 3
 #endif
@@ -97,7 +97,7 @@ int lib_kmu_provision_slot(int slot_id, struct kmu_src *kmu_src)
 #else
 	nrfx_rramc_write_enable_set(true, 0);
 #endif
-#elif defined(CONFIG_SOC_SERIES_NRF71X)
+#elif defined(CONFIG_SOC_SERIES_NRF71)
 	/* Enable write and erase from KMU to SICR in MRAM */
 	nrfx_mramc_confignvr_perm_set(true, MRAM_CONFIGNVR_SICR_PAGE);
 #endif
@@ -115,7 +115,7 @@ int lib_kmu_provision_slot(int slot_id, struct kmu_src *kmu_src)
 #else
 	nrfx_rramc_write_enable_set(false, 0);
 #endif
-#elif defined(CONFIG_SOC_SERIES_NRF71X)
+#elif defined(CONFIG_SOC_SERIES_NRF71)
 	/* Disable write and erase from KMU to SICR in MRAM */
 	nrfx_mramc_confignvr_perm_set(false, MRAM_CONFIGNVR_SICR_PAGE);
 #endif
@@ -161,7 +161,7 @@ int lib_kmu_revoke_slot(int slot_id)
 {
 #if !defined(__NRF_TFM__) && defined(CONFIG_SOC_SERIES_NRF54L)
 	nrfx_rramc_write_enable_set(true, 0);
-#elif defined(CONFIG_SOC_SERIES_NRF71X)
+#elif defined(CONFIG_SOC_SERIES_NRF71)
 	/* Enable write and erase from KMU to SICR in MRAM */
 	nrfx_mramc_confignvr_perm_set(true, MRAM_CONFIGNVR_SICR_PAGE);
 #endif
@@ -173,7 +173,7 @@ int lib_kmu_revoke_slot(int slot_id)
 
 #if !defined(__NRF_TFM__) && defined(CONFIG_SOC_SERIES_NRF54L)
 	nrfx_rramc_write_enable_set(false, 0);
-#elif defined(CONFIG_SOC_SERIES_NRF71X)
+#elif defined(CONFIG_SOC_SERIES_NRF71)
 	/* Disable write and erase from KMU to SICR in MRAM */
 	nrfx_mramc_confignvr_perm_set(false, MRAM_CONFIGNVR_SICR_PAGE);
 #endif

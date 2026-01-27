@@ -70,7 +70,7 @@ class NrfBinaryRunnerNext(nrf_common.NrfBinaryRunner):
         if self.family is not None:
             return
 
-        if self.build_conf.getboolean('CONFIG_SOC_SERIES_NRF71X'):
+        if self.build_conf.getboolean('CONFIG_SOC_SERIES_NRF71'):
             self.family = 'nrf71'
         else:
             raise RuntimeError(f'unknown nRF; update {__file__}')
