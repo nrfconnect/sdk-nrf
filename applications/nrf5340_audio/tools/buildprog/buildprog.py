@@ -367,7 +367,7 @@ def __main():
                 try:
                     location = [Location[name] for name in dev["location"]]
                 except KeyError as e:
-                    raise KeyError(f"Invalid location name {e} for headset in JSON file")
+                    raise KeyError(f"Invalid location name {e} for headset in JSON file") from e
             else:
                 print("No location specified for headset, setting to MONO_AUDIO")
                 location = [Location.MONO_AUDIO]
@@ -378,7 +378,7 @@ def __main():
                 if dev["location"] != ['NA'] or dev["location"] == []:
                     print("Location field is only valid for headset devices, setting to NA")
             else:
-                raise KeyError(f"Invalid location name {e} for gateway in JSON file")
+                raise KeyError("Invalid location name for gateway in JSON file")
             location = []
 
         device = DeviceConf(
