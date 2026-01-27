@@ -137,25 +137,25 @@ enum {
 
 /* Specifying the expected options */
 static struct sys_getopt_option long_options[] = {
-	{ "method", sys_getopt_required_argument, 0, 'm' },
-	{ "mode", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_MODE },
-	{ "interval", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_INTERVAL },
-	{ "timeout", sys_getopt_required_argument, 0, 't' },
-	{ "gnss_accuracy", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_GNSS_ACCURACY },
-	{ "gnss_timeout", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_GNSS_TIMEOUT },
-	{ "gnss_num_fixes", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_GNSS_NUM_FIXES },
-	{ "gnss_visibility", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_GNSS_VISIBILITY },
-	{ "gnss_priority", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_GNSS_PRIORITY_MODE },
-	{ "gnss_cloud_nmea", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_NMEA },
-	{ "gnss_cloud_pvt", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT },
-	{ "cloud_details", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_DETAILS },
-	{ "cellular_timeout", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_TIMEOUT },
-	{ "cellular_cell_count", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_CELL_COUNT },
-	{ "cloud_resp_disabled", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_CLOUD_RESP_DISABLED },
-	{ "wifi_timeout", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_WIFI_TIMEOUT },
-	{ "help", sys_getopt_no_argument, 0, 'h' },
-	{ 0, 0, 0, 0 }
-};
+	{"method", sys_getopt_required_argument, 0, 'm'},
+	{"mode", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_MODE},
+	{"interval", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_INTERVAL},
+	{"timeout", sys_getopt_required_argument, 0, 't'},
+	{"gnss_accuracy", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_GNSS_ACCURACY},
+	{"gnss_timeout", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_GNSS_TIMEOUT},
+	{"gnss_num_fixes", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_GNSS_NUM_FIXES},
+	{"gnss_visibility", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_GNSS_VISIBILITY},
+	{"gnss_priority", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_GNSS_PRIORITY_MODE},
+	{"gnss_cloud_nmea", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_NMEA},
+	{"gnss_cloud_pvt", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_PVT},
+	{"cloud_details", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_GNSS_LOC_CLOUD_DETAILS},
+	{"cellular_timeout", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_CELLULAR_TIMEOUT},
+	{"cellular_cell_count", sys_getopt_required_argument, 0,
+	 LOCATION_SHELL_OPT_CELLULAR_CELL_COUNT},
+	{"cloud_resp_disabled", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_CLOUD_RESP_DISABLED},
+	{"wifi_timeout", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_WIFI_TIMEOUT},
+	{"help", sys_getopt_no_argument, 0, 'h'},
+	{0, 0, 0, 0}};
 
 #if defined(CONFIG_DK_LIBRARY)
 static void location_evt_led_off_work_fn(struct k_work *work_item)
@@ -648,7 +648,8 @@ static int cmd_location_get(const struct shell *shell, size_t argc, char **argv)
 			} else if (strcmp(sys_getopt_optarg, "wifi") == 0) {
 				method_list[method_count] = LOCATION_METHOD_WIFI;
 			} else {
-				mosh_error("Unknown method (%s) given. See usage:", sys_getopt_optarg);
+				mosh_error("Unknown method (%s) given. See usage:",
+					   sys_getopt_optarg);
 				goto show_usage;
 			}
 			method_count++;

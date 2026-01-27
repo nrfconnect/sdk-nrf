@@ -1104,7 +1104,8 @@ static int cmd_sock_setgetopt(const struct shell *shell, size_t argc, char **arg
 
 		case 'v': /* Value */
 			if (cmd == SOCKOPT_CMD_TYPE_GET) {
-				mosh_error("Unknown option (%s). See usage:", argv[sys_getopt_optind - 1]);
+				mosh_error("Unknown option (%s). See usage:",
+					   argv[sys_getopt_optind - 1]);
 				goto show_usage;
 			}
 			arg_sock_opt_value = sys_getopt_optarg;
