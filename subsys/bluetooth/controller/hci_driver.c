@@ -549,6 +549,10 @@ static int iso_data_packet_process(const struct device *dev, uint8_t *hci_buf)
 
 static bool event_packet_is_discardable(const uint8_t *hci_buf)
 {
+#if !defined(CONFIG_BT_BUF_EVT_DISCARDABLE_COUNT)
+	return false;
+#endif
+
 	struct bt_hci_evt_hdr *hdr = (void *)hci_buf;
 
 	switch (hdr->evt) {
@@ -593,17 +597,9 @@ static bool event_packet_is_discardable(const uint8_t *hci_buf)
 
 static int event_packet_process(const struct device *dev, uint8_t *hci_buf)
 {
-	bool discardable = event_packet_is_discardable(hci_buf);
 	struct bt_hci_evt_hdr *hdr = (void *)hci_buf;
-	struct net_buf *evt_buf;
 
-	if (hdr->len + sizeof(*hdr) > HCI_RX_BUF_SIZE) {
-		LOG_ERR("Event buffer too small. %zu > %u",
-			hdr->len + sizeof(*hdr),
-			HCI_RX_BUF_SIZE);
-		return -ENOMEM;
-	}
-
+	/* Below if-then-else clause for debug logging */
 	if (hdr->evt == BT_HCI_EVT_LE_META_EVENT) {
 		struct bt_hci_evt_le_meta_event *me = (void *)&hci_buf[2];
 
@@ -627,11 +623,34 @@ static int event_packet_process(const struct device *dev, uint8_t *hci_buf)
 		LOG_DBG("Event (0x%02x) len %u", hdr->evt, hdr->len);
 	}
 
-	evt_buf = bt_buf_get_evt(hdr->evt, discardable, K_NO_WAIT);
+	/* Process HCI event from the Controller */
+	const size_t buf_size = hdr->len + sizeof(*hdr);
+	bool discardable = event_packet_is_discardable(hci_buf);
+
+	if (false) {
+#if defined(CONFIG_BT_BUF_EVT_DISCARDABLE_COUNT)
+	} else if (discardable) {
+		const size_t max_buf_size = BT_BUF_EVT_SIZE(CONFIG_BT_BUF_EVT_DISCARDABLE_SIZE);
+
+		if (buf_size > max_buf_size) {
+			LOG_DBG("Discardable event buffer too small. %zu > %zu",
+				buf_size, max_buf_size);
+			return 0;
+		}
+#endif /* CONFIG_BT_BUF_EVT_DISCARDABLE_COUNT */
+	} else {
+		if (buf_size > HCI_RX_BUF_SIZE) {
+			LOG_ERR("Event buffer too small. %zu > %zu",
+				buf_size, HCI_RX_BUF_SIZE);
+			return -ENOMEM;
+		}
+	}
+
+	struct net_buf *evt_buf = bt_buf_get_evt(hdr->evt, discardable, K_NO_WAIT);
 
 	if (!evt_buf) {
 		if (discardable) {
-			LOG_DBG("Discarding event");
+			LOG_DBG("No discardable event buffer available");
 			return 0;
 		}
 
@@ -639,7 +658,7 @@ static int event_packet_process(const struct device *dev, uint8_t *hci_buf)
 		return -ENOBUFS;
 	}
 
-	net_buf_add_mem(evt_buf, &hci_buf[0], hdr->len + sizeof(*hdr));
+	net_buf_add_mem(evt_buf, &hci_buf[0], buf_size);
 
 	struct hci_driver_data *driver_data = dev->data;
 
