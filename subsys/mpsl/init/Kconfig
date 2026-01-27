@@ -71,7 +71,7 @@ config MPSL_LOW_PRIO_IRQN
 	default 26 if SOC_COMPATIBLE_NRF53X # SWI0
 	default 88 if SOC_SERIES_NRF54H # SWI0
 	default 28 if SOC_COMPATIBLE_NRF54LX # SWI00
-	default 28 if SOC_SERIES_NRF71X # SWI00
+	default 28 if SOC_SERIES_NRF71 # SWI00
 	help
 	  This option sets the low priority interrupt that MPSL will use.
 	  Check the interrupt number in the MDK
