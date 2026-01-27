@@ -92,12 +92,12 @@ The nRF Desktop application introduces application-specific configuration option
 These options are defined in the :file:`Kconfig.debug` file.
 
 The :option:`CONFIG_DESKTOP_LOG` Kconfig option enables support for logging in the nRF Desktop application.
-This option overlays Kconfig option defaults from the logging subsystem to align them with the nRF Desktop requirements.
+This option overlays Kconfig option defaults from the :ref:`zephyr:logging_api` subsystem to align them with the nRF Desktop requirements.
 The nRF Desktop configuration can use SEGGER J-Link RTT (:option:`CONFIG_DESKTOP_LOG_RTT`) or UART (:option:`CONFIG_DESKTOP_LOG_UART`) as the logging subsystem backend.
 The SEGGER J-Link RTT is used by default.
 
 The :option:`CONFIG_DESKTOP_SHELL` Kconfig option enables support for CLI in the nRF Desktop application.
-This option overlays Kconfig option defaults from the shell subsystem to align them with the nRF Desktop requirements.
+This option overlays Kconfig option defaults from the :ref:`zephyr:shell_api` subsystem to align them with the nRF Desktop requirements.
 The nRF Desktop configuration uses SEGGER J-Link RTT as the shell subsystem backend.
 If both shell and logging are enabled, logger uses shell as the logging backend.
 
