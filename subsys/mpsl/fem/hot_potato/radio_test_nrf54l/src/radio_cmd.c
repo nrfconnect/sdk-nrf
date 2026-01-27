@@ -5,10 +5,13 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 
 #include <zephyr/kernel.h>
 #include <hal/nrf_gpio.h>
 #include <hal/nrf_power.h>
+#include <hal/nrf_regulators.h>
 #include <openthread/cli.h>
 
 #include "radio_test.h"
@@ -23,6 +26,8 @@
 	"Toggle DCDC state <state>, "                                                              \
 	"Toggle DC/DC state regardless of state value"
 #endif
+
+#define REGULATOR_MODE_HELP "Set regulator mode <ldo|dcdc>"
 
 #define shell_print(fmt, ...)	otCliOutputFormat(fmt "\r\n" __VA_OPT__(, ) __VA_ARGS__)
 #define shell_hexdump(ptr, len) otCliOutputBytes(ptr, len), otCliOutputFormat("\r\n")
@@ -835,6 +840,105 @@ static otError cmd_toggle_dc(void *ctx, uint8_t argc, char *argv[])
 }
 #endif
 
+#if defined(CONFIG_MPSL_FEM_HOT_POTATO_REGULATOR_CONTROL_MANUAL)
+static int regulator_mode_handle(enum radio_test_regulator_mode mode)
+{
+	if (!NRF_REGULATORS_HAS_VREG_ANY && !NRF_POWER_HAS_DCDCEN_VDDH && !NRF_POWER_HAS_DCDCEN) {
+		shell_print("Regulator control not supported on this SoC");
+		return -ENOTSUP;
+	}
+
+	if (test_in_progress) {
+		shell_print("Stop radio test before changing regulator mode");
+		return -EBUSY;
+	}
+
+	radio_test_regulator_mode_set(mode);
+
+	shell_print("Regulator mode request: %s",
+		    (mode == RADIO_TEST_REGULATOR_MODE_DCDC) ? "dcdc" : "ldo");
+
+#if NRF_REGULATORS_HAS_VREG_MAIN
+	shell_print("VREGMAIN DCDC state %d",
+		    nrf_regulators_vreg_enable_check(NRF_REGULATORS, NRF_REGULATORS_VREG_MAIN));
+#endif /* NRF_REGULATORS_HAS_VREG_MAIN */
+
+#if NRF_REGULATORS_HAS_VREG_HIGH
+	shell_print("VREGH DCDC state %d",
+		    nrf_regulators_vreg_enable_check(NRF_REGULATORS, NRF_REGULATORS_VREG_HIGH));
+#endif /* NRF_REGULATORS_HAS_VREG_HIGH */
+
+#if NRF_REGULATORS_HAS_MAIN_STATUS
+	shell_print("MAINREGSTATUS %s", (nrf_regulators_main_status_get(NRF_REGULATORS) ==
+					 NRF_REGULATORS_MAIN_STATUS_HIGH)
+						? "high (VDDH)"
+						: "normal (VDD)");
+#elif NRF_POWER_HAS_MAINREGSTATUS
+	shell_print("MAINREGSTATUS %s",
+		    (nrf_power_mainregstatus_get(NRF_POWER) == NRF_POWER_MAINREGSTATUS_HIGH)
+			    ? "high (VDDH)"
+			    : "normal (VDD)");
+#endif /* NRF_REGULATORS_HAS_MAIN_STATUS */
+
+#if NRF_POWER_HAS_MAINREGSTATUS
+	shell_print("MAINREGSTATUS %s",
+		    (nrf_power_mainregstatus_get(NRF_POWER) == NRF_POWER_MAINREGSTATUS_HIGH)
+			    ? "high (VDDH)"
+			    : "normal (VDD)");
+#endif /* NRF_POWER_HAS_MAINREGSTATUS */
+
+	return 0;
+}
+
+static otError cmd_regulator_mode_ldo(void *ctx, uint8_t argc, char *argv[])
+{
+	ARG_UNUSED(ctx);
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+	printk("Regulator mode request: ldo\r\n");
+	return regulator_mode_handle(RADIO_TEST_REGULATOR_MODE_LDO);
+}
+
+static otError cmd_regulator_mode_dcdc(void *ctx, uint8_t argc, char *argv[])
+{
+	ARG_UNUSED(ctx);
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+	printk("Regulator mode request: dcdc\r\n");
+	return regulator_mode_handle(RADIO_TEST_REGULATOR_MODE_DCDC);
+}
+
+static otError cmd_regulator_mode(void *ctx, uint8_t argc, char *argv[])
+{
+	int rc;
+	struct radio_test_cmd cmds[] = {
+		{"ldo", "Force LDO regulator mode", cmd_regulator_mode_ldo},
+		{"dcdc", "Force DCDC regulator mode", cmd_regulator_mode_dcdc},
+	};
+
+	if (argc != 1) {
+		shell_print("Bad parameters count");
+		return OT_ERROR_INVALID_ARGS;
+	}
+
+	rc = exec_subcommand(cmds, ARRAY_SIZE(cmds), ctx, argc, argv);
+	if (rc == -ENOTSUP) {
+		return OT_ERROR_NOT_IMPLEMENTED;
+	}
+
+	if (rc == -EBUSY) {
+		return OT_ERROR_BUSY;
+	}
+
+	if (rc != 0) {
+		shell_print("Invalid regulator mode, use ldo/dcdc");
+		return OT_ERROR_INVALID_ARGS;
+	}
+
+	return OT_ERROR_NONE;
+}
+#endif /* CONFIG_MPSL_FEM_HOT_POTATO_REGULATOR_CONTROL_MANUAL */
+
 #if defined(RADIO_TXPOWER_TXPOWER_Pos10dBm)
 static otError cmd_pos10dbm(void *ctx, uint8_t argc, char *argv[])
 {
@@ -1529,6 +1633,9 @@ otError VendorRadioTest(void *ctx, uint8_t argc, char *argv[])
 		{"cpu_activity", "Set CPU activity during radio operations", cmd_cpu_activity_set},
 #if defined(TOGGLE_DCDC_HELP)
 		{"toggle_dcdc_state", TOGGLE_DCDC_HELP, cmd_toggle_dc},
+#endif
+#if defined(CONFIG_MPSL_FEM_HOT_POTATO_REGULATOR_CONTROL_MANUAL)
+		{"set_regulator_mode", REGULATOR_MODE_HELP, cmd_regulator_mode},
 #endif
 		{"start", "Start radio test", cmd_start},
 	};

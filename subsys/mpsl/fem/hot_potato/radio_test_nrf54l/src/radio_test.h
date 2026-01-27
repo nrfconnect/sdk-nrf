@@ -152,7 +152,7 @@ struct radio_test_config {
 			uint32_t duty_cycle;
 		} modulated_tx_duty_cycle;
 
-        struct {
+		struct {
 			/** Radio output power. */
 			int8_t txpower;
 
@@ -224,6 +224,20 @@ void radio_rx_stats_get(struct radio_rx_stats *rx_stats);
  * @param[in] dcdc_state  DC/DC converter state.
  */
 void toggle_dcdc_state(uint8_t dcdc_state);
+
+#if defined(CONFIG_MPSL_FEM_HOT_POTATO_REGULATOR_CONTROL_MANUAL)
+enum radio_test_regulator_mode {
+	RADIO_TEST_REGULATOR_MODE_LDO = 0,
+	RADIO_TEST_REGULATOR_MODE_DCDC = 1,
+};
+
+/**
+ * @brief Function for forcing regulator mode (LDO or DCDC).
+ *
+ * @param[in] mode  Regulator mode.
+ */
+void radio_test_regulator_mode_set(enum radio_test_regulator_mode mode);
+#endif /* CONFIG_MPSL_FEM_HOT_POTATO_REGULATOR_CONTROL_MANUAL */
 
 /**
  * @brief Function for getting averaged RSSI samples of latest received packets.

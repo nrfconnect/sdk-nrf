@@ -8,14 +8,17 @@
 
 #include <string.h>
 #include <inttypes.h>
+#include <errno.h>
 
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #include <zephyr/kernel.h>
+#include <zephyr/sys/util.h>
 #include <zephyr/random/random.h>
 
 #include <hal/nrf_egu.h>
 #include <hal/nrf_power.h>
 #include <mdk/nrf_erratas.h>
+#include <hal/nrf_regulators.h>
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
 
@@ -39,32 +42,31 @@
 #define CHAN_TO_FREQ(_channel) (2400 + _channel)
 
 #if defined(CONFIG_SOC_SERIES_NRF54HX)
-	#define RADIO_TEST_EGU            NRF_EGU020
-	#define RADIO_TEST_TIMER_INSTANCE 020
-	#define RADIO_TEST_TIMER_IRQn     TIMER020_IRQn
-	#define RADIO_TEST_RADIO_IRQn     RADIO_0_IRQn
-	#define NRF_RADIO_SHORT_END_DISABLE_MASK NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
+#define RADIO_TEST_EGU            NRF_EGU020
+#define RADIO_TEST_TIMER_INSTANCE 020
+#define RADIO_TEST_TIMER_IRQn     TIMER020_IRQn
+#define RADIO_TEST_RADIO_IRQn     RADIO_0_IRQn
+#define NRF_RADIO_SHORT_END_DISABLE_MASK NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
 #elif defined(CONFIG_SOC_SERIES_NRF54LX)
-	#define RADIO_TEST_EGU            NRF_EGU10
-	#define RADIO_TEST_TIMER_INSTANCE 10
-	#define RADIO_TEST_TIMER_IRQn     TIMER10_IRQn
-	#define RADIO_TEST_RADIO_IRQn     RADIO_0_IRQn
-	#define NRF_RADIO_SHORT_END_DISABLE_MASK NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
+#define RADIO_TEST_EGU            NRF_EGU10
+#define RADIO_TEST_TIMER_INSTANCE 10
+#define RADIO_TEST_TIMER_IRQn     TIMER10_IRQn
+#define RADIO_TEST_RADIO_IRQn     RADIO_0_IRQn
+#define NRF_RADIO_SHORT_END_DISABLE_MASK NRF_RADIO_SHORT_PHYEND_DISABLE_MASK
 #else
-	#define RADIO_TEST_EGU            NRF_EGU0
-	#define RADIO_TEST_TIMER_INSTANCE 0
-	#define RADIO_TEST_TIMER_IRQn     TIMER0_IRQn
-	#define RADIO_TEST_RADIO_IRQn     RADIO_IRQn
+#define RADIO_TEST_EGU            NRF_EGU0
+#define RADIO_TEST_TIMER_INSTANCE 0
+#define RADIO_TEST_TIMER_IRQn     TIMER0_IRQn
+#define RADIO_TEST_RADIO_IRQn     RADIO_IRQn
 #endif /* defined(CONFIG_SOC_SERIES_NRF54HX) */
 
-#define RADIO_TEST_TIMER_IRQ_HANDLER  NRFX_CONCAT_3(nrfx_timer_,	    \
-						 RADIO_TEST_TIMER_INSTANCE, \
-						 _irq_handler)
+#define RADIO_TEST_TIMER_IRQ_HANDLER                                                               \
+	NRFX_CONCAT_3(nrfx_timer_, RADIO_TEST_TIMER_INSTANCE, _irq_handler)
 
-#define ENDPOINT_EGU_RADIO_TX    BIT(1)
-#define ENDPOINT_EGU_RADIO_RX    BIT(2)
-#define ENDPOINT_TIMER_RADIO_TX  BIT(3)
-#define ENDPOINT_FORK_EGU_TIMER  BIT(4)
+#define ENDPOINT_EGU_RADIO_TX	BIT(1)
+#define ENDPOINT_EGU_RADIO_RX	BIT(2)
+#define ENDPOINT_TIMER_RADIO_TX BIT(3)
+#define ENDPOINT_FORK_EGU_TIMER BIT(4)
 
 extern void TIMER10_IRQHandler(void);
 
@@ -105,15 +107,11 @@ uint8_t rssi_sample_averaged_packets_get(uint32_t num_rssi_samples)
 {
 	uint32_t current_index = num_rssi_samples;
 	uint64_t averaged_rssi = 0;
-	for(int i = 0; i < num_rssi_samples; i++)
-	{
+	for (int i = 0; i < num_rssi_samples; i++) {
 		averaged_rssi += rssi_sample_latest_packets[current_index];
-		if(current_index == 0)
-		{
+		if (current_index == 0) {
 			current_index = MAX_RSSISAMPLE_STORED;
-		}
-		else
-		{
+		} else {
 			current_index--;
 		}
 	}
@@ -121,13 +119,11 @@ uint8_t rssi_sample_averaged_packets_get(uint32_t num_rssi_samples)
 	return (uint8_t)averaged_rssi;
 }
 
-
 static uint16_t channel_to_frequency(nrf_radio_mode_t mode, uint8_t channel)
 {
 #if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	if (mode == NRF_RADIO_MODE_IEEE802154_250KBIT) {
-		if ((channel >= IEEE_MIN_CHANNEL) &&
-			(channel <= IEEE_MAX_CHANNEL)) {
+		if ((channel >= IEEE_MIN_CHANNEL) && (channel <= IEEE_MAX_CHANNEL)) {
 			return CHAN_TO_FREQ(IEEE_FREQ_CALC(channel));
 		} else {
 			return CHAN_TO_FREQ(IEEE_DEFAULT_FREQ);
@@ -373,7 +369,8 @@ static void radio_channel_set(nrf_radio_mode_t mode, uint8_t channel)
 	nrf_radio_frequency_set(NRF_RADIO, frequency);
 }
 
-static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern, uint32_t payload_size, bool crc_enabled)
+static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern,
+			 uint32_t payload_size, bool crc_enabled)
 {
 	nrf_radio_packet_conf_t packet_conf;
 
@@ -385,14 +382,13 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern, u
 #endif /* defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX) */
 
 	/* Disable CRC. */
-	nrf_radio_crc_configure(NRF_RADIO, RADIO_CRCCNF_LEN_Disabled,
-				NRF_RADIO_CRC_ADDR_INCLUDE, 0);
+	nrf_radio_crc_configure(NRF_RADIO, RADIO_CRCCNF_LEN_Disabled, NRF_RADIO_CRC_ADDR_INCLUDE,
+				0);
 
-	if(crc_enabled)
-	{
+	if (crc_enabled) {
 		/* Enable CRC. */
-		nrf_radio_crc_configure(NRF_RADIO, RADIO_CRCCNF_LEN_Three,
-						NRF_RADIO_CRC_ADDR_SKIP, 0x00065BUL);
+		nrf_radio_crc_configure(NRF_RADIO, RADIO_CRCCNF_LEN_Three, NRF_RADIO_CRC_ADDR_SKIP,
+					0x00065BUL);
 
 		nrf_radio_crcinit_set(NRF_RADIO, 0x555555UL);
 	}
@@ -449,24 +445,23 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern, u
 		 * 32-bit preamble.
 		 */
 		packet_conf.plen = NRF_RADIO_PREAMBLE_LENGTH_32BIT_ZERO;
-		packet_conf.maxlen = payload_size; //IEEE_MAX_PAYLOAD_LEN;
+		packet_conf.maxlen = payload_size; /* IEEE_MAX_PAYLOAD_LEN; */
 		packet_conf.balen = 0;
 		packet_conf.big_endian = false;
 		packet_conf.whiteen = false;
 
 		/* Enable CRC for IEEE802.15.4 mode. */
-		if(crc_enabled)
-		{
+		if (crc_enabled) {
 			packet_conf.crcinc = true;
 			nrf_radio_crc_configure(NRF_RADIO, RADIO_CRCCNF_LEN_Two,
-					    NRF_RADIO_CRC_ADDR_IEEE802154, 0x11021UL);
+						NRF_RADIO_CRC_ADDR_IEEE802154, 0x11021UL);
 
 			nrf_radio_crcinit_set(NRF_RADIO, 0x0UL);
 
 			/* preamble, address (BALEN + PREFIX), lflen, payload and CRC*/
-			total_payload_size = 4 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen + RADIO_CRCCNF_LEN_Two;
-		}
-		else {
+			total_payload_size = 4 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen +
+					     RADIO_CRCCNF_LEN_Two;
+		} else {
 			/* preamble, address (BALEN + PREFIX), lflen and payload */
 			total_payload_size = 4 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen;
 		}
@@ -491,11 +486,12 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern, u
 		/* Set CRC length; CRC calculation does not include the address
 		 * field.
 		 */
-		nrf_radio_crc_configure(NRF_RADIO, RADIO_CRCCNF_LEN_Three,
-					NRF_RADIO_CRC_ADDR_SKIP, 0);
+		nrf_radio_crc_configure(NRF_RADIO, RADIO_CRCCNF_LEN_Three, NRF_RADIO_CRC_ADDR_SKIP,
+					0);
 		/* preamble, address (BALEN + PREFIX), lflen, code indicator, TERM, payload, CRC */
 		total_payload_size = 10 + (packet_conf.balen + 1) + 1 + packet_conf.cilen +
-				  packet_conf.termlen + packet_conf.maxlen + RADIO_CRCCNF_LEN_Three;
+				     packet_conf.termlen + packet_conf.maxlen +
+				     RADIO_CRCCNF_LEN_Three;
 		break;
 
 #endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
@@ -509,12 +505,11 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern, u
 		packet_conf.plen = NRF_RADIO_PREAMBLE_LENGTH_16BIT;
 
 		/* preamble, address (BALEN + PREFIX), lflen and payload */
-		if(crc_enabled)
-		{
-            packet_conf.crcinc = true;
-			total_payload_size = 2 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen + RADIO_CRCCNF_LEN_Three;
-		}
-		else {
+		if (crc_enabled) {
+			packet_conf.crcinc = true;
+			total_payload_size = 2 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen +
+					     RADIO_CRCCNF_LEN_Three;
+		} else {
 			total_payload_size = 1 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen;
 		}
 
@@ -529,12 +524,11 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern, u
 		packet_conf.plen = NRF_RADIO_PREAMBLE_LENGTH_8BIT;
 
 		/* preamble, address (BALEN + PREFIX), lflen, and payload */
-		if(crc_enabled)
-		{
-            packet_conf.crcinc = true;
-			total_payload_size = 1 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen + RADIO_CRCCNF_LEN_Three;
-		}
-		else {
+		if (crc_enabled) {
+			packet_conf.crcinc = true;
+			total_payload_size = 1 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen +
+					     RADIO_CRCCNF_LEN_Three;
+		} else {
 			total_payload_size = 1 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen;
 		}
 		break;
@@ -543,24 +537,21 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern, u
 	nrf_radio_packet_configure(NRF_RADIO, &packet_conf);
 }
 
-static void generate_modulated_rf_packet(uint8_t mode,
-					 enum transmit_pattern pattern,
-                     uint32_t payload_size,
-					 bool crc_enabled)
+static void generate_modulated_rf_packet(uint8_t mode, enum transmit_pattern pattern,
+					 uint32_t payload_size, bool crc_enabled)
 {
-
 
 	/* One byte used for size, actual size is SIZE-1 */
 #if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	if (mode == NRF_RADIO_MODE_IEEE802154_250KBIT) {
-        radio_config(mode, pattern, MIN(IEEE_MAX_PAYLOAD_LEN, payload_size), crc_enabled);
+		radio_config(mode, pattern, MIN(IEEE_MAX_PAYLOAD_LEN, payload_size), crc_enabled);
 		tx_packet[0] = MIN(IEEE_MAX_PAYLOAD_LEN, payload_size) - 1;
 	} else {
-        radio_config(mode, pattern, MIN(RADIO_MAX_PAYLOAD_LEN, payload_size), crc_enabled);
+		radio_config(mode, pattern, MIN(RADIO_MAX_PAYLOAD_LEN, payload_size), crc_enabled);
 		tx_packet[0] = MIN(sizeof(tx_packet), payload_size) - 1;
 	}
 #else
-    radio_config(mode, pattern, RADIO_MAX_PAYLOAD_LEN);
+	radio_config(mode, pattern, RADIO_MAX_PAYLOAD_LEN);
 	tx_packet[0] = sizeof(tx_packet) - 1;
 #endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
@@ -602,8 +593,7 @@ static void errata_117(nrf_radio_mode_t mode)
 		return;
 	}
 
-	if ((mode == NRF_RADIO_MODE_NRF_2MBIT) ||
-	    (mode == NRF_RADIO_MODE_BLE_2MBIT) ||
+	if ((mode == NRF_RADIO_MODE_NRF_2MBIT) || (mode == NRF_RADIO_MODE_BLE_2MBIT) ||
 	    (mode == NRF_RADIO_MODE_IEEE802154_250KBIT)) {
 		*((volatile uint32_t *)0x41008588) = *((volatile uint32_t *)0x01FF0084);
 	} else {
@@ -641,8 +631,8 @@ static void radio_unmodulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t c
 }
 
 static void radio_modulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t channel,
-				       enum transmit_pattern pattern, uint32_t packets_num, uint32_t payload_size,
-					   bool crc_enabled)
+				       enum transmit_pattern pattern, uint32_t packets_num,
+				       uint32_t payload_size, bool crc_enabled)
 {
 	radio_disable();
 	generate_modulated_rf_packet(mode, pattern, payload_size, crc_enabled);
@@ -652,9 +642,8 @@ static void radio_modulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t cha
 	case NRF_RADIO_MODE_IEEE802154_250KBIT:
 	case NRF_RADIO_MODE_BLE_LR125KBIT:
 	case NRF_RADIO_MODE_BLE_LR500KBIT:
-		nrf_radio_shorts_enable(NRF_RADIO,
-					NRF_RADIO_SHORT_READY_START_MASK |
-					NRF_RADIO_SHORT_PHYEND_START_MASK);
+		nrf_radio_shorts_enable(NRF_RADIO, NRF_RADIO_SHORT_READY_START_MASK |
+							   NRF_RADIO_SHORT_PHYEND_START_MASK);
 		break;
 
 #endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 || CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
@@ -673,9 +662,8 @@ static void radio_modulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t cha
 #if defined(RADIO_MODE_MODE_Nrf_4Mbit0_25)
 	case NRF_RADIO_MODE_NRF_4MBIT_H_0_25:
 #endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_25) */
-		nrf_radio_shorts_enable(NRF_RADIO,
-					NRF_RADIO_SHORT_READY_START_MASK |
-					NRF_RADIO_SHORT_END_START_MASK);
+		nrf_radio_shorts_enable(NRF_RADIO, NRF_RADIO_SHORT_READY_START_MASK |
+							   NRF_RADIO_SHORT_END_START_MASK);
 		break;
 	}
 
@@ -700,10 +688,9 @@ static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern patter
 
 	radio_mode_set(NRF_RADIO, mode);
 
-	nrf_radio_shorts_enable(NRF_RADIO,
-				NRF_RADIO_SHORT_READY_START_MASK |
-				NRF_RADIO_SHORT_END_START_MASK |
-				NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK);
+	nrf_radio_shorts_enable(NRF_RADIO, NRF_RADIO_SHORT_READY_START_MASK |
+						   NRF_RADIO_SHORT_END_START_MASK |
+						   NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK);
 	nrf_radio_packetptr_set(NRF_RADIO, rx_packet);
 
 	radio_config(mode, pattern, RADIO_MAX_PAYLOAD_LEN, crc_enabled);
@@ -728,35 +715,29 @@ static void radio_sweep_start(uint8_t channel, uint32_t delay_ms)
 	nrf_timer_shorts_disable(timer.p_reg, ~0);
 	nrf_timer_int_disable(timer.p_reg, ~0);
 
-	nrfx_timer_extended_compare(&timer,
-		NRF_TIMER_CC_CHANNEL0,
-		nrfx_timer_ms_to_ticks(&timer, delay_ms),
-		(NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK |
-		NRF_TIMER_SHORT_COMPARE0_STOP_MASK),
-		true);
+	nrfx_timer_extended_compare(
+		&timer, NRF_TIMER_CC_CHANNEL0, nrfx_timer_ms_to_ticks(&timer, delay_ms),
+		(NRF_TIMER_SHORT_COMPARE0_CLEAR_MASK | NRF_TIMER_SHORT_COMPARE0_STOP_MASK), true);
 
 	nrfx_timer_enable(&timer);
 }
 
-static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
-						  uint8_t channel,
+static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower, uint8_t channel,
 						  enum transmit_pattern pattern,
 						  uint32_t duty_cycle, bool crc_enabled)
 {
 	/* Lookup table with time per byte in each radio MODE
 	 * Mapped per NRF_RADIO->MODE available on nRF5-series devices
 	 */
-	static const uint8_t time_in_us_per_byte[16] = {
-		8, 4, 32, 8, 4, 64, 16, 0, 0, 0, 0, 0, 0, 0, 0, 32
-	};
+	static const uint8_t time_in_us_per_byte[16] = {8, 4, 32, 8, 4, 64, 16, 0,
+							0, 0, 0,  0, 0, 0,  0,	32};
 
 	radio_disable();
 	generate_modulated_rf_packet(mode, pattern, RADIO_MAX_PAYLOAD_LEN, crc_enabled);
 
 	radio_mode_set(NRF_RADIO, mode);
-	nrf_radio_shorts_enable(NRF_RADIO,
-				NRF_RADIO_SHORT_READY_START_MASK |
-				NRF_RADIO_SHORT_END_DISABLE_MASK);
+	nrf_radio_shorts_enable(NRF_RADIO, NRF_RADIO_SHORT_READY_START_MASK |
+						   NRF_RADIO_SHORT_END_DISABLE_MASK);
 	radio_power_set(mode, channel, txpower);
 	radio_channel_set(mode, channel);
 
@@ -767,9 +748,10 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 	 * In addition, the timer includes the "total_time_per_payload",
 	 * so we need to add this to the total timer cycle.
 	 */
-	uint32_t delay_time = total_time_per_payload +
-			   ((100 * total_time_per_payload - (total_time_per_payload * duty_cycle)) /
-			   duty_cycle);
+	uint32_t delay_time =
+		total_time_per_payload +
+		((100 * total_time_per_payload - (total_time_per_payload * duty_cycle)) /
+		 duty_cycle);
 
 	/* We let the TIMER start the radio transmission again. */
 	nrfx_timer_disable(&timer);
@@ -779,11 +761,9 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 	nrf_timer_shorts_disable(timer.p_reg, ~0);
 	nrf_timer_int_disable(timer.p_reg, ~0);
 
-	nrfx_timer_extended_compare(&timer,
-		NRF_TIMER_CC_CHANNEL1,
-		nrfx_timer_us_to_ticks(&timer, delay_time),
-		NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK,
-		false);
+	nrfx_timer_extended_compare(&timer, NRF_TIMER_CC_CHANNEL1,
+				    nrfx_timer_us_to_ticks(&timer, delay_time),
+				    NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK, false);
 
 	unsigned int key = irq_lock();
 
@@ -793,18 +773,16 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 	irq_unlock(key);
 }
 
-static void radio_modulated_tx_carrier_interval(uint8_t mode, int8_t txpower,
-						  uint8_t channel,
-						  enum transmit_pattern pattern,
-						  uint32_t interval, uint32_t payload_size, bool crc_enabled)
+static void radio_modulated_tx_carrier_interval(uint8_t mode, int8_t txpower, uint8_t channel,
+						enum transmit_pattern pattern, uint32_t interval,
+						uint32_t payload_size, bool crc_enabled)
 {
 	radio_disable();
 	generate_modulated_rf_packet(mode, pattern, payload_size, crc_enabled);
 
 	radio_mode_set(NRF_RADIO, mode);
-	nrf_radio_shorts_enable(NRF_RADIO,
-				NRF_RADIO_SHORT_READY_START_MASK |
-				NRF_RADIO_SHORT_END_DISABLE_MASK);
+	nrf_radio_shorts_enable(NRF_RADIO, NRF_RADIO_SHORT_READY_START_MASK |
+						   NRF_RADIO_SHORT_END_DISABLE_MASK);
 	radio_power_set(mode, channel, txpower);
 	radio_channel_set(mode, channel);
 
@@ -816,11 +794,9 @@ static void radio_modulated_tx_carrier_interval(uint8_t mode, int8_t txpower,
 	nrf_timer_shorts_disable(timer.p_reg, ~0);
 	nrf_timer_int_disable(timer.p_reg, ~0);
 
-	nrfx_timer_extended_compare(&timer,
-		NRF_TIMER_CC_CHANNEL1,
-		nrfx_timer_ms_to_ticks(&timer, interval),
-		NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK,
-		false);
+	nrfx_timer_extended_compare(&timer, NRF_TIMER_CC_CHANNEL1,
+				    nrfx_timer_ms_to_ticks(&timer, interval),
+				    NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK, false);
 
 	unsigned int key = irq_lock();
 
@@ -844,10 +820,10 @@ void radio_test_start(const struct radio_test_config *config)
 			config->params.modulated_tx.channel,
 			config->params.modulated_tx.pattern,
 			config->params.modulated_tx.packets_num,
-            config->params.modulated_tx.payload_size,
+			config->params.modulated_tx.payload_size,
 			config->crc_enabled);
-			printk("Payload size (bytes): %d\r\n", config->params.modulated_tx.payload_size);
-    		printk("Total payload size (bits): %d\r\n", total_payload_size*8);
+		printk("Payload size (bytes): %d\r\n", config->params.modulated_tx.payload_size);
+		printk("Total payload size (bits): %d\r\n", total_payload_size*8);
 		break;
 	case RX:
 		radio_rx(config->mode,
@@ -879,8 +855,8 @@ void radio_test_start(const struct radio_test_config *config)
 			config->params.modulated_tx_interval.interval,
             config->params.modulated_tx_interval.payload_size,
 			config->crc_enabled);
-            printk("Payload size (bytes): %d\r\n", config->params.modulated_tx.payload_size);
-    		printk("Total payload size (bits): %d\r\n", total_payload_size*8);
+		printk("Payload size (bytes): %d\r\n", config->params.modulated_tx.payload_size);
+		printk("Total payload size (bits): %d\r\n", total_payload_size*8);
 		break;
 	}
 }
@@ -944,6 +920,36 @@ void toggle_dcdc_state(uint8_t dcdc_state)
 #endif /* NRF_POWER_HAS_DCDCEN */
 }
 #endif /* NRF_POWER_HAS_DCDCEN_VDDH || NRF_POWER_HAS_DCDCEN */
+
+#if defined(CONFIG_MPSL_FEM_HOT_POTATO_REGULATOR_CONTROL_MANUAL)
+void radio_test_regulator_mode_set(enum radio_test_regulator_mode mode)
+{
+	__ASSERT((mode == RADIO_TEST_REGULATOR_MODE_LDO) ||
+			 (mode == RADIO_TEST_REGULATOR_MODE_DCDC),
+		 "Invalid regulator mode");
+
+	/* LDO mode is selected by disabling DCDC. */
+	bool enable_dcdc = (mode == RADIO_TEST_REGULATOR_MODE_DCDC);
+
+#if NRF_REGULATORS_HAS_VREG_MAIN || NRF_REGULATORS_HAS_VREG_HIGH
+#if NRF_REGULATORS_HAS_VREG_MAIN
+	nrf_regulators_vreg_enable_set(NRF_REGULATORS, NRF_REGULATORS_VREG_MAIN, enable_dcdc);
+#endif /* NRF_REGULATORS_HAS_VREG_MAIN */
+#if NRF_REGULATORS_HAS_VREG_HIGH
+	nrf_regulators_vreg_enable_set(NRF_REGULATORS, NRF_REGULATORS_VREG_HIGH, enable_dcdc);
+#endif /* NRF_REGULATORS_HAS_VREG_HIGH */
+
+#elif NRF_POWER_HAS_DCDCEN_VDDH || NRF_POWER_HAS_DCDCEN
+#if NRF_POWER_HAS_DCDCEN_VDDH
+	nrf_power_dcdcen_vddh_set(NRF_POWER, enable_dcdc);
+#endif /* NRF_POWER_HAS_DCDCEN_VDDH */
+
+#if NRF_POWER_HAS_DCDCEN
+	nrf_power_dcdcen_set(NRF_POWER, enable_dcdc);
+#endif /* NRF_POWER_HAS_DCDCEN */
+#endif /* NRF_REGULATORS_HAS_VREG_MAIN || NRF_REGULATORS_HAS_VREG_HIGH */
+}
+#endif /* CONFIG_MPSL_FEM_HOT_POTATO_REGULATOR_CONTROL_MANUAL */
 
 static void timer_handler(nrf_timer_event_t event_type, void *context)
 {

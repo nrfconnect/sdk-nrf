@@ -58,10 +58,30 @@ config MPSL_FEM_HOT_POTATO_BYPASS_BLE
 	  Put FEM in the bypass mode for the duration of Bluetooth LE TX or RX
 	  time slots while in the auto mode.
 
+choice MPSL_FEM_HOT_POTATO_REGULATOR_CONTROL
+	prompt "Regulator control mode"
+	default MPSL_FEM_HOT_POTATO_REGULATOR_CONTROL_AUTO
+	depends on SOC_SERIES_NRF54LX
+	help
+	  Select whether regulator mode is controlled automatically or manually.
+
+config MPSL_FEM_HOT_POTATO_REGULATOR_CONTROL_AUTO
+	bool "Automatic regulator switching"
+	help
+	  Use automatic switching between LDO and DCDC based on FEM state.
+
+config MPSL_FEM_HOT_POTATO_REGULATOR_CONTROL_MANUAL
+	bool "Manual regulator selection (CLI)"
+	help
+	  Allow manual regulator selection via CLI. This disables automatic switching.
+
+endchoice # MPSL_FEM_HOT_POTATO_REGULATOR_CONTROL
+
 config MPSL_FEM_HOT_POTATO_PA_LDO
 	bool "Use LDO voltage regulator when PA is used"
 	default y
 	depends on SOC_SERIES_NRF54LX
+	depends on MPSL_FEM_HOT_POTATO_REGULATOR_CONTROL_AUTO
 	help
 	  Switch to LDO voltage regulator just before FEM Power Amplifier gets
 	  enabled, and switch back to DCDC after FEM gets disabled.
@@ -79,7 +99,7 @@ config OPENTHREAD_CLI_VENDOR_RADIO_TEST
 	bool "Includes radio_test commands"
 	default y
 	depends on SOC_SERIES_NRF54LX
-	select NRFX_TIMER10
+	select NRFX_TIMER
 	select DYNAMIC_DIRECT_INTERRUPTS
 	select MPSL_DYNAMIC_INTERRUPTS
 
@@ -87,7 +107,7 @@ config OPENTHREAD_CLI_VENDOR_CPU_USAGE
 	bool "Includes cpu usage commands"
 	default y
 	depends on SOC_SERIES_NRF54LX
-	select NRFX_TIMER20
+	select NRFX_TIMER
 
 endif # OPENTHREAD
 endif # MPSL_FEM_HOT_POTATO
