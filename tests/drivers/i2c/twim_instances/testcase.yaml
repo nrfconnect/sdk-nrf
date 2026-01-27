@@ -4,6 +4,8 @@ common:
     - ci_tests_drivers_i2c
   harness: ztest
   timeout: 210
+  harness_config:
+    fixture: gpio_loopback
 
 tests:
   drivers.i2c.twim_instances:
