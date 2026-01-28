@@ -178,8 +178,6 @@ Building and running
 
 .. include:: /includes/ipc_radio_conf.txt
 
-.. include:: /includes/nRF54H20_erase_UICR.txt
-
 Experimental nRF54H20 SoC radio core only build
 ===============================================
 

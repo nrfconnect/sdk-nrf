@@ -50,8 +50,6 @@ The Transmitter sample can be found under :file:`samples/esb/esb_ptx` in the |NC
 
 See :ref:`building` and :ref:`programming` for information about how to build and program the application, respectively.
 
-.. include:: /includes/nRF54H20_erase_UICR.txt
-
 FEM support
 ===========
 

@@ -56,7 +56,6 @@ The channel numbers association is presented in the following table:
 Signal originator             Channel id
 ============================  ==========
 SecDom                        0
-SecDom: signal to a debugger  1
 System Controller             6
 Application                   12
 Radio                         18
@@ -65,16 +64,6 @@ Radio                         18
 Some of the channels in BELLBOARDs and VEVIFs are interpreted differently by other receivers.
 
 The following tables show signals received only by specified cores.
-
-   Secure Domain core:
-
-      ============================  ==========
-      Signal originator             Channel id
-      ============================  ==========
-      System Controller's debugger  7
-      Application's debugger        13
-      Radio's debugger              19
-      ============================  ==========
 
    Application core:
 
@@ -152,7 +141,7 @@ The solutions selected for each connection are listed in the following table:
 Connection              Communication library
 ======================  =====================
 System Controller       nrfs
-Secure Domain           RPC (:ref:`nrfxlib:nrf_rpc`)
+Secure Domain           IronSide Call
 Radio Bluetooth         HCI or :ref:`nrfxlib:nrf_rpc`
 Radio 802.15.4          Spinel
 PPR with event_manager  :ref:`event_manager_proxy`
@@ -185,24 +174,13 @@ You can implement other services running in the radio core and expose them to th
 Secure Domain
 =============
 
-The Secure Domain exposes security-related services to the other local cores in the system (application, radio).
-The list of services also includes:
-
-   * Key management
-   * Secure storage
-   * Cryptography
-
-     * Cryptographically Secure Pseudo Random Number Generator
-
-   * Device Firmware Upgrade
-   * Debugger access management
-   * Reset notifications
-   * Encrypted core dumps
+The Secure Domain exposes security-related services to the other local cores in the system (Application, Radio).
+See :ref:`ug_nrf54h20_ironside_services` for a description of the available services.
 
 System Controller
 =================
 
-The System Controller exposes the following services to local cores (Application, Radio, Secure Domain) through IPC:
+The System Controller exposes the following services to local cores (Application, Radio) through IPC:
 
    * Clocks accuracy notification and calibration requests
    * MRAM latency management (related to power management)
