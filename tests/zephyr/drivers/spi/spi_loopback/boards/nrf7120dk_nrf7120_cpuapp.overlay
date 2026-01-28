@@ -10,7 +10,7 @@
  */
 
 &pinctrl {
-	spi20_default: spi20_default {
+	spi21_default: spi21_default {
 		group1 {
 			psels = <NRF_PSEL(SPIM_SCK, 2, 6)>,
 				<NRF_PSEL(SPIM_MISO, 1, 11)>,
@@ -19,7 +19,7 @@
 		};
 	};
 
-	spi20_sleep: spi20_sleep {
+	spi21_sleep: spi21_sleep {
 		group1 {
 			psels = <NRF_PSEL(SPIM_SCK, 2, 6)>,
 				<NRF_PSEL(SPIM_MISO, 1, 11)>,
@@ -29,10 +29,10 @@
 	};
 };
 
-&spi20 {
+&spi21 {
 	status = "okay";
-	pinctrl-0 = <&spi20_default>;
-	pinctrl-1 = <&spi20_sleep>;
+	pinctrl-0 = <&spi21_default>;
+	pinctrl-1 = <&spi21_sleep>;
 	pinctrl-names = "default", "sleep";
 	overrun-character = <0x00>;
 	zephyr,pm-device-runtime-auto;
@@ -52,10 +52,4 @@
 
 &gpio2 {
 	status = "okay";
-};
-
-// UART20 disabled to avoid pin-conflicts with SPI20 + uses the same peripheral hardware block .
-
-&uart20 {
-	status = "disabled";
 };
