@@ -131,8 +131,8 @@ in a separate plain AT command mode where also pipelining of AT commands is supp
    The percentage sign (``%``) is often needed and can be written as is.
 
 .. note::
-   In order to support provisioning certificates using the ``AT%CMNG=0`` command, occurences of escaped newlines ``\\n`` are replaced by ``\r\n`` internally.
-   To use this feature, remove existing occurences of ``\r`` and replace ``\n`` with ``\\n`` in the AT command string.
+   In order to support provisioning certificates using the ``AT%CMNG=0`` command, occurrences of escaped newlines ``\\n`` are replaced by ``\r\n`` internally.
+   To use this feature, remove existing occurrences of ``\r`` and replace ``\n`` with ``\\n`` in the AT command string.
 
 Examples
 --------
