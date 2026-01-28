@@ -118,7 +118,7 @@ static inline uint32_t sx_rd_trng(uint32_t addr)
 /** Reserve the cryptomaster instance
  *  and should be given back after use with sx_cmdma_release_hw().
  */
-void sx_hw_reserve(struct sx_dmactl *dma);
+int sx_hw_reserve(struct sx_dmactl *dma, sx_hw_reserve_flags_t flags);
 
 /** Release the cryptomaster instance */
 void sx_cmdma_release_hw(struct sx_dmactl *dma);

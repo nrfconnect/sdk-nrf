@@ -59,7 +59,6 @@ static int sx_hash_create_hmac_ba413(struct sxmac *mac_ctx, const struct sxhasha
 	}
 
 	mac_ctx->key = keyref;
-	sx_hw_reserve(&mac_ctx->dma);
 
 	mac_ctx->cfg = &ba413cfg;
 	sx_cmdma_newcmd(&mac_ctx->dma, mac_ctx->descs,
@@ -121,7 +120,6 @@ static int sx_hash_create_hmac_ba418(struct sxmac *mac_ctx, const struct sxhasha
 	}
 
 	mac_ctx->key = keyref;
-	sx_hw_reserve(&mac_ctx->dma);
 
 	mac_ctx->cfg = &ba418cfg;
 

@@ -21,6 +21,7 @@
 #include <stddef.h>
 #include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/hashdefs.h>
+#include <sxsymcrypt/internal.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
 #include <psa/nrf_platform_key_ids.h>
@@ -1493,23 +1494,28 @@ int cracen_hash_all_inputs_with_context(struct sxhash *hashopctx, const uint8_t 
 			return status;
 		}
 	}
+
 	status = sx_hash_digest(hashopctx, digest);
 	if (status != SX_OK) {
 		return status;
 	}
 
-	status = sx_hash_wait(hashopctx);
-
-	return status;
+	return sx_hash_wait(hashopctx);
 }
 
 int cracen_hash_all_inputs(const uint8_t *inputs[], const size_t input_lengths[],
 			   size_t input_count, const struct sxhashalg *hashalg, uint8_t *digest)
 {
+	int status;
 	struct sxhash hashopctx;
 
-	return cracen_hash_all_inputs_with_context(&hashopctx, inputs, input_lengths, input_count,
-						   hashalg, digest);
+	sx_hw_reserve(&hashopctx.dma, SX_HW_RESERVE_DEFAULT);
+
+	status = cracen_hash_all_inputs_with_context(&hashopctx, inputs, input_lengths, input_count,
+						     hashalg, digest);
+
+	sx_cmdma_release_hw(&hashopctx.dma);
+	return status;
 }
 
 int cracen_hash_input(const uint8_t *input, const size_t input_length,

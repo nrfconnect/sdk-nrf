@@ -30,6 +30,7 @@
 #include "silexpk/ec_curves.h"
 #include <cracen/statuscodes.h>
 #include <sxsymcrypt/hash.h>
+#include <sxsymcrypt/internal.h>
 #include <cracen_psa_ecdsa.h>
 #include <cracen_psa_primitives.h>
 #include <sxsymcrypt/hashdefs.h>
@@ -293,14 +294,19 @@ static int deterministic_ecdsa_hmac(const struct sxhashalg *hashalg, const uint8
 		sx_hash_get_alg_digestsz(hashalg) + sx_hash_get_alg_blocksz(hashalg);
 	uint8_t workmem[workmem_requirement];
 
-	status = mac_create_hmac(hashalg, &hashopctx, key, hash_len, workmem, workmem_requirement);
+	status = sx_hw_reserve(&hashopctx.dma, SX_HW_RESERVE_DEFAULT);
 	if (status != SX_OK) {
 		return status;
 	}
-	/* The hash context is initialized in mac_create_hmac */
+
+	status = mac_create_hmac(hashalg, &hashopctx, key, hash_len, workmem, workmem_requirement);
+	if (status != SX_OK) {
+		goto error;
+	}
+
 	status = sx_hash_feed(&hashopctx, v, hash_len);
 	if (status != SX_OK) {
-		return status;
+		goto error;
 	}
 
 	if (internal_octet != INTERNAL_OCTET_NOT_USED) {
@@ -311,23 +317,29 @@ static int deterministic_ecdsa_hmac(const struct sxhashalg *hashalg, const uint8
 		status = sx_hash_feed(&hashopctx, &internal_octet_values[internal_octet],
 				      sizeof(*internal_octet_values));
 		if (status != SX_OK) {
-			return status;
+			goto error;
 		}
 	}
 	if (sk) {
 		status = sx_hash_feed(&hashopctx, sk, key_len);
 		if (status != SX_OK) {
-			return status;
+			goto error;
 		}
 	}
 	if (hash) {
 		status = sx_hash_feed(&hashopctx, hash, key_len);
 		if (status != SX_OK) {
-			return status;
+			goto error;
 		}
 	}
 
-	return hmac_produce(&hashopctx, hashalg, hmac, hash_len, workmem);
+	status = hmac_produce(&hashopctx, hashalg, hmac, hash_len, workmem);
+	sx_cmdma_release_hw(&hashopctx.dma);
+	return status;
+
+error:
+	sx_cmdma_release_hw(&hashopctx.dma);
+	return status;
 }
 
 static int run_deterministic_ecdsa_hmac_step(const struct sxhashalg *hashalg, size_t opsz,

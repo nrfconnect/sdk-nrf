@@ -555,15 +555,23 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 			}
 
 		} else {
+			/* ChaCha20 path - acquire HW before operations */
+			sx_status = sx_hw_reserve(&operation->cipher.dma, SX_HW_RESERVE_DEFAULT);
+			if (sx_status) {
+				return silex_statuscodes_to_psa(sx_status);
+			}
+
 			if (operation->initialized) {
 				sx_status = sx_blkcipher_resume_state(&operation->cipher);
 				if (sx_status) {
+					sx_cmdma_release_hw(&operation->cipher.dma);
 					return silex_statuscodes_to_psa(sx_status);
 				}
 			} else {
 				psa_status = initialize_cipher(operation);
 
 				if (psa_status != PSA_SUCCESS) {
+					sx_cmdma_release_hw(&operation->cipher.dma);
 					return psa_status;
 				}
 			}
@@ -575,6 +583,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 					&operation->cipher, operation->unprocessed_input,
 					operation->unprocessed_input_bytes, output);
 				if (sx_status) {
+					sx_cmdma_release_hw(&operation->cipher.dma);
 					return silex_statuscodes_to_psa(sx_status);
 				}
 
@@ -587,16 +596,19 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 				sx_status = sx_blkcipher_crypt(&operation->cipher, input,
 							       block_bytes, output);
 				if (sx_status) {
+					sx_cmdma_release_hw(&operation->cipher.dma);
 					return silex_statuscodes_to_psa(sx_status);
 				}
 			}
 
 			sx_status = sx_blkcipher_save_state(&operation->cipher);
 			if (sx_status) {
+				sx_cmdma_release_hw(&operation->cipher.dma);
 				return silex_statuscodes_to_psa(sx_status);
 			}
 
 			sx_status = sx_blkcipher_wait(&operation->cipher);
+			sx_cmdma_release_hw(&operation->cipher.dma);
 			if (sx_status) {
 				return silex_statuscodes_to_psa(sx_status);
 			}
@@ -677,15 +689,24 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 			}
 		}
 	}
+
+	/* ChaCha20 path - acquire HW before operations */
+	sx_status = sx_hw_reserve(&operation->cipher.dma, SX_HW_RESERVE_DEFAULT);
+	if (sx_status) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
 	if (operation->initialized) {
 		sx_status = sx_blkcipher_resume_state(&operation->cipher);
 		if (sx_status) {
+			sx_cmdma_release_hw(&operation->cipher.dma);
 			return silex_statuscodes_to_psa(sx_status);
 		}
 	} else {
 		psa_status = initialize_cipher(operation);
 
 		if (psa_status != PSA_SUCCESS) {
+			sx_cmdma_release_hw(&operation->cipher.dma);
 			return psa_status;
 		}
 	}
@@ -693,21 +714,25 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 	*output_length = operation->unprocessed_input_bytes;
 	if (*output_length > output_size) {
 		*output_length = 0;
+		sx_cmdma_release_hw(&operation->cipher.dma);
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
 	sx_status = sx_blkcipher_crypt(&operation->cipher, operation->unprocessed_input,
 				       operation->unprocessed_input_bytes, output);
 	if (sx_status) {
+		sx_cmdma_release_hw(&operation->cipher.dma);
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_blkcipher_run(&operation->cipher);
 	if (sx_status) {
+		sx_cmdma_release_hw(&operation->cipher.dma);
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_blkcipher_wait(&operation->cipher);
+	sx_cmdma_release_hw(&operation->cipher.dma);
 	if (sx_status) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
