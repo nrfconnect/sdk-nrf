@@ -9,6 +9,8 @@ common:
   harness: pytest
   harness_config:
     pytest_dut_scope: session
+    pytest_root:
+      - "${ZEPHYR_BASE}/samples/sysbuild/hello_world/pytest/test_both_uart.py"
   timeout: 20
   tags:
     - ci_samples_zephyr_sysbuild_hello_world
