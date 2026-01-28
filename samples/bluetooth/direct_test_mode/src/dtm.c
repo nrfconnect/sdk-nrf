@@ -848,7 +848,7 @@ static int anomaly_timer_init(void)
 
 static int gppi_init(void)
 {
-	nrfx_err_t err;
+	int err;
 	uint32_t rad_domain = nrfx_gppi_domain_id_get((uint32_t)NRF_RADIO);
 
 	err = nrfx_gppi_domain_conn_alloc(rad_domain, rad_domain, &dtm_inst.ppi_radio_start);
