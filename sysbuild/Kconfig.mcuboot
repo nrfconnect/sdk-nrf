@@ -51,15 +51,24 @@ endif # MCUBOOT_MANIFEST_UPDATES
 
 config MCUBOOT_BUILD_DIRECT_XIP_VARIANT
 	bool "Build DirectXIP variant image"
+	depends on SOC_SERIES_NRF54H
 	depends on MCUBOOT_MODE_DIRECT_XIP || MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT
 	default y
 	help
 	  Will build the alternative slot (variant) image of the main application.
 
-# Temporarily disable the zephyr Kconfig for generating the alternative slot (variant) image of
-# the main application until NCS is fixed to use it properly NCSDK-37325
 configdefault MCUBOOT_DIRECT_XIP_GENERATE_VARIANT
-	default n
+	default n if PARTITION_MANAGER
+
+config MCUBOOT_BUILD_DIRECT_XIP_VARIANT
+	bool "Build DirectXIP variant image [DEPRECATED]"
+	depends on !SOC_SERIES_NRF54H
+	depends on MCUBOOT_MODE_DIRECT_XIP || MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT
+	select MCUBOOT_DIRECT_XIP_GENERATE_VARIANT if !PARTITION_MANAGER
+	select DEPRECATED
+	help
+	  Will build the alternative slot (variant) image of the main application. This option has
+	  been deprecated and replaced with SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT.
 
 menuconfig MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 	bool "Downgrade prevention using hardware security counters"

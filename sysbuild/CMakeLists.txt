@@ -274,6 +274,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endif()
 
     if(SB_CONFIG_MCUBOOT_MANIFEST_UPDATES)
+      # nRF54H20 specific code, not applicable to any other SoC
       set_config_bool(mcuboot CONFIG_MCUBOOT_MANIFEST_UPDATES y)
       set_config_int(mcuboot CONFIG_MCUBOOT_MANIFEST_IMAGE_INDEX
         ${SB_CONFIG_MCUBOOT_MANIFEST_IMAGE_INDEX})
@@ -437,10 +438,23 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
        OR SB_CONFIG_MCUBOOT_MANIFEST_UPDATES)
       # Use NCS signing script with support for PM or direct XIP (NCS specific features)
       if(SB_CONFIG_QSPI_XIP_SPLIT_IMAGE)
-        set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+        set(${DEFAULT_IMAGE}_SIGNING_SCRIPT
+          "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL
+          "MCUboot signing script" FORCE
+        )
 
-        if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
-          set(mcuboot_secondary_app_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+        if(SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT)
+          if(SB_CONFIG_PARTITION_MANAGER)
+            set(mcuboot_secondary_app_SIGNING_SCRIPT
+              "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL
+              "MCUboot signing script" FORCE
+            )
+          else()
+            set(${DEFAULT_IMAGE}_slot1_variant_SIGNING_SCRIPT
+              "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL
+              "MCUboot signing script" FORCE
+            )
+          endif()
         endif()
 
         # Flash drivers are mandatory with QSPI XIP split image support
