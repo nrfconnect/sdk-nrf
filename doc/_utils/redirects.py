@@ -433,6 +433,8 @@ NRF = (
     ("samples/bluetooth/connection_event_trigger/README", "samples/bluetooth/event_trigger/README"),
     ("samples/bluetooth/broadcast_config_tool/README", "samples/bluetooth/nrf_auraconfig/README"),
     ("samples/bluetooth/central_and_peripheral_hr/README", "samples/bluetooth/central_and_peripheral_hrs/README"), # Renamed the folders to better match the sample names
+    ("samples/bluetooth/channel_sounding_ras_initiator/README", "samples/bluetooth/channel_sounding/ras_initiator/README"), # New folder structure for channel sounding samples
+    ("samples/bluetooth/channel_sounding_ras_reflector/README", "samples/bluetooth/channel_sounding/ras_reflector/README"), # New folder structure for channel sounding samples
     ("samples/cellular/ciphersuites/README","samples/cellular/tls_ciphersuites/README"),
     ("samples/cellular/nrf_provisioning/README", "samples/cellular/nrf_device_provisioning/README"),
     ("samples/samples_nrf9160", "samples/cellular"), # Cellular samples (landing)
