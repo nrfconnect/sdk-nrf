@@ -809,15 +809,6 @@ zbus:
     - zephyr/tests/subsys/zbus/
     - zephyr/subsys/zbus/
 
-llext:
-  files:
-    - zephyr/cmake/llext-edk.cmake
-    - zephyr/samples/subsys/llext/
-    - zephyr/include/zephyr/llext/
-    - zephyr/tests/misc/llext-edk/
-    - zephyr/tests/subsys/llext/
-    - zephyr/subsys/llext/
-
 lz4:
   files:
     - zephyr/modules/lz4/
