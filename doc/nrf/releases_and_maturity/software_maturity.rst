@@ -3401,21 +3401,21 @@ The following table indicates the software maturity levels of the support for Fr
             - nRF54LV10A
           * - nRF21540
             - nRF21540 GPIO
-            - --
+            - Supported
             - Supported
             - Supported
             - --
             - --
           * - nRF21540
             - nRF21540 GPIO+SPI
-            - --
+            - Supported
             - Supported
             - Supported
             - Supported
             - --
           * - SKY66112-11
             - Simple GPIO
-            - --
+            - Supported
             - Supported
             - Supported
             - --
