@@ -1,0 +1,12 @@
+tests:
+  nrf.extended.arch.arm.arm_irq_advanced_features:
+    tags:
+      - arm
+      - interrupt
+      - ci_tests_zephyr_arch_arm_arm_irq_advanced_features
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
