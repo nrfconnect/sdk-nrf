@@ -28,17 +28,17 @@ tests:
   drivers.mspi.spi_mode3:
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=3
-      - CONFIG_TESTED_SPI_FREQUENCY=2000000
+      - CONFIG_TESTED_SPI_FREQUENCY=250000
     extra_args: EXTRA_DTC_OVERLAY_FILE="boards/nrf54l15dk_spis.overlay"
 
-  drivers.mspi.spi_4MHz:
+  drivers.mspi.spi_mode0_4MHz:
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=0
       - CONFIG_TESTED_SPI_FREQUENCY=4000000
     extra_args: EXTRA_DTC_OVERLAY_FILE="boards/nrf54l15dk_spis.overlay"
 
-  drivers.mspi.spi_8MHz:
+  drivers.mspi.spi_mode3_4MHz:
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=3
-      - CONFIG_TESTED_SPI_FREQUENCY=8000000
+      - CONFIG_TESTED_SPI_FREQUENCY=4000000
     extra_args: EXTRA_DTC_OVERLAY_FILE="boards/nrf54l15dk_spis.overlay"

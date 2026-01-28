@@ -6,18 +6,29 @@ common:
   sysbuild: true
   harness: console
   harness_config:
+    fixture: external_flash
     type: one_line
     regex:
       - ">>> HPF APP FATAL ERROR"
 
 tests:
-  drivers.mspi.hpf_trap_handler:
+  drivers.mspi.hpf_trap_handler.l15:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15dk_nrf54l15_cpuapp_memory.overlay"
-      - hpf_CONFIG_ASSERT=y
-      - hpf_CONFIG_ASSERT_TEST=y
-      - hpf_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/drivers/mspi/trap_handler/boards/nrf54l15dk_nrf54l15_cpuflpr_memory.overlay"
+      - hpf_mspi_CONFIG_ASSERT=y
+      - hpf_mspi_CONFIG_ASSERT_TEST=y
+      - hpf_mspi_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/drivers/mspi/trap_handler/boards/nrf54l15dk_nrf54l15_cpuflpr_memory.overlay"
+  drivers.mspi.hpf_trap_handler.lm20:
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="./boards/nrf54lm20dk_nrf54lm20a_cpuapp_memory.overlay"
+      - hpf_mspi_CONFIG_ASSERT=y
+      - hpf_mspi_CONFIG_ASSERT_TEST=y
+      - hpf_mspi_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/drivers/mspi/trap_handler/boards/nrf54lm20dk_nrf54lm20a_cpuflpr_memory.overlay"
