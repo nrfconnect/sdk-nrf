@@ -128,7 +128,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 4e00d240273c6c327e700e33172216f7342bfbef
+      revision: ea0c93338b7e99f92dbbde465511cdaaf6814e42
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -145,11 +145,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: cd973eca82fb2e44cc58a150476454d3e5e0d7d5
+      revision: c63a6c292cb985af87a583ddd40341e5085621ee
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 20d9399b341cf6a1b60139067805ab69a0f528e6
+      revision: 45c0c54e34f540fd9b82e8e07bb3fa845a87e419
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
