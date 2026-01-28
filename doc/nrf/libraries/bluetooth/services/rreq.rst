@@ -36,7 +36,7 @@ Usage
 
 You can set up the RREQ either as a Channel Sounding Initiator or Reflector.
 
-| See the sample: :file:`samples/bluetooth/channel_sounding_ras_initiator`
+| See the sample: :file:`samples/bluetooth/channel_sounding/ras_initiator`
 
 API documentation
 *****************
