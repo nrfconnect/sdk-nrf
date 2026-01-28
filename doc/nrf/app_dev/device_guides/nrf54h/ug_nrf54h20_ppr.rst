@@ -16,6 +16,7 @@ Using Zephyr multithreaded mode on PPR
 
 The PPR core can operate as a general-purpose core, running under the full Zephyr kernel.
 Building the PPR target is similar to building the application core, but the application core build must include an overlay that enables the PPR core.
+See :ref:`ug_nrf54h20_assigning_peripherals` for information on how to assign peripherals to the PPR core.
 
 Bootstrapping the PPR core
 ==========================
