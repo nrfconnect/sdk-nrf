@@ -41,7 +41,3 @@ counter_dev: &timer00 {
 &grtc {
 	interrupts = <228 2>;
 };
-
-&uart20 {
-	status = "disabled";
-};
