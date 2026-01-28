@@ -40,6 +40,10 @@ if(CONFIG_LOCK_SCHEDULES)
   LIST(APPEND access_srcs src/access/access_manager_schedules.cpp)
 endif()
 
+if(CONFIG_LOCK_PRINT_STORAGE_STATUS)
+  LIST(APPEND access_srcs src/access/access_storage_print.cpp)
+endif()
+
 target_sources(app PRIVATE
   src/app_task.cpp
   src/bolt_lock_manager.cpp

@@ -64,6 +64,8 @@ if LOCK_ENABLE_DEBUG
 
 config LOCK_PRINT_STORAGE_STATUS
 	bool "Print storage status after each store call"
+	# This feature assumes that items are eventually stored in Zephyr settings subsystem
+	depends on LOCK_ACCESS_STORAGE_PERSISTENT_STORAGE || TRUSTED_STORAGE_STORAGE_BACKEND_SETTINGS
 	help
 	  Debug feature to print the debug-level log that contains information of the entry being stored
 	  to persistent storage and how many bytes are left to store the new entry. It can be used to verify

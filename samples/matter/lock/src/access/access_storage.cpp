@@ -6,40 +6,11 @@
 
 #include "access_storage.h"
 
+#include "access_storage_print.h"
+
 #include <persistent_storage/persistent_storage.h>
 
 #include <zephyr/sys/cbprintf.h>
-
-#ifdef CONFIG_LOCK_PRINT_STORAGE_STATUS
-#ifdef CONFIG_SETTINGS_NVS
-#include <zephyr/fs/nvs.h>
-#elif CONFIG_SETTINGS_ZMS || CONFIG_SETTINGS_ZMS_LEGACY
-#include <zephyr/fs/zms.h>
-#endif /* CONFIG_SETTINGS_NVS */
-#include <zephyr/logging/log.h>
-#include <zephyr/settings/settings.h>
-
-LOG_MODULE_DECLARE(storage_manager, CONFIG_CHIP_APP_LOG_LEVEL);
-
-namespace
-{
-bool GetStorageFreeSpace(size_t &freeBytes)
-{
-	void *storage = nullptr;
-	int status = settings_storage_get(&storage);
-	if (status != 0 || !storage) {
-		LOG_ERR("AccessStorage: Cannot read NVS free space [error: %d]", status);
-		return false;
-	}
-#ifdef CONFIG_SETTINGS_NVS
-	freeBytes = nvs_calc_free_space(static_cast<nvs_fs *>(storage));
-#elif CONFIG_SETTINGS_ZMS || CONFIG_SETTINGS_ZMS_LEGACY
-	freeBytes = zms_calc_free_space(static_cast<zms_fs *>(storage));
-#endif /* CONFIG_SETTINGS_NVS */
-	return true;
-}
-} /* namespace */
-#endif /* CONFIG_LOCK_PRINT_STORAGE_STATUS */
 
 /* Currently the secure storage is available only for non-Wi-Fi builds,
    because NCS Wi-Fi implementation does not support PSA API yet. */
@@ -152,15 +123,7 @@ bool AccessStorage::Store(Type storageType, const void *data, size_t dataSize, u
 	bool ret = (Nrf::PSErrorCode::Success == Nrf::GetPersistentStorage().PSStore(&node, data, dataSize));
 
 #ifdef CONFIG_LOCK_PRINT_STORAGE_STATUS
-	if (ret) {
-		LOG_DBG("AccessStorage: Stored %s of size: %d bytes", storageType == Type::User ? "user" : "credential",
-			dataSize);
-
-		size_t storageFreeSpace;
-		if (GetStorageFreeSpace(storageFreeSpace)) {
-			LOG_DBG("AccessStorage: Free space: %d bytes", storageFreeSpace);
-		}
-	}
+	PrintAccessDataStored(storageType, dataSize, ret);
 #endif
 
 	return ret;
