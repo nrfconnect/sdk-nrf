@@ -366,7 +366,7 @@ psa_status_t cracen_ecc_h2e_sswu(psa_ecc_family_t curve_family, size_t curve_bit
  * base is greater than the modulus, SilexPK will return the SX_ERR_OUT_OF_RANGE
  * status code.
  */
-int cracen_rsa_modexp(struct sx_pk_acq_req *pkreq, struct sx_pk_slot *inputs,
+int cracen_rsa_modexp(sx_pk_req *req, struct sx_pk_slot *inputs,
 		      struct cracen_rsa_key *rsa_key, const uint8_t *base, size_t basez,
 		      int *sizes);
 

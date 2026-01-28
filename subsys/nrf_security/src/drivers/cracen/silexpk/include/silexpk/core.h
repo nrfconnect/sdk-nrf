@@ -26,11 +26,27 @@ struct sx_pk_cmd_def;
  * @{
  */
 
+struct sx_regs {
+	uint8_t *base;
+};
+
 /** Acceleration request
  *
  * A public key operation for offload on a hardware accelerator
  *
  */
+struct sx_pk_req {
+	struct sx_regs regs;
+	uint8_t *cryptoram;
+	int slot_sz;
+	int op_size;
+	const struct sx_pk_cmd_def *cmd;
+	struct sx_pk_cnx *cnx;
+	const uint8_t *outputops[12];
+	void *userctxt;
+	int ik_mode;
+};
+
 typedef struct sx_pk_req sx_pk_req;
 
 /** SilexPK and hardware constraints */
@@ -284,6 +300,15 @@ void sx_pk_release_req(sx_pk_req *req);
  * @param[in] cmd The new command definition
  */
 void sx_pk_set_cmd(sx_pk_req *req, const struct sx_pk_cmd_def *cmd);
+
+/** Acquire the hardware accelerator for an operation.
+ *
+ * This function acquires the cryptographic hardware accelerator and
+ * initializes the request structure for use.
+ *
+ * @param[out] req The acceleration request to initialize
+ */
+void sx_pk_acquire_hw(sx_pk_req *req);
 
 /**
  * @brief Clear interrupt for Cracen PK Engine.

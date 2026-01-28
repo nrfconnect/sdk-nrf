@@ -135,18 +135,17 @@ static psa_status_t cracen_ecjpake_get_public_key(cracen_jpake_operation_t *oper
 						  uint8_t *public_key, const uint8_t *G,
 						  const uint8_t *secret)
 {
-	struct sx_pk_acq_req pkreq;
+	sx_pk_req req;
 	struct sx_pk_inops_ecp_mult inputs;
 	int opsz;
+	int status;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECC_PTMUL);
-	if (pkreq.status) {
-		return PSA_ERROR_HARDWARE_FAILURE;
-	}
+	sx_pk_acquire_hw(&req);
+	sx_pk_set_cmd(&req, SX_PK_CMD_ECC_PTMUL);
 
-	pkreq.status = sx_pk_list_ecc_inslots(pkreq.req, operation->curve, 0,
-					      (struct sx_pk_slot *)&inputs);
-	if (pkreq.status) {
+	status = sx_pk_list_ecc_inslots(&req, operation->curve, 0, (struct sx_pk_slot *)&inputs);
+	if (status) {
+		sx_pk_release_req(&req);
 		return PSA_ERROR_HARDWARE_FAILURE;
 	}
 
@@ -156,24 +155,25 @@ static psa_status_t cracen_ecjpake_get_public_key(cracen_jpake_operation_t *oper
 	sx_wrpkmem(inputs.k.addr, secret, opsz);
 
 	if (G == NULL) {
-		sx_pk_write_curve_gen(pkreq.req, operation->curve, inputs.px, inputs.py);
+		sx_pk_write_curve_gen(&req, operation->curve, inputs.px, inputs.py);
 	} else {
 		sx_wrpkmem(inputs.px.addr, G, CRACEN_P256_KEY_SIZE);
 		sx_wrpkmem(inputs.py.addr, G + CRACEN_P256_KEY_SIZE, CRACEN_P256_KEY_SIZE);
 	}
 
-	sx_pk_run(pkreq.req);
-	int status = sx_pk_wait(pkreq.req);
+	sx_pk_run(&req);
+	status = sx_pk_wait(&req);
 
 	if (status) {
+		sx_pk_release_req(&req);
 		return silex_statuscodes_to_psa(status);
 	}
 
-	const uint8_t **outputs = sx_pk_get_output_ops(pkreq.req);
+	const uint8_t **outputs = sx_pk_get_output_ops(&req);
 
 	sx_rdpkmem(&public_key[0], outputs[0], opsz);
 	sx_rdpkmem(&public_key[32], outputs[1], opsz);
-	sx_pk_release_req(pkreq.req);
+	sx_pk_release_req(&req);
 
 	return PSA_SUCCESS;
 }
