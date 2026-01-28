@@ -44,17 +44,18 @@ def test_uart_passtrough(dut: DeviceAdapter):
 
     dut.disconnect()
     time.sleep(1)
+    default_serial = dut.device_config.serial_configs[0]
     console_serial_port: SerialPort = SerialPort(
-        serial_port=dut.device_config.serial, baudrate=dut.device_config.baud
+        serial_port=default_serial.port, baudrate=default_serial.baud
     )
 
-    if "if00" in dut.device_config.serial:
-        second_serial_port_name = dut.device_config.serial.replace("if00", "if02")
-    elif "if02" in dut.device_config.serial:
-        second_serial_port_name = dut.device_config.serial.replace("if02", "if00")
+    if "if00" in default_serial.port:
+        second_serial_port_name = default_serial.port.replace("if00", "if02")
+    elif "if02" in default_serial.port:
+        second_serial_port_name = default_serial.port.replace("if02", "if00")
 
     passtrough_serial_port: SerialPort = SerialPort(
-        serial_port=second_serial_port_name, baudrate=dut.device_config.baud
+        serial_port=second_serial_port_name, baudrate=default_serial.baud
     )
 
     first_message: str = "TEST1: console->passtrough"
