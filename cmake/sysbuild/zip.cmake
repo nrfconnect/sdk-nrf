@@ -31,14 +31,21 @@ function(dfu_app_zip_package)
     if(SB_CONFIG_QSPI_XIP_SPLIT_IMAGE)
       set(app_internal_update_name "${DEFAULT_IMAGE}.internal.bin")
       set(app_external_update_name "${DEFAULT_IMAGE}.external.bin")
-      set(secondary_app_internal_update_name mcuboot_secondary_app.internal.bin)
-      set(secondary_app_external_update_name mcuboot_secondary_app.external.bin)
+
+      if(SB_CONFIG_PARTITION_MANAGER)
+        set(secondary_app_internal_update_name mcuboot_secondary_app.internal.bin)
+        set(secondary_app_external_update_name mcuboot_secondary_app.external.bin)
+      else()
+        set(secondary_app_internal_update_name ${DEFAULT_IMAGE}_slot1_variant.internal.bin)
+        set(secondary_app_external_update_name ${DEFAULT_IMAGE}_slot1_variant.external.bin)
+      endif()
+
       mcuboot_image_number_to_slot(internal_slot_primary ${NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER} n)
       mcuboot_image_number_to_slot(internal_slot_secondary ${NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER} y)
       mcuboot_image_number_to_slot(external_slot_primary ${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} n)
       mcuboot_image_number_to_slot(external_slot_secondary ${NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER} y)
 
-      if(NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
+      if(NOT SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT AND NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
         # Application
         math(EXPR internal_slot_primary "${internal_slot_primary} + 1")
         math(EXPR internal_slot_secondary "${internal_slot_secondary} + 1")
@@ -88,34 +95,68 @@ function(dfu_app_zip_package)
         list(APPEND bin_files
              "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin"
              "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin"
-             "${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin"
-             "${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin"
         )
-        list(APPEND zip_names "${app_internal_update_name};${app_external_update_name};${secondary_app_internal_update_name};${secondary_app_external_update_name}")
-        list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts mcuboot_secondary_app_extra_byproducts)
+
         set(exclude_files EXCLUDE
-            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin
-            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin
+          ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin
+          ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin
+        )
+
+        if(SB_CONFIG_PARTITION_MANAGER)
+          list(APPEND bin_files
+            "${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin"
+            "${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin"
+          )
+          list(APPEND signed_targets
+            ${DEFAULT_IMAGE}_extra_byproducts
+            mcuboot_secondary_app_extra_byproducts
+          )
+          list(APPEND exclude_files
             ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin
             ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin
-        )
-        set(include_files INCLUDE
+          )
+          set(include_files INCLUDE
             ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
             ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
-        )
+          )
+        else()
+          list(APPEND bin_files
+            "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin"
+            "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin"
+          )
+          list(APPEND signed_targets
+            ${DEFAULT_IMAGE}_extra_byproducts
+            ${DEFAULT_IMAGE}_slot1_variant_extra_byproducts
+          )
+          list(APPEND exclude_files
+            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.internal.signed.bin
+            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.external.signed.bin
+          )
+          set(include_files INCLUDE
+            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+          )
+        endif()
+
+        list(APPEND zip_names "${app_internal_update_name};${app_external_update_name};${secondary_app_internal_update_name};${secondary_app_external_update_name}")
       endif()
     else()
       if(SB_CONFIG_BOOT_ENCRYPTION)
         set(app_update_name "${DEFAULT_IMAGE}.signed.encrypted.bin")
       else()
         set(app_update_name "${DEFAULT_IMAGE}.signed.bin")
-        set(secondary_app_update_name mcuboot_secondary_app.signed.bin)
+
+        if(SB_CONFIG_PARTITION_MANAGER OR SB_CONFIG_SOC_SERIES_NRF54H)
+          set(secondary_app_update_name mcuboot_secondary_app.signed.bin)
+        else()
+          set(secondary_app_update_name ${DEFAULT_IMAGE}_slot1_variant.signed.bin)
+        endif()
       endif()
 
       mcuboot_image_number_to_slot(slot_primary ${NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER} n)
       mcuboot_image_number_to_slot(slot_secondary ${NCS_MCUBOOT_APPLICATION_IMAGE_NUMBER} y)
 
-      if(NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
+      if(NOT SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT AND NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
         if(SB_CONFIG_PARTITION_MANAGER)
           set(load_address "$<TARGET_PROPERTY:partition_manager,PM_APP_ADDRESS>")
         else()
@@ -168,26 +209,60 @@ function(dfu_app_zip_package)
 
         if(NOT SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY)
           list(APPEND bin_files
-               "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
-               "${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
+            "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
           )
           set(exclude_files EXCLUDE
-              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
-              ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
+            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
           )
           set(include_files INCLUDE
-              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+            ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+          )
+
+          if(SB_CONFIG_PARTITION_MANAGER OR SB_CONFIG_SOC_SERIES_NRF54H)
+            list(APPEND bin_files
+              "${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
+            )
+            list(APPEND exclude_files
+              ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
+            )
+            list(APPEND include_files
               ${CMAKE_BINARY_DIR}/mcuboot_secondary_app/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
-          )
+            )
+          else()
+            list(APPEND bin_files
+              "${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
+            )
+            list(APPEND exclude_files
+              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.signed.bin
+            )
+            list(APPEND include_files
+              ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}_slot1_variant/zephyr/${CONFIG_KERNEL_BIN_NAME}.bin
+            )
+          endif()
         else()
-          list(APPEND bin_files
-               "${CMAKE_BINARY_DIR}/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
-               "${CMAKE_BINARY_DIR}/${CONFIG_KERNEL_BIN_NAME}_secondary_app.signed.bin"
-          )
+          if(SB_CONFIG_PARTITION_MANAGER OR SB_CONFIG_SOC_SERIES_NRF54H)
+            list(APPEND bin_files
+              "${CMAKE_BINARY_DIR}/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
+              "${CMAKE_BINARY_DIR}/${CONFIG_KERNEL_BIN_NAME}_secondary_app.signed.bin"
+            )
+          else()
+            list(APPEND bin_files
+              "${CMAKE_BINARY_DIR}/${CONFIG_KERNEL_BIN_NAME}.signed.bin"
+              "${CMAKE_BINARY_DIR}/${CONFIG_KERNEL_BIN_NAME}_slot1_variant.signed.bin"
+            )
+          endif()
         endif()
 
         list(APPEND zip_names "${app_update_name};${secondary_app_update_name}")
-        list(APPEND signed_targets ${DEFAULT_IMAGE}_extra_byproducts mcuboot_secondary_app_extra_byproducts)
+        if(SB_CONFIG_PARTITION_MANAGER OR SB_CONFIG_SOC_SERIES_NRF54H)
+          list(APPEND signed_targets
+            ${DEFAULT_IMAGE}_extra_byproducts mcuboot_secondary_app_extra_byproducts
+          )
+        else()
+          list(APPEND signed_targets
+            ${DEFAULT_IMAGE}_extra_byproducts ${DEFAULT_IMAGE}_slot1_variant_extra_byproducts
+          )
+        endif()
       endif()
     endif()
   endif()
@@ -208,7 +283,7 @@ function(dfu_app_zip_package)
     mcuboot_image_number_to_slot(net_update_slot_primary ${NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER} n)
     mcuboot_image_number_to_slot(net_update_slot_secondary ${NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER} y)
 
-    if(NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
+    if(NOT SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT AND NOT SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
       if(SB_CONFIG_PARTITION_MANAGER)
         set(net_load_address "$<TARGET_PROPERTY:partition_manager,CPUNET_PM_APP_ADDRESS>")
       else()
