@@ -227,54 +227,9 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.cellular.modem_shell
-    - sample.cellular.modem_shell.bt
-    - sample.cellular.modem_shell.carrier
-    - sample.cellular.modem_shell.cloud_coap_only
-    - sample.cellular.modem_shell.cloud_mqtt_only
-    - sample.cellular.modem_shell.cloud_mqtt_rest
-    - sample.cellular.modem_shell.esp_wifi
-    - sample.cellular.modem_shell.location_cellular_no_wifi_no_gnss
-    - sample.cellular.modem_shell.location_gnss_no_wifi_no_cellular
-    - sample.cellular.modem_shell.location_gnss_wifi_no_cellular
-    - sample.cellular.modem_shell.location_service_ext
-    - sample.cellular.modem_shell.location_service_ext_pgps_nrf7002ek_wifi
-    - sample.cellular.modem_shell.location_wifi_cellular_no_gnss
-    - sample.cellular.modem_shell.location_wifi_no_cellular_no_gnss
-    - sample.cellular.modem_shell.lwm2m
-    - sample.cellular.modem_shell.lwm2m_bootstrap
-    - sample.cellular.modem_shell.lwm2m_pgps
-    - sample.cellular.modem_shell.memfault_modem_trace.nrf9160
-    - sample.cellular.modem_shell.memfault_modem_trace_ra
-    - sample.cellular.modem_shell.non_offloading_ip
-    - sample.cellular.modem_shell.non_offloading_ip_modem_uart_trace
-    - sample.cellular.modem_shell.nrf7000ek_wifi
-    - sample.cellular.modem_shell.nrf7001ek_wifi
-    - sample.cellular.modem_shell.nrf7002ek_wifi
-    - sample.cellular.modem_shell.nrf7002ek_wifi-debug
-    - sample.cellular.modem_shell.pgps
-    - sample.cellular.modem_shell.ppp
-    - sample.cellular.modem_shell.rtt
-    - sample.cellular.modem_shell_debug
     - sample.cellular.modem_shell_modem_uart_trace
   platforms:
     - nrf9160dk@0.14.0/nrf9160/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.cellular.modem_shell.cloud_mqtt_rest
-    - sample.cellular.modem_shell.location_cellular_no_wifi_no_gnss
-    - sample.cellular.modem_shell.location_gnss_no_wifi_no_cellular
-    - sample.cellular.modem_shell.location_gnss_wifi_no_cellular
-    - sample.cellular.modem_shell.location_wifi_cellular_no_gnss
-    - sample.cellular.modem_shell.location_wifi_no_cellular_no_gnss
-    - sample.cellular.modem_shell.non_offloading_ip
-    - sample.cellular.modem_shell.nrf7000ek_wifi
-    - sample.cellular.modem_shell.nrf7001ek_wifi
-    - sample.cellular.modem_shell.nrf7002ek_wifi
-    - sample.cellular.modem_shell_debug
-  platforms:
-    - nrf9161dk/nrf9161/ns
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
