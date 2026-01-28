@@ -26,3 +26,15 @@
 	status = "okay";
 	owned-channels = <0>;
 };
+
+&mx25uw63 {
+	status = "okay";
+};
+
+&gpio6 {
+	status = "okay";
+};
+
+&exmif {
+	status = "okay";
+};
