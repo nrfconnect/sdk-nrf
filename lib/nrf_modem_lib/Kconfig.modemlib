@@ -24,6 +24,13 @@ config NRF_MODEM_LIB_HEAP_SIZE
 	  Size of the library heap.
 	  This heap is allocated from the application's RAM region.
 
+config ZVFS_OPEN_ADD_SIZE_NRF_MODEM
+	int "Reserve file descriptors for offloaded modem sockets"
+	default 8
+	range 1 8
+	help
+	  Modem supports 8 sockets. By default reserve file descriptors for all of them.
+
 config HEAP_MEM_POOL_ADD_SIZE_NRF9X_SOCKETS_GETADDRINFO
 	int "Extra heap size for getaddrinfo"
 	depends on NET_SOCKETS
