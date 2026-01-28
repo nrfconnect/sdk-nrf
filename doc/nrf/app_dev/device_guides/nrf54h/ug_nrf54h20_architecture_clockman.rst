@@ -48,6 +48,7 @@ LFCLK
 =====
 
 The Low-Frequency Clock domain is responsible for generating a 32768 Hz clock signal for ultra-low-power peripherals like ``GRTC`` or ``RTC``.
+The LFCLK source is selected by the clock control drivers based on system configuration (including BICR), and when ``LFXO`` is used, the SoC performs an automated LFXO calibration during startup; see :ref:`ug_nrf54h20_custom_pcb_bicr`.
 
 HFXO
 ====
