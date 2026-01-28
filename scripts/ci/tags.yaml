@@ -1615,6 +1615,11 @@ ci_samples_zephyr_drivers_regulator:
     - nrf/drivers/regulator/
     - nrf/samples/zephyr/drivers/regulator/
 
+ci_tests_zephyr_arch_arm_arm_irq_advanced_features:
+  files:
+    - nrf/tests/zephyr/arch/arm/arm_irq_advanced_features/
+    - zephyr/tests/arch/arm/arm_irq_advanced_features/
+
 ci_tests_zephyr_drivers_audio_dmic_api:
   files:
     - nrf/tests/zephyr/drivers/audio/dmic_api/
