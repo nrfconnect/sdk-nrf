@@ -515,6 +515,8 @@ nRF5340 samples
 Peripheral samples
 ------------------
 
+* Added the :ref:`ppi_seq_spi_sample` sample that demonstrates use of :ref:`ppi_seq_i2c_spi`.
+
 * :ref:`802154_phy_test` sample:
 
   * Removed unused functions from the :file:`rf_proc.c` file and the :file:`rf_proc.h` header file.
@@ -753,6 +755,10 @@ nRF RPC libraries
 
 Other libraries
 ---------------
+
+* Added:
+  * The :ref:`ppi_seq` library for triggering periodic hardware tasks using PPI.
+  * The :ref:`ppi_seq_i2c_spi` driver, which is using :ref:`ppi_seq` to perform batches of periodic I2C/SPI transfers without waking up the CPU.
 
 * :ref:`nrf_profiler` library:
 
