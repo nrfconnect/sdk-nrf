@@ -539,7 +539,7 @@ static int logger_out(uint8_t *buf, size_t size, void *ctx)
 	}
 
 	if (k_sem_take(&ncl_active, K_NO_WAIT) < 0) {
-		return 0;
+		return orig_size;
 	}
 
 	if (log_format_current == LOG_OUTPUT_TEXT) {
