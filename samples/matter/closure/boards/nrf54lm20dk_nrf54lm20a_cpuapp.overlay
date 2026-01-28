@@ -24,6 +24,12 @@
 	};
 };
 
+&rram_controller {
+	cpuapp_rram: rram@0 {
+		reg = <0x0 DT_SIZE_K(2036)>;
+		ranges = <0x0 0x0 DT_SIZE_K(2036)>;
+	};
+};
 
 &pwm20 {
 	status = "okay";
