@@ -29,18 +29,7 @@ enum unicast_discover_dir {
 	UNICAST_SERVER_BIDIR = (BT_AUDIO_DIR_SINK | BT_AUDIO_DIR_SOURCE)
 };
 
-#if CONFIG_BT_BAP_UNICAST_CONFIGURABLE
-#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
-	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                               \
-				       BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED,                          \
-				       CONFIG_BT_AUDIO_BITRATE_UNICAST_SINK)
-
-#define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SOURCE                                             \
-	BT_BAP_LC3_PRESET_CONFIGURABLE(BT_AUDIO_LOCATION_FRONT_LEFT,                               \
-				       BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED,                          \
-				       CONFIG_BT_AUDIO_BITRATE_UNICAST_SRC)
-
-#elif CONFIG_BT_BAP_UNICAST_16_2_1
+#if CONFIG_BT_BAP_UNICAST_16_2_1
 #define BT_BAP_LC3_UNICAST_PRESET_NRF5340_AUDIO_SINK                                               \
 	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
 					 BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED)
@@ -65,7 +54,7 @@ enum unicast_discover_dir {
 	BT_BAP_LC3_UNICAST_PRESET_48_4_1(BT_AUDIO_LOCATION_ANY, BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED)
 #else
 #error Unsupported LC3 codec preset for unicast
-#endif /* CONFIG_BT_BAP_UNICAST_CONFIGURABLE */
+#endif /* CONFIG_BT_BAP_UNICAST_16_2_1 */
 
 /**
  * @brief	Get configuration for the audio stream.
