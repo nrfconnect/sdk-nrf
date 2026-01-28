@@ -404,3 +404,140 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     harness_config: *bt_harness_config
+
+  sample.mcumgr.smp_svr.serial_recovery.basic:
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_CONFIG_MCUBOOT_SERIAL=y
+      - mcuboot_CONFIG_UART_CONSOLE=n
+      - mcuboot_CONFIG_BOOT_SERIAL_NO_APPLICATION=y
+      - FILE_SUFFIX=larger_mcuboot
+      - EXTRA_CONF_FILE="overlay-serial.conf"
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+  sample.mcumgr.smp_svr.serial_recovery.pin_reset:
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_CONFIG_MCUBOOT_SERIAL=y
+      - mcuboot_CONFIG_UART_CONSOLE=n
+      - mcuboot_CONFIG_BOOT_SERIAL_PIN_RESET=y
+      - FILE_SUFFIX=larger_mcuboot
+      - EXTRA_CONF_FILE="overlay-serial.conf"
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+  sample.mcumgr.smp_svr.serial_recovery.wait_for_dfu:
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_CONFIG_MCUBOOT_SERIAL=y
+      - mcuboot_CONFIG_UART_CONSOLE=n
+      - mcuboot_CONFIG_BOOT_SERIAL_WAIT_FOR_DFU=y
+      - mcuboot_CONFIG_BOOT_SERIAL_WAIT_FOR_DFU_TIMEOUT=5000
+      - FILE_SUFFIX=larger_mcuboot
+      - EXTRA_CONF_FILE="overlay-serial.conf"
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+  sample.mcumgr.smp_svr.serial_recovery.signature_ecdsa:
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_CONFIG_MCUBOOT_SERIAL=y
+      - mcuboot_CONFIG_UART_CONSOLE=n
+      - mcuboot_CONFIG_BOOT_SERIAL_PIN_RESET=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
+      - FILE_SUFFIX=larger_mcuboot
+      - EXTRA_CONF_FILE="overlay-serial.conf"
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+  sample.mcumgr.smp_svr.serial_recovery.signature_rsa:
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_CONFIG_MCUBOOT_SERIAL=y
+      - mcuboot_CONFIG_UART_CONSOLE=n
+      - mcuboot_CONFIG_BOOT_SERIAL_PIN_RESET=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA=y
+      - FILE_SUFFIX=larger_mcuboot
+      - EXTRA_CONF_FILE="overlay-serial.conf"
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+  sample.mcumgr.smp_svr.serial_recovery.image_list:
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_CONFIG_MCUBOOT_SERIAL=y
+      - mcuboot_CONFIG_UART_CONSOLE=n
+      - mcuboot_CONFIG_BOOT_SERIAL_PIN_RESET=y
+      - mcuboot_CONFIG_BOOT_SERIAL_IMG_GRP_IMAGE_STATE=y
+      - mcuboot_CONFIG_BOOT_SERIAL_IMG_GRP_HASH=y
+      - FILE_SUFFIX=larger_mcuboot
+      - EXTRA_CONF_FILE="overlay-serial.conf"
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+  sample.mcumgr.smp_svr.serial_recovery.progressive_erase:
+    sysbuild: true
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_CONFIG_MCUBOOT_SERIAL=y
+      - mcuboot_CONFIG_UART_CONSOLE=n
+      - mcuboot_CONFIG_BOOT_SERIAL_PIN_RESET=y
+      - mcuboot_CONFIG_BOOT_ERASE_PROGRESSIVELY=y
+      - FILE_SUFFIX=larger_mcuboot
+      - EXTRA_CONF_FILE="overlay-serial.conf"
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+  sample.mcumgr.smp_svr.serial_recovery.entrance_gpio:
+    sysbuild: true
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_CONFIG_MCUBOOT_SERIAL=y
+      - mcuboot_CONFIG_UART_CONSOLE=n
+      - mcuboot_CONFIG_BOOT_SERIAL_ENTRANCE_GPIO=y
+      - FILE_SUFFIX=larger_mcuboot
+      - EXTRA_CONF_FILE="overlay-serial.conf"
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
