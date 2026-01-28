@@ -142,13 +142,13 @@ This is a reference configuration that can be modified in the production firmwar
 nRF54L Key Management Unit (KMU)
 ================================
 
-nRF54L Series devices include :ref:`ug_nrf54l_crypto_kmu_cracen_peripherals` that can be used to store cryptographic keys in Matter.
-In this solution, the keys are stored within the available slots in the :ref:`ug_nrf54l_crypto_kmu_slots` range that are not reserved for current and future |NCS| use cases.
+nRF54L Series devices include :ref:`ug_kmu_hardware_peripheral` that can be used to store cryptographic keys in Matter.
+In this solution, the keys are stored within the available slots in the :ref:`ug_kmu_slots` range that are not reserved for current and future |NCS| use cases.
 
 The default slots range used for Matter is from ``100`` to ``180``, excluding the DAC private key.
 For details on the DAC private key configuration, see :ref:`matter_platforms_security_dac_priv_key_kmu`.
 To change the slots range, set the :kconfig:option:`CONFIG_CHIP_KMU_SLOT_RANGE_START` and :kconfig:option:`CONFIG_CHIP_KMU_SLOT_RANGE_END` Kconfig options.
-The Raw usage scheme defined in the :ref:`ug_nrf54l_crypto_kmu_key_usage_schemes` section is used for all Matter keys.
+The Raw usage scheme defined in the :ref:`ug_kmu_guides_key_usage_schemes` section is used for all Matter keys.
 
 To use this feature, set the :kconfig:option:`CONFIG_CHIP_STORE_KEYS_IN_KMU` Kconfig option to ``y``, and switch to the ``KMUKeyAllocator`` by calling the ``chip::Crypto::SetPSAKeyAllocator`` method in your code during the Matter stack initialization.
 
@@ -353,7 +353,7 @@ By default, the DAC private key occupies the last slots dedicated for applicatio
 For the non-encrypted version, it occupies the last two slots (178 and 179), and for the encrypted version, it occupies the last four slots (176-179).
 You can change the default slots by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_DAC_PRIV_KEY_KMU_SLOT_ID` Kconfig option to the first slot number of the desired slots, making sure that all slots fit within the possible range.
 This means you can set it to slot numbers 0-176 for encrypted, or 0-178 for non-encrypted.
-To read more about KMU slots, see the :ref:`ug_nrf54l_crypto_kmu_slots` section of the :ref:`ug_nrf54l_cryptography` page, which details the KMU peripheral.
+To read more about KMU slots, see the :ref:`ug_kmu_guides_cracen_overview` page.
 
 Securing production devices
 ***************************

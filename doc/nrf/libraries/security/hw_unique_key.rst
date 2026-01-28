@@ -43,7 +43,7 @@ The |NCS| supports the following types of HUKs through this library:
      - Deriving special hardware keys for CRACEN operations
      - :ref:`key_storage_kmu`
      - | - Regenerated on each CRACEN power cycle from the IKG seed
-       | - Supported on nRF54L Series devices; see :ref:`ug_nrf54l_crypto_cracen_ikg`
+       | - Supported on nRF54L Series devices; see :ref:`ug_kmu_guides_cracen_ikg`
    * - Device Root Key (KDR)
      - Deriving general-purpose keys
      - Non-volatile memory locked by `ACL <nRF52840 DK Access Control Lists_>`_

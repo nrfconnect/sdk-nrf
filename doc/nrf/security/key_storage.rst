@@ -150,7 +150,7 @@ KMU is available on the following devices:
 
   .. note::
      nRF54L devices are equipped with a KMU that works with the CRACEN peripheral.
-     For more information, see :ref:`ug_nrf54l_developing_basics_kmu`.
+     For more information, see :ref:`ug_kmu_guides_cracen_overview`.
 
 Key storage
 -----------
@@ -281,7 +281,7 @@ The configuration is device-specific.
 
    .. group-tab:: nRF54L15
 
-      For nRF54L15, the IAK is derived from the :ref:`CRACEN Isolated Key Generator (IKG) <ug_nrf54l_crypto_cracen_ikg>` seed.
+      For nRF54L15, the IAK is derived from the :ref:`CRACEN Isolated Key Generator (IKG) <ug_kmu_guides_cracen_ikg>` seed.
 
       See the :ref:`crypto_persistent_key` sample for an example of the IKG seed generation and write.
 
