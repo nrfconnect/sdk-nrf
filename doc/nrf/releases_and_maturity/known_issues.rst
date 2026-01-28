@@ -6652,6 +6652,14 @@ NCSDK-6832: SMP Server sample fails upon initialization
 Other issues
 ************
 
+.. rst-class:: v3-2-1 v3-2-0
+
+NCSDK-36679: FLPR is not given access to pins during UICR provisioning
+  During application build, FLPR is not granted access to the pins as part of the UICR provisioning step.
+  As a result, Soft Peripherals do not show any pin activity.
+
+  **Affected platforms:** nRF54H20
+
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0
 
 The RRAM size has decreased from 1024 KB to 1012 KB for the nRF54L10 SoC.
