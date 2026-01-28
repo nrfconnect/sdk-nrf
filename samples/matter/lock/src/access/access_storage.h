@@ -19,21 +19,22 @@
  *
  * Agreed the following settings key convention:
  *
- * /cr/
- *    /<credential type (int)>/
- *                           / cr_idxs (bytes)
- *                           / <credential index (int)>/
- *                                                     / <credential data (bytes)>
- *    /usr_idxs (bytes)
- *    /usr/
- *        / <user index (int)> /
- *                             / <user data (bytes)>
- *
- *    /sch_<type (w - weekday, y - yearday, h - holiday)>/
- *    		/sch_idx_<type (w - weekday, y - yearday, h - holiday)> (bytes)/
- *        			/ <user index (int)> /
- *                       		/ <schedule index (int)> /
- *		   		                 			/ <schedule data (bytes)>
+ * /cr
+ *     /<credential type (uint8_t)>
+ *         /cr                                                   = <credential indices>
+ *         /<credential index (uint16_t)>                        = <credential data>
+ *     /usr_idxs                                                 = <user indices>
+ *     /usr
+ *         /<user index (uint16_t)>                              = <user data>
+ *     /sch_idxs_<type (w - weekday, y - yearday)>
+ *         /<user index (uint16_t)>                              = <schedule indices>
+ *     /sch_<type (w - weekday, y - yearday)>
+ *         /<user index (uint16_t)>
+ *             /<schedule index (uint8_t)>                       = <schedule data>
+ *     /sch_idxs_<type (h - holiday)>                            = <schedule indices>
+ *     /sch_<type (h - holiday)>
+ *         /<schedule index (uint8_t)>                           = <schedule data>
+ * /pin_req                                                      = <requires PIN?>
  *
  */
 
@@ -114,7 +115,7 @@ public:
 
 private:
 	constexpr static auto kAccessPrefix = "cr";
-	constexpr static auto kAccessCounterPrefix = "cr_idxs";
+	constexpr static auto kAccessCounterPrefix = "cr";
 	constexpr static auto kUserPrefix = "usr";
 	constexpr static auto kUserCounterPrefix = "usr_idxs";
 	constexpr static auto kRequirePinPrefix = "pin_req";

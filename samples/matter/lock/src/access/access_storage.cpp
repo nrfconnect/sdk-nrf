@@ -104,7 +104,7 @@ bool AccessStorage::PrepareKeyName(Type storageType, uint16_t index, uint16_t su
 		(void)snprintf(mKeyName, kMaxAccessName, "%s/%s", kAccessPrefix, kUserCounterPrefix);
 		return true;
 	case Type::CredentialsIndexes:
-		(void)snprintf(mKeyName, kMaxAccessName, "%s/%u/%s", kAccessPrefix, limitedIndex, kAccessPrefix);
+		(void)snprintf(mKeyName, kMaxAccessName, "%s/%u/%s", kAccessPrefix, limitedIndex, kAccessCounterPrefix);
 		return true;
 	case Type::RequirePIN:
 		(void)snprintf(mKeyName, kMaxAccessName, "%s", kRequirePinPrefix);
