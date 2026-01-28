@@ -1,0 +1,63 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	gpio_toggle_pin_1: gpio-toggle-pin-1 {
+		compatible = "nordic,gpio-pins";
+		gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
+
+	gpio_toggle_pin_2: gpio-toggle-pin-2 {
+		compatible = "nordic,gpio-pins";
+		gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
+};
+
+&dppic130 {
+	owned-channels = <0 1 2 3 4>;
+	owned-channel-groups = <0 1>;
+	status = "okay";
+};
+
+/* IPCT130 in Global domain and IPCT in Radio domain are used to create IPCTMAP entry.
+ * That means channels: source and sink create pairs that are applied by Secure Domain FW on boot.
+ * These entries has to be provided to pin_transport_debug by calls: debug_allow_ipct_channel
+ * and debug_allow_global_channel.
+ *
+ * Note: Channel 0 in IPCT in Radio domai is used by GRTC to deliver the GRTC events to Radio
+ *       domain. It is setup as sink-channel-link in common NCS DTS file.
+ */
+&cpurad_ipct {
+	source-channel-links = <1 NRF_DOMAIN_ID_GLOBALSLOW 1
+				2 NRF_DOMAIN_ID_GLOBALSLOW 2
+				3 NRF_DOMAIN_ID_GLOBALSLOW 3
+				4 NRF_DOMAIN_ID_GLOBALSLOW 4>;
+};
+
+/* Note: IPCT130 in Global domain channel 0 is used by GRTC to deliver the GRTC events to Radio
+ *       domain. It is setup as source-channel-link in common NCS DTS file.
+ */
+&ipct130 {
+	status = "okay";
+	owned-channels = <0 1 2 3 4>;
+	sink-channel-links = <1 NRF_DOMAIN_ID_RADIOCORE 1
+			      2 NRF_DOMAIN_ID_RADIOCORE 2
+			      3 NRF_DOMAIN_ID_RADIOCORE 3
+				  4 NRF_DOMAIN_ID_RADIOCORE 4>;
+};
+
+/* Example of GPIOTE channels allocation for Radio core.
+ *
+ * Note: By default all GPIOTE130 channels are allocated to APP Core.
+ *       To use some of them in Radio domain you have to change the allocation
+ *       in APP core DTS file.
+ */
+&gpiote130 {
+	status = "okay";
+	owned-channels = <0 1 2 3>;
+};
