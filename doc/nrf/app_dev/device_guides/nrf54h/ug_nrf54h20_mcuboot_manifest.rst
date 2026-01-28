@@ -31,6 +31,9 @@ The system contains two manifests, one for each manifest image slot.
 Before switching to a new slot, the bootloader verifies that all images described by the manifest are present and valid.
 This ensures that all images are compatible and reduces the complexity of managing interdependencies between images.
 
+.. figure:: images/mcuboot_manifest_partitions.svg
+   :alt: MCUboot partitions and their relationship with manifests
+
 This update strategy also supports partial system updates, with the limitation that you must always update the manifest image.
 For example, you can update only the application core firmware while keeping the radio core firmware unchanged.
 This is particularly useful when the application core firmware requires frequent updates, while the radio core firmware remains relatively stable.
@@ -110,6 +113,9 @@ This can be useful when the image is not built as part of the same build process
 The ``imgtool sign`` command handles the generation of the manifest structure.
 You can specify the path to the manifest configuration file using the ``--manifest`` option.
 The manifest TLV is appended to the image's protected TLV area, being included in the image's signature.
+
+.. figure:: images/mcuboot_manifest_tlvs.png
+   :alt: MCUboot manifest TLV inside the image structure
 
 Manifest-based update and boot strategy
 ***************************************
