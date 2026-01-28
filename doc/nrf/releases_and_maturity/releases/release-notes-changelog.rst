@@ -638,6 +638,8 @@ nRF Cloud integration
 ---------------------
 
 * Updated by enabling a transform request for topic prefix and pairing during connection initialization to nRF Cloud in the MQTT finite state machine (FSM).
+* Fixed a hang in the nRF Cloud log backend caused by incorrect error handling.
+  When the semaphore cannot be acquired, the function now returns the original size instead of 0, allowing the logging system to proceed correctly.
 
 CoreMark integration
 --------------------
