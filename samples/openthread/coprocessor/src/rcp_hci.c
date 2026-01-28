@@ -259,7 +259,7 @@ static int h4_send(struct net_buf *buf)
 }
 
 #if defined(CONFIG_BT_CTLR_ASSERT_HANDLER)
-void bt_ctlr_assert_handle(char *file, uint32_t line)
+__weak void bt_ctlr_assert_handle(char *file, uint32_t line)
 {
 	uint32_t len = 0U, pos = 0U;
 
