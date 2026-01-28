@@ -848,20 +848,11 @@ static int anomaly_timer_init(void)
 
 static int gppi_init(void)
 {
-	nrfx_err_t err;
-#if defined(CONFIG_NRFX_GPPI_V1)
-	/* GPPI v1 (e.g. nRF54H radio core) does not implement domain API;
-	 * use nrfx_gppi_conn_alloc with one fixed event/task pair (EGU event -> RADIO TXEN).
-	 */
-	err = nrfx_gppi_conn_alloc(
-		nrf_egu_event_address_get(DTM_EGU, DTM_EGU_EVENT),
-		nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN),
-		&dtm_inst.ppi_radio_start);
-#else
+	int err;
 	uint32_t rad_domain = nrfx_gppi_domain_id_get((uint32_t)NRF_RADIO);
 
 	err = nrfx_gppi_domain_conn_alloc(rad_domain, rad_domain, &dtm_inst.ppi_radio_start);
-#endif
+
 	if (err < 0) {
 		printk("nrfx_gppi channel alloc failed with: %d\n", err);
 		return err;
