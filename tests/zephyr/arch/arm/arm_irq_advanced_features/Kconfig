@@ -1,0 +1,1 @@
+source "tests/arch/arm/arm_irq_advanced_features/Kconfig"
