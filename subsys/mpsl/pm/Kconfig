@@ -25,11 +25,20 @@ config MPSL_PM_NO_RADIO_EVENT_PERIOD_LATENCY_US
 config MPSL_PM_USE_MRAM_LATENCY_SERVICE
 	bool "Use Zephyr's MRAM latency service"
 	select MRAM_LATENCY
-	default y
 	help
 	  This option enables MPSL PM integration with MRAM latency service.
 	  Use of MRAM latency service ensures there is no latency due to code
 	  fetching from disabled MRAM in REM events. It decreases power consumption
 	  on nRF54H20 SoC.
+
+config MPSL_PM_USE_MRAM_LATENCY_INTERNAL_SWITCH
+	bool "System controller MRAM latency internal switch"
+	default y
+	depends on !MPSL_PM_USE_MRAM_LATENCY_SERVICE
+	select MRAM_LATENCY
+	help
+	  This option enables usage of an internal system controller switch to
+	  automatically request no latency MRAM along with HMPAN-216.  It decreases
+	  power consumption even more than using MPSL_PM_USE_MRAM_LATENCY_SERVICE.
 
 endif # MPSL_USE_ZEPHYR_PM
