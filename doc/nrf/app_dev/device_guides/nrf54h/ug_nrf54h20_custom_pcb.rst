@@ -75,10 +75,14 @@ When the BICR has not been programmed, all the registers contain ``0xFFFFFFFF``.
 
 The LFOSC.LFXOCAL register is used by the device to store the calibration of the LFXO.
 
-When LFOSC.LFXOCAL is ``0xFFFFFFFF`` at device boot, the firmware recalibrates the LFXO oscillator and writes the calibration data to the LFOSC.LFXOCAL register.
-This is useful when making a change on the PCB (for example, when changing the crystal).
-This initial calibration is only performed once.
-Each subsequent start will use this initial calibration as the starting point.
+When you use the LFXO oscillator as the LFCLK clock source and LFOSC.LFXOCAL is set to ``0xFFFFFFFF`` at device boot, the firmware calibrates the LFXO oscillator and writes the calibration data to the LFOSC.LFXOCAL register.
+This is useful when making a change on the PCB (for example, when changing the crystal), or after programming a new BICR configuration.
+
+In this case, LFXO calibration is performed during startup.
+This process is fully automated and typically takes 3 to 3.5 seconds.
+The SoC must remain powered during this time to complete the procedure.
+Until calibration is complete, the SoC uses the LFRC oscillator.
+If calibration does not succeed, it will be repeated during the next startup procedure.
 
 Configuring BICR in JSON for nRF54H20 SoC
 =========================================
@@ -233,6 +237,12 @@ The following parameters are used in the LFOSC configuration:
   The valid range is from 1 to 25 ms.
 * ``source`` - Specifies the low-frequency clock source.
   It can be ``LFXO`` when an external crystal oscillator is in place, or ``LFRC`` when an external crystal oscillator is not in place.
+
+.. note::
+   If you select ``LFXO`` as the low-frequency clock source, the SoC performs an automated LFXO calibration during startup when no calibration has been stored yet (for example, when ``LFOSC.LFXOCAL`` is set to ``0xFFFFFFFF`` after programming a new BICR configuration).
+   This process takes approximately 3 to 3.5 seconds, during which the SoC must remain powered.
+   Until calibration is complete, the SoC uses the LFRC oscillator.
+   For more information, see :ref:`ug_nrf54h20_custom_pcb_bicr`.
 
 ACCURACY
   The following are valid values for ``accuracyPPM``:
