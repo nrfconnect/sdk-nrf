@@ -33,6 +33,10 @@ settings_storage:
   address: 0x1F1000
   region: flash_primary
   size: 0xC000
+EMPTY_1:
+  address: 0x1Fd000
+  region: flash_primary
+  size: 0x3000
 mcuboot_secondary:
   address: 0x0
   orig_span: &id003
