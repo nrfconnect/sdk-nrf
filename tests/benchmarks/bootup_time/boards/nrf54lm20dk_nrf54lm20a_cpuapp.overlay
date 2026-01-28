@@ -9,3 +9,7 @@
 		led = &led0;
 	};
 };
+
+&mx25r64 {
+	status = "okay";
+};
