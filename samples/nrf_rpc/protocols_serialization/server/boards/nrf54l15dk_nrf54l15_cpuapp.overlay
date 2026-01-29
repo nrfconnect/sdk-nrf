@@ -23,6 +23,9 @@
 /delete-node/ &button1;
 /delete-node/ &button2;
 /delete-node/ &button3;
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
 /delete-node/ &storage_partition;
 
 /* restore full RRAM and SRAM space - by default some parts are dedicated to FLRP */
@@ -30,6 +33,11 @@
 	reg = <0x0 DT_SIZE_K(1524)>;
 
 	partitions {
+		slot0_partition: partition@0  {
+			label = "image-0";
+			reg = <0x00000000 0x00178000>;
+		};
+
 		storage_partition: partition@178000 {
 			label = "storage";
 			reg = <0x00178000 0x00002000>;
