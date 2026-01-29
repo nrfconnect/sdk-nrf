@@ -25,7 +25,7 @@
 #define NCS_PREFIX "Booting "
 #endif
 
-void boot_banner(void)
+static int ncs_boot_banner(void)
 {
 #if defined(CONFIG_BOOT_DELAY) && (CONFIG_BOOT_DELAY > 0)
 	printk("*** Delaying boot by " STRINGIFY(CONFIG_BOOT_DELAY) "ms... ***\n");
@@ -52,4 +52,8 @@ void boot_banner(void)
 	printk("*** Using " CONFIG_NCS_ZEPHYR_BOOT_BANNER_STRING " v"
 	       KERNEL_VERSION_STRING "-" ZEPHYR_COMMIT_STRING " ***\n");
 #endif
+
+	return 0;
 }
+
+SYS_INIT(ncs_boot_banner, APPLICATION, 0);

@@ -4,5 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+configdefault BOOT_BANNER
+	default n if NCS_BOOT_BANNER
+
 osource "$(NCS_MEMFAULT_FIRMWARE_SDK_KCONFIG)"
 rsource "wfa-qt/Kconfig"
