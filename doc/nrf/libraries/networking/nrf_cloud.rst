@@ -94,6 +94,13 @@ Configuration options for device ID
   * This option only takes effect if the :kconfig:option:`CONFIG_MODEM_JWT` Kconfig option is also enabled.
     If the :kconfig:option:`CONFIG_MODEM_JWT` Kconfig option is not set to ``y``, the default :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` Kconfig option will be selected instead.
 
+* :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_MDM_DEVICE_UUID` - Similar to :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID` but get the device UUID from the modem by using the ``AT%DEVICEUUID`` command and not using JWT.
+  This option is only supported by the following modem firmware:
+
+  * mfw_nrf91x1 (v2.0.0 or later)
+  * mfw_nrf9151-ntn
+  * mfw-nr+_nrf91x1 (v2.0.0 or later)
+
 * :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` - If you enable this option, the ID is set at compile time using the value specified by :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID`.
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` - If you enable this option, the ID is automatically generated using a unique hardware ID (for example, a MAC address).
