@@ -46,7 +46,7 @@ Usage
 
 You can set up the RRSP either as a Channel Sounding Initiator or Reflector.
 
-| See the sample: :file:`samples/bluetooth/channel_sounding_ras_reflector`
+| See the sample: :file:`samples/bluetooth/channel_sounding/ras_reflector`
 
 API documentation
 *****************
