@@ -1357,6 +1357,19 @@ static int hci_driver_open(const struct device *dev, bt_hci_recv_t recv_func)
 	}
 #endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING */
 
+#if defined(CONFIG_BT_CTLR_CHANNEL_SOUNDING)
+	sdc_hci_cmd_vs_cs_params_set_t cs_params_set_board_distance_offset = {
+		.cs_param_type = SDC_HCI_VS_CS_PARAM_TYPE_CS_BOARD_DISTANCE_OFFSET_SET,
+		.cs_param_data.cs_board_distance_offset_params.cs_board_distance_offset_cm =
+			CONFIG_BT_CTLR_SDC_CS_BOARD_DISTANCE_OFFSET,
+	};
+	err = sdc_hci_cmd_vs_cs_params_set(&cs_params_set_board_distance_offset);
+	if (err) {
+		MULTITHREADING_LOCK_RELEASE();
+		return -ENOTSUP;
+	}
+#endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING */
+
 #if defined(CONFIG_BT_CTLR_SDC_BIG_RESERVED_TIME_US)
 	sdc_hci_cmd_vs_big_reserved_time_set_t big_reserved_time_params = {
 		.reserved_time_us = CONFIG_BT_CTLR_SDC_BIG_RESERVED_TIME_US
