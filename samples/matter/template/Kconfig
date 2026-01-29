@@ -16,6 +16,17 @@ choice OPENTHREAD_DEVICE_TYPE
 	default OPENTHREAD_MTD
 endchoice
 
+# SED with 0 dBm Thread TX output power for nRF54L15 tag
+if BOARD_NRF54L15TAG
+
+config CHIP_ENABLE_ICD_SUPPORT
+	default y
+
+config OPENTHREAD_DEFAULT_TX_POWER
+	default 0
+
+endif
+
 endif # OPENTHREAD
 
 config CHIP_WIFI
