@@ -14,3 +14,7 @@
 	/* Logic is inverted to adapt to measurement methods */
 	gpios = <&gpio0 28 GPIO_ACTIVE_HIGH>;
 };
+
+&mx25r64 {
+	status = "okay";
+};
