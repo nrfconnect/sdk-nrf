@@ -29,7 +29,14 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-|no_changes_yet_note|
+Matter
+------
+
+.. toggle::
+
+   * Changed partitions mapping for the nRF7002 DK in the Matter samples and applications.
+     This change breaks the DFU between the previous |NCS| versions and the upcoming release.
+     Ensure that you have valid partition mappings for the nRF7002 DK in your project to perform the DFU.
 
 Libraries
 =========
