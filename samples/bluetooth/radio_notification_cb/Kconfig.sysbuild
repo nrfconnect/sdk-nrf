@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config PARTITION_MANAGER
+	default n if !BOARD_IS_NON_SECURE
+
 config NRF_DEFAULT_EMPTY
 	default y if SOC_SERIES_NRF53
 

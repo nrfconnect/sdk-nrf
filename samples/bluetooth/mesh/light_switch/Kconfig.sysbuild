@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "share/sysbuild/Kconfig"
-
 config NRF_DEFAULT_IPC_RADIO
 	default y
+
+source "share/sysbuild/Kconfig"
