@@ -147,3 +147,13 @@
   platforms:
     - nrf7120dk/nrf7120/cpuapp
   comment: "Upmerge regression - Requires custom section for KMU - JIRA TBD."
+
+- scenarios:
+    - nrf.extended.drivers.uart.uart_errors.int_driven
+    - nrf.extended.drivers.uart.uart_errors.async
+    - nrf.extended.drivers.uart.uart_mix_poll_fifo
+    - nrf.extended.drivers.uart.uart_mix_poll_async_api
+    - nrf.extended.drivers.uart.uart_mix_poll
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37390"
