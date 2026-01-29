@@ -114,8 +114,10 @@ K_THREAD_DEFINE(receiver_thread_id, CONFIG_PROMISCUOUS_SAMPLE_RX_THREAD_STACK_SI
 static const struct device *capture_dev;
 #endif
 
-#ifdef CONFIG_USB_DEVICE_STACK
+#if defined(CONFIG_USB_DEVICE_STACK) || defined(CONFIG_USB_DEVICE_STACK_NEXT)
 #include <zephyr/usb/usb_device.h>
+#include <zephyr/usb/usbd.h>
+#include <sample_usbd.h>
 
 static struct in_addr addr = { { { 192, 0, 2, 1 } } };
 static struct in_addr mask = { { { 255, 255, 255, 0 } } };
@@ -124,7 +126,13 @@ int init_usb(void)
 {
 	int ret;
 
+#ifdef CONFIG_USB_DEVICE_STACK
 	ret = usb_enable(NULL);
+#else
+	struct usbd_context *sample_usbd = sample_usbd_init_device(NULL);
+
+	ret = usbd_enable(sample_usbd);
+#endif
 	if (ret != 0) {
 		printk("Cannot enable USB (%d)", ret);
 		return ret;
@@ -412,11 +420,15 @@ int main(void)
 {
 	int ret;
 
-#ifdef CONFIG_USB_DEVICE_STACK
+#if defined(CONFIG_USB_DEVICE_STACK) || defined(CONFIG_USB_DEVICE_STACK_NEXT)
 	init_usb();
 
 	/* Redirect static IP address to netusb*/
+#ifdef CONFIG_USB_DEVICE_STACK
 	const struct device *usb_dev = device_get_binding("eth_netusb");
+#else
+	const struct device *usb_dev = device_get_binding("cdc_ecm_eth0");
+#endif
 	struct net_if *iface = net_if_lookup_by_dev(usb_dev);
 
 	if (!iface) {
