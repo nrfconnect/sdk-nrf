@@ -4593,6 +4593,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
                  - --
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
+                 - --
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
@@ -4654,6 +4657,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
+                 - --
+                 - --
+                 - --
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
                  - --
                  - --
                  - --
@@ -4748,6 +4756,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
                  - --
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
+                 - --
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
@@ -4799,6 +4810,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
+                 - --
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
                  - --
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
@@ -4877,6 +4891,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - HashEdDSA Edwards25519
                  - ``PSA_WANT_ALG_ED25519PH``
                  - Supported
+               * - HashEdDSA Edwards448
+                 - ``PSA_WANT_ALG_ED448PH``
+                 - --
                * - RSA PKCS#1 v1.5 sign
                  - ``PSA_WANT_ALG_RSA_PKCS1V15_SIGN``
                  - --
@@ -4954,6 +4971,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Experimental
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
                  - Supported
                  - Supported
                  - Supported
@@ -5066,6 +5090,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
                  - --
                  - --
                  - --
@@ -5209,6 +5240,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
+                 - --
+                 - --
+                 - --
+                 - --
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
@@ -5302,6 +5339,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
+                 - --
+                 - --
+                 - --
+                 - --
+               * - HashEdDSA Edwards448
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
                  - --
                  - --
                  - --
@@ -5505,6 +5548,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA_ANY`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
@@ -5986,6 +6030,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - Curve25519 (X25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
                  - Supported
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
+                 - --
                * - Edwards25519 (Ed25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                  - Supported
@@ -6052,6 +6099,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - Curve25519 (X25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                 - Supported
+                 - Supported
+                 - Supported
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                  - Supported
                  - Supported
                  - Supported
@@ -6134,6 +6186,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - Curve25519 (X25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
                  - Supported
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
+                 - --
                * - Edwards25519 (Ed25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                  - Supported
@@ -6188,6 +6243,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - Curve25519 (X25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                 - Supported
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                  - Supported
                * - Edwards25519 (Ed25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
@@ -6258,6 +6316,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - Curve25519 (X25519)
                  - ``PSA_WANT_ECC_MONTGOMERY_255``
                  - Supported
+               * - Curve448 (X448)
+                 - ``PSA_WANT_ECC_MONTGOMERY_448``
+                 - --
                * - Edwards25519 (Ed25519)
                  - ``PSA_WANT_ECC_TWISTED_EDWARDS_255``
                  - Supported
@@ -6342,6 +6403,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                * - Curve25519 (X25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Experimental
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                  - Supported
                  - Supported
                  - Supported
@@ -6473,6 +6541,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - Edwards448 (Ed448)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                  - Supported
@@ -6584,6 +6659,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
+                 - --
+                 - --
+                 - --
+                 - --
                * - Edwards25519 (Ed25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                  - Supported
@@ -6687,6 +6768,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+               * - Curve448 (X448)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - Edwards25519 (Ed25519)
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                  - Supported
@@ -6785,6 +6872,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                  - Supported ECC curve types
                * - Configuration automatically generated based on the enabled ECC curve types. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
                  - | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
@@ -6826,6 +6914,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                  - Supported ECC curve types
                * - Configuration automatically generated based on the enabled ECC curve types. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
                  - | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
@@ -6853,6 +6942,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_384`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_512`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
@@ -6873,6 +6963,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                  - Supported ECC curve types
                * - Configuration automatically generated based on the enabled ECC curve types. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
                  - | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
@@ -6914,6 +7005,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                  - Supported ECC curve types
                * - Configuration automatically generated based on the enabled ECC curve types. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
                  - | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
                    | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`

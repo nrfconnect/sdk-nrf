@@ -141,7 +141,8 @@ Security
     * Experimental support for ASCON AEAD128 AEAD algorithm.
     * Updated implementations of WPA3-SAE, ML-DSA and ML-KEM to support the PSA Crypto API v1.4.
 
-   The :ref:`ug_crypto_supported_features` page has been updated accordingly.
+    The :ref:`ug_crypto_supported_features` page has been updated accordingly.
+  * The :ref:`ug_crypto_supported_features` page with information about support for the Curve448 (X448) elliptic curve under :ref:`ug_crypto_supported_features_signature_algorithms` and :ref:`ug_crypto_supported_features_ecc_curve_types`.
 
 * Removed the ``CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE_PT`` Kconfig option and replaced it with :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`.
 * Removed the ``CONFIG_PSA_WANT_ALG_WPA3_SAE`` Kconfig option and replaced it by options :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_FIXED` and :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_GDH`.
