@@ -18,7 +18,7 @@
 		label = "System State LED";
 
 		led0: led_0 {
-			gpios = < &gpio1 24 GPIO_ACTIVE_HIGH >;
+			gpios = <&gpio1 24 GPIO_ACTIVE_HIGH>;
 			label = "Green LED 0";
 		};
 	};
@@ -29,7 +29,7 @@
 		label = "Peer State LED";
 
 		led1: led_1 {
-			gpios = < &gpio1 10 GPIO_ACTIVE_HIGH >;
+			gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
 			label = "Green LED 1";
 		};
 	};
@@ -40,7 +40,7 @@
 		label = "Unused LED 2";
 
 		led2: led_2 {
-			gpios = < &gpio1 25 GPIO_ACTIVE_HIGH >;
+			gpios = <&gpio1 25 GPIO_ACTIVE_HIGH>;
 			label = "Green LED 2";
 		};
 	};
@@ -51,7 +51,7 @@
 		label = "Unused LED 3";
 
 		led3: led_3 {
-			gpios = < &gpio1 22 GPIO_ACTIVE_HIGH >;
+			gpios = <&gpio1 22 GPIO_ACTIVE_HIGH>;
 			label = "Green LED 3";
 		};
 	};

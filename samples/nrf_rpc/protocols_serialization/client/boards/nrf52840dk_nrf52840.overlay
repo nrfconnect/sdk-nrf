@@ -15,7 +15,7 @@
 
 &flash0 {
 	partitions {
-		slot0_partition: partition@0  {
+		slot0_partition: partition@0 {
 			label = "image-0";
 			reg = <0x00000000 0xf8000>;
 		};
