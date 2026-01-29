@@ -77,13 +77,6 @@ function(dt_get_parent parent_full_path node_full_path)
 endfunction()
 
 function(fast_pair_hex_dts)
-  include(${CMAKE_CURRENT_LIST_DIR}/../suit_utilities.cmake)
-
-  if(NOT SB_CONFIG_SOC_SERIES_NRF54H)
-    message(FATAL_ERROR "Fast Pair data provisioning using DTS partitions is only supported"
-                        "for nRF54H series.")
-  endif()
-
   set(fp_partition_name bt_fast_pair_partition)
 
   dt_nodelabel(
@@ -163,10 +156,6 @@ function(fast_pair_hex_dts)
     DEPENDS
     "${fp_provisioning_data_hex}"
     )
-
-  suit_add_merge_hex_file(FILES ${fp_provisioning_data_hex}
-                          DEPENDENCIES ${fp_partition_name}_target
-  )
 endfunction()
 
 function(fast_pair_device_model_warning)

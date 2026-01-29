@@ -27,13 +27,13 @@ function(setup_nrf700x_xip_data)
     message(FATAL_ERROR "Unsupported nRF70 patch configuration")
   endif()
 
+  message(STATUS "nRF WiFi FW patch binary will be stored in external flash")
+
+  add_custom_target(nrf70_wifi_fw_patch_target
+    DEPENDS ${CMAKE_BINARY_DIR}/nrf70.hex
+  )
+
   if(SB_CONFIG_PARTITION_MANAGER)
-    message(STATUS "nRF WiFi FW patch binary will be stored in external flash")
-
-    add_custom_target(nrf70_wifi_fw_patch_target
-      DEPENDS ${CMAKE_BINARY_DIR}/nrf70.hex
-    )
-
     add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/nrf70.hex
       COMMAND ${Python3_EXECUTABLE}
         -c "import sys; import intelhex; intelhex.bin2hex(sys.argv[1], sys.argv[2], int(sys.argv[3], 16) + int(sys.argv[4], 16)) "
@@ -43,30 +43,58 @@ function(setup_nrf700x_xip_data)
         ${qspi_xip_address}
         VERBATIM
       )
+  else()
+    dt_nodelabel(nrf70_wifi_fw_partition_nodelabel TARGET ${DEFAULT_IMAGE} NODELABEL
+      "nrf70_wifi_fw_partition"
+    )
+    dt_reg_addr(nrf70_wifi_fw_partition_addr TARGET ${DEFAULT_IMAGE} PATH
+      "${nrf70_wifi_fw_partition_nodelabel}"
+    )
 
-    # Delegate merging WiFi FW patch to mcuboot because we need to merge signed hex instead of raw nrf70.hex.
-    if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH OR SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH)
-      include(${CMAKE_CURRENT_LIST_DIR}/image_signing_nrf700x.cmake)
-      nrf7x_signing_tasks(${CMAKE_BINARY_DIR}/nrf70.hex ${CMAKE_BINARY_DIR}/nrf70.signed.hex ${CMAKE_BINARY_DIR}/nrf70.signed.bin nrf70_wifi_fw_patch_target)
+    add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/nrf70.hex
+      COMMAND ${Python3_EXECUTABLE}
+        -c "import sys; import intelhex; intelhex.bin2hex(sys.argv[1], sys.argv[2], int(sys.argv[3], 16) + int(sys.argv[4], 16)) "
+        ${NRF70_PATCH}
+        ${CMAKE_BINARY_DIR}/nrf70.hex
+        ${nrf70_wifi_fw_partition_addr}
+        ${qspi_xip_address}
+        VERBATIM
+      )
+  endif()
 
+  # Delegate merging WiFi FW patch to mcuboot because we need to merge signed hex instead of raw
+  # nrf70.hex.
+  if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH OR SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH OR NOT
+    SB_CONFIG_PARTITION_MANAGER
+  )
+    include(${CMAKE_CURRENT_LIST_DIR}/image_signing_nrf700x.cmake)
+    nrf7x_signing_tasks(${CMAKE_BINARY_DIR}/nrf70.hex ${CMAKE_BINARY_DIR}/nrf70.signed.hex
+      ${CMAKE_BINARY_DIR}/nrf70.signed.bin nrf70_wifi_fw_patch_target
+    )
+
+    if(SB_CONFIG_PARTITION_MANAGER)
       set_property(
         GLOBAL PROPERTY
         nrf70_wifi_fw_PM_HEX_FILE
         ${CMAKE_BINARY_DIR}/nrf70.signed.hex
-        )
-    else()
+      )
+    endif()
+  else()
+    if(SB_CONFIG_PARTITION_MANAGER)
       set_property(
         GLOBAL PROPERTY
         nrf70_wifi_fw_PM_HEX_FILE
         ${CMAKE_BINARY_DIR}/nrf70.hex
-        )
+      )
     endif()
+  endif()
 
+  if(SB_CONFIG_PARTITION_MANAGER)
     set_property(
       GLOBAL PROPERTY
       nrf70_wifi_fw_PM_TARGET
       nrf70_wifi_fw_patch_target
-      )
+    )
   endif()
 endfunction()
 

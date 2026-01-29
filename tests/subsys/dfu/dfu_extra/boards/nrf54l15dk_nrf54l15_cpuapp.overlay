@@ -4,15 +4,36 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/ {
-	chosen {
-		nordic,pm-ext-flash = &mx25r64;
-	};
-};
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
 
 /* restore full RRAM and SRAM space - by default some parts are dedicated to FLRP */
 &cpuapp_rram {
 	reg = <0x0 DT_SIZE_K(1524)>;
+
+	partitions {
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 0x00020000>;
+		};
+
+		slot0_partition: partition@20000 {
+			label = "image-0";
+			reg = <0x00020000 0x00040000>;
+		};
+
+		slot2_partition: partition@60000 {
+			label = "image-2";
+			reg = <0x00060000 0x00020000>;
+		};
+
+		storage_partition: partition@80000 {
+			label = "storage";
+			reg = <0x00080000 0x00002000>;
+		};
+	};
 };
 
 &cpuapp_sram {
@@ -22,4 +43,30 @@
 
 &mx25r64 {
 	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot1_partition: partition@0 {
+			label = "image-1";
+			reg = <0x00000000 0x00040000>;
+		};
+
+		slot3_partition: partition@40000 {
+			label = "image-3";
+			reg = <0x00040000 0x00020000>;
+		};
+
+		slot4_partition: partition@60000 {
+			label = "image-4";
+			reg = <0x00060000 0x00010000>;
+		};
+
+		slot5_partition: partition@70000 {
+			label = "image-5";
+			reg = <0x00070000 0x00010000>;
+		};
+	};
 };
