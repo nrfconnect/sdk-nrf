@@ -349,6 +349,7 @@
     - drivers.gpio.build
     - filesystem.lib_link
     - kernel.common
+    - kernel.common.lto.singlethreaded
     - kernel.common.minimallibc
     - kernel.common.misra
     - kernel.common.nano32
