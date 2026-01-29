@@ -3,13 +3,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-# Redefine this symbol here and give it a non-zero default value
-# so that the Zephyr system heap is enabled, the offloading layer
-# depends on it
-config HEAP_MEM_POOL_SIZE
-	int
-	default 512
-
 # The offloading layer cannot handle truncated block notifications.
 config COAP_CLIENT_TRUNCATE_MSGS
 	default n if NRF_MODEM_LIB
