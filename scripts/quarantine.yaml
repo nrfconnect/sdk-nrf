@@ -157,3 +157,10 @@
   platforms:
     - nrf7120dk/nrf7120/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37390"
+
+- scenarios:
+    - lpuart.loopback.int_driven
+    - lpuart.loopback.nrf54l.busy_sim
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37390"
