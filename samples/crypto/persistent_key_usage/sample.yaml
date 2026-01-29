@@ -54,7 +54,6 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
@@ -79,7 +78,6 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
