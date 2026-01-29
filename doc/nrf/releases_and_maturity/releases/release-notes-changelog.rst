@@ -165,7 +165,8 @@ Bluetooth® LE
 Bluetooth Mesh
 --------------
 
-|no_changes_yet_note|
+* Added support for node reset callback in the :ref:`bt_mesh_dk_prov` module.
+  Applications can now register a callback using :c:func:`bt_mesh_dk_prov_node_reset_cb_set` to perform cleanup operations when a node reset occurs.
 
 DECT NR+
 --------
@@ -316,7 +317,10 @@ Bluetooth samples
 Bluetooth Mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* Fixed:
+
+  * An issue in the :ref:`bluetooth_mesh_light_lc` sample where stale RPL data could persist in EMDS after a node reset.
+    The sample now uses the new :c:func:`bt_mesh_dk_prov_node_reset_cb_set` API to clear EMDS data when a node reset occurs, ensuring that stale RPL data is removed.
 
 Bluetooth Fast Pair samples
 ---------------------------

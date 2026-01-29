@@ -27,6 +27,12 @@ extern "C" {
  */
 const struct bt_mesh_prov *bt_mesh_dk_prov_init(void);
 
+/** @brief Register a handler for node reset.
+ *
+ * @param handler The handler to register.
+ */
+void bt_mesh_dk_prov_node_reset_cb_set(void (*handler)(void));
+
 #ifdef __cplusplus
 }
 #endif
