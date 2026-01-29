@@ -2762,7 +2762,7 @@ static void print_cellular_info(void)
 
 	dect_l2_shell_print("Border Router - Cellular Modem LTE status:");
 
-	rc = cellular_get_registration_status(modem_dev, CELLULAR_ACCESS_TECHNOLOGY_LTE,
+	rc = cellular_get_registration_status(modem_dev, CELLULAR_ACCESS_TECHNOLOGY_E_UTRAN,
 					      &reg_status);
 	if (!rc) {
 		dect_l2_shell_print("  Network registration status:  %s",
