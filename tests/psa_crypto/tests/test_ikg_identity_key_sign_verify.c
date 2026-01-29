@@ -14,12 +14,12 @@
 #include <psa/crypto_values.h>
 #include <psa/crypto_extra.h>
 #include <zephyr/sys/printk.h>
-#include "psa_tests_common.h"
+#include <psa_tests_common.h>
 
 #ifdef CONFIG_BUILD_WITH_TFM
 #include <tfm_ns_interface.h>
 #include <tfm_builtin_key_ids.h>
-#include "cracen_psa_kmu.h"
+#include <cracen_psa_kmu.h>
 static psa_key_id_t identity_key_id = TFM_BUILTIN_KEY_ID_IAK;
 #else
 #include <cracen_psa.h>
@@ -51,16 +51,9 @@ LOG_MODULE_DECLARE(app, LOG_LEVEL_DBG);
 int get_identity_key(void)
 {
 	psa_status_t status;
-	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
 	size_t data_length;
 
 	key_handle = mbedtls_svc_key_id_make(0, identity_key_id);
-	psa_key_attributes_t attr = key_attributes;
-
-	status = psa_get_key_attributes(key_handle, &attr);
-	if (status != APP_SUCCESS) {
-		return status;
-	}
 
 	status = psa_export_public_key(key_handle,
 		m_pub_key,
@@ -107,9 +100,12 @@ int sign_message(void)
 		sizeof(m_signature),
 		&output_len);
 
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
+#ifdef CONFIG_BUILD_WITH_TFM
+	/* Signing with the IAK from NS is not allowed. */
+	TEST_VECTOR_ASSERT_EQUAL(status, PSA_ERROR_NOT_PERMITTED);
+#else
+	TEST_VECTOR_ASSERT_EQUAL(status, PSA_SUCCESS);
+#endif
 
 	return APP_SUCCESS;
 }
@@ -118,16 +114,19 @@ int verify_message(void)
 {
 	psa_status_t status;
 
-	status = psa_verify_message(key_id,
+	status = psa_verify_message(identity_key_id,
 		PSA_ALG_ECDSA(PSA_ALG_SHA_256),
 		m_plain_text,
 		sizeof(m_plain_text),
 		m_signature,
 		NRF_CRYPTO_TEST_IKG_SIGNATURE_SIZE);
 
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
+#ifdef CONFIG_BUILD_WITH_TFM
+	/* NS can use the IAK to verify but as signing failed the signature will be invalid. */
+	TEST_VECTOR_ASSERT_EQUAL(status, PSA_ERROR_INVALID_SIGNATURE);
+#else
+	TEST_VECTOR_ASSERT_EQUAL(status, PSA_SUCCESS);
+#endif
 
 	return APP_SUCCESS;
 }

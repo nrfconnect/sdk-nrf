@@ -1235,9 +1235,10 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 					size_t key_buffer_size, size_t *key_buffer_length)
 {
 	kmu_metadata metadata;
-	psa_status_t psa_status = read_primary_slot_metadata(slot_number, &metadata);
+	psa_status_t psa_status;
 	size_t opaque_key_size;
 
+	psa_status = read_primary_slot_metadata(slot_number, &metadata);
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
 	}
