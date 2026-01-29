@@ -49,7 +49,6 @@ if NRF_RPC_IPC_SERVICE
 # so that the Zephyr system heap is enabled, the nRF IPC IPC service
 # depends on it
 config HEAP_MEM_POOL_SIZE
-	int
 	default 2048
 
 config NRF_RPC_IPC_SERVICE_BIND_TIMEOUT_MS
