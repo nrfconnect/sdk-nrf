@@ -23,6 +23,7 @@ target_include_directories(app PRIVATE
 # Preinitialization related to DFU over SMP
 target_sources_ifdef(CONFIG_MCUMGR_TRANSPORT_BT app PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common/smp_bt.c
+  ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common/mgmt_dfu_hooks.c
 )
 
 # NORDIC SDK APP END

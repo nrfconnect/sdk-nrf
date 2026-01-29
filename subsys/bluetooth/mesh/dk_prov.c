@@ -5,12 +5,39 @@
  */
 
 #include <zephyr/bluetooth/mesh.h>
+#include <zephyr/bluetooth/conn.h>
 #include <dk_buttons_and_leds.h>
 #include <zephyr/drivers/hwinfo.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/byteorder.h>
 
 LOG_MODULE_REGISTER(dk_bt_mesh_prov, CONFIG_BT_MESH_DK_PROV_LOG_LEVEL);
+
+/*
+ * Workaround for apps that do not properly close PB-GATT connection after
+ * provisioning, especially after DFU. We force disconnect mesh connections
+ * after provisioning to ensure the app reconnects via Proxy service.
+ */
+#ifdef CONFIG_BT_MESH_DK_PROV_PB_GATT_DISCONNECT
+static void prov_disconnect_cb(struct bt_conn *conn, void *data)
+{
+	struct bt_conn_info info;
+	int err;
+
+	err = bt_conn_get_info(conn, &info);
+	if (err == 0 && info.id == BT_ID_DEFAULT) {
+		LOG_INF("Forcing PB-GATT disconnect for Proxy transition");
+		bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
+	}
+}
+
+static void prov_disconnect_work_handler(struct k_work *work)
+{
+	bt_conn_foreach(BT_CONN_TYPE_LE, prov_disconnect_cb, NULL);
+}
+
+static K_WORK_DELAYABLE_DEFINE(prov_disconnect_work, prov_disconnect_work_handler);
+#endif /* CONFIG_BT_MESH_DK_PROV_PB_GATT_DISCONNECT */
 
 static uint32_t oob_toggles;
 static uint32_t oob_toggle_count;
@@ -148,6 +175,15 @@ static void prov_complete(uint16_t net_idx, uint16_t src)
 {
 	oob_stop();
 	LOG_DBG("Prov complete! Addr: 0x%04x\n", src);
+
+#ifdef CONFIG_BT_MESH_DK_PROV_PB_GATT_DISCONNECT
+	/* Schedule disconnect to allow provisioning completion message to be sent,
+	 * then force transition from PB-GATT to Proxy.
+	 * This works around mobile apps that don't properly close PB-GATT.
+	 */
+	k_work_schedule(&prov_disconnect_work,
+			K_MSEC(CONFIG_BT_MESH_DK_PROV_PB_GATT_DISCONNECT_DELAY_MS));
+#endif
 }
 
 static void prov_reset(void)
