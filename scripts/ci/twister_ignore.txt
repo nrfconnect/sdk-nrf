@@ -18,5 +18,6 @@ nrf/doc/*
 *.md
 nrf/scripts/ci/test_plan.py
 nrf/scripts/ci/twister_ignore.txt
-nrf/scripts/ci/twister_ignore_sdk_zephyr.txt
+nrf/scripts/ci/twister_platforms_zephyr.yaml
+ts/ci/twister_ignore_sdk_zephyr.txt
 nrf/scripts/checkpatch/*
