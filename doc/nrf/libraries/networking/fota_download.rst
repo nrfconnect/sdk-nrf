@@ -9,8 +9,8 @@ FOTA download
 
 The firmware over-the-air (FOTA) download library provides functions for downloading a firmware file as an upgrade candidate to the DFU target that is used in the :ref:`lib_dfu_target` library.
 
-Configuration and implementation
-********************************
+Implementation
+**************
 
 To start a FOTA download, provide the URL for the file that should be downloaded, specifying the required arguments as follows:
 
@@ -31,6 +31,23 @@ The library then sends a :c:enumerator:`FOTA_DOWNLOAD_EVT_FINISHED` callback eve
 When the application using the library receives this event, it must issue a reboot command to apply the upgrade.
 
 You can set :kconfig:option:`CONFIG_FOTA_DOWNLOAD_NATIVE_TLS` to configure the socket to be native for TLS instead of offloading TLS operations to the modem.
+
+Configuration
+*************
+
+To use the FOTA download library, enable the :kconfig:option:`CONFIG_FOTA_DOWNLOAD` Kconfig option.
+
+* :kconfig:option:`CONFIG_FOTA_SOCKET_RETRIES`
+* :kconfig:option:`CONFIG_FOTA_DOWNLOAD_PROGRESS_EVT`
+* :kconfig:option:`CONFIG_FOTA_CLIENT_AUTOSCHEDULE_UPDATE`
+* :kconfig:option:`CONFIG_FOTA_DOWNLOAD_MCUBOOT_FLASH_BUF_SZ`
+* :kconfig:option:`CONFIG_FOTA_DOWNLOAD_BUF_SZ`
+* :kconfig:option:`CONFIG_FOTA_DOWNLOAD_FULL_MODEM_BUF_SZ`
+* :kconfig:option:`CONFIG_FOTA_DOWNLOAD_NATIVE_TLS`
+* :kconfig:option:`CONFIG_FOTA_DOWNLOAD_FILE_NAME_LENGTH`
+* :kconfig:option:`CONFIG_FOTA_DOWNLOAD_HOST_NAME_LENGTH`
+* :kconfig:option:`CONFIG_FOTA_DOWNLOAD_RESOURCE_LOCATOR_LENGTH`
+* :kconfig:option:`CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX`
 
 HTTPS downloads
 ***************
