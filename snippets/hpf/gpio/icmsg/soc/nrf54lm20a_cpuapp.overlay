@@ -21,7 +21,7 @@
 	};
 
 	soc {
-		cpuflpr_sram_code_data: memory@2007cc00 {
+		cpuflpr_code_data_sram: memory@2007cc00 {
 			compatible = "mmio-sram";
 			reg = <0x2007cc00 DT_SIZE_K(12)>;
 			#address-cells = <1>;
@@ -66,7 +66,7 @@
 
 &cpuflpr_vpr {
 	source-memory = <&cpuflpr_rram>;
-	execution-memory = <&cpuflpr_sram_code_data>;
+	execution-memory = <&cpuflpr_code_data_sram>;
 };
 
 &gpio2 {
