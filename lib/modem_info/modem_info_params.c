@@ -170,7 +170,9 @@ int modem_info_params_get(struct modem_param_info *modem)
 #if IS_ENABLED(CONFIG_MODEM_INFO_ADD_DEVICE)
 			&modem->device.modem_fw,
 			&modem->device.battery,
+#if !IS_ENABLED(CONFIG_DECT)
 			&modem->device.imei,
+#endif
 #endif
 		};
 

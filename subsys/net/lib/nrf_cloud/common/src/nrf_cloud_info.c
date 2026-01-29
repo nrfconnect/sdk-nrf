@@ -109,12 +109,14 @@ int nrf_cloud_print_details(void)
 	const char *download_protocol;
 	char buf[100];
 
+#if !defined(CONFIG_DECT)
 	err = nrf_cloud_get_imei(buf, sizeof(buf));
 	if (!err) {
 		LOG_INF("IMEI:      %s", buf);
 	} else if (err != -ENOTSUP) {
 		LOG_ERR("Error requesting the IMEI: %d", err);
 	}
+#endif
 	err = nrf_cloud_get_uuid(buf, sizeof(buf));
 	if (!err) {
 		LOG_INF("UUID:      %s", buf);

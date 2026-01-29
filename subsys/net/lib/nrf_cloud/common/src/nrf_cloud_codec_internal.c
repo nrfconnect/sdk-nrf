@@ -111,7 +111,9 @@ static const char *const job_status_strings[] = {
 #endif
 
 /* Define a string represention what connection method we are using. */
-#if defined(CONFIG_NRF_MODEM_LIB)
+#if defined(CONFIG_DECT)
+#define NRF_CLOUD_JSON_VAL_CFGD_METHOD_VAL NRF_CLOUD_JSON_VAL_METHOD_DECT
+#elif defined(CONFIG_NRF_MODEM_LIB)
 #define NRF_CLOUD_JSON_VAL_CFGD_METHOD_VAL NRF_CLOUD_JSON_VAL_METHOD_LTE
 #elif defined(CONFIG_WIFI)
 #define NRF_CLOUD_JSON_VAL_CFGD_METHOD_VAL NRF_CLOUD_JSON_VAL_METHOD_WIFI
@@ -959,7 +961,7 @@ static int encode_modem_info_device(struct device_param *device, cJSON *json_obj
 static int encode_modem_info_json_object(struct modem_param_info *modem, cJSON *root_obj,
 					 const char *const app_ver)
 {
-	int ret;
+	int ret = 0;
 
 	__ASSERT_NO_MSG(root_obj != NULL);
 	__ASSERT_NO_MSG(modem != NULL);

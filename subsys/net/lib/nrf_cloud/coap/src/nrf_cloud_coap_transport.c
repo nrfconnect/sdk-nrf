@@ -828,7 +828,7 @@ int nrf_cloud_coap_transport_authenticate(struct nrf_cloud_coap_client *const cl
 	int err = 0;
 	char *jwt;
 
-#if defined(CONFIG_MODEM_INFO)
+#if defined(CONFIG_MODEM_INFO) && !defined(CONFIG_DECT)
 	char mfw_string[MODEM_INFO_FWVER_SIZE];
 	char ver_string[strlen(VER_STRING_FMT) +
 			MODEM_INFO_FWVER_SIZE +
