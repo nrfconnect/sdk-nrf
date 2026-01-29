@@ -8,12 +8,17 @@
 #if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID)
 #include <modem/modem_jwt.h>
 #endif
-#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI)
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI) || \
+	defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_MDM_DEVICE_UUID)
 #include <nrf_modem_at.h>
 #endif
 #if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID)
 #include <hw_id.h>
 #endif
+#if defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_MDM_DEVICE_UUID)
+#include <string.h>
+#endif
+
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <zephyr/logging/log.h>
@@ -70,6 +75,21 @@ static int configured_client_id_init(void)
 
 	print_ret = snprintk(client_id_buf, buf_sz, "%s%.*s", CONFIG_NRF_CLOUD_CLIENT_ID_PREFIX,
 			     NRF_IMEI_LEN, imei_buf);
+
+#elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_MDM_DEVICE_UUID)
+/* Device UUID is 36 characters: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX */
+#define UUID_SIZE 37
+
+	char uuid_buf[UUID_SIZE];
+
+	err = nrf_modem_at_scanf(
+		"AT%DEVICEUUID", "%%DEVICEUUID: %" STRINGIFY(UUID_SIZE) "[^\r\n]", uuid_buf);
+	if (err <= 0) {
+		LOG_ERR("Failed to obtain device UUID, error: %d", err);
+		goto cleanup;
+	}
+
+	print_ret = snprintk(client_id_buf, buf_sz, "%s", uuid_buf);
 
 #elif defined(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID)
 	struct nrf_device_uuid dev_id;

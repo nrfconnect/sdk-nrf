@@ -21,6 +21,13 @@ config NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID
 	help
 	  Requires modem firmware version 1.3 or later.
 
+config NRF_CLOUD_CLIENT_ID_SRC_MDM_DEVICE_UUID
+	bool "Modem internal device UUID value"
+	help
+	  Get the device UUID from the modem directly using the AT%DEVICEUUID command.
+	  This is only supported by the following modem firmware:
+	  mfw_nrf91x1 (v2.0.0 or later), mfw_nrf9151-ntn and mfw-nr+_nrf91x1 (v2.0.0 or later).
+
 config NRF_CLOUD_CLIENT_ID_SRC_HW_ID
 	depends on HW_ID_LIBRARY
 	bool "Hardware ID based value"
