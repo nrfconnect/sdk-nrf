@@ -20,9 +20,9 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_usb, CONFIG_MODULE_AUDIO_USB_LOG_LEVEL);
 
-#define TERMINAL_ID_HEADSET_OUT	  UAC2_ENTITY_ID(DT_NODELABEL(out_terminal))
+#define TERMINAL_ID_HEADSET_OUT	   0
 #define TERMINAL_ID_HEADPHONES_OUT UAC2_ENTITY_ID(DT_NODELABEL(hp_out_terminal))
-#define TERMINAL_ID_HEADSET_IN	  UAC2_ENTITY_ID(DT_NODELABEL(in_terminal))
+#define TERMINAL_ID_HEADSET_IN	   1
 
 /* Absolute minimum is 2 TX buffers but add 2 additional buffers to prevent out of memory
  * errors when USB host decides to perform rapid terminal enable/disable cycles.
@@ -300,7 +300,7 @@ int audio_usb_init(bool host_in, bool host_out)
 	local_host_out = host_out;
 
 	if (host_in && host_out) {
-		dev = DEVICE_DT_GET(DT_NODELABEL(uac2_headset));
+		// dev = DEVICE_DT_GET(DT_NODELABEL(uac2_headset));
 		LOG_INF("USB initialized as bidirectional (headset).");
 	} else if (host_out) {
 		dev = DEVICE_DT_GET(DT_NODELABEL(uac2_headphones));
