@@ -90,6 +90,7 @@ menuconfig MBEDTLS_TLS_LIBRARY
 	imply PSA_WANT_ALG_TLS12_PRF
 	imply PSA_WANT_ALG_TLS12_PSK_TO_MS
 	default y if MBEDTLS_PSA_CRYPTO_C && (MBEDTLS_ECDSA_C || MBEDTLS_ECDH_C)
+	default y if NET_SOCKETS_SOCKOPT_TLS
 	help
 	  Create the mbed SSL/TLS library in addition to the mbed crypto
 	  library.
