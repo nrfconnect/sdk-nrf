@@ -5,8 +5,7 @@
 #
 
 menuconfig MBEDTLS_X509_LIBRARY
-	bool
-	prompt "Create mbed TLS x509 library"
+	bool "Create mbed TLS x509 library"
 	select MBEDTLS_PK_C
 	default y if MBEDTLS_PSA_CRYPTO_C && (MBEDTLS_ECDSA_C || MBEDTLS_ECDH_C)
 	help
@@ -86,8 +85,7 @@ config MBEDTLS_PKCS7_C
 endif
 
 menuconfig MBEDTLS_TLS_LIBRARY
-	bool
-	prompt "Create mbed TLS transport layer security library"
+	bool "Create mbed TLS transport layer security library"
 	select MBEDTLS_X509_LIBRARY
 	imply PSA_WANT_ALG_TLS12_PRF
 	imply PSA_WANT_ALG_TLS12_PSK_TO_MS
@@ -150,8 +148,7 @@ config MBEDTLS_SSL_EXTENDED_MASTER_SECRET
 	  Corresponds to MBEDTLS_SSL_EXTENDED_MASTER_SECRET in mbed TLS config file.
 
 config MBEDTLS_SSL_COOKIE_C
-	bool
-	prompt "TLS server-side callbacks for session tickets"
+	bool "TLS server-side callbacks for session tickets"
 	depends on MBEDTLS_SSL_SRV_C
 	default y
 	help
@@ -160,8 +157,7 @@ config MBEDTLS_SSL_COOKIE_C
 endif # MBEDTLS_SSL_PROTO_TLS1_2
 
 config MBEDTLS_DEBUG_C
-	bool
-	prompt "Debug functions for TLS"
+	bool "Debug functions for TLS"
 	select CBPRINTF_PACKAGE_LONGDOUBLE
 	help
 	  Enable the debug functions for TLS.
@@ -213,23 +209,20 @@ config MBEDTLS_SSL_DTLS_SRTP
 	bool "DTLS-SRTP (RFC5764)"
 
 config MBEDTLS_SSL_DTLS_CLIENT_PORT_REUSE
-	bool
-	prompt "SSL - DTLS client port reuse"
+	bool "SSL - DTLS client port reuse"
 	depends on MBEDTLS_SSL_DTLS_HELLO_VERIFY
 	help
 	  Enable server-side support for clients that reconnect from the same port.
 
 config MBEDTLS_SSL_DTLS_CONNECTION_ID
-	bool
-	prompt "SSL - DTLS connection ID"
+	bool "SSL - DTLS connection ID"
 	help
 	  Enable support for the DTLS Connection ID extension which allows to
 	  identify DTLS connections across changes in the underlying transport.
 	  The Connection ID extension is still in draft state.
 
 config MBEDTLS_SSL_DTLS_BADMAC_LIMIT
-	bool
-	prompt "SSL - DTLS bad MAC limit"
+	bool "SSL - DTLS bad MAC limit"
 	help
 	  Enable support for a limit of records with bad MAC.
 
@@ -245,18 +238,16 @@ config MBEDTLS_SSL_CLI_ALLOW_WEAK_CERTIFICATE_VERIFICATION_WITHOUT_HOSTNAME
 	  Allow weak certificate verification without hostname check.
 
 config MBEDTLS_SSL_ALL_ALERT_MESSAGES
-	bool
-	prompt "All SSL alert messages"
+	bool "All SSL alert messages"
 	default y
 	help
-	  This setting enables alert messages beingsentin case of failures.
+	  This setting enables alert messages being sent in case of failures.
 	  Disabling this will enure that no information is given about reasons
 	  for failures.
 	  Corresponds to MBEDTLS_SSL_ALL_ALERT_MESSAGES in mbed TLS config file.
 
 config MBEDTLS_SSL_CONTEXT_SERIALIZATION
-	bool
-	prompt "Serialization of TLS conftext structures"
+	bool "Serialization of TLS context structures"
 	default y
 	help
 	  This setting enables serialization of TLS structures, through use of
@@ -264,16 +255,14 @@ config MBEDTLS_SSL_CONTEXT_SERIALIZATION
 	  Corresponds to MBEDTLS_SSL_CONTEXT_SERIALIZATION in mbed TLS config file.
 
 config MBEDTLS_SSL_DEBUG_ALL
-	bool
-	prompt "Debug messages in SSL module for all issues."
+	bool "Debug messages in SSL module for all issues."
 	help
 	  This setting enable the debug messages in SSL module for all issues.
 	  Note: Some debug messages have been enabled to prevent timing attacks.
 	  Corresponds to MBEDTLS_SSL_DEBUG_ALL in mbed TLS config file.
 
 config MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
-	bool
-	prompt "Give acces to peer certificate after handshake"
+	bool "Give access to peer certificate after handshake"
 	default y
 	help
 	  Provides mbedtls_ssl_get_peer_cert() the ability to give the
@@ -282,46 +271,39 @@ config MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
 	  Corresponds to MBEDTLS_SSL_KEEP_PEER_CERTIFICATE in mbed TLS config file.
 
 config MBEDTLS_SSL_RENEGOTIATION
-	bool
-	prompt "SSL - Renegotiation"
+	bool "SSL - Renegotiation"
 	help
 	  Enable support for TLS renegotiation.
 
 config MBEDTLS_SSL_MAX_FRAGMENT_LENGTH
-	bool
-	prompt "SSL - RFC 6066 max_fragment_legth extension"
+	bool "SSL - RFC 6066 max_fragment_length extension"
 	help
 	  Enable support for RFC 6066 max_fragment_length extension in SSL.
 
 config MBEDTLS_SSL_SESSION_TICKETS
-	bool
-	prompt "SSL - RFC 5077 session tickets support"
+	bool "SSL - RFC 5077 session tickets support"
 	help
 	  Enable support for RFC 5077 session tickets in SSL.
 
 config MBEDTLS_SSL_SERVER_NAME_INDICATION
-	bool
-	prompt "SSL - RFC 6066 SNI"
+	bool "SSL - RFC 6066 SNI"
 	depends on MBEDTLS_X509_CRT_PARSE_C
 	help
 	  Enable support for RFC 6066 server name indication (SNI) in SSL.
 
 config MBEDTLS_SSL_CACHE_C
-	bool
-	prompt "SSL - cache"
+	bool "SSL - cache"
 	help
 	  Enable simple SSL cache implementation.
 
 config MBEDTLS_SSL_TICKET_C
-	bool
-	prompt "SSL - tickets"
+	bool "SSL - tickets"
 	depends on MBEDTLS_CIPHER_C
 	help
 	  Enable an implementation of TLS server-side callbacks for session tickets.
 
 config MBEDTLS_SSL_EXPORT_KEYS
-	bool
-	prompt "Support for exporting keys"
+	bool "Support for exporting keys"
 	default y
 	help
 	  Enables support for exporting key block and master secret.
@@ -433,80 +415,69 @@ config MBEDTLS_HAS_ECJPAKE_CIPHERSUITE_REQUIREMENTS
 		   (PSA_WANT_ALG_JPAKE && PSA_WANT_ALG_SHA_256 && MBEDTLS_USE_PSA_CRYPTO)
 
 config MBEDTLS_KEY_EXCHANGE_PSK_ENABLED
-	bool
-	prompt "PSK"
+	bool "PSK"
 	default y if OPENTHREAD_COAPS || !OPENTHREAD
 	depends on MBEDTLS_HAS_CIPHER_MODE_CIPHERSUITE_REQUIREMENTS
 
 config MBEDTLS_KEY_EXCHANGE_DHE_PSK_ENABLED
-	bool
-	prompt "DHE PSK"
+	bool "DHE PSK"
 	default y if !OPENTHREAD
 	depends on MBEDTLS_HAS_CIPHER_MODE_CIPHERSUITE_REQUIREMENTS && \
 		   MBEDTLS_HAS_RSA_CIPHERSUITE_REQUIREMENTS
 
 config MBEDTLS_KEY_EXCHANGE_ECDHE_PSK_ENABLED
-	bool
-	prompt "ECDHE PSK"
+	bool "ECDHE PSK"
 	default y if !OPENTHREAD
 	depends on MBEDTLS_HAS_CIPHER_MODE_CIPHERSUITE_REQUIREMENTS && \
 		   MBEDTLS_HAS_ECDH_CIPHERSUITE_REQUIREMENTS
 
 config MBEDTLS_KEY_EXCHANGE_RSA_PSK_ENABLED
-	bool
-	prompt "RSA PSK"
+	bool "RSA PSK"
 	default y if !OPENTHREAD
 	depends on MBEDTLS_HAS_CIPHER_MODE_CIPHERSUITE_REQUIREMENTS && \
 		   MBEDTLS_HAS_RSA_CIPHERSUITE_REQUIREMENTS
 
 config MBEDTLS_KEY_EXCHANGE_RSA_ENABLED
-	bool
-	prompt "RSA"
+	bool "RSA"
 	default y if !OPENTHREAD
 	depends on MBEDTLS_HAS_RSA_CIPHERSUITE_REQUIREMENTS
 
 config MBEDTLS_KEY_EXCHANGE_DHE_RSA_ENABLED
-	bool
-	prompt "DHE RSA"
+	bool "DHE RSA"
 	default y if !OPENTHREAD
 	depends on MBEDTLS_HAS_CIPHER_MODE_CIPHERSUITE_REQUIREMENTS && \
 		   MBEDTLS_HAS_RSA_CIPHERSUITE_REQUIREMENTS
 
 config MBEDTLS_KEY_EXCHANGE_ECDHE_RSA_ENABLED
-	bool
-	prompt "ECDHE RSA"
+	bool "ECDHE RSA"
 	default y if !OPENTHREAD
 	depends on MBEDTLS_HAS_CIPHER_MODE_CIPHERSUITE_REQUIREMENTS && \
 		   MBEDTLS_HAS_ECDH_CIPHERSUITE_REQUIREMENTS && \
 		   MBEDTLS_HAS_RSA_CIPHERSUITE_REQUIREMENTS
 
 config MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED
-	bool
-	prompt "ECDHE ECDSA"
+	bool "ECDHE ECDSA"
 	default y if OPENTHREAD_ECDSA || !OPENTHREAD
 	depends on MBEDTLS_HAS_CIPHER_MODE_CIPHERSUITE_REQUIREMENTS && \
 		   MBEDTLS_HAS_ECDH_CIPHERSUITE_REQUIREMENTS && \
 		   MBEDTLS_HAS_ECDSA_CIPHERSUITE_REQUIREMENTS
 
 config MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA_ENABLED
-	bool
-	prompt "ECDH ECDSA"
+	bool "ECDH ECDSA"
 	default y if !OPENTHREAD
 	depends on MBEDTLS_HAS_CIPHER_MODE_CIPHERSUITE_REQUIREMENTS && \
 		   MBEDTLS_HAS_ECDH_CIPHERSUITE_REQUIREMENTS && \
 		   MBEDTLS_HAS_ECDSA_CIPHERSUITE_REQUIREMENTS
 
 config MBEDTLS_KEY_EXCHANGE_ECDH_RSA_ENABLED
-	bool
-	prompt "ECDH RSA"
+	bool "ECDH RSA"
 	default y if !OPENTHREAD
 	depends on MBEDTLS_HAS_CIPHER_MODE_CIPHERSUITE_REQUIREMENTS && \
 		   MBEDTLS_HAS_ECDH_CIPHERSUITE_REQUIREMENTS && \
 		   MBEDTLS_HAS_RSA_CIPHERSUITE_REQUIREMENTS
 
 config MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED
-	bool
-	prompt "ECJPAKE"
+	bool "ECJPAKE"
 	default y
 	depends on MBEDTLS_HAS_ECJPAKE_CIPHERSUITE_REQUIREMENTS
 
