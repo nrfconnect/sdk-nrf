@@ -714,6 +714,7 @@
 /scripts/ci/tags_sdk_zephyr.yaml          @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/twister_ignore.txt            @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/twister_ignore_sdk_zephyr.txt @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
+/scripts/ci/twister_platforms_zephyr.yaml @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/quarantine*.yaml                 @nrfconnect/ncs-test-leads
 /scripts/hid_configurator/                @nrfconnect/ncs-si-xcake
 /scripts/nrf_profiler/                    @nrfconnect/ncs-si-xcake

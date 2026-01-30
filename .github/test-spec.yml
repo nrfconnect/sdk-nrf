@@ -16,6 +16,9 @@
       - "!VERSION"
       - "!ncs_version.h.in"
 
+"CI-run-zephyr-twister":
+  - "scripts/ci/twister_platforms_zephyr.yaml"
+
 "CI-tool-test-linux":
   - "scripts/requirements*.txt"
   - "scripts/tools-versions-linux.yml"
