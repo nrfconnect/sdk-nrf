@@ -175,3 +175,9 @@ if(CONFIG_PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KEY_DER
     ${CMAKE_CURRENT_LIST_DIR}/src/key_derivation.c
   )
 endif()
+
+if(CONFIG_PSA_NEED_CRACEN_KEY_WRAP_DRIVER)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_wrap.c
+  )
+endif()

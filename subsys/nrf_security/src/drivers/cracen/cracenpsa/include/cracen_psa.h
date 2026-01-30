@@ -34,6 +34,7 @@
 #include "cracen_psa_kmu.h"
 #include "cracen_psa_key_ids.h"
 #include "sxsymcrypt/keyref.h"
+#include "cracen_psa_key_wrap.h"
 
 /** @brief Sign a message.
  *
