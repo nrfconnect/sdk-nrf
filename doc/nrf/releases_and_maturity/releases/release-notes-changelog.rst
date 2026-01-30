@@ -441,7 +441,10 @@ Matter samples
 
 * :ref:`matter_lock_sample`:
 
-  * Added support for the :ref:`matter_lock_sample_wifi_thread_switching` in the nRF54LM20 DK with the nRF7002-EB II shield attached.
+  * Added:
+
+    * Support for the :ref:`matter_lock_sample_wifi_thread_switching` in the nRF54LM20 DK with the nRF7002-EB II shield attached.
+    * Lock data storage implementation based on the ARM PSA Protected Storage API, enabled with the :kconfig:option:`CONFIG_LOCK_ACCESS_STORAGE_PROTECTED_STORAGE` Kconfig option.
 
 * :ref:`matter_light_bulb_sample`:
 
