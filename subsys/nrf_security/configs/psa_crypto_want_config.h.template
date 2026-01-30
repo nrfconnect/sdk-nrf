@@ -168,7 +168,8 @@
 #cmakedefine PSA_WANT_ALG_DETERMINISTIC_ML_DSA                  @PSA_WANT_ALG_DETERMINISTIC_ML_DSA@
 #cmakedefine PSA_WANT_ALG_DETERMINISTIC_HASH_ML_DSA             @PSA_WANT_ALG_DETERMINISTIC_HASH_ML_DSA@
 #cmakedefine PSA_WANT_ALG_HASH_ML_DSA                           @PSA_WANT_ALG_HASH_ML_DSA@
-
+#cmakedefine PSA_WANT_ALG_AES_KW                                @PSA_WANT_ALG_AES_KW@
+#cmakedefine PSA_WANT_ALG_AES_KWP                               @PSA_WANT_ALG_AES_KWP@
 
 /* The Adjusting is done in this file */
 #define PSA_CRYPTO_ADJUST_KEYPAIR_TYPES_H

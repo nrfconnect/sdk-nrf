@@ -3643,6 +3643,169 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_CMAC`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_HMAC`
 
+.. _ug_crypto_supported_features_key_wrap_algorithms:
+
+Key wrapping algorithms
+=======================
+
+The following tables show the ``CONFIG_PSA_WANT_*`` Kconfig options for configuring AES key wrapping algorithms that Oberon PSA Crypto should add support for in the application at compile time.
+Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option, Oberon PSA Crypto selects the most appropriate driver for the supported AES key wrapping algorithms.
+
+The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
+
+.. tabs::
+
+   .. tab:: nRF52 Series
+
+      The following tables list the supported AES key wrapping algorithms for nRF52 Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: Key wrapping support (nrf_oberon driver) - nRF52 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Key wrapping algorithm
+                 - Configuration option
+                 - nRF52832
+                 - nRF52833
+                 - nRF52840
+               * - AES Key wrap (AES-KW)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KW`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - AES Key wrap with Padding (AES-KWP)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KWP`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+
+   .. tab:: nRF53 Series
+
+      The following tables list the supported AES key wrapping algorithms for nRF53 Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: Key wrapping support (nrf_oberon driver) - nRF53 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Key wrapping algorithm
+                 - Configuration option
+                 - nRF5340
+               * - AES Key wrap (AES-KW)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KW`
+                 - Experimental
+               * - AES Key wrap with Padding (AES-KWP)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KWP`
+                 - Experimental
+
+   .. tab:: nRF54L Series
+
+      The following tables list the supported AES key wrapping algorithms for nRF54L Series devices.
+
+      .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: Key wrapping support (CRACEN driver) - nRF54L Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Key wrapping algorithm
+                 - Configuration option
+                 - nRF54L05
+                 - nRF54L10
+                 - nRF54L15
+                 - nRF54LM20A
+                 - nRF54LV10A
+               * - AES Key wrap (AES-KW)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KW`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental (with exceptions, see note)
+                 - Experimental (with exceptions, see note)
+               * - AES Key wrap with Padding (AES-KWP)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KWP`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental (with exceptions, see note)
+                 - Experimental (with exceptions, see note)
+
+            .. note::
+
+               The following limitations apply for nRF54LM20A and nRF54LV10A when using the CRACEN driver:
+
+               * 192-bit keys are not supported.
+                 See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: Key wrapping support (nrf_oberon driver) - nRF54L Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Key wrapping algorithm
+                 - Configuration option
+                 - nRF54L05
+                 - nRF54L10
+                 - nRF54L15
+                 - nRF54LM20A
+                 - nRF54LV10A
+               * - AES Key wrap (AES-KW)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KW`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - AES Key wrap with Padding (AES-KWP)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KWP`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+
+   .. tab:: nRF91 Series
+
+      The following tables list the supported AES key wrapping algorithms for nRF91 Series devices.
+
+      .. tabs::
+
+         .. tab:: nrf_oberon
+
+            .. list-table:: Key wrapping support (nrf_oberon driver) - nRF91 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Key wrapping algorithm
+                 - Configuration option
+                 - nRF9131
+                 - nRF9151
+                 - nRF9160
+                 - nRF9161
+               * - AES Key wrap (AES-KW)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KW`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+               * - AES Key wrap with Padding (AES-KWP)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KWP`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+
+
 .. _ug_crypto_supported_features_mac_algorithms:
 
 MAC algorithms

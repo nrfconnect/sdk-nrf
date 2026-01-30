@@ -123,6 +123,15 @@ void cracen_be_rshift(const uint8_t *a, int n, uint8_t *r, size_t sz);
 int cracen_be_cmp(const uint8_t *a, const uint8_t *b, size_t sz, int carry);
 
 /**
+ * @brief Compute buf = buf ^ xor_val.
+ *
+ * @param buf		Big-endian value.
+ * @param buf_sz	size of buf.
+ * @param xor_val	A value to XOR buf with.
+ */
+void cracen_be_xor(uint8_t *buf, size_t buf_sz, size_t xor_val);
+
+/**
  * @brief Hash several elements at different locations in memory
  *
  * @param inputs[in]		Array of pointers to elements that will be hashed.

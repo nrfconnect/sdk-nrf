@@ -345,6 +345,8 @@
 #cmakedefine PSA_NEED_CRACEN_SHA3_384                           @PSA_NEED_CRACEN_SHA3_384@
 #cmakedefine PSA_NEED_CRACEN_SHA3_512                           @PSA_NEED_CRACEN_SHA3_512@
 #cmakedefine PSA_NEED_CRACEN_SHAKE256_512                       @PSA_NEED_CRACEN_SHAKE256_512@
+#cmakedefine PSA_NEED_CRACEN_AES_KW                             @PSA_NEED_CRACEN_AES_KW@
+#cmakedefine PSA_NEED_CRACEN_AES_KWP                            @PSA_NEED_CRACEN_AES_KWP@
 
 /* Key management driver configurations */
 #cmakedefine PSA_NEED_CRACEN_KEY_TYPE_ECC_PUBLIC_KEY_SECP_R1_224                @PSA_NEED_CRACEN_KEY_TYPE_ECC_PUBLIC_KEY_SECP_R1_224@
@@ -481,6 +483,8 @@
 #cmakedefine PSA_NEED_CRACEN_TLS12_PRF                          @PSA_NEED_CRACEN_TLS12_PRF@
 #cmakedefine PSA_NEED_CRACEN_TLS12_PSK_TO_MS                    @PSA_NEED_CRACEN_TLS12_PSK_TO_MS@
 #cmakedefine PSA_NEED_CRACEN_PBKDF2_HMAC                        @PSA_NEED_CRACEN_PBKDF2_HMAC@
+
+#cmakedefine PSA_NEED_CRACEN_KEY_WRAP_DRIVER                    @PSA_NEED_CRACEN_KEY_WRAP_DRIVER@
 
 /* Nordic specific */
 #cmakedefine PSA_CRYPTO_DRIVER_ALG_PRNG_TEST                    @PSA_CRYPTO_DRIVER_ALG_PRNG_TEST@
