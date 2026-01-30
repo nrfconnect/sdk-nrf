@@ -1,0 +1,28 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "app_common.dtsi"
+
+/* Debug build without MCUboot. */
+&cpuapp_rram {
+	/delete-node/ partitions;
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot0_partition: partition@0 {
+			label = "image-0";
+			reg = <0x0 DT_SIZE_K(492)>;
+		};
+
+		storage_partition: partition@7b000 {
+			label = "storage";
+			reg = <0x7b000 DT_SIZE_K(16)>;
+		};
+	};
+};
