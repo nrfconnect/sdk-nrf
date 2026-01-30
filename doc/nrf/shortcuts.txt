@@ -280,3 +280,6 @@
 .. |ISE| replace:: IronSide SE
 
 .. |ESB| replace:: Enhanced ShockBurst
+
+.. |errata36_approtect| replace:: The registers in the NRF_APPROTECT peripheral are not retained in SYSTEM ON IDLE mode.
+   See `Errata 36`_ in the nRF9161 hardware revision 1 errata for more information and workaround.
