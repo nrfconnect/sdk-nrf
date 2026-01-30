@@ -47,6 +47,7 @@
 #include "cracen_psa_spake2p.h"
 #include "cracen_psa_srp.h"
 #include "cracen_psa_wpa3_sae.h"
+#include "cracen_psa_key_wrap.h"
 
 /** @brief Get the size of an opaque key.
  *

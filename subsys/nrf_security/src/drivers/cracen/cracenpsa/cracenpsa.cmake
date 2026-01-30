@@ -27,7 +27,8 @@ if(BUILD_INSIDE_TFM)
   )
 endif()
 
-# Include hardware cipher implementation for all devices except nRF54LM20A
+# Include hardware cipher implementation for all devices except nRF54LM20A,
+# which does not support multipart cipher operations.
 # nRF54LM20A uses only cracen_sw
 if(NOT CONFIG_PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
   list(APPEND cracen_driver_sources
@@ -178,5 +179,21 @@ if(CONFIG_PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KEY_DER
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecdh/cracen_ecdh_weierstrass.c
 
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_derivation.c
+  )
+endif()
+
+if(CONFIG_PSA_NEED_CRACEN_KEY_WRAP_DRIVER)
+  # nRF54LM20A supports singlepart AES-ECB required by key wrap
+  if(CONFIG_PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
+    list(APPEND cracen_driver_sources
+      ${CMAKE_CURRENT_LIST_DIR}/src/internal/aes/cracen_aes_ecb.c
+    )
+  endif()
+
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_wrap/cracen_key_wrap_common.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_wrap/cracen_key_wrap_kw.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_wrap/cracen_key_wrap_kwp.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_wrap.c
   )
 endif()

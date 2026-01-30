@@ -397,6 +397,15 @@ int cracen_be_cmp(const uint8_t *a, const uint8_t *b, size_t sz, int carry)
 	return (gt ? 1 : 0) - (lt ? 1 : 0);
 }
 
+void cracen_be_xor(uint8_t *buf, size_t buf_sz, size_t xor_val)
+{
+	while (buf_sz > 0 && xor_val > 0) {
+		buf_sz--;
+		buf[buf_sz] ^= xor_val & 0xFF;
+		xor_val >>= 8;
+	}
+}
+
 int cracen_hash_all_inputs_with_context(struct sxhash *hashopctx, const uint8_t *inputs[],
 					const size_t input_lengths[], size_t input_count,
 					const struct sxhashalg *hashalg, uint8_t *digest)
