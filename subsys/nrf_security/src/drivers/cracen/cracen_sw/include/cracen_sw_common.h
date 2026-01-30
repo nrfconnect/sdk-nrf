@@ -65,4 +65,30 @@ psa_status_t cracen_aes_ecb_decrypt(struct sxblkcipher *blkciph, const struct sx
 psa_status_t cracen_aes_primitive(struct sxblkcipher *blkciph, const struct sxkeyref *key,
 				  const uint8_t *input, uint8_t *output);
 
+/** @brief Increment counter value stored as a big endian buffer.
+ *
+ * This function is used by software workarounds for CRACEN peripheral.
+ *
+ * @param[in,out] ctr_buf Counter.
+ * @param[in] ctr_buf_size Counter buffer size.
+ * @param[in] start_pos Counter starting position index.
+ *
+ * @retval PSA_SUCCESS		      The operation completed successfully.
+ * @retval PSA_ERROR_INVALID_ARGUMENT The counter overflowed.
+ */
+psa_status_t cracen_sw_increment_counter_be(uint8_t *ctr_buf, size_t ctr_buf_size,
+					    size_t start_pos);
+
+/** @brief Encode value as big-endian, right-aligned in buffer.
+ *
+ * This function is used by software workarounds for CRACEN peripheral.
+ *
+ * @param[out] buffer Output buffer.
+ * @param[in] buffer_size Output buffer size.
+ * @param[in] value Value to encode.
+ * @param[in] value_size A size of the value.
+ */
+void cracen_sw_encode_value_be(uint8_t *buffer, size_t buffer_size, size_t value,
+			       size_t value_size);
+
 #endif /* CRACEN_SW_COMMON_H */

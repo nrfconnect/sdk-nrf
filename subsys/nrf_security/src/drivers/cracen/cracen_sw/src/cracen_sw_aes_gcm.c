@@ -54,29 +54,6 @@ static bool is_tag_length_valid(size_t tag_length)
 	       (tag_length == GCM_SPECIAL_TAG_SIZE_1) || (tag_length == GCM_SPECIAL_TAG_SIZE_2);
 }
 
-static psa_status_t increment_counter(uint8_t *ctr, size_t counter_size)
-{
-	size_t start_pos = SX_BLKCIPHER_AES_BLK_SZ - counter_size;
-
-	for (size_t i = SX_BLKCIPHER_AES_BLK_SZ; i > start_pos; i--) {
-		if (++ctr[i - 1] != 0) {
-			return PSA_SUCCESS;
-		}
-	}
-
-	/* All counter bytes wrapped to zero which means it overflowed */
-	return PSA_ERROR_INVALID_ARGUMENT;
-}
-
-/* Encode value as big-endian, right-aligned in buffer */
-static void encode_big_endian_length(uint8_t *buffer, size_t buffer_size, size_t value,
-				     size_t value_size)
-{
-	for (size_t i = 0; i < value_size; i++) {
-		buffer[buffer_size - 1 - i] = value >> (i * 8);
-	}
-}
-
 /** GHASH_H(X1 || X2 || ... || Xm) = Ym
  *  Note: the current implementation follows NIST SP800-38D,
  *  no Shoup's tables are used now
@@ -252,11 +229,14 @@ static psa_status_t ctr_xor(cracen_aead_operation_t *operation, struct sxblkciph
 {
 	cracen_sw_gcm_context_t *gcm_ctx = &operation->sw_gcm_ctx;
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	size_t counter_start_pos = SX_BLKCIPHER_AES_BLK_SZ - counter_size;
 
 	for (size_t i = 0; i < length; i++) {
 		/* Generate new keystream block when current one is exhausted */
 		if (gcm_ctx->keystream_offset >= SX_BLKCIPHER_AES_BLK_SZ) {
-			status = increment_counter(gcm_ctx->ctr_block, counter_size);
+			status = cracen_sw_increment_counter_be(gcm_ctx->ctr_block,
+								SX_BLKCIPHER_AES_BLK_SZ,
+								counter_start_pos);
 			if (status != PSA_SUCCESS) {
 				return status;
 			}
@@ -279,14 +259,14 @@ static void finalize_data_padding(cracen_aead_operation_t *operation)
 	uint8_t padding_block[SX_BLKCIPHER_AES_BLK_SZ] = {0};
 
 	/* GHASH( [len(AAD)]64 || [LEN(C)]64 ) */
-	encode_big_endian_length(padding_block,
-				 SX_BLKCIPHER_AES_BLK_SZ / 2,
-				 PSA_BYTES_TO_BITS(gcm_ctx->total_ad_fed),
-				 SX_BLKCIPHER_AES_BLK_SZ / 2);
-	encode_big_endian_length(padding_block + SX_BLKCIPHER_AES_BLK_SZ / 2,
-				 SX_BLKCIPHER_AES_BLK_SZ / 2,
-				 PSA_BYTES_TO_BITS(gcm_ctx->total_data_enc),
-				 SX_BLKCIPHER_AES_BLK_SZ / 2);
+	cracen_sw_encode_value_be(padding_block,
+				  SX_BLKCIPHER_AES_BLK_SZ / 2,
+				  PSA_BYTES_TO_BITS(gcm_ctx->total_ad_fed),
+				  SX_BLKCIPHER_AES_BLK_SZ / 2);
+	cracen_sw_encode_value_be(padding_block + SX_BLKCIPHER_AES_BLK_SZ / 2,
+				  SX_BLKCIPHER_AES_BLK_SZ / 2,
+				  PSA_BYTES_TO_BITS(gcm_ctx->total_data_enc),
+				  SX_BLKCIPHER_AES_BLK_SZ / 2);
 	calc_gcm_ghash(operation, padding_block, SX_BLKCIPHER_AES_BLK_SZ);
 
 	operation->unprocessed_input_bytes = 0;
