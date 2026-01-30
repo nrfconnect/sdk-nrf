@@ -97,3 +97,23 @@ psa_status_t cracen_aes_primitive(struct sxblkcipher *blkciph, const struct sxke
 	return cracen_aes_ecb_crypt(blkciph, input, SX_BLKCIPHER_AES_BLK_SZ, output,
 				    SX_BLKCIPHER_AES_BLK_SZ, &output_size);
 }
+
+psa_status_t cracen_sw_increment_counter_be(uint8_t *ctr_buf, size_t ctr_buf_size, size_t start_pos)
+{
+	for (size_t i = ctr_buf_size; i > start_pos; i--) {
+		if (++ctr_buf[i - 1] != 0) {
+			return PSA_SUCCESS;
+		}
+	}
+
+	/* All counter bytes wrapped to zero which means it overflowed */
+	return PSA_ERROR_INVALID_ARGUMENT;
+}
+
+void cracen_sw_encode_value_be(uint8_t *buffer, size_t buffer_size, size_t value,
+			       size_t value_size)
+{
+	for (size_t i = 0; i < value_size; i++) {
+		buffer[buffer_size - 1 - i] = value >> (i * 8);
+	}
+}

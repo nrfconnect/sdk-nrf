@@ -82,27 +82,6 @@ static bool is_tag_length_valid(size_t tag_length)
 	return tag_length == CRACEN_POLY1305_TAG_SIZE;
 }
 
-static psa_status_t increment_counter(uint8_t *ctr)
-{
-	for (size_t i = CRACEN_CHACHA20_COUNTER_SIZE; i > 0; i--) {
-		if (++ctr[i - 1] != 0) {
-			return PSA_SUCCESS;
-		}
-	}
-
-	/* All counter bytes wrapped to zero which means it overflowed */
-	return PSA_ERROR_INVALID_ARGUMENT;
-}
-
-/* Encode value as big-endian, right-aligned in buffer */
-static void encode_big_endian_value(uint8_t *buffer, size_t buffer_size, size_t value,
-				     size_t value_size)
-{
-	for (size_t i = 0; i < value_size; i++) {
-		buffer[buffer_size - 1 - i] = value >> (i * 8);
-	}
-}
-
 /* Encode value as little-endian, left-aligned in buffer */
 static void encode_little_endian_value(uint8_t *buffer, size_t buffer_size, size_t value,
 				       size_t value_size)
@@ -189,7 +168,7 @@ static void initialize_ctr(cracen_aead_operation_t *operation)
 		return;
 	}
 	/* RFC8439: initial counter value is 1 */
-	encode_big_endian_value(chacha_poly_ctx->ctr, CRACEN_CHACHA20_COUNTER_SIZE, 1, 1);
+	cracen_sw_encode_value_be(chacha_poly_ctx->ctr, CRACEN_CHACHA20_COUNTER_SIZE, 1, 1);
 	chacha_poly_ctx->ctr_initialized = true;
 }
 
@@ -223,7 +202,9 @@ static psa_status_t calc_chacha20(cracen_aead_operation_t *operation, struct sxb
 	}
 
 	if (length == SX_BLKCIPHER_CHACHA20_BLK_SZ) {
-		return increment_counter(chacha_poly_ctx->ctr);
+		return cracen_sw_increment_counter_be(chacha_poly_ctx->ctr,
+						      CRACEN_CHACHA20_COUNTER_SIZE,
+						      0);
 	}
 	return PSA_SUCCESS;
 }
