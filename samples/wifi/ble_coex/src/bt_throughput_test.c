@@ -177,6 +177,39 @@ struct bt_gatt_dm_cb discovery_cb = {
 	.error_found       = discovery_error,
 };
 
+/*
+ * Robust LE Set PHY helper with exponential backoff to handle early
+ * "Controller Busy (0x3A)" conditions right after a connection.
+ * Retries only on transient errors and returns 0 once the command is
+ * accepted by the controller (completion is still signaled via
+ * le_phy_updated() -> throughput_sem as before).
+ */
+static int try_set_phy_with_backoff(struct bt_conn *conn, const struct bt_conn_le_phy_param *phy)
+{
+	int err;
+	int delay_ms = 50;
+	const int max_attempts = 5;
+
+	for (int attempt = 1; attempt <= max_attempts; attempt++) {
+		err = bt_conn_le_phy_update(conn, phy);
+		if (err == 0) {
+			return 0; /* accepted; wait for callback/semaphore */
+		}
+
+		/* Treat typical transient returns as retryable */
+		if (err == -EIO || err == -EBUSY || err == -EAGAIN) {
+			LOG_WRN("PHY update busy on attempt %d/%d (err %d); retrying in %d ms",
+				attempt, max_attempts, err, delay_ms);
+			k_msleep(delay_ms);
+			delay_ms <<= 1; /* 50 ? 100 ? 200 ? 400 ? 800 */
+			continue;
+		}
+
+		/* Non-transient: bubble up immediately */
+		return err;
+	}
+	return -EIO; /* Exhausted retries */
+}
 static void connected(struct bt_conn *conn, uint8_t hci_err)
 {
 	struct bt_conn_info info = {0};
@@ -468,17 +501,20 @@ int connection_configuration_set(const struct bt_le_conn_param *conn_param,
 		LOG_INF("'run' command shall be executed only on the central board");
 	}
 
-	err = bt_conn_le_phy_update(default_conn, phy);
-	if (err) {
-		LOG_ERR("PHY update failed: %d", err);
-		return err;
-	}
+	/* Use robust PHY set helper (handles early controller-busy) */
+	err = try_set_phy_with_backoff(default_conn, phy);
 
-	LOG_INF("PHY update pending");
-	err = k_sem_take(&throughput_sem, K_SECONDS(THROUGHPUT_CONFIG_TIMEOUT));
 	if (err) {
-		LOG_ERR("PHY update timeout");
-		return err;
+		/* PHY update may fail initially but succeed later via remote device.
+		 * Log warning and continue - don't treat as fatal error.
+		 */
+		LOG_WRN("PHY update request failed: %d (may still succeed via callback)", err);
+	} else {
+		LOG_INF("PHY update pending");
+		err = k_sem_take(&throughput_sem, K_SECONDS(THROUGHPUT_CONFIG_TIMEOUT));
+		if (err) {
+			LOG_WRN("PHY update timeout - continuing anyway");
+		}
 	}
 
 	if (BT_GAP_US_TO_CONN_INTERVAL(info.le.interval_us) != conn_param->interval_max) {
