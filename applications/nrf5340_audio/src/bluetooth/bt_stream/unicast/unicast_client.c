@@ -981,6 +981,7 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 	if (stream->qos->rtn != server_pref->rtn) {
 		LOG_INF("Accepting server's preferred RTN: %d (was %d)", server_pref->rtn,
 			stream->qos->rtn);
+		/* RTN may be different for the sink/source direction and for each stream. */
 
 		if (dir == BT_AUDIO_DIR_SINK) {
 			server->snk.lc3_preset[0].qos.rtn = server_pref->rtn;
