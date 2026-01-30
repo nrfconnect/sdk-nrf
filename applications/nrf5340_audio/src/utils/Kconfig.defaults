@@ -6,4 +6,4 @@
 
 # Location assignment writes to UICR
 config NRFX_NVMC
-	default y
+	default n

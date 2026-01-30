@@ -49,7 +49,7 @@ config CONTIN_ARRAY
 	default y
 
 config NRFX_I2S
-	default y
+	default n
 
 config PCM_MIX
 	default y
@@ -59,7 +59,7 @@ config PSCM
 
 # Enable NRFX_CLOCK for ACLK control
 config NRFX_CLOCK
-	default y
+	default n
 
 config I2C
 	default y
@@ -76,10 +76,10 @@ config FPU_SHARING
 
 # Enable SDHC interface
 config DISK_DRIVERS
-	default y
+	default n
 
 config DISK_DRIVER_SDMMC
-	default y
+	default n
 
 # Enable SPI interface
 config SPI
@@ -96,13 +96,13 @@ config SPI_NRFX_RAM_BUFFER_SIZE
 
 # Config the file system
 config FILE_SYSTEM
-	default y
+	default n
 
 config FAT_FILESYSTEM_ELM
-	default y
+	default n
 
 config FS_FATFS_LFN
-	default y
+	default n
 choice FS_FATFS_LFN_MODE
 	# Using stack for LFN work queue
 	default FS_FATFS_LFN_MODE_STACK
@@ -110,10 +110,10 @@ endchoice
 
 # exFAT enabled to support longer file names and higher transfer speed
 config FS_FATFS_EXFAT
-	default y
+	default n
 
 config WATCHDOG
-	default y
+	default n
 
 config TASK_WDT
-	default y
+	default n

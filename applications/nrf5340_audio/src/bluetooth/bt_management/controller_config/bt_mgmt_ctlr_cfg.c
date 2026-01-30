@@ -48,8 +48,8 @@ static void work_ctlr_poll_handler(struct k_work *work)
 	ret = bt_mgmt_ctlr_cfg_manufacturer_get(false, &manufacturer);
 	ERR_CHK_MSG(ret, "Failed to contact net core");
 
-	ret = task_wdt_feed(wdt_ch_id);
-	ERR_CHK_MSG(ret, "Failed to feed watchdog");
+	// ret = task_wdt_feed(wdt_ch_id);
+	// ERR_CHK_MSG(ret, "Failed to feed watchdog");
 }
 
 static void ctlr_poll_timer_handler(struct k_timer *timer_id)
@@ -62,10 +62,10 @@ static void ctlr_poll_timer_handler(struct k_timer *timer_id)
 	}
 }
 
-static void wdt_timeout_cb(int channel_id, void *user_data)
-{
-	ERR_CHK_MSG(-ETIMEDOUT, "No response from IPC or controller");
-}
+// static void wdt_timeout_cb(int channel_id, void *user_data)
+// {
+// 	ERR_CHK_MSG(-ETIMEDOUT, "No response from IPC or controller");
+// }
 
 int bt_mgmt_ctlr_cfg_manufacturer_get(bool print_version, uint16_t *manufacturer)
 {
@@ -108,28 +108,28 @@ int bt_mgmt_ctlr_cfg_init(bool watchdog_enable)
 		return ret;
 	}
 
-	if (watchdog_enable) {
-		ret = task_wdt_init(NULL);
-		if (ret != 0) {
-			LOG_ERR("task wdt init failure: %d\n", ret);
-			return ret;
-		}
+	// if (watchdog_enable) {
+	// 	ret = task_wdt_init(NULL);
+	// 	if (ret != 0) {
+	// 		LOG_ERR("task wdt init failure: %d\n", ret);
+	// 		return ret;
+	// 	}
 
-		wdt_ch_id = task_wdt_add(WDT_TIMEOUT_MS, wdt_timeout_cb, NULL);
-		if (wdt_ch_id < 0) {
-			return wdt_ch_id;
-		}
-		k_work_queue_init(&ctrl_poll_work_q);
+	// 	wdt_ch_id = task_wdt_add(WDT_TIMEOUT_MS, wdt_timeout_cb, NULL);
+	// 	if (wdt_ch_id < 0) {
+	// 		return wdt_ch_id;
+	// 	}
+	// 	k_work_queue_init(&ctrl_poll_work_q);
 
-		k_work_queue_start(&ctrl_poll_work_q, ctlr_poll_stack_area,
-				   K_THREAD_STACK_SIZEOF(ctlr_poll_stack_area),
-				   K_PRIO_PREEMPT(CONFIG_CTLR_POLL_WORK_Q_PRIO),
-				   &ctrl_poll_work_q_config);
+	// 	k_work_queue_start(&ctrl_poll_work_q, ctlr_poll_stack_area,
+	// 			   K_THREAD_STACK_SIZEOF(ctlr_poll_stack_area),
+	// 			   K_PRIO_PREEMPT(CONFIG_CTLR_POLL_WORK_Q_PRIO),
+	// 			   &ctrl_poll_work_q_config);
 
-		k_work_init(&work_ctlr_poll, work_ctlr_poll_handler);
-		k_timer_start(&ctlr_poll_timer, K_MSEC(CTLR_POLL_INTERVAL_MS),
-			      K_MSEC(CTLR_POLL_INTERVAL_MS));
-	}
+	// 	k_work_init(&work_ctlr_poll, work_ctlr_poll_handler);
+	// 	k_timer_start(&ctlr_poll_timer, K_MSEC(CTLR_POLL_INTERVAL_MS),
+	// 		      K_MSEC(CTLR_POLL_INTERVAL_MS));
+	// }
 
 	return 0;
 }

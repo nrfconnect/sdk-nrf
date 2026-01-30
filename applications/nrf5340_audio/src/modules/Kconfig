@@ -14,7 +14,7 @@ config BUTTON_DEBOUNCE_MS
 
 config AUDIO_SYNC_TIMER_USES_RTC
 	bool
-	default y
+	default n
 	select NRFX_RTC0
 
 config USBD_PID

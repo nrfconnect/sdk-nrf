@@ -15,7 +15,7 @@
 #include "macros_common.h"
 #include "sw_codec_select.h"
 #include "audio_datapath.h"
-#include "audio_i2s.h"
+// #include "audio_i2s.h"
 #include "hw_codec.h"
 #include "audio_usb.h"
 #include "streamctrl.h"
@@ -34,6 +34,8 @@ LOG_MODULE_REGISTER(audio_system, CONFIG_AUDIO_SYSTEM_LOG_LEVEL);
 
 #define DEBUG_INTERVAL_NUM     1000
 #define TEST_TONE_BASE_FREQ_HZ 1000
+
+#define FRAME_SIZE_BYTES ((48000 / 1000 * 10) * 2 * 2)
 
 K_THREAD_STACK_DEFINE(encoder_thread_stack, CONFIG_ENCODER_STACK_SIZE);
 

@@ -11,7 +11,7 @@ rsource "controller_config/Kconfig"
 #----------------------------------------------------------------------------#
 config WDT_CTLR
 	bool "Enable watchdog for controller"
-	default y
+	default n
 	help
 	  When true, the controller will be polled at regular intervals to check that it is alive.
 	  Turn off to reduce overhead, or HCI traffic.

@@ -313,7 +313,7 @@ int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio
 		}
 
 		if (!ts_common_acquired) {
-			curr_ts_us = audio_sync_timer_capture();
+			curr_ts_us = 0;
 			common_tx_sync_ts_us = tx_info->iso_tx_readback.ts;
 			ts_common_acquired = true;
 		}
