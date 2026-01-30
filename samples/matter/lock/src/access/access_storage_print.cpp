@@ -37,10 +37,10 @@ static const char *TypeToString(AccessStorage::Type type)
 	switch (type) {
 	case AccessStorage::Type::User:
 		return "user";
-	case AccessStorage::Type::Credential:
-		return "credential";
 	case AccessStorage::Type::UsersIndexes:
 		return "user idx";
+	case AccessStorage::Type::Credential:
+		return "credential";
 	case AccessStorage::Type::CredentialsIndexes:
 		return "credential idx";
 #ifdef CONFIG_LOCK_SCHEDULES
