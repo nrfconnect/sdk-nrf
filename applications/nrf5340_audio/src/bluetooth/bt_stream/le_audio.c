@@ -505,7 +505,7 @@ void le_audio_print_qos_from_stream(struct bt_bap_stream const *const stream)
 	LOG_INF("\t Max SDU size: %d", stream->qos->sdu);
 
 #if defined(CONFIG_BT_BAP_BROADCAST_SOURCE) || defined(CONFIG_BT_BAP_UNICAST)
-	LOG_INF("\t Max transport latency: %d us", stream->qos->latency);
+	LOG_INF("\t Max transport latency: %d ms", stream->qos->latency);
 #endif /*  CONFIG_BT_BAP_BROADCAST_SOURCE || CONFIG_BT_BAP_UNICAST */
 	LOG_INF("\t SDU interval: %d us", stream->qos->interval);
 };
