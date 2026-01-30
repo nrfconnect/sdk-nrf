@@ -255,7 +255,6 @@ static int lc3_enable_cb(struct bt_bap_stream *stream, const uint8_t *meta, size
 			 struct bt_bap_ascs_rsp *rsp)
 {
 	LOG_DBG("Enable: stream %p meta_len %d", (void *)stream, meta_len);
-
 	return 0;
 }
 
@@ -451,6 +450,12 @@ static void stream_released_cb(struct bt_bap_stream *stream)
 	LOG_INF("Stream %p released", stream);
 }
 
+static void stream_qos_configured_cb(struct bt_bap_stream *stream)
+{
+	LOG_INF("QoS configured for stream %p", stream);
+	le_audio_print_qos_from_stream(stream);
+}
+
 static struct bt_bap_stream_ops stream_ops = {
 #if (CONFIG_BT_AUDIO_RX)
 	.recv = stream_recv_cb,
@@ -463,6 +468,7 @@ static struct bt_bap_stream_ops stream_ops = {
 	.started = stream_started_cb,
 	.stopped = stream_stopped_cb,
 	.released = stream_released_cb,
+	.qos_set = stream_qos_configured_cb,
 };
 
 int unicast_server_pd_min_set(uint32_t dly_min_in_us)
