@@ -1,0 +1,66 @@
+# Tested platforms for sdk-zephyr CI.
+#
+# twister-lib reads this file to generate arguments for twister runs.
+# When new platforms are added, they can be tested with branches or forks
+# of sdk-zephyr before being merged, avoiding surprises at release time.
+#
+# sdk-zephyr: build all targets for platforms in this file
+# sdk-nrf: build all targets for all platforms
+# Platform identifier format: <board>/<soc>[/<cpucluster>][/<variant>][@<revision>]
+#
+
+# Platforms tested on every CI run (PR, commit, nightly, weekly)
+COMMIT: &commit
+  - native_sim
+  - qemu_cortex_m3
+  - nrf52dk/nrf52832
+  - nrf54h20dk/nrf54h20/cpuapp
+  - nrf54h20dk/nrf54h20/cpurad
+  - nrf54h20dk/nrf54h20/cpuppr
+  - nrf54l15dk/nrf54l15/cpuapp
+  - nrf54l15dk/nrf54l15/cpuflpr
+  - nrf54lm20dk/nrf54lm20a/cpuapp
+
+# Additional platforms tested on NIGHTLY and WEEKLY runs
+NIGHTLY:
+  - *commit
+  - nrf5340dk/nrf5340/cpuapp
+  - nrf5340dk/nrf5340/cpuapp/ns
+  - nrf5340dk/nrf5340/cpunet
+  - nrf9160dk/nrf9160
+  - nrf9160dk/nrf9160/ns
+  - nrf52840dk/nrf52840
+  - mps2/an521/cpu0
+# Platforms tested on TOOLCHAIN runs
+TOOLCHAIN:
+  - nrf54h20dk/nrf54h20/cpuapp
+# Platforms not currently tested (can be re-enabled by moving to always or nightly)
+disabled:
+  - nrf52840dk/nrf52811
+  - nrf52840dongle/nrf52840
+  - nrf52833dk/nrf52833
+  - nrf51dk/nrf51822
+  - nrf5340_audio_dk/nrf5340/cpuapp
+  - nrf5340_audio_dk/nrf5340/cpunet
+  - nrf7002dk/nrf5340/cpuapp
+  - nrf7002dk/nrf5340/cpunet
+  - thingy53/nrf5340/cpuapp
+  - thingy53/nrf5340/cpunet
+  - nrf54l15dk/nrf54l15/cpuapp/ns
+  - nrf54l15dk/nrf54l15/cpuflpr/xip
+  - nrf54l15dk/nrf54l10/cpuapp
+  - nrf54l15dk/nrf54l05/cpuapp
+  - nrf54lm20dk/nrf54lm20a/cpuflpr
+  - nrf54lm20dk/nrf54lm20a/cpuflpr/xip
+  - nrf9160dk/nrf52840
+  - nrf9151dk/nrf9151
+  - nrf9151dk/nrf9151/ns
+  - nrf9161dk/nrf9161
+  - nrf9161dk/nrf9161/ns
+  - nrf9131ek/nrf9131
+  - nrf9131ek/nrf9131/ns
+  - nrf9280pdk/nrf9280/cpuapp
+  - nrf9280pdk/nrf9280/cpurad
+  - nrf21540dk/nrf21540
+  - thingy52/nrf52832
+  - native_sim/native/64
