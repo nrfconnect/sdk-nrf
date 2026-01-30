@@ -171,3 +171,10 @@
   platforms:
     - nrf7120dk/nrf7120/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37414"
+
+- scenarios:
+    - sample.net.sockets.http_client.tls
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37415"
