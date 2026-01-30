@@ -217,13 +217,12 @@ psa_status_t cracen_sw_aes_gcm_update_ad(cracen_aead_operation_t *operation, con
 		calc_gcm_ghash(operation, &input[processed], chunk_size);
 		processed += chunk_size;
 	}
-	gcm_ctx->total_ad_fed += processed;
+	gcm_ctx->total_ad_fed += input_length;
 	return status;
 }
 
 static void finalize_ad_padding(cracen_aead_operation_t *operation)
 {
-	cracen_sw_gcm_context_t *gcm_ctx = &operation->sw_gcm_ctx;
 	const uint8_t padding_block[SX_BLKCIPHER_AES_BLK_SZ] = {0};
 
 	/* GCM requires AD to be padded to block boundary before processing plaintext */
@@ -231,7 +230,6 @@ static void finalize_ad_padding(cracen_aead_operation_t *operation)
 		/* Apply zero padding */
 		calc_gcm_ghash(operation, padding_block,
 			       SX_BLKCIPHER_AES_BLK_SZ - operation->unprocessed_input_bytes);
-		gcm_ctx->total_ad_fed = ROUND_UP(gcm_ctx->total_ad_fed, SX_BLKCIPHER_AES_BLK_SZ);
 	}
 }
 
@@ -279,8 +277,6 @@ static void finalize_data_padding(cracen_aead_operation_t *operation)
 {
 	cracen_sw_gcm_context_t *gcm_ctx = &operation->sw_gcm_ctx;
 	uint8_t padding_block[SX_BLKCIPHER_AES_BLK_SZ] = {0};
-
-	gcm_ctx->total_data_enc += operation->unprocessed_input_bytes;
 
 	/* GHASH( [len(AAD)]64 || [LEN(C)]64 ) */
 	encode_big_endian_length(padding_block,
@@ -339,7 +335,6 @@ psa_status_t cracen_sw_aes_gcm_update(cracen_aead_operation_t *operation, const 
 	initialize_ctr(operation);
 
 	finalize_ad_padding(operation);
-	safe_memzero(output, input_length);
 
 	/* Process data with CTR mode encryption/decryption */
 	if (operation->dir == CRACEN_ENCRYPT) {
