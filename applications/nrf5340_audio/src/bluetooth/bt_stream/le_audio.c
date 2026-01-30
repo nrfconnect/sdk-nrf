@@ -379,6 +379,7 @@ void le_audio_print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_
 	}
 }
 
+<<<<<<< HEAD
 int le_audio_print_qos_from_stream(struct bt_bap_stream const *const stream)
 {
 	if (stream == NULL || stream->qos == NULL) {
@@ -472,3 +473,40 @@ int le_audio_print_unicast_group(struct bt_cap_unicast_group const *const unicas
 
 	return 0;
 }
+=======
+void le_audio_print_qos_from_stream(struct bt_bap_stream const *const stream)
+{
+	if (stream == NULL || stream->qos == NULL) {
+		LOG_WRN("Invalid parameters to print QoS");
+		return;
+	}
+
+	LOG_INF("BAP stream (%p) QoS:", (void *)stream);
+	LOG_INF("\t Pres dly: %d us", stream->qos->pd);
+	if (stream->qos->framing == BT_BAP_QOS_CFG_FRAMING_UNFRAMED) {
+		LOG_INF("\t Framing: Unframed");
+	} else if (stream->qos->framing == BT_BAP_QOS_CFG_FRAMING_FRAMED) {
+		LOG_INF("\t Framing: Framed");
+	} else {
+		LOG_ERR("\t Framing: Unknown (%d)", stream->qos->framing);
+	}
+
+	if (stream->qos->phy == BT_BAP_QOS_CFG_1M) {
+		LOG_INF("\t PHY: 1M");
+	} else if (stream->qos->phy == BT_BAP_QOS_CFG_2M) {
+		LOG_INF("\t PHY: 2M");
+	} else if (stream->qos->phy == BT_BAP_QOS_CFG_CODED) {
+		LOG_INF("\t PHY: Coded");
+	} else {
+		LOG_ERR("\t PHY: Unknown (%d)", stream->qos->phy);
+	}
+
+	LOG_INF("\t Recmd. ret.: %d", stream->qos->rtn);
+	LOG_INF("\t Max SDU size: %d", stream->qos->sdu);
+
+#if defined(CONFIG_BT_BAP_BROADCAST_SOURCE) || defined(CONFIG_BT_BAP_UNICAST)
+	LOG_INF("\t Max transport latency: %d us", stream->qos->latency);
+#endif /*  CONFIG_BT_BAP_BROADCAST_SOURCE || CONFIG_BT_BAP_UNICAST */
+	LOG_INF("\t SDU interval: %d us", stream->qos->interval);
+};
+>>>>>>> 4af78bbab40 (Applications: nrf5340_audio: Added debug prints)
