@@ -666,6 +666,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
 * :ref:`west_sbom` script:
 
+  * Added sysbuild support for generating individual SBOM for each application.
   * Updated to support Matter builds by detecting GN external projects and collecting their source files for SBOM generation.
 
 Integrations
