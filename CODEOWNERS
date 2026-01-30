@@ -295,6 +295,7 @@
 /drivers/sensor/pmw3360/                  @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-xcake
 /drivers/sensor/sensor_sim/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /drivers/sensor/sensor_stub/              @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
+/drivers/wifi/nrf71/                      @krish2718 @sachinthegreen
 
 # Devicetree
 /dts/                                     @nrfconnect/ncs-co-drivers
