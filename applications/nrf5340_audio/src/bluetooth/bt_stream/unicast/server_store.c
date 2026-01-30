@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-// #include <zephyr/sys/slist.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/addr.h>
@@ -19,7 +18,7 @@
 #include "le_audio.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(server_store, 3);
+LOG_MODULE_REGISTER(server_store, CONFIG_SERVER_STORE_LOG_LEVEL);
 
 static struct bt_bap_lc3_preset lc3_preset_48_4_1 = BT_BAP_LC3_UNICAST_PRESET_48_4_1(
 	BT_AUDIO_LOCATION_ANY, (BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED));
@@ -228,9 +227,6 @@ static bool pac_parse(struct bt_data *data, struct bt_bap_lc3_preset *preset,
 			}
 		}
 		break;
-		// case BT_AUDIO_CODEC_CAP_TYPE_LATENCY:
-
-		break;
 	default:
 		break;
 	}
@@ -418,7 +414,6 @@ static bool pres_dly_stream_ignore(struct bt_bap_stream const *const existing_st
 		return true;
 	}
 
-	// Need to check the direction as well?
 	struct bt_bap_ep_info ep_info_existing_stream;
 	struct bt_bap_ep_info ep_info_stream_in;
 

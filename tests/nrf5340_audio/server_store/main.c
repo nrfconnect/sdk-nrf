@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-// #define FFF_GCC_FUNCTION_ATTRIBUTES __attribute__((weak))
 #include <zephyr/fff.h>
 #include <zephyr/ztest.h>
 #include <zephyr/ztest_error_hook.h>
@@ -30,7 +29,7 @@
 	sys_slist_init(&bap_group_##name.streams);                                                 \
 	name.bap_unicast_group = &bap_group_##name;
 
-/* Should populate the pointer om a real cap stream */
+/* TODO: Should populate the pointer on a real cap stream */
 #define TEST_CAP_STREAM(name, dir_in, pd_in, group_in)                                             \
 	struct bt_cap_stream name = {0};                                                           \
 	struct bt_bap_ep name##_ep_var = {0};                                                      \
@@ -42,8 +41,6 @@
 	name.bap_stream.iso = &name##_bap_iso;                                                     \
 	name.bap_stream.group = (void *)group_in;                                                  \
 	name.bap_stream.qos = &name##_qos;
-
-// stream->ep is NULL
 
 int test_cap_stream_populate(struct server_store *server, uint8_t idx, enum bt_audio_dir dir,
 			     uint32_t pd, struct bt_cap_unicast_group *group, struct bt_bap_ep *ep)
@@ -64,10 +61,9 @@ int test_cap_stream_populate(struct server_store *server, uint8_t idx, enum bt_a
 		}
 		server->snk.cap_streams[idx].bap_stream.group = group;
 		server->snk.cap_streams[idx].bap_stream.ep = ep;
-		// server->snk.cap_streams[idx].bap_stream.ep
-
-		server->snk.lc3_preset[idx].qos.pd = pd;
 		server->snk.cap_streams[idx].bap_stream.qos = &server->snk.lc3_preset[idx].qos;
+		server->snk.lc3_preset[idx].qos.pd = pd;
+
 	} else if (dir == BT_AUDIO_DIR_SOURCE) {
 		if (idx >= CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT) {
 			TC_PRINT("Index out of bounds for source streams\n");
@@ -78,8 +74,9 @@ int test_cap_stream_populate(struct server_store *server, uint8_t idx, enum bt_a
 			return -EALREADY;
 		}
 		server->src.cap_streams[idx].bap_stream.group = group;
-		// server->src.cap_streams[idx].bap_stream.ep;
+		server->src.cap_streams[idx].bap_stream.ep = ep;
 		server->src.cap_streams[idx].bap_stream.qos = &server->src.lc3_preset[idx].qos;
+		server->src.lc3_preset[idx].qos.pd = pd;
 	} else {
 		TC_PRINT("Invalid dir parameter passed\n");
 		return -EINVAL;
