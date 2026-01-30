@@ -96,10 +96,16 @@ menuconfig MBEDTLS_TLS_LIBRARY
 
 if MBEDTLS_TLS_LIBRARY
 
+config MBEDTLS_SSL_TLS_C
+	bool
+	depends on MBEDTLS_MD_C
+	default y
+
+if MBEDTLS_SSL_TLS_C
+
 config MBEDTLS_SSL_CLI_C
 	bool "SSL/TLS client code"
 	default y
-	depends on MBEDTLS_SSL_TLS_C
 	help
 	  This setting enables SSL/TLS client functionality.
 	  Corresponds to MBEDTLS_SSL_CLI_C in mbed TLS config file
@@ -107,17 +113,11 @@ config MBEDTLS_SSL_CLI_C
 config MBEDTLS_SSL_SRV_C
 	bool "SSL/TLS server code"
 	default y
-	depends on MBEDTLS_SSL_TLS_C
 	help
 	  This setting enables SSL/TLS server functionality.
 	  Corresponds to MBEDTLS_SSL_SRV_C in mbed TLS config file.
 
-config MBEDTLS_SSL_TLS_C
-	bool
-	default y
-	depends on MBEDTLS_MD_C
-	help
-	  Corresponds to MBEDTLS_SSL_TLS_C in mbed TLS config file
+endif # MBEDTLS_SSL_TLS_C
 
 config MBEDTLS_SSL_PROTO_TLS1_2
 	bool "TLS version 1.2 protocol"
