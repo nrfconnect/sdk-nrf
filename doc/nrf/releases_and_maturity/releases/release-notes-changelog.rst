@@ -301,6 +301,7 @@ nRF Desktop
     The :kconfig:option:`CONFIG_LOG_BACKEND_UART` and :kconfig:option:`CONFIG_LOG_BACKEND_RTT` Kconfig options are no longer enabled by default if nRF Desktop logging (:option:`CONFIG_DESKTOP_LOG`) is enabled.
     These options are controlled through the newly introduced nRF Desktop application-specific Kconfig options.
     The application still uses SEGGER J-Link RTT as the default logging backend.
+  * Support for the ``nrf54ls05dk/nrf54ls05b/cpuapp`` board target.
 
 * Updated:
 
