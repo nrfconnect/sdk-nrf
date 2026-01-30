@@ -42,8 +42,8 @@ class AccessStorage {
 public:
 	enum class Type : uint8_t {
 		User,
-		Credential,
 		UsersIndexes,
+		Credential,
 		CredentialsIndexes,
 		RequirePIN,
 #ifdef CONFIG_LOCK_SCHEDULES
