@@ -89,6 +89,42 @@ config BT_AUDIO_LOG_LEVEL
 	int
 	default 2
 
+config CODEC_CAP_COUNT_MAX
+	int
+	default 5
+
+config BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE
+	int
+	default 8
+
+config BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE
+	int
+	default 8
+
+config AUDIO_SAMPLE_RATE_48000_HZ
+	bool
+	default y
+
+config SERVER_STORE_LOG_LEVEL
+	int
+	default 4
+
+config BLE_LOG_LEVEL
+	int
+	default 4
+
+config LC3_BITRATE_MIN
+	int
+	default 32000
+
+config LC3_BITRATE_MAX
+	int
+	default 124000
+
+config AUDIO_FRAME_DURATION_US
+	int
+	default 10000
+
 # Include Zephyr's Kconfig.
 source "Kconfig"
 source "subsys/bluetooth/audio/Kconfig"

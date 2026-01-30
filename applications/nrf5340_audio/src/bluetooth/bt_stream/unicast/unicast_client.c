@@ -121,7 +121,6 @@ static void cap_proc_waiting_check(void)
 		LOG_ERR("Update procedure not implemented");
 		break;
 	case CAP_PROCEDURE_STOP:
-		LOG_WRN("stopping cap procedure");
 		unicast_client_stop(0);
 		break;
 	default:
@@ -930,27 +929,6 @@ static bool new_pres_dly_us_set(struct bt_cap_stream *stream, void *user_data)
 	return false;
 }
 
-// static bool new_max_trans_lat_ms_set(struct bt_cap_stream *stream, void *user_data)
-// {
-// 	uint16_t *new_max_trans_lat_ms = (uint16_t *)user_data;
-
-// 	struct server_store *server = NULL;
-
-// 	int ret = srv_store_from_stream_get(&(stream->bap_stream), &server);
-// 	if (ret) {
-// 		LOG_ERR("Unknown stream");
-// 		return true;
-// 	}
-
-// 	// Must check direction!
-
-// 	LOG_WRN("setting new max transport latency to %d ms", *new_max_trans_lat_ms);
-// 	server->snk.lc3_preset[0].qos.latency = *new_max_trans_lat_ms;
-// 	server->src.lc3_preset[0].qos.latency = *new_max_trans_lat_ms;
-
-// 	return false;
-// }
-
 static void stream_configured_cb(struct bt_bap_stream *stream,
 				 const struct bt_bap_qos_cfg_pref *server_pref)
 {
@@ -1101,14 +1079,13 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 
 static void stream_qos_set_cb(struct bt_bap_stream *stream)
 {
-	LOG_INF("QoS set cb");
+	LOG_INF("QoS set");
 	le_audio_print_qos_from_stream(stream);
 }
 
 static void stream_enabled_cb(struct bt_bap_stream *stream)
 {
-	LOG_INF("BAP Stream (%p) enabled: lat: %d, rtn: %d, pd: %d", (void *)stream,
-		stream->qos->latency, stream->qos->rtn, stream->qos->pd);
+	LOG_INF("BAP Stream (%p) enabled", (void *)stream);
 }
 
 static void stream_started_cb(struct bt_bap_stream *stream)
@@ -1136,8 +1113,6 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Stream %p started, idx: %d %d %d", (void *)stream, idx.lvl1, idx.lvl2, idx.lvl3);
-	LOG_WRN("Stream . lat: %d, rtn: %d, pd: %d", stream->qos->latency, stream->qos->rtn,
-		stream->qos->pd);
 
 	le_audio_event_publish(LE_AUDIO_EVT_STREAMING, stream->conn, stream, dir);
 }
@@ -1722,8 +1697,8 @@ int unicast_client_start(uint8_t cig_index)
 	}
 
 	// Makes sense to reconfig group here.
-	int bt_cap_unicast_group_reconfig(struct bt_cap_unicast_group * unicast_group,
-					  const struct bt_cap_unicast_group_param *group_param);
+	// ret = bt_cap_unicast_group_reconfig(unicast_group,
+	//				    const struct bt_cap_unicast_group_param *group_param);
 
 	ret = bt_cap_initiator_unicast_audio_start(&param);
 	if (ret) {
