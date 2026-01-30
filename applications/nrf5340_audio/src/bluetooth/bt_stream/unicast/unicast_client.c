@@ -333,7 +333,7 @@ static void unicast_group_create(void)
 	if (ret) {
 		LOG_ERR("Failed to create unicast group: %d", ret);
 	} else {
-		LOG_WRN("Created unicast group");
+		LOG_INF("Created unicast group");
 		unicast_group_created = true;
 	}
 
@@ -989,13 +989,13 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 	}
 
 	/* NOTE: The string below is used by the Nordic CI system */
-	LOG_INF("%s %s stream configured", server->name,
-		(dir == BT_AUDIO_DIR_SINK) ? "sink" : "source");
+	LOG_INF("%s %s BAP stream (%p) configured", server->name,
+		(dir == BT_AUDIO_DIR_SINK) ? "sink" : "source", (void *)stream);
 	le_audio_print_codec(stream->codec_cfg, dir);
 
 	LOG_DBG("Configured Stream info: %s, %p, dir %d", server->name, (void *)stream, dir);
 
-	if (!server_pref->phy & BT_GAP_LE_PHY_2M) {
+	if (!(server_pref->phy & BT_GAP_LE_PHY_2M)) {
 		LOG_WRN("Server does not prefer 2M PHY");
 	}
 
@@ -1021,9 +1021,9 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 
 	bool group_reconfig_needed_lat = false;
 	LOG_INF("max trans lat find. Server pref lat: %d", server_pref->latency);
-	ret = srv_store_max_trans_lat_find(stream, &new_max_trans_lat_ms,
+	ret = srv_store_max_trans_lat_find(stream, server_pref, &new_max_trans_lat_ms,
 					   &existing_max_trans_lat_ms, &group_reconfig_needed_lat,
-					   server_pref, unicast_group);
+					   unicast_group);
 
 	if (ret) {
 		LOG_ERR("Cannot get a valid max transport latency");
@@ -1049,7 +1049,6 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 		srv_store_unlock();
 		return;
 	}
-	LOG_WRN("Setting new common max transport latency to %d ms", new_max_trans_lat_ms);
 
 	bool group_reconfigure_needed_pd = false;
 	uint32_t existing_pres_dly_us = 0;
@@ -1102,15 +1101,14 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 
 static void stream_qos_set_cb(struct bt_bap_stream *stream)
 {
-	LOG_WRN("QoS set cb. lat: %d, rtn: %d, pd: %d", stream->qos->latency, stream->qos->rtn,
-		stream->qos->pd);
+	LOG_INF("QoS set cb");
+	le_audio_print_qos_from_stream(stream);
 }
 
 static void stream_enabled_cb(struct bt_bap_stream *stream)
 {
-	LOG_DBG("Stream enabled: %p", (void *)stream);
-	LOG_WRN("Stream en. lat: %d, rtn: %d, pd: %d", stream->qos->latency, stream->qos->rtn,
-		stream->qos->pd);
+	LOG_INF("BAP Stream (%p) enabled: lat: %d, rtn: %d, pd: %d", (void *)stream,
+		stream->qos->latency, stream->qos->rtn, stream->qos->pd);
 }
 
 static void stream_started_cb(struct bt_bap_stream *stream)
@@ -1395,6 +1393,10 @@ static bool first_source_location_get(struct bt_cap_stream *stream, void *user_d
 	enum bt_audio_location *locations = (enum bt_audio_location *)user_data;
 
 	dir = le_audio_stream_dir_get(&stream->bap_stream);
+	if (dir <= 0) {
+		LOG_ERR("Failed to get dir of stream %p", (void *)stream);
+		return false;
+	}
 
 	ret = stream_idx_get(&stream->bap_stream, &idx);
 	if (ret) {
