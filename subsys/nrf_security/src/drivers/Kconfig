@@ -8,15 +8,13 @@
 # for all the crypto operations when hardware acceleration is not available.
 config PSA_CRYPTO_DRIVER_OBERON
 	# The Oberon driver is required to provide HKDF needed for protected storage and bultin keys
-	prompt "Oberon PSA driver" if !(TFM_PARTITION_PROTECTED_STORAGE || TFM_CRYPTO_BUILTIN_KEYS)
-	bool
+	bool "Oberon PSA driver" if !(TFM_PARTITION_PROTECTED_STORAGE || TFM_CRYPTO_BUILTIN_KEYS)
 	default y if !HAS_HW_NRF_CRACEN
 	help
 	  This configuration enables the usage of the Oberon PSA driver.
 
 config PSA_CRYPTO_DRIVER_CC3XX
-	prompt "CryptoCell PSA driver"
-	bool
+	bool "CryptoCell PSA driver"
 	depends on HAS_HW_NRF_CC3XX
 	help
 	  This configuration enables the usage of CryptoCell for the supported operations.
@@ -44,14 +42,12 @@ config PSA_CRYPTO_DRIVER_IRONSIDE
 
 menu "Choose DRBG algorithm"
 config PSA_WANT_ALG_CTR_DRBG
-	prompt "CTR_DRBG"
-	bool
+	bool "CTR_DRBG"
 	default y if !PSA_WANT_ALG_HMAC_DRBG
 	depends on PSA_WANT_GENERATE_RANDOM
 
 config PSA_WANT_ALG_HMAC_DRBG
-	prompt "HMAC_DRBG"
-	bool
+	bool "HMAC_DRBG"
 	depends on PSA_WANT_GENERATE_RANDOM
 
 # The Oberon PSA core requires the USE symbols to choose a DRBG algorithm.
@@ -69,8 +65,7 @@ menu "CryptoCell PSA Driver Configuration"
 if PSA_CRYPTO_DRIVER_CC3XX
 
 config PSA_USE_CC3XX_CIPHER_DRIVER
-	prompt "CryptoCell driver support for the PSA cipher APIs"
-	bool
+	bool "CryptoCell driver support for the PSA cipher APIs"
 	default y
 	help
 	  Enable CryptoCell for the PSA Cipher APIs. Enabling this
@@ -78,8 +73,7 @@ config PSA_USE_CC3XX_CIPHER_DRIVER
 	  CBC no padding, ECB no padding and Chacha20.
 
 config PSA_USE_CC3XX_AEAD_DRIVER
-	prompt "CryptoCell driver support for the PSA AEAD APIs"
-	bool
+	bool "CryptoCell driver support for the PSA AEAD APIs"
 	default y
 	help
 	  Enable CryptoCell for the PSA AEAD APIs. Enabling this
@@ -87,32 +81,28 @@ config PSA_USE_CC3XX_AEAD_DRIVER
 	  and Chacha20Poly1305.
 
 config PSA_USE_CC3XX_HASH_DRIVER
-	prompt "CryptoCell driver support for the PSA hash APIs"
-	bool
+	bool "CryptoCell driver support for the PSA hash APIs"
 	default y
 	help
 	  Enable CryptoCell for the PSA hash APIs. Enabling this
 	  will provide support for SHA1, SHA224 and SHA256.
 
 config PSA_USE_CC3XX_MAC_DRIVER
-	prompt "CryptoCell driver support for the PSA mac APIs"
-	bool
+	bool "CryptoCell driver support for the PSA mac APIs"
 	default y
 	help
 	  Enable CryptoCell for the PSA mac APIs. Enabling this
 	  will provide support for HMAC and CMAC.
 
 config PSA_USE_CC3XX_KEY_AGREEMENT_DRIVER
-	prompt "CryptoCell driver support for the PSA key agreement APIs"
-	bool
+	bool "CryptoCell driver support for the PSA key agreement APIs"
 	default y
 	help
 	  Enable CryptoCell for the PSA key agreement APIs. Enabling this
 	  will provide support for key agreement with ECDH.
 
 config PSA_USE_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER
-	prompt "CryptoCell driver support for the PSA asymmetric signature APIs"
-	bool
+	bool "CryptoCell driver support for the PSA asymmetric signature APIs"
 	default y
 	help
 	  Enable CryptoCell for the PSA asymmetric signature APIs. Enabling this
@@ -120,8 +110,7 @@ config PSA_USE_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER
 	  and randomized modes and RSA in PKCS1V15 and PSS modes.
 
 config PSA_USE_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER
-	prompt "CryptoCell driver support for the PSA asymmetric encryption APIs"
-	bool
+	bool "CryptoCell driver support for the PSA asymmetric encryption APIs"
 	default y
 	help
 	  Enable CryptoCell for the PSA asymmetric encryption APIs. Enabling this
@@ -129,8 +118,7 @@ config PSA_USE_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER
 	  in PKCS1V15 and OAEP modes.
 
 config PSA_USE_CC3XX_KEY_MANAGEMENT_DRIVER
-	prompt "CryptoCell driver support for the PSA key management APIs"
-	bool
+	bool "CryptoCell driver support for the PSA key management APIs"
 	default y
 	depends on PSA_USE_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER || \
 		   PSA_USE_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER  || \
@@ -217,54 +205,44 @@ endmenu
 menu "AES key size configuration"
 
 config PSA_WANT_AES_KEY_SIZE_128
-	prompt "AES 128 bits key"
-	bool
+	bool "AES 128 bits key"
 
 config PSA_WANT_AES_KEY_SIZE_192
-	prompt "AES 192 bits key"
-	bool
+	bool "AES 192 bits key"
 
 config PSA_WANT_AES_KEY_SIZE_256
-	prompt "AES 256 bits key"
-	bool
+	bool "AES 256 bits key"
 
 endmenu
 
 menu "RSA key size configuration"
 
 config PSA_WANT_RSA_KEY_SIZE_1024
-	prompt "RSA 1024 bits key (weak)"
-	bool
+	bool "RSA 1024 bits key (weak)"
 	help
 	  RSA with 1024 bit keys are not recommended for new designs.
 	  Please see https://www.keylength.com/
 
 config PSA_WANT_RSA_KEY_SIZE_1536
-	prompt "RSA 1536 bits key (weak)"
-	bool
+	bool "RSA 1536 bits key (weak)"
 	help
 	  RSA with 1536 bit keys are not recommended for new designs.
 	  Please see https://www.keylength.com/
 
 config PSA_WANT_RSA_KEY_SIZE_2048
-	prompt "RSA 2048 bits key"
-	bool
+	bool "RSA 2048 bits key"
 
 config PSA_WANT_RSA_KEY_SIZE_3072
-	prompt "RSA 3072 bits key"
-	bool
+	bool "RSA 3072 bits key"
 
 config PSA_WANT_RSA_KEY_SIZE_4096
-	prompt "RSA 4096 bits key"
-	bool
+	bool "RSA 4096 bits key"
 
 config PSA_WANT_RSA_KEY_SIZE_6144
-	prompt "RSA 6144 bits key"
-	bool
+	bool "RSA 6144 bits key"
 
 config PSA_WANT_RSA_KEY_SIZE_8192
-	prompt "RSA 8192 bits key"
-	bool
+	bool "RSA 8192 bits key"
 
 config PSA_MAX_RSA_KEY_BITS
 	int
