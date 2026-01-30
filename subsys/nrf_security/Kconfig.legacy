@@ -230,8 +230,7 @@ config MBEDTLS_NO_PLATFORM_ENTROPY
 # End items required for non CryptoCell RNG in PSA scope
 
 config NRF_SECURITY_ADVANCED
-	bool
-	prompt "Advanced mbed TLS Configuration Settings"
+	bool "Advanced mbed TLS Configuration Settings"
 	help
 	  This configuration has no effect and will be deprecated.
 	  It is kept in to ensure projects setting this aren't affected.
@@ -299,8 +298,7 @@ config MBEDTLS_LEGACY_CRYPTO_C_SILENCE_DEPRECATION
 	  removes warnings for the deprecated MBEDTLS_LEGACY_CRYPTO_C Kconfig.
 
 config MBEDTLS_LEGACY_CRYPTO_C
-	bool
-	prompt "(Legacy) mbed TLS crypto APIs"
+	bool "(Legacy) mbed TLS crypto APIs"
 	select DEPRECATED if !MBEDTLS_LEGACY_CRYPTO_C_SILENCE_DEPRECATION
 	help
 	  Enable support for legacy mbed TLS APIs.
@@ -343,8 +341,7 @@ config CC3XX_BACKEND
 	  PSA crypto APIs are standardized.
 
 config OBERON_BACKEND
-	bool
-	prompt "Configuration to enable nrf_oberon for legacy mbed TLS APIs"
+	bool "Configuration to enable nrf_oberon for legacy mbed TLS APIs"
 	select NRF_OBERON
 	depends on !(CC3XX_BACKEND_FORCED || CC3XX_BACKEND)
 	help
@@ -353,8 +350,7 @@ config OBERON_BACKEND
 	  PSA crypto APIs are standardized.
 
 config MBEDTLS_CTR_DRBG_C
-	bool
-	prompt "PRNG using CTR_DRBG"
+	bool "PRNG using CTR_DRBG"
 	select MBEDTLS_AES_C
 	default y if !HAS_HW_NRF_CC3XX
 	help
@@ -368,8 +364,7 @@ config MBEDTLS_CTR_DRBG_USE_128_BIT_KEY
 	  Use 128 bit AES instead of 256 bit for CTR_DRBG.
 
 config MBEDTLS_HMAC_DRBG_C
-	bool
-	prompt "PRNG using HMAC_DRBG"
+	bool "PRNG using HMAC_DRBG"
 	default y
 	select MBEDTLS_SHA256_C
 	help
@@ -377,8 +372,7 @@ config MBEDTLS_HMAC_DRBG_C
 	  Corresponds to MBEDTLS_HMAC_DRBG_C setting in mbed TLS config file.
 
 config MBEDTLS_ENTROPY_C
-	bool
-	prompt "Entropy gathering"
+	bool "Entropy gathering"
 	depends on !MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
 	default y if !HAS_HW_NRF_CC3XX
 	help
@@ -387,8 +381,7 @@ config MBEDTLS_ENTROPY_C
 	  CryptoCell.
 
 menuconfig MBEDTLS_AES_C
-	bool
-	prompt "AES - Advanced Encryption Standard"
+	bool "AES - Advanced Encryption Standard"
 	default y if !MBEDTLS_USE_PSA_CRYPTO
 	help
 	  This setting will enable AES block cipher, including ECB - Electronic Code Book.
@@ -413,8 +406,7 @@ menu "CBC cipher padding modes"
 	depends on MBEDTLS_CIPHER_MODE_CBC
 
 config MBEDTLS_CIPHER_PADDING_PKCS7
-	bool
-	prompt "MBEDTLS_CIPHER_PADDING_PKCS7"
+	bool "MBEDTLS_CIPHER_PADDING_PKCS7"
 	default y if !OPENTHREAD
 	select PSA_WANT_ALG_CBC_PKCS7 if PSA_CRYPTO_CLIENT
 	select PSA_WANT_KEY_TYPE_AES if PSA_CRYPTO_CLIENT
@@ -423,44 +415,38 @@ config MBEDTLS_CIPHER_PADDING_PKCS7
 	  That is, fill buffer with ll bytes, where ll is padding length.
 
 config MBEDTLS_CIPHER_PADDING_ONE_AND_ZEROS
-	bool
-	prompt "MBEDTLS_CIPHER_PADDING_ONE_AND_ZEROS"
+	bool "MBEDTLS_CIPHER_PADDING_ONE_AND_ZEROS"
 	default y
 	help
 	  Enable support for one and zeros padding for CBC cipher functions in mbedTLS.
 	  That is, fill buffer with 80 00 .. 00.
 
 config MBEDTLS_CIPHER_PADDING_ZEROS_AND_LEN
-	bool
-	prompt "MBEDTLS_CIPHER_PADDING_ZEROS_AND_LEN"
+	bool "MBEDTLS_CIPHER_PADDING_ZEROS_AND_LEN"
 	default y
 	help
 	  Enable support for zeros and length padding for CBC cipher functions in mbedTLS.
 	  That is, fill buffer with 00 .. 00 ll, where ll is padding length.
 
 config MBEDTLS_CIPHER_PADDING_ZEROS
-	bool
-	prompt "MBEDTLS_CIPHER_PADDING_ZEROS"
+	bool "MBEDTLS_CIPHER_PADDING_ZEROS"
 	default y
 	help
 	  Enable support for zeros padding for CBC cipher functions in mbedTLS.
 	  That is, fill buffer with 00 .. 00.
 
 config MBEDTLS_AES_FEWER_TABLES
-	bool
-	prompt "Use fewer tables for AES"
+	bool "Use fewer tables for AES"
 	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
 
 config MBEDTLS_AES_ROM_TABLES
-	bool
-	prompt "Use AES tables in ROM"
+	bool "Use AES tables in ROM"
 	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
 
 endmenu # CBC cipher padding modes
 
 config MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH
-	bool
-	prompt "MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH"
+	bool "MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH"
 	help
 	   Enable AES operations to support only 128-bit keys to reduce ROM usage.
 
@@ -506,8 +492,7 @@ config MBEDTLS_CCM_C
 	  MBEDTLS_CCM_C setting in mbed TLS config file.
 
 config MBEDTLS_GCM_C
-	bool
-	prompt "AES-GCM - AES Galois/Counter Mode support"
+	bool "AES-GCM - AES Galois/Counter Mode support"
 	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_GCM if PSA_CRYPTO_CLIENT
 	select PSA_WANT_KEY_TYPE_AES if PSA_CRYPTO_CLIENT
@@ -516,8 +501,7 @@ config MBEDTLS_GCM_C
 	  MBEDTLS_GCM_C setting in mbed TLS config file.
 
 config MBEDTLS_CHACHA20_C
-	bool
-	prompt "CHACHA20 stream cipher support"
+	bool "CHACHA20 stream cipher support"
 	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_CHACHA20 if PSA_CRYPTO_CLIENT
 	select PSA_WANT_ALG_CHACHA20_POLY1305 if PSA_CRYPTO_CLIENT
@@ -527,8 +511,7 @@ config MBEDTLS_CHACHA20_C
 	  MBEDTLS_CHACHA20_C setting in mbed TLS config file.
 
 config MBEDTLS_POLY1305_C
-	bool
-	prompt "POLY1305 module support"
+	bool "POLY1305 module support"
 	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_CHACHA20_POLY1305 if PSA_CRYPTO_CLIENT
 	help
@@ -536,8 +519,7 @@ config MBEDTLS_POLY1305_C
 	  MBEDTLS_POLY1305_C setting in mbed TLS config file.
 
 config MBEDTLS_CHACHAPOLY_C
-	bool
-	prompt "CHACHA-POLY module support"
+	bool "CHACHA-POLY module support"
 	depends on (MBEDTLS_CHACHA20_C && MBEDTLS_POLY1305_C)
 	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_CHACHA20_POLY1305 if PSA_CRYPTO_CLIENT
@@ -548,16 +530,14 @@ config MBEDTLS_CHACHAPOLY_C
 endmenu # AEAD  - Authenticated Encryption with Associated Data
 
 config MBEDTLS_DHM_C
-	bool
-	prompt "DHM - Diffie-Hellman-Merkel"
+	bool "DHM - Diffie-Hellman-Merkel"
 	default y if MBEDTLS_TLS_LIBRARY
 	help
 	  Enable the DHM module.
 	  MBEDTLS_DHM_C setting in mbed TLS config file.
 
 menuconfig MBEDTLS_ECP_C
-	bool
-	prompt "ECC - Eliptic Curve Cryptography"
+	bool "ECC - Elliptic Curve Cryptography"
 	default y
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT if PSA_CRYPTO_CLIENT
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT if PSA_CRYPTO_CLIENT
@@ -573,8 +553,7 @@ menuconfig MBEDTLS_ECP_C
 if MBEDTLS_ECP_C
 
 config MBEDTLS_ECDH_C
-	bool
-	prompt "ECDH  - Elliptic Curve Diffie-Hellman"
+	bool "ECDH  - Elliptic Curve Diffie-Hellman"
 	default y if !MBEDTLS_USE_PSA_CRYPTO
 	select PSA_WANT_ALG_ECDH if PSA_CRYPTO_CLIENT
 	help
@@ -582,8 +561,7 @@ config MBEDTLS_ECDH_C
 	  MBEDTLS_ECDH_C setting in mbed TLS config file.
 
 config MBEDTLS_ECDSA_C
-	bool
-	prompt "ECDSA - Elliptic Curve Digital Signature Algorithm"
+	bool "ECDSA - Elliptic Curve Digital Signature Algorithm"
 	default y if !MBEDTLS_USE_PSA_CRYPTO
 	select PSA_WANT_ALG_ECDSA if PSA_CRYPTO_CLIENT
 	help
@@ -711,8 +689,7 @@ endmenu # ECC curves
 endif # MBEDTLS_ECP_C
 
 config MBEDTLS_HKDF_C
-	bool
-	prompt "HKDF support"
+	bool "HKDF support"
 	default y if !MBEDTLS_USE_PSA_CRYPTO
 	select PSA_WANT_ALG_HMAC if PSA_CRYPTO_CLIENT
 	select PSA_WANT_ALG_HKDF if PSA_CRYPTO_CLIENT
@@ -723,8 +700,7 @@ config MBEDTLS_HKDF_C
 	  MBEDTLS_HKDF_C setting in mbed TLS config file.
 
 config MBEDTLS_RSA_C
-	bool
-	prompt "RSA - Rivest-Shamir-Adleman cryptosystem"
+	bool "RSA - Rivest-Shamir-Adleman cryptosystem"
 	select PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT if PSA_CRYPTO_CLIENT
 	select PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT if PSA_CRYPTO_CLIENT
 	select PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE if PSA_CRYPTO_CLIENT
@@ -768,38 +744,33 @@ config MBEDTLS_MD5_C
 	  MD5 is not recommended for general use as a secure hash algorithm.
 
 config MBEDTLS_SHA1_C
-	bool
-	prompt "SHA-1 hash functionality"
+	bool "SHA-1 hash functionality"
 	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_SHA_1 if PSA_CRYPTO_CLIENT
 	help
 	  SHA-1 hash functionality.
 
 config MBEDTLS_SHA224_C
-	bool
-	prompt "SHA-224 hash functionality"
+	bool "SHA-224 hash functionality"
 	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_SHA_224 if PSA_CRYPTO_CLIENT
 	help
 	  SHA-224 hash functionality.
 
 config MBEDTLS_SHA256_C
-	bool
-	prompt "SHA-256 hash functionality"
+	bool "SHA-256 hash functionality"
 	default y if !MBEDTLS_USE_PSA_CRYPTO
 	select PSA_WANT_ALG_SHA_256 if PSA_CRYPTO_CLIENT
 	help
 	  SHA-256 hash functionality.
 
 config MBEDTLS_SHA256_SMALLER
-	bool
-	prompt "Use smaller SHA-256 implementation"
+	bool "Use smaller SHA-256 implementation"
 	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
 	depends on MBEDTLS_SHA256_C
 
 config MBEDTLS_SHA384_C
-	bool
-	prompt "SHA-384 hash functionality"
+	bool "SHA-384 hash functionality"
 	select MBEDTLS_SHA512_C
 	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_SHA_384 if PSA_CRYPTO_CLIENT
@@ -807,31 +778,27 @@ config MBEDTLS_SHA384_C
 	  SHA-384 hash functionality.
 
 config MBEDTLS_SHA512_C
-	bool
-	prompt "SHA-512 hash functionality"
+	bool "SHA-512 hash functionality"
 	default y if !(OPENTHREAD || MBEDTLS_USE_PSA_CRYPTO)
 	select PSA_WANT_ALG_SHA_512 if PSA_CRYPTO_CLIENT
 	help
 	  SHA-512 hash functionality.
 
 config MBEDTLS_512_SMALLER
-	bool
-	prompt "Use smaller SHA-256 implementation"
+	bool "Use smaller SHA-512 implementation"
 	depends on !(OBERON_BACKEND || CC3XX_BACKEND)
 	depends on MBEDTLS_SHA512_C
 
 endmenu # SHA - Secure Hash Algorithm
 
 config MBEDTLS_FORCE_LEGACY_MD
-	bool
-	prompt "Force using legacy crypto for MD"
+	bool "Force using legacy crypto for MD"
 	default y if BUILD_WITH_TFM && TFM_PROFILE_TYPE_MINIMAL
 	help
 	  Should only be used when TF-M MINIMAL profile is used
 
 config MBEDTLS_FORCE_LEGACY_CIPHER
-	bool
-	prompt "Force using legacy crypto for cipher"
+	bool "Force using legacy crypto for cipher"
 	default y if BUILD_WITH_TFM && TFM_PROFILE_TYPE_MINIMAL
 	help
 	  Should only be used when TF-M MINIMAL profile is used
@@ -839,52 +806,43 @@ config MBEDTLS_FORCE_LEGACY_CIPHER
 endif #MBEDTLS_LEGACY_CRYPTO_C
 
 config MBEDTLS_CIPHER_C
-	bool
-	prompt "Cipher support"
+	bool "Cipher support"
 	default y if MBEDTLS_LEGACY_CRYPTO_C
 
 config MBEDTLS_MD_C
-	bool
-	prompt "MD support"
+	bool "MD support"
 	default y if MBEDTLS_LEGACY_CRYPTO_C || MBEDTLS_TLS_LIBRARY
 
 config MBEDTLS_PK_C
-	bool
-	prompt "PK support"
+	bool "PK support"
 	default y if MBEDTLS_TLS_LIBRARY
 
 config MBEDTLS_PKCS5_C
-	bool
-	prompt "PKCS5 support"
+	bool "PKCS5 support"
 	default y
 	depends on MBEDTLS_MD_C
 	depends on MBEDTLS_CIPHER_PADDING_PKCS7
 
 config MBEDTLS_PK_WRITE_C
-	bool
-	prompt "PK write support"
+	bool "PK write support"
 	depends on MBEDTLS_PK_C
 
 config MBEDTLS_PK_PARSE_C
-	bool
-	prompt "PK parse support"
+	bool "PK parse support"
 	default y if MBEDTLS_TLS_LIBRARY
 	depends on MBEDTLS_PK_C
 
 config MBEDTLS_PK_PARSE_EC_EXTENDED
-	bool
-	prompt "Enhance support for reading EC keys"
+	bool "Enhance support for reading EC keys"
 	default y
 	depends on MBEDTLS_PK_PARSE_C
 
 config MBEDTLS_PEM_PARSE_C
-	bool
-	prompt "Support parsing PEM files"
+	bool "Support parsing PEM files"
 	depends on MBEDTLS_BASE64_C
 
 config MBEDTLS_PEM_WRITE_C
-	bool
-	prompt "Support writing PEM files"
+	bool "Support writing PEM files"
 	depends on MBEDTLS_BASE64_C
 
 config MBEDTLS_SSL_CLI_ALLOW_WEAK_CERTIFICATE_VERIFICATION_WITHOUT_HOSTNAME
