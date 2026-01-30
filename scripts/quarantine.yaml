@@ -185,3 +185,9 @@
   platforms:
     - nrf52840dk/nrf52840
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37416"
+
+- scenarios:
+    - buildsystem.sysbuild.merged.hex
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37417"
