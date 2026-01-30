@@ -164,3 +164,9 @@
   platforms:
     - nrf7120dk/nrf7120/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37390"
+
+- scenarios:
+    - nrf.extended.sample.sysbuild.hello_world
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37414"
