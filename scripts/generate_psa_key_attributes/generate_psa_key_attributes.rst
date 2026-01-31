@@ -11,7 +11,7 @@ This Python script generates Platform Security Architecture (PSA) key attribute 
 
 .. note::
    The script is primarily used for Key Management Unit (KMU) provisioning on nRF54L Series devices and nRF54H20.
-   For more details about KMU provisioning, see the :ref:`ug_nrf54l_developing_provision_kmu` in the nRF54L Series device guide and the :ref:`ug_nrf54h20_keys` in the nRF54H20 device guide.
+   For more details about KMU provisioning, see the :ref:`ug_kmu_provisioning_overview` for the nRF54L Series devices and the :ref:`ug_nrf54h20_keys` in the nRF54H20 device guide.
 
 Overview
 ********
@@ -158,7 +158,7 @@ The script requires the following arguments:
    For the nRF54L Series devices, the script also requires the ``--cracen-usage`` argument.
    The argument can take different values.
    If you use ``--cracen-usage ENCRYPTED``, make sure that the device already has a seed value before you provision the key.
-   See :ref:`ug_nrf54l_crypto_cracen_ikg` for more information.
+   See :ref:`ug_kmu_guides_cracen_ikg` for more information.
 
 To list all available arguments, including the optional ones, run the ``generate_psa_key_attributes.py -h`` command.
 
