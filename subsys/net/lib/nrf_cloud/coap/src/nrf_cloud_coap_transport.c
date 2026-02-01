@@ -51,6 +51,7 @@ LOG_MODULE_REGISTER(nrf_cloud_coap_transport, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 #define BUILD_VERSION_STR STRINGIFY(BUILD_VERSION)
 #define NON_RESP_WAIT_S 3
 #define MAX_XFERS (CONFIG_COAP_CLIENT_MAX_INSTANCES * CONFIG_COAP_CLIENT_MAX_REQUESTS)
+#define NRF_CLOUD_COAP_NUM_INTERNAL_OPTIONS 1
 
 #define NRF_CLOUD_COAP_AUTH_RSC "auth/jwt"
 
@@ -409,6 +410,8 @@ static void client_callback(const struct coap_client_response_data *data, void *
 }
 
 
+BUILD_ASSERT((NRF_CLOUD_COAP_NUM_INTERNAL_OPTIONS + CONFIG_NRF_CLOUD_COAP_MAX_USER_OPTIONS) <=
+		CONFIG_COAP_CLIENT_MAX_EXTRA_OPTIONS);
 static int client_transfer(enum coap_method method,
 			   const char *resource, const char *query,
 			   const uint8_t *buf, size_t buf_len,
@@ -436,14 +439,24 @@ static int client_transfer(enum coap_method method,
 	};
 	struct coap_client *const cc = &xfer->nrfc_cc->cc;
 
+	size_t num_internal_options = 0;
 	if (response_expected) {
-		request.options[0].code = COAP_OPTION_ACCEPT;
-		request.options[0].len = 1;
-		request.options[0].value[0] = fmt_in;
-		request.num_options = 1;
-	} else {
-		request.num_options = 0;
+		num_internal_options += 1;
+		request.options[0] = (struct coap_client_option) {
+			.code = COAP_OPTION_ACCEPT,
+			.len = 1,
+			.value[0] = fmt_in
+		};
 	}
+
+	size_t num_user_options = CONFIG_NRF_CLOUD_COAP_MAX_USER_OPTIONS;
+#if (CONFIG_NRF_CLOUD_COAP_MAX_USER_OPTIONS > 0)
+	nrf_cloud_coap_get_user_options(&request.options[num_internal_options], &num_user_options,
+		resource, xfer->user_data);
+#endif
+	const size_t total_options = num_internal_options + num_user_options;
+
+	request.num_options = total_options;
 
 	if (!query) {
 		strncpy(request.path, resource, MAX_PATH_SIZE);
@@ -451,7 +464,8 @@ static int client_transfer(enum coap_method method,
 	} else {
 		err = snprintk(request.path, sizeof(request.path), "%s?%s", resource, query);
 		if ((err <= 0) || (err >= sizeof(request.path))) {
-			LOG_ERR("Could not format string");
+			/* If we get here, CONFIG_COAP_CLIENT_MAX_PATH_LENGTH needs a bump */
+			LOG_ERR("Could not format string: %s?%s", resource, query);
 			err = -ETXTBSY;
 			goto transfer_end;
 		}
