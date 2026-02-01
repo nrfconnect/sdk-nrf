@@ -260,6 +260,19 @@ int nrf_cloud_coap_patch(const char *resource, const char *query,
  */
 int nrf_cloud_coap_bin_log_send(const uint8_t * const buf, size_t buf_len, bool confirmable);
 
+/**@brief User implements this API to add additional CoAP Options to nRF Cloud CoAP Requests
+ *
+ * Note: The API is only called if CONFIG_NRF_CLOUD_COAP_MAX_USER_OPTIONS has been set to a value
+ * greater than 0.
+ *
+ * @param options The array to populate custom options into
+ * @param num_options In: options array size; out: number of options added
+ * @param resource The specific CoAP endpoint being accessed
+ * @param user_data The user_data provided to nrf_cloud_coap_[patch/fetch/put/get/delete/post] call
+ */
+void nrf_cloud_coap_get_user_options(struct coap_client_option *options, size_t *num_options,
+				     const char *resource, const char *user_data);
+
 /** @} */
 
 #ifdef __cplusplus
