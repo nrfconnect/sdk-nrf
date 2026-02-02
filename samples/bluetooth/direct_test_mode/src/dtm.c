@@ -754,9 +754,9 @@ static int clock_init(void)
 	}
 #endif /* NRF54L_ERRATA_20_PRESENT */
 
-#if defined(NRF54LM20A_ENGA_XXAA)
+#if defined(NRF54LM20A_XXAA)
 	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
-#endif /* defined(NRF54LM20A_ENGA_XXAA) */
+#endif /* defined(NRF54LM20A_XXAA) */
 
 	return err;
 }
@@ -848,7 +848,7 @@ static int anomaly_timer_init(void)
 
 static int gppi_init(void)
 {
-	nrfx_err_t err;
+	int err;
 	uint32_t rad_domain = nrfx_gppi_domain_id_get((uint32_t)NRF_RADIO);
 
 	err = nrfx_gppi_domain_conn_alloc(rad_domain, rad_domain, &dtm_inst.ppi_radio_start);
