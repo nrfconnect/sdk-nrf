@@ -163,6 +163,18 @@ int tls_setup(int fd)
 		printk("Failed to setup TLS hostname, err %d\n", errno);
 		return err;
 	}
+
+	/* Set TLS cipher suite list tp support only TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 */
+
+	int cipher_list[] = { 0xC02B };
+
+	err = setsockopt(fd, SOL_TLS, TLS_CIPHERSUITE_LIST, cipher_list, sizeof(cipher_list));
+	if (err) {
+		printk("Failed to setup TLS cipher suite list, err %d\n", errno);
+
+		return err;
+	}
+
 	return 0;
 }
 
