@@ -46,6 +46,29 @@ nRF54H20 IronSide SE binaries changelog
 
 The following sections provide detailed lists of changes by component.
 
+IronSide Secure Element (IronSide SE) v23.2.1+25
+================================================
+
+Added
+-----
+
+* Added support for *event reports* and the *event enable* service.
+  These features provide mechanisms for forwarding error events from the SPU, MPC, and MRAMC peripherals to local domains. (NCSDK-32170)
+* The System Controller now periodically monitors for stalled transactions targeting MRAM, and triggers a global reset to recover from this condition.
+
+Updated
+-------
+
+* SysCtrl updated to v6.1.0.
+* Enabling radio upscale mode now additionally requests operation with no MRAM latency.
+* Disabled data prefetching in the L2CACHE.
+
+Fixed
+-----
+
+* An issue with corrupted temperature measurements when sampled too soon after boot.
+* PSA Vendor key ID ``0x7fffc001`` now refers to the correct IAK per local domain. (NRFX-8427)
+
 IronSide Secure Element (IronSide SE) v23.1.2+21
 ================================================
 
