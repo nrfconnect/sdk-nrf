@@ -282,6 +282,7 @@
 /drivers/flash/                           @nrfconnect/ncs-co-drivers
 /drivers/gpio/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /drivers/hw_cc3xx/                        @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
+/drivers/kmu/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
 /drivers/mpsl/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
 /drivers/mspi/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /drivers/net/                             @nrfconnect/ncs-co-drivers @doki-nordic
