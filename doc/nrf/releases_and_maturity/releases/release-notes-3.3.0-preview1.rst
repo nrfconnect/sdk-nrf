@@ -1,16 +1,13 @@
-.. _ncs_release_notes_changelog:
+.. _ncs_release_notes_3.3.0-preview1:
 
-Changelog for |NCS| v3.2.99
-###########################
+Changelog for |NCS| v3.3.0-preview1
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -126,8 +123,7 @@ Security
   * Support for the HMAC KDF algorithm in the CRACEN driver.
     The algorithm implementation is conformant to the NIST SP 800-108 Rev. 1 recommendation.
   * Support for the secp384r1 key storage in the :ref:`Key Management Unit (KMU) <ug_nrf54l_crypto_kmu_supported_key_types>`.
-  * Support for AES-GCM AEAD using CRACEN for the :ref:`nrf54lm20dk <app_boards>` board.
-  * Support for ChaCha20-Poly1305 AEAD using CRACEN for the :ref:`nrf54lm20dk <app_boards>` board.
+  * Support for AES-GCM AEAD using CRACEN for the :ref:`nrf54lm20dk <app_boards>`.
 
 * Updated:
 
@@ -141,8 +137,7 @@ Security
     * Experimental support for ASCON AEAD128 AEAD algorithm.
     * Updated implementations of WPA3-SAE, ML-DSA and ML-KEM to support the PSA Crypto API v1.4.
 
-    The :ref:`ug_crypto_supported_features` page has been updated accordingly.
-  * The :ref:`ug_crypto_supported_features` page with information about support for the Curve448 (X448) elliptic curve under :ref:`ug_crypto_supported_features_signature_algorithms` and :ref:`ug_crypto_supported_features_ecc_curve_types`.
+   The :ref:`ug_crypto_supported_features` page has been updated accordingly.
 
 * Removed:
 
@@ -234,8 +229,7 @@ IPC radio firmware
 Matter bridge
 -------------
 
-* Updated partitions mapping for the nRF7002 DK in the application.
-  See the :ref:`migration guide <migration_3.3_required>` for more information.
+|no_changes_yet_note|
 
 nRF5340 Audio
 -------------
@@ -320,22 +314,7 @@ Bluetooth samples
 Bluetooth Mesh samples
 ----------------------
 
-* :ref:`ble_mesh_dfu_distributor` sample:
-
-  * Added a force disconnect of the mesh after provisioning to ensure the apps reconnect through the proxy service.
-    This is a workaround for apps that do not properly close the PB-GATT connection after provisioning, especially after DFU.
-    Disable :kconfig:option:`CONFIG_BT_MESH_DK_PROV_PB_GATT_DISCONNECT` to restore old behavior.
-
-* :ref:`bluetooth_mesh_light_lc` sample with :file:`overlay-dfu.conf` enabled:
-
-  * Added a force disconnect of the mesh after provisioning to ensure the apps reconnect through the proxy service.
-    This is a workaround for apps that do not properly close the PB-GATT connection after provisioning, especially after DFU.
-    Disable :kconfig:option:`CONFIG_BT_MESH_DK_PROV_PB_GATT_DISCONNECT` to restore old behavior.
-
-* :ref:`bluetooth_mesh_light_lc` sample:
-
-  * Fixed an issue where stale RPL data could persist in EMDS after a node reset.
-    The sample now uses the new :c:func:`bt_mesh_dk_prov_node_reset_cb_set` function to clear EMDS data when a node reset occurs, ensuring that stale RPL data is removed.
+|no_changes_yet_note|
 
 Bluetooth Fast Pair samples
 ---------------------------
@@ -413,11 +392,7 @@ Keys samples
 Matter samples
 --------------
 
-* Updated:
-
-  * The documentation for all Matter samples and applications to make it more consistent and easier to maintain and read.
-  * Partitions mapping for the nRF7002 DK in all Matter samples.
-    See the :ref:`migration guide <migration_3.3_required>` for more information.
+* Refactored documentation for all Matter samples and applications to make it more consistent and easier to maintain and read.
 
 * :ref:`matter_manufacturer_specific_sample`:
 
@@ -531,10 +506,7 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-:ref:`bt_mesh_dk_prov` module:
-
-  * Added support for node reset callback.
-    Applications can now register a callback using the :c:func:`bt_mesh_dk_prov_node_reset_cb_set` function to perform cleanup operations when a node reset occurs.
+|no_changes_yet_note|
 
 Common Application Framework
 ----------------------------
@@ -664,8 +636,6 @@ nRF Cloud integration
 ---------------------
 
 * Updated by enabling a transform request for topic prefix and pairing during connection initialization to nRF Cloud in the MQTT finite state machine (FSM).
-* Fixed a hang in the nRF Cloud log backend caused by incorrect error handling.
-  When the semaphore cannot be acquired, the function now returns the original size instead of 0, allowing the logging system to proceed correctly.
 
 CoreMark integration
 --------------------
