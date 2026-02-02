@@ -1,0 +1,30 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&flash0 {
+	/* Redefine the "partitions" DTS node. */
+	/delete-node/ partitions;
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot0_partition: partition@0 {
+			label = "image-0";
+			reg = <0x0 DT_SIZE_K(1000)>;
+		};
+
+		bt_fast_pair_partition: partition@fa000 {
+			reg = <0xfa000 DT_SIZE_K(4)>;
+		};
+
+		storage_partition: partition@fb000 {
+			label = "storage";
+			reg = <0xfb000 DT_SIZE_K(20)>;
+		};
+	};
+};
