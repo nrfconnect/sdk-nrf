@@ -988,6 +988,9 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 		} else {
 			server->src.lc3_preset[0].qos.rtn = server_pref->rtn;
 		}
+		/* If we need to change the RTN, the controller may need to adjust scheduling.
+		 * Hence, we need to perform a group reconfiguration
+		 */
 		group_reconfig_needed = true;
 	}
 
