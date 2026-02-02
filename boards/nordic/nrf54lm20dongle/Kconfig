@@ -1,0 +1,11 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+# Board is experimental; select general Zephyr EXPERIMENTAL symbol here (not in
+# Kconfig.nrf54lm20dongle).
+# Putting the EXPERIMENTAL symbol in Kconfig.nrf54lm20dongle would leed
+# to compliance check failures.
+config BOARD_NRF54LM20DONGLE_EXPERIMENTAL
+	bool
+	select EXPERIMENTAL
+	default y
