@@ -10,7 +10,7 @@
  * Provides the implementation of AccessStorage class that utilizes the persistent storage interface.
  * The persistent storage backend is chosen based on the Kconfig settings:
  * - NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND or
- * - NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND.
+ * - NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND [DEPRECATED].
  *
  * This implementation uses the following persistent storage keys for the access items:
  *
