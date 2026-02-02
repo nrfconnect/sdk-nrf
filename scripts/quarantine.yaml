@@ -160,6 +160,7 @@
 
 - scenarios:
     - lpuart.loopback.int_driven
+    - lpuart.loopback.nrf54l
     - lpuart.loopback.nrf54l.busy_sim
     - lpuart.user_specific_config
   platforms:
