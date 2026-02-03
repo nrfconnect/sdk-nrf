@@ -13,5 +13,4 @@ tests:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow: nrf7120dk/nrf7120/cpuapp
     extra_args:
-      - EXTRA_DTC_OVERLAY_FILE="ipc.overlay"
       - EXTRA_CONF_FILE="overlay-nrf71-tlm.conf"
