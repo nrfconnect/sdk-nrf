@@ -5,7 +5,7 @@
  */
 
 /dts-v1/;
-#include <sercomm/tpm530mns.dtsi>
+#include <arm/sercomm/tpm530m_ns.dtsi>
 #include "tpm530mevk_tpm530m_common.dtsi"
 
 / {
