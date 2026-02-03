@@ -28,6 +28,17 @@ config NET_PKT_BUF_RX_DATA_POOL_SIZE
 
 endif
 
+
+if WIFI_NRF70
+
+config NRF70_RX_NUM_BUFS
+	default 16
+
+config NRF70_MAX_TX_AGGREGATION
+	default 4
+
+endif
+
 source "Kconfig.zephyr"
 
 endmenu
