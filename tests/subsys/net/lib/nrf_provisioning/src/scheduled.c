@@ -20,6 +20,7 @@
 #include <ncs_version.h>
 
 #include "cmock_date_time.h"
+#include "cmock_lte_lc.h"
 #include "cmock_modem_attest_token.h"
 #include "cmock_modem_key_mgmt.h"
 #include "cmock_modem_info.h"
@@ -233,6 +234,7 @@ void test_provisioning_init_should_start_provisioning(void)
 	__cmock_settings_subsys_init_IgnoreAndReturn(0);
 	__cmock_settings_register_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
+	__cmock_lte_lc_register_handler_Ignore();
 	__cmock_date_time_now_IgnoreAndReturn(0);
 	__cmock_date_time_is_valid_IgnoreAndReturn(1);
 	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
