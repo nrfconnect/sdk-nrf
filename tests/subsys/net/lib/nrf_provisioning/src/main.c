@@ -1044,6 +1044,8 @@ void test_provisioning_init_wo_cert_change_valid(void)
 	__cmock_rest_client_request_ExpectAnyArgsAndReturn(0);
 	__cmock_rest_client_request_AddCallback(rest_client_request_auth_hdr_valid);
 
+	__cmock_lte_lc_register_handler_Ignore();
+
 	int ret = nrf_provisioning_init(nrf_provisioning_event_cb);
 
 	TEST_ASSERT_EQUAL_INT(0, ret);

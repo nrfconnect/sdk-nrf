@@ -15,6 +15,7 @@ set(options
   -DCONFIG_NRF_MODEM_LIB_MEM_DIAG=y
   -DCONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S=300
   -DCONFIG_MODEM_JWT_MAX_LEN=850
+  -DCONFIG_LTE_LC_PDN_MODULE=y
 )
 
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/date_time.h)
@@ -33,8 +34,6 @@ cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nr
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/rest_client.h)
 cmock_handle(include/nrf_modem_at.h)
 
-list(APPEND app_sources src/net_mgmt_mock.c)
-
 if(CONFIG_SETTINGS_CUSTOM)
   test_runner_generate(src/http_jwt.c)
   list(APPEND app_sources src/http_jwt.c)
@@ -42,7 +41,6 @@ if(CONFIG_SETTINGS_CUSTOM)
 elseif(CONFIG_NRF_PROVISIONING_COAP)
   test_runner_generate(src/coap.c)
   list(APPEND app_sources src/coap.c)
-  list(APPEND app_sources src/net_mgmt_mock.c)
   list (APPEND options
     -DCONFIG_COAP_CLIENT_MESSAGE_HEADER_SIZE=48
     -DCONFIG_COAP_CLIENT_MESSAGE_SIZE=512

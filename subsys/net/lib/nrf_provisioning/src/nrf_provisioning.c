@@ -17,7 +17,6 @@
 #include <zephyr/random/random.h>
 #include <zephyr/settings/settings.h>
 #include <zephyr/sys/reboot.h>
-#include <zephyr/net/net_if.h>
 
 #include <modem/lte_lc.h>
 #include <modem/modem_key_mgmt.h>
@@ -43,9 +42,6 @@ LOG_MODULE_REGISTER(nrf_provisioning, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 #define SRV_TIMEOUT_BACKOFF_MAX_S 86400
 #define SETTINGS_STORAGE_PREFIX	  CONFIG_NRF_PROVISIONING_SETTINGS_STORAGE_PATH
 
-/* L4 event mask, used to subscribe to L4 events from Zephyr NET connection manager */
-#define L4_EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
-
 /* nRF Provisioning context */
 static struct nrf_provisioning_http_context rest_ctx = {
 	.connect_socket = REST_CLIENT_SCKT_CONNECT,
@@ -60,7 +56,6 @@ static struct nrf_provisioning_coap_context coap_ctx = {
 
 /* Variables */
 static bool initialized;
-static struct net_mgmt_event_callback l4_cb;
 static time_t provisioning_interval;
 static nrf_provisioning_event_cb_t callback_local;
 static bool nw_connected = true;
@@ -334,29 +329,38 @@ static int settings_init(void)
 	return 0;
 }
 
-static void l4_event_handler(struct net_mgmt_event_callback *cb,
-			     uint64_t event, struct net_if *iface)
+static void lte_lc_event_handler(const struct lte_lc_evt *const evt)
 {
-	switch (event) {
-	case NET_EVENT_L4_CONNECTED:
-		LOG_DBG("Connected to network");
+	switch (evt->type) {
+	case LTE_LC_EVT_PDN:
+		switch (evt->pdn.type) {
+		case LTE_LC_EVT_PDN_ACTIVATED:
+		case LTE_LC_EVT_PDN_RESUMED:
 
-		nw_connected = true;
+			LOG_DBG("Connected to network");
+			nw_connected = true;
+			if (backoff && IS_ENABLED(CONFIG_NRF_PROVISIONING_SCHEDULED)) {
+				/* If network resumed while waiting, resume immediately */
+				schedule_next_work(0);
+			}
 
-		if (backoff && IS_ENABLED(CONFIG_NRF_PROVISIONING_SCHEDULED)) {
-			/* If network resumed while waiting, resume immediately */
-			schedule_next_work(0);
+			break;
+		case LTE_LC_EVT_PDN_DEACTIVATED:
+		case LTE_LC_EVT_PDN_NETWORK_DETACH:
+		case LTE_LC_EVT_PDN_SUSPENDED:
+
+			LOG_DBG("Disconnected from network");
+			nw_connected = false;
+
+			break;
+		default:
+			/* Don't care about other PDN events */
+			break;
 		}
-
-		break;
-	case NET_EVENT_L4_DISCONNECTED:
-		LOG_DBG("Disconnected from network");
-
-		nw_connected = false;
 		break;
 	default:
-		/* Don't care */
-		return;
+		/* Don't care about other events */
+		break;
 	}
 }
 
@@ -415,9 +419,8 @@ static void init_work_fn(struct k_work *work)
 		return;
 	}
 
-	/* Setup handler for Zephyr NET Connection Manager events. */
-	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
-	net_mgmt_add_event_callback(&l4_cb);
+	/* Setup handler for LTE Link Control events. */
+	lte_lc_register_handler(lte_lc_event_handler);
 
 	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_AUTO_START_ON_INIT)) {
 		LOG_DBG("Starting provisioning on init");
