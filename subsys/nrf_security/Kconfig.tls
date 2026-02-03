@@ -82,7 +82,7 @@ config MBEDTLS_PKCS7_C
 	  See https://tools.ietf.org/html/rfc2315 for details.
 	  This feature is currently experimental.
 
-endif
+endif # MBEDTLS_X509_LIBRARY
 
 menuconfig MBEDTLS_TLS_LIBRARY
 	bool "Create mbed TLS transport layer security library"
