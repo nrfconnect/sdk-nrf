@@ -169,6 +169,7 @@ static void initialize_ctr(cracen_aead_operation_t *operation)
 	}
 	/* RFC8439: initial counter value is 1 */
 	cracen_sw_encode_value_be(chacha_poly_ctx->ctr, CRACEN_CHACHA20_COUNTER_SIZE, 1, 1);
+	chacha_poly_ctx->keystream_offset = SX_BLKCIPHER_CHACHA20_BLK_SZ;
 	chacha_poly_ctx->ctr_initialized = true;
 }
 
@@ -193,18 +194,31 @@ static psa_status_t calc_chacha20(cracen_aead_operation_t *operation, struct sxb
 {
 	cracen_sw_chacha20_poly1305_context_t *chacha_poly_ctx = &operation->sw_chacha_poly_ctx;
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	const uint8_t zero[SX_BLKCIPHER_CHACHA20_BLK_SZ] = {};
 
-	status = cracen_chacha20_primitive(cipher, &operation->keyref,
-					   chacha_poly_ctx->ctr,
-					   operation->nonce, input, output, length);
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
+	for (size_t i = 0; i < length; i++) {
+		/* Generate new keystream block when current one is exhausted */
+		if (chacha_poly_ctx->keystream_offset >= SX_BLKCIPHER_CHACHA20_BLK_SZ) {
+			status = cracen_chacha20_primitive(cipher, &operation->keyref,
+							   chacha_poly_ctx->ctr,
+							   operation->nonce, zero,
+							   chacha_poly_ctx->keystream,
+							   SX_BLKCIPHER_CHACHA20_BLK_SZ);
+			if (status != PSA_SUCCESS) {
+				return status;
+			}
 
-	if (length == SX_BLKCIPHER_CHACHA20_BLK_SZ) {
-		return cracen_sw_increment_counter_be(chacha_poly_ctx->ctr,
-						      CRACEN_CHACHA20_COUNTER_SIZE,
-						      0);
+			status = cracen_sw_increment_counter_be(chacha_poly_ctx->ctr,
+								CRACEN_CHACHA20_COUNTER_SIZE,
+								0);
+			if (status != PSA_SUCCESS) {
+				return status;
+			}
+
+			chacha_poly_ctx->keystream_offset = 0;
+		}
+		output[i] =
+			input[i] ^ chacha_poly_ctx->keystream[chacha_poly_ctx->keystream_offset++];
 	}
 	return PSA_SUCCESS;
 }
@@ -335,8 +349,6 @@ psa_status_t cracen_sw_chacha20_poly1305_update(cracen_aead_operation_t *operati
 
 	finalize_ad_padding(operation);
 	operation->ad_finished = true;
-
-	safe_memzero(output, output_size);
 
 	/* Process data with CTR mode encryption/decryption */
 	if (operation->dir == CRACEN_ENCRYPT) {

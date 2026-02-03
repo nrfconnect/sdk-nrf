@@ -322,6 +322,8 @@ typedef struct cracen_sw_gcm_context_s cracen_sw_gcm_context_t;
 /** Software ChaCha20-Poly1305 context for CRACEN software implementations. */
 struct cracen_sw_chacha20_poly1305_context_s {
 	uint8_t ctr[CRACEN_CHACHA20_COUNTER_SIZE]; /* Counter */
+	uint8_t keystream[SX_BLKCIPHER_CHACHA20_BLK_SZ]; /* Generated keystream */
+	size_t keystream_offset; /* Position in keystream buffer */
 	poly1305_ext_context poly_ctx;
 	size_t total_ad_fed; /* Total AD bytes processed */
 	size_t total_data_enc; /* Total size of the ciphertext */
