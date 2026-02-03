@@ -1588,7 +1588,7 @@
 
 .. _`Matter Resource Kit`:
 .. _`CSA Matter Resource Kit`: https://community.csa-iot.org/page/matter-resource-kit
-.. _`Connectivity Standards Alliance Certification Policy`: https://csa-iot.org/wp-content/uploads/2021/12/07-4842-14-ptsc-certification-policy.pdf
+.. _`CSA Interoperability Lab (Interop Lab)`: https://community.csa-iot.org/page/interoperability
 .. _`CSA's Testing Providers`: https://csa-iot.org/certification/testing-providers/
 .. _`CSA's Certification Team`: https://csa-iot.org/contact-us/
 .. _`Connectivity Standards Alliance members`: https://csa-iot.org/members/

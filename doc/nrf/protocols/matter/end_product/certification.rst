@@ -10,8 +10,8 @@ Matter certification
 Matter offers full certification, including test specification, certification program, and certification framework.
 
 Read the following sections for an overview of the Matter certification process.
-For detailed information, see the official Certification Policy documentation from `Connectivity Standards Alliance`_ (CSA).
-This and other documents related to certification are available in the `Matter Resource Kit`_ to Matter members.
+For detailed information, see the official Certification Policy and Procedures from CSA.
+The latest Certification Policy and other documents related to certification are available in the `Matter Resource Kit`_ to Matter members.
 
 The public listing of certified Matter products is available at the `CSA Certified Products Database`_ page.
 
@@ -29,8 +29,11 @@ Certified Product
 Certified Software Component
    A software feature of a Supported Operating Environment (SOE).
 
-This page offers general introduction to the Matter certification process, and so it makes no distinction between these types.
-It uses the term *Matter component* to refer to both of them.
+Matter Compliant Platform
+   A platform that provides a certified Matter foundation (e.g. stack, commissioning, mandatory clusters) for building products.
+
+This page offers a general introduction to the Matter certification process, and so it makes no distinction between these types where the process is the same.
+It uses the term *Matter component* to refer to Certified Products and Certified Software Components.
 
 .. _ug_matter_device_certification_overview:
 
@@ -291,10 +294,18 @@ You can visit the following pages to check the Bluetooth QDIDs and Thread CIDs v
 * `nRF54L15 Compatibility Matrix <nRF54L15 SoC Compatibility Matrix_>`_
 
 Matter certification process variants
-*************************************
+=====================================
 
-The standard Matter certification process has several variants that you can use if you have already obtained the certification or you want to certify several products of the same family.
-There are separate processes for certification for different devices and recertification for devices that are already certified.
+The standard Matter certification process has several variants: certification paths for different devices (including Derived Matter Product), recertification for devices that are already certified, and variants for certifying several products of the same family.
+
+.. _ug_matter_device_certification_dmp:
+
+Derived Matter Product (DMP) certification
+=========================================
+
+Another way to achieve product certification is to build your product on a certified Matter Compliant Platform and certify it as a Derived Matter Product (DMP).
+A DMP adds product-specific clusters and functionality on top of the platform; only the product-only and shared tests are required for certification, so the testing scope is reduced compared to certifying a full product from scratch.
+For the DMP concept, process, and step-by-step guidance, see :ref:`platform and DMP certification <ug_matter_platform_and_dmp>`.
 
 .. _ug_matter_device_recertification_process:
 
@@ -306,35 +317,53 @@ The following variants are meant for devices that are already certified.
 FastTrack Recertification program
 ---------------------------------
 
-Matter FastTrack Recertification is a program for recertification of previously certified Matter products.
-With FastTrack, you can test updated products and obtain a Matter certification based on the test results.
+Matter FastTrack Recertification is a program for recertification of previously certified Matter products and Matter Platforms.
+With FastTrack, you perform the testing yourself and *self-attest* the results: no Authorized Test Laboratory (ATL) validation is required.
+Upon approval, no new Certification Declaration (CD) is issued for Matter; only a :ref:`Distributed Compliance Ledger <ug_matter_device_dcl>` (DCL) update is required.
 
-The procedure is to validate the quality of the Matter solution by the device maker as follows:
+The procedure is:
 
-1. Execute the certification test cases valid for the device.
-#. Validate the results if all of the test cases pass (save the logs and results for proof).
-#. Register the device for certification with all needed documentation.
-#. Wait for CSA response regarding acceptance of results.
+1. Request and be granted FastTrack Program membership from the Director of Certifications (e.g. via certification@csa-iot.org).
+#. Execute the certification test cases valid for the device using the latest applicable test harness and scripts.
+#. Validate the results; save logs and results for proof (see retention below).
+#. A registered Point of Contact (PoC) attests to the results in the Declaration of Conformity (DoC).
+#. Submit the completed DoC and supporting documents (e.g. PICS, attestations) to the Director of Certifications.
+#. Provide two product samples to the `CSA Interoperability Lab (Interop Lab)`_ if not already present there, within 3 months of first using FastTrack for that product.
 
-In case of critical and security fixes that need to be applied as soon as possible, the client may launch and update devices with new version without waiting for acceptance from CSA.
+For critical and security fixes, you may deploy updates to devices after the Director of Certifications acknowledges *receipt* of your certification request, without waiting for formal certification approval.
 
-The conformance of every certified Matter product undergoing initial certification is validated by an Alliance-approved Authorized Test Lab (ATL), but with FastTrack, you can validate the conformance of software updates to your certified Matter product without returning to the ATL.
-However, you need to send the updated firmware to the CSA Interoperability Lab.
+
+To maintain qualified status, you must:
+
+* Store test results for at least five years from the date of approved certification and share them with the Alliance on request.
+* Maintain qualified status: registered Point of Contact (PoC), participation in the relevant working-group subgroups (e.g. Matter CSG), and annual training for self-test individuals as required by the Alliance.
 
 .. figure:: images/matter_device_certification_process_ft.svg
    :alt: Matter's FastTrack Recertification program overview
 
    Matter's FastTrack Recertification program overview
 
-The scope of changes permitted under this program is broad, covering not only bug fixes and interoperability improvements, but also updates to newer specification versions.
-For more details, read a dedicated document in the `Matter Resource Kit`_.
+The program allows the following changes:
+
+* Security fixes
+* Critical bug fixes
+* Interoperability improvements
+* Updates to a newer certifiable specification version
+* SDK updates recommended by the Matter Steering Committee
+* Device improvements and bug fixes
+
+The following changes are not permitted under FastTrack:
+
+* New device types
+* Additions or changes to existing clusters
+* Adding features not previously tested in a certification context
 
 Rapid Recertification program
 -----------------------------
 
 The Rapid Recertification program lets you perform the product testing using the services of a qualified CSA Member, even your own organization, instead of an ATL.
-This allows for a potentially more streamlined recertification process when you want to certify.
-The first certification must still be done at an ATL.
+Test results must still be submitted to an ATL of your choice for review and validation; the ATL then recommends recertification to the Director of Certifications, who grants certification in line with existing policy.
+The first (initial) certification must still be done at an ATL.
 
 .. figure:: images/matter_device_certification_process_rr.svg
    :alt: Matter's Rapid Recertification program overview
@@ -400,9 +429,8 @@ The |NCS| includes several :ref:`matter_samples` that are example implementation
 The samples are maintained to fulfill Matter certification requirements as closely as possible, but they do not have official Matter compliance certificates.
 You can use them as a reference for creating your own application, but this does not guarantee that your application will pass the Matter certification.
 
-Currently, the Matter certification program does not provide any form of platform certification, so the product maker is solely responsible for ensuring that the application used fulfills all Matter certification requirements.
-Before you start the application process for the Matter certification, make sure that the application configuration generated using :file:`.zap` file is compatible with the PICS generated for the certification purpose.
-You can find the information about the specification and the valid PICS for specific Matter stack version that should be used for your product on the `CSA Matter Resource Kit`_ page, in the `Specification` section.
+Before starting the Matter certification application process, ensure that the application configuration generated using the :file:`.zap` file aligns with the PICS required for certification.
+You can find detailed information about specifications and the appropriate PICS for your target Matter stack version on the `CSA Matter Resource Kit`_ page, under the `Specification` section.
 Especially, make sure that:
 
 * ``FeatureMap`` attributes for all clusters match the desired configuration selected in PICS, and all other cluster requirements related to the specific ``FeatureMap`` value are met.
