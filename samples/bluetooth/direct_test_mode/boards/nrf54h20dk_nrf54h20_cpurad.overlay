@@ -6,24 +6,18 @@
 
 / {
 	chosen {
-		ncs,dtm-uart = &uart136;
+		ncs,dtm-uart = &uart135;
 	};
 };
 
-&uart135 {
-	status = "disabled";
+&cpurad_dma_region {
+	status = "okay";
 };
 
-&uart136 {
+&uart135 {
 	status = "okay";
 	memory-regions = <&cpurad_dma_region>;
 	current-speed = <19200>;
-};
-
-&dppic020 {
-	status = "okay";
-	source-channels = <0 1>;
-	sink-channels = <2 3>;
 };
 
 &radio {
