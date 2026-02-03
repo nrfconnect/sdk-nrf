@@ -111,7 +111,9 @@ int cert_provision(void)
 				 sizeof(cert));
 	if (err == -EEXIST) {
 		printk("CA certificate already exists, sec tag: %d\n", TLS_SEC_TAG);
-	} else if (err < 0) {
+		return 0;
+	}
+	if (err < 0) {
 		printk("Failed to register CA certificate: %d\n", err);
 		return err;
 	}
@@ -164,11 +166,11 @@ int tls_setup(int fd)
 		return err;
 	}
 
-	/* Set TLS cipher suite list tp support only TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 */
-
+	/* Set TLS cipher suite to TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 */
 	int cipher_list[] = { 0xC02B };
 
-	err = setsockopt(fd, SOL_TLS, TLS_CIPHERSUITE_LIST, cipher_list, sizeof(cipher_list));
+	err = setsockopt(fd, SOL_TLS, TLS_CIPHERSUITE_LIST, cipher_list,
+			 sizeof(cipher_list));
 	if (err) {
 		printk("Failed to setup TLS cipher suite list, err %d\n", errno);
 
@@ -242,11 +244,11 @@ static void send_http_request(void)
 		  INET6_ADDRSTRLEN);
 	printk("Resolved %s (%s)\n", peer_addr, net_family2str(res->ai_family));
 
-	if (IS_ENABLED(CONFIG_SAMPLE_TFM_MBEDTLS)) {
+	// if (IS_ENABLED(CONFIG_SAMPLE_TFM_MBEDTLS)) {
 		fd = socket(res->ai_family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
-	} else {
-		fd = socket(res->ai_family, SOCK_STREAM, IPPROTO_TLS_1_2);
-	}
+	// } else {
+	// 	fd = socket(res->ai_family, SOCK_STREAM, IPPROTO_TLS_1_2);
+	// }
 	if (fd == -1) {
 		printk("Failed to open socket!\n");
 		goto clean_up;
