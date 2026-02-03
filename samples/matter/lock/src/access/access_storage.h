@@ -50,11 +50,6 @@ public:
 	bool Init();
 
 	/**
-	 * @brief Factory reset the storage.
-	 */
-	void FactoryReset();
-
-	/**
 	 * @brief Store the entry into the persistent storage.
 	 *
 	 * @param storageType depending on that there will be a different key set.
