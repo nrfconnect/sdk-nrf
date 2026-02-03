@@ -1,0 +1,27 @@
+/delete-node/ &storage_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+
+&cpuapp_rram {
+	partitions {
+		slot0_partition: partition@10000 {
+			label = "image-0";
+			reg = <0x00010000 DT_SIZE_K(400)>;
+		};
+
+		storage_partition: partition@74000 {
+			label = "storage";
+			reg = <0x00074000 DT_SIZE_K(20)>;
+		};
+
+		emds_partition_0: partition@79000 {
+			label = "emds-0";
+			reg = <0x00079000 DT_SIZE_K(8)>;
+		};
+
+		emds_partition_1: partition@7b000 {
+			label = "emds-1";
+			reg = <0x0007b000 DT_SIZE_K(8)>;
+		};
+	};
+};
