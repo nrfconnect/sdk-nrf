@@ -95,6 +95,16 @@
 			#nordic,ficr-cells = <1>;
 		};
 
+#ifdef USE_NON_SECURE_ADDRESS_MAP
+		/* FLPR is not used with TF-M so NS can use full SRAM */
+		cpuapp_sram: memory@20000000 {
+			compatible = "mmio-sram";
+			reg = <0x20000000 DT_SIZE_K(191)>;
+			ranges = <0x0 0x20000000 DT_SIZE_K(191)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+		};
+#else
 		cpuapp_sram: memory@20000000 {
 			reg = <0x20000000 DT_SIZE_K(191)>;
 			ranges = <0x0 0x20000000 DT_SIZE_K(191)>;
@@ -110,6 +120,7 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 		};
+#endif
 
  #ifdef USE_NON_SECURE_ADDRESS_MAP
 		global_peripherals: peripheral@40000000 {
@@ -594,7 +605,12 @@
 			interrupts = <75 NRF_DEFAULT_IRQ_PRIORITY>;
 
 			cpuapp_rram: rram@0 {
+#ifdef USE_NON_SECURE_ADDRESS_MAP
+				/* FLPR is not used with TF-M so NS can use full RRAM */
+				reg = <0x0 DT_SIZE_K(1012)>;
+#else
 				reg = <0x0 DT_SIZE_K(948)>;
+#endif
 				ranges = <0x0 0x0 DT_SIZE_K(948)>;
 				compatible = "soc-nv-flash";
 				erase-block-size = <4096>;
@@ -603,6 +619,7 @@
 				#size-cells = <1>;
 			};
 
+#ifndef USE_NON_SECURE_ADDRESS_MAP
 			cpuflpr_rram: rram@ed000 {
 				reg = <0xed000 DT_SIZE_K(64)>;
 				ranges = <0x0 0xed000 DT_SIZE_K(64)>;
@@ -612,6 +629,7 @@
 				#address-cells = <1>;
 				#size-cells = <1>;
 			};
+#endif
 		};
 
 		cpuapp_ppb: cpuapp-ppb-bus {

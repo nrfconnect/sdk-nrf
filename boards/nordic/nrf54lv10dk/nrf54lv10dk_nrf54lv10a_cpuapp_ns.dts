@@ -28,75 +28,6 @@
 	};
 };
 
-&cpuapp_sram {
-	/*
-	 * Default SRAM planning when building for nRF54LV10 with ARM TrustZone-M support.
-	 * - Lowest 72 kB SRAM allocated to Secure image (sram0_s).
-	 * - Upper 72 kB SRAM allocated to Non-Secure image (sram0_ns).
-	 *
-	 * nRF54LV10 has 192 kB of volatile memory (SRAM) but the last 42kB are reserved for
-	 * the FLPR MCU.
-	 * This static layout needs to be the same with the upstream TF-M layout in the
-	 * header flash_layout.h of the relevant platform. Any updates in the layout
-	 * needs to happen both in the flash_layout.h and in this file at the same time.
-	 */
-	sram0_s: sram@0 {
-		/* Secure image memory */
-		reg = <0x0 DT_SIZE_K(72)>;
-	};
-
-	sram0_ns: sram@12000 {
-		/* Non-Secure image memory */
-		reg = <0x12000 DT_SIZE_K(72)>;
-	};
-};
-
-&cpuapp_rram {
-	partitions {
-		compatible = "fixed-partitions";
-		#address-cells = <1>;
-		#size-cells = <1>;
-		ranges;
-
-		/* nRF54LV10 has 1012 kB of non volatile memory (RRAM) but the
-		 * last 64kB are reserved for the FLPR MCU.
-		 *
-		 * This static layout needs to be the same with the upstream TF-M layout in the
-		 * header flash_layout.h of the relevant platform. Any updates in the layout
-		 * needs to happen both in the flash_layout.h and in this file at the same time.
-		 */
-		slot0_partition: partition@0 {
-			label = "image-0";
-			reg = <0x0000000 DT_SIZE_K(384)>;
-		};
-
-		tfm_ps_partition: partition@60000 {
-			label = "tfm-ps";
-			reg = <0x00060000 DT_SIZE_K(16)>;
-		};
-
-		tfm_its_partition: partition@64000 {
-			label = "tfm-its";
-			reg = <0x00064000 DT_SIZE_K(16)>;
-		};
-
-		tfm_otp_partition: partition@68000 {
-			label = "tfm-otp";
-			reg = <0x00068000 DT_SIZE_K(8)>;
-		};
-
-		slot0_ns_partition: partition@6a000 {
-			label = "image-0-nonsecure";
-			reg = <0x0006a000 DT_SIZE_K(504)>;
-		};
-
-		storage_partition: partition@e8000 {
-			label = "storage";
-			reg = <0x000e8000 DT_SIZE_K(20)>;
-		};
-	};
-};
-
 &uart20 {
 	/* Disable so that TF-M can use this UART */
 	status = "disabled";
@@ -109,3 +40,6 @@
 &bt_hci_controller {
 	status = "disabled";
 };
+
+/* Include default memory partition configuration file */
+#include <nordic/nrf54lv10a_cpuapp_ns_partition.dtsi>
