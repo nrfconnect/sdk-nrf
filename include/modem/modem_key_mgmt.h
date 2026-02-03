@@ -149,7 +149,7 @@ int modem_key_mgmt_cmp(nrf_sec_tag_t sec_tag,
 		       const void *buf, size_t len);
 
 /**
- * @brief Read the SHA1 digest of a credential from persistent storage.
+ * @brief Read the SHA-256 digest of a credential from persistent storage.
  *
  * @param[in]           sec_tag         The security tag of the credential.
  * @param[in]           cred_type       The credential type.
