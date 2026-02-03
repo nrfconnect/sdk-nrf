@@ -53,13 +53,11 @@
 #define PSStore SecureStore
 #define PSRemove SecureRemove
 #define PSLoad SecureLoad
-#define PSFactoryReset SecureFactoryReset
 #elif defined(CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND)
 #define PSInit NonSecureInit
 #define PSStore NonSecureStore
 #define PSLoad NonSecureLoad
 #define PSRemove NonSecureRemove
-#define PSFactoryReset NonSecureFactoryReset
 #endif
 
 namespace
@@ -156,11 +154,6 @@ bool AccessStorage::Init()
 	static Nrf::PersistentStorageNode rootNode{ kAccessPrefix, strlen(kAccessPrefix) };
 
 	return Nrf::PSErrorCode::Success == Nrf::GetPersistentStorage().PSInit(&rootNode);
-}
-
-void AccessStorage::FactoryReset()
-{
-	Nrf::GetPersistentStorage().PSFactoryReset();
 }
 
 bool AccessStorage::Store(Type storageType, const void *data, size_t dataSize, uint16_t index, uint16_t subindex)

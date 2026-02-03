@@ -106,11 +106,6 @@ bool AccessStorage::Init()
 	return true;
 }
 
-void AccessStorage::FactoryReset()
-{
-	/* TODO: Implement factory reset */
-}
-
 bool AccessStorage::Store(Type type, const void *data, size_t dataSize, uint16_t index, uint16_t subindex)
 {
 	if (data == nullptr) {
