@@ -44,12 +44,6 @@ config TFM_LOG_LEVEL_SILENCE
 		   $(dt_nodelabel_has_prop,uart22,pinctrl-names) || \
 		   $(dt_nodelabel_has_prop,uart30,pinctrl-names)
 
-choice TFM_PROFILE_TYPE
-	default TFM_PROFILE_TYPE_NOT_SET if NRF_PLATFORM_LUMOS || \
-		BT_CRYPTO || BT_MESH_CRYPTO_LIB || OPENTHREAD
-	default TFM_PROFILE_TYPE_MINIMAL
-endchoice
-
 choice TFM_MODEL
 	default TFM_SFN if TFM_PROFILE_TYPE_MINIMAL
 endchoice
