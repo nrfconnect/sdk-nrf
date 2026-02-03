@@ -64,30 +64,18 @@ function(fast_pair_hex_pm)
     )
 endfunction()
 
-# This function should probably one day be moved to some common utilities file.
-function(dt_get_parent parent_full_path node_full_path)
-  string(FIND "${node_full_path}" "/" pos REVERSE)
-
-  if(pos LESS_EQUAL 0)
-    message(FATAL_ERROR "Unable to get parent of node: ${node_full_path}")
-  endif()
-
-  string(SUBSTRING "${node_full_path}" 0 ${pos} parent)
-  set(${parent_full_path} ${parent} PARENT_SCOPE)
-endfunction()
-
 function(fast_pair_hex_dts)
   set(fp_partition_name bt_fast_pair_partition)
 
   dt_nodelabel(
-    bt_fast_pair_partition_node_full_path
+    fp_partition_node_full_path
     TARGET
     ${DEFAULT_IMAGE}
     NODELABEL
     "${fp_partition_name}"
     )
 
-  if(NOT bt_fast_pair_partition_node_full_path)
+  if(NOT fp_partition_node_full_path)
     message(FATAL_ERROR
             "The `bt_fast_pair_partition` partition node is not defined in DTS. "
             "Please define the Fast Pair partition to use the automatic provisioning "
@@ -95,46 +83,17 @@ function(fast_pair_hex_dts)
   endif()
 
   dt_reg_addr(
-    bt_fast_pair_partition_relative_address
+    fp_provisioning_data_address
     TARGET
     ${DEFAULT_IMAGE}
     PATH
-    "${bt_fast_pair_partition_node_full_path}"
-    )
-
-  # It's assumed that the Fast Pair partition node is a child of an address-less node which groups
-  # partitions and is a child of a NVM node. For more details see the Fixed flash partitions section
-  # of https://docs.zephyrproject.org/latest/build/dts/intro-syntax-structure.html#unit-addresses.
-  dt_get_parent(
-    bt_fast_pair_partition_node_parent_full_path
-    "${bt_fast_pair_partition_node_full_path}"
-    )
-  dt_get_parent(
-    nvm_node_full_path
-    "${bt_fast_pair_partition_node_parent_full_path}"
-    )
-  dt_reg_addr(
-    nvm_base_address
-    TARGET
-    ${DEFAULT_IMAGE}
-    PATH
-    "${nvm_node_full_path}"
-    )
-
-  math(
-    EXPR
-    bt_fast_pair_partition_address
-    "${nvm_base_address} + ${bt_fast_pair_partition_relative_address}"
-    OUTPUT_FORMAT
-    HEXADECIMAL
+    "${fp_partition_node_full_path}"
     )
 
   set(
     fp_provisioning_data_hex
     ${CMAKE_BINARY_DIR}/modules/nrf/subsys/bluetooth/services/fast_pair/fp_provisioning_data.hex
     )
-
-  set(fp_provisioning_data_address ${bt_fast_pair_partition_address})
 
   add_custom_command(
     OUTPUT
