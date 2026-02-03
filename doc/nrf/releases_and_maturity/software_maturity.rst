@@ -865,12 +865,12 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
             * - **QoS Channel Survey**
-              - Experimental
-              - Experimental
-              - Experimental
-              - Experimental
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
+              - Supported
+              - Supported
+              - Supported
+              - Supported
             * - **Radio Coexistence**
               - Supported
               - Supported
@@ -894,7 +894,7 @@ The following table indicates the software maturity levels of the support for ea
             * - **QoS Conn Event Reports**
               - Supported
             * - **QoS Channel Survey**
-              - Experimental
+              - Supported
             * - **Radio Coexistence**
               - Supported
 
@@ -913,7 +913,7 @@ The following table indicates the software maturity levels of the support for ea
             * - **QoS Conn Event Reports**
               - Supported
             * - **QoS Channel Survey**
-              - Experimental
+              - Supported
             * - **Radio Coexistence**
               - Supported
 
@@ -948,10 +948,10 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Experimental
             * - **QoS Channel Survey**
-              - Experimental
-              - Experimental
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
+              - Supported
+              - Supported
               - Experimental
             * - **Radio Coexistence**
               - Supported
