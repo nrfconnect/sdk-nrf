@@ -17,16 +17,6 @@ choice BT_FAST_PAIR_CRYPTO_BACKEND
 	default BT_FAST_PAIR_CRYPTO_PSA
 endchoice
 
-if BUILD_WITH_TFM
-
-choice TFM_PROFILE_TYPE
-	default TFM_PROFILE_TYPE_NOT_SET
-	help
-	  The minimal TFM build profile is not configurable and cannot be used.
-endchoice
-
-endif # BUILD_WITH_TFM
-
 endif # TEST_BT_FAST_PAIR_CRYPTO_PSA
 
 menu "Test configuration"
