@@ -50,6 +50,9 @@ UNICAST_CLIENT_OVERLAY = NRF5340_AUDIO_FOLDER / "unicast_client/overlay-unicast_
 BROADCAST_SINK_OVERLAY = NRF5340_AUDIO_FOLDER / "broadcast_sink/overlay-broadcast_sink.conf"
 BROADCAST_SOURCE_OVERLAY = NRF5340_AUDIO_FOLDER / "broadcast_source/overlay-broadcast_source.conf"
 
+USB_FEEDBACK_OFF_OVERLAY = NRF5340_AUDIO_FOLDER / "boards/nrf5340_audio_usb_feedback_off_cpuapp.overlay"
+USB_FEEDBACK_ON_OVERLAY = NRF5340_AUDIO_FOLDER / "boards/nrf5340_audio_usb_feedback_on_cpuapp.overlay"
+
 TARGET_RELEASE_FOLDER = "build_release"
 TARGET_DEBUG_FOLDER = "build_debug"
 
@@ -120,6 +123,7 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
         raise Exception("Invalid build type!")
 
     device_flag = ""
+    usb_fb_overlay = ""
 
     if options.nrf21540:
         device_flag += " -Dnrf5340_audio_SHIELD=nrf21540ek"
@@ -140,11 +144,16 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
             overlay_flag = f" -DEXTRA_CONF_FILE={BROADCAST_SINK_OVERLAY}"
         else:
             overlay_flag = f" -DEXTRA_CONF_FILE={BROADCAST_SOURCE_OVERLAY}"
+            usb_fb_overlay = f" -DCONFIG_AUDIO_USB_FEEDBACK=y -DEXTRA_DTC_OVERLAY_FILE={USB_FEEDBACK_ON_OVERLAY}"
     else:
         if device == AudioDevice.headset:
             overlay_flag = f" -DEXTRA_CONF_FILE={UNICAST_SERVER_OVERLAY}"
         else:
             overlay_flag = f" -DEXTRA_CONF_FILE={UNICAST_CLIENT_OVERLAY}"
+            if options.feedback:
+                usb_fb_overlay = f" -DCONFIG_AUDIO_USB_FEEDBACK=y -DEXTRA_DTC_OVERLAY_FILE={USB_FEEDBACK_ON_OVERLAY}"
+            else:
+                usb_fb_overlay = f" -DEXTRA_DTC_OVERLAY_FILE={USB_FEEDBACK_OFF_OVERLAY}"
 
     if os.name == 'nt':
         release_flag = release_flag.replace('\\', '/')
@@ -153,11 +162,11 @@ def __build_cmd_get(core: Core, device: AudioDevice, build: BuildType,
 
     dest_folder = TARGET_AUDIO_BUILD_FOLDER / options.transport / device / core / build
 
-    return build_cmd, dest_folder, device_flag, release_flag, overlay_flag
+    return build_cmd, dest_folder, device_flag, release_flag, overlay_flag, usb_fb_overlay
 
 
 def __build_module(build_config, options):
-    build_cmd, dest_folder, device_flag, release_flag, overlay_flag = __build_cmd_get(
+    build_cmd, dest_folder, device_flag, release_flag, overlay_flag, usb_fb_overlay = __build_cmd_get(
         build_config.core,
         build_config.device,
         build_config.build,
@@ -171,7 +180,7 @@ def __build_module(build_config, options):
 
     # Only add compiler flags if folder doesn't exist already
     if not dest_folder.exists():
-        west_str = west_str + device_flag + release_flag + overlay_flag
+        west_str = west_str + device_flag + release_flag + overlay_flag + usb_fb_overlay
 
     print("Run: " + west_str)
 
@@ -196,10 +205,10 @@ def __find_snr():
 def __populate_hex_paths(dev, options):
     """Poplulate hex paths where relevant"""
 
-    _, temp_dest_folder, _, _, _ = __build_cmd_get(Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options)
+    _, temp_dest_folder, _, _, _, _ = __build_cmd_get(Core.app, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options)
     dev.hex_path_app = temp_dest_folder / "nrf5340_audio/zephyr/zephyr.hex"
 
-    _, temp_dest_folder, _, _, _ = __build_cmd_get(Core.net, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options)
+    _, temp_dest_folder, _, _, _, _ = __build_cmd_get(Core.net, dev.nrf5340_audio_dk_dev, options.build, options.pristine, options)
     dev.hex_path_net = temp_dest_folder / "ipc_radio/zephyr/zephyr.hex"
 
 
@@ -318,6 +327,13 @@ def __main():
         choices=[i.name for i in Transport],
         default=Transport.unicast.name,
         help="Select the transport type",
+    )
+    parser.add_argument(
+        "-fb",
+        "--feedback",
+        action="store_true",
+        default=False,
+        help="Set the USB to use feedback or not",
     )
 
     options = parser.parse_args(args=sys.argv[1:])

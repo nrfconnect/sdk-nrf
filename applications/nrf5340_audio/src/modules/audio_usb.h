@@ -25,9 +25,14 @@
 #error USB only supports 48kHz stereo
 #endif /* (CONFIG_AUDIO_SOURCE_USB && !CONFIG_AUDIO_SAMPLE_RATE_48000_HZ) */
 
+#define USB_BLOCK_SIZE_PER_CHAN                                                                    \
+	((CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS) / 1000)
 #define USB_BLOCK_SIZE_MULTI_CHAN                                                                  \
-	(((CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS) / 1000) *                  \
+	(USB_BLOCK_SIZE_PER_CHAN * MAX(CONFIG_AUDIO_INPUT_CHANNELS, CONFIG_AUDIO_OUTPUT_CHANNELS))
+#define USB_SAMPLE_MULTI_CHAN_SIZE                                                                 \
+	(CONFIG_AUDIO_BIT_DEPTH_OCTETS *                                                           \
 	 MAX(CONFIG_AUDIO_INPUT_CHANNELS, CONFIG_AUDIO_OUTPUT_CHANNELS))
+#define USB_OUTPUT_MULTI_CHAN_SIZE (USB_BLOCK_SIZE_MULTI_CHAN * CONFIG_FIFO_FRAME_SPLIT_NUM)
 
 struct usbd_context *audio_usbd_init_device(usbd_msg_cb_t msg_cb);
 

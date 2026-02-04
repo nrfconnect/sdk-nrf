@@ -36,6 +36,9 @@ config UDC_DRIVER_LOG_LEVEL
 config USBD_MAX_SPEED
 	default 0 # FULL
 
+config USBD_UAC2_FS_WINDOWS_WORKAROUND
+	default n
+
 endif # AUDIO_SOURCE_USB
 
 endif # AUDIO_DEV = 2 (GATEWAY)
