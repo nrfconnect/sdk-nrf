@@ -242,7 +242,7 @@ static int coap_parse(struct downloader *dl, size_t len)
 	}
 
 	response_code = coap_header_get_code(&response);
-	if (response_code != COAP_RESPONSE_CODE_OK && response_code != COAP_RESPONSE_CODE_CONTENT) {
+	if (response_code != COAP_RESPONSE_CODE_CONTENT) {
 		LOG_ERR("Server responded with code 0x%x", response_code);
 		return -EBADMSG;
 	}

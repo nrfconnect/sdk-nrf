@@ -213,7 +213,7 @@ static int coap_client_auth_cb(struct coap_client *client, int sock,
 		data.last_block = true;
 		req->cb(&data, req->user_data);
 	} else {
-		data.result_code = COAP_RESPONSE_CODE_OK;
+		data.result_code = COAP_RESPONSE_CODE_CONTENT;
 		data.last_block = true;
 		req->cb(&data, req->user_data);
 	}
