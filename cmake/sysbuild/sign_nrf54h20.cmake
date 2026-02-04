@@ -61,6 +61,7 @@ function(merge_images_nrf54h20 output_artifact images)
     list(APPEND binaries_to_merge "${app_binary}")
   endforeach()
 
+  string(REPLACE ";" ", " image_names "${images}")
   get_filename_component(merge_target ${output_artifact} NAME_WE)
   add_custom_target(
     merged_${merge_target}
@@ -70,7 +71,7 @@ function(merge_images_nrf54h20 output_artifact images)
     ${binaries_to_merge}
     BYPRODUCTS
     ${output_artifact}
-    COMMENT "Merge intermediate images"
+    COMMENT "Merge intermediate images: ${image_names}"
   )
 endfunction()
 
@@ -80,7 +81,63 @@ function(disable_programming_nrf54h20 images)
   endforeach()
 endfunction()
 
-function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
+function(generate_ironside_se_tlvs
+  prefix out_extra_imgtool_args out_extra_depends slot_addr images
+)
+  set(ironside_se_tlv_args)
+  set(ironside_se_tlv_depends)
+
+  foreach(image ${images})
+    set(image_has_periphconf)
+    set(image_periphconf_strip)
+    sysbuild_get(image_has_periphconf IMAGE ${image} VAR CONFIG_NRF_PERIPHCONF_SECTION KCONFIG)
+    sysbuild_get(image_periphconf_strip IMAGE ${image} VAR CONFIG_NRF_PERIPHCONF_SECTION_STRIP KCONFIG)
+
+    # Note: CONFIG_NRF_PERIPHCONF_SECTION_STRIP=y implies that the PERIPHCONF section is included
+    # in UICR instead, therefore we check both of these.
+    if(image_has_periphconf AND NOT image_periphconf_strip)
+      set(image_elf)
+      sysbuild_get(image_elf IMAGE ${image} VAR BYPRODUCT_KERNEL_ELF_NAME CACHE)
+      list(APPEND ironside_se_tlv_args --elf ${image_elf})
+      list(APPEND ironside_se_tlv_depends ${image_elf})
+    endif()
+  endforeach()
+
+  if(NOT ironside_se_tlv_args)
+    return()
+  endif()
+
+  set(periphconf_tlv_bin ${CMAKE_BINARY_DIR}/${prefix}_periphconf_tlv.bin)
+  set(MCUBOOT_HEADER_SIZE 0x800)
+
+  math(EXPR image_fw_base "${slot_addr} + ${MCUBOOT_HEADER_SIZE}" OUTPUT_FORMAT HEXADECIMAL)
+  list(APPEND ironside_se_tlv_args --image-fw-base ${image_fw_base})
+  list(APPEND ironside_se_tlv_args --periphconf-tlv-out ${periphconf_tlv_bin})
+  list(APPEND extra_imgtool_args
+    --custom-tlv-file ${SB_CONFIG_NCS_MCUBOOT_PERIPHCONF_TLV_ID} ${periphconf_tlv_bin}
+  )
+
+  add_custom_command(
+    OUTPUT ${periphconf_tlv_bin}
+    COMMAND ${PYTHON_EXECUTABLE}
+    ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/ironside_se_tlv.py
+    ${ironside_se_tlv_args}
+    DEPENDS
+    ${ironside_se_tlv_depends}
+  )
+  add_custom_target(
+    ironside_se_tlv_${prefix}
+    DEPENDS
+    ${periphconf_tlv_bin}
+    COMMENT "Generate IronSide SE TLVs"
+  )
+
+  string(STRIP "${extra_imgtool_args}" extra_imgtool_args)
+  set(${out_extra_imgtool_args} "${extra_imgtool_args}" PARENT_SCOPE)
+  set(${out_extra_depends} ironside_se_tlv_${prefix} ${periphconf_tlv_bin} PARENT_SCOPE)
+endfunction()
+
+function(mcuboot_sign_merged_nrf54h20 merged_hex main_image merged_images)
   find_program(IMGTOOL imgtool.py HINTS ${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/
     NAMES imgtool NAMES_PER_DIR)
   find_program(HEX2BIN hex2bin.py NAMES hex2bin)
@@ -229,6 +286,7 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
   dt_chosen(flash_node TARGET mcuboot PROPERTY "zephyr,flash")
   dt_prop(write_block_size TARGET mcuboot PATH "${flash_node}" PROPERTY
     "write-block-size")
+  dt_reg_addr(flash_base_addr TARGET mcuboot PATH ${flash_node})
   dt_nodelabel(slot0_path TARGET mcuboot NODELABEL "slot0_partition" REQUIRED)
   dt_partition_addr(slot0_addr PATH "${slot0_path}" TARGET mcuboot REQUIRED)
   dt_reg_size(slot0_size TARGET mcuboot PATH ${slot0_path})
@@ -281,6 +339,23 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
   else()
     message(FATAL_ERROR "Only Direct XIP and firmware updater MCUboot modes are supported.")
     return()
+  endif()
+
+  set(tlv_extra_imgtool_args)
+  set(tlv_extra_sign_depends)
+
+  if(SB_CONFIG_NCS_MCUBOOT_LOAD_PERIPHCONF)
+    if(CONFIG_NCS_IS_VARIANT_IMAGE)
+      math(EXPR tlv_slot_addr "${flash_base_addr} + ${slot1_addr}" OUTPUT_FORMAT HEXADECIMAL)
+    else()
+      math(EXPR tlv_slot_addr "${flash_base_addr} + ${slot0_addr}" OUTPUT_FORMAT HEXADECIMAL)
+    endif()
+    cmake_path(GET merged_hex STEM tlv_prefix)
+
+    generate_ironside_se_tlvs(${tlv_prefix} tlv_extra_imgtool_args tlv_extra_sign_depends
+      ${tlv_slot_addr} "${merged_images}"
+    )
+    list(APPEND imgtool_args ${tlv_extra_imgtool_args})
   endif()
 
   if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER OR SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY)
@@ -392,6 +467,7 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
     ${imgtool_cmd}
     DEPENDS
     ${merged_hex}
+    ${tlv_extra_sign_depends}
     BYPRODUCTS
     ${byproducts}
     COMMAND_EXPAND_LISTS
