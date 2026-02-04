@@ -933,6 +933,7 @@
 /tests/nrf5340_audio/                     @nrfconnect/ncs-audio @nordic-auko
 /tests/psa_crypto/                        @nrfconnect/ncs-aegir
 /tests/subsys/app_event_manager/          @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
+/tests/subsys/app_protect/                @nrfconnect/ncs-low-level-test
 /tests/subsys/audio/audio_module_template/ @nrfconnect/ncs-audio
 /tests/subsys/audio_module/               @nrfconnect/ncs-audio
 /tests/subsys/bluetooth/controller/        @nrfconnect/ncs-dragoon
