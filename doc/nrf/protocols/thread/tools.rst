@@ -340,3 +340,83 @@ To use ``ot-cli``, enter the following command instead:
 .. code-block:: console
 
    sudo ./build/posix/src/posix/ot-cli 'spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=1000000' --verbose -B eth0
+
+.. _ug_otperf_tool:
+
+OpenThread performance measurement
+**********************************
+
+When measuring network performance, it is important to select the appropriate tool.
+The available tools are IPerf, zperf, and otperf, each serving slightly different use cases:
+
+IPerf
+   IPerf is a widely used, general-purpose tool for benchmarking the throughput of IP-based networks.
+   It offers a wide range of advanced functionalities, many of which go beyond the requirements of typical Thread devices.
+   You can use this tool on a powerful device, such as a border router.
+
+zperf
+   :ref:`Zperf <zephyr:zperf>` an implementation of IPerf protocol using Zephyr's L2 (data link) layer.
+   Use zperf if your Thread implementation uses the Zephyr network stack.
+
+otperf
+   Otperf is a lightweight implementation of IPerf protocol that uses OpenThread stack directly (bypassing the Zephyr L2 layer, as is the case for the default Thread implementation in nRF Connect SDK).
+   Use otperf when your device runs OpenThread directly (without Zephyr L2 integration).
+
+Because otperf, zperf, and IPerf v2.0.10 and newer are protocol-compatible, clients and servers can be mixed across these tools, allowing flexible test scenarios (for example, otperf server and zperf client).
+The following section describes the usage of otperf.
+For the other tools, consult the proper documentation.
+
+Configuration
+=============
+
+You can enable and configure otperf using the following Kconfig options:
+
+  * :kconfig:option:`CONFIG_OTPERF` - Enables the otperf tool.
+  * :kconfig:option:`CONFIG_OTPERF_SHELL` (enabled by default) - Allows otperf to be used through the shell (requires :kconfig:option:`CONFIG_SHELL`).
+  * :kconfig:option:`CONFIG_OTPERF_SERVER` (enabled by default) - Enables the ``otperf udp download`` (server) command.
+  * :kconfig:option:`CONFIG_OTPERF_MAX_PACKET_SIZE` - Specifies the maximum data packet size (default: 1064 bytes: 40 header + 1024 data).
+  * :kconfig:option:`CONFIG_OTPERF_MAX_SESSIONS` - Sets the maximum number of handled connections.
+  * :kconfig:option:`CONFIG_OTPERF_UDP_REPORT_RETRANSMISSION_COUNT` - Defines how many times the client will attempt to request a UDP report.
+  * :kconfig:option:`CONFIG_OTPERF_DEFAULT_PORT`, :kconfig:option:`CONFIG_OTPERF_DEFAULT_DURATION_S`, :kconfig:option:`CONFIG_OTPERF_DEFAULT_PACKET_SIZE`, :kconfig:option:`CONFIG_OTPERF_DEFAULT_RATE_KBPS` - Default values applied when not overridden by the user.
+
+Usage
+=====
+
+Before starting measurements, ensure that two Thread devices are connected to the same network.
+
+To enable the server on one device, run the following command:
+
+.. code-block:: console
+
+   otperf udp download <port>
+
+You should see a message similar to this:
+
+.. code-block:: console
+
+   UDP server started on port 5001
+
+On the other device, initiate a test session using the following command:
+
+.. code-block:: console
+
+   otperf udp upload <ipv6> <port> <duration> <packet size> <rate>
+
+You can use ``K`` (kilobits) and ``M`` (megabits) as units for the rate.
+For example, to send data at 200 kbps, use the following parameters:
+
+.. code-block:: console
+
+   otperf udp upload fe80:0:0:0:fcfb:7a67:4a05:ba27 5001 10 1064 200K
+
+After a successful upload, both devices should display results similar to this (server will not display client statistics, while client will display both):
+
+.. code-block:: console
+
+   Statistics:             server  (client)
+   Duration:               10.72 s (10.06 s)
+   Num packets:            121     (241)
+   Num packets out order:  0
+   Num packets lost:       118
+   Jitter:                 8.78 ms
+   Rate:                   96 Kbps (203 Kbps)

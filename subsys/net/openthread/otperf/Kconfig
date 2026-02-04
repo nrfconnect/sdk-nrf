@@ -49,7 +49,7 @@ config OTPERF_MAX_SESSIONS
 	help
 	  Upper size limit for connections handled by otperf.
 
-config OTPERF_UDP_REPORT_RETANSMISSION_COUNT
+config OTPERF_UDP_REPORT_RETRANSMISSION_COUNT
 	int "Maximum number of UDP upload report retransmissions"
 	range 0 16
 	default 4
