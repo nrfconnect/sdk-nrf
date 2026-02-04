@@ -73,6 +73,14 @@ static bool get_first_down_section(struct bank_section *out)
 	return down_section_found;
 }
 
+static void teardown(void *f)
+{
+	const uintptr_t RAM_START_ADDR = 0x20000000UL;
+	const uintptr_t RAM_END_ADDR = 0x20040000UL;
+
+	power_up_ram(RAM_START_ADDR, RAM_END_ADDR);
+}
+
 /* ===== Test cases ===== */
 
 /*
@@ -178,4 +186,4 @@ ZTEST(ram_pwrdn, test_manual_power_control)
 		     "Disabling sections on two banks (disabled too much)");
 }
 
-ZTEST_SUITE(ram_pwrdn, NULL, NULL, NULL, NULL, NULL);
+ZTEST_SUITE(ram_pwrdn, NULL, NULL, NULL, teardown, NULL);
