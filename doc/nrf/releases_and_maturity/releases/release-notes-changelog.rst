@@ -579,6 +579,13 @@ Modem libraries
     * The ``lte_lc_modem_events_enable()`` and ``lte_lc_modem_events_disable()`` functions.
       Instead, use the :kconfig:option:`CONFIG_LTE_LC_MODEM_EVENTS_MODULE` Kconfig option to enable modem events.
 
+* :ref:`lib_at_shell` library:
+
+  * Added:
+
+    * Support for AT command mode (shell bypass) using the :kconfig:option:`CONFIG_AT_SHELL_CMD_MODE` Kconfig option.
+    * Tab-completion for known shell subcommands.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
