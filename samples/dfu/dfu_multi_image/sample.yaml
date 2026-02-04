@@ -5,8 +5,7 @@
 #
 
 sample:
-  description: DFU multi image sample application
-  name: dfu_multi_image sample
+  name: DFU multi-image sample
 common:
   platform_allow:
     - nrf5340dk/nrf5340/cpuapp

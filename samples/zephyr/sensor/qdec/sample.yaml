@@ -1,6 +1,5 @@
 sample:
-  description: Usage quadrature decoder sensor
-  name: qdec_sensor
+  name: Usage quadrature decoder sensor sample
 common:
   tags:
     - sensors

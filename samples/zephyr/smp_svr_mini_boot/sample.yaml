@@ -1,6 +1,5 @@
 sample:
-  description: Mcuboot minimal configuration sample
-  name: smp_svr_mini_boot
+  name: MCUboot minimal configuration sample
 common:
   sysbuild: true
   tags:

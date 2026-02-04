@@ -1,5 +1,6 @@
 sample:
-  name: netboot Sample
+  name: Network core bootloader sample
+  description: Network core bootloader sample for nRF5340
 tests:
   sample.nrf5340.netboot:
     sysbuild: true

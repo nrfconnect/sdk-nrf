@@ -1,8 +1,8 @@
 # Copyright (c) 2023 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 sample:
-  name: nPM13xx fuel gauge
-
+  name: Fuel gauge sample
+  description: Fuel gauge sample for nPM1300 and nPM1304
 common:
   integration_platforms:
     - nrf52dk/nrf52832

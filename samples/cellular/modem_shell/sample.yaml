@@ -1,5 +1,5 @@
 sample:
-  name: modem_shell Sample
+  name: Modem Shell sample
 tests:
   sample.cellular.modem_shell:
     sysbuild: true

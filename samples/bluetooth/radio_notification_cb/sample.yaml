@@ -1,6 +1,5 @@
 sample:
-  description: Connection event callback sample
-  name: Connection event callback
+  name: Radio Notification callback sample
 tests:
   sample.bluetooth.conn_evt_cb:
     sysbuild: true

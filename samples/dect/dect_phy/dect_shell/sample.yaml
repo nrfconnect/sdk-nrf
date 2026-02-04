@@ -1,5 +1,5 @@
 sample:
-  name: dect_shell Sample
+  name: DECT NR+ Shell sample
 tests:
   sample.dect.dect_shell:
     sysbuild: true

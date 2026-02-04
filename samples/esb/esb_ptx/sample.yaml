@@ -1,5 +1,5 @@
 sample:
-  name: ESB ptx Sample
+  name: ESB transmitter sample
 common:
   harness: console
   harness_config:

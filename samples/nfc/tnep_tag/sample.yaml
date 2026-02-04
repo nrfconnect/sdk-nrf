@@ -1,6 +1,5 @@
 sample:
-  description: TBD
-  name: TBD
+  name: NFC TNEP tag sample
 tests:
   sample.nfc.tnep_tag:
     sysbuild: true
