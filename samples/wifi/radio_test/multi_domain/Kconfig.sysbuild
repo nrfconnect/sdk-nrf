@@ -4,16 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "Network core configuration"
-	depends on SUPPORT_NETCORE
 
 config SUPPORT_NETCORE_PERIPHERAL_RADIO_TEST
-	bool "wi-fi ble radio test combo build"
+	bool
+	default y if SOC_SERIES_NRF53 || SOC_SERIES_NRF54
 
 choice NETCORE
-	prompt "Netcore image"
-	depends on SUPPORT_NETCORE && !EXTERNAL_CONFIGURED_NETCORE
-	default NETCORE_PERIPHERAL_RADIO_TEST if SOC_SERIES_NRF53
 
 config NETCORE_PERIPHERAL_RADIO_TEST
 	bool "peripheral_radio_test"
@@ -23,16 +19,10 @@ config NETCORE_PERIPHERAL_RADIO_TEST
 
 endchoice
 
-if !NETCORE_NONE
-
 config NETCORE_IMAGE_NAME
 	default "peripheral_radio_test" if NETCORE_PERIPHERAL_RADIO_TEST
 
 config NETCORE_IMAGE_PATH
 	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/peripheral/radio_test/" if NETCORE_PERIPHERAL_RADIO_TEST
-
-endif # !NETCORE_NONE
-
-endmenu
 
 source "share/sysbuild/Kconfig"
