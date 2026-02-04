@@ -81,6 +81,10 @@ config NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST
 	  Enabling this option will ensure that the CoAP client is disconnected when a request
 	  fails to be sent. (Maximum retransmissions reached).
 
+# Increase the maximum path length to have enough room
+config COAP_CLIENT_MAX_PATH_LENGTH
+	default 128
+
 module = NRF_CLOUD_COAP
 module-str = nRF Cloud COAP
 source "subsys/logging/Kconfig.template.log_config"
