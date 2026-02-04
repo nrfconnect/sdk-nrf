@@ -140,3 +140,27 @@ config NCS_MCUBOOT_BOOT_REQUEST_TEST_SETS_BOOT_PREFERENCE
 	  effective.
 
 endif # NRF_MCUBOOT_BOOT_REQUEST
+
+menu "Custom TLVs"
+
+config MCUBOOT_NRF_PERIPHCONF_TLV
+	bool "Add PERIPHCONF TLV"
+	default y
+	depends on NRF_PERIPHCONF_SECTION_KEEP
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  Adds a TLV to the image trailer that informs MCUboot about PERIPHCONF
+	  sections in the image data. These are used on SoCs with IronSide SE
+	  to initialize certain peripherals at boot.
+
+config MCUBOOT_NRF_PERIPHCONF_TLV_ID
+	hex "PERIPHCONF TLV ID"
+	default 0xA1
+	range 0xA0 0xFFFE
+	depends on HAS_IRONSIDE_SE
+	help
+	  Vendor range TLV ID used for PERIPHCONF TLVs. If changing this, ensure
+	  that it is set to the same value in the mcuboot image and any image that
+	  performs signing using imgtool.
+
+endmenu

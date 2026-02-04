@@ -84,6 +84,11 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_extra)
   endif()
 
+  get_property(extra_imgtool_args_prop GLOBAL PROPERTY mcuboot_extra_imgtool_args)
+  if(extra_imgtool_args_prop)
+    list(APPEND imgtool_extra ${extra_imgtool_args_prop})
+  endif()
+
   # Set proper hash calculation algorithm for signing
   if(CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE)
     set(imgtool_extra --pure ${imgtool_extra})

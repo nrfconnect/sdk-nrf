@@ -411,6 +411,13 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       else()
         set_config_bool(mcuboot CONFIG_NCS_BOOT_SIGNATURE_USING_ITS n)
       endif()
+      if(SB_CONFIG_MCUBOOT_LOAD_PERIPHCONF)
+        set_config_bool(mcuboot CONFIG_MCUBOOT_NRF_LOAD_PERIPHCONF y)
+        set_config_bool(mcuboot CONFIG_NRF_PERIPHCONF_GENERATE_ENTRIES_NO_LOCK y)
+      else()
+        set_config_bool(mcuboot CONFIG_MCUBOOT_NRF_LOAD_PERIPHCONF n)
+        set_config_bool(mcuboot CONFIG_NRF_PERIPHCONF_GENERATE_ENTRIES_NO_LOCK n)
+      endif()
     endif()
 
     # A v1 board doesn't define board qualifiers, thus below test will just test the pure board
@@ -854,6 +861,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     UpdateableImage_Get(images ALL)
     foreach(image ${images})
       set_config_bool(${image} CONFIG_NCS_MCUBOOT_BOOTLOADER_SIGN_MERGED_BINARY true)
+      set_config_bool(${image} CONFIG_MCUBOOT_NRF_PERIPHCONF_TLV n)  # Done in sysbuild instead
       set(${image}_SIGNING_SCRIPT
         "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_nrf54h20.cmake"
          CACHE INTERNAL "MCUboot signing script" FORCE)
@@ -862,9 +870,19 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     FirmwareUpdaterImage_Get(images ALL)
     foreach(image ${images})
       set_config_bool(${image} CONFIG_NCS_MCUBOOT_BOOTLOADER_SIGN_MERGED_BINARY true)
+      set_config_bool(${image} CONFIG_MCUBOOT_NRF_PERIPHCONF_TLV n)  # Done in sysbuild instead
       set(${image}_SIGNING_SCRIPT
         "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_nrf54h20.cmake"
          CACHE INTERNAL "MCUboot signing script" FORCE)
+    endforeach()
+  endif()
+
+  if(SB_CONFIG_MCUBOOT_LOAD_PERIPHCONF)
+    set_config_bool(uicr CONFIG_GEN_UICR_POLICY_PERIPHCONF_STAGE_INIT y)
+
+    UpdateableImage_Get(images ALL)
+    foreach(image ${images})
+      set_config_bool(${image} CONFIG_NRF_PERIPHCONF_SECTION_KEEP_BY_DEFAULT y)
     endforeach()
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)

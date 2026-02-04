@@ -108,6 +108,11 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_extra)
   endif()
 
+  get_property(extra_imgtool_args_prop GLOBAL PROPERTY mcuboot_extra_imgtool_args)
+  if(extra_imgtool_args_prop)
+    list(APPEND imgtool_extra ${extra_imgtool_args_prop})
+  endif()
+
   if(CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT_ENABLED)
     set(imgtool_bin_extra --compression lzma2armthumb)
   else()
