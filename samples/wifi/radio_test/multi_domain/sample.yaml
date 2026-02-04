@@ -29,7 +29,7 @@ tests:
     extra_args:
       - CONFIG_NRF70_SR_COEX=y
       - CONFIG_NRF70_SR_COEX_RF_SWITCH=y
-      - SB_CONFIG_SUPPORT_NETCORE_PERIPHERAL_RADIO_TEST=y
+      - SB_CONFIG_NETCORE_PERIPHERAL_RADIO_TEST=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
@@ -102,7 +102,7 @@ tests:
       - multi_domain_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
       - SNIPPET=nrf70-wifi
       - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
-      - SB_CONFIG_SUPPORT_NETCORE_PERIPHERAL_RADIO_TEST=y
+      - SB_CONFIG_NETCORE_PERIPHERAL_RADIO_TEST=y
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
