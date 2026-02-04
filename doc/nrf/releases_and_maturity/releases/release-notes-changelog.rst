@@ -51,6 +51,10 @@ Bootloaders and DFU
 * Updated the :ref:`nrf_smp_svr_sample` sample to move to :file:`samples/dfu/smp_svr`.
   Added documentation for the sample.
 
+* :ref:`firmware_loader_entrance` sample:
+
+  * Added the :ref:`sample documentation page <firmware_loader_entrance>`.
+
 Developing with nRF91 Series
 ============================
 
