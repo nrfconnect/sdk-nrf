@@ -170,7 +170,7 @@ In |NCS|, you can build and program the :zephyr:code-sample:`smp-svr` as any oth
         .. parsed-literal::
            :class: highlight
 
-            west build -b nrf54l15dk/nrf54l15/cpuapp -T sample.mcumgr.smp_svr.bt.nrf54l15dk.ext_flash
+            west build -b nrf54l15dk/nrf54l15/cpuapp -T sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash
             west flash
 
     .. group-tab:: nRF54L15 DK with SPI Flash as update image (DTS partitioning)
@@ -180,7 +180,7 @@ In |NCS|, you can build and program the :zephyr:code-sample:`smp-svr` as any oth
         .. parsed-literal::
            :class: highlight
 
-            west build -b nrf54l15dk/nrf54l15/cpuapp -d build/smp_svr_54l_d zephyr/samples/subsys/mgmt/mcumgr/smp_svr -T sample.mcumgr.smp_svr.bt.nrf54l15dk.ext_flash.pure_dts
+            west build -b nrf54l15dk/nrf54l15/cpuapp -d build/smp_svr_54l_d zephyr/samples/subsys/mgmt/mcumgr/smp_svr -T sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash.pure_dts
 
 Make sure to indicate the :file:`overlay-bt.conf` overlay configuration for the Bluetooth transport like in the command example.
 This configuration was carefully selected to achieve the maximum possible throughput of the FOTA update transport over Bluetooth with the help of the following features:
