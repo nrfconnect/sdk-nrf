@@ -279,6 +279,9 @@ nRF5340 Audio
 
   * Improved error handling with ``unlikely()`` macros for better branch prediction in performance-critical paths.
 
+  * Removed the Bluetooth controller alive watchdog from the application.
+    The watchdog was not providing value and the removal allows for easier porting to other platforms that do not have a multiple core architecture.
+
 nRF Desktop
 -----------
 

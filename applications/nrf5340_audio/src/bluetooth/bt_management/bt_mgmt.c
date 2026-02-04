@@ -18,7 +18,6 @@
 #include "macros_common.h"
 #include "zbus_common.h"
 #include "button_handler.h"
-#include "bt_mgmt_ctlr_cfg_internal.h"
 #include "bt_mgmt_adv_internal.h"
 #include "bt_mgmt_dfu_internal.h"
 #include "button_assignments.h"
@@ -33,6 +32,7 @@ ZBUS_CHAN_DEFINE(bt_mgmt_chan, struct bt_mgmt_msg, NULL, NULL, ZBUS_OBSERVERS_EM
  * Buffer added as this will not add to bootup time
  */
 #define BT_ENABLE_TIMEOUT_MS 100
+#define COMPANY_ID_NORDIC    0x0059
 
 K_SEM_DEFINE(sem_bt_enabled, 0, 1);
 
@@ -361,6 +361,36 @@ static int local_identity_addr_print(void)
 	return 0;
 }
 
+static int bt_mgmt_ctlr_cfg_manufacturer_get(bool print_version)
+{
+	int ret;
+	struct net_buf *rsp;
+
+	ret = bt_hci_cmd_send_sync(BT_HCI_OP_READ_LOCAL_VERSION_INFO, NULL, &rsp);
+	if (ret) {
+		return ret;
+	}
+
+	struct bt_hci_rp_read_local_version_info *rp = (void *)rsp->data;
+
+	if (print_version) {
+		if (rp->manufacturer == COMPANY_ID_NORDIC) {
+			/* NOTE: The string below is used by the Nordic CI system */
+			LOG_INF("Controller: SoftDevice: Version %s (0x%02x), Revision %d",
+				bt_hci_get_ver_str(rp->hci_version), rp->hci_version,
+				rp->hci_revision);
+		} else {
+			LOG_ERR("Unsupported controller");
+			net_buf_unref(rsp);
+			return -EPERM;
+		}
+	}
+
+	net_buf_unref(rsp);
+
+	return 0;
+}
+
 void bt_mgmt_num_conn_get(uint8_t *num_conn)
 {
 	bt_conn_foreach(BT_CONN_TYPE_LE, conn_state_connected_check, (void *)num_conn);
@@ -472,7 +502,7 @@ int bt_mgmt_init(void)
 	}
 
 	if (pressed) {
-		ret = bt_mgmt_ctlr_cfg_init(false);
+		ret = bt_mgmt_ctlr_cfg_manufacturer_get(true);
 		if (ret) {
 			return ret;
 		}
@@ -490,8 +520,7 @@ int bt_mgmt_init(void)
 		return ret;
 	}
 #endif
-
-	ret = bt_mgmt_ctlr_cfg_init(IS_ENABLED(CONFIG_WDT_CTLR));
+	ret = bt_mgmt_ctlr_cfg_manufacturer_get(true);
 	if (ret) {
 		return ret;
 	}

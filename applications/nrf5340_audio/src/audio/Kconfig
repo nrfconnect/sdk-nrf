@@ -163,6 +163,8 @@ config AUDIO_SOURCE_USB
 
 config AUDIO_SOURCE_I2S
 	bool "Use I2S as audio source"
+	help
+	  Set I2S as audio source.
 endchoice
 
 choice AUDIO_DEVICE_LOCATION_WHEN_TO_SET
