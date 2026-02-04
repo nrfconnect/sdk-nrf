@@ -549,3 +549,16 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_wifi
+  sample.nrf7120.shell:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      # sysbuild by default is nRF70, to avoid Kconfig warns disable it
+      - SB_CONFIG_WIFI_NRF70=n
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow: nrf7120dk/nrf7120/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
