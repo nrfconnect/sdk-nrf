@@ -1,6 +1,5 @@
 sample:
-  description: AB update sample with separated slots
-  name: ab_split
+  name: A/B with MCUboot and separated slots sample
 common:
   sysbuild: true
   build_only: true

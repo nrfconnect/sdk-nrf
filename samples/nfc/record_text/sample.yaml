@@ -1,6 +1,5 @@
 sample:
-  description: NFC Records text sample
-  name: NFC Records text
+  name: NFC text record sample
 tests:
   sample.nfc.record_text:
     sysbuild: true

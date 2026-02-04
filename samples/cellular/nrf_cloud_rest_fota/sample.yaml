@@ -1,5 +1,6 @@
 sample:
-  name: nRF Cloud REST FOTA
+  name: nRF Cloud REST FOTA sample
+  description: nRF Cloud REST FOTA sample for cellular devices
 tests:
   sample.cellular.nrf_cloud_rest_fota:
     sysbuild: true

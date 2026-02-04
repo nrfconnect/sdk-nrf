@@ -1,5 +1,5 @@
 sample:
-  name: nRF Cloud REST Cellular Positioning
+  name: nRF Cloud REST cellular location sample
 tests:
   sample.cellular.nrf_cloud_rest_cell_pos:
     sysbuild: true

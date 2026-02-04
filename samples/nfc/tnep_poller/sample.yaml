@@ -1,6 +1,5 @@
 sample:
-  description: TBD
-  name: TBD
+  name: NFC TNEP poller sample
 tests:
   sample.nfc.tnep_poller:
     sysbuild: true

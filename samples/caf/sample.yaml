@@ -1,6 +1,6 @@
 sample:
-  description: Common Application Framework sample
-  name: CAF
+  description: Common Application Framework preview sample
+  name: Common Application Framework sample
 tests:
   sample.caf:
     sysbuild: true

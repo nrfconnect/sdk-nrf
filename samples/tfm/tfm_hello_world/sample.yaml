@@ -1,6 +1,6 @@
 sample:
   description: Hello World sample, the simplest Zephyr application, with TF-M enabled
-  name: hello world TFM
+  name: TF-M Hello World sample
 common:
   tags:
     - tfm

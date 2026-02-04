@@ -1,5 +1,5 @@
 sample:
-  name: Modem trace flash
+  name: Modem trace external flash backend sample
 tests:
   sample.cellular.modem_trace_flash:
     sysbuild: true

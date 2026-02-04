@@ -1,5 +1,5 @@
 sample:
-  name: ESB prx Sample
+  name: ESB receiver sample
 common:
   harness: console
   harness_config:

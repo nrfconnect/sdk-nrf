@@ -1,6 +1,5 @@
 sample:
-  description: NFC Tag Reader sample
-  name: NFC Tag Reader
+  name: NFC tag reader sample
 tests:
   sample.nfc.tag_reader:
     sysbuild: true

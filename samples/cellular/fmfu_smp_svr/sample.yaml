@@ -1,6 +1,6 @@
 sample:
-  description: Full modem firmware update Simple Management Protocol sample
-  name: Full modem serial update sample
+  name: Full modem firmware update using SMP Server sample
+  description: Full modem firmware update using SMP Server sample for cellular devices
 tests:
   sample.cellular.fmfu_smp_svr:
     sysbuild: true

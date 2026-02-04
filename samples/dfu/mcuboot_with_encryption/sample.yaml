@@ -1,6 +1,5 @@
 sample:
-  description: MCUboot build with image encryption
-  name: mcuboot_with_encryption
+  name: MCUboot with encryption enabled sample
 common:
   sysbuild: true
   tags:

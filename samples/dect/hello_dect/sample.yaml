@@ -1,5 +1,5 @@
 sample:
-  name: Hello DECT Sample
+  name: Hello DECT sample
   description: Simple DECT NR+ sample application demonstrating connection manager usage
 common:
   tags:

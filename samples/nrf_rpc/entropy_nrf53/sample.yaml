@@ -1,6 +1,6 @@
 sample:
-  description: Entropy driver application core sample
-  name: Entropy remote application core
+  description: Entropy driver application core sample for nRF5340
+  name: nRF RPC Entropy sample
 tests:
   sample.nrf_rpc.entropy_cpuapp:
     sysbuild: true
