@@ -44,7 +44,6 @@ LOG_MODULE_REGISTER(nrf_cloud_coap_transport, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 
 /** @TODO: figure out whether to make this a Kconfig value or place in a header */
 #define CDDL_VERSION "1"
-#define MAX_COAP_PATH 256
 #define JWT_BUF_SZ 700
 #define VER_STRING_FMT "mver=%s&cver=%s&dver=%s"
 #define VER_STRING_FMT2 "cver=" CDDL_VERSION "&dver=" BUILD_VERSION_STR
@@ -401,7 +400,7 @@ static void client_callback(const struct coap_client_response_data *data, void *
 			xfer->cb(data, xfer->user_data);
 		}
 	}
-	if (data->result_code || (data->result_code >= COAP_RESPONSE_CODE_BAD_REQUEST)) {
+	if (data->last_block || (data->result_code >= COAP_RESPONSE_CODE_BAD_REQUEST)) {
 		LOG_DBG("End of client transfer");
 		if (xfer->sem) {
 			k_sem_give(xfer->sem);
