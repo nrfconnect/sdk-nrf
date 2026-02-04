@@ -1,6 +1,6 @@
 sample:
   description: Simple Management Protocol sample
-  name: smp svr
+  name: MCUboot SMP Server sample
 common:
   sysbuild: true
   harness: console
@@ -16,7 +16,7 @@ common:
     - ci_samples_zephyr_subsys_mgmt_mcumgr_smp_svr
 
 tests:
-  sample.mcumgr.smp_svr.nrf.bt:
+  sample.dfu.smp_svr.bt:
     harness: bluetooth
     tags: bluetooth
     extra_args: EXTRA_CONF_FILE="overlay-bt.conf"
@@ -37,7 +37,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-  sample.mcumgr.smp_svr.basic:
+  sample.dfu.smp_svr.basic:
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -55,7 +55,7 @@ tests:
       - nrf9160dk/nrf9160
     extra_args:
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
-  sample.mcumgr.smp_svr.nrf.serial:
+  sample.dfu.smp_svr.serial:
     extra_args: EXTRA_CONF_FILE="overlay-serial.conf"
     platform_allow:
       - nrf52840dk/nrf52840
@@ -69,7 +69,7 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-  sample.mcumgr.smp_svr.nrf.mcuboot_flags.direct_xip_withrevert:
+  sample.dfu.smp_svr.mcuboot_flags.direct_xip_withrevert:
     extra_args:
       - EXTRA_CONF_FILE="overlay-serial.conf"
       - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
@@ -82,7 +82,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-  sample.mcumgr.smp_svr.encryption.rsa:
+  sample.dfu.smp_svr.encryption.rsa:
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -99,7 +99,7 @@ tests:
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
       - FILE_SUFFIX=larger_mcuboot
 
-  sample.mcumgr.smp_svr.encryption.ecdsa_p256:
+  sample.dfu.smp_svr.encryption.ecdsa_p256:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -115,7 +115,7 @@ tests:
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
       - FILE_SUFFIX=larger_mcuboot
 
-  sample.mcumgr.smp_svr.encryption.ed25519:
+  sample.dfu.smp_svr.encryption.ed25519:
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -131,7 +131,7 @@ tests:
       - SB_CONFIG_BOOT_ENCRYPTION=y
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
 
-  sample.mcumgr.smp_svr.signature.none:
+  sample.dfu.smp_svr.signature.none:
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -146,7 +146,7 @@ tests:
     extra_args:
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_NONE=y
 
-  sample.mcumgr.smp_svr.signature.ed25519:
+  sample.dfu.smp_svr.signature.ed25519:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -159,7 +159,7 @@ tests:
     extra_args:
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
 
-  sample.mcumgr.smp_svr.signature.ecdsa_p256:
+  sample.dfu.smp_svr.signature.ecdsa_p256:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     tags:
@@ -167,7 +167,7 @@ tests:
     extra_args:
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
 
-  sample.mcumgr.smp_svr.signature.pure:
+  sample.dfu.smp_svr.signature.pure:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
@@ -177,7 +177,7 @@ tests:
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE=y
 
-  sample.mcumgr.smp_svr.kmu.basic:
+  sample.dfu.smp_svr.kmu.basic:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
@@ -191,7 +191,7 @@ tests:
       - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
 
-  sample.mcumgr.smp_svr.nsib.kmu.basic:
+  sample.dfu.smp_svr.nsib.kmu.basic:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -206,7 +206,7 @@ tests:
       - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
 
-  sample.mcumgr.smp_svr.kmu.revocation:
+  sample.dfu.smp_svr.kmu.revocation:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -220,7 +220,7 @@ tests:
       - mcuboot_CONFIG_BOOT_SIGNATURE_KMU_SLOTS=3
       - mcuboot_CONFIG_BOOT_KEYS_REVOCATION=y
 
-  sample.mcumgr.smp_svr.nrf_compress.basic:
+  sample.dfu.smp_svr.nrf_compress.basic:
     tags:
       - nrf_compress
     platform_allow:
@@ -237,7 +237,7 @@ tests:
       - SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT=y
       - FILE_SUFFIX=larger_mcuboot
 
-  sample.mcumgr.smp_svr.nrf_compress.encryption_rsa:
+  sample.dfu.smp_svr.nrf_compress.encryption_rsa:
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -251,7 +251,7 @@ tests:
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA=y
       - FILE_SUFFIX=larger_mcuboot
 
-  sample.mcumgr.smp_svr.nrf_compress.encryption_ecdsa_p256:
+  sample.dfu.smp_svr.nrf_compress.encryption_ecdsa_p256:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -271,7 +271,7 @@ tests:
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
       - FILE_SUFFIX=larger_mcuboot
 
-  sample.mcumgr.smp_svr.nrf_compress.encryption_ed25519:
+  sample.dfu.smp_svr.nrf_compress.encryption_ed25519:
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -290,7 +290,7 @@ tests:
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
       - FILE_SUFFIX=larger_mcuboot
 
-  sample.mcumgr.smp_svr.bt.nrf5340dk.ext_flash:
+  sample.dfu.smp_svr.bt.nrf5340dk.ext_flash:
     sysbuild: true
     extra_args:
       - FILE_SUFFIX=nrf5340_bt
@@ -307,7 +307,7 @@ tests:
         - "smp_sample: build time"
         - "smp_bt_sample: Advertising successfully started"
 
-  sample.mcumgr.smp_svr.bt.nrf54l15:
+  sample.dfu.smp_svr.bt.nrf54l15:
     tags: bluetooth
     extra_args: EXTRA_CONF_FILE="overlay-bt.conf"
     platform_allow:
@@ -317,7 +317,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     harness_config: *bt_harness_config
 
-  sample.mcumgr.smp_svr.bt.nrf54l15dk.ext_flash:
+  sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash:
     extra_args:
       - OVERLAY_CONFIG="overlay-bt.conf"
       - FILE_SUFFIX=ext_flash
@@ -331,7 +331,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     harness_config: *bt_harness_config
 
-  sample.mcumgr.smp_svr.bt.nrf54h20dk:
+  sample.dfu.smp_svr.bt.nrf54h20dk:
     sysbuild: true
     extra_args:
       - EXTRA_CONF_FILE="overlay-bt.conf"
@@ -346,7 +346,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     harness_config: *bt_harness_config
 
-  sample.mcumgr.smp_svr.bt.nrf54h20dk.direct_xip_withrevert:
+  sample.dfu.smp_svr.bt.nrf54h20dk.direct_xip_withrevert:
     sysbuild: true
     extra_args:
       - FILE_SUFFIX="merged_slot"
@@ -362,7 +362,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     harness_config: *bt_harness_config
 
-  sample.mcumgr.smp_svr.serial.nrf54h20dk.ecdsa:
+  sample.dfu.smp_svr.serial.nrf54h20dk.ecdsa:
     sysbuild: true
     extra_args:
       - EXTRA_CONF_FILE="overlay-serial.conf"
@@ -374,7 +374,7 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
-  sample.mcumgr.smp_svr.bt.nrf54h20dk.direct_xip_withrequests:
+  sample.dfu.smp_svr.bt.nrf54h20dk.direct_xip_withrequests:
     sysbuild: true
     extra_args:
       - FILE_SUFFIX="requests"
@@ -390,7 +390,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     harness_config: *bt_harness_config
 
-  sample.mcumgr.smp_svr.bt.nrf54h20dk.ext_flash:
+  sample.dfu.smp_svr.bt.nrf54h20dk.ext_flash:
     extra_args:
       - FILE_SUFFIX="ext_flash"
       - EXTRA_CONF_FILE="overlay-bt.conf"
