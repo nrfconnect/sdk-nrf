@@ -131,7 +131,7 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 
 		chan_in_num = audio_metadata_num_loc_get(meta_in);
 		if (unlikely(audio_frame_in->len < (meta_in->bytes_per_location * chan_in_num))) {
-			LOG_ERR("Encoder input buffer too small: %d (>=%d)", audio_frame_in->len,
+			LOG_ERR("Encoder input buffer too small: %d (< %d)", audio_frame_in->len,
 				meta_in->bytes_per_location * chan_in_num);
 			return -EINVAL;
 		}

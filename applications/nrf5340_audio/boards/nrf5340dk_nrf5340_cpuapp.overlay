@@ -47,7 +47,6 @@
 			clock-type = "internal-programmable";
 			frequency-control = "read-only";
 			sampling-frequencies = <48000>;
-			sof-synchronized;
 		};
 
 		out_terminal: out_terminal {
@@ -109,7 +108,6 @@
 			clock-type = "internal-programmable";
 			frequency-control = "read-only";
 			sampling-frequencies = <48000>;
-			sof-synchronized;
 		};
 
 		hp_out_terminal: out_terminal {
