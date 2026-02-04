@@ -262,4 +262,13 @@ config MCUBOOT_NRF53_MULTI_IMAGE_UPDATE
 	  Note: if not using overwrite only mode for MCUboot, this can result in a bricked device
 	  upon firmware reverts.
 
+config MCUBOOT_LOAD_PERIPHCONF
+	bool "Initialize global peripherals from MCUboot [EXPERIMENTAL]"
+	depends on SOC_SERIES_NRF54H
+	select EXPERIMENTAL
+	help
+	  If enabled, MCUboot loads a second global peripheral configuration (PERIPHCONF)
+	  before booting the firmware in a given slot. The PERIPHCONF pointed to by UICR.PERIPHCONF
+	  will by default only include the configuration from the MCUboot image.
+
 endmenu
