@@ -140,3 +140,11 @@ config NCS_MCUBOOT_BOOT_REQUEST_TEST_SETS_BOOT_PREFERENCE
 	  effective.
 
 endif # NRF_MCUBOOT_BOOT_REQUEST
+
+# TODO: is kconfig the appropriate place?
+config MCUBOOT_NRF_PERIPHCONF_TLV_ID
+	def_hex 0xA1
+	help
+	  Vendor range TLV ID used for PERIPHCONF TLVs.
+	  On SoCs with IronSide SE, these are used to initialize certain
+	  peripherals at boot.
