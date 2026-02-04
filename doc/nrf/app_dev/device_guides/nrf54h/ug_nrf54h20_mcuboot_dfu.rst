@@ -95,23 +95,23 @@ It uses Simple Management Protocol for DFU and querying device information from 
 
 The following nRF54H20-specific build flavors are available:
 
-* ``sample.mcumgr.smp_svr.bt.nrf54h20dk`` - DFU over BLE using the default :ref:`ipc_radio` image and *Swap using move* MCUboot mode.
-* ``sample.mcumgr.smp_svr.bt.nrf54h20dk.direct_xip_withrevert`` - DFU over BLE using *Direct-XIP with revert* MCUboot mode.
-* ``sample.mcumgr.smp_svr.serial.nrf54h20dk.ecdsa`` - DFU over serial port with ECDSA P256 signature verification.
-* ``sample.mcumgr.smp_svr.bt.nrf54h20dk.direct_xip_withrequests`` - DFU over BLE using *Direct-XIP with revert* MCUboot mode and bootloader requests support.
-* ``sample.mcumgr.smp_svr.bt.nrf54h20dk.ext_flash`` - DFU over BLE from external flash using *Swap using move* MCUboot mode.
+* ``sample.dfu.smp_svr.bt.nrf54h20dk`` - DFU over BLE using the default :ref:`ipc_radio` image and *Swap using move* MCUboot mode.
+* ``sample.dfu.smp_svr.bt.nrf54h20dk.direct_xip_withrevert`` - DFU over BLE using *Direct-XIP with revert* MCUboot mode.
+* ``sample.dfu.smp_svr.serial.nrf54h20dk.ecdsa`` - DFU over serial port with ECDSA P256 signature verification.
+* ``sample.dfu.smp_svr.bt.nrf54h20dk.direct_xip_withrequests`` - DFU over BLE using *Direct-XIP with revert* MCUboot mode and bootloader requests support.
+* ``sample.dfu.smp_svr.bt.nrf54h20dk.ext_flash`` - DFU over BLE from external flash using *Swap using move* MCUboot mode.
 
 The following additional build flavors are also available:
 
-* ``sample.mcumgr.smp_svr.encryption.ecdsa_p256`` - DFU using *Dual-bank swap with move* MCUboot mode with encryption support and ECDSA P256 signature verification.
-* ``sample.mcumgr.smp_svr.nrf_compress.basic`` - DFU using *Dual-bank overwrite* MCUboot mode with compression support.
-* ``sample.mcumgr.smp_svr.nrf_compress.encryption_ecdsa_p256`` - DFU using *Dual-bank overwrite* MCUboot mode with both compression and encryption support, and ECDSA P256 signature verification.
+* ``sample.dfu.smp_svr.encryption.ecdsa_p256`` - DFU using *Dual-bank swap with move* MCUboot mode with encryption support and ECDSA P256 signature verification.
+* ``sample.dfu.smp_svr.nrf_compress.basic`` - DFU using *Dual-bank overwrite* MCUboot mode with compression support.
+* ``sample.dfu.smp_svr.nrf_compress.encryption_ecdsa_p256`` - DFU using *Dual-bank overwrite* MCUboot mode with both compression and encryption support, and ECDSA P256 signature verification.
 
 You can build and flash the selected flavor of the :zephyr:code-sample:`smp-svr` sample with the following commands:
 
 .. code-block:: console
 
-    west build -b nrf54h20dk/nrf54h20/cpuapp -T ./sample.mcumgr.smp_svr.bt.nrf54h20dk
+    west build -b nrf54h20dk/nrf54h20/cpuapp -T ./sample.dfu.smp_svr.bt.nrf54h20dk
     west flash
 
 Testing steps
