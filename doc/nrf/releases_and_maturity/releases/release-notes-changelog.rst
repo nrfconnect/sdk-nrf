@@ -212,7 +212,11 @@ nRF IEEE 802.15.4 radio driver
 Thread
 ------
 
-* Added a warning when using precompiled OpenThread libraries with modified Kconfig options related to the OpenThread stack.
+* Added:
+
+  * A warning when using precompiled OpenThread libraries with modified Kconfig options related to the OpenThread stack.
+  * The otperf tool that is compatible with zperf and iperf for measuring throughput of thread transmissions.
+    For more details, see :ref:`ug_otperf_tool`.
 
 Wi-Fi®
 ------
