@@ -24,9 +24,9 @@ typedef struct {
 	uint8_t owner_id;
 } ikg_opaque_key;
 
-__attribute__((warn_unused_result)) psa_status_t silex_statuscodes_to_psa(int ret);
+__must_check psa_status_t silex_statuscodes_to_psa(int sx_status);
 
-__attribute__((warn_unused_result)) psa_status_t
+__must_check psa_status_t
 hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash_algo);
 
 /**
@@ -41,7 +41,8 @@ hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash_algo);
  *
  * @return PSA status code.
  */
-psa_status_t rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit, size_t retrylimit);
+psa_status_t cracen_rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit,
+				 size_t retrylimit);
 
 /**
  * @brief XOR two byte buffers and store result in first buffer

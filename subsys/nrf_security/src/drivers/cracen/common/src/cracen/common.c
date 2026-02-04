@@ -26,13 +26,13 @@ LOG_MODULE_DECLARE(cracen, CONFIG_CRACEN_LOG_LEVEL);
 
 #define NOT_ENABLED_HASH_ALG (0)
 
-psa_status_t silex_statuscodes_to_psa(int ret)
+psa_status_t silex_statuscodes_to_psa(int sx_status)
 {
-	if (ret != SX_OK) {
-		LOG_DBG("SX_ERR %d", ret);
+	if (sx_status != SX_OK) {
+		LOG_DBG("SX_ERR %d", sx_status);
 	}
 
-	switch (ret) {
+	switch (sx_status) {
 	case SX_OK:
 	case SX_ERR_READY:
 		return PSA_SUCCESS;
@@ -85,8 +85,7 @@ psa_status_t silex_statuscodes_to_psa(int ret)
 	}
 }
 
-__attribute__((warn_unused_result)) psa_status_t
-hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash_algo)
+psa_status_t hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash_algo)
 {
 	*sx_hash_algo = NOT_ENABLED_HASH_ALG;
 
@@ -128,7 +127,8 @@ hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash_algo)
 	return (*sx_hash_algo == NOT_ENABLED_HASH_ALG) ? PSA_ERROR_NOT_SUPPORTED : PSA_SUCCESS;
 }
 
-psa_status_t rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit, size_t retry_limit)
+psa_status_t cracen_rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit,
+				 size_t retry_limit)
 {
 	size_t retries = 0;
 
