@@ -105,7 +105,7 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34573"
 
 - scenarios:
-    - sample.mcumgr.smp_svr.ram_load.*
+    - sample.dfu.smp_svr.ram_load.*
   platforms:
     - nrf52840dk/nrf52840
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24488"
