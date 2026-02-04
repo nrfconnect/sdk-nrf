@@ -1102,7 +1102,7 @@ uint8_t coap_header_get_type_ack(const struct coap_packet *cpkt)
 
 uint8_t coap_header_get_code_ok(const struct coap_packet *cpkt)
 {
-	return COAP_RESPONSE_CODE_OK;
+	return COAP_RESPONSE_CODE_CONTENT;
 }
 
 uint8_t coap_header_get_code_bad_then_ok(const struct coap_packet *cpkt)
@@ -1110,11 +1110,11 @@ uint8_t coap_header_get_code_bad_then_ok(const struct coap_packet *cpkt)
 	switch (coap_header_get_code_fake.call_count) {
 	case 1:
 	return 0xba;
-	default: return COAP_RESPONSE_CODE_OK;
+	default: return COAP_RESPONSE_CODE_CONTENT;
 	}
 
 
-	return COAP_RESPONSE_CODE_OK;
+	return COAP_RESPONSE_CODE_CONTENT;
 }
 
 uint8_t coap_header_get_code_bad(const struct coap_packet *cpkt)
