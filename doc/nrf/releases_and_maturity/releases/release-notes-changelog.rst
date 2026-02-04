@@ -275,8 +275,9 @@ nRF5340 Audio
 * Updated:
 
   * Switched to the new USB stack introduced in Zephyr 3.4.0.
-    For an end user, this change requires no action.
     macOS will now work out of the box, fixing OCT-2154.
+    USB includes feedback, for headphones only, to synchronize the USB host clock and the Bluetooth clock.
+    For an end user, this change requires no action.
 
   * Programming script.
     Devices are now halted before programming.

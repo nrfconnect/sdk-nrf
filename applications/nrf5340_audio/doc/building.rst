@@ -107,6 +107,9 @@ The building command for running the script requires providing the following par
      - Specifies the device type.
      - ``headset``, ``gateway``, ``both``
      - :ref:`nrf53_audio_app_overview_gateway_headsets`
+   * - USB Feedback (``-fb``)
+     - Specifies if USB asynchronous streaming with feedback.
+     - :ref:`nrf53_audio_app_overview_gateway_headsets`
 
 For example, the following command builds headset and gateway applications using the script for the application core with the ``debug`` application version:
 
@@ -268,6 +271,14 @@ The nRF5340 Audio applications come with the following configuration files:
      - :file:`broadcast_source/overlay-broadcast_source.conf`
      - ``broadcast_source``
      - Configuration file for the broadcast source application.
+  * - Application-specific overlay file
+     - :file:`boards/nrf5340_audio_usb_feedback_on_cpuapp.overlay`
+     - ``usb_feedback``
+     - Device overlay file for USB asynchronous application.
+  * - Application-specific overlay file
+     - :file:`boards/nrf5340_audio_usb_feedback_off_cpuapp.overlay`
+     - ``usb_feedback``
+     - Device overlay file for USB synchronous application.
 
 .. _nrf53_audio_app_configuration_select_build:
 
@@ -314,7 +325,7 @@ Complete the following steps to build each of the configurations you need:
 
    .. group-tab:: Command line
 
-      1. Choose the combination of build flags:
+      2. Choose the combination of build flags:
 
          a. Choose the configuration file for the device selected by using one of the following options:
 
@@ -322,6 +333,11 @@ Complete the following steps to build each of the configurations you need:
             * For unicast gateway: ``-DEXTRA_CONF_FILE=".\unicast_client\overlay-unicast_client.conf"``
             * For broadcast headset: ``-DEXTRA_CONF_FILE=".\broadcast_sink\overlay-broadcast_sink.conf"``
             * For broadcast gateway: ``-DEXTRA_CONF_FILE=".\broadcast_source\overlay-broadcast_source.conf"``
+
+         #. Choose the device overlay file for the USB synchronization selected by using one of the following options:
+
+            * For asynchronous USB: ``-DCONFIG_AUDIO_USB_FEEDBACK=y -DEXTRA_DTC_OVERLAY_FILE=.\boards\nrf5340_audio_usb_feedback_on_cpuapp.overlay"``
+            * For synchronous USB: ``-DEXTRA_DTC_OVERLAY_FILE=.\boards\nrf5340_audio_usb_feedback_on_cpuapp.overlay"``
 
          #. Choose the application version (:ref:`nrf53_audio_app_building_config_files`) by using one of the following options:
 
