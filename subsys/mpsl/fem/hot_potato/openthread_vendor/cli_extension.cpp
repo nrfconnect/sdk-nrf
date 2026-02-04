@@ -36,7 +36,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <nrf.h>
 #include <nrfx_temp.h>
 #include <openthread/cli.h>
 #include <openthread/error.h>
@@ -674,11 +673,10 @@ static otError VendorTemp(void *aContext, uint8_t aArgsLength, char *aArgs[])
 	VerifyOrExit(aArgsLength == 0, error = OT_ERROR_INVALID_ARGS);
 
 	if (!m_diag_temp_initialized) {
-		VerifyOrExit(nrfx_temp_init(&config, NULL) == NRFX_SUCCESS,
-			     error = OT_ERROR_FAILED);
+		VerifyOrExit(nrfx_temp_init(&config, NULL) == 0, error = OT_ERROR_FAILED);
 		m_diag_temp_initialized = true;
 	}
-	VerifyOrExit(nrfx_temp_measure() == NRFX_SUCCESS, error = OT_ERROR_FAILED);
+	VerifyOrExit(nrfx_temp_measure() == 0, error = OT_ERROR_FAILED);
 	celsius_temperature = nrfx_temp_calculate(nrfx_temp_result_get());
 	otCliOutputFormat("Measured temperature: %d\r\n", celsius_temperature);
 

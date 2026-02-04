@@ -31,8 +31,7 @@
 #include <hal/nrf_power.h>
 #include <hal/nrf_timer.h>
 #include <nrf_802154_sl_timer.h>
-#include <nrfx_dppi.h>
-#include <nrfx_ppib.h>
+#include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
 
 #include <openthread/cli.h>
@@ -45,20 +44,11 @@
 #define CPU_USAGE_HISTOGRAM_LEN 10
 #define CPU_USAGE_AGG_PERIOD_US (100ULL * 1000ULL)
 
-static const nrfx_timer_t timer_cpu = NRFX_TIMER_INSTANCE(20); /* CPU duty cycle */
-static const nrfx_dppi_t dppi_peri = NRFX_DPPI_INSTANCE(20);   /* TIMER20 DPPI - PERI DPPI */
-static const nrfx_dppi_t dppi_lp = NRFX_DPPI_INSTANCE(30);     /* POWER DPPI - LP DPPI */
-static const nrfx_ppib_interconnect_t ppib = NRFX_PPIB_INTERCONNECT_INSTANCE(22, 30);
+static nrfx_timer_t timer_cpu = NRFX_TIMER_INSTANCE(NRF_TIMER_INST_GET(20)); /* CPU duty cycle */
+static nrfx_gppi_handle_t sleep_enter_handle;
+static nrfx_gppi_handle_t sleep_exit_handle;
 
 static volatile bool initialized;
-
-static uint8_t dppi_lp_channel_sleep_enter;
-static uint8_t dppi_peri_channel_sleep_enter;
-static uint8_t ppib_channel_sleep_enter;
-
-static uint8_t dppi_lp_channel_sleep_exit;
-static uint8_t dppi_peri_channel_sleep_exit;
-static uint8_t ppib_channel_sleep_exit;
 
 static volatile bool meas_started; /* Measurement started? */
 static uint32_t max_cpu_usage;
@@ -70,7 +60,9 @@ static K_TIMER_DEFINE(timer_meas, VendorUsageCpuMeasure, NULL);
 static void VendorUsageCpuInit()
 {
 	nrfx_timer_config_t timer_cfg = NRFX_TIMER_DEFAULT_CONFIG(NRFX_MHZ_TO_HZ(1));
-	nrfx_err_t err;
+	int err;
+	uint32_t event;
+	uint32_t task;
 
 	if (initialized) {
 		return;
@@ -79,67 +71,23 @@ static void VendorUsageCpuInit()
 	/* === Initialize timer === */
 	timer_cfg.bit_width = NRF_TIMER_BIT_WIDTH_32;
 	err = nrfx_timer_init(&timer_cpu, &timer_cfg, NULL);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	__ASSERT_NO_MSG(!err);
 
 	nrfx_timer_enable(&timer_cpu);
 
-	/* === Stop timer on SLEEPENTER === */
-	err = nrfx_dppi_channel_alloc(&dppi_lp, &dppi_lp_channel_sleep_enter);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	/* === Setup NRF_POWER_EVENT_SLEEPENTER -> NRF_TIMER_TASK_STOP */
+	event = nrf_power_event_address_get(NRF_POWER, NRF_POWER_EVENT_SLEEPENTER);
+	task = nrfx_timer_task_address_get(&timer_cpu, NRF_TIMER_TASK_STOP);
 
-	err = nrfx_dppi_channel_alloc(&dppi_peri, &dppi_peri_channel_sleep_enter);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	nrfx_gppi_conn_alloc(event, task, &sleep_enter_handle);
+	nrfx_gppi_conn_enable(sleep_enter_handle);
 
-	err = nrfx_ppib_channel_alloc(&ppib, &ppib_channel_sleep_enter);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	/* === Setup NRF_POWER_EVENT_SLEEPEXIT -> NRF_TIMER_TASK_START */
+	event = nrf_power_event_address_get(NRF_POWER, NRF_POWER_EVENT_SLEEPEXIT);
+	task = nrfx_timer_task_address_get(&timer_cpu, NRF_TIMER_TASK_START);
 
-	/* POWER.EVENT_SLEEPENTER -> DPPI30 */
-	nrf_power_publish_set(NRF_POWER, NRF_POWER_EVENT_SLEEPENTER, dppi_lp_channel_sleep_enter);
-	/* DPPI30 -> PPIB30 */
-	nrf_ppib_subscribe_set(ppib.right.p_reg, nrf_ppib_send_task_get(ppib_channel_sleep_enter),
-			       dppi_lp_channel_sleep_enter);
-	/* PPIB30 -> PPIB22 (implicit)*/
-	/* PPIB22 -> DPPI20 */
-	nrf_ppib_publish_set(ppib.left.p_reg, nrf_ppib_receive_event_get(ppib_channel_sleep_enter),
-			     dppi_peri_channel_sleep_enter);
-	/* DPPI20 -> TIMER.TASK_STOP */
-	nrf_timer_subscribe_set(timer_cpu.p_reg, NRF_TIMER_TASK_STOP,
-				dppi_peri_channel_sleep_enter);
-
-	err = nrfx_dppi_channel_enable(&dppi_lp, dppi_lp_channel_sleep_enter);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
-
-	err = nrfx_dppi_channel_enable(&dppi_peri, dppi_peri_channel_sleep_enter);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
-
-	/* === Start timer on SLEEPEXIT === */
-	err = nrfx_dppi_channel_alloc(&dppi_lp, &dppi_lp_channel_sleep_exit);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
-
-	err = nrfx_dppi_channel_alloc(&dppi_peri, &dppi_peri_channel_sleep_exit);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
-
-	err = nrfx_ppib_channel_alloc(&ppib, &ppib_channel_sleep_exit);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
-
-	/* POWER.EVENT_SLEEPEXIT -> DPPI30 */
-	nrf_power_publish_set(NRF_POWER, NRF_POWER_EVENT_SLEEPEXIT, dppi_lp_channel_sleep_exit);
-	/* DPPI30 -> PPIB30 */
-	nrf_ppib_subscribe_set(ppib.right.p_reg, nrf_ppib_send_task_get(ppib_channel_sleep_exit),
-			       dppi_lp_channel_sleep_exit);
-	/* PPIB30 -> PPIB22 (implicit) */
-	/* PPIB22 -> DPPI20 */
-	nrf_ppib_publish_set(ppib.left.p_reg, nrf_ppib_receive_event_get(ppib_channel_sleep_exit),
-			     dppi_peri_channel_sleep_exit);
-	/* DPPI20 -> TIMER.TASK_START */
-	nrf_timer_subscribe_set(timer_cpu.p_reg, NRF_TIMER_TASK_START,
-				dppi_peri_channel_sleep_exit);
-
-	err = nrfx_dppi_channel_enable(&dppi_lp, dppi_lp_channel_sleep_exit);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
-
-	err = nrfx_dppi_channel_enable(&dppi_peri, dppi_peri_channel_sleep_exit);
-	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
+	nrfx_gppi_conn_alloc(event, task, &sleep_exit_handle);
+	nrfx_gppi_conn_enable(sleep_exit_handle);
 
 	k_timer_start(&timer_meas, K_NO_WAIT, K_USEC(CPU_USAGE_AGG_PERIOD_US));
 

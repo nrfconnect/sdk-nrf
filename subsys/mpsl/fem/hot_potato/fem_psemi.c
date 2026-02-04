@@ -34,31 +34,34 @@
 #include <zephyr/sys/__assert.h>
 #include <soc_nrf_common.h>
 #include <nrfx_gpiote.h>
+#include <gpiote_nrfx.h>
 #include <mpsl_fem_utils.h>
 
 #include "power_model.h"
 #include "./psemi/include/mpsl_fem_psemi_interface.h"
 
+#define RADIO_FEM_NODE DT_NODELABEL(nrf_radio_fem)
+
 static int fem_psemi_configure(void)
 {
-	int err;
+	int err = 0;
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ctx_gpios)
 	uint8_t ctx_gpiote_channel = MPSL_FEM_GPIOTE_INVALID_CHANNEL;
-	const nrfx_gpiote_t ctx_gpiote =
-		NRFX_GPIOTE_INSTANCE(NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), ctx_gpios));
+	nrfx_gpiote_t *ctx_gpiote =
+		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(RADIO_FEM_NODE, ctx_gpios));
 
-	if (nrfx_gpiote_channel_alloc(&ctx_gpiote, &ctx_gpiote_channel) != NRFX_SUCCESS) {
+	if (nrfx_gpiote_channel_alloc(ctx_gpiote, &ctx_gpiote_channel) != 0) {
 		return -ENOMEM;
 	}
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), crx_gpios)
 	uint8_t crx_gpiote_channel = MPSL_FEM_GPIOTE_INVALID_CHANNEL;
-	const nrfx_gpiote_t crx_gpiote =
-		NRFX_GPIOTE_INSTANCE(NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), crx_gpios));
+	nrfx_gpiote_t *crx_gpiote =
+		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(RADIO_FEM_NODE, crx_gpios));
 
-	if (nrfx_gpiote_channel_alloc(&crx_gpiote, &crx_gpiote_channel) != NRFX_SUCCESS) {
+	if (nrfx_gpiote_channel_alloc(crx_gpiote, &crx_gpiote_channel) != 0) {
 		return -ENOMEM;
 	}
 #endif
@@ -87,7 +90,7 @@ static int fem_psemi_configure(void)
 				.active_high = MPSL_FEM_GPIO_POLARITY_GET(ctx_gpios),
 				.gpiote_ch_id = ctx_gpiote_channel,
 #if defined(NRF54L_SERIES)
-				.p_gpiote = ctx_gpiote.p_reg,
+				.p_gpiote = ctx_gpiote->p_reg,
 #endif
 #else
 				MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
@@ -106,7 +109,7 @@ static int fem_psemi_configure(void)
 				.active_high = MPSL_FEM_GPIO_POLARITY_GET(crx_gpios),
 				.gpiote_ch_id = crx_gpiote_channel,
 #if defined(NRF54L_SERIES)
-				.p_gpiote = crx_gpiote.p_reg,
+				.p_gpiote = crx_gpiote->p_reg,
 #endif
 #else
 				MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT

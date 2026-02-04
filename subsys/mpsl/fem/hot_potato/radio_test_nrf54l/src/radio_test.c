@@ -15,9 +15,9 @@
 
 #include <hal/nrf_egu.h>
 #include <hal/nrf_power.h>
+#include <mdk/nrf_erratas.h>
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
-#include <nrf_erratas.h>
 
 #include <mpsl/mpsl_lib.h>
 
@@ -66,6 +66,8 @@
 #define ENDPOINT_TIMER_RADIO_TX  BIT(3)
 #define ENDPOINT_FORK_EGU_TIMER  BIT(4)
 
+extern void TIMER10_IRQHandler(void);
+
 /* Buffer for the radio TX packet */
 static uint8_t tx_packet[RADIO_MAX_PAYLOAD_LEN];
 /* Buffer for the radio RX packet. */
@@ -79,7 +81,8 @@ static uint32_t rx_packet_cnt;
 static uint8_t current_channel;
 
 /* Timer used for channel sweeps and tx with duty cycle. */
-static const nrfx_timer_t timer = NRFX_TIMER_INSTANCE(RADIO_TEST_TIMER_INSTANCE);
+static nrfx_timer_t timer =
+	NRFX_TIMER_INSTANCE(NRF_TIMER_INST_GET(RADIO_TEST_TIMER_INSTANCE));
 
 static bool sweep_processing;
 
@@ -87,7 +90,7 @@ static bool sweep_processing;
 static uint16_t total_payload_size;
 
 /* PPI channel for starting radio */
-static uint8_t ppi_radio_start;
+static nrfx_gppi_handle_t ppi_radio_start;
 
 /* PPI endpoint status.*/
 static atomic_t endpoint_state;
@@ -95,6 +98,8 @@ static atomic_t endpoint_state;
 /* RSSI samples of received packets */
 static uint8_t rssi_sample_latest_packets[MAX_RSSISAMPLE_STORED];
 static uint32_t rssi_sample_current_index = 0;
+
+// extern void RADIO_TEST_TIMER_IRQ_HANDLER(void);
 
 uint8_t rssi_sample_averaged_packets_get(uint32_t num_rssi_samples)
 {
@@ -299,23 +304,22 @@ static void radio_power_set(nrf_radio_mode_t mode, uint8_t channel, int8_t power
 static void endpoints_clear(void)
 {
 	if (atomic_test_and_clear_bit(&endpoint_state, ENDPOINT_FORK_EGU_TIMER)) {
-		nrfx_gppi_fork_endpoint_clear(ppi_radio_start,
-			nrf_timer_task_address_get(timer.p_reg, NRF_TIMER_TASK_START));
+		nrfx_gppi_ep_clear(nrf_timer_task_address_get(timer.p_reg, NRF_TIMER_TASK_START));
 	}
 	if (atomic_test_and_clear_bit(&endpoint_state, ENDPOINT_EGU_RADIO_TX)) {
-		nrfx_gppi_channel_endpoints_clear(ppi_radio_start,
-			nrf_egu_event_address_get(RADIO_TEST_EGU, RADIO_TEST_EGU_EVENT),
-			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
+		nrfx_gppi_ep_clear(
+				nrf_egu_event_address_get(RADIO_TEST_EGU, RADIO_TEST_EGU_EVENT));
+		nrfx_gppi_ep_clear(nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
 	}
 	if (atomic_test_and_clear_bit(&endpoint_state, ENDPOINT_EGU_RADIO_RX)) {
-		nrfx_gppi_channel_endpoints_clear(ppi_radio_start,
-			nrf_egu_event_address_get(RADIO_TEST_EGU, RADIO_TEST_EGU_EVENT),
-			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_RXEN));
+		nrfx_gppi_ep_clear(
+				nrf_egu_event_address_get(RADIO_TEST_EGU, RADIO_TEST_EGU_EVENT));
+		nrfx_gppi_ep_clear(nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_RXEN));
 	}
 	if (atomic_test_and_clear_bit(&endpoint_state, ENDPOINT_TIMER_RADIO_TX)) {
-		nrfx_gppi_channel_endpoints_clear(ppi_radio_start,
-			nrf_timer_event_address_get(timer.p_reg, NRF_TIMER_EVENT_COMPARE0),
-			nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
+		nrfx_gppi_ep_clear(
+			nrf_timer_event_address_get(timer.p_reg, NRF_TIMER_EVENT_COMPARE0));
+		nrfx_gppi_ep_clear(nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
 	}
 }
 
@@ -323,33 +327,33 @@ static void radio_ppi_config(bool rx)
 {
 	endpoints_clear();
 
-	nrfx_gppi_channel_endpoints_setup(ppi_radio_start,
-			nrf_egu_event_address_get(RADIO_TEST_EGU, RADIO_TEST_EGU_EVENT),
+	nrfx_gppi_ep_attach(ppi_radio_start,
+			nrf_egu_event_address_get(RADIO_TEST_EGU, RADIO_TEST_EGU_EVENT));
+	nrfx_gppi_ep_attach(ppi_radio_start,
 			nrf_radio_task_address_get(NRF_RADIO,
 						   rx ? NRF_RADIO_TASK_RXEN : NRF_RADIO_TASK_TXEN));
 	atomic_set_bit(&endpoint_state, (rx ? ENDPOINT_EGU_RADIO_RX : ENDPOINT_EGU_RADIO_TX));
 
-	nrfx_gppi_fork_endpoint_setup(ppi_radio_start,
+	nrfx_gppi_ep_attach(ppi_radio_start,
 			nrf_timer_task_address_get(timer.p_reg, NRF_TIMER_TASK_START));
 	atomic_set_bit(&endpoint_state, ENDPOINT_FORK_EGU_TIMER);
 
-	nrfx_gppi_channels_enable(BIT(ppi_radio_start));
+	nrfx_gppi_conn_enable(ppi_radio_start);
 }
 
 static void radio_ppi_tx_reconfigure(void)
 {
-	if (nrfx_gppi_channel_check(ppi_radio_start)) {
-		nrfx_gppi_channels_disable(BIT(ppi_radio_start));
-	}
+	nrfx_gppi_conn_disable(ppi_radio_start);
 
 	endpoints_clear();
 
-	nrfx_gppi_channel_endpoints_setup(ppi_radio_start,
-		nrf_timer_event_address_get(timer.p_reg, NRF_TIMER_EVENT_COMPARE1),
+	nrfx_gppi_ep_attach(ppi_radio_start,
+		nrf_timer_event_address_get(timer.p_reg, NRF_TIMER_EVENT_COMPARE1));
+	nrfx_gppi_ep_attach(ppi_radio_start,
 		nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_TXEN));
 	atomic_set_bit(&endpoint_state, ENDPOINT_TIMER_RADIO_TX);
 
-	nrfx_gppi_channels_enable(BIT(ppi_radio_start));
+	nrfx_gppi_conn_enable(ppi_radio_start);
 }
 
 static void radio_start(bool rx, bool force_egu)
@@ -449,11 +453,11 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern, u
 		packet_conf.balen = 0;
 		packet_conf.big_endian = false;
 		packet_conf.whiteen = false;
-        
-        /* Enable CRC for IEEE802.15.4 mode. */
+
+		/* Enable CRC for IEEE802.15.4 mode. */
 		if(crc_enabled)
 		{
-            packet_conf.crcinc = true;
+			packet_conf.crcinc = true;
 			nrf_radio_crc_configure(NRF_RADIO, RADIO_CRCCNF_LEN_Two,
 					    NRF_RADIO_CRC_ADDR_IEEE802154, 0x11021UL);
 
@@ -466,7 +470,7 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern, u
 			/* preamble, address (BALEN + PREFIX), lflen and payload */
 			total_payload_size = 4 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen;
 		}
-		
+
 		break;
 #endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
 
@@ -513,7 +517,7 @@ static void radio_config(nrf_radio_mode_t mode, enum transmit_pattern pattern, u
 		else {
 			total_payload_size = 1 + (packet_conf.balen + 1) + 1 + packet_conf.maxlen;
 		}
-		
+
 		break;
 
 	default:
@@ -888,9 +892,7 @@ void radio_test_cancel(void)
 
 	sweep_processing = false;
 
-	if (nrfx_gppi_channel_check(ppi_radio_start)) {
-		nrfx_gppi_channels_disable(BIT(ppi_radio_start));
-	}
+	nrfx_gppi_conn_disable(ppi_radio_start);
 
 	rssi_sample_current_index = 0;
 
@@ -1001,7 +1003,7 @@ static void timer_init(const struct radio_test_config *config)
 
 void timer_irq_handler(const void *context)
 {
-	RADIO_TEST_TIMER_IRQ_HANDLER();
+	nrfx_timer_irq_handler(&timer);
 }
 
 void radio_irq_handler(const void *context)
@@ -1077,6 +1079,7 @@ static bool clock_init(void)
 int radio_test_init(struct radio_test_config *config)
 {
 	nrfx_err_t nrfx_err;
+	uint32_t rad_domain = nrfx_gppi_domain_id_get((uint32_t)NRF_RADIO);
 
 	/* Request HFCLK before unloading MPSL as the latter disables CLOCK interrupts,
 	 * which are necessary to complete the HFCLK startup.
@@ -1093,7 +1096,7 @@ int radio_test_init(struct radio_test_config *config)
 	irq_connect_dynamic(RADIO_TEST_RADIO_IRQn, IRQ_PRIO_LOWEST, radio_irq_handler, config, 0);
 	irq_enable(RADIO_TEST_RADIO_IRQn);
 
-	nrfx_err = nrfx_gppi_channel_alloc(&ppi_radio_start);
+	nrfx_err = nrfx_gppi_domain_conn_alloc(rad_domain, rad_domain, &ppi_radio_start);
 	if (nrfx_err != NRFX_SUCCESS) {
 		printk("Failed to allocate gppi channel.\n");
 		return -EFAULT;
