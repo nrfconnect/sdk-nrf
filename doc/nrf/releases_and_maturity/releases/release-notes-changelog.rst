@@ -48,7 +48,9 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
-|no_changes_yet_note|
+* :ref:`firmware_loader_entrance` sample:
+
+  * Added the :ref:`sample documentation page <firmware_loader_entrance>`.
 
 Developing with nRF91 Series
 ============================
