@@ -304,8 +304,9 @@ static psa_status_t cracen_write_key_share(cracen_jpake_operation_t *operation, 
 		 * more times giving us a statistically impossible chance of
 		 * generating a number that is too small.
 		 */
-		status = rnd_in_range(operation->x[idx], CRACEN_P256_KEY_SIZE,
-				      sx_pk_curve_order(operation->curve), RANDOM_RETRY_LIMIT);
+		status = cracen_rnd_in_range(operation->x[idx], CRACEN_P256_KEY_SIZE,
+					     sx_pk_curve_order(operation->curve),
+					     RANDOM_RETRY_LIMIT);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
@@ -341,8 +342,8 @@ static psa_status_t cracen_write_key_share(cracen_jpake_operation_t *operation, 
 		return PSA_ERROR_BAD_STATE;
 	}
 
-	status =
-		rnd_in_range(v, sizeof(v), sx_pk_curve_order(operation->curve), RANDOM_RETRY_LIMIT);
+	status = cracen_rnd_in_range(v, sizeof(v), sx_pk_curve_order(operation->curve),
+				     RANDOM_RETRY_LIMIT);
 
 	if (status != PSA_SUCCESS) {
 		return status;
