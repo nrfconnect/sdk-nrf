@@ -60,6 +60,35 @@ config MCUBOOT_NRF_CLEANUP_PERIPHERAL
 	depends on SOC_FAMILY_NORDIC_NRF
 	default y
 
+config NCS_MCUBOOT_LOAD_PERIPHCONF
+	bool "Load new peripheral configuration before jumping to the application"
+	select IRONSIDE_SE_CALL
+	depends on HAS_IRONSIDE_SE
+	help
+	  When enabled, MCUboot looks for a TLV pointing to a slot specific list of
+	  peripheral configurations (PERIPHCONF) to initialize peripherals with before
+	  booting that slot. The actual initialization happens via a IronSide SE IPC call.
+
+if NCS_MCUBOOT_LOAD_PERIPHCONF
+
+config NCS_MCUBOOT_LOAD_PERIPHCONF_RESET_ON_ERROR
+	bool "Reset if the load procedure fails"
+	default y
+	help
+	  Trigger a system reset on failure to load the new peripheral configuration.
+	  A failure to load the configuration in most cases means that it was rejected
+	  by IronSide SE, either because it contained invalid register values, or because two
+	  or more of the configuration blobs loaded are in conflict with each other.
+	  If this option is disabled, MCUboot will instead loop indefinitely on failure.
+
+config NCS_MCUBOOT_LOAD_PERIPHCONF_MAX_BLOBS
+	int "Max PERIPHCONF blobs to load"
+	default 8
+	help
+	  The maximum number of PERIPHCONF blobs loaded by MCUboot for a slot.
+
+endif
+
 config BOOT_SIGNATURE_KEY_FILE
 	string "MCUBoot PEM key file"
 	help
