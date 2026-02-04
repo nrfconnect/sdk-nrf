@@ -1965,13 +1965,19 @@ ci_tests_subsys_west_debug:
   files:
     - nrf/tests/subsys/west_debug/
     - zephyr/boards/nordic/
-    - nrf/boards/nordic/54*
+    - nrf/boards/nordic/nrf54*
 
 ci_tests_subsys_west_flash:
   files:
     - nrf/tests/subsys/west_flash/
     - zephyr/boards/nordic/
-    - nrf/boards/nordic/54*
+    - nrf/boards/nordic/nrf54*
+
+ci_tests_subsys_app_protect:
+  files:
+    - nrf/tests/subsys/app_protect/
+    - zephyr/boards/nordic/
+    - nrf/boards/nordic/nrf54*
 
 ci_tests_zephyr_board_nrf_throttling:
   files:
