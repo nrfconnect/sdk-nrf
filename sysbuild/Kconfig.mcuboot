@@ -262,4 +262,31 @@ config MCUBOOT_NRF53_MULTI_IMAGE_UPDATE
 	  Note: if not using overwrite only mode for MCUboot, this can result in a bricked device
 	  upon firmware reverts.
 
+config NCS_MCUBOOT_LOAD_PERIPHCONF
+	bool "Initialize global peripherals from MCUboot [EXPERIMENTAL]"
+	depends on SOC_SERIES_NRF54HX
+	select EXPERIMENTAL
+	help
+	  If enabled, MCUboot loads global peripheral configuration (PERIPHCONF) blobs
+	  from the images in the slot it is booting, to reinitialize the global peripherals
+	  before booting a slot. For images containing a section with PERIPHCONF entries, the
+	  signing script includes a special PERIPHCONF TLV in the image trailer that informs
+	  MCUboot about where the entries are located.
+
+	  Since PERIPHCONF blobs loaded by MCUboot are located in the image data, they are
+	  updated along with the image firmware. The configuration can also be different between
+	  the different slots. The PERIPHCONF blob pointed to by UICR.PERIPHCONF will by default
+	  only include the configuration from the MCUboot image.
+
+menu "Custom TLVs"
+
+config NCS_MCUBOOT_PERIPHCONF_TLV_ID
+	hex "PERIPHCONF TLV ID"
+	default 0xA1
+	range 0xA0 0xFFFE
+	help
+	  Vendor range TLV ID used for PERIPHCONF TLVs.
+
+endmenu
+
 endmenu
