@@ -1,0 +1,321 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+/* Define _POSIX_C_SOURCE before including <string.h> in order to use `strtok_r`. */
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#include <zephyr/kernel.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/sys/util.h>
+
+#include <modem/at_monitor.h>
+#include <nrf_modem_at.h>
+
+#include "at_shell_internal.h"
+
+static bool at_cmd_mode_echo_on = IS_ENABLED(CONFIG_AT_SHELL_CMD_MODE_ECHO_DEFAULT);
+static bool at_cmd_mode_active;
+static bool inside_quotes;
+static bool writing;
+static size_t at_cmd_len;
+
+enum at_cmd_mode_term {
+	NULL_TERM,
+	CR_TERM,
+	LF_TERM,
+	CR_LF_TERM,
+};
+
+static enum at_cmd_mode_term term_mode =
+	(enum at_shell_cmd_mode_termination)CONFIG_AT_SHELL_CMD_MODE_TERMINATION;
+
+#define AT_CMD_MODE_AT_CMD_MAX_LEN	     CONFIG_SHELL_CMD_BUFF_SIZE
+#define AT_CMD_MODE_PIPELINED_AT_CMD_MAX_LEN 1023
+
+static uint8_t at_buf[AT_CMD_MODE_AT_CMD_MAX_LEN + 1];
+static uint8_t at_buf_pipelined[AT_CMD_MODE_PIPELINED_AT_CMD_MAX_LEN + 1];
+
+AT_MONITOR(at_shell_cmd_mode_monitor, ANY, at_cmd_mode_event_handler, PAUSED);
+
+struct at_cmd_mode_pipelining_info {
+	uint8_t *pipelined_cmd_start; /* Pointers to at_buf with pipelining */
+	int pipelined_cmd_len;
+};
+
+#define AT_MAX_CMD_PIPELINED 10
+
+/* ctrl + x */
+#define CHAR_CAN 0x18
+/* ctrl + q */
+#define CHAR_DC1 0x11
+
+struct at_cmd_mode_work_data {
+	struct k_work work;
+	int pipe_cnt;
+	struct at_cmd_mode_pipelining_info pipe_infos[AT_MAX_CMD_PIPELINED];
+};
+static struct at_cmd_mode_work_data at_cmd_mode_work;
+
+K_MUTEX_DEFINE(at_buf_mutex);
+
+static void at_cmd_mode_event_handler(const char *response)
+{
+	/* Cmd-mode always prints with printk(). */
+	if (writing && at_cmd_mode_echo_on) {
+		/* 1st we need to clear current writings */
+		printk("\r");
+		for (int i = 0; i < at_cmd_len; i++) {
+			printk(" ");
+		}
+
+		/* Then print AT notification */
+		printk("\r%s", response);
+
+		/* And at last, print the command that user was writing back */
+		k_mutex_lock(&at_buf_mutex, K_FOREVER);
+		at_buf[at_cmd_len] = '\0';
+		printk("%s", at_buf);
+		k_mutex_unlock(&at_buf_mutex);
+	} else {
+		printk("%s", response);
+	}
+}
+
+static void at_cmd_mode_send_at_cmd(const char *at_str, char *rsp_buf, int rsp_buf_len)
+{
+	int err;
+
+	err = nrf_modem_at_cmd(rsp_buf, rsp_buf_len, "%s", at_str);
+	if (err < 0) {
+		(void)snprintf(rsp_buf, rsp_buf_len, "ERROR: AT command failed: %d\n", err);
+	} /* else if (err > 0): print error from modem */
+
+	/* Response */
+	printk("%s", rsp_buf);
+}
+
+static void at_cmd_mode_send_at_cmd_from_at_buf(void)
+{
+	at_cmd_mode_send_at_cmd(at_buf, at_buf, sizeof(at_buf));
+}
+
+static void at_cmd_mode_worker(struct k_work *item)
+{
+	struct at_cmd_mode_work_data *data = CONTAINER_OF(item, struct at_cmd_mode_work_data, work);
+	struct at_cmd_mode_pipelining_info *pipes = data->pipe_infos;
+
+	if (data->pipe_cnt) {
+		for (int i = 0; i < AT_MAX_CMD_PIPELINED; i++) {
+			if (pipes[i].pipelined_cmd_len) {
+				strncpy(at_buf_pipelined, pipes[i].pipelined_cmd_start,
+					pipes[i].pipelined_cmd_len);
+				at_buf_pipelined[pipes[i].pipelined_cmd_len] = '\0';
+
+				at_cmd_mode_send_at_cmd(at_buf_pipelined, at_buf_pipelined,
+							sizeof(at_buf_pipelined));
+				pipes[i].pipelined_cmd_len = 0;
+			}
+		}
+	} else {
+		at_cmd_mode_send_at_cmd_from_at_buf();
+	}
+	data->pipe_cnt = 0;
+}
+
+static void at_cmd_mode_cmd_rx_handler(uint8_t character)
+{
+	writing = true;
+
+	switch (character) {
+	case 0x08: /* Backspace. */
+		/* Fall through. */
+	case 0x7F: /* DEL character */
+		if (at_cmd_len == 0) {
+			return;
+		}
+		/* Reprint with DEL/Backspace  */
+		k_mutex_lock(&at_buf_mutex, K_FOREVER);
+		at_buf[at_cmd_len] = '\0';
+		at_cmd_len--;
+		/* If the removed character was a quote, need to toggle the flag. */
+		if (at_buf[at_cmd_len] == '"') {
+			inside_quotes = !inside_quotes;
+		}
+		at_buf[at_cmd_len] = ' ';
+		printk("\r%s", at_buf);
+		at_buf[at_cmd_len] = '\0';
+		printk("\r%s", at_buf);
+		k_mutex_unlock(&at_buf_mutex);
+		return;
+	}
+
+	/* Handle termination characters, if outside quotes. */
+	if (!inside_quotes) {
+		switch (character) {
+		case '\0':
+			if (term_mode == NULL_TERM) {
+				goto send;
+			}
+			/* Ignored null and will terminate string early. */
+			break;
+		case '\r':
+			if (term_mode == CR_TERM) {
+				goto send;
+			}
+			break;
+		case '\n':
+			if (term_mode == LF_TERM) {
+				goto send;
+			}
+			if (term_mode == CR_LF_TERM && at_cmd_len > 0 &&
+			    at_buf[at_cmd_len - 1] == '\r') {
+				goto send;
+			}
+			break;
+		}
+	}
+
+	/* Detect AT command buffer overflow, leaving space for null */
+	if (at_cmd_len + 1 > sizeof(at_buf) - 1) {
+		printk("Buffer overflow, dropping '%c'\n", character);
+		return;
+	}
+
+	/* Write character to AT buffer */
+	k_mutex_lock(&at_buf_mutex, K_FOREVER);
+	at_buf[at_cmd_len] = character;
+	at_cmd_len++;
+	k_mutex_unlock(&at_buf_mutex);
+
+	/* Handle special written character */
+	if (character == '"') {
+		inside_quotes = !inside_quotes;
+	}
+
+	if (at_cmd_mode_echo_on) {
+		printk("%c", character);
+	}
+	return;
+
+send:
+	k_mutex_lock(&at_buf_mutex, K_FOREVER);
+	at_buf[at_cmd_len] = '\0'; /* Terminate the command string */
+	inside_quotes = false;
+	at_cmd_len = 0;
+	k_mutex_unlock(&at_buf_mutex);
+
+	/* Scan AT command buffer for possible pipelined at commands */
+	at_cmd_mode_work.pipe_cnt = 0;
+
+	if (strchr(at_buf, '|')) {
+		struct at_cmd_mode_pipelining_info *pipes = at_cmd_mode_work.pipe_infos;
+		char *next_char = at_buf;
+		char *save_next_char;
+		char *tmp = strtok_r(next_char, "|", &save_next_char);
+
+		while (tmp != NULL) {
+			if (at_cmd_mode_work.pipe_cnt >= AT_MAX_CMD_PIPELINED) {
+				printk("\nMax %d pipelined at commands supported, dropping: \"%s\"",
+				       AT_MAX_CMD_PIPELINED, tmp);
+			} else {
+				int pipelined_len = strlen(tmp);
+
+				if (pipelined_len > AT_CMD_MODE_PIPELINED_AT_CMD_MAX_LEN) {
+					printk("\nPipelined AT cmd max len is %d, "
+					       "too long %d bytes AT cmd dropped",
+						AT_CMD_MODE_PIPELINED_AT_CMD_MAX_LEN,
+						pipelined_len);
+				} else {
+					pipes[at_cmd_mode_work.pipe_cnt].pipelined_cmd_start = tmp;
+					pipes[at_cmd_mode_work.pipe_cnt].pipelined_cmd_len =
+						pipelined_len;
+					at_cmd_mode_work.pipe_cnt++;
+				}
+			}
+			tmp = strtok_r(NULL, "|", &save_next_char);
+		}
+	}
+
+	if (at_cmd_mode_echo_on) {
+		/* Echo a line feed */
+		printk("\n");
+	}
+	writing = false;
+
+	at_shell_submit_at_cmd_mode_work(&at_cmd_mode_work.work);
+}
+
+static void at_cmd_mode_bypass_cb(const struct shell *sh, uint8_t *recv, size_t len,
+				  void *user_data)
+{
+	ARG_UNUSED(user_data);
+	static uint8_t tail;
+	bool escape = false;
+
+	/* Check if escape criteria is met. */
+	if (tail == CHAR_CAN && recv[0] == CHAR_DC1) {
+		escape = true;
+	} else {
+		for (int i = 0; i < (len - 1); i++) {
+			if (recv[i] == CHAR_CAN && recv[i + 1] == CHAR_DC1) {
+				escape = true;
+				break;
+			}
+		}
+	}
+
+	if (escape) {
+		printk("===========================================================\n");
+		printk("AT command mode exited\n");
+
+		shell_set_bypass(sh, NULL, NULL);
+		at_monitor_pause(&at_shell_cmd_mode_monitor);
+		at_cmd_mode_active = false;
+		inside_quotes = false;
+		tail = 0;
+		at_cmd_len = 0;
+		return;
+	}
+
+	/* Store last byte for escape sequence detection */
+	tail = recv[len - 1];
+
+	/* Handle byte by byte. */
+	for (int i = 0; i < len; i++) {
+		at_cmd_mode_cmd_rx_handler(recv[i]);
+	}
+}
+
+int at_shell_cmd_mode_start(const struct shell *sh, const struct at_shell_cmd_mode_config *cfg)
+{
+	if (at_cmd_mode_active) {
+		printk("AT command mode already started\n");
+		return -EBUSY;
+	}
+
+	term_mode = (enum at_cmd_mode_term)cfg->termination;
+	at_cmd_mode_echo_on = cfg->echo;
+
+	k_work_init(&at_cmd_mode_work.work, at_cmd_mode_worker);
+	at_cmd_mode_work.pipe_cnt = 0;
+
+	printk("AT command mode started, press ctrl-x ctrl-q to escape\n");
+	printk("===========================================================\n");
+
+	at_cmd_mode_active = true;
+	at_monitor_resume(&at_shell_cmd_mode_monitor);
+	shell_set_bypass(sh, at_cmd_mode_bypass_cb, NULL);
+
+	return 0;
+}
