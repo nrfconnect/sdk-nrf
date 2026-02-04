@@ -107,7 +107,6 @@ def test_west_flash(dut: DeviceAdapter):
     run_communicate_check(
         cmd,
         None,
-        # r"J-Link: Flash download: Total: [0-9.]+s",  # J-Link: Flash download: Total: 0.453s
         expected,
     )
 
