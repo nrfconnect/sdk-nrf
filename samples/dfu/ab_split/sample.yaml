@@ -15,3 +15,13 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+
+  sample.dfu.ab_split.load_periphconf:
+    extra_configs:
+      - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONFIG_NCS_MCUBOOT_LOAD_PERIPHCONF=y
