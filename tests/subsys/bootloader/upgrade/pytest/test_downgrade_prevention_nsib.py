@@ -59,9 +59,6 @@ def test_b0_firmware_version_blocks_downgrade(dut: DeviceAdapter, shell: Shell, 
 
 
 @pytest.mark.nightly
-@pytest.mark.xfail(
-    reason="Quarantine: NCSDK-31918 Monotonic counter update protection does not work"
-)
 def test_b0_monotonic_counters_limit_number_of_upgrades(
     dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr
 ):
