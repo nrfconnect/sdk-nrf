@@ -16,4 +16,9 @@ common:
       - "Tests status: PASS"
 
 tests:
-  drivers.flash.multicore_soc_flash: {}
+  drivers.flash.multicore_soc_flash:
+    filter: not CONFIG_COVERAGE
+  drivers.flash.multicore_soc_flash.coverage:
+    filter: CONFIG_COVERAGE
+    extra_args:
+      - CONFIG_PM=n
