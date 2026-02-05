@@ -135,7 +135,7 @@ static void be_sub(uint8_t *v, size_t sz, uint8_t subtrahend)
 {
 	int tmp = subtrahend;
 
-	for (; sz > 0;) {
+	while (sz > 0) {
 		sz--;
 		tmp = v[sz] - tmp;
 		v[sz] = tmp & 0xFF;

@@ -642,8 +642,8 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 						  operation->unprocessed_input_bytes;
 
 			/* The value to pad which equals the number of
-				* padded bytes as described in PKCS7 (rfc2315).
-				*/
+			 * padded bytes as described in PKCS7 (rfc2315).
+			 */
 			memset(&operation->unprocessed_input
 					[operation->unprocessed_input_bytes],
 				padding, padding);
@@ -675,9 +675,7 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 			}
 
 			uint8_t padding = out_with_padding[SX_BLKCIPHER_AES_BLK_SZ - 1];
-			/* Verify that padding is in the valid
-				* range.
-				*/
+			/* Verify that padding is in the valid range. */
 			if (padding > SX_BLKCIPHER_AES_BLK_SZ || padding == 0) {
 				return PSA_ERROR_INVALID_PADDING;
 			}
