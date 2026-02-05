@@ -57,6 +57,19 @@ This section describes the changes related to libraries.
       * Removed the ``CONFIG_MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE`` Kconfig option.
         The PSA Crypto core is able to infer the key slot buffer size based on the keys enabled in the build, so there is no need to define it manually.
 
+Trusted Firmware-M
+==================
+
+.. toggle::
+
+   * The default TF-M profile has changed.
+     It is now :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` in all cases (except for the Thingy:91 and Thingy:91 X board targets on which it is still :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL`).
+     If you use the minimal TF-M profile in your application, you will now need to explicitly enable :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` in your build configuration.
+
+   * In relation with the default TF-M profile change, the default TF-M partition size (as configured with :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM`) has been reduced for the nRF91 Series board targets when MCUboot is enabled and a TF-M profile other than minimal is in use.
+     In cases where it would previously be ``0x3FE00``, it is now ``0x17E00``.
+
+
 .. _migration_3.3_recommended:
 
 Recommended changes

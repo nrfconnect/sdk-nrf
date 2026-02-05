@@ -143,6 +143,7 @@ Security
 
     The :ref:`ug_crypto_supported_features` page has been updated accordingly.
   * The :ref:`ug_crypto_supported_features` page with information about support for the Curve448 (X448) elliptic curve under :ref:`ug_crypto_supported_features_signature_algorithms` and :ref:`ug_crypto_supported_features_ecc_curve_types`.
+  * The :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_2048` Kconfig option is now enabled by default whenever :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_BASIC` or :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY` is enabled and no other RSA key size is enabled.
 
 * Removed:
 
@@ -153,6 +154,7 @@ Trusted Firmware-M (TF-M)
 -------------------------
 
 * Updated to version 2.2.2.
+* The default TF-M profile is now :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` in all cases (except for the Thingy:91 and Thingy:91 X board targets where it remains :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL`).
 
 Protocols
 =========
