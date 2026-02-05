@@ -1206,6 +1206,111 @@ ZTEST(suite_server_store, test_srv_store_max_transport_latency_basic)
 	srv_store_unlock();
 }
 
+ZTEST(suite_server_store, test_srv_store_pres_delay_get_none)
+{
+	int ret;
+	ret = srv_store_lock(K_NO_WAIT);
+	zassert_equal(ret, 0);
+
+	TEST_UNICAST_GROUP(cap_group);
+	uint32_t pres_dly_snk_us;
+	uint32_t pres_dly_src_us;
+
+	ret = srv_store_pres_delay_get(&cap_group, &pres_dly_snk_us, &pres_dly_src_us);
+	zassert_equal(ret, 0);
+	zassert_equal(pres_dly_snk_us, UINT32_MAX, "no streams");
+	zassert_equal(pres_dly_src_us, UINT32_MAX, "no streams");
+
+	srv_store_unlock();
+}
+
+ZTEST(suite_server_store, test_srv_store_pres_delay_get_one)
+{
+	int ret;
+	ret = srv_store_lock(K_NO_WAIT);
+	zassert_equal(ret, 0);
+
+	TEST_UNICAST_GROUP(cap_group);
+	uint32_t pres_dly_snk_us;
+	uint32_t pres_dly_src_us;
+
+	/* Need to create endpoints in test as these are owned by the host */
+	struct bt_bap_ep ep_1 = {0};
+	ep_1.state = BT_BAP_EP_STATE_STREAMING;
+	ep_1.dir = BT_AUDIO_DIR_SINK;
+
+	ep_1.qos_pref.pd_min = 1000;
+	ep_1.qos_pref.pref_pd_min = 2000;
+	ep_1.qos_pref.pref_pd_max = 3000;
+	ep_1.qos_pref.pd_max = 4000;
+	TEST_CONN(1);
+
+	struct server_store *retr_server = NULL;
+	ret = srv_store_add_by_conn(&test_1_conn);
+	zassert_equal(ret, 0);
+
+	ret = srv_store_from_conn_get(&test_1_conn, &retr_server);
+	zassert_equal(ret, 0);
+
+	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_1);
+	zassert_equal(ret, 0);
+
+	mock_add_stream_to_group(&retr_server->snk.cap_streams[0].bap_stream, &cap_group);
+
+	ret = srv_store_pres_delay_get(&cap_group, &pres_dly_snk_us, &pres_dly_src_us);
+	zassert_equal(ret, 0);
+
+	zassert_equal(pres_dly_snk_us, 2000, "Pref_min_selected");
+	zassert_equal(pres_dly_src_us, UINT32_MAX, "no streams");
+
+	ep_1.qos_pref.pref_pd_min = 0; /* Should select pd_min now, no pref */
+	ret = srv_store_pres_delay_get(&cap_group, &pres_dly_snk_us, &pres_dly_src_us);
+	zassert_equal(ret, 0);
+
+	zassert_equal(pres_dly_snk_us, 1000, "Pref_min_selected");
+	zassert_equal(pres_dly_src_us, UINT32_MAX, "no streams");
+
+	/* Adding new stream */
+	TEST_CONN(2);
+
+	struct bt_bap_ep ep_2 = {0};
+	ep_2.state = BT_BAP_EP_STATE_STREAMING;
+	ep_2.dir = BT_AUDIO_DIR_SINK;
+
+	ep_2.qos_pref.pd_min = 4000;
+	ep_2.qos_pref.pref_pd_min = 5000;
+	ep_2.qos_pref.pref_pd_max = 6000;
+	ep_2.qos_pref.pd_max = 7000;
+
+	ret = srv_store_add_by_conn(&test_2_conn);
+	zassert_equal(ret, 0);
+
+	ret = srv_store_from_conn_get(&test_2_conn, &retr_server);
+	zassert_equal(ret, 0);
+
+	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_2);
+	zassert_equal(ret, 0);
+
+	mock_add_stream_to_group(&retr_server->snk.cap_streams[0].bap_stream, &cap_group);
+
+	ret = srv_store_pres_delay_get(&cap_group, &pres_dly_snk_us, &pres_dly_src_us);
+	zassert_equal(ret, 0);
+
+	/* Only common ground is 4000*/
+	zassert_equal(pres_dly_snk_us, 4000, "Only common denominator is 4000");
+	zassert_equal(pres_dly_src_us, UINT32_MAX, "no streams");
+
+	/* No common denominator */
+	ep_2.qos_pref.pd_min = 4001;
+	ret = srv_store_pres_delay_get(&cap_group, &pres_dly_snk_us, &pres_dly_src_us);
+	zassert_equal(ret, -ESPIPE, "Should return error when no common denominator");
+
+	zassert_equal(pres_dly_snk_us, UINT32_MAX, "no common denominator");
+	zassert_equal(pres_dly_src_us, UINT32_MAX, "no common denominator");
+
+	srv_store_unlock();
+}
+
 void before_fn(void *dummy)
 {
 	int ret;
