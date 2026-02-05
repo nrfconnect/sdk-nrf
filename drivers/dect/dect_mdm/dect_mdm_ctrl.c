@@ -2180,7 +2180,9 @@ static void handle_mdm_nw_beacon_rcvd(struct dect_mdm_common_op_event_msgq_item 
 		};
 		struct dect_network_beacon_data nw_beacon = {
 			.next_cluster_channel = params->beacon.next_cluster_channel,
-			.current_cluster_channel = params->beacon.current_cluster_channel,
+			.current_cluster_channel = (params->beacon.flags
+					.has_current_cluster_channel) ?
+				params->beacon.current_cluster_channel : 0,
 			.num_network_beacon_channels = params->beacon.num_network_beacon_channels,
 		};
 

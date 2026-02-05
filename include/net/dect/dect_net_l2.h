@@ -153,7 +153,10 @@ enum dect_scan_result_evt_type {
 
 /** @brief Network beacon data. */
 struct dect_network_beacon_data {
-	/** Current cluster channel. */
+	/**
+	 * Current cluster channel.
+	 * @details Zero value means that the current cluster channel information is not available.
+	 */
 	uint16_t current_cluster_channel;
 
 	/** Next cluster channel. */
