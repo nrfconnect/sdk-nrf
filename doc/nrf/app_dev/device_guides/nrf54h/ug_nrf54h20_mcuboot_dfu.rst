@@ -114,6 +114,8 @@ You can build and flash the selected flavor of the :zephyr:code-sample:`smp-svr`
     west build -b nrf54h20dk/nrf54h20/cpuapp -T ./sample.dfu.smp_svr.bt.nrf54h20dk
     west flash
 
+.. _ug_nrf54h_developing_ble_fota_steps_testing:
+
 Testing steps
 =============
 

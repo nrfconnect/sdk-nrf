@@ -48,7 +48,8 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
-|no_changes_yet_note|
+* The MCUboot SMP Server sample was moved to :file:`samples/dfu/smp_svr`.
+  Documentation for the samples was added.
 
 Developing with nRF91 Series
 ============================
