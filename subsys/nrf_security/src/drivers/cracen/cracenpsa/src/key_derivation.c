@@ -820,10 +820,11 @@ psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t
 #endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC */
 
 #if defined(PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS)
+	if (operation->alg == PSA_ALG_TLS12_ECJPAKE_TO_PMS &&
+	    operation->state != CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_INIT) {
+		return PSA_ERROR_BAD_STATE;
+	}
 	if (operation->alg == PSA_ALG_TLS12_ECJPAKE_TO_PMS) {
-		if (operation->state != CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_INIT) {
-			return PSA_ERROR_BAD_STATE;
-		}
 		operation->state = CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_OUTPUT;
 		if (data_length != 65 || data[0] != 0x04) {
 			return PSA_ERROR_INVALID_ARGUMENT;
