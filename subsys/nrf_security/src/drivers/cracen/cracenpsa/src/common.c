@@ -88,7 +88,7 @@ psa_status_t silex_statuscodes_to_psa(int ret)
 
 	case SX_ERR_INVALID_ARG:
 	case SX_ERR_INPUT_BUFFER_TOO_SMALL:
-	default:
+	default: /* For compliance */
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 }
@@ -129,7 +129,7 @@ hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash_algo)
 	case PSA_ALG_SHAKE256_512:
 		IF_ENABLED(PSA_NEED_CRACEN_SHAKE256_512, (*sx_hash_algo = &sxhashalg_shake256_64));
 		break;
-	default:
+	default: /* For compliance */
 		return PSA_ALG_IS_HASH(alg) ? PSA_ERROR_NOT_SUPPORTED : PSA_ERROR_INVALID_ARGUMENT;
 	}
 
@@ -194,7 +194,7 @@ static psa_status_t get_sx_secp_r1_curve(size_t curve_bits, const struct sx_pk_e
 		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1_521,
 			   (selected_curve = &sx_curve_nistp521));
 		break;
-	default:
+	default: /* For compliance */
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
@@ -216,6 +216,8 @@ static psa_status_t get_sx_secp_k1_curve(size_t curve_bits, const struct sx_pk_e
 	case 256:
 		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1_256,
 			   (selected_curve = &sx_curve_secp256k1));
+		break;
+	default: /* For compliance */
 		break;
 	}
 
@@ -1364,6 +1366,8 @@ static psa_status_t cracen_get_ikg_opaque_key_size(const psa_key_attributes_t *a
 			*key_size = sizeof(ikg_opaque_key);
 			return PSA_SUCCESS;
 		}
+		break;
+	default: /* For compliance */
 		break;
 	}
 

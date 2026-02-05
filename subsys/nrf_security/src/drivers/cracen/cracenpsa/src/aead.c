@@ -41,6 +41,8 @@ static psa_key_type_t alg_to_key_type(psa_algorithm_t alg)
 	case PSA_ALG_CHACHA20_POLY1305:
 		IF_ENABLED(PSA_NEED_CRACEN_CHACHA20_POLY1305, (return PSA_KEY_TYPE_CHACHA20));
 		break;
+	default: /* For compliance */
+		break;
 	}
 
 	return PSA_KEY_TYPE_NONE;
@@ -62,6 +64,8 @@ static bool is_nonce_length_supported(psa_algorithm_t alg, size_t nonce_length)
 	case PSA_ALG_CCM:
 		IF_ENABLED(PSA_NEED_CRACEN_CCM_AES,
 			   (return sx_aead_aesccm_nonce_size_is_valid(nonce_length)));
+		break;
+	default: /* For compliance */
 		break;
 	}
 
@@ -94,6 +98,8 @@ static uint8_t get_block_size(psa_algorithm_t alg)
 		break;
 	case PSA_ALG_CHACHA20_POLY1305:
 		IF_ENABLED(PSA_NEED_CRACEN_CHACHA20_POLY1305, (return 64));
+		break;
+	default: /* For compliance */
 		break;
 	}
 
@@ -189,6 +195,9 @@ static psa_status_t initialize_or_resume_context(cracen_aead_operation_t *operat
 		break;
 	case CRACEN_HW_RESERVED:
 		status = PSA_SUCCESS;
+		break;
+	default: /* For compliance */
+		break;
 	}
 
 	return status;
