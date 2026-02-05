@@ -749,8 +749,12 @@ static void handle_dect_scan_result_evt(struct net_mgmt_event_callback *cb)
 		entry->rx_signal_info.transmit_power,
 		dect_utils_lib_phy_tx_power_to_dbm(entry->rx_signal_info.transmit_power));
 	if (entry->beacon_type == DECT_SCAN_RESULT_TYPE_NW_BEACON) {
-		dect_l2_shell_print("  Current cluster channel: %d",
-				    entry->network_beacon.current_cluster_channel);
+		if (entry->network_beacon.current_cluster_channel) {
+			dect_l2_shell_print("  Current cluster channel: %d",
+					    entry->network_beacon.current_cluster_channel);
+		} else {
+			dect_l2_shell_print("  Current cluster channel: not available");
+		}
 		dect_l2_shell_print("  Next cluster channel:    %d",
 				    entry->network_beacon.next_cluster_channel);
 		for (int i = 0; i < entry->network_beacon.num_network_beacon_channels; i++) {
