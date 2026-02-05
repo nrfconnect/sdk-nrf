@@ -24,8 +24,6 @@
 #include <zephyr/sys/util.h>
 #include <psa/nrf_platform_key_ids.h>
 
-#define NOT_ENABLED_CURVE	(0)
-
 static psa_status_t get_sx_brainpool_curve(size_t curve_bits, const struct sx_pk_ecurve **sicurve)
 {
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;
@@ -84,7 +82,7 @@ static psa_status_t get_sx_secp_r1_curve(size_t curve_bits, const struct sx_pk_e
 		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1_521,
 			   (selected_curve = &sx_curve_nistp521));
 		break;
-	default:
+	default: /* For compliance */
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
@@ -106,6 +104,8 @@ static psa_status_t get_sx_secp_k1_curve(size_t curve_bits, const struct sx_pk_e
 	case 256:
 		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1_256,
 			   (selected_curve = &sx_curve_secp256k1));
+		break;
+	default: /* For compliance */
 		break;
 	}
 
