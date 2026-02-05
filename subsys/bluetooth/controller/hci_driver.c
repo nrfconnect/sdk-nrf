@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/entropy.h>
 #include <zephyr/drivers/bluetooth.h>
+#include <zephyr/bluetooth/addr.h>
 #include <zephyr/bluetooth/controller.h>
 #include <zephyr/bluetooth/hci_vs.h>
 #include <zephyr/bluetooth/buf.h>
@@ -1492,10 +1493,40 @@ static int hci_driver_close(const struct device *dev)
 	return err;
 }
 
+#if defined(CONFIG_BT_HCI_SETUP)
+static int hci_driver_setup(const struct device *dev, const struct bt_hci_setup_params *param)
+{
+	sdc_hci_cmd_vs_zephyr_write_bd_addr_t sdc_params;
+	uint8_t hci_status;
+	int err;
+
+	(void)dev;
+
+	memcpy(&sdc_params.bd_addr[0], &param->public_addr.val[0], BT_ADDR_SIZE);
+
+	err = MULTITHREADING_LOCK_ACQUIRE();
+	if (err) {
+		return err;
+	}
+
+	hci_status = sdc_hci_cmd_vs_zephyr_write_bd_addr(&sdc_params);
+
+	MULTITHREADING_LOCK_RELEASE();
+	if (hci_status != 0) {
+		return -EBUSY;
+	}
+
+	return 0;
+}
+#endif /* defined(CONFIG_BT_HCI_SETUP) */
+
 static const struct bt_hci_driver_api hci_driver_api = {
 	.open = hci_driver_open,
 	.close = hci_driver_close,
 	.send = hci_driver_send,
+#if defined(CONFIG_BT_HCI_SETUP)
+	.setup = hci_driver_setup,
+#endif
 };
 
 void bt_ctlr_set_public_addr(const uint8_t *addr)
