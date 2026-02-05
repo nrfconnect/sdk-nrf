@@ -2192,10 +2192,105 @@ int srv_store_max_transp_latency_get(struct bt_cap_unicast_group *unicast_group,
 	return 0;
 }
 
+struct foreach_trans_latency_set {
+	enum group_action_req action;
+	uint16_t new_max_trans_lat_snk_ms;
+	uint8_t streams_set_snk;
+	uint16_t new_max_trans_lat_src_ms;
+	uint8_t streams_set_src;
+};
+
+static bool foreach_stream_transp_latency_set(struct bt_cap_stream *existing_stream,
+					      void *user_data)
+{
+	struct foreach_trans_latency_set *ctx = (struct foreach_trans_latency_set *)user_data;
+
+	if (existing_stream->bap_stream.ep == NULL) {
+		LOG_ERR("Existing stream has no ep set yet.");
+		return true;
+	}
+
+	/* If the max transport latency must be changed, we need to tear down and re-establish the
+	 * stream in order for the controller to get the new information.
+	 */
+	int dir = le_audio_stream_dir_get(&existing_stream->bap_stream);
+	switch (dir) {
+	case BT_AUDIO_DIR_SINK:
+		if (ctx->new_max_trans_lat_snk_ms == UINT16_MAX) {
+			return false;
+		}
+
+		if (existing_stream->bap_stream.qos->latency != ctx->new_max_trans_lat_snk_ms) {
+			group_action_set(&ctx->action, GROUP_ACTION_REQ_RESTART);
+			existing_stream->bap_stream.qos->latency = ctx->new_max_trans_lat_snk_ms;
+		}
+
+		ctx->streams_set_snk++;
+		break;
+
+	case BT_AUDIO_DIR_SOURCE:
+		if (ctx->new_max_trans_lat_src_ms == UINT16_MAX) {
+			return false;
+		}
+
+		if (existing_stream->bap_stream.qos->latency != ctx->new_max_trans_lat_src_ms) {
+			group_action_set(&ctx->action, GROUP_ACTION_REQ_RESTART);
+			existing_stream->bap_stream.qos->latency = ctx->new_max_trans_lat_src_ms;
+		}
+
+		ctx->streams_set_src++;
+		break;
+
+		break;
+	default:
+		LOG_ERR("Failed stream direction set");
+		return true;
+	};
+
+	return false;
+}
+
 int srv_store_max_transp_latency_set(struct bt_cap_unicast_group *unicast_group,
 				     uint16_t new_max_trans_lat_snk_ms,
 				     uint16_t new_max_trans_lat_src_ms,
-				     enum group_action_req *group_action_required)
+				     enum group_action_req *group_action_needed)
 {
+	valid_entry_check(__func__);
+
+	if (unicast_group == NULL || group_action_needed == NULL) {
+		LOG_ERR("NULL parameter");
+		return -EINVAL;
+	}
+
+	int ret;
+
+	struct foreach_trans_latency_set stream_trans_lat_set = {
+		.action = GROUP_ACTION_REQ_NONE,
+		.new_max_trans_lat_snk_ms = new_max_trans_lat_snk_ms,
+		.streams_set_snk = 0,
+		.new_max_trans_lat_src_ms = new_max_trans_lat_src_ms,
+		.streams_set_src = 0,
+	};
+
+	ret = bt_cap_unicast_group_foreach_stream(unicast_group, foreach_stream_transp_latency_set,
+						  (void *)&stream_trans_lat_set);
+
+	if (ret != 0 && ret != -ECANCELED) {
+		LOG_ERR("Failed to iterate streams in group: %d", ret);
+		return ret;
+	}
+
+	if (new_max_trans_lat_snk_ms != UINT16_MAX) {
+		LOG_INF("Max transport latency %d ms selected for %d sink streams",
+			new_max_trans_lat_snk_ms, stream_trans_lat_set.streams_set_snk);
+	}
+
+	if (new_max_trans_lat_src_ms != UINT16_MAX) {
+		LOG_INF("Max transport latency %d ms selected for %d source streams",
+			new_max_trans_lat_src_ms, stream_trans_lat_set.streams_set_src);
+	}
+
+	*group_action_needed = stream_trans_lat_set.action;
+
 	return 0;
 }
