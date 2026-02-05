@@ -7,6 +7,7 @@
 import logging
 import re
 import subprocess
+import time
 
 from twister_harness import DeviceAdapter
 
@@ -38,6 +39,7 @@ def get_cycle_and_uptime_from_logs(dut: DeviceAdapter):
     return cycle, uptime
 
 def test_grtc_after_reset_system(dut: DeviceAdapter):
+    time.sleep(3)
     dut.clear_buffer()
     reset_dut(dut, reset_kind="RESET_PIN")
     cycle_start, uptime_start = get_cycle_and_uptime_from_logs(dut)
@@ -49,6 +51,7 @@ def test_grtc_after_reset_system(dut: DeviceAdapter):
     assert uptime_after_reset in range(8, 30)
 
 def test_grtc_after_reset_pin(dut: DeviceAdapter):
+    time.sleep(3)
     dut.clear_buffer()
     reset_dut(dut, reset_kind="RESET_PIN")
     cycle_start, uptime_start = get_cycle_and_uptime_from_logs(dut)
