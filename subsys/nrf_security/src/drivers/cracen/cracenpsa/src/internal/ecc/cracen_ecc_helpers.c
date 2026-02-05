@@ -101,11 +101,11 @@ static psa_status_t get_sx_secp_k1_curve(size_t curve_bits, const struct sx_pk_e
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;
 
 	switch (curve_bits) {
-	case 225:
-		return PSA_ERROR_NOT_SUPPORTED;
 	case 256:
 		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1_256,
 			   (selected_curve = &sx_curve_secp256k1));
+		break;
+	default: /* For compliance */
 		break;
 	}
 
