@@ -464,6 +464,24 @@ void srv_store_unlock(void);
  */
 int srv_store_init(void);
 
+///////////////////////////////////////////////////////////////////////NEW
+
+// This needs to be called only once, after all streams have been through the configured cb
+int srv_store_pres_delay_get(struct bt_cap_unicast_group *unicast_group, uint32_t *pres_dly_snk_us,
+			     uint32_t *pres_dly_src_us);
+
+int srv_store_pres_delay_set(struct bt_cap_unicast_group *unicast_group, uint32_t *pres_dly_snk_us,
+			     uint32_t *pres_dly_src_us, bool *group_reconfig_needed);
+
+// This needs to be called only once, after all streams have been through the configured cb
+int srv_store_max_transp_lat_get(struct bt_cap_unicast_group *unicast_group,
+				 uint16_t *new_max_trans_lat_snk_ms,
+				 uint16_t *new_max_trans_lat_src_ms);
+
+int srv_store_max_transp_lat_set(struct bt_cap_unicast_group *unicast_group,
+				 uint16_t new_max_trans_lat_snk_ms,
+				 uint16_t new_max_trans_lat_src_ms, bool *group_reconfig_needed);
+
 /**
  * @}
  * @}
