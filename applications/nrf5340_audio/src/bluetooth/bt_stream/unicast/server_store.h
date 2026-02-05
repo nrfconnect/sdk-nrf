@@ -67,6 +67,12 @@ struct client_supp_configs {
 	struct bt_audio_codec_octets_per_codec_frame oct_per_codec_frame;
 };
 
+enum group_action_req {
+	GROUP_ACTION_REQ_NONE = 0,
+	GROUP_ACTION_REQ_QOS_RECONFIG,
+	GROUP_ACTION_REQ_RESTART,
+};
+
 /**
  * @brief	Function for bt_bap_unicast_group_foreach_stream().
  *
@@ -470,8 +476,9 @@ int srv_store_init(void);
 int srv_store_pres_delay_get(struct bt_cap_unicast_group *unicast_group, uint32_t *pres_dly_snk_us,
 			     uint32_t *pres_dly_src_us);
 
-int srv_store_pres_delay_set(struct bt_cap_unicast_group *unicast_group, uint32_t *pres_dly_snk_us,
-			     uint32_t *pres_dly_src_us, bool *group_reconfig_needed);
+int srv_store_pres_delay_set(struct bt_cap_unicast_group *unicast_group, uint32_t pres_dly_snk_us,
+			     uint32_t pres_dly_src_us,
+			     enum group_action_req *group_action_required);
 
 // This needs to be called only once, after all streams have been through the configured cb
 int srv_store_max_transp_lat_get(struct bt_cap_unicast_group *unicast_group,
