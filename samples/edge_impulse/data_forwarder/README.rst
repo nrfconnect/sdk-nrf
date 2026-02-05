@@ -3,6 +3,10 @@
 Edge Impulse: Data forwarder
 ############################
 
+.. note::
+   This sample is deprecated and will be removed in the future |NCS| release.
+   The Edge Impulse SDK is now available in `Edge AI Add-on for nRF Connect SDK`_.
+
 .. contents::
    :local:
    :depth: 2
