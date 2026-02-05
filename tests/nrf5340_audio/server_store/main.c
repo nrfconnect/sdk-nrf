@@ -1311,6 +1311,100 @@ ZTEST(suite_server_store, test_srv_store_pres_delay_get_one)
 	srv_store_unlock();
 }
 
+ZTEST(suite_server_store, test_srv_store_pres_delay_set)
+{
+	int ret;
+	ret = srv_store_lock(K_NO_WAIT);
+	zassert_equal(ret, 0);
+
+	TEST_UNICAST_GROUP(cap_group);
+
+	TEST_CONN(1);
+
+	struct server_store *retr_server = NULL;
+	ret = srv_store_add_by_conn(&test_1_conn);
+	zassert_equal(ret, 0);
+
+	ret = srv_store_from_conn_get(&test_1_conn, &retr_server);
+	zassert_equal(ret, 0);
+
+	struct bt_bap_ep ep_1 = {0};
+	ep_1.state = BT_BAP_EP_STATE_IDLE;
+	ep_1.dir = BT_AUDIO_DIR_SINK;
+
+	struct bt_bap_ep ep_2 = {0};
+	ep_2.state = BT_BAP_EP_STATE_IDLE;
+	ep_2.dir = BT_AUDIO_DIR_SINK;
+
+	struct bt_bap_ep ep_3 = {0};
+	ep_3.state = BT_BAP_EP_STATE_IDLE;
+	ep_3.dir = BT_AUDIO_DIR_SOURCE;
+
+	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_1);
+	zassert_equal(ret, 0);
+
+	ret = test_cap_stream_populate(retr_server, 1, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_2);
+	zassert_equal(ret, 0);
+
+	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SOURCE, 40000, &cap_group,
+				       &ep_3);
+	zassert_equal(ret, 0);
+
+	mock_add_stream_to_group(&retr_server->snk.cap_streams[0].bap_stream, &cap_group);
+	mock_add_stream_to_group(&retr_server->snk.cap_streams[1].bap_stream, &cap_group);
+	mock_add_stream_to_group(&retr_server->src.cap_streams[0].bap_stream, &cap_group);
+
+	enum group_action_req group_action_required;
+
+	ret = srv_store_pres_delay_set(&cap_group, 5000, UINT32_MAX, &group_action_required);
+	zassert_equal(ret, 0);
+
+	zassert_equal(group_action_required, GROUP_ACTION_REQ_NONE);
+
+	zassert_equal(retr_server->snk.cap_streams[0].bap_stream.qos->pd, 5000);
+	zassert_equal(retr_server->snk.cap_streams[1].bap_stream.qos->pd, 5000);
+	zassert_equal(retr_server->src.cap_streams[0].bap_stream.qos->pd, 40000);
+
+	/* Put one stream in a QoS configured state*/
+	ep_1.state = BT_BAP_EP_STATE_QOS_CONFIGURED;
+
+	/* No change in PD*/
+	ret = srv_store_pres_delay_set(&cap_group, 5000, UINT32_MAX, &group_action_required);
+	zassert_equal(ret, 0);
+
+	zassert_equal(group_action_required, GROUP_ACTION_REQ_NONE);
+
+	/* Change PD with one stream in QoS configured state */
+	ret = srv_store_pres_delay_set(&cap_group, 4000, UINT32_MAX, &group_action_required);
+	zassert_equal(ret, 0);
+
+	zassert_equal(group_action_required, GROUP_ACTION_REQ_QOS_RECONFIG);
+	zassert_equal(retr_server->snk.cap_streams[0].bap_stream.qos->pd, 4000);
+	zassert_equal(retr_server->snk.cap_streams[1].bap_stream.qos->pd, 4000);
+	zassert_equal(retr_server->src.cap_streams[0].bap_stream.qos->pd, 40000);
+
+	/* Put one stream in a streaming state*/
+	ep_1.state = BT_BAP_EP_STATE_STREAMING;
+	/* Change PD with one stream in QoS configured state */
+	ret = srv_store_pres_delay_set(&cap_group, 3000, UINT32_MAX, &group_action_required);
+	zassert_equal(ret, 0);
+
+	zassert_equal(group_action_required, GROUP_ACTION_REQ_RESTART);
+	zassert_equal(retr_server->snk.cap_streams[0].bap_stream.qos->pd, 3000);
+	zassert_equal(retr_server->snk.cap_streams[1].bap_stream.qos->pd, 3000);
+	zassert_equal(retr_server->src.cap_streams[0].bap_stream.qos->pd, 40000);
+
+	ret = srv_store_pres_delay_set(&cap_group, UINT32_MAX, 20000, &group_action_required);
+	zassert_equal(ret, 0);
+
+	zassert_equal(group_action_required, GROUP_ACTION_REQ_NONE);
+	zassert_equal(retr_server->snk.cap_streams[0].bap_stream.qos->pd, 3000);
+	zassert_equal(retr_server->snk.cap_streams[1].bap_stream.qos->pd, 3000);
+	zassert_equal(retr_server->src.cap_streams[0].bap_stream.qos->pd, 20000);
+
+	srv_store_unlock();
+}
+
 void before_fn(void *dummy)
 {
 	int ret;
