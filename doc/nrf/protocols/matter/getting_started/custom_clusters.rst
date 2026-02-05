@@ -55,9 +55,6 @@ You can create a new cluster description file in the following ways:
 
    .. tab:: Using the Matter Cluster Editor app
 
-      .. note::
-         |matter_cluster_editor_preview|
-
       Before using the tool, you need to download and install it.
       See the `Matter Cluster Editor app`_ documentation for installation instructions.
 

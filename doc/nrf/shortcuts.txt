@@ -279,9 +279,6 @@
    There is an option to utilize a 'built-in' driver, which corresponds to the software-implemented cryptography from the 'original' Mbed TLS deliverables.
    This is provided to ensure that the cryptographic toolbox supports all requested features.
 
-
-.. |matter_cluster_editor_preview| replace:: The Matter Cluster Editor app is currently in the preview stage.
-
 .. |ISE| replace:: IronSide SE
 
 .. |ESB| replace:: Enhanced ShockBurst
