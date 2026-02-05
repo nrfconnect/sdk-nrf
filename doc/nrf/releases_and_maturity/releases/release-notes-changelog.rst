@@ -429,6 +429,8 @@ Cellular samples
 Cryptography samples
 --------------------
 
+* Added the :ref:`crypto_aes_kw` sample.
+
 * :ref:`crypto_aes_ccm` sample:
 
   * Added support for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
