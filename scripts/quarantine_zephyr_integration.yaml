@@ -4,10 +4,12 @@
 # This configurations come from tests/samples in sdk-zephyr
 
 - scenarios:
+    - drivers.modem.modem_.*
     - modem.backends.tty
     - modem.modem_chat
     - modem.modem_cmux
     - modem.modem_ppp
+    - sample.driver.lora.*
   platforms:
     - native_sim/native
   comment: "Configurations excluded to limit resources usage in integration builds"
@@ -44,41 +46,8 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - bluetooth.audio_shell.no_audio_rx
-    - bluetooth.audio_shell.no_audio_tx
-    - bluetooth.audio_shell.no_broadcast_sink
-    - bluetooth.audio_shell.no_broadcast_source
-    - bluetooth.audio_shell.no_cap_acceptor
-    - bluetooth.audio_shell.no_cap_acceptor_set_member
-    - bluetooth.audio_shell.no_cap_initiator
-    - bluetooth.audio_shell.no_client_ase_snk
-    - bluetooth.audio_shell.no_client_ase_src
-    - bluetooth.audio_shell.no_has
-    - bluetooth.audio_shell.no_has_client
-    - bluetooth.audio_shell.no_pac_snk
-    - bluetooth.audio_shell.no_pac_src
-    - bluetooth.audio_shell.no_server_ase_snk
-    - bluetooth.audio_shell.no_server_ase_src
-    - bluetooth.audio_shell.no_unicast_client
-    - bluetooth.audio_shell.no_unicast_serve
-    - bluetooth.shell.audio.gtbs_only_client
-    - bluetooth.shell.audio.micp_mic_ctlr_no_aics_client
-    - bluetooth.shell.audio.no_aics
-    - bluetooth.shell.audio.no_aics_vocs
-    - bluetooth.shell.audio.no_mcc
-    - bluetooth.shell.audio.no_mcc_ots
-    - bluetooth.shell.audio.no_mcs
-    - bluetooth.shell.audio.no_micp_mic_ctlr
-    - bluetooth.shell.audio.no_micp_mic_dev
-    - bluetooth.shell.audio.no_micp_mic_dev_micp_mic_ctlr
-    - bluetooth.shell.audio.no_ots
-    - bluetooth.shell.audio.no_otsc
-    - bluetooth.shell.audio.no_tbs
-    - bluetooth.shell.audio.no_tbs_clien
-    - bluetooth.shell.audio.no_vcp_vol_ctlr
-    - bluetooth.shell.audio.no_vcs
-    - bluetooth.shell.audio.no_vcs_vcp_vol_ctlr
-    - bluetooth.shell.audio.no_voc
+    - bluetooth.audio_shell.*
+    - bluetooth.shell.audio.*
   platforms:
     - native_sim/native
   comment: "Configurations excluded to limit resources usage in integration builds"
@@ -160,39 +129,41 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - libraries.cmsis_dsp.*
-    - libraries.libc.*
-    - cpp.main.*
-    - cpp.libcxx.*
+    - cpp.*
     - libraries.cbprintf.*
-    - libraries.spsc_pbuf.*
-    - libraries.hash_map.*
+    - libraries.cmsis_dsp.*
+    - libraries.cmsis_nn
+    - libraries.data_structures
     - libraries.devicetree.*
+    - libraries.encoding.*
+    - libraries.fdtable
     - libraries.hash_function.*
-    - libraries.smf.*
+    - libraries.hash_map.*
+    - libraries.heap
+    - libraries.heap_align
+    - libraries.libc.*
+    - libraries.libc.time
     - libraries.linear_range
     - libraries.mem_blocks
-    - libraries.ring_buffer
-    - libraries.cmsis_nn
     - libraries.mem_blocks.*
-    - libraries.heap
-    - libraries.fdtable
-    - libraries.p4wq
-    - libraries.heap_align
-    - libraries.data_structures
-    - libraries.sys_util
-    - libraries.onoff
-    - libraries.libc.time
     - libraries.mpsc_pbuf.*
-    - libraries.encoding.*
+    - libraries.onoff
+    - libraries.p4wq
+    - libraries.ring_buffer
+    - libraries.smf.*
+    - libraries.spsc_pbuf.*
+    - libraries.sys_util
     - libraries.timespec_utils.*
-    - sample.modules.cmsis_dsp.moving_average
     - math.interpolation
-    - utilities.math.interpolation
-    - sample.drivers.misc.timeaware_gpio
-    - sample.libraries.hash_map.*
-    - sample.boards.renesas.elc
+    - sample.basic.button
     - sample.boards.magic_addr
+    - sample.boards.renesas.elc
+    - sample.drivers.misc.timeaware_gpio
+    - sample.kernel.bootargs.tokenization
+    - sample.kernel.msgqueue
+    - sample.libraries.hash_map.*
+    - sample.modules.cmsis_dsp.moving_average
+    - utilities.math.interpolation
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
