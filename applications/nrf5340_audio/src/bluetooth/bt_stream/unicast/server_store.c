@@ -2017,12 +2017,81 @@ int srv_store_pres_delay_get(struct bt_cap_unicast_group *unicast_group, uint32_
 	return 0;
 }
 
+struct new_pres_delays {
+	enum group_action_req action;
+	uint32_t snk_us;
+	uint32_t src_us;
+};
+
+/* Set the new action required. Only set if the new action is more severe */
+static void group_action_set(enum group_action_req *action, enum group_action_req new_action)
+{
+	if (*action < new_action) {
+		*action = new_action;
+	}
+}
+
+static void stream_state_check(struct bt_cap_stream *stream,
+			       struct new_pres_delays *new_pres_delays)
+{
+	if (le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_QOS_CONFIGURED)) {
+		/* Stream needs to be QoS configured again to update the presentation delay */
+		group_action_set(&new_pres_delays->action, GROUP_ACTION_REQ_QOS_RECONFIG);
+	} else if (le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_ENABLING) ||
+		   le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_STREAMING)) {
+		/* Group must be restarted to update the presentation delay */
+		group_action_set(&new_pres_delays->action, GROUP_ACTION_REQ_RESTART);
+	} else {
+		group_action_set(&new_pres_delays->action, GROUP_ACTION_REQ_NONE);
+	}
+}
+
+static bool new_pres_dly_us_set(struct bt_cap_stream *stream, void *user_data)
+{
+	struct new_pres_delays *new_pres_delays = (struct new_pres_delays *)user_data;
+
+	if (stream->bap_stream.ep == NULL) {
+		LOG_ERR("Stream has no endpoint assigned yet");
+		return false;
+	}
+
+	if (new_pres_delays->snk_us != UINT32_MAX &&
+	    stream->bap_stream.ep->dir == BT_AUDIO_DIR_SINK) {
+		if (stream->bap_stream.qos->pd != new_pres_delays->snk_us) {
+			stream->bap_stream.qos->pd = new_pres_delays->snk_us;
+			stream_state_check(stream, new_pres_delays);
+		}
+
+	} else if (new_pres_delays->src_us != UINT32_MAX &&
+		   stream->bap_stream.ep->dir == BT_AUDIO_DIR_SOURCE) {
+		if (stream->bap_stream.qos->pd != new_pres_delays->src_us) {
+			stream->bap_stream.qos->pd = new_pres_delays->src_us;
+			stream_state_check(stream, new_pres_delays);
+		}
+	} else {
+		/* No update needed for this stream */
+		return false;
+	}
+	return false;
+}
+
 // This needs to be called only once, after all streams have been through the configured cb
-int srv_store_pres_delay_set(struct bt_cap_unicast_group *unicast_group, uint32_t *pres_dly_snk_us,
-			     uint32_t *pres_dly_src_us, bool *group_reconfig_needed)
+int srv_store_pres_delay_set(struct bt_cap_unicast_group *unicast_group, uint32_t pres_dly_snk_us,
+			     uint32_t pres_dly_src_us, enum group_action_req *group_action_required)
 {
 
-	return 0;
+	int ret;
+	struct new_pres_delays new_pres_delays = {
+		.action = GROUP_ACTION_REQ_NONE,
+		.snk_us = pres_dly_snk_us,
+		.src_us = pres_dly_src_us,
+	};
+
+	ret = bt_cap_unicast_group_foreach_stream(unicast_group, new_pres_dly_us_set,
+						  &new_pres_delays);
+
+	*group_action_required = new_pres_delays.action;
+	return ret;
 }
 
 // This needs to be called only once, after all streams have been through the configured cb
