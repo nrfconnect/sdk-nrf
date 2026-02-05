@@ -17,6 +17,7 @@
 #define _LE_AUDIO_H_
 
 #include <zephyr/bluetooth/audio/bap.h>
+#include <zephyr/bluetooth/audio/cap.h>
 #include <zephyr/net_buf.h>
 #include <audio_defines.h>
 
@@ -235,6 +236,8 @@ bool le_audio_freq_check(const struct bt_audio_codec_cfg *codec);
 void le_audio_print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_dir dir);
 
 void le_audio_print_qos_from_stream(struct bt_bap_stream const *const stream);
+
+int le_audio_print_cig(struct bt_cap_unicast_group const *const unicast_group);
 /**
  * @}
  */
