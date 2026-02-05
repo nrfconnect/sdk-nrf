@@ -78,7 +78,7 @@ Here is an example of how you can build for the :ref:`peripheral_lbs` sample:
     west build -b *board_target* -- -DSB_CONFIG_BOOTLOADER_MCUBOOT=y -DCONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
 
 When you connect to the device after the build has completed and the firmware has been programmed to it, the SMP Service is enabled with the ``UUID 8D53DC1D-1DB7-4CD3-868B-8A527460AA84``.
-If you want to add SMP Service to advertising data, refer to the :zephyr:code-sample:`smp-svr`.
+If you want to add SMP Service to advertising data, refer to the :ref:`nrf_smp_svr_sample` sample.
 
 .. fota_upgrades_over_ble_additional_information_end
 
@@ -137,10 +137,10 @@ FOTA update sample
 
 .. fota_upgrades_update_start
 
-The :zephyr:code-sample:`smp-svr` demonstrates how to set up your project to support FOTA updates.
+The :ref:`nrf_smp_svr_sample` sample demonstrates how to set up your project to support FOTA updates.
 
 When working in the |NCS| environment, ignore the part of the sample documentation that describes the building and programming steps.
-In |NCS|, you can build and program the :zephyr:code-sample:`smp-svr` as any other sample using the following commands:
+In |NCS|, you can build and program the  :ref:`nrf_smp_svr_sample` sample as any other sample using the following commands:
 
 .. tabs::
 
@@ -172,15 +172,6 @@ In |NCS|, you can build and program the :zephyr:code-sample:`smp-svr` as any oth
 
             west build -b nrf54l15dk/nrf54l15/cpuapp -T sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash
             west flash
-
-    .. group-tab:: nRF54L15 DK with SPI Flash as update image (DTS partitioning)
-
-       To build with the DTS partitioning, run the following command:
-
-        .. parsed-literal::
-           :class: highlight
-
-            west build -b nrf54l15dk/nrf54l15/cpuapp -d build/smp_svr_54l_d zephyr/samples/subsys/mgmt/mcumgr/smp_svr -T sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash.pure_dts
 
 Make sure to indicate the :file:`overlay-bt.conf` overlay configuration for the Bluetooth transport like in the command example.
 This configuration was carefully selected to achieve the maximum possible throughput of the FOTA update transport over Bluetooth with the help of the following features:
