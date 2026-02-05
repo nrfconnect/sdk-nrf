@@ -932,10 +932,10 @@ psa_status_t rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit, size
 		sz--;
 	}
 
-	uint8_t msb_mask;
+	uint8_t msb_mask = 0xFF;
 
-	for (msb_mask = 0xFF; upperlimit[0] & msb_mask; msb_mask <<= 1) {
-		;
+	while (upperlimit[0] & msb_mask) {
+		msb_mask <<= 1;
 	}
 	msb_mask = ~msb_mask;
 
@@ -1405,10 +1405,9 @@ psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size
 
 void cracen_be_add(uint8_t *v, size_t sz, size_t summand)
 {
-	while (sz > 0) {
-		sz--;
-		summand += v[sz];
-		v[sz] = summand & 0xFF;
+	for (; sz > 0; sz--) {
+		summand += v[sz - 1];
+		v[sz - 1] = summand & 0xFF;
 		summand >>= 8;
 	}
 }
@@ -1420,17 +1419,16 @@ int cracen_be_sub(const uint8_t *a, const uint8_t *b, uint8_t *c, size_t sz)
 	unsigned int bi;
 	unsigned int tmp;
 
-	while (sz > 0) {
-		sz--;
-		ai = (unsigned int)a[sz];
-		bi = (unsigned int)b[sz];
+	for (; sz > 0; sz--) {
+		ai = (unsigned int)a[sz - 1];
+		bi = (unsigned int)b[sz - 1];
 
 		/* tmp will be in 0..0xFFFFFFFF; if underflow occurred for the byte subtraction
 		 * (ai < bi + borrow) then the high bits of tmp will be set (tmp >= 0xFFFFFF00).
 		 * Shifting right by 8 and masking the LSB yields 1 in that case, 0 otherwise.
 		 */
 		tmp = ai - bi - borrow;
-		c[sz] = (uint8_t)tmp;
+		c[sz - 1] = (uint8_t)tmp;
 		borrow = (tmp >> 8) & 1u;
 	}
 

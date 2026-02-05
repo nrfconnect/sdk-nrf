@@ -160,9 +160,8 @@ static size_t get_asn1_size_with_tag_and_length(size_t sz)
 
 	/* If size >= 0x80 we need additional bytes. */
 	if (sz >= 0x80) {
-		while (sz) {
-			r += 1;
-			sz >>= 8;
+		for (; sz; sz >>= 8) {
+			r++;
 		}
 	}
 
