@@ -1112,6 +1112,8 @@
 .. _`switch to the pre-release version of the extension`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/rel_notes_overview.html#switching-to-a-pre-release-version
 .. _`How to work with sysbuild domains`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_multi_domain.html
 
+.. _`Edge AI Add-on for nRF Connect SDK`: https://docs.nordicsemi.com/bundle/addon-edge-ai_latest/page/index.html
+
 .. ### Source: files.nordicsemi.com
 
 .. _`Twister test report for nRF Connect SDK v3.2.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v3.2.0/test-report/twister_test_results_report.html?isNativeBrowsing=true
