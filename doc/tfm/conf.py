@@ -77,10 +77,13 @@ autosectionlabel_maxdepth = 2
 
 # Options for intersphinx ------------------------------------------------------
 
+# FIXME: we should build dependencies, using version here is fragile!
+# Remember to update URLs when bumping TFM version
+
 intersphinx_mapping = {
-    "TF-M-Tests": (f"https://trustedfirmware-m.readthedocs.io/projects/tf-m-tests/en/tf-mv{version}/", None),
-    "TF-M-Tools": (f"https://trustedfirmware-m.readthedocs.io/projects/tf-m-tools/en/tf-mv{version}/", None),
-    "TF-M-Extras": (f"https://trustedfirmware-m.readthedocs.io/projects/tf-m-extras/en/tf-mv{version}/", None),
+    "TF-M-Tests": ("https://trustedfirmware-m.readthedocs.io/projects/tf-m-tests/en/tf-mv2.2.2/", None),
+    "TF-M-Tools": ("https://trustedfirmware-m.readthedocs.io/projects/tf-m-tools/en/tf-mv2.2.2/", None),
+    "TF-M-Extras": ("https://trustedfirmware-m.readthedocs.io/projects/tf-m-extras/en/tf-mv2.2.2/", None),
 }
 
 # Options for warnings_filter --------------------------------------------------
