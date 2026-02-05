@@ -508,5 +508,34 @@ void le_audio_print_qos_from_stream(struct bt_bap_stream const *const stream)
 	LOG_INF("\t Max transport latency: %d ms", stream->qos->latency);
 #endif /*  CONFIG_BT_BAP_BROADCAST_SOURCE || CONFIG_BT_BAP_UNICAST */
 	LOG_INF("\t SDU interval: %d us", stream->qos->interval);
+<<<<<<< HEAD
 };
 >>>>>>> 4af78bbab40 (Applications: nrf5340_audio: Added debug prints)
+=======
+}
+
+// These values will be updated after group create or reconfig.
+
+int le_audio_print_cig(struct bt_cap_unicast_group const *const unicast_group)
+{
+
+	if (unicast_group == NULL) {
+		LOG_WRN("Invalid parameters to print CIG");
+		return -EINVAL;
+	}
+
+	LOG_INF("CIG Index: %d", unicast_group->bap_unicast_group->index);
+	LOG_INF("\nSink PD: %d us", unicast_group->bap_unicast_group->sink_pd);
+	LOG_INF("\nSource PD: %d us", unicast_group->bap_unicast_group->source_pd);
+	LOG_INF("\nC->P interval : %d us",
+		unicast_group->bap_unicast_group->cig_param.c_to_p_interval);
+	LOG_INF("\nP->C interval : %d us",
+		unicast_group->bap_unicast_group->cig_param.p_to_c_interval);
+	LOG_INF("\nC->P latency  : %d ms",
+		unicast_group->bap_unicast_group->cig_param.c_to_p_latency);
+	LOG_INF("\nP->C latency  : %d ms",
+		unicast_group->bap_unicast_group->cig_param.p_to_c_latency);
+
+	return 0;
+}
+>>>>>>> 678af0a700b (Applications: nrf5340_audio: Added new functions pres MTL)
