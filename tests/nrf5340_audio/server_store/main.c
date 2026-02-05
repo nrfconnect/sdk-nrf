@@ -43,7 +43,8 @@
 	name.bap_stream.qos = &name##_qos;
 
 int test_cap_stream_populate(struct server_store *server, uint8_t idx, enum bt_audio_dir dir,
-			     uint32_t pd, struct bt_cap_unicast_group *group, struct bt_bap_ep *ep)
+			     uint32_t pd, struct bt_cap_unicast_group *group, struct bt_bap_ep *ep,
+			     uint16_t latency)
 {
 	if (server == NULL || group == NULL) {
 		TC_PRINT("Invalid parameter(s) passed\n");
@@ -63,6 +64,7 @@ int test_cap_stream_populate(struct server_store *server, uint8_t idx, enum bt_a
 		server->snk.cap_streams[idx].bap_stream.ep = ep;
 		server->snk.cap_streams[idx].bap_stream.qos = &server->snk.lc3_preset[idx].qos;
 		server->snk.lc3_preset[idx].qos.pd = pd;
+		server->snk.lc3_preset[idx].qos.latency = latency;
 
 	} else if (dir == BT_AUDIO_DIR_SOURCE) {
 		if (idx >= CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT) {
@@ -77,6 +79,7 @@ int test_cap_stream_populate(struct server_store *server, uint8_t idx, enum bt_a
 		server->src.cap_streams[idx].bap_stream.ep = ep;
 		server->src.cap_streams[idx].bap_stream.qos = &server->src.lc3_preset[idx].qos;
 		server->src.lc3_preset[idx].qos.pd = pd;
+		server->src.lc3_preset[idx].qos.latency = latency;
 	} else {
 		TC_PRINT("Invalid dir parameter passed\n");
 		return -EINVAL;
@@ -1156,7 +1159,8 @@ ZTEST(suite_server_store, test_srv_store_max_transport_latency_basic)
 	zassert_equal(ret, 0);
 
 	/* This is the right way, need to link the server->cap_stream.bap_stream to the group */
-	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_1);
+	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_1,
+				       0);
 	zassert_equal(ret, 0);
 
 	mock_add_stream_to_group(&retr_server->snk.cap_streams[0].bap_stream, &cap_group);
@@ -1180,7 +1184,8 @@ ZTEST(suite_server_store, test_srv_store_max_transport_latency_basic)
 	ret = srv_store_max_trans_lat_set(&cap_group, BT_AUDIO_DIR_SINK, new_max_trans_lat_ms);
 	zassert_equal(ret, 0, "Should succeed setting max transport latency");
 
-	ret = test_cap_stream_populate(retr_server, 1, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_2);
+	ret = test_cap_stream_populate(retr_server, 1, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_2,
+				       0);
 	zassert_equal(ret, 0);
 
 	/* Test 2: New stream incoming with lower max transport latency preference */
@@ -1252,7 +1257,8 @@ ZTEST(suite_server_store, test_srv_store_pres_delay_get_one)
 	ret = srv_store_from_conn_get(&test_1_conn, &retr_server);
 	zassert_equal(ret, 0);
 
-	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_1);
+	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_1,
+				       0);
 	zassert_equal(ret, 0);
 
 	mock_add_stream_to_group(&retr_server->snk.cap_streams[0].bap_stream, &cap_group);
@@ -1288,7 +1294,8 @@ ZTEST(suite_server_store, test_srv_store_pres_delay_get_one)
 	ret = srv_store_from_conn_get(&test_2_conn, &retr_server);
 	zassert_equal(ret, 0);
 
-	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_2);
+	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_2,
+				       0);
 	zassert_equal(ret, 0);
 
 	mock_add_stream_to_group(&retr_server->snk.cap_streams[0].bap_stream, &cap_group);
@@ -1340,14 +1347,16 @@ ZTEST(suite_server_store, test_srv_store_pres_delay_set)
 	ep_3.state = BT_BAP_EP_STATE_IDLE;
 	ep_3.dir = BT_AUDIO_DIR_SOURCE;
 
-	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_1);
+	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_1,
+				       0);
 	zassert_equal(ret, 0);
 
-	ret = test_cap_stream_populate(retr_server, 1, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_2);
+	ret = test_cap_stream_populate(retr_server, 1, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_2,
+				       0);
 	zassert_equal(ret, 0);
 
 	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SOURCE, 40000, &cap_group,
-				       &ep_3);
+				       &ep_3, 0);
 	zassert_equal(ret, 0);
 
 	mock_add_stream_to_group(&retr_server->snk.cap_streams[0].bap_stream, &cap_group);
@@ -1401,6 +1410,67 @@ ZTEST(suite_server_store, test_srv_store_pres_delay_set)
 	zassert_equal(retr_server->snk.cap_streams[0].bap_stream.qos->pd, 3000);
 	zassert_equal(retr_server->snk.cap_streams[1].bap_stream.qos->pd, 3000);
 	zassert_equal(retr_server->src.cap_streams[0].bap_stream.qos->pd, 20000);
+
+	srv_store_unlock();
+}
+
+ZTEST(suite_server_store, test_srv_store_max_transp_lat_get)
+{
+	int ret;
+	ret = srv_store_lock(K_NO_WAIT);
+	zassert_equal(ret, 0);
+
+	TEST_UNICAST_GROUP(cap_group);
+	TEST_CONN(1);
+
+	ret = srv_store_add_by_conn(&test_1_conn);
+	zassert_equal(ret, 0);
+
+	struct server_store *retr_server = NULL;
+
+	ret = srv_store_from_conn_get(&test_1_conn, &retr_server);
+	zassert_equal(ret, 0);
+
+	TC_PRINT("the cap group is %p\n", &cap_group);
+
+	/* Need to create endpoints in test as these are owned by the host */
+	struct bt_bap_ep ep_1 = {0};
+	ep_1.state = BT_BAP_EP_STATE_STREAMING;
+	ep_1.dir = BT_AUDIO_DIR_SINK;
+
+	struct bt_bap_ep ep_2 = {0};
+	ep_2.state = BT_BAP_EP_STATE_STREAMING;
+	ep_2.dir = BT_AUDIO_DIR_SINK;
+
+	struct bt_bap_ep ep_3 = {0};
+	ep_3.state = BT_BAP_EP_STATE_STREAMING;
+	ep_3.dir = BT_AUDIO_DIR_SOURCE;
+
+	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_1,
+				       40);
+	zassert_equal(ret, 0);
+
+	ret = test_cap_stream_populate(retr_server, 1, BT_AUDIO_DIR_SINK, 40000, &cap_group, &ep_2,
+				       40);
+	zassert_equal(ret, 0);
+
+	ret = test_cap_stream_populate(retr_server, 0, BT_AUDIO_DIR_SOURCE, 40000, &cap_group,
+				       &ep_3, 50);
+	zassert_equal(ret, 0);
+
+	mock_add_stream_to_group(&retr_server->snk.cap_streams[0].bap_stream, &cap_group);
+	mock_add_stream_to_group(&retr_server->snk.cap_streams[1].bap_stream, &cap_group);
+	mock_add_stream_to_group(&retr_server->src.cap_streams[0].bap_stream, &cap_group);
+
+	uint16_t max_transp_lat_snk_ms;
+	uint16_t max_transp_lat_src_ms;
+	ret = srv_store_max_transp_latency_get(&cap_group, &max_transp_lat_snk_ms,
+					       &max_transp_lat_src_ms);
+	zassert_equal(ret, 0);
+	TC_PRINT("Max transport latency for sink: %d ms, source: %d ms", max_transp_lat_snk_ms,
+		 max_transp_lat_src_ms);
+	zassert_equal(max_transp_lat_snk_ms, 40, "Max transport latency for sink should be 40ms");
+	zassert_equal(max_transp_lat_src_ms, 50, "Max transport latency for source should be 50ms");
 
 	srv_store_unlock();
 }
