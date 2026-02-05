@@ -72,6 +72,8 @@ static int cracen_signature_set_hashalgo_from_digestsz(const struct sxhashalg **
 		}
 	} else if (status != SX_OK) {
 		return status;
+	} else {
+		/* For compliance */
 	}
 	/* if status == SX_OK */
 	if (sx_hash_get_alg_digestsz(*hashalg) != digestsz) {
@@ -308,6 +310,8 @@ static psa_status_t handle_ecdsa_sign(bool is_message, const uint8_t *key_buffer
 			status = cracen_ecdsa_sign_digest(&privkey, hashalgpointer, ecurve, input,
 							  input_length, signature);
 		}
+	} else {
+		/* For compliance */
 	}
 
 	return silex_statuscodes_to_psa(status);
@@ -366,6 +370,8 @@ static psa_status_t cracen_signature_ecc_sign(bool is_message,
 					     IS_ENABLED(PSA_NEED_CRACEN_DETERMINISTIC_ECDSA))) {
 		return handle_ecdsa_sign(is_message, key_buffer, alg, input, input_length, ecurve,
 					 signature, signature_length);
+	} else {
+		/* For compliance */
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;

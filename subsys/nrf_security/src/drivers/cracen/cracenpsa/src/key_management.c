@@ -893,6 +893,8 @@ static psa_status_t generate_ecc_private_key(const psa_key_attributes_t *attribu
 			} else if (key_size_bytes == 56) {
 				/* X448 */
 				decode_scalar_448(&workmem[0]);
+			} else {
+				/* For compliance */
 			}
 		}
 
@@ -1169,6 +1171,8 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		} else if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
 			return ecc_export_key(attributes, key_buffer, key_buffer_size, data,
 					      data_size, data_length);
+		} else {
+			/* For compliance */
 		}
 	}
 
@@ -1180,6 +1184,8 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		} else if (PSA_KEY_TYPE_IS_SPAKE2P_PUBLIC_KEY(key_type)) {
 			return ecc_export_key(attributes, key_buffer, key_buffer_size, data,
 					      data_size, data_length);
+		} else {
+			/* For compliance */
 		}
 	}
 
@@ -1191,6 +1197,8 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		   IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_RSA_PUBLIC_KEY)) {
 		return rsa_export_public_key(attributes, key_buffer, key_buffer_size, data,
 					     data_size, data_length);
+	} else {
+		/* For compliance */
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -1270,6 +1278,8 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		} else if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
 			return import_ecc_public_key(attributes, data, data_length, key_buffer,
 						     key_buffer_size, key_buffer_length, key_bits);
+		} else {
+			/* For compliance */
 		}
 	}
 

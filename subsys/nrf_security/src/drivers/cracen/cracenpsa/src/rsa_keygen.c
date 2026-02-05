@@ -584,6 +584,8 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 		} else if (sx_status != SX_OK) {
 			sx_pk_release_req(pkreq.req);
 			return sx_status;
+		} else {
+			/* For compliance */
 		}
 	} while (sx_status != SX_OK);
 
@@ -603,6 +605,8 @@ int cracen_rsa_generate_privkey(uint8_t *pubexp, size_t pubexpsz, size_t keysz,
 		} else if (sx_status != SX_OK) {
 			sx_pk_release_req(pkreq.req);
 			return sx_status;
+		} else {
+			/* For compliance */
 		}
 	} while (sx_status != SX_OK);
 
