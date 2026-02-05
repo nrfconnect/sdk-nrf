@@ -6,23 +6,18 @@
 
 #include <zephyr/kernel.h>
 
-#define FIXED_PARTITION_ADDRESS(label)                                                             \
-	(DT_REG_ADDR(DT_NODELABEL(label)) +                                                        \
-	 DT_REG_ADDR(COND_CODE_1(DT_FIXED_SUBPARTITION_EXISTS(DT_NODELABEL(label)),                \
-			(DT_GPARENT(DT_PARENT(DT_NODELABEL(label)))),                              \
-			(DT_GPARENT(DT_NODELABEL(label))))))
-
-#define FIXED_PARTITION_SIZE(label) DT_REG_SIZE(DT_NODELABEL(label))
+#define FIXED_PARTITION_ADDRESS(label) DT_REG_ADDR(DT_NODELABEL(label))
+#define FIXED_PARTITION_SIZE(label)    DT_REG_SIZE(DT_NODELABEL(label))
 
 #ifdef CONFIG_USE_DT_CODE_PARTITION
-#define FLASH_LOAD_OFFSET DT_REG_ADDR(DT_CHOSEN(zephyr_code_partition))
+#define FLASH_LOAD_ADDRESS DT_REG_ADDR(DT_CHOSEN(zephyr_code_partition))
 #elif defined(CONFIG_FLASH_LOAD_OFFSET)
-#define FLASH_LOAD_OFFSET CONFIG_FLASH_LOAD_OFFSET
+#define FLASH_LOAD_ADDRESS (CONFIG_FLASH_BASE_ADDRESS + CONFIG_FLASH_LOAD_OFFSET)
 #endif
 
 #define PARTITION_IS_RUNNING_APP_PARTITION(label)                                                  \
-	(DT_REG_ADDR(DT_NODELABEL(label)) <= FLASH_LOAD_OFFSET &&                                  \
-	 DT_REG_ADDR(DT_NODELABEL(label)) + DT_REG_SIZE(DT_NODELABEL(label)) > FLASH_LOAD_OFFSET)
+	(DT_REG_ADDR(DT_NODELABEL(label)) <= FLASH_LOAD_ADDRESS &&                                 \
+	 DT_REG_ADDR(DT_NODELABEL(label)) + DT_REG_SIZE(DT_NODELABEL(label)) > FLASH_LOAD_ADDRESS)
 
 /* Used to determine the running slot of the radio loader. */
 #define RADIO_LOADER_PRIMARY_SLOT	cpurad_slot0_partition
