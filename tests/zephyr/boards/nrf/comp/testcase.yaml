@@ -9,7 +9,5 @@ tests:
   nrf.extended.drivers.comparator.nrf_comp:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120dk/nrf7120/cpuapp

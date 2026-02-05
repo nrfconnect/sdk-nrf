@@ -17,7 +17,6 @@ tests:
       - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuflpr
-      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 
@@ -29,8 +28,6 @@ tests:
       - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuflpr
-      - nrf7120dk/nrf7120/cpuapp
-      - nrf7120dk/nrf7120/cpuflpr
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_args:
@@ -41,8 +38,6 @@ tests:
       - platform:nrf54lv10dk/nrf54lv10a/cpuflpr:"DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_dual_uart.overlay"
       - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp:"DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_dual_uart.overlay"
       - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuflpr:"DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_dual_uart.overlay"
-      - platform:nrf7120dk/nrf7120/cpuapp:"DTC_OVERLAY_FILE=boards/nrf7120dk_nrf7120_cpuapp_dual_uart.overlay"
-      - platform:nrf7120dk/nrf7120/cpuflpr:"DTC_OVERLAY_FILE=boards/nrf7120dk_nrf7120_cpuflpr_dual_uart.overlay"
     extra_configs:
       - CONFIG_DUAL_UART_TEST=y
 
@@ -54,8 +49,6 @@ tests:
       - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuflpr
-      - nrf7120dk/nrf7120/cpuapp
-      - nrf7120dk/nrf7120/cpuflpr
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     extra_args:
@@ -66,8 +59,6 @@ tests:
       - platform:nrf54lv10dk/nrf54lv10a/cpuflpr:"DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_dual_uart.overlay"
       - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp:"DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_dual_uart.overlay"
       - platform:nrf54lv10dk@0.7.0/nrf54lv10a/cpuflpr:"DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_dual_uart.overlay"
-      - platform:nrf7120dk/nrf7120/cpuapp:"DTC_OVERLAY_FILE=boards/nrf7120dk_nrf7120_cpuapp_dual_uart.overlay"
-      - platform:nrf7120dk/nrf7120/cpuflpr:"DTC_OVERLAY_FILE=boards/nrf7120dk_nrf7120_cpuflpr_dual_uart.overlay"
     extra_configs:
       - CONFIG_DUAL_UART_TEST=y
       - CONFIG_SETUP_MISMATCH_TEST=y
