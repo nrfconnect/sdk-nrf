@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "AES KW sample"
+
+config SAMPLE_AES_KW_SHOW_KWP
+	bool "Demonstrate AES-KWP usage instead of AES-KW"
+	default n
+	help
+	  When activated, sample demonstrates AES-KWP (key wrap with padding)
+	  algorithm usage.
+
+endmenu

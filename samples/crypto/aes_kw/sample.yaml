@@ -1,0 +1,46 @@
+sample:
+  description: |
+    This sample demonstrates key wrapping and unwrapping using either AES-KW or AES-KWP algorithm
+    with the PSA Crypto API, on devices with the CRACEN hardware peripheral.
+  name: AES KW sample
+
+common:
+  sysbuild: true
+  tags:
+    - introduction
+    - psa
+    - cracen
+    - sysbuild
+    - ci_samples_crypto
+  harness: console
+  harness_config:
+    type: multi_line
+    regex:
+      - ".*Example finished successfully!.*"
+
+tests:
+  sample.aes_kw.cracen:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+
+  sample.aes_kwp.cracen:
+    extra_args:
+      - EXTRA_CONF_FILE=overlays/aes_kwp.conf
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
