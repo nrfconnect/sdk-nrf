@@ -481,13 +481,13 @@ int srv_store_pres_delay_set(struct bt_cap_unicast_group *unicast_group, uint32_
 			     enum group_action_req *group_action_required);
 
 // This needs to be called only once, after all streams have been through the configured cb
-int srv_store_max_transp_lat_get(struct bt_cap_unicast_group *unicast_group,
-				 uint16_t *new_max_trans_lat_snk_ms,
-				 uint16_t *new_max_trans_lat_src_ms);
+int srv_store_max_transp_latency_get(struct bt_cap_unicast_group *unicast_group,
+				     uint16_t *new_max_trans_lat_snk_ms,
+				     uint16_t *new_max_trans_lat_src_ms);
 
-int srv_store_max_transp_lat_set(struct bt_cap_unicast_group *unicast_group,
-				 uint16_t new_max_trans_lat_snk_ms,
-				 uint16_t new_max_trans_lat_src_ms, bool *group_reconfig_needed);
+int srv_store_max_trans_latency_set(struct bt_cap_unicast_group *unicast_group,
+				    uint16_t new_max_trans_lat_snk_ms,
+				    uint16_t new_max_trans_lat_src_ms, bool *group_reconfig_needed);
 
 /**
  * @}

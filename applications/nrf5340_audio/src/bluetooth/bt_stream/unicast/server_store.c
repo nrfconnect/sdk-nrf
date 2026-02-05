@@ -2094,17 +2094,108 @@ int srv_store_pres_delay_set(struct bt_cap_unicast_group *unicast_group, uint32_
 	return ret;
 }
 
-// This needs to be called only once, after all streams have been through the configured cb
-int srv_store_max_transp_lat_get(struct bt_cap_unicast_group *unicast_group,
-				 uint16_t *new_max_trans_lat_snk_ms,
-				 uint16_t *new_max_trans_lat_src_ms)
+struct foreach_stream_mtl {
+	int ret;
+	struct bt_cap_unicast_group *unicast_group;
+	uint8_t streams_checked_snk;
+	uint8_t streams_checked_src;
+	uint16_t max_trans_lat_snk_ms;
+	uint16_t max_trans_lat_src_ms;
+};
+
+static bool stream_max_trans_lat_find(struct bt_cap_stream *stream, void *user_data)
 {
+	struct foreach_stream_mtl *ctx = (struct foreach_stream_mtl *)user_data;
+
+	if (stream->bap_stream.ep == NULL) {
+		LOG_ERR("Existing stream has no ep set yet");
+		ctx->ret = -EINVAL;
+		return true;
+	}
+
+	int dir = le_audio_stream_dir_get(&stream->bap_stream);
+
+	if (dir < 0) {
+		LOG_ERR("Failed to get stream direction");
+		ctx->ret = -EINVAL;
+		return true;
+	}
+
+	/* Need to find the smallest MTL in a given direction */
+	switch (dir) {
+	case BT_AUDIO_DIR_SINK:
+		ctx->streams_checked_snk++;
+		if (ctx->max_trans_lat_snk_ms > stream->bap_stream.qos->latency) {
+			ctx->max_trans_lat_snk_ms = stream->bap_stream.qos->latency;
+		}
+		break;
+	case BT_AUDIO_DIR_SOURCE:
+		ctx->streams_checked_src++;
+		if (ctx->max_trans_lat_src_ms > stream->bap_stream.qos->latency) {
+			ctx->max_trans_lat_src_ms = stream->bap_stream.qos->latency;
+		}
+		break;
+	default:
+		LOG_ERR("Unknown stream direction");
+		ctx->ret = -EINVAL;
+		return true;
+	}
+
+	return false;
+}
+
+// This needs to be called only once, after all streams have been through the configured cb
+int srv_store_max_transp_latency_get(struct bt_cap_unicast_group *unicast_group,
+				     uint16_t *max_trans_lat_snk_ms, uint16_t *max_trans_lat_src_ms)
+{
+	int ret;
+
+	valid_entry_check(__func__);
+
+	if (unicast_group == NULL || max_trans_lat_snk_ms == NULL || max_trans_lat_src_ms == NULL) {
+		LOG_ERR("NULL parameter!");
+		return -EINVAL;
+	}
+
+	/* All streams of a given direction within the CIG must have the same
+	 * transport latency. See BAP spec (BAP_v1.0.2 section 7.2.1)
+	 */
+
+	struct foreach_stream_mtl foreach_data = {
+		.ret = 0,
+		.unicast_group = unicast_group,
+		.streams_checked_snk = 0,
+		.streams_checked_src = 0,
+		.max_trans_lat_snk_ms = UINT16_MAX,
+		.max_trans_lat_src_ms = UINT16_MAX,
+	};
+
+	ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_max_trans_lat_find,
+						  (void *)&foreach_data);
+	if (ret != 0 && ret != -ECANCELED) {
+		/* There shall already be at least one server added at this point */
+		LOG_ERR("Failed to iterate streams in group: %d", ret);
+		return ret;
+	}
+
+	if (foreach_data.ret) {
+		LOG_ERR("Failed to compute max transport latency");
+		return foreach_data.ret;
+	}
+
+	LOG_INF("Checked %d sink stream(s) and %d source stream(s) in the same group",
+		foreach_data.streams_checked_snk, foreach_data.streams_checked_src);
+
+	*max_trans_lat_snk_ms = foreach_data.max_trans_lat_snk_ms;
+	*max_trans_lat_src_ms = foreach_data.max_trans_lat_src_ms;
+
 	return 0;
 }
 
-int srv_store_max_transp_lat_set(struct bt_cap_unicast_group *unicast_group,
-				 uint16_t new_max_trans_lat_snk_ms,
-				 uint16_t new_max_trans_lat_src_ms, bool *group_reconfig_needed)
+int srv_store_max_transp_latency_set(struct bt_cap_unicast_group *unicast_group,
+				     uint16_t new_max_trans_lat_snk_ms,
+				     uint16_t new_max_trans_lat_src_ms,
+				     enum group_action_req *group_action_required)
 {
 	return 0;
 }
