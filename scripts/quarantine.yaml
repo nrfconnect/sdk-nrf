@@ -118,12 +118,6 @@
   comment: "Upmerge regression - jira TBD."
 
 - scenarios:
-    - sample.nrf7120.raw_tx_rx_packet.tlm
-  platforms:
-    - nrf7120dk/nrf7120/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37299"
-
-- scenarios:
     - nrf.extended.drivers.uart.uart_errors.int_driven
     - nrf.extended.drivers.uart.uart_errors.async
     - nrf.extended.drivers.uart.uart_mix_poll_fifo
