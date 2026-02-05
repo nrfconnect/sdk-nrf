@@ -125,6 +125,8 @@ psa_status_t cracen_pake_set_context(cracen_pake_operation_t *operation, const u
 		status = cracen_spake2p_set_context(&operation->cracen_spake2p_ctx, context,
 						    context_length);
 #endif /* PSA_NEED_CRACEN_SPAKE2P */
+	} else {
+		/* For compliance */
 	}
 
 	return status;
