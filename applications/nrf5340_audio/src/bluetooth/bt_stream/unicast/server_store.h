@@ -485,9 +485,10 @@ int srv_store_max_transp_latency_get(struct bt_cap_unicast_group *unicast_group,
 				     uint16_t *new_max_trans_lat_snk_ms,
 				     uint16_t *new_max_trans_lat_src_ms);
 
-int srv_store_max_trans_latency_set(struct bt_cap_unicast_group *unicast_group,
-				    uint16_t new_max_trans_lat_snk_ms,
-				    uint16_t new_max_trans_lat_src_ms, bool *group_reconfig_needed);
+int srv_store_max_transp_latency_set(struct bt_cap_unicast_group *unicast_group,
+				     uint16_t new_max_trans_lat_snk_ms,
+				     uint16_t new_max_trans_lat_src_ms,
+				     enum group_action_req *group_action_needed);
 
 /**
  * @}
