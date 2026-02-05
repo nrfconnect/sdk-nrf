@@ -24,6 +24,8 @@
 #include <zephyr/sys/util.h>
 #include <psa/nrf_platform_key_ids.h>
 
+#define NOT_ENABLED_CURVE	(0)
+
 static psa_status_t get_sx_brainpool_curve(size_t curve_bits, const struct sx_pk_ecurve **sicurve)
 {
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;

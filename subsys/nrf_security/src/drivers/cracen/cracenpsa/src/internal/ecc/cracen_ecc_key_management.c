@@ -91,17 +91,11 @@ static psa_status_t check_ecc_key_attributes(const psa_key_attributes_t *attribu
 
 			if (*key_bits == 0 && valid_key_size == key_buffer_size) {
 				*key_bits = valid_keys[i].bits;
-
-				status = valid_keys[i].supported ? PSA_SUCCESS
-								 : PSA_ERROR_NOT_SUPPORTED;
-				break;
 			}
-
-			if (*key_bits == valid_keys[i].bits && valid_key_size != key_buffer_size) {
-				return PSA_ERROR_INVALID_ARGUMENT;
-			}
-
 			if (*key_bits == valid_keys[i].bits) {
+				if (valid_key_size != key_buffer_size) {
+					return PSA_ERROR_INVALID_ARGUMENT;
+				}
 				status = valid_keys[i].supported ? PSA_SUCCESS
 								 : PSA_ERROR_NOT_SUPPORTED;
 				break;
