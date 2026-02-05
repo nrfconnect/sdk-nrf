@@ -767,11 +767,6 @@ zcbor
 
 |no_changes_yet_note|
 
-Trusted Firmware-M
-==================
-
-|no_changes_yet_note|
-
 cJSON
 =====
 
