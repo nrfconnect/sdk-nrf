@@ -8,7 +8,6 @@ common:
   platform_allow:
     - nrf54lv10dk/nrf54lv10a/cpuapp
     - nrf54lv10dk/nrf54lv10a/cpuapp/ns
-    - nrf7120dk/nrf7120/cpuapp
   integration_platforms:
     - nrf54lv10dk/nrf54lv10a/cpuapp
 tests:
