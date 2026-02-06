@@ -5,6 +5,8 @@
  */
 #include "battery.h"
 
+#if CONFIG_MATTER_WEATHER_STATION_BATTERY
+
 #include <hal/nrf_saadc.h>
 
 #include <zephyr/drivers/adc.h>
@@ -121,3 +123,32 @@ bool BatteryCharged()
 
 	return static_cast<bool>(gpio_pin_get_dt(&sChargeGpio));
 }
+
+#else
+
+int BatteryMeasurementInit()
+{
+	return 0;
+}
+
+int BatteryMeasurementEnable()
+{
+	return 0;
+}
+
+int32_t BatteryMeasurementReadVoltageMv()
+{
+	return 3500;
+}
+
+int BatteryChargeControlInit()
+{
+	return 0;
+}
+
+bool BatteryCharged()
+{
+	return false;
+}
+
+#endif
