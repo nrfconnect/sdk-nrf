@@ -238,7 +238,7 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.mcumgr.smp_svr.bt
+    - sample.dfu.smp_svr.bt
   platforms:
     - nrf52dk/nrf52832
   comment: "Configurations excluded to limit resources usage in integration builds"
