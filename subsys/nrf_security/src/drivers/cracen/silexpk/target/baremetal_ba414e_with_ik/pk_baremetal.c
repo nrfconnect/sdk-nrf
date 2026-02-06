@@ -16,6 +16,7 @@
 #include <silexpk/cmddefs/modmath.h>
 #include <silexpk/core.h>
 #include <silexpk/iomem.h>
+#include <silexpk/blinding.h>
 #include <cracen/interrupts.h>
 #include <cracen/statuscodes.h>
 #include "internal.h"
@@ -58,7 +59,6 @@ module with entropy will fail"
 struct sx_pk_cnx {
 	struct sx_pk_req instance;
 	struct sx_pk_capabilities caps;
-	struct sx_pk_blinder *b;
 };
 
 static struct sx_pk_cnx silex_pk_engine;
@@ -186,11 +186,6 @@ uint32_t sx_pk_rdreg(struct sx_regs *regs, uint32_t addr)
 	return value;
 }
 
-struct sx_pk_blinder **sx_pk_get_blinder(struct sx_pk_cnx *cnx)
-{
-	return &cnx->b;
-}
-
 const struct sx_pk_capabilities *sx_pk_fetch_capabilities(void)
 {
 	uint32_t ba414epfeatures = 0;
@@ -214,7 +209,6 @@ int sx_pk_init(void)
 	struct sx_pk_cnx *cnx;
 
 	cnx = &silex_pk_engine;
-	cnx->b = NULL;
 
 	cnx->instance.regs.base = ADDR_BA414EP_REGS(0);
 	cnx->instance.cryptoram = ADDR_BA414EP_CRYPTORAM(0);
