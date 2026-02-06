@@ -143,6 +143,7 @@ Security
 
     The :ref:`ug_crypto_supported_features` page has been updated accordingly.
   * The :ref:`ug_crypto_supported_features` page with information about support for the Curve448 (X448) elliptic curve under :ref:`ug_crypto_supported_features_signature_algorithms` and :ref:`ug_crypto_supported_features_ecc_curve_types`.
+  * CRACEN updated by refactoring the folder structure of the driver to separate dispatch functionality and software algorithms implementations.
 
 * Removed:
 
