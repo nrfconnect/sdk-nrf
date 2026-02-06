@@ -275,6 +275,11 @@ Both can be used simultaneously by controlling the following Kconfig options:
 * :option:`CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND` - Activates the module based on the ARM PSA Protected Storage API implementation from the :ref:`trusted_storage_readme` |NCS| library.
   This backend implements ``Secure`` methods of the Persistent Storage API and returns ``PSErrorCode::NotSupported`` for ``NonSecure`` methods.
 
+.. note::
+   The secure backend implements a costly mapping between string keys used by the Persistent Storage API and numeric UIDs used by the ARM PSA Protected Storage API.
+   For this reason, the secure backend has been deprecated and is subject to removal in future releases.
+   Applications should use the ARM PSA Protected Storage API directly, instead.
+
 Both backends allow you to control the maximum length of a string-type key under which an asset can be stored.
 You can do this using the :option:`CONFIG_NCS_SAMPLE_MATTER_STORAGE_MAX_KEY_LEN` Kconfig option.
 

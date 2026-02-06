@@ -4,42 +4,42 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/**
+ * @file access_storage.cpp
+ *
+ * Provides the implementation of AccessStorage class that utilizes the persistent storage interface.
+ * The persistent storage backend is chosen based on the Kconfig settings:
+ * - NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND or
+ * - NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND [DEPRECATED].
+ *
+ * This implementation uses the following persistent storage keys for the access items:
+ *
+ * /cr
+ *     /<credential type (uint8_t)>
+ *         /cr                                                   = <credential indices>
+ *         /<credential index (uint16_t)>                        = <credential data>
+ *     /usr_idxs                                                 = <user indices>
+ *     /usr
+ *         /<user index (uint16_t)>                              = <user data>
+ *     /sch_idxs_<type (w - weekday, y - yearday)>
+ *         /<user index (uint16_t)>                              = <schedule indices>
+ *     /sch_<type (w - weekday, y - yearday)>
+ *         /<user index (uint16_t)>
+ *             /<schedule index (uint8_t)>                       = <schedule data>
+ *     /sch_idxs_<type (h - holiday)>                            = <schedule indices>
+ *     /sch_<type (h - holiday)>
+ *         /<schedule index (uint8_t)>                           = <schedule data>
+ * /pin_req                                                      = <requires PIN?>
+ *
+ */
+
 #include "access_storage.h"
+
+#include "access_storage_print.h"
 
 #include <persistent_storage/persistent_storage.h>
 
 #include <zephyr/sys/cbprintf.h>
-
-#ifdef CONFIG_LOCK_PRINT_STORAGE_STATUS
-#ifdef CONFIG_SETTINGS_NVS
-#include <zephyr/fs/nvs.h>
-#elif CONFIG_SETTINGS_ZMS || CONFIG_SETTINGS_ZMS_LEGACY
-#include <zephyr/fs/zms.h>
-#endif /* CONFIG_SETTINGS_NVS */
-#include <zephyr/logging/log.h>
-#include <zephyr/settings/settings.h>
-
-LOG_MODULE_DECLARE(storage_manager, CONFIG_CHIP_APP_LOG_LEVEL);
-
-namespace
-{
-bool GetStorageFreeSpace(size_t &freeBytes)
-{
-	void *storage = nullptr;
-	int status = settings_storage_get(&storage);
-	if (status != 0 || !storage) {
-		LOG_ERR("AccessStorage: Cannot read NVS free space [error: %d]", status);
-		return false;
-	}
-#ifdef CONFIG_SETTINGS_NVS
-	freeBytes = nvs_calc_free_space(static_cast<nvs_fs *>(storage));
-#elif CONFIG_SETTINGS_ZMS || CONFIG_SETTINGS_ZMS_LEGACY
-	freeBytes = zms_calc_free_space(static_cast<zms_fs *>(storage));
-#endif /* CONFIG_SETTINGS_NVS */
-	return true;
-}
-} /* namespace */
-#endif /* CONFIG_LOCK_PRINT_STORAGE_STATUS */
 
 /* Currently the secure storage is available only for non-Wi-Fi builds,
    because NCS Wi-Fi implementation does not support PSA API yet. */
@@ -53,85 +53,91 @@ bool GetStorageFreeSpace(size_t &freeBytes)
 #define PSStore SecureStore
 #define PSRemove SecureRemove
 #define PSLoad SecureLoad
-#define PSFactoryReset SecureFactoryReset
 #elif defined(CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND)
 #define PSInit NonSecureInit
 #define PSStore NonSecureStore
 #define PSLoad NonSecureLoad
 #define PSRemove NonSecureRemove
-#define PSFactoryReset NonSecureFactoryReset
 #endif
 
-bool AccessStorage::Init()
+namespace
 {
-	return Nrf::PSErrorCode::Success == Nrf::GetPersistentStorage().PSInit(&mRootNode);
-}
+constexpr auto kAccessPrefix = "cr";
+constexpr auto kAccessCounterPrefix = "cr";
+constexpr auto kUserPrefix = "usr";
+constexpr auto kUserCounterPrefix = "usr_idxs";
+constexpr auto kRequirePinPrefix = "pin_req";
+#ifdef CONFIG_LOCK_SCHEDULES
+constexpr auto kSchedulePrefix = "sch";
+constexpr auto kScheduleWeekDaySuffix = "_w";
+constexpr auto kScheduleYearDaySuffix = "_y";
+constexpr auto kScheduleHolidaySuffix = "_h";
+constexpr auto kScheduleCounterPrefix = "sch_idxs";
+#endif /* CONFIG_LOCK_SCHEDULES */
+constexpr auto kMaxAccessName = Nrf::PersistentStorageNode::kMaxKeyNameLength;
 
-void AccessStorage::FactoryReset()
-{
-	Nrf::GetPersistentStorage().PSFactoryReset();
-}
+char keyName[kMaxAccessName];
 
-bool AccessStorage::PrepareKeyName(Type storageType, uint16_t index, uint16_t subindex)
+bool PrepareKeyName(AccessStorage::Type storageType, uint16_t index, uint16_t subindex)
 {
-	memset(mKeyName, '\0', sizeof(mKeyName));
+	memset(keyName, '\0', sizeof(keyName));
 
 	uint8_t limitedIndex = static_cast<uint8_t>(index);
 	uint8_t limitedSubindex = static_cast<uint8_t>(subindex);
 
 	switch (storageType) {
-	case Type::User:
+	case AccessStorage::Type::User:
 		if (0 == limitedIndex && 0 == limitedSubindex) {
-			(void)snprintf(mKeyName, kMaxAccessName, "%s/%s", kAccessPrefix, kUserPrefix);
+			(void)snprintf(keyName, kMaxAccessName, "%s/%s", kAccessPrefix, kUserPrefix);
 		} else if (0 == limitedSubindex) {
-			(void)snprintf(mKeyName, kMaxAccessName, "%s/%s/%u", kAccessPrefix, kUserPrefix, limitedIndex);
+			(void)snprintf(keyName, kMaxAccessName, "%s/%s/%u", kAccessPrefix, kUserPrefix, limitedIndex);
 		} else {
-			(void)snprintf(mKeyName, kMaxAccessName, "%s/%s/%u/%u", kAccessPrefix, kUserPrefix,
-				       limitedIndex, limitedSubindex);
-		}
-		return true;
-	case Type::Credential:
-		if (0 == limitedIndex && 0 == limitedSubindex) {
-			(void)snprintf(mKeyName, kMaxAccessName, "%s", kAccessPrefix);
-		} else if (0 == limitedSubindex) {
-			(void)snprintf(mKeyName, kMaxAccessName, "%s/%u", kAccessPrefix, limitedIndex);
-		} else {
-			(void)snprintf(mKeyName, kMaxAccessName, "%s/%u/%u", kAccessPrefix, limitedIndex,
+			(void)snprintf(keyName, kMaxAccessName, "%s/%s/%u/%u", kAccessPrefix, kUserPrefix, limitedIndex,
 				       limitedSubindex);
 		}
 		return true;
-	case Type::UsersIndexes:
-		(void)snprintf(mKeyName, kMaxAccessName, "%s/%s", kAccessPrefix, kUserCounterPrefix);
+	case AccessStorage::Type::Credential:
+		if (0 == limitedIndex && 0 == limitedSubindex) {
+			(void)snprintf(keyName, kMaxAccessName, "%s", kAccessPrefix);
+		} else if (0 == limitedSubindex) {
+			(void)snprintf(keyName, kMaxAccessName, "%s/%u", kAccessPrefix, limitedIndex);
+		} else {
+			(void)snprintf(keyName, kMaxAccessName, "%s/%u/%u", kAccessPrefix, limitedIndex,
+				       limitedSubindex);
+		}
 		return true;
-	case Type::CredentialsIndexes:
-		(void)snprintf(mKeyName, kMaxAccessName, "%s/%u/%s", kAccessPrefix, limitedIndex, kAccessPrefix);
+	case AccessStorage::Type::UsersIndexes:
+		(void)snprintf(keyName, kMaxAccessName, "%s/%s", kAccessPrefix, kUserCounterPrefix);
 		return true;
-	case Type::RequirePIN:
-		(void)snprintf(mKeyName, kMaxAccessName, "%s", kRequirePinPrefix);
+	case AccessStorage::Type::CredentialsIndexes:
+		(void)snprintf(keyName, kMaxAccessName, "%s/%u/%s", kAccessPrefix, limitedIndex, kAccessCounterPrefix);
+		return true;
+	case AccessStorage::Type::RequirePIN:
+		(void)snprintf(keyName, kMaxAccessName, "%s", kRequirePinPrefix);
 		return true;
 #ifdef CONFIG_LOCK_SCHEDULES
-	case Type::WeekDaySchedule:
-		(void)snprintf(mKeyName, kMaxAccessName, "%s/%s%s/%u/%u", kAccessPrefix, kSchedulePrefix,
+	case AccessStorage::Type::WeekDaySchedule:
+		(void)snprintf(keyName, kMaxAccessName, "%s/%s%s/%u/%u", kAccessPrefix, kSchedulePrefix,
 			       kScheduleWeekDaySuffix, limitedIndex, limitedSubindex);
 		return true;
-	case Type::YearDaySchedule:
-		(void)snprintf(mKeyName, kMaxAccessName, "%s/%s%s/%u/%u", kAccessPrefix, kSchedulePrefix,
+	case AccessStorage::Type::YearDaySchedule:
+		(void)snprintf(keyName, kMaxAccessName, "%s/%s%s/%u/%u", kAccessPrefix, kSchedulePrefix,
 			       kScheduleYearDaySuffix, limitedIndex, limitedSubindex);
 		return true;
-	case Type::HolidaySchedule:
-		(void)snprintf(mKeyName, kMaxAccessName, "%s/%s%s/%u", kAccessPrefix, kSchedulePrefix,
+	case AccessStorage::Type::HolidaySchedule:
+		(void)snprintf(keyName, kMaxAccessName, "%s/%s%s/%u", kAccessPrefix, kSchedulePrefix,
 			       kScheduleHolidaySuffix, limitedIndex);
 		return true;
-	case Type::WeekDayScheduleIndexes:
-		(void)snprintf(mKeyName, kMaxAccessName, "%s/%s%s/%u", kAccessPrefix, kScheduleCounterPrefix,
+	case AccessStorage::Type::WeekDayScheduleIndexes:
+		(void)snprintf(keyName, kMaxAccessName, "%s/%s%s/%u", kAccessPrefix, kScheduleCounterPrefix,
 			       kScheduleWeekDaySuffix, limitedIndex);
 		return true;
-	case Type::YearDayScheduleIndexes:
-		(void)snprintf(mKeyName, kMaxAccessName, "%s/%s%s/%u", kAccessPrefix, kScheduleCounterPrefix,
+	case AccessStorage::Type::YearDayScheduleIndexes:
+		(void)snprintf(keyName, kMaxAccessName, "%s/%s%s/%u", kAccessPrefix, kScheduleCounterPrefix,
 			       kScheduleYearDaySuffix, limitedIndex);
 		return true;
-	case Type::HolidayScheduleIndexes:
-		(void)snprintf(mKeyName, kMaxAccessName, "%s/%s%s", kAccessPrefix, kScheduleCounterPrefix,
+	case AccessStorage::Type::HolidayScheduleIndexes:
+		(void)snprintf(keyName, kMaxAccessName, "%s/%s%s", kAccessPrefix, kScheduleCounterPrefix,
 			       kScheduleHolidaySuffix);
 		return true;
 #endif /* CONFIG_LOCK_SCHEDULES */
@@ -141,6 +147,14 @@ bool AccessStorage::PrepareKeyName(Type storageType, uint16_t index, uint16_t su
 
 	return false;
 }
+} /* namespace */
+
+bool AccessStorage::Init()
+{
+	static Nrf::PersistentStorageNode rootNode{ kAccessPrefix, strlen(kAccessPrefix) };
+
+	return Nrf::PSErrorCode::Success == Nrf::GetPersistentStorage().PSInit(&rootNode);
+}
 
 bool AccessStorage::Store(Type storageType, const void *data, size_t dataSize, uint16_t index, uint16_t subindex)
 {
@@ -148,19 +162,11 @@ bool AccessStorage::Store(Type storageType, const void *data, size_t dataSize, u
 		return false;
 	}
 
-	Nrf::PersistentStorageNode node{ mKeyName, strlen(mKeyName) + 1 };
+	Nrf::PersistentStorageNode node{ keyName, strlen(keyName) + 1 };
 	bool ret = (Nrf::PSErrorCode::Success == Nrf::GetPersistentStorage().PSStore(&node, data, dataSize));
 
 #ifdef CONFIG_LOCK_PRINT_STORAGE_STATUS
-	if (ret) {
-		LOG_DBG("AccessStorage: Stored %s of size: %d bytes", storageType == Type::User ? "user" : "credential",
-			dataSize);
-
-		size_t storageFreeSpace;
-		if (GetStorageFreeSpace(storageFreeSpace)) {
-			LOG_DBG("AccessStorage: Free space: %d bytes", storageFreeSpace);
-		}
-	}
+	PrintAccessDataStored(storageType, dataSize, ret);
 #endif
 
 	return ret;
@@ -173,7 +179,7 @@ bool AccessStorage::Load(Type storageType, void *data, size_t dataSize, size_t &
 		return false;
 	}
 
-	Nrf::PersistentStorageNode node{ mKeyName, strlen(mKeyName) + 1 };
+	Nrf::PersistentStorageNode node{ keyName, strlen(keyName) + 1 };
 	Nrf::PSErrorCode result = Nrf::GetPersistentStorage().PSLoad(&node, data, dataSize, outSize);
 
 	return (Nrf::PSErrorCode::Success == result);
@@ -185,7 +191,7 @@ bool AccessStorage::Remove(Type storageType, uint16_t index, uint16_t subindex)
 		return false;
 	}
 
-	Nrf::PersistentStorageNode node{ mKeyName, strlen(mKeyName) + 1 };
+	Nrf::PersistentStorageNode node{ keyName, strlen(keyName) + 1 };
 	Nrf::PSErrorCode result = Nrf::GetPersistentStorage().PSRemove(&node);
 
 	return (Nrf::PSErrorCode::Success == result);

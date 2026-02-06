@@ -11,10 +11,38 @@
 
 #include <zephyr/logging/log.h>
 
+#include <utility>
+
 LOG_MODULE_REGISTER(cr_manager, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace chip;
 using namespace DoorLockData;
+
+namespace
+{
+/*
+ * For each itemIndex in indexList: calls AccessStorage::Remove(itemType, [extraArgs...,] itemIndex)
+ * Finally: calls AccessStorage::Remove(indexesType[, extraArgs...])
+ */
+template <uint16_t N, class... ExtraArgs>
+void RemoveCollection(const DoorLockData::IndexList<N> &indexList, AccessStorage::Type itemType,
+		      AccessStorage::Type indexesType, ExtraArgs &&...extraArgs)
+{
+	for (size_t i = 0; i < indexList.mList.mLength; i++) {
+		uint16_t itemIndex = indexList.mList.mIndexes[i];
+
+		if (!AccessStorage::Instance().Remove(itemType, std::forward<ExtraArgs>(extraArgs)..., itemIndex)) {
+			LOG_ERR("Cannot remove item %u with type %u", itemIndex, static_cast<unsigned>(itemType));
+		}
+	}
+
+	if (indexList.mList.mLength > 0) {
+		if (!AccessStorage::Instance().Remove(indexesType, std::forward<ExtraArgs>(extraArgs)...)) {
+			LOG_ERR("Cannot remove indexes with type %u", static_cast<unsigned>(indexesType));
+		}
+	}
+}
+} /* namespace */
 
 template <CredentialsBits CRED_BIT_MASK>
 void AccessManager<CRED_BIT_MASK>::Init(SetCredentialCallback setCredentialClbk,
@@ -35,8 +63,32 @@ void AccessManager<CRED_BIT_MASK>::Init(SetCredentialCallback setCredentialClbk,
 
 template <CredentialsBits CRED_BIT_MASK> void AccessManager<CRED_BIT_MASK>::FactoryReset()
 {
-	/* Factory reset the storage */
-	AccessStorage::Instance().FactoryReset();
+	/* Remove users */
+	RemoveCollection(mUsersIndexes, AccessStorage::Type::User, AccessStorage::Type::UsersIndexes);
+
+	/* Remove credentials */
+	for (uint8_t type = CredentialTypeIndex::Pin; type <= CredentialTypeIndex::Max; ++type) {
+		RemoveCollection(mCredentialsIndexes.Get(static_cast<CredentialTypeIndex>(type)),
+				 AccessStorage::Type::Credential, AccessStorage::Type::CredentialsIndexes, type);
+	}
+
+#ifdef CONFIG_LOCK_SCHEDULES
+	/* Remove schedules */
+	for (uint16_t userIndex = 1; userIndex <= CONFIG_LOCK_MAX_NUM_USERS; userIndex++) {
+		RemoveCollection(mWeekDayScheduleIndexes.Get(userIndex), AccessStorage::Type::WeekDaySchedule,
+				 AccessStorage::Type::WeekDayScheduleIndexes, userIndex);
+		RemoveCollection(mYearDayScheduleIndexes.Get(userIndex), AccessStorage::Type::YearDaySchedule,
+				 AccessStorage::Type::YearDayScheduleIndexes, userIndex);
+	}
+
+	RemoveCollection(mHolidayScheduleIndexes, AccessStorage::Type::HolidaySchedule,
+			 AccessStorage::Type::HolidayScheduleIndexes);
+#endif
+
+	/* Remove other data */
+	if (!AccessStorage::Instance().Remove(AccessStorage::Type::RequirePIN)) {
+		LOG_ERR("Cannot remove RequirePINforRemoteOperation");
+	}
 
 	/* Reinitialize to clear removed users/credentials/schedules */
 	InitializeAllCredentials();

@@ -6,43 +6,29 @@
 
 #pragma once
 
-#include <persistent_storage/persistent_storage_common.h>
+#include <cstddef>
+#include <cstdint>
 
 /**
- * @brief Class to manage access storage
+ * @brief Class for storing and retrieving door lock access items from the persistent storage.
  *
- * Eventually access items will be store to the Zephyr settings to be persistent (regardless of the used persistent
- * storage backend). There are several credential types: PIN, RFID, Fingerprint etc. and each of them is declared as an
- * array with the maximum size defined by Kconfig ...MAX_NUM_CREDENTIALS_PER_USER. Each user has a list of credentials
- * that are assign to them. The new access item should be written with the new index if the previous one is already
- * occupied.
+ * There are several access item types that can be stored using this class. Each of them may use up to two indexes.
+ * For example, a credential is referenced by its:
+ * - type: PIN, RFID or fingerprint
+ * - credential index: from 1 to CONFIG_LOCK_MAX_NUM_CREDENTIALS_PER_TYPE.
+ * On the other hand, a user is referenced by its user index: from 1 to CONFIG_LOCK_MAX_NUM_USERS.
  *
- * Agreed the following settings key convention:
+ * Each user has a list of credentials that are assigned to them.
  *
- * /cr/
- *    /<credential type (int)>/
- *                           / cr_idxs (bytes)
- *                           / <credential index (int)>/
- *                                                     / <credential data (bytes)>
- *    /usr_idxs (bytes)
- *    /usr/
- *        / <user index (int)> /
- *                             / <user data (bytes)>
- *
- *    /sch_<type (w - weekday, y - yearday, h - holiday)>/
- *    		/sch_idx_<type (w - weekday, y - yearday, h - holiday)> (bytes)/
- *        			/ <user index (int)> /
- *                       		/ <schedule index (int)> /
- *		   		                 			/ <schedule data (bytes)>
- *
+ * The new access item should be written with the new index if the previous one is already occupied.
  */
 
 class AccessStorage {
 public:
 	enum class Type : uint8_t {
 		User,
-		Credential,
 		UsersIndexes,
+		Credential,
 		CredentialsIndexes,
 		RequirePIN,
 #ifdef CONFIG_LOCK_SCHEDULES
@@ -62,11 +48,6 @@ public:
 	 * @return false otherwise.
 	 */
 	bool Init();
-
-	/**
-	 * @brief Factory reset the storage.
-	 */
-	void FactoryReset();
 
 	/**
 	 * @brief Store the entry into the persistent storage.
@@ -111,24 +92,4 @@ public:
 		static AccessStorage sInstance;
 		return sInstance;
 	}
-
-private:
-	constexpr static auto kAccessPrefix = "cr";
-	constexpr static auto kAccessCounterPrefix = "cr_idxs";
-	constexpr static auto kUserPrefix = "usr";
-	constexpr static auto kUserCounterPrefix = "usr_idxs";
-	constexpr static auto kRequirePinPrefix = "pin_req";
-#ifdef CONFIG_LOCK_SCHEDULES
-	constexpr static auto kSchedulePrefix = "sch";
-	constexpr static auto kScheduleWeekDaySuffix = "_w";
-	constexpr static auto kScheduleYearDaySuffix = "_y";
-	constexpr static auto kScheduleHolidaySuffix = "_h";
-	constexpr static auto kScheduleCounterPrefix = "sch_idxs";
-#endif /* CONFIG_LOCK_SCHEDULES */
-	constexpr static auto kMaxAccessName = Nrf::PersistentStorageNode::kMaxKeyNameLength;
-
-	Nrf::PersistentStorageNode mRootNode{ kAccessPrefix, strlen(kAccessPrefix) };
-	char mKeyName[AccessStorage::kMaxAccessName];
-
-	bool PrepareKeyName(Type storageType, uint16_t index, uint16_t subindex);
 };

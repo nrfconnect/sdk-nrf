@@ -28,31 +28,36 @@ target_include_directories(app PRIVATE
   ${ZAP_PARENT_DIR}
 )
 
-SET(access_srcs
-  src/access/access_data_types.cpp
-  src/access/access_manager_credentials.cpp
-  src/access/access_manager_users.cpp
-  src/access/access_manager.cpp
-  src/access/access_storage.cpp
-)
-
-if(CONFIG_LOCK_SCHEDULES)
-  LIST(APPEND access_srcs src/access/access_manager_schedules.cpp)
-endif()
-
 target_sources(app PRIVATE
   src/app_task.cpp
   src/bolt_lock_manager.cpp
   src/main.cpp
   src/zcl_callbacks.cpp
-  ${access_srcs}
+  src/access/access_data_types.cpp
+  src/access/access_manager_credentials.cpp
+  src/access/access_manager_users.cpp
+  src/access/access_manager.cpp
 )
 
-if(CONFIG_THREAD_WIFI_SWITCHING)
-  target_sources(app PRIVATE
-    src/thread_wifi_switch.cpp
-  )
-endif()
+target_sources_ifdef(CONFIG_LOCK_ACCESS_STORAGE_PERSISTENT_STORAGE app PRIVATE
+  src/access/access_storage.cpp
+)
+
+target_sources_ifdef(CONFIG_LOCK_ACCESS_STORAGE_PROTECTED_STORAGE app PRIVATE
+  src/access/access_storage_psa_ps.cpp
+)
+
+target_sources_ifdef(CONFIG_LOCK_SCHEDULES app PRIVATE
+  src/access/access_manager_schedules.cpp
+)
+
+target_sources_ifdef(CONFIG_LOCK_PRINT_STORAGE_STATUS app PRIVATE
+  src/access/access_storage_print.cpp
+)
+
+target_sources_ifdef(CONFIG_THREAD_WIFI_SWITCHING app PRIVATE
+  src/thread_wifi_switch.cpp
+)
 
 # Do not treat warnings as errors while the variable may be uninitialized for this sample data model.
 # In the door-lock-server implementation, there is a warning that the C++ "optional"
