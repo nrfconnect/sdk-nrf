@@ -327,7 +327,14 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* :ref:`peripheral_ams_client` sample:
+
+  * Added support for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` and ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` board targets.
+
+* :ref:`peripheral_ancs_client` sample:
+
+  * Added support for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` and ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` board targets.
+
 
 Bluetooth Mesh samples
 ----------------------
