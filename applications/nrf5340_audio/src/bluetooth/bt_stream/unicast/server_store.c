@@ -2132,14 +2132,14 @@ static bool stream_max_trans_lat_find(struct bt_cap_stream *stream, void *user_d
 	switch (dir) {
 	case BT_AUDIO_DIR_SINK:
 		ctx->streams_checked_snk++;
-		if (ctx->max_trans_lat_snk_ms > stream->bap_stream.qos->latency) {
-			ctx->max_trans_lat_snk_ms = stream->bap_stream.qos->latency;
+		if (ctx->max_trans_lat_snk_ms > stream->bap_stream.ep->qos_pref.latency) {
+			ctx->max_trans_lat_snk_ms = stream->bap_stream.ep->qos_pref.latency;
 		}
 		break;
 	case BT_AUDIO_DIR_SOURCE:
 		ctx->streams_checked_src++;
-		if (ctx->max_trans_lat_src_ms > stream->bap_stream.qos->latency) {
-			ctx->max_trans_lat_src_ms = stream->bap_stream.qos->latency;
+		if (ctx->max_trans_lat_src_ms > stream->bap_stream.ep->qos_pref.latency) {
+			ctx->max_trans_lat_src_ms = stream->bap_stream.ep->qos_pref.latency;
 		}
 		break;
 	default:
