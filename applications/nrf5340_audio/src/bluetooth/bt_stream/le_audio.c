@@ -7,7 +7,11 @@
 #include "le_audio.h"
 
 #include <zephyr/bluetooth/audio/bap.h>
+#include <zephyr/bluetooth/audio/cap.h>
 #include <zephyr/bluetooth/audio/audio.h>
+#include <../subsys/bluetooth/audio/bap_endpoint.h>
+/* TODO: Remove after https://github.com/zephyrproject-rtos/zephyr/issues/103567 */
+#include <../subsys/bluetooth/audio/cap_internal.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(le_audio, CONFIG_BLE_LOG_LEVEL);
@@ -220,10 +224,15 @@ int le_audio_stream_dir_get(struct bt_bap_stream const *const stream)
 	int ret;
 	struct bt_bap_ep_info ep_info;
 
+	if (stream->ep == NULL) {
+		LOG_ERR("Stream has no endpoint");
+		return -EINVAL;
+	}
+
 	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
 
 	if (ret) {
-		LOG_WRN("Failed to get ep_info");
+		LOG_ERR("Failed to get ep_info %d", ret);
 		return ret;
 	}
 
@@ -369,4 +378,76 @@ void le_audio_print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_
 	} else {
 		LOG_WRN("Codec is not LC3, codec_id: 0x%2x", codec->id);
 	}
+}
+
+void le_audio_print_qos_from_stream(struct bt_bap_stream const *const stream)
+{
+	if (stream == NULL || stream->qos == NULL) {
+		LOG_WRN("Invalid parameters to print QoS");
+		return;
+	}
+
+	LOG_INF("BAP stream (%p) QoS:", (void *)stream);
+	LOG_INF("\t Pres dly: %d us", stream->qos->pd);
+	if (stream->qos->framing == BT_BAP_QOS_CFG_FRAMING_UNFRAMED) {
+		LOG_INF("\t Framing: Unframed");
+	} else if (stream->qos->framing == BT_BAP_QOS_CFG_FRAMING_FRAMED) {
+		LOG_INF("\t Framing: Framed");
+	} else {
+		LOG_ERR("\t Framing: Unknown (%d)", stream->qos->framing);
+	}
+
+	if (stream->qos->phy == BT_BAP_QOS_CFG_1M) {
+		LOG_INF("\t PHY: 1M");
+	} else if (stream->qos->phy == BT_BAP_QOS_CFG_2M) {
+		LOG_INF("\t PHY: 2M");
+	} else if (stream->qos->phy == BT_BAP_QOS_CFG_CODED) {
+		LOG_INF("\t PHY: Coded");
+	} else {
+		LOG_ERR("\t PHY: Unknown (%d)", stream->qos->phy);
+	}
+
+	LOG_INF("\t Recmd. ret.: %d", stream->qos->rtn);
+	LOG_INF("\t Max SDU size: %d", stream->qos->sdu);
+
+#if defined(CONFIG_BT_BAP_BROADCAST_SOURCE) || defined(CONFIG_BT_BAP_UNICAST)
+	LOG_INF("\t Max transport latency: %d ms", stream->qos->latency);
+#endif /*  CONFIG_BT_BAP_BROADCAST_SOURCE || CONFIG_BT_BAP_UNICAST */
+	LOG_INF("\t SDU interval: %d us", stream->qos->interval);
+}
+
+// These values will be updated after group create or reconfig.
+
+int le_audio_print_cig(struct bt_cap_unicast_group const *const unicast_group)
+{
+
+	if (unicast_group == NULL) {
+		LOG_WRN("Invalid parameters to print CIG");
+		return -EINVAL;
+	}
+
+	LOG_INF("CIG Index: %d", unicast_group->bap_unicast_group->index);
+
+	if (unicast_group->bap_unicast_group->sink_pd != BT_BAP_PD_UNSET) {
+		LOG_INF("\tSink PD: %u us", unicast_group->bap_unicast_group->sink_pd);
+	} else {
+		LOG_INF("\tSink PD: Not set");
+	}
+
+	if (unicast_group->bap_unicast_group->source_pd != BT_BAP_PD_UNSET) {
+		LOG_INF("\tSource PD: %u us", unicast_group->bap_unicast_group->source_pd);
+	} else {
+		LOG_INF("\tSource PD: Not set");
+	}
+	LOG_INF("\tC->P interval : %d us",
+		unicast_group->bap_unicast_group->cig_param.c_to_p_interval);
+	LOG_INF("\tC->P latency  : %d ms",
+		unicast_group->bap_unicast_group->cig_param.c_to_p_latency);
+	LOG_INF("\tP->C interval : %d us",
+		unicast_group->bap_unicast_group->cig_param.p_to_c_interval);
+
+	LOG_INF("\tP->C latency  : %d ms",
+		unicast_group->bap_unicast_group->cig_param.p_to_c_latency);
+
+	return 0;
 }
