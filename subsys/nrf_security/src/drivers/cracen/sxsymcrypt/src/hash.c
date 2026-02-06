@@ -49,11 +49,6 @@ const struct sxhashalg sxhashalg_sm3 = {
 
 #define CMDMA_BA413_BUS_MSK 3
 
-void sx_hash_free(struct sxhash *hash_ctx)
-{
-	sx_cmdma_release_hw(&hash_ctx->dma);
-}
-
 static void sx_hash_pad(struct sxhash *hash_ctx)
 {
 	uint8_t *padding = hash_ctx->extramem;
@@ -123,8 +118,6 @@ static int sx_hash_create_ba413(struct sxhash *hash_ctx, size_t csz)
 		return SX_ERR_INCOMPATIBLE_HW;
 	}
 
-	sx_hw_reserve(&hash_ctx->dma);
-
 	hash_ctx->dmatags = &ba413tags;
 	sx_cmdma_newcmd(&hash_ctx->dma, hash_ctx->descs, hash_ctx->algo->cfgword,
 			hash_ctx->dmatags->cfg);
@@ -146,7 +139,7 @@ int sx_hash_create(struct sxhash *hash_ctx, const struct sxhashalg *alg, size_t 
 
 int sx_hash_resume_state(struct sxhash *hash_ctx)
 {
-	if (!hash_ctx->algo || hash_ctx->dma.hw_acquired) {
+	if (!hash_ctx->algo || !hash_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	size_t totalfeedsz = hash_ctx->totalfeedsz;
@@ -176,12 +169,10 @@ int sx_hash_feed(struct sxhash *hash_ctx, const uint8_t *msg, size_t sz)
 	}
 
 	if (hash_ctx->cntindescs >= (ARRAY_SIZE(hash_ctx->descs))) {
-		sx_hash_free(hash_ctx);
 		return SX_ERR_FEED_COUNT_EXCEEDED;
 	}
 
 	if (sz >= DMA_MAX_SZ) {
-		sx_hash_free(hash_ctx);
 		return SX_ERR_TOO_BIG;
 	}
 
@@ -208,11 +199,9 @@ int sx_hash_save_state(struct sxhash *hash_ctx)
 	}
 
 	if (hash_ctx->totalfeedsz % hash_ctx->algo->blocksz) {
-		sx_hash_free(hash_ctx);
 		return SX_ERR_WRONG_SIZE_GRANULARITY;
 	}
 	if ((hash_ctx->algo->statesz + hash_ctx->algo->maxpadsz) > sizeof(hash_ctx->extramem)) {
-		sx_hash_free(hash_ctx);
 		return SX_ERR_ALLOCATION_TOO_SMALL;
 	}
 
@@ -256,8 +245,6 @@ int sx_hash_status(struct sxhash *hash_ctx)
 #if CONFIG_DCACHE
 	sys_cache_data_invd_range((void *)&hash_ctx->extramem, sizeof(hash_ctx->extramem));
 #endif
-
-	sx_hash_free(hash_ctx);
 
 	return status;
 }

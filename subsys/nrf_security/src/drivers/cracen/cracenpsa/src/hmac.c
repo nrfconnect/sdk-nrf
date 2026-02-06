@@ -13,6 +13,7 @@
 
 #include <string.h>
 #include <sxsymcrypt/hash.h>
+#include <sxsymcrypt/internal.h>
 #include <cracen/statuscodes.h>
 #include <cracen/mem_helpers.h>
 #include "cracen_psa_primitives.h"
@@ -37,7 +38,6 @@ int hmac_produce(struct sxhash *hashctx, const struct sxhashalg *hashalg, uint8_
 
 	digestsz = sx_hash_get_alg_digestsz(hashalg);
 	if (output_buffer_size < digestsz) {
-		sx_hash_free(hashctx);
 		return SX_ERR_OUTPUT_BUFFER_TOO_SMALL;
 	}
 
@@ -81,9 +81,7 @@ static int internal_start_hmac_computation(struct sxhash *hashopctx,
 	xorbuf(workmem, 0x36, blocksz);
 
 	/* start feeding the hash operation */
-	status = sx_hash_feed(hashopctx, workmem, blocksz);
-
-	return status;
+	return sx_hash_feed(hashopctx, workmem, blocksz);
 }
 
 int mac_create_hmac(const struct sxhashalg *hashalg, struct sxhash *hashopctx, const uint8_t *key,
@@ -108,13 +106,11 @@ int mac_create_hmac(const struct sxhashalg *hashalg, struct sxhash *hashopctx, c
 
 		/* zero padding */
 		safe_memset(workmem + digestsz, workmemsz - digestsz, 0, blocksz - digestsz);
-		status = internal_start_hmac_computation(hashopctx, hashalg, workmem);
 	} else {
 		memcpy(workmem, key, keysz);
 		/* zero padding */
 		safe_memset(workmem + keysz, workmemsz - keysz, 0, blocksz - keysz);
-
-		status = internal_start_hmac_computation(hashopctx, hashalg, workmem);
 	}
-	return status;
+
+	return internal_start_hmac_computation(hashopctx, hashalg, workmem);
 }
