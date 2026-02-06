@@ -185,6 +185,7 @@ tests:
     extra_args:
       - EXTRA_CONF_FILE=overlay-scan-only.conf
       - SHIELD=nrf7002ek_nrf7000
+      - CONFIG_TFM_PROFILE_TYPE_MINIMAL=y
       - CONFIG_WIFI_NM_WPA_SUPPLICANT=n
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     integration_platforms:

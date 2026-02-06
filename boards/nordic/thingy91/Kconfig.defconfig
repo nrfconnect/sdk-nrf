@@ -31,6 +31,10 @@ config TFM_FLASH_MERGED_BINARY
 	bool
 	default y
 
+choice TFM_PROFILE_TYPE
+	default TFM_PROFILE_TYPE_MINIMAL
+endchoice
+
 endif # BUILD_WITH_TFM
 
 # For the secure version of the board the firmware is linked at the beginning
