@@ -526,16 +526,15 @@ psa_status_t cracen_cipher_set_iv(cracen_cipher_operation_t *operation, const ui
 	 * initialized with 0s we can just place the IV in the correct offset.
 	 */
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)) {
-		if (operation->alg == PSA_ALG_STREAM_CIPHER) {
-			if (iv_length == 12) {
-				memcpy(&operation->iv[4], iv, iv_length);
-				return PSA_SUCCESS;
-			} else {
-				return (iv_length == 8 || iv_length == 16)
-					       ? PSA_ERROR_NOT_SUPPORTED
-					       : PSA_ERROR_INVALID_ARGUMENT;
-			}
+	if (IS_ENABLED(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20) &&
+	    operation->alg == PSA_ALG_STREAM_CIPHER) {
+		if (iv_length == 12) {
+			memcpy(&operation->iv[4], iv, iv_length);
+			return PSA_SUCCESS;
+		} else {
+			return (iv_length == 8 || iv_length == 16)
+				       ? PSA_ERROR_NOT_SUPPORTED
+				       : PSA_ERROR_INVALID_ARGUMENT;
 		}
 	}
 
@@ -757,10 +756,10 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 		}
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES)) {
-		if (operation->alg == PSA_ALG_CBC_PKCS7) {
-			if (operation->dir == CRACEN_ENCRYPT) {
-				uint8_t padding = (uint32_t)operation->blk_size -
+	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES) &&
+	    operation->alg == PSA_ALG_CBC_PKCS7) {
+		if (operation->dir == CRACEN_ENCRYPT) {
+			uint8_t padding = (uint32_t)operation->blk_size -
 						  operation->unprocessed_input_bytes;
 
 				/* The value to pad which equals the number of
@@ -824,7 +823,6 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 
 				return PSA_SUCCESS;
 			}
-		}
 	}
 
 	*output_length = operation->unprocessed_input_bytes;

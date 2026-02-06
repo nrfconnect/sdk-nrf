@@ -72,6 +72,8 @@ static int cracen_signature_set_hashalgo_from_digestsz(const struct sxhashalg **
 		}
 	} else if (status != SX_OK) {
 		return status;
+	} else {
+		/* For compliance */
 	}
 	/* if status == SX_OK */
 	if (sx_hash_get_alg_digestsz(*hashalg) != digestsz) {
@@ -111,9 +113,9 @@ cracen_signature_prepare_ec_pubkey(const uint8_t *key_buffer, size_t key_buffer_
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_255)) {
-		if (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED25519PH) {
-			if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_255) &&
+	    (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED25519PH)) {
+		if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
 				memcpy(pubkey_buffer, key_buffer, key_buffer_size);
 				return PSA_SUCCESS;
 			}
@@ -122,9 +124,9 @@ cracen_signature_prepare_ec_pubkey(const uint8_t *key_buffer, size_t key_buffer_
 		}
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_448)) {
-		if (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED448PH) {
-			if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_448) &&
+	    (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED448PH)) {
+		if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
 				memcpy(pubkey_buffer, key_buffer, key_buffer_size);
 				return PSA_SUCCESS;
 			}
@@ -133,11 +135,11 @@ cracen_signature_prepare_ec_pubkey(const uint8_t *key_buffer, size_t key_buffer_
 		}
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1) ||
-	    IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_K1) ||
-	    IS_ENABLED(PSA_NEED_CRACEN_ECDSA_BRAINPOOL_P_R1)) {
-		if (PSA_ALG_IS_ECDSA(alg)) {
-			if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
+	if ((IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1) ||
+	     IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_K1) ||
+	     IS_ENABLED(PSA_NEED_CRACEN_ECDSA_BRAINPOOL_P_R1)) &&
+	    PSA_ALG_IS_ECDSA(alg)) {
+		if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
 				/* public keys must start with 0x04(uncompressed header)
 				 * and must have double the size of the EC curve plus 1
 				 * (from 0x04)
@@ -308,6 +310,8 @@ static psa_status_t handle_ecdsa_sign(bool is_message, const uint8_t *key_buffer
 			status = cracen_ecdsa_sign_digest(&privkey, hashalgpointer, ecurve, input,
 							  input_length, signature);
 		}
+	} else {
+		/* For compliance */
 	}
 
 	return silex_statuscodes_to_psa(status);
@@ -366,6 +370,8 @@ static psa_status_t cracen_signature_ecc_sign(bool is_message,
 					     IS_ENABLED(PSA_NEED_CRACEN_DETERMINISTIC_ECDSA))) {
 		return handle_ecdsa_sign(is_message, key_buffer, alg, input, input_length, ecurve,
 					 signature, signature_length);
+	} else {
+		/* For compliance */
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -639,20 +645,18 @@ psa_status_t cracen_sign_message(const psa_key_attributes_t *attributes, const u
 				 size_t input_length, uint8_t *signature, size_t signature_size,
 				 size_t *signature_length)
 {
-	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC)) {
-		if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
-			return cracen_signature_ecc_sign(
-				CRACEN_IS_MESSAGE, attributes, key_buffer, key_buffer_size, alg,
-				input, input_length, signature, signature_size, signature_length);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC) &&
+	    PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
+		return cracen_signature_ecc_sign(
+			CRACEN_IS_MESSAGE, attributes, key_buffer, key_buffer_size, alg,
+			input, input_length, signature, signature_size, signature_length);
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_RSA)) {
-		if (PSA_KEY_TYPE_IS_RSA(psa_get_key_type(attributes))) {
-			return cracen_signature_rsa_sign(
-				CRACEN_IS_MESSAGE, attributes, key_buffer, key_buffer_size, alg,
-				input, input_length, signature, signature_size, signature_length);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_RSA) &&
+	    PSA_KEY_TYPE_IS_RSA(psa_get_key_type(attributes))) {
+		return cracen_signature_rsa_sign(
+			CRACEN_IS_MESSAGE, attributes, key_buffer, key_buffer_size, alg,
+			input, input_length, signature, signature_size, signature_length);
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -663,20 +667,18 @@ psa_status_t cracen_sign_hash(const psa_key_attributes_t *attributes, const uint
 			      size_t hash_length, uint8_t *signature, size_t signature_size,
 			      size_t *signature_length)
 {
-	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC)) {
-		if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
-			return cracen_signature_ecc_sign(
-				CRACEN_IS_HASH, attributes, key_buffer, key_buffer_size, alg, hash,
-				hash_length, signature, signature_size, signature_length);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC) &&
+	    PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
+		return cracen_signature_ecc_sign(
+			CRACEN_IS_HASH, attributes, key_buffer, key_buffer_size, alg, hash,
+			hash_length, signature, signature_size, signature_length);
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_RSA)) {
-		if (PSA_KEY_TYPE_IS_RSA(psa_get_key_type(attributes))) {
-			return cracen_signature_rsa_sign(
-				CRACEN_IS_HASH, attributes, key_buffer, key_buffer_size, alg, hash,
-				hash_length, signature, signature_size, signature_length);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_RSA) &&
+	    PSA_KEY_TYPE_IS_RSA(psa_get_key_type(attributes))) {
+		return cracen_signature_rsa_sign(
+			CRACEN_IS_HASH, attributes, key_buffer, key_buffer_size, alg, hash,
+			hash_length, signature, signature_size, signature_length);
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -687,20 +689,18 @@ psa_status_t cracen_verify_message(const psa_key_attributes_t *attributes,
 				   psa_algorithm_t alg, const uint8_t *input, size_t input_length,
 				   const uint8_t *signature, size_t signature_length)
 {
-	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC)) {
-		if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
-			return cracen_signature_ecc_verify(
-				CRACEN_IS_MESSAGE, attributes, key_buffer, key_buffer_size, alg,
-				input, input_length, signature, signature_length);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC) &&
+	    PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
+		return cracen_signature_ecc_verify(
+			CRACEN_IS_MESSAGE, attributes, key_buffer, key_buffer_size, alg,
+			input, input_length, signature, signature_length);
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_RSA)) {
-		if (PSA_KEY_TYPE_IS_RSA(psa_get_key_type(attributes))) {
-			return cracen_signature_rsa_verify(
-				CRACEN_IS_MESSAGE, attributes, key_buffer, key_buffer_size, alg,
-				input, input_length, signature, signature_length);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_RSA) &&
+	    PSA_KEY_TYPE_IS_RSA(psa_get_key_type(attributes))) {
+		return cracen_signature_rsa_verify(
+			CRACEN_IS_MESSAGE, attributes, key_buffer, key_buffer_size, alg,
+			input, input_length, signature, signature_length);
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -711,20 +711,18 @@ psa_status_t cracen_verify_hash(const psa_key_attributes_t *attributes, const ui
 				size_t hash_length, const uint8_t *signature,
 				size_t signature_length)
 {
-	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC)) {
-		if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
-			return cracen_signature_ecc_verify(CRACEN_IS_HASH, attributes, key_buffer,
-							   key_buffer_size, alg, hash, hash_length,
-							   signature, signature_length);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC) &&
+	    PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
+		return cracen_signature_ecc_verify(CRACEN_IS_HASH, attributes, key_buffer,
+						   key_buffer_size, alg, hash, hash_length,
+						   signature, signature_length);
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_RSA)) {
-		if (PSA_KEY_TYPE_IS_RSA(psa_get_key_type(attributes))) {
-			return cracen_signature_rsa_verify(CRACEN_IS_HASH, attributes, key_buffer,
-							   key_buffer_size, alg, hash, hash_length,
-							   signature, signature_length);
-		}
+	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_RSA) &&
+	    PSA_KEY_TYPE_IS_RSA(psa_get_key_type(attributes))) {
+		return cracen_signature_rsa_verify(CRACEN_IS_HASH, attributes, key_buffer,
+						   key_buffer_size, alg, hash, hash_length,
+						   signature, signature_length);
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;

@@ -88,7 +88,7 @@ psa_status_t silex_statuscodes_to_psa(int ret)
 
 	case SX_ERR_INVALID_ARG:
 	case SX_ERR_INPUT_BUFFER_TOO_SMALL:
-	default:
+	default: /* For compliance */
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 }
@@ -129,7 +129,7 @@ hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash_algo)
 	case PSA_ALG_SHAKE256_512:
 		IF_ENABLED(PSA_NEED_CRACEN_SHAKE256_512, (*sx_hash_algo = &sxhashalg_shake256_64));
 		break;
-	default:
+	default: /* For compliance */
 		return PSA_ALG_IS_HASH(alg) ? PSA_ERROR_NOT_SUPPORTED : PSA_ERROR_INVALID_ARGUMENT;
 	}
 
@@ -194,7 +194,7 @@ static psa_status_t get_sx_secp_r1_curve(size_t curve_bits, const struct sx_pk_e
 		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1_521,
 			   (selected_curve = &sx_curve_nistp521));
 		break;
-	default:
+	default: /* For compliance */
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
@@ -216,6 +216,8 @@ static psa_status_t get_sx_secp_k1_curve(size_t curve_bits, const struct sx_pk_e
 	case 256:
 		IF_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1_256,
 			   (selected_curve = &sx_curve_secp256k1));
+		break;
+	default: /* For compliance */
 		break;
 	}
 
@@ -930,10 +932,10 @@ psa_status_t rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit, size
 		sz--;
 	}
 
-	uint8_t msb_mask;
+	uint8_t msb_mask = 0xFF;
 
-	for (msb_mask = 0xFF; upperlimit[0] & msb_mask; msb_mask <<= 1) {
-		;
+	while (upperlimit[0] & msb_mask) {
+		msb_mask <<= 1;
 	}
 	msb_mask = ~msb_mask;
 
@@ -1365,6 +1367,8 @@ static psa_status_t cracen_get_ikg_opaque_key_size(const psa_key_attributes_t *a
 			return PSA_SUCCESS;
 		}
 		break;
+	default: /* For compliance */
+		break;
 	}
 
 	return PSA_ERROR_INVALID_ARGUMENT;
@@ -1401,10 +1405,9 @@ psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size
 
 void cracen_be_add(uint8_t *v, size_t sz, size_t summand)
 {
-	while (sz > 0) {
-		sz--;
-		summand += v[sz];
-		v[sz] = summand & 0xFF;
+	for (; sz > 0; sz--) {
+		summand += v[sz - 1];
+		v[sz - 1] = summand & 0xFF;
 		summand >>= 8;
 	}
 }
@@ -1416,17 +1419,16 @@ int cracen_be_sub(const uint8_t *a, const uint8_t *b, uint8_t *c, size_t sz)
 	unsigned int bi;
 	unsigned int tmp;
 
-	while (sz > 0) {
-		sz--;
-		ai = (unsigned int)a[sz];
-		bi = (unsigned int)b[sz];
+	for (; sz > 0; sz--) {
+		ai = (unsigned int)a[sz - 1];
+		bi = (unsigned int)b[sz - 1];
 
 		/* tmp will be in 0..0xFFFFFFFF; if underflow occurred for the byte subtraction
 		 * (ai < bi + borrow) then the high bits of tmp will be set (tmp >= 0xFFFFFF00).
 		 * Shifting right by 8 and masking the LSB yields 1 in that case, 0 otherwise.
 		 */
 		tmp = ai - bi - borrow;
-		c[sz] = (uint8_t)tmp;
+		c[sz - 1] = (uint8_t)tmp;
 		borrow = (tmp >> 8) & 1u;
 	}
 

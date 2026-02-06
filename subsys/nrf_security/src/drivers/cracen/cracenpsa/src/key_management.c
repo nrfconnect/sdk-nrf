@@ -109,11 +109,11 @@ static psa_status_t check_ecc_key_attributes(const psa_key_attributes_t *attribu
 				break;
 			}
 
-			if (*key_bits == valid_keys[i].bits) {
-				if (valid_key_size != key_buffer_size) {
-					return PSA_ERROR_INVALID_ARGUMENT;
-				}
+			if (*key_bits == valid_keys[i].bits && valid_key_size != key_buffer_size) {
+				return PSA_ERROR_INVALID_ARGUMENT;
+			}
 
+			if (*key_bits == valid_keys[i].bits) {
 				status = valid_keys[i].supported ? PSA_SUCCESS
 								 : PSA_ERROR_NOT_SUPPORTED;
 				break;
@@ -121,11 +121,10 @@ static psa_status_t check_ecc_key_attributes(const psa_key_attributes_t *attribu
 		}
 	}
 
-	if (status == PSA_SUCCESS) {
-		if ((curve == PSA_ECC_FAMILY_TWISTED_EDWARDS) && (key_alg != PSA_ALG_PURE_EDDSA &&
-			key_alg != PSA_ALG_ED25519PH && key_alg != PSA_ALG_ED448PH)) {
-			return PSA_ERROR_INVALID_ARGUMENT;
-		}
+	if (status == PSA_SUCCESS &&
+	    (curve == PSA_ECC_FAMILY_TWISTED_EDWARDS) && (key_alg != PSA_ALG_PURE_EDDSA &&
+	    key_alg != PSA_ALG_ED25519PH && key_alg != PSA_ALG_ED448PH)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	return status;
@@ -161,9 +160,8 @@ static size_t get_asn1_size_with_tag_and_length(size_t sz)
 
 	/* If size >= 0x80 we need additional bytes. */
 	if (sz >= 0x80) {
-		while (sz) {
-			r += 1;
-			sz >>= 8;
+		for (; sz; sz >>= 8) {
+			r++;
 		}
 	}
 
@@ -893,6 +891,8 @@ static psa_status_t generate_ecc_private_key(const psa_key_attributes_t *attribu
 			} else if (key_size_bytes == 56) {
 				/* X448 */
 				decode_scalar_448(&workmem[0]);
+			} else {
+				/* For compliance */
 			}
 		}
 
@@ -1169,6 +1169,8 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		} else if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
 			return ecc_export_key(attributes, key_buffer, key_buffer_size, data,
 					      data_size, data_length);
+		} else {
+			/* For compliance */
 		}
 	}
 
@@ -1180,6 +1182,8 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		} else if (PSA_KEY_TYPE_IS_SPAKE2P_PUBLIC_KEY(key_type)) {
 			return ecc_export_key(attributes, key_buffer, key_buffer_size, data,
 					      data_size, data_length);
+		} else {
+			/* For compliance */
 		}
 	}
 
@@ -1191,6 +1195,8 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 		   IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_RSA_PUBLIC_KEY)) {
 		return rsa_export_public_key(attributes, key_buffer, key_buffer_size, data,
 					     data_size, data_length);
+	} else {
+		/* For compliance */
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -1270,6 +1276,8 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		} else if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
 			return import_ecc_public_key(attributes, data, data_length, key_buffer,
 						     key_buffer_size, key_buffer_length, key_bits);
+		} else {
+			/* For compliance */
 		}
 	}
 

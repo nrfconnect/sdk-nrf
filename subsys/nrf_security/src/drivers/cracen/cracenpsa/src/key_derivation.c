@@ -118,6 +118,8 @@ static psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *c
 		return PSA_ERROR_INVALID_ARGUMENT;
 	} else if (output_size < curve_op_sz) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
+	} else {
+		/* For compliance */
 	}
 
 	sx_status = SX_ERR_INVALID_CURVE_PARAM;
@@ -144,6 +146,8 @@ static psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *c
 		/* 448 % 8 = 0, so there is no need to decode pt coordinate. */
 		sx_status = sx_x448_ptmult(&k, (struct sx_x448_op *)publ_key,
 					   (struct sx_x448_op *)output);
+	} else {
+		/* For compliance */
 	}
 
 	if (sx_status != SX_OK) {
@@ -402,6 +406,8 @@ cracen_key_derivation_input_bytes_hkdf(cracen_key_derivation_operation_t *operat
 			}
 		} else if (operation->state != CRACEN_KD_STATE_HKDF_STARTED) {
 			return PSA_ERROR_BAD_STATE;
+		} else {
+			/* For compliance */
 		}
 
 		status = cracen_mac_update(&operation->mac_op, data, data_length);
@@ -814,10 +820,11 @@ psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t
 #endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC */
 
 #if defined(PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS)
+	if (operation->alg == PSA_ALG_TLS12_ECJPAKE_TO_PMS &&
+	    operation->state != CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_INIT) {
+		return PSA_ERROR_BAD_STATE;
+	}
 	if (operation->alg == PSA_ALG_TLS12_ECJPAKE_TO_PMS) {
-		if (operation->state != CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_INIT) {
-			return PSA_ERROR_BAD_STATE;
-		}
 		operation->state = CRACEN_KD_STATE_TLS12_ECJPAKE_TO_PMS_OUTPUT;
 		if (data_length != 65 || data[0] != 0x04) {
 			return PSA_ERROR_INVALID_ARGUMENT;
