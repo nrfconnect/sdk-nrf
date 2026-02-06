@@ -6,32 +6,27 @@
 
 #include <silexpk/core.h>
 #include <silexpk/blinding.h>
+#include <cracen/statuscodes.h>
+#include <cracen/prng_pool.h>
 #include "internal.h"
 
-void sx_pk_cnx_configure_blinding(struct sx_pk_cnx *cnx, struct sx_pk_blinder *prng)
+int sx_pk_get_blinding_factor(sx_pk_blind_factor *bld_factor)
 {
+	int status;
 	const struct sx_pk_capabilities *caps = sx_pk_fetch_capabilities();
+	if (!caps->blinding) {
+		return SX_ERR_INCOMPATIBLE_HW;
+	};
 
-	if (!prng || !caps->blinding) {
-		return;
-	}
-	struct sx_pk_blinder **blinder_ptr = sx_pk_get_blinder(cnx);
-	*blinder_ptr = prng;
-}
+	/* The blinding factor needs to be a non zero value, make sure that
+	 * at least half of it is not zero.
+	 */
+	do {
+		status = cracen_prng_value_from_pool((uint32_t *)bld_factor);
+		if (status != SX_OK) {
+			return status;
+		}
+	} while (bld_factor == 0);
 
-sx_pk_blind_factor sx_pk_default_blind_gen(struct sx_pk_blinder *blinder)
-{
-	/* source: https://en.wikipedia.org/wiki/Xorshift xorshift64() */
-	sx_pk_blind_factor x = blinder->state.blind;
-
-	x ^= x << 13;
-	x ^= x >> 7;
-	x ^= x << 17;
-	return blinder->state.blind = x;
-}
-
-void sx_pk_default_blinder(struct sx_pk_blinder *blinder, sx_pk_blind_factor seed)
-{
-	blinder->state.blind = seed;
-	blinder->generate = &sx_pk_default_blind_gen;
+	return cracen_prng_value_from_pool((uint32_t *)bld_factor + 1);
 }
