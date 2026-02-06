@@ -106,7 +106,10 @@ def test_b0_monotonic_counters_limit_number_of_upgrades(
     tm.reset_device_from_shell()
 
     tm.verify_after_reset(
-        lines=["Failed during setting the monotonic counter"],
-        no_lines=[f"Firmware version {current_firmware_version}"],
+        lines=[
+            "Failed during setting the monotonic counter",
+            "Attempting to boot slot 1",
+            f"Firmware version {current_firmware_version - 1}",
+        ],
     )
     logger.info("PASSED: Number of upgrades is limited by monotonic counters.")
