@@ -33,6 +33,9 @@ target_sources(app PRIVATE
   src/app_task.cpp
   src/main.cpp
   src/battery.cpp
+)
+
+target_sources_ifdef(CONFIG_MATTER_WEATHER_STATION_BUZZER app PRIVATE
   src/buzzer.cpp
 )
 

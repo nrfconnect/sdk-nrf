@@ -6,6 +6,21 @@
 
 mainmenu "Matter weather station application"
 
+config MATTER_WEATHER_STATION_BUZZER
+	bool "Identify buzzer (PWM)"
+	depends on BOARD_THINGY53
+	default y
+	help
+	  When enabled the identify command will use a buzzer, in other cases, it will use an LED.
+
+config MATTER_WEATHER_STATION_BATTERY
+	bool "Battery measurement and charge control"
+	depends on BOARD_THINGY53
+	default y
+	help
+	  When enabled, battery voltage will be monitored.
+	  Otherwise the Power Source cluster will expose mock data.
+
 config AVERAGE_CURRENT_CONSUMPTION
 	int "Average device current consumption in microamperes"
 	default 0
