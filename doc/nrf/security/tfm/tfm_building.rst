@@ -14,8 +14,7 @@ To add TF-M to your build, enable the :kconfig:option:`CONFIG_BUILD_WITH_TFM` co
 .. note::
    If you use menuconfig to enable :kconfig:option:`CONFIG_BUILD_WITH_TFM`, you must also enable its dependencies.
 
-By default, TF-M is configured to build the :ref:`minimal version <tfm_minimal_build>`.
-To use the full TF-M, you must disable the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` option.
+By default, TF-M is built with the :ref:`configurable version <tfm_configurable_build>` on all devices except the :ref:`Thingy:91 <ug_thingy91>` and the :ref:`Thingy:91 X <ug_thingy91x>` which default to the :ref:`minimal version <tfm_minimal_build>`.
 
 .. _ug_tfm_building_board_targets:
 
@@ -127,7 +126,7 @@ Minimal build
    :end-before: minimal_build_overview_end
 
 The minimal build uses an image of 32 kB.
-It is set with the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` Kconfig option that is enabled by default on the nRF53 and nRF91 Series devices.
+It is set with the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` Kconfig option that is enabled by default on the :ref:`Thingy:91 <ug_thingy91>` and :ref:`Thingy:91 X <ug_thingy91x>` devices.
 
 With the minimal build, the configuration of TF-M is severely limited.
 Hence, it is not possible to modify the TF-M minimal configuration to create your own variant of the minimal configuration.
@@ -146,7 +145,6 @@ To enable the configurable, full TF-M build, make sure the following Kconfig opt
 
 * :kconfig:option:`CONFIG_BUILD_WITH_TFM` is enabled
 * :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET` is enabled
-* :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` is disabled
 
 For description of the build profiles, see :ref:`tf-m_profiles`.
 It is not recommended to use predefined TF-M profiles as they might result in a larger memory footprint than necessary.
@@ -242,7 +240,7 @@ The |NCS| ensures that they in fact are aligned and comply with the TF-M require
 The following differences apply to the device families:
 
 * On nRF53 and nRF91 Series devices, TF-M uses the SPU to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` Kconfig option is set to the SPU flash region size.
-* On nRF54L15 devices, TF-M uses the MPC to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` option is set to the MPC region size.
+* On nRF54L15 devices, TF-M uses the MPC to enforce the security policy between the partitions, so the :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE` Kconfig option is set to the MPC region size.
 
 .. list-table:: Region limits on different hardware
    :header-rows: 1
