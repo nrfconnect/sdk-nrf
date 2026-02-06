@@ -10,7 +10,7 @@
 #include "crypmasterregs.h"
 #include "hw.h"
 #include "cmdma.h"
-#include "security/cracen.h"
+#include <cracen/hardware.h>
 #include <nrf_security_core.h>
 
 void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *desc_ptr, uint32_t cmd, uint32_t tag)
