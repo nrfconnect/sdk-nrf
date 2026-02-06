@@ -154,7 +154,7 @@ choice AUDIO_SOURCE_GATEWAY
 	  Select audio source for the gateway.
 
 config AUDIO_SOURCE_USB
-	bool "Use USB as audio source"
+	bool "USB as audio source"
 	select USB_DEVICE_STACK_NEXT
 	select USBD_AUDIO2_CLASS
 	help
@@ -162,7 +162,7 @@ config AUDIO_SOURCE_USB
 	  stream to be unidirectional because of CPU load.
 
 config AUDIO_SOURCE_I2S
-	bool "Use I2S as audio source"
+	bool "I2S as audio source"
 	help
 	  Set I2S as audio source.
 endchoice
