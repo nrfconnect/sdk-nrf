@@ -2034,6 +2034,8 @@ static void group_action_set(enum group_action_req *action, enum group_action_re
 static void stream_state_check(struct bt_cap_stream *stream,
 			       struct new_pres_delays *new_pres_delays)
 {
+	// Check for IDLE or releasing state and LOG error
+
 	if (le_audio_ep_state_check(stream->bap_stream.ep, BT_BAP_EP_STATE_QOS_CONFIGURED)) {
 		/* Stream needs to be QoS configured again to update the presentation delay */
 		group_action_set(&new_pres_delays->action, GROUP_ACTION_REQ_QOS_RECONFIG);
