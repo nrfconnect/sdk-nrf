@@ -85,6 +85,9 @@ This is automatically set for One-shot mode.
 
    west build -p -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_NRF_WIFI_IF_AUTO_START=n
 
+With this configuration, the Wi-Fi network interface is not automatically brought up by the Zephyr networking stack.
+You must press **Button 1** to bring up the Wi-Fi network interface.
+
 Adjust shutdown timeout
 -----------------------
 
