@@ -67,6 +67,10 @@ Bootloaders and DFU
 
 * Added a new lifecycle state (LCS) API designed for nRF54L Series devices.
 
+* Replaced `ExternalNcsVariantProject_Add(..)` CMake function with the `ExternalZephyrVariantProject_Add(..)` function.
+  The new function is defined and maintained in the Zephyr repository, providing a very similar API and functionality.
+  The old function is deprecated and kept for backward compatibility, but it will be removed in the future.
+
 Developing with nRF91 Series
 ============================
 
