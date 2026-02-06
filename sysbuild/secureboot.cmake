@@ -63,9 +63,19 @@ if(SB_CONFIG_SECURE_BOOT)
     set(image s1_image)
 
     if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-      ExternalNcsVariantProject_Add(APPLICATION mcuboot VARIANT ${image})
+      ExternalZephyrVariantProject_Add(
+        APPLICATION ${image}
+        SOURCE_APP mcuboot
+        SNIPPET slot1-partition
+        BUILD_ONLY TRUE
+      )
     else()
-      ExternalNcsVariantProject_Add(APPLICATION ${DEFAULT_IMAGE} VARIANT ${image})
+      ExternalZephyrVariantProject_Add(
+        APPLICATION ${image}
+        SOURCE_APP ${DEFAULT_IMAGE}
+        SNIPPET slot1-partition
+        BUILD_ONLY TRUE
+      )
     endif()
 
     set_property(GLOBAL APPEND PROPERTY
