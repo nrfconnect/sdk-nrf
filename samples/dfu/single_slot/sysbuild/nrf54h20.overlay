@@ -51,31 +51,39 @@
 
 		/* Main application with the MCUboot header. */
 		slot0_partition: partition@36000 {
+			compatible = "fixed-subpartitions";
 			reg = <0x36000 DT_SIZE_K(1628)>;
-		};
+			ranges = <0x0 0x36000 DT_SIZE_K(1628)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
 
-		/* Main application without the MCUboot metadata.
-		 * Offset by the MCUboot header size (2048 bytes).
-		 */
-		cpuapp_slot0_partition: partition@36800 {
-			reg = <0x36800 DT_SIZE_K(1626)>;
+			/* Main application without the MCUboot metadata.
+			 * Offset by the MCUboot header size (2048 bytes).
+			 */
+			cpuapp_slot0_partition: partition@800 {
+				reg = <0x800 DT_SIZE_K(1626)>;
+			};
 		};
 
 		/* Merged partition used by the FW loader. */
 		slot1_partition: partition@1cd000 {
+			compatible = "fixed-subpartitions";
 			reg = <0x1cd000 DT_SIZE_K(144)>;
-		};
+			ranges = <0x0 0x1cd000 DT_SIZE_K(144)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
 
-		/* Application code partition (part of the FW loader).
-		 * Offset by the MCUboot header size (2048 bytes).
-		 */
-		fw_loader_partition: cpuapp_slot1_partition: partition@1cd800 {
-			reg = <0x1cd800 DT_SIZE_K(60)>;
-		};
+			/* Application code partition (part of the FW loader).
+			 * Offset by the MCUboot header size (2048 bytes).
+			 */
+			fw_loader_partition: cpuapp_slot1_partition: partition@800 {
+				reg = <0x800 DT_SIZE_K(60)>;
+			};
 
-		/* Radio code partition (part of the FW loader). */
-		cpurad_slot0_partition: partition@1dc800 {
-			reg = <0x1dc800 DT_SIZE_K(82)>;
+			/* Radio code partition (part of the FW loader). */
+			cpurad_slot0_partition: partition@f800 {
+				reg = <0xf800 DT_SIZE_K(82)>;
+			};
 		};
 
 		storage_partition: partition@1f1000 {
