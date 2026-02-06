@@ -1,0 +1,99 @@
+/delete-node/ &storage_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &tfm_ps_partition;
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+
+&flash0 {
+	/*
+	 * Flash planning for nRF5340 with EMDS support:
+	 *
+	 * 0x0000_0000 BL2 - MCUBoot (64 KB)
+	 * 0x0001_0000 Primary image area (432 KB):
+	 *    0x0001_0000 Secure     image primary (128 KB)
+	 *    0x0003_0000 Non-secure image primary (304 KB)
+	 * 0x0007_c000 Secondary image area (432 KB):
+	 *    0x0007_c000 Secure     image secondary (128 KB)
+	 *    0x0009_c000 Non-secure image secondary (304 KB)
+	 * 0x000e_8000 Protected Storage Area (16 KB)
+	 * 0x000e_c000 Internal Trusted Storage Area (8 KB)
+	 * 0x000e_e000 OTP / NV counters area (8 KB)
+	 * 0x000f_0000 Non-secure storage (32 KB)
+	 * 0x000f_8000 EMDS partition 0 (16 KB)
+	 * 0x000f_c000 EMDS partition 1 (16 KB)
+	 */
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot0_partition: partition@10000 {
+			compatible = "fixed-subpartitions";
+			label = "image-0";
+			reg = <0x00010000 0x6c000>;
+			ranges = <0x0 0x10000 0x6c000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				label = "image-0-secure";
+				reg = <0x00000000 0x20000>;
+			};
+
+			slot0_ns_partition: partition@20000 {
+				label = "image-0-nonsecure";
+				reg = <0x00020000 0x4c000>;
+			};
+		};
+
+		slot1_partition: partition@7c000 {
+			compatible = "fixed-subpartitions";
+			label = "image-1";
+			reg = <0x0007c000 0x6c000>;
+			ranges = <0x0 0x7c000 0x6c000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot1_s_partition: partition@0 {
+				label = "image-1-secure";
+				reg = <0x00000000 0x20000>;
+			};
+
+			slot1_ns_partition: partition@20000 {
+				label = "image-1-nonsecure";
+				reg = <0x00020000 0x4c000>;
+			};
+		};
+
+		tfm_ps_partition: partition@e8000 {
+			label = "tfm-ps";
+			reg = <0x000e8000 0x00004000>;
+		};
+
+		tfm_its_partition: partition@ec000 {
+			label = "tfm-its";
+			reg = <0x000ec000 0x00002000>;
+		};
+
+		tfm_otp_partition: partition@ee000 {
+			label = "tfm-otp";
+			reg = <0x000ee000 0x00002000>;
+		};
+
+		storage_partition: partition@f0000 {
+			label = "storage";
+			reg = <0x000f0000 DT_SIZE_K(32)>;
+		};
+
+		emds_partition_0: partition@f8000 {
+			label = "emds-0";
+			reg = <0x000f8000 DT_SIZE_K(16)>;
+		};
+
+		emds_partition_1: partition@fc000 {
+			label = "emds-1";
+			reg = <0x000fc000 DT_SIZE_K(16)>;
+		};
+	};
+};

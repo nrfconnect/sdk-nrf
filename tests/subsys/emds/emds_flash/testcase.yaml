@@ -4,6 +4,8 @@ tests:
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
+    required_snippets:
+      - emds
     tags:
       - emds
       - sysbuild
