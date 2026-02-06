@@ -129,7 +129,8 @@ static psa_status_t cracen_update_transcript(cracen_spake2p_operation_t *operati
  */
 static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t *Z, uint8_t *V)
 {
-	psa_status_t status;
+	int status;
+	struct sx_pk_acq_req pkreq;
 
 	uint8_t w0N[CRACEN_P256_POINT_SIZE];
 
@@ -137,10 +138,16 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 	MAKE_SX_CONST_POINT(pt_NM, operation->NM, CRACEN_P256_POINT_SIZE);
 	sx_const_ecop w0 = {.bytes = operation->w0, .sz = sizeof(operation->w0)};
 
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECC_PTMUL);
+	if (pkreq.status) {
+		status = pkreq.status;
+		goto exit;
+	}
+
 	/* w0 * N. */
-	status = sx_ecp_ptmult(operation->curve, &w0, &pt_NM, &pt_n_w0N);
+	status = sx_sync_ecp_ptmult(&pkreq, operation->curve, &w0, &pt_NM, &pt_n_w0N);
 	if (status) {
-		return silex_statuscodes_to_psa(status);
+		goto exit;
 	}
 
 	/* Calculate -(previous result) */
@@ -154,9 +161,9 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 	sx_const_op b = {.sz = CRACEN_P256_KEY_SIZE, .bytes = &w0N[CRACEN_P256_KEY_SIZE]};
 	sx_op res = {.sz = CRACEN_P256_KEY_SIZE, .bytes = &w0N[CRACEN_P256_KEY_SIZE]};
 
-	status = sx_mod_primitive_cmd(NULL, cmd, &modulo, &a, &b, &res);
+	status = sx_sync_mod_primitive_cmd(&pkreq, NULL, cmd, &modulo, &a, &b, &res);
 	if (status) {
-		return silex_statuscodes_to_psa(status);
+		goto exit;
 	}
 
 	/* Calculate Y + (- w0 * N) */
@@ -164,9 +171,10 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 	sx_pk_const_affine_point c_pt_n_w0N;
 
 	sx_get_const_affine_point(&pt_n_w0N, &c_pt_n_w0N);
-	status = sx_ecp_ptadd(operation->curve, &pt_Y, &c_pt_n_w0N, &pt_n_w0N);
+
+	status = sx_sync_ecp_ptadd(&pkreq, operation->curve, &pt_Y, &c_pt_n_w0N, &pt_n_w0N);
 	if (status) {
-		return silex_statuscodes_to_psa(status);
+		goto exit;
 	}
 
 	/* Calculate Z = x * (previous result) */
@@ -174,9 +182,9 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 
 	sx_get_const_affine_point(&pt_n_w0N, &c_pt_n_w0N);
 	MAKE_SX_POINT(pt_Z, Z, CRACEN_P256_POINT_SIZE);
-	status = sx_ecp_ptmult(operation->curve, &x, &c_pt_n_w0N, &pt_Z);
+	status = sx_sync_ecp_ptmult(&pkreq, operation->curve, &x, &c_pt_n_w0N, &pt_Z);
 	if (status) {
-		return silex_statuscodes_to_psa(status);
+		goto exit;
 	}
 
 	/* Calculate V */
@@ -187,14 +195,13 @@ static psa_status_t cracen_get_ZV(cracen_spake2p_operation_t *operation, uint8_t
 			   .sz = CRACEN_P256_KEY_SIZE};
 	sx_get_const_affine_point(&pt_n_w0N, &c_pt_n_w0N);
 
-	status = sx_ecp_ptmult(operation->curve, &k,
+	status = sx_sync_ecp_ptmult(&pkreq, operation->curve, &k,
 			       operation->role == PSA_PAKE_ROLE_SERVER ? &pt_L
 								       : &c_pt_n_w0N, &pt_V);
-	if (status) {
-		return silex_statuscodes_to_psa(status);
-	}
 
-	return status;
+exit:
+	sx_pk_release_req(pkreq.req);
+	return  silex_statuscodes_to_psa(status);
 }
 
 static psa_status_t cracen_get_confirmation_keys(cracen_spake2p_operation_t *operation,
@@ -318,10 +325,14 @@ static psa_status_t cracen_p256_reduce(cracen_spake2p_operation_t *operation,
 				       uint8_t *result_buffer, const uint8_t *input,
 				       size_t input_length)
 {
+	int sx_status;
 	if (!input_length) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
+
 	const uint8_t *order = sx_pk_curve_order(operation->curve);
+
+	struct sx_pk_acq_req pkreq;
 
 	sx_const_op modulo = {.sz = CRACEN_P256_KEY_SIZE, .bytes = order};
 	sx_const_op b = {.sz = input_length, .bytes = input};
@@ -331,7 +342,14 @@ static psa_status_t cracen_p256_reduce(cracen_spake2p_operation_t *operation,
 	 * command.
 	 */
 	const struct sx_pk_cmd_def *cmd = SX_PK_CMD_ODD_MOD_REDUCE;
-	int sx_status = sx_mod_single_op_cmd(cmd, &modulo, &b, &result);
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_ODD_MOD_REDUCE);
+	if (pkreq.status) {
+		sx_pk_release_req(pkreq.req);
+		return silex_statuscodes_to_psa(pkreq.status);
+	}
+
+	sx_status = sx_sync_mod_single_op_cmd(&pkreq, cmd, &modulo, &b, &result);
+	sx_pk_release_req(pkreq.req);
 
 	return silex_statuscodes_to_psa(sx_status);
 }
@@ -639,12 +657,23 @@ static psa_status_t cracen_spake2p_get_L_from_w1(cracen_spake2p_operation_t *ope
 {
 	int sx_status;
 
+	struct sx_pk_acq_req pkreq;
+
 	sx_const_ecop w1 = {.sz = operation->curve->sz, .bytes = w1_buf};
 
 	sx_pk_affine_point L_pnt = {.x = {.sz = w1.sz, .bytes = L_buf},
 				    .y = {.sz = w1.sz, .bytes = L_buf + w1.sz}};
 
-	sx_status = sx_ecp_ptmult(operation->curve, &w1, SX_PTMULT_CURVE_GENERATOR, &L_pnt);
+	pkreq = sx_pk_acquire_req(SX_PK_CMD_ECC_PTMUL);
+	if (pkreq.status) {
+		sx_pk_release_req(pkreq.req);
+		return pkreq.status;
+	}
+
+	sx_status = sx_sync_ecp_ptmult(&pkreq, operation->curve, &w1,
+								SX_PTMULT_CURVE_GENERATOR, &L_pnt);
+
+	sx_pk_release_req(pkreq.req);
 
 	return silex_statuscodes_to_psa(sx_status);
 }

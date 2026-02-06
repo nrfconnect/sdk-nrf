@@ -417,6 +417,67 @@ static inline int sx_ecp_ptmult(const struct sx_pk_ecurve *curve, const sx_const
 	return status;
 }
 
+/** Compute point multiplication on an elliptic curve syncronuously
+ *
+ *  (Rx, Ry) = k * (Px, Py)
+ *
+ * @param[in,out] pkreq Acquired acceleration request for this operation
+ * @param[in] curve Elliptic curve used to perform point multiplication
+ * @param[in] k Scalar that multiplies point P
+ * @param[in] p Affine point P
+ * @param[out] r Affine point R
+ *
+ * @return ::SX_OK
+ * @return ::SX_ERR_NOT_INVERTIBLE
+ * @return ::SX_ERR_OUT_OF_RANGE
+ * @return ::SX_ERR_POINT_NOT_ON_CURVE
+ * @return ::SX_ERR_INVALID_PARAM
+ * @return ::SX_ERR_UNKNOWN_ERROR
+ * @return ::SX_ERR_BUSY
+ * @return ::SX_ERR_NOT_IMPLEMENTED
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PLATFORM_ERROR
+ * @return ::SX_ERR_EXPIRED
+ * @return ::SX_ERR_PK_RETRY
+ */
+static inline int sx_sync_ecp_ptmult(struct sx_pk_acq_req *pkreq,
+				const struct sx_pk_ecurve *curve, const sx_const_ecop *k,
+				const sx_pk_const_affine_point *p, sx_pk_affine_point *r)
+{
+	struct sx_pk_inops_ecp_mult inputs;
+
+	sx_pk_set_cmd(pkreq->req, SX_PK_CMD_ECC_PTMUL);
+
+	for (int i = 0; i < SX_MAX_ECC_ATTEMPTS; i++) {
+		pkreq->status = sx_pk_list_ecc_inslots(pkreq->req, curve,
+								0, (struct sx_pk_slot *)&inputs);
+		if (pkreq->status) {
+			return pkreq->status;
+		}
+		int opsz = sx_pk_get_opsize(pkreq->req);
+
+		sx_pk_ecop2mem(k, inputs.k.addr, opsz);
+		if (p == SX_PTMULT_CURVE_GENERATOR) {
+			sx_pk_write_curve_gen(pkreq->req, curve, inputs.px, inputs.py);
+		} else {
+			sx_pk_affpt2mem(p, inputs.px.addr, inputs.py.addr, opsz);
+		}
+
+		sx_pk_run(pkreq->req);
+
+		pkreq->status = sx_pk_wait(pkreq->req);
+		if (pkreq->status) {
+			return pkreq->status;
+		}
+	}
+	const uint8_t **outputs = sx_pk_get_output_ops(pkreq->req);
+	const int opsz = sx_pk_get_opsize(pkreq->req);
+
+	sx_pk_mem2affpt(outputs[0], outputs[1], opsz, r);
+
+	return pkreq->status;
+}
+
 /** Asynchronous EC point doubling.
  *
  * Starts an EC point doubling on the accelerator
@@ -1171,6 +1232,69 @@ static inline int sx_ecp_ptadd(const struct sx_pk_ecurve *curve, const sx_pk_con
 
 	status = sx_pk_wait(pkreq.req);
 	sx_async_ecp_add_end(pkreq.req, r);
+
+	return status;
+}
+
+/* Synchronous compute point addition on an elliptic curve
+ *
+ *  (Rx, Ry) = P1 + P2
+ *
+ * If P1 == P2 returns an SX_ERR_NOT_INVERTIBLE error
+ *
+ * @remark Use point doubling operation for the addition of equal points
+ *
+ * @param[in,out] pkreq Acquired acceleration request for this operation
+ * @param[in] curve Elliptic curve to do point addition
+ * @param[in] p1 The first point
+ * @param[in] p2 The second point
+ * @param[out] r The resulting point R
+ *
+ * @return ::SX_OK
+ * @return ::SX_ERR_NOT_INVERTIBLE
+ * @return ::SX_ERR_OUT_OF_RANGE
+ * @return ::SX_ERR_POINT_NOT_ON_CURVE
+ * @return ::SX_ERR_INVALID_PARAM
+ * @return ::SX_ERR_UNKNOWN_ERROR
+ * @return ::SX_ERR_BUSY
+ * @return ::SX_ERR_NOT_IMPLEMENTED
+ * @return ::SX_ERR_OPERAND_TOO_LARGE
+ * @return ::SX_ERR_PLATFORM_ERROR
+ * @return ::SX_ERR_EXPIRED
+ * @return ::SX_ERR_PK_RETRY
+ *
+ * @remark Use point doubling operation for the addition of equal points
+ * @see sx_ecp_double()
+ */
+static inline int sx_sync_ecp_ptadd(struct sx_pk_acq_req *pkreq,
+				   const struct sx_pk_ecurve *curve,
+				   const sx_pk_const_affine_point *p1,
+				   const sx_pk_const_affine_point *p2, sx_pk_affine_point *r)
+{
+	int status;
+	struct sx_pk_inops_ecp_add inputs;
+
+	sx_pk_set_cmd(pkreq->req, SX_PK_CMD_ECC_PT_ADD);
+	if (pkreq->status) {
+		return pkreq->status;
+	}
+
+	status = sx_pk_list_ecc_inslots(pkreq->req, curve, 0, (struct sx_pk_slot *)&inputs);
+	if (status) {
+		return status;
+	}
+	const int opsz = sx_pk_get_opsize(pkreq->req);
+
+	sx_pk_affpt2mem(p1, inputs.p1x.addr, inputs.p1y.addr, opsz);
+	sx_pk_affpt2mem(p2, inputs.p2x.addr, inputs.p2y.addr, opsz);
+
+	sx_pk_run(pkreq->req);
+
+	status = sx_pk_wait(pkreq->req);
+
+	const uint8_t **outputs = sx_pk_get_output_ops(pkreq->req);
+
+	sx_pk_mem2affpt(outputs[0], outputs[1], opsz, r);
 
 	return status;
 }
