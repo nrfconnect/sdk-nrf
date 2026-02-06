@@ -98,33 +98,13 @@ endfunction()
 function(ExternalNcsVariantProject_Add)
   cmake_parse_arguments(VBUILD "" "APPLICATION;VARIANT" "" ${ARGN})
 
-  ExternalProject_Get_Property(${VBUILD_APPLICATION} SOURCE_DIR BINARY_DIR)
-  set(${VBUILD_APPLICATION}_BINARY_DIR ${BINARY_DIR})
+  message(WARNING "ExternalNcsVariantProject_Add is deprecated and will be removed in the future."
+    "Please use ExternalZephyrVariantProject_Add instead.")
 
-  get_property(VARIANT_BOARD TARGET ${VBUILD_APPLICATION} PROPERTY BOARD)
-  if(DEFINED VARIANT_BOARD)
-    ExternalZephyrProject_Add(
-      APPLICATION ${VBUILD_VARIANT}
-      SOURCE_DIR ${SOURCE_DIR}
-      BOARD ${VARIANT_BOARD}
-      BUILD_ONLY true
+  ExternalZephyrVariantProject_Add(
+    APPLICATION ${VBUILD_VARIANT}
+    SOURCE_APP ${VBUILD_APPLICATION}
   )
-  else()
-    ExternalZephyrProject_Add(
-      APPLICATION ${VBUILD_VARIANT}
-      SOURCE_DIR ${SOURCE_DIR}
-      BUILD_ONLY true
-    )
-  endif()
-
-  set_property(TARGET ${VBUILD_VARIANT} PROPERTY NCS_VARIANT_APPLICATION ${VBUILD_APPLICATION})
-  set_property(TARGET ${VBUILD_VARIANT} APPEND PROPERTY _EP_CMAKE_ARGS
-    -DCONFIG_NCS_IS_VARIANT_IMAGE=y
-    -DPRELOAD_BINARY_DIR=${${VBUILD_APPLICATION}_BINARY_DIR}
-  )
-
-  # Configure variant image after application so that the configuration is present
-  sysbuild_add_dependencies(CONFIGURE ${VBUILD_VARIANT} ${VBUILD_APPLICATION})
 endfunction()
 
 # Usage:

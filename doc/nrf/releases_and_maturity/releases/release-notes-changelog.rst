@@ -81,6 +81,10 @@ Bootloaders and DFU
   * :ref:`nrf_smp_svr_sample`
   * :ref:`mcuboot_minimal_configuration`
 
+* Replaced ``ExternalNcsVariantProject_Add(..)`` CMake function with the ``ExternalZephyrVariantProject_Add(..)`` function.
+  The new function is defined and maintained in the Zephyr repository, providing a very similar API and functionality.
+  The old function is deprecated and kept for backward compatibility, but it will be removed in the future.
+
 Developing with nRF91 Series
 ============================
 
