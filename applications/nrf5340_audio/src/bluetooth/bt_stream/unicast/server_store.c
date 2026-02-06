@@ -585,9 +585,8 @@ static bool stream_check_pd(struct bt_cap_stream *existing_stream, void *user_da
 
 	if (existing_stream->bap_stream.group != ctx->incoming_stream->group) {
 		/* The existing stream is not in the same group as the incoming stream */
-		LOG_ERR("Existing stream group (%p) not same as incoming stream group (%p)",
-			(void *)existing_stream->bap_stream.group,
-			(void *)ctx->incoming_stream->group);
+		LOG_ERR("Existing group (%p) not same as incoming stream group (%p)",
+			existing_stream->bap_stream.group, ctx->incoming_stream->group);
 		ctx->ret = -EINVAL;
 		return true;
 	}
@@ -647,6 +646,8 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 	valid_entry_check(__func__);
 
 	int ret;
+
+	LOG_ERR("SHALL NOT BE USED");
 
 	if (stream == NULL || computed_pres_dly_us == NULL || existing_pres_dly_us == NULL ||
 	    server_qos_pref == NULL || group_reconfig_needed == NULL) {
@@ -875,6 +876,8 @@ int srv_store_max_trans_lat_find(struct bt_bap_stream const *const stream,
 {
 	int ret;
 
+	LOG_ERR("SHALL NOT BE USED");
+
 	valid_entry_check(__func__);
 
 	if (stream == NULL || new_max_trans_lat_ms == NULL || server_qos_pref == NULL ||
@@ -961,6 +964,8 @@ static bool stream_trans_lat_set(struct bt_cap_stream *existing_stream, void *us
 {
 	struct foreach_trans_lat_store *ctx = (struct foreach_trans_lat_store *)user_data;
 
+	LOG_ERR("SHALL NOT BE USED");
+
 	if (existing_stream->bap_stream.ep == NULL) {
 		/* Another stream may not yet have been through the stream_configured_cb
 		 * This is no problem, as the last stream to go through will set the
@@ -996,6 +1001,8 @@ int srv_store_max_trans_lat_set(struct bt_cap_unicast_group *unicast_group, enum
 				uint16_t max_trans_lat_ms)
 {
 	valid_entry_check(__func__);
+
+	LOG_ERR("SHALL NOT BE USED");
 
 	if (unicast_group == NULL) {
 		LOG_ERR("No valid unicast group pointer received");
@@ -1787,12 +1794,20 @@ static bool streams_calc_pres_dly(struct bt_cap_stream *stream, void *user_data)
 {
 	int ret;
 	struct foreach_stream_pres_dly *ctx = (struct foreach_stream_pres_dly *)user_data;
+	struct bt_cap_unicast_group_info info;
 
-	if (stream->bap_stream.group != ctx->unicast_group) {
+	ret = bt_cap_unicast_group_get_info(ctx->unicast_group, &info);
+	if (ret) {
+		LOG_ERR("Failed to get unicast group info: %d", ret);
+		ctx->ret = ret;
+		return true;
+	}
+
+	if (stream->bap_stream.group != info.unicast_group) {
 		/* The existing stream is not in the same group as we are checking.
 		This is not an error as such, but the system for now supports a single group.*/
 		LOG_ERR("Existing stream group (%p) not same as incoming stream group (%p)",
-			(void *)ctx->unicast_group, (void *)ctx->unicast_group);
+			(void *)info.unicast_group, stream->bap_stream.group);
 		ctx->ret = -EINVAL;
 		return true;
 	}
@@ -1823,14 +1838,9 @@ static bool streams_calc_pres_dly(struct bt_cap_stream *stream, void *user_data)
 	if (ep_info.dir == BT_AUDIO_DIR_SINK) {
 		/* Sink stream */
 		ctx->streams_checked_snk++;
+		LOG_WRN("Checking sink %d", ctx->streams_checked_snk);
 		if (ctx->existing_pres_dly_us_snk == UINT32_MAX) {
 			ctx->existing_pres_dly_us_snk = stream->bap_stream.qos->pd;
-		} else if (ctx->existing_pres_dly_us_snk != stream->bap_stream.qos->pd) {
-			LOG_ERR("Existing sink streams have differing presentation delays: %u us "
-				"and %u us",
-				ctx->existing_pres_dly_us_snk, stream->bap_stream.qos->pd);
-			ctx->ret = -EINVAL;
-			return true;
 		}
 
 		if (ctx->existing_pres_dly_us_snk == 0) {
@@ -1850,12 +1860,6 @@ static bool streams_calc_pres_dly(struct bt_cap_stream *stream, void *user_data)
 		ctx->streams_checked_src++;
 		if (ctx->existing_pres_dly_us_src == UINT32_MAX) {
 			ctx->existing_pres_dly_us_src = stream->bap_stream.qos->pd;
-		} else if (ctx->existing_pres_dly_us_src != stream->bap_stream.qos->pd) {
-			LOG_ERR("Existing sink streams have differing presentation delays: %u us "
-				"and %u us",
-				ctx->existing_pres_dly_us_src, stream->bap_stream.qos->pd);
-			ctx->ret = -EINVAL;
-			return true;
 		}
 
 		if (ctx->existing_pres_dly_us_snk == 0) {
@@ -1931,10 +1935,11 @@ static void pd_print(struct bt_bap_qos_cfg_pref pref, uint32_t existing_pd_us,
 		strcpy(calculated_pd_buf, "N/A");
 	}
 
-	LOG_INF("PD: \t\t abs min: %05u pref min: %05u pref max: %05u  abs max: %05u\r\n"
-		"\t selected: %s us, existing: %s us",
-		pref.pd_min, pref.pref_pd_min, pref.pref_pd_max, pref.pd_max, calculated_pd_buf,
-		existing_pd_buf);
+	LOG_INF("\tPD abs min: %u ", pref.pd_min);
+	LOG_INF("\tPD pref min: %u ", pref.pref_pd_min);
+	LOG_INF("\tPD pref max: %u ", pref.pref_pd_max);
+	LOG_INF("\tPD abs max: %u ", pref.pd_max);
+	LOG_INF("\tExisting PD: %s us, selected: %s us", existing_pd_buf, calculated_pd_buf);
 }
 
 // This needs to be called only once, after all streams have been through the configured cb
@@ -1998,7 +2003,7 @@ int srv_store_pres_delay_get(struct bt_cap_unicast_group *unicast_group, uint32_
 			return ret;
 		}
 		LOG_INF("Source PD: (%d streams checked)", foreach_data.streams_checked_snk);
-		pd_print(common_qos_src, foreach_data.existing_pres_dly_us_src, *pres_dly_src_us);
+		pd_print(common_qos_snk, foreach_data.existing_pres_dly_us_snk, *pres_dly_snk_us);
 	}
 
 	if (foreach_data.streams_checked_src == 0) {
