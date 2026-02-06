@@ -525,15 +525,26 @@ int le_audio_print_cig(struct bt_cap_unicast_group const *const unicast_group)
 	}
 
 	LOG_INF("CIG Index: %d", unicast_group->bap_unicast_group->index);
-	LOG_INF("\nSink PD: %d us", unicast_group->bap_unicast_group->sink_pd);
-	LOG_INF("\nSource PD: %d us", unicast_group->bap_unicast_group->source_pd);
-	LOG_INF("\nC->P interval : %d us",
+
+	if (unicast_group->bap_unicast_group->sink_pd != BT_BAP_PD_UNSET) {
+		LOG_INF("\tSink PD: %u us", unicast_group->bap_unicast_group->sink_pd);
+	} else {
+		LOG_INF("\tSink PD: Not set");
+	}
+
+	if (unicast_group->bap_unicast_group->source_pd != BT_BAP_PD_UNSET) {
+		LOG_INF("\tSource PD: %u us", unicast_group->bap_unicast_group->source_pd);
+	} else {
+		LOG_INF("\tSource PD: Not set");
+	}
+	LOG_INF("\tC->P interval : %d us",
 		unicast_group->bap_unicast_group->cig_param.c_to_p_interval);
-	LOG_INF("\nP->C interval : %d us",
-		unicast_group->bap_unicast_group->cig_param.p_to_c_interval);
-	LOG_INF("\nC->P latency  : %d ms",
+	LOG_INF("\tC->P latency  : %d ms",
 		unicast_group->bap_unicast_group->cig_param.c_to_p_latency);
-	LOG_INF("\nP->C latency  : %d ms",
+	LOG_INF("\tP->C interval : %d us",
+		unicast_group->bap_unicast_group->cig_param.p_to_c_interval);
+
+	LOG_INF("\tP->C latency  : %d ms",
 		unicast_group->bap_unicast_group->cig_param.p_to_c_latency);
 
 	return 0;
