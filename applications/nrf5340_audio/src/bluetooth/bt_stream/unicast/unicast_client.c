@@ -136,6 +136,8 @@ static void cap_proc_waiting_check(void)
 		return;
 	}
 
+	LOG_WRN("CAP procedure %d received from queue", proc);
+
 	switch (proc) {
 	case CAP_PROCEDURE_START:
 		unicast_client_start(0);
@@ -916,7 +918,8 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 	}
 
 	srv_store_unlock();
-	k_work_submit(&cap_start_work);
+	k_work_submit(&cap_start_work); // Why do we submit here instead of putting it on the queue
+					// like the other procedures?
 }
 
 #if (CONFIG_BT_AUDIO_TX)
@@ -1028,6 +1031,7 @@ static int all_streams_configured(void)
 	/* Check if a group reconfiguration is required */
 
 	if (action != GROUP_ACTION_REQ_NONE) {
+
 		LOG_INF("Group action required: %d", action);
 
 		/* first we need to cancel all operations, */
@@ -1261,7 +1265,7 @@ static void stream_metadata_updated_cb(struct bt_bap_stream *stream)
 
 static void stream_disabled_cb(struct bt_bap_stream *stream)
 {
-	LOG_DBG("Audio Stream %p disabled", (void *)stream);
+	LOG_INF("Audio Stream %p disabled", (void *)stream);
 }
 
 static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
@@ -1432,7 +1436,7 @@ static void unicast_start_complete_cb(int err, struct bt_conn *conn)
 		LOG_WRN("Failed start_complete for conn: %p, err: %d", (void *)conn, err);
 	}
 
-	LOG_INF("Unicast start complete cb");
+	LOG_WRN("Unicast start complete cb");
 	ret = le_audio_print_cig(unicast_group);
 	if (ret) {
 		LOG_ERR("Failed to print CIG info: %d", ret);
@@ -1458,6 +1462,8 @@ static void unicast_update_complete_cb(int err, struct bt_conn *conn)
 	if (ret) {
 		LOG_ERR("Failed to print CIG info: %d", ret);
 	}
+
+	cap_proc_waiting_check();
 }
 
 static void unicast_stop_complete_cb(int err, struct bt_conn *conn)
@@ -1468,7 +1474,7 @@ static void unicast_stop_complete_cb(int err, struct bt_conn *conn)
 		LOG_WRN("Failed stop_complete for conn: %p, err: %d", (void *)conn, err);
 	}
 
-	LOG_DBG("Unicast stop complete cb");
+	LOG_WRN("Unicast stop complete cb");
 	playing_state = false;
 
 	cap_proc_waiting_check();
