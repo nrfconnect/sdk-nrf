@@ -265,6 +265,7 @@ The following recommendations help optimize memory placement and cache usage to 
 
 * Relocate frequently accessed code and data to local RAM to avoid waking global domains, especially MRAM, which uses high power.
   For more information, see the :ref:`zephyr:code_data_relocation` page.
+* Execute the radio core image from Tightly Coupled Memory (TCM).
 * Profile L1 cache usage to minimize MRAM accesses.
   For more information, see ``nrf_cache_hal`` in the `nrfx API documentation`_.
 * Configure the MRAM latency manager:
@@ -275,6 +276,34 @@ The following recommendations help optimize memory placement and cache usage to 
     * ``y`` allows requesting low latency MRAM when needed.
 
   * :kconfig:option:`CONFIG_MRAM_LATENCY_AUTO_REQ` set to ``n`` prevents MRAM from always being in low latency/higher current mode.
+
+Execute radio code from TCM
+---------------------------
+
+You can configure the radio core firmware to execute from the Tightly Coupled Memory (TCM), which is the radio core local RAM.
+
+Accessing TCM consumes less energy and provides faster execution than accessing MRAM.
+This configuration can improve application energy efficiency, depending on the amount of radio traffic in your application.
+Higher radio usage results in more significant power savings.
+However, if your application keeps the application core active for significantly longer periods than the radio core, the power savings from executing the radio core firmware from TCM might be negligible.
+In this case, MRAM remains powered regardless of the radio core configuration.
+Therefore, executing the radio core firmware from TCM provides no additional benefit.
+To enable code execution from TCM on the nRF54H20 radio core, follow the steps as described in detail in the :ref:`idle_relocated_tcm_sample` sample.
+The sample demonstrates how to configure the memory map in the devicetree, how to use :ref:`zephyr:sysbuild` to add the ``radio_loader`` image, and how this configuration integrates with MCUboot.
+When you configure your application to execute the radio firmware from the TCM, the build system generates two images for the radio core:
+
+* The ``radio_loader`` image.
+* The radio core firmware image, built with the :kconfig:option:`CONFIG_XIP` option set to ``n``, linked against the TCM partition, and relocated to MRAM using the :kconfig:option:`CONFIG_BUILD_OUTPUT_ADJUST_LMA` option.
+
+The linker places both images adjacent to each other.
+At application boot, the radio core first executes the radio loader firmware.
+The radio loader copies the radio core firmware to TCM and then jumps to the boot address of the copied image.
+If your application uses the MCUboot bootloader in *Direct-XIP* mode, you can relocate the radio core firmware to TCM by using either merged-slot mode or manifest mode.
+In both cases, the build system merges the radio loader and the radio core firmware images into a single image.
+The bootloader then interprets them as a single image.
+
+.. note::
+    To ensure that the radio core executes code from TCM, the entire image, including all data sections, must fit within the local RAM region of the radio core (192 KB).
 
 Peripheral and clock recommendations
 ====================================

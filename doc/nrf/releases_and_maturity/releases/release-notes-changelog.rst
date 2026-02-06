@@ -807,4 +807,5 @@ cJSON
 Documentation
 =============
 
+* Added a section in :ref:`ug_nrf54h20_pm_optimization` about optimizing power on the nRF54H20 SoC by relocating the radio core firmware to TCM.
 * Removed references to JITP in different areas of the documentation.
