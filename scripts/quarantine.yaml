@@ -147,3 +147,10 @@
   platforms:
     - nrf7120dk/nrf7120/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37414"
+
+- scenarios:
+    - sample.mcumgr.smp_svr.nrf.bt
+    - sample.mcumgr.smp_svr.nrf.mcuboot_flags.direct_xip_withrevert
+  platforms:
+    - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37537"
