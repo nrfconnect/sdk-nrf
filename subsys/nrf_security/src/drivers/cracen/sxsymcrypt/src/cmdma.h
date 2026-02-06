@@ -6,7 +6,7 @@
  */
 
 #include "crypmasterregs.h"
-#include <security/cracen.h>
+#include <hardware/cracen.h>
 #include <sxsymcrypt/internal.h>
 
 #ifndef CMDMA_HEADER_FILE

@@ -10,11 +10,15 @@ list(APPEND cracen_driver_include_dirs
   ${CMAKE_CURRENT_LIST_DIR}/include
 )
 
+list(APPEND cracen_driver_internal_include_dirs
+  ${CMAKE_CURRENT_LIST_DIR}/src
+)
+
 list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa.c
   ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_helpers.c
   ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_keygen.c
-  ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rndinrange.c
+  ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_key_management.c
 )
 
 if(BUILD_INSIDE_TFM)
@@ -27,6 +31,8 @@ endif()
 # nRF54LM20A uses only cracen_sw
 if(NOT CONFIG_PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
   list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/aes/cracen_aes_ecb.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/aes/cracen_aes_cbc.c
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_cipher.c
   )
 endif()
@@ -39,7 +45,7 @@ endif()
 
 if(CONFIG_CRACEN_IKG)
   list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_ikg.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_ikg_operations.c
   )
 endif()
 
@@ -64,9 +70,11 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_sign_verify.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecdsa.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_keygen.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_key_management.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_eddsa_ed25519.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_eddsa_ed448.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rndinrange.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_signature.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/rsa/cracen_rsa_signature.c
   )
 endif()
 
@@ -105,10 +113,15 @@ endif()
 
 if(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KMU_DRIVER OR CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
   list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_ikg.c
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_management.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/rsa/cracen_rsa_key_management.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/pake/cracen_wpa3_key_management.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/pake/cracen_spake2p_key_management.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/pake/cracen_srp_key_management.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecdsa.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_keygen.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/internal/cracen_rndinrange.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_key_management.c
   )
 endif()
 
@@ -123,25 +136,25 @@ endif()
 if(CONFIG_PSA_NEED_CRACEN_PAKE_DRIVER)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_pake.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_spake2p.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/pake/cracen_psa_spake2p.c
   )
 endif()
 
 if(CONFIG_PSA_NEED_CRACEN_ECJPAKE_SECP_R1_256)
   list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_jpake.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/pake/cracen_psa_jpake.c
   )
 endif()
 
 if(CONFIG_PSA_NEED_CRACEN_SRP_6)
   list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_srp.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/pake/cracen_psa_srp.c
   )
 endif()
 
 if(CONFIG_PSA_NEED_CRACEN_WPA3_SAE)
   list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_wpa3_sae.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/pake/cracen_psa_wpa3_sae.c
   )
 endif()
 
@@ -161,6 +174,9 @@ endif()
 
 if(CONFIG_PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER)
   list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecdh/cracen_ecdh_montgomery.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecdh/cracen_ecdh_weierstrass.c
+
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_derivation.c
   )
 endif()

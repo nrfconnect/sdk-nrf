@@ -10,7 +10,7 @@
 #include "hal/nrf_cracen.h"
 #include <cracen/interrupts.h>
 #include <cracen/statuscodes.h>
-#include <security/cracen.h>
+#include <hardware/cracen.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <zephyr/kernel.h>

@@ -7,7 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-#include <security/cracen.h>
+#include <hardware/cracen.h>
 #include <cracen/interrupts.h>
 #include <cracen/statuscodes.h>
 #include <cracen/common.h>
