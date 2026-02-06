@@ -14,7 +14,7 @@
 #include "cracen_psa_primitives.h"
 #include <sxsymcrypt/blkcipher.h>
 #include <cracen/statuscodes.h>
-#include <security/cracen.h>
+#include <hardware/cracen.h>
 #include <sxsymcrypt/trng.h>
 #include <sxsymcrypt/aes.h>
 #include <sxsymcrypt/keyref.h>
