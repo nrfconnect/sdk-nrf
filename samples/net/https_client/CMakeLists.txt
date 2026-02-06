@@ -19,5 +19,5 @@ generate_inc_file_for_target(
     )
 
 # NORDIC SDK APP START
-target_sources(app PRIVATE src/main.c src/glue_nrf91_raw_ip.c)
+target_sources(app PRIVATE src/main.c src/nrf91_modem_if.c src/lte_ip_addr_helper.c)
 # NORDIC SDK APP END
