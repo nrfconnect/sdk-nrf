@@ -9,6 +9,7 @@
 
 #include <zephyr/net/net_ip.h>
 #include <zephyr/shell/shell.h>
+#include <zephyr/sys/util.h>
 
 #include <openthread/cli.h>
 #include <openthread/coap.h>
@@ -28,6 +29,8 @@
 #include <string.h>
 
 #define PORT 1212
+/** Maximum UDP payload length for generated payload (-s), aligned to IPv6 MTU. */
+#define MAX_UDP_GENERATED_PAYLOAD_LEN 1280
 
 #define MAX_SUBTYPES 4
 #define MAX_TXT_SIZE 128
@@ -2021,6 +2024,91 @@ static int cmd_udp_connect(const struct shell *sh, size_t argc, char *argv[])
 	return ot_cli_command_exec(cmd_udp_connect_impl, sh, argc, argv);
 }
 
+#define UDP_HEX_CHUNK_BYTES 128
+
+/** Append hex string as binary payload to message (uses Zephyr hex2bin). */
+static otError udp_append_hex_payload(otMessage *msg, const char *hex_str)
+{
+	size_t hex_len = strlen(hex_str);
+	uint8_t buf[UDP_HEX_CHUNK_BYTES];
+
+	while (hex_len > 0) {
+		size_t chunk_hex = MIN(hex_len, sizeof(buf) * 2);
+		size_t n = hex2bin(hex_str, chunk_hex, buf, sizeof(buf));
+
+		if (n == 0) {
+			return OT_ERROR_INVALID_ARGS;
+		}
+		otError err = otMessageAppend(msg, buf, n);
+
+		if (err != OT_ERROR_NONE) {
+			return err;
+		}
+		hex_str += chunk_hex;
+		hex_len -= chunk_hex;
+	}
+	return OT_ERROR_NONE;
+}
+
+/** Append generated payload of given length (0-9, A-Z, a-z cycling). */
+static otError udp_append_generated_payload(otMessage *msg, uint16_t payload_length)
+{
+	static const char cycle[] =
+		"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	const size_t cycle_len = sizeof(cycle) - 1;
+
+	while (payload_length > 0) {
+		uint16_t n = (uint16_t)MIN(payload_length, cycle_len);
+		otError err = otMessageAppend(msg, cycle, n);
+
+		if (err != OT_ERROR_NONE) {
+			return err;
+		}
+		payload_length -= n;
+	}
+	return OT_ERROR_NONE;
+}
+
+/** Payload type for UDP send command. */
+enum udp_send_payload_type {
+	UDP_SEND_PAYLOAD_TEXT,
+	UDP_SEND_PAYLOAD_HEX,
+	UDP_SEND_PAYLOAD_GENERATED,
+	UDP_SEND_PAYLOAD_INVALID,
+};
+
+static otError udp_send_append_text_payload(otMessage *msg, const char *value_str)
+{
+	return otMessageAppend(msg, value_str, strlen(value_str));
+}
+
+static otError udp_send_append_hex_payload_by_str(otMessage *msg, const char *value_str)
+{
+	if (value_str[0] == '\0') {
+		return OT_ERROR_INVALID_ARGS;
+	}
+	return udp_append_hex_payload(msg, value_str);
+}
+
+static otError udp_send_append_generated_payload_by_str(otMessage *msg,
+						       const char *value_str,
+						       const struct shell *sh)
+{
+	unsigned long value;
+	int rc = 0;
+
+	shell_print(sh, "Generated payload length: %s", value_str);
+	value = shell_strtoul(value_str, 0, &rc);
+	if (rc != 0) {
+		shell_error(sh, "Invalid argument: %s, rc: %d", value_str, rc);
+		return OT_ERROR_INVALID_ARGS;
+	}
+	if (value > UINT16_MAX || value > MAX_UDP_GENERATED_PAYLOAD_LEN) {
+		return OT_ERROR_INVALID_ARGS;
+	}
+	return udp_append_generated_payload(msg, (uint16_t)value);
+}
+
 static otError cmd_udp_send_impl(const struct shell *sh, size_t argc, char *argv[])
 {
 	otError error;
@@ -2031,9 +2119,32 @@ static otError cmd_udp_send_impl(const struct shell *sh, size_t argc, char *argv
 	};
 	otMessage *msg;
 	int rc = 0;
+	bool has_type = (argc == 3 || argc == 5);
+	const char *type_str = has_type ? argv[argc - 2] : NULL;
+	const char *value_str = argv[argc - 1];
+	enum udp_send_payload_type payload_type;
+
+	ARG_UNUSED(sh);
 
 	if (!otUdpIsOpen(NULL, &udp_socket)) {
 		return OT_ERROR_INVALID_STATE;
+	}
+
+	/* Parse payload type. */
+	if (!has_type) {
+		payload_type = UDP_SEND_PAYLOAD_TEXT;
+	} else if (strcmp(type_str, "-t") == 0) {
+		payload_type = UDP_SEND_PAYLOAD_TEXT;
+	} else if (strcmp(type_str, "-x") == 0) {
+		payload_type = UDP_SEND_PAYLOAD_HEX;
+	} else if (strcmp(type_str, "-s") == 0) {
+		payload_type = UDP_SEND_PAYLOAD_GENERATED;
+	} else {
+		payload_type = UDP_SEND_PAYLOAD_INVALID;
+	}
+
+	if (payload_type == UDP_SEND_PAYLOAD_INVALID) {
+		return OT_ERROR_INVALID_ARGS;
 	}
 
 	memset(&msg_info, 0, sizeof(msg_info));
@@ -2054,7 +2165,21 @@ static otError cmd_udp_send_impl(const struct shell *sh, size_t argc, char *argv
 		return OT_ERROR_NO_BUFS;
 	}
 
-	error = otMessageAppend(msg, argv[argc - 1], strlen(argv[argc - 1]));
+	switch (payload_type) {
+	case UDP_SEND_PAYLOAD_TEXT:
+		error = udp_send_append_text_payload(msg, value_str);
+		break;
+	case UDP_SEND_PAYLOAD_HEX:
+		error = udp_send_append_hex_payload_by_str(msg, value_str);
+		break;
+	case UDP_SEND_PAYLOAD_GENERATED:
+		error = udp_send_append_generated_payload_by_str(msg, value_str, sh);
+		break;
+	case UDP_SEND_PAYLOAD_INVALID:
+		error = OT_ERROR_INVALID_ARGS;
+		break;
+	}
+
 	if (error != OT_ERROR_NONE) {
 		otMessageFree(msg);
 		return error;
@@ -2087,7 +2212,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	udp_cmds, SHELL_CMD_ARG(open, NULL, "Open socket", cmd_udp_open, 1, 0),
 	SHELL_CMD_ARG(bind, NULL, "Bind socket [-u|-b] <addr> <port>", cmd_udp_bind, 3, 1),
 	SHELL_CMD_ARG(connect, NULL, "Connect socket <addr> <port>", cmd_udp_connect, 3, 0),
-	SHELL_CMD_ARG(send, NULL, "Send message [addr port] <message>", cmd_udp_send, 2, 2),
+	SHELL_CMD_ARG(send, NULL, "Send message [addr port] [-t|-x|-s] <message|hex|length>",
+		      cmd_udp_send, 2, 3),
 	SHELL_CMD_ARG(close, NULL, "Close socket", cmd_udp_close, 1, 0), SHELL_SUBCMD_SET_END);
 
 static otError cmd_channel_impl(const struct shell *sh, size_t argc, char *argv[])
