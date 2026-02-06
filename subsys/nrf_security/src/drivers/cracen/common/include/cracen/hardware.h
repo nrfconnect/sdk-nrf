@@ -11,8 +11,8 @@
  * @{
  */
 
-#ifndef CRACEN_H_
-#define CRACEN_H_
+#ifndef CRACEN_HARDWARE_H_
+#define CRACEN_HARDWARE_H_
 
 #include <stdint.h>
 #include <stdbool.h>

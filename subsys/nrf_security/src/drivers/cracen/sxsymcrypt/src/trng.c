@@ -10,7 +10,7 @@
 #include "hw.h"
 #include "ba431regs.h"
 #include "cmdma.h"
-#include <security/cracen.h>
+#include <cracen/hardware.h>
 
 #ifndef RNG_CLKDIV
 #define RNG_CLKDIV				(241)

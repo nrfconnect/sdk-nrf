@@ -113,7 +113,7 @@
 #endif
 #include "cracen_psa.h"
 #include "cracen_psa_ctr_drbg.h"
-#include "security/cracen.h"
+#include "cracen/hardware.h"
 #endif /* PSA_CRYPTO_DRIVER_CRACEN */
 
 /* Include TF-M builtin key driver */

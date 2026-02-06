@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include "../../crypmasterregs.h"
 #include "../../cmdma.h"
-#include <security/cracen.h>
+#include <cracen/hardware.h>
 #include <cracen/statuscodes.h>
 
 #include <nrf_security_mutexes.h>

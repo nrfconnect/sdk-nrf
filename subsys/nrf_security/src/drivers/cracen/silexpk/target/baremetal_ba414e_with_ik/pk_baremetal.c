@@ -21,7 +21,7 @@
 #include "internal.h"
 
 #include <hal/nrf_cracen.h>
-#include <security/cracen.h>
+#include <cracen/hardware.h>
 #include <nrf_security_mutexes.h>
 
 #if defined(CONFIG_CRACEN_HW_VERSION_LITE) &&                                                      \
