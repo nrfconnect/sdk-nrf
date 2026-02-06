@@ -7,7 +7,9 @@
 #include "app_task.h"
 
 #include "battery.h"
+#ifdef CONFIG_MATTER_WEATHER_STATION_BUZZER
 #include "buzzer.h"
+#endif
 
 #include "app/matter_init.h"
 #include "app/task_executor.h"
@@ -27,6 +29,12 @@
 
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/logging/log.h>
+
+#ifdef CONFIG_MATTER_WEATHER_STATION_BUZZER
+#define IDENTIFY_TYPE Clusters::Identify::IdentifyTypeEnum::kAudibleBeep
+#else
+#define IDENTIFY_TYPE Clusters::Identify::IdentifyTypeEnum::kLightOutput
+#endif
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
@@ -84,9 +92,11 @@ public:
 	{
 		Nrf::PostTask([] {
 			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(Nrf::LedConsts::kIdentifyBlinkRate_ms);
+#if CONFIG_MATTER_WEATHER_STATION_BUZZER
 			k_timer_start(&sIdentifyTimer, K_MSEC(kIdentifyTimerIntervalMs),
 				      K_MSEC(kIdentifyTimerIntervalMs));
 			BuzzerSetState(true);
+#endif
 		});
 	}
 
@@ -94,8 +104,10 @@ public:
 	{
 		Nrf::PostTask([] {
 			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
+#if CONFIG_MATTER_WEATHER_STATION_BUZZER
 			k_timer_stop(&sIdentifyTimer);
 			BuzzerSetState(false);
+#endif
 		});
 	}
 
@@ -106,7 +118,9 @@ public:
 	 */
 	void OnTriggerEffect(chip::app::Clusters::IdentifyCluster &cluster) override
 	{
+#if CONFIG_MATTER_WEATHER_STATION_BUZZER
 		Nrf::PostTask([] { BuzzerToggleState(); });
+#endif
 	}
 
 	bool IsTriggerEffectEnabled() const override { return false; }
@@ -117,11 +131,11 @@ DefaultTimerDelegate sTimerDelegate;
 
 Nrf::Matter::IdentifyCluster sIdentifyTemperature(kTemperatureMeasurementEndpointId,
 						  sIdentifyDelegateImplWeatherStation, sTimerDelegate,
-						  Clusters::Identify::IdentifyTypeEnum::kAudibleBeep);
+						  IDENTIFY_TYPE);
 Nrf::Matter::IdentifyCluster sIdentifyHumidity(kHumidityMeasurementEndpointId, sIdentifyDelegateImplWeatherStation,
-					       sTimerDelegate, Clusters::Identify::IdentifyTypeEnum::kAudibleBeep);
+					       sTimerDelegate, IDENTIFY_TYPE);
 Nrf::Matter::IdentifyCluster sIdentifyPressure(kPressureMeasurementEndpointId, sIdentifyDelegateImplWeatherStation,
-					       sTimerDelegate, Clusters::Identify::IdentifyTypeEnum::kAudibleBeep);
+						sTimerDelegate, IDENTIFY_TYPE);
 
 } /* namespace */
 
@@ -132,26 +146,28 @@ void AppTask::MeasurementsTimerHandler()
 
 void AppTask::IdentifyTimerHandler()
 {
+#if CONFIG_MATTER_WEATHER_STATION_BUZZER
 	BuzzerToggleState();
+#endif
 }
 
 void AppTask::UpdateTemperatureClusterState()
 {
-	struct sensor_value sTemperature;
+	sensor_value temperature;
 	Protocols::InteractionModel::Status status;
-	int result = sensor_channel_get(sBme688SensorDev, SENSOR_CHAN_AMBIENT_TEMP, &sTemperature);
+	int result = sensor_channel_get(sBme688SensorDev, SENSOR_CHAN_AMBIENT_TEMP, &temperature);
 	if (result == 0) {
 		/* Defined by cluster temperature measured value = 100 x temperature in degC with resolution of
 		 * 0.01 degC. val1 is an integer part of the value and val2 is fractional part in one-millionth
 		 * parts. To achieve resolution of 0.01 degC val2 needs to be divided by 10000. */
-		int16_t newValue = static_cast<int16_t>(sTemperature.val1 * 100 + sTemperature.val2 / 10000);
+		int16_t newValue = static_cast<int16_t>(temperature.val1 * 100 + temperature.val2 / 10000);
 
 		if (newValue > kTemperatureMeasurementAttributeMaxValue ||
 		    newValue < kTemperatureMeasurementAttributeMinValue) {
 			/* Read value exceeds permitted limits, so assign invalid value code to it. */
 			newValue = kTemperatureMeasurementAttributeInvalidValue;
 		}
-		LOG_DBG("New temperature measurement %d.%d *C", sTemperature.val1, sTemperature.val2);
+		LOG_DBG("New temperature measurement %d.%d *C", temperature.val1, temperature.val2);
 
 		status = Clusters::TemperatureMeasurement::Attributes::MeasuredValue::Set(
 			kTemperatureMeasurementEndpointId, newValue);
@@ -165,21 +181,21 @@ void AppTask::UpdateTemperatureClusterState()
 
 void AppTask::UpdatePressureClusterState()
 {
-	struct sensor_value sPressure;
+	sensor_value pressure;
 	Protocols::InteractionModel::Status status;
-	int result = sensor_channel_get(sBme688SensorDev, SENSOR_CHAN_PRESS, &sPressure);
+	int result = sensor_channel_get(sBme688SensorDev, SENSOR_CHAN_PRESS, &pressure);
 	if (result == 0) {
 		/* Defined by cluster pressure measured value = 10 x pressure in kPa with resolution of 0.1 kPa.
 		 * val1 is an integer part of the value and val2 is fractional part in one-millionth parts.
 		 * To achieve resolution of 0.1 kPa val2 needs to be divided by 100000. */
-		int16_t newValue = static_cast<int16_t>(sPressure.val1 * 10 + sPressure.val2 / 100000);
+		int16_t newValue = static_cast<int16_t>(pressure.val1 * 10 + pressure.val2 / 100000);
 
 		if (newValue > kPressureMeasurementAttributeMaxValue ||
 		    newValue < kPressureMeasurementAttributeMinValue) {
 			/* Read value exceeds permitted limits, so assign invalid value code to it. */
 			newValue = kPressureMeasurementAttributeInvalidValue;
 		}
-		LOG_DBG("New pressure measurement %d.%d kPa", sPressure.val1, sPressure.val2);
+		LOG_DBG("New pressure measurement %d.%d kPa", pressure.val1, pressure.val2);
 
 		status = Clusters::PressureMeasurement::Attributes::MeasuredValue::Set(kPressureMeasurementEndpointId,
 										       newValue);
@@ -193,21 +209,21 @@ void AppTask::UpdatePressureClusterState()
 
 void AppTask::UpdateRelativeHumidityClusterState()
 {
-	struct sensor_value sHumidity;
+	sensor_value humidity;
 	Protocols::InteractionModel::Status status;
-	int result = sensor_channel_get(sBme688SensorDev, SENSOR_CHAN_HUMIDITY, &sHumidity);
+	int result = sensor_channel_get(sBme688SensorDev, SENSOR_CHAN_HUMIDITY, &humidity);
 	if (result == 0) {
 		/* Defined by cluster humidity measured value = 100 x humidity in %RH with resolution of 0.01 %.
 		 * val1 is an integer part of the value and val2 is fractional part in one-millionth parts.
 		 * To achieve resolution of 0.01 % val2 needs to be divided by 10000. */
-		uint16_t newValue = static_cast<int16_t>(sHumidity.val1 * 100 + sHumidity.val2 / 10000);
+		uint16_t newValue = static_cast<int16_t>(humidity.val1 * 100 + humidity.val2 / 10000);
 
 		if (newValue > kHumidityMeasurementAttributeMaxValue ||
 		    newValue < kHumidityMeasurementAttributeMinValue) {
 			/* Read value exceeds permitted limits, so assign invalid value code to it. */
 			newValue = kHumidityMeasurementAttributeInvalidValue;
 		}
-		LOG_DBG("New humidity measurement %d.%d %%", sHumidity.val1, sHumidity.val2);
+		LOG_DBG("New humidity measurement %d.%d %%", humidity.val1, humidity.val2);
 
 		status = Clusters::RelativeHumidityMeasurement::Attributes::MeasuredValue::Set(
 			kHumidityMeasurementEndpointId, newValue);
@@ -385,29 +401,33 @@ CHIP_ERROR AppTask::Init()
 		return chip::System::MapErrorZephyr(-ENODEV);
 	}
 
-	int ret = BatteryMeasurementInit();
-	if (ret) {
+#if CONFIG_MATTER_WEATHER_STATION_BATTERY
+	int ret_battery = BatteryMeasurementInit();
+	if (ret_battery) {
 		LOG_ERR("Battery measurement init failed");
-		return chip::System::MapErrorZephyr(ret);
+		return chip::System::MapErrorZephyr(ret_battery);
 	}
 
-	ret = BatteryMeasurementEnable();
-	if (ret) {
+	ret_battery = BatteryMeasurementEnable();
+	if (ret_battery) {
 		LOG_ERR("Enabling battery measurement failed");
-		return chip::System::MapErrorZephyr(ret);
+		return chip::System::MapErrorZephyr(ret_battery);
 	}
 
-	ret = BatteryChargeControlInit();
-	if (ret) {
+	ret_battery = BatteryChargeControlInit();
+	if (ret_battery) {
 		LOG_ERR("Battery charge control init failed");
-		return chip::System::MapErrorZephyr(ret);
+		return chip::System::MapErrorZephyr(ret_battery);
 	}
+#endif
 
-	ret = BuzzerInit();
-	if (ret) {
+#if CONFIG_MATTER_WEATHER_STATION_BUZZER
+	int ret_buzzer = BuzzerInit();
+	if (ret_buzzer) {
 		LOG_ERR("Buzzer init failed");
-		return chip::System::MapErrorZephyr(ret);
+		return chip::System::MapErrorZephyr(ret_buzzer);
 	}
+#endif
 
 	ReturnErrorOnFailure(sIdentifyTemperature.Init());
 	ReturnErrorOnFailure(sIdentifyHumidity.Init());
