@@ -35,6 +35,7 @@
 #include "cracen_psa_key_ids.h"
 #include "cracen_psa_ctr_drbg.h"
 #include "sxsymcrypt/keyref.h"
+#include "cracen_psa_key_wrap.h"
 
 /** @brief Get the size of an opaque key.
  *

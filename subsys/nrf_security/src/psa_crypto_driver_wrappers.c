@@ -107,6 +107,10 @@
 #include "oberon_xof.h"
 #endif
 
+#ifdef PSA_NEED_OBERON_KEY_WRAP_DRIVER
+#include "oberon_key_wrap.h"
+#endif
+
 #if defined(PSA_CRYPTO_DRIVER_CRACEN)
 #ifndef PSA_CRYPTO_DRIVER_PRESENT
 #define PSA_CRYPTO_DRIVER_PRESENT
@@ -3060,7 +3064,12 @@ psa_status_t psa_driver_wrapper_wrap_key(const psa_key_attributes_t *wrapping_ke
 {
 	switch (PSA_KEY_LIFETIME_GET_LOCATION(wrapping_key_attributes->lifetime)) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
-		/* Add cases for transparent drivers here */
+#ifdef PSA_NEED_CRACEN_KEY_WRAP_DRIVER
+		return cracen_wrap_key(wrapping_key_attributes, wrapping_key_data,
+				       wrapping_key_size, alg, key_attributes, key_data, key_size,
+				       data, data_size, data_length);
+#endif /* PSA_NEED_CRACEN_KEY_WRAP_DRIVER */
+
 #ifdef PSA_NEED_OBERON_KEY_WRAP_DRIVER
 		return oberon_wrap_key(wrapping_key_attributes, wrapping_key_data,
 				       wrapping_key_size, alg, key_attributes, key_data, key_size,
@@ -3094,7 +3103,12 @@ psa_status_t psa_driver_wrapper_unwrap_key(const psa_key_attributes_t *attribute
 {
 	switch (PSA_KEY_LIFETIME_GET_LOCATION(wrapping_key_attributes->lifetime)) {
 	case PSA_KEY_LOCATION_LOCAL_STORAGE:
-		/* Add cases for transparent drivers here */
+#ifdef PSA_NEED_CRACEN_KEY_WRAP_DRIVER
+		return cracen_unwrap_key(attributes, wrapping_key_attributes, wrapping_key_data,
+					 wrapping_key_size, alg, data, data_length, key, key_size,
+					 key_length);
+#endif /* PSA_NEED_CRACEN_KEY_WRAP_DRIVER */
+
 #ifdef PSA_NEED_OBERON_KEY_WRAP_DRIVER
 		return oberon_unwrap_key(attributes, wrapping_key_attributes, wrapping_key_data,
 					 wrapping_key_size, alg, data, data_length, key, key_size,
