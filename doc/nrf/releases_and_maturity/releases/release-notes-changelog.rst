@@ -598,6 +598,10 @@ Modem libraries
     * Support for AT command mode (shell bypass) using the :kconfig:option:`CONFIG_AT_SHELL_CMD_MODE` Kconfig option.
     * Tab-completion for known shell subcommands.
 
+* :ref:`lib_location` library:
+
+  * Fixed a bug where GNSS was never stopped if the :c:func:`location_cloud_location_ext_result_set` function was called during GNSS method execution.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 

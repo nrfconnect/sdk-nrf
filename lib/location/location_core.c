@@ -534,12 +534,25 @@ void location_core_event_cb_cloud_location_request(struct location_data_cloud *r
 	location_utils_event_dispatch(&cloud_location_request_event_data);
 }
 
+static bool location_core_is_cloud_method(int method)
+{
+	if (method == LOCATION_METHOD_CELLULAR ||
+	    method == LOCATION_METHOD_WIFI ||
+	    method == LOCATION_METHOD_WIFI_CELLULAR) {
+		return true;
+	}
+
+	return false;
+}
+
 void location_core_cloud_location_ext_result_set(
 	enum location_ext_result result,
 	struct location_data *location)
 {
-	if (k_sem_count_get(&location_core_sem) > 0) {
-		LOG_WRN("Cloud positioning result set called but no location request pending");
+	if (k_sem_count_get(&location_core_sem) > 0 ||
+	    !location_core_is_cloud_method(loc_req_info.current_method)) {
+		LOG_WRN("Cloud positioning result set called but no "
+			"cloud location request pending");
 		return;
 	}
 
