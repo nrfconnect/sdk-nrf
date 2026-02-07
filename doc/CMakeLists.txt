@@ -50,12 +50,85 @@ if(NOT WEST)
   message(FATAL_ERROR "The 'west' command was not found")
 endif()
 
+find_package(Git REQUIRED)
+
 set(KCONFIG_BINARY_DIR ${CMAKE_BINARY_DIR}/kconfig)
 list(INSERT MODULE_EXT_ROOT 0 ${ZEPHYR_BASE})
 file(MAKE_DIRECTORY ${KCONFIG_BINARY_DIR})
 
 #-------------------------------------------------------------------------------
 # Functions
+
+# Get version from git describe.
+#
+# Args:
+# - repo_path: Path to the git repository
+# - upstream_url: URL of the upstream remote
+# - out_var: Output variable name to store the result
+#
+# This function configures the upstream remote, fetches all tags from it,
+# and runs git describe to get the version string.
+#
+function(get_git_version repo_path upstream_url out_var)
+  # Check if upstream remote exists
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} remote get-url upstream
+    WORKING_DIRECTORY ${repo_path}
+    OUTPUT_VARIABLE current_url
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+    RESULT_VARIABLE remote_exists
+  )
+
+  if(remote_exists EQUAL 0)
+    # Remote exists, verify URL matches
+    if(NOT current_url STREQUAL upstream_url)
+      # Update the remote URL
+      execute_process(
+        COMMAND ${GIT_EXECUTABLE} remote set-url upstream ${upstream_url}
+        WORKING_DIRECTORY ${repo_path}
+        RESULT_VARIABLE result
+      )
+      if(NOT result EQUAL 0)
+        message(FATAL_ERROR "Failed to update upstream remote URL")
+      endif()
+    endif()
+  else()
+    # Remote doesn't exist, add it
+    execute_process(
+      COMMAND ${GIT_EXECUTABLE} remote add upstream ${upstream_url}
+      WORKING_DIRECTORY ${repo_path}
+      RESULT_VARIABLE result
+    )
+    if(NOT result EQUAL 0)
+      message(FATAL_ERROR "Failed to add upstream remote")
+    endif()
+  endif()
+
+  # Fetch all tags from upstream
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} fetch upstream --tags
+    WORKING_DIRECTORY ${repo_path}
+    RESULT_VARIABLE result
+  )
+  if(NOT result EQUAL 0)
+    message(WARNING "Failed to fetch tags from upstream remote")
+  endif()
+
+  # Run git describe
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} describe --exclude "ncs-*"
+    WORKING_DIRECTORY ${repo_path}
+    OUTPUT_VARIABLE version_string
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    RESULT_VARIABLE result
+  )
+  if(NOT result EQUAL 0)
+    message(FATAL_ERROR "Failed to run git describe in ${repo_path}")
+  endif()
+
+  set(${out_var} ${version_string} PARENT_SCOPE)
+endfunction()
 
 # Add a new Doxygen docset.
 #
@@ -306,16 +379,25 @@ if(NOT HW_FEATURES)
   set(ZEPHYR_SPHINXOPTS -t hw_features_turbo)
 endif()
 
-add_docset(zephyr ${Zephyr_VERSION} SPHINXOPTS ${ZEPHYR_SPHINXOPTS})
-add_doxygen_docset(zephyr ${ZEPHYR_BASE} ${Zephyr_VERSION})
+get_git_version(
+  ${ZEPHYR_BASE}
+  "https://github.com/zephyrproject-rtos/zephyr"
+  ZEPHYR_VERSION
+)
+
+add_docset(zephyr ${ZEPHYR_VERSION} SPHINXOPTS ${ZEPHYR_SPHINXOPTS})
+add_doxygen_docset(zephyr ${ZEPHYR_BASE} ${ZEPHYR_VERSION})
 add_dependencies(zephyr zephyr-devicetree)
 add_dependencies(zephyr-all zephyr-devicetree)
 
 #-------------------------------------------------------------------------------
 # docset: nrf
 
-file(READ "${NRF_BASE}/VERSION" NRF_VERSION)
-string(STRIP ${NRF_VERSION} NRF_VERSION)
+get_git_version(
+  ${NRF_BASE}
+  "https://github.com/nrfconnect/sdk-nrf"
+  NRF_VERSION
+)
 
 add_docset(nrf ${NRF_VERSION})
 add_doxygen_docset(nrf ${NRF_BASE} ${NRF_VERSION})
@@ -323,7 +405,13 @@ add_doxygen_docset(nrf ${NRF_BASE} ${NRF_VERSION})
 #-------------------------------------------------------------------------------
 # docset: mcuboot
 
-add_docset(mcuboot "2.2.0-rc2")
+get_git_version(
+  ${ZEPHYR_MCUBOOT_MODULE_DIR}
+  "https://github.com/mcu-tools/mcuboot"
+  MCUBOOT_VERSION
+)
+
+add_docset(mcuboot ${MCUBOOT_VERSION})
 
 #-------------------------------------------------------------------------------
 # docset: nrfx
@@ -333,12 +421,24 @@ add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "" STANDALONE)
 #-------------------------------------------------------------------------------
 # docset: tfm
 
-add_docset(tfm "2.2.2")
+get_git_version(
+  ${ZEPHYR_TRUSTED_FIRMWARE_M_MODULE_DIR}
+  "https://github.com/TrustedFirmware-M/trusted-firmware-m"
+  TFM_VERSION
+)
+
+add_docset(tfm ${TFM_VERSION})
 
 #-------------------------------------------------------------------------------
 # docset: matter
 
-add_docset(matter "1.5.0")
+get_git_version(
+  ${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}
+  "https://github.com/project-chip/connectedhomeip"
+  MATTER_VERSION
+)
+
+add_docset(matter ${MATTER_VERSION})
 
 #-------------------------------------------------------------------------------
 # docset: nrfxlib
