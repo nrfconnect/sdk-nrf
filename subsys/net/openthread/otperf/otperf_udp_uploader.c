@@ -67,7 +67,7 @@ static void otperf_upload_fin(otUdpSocket *sock, uint32_t nb_packets, uint64_t e
 	struct otperf_client_hdr_v1 *hdr;
 	uint32_t secs = end_time_us / USEC_PER_SEC;
 	uint32_t usecs = end_time_us % USEC_PER_SEC;
-	int loop = CONFIG_OTPERF_UDP_REPORT_RETANSMISSION_COUNT;
+	int loop = CONFIG_OTPERF_UDP_REPORT_RETRANSMISSION_COUNT;
 	int ret = 0;
 	otInstance *instance = openthread_get_default_instance();
 	otMessage *message;
