@@ -5,10 +5,11 @@
 #
 
 menuconfig EDGE_IMPULSE
-	bool "Edge Impulse"
+	bool "Edge Impulse [DEPRECATED]"
 	depends on CPP
 	depends on STD_CPP11
 	depends on !FP16
+	select DEPRECATED
 	select REQUIRES_FULL_LIBCPP
 	imply FPU
 	imply CBPRINTF_FP_SUPPORT
@@ -51,8 +52,9 @@ config EDGE_IMPULSE_URI
 endif # EDGE_IMPULSE
 
 menuconfig EI_WRAPPER
-	bool "Edge Impulse wrapper"
+	bool "Edge Impulse wrapper [DEPRECATED]"
 	depends on EDGE_IMPULSE
+	select DEPRECATED
 	default y
 	help
 	  Enable Edge Impulse library wrapper in NCS.

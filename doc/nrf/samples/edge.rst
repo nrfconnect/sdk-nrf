@@ -3,6 +3,10 @@
 Edge Impulse samples
 ####################
 
+.. note::
+   These samples are deprecated and will be removed in the future |NCS| release.
+   The Edge Impulse SDK is now available in `Edge AI Add-on for nRF Connect SDK`_.
+
 This section lists the |NCS| samples for :ref:`integrating Edge Impulse with the nRF Connect SDK <ug_edge_impulse>`.
 
 .. include:: ../samples.rst
