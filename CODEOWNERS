@@ -249,6 +249,7 @@
 /doc/nrf/samples/ironside_se.rst          @nrfconnect/ncs-aurora-doc
 /doc/nrf/samples/keys.rst                 @nrfconnect/ncs-aegir-doc
 /doc/nrf/samples/matter.rst               @nrfconnect/ncs-matter-doc
+/doc/nrf/samples/mcuboot.rst              @nrfconnect/ncs-eris-doc
 /doc/nrf/samples/mesh.rst                 @nrfconnect/ncs-paladin-doc
 /doc/nrf/samples/net.rst                  @nrfconnect/ncs-doc-leads
 /doc/nrf/samples/nfc.rst                  @nrfconnect/ncs-radio-sw
@@ -624,6 +625,7 @@
 /samples/bluetooth/subrating/*.rst        @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/throughput/*.rst       @nrfconnect/ncs-blenders-doc
 /samples/bootloader/*.rst                 @nrfconnect/ncs-eris-doc
+/samples/mcuboot/firmware_loader_entrance/*.rst @nrfconnect/ncs-eris-doc
 /samples/caf/*.rst                        @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
 /samples/caf_sensor_manager/*.rst         @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc
 /samples/cellular/**/*.rst                @nrfconnect/ncs-modem-doc
