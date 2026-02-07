@@ -99,6 +99,7 @@ Global domain
 The global domain contains most of the memory and peripherals of the nRF54H20.
 This offers flexibility to assign memory regions and peripherals to different cores.
 If this flexibility is not needed, it is possible to use the |NCS| defaults, where most of the memory and peripherals are assigned to the application core.
+See :ref:`ug_nrf54h20_assigning_peripherals` for information on how to assign peripherals to differebt cores.
 
 The global domain includes two sets of power domains:
 
