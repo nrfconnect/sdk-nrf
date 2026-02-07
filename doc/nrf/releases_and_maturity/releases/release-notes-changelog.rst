@@ -634,6 +634,8 @@ nRF RPC libraries
 Other libraries
 ---------------
 
+* Added the :ref:`lib_accel_to_angle` library for converting accelerometer data to pitch and roll rotation data.
+
 * :ref:`lib_hw_id` library:
 
   * Updated by renaming the ``CONFIG_HW_ID_LIBRARY_SOURCE_BLE_MAC`` Kconfig option to :kconfig:option:`CONFIG_HW_ID_LIBRARY_SOURCE_BT_DEVICE_ADDRESS`.
