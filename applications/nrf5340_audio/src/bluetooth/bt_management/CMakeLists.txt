@@ -6,7 +6,6 @@
 
 zephyr_library_include_directories(
   advertising
-  controller_config
   dfu
   scanning
   ${ZEPHYR_BASE}/subsys/bluetooth/host/
@@ -14,7 +13,6 @@ zephyr_library_include_directories(
 
 target_sources(app PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/bt_mgmt.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/controller_config/bt_mgmt_ctlr_cfg.c
 )
 
 if(CONFIG_BT_CENTRAL)

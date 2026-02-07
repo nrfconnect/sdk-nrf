@@ -111,9 +111,3 @@ endchoice
 # exFAT enabled to support longer file names and higher transfer speed
 config FS_FATFS_EXFAT
 	default y
-
-config WATCHDOG
-	default y
-
-config TASK_WDT
-	default y

@@ -150,11 +150,6 @@
 			<desc>bt_rendering_and_capture</desc>
 			<rect x="0" y="547.312" width="51.4735" height="28.3465" class="st16"/>
 			<text x="4.14" y="559.39" class="st11">bt_rendering_<tspan x="6.28" dy="1.2em" class="st15">and_capture</tspan></text>		</g>
-		<g id="shape102-59" transform="translate(361.533,-178.924)">
-			<title>Nordic Lake.1451</title>
-			<desc>bt_mgmt_ctlr_cfg_internal</desc>
-			<rect x="0" y="559.184" width="95.8941" height="16.4743" class="st16"/>
-			<text x="6.82" y="569.37" class="st19">bt_mgmt_ctlr_cfg_internal</text>		</g>
 		<g id="shape122-62" transform="translate(531.652,-209.967)">
 			<title>Nordic Lake.122</title>
 			<desc>bt_content_control</desc>
@@ -577,10 +572,6 @@
 		<g id="shape253-439" transform="translate(349.528,-209.967)">
 			<title>Dynamic connector.253</title>
 			<path d="M-0.43 575.66 L-0.43 690.35 L-3.19 690.35" class="st1"/>
-		</g>
-		<g id="shape254-444" transform="translate(348.231,-209.967)">
-			<title>Dynamic connector.254</title>
-			<path d="M0.87 575.66 L0.87 598.46 L2.74 598.46" class="st1"/>
 		</g>
 		<g id="shape255-449" transform="translate(348.231,-209.967)">
 			<title>Dynamic connector.255</title>
