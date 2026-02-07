@@ -60,7 +60,7 @@ void error_handler(unsigned int reason, const struct arch_esf *esf)
 	CODE_UNREACHABLE;
 }
 
-void bt_ctlr_assert_handle(char *c, int code)
+__weak void bt_ctlr_assert_handle(char *c, int code)
 {
 	LOG_ERR("BT controller assert: %s, code: 0x%x", c, code);
 	error_handler(code, NULL);
