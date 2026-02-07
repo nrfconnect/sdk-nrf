@@ -151,8 +151,18 @@ Configuring a connected HID device simultaneously with multiple host tools is no
 If multiple host tools configure a HID device at the same time, the configuration channel transport implementation in the firmware might mix requests and responses coming from various host tools.
 Make sure to stop the ``fwupd`` daemon before using the HID configurator script.
 
+.. note::
+   Systemd can reactivate the ``fwupd`` daemon automatically using a timer (``fwupd-refresh.timer``) even after it has been stopped manually.
+   Make sure to stop the timer together with stopping the ``fwupd`` daemon to prevent the daemon from reactivating automatically.
+
 Ubuntu example
 --------------
+
+This section covers managing the ``fwupd`` service and its refresh timer (``fwupd-refresh.timer``) on Ubuntu.
+For other Linux distributions that use systemd, the procedure is similar.
+
+fwupd daemon
+^^^^^^^^^^^^
 
 To either stop or start the ``fwupd`` daemon on Ubuntu, run one of the following commands:
 
@@ -168,6 +178,25 @@ To check the status of the ``fwupd`` daemon on Ubuntu, run the following command
     :class: highlight
 
     systemctl status fwupd
+
+fwupd-refresh.timer
+^^^^^^^^^^^^^^^^^^^
+
+To check whether the ``fwupd-refresh.timer`` is running and see its configuration, use the following commands:
+
+.. parsed-literal::
+   :class: highlight
+
+   systemctl status fwupd-refresh.timer
+   systemctl cat fwupd-refresh.timer
+
+If needed, you can stop and start the timer using the following commands:
+
+.. parsed-literal::
+   :class: highlight
+
+   sudo systemctl stop fwupd-refresh.timer
+   sudo systemctl start fwupd-refresh.timer
 
 Using the script
 ****************
