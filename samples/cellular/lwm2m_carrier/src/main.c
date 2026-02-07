@@ -217,7 +217,7 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 
 int main(void)
 {
-	printk("LWM2M Carrier library sample.\n");
+	printk("LWM2M Carrier library sample..\n");
 
 	int err = nrf_modem_lib_init();
 
