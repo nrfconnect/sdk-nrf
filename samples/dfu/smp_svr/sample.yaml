@@ -345,9 +345,8 @@ tests:
   sample.dfu.smp_svr.bt.nrf54h20dk:
     sysbuild: true
     extra_args:
+      - FILE_SUFFIX="nrf54h20_bt"
       - EXTRA_CONF_FILE="overlay-bt.conf"
-      - SB_CONFIG_NETCORE_IPC_RADIO=y
-      - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
       - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_MULTITHREADING=y
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
@@ -362,8 +361,6 @@ tests:
     extra_args:
       - FILE_SUFFIX="merged_slot"
       - EXTRA_CONF_FILE="overlay-bt.conf"
-      - SB_CONFIG_NETCORE_IPC_RADIO=y
-      - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
       - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
       - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_MULTITHREADING=y
@@ -389,8 +386,6 @@ tests:
     extra_args:
       - FILE_SUFFIX="requests"
       - EXTRA_CONF_FILE="overlay-bt.conf"
-      - SB_CONFIG_NETCORE_IPC_RADIO=y
-      - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
       - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
       - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_MULTITHREADING=y

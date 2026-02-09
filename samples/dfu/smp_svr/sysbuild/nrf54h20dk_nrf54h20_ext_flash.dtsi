@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/delete-node/ &slot1_partition;
-/delete-node/ &slot3_partition;
+#include "nrf54h20dk_nrf54h20_memory_map_ext_flash.dtsi"
 
 / {
 	chosen {
@@ -15,22 +14,6 @@
 
 &mx25uw63 {
 	status = "okay";
-
-	partitions {
-		compatible = "fixed-partitions";
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		slot1_partition: partition@0 {
-			label = "image-1";
-			reg = <0x0 DT_SIZE_K(328)>;
-		};
-
-		slot3_partition: partition@52000 {
-			label = "image-3";
-			reg = <0x52000 DT_SIZE_K(328)>;
-		};
-	};
 };
 
 &gpio6 {

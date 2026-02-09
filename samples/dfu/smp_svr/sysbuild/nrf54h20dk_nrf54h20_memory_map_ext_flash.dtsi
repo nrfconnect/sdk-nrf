@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &cpuapp_slot1_partition;
+/delete-node/ &cpurad_slot1_partition;
+
+&mx25uw63 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		cpuapp_slot1_partition: slot1_partition: partition@0 {
+			label = "image-1";
+			reg = <0x0 DT_SIZE_K(328)>;
+		};
+
+		cpurad_slot1_partition: slot3_partition: partition@52000 {
+			label = "image-3";
+			reg = <0x52000 DT_SIZE_K(328)>;
+		};
+	};
+};
