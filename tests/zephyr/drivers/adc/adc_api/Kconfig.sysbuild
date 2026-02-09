@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SUPPORT_NETCORE_TESTAPP
+	bool
+	default y if SOC_NRF54H20_CPUAPP
+
+choice NETCORE
+
+config NETCORE_TESTAPP
+	bool "testapp image"
+
+endchoice
+
+if !NETCORE_NONE
+
+config NETCORE_IMAGE_NAME
+	default "netcore_testapp" if NETCORE_TESTAPP
+
+config NETCORE_IMAGE_PATH
+	default "${ZEPHYR_NRF_MODULE_DIR}/tests/zephyr/drivers/adc/adc_api/netcore_testapp" if NETCORE_TESTAPP
+
+endif # !NETCORE_NONE
+
+source "share/sysbuild/Kconfig"

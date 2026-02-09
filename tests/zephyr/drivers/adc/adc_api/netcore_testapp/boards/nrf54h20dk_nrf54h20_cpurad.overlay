@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	zephyr,user {
+		gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>, <&gpio1 4 GPIO_ACTIVE_HIGH>,
+			<&gpio1 5 GPIO_ACTIVE_HIGH>, <&gpio1 6 GPIO_ACTIVE_HIGH>,
+			<&gpio1 7 GPIO_ACTIVE_HIGH>, <&gpio1 8 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
+};
