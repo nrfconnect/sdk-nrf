@@ -2247,8 +2247,6 @@ static bool foreach_stream_transp_latency_set(struct bt_cap_stream *existing_str
 
 		ctx->streams_set_src++;
 		break;
-
-		break;
 	default:
 		LOG_ERR("Failed stream direction set");
 		return true;
