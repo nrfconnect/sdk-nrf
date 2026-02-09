@@ -133,6 +133,28 @@ config CRACEN_USE_INTERRUPTS
 	  If this is turned off CRACEN uses active polling instead,
 	  which may have an impact on performance.
 
+config CRACEN_ENABLE_ECC_EXTENDED_COUNTERMEASURES
+	def_bool CRACEN_HW_VERSION_LITE
+	depends on CRACEN_ENABLE_ECC_COUNTERMEASURES
+
+config CRACEN_ENABLE_ECC_COUNTERMEASURES
+	bool "CRACEN ECC countermeasures"
+	default y
+	help
+	  Enable Cracen ECC countermeasures, using scalar randomization
+	  and projective coordinate randomization.
+
+	  In nRF54H20, nRF54L05, nRF54L10, and nRF54L15 the countermeasures
+	  are available for the following operations:
+	  - ECDSA signature generation and public key generation
+	  - ECC point multiplication
+
+	  In nRF54LM20X, nRF54LV10A, and nRF7120 the countermeasures the following
+	  countermerasures are available in adddition to the above operations:
+	  - Montgomery curve multiplication
+	  - EdDSA base point multiplication
+	  - Edwards point multiplication
+
 rsource 'psa_driver.Kconfig'
 
 endif # PSA_CRYPTO_DRIVER_CRACEN
