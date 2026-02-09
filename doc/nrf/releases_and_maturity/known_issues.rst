@@ -634,6 +634,14 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v3-1-1 v3-1-0
+
+KRKNWK-21365: AnnounceOTAProvider command missing required privilege causes Matter Certification ACE 2-3 failure
+  Matter samples do not assign ``access(invoke: administer)`` privilege to the ``AnnounceOTAProvider`` command as required.
+  This causes a failure in the Matter Certification test case ACE 2-3.
+
+  **Workaround:** Add ``<access op="invoke" privilege="administer"/>`` under the ``AnnounceOTAProvider`` command definition in the :file:`modules/lib/matter/src/app/zap-templates/zcl/data-model/chip/chip-ota.xml` file and regenerate the ZAP files with the ``west zap-generate`` command.
+
 .. rst-class:: v3-2-2 v3-2-1 v3-2-0
 
 KRKNWK-21176: Fail to flash the nRF7002 DK with Wi-Fi external patch without full erase
