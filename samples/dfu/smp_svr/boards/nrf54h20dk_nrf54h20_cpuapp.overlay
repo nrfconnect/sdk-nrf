@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "../dts/nrf54h20dk_nrf54h20_bootchain.dtsi"
+
 &mram1x {
 	partitions {
 		boot_request: partition@0x1c2400 {
