@@ -273,12 +273,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - net.lib.azure_iot_hub.iot_hub
-  platforms:
-    - qemu_cortex_m3
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
     - nrf5340_audio.sw_codec_lc3_test
   platforms:
     - nrf5340_audio_dk/nrf5340/cpuapp
@@ -834,20 +828,6 @@
     - sample.net.aws_iot
   platforms:
     - thingy91/nrf9160/ns
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - net.lib.aws_fota.aws_fota_json
-  platforms:
-    - nrf52840dk/nrf52840
-    - nrf9160dk@0.14.0/nrf9160
-    - qemu_cortex_m3
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - net.lib.mqtt_helper
-  platforms:
-    - qemu_cortex_m3
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
