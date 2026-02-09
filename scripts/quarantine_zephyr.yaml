@@ -650,3 +650,10 @@
   platforms:
     - nrf52840dk/nrf52840
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37416"
+
+- scenarios:
+    - flash.interface_test.build_only
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37556"
