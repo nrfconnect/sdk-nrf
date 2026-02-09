@@ -63,6 +63,7 @@
   - "lib/data_fifo/**/*"
   - "lib/pcm_stream_channel_modifier/**/*"
   - "lib/tone/**/*"
+  - "subsys/bluetooth/host/host/**/*"
 
 "CI-iot-samples-test":
   - "include/modem/at_monitor.h"
@@ -211,6 +212,14 @@
   - "subsys/nrf_security/**/*"
   - "drivers/mpsl/**/*"
 
+"CI-ble-host-test":
+  - "include/bluetooth/host/**/*
+  - "include/bluetooth/drivers/**/*"
+  - "subsys/bluetooth/host/host/**/*"
+  - "tests/bluetooth/**/*"
+  - "tests/bsim/bluetooth/**/*"
+  - "tests/bsim/babblelit/**/*"
+
 "CI-ble-samples-test":
   - "samples/bluetooth/central_hids/*"
   - "samples/bluetooth/central_uart/*"
@@ -230,6 +239,7 @@
       - "!include/bluetooth/mesh/**/*"
 
 "CI-mesh-test":
+  - "subsys/bluetooth/host/host/**/*"
   - "subsys/bluetooth/mesh/**/*"
   - "include/bluetooth/mesh/**/*"
   - "samples/bluetooth/mesh/**/*"
