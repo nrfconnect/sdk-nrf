@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config PARTITION_MANAGER
+	default n
+
 config BT_FAST_PAIR_MODEL_ID
 	default 0x2A410B
 
