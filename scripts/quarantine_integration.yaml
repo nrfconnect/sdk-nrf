@@ -286,13 +286,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - dfu.dfu_target.mcuboot
-    - mcuboot.direct_xip
-  platforms:
-    - nrf52dk/nrf52832
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
     - sample.nrf_profiler
   platforms:
     - nrf21540dk/nrf52840
@@ -958,48 +951,6 @@
     - sample.nrf7001_eks.scan
     - sample.nrf7001_eks.provisioning
   platforms:
-    - nrf5340dk/nrf5340/cpuapp
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - dfu.target_stream
-    - dfu.target_stream.store_progress
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp
-    - nrf9160dk@0.14.0/nrf9160
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.bootloader
-  platforms:
-    - nrf21540dk/nrf52840
-    - nrf52833dk/nrf52833
-    - nrf52dk/nrf52832
-    - nrf5340dk/nrf5340/cpuapp
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - bootloader.bl_validation
-    - bootloader.bl_crypto
-  platforms:
-    - nrf52833dk/nrf52833
-    - nrf52dk/nrf52832
-    - nrf5340dk/nrf5340/cpuapp
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - bootloader.bl_validation.ff_key
-  platforms:
-    - nrf52840dk/nrf52840
-    - nrf52dk/nrf52832
-    - nrf5340dk/nrf5340/cpuapp
-    - nrf9160dk@0.14.0/nrf9160
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - bootloader.bl_validation.negative
-  platforms:
-    - nrf9160dk@0.14.0/nrf9160
     - nrf5340dk/nrf5340/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
