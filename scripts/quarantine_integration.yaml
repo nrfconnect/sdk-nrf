@@ -764,18 +764,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.peripheral.lpuart
-    - sample.peripheral.lpuart_int_driven
-    - sample.peripheral.lpuart_nrf52840_debug
-  platforms:
-    - nrf21540dk/nrf52840
-    - nrf52833dk/nrf52833
-    - nrf52840dk/nrf52840
-    - nrf52dk/nrf52832
-    - nrf5340dk/nrf5340/cpuapp
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
     - tfm.psa_test_initial_attestation_lvl1
     - tfm.psa_test_internal_trusted_storage_lvl1
     - tfm.psa_test_protected_storage_lvl1
