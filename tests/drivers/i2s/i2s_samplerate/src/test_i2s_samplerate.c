@@ -15,6 +15,57 @@
 #include <nrfx_gpiote.h>
 #include <gpiote_nrfx.h>
 
+#if defined(CONFIG_I2S_TEST_START_HFXO)
+#include <zephyr/drivers/clock_control.h>
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
+#if NRF54L_ERRATA_20_PRESENT
+#include <nrf_sys_event.h>
+#endif /* NRF54L_ERRATA_20_PRESENT */
+
+static void clock_init(void)
+{
+	int err;
+	int res;
+	struct onoff_manager *clk_mgr;
+	struct onoff_client clk_cli;
+
+	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
+	if (!clk_mgr) {
+		printk("Unable to get the Clock manager\n");
+		return;
+	}
+
+	sys_notify_init_spinwait(&clk_cli.notify);
+
+	err = onoff_request(clk_mgr, &clk_cli);
+	if (err < 0) {
+		printk("Clock request failed: %d\n", err);
+		return;
+	}
+
+	do {
+		err = sys_notify_fetch_result(&clk_cli.notify, &res);
+		if (!err && res) {
+			printk("Clock could not be started: %d\n", res);
+			return;
+		}
+	} while (err);
+
+#if NRF54L_ERRATA_20_PRESENT
+	if (nrf54l_errata_20()) {
+		nrf_sys_event_request_global_constlat();
+	}
+#endif /* NRF54L_ERRATA_20_PRESENT */
+
+#if defined(NRF54LM20A_ENGA_XXAA)
+	/* MLTPAN-39 */
+	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
+#endif /* defined(NRF54LM20A_ENGA_XXAA) */
+
+	printk("Clock has started\n");
+}
+#endif /* CONFIG_I2S_TEST_START_HFXO */
+
 #define I2S_DEV_NODE DT_ALIAS(i2s_node0)
 
 #define NUM_BLOCKS 4
@@ -218,21 +269,24 @@ static void i2s_dir_both_transfer_long(struct i2s_config *i2s_cfg, uint32_t expe
 	/* Get number of I2S LRCK rising edges. */
 	uint32_t pulses = nrfx_timer_capture_get(&timer_instance, NRF_TIMER_CC_CHANNEL0);
 
-	TC_PRINT("LRCK edges: %u\n", pulses);
+	TC_PRINT("LRCK edges: %u (expected: %u +/- %u)\n",
+		pulses, expected_edges, delta);
+	zassert_within(pulses, expected_edges, delta, "got %u while expected is %u with delta %u",
+		       pulses, expected_edges, delta);
+
 #if defined(CONFIG_DT_HAS_NORDIC_NRF_TDM_ENABLED)
-	TC_PRINT("SCK divider is %u\n", p_reg->CONFIG.SCK.DIV);
+	TC_PRINT("SCK divider is %u (expected: %u)\n",
+		p_reg->CONFIG.SCK.DIV, expected_divider);
 	zassert_equal(p_reg->CONFIG.SCK.DIV, expected_divider,
 		"CONFIG.SCK.DIV = %u while expected is %u",
 		p_reg->CONFIG.SCK.DIV, expected_divider);
 #else
-	TC_PRINT("MCK divider is %u\n", p_reg->CONFIG.MCKFREQ);
+	TC_PRINT("MCK divider is %u (expected: %u)\n",
+		p_reg->CONFIG.MCKFREQ, expected_divider);
 	zassert_equal(p_reg->CONFIG.MCKFREQ, expected_divider,
 		"CONFIG.MCKFREQ = %u while expected is %u",
 		p_reg->CONFIG.MCKFREQ, expected_divider);
 #endif
-
-	zassert_within(pulses, expected_edges, delta, "got %u while expected is %u with delta %u",
-		       pulses, expected_edges, delta);
 }
 
 ZTEST(i2s_samplerate, test_dir_both_at_08000_sps)
@@ -326,6 +380,9 @@ static void *suite_setup(void)
 	TC_PRINT("I2S samplerate test on %s\n", CONFIG_BOARD_TARGET);
 	TC_PRINT("Testing I2S device %s\n", dev_i2s->name);
 	TC_PRINT("I2S device address is %p\n", p_reg);
+#if defined(CONFIG_I2S_TEST_START_HFXO)
+	TC_PRINT("HFXO is used\n");
+#endif
 	TC_PRINT("Target values are:\n");
 	TC_PRINT(" -  8000 Sps: %u +/- %u\n", CONFIG_I2S_TEST_8000_EXPECTED,
 		 CONFIG_I2S_TEST_8000_TOLERANCE);
@@ -342,6 +399,10 @@ static void *suite_setup(void)
 	TC_PRINT(" - 96000 Sps: %u +/- %u\n", CONFIG_I2S_TEST_96000_EXPECTED,
 		 CONFIG_I2S_TEST_96000_TOLERANCE);
 	TC_PRINT("===================================================================\n");
+
+#if defined(CONFIG_I2S_TEST_START_HFXO)
+	clock_init();
+#endif
 
 	/* Check I2S Device. */
 	zassert_not_null(dev_i2s, "I2S device not found");

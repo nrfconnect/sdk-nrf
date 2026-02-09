@@ -6,6 +6,11 @@
 
 mainmenu "I2S Samplerate Test"
 
+config I2S_TEST_START_HFXO
+	bool "Start HFXO to increase clock accuracy"
+	help
+	  When set to 'y', clock source is switched to external crystal oscillator.
+
 config I2S_TEST_8000_SKIP
 	bool "Skip testing at 8000 samples per second"
 	help
