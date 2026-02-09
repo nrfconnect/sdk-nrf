@@ -34,7 +34,7 @@ tests:
       - nrf52840dk/nrf52840
     integration_platforms:
       - nrf52840dk/nrf52840
-  # nrf54lm20 boards in CI have high deviation from each other
+  # nrf54lm20: PCLK32 and internal RC
   drivers.i2s.samplerate.nrf54lm20:
     harness_config:
       fixture: gpio_loopback
@@ -46,6 +46,55 @@ tests:
       - CONFIG_I2S_TEST_48000_TOLERANCE=476
       - CONFIG_I2S_TEST_88200_TOLERANCE=909
       - CONFIG_I2S_TEST_96000_TOLERANCE=1000
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  # nrf54lm20: PCLK32 and HFXO
+  drivers.i2s.samplerate.nrf54lm20.hfxo:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - CONFIG_I2S_TEST_START_HFXO=y
+      - CONFIG_I2S_TEST_8000_TOLERANCE=10
+      - CONFIG_I2S_TEST_16000_TOLERANCE=10
+      - CONFIG_I2S_TEST_32000_TOLERANCE=10
+      - CONFIG_I2S_TEST_44100_TOLERANCE=10
+      - CONFIG_I2S_TEST_48000_TOLERANCE=10
+      - CONFIG_I2S_TEST_88200_TOLERANCE=15
+      - CONFIG_I2S_TEST_96000_TOLERANCE=15
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+  # nrf54lm20: ACLK and HFXO
+  drivers.i2s.samplerate.nrf54lm20.hfxo.aclk:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20a_cpuapp_aclk.overlay"
+      - CONFIG_I2S_TEST_START_HFXO=y
+      - CONFIG_I2S_TEST_8000_EXPECTED=7978
+      - CONFIG_I2S_TEST_16000_EXPECTED=15957
+      - CONFIG_I2S_TEST_32000_EXPECTED=32608
+      - CONFIG_I2S_TEST_44100_EXPECTED=44117
+      - CONFIG_I2S_TEST_48000_EXPECTED=46875
+      - CONFIG_I2S_TEST_88200_EXPECTED=83333
+      - CONFIG_I2S_TEST_96000_EXPECTED=93750
+      - CONFIG_I2S_TEST_8000_TOLERANCE=10
+      - CONFIG_I2S_TEST_16000_TOLERANCE=10
+      - CONFIG_I2S_TEST_32000_TOLERANCE=10
+      - CONFIG_I2S_TEST_44100_TOLERANCE=10
+      - CONFIG_I2S_TEST_48000_TOLERANCE=10
+      - CONFIG_I2S_TEST_88200_TOLERANCE=15
+      - CONFIG_I2S_TEST_96000_TOLERANCE=15
+      - CONFIG_I2S_TEST_8000_DIVIDER=45568000
+      - CONFIG_I2S_TEST_16000_DIVIDER=90656768
+      - CONFIG_I2S_TEST_32000_DIVIDER=179421184
+      - CONFIG_I2S_TEST_44100_DIVIDER=245329920
+      - CONFIG_I2S_TEST_48000_DIVIDER=266350592
+      - CONFIG_I2S_TEST_88200_DIVIDER=477036544
+      - CONFIG_I2S_TEST_96000_DIVIDER=516685824
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
