@@ -320,6 +320,7 @@ tests:
       - OVERLAY_CONFIG="overlay-bt.conf"
       - FILE_SUFFIX=ext_flash
       - DTC_OVERLAY_FILE="boards/nrf54l15dk_ext_flash.overlay"
+      - mcuboot_EXTRA_DTC_OVERLAY_FILE="boards/nrf54l15dk_ext_flash.overlay"
       - SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK=y
       - SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=y
     platform_allow:
